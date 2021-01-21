@@ -44,32 +44,43 @@ namespace Altaxo.Calc.Ode
   /// </remarks>
   public abstract partial class RungeKuttaExplicitBase
   {
+    protected static double[][] _emptyJaggedDoubleArray = new double[0][];
+
     /// <summary>
     /// Gets the order of the method (the highest of the pair).
     /// </summary>
     public abstract int Order { get; }
 
     /// <summary>
-    /// Gets the number of stages, including the stages needed for dense output.
+    /// Gets the number of stages for the main process (stages needed for dense output not included).
     /// </summary>
     public abstract int NumberOfStages { get; }
 
     /// <summary>Central coefficients of the Runge-Kutta scheme. See [1], page 135.</summary>
     protected abstract double[][] A { get; }
 
-    /// <summary>High order coefficients (lower side of the Runge-Kutta scheme).</summary>
+    /// <summary>High order bottom side coefficients of the Runge-Kutta scheme.</summary>
     protected abstract double[] BH { get; }
 
-    /// <summary>Low order coefficients (lower side of the Runge-Kutta scheme).</summary>
-    protected abstract double[]? BL { get; }
+    /// <summary>Differences between high order and low order bottom side coefficients of the Runge-Kutta scheme.</summary>
+    protected abstract double[]? BHML { get; }
 
     /// <summary>Left side coefficients of the Runge-Kutta scheme.</summary>
     protected abstract double[] C { get; }
 
     /// <summary>
-    /// The interpolation coefficients aij from [2], eq.11 and unnumbered equation shortly below eq. 12. Values from [2], table 2.
+    /// The interpolation coefficients aij. Note that zero to third order interpolation is using y and slope of x_previous and x_current.
+    /// Thus in this array we only need the coefficients for 4th order (and higher) interpolation.
     /// </summary>
-    protected abstract double[][]? InterpolationCoefficients { get; }
+    protected virtual double[][] InterpolationCoefficients => _emptyJaggedDoubleArray;
+
+    /// <summary>
+    /// Sets the stiffness detection threshold value.
+    /// </summary>
+    /// <value>
+    /// The stiffness detection threshold value.
+    /// </value>
+    protected abstract double StiffnessDetectionThresholdValue { get; }
 
     protected ICore? _core;
 
@@ -83,9 +94,11 @@ namespace Altaxo.Calc.Ode
     [MemberNotNull(nameof(_core))]
     public virtual RungeKuttaExplicitBase Initialize(double x, double[] y, Action<double, double[], double[]> f)
     {
-      _core = new Core(Order, NumberOfStages, A, BH, BL, C, x, y, f);
+      _core = new Core(Order, NumberOfStages, A, BH, BHML, C, x, y, f);
       if (InterpolationCoefficients is not null)
         _core.InterpolationCoefficients = InterpolationCoefficients;
+
+      _core.StiffnessDetectionThresholdValue = StiffnessDetectionThresholdValue;
 
       return this;
     }

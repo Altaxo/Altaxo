@@ -38,16 +38,20 @@ namespace Altaxo.Calc.Ode
       new double[] { 0, 1 / 2d },
       new double[] { 0, 0, 1 }
       };
+
     private static readonly double[] _sbh = new double[] { 1 / 6d, 2 / 6d, 2 / 6d, 1 / 6d };
+
     private static readonly double[] _sc = new double[] { 0, 1 / 2d, 1 / 2d, 1 };
 
     public override int Order => 4;
 
     public override int NumberOfStages => 4;
+    protected override double StiffnessDetectionThresholdValue => 3;
+
 
     protected override double[][] A => _sa;
     protected override double[] BH => _sbh;
-    protected override double[]? BL => null;
+    protected override double[]? BHML => null;
     protected override double[] C => _sc;
 
     protected override double[][]? InterpolationCoefficients => null;

@@ -11,7 +11,6 @@ using Xunit;
 
 namespace Altaxo.Calc.Ode
 {
-
   public class RK547M_Tests
   {
     /// <summary>Solves dx/dt = exp(-x) equation with x(0) = 1 initial condition</summary>
@@ -67,7 +66,7 @@ namespace Altaxo.Calc.Ode
     }
 
     [Fact]
-    public void TestDopri5AccuracyWithConstantStepSize_1_64()
+    public void TestAccuracyWithConstantStepSize_1_64()
     {
       var ode2 = new RK547M();
       var it2 = ode2.GetSolutionPointsVolatileForStepSize(0, new double[] { 1 }, (x, y, d) => { d[0] = -y[0]; }, 1 / 64d).GetEnumerator();
@@ -104,7 +103,7 @@ namespace Altaxo.Calc.Ode
     }
 
     [Fact]
-    public void TestDopri5_FSS_AccuracyWithConstantStepSize_1_2()
+    public void Test_FSS_AccuracyWithConstantStepSize_1_2()
     {
       var ode2 = new RK547M();
       var it2 = ode2.GetSolutionPointsVolatileForStepSize(0, new double[] { 1 }, (x, y, d) => { d[0] = -y[0]; }, 1 / 2d).GetEnumerator();
@@ -141,7 +140,7 @@ namespace Altaxo.Calc.Ode
     }
 
     [Fact]
-    public void TestDopri5_FSS_AccuracyWithConstantStepSize_1_2_AndOptionalPoints()
+    public void Test_FSS_AccuracyWithConstantStepSize_1_2_AndOptionalPoints()
     {
       var ode2 = new RK547M();
       ode2.Initialize(0, new double[] { 1 }, (x, y, d) => { d[0] = -y[0]; });
@@ -186,12 +185,12 @@ namespace Altaxo.Calc.Ode
 
       }
 
-      AssertEx.Less(maxRelErr_InterpolatedPoints, 4E-5);
+      AssertEx.Less(maxRelErr_InterpolatedPoints, 5E-5);
       AssertEx.Less(maxRelErr_TruePoints, 8E-5);
     }
 
     [Fact]
-    public void TestDopri5_FSS_Accuracy2VariablesWithConstantStepSize_1_16()
+    public void Test_FSS_Accuracy2VariablesWithConstantStepSize_1_16()
     {
       var ode2 = new RK547M();
       var it2 = ode2.GetSolutionPointsVolatileForStepSize(0,
@@ -238,7 +237,7 @@ namespace Altaxo.Calc.Ode
     }
 
     [Fact]
-    public void TestDopri5InitialStepSize_ExponentialDecay()
+    public void Test_InitialStepSize_ExponentialDecay()
     {
       var ode = new RK547M();
       ode.Initialize(0, new double[] { 1 }, (x, y, d) => { d[0] = -y[0]; });
@@ -249,7 +248,7 @@ namespace Altaxo.Calc.Ode
     }
 
     [Fact]
-    public void TestDopri5_ASSC_AutomaticStepSize_ExponentialDecay()
+    public void Test_ASSC_AutomaticStepSize_ExponentialDecay()
     {
       double targetAccuracy = 1E-2;
 
@@ -298,7 +297,7 @@ namespace Altaxo.Calc.Ode
     /// Tests whether the step size is really increased during evaluation of the exponential decay
     /// </summary>
     [Fact]
-    public void TestDopri5_ASSC_AutomaticStepSizeIncrease_ExponentialDecay()
+    public void Test_ASSC_AutomaticStepSizeIncrease_ExponentialDecay()
     {
       double initialStepSize = 1 / 64d;
       var ode = new RK547M();
@@ -322,12 +321,12 @@ namespace Altaxo.Calc.Ode
     }
 
     [Fact]
-    public void TestDopri5_ASSC_MandatoryPoints_ExponentialDecay()
+    public void Test_ASSC_MandatoryPoints_ExponentialDecay()
     {
       var ode = new RK547M();
       ode.Initialize(0, new double[] { 1 }, (x, y, d) => { d[0] = -y[0]; });
 
-      var mandatoryPoints = RungeKuttaOptions.GetEquidistantSequence(0.1, 0.1, 10);
+      var mandatoryPoints = RungeKuttaOptions.GetEquidistantSequence(1/8d, 1/8d, 10);
 
       var points = ode.GetSolutionPointsVolatile(new RungeKuttaOptions { InitialStepSize = 2, RelativeTolerance = 1E-6, AutomaticStepSizeControl = true, MandatorySolutionPoints = mandatoryPoints, IncludeAutomaticStepsInOutput = false });
 
@@ -362,19 +361,19 @@ namespace Altaxo.Calc.Ode
 
       Assert.Equal(10, listOfX.Count);
       for (int i = 0; i < 10; ++i)
-        Assert.Equal(0.1 + i * 0.1, listOfX[i]);
+        Assert.Equal((i+1)/8d, listOfX[i]);
 
-      AssertEx.Less(maxRelErr, 1E-4);
+      AssertEx.Less(maxRelErr, 2E-8);
     }
 
     [Fact]
-    public void TestDopri5_ASSC_MandatoryAndOptionalPoints_ExponentialDecay()
+    public void Test_ASSC_MandatoryAndOptionalPoints_ExponentialDecay()
     {
       var ode = new RK547M();
       ode.Initialize(0, new double[] { 1 }, (x, y, d) => { d[0] = -y[0]; });
 
-      var mandatoryPoints = RungeKuttaOptions.GetEquidistantSequence(0.1, 0.1, 10);
-      var optionalPoints = RungeKuttaOptions.GetEquidistantSequence(0.05, 0.1, 10);
+      var mandatoryPoints = RungeKuttaOptions.GetEquidistantSequence(1/8d, 1/8d, 10);
+      var optionalPoints = RungeKuttaOptions.GetEquidistantSequence(1/64d, 1/64d, 80);
 
       var points = ode.GetSolutionPointsVolatile(new RungeKuttaOptions { InitialStepSize = 2, RelativeTolerance = 1E-6, AutomaticStepSizeControl = true, MandatorySolutionPoints = mandatoryPoints, OptionalSolutionPoints = optionalPoints, IncludeAutomaticStepsInOutput = false });
 
@@ -407,15 +406,16 @@ namespace Altaxo.Calc.Ode
         }
       }
 
-      Assert.Equal(20, listOfX.Count);
-      for (int i = 0; i < 20; ++i)
-        AssertEx.Equal(0.05 + i * 0.05, listOfX[i], 1E-12);
+      Assert.Equal(80, listOfX.Count);
+      for (int i = 0; i < 80; ++i)
+        AssertEx.Equal((i+1)/64d, listOfX[i], 1E-12);
 
-      AssertEx.Less(maxRelErr, 1E-4);
+      AssertEx.Less(maxRelErr, 1.5E-8);
+      AssertEx.Less(maxAbsErr, 1.2E-8);
     }
 
     [Fact]
-    public void TestDopri5_ASSC_Diffusion()
+    public void Test_ASSC_Diffusion()
     {
       void CalcRates(double x, double[] y, double[] rates)
       {

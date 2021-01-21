@@ -11,7 +11,6 @@ using Xunit;
 
 namespace Altaxo.Calc.Ode
 {
-
   public class RK546M_Tests
   {
 
@@ -85,8 +84,58 @@ namespace Altaxo.Calc.Ode
         }
       }
 
-      AssertEx.Less(maxAbsErr, 8E-6);
-      AssertEx.Less(maxRelErr, 8E-5);
+      AssertEx.Less(maxAbsErr, 1E-6);
+      AssertEx.Less(maxRelErr, 1E-5);
+    }
+
+    [Fact]
+    public void Test_FSS_AccuracyWithConstantStepSize_1_2_AndOptionalPoints()
+    {
+      var ode2 = new RK546M();
+      ode2.Initialize(0, new double[] { 1 }, (x, y, d) => { d[0] = -y[0]; });
+      var it2 = ode2.GetSolutionPointsVolatile(new RungeKuttaOptions { StepSize = 0.5, OptionalSolutionPoints = RungeKuttaOptions.GetEquidistantSequence(0.25, 0.5) }).GetEnumerator();
+
+      var maxRelErr_InterpolatedPoints = 0.0;
+      int maxRelErr_InterpolatedPointsIndex = -1;
+      var maxRelErr_TruePoints = 0.0;
+      int maxRelErr_TruePointsIndex = -1;
+
+      double x_prev = 0;
+      double y_prev = 1;
+      for (int i = 1; i <= 16; ++i)
+      {
+        it2.MoveNext();
+        double x_expected = i / 4d;
+        var yexpected = Math.Exp(-it2.Current.X);
+
+        Assert.Equal(x_expected, it2.Current.X);
+        var y2 = it2.Current.Y_volatile[0];
+        var errRel = Math.Abs((y2 - yexpected) / yexpected);
+
+
+        if (i % 2 == 1 && errRel > maxRelErr_InterpolatedPoints)
+        {
+          maxRelErr_InterpolatedPoints = errRel;
+          maxRelErr_InterpolatedPointsIndex = i;
+
+          // show that we are better than linear interpolation
+          double y_linear = (Math.Exp(-(x_expected - 1 / 4d)) + Math.Exp(-(x_expected + 1 / 4d))) / 2d;
+          var errRelLinear = Math.Abs((y_linear - yexpected) / yexpected);
+          AssertEx.Less(errRel, errRelLinear);
+        }
+        if (i % 2 == 0 && errRel > maxRelErr_TruePoints)
+        {
+          maxRelErr_TruePoints = errRel;
+          maxRelErr_TruePointsIndex = i;
+        }
+
+        y_prev = it2.Current.Y_volatile[0];
+        x_prev = it2.Current.X;
+
+      }
+
+      AssertEx.Less(maxRelErr_InterpolatedPoints, 2E-4);
+      AssertEx.Less(maxRelErr_TruePoints, 1E-5);
     }
 
     [Fact]
@@ -226,7 +275,7 @@ namespace Altaxo.Calc.Ode
       var ode = new RK546M();
       ode.Initialize(0, new double[] { 1 }, (x, y, d) => { d[0] = -y[0]; });
 
-      var mandatoryPoints = RungeKuttaOptions.GetEquidistantSequence(0.1, 0.1, 10);
+      var mandatoryPoints = RungeKuttaOptions.GetEquidistantSequence(1 / 8d, 1 / 8d, 10);
 
       var points = ode.GetSolutionPointsVolatile(new RungeKuttaOptions { InitialStepSize = 2, RelativeTolerance = 1E-6, AutomaticStepSizeControl = true, MandatorySolutionPoints = mandatoryPoints, IncludeAutomaticStepsInOutput = false });
 
@@ -261,10 +310,59 @@ namespace Altaxo.Calc.Ode
 
       Assert.Equal(10, listOfX.Count);
       for (int i = 0; i < 10; ++i)
-        Assert.Equal(0.1 + i * 0.1, listOfX[i]);
+        Assert.Equal((1+i)/8d, listOfX[i]);
 
-      AssertEx.Less(maxRelErr, 1E-4);
+      AssertEx.Less(maxRelErr, 5E-9);
     }
+
+    [Fact]
+    public void Test_ASSC_MandatoryAndOptionalPoints_ExponentialDecay()
+    {
+      var ode = new RK546M();
+      ode.Initialize(0, new double[] { 1 }, (x, y, d) => { d[0] = -y[0]; });
+
+      var mandatoryPoints = RungeKuttaOptions.GetEquidistantSequence(1 / 8d, 1 / 8d, 10);
+      var optionalPoints = RungeKuttaOptions.GetEquidistantSequence(1 / 64d, 1 / 64d, 80);
+
+      var points = ode.GetSolutionPointsVolatile(new RungeKuttaOptions { InitialStepSize = 2, RelativeTolerance = 1E-6, AutomaticStepSizeControl = true, MandatorySolutionPoints = mandatoryPoints, OptionalSolutionPoints = optionalPoints, IncludeAutomaticStepsInOutput = false });
+
+      var maxAbsErr = 0d;
+      var maxAbsErrX = -1d;
+      var maxRelErr = 0d;
+      var maxRelErrX = -1d;
+
+      var listOfX = new List<double>();
+
+      foreach (var sp in points.TakeWhile(sp => sp.X <= 4))
+      {
+        listOfX.Add(sp.X);
+        var yexpected = Math.Exp(-sp.X);
+        var y = sp.Y_volatile[0];
+
+        var errAbs = Math.Abs(y - yexpected);
+        var errRel = Math.Abs((y - yexpected) / yexpected);
+
+
+        if (errAbs > maxAbsErr)
+        {
+          maxAbsErr = errAbs;
+          maxAbsErrX = sp.X;
+        }
+        if (errRel > maxRelErr)
+        {
+          maxRelErr = errRel;
+          maxRelErrX = sp.X;
+        }
+      }
+
+      Assert.Equal(80, listOfX.Count);
+      for (int i = 0; i < 80; ++i)
+        AssertEx.Equal((i + 1) / 64d, listOfX[i], 1E-12);
+
+      AssertEx.Less(maxRelErr, 7E-7);
+      AssertEx.Less(maxAbsErr, 6E-7);
+    }
+
 
     [Fact]
     public void Test_ASSC_Diffusion()

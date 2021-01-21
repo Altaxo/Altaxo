@@ -56,19 +56,24 @@ namespace Altaxo.Calc.Ode
           new double[] { 403863854/491063109d, 0, 0, -5068492393/434740067d, -411421997/543043805d, 652783627/914296604d, 11173962825/925320556d, -13158990841/6184727034d, 3936647629/ 1978049680d, -160528059/685178525d, 248638103/1413531060d,  0},
          };
 
-    /// <summary>Scheme coefficients 8th order, see [2] p.693</summary>
+    /// <summary>Bottom side scheme coefficients 8th order, see [2] p.693</summary>
     private static readonly double[] _sbh = new double[] { 14005451 / 335480064d, 0, 0, 0, 0, -59238493 / 1068277825d, 181606767 / 758867731d, 561292985 / 797845732d, -1041891430 / 1371343529d, 760417239 / 1151165299d, 118820643 / 751138087d, -528747749 / 2220607170d, 1 / 4d };
 
-    /// <summary>Scheme coefficients 7th order, see [2] p.693</summary>
+    /// <summary>Bottom side scheme coefficients 7th order, see [2] p.693</summary>
     private static readonly double[] _sbl = new double[] { 13451932 / 455176623d, 0, 0, 0, 0, -808719846 / 976000145d, 1757004468 / 5645159321d, 656045339 / 265891186d, -3867574721 / 1518517206d, 465885868 / 322736535d, 53011238 / 667516719d, 2 / 45d, 0 };
 
-    /// <summary>Scheme coefficients, see [2] p.693</summary>
+    /// <summary>Bottom side scheme coefficients 8th order minus scheme coefficents 7th order, see [2] p.693</summary>
+    private static readonly double[] _sbhml = new double[] { 19478166 / 1597320223d, 0, 0, 0, 0, 151758317 / 196284734d, -73268277 / 1018632277d, -258320912 / 146454165d, 361426111 / 202232399d, -106217201 / 135656655d, 79092227 / 1004066684d, -134149358 / 474774259d, 1 / 4d };
+
+    /// <summary>Left side scheme coefficients, see [2] p.693</summary>
     private static readonly double[] _sc = new double[] { 0, 1/18d, 1/12d, 1/8d, 5/16d, 3/8d, 59/400d, 93/200d, 5490023248 / 9719169821d , 13/20d, 1201146811 / 1299019798d , 1, 1};
 
     /// <inheritdoc/>
     public override int Order => 8;
 
     public override int NumberOfStages => 13;
+
+    protected override double StiffnessDetectionThresholdValue => 6.1;
 
 
     /// <inheritdoc/>
@@ -78,14 +83,10 @@ namespace Altaxo.Calc.Ode
     protected override double[] BH => _sbh;
 
     /// <inheritdoc/>
-    protected override double[] BL => _sbl;
+    protected override double[] BHML => _sbhml;
 
     /// <inheritdoc/>
     protected override double[] C => _sc;
-
-    /// <inheritdoc/>
-    protected override double[][]? InterpolationCoefficients => null;
-
 
     #region Coefficients with still more accuracy (for 16 byte floating point in future C# ?)
 #if false
@@ -269,6 +270,24 @@ namespace Altaxo.Calc.Ode
         0.4444444444444444444444444444444444444444444444444444444444444444444444444444444444444e-1,
         0,
        };
+
+       private static readonly double[] _bhml =
+       {
+       0.0121942774651767492401210453564748685568608235573558040911450897093197518967272923039,
+       0,
+       0,
+       0,
+       0,
+       0.773153947876557730805283718034002465841810472836620033159941791302150449827494177143,
+       -0.071928092849938230883166397378100081629430962471619651092660152729812233472078174852,
+       -1.76383452119644395890663929317905930719587960253360162952694594225236335428692322438,
+       1.78718203802744780924289239833065055412548214389897219214975620055141717388230609524,
+       -0.78298555275448889884049635585228362857064829765509653606972347986167675147356595965,
+       0.078771886628996048258312884438456766841388946029268391036427730331481133827374835115,
+      -0.282553983197307248916307999750141637969583523661898603747941237050516170201335040924,
+      0.25
+       }
+
 
 #endif
     #endregion

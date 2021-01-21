@@ -27,7 +27,6 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Altaxo.Calc.Ode
 {
-
   /// <summary>
   /// Runge-Kutta method of 8th order of Dormand and Prince. Supports step size control, stiffness detection and dense output.
   /// If stiffness detection and dense output is not needed, it is recommended to use <see cref="RK8713M"/>,
@@ -236,26 +235,35 @@ namespace Altaxo.Calc.Ode
     /// <summary>The high order coefficients.</summary>
     private static readonly double[] _sbh = new double[] { b0, 0, 0, 0, 0, b5, b6, b7, b8, b9, b10, b11};
 
+    /// <summary>Differences between high order and low order bottom side coefficients of the Runge-Kutta scheme.</summary>
+    private static readonly double[] _sbhml = new double[] { er0, 0, 0, 0, 0, er5, er6, er7, er8, er9, er10, er11 };
+
     /// <summary>
-    /// Attention: this are <b>not</b> the low order coefficients itself, but the differenced between
-    /// high order coefficients and low order coefficients.
+    /// Additional central Runge-Kutta scheme coefficients for the additional stages needed for dense output.
     /// </summary>
-    private static readonly double[] _sbl = new double[] { er0, 0, 0, 0, 0, er5, er6, er7, er8, er9, er10, er11 };  
+    private static readonly double[][] _interpolation_sa = new double[][]
+    {
+          new double[] { a130, 0, 0, 0, 0,    0, a136, a137, a138, a139, a1310, a1311, a1312},
+          new double[] { a140, 0, 0, 0, 0, a145, a146, a147,    0,    0, a1410, a1411, a1412, a1413 },
+          new double[] { a150, 0, 0, 0, 0, a155, a156, a157, a158,    0,     0,     0, a1512, a1513, a1514},
+    };
+
+    /// <summary>
+    /// Additional left side coefficients of the Runge-Kutta scheme for the additional stages needed for dense output.
+    /// </summary>
+    private static readonly double[] _interpolation_sc = new double[] { c12, c13, c14};
+
+    private static readonly double[][] _interpolation_aij = new double[][]
+    {
+      new double[]{d40, 0,  0,  0, 0, d45, d46, d47, d48, d49, d410, d411, d412, d413, d414, d415},
+      new double[]{d50, 0,  0,  0, 0, d55, d56, d57, d58, d59, d510, d511, d512, d513, d514, d515},
+      new double[]{d60, 0,  0,  0, 0, d65, d66, d67, d68, d69, d610, d611, d612, d613, d614, d615},
+      new double[]{d70, 0,  0,  0, 0, d75, d76, d77, d78, d79, d710, d711, d712, d713, d714, d715},
+    };
 
 #if true
     protected class CoreDOP853 : RungeKuttaExplicitBase.Core
     {
-      /// <summary>True if the _k[12] (13th stage) was evaluated</summary>
-      private bool _isK12Evaluated;
-
-      /// <summary>True if dense output was prepared, i.e. the array _rcont contains values.</summary>
-      private bool _isDenseOutputPrepared;
-
-      /// <summary>Contains the precalcuated polynomial coefficients for dense output.</summary>
-      private double[][]? _rcont;
-
-
-
       public CoreDOP853(int order, int numberOfStages, double[][] a, double[] b, double[]? bl, double[] c, double x0, double[] y, Action<double, double[], double[]> f)
         : base(order, numberOfStages, a, b, bl, c, x0, y, f)
       {
@@ -287,7 +295,7 @@ namespace Altaxo.Calc.Ode
 
         // calculate the derivatives k0 .. ks-1 (see [1] page 134)
 
-        if (_wasSolutionPointEvaluated && _isK12Evaluated)
+        if (_wasSolutionPointEvaluated && _was_Knext_Evaluated)
         {
           Exchange(ref k[12], ref k[0]);
         }
@@ -295,10 +303,10 @@ namespace Altaxo.Calc.Ode
         {
           _f(x_previous, y_previous, k[0]); // else we have to calculate the 1st stage
         }
-        _isK12Evaluated = false;
+        _was_Knext_Evaluated = false;
 
         // Note: due to many zeros in the _a array it is preferrable to multiply directly
-        var ysi = _ytemp;
+        var ysi = _y_stages;
         var k0 = _k[0];
         var k1 = _k[1];
         var k2 = _k[2];
@@ -390,8 +398,8 @@ namespace Altaxo.Calc.Ode
         {
           // Attention: here we calculate not y (low order), but because the _bl contains only the
           // _differences_ between high and low order coefficient, we calculate the (local) error instead
-          var bl = _bl!;
-          var yl = _y_current_lowPrecision;
+          var bl = _bhml!;
+          var yl = _y_current_LocalError;
           for (int ni = 0; ni < n; ++ni) 
           {
             yl[ni] = h * (er0 * k0[ni] + er5 * k5[ni] + er6 * k6[ni] + er7 * k7[ni] + er8 * k8[ni] + er9 * k9[ni] + er10 * k10[ni] + er11 * k11[ni]); // yl contains now local error
@@ -400,34 +408,6 @@ namespace Altaxo.Calc.Ode
 
         _x_current += stepSize;
         _wasSolutionPointEvaluated = true;
-      }
-
-      /// <summary>
-      /// Gets the relative error, which should be in the order of 1, if the step size is optimally chosen.
-      /// </summary>
-      /// <returns>The relative error (relative to the absolute and relative tolerance).</returns>
-      public override double GetRelativeError()
-      {
-        // Compute error (see [1], page 168
-        // error computation in L2 or L-infinity norm is possible
-        // here, L-infinity is used
-
-        if (_bl is null)
-        {
-          throw new InvalidOperationException("In order to evaluate errors, the evaluation of the low order y has to be done, but the low order coefficients were not set!");
-        }
-
-        var y = _y_current;
-        var yl = _y_current_lowPrecision;
-        var yp = _y_previous;
-
-        double e = double.MinValue;
-        for (int i = 0; i < y.Length; ++i)
-        {
-          e = Math.Max(e, Math.Abs(yl[i]) / Math.Max(_absoluteTolerance, _relativeTolerance * Math.Max(Math.Abs(y[i]), Math.Abs(yp[i]))));
-        }
-
-        return e;
       }
 
       /// <summary>
@@ -448,57 +428,6 @@ namespace Altaxo.Calc.Ode
           return fac * _stepSize_current;
       }
 
-
-      /// <summary>
-      /// Determines whether the ODE has become stiff. If a stiffness condition is detected, then an exception will be thrown.
-      /// </summary>
-      public override void ThrowIfStiffnessDetected()
-      {
-        if(_stiffnessDetectionEveryNumberOfSteps > 0 &&
-             (  (++_numberOfRejectedStiffnessDetectionCalls >= _stiffnessDetectionEveryNumberOfSteps) ||
-                (_numberOfNonstiffEvaluationResults > 0)
-             )
-          )
-        {
-          _numberOfRejectedStiffnessDetectionCalls = 0;
-
-          if (!_isK12Evaluated)
-          {
-            _isK12Evaluated = true;
-            _f(_x_current, _y_current, _k[12]); // evaluate slope with new y at new x
-          }
-
-          int n = _y_current.Length;
-          double sumSquaredSlopeDifferences = 0;
-          double sumSquaredValueDifferences = 0;
-          double q;
-          double h = _stepSize_current;
-          for (int ni = 0; ni < n; ++ni)
-          {
-            q = _k[12][ni] - _k[11][ni]; // difference between slope k[12] and the slope k[11]
-            sumSquaredSlopeDifferences += q * q;
-            q = _y_current[ni] - _ytemp[ni]; // difference of the y at the end of the step used to calc k[12] and the y used to calculate k[11]
-            sumSquaredValueDifferences += q * q;
-          }
-
-          if (sumSquaredValueDifferences > 0 && (h * h * sumSquaredSlopeDifferences) / sumSquaredValueDifferences > 37.21)
-          {
-            _numberOfNonstiffEvaluationResults = 0;
-            _numberOfStiffEvaluationResults++;
-            if (_numberOfStiffEvaluationResults == 15)
-            {
-              throw new InvalidOperationException($"Stiffness detected in ODE at x={_x_current}");
-            }
-          }
-          else
-          {
-            _numberOfNonstiffEvaluationResults++;
-            if (_numberOfNonstiffEvaluationResults == 6)
-              _numberOfStiffEvaluationResults = 0;
-          }
-        }
-      }
-
       /// <summary>Get an interpolated point in the last evaluated interval.
       /// Please use the result immediately, or else make a copy of the result, since a internal array
       /// is returned, which is overwritten at the next operation.</summary>
@@ -509,7 +438,7 @@ namespace Altaxo.Calc.Ode
       {
         var k = _k;
         var y = _y_previous;
-        var ys = _ytemp;
+        var ys = _y_stages;
         int n = y.Length;
 
         /* the next three function evaluations */
@@ -531,11 +460,7 @@ namespace Altaxo.Calc.Ode
         var k14 = _k[14];
         var k15 = _k[15];
 
-        if (!_isK12Evaluated)
-        {
-          _isK12Evaluated = true;
-          _f(_x_current, _y_current, k[12]); // evaluate slope with new y at new x
-        }
+       
 
         if (_rcont is null)
         {
@@ -557,6 +482,12 @@ namespace Altaxo.Calc.Ode
         {
           _isDenseOutputPrepared = true;
 
+          if (!_was_Knext_Evaluated)
+          {
+            _was_Knext_Evaluated = true;
+            _f(_x_current, _y_current, k[12]); // evaluate slope with new y at new x
+          }
+
           // at first, calculate the stages 13..15 needed for dense output
           for (int ni = 0; ni < n; ++ni)
           {
@@ -576,14 +507,14 @@ namespace Altaxo.Calc.Ode
           }
           _f(_x_previous + c14 * h, ys, k15);
 
-          // now calculate the polynomial coefficients
-          double ydiff, bspl;
+          // now calculate the polynomial coefficients for dense interpolation
+          double valcont1, valcont2;
           for (int ni = 0; ni < n; ++ni)
           {
             rcont0[ni] = y[ni]; // values at begin of step
-            rcont1[ni] = ydiff = _y_current[ni] - y[ni]; // values at end of step minus values at begin of step
-            rcont2[ni] = bspl = h * k0[ni] - ydiff;
-            rcont3[ni] = ydiff - h * k12[ni] - bspl;
+            rcont1[ni] = valcont1 = _y_current[ni] - y[ni]; // values at end of step minus values at begin of step
+            rcont2[ni] = valcont2 = h * k0[ni] - valcont1;
+            rcont3[ni] = valcont1 - h * k12[ni] - valcont2;
             rcont4[ni] = h * (d40 * k0[ni] + d45 * k5[ni] + d46 * k6[ni] + d47 * k7[ni] + d48 * k8[ni] + d49 * k9[ni] + d410 * k10[ni] + d411 * k11[ni] + d412 * k12[ni] + d413 * k13[ni] + d414 * k14[ni] + d415 * k15[ni]);
             rcont5[ni] = h * (d50 * k0[ni] + d55 * k5[ni] + d56 * k6[ni] + d57 * k7[ni] + d58 * k8[ni] + d59 * k9[ni] + d510 * k10[ni] + d511 * k11[ni] + d512 * k12[ni] + d513 * k13[ni] + d514 * k14[ni] + d515 * k15[ni]);
             rcont6[ni] = h * (d60 * k0[ni] + d65 * k5[ni] + d66 * k6[ni] + d67 * k7[ni] + d68 * k8[ni] + d69 * k9[ni] + d610 * k10[ni] + d611 * k11[ni] + d612 * k12[ni] + d613 * k13[ni] + d614 * k14[ni] + d615 * k15[ni]);
@@ -611,7 +542,7 @@ namespace Altaxo.Calc.Ode
     /// <returns>This instance (for a convenient way to chain this method with sequence creation).</returns>
     public override RungeKuttaExplicitBase Initialize(double x, double[] y, Action<double, double[], double[]> f)
     {
-      _core = new CoreDOP853(Order, NumberOfStages, A, BH, BL, C, x, y, f);
+      _core = new CoreDOP853(Order, NumberOfStages, A, BH, BHML, C, x, y, f);
       if (InterpolationCoefficients is not null)
         _core.InterpolationCoefficients = InterpolationCoefficients;
 
@@ -621,7 +552,9 @@ namespace Altaxo.Calc.Ode
     /// <inheritdoc/>
     public override int Order => 8;
 
-    public override int NumberOfStages => 16;
+    public override int NumberOfStages => 12;
+
+    protected override double StiffnessDetectionThresholdValue => 6.1;
 
     /// <inheritdoc/>
     protected override double[][] A => _sa;
@@ -630,12 +563,12 @@ namespace Altaxo.Calc.Ode
     protected override double[] BH => _sbh;
 
     /// <inheritdoc/>
-    protected override double[] BL => _sbl;
+    protected override double[] BHML => _sbhml;
 
     /// <inheritdoc/>
     protected override double[] C => _sc;
 
     /// <inheritdoc/>
-    protected override double[][]? InterpolationCoefficients => null;
+    protected override double[][] InterpolationCoefficients => _interpolation_aij;
   }
 }

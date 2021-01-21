@@ -37,6 +37,8 @@ namespace Altaxo.Calc.Ode
   /// </remarks>
   public class RK546M : RungeKuttaExplicitBase
   {
+
+
     /// <summary>Scheme coefficients, see [3] p.688</summary>
     private static readonly double[][] _sa = new double[][]
         {
@@ -53,6 +55,8 @@ namespace Altaxo.Calc.Ode
     /// <summary>Scheme coefficients 4th order, see [3] p.688</summary>
     private static readonly double[] _sbl = new double[] { 31 / 540d, 0, 190 / 297d, -145 / 108d, 351 / 220d, 1 / 20d};
 
+    private static readonly double[] _sbhml = new double[] { 11 / 360d, 0, -10 / 63d, 55 / 72d, -27 / 40d, 11 / 280d };
+
     /// <summary>Scheme coefficients, see [3] p.688</summary>
     private static readonly double[] _sc = new double[] { 0, 1 / 5d, 3 / 10d, 3 / 5d, 2 / 3d, 1 };
 
@@ -61,6 +65,10 @@ namespace Altaxo.Calc.Ode
 
     public override int NumberOfStages => 6;
 
+    /// <summary>
+    /// Sets the stiffness detection threshold value.
+    /// </summary>
+    protected override double StiffnessDetectionThresholdValue => 3.25;
 
     /// <inheritdoc/>
     protected override double[][] A => _sa;
@@ -69,12 +77,9 @@ namespace Altaxo.Calc.Ode
     protected override double[] BH => _sbh;
 
     /// <inheritdoc/>
-    protected override double[] BL => _sbl;
+    protected override double[] BHML => _sbhml;
 
     /// <inheritdoc/>
     protected override double[] C => _sc;
-
-    /// <inheritdoc/>
-    protected override double[][]? InterpolationCoefficients => null;
   }
 }
