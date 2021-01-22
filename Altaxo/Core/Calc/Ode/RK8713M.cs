@@ -28,8 +28,8 @@ namespace Altaxo.Calc.Ode
 {
   /// <summary>
   /// Runge-Kutta method of 8th order of Dormand and Prince.
-  /// Please note: this method <b>can only provide dense output of order 1 (linear interpolation)!</b>
-  /// If accurate dense output or stiffness detection is needed, please use <see cref="DOP853"/>.
+  /// Attention: this method <b>can only provide dense output of order 3.</b>
+  /// If accurate dense output is needed, please use method <see cref="DOP853"/>.
   /// </summary>
   /// <remarks>
   /// <para>References:</para>
@@ -66,15 +66,16 @@ namespace Altaxo.Calc.Ode
     private static readonly double[] _sbhml = new double[] { 19478166 / 1597320223d, 0, 0, 0, 0, 151758317 / 196284734d, -73268277 / 1018632277d, -258320912 / 146454165d, 361426111 / 202232399d, -106217201 / 135656655d, 79092227 / 1004066684d, -134149358 / 474774259d, 1 / 4d };
 
     /// <summary>Left side scheme coefficients, see [2] p.693</summary>
-    private static readonly double[] _sc = new double[] { 0, 1/18d, 1/12d, 1/8d, 5/16d, 3/8d, 59/400d, 93/200d, 5490023248 / 9719169821d , 13/20d, 1201146811 / 1299019798d , 1, 1};
+    private static readonly double[] _sc = new double[] { 0, 1 / 18d, 1 / 12d, 1 / 8d, 5 / 16d, 3 / 8d, 59 / 400d, 93 / 200d, 5490023248 / 9719169821d, 13 / 20d, 1201146811 / 1299019798d, 1, 1 };
 
     /// <inheritdoc/>
     public override int Order => 8;
 
+    /// <inheritdoc/>
     public override int NumberOfStages => 13;
 
+    /// <inheritdoc/>
     protected override double StiffnessDetectionThresholdValue => 6.1;
-
 
     /// <inheritdoc/>
     protected override double[][] A => _sa;
@@ -88,10 +89,10 @@ namespace Altaxo.Calc.Ode
     /// <inheritdoc/>
     protected override double[] C => _sc;
 
-    #region Coefficients with still more accuracy (for 16 byte floating point in future C# ?)
+    #region Coefficients with still more accuracy (for 16 byte floating point in a future C# version?)
 #if false
-    // for calculation of these coefficients see http://www.peterstone.name/Maplepgs/Maple/nmthds/RKcoeff/Runge_Kutta_schemes/RK8/RKcoeff8d_1.pdf
 
+    // for calculation of these coefficients see http://www.peterstone.name/Maplepgs/Maple/nmthds/RKcoeff/Runge_Kutta_schemes/RK8/RKcoeff8d_1.pdf
 
     private static readonly double[] _sc = new double[]
       {

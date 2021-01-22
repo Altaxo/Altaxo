@@ -52,16 +52,6 @@ namespace Altaxo.Calc.Ode
       /// <exception cref="ArgumentException">Must be >= 0 - RelativeTolerance</exception>
       double RelativeTolerance { get; set; }
 
-
-      /// <summary>
-      /// Sets the stiffness detection threshold value.
-      /// </summary>
-      /// <value>
-      /// The stiffness detection threshold value.
-      /// </value>
-      double StiffnessDetectionThresholdValue { set; }
-
-
       /// <summary>
       /// Sets the coefficients for the local error evaluation (used in order to guess the error).
       /// If set to null, the error is not evaluated.
@@ -69,20 +59,29 @@ namespace Altaxo.Calc.Ode
       /// <value>
       /// The difference between high order and low order bottom side coefficients of the Runge-Kutta scheme.
       /// </value>
-      double[]? BL { set; }
-
+      double[]? BHML { set; }
 
       /// <summary>
-      /// Gets or sets the interpolation coefficients for dense output.
+      /// Sets the coefficients for additional stages that are neccessary for dense output (interpolation).
       /// </summary>
-      /// <value>
-      /// The interpolation coefficients.
-      /// </value>
-      double[][]? InterpolationCoefficients { get; set; }
+      /// <param name="a_interpolation">Additional central coefficients of the Runge-Kutta scheme.</param>
+      /// <param name="c_interpolation">Additional left side coefficients of the Runge-Kutta scheme.</param>
+      void SetCoefficientsForAdditionalStages(double[][] a_interpolation, double[] c_interpolation);
 
-      bool IsInitialized { get; }
+      /// <summary>
+      /// Gets the x value at the end of the current step.
+      /// </summary>
       double X { get; }
+
+      /// <summary>
+      /// Gets the x value at the beginning of the current step.
+      /// </summary>
       double X_previous { get; }
+
+      /// <summary>
+      /// Gets the y values at the end of the current step. The data are for immediate use only and the elements of the array
+      /// must not be altered.
+      /// </summary>
       double[] Y_volatile { get; }
 
       /// <summary>
@@ -128,11 +127,44 @@ namespace Altaxo.Calc.Ode
       /// </summary>
       void Revert();
 
+      #region Dense output (Interpolation
+
+      /// <summary>
+      /// Gets or sets the interpolation coefficients for dense output.
+      /// </summary>
+      /// <value>
+      /// The interpolation coefficients.
+      /// </value>
+      double[][] InterpolationCoefficients { get; set; }
+
+      #endregion
+
+      #region Stiffness
+
       /// <summary>
       /// Function that is been called after every <b>successfull</b> step.
       /// Detects a stiffness condition. If it founds one, an exception will be thrown.
       /// </summary>
       void ThrowIfStiffnessDetected();
+
+      /// <summary>
+      /// Gets or sets the number of successful steps between test for stiffness.
+      /// Setting this value to 0 disables stiffness detection. The default value is 0.
+      /// </summary>
+      /// <value>
+      /// The number of successful steps between test for stiffness.
+      /// </value>
+      int StiffnessDetectionEveryNumberOfSteps { get; set; }
+
+      /// <summary>
+      /// Sets the stiffness detection threshold value.
+      /// </summary>
+      /// <value>
+      /// The stiffness detection threshold value.
+      /// </value>
+      double StiffnessDetectionThresholdValue { set; }
+
+      #endregion
     }
   }
 }

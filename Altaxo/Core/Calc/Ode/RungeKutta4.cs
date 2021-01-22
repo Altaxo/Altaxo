@@ -46,6 +46,9 @@ namespace Altaxo.Calc.Ode
     public override int Order => 4;
 
     public override int NumberOfStages => 4;
+
+    public override int NumberOfAdditionalStagesForDenseOutput => 0;
+
     protected override double StiffnessDetectionThresholdValue => 3;
 
 
@@ -54,6 +57,6 @@ namespace Altaxo.Calc.Ode
     protected override double[]? BHML => null;
     protected override double[] C => _sc;
 
-    protected override double[][]? InterpolationCoefficients => null;
+    protected override double[][] InterpolationCoefficients => _emptyJaggedDoubleArray;
   }
 }

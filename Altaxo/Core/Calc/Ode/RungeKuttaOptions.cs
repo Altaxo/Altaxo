@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2020 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2021 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -37,10 +37,11 @@ namespace Altaxo.Calc.Ode
   /// <para><b>With</b> automatic step size control, the following parameters are relevant:
   /// <list type="">
   /// <item><see cref="IncludeInitialValueInOutput"/> determines whether the inital values for x and y should appear as first item in the output sequence.</item>
-  /// <item><see cref="AbsoluteTolerance"/> and <see cref="RelativeTolerance"/> determine the chosen step size.</item>
+  /// <item><see cref="AbsoluteTolerance"/> and <see cref="RelativeTolerance"/> and/or <see cref="AbsoluteTolerances"/> and <see cref="RelativeTolerances"/> determine the chosen step size.</item>
   /// <item><see cref="MaxStepSize"/> determines the maximum applied step size.</item>
   /// <item><see cref="IncludeAutomaticStepsInOutput"/> if the steps that are chosen automatically should appear in the sequence of solution points.</item>
   /// <item><see cref="InitialStepSize"/> determines the initial step size. If set to null, a reasonable guess of the initial step size will be done.</item>
+  /// <item><see cref="StepSizeFilter"/> determines the variations of the step size.</item>
   /// <item><see cref="MandatorySolutionPoints"/> are points where the method is forced to have a solution point. At those points the evaluation of the derivative is forced.</item>
   /// <item><see cref="IncludeMandatorySolutionPointsInOutput"/> determines if the mandatory solution points should appear in the output sequence (default: true).</item>
   /// <item><see cref="OptionalSolutionPoints"/> are points that are evaluated by interpolation between true solution points. Optional solution points always appear in the output sequence.</item>
@@ -57,8 +58,8 @@ namespace Altaxo.Calc.Ode
   /// </remarks>
   public class RungeKuttaOptions
   {
-    private double _relativeTolerance;
-    private double _absoluteTolerance;
+    private double[] _relativeTolerances = new double[] { 0 };
+    private double[] _absoluteTolerances = new double[] { 0 };
 
     /// <summary>
     /// Gets or sets the absolute tolerance.
@@ -69,12 +70,18 @@ namespace Altaxo.Calc.Ode
     /// <exception cref="ArgumentException">Must be &gt;= 0 - AbsoluteTolerance</exception>
     public double AbsoluteTolerance
     {
-      get => _absoluteTolerance;
+      get
+      {
+        if (_absoluteTolerances.Length == 1)
+          return _absoluteTolerances[0];
+        else
+          throw new InvalidOperationException($"{nameof(AbsoluteTolerance)} is an array and not a scalar.");
+      }
       set
       {
         if (!(value >= 0))
           throw new ArgumentException("Must be >= 0", nameof(AbsoluteTolerance));
-        _absoluteTolerance = value;
+        _absoluteTolerances = new double[1] { value };
       }
     }
 
@@ -87,12 +94,65 @@ namespace Altaxo.Calc.Ode
     /// <exception cref="ArgumentException">Must be &gt;= 0 - RelativeTolerance</exception>
     public double RelativeTolerance
     {
-      get => _relativeTolerance;
+      get
+      {
+        if (_relativeTolerances.Length == 1)
+          return _relativeTolerances[0];
+        else
+          throw new InvalidOperationException($"{nameof(RelativeTolerance)} is an array and not a scalar.");
+      }
       set
       {
         if (!(value >= 0))
           throw new ArgumentException("Must be >= 0", nameof(RelativeTolerance));
-        _relativeTolerance = value;
+        _relativeTolerances = new double[1] { value };
+      }
+    }
+
+    /// <summary>
+    /// Gets or sets the absolute tolerances. The length of the array must either be 1 (tolerances for all y equal), or of length N.
+    /// </summary>
+    /// <value>
+    /// The absolute tolerances.
+    /// </value>
+    public double[] AbsoluteTolerances
+    {
+      get => _absoluteTolerances;
+      set
+      {
+        if (value is null)
+          throw new ArgumentNullException(nameof(AbsoluteTolerances));
+        _absoluteTolerances = (double[])value.Clone();
+
+        for (int i=0;i<_absoluteTolerances.Length;++i)
+        {
+          if(!(_absoluteTolerances[i]>=0))
+            throw new ArgumentException($"Element {i} must be >= 0", nameof(AbsoluteTolerances));
+        }
+      }
+    }
+
+    /// <summary>
+    /// Gets or sets the relative tolerances. The length of the array must either be 1 (tolerances for all y equal), or of length N.
+    /// </summary>
+    /// <value>
+    /// The relative tolerances.
+    /// </value>
+    public double[] RelativeTolerances
+    {
+      get => _relativeTolerances;
+      set
+      {
+        if (value is null)
+          throw new ArgumentNullException(nameof(RelativeTolerances));
+        _relativeTolerances = (double[])value.Clone();
+
+        for (int i = 0; i < _relativeTolerances.Length; ++i)
+        {
+          if (!(_relativeTolerances[i] >= 0))
+            throw new ArgumentException($"Element {i} must be >= 0", nameof(RelativeTolerances));
+        }
+       
       }
     }
 
@@ -191,6 +251,20 @@ namespace Altaxo.Calc.Ode
     }
 
     /// <summary>
+    /// Set the step size filter (determines the variation of step sizes), see <see cref="StepSizeFilter"/>.
+    /// </summary>
+    private StepSizeFilter _stepSizeFilter;
+    public StepSizeFilter StepSizeFilter
+    {
+      get => _stepSizeFilter;
+      set
+      {
+        _stepSizeFilter = value;
+      }
+    }
+
+
+    /// <summary>
     /// Gets or sets optional solution points. Optional solution points will be not evaluated directly, but interpolated between two real solution points.
     /// </summary>
     /// <value>
@@ -217,6 +291,29 @@ namespace Altaxo.Calc.Ode
     /// </value>
     public bool IncludeMandatorySolutionPointsInOutput { get; set; } = true;
 
+    private int _stiffnessDetectionEveryNumberOfSteps;
+
+    /// <summary>
+    /// Gets or sets the number of successful steps between test for stiffness.
+    /// Setting this value to 0 disables stiffness detection. The default value is 0.
+    /// </summary>
+    /// <value>
+    /// The number of successful steps between test for stiffness.
+    /// </value>
+    public int StiffnessDetectionEveryNumberOfSteps
+    {
+      get
+      {
+        return _stiffnessDetectionEveryNumberOfSteps;
+      }
+      set
+      {
+        if (!(value >= 0))
+          throw new ArgumentOutOfRangeException(nameof(StiffnessDetectionEveryNumberOfSteps), "Must be >=0");
+        _stiffnessDetectionEveryNumberOfSteps = value;
+      }
+    }
+
 
 
     /// <summary>
@@ -227,8 +324,14 @@ namespace Altaxo.Calc.Ode
     {
       if (AutomaticStepSizeControl)
       {
-        if (!((_absoluteTolerance > 0 && _relativeTolerance >= 0) || (_absoluteTolerance >= 0 && _relativeTolerance > 0)))
+        double maxtol = 0;
+        for (int i = 0; i < _absoluteTolerances.Length; ++i)
+          maxtol = Math.Max(maxtol, _absoluteTolerances[i]);
+        for (int i = 0; i < _relativeTolerances.Length; ++i)
+          maxtol = Math.Max(maxtol, _relativeTolerances[i]);
+        if (!(maxtol>0))
           throw new InvalidOperationException($"Automatic step size control requires that tolerances have been set.");
+
         if (_stepSize is not null)
           throw new InvalidOperationException($"{nameof(StepSize)} without effect because {nameof(AutomaticStepSizeControl)} is true.");
 
@@ -237,7 +340,7 @@ namespace Altaxo.Calc.Ode
 
         if (InitialStepSize is null)
         {
-          if (!((_absoluteTolerance > 0 && _relativeTolerance >= 0) || (_absoluteTolerance >= 0 && _relativeTolerance > 0)))
+          if (!(maxtol>0))
             throw new InvalidOperationException($"Evaluation of initial step size requires that tolerances have been set.");
         }
       }
@@ -261,5 +364,23 @@ namespace Altaxo.Calc.Ode
       for (long i = 0; i < count; ++i)
         yield return start + step * i;
     }
+  }
+
+  /// <summary>
+  /// Designates the filter method for calculation of the recommended step size of the next step.
+  /// </summary>
+  /// <remarks>
+  /// See Table 1 in [Söderlind, Adaptive Time-Stepping and Computational Stability, 2003]
+  /// </remarks>
+  public enum StepSizeFilter
+  {
+    /// <summary>The H211b digital filter (b=4). Takes the current relative error, the previous relative error, and the current and previous step size into account</summary>
+    H211b,
+
+    /// <summary>The PI4.2 digital filter. Takes the current relative error and the previous relative error into account.</summary>
+    PI_4_2,
+
+    /// <summary>Elementary controller (not recommended). Takes only the current relative error into account.</summary>
+    Elementary
   }
 }

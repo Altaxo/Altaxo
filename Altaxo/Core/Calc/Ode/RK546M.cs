@@ -26,8 +26,8 @@ namespace Altaxo.Calc.Ode
 {
   /// <summary>
   /// Runge-Kutta method of 5th order of Dormand and Prince with 6 stages.
-  /// Attention: This method can only provide dense output of order 1 (linear interpolation between evaluation points).
-  /// Use <see cref="RK547M"/> if dense output of high accuracy is needed.
+  /// Attention: This method can only provide dense output of order 3.
+  /// If dense output of high accuracy is needed, use method <see cref="RK547M"/> .
   /// </summary>
   /// <remarks>
   /// <para>References:</para>
@@ -37,8 +37,6 @@ namespace Altaxo.Calc.Ode
   /// </remarks>
   public class RK546M : RungeKuttaExplicitBase
   {
-
-
     /// <summary>Scheme coefficients, see [3] p.688</summary>
     private static readonly double[][] _sa = new double[][]
         {
@@ -53,7 +51,7 @@ namespace Altaxo.Calc.Ode
     private static readonly double[] _sbh = new double[] { 19 / 216d, 0, 1000 / 2079d, -125 / 216d, 81 / 88d, 5 / 56d };
 
     /// <summary>Scheme coefficients 4th order, see [3] p.688</summary>
-    private static readonly double[] _sbl = new double[] { 31 / 540d, 0, 190 / 297d, -145 / 108d, 351 / 220d, 1 / 20d};
+    private static readonly double[] _sbl = new double[] { 31 / 540d, 0, 190 / 297d, -145 / 108d, 351 / 220d, 1 / 20d };
 
     private static readonly double[] _sbhml = new double[] { 11 / 360d, 0, -10 / 63d, 55 / 72d, -27 / 40d, 11 / 280d };
 
@@ -63,6 +61,7 @@ namespace Altaxo.Calc.Ode
     /// <inheritdoc/>
     public override int Order => 5;
 
+    /// <inheritdoc/>
     public override int NumberOfStages => 6;
 
     /// <summary>

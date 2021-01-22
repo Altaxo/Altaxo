@@ -91,6 +91,9 @@ namespace Altaxo.Calc.Ode
     [Fact]
     public void Test_FSS_AccuracyWithConstantStepSize_1_2_AndOptionalPoints()
     {
+      const double ExpectedMaxRelErr_TruePoints = 1.2E-9;
+      const double ExpectedMaxRelErr_InterpolatedPoints = 4.6E-9;
+
       var ode2 = new DOP853();
       ode2.Initialize(0, new double[] { 1 }, (x, y, d) => { d[0] = -y[0]; });
       var it2 = ode2.GetSolutionPointsVolatile(new RungeKuttaOptions { StepSize = 0.5, OptionalSolutionPoints = RungeKuttaOptions.GetEquidistantSequence(0.25, 0.5) }).GetEnumerator();
@@ -127,6 +130,7 @@ namespace Altaxo.Calc.Ode
         {
           maxRelErr_TruePoints = errRel;
           maxRelErr_TruePointsIndex = i;
+          AssertEx.Less(maxRelErr_TruePoints, ExpectedMaxRelErr_TruePoints);
         }
 
         y_prev = it2.Current.Y_volatile[0];
@@ -134,8 +138,8 @@ namespace Altaxo.Calc.Ode
 
       }
 
-      AssertEx.Less(maxRelErr_InterpolatedPoints, 4.6E-9);
-      AssertEx.Less(maxRelErr_TruePoints, 1.2E-9);
+      AssertEx.Less(maxRelErr_InterpolatedPoints, ExpectedMaxRelErr_InterpolatedPoints);
+      AssertEx.Less(maxRelErr_TruePoints, ExpectedMaxRelErr_TruePoints);
     }
 
     [Fact]
@@ -321,8 +325,8 @@ namespace Altaxo.Calc.Ode
       var ode = new DOP853();
       ode.Initialize(0, new double[] { 1 }, (x, y, d) => { d[0] = -y[0]; });
 
-      var mandatoryPoints = RungeKuttaOptions.GetEquidistantSequence(0.125, 0.125, 10);
-      var optionalPoints = RungeKuttaOptions.GetEquidistantSequence(0.015625, 0.015625, 80);
+      var mandatoryPoints = RungeKuttaOptions.GetEquidistantSequence(1/8d, 1/8d, 10);
+      var optionalPoints = RungeKuttaOptions.GetEquidistantSequence(1/64d, 1/64d, 80);
 
       var points = ode.GetSolutionPointsVolatile(new RungeKuttaOptions { InitialStepSize = 2, RelativeTolerance = 1E-6, AutomaticStepSizeControl = true, MandatorySolutionPoints = mandatoryPoints, OptionalSolutionPoints = optionalPoints, IncludeAutomaticStepsInOutput = false });
 
@@ -357,7 +361,7 @@ namespace Altaxo.Calc.Ode
 
       Assert.Equal(80, listOfX.Count);
       for (int i = 0; i < 80; ++i)
-        AssertEx.Equal(0.015625 + i * 0.015625, listOfX[i], 1E-12);
+        AssertEx.Equal((i+1)/64d, listOfX[i], 1E-12);
 
       AssertEx.Less(maxRelErr, 7E-14);
     }
