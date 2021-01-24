@@ -11,14 +11,13 @@ using Xunit;
 
 namespace Altaxo.Calc.Ode
 {
-
-  public class RK8713M_Tests
+  public class RKF43_Tests
   {
 
     [Fact]
     public void TestAccuracyWithConstantStepSize_1_64()
     {
-      var ode2 = new RK8713M();
+      var ode2 = new RKF43();
       var it2 = ode2.GetSolutionPointsVolatileForStepSize(0, new double[] { 1 }, (x, y, d) => { d[0] = -y[0]; }, 1 / 64d).GetEnumerator();
 
       var maxAbsErr = 0.0;
@@ -48,14 +47,14 @@ namespace Altaxo.Calc.Ode
         }
       }
 
-      AssertEx.Less(maxAbsErr, 1.2E-16);
-      AssertEx.Less(maxRelErr, 5E-16);
+      AssertEx.Less(maxAbsErr, 1.3E-10);
+      AssertEx.Less(maxRelErr, 1.4E-9);
     }
 
     [Fact]
     public void Test_FSS_AccuracyWithConstantStepSize_1_2()
     {
-      var ode2 = new RK8713M();
+      var ode2 = new RKF43();
       var it2 = ode2.GetSolutionPointsVolatileForStepSize(0, new double[] { 1 }, (x, y, d) => { d[0] = -y[0]; }, 1 / 2d).GetEnumerator();
 
       var maxAbsErr = 0.0;
@@ -85,14 +84,14 @@ namespace Altaxo.Calc.Ode
         }
       }
 
-      AssertEx.Less(maxAbsErr, 4E-11);
-      AssertEx.Less(maxRelErr, 4E-10);
+      AssertEx.Less(maxAbsErr, 2E-4);
+      AssertEx.Less(maxRelErr, 3E-3);
     }
 
     [Fact]
     public void Test_FSS_AccuracyWithConstantStepSize_1_2_AndOptionalPoints()
     {
-      var ode2 = new RK8713M();
+      var ode2 = new RKF43();
       ode2.Initialize(0, new double[] { 1 }, (x, y, d) => { d[0] = -y[0]; });
       var it2 = ode2.GetSolutionPointsVolatile(new RungeKuttaOptions { StepSize = 0.5, OptionalSolutionPoints = RungeKuttaOptions.GetEquidistantSequence(0.25, 0.5) }).GetEnumerator();
 
@@ -135,14 +134,14 @@ namespace Altaxo.Calc.Ode
 
       }
 
-      AssertEx.Less(maxRelErr_InterpolatedPoints, 2E-4);
-      AssertEx.Less(maxRelErr_TruePoints, 4E-10);
+      AssertEx.Less(maxRelErr_InterpolatedPoints, 2E-3);
+      AssertEx.Less(maxRelErr_TruePoints, 3E-3);
     }
 
     [Fact]
     public void Test_FSS_Accuracy2VariablesWithConstantStepSize_1_16()
     {
-      var ode2 = new RK8713M();
+      var ode2 = new RKF43();
       var it2 = ode2.GetSolutionPointsVolatileForStepSize(0,
         new double[] { 1, -1 },
         (t, x, r) => { r[0] = x[1] + 1; r[1] = -x[0] + 2; },
@@ -182,19 +181,19 @@ namespace Altaxo.Calc.Ode
 
       }
 
-      AssertEx.Less(maxAbsErr1, 6E-15);
-      AssertEx.Less(maxAbsErr2, 6E-15);
+      AssertEx.Less(maxAbsErr1, 3E-6);
+      AssertEx.Less(maxAbsErr2, 3E-6);
     }
 
     [Fact]
     public void TestInitialStepSize_ExponentialDecay()
     {
-      var ode = new RK8713M();
+      var ode = new RKF43();
       ode.Initialize(0, new double[] { 1 }, (x, y, d) => { d[0] = -y[0]; });
       ode.RelativeTolerance = 1E-6;
       ode.AbsoluteTolerance = 0;
       double initialStepSize = ode.GetInitialStepSize();
-      AssertEx.Equal(Math.Pow(1E-8, 0.125), initialStepSize, 1E-6);
+      AssertEx.Equal(Math.Pow(1E-8, 0.25), initialStepSize, 1E-6);
     }
 
     [Fact]
@@ -206,7 +205,7 @@ namespace Altaxo.Calc.Ode
       {
         targetAccuracy /= 100;
 
-        var ode = new RK8713M();
+        var ode = new RKF43();
         ode.Initialize(0, new double[] { 1 }, (x, y, d) => { d[0] = -y[0]; });
         var points = ode.GetSolutionPointsVolatile(new RungeKuttaOptions { InitialStepSize = 2, RelativeTolerance = targetAccuracy, AutomaticStepSizeControl = true });
 
@@ -250,7 +249,7 @@ namespace Altaxo.Calc.Ode
     public void Test_ASSC_AutomaticStepSizeIncrease_ExponentialDecay()
     {
       double initialStepSize = 1 / 64d;
-      var ode = new RK8713M();
+      var ode = new RKF43();
       ode.Initialize(0, new double[] { 1 }, (x, y, d) => { d[0] = -y[0]; });
       var points = ode.GetSolutionPoints(new RungeKuttaOptions { InitialStepSize = initialStepSize, RelativeTolerance = 1E-4, AbsoluteTolerance = 1E-4, AutomaticStepSizeControl = true });
 
@@ -260,7 +259,7 @@ namespace Altaxo.Calc.Ode
       foreach (var sp in points.TakeWhile(sp => sp.X <= 10))
       {
         var currentStepSize = sp.X - previousX;
-        AssertEx.GreaterOrEqual(currentStepSize, previousStepSize*0.5);
+        AssertEx.GreaterOrEqual(currentStepSize, previousStepSize);
         previousX = sp.X;
         previousStepSize = currentStepSize;
 
@@ -273,10 +272,10 @@ namespace Altaxo.Calc.Ode
     [Fact]
     public void Test_ASSC_MandatoryPoints_ExponentialDecay()
     {
-      var ode = new RK8713M();
+      var ode = new RKF43();
       ode.Initialize(0, new double[] { 1 }, (x, y, d) => { d[0] = -y[0]; });
 
-      var mandatoryPoints = RungeKuttaOptions.GetEquidistantSequence(0.1, 0.1, 10);
+      var mandatoryPoints = RungeKuttaOptions.GetEquidistantSequence(1 / 8d, 1 / 8d, 10);
 
       var points = ode.GetSolutionPointsVolatile(new RungeKuttaOptions { InitialStepSize = 2, RelativeTolerance = 1E-6, AutomaticStepSizeControl = true, MandatorySolutionPoints = mandatoryPoints, IncludeAutomaticStepsInOutput = false });
 
@@ -311,15 +310,15 @@ namespace Altaxo.Calc.Ode
 
       Assert.Equal(10, listOfX.Count);
       for (int i = 0; i < 10; ++i)
-        Assert.Equal(0.1 + i * 0.1, listOfX[i]);
+        Assert.Equal((1+i)/8d, listOfX[i]);
 
-      AssertEx.Less(maxRelErr, 1E-4);
+      AssertEx.Less(maxRelErr, 1.2E-7);
     }
 
     [Fact]
     public void Test_ASSC_MandatoryAndOptionalPoints_ExponentialDecay()
     {
-      var ode = new RK8713M();
+      var ode = new RKF43();
       ode.Initialize(0, new double[] { 1 }, (x, y, d) => { d[0] = -y[0]; });
 
       var mandatoryPoints = RungeKuttaOptions.GetEquidistantSequence(1 / 8d, 1 / 8d, 10);
@@ -360,8 +359,8 @@ namespace Altaxo.Calc.Ode
       for (int i = 0; i < 80; ++i)
         AssertEx.Equal((i + 1) / 64d, listOfX[i], 1E-12);
 
-      AssertEx.Less(maxRelErr, 7E-7);
-      AssertEx.Less(maxAbsErr, 7E-7);
+      AssertEx.Less(maxRelErr, 1.2E-7);
+      AssertEx.Less(maxAbsErr, 4E-8);
     }
 
     [Fact]
@@ -382,7 +381,7 @@ namespace Altaxo.Calc.Ode
       }
 
 
-      var ode = new RK8713M();
+      var ode = new RKF43();
       var yinitial = new double[100];
       yinitial.FillWith(1);
       ode.Initialize(0, yinitial, CalcRates);

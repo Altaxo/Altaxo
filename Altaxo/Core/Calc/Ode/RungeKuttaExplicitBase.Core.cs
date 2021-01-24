@@ -1,22 +1,10 @@
 ﻿#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
+//
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2020 Dr. Dirk Lellinger
-//
-//    This program is free software; you can redistribute it and/or modify
-//    it under the terms of the GNU General Public License as published by
-//    the Free Software Foundation; either version 2 of the License, or
-//    (at your option) any later version.
-//
-//    This program is distributed in the hope that it will be useful,
-//    but WITHOUT ANY WARRANTY; without even the implied warranty of
-//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//    GNU General Public License for more details.
-//
-//    You should have received a copy of the GNU General Public License
-//    along with this program; if not, write to the Free Software
-//    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+//    Copyright (C) 2002-2021 Dr. Dirk Lellinger
+//    This source file is licensed under the MIT license.
 //
 /////////////////////////////////////////////////////////////////////////////
 
@@ -32,7 +20,7 @@ namespace Altaxo.Calc.Ode
     /// <summary>
     /// The core implements functionality common to all Runge-Kutta methods, like stepping, error evaluation, interpolation and initial step finding.
     /// </summary>
-    protected class Core : ICore
+    protected class Core 
     {
       protected const double StepSize_SafetyFactor = 0.8;
       protected const double StepSize_MaxFactor = 5; // Maximum possible step increase

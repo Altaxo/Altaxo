@@ -1,22 +1,10 @@
 ﻿#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
+//
 //    Altaxo:  a data processing and data plotting program
 //    Copyright (C) 2002-2021 Dr. Dirk Lellinger
-//
-//    This program is free software; you can redistribute it and/or modify
-//    it under the terms of the GNU General Public License as published by
-//    the Free Software Foundation; either version 2 of the License, or
-//    (at your option) any later version.
-//
-//    This program is distributed in the hope that it will be useful,
-//    but WITHOUT ANY WARRANTY; without even the implied warranty of
-//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//    GNU General Public License for more details.
-//
-//    You should have received a copy of the GNU General Public License
-//    along with this program; if not, write to the Free Software
-//    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+//    This source file is licensed under the MIT license.
 //
 /////////////////////////////////////////////////////////////////////////////
 
@@ -250,10 +238,10 @@ namespace Altaxo.Calc.Ode
       }
     }
 
+    private StepSizeFilter _stepSizeFilter;
     /// <summary>
     /// Set the step size filter (determines the variation of step sizes), see <see cref="StepSizeFilter"/>.
     /// </summary>
-    private StepSizeFilter _stepSizeFilter;
     public StepSizeFilter StepSizeFilter
     {
       get => _stepSizeFilter;
@@ -374,7 +362,7 @@ namespace Altaxo.Calc.Ode
   /// </remarks>
   public enum StepSizeFilter
   {
-    /// <summary>The H211b digital filter (b=4). Takes the current relative error, the previous relative error, and the current and previous step size into account</summary>
+    /// <summary>The H211b digital filter (b=4). Takes the current relative error, the previous relative error, and the current and previous step sizes into account</summary>
     H211b,
 
     /// <summary>The PI4.2 digital filter. Takes the current relative error and the previous relative error into account.</summary>

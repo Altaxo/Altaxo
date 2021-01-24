@@ -13,58 +13,6 @@ namespace Altaxo.Calc.Ode
 {
   public class RK547M_Tests
   {
-    /// <summary>Solves dx/dt = exp(-x) equation with x(0) = 1 initial condition</summary>
-    [Fact]
-    public void TestRungeKutta4_ExponentialDecay()
-    {
-      var ode = new RungeKutta4();
-
-      foreach (var sp in ode.GetSolutionPointsVolatileForStepSize(0,
-          new double[] { 1 },
-          (t, x, r) => { r[0] = -x[0]; },
-          1 / 2d
-          ).TakeWhile(p => p.X <= 10))
-
-      {
-        AssertEx.Equal(Math.Exp(-sp.X), sp.Y_volatile[0], 1e-2, $"y[0] at x={sp.X}");
-      }
-    }
-
-    /// <summary>Solves dx/dt = exp(-x) equation an stores results in array</summary>
-    [Fact]
-    public void TestRungeKutta4_ExponentialDecayToArrayTest()
-    {
-      var ode = new RungeKutta4();
-
-      var arr = ode.GetSolutionPointsForStepSize(0,
-          new double[] { 1 },
-          (t, x, r) => { r[0] = -x[0]; },
-          1 / 2d).TakeWhile(p => p.x <= 10).ToArray();
-
-      foreach (var sp in arr)
-      {
-        AssertEx.Equal(Math.Exp(-sp.x), sp.y[0], 1e-2, $"y[0] at x={sp.x}");
-      }
-    }
-
-    /// <summary>Solves dx/dt = y+1, dy/dt = -x+2 with initial conditions x(0)==1, y(0)==-1,
-    /// which would result in x(t)==2-Cos(t), y(t)==-1+Sin(t).</summary>
-    [Fact]
-    public void TestRungeKutta4_TwoEquations()
-    {
-      var ode = new RungeKutta4();
-      foreach (var sp in ode.GetSolutionPointsVolatileForStepSize(
-          0,
-          new double[] { 1, -1 },
-          (t, x, r) => { r[0] = x[1] + 1; r[1] = -x[0] + 2; },
-          1 / 2d
-          ).TakeWhile(p => p.X <= 8))
-      {
-        AssertEx.Equal(2 - Math.Cos(sp.X), sp.Y_volatile[0], 1e-2, $"y[0] at solution point x={sp.X}");
-        AssertEx.Equal(-1 + Math.Sin(sp.X), sp.Y_volatile[1], 1e-2, $"y[1] at solution point x={sp.X}");
-      }
-    }
-
     [Fact]
     public void TestAccuracyWithConstantStepSize_1_64()
     {
