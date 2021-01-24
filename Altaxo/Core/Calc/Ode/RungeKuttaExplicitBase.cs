@@ -1,22 +1,10 @@
 ﻿#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
+//
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2020 Dr. Dirk Lellinger
-//
-//    This program is free software; you can redistribute it and/or modify
-//    it under the terms of the GNU General Public License as published by
-//    the Free Software Foundation; either version 2 of the License, or
-//    (at your option) any later version.
-//
-//    This program is distributed in the hope that it will be useful,
-//    but WITHOUT ANY WARRANTY; without even the implied warranty of
-//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//    GNU General Public License for more details.
-//
-//    You should have received a copy of the GNU General Public License
-//    along with this program; if not, write to the Free Software
-//    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+//    Copyright (C) 2002-2021 Dr. Dirk Lellinger
+//    This source file is licensed under the MIT license.
 //
 /////////////////////////////////////////////////////////////////////////////
 
@@ -25,6 +13,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -43,25 +32,55 @@ namespace Altaxo.Calc.Ode
   /// </remarks>
   public abstract partial class RungeKuttaExplicitBase
   {
+    protected static readonly double[] _emptyDoubleArray = new double[0];
+    protected static readonly double[][] _emptyJaggedDoubleArray = new double[0][];
+
+    /// <summary>
+    /// Gets the order of the method (the highest of the pair).
+    /// </summary>
+    public abstract int Order { get; }
+
+    /// <summary>
+    /// Gets the number of stages for the main process (stages needed for dense output not included).
+    /// </summary>
+    public abstract int NumberOfStages { get; }
+
+    /// <summary>
+    /// Gets the number of stages of additional stages needed for dense output.
+    /// </summary>
+    public virtual int NumberOfAdditionalStagesForDenseOutput => 0;
 
     /// <summary>Central coefficients of the Runge-Kutta scheme. See [1], page 135.</summary>
     protected abstract double[][] A { get; }
 
-    /// <summary>High order coefficients (lower side of the Runge-Kutta scheme).</summary>
+    /// <summary>High order bottom side coefficients of the Runge-Kutta scheme.</summary>
     protected abstract double[] BH { get; }
 
-    /// <summary>Low order coefficients (lower side of the Runge-Kutta scheme).</summary>
-    protected abstract double[]? BL { get; }
+    /// <summary>Differences between high order and low order bottom side coefficients of the Runge-Kutta scheme.</summary>
+    protected abstract double[]? BHML { get; }
 
     /// <summary>Left side coefficients of the Runge-Kutta scheme.</summary>
     protected abstract double[] C { get; }
 
     /// <summary>
-    /// The interpolation coefficients aij from [2], eq.11 and unnumbered equation shortly below eq. 12. Values from [2], table 2.
+    /// The interpolation coefficients aij. Note that zero to third order interpolation is using y and slope of x_previous and x_current.
+    /// Thus in this array we only need the coefficients for 4th order (and higher) interpolation.
     /// </summary>
-    protected abstract double[][]? InterpolationCoefficients { get; }
+    protected virtual double[][] InterpolationCoefficients => _emptyJaggedDoubleArray;
 
-    private Core _core;
+    protected virtual double[][] A_Interpolation => _emptyJaggedDoubleArray;
+
+    protected virtual double[] C_Interpolation => _emptyDoubleArray;
+
+    /// <summary>
+    /// Sets the stiffness detection threshold value.
+    /// </summary>
+    /// <value>
+    /// The stiffness detection threshold value.
+    /// </value>
+    protected abstract double StiffnessDetectionThresholdValue { get; }
+
+    protected Core? _core;
 
     /// <summary>
     /// Initializes the Runge-Kutta method.
@@ -70,13 +89,20 @@ namespace Altaxo.Calc.Ode
     /// <param name="y">The initial y values.</param>
     /// <param name="f">Calculation of the derivatives. First argument is x value, 2nd argument are the current y values. The 3rd argument is an array that store the derivatives.</param>
     /// <returns>This instance (for a convenient way to chain this method with sequence creation).</returns>
-    public RungeKuttaExplicitBase Initialize(double x, double[] y, Action<double, double[], double[]> f)
+    [MemberNotNull(nameof(_core))]
+    public virtual RungeKuttaExplicitBase Initialize(double x, double[] y, Action<double, double[], double[]> f)
     {
-      _core = new Core(A, BH, BL, C, x, y, f);
-      if (BL is not null)
-        _core.BL = BL;
+      _core = new Core(Order, NumberOfStages, NumberOfAdditionalStagesForDenseOutput, A, BH, BHML, C, x, y, f);
       if (InterpolationCoefficients is not null)
+      {
         _core.InterpolationCoefficients = InterpolationCoefficients;
+      }
+      if (A_Interpolation.Length > 0)
+      {
+        _core.SetCoefficientsForAdditionalStages(A_Interpolation, C_Interpolation);
+      }
+
+      _core.StiffnessDetectionThresholdValue = StiffnessDetectionThresholdValue;
 
       return this;
     }
@@ -96,6 +122,7 @@ namespace Altaxo.Calc.Ode
       for (; ; )
       {
         _core.EvaluateNextSolutionPoint(stepSize);
+        _core.ThrowIfStiffnessDetected();
         yield return (_core.X, _core.Y_volatile);
       }
     }
@@ -108,12 +135,13 @@ namespace Altaxo.Calc.Ode
     public virtual IEnumerable<(double X, double[] Y_volatile)> GetSolutionPointsVolatileForStepSize(
           double stepSize)
     {
-      if (!_core.IsInitialized)
-        throw NewCoreNotInitializeException;
+      if (_core is null)
+        throw NewCoreNotInitializedException;
 
       for (; ; )
       {
         _core.EvaluateNextSolutionPoint(stepSize);
+        _core.ThrowIfStiffnessDetected();
         yield return (_core.X, _core.Y_volatile);
       }
     }
@@ -145,6 +173,23 @@ namespace Altaxo.Calc.Ode
     }
 
     /// <summary>
+    /// Provides the core with the parameters found in the <paramref name="options"/>.
+    /// </summary>
+    /// <param name="options">The options to set.</param>
+    protected virtual void SetOptionsToCore(RungeKuttaOptions options)
+    {
+      if (_core is null)
+        throw NewCoreNotInitializedException;
+
+      options.CheckConsistency();
+      _core.AbsoluteTolerances = Clone(options.AbsoluteTolerances);
+      _core.RelativeTolerances = Clone(options.RelativeTolerances);
+      _core.StepSizeFilter = options.StepSizeFilter;
+      _core.StiffnessDetectionEveryNumberOfSteps = options.StiffnessDetectionEveryNumberOfSteps;
+
+    }
+
+    /// <summary>
     /// Gets a sequence of solution points, using the settings in the argument. The y-values in the returned tuple
     /// are intended for immediate consumption, because the content of the array will change in the further course of the
     /// evaluation.
@@ -155,13 +200,10 @@ namespace Altaxo.Calc.Ode
     /// evaluation.</returns>
     public virtual IEnumerable<(double X, double[] Y_volatile)> GetSolutionPointsVolatile(RungeKuttaOptions options)
     {
-      if (!_core.IsInitialized)
-        throw NewCoreNotInitializeException;
+      if (_core is null)
+        throw NewCoreNotInitializedException;
 
-      options.CheckConsistency();
-
-      _core.AbsoluteTolerance = options.AbsoluteTolerance;
-      _core.RelativeTolerance = options.RelativeTolerance;
+      SetOptionsToCore(options);
 
       if (options.IncludeInitialValueInOutput)
         yield return (_core.X, _core.Y_volatile);
@@ -196,8 +238,8 @@ namespace Altaxo.Calc.Ode
     /// <exception cref="InvalidOperationException">Either absolute tolerance or relative tolerance is required to be &gt; 0</exception>
     public double GetInitialStepSize()
     {
-      if (!_core.IsInitialized)
-        throw NewCoreNotInitializeException;
+      if (_core is null)
+        throw NewCoreNotInitializedException;
 
       return _core.GetInitialStepSize();
     }
@@ -213,15 +255,15 @@ namespace Altaxo.Calc.Ode
     {
       get
       {
-        if (!_core.IsInitialized)
-          throw NewCoreNotInitializeException;
+        if (_core is null)
+          throw NewCoreNotInitializedException;
 
         return _core.AbsoluteTolerance;
       }
       set
       {
-        if (!_core.IsInitialized)
-          throw NewCoreNotInitializeException;
+        if (_core is null)
+          throw NewCoreNotInitializedException;
         if (!(value >= 0))
           throw new ArgumentException("Must be >= 0", nameof(AbsoluteTolerance));
 
@@ -240,19 +282,90 @@ namespace Altaxo.Calc.Ode
     {
       get
       {
-        if (!_core.IsInitialized)
-          throw NewCoreNotInitializeException;
+        if (_core is null)
+          throw NewCoreNotInitializedException;
 
         return _core.RelativeTolerance;
       }
       set
       {
-        if (!_core.IsInitialized)
-          throw NewCoreNotInitializeException;
+        if (_core is null)
+          throw NewCoreNotInitializedException;
         if (!(value >= 0))
           throw new ArgumentException("Must be >= 0", nameof(RelativeTolerance));
 
         _core.RelativeTolerance = value;
+      }
+    }
+
+    /// <summary>
+    /// Gets or sets the relative tolerances. The length of the array must either be 1 (tolerances for all y equal), or of length N.
+    /// </summary>
+    /// <value>
+    /// The relative tolerances.
+    /// </value>
+    public double[] RelativeTolerances
+    {
+      get
+      {
+        if (_core is null)
+          throw NewCoreNotInitializedException;
+
+        return Clone(_core.RelativeTolerances);
+      }
+      set
+      {
+        if (_core is null)
+          throw NewCoreNotInitializedException;
+
+        _core.RelativeTolerances = Clone(value);
+      }
+    }
+
+    /// <summary>
+    /// Gets or sets the absolute tolerances. The length of the array must either be 1 (tolerances for all y equal), or of length N.
+    /// </summary>
+    /// <value>
+    /// The absolute tolerances.
+    /// </value>
+    public double[] AbsoluteTolerances
+    {
+      get
+      {
+        if (_core is null)
+          throw NewCoreNotInitializedException;
+
+        return Clone(_core.AbsoluteTolerances);
+      }
+      set
+      {
+        if (_core is null)
+          throw NewCoreNotInitializedException;
+
+        _core.AbsoluteTolerances = Clone(value);
+      }
+    }
+
+    /// <summary>
+    /// Gets or sets the number of successful steps between test for stiffness.
+    /// Setting this value to 0 disables stiffness detection. The default value is 0.
+    /// </summary>
+    /// <value>
+    /// The number of successful steps between test for stiffness.
+    /// </value>
+    public int StiffnessDetectionEveryNumberOfSteps
+    {
+      get
+      {
+        if (_core is null)
+          throw NewCoreNotInitializedException;
+        return _core.StiffnessDetectionEveryNumberOfSteps;
+      }
+      set
+      {
+        if (_core is null)
+          throw NewCoreNotInitializedException;
+        _core.StiffnessDetectionEveryNumberOfSteps = value;
       }
     }
 
@@ -263,6 +376,10 @@ namespace Altaxo.Calc.Ode
     /// <returns></returns>
     protected virtual IEnumerable<(double X, double[] Y_volatile)> GetSolutionPointsVolatile_WithStepSizeControl(RungeKuttaOptions options)
     {
+      if (_core is null)
+        throw NewCoreNotInitializedException;
+      SetOptionsToCore(options);
+
       double stepSize;
       if (options.InitialStepSize.HasValue)
         stepSize = options.InitialStepSize.Value;
@@ -346,6 +463,7 @@ namespace Altaxo.Calc.Ode
 
           // Make the step with the effective step size.
           _core.EvaluateNextSolutionPoint(effectiveStepSize);
+
           error_current = _core.GetRelativeError();
           if (double.IsNaN(error_current) || double.IsInfinity(error_current))
             error_current = 10; // if error is NaN then probably the step size is too big, we force to reduce step size by setting error to 10
@@ -355,6 +473,7 @@ namespace Altaxo.Calc.Ode
 
           if (error_current > 1)
           {
+            error_previous = error_current;
             _core.Revert();
           }
 
@@ -363,6 +482,8 @@ namespace Altaxo.Calc.Ode
 
         } while (error_current > 1);
         error_previous = error_current;
+
+        _core.ThrowIfStiffnessDetected();
 
         bool includeTrueSolutionPointInOutput = (isStepToMandatorySolutionPoint && options.IncludeMandatorySolutionPointsInOutput) || options.IncludeAutomaticStepsInOutput;
 
@@ -395,6 +516,10 @@ namespace Altaxo.Calc.Ode
     /// <returns></returns>
     protected virtual IEnumerable<(double X, double[] Y_volatile)> GetSolutionPointsVolatile_WithoutStepSizeControl(RungeKuttaOptions options)
     {
+      if (_core is null)
+        throw NewCoreNotInitializedException;
+      SetOptionsToCore(options);
+
       var itFixedStep = options.StepSize.HasValue ? EnumerateXForFixedStepSize(_core.X, options.StepSize.Value).GetEnumerator() : null;
       var itMandatory = options.MandatorySolutionPoints?.GetEnumerator();
 
@@ -421,6 +546,7 @@ namespace Altaxo.Calc.Ode
       while (TryGetNextValue(ref itFixedStep, ref itMandatory, out x_next))
       {
         _core.EvaluateNextSolutionPoint(x_next - _core.X);
+        _core.ThrowIfStiffnessDetected();
 
         // if needed, output the optional interpolated points
         while (itOptional is not null && itOptional.Current <= _core.X) // move it3 until its greater than this step
@@ -522,7 +648,7 @@ namespace Altaxo.Calc.Ode
     /// <summary>
     /// Creates a new exception that indicates that the core is not initialized.
     /// </summary>
-    protected InvalidOperationException NewCoreNotInitializeException => new InvalidOperationException($"Core is not initialized. Please call {nameof(Initialize)} first!");
+    protected InvalidOperationException NewCoreNotInitializedException => new InvalidOperationException($"Core is not initialized. Please call {nameof(Initialize)} first!");
 
     /// <summary>
     /// Enumerates the size of the x for fixed step.
