@@ -43,7 +43,8 @@
     <PackageReference Include="SharpDX.Mathematics" Version="4.2.0" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="CompiledShaders\Effects\" />
+    <EmbeddedResource Include="CompiledShaders\Effects\GammaCorrector.cso" />
+    <EmbeddedResource Include="CompiledShaders\Effects\Lighting.cso" />
   </ItemGroup>
   <UsingTask TaskName="Shader" AssemblyFile="ShaderCompilerBuildTask.dll" />
   <UsingTask TaskName="GitVersionFile" AssemblyFile="..\..\..\MSBuildVersioning.dll" />

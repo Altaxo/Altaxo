@@ -1,4 +1,16 @@
-﻿using System;
+﻿#region Copyright
+
+/////////////////////////////////////////////////////////////////////////////
+//
+//    Altaxo:  a data processing and data plotting program
+//    Copyright (C) 2002-2021 Dr. Dirk Lellinger
+//    This source file is licensed under the MIT license.
+//
+/////////////////////////////////////////////////////////////////////////////
+
+#endregion Copyright
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
