@@ -22,10 +22,18 @@ namespace Altaxo.Calc.Ode
     /// </summary>
     protected class Core 
     {
+      /// <summary>Safety factor for the step size. Without this factor, the control loop for step size
+      /// would try to set the stepsize so that the relative error would be around 1. But then, if the relative error is slighly above 1, this
+      /// step would be rejected. By having a safety factor of less than 1 we get the relative error safely below 1.</summary>
       protected const double StepSize_SafetyFactor = 0.8;
+
+      /// <summary>Maximum factor by which the step size can be increased.</summary>
       protected const double StepSize_MaxFactor = 5; // Maximum possible step increase
+
+      /// <summary>Minimum factor by which the step size can be decreased.</summary>
       protected const double StepSize_MinFactor = 0.2; // Maximum possible step decrease
 
+      /// <summary>Order of the Runge-Kutta method (the highest order of the embedded pair).</summary>
       protected readonly int _order;
 
       /// <summary>The number of stages of this method.</summary>
@@ -129,8 +137,15 @@ namespace Altaxo.Calc.Ode
       /// </summary>
       public double[] _relativeTolerances;
 
+      /// <summary>
+      /// The step size filter.
+      /// </summary>
       protected StepSizeFilter _stepSizeFilter;
 
+      /// <summary>
+      /// The ODE function. First argument is the independent variable (usually named x or t),
+      /// 2nd argument are the current y values, and the 3rd argument adopts the derivatives dy/dx calculated by this function.
+      /// </summary>
       protected Action<double, double[], double[]> _f;
 
       /// <summary>The number of evaluation results in <see cref="ThrowIfStiffnessDetected()"/>, for which the result was false (non-stiff).
@@ -321,7 +336,7 @@ namespace Altaxo.Calc.Ode
       /// Sets the coefficients for the error evaluation.
       /// These coefficients are the difference of the high order and low order bottom side
       /// coefficients of the Runge-Kutta scheme.
-      /// If set to null, the low order y is not evaluated.
+      /// If set to null, local error calculation, and thus automatic step size control, is not possible.
       /// </summary>
       /// <value>
       /// The difference of high order and low order coefficients of the Runge-Kutta method.
@@ -602,6 +617,9 @@ namespace Altaxo.Calc.Ode
 
       #region Error and step size evaluation
 
+      /// <summary>
+      /// Gets or sets the step size filter. For the values see <see cref="Altaxo.Calc.Ode.StepSizeFilter"/>.
+      /// </summary>
       public StepSizeFilter StepSizeFilter
       {
         get => _stepSizeFilter;

@@ -32,7 +32,10 @@ namespace Altaxo.Calc.Ode
   /// </remarks>
   public abstract partial class RungeKuttaExplicitBase
   {
+    /// <summary>An empty double array intended for initialization of arrays.</summary>
     protected static readonly double[] _emptyDoubleArray = new double[0];
+
+    /// <summary>An empty jagged double array intended for initialization of arrays.</summary>
     protected static readonly double[][] _emptyJaggedDoubleArray = new double[0][];
 
     /// <summary>
@@ -68,8 +71,14 @@ namespace Altaxo.Calc.Ode
     /// </summary>
     protected virtual double[][] InterpolationCoefficients => _emptyJaggedDoubleArray;
 
+    /// <summary>
+    /// Gets additional central coefficients of the Runge-Kutta scheme that are used for dense output (interpolation).
+    /// </summary>
     protected virtual double[][] A_Interpolation => _emptyJaggedDoubleArray;
 
+    /// <summary>
+    /// Gets additional left side coefficients of the Runge-Kutta scheme (x-partitions) that are used for dense output (interpolation).
+    /// </summary>
     protected virtual double[] C_Interpolation => _emptyDoubleArray;
 
     /// <summary>
@@ -80,6 +89,9 @@ namespace Altaxo.Calc.Ode
     /// </value>
     protected abstract double StiffnessDetectionThresholdValue { get; }
 
+    /// <summary>
+    /// The solver core.
+    /// </summary>
     protected Core? _core;
 
     /// <summary>
@@ -651,11 +663,11 @@ namespace Altaxo.Calc.Ode
     protected InvalidOperationException NewCoreNotInitializedException => new InvalidOperationException($"Core is not initialized. Please call {nameof(Initialize)} first!");
 
     /// <summary>
-    /// Enumerates the size of the x for fixed step.
+    /// Enumerates the endless sequence <paramref name="x_current"/> + k * <paramref name="stepSize"/>, for k=1..Infinity.
     /// </summary>
-    /// <param name="x_current">The x current.</param>
-    /// <param name="stepSize">Size of the step.</param>
-    /// <returns></returns>
+    /// <param name="x_current">The base value.</param>
+    /// <param name="stepSize">The step size.</param>
+    /// <returns>The endless sequence <paramref name="x_current"/> + k * <paramref name="stepSize"/>, for k=1..Infinity.</returns>
     protected IEnumerable<double> EnumerateXForFixedStepSize(double x_current, double stepSize)
     {
       for (long i = 1; ; ++i)
