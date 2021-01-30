@@ -131,9 +131,9 @@ namespace Altaxo.Calc.Ode
          double x0, double[] y0, Action<double, double[], double[]> f, double stepSize)
     {
       Initialize(x0, y0, f);
-      for (; ; )
+      for (long i = 1; ; ++i)
       {
-        _core.EvaluateNextSolutionPoint(stepSize);
+        _core.EvaluateNextSolutionPoint(x0 + i * stepSize);
         _core.ThrowIfStiffnessDetected();
         yield return (_core.X, _core.Y_volatile);
       }
@@ -150,9 +150,10 @@ namespace Altaxo.Calc.Ode
       if (_core is null)
         throw NewCoreNotInitializedException;
 
-      for (; ; )
+      double x0 = _core.X;
+      for (long i = 1; ; ++i)
       {
-        _core.EvaluateNextSolutionPoint(stepSize);
+        _core.EvaluateNextSolutionPoint(x0 + i * stepSize);
         _core.ThrowIfStiffnessDetected();
         yield return (_core.X, _core.Y_volatile);
       }
@@ -241,6 +242,24 @@ namespace Altaxo.Calc.Ode
     public virtual IEnumerable<(double X, double[] Y)> GetSolutionPoints(RungeKuttaOptions options)
     {
       return GetSolutionPointsVolatile(options).Select(sp => (sp.X, Clone(sp.Y_volatile)));
+    }
+
+    /// <summary>
+    /// Gets you an interpolated volative solution point during the enumeration of the solution points.
+    /// The returned array must not be modified and has to be immediately consumed, since it is changed in the course of the next ODE evaluation.
+    /// </summary>
+    /// <param name="x">The x.</param>
+    /// <returns></returns>
+    public virtual double[] GetInterpolatedSolutionPointVolatile(double x)
+    {
+      if (_core is null)
+        throw NewCoreNotInitializedException;
+
+      if (!(_core.X_previous <= x && x <= _core.X))
+        throw new Exception($"Can only get interpolated point in the interval between x_previous={_core.X_previous} and x_current={_core.X}, but the argument was {x}");
+
+      double theta = (x - _core.X_previous) / (_core.X - _core.X_previous);
+      return _core.GetInterpolatedY_volatile(theta);
     }
 
     /// <summary>
@@ -424,6 +443,7 @@ namespace Altaxo.Calc.Ode
         do // do one step. If automatic step size control is on, repeat until target accuracy is reached.
         {
           double effectiveStepSize;
+          double x_nextStepEffective;
 
           double x_next = x_current + stepSize;
 
@@ -450,18 +470,21 @@ namespace Altaxo.Calc.Ode
             if (itMandatory.Current <= x_next)
             {
               // Mandatory point is in this interval => use a step to the mandatory point
+              x_nextStepEffective = itMandatory.Current;
               effectiveStepSize = itMandatory.Current - x_current;
               isStepToMandatorySolutionPoint = true;
             }
             else if (itMandatory.Current < (x_next + stepSize))
             {
               // Mandatory point is in the interval after this interval => use two equal steps to the mandatory point
+              x_nextStepEffective = 0.5 * (itMandatory.Current + x_current);
               effectiveStepSize = 0.5 * (itMandatory.Current - x_current);
               isStepToMandatorySolutionPoint = false;
             }
             else
             {
               // In all other cases: use recommend step size
+              x_nextStepEffective = x_current + stepSize;
               effectiveStepSize = stepSize;
               isStepToMandatorySolutionPoint = false;
             }
@@ -469,12 +492,13 @@ namespace Altaxo.Calc.Ode
           else
           {
             // if there are no mandatory points: use recommended step size
+            x_nextStepEffective = x_current + stepSize;
             effectiveStepSize = stepSize;
             isStepToMandatorySolutionPoint = false;
           }
 
           // Make the step with the effective step size.
-          _core.EvaluateNextSolutionPoint(effectiveStepSize);
+          _core.EvaluateNextSolutionPoint(x_nextStepEffective);
 
           error_current = _core.GetRelativeError();
           if (double.IsNaN(error_current) || double.IsInfinity(error_current))
@@ -557,7 +581,7 @@ namespace Altaxo.Calc.Ode
 
       while (TryGetNextValue(ref itFixedStep, ref itMandatory, out x_next))
       {
-        _core.EvaluateNextSolutionPoint(x_next - _core.X);
+        _core.EvaluateNextSolutionPoint(x_next);
         _core.ThrowIfStiffnessDetected();
 
         // if needed, output the optional interpolated points

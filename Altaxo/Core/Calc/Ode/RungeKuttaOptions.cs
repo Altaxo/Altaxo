@@ -16,6 +16,63 @@ using System.Collections.Generic;
 namespace Altaxo.Calc.Ode
 {
   /// <summary>
+  /// Options for explicit ODE methods without step size control.
+  /// </summary>
+  /// <remarks>
+  /// <para><b>Without</b> step size control, the following parameters are relevant:
+  /// <list type="">
+  /// <item><see cref="IncludeInitialValueInOutput"/> determines whether the inital values for x and y should appear as first item in the output sequence.</item>
+  /// <item><see cref="StepSize"/> determines the fixed step size. Set this parameter to null if you only want to output <see cref="MandatorySolutionPoints"/>.</item>
+  /// <item><see cref="OptionalSolutionPoints"/> are points that are evaluated by interpolation between true solution points. Optional solution points always appear in the output sequence.</item>
+  /// </list>
+  /// </para>
+  /// </remarks>
+  public class OdeOptions
+  {
+    /// <summary>
+    /// Gets or sets a value indicating whether the inital point should be included in the output.
+    /// </summary>
+    /// <value>
+    ///   <c>true</c> if the initial point should be included in the output; otherwise, <c>false</c>.
+    /// </value>
+    public bool IncludeInitialValueInOutput { get; set; }
+
+    /// <summary>
+    /// Gets or sets optional solution points. Optional solution points will be not evaluated directly, but interpolated between two real solution points.
+    /// </summary>
+    /// <value>
+    /// The sequence of optional solution points. Must be a strongly increasing sequence.
+    /// </value>
+    public IEnumerable<double>? OptionalSolutionPoints { get; set; }
+
+
+
+    /// <summary>
+    /// Gets or sets the size of the step. This value is effective only if automatic step size control is not active.
+    /// </summary>
+    /// <value>
+    /// The size of one step. Additionally to this value, you can set further mandatory evaluation points by setting <see cref="MandatorySolutionPoints"/>.
+    /// </value>
+    public double? StepSize
+    {
+      get => _stepSize;
+      set
+      {
+        if (value.HasValue && !(value.Value >= 0))
+          throw new ArgumentException($"Either {nameof(StepSize)} must be null, or a value > 0", nameof(StepSize));
+
+        if (value.HasValue && value == 0)
+          value = null;
+        _stepSize = value;
+      }
+    }
+    protected double? _stepSize;
+  }
+
+
+
+
+  /// <summary>
   /// Options for explicit Runge-Kutta methods.
   /// </summary>
   /// <remarks>
@@ -24,7 +81,7 @@ namespace Altaxo.Calc.Ode
   /// <para>ii) Without automatic step size control (<see cref="AutomaticStepSizeControl"/> = false)</para>
   /// <para><b>With</b> automatic step size control, the following parameters are relevant:
   /// <list type="">
-  /// <item><see cref="IncludeInitialValueInOutput"/> determines whether the inital values for x and y should appear as first item in the output sequence.</item>
+  /// <item><see cref="OdeOptions.IncludeInitialValueInOutput"/> determines whether the inital values for x and y should appear as first item in the output sequence.</item>
   /// <item><see cref="AbsoluteTolerance"/> and <see cref="RelativeTolerance"/> and/or <see cref="AbsoluteTolerances"/> and <see cref="RelativeTolerances"/> determine the chosen step size.</item>
   /// <item><see cref="MaxStepSize"/> determines the maximum applied step size.</item>
   /// <item><see cref="IncludeAutomaticStepsInOutput"/> if the steps that are chosen automatically should appear in the sequence of solution points.</item>
@@ -32,19 +89,19 @@ namespace Altaxo.Calc.Ode
   /// <item><see cref="StepSizeFilter"/> determines the variations of the step size.</item>
   /// <item><see cref="MandatorySolutionPoints"/> are points where the method is forced to have a solution point. At those points the evaluation of the derivative is forced.</item>
   /// <item><see cref="IncludeMandatorySolutionPointsInOutput"/> determines if the mandatory solution points should appear in the output sequence (default: true).</item>
-  /// <item><see cref="OptionalSolutionPoints"/> are points that are evaluated by interpolation between true solution points. Optional solution points always appear in the output sequence.</item>
+  /// <item><see cref="OdeOptions.OptionalSolutionPoints"/> are points that are evaluated by interpolation between true solution points. Optional solution points always appear in the output sequence.</item>
   /// </list>
   /// </para>
   /// <para><b>Without</b> automatic step size control, the following parameters are relevant:
   /// <list type="">
-  /// <item><see cref="IncludeInitialValueInOutput"/> determines whether the inital values for x and y should appear as first item in the output sequence.</item>
-  /// <item><see cref="StepSize"/> determines the fixed step size. Set this parameter to null if you only want to output <see cref="MandatorySolutionPoints"/>.</item>
+  /// <item><see cref="OdeOptions.IncludeInitialValueInOutput"/> determines whether the inital values for x and y should appear as first item in the output sequence.</item>
+  /// <item><see cref="OdeOptions.StepSize"/> determines the fixed step size. Set this parameter to null if you only want to output <see cref="MandatorySolutionPoints"/>.</item>
   /// <item><see cref="MandatorySolutionPoints"/> are points where the method is forced to have a solution point. At those points the evaluation of the derivative is forced. In mode without automatic step size control, mandatory solution points always appear in the output sequence.</item>
-  /// <item><see cref="OptionalSolutionPoints"/> are points that are evaluated by interpolation between true solution points. Optional solution points always appear in the output sequence.</item>
+  /// <item><see cref="OdeOptions.OptionalSolutionPoints"/> are points that are evaluated by interpolation between true solution points. Optional solution points always appear in the output sequence.</item>
   /// </list>
   /// </para>
   /// </remarks>
-  public class RungeKuttaOptions
+  public class RungeKuttaOptions : OdeOptions
   {
     private double[] _relativeTolerances = new double[] { 0 };
     private double[] _absoluteTolerances = new double[] { 0 };
@@ -112,9 +169,9 @@ namespace Altaxo.Calc.Ode
           throw new ArgumentNullException(nameof(AbsoluteTolerances));
         _absoluteTolerances = (double[])value.Clone();
 
-        for (int i=0;i<_absoluteTolerances.Length;++i)
+        for (int i = 0; i < _absoluteTolerances.Length; ++i)
         {
-          if(!(_absoluteTolerances[i]>=0))
+          if (!(_absoluteTolerances[i] >= 0))
             throw new ArgumentException($"Element {i} must be >= 0", nameof(AbsoluteTolerances));
         }
       }
@@ -140,17 +197,11 @@ namespace Altaxo.Calc.Ode
           if (!(_relativeTolerances[i] >= 0))
             throw new ArgumentException($"Element {i} must be >= 0", nameof(RelativeTolerances));
         }
-       
+
       }
     }
 
-    /// <summary>
-    /// Gets or sets a value indicating whether the inital point should be included in the output.
-    /// </summary>
-    /// <value>
-    ///   <c>true</c> if the initial point should be included in the output; otherwise, <c>false</c>.
-    /// </value>
-    public bool IncludeInitialValueInOutput { get; set; }
+
 
 
     /// <summary>
@@ -216,27 +267,8 @@ namespace Altaxo.Calc.Ode
       }
     }
 
-    private double? _stepSize;
 
-    /// <summary>
-    /// Gets or sets the size of the step. This value is effective only if <see cref="AutomaticStepSizeControl"/> is false.
-    /// </summary>
-    /// <value>
-    /// The size of one step. Additionally to this value, you can set further mandatory evaluation points by setting <see cref="MandatorySolutionPoints"/>.
-    /// </value>
-    public double? StepSize
-    {
-      get => _stepSize;
-      set
-      {
-        if (value.HasValue && !(value.Value >= 0))
-          throw new ArgumentException($"Either {nameof(StepSize)} must be null, or a value > 0", nameof(StepSize));
 
-        if (value.HasValue && value == 0)
-          value = null;
-        _stepSize = value;
-      }
-    }
 
     private StepSizeFilter _stepSizeFilter;
     /// <summary>
@@ -252,19 +284,13 @@ namespace Altaxo.Calc.Ode
     }
 
 
-    /// <summary>
-    /// Gets or sets optional solution points. Optional solution points will be not evaluated directly, but interpolated between two real solution points.
-    /// </summary>
-    /// <value>
-    /// The sequence of optional solution points. Must be a strongly increasing sequence.
-    /// </value>
-    public IEnumerable<double>? OptionalSolutionPoints { get; set; }
+
 
     /// <summary>
     /// Gets or sets the mandatory solution points. Mandatory solution points will be evaluated directly (i.e. not interpolated).
     /// </summary>
     /// <value>
-    /// The sequence of mandatory solution points. If <see cref="StepSize"/> is set too, the sequence of solution points is the
+    /// The sequence of mandatory solution points. If <see cref="OdeOptions.StepSize"/> is set too, the sequence of solution points is the
     /// result of zipping the mandatory solution point sequence with the sequence of k*StepSize.
     /// </value>
     public IEnumerable<double>? MandatorySolutionPoints { get; set; }
@@ -317,7 +343,7 @@ namespace Altaxo.Calc.Ode
           maxtol = Math.Max(maxtol, _absoluteTolerances[i]);
         for (int i = 0; i < _relativeTolerances.Length; ++i)
           maxtol = Math.Max(maxtol, _relativeTolerances[i]);
-        if (!(maxtol>0))
+        if (!(maxtol > 0))
           throw new InvalidOperationException($"Automatic step size control requires that tolerances have been set.");
 
         if (_stepSize is not null)
@@ -328,7 +354,7 @@ namespace Altaxo.Calc.Ode
 
         if (InitialStepSize is null)
         {
-          if (!(maxtol>0))
+          if (!(maxtol > 0))
             throw new InvalidOperationException($"Evaluation of initial step size requires that tolerances have been set.");
         }
       }
@@ -341,7 +367,7 @@ namespace Altaxo.Calc.Ode
 
 
     /// <summary>
-    /// Gets an equidistant sequence, that can be used e.g. for <see cref="OptionalSolutionPoints"/> or <see cref="MandatorySolutionPoints"/>.
+    /// Gets an equidistant sequence, that can be used e.g. for <see cref="OdeOptions.OptionalSolutionPoints"/> or <see cref="MandatorySolutionPoints"/>.
     /// </summary>
     /// <param name="start">The first value of the sequence.</param>
     /// <param name="step">The difference between the values.</param>

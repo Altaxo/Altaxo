@@ -49,8 +49,8 @@ namespace Altaxo.Calc.Ode
       /// <summary>
       /// Evaluates the next solution point in one step. To get the results, see <see cref="RungeKuttaExplicitBase.Core.X"/> and <see cref="RungeKuttaExplicitBase.Core.Y_volatile"/>.
       /// </summary>
-      /// <param name="stepSize">Size of the step.</param>
-      public override void EvaluateNextSolutionPoint(double stepSize)
+      /// <param name="xnext">X at the end of the next step.</param>
+      public override void EvaluateNextSolutionPoint(double xnext)
       {
         var a = _a;
         var b = _b;
@@ -60,9 +60,9 @@ namespace Altaxo.Calc.Ode
         int n = _y_current.Length; // number of variables
         int s = a.Length; // number of stages
 
-        var h = stepSize;
+        var h = xnext - _x_current;
         _stepSize_previous = _stepSize_current;
-        _stepSize_current = stepSize;
+        _stepSize_current = h;
         _x_previous = _x_current;
         _isDenseOutputPrepared = false;
         Exchange(ref _y_previous, ref _y_current); // swap the two arrays => what was current is now previous
@@ -183,7 +183,7 @@ namespace Altaxo.Calc.Ode
         }
 
 
-        _x_current += stepSize;
+        _x_current = xnext;
         _wasSolutionPointEvaluated = true;
       }
 

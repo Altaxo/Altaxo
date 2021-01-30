@@ -20,7 +20,7 @@ namespace Altaxo.Calc.Ode
     /// <summary>
     /// The core implements functionality common to all Runge-Kutta methods, like stepping, error evaluation, interpolation and initial step finding.
     /// </summary>
-    protected class Core 
+    protected class Core
     {
       /// <summary>Safety factor for the step size. Without this factor, the control loop for step size
       /// would try to set the stepsize so that the relative error would be around 1. But then, if the relative error is slighly above 1, this
@@ -270,7 +270,7 @@ namespace Altaxo.Calc.Ode
             throw new ArgumentNullException(nameof(RelativeTolerances));
           if (!(value.Length == 1 || value.Length == _y_current.Length))
             throw new ArgumentException($"Length of array is neither 1 nor N", nameof(RelativeTolerances));
-          for(int i=0;i<value.Length;++i)
+          for (int i = 0; i < value.Length; ++i)
           {
             if (!(value[i] >= 0))
               throw new ArgumentException($"Element {i} of tolerances is not >=0", nameof(RelativeTolerances));
@@ -466,12 +466,12 @@ namespace Altaxo.Calc.Ode
       /// Evaluates the next solution point in one step.
       /// To get the results, see <see cref="X"/> and <see cref="Y_volatile"/>.
       /// </summary>
-      /// <param name="stepSize">Size of the step.</param>
+      /// <param name="xnext">The x at the end of this step.</param>
       /// <remarks>At the end of this call, <see cref="_y_current"/> contains the current y values,
       /// <see cref="_y_stages"/> contains the y values of the last stage (non-FSAL) or of the stage before
       /// the last stage (FSAL), <see cref="_y_current_LocalError"/> contains the local errors, and <see cref="_y_previous"/>
       /// contains the y values at the beginning of the current step.</remarks>
-      public virtual void EvaluateNextSolutionPoint(double stepSize)
+      public virtual void EvaluateNextSolutionPoint(double xnext)
       {
         var a = _a;
         var b = _b;
@@ -481,9 +481,9 @@ namespace Altaxo.Calc.Ode
         int n = _y_current.Length; // number of variables
         int s = a.Length; // number of stages
 
-        var h = stepSize;
+        var h = xnext - _x_current;
         _stepSize_previous = _stepSize_current;
-        _stepSize_current = stepSize;
+        _stepSize_current = h;
         _x_previous = _x_current;
         _isDenseOutputPrepared = false;
         Exchange(ref _y_previous, ref _y_current); // swap the two arrays => what was current is now previous
@@ -518,7 +518,7 @@ namespace Altaxo.Calc.Ode
             {
               sum += asi[j] * k[j][ni];
             }
-            ydest[ni] = sum * stepSize + y_previous[ni];
+            ydest[ni] = sum * h + y_previous[ni];
           }
           _f(x_previous + h * c[si], ydest, k[si]); // calculate derivative k
         } // end calculation of k0 .. k[s-1]
@@ -555,7 +555,7 @@ namespace Altaxo.Calc.Ode
           }
         }
 
-        _x_current += stepSize;
+        _x_current = xnext;
         _wasSolutionPointEvaluated = true;
         _isKnextEvaluated = _isFirstSameAsLastMethod; // if this is an FSAL method, k of the current x is already evaluated (in the last stage)
       }
@@ -662,7 +662,7 @@ namespace Altaxo.Calc.Ode
             e = Math.Max(e, Math.Abs(ylocalerror[i]) / Math.Max(_absoluteTolerances[i], _relativeTolerances[i] * Math.Max(Math.Abs(ycurrent[i]), Math.Abs(yprevious[i]))));
           }
         }
-        else if(_relativeTolerances.Length==1)
+        else if (_relativeTolerances.Length == 1)
         {
           var relativeTolerance = _relativeTolerances[0];
           for (int i = 0; i < ycurrent.Length; ++i)
@@ -670,7 +670,7 @@ namespace Altaxo.Calc.Ode
             e = Math.Max(e, Math.Abs(ylocalerror[i]) / Math.Max(_absoluteTolerances[i], relativeTolerance * Math.Max(Math.Abs(ycurrent[i]), Math.Abs(yprevious[i]))));
           }
         }
-        else if(_absoluteTolerances.Length==1) 
+        else if (_absoluteTolerances.Length == 1)
         {
           var absoluteTolerance = _absoluteTolerances[0];
           for (int i = 0; i < ycurrent.Length; ++i)
@@ -680,11 +680,11 @@ namespace Altaxo.Calc.Ode
         }
 
         // Ensure that always a valid error is returned
-        if(e == 0) // Problem has lower order than our method
+        if (e == 0) // Problem has lower order than our method
         {
           e = Math.Pow(4, -_order); // we ensure a small relative error in order to increase the step size
         }
-        else if(double.IsNaN(e) || double.IsInfinity(e)) // probably the step was so big that there is no valid result
+        else if (double.IsNaN(e) || double.IsInfinity(e)) // probably the step was so big that there is no valid result
         {
           e = Math.Pow(4, _order); // return a high relative error
         }
@@ -744,7 +744,7 @@ namespace Altaxo.Calc.Ode
         var reltollength = _relativeTolerances.Length;
         for (int i = 0; i < n; i++)
         {
-          delta[i] = _absoluteTolerances[i%abstollength] + _relativeTolerances[i%reltollength] * Math.Abs(_y_current[i]);
+          delta[i] = _absoluteTolerances[i % abstollength] + _relativeTolerances[i % reltollength] * Math.Abs(_y_current[i]);
           d0 = Math.Max(d0, Math.Abs(_y_current[i]) / delta[i]);
           d1 = Math.Max(d1, Math.Abs(f0[i]) / delta[i]);
         }
