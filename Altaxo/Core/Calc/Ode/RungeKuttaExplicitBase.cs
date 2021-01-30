@@ -248,8 +248,8 @@ namespace Altaxo.Calc.Ode
     /// Gets you an interpolated volative solution point during the enumeration of the solution points.
     /// The returned array must not be modified and has to be immediately consumed, since it is changed in the course of the next ODE evaluation.
     /// </summary>
-    /// <param name="x">The x.</param>
-    /// <returns></returns>
+    /// <param name="x">The x value. Must be in the interval [X-StepSize, X].</param>
+    /// <returns>The interpolated y values. The elements of the array must not be altered, and are intended for immediate use only.</returns>
     public virtual double[] GetInterpolatedSolutionPointVolatile(double x)
     {
       if (_core is null)
