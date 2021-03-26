@@ -82,7 +82,7 @@ namespace Altaxo.Serialization.Ascii
     }
 
     [MemberNotNull(nameof(_importOptions), nameof(_asciiImportOptions))]
-    void DeserializeSurrogate0(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+    private void DeserializeSurrogate0(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
     {
       _isDeserializationInProgress = true;
       ChildSetMember(ref _importOptions, (IDataSourceImportOptions)info.GetValue("ImportOptions", this));
@@ -117,13 +117,13 @@ namespace Altaxo.Serialization.Ascii
     #region Construction
 
     [MemberNotNull(nameof(_asciiFiles), nameof(_importOptions), nameof(_asciiImportOptions))]
-    void CopyFrom(AsciiImportDataSource from)
+    private void CopyFrom(AsciiImportDataSource from)
     {
       using (var token = SuspendGetToken())
       {
         _asciiFiles = new List<AbsoluteAndRelativeFileName>(CopyHelper.GetEnumerationMembersNotNullCloned(from._asciiFiles));
-        ChildSetMember(ref _importOptions, from._importOptions);
-        ChildSetMember(ref _asciiImportOptions, from._asciiImportOptions);
+        ChildCloneToMember(ref _importOptions, from._importOptions);
+        ChildCloneToMember(ref _asciiImportOptions, from._asciiImportOptions);
         EhSelfChanged(EventArgs.Empty);
         token.Resume();
       }

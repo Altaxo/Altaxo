@@ -576,9 +576,9 @@ namespace Altaxo.Data
     {
       _parent = null; // do not clone the parent
       _name = from._name;
-      _tableScript = from._tableScript is null ? null : (TableScript)from._tableScript.Clone();
+      ChildCloneToMember(ref _tableScript, from._tableScript);
       _creationTime = _lastChangeTime = DateTime.UtcNow;
-      ChildCopyToMember(ref _notes, from._notes);
+      ChildCloneToMember(ref _notes, from._notes);
 
       // Clone also the table properties (deep copy)
       if (from._tableProperties is not null && from._tableProperties.Count > 0)
@@ -590,7 +590,7 @@ namespace Altaxo.Data
         _tableProperties = null;
       }
 
-      ChildCopyToMember(ref _tableDataSource, from._tableDataSource);
+      ChildCloneToMember(ref _tableDataSource, from._tableDataSource);
     }
 
     /// <summary>
