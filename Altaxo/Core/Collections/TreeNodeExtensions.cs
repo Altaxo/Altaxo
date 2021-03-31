@@ -1054,16 +1054,13 @@ namespace Altaxo.Collections
     /// <returns>All tree nodes from <paramref name="node"/> down to the root of the tree.</returns>
     public static IEnumerable<T> TakeFromHereToRoot<T>(this T node) where T : INodeWithParentNode<T>
     {
-      if (node is null)
-        throw new ArgumentNullException(nameof(node));
+      yield return node ?? throw new ArgumentNullException(nameof(node));
 
-      yield return node;
-
-      node = node.ParentNode;
-      while (node is not null)
+      var pnode = node.ParentNode;
+      while (pnode is not null)
       {
-        yield return node;
-        node = node.ParentNode;
+        yield return pnode;
+        pnode = pnode.ParentNode;
       }
     }
 
@@ -1077,17 +1074,17 @@ namespace Altaxo.Collections
     public static IEnumerable<T> TakeFromRootToHere<T>(this T node) where T : INodeWithParentNode<T>
     {
       if (node is null)
-        throw new ArgumentNullException("node");
+        throw new ArgumentNullException(nameof(node));
 
       var list = new List<T>
       {
         node
       };
-      node = node.ParentNode;
-      while (node is not null)
+      var pnode = node.ParentNode;
+      while (pnode is not null)
       {
-        list.Add(node);
-        node = node.ParentNode;
+        list.Add(pnode);
+        pnode = pnode.ParentNode;
       }
       for (int i = list.Count - 1; i >= 0; --i)
         yield return list[i];
@@ -1285,7 +1282,7 @@ namespace Altaxo.Collections
       if (0 == hashOfSelectedNodes.Count)
         return false; // nothing to move
 
-      T parent = hashOfSelectedNodes.First().ParentNode;
+      var parent = hashOfSelectedNodes.First().ParentNode;
       if (parent is null)
         return false; // nodes does not have a parent
       var childs = parent.ChildNodes;

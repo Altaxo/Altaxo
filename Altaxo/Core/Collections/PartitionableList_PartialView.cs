@@ -242,9 +242,9 @@ namespace Altaxo.Collections
       {
         get
         {
-#pragma warning disable CS8603 // Possible null reference return.
+#pragma warning disable CS8600,CS8603 // Possible null reference return.
           return (M)_collection[_itemIndex[index]];
-#pragma warning restore CS8603 // Possible null reference return.
+#pragma warning restore CS8600,CS8603 // Possible null reference return.
         }
         set
         {
@@ -309,10 +309,10 @@ namespace Altaxo.Collections
 
       public void CopyTo(M[] array, int arrayIndex)
       {
-#pragma warning disable CS8601 // Possible null reference assignment.
+#pragma warning disable CS8600, 8601 // Possible null reference assignment.
         for (int i = 0; i < _itemIndex.Count; ++i)
           array[i + arrayIndex] = (M)_collection[_itemIndex[i]];
-#pragma warning restore CS8601 // Possible null reference assignment.
+#pragma warning restore CS8600, 8601 // Possible null reference assignment.
       }
 
       public int Count
@@ -341,10 +341,10 @@ namespace Altaxo.Collections
 
       public IEnumerator<M> GetEnumerator()
       {
-#pragma warning disable CS8603 // Possible null reference return.
+#pragma warning disable CS8600, CS8603 // Possible null reference return.
         foreach (int j in _itemIndex)
           yield return (M)_collection[j];
-#pragma warning restore CS8603 // Possible null reference return.
+#pragma warning restore CS8600, CS8603 // Possible null reference return.
       }
 
       System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
