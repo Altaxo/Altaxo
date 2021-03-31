@@ -189,7 +189,7 @@ namespace Altaxo.Calc.Ode
     /// Provides the core with the parameters found in the <paramref name="options"/>.
     /// </summary>
     /// <param name="options">The options to set.</param>
-    protected virtual void SetOptionsToCore(RungeKuttaOptions options)
+    protected virtual void SetOptionsToCore(OdeMethodOptions options)
     {
       if (_core is null)
         throw NewCoreNotInitializedException;
@@ -207,11 +207,11 @@ namespace Altaxo.Calc.Ode
     /// are intended for immediate consumption, because the content of the array will change in the further course of the
     /// evaluation.
     /// </summary>
-    /// <param name="options">The evaluation options, see <see cref="RungeKuttaOptions"/>.</param>
+    /// <param name="options">The evaluation options, see <see cref="OdeMethodOptions"/>.</param>
     /// <returns>Tuple of the current x, and y values. The y-values are intended for immediate consumption,
     /// because the content of the array will change in the further course of the
     /// evaluation.</returns>
-    public virtual IEnumerable<(double X, double[] Y_volatile)> GetSolutionPointsVolatile(RungeKuttaOptions options)
+    public virtual IEnumerable<(double X, double[] Y_volatile)> GetSolutionPointsVolatile(OdeMethodOptions options)
     {
       if (_core is null)
         throw NewCoreNotInitializedException;
@@ -237,9 +237,9 @@ namespace Altaxo.Calc.Ode
     /// <summary>
     /// Gets a sequence of solution points, using the settings in the argument. 
     /// </summary>
-    /// <param name="options">The evaluation options, see <see cref="RungeKuttaOptions"/>.</param>
+    /// <param name="options">The evaluation options, see <see cref="OdeMethodOptions"/>.</param>
     /// <returns>Tuple of the current x, and y values. The array of y-values is a copy of the solution vector, and is therefore save be to stored permanently.</returns>
-    public virtual IEnumerable<(double X, double[] Y)> GetSolutionPoints(RungeKuttaOptions options)
+    public virtual IEnumerable<(double X, double[] Y)> GetSolutionPoints(OdeMethodOptions options)
     {
       return GetSolutionPointsVolatile(options).Select(sp => (sp.X, Clone(sp.Y_volatile)));
     }
@@ -405,7 +405,7 @@ namespace Altaxo.Calc.Ode
     /// </summary>
     /// <param name="options">The evaluation options.</param>
     /// <returns></returns>
-    protected virtual IEnumerable<(double X, double[] Y_volatile)> GetSolutionPointsVolatile_WithStepSizeControl(RungeKuttaOptions options)
+    protected virtual IEnumerable<(double X, double[] Y_volatile)> GetSolutionPointsVolatile_WithStepSizeControl(OdeMethodOptions options)
     {
       if (_core is null)
         throw NewCoreNotInitializedException;
@@ -550,7 +550,7 @@ namespace Altaxo.Calc.Ode
     /// </summary>
     /// <param name="options">The evaluation options.</param>
     /// <returns></returns>
-    protected virtual IEnumerable<(double X, double[] Y_volatile)> GetSolutionPointsVolatile_WithoutStepSizeControl(RungeKuttaOptions options)
+    protected virtual IEnumerable<(double X, double[] Y_volatile)> GetSolutionPointsVolatile_WithoutStepSizeControl(OdeMethodOptions options)
     {
       if (_core is null)
         throw NewCoreNotInitializedException;

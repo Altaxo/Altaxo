@@ -30,7 +30,7 @@ using System.Threading.Tasks;
 
 namespace Altaxo.Calc.LinearAlgebra
 {
-  public class BandDoubleMatrix : IMatrix<double>, IROBandMatrix<double>, IROMatrixLevel1<double>
+  public class BandDoubleMatrix : IMatrix<double>, IROBandMatrix<double>, IROMatrixLevel1<double>, IMatrixLevel1<double>
   {
     private double[][] _array;
     private int _rowCount;
@@ -226,6 +226,32 @@ namespace Altaxo.Calc.LinearAlgebra
 
         default:
           throw new NotImplementedException();
+      }
+    }
+
+    public void Clear()
+    {
+      for (int i = 0; i < _array.Length; ++i)
+      {
+        Array.Clear(_array[i], 0, _array[i].Length);
+      }
+    }
+
+    public void CopyFrom(IROMatrix<double> from)
+    {
+      if (this.RowCount != from.RowCount || this.ColumnCount != from.ColumnCount)
+        throw new ArgumentException("Dimensions do not match", nameof(from));
+
+      if (from is BandDoubleMatrix bdm)
+      {
+        for (int i = 0; i < _array.Length; ++i)
+        {
+          Array.Copy(bdm._array[i], _array[i], bdm._array[i].Length);
+        }
+      }
+      else
+      {
+        MatrixMath.Copy(from, this);
       }
     }
   }

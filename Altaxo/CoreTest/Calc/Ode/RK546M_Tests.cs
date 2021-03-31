@@ -1,4 +1,16 @@
-﻿using System;
+﻿#region Copyright
+
+/////////////////////////////////////////////////////////////////////////////
+//
+//    Altaxo:  a data processing and data plotting program
+//    Copyright (C) 2002-2021 Dr. Dirk Lellinger
+//    This source file is licensed under the MIT license.
+//
+/////////////////////////////////////////////////////////////////////////////
+
+#endregion Copyright
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -93,7 +105,7 @@ namespace Altaxo.Calc.Ode
     {
       var ode2 = new RK546M();
       ode2.Initialize(0, new double[] { 1 }, (x, y, d) => { d[0] = -y[0]; });
-      var it2 = ode2.GetSolutionPointsVolatile(new RungeKuttaOptions { StepSize = 0.5, OptionalSolutionPoints = RungeKuttaOptions.GetEquidistantSequence(0.25, 0.5) }).GetEnumerator();
+      var it2 = ode2.GetSolutionPointsVolatile(new OdeMethodOptions { StepSize = 0.5, OptionalSolutionPoints = OdeMethodOptions.GetEquidistantSequence(0.25, 0.5) }).GetEnumerator();
 
       var maxRelErr_InterpolatedPoints = 0.0;
       int maxRelErr_InterpolatedPointsIndex = -1;
@@ -207,7 +219,7 @@ namespace Altaxo.Calc.Ode
 
         var ode = new RK546M();
         ode.Initialize(0, new double[] { 1 }, (x, y, d) => { d[0] = -y[0]; });
-        var points = ode.GetSolutionPointsVolatile(new RungeKuttaOptions { InitialStepSize = 2, RelativeTolerance = targetAccuracy, AutomaticStepSizeControl = true });
+        var points = ode.GetSolutionPointsVolatile(new OdeMethodOptions { InitialStepSize = 2, RelativeTolerance = targetAccuracy, AutomaticStepSizeControl = true });
 
         var maxAbsErr = 0d;
         var maxAbsErrX = -1d;
@@ -251,7 +263,7 @@ namespace Altaxo.Calc.Ode
       double initialStepSize = 1 / 64d;
       var ode = new RK546M();
       ode.Initialize(0, new double[] { 1 }, (x, y, d) => { d[0] = -y[0]; });
-      var points = ode.GetSolutionPoints(new RungeKuttaOptions { InitialStepSize = initialStepSize, RelativeTolerance = 1E-4, AbsoluteTolerance = 1E-4, AutomaticStepSizeControl = true });
+      var points = ode.GetSolutionPoints(new OdeMethodOptions { InitialStepSize = initialStepSize, RelativeTolerance = 1E-4, AbsoluteTolerance = 1E-4, AutomaticStepSizeControl = true });
 
       double maxStepSize = 0;
       double previousStepSize = 0;
@@ -275,9 +287,9 @@ namespace Altaxo.Calc.Ode
       var ode = new RK546M();
       ode.Initialize(0, new double[] { 1 }, (x, y, d) => { d[0] = -y[0]; });
 
-      var mandatoryPoints = RungeKuttaOptions.GetEquidistantSequence(1 / 8d, 1 / 8d, 10);
+      var mandatoryPoints = OdeMethodOptions.GetEquidistantSequence(1 / 8d, 1 / 8d, 10);
 
-      var points = ode.GetSolutionPointsVolatile(new RungeKuttaOptions { InitialStepSize = 2, RelativeTolerance = 1E-6, AutomaticStepSizeControl = true, MandatorySolutionPoints = mandatoryPoints, IncludeAutomaticStepsInOutput = false });
+      var points = ode.GetSolutionPointsVolatile(new OdeMethodOptions { InitialStepSize = 2, RelativeTolerance = 1E-6, AutomaticStepSizeControl = true, MandatorySolutionPoints = mandatoryPoints, IncludeAutomaticStepsInOutput = false });
 
       var maxAbsErr = 0d;
       var maxAbsErrX = -1d;
@@ -321,10 +333,10 @@ namespace Altaxo.Calc.Ode
       var ode = new RK546M();
       ode.Initialize(0, new double[] { 1 }, (x, y, d) => { d[0] = -y[0]; });
 
-      var mandatoryPoints = RungeKuttaOptions.GetEquidistantSequence(1 / 8d, 1 / 8d, 10);
-      var optionalPoints = RungeKuttaOptions.GetEquidistantSequence(1 / 64d, 1 / 64d, 80);
+      var mandatoryPoints = OdeMethodOptions.GetEquidistantSequence(1 / 8d, 1 / 8d, 10);
+      var optionalPoints = OdeMethodOptions.GetEquidistantSequence(1 / 64d, 1 / 64d, 80);
 
-      var points = ode.GetSolutionPointsVolatile(new RungeKuttaOptions { InitialStepSize = 2, RelativeTolerance = 1E-6, AutomaticStepSizeControl = true, MandatorySolutionPoints = mandatoryPoints, OptionalSolutionPoints = optionalPoints, IncludeAutomaticStepsInOutput = false });
+      var points = ode.GetSolutionPointsVolatile(new OdeMethodOptions { InitialStepSize = 2, RelativeTolerance = 1E-6, AutomaticStepSizeControl = true, MandatorySolutionPoints = mandatoryPoints, OptionalSolutionPoints = optionalPoints, IncludeAutomaticStepsInOutput = false });
 
       var maxAbsErr = 0d;
       var maxAbsErrX = -1d;
@@ -388,7 +400,7 @@ namespace Altaxo.Calc.Ode
       ode.Initialize(0, yinitial, CalcRates);
 
 
-      var points = ode.GetSolutionPointsVolatile(new RungeKuttaOptions { InitialStepSize = 1 / 64d, RelativeTolerance = 1E-4, AbsoluteTolerance = 1E-4, AutomaticStepSizeControl = true });
+      var points = ode.GetSolutionPointsVolatile(new OdeMethodOptions { InitialStepSize = 1 / 64d, RelativeTolerance = 1E-4, AbsoluteTolerance = 1E-4, AutomaticStepSizeControl = true });
 
       double maxStepSize = 0;
       double previousStepSize = 0;

@@ -46,7 +46,7 @@ namespace Altaxo.Calc.LinearAlgebra
   /// <para>Adopted to Altaxo (c) 2005 Dr. Dirk Lellinger.</para>
   /// </remarks>
   [System.Serializable]
-  public sealed class DoubleMatrix : IMatrix<double>, ICloneable, IFormattable, IEnumerable, ICollection, IList
+  public sealed class DoubleMatrix : IMatrix<double>, ICloneable, IFormattable, IEnumerable, ICollection, IList, IMatrixLevel1<double>
   {
 #if MANAGED
     internal double[][] data;
@@ -537,7 +537,17 @@ namespace Altaxo.Calc.LinearAlgebra
       var fromData = x.data;
       var toData = data;
       for (int i = 0; i < rows; ++i)
+      {
         Array.Copy(fromData[i], toData[i], cols);
+      }
+    }
+
+    public void CopyFrom(IROMatrix<double> from)
+    {
+      if (from is DoubleMatrix dm)
+        CopyFrom(dm);
+      else
+        MatrixMath.Copy(from, this);
     }
 
     ///<summary>Check if <c>DoubleMatrix</c> variable is the same as another object.</summary>
@@ -2267,6 +2277,23 @@ namespace Altaxo.Calc.LinearAlgebra
       double[] result = new double[source.Count];
       ToLinearArray(source, result);
       return result;
+    }
+
+
+
+    public IEnumerable<(int row, int column, double value)> EnumerateElementsIndexed(Zeros zeros = Zeros.AllowSkip)
+    {
+      throw new NotImplementedException();
+    }
+
+    public void MapIndexed(Func<int, int, double, double> function, IMatrix<double> result, Zeros zeros = Zeros.AllowSkip)
+    {
+      throw new NotImplementedException();
+    }
+
+    public void MapIndexed<T1>(T1 sourceParameter1, Func<int, int, double, T1, double> function, IMatrix<double> result, Zeros zeros = Zeros.AllowSkip)
+    {
+      throw new NotImplementedException();
     }
 
     #endregion Additions due to Adoption to Altaxo

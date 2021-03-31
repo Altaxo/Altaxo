@@ -132,5 +132,11 @@ namespace Altaxo.Calc.LinearAlgebra
     /// Sets all elements of the matrix to the default value (i.e. zero for numerical values).
     /// </summary>
     void Clear();
+
+    /// <summary>
+    /// Copies elements from another matrix.
+    /// </summary>
+    /// <param name="from">From.</param>
+    void CopyFrom(IROMatrix<T> from);
   }
 }

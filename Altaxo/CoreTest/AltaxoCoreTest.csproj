@@ -11,11 +11,7 @@
   
   <ItemGroup>
     <ProjectReference Include="..\Core\AltaxoCore.csproj" />
-    <ProjectReference Include="..\..\Analyzer\NullComparisonAnalyzer\NullComparisonAnalyzer.csproj"
-                  PrivateAssets="all"
-                  ReferenceOutputAssembly="false"
-                  OutputItemType="Analyzer"
-                      />
+    <ProjectReference Include="..\..\Analyzer\NullComparisonAnalyzer\NullComparisonAnalyzer.csproj" PrivateAssets="all" ReferenceOutputAssembly="false" OutputItemType="Analyzer" />
   </ItemGroup>
 
   <ItemGroup>
