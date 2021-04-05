@@ -199,6 +199,7 @@ namespace Altaxo.Calc.Ode
       _core.RelativeTolerances = Clone(options.RelativeTolerances);
       _core.StepSizeFilter = options.StepSizeFilter;
       _core.StiffnessDetectionEveryNumberOfSteps = options.StiffnessDetectionEveryNumberOfSteps;
+      _core.ErrorNorm = options.ErrorNorm;
 
     }
 
@@ -500,7 +501,13 @@ namespace Altaxo.Calc.Ode
           // Make the step with the effective step size.
           _core.EvaluateNextSolutionPoint(x_nextStepEffective);
 
-          error_current = _core.GetRelativeError();
+          error_current = _core.ErrorNorm switch
+          {
+            ErrorNorm.L2Norm => _core.GetRelativeError_L2Norm(),
+            ErrorNorm.InfinityNorm => _core.GetRelativeError_InfinityNorm(),
+            _ => throw new NotImplementedException()
+          };
+
           if (double.IsNaN(error_current) || double.IsInfinity(error_current))
             error_current = 10; // if error is NaN then probably the step size is too big, we force to reduce step size by setting error to 10
           stepSize = _core.GetRecommendedStepSize(error_current, error_previous);

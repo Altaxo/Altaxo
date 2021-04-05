@@ -45,6 +45,12 @@ namespace Altaxo.Calc.Ode
       /// <summary>True if the last point is the same as first point (FSAL property). This is for instance true for the Dormand-Prince (<see cref="RK547M"/>) method.</summary>
       protected readonly bool _isFirstSameAsLastMethod;
 
+      /// <summary>
+      /// The vector norm, by which from the vector of relative errors (dimension N) the scalar relative error is calculated.
+      /// </summary>
+      public ErrorNorm ErrorNorm { get; internal set; } = ErrorNorm.InfinityNorm;
+
+
       /// <summary>Central coefficients of the Runge-Kutta scheme. See [1], page 135.</summary>
       protected double[][] _a;
 
@@ -627,10 +633,10 @@ namespace Altaxo.Calc.Ode
       }
 
       /// <summary>
-      /// Gets the relative error, which should be in the order of 1, if the step size is optimally chosen.
+      /// Gets the relative error by the infinity norm, which should be in the order of 1, if the step size is optimally chosen.
       /// </summary>
       /// <returns>The relative error (relative to the absolute and relative tolerance).</returns>
-      public virtual double GetRelativeError()
+      public virtual double GetRelativeError_InfinityNorm()
       {
         // Compute error (see [1], page 168
         // error computation in L2 or L-infinity norm is possible
@@ -689,6 +695,80 @@ namespace Altaxo.Calc.Ode
           e = Math.Pow(4, _order); // return a high relative error
         }
         return e;
+      }
+
+
+      /// <summary>
+      /// Gets the relative error calculated by the L2-norm, which should be in the order of 1, if the step size is optimally chosen.
+      /// </summary>
+      /// <returns>The relative error (relative to the absolute and relative tolerance).</returns>
+      public virtual double GetRelativeError_L2Norm()
+      {
+        // Compute error (see [1], page 168
+        // error computation in L2 or L-infinity norm is possible
+        // here, L2 is used
+
+        if (_bhml is null)
+        {
+          throw new InvalidOperationException("In order to evaluate errors, the evaluation of the low order y has to be done, but the low order coefficients were not set!");
+        }
+
+        
+        var ylocalerror = _y_current_LocalError;
+        int n = ylocalerror.Length;
+        var ycurrent = _y_current;
+        var yprevious = _y_previous;
+
+        double sumresqr = 0;
+        if (_absoluteTolerances.Length == 1 && _relativeTolerances.Length == 1)
+        {
+          var absoluteTolerance = _absoluteTolerances[0];
+          var relativeTolerance = _relativeTolerances[0];
+          for (int i = 0; i < ycurrent.Length; ++i)
+          {
+            var re = Math.Abs(ylocalerror[i]) / Math.Max(absoluteTolerance, relativeTolerance * Math.Max(Math.Abs(ycurrent[i]), Math.Abs(yprevious[i])));
+            sumresqr += re * re;
+          }
+        }
+        else if (_absoluteTolerances.Length > 1 && _relativeTolerances.Length > 1)
+        {
+          for (int i = 0; i < ycurrent.Length; ++i)
+          {
+            var re = Math.Abs(ylocalerror[i]) / Math.Max(_absoluteTolerances[i], _relativeTolerances[i] * Math.Max(Math.Abs(ycurrent[i]), Math.Abs(yprevious[i])));
+            sumresqr += re * re;
+          }
+        }
+        else if (_relativeTolerances.Length == 1)
+        {
+          var relativeTolerance = _relativeTolerances[0];
+          for (int i = 0; i < ycurrent.Length; ++i)
+          {
+            var re = Math.Abs(ylocalerror[i]) / Math.Max(_absoluteTolerances[i], relativeTolerance * Math.Max(Math.Abs(ycurrent[i]), Math.Abs(yprevious[i])));
+            sumresqr += re * re;
+          }
+        }
+        else if (_absoluteTolerances.Length == 1)
+        {
+          var absoluteTolerance = _absoluteTolerances[0];
+          for (int i = 0; i < ycurrent.Length; ++i)
+          {
+            var re = Math.Abs(ylocalerror[i]) / Math.Max(absoluteTolerance, _relativeTolerances[i] * Math.Max(Math.Abs(ycurrent[i]), Math.Abs(yprevious[i])));
+            sumresqr += re * re;
+          }
+        }
+
+        var relError = Math.Sqrt(sumresqr / n);
+
+        // Ensure that always a valid error is returned
+        if (relError == 0) // Problem has lower order than our method
+        {
+          relError = Math.Pow(4, -_order); // we ensure a small relative error in order to increase the step size
+        }
+        else if (double.IsNaN(relError) || double.IsInfinity(relError)) // probably the step was so big that there is no valid result
+        {
+          relError = Math.Pow(4, _order); // return a high relative error
+        }
+        return relError;
       }
 
       /// <summary>
