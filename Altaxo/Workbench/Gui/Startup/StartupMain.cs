@@ -41,6 +41,16 @@ namespace Altaxo.Gui.Startup
   {
     private static readonly string[] _possibleStartupAssemblyNameEnds = { "startup", "startup32", "startup64" };
 
+    private static bool AttachDebugger(params string[] startupArgs)
+    {
+      foreach (string arg in startupArgs ?? Enumerable.Empty<string>())
+      {
+        if (arg == "--attachDebugger")
+          return true;
+      }
+      return false;
+    }
+
     private static bool UseExceptionBox(params string[] startupArgs)
     {
 #if DEBUG
@@ -85,6 +95,25 @@ namespace Altaxo.Gui.Startup
       // Make sure to use nothing except from this Assembly (event not derived from another assembly)
       // until the splash screen is shown
       // otherwise other assemblies will be loaded before the splash screen is visible
+
+      if (AttachDebugger(args))
+      {
+        System.Diagnostics.Debugger.Launch();
+        if (System.Diagnostics.Debugger.IsAttached)
+        {
+          System.Diagnostics.Debugger.Break();
+        }
+        else
+        {
+          Console.Write("Wait for a debugger to be attached...");
+          for (int i = 0; i < 30; ++i)
+          {
+            Console.Write(".");
+            System.Threading.Thread.Sleep(1000);
+          }
+          System.Diagnostics.Debugger.Break();
+        }
+      }
 
       var startupArguments = new StartupArguments(FindApplicationName(), args);
 
@@ -182,9 +211,9 @@ namespace Altaxo.Gui.Startup
     {
       // Safety check: our setup already checks that .NET 4 is installed, but we manually check the .NET version in case the app is
       // used on another machine than it was installed on (e.g. "on USB stick")
-      if (!Altaxo.Main.Services.NetFrameworkVersionDetermination.IsVersion471Installed())
+      if (!Altaxo.Main.Services.NetFrameworkVersionDetermination.IsVersion48Installed())
       {
-        MessageBox.Show(string.Format("This version of {0} requires .NET 4.7.1 You are using: {1}", args.ApplicationName, Environment.Version));
+        MessageBox.Show(string.Format("This version of {0} requires .NET 4.8 You are using: {1}", args.ApplicationName, Environment.Version));
         return false;
       }
       // Work around a WPF issue when %WINDIR% is set to an incorrect path
