@@ -109,7 +109,9 @@ namespace Altaxo.AddInItems
   /// <seealso cref="System.Runtime.Loader.AssemblyLoadContext" />
   public class LoadContextIntoDefault : AssemblyLoadContext
   {
+    /// <summary>Resolver for the addin folder</summary>
     private AssemblyDependencyResolver _resolver;
+
     private string _pluginAssemblyFileName;
 
     /// <summary>
@@ -143,12 +145,24 @@ namespace Altaxo.AddInItems
       {
         // otherwise, we use the _resolver to resolve the dependent assembly
         string? assemblyPath = _resolver.ResolveAssemblyToPath(assemblyName);
-        if (!(assemblyPath is null))
+        if (assemblyPath is not null)
         {
           // note that we load the dependent assemblies into the default load context,
           // and not in this context here
           // by this way we avoid that we load the same assembly in different contexts
           result = Default.LoadFromAssemblyPath(assemblyPath);
+        }
+        else
+        {
+          var dirInfo = new DirectoryInfo(Path.GetDirectoryName(Assembly.GetEntryAssembly()!.Location)!);
+          var fileInfo = dirInfo.EnumerateFiles(assemblyName.Name + ".dll").FirstOrDefault();
+          if (fileInfo is not null)
+          {
+            // note that we load the dependent assemblies into the default load context,
+            // and not in this context here
+            // by this way we avoid that we load the same assembly in different contexts
+            result = Default.LoadFromAssemblyPath(fileInfo.FullName);
+          }
         }
       }
 
