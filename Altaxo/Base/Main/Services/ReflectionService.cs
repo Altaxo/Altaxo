@@ -387,7 +387,7 @@ namespace Altaxo.Main.Services
     {
       foreach (AssemblyName assName in assemblyNames)
       {
-        if (assName.FullName == searchedName.FullName)
+        if (AssemblyName.ReferenceMatchesDefinition(searchedName, assName))
           return true;
       }
 
