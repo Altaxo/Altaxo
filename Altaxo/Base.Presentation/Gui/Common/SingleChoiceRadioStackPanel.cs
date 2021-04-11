@@ -35,9 +35,9 @@ namespace Altaxo.Gui.Common
 {
   public class SingleChoiceRadioStackPanel : StackPanel
   {
-    public event Action? SelectionChanged;
+    public event EventHandler? SelectionChanged;
 
-    #region Dependency property
+    #region Dependency properties
 
     public static readonly DependencyProperty ItemsSourceProperty =
     DependencyProperty.Register(
@@ -49,9 +49,9 @@ namespace Altaxo.Gui.Common
     /// <summary>
     /// Gets/sets the quantity. The quantity consist of a numeric value together with a unit.
     /// </summary>
-    public SelectableListNodeList ItemsSource
+    public SelectableListNodeList? ItemsSource
     {
-      get { var result = (SelectableListNodeList)GetValue(ItemsSourceProperty); return result; }
+      get { return (SelectableListNodeList)GetValue(ItemsSourceProperty); }
       set { SetValue(ItemsSourceProperty, value); }
     }
 
@@ -62,11 +62,10 @@ namespace Altaxo.Gui.Common
 
     protected void OnItemsSourceChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
     {
-      var list = args.NewValue as SelectableListNodeList;
-      if (list is not null)
+      if (args.NewValue is SelectableListNodeList newItemsSource)
       {
-        SelectedItem = list.FirstSelectedNode;
-        Initialize(list);
+        SelectedItem = newItemsSource.FirstSelectedNode;
+        Initialize(newItemsSource);
       }
       else
       {
@@ -75,18 +74,18 @@ namespace Altaxo.Gui.Common
     }
 
     public static readonly DependencyProperty SelectedItemProperty =
-   DependencyProperty.Register(
-     nameof(SelectedItem),
-     typeof(SelectableListNode),
-     typeof(SingleChoiceRadioStackPanel),
-     new FrameworkPropertyMetadata(EhSelectedItemChanged));
+      DependencyProperty.Register(
+        nameof(SelectedItem),
+        typeof(SelectableListNode),
+        typeof(SingleChoiceRadioStackPanel),
+        new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, EhSelectedItemChanged));
 
     /// <summary>
     /// Gets/sets the quantity. The quantity consist of a numeric value together with a unit.
     /// </summary>
-    public SelectableListNode SelectedItem
+    public SelectableListNode? SelectedItem
     {
-      get { var result = (SelectableListNode)GetValue(SelectedItemProperty); return result; }
+      get { return (SelectableListNode)GetValue(SelectedItemProperty); }
       set { SetValue(SelectedItemProperty, value); }
     }
 
@@ -97,30 +96,25 @@ namespace Altaxo.Gui.Common
 
     protected void OnSelectedItemChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
     {
-      var list = ItemsSource;
-
-      if (list is not null)
-      {
-        list.ClearSelectionsAll();
-        if (args.NewValue is not null)
-          list.SetSelection((node) => object.ReferenceEquals(node, args.NewValue));
-      }
+      SelectionChanged?.Invoke(this, EventArgs.Empty);
     }
 
     #endregion
 
+    private SelectableListNodeList _choices;
 
     public void Initialize(SelectableListNodeList choices)
     {
-      if (!object.ReferenceEquals(choices, ItemsSource))
+      _choices = choices;
+      if (!object.ReferenceEquals(_choices, ItemsSource))
       {
-        ItemsSource = choices;
+        ItemsSource = _choices;
       }
 
       Children.Clear();
-      if (choices is not null)
+      if (_choices is not null)
       {
-        foreach (var choice in choices)
+        foreach (var choice in _choices)
         {
           var rb = new RadioButton
           {
@@ -128,14 +122,9 @@ namespace Altaxo.Gui.Common
             ToolTip = choice.Text0,
             Tag = choice,
             IsChecked = choice.IsSelected,
-
+            Margin = Orientation == Orientation.Horizontal ? new Thickness(3, 0, 3, 0) : new Thickness(0, 3, 0, 3),
           };
           rb.Checked += EhRadioButtonChecked;
-
-          if (Orientation == System.Windows.Controls.Orientation.Horizontal)
-            rb.Margin = new Thickness(3, 0, 3, 0);
-          else
-            rb.Margin = new Thickness(0, 3, 0, 3);
 
           Children.Add(rb);
         }
@@ -145,14 +134,16 @@ namespace Altaxo.Gui.Common
     private void EhRadioButtonChecked(object sender, RoutedEventArgs e)
     {
       var rb = (RadioButton)sender;
-      var node = rb.Tag as SelectableListNode;
-      if (node is not null && (true == rb.IsChecked))
+      if (rb.Tag is SelectableListNode node)
       {
-        SelectedItem = node;
+        _choices.ClearSelectionsAll();
+        node.IsSelected = true == rb.IsChecked;
+
+        if (node.IsSelected)
+        {
+          SelectedItem = node;
+        }
       }
-
-
-      SelectionChanged?.Invoke();
     }
   }
 }

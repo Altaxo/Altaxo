@@ -35,40 +35,130 @@ namespace Altaxo.Gui.Common
 {
   public class SingleChoiceRadioWrapPanel : WrapPanel
   {
-    public event Action? SelectionChanged;
+    public event EventHandler? SelectionChanged;
+
+    #region Dependency properties
+
+    public static readonly DependencyProperty ItemsSourceProperty =
+    DependencyProperty.Register(
+      nameof(ItemsSource),
+      typeof(SelectableListNodeList),
+      typeof(SingleChoiceRadioWrapPanel),
+      new FrameworkPropertyMetadata(EhItemsSourceChanged));
+
+    /// <summary>
+    /// Gets/sets the quantity. The quantity consist of a numeric value together with a unit.
+    /// </summary>
+    public SelectableListNodeList? ItemsSource
+    {
+      get { return (SelectableListNodeList)GetValue(ItemsSourceProperty); }
+      set { SetValue(ItemsSourceProperty, value); }
+    }
+
+    private static void EhItemsSourceChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
+    {
+      ((SingleChoiceRadioWrapPanel)obj).OnItemsSourceChanged(obj, args);
+    }
+
+    /// <summary>
+    /// Triggers the <see cref="SelectedQuantityChanged"/> event.
+    /// </summary>
+    /// <param name="obj">Dependency object (here: the control).</param>
+    /// <param name="args">Property changed event arguments.</param>
+    protected void OnItemsSourceChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
+    {
+      if (args.NewValue is SelectableListNodeList newItemsSource)
+      {
+        SelectedItem = newItemsSource.FirstSelectedNode;
+        Initialize(newItemsSource);
+      }
+      else
+      {
+        SelectedItem = null;
+      }
+    }
+
+
+    public static readonly DependencyProperty SelectedItemProperty =
+      DependencyProperty.Register(
+        nameof(SelectedItem),
+        typeof(SelectableListNode),
+        typeof(SingleChoiceRadioWrapPanel),
+        new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, EhSelectedItemChanged));
+
+    /// <summary>
+    /// Gets/sets the quantity. The quantity consist of a numeric value together with a unit.
+    /// </summary>
+    public SelectableListNode? SelectedItem
+    {
+      get { return (SelectableListNode)GetValue(SelectedItemProperty); }
+      set { SetValue(SelectedItemProperty, value); }
+    }
+
+    private static void EhSelectedItemChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
+    {
+      ((SingleChoiceRadioWrapPanel)obj).OnSelectedItemChanged(obj, args);
+    }
+
+    /// <summary>
+    /// Triggers the <see cref="SelectedQuantityChanged"/> event.
+    /// </summary>
+    /// <param name="obj">Dependency object (here: the control).</param>
+    /// <param name="args">Property changed event arguments.</param>
+    protected void OnSelectedItemChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
+    {
+      SelectionChanged?.Invoke(this, EventArgs.Empty);
+    }
+
+    #endregion
+
+
 
     private SelectableListNodeList _choices;
+
+
 
     public void Initialize(SelectableListNodeList choices)
     {
       _choices = choices;
-      Children.Clear();
-      foreach (var choice in _choices)
+      if (!object.ReferenceEquals(_choices, ItemsSource))
       {
-        var rb = new RadioButton
+        ItemsSource = _choices;
+      }
+
+      Children.Clear();
+      if (_choices is not null)
+      {
+        foreach (var choice in _choices)
         {
-          Content = choice.Text,
-          Tag = choice,
-          IsChecked = choice.IsSelected
-        };
-        rb.Checked += EhRadioButtonChecked;
-        rb.Margin = new Thickness(4, 4, 0, 0);
-        Children.Add(rb);
+          var rb = new RadioButton
+          {
+            Content = choice.Text,
+            ToolTip = choice.Text0,
+            Tag = choice,
+            IsChecked = choice.IsSelected,
+            Margin = Orientation == Orientation.Horizontal ? new Thickness(3, 0, 3, 0) : new Thickness(0, 3, 0, 3),
+          };
+          rb.Checked += EhRadioButtonChecked;
+
+          Children.Add(rb);
+        }
       }
     }
 
     private void EhRadioButtonChecked(object sender, RoutedEventArgs e)
     {
       var rb = (RadioButton)sender;
-      var node = rb.Tag as SelectableListNode;
-      if (node is not null)
+      if (rb.Tag is SelectableListNode node)
       {
         _choices.ClearSelectionsAll();
         node.IsSelected = true == rb.IsChecked;
-      }
 
-      if (SelectionChanged is not null)
-        SelectionChanged();
+        if (node.IsSelected)
+        {
+          SelectedItem = node;
+        }
+      }
     }
   }
 }
