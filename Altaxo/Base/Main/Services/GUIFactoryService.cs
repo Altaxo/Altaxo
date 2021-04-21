@@ -441,8 +441,10 @@ namespace Altaxo.Main.Services
           }
 
           // we can try to use a property grid
-          controller = new PropertyController(args[0]);
-          FindAndAttachControlTo(controller);
+          var pcontroller = new Altaxo.Gui.Common.PropertyGrid.PropertyGridController<object>();
+          pcontroller.InitializeDocument(args[0]);
+          FindAndAttachControlTo(pcontroller);
+          controller = pcontroller;
         }
 
         if (ShowDialog(controller, title, showApplyButton))
