@@ -4,7 +4,7 @@
     <UseWPF>true</UseWPF>
     <UseWindowsForms>true</UseWindowsForms>
     <RootNamespace>WPG</RootNamespace>
-    <AssemblyName>WpfPropertyGrid</AssemblyName>
+    <AssemblyName>WPG</AssemblyName>
     <LangVersion>preview</LangVersion>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
