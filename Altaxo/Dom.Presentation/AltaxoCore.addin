@@ -224,7 +224,7 @@
 					description="${res:XML.MainMenu.FileMenu.SaveCopyOfProjectAs.Description}" class="Altaxo.Main.Commands.FileSaveCopyAs" />
       </Condition>
       <MenuItem id="NewDocId" label="${res:XML.MainMenu.FileMenu.NewDocumentIdentifier}"
-				description="${res:XML.MainMenu.FileMenu..NewDocumentIdentifier.Description}" class="Altaxo.Main.Commands.NewDocumentIdentifier" />
+				description="${res:XML.MainMenu.FileMenu.NewDocumentIdentifier.Description}" class="Altaxo.Main.Commands.NewDocumentIdentifier" />
       <MenuItem id="SaveProjectSeparator" type = "Separator" />
       <Condition name = "WindowActive" activewindow="Altaxo.Gui.Worksheet.Viewing.WorksheetController" action="Exclude">
         <MenuItem id="SaveWorksheetAs" label="${res:XML.MainMenu.FileMenu.SaveWorksheetAs}" icon="Icons.16x16.SaveIcon"
