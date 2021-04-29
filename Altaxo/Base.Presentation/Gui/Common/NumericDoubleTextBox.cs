@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2021 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -72,13 +72,6 @@ namespace Altaxo.Gui.Common
 
     public bool DisallowZeroValues { get { return _converter.DisallowZeroValues; } set { _converter.DisallowZeroValues = value; } }
 
-    public double MinValue { get { return _converter.MinValue; } set { _converter.MinValue = value; } }
-
-    public double MaxValue { get { return _converter.MaxValue; } set { _converter.MaxValue = value; } }
-
-    public bool IsMinValueInclusive { get { return _converter.IsMinValueInclusive; } set { _converter.IsMinValueInclusive = value; } }
-
-    public bool IsMaxValueInclusive { get { return _converter.IsMaxValueInclusive; } set { _converter.IsMaxValueInclusive = value; } }
 
     #region Change selection behaviour
 
@@ -113,7 +106,7 @@ namespace Altaxo.Gui.Common
 
     #endregion Change selection behaviour
 
-    #region Dependency property
+    #region SelectedValue
 
     /// <summary>
     /// Gets/sets the quantity. The quantity consist of a numeric value together with a unit.
@@ -145,5 +138,134 @@ namespace Altaxo.Gui.Common
     }
 
     #endregion Dependency property
+
+    #region MinValue
+
+    /// <summary>
+    /// Gets/sets the quantity. The quantity consist of a numeric value together with a unit.
+    /// </summary>
+    public double MinValue
+    {
+      get { return (double)GetValue(MinValueProperty); }
+      set { SetValue(MinValueProperty, value); }
+    }
+
+    public static readonly DependencyProperty MinValueProperty =
+    DependencyProperty.Register(nameof(MinValue), typeof(double), typeof(NumericDoubleTextBox),
+    new FrameworkPropertyMetadata(NumericDoubleConverter.DefaultValue_MinValue, EhMinValueChanged));
+
+    private static void EhMinValueChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
+    {
+      ((NumericDoubleTextBox)obj).OnMinValueChanged(obj, args);
+    }
+
+    /// <summary>
+    /// Triggers the <see cref="SelectedValueChanged"/> event.
+    /// </summary>
+    /// <param name="obj">Dependency object (here: the control).</param>
+    /// <param name="args">Property changed event arguments.</param>
+    protected void OnMinValueChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
+    {
+      _converter.MinValue = (double)args.NewValue;
+    }
+
+    #endregion
+
+    #region MaxValue
+
+    /// <summary>
+    /// Gets/sets the quantity. The quantity consist of a numeric value together with a unit.
+    /// </summary>
+    public double MaxValue
+    {
+      get { return (double)GetValue(MaxValueProperty); }
+      set { SetValue(MaxValueProperty, value); }
+    }
+
+    public static readonly DependencyProperty MaxValueProperty =
+    DependencyProperty.Register(nameof(MaxValue), typeof(double), typeof(NumericDoubleTextBox),
+    new FrameworkPropertyMetadata(NumericDoubleConverter.DefaultValue_MaxValue, EhMaxValueChanged));
+
+    private static void EhMaxValueChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
+    {
+      ((NumericDoubleTextBox)obj).OnMaxValueChanged(obj, args);
+    }
+
+    /// <summary>
+    /// Triggers the <see cref="SelectedValueChanged"/> event.
+    /// </summary>
+    /// <param name="obj">Dependency object (here: the control).</param>
+    /// <param name="args">Property changed event arguments.</param>
+    protected void OnMaxValueChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
+    {
+      _converter.MaxValue = (double)args.NewValue;
+    }
+
+    #endregion
+
+    #region IsMinValueInclusive
+
+    /// <summary>
+    /// Gets/sets the quantity. The quantity consist of a numeric value together with a unit.
+    /// </summary>
+    public bool IsMinValueInclusive
+    {
+      get { return (bool)GetValue(IsMinValueInclusiveProperty); }
+      set { SetValue(IsMinValueInclusiveProperty, value); }
+    }
+
+    public static readonly DependencyProperty IsMinValueInclusiveProperty =
+    DependencyProperty.Register(nameof(IsMinValueInclusive), typeof(bool), typeof(NumericDoubleTextBox),
+    new FrameworkPropertyMetadata(NumericDoubleConverter.DefaultValue_IsMinValueInclusive, EhIsMinValueInclusiveChanged));
+
+    private static void EhIsMinValueInclusiveChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
+    {
+      ((NumericDoubleTextBox)obj).OnIsMinValueInclusiveChanged(obj, args);
+    }
+
+    /// <summary>
+    /// Triggers the <see cref="SelectedValueChanged"/> event.
+    /// </summary>
+    /// <param name="obj">Dependency object (here: the control).</param>
+    /// <param name="args">Property changed event arguments.</param>
+    protected void OnIsMinValueInclusiveChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
+    {
+      _converter.IsMinValueInclusive = (bool)args.NewValue;
+    }
+
+    #endregion
+
+    #region IsMaxValueInclusive
+
+    /// <summary>
+    /// Gets/sets the quantity. The quantity consist of a numeric value together with a unit.
+    /// </summary>
+    public bool IsMaxValueInclusive
+    {
+      get { return (bool)GetValue(IsMaxValueInclusiveProperty); }
+      set { SetValue(IsMaxValueInclusiveProperty, value); }
+    }
+
+    public static readonly DependencyProperty IsMaxValueInclusiveProperty =
+    DependencyProperty.Register(nameof(IsMaxValueInclusive), typeof(bool), typeof(NumericDoubleTextBox),
+    new FrameworkPropertyMetadata(NumericDoubleConverter.DefaultValue_IsMaxValueInclusive, EhIsMaxValueInclusiveChanged));
+
+    private static void EhIsMaxValueInclusiveChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
+    {
+      ((NumericDoubleTextBox)obj).OnIsMaxValueInclusiveChanged(obj, args);
+    }
+
+    /// <summary>
+    /// Triggers the <see cref="SelectedValueChanged"/> event.
+    /// </summary>
+    /// <param name="obj">Dependency object (here: the control).</param>
+    /// <param name="args">Property changed event arguments.</param>
+    protected void OnIsMaxValueInclusiveChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
+    {
+      _converter.IsMaxValueInclusive = (bool)args.NewValue;
+    }
+
+    #endregion
+
   }
 }

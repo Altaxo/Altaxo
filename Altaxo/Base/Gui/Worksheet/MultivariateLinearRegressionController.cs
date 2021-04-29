@@ -28,6 +28,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Altaxo.Calc.Regression.Multivariate;
 using Altaxo.Gui.Common;
+using Altaxo.Gui.Common.BasicTypes;
 
 namespace Altaxo.Gui.Worksheet
 {

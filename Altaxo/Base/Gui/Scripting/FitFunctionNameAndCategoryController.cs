@@ -28,6 +28,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Altaxo.Gui.Common;
+using Altaxo.Gui.Common.BasicTypes;
 using Altaxo.Scripting;
 
 namespace Altaxo.Gui.Scripting
