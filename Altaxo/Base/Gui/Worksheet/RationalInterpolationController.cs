@@ -26,6 +26,8 @@
 using System;
 using Altaxo.Calc.Interpolation;
 using Altaxo.Gui.Common;
+using Altaxo.Gui.Common.BasicTypes;
+using Altaxo.Gui.Common.PropertyGrid;
 
 namespace Altaxo.Gui.Worksheet
 {
@@ -33,36 +35,30 @@ namespace Altaxo.Gui.Worksheet
   /// Controls the Smoothing parameter of a rational cubic spline.
   /// </summary>
   [UserControllerForObject(typeof(Altaxo.Calc.Interpolation.RationalInterpolation), 100)]
-  public class RationalInterpolationController : NumericDoubleValueController
+  public class RationalInterpolationController : PropertyGridController
   {
-    private RationalInterpolation _spline;
+    private RationalInterpolation Spline => (RationalInterpolation)_doc;
 
-    public RationalInterpolationController(RationalInterpolation spline)
-      : base(spline.NumeratorDegree)
+    protected override void InitializeValueInfos()
     {
-      base._minimumValue = 0;
-      base._isMinimumValueIncluded = false;
-      _descriptionText = "Numerator degree N (N>(n-1)/2, where n is the original number of points for this interpolation) :";
-      _spline = spline;
-    }
-
-    public override object ModelObject
-    {
-      get
-      {
-        return _spline;
-      }
+      var controller = new Altaxo.Gui.Common.BasicTypes.IntegerValueController(Spline.NumeratorDegree);
+      controller.UserMinimum = 1;
+      Current.Gui.FindAndAttachControlTo(controller);
+      ValueInfos.Add(new ValueInfo("Numerator degree N (N>(n-1)/2, where n is the original number of points for this interpolation) :", controller));
     }
 
     public override bool Apply(bool disposeController)
     {
-      if (base.Apply(disposeController))
+      var controller = ValueInfos[0].Controller;
+      if (false == controller.Apply(disposeController))
       {
-        _spline.NumeratorDegree = (int)base._value1Double;
-        return true;
+        return ApplyEnd(false, disposeController);
       }
       else
-        return false;
+      {
+        Spline.NumeratorDegree = (int)controller.ModelObject;
+        return ApplyEnd(true, disposeController);
+      }
     }
   }
 }

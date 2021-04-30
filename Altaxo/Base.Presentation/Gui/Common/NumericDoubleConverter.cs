@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2021 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -34,6 +34,11 @@ namespace Altaxo.Gui.Common
 {
   public class NumericDoubleConverter : ValidationRule, IValueConverter
   {
+    public const bool DefaultValue_IsMinValueInclusive = true;
+    public const bool DefaultValue_IsMaxValueInclusive = true;
+    public const double DefaultValue_MinValue = double.NegativeInfinity;
+    public const double DefaultValue_MaxValue = double.PositiveInfinity;
+
     public bool AllowInfiniteValues { get; set; }
 
     public bool AllowNaNValues { get; set; }
@@ -56,17 +61,17 @@ namespace Altaxo.Gui.Common
       }
     }
 
-    public double _minValue = double.NegativeInfinity;
+    public double _minValue = DefaultValue_MinValue;
 
     public double MinValue { get { return _minValue; } set { _minValue = value; } }
 
-    public bool IsMinValueInclusive { get; set; }
+    public bool IsMinValueInclusive { get; set; } = DefaultValue_IsMinValueInclusive;
 
-    public double _maxValue = double.PositiveInfinity;
+    public double _maxValue = DefaultValue_MaxValue;
 
     public double MaxValue { get { return _maxValue; } set { _maxValue = value; } }
 
-    public bool IsMaxValueInclusive { get; set; }
+    public bool IsMaxValueInclusive { get; set; } = DefaultValue_IsMaxValueInclusive;
 
     private System.Globalization.CultureInfo _conversionCulture = Altaxo.Settings.GuiCulture.Instance;
 

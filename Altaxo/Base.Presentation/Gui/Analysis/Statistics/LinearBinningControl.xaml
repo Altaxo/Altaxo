@@ -1,36 +1,52 @@
-﻿<UserControl x:Class="Altaxo.Gui.Analysis.Statistics.LinearBinningControl"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-						  xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
-             mc:Ignorable="d">
-	<UserControl.Resources>
-		<axogc:InverseBooleanConverter x:Key="InverseBooleanConverter" />
-	</UserControl.Resources>
+﻿<UserControl
+    x:Class="Altaxo.Gui.Analysis.Statistics.LinearBinningControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+    <UserControl.Resources>
+        <axogc:InverseBooleanConverter x:Key="InverseBooleanConverter" />
+    </UserControl.Resources>
 
-	<Grid>
-		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="Auto" />
-			<ColumnDefinition Width="*" MinWidth="60" />
-		</Grid.ColumnDefinitions>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" MinWidth="60" />
+        </Grid.ColumnDefinitions>
 
-		<Grid.RowDefinitions>
-			<RowDefinition Height="Auto" />
-			<RowDefinition Height="4" />
-			<RowDefinition Height="Auto" />
-			<RowDefinition Height="4" />
-			<RowDefinition Height="Auto" />
-			<RowDefinition Height="4" />
-		</Grid.RowDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="4" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="4" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="4" />
+        </Grid.RowDefinitions>
 
-		<CheckBox x:Name="_guiIsUserDefinedBinOffset" Content="User defined bin offset:" />
-		<axogc:NumericDoubleTextBox x:Name="_guiBinOffset" Grid.Row="0" Grid.Column="1"  IsReadOnly="{Binding ElementName=_guiIsUserDefinedBinOffset, Path=IsChecked, Converter={StaticResource InverseBooleanConverter}}" />
+        <CheckBox x:Name="_guiIsUserDefinedBinOffset" Content="User defined bin offset:" />
+        <axogc:NumericDoubleTextBox
+            x:Name="_guiBinOffset"
+            Grid.Row="0"
+            Grid.Column="1"
+            IsReadOnly="{Binding ElementName=_guiIsUserDefinedBinOffset, Path=IsChecked, Converter={StaticResource InverseBooleanConverter}}" />
 
-		<CheckBox x:Name="_guiIsUserDefinedBinWidth" Grid.Row="2" Content="User defined bin width:" />
-		<axogc:NumericDoubleTextBox x:Name="_guiBinWidth" Grid.Row="2" Grid.Column="1" IsReadOnly="{Binding ElementName=_guiIsUserDefinedBinWidth, Path=IsChecked, Converter={StaticResource InverseBooleanConverter}}" />
+        <CheckBox
+            x:Name="_guiIsUserDefinedBinWidth"
+            Grid.Row="2"
+            Content="User defined bin width:" />
+        <axogc:NumericDoubleTextBox
+            x:Name="_guiBinWidth"
+            Grid.Row="2"
+            Grid.Column="1"
+            IsReadOnly="{Binding ElementName=_guiIsUserDefinedBinWidth, Path=IsChecked, Converter={StaticResource InverseBooleanConverter}}" />
 
-		<Label Grid.Row="4" Content="Resulting number of bins:" />
-		<axogc:NumericDoubleTextBox x:Name="_guiBinCount" Grid.Row="4" Grid.Column="1" IsReadOnly="True" />
-	</Grid>
+        <Label Grid.Row="4" Content="Resulting number of bins:" />
+        <axogc:NumericDoubleTextBox
+            x:Name="_guiBinCount"
+            Grid.Row="4"
+            Grid.Column="1"
+            IsReadOnly="True" />
+    </Grid>
 </UserControl>

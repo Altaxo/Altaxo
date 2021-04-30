@@ -32,12 +32,42 @@
         </Style.Triggers>
     </Style>
 
+    <!--  *********************** Styles for NumericDecimalTextBox **************************************  -->
+    <Style
+        xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
+        BasedOn="{StaticResource {x:Type TextBox}}"
+        TargetType="{x:Type axogc:NumericDecimalTextBox}">
+        <Style.Triggers>
+            <Trigger Property="Validation.HasError" Value="true">
+                <Setter Property="ToolTip" Value="{Binding RelativeSource={x:Static RelativeSource.Self}, Path=(Validation.Errors)[0].ErrorContent}" />
+            </Trigger>
+        </Style.Triggers>
+        <Style.Setters>
+            <Setter Property="HorizontalContentAlignment" Value="Right" />
+        </Style.Setters>
+    </Style>
+
 
     <!--  *********************** Styles for NumericDoubleTextBox **************************************  -->
     <Style
         xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
         BasedOn="{StaticResource {x:Type TextBox}}"
         TargetType="{x:Type axogc:NumericDoubleTextBox}">
+        <Style.Triggers>
+            <Trigger Property="Validation.HasError" Value="true">
+                <Setter Property="ToolTip" Value="{Binding RelativeSource={x:Static RelativeSource.Self}, Path=(Validation.Errors)[0].ErrorContent}" />
+            </Trigger>
+        </Style.Triggers>
+        <Style.Setters>
+            <Setter Property="HorizontalContentAlignment" Value="Right" />
+        </Style.Setters>
+    </Style>
+
+    <!--  *********************** Styles for NumericFloatTextBox **************************************  -->
+    <Style
+        xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
+        BasedOn="{StaticResource {x:Type TextBox}}"
+        TargetType="{x:Type axogc:NumericFloatTextBox}">
         <Style.Triggers>
             <Trigger Property="Validation.HasError" Value="true">
                 <Setter Property="ToolTip" Value="{Binding RelativeSource={x:Static RelativeSource.Self}, Path=(Validation.Errors)[0].ErrorContent}" />
@@ -62,6 +92,22 @@
             <Setter Property="HorizontalContentAlignment" Value="Right" />
         </Style.Setters>
     </Style>
+
+    <!--  *********************** Styles for DateTimeOffsetTextBox **************************************  -->
+    <Style
+        xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
+        BasedOn="{StaticResource {x:Type TextBox}}"
+        TargetType="{x:Type axogc:DateTimeOffsetTextBox}">
+        <Style.Triggers>
+            <Trigger Property="Validation.HasError" Value="true">
+                <Setter Property="ToolTip" Value="{Binding RelativeSource={x:Static RelativeSource.Self}, Path=(Validation.Errors)[0].ErrorContent}" />
+            </Trigger>
+        </Style.Triggers>
+        <Style.Setters>
+            <Setter Property="HorizontalContentAlignment" Value="Right" />
+        </Style.Setters>
+    </Style>
+
 
     <!--  *********************** Styles for TimeSpanTextBox **************************************  -->
     <Style

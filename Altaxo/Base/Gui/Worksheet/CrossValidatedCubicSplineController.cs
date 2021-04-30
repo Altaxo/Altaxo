@@ -26,6 +26,8 @@
 using System;
 using Altaxo.Calc.Interpolation;
 using Altaxo.Gui.Common;
+using Altaxo.Gui.Common.BasicTypes;
+using Altaxo.Gui.Common.PropertyGrid;
 
 namespace Altaxo.Gui.Worksheet
 {
@@ -33,36 +35,32 @@ namespace Altaxo.Gui.Worksheet
   /// Controls the Smoothing parameter of a rational cubic spline.
   /// </summary>
   [UserControllerForObject(typeof(Altaxo.Calc.Interpolation.CrossValidatedCubicSpline), 100)]
-  public class CrossValidatedCubicSplineController : NumericDoubleValueController
+  public class CrossValidatedCubicSplineController : PropertyGridController
   {
-    private CrossValidatedCubicSpline _spline;
+    internal CrossValidatedCubicSpline Spline => (CrossValidatedCubicSpline)_doc;
 
-    public CrossValidatedCubicSplineController(CrossValidatedCubicSpline spline)
-      : base(spline.ErrorVariance)
-    {
-      base._minimumValue = 0;
-      base._isMinimumValueIncluded = false;
-      _descriptionText = "Error variance (if unknown, set it to -1) :";
-      _spline = spline;
-    }
 
-    public override object ModelObject
+    protected override void InitializeValueInfos()
     {
-      get
-      {
-        return _spline;
-      }
+      var controller = new Altaxo.Gui.Common.BasicTypes.NumericDoubleValueController(Spline.ErrorVariance);
+      controller.Minimum = -1;
+      controller.IsMinimumValueInclusive = true;
+      Current.Gui.FindAndAttachControlTo(controller);
+      ValueInfos.Add(new ValueInfo("Error variance (if unknown, set it to -1) :", controller));
     }
 
     public override bool Apply(bool disposeController)
     {
-      if (base.Apply(disposeController))
+      var controller = ValueInfos[0].Controller;
+      if (false == controller.Apply(disposeController))
       {
-        _spline.ErrorVariance = base._value1Double;
-        return true;
+        return ApplyEnd(false, disposeController);
       }
       else
-        return false;
+      {
+        Spline.ErrorVariance = (double)controller.ModelObject;
+        return ApplyEnd(true, disposeController);
+      }
     }
   }
 }

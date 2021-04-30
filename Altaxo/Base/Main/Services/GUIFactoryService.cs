@@ -32,6 +32,7 @@ using System.Windows.Input;
 using Altaxo.Geometry;
 using Altaxo.Gui;
 using Altaxo.Gui.Common;
+using Altaxo.Gui.Common.BasicTypes;
 
 namespace Altaxo.Main.Services
 {
@@ -91,6 +92,8 @@ namespace Altaxo.Main.Services
     {
       if (!(typeof(IMVCController).IsAssignableFrom((expectedControllerType))))
         throw new ArgumentException("Expected controller type has to be IMVCController or a subclass or derived class of this");
+      if (overrideArg0Type is null && ( creationArgs is null || creationArgs.Length == 0 || creationArgs[0] is null))
+        throw new ArgumentException("CreationArgs must contain an argument", nameof(creationArgs));
 
       object? result = null;
 
@@ -441,8 +444,10 @@ namespace Altaxo.Main.Services
           }
 
           // we can try to use a property grid
-          controller = new PropertyController(args[0]);
-          FindAndAttachControlTo(controller);
+          var pcontroller = new Altaxo.Gui.Common.PropertyGrid.PropertyGridController();
+          pcontroller.InitializeDocument(args[0]);
+          FindAndAttachControlTo(pcontroller);
+          controller = pcontroller;
         }
 
         if (ShowDialog(controller, title, showApplyButton))
@@ -504,7 +509,7 @@ namespace Altaxo.Main.Services
 
     public bool ShowDialogForEnumFlag(ref System.Enum arg, string title)
     {
-      var ctrl = new Altaxo.Gui.Common.EnumFlagController();
+      var ctrl = new EnumValueController();
       ctrl.InitializeDocument(new object[] { arg });
 
       if (ShowDialog(ctrl, title))

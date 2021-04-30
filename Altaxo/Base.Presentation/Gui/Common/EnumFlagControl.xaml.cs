@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2021 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -33,13 +33,13 @@ using Altaxo.Collections;
 namespace Altaxo.Gui.Common
 {
   /// <summary>
-  /// Interaction logic for EnumFlagControl.xaml
+  /// Control that shows multiple choices as a list of checkboxes in a wrap panel
   /// </summary>
-  public partial class EnumFlagControl : UserControl, IEnumFlagView
+  public partial class MultiChoiceCheckboxControl : UserControl
   {
     private SelectableListNodeList _choices;
 
-    public EnumFlagControl()
+    public MultiChoiceCheckboxControl()
     {
       InitializeComponent();
     }

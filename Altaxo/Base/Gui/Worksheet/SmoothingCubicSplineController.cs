@@ -26,6 +26,8 @@
 using System;
 using Altaxo.Calc.Interpolation;
 using Altaxo.Gui.Common;
+using Altaxo.Gui.Common.BasicTypes;
+using Altaxo.Gui.Common.PropertyGrid;
 
 namespace Altaxo.Gui.Worksheet
 {
@@ -33,36 +35,53 @@ namespace Altaxo.Gui.Worksheet
   /// Controls the Smoothing parameter of a rational cubic spline.
   /// </summary>
   [UserControllerForObject(typeof(Altaxo.Calc.Interpolation.SmoothingCubicSpline), 100)]
-  public class SmoothingCubicSplineController : NumericDoubleValueController
+  public class SmoothingCubicSplineController : PropertyGridController
   {
-    private SmoothingCubicSpline _spline;
+    private SmoothingCubicSpline Spline => (SmoothingCubicSpline)_doc;
 
-    public SmoothingCubicSplineController(SmoothingCubicSpline spline)
-      : base(spline.Smoothness)
+    protected override void InitializeValueInfos()
     {
-      base._minimumValue = 0;
-      base._isMinimumValueIncluded = true;
-      _descriptionText = "Smoothness (0-Infinity, 0: cubic spline, infinity: linear regression)  :";
-      _spline = spline;
-    }
-
-    public override object ModelObject
-    {
-      get
       {
-        return _spline;
+        var controller = new Altaxo.Gui.Common.BasicTypes.NumericDoubleValueController(Spline.ErrorVariance);
+        controller.Minimum = -1;
+        controller.IsMinimumValueInclusive = true;
+        Current.Gui.FindAndAttachControlTo(controller);
+        ValueInfos.Add(new ValueInfo("Error variance (if unknown, set it to -1) :", controller));
+      }
+
+      {
+        var controller = new Altaxo.Gui.Common.BasicTypes.NumericDoubleValueController(Spline.Smoothness);
+        controller.Minimum = 0;
+        controller.IsMinimumValueInclusive = true;
+        Current.Gui.FindAndAttachControlTo(controller);
+        ValueInfos.Add(new ValueInfo("Smoothness (0-Infinity, 0: cubic spline, infinity: linear regression)  :", controller));
       }
     }
 
     public override bool Apply(bool disposeController)
     {
-      if (base.Apply(disposeController))
+      var controller = ValueInfos[0].Controller;
+      if (false == controller.Apply(disposeController))
       {
-        _spline.Smoothness = base._value1Double;
-        return true;
+        return ApplyEnd(false, disposeController);
       }
       else
-        return false;
+      {
+        Spline.ErrorVariance = (double)controller.ModelObject;
+      }
+
+      controller = ValueInfos[1].Controller;
+      if (false == controller.Apply(disposeController))
+      {
+        return ApplyEnd(false, disposeController);
+      }
+      else
+      {
+        Spline.Smoothness = (double)controller.ModelObject;
+      }
+
+
+      return ApplyEnd(true, disposeController);
     }
   }
 }

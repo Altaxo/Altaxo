@@ -37,6 +37,7 @@ using Altaxo.Main.Properties;
 namespace Altaxo.Graph.Graph3D
 {
   using System.Diagnostics.CodeAnalysis;
+  using Altaxo.Gui.Common.BasicTypes;
   using Camera;
   using Drawing.D3D;
   using GraphicsContext;
@@ -155,7 +156,7 @@ namespace Altaxo.Graph.Graph3D
     {
       EditingControllerCreation = (doc) =>
       {
-        var ctrl = new Gui.Common.EnumFlagController() { UseDocumentCopy = Gui.UseDocument.Copy };
+        var ctrl = new EnumValueController() { UseDocumentCopy = Gui.UseDocument.Copy };
         ctrl.InitializeDocument(doc);
         return ctrl;
       }

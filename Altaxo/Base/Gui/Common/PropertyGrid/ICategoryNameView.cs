@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2018 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2021 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -25,40 +25,29 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace Altaxo.Gui.Common.BasicTypes
+namespace Altaxo.Gui.Common.PropertyGrid
 {
-  public interface IDateTimeNakedControl
+  /// <summary>
+  /// Designates a property in the Gui system.
+  /// </summary>
+  public interface ICategoryNameView
   {
-    DateTime SelectedValue { get; set; }
-  }
-
-  [UserControllerForObject(typeof(DateTime), 100)]
-  [ExpectedTypeOfView(typeof(IDateTimeNakedControl))]
-  public class DateTimeController : MVCANControllerEditImmutableDocBase<DateTime, IDateTimeNakedControl>
-  {
-    protected override void Initialize(bool initData)
-    {
-      base.Initialize(initData);
-
-      if (_view is not null)
-      {
-        _view.SelectedValue = _doc;
-      }
-    }
-
-    public override bool Apply(bool disposeController)
-    {
-      if (_view is null)
-        throw NoViewException;
-
-      _doc = _view.SelectedValue;
-      return ApplyEnd(true, disposeController);
-    }
-
-    public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
-    {
-      yield break;
-    }
+    /// <summary>
+    /// Gets the category the property belongs to.
+    /// </summary>
+    string Category { get; }
+    /// <summary>
+    /// Gets the name of the property.
+    /// </summary>
+   
+    string Name { get; }
+    /// <summary>
+    /// Gets the view (Gui object) that allows to show or edit the property value.
+    /// </summary>
+    object View { get; }
   }
 }
