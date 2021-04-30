@@ -152,21 +152,24 @@ namespace Altaxo.Gui.Common.PropertyGrid
       foreach (var propertyInfo in propertyInfos.Where(x => x.CanWrite && x.CanRead)) // First, we are interested in the writable properties
       {
         var parameterValue = propertyInfo.GetValue(_doc);
-     
-     
-          if (TryGetControllerAndControl(parameterValue, propertyInfo.PropertyType) is { } controller)
+
+        if (TryGetControllerAndControl(parameterValue, propertyInfo.PropertyType) is { } controller)
+        {
+          var valueInfo = new ValueInfo(propertyInfo.Name, propertyInfo, parameterValue, controller);
+          if (propertyInfo.GetCustomAttribute(typeof(System.ComponentModel.CategoryAttribute)) is System.ComponentModel.CategoryAttribute attr)
           {
-            ValueInfos.Add(new ValueInfo(propertyInfo.Name, propertyInfo, parameterValue, controller ));
+            valueInfo.Category = attr.Category;
           }
-     
+          ValueInfos.Add(valueInfo);
+        }
       }
 
-      foreach (var method in doctype.GetMethods())
+      foreach (var methodInfo in doctype.GetMethods())
       {
-        if (!(method.ReturnType == _doc.GetType()))
+        if (!(methodInfo.ReturnType == _doc.GetType()))
           continue;
 
-        var methodParameters = method.GetParameters();
+        var methodParameters = methodInfo.GetParameters();
         if (methodParameters.Length != 1)
           continue;
 
@@ -188,7 +191,41 @@ namespace Altaxo.Gui.Common.PropertyGrid
 
         if (TryGetControllerAndControl(parameterValue, parameterType) is { } controller)
         {
-          ValueInfos.Add(new ValueInfo(parameterName, parameterType, method, parameterValue,controller ));
+          var valueInfo = new ValueInfo(parameterName, parameterType, methodInfo, parameterValue, controller);
+          if (methodInfo.GetCustomAttribute(typeof(System.ComponentModel.CategoryAttribute)) is System.ComponentModel.CategoryAttribute attr)
+          {
+            valueInfo.Category = attr.Category;
+          }
+
+          ValueInfos.Add(valueInfo);
+        }
+      }
+
+      GroupValueInfosByCategory();
+    }
+    /// <summary>
+    /// Sorts the <see cref="ValueInfos"/> by its category. Here, the order of the items is preserved, thus the categories are
+    /// not sorted alphabetically, but grouped according to its first occurence.
+    /// </summary>
+    protected virtual void GroupValueInfosByCategory()
+    {
+      for(int i=0;i<ValueInfos.Count;++i)
+      {
+        var currentCategory = ValueInfos[i].Category;
+        var currentInsertPosition = i + 1;
+        for (int j = i + 1; j < ValueInfos.Count; ++j) 
+        {
+          if (ValueInfos[j].Category == currentCategory)
+          {
+            var toInsert = ValueInfos[j];
+            ValueInfos.RemoveAt(j);
+            ValueInfos.Insert(currentInsertPosition, toInsert);
+            ++currentInsertPosition;
+          }
+        }
+        // move forward until the next item's category is no longer currentCategory
+        for (; i < (ValueInfos.Count - 1) && ValueInfos[i + 1].Category == currentCategory; ++i)
+        {
         }
       }
     }

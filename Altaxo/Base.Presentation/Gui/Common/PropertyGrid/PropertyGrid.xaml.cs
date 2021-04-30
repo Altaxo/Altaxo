@@ -64,20 +64,58 @@ namespace Altaxo.Gui.Common.PropertyGrid
 
       _guiGrid.RowDefinitions.Clear();
 
+      string currentCategory = string.Empty;
+
       int idx = 0;
+      int iRow = -1;
       foreach (var tuple in values)
       {
+        // First, make a line for the category, if there is any
+        if(tuple.Category != currentCategory)
+        {
+          currentCategory = tuple.Category;
+
+          if (idx != 0 || !string.IsNullOrEmpty(currentCategory))
+          {
+            _guiGrid.RowDefinitions.Add(new RowDefinition());
+            ++iRow;
+
+            var line = new Border();
+            line.BorderBrush = Brushes.Black;
+            line.BorderThickness = new Thickness(0, 0, 0, 0.5);
+            line.SetValue(Grid.RowProperty, iRow);
+            line.SetValue(Grid.ColumnSpanProperty, 3);
+            _guiGrid.Children.Add(line);
+
+            var catLabel = new Label { Content = currentCategory };
+            catLabel.FontWeight = FontWeights.Bold;
+            catLabel.SetValue(Grid.RowProperty, iRow);
+            catLabel.SetValue(Grid.ColumnSpanProperty, 3);
+            catLabel.SetValue(Grid.HorizontalAlignmentProperty, HorizontalAlignment.Center);
+            _guiGrid.Children.Add(catLabel);
+
+            _guiGrid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(4) });
+            ++iRow;
+
+          }
+        }
+
+        // now create the label, and add the view of the controller
         _guiGrid.RowDefinitions.Add(new RowDefinition());
-        _guiGrid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(4) });
+        ++iRow;
 
         var label = new Label { Content = tuple.Name + ":" };
-        label.SetValue(Grid.RowProperty, idx * 2);
+        label.SetValue(Grid.ColumnProperty, 0);
+        label.SetValue(Grid.RowProperty, iRow);
         _guiGrid.Children.Add(label);
 
         FrameworkElement fe = (FrameworkElement)(tuple.View);
         fe.SetValue(Grid.ColumnProperty, 2);
-        fe.SetValue(Grid.RowProperty, idx * 2);
+        fe.SetValue(Grid.RowProperty, iRow);
         _guiGrid.Children.Add(fe);
+
+        _guiGrid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(4) });
+        ++iRow;
 
         ++idx;
       }
