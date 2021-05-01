@@ -33,28 +33,28 @@ using Altaxo.Calc.Regression.Nonlinear;
 namespace Altaxo.Calc.FitFunctions.General
 {
   /// <summary>
-  /// Represents an exponential decrease with offset (multiple exponential terms possible).
+  /// Represents an exponential decay with offset (multiple exponential terms possible).
   /// </summary>
   /// <seealso cref="Altaxo.Calc.Regression.Nonlinear.IFitFunction" />
   [FitFunctionClass]
-  public class ExponentialDecrease : IFitFunctionWithGradient
+  public class ExponentialDecay : IFitFunctionWithGradient
   {
     private int _numberOfTerms;
 
     #region Serialization
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ExponentialDecrease), 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ExponentialDecay), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (ExponentialDecrease)obj;
+        var s = (ExponentialDecay)obj;
         info.AddValue("NumberOfTerms", s._numberOfTerms);
       }
 
       public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (ExponentialDecrease?)o ?? new ExponentialDecrease();
+        var s = (ExponentialDecay?)o ?? new ExponentialDecay();
         s._numberOfTerms = info.GetInt32("NumberOfTerms");
         return s;
       }
@@ -62,12 +62,12 @@ namespace Altaxo.Calc.FitFunctions.General
 
     #endregion Serialization
 
-    public ExponentialDecrease()
+    public ExponentialDecay()
     {
       _numberOfTerms = 1;
     }
 
-    public ExponentialDecrease(int numberOfTerms)
+    public ExponentialDecay(int numberOfTerms)
     {
       NumberOfTerms = numberOfTerms;
     }
@@ -78,11 +78,11 @@ namespace Altaxo.Calc.FitFunctions.General
     /// Creates an exponential decrease fit function with one exponential term (3 parameters).
     /// </summary>
     /// <returns></returns>
-    [FitFunctionCreator("ExponentialDecrease", "General", 1, 1, 3)]
-    [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.General.ExponentialDecrease}")]
+    [FitFunctionCreator("ExponentialDecay", "General", 1, 1, 3)]
+    [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.General.ExponentialDecay}")]
     public static IFitFunction CreateExponentialDecrease()
     {
-      return new ExponentialDecrease();
+      return new ExponentialDecay();
     }
 
     /// <summary>
@@ -199,6 +199,7 @@ namespace Altaxo.Calc.FitFunctions.General
 
     public void EvaluateGradient(double[] X, double[] P, double[][] DY)
     {
+      DY[0][0] = 1;
       for (int i = 1; i < P.Length; i += 2)
       {
         DY[0][i] = Math.Exp(-X[0] / P[i + 1]);
