@@ -117,6 +117,24 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="General.ExponentialDecrease" xml:space="preserve">
+    <value>This function evaluates an exponential decrease with one or multiple terms according to
+
+$$
+y(x) = Offset + A_0 \exp\left(\frac{-x}{\tau_0}\right ) + ... + A_{n-1} \exp\left(\frac{-x}{\tau_{n-1}} \right )
+$$
+
+in which:
+
+- $Offset$ is the value of the base line (value of y for $x\rightarrow \infty$ )
+- $A_0$ .. $A_{n-1}$ are the prefactors of the exponential decay terms
+- $\tau_0$ ... $\tau_{n-1}$ are the characteristic times
+- $n$ is the number of exponential terms
+
+The number of terms $n$ can be changed by double-clicking on the fit function. The default value is $n=1$.
+
+The domain of the function is $-\infty \leq x \leq \infty$.</value>
+  </data>
   <data name="General.PolynomialFit.Description" xml:space="preserve">
     <value>This implements a polynomial fit. Please use the polynomial fit from the analysis menu instead of this unless you need to set some parameters fixed. The fit function is defined as:
 $$
