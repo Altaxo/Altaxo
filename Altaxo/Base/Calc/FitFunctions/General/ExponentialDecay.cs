@@ -29,6 +29,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Altaxo.Calc.Regression.Nonlinear;
+using Altaxo.Main;
 
 namespace Altaxo.Calc.FitFunctions.General
 {
@@ -37,10 +38,8 @@ namespace Altaxo.Calc.FitFunctions.General
   /// </summary>
   /// <seealso cref="Altaxo.Calc.Regression.Nonlinear.IFitFunction" />
   [FitFunctionClass]
-  public class ExponentialDecay : IFitFunctionWithGradient
+  public class ExponentialDecay : IFitFunctionWithGradient, IImmutable
   {
-    private int _numberOfTerms;
-
     #region Serialization
 
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ExponentialDecay), 0)]
@@ -49,14 +48,13 @@ namespace Altaxo.Calc.FitFunctions.General
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (ExponentialDecay)obj;
-        info.AddValue("NumberOfTerms", s._numberOfTerms);
+        info.AddValue("NumberOfTerms", s.NumberOfTerms);
       }
 
       public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (ExponentialDecay?)o ?? new ExponentialDecay();
-        s._numberOfTerms = info.GetInt32("NumberOfTerms");
-        return s;
+        var numberOfTerms = info.GetInt32("NumberOfTerms");
+        return new ExponentialDecay(numberOfTerms);
       }
     }
 
@@ -64,11 +62,14 @@ namespace Altaxo.Calc.FitFunctions.General
 
     public ExponentialDecay()
     {
-      _numberOfTerms = 1;
+      NumberOfTerms = 1;
     }
 
     public ExponentialDecay(int numberOfTerms)
     {
+      if (!(numberOfTerms >= 1))
+        throw new ArgumentOutOfRangeException($"{nameof(NumberOfTerms)} must be greater than or equal to 1");
+
       NumberOfTerms = numberOfTerms;
     }
 
@@ -86,41 +87,37 @@ namespace Altaxo.Calc.FitFunctions.General
     }
 
     /// <summary>
-    /// Called when anything in this fit function has changed.
+    /// Not functional since this instance is immutable.
     /// </summary>
-    protected virtual void OnChanged()
-    {
-      Changed?.Invoke(this, EventArgs.Empty);
-    }
+    public event EventHandler? Changed { add { } remove { } }
 
     /// <summary>
-    /// Fired when the fit function changed.
-    /// </summary>
-    public event EventHandler? Changed;
-
-    /// <summary>
-    /// Gets or sets the number of exponential terms. Must be greater then or equal to 1.
+    /// Gets the number of exponential terms. Must be greater than or equal to 1.
     /// </summary>
     /// <value>
     /// The number of terms.
     /// </value>
     /// <exception cref="ArgumentOutOfRangeException"></exception>
-    public int NumberOfTerms
-    {
-      get
-      {
-        return _numberOfTerms;
-      }
-      set
-      {
-        if (!(value >=1))
-          throw new ArgumentOutOfRangeException($"{nameof(NumberOfTerms)} must be greater than or equal to 1");
+    public int NumberOfTerms { get; }
 
-        if (!(_numberOfTerms == value))
-        {
-          _numberOfTerms = value;
-          OnChanged();
-        }
+    /// <summary>
+    /// Creates a new instance with the provided number of terms.
+    /// </summary>
+    /// <param name="value">The number of exponential terms.</param>
+    /// <returns>New instance with the provided number of terms.</returns>
+    /// <exception cref="ArgumentOutOfRangeException">$"{nameof(NumberOfTerms)} must be greater than or equal to 1</exception>
+    public ExponentialDecay WithNumberOfTerms(int value)
+    {
+      if (!(value >= 1))
+        throw new ArgumentOutOfRangeException($"{nameof(NumberOfTerms)} must be greater than or equal to 1");
+
+      if (!(NumberOfTerms == value))
+      {
+        return new ExponentialDecay(value);
+      }
+      else
+      {
+        return this;
       }
     }
 
@@ -146,7 +143,7 @@ namespace Altaxo.Calc.FitFunctions.General
     {
       get
       {
-        return _numberOfTerms*2 + 1;
+        return NumberOfTerms*2 + 1;
       }
     }
 

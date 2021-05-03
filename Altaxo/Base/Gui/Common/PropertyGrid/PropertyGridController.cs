@@ -173,16 +173,14 @@ namespace Altaxo.Gui.Common.PropertyGrid
         if (methodParameters.Length != 1)
           continue;
 
+        if (!methodInfo.Name.StartsWith("With"))
+          continue;
+
+        var parameterName = methodInfo.Name.Substring("With".Length);
+        if (string.IsNullOrEmpty(parameterName))
+          continue;
+
         var parameterType = methodParameters[0].ParameterType;
-
-        if (parameterType != typeof(double) && parameterType != typeof(DateTime) && parameterType != typeof(string))
-          continue;
-
-        var parameterName = methodParameters[0].Name;
-        if (parameterName is null)
-          continue;
-
-        parameterName = parameterName.Substring(0, 1).ToUpperInvariant() + parameterName.Substring(1); // Capitalize parameter name
 
         object? parameterValue = null;
         var getterProp = _doc.GetType().GetProperty(parameterName);
@@ -321,7 +319,7 @@ namespace Altaxo.Gui.Common.PropertyGrid
       if (IsBasicType(TypeOfDocument))
       {
         var valueInfo = ValueInfos[0];
-        if (valueInfo.Controller.Apply(disposeController))
+        if (valueInfo.Controller.Apply(false))
         {
           _doc = valueInfo.Controller.ModelObject;
           return ApplyEnd(true, disposeController);
@@ -337,25 +335,37 @@ namespace Altaxo.Gui.Common.PropertyGrid
         {
           var valueInfo = ValueInfos[i];
 
-          if (!valueInfo.Controller.Apply(disposeController))
+          if (!valueInfo.Controller.Apply(false))
           {
             return ApplyEnd(false, disposeController);
           }
 
           object newValue = valueInfo.Controller.ModelObject;
 
-          if (ValueInfos[i].MethodOrPropertyInfo is PropertyInfo pi && pi.SetMethod is not null)
+          try
           {
-            pi.SetMethod.Invoke(_doc, new[] { newValue });
-          }
+            if (ValueInfos[i].MethodOrPropertyInfo is PropertyInfo pi && pi.SetMethod is not null)
+            {
+              pi.SetMethod.Invoke(_doc, new[] { newValue });
+            }
 
-          else if (ValueInfos[i].MethodOrPropertyInfo is MethodInfo mi && mi.Invoke(_doc, new[] { newValue }) is { } newdoc && TypeOfDocument.IsAssignableFrom(newdoc.GetType()))
+            else if (ValueInfos[i].MethodOrPropertyInfo is MethodInfo mi && mi.Invoke(_doc, new[] { newValue }) is { } newdoc && TypeOfDocument.IsAssignableFrom(newdoc.GetType()))
+            {
+              _doc = newdoc;
+            }
+          }
+          catch(TargetInvocationException ex1)
           {
-            _doc = newdoc;
+            Current.Gui.ErrorMessageBox(ex1.InnerException.Message, "Error applying values");
+            return ApplyEnd(false, disposeController);
+          }
+          catch(Exception ex)
+          {
+            Current.Gui.ErrorMessageBox(ex.Message, "Error applying values");
+            return ApplyEnd(false, disposeController);
           }
         }
-
-
+        
         return ApplyEnd(true, disposeController);
       }
     }
