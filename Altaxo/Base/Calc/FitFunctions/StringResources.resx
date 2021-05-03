@@ -160,12 +160,52 @@ The number of terms $n$ can be changed by double-clicking on the fit function. T
 
 The domain of the function is $-\infty \leq x \leq \infty$.</value>
   </data>
+  <data name="General.ExponentialGrowth" xml:space="preserve">
+    <value># Exponential growth
+
+This function evaluates an exponential growth with one or multiple terms according to
+
+$$
+y(x) = Offset + A_0 \exp\left(\frac{x}{\tau_0}\right ) + ... + A_{n-1} \exp\left(\frac{x}{\tau_{n-1}} \right )
+$$
+
+in which:
+
+- $Offset$ is the value of the base line (value of y for $x\rightarrow {-\infty}$ )
+- $A_0$ .. $A_{n-1}$ are the prefactors of the exponential decay terms
+- $\tau_0$ ... $\tau_{n-1}$ are the characteristic times
+- $n$ is the number of exponential terms
+
+The number of terms $n$ can be changed by double-clicking on the fit function. The default value is $n=1$.
+
+The domain of the function is $-\infty \leq x \leq \infty$.</value>
+  </data>
   <data name="General.PolynomialFit.Description" xml:space="preserve">
     <value>This implements a polynomial fit. Please use the polynomial fit from the analysis menu instead of this unless you need to set some parameters fixed. The fit function is defined as:
 $$
 y(x) = a_0 + a_1 x + a_2 x^2 + ... + a_n x^n
 $$
 in which x is the independent variable, y is the dependent variable, and $ a_0 ... a_n $ are the parameters.</value>
+  </data>
+  <data name="General.PowerLawPrefactor" xml:space="preserve">
+    <value># Power law (with pre-factors)
+
+This function evaluates a power law with one or multiple terms according to
+
+$$
+y(x) = y_0 + a_0 x^{k_0} + ... + a_{n-1} x^{k_{n-1}}
+$$
+
+in which:
+
+- $y_0$ is the value of the base line (value of y for $x=0$ )
+- $a_0$ .. $a_{n-1}$ are the pre-factors of the terms
+- $k_0$ ... $k_{n-1}$ are the exponents
+- $n$ is the number of  terms
+
+The number of terms $n$ can be changed by double-clicking on the fit function. The default value is $n=1$. Strictly speaking, the function is a power law only if $y_0=0$ and $n=1$.
+
+The domain of the function is $ 0 \leq x &lt; \infty $ if all $k_0..k_{n-1}$ are positive, or $ 0 &lt; x &lt; \infty $ if some of the exponents are negative.</value>
   </data>
   <data name="IndependentVariable.FrequencyAsOmega" xml:space="preserve">
     <value>with the frequency $f$ being the independent variable  ($\omega = 2 \pi f$ is calculated from $f$), </value>
