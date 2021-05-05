@@ -127,7 +127,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
     [MemberNotNull(nameof(_rangeOfRows), nameof(_independentVariables), nameof(_dependentVariables), nameof(_errorEvaluation), nameof(_fitFunction))]
     private void DeserializeSurrogate0(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
     {
-      ChildSetMemberAlt(ref _fitFunction, (IFitFunction?)info.GetValueOrNull("FitFunction", this) ?? new PolynomialFit(1));
+      ChildSetMemberAlt(ref _fitFunction, (IFitFunction?)info.GetValueOrNull("FitFunction", this) ?? new PolynomialFit(1,0));
 
       int numRows = info.GetInt32("NumberOfRows");
       int firstRow = info.GetInt32("FirstRow");
@@ -206,7 +206,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
     [MemberNotNull(nameof(_rangeOfRows), nameof(_independentVariables), nameof(_dependentVariables), nameof(_errorEvaluation), nameof(_fitFunction))]
     private void DeserializeSurrogate1(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
     {
-      ChildSetMemberAlt<IFitFunction>(ref _fitFunction, (IFitFunction?)info.GetValueOrNull("FitFunction", this) ?? new PolynomialFit(1));
+      ChildSetMemberAlt<IFitFunction>(ref _fitFunction, (IFitFunction?)info.GetValueOrNull("FitFunction", this) ?? new PolynomialFit(1,0));
 
       ChildSetMember(ref _dataTable, (DataTableProxy?)info.GetValueOrNull("DataTable", this));
 

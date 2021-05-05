@@ -162,7 +162,7 @@ namespace Altaxo.Calc.FitFunctions.General
     public string ParameterName(int i)
     {
       if (i == 0)
-        return "Offset";
+        return "y0";
       if (i == 1)
         return "x0";
       else
