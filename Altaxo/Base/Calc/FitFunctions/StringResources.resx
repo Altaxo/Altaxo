@@ -117,49 +117,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="General.ExponentialDecay" xml:space="preserve">
-    <value>This function evaluates an exponential decay with one or multiple terms according to
-
-$$
-y(x) = Offset + A_0 \exp\left(\frac{-x}{\tau_0}\right ) + ... + A_{n-1} \exp\left(\frac{-x}{\tau_{n-1}} \right )
-$$
-
-in which:
-
-- $Offset$ is the value of the base line (value of y for $x\rightarrow \infty$ )
-- $A_0$ .. $A_{n-1}$ are the prefactors of the exponential decay terms
-- $\tau_0$ ... $\tau_{n-1}$ are the characteristic times
-- $n$ is the number of exponential terms
-
-The number of terms $n$ can be changed by double-clicking on the fit function. The default value is $n=1$.
-
-The domain of the function is $-\infty \leq x \leq \infty$.</value>
-  </data>
-  <data name="General.ExponentialEquilibration" xml:space="preserve">
-    <value>This function evaluates an exponential equilibration process with one or multiple terms according to
-
-$$
-y(x) = Offset + A_0 \left [ 1-\exp\left(\frac{-(x-x_0)}{\tau_0}\right ) \right ] + ... + A_{n-1} \left [ 1- \exp\left(\frac{-(x-x_0)}{\tau_{n-1}} \right ) \right ]  (x &gt; x_0)
-$$
-
-and
-
-$$
-y(x) = Offset (x \leq x_0)
-$$
-
-in which:
-
-- $Offset$ is the starting value 
-- $x_0$ is the starting point of the equilibration process
-- $A_0$ .. $A_{n-1}$ are the prefactors of the exponential equilibration terms
-- $\tau_0$ ... $\tau_{n-1}$ are the characteristic times
-- $n$ is the number of exponential terms
-
-The number of terms $n$ can be changed by double-clicking on the fit function. The default value is $n=1$.
-
-The domain of the function is $-\infty \leq x \leq \infty$.</value>
-  </data>
   <data name="General.ExponentialGrowth" xml:space="preserve">
     <value># Exponential growth
 
@@ -595,5 +552,65 @@ in which
 
 - $y_1$ value of $y$ as evaluated by the left side equation at $p=p_1$
 - $y_2$ value of $y$ as evaluated by the right side equation at $p=p_2$</value>
+  </data>
+  <data name="General.ExponentialDecay" xml:space="preserve">
+    <value># ExponentialDecay
+
+This function evaluates an exponential decay with one or multiple terms according to
+
+$$
+y(x) = y_0 + A_0 \exp\left(\frac{-x}{\tau_0}\right ) + ... + A_{n-1} \exp\left(\frac{-x}{\tau_{n-1}} \right )
+$$
+
+in which:
+
+- $y_0$ is the value of the base line (value of y for $x\rightarrow \infty$ )
+- $A_0$ .. $A_{n-1}$ are the prefactors of the exponential decay terms
+- $\tau_0$ ... $\tau_{n-1}$ are the characteristic times
+- $n$ is the number of exponential terms
+
+The number of terms $n$ can be changed by double-clicking on the fit function. The default value is $n=1$.
+
+The domain of the function is $-\infty \leq x \leq \infty$.
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.General.ExponentialDecay.Fig1.png)
+^^^ Fig. 1: Exponential decay with $y_0=1$, $A_0=3$, and $\tau_0=4$.
+
+
+
+</value>
+  </data>
+  <data name="General.ExponentialEquilibration" xml:space="preserve">
+    <value># ExponentialEquilibration
+
+This function evaluates an exponential equilibration process with one or multiple terms according to
+
+$$
+y(x) = y_0 + A_0 \left [ 1-\exp\left(\frac{-(x-x_0)}{\tau_0}\right ) \right ] + ... + A_{n-1} \left [ 1- \exp\left(\frac{-(x-x_0)}{\tau_{n-1}} \right ) \right ]  | (x &gt; x_0)
+$$
+
+and
+
+$$
+y(x) = y_0 | (x \leq x_0)
+$$
+
+in which:
+
+- $y_0$ is the starting value (and the value for $x \leq x_0$)
+- $x_0$ is the starting point of the equilibration process
+- $A_0$ .. $A_{n-1}$ are the prefactors of the exponential equilibration terms
+- $\tau_0$ ... $\tau_{n-1}$ are the characteristic times
+- $n$ is the number of exponential terms
+
+The number of terms $n$ can be changed by double-clicking on the fit function. The default value is $n=1$.
+
+The domain of the function is $-\infty \leq x \leq \infty$.
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.General.ExponentialEquilibration.Fig1.png)
+^^^ Fig. 1: Exponential equilibration with $y_0=1$, $A_0=3$, $x_0=2$ and $\tau_0=4$.
+</value>
   </data>
 </root>
