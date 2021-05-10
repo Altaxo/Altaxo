@@ -130,49 +130,6 @@ in which x is the independent variable, y is the dependent variable, and $ a_0 .
   <data name="IndependentVariable.Omega" xml:space="preserve">
     <value>with the circular frequency $\omega$  being the independent variable, </value>
   </data>
-  <data name="Materials.ArrheniusLaw.Description" xml:space="preserve">
-    <value># Arrhenius law
-
-The Arrhenius law describes the dependence of (chemical) reaction rates on the temperature.  
-The function is defined as:
-$$
-y(T) = y_0 \exp\left(\frac{-E_a}{k T})
-$$
-in which $y$ is the reaction rate (dependent variable), $T$ is the absolute (!) temperature (independent variable), and $k$ is a constant, usually the Boltzmann constant, but it depends on the options you choose for the fit (see below).
-
-The parameters are: 
-- $y_0$ is the reaction rate in the limit $T\rightarrow\infty$
-- $E_a$ is the activation energy.
-
-Please note that for large temperature intervals, the reaction rate can vary over some orders of magnitude. This will lead to a poor fit, because the data points with small values of the reaction rate then contribute too little to the fit. 
-
-In order to get a good fit nevertheless, it is neccessary  that you logarithmize your data points before they get fitted, and choose the `DecadicLogarithm` dependent variable option on this fit.
-
-*Options for the independent variable x*:
-- Kelvin: x is $T$ in Kelvin
-- AsInverseKelvin: x is $\frac{1}{T}$
-- DegreeCelsius: x is in °C
-- DegreeFahrenheit: x is in °F
-
-
-*Options for the dependent variable y*:
-- Original: the original value of $y$ (the rate)
-- Inverse:  the inverse of the rate, i.e. $\frac{1}{y}$
-- Negative: the negative rate $-y$
-- DecadicLogarithm: $\log_{10}(y)$
-- NegativeDecadicLogarithm: $-\log_{10}(y)$
-- NaturalLogarithm: $\ln(y)$
-- NegativeNaturalLogarithm: $-\ln(y)$
-
-
-
-*Option for parameters*:
-- ParameterEnergyRepresentation
-  - Joule: $E_a$ is in Joule
-  - JoulePerMole: $E_a$ is in Joule per mole
-  - ElectronVolt: $E_a$ is in eV (electron volt)
-  - kWh, calorie, calorie per mole and more..</value>
-  </data>
   <data name="Materials.VogelFulcherLaw" xml:space="preserve">
     <value># Arrhenius law
 
@@ -513,6 +470,54 @@ in which
 - $y_1$ value of $y$ as evaluated by the left side equation at $p=p_1$
 - $y_2$ value of $y$ as evaluated by the right side equation at $p=p_2$</value>
   </data>
+  <data name="Material.ArrheniusLawRate" xml:space="preserve">
+    <value># Arrhenius law (rate)
+
+This Arrhenius law describes the temperature dependence of e.g. reaction rates, typical frequencies, e.g. quantities that increase with increasing temperature.  
+The function is defined as:
+$$
+y(T) = y_0 \exp\left(\frac{-E_a}{k T})
+$$
+in which $y$ is the reaction rate (dependent variable), $T$ is the absolute (!) temperature (independent variable), and $k$ is a constant, usually the Boltzmann constant, but it depends on the options you choose for the fit (see below).
+
+The parameters are: 
+- $y_0$ is the reaction rate in the limit $T\rightarrow\infty$
+- $E_a$ is the activation energy.
+
+Please note that for large temperature intervals, the y-value can vary over some orders of magnitude. This will lead to a poor fit, because the data points with small values of the reaction rate then contribute too little to the fit. 
+
+In order to get a good fit nevertheless, it is neccessary  that you logarithmize your data points before they get fitted, and choose the `DecadicLogarithm` dependent variable option on this fit.
+
+*Options for the independent variable x*:
+- Kelvin: x is $T$ in Kelvin
+- AsInverseKelvin: x is $\frac{1}{T}$
+- DegreeCelsius: x is in °C
+- DegreeFahrenheit: x is in °F
+  
+  
+
+*Options for the dependent variable y*:
+- Original: the original value of $y$ (the rate)
+- Inverse:  the inverse of the rate, i.e. $\frac{1}{y}$
+- Negative: the negative rate $-y$
+- DecadicLogarithm: $\log_{10}(y)$
+- NegativeDecadicLogarithm: $-\log_{10}(y)$
+- NaturalLogarithm: $\ln(y)$
+- NegativeNaturalLogarithm: $-\ln(y)$
+
+  
+  
+*Option for parameters*:
+- ParameterEnergyRepresentation
+  - Joule: $E_a$ is in Joule
+  - JoulePerMole: $E_a$ is in Joule per mole
+  - ElectronVolt: $E_a$ is in eV (electron volt)
+  - kWh, calorie, calorie per mole and more..
+  
+^^^
+![](res:Altaxo.Calc.FitFunctions.Material.ArrheniusLawRate.Fig1.png)
+^^^ Fig. 1: Typical plot of an Arrhenius diagram (reaction rate by the inverse temperature). Here the parameters are $y_0=10^{12} s^{-1}$ and $E_a=80000$ J/mol. Please note that if you choose the x-axis to be $ 1/T $ instead of T and the y-axis to be logarithmic, as in this example, the curve becomes a straight line. You can even include the "right" temperatures in °C by adding a second axis at the bottom, with inverse tick spacing and the transformation $x'=-273.15+x$.</value>
+  </data>
   <data name="General.ExponentialDecay" xml:space="preserve">
     <value># ExponentialDecay
 
@@ -742,5 +747,101 @@ The domain of the function is $ -\infty &lt; x &lt; \infty $, with some points (
 ^^^ Fig. 1: RationalInverse $\frac{1+3x}{-2+x}$, i.e. with $n=m=1$, $a_1=3$, $b_0=-2$ and $b_1=1$.
 
 ---</value>
+  </data>
+  <data name="Materials.ArrheniusLawRate" xml:space="preserve">
+    <value># Arrhenius law (rate)
+
+This Arrhenius law describes the temperature dependence of e.g. reaction rates, typical frequencies, e.g. quantities that increase with increasing temperature.  
+The function is defined as:
+$$
+y(T) = y_0 \exp\left(\frac{-E_a}{k T})
+$$
+in which $y$ is the reaction rate (dependent variable), $T$ is the absolute (!) temperature (independent variable), and $k$ is a constant, usually the Boltzmann constant, but it depends on the options you choose for the fit (see below).
+
+The parameters are: 
+- $y_0$ is the reaction rate in the limit $T\rightarrow\infty$
+- $E_a$ is the activation energy.
+
+Please note that for large temperature intervals, the y-value can vary over some orders of magnitude. This will lead to a poor fit, because the data points with small values of the reaction rate then contribute too little to the fit. 
+
+In order to get a good fit nevertheless, it is neccessary  that you logarithmize your data points before they get fitted, and choose the `DecadicLogarithm` dependent variable option on this fit.
+
+*Options for the independent variable x*:
+- Kelvin: x is $T$ in Kelvin
+- AsInverseKelvin: x is $\frac{1}{T}$
+- DegreeCelsius: x is in °C
+- DegreeFahrenheit: x is in °F
+  
+  
+
+*Options for the dependent variable y*:
+- Original: the original value of $y$ (the rate)
+- Inverse:  the inverse of the rate, i.e. $\frac{1}{y}$
+- Negative: the negative rate $-y$
+- DecadicLogarithm: $\log_{10}(y)$
+- NegativeDecadicLogarithm: $-\log_{10}(y)$
+- NaturalLogarithm: $\ln(y)$
+- NegativeNaturalLogarithm: $-\ln(y)$
+
+  
+  
+*Option for parameters*:
+- ParameterEnergyRepresentation
+  - Joule: $E_a$ is in Joule
+  - JoulePerMole: $E_a$ is in Joule per mole
+  - ElectronVolt: $E_a$ is in eV (electron volt)
+  - kWh, calorie, calorie per mole and more..
+  
+^^^
+![](res:Altaxo.Calc.FitFunctions.Materials.ArrheniusLawRate.Fig1.png)
+^^^ Fig. 1: Typical plot of an Arrhenius diagram (reaction rate by the inverse temperature). Here the parameters are $y_0=10^{12} s^{-1}$ and $E_a=80000$ J/mol. Please note that if you choose the x-axis to be $ 1/T $ instead of T and the y-axis to be logarithmic, as in this example, the curve becomes a straight line. You can even include the "right" temperatures in °C by adding a second axis at the bottom, with inverse tick spacing and the transformation $x'=-273.15+x$.</value>
+  </data>
+  <data name="Materials.ArrheniusLawTime" xml:space="preserve">
+    <value># Arrhenius law (time)
+
+This Arrhenius law describes the temperature dependence of e.g. relaxation or retardation times, or viscosities, e.g. quantities that decrease with increasing temperature.  
+The function is defined as:
+$$
+y(T) = y_0 \exp\left(\frac{E_a}{k T})
+$$
+in which $y$ is the relaxation or retardation time or viscosity (dependent variable), $T$ is the absolute (!) temperature (independent variable), and $k$ is a constant, usually the Boltzmann constant, but it depends on the options you choose for the fit (see below).
+
+The parameters are: 
+- $y_0$ is the relaxation or retardation time or viscosity in the limit $T\rightarrow\infty$
+- $E_a$ is the activation energy.
+
+Please note that for large temperature intervals, the y-value can vary over some orders of magnitude. This will lead to a poor fit, because the data points with small values of the reaction rate then contribute too little to the fit. 
+
+In order to get a good fit nevertheless, it is neccessary  that you logarithmize your data points before they get fitted, and choose the `DecadicLogarithm` dependent variable option on this fit.
+
+*Options for the independent variable x*:
+- Kelvin: x is $T$ in Kelvin
+- AsInverseKelvin: x is $\frac{1}{T}$
+- DegreeCelsius: x is in °C
+- DegreeFahrenheit: x is in °F
+  
+  
+
+*Options for the dependent variable y*:
+- Original: the original value of $y$ (the rate)
+- Inverse:  the inverse of the rate, i.e. $\frac{1}{y}$
+- Negative: the negative rate $-y$
+- DecadicLogarithm: $\log_{10}(y)$
+- NegativeDecadicLogarithm: $-\log_{10}(y)$
+- NaturalLogarithm: $\ln(y)$
+- NegativeNaturalLogarithm: $-\ln(y)$
+
+  
+  
+*Option for parameters*:
+- ParameterEnergyRepresentation
+  - Joule: $E_a$ is in Joule
+  - JoulePerMole: $E_a$ is in Joule per mole
+  - ElectronVolt: $E_a$ is in eV (electron volt)
+  - kWh, calorie, calorie per mole and more..
+  
+^^^
+![](res:Altaxo.Calc.FitFunctions.Materials.ArrheniusLawTime.Fig1.png)
+^^^ Fig. 1: Typical plot of an Arrhenius diagram (viscosity by the inverse temperature). Here the parameters are $y_0=10^{-10}$ and $E_a=80000$ J/mol. Please note that if you choose the x-axis to be $ 1/T $ instead of T and the y-axis to be logarithmic, as in this example, the curve becomes a straight line. You can even include the "right" temperatures in °C by adding a second axis at the bottom, with inverse tick spacing and the transformation $x'=-273.15+x$.</value>
   </data>
 </root>
