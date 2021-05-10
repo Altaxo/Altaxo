@@ -117,52 +117,12 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="General.ExponentialGrowth" xml:space="preserve">
-    <value># Exponential growth
-
-This function evaluates an exponential growth with one or multiple terms according to
-
-$$
-y(x) = Offset + A_0 \exp\left(\frac{x}{\tau_0}\right ) + ... + A_{n-1} \exp\left(\frac{x}{\tau_{n-1}} \right )
-$$
-
-in which:
-
-- $Offset$ is the value of the base line (value of y for $x\rightarrow {-\infty}$ )
-- $A_0$ .. $A_{n-1}$ are the prefactors of the exponential decay terms
-- $\tau_0$ ... $\tau_{n-1}$ are the characteristic times
-- $n$ is the number of exponential terms
-
-The number of terms $n$ can be changed by double-clicking on the fit function. The default value is $n=1$.
-
-The domain of the function is $-\infty \leq x \leq \infty$.</value>
-  </data>
   <data name="General.PolynomialFit.Description" xml:space="preserve">
     <value>This implements a polynomial fit. Please use the polynomial fit from the analysis menu instead of this unless you need to set some parameters fixed. The fit function is defined as:
 $$
 y(x) = a_0 + a_1 x + a_2 x^2 + ... + a_n x^n
 $$
 in which x is the independent variable, y is the dependent variable, and $ a_0 ... a_n $ are the parameters.</value>
-  </data>
-  <data name="General.PowerLawPrefactor" xml:space="preserve">
-    <value># Power law (with pre-factors)
-
-This function evaluates a power law with one or multiple terms according to
-
-$$
-y(x) = y_0 + a_0 x^{k_0} + ... + a_{n-1} x^{k_{n-1}}
-$$
-
-in which:
-
-- $y_0$ is the value of the base line (value of y for $x=0$ )
-- $a_0$ .. $a_{n-1}$ are the pre-factors of the terms
-- $k_0$ ... $k_{n-1}$ are the exponents
-- $n$ is the number of  terms
-
-The number of terms $n$ can be changed by double-clicking on the fit function. The default value is $n=1$. Strictly speaking, the function is a power law only if $y_0=0$ and $n=1$.
-
-The domain of the function is $ 0 \leq x &lt; \infty $ if all $k_0..k_{n-1}$ are positive, or $ 0 &lt; x &lt; \infty $ if some of the exponents are negative.</value>
   </data>
   <data name="IndependentVariable.FrequencyAsOmega" xml:space="preserve">
     <value>with the frequency $f$ being the independent variable  ($\omega = 2 \pi f$ is calculated from $f$), </value>
@@ -559,13 +519,13 @@ in which
 This function evaluates an exponential decay with one or multiple terms according to
 
 $$
-y(x) = y_0 + A_0 \exp\left(\frac{-x}{\tau_0}\right ) + ... + A_{n-1} \exp\left(\frac{-x}{\tau_{n-1}} \right )
+y(x) = y_0 + a_0 \exp\left(\frac{-x}{\tau_0}\right ) + ... + a_{n-1} \exp\left(\frac{-x}{\tau_{n-1}} \right )
 $$
 
 in which:
 
 - $y_0$ is the value of the base line (value of y for $x\rightarrow \infty$ )
-- $A_0$ .. $A_{n-1}$ are the prefactors of the exponential decay terms
+- $a_0$ .. $a_{n-1}$ are the prefactors of the exponential decay terms
 - $\tau_0$ ... $\tau_{n-1}$ are the characteristic times
 - $n$ is the number of exponential terms
 
@@ -575,7 +535,7 @@ The domain of the function is $-\infty \leq x \leq \infty$.
 
 ^^^
 ![](res:Altaxo.Calc.FitFunctions.General.ExponentialDecay.Fig1.png)
-^^^ Fig. 1: Exponential decay with $y_0=1$, $A_0=3$, and $\tau_0=4$.
+^^^ Fig. 1: Exponential decay with $y_0=1$, $a_0=3$, and $\tau_0=4$.
 
 
 
@@ -587,7 +547,7 @@ The domain of the function is $-\infty \leq x \leq \infty$.
 This function evaluates an exponential equilibration process with one or multiple terms according to
 
 $$
-y(x) = y_0 + A_0 \left [ 1-\exp\left(\frac{-(x-x_0)}{\tau_0}\right ) \right ] + ... + A_{n-1} \left [ 1- \exp\left(\frac{-(x-x_0)}{\tau_{n-1}} \right ) \right ]  | (x &gt; x_0)
+y(x) = y_0 + a_0 \left [ 1-\exp\left(\frac{-(x-x_0)}{\tau_0}\right ) \right ] + ... + a_{n-1} \left [ 1- \exp\left(\frac{-(x-x_0)}{\tau_{n-1}} \right ) \right ]  | (x &gt; x_0)
 $$
 
 and
@@ -600,7 +560,7 @@ in which:
 
 - $y_0$ is the starting value (and the value for $x \leq x_0$)
 - $x_0$ is the starting point of the equilibration process
-- $A_0$ .. $A_{n-1}$ are the prefactors of the exponential equilibration terms
+- $a_0$ .. $a_{n-1}$ are the prefactors of the exponential equilibration terms
 - $\tau_0$ ... $\tau_{n-1}$ are the characteristic times
 - $n$ is the number of exponential terms
 
@@ -610,7 +570,177 @@ The domain of the function is $-\infty \leq x \leq \infty$.
 
 ^^^
 ![](res:Altaxo.Calc.FitFunctions.General.ExponentialEquilibration.Fig1.png)
-^^^ Fig. 1: Exponential equilibration with $y_0=1$, $A_0=3$, $x_0=2$ and $\tau_0=4$.
+^^^ Fig. 1: Exponential equilibration with $y_0=1$, $a_0=3$, $x_0=2$ and $\tau_0=4$.
 </value>
+  </data>
+  <data name="General.ExponentialGrowth" xml:space="preserve">
+    <value># Exponential growth
+
+This function evaluates an exponential growth with one or multiple terms according to
+
+$$
+y(x) = y_0 + a_0 \exp\left(\frac{x}{\tau_0}\right ) + ... + a_{n-1} \exp\left(\frac{x}{\tau_{n-1}} \right )
+$$
+
+in which:
+
+- $y_0$ is the value of the base line (value of y for $x\rightarrow {-\infty}$ )
+- $a_0$ .. $a_{n-1}$ are the prefactors of the exponential terms
+- $\tau_0$ ... $\tau_{n-1}$ are the characteristic times
+- $n$ is the number of exponential terms
+
+The number of terms $n$ can be changed by double-clicking on the fit function. The default value is $n=1$.
+
+The domain of the function is $-\infty \leq x \leq \infty$.
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.General.ExponentialGrowth.Fig1.png)
+^^^ Fig. 1: Exponential growth with $y_0=100$, $a_0=3$ and $\tau_0=4$.
+</value>
+  </data>
+  <data name="General.Polynomial" xml:space="preserve">
+    <value># Polynomial
+
+This function evaluates an polynomial with one or multiple terms, and both positive and negative exponents, according to
+
+$$
+y(x) = a_0 + a_1 x^1 + ... + a_n x^n + b_1 x^{-1} + ... + b_m x^{-m}
+$$
+
+in which:
+
+- $a_0 ... a_n$ are the polynomial coefficients for positive exponents $ 0...n $
+- $b_1$ ... $b_{m}$ are the polynomial coefficients for negative exponents $-1 .. -m$
+- $n$ is the order of the polynom for positive exponents
+- $m$ is the order of the polynom for negative exponents
+
+The polynomial orders $n$ and $m$ can be changed by double-clicking on the fit function. The default value is $n=2$ and $m=0$. If some of the terms are not needed, set their corresponding coefficients fixed to zero.
+
+The domain of the function is $-\infty \leq x \leq \infty$. If $m \neq 0$, $x=0$ is excluded.
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.General.Polynomial.Fig1.png)
+^^^ Fig. 1: Polynomial ($n=3$, $m=0$) with $a_0=1$, $a_1=0$, $a_2=2$ and $a_3=-0.125$.
+
+
+
+</value>
+  </data>
+  <data name="General.PowerLawPrefactor" xml:space="preserve">
+    <value># Power law (with pre-factors)
+
+This function evaluates a power law with one or multiple terms according to
+
+$$
+y(x) = y_0 + a_0 x^{k_0} + ... + a_{n-1} x^{k_{n-1}}
+$$
+
+in which:
+
+- $y_0$ is the value of the base line (value of y for $x=0$ )
+- $a_0$ .. $a_{n-1}$ are the pre-factors of the terms
+- $k_0$ ... $k_{n-1}$ are the exponents
+- $n$ is the number of  terms
+
+The number of terms $n$ can be changed by double-clicking on the fit function. The default value is $n=1$. Strictly speaking, the function is a power law only if $y_0=0$ and $n=1$.
+
+The domain of the function is $ 0 \leq x &lt; \infty $ if all $k_0..k_{n-1}$ are positive, or $ 0 &lt; x &lt; \infty $ if some of the exponents are negative.
+
+&gt; **Note:**  
+Even if you set the exponents fixed to integer values, the domain of the function is not extended to the full range! Use `Polynomial` instead.
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.General.PowerLawPrefactor.Fig2.png)
+^^^ Fig. 1: Power law with $y_0=0$, $a_0=3$ and $k_0=2.5$ with linear x- and y-axes.
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.General.PowerLawPrefactor.Fig1.png)
+^^^ Fig. 2: Power law with the same parameters $y_0=0$, $a_0=3$ and $k_0=2.5$ in a double-logarithmic plot.
+</value>
+  </data>
+  <data name="General.PowerLawRatio" xml:space="preserve">
+    <value># Power law (with ratios)
+
+This function evaluates a power law with one or multiple terms according to
+
+$$
+y(x) = y_0 +  \left ( \frac{x}{a_0} \right ) ^{k_0} + ... +  \left ( \frac{x}{a_{n-1}} \right )^{k_{n-1}}
+$$
+
+in which:
+
+- $y_0$ is the value of the base line (value of y for $x=0$ )
+- $a_0$ .. $a_{n-1}$ are the denominators of the terms
+- $k_0$ ... $k_{n-1}$ are the exponents
+- $n$ is the number of  terms
+
+The number of terms $n$ can be changed by double-clicking on the fit function. The default value is $n=1$. Strictly speaking, the function is a power law only if $y_0=0$ and $n=1$.
+
+The domain of the function is $ 0 \leq x &lt; \infty $ if all $k_0..k_{n-1}$ and all $a_0..a_{n-1}$ are positive, $-\infty &lt; x \leq 0$ if all $k_0..k_{n-1}$ are positive and all $a_0..a_{n-1}$ are negative, and, if some of the exponents are negative, the  value $x=0$ is not included.
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.General.PowerLawRatio.Fig2.png)
+^^^ Fig. 1: Power law (ratio) with $y_0=0$, $a_0=3$ and $k_0=-0.5$ with linear x- and y-axes.
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.General.PowerLawRatio.Fig1.png)
+^^^ Fig. 2: Power law (ratio) with the same parameters $y_0=0$, $a_0=3$ and $k_0=-0.5$ in a double-logarithmic plot.
+</value>
+  </data>
+  <data name="General.Rational" xml:space="preserve">
+    <value># Rational
+
+This function evaluates a rational polynom with one or multiple terms in the nominator and in the denominator according to
+
+$$
+y(x) = \frac{a_0 + a_1 x + ... + a_{n} x^{n}}{1 + b_1 x + .. + b_{m} x^{m}}
+$$
+
+in which:
+
+- $a_0$ .. $a_{n}$ are the coefficients of the nominator polynom
+- $b_1$ .. $b_{m}$ are the coefficients of the denominator polynom
+- $n$ is the polynomial order of the nominator polynom
+- $m$ is the polynomial order of the denominator polynom
+
+In order to avoid covariance between the 0th order coefficients $a_0$ and $b_0$, in this formula $b_0$ is set to $b_0=1$. Please use `RationalInverse` if a free value of $b_0$ is preferred.
+
+The polynomial orders $n$ and $m$ can be changed by double-clicking on the fit function. The default value is $n=1$ and $m=1$.
+
+The domain of the function is $ -\infty &lt; x &lt; \infty $, with some points (poles) excluded, at which the denominator becomes zero.
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.General.Rational.Fig1.png)
+^^^ Fig. 1: Rational $\frac{2+x}{1+2x}$, i.e. with $n=m=1$, $a_0=2$, $a_1=1$ and $b_1=2$.
+
+---</value>
+  </data>
+  <data name="General.RationalInverse" xml:space="preserve">
+    <value># RationalInverse
+
+This function evaluates a rational polynom with one or multiple terms in the nominator and in the denominator according to
+
+$$
+y(x) = \frac{1 + a_1 x + ... + a_{n} x^{n}}{b_0 + b_1 x + .. + b_{m} x^{m}}
+$$
+
+in which:
+
+- $a_1$ .. $a_{n}$ are the coefficients of the nominator polynom
+- $b_0$ .. $b_{m}$ are the coefficients of the denominator polynom
+- $n$ is the polynomial order of the nominator polynom
+- $m$ is the polynomial order of the denominator polynom
+
+In order to avoid covariance between the 0^th^ order coefficients $a_0$ and $b_0$, in this formula $a_0$ is set to $a_0=1$. Please use `Rational` if a free value of $a_0$ is preferred.
+
+The polynomial orders $n$ and $m$ can be changed by double-clicking on the fit function. The default value is $n=0$ and $m=1$.
+
+The domain of the function is $ -\infty &lt; x &lt; \infty $, with some points (poles) excluded, at which the denominator becomes zero.
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.General.RationalInverse.Fig1.png)
+^^^ Fig. 1: RationalInverse $\frac{1+3x}{-2+x}$, i.e. with $n=m=1$, $a_1=3$, $b_0=-2$ and $b_1=1$.
+
+---</value>
   </data>
 </root>

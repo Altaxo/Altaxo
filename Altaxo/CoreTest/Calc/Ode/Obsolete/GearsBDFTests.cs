@@ -34,67 +34,7 @@ namespace Altaxo.Calc.Ode.Obsolete
 
   public class GearsBDFTest
   {
-    [Fact]
-    public void GearTest2a()
-    {
-      const double lambda1 = -1;
-      const double lambda2 = -1000;
-      const double lambda1PlusLambda2By2 = (lambda1 + lambda2) / 2;
-      const double lambda1MinusLambda2By2 = (lambda1 - lambda2) / 2;
-
-      const double C1 = 1;
-      const double C2 = 1;
-
-      Vector fuu(double t, Vector y)
-      {
-        return new Vector(lambda1PlusLambda2By2 * y[0] + lambda1MinusLambda2By2 * y[1], lambda1MinusLambda2By2 * y[0] + lambda1PlusLambda2By2 * y[1]);
-      }
-
-      var pulse = Altaxo.Calc.Ode.Obsolete.Ode.GearBDF(
-      0,
-      new Vector(C1 + C2, C1 - C2),
-      fuu,
-      new Altaxo.Calc.Ode.Obsolete.Options { RelativeTolerance = 1e-7, AbsoluteTolerance = 1E-8 });
-
-      var ode = new GearsBDF();
-
-      ode.Initialize(
-      0,
-      new double[] { C1 + C2, C1 - C2 },
-      (t, y, dydt) => { dydt[0] = lambda1PlusLambda2By2 * y[0] + lambda1MinusLambda2By2 * y[1]; dydt[1] = lambda1MinusLambda2By2 * y[0] + lambda1PlusLambda2By2 * y[1]; },
-      new GearsBDFOptions { RelativeTolerance = 1e-7, AbsoluteTolerance = 1E-8 });
-
-      int nCounter = 0;
-      var sp = new double[2];
-
-      var pulseit = pulse.SolveTo(20).GetEnumerator();
-      for (; ; )
-      {
-        if (!pulseit.MoveNext())
-          break;
-        var spulse = pulseit.Current;
-        ode.Evaluate(out var tres, sp);
-
-        Assert.Equal(spulse.T, tres);
-        Assert.Equal(spulse.X[0], sp[0]);
-        Assert.Equal(spulse.X[1], sp[1]);
-
-        double t = spulse.T;
-        var y0_expected = C1 * Math.Exp(lambda1 * t) + C2 * Math.Exp(lambda2 * t);
-        var y1_expected = C1 * Math.Exp(lambda1 * t) - C2 * Math.Exp(lambda2 * t);
-        AssertEx.Equal(y0_expected, spulse.X[0], 1E-7 * y0_expected + 1E-8);
-        AssertEx.Equal(y1_expected, spulse.X[1], 6E-7 * y1_expected + 1E-8);
-
-        t = tres;
-        y0_expected = C1 * Math.Exp(lambda1 * t) + C2 * Math.Exp(lambda2 * t);
-        y1_expected = C1 * Math.Exp(lambda1 * t) - C2 * Math.Exp(lambda2 * t);
-        AssertEx.Equal(y0_expected, sp[0], 1E-7 * y0_expected + 1E-8);
-        AssertEx.Equal(y1_expected, sp[1], 6E-7 * y1_expected + 1E-8);
-
-        ++nCounter;
-      }
-    }
-
+    
     [Fact]
     public void GearTest3a()
     {
@@ -361,9 +301,12 @@ namespace Altaxo.Calc.Ode.Obsolete
 
       var sp = new double[1];
 
-      for (; ; )
+      for (int i=0;i<100000;++i )
       {
         ode.Evaluate(out var tres, sp);
+        AssertEx.AreEqual(Math.Exp(-tres), sp[0], 1E-6, 1E-6);
+        if (tres > 6)
+          break;
       }
     }
 

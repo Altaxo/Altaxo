@@ -34,7 +34,7 @@ using Altaxo.Main;
 namespace Altaxo.Calc.FitFunctions.General
 {
   /// <summary>
-  /// Represents an exponential decay with offset (multiple exponential terms possible).
+  /// Represents a power law, but with an offset, and with multiple terms possible.
   /// </summary>
   /// <seealso cref="Altaxo.Calc.Regression.Nonlinear.IFitFunction" />
   [FitFunctionClass]
@@ -79,9 +79,9 @@ namespace Altaxo.Calc.FitFunctions.General
     /// <returns></returns>
     [FitFunctionCreator("PowerLaw (Prefactor)", "General", 1, 1, 3)]
     [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.General.PowerLawPrefactor}")]
-    public static IFitFunction CreateFitFunction()
+    public static IFitFunction CreatePowerLawPrefactor_1()
     {
-      return new PowerLawPrefactor();
+      return new PowerLawPrefactor(1);
     }
 
     /// <summary>

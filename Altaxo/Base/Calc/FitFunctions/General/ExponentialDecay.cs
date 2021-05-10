@@ -162,7 +162,7 @@ namespace Altaxo.Calc.FitFunctions.General
       if (i == 0)
         return "y0";
       else
-      return (i - 1) % 2 == 0 ? FormattableString.Invariant($"A{(i - 1) / 2}") : FormattableString.Invariant($"Tau{(i - 1) / 2}");
+      return (i - 1) % 2 == 0 ? FormattableString.Invariant($"a{(i - 1) / 2}") : FormattableString.Invariant($"Tau{(i - 1) / 2}");
     }
 
     public double DefaultParameterValue(int i)
