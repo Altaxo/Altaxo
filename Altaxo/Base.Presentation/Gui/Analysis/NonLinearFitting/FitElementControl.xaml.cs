@@ -79,13 +79,17 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
     private const int idxParameterColumn = 7;
 
     private FitElement _fitElement;
-    private int _numberOfX;
-    private int _numberOfY;
-    private int _numberOfParameter;
-    private int _totalSlots;
+    private int _cachedNumberOfX;
+    private int _cachedNumberOfY;
+    private int _cachedNumberOfParameter;
     private bool _fitFunctionSelected;
 
     #endregion Members
+
+    private int NumberOfX => _cachedNumberOfX = _fitElement?.NumberOfIndependentVariables ?? _cachedNumberOfX;
+    private int NumberOfY => _cachedNumberOfY = _fitElement?.NumberOfDependentVariables ?? _cachedNumberOfY;
+    private int NumberOfParameter => _cachedNumberOfParameter = _fitElement?.NumberOfParameters ?? _cachedNumberOfParameter;
+    private int _totalSlots => Math.Max(NumberOfParameter, NumberOfX + NumberOfY + 4);
 
     public FitElementControl()
     {
@@ -147,7 +151,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       }
 
       // internal independent variable names
-      for (int i = 0; i < _numberOfX; ++i)
+      for (int i = 0; i < NumberOfX; ++i)
       {
         string name = _fitElement.FitFunction is not null && i < _fitElement.FitFunction.NumberOfIndependentVariables ? _fitElement.FitFunction.IndependentVariableName(i) : string.Empty;
         var item = new TextBlock() { Text = name };
@@ -174,7 +178,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       }
 
       // external independent variable names
-      for (int i = 0; i < _numberOfX; ++i)
+      for (int i = 0; i < NumberOfX; ++i)
       {
         var item = new Label()
         {
@@ -193,7 +197,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       {
         var item = new Border() { Background = Brushes.Bisque };
         item.SetValue(Grid.ColumnProperty, idxVariablesColumn);
-        item.SetValue(Grid.RowProperty, _numberOfX);
+        item.SetValue(Grid.RowProperty, NumberOfX);
         item.SetValue(Grid.RowSpanProperty, 4);
         _grid.Children.Add(item);
       }
@@ -206,7 +210,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
           Margin = leftButtonMargin
         };
         item.SetValue(Grid.ColumnProperty, idxVariablesColumn);
-        item.SetValue(Grid.RowProperty, _numberOfX);
+        item.SetValue(Grid.RowProperty, NumberOfX);
         _grid.Children.Add(item);
       }
       // Group Number
@@ -217,7 +221,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
           Margin = leftButtonMargin
         };
         item.SetValue(Grid.ColumnProperty, idxVariablesColumn);
-        item.SetValue(Grid.RowProperty, _numberOfX + 1);
+        item.SetValue(Grid.RowProperty, NumberOfX + 1);
         _grid.Children.Add(item);
       }
       // plot range
@@ -228,7 +232,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
           Margin = leftButtonMargin
         };
         item.SetValue(Grid.ColumnProperty, idxVariablesColumn);
-        item.SetValue(Grid.RowProperty, _numberOfX + 2);
+        item.SetValue(Grid.RowProperty, NumberOfX + 2);
         _grid.Children.Add(item);
       }
 
@@ -240,13 +244,13 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
           Margin = new Thickness(4)
         };
         item.SetValue(Grid.ColumnProperty, idxVariablesColumn);
-        item.SetValue(Grid.RowProperty, _numberOfX + 3);
+        item.SetValue(Grid.RowProperty, NumberOfX + 3);
         item.Click += new RoutedEventHandler(EhSetupVariablesAndRange);
         _grid.Children.Add(item);
       }
 
       // internal dependent variable names
-      for (int i = 0; i < _numberOfY; ++i)
+      for (int i = 0; i < NumberOfY; ++i)
       {
         string name = _fitElement.FitFunction is not null && i < _fitElement.FitFunction.NumberOfDependentVariables ? _fitElement.FitFunction.DependentVariableName(i) : string.Empty;
         var item = new TextBlock() { Text = name };
@@ -254,7 +258,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
         item.VerticalAlignment = System.Windows.VerticalAlignment.Center;
         item.Margin = standardLeftInnerLabelMargin;
         item.SetValue(Grid.ColumnProperty, idxVariablesNameColumn);
-        item.SetValue(Grid.RowProperty, _totalSlots - _numberOfY + i);
+        item.SetValue(Grid.RowProperty, _totalSlots - NumberOfY + i);
         _grid.Children.Add(item);
 
         var errorScaleButton = new Button()
@@ -268,12 +272,12 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
         errorScaleButton.Click += new RoutedEventHandler(EhClickOnErrorFunction);
         errorScaleButton.SetValue(Grid.ColumnProperty, 1);
         errorScaleButton.SetValue(Grid.ColumnSpanProperty, 2);
-        errorScaleButton.SetValue(Grid.RowProperty, _totalSlots - _numberOfY + i);
+        errorScaleButton.SetValue(Grid.RowProperty, _totalSlots - NumberOfY + i);
         _grid.Children.Add(errorScaleButton);
       }
 
       // external dependent variable names
-      for (int i = 0; i < _numberOfY; ++i)
+      for (int i = 0; i < NumberOfY; ++i)
       {
         var item = new Label()
         {
@@ -283,12 +287,12 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
           HorizontalAlignment = HorizontalAlignment.Right
         };
         item.SetValue(Grid.ColumnProperty, idxVariablesColumn);
-        item.SetValue(Grid.RowProperty, _totalSlots - _numberOfY + i);
+        item.SetValue(Grid.RowProperty, _totalSlots - NumberOfY + i);
         _grid.Children.Add(item);
       }
 
       // internal parameter names
-      for (int i = 0; i < _numberOfParameter; ++i)
+      for (int i = 0; i < NumberOfParameter; ++i)
       {
         string name = _fitElement.FitFunction is not null && i < _fitElement.FitFunction.NumberOfParameters ? _fitElement.FitFunction.ParameterName(i) : string.Empty;
         var item = new TextBlock()
@@ -318,7 +322,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       }
 
       // external parameters
-      for (int i = 0; i < _numberOfParameter; ++i)
+      for (int i = 0; i < NumberOfParameter; ++i)
       {
         var item = new Button()
         {
@@ -420,11 +424,10 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
     {
       _fitElement = fitElement;
 
-      _numberOfX = _fitElement.NumberOfIndependentVariables;
-      _numberOfY = _fitElement.NumberOfDependentVariables;
-      _numberOfParameter = _fitElement.NumberOfParameters;
+      _cachedNumberOfX = _fitElement.NumberOfIndependentVariables;
+      _cachedNumberOfY = _fitElement.NumberOfDependentVariables;
+      _cachedNumberOfParameter = _fitElement.NumberOfParameters;
 
-      _totalSlots = Math.Max(_numberOfParameter, _numberOfX + _numberOfY + 4);
       SetupElements();
     }
 
