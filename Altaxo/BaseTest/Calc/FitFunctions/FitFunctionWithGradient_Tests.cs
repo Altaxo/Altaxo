@@ -79,6 +79,7 @@ namespace Altaxo.Calc.FitFunctions
         (() => new RationalInverse(0,2), 0.25, new double[]{2,3,5}, 1/(2 + 3*0.25 + 5*0.25*0.25)),
         (() => new RationalInverse(1,1), 0.25, new double[]{2,3,5}, (1+2*0.25)/(3 + 5*0.25)),
         (() => new RationalInverse(2,2), 0.25, new double[]{2,3,5,7,11}, (1+2*0.25+3*0.25*0.25)/(5 + 7*0.25 + 11*0.25*0.25)),
+        (() => new StretchedExponentialEquilibration(1), 0.5, new double[]{0.125,1,3,5,0.5}, 1+3*(1-Math.Exp(-Math.Pow((0.5-0.125)/5,0.5)))),
       };
     private static DoubleEqualityComparer CompareD = new DoubleEqualityComparer(1E-100, 1E-12);
     private static DoubleEqualityComparer CompareDerivatives = new DoubleEqualityComparer(1E-5, 1E-5);
@@ -95,6 +96,7 @@ namespace Altaxo.Calc.FitFunctions
       foreach(var entry in _fitData)
       {
         var fitFunction = entry.Creation();
+        Assert.Equal(fitFunction.NumberOfParameters, entry.parameters.Length);
         x[0] = entry.x;
         fitFunction.Evaluate(x, entry.parameters, y);
         Assert.Equal(entry.expectedY, y[0], CompareD);
