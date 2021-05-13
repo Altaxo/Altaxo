@@ -358,7 +358,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
     private string GetTextShownForErrorEvaluation(int i)
     {
-      string name = _fitElement.GetErrorEvaluation(i) is not null ? _fitElement.GetErrorEvaluation(i).ShortName : string.Empty;
+      string name = _fitElement.GetDependentVariableTransformation(i) is not null ? _fitElement.GetDependentVariableTransformation(i).RepresentationAsOperator : string.Empty;
       return name;
     }
 

@@ -325,6 +325,8 @@ namespace Altaxo.Calc.Regression.Nonlinear
     /// <param name="values">The array used to store the values.</param>
     public void GetWeights(double[] values)
     {
+      throw new NotImplementedException();
+      /*
       int outputValuesPointer = 0;
       for (int ele = 0; ele < _cachedFitElementInfo.Length; ele++)
       {
@@ -343,6 +345,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
           }
         }
       }
+      */
     }
 
     /// <summary>
@@ -443,7 +446,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
           for (int k = info.Xs.Length - 1; k >= 0; k--)
             info.Xs[k] = fitEle.IndependentVariables(k)?[validRows[i]] ?? throw new ObjectDisposedException($"Independent variables column k={k} not available or disposed.");
 
-          fitEle.FitFunction.Evaluate(info.Xs, info.Parameters, info.Ys);
+          fitEle.FitFunctionEvaluate(info.Xs, info.Parameters, info.Ys);
 
           if (calculateUnusedDependentVariablesAlso)
           {

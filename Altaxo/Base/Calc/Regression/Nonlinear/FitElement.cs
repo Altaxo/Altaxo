@@ -31,6 +31,7 @@ using Altaxo.Calc.FitFunctions.General;
 using Altaxo.Collections;
 using Altaxo.Data;
 using Altaxo.Data.Selections;
+using Altaxo.Data.Transformations;
 using Altaxo.Graph.Plot.Data;
 using Altaxo.Main;
 
@@ -64,8 +65,9 @@ namespace Altaxo.Calc.Regression.Nonlinear
     /// <summary>Array of columns that are used as data source for the dependent variables.</summary>
     private IReadableColumnProxy?[] _dependentVariables;
 
-    /// <summary>Holds for each dependent variable the kind of error evaluation (i.e. the kind of weighing of the difference between current dependent values and the calculated value of the fitting function)</summary>
-    private IVarianceScaling?[] _errorEvaluation;
+    /// <summary>Holds for each dependent variable output of the fit function the kind of transformation.
+    /// If null, an identity transformation is assumed.</summary>
+    private IDoubleToDoubleTransformation?[] _dependentVariableTransformations;
 
     /// <summary>Array of the current parameter names. The length of this array should be equal to that of <see cref="P:IFitFunction.NumberOfParameters"/>. If an element of this array is null, the parameter name
     /// of the fit function is used. Otherwise, this value overrides the original parameter name of the fit function.</summary>
@@ -85,6 +87,9 @@ namespace Altaxo.Calc.Regression.Nonlinear
           break;
         case 1:
           DeserializeSurrogate1(info);
+          break;
+        case 2:
+          DeserializeSurrogate2(info);
           break;
         default:
           throw new ArgumentOutOfRangeException(nameof(version));
@@ -124,7 +129,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
       }
     }
 
-    [MemberNotNull(nameof(_rangeOfRows), nameof(_independentVariables), nameof(_dependentVariables), nameof(_errorEvaluation), nameof(_fitFunction))]
+    [MemberNotNull(nameof(_rangeOfRows), nameof(_independentVariables), nameof(_dependentVariables), nameof(_dependentVariableTransformations), nameof(_fitFunction))]
     private void DeserializeSurrogate0(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
     {
       ChildSetMemberAlt(ref _fitFunction, (IFitFunction?)info.GetValueOrNull("FitFunction", this) ?? new Polynomial(1,0));
@@ -150,9 +155,9 @@ namespace Altaxo.Calc.Regression.Nonlinear
       info.CloseArray(arraycount);
 
       arraycount = info.OpenArray();
-      _errorEvaluation = new IVarianceScaling?[arraycount];
+      _dependentVariableTransformations = new IDoubleToDoubleTransformation?[arraycount];
       for (int i = 0; i < arraycount; ++i)
-        _errorEvaluation[i] = info.GetValueOrNull<IVarianceScaling>("e", this);
+        info.GetValueOrNull<IVarianceScaling>("e", this); // do not use this value
       info.CloseArray(arraycount);
 
       info.GetArray("ParameterNames", out _parameterNames);
@@ -171,7 +176,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
     /// 2016-10-05 Added DataTable, GroupNumber. Changed: NunberOfRows, FirstRow now is replaced by RowSelection
     /// </summary>
     /// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(FitElement), 1)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Calc.Regression.Nonlinear.FitElement", 1)]
     private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
@@ -188,7 +193,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
         info.AddArrayOfNullableElements("IndependentVariables", s._independentVariables, s._independentVariables.Length);
         info.AddArrayOfNullableElements("DependentVariables", s._dependentVariables, s._dependentVariables.Length);
-        info.AddArrayOfNullableElements("VarianceEvaluation", s._errorEvaluation, s._errorEvaluation.Length);
+        info.AddArrayOfNullableElements("VarianceEvaluation", s._dependentVariableTransformations, s._dependentVariableTransformations.Length);
         info.AddArray("ParameterNames", s._parameterNames, s._parameterNames.Length);
         info.AddValue("ParameterNameStart", s._parameterNameStart);
       }
@@ -203,7 +208,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
       }
     }
 
-    [MemberNotNull(nameof(_rangeOfRows), nameof(_independentVariables), nameof(_dependentVariables), nameof(_errorEvaluation), nameof(_fitFunction))]
+    [MemberNotNull(nameof(_rangeOfRows), nameof(_independentVariables), nameof(_dependentVariables), nameof(_dependentVariableTransformations), nameof(_fitFunction))]
     private void DeserializeSurrogate1(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
     {
       ChildSetMemberAlt<IFitFunction>(ref _fitFunction, (IFitFunction?)info.GetValueOrNull("FitFunction", this) ?? new Polynomial(1,0));
@@ -231,9 +236,9 @@ namespace Altaxo.Calc.Regression.Nonlinear
       info.CloseArray(arraycount);
 
       arraycount = info.OpenArray();
-      _errorEvaluation = new IVarianceScaling?[arraycount];
+      _dependentVariableTransformations = new IDoubleToDoubleTransformation?[arraycount];
       for (int i = 0; i < arraycount; ++i)
-        _errorEvaluation[i] = info.GetValueOrNull<IVarianceScaling>("e", this);
+        info.GetValueOrNull<IVarianceScaling>("e", this); // do not use this value
       info.CloseArray(arraycount);
 
       info.GetArray("ParameterNames", out _parameterNames);
@@ -247,6 +252,92 @@ namespace Altaxo.Calc.Regression.Nonlinear
       if (InternalCheckAndCorrectArraySize(false, false))
         Current.Console.WriteLine("Error: Fitelement array size mismatch");
     }
+
+    #region Version 2
+    /// <summary>
+    /// 2021-05-13 Deprecate errorEvalulation, instead use transformation of the dependent variable output of the fit function.
+    /// </summary>
+    /// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(FitElement), 2)]
+    private class XmlSerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        var s = (FitElement)obj;
+
+        s.InternalCheckAndCorrectArraySize(true, false); // make sure the fit function has not changed unnoticed
+
+        info.AddValueOrNull("FitFunction", s._fitFunction);
+
+        info.AddValueOrNull("DataTable", s._dataTable);
+        info.AddValue("GroupNumber", s._groupNumber);
+        info.AddValue("RowSelection", s._rangeOfRows);
+
+        info.AddArrayOfNullableElements("IndependentVariables", s._independentVariables, s._independentVariables.Length);
+        info.AddArrayOfNullableElements("DependentVariables", s._dependentVariables, s._dependentVariables.Length);
+        info.AddArrayOfNullableElements("DependentVariablesTransformations", s._dependentVariableTransformations, s._dependentVariableTransformations.Length);
+        info.AddArray("ParameterNames", s._parameterNames, s._parameterNames.Length);
+        info.AddValue("ParameterNameStart", s._parameterNameStart);
+      }
+
+      public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      {
+        if (o is FitElement s)
+          s.DeserializeSurrogate2(info);
+        else
+          s = new FitElement(info, 2);
+        return s;
+      }
+    }
+
+    [MemberNotNull(nameof(_rangeOfRows), nameof(_independentVariables), nameof(_dependentVariables), nameof(_dependentVariableTransformations), nameof(_fitFunction))]
+    private void DeserializeSurrogate2(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+    {
+      ChildSetMemberAlt<IFitFunction>(ref _fitFunction, (IFitFunction?)info.GetValueOrNull("FitFunction", this) ?? new Polynomial(1, 0));
+
+      ChildSetMember(ref _dataTable, (DataTableProxy?)info.GetValueOrNull("DataTable", this));
+
+      _groupNumber = info.GetInt32("GroupNumber");
+
+      ChildSetMember(ref _rangeOfRows, (IRowSelection)info.GetValue("RowSelection", this));
+
+      int arraycount = info.OpenArray();
+      _independentVariables = new IReadableColumnProxy[arraycount];
+      for (int i = 0; i < arraycount; ++i)
+      {
+        ChildSetMember(ref _independentVariables[i], info.GetValueOrNull<IReadableColumnProxy>("e", this));
+      }
+      info.CloseArray(arraycount);
+
+      arraycount = info.OpenArray();
+      _dependentVariables = new IReadableColumnProxy[arraycount];
+      for (int i = 0; i < arraycount; ++i)
+      {
+        ChildSetMember(ref _dependentVariables[i], info.GetValueOrNull<IReadableColumnProxy>("e", this));
+      }
+      info.CloseArray(arraycount);
+
+      arraycount = info.OpenArray();
+      _dependentVariableTransformations = new IDoubleToDoubleTransformation?[arraycount];
+      for (int i = 0; i < arraycount; ++i)
+        _dependentVariableTransformations[i] = info.GetValueOrNull<IDoubleToDoubleTransformation>("e", this);
+      info.CloseArray(arraycount);
+
+      info.GetArray("ParameterNames", out _parameterNames);
+      for (int i = 0; i < _parameterNames.Length; ++i)
+        if (_parameterNames[i] == string.Empty)
+          _parameterNames[i] = null; // serialization can not distinguish between an empty string and a null string
+
+      _parameterNameStart = info.GetString("ParameterNameStart");
+
+      // now some afterwork
+      if (InternalCheckAndCorrectArraySize(false, false))
+        Current.Console.WriteLine("Error: Fitelement array size mismatch");
+    }
+
+
+
+    #endregion
 
     #endregion Serialization
 
@@ -282,12 +373,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
         ChildCloneToMember(ref _dependentVariables[i], from._dependentVariables[i]);
       }
 
-      _errorEvaluation = new IVarianceScaling[from._errorEvaluation.Length];
-      for (int i = 0; i < _errorEvaluation.Length; ++i)
-      {
-        if (from._errorEvaluation[i] is { } fromErrorEval)
-          _errorEvaluation[i] = (IVarianceScaling)fromErrorEval.Clone();
-      }
+      _dependentVariableTransformations = (IDoubleToDoubleTransformation?[])from._dependentVariableTransformations.Clone();
 
       _parameterNames = (string[])from._parameterNames.Clone();
       _parameterNameStart = from._parameterNameStart;
@@ -308,7 +394,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
       _dependentVariables = new IReadableColumnProxy[fitFunction.NumberOfDependentVariables];
 
-      _errorEvaluation = new IVarianceScaling[fitFunction.NumberOfDependentVariables];
+      _dependentVariableTransformations = new IDoubleToDoubleTransformation?[fitFunction.NumberOfDependentVariables];
 
       _parameterNames = new string[fitFunction.NumberOfParameters];
 
@@ -335,8 +421,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
       _dependentVariables = new IReadableColumnProxy[_fitFunction.NumberOfDependentVariables];
       ChildSetMember(ref _dependentVariables[0], ReadableColumnProxyBase.FromColumn(yColumn));
 
-      _errorEvaluation = new IVarianceScaling[_fitFunction.NumberOfDependentVariables];
-      _errorEvaluation[0] = new ConstantVarianceScaling();
+      _dependentVariableTransformations = new IDoubleToDoubleTransformation[_fitFunction.NumberOfDependentVariables];
 
       _parameterNames = new string[_fitFunction.NumberOfParameters];
     }
@@ -356,8 +441,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
       _dependentVariables = new IReadableColumnProxy[1];
       ChildSetMember(ref _dependentVariables[0], ReadableColumnProxyBase.FromColumn(yColumn));
 
-      _errorEvaluation = new IVarianceScaling[1];
-      _errorEvaluation[0] = new ConstantVarianceScaling();
+      _dependentVariableTransformations = new IDoubleToDoubleTransformation[1];
 
       _parameterNames = new string[0];
     }
@@ -584,35 +668,31 @@ namespace Altaxo.Calc.Regression.Nonlinear
       {
         ChildSetMember(ref _dependentVariables[i], ReadableColumnProxyBase.FromColumn(col));
 
-        if (col is not null)
+        if (col is null)
         {
-          _errorEvaluation[i] ??= new ConstantVarianceScaling();
-        }
-        else
-        {
-          _errorEvaluation[i] = null;
+          _dependentVariableTransformations[i] = null;
         }
       }
     }
 
     /// <summary>
-    /// Gets the kind of error evaluation for the ith dependent variable.
+    /// Gets the transformation for the ith dependent variable output of the fit function.
     /// </summary>
     /// <param name="i">The index of the dependent variable.</param>
-    /// <returns>Kind of error evaluation for the ith dependent variable.</returns>
-    public IVarianceScaling? GetErrorEvaluation(int i)
+    /// <returns>The transformation for the ith dependent variable output of the fit function.</returns>
+    public IDoubleToDoubleTransformation? GetDependentVariableTransformation(int i)
     {
-      return _errorEvaluation[i];
+      return _dependentVariableTransformations[i];
     }
 
     /// <summary>
-    /// Gets the kind of error evaluation for the ith dependent variable.
+    /// Sets the transformation for the ith dependent variable output of the fit function.
     /// </summary>
     /// <param name="i">The index of the dependent variable.</param>
-    /// <param name="val">Kind of error evaluation for the ith dependent variable.</param>
-    public void SetErrorEvaluation(int i, IVarianceScaling val)
+    /// <param name="val">Transformation for the ith dependent variable output of the fit function.</param>
+    public void SetDependentVariableTransformation(int i, IDoubleToDoubleTransformation? val)
     {
-      _errorEvaluation[i] = val;
+      _dependentVariableTransformations[i] = val;
     }
 
     /// <summary>
@@ -623,20 +703,6 @@ namespace Altaxo.Calc.Regression.Nonlinear
     {
       get
       {
-        if (_errorEvaluation is null || _dependentVariables is null)
-          return false;
-
-        for (int i = 0; i < _errorEvaluation.Length; ++i)
-        {
-          if (_dependentVariables[i] is not null)
-          {
-            if (_errorEvaluation[i] is { } errorEvaluation)
-            {
-              if (!(errorEvaluation is ConstantVarianceScaling scalingErrorEval) || !scalingErrorEval.IsDefault)
-                return true;
-            }
-          }
-        }
         return false;
       }
     }
@@ -680,6 +746,23 @@ namespace Altaxo.Calc.Regression.Nonlinear
           EhSelfChanged(EventArgs.Empty);
         }
       }
+    }
+
+    /// <summary>
+    /// Evaluates the fit function values and transforms them according to the transformations set.
+    /// </summary>
+    /// <param name="independent">The independent.</param>
+    /// <param name="parameters">The parameters.</param>
+    /// <param name="FV">The fv.</param>
+    /// <returns></returns>
+    public void FitFunctionEvaluate(double[] independent, double[] parameters, double[] FV)
+    {
+      FitFunction!.Evaluate(independent, parameters, FV);
+      for(int i=0;i<_dependentVariableTransformations.Length;++i)
+      {
+        if (_dependentVariableTransformations[i] is { } t)
+          FV[i] = t.Transform(FV[i]);
+       }
     }
 
     private void EhFitFunctionChanged(object? sender, EventArgs e)
@@ -754,11 +837,11 @@ namespace Altaxo.Calc.Regression.Nonlinear
       {
         // do the same also with the error scaling
 
-        var oldArr = _errorEvaluation;
-        var newArr = new IVarianceScaling?[noDep];
+        var oldArr = _dependentVariableTransformations;
+        var newArr = new IDoubleToDoubleTransformation?[noDep];
         for (int i = Math.Min(newArr.Length, oldArr.Length) - 1; i >= 0; i--)
           newArr[i] = oldArr[i];
-        _errorEvaluation = newArr;
+        _dependentVariableTransformations = newArr;
       }
     }
 

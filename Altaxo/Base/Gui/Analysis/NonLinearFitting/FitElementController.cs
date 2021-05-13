@@ -27,6 +27,7 @@ using System;
 using Altaxo.Calc.Regression.Nonlinear;
 using Altaxo.Collections;
 using Altaxo.Data;
+using Altaxo.Data.Transformations;
 using Altaxo.Gui.Common;
 using Altaxo.Gui.Graph;
 
@@ -169,13 +170,13 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
     public void EhView_ChooseErrorFunction(int idx)
     {
-      var choice = new SingleInstanceChoice(typeof(IVarianceScaling), _doc.GetErrorEvaluation(idx));
+      var choice = new SingleInstanceChoice(typeof(IDoubleToDoubleTransformation), _doc.GetDependentVariableTransformation(idx));
 
       object choiceAsObject = choice;
       if (Current.Gui.ShowDialog(ref choiceAsObject, "Select error norm"))
       {
         choice = (SingleInstanceChoice)choiceAsObject;
-        _doc.SetErrorEvaluation(idx, (IVarianceScaling)choice.Instance);
+        _doc.SetDependentVariableTransformation(idx, (IDoubleToDoubleTransformation)choice.Instance);
         _view.Refresh();
       }
     }
