@@ -27,8 +27,9 @@ using System;
 
 namespace Altaxo.Data.Transformations
 {
-  public class DecadicExponentialTransformation : ImmutableClassWithoutMembersBase, IVariantToVariantTransformation
+  public class DecadicExponentialTransformation : ImmutableClassWithoutMembersBase, IDoubleToDoubleTransformation
   {
+    private static readonly double Log10 = Math.Log(10);
     public static DecadicExponentialTransformation Instance { get; private set; } = new DecadicExponentialTransformation();
 
     #region Serialization
@@ -61,6 +62,17 @@ namespace Altaxo.Data.Transformations
     public AltaxoVariant Transform(AltaxoVariant value)
     {
       return Math.Pow(10, value);
+    }
+    public double Transform(double value)
+    {
+      return Math.Pow(10, value);
+    }
+
+    /// <inheritdoc/>
+    public (double ytrans, double dydxtrans) Derivative(double y, double dydx)
+    {
+      var ytrans = Math.Pow(10, y);
+      return (ytrans, dydx * ytrans * Log10);
     }
 
     public string RepresentationAsFunction

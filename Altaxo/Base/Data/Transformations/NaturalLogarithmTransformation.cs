@@ -27,7 +27,7 @@ using System;
 
 namespace Altaxo.Data.Transformations
 {
-  public class NaturalLogarithmTransformation : ImmutableClassWithoutMembersBase, IVariantToVariantTransformation
+  public class NaturalLogarithmTransformation : ImmutableClassWithoutMembersBase, IDoubleToDoubleTransformation
   {
     public static NaturalLogarithmTransformation Instance { get; private set; } = new NaturalLogarithmTransformation();
 
@@ -58,9 +58,22 @@ namespace Altaxo.Data.Transformations
     /// <inheritdoc/>
     public Type OutputValueType { get { return typeof(double); } }
 
+    /// <inheritdoc/>
     public AltaxoVariant Transform(AltaxoVariant value)
     {
       return Math.Log(value);
+    }
+
+    /// <inheritdoc/>
+    public double Transform(double value)
+    {
+      return Math.Log(value);
+    }
+
+    /// <inheritdoc/>
+    public (double ytrans, double dydxtrans) Derivative(double y, double dydx)
+    {
+      return (Math.Log(y), dydx / y);
     }
 
     public string RepresentationAsFunction

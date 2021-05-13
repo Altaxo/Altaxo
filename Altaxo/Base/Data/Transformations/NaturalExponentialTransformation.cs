@@ -27,7 +27,7 @@ using System;
 
 namespace Altaxo.Data.Transformations
 {
-  public class NaturalExponentialTransformation : ImmutableClassWithoutMembersBase, IVariantToVariantTransformation
+  public class NaturalExponentialTransformation : ImmutableClassWithoutMembersBase, IDoubleToDoubleTransformation
   {
     public static NaturalExponentialTransformation Instance { get; private set; } = new NaturalExponentialTransformation();
 
@@ -58,9 +58,23 @@ namespace Altaxo.Data.Transformations
     /// <inheritdoc/>
     public Type OutputValueType { get { return typeof(double); } }
 
+    /// <inheritdoc/>
     public AltaxoVariant Transform(AltaxoVariant value)
     {
       return Math.Exp(value);
+    }
+
+    /// <inheritdoc/>
+    public double Transform(double value)
+    {
+      return Math.Exp(value);
+    }
+
+    /// <inheritdoc/>
+    public (double ytrans, double dydxtrans) Derivative(double y, double dydx)
+    {
+      var yt = Math.Exp(y);
+      return (yt, dydx * yt);
     }
 
     public string RepresentationAsFunction

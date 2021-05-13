@@ -27,7 +27,7 @@ using System;
 
 namespace Altaxo.Data.Transformations
 {
-  public class NegateTransformation : ImmutableClassWithoutMembersBase, IVariantToVariantTransformation
+  public class NegateTransformation : ImmutableClassWithoutMembersBase, IDoubleToDoubleTransformation
   {
     public static NegateTransformation Instance { get; private set; } = new NegateTransformation();
 
@@ -62,6 +62,17 @@ namespace Altaxo.Data.Transformations
     {
       return -value;
     }
+    public double Transform(double value)
+    {
+      return -value;
+    }
+
+    /// <inheritdoc/>
+    public (double ytrans, double dydxtrans) Derivative(double y, double dydx)
+    {
+      return (-y, -dydx);
+    }
+
 
     public string RepresentationAsFunction
     {

@@ -27,7 +27,7 @@ using System;
 
 namespace Altaxo.Data.Transformations
 {
-  public class InverseTransformation : ImmutableClassWithoutMembersBase, IVariantToVariantTransformation
+  public class InverseTransformation : ImmutableClassWithoutMembersBase, IDoubleToDoubleTransformation
   {
     public static InverseTransformation Instance { get; private set; } = new InverseTransformation();
 
@@ -62,6 +62,18 @@ namespace Altaxo.Data.Transformations
     {
       return 1 / value;
     }
+
+    public double Transform(double value)
+    {
+      return 1 / value;
+    }
+
+    /// <inheritdoc/>
+    public (double ytrans, double dydxtrans) Derivative(double y, double dydx)
+    {
+      return (1/y, -dydx / (y*y));
+    }
+
 
     public string RepresentationAsFunction
     {

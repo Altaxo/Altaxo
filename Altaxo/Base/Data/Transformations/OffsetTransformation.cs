@@ -27,7 +27,7 @@ using System;
 
 namespace Altaxo.Data.Transformations
 {
-  public class OffsetTransformation : IVariantToVariantTransformation
+  public class OffsetTransformation : IDoubleToDoubleTransformation
   {
     /// <summary>
     /// The transformations. The innermost (i.e. first transformation to carry out, the rightmost transformation) is located at index 0.
@@ -78,6 +78,17 @@ namespace Altaxo.Data.Transformations
     {
       return _offset + value;
     }
+    public double Transform(double value)
+    {
+      return _offset + value;
+    }
+
+    /// <inheritdoc/>
+    public (double ytrans, double dydxtrans) Derivative(double y, double dydx)
+    {
+      return (_offset + y, dydx);
+    }
+
 
     public string RepresentationAsFunction
     {

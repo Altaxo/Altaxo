@@ -29,7 +29,7 @@ using System.Linq;
 
 namespace Altaxo.Data.Transformations
 {
-  public class CompoundTransformation : IVariantToVariantTransformation
+  public class CompoundTransformation : IDoubleToDoubleTransformation
   {
     /// <summary>
     /// The transformations. The innermost (i.e. first transformation to carry out, the rightmost transformation) is located at index 0.
@@ -190,6 +190,30 @@ namespace Altaxo.Data.Transformations
       foreach (var item in _transformations)
         value = item.Transform(value);
       return value;
+    }
+
+    public double Transform(double value)
+    {
+      foreach (var item in _transformations)
+        value = item.Transform(value);
+      return value;
+    }
+
+    /// <inheritdoc/>
+    public (double ytrans, double dydxtrans) Derivative(double y, double dydx)
+    {
+      foreach (var item in _transformations)
+      {
+        if (item is IDoubleToDoubleTransformation ddt)
+        {
+          (y, dydx) = ddt.Derivative(y, dydx);
+        }
+        else
+        {
+          throw new InvalidOperationException($"Can not calculate derivative of compound transformation because the member {item} does not implement {nameof(IDoubleToDoubleTransformation)}");
+        }
+      }
+      return (y, dydx);
     }
 
     public string RepresentationAsFunction
