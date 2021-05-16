@@ -170,6 +170,17 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
     public void EhView_ChooseErrorFunction(int idx)
     {
+      var docTrans = _doc.GetDependentVariableTransformation(idx);
+      var controller = new DependentVariableTransformationController(docTrans);
+      Current.Gui.FindAndAttachControlTo(controller);
+      if(true == Current.Gui.ShowDialog(controller, "Choose dependent variable transformation"))
+      {
+        docTrans = (IDoubleToDoubleTransformation)controller.ModelObject;
+        _doc.SetDependentVariableTransformation(idx, docTrans);
+        _view.Refresh();
+      }
+
+      /*
       var choice = new SingleInstanceChoice(typeof(IDoubleToDoubleTransformation), _doc.GetDependentVariableTransformation(idx));
 
       object choiceAsObject = choice;
@@ -179,6 +190,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
         _doc.SetDependentVariableTransformation(idx, (IDoubleToDoubleTransformation)choice.Instance);
         _view.Refresh();
       }
+      */
     }
 
     public void EhView_EditFitFunction()

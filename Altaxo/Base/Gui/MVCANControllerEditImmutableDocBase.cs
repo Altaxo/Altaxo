@@ -90,7 +90,7 @@ namespace Altaxo.Gui
     /// <summary>Throws an exception if the controller is not initialized with a document.</summary>
     /// <exception cref="InvalidOperationException">Controller was not initialized with a document</exception>
     [MemberNotNull(nameof(_originalDoc), nameof(_doc))]
-    protected void ThrowIfNotInitialized()
+    protected virtual void ThrowIfNotInitialized()
     {
       if (_originalDoc is null || _doc is null)
         throw NoDocumentException;

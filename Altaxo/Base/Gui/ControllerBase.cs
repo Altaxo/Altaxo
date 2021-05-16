@@ -44,16 +44,10 @@ namespace Altaxo.Gui
       new InvalidOperationException($"Controller {GetType()} is not property initialized.");
 
 
-    protected void CheckDocumentInitialized<T>([AllowNull][NotNull] ref T doc)
+    protected virtual void CheckDocumentInitialized<T>([AllowNull][NotNull] ref T doc)
     {
       if (doc is null)
         throw NoDocumentException;
-    }
-
-    public static void CheckDocumentInitialized<T>([AllowNull][NotNull] ref T doc, IMVCController controller)
-    {
-      if (doc is null)
-        throw new InvalidOperationException($"Controller {controller.GetType()} was not initialized with a document");
     }
   }
 }

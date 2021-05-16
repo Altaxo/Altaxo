@@ -252,15 +252,22 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       // internal dependent variable names
       for (int i = 0; i < NumberOfY; ++i)
       {
-        string name = _fitElement.FitFunction is not null && i < _fitElement.FitFunction.NumberOfDependentVariables ? _fitElement.FitFunction.DependentVariableName(i) : string.Empty;
-        var item = new TextBlock() { Text = name };
-        item.HorizontalAlignment = System.Windows.HorizontalAlignment.Left;
-        item.VerticalAlignment = System.Windows.VerticalAlignment.Center;
-        item.Margin = standardLeftInnerLabelMargin;
+        var item = new Button()
+        {
+          Content = GetTextShownForErrorEvaluation(i),
+          HorizontalAlignment = System.Windows.HorizontalAlignment.Left,
+        VerticalAlignment = System.Windows.VerticalAlignment.Center,
+        Margin = new Thickness(-4,0,0,0),
+        Padding = new Thickness(4,0,4,0),
+        Tag = i,
+         };
         item.SetValue(Grid.ColumnProperty, idxVariablesNameColumn);
         item.SetValue(Grid.RowProperty, _totalSlots - NumberOfY + i);
+        item.Click += new RoutedEventHandler(EhClickOnErrorFunction);
         _grid.Children.Add(item);
 
+        /*
+        
         var errorScaleButton = new Button()
         {
           Content = GetTextShownForErrorEvaluation(i),
@@ -274,6 +281,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
         errorScaleButton.SetValue(Grid.ColumnSpanProperty, 2);
         errorScaleButton.SetValue(Grid.RowProperty, _totalSlots - NumberOfY + i);
         _grid.Children.Add(errorScaleButton);
+        */
       }
 
       // external dependent variable names
@@ -358,7 +366,12 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
     private string GetTextShownForErrorEvaluation(int i)
     {
-      string name = _fitElement.GetDependentVariableTransformation(i) is not null ? _fitElement.GetDependentVariableTransformation(i).RepresentationAsOperator : string.Empty;
+      string name = _fitElement.FitFunction is not null && i < _fitElement.FitFunction.NumberOfDependentVariables ? _fitElement.FitFunction.DependentVariableName(i) : string.Empty;
+
+      if (!string.IsNullOrEmpty(name) && _fitElement.GetDependentVariableTransformation(i) is { } transformation)
+      {
+        name = transformation.GetRepresentationAsFunction(name);
+      }
       return name;
     }
 
