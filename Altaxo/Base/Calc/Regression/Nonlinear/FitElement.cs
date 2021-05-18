@@ -696,6 +696,24 @@ namespace Altaxo.Calc.Regression.Nonlinear
     }
 
     /// <summary>
+    /// Gets the dependent variable name, and if a transformation is applied, the representation of this transformation as a function.
+    /// </summary>
+    /// <param name="i">The index of the dependent variable.</param>
+    /// <returns>The dependent variable name, and if a transformation is applied, the representation of this transformation as a function.</returns>
+    public string GetDependentVariableNameWithTransformation(int i)
+    {
+      var result = _fitFunction?.DependentVariableName(i);
+      if (string.IsNullOrEmpty(result))
+        return string.Empty;
+
+      if(_dependentVariableTransformations[i] is { } transformation)
+      {
+        result = transformation.GetRepresentationAsFunction(result);
+      }
+      return result;
+    }
+
+    /// <summary>
     /// Returns true if the regression procedure has to include weights in the calculation.
     /// Otherwise, if weights are not used for all used dependent variables (ConstantVarianceScaling with Scaling==1), <c>false</c> is returned.
     /// </summary>

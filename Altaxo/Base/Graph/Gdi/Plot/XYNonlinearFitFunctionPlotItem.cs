@@ -137,7 +137,7 @@ namespace Altaxo.Graph.Gdi.Plot
     }
 
     /// <summary>
-    /// A Guid string that is identical for all fit function elements with the same fit document.
+    /// A Guid string that is identical for all fit function elements within the same fit document.
     /// </summary>
     public string FitDocumentIdentifier
     {

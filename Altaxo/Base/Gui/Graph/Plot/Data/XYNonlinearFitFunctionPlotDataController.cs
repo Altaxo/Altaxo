@@ -73,8 +73,8 @@ namespace Altaxo.Gui.Graph.Plot.Data
       var fitdoc = _doc.FitDocumentCopy;
 
       var parameters = fitdoc.CurrentParameters;
-
-      var thisFitFunction = fitdoc.FitEnsemble[_doc.FitElementIndex].FitFunction;
+      var fitEle = fitdoc.FitEnsemble[_doc.FitElementIndex];
+      var thisFitFunction = fitEle.FitFunction;
 
       var thisIndepTransformation = (_doc.Function as FitFunctionToScalarFunctionDDWrapper)?.IndependentVariableTransformation;
       var thisTransformation = (_doc.Function as FitFunctionToScalarFunctionDDWrapper)?.DependentVariableTransformation;
@@ -84,7 +84,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
       stb.AppendFormat(culture, "Independent variable: {0}, fed with: {1} {2}", thisFitFunction?.IndependentVariableName(0), thisIndepTransformation?.RepresentationAsOperator ?? string.Empty, "x_axis_value");
       stb.AppendLine();
       stb.AppendFormat(culture, "Displayed dependent variable[{0}]: {1} {2}", _doc.DependentVariableIndex, thisTransformation?.RepresentationAsOperator ?? string.Empty, thisFitFunction?.DependentVariableName(_doc.DependentVariableIndex));
-      stb.AppendFormat(culture, " ({0} was fitted to : {1})", thisFitFunction?.DependentVariableName(_doc.DependentVariableIndex), fitdoc.FitEnsemble[_doc.FitElementIndex].DependentVariables(_doc.DependentVariableIndex)?.FullName);
+      stb.AppendFormat(culture, " ({0} was fitted to : {1})", fitEle.GetDependentVariableNameWithTransformation(_doc.FitElementIndex), fitEle.DependentVariables(_doc.DependentVariableIndex)?.FullName);
       stb.AppendLine();
       stb.AppendLine();
 
@@ -134,7 +134,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
 
         for (int i = 0; i < fitElement.NumberOfDependentVariables; ++i)
         {
-          stb.AppendFormat(culture, "DependentVariable[{0}]: {1} ---> {2}", i, fitElement.FitFunction?.DependentVariableName(i), fitElement.DependentVariables(i)?.FullName);
+          stb.AppendFormat(culture, "DependentVariable[{0}]: {1} ---> {2}", i, fitElement.GetDependentVariableNameWithTransformation(i), fitElement.DependentVariables(i)?.FullName);
           stb.AppendLine();
         }
 
