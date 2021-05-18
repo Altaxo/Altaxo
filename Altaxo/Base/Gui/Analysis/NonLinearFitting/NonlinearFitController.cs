@@ -680,7 +680,7 @@ Label_EditScript:
           if (indepVarDataColumn is not null && depVarDataColumn is not null && dataColumnsAndTheirTransformation.TryGetValue((indepVarDataColumn, depVarDataColumn), out var orgTransformations))
           {
             functionIndepVarPlotItemTransformation = GetFitFunctionIndependentTransformation(orgTransformations.xDataTransformation, indepFitVarTransformation);
-            functionDepVarPlotItemTransformation = GetFitFunctionDependentTransformation(orgTransformations.yDataTransformation, depFitVarTransformation);
+            functionDepVarPlotItemTransformation = GetFitFunctionDependentTransformation(orgTransformations.yDataTransformation, depFitVarTransformation, fitEle.GetDependentVariableTransformation(idxDependentVariable));
           }
 
           // Plot items for confidence intervals
@@ -785,24 +785,9 @@ Label_EditScript:
       return newFitDocumentIdentifier;
     }
 
-    private static IVariantToVariantTransformation GetFitFunctionDependentTransformation(IVariantToVariantTransformation transformationOfOriginalDataColumn, IVariantToVariantTransformation transformationOfFitDependentVariable)
+    private static IVariantToVariantTransformation GetFitFunctionDependentTransformation(IVariantToVariantTransformation transformationOfOriginalDataColumn, IVariantToVariantTransformation transformationOfFitDependentVariable, IVariantToVariantTransformation transformationOfDependentVariableFitFunctionOutput)
     {
-      if (transformationOfOriginalDataColumn is null && transformationOfFitDependentVariable is null)
-      {
-        return null;
-      }
-      else if (transformationOfOriginalDataColumn is not null && transformationOfFitDependentVariable is null)
-      {
-        return transformationOfOriginalDataColumn;
-      }
-      else if (transformationOfOriginalDataColumn is null && transformationOfFitDependentVariable is not null)
-      {
-        return transformationOfFitDependentVariable.BackTransformation;
-      }
-      else // both transformations are not null
-      {
-        return CompoundTransformation.TryGetCompoundTransformationWithSimplification(new[] { transformationOfOriginalDataColumn, transformationOfFitDependentVariable.BackTransformation });
-      }
+        return CompoundTransformation.TryGetCompoundTransformationWithSimplification(new[] { (transformationOfDependentVariableFitFunctionOutput,false),  (transformationOfFitDependentVariable, true), (transformationOfOriginalDataColumn, false) });
     }
 
     private static IVariantToVariantTransformation GetFitFunctionIndependentTransformation(IVariantToVariantTransformation transformationOfOriginalDataColumn, IVariantToVariantTransformation transformationOfFitIndependentVariable)

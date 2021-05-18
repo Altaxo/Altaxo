@@ -123,6 +123,44 @@ namespace Altaxo.Data.Transformations
         return new CompoundTransformation(transformationList);
     }
 
+    public static IVariantToVariantTransformation? TryGetCompoundTransformationWithSimplification(IEnumerable<(IVariantToVariantTransformation Transformation, bool UseBackTransformation)> transformations)
+    {
+      if (transformations is null)
+        return null;
+
+      var transformationList = new List<IVariantToVariantTransformation>();
+      foreach (var item in transformations)
+      {
+        AddTransformationToFlattenedList(item.Transformation, item.UseBackTransformation, transformationList);
+      }
+
+      if (transformationList.Count == 0)
+      {
+        return null;
+      }
+      else if (transformationList.Count == 1)
+      {
+        return transformationList[0];
+      }
+      else
+      {
+        SimplifyTransformationList(transformationList);
+
+        if (transformationList.Count == 0)
+        {
+          return null;
+        }
+        else if (transformationList.Count == 1)
+        {
+          return transformationList[0];
+        }
+        else
+        {
+          return new CompoundTransformation(transformationList);
+        }
+      }
+    }
+
     public static IVariantToVariantTransformation? TryGetCompoundTransformationWithSimplification(IEnumerable<IVariantToVariantTransformation> transformations)
     {
       if (transformations is null)
@@ -130,7 +168,7 @@ namespace Altaxo.Data.Transformations
 
       var transformationList = new List<IVariantToVariantTransformation>();
       foreach (var transfo in transformations)
-        AddTransformationToFlattenedList(transfo, transformationList);
+        AddTransformationToFlattenedList(transfo, false, transformationList);
 
       if (transformationList.Count == 0)
       {
@@ -156,16 +194,35 @@ namespace Altaxo.Data.Transformations
     /// </summary>
     /// <param name="transformation">The transformation.</param>
     /// <param name="list">The list.</param>
-    private static void AddTransformationToFlattenedList(IVariantToVariantTransformation transformation, List<IVariantToVariantTransformation> list)
+    private static void AddTransformationToFlattenedList(IVariantToVariantTransformation transformation, bool useBackTransformation, List<IVariantToVariantTransformation> list)
     {
       if (transformation is CompoundTransformation ct)
       {
-        foreach (var trans in ct._transformations)
-          AddTransformationToFlattenedList(trans, list);
+        if (useBackTransformation)
+        {
+          for(int i=ct._transformations.Count-1;i>=0;--i)
+          {
+            AddTransformationToFlattenedList(ct._transformations[i], useBackTransformation, list);
+          }
+        }
+        else
+        {
+          foreach (var trans in ct._transformations)
+          {
+            AddTransformationToFlattenedList(trans, useBackTransformation, list);
+          }
+        }
       }
       else if (transformation is not null)
       {
-        list.Add(transformation);
+        if (useBackTransformation)
+        {
+          list.Add(transformation.BackTransformation ?? throw new InvalidOperationException($"Backtransformation of transformation {transformation} is not available"));
+        }
+        else
+        {
+          list.Add(transformation);
+        }
       }
     }
 
@@ -175,14 +232,53 @@ namespace Altaxo.Data.Transformations
     /// <param name="list">The list to simplify.</param>
     private static void SimplifyTransformationList(List<IVariantToVariantTransformation> list)
     {
-      for (int i = list.Count - 2; i >= 0; --i)
+      bool hasChanged;
+
+      // Cancel factors and offsets
+      do
       {
-        if (list[i].BackTransformation.Equals(list[i + 1]))
+        hasChanged = false;
+        for (int i = list.Count - 2; i >= 0; --i)
         {
-          list.RemoveAt(i + 1);
-          list.RemoveAt(i);
+          if (list[i].BackTransformation.Equals(list[i + 1]))
+          {
+            hasChanged = true;
+            list.RemoveAt(i + 1);
+            list.RemoveAt(i);
+            --i;
+          }
+          else if (list[i+1] is ScaleTransformation sc1 && list[i] is ScaleTransformation sc2)
+          {
+            hasChanged = true;
+            list.RemoveAt(i + 1);
+            var newScale = sc1.Scale + sc2.Scale;
+            if (newScale != 1)
+            {
+              list[i] = new ScaleTransformation(newScale);
+            }
+            else
+            {
+              list.RemoveAt(i);
+              --i;
+            }
+          }
+          else if (list[i + 1] is OffsetTransformation of1 && list[i] is OffsetTransformation of2)
+          {
+            hasChanged = true;
+            list.RemoveAt(i + 1);
+            var newOffset = of1.Offset + of2.Offset;
+            if (newOffset != 0)
+            {
+              list[i] = new OffsetTransformation(newOffset);
+            }
+            else
+            {
+              list.RemoveAt(i);
+              --i;
+            }
+          }
         }
-      }
+      } while (hasChanged);
     }
 
     public AltaxoVariant Transform(AltaxoVariant value)
