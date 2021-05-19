@@ -25,6 +25,7 @@
 #nullable enable
 using System;
 using Altaxo.Calc.Regression.Nonlinear;
+using Altaxo.Main;
 
 namespace Altaxo.Calc.FitFunctions.Relaxation
 {
@@ -32,7 +33,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
   /// Summary description for KohlrauschDecay.
   /// </summary>
   [FitFunctionClass]
-  public class KohlrauschDecay : IFitFunction
+  public class KohlrauschDecay : IFitFunction, IImmutable
   {
     private int _numberOfRelaxations = 1;
     private bool _logarithmizeResult;
@@ -70,7 +71,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
       public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (KohlrauschDecay?)o ?? new KohlrauschDecay();
-        s.NumberOfRelaxations = info.GetInt32("NumberOfRelaxations");
+        s._numberOfRelaxations = info.GetInt32("NumberOfRelaxations");
         s._logarithmizeResult = info.GetBoolean("LogarithmizeResult");
         return s;
       }
@@ -90,14 +91,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
       }
       set
       {
-        var oldValue = _numberOfRelaxations;
-        value = Math.Max(value, 0);
-        _numberOfRelaxations = value;
-
-        if (oldValue != value)
-        {
-          OnChanged();
-        }
+        throw new NotImplementedException("Sorry, this function is deprecated. Use General/StretchedExponentialDecay.");
       }
     }
 
@@ -115,10 +109,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
       }
       set
       {
-        var oldValue = _logarithmizeResult;
-        _logarithmizeResult = value;
-        if (value != oldValue)
-          OnChanged();
+        throw new NotImplementedException("Sorry, this function is deprecated. Use General/StretchedExponentialDecay.");
       }
     }
 
@@ -127,8 +118,6 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
       return "KohlrauschDecay";
     }
 
-    [FitFunctionCreator("KohlrauschDecay", "Relaxation", 1, 1, 4)]
-    [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Relaxation.KohlrauschDecay}")]
     public static IFitFunction CreateDefault()
     {
       return new KohlrauschDecay();
@@ -219,15 +208,12 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     /// <summary>
     /// Called when anything in this fit function has changed.
     /// </summary>
-    protected virtual void OnChanged()
-    {
-      Changed?.Invoke(this, EventArgs.Empty);
-    }
+   
 
     /// <summary>
-    /// Fired when the fit function changed.
+    /// Unused because this instance is immutable.
     /// </summary>
-    public event EventHandler? Changed;
+    public event EventHandler? Changed { add { } remove { } }
 
     #endregion IFitFunction Members
   }

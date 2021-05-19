@@ -105,7 +105,7 @@ namespace Altaxo.Calc.FitFunctions.General
 
     }
 
-    [FitFunctionCreator("PolynomialFit", "General", 1, 1, 3)]
+    [FitFunctionCreator("Polynomial", "General", 1, 1, 3)]
     [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.General.Polynomial}")]
     public static IFitFunction CreatePolynomial_2_0()
     {
