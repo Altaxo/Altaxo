@@ -242,21 +242,6 @@ The parameters are:
     <value>This implements the Havriliak-Negami function
 </value>
   </data>
-  <data name="Relaxation.KohlrauschDecay" xml:space="preserve">
-    <value>This implements the Kohlrausch decay function (also known as 'stretched exponential function' in the time domain: 
-
-$$
-y(x) = o + a \times \exp\left(-(\frac{x}{\tau})^{\beta})
-$$
-
-in which x is the independent variable (usually the time), and y is the dependent variable. The parameters are:
-- o is the offset,
-- a is the amplitude,
-- $\tau$ is the characteristic decay time, and
-- $\beta$ is the shape parameter.
-
-The value of $\beta$ is usually in the range (0, 1]. A smaller value of $\beta$ causes a steeper slope at $x$ close to 0, and a longer tail for large values of x.</value>
-  </data>
   <data name="Relaxation.KohlrauschKernel.Formula" xml:space="preserve">
     <value>
 $$
@@ -748,6 +733,41 @@ The domain of the function is $ -\infty &lt; x &lt; \infty $, with some points (
 
 ---</value>
   </data>
+  <data name="General.StretchedExponentialDecay" xml:space="preserve">
+    <value># Stretched exponential decay
+(also known as **Kohlrausch decay**)
+
+This function evaluates a stretched exponential decay process starting at $x=x_0$ with one or multiple terms according to
+
+$$
+y(x) = y_0 + a_0 \exp\left(-(\frac{x-x_0}{\tau_0})^{\beta_0} \right ) + ... + a_{n-1} \exp\left(-(\frac{x-x_0}{\tau_{n-1}})^{\beta_{n-1}} \right )   | (x &gt; x_0)
+$$
+
+and
+
+$$
+y(x) = y_0 + \sum_{0}^{n-1} a_i  | (x \leq x_0)
+$$
+
+in which:
+
+- $x_0$ is the starting point of the decay process. If this value is known, you should enter the value and set this parameter to fixed.
+- $y_0$ is the value for $x \rightarrow \infty$
+- $a_0$ .. $a_{n-1}$ are the pre-factors of the exponential terms
+- $\tau_0$ ... $\tau_{n-1}$ are the characteristic times
+- $\beta_0$ ... $\beta_{n-1}$ are the exponents, usually in the range $ 0 &lt; \beta \leq 1 $
+- $n$ is the number of exponential terms
+
+The number of terms $n$ can be changed by double-clicking on the fit function. The default value is $n=1$.
+
+The domain of the function is $-\infty &lt; x &lt; \infty$. The function values are set to constant for $x&lt;x_0$.
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.General.StretchedExponentialDecay.Fig1.png)
+^^^ Fig. 1: Stretched exponential decay with $x_0=0$, $y_0=1$, $a_0=3$, $\tau_0=4$, and $\beta=0.5$ (green) in comparison to a 'normal' exponential decay function with the same parameters (grey). Note that the 'normal' exponential decay has varying function values both for $x&lt;0$ and $x&gt;0$, whereas the stretched exponential decay is constant for $x&lt;x_0$.
+---
+</value>
+  </data>
   <data name="General.StretchedExponentialEquilibration" xml:space="preserve">
     <value># Stretched exponential equilibration
 
@@ -765,8 +785,8 @@ $$
 
 in which:
 
+- $x_0$ is the starting point of the equilibration process. If this value is known, you should enter the value and set this parameter to fixed.
 - $y_0$ is the starting value (and the value for $x \leq x_0$)
-- $x_0$ is the starting point of the equilibration process
 - $a_0$ .. $a_{n-1}$ are the pre-factors of the exponential equilibration terms
 - $\tau_0$ ... $\tau_{n-1}$ are the characteristic times
 - $\beta_0$ ... $\beta_{n-1}$ are the exponents, usually in the range $ 0 &lt; \beta \leq 1 $
@@ -778,7 +798,41 @@ The domain of the function is $-\infty &lt; x &lt; \infty$.
 
 ^^^
 ![](res:Altaxo.Calc.FitFunctions.General.StretchedExponentialEquilibration.Fig1.png)
-^^^ Fig. 1: Stretched exponential equilibration with $y_0=1$, $a_0=3$, $x_0=2$, $\tau_0=4$, and $\beta=0.5$ (green) in comparison to a 'normal' exponential equilibration function with the same parameters ($\beta=1$).
+^^^ Fig. 1: Stretched exponential equilibration with  $x_0=2$, $y_0=1$, $a_0=3$, $\tau_0=4$, and $\beta=0.5$ (green) in comparison to a 'normal' exponential equilibration function with the same parameters (grey).
+---
+</value>
+  </data>
+  <data name="General.StretchedExponentialGrowth" xml:space="preserve">
+    <value># Stretched exponential growth
+
+This function evaluates a stretched exponential growth process starting at $x=x_0$ with one or multiple terms according to
+
+$$
+y(x) = y_0 + a_0 \exp\left((\frac{x-x_0}{\tau_0})^{\beta_0} \right ) + ... + a_{n-1} \exp\left((\frac{x-x_0}{\tau_{n-1}})^{\beta_{n-1}} \right )   | (x &gt; x_0)
+$$
+
+and
+
+$$
+y(x) = y_0 + \sum_{0}^{n-1} a_i  | (x \leq x_0)
+$$
+
+in which:
+
+- $x_0$ is the starting point of the growth process. If this value is known, you should enter the value and set this parameter to fixed.
+- $y_0$ is an offset value
+- $a_0$ .. $a_{n-1}$ are the pre-factors of the exponential terms
+- $\tau_0$ ... $\tau_{n-1}$ are the characteristic times
+- $\beta_0$ ... $\beta_{n-1}$ are the exponents, usually in the range $ 0 &lt; \beta \leq 1 $
+- $n$ is the number of exponential terms
+
+The number of terms $n$ can be changed by double-clicking on the fit function. The default value is $n=1$.
+
+The domain of the function is $-\infty &lt; x &lt; \infty$. The function values are set to constant for $x&lt;x_0$.
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.General.StretchedExponentialGrowth.Fig1.png)
+^^^ Fig. 1: Stretched exponential growth with $x_0=0$, $y_0=-2$, $a_0=3$, $\tau_0=4$, and $\beta=0.5$ (green) in comparison to a 'normal' exponential growth function with the same parameters (grey). Note that the 'normal' exponential growth has varying function values both for $x&lt;0$ and $x&gt;0$, whereas the stretched exponential growth is constant for $x&lt;x_0$.
 ---
 </value>
   </data>

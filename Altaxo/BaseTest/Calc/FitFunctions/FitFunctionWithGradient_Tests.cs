@@ -83,6 +83,8 @@ namespace Altaxo.Calc.FitFunctions
         (() => new StretchedExponentialDecay(1), -0.5, new double[]{0.125,1,3,5,0.5}, 4),
         (() => new StretchedExponentialEquilibration(1), 0.5, new double[]{0.125,1,3,5,0.5}, 1+3*(1-Math.Exp(-Math.Pow((0.5-0.125)/5,0.5)))),
         (() => new StretchedExponentialEquilibration(1), -0.5, new double[]{0.125,1,3,5,0.5}, 1),
+        (() => new StretchedExponentialGrowth(1), 0.5, new double[]{0.125,1,3,5,0.5}, 1+3*(Math.Exp(Math.Pow((0.5-0.125)/5,0.5)))),
+        (() => new StretchedExponentialGrowth(1), -0.5, new double[]{0.125,1,3,5,0.5}, 4),
       };
     private static DoubleEqualityComparer CompareD = new DoubleEqualityComparer(1E-100, 1E-12);
     private static DoubleEqualityComparer CompareDerivatives = new DoubleEqualityComparer(1E-5, 1E-5);

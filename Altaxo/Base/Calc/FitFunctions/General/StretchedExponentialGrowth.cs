@@ -38,7 +38,7 @@ namespace Altaxo.Calc.FitFunctions.General
   /// </summary>
   /// <seealso cref="Altaxo.Calc.Regression.Nonlinear.IFitFunction" />
   [FitFunctionClass]
-  public class StretchedExponentialDecay : IFitFunctionWithGradient, IImmutable
+  public class StretchedExponentialGrowth : IFitFunctionWithGradient, IImmutable
   {
     #region Serialization
 
@@ -46,30 +46,30 @@ namespace Altaxo.Calc.FitFunctions.General
     /// Initial version 2021-05-19.
     /// </summary>
     /// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(StretchedExponentialDecay), 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(StretchedExponentialGrowth), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (StretchedExponentialDecay)obj;
+        var s = (StretchedExponentialGrowth)obj;
         info.AddValue("NumberOfTerms", s.NumberOfTerms);
       }
 
       public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var numberOfTerms = info.GetInt32("NumberOfTerms");
-        return new StretchedExponentialDecay(numberOfTerms);
+        return new StretchedExponentialGrowth(numberOfTerms);
       }
     }
 
     #endregion Serialization
 
-    public StretchedExponentialDecay()
+    public StretchedExponentialGrowth()
     {
       NumberOfTerms = 1;
     }
 
-    public StretchedExponentialDecay(int numberOfTerms)
+    public StretchedExponentialGrowth(int numberOfTerms)
     {
       if (!(numberOfTerms >= 1))
         throw new ArgumentOutOfRangeException($"{nameof(NumberOfTerms)} must be greater than or equal to 1");
@@ -83,21 +83,12 @@ namespace Altaxo.Calc.FitFunctions.General
     /// Creates an exponential decrease fit function with one exponential term (3 parameters).
     /// </summary>
     /// <returns></returns>
-    [FitFunctionCreator("StretchedExponentialDecay", "General", 1, 1, 5)]
-    [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.General.StretchedExponentialDecay}")]
+    [FitFunctionCreator("StretchedExponentialGrowth", "General", 1, 1, 5)]
+    [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.General.StretchedExponentialGrowth}")]
     public static IFitFunction CreateFitFunction()
     {
-      return new StretchedExponentialDecay(1);
+      return new StretchedExponentialGrowth(1);
     }
-
-    [FitFunctionCreator("KohlrauschDecay", "Relaxation", 1, 1, 5)]
-    [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.General.StretchedExponentialDecay}")]
-    public static IFitFunction CreateKohlrauschDecay()
-    {
-      return new StretchedExponentialDecay(1);
-    }
-
-
 
     /// <summary>
     /// Not functional since this instance is immutable.
@@ -119,21 +110,20 @@ namespace Altaxo.Calc.FitFunctions.General
     /// <param name="value">The number of exponential terms.</param>
     /// <returns>New instance with the provided number of terms.</returns>
     /// <exception cref="ArgumentOutOfRangeException">$"{nameof(NumberOfTerms)} must be greater than or equal to 1</exception>
-    public StretchedExponentialDecay WithNumberOfTerms(int value)
+    public StretchedExponentialGrowth WithNumberOfTerms(int value)
     {
       if (!(value >= 1))
         throw new ArgumentOutOfRangeException($"{nameof(NumberOfTerms)} must be greater than or equal to 1");
 
       if (!(NumberOfTerms == value))
       {
-        return new StretchedExponentialDecay(value);
+        return new StretchedExponentialGrowth(value);
       }
       else
       {
         return this;
       }
     }
-
 
     #region IFitFunction Members
 
@@ -214,7 +204,7 @@ namespace Altaxo.Calc.FitFunctions.General
       {
         for (int i = 2, j = 0; j < NumberOfTerms; i += 3, ++j) 
         {
-          sum += P[i] * (Math.Exp(-Math.Pow(x / P[i + 1], P[i+2])));
+          sum += P[i] * (Math.Exp(Math.Pow(x / P[i + 1], P[i+2])));
         }
       }
       else
@@ -244,12 +234,12 @@ namespace Altaxo.Calc.FitFunctions.General
           var tau = P[i + 1];
           var beta = P[i + 2];
           var arg = Math.Pow(x / tau, beta);
-          var earg = Math.Exp(-arg);
+          var earg = Math.Exp(arg);
 
           DY[0][i] = earg; // dy/da
-          DY[0][i + 1] = P[i] * earg * arg *  beta / tau; // dy/dtau
-          DY[0][i + 2] = -P[i] * earg * arg * Math.Log(x / tau); // dy/dbeta
-          sum += P[i] * earg * arg * beta / x;
+          DY[0][i + 1] = -P[i] * earg * arg *  beta / tau; // dy/dtau
+          DY[0][i + 2] = P[i] * earg * arg * Math.Log(x / tau); // dy/dbeta
+          sum -= P[i] * earg * arg * beta / x;
         }
         DY[0][0] = sum; // derivative w.r.t. to x0
       }
