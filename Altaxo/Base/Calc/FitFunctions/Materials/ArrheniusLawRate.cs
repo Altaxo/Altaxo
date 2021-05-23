@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2021 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -36,23 +36,26 @@ namespace Altaxo.Calc.FitFunctions.Materials
   /// quantities which increase with increasing temperature.
   /// </summary>
   [FitFunctionClass]
-  public class ArrheniusLawRate : IFitFunction
+  public class ArrheniusLawRate : IFitFunction, Main.IImmutable
   {
     private TemperatureRepresentation _temperatureUnitOfX;
-    private TransformedValueRepresentation _dependentVariableTransform;
     private EnergyRepresentation _paramEnergyUnit;
 
     public ArrheniusLawRate()
     {
       _temperatureUnitOfX = TemperatureRepresentation.Kelvin;
-      _dependentVariableTransform = TransformedValueRepresentation.Original;
       _paramEnergyUnit = EnergyRepresentation.JoulePerMole;
     }
 
-    public ArrheniusLawRate(TemperatureRepresentation temperatureUnitOfX, TransformedValueRepresentation dependentVariableTransform, EnergyRepresentation paramEnergyUnit)
+    private ArrheniusLawRate(TemperatureRepresentation temperatureUnitOfX, TransformedValueRepresentation dependentVariableTransform, EnergyRepresentation paramEnergyUnit)
     {
       _temperatureUnitOfX = temperatureUnitOfX;
-      _dependentVariableTransform = dependentVariableTransform;
+      _paramEnergyUnit = paramEnergyUnit;
+    }
+
+    public ArrheniusLawRate(TemperatureRepresentation temperatureUnitOfX, EnergyRepresentation paramEnergyUnit)
+    {
+      _temperatureUnitOfX = temperatureUnitOfX;
       _paramEnergyUnit = paramEnergyUnit;
     }
 
@@ -65,22 +68,7 @@ namespace Altaxo.Calc.FitFunctions.Materials
     {
       if(!(_paramEnergyUnit == value))
       {
-        return new ArrheniusLawRate(_temperatureUnitOfX, _dependentVariableTransform, value);
-      }
-      else
-      {
-        return this;
-      }
-    }
-
-    [Category("OptionsForDependentVariables")]
-    public TransformedValueRepresentation DependentVariableRepresentation => _dependentVariableTransform;
-    [Category("OptionsForDependentVariables")]
-    public ArrheniusLawRate WithDependentVariableRepresentation(TransformedValueRepresentation value)
-    {
-      if (!(_dependentVariableTransform == value))
-      {
-        return new ArrheniusLawRate(_temperatureUnitOfX, value, _paramEnergyUnit);
+        return new ArrheniusLawRate(_temperatureUnitOfX, value);
       }
       else
       {
@@ -92,12 +80,12 @@ namespace Altaxo.Calc.FitFunctions.Materials
     public TemperatureRepresentation IndependentVariableRepresentation => _temperatureUnitOfX;
 
 
-[Category("OptionsForIndependentVariables")]
+    [Category("OptionsForIndependentVariables")]
     public ArrheniusLawRate WithIndependentVariableRepresentation(TemperatureRepresentation value)
     {
       if(!(_temperatureUnitOfX == value))
       {
-        return new ArrheniusLawRate(value, _dependentVariableTransform, _paramEnergyUnit);
+        return new ArrheniusLawRate(value, _paramEnergyUnit);
       }
       else
       {
@@ -118,7 +106,6 @@ namespace Altaxo.Calc.FitFunctions.Materials
       {
         var s = (ArrheniusLawRate)obj;
         info.AddEnum("IndependentVariableUnit", s._temperatureUnitOfX);
-        info.AddEnum("DependentVariableTransform", s._dependentVariableTransform);
         info.AddEnum("ParamEnergyUnit", s._paramEnergyUnit);
       }
 
@@ -127,12 +114,12 @@ namespace Altaxo.Calc.FitFunctions.Materials
         ArrheniusLawRate s = (ArrheniusLawRate?)o ?? new ArrheniusLawRate();
 
         var temperatureUnitOfX = (TemperatureRepresentation)info.GetEnum("IndependentVariableUnit", typeof(TemperatureRepresentation));
-        var dependentVariableTransform = (TransformedValueRepresentation)info.GetEnum("DependentVariableTransform", typeof(TransformedValueRepresentation));
         var paramEnergyUnit = (EnergyRepresentation)info.GetEnum("ParamEnergyUnit", typeof(EnergyRepresentation));
 
-        return new ArrheniusLawRate(temperatureUnitOfX, dependentVariableTransform, paramEnergyUnit);
+        return new ArrheniusLawRate(temperatureUnitOfX, paramEnergyUnit);
       }
     }
+
 
 
     #endregion Serialization
@@ -142,7 +129,7 @@ namespace Altaxo.Calc.FitFunctions.Materials
       return "ArrheniusLaw(Rate)";
     }
 
-    [FitFunctionCreator("ArrheniusLaw (Rate)", "Materials", 1, 1, 2)]
+    [FitFunctionCreator("Arrhenius law (rate)", "Materials", 1, 1, 2)]
     [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Materials.ArrheniusLawRate}")]
     public static IFitFunction CreateDefault()
     {
@@ -182,7 +169,7 @@ namespace Altaxo.Calc.FitFunctions.Materials
 
     public string DependentVariableName(int i)
     {
-      return TransformedValue.GetFormula("y", _dependentVariableTransform);
+      return "y";
     }
 
     public string ParameterName(int i)
@@ -208,7 +195,9 @@ namespace Altaxo.Calc.FitFunctions.Materials
           return 1;
 
         case 1:
-          return 1000;
+          var en = new Energy(80000, EnergyRepresentation.JoulePerMole);
+          return en.ConvertTo(_paramEnergyUnit).Value;
+
       }
 
       return 0;
@@ -232,8 +221,7 @@ namespace Altaxo.Calc.FitFunctions.Materials
     {
       double temperature = Temperature.ToKelvin(X[0], _temperatureUnitOfX);
       double energyAsTemperature = Energy.ToTemperatureSI(P[1], _paramEnergyUnit);
-      double ybase = P[0] * Math.Exp(-energyAsTemperature / temperature);
-      Y[0] = TransformedValue.BaseValueToTransformedValue(ybase, _dependentVariableTransform);
+      Y[0] = P[0] * Math.Exp(-energyAsTemperature / temperature);
     }
 
   }

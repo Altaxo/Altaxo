@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2021 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -25,192 +25,74 @@
 #nullable enable
 using System;
 using System.ComponentModel;
-using Altaxo.Calc.Regression.Nonlinear;
 using Altaxo.Science;
 
 namespace Altaxo.Calc.FitFunctions.Materials
 {
   /// <summary>
-  /// Represents the Vogel-Fulcher law to describe the temperature dependence of rates in glass forming substances.
+  /// Obsolete VogelFulcherLaw class.
   /// </summary>
-  [FitFunctionClass]
-  public class VogelFulcherLaw : IFitFunction
+  /// <seealso cref="Altaxo.Calc.FitFunctions.Materials.VogelFulcherLawTime" />
+  [Obsolete("Please use VogelFulcherLawTime or VogelFulcherLawRate")]
+  public class VogelFulcherLaw : VogelFulcherLawTime
   {
-    public enum OutputType { Direct = 0, NaturalLogarithm = 1, DecadicLogarithm = 2 };
-
     private TransformedValueRepresentation _dependentVariableTransform;
-    private TemperatureRepresentation _temperatureUnitOfX;
-    private TemperatureRepresentation _temperatureUnitOfT0;
-    private TemperatureRepresentation _temperatureUnitOfB;
+
+    private VogelFulcherLaw(
+      TransformedValueRepresentation dependentVariableTransform,
+    TemperatureRepresentation temperatureUnitOfX,
+    TemperatureRepresentation temperatureUnitOfT0,
+    TemperatureRepresentation temperatureUnitOfB)
+      : base(temperatureUnitOfX, temperatureUnitOfT0, temperatureUnitOfB)
+    {
+      _dependentVariableTransform = dependentVariableTransform;
+    }
 
     [Category("OptionsForDependentVariables")]
     public TransformedValueRepresentation DependentVariableRepresentation
     {
       get { return _dependentVariableTransform; }
-      set { _dependentVariableTransform = value; }
+      set { throw new NotImplementedException("Obsolete. Instead, please use the output transformation in the fit function manager"); }
     }
 
-    [Category("OptionsForIndependentVariables")]
-    public TemperatureRepresentation IndependentVariableRepresentation
+    public override string DependentVariableName(int i)
     {
-      get { return _temperatureUnitOfX; }
-      set { _temperatureUnitOfX = value; }
+      return TransformedValue.GetFormula("y", _dependentVariableTransform);
     }
 
-    [Category("OptionsForParameters")]
-    public TemperatureRepresentation ParameterT0Representation
+    public override void Evaluate(double[] X, double[] P, double[] Y)
     {
-      get { return _temperatureUnitOfT0; }
-      set { _temperatureUnitOfT0 = value; }
+      base.Evaluate(X, P, Y);
+      Y[0] = TransformedValue.BaseValueToTransformedValue(Y[0], _dependentVariableTransform);
     }
 
-    [Category("OptionsForParameters")]
-    public TemperatureRepresentation ParameterBRepresentation
-    {
-      get { return _temperatureUnitOfB; }
-      set { _temperatureUnitOfB = value; }
-    }
-
-    #region Serialization
-
+    /// <summary>
+    /// Initial version.
+    /// 2021-05-23 renamed to VogelFulcherLawTimeA
+    /// </summary>
+    /// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(VogelFulcherLaw), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (VogelFulcherLaw)obj;
-        info.AddEnum("IndependentVariableUnit", s._temperatureUnitOfX);
-        info.AddEnum("DependentVariableTransform", s._dependentVariableTransform);
-        info.AddEnum("ParamBUnit", s._temperatureUnitOfB);
-        info.AddEnum("ParamT0Unit", s._temperatureUnitOfT0);
+        info.AddEnum("IndependentVariableUnit", s.IndependentVariableRepresentation);
+        info.AddEnum("DependentVariableTransform", s.DependentVariableRepresentation);
+        info.AddEnum("ParamBUnit", s.ParameterBRepresentation);
+        info.AddEnum("ParamT0Unit", s.ParameterT0Representation);
       }
 
       public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        VogelFulcherLaw s = (VogelFulcherLaw?)o ?? new VogelFulcherLaw();
 
-        s._temperatureUnitOfX = (TemperatureRepresentation)info.GetEnum("IndependentVariableUnit", typeof(TemperatureRepresentation));
-        s._dependentVariableTransform = (TransformedValueRepresentation)info.GetEnum("DependentVariableTransform", typeof(TransformedValueRepresentation));
-        s._temperatureUnitOfB = (TemperatureRepresentation)info.GetEnum("ParamBUnit", typeof(TemperatureRepresentation));
-        s._temperatureUnitOfT0 = (TemperatureRepresentation)info.GetEnum("ParamT0Unit", typeof(TemperatureRepresentation));
+        var unitOfX = (TemperatureRepresentation)info.GetEnum("IndependentVariableUnit", typeof(TemperatureRepresentation));
+         var dependentVariableTransform = (TransformedValueRepresentation)info.GetEnum("DependentVariableTransform", typeof(TransformedValueRepresentation));
+        var temperatureUnitOfB = (TemperatureRepresentation)info.GetEnum("ParamBUnit", typeof(TemperatureRepresentation));
+        var temperatureUnitOfT0 = (TemperatureRepresentation)info.GetEnum("ParamT0Unit", typeof(TemperatureRepresentation));
 
-        return s;
+        return new VogelFulcherLaw(dependentVariableTransform, unitOfX, temperatureUnitOfT0, temperatureUnitOfB);
       }
     }
-
-    #endregion Serialization
-
-    public VogelFulcherLaw()
-    {
-    }
-
-    public override string ToString()
-    {
-      return "VogelFulcherLaw";
-    }
-
-    [FitFunctionCreator("VogelFulcherLaw", "Materials", 1, 1, 3)]
-    [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Materials.VogelFulcherLaw}")]
-    public static IFitFunction CreateDefault()
-    {
-      return new VogelFulcherLaw();
-    }
-
-    #region IFitFunction Members
-
-    public int NumberOfIndependentVariables
-    {
-      get
-      {
-        return 1;
-      }
-    }
-
-    public int NumberOfDependentVariables
-    {
-      get
-      {
-        return 1;
-      }
-    }
-
-    public int NumberOfParameters
-    {
-      get
-      {
-        return 3;
-      }
-    }
-
-    public string IndependentVariableName(int i)
-    {
-      return "T_" + _temperatureUnitOfX.ToString();
-    }
-
-    public string DependentVariableName(int i)
-    {
-      return TransformedValue.GetFormula("y", _dependentVariableTransform);
-    }
-
-    public string ParameterName(int i)
-    {
-      switch (i)
-      {
-        case 0:
-          return "y0";
-
-        case 1:
-          return "B_" + _temperatureUnitOfB.ToString();
-          ;
-        case 2:
-          return "T0_" + _temperatureUnitOfT0.ToString();
-
-        default:
-          throw new ArgumentOutOfRangeException("i");
-      }
-    }
-
-    public double DefaultParameterValue(int i)
-    {
-      switch (i)
-      {
-        case 0:
-          return 1;
-
-        case 1:
-          return 1000;
-
-        case 2:
-          return 0;
-      }
-
-      return 0;
-    }
-
-    public IVarianceScaling? DefaultVarianceScaling(int i)
-    {
-      return null;
-    }
-
-    public void Evaluate(double[] X, double[] P, double[] Y)
-    {
-      double temperature = Temperature.ToKelvin(X[0], _temperatureUnitOfX);
-      double B = Temperature.ToKelvin(P[1], _temperatureUnitOfB);
-      double T0 = Temperature.ToKelvin(P[2], _temperatureUnitOfT0);
-      double yraw = P[0] * Math.Exp(B / (temperature - T0));
-      Y[0] = TransformedValue.BaseValueToTransformedValue(yraw, _dependentVariableTransform);
-    }
-
-    /// <summary>
-    /// Not used here since this fit function never changed.
-    /// </summary>
-    public event EventHandler? Changed;
-
-    protected virtual void OnChanged()
-    {
-      Changed?.Invoke(this, EventArgs.Empty);
-    }
-
-    #endregion IFitFunction Members
   }
 }

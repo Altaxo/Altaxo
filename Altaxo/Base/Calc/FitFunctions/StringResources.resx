@@ -882,7 +882,7 @@ In order to get a good fit nevertheless, it is neccessary  that you logarithmize
   
 ^^^
 ![](res:Altaxo.Calc.FitFunctions.Materials.ArrheniusLawRate.Fig1.png)
-^^^ Fig. 1: Typical plot of an Arrhenius diagram (reaction rate by the inverse temperature). Here the parameters are $y_0=10^{12} s^{-1}$ and $E_a=80000$ J/mol. Please note that if you choose the x-axis to be $ 1/T $ instead of T and the y-axis to be logarithmic, as in this example, the curve becomes a straight line. You can even include the "right" temperatures in °C by adding a second axis at the bottom, with inverse tick spacing and the transformation $x'=-273.15+x$.</value>
+^^^ Fig. 1: Typical plot of an Arrhenius diagram (reaction rate by the inverse temperature). Here the parameters are $y_0=10^{12} s^{-1}$ and $E_a=80$ kJ/mol. Please note that if you choose the x-axis to be $ 1/T $ instead of T and the y-axis to be logarithmic, as in this example, the curve becomes a straight line. You can even include the "right" temperatures in °C by adding a second axis at the bottom, with inverse tick spacing and the transformation $x'=-273.15+x$.</value>
   </data>
   <data name="Materials.ArrheniusLawTime" xml:space="preserve">
     <value># Arrhenius law (time)
@@ -930,6 +930,113 @@ In order to get a good fit nevertheless, it is neccessary  that you logarithmize
   
 ^^^
 ![](res:Altaxo.Calc.FitFunctions.Materials.ArrheniusLawTime.Fig1.png)
-^^^ Fig. 1: Typical plot of an Arrhenius diagram (viscosity by the inverse temperature). Here the parameters are $y_0=10^{-10}$ and $E_a=80000$ J/mol. Please note that if you choose the x-axis to be $ 1/T $ instead of T and the y-axis to be logarithmic, as in this example, the curve becomes a straight line. You can even include the "right" temperatures in °C by adding a second axis at the bottom, with inverse tick spacing and the transformation $x'=-273.15+x$.</value>
+^^^ Fig. 1: Typical plot of an Arrhenius diagram (viscosity by the inverse temperature). Here the parameters are $y_0=10^{-10}$ and $E_a=80$ kJ/mol. Please note that if you choose the x-axis to be $ 1/T $ instead of T and the y-axis to be logarithmic, as in this example, the curve becomes a straight line. You can even include the "right" temperatures in °C by adding a second axis at the bottom, with inverse tick spacing and the transformation $x'=-273.15+x$.
+---</value>
+  </data>
+  <data name="Materials.VogelFulcherLawRate" xml:space="preserve">
+    <value># Vogel-Fulcher law (rate, mobility)
+
+The Vogel-Fulcher law describes the dependence of reaction rates, mobilities, viscosities and relaxation times on the temperature for materials like glasses and polymers for temperatures in the vicinity of the glass transition temperature and in any case above the so-called Vogel temperature $T_0$.
+
+This variant of the Vogel-Fulcher law is especially suited to describe the temperature dependence of rates, mobilities, diffusion coefficients etc., i.e. **quantities which increase with increasing temperatures**. in glasses at temperatures above $T_0$.
+
+The function is defined as:
+$$
+y(T) = y_0 \exp\left(-\frac{B}{T-T_0})
+$$
+
+in which $y$ is the  rate, mobility, etc. (dependent variable), $T$ is the  temperature (independent variable), $T_0$ is the so-called Vogel temperature, and $B$ is a broadness parameter.
+
+&gt; **Note:**
+The function above is designed for reaction rates, mobilities, etc., i.e. for quantities, which increase with increasing temperature. But quantities like viscosity, relaxation times decrease with increasing temperature. To fit those quantities, please use `VogelFulcherLaw (Time)`, or use this function with a negative value for $B$.  
+
+
+The parameters are: 
+- $y_0$ is the reaction rate, mobility, ..., etc. in the limit $T\rightarrow\infty$
+- $T_0$ is the Vogel-Temperature. The formula is only valid for temperatures $T&gt;T_0$. At the Vogel temperature, reaction rates, mobilities, etc., converge to zero.
+- $B$ changes the slope of the curve.
+
+Please note that for large temperature intervals, the function value can vary over many orders of magnitude. This will lead to a poor fit, because the data points with small values then contribute too little to the fit. 
+
+In order to get a good fit nevertheless, it is necessary  that you logarithmize your data points before they get fitted. In order to do this, choose the `DecadicLogarithm` or `NaturalLogarithm` transformation for both the transformation of your data and for the transformation of the fit output $y$.
+
+*Options for the independent variable $T$*:
+- Kelvin: Your x-values are absolute temperatures in Kelvin
+- AsInverseKelvin: your x-values are inverse temperatures $\frac{1}{T}$
+- DegreeCelsius: your x-values are given as temperatures in °C
+- DegreeFahrenheit: your x-values are given as temperatures in °F
+
+
+*Option for parameters*:
+- ParameterEnergyRepresentation
+  - Joule: $E_a$ is in Joule
+  - JoulePerMole: $E_a$ is in Joule per mole
+  - ElectronVolt: $E_a$ is in eV (electron volt)
+  - kWh, calorie, calorie per mole and more..
+  
+^^^
+![](res:Altaxo.Calc.FitFunctions.Materials.VogelFulcherLawRate.Fig2.png)
+^^^ Fig. 1: Vogel-Fulcher law (e.g. reaction rate by temperature). Here the parameters are $y_0=10^{10}$, $T_0$=120°C and $B$=1000 K.
+
+  
+  
+^^^
+![](res:Altaxo.Calc.FitFunctions.Materials.VogelFulcherLawRate.Fig1.png)
+^^^ Fig. 2: Vogel-Fulcher law plotted in an Arrhenius diagram (e.g. reaction rate versus inverse temperature). The parameters are $y_0=10^{10}$, $T_0$=120°C and $B$=1000 K.
+
+---</value>
+  </data>
+  <data name="Materials.VogelFulcherLawTime" xml:space="preserve">
+    <value># Vogel-Fulcher law (relaxation times, viscosities)
+
+The Vogel-Fulcher law describes the dependence of reaction rates, mobilities, viscosities and relaxation times on the temperature for materials like glasses and polymers for temperatures in the vicinity of the glass transition temperature and in any case above the so-called Vogel temperature $T_0$.
+
+This variant of the Vogel-Fulcher law is especially suited to describe the temperature dependence of relaxation times, viscosities, etc., i.e. **quantities which decrease with increasing temperatures**. in glasses at temperatures above $T_0$.
+
+The function is defined as:
+$$
+y(T) = y_0 \exp\left(\frac{B}{T-T_0})
+$$
+
+in which $y$ is the  relaxation time, viscosity, etc. (dependent variable), $T$ is the  temperature (independent variable), $T_0$ is the so-called Vogel temperature, and $B$ is a broadness parameter.
+
+&gt; **Note:**
+The function above is designed for relaxation times, viscosities, etc, i.e. for quantities, which decrease with increasing temperature. But quantities like reaction rates, mobilities, etc., increase with increasing temperature. To fit those quantities, please use `VogelFulcherLawRate`, or use this function with a negative value for $B$. 
+
+
+The parameters are: 
+- $y_0$ is the relaxation time, viscosity, ..., etc. in the limit $T\rightarrow\infty$
+- $T_0$ is the Vogel-Temperature. The formula is only valid for temperatures $T&gt;T_0$. At the Vogel temperature, relaxation times, viscosities, etc., converge to infinity.
+- $B$ changes the slope of the curve.
+
+Please note that for large temperature intervals, the function value can vary over many orders of magnitude. This will lead to a poor fit, because the data points with small values then contribute too little to the fit. 
+
+In order to get a good fit nevertheless, it is necessary  that you logarithmize your data points before they get fitted. In order to do this, choose the `DecadicLogarithm` or `NaturalLogarithm` transformation for both the transformation of your data and for the transformation of the fit output $y$.
+
+*Options for the independent variable $T$*:
+- Kelvin: Your x-values are absolute temperatures in Kelvin
+- AsInverseKelvin: your x-values are inverse temperatures $\frac{1}{T}$
+- DegreeCelsius: your x-values are given as temperatures in °C
+- DegreeFahrenheit: your x-values are given as temperatures in °F
+
+
+*Option for parameters*:
+- ParameterEnergyRepresentation
+  - Joule: $E_a$ is in Joule
+  - JoulePerMole: $E_a$ is in Joule per mole
+  - ElectronVolt: $E_a$ is in eV (electron volt)
+  - kWh, calorie, calorie per mole and more..
+  
+^^^
+![](res:Altaxo.Calc.FitFunctions.Materials.VogelFulcherLawTime.Fig2.png)
+^^^ Fig. 1: Vogel-Fulcher law (e.g. relaxation time by temperature). Here the parameters are $y_0=10^{-10}$, $T_0$=120°C and $B$=1000 K.
+
+  
+  
+^^^
+![](res:Altaxo.Calc.FitFunctions.Materials.VogelFulcherLawTime.Fig1.png)
+^^^ Fig. 2: Vogel-Fulcher law plotted in an Arrhenius diagram (e.g. relaxation time versus inverse temperature). The parameters are $y_0=10^{-10}$, $T_0$=120°C and $B$=1000 K.
+
+---</value>
   </data>
 </root>

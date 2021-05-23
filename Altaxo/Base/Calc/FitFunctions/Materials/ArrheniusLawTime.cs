@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2021 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -36,25 +36,25 @@ namespace Altaxo.Calc.FitFunctions.Materials
   /// quantities which decrease with increasing temperature.
   /// </summary>
   [FitFunctionClass]
-  public class ArrheniusLawTime : IFitFunction
+  public class ArrheniusLawTime : IFitFunction, Main.IImmutable
   {
     private TemperatureRepresentation _temperatureUnitOfX;
-    private TransformedValueRepresentation _dependentVariableTransform;
     private EnergyRepresentation _paramEnergyUnit;
 
     public ArrheniusLawTime()
     {
       _temperatureUnitOfX = TemperatureRepresentation.Kelvin;
-      _dependentVariableTransform = TransformedValueRepresentation.Original;
       _paramEnergyUnit = EnergyRepresentation.JoulePerMole;
     }
 
-    public ArrheniusLawTime(TemperatureRepresentation temperatureUnitOfX, TransformedValueRepresentation dependentVariableTransform, EnergyRepresentation paramEnergyUnit)
+    public ArrheniusLawTime(TemperatureRepresentation temperatureUnitOfX, EnergyRepresentation paramEnergyUnit)
     {
       _temperatureUnitOfX = temperatureUnitOfX;
-      _dependentVariableTransform = dependentVariableTransform;
       _paramEnergyUnit = paramEnergyUnit;
     }
+
+
+    
 
 
     [Category("OptionsForParameters")]
@@ -63,30 +63,18 @@ namespace Altaxo.Calc.FitFunctions.Materials
     [Category("OptionsForParameters")]
     public ArrheniusLawTime WithParameterEnergyRepresentation(EnergyRepresentation value)
     {
-      if(!(_paramEnergyUnit == value))
+      if(_paramEnergyUnit == value)
       {
-        return new ArrheniusLawTime(_temperatureUnitOfX, _dependentVariableTransform, value);
+        return this;
       }
       else
       {
-        return this;
+        var result = (ArrheniusLawTime)MemberwiseClone();
+        _paramEnergyUnit = value;
+        return result;
       }
     }
 
-    [Category("OptionsForDependentVariables")]
-    public TransformedValueRepresentation DependentVariableRepresentation => _dependentVariableTransform;
-    [Category("OptionsForDependentVariables")]
-    public ArrheniusLawTime WithDependentVariableRepresentation(TransformedValueRepresentation value)
-    {
-      if (!(_dependentVariableTransform == value))
-      {
-        return new ArrheniusLawTime(_temperatureUnitOfX, value, _paramEnergyUnit);
-      }
-      else
-      {
-        return this;
-      }
-    }
 
     [Category("OptionsForIndependentVariables")]
     public TemperatureRepresentation IndependentVariableRepresentation => _temperatureUnitOfX;
@@ -95,26 +83,31 @@ namespace Altaxo.Calc.FitFunctions.Materials
 [Category("OptionsForIndependentVariables")]
     public ArrheniusLawTime WithIndependentVariableRepresentation(TemperatureRepresentation value)
     {
-      if(!(_temperatureUnitOfX == value))
+      if(_temperatureUnitOfX == value)
       {
-        return new ArrheniusLawTime(value, _dependentVariableTransform, _paramEnergyUnit);
+        return this;
       }
       else
       {
-        return this;
+        var result = (ArrheniusLawTime)MemberwiseClone();
+        _temperatureUnitOfX = value;
+        return result;
       }
     }
 
     #region Serialization
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Calc.FitFunctions.Materials.ArrheniusLaw", 0)]
+    /// <summary>
+    /// 2021-05-23 initial version
+    /// </summary>
+    /// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ArrheniusLawTime), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (ArrheniusLawTime)obj;
         info.AddEnum("IndependentVariableUnit", s._temperatureUnitOfX);
-        info.AddEnum("DependentVariableTransform", s._dependentVariableTransform);
         info.AddEnum("ParamEnergyUnit", s._paramEnergyUnit);
       }
 
@@ -123,45 +116,20 @@ namespace Altaxo.Calc.FitFunctions.Materials
         ArrheniusLawTime s = (ArrheniusLawTime?)o ?? new ArrheniusLawTime();
 
         s._temperatureUnitOfX = (TemperatureRepresentation)info.GetEnum("IndependentVariableUnit", typeof(TemperatureRepresentation));
-        s._dependentVariableTransform = (TransformedValueRepresentation)info.GetEnum("DependentVariableTransform", typeof(TransformedValueRepresentation));
         s._paramEnergyUnit = (EnergyRepresentation)info.GetEnum("ParamEnergyUnit", typeof(EnergyRepresentation));
 
         return s;
       }
     }
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ArrheniusLawTime), 1)]
-    private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-    {
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-      {
-        var s = (ArrheniusLawTime)obj;
-        info.AddEnum("IndependentVariableUnit", s._temperatureUnitOfX);
-        info.AddEnum("DependentVariableTransform", s._dependentVariableTransform);
-        info.AddEnum("ParamEnergyUnit", s._paramEnergyUnit);
-      }
-
-      public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
-      {
-        ArrheniusLawTime s = (ArrheniusLawTime?)o ?? new ArrheniusLawTime();
-
-        var temperatureUnitOfX = (TemperatureRepresentation)info.GetEnum("IndependentVariableUnit", typeof(TemperatureRepresentation));
-        var dependentVariableTransform = (TransformedValueRepresentation)info.GetEnum("DependentVariableTransform", typeof(TransformedValueRepresentation));
-        var paramEnergyUnit = (EnergyRepresentation)info.GetEnum("ParamEnergyUnit", typeof(EnergyRepresentation));
-
-        return new ArrheniusLawTime(temperatureUnitOfX, dependentVariableTransform, paramEnergyUnit);
-      }
-    }
-
-
     #endregion Serialization
 
     public override string ToString()
     {
-      return "ArrheniusLaw(Time)";
+      return "ArrheniusLaw (Time)";
     }
 
-    [FitFunctionCreator("ArrheniusLaw (Time)", "Materials", 1, 1, 2)]
+    [FitFunctionCreator("Arrhenius law (time)", "Materials", 1, 1, 2)]
     [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Materials.ArrheniusLawTime}")]
     public static IFitFunction CreateDefault()
     {
@@ -199,9 +167,9 @@ namespace Altaxo.Calc.FitFunctions.Materials
       return "T_" + _temperatureUnitOfX.ToString();
     }
 
-    public string DependentVariableName(int i)
+    public virtual string DependentVariableName(int i)
     {
-      return TransformedValue.GetFormula("y", _dependentVariableTransform);
+      return "y";
     }
 
     public string ParameterName(int i)
@@ -227,7 +195,8 @@ namespace Altaxo.Calc.FitFunctions.Materials
           return 1;
 
         case 1:
-          return 1000;
+          var en = new Energy(80000, EnergyRepresentation.JoulePerMole);
+          return en.ConvertTo(_paramEnergyUnit).Value;
       }
 
       return 0;
@@ -247,13 +216,11 @@ namespace Altaxo.Calc.FitFunctions.Materials
 
     #endregion Change event
 
-    public void Evaluate(double[] X, double[] P, double[] Y)
+    public virtual void Evaluate(double[] X, double[] P, double[] Y)
     {
       double temperature = Temperature.ToKelvin(X[0], _temperatureUnitOfX);
       double energyAsTemperature = Energy.ToTemperatureSI(P[1], _paramEnergyUnit);
-      double ybase = P[0] * Math.Exp(energyAsTemperature / temperature);
-      Y[0] = TransformedValue.BaseValueToTransformedValue(ybase, _dependentVariableTransform);
+      Y[0] = P[0] * Math.Exp(energyAsTemperature / temperature);
     }
-
   }
 }
