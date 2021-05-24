@@ -109,5 +109,8 @@ namespace Altaxo.UnmanagedApi.Ole32
 
     [DllImport("ole32.dll")]
     public static extern int CreateStreamOnHGlobal(IntPtr hGlobal, bool fDeleteOnRelease, out IStream ppstm);
+
+    [DllImport("ole32.dll")]
+    public static extern int StgOpenStorage([MarshalAs(UnmanagedType.LPWStr)] string pwcsName, IStorage? pstgPriority, STGM grfmode, IntPtr snbExclude, uint researved, out IStorage ppstgOpen);
   }
 }

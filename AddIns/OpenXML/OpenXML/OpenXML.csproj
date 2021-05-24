@@ -30,12 +30,13 @@
     <ProjectReference Include="..\..\..\Altaxo\Base\AltaxoBase.csproj" />
     <ProjectReference Include="..\..\..\Altaxo\Core\AltaxoCore.csproj" />
     <ProjectReference Include="..\..\..\Altaxo\Dom\AltaxoDom.csproj" />
+    <ProjectReference Include="..\..\..\Altaxo\Dom.Presentation\AltaxoDom.Presentation.csproj" />
     <ProjectReference Include="..\..\..\Libraries\Markdig\Markdig.csproj" />
     <ProjectReference Include="..\..\..\Libraries\WpfMath\WpfMath.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="PresentationCore" />
-    <PackageReference Include="DocumentFormat.OpenXml" Version="2.11.3" />
+    <PackageReference Include="DocumentFormat.OpenXml" Version="2.13.0" />
     <PackageReference Include="System.IO.Compression" Version="4.3.0" />
   </ItemGroup>
   <UsingTask TaskName="GitVersionFile" AssemblyFile="..\..\..\MSBuildVersioning.dll" />
