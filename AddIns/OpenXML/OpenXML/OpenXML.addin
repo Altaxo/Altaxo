@@ -31,8 +31,15 @@
     </Condition>
   </Path>
 
+  <Path name = "/Altaxo/Workbench/MainMenu/Tools">
+    <MenuItem id = "ExtractMiniProjectsFromWord"
+                insertbefore="Options"
+                label = "Extract MiniProjects from MS Word (.docx)"
+                class = "Altaxo.Main.Commands.ExtractGraphsAsMiniProject"/>
+  </Path>
 
-  <Path name="/Altaxo/Pads/ProjectBrowser/ItemList/ContextMenu">
+
+    <Path name="/Altaxo/Pads/ProjectBrowser/ItemList/ContextMenu">
     <Condition name="ProjbrowserListItemSelection" selcount=">0" selitems="Altaxo.Data.DataTable, AltaxoBase" action="Disable">
       <MenuItem id="ExportMultiExcel" 
                 insertbefore="ExportMultiMicrosoft"

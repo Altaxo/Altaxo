@@ -730,10 +730,6 @@
 							label="${res:XML.MainMenu.ToolsMenu.ShowOptions}"
 							description="${res:XML.MainMenu.ToolsMenu.ShowOptions.Description}"
 							class="Altaxo.Main.Commands.ShowOptions" />
-      <MenuItem id="Options"
-							label="${res:XML.MainMenu.ToolsMenu.ShowOptions}"
-							description="${res:XML.MainMenu.ToolsMenu.ShowOptions.Description}"
-							class="Altaxo.Main.Commands.ShowOptions" />
       <MenuItem id="Theme" label="Docking theme" type="Menu">
         <MenuItem id="Metro" label="Metro" description="Loads the Metro theme" class="Altaxo.Gui.MenuCommands.LoadMetroTheme" />
         <MenuItem id="Aero" label="Aero" description="Loads the Aero theme" class="Altaxo.Gui.MenuCommands.LoadAeroTheme" />
