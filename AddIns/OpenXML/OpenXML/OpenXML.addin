@@ -35,7 +35,11 @@
     <MenuItem id = "ExtractMiniProjectsFromWord"
                 insertbefore="Options"
                 label = "Extract MiniProjects from MS Word (.docx)"
-                class = "Altaxo.Main.Commands.ExtractGraphsAsMiniProject"/>
+                class = "Altaxo.Main.Commands.ExtractGraphsAsMiniProjects"/>
+    <MenuItem id = "ExtractMiniProjectsAndImgsFromWord"
+                insertbefore="Options"
+                label = "Extract MiniProjects and graphs from MS Word (.docx)"
+                class = "Altaxo.Main.Commands.ExtractGraphsAsMiniProjectsAndImages"/>
   </Path>
 
 

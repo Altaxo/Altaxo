@@ -36,6 +36,11 @@ namespace Altaxo.Drawing
   public static class BrushesX
   {
     /// <summary>
+    /// Gets a white solid brush.
+    /// </summary>
+    public static BrushX White { get; } = new BrushX(NamedColors.White);
+
+    /// <summary>
     /// Gets a black solid brush.
     /// </summary>
     public static BrushX Black { get; } = new BrushX(NamedColors.Black);
