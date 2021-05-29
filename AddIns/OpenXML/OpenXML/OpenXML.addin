@@ -40,6 +40,10 @@
                 insertbefore="Options"
                 label = "Extract MiniProjects and graphs from MS Word (.docx)"
                 class = "Altaxo.Main.Commands.ExtractGraphsAsMiniProjectsAndImages"/>
+    <MenuItem id = "ExchangeEmbeddedGraphsByImages"
+               insertbefore="Options"
+               label = "Exchange embedded graphs with images in MS Word (.docx)"
+               class = "Altaxo.Main.Commands.ExchangeEmbeddedGraphsByImages"/>
   </Path>
 
 

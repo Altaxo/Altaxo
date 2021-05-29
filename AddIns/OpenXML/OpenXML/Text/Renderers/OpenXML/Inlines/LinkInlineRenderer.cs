@@ -142,42 +142,7 @@ namespace Altaxo.Text.Renderers.OpenXML.Inlines
           }
         }
 
-        ImagePartType imgPartType = ImagePartType.Jpeg;
-        switch (streamResult.Extension.ToLowerInvariant())
-        {
-          case ".bmp":
-            imgPartType = ImagePartType.Bmp;
-            break;
-          case ".emf":
-            imgPartType = ImagePartType.Emf;
-            break;
-          case ".gif":
-            imgPartType = ImagePartType.Gif;
-            break;
-          case ".ico":
-            imgPartType = ImagePartType.Icon;
-            break;
-          case ".jpg":
-          case ".jpeg":
-            imgPartType = ImagePartType.Jpeg;
-            break;
-          case ".pcx":
-            imgPartType = ImagePartType.Pcx;
-            break;
-          case ".png":
-            imgPartType = ImagePartType.Png;
-            break;
-          case ".tif":
-          case ".tiff":
-            imgPartType = ImagePartType.Tiff;
-            break;
-          case ".wmf":
-            imgPartType = ImagePartType.Wmf;
-            break;
-          default:
-            throw new NotImplementedException();
-        }
-
+        ImagePartType imgPartType = GetImagePartTypeFromExtension(streamResult.Extension);
 
         var mainPart = wordDocument.MainDocumentPart;
         var imagePart = mainPart.AddImagePart(imgPartType);
@@ -191,6 +156,55 @@ namespace Altaxo.Text.Renderers.OpenXML.Inlines
 
     private void AddImageToBody(OpenXMLRenderer renderer, string relationshipId, ImageRenderToStreamResult streamResult, double? width, double? height)
     {
+      var drawing = CreateDrawing(relationshipId,
+        width, height,
+        renderer.MaxImageWidthIn96thInch, renderer.MaxImageHeigthIn96thInch,
+        streamResult.PixelsX, streamResult.PixelsY, streamResult.DpiX, streamResult.DpiY,
+        streamResult.NameHint,
+        ref _figureIndex
+        );
+
+      var run = renderer.Push(new Run());
+      run.AppendChild(drawing);
+      renderer.PopTo(run);
+    }
+
+
+
+    /// <summary>
+    /// Creates a Wordprocessing drawing for an image. The image must beforehand be added to the main part of the document.
+    /// </summary>
+    /// <param name="relationshipId">The relationship identifier. See example below how to get it.</param>
+    /// <param name="width">The designated target width in px (1/96th inch).</param>
+    /// <param name="height">The designated target height of the image in px (1/96th inch).</param>
+    /// <param name="MaxImageWidthIn96thInch">The maximum image width in 1/96th inch.</param>
+    /// <param name="MaxImageHeigthIn96thInch">The maximum image heigth in 1/96th inch.</param>
+    /// <param name="PixelsX">The number of pixels (width) of the original image.</param>
+    /// <param name="PixelsY">The number of pixels (height) of the original image.</param>
+    /// <param name="DpiX">The horizontal resolution of the original image in dpi.</param>
+    /// <param name="DpiY">The vertical resolution of the original image in dpi.</param>
+    /// <param name="NameHint">A name hint that is used to identify the image in the document.</param>
+    /// <param name="figureIndex">Index of the figure. Is incremented by 1.</param>
+    /// <returns>The drawing that can be included, for instance, in a Run element.</returns>
+    /// <example>
+    /// <code>
+    /// var imgPartType = GetImagePartTypeFromExtension(".png); // assuming we have a stream containing a .png image
+    /// var mainPart = wordDocument.MainDocumentPart;
+    /// var imagePart = mainPart.AddImagePart(imgPartType);  // Create a new image part  
+    /// imageStream.Seek(0, SeekOrigin.Begin);
+    /// imagePart.FeedData(imageStream); // save the image stream to the imagePart
+    /// var drawing = CreateDrawing( mainPart.GetIdOfPart(imagePart), width, height, ....
+    /// </code>
+    /// </example>
+    public static DocumentFormat.OpenXml.Wordprocessing.Drawing CreateDrawing(
+            string relationshipId,
+            double? width, double? height,
+            double? MaxImageWidthIn96thInch, double? MaxImageHeigthIn96thInch,
+            double PixelsX, double PixelsY, double DpiX, double DpiY,
+            string NameHint,
+            ref uint figureIndex
+            )
+    {
       bool changeAspect = false;
       long cx;
       long cy;
@@ -203,27 +217,27 @@ namespace Altaxo.Text.Renderers.OpenXML.Inlines
       }
       else if (width.HasValue)
       {
-        double aspectYX = streamResult.PixelsY * streamResult.DpiX / (streamResult.PixelsX * streamResult.DpiY);
+        double aspectYX = PixelsY * DpiX / (PixelsX * DpiY);
         cx = (long)(width.Value * 9525);
         cy = (long)(width.Value * 9525 * aspectYX);
       }
       else if (height.HasValue)
       {
-        double aspectXY = streamResult.PixelsX * streamResult.DpiY / (streamResult.PixelsY * streamResult.DpiX);
+        double aspectXY = PixelsX * DpiY / (PixelsY * DpiX);
         cy = (long)(height.Value * 9525);
         cx = (long)(height.Value * 9525 * aspectXY);
       }
       else
       {
-        cx = (long)(914400 * streamResult.PixelsX / streamResult.DpiX);
-        cy = (long)(914400 * streamResult.PixelsY / streamResult.DpiY);
+        cx = (long)(914400 * PixelsX / DpiX);
+        cy = (long)(914400 * PixelsY / DpiY);
       }
 
       // limit the image size if set in the renderer.
-      if (renderer.MaxImageWidthIn96thInch.HasValue && renderer.MaxImageHeigthIn96thInch.HasValue)
+      if (MaxImageWidthIn96thInch.HasValue && MaxImageHeigthIn96thInch.HasValue)
       {
-        double cxmax = renderer.MaxImageWidthIn96thInch.Value * 9525;
-        double cymax = renderer.MaxImageHeigthIn96thInch.Value * 9525;
+        double cxmax = MaxImageWidthIn96thInch.Value * 9525;
+        double cymax = MaxImageHeigthIn96thInch.Value * 9525;
         var r = Math.Min(cxmax / cx, cymax / cy);
         if (r < 1)
         {
@@ -231,18 +245,18 @@ namespace Altaxo.Text.Renderers.OpenXML.Inlines
           cy = (long)(r * cy);
         }
       }
-      else if (renderer.MaxImageWidthIn96thInch.HasValue)
+      else if (MaxImageWidthIn96thInch.HasValue)
       {
-        double cxmax = renderer.MaxImageWidthIn96thInch.Value * 9525;
+        double cxmax = MaxImageWidthIn96thInch.Value * 9525;
         if (cx > cxmax)
         {
           cy = (long)(cy * (cxmax / cx));
           cx = (long)cxmax;
         }
       }
-      else if (renderer.MaxImageHeigthIn96thInch.HasValue)
+      else if (MaxImageHeigthIn96thInch.HasValue)
       {
-        double cymax = renderer.MaxImageHeigthIn96thInch.Value * 9525;
+        double cymax = MaxImageHeigthIn96thInch.Value * 9525;
         if (cy > cymax)
         {
           cx = (long)(cx * (cymax / cy));
@@ -250,7 +264,7 @@ namespace Altaxo.Text.Renderers.OpenXML.Inlines
         }
       }
 
-      ++_figureIndex;
+      ++figureIndex;
 
       var drawing =
            new DocumentFormat.OpenXml.Wordprocessing.Drawing(
@@ -265,9 +279,9 @@ namespace Altaxo.Text.Renderers.OpenXML.Inlines
                    },
                    new DW.DocProperties()
                    {
-                     Id = _figureIndex,
-                     Name = "Figure " + _figureIndex.ToString(System.Globalization.CultureInfo.InvariantCulture),
-                     Description = streamResult.NameHint
+                     Id = figureIndex,
+                     Name = "Figure " + figureIndex.ToString(System.Globalization.CultureInfo.InvariantCulture),
+                     Description = NameHint
                    },
                    new DW.NonVisualGraphicFrameDrawingProperties(
                        new A.GraphicFrameLocks() { NoChangeAspect = !changeAspect }),
@@ -278,7 +292,7 @@ namespace Altaxo.Text.Renderers.OpenXML.Inlines
                                    new PIC.NonVisualDrawingProperties()
                                    {
                                      Id = 0U,
-                                     Name = streamResult.NameHint
+                                     Name = NameHint
                                    },
                                    new PIC.NonVisualPictureDrawingProperties()),
                                new PIC.BlipFill(
@@ -314,17 +328,17 @@ namespace Altaxo.Text.Renderers.OpenXML.Inlines
                  DistanceFromRight = 0U
                });
 
-      var run = renderer.Push(new Run());
-      run.AppendChild(drawing);
-      renderer.PopTo(run);
+      return drawing;
     }
 
+
+
     /// <summary>
-    /// Gets the length in 1/96th inch.
+    /// Gets the length in 1/96th inch (i.e. in px).
     /// </summary>
-    /// <param name="lenString">The length string.</param>
-    /// <returns></returns>
-    private double? GetLength(string lenString)
+    /// <param name="lenString">The length string. Consist of a floating point number and a unit like pt, cm, mm, px, in.</param>
+    /// <returns>The length in 1/96th inch (i.e. in px).</returns>
+    public static double? GetLength(string lenString)
     {
       if (string.IsNullOrEmpty(lenString))
         return null;
@@ -365,6 +379,52 @@ namespace Altaxo.Text.Renderers.OpenXML.Inlines
         return result * factor;
       }
       return null;
+    }
+
+    /// <summary>
+    /// Gets the type of the image part, dependent on the extension of the image
+    /// </summary>
+    /// <param name="extension">The extension (e.g. '.png', '.jpg', etc.).</param>
+    /// <returns>The image part type.</returns>
+    /// <exception cref="NotImplementedException"></exception>
+    public static ImagePartType GetImagePartTypeFromExtension(string extension)
+    {
+      ImagePartType imgPartType = ImagePartType.Jpeg;
+      switch (extension.ToLowerInvariant())
+      {
+        case ".bmp":
+          imgPartType = ImagePartType.Bmp;
+          break;
+        case ".emf":
+          imgPartType = ImagePartType.Emf;
+          break;
+        case ".gif":
+          imgPartType = ImagePartType.Gif;
+          break;
+        case ".ico":
+          imgPartType = ImagePartType.Icon;
+          break;
+        case ".jpg":
+        case ".jpeg":
+          imgPartType = ImagePartType.Jpeg;
+          break;
+        case ".pcx":
+          imgPartType = ImagePartType.Pcx;
+          break;
+        case ".png":
+          imgPartType = ImagePartType.Png;
+          break;
+        case ".tif":
+        case ".tiff":
+          imgPartType = ImagePartType.Tiff;
+          break;
+        case ".wmf":
+          imgPartType = ImagePartType.Wmf;
+          break;
+        default:
+          throw new NotImplementedException();
+      }
+      return imgPartType;
     }
   }
 }

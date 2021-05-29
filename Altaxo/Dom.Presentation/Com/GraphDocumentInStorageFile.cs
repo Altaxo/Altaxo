@@ -40,6 +40,108 @@ namespace Altaxo.Com
   public class GraphDocumentInStorageFile
   {
     /// <summary>
+    /// Extracts an Altaxo project file from an structured storage file and opens it. Attention:
+    /// the current project is forced to close!!!
+    /// </summary>
+    /// <param name="fileNameOfStructuredStorageFile">The file name of structured storage file.</param>
+    /// <returns>At return, the project that was contained in the structured storage file is currently open.
+    /// The return value is the main graph of the mini project.</returns>
+    public static Altaxo.Graph.GraphDocumentBase? OpenAltaxoProjectFromFromStructuredStorageFile(string fileNameOfStructuredStorageFile)
+    {
+      Ole32Func.StgOpenStorage(fileNameOfStructuredStorageFile, null, STGM.READWRITE | STGM.SHARE_EXCLUSIVE, IntPtr.Zero, 0, out IStorage iStorage);
+      try
+      {
+        using (var streamWrapper = OpenAltaxoProjectStreamFromIStorage(iStorage, out var version, out var graphName))
+        {
+          try
+          {
+            Current.IProjectService.CloseProject(true);
+          }
+          catch (Exception ex)
+          {
+            return null;
+          }
+
+          try
+          {
+            using (var archive = new Altaxo.Main.Services.Files.ZipArchiveAsProjectArchive(streamWrapper, System.IO.Compression.ZipArchiveMode.Read, true))
+            {
+              Current.IProjectService.OpenProjectFromArchive(archive);
+            }
+          }
+          catch (Exception ex2)
+          {
+            return null;
+          }
+
+          if (Current.Project.GraphDocumentCollection.Contains(graphName))
+            return Current.Project.GraphDocumentCollection[graphName];
+          else if (Current.Project.Graph3DDocumentCollection.Contains(graphName))
+            return Current.Project.Graph3DDocumentCollection[graphName];
+          else if (Current.Project.GraphDocumentCollection.Count == 1)
+            return Current.Project.GraphDocumentCollection.First();
+          else if (Current.Project.Graph3DDocumentCollection.Count == 1)
+            return Current.Project.Graph3DDocumentCollection.First();
+          else
+            return null;
+        }
+      }
+      finally
+      {
+        Marshal.ReleaseComObject(iStorage);
+      }
+    }
+
+    /// <summary>
+    /// Extracts the Altaxo project stream and the other properties from an <see cref="IStorage"/> object.
+    /// </summary>
+    /// <param name="pstg">The <see cref="IStorage"/> object that contains the Altaxo project.</param>
+    /// <param name="altaxoVersion">>Returns the Altaxo version this object was created with.</param>
+    /// <param name="graphName">Returns the graph name of the main graph of this mini project.</param>
+    /// <returns>The opened project stream of the Altaxo project. You as the caller are responsible for properly closing the stream again.</returns>
+    public static Stream OpenAltaxoProjectStreamFromIStorage(IStorage pstg, out Version altaxoVersion, out string graphName)
+    {
+      try
+      {
+        using (var stream = new ComStreamWrapper(pstg.OpenStream("AltaxoVersion", IntPtr.Zero, (int)(STGM.READ | STGM.SHARE_EXCLUSIVE), 0), true))
+        {
+          var bytes = new byte[stream.Length];
+          stream.Read(bytes, 0, bytes.Length);
+          var versionString = System.Text.Encoding.UTF8.GetString(bytes);
+          altaxoVersion = Version.Parse(versionString);
+        }
+      }
+      catch (Exception)
+      {
+        throw;
+      }
+
+      try
+      {
+        using (var stream = new ComStreamWrapper(pstg.OpenStream("AltaxoGraphName", IntPtr.Zero, (int)(STGM.READ | STGM.SHARE_EXCLUSIVE), 0), true))
+        {
+          var bytes = new byte[stream.Length];
+          stream.Read(bytes, 0, bytes.Length);
+          graphName = System.Text.Encoding.UTF8.GetString(bytes);
+        }
+      }
+      catch (Exception)
+      {
+        throw;
+      }
+
+      try
+      {
+        var streamWrapper = new ComStreamWrapper(pstg.OpenStream("AltaxoProjectZip", IntPtr.Zero, (int)(STGM.READ | STGM.SHARE_EXCLUSIVE), 0), true);
+        return streamWrapper;
+      }
+      catch (Exception)
+      {
+        throw;
+      }
+    }
+
+    /// <summary>
     /// Extracts an Altaxo project file from an structured storage file.
     /// </summary>
     /// <param name="fileNameOfStructuredStorageFile">The file name of structured storage file.</param>
@@ -66,53 +168,14 @@ namespace Altaxo.Com
     /// <returns>Altaxo version this object was created with, and name of the main graph in the extracted project.</returns>
     public static (Version AltaxoVersion, string GraphName) ExtractAltaxoProjectFromIStorage(IStorage pstg, string destinationFileName)
     {
-      string? documentName = null;
-      Version altaxoVersion;
-
-      try
+      using(var projectStream = OpenAltaxoProjectStreamFromIStorage(pstg, out var altaxoVersion, out var graphName))
       {
-        using (var stream = new ComStreamWrapper(pstg.OpenStream("AltaxoVersion", IntPtr.Zero, (int)(STGM.READ | STGM.SHARE_EXCLUSIVE), 0), true))
+        using (var destStream = new System.IO.FileStream(destinationFileName, FileMode.CreateNew, FileAccess.Write, FileShare.None))
         {
-          var bytes = new byte[stream.Length];
-          stream.Read(bytes, 0, bytes.Length);
-          var versionString = System.Text.Encoding.UTF8.GetString(bytes);
-          altaxoVersion = Version.Parse(versionString);
+          projectStream.CopyTo(destStream);
         }
+        return (altaxoVersion, graphName);
       }
-      catch (Exception)
-      {
-        throw;
-      }
-
-      try
-      {
-        using (var stream = new ComStreamWrapper(pstg.OpenStream("AltaxoGraphName", IntPtr.Zero, (int)(STGM.READ | STGM.SHARE_EXCLUSIVE), 0), true))
-        {
-          var bytes = new byte[stream.Length];
-          stream.Read(bytes, 0, bytes.Length);
-          documentName = System.Text.Encoding.UTF8.GetString(bytes);
-        }
-      }
-      catch (Exception)
-      {
-        throw;
-      }
-
-      try
-      {
-        using (var streamWrapper = new ComStreamWrapper(pstg.OpenStream("AltaxoProjectZip", IntPtr.Zero, (int)(STGM.READ | STGM.SHARE_EXCLUSIVE), 0), true))
-        {
-          using (var destStream = new System.IO.FileStream(destinationFileName, FileMode.CreateNew, FileAccess.Write, FileShare.None))
-          {
-            streamWrapper.CopyTo(destStream);
-          }
-        }
-      }
-      catch (Exception)
-      {
-        throw;
-      }
-      return (altaxoVersion, documentName);
     }
   }
 }

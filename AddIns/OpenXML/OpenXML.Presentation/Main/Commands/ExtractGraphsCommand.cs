@@ -95,7 +95,7 @@ namespace Altaxo.Main.Commands
       if (false == Current.Gui.ShowOpenFileDialog(odlg))
         return;
 
-      var wordFileName = odlg.FileName;
+      var wordInputFileName = odlg.FileName;
 
       var sdlg = new Altaxo.Gui.SaveFileOptions()
       {
@@ -122,7 +122,7 @@ namespace Altaxo.Main.Commands
 
       try
       {
-        var list = EmbeddedGraphExtractor.FromWordExtractAllEmbeddedGraphsAsMiniprojects(wordFileName, miniProjectFileName);
+        var list = EmbeddedGraphExtractor.FromWordExtractAllEmbeddedGraphsAsMiniprojects(wordInputFileName, miniProjectFileName);
 
         // now open all the mini projects
         foreach (var (projectFileName, version, graphName) in list)
@@ -150,6 +150,70 @@ namespace Altaxo.Main.Commands
       }
 
 
+    }
+  }
+
+  /// <summary>
+  /// Command that is used to extract embedded graphs in a MS Word document,
+  /// and save them as Altaxo mini projects, with a numeration.
+  /// </summary>
+  /// <seealso cref="Altaxo.Gui.SimpleCommand" />
+  public class ExchangeEmbeddedGraphsByImages : SimpleCommand
+  {
+    public override void Execute(object? parameter)
+    {
+      if (Current.Project.IsDirty)
+      {
+        Current.Gui.ErrorMessageBox("Please save and then close your current project before issuing this command!", "Action neccessary");
+        return;
+      }
+      Current.ProjectService.CloseProject(false);
+
+
+      var odlg = new Altaxo.Gui.OpenFileOptions()
+      {
+        Title = "Choose the MS Word file to extract the graphs from",
+        Multiselect = false,
+        RestoreDirectory = true,
+      };
+      odlg.AddFilter("*.docx", "Microsoft Word documents (*.docx)");
+
+      if (false == Current.Gui.ShowOpenFileDialog(odlg))
+        return;
+
+      var wordInputFileName = odlg.FileName;
+
+
+      var sdlg = new Altaxo.Gui.SaveFileOptions()
+      {
+        Title = "Choose the new MS Word file name to save to",
+        Multiselect = false,
+        RestoreDirectory = true,
+        AddExtension = false,
+      };
+      sdlg.AddFilter("*.docx", "MS Word documents (*.docx)");
+
+      if (false == Current.Gui.ShowSaveFileDialog(sdlg))
+        return;
+
+      var wordOutputFileName = sdlg.FileName;
+
+      var exportOptions = new Graph.Gdi.GraphExportOptions();
+      exportOptions.BackgroundBrush = Drawing.BrushesX.White;
+      object exportOptionsObj = exportOptions;
+      if (false == Current.Gui.ShowDialog(ref exportOptionsObj, "Choose graph export options"))
+        return;
+      exportOptions = (Altaxo.Graph.Gdi.GraphExportOptions)exportOptionsObj;
+
+
+      try
+      {
+        EmbeddedGraphExtractor.WordReplaceAllEmbeddedGraphsWithImages(wordInputFileName, wordOutputFileName, exportOptions);
+      }
+      catch (Exception ex)
+      {
+        Current.Gui.ErrorMessageBox(ex.Message, "Exception during replacing of embedded graphs by images");
+      }
     }
   }
 }
