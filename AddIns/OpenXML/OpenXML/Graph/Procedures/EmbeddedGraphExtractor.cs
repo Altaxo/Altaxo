@@ -47,36 +47,47 @@ namespace Altaxo.Graph.Procedures
     /// This must be a full file name, including the full path, but without extension. To this base name, a number starting from 1 up to
     /// the number of embedded projects is appended, and then the extension (.axoprj) is appended, too.</param>
     /// <returns>List of tuples that contain file name, Altaxo version, and name of the main graph of the extracted mini projects.</returns>
-    public static List<(string ProjectFileName, Version AltaxoVersion, string GraphName)> FromWordExtractAllEmbeddedGraphsAsMiniprojects(string wordSourceFileName, string destinationFileNameBaseWOExtension)
+    public static List<(string ProjectFileName, Version AltaxoVersion, string GraphName)> FromWordExtractAllEmbeddedGraphsAsMiniprojects(string wordSourceFileName, string destinationFileNameBaseWOExtension, Altaxo.Main.Services.ExternalDrivenBackgroundMonitor? monitor)
     {
       var result = new List<(string ProjectFileName, Version AltaxoVersion, string GraphName)>();
       int documentNumber = 1;
 
       using (var document = WordprocessingDocument.Open(wordSourceFileName, false))
       {
-        foreach (var embeddedOleObject in document.MainDocumentPart.Document.Descendants<DocumentFormat.OpenXml.Vml.Office.OleObject>())
-        {
-          if (embeddedOleObject.ProgId.ToString().StartsWith("Altaxo.Graph"))
-          {
-            // we could extract something like a filename like
-            // fileName = document.MainDocumentPart.GetPartById(emb.Id.ToString()).Uri.ToString().Remove(0, "/word/embeddings/".Length);
-            // but this is unneccessary here, because
-            // we save the embedded structured storage object to a temporary file
-            var tempFileName = Path.GetTempFileName();
-            // Write the stream to the temporary file.
-            using (var writeStream = new FileStream(tempFileName, FileMode.Create, FileAccess.Write))
-            {
-              var readStream = document.MainDocumentPart.GetPartById(embeddedOleObject.Id).GetStream();
-              readStream.CopyTo(writeStream);
-              writeStream.Close();
-            }
+        int totalNumberOfObjects = document.MainDocumentPart.Document.Descendants<DocumentFormat.OpenXml.Vml.Office.OleObject>().Where(x => x.ProgId.ToString().StartsWith("Altaxo.Graph")).Count();
 
-            var destinationFileName = $"{destinationFileNameBaseWOExtension}{documentNumber:D4}.axoprj";
-            var (version, graphName) = GraphDocumentInStorageFile.ExtractAltaxoProjectFromStructuredStorageFile(tempFileName, destinationFileName);
-            result.Add((destinationFileName, version, graphName));
-            ++documentNumber;
-            File.Delete(tempFileName);
+        foreach (var embeddedOleObject in document.MainDocumentPart.Document.Descendants<DocumentFormat.OpenXml.Vml.Office.OleObject>().Where(x => x.ProgId.ToString().StartsWith("Altaxo.Graph")))
+        {
+          if (monitor is not null)
+          {
+            if (monitor.CancellationPending)
+            {
+              break;
+            }
+            if (monitor.ShouldReportNow == true)
+            {
+              monitor.ReportProgress($"Start processing object {documentNumber} of {totalNumberOfObjects}", documentNumber / (double)totalNumberOfObjects);
+            }
           }
+
+          // we could extract something like a filename like
+          // fileName = document.MainDocumentPart.GetPartById(emb.Id.ToString()).Uri.ToString().Remove(0, "/word/embeddings/".Length);
+          // but this is unneccessary here, because
+          // we save the embedded structured storage object to a temporary file
+          var tempFileName = Path.GetTempFileName();
+          // Write the stream to the temporary file.
+          using (var writeStream = new FileStream(tempFileName, FileMode.Create, FileAccess.Write))
+          {
+            var readStream = document.MainDocumentPart.GetPartById(embeddedOleObject.Id).GetStream();
+            readStream.CopyTo(writeStream);
+            writeStream.Close();
+          }
+
+          var destinationFileName = $"{destinationFileNameBaseWOExtension}{documentNumber:D4}.axoprj";
+          var (version, graphName) = GraphDocumentInStorageFile.ExtractAltaxoProjectFromStructuredStorageFile(tempFileName, destinationFileName);
+          result.Add((destinationFileName, version, graphName));
+          ++documentNumber;
+          File.Delete(tempFileName);
         }
       }
       return result;
@@ -89,64 +100,80 @@ namespace Altaxo.Graph.Procedures
     /// <param name="wordSourceFileName">File name of the existing MS Word file that contains the embedded graphs.</param>
     /// <param name="wordDestinationFileName">File name of the MS Word file, to which the modified document is stored.</param>
     /// <param name="graphExportOptions">Export options for all graphs.</param>
-    public static void WordReplaceAllEmbeddedGraphsWithImages(string wordSourceFileName, string wordDestinationFileName, GraphExportOptions graphExportOptions)
+    public static void WordReplaceAllEmbeddedGraphsWithImages(string wordSourceFileName, string wordDestinationFileName, GraphExportOptions graphExportOptions, Altaxo.Main.Services.ExternalDrivenBackgroundMonitor? monitor)
     {
       uint documentNumber = 1;
 
-      using (var document = WordprocessingDocument.Open(wordSourceFileName, true))
+      System.IO.File.Copy(wordSourceFileName, wordDestinationFileName, false);
+
+      using (var document = WordprocessingDocument.Open(wordDestinationFileName, true))
       {
-        foreach (var embeddedOleObject in document.MainDocumentPart.Document.Descendants<DocumentFormat.OpenXml.Vml.Office.OleObject>())
+        int totalNumberOfObjects = document.MainDocumentPart.Document.Descendants<DocumentFormat.OpenXml.Vml.Office.OleObject>().Where(x => x.ProgId.ToString().StartsWith("Altaxo.Graph")).Count();
+
+        foreach (var embeddedOleObject in document.MainDocumentPart.Document.Descendants<DocumentFormat.OpenXml.Vml.Office.OleObject>().Where(x => x.ProgId.ToString().StartsWith("Altaxo.Graph")))
         {
-          if (embeddedOleObject.ProgId.ToString().StartsWith("Altaxo.Graph"))
+          if (monitor is not null)
           {
-            var parent = embeddedOleObject.Parent as DocumentFormat.OpenXml.Wordprocessing.EmbeddedObject;
-            var shape = parent.ChildElements.OfType<DocumentFormat.OpenXml.Vml.Shape>().FirstOrDefault();
-            var (imgWidth, imgHeight) = FromShapeGetWidthAndHeight(shape);
-
-            // we could extract something like a filename like
-            // fileName = document.MainDocumentPart.GetPartById(emb.Id.ToString()).Uri.ToString().Remove(0, "/word/embeddings/".Length);
-            // but this is unneccessary here, because
-            // we save the embedded structured storage object to a temporary file
-            var tempFileName = Path.GetTempFileName();
-            // Write the stream to the temporary file.
-            using (var writeStream = new FileStream(tempFileName, FileMode.Create, FileAccess.Write))
+            if (monitor.CancellationPending)
             {
-              var readStream = document.MainDocumentPart.GetPartById(embeddedOleObject.Id).GetStream();
-              readStream.CopyTo(writeStream);
-              writeStream.Close();
+              break;
             }
-
-            var mainGraph = GraphDocumentInStorageFile.OpenAltaxoProjectFromFromStructuredStorageFile(tempFileName);
-            var exporter = Current.ProjectService.GetProjectItemImageExporter(mainGraph);
-
-            if (exporter is null)
-              throw new ArgumentException("Did not find exporter for document of type " + mainGraph?.GetType().ToString() ?? string.Empty, nameof(mainGraph));
-
-            // now we can directly export the image stream to the word document
-
-            using (Stream imageStream = new MemoryStream())
+            if (monitor.ShouldReportNow == true)
             {
-              var (pixelsX, pixelsY) = exporter.ExportAsImageToStream(mainGraph, graphExportOptions, imageStream);
-              var imgPartType = Text.Renderers.OpenXML.Inlines.LinkInlineRenderer.GetImagePartTypeFromExtension(graphExportOptions.GetDefaultFileNameExtension()); // assuming we have a stream containing a .png image
-              var mainPart = document.MainDocumentPart;
-              var imagePart = mainPart.AddImagePart(imgPartType);  // Create a new image part  
-              imageStream.Seek(0, SeekOrigin.Begin);
-              imagePart.FeedData(imageStream); // save the image stream to the imagePart
-
-              var drawing = Text.Renderers.OpenXML.Inlines.LinkInlineRenderer.CreateDrawing(
-                 mainPart.GetIdOfPart(imagePart),
-                 null, null,
-                 null, null,
-                 pixelsX, pixelsY,
-                 graphExportOptions.DestinationDpiResolution, graphExportOptions.DestinationDpiResolution,
-                 $"EmbeddedAltaxoFig_{documentNumber}",
-                 ref documentNumber);
-              parent.Parent.ReplaceChild(drawing, parent);
+              monitor.ReportProgress($"Start processing object {documentNumber} of {totalNumberOfObjects}", documentNumber / (double)totalNumberOfObjects);
             }
-            File.Delete(tempFileName);
           }
+
+          var parent = embeddedOleObject.Parent as DocumentFormat.OpenXml.Wordprocessing.EmbeddedObject;
+          var shape = parent.ChildElements.OfType<DocumentFormat.OpenXml.Vml.Shape>().FirstOrDefault();
+          var (imgWidth, imgHeight) = FromShapeGetWidthAndHeight(shape);
+
+          // we could extract something like a filename like
+          // fileName = document.MainDocumentPart.GetPartById(emb.Id.ToString()).Uri.ToString().Remove(0, "/word/embeddings/".Length);
+          // but this is unneccessary here, because
+          // we save the embedded structured storage object to a temporary file
+          var tempFileName = Path.GetTempFileName();
+          // Write the stream to the temporary file.
+          using (var writeStream = new FileStream(tempFileName, FileMode.Create, FileAccess.Write))
+          {
+            var readStream = document.MainDocumentPart.GetPartById(embeddedOleObject.Id).GetStream();
+            readStream.CopyTo(writeStream);
+            writeStream.Close();
+          }
+
+          var mainGraph = Current.Dispatcher.InvokeIfRequired(
+
+          () => GraphDocumentInStorageFile.OpenAltaxoProjectFromFromStructuredStorageFile(tempFileName));
+          var exporter = Current.ProjectService.GetProjectItemImageExporter(mainGraph);
+
+          if (exporter is null)
+            throw new ArgumentException("Did not find exporter for document of type " + mainGraph?.GetType().ToString() ?? string.Empty, nameof(mainGraph));
+
+          // now we can directly export the image stream to the word document
+
+          using (Stream imageStream = new MemoryStream())
+          {
+            var (pixelsX, pixelsY) = exporter.ExportAsImageToStream(mainGraph, graphExportOptions, imageStream);
+            var imgPartType = Text.Renderers.OpenXML.Inlines.LinkInlineRenderer.GetImagePartTypeFromExtension(graphExportOptions.GetDefaultFileNameExtension()); // assuming we have a stream containing a .png image
+            var mainPart = document.MainDocumentPart;
+            var imagePart = mainPart.AddImagePart(imgPartType);  // Create a new image part  
+            imageStream.Seek(0, SeekOrigin.Begin);
+            imagePart.FeedData(imageStream); // save the image stream to the imagePart
+
+            var drawing = Text.Renderers.OpenXML.Inlines.LinkInlineRenderer.CreateDrawing(
+               mainPart.GetIdOfPart(imagePart),
+               imgWidth, imgHeight,
+               null, null,
+               pixelsX, pixelsY,
+               graphExportOptions.DestinationDpiResolution, graphExportOptions.DestinationDpiResolution,
+               $"EmbeddedAltaxoFig_{documentNumber}",
+               ref documentNumber);
+            parent.Parent.ReplaceChild(drawing, parent);
+          }
+          File.Delete(tempFileName);
+
         }
-        document.SaveAs(wordDestinationFileName);
+        document.Save();
       }
     }
 

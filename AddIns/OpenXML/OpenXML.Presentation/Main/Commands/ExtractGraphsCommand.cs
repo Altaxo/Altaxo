@@ -51,17 +51,19 @@ namespace Altaxo.Main.Commands
         miniProjectFileName = miniProjectFileName.Substring(0, miniProjectFileName.Length - ".axoprj".Length);
       }
 
-      try
+      var monitor = new Altaxo.Main.Services.ExternalDrivenBackgroundMonitor();
+      Current.Gui.ShowBackgroundCancelDialog(10, () =>
       {
-        var list = EmbeddedGraphExtractor.FromWordExtractAllEmbeddedGraphsAsMiniprojects(wordFileName, miniProjectFileName);
-        Current.Gui.InfoMessageBox($"{list.Count} mini projects extracted successfully!", "Success");
-
-
-      }
-      catch(Exception ex)
-      {
-        Current.Gui.ErrorMessageBox(ex.Message, "Exception during extraction of mini projects");
-      }
+        try
+        {
+          var list = EmbeddedGraphExtractor.FromWordExtractAllEmbeddedGraphsAsMiniprojects(wordFileName, miniProjectFileName, monitor);
+          Current.Gui.InfoMessageBox($"{list.Count} mini projects extracted successfully!", "Success");
+        }
+        catch (Exception ex)
+        {
+          Current.Gui.ErrorMessageBox(ex.Message, "Exception during extraction of mini projects");
+        }
+      }, monitor);
 
     }
   }
@@ -75,7 +77,7 @@ namespace Altaxo.Main.Commands
   {
     public override void Execute(object? parameter)
     {
-      if(Current.Project.IsDirty)
+      if (Current.Project.IsDirty)
       {
         Current.Gui.ErrorMessageBox("Please save and then close your current project before issuing this command!", "Action neccessary");
         return;
@@ -120,34 +122,54 @@ namespace Altaxo.Main.Commands
         miniProjectFileName = miniProjectFileName.Substring(0, miniProjectFileName.Length - ".axoprj".Length);
       }
 
-      try
-      {
-        var list = EmbeddedGraphExtractor.FromWordExtractAllEmbeddedGraphsAsMiniprojects(wordInputFileName, miniProjectFileName);
 
-        // now open all the mini projects
-        foreach (var (projectFileName, version, graphName) in list)
+      var monitor = new Altaxo.Main.Services.ExternalDrivenBackgroundMonitor();
+      Current.Gui.ShowBackgroundCancelDialog(10, () =>
+      {
+        try
         {
-          Current.ProjectService.OpenProject(new FileName(projectFileName), false);
-          GraphDocumentBase? doc=null;
-          if (Current.Project.GraphDocumentCollection.Contains(graphName))
-            doc = Current.Project.GraphDocumentCollection[graphName];
-          else if (Current.Project.Graph3DDocumentCollection.Contains(graphName))
-            doc = Current.Project.Graph3DDocumentCollection[graphName];
+          var list = EmbeddedGraphExtractor.FromWordExtractAllEmbeddedGraphsAsMiniprojects(wordInputFileName, miniProjectFileName, monitor);
 
-          if (doc is not null)
+          // now open all the mini projects
+          int documentNumber = 0;
+          foreach (var (projectFileName, version, graphName) in list)
           {
-            var graphFileName = Path.Combine(Path.GetDirectoryName(projectFileName), Path.GetFileNameWithoutExtension(projectFileName) + exportOptions.GetDefaultFileNameExtension());
-            GraphDocumentBaseExportActions.DoExportGraph(doc, graphFileName,exportOptions);
-          }
-          Current.ProjectService.CloseProject(true);
-        }
+            ++documentNumber;
+            if (monitor is not null)
+            {
+              if (monitor.CancellationPending)
+              {
+                break;
+              }
+              if (monitor.ShouldReportNow == true)
+              {
+                monitor.ReportProgress($"Start opening mini project {documentNumber} of {list.Count}", documentNumber / (double)list.Count);
+              }
+            }
 
-        Current.Gui.InfoMessageBox($"{list.Count} mini projects extracted successfully!", "Success");
-      }
-      catch (Exception ex)
-      {
-        Current.Gui.ErrorMessageBox(ex.Message, "Exception during extraction of mini projects");
-      }
+
+            Current.Dispatcher.InvokeIfRequired(() => Current.ProjectService.OpenProject(new FileName(projectFileName), false));
+            GraphDocumentBase? doc = null;
+            if (Current.Project.GraphDocumentCollection.Contains(graphName))
+              doc = Current.Project.GraphDocumentCollection[graphName];
+            else if (Current.Project.Graph3DDocumentCollection.Contains(graphName))
+              doc = Current.Project.Graph3DDocumentCollection[graphName];
+
+            if (doc is not null)
+            {
+              var graphFileName = Path.Combine(Path.GetDirectoryName(projectFileName), Path.GetFileNameWithoutExtension(projectFileName) + exportOptions.GetDefaultFileNameExtension());
+              GraphDocumentBaseExportActions.DoExportGraph(doc, graphFileName, exportOptions);
+            }
+            Current.Dispatcher.InvokeIfRequired(() => Current.ProjectService.CloseProject(true));
+          }
+
+          Current.Gui.InfoMessageBox($"{list.Count} mini projects extracted successfully!", "Success");
+        }
+        catch (Exception ex)
+        {
+          Current.Gui.ErrorMessageBox(ex.Message, "Exception during extraction of mini projects");
+        }
+      }, monitor);
 
 
     }
@@ -206,14 +228,9 @@ namespace Altaxo.Main.Commands
       exportOptions = (Altaxo.Graph.Gdi.GraphExportOptions)exportOptionsObj;
 
 
-      try
-      {
-        EmbeddedGraphExtractor.WordReplaceAllEmbeddedGraphsWithImages(wordInputFileName, wordOutputFileName, exportOptions);
-      }
-      catch (Exception ex)
-      {
-        Current.Gui.ErrorMessageBox(ex.Message, "Exception during replacing of embedded graphs by images");
-      }
+      var monitor = new Altaxo.Main.Services.ExternalDrivenBackgroundMonitor();
+      Current.Gui.ShowBackgroundCancelDialog(10, () => EmbeddedGraphExtractor.WordReplaceAllEmbeddedGraphsWithImages(wordInputFileName, wordOutputFileName, exportOptions, monitor), monitor);
+      Current.Dispatcher.InvokeIfRequired(() => Current.ProjectService.CloseProject(true));
     }
   }
 }

@@ -32,24 +32,26 @@
   </Path>
 
   <Path name = "/Altaxo/Workbench/MainMenu/Tools">
-    <MenuItem id = "ExtractMiniProjectsFromWord"
-                insertbefore="Options"
-                label = "Extract MiniProjects from MS Word (.docx)"
-                class = "Altaxo.Main.Commands.ExtractGraphsAsMiniProjects"/>
-    <MenuItem id = "ExtractMiniProjectsAndImgsFromWord"
-                insertbefore="Options"
-                label = "Extract MiniProjects and graphs from MS Word (.docx)"
-                class = "Altaxo.Main.Commands.ExtractGraphsAsMiniProjectsAndImages"/>
-    <MenuItem id = "ExchangeEmbeddedGraphsByImages"
-               insertbefore="Options"
-               label = "Exchange embedded graphs with images in MS Word (.docx)"
-               class = "Altaxo.Main.Commands.ExchangeEmbeddedGraphsByImages"/>
+    <MenuItem id="Conversions" label="Conversions" insertbefore="Options" type="Menu" >
+      <MenuItem id = "ExtractMiniProjectsFromWord"
+                
+                  label = "Extract MiniProjects from MS Word (.docx)"
+                  class = "Altaxo.Main.Commands.ExtractGraphsAsMiniProjects"/>
+      <MenuItem id = "ExtractMiniProjectsAndImgsFromWord"
+                  insertbefore="Options"
+                  label = "Extract MiniProjects and graphs from MS Word (.docx)"
+                  class = "Altaxo.Main.Commands.ExtractGraphsAsMiniProjectsAndImages"/>
+      <MenuItem id = "ExchangeEmbeddedGraphsByImages"
+                 insertbefore="Options"
+                 label = "Exchange embedded graphs with images in MS Word (.docx)"
+                 class = "Altaxo.Main.Commands.ExchangeEmbeddedGraphsByImages"/>
+    </MenuItem>
   </Path>
 
 
-    <Path name="/Altaxo/Pads/ProjectBrowser/ItemList/ContextMenu">
+  <Path name="/Altaxo/Pads/ProjectBrowser/ItemList/ContextMenu">
     <Condition name="ProjbrowserListItemSelection" selcount=">0" selitems="Altaxo.Data.DataTable, AltaxoBase" action="Disable">
-      <MenuItem id="ExportMultiExcel" 
+      <MenuItem id="ExportMultiExcel"
                 insertbefore="ExportMultiMicrosoft"
                 label="Export tables to MS Excel ..."
                 description="Export selected tables to multiple Excel files"
@@ -62,5 +64,5 @@
                 description="Export selected project items to MS Excel, MS Word and Image files"
 							  class="Altaxo.Main.Commands.ExportProjectItemsToOpenXMLCommand" />
     </Condition>
-    </Path>
+  </Path>
 </AddIn>
