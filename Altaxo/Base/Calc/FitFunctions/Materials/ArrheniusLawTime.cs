@@ -70,7 +70,7 @@ namespace Altaxo.Calc.FitFunctions.Materials
       else
       {
         var result = (ArrheniusLawTime)MemberwiseClone();
-        _paramEnergyUnit = value;
+        result._paramEnergyUnit = value;
         return result;
       }
     }
@@ -90,7 +90,7 @@ namespace Altaxo.Calc.FitFunctions.Materials
       else
       {
         var result = (ArrheniusLawTime)MemberwiseClone();
-        _temperatureUnitOfX = value;
+        result._temperatureUnitOfX = value;
         return result;
       }
     }

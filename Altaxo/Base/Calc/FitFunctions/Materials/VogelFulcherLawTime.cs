@@ -77,7 +77,7 @@ namespace Altaxo.Calc.FitFunctions.Materials
       else
       {
         var result = (VogelFulcherLawTime)MemberwiseClone();
-        _temperatureUnitOfX = value;
+        result._temperatureUnitOfX = value;
         return result;
       }
     }
@@ -97,7 +97,7 @@ namespace Altaxo.Calc.FitFunctions.Materials
       else
       {
         var result = (VogelFulcherLawTime)MemberwiseClone();
-        _temperatureUnitOfT0 = value;
+        result._temperatureUnitOfT0 = value;
         return result;
       }
     }
