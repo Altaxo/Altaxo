@@ -24,10 +24,8 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Altaxo.Calc.FitFunctions.General;
+using Altaxo.Calc.FitFunctions.Probability;
 using Altaxo.Calc.Regression.Nonlinear;
 using Xunit;
 
@@ -46,7 +44,7 @@ namespace Altaxo.Calc.FitFunctions
 
     public bool Equals(double x, double y)
     {
-      return Math.Abs(x - y) <= _absolutePrecision + _relativePrecision * Math.Max(Math.Abs(x), Math.Abs(y));  
+      return Math.Abs(x - y) <= _absolutePrecision + _relativePrecision * Math.Max(Math.Abs(x), Math.Abs(y));
     }
 
     public int GetHashCode(double obj)
@@ -85,6 +83,7 @@ namespace Altaxo.Calc.FitFunctions
         (() => new StretchedExponentialEquilibration(1), -0.5, new double[]{0.125,1,3,5,0.5}, 1),
         (() => new StretchedExponentialGrowth(1), 0.5, new double[]{0.125,1,3,5,0.5}, 1+3*(Math.Exp(Math.Pow((0.5-0.125)/5,0.5)))),
         (() => new StretchedExponentialGrowth(1), -0.5, new double[]{0.125,1,3,5,0.5}, 4),
+        (() => new GaussAmplitude(1,1), 0.5, new double[]{2,3,5,1,3}, 1+3*0.5+2*Math.Exp(-0.5*RMath.Pow2((0.5-3)/5))),
       };
     private static DoubleEqualityComparer CompareD = new DoubleEqualityComparer(1E-100, 1E-12);
     private static DoubleEqualityComparer CompareDerivatives = new DoubleEqualityComparer(1E-5, 1E-5);
@@ -98,7 +97,7 @@ namespace Altaxo.Calc.FitFunctions
     {
       double[] x = new double[1];
       double[] y = new double[1];
-      foreach(var entry in _fitData)
+      foreach (var entry in _fitData)
       {
         var fitFunction = entry.Creation();
         Assert.Equal(fitFunction.NumberOfParameters, entry.parameters.Length);
@@ -106,7 +105,7 @@ namespace Altaxo.Calc.FitFunctions
         fitFunction.Evaluate(x, entry.parameters, y);
         Assert.Equal(entry.expectedY, y[0], CompareD);
 
-        if(fitFunction is IFitFunctionWithGradient fg)
+        if (fitFunction is IFitFunctionWithGradient fg)
         {
           TestGradients(fg, entry.x, entry.parameters);
         }
@@ -114,7 +113,7 @@ namespace Altaxo.Calc.FitFunctions
     }
 
 
-    
+
     private static void TestGradients(IFitFunctionWithGradient ff, double x0, double[] parameters)
     {
       const double delta = 1 / 131072d;
@@ -133,14 +132,14 @@ namespace Altaxo.Calc.FitFunctions
 
       ff.EvaluateGradient(x, parameters, actualDerivative);
 
-      for(int i=0;i<paraVariation.Length;++i)
+      for (int i = 0; i < paraVariation.Length; ++i)
       {
         Array.Copy(parameters, paraVariation, paraVariation.Length);
 
         double d = delta;
-        if(paraVariation[i]!=0)
+        if (paraVariation[i] != 0)
         {
-          d = Math.Abs(paraVariation[i]) * delta; 
+          d = Math.Abs(paraVariation[i]) * delta;
         }
         paraVariation[i] += d; ;
         ff.Evaluate(x, paraVariation, y);

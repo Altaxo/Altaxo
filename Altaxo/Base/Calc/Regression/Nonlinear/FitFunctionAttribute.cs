@@ -38,7 +38,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
   /// <summary>
   /// Marks a static function to return a new instance of a <see href="IFitFunction" /> class.
   /// </summary>
-  [AttributeUsage(AttributeTargets.Method)]
+  [AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
   public class FitFunctionCreatorAttribute : System.Attribute, IComparable
   {
     private string _name;
