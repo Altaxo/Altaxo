@@ -34,7 +34,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
   /// of variable order.
   /// </summary>
   [FitFunctionClass]
-  public class GaussAmplitude
+  public class GaussArea
         : IFitFunctionWithGradient, IImmutable
   {
     /// <summary>The order of the background polynomial.</summary>
@@ -45,14 +45,14 @@ namespace Altaxo.Calc.FitFunctions.Probability
     #region Serialization
 
     /// <summary>
-    /// 2021-06-07 Initial version
+    /// 2021-06-12 Initial version
     /// </summary>
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(GaussAmplitude), 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(GaussArea), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (GaussAmplitude)obj;
+        var s = (GaussArea)obj;
         info.AddValue("NumberOfTerms", s._numberOfTerms);
         info.AddValue("OrderOfBackgroundPolynomial", s._orderOfBackgroundPolynomial);
       }
@@ -61,7 +61,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
       {
         var numberOfTerms = info.GetInt32("NumberOfTerms");
         var orderOfBackgroundPolynomial = info.GetInt32("OrderOfBackgroundPolynomial");
-        return new GaussAmplitude(numberOfTerms, orderOfBackgroundPolynomial);
+        return new GaussArea(numberOfTerms, orderOfBackgroundPolynomial);
       }
     }
 
@@ -69,13 +69,13 @@ namespace Altaxo.Calc.FitFunctions.Probability
 
 
 
-    public GaussAmplitude()
+    public GaussArea()
     {
       _numberOfTerms = 1;
       _orderOfBackgroundPolynomial = 0;
     }
 
-    public GaussAmplitude(int numberOfGaussianTerms, int orderOfBackgroundPolynomial)
+    public GaussArea(int numberOfGaussianTerms, int orderOfBackgroundPolynomial)
     {
       _numberOfTerms = numberOfGaussianTerms;
       _orderOfBackgroundPolynomial = orderOfBackgroundPolynomial;
@@ -87,18 +87,18 @@ namespace Altaxo.Calc.FitFunctions.Probability
 
     }
 
-    [FitFunctionCreator("GaussAmplitude", "General", 1, 1, 4)]
-    [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Probability.GaussAmplitude}")]
+    [FitFunctionCreator("GaussArea", "General", 1, 1, 4)]
+    [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Probability.GaussArea}")]
     public static IFitFunction Create_1_0()
     {
-      return new GaussAmplitude(1, 0);
+      return new GaussArea(1, 0);
     }
 
-    [FitFunctionCreator("GaussAmplitude", "Probability", 1, 1, 4)]
-    [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Probability.GaussAmplitude}")]
+    [FitFunctionCreator("GaussArea", "Probability", 1, 1, 4)]
+    [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Probability.GaussArea}")]
     public static IFitFunction Create_1_M1()
     {
-      return new GaussAmplitude(1, -1);
+      return new GaussArea(1, -1);
     }
 
     /// <summary>
@@ -111,14 +111,14 @@ namespace Altaxo.Calc.FitFunctions.Probability
     /// </summary>
     /// <param name="orderOfBackgroundPolynomial">The order of the background polynomial. If set to -1, the background polynomial will be disabled.</param>
     /// <returns>New instance with the background polynomial of the provided order.</returns>
-    public GaussAmplitude WithOrderOfBackgroundPolynomial(int orderOfBackgroundPolynomial)
+    public GaussArea WithOrderOfBackgroundPolynomial(int orderOfBackgroundPolynomial)
     {
       if (!(orderOfBackgroundPolynomial >= -1))
         throw new ArgumentOutOfRangeException($"{nameof(orderOfBackgroundPolynomial)} must be greater than or equal to 0, or -1 in order to deactivate it.");
 
       if (!(_orderOfBackgroundPolynomial == orderOfBackgroundPolynomial))
       {
-        return new GaussAmplitude(_numberOfTerms, orderOfBackgroundPolynomial);
+        return new GaussArea(_numberOfTerms, orderOfBackgroundPolynomial);
       }
       else
       {
@@ -136,14 +136,14 @@ namespace Altaxo.Calc.FitFunctions.Probability
     /// </summary>
     /// <param name="numberOfGaussianTerms">The number of Gaussian terms (should be greater than or equal to 1).</param>
     /// <returns>New instance with the provided number of Gaussian terms.</returns>
-    public GaussAmplitude WithNumberOfTerms(int numberOfGaussianTerms)
+    public GaussArea WithNumberOfTerms(int numberOfGaussianTerms)
     {
       if (!(numberOfGaussianTerms >= 1))
         throw new ArgumentOutOfRangeException($"{nameof(numberOfGaussianTerms)} must be greater than or equal to 1");
 
       if (!(_numberOfTerms == numberOfGaussianTerms))
       {
-        return new GaussAmplitude(numberOfGaussianTerms, _orderOfBackgroundPolynomial);
+        return new GaussArea(numberOfGaussianTerms, _orderOfBackgroundPolynomial);
       }
       else
       {
@@ -195,7 +195,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
         int j = i / 3;
         return (i % 3) switch
         {
-          0 => FormattableString.Invariant($"a{j}"),
+          0 => FormattableString.Invariant($"A{j}"),
           1 => FormattableString.Invariant($"xc{j}"),
           2 => FormattableString.Invariant($"w{j}"),
           _ => throw new InvalidProgramException()
@@ -228,7 +228,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
       for (int i = 0, j = 0; i < _numberOfTerms; ++i, j += 3)
       {
         double x = (X[0] - P[j + 1]) / P[j + 2];
-        sumGauss += P[j] * Math.Exp(-0.5 * x * x);
+        sumGauss += P[j] / P[j + 2] * Math.Exp(-0.5 * x * x);
       }
 
       if (_orderOfBackgroundPolynomial >= 0)
@@ -242,7 +242,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
           sumPolynomial += P[i + offset];
         }
       }
-      Y[0] = sumGauss + sumPolynomial;
+      Y[0] = sumGauss / Math.Sqrt(2 * Math.PI) + sumPolynomial;
     }
 
     /// <summary>
@@ -258,10 +258,10 @@ namespace Altaxo.Calc.FitFunctions.Probability
       for (int i = 0, j = 0; i < _numberOfTerms; ++i, j += 3)
       {
         var x = (X[0] - P[j + 1]) / P[j + 2];
-        var expTerm = Math.Exp(-0.5 * x * x);
+        var expTerm = Math.Exp(-0.5 * x * x) / (P[j + 2] * Math.Sqrt(2 * Math.PI));
         DY[0][j + 0] = expTerm;
         DY[0][j + 1] = expTerm * x * P[j] / P[j + 2];
-        DY[0][j + 2] = expTerm * x * x * P[j] / P[j + 2];
+        DY[0][j + 2] = expTerm * P[j] / P[j + 2] * (x * x - 1);
       }
 
       if (_orderOfBackgroundPolynomial >= 0)

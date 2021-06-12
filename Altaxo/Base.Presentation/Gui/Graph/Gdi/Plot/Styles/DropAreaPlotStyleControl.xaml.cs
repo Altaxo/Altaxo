@@ -23,9 +23,6 @@
 #endregion Copyright
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -114,7 +111,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private void EhFillColorLinkageChanged()
     {
-      FillColorLinkageChanged?.Invoke();
+
     }
 
     public bool ShowPlotColorsOnlyForFillBrush
@@ -144,9 +141,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
       _guiFrameColorLinkage.Initialize(list);
     }
 
-    private void EhFrameColorLinkageChanged()
+    private void EhFillColorLinkageChanged(object sender, EventArgs e)
     {
-      FrameColorLinkageChanged?.Invoke();
+      FillColorLinkageChanged?.Invoke();
     }
 
     public bool ShowPlotColorsOnlyForFramePen
@@ -171,6 +168,11 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
     private void EhFramePenChanged(object? sender, EventArgs e)
     {
       FramePenChanged?.Invoke();
+    }
+
+    private void EhFrameColorLinkageChanged(object sender, EventArgs e)
+    {
+      FrameColorLinkageChanged?.Invoke();
     }
   }
 }

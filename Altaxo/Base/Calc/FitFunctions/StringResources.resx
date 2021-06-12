@@ -1068,7 +1068,42 @@ The domain of the function is $-\infty \leq x \leq \infty$.
 ^^^
 ![](res:Altaxo.Calc.FitFunctions.Probability.GaussAmplitude.Fig1.png)
 ^^^ Fig. 1: GaussAmplitude ($n=1$, $m=0$) with $a_0=5$, $x_{c0}=7$, $w_0=3$ and $b_0=1$.
+---
 
+
+
+</value>
+  </data>
+  <data name="Probability.GaussArea" xml:space="preserve">
+    <value># GaussArea
+
+This function evaluates a sum of Gaussian terms, plus a background polynomial with one or multiple terms, according to
+
+$$
+y(x) = \frac{A_0}{w_0 \sqrt{2 \pi}} \exp \left ( -\frac{(x-x_{c0})^2}{2 w_0^2} \right ) + ... + \frac{A_{n-1}}{w_{n-1} \sqrt{2 \pi}} \exp \left ( -\frac{(x-x_{cn-1})^2}{2 w_{n-1}^2} \right ) + b_0 + b_1 x^1 + ... + b_m x^m 
+$$
+
+in which:
+
+- $A_0 ... A_{n-1}$ are the areas under the Gaussian terms
+
+- $x_{c0} ... x_{cn-1}$ are the locations of the Gaussian terms
+
+- $w_0 ... w_{n-1}$ are the widths of the Gaussian terms
+
+- $b_0 ... b_m$ are the coefficients of the background polynomial of order  $m$
+
+- $n$ is the number of Gaussian terms ($n \geq 1$)
+- $m$ is the order of the background polynomial (set $m=-1$ to disable the background polynomial)
+
+The number of Gaussian terms $n$ and the order of the background polynomial $m$ can be changed by double-clicking on the fit function. The default values are $n=1$ and $m=0$. 
+
+The domain of the function is $-\infty \leq x \leq \infty$. 
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.Probability.GaussArea.Fig1.png)
+^^^ Fig. 1: GaussArea ($n=1$, $m=0$) with $A_0=40$, $x_{c0}=7$, $w_0=3$ and $b_0=1$.
+---
 
 
 </value>
