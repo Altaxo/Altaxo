@@ -1182,4 +1182,80 @@ The domain of the function is $-\infty \leq x \leq \infty$.
 
 </value>
   </data>
+  <data name="Transitions.LogisticDecreasing" xml:space="preserve">
+    <value># LogisticDecreasing
+
+This function evaluates a sum of logistic terms (decreasing steps), plus a background polynomial with one or multiple terms, according to
+
+$$
+y(x) = \frac{a_0}{1+ \exp \left ( \frac{x-x_{c0}}{w_0} \right ) } + ... + \frac{a_{n-1}}{1+ \exp \left ( \frac{x-x_{cn-1}}{w_{n-1}} \right )^2 } + b_0 + b_1 x^1 + ... + b_m x^m 
+$$
+
+in which:
+
+- $a_0 ... a_{n-1}$ are the amplitudes (step heights) of the logistic step terms
+
+- $x_{c0} ... x_{cn-1}$ are the locations of the logistic step terms
+
+- $w_0 ... w_{n-1}$ are the widths of the logistic step terms
+
+- $b_0 ... b_m$ are the coefficients of the background polynomial of order  $m$
+
+- $n$ is the number of logistic step terms ($n \geq 1$)
+- $m$ is the order of the background polynomial (set $m=-1$ to disable the background polynomial)
+
+The number of logistic step terms $n$ and the order of the background polynomial $m$ can be changed by double-clicking on the fit function. The default values are $n=1$ and $m=0$. 
+
+The domain of the function is $-\infty \leq x \leq \infty$. 
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.Transitions.LogisticDecreasing.Fig1.png)
+^^^ Fig. 1: LogisticDecreasing ($n=1$, $m=0$) with $a_0=5$, $x_{c0}=7$, $w_0=3$ and $b_0=1$.
+---
+References:
+[Sigmoid function at Wikipedia](https://en.wikipedia.org/wiki/Sigmoid_function)
+
+
+
+
+</value>
+  </data>
+  <data name="Transitions.LogisticIncreasing" xml:space="preserve">
+    <value># LogisticIncreasing
+
+This function evaluates a sum of logistic terms (increasing steps), plus a background polynomial with one or multiple terms, according to
+
+$$
+y(x) = \frac{a_0}{1+ \exp \left ( - \frac{x-x_{c0}}{w_0} \right ) } + ... + \frac{a_{n-1}}{1+ \exp \left ( - \frac{x-x_{cn-1}}{w_{n-1}} \right )^2 } + b_0 + b_1 x^1 + ... + b_m x^m 
+$$
+
+in which:
+
+- $a_0 ... a_{n-1}$ are the amplitudes (step heights) of the logistic step terms
+
+- $x_{c0} ... x_{cn-1}$ are the locations of the logistic step terms
+
+- $w_0 ... w_{n-1}$ are the widths of the logistic step terms
+
+- $b_0 ... b_m$ are the coefficients of the background polynomial of order  $m$
+
+- $n$ is the number of logistic step terms ($n \geq 1$)
+- $m$ is the order of the background polynomial (set $m=-1$ to disable the background polynomial)
+
+The number of logistic step terms $n$ and the order of the background polynomial $m$ can be changed by double-clicking on the fit function. The default values are $n=1$ and $m=0$. 
+
+The domain of the function is $-\infty \leq x \leq \infty$. 
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.Transitions.LogisticIncreasing.Fig1.png)
+^^^ Fig. 1: LogisticIncreasing ($n=1$, $m=0$) with $a_0=5$, $x_{c0}=7$, $w_0=3$ and $b_0=1$.
+---
+References:
+[Sigmoid function at Wikipedia](https://en.wikipedia.org/wiki/Sigmoid_function)
+
+
+
+
+</value>
+  </data>
 </root>
