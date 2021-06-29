@@ -46,11 +46,12 @@ namespace Altaxo.Calc.Regression.Nonlinear
     /// </summary>
     private string[] _parameterNames = new string[0];
 
+    private double[] _defaultParameterValues = new double[0];
+
     /// <summary>
     /// All parameters of the fit ensemble sorted by name. Key is the parameter name. Value is the position of the parameter.
     /// </summary>
-    private SortedList<string, int> _parametersSortedByName = new SortedList<string, int>();
-
+    private SortedList<string, (int Position, double DefaultValue)> _parametersSortedByName = new SortedList<string, (int Position, double DefaultValue)>();
     private List<FitElement> _fitElements = new List<FitElement>();
 
     #region Serialization
@@ -103,25 +104,34 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
             if (!string.IsNullOrEmpty(parameterName) && !(_parametersSortedByName.ContainsKey(parameterName)))
             {
-              _parametersSortedByName.Add(parameterName, nameposition++);
+              _parametersSortedByName.Add(parameterName, (nameposition++, ele.FitFunction.DefaultParameterValue(k)));
             }
           }
         }
       }
 
       // now sort the items in the order of the namepositions
-      var sortedbypos = new SortedList<int, string>();
-      foreach (KeyValuePair<string, int> en in _parametersSortedByName)
-        sortedbypos.Add(en.Value, en.Key);
+      var sortedbypos = new SortedList<int, (string Name, double DefaultValue)>();
+      foreach (var en in _parametersSortedByName)
+        sortedbypos.Add(en.Value.Position, (en.Key, en.Value.DefaultValue));
 
       _parameterNames = new string[sortedbypos.Count];
+      _defaultParameterValues = new double[sortedbypos.Count];
       for (int i = 0; i < _parameterNames.Length; i++)
-        _parameterNames[i] = sortedbypos[i];
+      {
+        _parameterNames[i] = sortedbypos[i].Name;
+        _defaultParameterValues[i] = sortedbypos[i].DefaultValue;
+      }
     }
 
     public string ParameterName(int i)
     {
       return _parameterNames[i];
+    }
+
+    public double DefaultParameterValue(int i)
+    {
+      return _defaultParameterValues[i];
     }
 
     public int NumberOfParameters

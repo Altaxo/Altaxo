@@ -151,9 +151,17 @@ namespace Altaxo.Calc.Regression.Nonlinear
       {
         string name = _fitEnsemble.ParameterName(i);
         if (byName.ContainsKey(name))
+        {
           _currentParameters.Add((ParameterSetElement)byName[name]);
+        }
         else
-          _currentParameters.Add(new ParameterSetElement(name));
+        {
+          var newParameterSet = new ParameterSetElement(name)
+          {
+            Parameter = _fitEnsemble.DefaultParameterValue(i)
+          };
+          _currentParameters.Add(newParameterSet);
+        }
       }
 
       _currentParameters.OnInitializationFinished();

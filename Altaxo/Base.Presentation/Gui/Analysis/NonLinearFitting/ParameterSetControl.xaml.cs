@@ -23,10 +23,6 @@
 #endregion Copyright
 
 #nullable disable warnings
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Windows.Controls;
 
 namespace Altaxo.Gui.Analysis.NonLinearFitting
@@ -41,21 +37,6 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       InitializeComponent();
     }
 
-    #region IParameterSetView
 
-    private List<ParameterSetViewItem> _itemsSource;
-
-    public void Initialize(List<ParameterSetViewItem> list)
-    {
-      _itemsSource = list;
-      _dataGrid.ItemsSource = _itemsSource;
-    }
-
-    public List<ParameterSetViewItem> GetList()
-    {
-      return _itemsSource;
-    }
-
-    #endregion IParameterSetView
   }
 }

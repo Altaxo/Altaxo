@@ -23,8 +23,8 @@
 #endregion Copyright
 
 #nullable disable
-using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using Altaxo.Calc.Regression.Nonlinear;
 
 namespace Altaxo.Gui.Analysis.NonLinearFitting
@@ -33,19 +33,18 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
   {
     public string Name { get; set; }
 
-    public string Value { get; set; }
+    public double Value { get; set; }
 
     public bool Vary { get; set; }
 
-    public string Variance { get; set; }
+    public double Variance { get; set; }
   }
 
-  public interface IParameterSetView
+  public interface IParameterSetView : IDataContextAwareView
   {
-    void Initialize(List<ParameterSetViewItem> list);
-
-    List<ParameterSetViewItem> GetList();
   }
+
+
 
   /// <summary>
   /// Summary description for ParameterSetController.
@@ -54,67 +53,72 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
   [ExpectedTypeOfView(typeof(IParameterSetView))]
   public class ParameterSetController1 : MVCANControllerEditOriginalDocBase<ParameterSet, IParameterSetView>
   {
+    public ObservableCollection<ParameterSetViewItem> ParameterList { get; } = new ObservableCollection<ParameterSetViewItem>();
+
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
+    }
+
+    public void OnParametersChanged()
+    {
+      ParameterList.Clear();
+
+      for (int i = 0; i < _doc.Count; i++)
+      {
+        var item = new ParameterSetViewItem
+        {
+          Name = _doc[i].Name,
+          Value = _doc[i].Parameter,
+          Vary = _doc[i].Vary,
+          Variance = _doc[i].Variance
+        };
+
+        ParameterList.Add(item);
+      }
     }
 
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
 
-      if (_view is not null)
-      {
-        var list = new List<ParameterSetViewItem>();
+      OnParametersChanged();
 
-        for (int i = 0; i < _doc.Count; i++)
-        {
-          var item = new ParameterSetViewItem
-          {
-            Name = _doc[i].Name,
-            Value = Altaxo.Serialization.GUIConversion.ToString(_doc[i].Parameter),
-            Vary = _doc[i].Vary,
-            Variance = Altaxo.Serialization.GUIConversion.ToString(_doc[i].Variance)
-          };
 
-          list.Add(item);
-        }
-
-        Current.Dispatcher.InvokeIfRequired(() => _view.Initialize(list));
-      }
     }
+
+    protected override void AttachView()
+    {
+      base.AttachView();
+      _view.DataContext = this;
+    }
+
+    protected override void DetachView()
+    {
+      _view.DataContext = null;
+      base.DetachView();
+    }
+
 
     public override bool Apply(bool disposeController)
     {
-      List<ParameterSetViewItem> list = _view.GetList();
+      var list = ParameterList;
 
       for (int i = 0; i < _doc.Count; i++)
       {
 
         // Parameter
-        if (Altaxo.Serialization.GUIConversion.IsDouble(list[i].Value, out var paraValue))
-        {
-          _doc[i].Parameter = paraValue;
-        }
-        else
-        {
-          Current.Gui.ErrorMessageBox(string.Format("Parameter {0} is not numeric", list[i].Name));
-          return false;
-        }
+
+        _doc[i].Parameter = list[i].Value;
+
 
         // Vary
         _doc[i].Vary = list[i].Vary;
 
         // Variance
-        if (Altaxo.Serialization.GUIConversion.IsDouble(list[i].Variance, out var varianceValue))
-        {
-          _doc[i].Variance = varianceValue;
-        }
-        else if (!string.IsNullOrEmpty(list[i].Variance))
-        {
-          Current.Gui.ErrorMessageBox(string.Format("Variance of parameter {0} is not numeric", list[i].Name));
-          return false;
-        }
+
+        _doc[i].Variance = list[i].Variance;
+
       }
 
       return ApplyEnd(true, disposeController);

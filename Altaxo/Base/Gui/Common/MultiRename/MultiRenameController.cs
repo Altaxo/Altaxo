@@ -310,9 +310,7 @@ namespace Altaxo.Gui.Common.MultiRename
       }
     }
 
-    public void Dispose()
-    {
-    }
+
 
     public bool Apply(bool disposeController)
     {

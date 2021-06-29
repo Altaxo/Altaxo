@@ -54,8 +54,6 @@ namespace Altaxo.Gui
     /// <summary>If true, a copy of the document is made before editing; this copy can later be used to revert the state of the document to the original state.</summary>
     protected bool _useDocumentCopy;
 
-    /// <summary>Set to true if this controller is already disposed.</summary>
-    private bool _isDisposed;
 
     /// <summary>
     /// The suspend token of the document being edited. If <see cref="_useDocumentCopy"/> is false, we assume that a controller higher in hierarchy has made a copy
@@ -237,9 +235,6 @@ namespace Altaxo.Gui
         return null;
     }
 
-    /// <summary>Get a value indication whether  this controller is already disposed.</summary>
-    public bool IsDisposed { get { return _isDisposed; } }
-
     /// <summary>
     /// Sets whether or not a copy of the document is used. If set to true, a copy of the document is used, so if the controller is not applied,
     /// all changes can be reverted. If set to false, no copy must be made. The document is directly changed by the controller, and changes can not be reverted.
@@ -288,14 +283,7 @@ namespace Altaxo.Gui
       }
     }
 
-    /// <summary>
-    /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
-    /// </summary>
-    public void Dispose()
-    {
-      Dispose(true);
-      GC.SuppressFinalize(this);
-    }
+
 
     /// <summary>
     /// Enumerates the sub controllers. This function is called on <see cref="Dispose(bool)"/> of this controller to dispose the subcontrollers too.
@@ -308,7 +296,7 @@ namespace Altaxo.Gui
     /// Releases unmanaged and - optionally - managed resources.
     /// </summary>
     /// <param name="isDisposing"><c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
-    public virtual void Dispose(bool isDisposing)
+    public override void Dispose(bool isDisposing)
     {
       if (!IsDisposed)
       {
@@ -333,27 +321,9 @@ namespace Altaxo.Gui
           ((IDisposable)_clonedCopyOfDoc).Dispose();
           _clonedCopyOfDoc = default;
         }
-
-        _isDisposed = true;
       }
+      base.Dispose(isDisposing);
     }
 
-    #region Helper functions
-
-    /// <summary>
-    /// Helper function to dispose a member and set it to null.
-    /// </summary>
-    /// <typeparam name="T">Type of the object to dispose.</typeparam>
-    /// <param name="objectToDispose">The object to dispose.</param>
-    protected static void DisposeAndSetToNull<T>(ref T? objectToDispose) where T : class, IDisposable
-    {
-      if (objectToDispose is not null)
-      {
-        objectToDispose.Dispose();
-        objectToDispose = null;
-      }
-    }
-
-    #endregion Helper functions
   }
 }

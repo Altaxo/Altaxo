@@ -466,6 +466,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
         // _doc.FitEnsemble.InitializeParameterSetFromEnsembleParameters(_doc.CurrentParameters);
 
         _fitEnsembleController.Refresh();
+        _parameterController.InitializeDocument(_doc.CurrentParameters);
       }
     }
 
@@ -787,7 +788,7 @@ Label_EditScript:
 
     private static IVariantToVariantTransformation GetFitFunctionDependentTransformation(IVariantToVariantTransformation transformationOfOriginalDataColumn, IVariantToVariantTransformation transformationOfFitDependentVariable, IVariantToVariantTransformation transformationOfDependentVariableFitFunctionOutput)
     {
-        return CompoundTransformation.TryGetCompoundTransformationWithSimplification(new[] { (transformationOfDependentVariableFitFunctionOutput,false),  (transformationOfFitDependentVariable, true), (transformationOfOriginalDataColumn, false) });
+      return CompoundTransformation.TryGetCompoundTransformationWithSimplification(new[] { (transformationOfDependentVariableFitFunctionOutput, false), (transformationOfFitDependentVariable, true), (transformationOfOriginalDataColumn, false) });
     }
 
     private static IVariantToVariantTransformation GetFitFunctionIndependentTransformation(IVariantToVariantTransformation transformationOfOriginalDataColumn, IVariantToVariantTransformation transformationOfFitIndependentVariable)

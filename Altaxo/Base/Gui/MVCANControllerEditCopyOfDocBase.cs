@@ -51,8 +51,7 @@ namespace Altaxo.Gui
     /// <summary>If true, a copy of the document is made before editing; this copy can later be used to revert the state of the document to the original state.</summary>
     protected bool _useDocumentCopy;
 
-    /// <summary>Set to true if this controller is already disposed.</summary>
-    private bool _isDisposed;
+
 
     /// <summary>
     /// Enumerates the sub controllers. This function is called on <see cref="Dispose(bool)"/> of this controller to dispose the subcontrollers too.
@@ -179,8 +178,6 @@ namespace Altaxo.Gui
     {
     }
 
-    /// <summary>Get a value indication whether  this controller is already disposed.</summary>
-    public bool IsDisposed { get { return _isDisposed; } }
 
     /// <summary>
     /// Sets whether or not a copy of the document is used. If set to true, a copy of the document is used, so if the controller is not applied,
@@ -230,20 +227,13 @@ namespace Altaxo.Gui
       }
     }
 
-    /// <summary>
-    /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
-    /// </summary>
-    public void Dispose()
-    {
-      Dispose(true);
-      GC.SuppressFinalize(this);
-    }
+
 
     /// <summary>
     /// Releases unmanaged and - optionally - managed resources.
     /// </summary>
     /// <param name="isDisposing"><c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
-    public virtual void Dispose(bool isDisposing)
+    public override void Dispose(bool isDisposing)
     {
       if (!IsDisposed)
       {
@@ -257,8 +247,9 @@ namespace Altaxo.Gui
 
         ViewObject = null;
 
-        _isDisposed = true;
+
       }
+      base.Dispose(isDisposing);
     }
   }
 }
