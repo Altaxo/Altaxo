@@ -34,49 +34,41 @@ namespace WpfMath.Atoms
             ligatureKernChangeSet.Set((int)TexAtomType.Punctuation, true);
         }
 
-        public RowAtom(SourceSpan source, IList<TexFormula> formulaList)
-            : this(
-                source,
-                formulaList
-                    .Where(formula => formula.RootAtom != null)
-                    .Select(formula => formula.RootAtom))
-        {
-        }
-
-        public RowAtom(SourceSpan source, Atom baseAtom)
+        public RowAtom(SourceSpan? source, Atom? baseAtom)
             : this(
                 source,
                 baseAtom is RowAtom
                     ? (IEnumerable<Atom>) ((RowAtom) baseAtom).Elements
-                    : new[] { baseAtom })
+                    : new[] { baseAtom! }) // Nullable: Seems to require some sort of non-null assertion to make the analyzer happy
         {
         }
 
-        public RowAtom(SourceSpan source)
+        public RowAtom(SourceSpan? source)
             : base(source)
         {
             this.Elements = new List<Atom>().AsReadOnly();
         }
 
-        private RowAtom(SourceSpan source, DummyAtom previousAtom, ReadOnlyCollection<Atom> elements)
+        private RowAtom(SourceSpan? source, DummyAtom? previousAtom, ReadOnlyCollection<Atom> elements)
             : base(source)
         {
             this.PreviousAtom = previousAtom;
             this.Elements = elements;
         }
 
-        internal RowAtom(SourceSpan source, IEnumerable<Atom> elements)
+        internal RowAtom(SourceSpan? source, IEnumerable<Atom?> elements)
             : base(source) =>
-            this.Elements = elements.ToList().AsReadOnly();
+            this.Elements = elements.Where(x => x != null).ToList().AsReadOnly()!;
+            // TODO[F]: Fix this with C# 8 migration: there shouldn't be nullable atoms in this collection
 
-        public DummyAtom PreviousAtom { get; }
+        public DummyAtom? PreviousAtom { get; }
 
         public ReadOnlyCollection<Atom> Elements { get; }
 
-        public Atom WithPreviousAtom(DummyAtom previousAtom) =>
+        public Atom WithPreviousAtom(DummyAtom? previousAtom) =>
             new RowAtom(this.Source, previousAtom, this.Elements);
 
-        public RowAtom WithSource(SourceSpan source) =>
+        public RowAtom WithSource(SourceSpan? source) =>
             new RowAtom(source, this.PreviousAtom, this.Elements);
 
         public RowAtom Add(Atom atom)
@@ -86,7 +78,7 @@ namespace WpfMath.Atoms
             return new RowAtom(this.Source, this.PreviousAtom, newElements.AsReadOnly());
         }
 
-        private static DummyAtom ChangeAtomToOrdinary(DummyAtom currentAtom, DummyAtom previousAtom, Atom nextAtom)
+        private static DummyAtom ChangeAtomToOrdinary(DummyAtom currentAtom, DummyAtom? previousAtom, Atom? nextAtom)
         {
             var type = currentAtom.GetLeftType();
             if (type == TexAtomType.BinaryOperator && (previousAtom == null ||

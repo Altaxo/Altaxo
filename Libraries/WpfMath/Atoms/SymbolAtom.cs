@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using WpfMath.Utils;
 
 namespace WpfMath.Atoms
@@ -14,7 +15,7 @@ namespace WpfMath.Atoms
         internal const string EmptyDelimiterName = "_emptyDelimiter";
 
         // Dictionary of definitions of all symbols, keyed by name.
-        private static readonly IDictionary<string, Func<SourceSpan, SymbolAtom>> symbols;
+        private static readonly IDictionary<string, Func<SourceSpan?, SymbolAtom>> symbols;
 
         // Set of all valid symbol types.
         private static BitArray validSymbolTypes;
@@ -35,32 +36,36 @@ namespace WpfMath.Atoms
             validSymbolTypes.Set((int)TexAtomType.Accent, true);
         }
 
-        public static SymbolAtom GetAtom(string name, SourceSpan source)
+#if !NET452
+        public static bool TryGetAtom(string name, SourceSpan? source, [NotNullWhen(true)] out SymbolAtom? atom)
+#else
+        public static bool TryGetAtom(string name, SourceSpan? source, out SymbolAtom? atom)
+#endif
         {
-            try
+            if (!symbols.TryGetValue(name, out var factory))
             {
-                var symbol = symbols[name](source);
-                return new SymbolAtom(source, symbol, symbol.Type);
+                atom = null;
+                return false;
             }
-            catch (KeyNotFoundException)
-            {
-                throw new SymbolNotFoundException(name);
-            }
+
+            var symbol = factory(source);
+            atom = new SymbolAtom(source, symbol, symbol.Type);
+            return true;
         }
 
-        public static bool TryGetAtom(SourceSpan name, out SymbolAtom atom)
+        public static SymbolAtom GetAtom(string name, SourceSpan? source) =>
+            TryGetAtom(name, source, out var atom) ? atom : throw new SymbolNotFoundException(name);
+
+#if !NET452
+        public static bool TryGetAtom(SourceSpan name, [NotNullWhen(true)] out SymbolAtom? atom)
+#else
+        public static bool TryGetAtom(SourceSpan name, out SymbolAtom? atom)
+#endif
         {
-            if (symbols.TryGetValue(name.ToString(), out var temp))
-            {
-                var symbol = temp(name);
-                atom = new SymbolAtom(name, symbol, symbol.Type);
-                return true;
-            }
-            atom = null;
-            return false;
+            return TryGetAtom(name.ToString(), name, out atom);
         }
 
-        public SymbolAtom(SourceSpan source, SymbolAtom symbolAtom, TexAtomType type)
+        public SymbolAtom(SourceSpan? source, SymbolAtom symbolAtom, TexAtomType type)
             : base(source, type)
         {
             if (!validSymbolTypes[(int)type])
@@ -69,7 +74,7 @@ namespace WpfMath.Atoms
             this.IsDelimeter = symbolAtom.IsDelimeter;
         }
 
-        public SymbolAtom(SourceSpan source, string name, TexAtomType type, bool isDelimeter)
+        public SymbolAtom(SourceSpan? source, string name, TexAtomType type, bool isDelimeter)
             : base(source, type)
         {
             this.Name = name;

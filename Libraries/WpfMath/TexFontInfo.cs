@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Windows.Media;
 using WpfMath.Exceptions;
@@ -113,11 +113,10 @@ namespace WpfMath
             return kern * factor;
         }
 
-        public CharFont GetLigature(char left, char right)
+        public CharFont? GetLigature(char left, char right)
         {
             Tuple<char, char> tpl = Tuple.Create(left, right);
-            char ch;
-            return this.ligatures.TryGetValue(tpl, out ch) ? new CharFont(ch, this.FontId) : null;
+            return this.ligatures.TryGetValue(tpl, out char ch) ? new CharFont(ch, this.FontId) : null;
         }
 
         public CharFont GetNextLarger(char character)
@@ -140,7 +139,6 @@ namespace WpfMath
             return this.XHeight * factor;
         }
 
-        /// <summary>Return the character metrics or <c>null</c> if the metrics weren't found.</summary>
         public Result<double[]> GetMetrics(char character)
         {
             if (this.metrics.Length <= character || this.metrics[character] == null)
