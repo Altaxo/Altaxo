@@ -537,14 +537,11 @@ The domain of the function is $-\infty \leq x \leq \infty$.
 This function evaluates an exponential equilibration process with one or multiple terms according to
 
 $$
-y(x) = y_0 + a_0 \left [ 1-\exp\left(\frac{-(x-x_0)}{\tau_0}\right ) \right ] + ... + a_{n-1} \left [ 1- \exp\left(\frac{-(x-x_0)}{\tau_{n-1}} \right ) \right ]  | (x &gt; x_0)
+y(x) = \cases{ y_0 \thickspace \thickspace (x \leq x_0) \cr y_0 + a_0 \left [ 1-\exp\left(\frac{-(x-x_0)}{\tau_0}\right ) \right ] + ... + a_{n-1} \left [ 1- \exp\left(\frac{-(x-x_0)}{\tau_{n-1}} \right ) \right ]  \thickspace \thickspace (x &gt; x_0)
+}
 $$
 
-and
 
-$$
-y(x) = y_0 | (x \leq x_0)
-$$
 
 in which:
 
@@ -574,7 +571,7 @@ $$
 
 in which:
 
-- $y_0$ is the value of the base line (value of y for $x\rightarrow {-\infty}$ )
+- $y_0$ is the value of the base line (value of y for $x \rightarrow {-\infty}$ )
 - $a_0$ .. $a_{n-1}$ are the prefactors of the exponential terms
 - $\tau_0$ ... $\tau_{n-1}$ are the characteristic times
 - $n$ is the number of exponential terms
@@ -637,7 +634,7 @@ The number of terms $n$ can be changed by double-clicking on the fit function. T
 The domain of the function is $ 0 \leq x &lt; \infty $ if all $k_0..k_{n-1}$ are positive, or $ 0 &lt; x &lt; \infty $ if some of the exponents are negative.
 
 &gt; **Note:**  
-Even if you set the exponents fixed to integer values, the domain of the function is not extended to the full range! Use `Polynomial` instead.
+Even if you set the exponents fixed to integer values, the domain of the function is not extended to the full range! If the full range is neccessary, try to use `Polynomial` instead.
 
 ^^^
 ![](res:Altaxo.Calc.FitFunctions.General.PowerLawPrefactor.Fig2.png)
@@ -740,14 +737,9 @@ The domain of the function is $ -\infty &lt; x &lt; \infty $, with some points (
 This function evaluates a stretched exponential decay process starting at $x=x_0$ with one or multiple terms according to
 
 $$
-y(x) = y_0 + a_0 \exp\left(-(\frac{x-x_0}{\tau_0})^{\beta_0} \right ) + ... + a_{n-1} \exp\left(-(\frac{x-x_0}{\tau_{n-1}})^{\beta_{n-1}} \right )   | (x &gt; x_0)
+y(x) = \cases{ y_0 + a_0 \exp\left(-\left\[\frac{x-x_0}{\tau_0}\right\]^{\beta_0} \right ) + ... + a_{n-1} \exp\left(-\left[\frac{x-x_0}{\tau_{n-1}}\right]^{\beta_{n-1}} \right )   \thickspace \thickspace (x &gt; x_0) \cr y_0 + \sum_{0}^{n-1} a_i  \thickspace \thickspace (x \leq x_0)}
 $$
 
-and
-
-$$
-y(x) = y_0 + \sum_{0}^{n-1} a_i  | (x \leq x_0)
-$$
 
 in which:
 
@@ -774,13 +766,7 @@ The domain of the function is $-\infty &lt; x &lt; \infty$. The function values 
 This function evaluates a stretched exponential equilibration process with one or multiple terms according to
 
 $$
-y(x) = y_0 + a_0 \left [ 1-\exp\left(-(\frac{x-x_0}{\tau_0})^{\beta_0} \right ) \right ] + ... + a_{n-1} \left [ 1- \exp\left(-(\frac{x-x_0}{\tau_{n-1}})^{\beta_{n-1}} \right ) \right ]  | (x &gt; x_0)
-$$
-
-and
-
-$$
-y(x) = y_0 | (x \leq x_0)
+y(x) = \cases{y_0 + a_0 \left \{ 1-\exp\left(-\left[\frac{x-x_0}{\tau_0}\right]^{\beta_0} \right ) \right \} + ... + a_{n-1} \left [\{ 1- \exp\left(-\left[\frac{x-x_0}{\tau_{n-1}}\right]^{\beta_{n-1}} \right ) \right \}  \thickspace \thickspace (x &gt; x_0) \cr y_0 \thickspace \thickspace (x \leq x_0)}
 $$
 
 in which:
@@ -808,13 +794,8 @@ The domain of the function is $-\infty &lt; x &lt; \infty$.
 This function evaluates a stretched exponential growth process starting at $x=x_0$ with one or multiple terms according to
 
 $$
-y(x) = y_0 + a_0 \exp\left((\frac{x-x_0}{\tau_0})^{\beta_0} \right ) + ... + a_{n-1} \exp\left((\frac{x-x_0}{\tau_{n-1}})^{\beta_{n-1}} \right )   | (x &gt; x_0)
-$$
-
-and
-
-$$
-y(x) = y_0 + \sum_{0}^{n-1} a_i  | (x \leq x_0)
+y(x) = \cases{y_0 + a_0 \exp\left(\left[\frac{x-x_0}{\tau_0}\right]^{\beta_0} \right ) + ... + a_{n-1} \exp\left(\left[\frac{x-x_0}{\tau_{n-1}}\right]^{\beta_{n-1}} \right ) \thickspace \thickspace (x &gt; x_0)
+\cr y_0 + \sum_{0}^{n-1} a_i  \thickspace \thickspace (x \leq x_0)}
 $$
 
 in which:
@@ -1083,7 +1064,7 @@ References:
 This function evaluates a sum of Cauchy (Lorentzian) terms, plus a background polynomial with one or multiple terms, according to
 
 $$
-y(x) = \frac{A_0}{\pi w_0 [ 1 + \left ( \frac{x-x_{c0}}{w_0} \right ) ^2  ] } + ... + \frac{A_{n-1}}{\pi w_{n-1} [ 1 + \left ( \frac{x-x_{cn-1}}{w_{n-1}} \right ) ^2  ] } + b_0 + b_1 x^1 + ... + b_m x^m 
+y(x) = \frac{A_0}{\pi w_0 \left[ 1 + \left ( \frac{x-x_{c0}}{w_0} \right ) ^2  \right ] } + ... + \frac{A_{n-1}}{\pi w_{n-1} \left [ 1 + \left ( \frac{x-x_{cn-1}}{w_{n-1}} \right ) ^2  \right ] } + b_0 + b_1 x^1 + ... + b_m x^m 
 $$
 
 in which:
@@ -1188,7 +1169,7 @@ The domain of the function is $-\infty \leq x \leq \infty$.
 This function evaluates a sum of generalized logistic terms (decreasing steps), plus a background polynomial with one or multiple terms, according to
 
 $$
-y(x) = \frac{a_0}{ [ 1+ \exp \left ( \frac{x-x_{c0}}{w_0} \right )^{\gamma_0}  ]^{\delta_0 / \gamma_0} } + ... + \frac{a_{n-1}}{ [ 1+ \exp \left ( \frac{x-x_{cn-1}}{w_{n-1}} \right )^{\gamma_{n-1}} ]^{\delta_{n-1} / \gamma_{n-1}} } + b_0 + b_1 x^1 + ... + b_m x^m 
+y(x) = \frac{a_0}{ \left [ 1+ \exp \left\(\frac{x-x_{c0}}{w_0} \right\)^{\gamma_0} \right ]^{\delta_0 / \gamma_0} } + ... + \frac{a_{n-1}}{ \left [ 1+ \exp \left ( \frac{x-x_{cn-1}}{w_{n-1}} \right )^{\gamma_{n-1}} \right ]^{\delta_{n-1} / \gamma_{n-1}} } + b_0 + b_1 x^1 + ... + b_m x^m 
 $$
 
 in which:
@@ -1230,7 +1211,7 @@ References:
 This function evaluates a sum of generalized logistic terms (increasing steps), plus a background polynomial with one or multiple terms, according to
 
 $$
-y(x) = \frac{a_0}{ [ 1+ \exp \left ( - \frac{x-x_{c0}}{w_0} \right )^{\gamma_0}  ]^{\delta_0 / \gamma_0} } + ... + \frac{a_{n-1}}{ [ 1+ \exp \left ( - \frac{x-x_{cn-1}}{w_{n-1}} \right )^{\gamma_{n-1}} ]^{\delta_{n-1} / \gamma_{n-1}} } + b_0 + b_1 x^1 + ... + b_m x^m 
+y(x) = \frac{a_0}{ \left [ 1+ \exp \left ( - \frac{x-x_{c0}}{w_0} \right )^{\gamma_0} \right ]^{\delta_0 / \gamma_0} } + ... + \frac{a_{n-1}}{ \left [ 1+ \exp \left ( - \frac{x-x_{cn-1}}{w_{n-1}} \right )^{\gamma_{n-1}} \right ]^{\delta_{n-1} / \gamma_{n-1}} } + b_0 + b_1 x^1 + ... + b_m x^m 
 $$
 
 in which:
