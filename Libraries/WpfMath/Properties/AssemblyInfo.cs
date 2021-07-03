@@ -1,3 +1,5 @@
-using System.Runtime.CompilerServices;
+﻿using System.Runtime.CompilerServices;
 
 [assembly: InternalsVisibleTo("WpfMath.Tests")]
+
+[assembly: InternalsVisibleToAttribute("OpenXMLAddin")]
