@@ -96,15 +96,10 @@ namespace Altaxo.Gui.Common
       {
         // adjust the size of the dialog box so that it fits inside of the working area (without changing the position of the dialog
         if (Top + availableSize.Height > _workArea.Bottom)
-          availableSize.Height = _workArea.Bottom - Top;
+          availableSize.Height = Math.Max(_workArea.Bottom - Top, 0);
         if (Left + availableSize.Width > _workArea.Right)
-          availableSize.Width = _workArea.Right - Left;
+          availableSize.Width = Math.Max(_workArea.Right - Left, 0);
       }
-
-      if (availableSize.Height < 0)
-        availableSize.Height = 0;
-      if (availableSize.Width < 0)
-        availableSize.Width = 0;
 
       return base.MeasureOverride(availableSize);
     }
