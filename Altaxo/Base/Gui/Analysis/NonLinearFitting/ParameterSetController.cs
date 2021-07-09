@@ -25,19 +25,35 @@
 #nullable disable
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using Altaxo.Calc.Regression.Nonlinear;
 
 namespace Altaxo.Gui.Analysis.NonLinearFitting
 {
-  public class ParameterSetViewItem
+  public class ParameterSetViewItem : INotifyPropertyChanged
   {
+    private double _value;
+
     public string Name { get; set; }
 
-    public double Value { get; set; }
+    public double Value
+    {
+      get => _value;
+      set
+      {
+        if(!(_value==value))
+        {
+          _value = value;
+          PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Value)));
+        }
+      }
+    }
 
     public bool Vary { get; set; }
 
     public double Variance { get; set; }
+
+    public event PropertyChangedEventHandler PropertyChanged;
   }
 
   public interface IParameterSetView : IDataContextAwareView

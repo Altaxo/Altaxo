@@ -209,6 +209,12 @@ namespace Altaxo.Calc.Ode
       private IMatrix<double>? _jacobian_aux;
 
       /// <summary>
+      /// Designates the number of iterations that were neccessary for convergence with a freshly calculated jacobian matrix.
+      /// </summary>
+      private int? _numberOfIterationsNeccessaryWithFreshJacobian;
+
+
+      /// <summary>
       /// The array to accomodate polynomial coefficients of either eq. 2.15 or eq. 2.49 in Byrne and Hindmarsh [1].
       /// </summary>
       private double[] _l_array;
@@ -325,6 +331,7 @@ namespace Altaxo.Calc.Ode
           fac *= stepSizeScaleFactor;
         }
         _nordsieckArray_h *= stepSizeScaleFactor;
+        _nordsieckArray_x = X + _nordsieckArray_h;
         _numberOfStepsAtCurrentStepSize = 0;
       }
 
@@ -862,6 +869,8 @@ namespace Altaxo.Calc.Ode
       /// <returns>True if the iteration has converged; otherwise, false.</returns>
       public bool IterationUsingJacobian()
       {
+        const int MaxNumberOfIterations = 10;
+
         double l2NormOfCorrection;
 
         var n = N;
@@ -886,10 +895,14 @@ namespace Altaxo.Calc.Ode
 
           EvaluateJacobian(_x[0].X, yn0, ref _jacobian);
           _numberOfStepsWithoutJacobianEvaluation = -1;
+          _numberOfIterationsNeccessaryWithFreshJacobian = null;
         }
 
 
-        for (int loops = 10; loops >= 0; --loops)
+        ++_numberOfStepsWithoutJacobianEvaluation;
+
+        int loops;
+        for (loops = 0; loops <= MaxNumberOfIterations; ++loops)
         {
           // Calculate derivative
           _f(_x[0].X, u, _naux2);
@@ -900,11 +913,8 @@ namespace Altaxo.Calc.Ode
             _naux2[i] = (u[i] - yn0[i]) - one_l1 * (h * _naux2[i] - _nordsieckArray[1][i]);
           }
 
-          // now we have 4 methods to correct u
-
 
           {
-            ++_numberOfStepsWithoutJacobianEvaluation;
             // Instead of scaling the jacobian with h/l1, we scale I and the right side with l1/h
             var l1h = _l_array[1] / _nordsieckArray_h;
             MatrixMath.Copy(_jacobian, _jacobian_aux);
@@ -926,9 +936,18 @@ namespace Altaxo.Calc.Ode
           if (!l2NormOfFirstCorrection.HasValue)
             l2NormOfFirstCorrection = l2NormOfCorrection;
           else if (!(l2NormOfCorrection < l2NormOfFirstCorrection))
-            return false; // no convergence at all
+          {
+            // either this is no convergence then, or the first correction was already so small, that there could be no improvement in
+            // the second correction
+            // we have to check wheter the first correction was an considerable improvement
 
-          if (loops == 0)
+            if (l2NormOfFirstCorrection < L2Norm(u) * 1E-15)
+              return true;  // l2Norm of first correction was already very small, so there was already convergence
+            else
+              return false; // no convergence at all
+          }
+
+          if (loops == MaxNumberOfIterations)
             return false; // no convergence in max number of iterations
 
           if (l2NormOfCorrection >= l2NormOfPreviousCorrection)
@@ -945,8 +964,23 @@ namespace Altaxo.Calc.Ode
           en[i] = u[i] - yn0[i];
         }
 
+        // Some additional measures to avoid too many iterations if the jacobian is outdated:
+        if(_numberOfIterationsNeccessaryWithFreshJacobian is null)
+        {
+          // if the jacobian was freshly calculated, then store how many loops it has taken for convergence 
+          _numberOfIterationsNeccessaryWithFreshJacobian = loops;
+        }
+        else if(loops > 3 + _numberOfIterationsNeccessaryWithFreshJacobian)
+        {
+          // if the jacobian is not fresh, and it takes more than 3 loops more compared with the fresh jacobian,
+          // then a fresh calculation of the jacobian is enforced
+          _numberOfStepsWithoutJacobianEvaluation = -1;
+        }
+
         return true;
       }
+
+
 
       /// <summary>
       /// Does some iteration steps. This iteration method does not use the Jacobian for Newton-Raphson steps,

@@ -16,10 +16,16 @@
         CanUserAddRows="False">
         <DataGrid.Resources>
             <DataTemplate x:Key="ValueCellTemplate" >
-                <axogc:NumericDoubleTextBox SelectedValue="{Binding Value}" AllowInfiniteValues="True" AllowNaNValues="False" Background="{Binding Path=Background, RelativeSource={RelativeSource AncestorType=DataGridRow}}"/>
+                <TextBlock Text="{Binding Value}"/>
+            </DataTemplate>
+            <DataTemplate x:Key="ValueCellEditingTemplate" >
+                <axogc:NumericDoubleTextBox SelectedValue="{Binding Value, Mode=TwoWay}" AllowInfiniteValues="True" AllowNaNValues="False" Background="{Binding Path=Background, RelativeSource={RelativeSource AncestorType=DataGridRow}}"/>
             </DataTemplate>
             <DataTemplate x:Key="VarianceCellTemplate" >
-                <axogc:NumericDoubleTextBox SelectedValue="{Binding Variance}" AllowInfiniteValues="False" AllowNaNValues="False" Background="{Binding Path=Background, RelativeSource={RelativeSource AncestorType=DataGridRow}}"/>
+                <TextBlock Text="{Binding Variance}"/>
+            </DataTemplate>
+            <DataTemplate x:Key="VarianceCellEditingTemplate" >
+                <axogc:NumericDoubleTextBox SelectedValue="{Binding Variance, Mode=TwoWay}" AllowInfiniteValues="False" AllowNaNValues="False" Background="{Binding Path=Background, RelativeSource={RelativeSource AncestorType=DataGridRow}}"/>
             </DataTemplate>
 
             <!--  style to apply to DataGridTextColumn in edit mode  -->
@@ -38,7 +44,8 @@
                 Binding="{Binding Name}"
                 Header="Name"
                 IsReadOnly="True" />
-            <DataGridTemplateColumn Header="Value" CellTemplate="{StaticResource ValueCellTemplate}" CellEditingTemplate="{StaticResource ValueCellTemplate}" />
+            <DataGridTemplateColumn Header="Value" CellTemplate="{StaticResource ValueCellTemplate}" CellEditingTemplate="{StaticResource ValueCellEditingTemplate}">
+            </DataGridTemplateColumn>
             <!--
             <DataGridTextColumn EditingElementStyle="{StaticResource CellEditStyle}" Header="Value">
                 <DataGridTextColumn.Binding>
@@ -52,7 +59,7 @@
             -->
             <DataGridCheckBoxColumn Binding="{Binding Vary}" Header="Vary?" />
 
-            <DataGridTemplateColumn Header="Variance" CellTemplate="{StaticResource VarianceCellTemplate}" CellEditingTemplate="{StaticResource VarianceCellTemplate}" />
+            <DataGridTemplateColumn Header="Variance" CellTemplate="{StaticResource VarianceCellTemplate}" CellEditingTemplate="{StaticResource VarianceCellEditingTemplate}" />
 <!--
             <DataGridTextColumn EditingElementStyle="{StaticResource CellEditStyle}" Header="Variance">
                 <DataGridTextColumn.Binding>

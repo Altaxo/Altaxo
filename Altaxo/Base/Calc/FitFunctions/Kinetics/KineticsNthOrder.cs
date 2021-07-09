@@ -26,14 +26,174 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Altaxo.Calc.Regression.Nonlinear;
+using Altaxo.Main;
 
 namespace Altaxo.Calc.FitFunctions.Kinetics
 {
   /// <summary>
   /// Represents solutions related to the differential equation y'=-k*y^n. For the direct solution of this equation, see <see cref="CoreSolution"/>.
   /// </summary>
-  public class KineticsNthOrder
+  [FitFunctionClass]
+  public class KineticsNthOrder : IFitFunctionWithGradient, IImmutable
   {
+    #region Serialization
+
+    /// <summary>
+    /// Initial version 2021-07-07.
+    /// </summary>
+    /// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(KineticsNthOrder), 0)]
+    private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        var s = (KineticsNthOrder)obj;
+      }
+
+      public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      {
+        return new KineticsNthOrder();
+      }
+    }
+
+    #endregion Serialization
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="KineticsNthOrder"/> class.
+    /// </summary>
+    public KineticsNthOrder()
+    {
+    }
+
+    /// <summary>
+    /// Creates the fit function.
+    /// </summary>
+    /// <returns>The fit function.</returns>
+    [FitFunctionCreator("KinecticsNthOrder", "Kinetics", 1, 1, 3)]
+    [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Kinetics.KineticsNthOrder}")]
+    public static IFitFunction CreateFitFunction()
+    {
+      return new KineticsNthOrder();
+    }
+
+    /// <summary>
+    /// Not functional since this instance is immutable.
+    /// </summary>
+    public event EventHandler? Changed { add { } remove { } }
+
+    /// <inheritdoc/>
+    public int NumberOfIndependentVariables
+    {
+      get
+      {
+        return 1;
+      }
+    }
+
+    /// <inheritdoc/>
+    public int NumberOfDependentVariables
+    {
+      get
+      {
+        return 1;
+      }
+    }
+
+    /// <inheritdoc/>
+    public int NumberOfParameters
+    {
+      get
+      {
+        return 3;
+      }
+    }
+
+    /// <inheritdoc/>
+    public string IndependentVariableName(int i)
+    {
+      return "x";
+    }
+
+    /// <inheritdoc/>
+    public string DependentVariableName(int i)
+    {
+      return "y";
+    }
+
+    /// <inheritdoc/>
+    public string ParameterName(int i)
+    {
+      return i switch
+      {
+        0 => "y0",
+        1 => "k",
+        2 => "n",
+        _ => throw new InvalidOperationException()
+      };
+    }
+
+    /// <inheritdoc/>
+    public double DefaultParameterValue(int i)
+    {
+      return i switch
+      {
+        0 => 1,
+        1 => 1,
+        2 => 1,
+        _ => throw new InvalidOperationException()
+      };
+    }
+
+    /// <inheritdoc/>
+    public IVarianceScaling? DefaultVarianceScaling(int i)
+    {
+      return null;
+    }
+
+    /// <inheritdoc/>
+    public void Evaluate(double[] X, double[] P, double[] Y)
+    {
+      Y[0] = CoreSolution(X[0], P[0], P[1], P[2]);
+    }
+
+    /// <inheritdoc/>
+    public void EvaluateGradient(double[] X, double[] P, double[][] DY)
+    {
+      double x = X[0];
+      double y0 = P[0];
+      double k = P[1];
+      double n = P[2];
+
+      if (!(y0 >= 0))
+      {
+        DY[0][0] = double.NaN;
+        DY[0][1] = double.NaN;
+        DY[0][2] = double.NaN;
+      }
+      else
+      {
+        if (n == 1)
+        {
+          var term = Math.Exp(-k * x);
+          DY[0][0] = term;
+          DY[0][1] = -term * y0 * x;
+          DY[0][2] = term * 0.5 * k * x * y0 * (k * x - 2 * Math.Log(y0));
+        }
+        else
+        {
+          var term = k * (n - 1) * x + Math.Pow(y0, 1 - n);
+          var termE = Math.Pow(term, 1 / (1 - n));
+
+          DY[0][0] = termE / (term * Math.Pow(y0, n));
+          DY[0][1] = -termE * x / term;
+          DY[0][2] = termE * ( (k * x - Math.Pow(y0, 1-n)* Math.Log(y0)) / ((1 - n) * term) + Math.Log(term) / ((1 - n) * (1 - n)));
+        }
+      }
+    }
+
+    #region Static functions
+
     /// <summary>
     /// Represents the real solution of the nth order kinetic equation y'=-k*y^n with y[0]&gt;=0.
     /// </summary>
@@ -47,22 +207,14 @@ namespace Altaxo.Calc.FitFunctions.Kinetics
       if (!(y0 >= 0))
         return double.NaN; // throw new ArgumentOutOfRangeException("y0 has to be nonnegative");
 
-      if (order >= 1)
-      {
-        if (order == 1)
+     
+        if(order==0)
+          return y0 - k * t;
+        else if (order == 1)
           return y0 * Math.Exp(-k * t);
         else
           return Math.Pow(Math.Pow(y0, 1 - order) + (order - 1) * k * t, 1 / (1 - order));
-      }
-      else // order<1
-      {
-        if (order == 0)
-          return y0 - k * t;
-        else if (order > 0)
-          return Math.Pow(Math.Pow(y0, 1 - order) + (order - 1) * k * t, 1 / (1 - order));
-        else
-          return double.NaN; // throw new ArgumentOutOfRangeException("order has to be nonnegative");
-      }
+      
     }
 
     /// <summary>
@@ -109,5 +261,7 @@ namespace Altaxo.Calc.FitFunctions.Kinetics
       double p0 = pSample * (1 - pA0 / pAInf);
       return (pAInf - (pAInf - pA0) * CoreSolution(t, p0, k, order));
     }
+
+    #endregion
   }
 }

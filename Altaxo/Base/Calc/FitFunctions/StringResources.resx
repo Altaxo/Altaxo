@@ -817,6 +817,149 @@ The domain of the function is $-\infty &lt; x &lt; \infty$. The function values 
 ---
 </value>
   </data>
+  <data name="Kinetics.ConversionAutocatalytic" xml:space="preserve">
+    <value># Conversion of an autocatalytic reaction
+
+This fit function represents the solution of the differential equation for the conversion of an autocatalytic reaction (e.g. epoxy curing), namely:
+
+$$
+\frac{dy}{dx} = (k_1 + k_2 y^m)(1-y)^n \\ \\ y(t_0)=0
+$$
+
+in which 
+
+- $y$ is the dependent variable (e.g. the conversion, a value between 0 and 1),
+- $x$ is the independent variable (for a reaction, $x$ represents the time),
+- $k_1$ and $k_2$ are a rate parameter,
+- $m$ and $n$ are exponents,
+- $t_0$ is the point (time) of the start of the reaction, i.e. $y(t_0)=0$.
+
+The values of $y$, $k_1$ and $k_2$ are assumed to be positive. The value of $y$ before the start of reaction ($x \le t_0$) is assumed to be 0.
+
+Since there is no general analytical solution of this differential equation, the solution must be calculated using an ordinary differential equation solver. This could make fits to a large data set somewhat slow.
+
+The domain of the function is $-\infty \leq x \leq \infty$. 
+
+
+&gt; Tip:  
+&gt; If your conversion data are in percent (instead of values between 0 and 1), use a scale transformation with a scale of 0.01 for the dependent variable to convert the values to the range [0,1].
+
+&gt; Note:  
+&gt; This kinetic equation assumes that the conversion finally reaches 1 (100%). This assumption may be wrong if the glass temperature of the finally cured material exceeds the curing temperature.
+
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.Kinetics.ConversionAutocatalytic.Fig1.png)
+^^^ Fig. 1: ConversionAutocatalytic (with $t_0=1$, $k_1=1$ and $k_2$=1). The values for $m$ and $n$ are indicated in the legend.
+---
+References:  
+- J. M. Kenny, Determination of Autocatalytic Kinetic Model Parameters Describing Thermoset Cure, Journal of Applied Polymer Science, Vol. 51, 761-764 (1994) 
+
+
+
+</value>
+  </data>
+  <data name="Kinetics.ConversionNthOrder" xml:space="preserve">
+    <value># Conversion of a reaction of n^th^ order
+
+This fit function represents the solution of the differential equation of a conversion kinetics of n^th^ order, namely:
+
+$$
+\frac{dy}{dx} = k (1-y)^n \\ \\ y(t_0)=0
+$$
+
+in which 
+
+- $y$ is the dependent variable (e.g. the conversion, a value between 0 and 1),
+- $x$ is the independent variable (for a kinetics, $x$ represents the time),
+- $k$ is a rate parameter,
+- $n$ is the order of the kinetic conversion process,
+- $t_0$ is the point (time) of the start of the reaction, i.e. $y(t_0)=0$.
+
+The values of $y$ and $k$ are assumed to be positive.
+
+The solution for $x\ge t_0$ of this differential equation is:
+
+
+$$
+y(x) = \cases { 
+                \left \[  y_0^{1-n} -k x (1-n) \right \]^{\frac{1}{1-n}} \thickspace \mathrm{if} \thickspace n \neq 1 \cr
+                 1 - \exp(-k (x-t_0)) \thickspace \mathrm{if} \thickspace n=1} 
+$$
+
+For $x \le t_0$, $y$ is set to 0. Additionally, in order to be consistent among different $n$, $y$ is set to 1 if $n&lt;1$ and $x&gt;t_0 + \frac{1}{k(1-n)}$. 
+
+The domain of the function is: 
+
+$$
+\cases{-\infty \leq x \leq \infty \thickspace \mathrm{for} \thickspace n = 1 \cr
+       \frac{y_0^{1-n}}{k(n-1)} &lt; x \leq \infty \thickspace \mathrm{for} \thickspace n \thinspace \mathrm{sign}(k)&gt; -1 \cr
+       -\infty \leq x &lt; \frac{y_0^{1-n}}{k(n-1)} \thickspace \mathrm{for} \thickspace n\thinspace \mathrm{sign}(k) &lt; -1
+}
+$$
+
+&gt; Tip:  
+&gt; If your conversion data are in percent (instead of values between 0 and 1), use a scale transformation with a scale of 0.01 for the dependent variable to convert the values to the range [0,1].
+
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.Kinetics.ConversionNthOrder.Fig1.png)
+^^^ Fig. 1: ConversionNthOrder (with $t_0=1$, $k=1$). The values for $n$ are indicated in the legend.
+---
+
+
+
+
+</value>
+  </data>
+  <data name="Kinetics.KineticsNthOrder" xml:space="preserve">
+    <value># Kinetics of n^th^ order
+
+This fit function represents the solution of the differential equation for a kinetics of n^th^ order, namely:
+
+$$
+\frac{dy}{dx} = -k y^n \\ \\ y(0)=y_0
+$$
+
+in which 
+
+- $y$ is the dependent variable,
+- $x$ is the independent variable (for a kinetics, $x$ represents the time),
+- $k$ is a rate parameter,
+- $n$ is the order of the kinetic process,
+- $y_0$ is the value of $y$ at $x=0$.
+
+The values of $y$ and $y_0$ is assumed to be positive.
+
+The solution of this differential equation is:
+
+
+$$
+y(x) = \cases { \left \[  y_0^{1-n} -k x (1-n) \right \]^{\frac{1}{1-n}} \thickspace \mathrm{if} \thickspace n \neq 1 \cr
+                 y_0 \exp(-k x) \thickspace \mathrm{if} \thickspace n=1} 
+$$
+
+The domain of the function is: 
+
+$$
+\cases{-\infty \leq x \leq \infty \thickspace \mathrm{for} \thickspace n = 1 \cr
+       \frac{y_0^{1-n}}{k(n-1)} &lt; x \leq \infty \thickspace \mathrm{for} \thickspace n \thinspace \mathrm{sign}(k)&gt; -1 \cr
+       -\infty \leq x &lt; \frac{y_0^{1-n}}{k(n-1)} \thickspace \mathrm{for} \thickspace n\thinspace \mathrm{sign}(k) &lt; -1
+}
+$$
+
+
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.Kinetics.KineticsNthOrder.Fig1.png)
+^^^ Fig. 1: KineticsNthOrder (with $y_0=1$, $k=1$). The values for $n$ are indicated in the legend.
+---
+
+
+
+
+</value>
+  </data>
   <data name="Materials.ArrheniusLawRate" xml:space="preserve">
     <value># Arrhenius law (rate)
 

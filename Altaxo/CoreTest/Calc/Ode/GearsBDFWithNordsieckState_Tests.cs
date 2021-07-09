@@ -409,5 +409,109 @@ namespace Altaxo.Calc.Ode
 
       AssertEx.Greater(maxStepSize, 1);
     }
+
+    private static void GetJacobianForAutocatalytic(double x, double[] y, ref IMatrix<double> m)
+    {
+      m ??= new DoubleMatrix(1, 1);
+      m[0, 0] = -2 * y[0];
+    }
+
+    [Fact]
+    public void Test_ASSC_Autocatalytic()
+    {
+      double targetAccuracy = 1E-4;
+      var ode = new GearsBDFWithNordsieckState();
+      ode.Initialize(0, new double[] { 0 }, (x, y, d) => { d[0] = (1+y[0])*(1-y[0]); }, GetJacobianForAutocatalytic);
+      var points = ode.GetSolutionPointsVolatile(
+        new MultiStepMethodOptions
+        {
+          AbsoluteTolerance = 1E-5,
+          RelativeTolerance = targetAccuracy,
+          AutomaticStepSizeControl = true,
+          IterationMethod = OdeIterationMethod.DoNotUseJacobian
+        }); ;
+
+      int cnt = 0;
+      double prev_y = 0;
+      double maxAbsError=0, maxRelError = 0;
+      foreach (var p in points)
+      {
+        if (p.X > 5)
+          break;
+
+        ++cnt;
+
+        var x = p.X;
+        var y = p.Y_volatile[0];
+
+        System.Diagnostics.Debug.WriteLine($"x={x}, y={y}");
+
+
+        Assert.True(y >= prev_y);
+        prev_y = y;
+
+        var expected = (Math.Exp(2*x)-1)/(Math.Exp(2*x)+1);
+
+        var absError = Math.Abs(p.Y_volatile[0] - expected);
+        var relError = absError / Math.Abs(expected);
+
+        maxAbsError = Math.Max(absError, maxAbsError);
+        maxRelError = Math.Max(relError, maxRelError);
+
+
+        //AssertEx.Equal(expected, p.Y_volatile[0], 0, targetAccuracy * cnt, string.Empty);
+      }
+      AssertEx.Less(maxRelError, targetAccuracy * cnt);
+
+    }
+
+    [Fact]
+    public void Test_ASSC_AutocatalyticJac()
+    {
+      double targetAccuracy = 1E-4;
+      var ode = new GearsBDFWithNordsieckState();
+      ode.Initialize(0, new double[] { 0 }, (x, y, d) => { d[0] = (1 + y[0]) * (1 - y[0]); },GetJacobianForAutocatalytic);
+      var points = ode.GetSolutionPointsVolatile(
+        new MultiStepMethodOptions
+        {
+          AbsoluteTolerance = 1E-5,
+          RelativeTolerance = targetAccuracy,
+          AutomaticStepSizeControl = true,
+          IterationMethod = OdeIterationMethod.UseJacobian
+        }); ;
+
+      int cnt = 0;
+      double prev_y = 0;
+      double maxAbsError = 0, maxRelError = 0;
+      foreach (var p in points)
+      {
+        if (p.X > 5)
+          break;
+
+        ++cnt;
+
+        var x = p.X;
+        var y = p.Y_volatile[0];
+        var expected = (Math.Exp(2 * x) - 1) / (Math.Exp(2 * x) + 1);
+
+        System.Diagnostics.Debug.WriteLine($"x={x}, y={y}, exp={expected}");
+
+
+        Assert.True(y >= prev_y);
+        prev_y = y;
+
+
+        var absError = Math.Abs(p.Y_volatile[0] - expected);
+        var relError = absError / Math.Abs(expected);
+
+        maxAbsError = Math.Max(absError, maxAbsError);
+        maxRelError = Math.Max(relError, maxRelError);
+
+        AssertEx.Less(maxRelError, targetAccuracy * cnt);
+
+        //AssertEx.Equal(expected, p.Y_volatile[0], 0, targetAccuracy * cnt, string.Empty);
+      }
+
+    }
   }
 }
