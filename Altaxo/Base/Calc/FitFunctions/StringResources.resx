@@ -889,14 +889,7 @@ $$
 
 For $x \le t_0$, $y$ is set to 0. Additionally, in order to be consistent among different $n$, $y$ is set to 1 if $n&lt;1$ and $x&gt;t_0 + \frac{1}{k(1-n)}$. 
 
-The domain of the function is: 
-
-$$
-\cases{-\infty \leq x \leq \infty \thickspace \mathrm{for} \thickspace n = 1 \cr
-       \frac{y_0^{1-n}}{k(n-1)} &lt; x \leq \infty \thickspace \mathrm{for} \thickspace n \thinspace \mathrm{sign}(k)&gt; -1 \cr
-       -\infty \leq x &lt; \frac{y_0^{1-n}}{k(n-1)} \thickspace \mathrm{for} \thickspace n\thinspace \mathrm{sign}(k) &lt; -1
-}
-$$
+The domain of the function is $-\infty \leq x \leq \infty$. 
 
 &gt; Tip:  
 &gt; If your conversion data are in percent (instead of values between 0 and 1), use a scale transformation with a scale of 0.01 for the dependent variable to convert the values to the range [0,1].
@@ -1304,6 +1297,174 @@ The domain of the function is $-\infty \leq x \leq \infty$.
 ---
 
 
+</value>
+  </data>
+  <data name="Relaxation.HavriliakNegamiModulusRelaxationFrequency" xml:space="preserve">
+    <value># Havriliak-Negami modulus relaxation (frequency)
+
+This function models the complex dynamic modulus in dependence on the frequency as:
+
+
+$$
+M^*(f) = M'(f) - i M''(f) = M_{\infty} + (M_{0}-M_{\infty})\frac{1}{(1+(i 2\pi  f \tau)^{\alpha})^{\gamma}} 
+$$
+
+or with a generalized flow term (both equations are equivalent if $\sigma=0$) :
+
+$$
+M^*(f) = M'(f) - i M''(f) = \left\{\frac{1}{M_{\infty} + (M_{0}-M_{\infty})\frac{1}{(1+(i 2 \pi f \tau)^{\alpha})^{\gamma}} } + \frac{i \sigma}{2\pi f} \right \}^{-1}
+$$
+
+with the frequency $f$  being the independent variable, and $M'(f)$ and $M''(f)$ being the dependent variables, namely the real and imaginary part of the complex dynamic modulus $M^*(f)$.
+
+The parameters are:
+
+- $M_0$ : low frequency modulus limit
+- $M_{\infty}$ : high frequency modulus limit
+- $\tau$ : relaxation time
+- $\alpha$, $\gamma$ : shape exponents (usually $ 0&lt;\alpha\le 1 $ and $ 0&lt;\gamma\le 1 $)
+- $\sigma$ : generalized flow term, for instance fluidity (inverse viscosity), conductivity etc.
+
+&gt; Note:  
+&gt; Since in most cases $M_0$ and $M_{\infty}$ differ by several orders of magnitude, your fit function will also cover several orders of magnitude. This will result in a poor fit of the low modulus data. To avoid this behavior, you should use a NaturalLogarithmTransformation for both your data and for the fit function's dependent variables.
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.Relaxation.HavriliakNegamiModulusRelaxationFrequency.Fig2.png)
+^^^ Fig. 1: Havriliak-Negami (with $M_0=10^6$, $M_{\infty}=10^9$, $\tau=1$ and $\sigma=0$). The values for $\alpha$ and $\gamma$ are indicated in the legend.
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.Relaxation.HavriliakNegamiModulusRelaxationFrequency.Fig1.png)
+^^^ Fig. 2: Comparison of Havriliak-Negami (with $M_0=10^6$, $M_{\infty}=10^9$, $\tau=1$, $\alpha=1$ and $\gamma=1$) without and with flow term. The values for $\sigma$ are indicated in the legend.
+
+---
+References:  
+- Havriliak, S., Negami, S., "A complex plane representation of dielectric and mechanical relaxation processes in some polymers", Polymer 8: 161–210, doi:10.1016/0032-3861(67)90021-3
+</value>
+  </data>
+  <data name="Relaxation.HavriliakNegamiModulusRelaxationOmega" xml:space="preserve">
+    <value># Havriliak-Negami modulus relaxation (circular frequency)
+
+This function models the complex dynamic modulus in dependence on the circular frequency as:
+
+
+$$
+M^*(\omega) = M'(\omega) - i M''(\omega) = M_{\infty} + (M_{0}-M_{\infty})\frac{1}{(1+(i \tau \omega)^{\alpha})^{\gamma}} 
+$$
+
+or with a generalized flow term (both equations are equivalent if $\sigma=0$) :
+
+$$
+M^*(\omega) = M'(\omega) - i M''(\omega) = \left\{\frac{1}{M_{\infty} + (M_{0}-M_{\infty})\frac{1}{(1+(i \tau \omega)^{\alpha})^{\gamma}} } + \frac{i \sigma}{\omega} \right \}^{-1}
+$$
+
+with the circular frequency $\omega = 2\pi f$  being the independent variable, and $M'(\omega)$ and $M''(\omega)$ being the dependent variables, namely the real and imaginary part of the complex dynamic modulus $M^*(\omega)$.
+
+The parameters are:
+
+- $M_0$ : low frequency modulus limit
+- $M_{\infty}$ : high frequency modulus limit
+- $\tau$ : relaxation time
+- $\alpha$, $\gamma$ : shape exponents (usually $ 0&lt;\alpha\le 1 $ and $ 0&lt;\gamma\le 1 $)
+- $\sigma$ : generalized flow term, for instance fluidity (inverse viscosity), conductivity etc.
+
+&gt; Note:  
+&gt; Since in most cases $M_0$ and $M_{\infty}$ differ by several orders of magnitude, your fit function will also cover several orders of magnitude. This will result in a poor fit of the low modulus data. To avoid this behavior, you should use a NaturalLogarithmTransformation for both your data and for the fit function's dependent variables.
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.Relaxation.HavriliakNegamiModulusRelaxationOmega.Fig2.png)
+^^^ Fig. 1: Havriliak-Negami (with $M_0=10^6$, $M_{\infty}=10^9$, $\tau=1$ and $\sigma=0$). The values for $\alpha$ and $\gamma$ are indicated in the legend.
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.Relaxation.HavriliakNegamiModulusRelaxationOmega.Fig1.png)
+^^^ Fig. 2: Comparison of Havriliak-Negami (with $M_0=10^6$, $M_{\infty}=10^9$, $\tau=1$, $\alpha=1$ and $\gamma=1$) without and with flow term. The values for $\sigma$ are indicated in the legend.
+
+---
+References:  
+- Havriliak, S., Negami, S., "A complex plane representation of dielectric and mechanical relaxation processes in some polymers", Polymer 8: 161–210, doi:10.1016/0032-3861(67)90021-3
+</value>
+  </data>
+  <data name="Relaxation.LgHavriliakNegamiModulusRelaxationFrequency" xml:space="preserve">
+    <value># Havriliak-Negami modulus relaxation (frequency)
+
+This function models the complex dynamic modulus in dependence on the frequency as:
+
+
+$$
+M^*(f) = M'(f) - i M''(f) = M_{\infty} + (M_{0}-M_{\infty})\frac{1}{(1+(i 2\pi  f \tau)^{\alpha})^{\gamma}} 
+$$
+
+or with a generalized flow term (both equations are equivalent if $\sigma=0$) :
+
+$$
+M^*(f) = M'(f) - i M''(f) = \left\{\frac{1}{M_{\infty} + (M_{0}-M_{\infty})\frac{1}{(1+(i 2 \pi f \tau)^{\alpha})^{\gamma}} } + \frac{i \sigma}{2\pi f} \right \}^{-1}
+$$
+
+with the frequency $f$  being the independent variable, and $\log_{10}(M'(f))$ and $\log_{10}(M''(f))$ being the dependent variables, namely the decadic logarithm of the real and imaginary part of the complex dynamic modulus $M^*(f)$.
+
+The parameters are:
+
+- $M_0$ : low frequency modulus limit
+- $M_{\infty}$ : high frequency modulus limit
+- $\tau$ : relaxation time
+- $\alpha$, $\gamma$ : shape exponents (usually $ 0&lt;\alpha\le 1 $ and $ 0&lt;\gamma\le 1 $)
+- $\sigma$ : generalized flow term, for instance fluidity (inverse viscosity), conductivity etc.
+
+&gt; Note:  
+&gt; If your data are not logarithmized already, please use a DecadicLogarithmTransformation for your data.
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.Relaxation.LgHavriliakNegamiModulusRelaxationFrequency.Fig2.png)
+^^^ Fig. 1: Havriliak-Negami (with $M_0=10^6$, $M_{\infty}=10^9$, $\tau=1$ and $\sigma=0$). The values for $\alpha$ and $\gamma$ are indicated in the legend.
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.Relaxation.LgHavriliakNegamiModulusRelaxationFrequency.Fig1.png)
+^^^ Fig. 2: Comparison of Havriliak-Negami (with $M_0=10^6$, $M_{\infty}=10^9$, $\tau=1$, $\alpha=1$ and $\gamma=1$) without and with flow term. The values for $\sigma$ are indicated in the legend.
+
+---
+References:  
+- Havriliak, S., Negami, S., "A complex plane representation of dielectric and mechanical relaxation processes in some polymers", Polymer 8: 161–210, doi:10.1016/0032-3861(67)90021-3
+</value>
+  </data>
+  <data name="Relaxation.LgHavriliakNegamiModulusRelaxationOmega" xml:space="preserve">
+    <value># Havriliak-Negami modulus relaxation (circular frequency)
+
+This function models the complex dynamic modulus in dependence on the circular frequency as:
+
+
+$$
+M^*(\omega) = M'(\omega) - i M''(\omega) = M_{\infty} + (M_{0}-M_{\infty})\frac{1}{(1+(i \tau \omega)^{\alpha})^{\gamma}} 
+$$
+
+or with a generalized flow term (both equations are equivalent if $\sigma=0$) :
+
+$$
+M^*(\omega) = M'(\omega) - i M''(\omega) = \left\{\frac{1}{M_{\infty} + (M_{0}-M_{\infty})\frac{1}{(1+(i \tau \omega)^{\alpha})^{\gamma}} } + \frac{i \sigma}{\omega} \right \}^{-1}
+$$
+
+with the circular frequency $\omega = 2\pi f$  being the independent variable, and $\log_{10}(M'(\omega))$ and $\log_{10}(M''(\omega))$ being the dependent variables, namely the decadic logarithm of the real and imaginary part of the complex dynamic modulus $M^*(\omega)$.
+
+The parameters are:
+
+- $M_0$ : low frequency modulus limit
+- $M_{\infty}$ : high frequency modulus limit
+- $\tau$ : relaxation time
+- $\alpha$, $\gamma$ : shape exponents (usually $ 0&lt;\alpha\le 1 $ and $ 0&lt;\gamma\le 1 $)
+- $\sigma$ : generalized flow term, for instance fluidity (inverse viscosity), conductivity etc.
+
+&gt; Note:  
+&gt; If your data are not logarithmized already, please use a DecadicLogarithmTransformation for your data.
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.Relaxation.LgHavriliakNegamiModulusRelaxationOmega.Fig2.png)
+^^^ Fig. 1: Havriliak-Negami (with $M_0=10^6$, $M_{\infty}=10^9$, $\tau=1$ and $\sigma=0$). The values for $\alpha$ and $\gamma$ are indicated in the legend.
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.Relaxation.LgHavriliakNegamiModulusRelaxationOmega.Fig1.png)
+^^^ Fig. 2: Comparison of Havriliak-Negami (with $M_0=10^6$, $M_{\infty}=10^9$, $\tau=1$, $\alpha=1$ and $\gamma=1$) without and with flow term. The values for $\sigma$ are indicated in the legend.
+
+---
+References:  
+- Havriliak, S., Negami, S., "A complex plane representation of dielectric and mechanical relaxation processes in some polymers", Polymer 8: 161–210, doi:10.1016/0032-3861(67)90021-3
 </value>
   </data>
   <data name="Transitions.GeneralizedLogisticDecreasing" xml:space="preserve">

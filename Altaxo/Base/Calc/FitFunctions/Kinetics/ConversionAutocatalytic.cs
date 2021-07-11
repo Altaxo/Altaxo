@@ -73,7 +73,7 @@ namespace Altaxo.Calc.FitFunctions.Kinetics.Foo
     /// </summary>
     /// <returns>The fit function.</returns>
     [FitFunctionCreator("ConversionAutocatalytic", "Kinetics", 1, 1, 5)]
-    [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Kinetics.ConversionNthOrder}")]
+    [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Kinetics.ConversionAutocatalytic}")]
     public static IFitFunction CreateFitFunction()
     {
       return new ConversionAutocatalytic();

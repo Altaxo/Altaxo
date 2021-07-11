@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2021 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -71,15 +71,14 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 
     public override string ToString()
     {
-      return "HavriliakNegami Complex " + (_useFrequencyInsteadOmega ? "(Freq)" : "(Omeg)");
+      if(_logarithmizeResults)
+        return "Lg10 HavriliakNegami Complex " + (_useFrequencyInsteadOmega ? "(Frequency)" : "(Omega)");
+      else
+        return "HavriliakNegami Complex " + (_useFrequencyInsteadOmega ? "(Frequency)" : "(Omega)");
     }
 
     [FitFunctionCreator("HavriliakNegami Complex (Omega)", "Relaxation/Modulus", 1, 2, 5)]
-    [Description(
-      "${res:Altaxo.Calc.FitFunctions.Relaxation.ModulusRelaxation.Introduction}\r\n" +
-      "${res:Altaxo.Calc.FitFunctions.Relaxation.HavriliakNegami.Modulus.Formula}\r\n" +
-      "${res:Altaxo.Calc.FitFunctions.IndependentVariable.Omega}\r\n" +
-      "${res:Altaxo.Calc.FitFunctions.Relaxation.ModulusRelaxation.Part3}")]
+    [Description("${res:Altaxo.Calc.FitFunctions.Relaxation.HavriliakNegamiModulusRelaxationOmega}")]
     public static IFitFunction CreateModulusOfOmega()
     {
       var result = new HavriliakNegamiModulusRelaxation
@@ -92,11 +91,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     }
 
     [FitFunctionCreator("Lg10 HavriliakNegami Complex (Omega)", "Relaxation/Modulus", 1, 2, 5)]
-    [Description(
-      "${res:Altaxo.Calc.FitFunctions.Relaxation.ModulusRelaxation.Introduction}\r\n" +
-      "${res:Altaxo.Calc.FitFunctions.Relaxation.HavriliakNegami.Modulus.Formula}\r\n" +
-      "${res:Altaxo.Calc.FitFunctions.IndependentVariable.Omega}\r\n" +
-      "${res:Altaxo.Calc.FitFunctions.Relaxation.ModulusRelaxation.Part3}")]
+    [Description("${res:Altaxo.Calc.FitFunctions.Relaxation.LgHavriliakNegamiModulusRelaxationOmega}")]
     public static IFitFunction CreateLg10ModulusOfOmega()
     {
       var result = new HavriliakNegamiModulusRelaxation
@@ -109,12 +104,8 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
       return result;
     }
 
-    [FitFunctionCreator("HavriliakNegami Complex (Freq)", "Relaxation/Modulus", 1, 2, 5)]
-    [Description(
-      "${res:Altaxo.Calc.FitFunctions.Relaxation.ModulusRelaxation.Introduction}\r\n" +
-      "${res:Altaxo.Calc.FitFunctions.Relaxation.HavriliakNegami.Modulus.Formula}\r\n" +
-      "${res:Altaxo.Calc.FitFunctions.IndependentVariable.FrequencyAsOmega}\r\n" +
-      "${res:Altaxo.Calc.FitFunctions.Relaxation.ModulusRelaxation.Part3}")]
+    [FitFunctionCreator("HavriliakNegami Complex (Frequency)", "Relaxation/Modulus", 1, 2, 5)]
+    [Description("${res:Altaxo.Calc.FitFunctions.Relaxation.HavriliakNegamiModulusRelaxationFrequency}")]
     public static IFitFunction CreateModulusOfFrequency()
     {
       var result = new HavriliakNegamiModulusRelaxation
@@ -126,12 +117,8 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
       return result;
     }
 
-    [FitFunctionCreator("Lg10 HavriliakNegami Complex (Freq)", "Relaxation/Modulus", 1, 2, 5)]
-    [Description(
-      "${res:Altaxo.Calc.FitFunctions.Relaxation.ModulusRelaxation.Introduction}\r\n" +
-      "${res:Altaxo.Calc.FitFunctions.Relaxation.HavriliakNegami.Modulus.Formula}\r\n" +
-      "${res:Altaxo.Calc.FitFunctions.IndependentVariable.FrequencyAsOmega}\r\n" +
-      "${res:Altaxo.Calc.FitFunctions.Relaxation.ModulusRelaxation.Part3}")]
+    [FitFunctionCreator("Lg10 HavriliakNegami Complex (Frequency)", "Relaxation/Modulus", 1, 2, 5)]
+    [Description("${res:Altaxo.Calc.FitFunctions.Relaxation.LgHavriliakNegamiModulusRelaxationFrequency}")]
     public static IFitFunction CreateLg10ModulusOfFrequency()
     {
       var result = new HavriliakNegamiModulusRelaxation
@@ -143,6 +130,57 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 
       return result;
     }
+
+    #region Properties
+
+    public HavriliakNegamiModulusRelaxation(bool useFrequencyInsteadOfOmega, bool useFlowTerm, bool logarithmizeResult)
+    {
+      _useFrequencyInsteadOmega = useFrequencyInsteadOfOmega;
+      _useFlowTerm = useFlowTerm;
+      _logarithmizeResults = logarithmizeResult;
+    }
+
+
+    public bool UseFrequencyInsteadOfOmega => _useFrequencyInsteadOmega;
+    public HavriliakNegamiModulusRelaxation WithUseFrequencyInsteadOfOmega(bool value)
+    {
+      if(!(UseFrequencyInsteadOfOmega == value))
+      {
+        return new HavriliakNegamiModulusRelaxation(value, _useFlowTerm, _logarithmizeResults);
+      }
+      else
+      {
+        return this;
+      }
+    }
+
+    public bool UseFlowTerm => _useFlowTerm;
+    public HavriliakNegamiModulusRelaxation WithUseFlowTerm(bool value)
+    {
+      if (!(UseFlowTerm == value))
+      {
+        return new HavriliakNegamiModulusRelaxation(_useFrequencyInsteadOmega, value, _logarithmizeResults);
+      }
+      else
+      {
+        return this;
+      }
+    }
+
+    public bool LogarithmizeResults => _logarithmizeResults;
+    public HavriliakNegamiModulusRelaxation WithLogarithmizeResults(bool value)
+    {
+      if (!(LogarithmizeResults == value))
+      {
+        return new HavriliakNegamiModulusRelaxation(_useFrequencyInsteadOmega, _useFlowTerm, value);
+      }
+      else
+      {
+        return this;
+      }
+    }
+
+    #endregion
 
     #region IFitFunction Members
 
@@ -165,7 +203,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 
     #region dependent variable definition
 
-    private string[] _dependentVariableNameS = new string[] { "chi'", "chi''" };
+    private string[] _dependentVariableNameS = new string[] { "M'", "M''" };
 
     public int NumberOfDependentVariables
     {
@@ -177,7 +215,10 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 
     public string DependentVariableName(int i)
     {
-      return _dependentVariableNameS[i];
+      if (_logarithmizeResults)
+        return $"Lg10 {_dependentVariableNameS[i]}";
+      else
+        return _dependentVariableNameS[i];
     }
 
     #endregion dependent variable definition
@@ -207,7 +248,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
           return 1;
 
         case 1:
-          return 1;
+          return 10;
 
         case 2:
           return 1;
@@ -229,22 +270,10 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 
     #endregion parameter definition
 
-    #region Change event
-
     /// <summary>
-    /// Called when anything in this fit function has changed.
+    /// Not functional because instance is immutable.
     /// </summary>
-    protected virtual void OnChanged()
-    {
-      Changed?.Invoke(this, EventArgs.Empty);
-    }
-
-    /// <summary>
-    /// Fired when the fit function changed.
-    /// </summary>
-    public event EventHandler? Changed;
-
-    #endregion Change event
+    public event EventHandler? Changed { add { } remove { } }
 
     public void Evaluate(double[] X, double[] P, double[] Y)
     {
