@@ -33,7 +33,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
   /// Havriliak-Negami function to fit dielectric spectra.
   /// </summary>
   [FitFunctionClass]
-  public class HavriliakNegamiSusceptibility : IFitFunctionWithGradient
+  public class HavriliakNegamiSusceptibility : IFitFunction, Main.IImmutable
   {
     private bool _useFrequencyInsteadOmega;
     private bool _useFlowTerm;
@@ -130,7 +130,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
         s._useFrequencyInsteadOmega = info.GetBoolean("UseFrequency");
         s._useFlowTerm = info.GetBoolean("FlowTerm");
         s._isDielectricData = info.GetBoolean("IsDielectric");
-        s.NumberOfRelaxations = info.GetInt32("NumberOfTerms");
+        s._numberOfTerms = info.GetInt32("NumberOfTerms");
 
         return s;
       }
@@ -161,7 +161,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
         s._useFlowTerm = info.GetBoolean("FlowTerm");
         s._isDielectricData = info.GetBoolean("IsDielectric");
         s._invertViscosity = info.GetBoolean("InvertViscosity");
-        s.NumberOfRelaxations = info.GetInt32("NumberOfRelaxations");
+        s._numberOfTerms = info.GetInt32("NumberOfRelaxations");
         s._invertResult = info.GetBoolean("InvertResult");
         s._logarithmizeResults = info.GetBoolean("LogarithmizeResults");
 
@@ -175,70 +175,81 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     {
     }
 
-    public bool UseFrequencyInsteadOmega
+    public bool UseFrequencyInsteadOfOmega => _useFrequencyInsteadOmega;
+    public HavriliakNegamiSusceptibility WithUseFrequencyInsteadOfOmega(bool value)
     {
-      get { return _useFrequencyInsteadOmega; }
-      set
+      if(!(_useFrequencyInsteadOmega == value))
       {
-        var oldValue = _useFrequencyInsteadOmega;
-        _useFrequencyInsteadOmega = value;
-        if (oldValue != value)
-          OnChanged();
+        var result = (HavriliakNegamiSusceptibility)this.MemberwiseClone();
+        result._useFrequencyInsteadOmega = value;
+        return result;
+      }
+      else
+      {
+        return this;
       }
     }
 
-    public bool UseFlowTerm
+    public bool UseFlowTerm => _useFlowTerm;
+    public HavriliakNegamiSusceptibility WithUseFlowTerm(bool value)
     {
-      get { return _useFlowTerm; }
-      set
+      if (!(_useFlowTerm == value))
       {
-        var oldValue = _useFlowTerm;
-        _useFlowTerm = value;
-        if (oldValue != value)
-          OnChanged();
+        var result = (HavriliakNegamiSusceptibility)this.MemberwiseClone();
+        result._useFlowTerm = value;
+        return result;
+      }
+      else
+      {
+        return this;
       }
     }
 
-    public bool IsDielectricData
+    public bool IsRelativeDielectricPermittivity => _isDielectricData;
+    public HavriliakNegamiSusceptibility WithIsRelativeDielectricPermittivity(bool value)
     {
-      get { return _isDielectricData; }
-      set
+      if (!(IsRelativeDielectricPermittivity == value))
       {
-        var oldValue = _isDielectricData;
-        _isDielectricData = value;
-        if (oldValue != value)
-          OnChanged();
+        var result = (HavriliakNegamiSusceptibility)this.MemberwiseClone();
+        result._isDielectricData = value;
+        return result;
+      }
+      else
+      {
+        return this;
       }
     }
 
-    public bool InvertViscosity
+    public bool InvertViscosity => _invertViscosity;
+    public HavriliakNegamiSusceptibility WithInvertViscosity(bool value)
     {
-      get { return _invertViscosity; }
-      set
+      if (!(InvertViscosity == value))
       {
-        var oldValue = _invertViscosity;
-        _invertViscosity = value;
-        if (oldValue != value)
-          OnChanged();
+        var result = (HavriliakNegamiSusceptibility)this.MemberwiseClone();
+        result._invertViscosity = value;
+        return result;
+      }
+      else
+      {
+        return this;
       }
     }
 
-    public int NumberOfRelaxations
+    public int NumberOfTerms => _numberOfTerms;
+    public HavriliakNegamiSusceptibility WithNumberOfTerms(int value)
     {
-      get
-      {
-        return _numberOfTerms;
-      }
-      set
-      {
-        var oldValue = _numberOfTerms;
-        value = Math.Max(value, 0);
-        _numberOfTerms = value;
+      if (value < 1)
+        throw new ArgumentOutOfRangeException("Must be greater than or equal to 1", nameof(value));
 
-        if (oldValue != value)
-        {
-          OnChanged();
-        }
+      if (!(NumberOfTerms == value))
+      {
+        var result = (HavriliakNegamiSusceptibility)this.MemberwiseClone();
+        result._numberOfTerms = value;
+        return result;
+      }
+      else
+      {
+        return this;
       }
     }
 
@@ -248,18 +259,18 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     /// <value>
     /// <c>true</c> if the result is inverted; otherwise, <c>false</c>.
     /// </value>
-    public bool InvertResult
+    public bool InvertResult => _invertResult;
+    public HavriliakNegamiSusceptibility WithInvertResult(bool value)
     {
-      get
+      if (!(InvertResult == value))
       {
-        return _invertResult;
+        var result = (HavriliakNegamiSusceptibility)this.MemberwiseClone();
+        result._invertResult = value;
+        return result;
       }
-      set
+      else
       {
-        var oldValue = _invertResult;
-        _invertResult = value;
-        if (value != oldValue)
-          OnChanged();
+        return this;
       }
     }
 
@@ -269,90 +280,114 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     /// <value>
     ///   <c>true</c> if the result is logarithmized; otherwise, <c>false</c>.
     /// </value>
-    public bool LogarithmizeResults
+    public bool LogarithmizeResults => _logarithmizeResults;
+    public HavriliakNegamiSusceptibility WithLogarithmizeResults(bool value)
     {
-      get
+      if (!(LogarithmizeResults == value))
       {
-        return _logarithmizeResults;
+        var result = (HavriliakNegamiSusceptibility)this.MemberwiseClone();
+        result._logarithmizeResults = value;
+        return result;
       }
-      set
+      else
       {
-        var oldValue = _logarithmizeResults;
-        _logarithmizeResults = value;
-        if (value != oldValue)
-          OnChanged();
+        return this;
       }
     }
 
     public override string ToString()
     {
-      return "HavriliakNegami Complex " + (_useFrequencyInsteadOmega ? "(Freq)" : "(Omeg)");
+      if(_isDielectricData)
+        return "HavriliakNegami RelativePermittivity " + (_useFrequencyInsteadOmega ? "(Frequency)" : "(Omega)");
+      else
+       return "HavriliakNegami Susceptibility " + (_useFrequencyInsteadOmega ? "(Frequency)" : "(Omega)");
     }
 
-    [FitFunctionCreator("HavriliakNegami Complex (Omeg)", "Retardation/Dielectrics", 1, 2, 5)]
-    [Description(
-      "${res:Altaxo.Calc.FitFunctions.Relaxation.HavriliakNegamiSusceptibility.Introduction}\r\n" +
-      "${res:Altaxo.Calc.FitFunctions.Relaxation.HavriliakNegamiSusceptibility.Dielectrics.Formula}\r\n" +
-      "${res:Altaxo.Calc.FitFunctions.IndependentVariable.Omega}\r\n" +
-      "${res:Altaxo.Calc.FitFunctions.Relaxation.HavriliakNegamiSusceptibility.Dielectrics.Quantities}")]
+    [FitFunctionCreator("HavriliakNegami Complex (Omega)", "Retardation/Dielectrics", 1, 2, 6)]
+    [Description("${res:Altaxo.Calc.FitFunctions.Retardation.Dielectrics.HavriliakNegamiComplexOmega}")]
     public static IFitFunction CreateDielectricFunctionOfOmega()
     {
       var result = new HavriliakNegamiSusceptibility
       {
         _useFrequencyInsteadOmega = false,
         _isDielectricData = true,
-        _useFlowTerm = true
+        _useFlowTerm = true,
+        _invertViscosity = true
       };
       return result;
     }
 
-    [FitFunctionCreator("HavriliakNegami Complex (Freq)", "Retardation/Dielectrics", 1, 2, 5)]
-    [Description(
-      "${res:Altaxo.Calc.FitFunctions.Relaxation.HavriliakNegamiSusceptibility.Introduction}\r\n" +
-      "${res:Altaxo.Calc.FitFunctions.Relaxation.HavriliakNegamiSusceptibility.Dielectrics.Formula}\r\n" +
-      "${res:Altaxo.Calc.FitFunctions.IndependentVariable.FrequencyAsOmega}\r\n" +
-      "${res:Altaxo.Calc.FitFunctions.Relaxation.HavriliakNegamiSusceptibility.Dielectrics.Quantities}")]
+    [FitFunctionCreator("HavriliakNegami Complex (Frequency)", "Retardation/Dielectrics", 1, 2, 6)]
+    [Description("${res:Altaxo.Calc.FitFunctions.Retardation.Dielectrics.HavriliakNegamiComplexFrequency}")]
     public static IFitFunction CreateDielectricFunctionOfFrequency()
     {
       var result = new HavriliakNegamiSusceptibility
       {
         _useFrequencyInsteadOmega = true,
         _isDielectricData = true,
-        _useFlowTerm = true
+        _useFlowTerm = true,
+        _invertViscosity = true
       };
       return result;
     }
 
-    [FitFunctionCreator("HavriliakNegami Complex (Omeg)", "Retardation/General", 1, 2, 5)]
-    [Description(
-      "${res:Altaxo.Calc.FitFunctions.Relaxation.HavriliakNegamiSusceptibility.Introduction}\r\n" +
-      "${res:Altaxo.Calc.FitFunctions.Relaxation.HavriliakNegamiSusceptibility.General.Formula}\r\n" +
-      "${res:Altaxo.Calc.FitFunctions.IndependentVariable.Omega}\r\n" +
-      "${res:Altaxo.Calc.FitFunctions.Relaxation.HavriliakNegamiSusceptibility.General.Quantities}")]
+    [FitFunctionCreator("HavriliakNegami Complex (Omega)", "Retardation/General", 1, 2, 6)]
+    [Description("${res:Altaxo.Calc.FitFunctions.Retardation.General.HavriliakNegamiComplexOmega}")]
     public static IFitFunction CreateGeneralFunctionOfOmega()
     {
       var result = new HavriliakNegamiSusceptibility
       {
         _useFrequencyInsteadOmega = false,
         _isDielectricData = false,
-        _useFlowTerm = true
+        _useFlowTerm = true,
+        _invertViscosity = false
       };
       return result;
     }
 
-    [FitFunctionCreator("HavriliakNegami Complex (Freq)", "Retardation/General", 1, 2, 5)]
-    [Description(
-      "${res:Altaxo.Calc.FitFunctions.Relaxation.HavriliakNegamiSusceptibility.Introduction}\r\n" +
-      "${res:Altaxo.Calc.FitFunctions.Relaxation.HavriliakNegamiSusceptibility.General.Formula}\r\n" +
-      "${res:Altaxo.Calc.FitFunctions.IndependentVariable.FrequencyAsOmega}\r\n" +
-      "${res:Altaxo.Calc.FitFunctions.Relaxation.HavriliakNegamiSusceptibility.General.Quantities}")]
+    [FitFunctionCreator("HavriliakNegami Complex (Frequency)", "Retardation/General", 1, 2, 6)]
+    [Description("${res:Altaxo.Calc.FitFunctions.Retardation.General.HavriliakNegamiComplexFrequency}")]
     public static IFitFunction CreateGeneralFunctionOfFrequency()
     {
       var result = new HavriliakNegamiSusceptibility
       {
         _useFrequencyInsteadOmega = true,
         _isDielectricData = false,
-        _useFlowTerm = true
+        _useFlowTerm = true,
+        _invertViscosity = false,
+      };
+      return result;
+    }
+
+
+    [FitFunctionCreator("HavriliakNegami Complex Multi (Omega)", "Retardation/Modulus", 1, 2, 6)]
+    [Description("${res:Altaxo.Calc.FitFunctions.Retardation.Modulus.HavriliakNegamiMultiComplexOmega}")]
+    public static IFitFunction CreateModulusFunctionOfOmega()
+    {
+      var result = new HavriliakNegamiSusceptibility
+      {
+        _useFrequencyInsteadOmega = false,
+        _isDielectricData = false,
+        _useFlowTerm = true,
+        _invertViscosity = false,
+        _invertResult = true,
+        _numberOfTerms = 2
+      };
+      return result;
+    }
+
+    [FitFunctionCreator("HavriliakNegami Complex Multi (Frequency)", "Retardation/Modulus", 1, 2, 6)]
+    [Description("${res:Altaxo.Calc.FitFunctions.Retardation.Modulus.HavriliakNegamiMultiComplexFrequency}")]
+    public static IFitFunction CreateModulusFunctionOfFrequency()
+    {
+      var result = new HavriliakNegamiSusceptibility
+      {
+        _useFrequencyInsteadOmega = true,
+        _isDielectricData = false,
+        _useFlowTerm = true,
+        _invertViscosity = false,
+        _invertResult = true,
+        _numberOfTerms =2
       };
       return result;
     }
@@ -378,28 +413,35 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 
     #region dependent variable definition
 
-    private string[] _dependentVariableNameS = new string[] { "chi'", "chi''" };
-    private string[] _dependentVariableNameD = new string[] { "eps'", "eps''" };
-
     public int NumberOfDependentVariables
     {
       get
       {
-        return _dependentVariableNameS.Length;
+        return 2;
       }
     }
 
     public string DependentVariableName(int i)
     {
-      return _isDielectricData ? _dependentVariableNameD[i] : _dependentVariableNameS[i];
+      var result = (_isDielectricData, _invertResult) switch
+      {
+        (false, false) => i == 0 ? "chi'" : "chi''",
+        (false, true) => i == 0 ? "M'" : "M''",
+        (true, false) => i == 0 ? "epsR'" : "epsR''",
+        (true, true) => i == 0 ? "Md'" : "Md''",
+      };
+
+      return _logarithmizeResults ? "Lg " + result : result;
+
+
     }
 
     #endregion dependent variable definition
 
     #region parameter definition
 
-    private string[] _parameterNameD = new string[] { "eps_inf", "delta_eps", "tau", "alpha", "gamma", "conductivity" };
-    private string[] _parameterNameS = new string[] { "j_inf", "delta_j", "tau", "alpha", "gamma", "viscosity" };
+    private string[] _parameterNameD = new string[] { "epsR_inf", "delta_epsR", "tau", "alpha", "gamma" };
+    private string[] _parameterNameS = new string[] { "chi_inf", "delta_chi", "tau", "alpha", "gamma" };
 
     public int NumberOfParameters
     {
@@ -420,13 +462,19 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
         return namearr[0]; // eps_inf
 
       --i;
+      if (i < 4 * NumberOfTerms)
+      {
+        var idx = i % 4;
+        var term = i / 4;
+        return namearr[idx + 1] + (term > 0 ? string.Format("_{0}", term) : "");
+      }
 
-      var idx = i % 4;
-      var term = i / 4;
-      if (term < NumberOfRelaxations)
-        return namearr[idx + 1] + (term > 0 ? string.Format("_{0}", term + 1) : "");
+      // flow term
+
+      if (_isDielectricData)
+        return _invertViscosity ? "sigmaDC" : "rhoDC";
       else
-        return namearr[namearr.Length - 1];
+        return _invertViscosity ? "sigma" : "eta";
     }
 
     public double DefaultParameterValue(int i)
@@ -434,7 +482,9 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
       if (i < (1 + 4 * _numberOfTerms))
         return 1;
       else
-        return 0;
+      {
+        return _invertViscosity ? 0 : 1E33;
+      }
     }
 
     public IVarianceScaling? DefaultVarianceScaling(int i)
@@ -443,17 +493,10 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     }
 
     /// <summary>
-    /// Called when anything in this fit function has changed.
+    /// Not functional because instance is immutable.
     /// </summary>
-    protected virtual void OnChanged()
-    {
-      Changed?.Invoke(this, EventArgs.Empty);
-    }
+    public event EventHandler? Changed { add { } remove { } }
 
-    /// <summary>
-    /// Fired when the fit function changed.
-    /// </summary>
-    public event EventHandler? Changed;
 
     #endregion parameter definition
 
@@ -461,7 +504,9 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     {
       double x = X[0];
       if (_useFrequencyInsteadOmega)
+      {
         x *= (2 * Math.PI);
+      }
 
       Complex result = P[0];
       int i, j;
@@ -475,11 +520,19 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
       if (_useFlowTerm)
       {
         if (_isDielectricData)
-          result.Im -= P[j] / (x * 8.854187817e-12);
-        else if (_invertViscosity)
-          result.Im -= P[j] / (x);
+        {
+          if (_invertViscosity)
+            result.Im -= P[j] / (x * 8.854187817e-12);
+          else
+            result.Im -= 1 / (P[j] * x * 8.854187817e-12);
+        }
         else
-          result.Im -= 1 / (P[j] * x);
+        {
+        if (_invertViscosity)
+            result.Im -= P[j] / (x);
+          else
+            result.Im -= 1 / (P[j] * x);
+        }
       }
 
       if (_invertResult)
