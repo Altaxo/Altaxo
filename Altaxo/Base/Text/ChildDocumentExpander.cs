@@ -166,6 +166,7 @@ namespace Altaxo.Text
           var childDocName = attr.Properties[1].Value;
           // first, we assume a relative name
           var fullName = Altaxo.Main.ProjectFolder.GetFolderPart(textDocument.Name) + childDocName;
+          fullName = Altaxo.Main.ProjectFolder.ResolveRelativeDirectoryChars(fullName);
           var success = Current.Project.TextDocumentCollection.TryGetValue(fullName, out var childTextDocument);
           if (!success) // relative name failed, we try it with the unmodified (absolute) name
           {

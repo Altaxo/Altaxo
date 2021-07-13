@@ -488,6 +488,39 @@ namespace Altaxo.Main
     }
 
     /// <summary>
+    /// Resolves the relative directory chars (.) and (..).
+    /// </summary>
+    /// <param name="fullName">The full name of the path.</param>
+    /// <returns>The path without the relative directory chars (if they could be resolved).</returns>
+    public static string ResolveRelativeDirectoryChars(string fullName)
+    {
+      var list = new List<string>(fullName.Split(new char[] { '\\' }, StringSplitOptions.None));
+
+      for (int i = list.Count - 1; i >= 0; --i)
+      {
+        if (list[i] == ".")
+          list.RemoveAt(i);
+      }
+
+      bool isChanged;
+      do
+      {
+        isChanged = false;
+        for (int i = list.Count - 1; i >= 1; --i)
+        {
+          if (list[i] == ".." && list[i - 1] != "..")
+          {
+            list.RemoveAt(i);
+            list.RemoveAt(i - 1);
+            isChanged = true;
+          }
+        }
+      } while (isChanged);
+
+      return string.Join("\\", list);
+    }
+
+    /// <summary>
     /// Gets the relative path from one folder to another folder.
     /// </summary>
     /// <param name="startPathOrFullName">Name of the starting folder or full name of the item.</param>
