@@ -39,7 +39,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     private bool _useFlowTerm;
     private bool _isDielectricData;
     private bool _invertViscosity = true;
-    private int _numberOfRelaxations = 1;
+    private int _numberOfTerms = 1;
     private bool _invertResult;
     private bool _logarithmizeResults;
 
@@ -76,7 +76,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
         info.AddValue("FlowTerm", s._useFlowTerm);
         info.AddValue("IsDielectric", s._isDielectricData);
         info.AddValue("InvertViscosity", s._invertViscosity);
-        info.AddValue("NumberOfRelaxations", s._numberOfRelaxations);
+        info.AddValue("NumberOfRelaxations", s._numberOfTerms);
       }
 
       public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
@@ -86,7 +86,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
         s._useFlowTerm = info.GetBoolean("FlowTerm");
         s._isDielectricData = info.GetBoolean("IsDielectric");
         s._invertViscosity = info.GetBoolean("InvertViscosity");
-        s._numberOfRelaxations = info.GetInt32("NumberOfRelaxations");
+        s._numberOfTerms = info.GetInt32("NumberOfRelaxations");
         return s;
       }
     }
@@ -104,7 +104,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
         info.AddValue("FlowTerm", s._useFlowTerm);
         info.AddValue("IsDielectric", s._isDielectricData);
         info.AddValue("InvertViscosity", s._invertViscosity);
-        info.AddValue("NumberOfRelaxations", s._numberOfRelaxations);
+        info.AddValue("NumberOfRelaxations", s._numberOfTerms);
         info.AddValue("InvertResult", s._invertResult);
         info.AddValue("LogarithmizeResults", s._logarithmizeResults);
       }
@@ -116,7 +116,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
         s._useFlowTerm = info.GetBoolean("FlowTerm");
         s._isDielectricData = info.GetBoolean("IsDielectric");
         s._invertViscosity = info.GetBoolean("InvertViscosity");
-        s._numberOfRelaxations = info.GetInt32("NumberOfRelaxations");
+        s._numberOfTerms = info.GetInt32("NumberOfRelaxations");
         s._invertResult = info.GetBoolean("InvertResult");
         s._logarithmizeResults = info.GetBoolean("LogarithmizeResults");
 
@@ -126,66 +126,87 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 
     #endregion Serialization
 
-    public bool UseFrequencyInsteadOmega
+    /// <summary>
+    /// Gets a value indicating whether to use the frequency instead of omega.
+    /// </summary>
+    /// <value>
+    ///   <c>true</c> if the independent variable is the frequency; false if the independent variable is the circular frequency.
+    /// </value>
+    public bool UseFrequencyInsteadOfOmega => _useFrequencyInsteadOmega;
+    public KohlrauschSusceptibility WithUseFrequencyInsteadOfOmega(bool value)
     {
-      get { return _useFrequencyInsteadOmega; }
-      set
+      if (!(_useFrequencyInsteadOmega == value))
       {
-        var oldValue = _useFrequencyInsteadOmega;
-        _useFrequencyInsteadOmega = value;
-        if (oldValue != value)
-          OnChanged();
+        var result = (KohlrauschSusceptibility)this.MemberwiseClone();
+        result._useFrequencyInsteadOmega = value;
+        return result;
+      }
+      else
+      {
+        return this;
       }
     }
 
-    public bool UseFlowTerm
+    public bool UseFlowTerm => _useFlowTerm;
+    public KohlrauschSusceptibility WithUseFlowTerm(bool value)
     {
-      get { return _useFlowTerm; }
-      set
+      if (!(_useFlowTerm == value))
       {
-        var oldValue = _useFlowTerm;
-        _useFlowTerm = value;
-        if (oldValue != value)
-          OnChanged();
+        var result = (KohlrauschSusceptibility)this.MemberwiseClone();
+        result._useFlowTerm = value;
+        return result;
+      }
+      else
+      {
+        return this;
       }
     }
 
-    public bool IsDielectricData
+    public bool IsRelativeDielectricPermittivity => _isDielectricData;
+    public KohlrauschSusceptibility WithIsRelativeDielectricPermittivity(bool value)
     {
-      get { return _isDielectricData; }
-      set
+      if (!(IsRelativeDielectricPermittivity == value))
       {
-        var oldValue = _isDielectricData;
-        _isDielectricData = value;
-        if (oldValue != value)
-          OnChanged();
+        var result = (KohlrauschSusceptibility)this.MemberwiseClone();
+        result._isDielectricData = value;
+        return result;
+      }
+      else
+      {
+        return this;
       }
     }
 
-    public bool InvertViscosity
+    public bool InvertViscosity => _invertViscosity;
+    public KohlrauschSusceptibility WithInvertViscosity(bool value)
     {
-      get { return _invertViscosity; }
-      set
+      if (!(InvertViscosity == value))
       {
-        var oldValue = _invertViscosity;
-        _invertViscosity = value;
-        if (oldValue != value)
-          OnChanged();
+        var result = (KohlrauschSusceptibility)this.MemberwiseClone();
+        result._invertViscosity = value;
+        return result;
+      }
+      else
+      {
+        return this;
       }
     }
 
-    public int NumberOfRelaxations
+    public int NumberOfTerms => _numberOfTerms;
+    public KohlrauschSusceptibility WithNumberOfTerms(int value)
     {
-      get { return _numberOfRelaxations; }
-      set
-      {
-        if (value < 0)
-          throw new ArgumentOutOfRangeException("NumberOfRelaxations has to be a positive number");
-        var oldValue = _numberOfRelaxations;
-        _numberOfRelaxations = value;
+      if (value < 1)
+        throw new ArgumentOutOfRangeException("Must be greater than or equal to 1", nameof(value));
 
-        if (oldValue != value)
-          OnChanged();
+      if (!(NumberOfTerms == value))
+      {
+        var result = (KohlrauschSusceptibility)this.MemberwiseClone();
+        result._numberOfTerms = value;
+        return result;
+      }
+      else
+      {
+        return this;
       }
     }
 
@@ -195,18 +216,18 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     /// <value>
     /// <c>true</c> if the result is inverted; otherwise, <c>false</c>.
     /// </value>
-    public bool InvertResult
+    public bool InvertResult => _invertResult;
+    public KohlrauschSusceptibility WithInvertResult(bool value)
     {
-      get
+      if (!(InvertResult == value))
       {
-        return _invertResult;
+        var result = (KohlrauschSusceptibility)this.MemberwiseClone();
+        result._invertResult = value;
+        return result;
       }
-      set
+      else
       {
-        var oldValue = _invertResult;
-        _invertResult = value;
-        if (value != oldValue)
-          OnChanged();
+        return this;
       }
     }
 
@@ -216,18 +237,18 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     /// <value>
     ///   <c>true</c> if the result is logarithmized; otherwise, <c>false</c>.
     /// </value>
-    public bool LogarithmizeResults
+    public bool LogarithmizeResults => _logarithmizeResults;
+    public KohlrauschSusceptibility WithLogarithmizeResults(bool value)
     {
-      get
+      if (!(LogarithmizeResults == value))
       {
-        return _logarithmizeResults;
+        var result = (KohlrauschSusceptibility)this.MemberwiseClone();
+        result._logarithmizeResults = value;
+        return result;
       }
-      set
+      else
       {
-        var oldValue = _logarithmizeResults;
-        _logarithmizeResults = value;
-        if (value != oldValue)
-          OnChanged();
+        return this;
       }
     }
 
@@ -237,81 +258,66 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 
     public override string ToString()
     {
-      return "Kohlrausch Complex " + (_useFrequencyInsteadOmega ? "(Freq)" : "(Omeg)");
+      if (_isDielectricData)
+        return "Kohlrausch RelativePermittivity " + (_useFrequencyInsteadOmega ? "(Frequency)" : "(Omega)");
+      else
+        return "Kohlrausch Susceptibility " + (_useFrequencyInsteadOmega ? "(Frequency)" : "(Omega)");
     }
 
-    [FitFunctionCreator("Kohlrausch Complex (Omega)", "Retardation/General", 1, 2, 4)]
-    [Description(
-      "${res:Altaxo.Calc.FitFunctions.Relaxation.Susceptibility.Introduction}\r\n" +
-      "${res:Altaxo.Calc.FitFunctions.Relaxation.KohlrauschSusceptibility.General.Formula}\r\n" +
-      "${res:Altaxo.Calc.FitFunctions.Relaxation.KohlrauschSusceptibility.Part2}\r\n" +
-      "${res:Altaxo.Calc.FitFunctions.Relaxation.KohlrauschKernel.Formula}\r\n" +
-      "${res:Altaxo.Calc.FitFunctions.IndependentVariable.Omega}\r\n" +
-      "${res:Altaxo.Calc.FitFunctions.Relaxation.KohlrauschSusceptibility.Part3}")]
+    [FitFunctionCreator("Kohlrausch Complex (Omega)", "Retardation/General", 1, 2, 5)]
+    [Description("${res:Altaxo.Calc.FitFunctions.Retardation.General.KohlrauschComplexOmega}")]
     public static IFitFunction CreateGeneralFunctionOfOmega()
     {
       var result = new KohlrauschSusceptibility
       {
         _useFrequencyInsteadOmega = false,
+        _isDielectricData = false,
         _useFlowTerm = true,
-        _isDielectricData = true
+        _invertViscosity = false
       };
       return result;
     }
 
-    [FitFunctionCreator("Kohlrausch Complex (Freq)", "Retardation/General", 1, 2, 4)]
-    [Description(
-      "${res:Altaxo.Calc.FitFunctions.Relaxation.Susceptibility.Introduction}\r\n" +
-      "${res:Altaxo.Calc.FitFunctions.Relaxation.KohlrauschSusceptibility.General.Formula}\r\n" +
-      "${res:Altaxo.Calc.FitFunctions.Relaxation.KohlrauschSusceptibility.Part2}\r\n" +
-      "${res:Altaxo.Calc.FitFunctions.Relaxation.KohlrauschKernel.Formula}\r\n" +
-      "${res:Altaxo.Calc.FitFunctions.IndependentVariable.FrequencyAsOmega}\r\n" +
-      "${res:Altaxo.Calc.FitFunctions.Relaxation.KohlrauschSusceptibility.Part3}")]
+    [FitFunctionCreator("Kohlrausch Complex (Frequency)", "Retardation/General", 1, 2, 5)]
+    [Description("${res:Altaxo.Calc.FitFunctions.Retardation.General.KohlrauschComplexFrequency}")]
     public static IFitFunction CreateGeneralFunctionOfFrequency()
     {
       var result = new KohlrauschSusceptibility
       {
         _useFrequencyInsteadOmega = true,
+        _isDielectricData = false,
         _useFlowTerm = true,
-        _isDielectricData = true
+        _invertViscosity = false,
       };
       return result;
     }
 
     [FitFunctionCreator("Kohlrausch Complex (Omega)", "Retardation/Dielectrics", 1, 2, 4)]
-    [Description(
-      "${res:Altaxo.Calc.FitFunctions.Relaxation.DielectricSusceptibility.Introduction}\r\n" +
-      "${res:Altaxo.Calc.FitFunctions.Relaxation.Susceptibility.Dielectrics.Formula}\r\n" +
-      "${res:Altaxo.Calc.FitFunctions.Relaxation.KohlrauschSusceptibility.Part2}\r\n" +
-      "${res:Altaxo.Calc.FitFunctions.Relaxation.KohlrauschKernel.Formula}\r\n" +
-      "${res:Altaxo.Calc.FitFunctions.IndependentVariable.Omega}\r\n" +
-      "${res:Altaxo.Calc.FitFunctions.Relaxation.HavriliakNegamiSusceptibility.Dielectrics.Quantities}")]
+    [Description("${res:Altaxo.Calc.FitFunctions.Retardation.Dielectrics.KohlrauschComplexOmega}")]
+
     public static IFitFunction CreateDielectricFunctionOfOmega()
     {
       var result = new KohlrauschSusceptibility
       {
         _useFrequencyInsteadOmega = false,
+        _isDielectricData = true,
         _useFlowTerm = true,
-        _isDielectricData = true
+        _invertViscosity = true
       };
       return result;
     }
 
-    [FitFunctionCreator("Kohlrausch Complex (Freq)", "Retardation/Dielectrics", 1, 2, 4)]
-    [Description(
-      "${res:Altaxo.Calc.FitFunctions.Relaxation.DielectricSusceptibility.Introduction}\r\n" +
-      "${res:Altaxo.Calc.FitFunctions.Relaxation.Susceptibility.Dielectrics.Formula}\r\n" +
-      "${res:Altaxo.Calc.FitFunctions.Relaxation.KohlrauschSusceptibility.Part2}\r\n" +
-      "${res:Altaxo.Calc.FitFunctions.Relaxation.KohlrauschKernel.Formula}\r\n" +
-      "${res:Altaxo.Calc.FitFunctions.IndependentVariable.FrequencyAsOmega}\r\n" +
-      "${res:Altaxo.Calc.FitFunctions.Relaxation.HavriliakNegamiSusceptibility.Dielectrics.Quantities}")]
+    [FitFunctionCreator("Kohlrausch Complex (Frequency)", "Retardation/Dielectrics", 1, 2, 4)]
+    [Description("${res:Altaxo.Calc.FitFunctions.Retardation.Dielectrics.KohlrauschComplexFrequency}")]
+
     public static IFitFunction CreateDielectricFunctionOfFrequency()
     {
       var result = new KohlrauschSusceptibility
       {
         _useFrequencyInsteadOmega = true,
+        _isDielectricData = true,
         _useFlowTerm = true,
-        _isDielectricData = true
+        _invertViscosity = true
       };
       return result;
     }
@@ -337,67 +343,76 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 
     #region dependent variable definition
 
-    private string[] _dependentVariableName = new string[] { "re", "im" };
-
     public int NumberOfDependentVariables
     {
       get
       {
-        return _dependentVariableName.Length;
+        return 2;
       }
     }
 
     public string DependentVariableName(int i)
     {
-      return _dependentVariableName[i];
+      var result = (_isDielectricData, _invertResult) switch
+      {
+        (false, false) => i == 0 ? "chi'" : "chi''",
+        (false, true) => i == 0 ? "M'" : "M''",
+        (true, false) => i == 0 ? "epsR'" : "epsR''",
+        (true, true) => i == 0 ? "Md'" : "Md''",
+      };
+
+      return _logarithmizeResults ? "Lg " + result : result;
     }
 
     #endregion dependent variable definition
 
     #region parameter definition
 
-    private string[] _parameterNameC = new string[] { "chi_inf", "delta_chi", "tau", "beta", "invviscosity" };
-    private string[] _parameterNameD = new string[] { "eps_inf", "delta_eps", "tau", "beta", "conductivity", };
+    private string[] _parameterNameD = new string[] { "epsR_inf", "delta_epsR", "tau", "beta", "conductivity", };
+    private string[] _parameterNameS = new string[] { "chi_inf", "delta_chi", "tau", "beta", "invviscosity" };
 
     public int NumberOfParameters
     {
       get
       {
         if (_useFlowTerm)
-          return 2 + 3 * _numberOfRelaxations;
+          return 2 + 3 * _numberOfTerms;
         else
-          return 1 + 3 * _numberOfRelaxations;
+          return 1 + 3 * _numberOfTerms;
       }
     }
 
     public string ParameterName(int i)
     {
-      string[] names = _isDielectricData ? _parameterNameD : _parameterNameC;
-      if (_numberOfRelaxations == 1)
-        return names[i];
-      else if (_numberOfRelaxations == 0)
-        return i == 1 ? names[4] : names[0];
-      else
+      var namearr = _isDielectricData ? _parameterNameD : _parameterNameS;
+
+      if (0 == i)
+        return namearr[0]; // eps_inf
+
+      --i;
+      if (i < 3 * NumberOfTerms)
       {
-        if (i == 0)
-          return names[0];
-        else if (i == NumberOfParameters - 1)
-          return names[4];
-        else
-        {
-          int k = (i - 1) / 3;
-          int l = (i - 1) % 3;
-          return names[l + 1] + (k + 1).ToString();
-        }
+        var idx = i % 3;
+        var term = i / 3;
+        return namearr[idx + 1] + (term > 0 ? string.Format("_{0}", term) : "");
       }
+
+      // flow term
+
+      if (_isDielectricData)
+        return _invertViscosity ? "sigmaDC" : "rhoDC";
+      else
+        return _invertViscosity ? "sigma" : "eta";
     }
 
     public double DefaultParameterValue(int i)
     {
-      if (_useFlowTerm && i == (NumberOfParameters - 1))
-        return _isDielectricData ? 0 : _invertViscosity ? 0 : double.PositiveInfinity;
-      else
+      if (i < (1 + 3 * _numberOfTerms))
         return 1;
+      else
+      {
+        return _invertViscosity ? 0 : 1E33;
+      }
     }
 
     public IVarianceScaling? DefaultVarianceScaling(int i)
@@ -415,9 +430,8 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 
       Complex result = P[0];
 
-      int iPar = 1;
-      int i;
-      for (i = 0, iPar = 1; i < _numberOfRelaxations; i++, iPar += 3)
+      int iPar, i;
+      for (i = 0, iPar = 1; i < _numberOfTerms; i++, iPar += 3)
       {
         result += P[0 + iPar] * Kohlrausch.ReIm(P[2 + iPar], P[1 + iPar] * x);
       }
@@ -427,12 +441,21 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
       if (_useFlowTerm)
       {
         if (_isDielectricData)
-          result.Im -= P[iPar] / (x * 8.854187817e-12);
-        else if (_invertViscosity)
-          result.Im -= P[iPar] / (x);
+        {
+          if (_invertViscosity)
+            result.Im -= P[iPar] / (x * 8.854187817e-12);
+          else
+            result.Im -= 1 / (P[iPar] * x * 8.854187817e-12);
+        }
         else
-          result.Im -= 1 / (P[iPar] * x);
+        {
+          if (_invertViscosity)
+            result.Im -= P[iPar] / (x);
+          else
+            result.Im -= 1 / (P[iPar] * x);
+        }
       }
+
 
       if (_invertResult)
         result = 1 / result; // if we invert, i.e. we calculate the modulus, the imaginary part is now positive
@@ -450,17 +473,9 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     }
 
     /// <summary>
-    /// Called when anything in this fit function has changed.
+    /// Not functional because instance is immutable.
     /// </summary>
-    protected virtual void OnChanged()
-    {
-      Changed?.Invoke(this, EventArgs.Empty);
-    }
-
-    /// <summary>
-    /// Fired when the fit function changed.
-    /// </summary>
-    public event EventHandler? Changed;
+    public event EventHandler? Changed { add { } remove { } }
 
     #endregion IFitFunction Members
   }

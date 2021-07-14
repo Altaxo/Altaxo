@@ -175,6 +175,12 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     {
     }
 
+    /// <summary>
+    /// Gets a value indicating whether to use the frequency instead of omega.
+    /// </summary>
+    /// <value>
+    ///   <c>true</c> if the independent variable is the frequency; false if the independent variable is the circular frequency.
+    /// </value>
     public bool UseFrequencyInsteadOfOmega => _useFrequencyInsteadOmega;
     public HavriliakNegamiSusceptibility WithUseFrequencyInsteadOfOmega(bool value)
     {
@@ -432,8 +438,6 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
       };
 
       return _logarithmizeResults ? "Lg " + result : result;
-
-
     }
 
     #endregion dependent variable definition

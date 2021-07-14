@@ -117,392 +117,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="General.PolynomialFit.Description" xml:space="preserve">
-    <value>This implements a polynomial fit. Please use the polynomial fit from the analysis menu instead of this unless you need to set some parameters fixed. The fit function is defined as:
-$$
-y(x) = a_0 + a_1 x + a_2 x^2 + ... + a_n x^n
-$$
-in which x is the independent variable, y is the dependent variable, and $ a_0 ... a_n $ are the parameters.</value>
-  </data>
-  <data name="IndependentVariable.FrequencyAsOmega" xml:space="preserve">
-    <value>with the frequency $f$ being the independent variable  ($\omega = 2 \pi f$ is calculated from $f$), </value>
-  </data>
-  <data name="IndependentVariable.Omega" xml:space="preserve">
-    <value>with the circular frequency $\omega$  being the independent variable, </value>
-  </data>
-  <data name="Materials.VogelFulcherLaw" xml:space="preserve">
-    <value># Arrhenius law
-
-The Arrhenius law describes the dependence of (chemical) reaction rates on the temperature.  
-The function is defined as:
-$$
-y(T) = y_0 \exp\left(\frac{-E_a}{k T})
-$$
-in which $y$ is the reaction rate (dependent variable), $T$ is the absolute (!) temperature (independent variable), and $k$ is a constant, usually the Boltzmann constant, but it depends on the options you choose for the fit (see below).
-
-The parameters are: 
-- $y_0$ is the reaction rate in the limit $T\rightarrow\infty$
-- $E_a$ is the activation energy.
-
-Please note that for large temperature intervals, the reaction rate can vary over some orders of magnitude. This will lead to a poor fit, because the data points with small values of the reaction rate then contribute too little to the fit. 
-
-In order to get a good fit nevertheless, it is neccessary  that you logarithmize your data points before they get fitted, and choose the `DecadicLogarithm` dependent variable option on this fit.
-
-*Options for the independent variable x*:
-- Kelvin: x is $T$ in Kelvin
-- AsInverseKelvin: x is $\frac{1}{T}$
-- DegreeCelsius: x is in °C
-- DegreeFahrenheit: x is in °F
-
-
-*Options for the dependent variable y*:
-- Original: the original value of $y$ (the rate)
-- Inverse:  the inverse of the rate, i.e. $\frac{1}{y}$
-- Negative: the negative rate $-y$
-- DecadicLogarithm: $\log_{10}(y)$
-- NegativeDecadicLogarithm: $-\log_{10}(y)$
-- NaturalLogarithm: $\ln(y)$
-- NegativeNaturalLogarithm: $-\ln(y)$
-
-
-
-*Option for parameters*:
-- ParameterEnergyRepresentation
-  - Joule: $E_a$ is in Joule
-  - JoulePerMole: $E_a$ is in Joule per mole
-  - ElectronVolt: $E_a$ is in eV (electron volt)
-  - kWh, calorie, calorie per mole and more..</value>
-  </data>
-  <data name="Relaxation.DielectricSusceptibility.Introduction" xml:space="preserve">
-    <value>This implements the dielectric susceptibility function</value>
-  </data>
-  <data name="Relaxation.Generic.Modulus.Formula" xml:space="preserve">
-    <value>$$
-M' + i M'' = M_{0}+(M_{\infty}-M_{0})\int_0^{\infty}\exp(-i \omega t')\frac{d\Phi(t)}{dt}dt'
-
-$$
-
-or with flow term (for $\eta=0$ the two equations are equivalent):
-
-$$
-M' + i M'' = \frac{1}{\frac{1}{M_{0}+(M_{\infty}-M_{0})\int_0^{\infty}\exp(-i \omega t')\frac{d\Phi(t)}{dt}dt'}-\frac{i\eta}{\omega}}
-
-$$</value>
-  </data>
-  <data name="Relaxation.HavriliakNegami.Modulus.Formula" xml:space="preserve">
-    <value>
-$$
-M' - i M'' = M_{\infty} + (M_{0}-M_{\infty})\frac{1}{(1+(i \tau \omega)^{\alpha})^{\gamma}} 
-$$
-
-or with a flow term (both equations are equivalent if $\eta=0$) :
-
-$$
-M' - i M'' = \frac{1}{\frac{1}{M_{\infty} + (M_{0}-M_{\infty})\frac{1}{(1+(i \tau \omega)^{\alpha})^{\gamma}} } + \frac{i \eta}{\omega}}
-$$
-</value>
-  </data>
-  <data name="Relaxation.HavriliakNegamiSusceptibility.Dielectrics.Formula" xml:space="preserve">
-    <value>
-$$
-\varepsilon' - i \varepsilon'' = \varepsilon_{\infty} + \frac{\Delta\varepsilon}{(1+(i \tau \omega)^{\alpha})^{\gamma}} - \frac{i \sigma}{\omega \varepsilon_0}
-$$
-</value>
-  </data>
-  <data name="Relaxation.HavriliakNegamiSusceptibility.Dielectrics.Quantities" xml:space="preserve">
-    <value> and $\varepsilon'$ and $\varepsilon''$ being the dependent variables, namely the real and negative imaginary part of the dielectric function.
-
-The parameters are:
-
-- $\varepsilon_{\infty}$: high frequency dielectric value (permittivity)
-- $\Delta\varepsilon$: step height of dielectric function
-- $\tau$: retardation time
-- $\alpha$, $\gamma$: shape exponents
-- $\sigma$: specific electrical conductivity [S/m]</value>
-  </data>
-  <data name="Relaxation.HavriliakNegamiSusceptibility.General.Formula" xml:space="preserve">
-    <value>
-$$
-\chi' - i \chi'' = \chi_{\infty} + \frac{\Delta\chi}{(1+(i \tau \omega)^{\alpha})^{\gamma}} - \frac{i \eta}{\omega }
-$$
-</value>
-  </data>
-  <data name="Relaxation.HavriliakNegamiSusceptibility.General.Quantities" xml:space="preserve">
-    <value> and $\chi'$ and $\chi''$ being the dependent variables, namely the real and negative imaginary part of the dynamic susceptibility.
-
-The parameters are:
-
-- $\chi_{\infty}$: high frequency susceptibility value
-- $\Delta\chi$: step height of susceptibility function
-- $\tau$: retardation time
-- $\alpha$, $\gamma$: shape exponents
-- $\eta$: generalized flow term, e.g. inverse (!) viscosity</value>
-  </data>
-  <data name="Relaxation.HavriliakNegamiSusceptibility.Introduction" xml:space="preserve">
-    <value>This implements the Havriliak-Negami function
-</value>
-  </data>
-  <data name="Relaxation.KohlrauschKernel.Formula" xml:space="preserve">
-    <value>
-$$
-\Phi(t) = \exp\left(-(\frac{t}{\tau})^{\beta})
-$$
-</value>
-  </data>
-  <data name="Relaxation.KohlrauschSusceptibility.General.Formula" xml:space="preserve">
-    <value>
-$$
-\chi' - i \chi'' = \chi_{\infty} + \Delta\chi \int_0^{\infty} \exp(- i \omega t') \frac{d\Phi}{d t} dt' - \frac{i \eta}{\omega}
-$$
-</value>
-  </data>
-  <data name="Relaxation.KohlrauschSusceptibility.Part2" xml:space="preserve">
-    <value>
-based on the Fourier transform of the (derivative of the) Kohlrausch function:
-</value>
-  </data>
-  <data name="Relaxation.KohlrauschSusceptibility.Part3" xml:space="preserve">
-    <value> and $\chi'$ and $\chi''$ being the dependent variables, namely the real and negative imaginary part of the dynamic susceptibility.
-
-The parameters are:
-
-- $\chi_{\infty}$ : high frequency susceptibility value
-- $\Delta\chi$ : step height of the susceptibility function
-- $\tau$ : retardation time
-- $\beta$ : shape exponent ($ 0 &lt; \beta \le 1 $)
-- $\eta$ : generalized flow term, for instance inverse (!) viscosity</value>
-  </data>
-  <data name="Relaxation.ModulusRelaxation.Introduction" xml:space="preserve">
-    <value>This function models the complex dynamic modulus in dependence on the frequency as:
-</value>
-  </data>
-  <data name="Relaxation.ModulusRelaxation.Part3" xml:space="preserve">
-    <value>and $M'$ and $M''$ being the dependent variables, namely the real and imaginary part of the complex dynamic modulus.
-
-The parameters are:
-
-- $M_0$: low frequency modulus limit
-- $M_{\infty}$: high frequency modulus limit
-- $\tau$: relaxation time
-- $\beta$: shape exponent ($ 0&lt;\beta\le 1 $)
-- $\eta$: generalized flow term, for instance inverse (!) viscosity</value>
-  </data>
-  <data name="Relaxation.ModulusRetardation.HavriliakNegami.Formula" xml:space="preserve">
-    <value>
-$$
-M' - i M'' = \frac{1}{\frac{1}{M_{\infty}} + (\frac{1}{M_{0}}-\frac{1}{M_{\infty}}) \frac{1}{(1+(i \tau \omega)^{\alpha})^{\gamma}} - \frac{i \eta}{\omega }}
-$$
-</value>
-  </data>
-  <data name="Relaxation.ModulusRetardation.Introduction" xml:space="preserve">
-    <value>This implements the modulus function as the scaled inverse of the generic susceptibility:
-</value>
-  </data>
-  <data name="Relaxation.ModulusRetardation.Part3" xml:space="preserve">
-    <value> and $M'$ and $M''$ being the dependent variables, namely the real and imaginary part of the dynamic modulus.
-
-The parameters are:
-
-- $M_0$: low frequency modulus limit
-- $M_{\infty}$: high frequency modulus limit
-- $\tau$: retardation time (not relaxation time!)
-- $\beta$: shape exponent ($ 0&lt;\beta\le 1 $)
-- $\eta$: generalized flow term, for instance inverse (!) viscosity</value>
-  </data>
-  <data name="Relaxation.Susceptibility.Dielectrics.Formula" xml:space="preserve">
-    <value>
-$$
-\varepsilon' - i \varepsilon'' = \varepsilon_{\infty} + \Delta\varepsilon \int_0^{\infty} \exp(- i \omega t') \frac{d\Phi}{d t} dt' - \frac{i \sigma}{\varepsilon_0 \omega}
-$$
-</value>
-  </data>
-  <data name="Relaxation.Susceptibility.Introduction" xml:space="preserve">
-    <value>This implements the susceptibility function:
-</value>
-  </data>
-  <data name="Retardation.Generic.Modulus.Formula" xml:space="preserve">
-    <value>
-$$
-M' + i M'' = \frac{1}{\frac{1}{M_{\infty}}+(\frac{1}{M_{0}}-\frac{1}{M_{\infty}})\int_0^{\infty}\exp(-i \omega t')\frac{d\Phi(t)}{dt}dt'-\frac{i\eta}{\omega}}
-
-$$
-</value>
-  </data>
-  <data name="Transitions.FermiDiracTransition.Core" xml:space="preserve">
-    <value># Fermi-Dirac transition
-
-The core of the Fermi-Dirac transition is the following function, defined in the interval [0, 1], which assumes the value of 1 for $p=0$ and 0 for $p=1$:
-
-$$
-  f(p) = \frac{\exp((1-p_c)/w)) - \exp((p-p_c)/w)}{\exp((1-p_c)/w) - \exp((0-p_c)/w)} \times
-  \frac{1 + \exp((0-p_c)/w)}{1 + \exp((p-p_c)/w)}
-$$
-
-in which:
-
-- $p_c$ : location of the transition (0..1)
-- $w$ : width parameter
-
-It is used e.g. to model the percolation behavior of electrical resistivity in dependence on the concentration $p$ and the critical concentration $p_c$.</value>
-  </data>
-  <data name="Transitions.FermiDiracTransition.Linear" xml:space="preserve">
-    <value>## Linearly scaled transition
-
-The core function is used to model the linearly scaled transition:
-
-$$
-g(p) = y_1 + (y_0 -y_1) \times f(p)
-$$
-
-which assumes a value of $y_0$ for $p=0$ and $y_1$ for $p=1$.</value>
-  </data>
-  <data name="Transitions.FermiDiracTransition.Logarithmic" xml:space="preserve">
-    <value>## Logarithmically scaled transition
-
-The core function is used to model the logarithmically scaled transition:
-
-$$
-g(p) = y_0^{f(p)} \times y_1^{1-f(p)}
-$$
-
-which assumes a value of $y_0$ for $p=0$ and $y_1$ for $p=1$.</value>
-  </data>
-  <data name="Transitions.GeneralEffectiveMedium.Core" xml:space="preserve">
-    <value># General effective medium transition
-
-This transition models e.g. the electrical conductivity of conductive particles embedded in a matrix, but is valid for general percolation problems.
-
-The function, which evaluates the property $y$ of the resulting compound is given implicitly by the following equation:
-
-$$
-  (1-p) \frac{y_{0}^{1/s} - y^{1/s}}{y_{0}^{1/s} + A y^{1/s}} +
-  p \frac{y_{1}^{1/t} - y^{1/t}}{y_{1}^{1/t} + A y^{1/t}} = 0
-$$
-
-in which:
-- $A = (1-p_c)/p_c)$
-- $p_c$ : critical percolation threshold (location of the transition (0..1))
-- $p$ : volume concentration of the filler particles (0..1)
-- $s, t$ : exponents
-- $y_{0}$ : property of the matrix (e.g. electrical conductivity of the matrix)
-- $y_{1}$ : property of the filler particles (e.g. electrical conductivity of the filler)
-- $y$ : resulting property of the compound (e.g. electrical conductivity of the matrix with filler particles)
-
-The equation has the following properties, which match the percolation theory for concentrations below and above the percolation threshold:
-
-- $y = y_0$ for $p=0$ 
-- $y \approx y_0 \left ( \frac{p_c-p}{p_c} \right )^{-s}$ for $p &lt; p_c$
-- $y = y_1$ for $p=1$
-- $y \approx y_1 \left ( \frac{p-p_c}{1-p_c} \right )^{t}$ for $p &gt; p_c$
-
-In contrast to the separate percolation equations below and above the percolation threshold, the general effective medium transition avoids the divergence near the percolation threshold, and provides a smooth transition between the two equations.</value>
-  </data>
-  <data name="Transitions.GeneralEffectiveMedium.Log10" xml:space="preserve">
-    <value>## Logarithmically scaled transition
-
-Instead of returning $y$ as described above, the function will return $\log_{10}(y)$.</value>
-  </data>
-  <data name="Transitions.SmoothedPercolation.Core" xml:space="preserve">
-    <value># Smoothed percolation
-
-The base of this function are the two percolation equations valid below and above the percolation threshold $p_c$ :
-
-- $y \approx y_0 \left ( \frac{p_c-p}{p_c} \right )^{-s}$ for $p &lt; p_c$ (left side equation)
-
-- $y \approx y_1 \left ( \frac{p-p_c}{1-p_c} \right )^{t}$ for $p &gt; p_c$ (right side equation)
-
-in which:
-- $p_c$ : critical percolation threshold (location of the transition (0..1))
-- $p$ : volume concentration of the filler particles (0..1)
-- $s, t$ : exponents ($s&gt;0$, $t&gt;0$)
-- $y_{0}$ : property of the matrix (e.g. electrical conductivity of the matrix, $y_0&gt;0)$)
-- $y_{1}$ : property of the filler particles (e.g. electrical conductivity of the filler, $y_1&gt;0$)
-- $y$ : resulting property of the compound (e.g. electrical conductivity of the matrix with filler particles)
-
-
-Because both equations diverge at $p=p_c$, we need to smooth that location.
-For this we use somewhat stricter boundaries:
-
-- Calculate the approximate logarithmic step height of the transition by
-$$
-\ln(y_h/y_l) = \ln(y_1/y_0) - s - t
-$$
-
-- Find a $p_1 &lt; p_c$ such that the quotient of the function values of right side and left side approximately match this step height:
-
-$$
- \ln \left ( \frac{ y_1 \left ( \frac{p_2-p_c}{1-p_c} \right )^{t} }{ y_0 \left ( \frac{p_c-p_1}{p_c} \right )^{-s}} \right ) \approx \ln(y_h/y_l)
-$$
-
-in which $p_2 = p_c + (p_c-p_1)\frac{t}{s}$ (obviously: $p_2&gt;p_c$).
-
-
-The value of $p_1$ is then used as the upper boundary of the left side percolation equation:
-
-$y \approx y_0 \left ( \frac{p_c-p}{p_c} \right )^{-s}$ for $p &lt; p_1$
-
-
-and the value of $p_2$ is used as the lower boundary of the right side percolation equation:
-
-$y \approx y_1 \left ( \frac{p-p_c}{1-p_c} \right )^{t}$ for $p &gt; p_2$
-
-In the interval between $p_1$ and $p_2$, the function values are approximated by a logarithmic function:
-
-$\ln(y) = \ln(y_1) + (\ln(y_2)-\ln(y_1))\frac{p-p_1}{p_2-p_1}$
-
-in which 
-
-- $y_1$ value of $y$ as evaluated by the left side equation at $p=p_1$
-- $y_2$ value of $y$ as evaluated by the right side equation at $p=p_2$</value>
-  </data>
-  <data name="Material.ArrheniusLawRate" xml:space="preserve">
-    <value># Arrhenius law (rate)
-
-This Arrhenius law describes the temperature dependence of e.g. reaction rates, typical frequencies, e.g. quantities that increase with increasing temperature.  
-The function is defined as:
-$$
-y(T) = y_0 \exp\left(\frac{-E_a}{k T})
-$$
-in which $y$ is the reaction rate (dependent variable), $T$ is the absolute (!) temperature (independent variable), and $k$ is a constant, usually the Boltzmann constant, but it depends on the options you choose for the fit (see below).
-
-The parameters are: 
-- $y_0$ is the reaction rate in the limit $T\rightarrow\infty$
-- $E_a$ is the activation energy.
-
-Please note that for large temperature intervals, the y-value can vary over some orders of magnitude. This will lead to a poor fit, because the data points with small values of the reaction rate then contribute too little to the fit. 
-
-In order to get a good fit nevertheless, it is neccessary  that you logarithmize your data points before they get fitted, and choose the `DecadicLogarithm` dependent variable option on this fit.
-
-*Options for the independent variable x*:
-- Kelvin: x is $T$ in Kelvin
-- AsInverseKelvin: x is $\frac{1}{T}$
-- DegreeCelsius: x is in °C
-- DegreeFahrenheit: x is in °F
-  
-  
-
-*Options for the dependent variable y*:
-- Original: the original value of $y$ (the rate)
-- Inverse:  the inverse of the rate, i.e. $\frac{1}{y}$
-- Negative: the negative rate $-y$
-- DecadicLogarithm: $\log_{10}(y)$
-- NegativeDecadicLogarithm: $-\log_{10}(y)$
-- NaturalLogarithm: $\ln(y)$
-- NegativeNaturalLogarithm: $-\ln(y)$
-
-  
-  
-*Option for parameters*:
-- ParameterEnergyRepresentation
-  - Joule: $E_a$ is in Joule
-  - JoulePerMole: $E_a$ is in Joule per mole
-  - ElectronVolt: $E_a$ is in eV (electron volt)
-  - kWh, calorie, calorie per mole and more..
-  
-^^^
-![](res:Altaxo.Calc.FitFunctions.Material.ArrheniusLawRate.Fig1.png)
-^^^ Fig. 1: Typical plot of an Arrhenius diagram (reaction rate by the inverse temperature). Here the parameters are $y_0=10^{12} s^{-1}$ and $E_a=80000$ J/mol. Please note that if you choose the x-axis to be $ 1/T $ instead of T and the y-axis to be logarithmic, as in this example, the curve becomes a straight line. You can even include the "right" temperatures in °C by adding a second axis at the bottom, with inverse tick spacing and the transformation $x'=-273.15+x$.</value>
-  </data>
   <data name="General.ExponentialDecay" xml:space="preserve">
     <value># ExponentialDecay
 
@@ -1480,7 +1094,7 @@ with $\varepsilon^*$ being the complex relative dielectric permittivity of a mat
 It is a special case of the underlying base function with the options `NumberOfTerms=1`, `UseFrequencyInsteadOfOmega=true`, `UseFlowTerm=true`, `IsRelativeDielectricPermittivity=true`, `InvertViscosity=true`, `InvertResult=false` and `LogarithmizeResult=false`. These options can be changed by double-clicking on the fit function.
 
 
-The underlying base function models the generalized complex dynamic susceptibility in dependence on the frequency as:
+The underlying base function models the generalized complex dynamic susceptibility in dependence on the frequency with one or more retardation terms and a flow term as:
 
 $$
 \chi^*(\omega) = \chi'(\omega) - i \chi''(\omega) = \chi_{\infty} +  \sum_{k=0}^{N-1}{\frac{\Delta \chi_{k}}{(1+(i \omega \tau_k)^{\alpha_k})^{\gamma_k}} }  + Flowterm \\
@@ -1490,7 +1104,7 @@ Flowterm = \cases{
 -\frac{i \sigma}{\omega} \thickspace\thickspace\mathrm{for} \thickspace \mathrm{IsRelativeDielectricPermittivity=false} \thickspace \mathrm{and} \thickspace \mathrm{InvertViscosity=true} \cr -\frac{i}{\omega\eta} \thickspace\thickspace\mathrm{for} \thickspace \mathrm{IsRelativeDielectricPermittivity=false} \thickspace \mathrm{and} \thickspace \mathrm{InvertViscosity=false}}
 $$
 
-with the circular frequency $\omega$ being the independent variable (or, depending on an option, the frequency $f$, $\omega=2\pi f$), and $\chi'(f)$ and $\chi''(f)$ being the dependent variables, namely the real and negative imaginary part of the complex dynamic susceptibility $\chi^*(\omega)$.
+with the circular frequency $\omega$ being the independent variable (or, depending on an option, the frequency $f$, $\omega=2\pi f$), and $\chi'(\omega)$ and $\chi''(\omega)$ being the dependent variables, namely the real and negative imaginary part of the complex dynamic susceptibility $\chi^*(\omega)$.
 
 Typical use cases are fits to the complex relative dielectric permittivity $e_r^*$, to the complex mechanical compliance $J^*$, or the specific complex heat capacity $c_p^*$. With the option `InvertResult`=true, fits to the complex mechanical modulus $M^*$ or the dielectric modulus $M_d^*$ are possible, too.
 
@@ -1557,7 +1171,7 @@ with $\varepsilon^*$ being the complex relative dielectric permittivity of a mat
 It is a special case of the underlying base function with the options `NumberOfTerms=1`, `UseFrequencyInsteadOfOmega=false`, `UseFlowTerm=true`, `IsRelativeDielectricPermittivity=true`, `InvertViscosity=true`, `InvertResult=false` and `LogarithmizeResult=false`. These options can be changed by double-clicking on the fit function.
 
 
-The underlying base function models the generalized complex dynamic susceptibility in dependence on the frequency as:
+The underlying base function models the generalized complex dynamic susceptibility in dependence on the frequency with one or more retardation terms and a flow term as:
 
 $$
 \chi^*(\omega) = \chi'(\omega) - i \chi''(\omega) = \chi_{\infty} +  \sum_{k=0}^{N-1}{\frac{\Delta \chi_{k}}{(1+(i \omega \tau_k)^{\alpha_k})^{\gamma_k}} }  + Flowterm \\
@@ -1567,7 +1181,7 @@ Flowterm = \cases{
 -\frac{i \sigma}{\omega} \thickspace\thickspace\mathrm{for} \thickspace \mathrm{IsRelativeDielectricPermittivity=false} \thickspace \mathrm{and} \thickspace \mathrm{InvertViscosity=true} \cr -\frac{i}{\omega\eta} \thickspace\thickspace\mathrm{for} \thickspace \mathrm{IsRelativeDielectricPermittivity=false} \thickspace \mathrm{and} \thickspace \mathrm{InvertViscosity=false}}
 $$
 
-with the circular frequency $\omega$ being the independent variable (or, depending on an option, the frequency $f$, $\omega=2\pi f$), and $\chi'(f)$ and $\chi''(f)$ being the dependent variables, namely the real and negative imaginary part of the complex dynamic susceptibility $\chi^*(\omega)$.
+with the circular frequency $\omega$ being the independent variable (or, depending on an option, the frequency $f$, $\omega=2\pi f$), and $\chi'(\omega)$ and $\chi''(\omega)$ being the dependent variables, namely the real and negative imaginary part of the complex dynamic susceptibility $\chi^*(\omega)$.
 
 Typical use cases are fits to the complex relative dielectric permittivity $e_r^*$, to the complex mechanical compliance $J^*$, or the specific complex heat capacity $c_p^*$. With the option `InvertResult`=true, fits to the complex mechanical modulus $M^*$ or the dielectric modulus $M_d^*$ are possible, too.
 
@@ -1621,6 +1235,172 @@ References:
 - Havriliak, S., Negami, S., "A complex plane representation of dielectric and mechanical relaxation processes in some polymers", Polymer 8: 161–210, doi:10.1016/0032-3861(67)90021-3
 </value>
   </data>
+  <data name="Retardation.Dielectrics.KohlrauschComplexFrequency" xml:space="preserve">
+    <value># Kohlrausch retardation of the relative dielectric permittivity
+
+This function models the retardation of the relative dielectric permittivity in dependence on the frequency $f$, including a term for the DC electric conductivity:
+
+$$
+\varepsilon^*(f) = \varepsilon'(f) - i \varepsilon''(f) = \varepsilon_{\infty} + \Delta\varepsilon \int_0^{\infty} \exp(- i 2 \pi f t') \frac{d\Phi}{d t} dt' - \frac{i \sigma_{DC}}{2 \pi f \varepsilon_0} \\
+\Phi(t) = \exp\left [ -\left ( \frac{t}{\tau}\right )^{\beta} \right ]
+$$
+
+based on the Fourier transform of the derivative of the time-domain Kohlrausch function $\Phi(t)$:
+
+with $\varepsilon^*$ being the complex relative dielectric permittivity of a material (the other quantities are described below).
+It is a special case of the underlying base function with the options `NumberOfTerms=1`, `UseFrequencyInsteadOfOmega=true`, `UseFlowTerm=true`, `IsRelativeDielectricPermittivity=true`, `InvertViscosity=true`, `InvertResult=false` and `LogarithmizeResult=false`. These options can be changed by double-clicking on the fit function.
+
+
+The underlying base function models the generalized complex dynamic susceptibility in dependence on the frequency with one or more retardation terms and a flow term as:
+
+$$
+\chi^*(\omega) = \chi'(\omega) - i \chi''(\omega) = \chi_{\infty} +  \sum_{k=0}^{N-1}{\left [ \Delta \chi_{k}\int_0^{\infty} \exp(- i \omega t') \frac{d\Phi_k}{d t} dt' \right ]}   + Flowterm \\
+
+\Phi_k(t) = \exp\left [ -\left ( \frac{t}{\tau_k}\right )^{\beta_k} \right ] \\
+
+Flowterm = \cases{
+-\frac{i \sigma_{DC}}{\omega \varepsilon_0} \thickspace\mathrm{for} \thickspace \mathrm{IsRelativeDielectricPermittivity=true} \thickspace \mathrm{and}  \thickspace \mathrm{InvertViscosity=true}  \cr 
+-\frac{i }{\omega \varepsilon_0 \rho_{DC}} \thickspace\mathrm{for} \thickspace \mathrm{IsRelativeDielectricPermittivity=true} \thickspace \mathrm{and}  \thickspace \mathrm{InvertViscosity=false}  \cr
+-\frac{i \sigma}{\omega} \thickspace\thickspace\mathrm{for} \thickspace \mathrm{IsRelativeDielectricPermittivity=false} \thickspace \mathrm{and} \thickspace \mathrm{InvertViscosity=true} \cr -\frac{i}{\omega\eta} \thickspace\thickspace\mathrm{for} \thickspace \mathrm{IsRelativeDielectricPermittivity=false} \thickspace \mathrm{and} \thickspace \mathrm{InvertViscosity=false}} 
+$$
+
+based on the Fourier transformation of the time derivative of the Kohlrausch function $\Phi(t)$, with the circular frequency $\omega$ being the independent variable (or, depending on an option, the frequency $f$, $\omega=2\pi f$), and $\chi'(\omega)$ and $\chi''(\omega)$ being the dependent variables, namely the real and negative imaginary part of the complex dynamic susceptibility $\chi^*(\omega)$.
+
+Typical use cases are fits to the complex relative dielectric permittivity $e_r^*$, to the complex mechanical compliance $J^*$, or the specific complex heat capacity $c_p^*$. With the option `InvertResult`=true, fits to the complex mechanical modulus $M^*$ or the dielectric modulus $M_d^*$ are possible, too.
+
+The parameters are:
+
+- $\chi_{\infty}$ : high frequency susceptibility limit
+- $\Delta\chi_k$ : retardation amplitude of term k
+- $\tau_k$ : retardation time of term k
+- $\beta_k$ : shape exponent (usually $ 0&lt;\beta\le 1 $ of term k
+- $\sigma_{DC}$ : DC specific electrical conductivity in S/m
+- $\rho_{DC}$ : DC specific electrical resistance in Ω·m
+- $\sigma$ : generalized conductivity, for instance fluidity (inverse viscosity)
+- $\eta$ : generalized viscosity
+
+
+The available options are:
+- `NumberOfTerms` ($N$): 
+Determines the number of retardation terms in the formula above. Must be at least 1.
+- `UseFrequencyInsteadOfOmega`:  
+If true, the frequency $f$ is used as the independent variable, thus $\omega$ in the formula above is replaced by $ 2\pi f $.   
+If false, the circular frequency ($\omega$) is used as the independent variable.
+- `UseFlowTerm`:  
+If true, the flow term in above formula is used.   
+If false, the flow term is not used, and the parameter corresponding with the flow term will not show in the fit.
+- `IsRelativeDielectricPermittivity`:  
+If true, it is assumed that relative dielectric permittivity data are fitted. Thus, the flow term is modified to use either the DC specific electric conductivity or the DC specific electric resisitivity $\rho_{DC}$ as the parameter for the flow term: $-{i \sigma_{DC}}/{(\omega \varepsilon_0)}$ or $-{i}/{(\omega \varepsilon_0 \rho_{DC})}$ with $\varepsilon_0$ being the vacuum permittivity..
+- `InvertViscosity`:  
+If true, the parameter in the flow term is an inverted viscosity (i.e. specific electrical conductivity, fluidity). Thus the flow term generally is $-{i \sigma}/{\omega}$.  
+If false, the parameter in the flow term is a viscosity, and the flow term generally is $-{i}/{(\omega\eta)}$.
+- `InvertResult`:  
+If true, the result is inverted, i.e. instead of the general susceptibility $\chi^*=\chi'-i\chi''$ the real and imaginary part of the generalized modulus $M'+iM'' = M^*={1}/{\chi^*}$ is used for the dependent variables. Please note that despite the fact that the output is a modulus, the parameters $\tau_k$ are still retardation times (and not relaxation times)!  
+If false, the real and negative imaginary part of the generalized susceptibility are used as the dependent variables. 
+- `LogarithmizeResult`:  
+If true, the resulting values of $\chi'$ and $\chi''$ (or $M'$ and $M''$ if `InvertResult` is true) are logarithmized (decadic logarithm).  
+If false, the original values are used.
+
+&gt; Note:  
+&gt; Since in some cases $\chi_{\infty}$ and $\chi_0=\chi_{\infty}+\sum{\Delta\chi_k}$ differ by several orders of magnitude, your fit function will also cover several orders of magnitude. This will result in a poor fit of the low susceptibility data. To avoid this behavior, you should either use a NaturalLogarithmTransformation for both your data and for the fit function's dependent variables, or use the option in this fit function to logarithmize the results and then use a DecadicLogarithmTransformation to transform your data.  
+
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.Retardation.Dielectrics.KohlrauschComplexFrequency.Fig2.png)
+^^^ Fig. 1: Kohlrausch susceptibility fit functions (with $\varepsilon_{\infty}=2$, $\Delta \varepsilon=10$, $\tau=1$ and $\sigma_{DC}=0$). The values for $\beta$ are indicated in the legend.
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.Retardation.Dielectrics.KohlrauschComplexFrequency.Fig1.png)
+^^^ Fig. 2: Comparison of Kohlrausch susceptibility fit functions (with $\varepsilon_{\infty}=2$, $\Delta \varepsilon=10$, $\tau=1$ and $\beta=1$) without and with DC conductivity. The values for $\sigma_{DC}$ are indicated in the legend.
+
+---
+References:  
+- Kohlrausch, R., "Theorie des elektrischen Rückstandes in der Leidner Flasche", Annalen der Physik und Chemie. 91 (1) (1854): 56–82, 179–213, doi:10.1002/andp.18541670103
+</value>
+  </data>
+  <data name="Retardation.Dielectrics.KohlrauschComplexOmega" xml:space="preserve">
+    <value># Kohlrausch retardation of the relative dielectric permittivity
+
+This function models the retardation of the relative dielectric permittivity in dependence on the circular frequency $\omega$, including a term for the DC electric conductivity:
+
+$$
+\varepsilon^*(\omega) = \varepsilon'(\omega) - i \varepsilon''(\omega) = \varepsilon_{\infty} + \Delta\varepsilon \int_0^{\infty} \exp(- i \omega t') \frac{d\Phi}{d t} dt' - \frac{i \sigma_{DC}}{\omega\varepsilon_0} \\
+\Phi(t) = \exp\left [ -\left ( \frac{t}{\tau}\right )^{\beta} \right ]
+$$
+
+based on the Fourier transform of the derivative of the time-domain Kohlrausch function $\Phi(t)$:
+
+with $\varepsilon^*$ being the complex relative dielectric permittivity of a material (the other quantities are described below).
+It is a special case of the underlying base function with the options `NumberOfTerms=1`, `UseFrequencyInsteadOfOmega=false`, `UseFlowTerm=true`, `IsRelativeDielectricPermittivity=true`, `InvertViscosity=true`, `InvertResult=false` and `LogarithmizeResult=false`. These options can be changed by double-clicking on the fit function.
+
+
+The underlying base function models the generalized complex dynamic susceptibility in dependence on the frequency with one or more retardation terms and a flow term as:
+
+$$
+\chi^*(\omega) = \chi'(\omega) - i \chi''(\omega) = \chi_{\infty} +  \sum_{k=0}^{N-1}{\left [ \Delta \chi_{k}\int_0^{\infty} \exp(- i \omega t') \frac{d\Phi_k}{d t} dt' \right ]}   + Flowterm \\
+
+\Phi_k(t) = \exp\left [ -\left ( \frac{t}{\tau_k}\right )^{\beta_k} \right ] \\
+
+Flowterm = \cases{
+-\frac{i \sigma_{DC}}{\omega \varepsilon_0} \thickspace\mathrm{for} \thickspace \mathrm{IsRelativeDielectricPermittivity=true} \thickspace \mathrm{and}  \thickspace \mathrm{InvertViscosity=true}  \cr 
+-\frac{i }{\omega \varepsilon_0 \rho_{DC}} \thickspace\mathrm{for} \thickspace \mathrm{IsRelativeDielectricPermittivity=true} \thickspace \mathrm{and}  \thickspace \mathrm{InvertViscosity=false}  \cr
+-\frac{i \sigma}{\omega} \thickspace\thickspace\mathrm{for} \thickspace \mathrm{IsRelativeDielectricPermittivity=false} \thickspace \mathrm{and} \thickspace \mathrm{InvertViscosity=true} \cr -\frac{i}{\omega\eta} \thickspace\thickspace\mathrm{for} \thickspace \mathrm{IsRelativeDielectricPermittivity=false} \thickspace \mathrm{and} \thickspace \mathrm{InvertViscosity=false}} 
+$$
+
+based on the Fourier transformation of the time derivative of the Kohlrausch function $\Phi(t)$, with the circular frequency $\omega$ being the independent variable (or, depending on an option, the frequency $f$, $\omega=2\pi f$), and $\chi'(\omega)$ and $\chi''(\omega)$ being the dependent variables, namely the real and negative imaginary part of the complex dynamic susceptibility $\chi^*(\omega)$.
+
+Typical use cases are fits to the complex relative dielectric permittivity $e_r^*$, to the complex mechanical compliance $J^*$, or the specific complex heat capacity $c_p^*$. With the option `InvertResult`=true, fits to the complex mechanical modulus $M^*$ or the dielectric modulus $M_d^*$ are possible, too.
+
+The parameters are:
+
+- $\chi_{\infty}$ : high frequency susceptibility limit
+- $\Delta\chi_k$ : retardation amplitude of term k
+- $\tau_k$ : retardation time of term k
+- $\beta_k$ : shape exponent (usually $ 0&lt;\beta\le 1 $ of term k
+- $\sigma_{DC}$ : DC specific electrical conductivity in S/m
+- $\rho_{DC}$ : DC specific electrical resistance in Ω·m
+- $\sigma$ : generalized conductivity, for instance fluidity (inverse viscosity)
+- $\eta$ : generalized viscosity
+
+
+The available options are:
+- `NumberOfTerms` ($N$): 
+Determines the number of retardation terms in the formula above. Must be at least 1.
+- `UseFrequencyInsteadOfOmega`:  
+If true, the frequency $f$ is used as the independent variable, thus $\omega$ in the formula above is replaced by $ 2\pi f $.   
+If false, the circular frequency ($\omega$) is used as the independent variable.
+- `UseFlowTerm`:  
+If true, the flow term in above formula is used.   
+If false, the flow term is not used, and the parameter corresponding with the flow term will not show in the fit.
+- `IsRelativeDielectricPermittivity`:  
+If true, it is assumed that relative dielectric permittivity data are fitted. Thus, the flow term is modified to use either the DC specific electric conductivity or the DC specific electric resisitivity $\rho_{DC}$ as the parameter for the flow term: $-{i \sigma_{DC}}/{(\omega \varepsilon_0)}$ or $-{i}/{(\omega \varepsilon_0 \rho_{DC})}$ with $\varepsilon_0$ being the vacuum permittivity..
+- `InvertViscosity`:  
+If true, the parameter in the flow term is an inverted viscosity (i.e. specific electrical conductivity, fluidity). Thus the flow term generally is $-{i \sigma}/{\omega}$.  
+If false, the parameter in the flow term is a viscosity, and the flow term generally is $-{i}/{(\omega\eta)}$.
+- `InvertResult`:  
+If true, the result is inverted, i.e. instead of the general susceptibility $\chi^*=\chi'-i\chi''$ the real and imaginary part of the generalized modulus $M'+iM'' = M^*={1}/{\chi^*}$ is used for the dependent variables. Please note that despite the fact that the output is a modulus, the parameters $\tau_k$ are still retardation times (and not relaxation times)!  
+If false, the real and negative imaginary part of the generalized susceptibility are used as the dependent variables. 
+- `LogarithmizeResult`:  
+If true, the resulting values of $\chi'$ and $\chi''$ (or $M'$ and $M''$ if `InvertResult` is true) are logarithmized (decadic logarithm).  
+If false, the original values are used.
+
+&gt; Note:  
+&gt; Since in some cases $\chi_{\infty}$ and $\chi_0=\chi_{\infty}+\sum{\Delta\chi_k}$ differ by several orders of magnitude, your fit function will also cover several orders of magnitude. This will result in a poor fit of the low susceptibility data. To avoid this behavior, you should either use a NaturalLogarithmTransformation for both your data and for the fit function's dependent variables, or use the option in this fit function to logarithmize the results and then use a DecadicLogarithmTransformation to transform your data.  
+
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.Retardation.Dielectrics.KohlrauschComplexOmega.Fig2.png)
+^^^ Fig. 1: Kohlrausch susceptibility fit functions (with $\varepsilon_{\infty}=2$, $\Delta \varepsilon=10$, $\tau=1$ and $\sigma_{DC}=0$). The values for $\beta$ are indicated in the legend.
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.Retardation.Dielectrics.KohlrauschComplexOmega.Fig1.png)
+^^^ Fig. 2: Comparison of Kohlrausch susceptibility fit functions (with $\varepsilon_{\infty}=2$, $\Delta \varepsilon=10$, $\tau=1$ and $\beta=1$) without and with DC conductivity. The values for $\sigma_{DC}$ are indicated in the legend.
+
+---
+References:  
+- Kohlrausch, R., "Theorie des elektrischen Rückstandes in der Leidner Flasche", Annalen der Physik und Chemie. 91 (1) (1854): 56–82, 179–213, doi:10.1002/andp.18541670103
+</value>
+  </data>
   <data name="Retardation.General.HavriliakNegamiComplexFrequency" xml:space="preserve">
     <value># Havriliak-Negami retardation of a general susceptibility
 
@@ -1634,7 +1414,7 @@ The quantities are described below.
 It is a special case of the underlying base function with the options `NumberOfTerms=1`, `UseFrequencyInsteadOfOmega=true`, `UseFlowTerm=true`, `IsRelativeDielectricPermittivity=false`, `InvertViscosity=false`, `InvertResult=false` and `LogarithmizeResult=false`. These options can be changed by double-clicking on the fit function.
 
 
-The underlying base function models the generalized complex dynamic susceptibility in dependence on the frequency as:
+The underlying base function models the generalized complex dynamic susceptibility in dependence on the frequency with one or more retardation terms and a flow term as:
 
 $$
 \chi^*(\omega) = \chi'(\omega) - i \chi''(\omega) = \chi_{\infty} +  \sum_{k=0}^{N-1}{\frac{\Delta \chi_{k}}{(1+(i \omega \tau_k)^{\alpha_k})^{\gamma_k}} }  + Flowterm \\
@@ -1644,7 +1424,7 @@ Flowterm = \cases{
 -\frac{i \sigma}{\omega} \thickspace\thickspace\mathrm{for} \thickspace \mathrm{IsRelativeDielectricPermittivity=false} \thickspace \mathrm{and} \thickspace \mathrm{InvertViscosity=true} \cr -\frac{i}{\omega\eta} \thickspace\thickspace\mathrm{for} \thickspace \mathrm{IsRelativeDielectricPermittivity=false} \thickspace \mathrm{and} \thickspace \mathrm{InvertViscosity=false}}
 $$
 
-with the circular frequency $\omega$ being the independent variable (or, depending on an option, the frequency $f$, $\omega=2\pi f$), and $\chi'(f)$ and $\chi''(f)$ being the dependent variables, namely the real and negative imaginary part of the complex dynamic susceptibility $\chi^*(\omega)$.
+with the circular frequency $\omega$ being the independent variable (or, depending on an option, the frequency $f$, $\omega=2\pi f$), and $\chi'(\omega)$ and $\chi''(\omega)$ being the dependent variables, namely the real and negative imaginary part of the complex dynamic susceptibility $\chi^*(\omega)$.
 
 Typical use cases are fits to the complex relative dielectric permittivity $e_r^*$, to the complex mechanical compliance $J^*$, or the specific complex heat capacity $c_p^*$. With the option `InvertResult`=true, fits to the complex mechanical modulus $M^*$ or the dielectric modulus $M_d^*$ are possible, too.
 
@@ -1711,7 +1491,7 @@ The quantities are described below.
 It is a special case of the underlying base function with the options `NumberOfTerms=1`, `UseFrequencyInsteadOfOmega=false`, `UseFlowTerm=true`, `IsRelativeDielectricPermittivity=false`, `InvertViscosity=false`, `InvertResult=false` and `LogarithmizeResult=false`. These options can be changed by double-clicking on the fit function.
 
 
-The underlying base function models the generalized complex dynamic susceptibility in dependence on the frequency as:
+The underlying base function models the generalized complex dynamic susceptibility in dependence on the frequency with one or more retardation terms and a flow term as:
 
 $$
 \chi^*(\omega) = \chi'(\omega) - i \chi''(\omega) = \chi_{\infty} +  \sum_{k=0}^{N-1}{\frac{\Delta \chi_{k}}{(1+(i \omega \tau_k)^{\alpha_k})^{\gamma_k}} }  + Flowterm \\
@@ -1721,7 +1501,7 @@ Flowterm = \cases{
 -\frac{i \sigma}{\omega} \thickspace\thickspace\mathrm{for} \thickspace \mathrm{IsRelativeDielectricPermittivity=false} \thickspace \mathrm{and} \thickspace \mathrm{InvertViscosity=true} \cr -\frac{i}{\omega\eta} \thickspace\thickspace\mathrm{for} \thickspace \mathrm{IsRelativeDielectricPermittivity=false} \thickspace \mathrm{and} \thickspace \mathrm{InvertViscosity=false}}
 $$
 
-with the circular frequency $\omega$ being the independent variable (or, depending on an option, the frequency $f$, $\omega=2\pi f$), and $\chi'(f)$ and $\chi''(f)$ being the dependent variables, namely the real and negative imaginary part of the complex dynamic susceptibility $\chi^*(\omega)$.
+with the circular frequency $\omega$ being the independent variable (or, depending on an option, the frequency $f$, $\omega=2\pi f$), and $\chi'(\omega)$ and $\chi''(\omega)$ being the dependent variables, namely the real and negative imaginary part of the complex dynamic susceptibility $\chi^*(\omega)$.
 
 Typical use cases are fits to the complex relative dielectric permittivity $e_r^*$, to the complex mechanical compliance $J^*$, or the specific complex heat capacity $c_p^*$. With the option `InvertResult`=true, fits to the complex mechanical modulus $M^*$ or the dielectric modulus $M_d^*$ are possible, too.
 
@@ -1775,6 +1555,314 @@ References:
 - Havriliak, S., Negami, S., "A complex plane representation of dielectric and mechanical relaxation processes in some polymers", Polymer 8: 161–210, doi:10.1016/0032-3861(67)90021-3
 </value>
   </data>
+  <data name="Retardation.General.KohlrauschComplexFrequency" xml:space="preserve">
+    <value># Kohlrausch retardation of a general susceptibility
+
+This function models the retardation of a general susceptibility (e.g. mechanical complicance) in dependence on the frequency $f$, including a term for the flow:
+
+
+$$
+\chi^*(f) = \chi'(f) - i \chi''(f) = \chi_{\infty} + \Delta\chi \int_0^{\infty} \exp(- i 2 \pi f t') \frac{d\Phi}{d t} dt' - \frac{i }{2 \pi f \eta} \\
+\Phi(t) = \exp\left [ -\left ( \frac{t}{\tau}\right )^{\beta} \right ]
+$$
+
+based on the Fourier transform of the derivative of the time-domain Kohlrausch function $\Phi(t)$:
+
+The quantities are described below.
+It is a special case of the underlying base function with the options `NumberOfTerms=1`, `UseFrequencyInsteadOfOmega=true`, `UseFlowTerm=true`, `IsRelativeDielectricPermittivity=false`, `InvertViscosity=false`, `InvertResult=false` and `LogarithmizeResult=false`. These options can be changed by double-clicking on the fit function.
+
+
+The underlying base function models the generalized complex dynamic susceptibility in dependence on the frequency with one or more retardation terms and a flow term as:
+
+$$
+\chi^*(\omega) = \chi'(\omega) - i \chi''(\omega) = \chi_{\infty} +  \sum_{k=0}^{N-1}{\left [ \Delta \chi_{k}\int_0^{\infty} \exp(- i \omega t') \frac{d\Phi_k}{d t} dt' \right ]}   + Flowterm \\
+
+\Phi_k(t) = \exp\left [ -\left ( \frac{t}{\tau_k}\right )^{\beta_k} \right ] \\
+
+Flowterm = \cases{
+-\frac{i \sigma_{DC}}{\omega \varepsilon_0} \thickspace\mathrm{for} \thickspace \mathrm{IsRelativeDielectricPermittivity=true} \thickspace \mathrm{and}  \thickspace \mathrm{InvertViscosity=true}  \cr 
+-\frac{i }{\omega \varepsilon_0 \rho_{DC}} \thickspace\mathrm{for} \thickspace \mathrm{IsRelativeDielectricPermittivity=true} \thickspace \mathrm{and}  \thickspace \mathrm{InvertViscosity=false}  \cr
+-\frac{i \sigma}{\omega} \thickspace\thickspace\mathrm{for} \thickspace \mathrm{IsRelativeDielectricPermittivity=false} \thickspace \mathrm{and} \thickspace \mathrm{InvertViscosity=true} \cr -\frac{i}{\omega\eta} \thickspace\thickspace\mathrm{for} \thickspace \mathrm{IsRelativeDielectricPermittivity=false} \thickspace \mathrm{and} \thickspace \mathrm{InvertViscosity=false}} 
+$$
+
+based on the Fourier transformation of the time derivative of the Kohlrausch function $\Phi(t)$, with the circular frequency $\omega$ being the independent variable (or, depending on an option, the frequency $f$, $\omega=2\pi f$), and $\chi'(\omega)$ and $\chi''(\omega)$ being the dependent variables, namely the real and negative imaginary part of the complex dynamic susceptibility $\chi^*(\omega)$.
+
+Typical use cases are fits to the complex relative dielectric permittivity $e_r^*$, to the complex mechanical compliance $J^*$, or the specific complex heat capacity $c_p^*$. With the option `InvertResult`=true, fits to the complex mechanical modulus $M^*$ or the dielectric modulus $M_d^*$ are possible, too.
+
+The parameters are:
+
+- $\chi_{\infty}$ : high frequency susceptibility limit
+- $\Delta\chi_k$ : retardation amplitude of term k
+- $\tau_k$ : retardation time of term k
+- $\beta_k$ : shape exponent (usually $ 0&lt;\beta\le 1 $ of term k
+- $\sigma_{DC}$ : DC specific electrical conductivity in S/m
+- $\rho_{DC}$ : DC specific electrical resistance in Ω·m
+- $\sigma$ : generalized conductivity, for instance fluidity (inverse viscosity)
+- $\eta$ : generalized viscosity
+
+
+The available options are:
+- `NumberOfTerms` ($N$): 
+Determines the number of retardation terms in the formula above. Must be at least 1.
+- `UseFrequencyInsteadOfOmega`:  
+If true, the frequency $f$ is used as the independent variable, thus $\omega$ in the formula above is replaced by $ 2\pi f $.   
+If false, the circular frequency ($\omega$) is used as the independent variable.
+- `UseFlowTerm`:  
+If true, the flow term in above formula is used.   
+If false, the flow term is not used, and the parameter corresponding with the flow term will not show in the fit.
+- `IsRelativeDielectricPermittivity`:  
+If true, it is assumed that relative dielectric permittivity data are fitted. Thus, the flow term is modified to use either the DC specific electric conductivity or the DC specific electric resisitivity $\rho_{DC}$ as the parameter for the flow term: $-{i \sigma_{DC}}/{(\omega \varepsilon_0)}$ or $-{i}/{(\omega \varepsilon_0 \rho_{DC})}$ with $\varepsilon_0$ being the vacuum permittivity..
+- `InvertViscosity`:  
+If true, the parameter in the flow term is an inverted viscosity (i.e. specific electrical conductivity, fluidity). Thus the flow term generally is $-{i \sigma}/{\omega}$.  
+If false, the parameter in the flow term is a viscosity, and the flow term generally is $-{i}/{(\omega\eta)}$.
+- `InvertResult`:  
+If true, the result is inverted, i.e. instead of the general susceptibility $\chi^*=\chi'-i\chi''$ the real and imaginary part of the generalized modulus $M'+iM'' = M^*={1}/{\chi^*}$ is used for the dependent variables. Please note that despite the fact that the output is a modulus, the parameters $\tau_k$ are still retardation times (and not relaxation times)!  
+If false, the real and negative imaginary part of the generalized susceptibility are used as the dependent variables. 
+- `LogarithmizeResult`:  
+If true, the resulting values of $\chi'$ and $\chi''$ (or $M'$ and $M''$ if `InvertResult` is true) are logarithmized (decadic logarithm).  
+If false, the original values are used.
+
+&gt; Note:  
+&gt; Since in some cases $\chi_{\infty}$ and $\chi_0=\chi_{\infty}+\sum{\Delta\chi_k}$ differ by several orders of magnitude, your fit function will also cover several orders of magnitude. This will result in a poor fit of the low susceptibility data. To avoid this behavior, you should either use a NaturalLogarithmTransformation for both your data and for the fit function's dependent variables, or use the option in this fit function to logarithmize the results and then use a DecadicLogarithmTransformation to transform your data.  
+
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.Retardation.General.KohlrauschComplexFrequency.Fig2.png)
+^^^ Fig. 1: Kohlrausch susceptibility fit functions (with $\chi_{\infty}=10^{-9}$, $\Delta \chi=0.999 \times 10^{-6}$, $\tau=1$ and $\eta=10^{33}$). The values for $\beta$ are indicated in the legend.
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.Retardation.General.KohlrauschComplexFrequency.Fig1.png)
+^^^ Fig. 2: Comparison of Kohlrausch susceptibility fit functions (with $\chi_{\infty}=10^{-9}$, $\Delta \chi=0.999 \times 10^{-6}$, $\tau=1$ and $\beta=1$) with different viscosities $\eta$. The values for $\eta$ are indicated in the legend.
+
+---
+References:  
+- Kohlrausch, R., "Theorie des elektrischen Rückstandes in der Leidner Flasche", Annalen der Physik und Chemie. 91 (1) (1854): 56–82, 179–213, doi:10.1002/andp.18541670103
+</value>
+  </data>
+  <data name="Retardation.General.KohlrauschComplexOmega" xml:space="preserve">
+    <value># Kohlrausch retardation of a general susceptibility
+
+This function models the retardation of a general susceptibility (e.g. mechanical complicance) in dependence on the circular frequency $\omega$, including a term for the flow:
+
+
+$$
+\chi^*(\omega) = \chi'(\omega) - i \chi''(\omega) = \chi_{\infty} + \Delta\chi \int_0^{\infty} \exp(- i \omega t') \frac{d\Phi}{d t} dt' - \frac{i }{\omega\eta} \\
+\Phi(t) = \exp\left [ -\left ( \frac{t}{\tau}\right )^{\beta} \right ]
+$$
+
+based on the Fourier transform of the derivative of the time-domain Kohlrausch function $\Phi(t)$:
+
+The quantities are described below.
+It is a special case of the underlying base function with the options `NumberOfTerms=1`, `UseFrequencyInsteadOfOmega=false`, `UseFlowTerm=true`, `IsRelativeDielectricPermittivity=false`, `InvertViscosity=false`, `InvertResult=false` and `LogarithmizeResult=false`. These options can be changed by double-clicking on the fit function.
+
+
+The underlying base function models the generalized complex dynamic susceptibility in dependence on the frequency with one or more retardation terms and a flow term as:
+
+$$
+\chi^*(\omega) = \chi'(\omega) - i \chi''(\omega) = \chi_{\infty} +  \sum_{k=0}^{N-1}{\left [ \Delta \chi_{k}\int_0^{\infty} \exp(- i \omega t') \frac{d\Phi_k}{d t} dt' \right ]}   + Flowterm \\
+
+\Phi_k(t) = \exp\left [ -\left ( \frac{t}{\tau_k}\right )^{\beta_k} \right ] \\
+
+Flowterm = \cases{
+-\frac{i \sigma_{DC}}{\omega \varepsilon_0} \thickspace\mathrm{for} \thickspace \mathrm{IsRelativeDielectricPermittivity=true} \thickspace \mathrm{and}  \thickspace \mathrm{InvertViscosity=true}  \cr 
+-\frac{i }{\omega \varepsilon_0 \rho_{DC}} \thickspace\mathrm{for} \thickspace \mathrm{IsRelativeDielectricPermittivity=true} \thickspace \mathrm{and}  \thickspace \mathrm{InvertViscosity=false}  \cr
+-\frac{i \sigma}{\omega} \thickspace\thickspace\mathrm{for} \thickspace \mathrm{IsRelativeDielectricPermittivity=false} \thickspace \mathrm{and} \thickspace \mathrm{InvertViscosity=true} \cr -\frac{i}{\omega\eta} \thickspace\thickspace\mathrm{for} \thickspace \mathrm{IsRelativeDielectricPermittivity=false} \thickspace \mathrm{and} \thickspace \mathrm{InvertViscosity=false}} 
+$$
+
+based on the Fourier transformation of the time derivative of the Kohlrausch function $\Phi(t)$, with the circular frequency $\omega$ being the independent variable (or, depending on an option, the frequency $f$, $\omega=2\pi f$), and $\chi'(\omega)$ and $\chi''(\omega)$ being the dependent variables, namely the real and negative imaginary part of the complex dynamic susceptibility $\chi^*(\omega)$.
+
+Typical use cases are fits to the complex relative dielectric permittivity $e_r^*$, to the complex mechanical compliance $J^*$, or the specific complex heat capacity $c_p^*$. With the option `InvertResult`=true, fits to the complex mechanical modulus $M^*$ or the dielectric modulus $M_d^*$ are possible, too.
+
+The parameters are:
+
+- $\chi_{\infty}$ : high frequency susceptibility limit
+- $\Delta\chi_k$ : retardation amplitude of term k
+- $\tau_k$ : retardation time of term k
+- $\beta_k$ : shape exponent (usually $ 0&lt;\beta\le 1 $ of term k
+- $\sigma_{DC}$ : DC specific electrical conductivity in S/m
+- $\rho_{DC}$ : DC specific electrical resistance in Ω·m
+- $\sigma$ : generalized conductivity, for instance fluidity (inverse viscosity)
+- $\eta$ : generalized viscosity
+
+
+The available options are:
+- `NumberOfTerms` ($N$): 
+Determines the number of retardation terms in the formula above. Must be at least 1.
+- `UseFrequencyInsteadOfOmega`:  
+If true, the frequency $f$ is used as the independent variable, thus $\omega$ in the formula above is replaced by $ 2\pi f $.   
+If false, the circular frequency ($\omega$) is used as the independent variable.
+- `UseFlowTerm`:  
+If true, the flow term in above formula is used.   
+If false, the flow term is not used, and the parameter corresponding with the flow term will not show in the fit.
+- `IsRelativeDielectricPermittivity`:  
+If true, it is assumed that relative dielectric permittivity data are fitted. Thus, the flow term is modified to use either the DC specific electric conductivity or the DC specific electric resisitivity $\rho_{DC}$ as the parameter for the flow term: $-{i \sigma_{DC}}/{(\omega \varepsilon_0)}$ or $-{i}/{(\omega \varepsilon_0 \rho_{DC})}$ with $\varepsilon_0$ being the vacuum permittivity..
+- `InvertViscosity`:  
+If true, the parameter in the flow term is an inverted viscosity (i.e. specific electrical conductivity, fluidity). Thus the flow term generally is $-{i \sigma}/{\omega}$.  
+If false, the parameter in the flow term is a viscosity, and the flow term generally is $-{i}/{(\omega\eta)}$.
+- `InvertResult`:  
+If true, the result is inverted, i.e. instead of the general susceptibility $\chi^*=\chi'-i\chi''$ the real and imaginary part of the generalized modulus $M'+iM'' = M^*={1}/{\chi^*}$ is used for the dependent variables. Please note that despite the fact that the output is a modulus, the parameters $\tau_k$ are still retardation times (and not relaxation times)!  
+If false, the real and negative imaginary part of the generalized susceptibility are used as the dependent variables. 
+- `LogarithmizeResult`:  
+If true, the resulting values of $\chi'$ and $\chi''$ (or $M'$ and $M''$ if `InvertResult` is true) are logarithmized (decadic logarithm).  
+If false, the original values are used.
+
+&gt; Note:  
+&gt; Since in some cases $\chi_{\infty}$ and $\chi_0=\chi_{\infty}+\sum{\Delta\chi_k}$ differ by several orders of magnitude, your fit function will also cover several orders of magnitude. This will result in a poor fit of the low susceptibility data. To avoid this behavior, you should either use a NaturalLogarithmTransformation for both your data and for the fit function's dependent variables, or use the option in this fit function to logarithmize the results and then use a DecadicLogarithmTransformation to transform your data.  
+
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.Retardation.General.KohlrauschComplexOmega.Fig2.png)
+^^^ Fig. 1: Kohlrausch susceptibility fit functions (with $\chi_{\infty}=10^{-9}$, $\Delta \chi=0.999 \times 10^{-6}$, $\tau=1$ and $\eta=10^{33}$). The values for $beta$ are indicated in the legend.
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.Retardation.General.KohlrauschComplexOmega.Fig1.png)
+^^^ Fig. 2: Comparison of Kohlrausch susceptibility fit functions (with $\chi_{\infty}=10^{-9}$, $\Delta \chi=0.999 \times 10^{-6}$, $\tau=1$ and $\beta=1$) with different viscosities $\eta$. The values for $\eta$ are indicated in the legend.
+
+---
+References:  
+- Kohlrausch, R., "Theorie des elektrischen Rückstandes in der Leidner Flasche", Annalen der Physik und Chemie. 91 (1) (1854): 56–82, 179–213, doi:10.1002/andp.18541670103
+</value>
+  </data>
+  <data name="Retardation.Modulus.HavriliakNegamiComplexFrequency" xml:space="preserve">
+    <value># Havriliak-Negami retardation of a general modulus
+
+This function models the retardation of a general modulus (e.g. mechanical modulus) in dependence on the frequency $f$ with a retardation and a flow term:
+
+
+$$
+M^*(f) = M'(f) + i M''(f) = \left [\frac{1}{M_{\infty}} + \left ( \frac{1}{M_{0}}-\frac{1}{M_{\infty}} \right ) \frac{1}{(1+(i  2 \pi f \tau)^{\alpha})^{\gamma}} - \frac{i }{2 \pi f \eta} \right ]^{-1}
+$$
+
+The quantities are described below.
+It is a special case of the underlying base function with the options `UseFrequencyInsteadOfOmega=true`, `UseFlowTerm=true`, `InvertViscosity=false`  and `LogarithmizeResult=false`. These options can be changed by double-clicking on the fit function.
+
+The underlying base function models the generalized complex dynamic modulus in dependence on the circular frequency $\omega=2 \pi f$ as:
+
+$$
+M'(\omega) + i M''(\omega) = \left [\frac{1}{M_{\infty}} + \left ( \frac{1}{M_{0}}-\frac{1}{M_{\infty}} \right ) \frac{1}{(1+(i \tau \omega)^{\alpha})^{\gamma}} + Flowterm \right ]^{-1} \\
+Flowterm = \cases{
+-\frac{i \sigma}{\omega} \thickspace\thickspace\mathrm{for} \thickspace \mathrm{InvertViscosity=true} \cr -\frac{i}{\omega\eta} \thickspace\thickspace\mathrm{for} \thickspace \mathrm{InvertViscosity=false}}
+$$
+
+with the circular frequency $\omega$ being the independent variable (or, depending on an option, the frequency $f$, $\omega=2\pi f$), and $M'$ and $M''$ being the dependent variables, namely the real and imaginary part of the complex dynamic modulus $M^*$.
+
+The typical use case is a fit to the complex dynamic mechanical modulus (e.g. shear modulus $G^*$ or Young's modulus $Y^*$).
+
+The parameters are:
+
+- $M_{\infty}$ : high frequency modulus limit
+- $M_0$ : low frequency modulus limit
+- $\tau$ : retardation time (attention: this is not the same as the relaxation time, e.g. the maximum of $M''$ is considerably shifted with respect to $ 1/\tau $ !)
+- $\alpha$, $\gamma$ : shape exponents (usually $ 0&lt;\alpha\le 1 $ and $ 0&lt;\gamma\le 1 $)
+- $\sigma$ : generalized fluidity (inverse viscosity)
+- $\eta$ : generalized viscosity
+
+
+The available options are:
+
+- `UseFrequencyInsteadOfOmega`:  
+If true, the frequency $f$ is used as the independent variable, thus $\omega$ in the formula above is replaced by $ 2\pi f $.   
+If false, the circular frequency $\omega$ is used as the independent variable.
+
+- `UseFlowTerm`:  
+If true, the flow term in above formula is used.   
+If false, the flow term is not used, and the parameter corresponding with the flow term will not show in the fit.
+
+- `InvertViscosity`:  
+If true, the parameter in the flow term is an inverted viscosity (i.e.  fluidity). Thus the flow term generally is $-{i \sigma}/{\omega}$.  
+If false, the parameter in the flow term is a viscosity, and the flow term generally is $-{i}/{(\omega\eta)}$.
+
+- `LogarithmizeResult`:  
+If true, the resulting values of $M'$ and $M''$ are logarithmized (decadic logarithm).  
+If false, the original values are used.
+
+&gt; Note:  
+&gt; Since in most cases $M_{\infty}$ and $M_0$ differ by several orders of magnitude, your fit function will also cover several orders of magnitude. This will result in a poor fit of the low modulus data. To avoid this behavior, you should either use a NaturalLogarithmTransformation for both your data and for the fit function's dependent variables, or use the option in this fit function to logarithmize the results and then use a DecadicLogarithmTransformation to transform your data.  
+
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.Retardation.Modulus.HavriliakNegamiComplexFrequency.Fig2.png)
+^^^ Fig. 1: Havriliak-Negami fit functions (with $M_0=10^{6}$, $M_{\infty}=10^{9}$, $\tau=1$ and $\eta=10^{33}$). The values for $\alpha$ and $\gamma$ are indicated in the legend. 
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.Retardation.Modulus.HavriliakNegamiComplexFrequency.Fig1.png)
+^^^ Fig. 2: Comparison of Havriliak-Negami fit functions (with $M_0=10^{6}$, $M_{\infty}=10^{9}$, $\tau=1$, $\alpha=1$ and $\gamma=1$) with different viscosities $\eta$. The values for $\eta$ are indicated in the legend.
+
+---
+References:  
+- Havriliak, S., Negami, S., "A complex plane representation of dielectric and mechanical relaxation processes in some polymers", Polymer 8: 161–210, doi:10.1016/0032-3861(67)90021-3
+</value>
+  </data>
+  <data name="Retardation.Modulus.HavriliakNegamiComplexOmega" xml:space="preserve">
+    <value># Havriliak-Negami retardation of a general modulus
+
+This function models the retardation of a general modulus (e.g. mechanical modulus) in dependence on the circular frequency $\omega$ with a retardation and a flow term:
+
+
+$$
+M^*(\omega) = M'(\omega) + i M''(\omega) = \left [\frac{1}{M_{\infty}} + \left ( \frac{1}{M_{0}}-\frac{1}{M_{\infty}} \right ) \frac{1}{(1+(i \tau \omega)^{\alpha})^{\gamma}} - \frac{i }{\omega \eta} \right ]^{-1}
+$$
+
+The quantities are described below.
+It is a special case of the underlying base function with the options `UseFrequencyInsteadOfOmega=false`, `UseFlowTerm=true`, `InvertViscosity=false`  and `LogarithmizeResult=false`. These options can be changed by double-clicking on the fit function.
+
+The underlying base function models the generalized complex dynamic modulus in dependence on the circular frequency $\omega=2 \pi f$ as:
+
+$$
+M'(\omega) + i M''(\omega) = \left [\frac{1}{M_{\infty}} + \left ( \frac{1}{M_{0}}-\frac{1}{M_{\infty}} \right ) \frac{1}{(1+(i \tau \omega)^{\alpha})^{\gamma}} + Flowterm \right ]^{-1} \\
+Flowterm = \cases{
+-\frac{i \sigma}{\omega} \thickspace\thickspace\mathrm{for} \thickspace \mathrm{InvertViscosity=true} \cr -\frac{i}{\omega\eta} \thickspace\thickspace\mathrm{for} \thickspace \mathrm{InvertViscosity=false}}
+$$
+
+with the circular frequency $\omega$ being the independent variable (or, depending on an option, the frequency $f$, $\omega=2\pi f$), and $M'$ and $M''$ being the dependent variables, namely the real and imaginary part of the complex dynamic modulus $M^*$.
+
+The typical use case is a fit to the complex dynamic mechanical modulus (e.g. shear modulus $G^*$ or Young's modulus $Y^*$).
+
+The parameters are:
+
+- $M_{\infty}$ : high frequency modulus limit
+- $M_0$ : low frequency modulus limit
+- $\tau$ : retardation time (attention: this is not the same as the relaxation time, e.g. the maximum of $M''$ is considerably shifted with respect to $ 1/\tau $ !)
+- $\alpha$, $\gamma$ : shape exponents (usually $ 0&lt;\alpha\le 1 $ and $ 0&lt;\gamma\le 1 $)
+- $\sigma$ : generalized fluidity (inverse viscosity)
+- $\eta$ : generalized viscosity
+
+
+The available options are:
+
+- `UseFrequencyInsteadOfOmega`:  
+If true, the frequency $f$ is used as the independent variable, thus $\omega$ in the formula above is replaced by $ 2\pi f $.   
+If false, the circular frequency $\omega$ is used as the independent variable.
+
+- `UseFlowTerm`:  
+If true, the flow term in above formula is used.   
+If false, the flow term is not used, and the parameter corresponding with the flow term will not show in the fit.
+
+- `InvertViscosity`:  
+If true, the parameter in the flow term is an inverted viscosity (i.e.  fluidity). Thus the flow term generally is $-{i \sigma}/{\omega}$.  
+If false, the parameter in the flow term is a viscosity, and the flow term generally is $-{i}/{(\omega\eta)}$.
+
+- `LogarithmizeResult`:  
+If true, the resulting values of $M'$ and $M''$ are logarithmized (decadic logarithm).  
+If false, the original values are used.
+
+&gt; Note:  
+&gt; Since in most cases $M_{\infty}$ and $M_0$ differ by several orders of magnitude, your fit function will also cover several orders of magnitude. This will result in a poor fit of the low modulus data. To avoid this behavior, you should either use a NaturalLogarithmTransformation for both your data and for the fit function's dependent variables, or use the option in this fit function to logarithmize the results and then use a DecadicLogarithmTransformation to transform your data.  
+
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.Retardation.Modulus.HavriliakNegamiComplexOmega.Fig2.png)
+^^^ Fig. 1: Havriliak-Negami fit functions (with $M_0=10^{6}$, $M_{\infty}=10^{9}$, $\tau=1$ and $\eta=10^{33}$). The values for $\alpha$ and $\gamma$ are indicated in the legend. 
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.Retardation.Modulus.HavriliakNegamiComplexOmega.Fig1.png)
+^^^ Fig. 2: Comparison of Havriliak-Negami fit functions (with $M_0=10^{6}$, $M_{\infty}=10^{9}$, $\tau=1$, $\alpha=1$ and $\gamma=1$) with different viscosities $\eta$. The values for $\eta$ are indicated in the legend.
+
+---
+References:  
+- Havriliak, S., Negami, S., "A complex plane representation of dielectric and mechanical relaxation processes in some polymers", Polymer 8: 161–210, doi:10.1016/0032-3861(67)90021-3
+</value>
+  </data>
   <data name="Retardation.Modulus.HavriliakNegamiMultiComplexFrequency" xml:space="preserve">
     <value># Havriliak-Negami retardation of a general modulus
 
@@ -1788,7 +1876,7 @@ The quantities are described below.
 It is a special case of the underlying base function with the options `NumberOfTerms=2`, `UseFrequencyInsteadOfOmega=true`, `UseFlowTerm=true`, `IsRelativeDielectricPermittivity=false`, `InvertViscosity=false`, `InvertResult=true` and `LogarithmizeResult=false`. These options can be changed by double-clicking on the fit function.
 
 
-The underlying base function models the generalized complex dynamic susceptibility in dependence on the frequency as:
+The underlying base function models the generalized complex dynamic susceptibility in dependence on the frequency with one or more retardation terms and a flow term as:
 
 $$
 \chi^*(\omega) = \chi'(\omega) - i \chi''(\omega) = \chi_{\infty} +  \sum_{k=0}^{N-1}{\frac{\Delta \chi_{k}}{(1+(i \omega \tau_k)^{\alpha_k})^{\gamma_k}} }  + Flowterm \\
@@ -1798,7 +1886,7 @@ Flowterm = \cases{
 -\frac{i \sigma}{\omega} \thickspace\thickspace\mathrm{for} \thickspace \mathrm{IsRelativeDielectricPermittivity=false} \thickspace \mathrm{and} \thickspace \mathrm{InvertViscosity=true} \cr -\frac{i}{\omega\eta} \thickspace\thickspace\mathrm{for} \thickspace \mathrm{IsRelativeDielectricPermittivity=false} \thickspace \mathrm{and} \thickspace \mathrm{InvertViscosity=false}}
 $$
 
-with the circular frequency $\omega$ being the independent variable (or, depending on an option, the frequency $f$, $\omega=2\pi f$), and $\chi'(f)$ and $\chi''(f)$ being the dependent variables, namely the real and negative imaginary part of the complex dynamic susceptibility $\chi^*(\omega)$.
+with the circular frequency $\omega$ being the independent variable (or, depending on an option, the frequency $f$, $\omega=2\pi f$), and $\chi'(\omega)$ and $\chi''(\omega)$ being the dependent variables, namely the real and negative imaginary part of the complex dynamic susceptibility $\chi^*(\omega)$.
 
 Typical use cases are fits to the complex relative dielectric permittivity $e_r^*$, to the complex mechanical compliance $J^*$, or the specific complex heat capacity $c_p^*$. With the option `InvertResult`=true, fits to the complex mechanical modulus $M^*$ or the dielectric modulus $M_d^*$ are possible, too.
 
@@ -1841,11 +1929,11 @@ If false, the original values are used.
 
 ^^^
 ![](res:Altaxo.Calc.FitFunctions.Retardation.Modulus.HavriliakNegamiMultiComplexFrequency.Fig2.png)
-^^^ Fig. 1: Havriliak-Negami fit functions (with $\chi_{\infty}=0.5 \times 10^{-9}$, $\Delta \chi=0.999 \times 10^{-6}$, $\tau=1000$, $\Delta \chi_1=0.5 \times 10^{-9}$, $\tau_1=0.1$, $\alpha_1=1$, $\gamma_1=1$   and $\eta=10^{33}$). The values for $\alpha$ and $\gamma$ are indicated in the legend.
+^^^ Fig. 1: Havriliak-Negami fit functions (with $\chi_{\infty}=0.5 \times 10^{-9}$, $\Delta \chi=0.999 \times 10^{-6}$, $\tau=1000$, $\Delta \chi_1=0.5 \times 10^{-9}$, $\tau_1=0.1$, $\alpha_1=1$, $\gamma_1=1$   and $\eta=10^{33}$). The values for $\alpha$ and $\gamma$ are indicated in the legend. Note that here the $\chi$ values are mechanical compliances (in Pa^-1^).
 
 ^^^
 ![](res:Altaxo.Calc.FitFunctions.Retardation.Modulus.HavriliakNegamiMultiComplexFrequency.Fig1.png)
-^^^ Fig. 2: Comparison of Havriliak-Negami fit functions (with $\chi_{\infty}=0.5 \times 10^{-9}$, $\Delta \chi=0.999 \times 10^{-6}$, $\tau=1000$, $\alpha=1$, $\gamma=1$, $\Delta \chi_1=0.5 \times 10^{-9}$, $\tau_1=0.1$, $\alpha_1=1$ and $\gamma_1=1$) with different viscosities $\eta$. The values for $\eta$ are indicated in the legend.
+^^^ Fig. 2: Comparison of Havriliak-Negami fit functions (with $\chi_{\infty}=0.5 \times 10^{-9}$, $\Delta \chi=0.999 \times 10^{-6}$, $\tau=1000$, $\alpha=1$, $\gamma=1$, $\Delta \chi_1=0.5 \times 10^{-9}$, $\tau_1=0.1$, $\alpha_1=1$ and $\gamma_1=1$) with different viscosities $\eta$. The values for $\eta$ are indicated in the legend. Note that here the $\chi$ values are mechanical compliances (in Pa^-1^).
 
 ---
 References:  
@@ -1865,7 +1953,7 @@ The quantities are described below.
 It is a special case of the underlying base function with the options `NumberOfTerms=2`, `UseFrequencyInsteadOfOmega=false`, `UseFlowTerm=true`, `IsRelativeDielectricPermittivity=false`, `InvertViscosity=false`, `InvertResult=true` and `LogarithmizeResult=false`. These options can be changed by double-clicking on the fit function.
 
 
-The underlying base function models the generalized complex dynamic susceptibility in dependence on the frequency as:
+The underlying base function models the generalized complex dynamic susceptibility in dependence on the frequency with one or more retardation terms and a flow term as:
 
 $$
 \chi^*(\omega) = \chi'(\omega) - i \chi''(\omega) = \chi_{\infty} +  \sum_{k=0}^{N-1}{\frac{\Delta \chi_{k}}{(1+(i \omega \tau_k)^{\alpha_k})^{\gamma_k}} }  + Flowterm \\
@@ -1875,7 +1963,7 @@ Flowterm = \cases{
 -\frac{i \sigma}{\omega} \thickspace\thickspace\mathrm{for} \thickspace \mathrm{IsRelativeDielectricPermittivity=false} \thickspace \mathrm{and} \thickspace \mathrm{InvertViscosity=true} \cr -\frac{i}{\omega\eta} \thickspace\thickspace\mathrm{for} \thickspace \mathrm{IsRelativeDielectricPermittivity=false} \thickspace \mathrm{and} \thickspace \mathrm{InvertViscosity=false}}
 $$
 
-with the circular frequency $\omega$ being the independent variable (or, depending on an option, the frequency $f$, $\omega=2\pi f$), and $\chi'(f)$ and $\chi''(f)$ being the dependent variables, namely the real and negative imaginary part of the complex dynamic susceptibility $\chi^*(\omega)$.
+with the circular frequency $\omega$ being the independent variable (or, depending on an option, the frequency $f$, $\omega=2\pi f$), and $\chi'(\omega)$ and $\chi''(\omega)$ being the dependent variables, namely the real and negative imaginary part of the complex dynamic susceptibility $\chi^*(\omega)$.
 
 Typical use cases are fits to the complex relative dielectric permittivity $e_r^*$, to the complex mechanical compliance $J^*$, or the specific complex heat capacity $c_p^*$. With the option `InvertResult`=true, fits to the complex mechanical modulus $M^*$ or the dielectric modulus $M_d^*$ are possible, too.
 
@@ -1918,11 +2006,169 @@ If false, the original values are used.
 
 ^^^
 ![](res:Altaxo.Calc.FitFunctions.Retardation.Modulus.HavriliakNegamiMultiComplexOmega.Fig2.png)
-^^^ Fig. 1: Havriliak-Negami fit functions (with $\chi_{\infty}=0.5 \times 10^{-9}$, $\Delta \chi=0.999 \times 10^{-6}$, $\tau=1000$, $\Delta \chi_1=0.5 \times 10^{-9}$, $\tau_1=0.1$, $\alpha_1=1$, $\gamma_1=1$   and $\eta=10^{33}$). The values for $\alpha$ and $\gamma$ are indicated in the legend.
+^^^ Fig. 1: Havriliak-Negami fit functions (with $\chi_{\infty}=0.5 \times 10^{-9}$, $\Delta \chi=0.999 \times 10^{-6}$, $\tau=1000$, $\Delta \chi_1=0.5 \times 10^{-9}$, $\tau_1=0.1$, $\alpha_1=1$, $\gamma_1=1$   and $\eta=10^{33}$). The values for $\alpha$ and $\gamma$ are indicated in the legend. Note that here the $\chi$ values are mechanical compliances (in Pa^-1^).
 
 ^^^
 ![](res:Altaxo.Calc.FitFunctions.Retardation.Modulus.HavriliakNegamiMultiComplexOmega.Fig1.png)
-^^^ Fig. 2: Comparison of Havriliak-Negami fit functions (with $\chi_{\infty}=0.5 \times 10^{-9}$, $\Delta \chi=0.999 \times 10^{-6}$, $\tau=1000$, $\alpha=1$, $\gamma=1$, $\Delta \chi_1=0.5 \times 10^{-9}$, $\tau_1=0.1$, $\alpha_1=1$ and $\gamma_1=1$) with different viscosities $\eta$. The values for $\eta$ are indicated in the legend.
+^^^ Fig. 2: Comparison of Havriliak-Negami fit functions (with $\chi_{\infty}=0.5 \times 10^{-9}$, $\Delta \chi=0.999 \times 10^{-6}$, $\tau=1000$, $\alpha=1$, $\gamma=1$, $\Delta \chi_1=0.5 \times 10^{-9}$, $\tau_1=0.1$, $\alpha_1=1$ and $\gamma_1=1$) with different viscosities $\eta$. The values for $\eta$ are indicated in the legend. Note that here the $\chi$ values are mechanical compliances (in Pa^-1^).
+
+---
+References:  
+- Havriliak, S., Negami, S., "A complex plane representation of dielectric and mechanical relaxation processes in some polymers", Polymer 8: 161–210, doi:10.1016/0032-3861(67)90021-3
+</value>
+  </data>
+  <data name="Retardation.Modulus.Lg10HavriliakNegamiComplexFrequency" xml:space="preserve">
+    <value># Havriliak-Negami retardation of a general modulus
+
+This function models the retardation of a general modulus (e.g. mechanical modulus) in dependence on the frequency $f$ with a retardation and a flow term:
+
+
+$$
+M^*(f) = M'(f) + i M''(f) = \left [\frac{1}{M_{\infty}} + \left ( \frac{1}{M_{0}}-\frac{1}{M_{\infty}} \right ) \frac{1}{(1+(i  2 \pi f \tau)^{\alpha})^{\gamma}} - \frac{i }{2 \pi f \eta} \right ]^{-1}
+$$
+
+Here, the values of the real and imaginary part of the calculated modulus are **logarithmized** for the output:
+
+$$
+lgM'(f) = \log_{10}(M'(f)) \\
+lgM''(f) = \log_{10}(M''(f)) \\
+$$
+
+Should your data are not logarithmized, use a DecadicLogarithmTransformation to logarithmize them, too.
+
+The quantities are described below.
+It is a special case of the underlying base function with the options `UseFrequencyInsteadOfOmega=true`, `UseFlowTerm=true`, `InvertViscosity=false`  and `LogarithmizeResult=true`. These options can be changed by double-clicking on the fit function.
+
+The underlying base function models the generalized complex dynamic modulus in dependence on the circular frequency $\omega=2 \pi f$ as:
+
+$$
+M'(\omega) + i M''(\omega) = \left [\frac{1}{M_{\infty}} + \left ( \frac{1}{M_{0}}-\frac{1}{M_{\infty}} \right ) \frac{1}{(1+(i \tau \omega)^{\alpha})^{\gamma}} + Flowterm \right ]^{-1} \\
+Flowterm = \cases{
+-\frac{i \sigma}{\omega} \thickspace\thickspace\mathrm{for} \thickspace \mathrm{InvertViscosity=true} \cr -\frac{i}{\omega\eta} \thickspace\thickspace\mathrm{for} \thickspace \mathrm{InvertViscosity=false}}
+$$
+
+with the circular frequency $\omega$ being the independent variable (or, depending on an option, the frequency $f$, $\omega=2\pi f$), and $M'$ and $M''$ being the dependent variables, namely the real and imaginary part of the complex dynamic modulus $M^*$.
+
+The typical use case is a fit to the complex dynamic mechanical modulus (e.g. shear modulus $G^*$ or Young's modulus $Y^*$).
+
+The parameters are:
+
+- $M_{\infty}$ : high frequency modulus limit
+- $M_0$ : low frequency modulus limit
+- $\tau$ : retardation time (attention: this is not the same as the relaxation time, e.g. the maximum of $M''$ is considerably shifted with respect to $ 1/\tau $ !)
+- $\alpha$, $\gamma$ : shape exponents (usually $ 0&lt;\alpha\le 1 $ and $ 0&lt;\gamma\le 1 $)
+- $\sigma$ : generalized fluidity (inverse viscosity)
+- $\eta$ : generalized viscosity
+
+
+The available options are:
+
+- `UseFrequencyInsteadOfOmega`:  
+If true, the frequency $f$ is used as the independent variable, thus $\omega$ in the formula above is replaced by $ 2\pi f $.   
+If false, the circular frequency $\omega$ is used as the independent variable.
+
+- `UseFlowTerm`:  
+If true, the flow term in above formula is used.   
+If false, the flow term is not used, and the parameter corresponding with the flow term will not show in the fit.
+
+- `InvertViscosity`:  
+If true, the parameter in the flow term is an inverted viscosity (i.e.  fluidity). Thus the flow term generally is $-{i \sigma}/{\omega}$.  
+If false, the parameter in the flow term is a viscosity, and the flow term generally is $-{i}/{(\omega\eta)}$.
+
+- `LogarithmizeResult`:  
+If true, the resulting values of $M'$ and $M''$ are logarithmized (decadic logarithm).  
+If false, the original values are used.
+
+&gt; Note:  
+&gt; Since in most cases $M_{\infty}$ and $M_0$ differ by several orders of magnitude, your fit function will also cover several orders of magnitude. This will result in a poor fit of the low modulus data. To avoid this behavior, you should either use a NaturalLogarithmTransformation for both your data and for the fit function's dependent variables, or use the option in this fit function to logarithmize the results and then use a DecadicLogarithmTransformation to transform your data.  
+
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.Retardation.Modulus.Lg10HavriliakNegamiComplexFrequency.Fig2.png)
+^^^ Fig. 1: Havriliak-Negami fit functions (with $M_0=10^{6}$, $M_{\infty}=10^{9}$, $\tau=1$ and $\eta=10^{33}$). The values for $\alpha$ and $\gamma$ are indicated in the legend. 
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.Retardation.Modulus.Lg10HavriliakNegamiComplexFrequency.Fig1.png)
+^^^ Fig. 2: Comparison of Havriliak-Negami fit functions (with $M_0=10^{6}$, $M_{\infty}=10^{9}$, $\tau=1$, $\alpha=1$ and $\gamma=1$) with different viscosities $\eta$. The values for $\eta$ are indicated in the legend.
+
+---
+References:  
+- Havriliak, S., Negami, S., "A complex plane representation of dielectric and mechanical relaxation processes in some polymers", Polymer 8: 161–210, doi:10.1016/0032-3861(67)90021-3
+</value>
+  </data>
+  <data name="Retardation.Modulus.Lg10HavriliakNegamiComplexOmega" xml:space="preserve">
+    <value># Havriliak-Negami retardation of a general modulus
+
+This function models the retardation of a general modulus (e.g. mechanical modulus) in dependence on the circular frequency $\omega$ with a retardation and a flow term:
+
+
+$$
+M^*(\omega) = M'(\omega) + i M''(\omega) = \left [\frac{1}{M_{\infty}} + \left ( \frac{1}{M_{0}}-\frac{1}{M_{\infty}} \right ) \frac{1}{(1+(i \tau \omega)^{\alpha})^{\gamma}} - \frac{i }{\omega \eta} \right ]^{-1}
+$$
+
+Here, the values of the real and imaginary part of the calculated modulus are **logarithmized** for the output:
+
+$$
+lgM'(f) = \log_{10}(M'(f)) \\
+lgM''(f) = \log_{10}(M''(f)) \\
+$$
+
+Should your data are not logarithmized, use a DecadicLogarithmTransformation to logarithmize them, too.
+
+The quantities are described below.
+It is a special case of the underlying base function with the options `UseFrequencyInsteadOfOmega=false`, `UseFlowTerm=true`, `InvertViscosity=false`  and `LogarithmizeResult=false`. These options can be changed by double-clicking on the fit function.
+
+The underlying base function models the generalized complex dynamic modulus in dependence on the circular frequency $\omega=2 \pi f$ as:
+
+$$
+M'(\omega) + i M''(\omega) = \left [\frac{1}{M_{\infty}} + \left ( \frac{1}{M_{0}}-\frac{1}{M_{\infty}} \right ) \frac{1}{(1+(i \tau \omega)^{\alpha})^{\gamma}} + Flowterm \right ]^{-1} \\
+Flowterm = \cases{
+-\frac{i \sigma}{\omega} \thickspace\thickspace\mathrm{for} \thickspace \mathrm{InvertViscosity=true} \cr -\frac{i}{\omega\eta} \thickspace\thickspace\mathrm{for} \thickspace \mathrm{InvertViscosity=false}}
+$$
+
+with the circular frequency $\omega$ being the independent variable (or, depending on an option, the frequency $f$, $\omega=2\pi f$), and $M'$ and $M''$ being the dependent variables, namely the real and imaginary part of the complex dynamic modulus $M^*$.
+
+The typical use case is a fit to the complex dynamic mechanical modulus (e.g. shear modulus $G^*$ or Young's modulus $Y^*$).
+
+The parameters are:
+
+- $M_{\infty}$ : high frequency modulus limit
+- $M_0$ : low frequency modulus limit
+- $\tau$ : retardation time (attention: this is not the same as the relaxation time, e.g. the maximum of $M''$ is considerably shifted with respect to $ 1/\tau $ !)
+- $\alpha$, $\gamma$ : shape exponents (usually $ 0&lt;\alpha\le 1 $ and $ 0&lt;\gamma\le 1 $)
+- $\sigma$ : generalized fluidity (inverse viscosity)
+- $\eta$ : generalized viscosity
+
+
+The available options are:
+
+- `UseFrequencyInsteadOfOmega`:  
+If true, the frequency $f$ is used as the independent variable, thus $\omega$ in the formula above is replaced by $ 2\pi f $.   
+If false, the circular frequency $\omega$ is used as the independent variable.
+
+- `UseFlowTerm`:  
+If true, the flow term in above formula is used.   
+If false, the flow term is not used, and the parameter corresponding with the flow term will not show in the fit.
+
+- `InvertViscosity`:  
+If true, the parameter in the flow term is an inverted viscosity (i.e.  fluidity). Thus the flow term generally is $-{i \sigma}/{\omega}$.  
+If false, the parameter in the flow term is a viscosity, and the flow term generally is $-{i}/{(\omega\eta)}$.
+
+- `LogarithmizeResult`:  
+If true, the resulting values of $M'$ and $M''$ are logarithmized (decadic logarithm).  
+If false, the original values are used.
+
+&gt; Note:  
+&gt; Since in most cases $M_{\infty}$ and $M_0$ differ by several orders of magnitude, your fit function will also cover several orders of magnitude. This will result in a poor fit of the low modulus data. To avoid this behavior, you should either use a NaturalLogarithmTransformation for both your data and for the fit function's dependent variables, or use the option in this fit function to logarithmize the results and then use a DecadicLogarithmTransformation to transform your data.  
+
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.Retardation.Modulus.Lg10HavriliakNegamiComplexOmega.Fig2.png)
+^^^ Fig. 1: Havriliak-Negami fit functions (with $M_0=10^{6}$, $M_{\infty}=10^{9}$, $\tau=1$ and $\eta=10^{33}$). The values for $\alpha$ and $\gamma$ are indicated in the legend. 
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.Retardation.Modulus.Lg10HavriliakNegamiComplexOmega.Fig1.png)
+^^^ Fig. 2: Comparison of Havriliak-Negami fit functions (with $M_0=10^{6}$, $M_{\infty}=10^{9}$, $\tau=1$, $\alpha=1$ and $\gamma=1$) with different viscosities $\eta$. The values for $\eta$ are indicated in the legend.
 
 ---
 References:  
