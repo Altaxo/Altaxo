@@ -33,7 +33,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
   /// Kohlrausch function in the frequency domain to fit compliance or dielectric spectra.
   /// </summary>
   [FitFunctionClass]
-  public class KohlrauschSusceptibility : IFitFunction
+  public class KohlrauschSusceptibility : IFitFunction, Main.IImmutable
   {
     private bool _useFrequencyInsteadOmega;
     private bool _useFlowTerm;
@@ -147,7 +147,19 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
       }
     }
 
+    /// <summary>
+    /// Gets a value indicating whether to use a flow term.
+    /// </summary>
+    /// <value>
+    ///   <c>true</c> if a flow term is included; otherwise, <c>false</c>.
+    /// </value>
     public bool UseFlowTerm => _useFlowTerm;
+
+    /// <summary>
+    /// Sets a value indicating whether to use a flow term.
+    /// </summary>
+    /// <param name="value"><c>true</c> if a flow term is included; otherwise, <c>false</c>.</param>
+    /// <returns>New instance with the parameter set accordingly.</returns>
     public KohlrauschSusceptibility WithUseFlowTerm(bool value)
     {
       if (!(_useFlowTerm == value))
@@ -177,7 +189,19 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
       }
     }
 
+    /// <summary>
+    /// Gets a value indicating whether to invert the viscosity (then a general fluidity is used as parameter).
+    /// </summary>
+    /// <value>
+    ///   <c>true</c> if a fluidity is used instead of viscosity; otherwise, <c>false</c>.
+    /// </value>
     public bool InvertViscosity => _invertViscosity;
+
+    /// <summary>
+    /// Sets a value indicating whether to invert the viscosity (then a general fluidity is used as parameter).
+    /// </summary>
+    /// <param name="value"><c>true</c> if a fluidity is used instead of viscosity; otherwise, <c>false</c>.</param>
+    /// <returns>New instance with the parameter set accordingly.</returns>
     public KohlrauschSusceptibility WithInvertViscosity(bool value)
     {
       if (!(InvertViscosity == value))
@@ -238,6 +262,12 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     ///   <c>true</c> if the result is logarithmized; otherwise, <c>false</c>.
     /// </value>
     public bool LogarithmizeResults => _logarithmizeResults;
+
+    /// <summary>
+    /// Sets a value indicating whether the real and imaginary part of the dependent variable should be logarithmized (decadic logarithm).
+    /// </summary>
+    /// <param name="value"><c>true</c> if the real and imaginary part of the dependent variable should be logarithmized; otherwise, <c>false</c>.</param>
+    /// <returns>New instance with the parameter set accordingly.</returns>
     public KohlrauschSusceptibility WithLogarithmizeResults(bool value)
     {
       if (!(LogarithmizeResults == value))

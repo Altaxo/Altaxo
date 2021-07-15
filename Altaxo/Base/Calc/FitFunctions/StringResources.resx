@@ -1315,7 +1315,8 @@ If false, the original values are used.
 
 ---
 References:  
-- Kohlrausch, R., "Theorie des elektrischen Rückstandes in der Leidner Flasche", Annalen der Physik und Chemie. 91 (1) (1854): 56–82, 179–213, doi:10.1002/andp.18541670103
+- Kohlrausch, R., "Theorie des elektrischen Rückstandes in der Leidner Flasche", Annalen der Physik und Chemie. 91 (1) (1854): 56–82, 179–213, [doi:10.1002/andp.18541670103](https://doi.org/10.1002/andp.18541670103)
+- Williams, G., Watts, D. C., "Non-Symmetrical Dielectric Relaxation Behavior Arising from a Simple Empirical Decay Function", Transactions of the Faraday Society 66 (1970) 80–85. [doi:10.1039/tf9706600080](https://doi.org/10.1039/tf9706600080)
 </value>
   </data>
   <data name="Retardation.Dielectrics.KohlrauschComplexOmega" xml:space="preserve">
@@ -1398,7 +1399,8 @@ If false, the original values are used.
 
 ---
 References:  
-- Kohlrausch, R., "Theorie des elektrischen Rückstandes in der Leidner Flasche", Annalen der Physik und Chemie. 91 (1) (1854): 56–82, 179–213, doi:10.1002/andp.18541670103
+- Kohlrausch, R., "Theorie des elektrischen Rückstandes in der Leidner Flasche", Annalen der Physik und Chemie. 91 (1) (1854): 56–82, 179–213, [doi:10.1002/andp.18541670103](https://doi.org/10.1002/andp.18541670103)
+- Williams, G., Watts, D. C., "Non-Symmetrical Dielectric Relaxation Behavior Arising from a Simple Empirical Decay Function", Transactions of the Faraday Society 66 (1970) 80–85. [doi:10.1039/tf9706600080](https://doi.org/10.1039/tf9706600080)
 </value>
   </data>
   <data name="Retardation.General.HavriliakNegamiComplexFrequency" xml:space="preserve">
@@ -1636,7 +1638,8 @@ If false, the original values are used.
 
 ---
 References:  
-- Kohlrausch, R., "Theorie des elektrischen Rückstandes in der Leidner Flasche", Annalen der Physik und Chemie. 91 (1) (1854): 56–82, 179–213, doi:10.1002/andp.18541670103
+- Kohlrausch, R., "Theorie des elektrischen Rückstandes in der Leidner Flasche", Annalen der Physik und Chemie. 91 (1) (1854): 56–82, 179–213, [doi:10.1002/andp.18541670103](https://doi.org/10.1002/andp.18541670103)
+- Williams, G., Watts, D. C., "Non-Symmetrical Dielectric Relaxation Behavior Arising from a Simple Empirical Decay Function", Transactions of the Faraday Society 66 (1970) 80–85. [doi:10.1039/tf9706600080](https://doi.org/10.1039/tf9706600080)
 </value>
   </data>
   <data name="Retardation.General.KohlrauschComplexOmega" xml:space="preserve">
@@ -1720,7 +1723,8 @@ If false, the original values are used.
 
 ---
 References:  
-- Kohlrausch, R., "Theorie des elektrischen Rückstandes in der Leidner Flasche", Annalen der Physik und Chemie. 91 (1) (1854): 56–82, 179–213, doi:10.1002/andp.18541670103
+- Kohlrausch, R., "Theorie des elektrischen Rückstandes in der Leidner Flasche", Annalen der Physik und Chemie. 91 (1) (1854): 56–82, 179–213, [doi:10.1002/andp.18541670103](https://doi.org/10.1002/andp.18541670103)
+- Williams, G., Watts, D. C., "Non-Symmetrical Dielectric Relaxation Behavior Arising from a Simple Empirical Decay Function", Transactions of the Faraday Society 66 (1970) 80–85. [doi:10.1039/tf9706600080](https://doi.org/10.1039/tf9706600080)
 </value>
   </data>
   <data name="Retardation.Modulus.HavriliakNegamiComplexFrequency" xml:space="preserve">
@@ -2017,6 +2021,152 @@ References:
 - Havriliak, S., Negami, S., "A complex plane representation of dielectric and mechanical relaxation processes in some polymers", Polymer 8: 161–210, doi:10.1016/0032-3861(67)90021-3
 </value>
   </data>
+  <data name="Retardation.Modulus.KohlrauschComplexFrequency" xml:space="preserve">
+    <value># Kohlrausch retardation of a general modulus
+
+This function models the retardation of a general modulus (e.g. mechanical modulus) in dependence on the frequency $f$ with a retardation and a flow term:
+
+
+$$
+M^*(f) = M'(f) + i M''(f) = \left [\frac{1}{M_{\infty}} + \left ( \frac{1}{M_{0}}-\frac{1}{M_{\infty}} \right ) \int_0^{\infty} \exp(- i 2 \pi f t') \frac{d\Phi}{d t} dt' - \frac{i }{2 \pi f \eta} \right ]^{-1} \\
+\Phi(t) = \exp\left [ -\left ( \frac{t}{\tau}\right )^{\beta} \right ]
+$$
+
+The quantities are described below.
+It is a special case of the underlying base function with the options `UseFrequencyInsteadOfOmega=true`, `UseFlowTerm=true`, `InvertViscosity=false`  and `LogarithmizeResult=false`. These options can be changed by double-clicking on the fit function.
+
+The underlying base function models the generalized complex dynamic modulus in dependence on the circular frequency $\omega=2 \pi f$ as:
+
+$$
+M'(\omega) + i M''(\omega) = \left [\frac{1}{M_{\infty}} + \left ( \frac{1}{M_{0}}-\frac{1}{M_{\infty}} \right ) \int_0^{\infty} \exp(- i \omega t') \frac{d\Phi}{d t} dt' + Flowterm \right ]^{-1} \\
+\Phi(t) = \exp\left [ -\left ( \frac{t}{\tau}\right )^{\beta} \right ] \\
+Flowterm = \cases{
+-\frac{i \sigma}{\omega} \thickspace\thickspace\mathrm{for} \thickspace \mathrm{InvertViscosity=true} \cr -\frac{i}{\omega\eta} \thickspace\thickspace\mathrm{for} \thickspace \mathrm{InvertViscosity=false}}
+$$
+
+with the circular frequency $\omega$ being the independent variable (or, depending on an option, the frequency $f$, $\omega=2\pi f$), and $M'$ and $M''$ being the dependent variables, namely the real and imaginary part of the complex dynamic modulus $M^*$. The kernel of this equation is the Fourier transformation of the Kohlrausch function (also known as stretched exponential function, or as Kohlrausch-Williams-Watts (KWW) function).
+
+The typical use case is a fit to the complex dynamic mechanical modulus (e.g. shear modulus $G^*$ or Young's modulus $Y^*$).
+
+The parameters are:
+
+- $M_{\infty}$ : high frequency modulus limit
+- $M_0$ : low frequency modulus limit
+- $\tau$ : retardation time (attention: this is not the same as the relaxation time, e.g. the maximum of $M''$ is considerably shifted with respect to $ 1/\tau $ !)
+- $\beta$ : shape exponent (usually $ 0&lt;\beta\le 1 $). The smaller $\beta$ is, the broader is the resulting frequency spectrum.
+- $\sigma$ : generalized fluidity (inverse viscosity)
+- $\eta$ : generalized viscosity
+
+
+The available options are:
+
+- `UseFrequencyInsteadOfOmega`:  
+If true, the frequency $f$ is used as the independent variable, thus $\omega$ in the formula above is replaced by $ 2\pi f $.   
+If false, the circular frequency $\omega$ is used as the independent variable.
+
+- `UseFlowTerm`:  
+If true, the flow term in above formula is used.   
+If false, the flow term is not used, and the parameter corresponding with the flow term will not show in the fit.
+
+- `InvertViscosity`:  
+If true, the parameter in the flow term is an inverted viscosity (i.e.  fluidity). Thus the flow term generally is $-{i \sigma}/{\omega}$.  
+If false, the parameter in the flow term is a viscosity, and the flow term generally is $-{i}/{(\omega\eta)}$.
+
+- `LogarithmizeResult`:  
+If true, the resulting values of $M'$ and $M''$ are logarithmized (decadic logarithm).  
+If false, the original values are used.
+
+&gt; Note:  
+&gt; Since in most cases $M_{\infty}$ and $M_0$ differ by several orders of magnitude, your fit function will also cover several orders of magnitude. This will result in a poor fit of the low modulus data. To avoid this behavior, you should either use a NaturalLogarithmTransformation for both your data and for the fit function's dependent variables, or use the option in this fit function to logarithmize the results and then use a DecadicLogarithmTransformation to transform your data.  
+
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.Retardation.Modulus.KohlrauschComplexFrequency.Fig2.png)
+^^^ Fig. 1: Kohlrausch fit functions (with $M_0=10^{6}$, $M_{\infty}=10^{9}$, $\tau=1$ and $\eta=10^{33}$). The values for $\beta$ are indicated in the legend. 
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.Retardation.Modulus.KohlrauschComplexFrequency.Fig1.png)
+^^^ Fig. 2: Comparison of Kohlrausch fit functions (with $M_0=10^{6}$, $M_{\infty}=10^{9}$, $\tau=1$, and $\beta=1$) with different viscosities $\eta$. The values for $\eta$ are indicated in the legend.
+
+---
+References:  
+- Kohlrausch, R., "Theorie des elektrischen Rückstandes in der Leidner Flasche", Annalen der Physik und Chemie. 91 (1) (1854): 56–82, 179–213, [doi:10.1002/andp.18541670103](https://doi.org/10.1002/andp.18541670103)
+- Williams, G., Watts, D. C., "Non-Symmetrical Dielectric Relaxation Behavior Arising from a Simple Empirical Decay Function", Transactions of the Faraday Society 66 (1970) 80–85. [doi:10.1039/tf9706600080](https://doi.org/10.1039/tf9706600080)
+</value>
+  </data>
+  <data name="Retardation.Modulus.KohlrauschComplexOmega" xml:space="preserve">
+    <value># Kohlrausch retardation of a general modulus
+
+This function models the retardation of a general modulus (e.g. mechanical modulus) in dependence on the circular frequency $\omega$ with a retardation and a flow term:
+
+
+$$
+M^*(\omega) = M'(\omega) + i M''(\omega) = \left [\frac{1}{M_{\infty}} + \left ( \frac{1}{M_{0}}-\frac{1}{M_{\infty}} \right ) \int_0^{\infty} \exp(- i \omega t') \frac{d\Phi}{d t} dt' - \frac{i }{\omega \eta} \right ]^{-1} \\
+\Phi(t) = \exp\left [ -\left ( \frac{t}{\tau}\right )^{\beta} \right ]
+$$
+
+The quantities are described below.
+It is a special case of the underlying base function with the options `UseFrequencyInsteadOfOmega=false`, `UseFlowTerm=true`, `InvertViscosity=false`  and `LogarithmizeResult=false`. These options can be changed by double-clicking on the fit function.
+
+The underlying base function models the generalized complex dynamic modulus in dependence on the circular frequency $\omega=2 \pi f$ as:
+
+$$
+M'(\omega) + i M''(\omega) = \left [\frac{1}{M_{\infty}} + \left ( \frac{1}{M_{0}}-\frac{1}{M_{\infty}} \right ) \int_0^{\infty} \exp(- i \omega t') \frac{d\Phi}{d t} dt' + Flowterm \right ]^{-1} \\
+\Phi(t) = \exp\left [ -\left ( \frac{t}{\tau}\right )^{\beta} \right ] \\
+Flowterm = \cases{
+-\frac{i \sigma}{\omega} \thickspace\thickspace\mathrm{for} \thickspace \mathrm{InvertViscosity=true} \cr -\frac{i}{\omega\eta} \thickspace\thickspace\mathrm{for} \thickspace \mathrm{InvertViscosity=false}}
+$$
+
+with the circular frequency $\omega$ being the independent variable (or, depending on an option, the frequency $f$, $\omega=2\pi f$), and $M'$ and $M''$ being the dependent variables, namely the real and imaginary part of the complex dynamic modulus $M^*$. The kernel of this equation is the Fourier transformation of the Kohlrausch function (also known as stretched exponential function, or as Kohlrausch-Williams-Watts (KWW) function).
+
+The typical use case is a fit to the complex dynamic mechanical modulus (e.g. shear modulus $G^*$ or Young's modulus $Y^*$).
+
+The parameters are:
+
+- $M_{\infty}$ : high frequency modulus limit
+- $M_0$ : low frequency modulus limit
+- $\tau$ : retardation time (attention: this is not the same as the relaxation time, e.g. the maximum of $M''$ is considerably shifted with respect to $ 1/\tau $ !)
+- $\beta$ : shape exponent (usually $ 0&lt;\beta\le 1 $). The smaller $\beta$ is, the broader is the resulting frequency spectrum.
+- $\sigma$ : generalized fluidity (inverse viscosity)
+- $\eta$ : generalized viscosity
+
+
+The available options are:
+
+- `UseFrequencyInsteadOfOmega`:  
+If true, the frequency $f$ is used as the independent variable, thus $\omega$ in the formula above is replaced by $ 2\pi f $.   
+If false, the circular frequency $\omega$ is used as the independent variable.
+
+- `UseFlowTerm`:  
+If true, the flow term in above formula is used.   
+If false, the flow term is not used, and the parameter corresponding with the flow term will not show in the fit.
+
+- `InvertViscosity`:  
+If true, the parameter in the flow term is an inverted viscosity (i.e.  fluidity). Thus the flow term generally is $-{i \sigma}/{\omega}$.  
+If false, the parameter in the flow term is a viscosity, and the flow term generally is $-{i}/{(\omega\eta)}$.
+
+- `LogarithmizeResult`:  
+If true, the resulting values of $M'$ and $M''$ are logarithmized (decadic logarithm).  
+If false, the original values are used.
+
+&gt; Note:  
+&gt; Since in most cases $M_{\infty}$ and $M_0$ differ by several orders of magnitude, your fit function will also cover several orders of magnitude. This will result in a poor fit of the low modulus data. To avoid this behavior, you should either use a NaturalLogarithmTransformation for both your data and for the fit function's dependent variables, or use the option in this fit function to logarithmize the results and then use a DecadicLogarithmTransformation to transform your data.  
+
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.Retardation.Modulus.KohlrauschComplexOmega.Fig2.png)
+^^^ Fig. 1: Kohlrausch fit functions (with $M_0=10^{6}$, $M_{\infty}=10^{9}$, $\tau=1$ and $\eta=10^{33}$). The values for $\beta$ are indicated in the legend. 
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.Retardation.Modulus.KohlrauschComplexOmega.Fig1.png)
+^^^ Fig. 2: Comparison of Kohlrausch fit functions (with $M_0=10^{6}$, $M_{\infty}=10^{9}$, $\tau=1$, and $\beta=1$) with different viscosities $\eta$. The values for $\eta$ are indicated in the legend.
+
+---
+References:  
+- Kohlrausch, R., "Theorie des elektrischen Rückstandes in der Leidner Flasche", Annalen der Physik und Chemie. 91 (1) (1854): 56–82, 179–213, [doi:10.1002/andp.18541670103](https://doi.org/10.1002/andp.18541670103)
+- Williams, G., Watts, D. C., "Non-Symmetrical Dielectric Relaxation Behavior Arising from a Simple Empirical Decay Function", Transactions of the Faraday Society 66 (1970) 80–85. [doi:10.1039/tf9706600080](https://doi.org/10.1039/tf9706600080)
+</value>
+  </data>
   <data name="Retardation.Modulus.Lg10HavriliakNegamiComplexFrequency" xml:space="preserve">
     <value># Havriliak-Negami retardation of a general modulus
 
@@ -2173,6 +2323,169 @@ If false, the original values are used.
 ---
 References:  
 - Havriliak, S., Negami, S., "A complex plane representation of dielectric and mechanical relaxation processes in some polymers", Polymer 8: 161–210, doi:10.1016/0032-3861(67)90021-3
+</value>
+  </data>
+  <data name="Retardation.Modulus.Lg10KohlrauschComplexFrequency" xml:space="preserve">
+    <value># Kohlrausch retardation of a general modulus
+
+This function models the retardation of a general modulus (e.g. mechanical modulus) in dependence on the frequency $f$ with a retardation and a flow term:
+
+
+$$
+M^*(f) = M'(f) + i M''(f) = \left [\frac{1}{M_{\infty}} + \left ( \frac{1}{M_{0}}-\frac{1}{M_{\infty}} \right ) \int_0^{\infty} \exp(- i 2 \pi f t') \frac{d\Phi}{d t} dt' - \frac{i }{2 \pi f \eta} \right ]^{-1} \\
+\Phi(t) = \exp\left [ -\left ( \frac{t}{\tau}\right )^{\beta} \right ]
+$$
+
+Here, the values of the real and imaginary part of the calculated modulus are **logarithmized** for the output:
+
+$$
+lgM'(f) = \log_{10}(M'(f)) \\
+lgM''(f) = \log_{10}(M''(f)) \\
+$$
+
+Should your data are not logarithmized, use a DecadicLogarithmTransformation to logarithmize them, too.
+
+The quantities are described below.
+It is a special case of the underlying base function with the options `UseFrequencyInsteadOfOmega=true`, `UseFlowTerm=true`, `InvertViscosity=false`  and `LogarithmizeResult=false`. These options can be changed by double-clicking on the fit function.
+
+The underlying base function models the generalized complex dynamic modulus in dependence on the circular frequency $\omega=2 \pi f$ as:
+
+$$
+M'(\omega) + i M''(\omega) = \left [\frac{1}{M_{\infty}} + \left ( \frac{1}{M_{0}}-\frac{1}{M_{\infty}} \right ) \int_0^{\infty} \exp(- i \omega t') \frac{d\Phi}{d t} dt' + Flowterm \right ]^{-1} \\
+\Phi(t) = \exp\left [ -\left ( \frac{t}{\tau}\right )^{\beta} \right ] \\
+Flowterm = \cases{
+-\frac{i \sigma}{\omega} \thickspace\thickspace\mathrm{for} \thickspace \mathrm{InvertViscosity=true} \cr -\frac{i}{\omega\eta} \thickspace\thickspace\mathrm{for} \thickspace \mathrm{InvertViscosity=false}}
+$$
+
+with the circular frequency $\omega$ being the independent variable (or, depending on an option, the frequency $f$, $\omega=2\pi f$), and $M'$ and $M''$ being the dependent variables, namely the real and imaginary part of the complex dynamic modulus $M^*$. The kernel of this equation is the Fourier transformation of the Kohlrausch function (also known as stretched exponential function, or as Kohlrausch-Williams-Watts (KWW) function).
+
+The typical use case is a fit to the complex dynamic mechanical modulus (e.g. shear modulus $G^*$ or Young's modulus $Y^*$).
+
+The parameters are:
+
+- $M_{\infty}$ : high frequency modulus limit
+- $M_0$ : low frequency modulus limit
+- $\tau$ : retardation time (attention: this is not the same as the relaxation time, e.g. the maximum of $M''$ is considerably shifted with respect to $ 1/\tau $ !)
+- $\beta$ : shape exponent (usually $ 0&lt;\beta\le 1 $). The smaller $\beta$ is, the broader is the resulting frequency spectrum.
+- $\sigma$ : generalized fluidity (inverse viscosity)
+- $\eta$ : generalized viscosity
+
+
+The available options are:
+
+- `UseFrequencyInsteadOfOmega`:  
+If true, the frequency $f$ is used as the independent variable, thus $\omega$ in the formula above is replaced by $ 2\pi f $.   
+If false, the circular frequency $\omega$ is used as the independent variable.
+
+- `UseFlowTerm`:  
+If true, the flow term in above formula is used.   
+If false, the flow term is not used, and the parameter corresponding with the flow term will not show in the fit.
+
+- `InvertViscosity`:  
+If true, the parameter in the flow term is an inverted viscosity (i.e.  fluidity). Thus the flow term generally is $-{i \sigma}/{\omega}$.  
+If false, the parameter in the flow term is a viscosity, and the flow term generally is $-{i}/{(\omega\eta)}$.
+
+- `LogarithmizeResult`:  
+If true, the resulting values of $M'$ and $M''$ are logarithmized (decadic logarithm).  
+If false, the original values are used.
+
+&gt; Note:  
+&gt; Since in most cases $M_{\infty}$ and $M_0$ differ by several orders of magnitude, your fit function will also cover several orders of magnitude. This will result in a poor fit of the low modulus data. To avoid this behavior, you should either use a NaturalLogarithmTransformation for both your data and for the fit function's dependent variables, or use the option in this fit function to logarithmize the results and then use a DecadicLogarithmTransformation to transform your data.  
+
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.Retardation.Modulus.Lg10KohlrauschComplexFrequency.Fig2.png)
+^^^ Fig. 1: Kohlrausch fit functions (with $M_0=10^{6}$, $M_{\infty}=10^{9}$, $\tau=1$ and $\eta=10^{33}$). The values for $\beta$ are indicated in the legend. 
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.Retardation.Modulus.Lg10KohlrauschComplexFrequency.Fig1.png)
+^^^ Fig. 2: Comparison of Kohlrausch fit functions (with $M_0=10^{6}$, $M_{\infty}=10^{9}$, $\tau=1$, and $\beta=1$) with different viscosities $\eta$. The values for $\eta$ are indicated in the legend.
+
+---
+References:  
+- Kohlrausch, R., "Theorie des elektrischen Rückstandes in der Leidner Flasche", Annalen der Physik und Chemie. 91 (1) (1854): 56–82, 179–213, [doi:10.1002/andp.18541670103](https://doi.org/10.1002/andp.18541670103)
+- Williams, G., Watts, D. C., "Non-Symmetrical Dielectric Relaxation Behavior Arising from a Simple Empirical Decay Function", Transactions of the Faraday Society 66 (1970) 80–85. [doi:10.1039/tf9706600080](https://doi.org/10.1039/tf9706600080)
+</value>
+  </data>
+  <data name="Retardation.Modulus.Lg10KohlrauschComplexOmega" xml:space="preserve">
+    <value># Kohlrausch retardation of a general modulus
+
+This function models the retardation of a general modulus (e.g. mechanical modulus) in dependence on the circular frequency $\omega$ with a retardation and a flow term:
+
+$$
+M^*(\omega) = M'(\omega) + i M''(\omega) = \left [\frac{1}{M_{\infty}} + \left ( \frac{1}{M_{0}}-\frac{1}{M_{\infty}} \right ) \int_0^{\infty} \exp(- i \omega t') \frac{d\Phi}{d t} dt' - \frac{i }{\omega \eta} \right ]^{-1} \\
+\Phi(t) = \exp\left [ -\left ( \frac{t}{\tau}\right )^{\beta} \right ]
+$$
+
+Here, the values of the real and imaginary part of the calculated modulus are **logarithmized** for the output:
+
+$$
+lgM'(f) = \log_{10}(M'(f)) \\
+lgM''(f) = \log_{10}(M''(f)) \\
+$$
+
+Should your data are not logarithmized, use a DecadicLogarithmTransformation to logarithmize them, too.
+
+The quantities are described below.
+It is a special case of the underlying base function with the options `UseFrequencyInsteadOfOmega=false`, `UseFlowTerm=true`, `InvertViscosity=false`  and `LogarithmizeResult=false`. These options can be changed by double-clicking on the fit function.
+
+The underlying base function models the generalized complex dynamic modulus in dependence on the circular frequency $\omega=2 \pi f$ as:
+
+$$
+M'(\omega) + i M''(\omega) = \left [\frac{1}{M_{\infty}} + \left ( \frac{1}{M_{0}}-\frac{1}{M_{\infty}} \right ) \int_0^{\infty} \exp(- i \omega t') \frac{d\Phi}{d t} dt' + Flowterm \right ]^{-1} \\
+\Phi(t) = \exp\left [ -\left ( \frac{t}{\tau}\right )^{\beta} \right ] \\
+Flowterm = \cases{
+-\frac{i \sigma}{\omega} \thickspace\thickspace\mathrm{for} \thickspace \mathrm{InvertViscosity=true} \cr -\frac{i}{\omega\eta} \thickspace\thickspace\mathrm{for} \thickspace \mathrm{InvertViscosity=false}}
+$$
+
+with the circular frequency $\omega$ being the independent variable (or, depending on an option, the frequency $f$, $\omega=2\pi f$), and $M'$ and $M''$ being the dependent variables, namely the real and imaginary part of the complex dynamic modulus $M^*$. The kernel of this equation is the Fourier transformation of the Kohlrausch function (also known as stretched exponential function, or as Kohlrausch-Williams-Watts (KWW) function).
+
+The typical use case is a fit to the complex dynamic mechanical modulus (e.g. shear modulus $G^*$ or Young's modulus $Y^*$).
+
+The parameters are:
+
+- $M_{\infty}$ : high frequency modulus limit
+- $M_0$ : low frequency modulus limit
+- $\tau$ : retardation time (attention: this is not the same as the relaxation time, e.g. the maximum of $M''$ is considerably shifted with respect to $ 1/\tau $ !)
+- $\beta$ : shape exponent (usually $ 0&lt;\beta\le 1 $). The smaller $\beta$ is, the broader is the resulting frequency spectrum.
+- $\sigma$ : generalized fluidity (inverse viscosity)
+- $\eta$ : generalized viscosity
+
+
+The available options are:
+
+- `UseFrequencyInsteadOfOmega`:  
+If true, the frequency $f$ is used as the independent variable, thus $\omega$ in the formula above is replaced by $ 2\pi f $.   
+If false, the circular frequency $\omega$ is used as the independent variable.
+
+- `UseFlowTerm`:  
+If true, the flow term in above formula is used.   
+If false, the flow term is not used, and the parameter corresponding with the flow term will not show in the fit.
+
+- `InvertViscosity`:  
+If true, the parameter in the flow term is an inverted viscosity (i.e.  fluidity). Thus the flow term generally is $-{i \sigma}/{\omega}$.  
+If false, the parameter in the flow term is a viscosity, and the flow term generally is $-{i}/{(\omega\eta)}$.
+
+- `LogarithmizeResult`:  
+If true, the resulting values of $M'$ and $M''$ are logarithmized (decadic logarithm).  
+If false, the original values are used.
+
+&gt; Note:  
+&gt; Since in most cases $M_{\infty}$ and $M_0$ differ by several orders of magnitude, your fit function will also cover several orders of magnitude. This will result in a poor fit of the low modulus data. To avoid this behavior, you should either use a NaturalLogarithmTransformation for both your data and for the fit function's dependent variables, or use the option in this fit function to logarithmize the results and then use a DecadicLogarithmTransformation to transform your data.  
+
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.Retardation.Modulus.Lg10KohlrauschComplexOmega.Fig2.png)
+^^^ Fig. 1: Kohlrausch fit functions (with $M_0=10^{6}$, $M_{\infty}=10^{9}$, $\tau=1$ and $\eta=10^{33}$). The values for $\beta$ are indicated in the legend. 
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.Retardation.Modulus.Lg10KohlrauschComplexOmega.Fig1.png)
+^^^ Fig. 2: Comparison of Kohlrausch fit functions (with $M_0=10^{6}$, $M_{\infty}=10^{9}$, $\tau=1$, and $\beta=1$) with different viscosities $\eta$. The values for $\eta$ are indicated in the legend.
+
+---
+References:  
+- Kohlrausch, R., "Theorie des elektrischen Rückstandes in der Leidner Flasche", Annalen der Physik und Chemie. 91 (1) (1854): 56–82, 179–213, [doi:10.1002/andp.18541670103](https://doi.org/10.1002/andp.18541670103)
+- Williams, G., Watts, D. C., "Non-Symmetrical Dielectric Relaxation Behavior Arising from a Simple Empirical Decay Function", Transactions of the Faraday Society 66 (1970) 80–85. [doi:10.1039/tf9706600080](https://doi.org/10.1039/tf9706600080)
 </value>
   </data>
   <data name="Transitions.GeneralizedLogisticDecreasing" xml:space="preserve">

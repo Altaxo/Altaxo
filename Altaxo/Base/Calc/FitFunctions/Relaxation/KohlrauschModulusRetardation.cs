@@ -39,6 +39,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     private bool _useFrequencyInsteadOmega;
     private bool _useFlowTerm;
     private bool _logarithmizeResults;
+    private bool _invertViscosity=true;
 
     #region Serialization
 
@@ -63,7 +64,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
       }
     }
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(KohlrauschModulusRetardation), 1)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Calc.FitFunctions.Relaxation.KohlrauschModulusRetardation", 1)]
     private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
@@ -86,89 +87,206 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
       }
     }
 
+    /// <summary>
+    /// 2021-07-15 added property InvertViscosity
+    /// </summary>
+    /// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(KohlrauschModulusRetardation), 2)]
+    private class XmlSerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        var s = (KohlrauschModulusRetardation)obj;
+        info.AddValue("UseFrequency", s._useFrequencyInsteadOmega);
+        info.AddValue("FlowTerm", s._useFlowTerm);
+        info.AddValue("LogarithmizeResults", s._logarithmizeResults);
+        info.AddValue("InvertViscosity", s._invertViscosity);
+      }
+
+      public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      {
+        KohlrauschModulusRetardation s = o is not null ? (KohlrauschModulusRetardation)o : new KohlrauschModulusRetardation();
+        s._useFrequencyInsteadOmega = info.GetBoolean("UseFrequency");
+        s._useFlowTerm = info.GetBoolean("FlowTerm");
+        s._logarithmizeResults = info.GetBoolean("LogarithmizeResults");
+        s._invertViscosity = info.GetBoolean("InvertViscosity");
+        return s;
+      }
+    }
+
     #endregion Serialization
 
     public KohlrauschModulusRetardation()
     {
     }
 
+    /// <summary>
+    /// Gets a value indicating whether to use the frequency instead of omega.
+    /// </summary>
+    /// <value>
+    ///   <c>true</c> if the independent variable is the frequency; false if the independent variable is the circular frequency.
+    /// </value>
+    public bool UseFrequencyInsteadOfOmega => _useFrequencyInsteadOmega;
+    public KohlrauschModulusRetardation WithUseFrequencyInsteadOfOmega(bool value)
+    {
+      if (!(_useFrequencyInsteadOmega == value))
+      {
+        var result = (KohlrauschModulusRetardation)this.MemberwiseClone();
+        result._useFrequencyInsteadOmega = value;
+        return result;
+      }
+      else
+      {
+        return this;
+      }
+    }
+
+    /// <summary>
+    /// Gets a value indicating whether to use a flow term.
+    /// </summary>
+    /// <value>
+    ///   <c>true</c> if a flow term is included; otherwise, <c>false</c>.
+    /// </value>
+    public bool UseFlowTerm => _useFlowTerm;
+
+    /// <summary>
+    /// Sets a value indicating whether to use a flow term.
+    /// </summary>
+    /// <param name="value"><c>true</c> if a flow term is included; otherwise, <c>false</c>.</param>
+    /// <returns>New instance with the parameter set accordingly.</returns>
+    public KohlrauschModulusRetardation WithUseFlowTerm(bool value)
+    {
+      if (!(_useFlowTerm == value))
+      {
+        var result = (KohlrauschModulusRetardation)this.MemberwiseClone();
+        result._useFlowTerm = value;
+        return result;
+      }
+      else
+      {
+        return this;
+      }
+    }
+
+    /// <summary>
+    /// Gets a value indicating whether to invert the viscosity (then a general fluidity is used as parameter).
+    /// </summary>
+    /// <value>
+    ///   <c>true</c> if a fluidity is used instead of viscosity; otherwise, <c>false</c>.
+    /// </value>
+    public bool InvertViscosity => _invertViscosity;
+
+    /// <summary>
+    /// Sets a value indicating whether to invert the viscosity (then a general fluidity is used as parameter).
+    /// </summary>
+    /// <param name="value"><c>true</c> if a fluidity is used instead of viscosity; otherwise, <c>false</c>.</param>
+    /// <returns>New instance with the parameter set accordingly.</returns>
+    public KohlrauschModulusRetardation WithInvertViscosity(bool value)
+    {
+      if (!(InvertViscosity == value))
+      {
+        var result = (KohlrauschModulusRetardation)this.MemberwiseClone();
+        result._invertViscosity = value;
+        return result;
+      }
+      else
+      {
+        return this;
+      }
+    }
+
+    /// <summary>
+    /// Indicates whether the real and imaginary part of the dependent variable should be logarithmized (decadic logarithm).
+    /// </summary>
+    /// <value>
+    ///   <c>true</c> if the result is logarithmized; otherwise, <c>false</c>.
+    /// </value>
+    public bool LogarithmizeResults => _logarithmizeResults;
+
+    /// <summary>
+    /// Sets a value indicating whether the real and imaginary part of the dependent variable should be logarithmized (decadic logarithm).
+    /// </summary>
+    /// <param name="value"><c>true</c> if the real and imaginary part of the dependent variable should be logarithmized; otherwise, <c>false</c>.</param>
+    /// <returns>New instance with the parameter set accordingly.</returns>
+    public KohlrauschModulusRetardation WithLogarithmizeResults(bool value)
+    {
+      if (!(LogarithmizeResults == value))
+      {
+        var result = (KohlrauschModulusRetardation)this.MemberwiseClone();
+        result._logarithmizeResults = value;
+        return result;
+      }
+      else
+      {
+        return this;
+      }
+    }
+
+
+
     public override string ToString()
     {
       return "Kohlrausch Modulus Complex " + (_useFrequencyInsteadOmega ? "(Freq)" : "(Omeg)");
     }
 
+
+
+
     [FitFunctionCreator("Kohlrausch Complex (Omega)", "Retardation/Modulus", 1, 2, 4)]
-    [Description(
-      "${res:Altaxo.Calc.FitFunctions.Relaxation.ModulusRetardation.Introduction}\r\n" +
-      "${res:Altaxo.Calc.FitFunctions.Retardation.Generic.Modulus.Formula}\r\n" +
-      "${res:Altaxo.Calc.FitFunctions.Relaxation.KohlrauschSusceptibility.Part2}\r\n" +
-      "${res:Altaxo.Calc.FitFunctions.Relaxation.KohlrauschKernel.Formula}\r\n" +
-      "${res:Altaxo.Calc.FitFunctions.IndependentVariable.Omega}\r\n" +
-      "${res:Altaxo.Calc.FitFunctions.Relaxation.ModulusRetardation.Part3}")]
+    [Description("${res:Altaxo.Calc.FitFunctions.Retardation.Modulus.KohlrauschComplexOmega}")]
     public static IFitFunction CreateModulusOfOmega()
     {
       var result = new KohlrauschModulusRetardation
       {
         _useFrequencyInsteadOmega = false,
-        _useFlowTerm = true
+        _useFlowTerm = true,
+        _invertViscosity = false,
+        _logarithmizeResults = false,
       };
 
       return result;
     }
 
-    [FitFunctionCreator("Lg10 - Kohlrausch Complex (Omega)", "Retardation/Modulus", 1, 2, 4)]
-    [Description(
-      "${res:Altaxo.Calc.FitFunctions.Relaxation.ModulusRetardation.Introduction}\r\n" +
-      "${res:Altaxo.Calc.FitFunctions.Retardation.Generic.Modulus.Formula}\r\n" +
-      "${res:Altaxo.Calc.FitFunctions.Relaxation.KohlrauschSusceptibility.Part2}\r\n" +
-      "${res:Altaxo.Calc.FitFunctions.Relaxation.KohlrauschKernel.Formula}\r\n" +
-      "${res:Altaxo.Calc.FitFunctions.IndependentVariable.Omega}\r\n" +
-      "${res:Altaxo.Calc.FitFunctions.Relaxation.ModulusRetardation.Part3}")]
+    [FitFunctionCreator("Lg10 Kohlrausch Complex (Omega)", "Retardation/Modulus", 1, 2, 4)]
+    [Description("${res:Altaxo.Calc.FitFunctions.Retardation.Modulus.Lg10KohlrauschComplexOmega}")]
+
     public static IFitFunction CreateLg10ModulusOfOmega()
     {
       var result = new KohlrauschModulusRetardation
       {
         _useFrequencyInsteadOmega = false,
         _useFlowTerm = true,
-        _logarithmizeResults = true
+        _invertViscosity = false,
+        _logarithmizeResults = true, 
       };
 
       return result;
     }
 
-    [FitFunctionCreator("Kohlrausch Complex (Freq)", "Retardation/Modulus", 1, 2, 4)]
-    [Description(
-      "${res:Altaxo.Calc.FitFunctions.Relaxation.ModulusRetardation.Introduction}\r\n" +
-      "${res:Altaxo.Calc.FitFunctions.Retardation.Generic.Modulus.Formula}\r\n" +
-      "${res:Altaxo.Calc.FitFunctions.Relaxation.KohlrauschSusceptibility.Part2}\r\n" +
-      "${res:Altaxo.Calc.FitFunctions.Relaxation.KohlrauschKernel.Formula}\r\n" +
-      "${res:Altaxo.Calc.FitFunctions.IndependentVariable.FrequencyAsOmega}\r\n" +
-      "${res:Altaxo.Calc.FitFunctions.Relaxation.ModulusRetardation.Part3}")]
+    [FitFunctionCreator("Kohlrausch Complex (Frequency)", "Retardation/Modulus", 1, 2, 4)]
+    [Description("${res:Altaxo.Calc.FitFunctions.Retardation.Modulus.KohlrauschComplexFrequency}")]
     public static IFitFunction CreateModulusOfFrequency()
     {
       var result = new KohlrauschModulusRetardation
       {
         _useFrequencyInsteadOmega = true,
-        _useFlowTerm = true
+        _useFlowTerm = true,
+        _invertViscosity = false,
+        _logarithmizeResults = false,
       };
 
       return result;
     }
 
-    [FitFunctionCreator("Lg10 Kohlrausch Complex (Freq)", "Retardation/Modulus", 1, 2, 4)]
-    [Description(
-      "${res:Altaxo.Calc.FitFunctions.Relaxation.ModulusRetardation.Introduction}\r\n" +
-      "${res:Altaxo.Calc.FitFunctions.Retardation.Generic.Modulus.Formula}\r\n" +
-      "${res:Altaxo.Calc.FitFunctions.Relaxation.KohlrauschSusceptibility.Part2}\r\n" +
-      "${res:Altaxo.Calc.FitFunctions.Relaxation.KohlrauschKernel.Formula}\r\n" +
-      "${res:Altaxo.Calc.FitFunctions.IndependentVariable.FrequencyAsOmega}\r\n" +
-      "${res:Altaxo.Calc.FitFunctions.Relaxation.ModulusRetardation.Part3}")]
+    [FitFunctionCreator("Lg10 Kohlrausch Complex (Frequency)", "Retardation/Modulus", 1, 2, 4)]
+    [Description("${res:Altaxo.Calc.FitFunctions.Retardation.Modulus.Lg10KohlrauschComplexFrequency}")]
     public static IFitFunction CreateLg10ModulusOfFrequency()
     {
       var result = new KohlrauschModulusRetardation
       {
         _useFrequencyInsteadOmega = true,
         _useFlowTerm = true,
+        _invertViscosity = false,
         _logarithmizeResults = true
       };
 
@@ -196,58 +314,55 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 
     #region dependent variable definition
 
-    private string[] _dependentVariableName = new string[] { "re", "im" };
-
     public int NumberOfDependentVariables
     {
       get
       {
-        return _dependentVariableName.Length;
+        return 2;
       }
     }
 
     public string DependentVariableName(int i)
     {
-      return _dependentVariableName[i];
+      return i == 0 ? "M'" : "M''";
     }
 
     #endregion dependent variable definition
 
     #region parameter definition
 
-    private string[] _parameterName = new string[] { "m_0", "m_inf", "tau_retard", "beta", "viscosity" };
-
     public int NumberOfParameters
     {
       get
       {
-        return _useFlowTerm ? _parameterName.Length : _parameterName.Length - 1;
+        return _useFlowTerm ? 5 : 4;
       }
     }
 
     public string ParameterName(int i)
     {
-      return _parameterName[i];
+      return i switch
+      {
+        0 => "m_0",
+        1 => "m_inf",
+        2 => "tau_retard",
+        3 => "beta",
+        4 => _invertViscosity ? "sigma" : "eta",
+        _ => throw new NotImplementedException()
+      };
     }
 
     public double DefaultParameterValue(int i)
     {
-      switch (i)
+      return i switch
       {
-        case 0:
-          return 1;
-
-        case 1:
-          return 2;
-
-        case 2:
-          return 1;
-
-        case 3:
-          return 1;
-      }
-
-      return 0;
+        0 => 1E6,
+        1 => 1E9,
+        2 => 1,
+        3 => 1,
+        4 => 1E33,
+        _ => throw new NotImplementedException()
+      };
     }
 
     public IVarianceScaling? DefaultVarianceScaling(int i)
@@ -269,7 +384,10 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 
       if (_useFlowTerm)
       {
-        result.Im -= P[4] / (x);
+        if (_invertViscosity)
+          result.Im -= P[4] / (x);
+        else
+          result.Im -= 1 / (x * P[4]);
       }
 
       result = 1 / result;
