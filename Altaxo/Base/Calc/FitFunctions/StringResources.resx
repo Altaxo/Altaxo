@@ -2856,10 +2856,6 @@ The equation has the following properties, which match the percolation theory fo
 
 In contrast to the separate percolation equations below and above the percolation threshold, the general effective medium transition avoids the divergence near the percolation threshold, and provides a smooth transition between the two equations.
 
-## Logarithmically scaled transition
-
-Instead of returning $y$ as described above, the function will return $\log_{10}(y)$.
-
 ^^^
 ![](res:Altaxo.Calc.FitFunctions.Transitions.GeneralEffectiveMedium.Fig1.png)
 ^^^ Fig. 1: GeneralEffectiveMedium transition with $y_0=10^{-14}$, $y_1=10^{-2}$, $p_c=0.2$, $s=0.87$ and $t=2$.
