@@ -32,7 +32,7 @@ namespace Altaxo.Calc.FitFunctions.Transitions
   /// Only for testing purposes - use a "real" linear fit instead.
   /// </summary>
   [FitFunctionClass]
-  public class SmoothedPercolation : IFitFunction
+  public class SmoothedPercolation : IFitFunction, Main.IImmutable
   {
     #region Serialization
 
@@ -58,7 +58,7 @@ namespace Altaxo.Calc.FitFunctions.Transitions
     }
 
     [FitFunctionCreator("SmoothedPercolation", "Transitions", 1, 1, 5)]
-    [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Transitions.SmoothedPercolation.Core}")]
+    [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Transitions.SmoothedPercolation}")]
     public static IFitFunction CreateSmoothedPercolation()
     {
       return new SmoothedPercolation();
@@ -254,14 +254,9 @@ namespace Altaxo.Calc.FitFunctions.Transitions
     }
 
     /// <summary>
-    /// Not used here since this fit function never changed.
+    /// Unused because this instance is immutable.
     /// </summary>
-    public event EventHandler? Changed;
-
-    protected virtual void OnChanged()
-    {
-      Changed?.Invoke(this, EventArgs.Empty);
-    }
+    public event EventHandler? Changed { add { } remove { } }
 
     #endregion IFitFunction Members
   }

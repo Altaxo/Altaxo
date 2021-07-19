@@ -158,28 +158,16 @@ namespace Altaxo.Calc.FitFunctions.Transitions
 
     public abstract void Evaluate(double[] independent, double[] parameters, double[] FV);
 
-    #region Change event
-
     /// <summary>
-    /// Called when anything in this fit function has changed.
+    /// Unused because this instance is immutable.
     /// </summary>
-    protected virtual void OnChanged()
-    {
-      Changed?.Invoke(this, EventArgs.Empty);
-    }
-
-    /// <summary>
-    /// Fired when the fit function changed.
-    /// </summary>
-    public event EventHandler? Changed;
-
-    #endregion Change event
+    public event EventHandler? Changed { add { } remove { } }
 
     #endregion IFitFunction Members
   }
 
   [FitFunctionClass]
-  public class LinearFermiDiracTransition : FermiDiracTransitionBase
+  public class LinearFermiDiracTransition : FermiDiracTransitionBase, Main.IImmutable
   {
     #region Serialization
 
@@ -205,10 +193,7 @@ namespace Altaxo.Calc.FitFunctions.Transitions
     }
 
     [FitFunctionCreator("LinearFermiDiracTransition", "Transitions", 1, 1, 4)]
-    [System.ComponentModel.Description(
-      "${res:Altaxo.Calc.FitFunctions.Transitions.FermiDiracTransition.Core}\r\n" +
-      "${res:Altaxo.Calc.FitFunctions.Transitions.FermiDiracTransition.Linear}"
-      )]
+    [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Transitions.LinearFermiDiracTransition}")]
     public static IFitFunction CreateLinearFermiDiracTransition()
     {
       return new LinearFermiDiracTransition();
@@ -226,7 +211,7 @@ namespace Altaxo.Calc.FitFunctions.Transitions
   }
 
   [FitFunctionClass]
-  public class LogarithmicFermiDiracTransition : FermiDiracTransitionBase
+  public class LogarithmicFermiDiracTransition : FermiDiracTransitionBase, Main.IImmutable
   {
     #region Serialization
 
@@ -252,10 +237,7 @@ namespace Altaxo.Calc.FitFunctions.Transitions
     }
 
     [FitFunctionCreator("LogarithmicFermiDiracTransition", "Transitions", 1, 1, 4)]
-    [System.ComponentModel.Description(
-       "${res:Altaxo.Calc.FitFunctions.Transitions.FermiDiracTransition.Core}\r\n" +
-      "${res:Altaxo.Calc.FitFunctions.Transitions.FermiDiracTransition.Logarithmic}"
-      )]
+    [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Transitions.LogarithmicFermiDiracTransition}")]
     public static IFitFunction CreateLogarithmicFermiDiracTransition()
     {
       return new LogarithmicFermiDiracTransition();

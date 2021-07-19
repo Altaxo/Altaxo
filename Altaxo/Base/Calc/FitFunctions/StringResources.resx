@@ -913,8 +913,8 @@ The domain of the function is $-\infty \leq x \leq \infty$.
 
 </value>
   </data>
-  <data name="Relaxation.HavriliakNegamiModulusRelaxationFrequency" xml:space="preserve">
-    <value># Havriliak-Negami modulus relaxation (frequency)
+  <data name="Relaxation.Modulus.HavriliakNegamiModulusRelaxationFrequency" xml:space="preserve">
+    <value># Havriliak-Negami modulus relaxation (circular frequency)
 
 This function models the complex dynamic modulus in dependence on the frequency as:
 
@@ -943,19 +943,19 @@ The parameters are:
 &gt; Since in most cases $M_0$ and $M_{\infty}$ differ by several orders of magnitude, your fit function will also cover several orders of magnitude. This will result in a poor fit of the low modulus data. To avoid this behavior, you should use a NaturalLogarithmTransformation for both your data and for the fit function's dependent variables.
 
 ^^^
-![](res:Altaxo.Calc.FitFunctions.Relaxation.HavriliakNegamiModulusRelaxationFrequency.Fig2.png)
-^^^ Fig. 1: Havriliak-Negami (with $M_0=10^6$, $M_{\infty}=10^9$, $\tau=1$ and $\sigma=0$). The values for $\alpha$ and $\gamma$ are indicated in the legend.
+![](res:Altaxo.Calc.FitFunctions.Relaxation.Modulus.HavriliakNegamiModulusRelaxationFrequency.Fig2.png)
+^^^ Fig. 1: Havriliak-Negami (with $M_0=10^6$, $M_{\infty}=10^9$, $\tau=1$ and $\eta=10^{33}$). The values for $\alpha$ and $\gamma$ are indicated in the legend.
 
 ^^^
-![](res:Altaxo.Calc.FitFunctions.Relaxation.HavriliakNegamiModulusRelaxationFrequency.Fig1.png)
-^^^ Fig. 2: Comparison of Havriliak-Negami (with $M_0=10^6$, $M_{\infty}=10^9$, $\tau=1$, $\alpha=1$ and $\gamma=1$) without and with flow term. The values for $\sigma$ are indicated in the legend.
+![](res:Altaxo.Calc.FitFunctions.Relaxation.Modulus.HavriliakNegamiModulusRelaxationFrequency.Fig1.png)
+^^^ Fig. 2: Comparison of Havriliak-Negami (with $M_0=10^6$, $M_{\infty}=10^9$, $\tau=1$, $\alpha=1$ and $\gamma=1$) without and with flow term. The values for $\eta$ are indicated in the legend.
 
 ---
 References:  
 - Havriliak, S., Negami, S., "A complex plane representation of dielectric and mechanical relaxation processes in some polymers", Polymer 8: 161–210, doi:10.1016/0032-3861(67)90021-3
 </value>
   </data>
-  <data name="Relaxation.HavriliakNegamiModulusRelaxationOmega" xml:space="preserve">
+  <data name="Relaxation.Modulus.HavriliakNegamiModulusRelaxationOmega" xml:space="preserve">
     <value># Havriliak-Negami modulus relaxation (circular frequency)
 
 This function models the complex dynamic modulus in dependence on the circular frequency as:
@@ -985,19 +985,179 @@ The parameters are:
 &gt; Since in most cases $M_0$ and $M_{\infty}$ differ by several orders of magnitude, your fit function will also cover several orders of magnitude. This will result in a poor fit of the low modulus data. To avoid this behavior, you should use a NaturalLogarithmTransformation for both your data and for the fit function's dependent variables.
 
 ^^^
-![](res:Altaxo.Calc.FitFunctions.Relaxation.HavriliakNegamiModulusRelaxationOmega.Fig2.png)
-^^^ Fig. 1: Havriliak-Negami (with $M_0=10^6$, $M_{\infty}=10^9$, $\tau=1$ and $\sigma=0$). The values for $\alpha$ and $\gamma$ are indicated in the legend.
+![](res:Altaxo.Calc.FitFunctions.Relaxation.Modulus.HavriliakNegamiModulusRelaxationOmega.Fig2.png)
+^^^ Fig. 1: Havriliak-Negami (with $M_0=10^6$, $M_{\infty}=10^9$, $\tau=1$ and $\eta=10^{33}$). The values for $\alpha$ and $\gamma$ are indicated in the legend.
 
 ^^^
-![](res:Altaxo.Calc.FitFunctions.Relaxation.HavriliakNegamiModulusRelaxationOmega.Fig1.png)
-^^^ Fig. 2: Comparison of Havriliak-Negami (with $M_0=10^6$, $M_{\infty}=10^9$, $\tau=1$, $\alpha=1$ and $\gamma=1$) without and with flow term. The values for $\sigma$ are indicated in the legend.
+![](res:Altaxo.Calc.FitFunctions.Relaxation.Modulus.HavriliakNegamiModulusRelaxationOmega.Fig1.png)
+^^^ Fig. 2: Comparison of Havriliak-Negami (with $M_0=10^6$, $M_{\infty}=10^9$, $\tau=1$, $\alpha=1$ and $\gamma=1$) without and with flow term. The values for $\eta$ are indicated in the legend.
 
 ---
 References:  
 - Havriliak, S., Negami, S., "A complex plane representation of dielectric and mechanical relaxation processes in some polymers", Polymer 8: 161–210, doi:10.1016/0032-3861(67)90021-3
 </value>
   </data>
-  <data name="Relaxation.LgHavriliakNegamiModulusRelaxationFrequency" xml:space="preserve">
+  <data name="Relaxation.Modulus.KohlrauschModulusRelaxationFrequency" xml:space="preserve">
+    <value># Kohlrausch modulus relaxation (frequency)
+
+This function models the complex dynamic modulus in dependence on the  frequency as:
+
+$$
+M^*(f) = M'(f) + i M''(f) = M_{\infty} + (M_{0}-M_{\infty})\int_0^{\infty} \exp(- i 2 \pi f t') \frac{d\Phi}{d t} dt' \\
+\Phi(t) = \exp\left [ -\left ( \frac{t}{\tau}\right )^{\beta} \right ]
+$$
+
+or with a generalized flow term (both equations are equivalent if $\sigma=0$) :
+
+$$
+M^*(f) = M'(f) + i M''(f) = \left\{ \left [ M_{\infty} + (M_{0}-M_{\infty})\int_0^{\infty} \exp(- i 2 \pi f t') \frac{d\Phi}{d t} dt' \right ]^{-1} - \frac{i }{2 \pi f \eta} \right \}^{-1}
+$$
+
+based on the Fourier transform of the derivative of the time-domain Kohlrausch function $\Phi(t)$.
+
+The quantities are described below.
+It is a special case of the underlying base function with the options  `UseFrequencyInsteadOfOmega=true`, `UseFlowTerm=true`,  `InvertViscosity=false` and `LogarithmizeResult=false`. These options can be changed by double-clicking on the fit function.
+
+
+The underlying base function models the generalized complex dynamic modulus in dependence on the circular frequency $\omega$ with one relaxation term and a flow term as:
+
+$$
+M^*(\omega) = M'(\omega) + i M''(\omega) = \left\{ \left [ M_{\infty} + (M_{0}-M_{\infty})\int_0^{\infty} \exp(- i \omega t') \frac{d\Phi}{d t} dt' \right ]^{-1} + Flowterm \right \}^{-1} \\
+
+\Phi_k(t) = \exp\left [ -\left ( \frac{t}{\tau_k}\right )^{\beta} \right ] \\
+
+Flowterm = \cases{
+-\frac{i \sigma}{\omega} \thickspace\thickspace\mathrm{for} \thickspace \mathrm{InvertViscosity=true} \cr -\frac{i}{\omega\eta} \thickspace\thickspace\mathrm{for} \thickspace \mathrm{InvertViscosity=false}} 
+$$
+
+based on the Fourier transformation of the time derivative of the Kohlrausch function $\Phi(t)$, with the circular frequency $\omega$ being the independent variable (or, depending on an option, the frequency $f$, $\omega=2\pi f$), and $M'(\omega)$ and $M''(\omega)$ being the dependent variables, namely the real and negative imaginary part of the complex dynamic modulus $M^*(\omega)$.
+
+Typical use cases are fits to the complex to the complex mechanical modulus $M^*$ (e.g. shear modulus $G^*$ or Young's modulus $Y^*$)
+
+The parameters are:
+
+- $M_{0}$ : low frequency modulus limit
+- $M_{\infty}$ : high frequency modulus limit
+- $\tau$ : relaxation time
+- $\beta$ : shape exponent (usually $ 0&lt;\beta\le 1 $)
+- $\sigma$ : fluidity (inverse viscosity)
+- $\eta$ : viscosity
+
+
+The available options are:
+- `UseFrequencyInsteadOfOmega`:  
+If true, the frequency $f$ is used as the independent variable, thus $\omega$ in the formula above is replaced by $ 2\pi f $.   
+If false, the circular frequency ($\omega$) is used as the independent variable.
+- `UseFlowTerm`:  
+If true, the flow term in above formula is used.   
+If false, the flow term is not used, and the parameter corresponding with the flow term will not show in the fit.
+- `InvertViscosity`:  
+If true, the parameter in the flow term is an inverted viscosity (i.e.  fluidity). Thus the flow term generally is $-{i \sigma}/{\omega}$.  
+If false, the parameter in the flow term is a viscosity, and the flow term generally is $-{i}/{(\omega\eta)}$.
+- `LogarithmizeResult`:  
+If true, the resulting values of $M'$ and $M''$ are logarithmized (decadic logarithm).  
+If false, the original values are used.
+
+&gt; Note:  
+&gt; Since in most cases $M_0$ and $M_{\infty}$ differ by several orders of magnitude, your fit function will also cover several orders of magnitude. This will result in a poor fit of the low modulus data. To avoid this behavior, you should either use a NaturalLogarithmTransformation for both your data and for the fit function's dependent variables, or use the option in this fit function to logarithmize the results and then use a DecadicLogarithmTransformation to transform your data.  
+
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.Relaxation.Modulus.KohlrauschModulusRelaxationFrequency.Fig2.png)
+^^^ Fig. 1: Kohlrausch fit functions (with $M_0=10^6$, $M_{\infty}=10^9$, $\tau=1$ and $\eta=10^{33}$). The values for $\beta$ are indicated in the legend.
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.Relaxation.Modulus.KohlrauschModulusRelaxationFrequency.Fig1.png)
+^^^ Fig. 2: Comparison of Kohlrausch fit functions (with $M_0=10^6$, $M_{\infty}=10^9$, $\tau=1$ and $\beta=1$) without and with flow term. The values for $\eta$ are indicated in the legend.
+
+---
+References:  
+- Kohlrausch, R., "Theorie des elektrischen Rückstandes in der Leidner Flasche", Annalen der Physik und Chemie. 91 (1) (1854): 56–82, 179–213, [doi:10.1002/andp.18541670103](https://doi.org/10.1002/andp.18541670103)
+- Williams, G., Watts, D. C., "Non-Symmetrical Dielectric Relaxation Behavior Arising from a Simple Empirical Decay Function", Transactions of the Faraday Society 66 (1970) 80–85. [doi:10.1039/tf9706600080](https://doi.org/10.1039/tf9706600080)
+
+</value>
+  </data>
+  <data name="Relaxation.Modulus.KohlrauschModulusRelaxationOmega" xml:space="preserve">
+    <value># Kohlrausch modulus relaxation (circular frequency)
+
+This function models the complex dynamic modulus in dependence on the circular frequency as:
+
+$$
+M^*(\omega) = M'(\omega) + i M''(\omega) = M_{\infty} + (M_{0}-M_{\infty})\int_0^{\infty} \exp(- i \omega t') \frac{d\Phi}{d t} dt' \\
+\Phi(t) = \exp\left [ -\left ( \frac{t}{\tau}\right )^{\beta} \right ]
+$$
+
+or with a generalized flow term (both equations are equivalent if $\sigma=0$) :
+
+$$
+M^*(\omega) = M'(\omega) + i M''(\omega) = \left\{ \left [ M_{\infty} + (M_{0}-M_{\infty})\int_0^{\infty} \exp(- i \omega t') \frac{d\Phi}{d t} dt' \right ]^{-1} - \frac{i }{\omega \eta} \right \}^{-1}
+$$
+
+based on the Fourier transform of the derivative of the time-domain Kohlrausch function $\Phi(t)$.
+
+The quantities are described below.
+It is a special case of the underlying base function with the options  `UseFrequencyInsteadOfOmega=false`, `UseFlowTerm=true`,  `InvertViscosity=false` and `LogarithmizeResult=false`. These options can be changed by double-clicking on the fit function.
+
+
+The underlying base function models the generalized complex dynamic modulus in dependence on the circular frequency $\omega$ with one relaxation term and a flow term as:
+
+$$
+M^*(\omega) = M'(\omega) + i M''(\omega) = \left\{ \left [ M_{\infty} + (M_{0}-M_{\infty})\int_0^{\infty} \exp(- i \omega t') \frac{d\Phi}{d t} dt' \right ]^{-1} + Flowterm \right \}^{-1} \\
+
+\Phi_k(t) = \exp\left [ -\left ( \frac{t}{\tau_k}\right )^{\beta} \right ] \\
+
+Flowterm = \cases{
+-\frac{i \sigma}{\omega} \thickspace\thickspace\mathrm{for} \thickspace \mathrm{InvertViscosity=true} \cr -\frac{i}{\omega\eta} \thickspace\thickspace\mathrm{for} \thickspace \mathrm{InvertViscosity=false}} 
+$$
+
+based on the Fourier transformation of the time derivative of the Kohlrausch function $\Phi(t)$, with the circular frequency $\omega$ being the independent variable (or, depending on an option, the frequency $f$, $\omega=2\pi f$), and $M'(\omega)$ and $M''(\omega)$ being the dependent variables, namely the real and negative imaginary part of the complex dynamic modulus $M^*(\omega)$.
+
+Typical use cases are fits to the complex to the complex mechanical modulus $M^*$ (e.g. shear modulus $G^*$ or Young's modulus $Y^*$)
+
+The parameters are:
+
+- $M_{0}$ : low frequency modulus limit
+- $M_{\infty}$ : high frequency modulus limit
+- $\tau$ : relaxation time
+- $\beta$ : shape exponent (usually $ 0&lt;\beta\le 1 $)
+- $\sigma$ : fluidity (inverse viscosity)
+- $\eta$ : viscosity
+
+
+The available options are:
+- `UseFrequencyInsteadOfOmega`:  
+If true, the frequency $f$ is used as the independent variable, thus $\omega$ in the formula above is replaced by $ 2\pi f $.   
+If false, the circular frequency ($\omega$) is used as the independent variable.
+- `UseFlowTerm`:  
+If true, the flow term in above formula is used.   
+If false, the flow term is not used, and the parameter corresponding with the flow term will not show in the fit.
+- `InvertViscosity`:  
+If true, the parameter in the flow term is an inverted viscosity (i.e.  fluidity). Thus the flow term generally is $-{i \sigma}/{\omega}$.  
+If false, the parameter in the flow term is a viscosity, and the flow term generally is $-{i}/{(\omega\eta)}$.
+- `LogarithmizeResult`:  
+If true, the resulting values of $M'$ and $M''$ are logarithmized (decadic logarithm).  
+If false, the original values are used.
+
+&gt; Note:  
+&gt; Since in most cases $M_0$ and $M_{\infty}$ differ by several orders of magnitude, your fit function will also cover several orders of magnitude. This will result in a poor fit of the low modulus data. To avoid this behavior, you should either use a NaturalLogarithmTransformation for both your data and for the fit function's dependent variables, or use the option in this fit function to logarithmize the results and then use a DecadicLogarithmTransformation to transform your data.  
+
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.Relaxation.Modulus.KohlrauschModulusRelaxationOmega.Fig2.png)
+^^^ Fig. 1: Kohlrausch fit functions (with $M_0=10^6$, $M_{\infty}=10^9$, $\tau=1$ and $\eta=10^{33}$). The values for $\beta$ are indicated in the legend.
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.Relaxation.Modulus.KohlrauschModulusRelaxationOmega.Fig1.png)
+^^^ Fig. 2: Comparison of Kohlrausch fit functions (with $M_0=10^6$, $M_{\infty}=10^9$, $\tau=1$ and $\beta=1$) without and with flow term. The values for $\eta$ are indicated in the legend.
+
+---
+References:  
+- Kohlrausch, R., "Theorie des elektrischen Rückstandes in der Leidner Flasche", Annalen der Physik und Chemie. 91 (1) (1854): 56–82, 179–213, [doi:10.1002/andp.18541670103](https://doi.org/10.1002/andp.18541670103)
+- Williams, G., Watts, D. C., "Non-Symmetrical Dielectric Relaxation Behavior Arising from a Simple Empirical Decay Function", Transactions of the Faraday Society 66 (1970) 80–85. [doi:10.1039/tf9706600080](https://doi.org/10.1039/tf9706600080)
+
+</value>
+  </data>
+  <data name="Relaxation.Modulus.Lg10HavriliakNegamiModulusRelaxationFrequency" xml:space="preserve">
     <value># Havriliak-Negami modulus relaxation (frequency)
 
 This function models the complex dynamic modulus in dependence on the frequency as:
@@ -1027,19 +1187,19 @@ The parameters are:
 &gt; If your data are not logarithmized already, please use a DecadicLogarithmTransformation for your data.
 
 ^^^
-![](res:Altaxo.Calc.FitFunctions.Relaxation.LgHavriliakNegamiModulusRelaxationFrequency.Fig2.png)
-^^^ Fig. 1: Havriliak-Negami (with $M_0=10^6$, $M_{\infty}=10^9$, $\tau=1$ and $\sigma=0$). The values for $\alpha$ and $\gamma$ are indicated in the legend.
+![](res:Altaxo.Calc.FitFunctions.Relaxation.Modulus.Lg10HavriliakNegamiModulusRelaxationFrequency.Fig2.png)
+^^^ Fig. 1: Havriliak-Negami (with $M_0=10^6$, $M_{\infty}=10^9$, $\tau=1$ and $\eta=10^{33}$). The values for $\alpha$ and $\gamma$ are indicated in the legend.
 
 ^^^
-![](res:Altaxo.Calc.FitFunctions.Relaxation.LgHavriliakNegamiModulusRelaxationFrequency.Fig1.png)
-^^^ Fig. 2: Comparison of Havriliak-Negami (with $M_0=10^6$, $M_{\infty}=10^9$, $\tau=1$, $\alpha=1$ and $\gamma=1$) without and with flow term. The values for $\sigma$ are indicated in the legend.
+![](res:Altaxo.Calc.FitFunctions.Relaxation.Modulus.Lg10HavriliakNegamiModulusRelaxationFrequency.Fig1.png)
+^^^ Fig. 2: Comparison of Havriliak-Negami (with $M_0=10^6$, $M_{\infty}=10^9$, $\tau=1$, $\alpha=1$ and $\gamma=1$) without and with flow term. The values for $\eta$ are indicated in the legend.
 
 ---
 References:  
 - Havriliak, S., Negami, S., "A complex plane representation of dielectric and mechanical relaxation processes in some polymers", Polymer 8: 161–210, doi:10.1016/0032-3861(67)90021-3
 </value>
   </data>
-  <data name="Relaxation.LgHavriliakNegamiModulusRelaxationOmega" xml:space="preserve">
+  <data name="Relaxation.Modulus.Lg10HavriliakNegamiModulusRelaxationOmega" xml:space="preserve">
     <value># Havriliak-Negami modulus relaxation (circular frequency)
 
 This function models the complex dynamic modulus in dependence on the circular frequency as:
@@ -1069,20 +1229,198 @@ The parameters are:
 &gt; If your data are not logarithmized already, please use a DecadicLogarithmTransformation for your data.
 
 ^^^
-![](res:Altaxo.Calc.FitFunctions.Relaxation.LgHavriliakNegamiModulusRelaxationOmega.Fig2.png)
-^^^ Fig. 1: Havriliak-Negami (with $M_0=10^6$, $M_{\infty}=10^9$, $\tau=1$ and $\sigma=0$). The values for $\alpha$ and $\gamma$ are indicated in the legend.
+![](res:Altaxo.Calc.FitFunctions.Relaxation.Modulus.Lg10HavriliakNegamiModulusRelaxationOmega.Fig2.png)
+^^^ Fig. 1: Havriliak-Negami (with $M_0=10^6$, $M_{\infty}=10^9$, $\tau=1$ and $\eta=10^{33}$). The values for $\alpha$ and $\gamma$ are indicated in the legend.
 
 ^^^
-![](res:Altaxo.Calc.FitFunctions.Relaxation.LgHavriliakNegamiModulusRelaxationOmega.Fig1.png)
-^^^ Fig. 2: Comparison of Havriliak-Negami (with $M_0=10^6$, $M_{\infty}=10^9$, $\tau=1$, $\alpha=1$ and $\gamma=1$) without and with flow term. The values for $\sigma$ are indicated in the legend.
+![](res:Altaxo.Calc.FitFunctions.Relaxation.Modulus.Lg10HavriliakNegamiModulusRelaxationOmega.Fig1.png)
+^^^ Fig. 2: Comparison of Havriliak-Negami (with $M_0=10^6$, $M_{\infty}=10^9$, $\tau=1$, $\alpha=1$ and $\gamma=1$) without and with flow term. The values for $\eta$ are indicated in the legend.
 
 ---
 References:  
 - Havriliak, S., Negami, S., "A complex plane representation of dielectric and mechanical relaxation processes in some polymers", Polymer 8: 161–210, doi:10.1016/0032-3861(67)90021-3
 </value>
   </data>
+  <data name="Relaxation.Modulus.Lg10KohlrauschModulusRelaxationFrequency" xml:space="preserve">
+    <value># Kohlrausch modulus relaxation (frequency)
+
+This function models the complex dynamic modulus in dependence on the  frequency as:
+
+$$
+M^*(f) = M'(f) + i M''(f) = M_{\infty} + (M_{0}-M_{\infty})\int_0^{\infty} \exp(- i 2 \pi f t') \frac{d\Phi}{d t} dt' \\
+\Phi(t) = \exp\left [ -\left ( \frac{t}{\tau}\right )^{\beta} \right ]
+$$
+
+or with a generalized flow term (both equations are equivalent if $\sigma=0$) :
+
+$$
+M^*(f) = M'(f) + i M''(f) = \left\{ \left [ M_{\infty} + (M_{0}-M_{\infty})\int_0^{\infty} \exp(- i 2 \pi f t') \frac{d\Phi}{d t} dt' \right ]^{-1} - \frac{i }{2 \pi f \eta} \right \}^{-1}
+$$
+
+based on the Fourier transform of the derivative of the time-domain Kohlrausch function $\Phi(t)$.
+
+Here, the values of the real and imaginary part of the calculated modulus are **logarithmized** for the output:
+
+$$
+lgM'(f) = \log_{10}(M'(f)) \\
+lgM''(f) = \log_{10}(M''(f)) \\
+$$
+
+Should your data are not logarithmized, use a DecadicLogarithmTransformation to logarithmize them, too.
+
+The quantities are described below.
+It is a special case of the underlying base function with the options  `UseFrequencyInsteadOfOmega=true`, `UseFlowTerm=true`,  `InvertViscosity=false` and `LogarithmizeResult=false`. These options can be changed by double-clicking on the fit function.
+
+
+The underlying base function models the generalized complex dynamic modulus in dependence on the circular frequency $\omega$ with one relaxation term and a flow term as:
+
+$$
+M^*(\omega) = M'(\omega) + i M''(\omega) = \left\{ \left [ M_{\infty} + (M_{0}-M_{\infty})\int_0^{\infty} \exp(- i \omega t') \frac{d\Phi}{d t} dt' \right ]^{-1} + Flowterm \right \}^{-1} \\
+
+\Phi_k(t) = \exp\left [ -\left ( \frac{t}{\tau_k}\right )^{\beta} \right ] \\
+
+Flowterm = \cases{
+-\frac{i \sigma}{\omega} \thickspace\thickspace\mathrm{for} \thickspace \mathrm{InvertViscosity=true} \cr -\frac{i}{\omega\eta} \thickspace\thickspace\mathrm{for} \thickspace \mathrm{InvertViscosity=false}} 
+$$
+
+based on the Fourier transformation of the time derivative of the Kohlrausch function $\Phi(t)$, with the circular frequency $\omega$ being the independent variable (or, depending on an option, the frequency $f$, $\omega=2\pi f$), and $M'(\omega)$ and $M''(\omega)$ being the dependent variables, namely the real and negative imaginary part of the complex dynamic modulus $M^*(\omega)$.
+
+Typical use cases are fits to the complex to the complex mechanical modulus $M^*$ (e.g. shear modulus $G^*$ or Young's modulus $Y^*$)
+
+The parameters are:
+
+- $M_{0}$ : low frequency modulus limit
+- $M_{\infty}$ : high frequency modulus limit
+- $\tau$ : relaxation time
+- $\beta$ : shape exponent (usually $ 0&lt;\beta\le 1 $)
+- $\sigma$ : fluidity (inverse viscosity)
+- $\eta$ : viscosity
+
+
+The available options are:
+- `UseFrequencyInsteadOfOmega`:  
+If true, the frequency $f$ is used as the independent variable, thus $\omega$ in the formula above is replaced by $ 2\pi f $.   
+If false, the circular frequency ($\omega$) is used as the independent variable.
+- `UseFlowTerm`:  
+If true, the flow term in above formula is used.   
+If false, the flow term is not used, and the parameter corresponding with the flow term will not show in the fit.
+- `InvertViscosity`:  
+If true, the parameter in the flow term is an inverted viscosity (i.e.  fluidity). Thus the flow term generally is $-{i \sigma}/{\omega}$.  
+If false, the parameter in the flow term is a viscosity, and the flow term generally is $-{i}/{(\omega\eta)}$.
+- `LogarithmizeResult`:  
+If true, the resulting values of $M'$ and $M''$ are logarithmized (decadic logarithm).  
+If false, the original values are used.
+
+&gt; Note:  
+&gt; Since in most cases $M_0$ and $M_{\infty}$ differ by several orders of magnitude, your fit function will also cover several orders of magnitude. This will result in a poor fit of the low modulus data. To avoid this behavior, you should either use a NaturalLogarithmTransformation for both your data and for the fit function's dependent variables, or use the option in this fit function to logarithmize the results and then use a DecadicLogarithmTransformation to transform your data.  
+
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.Relaxation.Modulus.Lg10KohlrauschModulusRelaxationFrequency.Fig2.png)
+^^^ Fig. 1: Kohlrausch fit functions (with $M_0=10^6$, $M_{\infty}=10^9$, $\tau=1$ and $\eta=10^{33}$). The values for $\beta$ are indicated in the legend.
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.Relaxation.Modulus.Lg10KohlrauschModulusRelaxationFrequency.Fig1.png)
+^^^ Fig. 2: Comparison of Kohlrausch fit functions (with $M_0=10^6$, $M_{\infty}=10^9$, $\tau=1$ and $\beta=1$) without and with flow term. The values for $\eta$ are indicated in the legend.
+
+---
+References:  
+- Kohlrausch, R., "Theorie des elektrischen Rückstandes in der Leidner Flasche", Annalen der Physik und Chemie. 91 (1) (1854): 56–82, 179–213, [doi:10.1002/andp.18541670103](https://doi.org/10.1002/andp.18541670103)
+- Williams, G., Watts, D. C., "Non-Symmetrical Dielectric Relaxation Behavior Arising from a Simple Empirical Decay Function", Transactions of the Faraday Society 66 (1970) 80–85. [doi:10.1039/tf9706600080](https://doi.org/10.1039/tf9706600080)
+
+</value>
+  </data>
+  <data name="Relaxation.Modulus.Lg10KohlrauschModulusRelaxationOmega" xml:space="preserve">
+    <value># Kohlrausch modulus relaxation (circular frequency)
+
+This function models the complex dynamic modulus in dependence on the circular frequency as:
+
+$$
+M^*(\omega) = M'(\omega) + i M''(\omega) = M_{\infty} + (M_{0}-M_{\infty})\int_0^{\infty} \exp(- i \omega t') \frac{d\Phi}{d t} dt' \\
+\Phi(t) = \exp\left [ -\left ( \frac{t}{\tau}\right )^{\beta} \right ]
+$$
+
+or with a generalized flow term (both equations are equivalent if $\sigma=0$) :
+
+$$
+M^*(\omega) = M'(\omega) + i M''(\omega) = \left\{ \left [ M_{\infty} + (M_{0}-M_{\infty})\int_0^{\infty} \exp(- i \omega t') \frac{d\Phi}{d t} dt' \right ]^{-1} - \frac{i }{\omega \eta} \right \}^{-1}
+$$
+
+based on the Fourier transform of the derivative of the time-domain Kohlrausch function $\Phi(t)$.
+
+Here, the values of the real and imaginary part of the calculated modulus are **logarithmized** for the output:
+
+$$
+lgM'(\omega) = \log_{10}(M'(\omega)) \\
+lgM''(\omega) = \log_{10}(M''(\omega)) \\
+$$
+
+Should your data are not logarithmized, use a DecadicLogarithmTransformation to logarithmize them, too.
+
+The quantities are described below.
+It is a special case of the underlying base function with the options  `UseFrequencyInsteadOfOmega=false`, `UseFlowTerm=true`,  `InvertViscosity=false` and `LogarithmizeResult=false`. These options can be changed by double-clicking on the fit function.
+
+
+The underlying base function models the generalized complex dynamic modulus in dependence on the circular frequency $\omega$ with one relaxation term and a flow term as:
+
+$$
+M^*(\omega) = M'(\omega) + i M''(\omega) = \left\{ \left [ M_{\infty} + (M_{0}-M_{\infty})\int_0^{\infty} \exp(- i \omega t') \frac{d\Phi}{d t} dt' \right ]^{-1} + Flowterm \right \}^{-1} \\
+
+\Phi_k(t) = \exp\left [ -\left ( \frac{t}{\tau_k}\right )^{\beta} \right ] \\
+
+Flowterm = \cases{
+-\frac{i \sigma}{\omega} \thickspace\thickspace\mathrm{for} \thickspace \mathrm{InvertViscosity=true} \cr -\frac{i}{\omega\eta} \thickspace\thickspace\mathrm{for} \thickspace \mathrm{InvertViscosity=false}} 
+$$
+
+based on the Fourier transformation of the time derivative of the Kohlrausch function $\Phi(t)$, with the circular frequency $\omega$ being the independent variable (or, depending on an option, the frequency $f$, $\omega=2\pi f$), and $M'(\omega)$ and $M''(\omega)$ being the dependent variables, namely the real and negative imaginary part of the complex dynamic modulus $M^*(\omega)$.
+
+Typical use cases are fits to the complex to the complex mechanical modulus $M^*$ (e.g. shear modulus $G^*$ or Young's modulus $Y^*$)
+
+The parameters are:
+
+- $M_{0}$ : low frequency modulus limit
+- $M_{\infty}$ : high frequency modulus limit
+- $\tau$ : relaxation time
+- $\beta$ : shape exponent (usually $ 0&lt;\beta\le 1 $)
+- $\sigma$ : fluidity (inverse viscosity)
+- $\eta$ : viscosity
+
+
+The available options are:
+- `UseFrequencyInsteadOfOmega`:  
+If true, the frequency $f$ is used as the independent variable, thus $\omega$ in the formula above is replaced by $ 2\pi f $.   
+If false, the circular frequency ($\omega$) is used as the independent variable.
+- `UseFlowTerm`:  
+If true, the flow term in above formula is used.   
+If false, the flow term is not used, and the parameter corresponding with the flow term will not show in the fit.
+- `InvertViscosity`:  
+If true, the parameter in the flow term is an inverted viscosity (i.e.  fluidity). Thus the flow term generally is $-{i \sigma}/{\omega}$.  
+If false, the parameter in the flow term is a viscosity, and the flow term generally is $-{i}/{(\omega\eta)}$.
+- `LogarithmizeResult`:  
+If true, the resulting values of $M'$ and $M''$ are logarithmized (decadic logarithm).  
+If false, the original values are used.
+
+&gt; Note:  
+&gt; Since in most cases $M_0$ and $M_{\infty}$ differ by several orders of magnitude, your fit function will also cover several orders of magnitude. This will result in a poor fit of the low modulus data. To avoid this behavior, you should either use a NaturalLogarithmTransformation for both your data and for the fit function's dependent variables, or use the option in this fit function to logarithmize the results and then use a DecadicLogarithmTransformation to transform your data.  
+
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.Relaxation.Modulus.Lg10KohlrauschModulusRelaxationOmega.Fig2.png)
+^^^ Fig. 1: Kohlrausch fit functions (with $M_0=10^6$, $M_{\infty}=10^9$, $\tau=1$ and $\eta=10^{33}$). The values for $\beta$ are indicated in the legend.
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.Relaxation.Modulus.Lg10KohlrauschModulusRelaxationOmega.Fig1.png)
+^^^ Fig. 2: Comparison of Kohlrausch fit functions (with $M_0=10^6$, $M_{\infty}=10^9$, $\tau=1$ and $\beta=1$) without and with flow term. The values for $\eta$ are indicated in the legend.
+
+---
+References:  
+- Kohlrausch, R., "Theorie des elektrischen Rückstandes in der Leidner Flasche", Annalen der Physik und Chemie. 91 (1) (1854): 56–82, 179–213, [doi:10.1002/andp.18541670103](https://doi.org/10.1002/andp.18541670103)
+- Williams, G., Watts, D. C., "Non-Symmetrical Dielectric Relaxation Behavior Arising from a Simple Empirical Decay Function", Transactions of the Faraday Society 66 (1970) 80–85. [doi:10.1039/tf9706600080](https://doi.org/10.1039/tf9706600080)
+
+</value>
+  </data>
   <data name="Retardation.Dielectrics.HavriliakNegamiComplexFrequency" xml:space="preserve">
-    <value># Havriliak-Negami retardation of the relative dielectric permittivity
+    <value># Havriliak-Negami retardation of the relative dielectric permittivity (frequency)
 
 This function models the retardation of the relative dielectric permittivity in dependence on the frequency $f$, including a term for the DC electric conductivity:
 
@@ -1159,7 +1497,7 @@ References:
 </value>
   </data>
   <data name="Retardation.Dielectrics.HavriliakNegamiComplexOmega" xml:space="preserve">
-    <value># Havriliak-Negami retardation of the relative dielectric permittivity
+    <value># Havriliak-Negami retardation of the relative dielectric permittivity (circular frequency)
 
 This function models the retardation of the relative dielectric permittivity in dependence on the circular frequency $\omega$, including a term for the DC electric conductivity:
 
@@ -1236,7 +1574,7 @@ References:
 </value>
   </data>
   <data name="Retardation.Dielectrics.KohlrauschComplexFrequency" xml:space="preserve">
-    <value># Kohlrausch retardation of the relative dielectric permittivity
+    <value># Kohlrausch retardation of the relative dielectric permittivity (frequency)
 
 This function models the retardation of the relative dielectric permittivity in dependence on the frequency $f$, including a term for the DC electric conductivity:
 
@@ -1320,7 +1658,7 @@ References:
 </value>
   </data>
   <data name="Retardation.Dielectrics.KohlrauschComplexOmega" xml:space="preserve">
-    <value># Kohlrausch retardation of the relative dielectric permittivity
+    <value># Kohlrausch retardation of the relative dielectric permittivity (circular frequency)
 
 This function models the retardation of the relative dielectric permittivity in dependence on the circular frequency $\omega$, including a term for the DC electric conductivity:
 
@@ -1404,7 +1742,7 @@ References:
 </value>
   </data>
   <data name="Retardation.General.HavriliakNegamiComplexFrequency" xml:space="preserve">
-    <value># Havriliak-Negami retardation of a general susceptibility
+    <value># Havriliak-Negami retardation of a general susceptibility (frequency)
 
 This function models the retardation of a general susceptibility (e.g. mechanical complicance) in dependence on the frequency $f$, including a term for the flow:
 
@@ -1481,7 +1819,7 @@ References:
 </value>
   </data>
   <data name="Retardation.General.HavriliakNegamiComplexOmega" xml:space="preserve">
-    <value># Havriliak-Negami retardation of a general susceptibility
+    <value># Havriliak-Negami retardation of a general susceptibility (circular frequency)
 
 This function models the retardation of a general susceptibility (e.g. mechanical complicance) in dependence on the circular frequency $\omega$, including a term for the flow:
 
@@ -1558,7 +1896,7 @@ References:
 </value>
   </data>
   <data name="Retardation.General.KohlrauschComplexFrequency" xml:space="preserve">
-    <value># Kohlrausch retardation of a general susceptibility
+    <value># Kohlrausch retardation of a general susceptibility (frequency)
 
 This function models the retardation of a general susceptibility (e.g. mechanical complicance) in dependence on the frequency $f$, including a term for the flow:
 
@@ -1643,7 +1981,7 @@ References:
 </value>
   </data>
   <data name="Retardation.General.KohlrauschComplexOmega" xml:space="preserve">
-    <value># Kohlrausch retardation of a general susceptibility
+    <value># Kohlrausch retardation of a general susceptibility (circular frequency)
 
 This function models the retardation of a general susceptibility (e.g. mechanical complicance) in dependence on the circular frequency $\omega$, including a term for the flow:
 
@@ -1653,7 +1991,7 @@ $$
 \Phi(t) = \exp\left [ -\left ( \frac{t}{\tau}\right )^{\beta} \right ]
 $$
 
-based on the Fourier transform of the derivative of the time-domain Kohlrausch function $\Phi(t)$:
+based on the Fourier transform of the derivative of the time-domain Kohlrausch function $\Phi(t)$.
 
 The quantities are described below.
 It is a special case of the underlying base function with the options `NumberOfTerms=1`, `UseFrequencyInsteadOfOmega=false`, `UseFlowTerm=true`, `IsRelativeDielectricPermittivity=false`, `InvertViscosity=false`, `InvertResult=false` and `LogarithmizeResult=false`. These options can be changed by double-clicking on the fit function.
@@ -1728,7 +2066,7 @@ References:
 </value>
   </data>
   <data name="Retardation.Modulus.HavriliakNegamiComplexFrequency" xml:space="preserve">
-    <value># Havriliak-Negami retardation of a general modulus
+    <value># Havriliak-Negami retardation of a general modulus (frequency)
 
 This function models the retardation of a general modulus (e.g. mechanical modulus) in dependence on the frequency $f$ with a retardation and a flow term:
 
@@ -1798,7 +2136,7 @@ References:
 </value>
   </data>
   <data name="Retardation.Modulus.HavriliakNegamiComplexOmega" xml:space="preserve">
-    <value># Havriliak-Negami retardation of a general modulus
+    <value># Havriliak-Negami retardation of a general modulus (circular frequency)
 
 This function models the retardation of a general modulus (e.g. mechanical modulus) in dependence on the circular frequency $\omega$ with a retardation and a flow term:
 
@@ -1868,7 +2206,7 @@ References:
 </value>
   </data>
   <data name="Retardation.Modulus.HavriliakNegamiMultiComplexFrequency" xml:space="preserve">
-    <value># Havriliak-Negami retardation of a general modulus
+    <value># Havriliak-Negami retardation of a general modulus (frequency)
 
 This function models the retardation of a general modulus (e.g. mechanical modulus) in dependence on the frequency $f$ with two retardation terms and a term for the flow:
 
@@ -1945,7 +2283,7 @@ References:
 </value>
   </data>
   <data name="Retardation.Modulus.HavriliakNegamiMultiComplexOmega" xml:space="preserve">
-    <value># Havriliak-Negami retardation of a general modulus
+    <value># Havriliak-Negami retardation of a general modulus (circular frequency)
 
 This function models the retardation of a general modulus (e.g. mechanical modulus) in dependence on the circular frequency $\omega$ with two retardation terms and a term for the flow:
 
@@ -2022,7 +2360,7 @@ References:
 </value>
   </data>
   <data name="Retardation.Modulus.KohlrauschComplexFrequency" xml:space="preserve">
-    <value># Kohlrausch retardation of a general modulus
+    <value># Kohlrausch retardation of a general modulus (frequency)
 
 This function models the retardation of a general modulus (e.g. mechanical modulus) in dependence on the frequency $f$ with a retardation and a flow term:
 
@@ -2095,7 +2433,7 @@ References:
 </value>
   </data>
   <data name="Retardation.Modulus.KohlrauschComplexOmega" xml:space="preserve">
-    <value># Kohlrausch retardation of a general modulus
+    <value># Kohlrausch retardation of a general modulus (circular frequency)
 
 This function models the retardation of a general modulus (e.g. mechanical modulus) in dependence on the circular frequency $\omega$ with a retardation and a flow term:
 
@@ -2168,7 +2506,7 @@ References:
 </value>
   </data>
   <data name="Retardation.Modulus.Lg10HavriliakNegamiComplexFrequency" xml:space="preserve">
-    <value># Havriliak-Negami retardation of a general modulus
+    <value># Havriliak-Negami retardation of a general modulus (frequency)
 
 This function models the retardation of a general modulus (e.g. mechanical modulus) in dependence on the frequency $f$ with a retardation and a flow term:
 
@@ -2247,7 +2585,7 @@ References:
 </value>
   </data>
   <data name="Retardation.Modulus.Lg10HavriliakNegamiComplexOmega" xml:space="preserve">
-    <value># Havriliak-Negami retardation of a general modulus
+    <value># Havriliak-Negami retardation of a general modulus (circular frequency)
 
 This function models the retardation of a general modulus (e.g. mechanical modulus) in dependence on the circular frequency $\omega$ with a retardation and a flow term:
 
@@ -2259,8 +2597,8 @@ $$
 Here, the values of the real and imaginary part of the calculated modulus are **logarithmized** for the output:
 
 $$
-lgM'(f) = \log_{10}(M'(f)) \\
-lgM''(f) = \log_{10}(M''(f)) \\
+lgM'(\omega) = \log_{10}(M'(\omega)) \\
+lgM''(\omega) = \log_{10}(M''(\omega)) \\
 $$
 
 Should your data are not logarithmized, use a DecadicLogarithmTransformation to logarithmize them, too.
@@ -2326,7 +2664,7 @@ References:
 </value>
   </data>
   <data name="Retardation.Modulus.Lg10KohlrauschComplexFrequency" xml:space="preserve">
-    <value># Kohlrausch retardation of a general modulus
+    <value># Kohlrausch retardation of a general modulus (frequency)
 
 This function models the retardation of a general modulus (e.g. mechanical modulus) in dependence on the frequency $f$ with a retardation and a flow term:
 
@@ -2408,7 +2746,7 @@ References:
 </value>
   </data>
   <data name="Retardation.Modulus.Lg10KohlrauschComplexOmega" xml:space="preserve">
-    <value># Kohlrausch retardation of a general modulus
+    <value># Kohlrausch retardation of a general modulus (circular frequency)
 
 This function models the retardation of a general modulus (e.g. mechanical modulus) in dependence on the circular frequency $\omega$ with a retardation and a flow term:
 
@@ -2420,8 +2758,8 @@ $$
 Here, the values of the real and imaginary part of the calculated modulus are **logarithmized** for the output:
 
 $$
-lgM'(f) = \log_{10}(M'(f)) \\
-lgM''(f) = \log_{10}(M''(f)) \\
+lgM'(\omega) = \log_{10}(M'(\omega)) \\
+lgM''(\omega) = \log_{10}(M''(\omega)) \\
 $$
 
 Should your data are not logarithmized, use a DecadicLogarithmTransformation to logarithmize them, too.
@@ -2486,6 +2824,48 @@ If false, the original values are used.
 References:  
 - Kohlrausch, R., "Theorie des elektrischen Rückstandes in der Leidner Flasche", Annalen der Physik und Chemie. 91 (1) (1854): 56–82, 179–213, [doi:10.1002/andp.18541670103](https://doi.org/10.1002/andp.18541670103)
 - Williams, G., Watts, D. C., "Non-Symmetrical Dielectric Relaxation Behavior Arising from a Simple Empirical Decay Function", Transactions of the Faraday Society 66 (1970) 80–85. [doi:10.1039/tf9706600080](https://doi.org/10.1039/tf9706600080)
+</value>
+  </data>
+  <data name="Transitions.GeneralEffectiveMedium" xml:space="preserve">
+    <value># General effective medium transition
+
+This transition models e.g. the DC electrical conductivity of conductive particles embedded in a matrix, but is also suitable for other percolation problems.
+
+The function, which evaluates the property $y$ of a compound in dependence of a filler concentration $p$ ($ 0 \le p \le 1 $) is implicitly given by the following equation:
+
+$$
+  (1-p) \frac{y_{0}^{1/s} - y^{1/s}}{y_{0}^{1/s} + A y^{1/s}} +
+  p \frac{y_{1}^{1/t} - y^{1/t}}{y_{1}^{1/t} + A y^{1/t}} = 0 \\ \\
+  A = (1-p_c)/p_c)
+$$
+
+in which:
+- $p$ : volume concentration of the filler particles ($ 0 \le p \le 1 $)
+- $p_c$ : critical percolation threshold (location of the transition ($ 0 &lt; p_c &lt; 1 $))
+- $s, t$ : exponents ($s&gt;0$, $t&gt;0$)
+- $y_{0}$ : property of the matrix material (e.g. electrical conductivity of the matrix)
+- $y_{1}$ : property of the filler particles (e.g. electrical conductivity of the filler)
+- $y$ : resulting property of the compound (e.g. electrical conductivity of the matrix with filler particles)
+
+The equation has the following properties, which match the percolation theory for concentrations below and above the percolation threshold:
+
+- $y = y_0$ for $p=0$ 
+- $y \approx y_0 \left ( \frac{p_c-p}{p_c} \right )^{-s}$ for $p &lt; p_c$
+- $y \approx y_1 \left ( \frac{p-p_c}{1-p_c} \right )^{t}$ for $p &gt; p_c$
+- $y = y_1$ for $p=1$
+
+In contrast to the separate percolation equations below and above the percolation threshold, the general effective medium transition avoids the divergence near the percolation threshold, and provides a smooth transition between the two equations.
+
+## Logarithmically scaled transition
+
+Instead of returning $y$ as described above, the function will return $\log_{10}(y)$.
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.Transitions.GeneralEffectiveMedium.Fig1.png)
+^^^ Fig. 1: GeneralEffectiveMedium transition with $y_0=10^{-14}$, $y_1=10^{-2}$, $p_c=0.2$, $s=0.87$ and $t=2$.
+---
+References:
+- McLachlan, D. and G. Sauti. “The AC and DC conductivity of nanocomposites.” Journal of Nanomaterials 2007 (2007): 15, [doi:10.1155/2007/30389](https://doi.org/10.1155/2007/30389)
 </value>
   </data>
   <data name="Transitions.GeneralizedLogisticDecreasing" xml:space="preserve">
@@ -2572,6 +2952,122 @@ References:
 
 </value>
   </data>
+  <data name="Transitions.Lg10GeneralEffectiveMedium" xml:space="preserve">
+    <value># General effective medium transition (logarithmized)
+
+This transition models e.g. the DC electrical conductivity of conductive particles embedded in a matrix, but is also suitable for other percolation problems.
+
+The function, which evaluates the property $y$ of a compound in dependence of a filler concentration $p$ ($ 0 \le p \le 1 $) is implicitly given by the following equation:
+
+$$
+  (1-p) \frac{y_{0}^{1/s} - y^{1/s}}{y_{0}^{1/s} + A y^{1/s}} +
+  p \frac{y_{1}^{1/t} - y^{1/t}}{y_{1}^{1/t} + A y^{1/t}} = 0 \\ \\
+  A = (1-p_c)/p_c)
+$$
+
+in which:
+- $p$ : volume concentration of the filler particles ($ 0 \le p \le 1 $)
+- $p_c$ : critical percolation threshold (location of the transition ($ 0 &lt; p_c &lt; 1 $))
+- $s, t$ : exponents ($s&gt;0$, $t&gt;0$)
+- $y_{0}$ : property of the matrix material (e.g. electrical conductivity of the matrix)
+- $y_{1}$ : property of the filler particles (e.g. electrical conductivity of the filler)
+- $y$ : resulting property of the compound (e.g. electrical conductivity of the matrix with filler particles)
+
+**Instead of returning $y$ as described above, the function will return the decadic logarithm $\log_{10}(y)$. Furthermore, instead of $y_0$ and $y_1$, the logarithmized parameters $\lg_{10}(y_0)$ and $\lg_{10}(y_1)$ are used!**
+
+The equation has the following properties, which match the percolation theory for concentrations below and above the percolation threshold:
+
+- $y = y_0$ for $p=0$ 
+- $y \approx y_0 \left ( \frac{p_c-p}{p_c} \right )^{-s}$ for $p &lt; p_c$
+- $y \approx y_1 \left ( \frac{p-p_c}{1-p_c} \right )^{t}$ for $p &gt; p_c$
+- $y = y_1$ for $p=1$
+
+In contrast to the separate percolation equations below and above the percolation threshold, the general effective medium transition avoids the divergence near the percolation threshold, and provides a smooth transition between the two equations.
+
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.Transitions.Lg10GeneralEffectiveMedium.Fig1.png)
+^^^ Fig. 1: Lg10GeneralEffectiveMedium transition with the parameters $lg_{10}(y_0)=-14$, $lg_{10}(y_1)=-2$, $p_c=0.2$, $s=0.87$ and $t=2$.
+---
+References:
+- McLachlan, D. and G. Sauti. “The AC and DC conductivity of nanocomposites.” Journal of Nanomaterials 2007 (2007): 15, [doi:10.1155/2007/30389](https://doi.org/10.1155/2007/30389)
+</value>
+  </data>
+  <data name="Transitions.LinearFermiDiracTransition" xml:space="preserve">
+    <value># Linear Fermi-Dirac transition
+
+This fit function implements the linearly scaled Fermi-Dirac transition:
+
+$$
+y(p) = y_1 + (y_0 -y_1) \times f(p)
+$$
+
+which assumes a value of $y_0$ for $p=0$ and $y_1$ for $p=1$.
+
+The core $f(p)$ of the Fermi-Dirac transition is the following function, defined in the interval $[0, 1]$, which assumes the values $f(p=0)=1$ and $f(p=1)=0$:
+
+$$
+  f(p) = \frac{\exp((1-p_c)/w)) - \exp((p-p_c)/w)}{\exp((1-p_c)/w) - \exp((0-p_c)/w)} \times
+  \frac{1 + \exp((0-p_c)/w)}{1 + \exp((p-p_c)/w)}
+$$
+
+in which:
+
+- $p_c$ : location of the transition (0..1)
+- $w$ : width parameter
+
+
+The domain of the function is $ 0 \leq x \leq 1 $. 
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.Transitions.LinearFermiDiracTransition.Fig1.png)
+^^^ Fig. 1: LinearFermiDiracTransition with $y_0=2$, $y_1=10$, $p_c=0.3$ and $w=0.01$.
+---
+References:
+
+
+
+
+</value>
+  </data>
+  <data name="Transitions.LogarithmicFermiDiracTransition" xml:space="preserve">
+    <value># Logarithmic Fermi-Dirac transition
+
+This fit function implements the linearly scaled Fermi-Dirac transition:
+
+$$
+y(p) = y_0^{f(p)} \times y_1^{1-f(p)}
+$$
+
+which assumes a value of $y_0$ for $p=0$ and $y_1$ for $p=1$. It is used e.g. to model the  behavior of electrical conductivity in dependence on the concentration $p$ and the critical concentration $p_c$ (percolation behavior).
+
+
+The core $f(p)$ of the Fermi-Dirac transition is the following function, defined in the interval $[0, 1]$, which assumes the values $f(p=0)=1$ and $f(p=1)=0$:
+
+$$
+  f(p) = \frac{\exp((1-p_c)/w)) - \exp((p-p_c)/w)}{\exp((1-p_c)/w) - \exp((0-p_c)/w)} \times
+  \frac{1 + \exp((0-p_c)/w)}{1 + \exp((p-p_c)/w)}
+$$
+
+in which:
+
+- $p_c$ : location of the transition (0..1)
+- $w$ : width parameter
+
+
+The domain of the function is $ 0 \leq p \leq 1 $. 
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.Transitions.LogarithmicFermiDiracTransition.Fig1.png)
+^^^ Fig. 1: LogarithmicFermiDiracTransition with $y_0=10^{-14}$, $y_1=10^{-2}$, $p_c=0.2$ and $w=0.02$. This could e.g. be a typical curve for the electrical conductivity of a carbon black filled composite in dependence on the carbon black volume concentration.
+---
+References:
+
+
+
+
+</value>
+  </data>
   <data name="Transitions.LogisticDecreasing" xml:space="preserve">
     <value># LogisticDecreasing
 
@@ -2646,6 +3142,65 @@ References:
 
 
 
+</value>
+  </data>
+  <data name="Transitions.SmoothedPercolation" xml:space="preserve">
+    <value># Smoothed percolation
+
+The base of this function are the two percolation equations valid below and above the percolation threshold $p_c$ :
+
+- $y \approx  y_0 \left ( \frac{p_c-p}{p_c} \right )^{-s}$ for $p &lt; p_c$ (left side equation)}
+
+- $y \approx y_1 \left ( \frac{p-p_c}{1-p_c} \right )^{t}$ for $p &gt; p_c$ (right side equation)
+
+in which:
+- $p_c$ : critical percolation threshold (location of the transition (0..1))
+- $p$ : volume concentration of the filler particles (0..1)
+- $s, t$ : exponents ($s&gt;0$, $t&gt;0$)
+- $y_{0}$ : property of the matrix (e.g. electrical conductivity of the matrix, $y_0&gt;0)$)
+- $y_{1}$ : property of the filler particles (e.g. electrical conductivity of the filler, $y_1&gt;0$)
+- $y$ : resulting property of the compound (e.g. electrical conductivity of the matrix with filler particles)
+
+
+Because both equations diverge at $p=p_c$, we need to smooth that location.
+For this we use somewhat stricter boundaries:
+
+- Calculate the approximate logarithmic step height of the transition by
+$$
+\ln(y_h/y_l) = \ln(y_1/y_0) - s - t
+$$
+
+- Find a $p_1 &lt; p_c$ such that the quotient of the function values of right side and left side approximately match this step height:
+
+$$
+ \ln \left ( \frac{ y_1 \left ( \frac{p_2-p_c}{1-p_c} \right )^{t} }{ y_0 \left ( \frac{p_c-p_1}{p_c} \right )^{-s}} \right ) \approx \ln(y_h/y_l)
+$$
+
+in which $p_2 = p_c + (p_c-p_1)\frac{t}{s}$ (obviously: $p_2&gt;p_c$).
+
+
+The value of $p_1$ is then used as the upper boundary of the left side percolation equation:
+
+$y \approx y_0 \left ( \frac{p_c-p}{p_c} \right )^{-s}$ for $p &lt; p_1$
+
+
+and the value of $p_2$ is used as the lower boundary of the right side percolation equation:
+
+$y \approx y_1 \left ( \frac{p-p_c}{1-p_c} \right )^{t}$ for $p &gt; p_2$
+
+In the interval between $p_1$ and $p_2$, the function values are approximated by a logarithmic function:
+
+$\ln(y) = \ln(y_1) + (\ln(y_2)-\ln(y_1))\frac{p-p_1}{p_2-p_1}$
+
+in which 
+
+- $y_1$ value of $y$ as evaluated by the left side equation at $p=p_1$
+- $y_2$ value of $y$ as evaluated by the right side equation at $p=p_2$
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.Transitions.SmoothedPercolation.Fig1.png)
+^^^ Fig. 1: SmoothedPercolation transition with $y_0=10^{-14}$, $y_1=10^{-2}$, $p_c=0.2$, $s=0.87$ and $t=2$.
+---
 </value>
   </data>
 </root>

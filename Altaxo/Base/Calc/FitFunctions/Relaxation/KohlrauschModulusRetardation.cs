@@ -226,13 +226,13 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 
     public override string ToString()
     {
-      return "Kohlrausch Modulus Complex " + (_useFrequencyInsteadOmega ? "(Freq)" : "(Omeg)");
+      return "Kohlrausch Modulus Complex " + (_useFrequencyInsteadOmega ? "(Frequency)" : "(Omega)");
     }
 
 
 
 
-    [FitFunctionCreator("Kohlrausch Complex (Omega)", "Retardation/Modulus", 1, 2, 4)]
+    [FitFunctionCreator("Kohlrausch Complex (Omega)", "Retardation/Modulus", 1, 2, 5)]
     [Description("${res:Altaxo.Calc.FitFunctions.Retardation.Modulus.KohlrauschComplexOmega}")]
     public static IFitFunction CreateModulusOfOmega()
     {
@@ -247,7 +247,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
       return result;
     }
 
-    [FitFunctionCreator("Lg10 Kohlrausch Complex (Omega)", "Retardation/Modulus", 1, 2, 4)]
+    [FitFunctionCreator("Lg10 Kohlrausch Complex (Omega)", "Retardation/Modulus", 1, 2, 5)]
     [Description("${res:Altaxo.Calc.FitFunctions.Retardation.Modulus.Lg10KohlrauschComplexOmega}")]
 
     public static IFitFunction CreateLg10ModulusOfOmega()
@@ -263,7 +263,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
       return result;
     }
 
-    [FitFunctionCreator("Kohlrausch Complex (Frequency)", "Retardation/Modulus", 1, 2, 4)]
+    [FitFunctionCreator("Kohlrausch Complex (Frequency)", "Retardation/Modulus", 1, 2, 5)]
     [Description("${res:Altaxo.Calc.FitFunctions.Retardation.Modulus.KohlrauschComplexFrequency}")]
     public static IFitFunction CreateModulusOfFrequency()
     {

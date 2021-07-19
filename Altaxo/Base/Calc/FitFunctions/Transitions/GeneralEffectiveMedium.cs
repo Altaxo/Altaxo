@@ -32,7 +32,7 @@ namespace Altaxo.Calc.FitFunctions.Transitions
   /// Only for testing purposes - use a "real" linear fit instead.
   /// </summary>
   [FitFunctionClass]
-  public class GeneralEffectiveMedium : IFitFunction
+  public class GeneralEffectiveMedium : IFitFunction, Main.IImmutable
   {
     #region Serialization
 
@@ -58,7 +58,7 @@ namespace Altaxo.Calc.FitFunctions.Transitions
     }
 
     [FitFunctionCreator("GeneralEffectiveMedium", "Transitions", 1, 1, 5)]
-    [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Transitions.GeneralEffectiveMedium.Core}")]
+    [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Transitions.GeneralEffectiveMedium}")]
     public static IFitFunction CreateGeneralEffectiveMedium()
     {
       return new GeneralEffectiveMedium();
@@ -92,7 +92,6 @@ namespace Altaxo.Calc.FitFunctions.Transitions
 
     public string IndependentVariableName(int i)
     {
-      // TODO:  Add KohlrauschDecay.IndependentVariableName implementation
       return "phi";
     }
 
@@ -133,22 +132,10 @@ namespace Altaxo.Calc.FitFunctions.Transitions
       return null;
     }
 
-    #region Change event
-
     /// <summary>
-    /// Called when anything in this fit function has changed.
+    /// Unused because this instance is immutable.
     /// </summary>
-    protected virtual void OnChanged()
-    {
-      Changed?.Invoke(this, EventArgs.Empty);
-    }
-
-    /// <summary>
-    /// Fired when the fit function changed.
-    /// </summary>
-    public event EventHandler? Changed;
-
-    #endregion Change event
+    public event EventHandler? Changed { add { } remove { } }
 
     public virtual void Evaluate(double[] X, double[] P, double[] Y)
     {
@@ -344,10 +331,7 @@ namespace Altaxo.Calc.FitFunctions.Transitions
     }
 
     [FitFunctionCreator("GeneralEffectiveMediumLog10", "Transitions", 1, 1, 5)]
-    [System.ComponentModel.Description(
-      "${res:Altaxo.Calc.FitFunctions.Transitions.GeneralEffectiveMedium.Core}\r\n" +
-      "${res:Altaxo.Calc.FitFunctions.Transitions.GeneralEffectiveMedium.Log10}"
-      )]
+    [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Transitions.Lg10GeneralEffectiveMedium}")]
     public static IFitFunction CreateGeneralEffectiveMediumLog10()
     {
       return new GeneralEffectiveMediumLog10();
