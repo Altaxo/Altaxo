@@ -95,8 +95,8 @@ namespace Altaxo.Calc.FitFunctions
         (() => new GeneralizedLogisticIncreasing(1,1), 0.5, new double[]{2,3,5,0.4, 0.3, 1,3}, 1+3*0.5+2/Math.Pow(1+Math.Pow(Math.Exp(-(0.5-3)/5),0.4),0.3/0.4)),
         (() => new Kinetics.KineticsNthOrder(), 0.5, new double[]{2,3,1}, 2*Math.Exp(-3*0.5)),
         (() => new Kinetics.KineticsNthOrder(), 0.5, new double[]{2,3,1.5}, Math.Pow(3*(1.5-1)*0.5 + Math.Pow(2, 1-1.5), 1/(1-1.5))),
-        (() => new Kinetics.ConversionNthOrder(), 3.5, new double[]{2,3,1}, 1-Math.Exp(3*(2-3.5))),
-        (() => new Kinetics.ConversionNthOrder(), 3.5, new double[]{2,3,1.5}, 153/169d),
+        (() => new Kinetics.ConversionNthOrder(), 3.5, new double[]{2,1,3,1}, 1-Math.Exp(3*(2-3.5))),
+        (() => new Kinetics.ConversionNthOrder(), 3.5, new double[]{2,1,3,1.5}, 153/169d),
       };
     private static DoubleEqualityComparer CompareD = new DoubleEqualityComparer(1E-100, 1E-12);
     private static DoubleEqualityComparer CompareDerivatives = new DoubleEqualityComparer(1E-5, 1E-5);

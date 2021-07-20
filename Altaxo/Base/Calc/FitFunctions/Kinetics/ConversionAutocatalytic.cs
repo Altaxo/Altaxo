@@ -31,7 +31,7 @@ using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Calc.Regression.Nonlinear;
 using Altaxo.Main;
 
-namespace Altaxo.Calc.FitFunctions.Kinetics.Foo
+namespace Altaxo.Calc.FitFunctions.Kinetics
 {
   /// <summary>
   /// Represents solutions related to the differential equation y'=(k1+k2*y^m)(1-y)^n with the initial condition y(t0)=0. For the direct solution of this equation, see <see cref="CoreSolution"/>.
@@ -72,7 +72,7 @@ namespace Altaxo.Calc.FitFunctions.Kinetics.Foo
     /// Creates the fit function.
     /// </summary>
     /// <returns>The fit function.</returns>
-    [FitFunctionCreator("ConversionAutocatalytic", "Kinetics", 1, 1, 5)]
+    [FitFunctionCreator("ConversionAutocatalytic", "Kinetics", 1, 1, 6)]
     [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Kinetics.ConversionAutocatalytic}")]
     public static IFitFunction CreateFitFunction()
     {
@@ -129,10 +129,11 @@ namespace Altaxo.Calc.FitFunctions.Kinetics.Foo
       return i switch
       {
         0 => "t0",
-        1 => "k1",
-        2 => "k2",
-        3 => "m",
-        4 => "n",
+        1 => "A0",
+        2 => "k1",
+        3 => "k2",
+        4 => "m",
+        5 => "n",
         _ => throw new InvalidOperationException()
       };
     }
@@ -147,6 +148,7 @@ namespace Altaxo.Calc.FitFunctions.Kinetics.Foo
         2 => 1,
         3 => 1,
         4 => 1,
+        5 => 1,
         _ => throw new InvalidOperationException()
       };
     }
@@ -163,13 +165,44 @@ namespace Altaxo.Calc.FitFunctions.Kinetics.Foo
     private Evaluator _evaluator = new Evaluator();
     private IEnumerator<(double x, double[] y)> _solution;
 
-    /// <inheritdoc/>
-    public void Evaluate(double[] X, double[] P, double[] Y)
-    {
-      var x = X[0];
-      var t0 = P[0];
 
-      if (!(x >= t0))
+    /// <inheritdoc/>
+    public virtual void Evaluate(double[] X, double[] P, double[] Y)
+    {
+      EvaluateConversion(X, P, Y);
+      Y[0] *= P[1];
+    }
+
+    /// <summary>
+    /// Evaluates the conversion rate (without any prefactor). Thus, the resulting value
+    /// is the time derivative of the conversion (also without prefactor).
+    /// </summary>
+    /// <param name="X">The x value.</param>
+    /// <param name="P">The parameter array.</param>
+    /// <param name="Y">Outpust the y value.</param>
+    public virtual void EvaluateConversionRate(double[] X, double[] P, double[] Y)
+    {
+      if (!(X[0] >= P[0]))
+      {
+        Y[0] = 0;
+      }
+      else
+      {
+        EvaluateConversion(X, P, Y);
+        _evaluator.EvaluateRate(X[0], Y, Y);
+      }
+    }
+
+    /// <summary>
+    /// Evaluates the conversion (from 0..1). Thus, the prefactor A0 is not used here.
+    /// </summary>
+    /// <param name="X">The x value.</param>
+    /// <param name="P">The parameter array.</param>
+    /// <param name="Y">Outpust the y value.</param>
+    public virtual void EvaluateConversion(double[] X, double[] P, double[] Y)
+    {
+      var x = X[0] - P[0];
+      if (!(x >= 0))
       {
         Y[0] = 0;
       }
@@ -195,7 +228,7 @@ namespace Altaxo.Calc.FitFunctions.Kinetics.Foo
         if (initRequired)
         {
           _ode = new Ode.DOP853();
-          _ode.Initialize(t0, _y0, _evaluator.EvaluateRate);
+          _ode.Initialize(0, _y0, _evaluator.EvaluateRate);
 
           _solution = _ode.GetSolutionPointsVolatile(new Ode.OdeMethodOptions()
           {
@@ -204,7 +237,7 @@ namespace Altaxo.Calc.FitFunctions.Kinetics.Foo
             RelativeTolerance = 1E-4
           }).GetEnumerator();
 
-          _x_previous_step = t0;
+          _x_previous_step = 0;
           try
           {
             _solution.MoveNext();
@@ -238,25 +271,27 @@ namespace Altaxo.Calc.FitFunctions.Kinetics.Foo
     
     public class Evaluator
     {
-      private double t0, k1, k2, m, n;
+      private double t0, A0, k1, k2, m, n;
 
       public void Initialize(double[] P)
       {
         t0 = P[0];
-        k1 = P[1];
-        k2 = P[2];
-        m = P[3];
-        n = P[4];
+        A0 = P[1];
+        k1 = P[2];
+        k2 = P[3];
+        m = P[4];
+        n = P[5];
       }
 
       public bool IsSameParameterSet(double[] P)
       {
         return
         t0 == P[0] &&
-        k1 == P[1] &&
-        k2 == P[2] &&
-        m == P[3] &&
-        n == P[4];
+        A0 == P[1] &&
+        k1 == P[2] &&
+        k2 == P[3] &&
+        m == P[4] &&
+        n == P[5];
       }
 
       public void EvaluateRate(double x, double[] y, double[] dy)

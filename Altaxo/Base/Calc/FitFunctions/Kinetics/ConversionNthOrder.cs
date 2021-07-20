@@ -32,7 +32,7 @@ using Altaxo.Main;
 namespace Altaxo.Calc.FitFunctions.Kinetics
 {
   /// <summary>
-  /// Represents solutions related to the differential equation y'=k*(1-y)^n with the initial condition y(t0)=0. For the direct solution of this equation, see <see cref="CoreSolution"/>.
+  /// Represents solutions related to the differential equation y'=k*(1-y)^n with the initial condition y(t0)=0. For the direct solution of this equation, see <see cref="EvaluateConversion"/>.
   /// </summary>
   [FitFunctionClass]
   public class ConversionNthOrder : IFitFunctionWithGradient, IImmutable
@@ -105,7 +105,7 @@ namespace Altaxo.Calc.FitFunctions.Kinetics
     {
       get
       {
-        return 3;
+        return 4;
       }
     }
 
@@ -127,8 +127,9 @@ namespace Altaxo.Calc.FitFunctions.Kinetics
       return i switch
       {
         0 => "t0",
-        1 => "k",
-        2 => "n",
+        1 => "A0",
+        2 => "k",
+        3 => "n",
         _ => throw new InvalidOperationException()
       };
     }
@@ -141,6 +142,7 @@ namespace Altaxo.Calc.FitFunctions.Kinetics
         0 => 0,
         1 => 1,
         2 => 1,
+        3 => 1,
         _ => throw new InvalidOperationException()
       };
     }
@@ -154,7 +156,7 @@ namespace Altaxo.Calc.FitFunctions.Kinetics
     /// <inheritdoc/>
     public void Evaluate(double[] X, double[] P, double[] Y)
     {
-      Y[0] = CoreSolution(X[0], P[0], P[1], P[2]);
+      Y[0] = P[1] * EvaluateConversion(X[0], P[0], P[2], P[3]);
     }
 
     /// <inheritdoc/>
@@ -162,38 +164,43 @@ namespace Altaxo.Calc.FitFunctions.Kinetics
     {
       double x = X[0];
       double t0 = P[0];
-      double k = P[1];
-      double n = P[2];
+      double A0 = P[1];
+      double k = P[2];
+      double n = P[3];
 
       if (!(x >= t0))
       {
         DY[0][0] = 0;
         DY[0][1] = 0;
         DY[0][2] = 0;
+        DY[0][3] = 0;
       }
       else if (n < 1 && x >= t0 + 1 / (k * (1 - n)))
       {
         DY[0][0] = 0;
         DY[0][1] = 0;
         DY[0][2] = 0;
+        DY[0][3] = 0;
       }
       else
       {
         if (n == 1)
         {
           var term = Math.Exp(k * (t0-x));
-          DY[0][0] = -term*k;
-          DY[0][1] = term * (x - t0);
-          DY[0][2] = -term * 0.5 * RMath.Pow2(k * (x - t0));
+          DY[0][0] = -A0*term*k;
+          DY[0][1] = 1 - term;
+          DY[0][2] = A0*term * (x - t0);
+          DY[0][3] = -A0*term * 0.5 * RMath.Pow2(k * (x - t0));
         }
         else
         {
           var term = 1 - k * (n - 1) * (t0 - x);
           var termE = Math.Pow(term, 1 / (1 - n));
 
-          DY[0][0] = -termE * k / term;
-          DY[0][1] = termE * (x-t0) / term;
-          DY[0][2] = -termE * (Math.Log(term) / RMath.Pow2(1 - n) - k * (t0-x)/(term*(1-n)));
+          DY[0][0] = -A0*termE * k / term;
+          DY[0][1] = 1 - termE;
+          DY[0][2] = A0*termE * (x-t0) / term;
+          DY[0][3] = -A0*termE * (Math.Log(term) / RMath.Pow2(1 - n) - k * (t0-x)/(term*(1-n)));
         }
       }
     }
@@ -207,8 +214,8 @@ namespace Altaxo.Calc.FitFunctions.Kinetics
     /// <param name="t0">Time at which y is zero.</param>
     /// <param name="k">Kinetic constant (must be a positive value).</param>
     /// <param name="n">The order n of the kinetics equation.</param>
-    /// <returns>The solution if y'=k*(1-y)^n, presuming that k is nonnegative.</returns>
-    public static double CoreSolution(double x, double t0, double k, double n)
+    /// <returns>The value y(x) of the solution of y'=k*(1-y)^n, presuming that k is nonnegative.</returns>
+    public static double EvaluateConversion(double x, double t0, double k, double n)
     {
       if (!(k >= 0))
         return double.NaN;
