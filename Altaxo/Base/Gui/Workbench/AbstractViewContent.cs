@@ -291,7 +291,7 @@ namespace Altaxo.Gui.Workbench
         if (projectItem is not null)
         {
           var name = Altaxo.Main.AbsoluteDocumentPath.GetPathString(projectItem, 16);
-          System.Diagnostics.Debug.WriteLine("GetName: " + name);
+          // System.Diagnostics.Debug.WriteLine("GetName: " + name);
           return name;
         }
         else if (model is not null)

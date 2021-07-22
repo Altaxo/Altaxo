@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2019 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2021 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -96,6 +96,8 @@ namespace Altaxo.Main
 
     #endregion Serialization
 
+    #region Constructors
+
     public DocNodeProxy2ndLevel(IDocumentLeafNode docNode)
       : base(docNode, isCalledFromConstructor: true)
     {
@@ -126,6 +128,8 @@ namespace Altaxo.Main
     {
       _childName = from._childName;
     }
+
+    #endregion
 
     public override object Clone()
     {
@@ -199,19 +203,28 @@ namespace Altaxo.Main
     {
       var result = base.DocumentObject();
 
-      if (_childName is not null && result is IDocumentNode parentNode)
+      InstanceChangedEventArgs? instanceArgs = null;
+      lock (this)
       {
-        var child = parentNode.GetChildObjectNamed(_childName);
-        if (child is not null)
+        if (_childName is not null && result is IDocumentNode parentNode)
         {
-          _childName = null;
-          InternalSetDocNode(child, isCalledFromConstructor: false, doNotTriggerChangedEvent: true); // we are tracking the child now
-          result = child;
+          var child = parentNode.GetChildObjectNamed(_childName);
+          if (child is not null)
+          {
+            _childName = null;
+            instanceArgs = InternalSetDocNode(child, isCalledFromConstructor: false, doNotTriggerChangedEvent: true); // we are tracking the child now
+            result = child;
+          }
+          else
+          {
+            result = null; // can not resolved yet
+          }
         }
-        else
-        {
-          result = null; // can not resolved yet
-        }
+      }
+
+      if(instanceArgs is not null)
+      {
+        EhSelfChanged(instanceArgs);
       }
       return result;
 
@@ -219,13 +232,16 @@ namespace Altaxo.Main
 
     public override Main.AbsoluteDocumentPath DocumentPath()
     {
-      var docNode = InternalDocumentNode;
-      if (docNode is not null)
+      lock (this)
       {
-        InternalDocumentPath = Main.AbsoluteDocumentPath.GetAbsolutePath(docNode);
-      }
+        var docNode = InternalDocumentNode;
+        if (docNode is not null)
+        {
+          InternalDocumentPath = Main.AbsoluteDocumentPath.GetAbsolutePath(docNode);
+        }
 
-      return (_childName is null) ? InternalDocumentPath : InternalDocumentPath.Append(_childName);
+        return (_childName is null) ? InternalDocumentPath : InternalDocumentPath.Append(_childName);
+      }
     }
   }
 }

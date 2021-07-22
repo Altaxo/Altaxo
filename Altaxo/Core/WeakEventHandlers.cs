@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2020 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2021 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -153,6 +153,9 @@ namespace Altaxo
         Remove();
       }
     }
+
+    /// <summary>Gets the event source. Attention! Use the returned value only locally, otherwise, you will get a dependence that you wanted to avoid.</summary>
+    public object EventSource => _eventSource?.Target;
 
     /// <summary>Removes the event handler from the event source, using the stored remove action..</summary>
     public void Remove()
@@ -306,6 +309,9 @@ namespace Altaxo
       }
     }
 
+    /// <summary>Gets the event source. Attention! Use the returned value only locally, otherwise, you will get a dependence that you wanted to avoid.</summary>
+    public object EventSource => _eventSource?.Target;
+
     /// <summary>Removes the event handler from the event source, using the stored remove action..</summary>
     public void Remove()
     {
@@ -458,6 +464,9 @@ namespace Altaxo
       }
     }
 
+    /// <summary>Gets the event source. Attention! Use the returned value only locally, otherwise, you will get a dependence that you wanted to avoid.</summary>
+    public object EventSource => _eventSource?.Target;
+
     /// <summary>Removes the event handler from the event source, using the stored remove action..</summary>
     public void Remove()
     {
@@ -605,6 +614,9 @@ namespace Altaxo
         Remove();
       }
     }
+
+    /// <summary>Gets the event source. Attention! Use the returned value only locally, otherwise, you will get a dependence that you wanted to avoid.</summary>
+    public object EventSource => _eventSource?.Target;
 
     /// <summary>Removes the event handler from the event source, using the stored remove action..</summary>
     public void Remove()
@@ -757,6 +769,9 @@ namespace Altaxo
         Remove();
       }
     }
+
+    /// <summary>Gets the event source. Attention! Use the returned value only locally, otherwise, you will get a dependence that you wanted to avoid.</summary>
+    public object EventSource => _eventSource?.Target;
 
     /// <summary>Removes the event handler from the event source, using the stored remove action..</summary>
     public void Remove()
@@ -914,6 +929,9 @@ namespace Altaxo
       }
     }
 
+    /// <summary>Gets the event source. Attention! Use the returned value only locally, otherwise, you will get a dependence that you wanted to avoid.</summary>
+    public object EventSource => _eventSource?.Target;
+
     /// <summary>Removes the event handler from the event source, using the stored remove action..</summary>
     public void Remove()
     {
@@ -1069,6 +1087,10 @@ namespace Altaxo
         Remove();
       }
     }
+
+    /// <summary>Gets the event source. Attention! Use the returned value only locally, otherwise, you will get a dependence that you wanted to avoid.</summary>
+    public object EventSource => _eventSource?.Target;
+
 
     /// <summary>Removes the event handler from the event source, using the stored remove action..</summary>
     public void Remove()

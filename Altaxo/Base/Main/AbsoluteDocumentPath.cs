@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2021 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -42,7 +42,6 @@ namespace Altaxo.Main
   {
     private static readonly string[] _emptyStringArray = new string[0];
     public static readonly AbsoluteDocumentPath DocumentPathOfRootNode = new AbsoluteDocumentPath(new string[0]);
-
     private string[] _pathParts = _emptyStringArray;
 
     #region Serialization
@@ -435,6 +434,23 @@ namespace Altaxo.Main
       return path;
     }
 
+    /// <summary>
+    /// Get the absolute path of the node <code>node</code> starting from the root, or null if that fails.
+    /// </summary>
+    /// <param name="node">The node for which the path is retrieved.</param>
+    /// <returns>The absolute path of the node, or null if failed to get the path. The first element is a "/" to mark this as absolute path.</returns>
+    public static AbsoluteDocumentPath? TryGetAbsolutePath(IDocumentLeafNode node)
+    {
+      try
+      {
+        AbsoluteDocumentPath path = GetPath(node, int.MaxValue);
+        return path;
+      }
+      catch(Exception)
+      {
+        return null;
+      }
+    }
     /// <summary>
     /// Get the absolute path of the node <code>node</code> starting either from the root, or from the object in the depth
     /// <code>maxDepth</code>, whatever is reached first.
