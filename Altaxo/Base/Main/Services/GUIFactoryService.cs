@@ -509,7 +509,7 @@ namespace Altaxo.Main.Services
 
     public bool ShowDialogForEnumFlag(ref System.Enum arg, string title)
     {
-      var ctrl = new EnumValueController();
+      var ctrl = new Altaxo.Gui.Common.EnumFlagController();
       ctrl.InitializeDocument(new object[] { arg });
 
       if (ShowDialog(ctrl, title))

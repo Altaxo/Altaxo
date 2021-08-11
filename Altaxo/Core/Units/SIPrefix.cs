@@ -366,6 +366,27 @@ namespace Altaxo.Units
       return _exponent == other._exponent ? 0 : _exponent < other._exponent ? -1 : 1;
     }
 
+    /// <summary>
+    /// Multiplies two prefixes. If the result is not
+    /// a known prefix, an <see cref="InvalidOperationException"/> is thrown.
+    /// Consider using <see cref="FromMultiplication(SIPrefix, SIPrefix)"/> instead.
+    /// </summary>
+    /// <param name="x">The x.</param>
+    /// <param name="y">The y.</param>
+    /// <returns>
+    /// The result of the operator.
+    /// </returns>
+    /// <exception cref="InvalidOperationException">$"Result of multiplication of prefix {x} and {y} is not a known prefix!</exception>
+    public static SIPrefix operator *(SIPrefix x, SIPrefix y)
+    {
+      var exponent = x.Exponent + y.Exponent;
+      if (_prefixByExponent.TryGetValue(exponent, out var resultingPrefix))
+        return resultingPrefix;
+      else
+        throw new InvalidOperationException($"Result of multiplication of prefix {x} and {y} is not a known prefix!");
+
+    }
+
     #region IUnit implementation
 
     ISIPrefixList IUnit.Prefixes

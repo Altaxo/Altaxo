@@ -30,11 +30,6 @@ using Altaxo.Main.Services;
 
 namespace Altaxo.Main
 {
-  /// <summary>
-  /// The event handler to indicate the changing of an Altaxo project.
-  /// </summary>
-  public delegate void ProjectEventHandler(object sender, ProjectEventArgs e);
-
   public enum ProjectEventKind
   {
     /// <summary>Occurs before a new project is opened from file. Not fired when a new project is created internally.</summary>
@@ -93,11 +88,6 @@ namespace Altaxo.Main
       ProjectEventKind = eventKind;
     }
   }
-
-  /// <summary>
-  /// The event handler to indicate the renaming of a project.
-  /// </summary>
-  public delegate void ProjectRenameEventHandler(object sender, ProjectRenamedEventArgs e);
 
   /// <summary>
   /// Usefull to indicate the renaming of an Altaxo project.
@@ -276,28 +266,28 @@ namespace Altaxo.Main
     /// <summary>
     /// Fired when a project is opened or a new empty project is created.
     /// </summary>
-    event ProjectEventHandler ProjectOpened;
+    event EventHandler<ProjectEventArgs> ProjectOpened;
 
     /// <summary>
     /// Fired when the current open project is closed.
     /// </summary>
-    event ProjectEventHandler ProjectClosed;
+    event EventHandler<ProjectEventArgs> ProjectClosed;
 
     /// <summary>
     /// Fired when the current open project is renamed.
     /// </summary>
-    event ProjectRenameEventHandler ProjectRenamed;
+    event EventHandler<ProjectRenamedEventArgs> ProjectRenamed;
 
     /// <summary>
     /// Fired when the dirty state of the project changed.
     /// </summary>
-    event ProjectEventHandler ProjectDirtyChanged;
+    event EventHandler<ProjectEventArgs> ProjectDirtyChanged;
 
     /// <summary>
     /// Event fired <b>after</b> any of the following other events is fired: <see cref="ProjectOpened" />,
     /// <see cref="ProjectClosed" />, <see cref="ProjectRenamed" />, and <see cref="ProjectDirtyChanged" />.
     /// </summary>
-    event ProjectEventHandler ProjectChanged;
+    event EventHandler<ProjectEventArgs> ProjectChanged;
 
     /// <summary>
     /// Determines whether the provided file extension is a project extension.
@@ -352,11 +342,11 @@ namespace Altaxo.Main
     public IEnumerable<string> ProjectFileExtensions => throw new NotImplementedException();
 
 #pragma warning disable CS0067
-    public event ProjectEventHandler? ProjectOpened;
-    public event ProjectEventHandler? ProjectClosed;
-    public event ProjectRenameEventHandler? ProjectRenamed;
-    public event ProjectEventHandler? ProjectDirtyChanged;
-    public event ProjectEventHandler? ProjectChanged;
+    public event EventHandler<ProjectEventArgs>? ProjectOpened;
+    public event EventHandler<ProjectEventArgs>? ProjectClosed;
+    public event EventHandler<ProjectRenamedEventArgs>? ProjectRenamed;
+    public event EventHandler<ProjectEventArgs>? ProjectDirtyChanged;
+    public event EventHandler<ProjectEventArgs>? ProjectChanged;
 #pragma warning restore CS0067
 
     public void AskForSavingOfProject(CancelEventArgs e)

@@ -42,15 +42,15 @@ namespace Altaxo.Dom
 
     protected IProjectArchiveManager _currentProjectArchiveManager = new UnnamedProjectArchiveManager();
 
-    public event ProjectEventHandler? ProjectOpened;
+    public event EventHandler<ProjectEventArgs>? ProjectOpened;
 
-    public event ProjectEventHandler? ProjectClosed;
+    public event EventHandler<ProjectEventArgs>? ProjectClosed;
 
-    public event ProjectRenameEventHandler? ProjectRenamed;
+    public event EventHandler<ProjectRenamedEventArgs>? ProjectRenamed;
 
-    public event ProjectEventHandler? ProjectDirtyChanged;
+    public event EventHandler<ProjectEventArgs>? ProjectDirtyChanged;
 
-    public event ProjectEventHandler? ProjectChanged;
+    public event EventHandler<ProjectEventArgs>? ProjectChanged;
 
     #region Current project and project file name handling
 

@@ -43,30 +43,30 @@ namespace Altaxo.Units
     private IUnit? _unit;
 
     #region Serialization
-  [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DimensionfulQuantity), 0)]
-  public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-  {
-    public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DimensionfulQuantity), 0)]
+    public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      var s = (DimensionfulQuantity)obj;
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        var s = (DimensionfulQuantity)obj;
 
-      info.AddValue("Value", s.Value);
-      info.AddValue("Prefix", s.Prefix);
-      info.AddValueOrNull("Unit", s.IsEmpty ? null : s.Unit);
+        info.AddValue("Value", s.Value);
+        info.AddValue("Prefix", s.Prefix);
+        info.AddValueOrNull("Unit", s.IsEmpty ? null : s.Unit);
+      }
+
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      {
+        var value = info.GetDouble("Value");
+        var prefix = info.GetValue<SIPrefix>("Prefix", parent);
+        var unit = info.GetValueOrNull<IUnit>("Unit", parent);
+
+        if (unit is null)
+          return DimensionfulQuantity.Empty;
+        else
+          return new DimensionfulQuantity(value, prefix, unit);
+      }
     }
-
-    public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
-    {
-      var value = info.GetDouble("Value");
-      var prefix = info.GetValue<SIPrefix>("Prefix", parent);
-      var unit = info.GetValueOrNull<IUnit>("Unit", parent);
-
-      if (unit is null)
-        return DimensionfulQuantity.Empty;
-      else
-        return new DimensionfulQuantity(value, prefix, unit);
-    }
-  }
     #endregion
 
     /// <summary>Creates a dimensionless quantity with the provided value.</summary>
@@ -184,6 +184,14 @@ namespace Altaxo.Units
         return _prefix ?? SIPrefix.None;
       }
     }
+
+    /// <summary>
+    /// Gets the prefixed unit of this quantity.
+    /// </summary>
+    /// <value>
+    /// The prefixed unit of this quantity.
+    /// </value>
+    public PrefixedUnit PrefixedUnit => new PrefixedUnit(Prefix, Unit);
 
     /// <summary>Gets the numeric value of this quantity in the context of prefix and unit.</summary>
     public double Value
@@ -460,10 +468,9 @@ namespace Altaxo.Units
 
     public static DimensionfulQuantity operator *(DimensionfulQuantity a, DimensionfulQuantity b)
     {
-      (var newPrefix, var remainingFactor) = SIPrefix.FromMultiplication(a.Prefix, b.Prefix);
       return new DimensionfulQuantity(
-          remainingFactor * a.AsValueInSIUnits * b.AsValueInSIUnits,
-          newPrefix,
+          a.AsValueInSIUnits * b.AsValueInSIUnits,
+          SIPrefix.None,
           a.Unit.SIUnit * b.Unit.SIUnit);
     }
 
@@ -472,11 +479,9 @@ namespace Altaxo.Units
       a = a.TreatedAsUnbiasedDifference;
       b = b.TreatedAsUnbiasedDifference;
 
-      (var newPrefix, var remainingFactor) = SIPrefix.FromDivision(a.Prefix, b.Prefix);
-
       return new DimensionfulQuantity(
-          remainingFactor * a.Value / b.Value,
-          newPrefix,
+          a.AsValueInSIUnits / b.AsValueInSIUnits,
+          SIPrefix.None,
           a.Unit.SIUnit / b.Unit.SIUnit);
     }
 
@@ -517,7 +522,7 @@ namespace Altaxo.Units
       (var newPrefix, var remainingFactor) = SIPrefix.FromDivision(SIPrefix.None, b.Prefix);
 
       return new DimensionfulQuantity(
-          remainingFactor * a / b.AsValueInSIUnits,
+          remainingFactor * a / b.Value,
           newPrefix,
           Dimensionless.Unity.Instance / b.Unit.SIUnit);
     }
