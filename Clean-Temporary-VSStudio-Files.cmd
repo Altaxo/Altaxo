@@ -7,6 +7,9 @@ rmdir /S /Q .\AddIns\D3D\D3DPresentation\bin
 rmdir /S /Q .\AddIns\MLNet\MLNet\obj
 rmdir /S /Q .\AddIns\MLNet\MLNet\bin
 
+rmdir /S /Q .\AddIns\MLNet\MLNetDependencies\obj
+rmdir /S /Q .\AddIns\MLNet\MLNetDependencies\bin
+
 rmdir /S /Q .\AddIns\OpenXML\OpenXML\obj
 rmdir /S /Q .\AddIns\OpenXML\OpenXML\bin
 
