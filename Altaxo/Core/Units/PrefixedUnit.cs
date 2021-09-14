@@ -62,6 +62,13 @@ namespace Altaxo.Units
   }
     #endregion
 
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PrefixedUnit"/> struct (with <see cref="SIPrefix.None"/> as prefix).
+    /// </summary>
+    /// <param name="unit">The unit.</param>
+    public PrefixedUnit(IUnit unit) : this(SIPrefix.None, unit) { }
+
     /// <summary>
     /// Initializes a new instance of the <see cref="PrefixedUnit"/> struct.
     /// </summary>

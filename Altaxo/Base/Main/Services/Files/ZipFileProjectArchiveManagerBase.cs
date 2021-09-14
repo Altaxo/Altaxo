@@ -29,7 +29,6 @@ using System.IO;
 using System.IO.Compression;
 using System.Threading;
 using System.Threading.Tasks;
-using Altaxo.Main.Services.Files;
 using Altaxo.Serialization;
 
 namespace Altaxo.Main.Services
@@ -380,8 +379,8 @@ namespace Altaxo.Main.Services
         {
           try
           {
-            await orgStream.CopyToAsync(clonedFileStream, 81920, cancellationToken);
-            await clonedFileStream.FlushAsync(cancellationToken);
+            await orgStream.CopyToAsync(clonedFileStream, 81920, cancellationToken).ConfigureAwait(false);
+            await clonedFileStream.FlushAsync(cancellationToken).ConfigureAwait(false);
             if (!ZipAnalyzerAxo.IsZipFileOkay(clonedFileStream, ZipAnalyzerOptions.TestCentralDirectoryForNameDublettes | ZipAnalyzerOptions.TestStrictOrderOfLocalFileHeaders | ZipAnalyzerOptions.TestExistenceOfTheLocalFileHeaders, out string errorMessage))
             {
               Current.Console.WriteLine($"Error: Clone of original project file {orgStream.Name} not used because it is corrupt.");
