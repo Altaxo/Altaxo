@@ -421,12 +421,6 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
         BackgroundBrushChanged();
     }
 
-    private void EhBackgroundColorLinkageChanged()
-    {
-      if (BackgroundColorLinkageChanged is not null)
-        BackgroundColorLinkageChanged();
-    }
-
     public void InitializeBackgroundColorLinkage(Collections.SelectableListNodeList list)
     {
       _guiBackgroundColorLinkage.Initialize(list);
@@ -441,6 +435,11 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
     {
       if (UseBackgroundChanged is not null)
         UseBackgroundChanged();
+    }
+
+    private void EhBackgroundColorLinkageChanged(object? sender, EventArgs e)
+    {
+          BackgroundColorLinkageChanged?.Invoke();
     }
   }
 }
