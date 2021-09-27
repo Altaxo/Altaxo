@@ -282,8 +282,9 @@ namespace Altaxo.Graph.Graph3D.Shapes
     /// <param name="list">List of items to add.</param>
     public void AddRange(IEnumerable<GraphicBase> list)
     {
-      foreach (var obj in list)
+      foreach (var cand in list)
       {
+        var obj = (GraphicBase)cand.Clone();
         obj.Location.ChangeRelativeSizeValuesToAbsoluteSizeValues(); // all sizes of grouped objects must be absolute
         obj.Location.ChangeRelativePositionValuesToAbsolutePositionValues(); // all position values must be absolute
         obj.Location.ChangeParentAnchorToLeftTopButKeepPosition(); // Parent's anchor left top - this is our reference point

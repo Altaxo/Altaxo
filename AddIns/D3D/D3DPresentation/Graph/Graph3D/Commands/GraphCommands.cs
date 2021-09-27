@@ -67,6 +67,22 @@ namespace Altaxo.Graph.Graph3D.Commands
 
   #region Arrange commands
 
+  public class GroupSelectedObjects : AbstractGraph3DControllerCommand
+  {
+    public override void Run(Graph3DController ctrl)
+    {
+      ctrl.GroupSelectedObjects();
+    }
+  }
+
+  public class UngroupSelectedObjects : AbstractGraph3DControllerCommand
+  {
+    public override void Run(Graph3DController ctrl)
+    {
+      ctrl.UngroupSelectedObjects();
+    }
+  }
+
   public class ArrangeTop : AbstractGraph3DControllerCommand
   {
     public override void Run(Graph3DController ctrl)

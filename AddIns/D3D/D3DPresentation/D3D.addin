@@ -158,7 +158,12 @@
 				class="Altaxo.Graph.Graph3D.Commands.ArrangeSameHorizontalSize" />
 			<ToolbarItem id="ArrangeSameVerticalSize" icon="Icons.16x16.ArrangeSameVerticalSize" tooltip="${res:XML.MainMenu.GraphMenu.ArrangeSameVerticalSize.Description}"
 				class="Altaxo.Graph.Graph3D.Commands.ArrangeSameVerticalSize" />
-		</Condition>
+      <ToolbarItem id="GroupObjects3D" icon="Icons.16x16.GroupShapes" tooltip="${res:XML.MainMenu.GraphMenu.GroupShapes.Description}"
+        class="Altaxo.Graph.Graph3D.Commands.GroupSelectedObjects" />
+      <ToolbarItem id="UngroupObjects3D" icon="Icons.16x16.UngroupShapes" tooltip="${res:XML.MainMenu.GraphMenu.UngroupShapes.Description}"
+				class="Altaxo.Graph.Graph3D.Commands.UngroupSelectedObjects" />
+
+    </Condition>
 	</Path>
 
 	<Path name = "/Altaxo/Views/Graph3D/LayerButton/ContextMenu">

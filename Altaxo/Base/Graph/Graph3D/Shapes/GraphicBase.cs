@@ -634,7 +634,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
         var loctransform = _transformation; // because the _transformation member will be overwritten when setting Position, Rotation, Scale and so on, we create a copy of it
         loctransform.AppendTransform(transform);
 
-        var (shear, scale, rot, trans) = loctransform.DecomposeIntoScaleShearRotationDegreeTranslation();
+        var (scale, shear, rot, trans) = loctransform.DecomposeIntoScaleShearRotationDegreeTranslation();
 
         SetPosition(new PointD3D(trans.X, trans.Y, trans.Z), eventFiring);
 
@@ -656,7 +656,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
       {
         _transformation.AppendTransform(transform.Inverse);
 
-        var (shear, scale, rot, trans) = _transformation.DecomposeIntoScaleShearRotationDegreeTranslation();
+        var (scale, shear, rot, trans) = _transformation.DecomposeIntoScaleShearRotationDegreeTranslation();
 
         SetPosition(new PointD3D(trans.X, trans.Y, trans.Z), eventFiring);
         RotationX = rot.X;
