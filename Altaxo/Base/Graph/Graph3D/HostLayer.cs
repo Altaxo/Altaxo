@@ -1005,7 +1005,7 @@ namespace Altaxo.Graph.Graph3D
       if (_location is ItemLocationDirect)
       {
         var locD = (ItemLocationDirect)_location;
-        _transformation = Matrix4x3.NewScalingShearingRotationDegreesTranslation(
+        _transformation = Matrix4x3.FromScaleShearRotationDegreeTranslation(
           locD.ScaleX, locD.ScaleY, locD.ScaleZ,
           locD.ShearX, locD.ShearY, locD.ShearZ,
           locD.RotationX, locD.RotationY, locD.RotationZ,
@@ -1014,7 +1014,7 @@ namespace Altaxo.Graph.Graph3D
       }
       else
       {
-        _transformation = Matrix4x3.NewScalingShearingRotationDegreesTranslation(
+        _transformation = Matrix4x3.FromScaleShearRotationDegreeTranslation(
           _location.ScaleX, _location.ScaleY, _location.ScaleZ,
           _location.ShearX, _location.ShearY, _location.ShearZ,
           _location.RotationX, _location.RotationY, _location.RotationZ,

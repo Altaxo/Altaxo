@@ -12,6 +12,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Core\AltaxoCore.csproj" />
     <ProjectReference Include="..\Base\AltaxoBase.csproj" />
+    <ProjectReference Include="..\CoreTest\AltaxoCoreTest.csproj" />
   </ItemGroup>
 
   <ItemGroup>

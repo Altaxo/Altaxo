@@ -599,7 +599,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
     {
       if (RotationX != 0 || RotationY != 0 || RotationZ != 0 || ScaleX != 1 || ScaleY != 1 || ScaleZ != 1 || ShearX != 0 || ShearY != 0 || ShearZ != 0)
       {
-        g.PrependTransform(Matrix4x3.NewScalingShearingRotationDegreesTranslation(
+        g.PrependTransform(Matrix4x3.FromScaleShearRotationDegreeTranslation(
           _location.ScaleX, _location.ScaleY, _location.ScaleY
 ,
           _location.ShearX, _location.ShearY, _location.ShearZ,
@@ -620,11 +620,67 @@ namespace Altaxo.Graph.Graph3D.Shapes
     /// </summary>
     protected virtual void UpdateTransformationMatrix()
     {
-      _transformation = Matrix4x3.NewScalingShearingRotationDegreesTranslation(
+      _transformation = Matrix4x3.FromScaleShearRotationDegreeTranslation(
         ScaleX, ScaleY, ScaleZ,
         ShearX, ShearY, ShearZ,
         RotationX, RotationY, RotationZ,
         _location.AbsolutePivotPositionX, _location.AbsolutePivotPositionY, _location.AbsolutePivotPositionZ);
+    }
+
+    protected internal void SetCoordinatesByAppendTransformation(Matrix4x3 transform, Main.EventFiring eventFiring)
+    {
+      using (var token = SuspendGetToken())
+      {
+        var loctransform = _transformation; // because the _transformation member will be overwritten when setting Position, Rotation, Scale and so on, we create a copy of it
+        loctransform.AppendTransform(transform);
+
+        var (shear, scale, rot, trans) = loctransform.DecomposeIntoScaleShearRotationDegreeTranslation();
+
+        SetPosition(new PointD3D(trans.X, trans.Y, trans.Z), eventFiring);
+
+        RotationX = rot.X;
+        RotationY = rot.Y;
+        RotationZ = rot.Z;
+        ShearX = shear.X;
+        ShearY = shear.Y;
+        ShearZ = shear.Z;
+        Scale = scale;
+
+        token.Resume(eventFiring);
+      }
+    }
+
+    protected internal void SetCoordinatesByAppendInverseTransformation(Matrix4x3 transform, Main.EventFiring eventFiring)
+    {
+      using (var token = SuspendGetToken())
+      {
+        _transformation.AppendTransform(transform.Inverse);
+
+        var (shear, scale, rot, trans) = _transformation.DecomposeIntoScaleShearRotationDegreeTranslation();
+
+        SetPosition(new PointD3D(trans.X, trans.Y, trans.Z), eventFiring);
+        RotationX = rot.X;
+        RotationY = rot.Y;
+        RotationZ = rot.Z;
+        ShearX = shear.X;
+        ShearY = shear.Y;
+        ShearZ = shear.Z;
+        Scale = scale;
+
+        token.Resume(eventFiring);
+      }
+    }
+
+    protected void ShiftPosition(PointD3D dp)
+    {
+      ShiftPosition(dp.X, dp.Y, dp.Z);
+    }
+
+    protected internal void ShiftPosition(double dx, double dy, double dz)
+    {
+      var currPos = GetPosition();
+      SetPosition(new PointD3D(currPos.X + dx, currPos.Y + dy, currPos.Z + dz), Main.EventFiring.Suppressed);
+      UpdateTransformationMatrix();
     }
 
     /// <summary>

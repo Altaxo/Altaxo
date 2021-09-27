@@ -483,7 +483,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
 
         var bounds = Bounds;
 
-        var transformmatrix = Matrix4x3.NewScalingShearingRotationDegreesTranslation(
+        var transformmatrix = Matrix4x3.FromScaleShearRotationDegreeTranslation(
         ScaleX, ScaleY, ScaleZ,
           ShearX, ShearY, ShearZ,
           RotationX, RotationY, RotationZ,
