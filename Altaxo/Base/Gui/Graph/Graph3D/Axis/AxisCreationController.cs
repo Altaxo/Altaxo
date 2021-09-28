@@ -118,8 +118,10 @@ namespace Altaxo.Gui.Graph.Graph3D.Axis
     bool UsePhysicalValue { get; set; }
 
     double AxisPositionLogicalValue { get; set; }
+    double AxisPositionLogicalValue2nd { get; set; }
 
     Altaxo.Data.AltaxoVariant AxisPositionPhysicalValue { get; set; }
+    Altaxo.Data.AltaxoVariant AxisPositionPhysicalValue2nd { get; set; }
 
     bool MoveAxis { get; set; }
 
@@ -176,11 +178,11 @@ namespace Altaxo.Gui.Graph.Graph3D.Axis
 
       if (_view.UsePhysicalValue)
       {
-        _doc.CurrentStyle = CSLineID.FromPhysicalVariant(_doc.TemplateStyle.ParallelAxisNumber, _view.AxisPositionPhysicalValue);
+        _doc.CurrentStyle = CSLineID.FromPhysicalVariant(_doc.TemplateStyle.ParallelAxisNumber, _view.AxisPositionPhysicalValue, _view.AxisPositionPhysicalValue2nd);
       }
       else
       {
-        _doc.CurrentStyle = new CSLineID(_doc.TemplateStyle.ParallelAxisNumber, _view.AxisPositionLogicalValue);
+        _doc.CurrentStyle = new CSLineID(_doc.TemplateStyle.ParallelAxisNumber, _view.AxisPositionLogicalValue, _view.AxisPositionLogicalValue2nd);
       }
 
       return ApplyEnd(true, disposeController);

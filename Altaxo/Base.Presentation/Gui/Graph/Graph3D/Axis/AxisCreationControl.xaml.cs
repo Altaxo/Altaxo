@@ -68,6 +68,18 @@ namespace Altaxo.Gui.Graph.Graph3D.Axis
       }
     }
 
+    public double AxisPositionLogicalValue2nd
+    {
+      get
+      {
+        return _guiLogicalValue2nd.SelectedQuantityAsValueInSIUnits;
+      }
+      set
+      {
+        _guiLogicalValue2nd.SelectedQuantityAsValueInSIUnits = value;
+      }
+    }
+
     public Altaxo.Data.AltaxoVariant AxisPositionPhysicalValue
     {
       get
@@ -77,6 +89,18 @@ namespace Altaxo.Gui.Graph.Graph3D.Axis
       set
       {
         _guiPhysicalValue.SelectedValue = value;
+      }
+    }
+
+    public Altaxo.Data.AltaxoVariant AxisPositionPhysicalValue2nd
+    {
+      get
+      {
+        return _guiPhysicalValue2nd.SelectedValue;
+      }
+      set
+      {
+        _guiPhysicalValue2nd.SelectedValue = value;
       }
     }
 

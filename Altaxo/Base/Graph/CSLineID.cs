@@ -139,9 +139,9 @@ namespace Altaxo.Graph
     #endregion Serialization
 
     /// <summary>
-    /// Initialized a 2D identifier from the parallel axis and the physical value of the perpendicular axis.
+    /// Initialize a 2D identifier from the parallel axis and the physical value of the perpendicular axis.
     /// </summary>
-    /// <param name="parallelAxisNumber">Number of parallel axis (0->X, 1->Y, 2->Z).</param>
+    /// <param name="parallelAxisNumber">Number of parallel axis (0=X, 1=Y).</param>
     /// <param name="logicalValueOther">The logical value of the axis perpendicular to the parallel axis.</param>
     public CSLineID(int parallelAxisNumber, double logicalValueOther)
     {
@@ -156,6 +156,12 @@ namespace Altaxo.Graph
       _logicalValueSecondOther = double.NaN;
     }
 
+    /// <summary>
+    /// Initialize a 3D identifier from the parallel axis and the physical value of the perpendicular axis.
+    /// </summary>
+    /// <param name="parallelAxisNumber">Number of parallel axis (0=X, 1=Y, 2=Z).</param>
+    /// <param name="logicalValueOtherFirst">The logical value of the 1st axis perpendicular to the parallel axis.</param>
+    /// <param name="logicalValueOtherSecond">The logical value of the 2nd axis perpendicular to the parallel axis.</param>
     public CSLineID(int parallelAxisNumber, double logicalValueOtherFirst, double logicalValueOtherSecond)
     {
       // test arguments
@@ -257,6 +263,32 @@ namespace Altaxo.Graph
         _physicalValueFirstOther = physicalValueOther,
         _logicalValueFirstOther = double.NaN,
         _usePhysicalValueFirstOther = true,
+        _logicalValueSecondOther = double.NaN
+      };
+    }
+
+    /// <summary>
+    /// Initialized a 3D identifier from the parallel axis and the physical value of the perpendicular axis.
+    /// </summary>
+    /// <param name="parallelAxisNumber">Number of parallel axis (0->X, 1->Y, 2->Z).</param>
+    /// <param name="physicalValueOtherFirst">Physical value of the axis perendicular to the parallel axis.</param>
+    /// <returns>A freshly created 2D line identifier.</returns>
+    public static CSLineID FromPhysicalVariant(int parallelAxisNumber, AltaxoVariant physicalValueOtherFirst, AltaxoVariant physicalValueOtherSecond)
+    {
+      if (parallelAxisNumber < 0 || parallelAxisNumber > 2)
+        throw new ArgumentOutOfRangeException("AxisNumber must be either 0, 1, or 2, but you provide: " + parallelAxisNumber.ToString());
+
+      if (!physicalValueOtherFirst.Equals(physicalValueOtherFirst))
+        throw new ArgumentException("You can not set physical values that return false when compared to itself, value is: " + physicalValueOtherFirst.ToString());
+
+      return new CSLineID()
+      {
+        _parallelAxisNumber = parallelAxisNumber,
+        _usePhysicalValueFirstOther = true,
+        _physicalValueFirstOther = physicalValueOtherFirst,
+        _usePhysicalValueSecondOther = true,
+        _physicalValueSecondOther = physicalValueOtherSecond,
+        _logicalValueFirstOther = double.NaN,
         _logicalValueSecondOther = double.NaN
       };
     }
