@@ -647,11 +647,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
         HostLayer currentLayer = null;
         foreach (IHitTestObject o in SelectedObjects)
         {
-          var graphObject = o.HittedObject as GraphicBase;
-          if (graphObject is null)
+          if (!(o.HittedObject is GraphicBase graphObject))
             continue;
-          var layer = graphObject.ParentObject as HostLayer;
-          if (layer is null)
+          if(!(graphObject.ParentObject is HostLayer layer))
             continue;
 
           if (currentLayer is null)
@@ -677,7 +675,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
           var elements = new List<GraphicBase>();
           foreach (var hit in objectsToGroup)
             elements.Add(hit.HittedObject as GraphicBase);
-          var group = new Altaxo.Graph.Graph3D.Shapes.ShapeGroup(elements);
+          var group = new ShapeGroup(elements);
           int index = currentLayer.GraphObjects.IndexOf(elements[0]);
           currentLayer.GraphObjects.Insert(index, group);
 
@@ -695,6 +693,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
       while (objectsToGroup.Count > 0);
 
       SelectedObjects.Clear();
+      _view?.RenderOverlay();
     }
 
     /// <summary>
@@ -719,6 +718,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
         }
       }
       SelectedObjects.Clear();
+      _view?.RenderOverlay();
     }
 
 
@@ -766,6 +766,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
         }
       }
       // Redraw not neccessary since graph should trigger this by itself because some objects were removed
+      _view?.RenderOverlay();
     }
 
     public bool Apply(bool disposeController)
