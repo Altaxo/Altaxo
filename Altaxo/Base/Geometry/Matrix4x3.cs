@@ -28,6 +28,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Geometry
 {
@@ -242,9 +243,9 @@ namespace Altaxo.Geometry
     /// <param name="translateY">The translation in y direction.</param>
     /// <param name="translateZ">The translation in z direction.</param>
     /// <returns>The transformation matrix. A point transformed with this matrix is first translated, then rotated, then sheared, then scaled.</returns>
-    public static Matrix4x3 NewScalingShearingRotationDegreesTranslation(double scaleX, double scaleY, double scaleZ, double shearX, double shearY, double shearZ, double angleXdeg, double angleYdeg, double angleZdeg, double translateX, double translateY, double translateZ)
+    public static Matrix4x3 FromScaleShearRotationDegreeTranslation(double scaleX, double scaleY, double scaleZ, double shearX, double shearY, double shearZ, double angleXdeg, double angleYdeg, double angleZdeg, double translateX, double translateY, double translateZ)
     {
-      return NewScalingShearingRotationRadianTranslation(scaleX, scaleY, scaleZ, shearX, shearY, shearZ, (angleXdeg / 180) * Math.PI, (angleYdeg / 180) * Math.PI, (angleZdeg / 180) * Math.PI, translateX, translateY, translateZ);
+      return FromScaleShearRotationRadianTranslation(scaleX, scaleY, scaleZ, shearX, shearY, shearZ, (angleXdeg / 180) * Math.PI, (angleYdeg / 180) * Math.PI, (angleZdeg / 180) * Math.PI, translateX, translateY, translateZ);
     }
 
     /// <summary>
@@ -263,7 +264,7 @@ namespace Altaxo.Geometry
     /// <param name="translateY">The translation in y direction.</param>
     /// <param name="translateZ">The translation in z direction.</param>
     /// <returns>The transformation matrix. A point transformed with this matrix is first translated, then rotated, then sheared, then scaled.</returns>
-    public static Matrix4x3 NewScalingShearingRotationRadianTranslation(double scaleX, double scaleY, double scaleZ, double shearX, double shearY, double shearZ, double angleXrad, double angleYrad, double angleZrad, double translateX, double translateY, double translateZ)
+    public static Matrix4x3 FromScaleShearRotationRadianTranslation(double scaleX, double scaleY, double scaleZ, double shearX, double shearY, double shearZ, double angleXrad, double angleYrad, double angleZrad, double translateX, double translateY, double translateZ)
     {
       double cosX = Math.Cos(angleXrad);
       double sinX = Math.Sin(angleXrad);
@@ -275,15 +276,15 @@ namespace Altaxo.Geometry
       double sinZ = Math.Sin(angleZrad);
 
       return new Matrix4x3(
-        scaleX * (cosY * cosZ - cosX * cosZ * shearY * sinY + shearY * sinX * sinZ),
-        -(scaleX * (cosZ * shearY * sinX - cosY * sinZ + cosX * shearY * sinY * sinZ)),
-        scaleX * (cosX * cosY * shearY + sinY),
-        scaleY * (cosY * cosZ * shearZ - cosZ * sinX * sinY - cosX * sinZ),
-        scaleY * (cosX * cosZ + cosY * shearZ * sinZ - sinX * sinY * sinZ),
-        scaleY * (cosY * sinX + shearZ * sinY),
-        scaleZ * (cosY * cosZ * shearX * shearZ - cosZ * (cosX + shearX * sinX) * sinY + (-(cosX * shearX) + sinX) * sinZ),
-        scaleZ * (cosY * shearX * shearZ * sinZ + cosX * (cosZ * shearX - sinY * sinZ) - sinX * (cosZ + shearX * sinY * sinZ)),
-        scaleZ * (cosX * cosY + cosY * shearX * sinX + shearX * shearZ * sinY),
+        scaleX * (cosY * cosZ - cosZ * shearZ * sinX * sinY + shearY * sinX * sinZ - cosX * (cosZ * shearY * sinY + shearZ * sinZ)),
+        scaleX * (cosZ * (cosX * shearZ - shearY * sinX) + cosY * sinZ - (cosX * shearY + shearZ * sinX) * sinY * sinZ),
+        scaleX * (cosX * cosY * shearY + cosY * shearZ * sinX + sinY),
+        -(scaleY * (cosZ * (cosX * shearX + sinX) * sinY + (cosX - shearX * sinX) * sinZ)),
+        cosZ * scaleY * (cosX - shearX * sinX) - scaleY * (cosX * shearX + sinX) * sinY * sinZ,
+        cosY * scaleY * (cosX * shearX + sinX),
+        -(cosX * cosZ * scaleZ * sinY) + scaleZ * sinX * sinZ,
+        -(scaleZ * (cosZ * sinX + cosX * sinY * sinZ)),
+        cosX * cosY * scaleZ,
         translateX,
         translateY,
         translateZ,
@@ -298,9 +299,9 @@ namespace Altaxo.Geometry
     /// <param name="angleY">The rotation around y axis in degrees</param>
     /// <param name="angleZ">The rotation around z axis in degrees</param>
     /// <returns>The transformation matrix.</returns>
-    public static Matrix4x3 NewRotation(double angleX, double angleY, double angleZ)
+    public static Matrix4x3 FromRotationDegree(double angleX, double angleY, double angleZ)
     {
-      return NewScalingShearingRotationDegreesTranslation(1, 1, 1, 0, 0, 0, angleX, angleY, angleZ, 0, 0, 0);
+      return FromScaleShearRotationDegreeTranslation(1, 1, 1, 0, 0, 0, angleX, angleY, angleZ, 0, 0, 0);
     }
 
     /// <summary>
@@ -457,6 +458,23 @@ namespace Altaxo.Geometry
     #endregion Transformation (of points, vectors, planes)
 
     #region Inverse transformations (of points, vectors)
+
+
+    public Matrix4x3 Inverse
+    {
+      get
+      {
+        var det = Determinant;
+        return new Matrix4x3(
+          (M22 * M33 - M23 * M32) / det, (M13 * M32 - M12 * M33) / det, (M12 * M23 - M13 * M22) / det,
+          (M23 * M31 - M21 * M33) / det, (M11 * M33 - M13 * M31) / det, (M13 * M21 - M11 * M23) / det,
+          (M21 * M32 - M22 * M31) / det, (M12 * M31 - M11 * M32) / det, (M11 * M22 - M12 * M21) / det,
+          (M23 * M32 * M41 - M22 * M33 * M41 - M23 * M31 * M42 + M21 * M33 * M42 + M22 * M31 * M43 - M21 * M32 * M43) / det,
+          (-M13 * M32 * M41 + M12 * M33 * M41 + M13 * M31 * M42 - M11 * M33 * M42 - M12 * M31 * M43 + M11 * M32 * M43) / det,
+          (M13 * M22 * M41 - M12 * M23 * M41 - M13 * M21 * M42 + M11 * M23 * M42 + M12 * M21 * M43 - M11 * M22 * M43) / det
+          ); 
+      }
+    }
 
     /// <summary>
     /// Inverse transform a point p in such a way that the result will fullfill the relation p = result * matrix ( the * operator being the prepend transformation for points).
@@ -805,6 +823,23 @@ namespace Altaxo.Geometry
     }
 
     #endregion Conversion to other matrices
+
+    #region Decomposition into shear, scale, and rotation
+
+    public ( VectorD3D scale, VectorD3D shear, VectorD3D rotationRadian, VectorD3D translation) DecomposeIntoScaleShearRotationRadianTranslation()
+    {
+      var core = new Matrix3x3(M11, M12, M13, M21, M22, M23, M31, M32, M33);
+      var (shears, scales, rotations) = core.DecomposeIntoScaleShearRotationRadian();
+      return (shears, scales, rotations, new VectorD3D(M41, M42, M43));
+    }
+    public (VectorD3D scale, VectorD3D shear, VectorD3D rotationDegree, VectorD3D translation) DecomposeIntoScaleShearRotationDegreeTranslation()
+    {
+      var core = new Matrix3x3(M11, M12, M13, M21, M22, M23, M31, M32, M33);
+      var (shears, scales, rotations) = core.DecomposeIntoScaleShearRotationRadian();
+      return (shears, scales, rotations * 180 / Math.PI, new VectorD3D(M41, M42, M43));
+    }
+
+    #endregion
 
     public override string ToString()
     {

@@ -736,7 +736,7 @@ namespace Altaxo.Graph.Graph3D
     /// <returns>The enclosing rectangle in absolute values.</returns>
     public RectangleD3D GetAbsoluteEnclosingRectangle()
     {
-      var m = Matrix4x3.NewScalingShearingRotationDegreesTranslation(
+      var m = Matrix4x3.FromScaleShearRotationDegreeTranslation(
         ScaleX, ScaleY, ScaleZ,
         ShearX, ShearY, ShearZ,
         RotationX, RotationY, RotationZ,

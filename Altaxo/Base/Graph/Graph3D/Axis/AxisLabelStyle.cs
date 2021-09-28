@@ -760,7 +760,7 @@ namespace Altaxo.Graph.Graph3D.Axis
           // defined by the tickend point and the normal vector outVector
 
           // Assume that the text is now centered x, y, and z around the point tickend (but here we use origin instead tickend)
-          math = Matrix4x3.NewRotation(_rotationX, _rotationY, _rotationZ);
+          math = Matrix4x3.FromRotationDegree(_rotationX, _rotationY, _rotationZ);
           // we have to find all points with negative distance to the plane spanned by tickend and the vector outVector (but again instead of tickend we use origin)
           var msizePad = msize + new VectorD3D(
           (_font.Size * 1) / 3, // whereas above and below text no padding is neccessary, it is optically nicer to have left and right padding of the string by 1/6 of font size.

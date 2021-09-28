@@ -111,7 +111,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
         var dy = Bounds.Y + sy;
         var dz = Bounds.Z + sz;
 
-        var transformation = Matrix4x3.NewScalingShearingRotationDegreesTranslation(sx, sy, sz, 0, 0, 0, 0, 0, 0, dx, dy, dz);
+        var transformation = Matrix4x3.FromScaleShearRotationDegreeTranslation(sx, sy, sz, 0, 0, 0, 0, 0, 0, dx, dy, dz);
         transformation.AppendTransform(_transformation);
 
         var normalTransform = transformation.GetTransposedInverseMatrix3x3();
@@ -146,7 +146,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
       var dy = Bounds.Y + sy;
       var dz = Bounds.Z + sz;
 
-      var transformation = Matrix4x3.NewScalingShearingRotationDegreesTranslation(sx, sy, sz, 0, 0, 0, 0, 0, 0, dx, dy, dz); // represents a transformation from a unit sphere to the real sphere
+      var transformation = Matrix4x3.FromScaleShearRotationDegreeTranslation(sx, sy, sz, 0, 0, 0, 0, 0, 0, dx, dy, dz); // represents a transformation from a unit sphere to the real sphere
 
       transformation.AppendTransform(_transformation); // additional transformations of the ellipsoid
       transformation.AppendTransform(localToWorldTransformation); // local to global transformation

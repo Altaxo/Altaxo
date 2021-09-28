@@ -21,6 +21,10 @@
             <RowDefinition Height="4" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="4" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="4" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="4" />
         </Grid.RowDefinitions>
         <Label Content="Axis template:" />
         <ComboBox
@@ -44,27 +48,43 @@
             Grid.Row="4"
             Grid.Column="0"
             Margin="6,0,0,0"
-            Content="Use logical position value:" />
+            Content="Use logical position values:" />
         <axogc:QuantityWithUnitTextBox
             x:Name="_guiLogicalValue"
             Grid.Row="4"
             Grid.Column="1"
+            UnitEnvironment="{x:Static axog:RelationEnvironment.Instance}"
             IsEnabled="{Binding ElementName=_guiUseLogicalValue, Path=IsChecked}"
             SelectedQuantityAsValueInSIUnits="0"
             ToolTip="The value 0 designates the origin of the alternate axis, the value 1 (or 100%) designates the end of the alternate axis. It is possible to use values lesser than 0 or greater than 1 to position the axis outside."
-            UnitEnvironment="{x:Static axog:RelationEnvironment.Instance}" />
+             />
+        <axogc:QuantityWithUnitTextBox
+            x:Name="_guiLogicalValue2nd"
+            Grid.Row="6"
+            Grid.Column="1"
+            UnitEnvironment="{x:Static axog:RelationEnvironment.Instance}"
+            IsEnabled="{Binding ElementName=_guiUseLogicalValue, Path=IsChecked}"
+            SelectedQuantityAsValueInSIUnits="0"
+            ToolTip="The value 0 designates the origin of the alternate axis, the value 1 (or 100%) designates the end of the alternate axis. It is possible to use values lesser than 0 or greater than 1 to position the axis outside."
+             />
 
         <RadioButton
             x:Name="_guiUsePhysicalValue"
-            Grid.Row="6"
+            Grid.Row="8"
             Grid.Column="0"
             Margin="6,0,0,0"
             Content="Use physical position value:" />
         <axogc:NumericDoubleTextBox
             x:Name="_guiPhysicalValue"
-            Grid.Row="6"
+            Grid.Row="8"
             Grid.Column="1"
             IsEnabled="{Binding ElementName=_guiUsePhysicalValue, Path=IsChecked}"
+            SelectedValue="0" />
+        <axogc:NumericDoubleTextBox
+            x:Name="_guiPhysicalValue2nd"
+            Grid.Row="10"
+            Grid.Column="1"
+            IsEnabled="{Binding ElementName=_guiUsePhysicalValue2nd, Path=IsChecked}"
             SelectedValue="0" />
     </Grid>
 </UserControl>

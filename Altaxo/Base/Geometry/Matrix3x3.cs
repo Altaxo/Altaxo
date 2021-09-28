@@ -28,6 +28,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Geometry
 {
@@ -228,57 +229,90 @@ namespace Altaxo.Geometry
     /// <summary>
     /// Sets this transformation matrix by specifying translation, rotation, shear and scale.
     /// </summary>
-    /// <param name="angleX">The rotation around x axis in degrees.</param>
-    /// <param name="angleY">The rotation around y axis in degrees</param>
-    /// <param name="angleZ">The rotation around z axis in degrees</param>
-    /// <param name="shearX">The shear value x.</param>
-    /// <param name="shearY">The shear value y.</param>
-    /// <param name="shearZ">The shear value z.</param>
     /// <param name="scaleX">The scale value x.</param>
     /// <param name="scaleY">The scale value y.</param>
     /// <param name="scaleZ">The scale value z.</param>
-    public void SetRotationShearScale(double angleX, double angleY, double angleZ, double shearX, double shearY, double shearZ, double scaleX, double scaleY, double scaleZ)
+    /// <param name="shearX">The shear value x.</param>
+    /// <param name="shearY">The shear value y.</param>
+    /// <param name="shearZ">The shear value z.</param>
+    /// <param name="angleX">The rotation around x axis in degrees.</param>
+    /// <param name="angleY">The rotation around y axis in degrees</param>
+    /// <param name="angleZ">The rotation around z axis in degrees</param>
+    public void SetScaleShearRotationDegree(double scaleX, double scaleY, double scaleZ, double shearX, double shearY, double shearZ, double angleX, double angleY, double angleZ)
     {
-      double phi;
-      phi = angleX * Math.PI / 180;
-      double cosX = Math.Cos(phi);
-      double sinX = Math.Sin(phi);
-      phi = angleY * Math.PI / 180;
-      double cosY = Math.Cos(phi);
-      double sinY = Math.Sin(phi);
-      phi = angleZ * Math.PI / 180;
-      double cosZ = Math.Cos(phi);
-      double sinZ = Math.Sin(phi);
+      SetScaleShearRotationRadian(scaleX, scaleY, scaleZ, shearX, shearY, shearZ, angleX * Math.PI / 180, angleY * Math.PI / 180, angleZ * Math.PI / 180);
+    }
 
-      M11 = scaleX * (cosY * cosZ - cosX * cosZ * shearY * sinY + shearY * sinX * sinZ);
-      M12 = -(scaleX * (cosZ * shearY * sinX - cosY * sinZ + cosX * shearY * sinY * sinZ));
-      M13 = scaleX * (cosX * cosY * shearY + sinY);
-      M21 = scaleY * (cosY * cosZ * shearZ - cosZ * sinX * sinY - cosX * sinZ);
-      M22 = scaleY * (cosX * cosZ + cosY * shearZ * sinZ - sinX * sinY * sinZ);
-      M23 = scaleY * (cosY * sinX + shearZ * sinY);
-      M31 = scaleZ * (cosY * cosZ * shearX * shearZ - cosZ * (cosX + shearX * sinX) * sinY + (-(cosX * shearX) + sinX) * sinZ);
-      M32 = scaleZ * (cosY * shearX * shearZ * sinZ + cosX * (cosZ * shearX - sinY * sinZ) - sinX * (cosZ + shearX * sinY * sinZ));
-      M33 = scaleZ * (cosX * cosY + cosY * shearX * sinX + shearX * shearZ * sinY);
+    /// <summary>
+    /// Sets this transformation matrix by specifying translation, rotation, shear and scale.
+    /// </summary>
+    /// <param name="scaleX">The scale value x.</param>
+    /// <param name="scaleY">The scale value y.</param>
+    /// <param name="scaleZ">The scale value z.</param>
+    /// <param name="shearX">The shear value x.</param>
+    /// <param name="shearY">The shear value y.</param>
+    /// <param name="shearZ">The shear value z.</param>
+    /// <param name="angleX">The rotation around x axis in radian.</param>
+    /// <param name="angleY">The rotation around y axis in radian.</param>
+    /// <param name="angleZ">The rotation around z axis in radian.</param>
+    public void SetScaleShearRotationRadian(double scaleX, double scaleY, double scaleZ, double shearX, double shearY, double shearZ, double angleX, double angleY, double angleZ)
+    {
+      double cosX = Math.Cos(angleX);
+      double sinX = Math.Sin(angleX);
+      double cosY = Math.Cos(angleY);
+      double sinY = Math.Sin(angleY);
+      double cosZ = Math.Cos(angleZ);
+      double sinZ = Math.Sin(angleZ);
+
+      M11 = scaleX * (cosY * cosZ - cosZ * shearZ * sinX * sinY + shearY * sinX * sinZ - cosX * (cosZ * shearY * sinY + shearZ * sinZ));
+      M12 = scaleX * (cosZ * (cosX * shearZ - shearY * sinX) + cosY * sinZ - (cosX * shearY + shearZ * sinX) * sinY * sinZ);
+      M13 = scaleX * (cosX * cosY * shearY + cosY * shearZ * sinX + sinY);
+      M21 = -(scaleY * (cosZ * (cosX * shearX + sinX) * sinY + (cosX - shearX * sinX) * sinZ));
+      M22 = cosZ * scaleY * (cosX - shearX * sinX) - scaleY * (cosX * shearX + sinX) * sinY * sinZ;
+      M23 = cosY * scaleY * (cosX * shearX + sinX);
+      M31 = -(cosX * cosZ * scaleZ * sinY) + scaleZ * sinX * sinZ;
+      M32 = -(scaleZ * (cosZ * sinX + cosX * sinY * sinZ));
+      M33 = cosX * cosY * scaleZ;
       Determinant = scaleX * scaleY * scaleZ;
     }
 
     /// <summary>
     /// Gets a transformation matrix by specifying translation, rotation, shear and scale.
     /// </summary>
-    /// <param name="angleX">The rotation around x axis in degrees.</param>
-    /// <param name="angleY">The rotation around y axis in degrees</param>
-    /// <param name="angleZ">The rotation around z axis in degrees</param>
-    /// <param name="shearX">The shear value x.</param>
-    /// <param name="shearY">The shear value y.</param>
-    /// <param name="shearZ">The shear value z.</param>
     /// <param name="scaleX">The scale value x.</param>
     /// <param name="scaleY">The scale value y.</param>
     /// <param name="scaleZ">The scale value z.</param>
+    /// <param name="shearX">The shear value x.</param>
+    /// <param name="shearY">The shear value y.</param>
+    /// <param name="shearZ">The shear value z.</param>
+    /// <param name="angleX">The rotation around x axis in degrees.</param>
+    /// <param name="angleY">The rotation around y axis in degrees</param>
+    /// <param name="angleZ">The rotation around z axis in degrees</param>
     /// <returns>The transformation matrix. A point transformed with this matrix is first translated, then rotated, then sheared, then scaled.</returns>
-    public static Matrix3x3 FromTranslationRotationShearScale(double angleX, double angleY, double angleZ, double shearX, double shearY, double shearZ, double scaleX, double scaleY, double scaleZ)
+    public static Matrix3x3 FromScaleShearRotationDegree(double scaleX, double scaleY, double scaleZ, double shearX, double shearY, double shearZ, double angleX, double angleY, double angleZ)
     {
       var result = new Matrix3x3();
-      result.SetRotationShearScale(angleX, angleY, angleZ, shearX, shearY, shearZ, scaleX, scaleY, scaleZ);
+      result.SetScaleShearRotationDegree(scaleX, scaleY, scaleZ, shearX, shearY, shearZ, angleX, angleY, angleZ);
+      return result;
+    }
+
+    /// <summary>
+    /// Gets a transformation matrix by specifying translation, rotation, shear and scale.
+    /// </summary>
+    /// <param name="scaleX">The scale value x.</param>
+    /// <param name="scaleY">The scale value y.</param>
+    /// <param name="scaleZ">The scale value z.</param>
+    /// <param name="shearX">The shear value x.</param>
+    /// <param name="shearY">The shear value y.</param>
+    /// <param name="shearZ">The shear value z.</param>
+    /// <param name="angleX">The rotation around x axis in radian.</param>
+    /// <param name="angleY">The rotation around y axis in radian.</param>
+    /// <param name="angleZ">The rotation around z axis in radian.</param>
+    /// <returns>The transformation matrix. A point transformed with this matrix is first translated, then rotated, then sheared, then scaled.</returns>
+    public static Matrix3x3 FromScaleShearRotationRadian(double scaleX, double scaleY, double scaleZ, double shearX, double shearY, double shearZ, double angleX, double angleY, double angleZ)
+    {
+      var result = new Matrix3x3();
+      result.SetScaleShearRotationRadian(scaleX, scaleY, scaleZ, shearX, shearY, shearZ, angleX, angleY, angleZ);
       return result;
     }
 
@@ -289,10 +323,24 @@ namespace Altaxo.Geometry
     /// <param name="angleY">The rotation around y axis in degrees</param>
     /// <param name="angleZ">The rotation around z axis in degrees</param>
     /// <returns>The transformation matrix.</returns>
-    public static Matrix3x3 FromRotation(double angleX, double angleY, double angleZ)
+    public static Matrix3x3 FromRotationDegree(double angleX, double angleY, double angleZ)
     {
       var result = new Matrix3x3();
-      result.SetRotationShearScale(angleX, angleY, angleZ, 0, 0, 0, 1, 1, 1);
+      result.SetScaleShearRotationDegree(1, 1, 1, 0, 0, 0, angleX, angleY, angleZ);
+      return result;
+    }
+
+    /// <summary>
+    /// Gets a transformation matrix by specifying rotation (translation is 0, shear is 0 and scale is 1).
+    /// </summary>
+    /// <param name="angleX">The rotation around x axis in radian.</param>
+    /// <param name="angleY">The rotation around y axis in radian.</param>
+    /// <param name="angleZ">The rotation around z axis in radian.</param>
+    /// <returns>The transformation matrix.</returns>
+    public static Matrix3x3 FromRotationRadian(double angleX, double angleY, double angleZ)
+    {
+      var result = new Matrix3x3();
+      result.SetScaleShearRotationRadian(1, 1, 1, 0, 0, 0, angleX, angleY, angleZ);
       return result;
     }
 
@@ -433,6 +481,53 @@ namespace Altaxo.Geometry
 
     #region Inverse transformations
 
+    public Matrix3x3 Inverse
+    {
+      get
+      {
+        var det = Determinant;
+        return new Matrix3x3(
+          (M22 * M33 - M23 * M32) / det, (M13 * M32 - M12 * M33) / det, (M12 * M23 - M13 * M22) / det,
+          (M23 * M31 - M21 * M33) / det, (M11 * M33 - M13 * M31) / det, (M13 * M21 - M11 * M23) / det,
+          (M21 * M32 - M22 * M31) / det, (M12 * M31 - M11 * M32) / det, (M11 * M22 - M12 * M21) / det
+          );
+      }
+    }
+
+    /// <summary>
+    /// Extracts the rotation angles (in radian). Attention: the matrix must be a rotation matrix, i.e. the norm of all
+    /// rows and colums must be 1! This is not verified here!
+    /// </summary>
+    /// <returns>A Vector of rotations x, y, and z in radians.</returns>
+    public VectorD3D DecomposeIntoRotations()
+    {
+      double x, y, z;
+      // M13 is Sin(y)
+      if (Math.Abs(M13) < 1)
+      {
+        y = Math.Asin(M13); // but could be also y+Pi
+        double cy = Math.Cos(y);
+
+        double sz = M12 / cy;
+        double cz = M11 / cy;
+        z = Math.Atan2(sz, cz);
+
+        double sx = M23 / cy;
+        double cx = M33 / cy;
+        x = Math.Atan2(sx, cx);
+      }
+      else // cy is 0, and sy is either +1 or -1
+      {
+        // we could set z = 0
+        // then x is ArcCos[M22]
+        y = M13 < 0 ? -Math.PI / 2 : Math.PI / 2;
+        z = 0;
+        x = Math.Acos(M22);
+      }
+      return new VectorD3D(x, y, z);
+    }
+
+
     /// <summary>
     /// Inverse transform a vector p in such a way that the result will fullfill the relation p = result * matrix ( the * operator being the prepend transformation for vectors).
     /// </summary>
@@ -450,7 +545,78 @@ namespace Altaxo.Geometry
           );
     }
 
-    #endregion Inverse transformations
+    #region Decomposition into shear, scale, and rotation
+
+    /// <summary>
+    /// Decomposes the matrix into its rotations (in radian), shear and scale components.
+    /// </summary>
+    /// <returns>The 3 rotations (in radian), the 3 shear components, and 3 scale components.</returns>
+    public (VectorD3D scale, VectorD3D shear, VectorD3D rotationRadian) DecomposeIntoScaleShearRotationRadian()
+    {
+      // we use the following
+      // a QR decompostion would give us a rotation times a upper triangular matrix - but the order of the matrices is exchanged
+      // therefore, we need to make the QR decomposition of the inverse matrix, and then invert both results
+
+      var inv = Inverse;
+      var dbl = new DoubleMatrix(3, 3);
+      dbl[0, 0] = inv.M11;
+      dbl[0, 1] = inv.M12;
+      dbl[0, 2] = inv.M13;
+      dbl[1, 0] = inv.M21;
+      dbl[1, 1] = inv.M22;
+      dbl[1, 2] = inv.M23;
+      dbl[2, 0] = inv.M31;
+      dbl[2, 1] = inv.M32;
+      dbl[2, 2] = inv.M33;
+
+      var qr = new QRDecomposition(dbl);
+
+      var u = qr.GetR();
+      var q = qr.GetQ();
+      var u1 = new Matrix3x3(u[0, 0], u[0, 1], u[0, 2], u[1, 0], u[1, 1], u[1, 2], u[2, 0], u[2, 1], u[2, 2]);
+      var uu = u1.Inverse;
+      var q1 = new Matrix3x3(q[0, 0], q[0, 1], q[0, 2], q[1, 0], q[1, 1], q[1, 2], q[2, 0], q[2, 1], q[2, 2]);
+      var qq = q1.Inverse;
+
+
+
+
+      VectorD3D scales = new VectorD3D(Math.Abs(uu.M11), Math.Abs(uu.M22), Math.Abs(uu.M33));
+      VectorD3D shears = new VectorD3D(uu.M23 / uu.M22, uu.M13 / uu.M11, uu.M12 / uu.M11);
+
+      // we must modify q by scaling all that rows with -1, for which u[i,i] was negative
+
+      var s1 = uu.M11 < 0 ? -1 : 1;
+      var s2 = uu.M22 < 0 ? -1 : 1;
+      var s3 = uu.M33 < 0 ? -1 : 1;
+
+      var qqq = new Matrix3x3(
+        s1 * qq.M11, s1 * qq.M12, s1 * qq.M13,
+        s2 * qq.M21, s2 * qq.M22, s2 * qq.M23,
+        s3 * qq.M31, s3 * qq.M32, s3 * qq.M33
+        );
+
+
+      // now, we must extract the rotations
+      var rotations = qqq.DecomposeIntoRotations();
+
+      return (scales, shears, rotations);
+    }
+
+    /// <summary>
+    /// Decomposes the matrix into its rotations (in degree), shear and scale components.
+    /// </summary>
+    /// <returns>The 3 rotations (in degree), the 3 shear components, and 3 scale components.</returns>
+    public (VectorD3D rotationRadian, VectorD3D shear, VectorD3D scale) DecomposeIntoScaleShearRotationDegree()
+    {
+      var (scale, shear, rot) = DecomposeIntoScaleShearRotationRadian();
+      return (scale, shear, rot * 180 / Math.PI);
+    }
+
+    #endregion
+
+
+      #endregion Inverse transformations
 
     public override string ToString()
     {

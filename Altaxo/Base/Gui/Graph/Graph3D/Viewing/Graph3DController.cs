@@ -635,6 +635,94 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
       }
     }
 
+    /// <summary>
+    /// Groups the selected objects to form a ShapeGroup.
+    /// </summary>
+    public void GroupSelectedObjects()
+    {
+      var objectsToGroup = new List<IHitTestObject>();
+      do
+      {
+        objectsToGroup.Clear();
+        HostLayer currentLayer = null;
+        foreach (IHitTestObject o in SelectedObjects)
+        {
+          if (!(o.HittedObject is GraphicBase graphObject))
+            continue;
+          if(!(graphObject.ParentObject is HostLayer layer))
+            continue;
+
+          if (currentLayer is null)
+          {
+            currentLayer = layer;
+            objectsToGroup.Add(o);
+          }
+          else if (object.ReferenceEquals(currentLayer, layer))
+          {
+            objectsToGroup.Add(o);
+          }
+        }
+
+        // if objectsToGroup contains at least two items, we can group them together, using the position of the first item
+        // if objectsToGroup contains only one item, we ignore it, but remove it from selected objects.
+        // if objectsToGroup contains no item, we are done
+
+        if (objectsToGroup.Count >= 2)
+        {
+          // note that: we must take care of the visibility: more visible items must be added later to the list (and elements from layers with higher index)
+          // the group element must be added to the position at which the element with the best visibility was before
+
+          var elements = new List<GraphicBase>();
+          foreach (var hit in objectsToGroup)
+            elements.Add(hit.HittedObject as GraphicBase);
+          var group = new ShapeGroup(elements);
+          int index = currentLayer.GraphObjects.IndexOf(elements[0]);
+          currentLayer.GraphObjects.Insert(index, group);
+
+          foreach (var ele in objectsToGroup)
+          {
+            SelectedObjects.Remove(ele);
+            ele.Remove(ele);
+          }
+        }
+        else if (objectsToGroup.Count == 1)
+        {
+          SelectedObjects.Remove(objectsToGroup[0]);
+        }
+      }
+      while (objectsToGroup.Count > 0);
+
+      SelectedObjects.Clear();
+      _view?.RenderOverlay();
+    }
+
+    /// <summary>
+    /// Ungroups the selected objects (if they are ShapeGroup objects).
+    /// </summary>
+    public void UngroupSelectedObjects()
+    {
+      foreach (IHitTestObject o in SelectedObjects)
+      {
+        var shapeGroup = o.HittedObject as Altaxo.Graph.Graph3D.Shapes.ShapeGroup;
+        if (shapeGroup is not null)
+        {
+          var parentLayer = shapeGroup.ParentObject as HostLayer;
+          if (parentLayer is not null)
+          {
+            int idx = parentLayer.GraphObjects.IndexOf(shapeGroup);
+            parentLayer.GraphObjects.RemoveAt(idx);
+            var separateObjects = shapeGroup.Ungroup();
+            for (int i = separateObjects.Length - 1; i >= 0; i--)
+              parentLayer.GraphObjects.Insert(idx, separateObjects[i]);
+          }
+        }
+      }
+      SelectedObjects.Clear();
+      _view?.RenderOverlay();
+    }
+
+
+
     public bool IsCmdDeleteEnabled()
     {
       return true;
@@ -678,6 +766,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
         }
       }
       // Redraw not neccessary since graph should trigger this by itself because some objects were removed
+      _view?.RenderOverlay();
     }
 
     public bool Apply(bool disposeController)
