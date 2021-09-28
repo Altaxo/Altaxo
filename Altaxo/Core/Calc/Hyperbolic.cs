@@ -60,6 +60,8 @@ namespace Altaxo.Calc
       }
     }
 
+    public static double Asinh(double x) => RMath.Asinh(x);
+
     /// <summary>
     /// Hyperbolic cosine, i.e. (Exp(x)+Exp(-x))/2.
     /// </summary>
@@ -70,6 +72,9 @@ namespace Altaxo.Calc
       return 0.5 * (Math.Exp(x) + Math.Exp(-x));
     }
 
+    public static double Acosh(double x) => RMath.Acosh(x);
+
+
     /// <summary>
     /// Hyperbolic tangent, i.e. Sinh(x)/Cosh(x).
     /// </summary>
@@ -79,6 +84,9 @@ namespace Altaxo.Calc
     {
       return Sinh(x) / Cosh(x);
     }
+
+    public static double Atanh(double x) => RMath.Atanh(x);
+
 
     /// <summary>
     /// Hyperbolic cotangent, i.e. Cosh(x)/Sinh(x).
@@ -109,6 +117,8 @@ namespace Altaxo.Calc
     {
       return 1 / Sinh(x);
     }
+
+
 
     /// <summary>
     /// Hyperbolic cosecant, multiplied with the argument <paramref name="x"/>, i.e. x*Csch(x) = x/Sinh(x).
@@ -192,5 +202,28 @@ namespace Altaxo.Calc
         return Math.Exp(a * x) * p * 0.5 / Sinh(x);
       }
     }
+
+    /// <summary>
+    /// Calculates the natural logarithm of 1+x with better accuracy for very small x.
+    /// </summary>
+    /// <param name="x">The x value</param>
+    /// <returns>Log(1+x) with better accuracy for very small x.</returns>
+    public static double Log1p(double x) => RMath.Log1p(x);
+
+
+    /// <summary>
+    /// Calculates 1-Exp(x) with better accuracy around x=0.
+    /// </summary>
+    /// <param name="x">Function argument</param>
+    /// <returns>The value 1-Exp(x)</returns>
+    public static double OneMinusExp(double x) => RMath.OneMinusExp(x);
+
+    /// <summary>
+    /// Calculates Exp(x)-1 with better accuracy around x=0.
+    /// </summary>
+    /// <param name="x">Function argument</param>
+    /// <returns>The value Exp(x)-1</returns>
+    public static double ExpMinusOne(double x) => -RMath.OneMinusExp(x);
+
   }
 }
