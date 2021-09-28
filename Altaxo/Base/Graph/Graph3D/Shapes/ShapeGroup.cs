@@ -57,7 +57,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
 
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (ShapeGroup?)o ?? new ShapeGroup();
+        var s = (ShapeGroup?)o ?? new ShapeGroup(info);
         info.GetBaseValueEmbedded(s, typeof(ShapeGroup).BaseType!, parent);
 
         int count = info.OpenArray("Elements");
@@ -75,6 +75,12 @@ namespace Altaxo.Graph.Graph3D.Shapes
     }
 
     #endregion Serialization
+
+    private ShapeGroup(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+      : base(info)
+    {
+      _groupedObjects = new List<GraphicBase>();
+    }
 
     private ShapeGroup()
       : base(new ItemLocationDirectAutoSize())
