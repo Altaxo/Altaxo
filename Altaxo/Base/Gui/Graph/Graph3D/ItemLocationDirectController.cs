@@ -164,7 +164,7 @@ namespace Altaxo.Gui.Graph.Graph3D
 
       if (_view is not null)
       {
-        _view.ShowSizeElements(!_doc.IsAutoSized, true);
+        ShowSizeElements(!_doc.IsAutoSized, !_doc.IsAutoSized);
 
         if (!_doc.IsAutoSized)
         {
@@ -197,7 +197,7 @@ namespace Altaxo.Gui.Graph.Graph3D
 
         _view.ShowPositionElements(_showPositionElements_IsVisible, _showPositionElements_Enabled);
         _view.ShowSizeElements(_showSizeElements_IsVisible, _showSizeElements_Enabled);
-        _view.ShowScaleElements(_showScaleElements_IsVisible, _showSizeElements_Enabled);
+        _view.ShowScaleElements(_showScaleElements_IsVisible, _showScaleElements_Enabled);
         _view.ShowAnchorElements(_showAnchorElements_IsVisible, _showAnchorElements_Enabled);
       }
     }
