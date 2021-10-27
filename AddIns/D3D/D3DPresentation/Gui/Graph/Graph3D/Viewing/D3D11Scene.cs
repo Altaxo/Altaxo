@@ -84,11 +84,11 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
 
     // Transformation variables
     private System.Numerics.Matrix4x4 _worldViewProj = System.Numerics.Matrix4x4.Identity;
-    private Buffer? _evWorldViewProj;
+    private Buffer? _bufWorldViewProj;
 
     // Eye Position
     private System.Numerics.Vector4 _eyePosition;
-    private Buffer? _evEyePosition;
+    private Buffer? _bufEyePosition;
 
 
     // Texture for color providers to colorize a mesh by its height
@@ -98,19 +98,22 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
 
     // Materials
     private LightingHlsl.CbMaterial _material = new();
-    private Buffer? _evMaterial;
+    private Buffer? _bufMaterial;
 
-    // Lighting
-    private LightingHlsl.CbLights _cbLights = new();
-    private Buffer? _bufferLights;
+    // ----------------- Lighting ----------------------------------
 
-    // Clip planes
-    private LightingHlsl.CbClipPlanes _clipPlanes = new();
-    private Buffer? _evClipPlanes;
+    /// <summary>Lighting definition structure that matches register in .hlsl file.</summary>
+    private LightingHlsl.CbLights _lights = new();
 
-    // Lighting
+    /// <summary>Buffer to bring <see cref="_lights"/> structure to the device.</summary>
+    private Buffer? _bufLights;
+
+    /// <summary>Device independent lighting definition.</summary>
     private Lighting? _lighting;
 
+    // ---------------- Clip planes ---------------------------------
+    private LightingHlsl.CbClipPlanes _clipPlanes = new();
+    private Buffer? _bufClipPlanes;
 
     private ID3D11VertexShader _vertexShader_P;
     private ID3D11VertexShader _vertexShader_OVERLAY_PC;
@@ -280,37 +283,37 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
 
 
       // View transformation variables
-      _evWorldViewProj = device.CreateBuffer(ref _worldViewProj, new BufferDescription((4 * 4) * sizeof(float), BindFlags.ConstantBuffer, ResourceUsage.Default));
-      device.ImmediateContext.VSSetConstantBuffer(LightingHlsl.WorldViewProj_RegisterNumber, _evWorldViewProj);
+      _bufWorldViewProj = device.CreateBuffer(ref _worldViewProj, new BufferDescription((4 * 4) * sizeof(float), BindFlags.ConstantBuffer, ResourceUsage.Default));
+      device.ImmediateContext.VSSetConstantBuffer(LightingHlsl.WorldViewProj_RegisterNumber, _bufWorldViewProj);
 
-      _evEyePosition = device.CreateBuffer(ref _eyePosition, new BufferDescription(4 * sizeof(float), BindFlags.ConstantBuffer, ResourceUsage.Default));
-      device.ImmediateContext.PSSetConstantBuffer(LightingHlsl.EyePosition_RegisterNumber, _evEyePosition);
+      _bufEyePosition = device.CreateBuffer(ref _eyePosition, new BufferDescription(4 * sizeof(float), BindFlags.ConstantBuffer, ResourceUsage.Default));
+      device.ImmediateContext.PSSetConstantBuffer(LightingHlsl.EyePosition_RegisterNumber, _bufEyePosition);
 
       // Material
       _material.SpecularExponent = 4;
       _material.SpecularIntensity = 1;
       _material.MetalnessValue = 0.75f;
-      _evMaterial = device.CreateBuffer(ref _material, new BufferDescription(8 * sizeof(float), BindFlags.ConstantBuffer, ResourceUsage.Default));
-      device.ImmediateContext.VSSetConstantBuffer(LightingHlsl.Material_RegisterNumber, _evMaterial);
-      device.ImmediateContext.PSSetConstantBuffer(LightingHlsl.Material_RegisterNumber, _evMaterial);
+      _bufMaterial = device.CreateBuffer(ref _material, new BufferDescription(8 * sizeof(float), BindFlags.ConstantBuffer, ResourceUsage.Default));
+      device.ImmediateContext.VSSetConstantBuffer(LightingHlsl.Material_RegisterNumber, _bufMaterial);
+      device.ImmediateContext.PSSetConstantBuffer(LightingHlsl.Material_RegisterNumber, _bufMaterial);
 
       // Lights
-      _cbLights = new LightingHlsl.CbLights();
-      _bufferLights = device.CreateBuffer(ref _cbLights, new BufferDescription(Marshal.SizeOf(_cbLights), BindFlags.ConstantBuffer, ResourceUsage.Default));
-      device.ImmediateContext.PSSetConstantBuffer(LightingHlsl.Lights_RegisterNumber, _bufferLights);
+      _lights = new LightingHlsl.CbLights();
+      _bufLights = device.CreateBuffer(ref _lights, new BufferDescription(Marshal.SizeOf(_lights), BindFlags.ConstantBuffer, ResourceUsage.Default));
+      device.ImmediateContext.PSSetConstantBuffer(LightingHlsl.Lights_RegisterNumber, _bufLights);
       // Lighting variables
       _lighting = new Lighting();
       _lighting.SetDefaultLighting();
-      _lighting.AssembleLightsInto(ref _cbLights);
-      device.ImmediateContext.UpdateSubresource(ref _cbLights, _bufferLights);
+      _lighting.AssembleLightsInto(ref _lights);
+      device.ImmediateContext.UpdateSubresource(ref _lights, _bufLights);
 
 
       // Color providers
       BindTextureFor1DColorProviders(device.ImmediateContext);
 
       // Clip plane variables
-      _evClipPlanes = device.CreateBuffer(ref _clipPlanes, new BufferDescription(6 * 4 * sizeof(float), BindFlags.ConstantBuffer, ResourceUsage.Default));
-      device.ImmediateContext.VSSetConstantBuffer(LightingHlsl.ClipPlanes_RegisterNumber, _evClipPlanes);
+      _bufClipPlanes = device.CreateBuffer(ref _clipPlanes, new BufferDescription(6 * 4 * sizeof(float), BindFlags.ConstantBuffer, ResourceUsage.Default));
+      device.ImmediateContext.VSSetConstantBuffer(LightingHlsl.ClipPlanes_RegisterNumber, _bufClipPlanes);
 
 
 
@@ -394,11 +397,11 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
       // now dispose all other device dependent variables, in inverse order than in Attach()
 
       Disposer.RemoveAndDispose(ref _lighting);
-      Disposer.RemoveAndDispose(ref _evClipPlanes);
+      Disposer.RemoveAndDispose(ref _bufClipPlanes);
       ReleaseTextureFor1DColorProviders();
-      Disposer.RemoveAndDispose(ref _evMaterial);
-      Disposer.RemoveAndDispose(ref _evEyePosition);
-      Disposer.RemoveAndDispose(ref _evWorldViewProj);
+      Disposer.RemoveAndDispose(ref _bufMaterial);
+      Disposer.RemoveAndDispose(ref _bufEyePosition);
+      Disposer.RemoveAndDispose(ref _bufWorldViewProj);
 
       for (int i = 0; i < _renderLayouts.Length; ++i)
       {
@@ -785,16 +788,16 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
 
       // World projection and camera
       _worldViewProj = worldViewProjTr;
-      device.ImmediateContext.UpdateSubresource(ref _worldViewProj, _evWorldViewProj);
+      device.ImmediateContext.UpdateSubresource(ref _worldViewProj, _bufWorldViewProj);
 
 
       _eyePosition = ToVector4(_altaxoCamera.EyePosition, 1f);
-      device.ImmediateContext.UpdateSubresource(ref _eyePosition, _evEyePosition);
+      device.ImmediateContext.UpdateSubresource(ref _eyePosition, _bufEyePosition);
 
       // lighting
       _lighting.SetLighting(_altaxoLightSettings, _altaxoCamera);
-      _lighting.AssembleLightsInto(ref _cbLights);
-      device.ImmediateContext.UpdateSubresource(ref _cbLights, _bufferLights);
+      _lighting.AssembleLightsInto(ref _lights);
+      device.ImmediateContext.UpdateSubresource(ref _lights, _bufLights);
 
       // Material is separate for each buffer, therefore it is set there
 
@@ -856,7 +859,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
       {
         _material.DiffuseColor = ToColor4(material.Color.Color);
       }
-      device.UpdateSubresource(ref _material, _evMaterial);
+      device.UpdateSubresource(ref _material, _bufMaterial);
     }
 
     private void DrawPositionColorIndexedTriangleBuffer(DeviceContext device, VertexAndIndexDeviceBuffer deviceBuffers, System.Numerics.Matrix4x4 worldViewProj)
@@ -875,7 +878,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
         {
           _clipPlanes[i] = deviceBuffers.ClipPlanes[i];
         }
-        device.UpdateSubresource(ref _clipPlanes, _evClipPlanes);
+        device.UpdateSubresource(ref _clipPlanes, _bufClipPlanes);
       }
 
       device.IASetVertexBuffers(0, new VertexBufferView(deviceBuffers.VertexBuffer, 32, 0));
@@ -899,7 +902,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
         {
           _clipPlanes[i] = deviceBuffers.ClipPlanes[i];
         }
-        device.UpdateSubresource(ref _clipPlanes, _evClipPlanes);
+        device.UpdateSubresource(ref _clipPlanes, _bufClipPlanes);
       }
 
       SetShaderMaterialVariables(device, deviceBuffers.Material);
@@ -916,7 +919,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
         {
           _clipPlanes[i] = new Plane();
         }
-        device.UpdateSubresource(ref _clipPlanes, _evClipPlanes);
+        device.UpdateSubresource(ref _clipPlanes, _bufClipPlanes);
       }
     }
 
@@ -936,7 +939,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
         {
           _clipPlanes[i] = deviceBuffers.ClipPlanes[i];
         }
-        device.UpdateSubresource(ref _clipPlanes, _evClipPlanes);
+        device.UpdateSubresource(ref _clipPlanes, _bufClipPlanes);
       }
 
 
@@ -968,7 +971,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
         {
           _clipPlanes[i] = new Plane();
         }
-        device.UpdateSubresource(ref _clipPlanes, _evClipPlanes);
+        device.UpdateSubresource(ref _clipPlanes, _bufClipPlanes);
       }
 
     }
