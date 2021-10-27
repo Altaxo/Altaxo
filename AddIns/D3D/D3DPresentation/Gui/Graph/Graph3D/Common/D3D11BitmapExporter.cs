@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2015 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2021 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -58,11 +58,11 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
 
       double sourceDpi = options.SourceDpiResolution;
 
-      Viewing.D3D10Scene? scene = null;
+      Viewing.D3D11Scene? scene = null;
       D3DGraphicsContext? g = null;
       try
       {
-        scene = new Viewing.D3D10Scene();
+        scene = new Viewing.D3D11Scene();
         g = new D3DGraphicsContext();
 
         doc.Paint(g);
@@ -128,7 +128,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
       }
     }
 
-    public void Export(int sizeX, int sizeY, ID3D10Scene scene, Altaxo.Graph.Gdi.GraphExportOptions options, System.IO.Stream toStream)
+    public void Export(int sizeX, int sizeY, ID3D11Scene scene, Altaxo.Graph.Gdi.GraphExportOptions options, System.IO.Stream toStream)
     {
       Device? device = null;
       ID3D11Texture2D? renderTarget = null;

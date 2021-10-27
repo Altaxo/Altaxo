@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2019 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2021 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -47,7 +47,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
   using Device = Vortice.Direct3D11.ID3D11Device;
   using DeviceContext = Vortice.Direct3D11.ID3D11DeviceContext;
 
-  public partial class D3D10Scene : ID3D10Scene
+  public partial class D3D11Scene : ID3D11Scene
   {
     /// <summary>
     /// The _this triangle buffers. These buffers are used for current rendering
@@ -476,7 +476,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
       }
     }
 
-    ~D3D10Scene()
+    ~D3D11Scene()
     {
       // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
       Dispose(false);

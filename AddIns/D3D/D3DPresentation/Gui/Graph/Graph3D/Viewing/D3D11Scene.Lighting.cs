@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2016 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2021 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -44,7 +44,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
   using Buffer = Vortice.Direct3D11.ID3D11Buffer;
   using Device = Vortice.Direct3D11.ID3D11Device;
 
-  public partial class D3D10Scene : ID3D10Scene
+  public partial class D3D11Scene : ID3D11Scene
   {
 
     /// <summary>

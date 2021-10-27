@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2018 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2021 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -56,7 +56,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
   {
     private WeakReference _controller = new WeakReference(null);
 
-    private D3D10Scene _scene;
+    private D3D11Scene _scene;
 
     private int[]? _cachedCurrentLayer = null;
 
@@ -78,7 +78,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
     {
       InitializeComponent();
 
-      _scene = new D3D10Scene();
+      _scene = new D3D11Scene();
       _mouseState = null!; // set when controller is set.
     }
 

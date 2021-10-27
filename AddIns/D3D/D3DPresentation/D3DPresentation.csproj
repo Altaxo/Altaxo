@@ -20,12 +20,6 @@
   <ItemGroup>
     <Compile Remove="Properties\AssemblyInfo.cs" Visible="true" />
   </ItemGroup>
-  <!-- We have to compile the shaders in the pre-built event in order to be ready for embedding as resource - see below
-  <ItemGroup>
-    <Fx40File Include="Shaders\Lighting.fx" />
-    <Fx40File Include="Shaders\GammaCorrector.fx" />
-  </ItemGroup>
-  -->
   <ItemGroup>
     <ProjectReference Include="..\..\..\Altaxo\Base.Presentation\AltaxoBase.Presentation.csproj" />
     <ProjectReference Include="..\..\..\Altaxo\Base\AltaxoBase.csproj" />
@@ -33,16 +27,7 @@
     <ProjectReference Include="..\..\..\Altaxo\Dom.Presentation\AltaxoDom.Presentation.csproj" />
     <ProjectReference Include="..\..\..\Altaxo\Dom\AltaxoDom.csproj" />
   </ItemGroup>
-  <ItemGroup><!--
-    <PackageReference Include="SharpDX" Version="4.2.0" />
-    <PackageReference Include="SharpDX.D3DCompiler" Version="4.2.0" />
-    <PackageReference Include="SharpDX.Direct2D1" Version="4.2.0" />
-    <PackageReference Include="SharpDX.Direct3D10" Version="4.2.0" />
-    <PackageReference Include="SharpDX.Direct3D9" Version="4.2.0" />
-    <PackageReference Include="SharpDX.DXGI" Version="4.2.0" />
-    <PackageReference Include="SharpDX.Mathematics" Version="4.2.0" />
-    -->
-  
+  <ItemGroup>
     <None Remove="CompiledShaders\GammaCorrector_PS.cso" />
     <None Remove="CompiledShaders\GammaCorrector_VS.cso" />
     <None Remove="CompiledShaders\Lighting_PS.cso" />
@@ -84,13 +69,6 @@
   </ItemGroup>
   <UsingTask TaskName="Shader" AssemblyFile="ShaderCompilerBuildTask.dll" />
   <UsingTask TaskName="GitVersionFile" AssemblyFile="..\..\..\MSBuildVersioning.dll" />
-  <!--
-  <Target Name="DoCompileShaders">
-    <Shader InputFiles="@(Fx40File)" OutputPath="$(ProjectDir)\CompiledShaders\Effects" Profile="fx_4_0" />
-    <Shader InputFiles="@(Vs40File)" OutputPath="$(ProjectDir)\CompiledShaders\VS" Profile="vs_4_0" EntryPoint="VS" />
-    <Shader InputFiles="@(Ps40File)" OutputPath="$(ProjectDir)\CompiledShaders\PS" Profile="ps_4_0" EntryPoint="PS" />
-  </Target>
-  -->
   <Target Name="DoCompileShaders">
     <Shader InputFiles="Shaders\GammaCorrector.hlsl" OutputPath="CompiledShaders" Profile="vs_4_0" EntryPoint="VS" />
     <Shader InputFiles="Shaders\GammaCorrector.hlsl" OutputPath="CompiledShaders" Profile="ps_4_0" EntryPoint="PS" />
@@ -111,10 +89,4 @@
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
     <Exec Command="IF NOT EXIST $(SolutionDir)rt$(TargetFramework)\AddIns\D3D\ mkdir $(SolutionDir)rt$(TargetFramework)\AddIns\D3D\&#xD;&#xA;copy $(ProjectDir)D3D.addin $(SolutionDir)rt$(TargetFramework)\AddIns\D3D\&#xD;&#xA;copy $(TargetDir)D3DPresentation.??l $(SolutionDir)rt$(TargetFramework)\AddIns\D3D\&#xD;&#xA;copy $(TargetDir)Vortice*.??l $(SolutionDir)rt$(TargetFramework)\AddIns\D3D\&#xD;&#xA;copy $(TargetDir)SharpGen*.??l $(SolutionDir)rt$(TargetFramework)\AddIns\D3D\" />
   </Target>
-  <!--
-  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
-    <Shader InputFiles="$(ProjectDir)\Shaders\GammaCorrector.fx" OutputPath="$(ProjectDir)\CompiledShaders\Effects" Profile="fx_4_0" />
-    <Shader InputFiles="$(ProjectDir)\Shaders\Lighting.fx" OutputPath="$(ProjectDir)\CompiledShaders\Effects" Profile="fx_4_0" />
-  </Target>
-  -->
 </Project>

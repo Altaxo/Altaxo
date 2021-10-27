@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2019 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2021 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -25,32 +25,57 @@
 namespace Altaxo.Gui.Graph.Graph3D.Viewing
 {
   using System;
+  using System.Numerics;
+  using Altaxo.Drawing.D3D;
   using Altaxo.Gui.Graph.Graph3D.Common;
   using Buffer = Vortice.Direct3D11.ID3D11Buffer;
 
-  public partial class D3D10Scene
+  public partial class D3D11Scene
   {
-    internal class VertexBufferNoMaterial : IDisposable
+    internal class VertexAndIndexDeviceBuffer
     {
+      private bool _isDisposed;
+      private IMaterial _material;
       private Buffer _vertexBuffer;
       private int _vertexCount;
+      private Buffer _indexBuffer;
+      private int _indexCount;
+      private Plane[] _clipPlanes;
+      private byte[] _uColors;
 
+
+      public IMaterial Material => _material;
       public Buffer VertexBuffer => _vertexBuffer;
       public int VertexCount => _vertexCount;
+      public Buffer IndexBuffer => _indexBuffer;
+      public int IndexCount => _indexCount;
+      public Plane[] ClipPlanes => _clipPlanes;
+      public byte[] UColors => _uColors;
 
-      public VertexBufferNoMaterial(Buffer vertexBuffer, int vertexCount)
+      public VertexAndIndexDeviceBuffer(
+        IMaterial material,
+        Buffer vertexBuffer,
+        int vertexCount,
+        Buffer indexBuffer,
+        int indexCount,
+        Plane[] clipPlanes,
+        byte[] uColors)
       {
+        _isDisposed = false;
+        _material = material;
         _vertexBuffer = vertexBuffer;
         _vertexCount = vertexCount;
+        _indexBuffer = indexBuffer;
+        _indexCount = indexCount;
+        _clipPlanes = clipPlanes;
+        _uColors = uColors;
       }
-
 
       #region IDisposable Support
 
-      private bool _isDisposed = false; // To detect redundant calls
 
 
-      ~VertexBufferNoMaterial()
+      ~VertexAndIndexDeviceBuffer()
       {
         // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
         Dispose(false);
@@ -60,9 +85,13 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
       {
         if (!_isDisposed)
         {
+          Disposer.RemoveAndDispose(ref _material!);
           Disposer.RemoveAndDispose(ref _vertexBuffer!);
+          Disposer.RemoveAndDispose(ref _indexBuffer!);
           _vertexCount = 0;
-
+          _indexCount = 0;
+          _clipPlanes = null!;
+          _uColors = null!;
           _isDisposed = true;
         }
       }
