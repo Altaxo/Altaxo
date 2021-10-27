@@ -27,6 +27,8 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
   using System;
   using System.Collections.Generic;
   using System.Linq;
+  using System.Numerics;
+  using System.Runtime.InteropServices;
   using Altaxo.Geometry;
   using Altaxo.Graph.Graph3D;
   using Altaxo.Graph.Graph3D.Camera;
@@ -34,16 +36,51 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
   using Altaxo.Graph.Graph3D.Lighting;
   using Altaxo.Gui.Graph.Graph3D.Common;
   using Drawing.D3D;
-  using SharpDX;
-  using SharpDX.D3DCompiler;
-  using SharpDX.Direct3D10;
-  using SharpDX.DXGI;
-  using Buffer = SharpDX.Direct3D10.Buffer;
-  using Device = SharpDX.Direct3D10.Device;
+  using Vortice;
+  using Vortice.D3DCompiler;
+  using Vortice.Direct3D11;
+  using Vortice.DXGI;
+  using Vortice.Mathematics;
+  using Buffer = Vortice.Direct3D11.ID3D11Buffer;
+  using Device = Vortice.Direct3D11.ID3D11Device;
 
   public partial class D3D10Scene : ID3D10Scene
   {
-    private class Lighting
+
+    /// <summary>
+    /// Lights structure that must exactly match the structure in the shader code.
+    /// </summary>
+    public struct cbLights
+    {
+      public Color4 HemisphericLightColorBelow;
+      public Color4 HemisphericLightColorAbove;
+      public Vector4 HemisphericLightBelowToAboveVector;
+
+      // Light positions of the 4 lights, every variable is one component; x, y, z, and w correspond to the 4 lights
+      public Vector4 LightPosX;
+      public Vector4 LightPosY;
+      public Vector4 LightPosZ;
+
+      // Light directions
+      public Vector4 LightDirX;
+      public Vector4 LightDirY;
+      public Vector4 LightDirZ;
+
+      public Vector4 LightColorR;
+      public Vector4 LightColorG;
+      public Vector4 LightColorB;
+
+      public Vector4 LightRangeRcp; // reciprocal of light range
+
+      public Vector4 CapsuleLen;
+
+      public Vector4 SpotCosOuterCone;
+
+      public Vector4 SpotCosInnerConeRcp;
+    }
+
+
+    private class Lighting : IDisposable
     {
       private struct SingleLight
       {
@@ -56,64 +93,16 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
         public float SpotCosInnerConeRcp;
       }
 
-      public EffectConstantBuffer _cbLighting;
-
-      public EffectVectorVariable HemisphericLightColorBelow;
-      public EffectVectorVariable HemisphericLightColorAbove;
-      public EffectVectorVariable HemisphericLightBelowToAboveVector;
-
-      public EffectVectorVariable LightPosX;
-      public EffectVectorVariable LightPosY;
-      public EffectVectorVariable LightPosZ;
-
-      // Light directions
-      public EffectVectorVariable LightDirX;
-
-      public EffectVectorVariable LightDirY;
-      public EffectVectorVariable LightDirZ;
-
-      public EffectVectorVariable LightColorR;
-      public EffectVectorVariable LightColorG;
-      public EffectVectorVariable LightColorB;
-
-      public EffectVectorVariable LightRangeRcp; // reciprocal of light range
-
-      public EffectVectorVariable CapsuleLen;
-
-      public EffectVectorVariable SpotCosOuterCone;
-
-      public EffectVectorVariable SpotCosInnerConeRcp;
-
-
-
+      public Buffer _bufferLights;
+      public cbLights _cbLights;
       private SingleLight[] _singleLights;
 
-
-      public Lighting(Effect effect)
+      public Lighting(ID3D11Device device)
       {
         _singleLights = new SingleLight[4];
-
-        _cbLighting = effect.GetConstantBufferByName("cbLights");
-        HemisphericLightColorBelow = _cbLighting.GetMemberByName("HemisphericLightColorBelow").AsVector();
-        HemisphericLightColorAbove = _cbLighting.GetMemberByName("HemisphericLightColorAbove").AsVector();
-        HemisphericLightBelowToAboveVector = _cbLighting.GetMemberByName("HemisphericLightBelowToAboveVector").AsVector();
-
-        LightPosX = _cbLighting.GetMemberByName("LightPosX").AsVector();
-        LightPosY = _cbLighting.GetMemberByName("LightPosY").AsVector();
-        LightPosZ = _cbLighting.GetMemberByName("LightPosZ").AsVector();
-
-        LightDirX = _cbLighting.GetMemberByName("LightDirX").AsVector();
-        LightDirY = _cbLighting.GetMemberByName("LightDirY").AsVector();
-        LightDirZ = _cbLighting.GetMemberByName("LightDirZ").AsVector();
-
-        LightColorR = _cbLighting.GetMemberByName("LightColorR").AsVector();
-        LightColorG = _cbLighting.GetMemberByName("LightColorG").AsVector();
-        LightColorB = _cbLighting.GetMemberByName("LightColorB").AsVector();
-
-        LightRangeRcp = _cbLighting.GetMemberByName("LightRangeRcp").AsVector();
-        CapsuleLen = _cbLighting.GetMemberByName("CapsuleLen").AsVector();
-        SpotCosOuterCone = _cbLighting.GetMemberByName("SpotCosOuterCone").AsVector();
-        SpotCosInnerConeRcp = _cbLighting.GetMemberByName("SpotCosInnerConeRcp").AsVector();
+        _cbLights = new cbLights();
+        _bufferLights = device.CreateBuffer(ref _cbLights, new BufferDescription(Marshal.SizeOf(_cbLights), BindFlags.ConstantBuffer, ResourceUsage.Default));
+        device.ImmediateContext.PSSetConstantBuffer(3, _bufferLights);
       }
 
       #region IDisposable Support
@@ -130,29 +119,11 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
       {
         if (!_isDisposed)
         {
-          Disposer.RemoveAndDispose(ref SpotCosInnerConeRcp!);
-          Disposer.RemoveAndDispose(ref SpotCosOuterCone!);
-          Disposer.RemoveAndDispose(ref CapsuleLen!);
-          Disposer.RemoveAndDispose(ref LightRangeRcp!);
-          Disposer.RemoveAndDispose(ref LightColorB!);
-          Disposer.RemoveAndDispose(ref LightColorG!);
-          Disposer.RemoveAndDispose(ref LightColorR!);
-          Disposer.RemoveAndDispose(ref LightDirZ!);
-          Disposer.RemoveAndDispose(ref LightDirY!);
-          Disposer.RemoveAndDispose(ref LightDirX!);
-          Disposer.RemoveAndDispose(ref LightPosZ!);
-          Disposer.RemoveAndDispose(ref LightPosY!);
-          Disposer.RemoveAndDispose(ref LightPosX!);
-          Disposer.RemoveAndDispose(ref HemisphericLightBelowToAboveVector!);
-          Disposer.RemoveAndDispose(ref HemisphericLightColorAbove!);
-          Disposer.RemoveAndDispose(ref HemisphericLightColorBelow!);
-          Disposer.RemoveAndDispose(ref _cbLighting!);
+          Disposer.RemoveAndDispose(ref _bufferLights);
 
           _isDisposed = true;
         }
       }
-
-
 
       public void Dispose()
       {
@@ -162,11 +133,11 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
       #endregion
 
 
-      public void SetDefaultLighting()
+      public void SetDefaultLighting(ID3D11Device device)
       {
-        HemisphericLightBelowToAboveVector.Set(new Vector4(0, 0, 1, 1));
-        HemisphericLightColorBelow.Set(0.1f * new Vector4(0.55f, 0.5f, 0.5f, 1)); // slightly red
-        HemisphericLightColorAbove.Set(new Vector4(0.5f, 0.5f, 0.55f, 1)); // slightly blue
+        _cbLights.HemisphericLightBelowToAboveVector = new Vector4(0, 0, 1, 1);
+        _cbLights.HemisphericLightColorBelow = new Color4(0.055f, 0.05f, 0.05f, 1); // slightly red
+        _cbLights.HemisphericLightColorAbove = new Color4(0.5f, 0.5f, 0.55f, 1); // slightly blue
 
         ClearSingleLight(0);
         ClearSingleLight(1);
@@ -177,12 +148,12 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
         SetPointLight(1, Altaxo.Drawing.NamedColors.White.Color, 0.5, new PointD3D(200, 200, 200), 400);
         SetCapsuleLight(2, Altaxo.Drawing.NamedColors.Red, 1, new PointD3D(400, 200, 200), 500, new VectorD3D(0, 1, 0), 200);
 
-        AssembleLights();
+        AssembleLights(device);
       }
 
-      public void SetLighting(LightSettings lightSettings, CameraBase camera)
+      public void SetLighting(ID3D11Device device, LightSettings lightSettings, CameraBase camera)
       {
-        Matrix4x3 cameraM = Matrix4x3.Identity;
+        var cameraM = new Altaxo.Geometry.Matrix4x3(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0);
         if (lightSettings.IsAnyLightAffixedToCamera)
         {
           // if a light is affixed to the camera, its position is considered to be in camera coordinates
@@ -248,15 +219,15 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
           }
         }
 
-        AssembleLights();
+        AssembleLights(device);
       }
 
       public void SetAmbientLight(Altaxo.Drawing.AxoColor colorBelow, Altaxo.Drawing.AxoColor colorAbove, double lightAmplitude, VectorD3D directionBelowToAbove)
       {
         directionBelowToAbove = directionBelowToAbove.Normalized;
-        HemisphericLightBelowToAboveVector.Set(new Vector4((float)directionBelowToAbove.X, (float)directionBelowToAbove.Y, (float)directionBelowToAbove.Z, 0));
-        HemisphericLightColorBelow.Set(ToVector4(colorBelow, lightAmplitude, 1));
-        HemisphericLightColorAbove.Set(ToVector4(colorAbove, lightAmplitude, 1));
+        _cbLights.HemisphericLightBelowToAboveVector = new Vector4((float)directionBelowToAbove.X, (float)directionBelowToAbove.Y, (float)directionBelowToAbove.Z, 0);
+        _cbLights.HemisphericLightColorBelow = ToColor4(colorBelow, lightAmplitude, 1);
+        _cbLights.HemisphericLightColorAbove = ToColor4(colorAbove, lightAmplitude, 1);
       }
 
       public void SetDirectionalLight(int idx, Altaxo.Drawing.AxoColor color, double colorAmplitude, VectorD3D directionToLight)
@@ -293,7 +264,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
       {
         var sl = new SingleLight()
         {
-          Color = ToVector4(color, colorAmplitude, 1),
+          Color = ToColor4(color, colorAmplitude, 1),
           Position = ToVector4(position, 1f),
           Direction = ToVector4(direction, 0f),
           LightRangeRcp = (float)lightRangeRcp,
@@ -310,24 +281,28 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
         _singleLights[idx] = new SingleLight();
       }
 
-      private void AssembleLights()
+      private void AssembleLights(ID3D11Device device)
       {
-        LightPosX.Set(new Vector4(_singleLights[0].Position.X, _singleLights[1].Position.X, _singleLights[2].Position.X, _singleLights[3].Position.X));
-        LightPosY.Set(new Vector4(_singleLights[0].Position.Y, _singleLights[1].Position.Y, _singleLights[2].Position.Y, _singleLights[3].Position.Y));
-        LightPosZ.Set(new Vector4(_singleLights[0].Position.Z, _singleLights[1].Position.Z, _singleLights[2].Position.Z, _singleLights[3].Position.Z));
+        _cbLights.LightPosX = new Vector4(_singleLights[0].Position.X, _singleLights[1].Position.X, _singleLights[2].Position.X, _singleLights[3].Position.X);
+        _cbLights.LightPosY = new Vector4(_singleLights[0].Position.Y, _singleLights[1].Position.Y, _singleLights[2].Position.Y, _singleLights[3].Position.Y);
+        _cbLights.LightPosZ = new Vector4(_singleLights[0].Position.Z, _singleLights[1].Position.Z, _singleLights[2].Position.Z, _singleLights[3].Position.Z);
 
-        LightDirX.Set(new Vector4(_singleLights[0].Direction.X, _singleLights[1].Direction.X, _singleLights[2].Direction.X, _singleLights[3].Direction.X));
-        LightDirY.Set(new Vector4(_singleLights[0].Direction.Y, _singleLights[1].Direction.Y, _singleLights[2].Direction.Y, _singleLights[3].Direction.Y));
-        LightDirZ.Set(new Vector4(_singleLights[0].Direction.Z, _singleLights[1].Direction.Z, _singleLights[2].Direction.Z, _singleLights[3].Direction.Z));
+        _cbLights.LightDirX = new Vector4(_singleLights[0].Direction.X, _singleLights[1].Direction.X, _singleLights[2].Direction.X, _singleLights[3].Direction.X);
+        _cbLights.LightDirY = new Vector4(_singleLights[0].Direction.Y, _singleLights[1].Direction.Y, _singleLights[2].Direction.Y, _singleLights[3].Direction.Y);
+        _cbLights.LightDirZ = new Vector4(_singleLights[0].Direction.Z, _singleLights[1].Direction.Z, _singleLights[2].Direction.Z, _singleLights[3].Direction.Z);
 
-        LightColorR.Set(new Vector4(_singleLights[0].Color.X, _singleLights[1].Color.X, _singleLights[2].Color.X, _singleLights[3].Color.X));
-        LightColorG.Set(new Vector4(_singleLights[0].Color.Y, _singleLights[1].Color.Y, _singleLights[2].Color.Y, _singleLights[3].Color.Y));
-        LightColorB.Set(new Vector4(_singleLights[0].Color.Z, _singleLights[1].Color.Z, _singleLights[2].Color.Z, _singleLights[3].Color.Z));
+        _cbLights.LightColorR = new Vector4(_singleLights[0].Color.X, _singleLights[1].Color.X, _singleLights[2].Color.X, _singleLights[3].Color.X);
+        _cbLights.LightColorG = new Vector4(_singleLights[0].Color.Y, _singleLights[1].Color.Y, _singleLights[2].Color.Y, _singleLights[3].Color.Y);
+        _cbLights.LightColorB = new Vector4(_singleLights[0].Color.Z, _singleLights[1].Color.Z, _singleLights[2].Color.Z, _singleLights[3].Color.Z);
 
-        LightRangeRcp.Set(new Vector4(_singleLights[0].LightRangeRcp, _singleLights[1].LightRangeRcp, _singleLights[2].LightRangeRcp, _singleLights[3].LightRangeRcp));
-        CapsuleLen.Set(new Vector4(_singleLights[0].CapsuleLength, _singleLights[1].CapsuleLength, _singleLights[2].CapsuleLength, _singleLights[3].CapsuleLength));
-        SpotCosInnerConeRcp.Set(new Vector4(_singleLights[0].SpotCosInnerConeRcp, _singleLights[1].SpotCosInnerConeRcp, _singleLights[2].SpotCosInnerConeRcp, _singleLights[3].SpotCosInnerConeRcp));
-        SpotCosOuterCone.Set(new Vector4(_singleLights[0].SpotCosOuterCone, _singleLights[1].SpotCosOuterCone, _singleLights[2].SpotCosOuterCone, _singleLights[3].SpotCosOuterCone));
+        _cbLights.LightRangeRcp = new Vector4(_singleLights[0].LightRangeRcp, _singleLights[1].LightRangeRcp, _singleLights[2].LightRangeRcp, _singleLights[3].LightRangeRcp);
+        _cbLights.CapsuleLen = new Vector4(_singleLights[0].CapsuleLength, _singleLights[1].CapsuleLength, _singleLights[2].CapsuleLength, _singleLights[3].CapsuleLength);
+        _cbLights.SpotCosInnerConeRcp = new Vector4(_singleLights[0].SpotCosInnerConeRcp, _singleLights[1].SpotCosInnerConeRcp, _singleLights[2].SpotCosInnerConeRcp, _singleLights[3].SpotCosInnerConeRcp);
+        _cbLights.SpotCosOuterCone = new Vector4(_singleLights[0].SpotCosOuterCone, _singleLights[1].SpotCosOuterCone, _singleLights[2].SpotCosOuterCone, _singleLights[3].SpotCosOuterCone);
+
+        device.ImmediateContext.UpdateSubresource(ref _cbLights, _bufferLights);
+
+
       }
     }
   }

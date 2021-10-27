@@ -309,7 +309,7 @@ namespace Altaxo.Graph.Graph3D.Commands
       {
         using (Stream myStream = new FileStream(saveOptions.FileName, FileMode.Create, FileAccess.Write, FileShare.Read))
         {
-          new Gui.Graph.Graph3D.Common.D3D10BitmapExporter().ExportAsImageToStream(doc, graphExportOptions, myStream);
+          new Gui.Graph.Graph3D.Common.D3D11BitmapExporter().ExportAsImageToStream(doc, graphExportOptions, myStream);
           myStream.Close();
         } // end openfile ok
       } // end dlgresult ok

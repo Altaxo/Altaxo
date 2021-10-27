@@ -37,36 +37,36 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
   using System.Windows.Media;
   using Altaxo.Geometry;
   using Altaxo.Graph;
-  using SharpDX;
-  using SharpDX.Direct3D10;
-  using SharpDX.DXGI;
-  using Device = SharpDX.Direct3D10.Device1;
+  using Vortice.Direct3D11;
+  using Vortice.DXGI;
+  using Vortice.Mathematics;
+  using Device = Vortice.Direct3D11.ID3D11Device;
 
   /// <summary>
   /// Supports rendering of a scene (<see cref="IScene"/>) to an <see cref="D3D10ImageSource"/>.
   /// </summary>
   /// <seealso cref="System.IDisposable" />
-  public class D3D10RendererToImageSource : IDisposable
+  public class D3D11RendererToImageSource : IDisposable
   {
     private Device? _device;
 
-    private Texture2D? _depthStencil;
-    private DepthStencilView? _depthStencilView;
+    private ID3D11Texture2D? _depthStencil;
+    private ID3D11DepthStencilView? _depthStencilView;
 
-    private Texture2D? _renderTarget;
-    private RenderTargetView? _renderTargetView;
+    private ID3D11Texture2D? _renderTarget;
+    private ID3D11RenderTargetView? _renderTargetView;
 
-    private Texture2D? _renderTargetIntermediate;
-    private RenderTargetView? _renderTargetIntermediateView;
-    private ShaderResourceView? _renderTargetIntermediateShaderResourceView;
+    private ID3D11Texture2D? _renderTargetIntermediate;
+    private ID3D11RenderTargetView? _renderTargetIntermediateView;
+    private ID3D11ShaderResourceView? _renderTargetIntermediateShaderResourceView;
 
-    private D3D10ImageSource _d3dImageSource;
+    private D3D11ImageSource _d3dImageSource;
 
     private IScene? _renderScene;
     private bool _isRenderSceneAttached;
-    private D3D10GammaCorrector? _gammaCorrector;
+    private D3D11GammaCorrector? _gammaCorrector;
 
-    public Color4 _renderTargetClearColor = SharpDX.Color.White;
+    public Color4 _renderTargetClearColor = Color4.White;
 
     private bool _isDisposed;
 
@@ -82,7 +82,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
     /// <param name="d3dImageSource">The D3D image source, which is the target of the rendering.</param>
     /// <exception cref="ArgumentNullException">
     /// </exception>
-    public D3D10RendererToImageSource(IScene scene, D3D10ImageSource d3dImageSource, string name = "Unnamed")
+    public D3D11RendererToImageSource(IScene scene, D3D11ImageSource d3dImageSource, string name = "Unnamed")
     {
       Name = name;
       InstanceID = ++_instanceCounter;
@@ -91,7 +91,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
       _d3dImageSource.IsFrontBufferAvailableChanged += EhIsFrontBufferAvailableChanged;
     }
 
-    ~D3D10RendererToImageSource()
+    ~D3D11RendererToImageSource()
     {
       Dispose(false);
     }
@@ -126,7 +126,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
 
       if (_device is null)
       {
-        _device = D3D10DeviceFactory.Instance.BorrowDevice();
+        _device = D3D11DeviceFactory.Instance.BorrowDevice();
         // _device = new Device(DriverType.Hardware, DeviceCreationFlags.BgraSupport, FeatureLevel.Level_10_0);
       }
 
@@ -164,12 +164,12 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
 
       CreateAndBindTargets(0, 0);
 
-      D3D10DeviceFactory.Instance.PassbackDevice(ref _device);
+      D3D11DeviceFactory.Instance.PassbackDevice(ref _device);
     }
 
     private void CreateAndBindTargets(int sizeX, int sizeY)
     {
-      _d3dImageSource.SetRenderTargetDX10(null);
+      _d3dImageSource.SetRenderTargetDX11(null);
 
       Disposer.RemoveAndDispose(ref _renderTargetView);
       Disposer.RemoveAndDispose(ref _renderTargetIntermediateView);
@@ -227,26 +227,36 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
         if (_device is null)
           throw new InvalidOperationException("Binding to 3D device fails because device is null");
 
-        _renderTarget = new Texture2D(_device, colordesc);
-        _renderTargetIntermediate = new Texture2D(_device, colordesc);
-        _depthStencil = new Texture2D(_device, depthdesc);
-        _renderTargetIntermediateView = new RenderTargetView(_device, _renderTargetIntermediate);
-        _renderTargetIntermediateShaderResourceView = new ShaderResourceView(_device, _renderTargetIntermediate);
-        _renderTargetView = new RenderTargetView(_device, _renderTarget);
-        _depthStencilView = new DepthStencilView(_device, _depthStencil);
-        _gammaCorrector = new D3D10GammaCorrector(_device, "Altaxo.CompiledShaders.Effects.GammaCorrector.cso");
+        _renderTarget = _device.CreateTexture2D(colordesc);
+        _renderTargetIntermediate = _device.CreateTexture2D(colordesc);
+        _depthStencil = _device.CreateTexture2D(depthdesc);
+        _renderTargetIntermediateView = _device.CreateRenderTargetView(_renderTargetIntermediate);
+        _renderTargetIntermediateShaderResourceView = _device.CreateShaderResourceView(_renderTargetIntermediate);
+        _renderTargetView = _device.CreateRenderTargetView(_renderTarget);
+        _depthStencilView = _device.CreateDepthStencilView(_depthStencil);
+        if (_gammaCorrector is null)
+        {
+          _gammaCorrector = new D3D11GammaCorrector();
+        }
+        else
+        {
+          _gammaCorrector.Detach(_device);
+        }
+        _gammaCorrector.Attach(_device);
 
-        _d3dImageSource.SetRenderTargetDX10(_renderTarget);
+        _d3dImageSource.SetRenderTargetDX11(_renderTarget);
       }
     }
 
     private void Render()
     {
-      SharpDX.Direct3D10.Device? device = _device;
+      bool useGammaCorrection = true;
+      var device = _device;
       if (device is null)
         throw new InvalidOperationException("Rendering failed because 3D device is null");
 
-      Texture2D? renderTarget = _renderTargetIntermediate;
+      var renderTarget = useGammaCorrection ? _renderTargetIntermediate : _renderTarget;
+      var renderTargetView = useGammaCorrection ? _renderTargetIntermediateView : _renderTargetView;
       if (renderTarget is null)
         throw new InvalidOperationException("Rendering failed because renderTarget is null");
 
@@ -256,14 +266,13 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
       if (!(targetWidth > 0 && targetHeight > 0))
         throw new InvalidOperationException("Rendering failed because targetWidth or targetHeight is 0");
 
-      device.OutputMerger.SetTargets(_depthStencilView, _renderTargetIntermediateView);
-      device.Rasterizer.SetViewports(new Viewport(0, 0, targetWidth, targetHeight, 0.0f, 1.0f));
-
-      device.ClearDepthStencilView(_depthStencilView, DepthStencilClearFlags.Depth | DepthStencilClearFlags.Stencil, 1.0f, 0);
+      device.ImmediateContext.OMSetRenderTargets(renderTargetView, _depthStencilView);
+      device.ImmediateContext.RSSetViewports(new Viewport[] { new Viewport(0, 0, targetWidth, targetHeight, 0.0f, 1.0f) });
+      device.ImmediateContext.ClearDepthStencilView(_depthStencilView, DepthStencilClearFlags.Depth | DepthStencilClearFlags.Stencil, 1.0f, 0);
 
       if (Scene is null)
       {
-        device.ClearRenderTargetView(_renderTargetIntermediateView, _renderTargetClearColor);
+        device.ImmediateContext.ClearRenderTargetView(renderTargetView, _renderTargetClearColor);
       }
       else // if (this.Scene != null)
       {
@@ -274,26 +283,25 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
         }
 
         // Attention: it is now the Render function of the scene that is responsible for clearing the render target
-
         var renderTargetClearColor = _renderTargetClearColor;
         var sceneBack = Scene.SceneBackgroundColor;
         if (sceneBack.HasValue)
           renderTargetClearColor = new Color4(sceneBack.Value.ScR, sceneBack.Value.ScG, sceneBack.Value.ScB, sceneBack.Value.ScA);
-        device.ClearRenderTargetView(_renderTargetIntermediateView, renderTargetClearColor);
-
+        device.ImmediateContext.ClearRenderTargetView(renderTargetView, renderTargetClearColor);
         Scene.Render();
       }
+      device.ImmediateContext.Flush(); // make (intermediate) render target valid
 
-      device.Flush(); // make intermediate render target valid
-
-      // now start a 2nd stage of rendering, in order to gamma-correct the image
-      // we use the RenderTextureIntermediate that was the target in the first stage now as a ShaderResource in this 2nd stage
-      device.OutputMerger.SetTargets(_renderTargetView);
-      device.Rasterizer.SetViewports(new Viewport(0, 0, targetWidth, targetHeight, 0.0f, 1.0f));
-      device.ClearRenderTargetView(_renderTargetView, SharpDX.Color.Black);
-      _gammaCorrector!.Render(device, _renderTargetIntermediateShaderResourceView!);
-
-      device.Flush(); // make final render target valid
+      if (useGammaCorrection)
+      {
+        // now start a 2nd stage of rendering, in order to gamma-correct the image
+        // we use the RenderTextureIntermediate that was the target in the first stage now as a ShaderResource in this 2nd stage
+        device.ImmediateContext.OMSetRenderTargets(_renderTargetView);
+        device.ImmediateContext.RSSetViewports(new Viewport[] { new Viewport(0, 0, targetWidth, targetHeight, 0.0f, 1.0f) });
+        device.ImmediateContext.ClearRenderTargetView(_renderTargetView, Color4.Black);
+        _gammaCorrector!.Render(device, _renderTargetIntermediateShaderResourceView!);
+        device.ImmediateContext.Flush(); // make final render target valid
+      }
     }
 
     private void EhIsFrontBufferAvailableChanged(object sender, DependencyPropertyChangedEventArgs e)
@@ -303,7 +311,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
 
       if (true == (bool)e.NewValue)
       {
-        _d3dImageSource.SetRenderTargetDX10(_renderTarget);
+        _d3dImageSource.SetRenderTargetDX11(_renderTarget);
         TriggerRendering();
       }
     }

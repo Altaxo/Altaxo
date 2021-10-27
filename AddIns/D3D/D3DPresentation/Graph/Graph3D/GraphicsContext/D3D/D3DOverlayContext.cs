@@ -34,14 +34,14 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
   using Altaxo.Graph.Graph3D.GraphicsContext;
   using Drawing.D3D;
 
-  public class D3D10OverlayContext : GraphicsContextD3DPrimitivesBase, IOverlayContext3D, IDisposable
+  public class D3DOverlayContext : GraphicsContextD3DPrimitivesBase, IOverlayContext3D, IDisposable
   {
     protected PositionColorIndexedTriangleBuffer _positionColorIndexedTriangleBuffer;
     protected PositionColorLineListBuffer? _positionColorLineListBuffer;
 
     private Matrix4x3 _transformation = Matrix4x3.Identity;
 
-    public D3D10OverlayContext()
+    public D3DOverlayContext()
     {
       _positionColorIndexedTriangleBuffer = new PositionColorIndexedTriangleBuffer(this);
     }

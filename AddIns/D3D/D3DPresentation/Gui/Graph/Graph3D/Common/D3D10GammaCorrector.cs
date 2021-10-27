@@ -30,62 +30,103 @@ using System.Text;
 namespace Altaxo.Gui.Graph.Graph3D.Common
 {
   using System;
-  using SharpDX;
-  using SharpDX.D3DCompiler;
-  using SharpDX.Direct3D10;
-  using SharpDX.DXGI;
-  using Buffer = SharpDX.Direct3D10.Buffer;
-  using Device = SharpDX.Direct3D10.Device;
+  using Vortice.D3DCompiler;
+  using Vortice.Direct3D11;
+  using Buffer = Vortice.Direct3D11.ID3D11Buffer;
+  using Device = Vortice.Direct3D11.ID3D11Device;
+  using Format = Vortice.DXGI.Format;
 
-  public class D3D10GammaCorrector : IDisposable
+  public class D3D11GammaCorrector : IDisposable
   {
     private bool _isDisposed;
-    private InputLayout? _vertexLayout;
-    private Buffer? _vertices;
-    private Effect? _effect;
-    private Device? _cachedDevice;
+    private ID3D11InputLayout _vertexLayout;
+    private Buffer _vertices;
+    private ID3D11VertexShader _vertexShader;
+    private ID3D11PixelShader _pixelShader;
 
-    public D3D10GammaCorrector(Device device, string gammaCorrectorResourcePath)
+    private ID3D11VertexShader CreateVertexShader(ID3D11Device device, string entryPoint, out byte[] vertexShaderBytes)
     {
-      _cachedDevice = device ?? throw new ArgumentNullException(nameof(device));
-
-      using (var stream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream(gammaCorrectorResourcePath))
+      var resourceName = $"Altaxo.CompiledShaders.GammaCorrector_{entryPoint}.cso";
+      using (var stream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName))
       {
         if (stream is null)
-          throw new InvalidOperationException(string.Format("Compiled shader resource not found: {0}", gammaCorrectorResourcePath));
+          throw new InvalidOperationException($"Compiled shader resource not found: {resourceName}");
 
-        using (var shaderBytes = ShaderBytecode.FromStream(stream))
-        {
-          _effect = new Effect(device, shaderBytes);
-        }
-      }
-
-      using (EffectTechnique technique = _effect.GetTechniqueByIndex(0))
-      {
-        using (EffectPass pass = technique.GetPassByIndex(0))
-        {
-          _vertexLayout = new InputLayout(device, pass.Description.Signature, new[] {
-            new InputElement("POSITION", 0, Format.R32G32B32A32_Float, 0, 0),
-            new InputElement("TEXCOORD", 0, Format.R32G32_Float, 16, 0)
-          });
-
-          _vertices = Buffer.Create(device, BindFlags.VertexBuffer, new[]
-                                           {
-                                      // 3D coordinates              UV Texture coordinates
-                                       -1.0f, 1.0f, 0.5f, 1.0f,      0.0f, 0.0f,
-                                       1.0f, -1.0f, 0.5f, 1.0f,      1.0f, 1.0f,
-                                       -1.0f, -1.0f, 0.5f, 1.0f,     0.0f, 1.0f,
-                                       -1.0f, 1.0f, 0.5f, 1.0f,      0.0f, 0.0f,
-                                       1.0f,  1.0f, 0.5f, 1.0f,      1.0f, 0.0f,
-                                       1.0f, -1.0f, 0.5f, 1.0f,      1.0f, 1.0f,
-            });
-        }
+        vertexShaderBytes = new byte[stream.Length];
+        stream.Read(vertexShaderBytes, 0, vertexShaderBytes.Length);
+        return device.CreateVertexShader(vertexShaderBytes);
       }
     }
 
+    private ID3D11PixelShader CreatePixelShader(ID3D11Device device, string entryPoint, out byte[] pixelShaderBytes)
+    {
+      var resourceName = $"Altaxo.CompiledShaders.GammaCorrector_{entryPoint}.cso";
+      using (var stream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName))
+      {
+        if (stream is null)
+          throw new InvalidOperationException($"Compiled shader resource not found: {resourceName}");
+
+        pixelShaderBytes = new byte[stream.Length];
+        stream.Read(pixelShaderBytes, 0, pixelShaderBytes.Length);
+        return device.CreatePixelShader(pixelShaderBytes);
+      }
+    }
+
+
+    public void Attach(Device device)
+    {
+      if (device is null)
+        throw new ArgumentNullException(nameof(device));
+
+      _vertexShader = CreateVertexShader(device, "VS", out var vertexShaderBytes);
+      _pixelShader = CreatePixelShader(device, "PS", out var _);
+
+
+
+      this._vertexLayout = device.CreateInputLayout(
+                   new[] {
+                                new InputElementDescription("POSITION", 0, Format.R32G32B32A32_Float, 0, 0),
+                                new InputElementDescription("TEXCOORD", 0, Format.R32G32_Float, 16, 0)
+                    },
+                   vertexShaderBytes);
+
+      this._vertices = device.CreateBuffer(
+
+        new[]
+          {
+           // 3D coordinates              UV Texture coordinates
+           -1.0f,  1.0f, 0.5f, 1.0f,      0.0f, 0.0f,
+            1.0f, -1.0f, 0.5f, 1.0f,      1.0f, 1.0f,
+           -1.0f, -1.0f, 0.5f, 1.0f,      0.0f, 1.0f,
+           -1.0f,  1.0f, 0.5f, 1.0f,      0.0f, 0.0f,
+            1.0f,  1.0f, 0.5f, 1.0f,      1.0f, 0.0f,
+            1.0f, -1.0f, 0.5f, 1.0f,      1.0f, 1.0f,
+           },
+
+        new BufferDescription()
+        {
+          BindFlags = BindFlags.VertexBuffer,
+          CpuAccessFlags = CpuAccessFlags.None,
+          OptionFlags = ResourceOptionFlags.None,
+          SizeInBytes = 8 * 6 * 4,
+          Usage = ResourceUsage.Default
+        });
+
+    }
+
+    public void Detach(Device device)
+    {
+      if (device is null)
+        throw new ArgumentNullException(nameof(device));
+
+      Disposer.RemoveAndDispose(ref this._vertexLayout);
+      Disposer.RemoveAndDispose(ref this._vertices);
+      Disposer.RemoveAndDispose(ref this._vertexShader);
+      Disposer.RemoveAndDispose(ref this._pixelShader);
+    }
     #region IDisposable Support
 
-    ~D3D10GammaCorrector()
+    ~D3D11GammaCorrector()
     {
       Dispose(false);
     }
@@ -96,8 +137,8 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
       {
         Disposer.RemoveAndDispose(ref _vertexLayout);
         Disposer.RemoveAndDispose(ref _vertices);
-        Disposer.RemoveAndDispose(ref _effect);
-        _cachedDevice = null;
+        Disposer.RemoveAndDispose(ref _vertexShader);
+        Disposer.RemoveAndDispose(ref _pixelShader);
 
         _isDisposed = true;
       }
@@ -110,47 +151,18 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
     }
 
     #endregion IDisposable Support
-
-    public void Render(Device device, ShaderResourceView textureView)
+    public void Render(Device device, ID3D11ShaderResourceView textureView)
     {
-      if (_isDisposed)
-        throw new ObjectDisposedException(GetType().Name);
-
-      if (device is null)
-        return;
-
-      if (!object.ReferenceEquals(device, _cachedDevice))
-        throw new InvalidOperationException(string.Format("Argument {0} and member {1} do not match!", nameof(device), nameof(_cachedDevice)));
-
-      device.InputAssembler.InputLayout = _vertexLayout;
-      device.InputAssembler.PrimitiveTopology = SharpDX.Direct3D.PrimitiveTopology.TriangleList;
-      device.InputAssembler.SetVertexBuffers(0, new VertexBufferBinding(_vertices, 24, 0));
-
-
-      EffectTechnique? technique = null;
-      EffectPass? pass = null;
-      EffectVariable? shaderResourceObj = null;
-      EffectShaderResourceVariable? shaderResource = null;
-      try
+      if (device?.ImmediateContext is { } context)
       {
-        technique = _effect!.GetTechniqueByIndex(0);
-        pass = technique.GetPassByIndex(0);
-        shaderResourceObj = _effect.GetVariableByName("ShaderTexture");
-        shaderResource = shaderResourceObj.AsShaderResource();
-        shaderResource.SetResource(textureView);
-
-        for (int i = 0; i < technique.Description.PassCount; ++i)
-        {
-          pass.Apply();
-          device.Draw(6, 0);
-        }
-      }
-      finally
-      {
-        Disposer.RemoveAndDispose(ref shaderResource);
-        Disposer.RemoveAndDispose(ref shaderResourceObj);
-        Disposer.RemoveAndDispose(ref pass);
-        Disposer.RemoveAndDispose(ref technique);
+        context.VSSetShader(_vertexShader);
+        context.PSSetShader(_pixelShader);
+        context.IASetInputLayout(this._vertexLayout);
+        context.IASetPrimitiveTopology(Vortice.Direct3D.PrimitiveTopology.TriangleList);
+        context.IASetVertexBuffers(0, new VertexBufferView(this._vertices, 24, 0));
+        context.PSSetShaderResource(7, textureView); // use register 7 for the texture
+        context.Draw(6, 0);
+        context.Flush();
       }
     }
   }

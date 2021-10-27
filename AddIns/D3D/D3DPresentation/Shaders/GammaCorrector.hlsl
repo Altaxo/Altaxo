@@ -1,6 +1,6 @@
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2016 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2021 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 //
 /////////////////////////////////////////////////////////////////////////////
 
-Texture2D ShaderTexture;
+Texture2D ShaderTexture : register(t7);
 
 // just take the default sampler
 SamplerState SampleType
@@ -55,14 +55,4 @@ float4 PS(PS_IN input) : SV_Target
   float4 col = ShaderTexture.Sample(SampleType, input.col);
   col.rgb = pow(col.rgb, 0.4545454545f);
   return col;
-}
-
-technique10 Render
-{
-  pass P0
-  {
-    SetGeometryShader(0);
-    SetVertexShader(CompileShader(vs_4_0, VS()));
-    SetPixelShader(CompileShader(ps_4_0, PS()));
-  }
 }

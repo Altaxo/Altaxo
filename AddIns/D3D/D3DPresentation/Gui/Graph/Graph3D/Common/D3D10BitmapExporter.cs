@@ -30,12 +30,14 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
   using Altaxo.Geometry;
   using Altaxo.Graph.Graph3D.Camera;
   using Altaxo.Graph.Graph3D.GraphicsContext.D3D;
-  using SharpDX;
-  using SharpDX.Direct3D10;
-  using SharpDX.DXGI;
-  using Device = SharpDX.Direct3D10.Device1;
+  using Vortice.Direct3D;
+  using Vortice.Direct3D11;
+  using Vortice.DXGI;
+  using Vortice.Mathematics;
+  using Device = Vortice.Direct3D11.ID3D11Device;
 
-  public class D3D10BitmapExporter : Altaxo.Main.IProjectItemImageExporter
+
+  public class D3D11BitmapExporter : Altaxo.Main.IProjectItemImageExporter
   {
     /// <summary>
     /// Saves the project item as image to the provided stream.
@@ -57,11 +59,11 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
       double sourceDpi = options.SourceDpiResolution;
 
       Viewing.D3D10Scene? scene = null;
-      D3D10GraphicsContext? g = null;
+      D3DGraphicsContext? g = null;
       try
       {
         scene = new Viewing.D3D10Scene();
-        g = new D3D10GraphicsContext();
+        g = new D3DGraphicsContext();
 
         doc.Paint(g);
 
@@ -129,16 +131,16 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
     public void Export(int sizeX, int sizeY, ID3D10Scene scene, Altaxo.Graph.Gdi.GraphExportOptions options, System.IO.Stream toStream)
     {
       Device? device = null;
-      Texture2D? renderTarget = null;
-      Texture2D? renderTarget2 = null;
-      Texture2D? depthStencil = null;
-      RenderTargetView? renderTargetView = null;
-      DepthStencilView? depthStencilView = null;
+      ID3D11Texture2D? renderTarget = null;
+      ID3D11Texture2D? renderTarget2 = null;
+      ID3D11Texture2D? depthStencil = null;
+      ID3D11RenderTargetView? renderTargetView = null;
+      ID3D11DepthStencilView? depthStencilView = null;
 
       try
       {
         //device = new Device(DriverType.Hardware, DeviceCreationFlags.BgraSupport, FeatureLevel.Level_10_0);
-        device = D3D10DeviceFactory.Instance.BorrowDevice();
+        device = D3D11DeviceFactory.Instance.BorrowDevice();
         // try to get the highest MSAA level with the highest quality
         int sampleCount = 32;
         int qlevel_sampleCount = 0;
@@ -177,27 +179,27 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
           ArraySize = 1,
         };
 
-        renderTarget = new Texture2D(device, colordesc);
-        depthStencil = new Texture2D(device, depthdesc);
-        renderTargetView = new RenderTargetView(device, renderTarget);
-        depthStencilView = new DepthStencilView(device, depthStencil);
+        renderTarget = device.CreateTexture2D(colordesc);
+        depthStencil = device.CreateTexture2D(depthdesc);
+        renderTargetView = device.CreateRenderTargetView(renderTarget);
+        depthStencilView = device.CreateDepthStencilView(depthStencil);
 
         // Rendering
 
-        device.OutputMerger.SetTargets(depthStencilView, renderTargetView);
-        device.Rasterizer.SetViewports(new Viewport(0, 0, sizeX, sizeY, 0.0f, 1.0f));
+        device.ImmediateContext.OMSetRenderTargets( renderTargetView, depthStencilView);
+        device.ImmediateContext.RSSetViewports(new Viewport[] { new Viewport(0, 0, sizeX, sizeY, 0.0f, 1.0f) });
         var clearColor = new Color4(1, 1, 1, 0); // Transparent
         if (options.BackgroundBrush is not null)
         {
           var axoColor = options.BackgroundBrush.Color.Color;
           clearColor = new Color4(axoColor.ScR, axoColor.ScG, axoColor.ScB, axoColor.ScA);
         }
-        device.ClearRenderTargetView(renderTargetView, clearColor);
-        device.ClearDepthStencilView(depthStencilView, DepthStencilClearFlags.Depth | DepthStencilClearFlags.Stencil, 1.0f, 0);
+        device.ImmediateContext.ClearRenderTargetView(renderTargetView, clearColor);
+        device.ImmediateContext.ClearDepthStencilView(depthStencilView, DepthStencilClearFlags.Depth | DepthStencilClearFlags.Stencil, 1.0f, 0);
 
         scene.Attach(device, new PointD2D(sizeX, sizeY));
         scene.Render();
-        device.Flush();
+        device.ImmediateContext.Flush();
         scene.Detach();
 
         if (sampleCount > 1) // if renderTarget is an MSAA render target, we first have to copy it into a non-MSAA render target before we can copy it to a CPU texture and then hope to save it
@@ -217,8 +219,8 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
             ArraySize = 1
           };
 
-          renderTarget2 = new Texture2D(device, renderTarget2Description); // create non-MSAA render target
-          device.ResolveSubresource(renderTarget, 0, renderTarget2, 0, renderTarget.Description.Format); // copy from MSAA render target to the non-MSAA render target
+          renderTarget2 = device.CreateTexture2D(renderTarget2Description); // create non-MSAA render target
+          device.ImmediateContext.ResolveSubresource(renderTarget, 0, renderTarget2, 0, renderTarget.Description.Format); // copy from MSAA render target to the non-MSAA render target
 
           var h = renderTarget; // exchange renderTarget with renderTarget2
           renderTarget = renderTarget2;
@@ -236,8 +238,8 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
         Disposer.RemoveAndDispose(ref renderTarget);
         Disposer.RemoveAndDispose(ref depthStencil);
 
-        device?.ClearState();
-        D3D10DeviceFactory.Instance.PassbackDevice(ref device);
+        device?.ImmediateContext?.ClearState();
+        D3D11DeviceFactory.Instance.PassbackDevice(ref device);
         //device.QueryInterface<DeviceDebug>().ReportLiveDeviceObjects(ReportingLevel.Summary)
         // Disposer.RemoveAndDispose(ref device);
         //var activeObjects = SharpDX.Diagnostics.ObjectTracker.FindActiveObjects();

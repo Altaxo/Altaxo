@@ -33,7 +33,7 @@
     <ProjectReference Include="..\..\..\Altaxo\Dom.Presentation\AltaxoDom.Presentation.csproj" />
     <ProjectReference Include="..\..\..\Altaxo\Dom\AltaxoDom.csproj" />
   </ItemGroup>
-  <ItemGroup>
+  <ItemGroup><!--
     <PackageReference Include="SharpDX" Version="4.2.0" />
     <PackageReference Include="SharpDX.D3DCompiler" Version="4.2.0" />
     <PackageReference Include="SharpDX.Direct2D1" Version="4.2.0" />
@@ -41,10 +41,46 @@
     <PackageReference Include="SharpDX.Direct3D9" Version="4.2.0" />
     <PackageReference Include="SharpDX.DXGI" Version="4.2.0" />
     <PackageReference Include="SharpDX.Mathematics" Version="4.2.0" />
+    -->
+  
+    <None Remove="CompiledShaders\GammaCorrector_PS.cso" />
+    <None Remove="CompiledShaders\GammaCorrector_VS.cso" />
+    <None Remove="CompiledShaders\Lighting_PS.cso" />
+    <None Remove="CompiledShaders\Lighting_PS_OVERLAY.cso" />
+    <None Remove="CompiledShaders\Lighting_PS_T1.cso" />
+    <None Remove="CompiledShaders\Lighting_VS_OVERLAY_PC.cso" />
+    <None Remove="CompiledShaders\Lighting_VS_P.cso" />
+    <None Remove="CompiledShaders\Lighting_VS_PN.cso" />
+    <None Remove="CompiledShaders\Lighting_VS_PNC.cso" />
+    <None Remove="CompiledShaders\Lighting_VS_PNT.cso" />
+    <None Remove="CompiledShaders\Lighting_VS_PNT1.cso" />
+    <None Remove="CompiledShaders\Lighting_VS_PT.cso" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="CompiledShaders\Effects\GammaCorrector.cso" />
-    <EmbeddedResource Include="CompiledShaders\Effects\Lighting.cso" />
+    <EmbeddedResource Include="CompiledShaders\GammaCorrector_PS.cso" />
+    <EmbeddedResource Include="CompiledShaders\GammaCorrector_VS.cso" />
+    <EmbeddedResource Include="CompiledShaders\Lighting_PS.cso" />
+    <EmbeddedResource Include="CompiledShaders\Lighting_PS_OVERLAY.cso" />
+    <EmbeddedResource Include="CompiledShaders\Lighting_PS_T1.cso" />
+    <EmbeddedResource Include="CompiledShaders\Lighting_VS_OVERLAY_PC.cso" />
+    <EmbeddedResource Include="CompiledShaders\Lighting_VS_P.cso" />
+    <EmbeddedResource Include="CompiledShaders\Lighting_VS_PN.cso" />
+    <EmbeddedResource Include="CompiledShaders\Lighting_VS_PNC.cso" />
+    <EmbeddedResource Include="CompiledShaders\Lighting_VS_PNT.cso" />
+    <EmbeddedResource Include="CompiledShaders\Lighting_VS_PNT1.cso" />
+    <EmbeddedResource Include="CompiledShaders\Lighting_VS_PT.cso" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Vortice.Mathematics" Version="1.3.21" />
+    <PackageReference Include="Vortice.D3DCompiler" Version="1.9.87" />
+    <PackageReference Include="Vortice.Direct2D1" Version="1.9.87" />
+    <PackageReference Include="Vortice.Direct3D11" Version="1.9.87" />
+    <PackageReference Include="Vortice.Direct3D9" Version="1.9.87" />
+    <PackageReference Include="Vortice.DirectX" Version="1.9.87" />
+    <PackageReference Include="Vortice.DXGI" Version="1.9.87" />
+    <PackageReference Include="SharpGen.Runtime" Version="2.0.0-beta.9" />
+    <PackageReference Include="SharpGen.Runtime.COM" Version="2.0.0-beta.9" />
+
   </ItemGroup>
   <UsingTask TaskName="Shader" AssemblyFile="ShaderCompilerBuildTask.dll" />
   <UsingTask TaskName="GitVersionFile" AssemblyFile="..\..\..\MSBuildVersioning.dll" />
@@ -56,14 +92,24 @@
   </Target>
   -->
   <Target Name="DoCompileShaders">
-    <Shader InputFiles="Shaders\GammaCorrector.fx" OutputPath="CompiledShaders\Effects" Profile="fx_4_0" />
-    <Shader InputFiles="Shaders\Lighting.fx" OutputPath="CompiledShaders\Effects" Profile="fx_4_0" />
+    <Shader InputFiles="Shaders\GammaCorrector.hlsl" OutputPath="CompiledShaders" Profile="vs_4_0" EntryPoint="VS" />
+    <Shader InputFiles="Shaders\GammaCorrector.hlsl" OutputPath="CompiledShaders" Profile="ps_4_0" EntryPoint="PS" />
+    <Shader InputFiles="Shaders\Lighting.hlsl" OutputPath="CompiledShaders" Profile="vs_4_0" EntryPoint="VS_P" />
+    <Shader InputFiles="Shaders\Lighting.hlsl" OutputPath="CompiledShaders" Profile="vs_4_0" EntryPoint="VS_PT" />
+    <Shader InputFiles="Shaders\Lighting.hlsl" OutputPath="CompiledShaders" Profile="vs_4_0" EntryPoint="VS_PN" />
+    <Shader InputFiles="Shaders\Lighting.hlsl" OutputPath="CompiledShaders" Profile="vs_4_0" EntryPoint="VS_PNC" />
+    <Shader InputFiles="Shaders\Lighting.hlsl" OutputPath="CompiledShaders" Profile="vs_4_0" EntryPoint="VS_PNT" />
+    <Shader InputFiles="Shaders\Lighting.hlsl" OutputPath="CompiledShaders" Profile="vs_4_0" EntryPoint="VS_PNT1" />
+    <Shader InputFiles="Shaders\Lighting.hlsl" OutputPath="CompiledShaders" Profile="vs_4_0" EntryPoint="VS_OVERLAY_PC" />
+    <Shader InputFiles="Shaders\Lighting.hlsl" OutputPath="CompiledShaders" Profile="ps_4_0" EntryPoint="PS" />
+    <Shader InputFiles="Shaders\Lighting.hlsl" OutputPath="CompiledShaders" Profile="ps_4_0" EntryPoint="PS_OVERLAY" />
+    <Shader InputFiles="Shaders\Lighting.hlsl" OutputPath="CompiledShaders" Profile="ps_4_0" EntryPoint="PS_T1" />
   </Target>
   <Target Name="GenAssInfo">
     <GitVersionFile TemplateFile="Properties\AssemblyInfo.cs" DestinationFile="Properties\AssemblyInfo.autogenerated.cs" SettingsFile="..\..\..\MSBuildVersioning.xml" />
   </Target>
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="IF NOT EXIST $(SolutionDir)rt$(TargetFramework)\AddIns\D3D\ mkdir $(SolutionDir)rt$(TargetFramework)\AddIns\D3D\&#xD;&#xA;copy $(ProjectDir)D3D.addin $(SolutionDir)rt$(TargetFramework)\AddIns\D3D\&#xD;&#xA;copy $(TargetDir)D3DPresentation.??l $(SolutionDir)rt$(TargetFramework)\AddIns\D3D\&#xD;&#xA;copy $(TargetDir)SharpDX*.??l $(SolutionDir)rt$(TargetFramework)\AddIns\D3D\" />
+    <Exec Command="IF NOT EXIST $(SolutionDir)rt$(TargetFramework)\AddIns\D3D\ mkdir $(SolutionDir)rt$(TargetFramework)\AddIns\D3D\&#xD;&#xA;copy $(ProjectDir)D3D.addin $(SolutionDir)rt$(TargetFramework)\AddIns\D3D\&#xD;&#xA;copy $(TargetDir)D3DPresentation.??l $(SolutionDir)rt$(TargetFramework)\AddIns\D3D\&#xD;&#xA;copy $(TargetDir)Vortice*.??l $(SolutionDir)rt$(TargetFramework)\AddIns\D3D\&#xD;&#xA;copy $(TargetDir)SharpGen*.??l $(SolutionDir)rt$(TargetFramework)\AddIns\D3D\" />
   </Target>
   <!--
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">

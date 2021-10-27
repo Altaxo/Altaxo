@@ -19,7 +19,7 @@
 /////////////////////////////////////////////////////////////////////////////
 
 // Texture which stores color values for colorization of data mesh plot style
-Texture1D ColorGradient1DTexture;
+Texture1D ColorGradient1DTexture : register(t0);
 
 SamplerState ColorGradient1DTextureSampler
 {
@@ -27,26 +27,32 @@ SamplerState ColorGradient1DTextureSampler
   AddressU = Clamp;
 };
 
-cbuffer cbViewTransformation
+cbuffer cbViewTransformation: register(b0)
 {
-  float4x4 WorldViewProj;
-  float3 EyePosition;
+  float4x4 WorldViewProj; // used in vertex shaders only
+  
 }
 
-cbuffer cbMaterial
+cbuffer cbEyePosition : register(b1)
 {
-  float4 MaterialDiffuseColor;
-  float MaterialSpecularExponent;
-  float MaterialSpecularIntensity;
-  float MaterialDiffuseIntensity;
+    float4 EyePosition; // used in pixel shaders only
+}
+
+
+cbuffer cbMaterial: register(b2)
+{
+  float4 MaterialDiffuseColor; // used in vertex VS_P and pixel shaders
+  float MaterialSpecularExponent;  // used in pixel shaders only
+  float MaterialSpecularIntensity; // pixel shaders only
+  float MaterialDiffuseIntensity; // pixel shaders only
 
   // Metalness value for specular reflection: value between 0 and 1
   // if 0, the reflected specular light has the same color as the incident light (thus as if it is reflected at a white surface)
   // if 1, the reflected specular light is multiplied with the material diffuse color
-  float MaterialMetalnessValue;
+  float MaterialMetalnessValue; // pixel shaders only
 }
 
-cbuffer cbLights
+cbuffer cbLights: register(b3) // structure for pixel shaders only
 {
   float3 HemisphericLightColorBelow;
   float3 HemisphericLightColorAbove;
@@ -77,7 +83,7 @@ cbuffer cbLights
 
 // Buffer used for clipping operations
 // ClipPlane0 ... ClipPlane5 are the six clip planes
-cbuffer cbClipPlanes
+cbuffer cbClipPlanes: register(b4) // vertex shaders only
 {
   float4 ClipPlane0;
   float4 ClipPlane1;
@@ -417,73 +423,4 @@ float4 PS_OVERLAY(PS_OVERLAY_IN input) : SV_Target
 
 // ---------------------End of overlay rendering pixel shaders --------------------------------
 
-technique10 Shade_P
-{
-  pass P0
-  {
-    SetGeometryShader(0);
-    SetVertexShader(CompileShader(vs_4_0, VS_P()));
-    SetPixelShader(CompileShader(ps_4_0, PS()));
-  }
-}
 
-technique10 Shade_PC
-{
-  pass P0
-  {
-    SetGeometryShader(0);
-    SetVertexShader(CompileShader(vs_4_0, VS_OVERLAY_PC()));
-    SetPixelShader(CompileShader(ps_4_0, PS_OVERLAY()));
-  }
-}
-
-technique10 Shade_PT
-{
-  pass P0
-  {
-    SetGeometryShader(0);
-    SetVertexShader(CompileShader(vs_4_0, VS_PT()));
-    SetPixelShader(CompileShader(ps_4_0, PS()));
-  }
-}
-
-technique10 Shade_PN
-{
-  pass P0
-  {
-    SetGeometryShader(0);
-    SetVertexShader(CompileShader(vs_4_0, VS_PN()));
-    SetPixelShader(CompileShader(ps_4_0, PS()));
-  }
-}
-
-technique10 Shade_PNC
-{
-  pass P0
-  {
-    // SetBlendState(AlphaBlendingOn, float4(0.0f, 0.0f, 0.0f, 0.0f), 0xFFFFFFFF); // uncomment this to enable alpha blending (seems not to be useful in DX10)
-    SetGeometryShader(0);
-    SetVertexShader(CompileShader(vs_4_0, VS_PNC()));
-    SetPixelShader(CompileShader(ps_4_0, PS()));
-  }
-}
-
-technique10 Shade_PNT
-{
-  pass P0
-  {
-    SetGeometryShader(0);
-    SetVertexShader(CompileShader(vs_4_0, VS_PNT()));
-    SetPixelShader(CompileShader(ps_4_0, PS()));
-  }
-}
-
-technique10 Shade_PNT1
-{
-  pass P0
-  {
-    SetGeometryShader(0);
-    SetVertexShader(CompileShader(vs_4_0, VS_PNT1()));
-    SetPixelShader(CompileShader(ps_4_0, PS_T1()));
-  }
-}

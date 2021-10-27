@@ -63,7 +63,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
     private PointD2D _cachedGraphSize_96thInch;
     private System.Drawing.Size _cachedGraphSize_Pixels;
 
-    private D3D10RendererToImageSource? _renderer;
+    private D3D11RendererToImageSource? _renderer;
 
     private volatile bool _isGraphVisible;
 
@@ -87,7 +87,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
       _isDisposed = true;
       _controller = new WeakReference(null);
       _renderer?.Dispose();
-      var imgSource = _d3dCanvas?.Source as D3D10ImageSource;
+      var imgSource = _d3dCanvas?.Source as D3D11ImageSource;
       if (_d3dCanvas is not null)
         _d3dCanvas.Source = null;
       imgSource?.Dispose();
@@ -310,8 +310,8 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
 
       if (_renderer is null)
       {
-        _d3dCanvas.Source = new D3D10ImageSource(Controller.Doc.Name);
-        _renderer = new D3D10RendererToImageSource(_scene, (D3D10ImageSource)_d3dCanvas.Source, Controller.Doc.Name);
+        _d3dCanvas.Source = new D3D11ImageSource();
+        _renderer = new D3D11RendererToImageSource(_scene, (D3D11ImageSource)_d3dCanvas.Source, Controller.Doc.Name);
         // invalidate the cached graph sizes in order to force a new rendering
         _cachedGraphSize_Pixels = new System.Drawing.Size(0, 0);
         _cachedGraphSize_96thInch = new PointD2D(0, 0);
@@ -345,7 +345,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
         _renderer = null;
         tempRenderer?.Dispose();
 
-        var oldSource = (D3D10ImageSource)_d3dCanvas.Source;
+        var oldSource = (D3D11ImageSource)_d3dCanvas.Source;
         _d3dCanvas.Source = null;
         oldSource?.Dispose();
       }
@@ -555,7 +555,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
 
     public IGraphicsContext3D GetGraphicContext()
     {
-      return new D3D10GraphicsContext();
+      return new D3DGraphicsContext();
     }
 
     public void SetDrawing(IGraphicsContext3D drawing)
@@ -563,12 +563,12 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
       if (drawing is null)
         throw new ArgumentNullException();
 
-      _scene.SetDrawing((D3D10GraphicsContext)drawing);
+      _scene.SetDrawing((D3DGraphicsContext)drawing);
     }
 
     public IOverlayContext3D GetGraphicContextForMarkers()
     {
-      return new D3D10OverlayContext();
+      return new D3DOverlayContext();
     }
 
     public void SetMarkerGeometry(IOverlayContext3D markerGeometry)
@@ -576,12 +576,12 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
       if (markerGeometry is null)
         throw new ArgumentNullException();
 
-      _scene.SetMarkerGeometry((D3D10OverlayContext)markerGeometry);
+      _scene.SetMarkerGeometry((D3DOverlayContext)markerGeometry);
     }
 
     public IOverlayContext3D GetGraphicContextForOverlay()
     {
-      return new D3D10OverlayContext();
+      return new D3DOverlayContext();
     }
 
     public void SetOverlayGeometry(IOverlayContext3D overlayGeometry)
@@ -589,7 +589,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
       if (overlayGeometry is null)
         throw new ArgumentNullException();
 
-      _scene.SetOverlayGeometry((D3D10OverlayContext)overlayGeometry);
+      _scene.SetOverlayGeometry((D3DOverlayContext)overlayGeometry);
     }
   }
 }

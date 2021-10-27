@@ -21,7 +21,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
 {
   using System;
   using Altaxo.Geometry;
-  using SharpDX.Direct3D10;
+  using Vortice.Direct3D11;
 
   /// <summary>
   /// Scene.
@@ -32,7 +32,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
     /// Attaches the scene to the specified scene host.
     /// </summary>
     /// <param name="host">The scene host.</param>
-    void Attach(SharpDX.ComObject hostDevice, PointD2D hostSize);
+    void Attach(SharpGen.Runtime.ComObject hostDevice, PointD2D hostSize);
 
     /// <summary>
     /// Informes the scene that the host size has changed.
@@ -74,6 +74,6 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
     /// Attaches the scene to the specified scene host.
     /// </summary>
     /// <param name="host">The scene host.</param>
-    void Attach(SharpDX.Direct3D10.Device hostDevice, PointD2D hostSize);
+    void Attach(ID3D11Device hostDevice, PointD2D hostSize);
   }
 }

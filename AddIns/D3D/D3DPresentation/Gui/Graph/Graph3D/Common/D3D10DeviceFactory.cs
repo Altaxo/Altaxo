@@ -28,10 +28,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using SharpDX;
-using SharpDX.Direct3D10;
-using SharpDX.DXGI;
-using Device = SharpDX.Direct3D10.Device1;
+using Vortice.Direct3D;
+using Vortice.Direct3D11;
+using Device = Vortice.Direct3D11.ID3D11Device;
 
 namespace Altaxo.Gui.Graph.Graph3D.Common
 {
@@ -39,12 +38,12 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
   /// Despite all efforts, resources allocated by creating a new D3D10 device could not be released properly (2019-04-08). Because of this,
   /// created devices are cached, instead of tried to release. This class manages the already created devices.
   /// </summary>
-  public class D3D10DeviceFactory
+  public class D3D11DeviceFactory
   {
     /// <summary>
     /// Gets the only instance of this class.
     /// </summary>
-    public static D3D10DeviceFactory Instance { get; } = new D3D10DeviceFactory();
+    public static D3D11DeviceFactory Instance { get; } = new D3D11DeviceFactory();
 
 
     /// <summary>
@@ -53,7 +52,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
     /// </summary>
     private ConcurrentBag<Device> _devices = new ConcurrentBag<Device>();
 
-    private D3D10DeviceFactory() { }
+    private D3D11DeviceFactory() { }
 
 
     /// <summary>
@@ -69,7 +68,15 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
 
       if (dev is null)
       {
-        dev = new Device(DriverType.Hardware, DeviceCreationFlags.BgraSupport, FeatureLevel.Level_10_0);
+        var result = D3D11.D3D11CreateDevice(
+              null, // hardwareAdapter,
+              DriverType.Hardware,
+              DeviceCreationFlags.BgraSupport | DeviceCreationFlags.Debug,
+              new[] { FeatureLevel.Level_11_0, FeatureLevel.Level_10_1, FeatureLevel.Level_10_0 },
+              out dev);
+
+        if (result.Failure)
+          throw new InvalidOperationException("DirectX device could not be created.");
       }
 
       return dev;
@@ -92,7 +99,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
 
       if (!device.IsDisposed)
       {
-        device.ClearState();
+         device.ImmediateContext.ClearState(); 
         _devices.Add(device);
         device = null;
       }

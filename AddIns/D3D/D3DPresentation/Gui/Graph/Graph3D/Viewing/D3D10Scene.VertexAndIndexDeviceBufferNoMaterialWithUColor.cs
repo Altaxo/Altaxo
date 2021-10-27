@@ -26,7 +26,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
 {
   using System;
   using Altaxo.Gui.Graph.Graph3D.Common;
-  using Buffer = SharpDX.Direct3D10.Buffer;
+  using Buffer = Vortice.Direct3D11.ID3D11Buffer;
 
   public partial class D3D10Scene
   {

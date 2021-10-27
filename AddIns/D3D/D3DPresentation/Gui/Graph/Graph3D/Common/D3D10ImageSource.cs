@@ -49,125 +49,119 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
   using System.Runtime.InteropServices;
   using System.Windows;
   using System.Windows.Interop;
-  using SharpDX.Direct3D9;
+  using Vortice.Direct3D9;
 
-  public class D3D10ImageSource : D3DImage, IDisposable
+  /// <summary>
+  /// An image source that can be used to present to WPF.
+  /// </summary>
+  /// <seealso cref="System.Windows.Interop.D3DImage" />
+  /// <seealso cref="System.IDisposable" />
+  public class D3D11ImageSource : D3DImage, IDisposable
   {
     [DllImport("user32.dll", SetLastError = false)]
     private static extern IntPtr GetDesktopWindow();
 
     private static int _numberOfActiveClients;
-    private static Direct3DEx? _d3DContext;
-    private static DeviceEx? _d3DDevice;
+    private static IDirect3D9Ex _d3DContext;
+    private static IDirect3DDevice9Ex _d3DDevice;
 
-    private Texture? _renderTarget;
+    /// <summary>
+    /// The DX9 render target used for the image source in order to present to WPF.
+    /// </summary>
+    private IDirect3DTexture9 _renderTarget;
 
-    public string Name { get; private set; }
-    public int InstanceID { get; private set; }
-    private static int _instanceCounter;
-
-    private bool _isDisposed;
-
-    public D3D10ImageSource() : this("Unnamed")
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DX11ImageSource"/> class.
+    /// </summary>
+    public D3D11ImageSource()
     {
+      StartD3D();
+      _numberOfActiveClients++;
     }
 
-    public D3D10ImageSource(string name)
-    {
-      InstanceID = ++_instanceCounter;
-      Name = name;
-
-      // System.Diagnostics.Debug.WriteLine("D3DImageSource.ctor Name={0}, Id={1}", Name, InstanceID);
-
-      if (1 == System.Threading.Interlocked.Increment(ref _numberOfActiveClients))
-      {
-        StartD3D();
-      }
-    }
-
-    ~D3D10ImageSource()
-    {
-      Dispose(false);
-    }
-
+    /// <summary>
+    /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+    /// </summary>
     public void Dispose()
     {
-      Dispose(true);
+      this.SetRenderTargetDX11(null);
+      Disposer.RemoveAndDispose(ref this._renderTarget);
+
+      _numberOfActiveClients--;
+      this.EndD3D();
     }
 
-    public void Dispose(bool disposing)
-    {
-      // System.Diagnostics.Debug.WriteLine("D3DImageSource.Dispose Name={0}, Id={1}", Name, InstanceID);
-
-      if (!_isDisposed)
-      {
-        _isDisposed = true;
-        Disposer.RemoveAndDispose(ref _renderTarget);
-        if (0 == System.Threading.Interlocked.Decrement(ref _numberOfActiveClients))
-        {
-          EndD3D();
-        }
-      }
-    }
-
+    /// <summary>
+    /// Announce that the content of the shared DX11 texture has changed. Sets the entire area of the image source to dirty.
+    /// </summary>
     public void InvalidateD3DImage()
     {
-      if (_isDisposed)
-        throw new ObjectDisposedException(GetType().Name);
-
-      if (_renderTarget is not null)
+      if (this._renderTarget != null)
       {
         base.Lock();
         base.AddDirtyRect(new Int32Rect(0, 0, base.PixelWidth, base.PixelHeight));
         base.Unlock();
       }
-
-      // System.Diagnostics.Debug.WriteLine("D3DImageSource.InvalidateD3DImage Name={0}, Id={1}", Name, InstanceID);
     }
 
-    public void SetRenderTargetDX10(SharpDX.Direct3D10.Texture2D? renderTarget)
+    /// <summary>
+    /// Sets the DX9 render target used for the image source based on the provided DX11 texture.
+    /// The DX11 texture must be sharable, and is then shared with the DX9 image source.
+    /// If the DX11 texture changed its contents, this changed must be announced using <see cref="InvalidateD3DImage"/> in
+    /// order to set the entire areay of the image source to dirty.
+    /// </summary>
+    /// <param name="renderTargetDX11">The render target.</param>
+    /// <exception cref="System.ArgumentException">
+    /// Texture must be created with ResourceOptionFlags.Shared
+    /// or
+    /// Texture format is not compatible with OpenSharedResource
+    /// </exception>
+    /// <exception cref="System.ArgumentNullException">Handle</exception>
+    public void SetRenderTargetDX11(Vortice.Direct3D11.ID3D11Texture2D renderTargetDX11)
     {
-      if (_isDisposed)
-        throw new ObjectDisposedException(GetType().Name);
-
-      // System.Diagnostics.Debug.WriteLine("D3DImageSource.SetRenderTarget Name={0}, Id={1}, renderTarget={2}", Name, InstanceID, renderTarget);
-
-      if (_renderTarget is not null)
+      if (this._renderTarget is not null)
       {
-        Disposer.RemoveAndDispose(ref _renderTarget);
+        this._renderTarget = null;
 
         base.Lock();
         base.SetBackBuffer(D3DResourceType.IDirect3DSurface9, IntPtr.Zero);
         base.Unlock();
       }
 
-      if (renderTarget is not null)
+      if (renderTargetDX11 is null)
+        return;
+
+      if (!IsShareable(renderTargetDX11))
+        throw new ArgumentException("Texture must be created with ResourceOptionFlags.Shared");
+
+      Format format = TranslateFormat(renderTargetDX11);
+      if (format == Format.Unknown)
+        throw new ArgumentException("Texture format is not compatible with OpenSharedResource");
+
+      IntPtr handle = GetSharedHandle(renderTargetDX11);
+      if (handle == IntPtr.Zero)
+        throw new ArgumentNullException("Handle");
+
+
+      // Attention - could be a bug- the handle at the end of the argument list could be given by ref?
+      this._renderTarget = _d3DDevice.CreateTexture(renderTargetDX11.Description.Width, renderTargetDX11.Description.Height, 1, Usage.RenderTarget, format, Pool.Default, ref handle);
+      using (var surface = this._renderTarget.GetSurfaceLevel(0))
       {
-        if (!IsShareable(renderTarget))
-          throw new ArgumentException("Texture must be created with ResourceOptionFlags.Shared");
-
-        Format format = TranslateFormat(renderTarget);
-        if (format == Format.Unknown)
-          throw new ArgumentException("Texture format is not compatible with OpenSharedResource");
-
-        IntPtr handle = GetSharedHandle(renderTarget);
-        if (handle == IntPtr.Zero)
-          throw new ArgumentNullException("Handle");
-
-        _renderTarget = new Texture(_d3DDevice, renderTarget.Description.Width, renderTarget.Description.Height, 1, Usage.RenderTarget, format, Pool.Default, ref handle);
-        using (Surface surface = _renderTarget.GetSurfaceLevel(0))
-        {
-          base.Lock();
-          base.SetBackBuffer(D3DResourceType.IDirect3DSurface9, surface.NativePointer);
-          base.Unlock();
-        }
+        base.Lock();
+        base.SetBackBuffer(D3DResourceType.IDirect3DSurface9, surface.NativePointer);
+        base.Unlock();
       }
-      // System.Diagnostics.Debug.WriteLine("D3DImageSource.SetRenderTarget(end) Name={0}, Id={1}, renderTarget={2}, Size={3}x{4}", Name, InstanceID, renderTarget, this.PixelWidth, this.PixelHeight);
     }
 
-    private static void StartD3D()
+    /// <summary>
+    /// Announces the starts of the usage of this image source. If this is the first usage, the resources needed are allocated.
+    /// </summary>
+    private void StartD3D()
     {
-      _d3DContext = new Direct3DEx();
+      if (_numberOfActiveClients != 0)
+        return;
+
+      D3D9.Create9Ex(out _d3DContext);
 
       var presentparams = new PresentParameters
       {
@@ -177,44 +171,71 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
         PresentationInterval = PresentInterval.Default
       };
 
-      D3D10ImageSource._d3DDevice = new DeviceEx(_d3DContext, 0, DeviceType.Hardware, IntPtr.Zero, CreateFlags.HardwareVertexProcessing | CreateFlags.Multithreaded | CreateFlags.FpuPreserve, presentparams);
+      // Creates the DX9 device (static field)
+
+      _d3DDevice = _d3DContext.CreateDeviceEx(0, DeviceType.Hardware, IntPtr.Zero, CreateFlags.HardwareVertexProcessing | CreateFlags.Multithreaded | CreateFlags.FpuPreserve, presentparams);
     }
 
-    private static void EndD3D()
+    /// <summary>
+    /// Announces the end of usage of this image source. If the counter to the active clients reach zero,
+    /// the resources used by this instance are disposed of.
+    /// </summary>
+    private void EndD3D()
     {
-      Disposer.RemoveAndDispose(ref D3D10ImageSource._d3DDevice);
-      Disposer.RemoveAndDispose(ref D3D10ImageSource._d3DContext);
+      if (_numberOfActiveClients != 0)
+        return;
+
+      Disposer.RemoveAndDispose(ref this._renderTarget);
+      Disposer.RemoveAndDispose(ref _d3DDevice);
+      Disposer.RemoveAndDispose(ref _d3DContext);
     }
 
-    private static IntPtr GetSharedHandle(SharpDX.Direct3D10.Texture2D Texture)
+    /// <summary>
+    /// Gets a shared handle of the provided texture.
+    /// </summary>
+    /// <param name="Texture">The texture.</param>
+    /// <returns>The shared handle of the texture.</returns>
+    private static IntPtr GetSharedHandle(Vortice.Direct3D11.ID3D11Texture2D Texture)
     {
-      SharpDX.DXGI.Resource resource = Texture.QueryInterface<SharpDX.DXGI.Resource>();
+      var resource = Texture.QueryInterface<Vortice.DXGI.IDXGIResource>();
       IntPtr result = resource.SharedHandle;
       resource.Dispose();
       return result;
     }
 
-    private static Format TranslateFormat(SharpDX.Direct3D10.Texture2D Texture)
+    /// <summary>
+    /// Translates the format of the DirectX11 texture to the corresponding DX9 Format.
+    /// </summary>
+    /// <param name="texture">The texture.</param>
+    /// <returns>The format of the texture as DX9 format.</returns>
+    private static Format TranslateFormat(Vortice.Direct3D11.ID3D11Texture2D texture)
     {
-      switch (Texture.Description.Format)
+      switch (texture.Description.Format)
       {
-        case SharpDX.DXGI.Format.R10G10B10A2_UNorm:
-          return SharpDX.Direct3D9.Format.A2B10G10R10;
+        case Vortice.DXGI.Format.R10G10B10A2_UNorm:
+          return Vortice.Direct3D9.Format.A2B10G10R10;
 
-        case SharpDX.DXGI.Format.R16G16B16A16_Float:
-          return SharpDX.Direct3D9.Format.A16B16G16R16F;
+        case Vortice.DXGI.Format.R16G16B16A16_Float:
+          return Vortice.Direct3D9.Format.A16B16G16R16F;
 
-        case SharpDX.DXGI.Format.B8G8R8A8_UNorm:
-          return SharpDX.Direct3D9.Format.A8R8G8B8;
+        case Vortice.DXGI.Format.B8G8R8A8_UNorm:
+          return Vortice.Direct3D9.Format.A8R8G8B8;
 
         default:
-          return SharpDX.Direct3D9.Format.Unknown;
+          return Vortice.Direct3D9.Format.Unknown;
       }
     }
 
-    private static bool IsShareable(SharpDX.Direct3D10.Texture2D Texture)
+    /// <summary>
+    /// Determines whether the specified texture is shareable.
+    /// </summary>
+    /// <param name="Texture">The texture.</param>
+    /// <returns>
+    ///   <c>true</c> if the specified texture is shareable; otherwise, <c>false</c>.
+    /// </returns>
+    private static bool IsShareable(Vortice.Direct3D11.ID3D11Texture2D Texture)
     {
-      return (Texture.Description.OptionFlags & SharpDX.Direct3D10.ResourceOptionFlags.Shared) != 0;
+      return (Texture.Description.OptionFlags & Vortice.Direct3D11.ResourceOptionFlags.Shared) != 0;
     }
   }
 }

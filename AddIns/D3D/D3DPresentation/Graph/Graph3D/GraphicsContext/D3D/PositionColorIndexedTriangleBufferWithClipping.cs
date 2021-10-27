@@ -35,7 +35,7 @@ namespace Altaxo.Graph.Graph3D.GraphicsContext.D3D
   {
     public PlaneD3D[] ClipPlanes { get; private set; }
 
-    public PositionNormalColorIndexedTriangleBufferWithClipping(D3D10GraphicsContext parent, PlaneD3D[] clipPlanes)
+    public PositionNormalColorIndexedTriangleBufferWithClipping(D3DGraphicsContext parent, PlaneD3D[] clipPlanes)
         : base(parent)
     {
       if (clipPlanes is null)

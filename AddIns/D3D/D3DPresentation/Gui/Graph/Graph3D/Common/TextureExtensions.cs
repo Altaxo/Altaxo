@@ -27,10 +27,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using SharpDX;
-using SharpDX.Direct3D10;
-using SharpDX.DXGI;
-using SharpDX.WIC;
+using Vortice.Direct3D11;
+using Vortice.DXGI;
+using Vortice.WIC;
 
 namespace Altaxo.Gui.Graph.Graph3D.Common
 {
@@ -46,7 +45,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
     /// <param name="imageFormat">The image format of the saved image.</param>
     /// <param name="imageResolutionInDpi">The image resolution in dpi.</param>
     /// <param name="fileName">The name of the file to save the texture to.</param>
-    public static void SaveToFile(this Texture2D texture, System.Drawing.Imaging.ImageFormat imageFormat, double imageResolutionInDpi, string fileName)
+    public static void SaveToFile(this ID3D11Texture2D texture, System.Drawing.Imaging.ImageFormat imageFormat, double imageResolutionInDpi, string fileName)
     {
       using (var toStream = new System.IO.FileStream(fileName, System.IO.FileMode.OpenOrCreate, System.IO.FileAccess.ReadWrite))
       {
@@ -61,16 +60,16 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
     /// <param name="imageFormat">The image format of the saved image.</param>
     /// <param name="imageResolutionInDpi">The image resolution in dpi.</param>
     /// <param name="toStream">The stream to save the texture to.</param>
-    public static void SaveToStream(this Texture2D texture, System.Drawing.Imaging.ImageFormat imageFormat, double imageResolutionInDpi, System.IO.Stream toStream)
+    public static void SaveToStream(this ID3D11Texture2D texture, System.Drawing.Imaging.ImageFormat imageFormat, double imageResolutionInDpi, System.IO.Stream toStream)
     {
-      Texture2D? textureCopy = null;
-      ImagingFactory? imagingFactory = null;
-      Bitmap? bitmap = null;
-      BitmapEncoder? bitmapEncoder = null;
+      ID3D11Texture2D? textureCopy = null;
+      IWICImagingFactory? imagingFactory = null;
+      IWICBitmap? bitmap = null;
+      IWICBitmapEncoder? bitmapEncoder = null;
 
       try
       {
-        textureCopy = new Texture2D(texture.Device, new Texture2DDescription
+        textureCopy = texture.Device.CreateTexture2D(new Texture2DDescription
         {
           Width = texture.Description.Width,
           Height = texture.Description.Height,
@@ -84,34 +83,33 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
           OptionFlags = ResourceOptionFlags.None
         });
 
-        texture.Device.CopyResource(texture, textureCopy);
+        texture.Device.ImmediateContext.CopyResource(texture, textureCopy);
 
-        DataRectangle dataRectangle = textureCopy.Map(0, MapMode.Read, SharpDX.Direct3D10.MapFlags.None);
+        var dataRectangle = texture.Device.ImmediateContext.Map(textureCopy, 0, MapMode.Read, Vortice.Direct3D11.MapFlags.None);
 
-        imagingFactory = new ImagingFactory();
-        bitmap = new Bitmap(
-            imagingFactory,
+        imagingFactory = new IWICImagingFactory(); 
+        bitmap = imagingFactory.CreateBitmapFromMemory(
             textureCopy.Description.Width,
             textureCopy.Description.Height,
             PixelFormat.Format32bppBGRA,
-            dataRectangle);
+            dataRectangle.AsSpan<int>(textureCopy.Description.ArraySize));
 
         toStream.Position = 0;
 
         if (imageFormat == System.Drawing.Imaging.ImageFormat.Png)
-          bitmapEncoder = new PngBitmapEncoder(imagingFactory, toStream);
+          bitmapEncoder = imagingFactory.CreateEncoder(ContainerFormat.Png, toStream);
         else if (imageFormat == System.Drawing.Imaging.ImageFormat.Bmp)
-          bitmapEncoder = new BmpBitmapEncoder(imagingFactory, toStream);
+          bitmapEncoder = imagingFactory.CreateEncoder(ContainerFormat.Bmp, toStream);
         else if (imageFormat == System.Drawing.Imaging.ImageFormat.Gif)
-          bitmapEncoder = new GifBitmapEncoder(imagingFactory, toStream);
+          bitmapEncoder = imagingFactory.CreateEncoder(ContainerFormat.Gif, toStream);
         else if (imageFormat == System.Drawing.Imaging.ImageFormat.Jpeg)
-          bitmapEncoder = new JpegBitmapEncoder(imagingFactory, toStream);
+          bitmapEncoder = imagingFactory.CreateEncoder(ContainerFormat.Jpeg, toStream);
         else if (imageFormat == System.Drawing.Imaging.ImageFormat.Tiff)
-          bitmapEncoder = new TiffBitmapEncoder(imagingFactory, toStream);
+          bitmapEncoder = imagingFactory.CreateEncoder(ContainerFormat.Tiff, toStream);
         else
-          bitmapEncoder = new PngBitmapEncoder(imagingFactory, toStream);
+          bitmapEncoder = imagingFactory.CreateEncoder(ContainerFormat.Png, toStream);
 
-        using (var bitmapFrameEncode = new BitmapFrameEncode(bitmapEncoder))
+        using (var bitmapFrameEncode = bitmapEncoder.CreateNewFrame(null))
         {
           bitmapFrameEncode.Initialize();
           bitmapFrameEncode.SetSize(bitmap.Size.Width, bitmap.Size.Height);
@@ -126,7 +124,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
       finally
       {
         bitmapEncoder?.Dispose();
-        textureCopy?.Unmap(0);
+        texture.Device.ImmediateContext.Unmap(textureCopy, 0);
         textureCopy?.Dispose();
         bitmap?.Dispose();
         imagingFactory?.Dispose();
