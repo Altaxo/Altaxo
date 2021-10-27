@@ -30,7 +30,6 @@ SamplerState ColorGradient1DTextureSampler
 cbuffer cbViewTransformation: register(b0)
 {
   float4x4 WorldViewProj; // used in vertex shaders only
-  
 }
 
 cbuffer cbEyePosition : register(b1)

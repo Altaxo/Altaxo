@@ -28,6 +28,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
   using System.Collections.Generic;
   using System.Linq;
   using System.Numerics;
+  using System.Runtime.InteropServices;
   using Altaxo.Drawing;
   using Altaxo.Drawing.D3D;
   using Altaxo.Geometry;
@@ -37,6 +38,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
   using Altaxo.Graph.Graph3D.GraphicsContext.D3D;
   using Altaxo.Graph.Graph3D.Lighting;
   using Altaxo.Gui.Graph.Graph3D.Common;
+  using Altaxo.Shaders;
   using Vortice;
   using Vortice.D3DCompiler;
   using Vortice.Direct3D;
@@ -84,73 +86,26 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
     private System.Numerics.Matrix4x4 _worldViewProj = System.Numerics.Matrix4x4.Identity;
     private Buffer? _evWorldViewProj;
 
+    // Eye Position
     private System.Numerics.Vector4 _eyePosition;
     private Buffer? _evEyePosition;
 
-    // Materials
 
     // Texture for color providers to colorize a mesh by its height
     private Texture1DDescription _descriptionTextureFor1DColorProvider;
     private ID3D11Texture1D? _textureFor1DColorProvider;
     private ID3D11ShaderResourceView? _textureFor1DColorProviderView;
 
-    private struct CbClipPlanes
-    {
-      public Plane Plane0;
-      public Plane Plane1;
-      public Plane Plane2;
-      public Plane Plane3;
-      public Plane Plane4;
-      public Plane Plane5;
-
-      public Plane this[int i]
-      {
-        get
-        {
-          return i switch
-          {
-            0 => Plane0,
-            1 => Plane1,
-            2 => Plane2,
-            3 => Plane3,
-            4 => Plane4,
-            5 => Plane5,
-            _ => throw new IndexOutOfRangeException()
-          };
-        }
-        set
-        {
-          switch (i)
-          {
-            case 0: Plane0 = value; break;
-            case 1: Plane1 = value; break;
-            case 2: Plane2 = value; break;
-            case 3: Plane3 = value; break;
-            case 4: Plane4 = value; break;
-            case 5: Plane5 = value; break;
-            default: throw new IndexOutOfRangeException();
-          }
-        }
-      }
-    }
-
-    private struct CbMaterial
-    {
-      public Color4 DiffuseColor;
-      public float SpecularExponent;
-      public float SpecularIntensity;
-      public float DiffuseIntensity;
-      // Metalness value for specular reflection: value between 0 and 1
-      // if 0, the reflected specular light has the same color as the incident light (thus as if it is reflected at a white surface)
-      // if 1, the reflected specular light is multiplied with the material diffuse color
-      public float MetalnessValue;
-    }
-
-    private CbMaterial _material = new CbMaterial();
+    // Materials
+    private LightingHlsl.CbMaterial _material = new();
     private Buffer? _evMaterial;
 
+    // Lighting
+    private LightingHlsl.CbLights _cbLights = new();
+    private Buffer? _bufferLights;
+
     // Clip planes
-    private CbClipPlanes _clipPlanes = new CbClipPlanes();
+    private LightingHlsl.CbClipPlanes _clipPlanes = new();
     private Buffer? _evClipPlanes;
 
     // Lighting
@@ -326,30 +281,38 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
 
       // View transformation variables
       _evWorldViewProj = device.CreateBuffer(ref _worldViewProj, new BufferDescription((4 * 4) * sizeof(float), BindFlags.ConstantBuffer, ResourceUsage.Default));
-      device.ImmediateContext.VSSetConstantBuffer(0, _evWorldViewProj);
+      device.ImmediateContext.VSSetConstantBuffer(LightingHlsl.WorldViewProj_RegisterNumber, _evWorldViewProj);
 
       _evEyePosition = device.CreateBuffer(ref _eyePosition, new BufferDescription(4 * sizeof(float), BindFlags.ConstantBuffer, ResourceUsage.Default));
-      device.ImmediateContext.PSSetConstantBuffer(1, _evEyePosition);
+      device.ImmediateContext.PSSetConstantBuffer(LightingHlsl.EyePosition_RegisterNumber, _evEyePosition);
 
       // Material
       _material.SpecularExponent = 4;
       _material.SpecularIntensity = 1;
       _material.MetalnessValue = 0.75f;
       _evMaterial = device.CreateBuffer(ref _material, new BufferDescription(8 * sizeof(float), BindFlags.ConstantBuffer, ResourceUsage.Default));
-      device.ImmediateContext.VSSetConstantBuffer(2, _evMaterial);
-      device.ImmediateContext.PSSetConstantBuffer(2, _evMaterial);
+      device.ImmediateContext.VSSetConstantBuffer(LightingHlsl.Material_RegisterNumber, _evMaterial);
+      device.ImmediateContext.PSSetConstantBuffer(LightingHlsl.Material_RegisterNumber, _evMaterial);
+
+      // Lights
+      _cbLights = new LightingHlsl.CbLights();
+      _bufferLights = device.CreateBuffer(ref _cbLights, new BufferDescription(Marshal.SizeOf(_cbLights), BindFlags.ConstantBuffer, ResourceUsage.Default));
+      device.ImmediateContext.PSSetConstantBuffer(LightingHlsl.Lights_RegisterNumber, _bufferLights);
+      // Lighting variables
+      _lighting = new Lighting();
+      _lighting.SetDefaultLighting();
+      _lighting.AssembleLightsInto(ref _cbLights);
+      device.ImmediateContext.UpdateSubresource(ref _cbLights, _bufferLights);
+
 
       // Color providers
       BindTextureFor1DColorProviders(device.ImmediateContext);
 
       // Clip plane variables
       _evClipPlanes = device.CreateBuffer(ref _clipPlanes, new BufferDescription(6 * 4 * sizeof(float), BindFlags.ConstantBuffer, ResourceUsage.Default));
-      device.ImmediateContext.VSSetConstantBuffer(4, _evClipPlanes);
+      device.ImmediateContext.VSSetConstantBuffer(LightingHlsl.ClipPlanes_RegisterNumber, _evClipPlanes);
 
 
-      // Lighting variables
-      _lighting = new Lighting(device);
-      _lighting.SetDefaultLighting(device);
 
       // -------------------- now draw the scene again with the new attached device --------------
 
@@ -370,8 +333,6 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
           BringOverlayGeometryIntoDeviceBuffers(_altaxoOverlayGeometry);
         }
       }
-
-
     }
 
     /// <summary>
@@ -580,8 +541,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
       _textureFor1DColorProviderView = _cachedDevice.CreateShaderResourceView(_textureFor1DColorProvider);
       // for how to create a UnorderedAccessView, see https://stackoverflow.com/questions/44251230/how-can-i-write-to-my-id3d11unorderedaccessviews-buffer-before-dispatching-my-s?rq=1
       // var tt = _cachedDevice.CreateUnorderedAccessView(_textureFor1DColorProvider, new UnorderedAccessViewDescription())
-
-      context.PSSetShaderResource(0, _textureFor1DColorProviderView);
+      context.PSSetShaderResource(LightingHlsl.ColorGradient1DTexture_RegisterNumber, _textureFor1DColorProviderView);
     }
 
     private void ReleaseTextureFor1DColorProviders()
@@ -804,12 +764,6 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
       if (_altaxoCamera is not null)
       {
         var cam = _altaxoCamera;
-        var eye = cam.EyePosition;
-        var target = cam.TargetPosition;
-        var up = cam.UpVector;
-        //view = Matrix.LookAtRH(new Vector3((float)eye.X, (float)eye.Y, (float)eye.Z), new Vector3((float)target.X, (float)target.Y, (float)target.Z), new Vector3((float)up.X, (float)up.Y, (float)up.Z));
-
-        //var viewProjD3D = (cam as PerspectiveCamera).GetLookAtRHTimesPerspectiveRHMatrix(_hostSize.Y / _hostSize.X);
         var viewProjD3D = cam.GetViewProjectionMatrix(_hostSize.Y / _hostSize.X);
         worldViewProjTr = new System.Numerics.Matrix4x4(
                 (float)viewProjD3D.M11, (float)viewProjD3D.M21, (float)viewProjD3D.M31, (float)viewProjD3D.M41,
@@ -838,7 +792,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
       device.ImmediateContext.UpdateSubresource(ref _eyePosition, _evEyePosition);
 
       // lighting
-      _lighting.SetLighting(device, _altaxoLightSettings, _altaxoCamera);
+      _lighting.SetLighting(_altaxoLightSettings, _altaxoCamera);
+      _lighting.AssembleLightsInto(ref _cbLights);
+      device.ImmediateContext.UpdateSubresource(ref _cbLights, _bufferLights);
 
       // Material is separate for each buffer, therefore it is set there
 
@@ -992,7 +948,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Viewing
       var srcSpan = new Span<byte>(deviceBuffers.UColors, 0, deviceBuffers.UColors.Length);
       srcSpan.CopyTo(destSpan);
       device.Unmap(_textureFor1DColorProvider, 0);
-      device.PSSetShaderResource(0, _textureFor1DColorProviderView);
+      device.PSSetShaderResource(LightingHlsl.ColorGradient1DTexture_RegisterNumber, _textureFor1DColorProviderView);
 
       // set invalid color
       SetShaderMaterialVariables(device, deviceBuffers.Material); // note: the material's color must be set to the ColorProviders InvalidColor!

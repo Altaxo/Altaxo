@@ -30,6 +30,7 @@ using System.Text;
 namespace Altaxo.Gui.Graph.Graph3D.Common
 {
   using System;
+  using Altaxo.Shaders;
   using Vortice.D3DCompiler;
   using Vortice.Direct3D11;
   using Buffer = Vortice.Direct3D11.ID3D11Buffer;
@@ -160,7 +161,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
         context.IASetInputLayout(this._vertexLayout);
         context.IASetPrimitiveTopology(Vortice.Direct3D.PrimitiveTopology.TriangleList);
         context.IASetVertexBuffers(0, new VertexBufferView(this._vertices, 24, 0));
-        context.PSSetShaderResource(7, textureView); // use register 7 for the texture
+        context.PSSetShaderResource(GammaCorrectorHlsl.ShaderTexture_RegisterNumber, textureView); // use register 7 for the texture
         context.Draw(6, 0);
         context.Flush();
       }
