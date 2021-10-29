@@ -43,7 +43,6 @@ namespace Altaxo.Gui.Text
   [UserControllerForObject(typeof(HtmlExportOptions))]
   public class HtmlExportOptionsController : MVCANControllerEditOriginalDocBase<HtmlExportOptions, IHtmlExportOptionsView>, INotifyPropertyChanged
   {
-    public event PropertyChangedEventHandler PropertyChanged;
 
     public HtmlExportOptionsController()
     {
@@ -76,11 +75,6 @@ namespace Altaxo.Gui.Text
     }
 
     #region Bindable properties
-
-    protected virtual void OnPropertyChanged(string propertyName)
-    {
-      PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-    }
 
     public int SplitLevel { get { return _doc.SplitLevel; } set { _doc.SplitLevel = value; OnPropertyChanged(nameof(SplitLevel)); } }
     public bool EnableRemoveOldContentsOfOutputFolder { get { return _doc.EnableRemoveOldContentsOfOutputFolder; } set { _doc.EnableRemoveOldContentsOfOutputFolder = value; OnPropertyChanged(nameof(EnableRemoveOldContentsOfOutputFolder)); } }

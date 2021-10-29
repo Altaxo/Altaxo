@@ -2,7 +2,7 @@
   <PropertyGroup>
     <AssemblyName>ZzIsNotNeeded</AssemblyName>
     <OutputType>Exe</OutputType>
-    <TargetFrameworks>net48;net5.0</TargetFrameworks>
+    <TargetFrameworks>net48;net5.0-windows</TargetFrameworks>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     <Platforms>x64</Platforms>
     <PlatformTarget>x64</PlatformTarget>
@@ -13,6 +13,6 @@
     <PackageReference Include="Microsoft.ML.TimeSeries" Version="1.6.0" />   
   </ItemGroup>
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="mkdir $(SolutionDir)rt$(TargetFramework)\AddIns\ML.Net\&#xD;&#xA;del $(TargetDir)zzIsNotNeeded.*&#xD;&#xA;copy $(TargetDir)*.dll $(SolutionDir)rt$(TargetFramework)\AddIns\ML.Net\&#xD;&#xA;" />
+    <Exec Command="IF NOT EXIST $(SolutionDir)rt$(TargetFramework)\AddIns\ML.Net\ mkdir $(SolutionDir)rt$(TargetFramework)\AddIns\ML.Net\&#xD;&#xA;del $(TargetDir)zzIsNotNeeded.*&#xD;&#xA;copy $(TargetDir)*.dll $(SolutionDir)rt$(TargetFramework)\AddIns\ML.Net\&#xD;&#xA;" />
   </Target>
 </Project>

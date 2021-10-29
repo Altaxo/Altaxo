@@ -176,6 +176,8 @@ namespace Altaxo.Calc
     /// Calculates [Exp(a x)-Exp(b x)]/[Exp(x)-Exp(-x)].
     /// </summary>
     /// <param name="x">The argument.</param>
+    /// <param name="a">The first prefactor.</param>
+    /// <param name="b">The second prefactor.</param>
     /// <returns>The function f(x,a,b) = [Exp(a x)-Exp(b x)]/[Exp(x)-Exp(-x)].</returns>
     public static double SinhAxBxTimesCschX(double x, double a, double b)
     {

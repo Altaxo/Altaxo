@@ -50,8 +50,6 @@ namespace Altaxo.Gui.Units
   {
     private UnitEnvironmentController? _unitController;
 
-    public event PropertyChangedEventHandler? PropertyChanged;
-
     private SelectableListNodeList _quantities = new SelectableListNodeList();
     private SelectableListNode? _selectedQuantity;
     private string? _environmentName;
@@ -186,7 +184,7 @@ namespace Altaxo.Gui.Units
           if (_unitController is { } _ && _selectedQuantity is not null && !string.IsNullOrEmpty(_selectedQuantity.Tag as string))
             _unitController.SetQuantity((string)_selectedQuantity.Tag);
 
-          PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SelectedQuantity)));
+          OnPropertyChanged(nameof(SelectedQuantity));
         }
       }
     }
@@ -202,7 +200,7 @@ namespace Altaxo.Gui.Units
         if (!(_environmentName == value))
         {
           _environmentName = value;
-          PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(EnvironmentName)));
+          OnPropertyChanged(nameof(EnvironmentName));
         }
       }
     }

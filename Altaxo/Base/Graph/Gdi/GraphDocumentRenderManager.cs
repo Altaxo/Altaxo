@@ -216,7 +216,7 @@ namespace Altaxo.Graph.Gdi
       TryStartWaitingTasks();
     }
 
-    private void EhProjectClosed(object sender, Main.ProjectEventArgs e)
+    private void EhProjectClosed(object? sender, Main.ProjectEventArgs e)
     {
       _isEnabled = false;
       _tasksWaiting.Clear();

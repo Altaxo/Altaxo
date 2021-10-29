@@ -50,8 +50,6 @@ namespace Altaxo.Gui.Units
   {
     private Dictionary<Type, UnitDescriptionAttribute> _listOfUnits = new Dictionary<Type, UnitDescriptionAttribute>();
 
-    public event PropertyChangedEventHandler? PropertyChanged;
-
     private string _quantity;
     private SelectableListNodeList _availableUnits = new SelectableListNodeList();
     private SelectableListNode? _selectedAvailableUnit;
@@ -279,7 +277,7 @@ namespace Altaxo.Gui.Units
         if (!object.ReferenceEquals(_selectedAvailableUnit, value))
         {
           _selectedAvailableUnit = value;
-          PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SelectedAvailableUnit)));
+          OnPropertyChanged(nameof(SelectedAvailableUnit));
         }
       }
     }
@@ -306,7 +304,7 @@ namespace Altaxo.Gui.Units
           _selectedPrefixesChangedCommandDisabled = true; // temporary diabling of Store
           _selectedIncludedUnit = value;
           GetAvailablePrefixes((IUnit)_selectedIncludedUnit?.Tag!, _prefixes);
-          PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SelectedIncludedUnit)));
+          OnPropertyChanged(nameof(SelectedIncludedUnit));
           _selectedPrefixesChangedCommandDisabled = false;
         }
       }

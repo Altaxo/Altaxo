@@ -271,7 +271,8 @@ namespace Altaxo.Graph
     /// Initialized a 3D identifier from the parallel axis and the physical value of the perpendicular axis.
     /// </summary>
     /// <param name="parallelAxisNumber">Number of parallel axis (0->X, 1->Y, 2->Z).</param>
-    /// <param name="physicalValueOtherFirst">Physical value of the axis perendicular to the parallel axis.</param>
+    /// <param name="physicalValueOtherFirst">Physical value of the axis perpendicular to the parallel axis.</param>
+    /// <param name="physicalValueOtherSecond">Physical value of the axis perpendicular to the parallel axis and to the first other axis.</param>
     /// <returns>A freshly created 2D line identifier.</returns>
     public static CSLineID FromPhysicalVariant(int parallelAxisNumber, AltaxoVariant physicalValueOtherFirst, AltaxoVariant physicalValueOtherSecond)
     {

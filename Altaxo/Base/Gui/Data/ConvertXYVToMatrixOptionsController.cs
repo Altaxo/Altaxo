@@ -54,8 +54,6 @@ namespace Altaxo.Gui.Data
     private bool _createStdDevX;
     private bool _createStdDevY;
 
-    public event PropertyChangedEventHandler PropertyChanged;
-
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
@@ -65,8 +63,6 @@ namespace Altaxo.Gui.Data
     {
       base.Dispose(isDisposing);
     }
-
-    protected virtual void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
     #region ViewModel
 

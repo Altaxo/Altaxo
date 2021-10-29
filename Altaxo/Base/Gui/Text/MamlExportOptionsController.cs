@@ -43,8 +43,6 @@ namespace Altaxo.Gui.Text
   [UserControllerForObject(typeof(MamlExportOptions))]
   public class MamlExportOptionsController : MVCANControllerEditOriginalDocBase<MamlExportOptions, IMamlExportOptionsView>, INotifyPropertyChanged
   {
-    public event PropertyChangedEventHandler PropertyChanged;
-
     public MamlExportOptionsController()
     {
       CommandSelectOutputFile = new RelayCommand(EhSelectOutputFile);
@@ -76,11 +74,6 @@ namespace Altaxo.Gui.Text
     }
 
     #region Bindable properties
-
-    protected virtual void OnPropertyChanged(string propertyName)
-    {
-      PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-    }
 
     public int SplitLevel { get { return _doc.SplitLevel; } set { _doc.SplitLevel = value; OnPropertyChanged(nameof(SplitLevel)); } }
     public string ContentFolderName { get { return _doc.ContentFolderName; } set { _doc.ContentFolderName = value; OnPropertyChanged(nameof(ContentFolderName)); } }
