@@ -83,7 +83,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
           OptionFlags = ResourceOptionFlags.None
         });
 
-        texture.Device.ImmediateContext.CopyResource(texture, textureCopy);
+        texture.Device.ImmediateContext.CopyResource(textureCopy, texture);
 
         var dataRectangle = texture.Device.ImmediateContext.Map(textureCopy, 0, MapMode.Read, Vortice.Direct3D11.MapFlags.None);
 
@@ -92,7 +92,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
             textureCopy.Description.Width,
             textureCopy.Description.Height,
             PixelFormat.Format32bppBGRA,
-            dataRectangle.AsSpan<int>(textureCopy.Description.ArraySize));
+            dataRectangle.AsSpan<int>(dataRectangle.DepthPitch), dataRectangle.RowPitch);
 
         toStream.Position = 0;
 

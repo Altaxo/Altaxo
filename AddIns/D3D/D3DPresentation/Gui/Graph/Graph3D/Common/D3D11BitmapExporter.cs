@@ -220,7 +220,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
           };
 
           renderTarget2 = device.CreateTexture2D(renderTarget2Description); // create non-MSAA render target
-          device.ImmediateContext.ResolveSubresource(renderTarget, 0, renderTarget2, 0, renderTarget.Description.Format); // copy from MSAA render target to the non-MSAA render target
+          device.ImmediateContext.ResolveSubresource(renderTarget2, 0, renderTarget, 0, renderTarget.Description.Format); // copy from MSAA render target to the non-MSAA render target
 
           var h = renderTarget; // exchange renderTarget with renderTarget2
           renderTarget = renderTarget2;
