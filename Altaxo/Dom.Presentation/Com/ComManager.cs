@@ -302,12 +302,15 @@ namespace Altaxo.Com
       var applicationFileNameKind = RegistryValueKind.String; // if Altaxo is in an arbitrary path, use a simple string for the path, otherwise, use ExpandString (see below)
       string applicationFileName = System.Reflection.Assembly.GetEntryAssembly().Location;
       var p = System.IO.Path.GetFileNameWithoutExtension(applicationFileName);
-      if (p.EndsWith("32")) // strip 32 if registering from the 32-bit version
+      if (p.EndsWith("32") || p.EndsWith("64")) // strip 32 if registering from the 32-bit version, or 64 if registering from the 64 bit version
       {
         p = p.Substring(0, p.Length - 2);
       }
 
+      bool is64BitSystem = Environment.Is64BitOperatingSystem;
+
       var applicationFileName32 = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(applicationFileName), p + "32.exe");
+      var applicationFileName64 = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(applicationFileName), p + "64.exe");
 
       string programFilesPath = System.Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
       if (applicationFileName.ToUpperInvariant().StartsWith(programFilesPath.ToUpperInvariant()))
@@ -315,8 +318,8 @@ namespace Altaxo.Com
         applicationFileNameKind = RegistryValueKind.ExpandString;
         applicationFileName = "%ProgramFiles%" + applicationFileName.Substring(programFilesPath.Length);
         applicationFileName32 = "%ProgramFiles%" + applicationFileName32.Substring(programFilesPath.Length);
+        applicationFileName64 = "%ProgramFiles%" + applicationFileName64.Substring(programFilesPath.Length);
       }
-
 
       try
       {
@@ -329,8 +332,8 @@ namespace Altaxo.Com
         }
 
         RegisterProject(Registry.LocalMachine, WOW_Mode.None, applicationFileName, applicationFileNameKind);
-        RegisterGraphClass(Registry.LocalMachine, WOW_Mode.None, applicationFileName, applicationFileNameKind);
-        RegisterGraphClassID(Registry.LocalMachine, WOW_Mode.None, applicationFileName, applicationFileNameKind);
+        RegisterGraphClass(Registry.LocalMachine, WOW_Mode.None, is64BitSystem? applicationFileName64 : applicationFileName32, applicationFileNameKind);
+        RegisterGraphClassID(Registry.LocalMachine, WOW_Mode.None, is64BitSystem? applicationFileName64 : applicationFileName32, applicationFileNameKind);
         return; // if it was successful to register the computer account, we return
       }
       catch (Exception)
@@ -341,8 +344,8 @@ namespace Altaxo.Com
       try
       {
         RegisterProject(Registry.CurrentUser, WOW_Mode.None, applicationFileName, applicationFileNameKind);
-        RegisterGraphClass(Registry.CurrentUser, WOW_Mode.None, applicationFileName, applicationFileNameKind);
-        RegisterGraphClassID(Registry.CurrentUser, WOW_Mode.None, applicationFileName, applicationFileNameKind);
+        RegisterGraphClass(Registry.CurrentUser, WOW_Mode.None, is64BitSystem ? applicationFileName64 : applicationFileName32, applicationFileNameKind);
+        RegisterGraphClassID(Registry.CurrentUser, WOW_Mode.None, is64BitSystem ? applicationFileName64 : applicationFileName32, applicationFileNameKind);
       }
       catch (Exception ex)
       {
@@ -546,6 +549,7 @@ namespace Altaxo.Com
         key2.SetValue(null, "");
         key2.Close();
 
+        // Note: we have to register an .exe file, which has a predefined bitness (i.e., not compiled with AnyCPU)
         key2 = key1.CreateSubKey("LocalServer32");
         key2.SetValue(null, applicationFileName, applicationFileNameKind);
         key2.Close();
