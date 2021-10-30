@@ -332,8 +332,15 @@ namespace Altaxo.Com
         }
 
         RegisterProject(Registry.LocalMachine, WOW_Mode.None, applicationFileName, applicationFileNameKind);
-        RegisterGraphClass(Registry.LocalMachine, WOW_Mode.None, is64BitSystem? applicationFileName64 : applicationFileName32, applicationFileNameKind);
-        RegisterGraphClassID(Registry.LocalMachine, WOW_Mode.None, is64BitSystem? applicationFileName64 : applicationFileName32, applicationFileNameKind);
+        RegisterGraphClass(Registry.LocalMachine, WOW_Mode.Reg64, is64BitSystem? applicationFileName64 : applicationFileName32, applicationFileNameKind);
+        RegisterGraphClassID(Registry.LocalMachine, WOW_Mode.Reg64, is64BitSystem? applicationFileName64 : applicationFileName32, applicationFileNameKind);
+
+        if(is64BitSystem)
+        {
+          RegisterGraphClass(Registry.LocalMachine, WOW_Mode.Reg32, applicationFileName32, applicationFileNameKind);
+          RegisterGraphClassID(Registry.LocalMachine, WOW_Mode.Reg32, applicationFileName32, applicationFileNameKind);
+        }
+
         return; // if it was successful to register the computer account, we return
       }
       catch (Exception)
@@ -344,8 +351,25 @@ namespace Altaxo.Com
       try
       {
         RegisterProject(Registry.CurrentUser, WOW_Mode.None, applicationFileName, applicationFileNameKind);
-        RegisterGraphClass(Registry.CurrentUser, WOW_Mode.None, is64BitSystem ? applicationFileName64 : applicationFileName32, applicationFileNameKind);
-        RegisterGraphClassID(Registry.CurrentUser, WOW_Mode.None, is64BitSystem ? applicationFileName64 : applicationFileName32, applicationFileNameKind);
+
+        if(is64BitSystem)
+        {
+          // in a 64 bit operating system, we install the 64 bit exe in the normal registry ...
+          // (it is important not to register the AnyCPU .exe file, but the .exe with predefined 64 bit bitness)
+          RegisterGraphClass(Registry.CurrentUser, WOW_Mode.Reg64, applicationFileName64, applicationFileNameKind);
+          RegisterGraphClassID(Registry.CurrentUser, WOW_Mode.Reg64, applicationFileName64, applicationFileNameKind);
+
+          // ... and the 32 bit .exe file in the WOW6432 node, that is the view for 32 bit applications
+          RegisterGraphClass(Registry.CurrentUser, WOW_Mode.Reg32, applicationFileName32, applicationFileNameKind);
+          RegisterGraphClassID(Registry.CurrentUser, WOW_Mode.Reg32, applicationFileName32, applicationFileNameKind);
+        }
+        else
+        {
+          // in a 32 bit operating system, it is enough to register the 32 bit .exe
+          RegisterGraphClass(Registry.CurrentUser, WOW_Mode.None, applicationFileName32, applicationFileNameKind);
+          RegisterGraphClassID(Registry.CurrentUser, WOW_Mode.None,  applicationFileName32, applicationFileNameKind);
+        }
+
       }
       catch (Exception ex)
       {
@@ -472,35 +496,35 @@ namespace Altaxo.Com
         // register the Graph document embedded object (note that this is an Altaxo mini project)
         key1 = keyCR.CreateSubKey(GraphDocumentEmbeddedComObject.USER_TYPE, wowMode);
         key1.SetValue(null, GraphDocumentEmbeddedComObject.USER_TYPE_LONG);
-        key2 = key1.CreateSubKey("CLSID");
+        key2 = key1.CreateSubKey("CLSID", wowMode);
         key2.SetValue(null, typeof(GraphDocumentEmbeddedComObject).GUID.ToString("B").ToUpperInvariant());
 
         key2.Close();
-        key2 = key1.CreateSubKey("Insertable");
+        key2 = key1.CreateSubKey("Insertable", wowMode);
         key2.SetValue(null, "");
 
         key2.Close();
-        key2 = key1.CreateSubKey("protocol");
-        key3 = key2.CreateSubKey("StdFileEditing");
-        key4 = key3.CreateSubKey("server");
+        key2 = key1.CreateSubKey("protocol", wowMode);
+        key3 = key2.CreateSubKey("StdFileEditing", wowMode);
+        key4 = key3.CreateSubKey("server", wowMode);
         key4.SetValue(null, applicationFileName, applicationFileNameKind);
 
         key4.Close();
-        key4 = key3.CreateSubKey("verb");
-        key5 = key4.CreateSubKey("0");
+        key4 = key3.CreateSubKey("verb", wowMode);
+        key5 = key4.CreateSubKey("0", wowMode);
         key5.SetValue(null, "&Edit");
 
         key5.Close();
         key4.Close();
         key3.Close();
         key2.Close();
-        key2 = key1.CreateSubKey("shell");
-        key3 = key2.CreateSubKey("open");
-        key4 = key3.CreateSubKey("command");
+        key2 = key1.CreateSubKey("shell", wowMode);
+        key3 = key2.CreateSubKey("open", wowMode);
+        key4 = key3.CreateSubKey("command", wowMode);
         key4.SetValue(null, applicationFileName + "/dde");
 
         key4.Close();
-        key4 = key3.CreateSubKey("ddeexec");
+        key4 = key3.CreateSubKey("ddeexec", wowMode);
         key4.SetValue(null, "[open(\"%1\")]");
       }
       finally
@@ -529,36 +553,36 @@ namespace Altaxo.Com
         key1 = keyCLSID.CreateSubKey(typeof(GraphDocumentEmbeddedComObject).GUID.ToString("B").ToUpperInvariant(), wowMode);
         key1.SetValue(null, GraphDocumentEmbeddedComObject.USER_TYPE_LONG);
 
-        key2 = key1.CreateSubKey("AuxUserType");
-        key3 = key2.CreateSubKey("2");
+        key2 = key1.CreateSubKey("AuxUserType", wowMode);
+        key3 = key2.CreateSubKey("2", wowMode);
         key3.SetValue(null, "Altaxo.Graph.0");
-        key3 = key2.CreateSubKey("3");
+        key3 = key2.CreateSubKey("3", wowMode);
         key3.SetValue(null, "Altaxo graph object");
         key3.Close();
         key2.Close();
 
-        key2 = key1.CreateSubKey("DefaultIcon");
+        key2 = key1.CreateSubKey("DefaultIcon", wowMode);
         key2.SetValue(null, string.Format("{0},0", applicationFileName), applicationFileNameKind);
         key2.Close();
 
-        key2 = key1.CreateSubKey("InprocHandler32");
+        key2 = key1.CreateSubKey("InprocHandler32", wowMode);
         key2.SetValue(null, "ole32.dll"); // The entry InprocHandler32 is neccessary! Without this entry Word does not start the server. (Brockschmidt Inside Ole 2nd ed. says that it isn't neccessary).
         key2.Close();
 
-        key2 = key1.CreateSubKey("Insertable");
+        key2 = key1.CreateSubKey("Insertable", wowMode);
         key2.SetValue(null, "");
         key2.Close();
 
         // Note: we have to register an .exe file, which has a predefined bitness (i.e., not compiled with AnyCPU)
-        key2 = key1.CreateSubKey("LocalServer32");
+        key2 = key1.CreateSubKey("LocalServer32", wowMode);
         key2.SetValue(null, applicationFileName, applicationFileNameKind);
         key2.Close();
 
-        key2 = key1.CreateSubKey("MiscStatus"); // see Brockschmidt, Inside Ole 2nd ed. page 832
+        key2 = key1.CreateSubKey("MiscStatus", wowMode); // see Brockschmidt, Inside Ole 2nd ed. page 832
         key2.SetValue(null, ((int)(OLEMISC.OLEMISC_CANTLINKINSIDE)).ToString(System.Globalization.CultureInfo.InvariantCulture)); // DEFAULT: OLEMISC_CANTLINKINSIDE
         key2.Close();
 
-        key2 = key1.CreateSubKey("ProgID");
+        key2 = key1.CreateSubKey("ProgID", wowMode);
         key2.SetValue(null, GraphDocumentEmbeddedComObject.USER_TYPE);
         key2.Close();
 
@@ -567,12 +591,12 @@ namespace Altaxo.Com
         key2.SetValue(null, "Altaxo.Graph");
         */
 
-        key2 = key1.CreateSubKey("verb");
-        key3 = key2.CreateSubKey("0");
+        key2 = key1.CreateSubKey("verb", wowMode);
+        key3 = key2.CreateSubKey("0", wowMode);
         key3.SetValue(null, "&Edit,0,2");
         key3.Close();
 
-        key3 = key2.CreateSubKey("1");
+        key3 = key2.CreateSubKey("1", wowMode);
         key3.SetValue(null, "&Open,0,2");
         key3.Close();
         key2.Close();
@@ -589,19 +613,19 @@ namespace Altaxo.Com
         key3.SetValue(null, "Hide,0,1");
         */
 
-        key2 = key1.CreateSubKey("DataFormats");
-        key3 = key2.CreateSubKey("GetSet");
-        key4 = key3.CreateSubKey("0");
+        key2 = key1.CreateSubKey("DataFormats", wowMode);
+        key3 = key2.CreateSubKey("GetSet", wowMode);
+        key4 = key3.CreateSubKey("0", wowMode);
         key4.SetValue(null, "14,9,64,1"); // EnhMetafile on ENHMF in get-direction
         key4.Close();
 
-        key4 = key3.CreateSubKey("1");
+        key4 = key3.CreateSubKey("1", wowMode);
         key4.SetValue(null, "2,9,1,1"); // Bitmap on HGlobal in get-direction
         key4.Close();
         key3.Close();
 
 
-        key3 = key2.CreateSubKey(((int)DVASPECT.DVASPECT_CONTENT).ToString(System.Globalization.CultureInfo.InvariantCulture)); // For DVASPECT_CONTENT
+        key3 = key2.CreateSubKey(((int)DVASPECT.DVASPECT_CONTENT).ToString(System.Globalization.CultureInfo.InvariantCulture), wowMode); // For DVASPECT_CONTENT
         key3.SetValue(null, ((int)(OLEMISC.OLEMISC_CANTLINKINSIDE | OLEMISC.OLEMISC_RENDERINGISDEVICEINDEPENDENT)).ToString(System.Globalization.CultureInfo.InvariantCulture));  // OLEMISC_RECOMPOSEONRESIZE | OLEMISC_CANTLINKINSIDE
         key3.Close();
         key2.Close();
