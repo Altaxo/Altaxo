@@ -299,6 +299,25 @@ namespace Altaxo.Com
 
     public void RegisterApplicationForCom()
     {
+      var applicationFileNameKind = RegistryValueKind.String; // if Altaxo is in an arbitrary path, use a simple string for the path, otherwise, use ExpandString (see below)
+      string applicationFileName = System.Reflection.Assembly.GetEntryAssembly().Location;
+      var p = System.IO.Path.GetFileNameWithoutExtension(applicationFileName);
+      if (p.EndsWith("32")) // strip 32 if registering from the 32-bit version
+      {
+        p = p.Substring(0, p.Length - 2);
+      }
+
+      var applicationFileName32 = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(applicationFileName), p + "32.exe");
+
+      string programFilesPath = System.Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
+      if (applicationFileName.ToUpperInvariant().StartsWith(programFilesPath.ToUpperInvariant()))
+      {
+        applicationFileNameKind = RegistryValueKind.ExpandString;
+        applicationFileName = "%ProgramFiles%" + applicationFileName.Substring(programFilesPath.Length);
+        applicationFileName32 = "%ProgramFiles%" + applicationFileName32.Substring(programFilesPath.Length);
+      }
+
+
       try
       {
         {
@@ -309,8 +328,9 @@ namespace Altaxo.Com
           Registry.ClassesRoot.DeleteSubKeyTree(testkeystring, false);
         }
 
-        Register(Registry.LocalMachine, WOW_Mode.Reg32); // first register the special 32 bit mode, then
-        Register(Registry.LocalMachine, WOW_Mode.Reg64); // the "any CPU" mode, so that for important keys the 64 bit mode wins
+        RegisterProject(Registry.LocalMachine, WOW_Mode.None, applicationFileName, applicationFileNameKind);
+        RegisterGraphClass(Registry.LocalMachine, WOW_Mode.None, applicationFileName, applicationFileNameKind);
+        RegisterGraphClassID(Registry.LocalMachine, WOW_Mode.None, applicationFileName, applicationFileNameKind);
         return; // if it was successful to register the computer account, we return
       }
       catch (Exception)
@@ -320,11 +340,13 @@ namespace Altaxo.Com
       // if not successful to register into HKLM, we use the user's registry
       try
       {
-        Register(Registry.CurrentUser, WOW_Mode.Reg32); // first register the special 32 bit mode, then
-        Register(Registry.CurrentUser, WOW_Mode.Reg64); // the "any CPU" mode, so that for important keys the 64 bit mode wins
+        RegisterProject(Registry.CurrentUser, WOW_Mode.None, applicationFileName, applicationFileNameKind);
+        RegisterGraphClass(Registry.CurrentUser, WOW_Mode.None, applicationFileName, applicationFileNameKind);
+        RegisterGraphClassID(Registry.CurrentUser, WOW_Mode.None, applicationFileName, applicationFileNameKind);
       }
-      catch (Exception)
+      catch (Exception ex)
       {
+        MessageBox.Show("Error while registering Altaxo:\n" + ex.ToString());
       }
     }
 
@@ -380,31 +402,9 @@ namespace Altaxo.Com
         keySW.Close();
     }
 
-    private void Register(RegistryKey rootKey, WOW_Mode wowMode)
+    public void RegisterProject(RegistryKey rootKey, WOW_Mode wowMode, string applicationFileName, RegistryValueKind applicationFileNameKind)
     {
-      RegistryKey keySW = null;
-      RegistryKey keyCR = null;
-      RegistryKey keyCLSID = null;
-      RegistryKey key1 = null;
-      RegistryKey key2 = null;
-      RegistryKey key3 = null;
-      RegistryKey key4 = null;
-
-      RegistryValueKind applicationFileNameKind = RegistryValueKind.String;
-      string applicationFileName = System.Reflection.Assembly.GetEntryAssembly().Location;
-      if (wowMode == WOW_Mode.Reg32)
-      {
-        var p = System.IO.Path.GetFileNameWithoutExtension(applicationFileName);
-        applicationFileName = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(applicationFileName), p + "32.exe");
-      }
-
-      string programFilesPath = System.Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
-      if (applicationFileName.ToUpperInvariant().StartsWith(programFilesPath.ToUpperInvariant()))
-      {
-        applicationFileNameKind = RegistryValueKind.ExpandString;
-        applicationFileName = "%ProgramFiles%" + applicationFileName.Substring(programFilesPath.Length);
-      }
-
+      RegistryKey keySW = null, keyCR = null, keyCLSID = null, key1 = null, key2 = null, key3 = null, key4 = null;
       try
       {
         keySW = rootKey.CreateSubKey("Software", wowMode);
@@ -415,6 +415,7 @@ namespace Altaxo.Com
           // Register the project file extension
           key1 = keyCR.CreateSubKey(".axoprj", wowMode);
           key1.SetValue(null, "Altaxo.Project");
+          key1.Close();
         }
 
         {
@@ -425,10 +426,16 @@ namespace Altaxo.Com
           key2 = key1.CreateSubKey("CLSID");
           var fileComObject_IID = typeof(ProjectFileComObject).GUID.ToString("B").ToUpperInvariant();
           key2.SetValue(null, fileComObject_IID);
+          key2.Close();
+
           key2 = key1.CreateSubKey("shell");
           key3 = key2.CreateSubKey("open");
           key4 = key3.CreateSubKey("command");
           key4.SetValue(null, string.Format("\"{0}\" \"%1\"", applicationFileName), applicationFileNameKind);
+          key4.Close();
+          key3.Close();
+          key2.Close();
+          key1.Close();
         }
 
         {
@@ -438,101 +445,173 @@ namespace Altaxo.Com
           key2 = key1.CreateSubKey("LocalServer32");
           key2.SetValue(null, applicationFileName, applicationFileNameKind);
         }
-
-        {
-          key1 = keyCR.CreateSubKey("AppID", wowMode);
-          key2 = key1.CreateSubKey(typeof(GraphDocumentEmbeddedComObject).GUID.ToString("B").ToUpperInvariant(), wowMode);
-          key2.SetValue(null, GraphDocumentEmbeddedComObject.USER_TYPE);
-          key2.SetValue("PreferredServerBitness", 3, RegistryValueKind.DWord);
-        }
-
-        {
-          // register the Graph document embedded object (note that this is an Altaxo mini project)
-          key1 = keyCR.CreateSubKey(GraphDocumentEmbeddedComObject.USER_TYPE, wowMode);
-          key1.SetValue(null, GraphDocumentEmbeddedComObject.USER_TYPE_LONG);
-          key2 = key1.CreateSubKey("CLSID");
-          key2.SetValue(null, typeof(GraphDocumentEmbeddedComObject).GUID.ToString("B").ToUpperInvariant());
-          key2 = key1.CreateSubKey("Insertable");
-        }
-
-        {
-          // publish CLSID of file GraphDocumentEmbeddedObject and associate it with the application
-          key1 = keyCLSID.CreateSubKey(typeof(GraphDocumentEmbeddedComObject).GUID.ToString("B").ToUpperInvariant(), wowMode);
-          key1.SetValue(null, GraphDocumentEmbeddedComObject.USER_TYPE_LONG);
-
-          key2 = key1.CreateSubKey("LocalServer32");
-          key2.SetValue(null, applicationFileName, applicationFileNameKind);
-
-          key2 = key1.CreateSubKey("InprocHandler32");
-          key2.SetValue(null, "OLE32.DLL"); // The entry InprocHandler32 is neccessary! Without this entry Word does not start the server. (Brockschmidt Inside Ole 2nd ed. says that it isn't neccessary).
-
-          key2 = key1.CreateSubKey("ProgID");
-          key2.SetValue(null, GraphDocumentEmbeddedComObject.USER_TYPE);
-
-          key2 = key1.CreateSubKey("VersionIndependentProgID");
-          key2.SetValue(null, "Altaxo.Graph");
-
-          key2 = key1.CreateSubKey("Insertable");
-
-          key2 = key1.CreateSubKey("DataFormats");
-          key3 = key2.CreateSubKey("GetSet");
-          key4 = key3.CreateSubKey("0");
-          key4.SetValue(null, "14,9,64,1"); // EnhMetafile on ENHMF in get-direction
-
-          key4 = key3.CreateSubKey("1");
-          key4.SetValue(null, "2,9,1,1"); // Bitmap on HGlobal in get-direction
-
-          key2 = key1.CreateSubKey("DefaultIcon");
-          key2.SetValue(null, string.Format("{0},0", applicationFileName), applicationFileNameKind);
-
-          key2 = key1.CreateSubKey("verb");
-          key3 = key2.CreateSubKey("0");
-          key3.SetValue(null, "&Edit,0,2");
-
-          key3 = key2.CreateSubKey("-1");
-          key3.SetValue(null, "Show,0,0");
-
-          key3 = key2.CreateSubKey("-2");
-          key3.SetValue(null, "Open,0,0");
-
-          key3 = key2.CreateSubKey("-3");
-          key3.SetValue(null, "Hide,0,1");
-
-          key2 = key1.CreateSubKey("AuxUserType");
-          key3 = key2.CreateSubKey("2");
-          key3.SetValue(null, "Altaxo");
-
-          key3 = key2.CreateSubKey("3");
-          key3.SetValue(null, "Altaxo Graph Document");
-
-          key2 = key1.CreateSubKey("MiscStatus"); // see Brockschmidt, Inside Ole 2nd ed. page 832
-          key2.SetValue(null, ((int)(OLEMISC.OLEMISC_CANTLINKINSIDE)).ToString(System.Globalization.CultureInfo.InvariantCulture)); // DEFAULT: OLEMISC_CANTLINKINSIDE
-
-          key3 = key2.CreateSubKey(((int)DVASPECT.DVASPECT_CONTENT).ToString(System.Globalization.CultureInfo.InvariantCulture)); // For DVASPECT_CONTENT
-          key3.SetValue(null, ((int)(OLEMISC.OLEMISC_CANTLINKINSIDE | OLEMISC.OLEMISC_RENDERINGISDEVICEINDEPENDENT)).ToString(System.Globalization.CultureInfo.InvariantCulture));  // OLEMISC_RECOMPOSEONRESIZE | OLEMISC_CANTLINKINSIDE
-        }
-      }
-      catch (Exception ex)
-      {
-        MessageBox.Show("Error while registering the server:\n" + ex.ToString());
-        throw;
       }
       finally
       {
-        if (key4 is not null)
-          key4.Close();
-        if (key3 is not null)
-          key3.Close();
-        if (key2 is not null)
-          key2.Close();
-        if (key1 is not null)
-          key1.Close();
-        if (keyCLSID is not null)
-          keyCLSID.Close();
-        if (keyCR is not null)
-          keyCR.Close();
-        if (keySW is not null)
-          keySW.Close();
+        key4?.Close();
+        key3?.Close();
+        key2?.Close();
+        key1?.Close();
+        keyCLSID?.Close();
+        keyCR?.Close();
+        keySW?.Close();
+      }
+    }
+
+    public void RegisterGraphClass(RegistryKey rootKey, WOW_Mode wowMode, string applicationFileName, RegistryValueKind applicationFileNameKind)
+    {
+      RegistryKey keySW = null, keyCR = null, key1 = null, key2 = null, key3 = null, key4 = null, key5 = null;
+      try
+      {
+        keySW = rootKey.CreateSubKey("Software", wowMode);
+        keyCR = keySW.CreateSubKey("Classes", wowMode);
+
+        // register the Graph document embedded object (note that this is an Altaxo mini project)
+        key1 = keyCR.CreateSubKey(GraphDocumentEmbeddedComObject.USER_TYPE, wowMode);
+        key1.SetValue(null, GraphDocumentEmbeddedComObject.USER_TYPE_LONG);
+        key2 = key1.CreateSubKey("CLSID");
+        key2.SetValue(null, typeof(GraphDocumentEmbeddedComObject).GUID.ToString("B").ToUpperInvariant());
+
+        key2.Close();
+        key2 = key1.CreateSubKey("Insertable");
+        key2.SetValue(null, "");
+
+        key2.Close();
+        key2 = key1.CreateSubKey("protocol");
+        key3 = key2.CreateSubKey("StdFileEditing");
+        key4 = key3.CreateSubKey("server");
+        key4.SetValue(null, applicationFileName, applicationFileNameKind);
+
+        key4.Close();
+        key4 = key3.CreateSubKey("verb");
+        key5 = key4.CreateSubKey("0");
+        key5.SetValue(null, "&Edit");
+
+        key5.Close();
+        key4.Close();
+        key3.Close();
+        key2.Close();
+        key2 = key1.CreateSubKey("shell");
+        key3 = key2.CreateSubKey("open");
+        key4 = key3.CreateSubKey("command");
+        key4.SetValue(null, applicationFileName + "/dde");
+
+        key4.Close();
+        key4 = key3.CreateSubKey("ddeexec");
+        key4.SetValue(null, "[open(\"%1\")]");
+      }
+      finally
+      {
+        key5?.Close();
+        key4?.Close();
+        key3?.Close();
+        key2?.Close();
+        key1?.Close();
+        keyCR?.Close();
+        keySW?.Close();
+      }
+    }
+
+
+    public void RegisterGraphClassID(RegistryKey rootKey, WOW_Mode wowMode, string applicationFileName, RegistryValueKind applicationFileNameKind)
+    {
+      RegistryKey keySW = null, keyCR = null, keyCLSID = null, key1 = null, key2 = null, key3 = null, key4 = null;
+      try
+      {
+        keySW = rootKey.CreateSubKey("Software", wowMode);
+        keyCR = keySW.CreateSubKey("Classes", wowMode);
+        keyCLSID = keyCR.CreateSubKey("CLSID", wowMode);
+
+        // publish CLSID of file GraphDocumentEmbeddedObject and associate it with the application
+        key1 = keyCLSID.CreateSubKey(typeof(GraphDocumentEmbeddedComObject).GUID.ToString("B").ToUpperInvariant(), wowMode);
+        key1.SetValue(null, GraphDocumentEmbeddedComObject.USER_TYPE_LONG);
+
+        key2 = key1.CreateSubKey("AuxUserType");
+        key3 = key2.CreateSubKey("2");
+        key3.SetValue(null, "Altaxo.Graph.0");
+        key3 = key2.CreateSubKey("3");
+        key3.SetValue(null, "Altaxo graph object");
+        key3.Close();
+        key2.Close();
+
+        key2 = key1.CreateSubKey("DefaultIcon");
+        key2.SetValue(null, string.Format("{0},0", applicationFileName), applicationFileNameKind);
+        key2.Close();
+
+        key2 = key1.CreateSubKey("InprocHandler32");
+        key2.SetValue(null, "ole32.dll"); // The entry InprocHandler32 is neccessary! Without this entry Word does not start the server. (Brockschmidt Inside Ole 2nd ed. says that it isn't neccessary).
+        key2.Close();
+
+        key2 = key1.CreateSubKey("Insertable");
+        key2.SetValue(null, "");
+        key2.Close();
+
+        key2 = key1.CreateSubKey("LocalServer32");
+        key2.SetValue(null, applicationFileName, applicationFileNameKind);
+        key2.Close();
+
+        key2 = key1.CreateSubKey("MiscStatus"); // see Brockschmidt, Inside Ole 2nd ed. page 832
+        key2.SetValue(null, ((int)(OLEMISC.OLEMISC_CANTLINKINSIDE)).ToString(System.Globalization.CultureInfo.InvariantCulture)); // DEFAULT: OLEMISC_CANTLINKINSIDE
+        key2.Close();
+
+        key2 = key1.CreateSubKey("ProgID");
+        key2.SetValue(null, GraphDocumentEmbeddedComObject.USER_TYPE);
+        key2.Close();
+
+        /*
+        key2 = key1.CreateSubKey("VersionIndependentProgID");
+        key2.SetValue(null, "Altaxo.Graph");
+        */
+
+        key2 = key1.CreateSubKey("verb");
+        key3 = key2.CreateSubKey("0");
+        key3.SetValue(null, "&Edit,0,2");
+        key3.Close();
+
+        key3 = key2.CreateSubKey("1");
+        key3.SetValue(null, "&Open,0,2");
+        key3.Close();
+        key2.Close();
+
+
+        /*
+        key3 = key2.CreateSubKey("-1");
+        key3.SetValue(null, "Show,0,0");
+
+        key3 = key2.CreateSubKey("-2");
+        key3.SetValue(null, "Open,0,0");
+
+        key3 = key2.CreateSubKey("-3");
+        key3.SetValue(null, "Hide,0,1");
+        */
+
+        key2 = key1.CreateSubKey("DataFormats");
+        key3 = key2.CreateSubKey("GetSet");
+        key4 = key3.CreateSubKey("0");
+        key4.SetValue(null, "14,9,64,1"); // EnhMetafile on ENHMF in get-direction
+        key4.Close();
+
+        key4 = key3.CreateSubKey("1");
+        key4.SetValue(null, "2,9,1,1"); // Bitmap on HGlobal in get-direction
+        key4.Close();
+        key3.Close();
+
+
+        key3 = key2.CreateSubKey(((int)DVASPECT.DVASPECT_CONTENT).ToString(System.Globalization.CultureInfo.InvariantCulture)); // For DVASPECT_CONTENT
+        key3.SetValue(null, ((int)(OLEMISC.OLEMISC_CANTLINKINSIDE | OLEMISC.OLEMISC_RENDERINGISDEVICEINDEPENDENT)).ToString(System.Globalization.CultureInfo.InvariantCulture));  // OLEMISC_RECOMPOSEONRESIZE | OLEMISC_CANTLINKINSIDE
+        key3.Close();
+        key2.Close();
+        key1.Close();
+      }
+      finally
+      {
+        key4?.Close();
+        key3?.Close();
+        key2?.Close();
+        key1?.Close();
+        keyCLSID?.Close();
+        keyCR?.Close();
+        keySW?.Close();
       }
     }
 
