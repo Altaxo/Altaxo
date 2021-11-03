@@ -58,6 +58,9 @@ rmdir /S /Q .\Altaxo\Startup\bin
 rmdir /S /Q .\Altaxo\Startup32\obj
 rmdir /S /Q .\Altaxo\Startup32\bin
 
+rmdir /S /Q .\Altaxo\Startup64\obj
+rmdir /S /Q .\Altaxo\Startup64\bin
+
 rmdir /S /Q .\Altaxo\Workbench\obj
 rmdir /S /Q .\Altaxo\Workbench\bin
 
