@@ -129,6 +129,26 @@ namespace Altaxo.Geometry
       M44 = m44;
     }
 
+    public Matrix4x4(Matrix4x3 a)
+    {
+      M11 = a.M11;
+      M12 = a.M12;
+      M13 = a.M13;
+      M14 = a.M14;
+      M21 = a.M21;
+      M22 = a.M22;
+      M23 = a.M23;
+      M24 = a.M24;
+      M31 = a.M31;
+      M32 = a.M32;
+      M33 = a.M33;
+      M34 = a.M34;
+      M41 = a.M41;
+      M42 = a.M42;
+      M43 = a.M43;
+      M44 = a.M44;
+    }
+
     /// <summary>
     /// Transforms the specified point <paramref name="p"/>. For a point transform, the offset elements M41..M43 are used.
     /// The transformation is carried out as a prepend transformation, i.e. result = p * matrix (p considered as horizontal vector).
@@ -164,6 +184,42 @@ namespace Altaxo.Geometry
         l.M41 * M11 + l.M42 * M21 + l.M43 * M31 + M41, l.M41 * M12 + l.M42 * M22 + l.M43 * M32 + M42, l.M41 * M13 + l.M42 * M23 + l.M43 * M33 + M43, l.M41 * M14 + l.M42 * M24 + l.M43 * M34 + M44
    );
     }
+
+    public (Matrix4x4 Q, Matrix4x4 R) ToQRDecomposition()
+    {
+      var a1 = new VectorD4D(M11, M21, M31, M41);
+      var c1 = a1;
+      var e1 = c1.Normalized;
+
+      var a2 = new VectorD4D(M12, M22, M32, M42);
+      var c2 = a2 - VectorD4D.DotProduct(a2, e1) * e1;
+      var e2 = c2.Normalized;
+
+      var a3 = new VectorD4D(M13, M23, M33, M43);
+      var c3 = a3 - VectorD4D.DotProduct(a3, e1) * e1 - VectorD4D.DotProduct(a3, e2) * e2;
+      var e3 = c3.Normalized;
+
+      var a4 = new VectorD4D(M14, M24, M34, M44);
+      var c4 = a4 - VectorD4D.DotProduct(a4, e1) * e1 - VectorD4D.DotProduct(a4, e2) * e2 - VectorD4D.DotProduct(a4, e3) * e3;
+      var e4 = c4.Normalized;
+
+      var q = new Matrix4x4(
+        e1.X, e2.X, e3.X, e4.X,
+        e1.Y, e2.Y, e3.Y, e4.Y,
+        e1.Z, e2.Z, e3.Z, e4.Z,
+        e1.W, e2.W, e3.W, e4.W
+        );
+
+      var r = new Matrix4x4(
+        VectorD4D.DotProduct(a1, e1), VectorD4D.DotProduct(a2, e1), VectorD4D.DotProduct(a3, e1), VectorD4D.DotProduct(a4, e1),
+        0,                            VectorD4D.DotProduct(a2, e2), VectorD4D.DotProduct(a3, e2), VectorD4D.DotProduct(a4, e2),
+        0,                            0,                            VectorD4D.DotProduct(a3, e3), VectorD4D.DotProduct(a4, e3),
+        0,                            0,                            0,                            VectorD4D.DotProduct(a4, e4)
+        );
+
+      return (q, r);
+    }
+
 
     public override string ToString()
     {

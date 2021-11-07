@@ -77,5 +77,40 @@ namespace Altaxo.Geometry
       AssertEx.AreEqual(Math.PI/6, rot.Y, 1E-8, 1E-8);
       AssertEx.AreEqual(Math.PI/4, rot.Z, 1E-8, 1E-8);
     }
+
+
+    [Fact]
+    public void TestQRDecomposition()
+    {
+      var m = new Matrix3x3(1, 1, 0, 1, 0, 1, 0, 1, 1);
+      var (q, r) = m.ToQRDecomposition();
+
+      AssertEx.AreEqual(1 / Math.Sqrt(2), q.M11, 1E-8, 1E-8);
+      AssertEx.AreEqual(1 / Math.Sqrt(6), q.M12, 1E-8, 1E-8);
+      AssertEx.AreEqual(-1 / Math.Sqrt(3), q.M13, 1E-8, 1E-8);
+
+      AssertEx.AreEqual(1 / Math.Sqrt(2), q.M21, 1E-8, 1E-8);
+      AssertEx.AreEqual(-1 / Math.Sqrt(6), q.M22, 1E-8, 1E-8);
+      AssertEx.AreEqual(1 / Math.Sqrt(3), q.M23, 1E-8, 1E-8);
+
+      AssertEx.AreEqual(0, q.M31, 1E-8, 1E-8);
+      AssertEx.AreEqual(2 / Math.Sqrt(6), q.M32, 1E-8, 1E-8);
+      AssertEx.AreEqual(1 / Math.Sqrt(3), q.M33, 1E-8, 1E-8);
+
+      // Test R
+
+      AssertEx.AreEqual(2 / Math.Sqrt(2), r.M11, 1E-8, 1E-8);
+      AssertEx.AreEqual(1 / Math.Sqrt(2), r.M12, 1E-8, 1E-8);
+      AssertEx.AreEqual(1 / Math.Sqrt(2), r.M13, 1E-8, 1E-8);
+
+      AssertEx.AreEqual(0, r.M21, 1E-8, 1E-8);
+      AssertEx.AreEqual(3 / Math.Sqrt(6), r.M22, 1E-8, 1E-8);
+      AssertEx.AreEqual(1 / Math.Sqrt(6), r.M23, 1E-8, 1E-8);
+
+      AssertEx.AreEqual(0, r.M31, 1E-8, 1E-8);
+      AssertEx.AreEqual(0, r.M32, 1E-8, 1E-8);
+      AssertEx.AreEqual(2 / Math.Sqrt(3), r.M33, 1E-8, 1E-8);
+
+    }
   }
 }
