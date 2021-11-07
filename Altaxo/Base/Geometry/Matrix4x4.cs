@@ -185,7 +185,12 @@ namespace Altaxo.Geometry
    );
     }
 
-    public (Matrix4x4 Q, Matrix4x4 R) ToQRDecomposition()
+    /// <summary>
+    /// Decomposes this matrix into a product Q*R, in which  Q is an orthonormal matrix, and R is an upper triangular matrix,
+    /// using the Gram–Schmidt process. This process is also known as QR-decomposition (<see href="https://en.wikipedia.org/wiki/QR_decomposition#QL,_RQ_and_LQ_decompositions"/>).
+    /// </summary>
+    /// <returns>The two matrices Q (orthonormal) and R (upper triangular).</returns>
+    public (Matrix4x4 Q, Matrix4x4 R) DecomposeIntoQR()
     {
       var a1 = new VectorD4D(M11, M21, M31, M41);
       var c1 = a1;
@@ -204,22 +209,63 @@ namespace Altaxo.Geometry
       var e4 = c4.Normalized;
 
       var q = new Matrix4x4(
-        e1.X, e2.X, e3.X, e4.X,
-        e1.Y, e2.Y, e3.Y, e4.Y,
-        e1.Z, e2.Z, e3.Z, e4.Z,
-        e1.W, e2.W, e3.W, e4.W
-        );
+                e1.X, e2.X, e3.X, e4.X,
+                e1.Y, e2.Y, e3.Y, e4.Y,
+                e1.Z, e2.Z, e3.Z, e4.Z,
+                e1.W, e2.W, e3.W, e4.W
+                );
 
       var r = new Matrix4x4(
-        VectorD4D.DotProduct(a1, e1), VectorD4D.DotProduct(a2, e1), VectorD4D.DotProduct(a3, e1), VectorD4D.DotProduct(a4, e1),
-        0,                            VectorD4D.DotProduct(a2, e2), VectorD4D.DotProduct(a3, e2), VectorD4D.DotProduct(a4, e2),
-        0,                            0,                            VectorD4D.DotProduct(a3, e3), VectorD4D.DotProduct(a4, e3),
-        0,                            0,                            0,                            VectorD4D.DotProduct(a4, e4)
-        );
+                VectorD4D.DotProduct(a1, e1), VectorD4D.DotProduct(a2, e1), VectorD4D.DotProduct(a3, e1), VectorD4D.DotProduct(a4, e1),
+                0,                            VectorD4D.DotProduct(a2, e2), VectorD4D.DotProduct(a3, e2), VectorD4D.DotProduct(a4, e2),
+                0,                            0,                            VectorD4D.DotProduct(a3, e3), VectorD4D.DotProduct(a4, e3),
+                0,                            0,                            0,                            VectorD4D.DotProduct(a4, e4)
+                );
 
       return (q, r);
     }
 
+
+    /// <summary>
+    /// Decomposes this matrix into a product R*Q, in which R is an upper triangular matrix, and Q is an orthonormal matrix,
+    /// using the Gram–Schmidt process. This process is also known as RQ-decomposition (<see href="https://en.wikipedia.org/wiki/QR_decomposition#QL,_RQ_and_LQ_decompositions"/>).
+    /// </summary>
+    /// <returns>The two matrices R (upper triangular) and Q (orthonormal).</returns>
+
+    public (Matrix4x4 R, Matrix4x4 Q) DecomposeIntoRQ()
+    {
+      var a1 = new VectorD4D(M41, M42, M43, M44);
+      var c1 = a1;
+      var e1 = c1.Normalized;
+
+      var a2 = new VectorD4D(M31, M32, M33, M34);
+      var c2 = a2 - VectorD4D.DotProduct(a2, e1) * e1;
+      var e2 = c2.Normalized;
+
+      var a3 = new VectorD4D(M21, M22, M23, M24);
+      var c3 = a3 - VectorD4D.DotProduct(a3, e1) * e1 - VectorD4D.DotProduct(a3, e2) * e2;
+      var e3 = c3.Normalized;
+
+      var a4 = new VectorD4D(M11, M12, M13, M14);
+      var c4 = a4 - VectorD4D.DotProduct(a4, e1) * e1 - VectorD4D.DotProduct(a4, e2) * e2 - VectorD4D.DotProduct(a4, e3) * e3;
+      var e4 = c4.Normalized;
+
+      var q = new Matrix4x4(
+                e4.X, e4.Y, e4.Z, e4.W,
+                e3.X, e3.Y, e3.Z, e3.W,
+                e2.X, e2.Y, e2.Z, e2.W,
+                e1.X, e1.Y, e1.Z, e1.W
+                );
+
+      var r = new Matrix4x4(
+                VectorD4D.DotProduct(a4, e4), VectorD4D.DotProduct(a4, e3), VectorD4D.DotProduct(a4, e2), VectorD4D.DotProduct(a4, e1),
+                0,                            VectorD4D.DotProduct(a3, e3), VectorD4D.DotProduct(a3, e2), VectorD4D.DotProduct(a3, e1),
+                0,                            0,                            VectorD4D.DotProduct(a2, e2), VectorD4D.DotProduct(a2, e1),
+                0,                            0,                            0,                            VectorD4D.DotProduct(a1, e1)
+                );
+
+      return (r, q);
+    }
 
     public override string ToString()
     {

@@ -543,7 +543,12 @@ namespace Altaxo.Geometry
 
     #region Decomposition into shear, scale, and rotation
 
-    public (Matrix3x3 Q, Matrix3x3 R) ToQRDecomposition()
+    /// <summary>
+    /// Decomposes this matrix into a product Q*R, in which  Q is an orthonormal matrix, and R is an upper triangular matrix,
+    /// using the Gram–Schmidt process.  This process is also known as QR-decomposition (<see href="https://en.wikipedia.org/wiki/QR_decomposition#QL,_RQ_and_LQ_decompositions"/>).
+    /// </summary>
+    /// <returns>The two matrices Q (orthonormal) and R (upper triangular).</returns>
+    public (Matrix3x3 Q, Matrix3x3 R) DecomposeIntoQR()
     {
       var a1 = new VectorD3D(M11, M21, M31);
       var c1 = a1;
@@ -572,6 +577,39 @@ namespace Altaxo.Geometry
       return (q, r);
     }
 
+    /// <summary>
+    /// Decomposes this matrix into a product R*Q, in which R is an upper triangular matrix, and Q is an orthonormal matrix,
+    /// using the Gram–Schmidt process. This process is also known as RQ-decomposition (<see href="https://en.wikipedia.org/wiki/QR_decomposition#QL,_RQ_and_LQ_decompositions"/>).
+    /// </summary>
+    /// <returns>The two matrices R (upper triangular) and Q (orthonormal).</returns>
+    public (Matrix3x3 R, Matrix3x3 Q) DecomposeIntoRQ()
+    {
+      var a1 = new VectorD3D(M31, M32, M33);
+      var c1 = a1;
+      var e1 = c1.Normalized;
+
+      var a2 = new VectorD3D(M21, M22, M23);
+      var c2 = a2 - VectorD3D.DotProduct(a2, e1) * e1;
+      var e2 = c2.Normalized;
+
+      var a3 = new VectorD3D(M11, M12, M13);
+      var c3 = a3 - VectorD3D.DotProduct(a3, e1) * e1 - VectorD3D.DotProduct(a3, e2) * e2;
+      var e3 = c3.Normalized;
+
+      var q = new Matrix3x3(
+                e3.X, e3.Y, e3.Z,
+                e2.X, e2.Y, e2.Z,
+                e1.X, e1.Y, e1.Z
+                );
+
+      var r = new Matrix3x3(
+                VectorD3D.DotProduct(a3, e3), VectorD3D.DotProduct(a3, e2), VectorD3D.DotProduct(a3, e1),
+                0,                            VectorD3D.DotProduct(a2, e2), VectorD3D.DotProduct(a2, e1),
+                0,                            0,                            VectorD3D.DotProduct(a1, e1)
+          );
+ 
+      return (r, q);
+    }
 
     /// <summary>
     /// Decomposes the matrix into its rotations (in radian), shear and scale components.
@@ -579,33 +617,27 @@ namespace Altaxo.Geometry
     /// <returns>The 3 rotations (in radian), the 3 shear components, and 3 scale components.</returns>
     public (VectorD3D scale, VectorD3D shear, VectorD3D rotationRadian) DecomposeIntoScaleShearRotationRadian()
     {
-      // we use the following
-      // a QR decompostion would give us a rotation times a upper triangular matrix - but the order of the matrices is exchanged
-      // therefore, we need to make the QR decomposition of the inverse matrix, and then invert both results
+      // the RQ decomposition gives us a upper triangular matrix R and a rotation (orthonormal) matrix Q
+      // the diagonal elements of the upper triangular matrix are the scales
+      var (r, q) = DecomposeIntoRQ();
 
-      var inv = Inverse;
-      var (q1, u1) = inv.ToQRDecomposition();
-      var uu = u1.Inverse;
-      var qq = q1.Inverse;
+      VectorD3D scales = new VectorD3D(Math.Abs(r.M11), Math.Abs(r.M22), Math.Abs(r.M33)); // diagonal elements of upper triangular matrix
+      VectorD3D shears = new VectorD3D(r.M23 / r.M22, r.M13 / r.M11, r.M12 / r.M11);
 
-      VectorD3D scales = new VectorD3D(Math.Abs(uu.M11), Math.Abs(uu.M22), Math.Abs(uu.M33));
-      VectorD3D shears = new VectorD3D(uu.M23 / uu.M22, uu.M13 / uu.M11, uu.M12 / uu.M11);
+      // we must modify q by scaling all that rows with -1, for which u[i,i] is negative
+      // so that all diagonal elements of the rotation matrix become positive
+      var s1 = r.M11 < 0 ? -1 : 1;
+      var s2 = r.M22 < 0 ? -1 : 1;
+      var s3 = r.M33 < 0 ? -1 : 1;
 
-      // we must modify q by scaling all that rows with -1, for which u[i,i] was negative
-
-      var s1 = uu.M11 < 0 ? -1 : 1;
-      var s2 = uu.M22 < 0 ? -1 : 1;
-      var s3 = uu.M33 < 0 ? -1 : 1;
-
-      var qqq = new Matrix3x3(
-        s1 * qq.M11, s1 * qq.M12, s1 * qq.M13,
-        s2 * qq.M21, s2 * qq.M22, s2 * qq.M23,
-        s3 * qq.M31, s3 * qq.M32, s3 * qq.M33
+      var qmod = new Matrix3x3(
+        s1 * q.M11, s1 * q.M12, s1 * q.M13,
+        s2 * q.M21, s2 * q.M22, s2 * q.M23,
+        s3 * q.M31, s3 * q.M32, s3 * q.M33
         );
 
-
       // now, we must extract the rotations
-      var rotations = qqq.DecomposeIntoRotations();
+      var rotations = qmod.DecomposeIntoRotations();
 
       return (scales, shears, rotations);
     }
