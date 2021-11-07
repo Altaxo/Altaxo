@@ -719,9 +719,9 @@ namespace Altaxo.Collections
     public void Add<T>(SelectableListNode node, Action<T>? docAddAction)
     {
       base.Add(node);
-#pragma warning disable CS8604 // Possible null reference argument.
+#pragma warning disable CS8600,CS8604 // Possible null reference argument.
       docAddAction?.Invoke((T)node.Tag);
-#pragma warning restore CS8604 // Possible null reference argument.
+#pragma warning restore CS8600,CS8604 // Possible null reference argument.
     }
   }
 

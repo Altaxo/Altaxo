@@ -42,6 +42,7 @@ namespace Altaxo.Main.Properties
     /// <typeparam name="T">Type of the property value.</typeparam>
     /// <param name="p">The property key.</param>
     /// <returns>The property.</returns>
+    [return: MaybeNull]
     T GetValue<T>(PropertyKey<T> p);
 
     /// <summary>
@@ -62,7 +63,7 @@ namespace Altaxo.Main.Properties
     /// <param name="p">The property key.</param>
     /// <param name="value">If successfull, on return this value contains the property value.</param>
     /// <returns><c>True</c> if the property could be successfully retrieved, otherwise <c>false</c>.</returns>
-    bool TryGetValue<T>(PropertyKey<T> p, out T value);
+    bool TryGetValue<T>(PropertyKey<T> p, [MaybeNull] out T value);
 
     /// <summary>
     /// Gets the property keys in this bag.

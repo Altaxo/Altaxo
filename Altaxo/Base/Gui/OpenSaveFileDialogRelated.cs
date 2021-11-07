@@ -140,4 +140,15 @@ namespace Altaxo.Gui
     /// </value>
     public string DefaultExt { get; set; } = string.Empty;
   }
+
+  public class FolderChoiceOptions
+  {
+    public string SelectedPath { get; set; } = string.Empty;
+
+    public bool ShowNewFolderButton { get; set; } = true;
+
+    public string Description { get; set; } = string.Empty;
+
+    public System.Environment.SpecialFolder? RootFolder { get; set; }
+  }
 }

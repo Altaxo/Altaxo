@@ -326,10 +326,18 @@ namespace Altaxo.Main.Properties
       if (_propertiesLazyLoaded.Contains(p.GuidString) && _properties.TryGetValue(p.GuidString, out var obj) && obj is string xml && !ConvertFromLazy(p.GuidString, xml))
         return default;
 
-      if (_properties.ContainsKey(p.GuidString))
-        return (T)_properties[p.GuidString];
+      if (_properties.TryGetValue(p.GuidString, out var res))
+      {
+        if (res is T t)
+          return t;
+        else if (res is null && !(typeof(T).IsValueType))
+          return (T)res!;
+        else throw new InvalidOperationException($"Property key {p} was expected to have a value of type {typeof(T)}, but was {res?.GetType()}");
+      }
       else
+      {
         throw new KeyNotFoundException(string.Format("The property key {0} was not found in this collection", p.PropertyName));
+      }
     }
 
     [return: MaybeNull]
@@ -338,10 +346,18 @@ namespace Altaxo.Main.Properties
       if (_propertiesLazyLoaded.Contains(p.GuidString) && _properties.TryGetValue(p.GuidString, out var obj) && obj is string xml && !ConvertFromLazy(p.GuidString, xml))
         return defaultValue;
 
-      if (_properties.ContainsKey(p.GuidString))
-        return (T)_properties[p.GuidString];
+      if (_properties.TryGetValue(p.GuidString, out var res))
+      {
+        if (res is T t)
+          return t;
+        else if (res is null && !(typeof(T).IsValueType))
+          return (T)res!;
+        else throw new InvalidOperationException($"Property key {p} was expected to have a value of type {typeof(T)}, but was {res?.GetType()}");
+      }
       else
+      {
         return defaultValue;
+      }
     }
 
     /// <summary>

@@ -152,6 +152,8 @@ namespace Altaxo.Main.Services
 
     bool ShowSaveFileDialog(SaveFileOptions options);
 
+    bool ShowFolderDialog(FolderChoiceOptions options);
+
     bool YesNoMessageBox(string txt, string caption, bool defaultanswer);
 
     /// <summary>

@@ -56,6 +56,14 @@ namespace Altaxo.Gui.Workbench
       }
     }
 
+    /// <summary>
+    /// Occurs when the project is already closed and the rest of the shutdown procedure starts to happen.
+    /// This is a weak event in order to prevent garbage collection of item that subscribe to this event.
+    /// The event is raised during stage 3 <see cref="OnClosingStage3_SignalShutdownToken"/>. The tasks are executed
+    /// in parallel on thread-pool threads, thus make sure that the event handlers are thread-safe.
+    /// </summary>
+    public WeakAsynchronousEvent ClosedAsync { get; } = new WeakAsynchronousEvent();
+
     public CancellationToken ShutdownToken
     {
       get { return _shutdownCancellationTokenSource.Token; }
@@ -204,6 +212,7 @@ namespace Altaxo.Gui.Workbench
     {
       SignalShutdownToken();
       _closedEvent.Target?.Invoke(this, EventArgs.Empty);
+      ClosedAsync.InvokeParallel(CancellationToken.None).Wait();
     }
 
     protected virtual void OnClosingStage4_CloseAllViews()

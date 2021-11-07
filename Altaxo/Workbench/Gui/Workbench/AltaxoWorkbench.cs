@@ -850,7 +850,7 @@ new Altaxo.Main.Properties.PropertyKey<string>(
       }
     }
 
-    public void EhProjectChanged(object sender, ProjectEventArgs e)
+    public void EhProjectChanged(object? sender, ProjectEventArgs e)
     {
       switch (e.ProjectEventKind)
       {

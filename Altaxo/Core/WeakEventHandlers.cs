@@ -154,7 +154,7 @@ namespace Altaxo
       }
     }
 
-    /// <summary>Gets the event source. Attention! Use the returned value only locally, otherwise, you will get a dependence that you wanted to avoid.</summary>
+    /// <summary>Gets the event source. Attention! Use the returned value only locally, otherwise, you will get a strong reference that you wanted to avoid.</summary>
     public object? EventSource => _eventSource?.Target;
 
     /// <summary>Removes the event handler from the event source, using the stored remove action..</summary>

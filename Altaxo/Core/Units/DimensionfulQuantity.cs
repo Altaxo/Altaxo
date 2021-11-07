@@ -361,6 +361,26 @@ namespace Altaxo.Units
       return !(a == b);
     }
 
+    public static bool operator <(DimensionfulQuantity a, DimensionfulQuantity b)
+    {
+      return a.CompareTo(b) < 0;
+    }
+    public static bool operator >(DimensionfulQuantity a, DimensionfulQuantity b)
+    {
+      return a.CompareTo(b) > 0;
+    }
+
+    public static bool operator <=(DimensionfulQuantity a, DimensionfulQuantity b)
+    {
+      return a.CompareTo(b) <= 0;
+    }
+
+    public static bool operator >=(DimensionfulQuantity a, DimensionfulQuantity b)
+    {
+      return a.CompareTo(b) >= 0;
+    }
+
+
     /// <summary>
     /// Gets the quantity as treated as unbiased difference value. If the unit of this quantity is not biased, the
     /// return value is exactly this quantity. But if the unit is biased, the return value is the difference of this quantity and the same quantity with zero value.
@@ -468,6 +488,9 @@ namespace Altaxo.Units
 
     public static DimensionfulQuantity operator *(DimensionfulQuantity a, DimensionfulQuantity b)
     {
+      if (a.IsEmpty || b.IsEmpty)
+        return DimensionfulQuantity.Empty;
+
       return new DimensionfulQuantity(
           a.AsValueInSIUnits * b.AsValueInSIUnits,
           SIPrefix.None,
@@ -476,6 +499,9 @@ namespace Altaxo.Units
 
     public static DimensionfulQuantity operator /(DimensionfulQuantity a, DimensionfulQuantity b)
     {
+      if (a.IsEmpty || b.IsEmpty)
+        return DimensionfulQuantity.Empty;
+
       a = a.TreatedAsUnbiasedDifference;
       b = b.TreatedAsUnbiasedDifference;
 
@@ -487,6 +513,9 @@ namespace Altaxo.Units
 
     public static DimensionfulQuantity operator *(DimensionfulQuantity a, double b)
     {
+      if (a.IsEmpty)
+        return DimensionfulQuantity.Empty;
+
       a = a.TreatedAsUnbiasedDifference;
 
       return new DimensionfulQuantity(
@@ -497,6 +526,9 @@ namespace Altaxo.Units
 
     public static DimensionfulQuantity operator /(DimensionfulQuantity a, double b)
     {
+      if (a.IsEmpty)
+        return DimensionfulQuantity.Empty;
+
       a = a.TreatedAsUnbiasedDifference;
 
       return new DimensionfulQuantity(
@@ -507,6 +539,10 @@ namespace Altaxo.Units
 
     public static DimensionfulQuantity operator *(double a, DimensionfulQuantity b)
     {
+      if (b.IsEmpty)
+        return DimensionfulQuantity.Empty;
+
+
       b = b.TreatedAsUnbiasedDifference;
 
       return new DimensionfulQuantity(
@@ -517,6 +553,9 @@ namespace Altaxo.Units
 
     public static DimensionfulQuantity operator /(double a, DimensionfulQuantity b)
     {
+      if (b.IsEmpty)
+        return DimensionfulQuantity.Empty;
+
       b = b.TreatedAsUnbiasedDifference;
 
       (var newPrefix, var remainingFactor) = SIPrefix.FromDivision(SIPrefix.None, b.Prefix);
@@ -529,6 +568,9 @@ namespace Altaxo.Units
 
     public static DimensionfulQuantity operator -(DimensionfulQuantity a)
     {
+      if (a.IsEmpty)
+        return DimensionfulQuantity.Empty;
+
       if (a.Unit is IBiasedUnit)
         throw new ArithmeticException("Can not invert a biased unit");
 
@@ -537,6 +579,9 @@ namespace Altaxo.Units
 
     public static DimensionfulQuantity Abs(DimensionfulQuantity a)
     {
+      if (a.IsEmpty)
+        return DimensionfulQuantity.Empty;
+
       if (a.Unit is IBiasedUnit && a.Value < 0)
         throw new ArithmeticException("Can not invert a biased unit");
 

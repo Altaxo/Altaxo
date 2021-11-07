@@ -78,6 +78,21 @@ namespace Altaxo.Units
     }
 
     /// <summary>
+    /// Gets the units that are compatible to a given SI unit.
+    /// </summary>
+    /// <param name="siUnit">The SI unit.</param>
+    /// <param name="includeSelf">If true, the unit given in the argument is included in the enumeration, if it is a predefined unit.</param>
+    /// <returns>All units compatible to the given SI unit. If argument <paramref name="includeSelf"/> is true, the unit given in the argument <paramref name="siUnit"/> is also included.</returns>
+    public static IEnumerable<(Type Type, UnitDescriptionAttribute DescriptionAttribute)> GetUnits(SIUnit siUnit, bool includeSelf=false)
+    {
+      foreach (var entry in GetAllDefinedUnits())
+      {
+        if (siUnit.IsCompatibleTo(entry.Value) && (includeSelf || !typeof(SIUnit).IsAssignableFrom(entry.Key)))
+          yield return (entry.Key, entry.Value);
+      }
+    }
+
+    /// <summary>
     /// Gets the unit instance for a given type.
     /// </summary>
     /// <param name="type">The type of the unit.</param>
@@ -119,6 +134,36 @@ namespace Altaxo.Units
       foreach (var ty in unitTypes)
       {
         yield return GetUnitInstance(ty);
+      }
+    }
+
+    public static IEnumerable<IUnit> GetValueRateUnits(IEnumerable<IUnit> fixedUnits)
+    {
+      bool wasSomethingYielded = false;
+      IUnit? biasedUnit = null;
+
+      foreach (var valueUnit in fixedUnits)
+      {
+        if (!(valueUnit is IBiasedUnit)) // ignore biased units e.g. °C
+        {
+          yield return new UnitRatioComposite(null, valueUnit, null, Altaxo.Units.Time.Second.Instance);
+          yield return new UnitRatioComposite(null, valueUnit, null, Altaxo.Units.Time.Minute.Instance);
+          yield return new UnitRatioComposite(null, valueUnit, null, Altaxo.Units.Time.Hour.Instance);
+          wasSomethingYielded = true;
+        }
+        else
+        {
+          biasedUnit = valueUnit;
+        }
+      } // end foreach
+
+      // if unit is °C and there is only °C, then we have to include the SI unit
+      if (!wasSomethingYielded && biasedUnit is not null)
+      {
+        var valueUnit = new UnitWithLimitedPrefixes(biasedUnit.SIUnit, new[] { SIPrefix.None });
+        yield return new UnitRatioComposite(null, valueUnit, null, Altaxo.Units.Time.Second.Instance);
+        yield return new UnitRatioComposite(null, valueUnit, null, Altaxo.Units.Time.Minute.Instance);
+        yield return new UnitRatioComposite(null, valueUnit, null, Altaxo.Units.Time.Hour.Instance);
       }
     }
   }

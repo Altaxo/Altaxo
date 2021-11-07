@@ -392,35 +392,65 @@ return System.Windows.Forms.DialogResult.OK == dlgview.ShowDialog(MainWindow);
       }
     }
 
-    #region Clipboard
-
-    /* old WinForm Clipboard wrappers
-
-private class ClipDataWrapper : System.Windows.Forms.DataObject, IClipboardSetDataObject
-{
-    public void SetCommaSeparatedValues(string text) { this.SetData(System.Windows.Forms.DataFormats.CommaSeparatedValue, text); }
-}
-
-private class ClipGetDataWrapper : IClipboardGetDataObject
-{
-    System.Windows.Forms.DataObject _dao;
-
-    public ClipGetDataWrapper(System.Windows.Forms.DataObject value)
+    public override bool ShowFolderDialog(FolderChoiceOptions options)
     {
-        _dao = value;
+      return Current.Dispatcher.InvokeIfRequired(InternalShowFolderDialog, options);
     }
 
-    public string[] GetFormats() { return _dao.GetFormats(); }
-    public bool GetDataPresent(string format) { return _dao.GetDataPresent(format); }
-    public bool GetDataPresent(System.Type type) { return _dao.GetDataPresent(type); }
-    public object GetData(string format) { return _dao.GetData(format); }
-    public object GetData(System.Type type) { return _dao.GetData(type); }
-    public bool ContainsFileDropList() { return _dao.ContainsFileDropList(); }
-    public System.Collections.Specialized.StringCollection GetFileDropList() { return _dao.GetFileDropList(); }
-    public bool ContainsImage() { return _dao.ContainsImage(); }
-    public System.Drawing.Image GetImage() { return _dao.GetImage(); }
-}
-*/
+    private bool InternalShowFolderDialog(FolderChoiceOptions options)
+    {
+      var dlg = new System.Windows.Forms.FolderBrowserDialog()
+      {
+        ShowNewFolderButton = options.ShowNewFolderButton,
+        Description = options.Description,
+      };
+
+      if (options.RootFolder.HasValue)
+        dlg.RootFolder = options.RootFolder.Value;
+      if (!string.IsNullOrEmpty(options.SelectedPath))
+        dlg.SelectedPath = options.SelectedPath;
+
+      if(dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+      {
+        options.SelectedPath = dlg.SelectedPath;
+        return true;
+      }
+      else
+      {
+        return false;
+      }
+
+    }
+
+    #region Clipboard
+
+      /* old WinForm Clipboard wrappers
+
+  private class ClipDataWrapper : System.Windows.Forms.DataObject, IClipboardSetDataObject
+  {
+      public void SetCommaSeparatedValues(string text) { this.SetData(System.Windows.Forms.DataFormats.CommaSeparatedValue, text); }
+  }
+
+  private class ClipGetDataWrapper : IClipboardGetDataObject
+  {
+      System.Windows.Forms.DataObject _dao;
+
+      public ClipGetDataWrapper(System.Windows.Forms.DataObject value)
+      {
+          _dao = value;
+      }
+
+      public string[] GetFormats() { return _dao.GetFormats(); }
+      public bool GetDataPresent(string format) { return _dao.GetDataPresent(format); }
+      public bool GetDataPresent(System.Type type) { return _dao.GetDataPresent(type); }
+      public object GetData(string format) { return _dao.GetData(format); }
+      public object GetData(System.Type type) { return _dao.GetData(type); }
+      public bool ContainsFileDropList() { return _dao.ContainsFileDropList(); }
+      public System.Collections.Specialized.StringCollection GetFileDropList() { return _dao.GetFileDropList(); }
+      public bool ContainsImage() { return _dao.ContainsImage(); }
+      public System.Drawing.Image GetImage() { return _dao.GetImage(); }
+  }
+  */
 
     private class WpfClipSetDataWrapper : IClipboardSetDataObject
     {

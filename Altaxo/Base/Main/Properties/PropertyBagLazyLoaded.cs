@@ -27,8 +27,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Altaxo.Main.Properties
 {
@@ -87,11 +85,17 @@ namespace Altaxo.Main.Properties
           info.AddValue("Key", key);
 
           if (s._properties.TryGetValue(key, out var value))
+          {
             info.AddValueOrNull("Value", value);
+          }
           else if (s._propertiesLazyLoaded.TryGetValue(key, out var rawXml))
+          {
             info.WriteRaw(rawXml);
+          }
           else
+          {
             throw new InvalidOperationException("Key neither found in regular properties nor in lazy loaded properties");
+          }
 
           info.CommitElement();
         }

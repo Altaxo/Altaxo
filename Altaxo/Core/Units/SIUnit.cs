@@ -149,6 +149,18 @@ namespace Altaxo.Units
       return obj is IUnit other ? Equals(other) : false;
     }
 
+    public bool IsCompatibleTo(UnitDescriptionAttribute attr)
+    {
+      return
+       _metre == attr.Metre &&
+       _kilogram == attr.Kilogram &&
+       _second == attr.Second &&
+       _ampere == attr.Ampere &&
+       _kelvin == attr.Kelvin &&
+       _mole == attr.Mole &&
+       _candela == attr.Candela;
+    }
+
     /// <summary>Returns a hash code for this instance.</summary>
     /// <returns>A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table. </returns>
     public override int GetHashCode()

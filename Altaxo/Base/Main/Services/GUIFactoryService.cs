@@ -777,6 +777,8 @@ namespace Altaxo.Main.Services
 
     public abstract bool ShowSaveFileDialog(SaveFileOptions options);
 
+    public abstract bool ShowFolderDialog(FolderChoiceOptions options);
+
     /// <summary>
     /// Get a new clipboard data object. You can use this to put data on the clipboard.
     /// </summary>
