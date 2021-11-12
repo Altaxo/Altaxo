@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk" InitialTargets="GenAssInfo">
   <PropertyGroup>
-    <TargetFrameworks>net48;net5.0</TargetFrameworks>
+    <TargetFrameworks>net48;net6.0</TargetFrameworks>
     <LangVersion>preview</LangVersion>
     <nullable>enable</nullable>
     <OutputType>WinExe</OutputType>
@@ -16,7 +16,7 @@
     <OutputPath>..\..\rt$(TargetFramework)\bin</OutputPath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(TargetFramework)' != 'net48' ">
-    <OutputPath>..\..\rtnet5.0-windows\bin</OutputPath>
+    <OutputPath>..\..\rtnet6.0-windows\bin</OutputPath>
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="Properties\AssemblyInfo.cs" Visible="true" />
@@ -36,7 +36,7 @@
     </Compile>
   </ItemGroup>
 
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net5.0' ">
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net6.0' ">
     <PackageReference Include="Microsoft.Win32.Registry" Version="4.7.0" />
     <PackageReference Include="System.Security.Principal" Version="4.3.0" />
     <PackageReference Include="System.IO.FileSystem.AccessControl" Version="4.7.0" />

@@ -90,12 +90,7 @@ namespace System.Diagnostics.CodeAnalysis
       _parameterName = parameterName;
     }
   }
-#endif
-
-
-
-#if !NET5_0
-
+  
 
   [AttributeUsage(AttributeTargets.Property | AttributeTargets.Method, AllowMultiple = true, Inherited = false)]
   public sealed class MemberNotNullAttribute : Attribute
