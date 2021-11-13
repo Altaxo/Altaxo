@@ -30,21 +30,21 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="System.Data.OleDb" Version="4.7.1" />
-    <PackageReference Include="System.Drawing.Common" Version="4.7.0" />
-    <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.7.0" />
+    <PackageReference Include="System.Data.OleDb" Version="6.0.0" />
+    <PackageReference Include="System.Drawing.Common" Version="6.0.0" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="6.0.0" />
   </ItemGroup>
   
    <ItemGroup Condition=" '$(TargetFramework)' == 'net6.0' ">
-    <PackageReference Include="System.Resources.Extensions" Version="4.7.1" />
-    <PackageReference Include="Microsoft.Win32.Registry" Version="4.7.0" />
-    <PackageReference Include="Microsoft.Win32.SystemEvents" Version="4.7.0" />
-  </ItemGroup>
+     <PackageReference Include="System.Resources.Extensions" Version="6.0.0" />
+     <PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0" />
+     <PackageReference Include="Microsoft.Win32.SystemEvents" Version="6.0.0" />
+   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net48' ">
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
     <PackageReference Include="System.IO.Compression" Version="4.3.0" />
-    <PackageReference Include="System.Collections.Immutable" Version="1.7.1" />
+    <PackageReference Include="System.Collections.Immutable" Version="6.0.0" />
     <PackageReference Include="IndexRange" Version="1.0.0" />
   </ItemGroup>
   

@@ -36,7 +36,7 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="PresentationCore" />
-    <PackageReference Include="DocumentFormat.OpenXml" Version="2.13.0" />
+    <PackageReference Include="DocumentFormat.OpenXml" Version="2.14.0" />
     <PackageReference Include="System.IO.Compression" Version="4.3.0" />
   </ItemGroup>
   <UsingTask TaskName="GitVersionFile" AssemblyFile="..\..\..\MSBuildVersioning.dll" />
