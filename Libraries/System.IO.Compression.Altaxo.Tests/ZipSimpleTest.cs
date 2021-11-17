@@ -32,7 +32,7 @@ namespace System.IO.Compression
         zipArchive.Dispose();
       }
 
-      var rdBuffer = new byte[bufferSize];
+      var rdBuffer = new byte[bufferSize + 1024]; // some extra bytes to test for too many data
 
       // Open and verify
 
@@ -41,8 +41,14 @@ namespace System.IO.Compression
         var zipArchive = new ZipArchiveAxo(zipStream, ZipArchiveMode.Read, false);
         var entry = zipArchive.GetEntry("TestEntry");
         var entryStream = entry.Open();
-        var rd = entryStream.Read(rdBuffer, 0, bufferSize);
-        Assert.Equal(bufferSize, rd);
+        int totalRead = 0;
+        int rd;
+        do
+        {
+          rd = entryStream.Read(rdBuffer, totalRead, rdBuffer.Length - totalRead);
+          totalRead += rd;
+        } while (rd != 0);
+        Assert.Equal(bufferSize, totalRead);
 
         for (int i = 0; i < bufferSize; ++i)
         {
@@ -78,7 +84,7 @@ namespace System.IO.Compression
         zipArchive.Dispose();
       }
 
-      var rdBuffer = new byte[bufferSize];
+      var rdBuffer = new byte[bufferSize + 1024]; // some extra bytes to test for too many data
 
       // Open and verify
 
@@ -87,8 +93,14 @@ namespace System.IO.Compression
         var zipArchive = new ZipArchiveAxo(zipStream, ZipArchiveMode.Read, false);
         var entry = zipArchive.GetEntry("TestEntry");
         var entryStream = entry.OpenStreamInReadModeParallel();
-        var rd = entryStream.Read(rdBuffer, 0, bufferSize);
-        Assert.Equal(bufferSize, rd);
+        int totalRead = 0;
+        int rd;
+        do
+        {
+          rd = entryStream.Read(rdBuffer, totalRead, rdBuffer.Length - totalRead);
+          totalRead += rd;
+        } while (rd != 0);
+        Assert.Equal(bufferSize, totalRead);
 
         for (int i = 0; i < bufferSize; ++i)
         {
@@ -128,7 +140,7 @@ namespace System.IO.Compression
         zipArchive.Dispose();
       }
 
-      var rdBuffer = new byte[bufferSize];
+      var rdBuffer = new byte[bufferSize + 1024]; // some extra bytes to test for too many data
 
       // Open and verify
 
@@ -144,8 +156,15 @@ namespace System.IO.Compression
           var entry = zipArchive.GetEntry("TestEntry" + iEntry.ToString());
           var entryStream = entry.OpenStreamInReadModeParallel();
 
-          var rd = entryStream.Read(rdBuffer, 0, bufferSize);
-          Assert.Equal(bufferSize, rd);
+          int totalRead = 0;
+          int rd;
+          do
+          {
+            rd = entryStream.Read(rdBuffer, totalRead, rdBuffer.Length - totalRead);
+            totalRead += rd;
+          } while (rd != 0);
+
+          Assert.Equal(bufferSize, totalRead);
 
           for (int i = 0; i < bufferSize; ++i)
           {
@@ -190,7 +209,7 @@ namespace System.IO.Compression
         zipArchive.Dispose();
       }
 
-      var rdBuffer = new byte[bufferSize];
+      var rdBuffer = new byte[bufferSize + 1024]; // some extra bytes to test for too many data
 
       // Open and verify
 
@@ -209,8 +228,14 @@ namespace System.IO.Compression
           var entryStream = entry.OpenStreamInReadModeParallel();
           tasks[iEntry] = Task.Run(() =>
           {
-            var rd = entryStream.Read(rdBuffer, 0, bufferSize);
-            Assert.Equal(bufferSize, rd);
+            int totalRead = 0;
+            int rd;
+            do
+            {
+              rd = entryStream.Read(rdBuffer, totalRead, rdBuffer.Length - totalRead);
+              totalRead += rd;
+            } while (rd != 0);
+            Assert.Equal(bufferSize, totalRead);
 
             for (int i = 0; i < bufferSize; ++i)
             {
