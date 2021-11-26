@@ -490,10 +490,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
         BackgroundBrushChanged();
     }
 
-    private void EhBackgroundColorLinkageChanged()
+    private void EhBackgroundColorLinkageChanged(object sender, EventArgs e)
     {
-      if (BackgroundColorLinkageChanged is not null)
-        BackgroundColorLinkageChanged();
+      BackgroundColorLinkageChanged?.Invoke();
     }
 
     public void InitializeBackgroundColorLinkage(Collections.SelectableListNodeList list)
@@ -511,5 +510,6 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
       if (UseBackgroundChanged is not null)
         UseBackgroundChanged();
     }
+
   }
 }
