@@ -23,11 +23,7 @@
 #endregion Copyright
 
 #nullable enable
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Altaxo.Geometry
 {
@@ -127,6 +123,7 @@ namespace Altaxo.Geometry
       M42 = m42;
       M43 = m43;
       M44 = m44;
+      _determinant = null;
     }
 
     public Matrix4x4(Matrix4x3 a)
@@ -147,6 +144,108 @@ namespace Altaxo.Geometry
       M42 = a.M42;
       M43 = a.M43;
       M44 = a.M44;
+      _determinant = null;
+    }
+
+    double? _determinant;
+    public double Determinant
+    {
+      get
+      {
+        return _determinant ??=
+          M12 * M24 * M33 * M41 - M12 * M23 * M34 * M41 - M11 * M24 * M33 * M42 + M11 * M23 * M34 * M42 +
+          M11 * M24 * M32 * M43 - M12 * M24 * M32 * M43 + M12 * M21 * M34 * M43 - M11 * M22 * M34 * M43 +
+          M14 * (-(M22 * M33 * M41) + M23 * M32 * (M41 - M42) + M21 * M33 * M42 - M21 * M32 * M43 +
+          M22 * M32 * M43) + (-(M11 * M23 * M32) + M12 * M23 * M32 - M12 * M21 * M33 +
+          M11 * M22 * M33) * M44 + M13 * (M22 * M34 * M41 - M21 * M34 * M42 +
+          M24 * M32 * (-M41 + M42) + M21 * M32 * M44 - M22 * M32 * M44);
+      }
+    }
+
+    public Matrix4x4 Inverse()
+    {
+      var d = Determinant;
+
+      return new Matrix4x4
+        (
+          (-(M24 * M33 * M42) + M23 * M34 * M42 + M24 * M32 * M43 - M22 * M34 * M43 - M23 * M32 * M44 + M22 * M33 * M44) * d,
+          (M14 * M33 * M42 - M13 * M34 * M42 - M14 * M32 * M43 + M12 * M34 * M43 + M13 * M32 * M44 - M12 * M33 * M44) * d,
+          (-(M14 * M23 * M42) + M13 * M24 * M42 + M14 * M22 * M43 - M12 * M24 * M43 - M13 * M22 * M44 + M12 * M23 * M44) * d,
+          (M14 * M23 * M32 - M13 * M24 * M32 - M14 * M22 * M33 + M12 * M24 * M33 + M13 * M22 * M34 - M12 * M23 * M34) * d,
+
+          (M24 * M33 * M41 - M23 * M34 * M41 - M24 * M32 * M43 + M21 * M34 * M43 + M23 * M32 * M44 - M21 * M33 * M44) * d,
+          (-(M14 * M33 * M41) + M13 * M34 * M41 + M14 * M32 * M43 - M11 * M34 * M43 - M13 * M32 * M44 + M11 * M33 * M44) * d,
+          (M14 * M23 * M41 - M13 * M24 * M41 - M14 * M21 * M43 + M11 * M24 * M43 + M13 * M21 * M44 - M11 * M23 * M44) * d,
+          (-(M14 * M23 * M32) + M13 * M24 * M32 + M14 * M21 * M33 - M11 * M24 * M33 - M13 * M21 * M34 + M11 * M23 * M34) * d,
+
+          (M22 * M34 * M41 - M21 * M34 * M42 + M24 * M32 * (-M41 + M42) + M21 * M32 * M44 - M22 * M32 * M44) * d,
+          (-(M12 * M34 * M41) + M14 * M32 * (M41 - M42) + M11 * M34 * M42 - M11 * M32 * M44 + M12 * M32 * M44) * d,
+          (-(M14 * M22 * M41) + M12 * M24 * M41 + M14 * M21 * M42 - M11 * M24 * M42 - M12 * M21 * M44 + M11 * M22 * M44) * d,
+          (M14 * (-M21 + M22) * M32 + M11 * M24 * M32 - M12 * M24 * M32 + M12 * M21 * M34 - M11 * M22 * M34) * d,
+
+          (-(M22 * M33 * M41) + M23 * M32 * (M41 - M42) + M21 * M33 * M42 - M21 * M32 * M43 + M22 * M32 * M43) * d,
+          (M12 * M33 * M41 - M11 * M33 * M42 + M13 * M32 * (-M41 + M42) + M11 * M32 * M43 - M12 * M32 * M43) * d,
+          (M13 * M22 * M41 - M12 * M23 * M41 - M13 * M21 * M42 + M11 * M23 * M42 + M12 * M21 * M43 - M11 * M22 * M43) * d,
+          (M13 * (M21 - M22) * M32 - M11 * M23 * M32 + M12 * M23 * M32 - M12 * M21 * M33 + M11 * M22 * M33) * d
+        );
+    }
+
+    public double this[int r, int c]
+    {
+      get
+      {
+        return (r, c) switch
+        {
+          (0, 0) => M11,
+          (0, 1) => M12,
+          (0, 2) => M13,
+          (0, 3) => M14,
+
+          (1, 0) => M21,
+          (1, 1) => M22,
+          (1, 2) => M23,
+          (1, 3) => M24,
+
+          (2, 0) => M31,
+          (2, 1) => M32,
+          (2, 2) => M33,
+          (2, 3) => M34,
+
+          (3, 0) => M41,
+          (3, 1) => M42,
+          (3, 2) => M43,
+          (3, 3) => M44,
+
+          _ => throw new System.ArgumentOutOfRangeException()
+        };
+      }
+      /* No set accessor since this matrix should be immutable
+      set
+      {
+        switch (r,c)
+        {
+          case (0, 0): M11 = value; break;
+          case (0, 1): M12 = value; break;
+          case (0, 2): M13 = value; break;
+          case (0, 3): M14 = value; break;
+
+          case (1, 0): M21 = value; break;
+          case (1, 1): M22 = value; break;
+          case (1, 2): M23 = value; break;
+          case (1, 3): M24 = value; break;
+
+          case (2, 0): M31 = value; break;
+          case (2, 1): M32 = value; break;
+          case (2, 2): M33 = value; break;
+          case (2, 3): M34 = value; break;
+
+          case (3, 0): M41 = value; break;
+          case (3, 1): M42 = value; break;
+          case (3, 2): M43 = value; break;
+          case (3, 3): M44 = value; break;
+        }
+      }
+      */
     }
 
     /// <summary>
@@ -217,9 +316,9 @@ namespace Altaxo.Geometry
 
       var r = new Matrix4x4(
                 VectorD4D.DotProduct(a1, e1), VectorD4D.DotProduct(a2, e1), VectorD4D.DotProduct(a3, e1), VectorD4D.DotProduct(a4, e1),
-                0,                            VectorD4D.DotProduct(a2, e2), VectorD4D.DotProduct(a3, e2), VectorD4D.DotProduct(a4, e2),
-                0,                            0,                            VectorD4D.DotProduct(a3, e3), VectorD4D.DotProduct(a4, e3),
-                0,                            0,                            0,                            VectorD4D.DotProduct(a4, e4)
+                0, VectorD4D.DotProduct(a2, e2), VectorD4D.DotProduct(a3, e2), VectorD4D.DotProduct(a4, e2),
+                0, 0, VectorD4D.DotProduct(a3, e3), VectorD4D.DotProduct(a4, e3),
+                0, 0, 0, VectorD4D.DotProduct(a4, e4)
                 );
 
       return (q, r);
@@ -259,9 +358,9 @@ namespace Altaxo.Geometry
 
       var r = new Matrix4x4(
                 VectorD4D.DotProduct(a4, e4), VectorD4D.DotProduct(a4, e3), VectorD4D.DotProduct(a4, e2), VectorD4D.DotProduct(a4, e1),
-                0,                            VectorD4D.DotProduct(a3, e3), VectorD4D.DotProduct(a3, e2), VectorD4D.DotProduct(a3, e1),
-                0,                            0,                            VectorD4D.DotProduct(a2, e2), VectorD4D.DotProduct(a2, e1),
-                0,                            0,                            0,                            VectorD4D.DotProduct(a1, e1)
+                0, VectorD4D.DotProduct(a3, e3), VectorD4D.DotProduct(a3, e2), VectorD4D.DotProduct(a3, e1),
+                0, 0, VectorD4D.DotProduct(a2, e2), VectorD4D.DotProduct(a2, e1),
+                0, 0, 0, VectorD4D.DotProduct(a1, e1)
                 );
 
       return (r, q);
@@ -337,5 +436,7 @@ namespace Altaxo.Geometry
 
       return stb.ToString();
     }
+
+
   }
 }
