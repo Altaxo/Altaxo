@@ -68,6 +68,16 @@ namespace Altaxo.Main.Services
     event PropertyChangedEventHandler? PropertyChanged;
 
     /// <summary>
+    /// Returns the property bag with local application settings (settings on this computer, global for all users). These are typically stored in the LOCALAPPDATA directory.
+    /// This bag is not used by Altaxo (but by other programs).
+    /// </summary>
+    /// <value>
+    /// The local application settings.
+    /// </value>
+    Main.Properties.IPropertyBag LocalApplicationSettings { get; }
+
+
+    /// <summary>
     /// Returns the property bag with user settings. These are typically stored in the user's application settings directory.
     /// </summary>
     /// <value>

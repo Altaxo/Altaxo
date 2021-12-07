@@ -42,6 +42,27 @@ namespace Altaxo.Main.Services
     public DirectoryName ConfigDirectory { get; protected set; }
     public FileName PropertiesFileName { get; protected set; }
 
+
+    /// <summary>
+    /// The user settings bag is a bag that loads the properties lazy (as Xml string) during creation of this service.
+    /// See remarks for why this is neccessary.
+    /// </summary>
+    /// <remarks>The properties are lazy loaded, i.e. the property values are stored as string first. Only if the property is needed, the xml string
+    /// is converted into a regular value. This is neccessary, because some of the property values will required access
+    /// to other property values during deserialization. But the user settings are deserialized in the constructor of the property service,
+    /// and the property service is not installed in this moment. This will lead to NullReferenceException when the first deserialized
+    /// property value try to get the property service.</remarks>
+    protected PropertyBagLazyLoaded _localApplicationSettings;
+
+    /// <summary>
+    /// Gets the local application settings (applications specific for this PC). This data are stored in the LOCALAPPDATA folder.
+    /// </summary>
+    /// <value>
+    /// The local application settings.
+    /// </value>
+    public IPropertyBag LocalApplicationSettings { get { return _localApplicationSettings; } }
+    public FileName LocalApplicationSettingsFile { get; protected set; }
+
     /// <summary>
     /// The user settings bag is a bag that loads the properties lazy (as Xml string) during creation of this service.
     /// See remarks for why this is neccessary.
@@ -59,13 +80,16 @@ namespace Altaxo.Main.Services
 
     public IPropertyBag BuiltinSettings { get; private set; }
 
-    public PropertyService(DirectoryName configDirectory, DirectoryName dataDirectory, string propertiesName)
+    public PropertyService(DirectoryName configDirectory, DirectoryName dataDirectory, DirectoryName localAppDirectory, string propertiesName)
     {
       DataDirectory = dataDirectory;
       ConfigDirectory = configDirectory;
       PropertiesFileName = configDirectory.CombineFile(propertiesName + ".xml");
-
       _userSettings = InternalLoadUserSettingsBag(PropertiesFileName);
+
+      LocalApplicationSettingsFile = localAppDirectory.CombineFile(propertiesName + ".xml");
+      _localApplicationSettings = InternalLoadUserSettingsBag(LocalApplicationSettingsFile);
+
       ApplicationSettings = new PropertyBag() { ParentObject = SuspendableDocumentNode.StaticInstance };
       BuiltinSettings = new PropertyBag() { ParentObject = SuspendableDocumentNode.StaticInstance };
     }
@@ -117,7 +141,7 @@ namespace Altaxo.Main.Services
 
     [return: NotNullIfNotNull("ValueCreationIfNotFound")]
     [return: MaybeNull]
-    public T GetValue<T>(PropertyKey<T> p, RuntimePropertyKind kind, Func<T>? ValueCreationIfNotFound) where T: notnull
+    public T GetValue<T>(PropertyKey<T> p, RuntimePropertyKind kind, Func<T>? ValueCreationIfNotFound) where T : notnull
     {
       if (kind == RuntimePropertyKind.UserAndApplicationAndBuiltin && UserSettings.TryGetValue<T>(p, out var result))
         return result;
@@ -211,16 +235,16 @@ namespace Altaxo.Main.Services
       return new PropertyBagLazyLoaded() { ParentObject = SuspendableDocumentNode.StaticInstance };
     }
 
-    protected virtual void InternalSaveUserSettingsBag()
+    protected virtual void InternalSaveUserSettingsBag(PropertyBagLazyLoaded settings, FileName fileName)
     {
       var thisVersion = UserSettings.GetType().Assembly.GetName().Version;
 
-      if (_userSettings.AssemblyVersionLoadedFrom is not null && thisVersion < _userSettings.AssemblyVersionLoadedFrom)
+      if (settings.AssemblyVersionLoadedFrom is not null && thisVersion < settings.AssemblyVersionLoadedFrom)
       {
         var answer = Current.Gui.YesNoMessageBox(
             string.Format(
             "The existing UserSettings file was stored with a newer version of Altaxo (version {0}).\r\n" +
-            "Do you want to store and thus overwrite UserSettings now (with version {1})?", _userSettings.AssemblyVersionLoadedFrom, thisVersion),
+            "Do you want to store and thus overwrite UserSettings now (with version {1})?", settings.AssemblyVersionLoadedFrom, thisVersion),
             "Attention!", false);
 
         if (false == answer)
@@ -229,7 +253,7 @@ namespace Altaxo.Main.Services
 
       using (LockPropertyFile())
       {
-        if (PropertiesFileName.GetParentDirectory() is { } parentDirectory)
+        if (fileName.GetParentDirectory() is { } parentDirectory)
           System.IO.Directory.CreateDirectory(parentDirectory.ToString());
 
         System.IO.FileStream? streamForWriting = null;
@@ -237,7 +261,7 @@ namespace Altaxo.Main.Services
         {
           try
           {
-            streamForWriting = new System.IO.FileStream(PropertiesFileName.ToString(), System.IO.FileMode.Create, System.IO.FileAccess.Write, FileShare.None);
+            streamForWriting = new System.IO.FileStream(fileName.ToString(), System.IO.FileMode.Create, System.IO.FileAccess.Write, FileShare.None);
             break;
           }
           catch (Exception)
@@ -262,7 +286,16 @@ namespace Altaxo.Main.Services
 
     public virtual void Save()
     {
-      InternalSaveUserSettingsBag();
+      InternalSaveUserSettingsBag(_userSettings, PropertiesFileName);
+
+      if (_localApplicationSettings.Count > 0)
+      {
+        InternalSaveUserSettingsBag(_localApplicationSettings, LocalApplicationSettingsFile);
+      }
+      else if (File.Exists(LocalApplicationSettingsFile))
+      {
+        File.Delete(LocalApplicationSettingsFile);
+      }
     }
 
     #endregion Loading/Saving

@@ -26,10 +26,14 @@ namespace Altaxo.Main.Services
     public IPropertyBag UserSettings { get; } = new PropertyBag() { ParentObject = SuspendableDocumentNode.StaticInstance };
 
     /// <inheritdoc/>
+    public IPropertyBag LocalApplicationSettings { get; } = new PropertyBag() { ParentObject = SuspendableDocumentNode.StaticInstance };
+
+    /// <inheritdoc/>
     public IPropertyBag ApplicationSettings { get; } = new PropertyBag() { ParentObject = SuspendableDocumentNode.StaticInstance };
 
     /// <inheritdoc/>
     public IPropertyBag BuiltinSettings { get; } = new PropertyBag() { ParentObject = SuspendableDocumentNode.StaticInstance };
+
 
     /// <inheritdoc/>
     public event PropertyChangedEventHandler? PropertyChanged;
@@ -80,7 +84,7 @@ namespace Altaxo.Main.Services
     /// <inheritdoc/>
     [return: NotNullIfNotNull("ValueCreationIfNotFound")]
     [return: MaybeNull]
-    public T GetValue<T>(PropertyKey<T> p, RuntimePropertyKind kind, Func<T>? ValueCreationIfNotFound) where T: notnull
+    public T GetValue<T>(PropertyKey<T> p, RuntimePropertyKind kind, Func<T>? ValueCreationIfNotFound) where T : notnull
     {
       if (kind == RuntimePropertyKind.UserAndApplicationAndBuiltin && UserSettings.TryGetValue<T>(p, out var result))
         return result;

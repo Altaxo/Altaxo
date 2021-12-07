@@ -386,6 +386,7 @@ namespace Altaxo.Gui.Startup
       var propertyService = new Altaxo.Main.Services.PropertyService(
           DirectoryName.Create(configDirectory),
           DirectoryName.Create(dataDirectory ?? Path.Combine(FileUtility.ApplicationRootPath, "data")),
+          DirectoryName.Create(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), startupSettings.ApplicationName)),
           propertiesName);
       startup.StartCoreServices(propertyService, startupSettings);
 
