@@ -277,7 +277,7 @@ namespace Altaxo.Main.Services
         {
           var info = new Altaxo.Serialization.Xml.XmlStreamSerializationInfo();
           info.BeginWriting(stream);
-          info.AddValue("UserSettings", UserSettings);
+          info.AddValue("UserSettings", settings);
           info.EndWriting();
           stream.Close();
         }
