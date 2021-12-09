@@ -24,8 +24,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 #nullable enable
 
@@ -640,7 +638,7 @@ namespace Altaxo.Units
     {
       return IsEmpty
         ? double.NaN.ToString(formatProvider)
-        : string.Format(formatProvider, "{0} {1}{2}", _value, Prefix.ShortCut, Unit.ShortCut);
+        : string.Format(formatProvider, "{0} {1}{2}", _value.ToString(format, formatProvider), Prefix.ShortCut, Unit.ShortCut);
     }
   }
 }
