@@ -445,6 +445,41 @@ namespace Altaxo.Calc
     }
 
     /// <summary>
+    /// Calculates x^n by repeated multiplications. The algorithm takes ld(n) multiplications.
+    /// This algorithm can also be used with negative n.
+    /// </summary>
+    /// <param name="x"></param>
+    /// <param name="n"></param>
+    /// <returns></returns>
+    public static double Pow(this double x, long n)
+    {
+      double value = 1.0;
+
+      bool inverse = (n < 0);
+      if (n < 0)
+      {
+        n = -n;
+
+        if (!(n > 0)) // if n was so big, that it could not be inverted in sign
+          return double.NaN;
+      }
+
+      /* repeated squaring method
+             * returns 0.0^0 = 1.0, so continuous in x
+             */
+      do
+      {
+        if (0 != (n & 1))
+          value *= x;  /* for n odd */
+
+        n >>= 1;
+        x *= x;
+      } while (n != 0);
+
+      return inverse ? 1.0 / value : value;
+    }
+
+    /// <summary>
     /// Calculates x * 10^n.
     /// </summary>
     /// <param name="x">The scaling factor.</param>
