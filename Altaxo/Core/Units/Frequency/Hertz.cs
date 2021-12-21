@@ -22,16 +22,12 @@
 
 #endregion Copyright
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 #nullable enable
 
 namespace Altaxo.Units.Frequency
 {
-  [UnitDescription("Hertz", 0, 0, -1, 0, 0, 0, 0)]
+  [UnitDescription("Frequency", 0, 0, -1, 0, 0, 0, 0)]
   public class Hertz : SIUnit
   {
     private static readonly Hertz _instance = new Hertz();

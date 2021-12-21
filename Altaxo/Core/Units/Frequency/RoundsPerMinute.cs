@@ -22,16 +22,12 @@
 
 #endregion Copyright
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 #nullable enable
 
 namespace Altaxo.Units.Frequency
 {
-  [UnitDescription("RoundsPerMinute", 0, 0, -1, 0, 0, 0, 0)]
+  [UnitDescription("Frequency", 0, 0, -1, 0, 0, 0, 0)]
   public class RoundsPerMinute : UnitBase, IUnit
   {
     private static readonly RoundsPerMinute _instance = new RoundsPerMinute();
