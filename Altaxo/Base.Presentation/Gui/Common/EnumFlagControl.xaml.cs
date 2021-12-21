@@ -35,7 +35,7 @@ namespace Altaxo.Gui.Common
   /// <summary>
   /// Control that shows multiple choices as a list of checkboxes in a wrap panel
   /// </summary>
-  public partial class MultiChoiceCheckboxControl : UserControl
+  public partial class MultiChoiceCheckboxControl : UserControl, IEnumFlagView
   {
     private SelectableListNodeList _choices;
 
