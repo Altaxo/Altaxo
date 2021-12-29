@@ -40,9 +40,9 @@ namespace Altaxo.Gui.Common
   {
     public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
     {
-      if (value is bool)
+      if (value is bool b)
       {
-        return !((bool)value);
+        return !b;
       }
       else if (value is Nullable<bool>)
       {

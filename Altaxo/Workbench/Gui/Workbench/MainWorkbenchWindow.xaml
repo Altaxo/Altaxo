@@ -19,7 +19,7 @@
         FullScreen="{Binding FullScreen}"
                                Title="{Binding Title, Mode=OneWay}"
                                Icon="{Binding IconSource, Mode=OneWay, Converter={x:Static conv:ResourceImageConverter.Instance}}"
-                               Visibility="{Binding IsCollapsed, Mode=OneWay, Converter={x:Static conv:IsCollapsedToVisibilityConverter.Instance}}"
+                               Visibility="{Binding IsCollapsed, Mode=OneWay, Converter={x:Static conv:TrueToVisibilityCollapsedConverter.Instance}}"
                                ShowInTaskbar="{Binding IsShownInTaskbar, Mode=TwoWay}"
 
         Height="300"

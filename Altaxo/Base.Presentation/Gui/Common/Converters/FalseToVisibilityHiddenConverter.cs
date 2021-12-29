@@ -30,7 +30,7 @@ using System.Windows.Data;
 namespace Altaxo.Gui.Common.Converters
 {
   /// <summary>
-  /// Converter that converts a boolean to a visibility. True is translated to Visible, False is translated to collapsed.
+  /// Converter that converts a boolean to a visibility. True is translated to <see cref="Visibility.Visible"/>, False is translated to <see cref="Visibility.Hidden"/>.
   /// </summary>
   /// <seealso cref="System.Windows.Data.IValueConverter" />
   public class FalseToVisibilityHiddenConverter : IValueConverter
