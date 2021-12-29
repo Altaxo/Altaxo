@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2016 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2021 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -23,25 +23,15 @@
 #endregion Copyright
 
 #nullable disable
-using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
 using Altaxo.Drawing;
 using Altaxo.Drawing.D3D;
-using Altaxo.Graph;
 using Altaxo.Graph.Gdi;
 
 namespace Altaxo.Gui.Common.Drawing.D3D
 {
-  public interface IFontX3DView
+  public interface IFontX3DView : IDataContextAwareView
   {
-    string SelectedFontFamilyName { get; set; }
-
-    double SelectedFontSize { get; set; }
-
-    double SelectedFontDepth { get; set; }
   }
 
   [ExpectedTypeOfView(typeof(IFontX3DView))]
@@ -52,26 +42,68 @@ namespace Altaxo.Gui.Common.Drawing.D3D
       yield break;
     }
 
+    #region Bindings
+
+    public string SelectedFontFamilyName
+    {
+      get => _doc.FontFamilyName;
+      set
+      {
+        if (!(SelectedFontFamilyName == value))
+        {
+          ApplyFontFamily(value);
+          OnPropertyChanged(nameof(SelectedFontFamilyName));
+          OnPropertyChanged(nameof(SelectedFontSize));
+          OnPropertyChanged(nameof(SelectedFontDepth));
+        }
+      }
+    }
+
+    public double SelectedFontSize
+    {
+      get => _doc.Size;
+      set
+      {
+        if (!(SelectedFontSize == value))
+        {
+          _doc = _doc.WithSize(value);
+          OnPropertyChanged(nameof(SelectedFontSize));
+        }
+      }
+    }
+
+
+    public double SelectedFontDepth
+    {
+      get => _doc.Depth;
+      set
+      {
+        if (!(SelectedFontDepth == value))
+        {
+          _doc = _doc.WithDepth(value);
+          OnPropertyChanged(nameof(SelectedFontDepth));
+        }
+      }
+    }
+
+    #endregion
+
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
 
       if (initData)
       {
-      }
-      if (_view is not null)
-      {
-        // fill the font name combobox with all fonts
-        _view.SelectedFontFamilyName = GdiFontManager.GetValidFontFamilyName(_doc.Font);
-        _view.SelectedFontSize = _doc.Size;
-        _view.SelectedFontDepth = _doc.Depth;
+        var ff = GdiFontManager.GetValidFontFamilyName(_doc.Font);
+        if (!(ff == _doc.FontFamilyName))
+        {
+          ApplyFontFamily(ff);
+        }
       }
     }
 
-    private void ApplyFontFamily()
+    private void ApplyFontFamily(string ff)
     {
-      var ff = _view.SelectedFontFamilyName;
-
       // make sure that regular style is available
       if (GdiFontManager.IsFontFamilyAndStyleAvailable(ff, FontXStyle.Regular))
         _doc = _doc.WithFamily(ff).WithStyle(FontXStyle.Regular);
@@ -83,19 +115,9 @@ namespace Altaxo.Gui.Common.Drawing.D3D
         _doc = _doc.WithFamily(ff).WithStyle(FontXStyle.Bold | FontXStyle.Italic);
     }
 
-    private void ApplyFontSize()
-    {
-      var newSize = _view.SelectedFontSize;
-      _doc = _doc.WithSize(_view.SelectedFontSize);
-    }
-
     public override bool Apply(bool disposeController)
     {
-      ApplyFontFamily();
-      ApplyFontSize();
-
       _originalDoc = _doc; // this is safe because FontX is an immutable class
-
       return ApplyEnd(true, disposeController);
     }
   }
