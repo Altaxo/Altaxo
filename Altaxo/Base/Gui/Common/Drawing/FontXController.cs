@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2014 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2021 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -23,22 +23,14 @@
 #endregion Copyright
 
 #nullable disable
-using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
 using Altaxo.Drawing;
-using Altaxo.Graph;
 using Altaxo.Graph.Gdi;
 
 namespace Altaxo.Gui.Common.Drawing
 {
-  public interface IFontXView
+  public interface IFontXView : IDataContextAwareView
   {
-    string SelectedFontFamilyName { get; set; }
-
-    double SelectedFontSize { get; set; }
   }
 
   [ExpectedTypeOfView(typeof(IFontXView))]
@@ -49,50 +41,68 @@ namespace Altaxo.Gui.Common.Drawing
       yield break;
     }
 
+    #region Bindings
+
+    public string SelectedFontFamilyName
+    {
+      get => _doc.FontFamilyName;
+      set
+      {
+        if (!(SelectedFontFamilyName == value))
+        {
+          ApplyFontFamily(value);
+          OnPropertyChanged(nameof(SelectedFontFamilyName));
+          OnPropertyChanged(nameof(SelectedFontSize));
+        }
+      }
+    }
+
+    public double SelectedFontSize
+    {
+      get => _doc.Size;
+      set
+      {
+        if (!(SelectedFontSize == value))
+        {
+          _doc = _doc.WithSize(value);
+          OnPropertyChanged(nameof(SelectedFontSize));
+        }
+      }
+    }
+
+    #endregion
+
+
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
 
       if (initData)
       {
-      }
-      if (_view is not null)
-      {
-        // fill the font name combobox with all fonts
-        _view.SelectedFontFamilyName = GdiFontManager.GetValidFontFamilyName(_doc);
-        _view.SelectedFontSize = _doc.Size;
+        var ff = GdiFontManager.GetValidFontFamilyName(_doc);
+        if (!(ff == _doc.FontFamilyName))
+        {
+          ApplyFontFamily(ff);
+        }
       }
     }
 
-    private void ApplyFontFamily()
+    private void ApplyFontFamily(string fontFamilyName)
     {
-      var ff = _view.SelectedFontFamilyName;
-
       // make sure that regular style is available
-      if (GdiFontManager.IsFontFamilyAndStyleAvailable(ff, FontXStyle.Regular))
-        _doc = GdiFontManager.GetFontX(ff, _doc.Size, FontXStyle.Regular);
-      else if (GdiFontManager.IsFontFamilyAndStyleAvailable(ff, FontXStyle.Bold))
-        _doc = GdiFontManager.GetFontX(ff, _doc.Size, FontXStyle.Bold);
-      else if (GdiFontManager.IsFontFamilyAndStyleAvailable(ff, FontXStyle.Italic))
-        _doc = GdiFontManager.GetFontX(ff, _doc.Size, FontXStyle.Italic);
-      else if (GdiFontManager.IsFontFamilyAndStyleAvailable(ff, FontXStyle.Bold | FontXStyle.Italic))
-        _doc = GdiFontManager.GetFontX(ff, _doc.Size, FontXStyle.Bold | FontXStyle.Italic);
-    }
-
-    private void ApplyFontSize()
-    {
-      var newSize = _view.SelectedFontSize;
-      FontX oldFont = _doc;
-      _doc = oldFont.WithSize(newSize);
+      if (GdiFontManager.IsFontFamilyAndStyleAvailable(fontFamilyName, FontXStyle.Regular))
+        _doc = GdiFontManager.GetFontX(fontFamilyName, _doc.Size, FontXStyle.Regular);
+      else if (GdiFontManager.IsFontFamilyAndStyleAvailable(fontFamilyName, FontXStyle.Bold))
+        _doc = GdiFontManager.GetFontX(fontFamilyName, _doc.Size, FontXStyle.Bold);
+      else if (GdiFontManager.IsFontFamilyAndStyleAvailable(fontFamilyName, FontXStyle.Italic))
+        _doc = GdiFontManager.GetFontX(fontFamilyName, _doc.Size, FontXStyle.Italic);
+      else if (GdiFontManager.IsFontFamilyAndStyleAvailable(fontFamilyName, FontXStyle.Bold | FontXStyle.Italic))
+        _doc = GdiFontManager.GetFontX(fontFamilyName, _doc.Size, FontXStyle.Bold | FontXStyle.Italic);
     }
 
     public override bool Apply(bool disposeController)
     {
-      ApplyFontFamily();
-      ApplyFontSize();
-
       _originalDoc = _doc; // this is safe because FontX is an immutable class
-
       return ApplyEnd(true, disposeController);
     }
   }

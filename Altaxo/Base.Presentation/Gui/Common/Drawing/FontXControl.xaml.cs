@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2014 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2021 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -22,10 +22,6 @@
 
 #endregion Copyright
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Windows.Controls;
 
 namespace Altaxo.Gui.Common.Drawing
@@ -38,30 +34,6 @@ namespace Altaxo.Gui.Common.Drawing
     public FontXControl()
     {
       InitializeComponent();
-    }
-
-    public string SelectedFontFamilyName
-    {
-      get
-      {
-        return _guiFontFamily.SelectedFontFamilyName;
-      }
-      set
-      {
-        _guiFontFamily.SelectedFontFamilyName = value;
-      }
-    }
-
-    public double SelectedFontSize
-    {
-      get
-      {
-        return _guiFontSize.SelectedQuantityAsValueInPoints;
-      }
-      set
-      {
-        _guiFontSize.SelectedQuantityAsValueInPoints = value;
-      }
     }
   }
 }

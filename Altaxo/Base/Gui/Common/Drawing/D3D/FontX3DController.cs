@@ -22,7 +22,6 @@
 
 #endregion Copyright
 
-#nullable disable
 using System.Collections.Generic;
 using Altaxo.Drawing;
 using Altaxo.Drawing.D3D;
@@ -102,17 +101,17 @@ namespace Altaxo.Gui.Common.Drawing.D3D
       }
     }
 
-    private void ApplyFontFamily(string ff)
+    private void ApplyFontFamily(string fontFamilyName)
     {
       // make sure that regular style is available
-      if (GdiFontManager.IsFontFamilyAndStyleAvailable(ff, FontXStyle.Regular))
-        _doc = _doc.WithFamily(ff).WithStyle(FontXStyle.Regular);
-      else if (GdiFontManager.IsFontFamilyAndStyleAvailable(ff, FontXStyle.Bold))
-        _doc = _doc.WithFamily(ff).WithStyle(FontXStyle.Bold);
-      else if (GdiFontManager.IsFontFamilyAndStyleAvailable(ff, FontXStyle.Italic))
-        _doc = _doc.WithFamily(ff).WithStyle(FontXStyle.Italic);
-      else if (GdiFontManager.IsFontFamilyAndStyleAvailable(ff, FontXStyle.Bold | FontXStyle.Italic))
-        _doc = _doc.WithFamily(ff).WithStyle(FontXStyle.Bold | FontXStyle.Italic);
+      if (GdiFontManager.IsFontFamilyAndStyleAvailable(fontFamilyName, FontXStyle.Regular))
+        _doc = _doc.WithFamily(fontFamilyName).WithStyle(FontXStyle.Regular);
+      else if (GdiFontManager.IsFontFamilyAndStyleAvailable(fontFamilyName, FontXStyle.Bold))
+        _doc = _doc.WithFamily(fontFamilyName).WithStyle(FontXStyle.Bold);
+      else if (GdiFontManager.IsFontFamilyAndStyleAvailable(fontFamilyName, FontXStyle.Italic))
+        _doc = _doc.WithFamily(fontFamilyName).WithStyle(FontXStyle.Italic);
+      else if (GdiFontManager.IsFontFamilyAndStyleAvailable(fontFamilyName, FontXStyle.Bold | FontXStyle.Italic))
+        _doc = _doc.WithFamily(fontFamilyName).WithStyle(FontXStyle.Bold | FontXStyle.Italic);
     }
 
     public override bool Apply(bool disposeController)
