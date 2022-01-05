@@ -56,7 +56,11 @@ namespace Altaxo.Gui.Common.Drawing
 
       public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
       {
-        return ((ImageComboBoxItem)value).Value;
+        if (value is ImageComboBoxItem icbi)
+          return icbi.Value;
+        else
+          return Binding.DoNothing;
+
       }
     }
 

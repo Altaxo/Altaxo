@@ -50,13 +50,18 @@ namespace Altaxo.Gui.Common.Drawing
 
       public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
       {
-        var val = (BrushType)value;
-        return _cb._cachedItems[val];
+        if (value is BrushType bt)
+          return _cb._cachedItems[bt];
+        else
+          return Binding.DoNothing;
       }
 
       public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
       {
-        return ((ImageComboBoxItem)value).Value;
+        if (value is ImageComboBoxItem icbi)
+          return icbi.Value;
+        else
+          return Binding.DoNothing;
       }
     }
 

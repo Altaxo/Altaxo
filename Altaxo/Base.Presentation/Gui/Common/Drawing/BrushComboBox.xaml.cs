@@ -313,7 +313,7 @@ namespace Altaxo.Gui.Common.Drawing
       var localBrush = InternalSelectedBrush; // under no circumstances change the selected brush, since it may come from an unknown source
       var ctrl = new BrushControllerAdvanced
       {
-        RestrictBrushColorToPlotColorsOnly = ShowPlotColorsOnly
+        ShowPlotColorsOnly = ShowPlotColorsOnly
       };
       ctrl.InitializeDocument(localBrush);
       if (Current.Gui.ShowDialog(ctrl, "Edit brush properties", false))

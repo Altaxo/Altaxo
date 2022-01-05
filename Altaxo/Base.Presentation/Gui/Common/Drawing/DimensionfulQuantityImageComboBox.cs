@@ -54,6 +54,7 @@ namespace Altaxo.Gui.Common.Drawing
     {
       SetBinding("SelectedQuantity");
       IsTextSearchEnabled = false; // switch text search off since this interferes with the unit system
+      _converter.UnitEnvironment = UnitEnvironment;
     }
 
     protected void SetBinding(string nameOfValueProperty)
@@ -147,6 +148,38 @@ namespace Altaxo.Gui.Common.Drawing
         SelectedQuantityChanged(obj, args);
     }
 
+    #region Dependency property UnitEnvironment
+
+    public static readonly DependencyProperty UnitEnvironmentProperty =
+        DependencyProperty.Register(nameof(UnitEnvironment), typeof(QuantityWithUnitGuiEnvironment), typeof(DimensionfulQuantityImageComboBox),
+         new FrameworkPropertyMetadata(EhUnitEnvironmentChanged));
+
+    /// <summary>
+    /// Sets the unit environment. The unit environment determines the units the user is able to enter.
+    /// </summary>
+    public QuantityWithUnitGuiEnvironment UnitEnvironment
+    {
+      get
+      {
+        return (QuantityWithUnitGuiEnvironment)GetValue(UnitEnvironmentProperty);
+      }
+
+      set
+      {
+        SetValue(UnitEnvironmentProperty, value);
+      }
+    }
+
+    private static void EhUnitEnvironmentChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
+    {
+      var thiss = (DimensionfulQuantityImageComboBox)obj;
+      if (args.NewValue is not null)
+        thiss._converter.UnitEnvironment = (QuantityWithUnitGuiEnvironment)args.NewValue;
+    }
+
+    #endregion Dependency property UnitEnvironment
+
+
     #endregion Dependency property
 
     public double SelectedQuantityInSIUnits
@@ -160,21 +193,6 @@ namespace Altaxo.Gui.Common.Drawing
         var quant = new DimensionfulQuantity(value, UnitEnvironment.DefaultUnit.Unit.SIUnit);
         quant = quant.AsQuantityIn(UnitEnvironment.DefaultUnit);
         SelectedQuantity = quant;
-      }
-    }
-
-    /// <summary>
-    /// Sets the unit environment. The unit environment determines the units the user is able to enter.
-    /// </summary>
-    public QuantityWithUnitGuiEnvironment UnitEnvironment
-    {
-      get
-      {
-        return _converter.UnitEnvironment;
-      }
-      set
-      {
-        _converter.UnitEnvironment = value;
       }
     }
   }

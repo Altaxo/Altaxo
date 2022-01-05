@@ -42,12 +42,12 @@ namespace Altaxo.Gui.Common.Drawing
 
     static RotationComboBox()
     {
+      UnitEnvironmentProperty.OverrideMetadata(typeof(RotationComboBox), new FrameworkPropertyMetadata(AngleEnvironment.Instance));
       SelectedQuantityProperty.OverrideMetadata(typeof(RotationComboBox), new FrameworkPropertyMetadata(new DimensionfulQuantity(0, Degree.Instance)));
     }
 
     public RotationComboBox()
     {
-      UnitEnvironment = AngleEnvironment.Instance;
       InitializeComponent();
 
       foreach (var e in _initialValues)

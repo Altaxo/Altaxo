@@ -25,17 +25,14 @@
 #nullable disable
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
 using Altaxo.Main.Services.PropertyReflection;
 
 namespace Altaxo.Gui.Main
 {
-  public interface IInstancePropertyView
+  public interface IInstancePropertyView : IDataContextAwareView
   {
-    /// <summary>Initializes the items.</summary>
-    /// <param name="list">The list. Every item contains text that can be used as label. The item object is a view that displays the value.</param>
-    void InitializeItems(Altaxo.Collections.ListNodeList list);
   }
 
   [ExpectedTypeOfView(typeof(IInstancePropertyView))]
@@ -43,6 +40,12 @@ namespace Altaxo.Gui.Main
   {
     private SortedList<long, KeyValuePair<Property, IMVCAController>> _controllerList = new SortedList<long, KeyValuePair<Property, IMVCAController>>();
     private PropertyCollection _propertyCollection;
+
+    #region Bindings
+
+    public ObservableCollection<object> ControllerList { get; } = new();
+
+    #endregion
 
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
@@ -109,20 +112,18 @@ namespace Altaxo.Gui.Main
             }
           }
         }
-      }
 
-      if (_view is not null)
-      {
-        var list = new Altaxo.Collections.ListNodeList();
+        // Fill the controller list
+        ControllerList.Clear();
         foreach (var entry in _controllerList.Values)
         {
           var prop = entry.Key;
           string label = prop.Description;
           if (string.IsNullOrEmpty(label))
             label = prop.Name;
-          list.Add(new Collections.ListNode(label + ":", entry.Value.ViewObject));
+          ControllerList.Add(label + ":");
+          ControllerList.Add(entry.Value.ViewObject);
         }
-        _view.InitializeItems(list);
       }
     }
 

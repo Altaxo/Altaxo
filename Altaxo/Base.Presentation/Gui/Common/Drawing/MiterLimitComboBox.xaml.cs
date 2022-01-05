@@ -46,13 +46,12 @@ namespace Altaxo.Gui.Common.Drawing
 
     static MiterLimitComboBox()
     {
+      UnitEnvironmentProperty.OverrideMetadata(typeof(MiterLimitComboBox), new FrameworkPropertyMetadata(RelationEnvironment.Instance));
       SelectedQuantityProperty.OverrideMetadata(typeof(MiterLimitComboBox), new FrameworkPropertyMetadata(new DimensionfulQuantity(10, Unity.Instance)));
     }
 
     public MiterLimitComboBox()
     {
-      UnitEnvironment = RelationEnvironment.Instance;
-
       InitializeComponent();
 
       foreach (var e in _initialValues)

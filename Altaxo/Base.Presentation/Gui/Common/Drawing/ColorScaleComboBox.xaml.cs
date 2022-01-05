@@ -42,12 +42,12 @@ namespace Altaxo.Gui.Common.Drawing
 
     static ColorScaleComboBox()
     {
+      UnitEnvironmentProperty.OverrideMetadata(typeof(ColorScaleComboBox), new FrameworkPropertyMetadata(RelationEnvironment.Instance));
       SelectedQuantityProperty.OverrideMetadata(typeof(ColorScaleComboBox), new FrameworkPropertyMetadata(new Altaxo.Units.DimensionfulQuantity(1, Altaxo.Units.Dimensionless.Unity.Instance)));
     }
 
     public ColorScaleComboBox()
     {
-      UnitEnvironment = RelationEnvironment.Instance;
       _converter.ValidationAfterSuccessfulConversion = EhValidateQuantity;
 
       InitializeComponent();

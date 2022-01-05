@@ -38,6 +38,7 @@ namespace Altaxo.Gui.Common.Drawing
   {
     static LengthImageComboBox()
     {
+      UnitEnvironmentProperty.OverrideMetadata(typeof(LengthImageComboBox), new FrameworkPropertyMetadata(SizeEnvironment.Instance));
       SelectedQuantityProperty.OverrideMetadata(typeof(LengthImageComboBox), new FrameworkPropertyMetadata(new DimensionfulQuantity(0, AUL.Point.Instance)));
     }
 

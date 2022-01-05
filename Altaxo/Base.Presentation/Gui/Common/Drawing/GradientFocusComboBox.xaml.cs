@@ -41,14 +41,13 @@ namespace Altaxo.Gui.Common.Drawing
 
     static GradientFocusComboBox()
     {
+      UnitEnvironmentProperty.OverrideMetadata(typeof(GradientFocusComboBox), new FrameworkPropertyMetadata(RelationEnvironment.Instance));
       SelectedQuantityProperty.OverrideMetadata(typeof(GradientFocusComboBox), new FrameworkPropertyMetadata(new Altaxo.Units.DimensionfulQuantity(0.5, Altaxo.Units.Dimensionless.Unity.Instance)));
     }
 
     public GradientFocusComboBox()
     {
-      UnitEnvironment = RelationEnvironment.Instance;
       _converter.ValidationAfterSuccessfulConversion = EhValidateQuantity;
-
       InitializeComponent();
 
       foreach (var e in _initialValues)

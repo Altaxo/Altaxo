@@ -13,12 +13,13 @@
 			</Style.Setters>
 		</Style>
 	</UserControl.Resources>
-	<Grid x:Name="_guiGrid">
+	<Grid x:Name="_guiGrid" >
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="Auto" SharedSizeGroup="LabelColumn1" />
 			<ColumnDefinition Width="Auto" SharedSizeGroup="EditColumn1" />
 			<ColumnDefinition Width="Auto" SharedSizeGroup="LabelColumn2" />
 			<ColumnDefinition Width="Auto" SharedSizeGroup="EditColumn2" />
 		</Grid.ColumnDefinitions>
+        
 	</Grid>
 </UserControl>

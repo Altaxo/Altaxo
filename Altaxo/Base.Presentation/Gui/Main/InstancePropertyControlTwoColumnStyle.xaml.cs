@@ -23,10 +23,6 @@
 #endregion Copyright
 
 #nullable disable warnings
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -40,7 +36,26 @@ namespace Altaxo.Gui.Main
     public InstancePropertyControlTwoColumnStyle()
     {
       InitializeComponent();
+      DataContextChanged += EhDataContextChanged;
     }
+
+    private void EhDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
+    {
+      if (object.ReferenceEquals(e.OldValue, e.NewValue))
+        return;
+
+      if (e.NewValue is InstancePropertyController ctrl)
+      {
+        InitializeItems(ctrl.ControllerList);
+      }
+      else
+      {
+        _guiGrid.Children.Clear();
+      }
+
+    }
+
+    // https://stackoverflow.com/questions/889825/is-it-possible-to-bind-a-canvass-children-property-in-xaml
 
     public void InitializeItems(Altaxo.Collections.ListNodeList list)
     {

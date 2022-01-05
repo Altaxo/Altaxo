@@ -50,12 +50,12 @@ namespace Altaxo.Gui.Common.Drawing
 
     static ScaleComboBox()
     {
+      UnitEnvironmentProperty.OverrideMetadata(typeof(ScaleComboBox), new FrameworkPropertyMetadata(RelationEnvironment.Instance));
       SelectedQuantityProperty.OverrideMetadata(typeof(ScaleComboBox), new FrameworkPropertyMetadata(new Altaxo.Units.DimensionfulQuantity(1, Unity.Instance)));
     }
 
     public ScaleComboBox()
     {
-      UnitEnvironment = RelationEnvironment.Instance;
       _converter.ValidationAfterSuccessfulConversion = EhValidateQuantity;
 
       InitializeComponent();

@@ -5,9 +5,12 @@
     xmlns:axog="clr-namespace:Altaxo.Gui;assembly=AltaxoBase"
     xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
     xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing"
+    xmlns:axogcc="clr-namespace:Altaxo.Gui.Common.Converters"
+    xmlns:axogcdb="clr-namespace:Altaxo.Gui.Common.Drawing;assembly=AltaxoBase"
     xmlns:axogm="clr-namespace:Altaxo.Gui.Main"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:DataContext="{d:DesignInstance Type=axogcdb:BrushControllerAdvanced}"
     Grid.IsSharedSizeScope="True"
     mc:Ignorable="d">
     <UserControl.Resources>
@@ -21,6 +24,8 @@
                 <Setter Property="Margin" Value="4" />
             </Style.Setters>
         </Style>
+        <axogcc:BrushXToImageConverter x:Key="BrushToImageConverter"/>
+        <axogcc:TwoDoublesToSizeConverter x:Key="TwoDoublesToSizeConverter"/>
     </UserControl.Resources>
     <DockPanel>
         <Grid DockPanel.Dock="Top">
@@ -40,162 +45,186 @@
             </Grid.RowDefinitions>
 
             <Label
-                x:Name="_lblBrushType"
                 Grid.Row="0"
-                Grid.Column="0">
-                Brush type:
-            </Label>
+                Grid.Column="0"
+                VerticalAlignment="Center"
+                Content="Brush type:"
+                />
             <axogcd:BrushTypeComboBox
-                x:Name="_cbBrushType"
                 Grid.Row="0"
                 Grid.Column="1"
                 Margin="4"
-                SelectedBrushTypeChanged="EhBrushTypeChanged" />
+                BrushType="{Binding BrushType, Mode=TwoWay}"/>
 
             <Label
-                x:Name="_lblForeColor"
                 Grid.Row="0"
-                Grid.Column="2">
-                Color:
-            </Label>
+                Grid.Column="2"
+                Content="Color:"
+                VerticalAlignment="Center"
+                Visibility="{Binding ForeColorEnable, Converter={x:Static axogcc:FalseToVisibilityCollapsedConverter.Instance}}"
+                />
+
             <axogcd:ColorComboBox
-                x:Name="_cbColor"
                 Grid.Row="0"
                 Grid.Column="3"
                 Margin="4"
-                SelectedColorChanged="EhForeColorChanged" />
+                SelectedColor="{Binding ForeColor, Mode=TwoWay}" 
+                ShowPlotColorsOnly="{Binding ShowPlotColorsOnly}"
+                Visibility="{Binding ForeColorEnable, Converter={x:Static axogcc:FalseToVisibilityCollapsedConverter.Instance}}"
+                />
 
             <Label
-                x:Name="_lblExchangeColors"
                 Grid.Row="1"
-                Grid.Column="0">
-                Exchange colors:
-            </Label>
+                Grid.Column="0"
+                Content="Exchange colors:"
+                VerticalAlignment="Center"
+                Visibility="{Binding ExchangeColorsEnable, Converter={x:Static axogcc:FalseToVisibilityCollapsedConverter.Instance}}"
+                />
+
             <CheckBox
-                x:Name="_chkExchangeColors"
                 Grid.Row="1"
                 Grid.Column="1"
                 Margin="4"
                 VerticalAlignment="Center"
-                Checked="EhExchangeColorsChanged"
-                Unchecked="EhExchangeColorsChanged" />
+                IsChecked="{Binding ExchangeColors, Mode=TwoWay}"
+                Visibility="{Binding ExchangeColorsEnable, Converter={x:Static axogcc:FalseToVisibilityCollapsedConverter.Instance}}"
+                />
 
             <Label
-                x:Name="_lblBackColor"
                 Grid.Row="1"
-                Grid.Column="2">
-                BackColor:
-            </Label>
+                Grid.Column="2"
+                Content="BackColor:"
+                VerticalAlignment="Center"
+                Visibility="{Binding BackColorEnable, Converter={x:Static axogcc:FalseToVisibilityCollapsedConverter.Instance}}"
+                />
+
             <axogcd:ColorComboBox
-                x:Name="_cbBackColor"
                 Grid.Row="1"
                 Grid.Column="3"
                 Margin="4"
-                SelectedColorChanged="EhBackColorChanged" />
+                SelectedColor="{Binding BackColor, Mode=TwoWay}"
+                Visibility="{Binding BackColorEnable, Converter={x:Static axogcc:FalseToVisibilityCollapsedConverter.Instance}}"
+                />
 
             <Label
-                x:Name="_lblWrapMode"
                 Grid.Row="2"
-                Grid.Column="0">
-                Wrap mode:
-            </Label>
+                Grid.Column="0"
+                Content="Wrap mode:"
+                Visibility="{Binding WrapModeEnable, Converter={x:Static axogcc:FalseToVisibilityCollapsedConverter.Instance}}"
+                />
+
             <axogcd:WrapModeComboBox
-                x:Name="_cbWrapMode"
                 Grid.Row="2"
                 Grid.Column="1"
                 Margin="4"
-                SelectionChanged="EhWrapModeChanged" />
+                WrapMode="{Binding WrapMode, Mode=TwoWay}"
+                Visibility="{Binding WrapModeEnable, Converter={x:Static axogcc:FalseToVisibilityCollapsedConverter.Instance}}"
+                />
 
             <Label
-                x:Name="_lblGradientAngle"
                 Grid.Row="2"
-                Grid.Column="2">
-                Angle:
-            </Label>
+                Grid.Column="2"
+                Content="Angle:"
+                Visibility="{Binding GradientAngleEnable, Converter={x:Static axogcc:FalseToVisibilityCollapsedConverter.Instance}}"
+                />
+
             <axogcd:RotationComboBox
-                x:Name="_cbGradientAngle"
                 Grid.Row="2"
                 Grid.Column="3"
                 Margin="4"
-                SelectedQuantityChanged="EhGradientAngleChanged" />
+                UnitEnvironment="{Binding GradientAngleEnvironment, Mode=OneWayToSource}"
+                SelectedQuantity="{Binding GradientAngle, Mode=TwoWay}"
+                Visibility="{Binding GradientAngleEnable, Converter={x:Static axogcc:FalseToVisibilityCollapsedConverter.Instance}}"
+                />
 
             <Label
-                x:Name="_lblGradientFocus"
                 Grid.Row="3"
-                Grid.Column="0">
-                GradientFocus:
-            </Label>
+                Grid.Column="0"
+                Content="GradientFocus:"
+                Visibility="{Binding GradientFocusEnable, Converter={x:Static axogcc:FalseToVisibilityCollapsedConverter.Instance}}"
+                />
+
             <axogcd:GradientFocusComboBox
-                x:Name="_cbGradientFocus"
                 Grid.Row="3"
                 Grid.Column="1"
                 Margin="4"
-                SelectedQuantityChanged="EhGradientFocusChanged" />
+                UnitEnvironment="{Binding GradientFocusEnvironment, Mode=OneWayToSource}"
+                SelectedQuantity="{Binding GradientFocus, Mode=TwoWay}"
+                Visibility="{Binding GradientFocusEnable, Converter={x:Static axogcc:FalseToVisibilityCollapsedConverter.Instance}}"
+                />
 
             <Label
-                x:Name="_lblColorScale"
                 Grid.Row="3"
-                Grid.Column="2">
-                Gradient color scale:
-            </Label>
+                Grid.Column="2"
+                Content="Gradient color scale:"
+                Visibility="{Binding GradientColorScaleEnable, Converter={x:Static axogcc:FalseToVisibilityCollapsedConverter.Instance}}"
+                />
+ 
             <axogcd:ColorScaleComboBox
-                x:Name="_cbColorScale"
                 Grid.Row="3"
                 Grid.Column="3"
                 Margin="4"
-                SelectedQuantityChanged="EhColorScaleChanged" />
+                UnitEnvironment="{Binding GradientColorScaleEnvironment, Mode=OneWayToSource}"
+                SelectedQuantity="{Binding GradientColorScale, Mode=TwoWay}" 
+                Visibility="{Binding GradientColorScaleEnable, Converter={x:Static axogcc:FalseToVisibilityCollapsedConverter.Instance}}"
+                />
 
             <Label
-                x:Name="_lblTextureImage"
                 Grid.Row="4"
-                Grid.Column="0">
-                Texture:
-            </Label>
+                Grid.Column="0"
+                Content="Texture:"
+                Visibility="{Binding TextureImageEnable, Converter={x:Static axogcc:FalseToVisibilityCollapsedConverter.Instance}}"
+                />
+
             <axogcd:TextureImageComboBox
-                x:Name="_cbTextureImage"
                 Grid.Row="4"
                 Grid.Column="1"
                 Margin="4"
-                SelectionChanged="EhTextureImageChanged" />
+                TextureImage="{Binding TextureImage, Mode=TwoWay}"
+                TextureImageType="{Binding BrushType, Mode=OneWay}"
+                Visibility="{Binding TextureImageEnable, Converter={x:Static axogcc:FalseToVisibilityCollapsedConverter.Instance}}"
+                />
 
             <Label
-                x:Name="_lblTextureOffsetX"
                 Grid.Row="5"
-                Grid.Column="0">
-                X offset:
-            </Label>
+                Grid.Column="0"
+                Content="X offset:"
+                Visibility="{Binding TextureOffsetXEnable, Converter={x:Static axogcc:FalseToVisibilityCollapsedConverter.Instance}}"
+            />
             <axogc:QuantityWithUnitTextBox
                 x:Name="_guiTextureOffsetX"
                 Grid.Row="5"
                 Grid.Column="1"
                 Margin="4"
-                SelectedQuantityChanged="EhTextureOffsetXChanged"
-                UnitEnvironment="{x:Static axog:RelationEnvironment.Instance}" />
+                UnitEnvironment="{Binding TextureOffsetXEnvironment}" 
+                SelectedQuantity="{Binding TextureOffsetX, Mode=TwoWay}"
+                Visibility="{Binding TextureOffsetXEnable, Converter={x:Static axogcc:FalseToVisibilityCollapsedConverter.Instance}}"
+                />
 
             <Label
-                x:Name="_lblTextureOffsetY"
                 Grid.Row="5"
-                Grid.Column="2">
-                Y offset:
-            </Label>
+                Grid.Column="2"
+                Content="Y offset:" 
+                Visibility="{Binding TextureOffsetYEnable, Converter={x:Static axogcc:FalseToVisibilityCollapsedConverter.Instance}}"
+                />
             <axogc:QuantityWithUnitTextBox
-                x:Name="_guiTextureOffsetY"
                 Grid.Row="5"
                 Grid.Column="3"
                 Margin="4"
-                SelectedQuantityChanged="EhTextureOffsetYChanged"
-                UnitEnvironment="{x:Static axog:RelationEnvironment.Instance}" />
+                UnitEnvironment="{Binding TextureOffsetYEnvironment}" 
+                SelectedQuantity="{Binding TextureOffsetY, Mode=TwoWay}"
+                Visibility="{Binding TextureOffsetYEnable, Converter={x:Static axogcc:FalseToVisibilityCollapsedConverter.Instance}}"
+                />
         </Grid>
 
-        <axogcd:TextureScalingControl
-            x:Name="_guiTextureScaling"
-            Margin="0,4,0,4"
-            DockPanel.Dock="Top" />
+        <ContentControl Content="{Binding TextureScalingView}" Visibility="{Binding TextureScalingEnable, Converter={x:Static axogcc:FalseToVisibilityCollapsedConverter.Instance}}" Margin="0,4,0,4" DockPanel.Dock="Top" />
 
         <axogm:InstancePropertyControlTwoColumnStyle
             x:Name="_guiAdditionalProperties"
             Margin="0,4,0,4"
-            DockPanel.Dock="Top" />
+            DockPanel.Dock="Top"
+            DataContext="{Binding AdditionalPropertiesController}"
+            />
 
         <GroupBox Margin="0,4,0,4" Header="Preview:">
             <Grid>
@@ -207,9 +236,17 @@
                     x:Name="_previewPanel"
                     Width="{Binding ElementName=_previewRect, Path=ActualWidth}"
                     Height="{Binding ElementName=_previewRect, Path=ActualHeight}"
-                    SizeChanged="EhPreviewPanelSizeChanged"
                     Stretch="Fill"
-                    StretchDirection="Both" />
+                    StretchDirection="Both"
+                    >
+                    <Image.Source>
+                        <MultiBinding Converter="{StaticResource BrushToImageConverter}">
+                            <Binding Path="BrushDocument"/>
+                            <Binding RelativeSource="{RelativeSource Mode=Self}" Path="ActualWidth"/>
+                            <Binding RelativeSource="{RelativeSource Mode=Self}" Path="ActualHeight"/>
+                        </MultiBinding>
+                    </Image.Source>
+                </Image>
             </Grid>
         </GroupBox>
     </DockPanel>

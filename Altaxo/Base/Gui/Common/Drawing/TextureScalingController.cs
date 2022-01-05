@@ -27,32 +27,15 @@ using System;
 using System.Collections.Generic;
 using Altaxo.Drawing;
 using Altaxo.Geometry;
+using Altaxo.Units;
+using AUL = Altaxo.Units.Length;
+using AUD = Altaxo.Units.Dimensionless;
+
 
 namespace Altaxo.Gui.Common.Drawing
 {
-  public interface ITextureScalingView
+  public interface ITextureScalingView : IDataContextAwareView
   {
-    TextureScalingMode ScalingMode { get; set; }
-
-    event Action? ScalingModeChanged;
-
-    AspectRatioPreservingMode AspectPreserving { get; set; }
-
-    event Action? AspectPreservingChanged;
-
-    double XScale { get; set; }
-
-    double YScale { get; set; }
-
-    double XSize { get; set; }
-
-    double YSize { get; set; }
-
-    event Action? XChanged;
-
-    event Action? YChanged;
-
-    bool ShowSizeNotScale { set; }
   }
 
   public class TextureScalingController : MVCANDControllerEditImmutableDocBase<TextureScaling, ITextureScalingView>
@@ -70,59 +53,250 @@ namespace Altaxo.Gui.Common.Drawing
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
+    }
 
-      if (_view is not null)
+    #region Binding
+
+    public bool ScalingModeSource
+    {
+      get => _doc.ScalingMode == TextureScalingMode.Source;
+      set
       {
-        _view.ScalingMode = _doc.ScalingMode;
-        _view.AspectPreserving = _doc.SourceAspectRatioPreserving;
-        if (_doc.ScalingMode == TextureScalingMode.Absolute)
+        if(value && !ScalingModeSource)
         {
-          _view.XSize = _doc.X;
-          _view.YSize = _doc.Y;
-          _view.XScale = 1;
-          _view.YScale = 1;
-          _view.ShowSizeNotScale = true;
+          _doc = _doc.WithScalingMode(TextureScalingMode.Source);
+          OnPropertyChanged(nameof(ScalingModeSource));
+          OnPropertyChanged(nameof(ScalingModeDestination));
+          OnPropertyChanged(nameof(ScalingModeAbsolute));
+          OnPropertyChanged(nameof(ScaleX));
+          OnPropertyChanged(nameof(ScaleY));
         }
-        else
+      }
+    }
+    public bool ScalingModeDestination
+    {
+      get => _doc.ScalingMode == TextureScalingMode.Destination;
+      set
+      {
+        if (value && !ScalingModeDestination)
         {
-          _view.XScale = _doc.X;
-          _view.YScale = _doc.Y;
-          _view.XSize = 10;
-          _view.YSize = 10;
-          _view.ShowSizeNotScale = false;
+          _doc = _doc.WithScalingMode(TextureScalingMode.Destination);
+          OnPropertyChanged(nameof(ScalingModeSource));
+          OnPropertyChanged(nameof(ScalingModeDestination));
+          OnPropertyChanged(nameof(ScalingModeAbsolute));
+          OnPropertyChanged(nameof(ScaleX));
+          OnPropertyChanged(nameof(ScaleY));
+        }
+      }
+    }
+    public bool ScalingModeAbsolute
+    {
+      get => _doc.ScalingMode == TextureScalingMode.Absolute;
+      set
+      {
+        if (value && !ScalingModeAbsolute)
+        {
+          _doc = _doc.WithScalingMode(TextureScalingMode.Absolute);
+          OnPropertyChanged(nameof(ScalingModeSource));
+          OnPropertyChanged(nameof(ScalingModeDestination));
+          OnPropertyChanged(nameof(ScalingModeAbsolute));
+          OnPropertyChanged(nameof(SizeX));
+          OnPropertyChanged(nameof(SizeY));
         }
       }
     }
 
+    public bool AspectModeNone
+    {
+      get => _doc.SourceAspectRatioPreserving == AspectRatioPreservingMode.None;
+      set
+      {
+        if (value && !AspectModeNone)
+        {
+          ChangeAspectPreservingMode(AspectRatioPreservingMode.None);
+          OnPropertyChanged(nameof(AspectModeNone));
+          OnPropertyChanged(nameof(AspectModeXPriority));
+          OnPropertyChanged(nameof(AspectModeYPriority));
+        }
+      }
+    }
+
+    public bool AspectModeXPriority
+    {
+      get => _doc.SourceAspectRatioPreserving == AspectRatioPreservingMode.PreserveXPriority;
+      set
+      {
+        if (value && !AspectModeXPriority)
+        {
+          ChangeAspectPreservingMode(AspectRatioPreservingMode.PreserveXPriority);
+          OnPropertyChanged(nameof(AspectModeNone));
+          OnPropertyChanged(nameof(AspectModeXPriority));
+          OnPropertyChanged(nameof(AspectModeYPriority));
+        }
+      }
+    }
+
+    public bool AspectModeYPriority
+    {
+      get => _doc.SourceAspectRatioPreserving == AspectRatioPreservingMode.PreserveYPriority;
+      set
+      {
+        if (value && !AspectModeYPriority)
+        {
+          ChangeAspectPreservingMode(AspectRatioPreservingMode.PreserveYPriority);
+          OnPropertyChanged(nameof(AspectModeNone));
+          OnPropertyChanged(nameof(AspectModeXPriority));
+          OnPropertyChanged(nameof(AspectModeYPriority));
+        }
+      }
+    }
+
+    private void ChangeAspectPreservingMode(AspectRatioPreservingMode val)
+    {
+      _doc = _doc.WithSourceAspectRatioPreserving(val);
+
+      if (_doc.SourceAspectRatioPreserving != AspectRatioPreservingMode.None)
+      {
+        if (_doc.ScalingMode == TextureScalingMode.Absolute)
+        {
+          if (_sourceTextureSize.HasValue)
+          {
+            if (_doc.SourceAspectRatioPreserving == AspectRatioPreservingMode.PreserveXPriority)
+            {
+              _doc = _doc.WithY(_doc.X * _sourceTextureSize.Value.Y / _sourceTextureSize.Value.X);
+              OnPropertyChanged(nameof(SizeY));
+            }
+            else
+            {
+              _doc = _doc.WithX(_doc.Y * _sourceTextureSize.Value.X / _sourceTextureSize.Value.Y);
+              OnPropertyChanged(nameof(SizeX));
+            }
+          }
+        }
+        else
+        {
+          if (_doc.SourceAspectRatioPreserving == AspectRatioPreservingMode.PreserveXPriority)
+          {
+            _doc = _doc.WithY(_doc.X);
+            OnPropertyChanged(nameof(ScaleY));
+          }
+          else
+          {
+            _doc = _doc.WithX(_doc.Y);
+            OnPropertyChanged(nameof(ScaleX));
+          }
+        }
+      }
+
+      OnMadeDirty();
+    }
+
+    public QuantityWithUnitGuiEnvironment SizeEnvironment => Altaxo.Gui.SizeEnvironment.Instance;
+
+
+    public DimensionfulQuantity SizeX
+    {
+      get => new DimensionfulQuantity(_doc.X, AUL.Point.Instance).AsQuantityIn(SizeEnvironment.DefaultUnit);
+      set
+      {
+        var val = value.AsValueIn(AUL.Point.Instance);
+        if (!(_doc.X == val))
+        {
+          if (_doc.ScalingMode == TextureScalingMode.Absolute)
+          {
+            _doc = _doc.WithX(val);
+            if (_doc.SourceAspectRatioPreserving != AspectRatioPreservingMode.None && _sourceTextureSize is not null)
+            {
+              _doc = _doc.WithY(_doc.X * _sourceTextureSize.Value.Y / _sourceTextureSize.Value.X);
+            }
+            OnPropertyChanged(nameof(SizeX));
+            OnPropertyChanged(nameof(SizeY));
+            OnMadeDirty();
+          }
+        }
+      }
+    }
+
+    public DimensionfulQuantity SizeY
+    {
+      get => new DimensionfulQuantity(_doc.Y, AUL.Point.Instance).AsQuantityIn(SizeEnvironment.DefaultUnit);
+      set
+      {
+        var val = value.AsValueIn(AUL.Point.Instance);
+        if (!(_doc.Y == val))
+        {
+          if (_doc.ScalingMode == TextureScalingMode.Absolute)
+          {
+            _doc = _doc.WithY(val);
+            if (_doc.SourceAspectRatioPreserving != AspectRatioPreservingMode.None && _sourceTextureSize is not null)
+            {
+              _doc = _doc.WithX(_doc.Y * _sourceTextureSize.Value.X / _sourceTextureSize.Value.Y);
+            }
+            OnPropertyChanged(nameof(SizeX));
+            OnPropertyChanged(nameof(SizeY));
+            OnMadeDirty();
+          }
+        }
+      }
+    }
+
+    public QuantityWithUnitGuiEnvironment ScaleXEnvironment { get; set; }
+   
+
+    public DimensionfulQuantity ScaleX
+    {
+      get => new DimensionfulQuantity(_doc.X, AUD.Unity.Instance).AsQuantityIn(ScaleXEnvironment.DefaultUnit);
+      set
+      {
+        var val = value.AsValueIn(AUD.Unity.Instance);
+        if (!(_doc.X == val))
+        {
+          if (!(_doc.ScalingMode == TextureScalingMode.Absolute))
+          {
+            _doc = _doc.WithX(val);
+            if (_doc.SourceAspectRatioPreserving != AspectRatioPreservingMode.None)
+            {
+              _doc = _doc.WithY(_doc.X);
+            }
+            OnPropertyChanged(nameof(ScaleX));
+            OnPropertyChanged(nameof(ScaleY));
+            OnMadeDirty();
+          }
+
+        }
+      }
+    }
+
+    public QuantityWithUnitGuiEnvironment ScaleYEnvironment { get; set; }
+
+    public DimensionfulQuantity ScaleY
+    {
+      get => new DimensionfulQuantity(_doc.Y, AUD.Unity.Instance).AsQuantityIn(ScaleYEnvironment.DefaultUnit);
+      set
+      {
+        var val = value.AsValueIn(AUD.Unity.Instance);
+        if (!(_doc.Y == val))
+        {
+          if (!(_doc.ScalingMode == TextureScalingMode.Absolute))
+          {
+            _doc = _doc.WithY(val);
+            if (_doc.SourceAspectRatioPreserving != AspectRatioPreservingMode.None)
+            {
+              _doc = _doc.WithX(_doc.Y);
+            }
+            OnPropertyChanged(nameof(ScaleX));
+            OnPropertyChanged(nameof(ScaleY));
+            OnMadeDirty();
+          }
+        }
+      }
+    }
+
+    #endregion Binding
+
     public override bool Apply(bool disposeController)
     {
       return ApplyEnd(true, disposeController);
-    }
-
-    protected override void AttachView()
-    {
-      if (_view is null)
-        throw NoViewException;
-
-      _view.ScalingModeChanged += EhScalingModeChanged;
-      _view.AspectPreservingChanged += EhAspectPreservingChanged;
-      _view.XChanged += EhXChanged;
-      _view.YChanged += EhYChanged;
-
-      base.AttachView();
-    }
-
-    protected override void DetachView()
-    {
-      if (_view is null)
-        throw NoViewException;
-
-      _view.ScalingModeChanged -= EhScalingModeChanged;
-      _view.AspectPreservingChanged -= EhAspectPreservingChanged;
-      _view.XChanged -= EhXChanged;
-      _view.YChanged -= EhYChanged;
-
-      base.DetachView();
     }
 
     /// <summary>Sets the size of the source texture. This is used by the view to automatically change the value of one size/scale when the value for the other size/scale is changed.</summary>
@@ -135,114 +309,8 @@ namespace Altaxo.Gui.Common.Drawing
       }
     }
 
+   
 
-
-    private void EhScalingModeChanged()
-    {
-      if (_view is null)
-        throw NoViewException;
-      _doc = _doc.WithScalingMode(_view.ScalingMode);
-      using (var supp = _suppressDirtyEvent.SuspendGetToken())
-      {
-        EhXChanged();
-        EhYChanged();
-        _view.ShowSizeNotScale = (_doc.ScalingMode == TextureScalingMode.Absolute);
-      }
-      OnMadeDirty();
-    }
-
-    private void EhAspectPreservingChanged()
-    {
-      if (_view is null)
-        throw NoViewException;
-      _doc = _doc.WithSourceAspectRatioPreserving(_view.AspectPreserving);
-
-      if (_doc.SourceAspectRatioPreserving != AspectRatioPreservingMode.None)
-      {
-        if (_doc.ScalingMode == TextureScalingMode.Absolute)
-        {
-          if (_sourceTextureSize.HasValue)
-          {
-            if (_doc.SourceAspectRatioPreserving == AspectRatioPreservingMode.PreserveXPriority)
-            {
-              _doc = _doc.WithY(_doc.X * _sourceTextureSize.Value.Y / _sourceTextureSize.Value.X);
-              _view.YSize = _doc.Y;
-            }
-            else
-            {
-              _doc = _doc.WithX(_doc.Y * _sourceTextureSize.Value.X / _sourceTextureSize.Value.Y);
-              _view.XSize = _doc.X;
-            }
-          }
-        }
-        else
-        {
-          if (_doc.SourceAspectRatioPreserving == AspectRatioPreservingMode.PreserveXPriority)
-          {
-            _doc = _doc.WithY(_doc.X);
-            _view.YScale = _doc.Y;
-          }
-          else
-          {
-            _doc = _doc.WithX(_doc.Y);
-            _view.XScale = _doc.X;
-          }
-        }
-      }
-
-      OnMadeDirty();
-    }
-
-    private void EhXChanged()
-    {
-      if (_view is null)
-        throw NoViewException;
-      if (_doc.ScalingMode == TextureScalingMode.Absolute)
-      {
-        _doc = _doc.WithX(_view.XSize);
-        if (_doc.SourceAspectRatioPreserving != AspectRatioPreservingMode.None && _sourceTextureSize is not null)
-        {
-          _doc = _doc.WithY(_doc.X * _sourceTextureSize.Value.Y / _sourceTextureSize.Value.X);
-          _view.YSize = _doc.Y;
-        }
-      }
-      else
-      {
-        _doc = _doc.WithX(_view.XScale);
-        if (_doc.SourceAspectRatioPreserving != AspectRatioPreservingMode.None)
-        {
-          _doc = _doc.WithY(_doc.X);
-          _view.YScale = _doc.Y;
-        }
-      }
-
-      OnMadeDirty();
-    }
-
-    private void EhYChanged()
-    {
-      if (_view is null)
-        throw NoViewException;
-      if (_doc.ScalingMode == TextureScalingMode.Absolute)
-      {
-        _doc = _doc.WithY(_view.YSize);
-        if (_doc.SourceAspectRatioPreserving != AspectRatioPreservingMode.None && _sourceTextureSize is not null)
-        {
-          _doc = _doc.WithX(_doc.Y * _sourceTextureSize.Value.X / _sourceTextureSize.Value.Y);
-          _view.XSize = _doc.X;
-        }
-      }
-      else
-      {
-        _doc = _doc.WithY(_view.YScale);
-        if (_doc.SourceAspectRatioPreserving != AspectRatioPreservingMode.None)
-        {
-          _doc = _doc.WithX(_doc.Y);
-          _view.XScale = _doc.X;
-        }
-      }
-
-      OnMadeDirty();
-    }
+    
   }
 }

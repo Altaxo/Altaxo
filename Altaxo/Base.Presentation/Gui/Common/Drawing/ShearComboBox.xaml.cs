@@ -44,12 +44,12 @@ namespace Altaxo.Gui.Common.Drawing
 
     static ShearComboBox()
     {
+      UnitEnvironmentProperty.OverrideMetadata(typeof(ShearComboBox), new FrameworkPropertyMetadata(RelationEnvironment.Instance));
       SelectedQuantityProperty.OverrideMetadata(typeof(ShearComboBox), new FrameworkPropertyMetadata(new Altaxo.Units.DimensionfulQuantity(0, Unity.Instance)));
     }
 
     public ShearComboBox()
     {
-      UnitEnvironment = RelationEnvironment.Instance;
       _converter.ValidationAfterSuccessfulConversion = EhValidateQuantity;
 
       InitializeComponent();
