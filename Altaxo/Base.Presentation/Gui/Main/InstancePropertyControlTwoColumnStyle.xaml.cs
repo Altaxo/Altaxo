@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -36,55 +36,6 @@ namespace Altaxo.Gui.Main
     public InstancePropertyControlTwoColumnStyle()
     {
       InitializeComponent();
-      DataContextChanged += EhDataContextChanged;
-    }
-
-    private void EhDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
-    {
-      if (object.ReferenceEquals(e.OldValue, e.NewValue))
-        return;
-
-      if (e.NewValue is InstancePropertyController ctrl)
-      {
-        InitializeItems(ctrl.ControllerList);
-      }
-      else
-      {
-        _guiGrid.Children.Clear();
-      }
-
-    }
-
-    // https://stackoverflow.com/questions/889825/is-it-possible-to-bind-a-canvass-children-property-in-xaml
-
-    public void InitializeItems(Altaxo.Collections.ListNodeList list)
-    {
-      int rowsNeeded = (list.Count + 1) >> 1;
-
-      int diff = rowsNeeded - _guiGrid.RowDefinitions.Count;
-      for (int i = diff - 1; i >= 0; --i)
-        _guiGrid.RowDefinitions.Add(new RowDefinition());
-
-      _guiGrid.Children.Clear();
-
-      int itemIdx = -1;
-      foreach (var t in list)
-      {
-        itemIdx++;
-        int column = itemIdx % 2;
-        int row = itemIdx >> 1;
-
-        var label = new Label() { Content = t.Text };
-        label.SetValue(Grid.ColumnProperty, 2 * column);
-        label.SetValue(Grid.RowProperty, row);
-        _guiGrid.Children.Add(label);
-
-        var uiElement = (FrameworkElement)t.Tag;
-        uiElement.SetValue(Grid.ColumnProperty, 2 * column + 1);
-        uiElement.SetValue(Grid.RowProperty, row);
-        uiElement.Margin = new Thickness(4);
-        _guiGrid.Children.Add(uiElement);
-      }
     }
   }
 }

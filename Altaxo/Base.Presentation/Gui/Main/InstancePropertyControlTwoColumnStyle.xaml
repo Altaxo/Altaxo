@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:Altaxo.Gui.Main"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
 	<UserControl.Resources>
@@ -13,13 +14,31 @@
 			</Style.Setters>
 		</Style>
 	</UserControl.Resources>
-	<Grid x:Name="_guiGrid" >
-		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="Auto" SharedSizeGroup="LabelColumn1" />
-			<ColumnDefinition Width="Auto" SharedSizeGroup="EditColumn1" />
-			<ColumnDefinition Width="Auto" SharedSizeGroup="LabelColumn2" />
-			<ColumnDefinition Width="Auto" SharedSizeGroup="EditColumn2" />
-		</Grid.ColumnDefinitions>
-        
-	</Grid>
+    <!-- for an example of an ItemsControl with a panel see https://stackoverflow.com/questions/889825/is-it-possible-to-bind-a-canvass-children-property-in-xaml -->
+    <local:ItemsControlWithGridItemsHost ItemsSource="{Binding ControllerList}" NumberOfColumns="4">
+        <ItemsControl.ItemsPanel>
+            <ItemsPanelTemplate>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition  Width="Auto" SharedSizeGroup="LabelColumn1"/>
+                        <ColumnDefinition  Width="Auto" SharedSizeGroup="EditColumn1" />
+                        <ColumnDefinition Width="Auto" SharedSizeGroup="LabelColumn2"/>
+                        <ColumnDefinition Width="Auto" SharedSizeGroup="EditColumn2"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                </Grid>
+            </ItemsPanelTemplate>
+        </ItemsControl.ItemsPanel>
+        <ItemsControl.ItemTemplate>
+            <DataTemplate>
+                <Label Content="{Binding}" />
+            </DataTemplate>
+        </ItemsControl.ItemTemplate>
+        <ItemsControl.ItemContainerStyle>
+            <Style>
+            </Style>
+        </ItemsControl.ItemContainerStyle>
+    </local:ItemsControlWithGridItemsHost>
 </UserControl>
