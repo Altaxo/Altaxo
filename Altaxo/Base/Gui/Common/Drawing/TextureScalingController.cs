@@ -240,7 +240,7 @@ namespace Altaxo.Gui.Common.Drawing
       }
     }
 
-    public QuantityWithUnitGuiEnvironment ScaleXEnvironment { get; set; }
+    public QuantityWithUnitGuiEnvironment ScaleXEnvironment { get; set; } = RelationEnvironment.Instance;
    
 
     public DimensionfulQuantity ScaleX
@@ -267,7 +267,7 @@ namespace Altaxo.Gui.Common.Drawing
       }
     }
 
-    public QuantityWithUnitGuiEnvironment ScaleYEnvironment { get; set; }
+    public QuantityWithUnitGuiEnvironment ScaleYEnvironment { get; set; } = RelationEnvironment.Instance;
 
     public DimensionfulQuantity ScaleY
     {

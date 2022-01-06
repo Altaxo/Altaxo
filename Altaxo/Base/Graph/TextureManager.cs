@@ -63,6 +63,39 @@ namespace Altaxo.Graph
       }
     }
 
+
+    /// <summary>
+    /// Enumerates the synthetic brushes.
+    /// </summary>
+    /// <value>
+    /// The synthetic brushes.
+    /// </value>
+    public static IEnumerable<Altaxo.Graph.Gdi.SyntheticBrushes.SyntheticBrushBase> SyntheticBrushes
+    {
+      get
+      {
+        // Synthetic items
+        var types = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(Altaxo.Graph.Gdi.SyntheticBrushes.SyntheticBrushBase));
+        foreach (var t in types)
+        {
+          Altaxo.Graph.Gdi.SyntheticBrushes.SyntheticBrushBase brush = null;
+          try
+          {
+            brush = Activator.CreateInstance(t) as Altaxo.Graph.Gdi.SyntheticBrushes.SyntheticBrushBase;
+
+          }
+          catch (Exception)
+          {
+          }
+
+          if (brush is not null)
+          {
+            yield return brush;
+          }
+        }
+      }
+    }
+
     private TextureManager()
     {
     }

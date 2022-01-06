@@ -180,8 +180,8 @@
                 Grid.Row="4"
                 Grid.Column="1"
                 Margin="4"
-                TextureImage="{Binding TextureImage, Mode=TwoWay}"
                 TextureImageType="{Binding BrushType, Mode=OneWay}"
+                TextureImage="{Binding TextureImage, Mode=TwoWay}"
                 Visibility="{Binding TextureImageEnable, Converter={x:Static axogcc:FalseToVisibilityCollapsedConverter.Instance}}"
                 />
 
@@ -217,10 +217,9 @@
                 />
         </Grid>
 
-        <ContentControl Content="{Binding TextureScalingView}" Visibility="{Binding TextureScalingEnable, Converter={x:Static axogcc:FalseToVisibilityCollapsedConverter.Instance}}" Margin="0,4,0,4" DockPanel.Dock="Top" />
+        <axogcd:TextureScalingControl DataContext="{Binding TextureScalingController}" Visibility="{Binding TextureScalingEnable, Converter={x:Static axogcc:FalseToVisibilityCollapsedConverter.Instance}}" Margin="0,4,0,4" DockPanel.Dock="Top"/>
 
         <axogm:InstancePropertyControlTwoColumnStyle
-            x:Name="_guiAdditionalProperties"
             Margin="0,4,0,4"
             DockPanel.Dock="Top"
             DataContext="{Binding AdditionalPropertiesController}"

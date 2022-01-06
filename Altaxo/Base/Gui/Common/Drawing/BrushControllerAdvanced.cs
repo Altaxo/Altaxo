@@ -24,6 +24,7 @@
 
 #nullable disable
 using System.Collections.Generic;
+using System.Linq;
 using Altaxo.Drawing;
 using Altaxo.Geometry;
 using Altaxo.Units;
@@ -62,7 +63,6 @@ namespace Altaxo.Gui.Common.Drawing
         {
           _doc = _doc.WithBrushType(value);
           OnPropertyChanged(nameof(BrushType));
-
           OnPropertyChanged(nameof(ForeColor));
           OnPropertyChanged(nameof(BackColor));
           OnPropertyChanged(nameof(ExchangeColors));
@@ -72,6 +72,16 @@ namespace Altaxo.Gui.Common.Drawing
           OnPropertyChanged(nameof(GradientColorScale));
           OnPropertyChanged(nameof(TextureOffsetX));
           OnPropertyChanged(nameof(TextureOffsetY));
+
+          if(value == BrushType.SyntheticTextureBrush && _doc.TextureImage is null && Altaxo.Graph.TextureManager.SyntheticBrushes.FirstOrDefault() is { } syntheticTexture)
+          {
+            _doc = _doc.WithTextureImage(syntheticTexture);
+          }
+          if (value == BrushType.TextureBrush && _doc.TextureImage is null && Altaxo.Graph.TextureManager.BuiltinTextures.FirstOrDefault().Value is { } texture)
+          {
+            _doc = _doc.WithTextureImage(texture);
+          }
+
           OnPropertyChanged(nameof(TextureImage));
 
           EnableElementsInDependenceOnBrushType();
@@ -249,8 +259,7 @@ namespace Altaxo.Gui.Common.Drawing
     bool _textureScalingEnable;
     public bool TextureScalingEnable { get => _textureScalingEnable; set { if (!(TextureScalingEnable == value)) { _textureScalingEnable = value; OnPropertyChanged(nameof(TextureScalingEnable)); } } }
 
-
-    public object TextureScalingView => _textureScalingController?.ViewObject;
+    public TextureScalingController TextureScalingController => _textureScalingController;
 
     bool _textureImageEnable;
     public bool TextureImageEnable { get => _textureImageEnable; set { if (!(TextureImageEnable == value)) { _textureImageEnable = value; OnPropertyChanged(nameof(TextureImageEnable)); } } }
@@ -264,12 +273,17 @@ namespace Altaxo.Gui.Common.Drawing
         {
           _doc = _doc.WithTextureImage(value);
           OnPropertyChanged(nameof(TextureImage));
-          _additionalPropertiesController.InitializeDocument(_doc.TextureImage);
-          if (_doc.TextureImage is not null)
-            _textureScalingController.SourceTextureSize = GetSizeOfImageProxy(_doc.TextureImage);
+          OnTextureImageChanged();
           OnMadeDirty();
         }
       }
+    }
+
+    void OnTextureImageChanged()
+    {
+      _additionalPropertiesController.InitializeDocument(_doc.TextureImage);
+      if (_doc.TextureImage is not null)
+        _textureScalingController.SourceTextureSize = GetSizeOfImageProxy(_doc.TextureImage);
     }
 
     public Main.InstancePropertyController AdditionalPropertiesController => _additionalPropertiesController;
@@ -295,12 +309,6 @@ namespace Altaxo.Gui.Common.Drawing
 
       if (_view is not null)
       {
-        if (_textureScalingController.ViewObject is null)
-        {
-          Current.Gui.FindAndAttachControlTo(_textureScalingController);
-          OnPropertyChanged(nameof(TextureScalingView));
-        }
-
         EnableElementsInDependenceOnBrushType();
       }
     }
@@ -380,6 +388,7 @@ namespace Altaxo.Gui.Common.Drawing
           textureImage = true;
           textureOffsetX = true;
           textureOffsetY = true;
+          
           break;
       }
       ForeColorEnable = foreColor;
@@ -393,7 +402,9 @@ namespace Altaxo.Gui.Common.Drawing
       TextureOffsetXEnable = textureOffsetX;
       TextureOffsetYEnable = textureOffsetY;
       TextureImageEnable = textureImage;
-      //_view.AdditionalPropertiesView
+      OnTextureImageChanged();
+
+      
     }
 
     private VectorD2D GetSizeOfImageProxy(ImageProxy proxy)
@@ -404,10 +415,6 @@ namespace Altaxo.Gui.Common.Drawing
     #endregion Other helper functions
 
     #region Event handlers
-
-
-
-
 
     private void EhTextureImageChanged(IMVCANController ctrl)
     {
