@@ -24,14 +24,13 @@
 
 #nullable enable
 using System;
-using System.Collections.Generic;
 
 namespace Altaxo.Main.Properties
 {
   public class ProjectFolderPropertyDocumentCollection :
     ProjectItemCollectionBase<ProjectFolderPropertyDocument>
   {
-    public ProjectFolderPropertyDocumentCollection(AltaxoDocument parent)
+    public ProjectFolderPropertyDocumentCollection(IProject parent)
       : base(parent)
     {
     }

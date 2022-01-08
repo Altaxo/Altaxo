@@ -23,8 +23,8 @@
 #endregion Copyright
 
 using System;
-using System.Collections;
 using Altaxo.AddInItems;
+using Altaxo.Gui.Main;
 
 namespace Altaxo.Main
 {

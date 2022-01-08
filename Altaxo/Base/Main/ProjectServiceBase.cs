@@ -27,7 +27,9 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using Altaxo.AddInItems;
 using Altaxo.Gui;
+using Altaxo.Gui.Main;
 using Altaxo.Gui.Workbench;
 using Altaxo.Main;
 using Altaxo.Main.Services;
@@ -167,7 +169,7 @@ namespace Altaxo.Dom
       return oldManager;
     }
 
-    private void EhFileOrFolderNameChanged(object? sender, NameChangedEventArgs e)
+    protected virtual void EhFileOrFolderNameChanged(object? sender, NameChangedEventArgs e)
     {
       if (_currentProject is null)
         throw new InvalidProgramException();
@@ -217,7 +219,7 @@ namespace Altaxo.Dom
       }
     }
 
-    private void EhProjectDirtyChanged(object? sender, EventArgs e)
+    protected virtual void EhProjectDirtyChanged(object? sender, EventArgs e)
     {
       OnProjectChanged(new Altaxo.Main.ProjectEventArgs(_currentProject, _currentProject?.Name, ProjectEventKind.ProjectDirtyChanged));
     }
@@ -638,7 +640,7 @@ namespace Altaxo.Dom
       return false;
     }
 
-    public virtual void ShowDocumentView(object document)
+    public virtual object? ShowDocumentView(object document)
     {
       var viewcontent = Current.Workbench.GetViewModel<IViewContent>(document); // search for an already present view content
 
@@ -651,15 +653,47 @@ namespace Altaxo.Dom
       {
         Current.Workbench.ShowView(viewcontent, true);
       }
+
+      return viewcontent;
     }
 
     /// <summary>
-    /// This function will delete a project document and close all corresponding views.
+    /// This function will delete a project item and close the corresponding views.
     /// </summary>
-    /// <param name="document">The document (project item) to delete.</param>
-    /// <param name="force">If true, the document is deleted without safety question; otherwise, the user is ask before the graph document is deleted.</param>
-    public abstract void DeleteDocument(IProjectItem document, bool force);
+    /// <param name="document">The project item to delete</param>
+    /// <param name="force">If true, the document is deleted without safety question,
+    /// if false, the user is ask before the document is deleted.</param>
+    public void DeleteDocument(Main.IProjectItem document, bool force)
+    {
+      if (document is null)
+        throw new ArgumentNullException(nameof(document));
 
+      Current.Dispatcher.InvokeIfRequired(DeleteDocument_Unsynchronized, document, force);
+    }
+
+
+
+    protected virtual void DeleteDocument_Unsynchronized(Main.IProjectItem document, bool force)
+    {
+      if (!force &&
+        false == Current.Gui.YesNoMessageBox(string.Format("Are you sure to remove the {0} and the corresponding views?", document.GetType().Name), "Attention", false))
+        return;
+
+      // close all windows
+      var foundContent = Current.Workbench.GetViewModels<IViewContent>(document);
+      foreach (IViewContent content in foundContent.ToArray()) // ToArray because we change the collection by closing
+      {
+        if (content.CloseCommand.CanExecute(true))
+          content.CloseCommand.Execute(true);
+      }
+
+      Current.IProject.RemoveItem(document);
+
+      // the following sequence is related to a bug encountered when closing a tabbed window by the program:
+      // the active view content is not updated because the dockpanel lost the focus
+      // to circumvent this, we focus on a new viewcontent, in this case the first one
+      SelectFirstAvailableView();
+    }
     /// <summary>
     /// Returns all currently open views that show the given document object <code>document</code>, either directly (<see cref="IMVCController.ModelObject"/> is the document),
     /// or indirectly, if <see cref="IMVCController.ModelObject"/> is of type <see cref="Main.IProjectItemPresentationModel"/>, by comparing with
@@ -689,6 +723,123 @@ namespace Altaxo.Dom
               yield return content;
           }
         }
+      }
+    }
+
+    /// <summary>
+    /// Opens a view that shows the <paramref name="document"/>. If no view for the document can be found,
+    /// a new default view is created.
+    /// </summary>
+    /// <param name="document">The document for which a view must be found. This parameter must not be null.</param>
+    /// <returns>The view content for the provided document.</returns>
+    public object OpenOrCreateViewContentForDocument(IProjectItem document)
+    {
+      if (document is null)
+        throw new ArgumentNullException(nameof(document));
+
+      return Current.Dispatcher.InvokeIfRequired(OpenOrCreateViewContentForDocument_Unsynchronized, document);
+    }
+
+    protected object OpenOrCreateViewContentForDocument_Unsynchronized(IProjectItem document)
+    {
+      // make sure the document is contained in our current project
+      if (!Current.IProject.ContainsItem(document))
+        Current.IProject.AddItemWithThisOrModifiedName(document);
+
+      // if a content exist that show that graph, activate that content
+      var foundContent = GetViewContentsForDocument(document).FirstOrDefault();
+      if (foundContent is not null)
+      {
+        foundContent.IsActive = true;
+        foundContent.IsSelected = true;
+        return foundContent;
+      }
+      else // not found
+      {
+        return CreateNewViewContent_Unsynchronized(document);
+      }
+    }
+
+    protected IMVCController CreateNewViewContent_Unsynchronized(IProjectItem document)
+    {
+      if (document is null)
+        throw new ArgumentNullException(nameof(document));
+
+      // make sure that the item is already contained in the project
+      if (!Current.IProject.ContainsItem(document))
+        Current.IProject.AddItemWithThisOrModifiedName(document);
+
+      var types = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(AbstractViewContent));
+      System.Reflection.ConstructorInfo? cinfo = null;
+      object? viewContent = null;
+      foreach (Type type in types)
+      {
+        if ((cinfo = type.GetConstructor(new Type[] { document.GetType() })) is not null)
+        {
+          var par = cinfo.GetParameters()[0];
+          if (par.ParameterType != typeof(object)) // ignore view content which takes the most generic type
+          {
+            viewContent = cinfo.Invoke(new object[] { document });
+            break;
+          }
+        }
+      }
+
+      if (viewContent is null)
+      {
+        foreach (IProjectItemDisplayBindingDescriptor descriptor in AddInTree.BuildItems<IProjectItemDisplayBindingDescriptor>("/Altaxo/Workbench/ProjectItemDisplayBindings", this, false))
+        {
+          if (descriptor.ProjectItemType == document.GetType())
+          {
+            if ((cinfo = descriptor.ViewContentType.GetConstructor(new Type[] { document.GetType() })) is not null)
+            {
+              var par = cinfo.GetParameters()[0];
+              if (par.ParameterType != typeof(object)) // ignore view content which takes the most generic type
+              {
+                viewContent = cinfo.Invoke(new object[] { document });
+                break;
+              }
+            }
+          }
+        }
+      }
+
+      var controller = viewContent as IMVCController;
+      if (controller is not null && controller.ViewObject is null)
+      {
+        Current.Gui.FindAndAttachControlTo(controller);
+      }
+
+      if (Current.Workbench is { } wb && viewContent is { } vc)
+        wb.ShowView(vc, true);
+
+
+      return controller ?? throw new InvalidOperationException($"No controller found for project item of type {document.GetType()}");
+    }
+
+
+    /// <summary>This will remove the controller and its view from the Gui.</summary>
+    /// <param name="controller">The view content to remove.</param>
+    public void CloseViewContent(IViewContent controller)
+    {
+      Current.Dispatcher.InvokeIfRequired(CloseViewContent_Unsynchronized, controller);
+    }
+
+    private void CloseViewContent_Unsynchronized(IViewContent controller)
+    {
+      if (controller is not null)
+        Current.Workbench.CloseContent(controller);
+    }
+
+
+    protected void SelectFirstAvailableView()
+    {
+      var content = Current.Workbench.ViewContentCollection.FirstOrDefault();
+
+      if (content is not null)
+      {
+        content.IsActive = true;
+        content.IsSelected = true;
       }
     }
 

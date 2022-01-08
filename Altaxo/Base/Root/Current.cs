@@ -394,6 +394,11 @@ namespace Altaxo
       }
     }
 
+    /// <summary>
+    /// Gets the current project.
+    /// </summary>
+    public static Main.IProject IProject => IProjectService.CurrentProject;
+
     #endregion Project service
 
     #region Com Manager

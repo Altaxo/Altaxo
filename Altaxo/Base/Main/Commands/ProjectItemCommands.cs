@@ -26,8 +26,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using Altaxo.Gui;
 
 namespace Altaxo.Main.Commands
 {
@@ -44,7 +42,7 @@ namespace Altaxo.Main.Commands
     public class ProjectItemClipboardListBase
     {
       /// <summary>Folder from which the items are copied. Can be null if the base folder is unknown.</summary>
-      public string? BaseFolder { get; set; } 
+      public string? BaseFolder { get; set; }
 
       /// <summary>If true, references will be relocated in the same way as the project items will be relocated.</summary>
       /// <value><c>true</c> if references should be relocated, <c>false</c> otherwise</value>
@@ -97,7 +95,7 @@ namespace Altaxo.Main.Commands
           var s = (ProjectItemClipboardList)obj;
 
           info.AddValue("IsBaseFolderNull", s.BaseFolder is null);
-          if(s.BaseFolder is not null)
+          if (s.BaseFolder is not null)
             info.AddValue("BaseFolder", s.BaseFolder);
           info.AddValue("RelocateReferences", s.RelocateReferences);
           info.AddValue("TryToKeepInternalReferences", s.TryToKeepInternalReferences);
@@ -115,7 +113,7 @@ namespace Altaxo.Main.Commands
             s.BaseFolder = null;
           else
             s.BaseFolder = info.GetString("BaseFolder");
-  
+
           s.RelocateReferences = info.GetNullableBoolean("RelocateReferences");
           s.TryToKeepInternalReferences = info.GetNullableBoolean("TryToKeepInternalReferences");
 
@@ -240,7 +238,7 @@ namespace Altaxo.Main.Commands
     public static void PasteItemsFromClipboard(string baseFolder)
     {
       var list = Altaxo.Serialization.Clipboard.ClipboardSerialization.GetObjectFromClipboard<ProjectItemClipboardList>(ClipboardFormat_ListOfProjectItems);
-      if(list is not null)  
+      if (list is not null)
         PasteItems(baseFolder, list);
     }
 
@@ -269,13 +267,13 @@ namespace Altaxo.Main.Commands
       {
         var oldName = item.Name;
         var newName = GetRelocatedName(oldName, list.BaseFolder, targetFolder);
-        var oldPath = Current.Project.GetDocumentPathForProjectItem(item);
+        var oldPath = Current.IProject.GetDocumentPathForProjectItem(item);
 
         item.Name = newName;
-        Current.Project.AddItem(item);
+        Current.IProject.AddItem(item);
         if (list.TryToKeepInternalReferences.Value)
         {
-          var newPath = Current.Project.GetDocumentPathForProjectItem(item);
+          var newPath = Current.IProject.GetDocumentPathForProjectItem(item);
           relocationData.AddProjectItemReplacement(oldPath, newPath); // when trying to keep the references, we use the name the table gets after added to the collection (it can have changed during this operation).
         }
       }

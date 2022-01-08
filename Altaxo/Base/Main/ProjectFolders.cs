@@ -37,7 +37,7 @@ namespace Altaxo.Main
     : SuspendableDocumentLeafNodeWithSetOfEventArgs
   {
     /// <summary>The parent document for which the folder structure is kept.</summary>
-    private AltaxoDocument AltaxoDocument { get { return (AltaxoDocument)_parent!; } }
+    private IProject AltaxoDocument { get { return (IProject)_parent!; } }
 
     /// <summary>Directory dictionary. Key is the directoryname. Value is a list of objects contained in the directory.</summary>
     private Dictionary<string, HashSet<object>> _directories = new Dictionary<string, HashSet<object>>();
@@ -52,7 +52,7 @@ namespace Altaxo.Main
     /// Creates the instance of project folders, tracking the provided Altaxo project.
     /// </summary>
     /// <param name="doc">Altaxo project.</param>
-    public ProjectFolders(AltaxoDocument doc)
+    public ProjectFolders(IProject doc)
     {
       if (doc is null)
         throw new ArgumentNullException(nameof(doc));
@@ -390,13 +390,13 @@ namespace Altaxo.Main
       foreach (object item in list)
       {
         if (item is IProjectItem)
-          Current.ProjectService.DeleteDocument((IProjectItem)item, true);
+          Current.IProjectService.DeleteDocument((IProjectItem)item, true);
       }
     }
 
     #endregion Access to folders and items
 
-    private void Initialize(AltaxoDocument doc)
+    private void Initialize(IProject doc)
     {
       _directories.Clear();
       _directories.Add(ProjectFolder.RootFolderName, new HashSet<object>()); // Root folder
@@ -632,7 +632,7 @@ namespace Altaxo.Main
         if (!name.EndsWith(ProjectFolder.DirectorySeparatorString))
           name += ProjectFolder.DirectorySeparatorString;
 
-        return Current.Project.Folders.ContainsFolder(name) ? "The folder name already exists! Please enter a name of a new folder." : null;
+        return Current.IProjectService.CurrentProject.Folders.ContainsFolder(name) ? "The folder name already exists! Please enter a name of a new folder." : null;
       }
     }
 
@@ -723,7 +723,7 @@ namespace Altaxo.Main
     /// <summary>
     /// Move items in a list to another folder.
     /// </summary>
-    /// <param name="list">List of items to move. Momentarily the item types <see cref="Altaxo.Data.DataTable"/>, <see cref="Altaxo.Graph.Gdi.GraphDocument"/> and <see cref="ProjectFolder"/></param> are supported.
+    /// <param name="list">List of items to move.</param> 
     /// <param name="newFolderName">Name of the folder where to move the items into.</param>
     public void MoveItemsToFolder(IList<object> list, string newFolderName)
     {
@@ -815,7 +815,7 @@ namespace Altaxo.Main
         {
           if (AltaxoDocument.TryGetExistingItemWithSameTypeAndName(clonedItem, out var existingItem))
           {
-            Current.ProjectService.DeleteDocument(existingItem, true);
+            Current.IProjectService.DeleteDocument(existingItem, true);
           }
         }
 

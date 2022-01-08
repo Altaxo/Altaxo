@@ -26,6 +26,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using Altaxo.Gui.Workbench;
 using Altaxo.Main.Services;
 
 namespace Altaxo.Main
@@ -254,7 +255,23 @@ namespace Altaxo.Main
     /// Shows a view for the given document.
     /// </summary>
     /// <param name="document">The document to open.</param>
-    void ShowDocumentView(object document);
+    /// <returns>The view content. If no view content is found for the document, the return value is null.</returns>
+    object? ShowDocumentView(object document);
+
+    /// <summary>
+    /// Opens a view that shows the document <paramref name="document"/>. If no view for the document can be found,
+    /// a new default view is created.
+    /// </summary>
+    /// <param name="document">The document for which a view must be found.</param>
+    /// <returns>The view content for the provided graph.</returns>
+    object OpenOrCreateViewContentForDocument(IProjectItem document);
+
+
+    /// <summary>
+    /// Closes the view content.
+    /// </summary>
+    /// <param name="content">The view content.</param>
+    void CloseViewContent(IViewContent content);
 
     /// <summary>
     /// This function will delete a project item and close all corresponding views.
@@ -364,6 +381,11 @@ namespace Altaxo.Main
       throw new NotImplementedException();
     }
 
+    public void CloseViewContent(IViewContent content)
+    {
+      throw new NotImplementedException();
+    }
+
     public void CreateInitialProject()
     {
       throw new NotImplementedException();
@@ -409,6 +431,11 @@ namespace Altaxo.Main
       throw new NotImplementedException();
     }
 
+    public object OpenOrCreateViewContentForDocument(IProjectItem document)
+    {
+      throw new NotImplementedException();
+    }
+
     public void OpenProject(PathName pathName, bool showUserInteraction)
     {
       throw new NotImplementedException();
@@ -444,7 +471,7 @@ namespace Altaxo.Main
       throw new NotImplementedException();
     }
 
-    public void ShowDocumentView(object document)
+    public object? ShowDocumentView(object document)
     {
       throw new NotImplementedException();
     }

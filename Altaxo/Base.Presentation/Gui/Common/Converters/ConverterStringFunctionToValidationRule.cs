@@ -23,12 +23,10 @@
 #endregion Copyright
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Windows.Controls;
 using System.Windows.Data;
 
-namespace Altaxo.Gui.Common
+namespace Altaxo.Gui.Common.Converters
 {
   /// <summary>
   /// Converts a function Func&lt;object System.Globalization.CultureInfo, string&gt; into a ValidationRule. When the <see cref="ValidationRule"/>'s <c>Validate</c> function is called,

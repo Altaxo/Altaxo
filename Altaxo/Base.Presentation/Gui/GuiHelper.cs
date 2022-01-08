@@ -24,18 +24,11 @@
 
 #nullable disable warnings
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
-using System.Windows.Data;
-using System.Windows.Input;
-using System.Windows.Markup;
 using System.Windows.Media;
-using System.Xml;
 using Altaxo.Collections;
 using Altaxo.Drawing;
 using Altaxo.Geometry;
@@ -242,51 +235,5 @@ namespace Altaxo.Gui
     private static extern bool DeleteObject(IntPtr hObject);
 
     #endregion Image Conversion Wpf <==> Gdi
-
-    #region Drag-Drop
-
-    public static DragDropEffects ConvertCopyMoveToDragDropEffect(bool copy, bool move)
-    {
-      var result = DragDropEffects.None;
-      if (copy)
-        result |= DragDropEffects.Copy;
-      if (move)
-        result |= DragDropEffects.Move;
-      return result;
-    }
-
-    public static void ConvertDragDropEffectToCopyMove(DragDropEffects effects, out bool copy, out bool move)
-    {
-      copy = effects.HasFlag(DragDropEffects.Copy);
-      move = effects.HasFlag(DragDropEffects.Move);
-    }
-
-    public static System.Windows.IDataObject ToWpf(Altaxo.Serialization.Clipboard.IDataObject dao)
-    {
-      return DataObjectAdapterAltaxoToWpf.FromAltaxoDataObject(dao);
-    }
-
-    public static Altaxo.Serialization.Clipboard.IDataObject ToAltaxo(System.Windows.IDataObject dao)
-    {
-      return DataObjectAdapterWpfToAltaxo.FromWpfDataObject(dao);
-    }
-
-    public static Altaxo.Gui.Common.DragDropRelativeInsertPosition ToAltaxo(GongSolutions.Wpf.DragDrop.RelativeInsertPosition pos)
-    {
-      Altaxo.Gui.Common.DragDropRelativeInsertPosition result = 0;
-
-      if (pos.HasFlag(GongSolutions.Wpf.DragDrop.RelativeInsertPosition.BeforeTargetItem))
-        result |= Common.DragDropRelativeInsertPosition.BeforeTargetItem;
-
-      if (pos.HasFlag(GongSolutions.Wpf.DragDrop.RelativeInsertPosition.AfterTargetItem))
-        result |= Common.DragDropRelativeInsertPosition.AfterTargetItem;
-
-      if (pos.HasFlag(GongSolutions.Wpf.DragDrop.RelativeInsertPosition.TargetItemCenter))
-        result |= Common.DragDropRelativeInsertPosition.TargetItemCenter;
-
-      return result;
-    }
-
-    #endregion Drag-Drop
   }
 }

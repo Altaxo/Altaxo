@@ -24,12 +24,9 @@
 
 #nullable disable warnings
 using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Windows.Controls;
 using System.Windows.Data;
 
-namespace Altaxo.Gui.Common
+namespace Altaxo.Gui.Common.Converters
 {
   /// <summary>
   /// Converts a boolean value of false to true and vice versa (a value of null is converted to null)

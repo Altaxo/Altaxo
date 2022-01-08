@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common;assembly=AltaxoBase.Presentation"
+						 xmlns:axogcc="clr-namespace:Altaxo.Gui.Common.Converters;assembly=AltaxoBase.Presentation"
 						 xmlns:loc="clr-namespace:Altaxo.Gui.Pads.ProjectBrowser"
  						 xmlns:axocoll="clr-namespace:Altaxo.Collections;assembly=AltaxoBase"
 						 xmlns:dd="clr-namespace:GongSolutions.Wpf.DragDrop;assembly=AltaxoBase.Presentation"
@@ -16,7 +17,7 @@
                   CanExecute="EhDeleteCommandCanExecute" />
 	</UserControl.CommandBindings>
 	<UserControl.Resources>
-		<axogc:ConverterStringFuncToValidationRule x:Key="FuncToValidationConverter" />
+		<axogcc:ConverterStringFuncToValidationRule x:Key="FuncToValidationConverter" />
 
 		<!-- Style used for the renaming feature, it sets a tooltip with the error message if the validation fails -->
 		<Style x:Key="editTextBoxStyle" TargetType="{x:Type TextBox}">
