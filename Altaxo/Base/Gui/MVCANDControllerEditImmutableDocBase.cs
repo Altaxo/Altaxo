@@ -128,8 +128,8 @@ namespace Altaxo.Gui
     /// </summary>
     protected virtual void OnMadeDirty()
     {
-      if (!_suppressDirtyEvent.IsSuspended && MadeDirty is not null)
-        MadeDirty(this);
+      if (!_suppressDirtyEvent.IsSuspended)
+        MadeDirty?.Invoke(this);
     }
 
     /// <summary>

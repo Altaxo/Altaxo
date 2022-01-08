@@ -41,29 +41,5 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
     {
       InitializeComponent();
     }
-
-    #region ILineGraphicView
-
-    public PenX DocPen
-    {
-      get
-      {
-        return _penControl.Pen;
-      }
-      set
-      {
-        _penControl.Pen = value;
-      }
-    }
-
-    public object LocationView
-    {
-      set
-      {
-        _guiLocationHost.Child = (UIElement)value;
-      }
-    }
-
-    #endregion ILineGraphicView
   }
 }

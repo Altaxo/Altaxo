@@ -37,47 +37,9 @@ namespace Altaxo.Gui.Common.Drawing
   /// </summary>
   public partial class ColorTypeThicknessPenControl : UserControl, IColorTypeThicknessPenView
   {
-    private PenControlsGlue _glue;
-
     public ColorTypeThicknessPenControl()
     {
       InitializeComponent();
-
-      _glue = new PenControlsGlue(false)
-      {
-        CbBrush = _cbColor,
-        CbDashPattern = _cbLineType,
-        CbLineThickness = _cbThickness
-      };
     }
-
-    #region IColorTypeThicknessPenView
-
-    private IColorTypeThicknessPenViewEventSink _controller;
-
-    public IColorTypeThicknessPenViewEventSink Controller
-    {
-      get { return _controller; }
-      set { _controller = value; }
-    }
-
-    public PenX DocPen
-    {
-      get
-      {
-        return _glue.Pen;
-      }
-      set
-      {
-        _glue.Pen = value;
-      }
-    }
-
-    public void SetShowPlotColorsOnly(bool restrictChoiceToThisCollection)
-    {
-      _glue.CbBrush.ShowPlotColorsOnly = restrictChoiceToThisCollection;
-    }
-
-    #endregion IColorTypeThicknessPenView
   }
 }

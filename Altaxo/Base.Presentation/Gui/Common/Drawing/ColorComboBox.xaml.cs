@@ -26,33 +26,22 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Documents;
 using System.Windows.Media;
 using Altaxo.Drawing;
 using Altaxo.Drawing.ColorManagement;
-using Altaxo.Graph;
 
 namespace Altaxo.Gui.Common.Drawing
 {
   /// <summary>
   /// Interaction logic for ColorComboBoxEx.xaml
   /// </summary>
-  public partial class ColorComboBox : ColorComboBoxBase, INamedColorView
+  public partial class ColorComboBox : ColorComboBoxBase
   {
     private List<NamedColor> _lastLocalUsedItems = new List<NamedColor>();
 
     public event DependencyPropertyChangedEventHandler? SelectedColorChanged;
-
-    private event Action? ViewEvent_SelectedColorChanged;
-
-    event Action Altaxo.Gui.Common.Drawing.INamedColorView.SelectedItemChanged
-    {
-      add { ViewEvent_SelectedColorChanged += value; }
-      remove { ViewEvent_SelectedColorChanged -= value; }
-    }
 
     #region Constructors
 
@@ -141,10 +130,7 @@ namespace Altaxo.Gui.Common.Drawing
       if (!object.ReferenceEquals(oldColor.ParentColorSet, newColor.ParentColorSet) && !object.ReferenceEquals(newColor.ParentColorSet, _treeView.SelectedValue))
         UpdateTreeViewSelection();
 
-      if (SelectedColorChanged is not null)
-        SelectedColorChanged(obj, args);
-      if (ViewEvent_SelectedColorChanged is not null)
-        ViewEvent_SelectedColorChanged();
+      SelectedColorChanged?.Invoke(obj, args);
     }
 
     #endregion Dependency property

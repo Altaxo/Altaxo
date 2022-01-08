@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -22,20 +22,13 @@
 
 #endregion Copyright
 
-#nullable disable
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Altaxo.Drawing;
 
 namespace Altaxo.Gui.Common.Drawing
 {
-  public interface INamedColorView
+  public interface INamedColorView : IDataContextAwareView
   {
-    Altaxo.Drawing.NamedColor SelectedColor { get; set; }
-
-    event Action SelectedItemChanged;
   }
 
   [ExpectedTypeOfView(typeof(INamedColorView))]
@@ -47,36 +40,31 @@ namespace Altaxo.Gui.Common.Drawing
       yield break;
     }
 
+    #region Bindings
+
+    public NamedColor NamedColor
+    {
+      get => _doc;
+      set
+      {
+        if (!object.ReferenceEquals(NamedColor, value))
+        {
+          _doc = value;
+          OnMadeDirty();
+        }
+      }
+    }
+
+    #endregion
+
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
-
-      if (_view is not null)
-      {
-        _view.SelectedColor = _doc;
-      }
     }
 
     public override bool Apply(bool disposeController)
     {
-      _doc = _view.SelectedColor;
       return ApplyEnd(true, disposeController);
-    }
-
-    protected override void AttachView()
-    {
-      _view.SelectedItemChanged += EhSelectedColorChanged;
-    }
-
-    protected override void DetachView()
-    {
-      _view.SelectedItemChanged -= EhSelectedColorChanged;
-    }
-
-    private void EhSelectedColorChanged()
-    {
-      _doc = _view.SelectedColor;
-      OnMadeDirty();
     }
   }
 }

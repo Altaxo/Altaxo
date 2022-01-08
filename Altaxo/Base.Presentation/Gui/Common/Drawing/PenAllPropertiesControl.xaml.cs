@@ -36,45 +36,9 @@ namespace Altaxo.Gui.Common.Drawing
   /// </summary>
   public partial class PenAllPropertiesControl : UserControl, IPenAllPropertiesView
   {
-    private PenControlsGlue _glue;
-
     public PenAllPropertiesControl()
     {
       InitializeComponent();
-
-      _glue = new PenControlsGlue(true)
-      {
-        CbBrush = _cbBrush,
-        CbLineThickness = _cbThickness,
-        CbDashPattern = _cbDashStyle,
-        CbDashCap = _cbDashCap,
-        CbStartCap = _cbStartCap,
-        CbStartCapAbsSize = _cbStartCapSize,
-        CbStartCapRelSize = _edStartCapRelSize,
-        CbEndCap = _cbEndCap,
-        CbEndCapAbsSize = _cbEndCapSize,
-        CbEndCapRelSize = _edEndCapRelSize,
-        CbLineJoin = _cbLineJoin,
-        CbMiterLimit = _cbMiterLimit,
-        PreviewPanel = _previewPanel
-      };
-    }
-
-    public PenX Pen
-    {
-      get
-      {
-        return _glue.Pen;
-      }
-      set
-      {
-        _glue.Pen = value;
-      }
-    }
-
-    public bool ShowPlotColorsOnly
-    {
-      set { _glue.ShowPlotColorsOnly = value; }
     }
   }
 }

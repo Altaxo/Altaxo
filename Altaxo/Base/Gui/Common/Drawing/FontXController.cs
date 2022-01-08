@@ -22,7 +22,6 @@
 
 #endregion Copyright
 
-#nullable disable
 using System.Collections.Generic;
 using Altaxo.Drawing;
 using Altaxo.Graph.Gdi;

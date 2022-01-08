@@ -4,10 +4,17 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 						 xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing"
+						 xmlns:axogcd_model="clr-namespace:Altaxo.Gui.Common.Drawing;assembly=AltaxoBase"
 						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
+						 xmlns:axogcc="clr-namespace:Altaxo.Gui.Common.Converters"
 						 xmlns:axogdd="clr-namespace:Altaxo.Gui.Drawing.DashPatternManagement"
-						 xmlns:axog="clr-namespace:Altaxo.Gui;assembly=AltaxoBase"
+             d:DataContext="{d:DesignInstance Type=axogcd_model:PenAllPropertiesController}"
+             d:DesignWidth="420"
+             d:DesignHeight="300"
              mc:Ignorable="d">
+    <UserControl.Resources>
+        <axogcc:PenXToImageConverter x:Key="PenToImageConverter"/>
+    </UserControl.Resources>
 	<Grid>
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto" />
@@ -34,39 +41,52 @@
 		</Grid.ColumnDefinitions>
 
 		<Label Grid.Column="0" Grid.Row="0">Brush:</Label>
-		<axogcd:BrushComboBox Grid.Column="1" Grid.Row="0" x:Name="_cbBrush" />
+		<axogcd:BrushComboBox Grid.Column="1" Grid.Row="0"  SelectedBrush="{Binding Brush, Mode=TwoWay}" />
 		<Label Grid.Column="2" Grid.Row="0">Thickness:</Label>
-		<axogcd:LineThicknessComboBox Grid.Column="3" Grid.Row="0" x:Name="_cbThickness" />
+		<axogcd:LineThicknessComboBox Grid.Column="3" Grid.Row="0" SelectedQuantity="{Binding LineThickness, Mode=TwoWay}" UnitEnvironment="{Binding LineThicknessEnvironment, Mode=OneWayToSource}" />
 
 		<Label Grid.Column="0" Grid.Row="2">Style:</Label>
-		<axogdd:DashPatternComboBox Grid.Column="1" Grid.Row="2" x:Name="_cbDashStyle" />
+		<axogdd:DashPatternComboBox Grid.Column="1" Grid.Row="2" SelectedItem="{Binding DashPattern, Mode=TwoWay}"  />
 		<Label Grid.Column="2" Grid.Row="2">Dash cap:</Label>
-		<axogcd:DashCapComboBox Grid.Column="3" Grid.Row="2" x:Name="_cbDashCap" />
+		<axogcd:DashCapComboBox Grid.Column="3" Grid.Row="2" SelectedDashCap="{Binding DashCap, Mode=TwoWay}" />
 
 		<Label Grid.Column="0" Grid.Row="4" >StartCap:</Label>
-		<axogcd:LineCapComboBox Grid.Column="1" Grid.Row="4"  IsForEndCap="False" x:Name="_cbStartCap" />
+		<axogcd:LineCapComboBox Grid.Column="1" Grid.Row="4"  IsForEndCap="False" SelectedLineCap="{Binding StartCap.LineCap, Mode=TwoWay}" />
 		<Label Grid.Column="2" Grid.Row="4">Min. abs. size:</Label>
-		<axogcd:LineCapSizeComboBox Grid.Column="3" Grid.Row="4" x:Name="_cbStartCapSize" ToolTip="Minimum absolute cap size" />
+		<axogcd:LineCapSizeComboBox Grid.Column="3" Grid.Row="4" SelectedQuantity="{Binding StartCap.MinimumAbsoluteSize, Mode=TwoWay}" UnitEnvironment="{Binding StartCap.MinimumAbsoluteSizeEnvironment, Mode=OneWayToSource}" ToolTip="Minimum absolute cap size" />
 		<Label Grid.Column="2" Grid.Row="6" Content="Min. rel. size:" />
-		<axogc:QuantityWithUnitTextBox Grid.Column ="3" Grid.Row="6" x:Name="_edStartCapRelSize" UnitEnvironment="{x:Static axog:RelationEnvironment.Instance}" ToolTip="Minimum cap size relative to pen width" />
+		<axogc:QuantityWithUnitTextBox Grid.Column ="3" Grid.Row="6" SelectedQuantity="{Binding StartCap.MinimumRelativeSize, Mode=TwoWay}" UnitEnvironment="{Binding StartCap.MinimumRelativeSizeEnvironment}" ToolTip="Minimum cap size relative to pen width" />
 
 		<Label Grid.Column="0" Grid.Row="8">EndCap:</Label>
-		<axogcd:LineCapComboBox Grid.Column="1" Grid.Row="8" IsForEndCap="True" x:Name="_cbEndCap" />
+        <axogcd:LineCapComboBox Grid.Column="1" Grid.Row="8" IsForEndCap="true" SelectedLineCap="{Binding EndCap.LineCap, Mode=TwoWay}" />
 		<Label Grid.Column="2" Grid.Row="8">Min. abs. size:</Label>
-		<axogcd:LineCapSizeComboBox Grid.Column="3" Grid.Row="8" x:Name="_cbEndCapSize" ToolTip="Minimum absolute cap size" />
+        <axogcd:LineCapSizeComboBox Grid.Column="3" Grid.Row="8" SelectedQuantity="{Binding EndCap.MinimumAbsoluteSize, Mode=TwoWay}" UnitEnvironment="{Binding EndCap.MinimumAbsoluteSizeEnvironment, Mode=OneWayToSource}"  ToolTip="Minimum absolute cap size" />
 		<Label Grid.Column="2" Grid.Row="10" Content="Min. rel. size:" />
-		<axogc:QuantityWithUnitTextBox Grid.Column ="3" Grid.Row="10" x:Name="_edEndCapRelSize" UnitEnvironment="{x:Static axog:RelationEnvironment.Instance}" ToolTip="Minimum cap size relative to pen width" />
+        <axogc:QuantityWithUnitTextBox Grid.Column ="3" Grid.Row="10" SelectedQuantity="{Binding EndCap.MinimumRelativeSize, Mode=TwoWay}" UnitEnvironment="{Binding EndCap.MinimumRelativeSizeEnvironment}" ToolTip="Minimum cap size relative to pen width" />
 
 		<Label Grid.Column="0" Grid.Row="12">Join:</Label>
-		<axogcd:LineJoinComboBox Grid.Column="1" Grid.Row="12" x:Name="_cbLineJoin" />
+		<axogcd:LineJoinComboBox Grid.Column="1" Grid.Row="12" SelectedLineJoin="{Binding LineJoin, Mode=TwoWay}" />
 		<Label Grid.Column="2" Grid.Row="12">Miter:</Label>
-		<axogcd:MiterLimitComboBox Grid.Column="3" Grid.Row="12" x:Name="_cbMiterLimit" />
+		<axogcd:MiterLimitComboBox Grid.Column="3" Grid.Row="12" SelectedQuantity="{Binding MiterLimit, Mode=TwoWay}" UnitEnvironment="{Binding MiterLimitEnvironment, Mode=OneWayToSource}" />
 
 		<GroupBox Grid.Column="0" Grid.Row="14" Grid.ColumnSpan="4" Header="Preview:">
 			<Grid>
 				<Rectangle Name="_previewRect" MinHeight="40" Fill="Azure" />
-				<Image Height="{Binding ElementName=_previewRect, Path=ActualHeight}" Width="{Binding ElementName=_previewRect, Path=ActualWidth}"  StretchDirection="Both" Stretch="Fill" x:Name="_previewPanel" />
-			</Grid>
+                <Image
+                    Width="{Binding ElementName=_previewRect, Path=ActualWidth}"
+                    Height="{Binding ElementName=_previewRect, Path=ActualHeight}"
+                    Stretch="Fill"
+                    StretchDirection="Both"
+                    >
+                    <Image.Source>
+                        <MultiBinding Converter="{StaticResource PenToImageConverter}">
+                            <Binding Path="Pen"/>
+                            <Binding RelativeSource="{RelativeSource Mode=Self}" Path="ActualWidth"/>
+                            <Binding RelativeSource="{RelativeSource Mode=Self}" Path="ActualHeight"/>
+                        </MultiBinding>
+                    </Image.Source>
+                </Image>
+            </Grid>
 		</GroupBox>
 	</Grid>
 </UserControl>

@@ -3,8 +3,10 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-						 xmlns:axogg="clr-namespace:Altaxo.Gui.Graph"
-						 xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing"
+            xmlns:axogg="clr-namespace:Altaxo.Gui.Graph"
+			xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing" 
+             xmlns:shapes="clr-namespace:Altaxo.Gui.Graph.Gdi.Shapes;assembly=AltaxoBase"
+             d:DataContext="{d:DesignInstance Type=shapes:OpenPathShapeController}"
              mc:Ignorable="d"
 >
 	<Grid>
@@ -14,10 +16,10 @@
 		</Grid.RowDefinitions>
 
 		<GroupBox Grid.Row="0" Header="Appearance">
-			<axogcd:PenAllPropertiesControl x:Name="_penControl" />
+			<axogcd:PenAllPropertiesControl x:Name="_penControl" DataContext="{Binding PenController}" />
 		</GroupBox>
 		<GroupBox Grid.Row="1" Header="Positioning">
-			<Border x:Name="_guiLocationHost" />
+			<ContentControl x:Name="_guiLocationHost" Content="{Binding LocationView}" />
 		</GroupBox>
 	</Grid>
 </UserControl>

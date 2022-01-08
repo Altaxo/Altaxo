@@ -4,7 +4,9 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 						 xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing"
-						 xmlns:axogdd="clr-namespace:Altaxo.Gui.Drawing.DashPatternManagement"
+						 xmlns:axogcd_model="clr-namespace:Altaxo.Gui.Common.Drawing;assembly=AltaxoBase"
+						 xmlns:axogdd="clr-namespace:Altaxo.Gui.Drawing.DashPatternManagement" 
+             d:DataContext="{d:DesignInstance Type=axogcd_model:ColorTypeThicknessPenController}"
              mc:Ignorable="d">
 	<UserControl.Resources>
 		<LinearGradientBrush x:Key="HorzSeparatorBrush" StartPoint="0,0" EndPoint="0,1">
@@ -40,10 +42,10 @@
 		<Rectangle Grid.Row="3" Grid.ColumnSpan="2" Style="{StaticResource HorzSeparatorStyle}" />
 
 		<Label  Grid.Column="0" Grid.Row="0">Pen brush:</Label>
-		<axogcd:BrushComboBox Grid.Column="1" Grid.Row="0" x:Name="_cbColor" />
-		<Label  Grid.Column="0" Grid.Row="2">Style:</Label>
-		<axogdd:DashPatternComboBox Grid.Column="1" Grid.Row="2" x:Name="_cbLineType" />
+        <axogcd:BrushComboBox Grid.Column="1" Grid.Row="0" SelectedBrush="{Binding Brush}" ShowPlotColorsOnly="{Binding ShowPlotColorsOnly}" CustomPenCommand="{Binding CmdShowCustomPen}"/>
+        <Label  Grid.Column="0" Grid.Row="2">Style:</Label>
+		<axogdd:DashPatternComboBox Grid.Column="1" Grid.Row="2" SelectedItem="{Binding DashPattern, Mode=TwoWay}" />
 		<Label  Grid.Column="0" Grid.Row="4">Thickness:</Label>
-		<axogcd:LineThicknessComboBox Grid.Column="1" Grid.Row="4" x:Name="_cbThickness" />
+		<axogcd:LineThicknessComboBox Grid.Column="1" Grid.Row="4"  SelectedQuantity="{Binding LineThickness, Mode=TwoWay}" UnitEnvironment="{Binding LineThicknessEnvironment, Mode=OneWayToSource}" />
 	</Grid>
 </UserControl>

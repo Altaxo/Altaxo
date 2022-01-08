@@ -36,18 +36,18 @@ using Altaxo.Graph.Gdi;
 namespace Altaxo.Gui.Common.Converters
 {
   /// <summary>
-  /// Converts a <see cref="BrushX"/> instance to an image that visualize that brush (intended for the brush preview panel).
+  /// Converts a <see cref="PenX"/> instance to an image that visualize that pen (intended for the pen preview panel).
   /// </summary>
   /// <seealso cref="System.Windows.Data.IValueConverter" />
-  public class BrushXToImageConverter : IMultiValueConverter, IDisposable
+  public class PenXToImageConverter : IMultiValueConverter, IDisposable
   {
     private GdiToWpfBitmap? _previewBitmap;
 
     /// <summary>
-    /// Converts a <see cref="BrushX"/> value. 
-    /// It is expected that the argument <paramref name="values"/> contains [0] the brush, [1] the width of the preview image, and [2] the height of the preview image.
+    /// Converts a <see cref="PenX"/> value.
+    /// It is expected that the argument <paramref name="values"/> contains [0] the pen, [1] the width of the preview image, and [2] the height of the preview image.
     /// </summary>
-    /// <param name="value">The value produced by the binding source.</param>
+    /// <param name="values">The values produced by the binding source.</param>
     /// <param name="targetType">The type of the binding target property.</param>
     /// <param name="parameter">The converter parameter to use.</param>
     /// <param name="culture">The culture to use in the converter.</param>
@@ -56,7 +56,7 @@ namespace Altaxo.Gui.Common.Converters
     /// </returns>
     public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
     {
-      if(values is not null && values.Length>=3 && values[0] is BrushX brush && values[1] is double dwidth && values[2] is double dheight)
+      if(values is not null && values.Length>=3 && values[0] is PenX pen && values[1] is double dwidth && values[2] is double dheight)
       {
         
         int height = (int)dheight;
@@ -76,18 +76,11 @@ namespace Altaxo.Gui.Common.Converters
         using (var grfx = _previewBitmap.BeginGdiPainting())
         {
           var fullRect = _previewBitmap.GdiRectangle;
+          grfx.FillRectangle(System.Drawing.Brushes.White, fullRect);
 
-          grfx.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceCopy;
-          grfx.FillRectangle(System.Drawing.Brushes.Transparent, fullRect);
-          grfx.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceOver;
-
-          var r2 = fullRect;
-          r2.Inflate(-r2.Width / 4, -r2.Height / 4);
-          //grfx.FillRectangle(System.Drawing.Brushes.Black, r2);
-
-          using (var brushGdi = BrushCacheGdi.Instance.BorrowBrush(brush, fullRect, grfx, 1))
+          using (var penGdi = PenCacheGdi.Instance.BorrowPen(pen, fullRect, grfx, 1))
           {
-            grfx.FillRectangle(brushGdi, fullRect);
+            grfx.DrawLine(penGdi, fullRect.Width / 6, fullRect.Height / 2, (fullRect.Width * 5) / 6, fullRect.Height / 2);
           }
 
           _previewBitmap.EndGdiPainting();

@@ -22,30 +22,23 @@
 
 #endregion Copyright
 
-#nullable disable
 using System;
 using System.Collections.Generic;
+using System.Windows.Input;
 using Altaxo.Drawing;
+using Altaxo.Units;
 
 namespace Altaxo.Gui.Common.Drawing
 {
   #region interfaces
 
-  public interface IColorTypeThicknessPenView
+  public interface IColorTypeThicknessPenView : IDataContextAwareView
   {
-    IColorTypeThicknessPenViewEventSink Controller { get; set; }
-
-    PenX DocPen { get; set; }
-
-    void SetShowPlotColorsOnly(bool restrictChoiceToThisCollection);
   }
 
-  public interface IColorTypeThicknessPenViewEventSink
-  {
-    void EhView_ShowFullPenDialog();
-  }
 
-  public interface IColorTypeThicknessPenController : IColorTypeThicknessPenViewEventSink, IMVCAController
+
+  public interface IColorTypeThicknessPenController : IMVCANDController
   {
   }
 
@@ -54,105 +47,101 @@ namespace Altaxo.Gui.Common.Drawing
   /// <summary>
   /// Summary description for ColorTypeWidthPenController.
   /// </summary>
-  public class ColorTypeThicknessPenController : IColorTypeThicknessPenController
+  public class ColorTypeThicknessPenController : MVCANDControllerEditImmutableDocBase<PenX, object>, IColorTypeThicknessPenController
   {
-    private PenX _doc;
-    private PenX _tempDoc;
-    private IColorTypeThicknessPenView _view;
+
+    public ColorTypeThicknessPenController()
+    {
+      CmdShowCustomPen = new RelayCommand(EhShowCustomPen);
+    }
+
+
+
+    public ColorTypeThicknessPenController(PenX pen) : this()
+    {
+      _doc = _originalDoc = pen ?? throw new ArgumentNullException(nameof(pen));
+      Initialize(true);
+    }
+
+    public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+    {
+      yield break;
+    }
+
+    #region Bindings
+
     private bool _showPlotColorsOnly;
+    public bool ShowPlotColorsOnly { get => _showPlotColorsOnly; set { if (!(ShowPlotColorsOnly == value)) { _showPlotColorsOnly = value; OnPropertyChanged(nameof(ShowPlotColorsOnly)); } } }
 
-    public ColorTypeThicknessPenController(PenX doc)
+    public BrushX Brush
     {
-      if (doc is null)
-        throw new ArgumentNullException("doc");
-      _doc = doc;
-      _tempDoc = doc;
-    }
-
-    private void Initialize()
-    {
-      if (_view is not null)
-      {
-        _view.DocPen = _tempDoc;
-        _view.SetShowPlotColorsOnly(_showPlotColorsOnly);
-      }
-    }
-
-    public void SetShowPlotColorsOnly(bool showPlotColorsOnly)
-    {
-      _showPlotColorsOnly = showPlotColorsOnly;
-      if (_view is not null)
-        _view.SetShowPlotColorsOnly(_showPlotColorsOnly);
-    }
-
-    #region IColorTypeThicknessPenViewEventSink Members
-
-    public void EhView_ShowFullPenDialog()
-    {
-      var ctrl = new PenAllPropertiesController(_tempDoc);
-      Current.Gui.ShowDialog(ctrl, "Pen properties");
-      if (_view is not null)
-        _view.DocPen = _tempDoc;
-    }
-
-    #endregion IColorTypeThicknessPenViewEventSink Members
-
-    #region IMVCController Members
-
-    public object ViewObject
-    {
-      get
-      {
-        return _view;
-      }
+      get => _doc.Brush;
       set
       {
-        if (_view is not null)
-          _view.Controller = null;
-
-        _view = value as IColorTypeThicknessPenView;
-
-        Initialize();
-
-        if (_view is not null)
-          _view.Controller = this;
+        if (!object.ReferenceEquals(Brush, value))
+        {
+          _doc = _doc.WithBrush(value);
+          OnPropertyChanged(nameof(Brush));
+          OnMadeDirty();
+        }
       }
     }
 
-    public object ModelObject
+    public QuantityWithUnitGuiEnvironment LineThicknessEnvironment { get; set; } = Altaxo.Gui.LineThicknessEnvironment.Instance;
+    public DimensionfulQuantity LineThickness
     {
-      get
+      get => new DimensionfulQuantity(_doc.Width, Altaxo.Units.Length.Point.Instance).AsQuantityIn(LineThicknessEnvironment.DefaultUnit);
+      set
       {
-        return _doc;
+        if (!(LineThickness == value))
+        {
+          _doc = _doc.WithWidth(value.AsValueIn(Altaxo.Units.Length.Point.Instance));
+          OnPropertyChanged(nameof(LineThickness));
+          OnMadeDirty();
+        }
       }
     }
 
-    public void Dispose()
+    public IDashPattern DashPattern
     {
+      get => _doc.DashPattern;
+      set
+      {
+        if (!object.ReferenceEquals(DashPattern, value))
+        {
+          _doc = _doc.WithDashPattern(value);
+          OnPropertyChanged(nameof(DashPattern));
+          OnMadeDirty();
+        }
+      }
     }
 
-    #endregion IMVCController Members
+    public ICommand CmdShowCustomPen { get; }
 
-    #region IApplyController Members
+    #endregion
 
-    public bool Apply(bool disposeController)
+    private void EhShowCustomPen()
     {
-      _doc = _view.DocPen;
-      return true;
+      var ctrler = new PenAllPropertiesController(_doc)
+      {
+        ShowPlotColorsOnly = _showPlotColorsOnly,
+      };
+
+      if (Current.Gui.ShowDialog(ctrler, "Edit pen properties"))
+      {
+        _doc = (PenX)ctrler.ModelObject;
+        OnPropertyChanged(nameof(Brush));
+        OnPropertyChanged(nameof(DashPattern));
+        OnPropertyChanged(nameof(LineThickness));
+        OnMadeDirty();
+      }
     }
 
-    /// <summary>
-    /// Try to revert changes to the model, i.e. restores the original state of the model.
-    /// </summary>
-    /// <param name="disposeController">If set to <c>true</c>, the controller should release all temporary resources, since the controller is not needed anymore.</param>
-    /// <returns>
-    ///   <c>True</c> if the revert operation was successfull; <c>false</c> if the revert operation was not possible (i.e. because the controller has not stored the original state of the model).
-    /// </returns>
-    public bool Revert(bool disposeController)
+    public override bool Apply(bool disposeController)
     {
-      return false;
+      return ApplyEnd(true, disposeController);
     }
 
-    #endregion IApplyController Members
+
   }
 }

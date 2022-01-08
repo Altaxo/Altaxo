@@ -22,15 +22,12 @@
 
 #endregion Copyright
 
-#nullable enable
-using System;
 using System.Collections.Generic;
 using Altaxo.Drawing;
 using Altaxo.Geometry;
 using Altaxo.Units;
-using AUL = Altaxo.Units.Length;
 using AUD = Altaxo.Units.Dimensionless;
-
+using AUL = Altaxo.Units.Length;
 
 namespace Altaxo.Gui.Common.Drawing
 {
@@ -62,7 +59,7 @@ namespace Altaxo.Gui.Common.Drawing
       get => _doc.ScalingMode == TextureScalingMode.Source;
       set
       {
-        if(value && !ScalingModeSource)
+        if (value && !ScalingModeSource)
         {
           _doc = _doc.WithScalingMode(TextureScalingMode.Source);
           OnPropertyChanged(nameof(ScalingModeSource));
@@ -241,7 +238,7 @@ namespace Altaxo.Gui.Common.Drawing
     }
 
     public QuantityWithUnitGuiEnvironment ScaleXEnvironment { get; set; } = RelationEnvironment.Instance;
-   
+
 
     public DimensionfulQuantity ScaleX
     {
@@ -309,8 +306,8 @@ namespace Altaxo.Gui.Common.Drawing
       }
     }
 
-   
 
-    
+
+
   }
 }

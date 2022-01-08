@@ -30,6 +30,7 @@ using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
+using System.Windows.Input;
 using Altaxo.Drawing;
 using Altaxo.Drawing.ColorManagement;
 using Altaxo.Graph;
@@ -43,6 +44,8 @@ namespace Altaxo.Gui.Common.Drawing
   {
     public static readonly DependencyProperty SelectedBrushProperty;
 
+    public static readonly DependencyProperty CustomPenCommandProperty;
+
     public event DependencyPropertyChangedEventHandler? SelectedBrushChanged;
 
     private List<BrushX> _lastLocalUsedItems = new List<BrushX>();
@@ -52,7 +55,14 @@ namespace Altaxo.Gui.Common.Drawing
     static BrushComboBox()
     {
       SelectedBrushProperty = DependencyProperty.Register("SelectedBrush", typeof(BrushX), typeof(BrushComboBox), new FrameworkPropertyMetadata(new BrushX(NamedColors.Black), EhSelectedBrushChanged, EhSelectedBrushCoerce));
-    }
+
+      CustomPenCommandProperty = DependencyProperty.RegisterAttached(
+    nameof(CustomPenCommand),
+    typeof(ICommand),
+    typeof(BrushComboBox),
+    new FrameworkPropertyMetadata(OnCustomPenCommandChanged)
+    );
+  }
 
     public BrushComboBox()
     {
@@ -186,6 +196,32 @@ namespace Altaxo.Gui.Common.Drawing
 
       if (SelectedBrushChanged is not null)
         SelectedBrushChanged(obj, args);
+    }
+
+    public ICommand CustomPenCommand
+    {
+      get
+      {
+        return ((ICommand)GetValue(CustomPenCommandProperty));
+      }
+      set
+      {
+        SetValue(CustomPenCommandProperty, value);
+      }
+    }
+
+    protected static void OnCustomPenCommandChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
+    {
+      var thiss = (BrushComboBox)obj;
+      thiss._guiMenuShowCustomPen.Visibility = args.NewValue is null ? Visibility.Collapsed : Visibility.Visible;
+    }
+
+    private void EhShowCustomPenDialog(object sender, RoutedEventArgs e)
+    {
+      if (CustomPenCommand.CanExecute(SelectedBrush))
+      {
+        CustomPenCommand.Execute(SelectedBrush);
+      }
     }
 
     #endregion Dependency property
@@ -337,5 +373,7 @@ namespace Altaxo.Gui.Common.Drawing
     }
 
     #endregion Context menus
+
+   
   }
 }

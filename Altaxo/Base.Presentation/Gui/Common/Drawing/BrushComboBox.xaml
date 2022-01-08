@@ -168,6 +168,7 @@
     <!--  Context menu of this user control.  -->
     <UserControl.ContextMenu>
         <ContextMenu x:Name="_contextMenu">
+            <MenuItem Click="EhShowCustomPenDialog" Header="Custom pen.." Visibility="Collapsed" x:Name="_guiMenuShowCustomPen" />
             <MenuItem Click="EhShowCustomBrushDialog" Header="Custom brush.." />
             <MenuItem Click="EhShowCustomColorDialog" Header="Custom color.." />
             <MenuItem Click="EhShowColorSetManagerDialog" Header="New color set .." />

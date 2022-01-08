@@ -30,14 +30,12 @@ using Altaxo.Drawing;
 using Altaxo.Graph;
 using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Gdi.Shapes;
+using Altaxo.Gui.Common.Drawing;
 
 namespace Altaxo.Gui.Graph.Gdi.Shapes
 {
-  public interface IOpenPathShapeView
+  public interface IOpenPathShapeView : IDataContextAwareView
   {
-    PenX DocPen { get; set; }
-
-    object LocationView { set; }
   }
 
   [UserControllerForObject(typeof(OpenPathShapeBase), 101)]
@@ -45,11 +43,20 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
   public class OpenPathShapeController : MVCANControllerEditOriginalDocBase<OpenPathShapeBase, IOpenPathShapeView>
   {
     private IMVCANController _locationController;
+    private PenAllPropertiesController _penController;
 
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_locationController, () => _locationController = null);
+      yield return new ControllerAndSetNullMethod(_penController, () => _penController = null);
     }
+
+    #region Bindings
+    public object PenController => _penController;
+
+    public object LocationView => _locationController?.ViewObject;
+
+    #endregion
 
     protected override void Initialize(bool initData)
     {
@@ -59,11 +66,7 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
       {
         _locationController = (IMVCANController)Current.Gui.GetController(new object[] { _doc.Location }, typeof(IMVCANController), UseDocument.Directly);
         Current.Gui.FindAndAttachControlTo(_locationController);
-      }
-      if (_view is not null)
-      {
-        _view.DocPen = _doc.Pen;
-        _view.LocationView = _locationController.ViewObject;
+        _penController = new PenAllPropertiesController(_doc.Pen);
       }
     }
 
@@ -76,10 +79,14 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
         if (!_locationController.Apply(disposeController))
           return false;
 
+        if (!_penController.Apply(disposeController))
+          return false;
+
         if (!object.ReferenceEquals(_doc.Location, _locationController.ModelObject))
           _doc.Location.CopyFrom((ItemLocationDirect)_locationController.ModelObject);
 
-        _doc.Pen = _view.DocPen;
+        if (!object.ReferenceEquals(_doc.Pen, _penController.ModelObject))
+          _doc.Pen = (PenX)_penController.ModelObject;
       }
       catch (Exception ex)
       {

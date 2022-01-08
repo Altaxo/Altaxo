@@ -12,7 +12,9 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     d:DataContext="{d:DesignInstance Type=axogcdb:BrushControllerAdvanced}"
     Grid.IsSharedSizeScope="True"
-    mc:Ignorable="d">
+    mc:Ignorable="d"
+    d:DesignWidth="470"
+    d:DesignHeight="470">
     <UserControl.Resources>
         <Style TargetType="Label">
             <Style.Setters>
@@ -217,7 +219,7 @@
                 />
         </Grid>
 
-        <axogcd:TextureScalingControl DataContext="{Binding TextureScalingController}" Visibility="{Binding TextureScalingEnable, Converter={x:Static axogcc:FalseToVisibilityCollapsedConverter.Instance}}" Margin="0,4,0,4" DockPanel.Dock="Top"/>
+        <axogcd:TextureScalingControl DataContext="{Binding TextureScalingController}" Visibility="{Binding RelativeSource={RelativeSource AncestorType={x:Type axogcd:BrushAllPropertiesControl}}, Path=DataContext.TextureScalingEnable, Converter={x:Static axogcc:FalseToVisibilityCollapsedConverter.Instance}}" Margin="0,4,0,4" DockPanel.Dock="Top"/>
 
         <axogm:InstancePropertyControlTwoColumnStyle
             Margin="0,4,0,4"
