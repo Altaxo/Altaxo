@@ -283,6 +283,28 @@ namespace Altaxo.Calc.Regression
     }
 
     /// <summary>
+    /// Calculates the frequency response for a given frequency.
+    /// </summary>
+    /// <param name="fdt">Frequency. Must be given as f*dt, meaning the product of frequency and sample interval.</param>
+    /// <returns>The complex frequency response at the given frequency.</returns>
+    public virtual double GetFrequencyResponse(double fdt)
+    {
+      var Ak = _Ak ?? throw new InvalidOperationException(ErrorNoExecution);
+
+      double w = fdt * 2 * Math.PI;
+      Complex z = new Complex(Math.Cos(w), Math.Sin(w));
+      var zz = z;
+
+      Complex denom = Ak[1] * zz;
+      for (int i = 2; i < Ak.Length; ++i)
+      {
+        zz *= z;
+        denom += Ak[i] * zz;
+      }
+      return 1 / (1 + denom).GetModulusSquared();
+    }
+
+    /// <summary>
     /// Ensures that temporary arrays are allocated in order to execute the Burg algorithm.
     /// </summary>
     /// <param name="xLength">Length of the vector to build the model.</param>
