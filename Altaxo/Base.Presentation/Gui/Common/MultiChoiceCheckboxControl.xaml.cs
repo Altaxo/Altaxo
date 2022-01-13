@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2021 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -22,16 +22,19 @@
 
 #endregion Copyright
 
+#nullable disable warnings
 using System.Windows.Controls;
 
-namespace Altaxo.Gui.Analysis.Fourier
+namespace Altaxo.Gui.Common
 {
   /// <summary>
-  /// Interaction logic for RealFourierTransformationControl.xaml
+  /// Control that shows multiple choices as a list of checkboxes in a wrap panel.
+  /// Its data context should be a <see cref="Altaxo.Collections.SelectableListNodeList"/>
+  /// This control is not intended for <see cref="System.Enum"/>
   /// </summary>
-  public partial class RealFourierTransformationControl : UserControl, IRealFourierTransformationView
+  public partial class MultiChoiceCheckboxControl : UserControl
   {
-    public RealFourierTransformationControl()
+    public MultiChoiceCheckboxControl()
     {
       InitializeComponent();
     }

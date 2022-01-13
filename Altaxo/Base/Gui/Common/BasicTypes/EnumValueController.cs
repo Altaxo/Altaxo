@@ -24,7 +24,6 @@
 
 #nullable enable
 using System;
-using System.ComponentModel;
 using Altaxo.Collections;
 
 namespace Altaxo.Gui.Common.BasicTypes
@@ -35,7 +34,7 @@ namespace Altaxo.Gui.Common.BasicTypes
 
   [UserControllerForObject(typeof(System.Enum))]
   [ExpectedTypeOfView(typeof(IEnumValueView))]
-  internal class EnumValueController : IMVCANController
+  public class EnumValueController : IMVCANController
   {
     private System.Enum? _doc;
     private long _tempDoc;
@@ -74,7 +73,7 @@ namespace Altaxo.Gui.Common.BasicTypes
     public bool IsShortNonFlagsEnum => !(_list.Count >= MaximumNumberOfEntriesForShortDesign) && !_isFlagsEnum;
     public bool IsLongNonFlagsEnum => (_list.Count >= MaximumNumberOfEntriesForShortDesign) && !_isFlagsEnum;
 
-    public SelectableListNodeList? ItemsFlagsEnum => IsFlagsEnum ? _list :null;
+    public SelectableListNodeList? ItemsFlagsEnum => IsFlagsEnum ? _list : null;
     public SelectableListNodeList? ItemsShortNonFlagsEnum => IsShortNonFlagsEnum ? _list : null;
     public SelectableListNodeList? ItemsLongNonFlagsEnum => IsLongNonFlagsEnum ? _list : null;
 
@@ -112,7 +111,7 @@ namespace Altaxo.Gui.Common.BasicTypes
         }
       }
 
-     
+
     }
 
     private void EhNode_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -145,7 +144,7 @@ namespace Altaxo.Gui.Common.BasicTypes
       }
       else // non-flags enumeration
       {
-        if(b)
+        if (b)
         {
           _tempDoc = x;
         }

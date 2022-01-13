@@ -41,7 +41,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
   /// <summary>
   /// This view interface is for showing the options of the XYXYPlotScatterStyle
   /// </summary>
-  public interface IDropLinePlotStyleView
+  public interface IDropLinePlotStyleView : IDataContextAwareView
   {
     bool AdditionalDropTargetIsEnabled { get; set; }
 

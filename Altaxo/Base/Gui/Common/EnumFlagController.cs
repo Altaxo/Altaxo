@@ -28,31 +28,33 @@ using Altaxo.Collections;
 
 namespace Altaxo.Gui.Common
 {
-  public interface IEnumFlagView
+  public interface IEnumFlagView : IDataContextAwareView
   {
-    /// <summary>
-    /// Initializes the names. The view can set i.e. checks for each item which is selected. The view is responsible for updating
-    /// the <see cref="SelectableListNode.IsSelected"/> property when a check is set or unset.
-    /// </summary>
-    /// <param name="names"></param>
-    void Initialize(SelectableListNodeList names);
   }
 
-  [UserControllerForObject(typeof(System.Enum))]
-  [ExpectedTypeOfView(typeof(IEnumFlagView))]
-  internal class EnumFlagController : IMVCANController
+  [Obsolete("Use Altaxo.Gui.Common.BasicTypes.EnumValueController")]
+  public class EnumFlagController : IMVCANController
   {
     private System.Enum? _doc;
     private long _tempDoc;
     private IEnumFlagView? _view;
 
-    private SelectableListNodeList? _list;
+    private SelectableListNodeList? _list = new();
 
     private int _checkedChangeLock = 0;
 
     private Exception NoDocumentException => new InvalidOperationException("This controller is not yet initialized with a document!");
 
     private Exception NotInitializedException => new InvalidProgramException("This controller has a document, but was not properly initialized!");
+
+    #region Bindings
+
+    public SelectableListNodeList Choices
+    {
+      get => _list;
+    }
+
+    #endregion
 
 
     private void Initialize(bool initData)
@@ -62,7 +64,7 @@ namespace Altaxo.Gui.Common
 
       if (initData)
       {
-        _list = new SelectableListNodeList();
+        _list.Clear();
         var values = System.Enum.GetValues(_doc.GetType());
         foreach (var val in values)
         {
@@ -71,12 +73,6 @@ namespace Altaxo.Gui.Common
           _list.Add(node);
         }
       }
-
-      if (_view is not null)
-      {
-        if (_list is null) throw NotInitializedException;
-        _view.Initialize(_list);
-      }
     }
 
     private void EhNode_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -84,7 +80,7 @@ namespace Altaxo.Gui.Common
       if (0 != _checkedChangeLock || "IsSelected" != e.PropertyName)
         return;
 
-      if (!(sender is SelectableListNode node))
+      if (sender is not SelectableListNode node)
         return;
 
 
@@ -174,26 +170,40 @@ namespace Altaxo.Gui.Common
       }
       set
       {
+        DetachView();
+
         _view = value as IEnumFlagView;
 
         if (_view is not null)
         {
           Initialize(false);
+          AttachView();
         }
       }
+    }
+
+    void AttachView()
+    {
+      if (_view is { } view)
+        view.DataContext = this.Choices;
+    }
+    void DetachView()
+    {
+      if (_view is { } view)
+        view.DataContext = null;
     }
 
     public object ModelObject
     {
       get
       {
-        if (_doc is null) throw NoDocumentException;
-        return _doc;
+        return _doc ?? throw NoDocumentException; ;
       }
     }
 
     public void Dispose()
     {
+      DetachView();
     }
 
     #endregion IMVCController Members

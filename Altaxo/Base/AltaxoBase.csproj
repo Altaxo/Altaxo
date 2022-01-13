@@ -6,7 +6,7 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <nullable>enable</nullable>
-    <NoWarn>1591</NoWarn>
+    <NoWarn>1591;CA1416</NoWarn>
     <DefineConstants></DefineConstants>
   </PropertyGroup>
 

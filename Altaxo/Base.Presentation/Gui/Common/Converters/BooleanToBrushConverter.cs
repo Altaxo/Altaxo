@@ -22,26 +22,36 @@
 
 #endregion Copyright
 
-#nullable disable warnings
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows.Controls;
-using Altaxo.Collections;
+using System.Globalization;
+using System.Windows.Data;
+using System.Windows.Media;
 
-namespace Altaxo.Gui.Common.BasicTypes
+namespace Altaxo.Gui.Common.Converters
 {
   /// <summary>
-  /// Interaction logic for EnumFlagControl.xaml
+  /// Converter that converts a boolean to a brush. The default brush for true is Red, for false is Black.
+  /// The brushes for true and false can be set using <see cref="BrushForTrue"/> and <see cref="BrushForFalse"/>.
   /// </summary>
-  public partial class EnumFlagControl : UserControl, IEnumValueView
+  /// <seealso cref="System.Windows.Data.IValueConverter" />
+  public class BooleanToBrushConverter : IValueConverter
   {
-    public EnumFlagControl()
+    public Brush BrushForTrue { get; set; } = Brushes.Red;
+    public Brush BrushForFalse { get; set; } = Brushes.Black;
+
+    public static BooleanToBrushConverter Instance { get; private set; } = new BooleanToBrushConverter();
+
+    /// <inheritdoc/>
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
-      InitializeComponent();
+      return (value is bool isSet && isSet == true) ?
+        BrushForTrue : BrushForFalse;
+    }
+
+    /// <inheritdoc/>
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+      throw new NotImplementedException();
     }
   }
 }
-
-

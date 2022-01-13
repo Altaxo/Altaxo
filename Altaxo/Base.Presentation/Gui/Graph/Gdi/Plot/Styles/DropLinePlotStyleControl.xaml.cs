@@ -23,9 +23,6 @@
 #endregion Copyright
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using Altaxo.Collections;
@@ -118,7 +115,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     public void InitializeDropLineConditions(SelectableListNodeList names)
     {
-      _guiDropLines.Initialize(names);
+      _guiDropLines.DataContext = names;
     }
 
     public bool IndependentColor

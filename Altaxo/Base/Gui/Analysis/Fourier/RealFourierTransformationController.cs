@@ -23,46 +23,46 @@
 #endregion Copyright
 
 #nullable disable
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Altaxo.Collections;
 using Altaxo.Data;
+using Altaxo.Gui.Common.BasicTypes;
 using Altaxo.Main;
 
 namespace Altaxo.Gui.Analysis.Fourier
 {
-  public interface IRealFourierTransformationView
+  public interface IRealFourierTransformationView : IDataContextAwareView
   {
-    void SetColumnToTransform(string val);
-
-    void SetXIncrement(string val, bool bMarkAsWarning);
-
-    void SetOutputQuantities(SelectableListNodeList list);
-
-    void SetCreationOptions(SelectableListNodeList list);
   }
 
   [ExpectedTypeOfView(typeof(IRealFourierTransformationView))]
   [UserControllerForObject(typeof(AnalysisRealFourierTransformationCommands.RealFourierTransformOptions))]
   public class RealFourierTransformationController : MVCANControllerEditOriginalDocBase<AnalysisRealFourierTransformationCommands.RealFourierTransformOptions, IRealFourierTransformationView>
   {
-    private SelectableListNodeList _outputQuantities;
-    private SelectableListNodeList _creationOptions;
+    EnumValueController _outputQuantitiesController;
+
+    EnumValueController _outputPlacementController;
 
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
-      yield break;
+      yield return new ControllerAndSetNullMethod(_outputQuantitiesController, () => _outputQuantitiesController = null);
+      yield return new ControllerAndSetNullMethod(_outputPlacementController, () => _outputPlacementController = null);
     }
 
-    public override void Dispose(bool isDisposing)
+    #region Bindings
+
+    string _columnToTransform;
+    public string ColumnToTransform
     {
-      _outputQuantities = null;
-      _creationOptions = null;
-
-      base.Dispose(isDisposing);
+      get => _columnToTransform;
     }
+
+    public string XIncrement { get; set; }
+    public bool XIncrementWarning { get; set; }
+
+    public EnumValueController OutputQuantitiesController => _outputQuantitiesController;
+    public EnumValueController OutputPlacementController => _outputPlacementController;
+
+    #endregion
 
     protected override void Initialize(bool initData)
     {
@@ -70,32 +70,32 @@ namespace Altaxo.Gui.Analysis.Fourier
 
       if (initData)
       {
-        _outputQuantities = new SelectableListNodeList();
-        _creationOptions = new SelectableListNodeList();
-      }
+        _outputQuantitiesController = new EnumValueController();
+        _outputQuantitiesController.InitializeDocument(_doc.Output);
 
-      if (_view is not null)
-      {
-        var yColName = AbsoluteDocumentPath.GetPathString(_doc.ColumnToTransform, int.MaxValue);
-        _view.SetColumnToTransform(yColName);
+        _outputPlacementController = new EnumValueController();
+        _outputPlacementController.InitializeDocument(_doc.OutputPlacement);
+
+
+        _columnToTransform = AbsoluteDocumentPath.GetPathString(_doc.ColumnToTransform, int.MaxValue);
 
         string xInc = _doc.XIncrementValue.ToString();
         if (_doc.XIncrementMessage is not null)
           xInc += string.Format(" ({0})", _doc.XIncrementMessage);
-        _view.SetXIncrement(xInc, _doc.XIncrementMessage is not null);
-
-        _outputQuantities.FillWithFlagEnumeration(_doc.Output);
-        _view.SetOutputQuantities(_outputQuantities);
-
-        _creationOptions.FillWithEnumeration(_doc.OutputPlacement);
-        _view.SetCreationOptions(_creationOptions);
+        XIncrement = xInc;
+        XIncrementWarning = _doc.XIncrementMessage is not null;
       }
     }
 
     public override bool Apply(bool disposeController)
     {
-      _doc.Output = (AnalysisRealFourierTransformationCommands.RealFourierTransformOutput)_outputQuantities.GetFlagEnumValueAsInt32();
-      _doc.OutputPlacement = (AnalysisRealFourierTransformationCommands.RealFourierTransformOutputPlacement)_creationOptions.FirstSelectedNode.Tag;
+      if (false == _outputQuantitiesController.Apply(disposeController))
+        return ApplyEnd(false, disposeController);
+      if (false == _outputPlacementController.Apply(disposeController))
+        return ApplyEnd(false, disposeController);
+
+      _doc.Output = (AnalysisRealFourierTransformationCommands.RealFourierTransformOutput)_outputQuantitiesController.ModelObject;
+      _doc.OutputPlacement = (AnalysisRealFourierTransformationCommands.RealFourierTransformOutputPlacement)_outputPlacementController.ModelObject;
       return ApplyEnd(true, disposeController);
     }
   }
