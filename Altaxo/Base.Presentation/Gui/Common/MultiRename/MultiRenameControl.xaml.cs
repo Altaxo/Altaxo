@@ -26,6 +26,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace Altaxo.Gui.Common.MultiRename
@@ -38,69 +39,14 @@ namespace Altaxo.Gui.Common.MultiRename
     public MultiRenameControl()
     {
       InitializeComponent();
+      DataContextChanged += EhDataContextChanged;
     }
 
-    private void EhRenameTextChanged(object sender, TextChangedEventArgs e)
+    private void EhDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
     {
-      if (RenameStringTemplateChanged is not null)
-        RenameStringTemplateChanged();
-    }
-
-    public void InitializeItemListColumns(string[] columnHeaders)
-    {
-      GuiHelper.InitializeListViewColumnsAndBindToListNode(_guiItemList, columnHeaders);
-    }
-
-    public void InitializeItemListItems(Collections.ListNodeList list)
-    {
-      _guiItemList.ItemsSource = null;
-      _guiItemList.ItemsSource = list;
-    }
-
-    public void InitializeAvailableShortcuts(Collections.ListNodeList list)
-    {
-      _guiAvailableShortcuts.ItemsSource = null;
-      _guiAvailableShortcuts.ItemsSource = list;
-    }
-
-    public string RenameStringTemplate
-    {
-      get
+      if(e.NewValue is MultiRenameController ctrl)
       {
-        return _guiRenameText.Text;
-      }
-      set
-      {
-        _guiRenameText.Text = value;
-      }
-    }
-
-    public event Action? RenameStringTemplateChanged;
-
-    /// <summary>
-    /// Sets a value indicating whether the button to choose the base directory should be visible.
-    /// </summary>
-    /// <value>
-    ///   <c>true</c> if the button to choose the base directory is visible; otherwise, <c>false</c>.
-    /// </value>
-    public bool IsBaseDirectoryButtonVisible
-    {
-      set
-      {
-        _guiChooseBaseDirectory.Visibility = value ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
-      }
-    }
-
-    public event Action<string>? BaseDirectoryChosen;
-
-    private void EhChooseBaseDirectory(object sender, System.Windows.RoutedEventArgs e)
-    {
-      var dlg = new System.Windows.Forms.FolderBrowserDialog();
-      dlg.ShowNewFolderButton = true;
-      dlg.Description = "Choose base folder";
-      if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-      {
-        BaseDirectoryChosen?.Invoke(dlg.SelectedPath);
+        GuiHelper.InitializeListViewColumnsAndBindToListNode(_guiItemList, ctrl.ColumNames);
       }
     }
   }

@@ -24,6 +24,7 @@
 
 #nullable enable
 using System;
+using System.Windows.Input;
 using Altaxo.Collections;
 
 namespace Altaxo.Gui.Common.MultiRename
@@ -31,42 +32,8 @@ namespace Altaxo.Gui.Common.MultiRename
   /// <summary>
   /// Interface that must be implemented by views that visualize <see cref="MultiRenameData"/>.
   /// </summary>
-  public interface IMultiRenameView
+  public interface IMultiRenameView : IDataContextAwareView
   {
-    /// <summary>
-    /// Initializes the column names of the list of items.
-    /// </summary>
-    /// <param name="columnHeaders"></param>
-    void InitializeItemListColumns(string[] columnHeaders);
-
-    /// <summary>
-    /// Initializes the list view which shows the items.
-    /// </summary>
-    /// <param name="list">Item list to show.</param>
-    void InitializeItemListItems(ListNodeList list);
-
-    /// <summary>
-    /// Initializes the list of available shortcuts. First column has to be the type of shortcut, then the shortcut itself, then the description text.
-    /// </summary>
-    /// <param name="list">Item list.</param>
-    void InitializeAvailableShortcuts(ListNodeList list);
-
-    /// <summary>Returns the string template that is used to rename the items.</summary>
-    string RenameStringTemplate { get; set; }
-
-    /// <summary>Fired when the rename string template has changed.</summary>
-    event Action RenameStringTemplateChanged;
-
-    /// <summary>
-    /// Sets a value indicating whether the button to choose the base directory should be visible.
-    /// </summary>
-    /// <value>
-    ///   <c>true</c> if the button to choose the base directory is visible; otherwise, <c>false</c>.
-    /// </value>
-    bool IsBaseDirectoryButtonVisible { set; }
-
-    /// <summary>Fired when the user has chosen a base directory. The argument is the selected path.</summary>
-    event Action<string> BaseDirectoryChosen;
   }
 
   [ExpectedTypeOfView(typeof(IMultiRenameView))]
@@ -78,6 +45,10 @@ namespace Altaxo.Gui.Common.MultiRename
 
     private ListNodeList _itemsShown = new ListNodeList();
     private string[] _columNames = new string[0];
+
+    /// <summary>
+    /// Initializes the list of available shortcuts. First column has to be the type of shortcut, then the shortcut itself, then the description text.
+    /// </summary>
     private ListNodeList _shortcutDescriptionList = new ListNodeList();
 
 
@@ -176,6 +147,98 @@ namespace Altaxo.Gui.Common.MultiRename
 
     #endregion ListNode
 
+    public MultiRenameController()
+    {
+      CmdChooseBaseDirectory = new RelayCommand(EhChooseBaseDirectory);
+    }
+
+   
+
+
+    #region Binding
+
+    string _renameStringTemplate;
+    public string RenameStringTemplate
+    {
+      get => _renameStringTemplate;
+      set
+      {
+        if(!(_renameStringTemplate == value))
+        {
+          _renameStringTemplate = value;
+          OnPropertyChanged(nameof(RenameStringTemplate));
+          EhRenameStringTemplateChanged(value);
+        }
+      }
+    }
+
+    private void EhRenameStringTemplateChanged(string renameStringTemplate)
+    {
+      var walker = new MultiRenameTreeWalker(renameStringTemplate, _doc);
+      var result = walker.VisitTree();
+
+      for (int i = 0; i < _itemsShown.Count; ++i)
+      {
+        var item = (MyNode)_itemsShown[i];
+        int originalIndex = (int)item.Tag!;
+        string newName = result.GetContent(originalIndex, i);
+        item.NewName = newName;
+      }
+    }
+
+
+    public ICommand CmdChooseBaseDirectory { get; }
+    private void EhChooseBaseDirectory()
+    {
+      var dlg = new Altaxo.Gui.FolderChoiceOptions()
+      {
+        ShowNewFolderButton = true,
+        Description = "Choose base folder"
+      };
+
+      if (true == Current.Gui.ShowFolderDialog(dlg))
+      {
+        EhBaseDirectoryChosen(dlg.SelectedPath);
+      }
+    }
+
+    bool _isBaseDirectoryButtonVisible;
+    /// <summary>
+    /// Sets a value indicating whether the button to choose the base directory should be visible.
+    /// </summary>
+    /// <value>
+    ///   <c>true</c> if the button to choose the base directory is visible; otherwise, <c>false</c>.
+    /// </value>
+    public bool IsBaseDirectoryButtonVisible
+    {
+      get => _isBaseDirectoryButtonVisible;
+      set
+      {
+        if(!(_isBaseDirectoryButtonVisible==value))
+        {
+          _isBaseDirectoryButtonVisible = value;
+          OnPropertyChanged(nameof(IsBaseDirectoryButtonVisible));
+        }
+      }
+    }
+
+    /// <summary>
+    /// Initializes the list of available shortcuts. First column has to be the type of shortcut, then the shortcut itself, then the description text.
+    /// </summary>
+    public ListNodeList AvailableShortcuts => _shortcutDescriptionList;
+
+    /// <summary>
+    /// Initializes the list view which shows the items.
+    /// </summary>
+    public ListNodeList ItemListItems => _itemsShown;
+
+    /// <summary>
+    /// Initializes the column names of the list of items.
+    /// </summary>
+    public string[] ColumNames => _columNames;
+
+    #endregion
+
     public bool InitializeDocument(params object[] args)
     {
       if (args is null || args.Length == 0 || !(args[0] is MultiRenameData))
@@ -219,15 +282,9 @@ namespace Altaxo.Gui.Common.MultiRename
         scList = _doc.GetArrayShortcuts();
         foreach (string s in scList)
           _shortcutDescriptionList.Add(new DescriptionNode("Array", s, _doc.GetShortcutDescription(s)));
-      }
 
-      if (_view is not null)
-      {
-        _view.IsBaseDirectoryButtonVisible = _doc.IsRenameOperationFileSystemBased;
-        _view.RenameStringTemplate = _doc.DefaultPatternString;
-        _view.InitializeItemListColumns(_columNames);
-        _view.InitializeItemListItems(_itemsShown);
-        _view.InitializeAvailableShortcuts(_shortcutDescriptionList);
+        IsBaseDirectoryButtonVisible = _doc.IsRenameOperationFileSystemBased;
+        RenameStringTemplate = _doc.DefaultPatternString;
       }
     }
 
@@ -244,21 +301,29 @@ namespace Altaxo.Gui.Common.MultiRename
       }
       set
       {
-        if (_view is not null)
-        {
-          _view.RenameStringTemplateChanged -= EhRenameStringTemplateChanged;
-          _view.BaseDirectoryChosen -= EhBaseDirectoryChosen;
-        }
+        DetatchView();
         _view = value as IMultiRenameView;
 
         if (_view is not null)
         {
-          _view.RenameStringTemplateChanged += EhRenameStringTemplateChanged;
-          _view.BaseDirectoryChosen += EhBaseDirectoryChosen;
+          AttatchView();
           Initialize(false);
         }
       }
     }
+
+    void AttatchView()
+    {
+      if (_view is IDataContextAwareView view)
+        view.DataContext = this;
+    }
+
+    void DetatchView()
+    {
+      if (_view is IDataContextAwareView view)
+        view.DataContext = null;
+    }
+
 
     private void EhBaseDirectoryChosen(string path)
     {
@@ -268,37 +333,18 @@ namespace Altaxo.Gui.Common.MultiRename
           path += "\\";
 
 
-        string template = view.RenameStringTemplate;
+        string template = RenameStringTemplate;
         var idx = template.IndexOf("[");
         if (idx < 0)
           idx = template.Length;
 
         template = path + template.Substring(idx, template.Length - idx);
 
-        view.RenameStringTemplate = template;
+        RenameStringTemplate = template;
       }
     }
 
-    private void EhRenameStringTemplateChanged()
-    {
-      if (_view is { } view)
-      {
-        if (_doc is null)
-          throw NoDocumentException;
-
-        string template = view.RenameStringTemplate;
-        var walker = new MultiRenameTreeWalker(template, _doc);
-        var result = walker.VisitTree();
-
-        for (int i = 0; i < _itemsShown.Count; ++i)
-        {
-          var item = (MyNode)_itemsShown[i];
-          int originalIndex = (int)item.Tag!;
-          string newName = result.GetContent(originalIndex, i);
-          item.NewName = newName;
-        }
-      }
-    }
+    
 
     public object ModelObject
     {
