@@ -113,6 +113,7 @@ namespace Altaxo.Main.Services
         return defaultValue;
     }
 
+    [return: MaybeNull]
     public T GetValue<T>(PropertyKey<T> p, RuntimePropertyKind kind)
     {
       if (kind == RuntimePropertyKind.UserAndApplicationAndBuiltin && UserSettings.TryGetValue<T>(p, out var result))

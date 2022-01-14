@@ -103,6 +103,7 @@ namespace Altaxo.Main.Properties
     /// <typeparam name="T">Type of the property value.</typeparam>
     /// <param name="propName">The property name.</param>
     /// <returns>The property.</returns>
+    [return: MaybeNull]
     T GetValue<T>(string propName);
 
     /// <summary>

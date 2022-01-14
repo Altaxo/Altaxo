@@ -32,6 +32,7 @@ using System.Windows.Input;
 using Altaxo.Geometry;
 using Altaxo.Gui;
 using Altaxo.Gui.Common;
+using Altaxo.Gui.Common.BasicTypes;
 
 namespace Altaxo.Main.Services
 {

@@ -154,7 +154,7 @@ namespace Altaxo.Main.Services
 
     #endregion IBackgroundMonitor Members
 
-    private void EhTimerElapsed(object sender, System.Timers.ElapsedEventArgs e)
+    private void EhTimerElapsed(object? sender, System.Timers.ElapsedEventArgs e)
     {
       _shouldReport = true;
       Elapsed?.Invoke(sender, e);

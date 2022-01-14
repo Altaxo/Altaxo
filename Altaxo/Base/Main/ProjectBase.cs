@@ -49,10 +49,12 @@ namespace Altaxo.Main
 
     public event EventHandler? IsDirtyChanged;
 
+#pragma warning disable 8616 // we can not create _projectFolders here, it must be created after all other collections are created
     public ProjectBase()
     {
       _projectFolderProperties = new Main.Properties.ProjectFolderPropertyDocumentCollection((IProject)this);
     }
+#pragma warning restore 8618
 
     /// <summary>
     /// The properties associated with the project folders. Please note that the properties of the project are also stored inside this collection, with the name being an empty string (root folder node).

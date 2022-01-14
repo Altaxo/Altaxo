@@ -450,7 +450,7 @@ namespace Altaxo.Main.Properties
         return default;
 
       var result = _properties[propName];
-      return (T)result;
+      return (T)result!;
     }
 
     /// <summary>

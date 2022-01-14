@@ -151,7 +151,7 @@ namespace Altaxo.Serialization.Xml
     {
       if (_propertyDictionary.TryGetValue(propertyKey, out var result))
       {
-        return (T)result;
+        return (T)result!;
       }
       else
       {

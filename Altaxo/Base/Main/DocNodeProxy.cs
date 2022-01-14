@@ -491,7 +491,7 @@ namespace Altaxo.Main
       InstanceChangedEventArgs? instanceArgs = null;
       lock (this)
       {
-        if (!object.ReferenceEquals(_weakDocNodeTunneledEventHandler.EventSource, sender))
+        if (!object.ReferenceEquals(_weakDocNodeTunneledEventHandler?.EventSource, sender))
           return; // happens if this event handler has waited before the lock, and the other thread that owns the lock has changed the event handlers in the meantime.
 
         if (InternalDocumentNode is not null)
@@ -564,7 +564,7 @@ namespace Altaxo.Main
       InstanceChangedEventArgs? instanceArgs = null;
       lock (this)
       {
-        if (!object.ReferenceEquals(_weakDocNodeChangedHandler.EventSource, sender))
+        if (!object.ReferenceEquals(_weakDocNodeChangedHandler?.EventSource, sender))
           return; // happens if this event handler has waited before the lock, and the other thread that owns the lock has changed the event handlers in the meantime.
 
         if (InternalDocumentNode is not null)

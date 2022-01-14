@@ -117,6 +117,7 @@ namespace Altaxo.Main.Services
     /// <param name="p">The property key.</param>
     /// <param name="kind">Designates the kind of property to search.</param>
     /// <returns>The property value (if the property was found), or the default value defined by the property key (if not found).</returns>
+    [return: MaybeNull]
     T GetValue<T>(PropertyKey<T> p, RuntimePropertyKind kind);
 
     /// <summary>
