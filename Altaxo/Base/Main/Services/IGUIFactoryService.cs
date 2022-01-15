@@ -25,6 +25,7 @@
 #nullable enable
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Threading;
 using System.Windows.Input;
 using Altaxo.Geometry;
 using Altaxo.Gui;
@@ -91,6 +92,7 @@ namespace Altaxo.Main.Services
     bool ShowBackgroundCancelDialog(int millisecondsDelay, System.Threading.ThreadStart threadstart, IExternalDrivenBackgroundMonitor monitor);
 
     bool ShowBackgroundCancelDialog(int millisecondsDelay, System.Threading.Thread thread, IExternalDrivenBackgroundMonitor monitor);
+    bool ShowTaskCancelDialog<TResult>(int millisecondsDelay, System.Threading.Tasks.Task task, CancellationTokenSource ctsSoft, CancellationTokenSource ctsHard, IExternalDrivenBackgroundMonitor monitor);
 
     /// <summary>
     /// Creates and shows a context menu.

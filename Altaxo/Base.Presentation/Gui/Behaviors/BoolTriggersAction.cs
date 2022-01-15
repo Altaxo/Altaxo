@@ -29,39 +29,39 @@ namespace Altaxo.Gui.Behaviors
 {
   /// <summary>
   /// Calls a code-behind event handler if a boolean property in the viewmodel changes its value.
-  /// Bind the viewmodel's boolean property to the IsTriggered property of the attatched behavior
+  /// Bind the viewmodel's boolean property to the TriggerValue property of the attatched behavior
   /// and specify the event handler either in the WhenFalseToTrue property or in the WhenTrueToFalse property, or in both.
   /// </summary>
   /// <example>
   /// In the following code, 'ShouldClose' is a property in the viewmodel, and 'EhCloseWindow' is an event handler in the view that closes the window,
   /// that is called when the 'ShouldClose' property changes from false to true.
   /// <code>
-  /// axogb:BoolTriggersAction.IsTriggered="{Binding ShouldClose}" axogb:BoolTriggersAction.WhenFalseToTrue="EhCloseWindow"
+  /// axogb:BoolTriggersAction.TriggerValue="{Binding ShouldClose}" axogb:BoolTriggersAction.WhenFalseToTrue="EhCloseWindow"
   /// </code>
   /// Tip: more than one action handler is possible in the user control by attaching this behavior to different framework elements.
   /// Because it requires code behind, this behavior should be used sparsely.
   /// </example>
   public class BoolTriggersAction
   {
-    #region IsTriggered property
+    #region TriggerValue property
 
-    public static readonly DependencyProperty IsTriggeredProperty = DependencyProperty.RegisterAttached(
-        "IsTriggered",
+    public static readonly DependencyProperty TriggerValueProperty = DependencyProperty.RegisterAttached(
+        "TriggerValue",
         typeof(bool),
         typeof(BoolTriggersAction),
-        new FrameworkPropertyMetadata(false, OnIsTriggeredChanged));
+        new FrameworkPropertyMetadata(false, OnTriggerValueChanged));
 
-    public static bool GetIsTriggered(FrameworkElement frameworkElement)
+    public static bool GetTriggerValue(FrameworkElement frameworkElement)
     {
-      return (bool)frameworkElement.GetValue(IsTriggeredProperty);
+      return (bool)frameworkElement.GetValue(TriggerValueProperty);
     }
 
-    public static void SetIsTriggered(FrameworkElement frameworkElement, bool value)
+    public static void SetTriggerValue(FrameworkElement frameworkElement, bool value)
     {
-      frameworkElement.SetValue(IsTriggeredProperty, value);
+      frameworkElement.SetValue(TriggerValueProperty, value);
     }
 
-    private static void OnIsTriggeredChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    private static void OnTriggerValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
       if (e.OldValue is bool o && e.NewValue is bool n)
       {
@@ -78,7 +78,7 @@ namespace Altaxo.Gui.Behaviors
       }
     }
 
-    #endregion IsHandled property
+    #endregion TriggerValue property
 
     #region WhenFalseToTrue
 

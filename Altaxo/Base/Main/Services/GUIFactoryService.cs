@@ -32,7 +32,6 @@ using System.Windows.Input;
 using Altaxo.Geometry;
 using Altaxo.Gui;
 using Altaxo.Gui.Common;
-using Altaxo.Gui.Common.BasicTypes;
 
 namespace Altaxo.Main.Services
 {
@@ -836,6 +835,7 @@ namespace Altaxo.Main.Services
     }
 
     public abstract bool ShowBackgroundCancelDialog(int millisecondsDelay, Thread thread, IExternalDrivenBackgroundMonitor monitor);
+    public abstract bool ShowTaskCancelDialog<TResult>(int millisecondsDelay, System.Threading.Tasks.Task task, CancellationTokenSource ctsSoft, CancellationTokenSource ctsHard, IExternalDrivenBackgroundMonitor monitor);
 
     public struct ScreenInformation
     {
