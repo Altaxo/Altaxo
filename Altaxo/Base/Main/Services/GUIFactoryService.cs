@@ -835,7 +835,7 @@ namespace Altaxo.Main.Services
     }
 
     public abstract bool ShowBackgroundCancelDialog(int millisecondsDelay, Thread thread, IExternalDrivenBackgroundMonitor monitor);
-    public abstract bool ShowTaskCancelDialog<TResult>(int millisecondsDelay, System.Threading.Tasks.Task task, CancellationTokenSource ctsSoft, CancellationTokenSource ctsHard, IExternalDrivenBackgroundMonitor monitor);
+    public abstract bool ShowTaskCancelDialog(int millisecondsDelay, System.Threading.Tasks.Task task, CancellationTokenSource ctsSoft, CancellationTokenSource ctsHard, IExternalDrivenBackgroundMonitor monitor);
 
     public struct ScreenInformation
     {

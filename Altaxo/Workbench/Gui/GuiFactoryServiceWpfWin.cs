@@ -703,6 +703,26 @@ return System.Windows.Forms.DialogResult.OK == dlgview.ShowDialog(MainWindow);
       return false;
     }
 
+    public override bool ShowTaskCancelDialog(int millisecondsDelay, System.Threading.Tasks.Task task, CancellationTokenSource ctsSoft, CancellationTokenSource ctsHard, IExternalDrivenBackgroundMonitor monitor)
+    {
+      if (Current.Dispatcher.InvokeRequired)
+        throw new ApplicationException("Trying to show a BackgroundCancelDialog initiated by a background thread. This nesting is not supported");
+
+      for (int i = 0; i < millisecondsDelay && !task.IsCompleted; i += 10)
+        System.Threading.Thread.Sleep(10);
+
+      if (!task.IsCompleted)
+      {
+        var dlg = new TaskCancelDialog() { DataContext = new TaskCancelController(task, ctsSoft, ctsHard, monitor, 0) };
+        if (!task.IsCompleted)
+        {
+          dlg.Owner = MainWindowWpf;
+          return true == InternalShowModalWindow(dlg);
+        }
+      }
+      return false;
+    }
+
     #endregion Context menu
 
     #region Commands
