@@ -31,7 +31,7 @@ using Altaxo.Worksheet.Commands.Analysis;
 
 namespace Altaxo.Gui.Analysis.Fourier
 {
-  public interface IRealFourierTransformation2DView
+  public interface IRealFourierTransformation2DView : IDataContextAwareView
   {
   }
 

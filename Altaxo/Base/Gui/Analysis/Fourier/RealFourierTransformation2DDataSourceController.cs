@@ -22,7 +22,6 @@
 
 #endregion Copyright
 
-#nullable disable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,13 +30,8 @@ using Altaxo.Worksheet.Commands.Analysis;
 
 namespace Altaxo.Gui.Analysis.Fourier
 {
-  public interface IRealFourierTransformation2DDataSourceView
+  public interface IRealFourierTransformation2DDataSourceView : IDataContextAwareView
   {
-    void SetFourierTransformation2DOptionsControl(object p);
-
-    void SetImportOptionsControl(object p);
-
-    void SetInputDataControl(object p);
   }
 
   [ExpectedTypeOfView(typeof(IRealFourierTransformation2DDataSourceView))]
@@ -57,6 +51,14 @@ namespace Altaxo.Gui.Analysis.Fourier
       yield return new ControllerAndSetNullMethod(_inputDataController, () => _inputDataController = null);
     }
 
+    #region Bindings
+
+    public object? ImportOptionsView => _dataSourceOptionsController?.ViewObject;
+    public object? FourierOptionsView => _fourierTransformationOptionsController?.ViewObject;
+    public object? InputDataView => _inputDataController?.ViewObject;
+
+    #endregion
+
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -66,16 +68,6 @@ namespace Altaxo.Gui.Analysis.Fourier
         _dataSourceOptionsController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _doc.ImportOptions }, typeof(IMVCANController), UseDocument.Directly);
         _fourierTransformationOptionsController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _doc.FourierTransformation2DOptions }, typeof(IMVCANController), UseDocument.Directly);
         _inputDataController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _doc.InputData }, typeof(IMVCANController), UseDocument.Directly);
-      }
-
-      if (_view is not null)
-      {
-        _view.SetImportOptionsControl(_dataSourceOptionsController.ViewObject);
-        _view.SetFourierTransformation2DOptionsControl(_fourierTransformationOptionsController.ViewObject);
-        if (_inputDataController is not null)
-        {
-          _view.SetInputDataControl(_inputDataController.ViewObject);
-        }
       }
     }
 
@@ -98,12 +90,7 @@ namespace Altaxo.Gui.Analysis.Fourier
           return result;
       }
 
-      var ev = SuccessfullyApplied;
-      if (ev is not null)
-      {
-        ev();
-      }
-
+      SuccessfullyApplied?.Invoke();
       return ApplyEnd(true, disposeController);
     }
   }

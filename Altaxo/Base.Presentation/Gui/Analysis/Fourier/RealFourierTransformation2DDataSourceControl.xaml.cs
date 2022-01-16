@@ -40,20 +40,5 @@ namespace Altaxo.Gui.Analysis.Fourier
     {
       InitializeComponent();
     }
-
-    public void SetFourierTransformation2DOptionsControl(object p)
-    {
-      _guiFourierOptionsHost.Child = p as UIElement;
-    }
-
-    public void SetImportOptionsControl(object p)
-    {
-      _guiImportOptionsHost.Child = p as UIElement;
-    }
-
-    public void SetInputDataControl(object p)
-    {
-      _guiInputDataHost.Child = p as UIElement;
-    }
   }
 }
