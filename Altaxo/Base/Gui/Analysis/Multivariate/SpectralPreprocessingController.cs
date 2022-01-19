@@ -24,25 +24,16 @@
 
 #nullable disable
 using System;
+using System.Collections.Generic;
 using Altaxo.Calc.Regression.Multivariate;
+using Altaxo.Collections;
 
 namespace Altaxo.Gui.Worksheet
 {
   #region Interfaces
 
-  public interface ISpectralPreprocessingView
+  public interface ISpectralPreprocessingView : IDataContextAwareView
   {
-    void InitializeMethod(SpectralPreprocessingMethod method);
-
-    void InitializeDetrending(int detrending);
-
-    void InitializeEnsembleScale(bool ensScale);
-
-    event Action<SpectralPreprocessingMethod> MethodChanged;
-
-    event Action<int> DetrendingChanged;
-
-    event Action<bool> EnsembleScaleChanged;
   }
 
   #endregion Interfaces
@@ -51,10 +42,12 @@ namespace Altaxo.Gui.Worksheet
   /// Controls the SpectralPreprocessingControl GUI for choosing <see cref="SpectralPreprocessingOptions" />
   /// </summary>
   [ExpectedTypeOfView(typeof(ISpectralPreprocessingView))]
-  public class SpectralPreprocessingController : IMVCAController
+  [UserControllerForObject(typeof(SpectralPreprocessingOptions))]
+  public class SpectralPreprocessingController : MVCANControllerEditOriginalDocBase<SpectralPreprocessingOptions, ISpectralPreprocessingView>
   {
-    private ISpectralPreprocessingView _view;
-    private SpectralPreprocessingOptions _doc;
+    public SpectralPreprocessingController()
+    {
+    }
 
     /// <summary>
     /// Constructor. Supply a document to control here.
@@ -63,114 +56,85 @@ namespace Altaxo.Gui.Worksheet
     public SpectralPreprocessingController(SpectralPreprocessingOptions doc)
     {
       _doc = doc;
+      Initialize(true);
     }
 
-    private void SetElements(bool bInit)
+    public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
-      if (_view is not null)
-      {
-        _view.InitializeMethod(_doc.Method);
-        _view.InitializeDetrending(_doc.DetrendingOrder);
-        _view.InitializeEnsembleScale(_doc.EnsembleScale);
-      }
+      yield break;
     }
 
-    /// <summary>
-    /// Get/sets the GUI element that this controller controls.
-    /// </summary>
-    public ISpectralPreprocessingView View
+    #region Bindings
+
+    private bool _ensembleScale;
+
+    public bool EnsembleScale
     {
-      get { return _view; }
+      get => _ensembleScale;
       set
       {
-        if (_view is not null)
+        if (!(_ensembleScale == value))
         {
-          _view.MethodChanged -= EhView_MethodChanged;
-          _view.DetrendingChanged -= EhView_DetrendingChanged;
-          _view.EnsembleScaleChanged -= EhView_EnsembleScaleChanged;
-        }
-
-        _view = value;
-
-        if (_view is not null)
-        {
-          SetElements(false); // set only the view elements, dont't initialize the variables
-
-          _view.MethodChanged += EhView_MethodChanged;
-          _view.DetrendingChanged += EhView_DetrendingChanged;
-          _view.EnsembleScaleChanged += EhView_EnsembleScaleChanged;
+          _ensembleScale = value;
+          OnPropertyChanged(nameof(EnsembleScale));
         }
       }
     }
 
-    /// <summary>
-    /// Returns the document.
-    /// </summary>
-    public SpectralPreprocessingOptions Doc
+    public SelectableListNodeList SpectralPreprocessingMethods { get; } = new SelectableListNodeList();
+
+    public SelectableListNodeList DetrendingMethods { get; } = new SelectableListNodeList();
+
+    #endregion
+
+    void InitializeSpectralPreprocessingMethods()
     {
-      get { return _doc; }
-    }
-
-    public void EhView_MethodChanged(SpectralPreprocessingMethod newvalue)
-    {
-      _doc.Method = newvalue;
-    }
-
-    public void EhView_DetrendingChanged(int newvalue)
-    {
-      _doc.DetrendingOrder = newvalue;
-    }
-
-    public void EhView_EnsembleScaleChanged(bool newvalue)
-    {
-      _doc.EnsembleScale = newvalue;
-    }
-
-    #region IApplyController Members
-
-    public bool Apply(bool disposeController)
-    {
-      // nothing to do since all is done
-      return true;
-    }
-
-    /// <summary>
-    /// Try to revert changes to the model, i.e. restores the original state of the model.
-    /// </summary>
-    /// <param name="disposeController">If set to <c>true</c>, the controller should release all temporary resources, since the controller is not needed anymore.</param>
-    /// <returns>
-    ///   <c>True</c> if the revert operation was successfull; <c>false</c> if the revert operation was not possible (i.e. because the controller has not stored the original state of the model).
-    /// </returns>
-    public bool Revert(bool disposeController)
-    {
-      return false;
-    }
-
-    #endregion IApplyController Members
-
-    #region IMVCController Members
-
-    public object ViewObject
-    {
-      get
+      foreach (SpectralPreprocessingMethod v in Enum.GetValues(typeof(SpectralPreprocessingMethod)))
       {
-        return _view;
-      }
-      set
-      {
-        View = value as ISpectralPreprocessingView;
+        SpectralPreprocessingMethods.Clear();
+
+        var text = v switch
+        {
+          SpectralPreprocessingMethod.None => "None",
+          SpectralPreprocessingMethod.FirstDerivative => "1st derivative",
+          SpectralPreprocessingMethod.SecondDerivative => "2nd derivative",
+          SpectralPreprocessingMethod.MultiplicativeScatteringCorrection => "MSC",
+          SpectralPreprocessingMethod.StandardNormalVariate => "SNV",
+          _ => Enum.GetName(typeof(SpectralPreprocessingMethod), v)
+        };
+
+        SpectralPreprocessingMethods.Add(new SelectableListNode(text, v, v == _doc.Method));
       }
     }
 
-    public object ModelObject
+    void InitializeDetrendingMethods()
     {
-      get { return _doc; }
+      DetrendingMethods.Clear();
+      DetrendingMethods.Add(new SelectableListNode("None", -1, -1 == _doc.DetrendingOrder));
+      DetrendingMethods.Add(new SelectableListNode("Spectrum mean", 0, 0 == _doc.DetrendingOrder));
+      DetrendingMethods.Add(new SelectableListNode("Linear", 1, 1 == _doc.DetrendingOrder));
+      DetrendingMethods.Add(new SelectableListNode("Quadratic", 2, 2 == _doc.DetrendingOrder));
     }
 
-    public void Dispose()
+    protected override void Initialize(bool initData)
     {
+      base.Initialize(initData);
+
+      if (initData)
+      {
+        InitializeSpectralPreprocessingMethods();
+        InitializeDetrendingMethods();
+        EnsembleScale = _doc.EnsembleScale;
+      }
     }
 
-    #endregion IMVCController Members
+    public override bool Apply(bool disposeController)
+    {
+      _doc.Method = SpectralPreprocessingMethods.FirstSelectedNode?.Tag is SpectralPreprocessingMethod m ? m : SpectralPreprocessingMethod.None;
+      _doc.DetrendingOrder = DetrendingMethods.FirstSelectedNode?.Tag is int d ? d : -1;
+      _doc.EnsembleScale = EnsembleScale;
+      return ApplyEnd(true, disposeController);
+    }
   }
 }
+

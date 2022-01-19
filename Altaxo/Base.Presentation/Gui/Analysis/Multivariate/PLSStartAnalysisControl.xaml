@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
+						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common" xmlns:worksheet="clr-namespace:Altaxo.Gui.Worksheet;assembly=AltaxoBase" d:DataContext="{d:DesignInstance Type=worksheet:PLSStartAnalysisController}"
              mc:Ignorable="d">
 	<UserControl.Resources>
 		<Style TargetType="RadioButton">
@@ -24,17 +24,22 @@
 			<RowDefinition Height="4" />
 		</Grid.RowDefinitions>
 		<Label Grid.Row="0" Content="Method:" />
-		<ComboBox x:Name="cbAnalysisMethod" Grid.Row="1" SelectionChanged="cbAnalysisMethod_SelectionChangeCommitted" />
+		<ComboBox Grid.Row="1" ItemsSource="{Binding AnalysisMethods}" SelectedItem="{Binding SelectedAnalysisMethod}" SelectedValuePath="Tag" />
 		<Label Grid.Row="3" Content="Maximum number of factors to calculate:" />
-		<axogc:Int32UpDown x:Name="edMaxNumFactors" Grid.Row="4" Minimum="0" ValueChanged="edMaxNumFactors_ValueChanged" />
-
+		<axogc:Int32UpDown Grid.Row="4" Minimum="0" Value="{Binding NumberOfFactors}" />
 		<GroupBox Grid.Row="6" Header="Cross validation calculation">
-			<StackPanel Orientation="Vertical">
-				<RadioButton x:Name="rbCrossValidationNone" Content="None" Checked="rbCrossValidationNone_CheckedChanged" />
-				<RadioButton x:Name="rbCrossValidationEvery" Content="Exclude every measurement" Checked="rbCrossValidationEvery_CheckedChanged" />
-				<RadioButton x:Name="rbCrossValidationGroups" Content="Exclude groups of similar measurements" Checked="rbCrossValidationGroups_CheckedChanged" />
-				<RadioButton x:Name="rbCrossValidationHalfEnsemble" Content="Exclude half ensemble of measurements" Checked="rbCrossValidationHalfEnsemble_CheckedChanged" />
-			</StackPanel>
-		</GroupBox>
+            <ItemsControl ItemsSource="{Binding CROSSPressCalculationTypes}">
+                <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Vertical"/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <RadioButton Content="{Binding Text}" IsChecked="{Binding IsChecked, Mode=TwoWay}"/>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </GroupBox>
 	</Grid>
 </UserControl>

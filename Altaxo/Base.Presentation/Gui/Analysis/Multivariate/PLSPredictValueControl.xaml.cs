@@ -22,10 +22,6 @@
 
 #endregion Copyright
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Windows.Controls;
 
 namespace Altaxo.Gui.Worksheet
@@ -39,35 +35,5 @@ namespace Altaxo.Gui.Worksheet
     {
       InitializeComponent();
     }
-
-    #region IPLSPredictValueView
-
-    public void InitializeCalibrationModelTables(string[] tables)
-    {
-      cbCalibrationModelTable.Items.Clear();
-      cbCalibrationModelTable.ItemsSource = tables;
-      if (tables.Length > 0)
-        cbCalibrationModelTable.SelectedIndex = 0;
-    }
-
-    public void InitializeDestinationTables(string[] tables)
-    {
-      cbDestinationTable.Items.Clear();
-      cbDestinationTable.ItemsSource = tables;
-      if (tables.Length > 0)
-        cbDestinationTable.SelectedIndex = 0;
-    }
-
-    public int GetCalibrationTableChoice()
-    {
-      return cbCalibrationModelTable.SelectedIndex;
-    }
-
-    public int GetDestinationTableChoice()
-    {
-      return cbDestinationTable.SelectedIndex;
-    }
-
-    #endregion IPLSPredictValueView
   }
 }

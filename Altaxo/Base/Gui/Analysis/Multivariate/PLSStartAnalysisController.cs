@@ -24,93 +24,163 @@
 
 #nullable disable
 using System;
+using System.Collections.Generic;
 using Altaxo.Calc.Regression.Multivariate;
+using Altaxo.Collections;
+using Altaxo.Gui.Common.BasicTypes;
 
 namespace Altaxo.Gui.Worksheet
 {
-  #region Interfaces
 
-  public interface IPLSStartAnalysisView
+  public interface IPLSStartAnalysisView : IDataContextAwareView
   {
-    void InitializeNumberOfFactors(int numFactors);
-
-    void InitializeAnalysisMethod(string[] methods, int actMethod);
-
-    void InitializeCrossPressCalculation(CrossPRESSCalculationType val);
-
-    event Action<int> MaxNumberOfFactorsChanged;
-
-    event Action<CrossPRESSCalculationType> CrossValidationSelected;
-
-    event Action<int> AnalysisMethodChanged;
   }
 
-  #endregion Interfaces
 
   /// <summary>
   /// Summary description for PLSStartAnalysisController.
   /// </summary>
   [ExpectedTypeOfView(typeof(IPLSStartAnalysisView))]
-  public class PLSStartAnalysisController : IMVCAController
+   [UserControllerForObject(typeof(MultivariateAnalysisOptions))]
+  public class PLSStartAnalysisController : MVCANControllerEditImmutableDocBase<MultivariateAnalysisOptions, IPLSStartAnalysisView>
   {
-    private MultivariateAnalysisOptions _doc;
-    private IPLSStartAnalysisView _view;
-
-    private System.Collections.ArrayList _methoddictionary = new System.Collections.ArrayList();
+    public PLSStartAnalysisController()
+    {
+    }
 
     public PLSStartAnalysisController(MultivariateAnalysisOptions options)
     {
       _doc = options;
+      Initialize(true);
     }
 
-    private void SetElements(bool bInit)
+    public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
-      if (_view is not null)
+      yield break;
+    }
+
+    #region Bindings
+
+    private int  _numberOfFactors;
+    public int  NumberOfFactors
+    {
+      get => _numberOfFactors;
+      set
       {
-        _view.InitializeNumberOfFactors(_doc.MaxNumberOfFactors);
-        _view.InitializeCrossPressCalculation(_doc.CrossPRESSCalculation);
+        if (!(_numberOfFactors == value))
+        {
+          _numberOfFactors = value;
+          OnPropertyChanged(nameof(NumberOfFactors));
+        }
+      }
+    }
+
+    public SelectableListNodeList CROSSPressCalculationTypes { get; } = new SelectableListNodeList();
+
+    public SelectableListNodeList AnalysisMethods { get; } = new SelectableListNodeList();
+
+    private Type _selectedAnalysisMethod;
+
+    public Type SelectedAnalysisMethod
+    {
+      get => _selectedAnalysisMethod;
+      set
+      {
+        if (!(_selectedAnalysisMethod == value))
+        {
+          _selectedAnalysisMethod = value;
+          OnPropertyChanged(nameof(SelectedAnalysisMethod));
+        }
+      }
+    }
+
+
+    public CrossPRESSCalculationType SelectedCrossPressCalculationType
+    {
+      get
+      {
+        return CROSSPressCalculationTypes.FirstSelectedNode?.Tag is CrossPRESSCalculationType cp ? cp : CrossPRESSCalculationType.None;
+      }
+      set
+      {
+        CROSSPressCalculationTypes.ForEachDo(x => x.IsSelected = (value == (CrossPRESSCalculationType)x.Tag));
+      }
+    }
+
+
+    #endregion
+
+
+    protected override void Initialize(bool initData)
+    {
+      base.Initialize(initData);
+
+      if(initData)
+      {
+        NumberOfFactors = _doc.MaxNumberOfFactors;
+        InitializeCrossPressCalculationTypes();
         InitializeAnalysisMethods();
       }
     }
 
-    public IPLSStartAnalysisView View
+    public override bool Apply(bool disposeController)
     {
-      get { return _view; }
-      set
+      _doc = new MultivariateAnalysisOptions()
       {
-        if (_view is not null)
+        MaxNumberOfFactors = NumberOfFactors,
+        CrossPRESSCalculation = SelectedCrossPressCalculationType,
+        AnalysisMethod = SelectedAnalysisMethod
+      };
+
+      return ApplyEnd(true, disposeController);
+    }
+
+    void InitializeCrossPressCalculationTypes()
+    {
+      CROSSPressCalculationTypes.Clear();
+
+      foreach(CrossPRESSCalculationType v in Enum.GetValues(typeof(CrossPRESSCalculationType)))
+      {
+        var text = v switch
         {
-          _view.AnalysisMethodChanged -= EhView_AnalysisMethodChanged;
-          _view.CrossValidationSelected -= EhView_CrossValidationSelected;
-          _view.MaxNumberOfFactorsChanged -= EhView_MaxNumberOfFactorsChanged;
-        }
+          CrossPRESSCalculationType.None => "None",
+          CrossPRESSCalculationType.ExcludeEveryMeasurement => "Exclude every measurement",
+          CrossPRESSCalculationType.ExcludeGroupsOfSimilarMeasurements => "Exclude groups of similar measurements",
+          CrossPRESSCalculationType.ExcludeHalfEnsemblyOfMeasurements => "Exclude half ensemble of measurements",
+          _ => Enum.GetName(typeof(CrossPRESSCalculationType), v)
+        };
 
-        _view = value;
-
-        if (_view is not null)
-        {
-          SetElements(false); // set only the view elements, dont't initialize the variables
-
-          _view.AnalysisMethodChanged += EhView_AnalysisMethodChanged;
-          _view.CrossValidationSelected += EhView_CrossValidationSelected;
-          _view.MaxNumberOfFactorsChanged += EhView_MaxNumberOfFactorsChanged;
-        }
+        CROSSPressCalculationTypes.Add(new SelectableListNode(text, v, v == _doc.CrossPRESSCalculation));
+        SelectedCrossPressCalculationType = _doc.CrossPRESSCalculation;
       }
     }
 
-    public MultivariateAnalysisOptions Doc
+    void InitializeAnalysisMethods()
     {
-      get { return _doc; }
-    }
+      AnalysisMethods.Clear();
+      System.Reflection.Assembly[] assemblies = System.AppDomain.CurrentDomain.GetAssemblies();
+      foreach (System.Reflection.Assembly assembly in assemblies)
+      {
+        if (IsOwnAssembly(assembly) || ReferencesOwnAssembly(assembly.GetReferencedAssemblies()))
+        {
+          Type[] definedtypes = assembly.GetTypes();
+          foreach (Type definedtype in definedtypes)
+          {
+            if (definedtype.IsSubclassOf(typeof(Altaxo.Calc.Regression.Multivariate.WorksheetAnalysis)) && !definedtype.IsAbstract)
+            {
+              Attribute[] descriptionattributes = Attribute.GetCustomAttributes(definedtype, typeof(System.ComponentModel.DescriptionAttribute));
 
-    public void EhView_MaxNumberOfFactorsChanged(int numFactors)
-    {
-      _doc.MaxNumberOfFactors = numFactors;
-    }
+              string name =
+                (descriptionattributes.Length > 0) ?
+                ((System.ComponentModel.DescriptionAttribute)descriptionattributes[0]).Description : definedtype.ToString();
 
-    public void EhView_CrossValidationSelected(CrossPRESSCalculationType val)
-    {
-      _doc.CrossPRESSCalculation = val;
+              AnalysisMethods.Add(new SelectableListNode(name, definedtype, false));
+            }
+          }
+        } // end foreach type
+      } // end foreach assembly
+
+      SelectedAnalysisMethod = (Type)AnalysisMethods[0].Tag;
     }
 
     private static bool ReferencesOwnAssembly(System.Reflection.AssemblyName[] references)
@@ -128,88 +198,11 @@ namespace Altaxo.Gui.Worksheet
       return ass.FullName == System.Reflection.Assembly.GetCallingAssembly().FullName;
     }
 
-    public void InitializeAnalysisMethods()
-    {
-      _methoddictionary.Clear();
-      var nameList = new System.Collections.ArrayList();
+    
+  
 
-      System.Reflection.Assembly[] assemblies = System.AppDomain.CurrentDomain.GetAssemblies();
-      foreach (System.Reflection.Assembly assembly in assemblies)
-      {
-        if (IsOwnAssembly(assembly) || ReferencesOwnAssembly(assembly.GetReferencedAssemblies()))
-        {
-          Type[] definedtypes = assembly.GetTypes();
-          foreach (Type definedtype in definedtypes)
-          {
-            if (definedtype.IsSubclassOf(typeof(Altaxo.Calc.Regression.Multivariate.WorksheetAnalysis)) && !definedtype.IsAbstract)
-            {
-              Attribute[] descriptionattributes = Attribute.GetCustomAttributes(definedtype, typeof(System.ComponentModel.DescriptionAttribute));
+   
 
-              string name =
-                (descriptionattributes.Length > 0) ?
-                ((System.ComponentModel.DescriptionAttribute)descriptionattributes[0]).Description : definedtype.ToString();
-
-              _methoddictionary.Add(definedtype);
-              nameList.Add(name);
-            }
-          }
-        } // end foreach type
-      } // end foreach assembly
-      if (_view is not null)
-        _view.InitializeAnalysisMethod((string[])nameList.ToArray(typeof(string)), 0);
-      _doc.AnalysisMethod = (System.Type)_methoddictionary[0];
-    }
-
-    public void EhView_AnalysisMethodChanged(int item)
-    {
-      _doc.AnalysisMethod = (System.Type)_methoddictionary[item];
-    }
-
-    #region IApplyController Members
-
-    public bool Apply(bool disposeController)
-    {
-      // nothing to do here, since the hosted doc is a struct
-      return true;
-    }
-
-    /// <summary>
-    /// Try to revert changes to the model, i.e. restores the original state of the model.
-    /// </summary>
-    /// <param name="disposeController">If set to <c>true</c>, the controller should release all temporary resources, since the controller is not needed anymore.</param>
-    /// <returns>
-    ///   <c>True</c> if the revert operation was successfull; <c>false</c> if the revert operation was not possible (i.e. because the controller has not stored the original state of the model).
-    /// </returns>
-    public bool Revert(bool disposeController)
-    {
-      return false;
-    }
-
-    #endregion IApplyController Members
-
-    #region IMVCController Members
-
-    public object ViewObject
-    {
-      get
-      {
-        return _view;
-      }
-      set
-      {
-        View = value as IPLSStartAnalysisView;
-      }
-    }
-
-    public object ModelObject
-    {
-      get { return _doc; }
-    }
-
-    public void Dispose()
-    {
-    }
-
-    #endregion IMVCController Members
+    
   }
 }

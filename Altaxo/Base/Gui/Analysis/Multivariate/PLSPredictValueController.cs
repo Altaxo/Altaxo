@@ -23,21 +23,14 @@
 #endregion Copyright
 
 #nullable disable
-using System;
+using System.Collections.Generic;
 
 namespace Altaxo.Gui.Worksheet
 {
   #region Interfaces
 
-  public interface IPLSPredictValueView
+  public interface IPLSPredictValueView : IDataContextAwareView
   {
-    void InitializeCalibrationModelTables(string[] tables);
-
-    void InitializeDestinationTables(string[] tables);
-
-    int GetCalibrationTableChoice();
-
-    int GetDestinationTableChoice();
   }
 
   #endregion Interfaces
@@ -46,24 +39,55 @@ namespace Altaxo.Gui.Worksheet
   /// Summary description for PLSPredictValueController.
   /// </summary>
   [ExpectedTypeOfView(typeof(IPLSPredictValueView))]
-  public class PLSPredictValueController : IMVCAController
+  public class PLSPredictValueController : MVCANControllerEditImmutableDocBase<(string CalibrationTable, string DestinationTable), IPLSPredictValueView>
   {
-    private IPLSPredictValueView _view;
-    private string[] _calibrationTables;
-    private string[] _destinationTables;
+    public string[] CalibrationTables { get; private set; }
+    public string[] DestinationTables { get; private set; }
 
-    public string SelectedDestinationTableName;
-    public string SelectedCalibrationTableName;
+    private string _selectedDestinationTableName;
 
-    private void SetElements(bool bInit)
+    public string SelectedDestinationTableName
     {
-      _calibrationTables = Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.GetAvailablePLSCalibrationTables();
-      _destinationTables = GetAvailableDestinationTables();
-
-      if (_view is not null)
+      get => _selectedDestinationTableName;
+      set
       {
-        _view.InitializeCalibrationModelTables(_calibrationTables);
-        _view.InitializeDestinationTables(_destinationTables);
+        if (!(_selectedDestinationTableName == value))
+        {
+          _selectedDestinationTableName = value;
+          OnPropertyChanged(nameof(SelectedDestinationTableName));
+        }
+      }
+    }
+
+    private string _selectedCalibrationTableName;
+
+    public string SelectedCalibrationTableName
+    {
+      get => _selectedCalibrationTableName;
+      set
+      {
+        if (!(_selectedCalibrationTableName == value))
+        {
+          _selectedCalibrationTableName = value;
+          OnPropertyChanged(nameof(SelectedCalibrationTableName));
+        }
+      }
+    }
+
+    public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+    {
+      yield break;
+    }
+
+    protected override void Initialize(bool initData)
+    {
+      base.Initialize(initData);
+
+      if (initData)
+      {
+        CalibrationTables = Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.GetAvailablePLSCalibrationTables();
+        DestinationTables = GetAvailableDestinationTables();
+
       }
     }
 
@@ -79,77 +103,24 @@ namespace Altaxo.Gui.Worksheet
       return (string[])result.ToArray(typeof(string));
     }
 
-    public IPLSPredictValueView View
+    public override bool Apply(bool disposeController)
     {
-      get { return _view; }
-      set
+      if (string.IsNullOrEmpty(SelectedCalibrationTableName))
       {
-        _view = value;
-
-        if (_view is not null)
-        {
-          SetElements(false); // set only the view elements, dont't initialize the variables
-        }
+        Current.Gui.ErrorMessageBox("Please choose a calibration table");
+        return ApplyEnd(false, disposeController);
       }
-    }
-
-    #region IApplyController Members
-
-    public bool Apply(bool disposeController)
-    {
-      int sel;
-      sel = _view.GetCalibrationTableChoice();
-      if (sel < 0)
-        SelectedCalibrationTableName = null;
-      else
-        SelectedCalibrationTableName = _calibrationTables[sel];
-
-      sel = _view.GetDestinationTableChoice();
-      if (sel == 0)
-        SelectedDestinationTableName = null;
-      else
-        SelectedDestinationTableName = _destinationTables[sel];
-
-      return true;
-    }
-
-    /// <summary>
-    /// Try to revert changes to the model, i.e. restores the original state of the model.
-    /// </summary>
-    /// <param name="disposeController">If set to <c>true</c>, the controller should release all temporary resources, since the controller is not needed anymore.</param>
-    /// <returns>
-    ///   <c>True</c> if the revert operation was successfull; <c>false</c> if the revert operation was not possible (i.e. because the controller has not stored the original state of the model).
-    /// </returns>
-    public bool Revert(bool disposeController)
-    {
-      return false;
-    }
-
-    #endregion IApplyController Members
-
-    #region IMVCController Members
-
-    public object ViewObject
-    {
-      get
+      if (string.IsNullOrEmpty(SelectedDestinationTableName))
       {
-        return _view;
+        Current.Gui.ErrorMessageBox("Please choose a destination table");
+        return ApplyEnd(false, disposeController);
       }
-      set
-      {
-        View = value as IPLSPredictValueView;
-      }
+
+      _doc = (SelectedCalibrationTableName, SelectedDestinationTableName);
+
+      return ApplyEnd(true, disposeController);
     }
 
-    public object ModelObject
-    {
-      get { return null; }
-    }
 
-    public void Dispose()
-    {
-    }
-
-    #endregion IMVCController Members
   }
 }
