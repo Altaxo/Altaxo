@@ -25,22 +25,14 @@
 #nullable disable
 using System;
 using System.Collections.Generic;
-using Altaxo.Graph;
 using Altaxo.Graph.Gdi;
 
 namespace Altaxo.Gui.Graph.Gdi
 {
   #region Interfaces
 
-  public interface ILayerPositionView
+  public interface ILayerPositionView : IDataContextAwareView
   {
-    bool UseDirectPositioning { get; set; }
-
-    object SubPositionView { set; }
-
-    event Action PositioningTypeChanged;
-
-    bool IsPositioningTypeChoiceVisible { set; }
   }
 
   #endregion Interfaces
@@ -64,6 +56,49 @@ namespace Altaxo.Gui.Graph.Gdi
     {
       yield return new ControllerAndSetNullMethod(_subController, () => _subController = null);
     }
+
+    #region Bindings
+
+    private bool _UseDirectPositioning;
+
+    public bool UseDirectPositioning
+    {
+      get => _UseDirectPositioning;
+      set
+      {
+        if (!(_UseDirectPositioning == value))
+        {
+          _UseDirectPositioning = value;
+          EhPositioningTypeChanged();
+          OnPropertyChanged(nameof(UseDirectPositioning));
+          OnPropertyChanged(nameof(UseGridPositioning));
+        }
+      }
+    }
+
+    public bool UseGridPositioning
+    {
+      get => !UseDirectPositioning;
+      set => UseDirectPositioning = !value;
+    }
+
+
+    public bool IsPositioningChoiceVisible
+    {
+      get => !IsRootLayerPosition;
+    }
+
+    public bool IsRootLayerPosition
+    {
+      get
+      {
+        return (_layer is not null) && (_layer.ParentObject is GraphDocument);
+      }
+    }
+
+    public object SubPositioningView => _subController?.ViewObject;
+
+    #endregion
 
     public override void Dispose(bool isDisposing)
     {
@@ -98,15 +133,10 @@ namespace Altaxo.Gui.Graph.Gdi
         if (_layer.ParentLayer is null && !(_doc is ItemLocationDirect))
           _doc = new ItemLocationDirect();
 
+        UseDirectPositioning = _doc is ItemLocationDirect;
         CreateSubController();
       }
 
-      if (_view is not null)
-      {
-        _view.UseDirectPositioning = _doc is ItemLocationDirect;
-        _view.SubPositionView = _subController.ViewObject;
-        _view.IsPositioningTypeChoiceVisible = !IsRootLayerPosition;
-      }
     }
 
     public override bool Apply(bool disposeController)
@@ -116,18 +146,6 @@ namespace Altaxo.Gui.Graph.Gdi
         return result;
 
       return ApplyEnd(true, disposeController);
-    }
-
-    protected override void AttachView()
-    {
-      base.AttachView();
-      _view.PositioningTypeChanged += EhPositioningTypeChanged;
-    }
-
-    protected override void DetachView()
-    {
-      _view.PositioningTypeChanged -= EhPositioningTypeChanged;
-      base.DetachView();
     }
 
     private void CreateSubController()
@@ -152,6 +170,7 @@ namespace Altaxo.Gui.Graph.Gdi
         _subController.InitializeDocument(_doc, _layer.ParentLayer.Grid);
       }
       Current.Gui.FindAndAttachControlTo(_subController);
+      OnPropertyChanged(nameof(SubPositioningView));
     }
 
     private void EhPositioningTypeChanged()
@@ -159,7 +178,7 @@ namespace Altaxo.Gui.Graph.Gdi
       if (_subController.Apply(false))
         _instances[_subController.ModelObject.GetType()] = (IItemLocation)_subController.ModelObject;
 
-      bool useDirectPositioning = _view.UseDirectPositioning || _layer.ParentLayer is null; // if this is the root layer, then choice of grid positioning is not available
+      bool useDirectPositioning = UseDirectPositioning || _layer.ParentLayer is null; // if this is the root layer, then choice of grid positioning is not available
 
       IItemLocation oldDoc = _doc;
       IItemLocation newDoc = null;
@@ -192,16 +211,7 @@ namespace Altaxo.Gui.Graph.Gdi
 
         CreateSubController();
 
-        _view.UseDirectPositioning = useDirectPositioning;
-        _view.SubPositionView = _subController.ViewObject;
-      }
-    }
-
-    public bool IsRootLayerPosition
-    {
-      get
-      {
-        return (_layer is not null) && (_layer.ParentObject is GraphDocument);
+        UseDirectPositioning = useDirectPositioning;
       }
     }
   }

@@ -460,13 +460,24 @@ namespace Altaxo.Serialization
     public static Altaxo.Collections.SelectableListNodeList GetListOfChoices(Enum value)
     {
       var list = new Altaxo.Collections.SelectableListNodeList();
+      GetListOfChoices(value, list);
+      return list;
+    }
+
+    /// <summary>
+    /// For a given enum value, this gives the list of possible choices for that enumeration (must not be a flag enumeration).
+    /// </summary>
+    /// <param name="value">The enum value that is currently selected.</param>
+    /// <param name="list">List to be filled with choices</param>
+    public static void GetListOfChoices(Enum value, Altaxo.Collections.SelectableListNodeList list)
+    {
+      list.Clear();
       Type enumtype = value.GetType();
       foreach (var v in Enum.GetValues(enumtype).OfType<Enum>())
       {
         string name = Current.Gui.GetUserFriendlyName(v);
         list.Add(new Altaxo.Collections.SelectableListNode(name, v, Enum.Equals(v, value)));
       }
-      return list;
     }
 
     #endregion Selection lists

@@ -4,8 +4,8 @@
 						 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 						 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
-						 xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing"
-						 mc:Ignorable="d"
+						 xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing" xmlns:gdi="clr-namespace:Altaxo.Gui.Graph.Gdi;assembly=AltaxoBase" d:DataContext="{d:DesignInstance Type=gdi:ItemLocationByGridController}"
+             mc:Ignorable="d"
 >
 	<UserControl.Resources>
 		<Style TargetType="Label">
@@ -41,29 +41,29 @@
 			<RowDefinition Height="*" />
 		</Grid.RowDefinitions>
 		<Label Grid.Column="0" Grid.Row="0" Content="Grid column:" />
-		<axogc:DoubleUpDown x:Name="_guiXPosition"  Grid.Column="1" Grid.Row="0" />
+		<axogc:DoubleUpDown Grid.Column="1" Grid.Row="0" Value="{Binding GridColumn, Mode=TwoWay}" />
 
 		<Label Grid.Column="2" Grid.Row="0" Content="Grid row:" />
-		<axogc:DoubleUpDown x:Name="_guiYPosition" Grid.Column="3" Grid.Row="0" />
+		<axogc:DoubleUpDown Grid.Column="3" Grid.Row="0" Value="{Binding GridRow, Mode=TwoWay}" />
 
 		<Label Grid.Column="0" Grid.Row="2" Content="Column span:" />
-		<axogc:DoubleUpDown x:Name="_guiXSize"  Grid.Column="1" Grid.Row="2" />
+		<axogc:DoubleUpDown  Grid.Column="1" Grid.Row="2" Value="{Binding GridColumnSpan, Mode=TwoWay}"/>
 
 		<Label Grid.Column="2" Grid.Row="2" Content="Row span:" />
-		<axogc:DoubleUpDown x:Name="_guiYSize"  Grid.Column="3" Grid.Row="2" />
+		<axogc:DoubleUpDown  Grid.Column="3" Grid.Row="2" Value="{Binding GridRowSpan, Mode=TwoWay}" />
 
 		<Label Grid.Column="0" Grid.Row="4" Content="Rotation:" />
-		<axogcd:RotationComboBox  x:Name="_guiRotation" Grid.Column="1" Grid.Row="4" />
+		<axogcd:RotationComboBox  Grid.Column="1" Grid.Row="4" SelectedQuantity="{Binding Rotation, Mode=TwoWay}" UnitEnvironment="{Binding RotationEnvironment}" />
 
 		<Label Grid.Column="2" Grid.Row="4">Shear:</Label>
-		<axogcd:ShearComboBox Grid.Column="3" Grid.Row="4" x:Name="_guiShear" />
+		<axogcd:ShearComboBox Grid.Column="3" Grid.Row="4" SelectedQuantity="{Binding ShearX, Mode=TwoWay}" UnitEnvironment="{Binding ShearEnvironment}" />
 
 		<Label Grid.Column="0" Grid.Row="6" Content="ScaleX:" />
-		<axogcd:ScaleComboBox x:Name="_guiScaleX"  Grid.Column="1" Grid.Row="6" />
+        <axogcd:ScaleComboBox Grid.Column="1" Grid.Row="6"  SelectedQuantity="{Binding ScaleX, Mode=TwoWay}" UnitEnvironment="{Binding ScaleEnvironment}"/>
 
 		<Label Grid.Column="2" Grid.Row="6" Content="ScaleY:" />
-		<axogcd:ScaleComboBox x:Name="_guiScaleY"  Grid.Column="3" Grid.Row="6" />
+		<axogcd:ScaleComboBox  Grid.Column="3" Grid.Row="6" SelectedQuantity="{Binding ScaleY, Mode=TwoWay}" UnitEnvironment="{Binding ScaleEnvironment}"/>
 
-		<CheckBox x:Name="_guiForceFitIntoCell" Grid.ColumnSpan="4" Grid.Row="8" Content="Force content into grid cell (if rotated/sheared)" />
+		<CheckBox Grid.ColumnSpan="4" Grid.Row="8" Content="Force content into grid cell (if rotated/sheared)" IsChecked="{Binding ForceFitIntoCell, Mode=TwoWay}" />
 	</Grid>
 </UserControl>

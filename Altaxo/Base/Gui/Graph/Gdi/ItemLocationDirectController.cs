@@ -25,8 +25,8 @@
 #nullable disable
 using System;
 using Altaxo.Geometry;
-using Altaxo.Graph;
 using Altaxo.Graph.Gdi;
+using Altaxo.Gui.Graph.Gdi.Shapes;
 using Altaxo.Units;
 using AUL = Altaxo.Units.Length;
 
@@ -34,59 +34,9 @@ namespace Altaxo.Gui.Graph.Gdi
 {
   #region Interfaces
 
-  public interface IItemLocationDirectView
+  public interface IItemLocationDirectView : IDataContextAwareView
   {
-    void InitializeXPosition(DimensionfulQuantity x, QuantityWithUnitGuiEnvironment env);
 
-    void InitializeYPosition(DimensionfulQuantity x, QuantityWithUnitGuiEnvironment env);
-
-    void ShowSizeElements(bool isVisible, bool isEnabled);
-
-    void ShowScaleElements(bool isVisible, bool isEnabled);
-
-    void ShowPositionElements(bool isVisible, bool isEnabled);
-
-    void ShowAnchorElements(bool isVisible, bool isEnabled);
-
-    void InitializeYSize(DimensionfulQuantity x, QuantityWithUnitGuiEnvironment env);
-
-    void InitializeXSize(DimensionfulQuantity x, QuantityWithUnitGuiEnvironment env);
-
-    DimensionfulQuantity XPosition { get; }
-
-    DimensionfulQuantity YPosition { get; }
-
-    DimensionfulQuantity XSize { get; }
-
-    DimensionfulQuantity YSize { get; }
-
-    double Rotation { get; set; }
-
-    double Shear { get; set; }
-
-    double ScaleX { get; set; }
-
-    double ScaleY { get; set; }
-
-    void InitializePivot(RADouble pivotX, RADouble pivotY, PointD2D sizeOfOwnGraphic);
-
-    RADouble PivotX { get; }
-
-    RADouble PivotY { get; }
-
-    void InitializeReference(RADouble referenceX, RADouble referenceY, PointD2D sizeOfParent);
-
-    RADouble ReferenceX { get; }
-
-    RADouble ReferenceY { get; }
-
-    event Action SizeXChanged;
-
-    event Action SizeYChanged;
-
-    event Action ScaleXChanged;
-
-    event Action ScaleYChanged;
   }
 
   #endregion Interfaces
@@ -99,21 +49,444 @@ namespace Altaxo.Gui.Graph.Gdi
   public class ItemLocationDirectController : MVCANControllerEditOriginalDocBase<ItemLocationDirect, IItemLocationDirectView>
   {
     private PointD2D _parentSize;
-    private QuantityWithUnitGuiEnvironment _xSizeEnvironment, _xPositionEnvironment;
-    private QuantityWithUnitGuiEnvironment _ySizeEnvironment, _yPositionEnvironment;
 
     private ChangeableRelativePercentUnit _percentLayerXSizeUnit = new ChangeableRelativePercentUnit("% Parent X-Size", "%", new DimensionfulQuantity(1, AUL.Point.Instance));
     private ChangeableRelativePercentUnit _percentLayerYSizeUnit = new ChangeableRelativePercentUnit("% Parent Y-Size", "%", new DimensionfulQuantity(1, AUL.Point.Instance));
 
-    protected bool _showPositionElements_Enabled = true, _showPositionElements_IsVisible = true;
-    protected bool _showSizeElements_Enabled = true, _showSizeElements_IsVisible = true;
-    protected bool _showScaleElements_Enabled = true, _showScaleElements_IsVisible = true;
-    protected bool _showAnchorElements_Enabled = true, _showAnchorElements_IsVisible = true;
+    AnchoringController _localAnchoringController;
+    AnchoringController _parentAnchoringController;
 
     public override System.Collections.Generic.IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
-      yield break;
+      yield return new ControllerAndSetNullMethod(_localAnchoringController, () => _localAnchoringController = null);
+      yield return new ControllerAndSetNullMethod(_parentAnchoringController, () => _parentAnchoringController = null);
     }
+
+    #region Bindings
+
+    #region Size
+
+    private bool _areSizeElementsEnabled = true;
+
+    public bool AreSizeElementsEnabled
+    {
+      get => _areSizeElementsEnabled;
+      set
+      {
+        if (!(_areSizeElementsEnabled == value))
+        {
+          _areSizeElementsEnabled = value;
+          OnPropertyChanged(nameof(AreSizeElementsEnabled));
+        }
+      }
+    }
+
+
+    private bool _areSizeElementsVisible = true;
+
+    public bool AreSizeElementsVisible
+    {
+      get => _areSizeElementsVisible;
+      set
+      {
+        if (!(_areSizeElementsVisible == value))
+        {
+          _areSizeElementsVisible = value;
+          OnPropertyChanged(nameof(AreSizeElementsVisible));
+        }
+      }
+    }
+
+
+    private QuantityWithUnitGuiEnvironment _xSizeEnvironment = SizeEnvironment.Instance;
+
+    public QuantityWithUnitGuiEnvironment XSizeEnvironment
+    {
+      get => _xSizeEnvironment;
+      set
+      {
+        if (!(_xSizeEnvironment == value))
+        {
+          _xSizeEnvironment = value;
+          OnPropertyChanged(nameof(XSizeEnvironment));
+        }
+      }
+    }
+
+    private DimensionfulQuantity _xSize;
+
+    public DimensionfulQuantity XSize
+    {
+      get => _xSize;
+      set
+      {
+        if (!(_xSize == value))
+        {
+          _xSize = value;
+          OnPropertyChanged(nameof(XSize));
+          SizeXChanged?.Invoke(SizeX);
+        }
+      }
+    }
+
+    public event Action<RADouble> SizeXChanged;
+
+    public RADouble SizeX
+    {
+      get
+      {
+        RADouble result;
+        var xSize = XSize;
+
+        if (object.ReferenceEquals(xSize.Unit, _percentLayerXSizeUnit))
+          result = RADouble.NewRel(xSize.Value / 100);
+        else
+          result = RADouble.NewAbs(xSize.AsValueIn(AUL.Point.Instance));
+
+        return result;
+      }
+      set
+      {
+        XSize = value.IsAbsolute ? new DimensionfulQuantity(value.Value, AUL.Point.Instance) : new DimensionfulQuantity(value.Value * 100, _percentLayerXSizeUnit);
+      }
+    }
+
+    private QuantityWithUnitGuiEnvironment _ySizeEnvironment = SizeEnvironment.Instance;
+
+    public QuantityWithUnitGuiEnvironment YSizeEnvironment
+    {
+      get => _ySizeEnvironment;
+      set
+      {
+        if (!(_ySizeEnvironment == value))
+        {
+          _ySizeEnvironment = value;
+          OnPropertyChanged(nameof(YSizeEnvironment));
+        }
+      }
+    }
+
+    private DimensionfulQuantity _ySize;
+
+    public DimensionfulQuantity YSize
+    {
+      get => _ySize;
+      set
+      {
+        if (!(_ySize == value))
+        {
+          _ySize = value;
+          OnPropertyChanged(nameof(YSize));
+          SizeYChanged?.Invoke(SizeY);
+        }
+      }
+    }
+
+    public event Action<RADouble> SizeYChanged;
+
+    public RADouble SizeY
+    {
+      get
+      {
+        RADouble result;
+        var ySize = YSize;
+
+        if (object.ReferenceEquals(ySize.Unit, _percentLayerXSizeUnit))
+          result = RADouble.NewRel(ySize.Value / 100);
+        else
+          result = RADouble.NewAbs(ySize.AsValueIn(AUL.Point.Instance));
+
+        return result;
+      }
+      set
+      {
+        YSize = value.IsAbsolute ? new DimensionfulQuantity(value.Value, AUL.Point.Instance) : new DimensionfulQuantity(value.Value * 100, _percentLayerYSizeUnit);
+      }
+    }
+
+    #endregion
+
+    #region Position
+
+    private bool _arePositionElementsEnabled = true;
+
+    public bool ArePositionElementsEnabled
+    {
+      get => _arePositionElementsEnabled;
+      set
+      {
+        if (!(_arePositionElementsEnabled == value))
+        {
+          _arePositionElementsEnabled = value;
+          OnPropertyChanged(nameof(ArePositionElementsEnabled));
+        }
+      }
+    }
+
+    private bool _arePositionElementsVisible = true;
+
+    public bool ArePositionElementsVisible
+    {
+      get => _arePositionElementsVisible;
+      set
+      {
+        if (!(_arePositionElementsVisible == value))
+        {
+          _arePositionElementsVisible = value;
+          OnPropertyChanged(nameof(ArePositionElementsVisible));
+        }
+      }
+    }
+
+
+    private QuantityWithUnitGuiEnvironment _xPositionEnvironment = PositionEnvironment.Instance;
+
+    public QuantityWithUnitGuiEnvironment XPositionEnvironment
+    {
+      get => _xPositionEnvironment;
+      set
+      {
+        if (!(_xPositionEnvironment == value))
+        {
+          _xPositionEnvironment = value;
+          OnPropertyChanged(nameof(XPositionEnvironment));
+        }
+      }
+    }
+
+    private DimensionfulQuantity _xPosition;
+
+    public DimensionfulQuantity XPosition
+    {
+      get => _xPosition;
+      set
+      {
+        if (!(_xPosition == value))
+        {
+          _xPosition = value;
+          OnPropertyChanged(nameof(XPosition));
+        }
+      }
+    }
+
+    private QuantityWithUnitGuiEnvironment _yPositionEnvironment = PositionEnvironment.Instance;
+
+    public QuantityWithUnitGuiEnvironment YPositionEnvironment
+    {
+      get => _yPositionEnvironment;
+      set
+      {
+        if (!(_yPositionEnvironment == value))
+        {
+          _yPositionEnvironment = value;
+          OnPropertyChanged(nameof(YPositionEnvironment));
+        }
+      }
+    }
+
+    private DimensionfulQuantity _yPosition;
+
+    public DimensionfulQuantity YPosition
+    {
+      get => _yPosition;
+      set
+      {
+        if (!(_yPosition == value))
+        {
+          _yPosition = value;
+          OnPropertyChanged(nameof(YPosition));
+        }
+      }
+    }
+
+
+
+
+    #endregion Position
+
+    #region Rotation
+
+    public QuantityWithUnitGuiEnvironment RotationEnvironment => AngleEnvironment.Instance;
+
+
+    private DimensionfulQuantity _rotation;
+
+    public DimensionfulQuantity Rotation
+    {
+      get => _rotation;
+      set
+      {
+        if (!(_rotation == value))
+        {
+          _rotation = value;
+          OnPropertyChanged(nameof(Rotation));
+        }
+      }
+    }
+
+    #endregion
+
+    #region Shear
+
+    public QuantityWithUnitGuiEnvironment ShearEnvironment => RelationEnvironment.Instance;
+
+
+    private DimensionfulQuantity _shear;
+
+    public DimensionfulQuantity Shear
+    {
+      get => _shear;
+      set
+      {
+        if (!(_shear == value))
+        {
+          _shear = value;
+          OnPropertyChanged(nameof(Shear));
+        }
+      }
+    }
+
+    #endregion
+
+    #region Scale
+
+
+    private bool _areScaleElementsEnabled = true;
+
+    public bool AreScaleElementsEnabled
+    {
+      get => _areScaleElementsEnabled;
+      set
+      {
+        if (!(_areScaleElementsEnabled == value))
+        {
+          _areScaleElementsEnabled = value;
+          OnPropertyChanged(nameof(AreScaleElementsEnabled));
+        }
+      }
+    }
+
+    private bool _areScaleElementsVisible = true;
+
+    public bool AreScaleElementsVisible
+    {
+      get => _areScaleElementsVisible;
+      set
+      {
+        if (!(_areScaleElementsVisible == value))
+        {
+          _areScaleElementsVisible = value;
+          OnPropertyChanged(nameof(AreScaleElementsVisible));
+        }
+      }
+    }
+
+    public QuantityWithUnitGuiEnvironment ScaleEnvironment => RelationEnvironment.Instance;
+
+    private DimensionfulQuantity _xScale;
+
+    public DimensionfulQuantity XScale
+    {
+      get => _xScale;
+      set
+      {
+        if (!(_xScale == value))
+        {
+          _xScale = value;
+          OnPropertyChanged(nameof(XScale));
+          ScaleYChanged?.Invoke(_xScale.AsValueInSIUnits);
+        }
+      }
+    }
+
+    public double ScaleX
+    {
+      get
+      {
+        return XScale.AsValueInSIUnits;
+      }
+      set
+      {
+        XScale = new DimensionfulQuantity(value, Altaxo.Units.Dimensionless.Unity.Instance).AsQuantityIn(ScaleEnvironment.DefaultUnit);
+      }
+    }
+
+    private DimensionfulQuantity _yScale;
+
+    public DimensionfulQuantity YScale
+    {
+      get => _yScale;
+      set
+      {
+        if (!(_yScale == value))
+        {
+          _yScale = value;
+          OnPropertyChanged(nameof(YScale));
+          ScaleYChanged?.Invoke(_yScale.AsValueInSIUnits);
+        }
+      }
+    }
+
+    public double ScaleY
+    {
+      get
+      {
+        return YScale.AsValueInSIUnits;
+      }
+      set
+      {
+        YScale = new DimensionfulQuantity(value, Altaxo.Units.Dimensionless.Unity.Instance).AsQuantityIn(ScaleEnvironment.DefaultUnit);
+      }
+    }
+
+    public event Action<double> ScaleXChanged;
+    public event Action<double> ScaleYChanged;
+
+    #endregion
+
+    #region Anchor
+
+    protected bool _areAnchorElementsEnabled = true;
+
+    public bool AreAnchorElementsEnabled
+    {
+      get => _areAnchorElementsEnabled;
+      set
+      {
+        if (!(_areAnchorElementsEnabled == value))
+        {
+          _areAnchorElementsEnabled = value;
+          OnPropertyChanged(nameof(AreAnchorElementsEnabled));
+        }
+      }
+    }
+
+
+    bool _areAnchorElementsVisible = true;
+    public bool AreAnchorElementsVisible
+    {
+      get => _areAnchorElementsVisible;
+      set
+      {
+        if (!(_areAnchorElementsVisible == value))
+        {
+          _areAnchorElementsVisible = value;
+          OnPropertyChanged(nameof(AreAnchorElementsVisible));
+        }
+      }
+    }
+
+
+    public AnchoringController LocalAnchoringController => _localAnchoringController;
+
+    public AnchoringController ParentAnchoringController => _parentAnchoringController;
+
+
+    #endregion
+
+
+
+    #endregion
 
     protected override void Initialize(bool initData)
     {
@@ -125,40 +498,37 @@ namespace Altaxo.Gui.Graph.Gdi
         _percentLayerXSizeUnit.ReferenceQuantity = new DimensionfulQuantity(_parentSize.X, AUL.Point.Instance);
         _percentLayerYSizeUnit.ReferenceQuantity = new DimensionfulQuantity(_parentSize.Y, AUL.Point.Instance);
 
-        _xSizeEnvironment = new QuantityWithUnitGuiEnvironment(SizeEnvironment.Instance, new IUnit[] { _percentLayerXSizeUnit });
-        _ySizeEnvironment = new QuantityWithUnitGuiEnvironment(SizeEnvironment.Instance, new IUnit[] { _percentLayerYSizeUnit });
+        XSizeEnvironment = new QuantityWithUnitGuiEnvironment(SizeEnvironment.Instance, new IUnit[] { _percentLayerXSizeUnit });
+        YSizeEnvironment = new QuantityWithUnitGuiEnvironment(SizeEnvironment.Instance, new IUnit[] { _percentLayerYSizeUnit });
 
-        _xPositionEnvironment = new QuantityWithUnitGuiEnvironment(PositionEnvironment.Instance, new IUnit[] { _percentLayerXSizeUnit });
-        _yPositionEnvironment = new QuantityWithUnitGuiEnvironment(PositionEnvironment.Instance, new IUnit[] { _percentLayerYSizeUnit });
-      }
-      if (_view is not null)
-      {
-        _view.ShowSizeElements(!_doc.IsAutoSized, true);
+        XPositionEnvironment = new QuantityWithUnitGuiEnvironment(PositionEnvironment.Instance, new IUnit[] { _percentLayerXSizeUnit });
+        YPositionEnvironment = new QuantityWithUnitGuiEnvironment(PositionEnvironment.Instance, new IUnit[] { _percentLayerYSizeUnit });
+
+        // Size
+        AreSizeElementsVisible = !_doc.IsAutoSized;
+        AreSizeElementsEnabled = true;
 
         if (!_doc.IsAutoSized)
         {
-          var xSize = _doc.SizeX.IsAbsolute ? new DimensionfulQuantity(_doc.SizeX.Value, AUL.Point.Instance).AsQuantityIn(SizeEnvironment.Instance.DefaultUnit) : new DimensionfulQuantity(_doc.SizeX.Value * 100, _percentLayerXSizeUnit);
-          _view.InitializeXSize(xSize, _xSizeEnvironment);
-          var ySize = _doc.SizeY.IsAbsolute ? new DimensionfulQuantity(_doc.SizeY.Value, AUL.Point.Instance).AsQuantityIn(SizeEnvironment.Instance.DefaultUnit) : new DimensionfulQuantity(_doc.SizeY.Value * 100, _percentLayerYSizeUnit);
-          _view.InitializeYSize(ySize, _ySizeEnvironment);
+          XSize = _doc.SizeX.IsAbsolute ? new DimensionfulQuantity(_doc.SizeX.Value, AUL.Point.Instance).AsQuantityIn(SizeEnvironment.Instance.DefaultUnit) : new DimensionfulQuantity(_doc.SizeX.Value * 100, _percentLayerXSizeUnit);
+          YSize = _doc.SizeY.IsAbsolute ? new DimensionfulQuantity(_doc.SizeY.Value, AUL.Point.Instance).AsQuantityIn(SizeEnvironment.Instance.DefaultUnit) : new DimensionfulQuantity(_doc.SizeY.Value * 100, _percentLayerYSizeUnit);
         }
 
-        var xPos = _doc.PositionX.IsAbsolute ? new DimensionfulQuantity(_doc.PositionX.Value, AUL.Point.Instance).AsQuantityIn(PositionEnvironment.Instance.DefaultUnit) : new DimensionfulQuantity(_doc.PositionX.Value * 100, _percentLayerXSizeUnit);
-        _view.InitializeXPosition(xPos, _xPositionEnvironment);
-        var yPos = _doc.PositionY.IsAbsolute ? new DimensionfulQuantity(_doc.PositionY.Value, AUL.Point.Instance).AsQuantityIn(PositionEnvironment.Instance.DefaultUnit) : new DimensionfulQuantity(_doc.PositionY.Value * 100, _percentLayerYSizeUnit);
-        _view.InitializeYPosition(yPos, _yPositionEnvironment);
+        // Position
+        XPosition = _doc.PositionX.IsAbsolute ? new DimensionfulQuantity(_doc.PositionX.Value, AUL.Point.Instance).AsQuantityIn(PositionEnvironment.Instance.DefaultUnit) : new DimensionfulQuantity(_doc.PositionX.Value * 100, _percentLayerXSizeUnit);
+        YPosition = _doc.PositionY.IsAbsolute ? new DimensionfulQuantity(_doc.PositionY.Value, AUL.Point.Instance).AsQuantityIn(PositionEnvironment.Instance.DefaultUnit) : new DimensionfulQuantity(_doc.PositionY.Value * 100, _percentLayerYSizeUnit);
 
-        _view.Rotation = _doc.Rotation;
-        _view.Shear = _doc.ShearX;
-        _view.ScaleX = _doc.ScaleX;
-        _view.ScaleY = _doc.ScaleY;
-        _view.InitializePivot(_doc.LocalAnchorX, _doc.LocalAnchorY, _doc.AbsoluteSize);
-        _view.InitializeReference(_doc.ParentAnchorX, _doc.ParentAnchorY, _doc.ParentSize);
+        Rotation = new DimensionfulQuantity(_doc.Rotation, Altaxo.Units.Angle.Degree.Instance).AsQuantityIn(RotationEnvironment.DefaultUnit);
 
-        _view.ShowPositionElements(_showPositionElements_IsVisible, _showPositionElements_Enabled);
-        _view.ShowSizeElements(_showSizeElements_IsVisible, _showSizeElements_Enabled);
-        _view.ShowScaleElements(_showScaleElements_IsVisible, _showSizeElements_Enabled);
-        _view.ShowAnchorElements(_showAnchorElements_IsVisible, _showAnchorElements_Enabled);
+        Shear = new DimensionfulQuantity(_doc.ShearX, Altaxo.Units.Dimensionless.Unity.Instance).AsQuantityIn(ShearEnvironment.DefaultUnit);
+        XScale = new DimensionfulQuantity(_doc.ScaleX, Altaxo.Units.Dimensionless.Unity.Instance).AsQuantityIn(ScaleEnvironment.DefaultUnit);
+        YScale = new DimensionfulQuantity(_doc.ScaleY, Altaxo.Units.Dimensionless.Unity.Instance).AsQuantityIn(ScaleEnvironment.DefaultUnit);
+
+        _localAnchoringController = new AnchoringController();
+        _localAnchoringController.InitializeDocument(new AnchoringModel { Title = "Local anchor", ReferenceSize = _doc.AbsoluteSize, PivotX = _doc.LocalAnchorX, PivotY = _doc.LocalAnchorY });
+
+        _parentAnchoringController = new AnchoringController();
+        _parentAnchoringController.InitializeDocument(new AnchoringModel { Title = "Parent anchor", ReferenceSize = _doc.ParentSize, PivotX = _doc.ParentAnchorX, PivotY = _doc.ParentAnchorY });
       }
     }
 
@@ -166,15 +536,15 @@ namespace Altaxo.Gui.Graph.Gdi
     {
       try
       {
-        _doc.Rotation = _view.Rotation;
-        _doc.ShearX = _view.Shear;
-        _doc.ScaleX = _view.ScaleX;
-        _doc.ScaleY = _view.ScaleY;
+        _doc.Rotation = Rotation.AsValueIn(Altaxo.Units.Angle.Degree.Instance);
+        _doc.ShearX = Shear.AsValueIn(Altaxo.Units.Dimensionless.Unity.Instance);
+        _doc.ScaleX = XScale.AsValueIn(Altaxo.Units.Dimensionless.Unity.Instance);
+        _doc.ScaleY = YScale.AsValueIn(Altaxo.Units.Dimensionless.Unity.Instance);
 
         if (!_doc.IsAutoSized)
         {
-          var xSize = _view.XSize;
-          var ySize = _view.YSize;
+          var xSize = XSize;
+          var ySize = YSize;
 
           if (object.ReferenceEquals(xSize.Unit, _percentLayerXSizeUnit))
             _doc.SizeX = RADouble.NewRel(xSize.Value / 100);
@@ -187,8 +557,8 @@ namespace Altaxo.Gui.Graph.Gdi
             _doc.SizeY = RADouble.NewAbs(ySize.AsValueIn(AUL.Point.Instance));
         }
 
-        var xPos = _view.XPosition;
-        var yPos = _view.YPosition;
+        var xPos = XPosition;
+        var yPos = YPosition;
 
         if (object.ReferenceEquals(xPos.Unit, _percentLayerXSizeUnit))
           _doc.PositionX = RADouble.NewRel(xPos.Value / 100);
@@ -200,11 +570,19 @@ namespace Altaxo.Gui.Graph.Gdi
         else
           _doc.PositionY = RADouble.NewAbs(yPos.AsValueIn(AUL.Point.Instance));
 
-        _doc.LocalAnchorX = _view.PivotX;
-        _doc.LocalAnchorY = _view.PivotY;
+        if (false == _localAnchoringController.Apply(disposeController))
+          return ApplyEnd(false, disposeController);
+        if (false == _parentAnchoringController.Apply(disposeController))
+          return ApplyEnd(false, disposeController);
 
-        _doc.ParentAnchorX = _view.ReferenceX;
-        _doc.ParentAnchorY = _view.ReferenceY;
+        var localAnchor = (AnchoringModel)_localAnchoringController.ModelObject;
+        var parentAnchor = (AnchoringModel)_parentAnchoringController.ModelObject;
+
+        _doc.LocalAnchorX = localAnchor.PivotX;
+        _doc.LocalAnchorY = localAnchor.PivotY;
+
+        _doc.ParentAnchorX = parentAnchor.PivotX;
+        _doc.ParentAnchorY = parentAnchor.PivotY;
       }
       catch (Exception)
       {
@@ -214,181 +592,37 @@ namespace Altaxo.Gui.Graph.Gdi
       return ApplyEnd(true, disposeController);
     }
 
-    protected override void AttachView()
-    {
-      base.AttachView();
-      _view.SizeXChanged += EhSizeXChanged;
-      _view.SizeYChanged += EhSizeYChanged;
-      _view.ScaleXChanged += EhScaleXChanged;
-      _view.ScaleYChanged += EhScaleYChanged;
-    }
-
-    protected override void DetachView()
-    {
-      _view.SizeXChanged -= EhSizeXChanged;
-      _view.SizeYChanged -= EhSizeYChanged;
-      _view.ScaleXChanged -= EhScaleXChanged;
-      _view.ScaleYChanged -= EhScaleYChanged;
-      base.DetachView();
-    }
-
     #region Service members
 
-    public event Action<RADouble> SizeXChanged;
-
-    private void EhSizeXChanged()
-    {
-      var actn = SizeXChanged;
-      if (actn is not null)
-      {
-        RADouble result;
-        var xSize = _view.XSize;
-
-        if (object.ReferenceEquals(xSize.Unit, _percentLayerXSizeUnit))
-          result = RADouble.NewRel(xSize.Value / 100);
-        else
-          result = RADouble.NewAbs(xSize.AsValueIn(AUL.Point.Instance));
-        actn(result);
-      }
-    }
-
-    public event Action<RADouble> SizeYChanged;
-
-    private void EhSizeYChanged()
-    {
-      var actn = SizeYChanged;
-      if (actn is not null)
-      {
-        RADouble result;
-        var ySize = _view.YSize;
-
-        if (object.ReferenceEquals(ySize.Unit, _percentLayerYSizeUnit))
-          result = RADouble.NewRel(ySize.Value / 100);
-        else
-          result = RADouble.NewAbs(ySize.AsValueIn(AUL.Point.Instance));
-        actn(result);
-      }
-    }
-
-    public event Action<double> ScaleXChanged;
-
-    private void EhScaleXChanged()
-    {
-      var actn = ScaleXChanged;
-      if (actn is not null)
-      {
-        actn(_view.ScaleX);
-      }
-    }
-
-    public event Action<double> ScaleYChanged;
-
-    private void EhScaleYChanged()
-    {
-      var actn = ScaleYChanged;
-      if (actn is not null)
-      {
-        actn(_view.ScaleY);
-      }
-    }
 
     public void ShowSizeElements(bool isVisible, bool isEnabled)
     {
-      _showSizeElements_IsVisible = isVisible;
-      _showSizeElements_Enabled = isEnabled;
-      if (_view is not null)
-        _view.ShowSizeElements(isVisible, isEnabled);
+      AreSizeElementsVisible = isVisible;
+      AreSizeElementsEnabled = isEnabled;
     }
 
     public void ShowScaleElements(bool isVisible, bool isEnabled)
     {
-      _showScaleElements_IsVisible = isVisible;
-      _showScaleElements_Enabled = isEnabled;
-      if (_view is not null)
-        _view.ShowScaleElements(isVisible, isEnabled);
+      AreScaleElementsVisible = isVisible;
+      AreScaleElementsEnabled = isEnabled;
     }
 
     public void ShowPositionElements(bool isVisible, bool isEnabled)
     {
-      _showPositionElements_IsVisible = isVisible;
-      _showPositionElements_Enabled = isEnabled;
-      if (_view is not null)
-        _view.ShowPositionElements(isVisible, isEnabled);
+      ArePositionElementsVisible = isVisible;
+      ArePositionElementsEnabled = isEnabled;
     }
 
     public void ShowAnchorElements(bool isVisible, bool isEnabled)
     {
-      _showAnchorElements_IsVisible = isVisible;
-      _showAnchorElements_Enabled = isEnabled;
-      if (_view is not null)
-        _view.ShowAnchorElements(isVisible, isEnabled);
+      AreAnchorElementsVisible = isVisible;
+      AreAnchorElementsEnabled = isEnabled;
+
     }
 
-    public RADouble SizeX
-    {
-      get
-      {
-        RADouble result;
-        var xSize = _view.XSize;
 
-        if (object.ReferenceEquals(xSize.Unit, _percentLayerXSizeUnit))
-          result = RADouble.NewRel(xSize.Value / 100);
-        else
-          result = RADouble.NewAbs(xSize.AsValueIn(AUL.Point.Instance));
 
-        return result;
-      }
-      set
-      {
-        var xSize = value.IsAbsolute ? new DimensionfulQuantity(value.Value, AUL.Point.Instance) : new DimensionfulQuantity(value.Value * 100, _percentLayerXSizeUnit);
-        _view.InitializeXSize(xSize, _xSizeEnvironment);
-      }
-    }
 
-    public RADouble SizeY
-    {
-      get
-      {
-        RADouble result;
-        var ySize = _view.YSize;
-
-        if (object.ReferenceEquals(ySize.Unit, _percentLayerXSizeUnit))
-          result = RADouble.NewRel(ySize.Value / 100);
-        else
-          result = RADouble.NewAbs(ySize.AsValueIn(AUL.Point.Instance));
-
-        return result;
-      }
-      set
-      {
-        var ySize = value.IsAbsolute ? new DimensionfulQuantity(value.Value, AUL.Point.Instance) : new DimensionfulQuantity(value.Value * 100, _percentLayerYSizeUnit);
-        _view.InitializeYSize(ySize, _ySizeEnvironment);
-      }
-    }
-
-    public double ScaleX
-    {
-      get
-      {
-        return _view.ScaleX;
-      }
-      set
-      {
-        _view.ScaleX = value;
-      }
-    }
-
-    public double ScaleY
-    {
-      get
-      {
-        return _view.ScaleY;
-      }
-      set
-      {
-        _view.ScaleY = value;
-      }
-    }
 
     #endregion Service members
   }

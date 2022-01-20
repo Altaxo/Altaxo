@@ -549,7 +549,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
       tabController.AddTab("Preprocessing", ctrlBB, ctrlBB.ViewObject);
       if (Current.Gui.ShowDialog(tabController, "Enter analysis parameters", false))
       {
-        options = ctrlAA.Doc;
+        options = (MultivariateAnalysisOptions)ctrlAA.ModelObject;
         return true;
       }
       return false;

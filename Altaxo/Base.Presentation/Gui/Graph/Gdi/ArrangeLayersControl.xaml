@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
+						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common" xmlns:gdi="clr-namespace:Altaxo.Gui.Graph.Gdi;assembly=AltaxoBase" d:DataContext="{d:DesignInstance Type=gdi:ArrangeLayersController}"
              mc:Ignorable="d">
 	<Grid>
 		<Grid.ColumnDefinitions>
@@ -39,14 +39,14 @@
 		<Label Grid.Row="14" Grid.Column="0" Content="Right margin (%):" />
 		<Label Grid.Row="16" Grid.Column="0" Content="Superfluous layers:" />
 
-		<axogc:Int32UpDown x:Name="_edNumberOfRows" Grid.Row="0" Grid.Column="1" Minimum="1" ValueChanged="_edNumberOfRows_Validating" />
-		<axogc:Int32UpDown x:Name="_edNumberOfColumns" Grid.Row="2" Grid.Column="1" Minimum="1" ValueChanged="_edNumberOfColumns_Validating" />
-		<axogc:ValidatingTextBox x:Name="_edRowSpacing" Grid.Row="4" Grid.Column="1" Validating="_edRowSpacing_Validating" />
-		<axogc:ValidatingTextBox x:Name="_edColumnSpacing" Grid.Row="6" Grid.Column="1" Validating="_edColumnSpacing_Validating" />
-		<axogc:ValidatingTextBox x:Name="_edTopMargin" Grid.Row="8" Grid.Column="1" Validating="_edTopMargin_Validating" />
-		<axogc:ValidatingTextBox x:Name="_edLeftMargin" Grid.Row="10" Grid.Column="1" Validating="_edLeftMargin_Validating" />
-		<axogc:ValidatingTextBox x:Name="_edBottomMargin" Grid.Row="12" Grid.Column="1" Validating="_edBottomMargin_Validating" />
-		<axogc:ValidatingTextBox x:Name="_edRightMargin" Grid.Row="14" Grid.Column="1" Validating="_edRightMargin_Validating" />
-		<ComboBox x:Name="_cbSuperfluousLayersAction" Grid.Row="16" Grid.Column="1" SelectionChanged="_cbSuperfluousLayersAction_SelectionChangeCommitted" />
+		<axogc:Int32UpDown Grid.Row="0" Grid.Column="1" Minimum="1" Value="{Binding NumberOfRows, Mode=TwoWay}" />
+		<axogc:Int32UpDown Grid.Row="2" Grid.Column="1" Minimum="1" Value="{Binding NumberOfColumns, Mode=TwoWay}" />
+		<axogc:NumericDoubleTextBox Grid.Row="4" Grid.Column="1" SelectedValue="{Binding RowSpacing, Mode=TwoWay}" />
+        <axogc:NumericDoubleTextBox Grid.Row="6" Grid.Column="1" SelectedValue="{Binding ColumnSpacing, Mode=TwoWay}" />
+        <axogc:NumericDoubleTextBox Grid.Row="8" Grid.Column="1" SelectedValue="{Binding TopMargin, Mode=TwoWay}" />
+        <axogc:NumericDoubleTextBox Grid.Row="10" Grid.Column="1" SelectedValue="{Binding LeftMargin, Mode=TwoWay}" />
+        <axogc:NumericDoubleTextBox Grid.Row="12" Grid.Column="1" SelectedValue="{Binding BottomMargin, Mode=TwoWay}" />
+        <axogc:NumericDoubleTextBox Grid.Row="14" Grid.Column="1" SelectedValue="{Binding RightMargin, Mode=TwoWay}" />
+        <ComboBox Grid.Row="16" Grid.Column="1" SelectedValue="{Binding SelectedSuperfluousLayersAction, Mode=TwoWay}" ItemsSource="{Binding SuperfluousLayers}" SelectedValuePath="Tag" />
 	</Grid>
 </UserControl>

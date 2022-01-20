@@ -22,11 +22,6 @@
 
 #endregion Copyright
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows;
 using System.Windows.Controls;
 
 namespace Altaxo.Gui.Graph.Gdi
@@ -39,60 +34,6 @@ namespace Altaxo.Gui.Graph.Gdi
     public LayerPositionControl()
     {
       InitializeComponent();
-    }
-
-    public event Action? PositioningTypeChanged;
-
-    private bool _useDirectPositioning;
-
-    public bool UseDirectPositioning
-    {
-      get
-      {
-        return _useDirectPositioning;
-      }
-      set
-      {
-        _useDirectPositioning = value;
-
-        if (_useDirectPositioning)
-          _guiDirectPositioning.IsChecked = true;
-        else
-          _guiGridPositioning.IsChecked = true;
-      }
-    }
-
-    public object SubPositionView
-    {
-      set { _guiSubPositioningHost.Child = (System.Windows.UIElement)value; }
-    }
-
-    private void EhPositioningTypeChangedToDirect(object sender, RoutedEventArgs e)
-    {
-      var oldValue = _useDirectPositioning;
-      _useDirectPositioning = true;
-
-      if (_useDirectPositioning != oldValue && PositioningTypeChanged is not null)
-        PositioningTypeChanged();
-    }
-
-    private void EhPositioningTypeChangedToGrid(object sender, RoutedEventArgs e)
-    {
-      var oldValue = _useDirectPositioning;
-      _useDirectPositioning = false;
-
-      if (_useDirectPositioning != oldValue && PositioningTypeChanged is not null)
-        PositioningTypeChanged();
-    }
-
-    public bool IsPositioningTypeChoiceVisible
-    {
-      set
-      {
-        var visibility = value ? Visibility.Visible : System.Windows.Visibility.Collapsed;
-        _guiDirectPositioning.Visibility = visibility;
-        _guiGridPositioning.Visibility = visibility;
-      }
     }
   }
 }

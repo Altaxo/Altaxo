@@ -22,8 +22,9 @@
 
 #endregion Copyright
 
-#nullable disable
 using System;
+using System.Collections.Generic;
+using Altaxo.Collections;
 using Altaxo.Graph.Gdi;
 using Altaxo.Serialization;
 
@@ -31,41 +32,11 @@ namespace Altaxo.Gui.Graph.Gdi
 {
   #region interfaces
 
-  public interface IArrangeLayersView
+  public interface IArrangeLayersView : IDataContextAwareView
   {
-    IArrangeLayersViewEventSink Controller { get; set; }
-
-    void InitializeRowsColumns(int numRows, int numColumns);
-
-    void InitializeSpacing(double rowSpacing, double columnSpacing);
-
-    void InitializeMargins(double top, double left, double bottom, double right);
-
-    void InitializeSuperfluosLayersQuestion(Altaxo.Collections.SelectableListNodeList list);
-
-    void InitializeEnableConditions(bool rowSpacingEnabled, bool columnSpacingEnabled, bool superfluousEnabled);
   }
 
-  public interface IArrangeLayersViewEventSink
-  {
-    bool EhNumberOfRowsChanged(int val);
 
-    bool EhNumberOfColumnsChanged(int val);
-
-    bool EhRowSpacingChanged(string val);
-
-    bool EhColumnSpacingChanged(string val);
-
-    bool EhTopMarginChanged(string val);
-
-    bool EhLeftMarginChanged(string val);
-
-    bool EhBottomMarginChanged(string val);
-
-    bool EhRightMarginChanged(string val);
-
-    void EhSuperfluousLayersActionChanged(Altaxo.Collections.SelectableListNode node);
-  }
 
   #endregion interfaces
 
@@ -74,212 +45,189 @@ namespace Altaxo.Gui.Graph.Gdi
   /// </summary>
   [UserControllerForObject(typeof(ArrangeLayersDocument))]
   [ExpectedTypeOfView(typeof(IArrangeLayersView))]
-  public class ArrangeLayersController : IArrangeLayersViewEventSink, IMVCAController
+  public class ArrangeLayersController : MVCANControllerEditOriginalDocBase<ArrangeLayersDocument, IArrangeLayersView>
   {
-    private ArrangeLayersDocument _doc;
-    private ArrangeLayersDocument _tempDoc;
-    private IArrangeLayersView _view;
-
-    public ArrangeLayersController(ArrangeLayersDocument doc)
+    public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
-      _doc = doc;
-      _tempDoc = new ArrangeLayersDocument();
-      _tempDoc.CopyFrom(doc);
-
-      Initialize();
+      yield break;
     }
 
-    private void Initialize()
+    #region Bindings
+
+    private int _NumberOfRows;
+
+    public int NumberOfRows
     {
-      if (_view is not null)
-      {
-        _view.InitializeRowsColumns(_tempDoc.NumberOfRows, _tempDoc.NumberOfColumns);
-        _view.InitializeSpacing(_tempDoc.RowSpacing * 100, _tempDoc.ColumnSpacing * 100);
-        _view.InitializeMargins(_tempDoc.TopMargin * 100, _tempDoc.LeftMargin * 100, _tempDoc.BottomMargin * 100, _tempDoc.RightMargin * 100);
-        _view.InitializeSuperfluosLayersQuestion(Altaxo.Serialization.GUIConversion.GetListOfChoices(_tempDoc.SuperfluousLayersAction));
-        SetEnableConditions();
-      }
-    }
-
-    private void SetEnableConditions()
-    {
-      if (_view is not null)
-      {
-        // Note: the concept was not acceptable since the user can not hopp with the mouse
-        // into the ColumnSpacing or RowSpacing edit boxes because they are disabled
-        _view.InitializeEnableConditions(
-          true, // _tempDoc.NumberOfRows >= 2,
-          true, // _tempDoc.NumberOfColumns >= 2,
-          true
-        );
-      }
-    }
-
-    #region IArrangeLayersViewEventSink Members
-
-    public bool EhNumberOfRowsChanged(int val)
-    {
-      if (val < 1)
-      {
-        Current.Gui.ErrorMessageBox("Please provide a value >0 here");
-        return true;
-      }
-      _tempDoc.NumberOfRows = val;
-      SetEnableConditions();
-      return false;
-    }
-
-    public bool EhNumberOfColumnsChanged(int val)
-    {
-      if (val < 1)
-      {
-        Current.Gui.ErrorMessageBox("Please provide a value >0 here");
-        return true;
-      }
-
-      _tempDoc.NumberOfColumns = val;
-      SetEnableConditions();
-      return false;
-    }
-
-    public bool EhRowSpacingChanged(string val)
-    {
-      if (!GUIConversion.IsDouble(val, out var v))
-      {
-        Current.Gui.ErrorMessageBox("You have to provide an numeric value here");
-        return true;
-      }
-      if (v < 0)
-      {
-        Current.Gui.ErrorMessageBox("Please provide a value >=0 here");
-        return true;
-      }
-
-      _tempDoc.RowSpacing = v / 100.0;
-      return false;
-    }
-
-    public bool EhColumnSpacingChanged(string val)
-    {
-      if (!GUIConversion.IsDouble(val, out var v))
-      {
-        Current.Gui.ErrorMessageBox("You have to provide an numeric value here");
-        return true;
-      }
-      if (v < 0)
-      {
-        Current.Gui.ErrorMessageBox("Please provide a value >=0 here");
-        return true;
-      }
-
-      _tempDoc.ColumnSpacing = v / 100.0;
-      return false;
-    }
-
-    public bool EhTopMarginChanged(string val)
-    {
-      if (!GUIConversion.IsDouble(val, out var v))
-      {
-        Current.Gui.ErrorMessageBox("You have to provide an numeric value here");
-        return true;
-      }
-      _tempDoc.TopMargin = v / 100.0;
-      return false;
-    }
-
-    public bool EhLeftMarginChanged(string val)
-    {
-      if (!GUIConversion.IsDouble(val, out var v))
-      {
-        Current.Gui.ErrorMessageBox("You have to provide an numeric value here");
-        return true;
-      }
-      _tempDoc.LeftMargin = v / 100.0;
-      return false;
-    }
-
-    public bool EhBottomMarginChanged(string val)
-    {
-      if (!GUIConversion.IsDouble(val, out var v))
-      {
-        Current.Gui.ErrorMessageBox("You have to provide an numeric value here");
-        return true;
-      }
-      _tempDoc.BottomMargin = v / 100.0;
-      return false;
-    }
-
-    public bool EhRightMarginChanged(string val)
-    {
-      if (!GUIConversion.IsDouble(val, out var v))
-      {
-        Current.Gui.ErrorMessageBox("You have to provide an numeric value here");
-        return true;
-      }
-      _tempDoc.RightMargin = v / 100.0;
-      return false;
-    }
-
-    public void EhSuperfluousLayersActionChanged(Altaxo.Collections.SelectableListNode node)
-    {
-      _tempDoc.SuperfluousLayersAction = (SuperfluousLayersAction)node.Tag;
-    }
-
-    #endregion IArrangeLayersViewEventSink Members
-
-    #region IMVCController Members
-
-    public object ViewObject
-    {
-      get { return _view; }
+      get => _NumberOfRows;
       set
       {
-        if (_view is not null)
-          _view.Controller = null;
-
-        _view = value as IArrangeLayersView;
-
-        Initialize();
-
-        if (_view is not null)
-          _view.Controller = this;
+        if (!(_NumberOfRows == value))
+        {
+          _NumberOfRows = value;
+          OnPropertyChanged(nameof(NumberOfRows));
+        }
       }
     }
 
-    public object ModelObject
+    private int _NumberOfColumns;
+
+    public int NumberOfColumns
     {
-      get
+      get => _NumberOfColumns;
+      set
       {
-        return _doc;
+        if (!(_NumberOfColumns == value))
+        {
+          _NumberOfColumns = value;
+          OnPropertyChanged(nameof(NumberOfColumns));
+        }
       }
     }
 
-    public void Dispose()
+    private double _RowSpacing;
+
+    public double RowSpacing
     {
+      get => _RowSpacing;
+      set
+      {
+        if (!(_RowSpacing == value))
+        {
+          _RowSpacing = value;
+          OnPropertyChanged(nameof(RowSpacing));
+        }
+      }
     }
 
-    #endregion IMVCController Members
+    private double _ColumnSpacing;
 
-    #region IApplyController Members
-
-    public bool Apply(bool disposeController)
+    public double ColumnSpacing
     {
-      _doc.CopyFrom(_tempDoc);
-      return true;
+      get => _ColumnSpacing;
+      set
+      {
+        if (!(_ColumnSpacing == value))
+        {
+          _ColumnSpacing = value;
+          OnPropertyChanged(nameof(ColumnSpacing));
+        }
+      }
     }
 
-    /// <summary>
-    /// Try to revert changes to the model, i.e. restores the original state of the model.
-    /// </summary>
-    /// <param name="disposeController">If set to <c>true</c>, the controller should release all temporary resources, since the controller is not needed anymore.</param>
-    /// <returns>
-    ///   <c>True</c> if the revert operation was successfull; <c>false</c> if the revert operation was not possible (i.e. because the controller has not stored the original state of the model).
-    /// </returns>
-    public bool Revert(bool disposeController)
+    private double _LeftMargin;
+
+    public double LeftMargin
     {
-      return false;
+      get => _LeftMargin;
+      set
+      {
+        if (!(_LeftMargin == value))
+        {
+          _LeftMargin = value;
+          OnPropertyChanged(nameof(LeftMargin));
+        }
+      }
     }
 
-    #endregion IApplyController Members
+    private double _TopMargin;
+
+    public double TopMargin
+    {
+      get => _TopMargin;
+      set
+      {
+        if (!(_TopMargin == value))
+        {
+          _TopMargin = value;
+          OnPropertyChanged(nameof(TopMargin));
+        }
+      }
+    }
+
+
+
+
+    private double _RightMargin;
+
+    public double RightMargin
+    {
+      get => _RightMargin;
+      set
+      {
+        if (!(_RightMargin == value))
+        {
+          _RightMargin = value;
+          OnPropertyChanged(nameof(RightMargin));
+        }
+      }
+    }
+
+    private double _BottomMargin;
+
+    public double BottomMargin
+    {
+      get => _BottomMargin;
+      set
+      {
+        if (!(_BottomMargin == value))
+        {
+          _BottomMargin = value;
+          OnPropertyChanged(nameof(BottomMargin));
+        }
+      }
+    }
+
+    public SelectableListNodeList SuperfluousLayers { get; } = new SelectableListNodeList();
+
+    private SuperfluousLayersAction _SelectedSuperfluousLayersAction;
+
+    public SuperfluousLayersAction SelectedSuperfluousLayersAction
+    {
+      get => _SelectedSuperfluousLayersAction;
+      set
+      {
+        if (!(_SelectedSuperfluousLayersAction == value))
+        {
+          _SelectedSuperfluousLayersAction = value;
+          OnPropertyChanged(nameof(SelectedSuperfluousLayersAction));
+        }
+      }
+    }
+
+    #endregion
+
+    protected override void Initialize(bool initData)
+    {
+      base.Initialize(initData);
+
+      if(initData)
+      {
+        NumberOfRows = _doc.NumberOfRows;
+        NumberOfColumns = _doc.NumberOfColumns;
+        RowSpacing = _doc.RowSpacing * 100;
+        ColumnSpacing = _doc.ColumnSpacing * 100;
+        LeftMargin = _doc.LeftMargin * 100;
+        TopMargin = _doc.TopMargin * 100;
+        RightMargin = _doc.RightMargin * 100;
+        BottomMargin = _doc.BottomMargin * 100;
+        Altaxo.Serialization.GUIConversion.GetListOfChoices(_doc.SuperfluousLayersAction);
+        SelectedSuperfluousLayersAction = _doc.SuperfluousLayersAction;
+      }
+    }
+
+    public override bool Apply(bool disposeController)
+    {
+      _doc.NumberOfRows = NumberOfRows;
+      _doc.NumberOfColumns = NumberOfColumns;
+      _doc.RowSpacing = RowSpacing;
+      _doc.ColumnSpacing = ColumnSpacing;
+      _doc.LeftMargin = LeftMargin;
+      _doc.TopMargin = TopMargin;
+      _doc.RightMargin = RightMargin;
+      _doc.BottomMargin = BottomMargin;
+      _doc.SuperfluousLayersAction = SelectedSuperfluousLayersAction;
+
+      return ApplyEnd(true, disposeController);
+    }
   }
 }

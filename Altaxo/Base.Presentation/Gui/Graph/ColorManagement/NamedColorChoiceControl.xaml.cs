@@ -22,14 +22,7 @@
 
 #endregion Copyright
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media;
-using Altaxo.Drawing;
 
 namespace Altaxo.Gui.Graph.ColorManagement
 {
@@ -43,29 +36,6 @@ namespace Altaxo.Gui.Graph.ColorManagement
       InitializeComponent();
     }
 
-    private void EhSelectedColorChanged(object sender, DependencyPropertyChangedEventArgs e)
-    {
-      _guiColorPreview.Fill = new SolidColorBrush(_guiColor.SelectedWpfColor);
-    }
 
-    public bool ShowPlotColorsOnly
-    {
-      set
-      {
-        _guiColor.ShowPlotColorsOnly = value;
-      }
-    }
-
-    public NamedColor SelectedColor
-    {
-      get
-      {
-        return _guiColor.SelectedColor;
-      }
-      set
-      {
-        _guiColor.SelectedColor = value;
-      }
-    }
   }
 }

@@ -24,8 +24,6 @@
 
 #nullable disable warnings
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Windows;
@@ -163,6 +161,7 @@ namespace Altaxo.Gui.Common
           var unitEnvironment = _unitEnvironment;
           unitEnvironment.DefaultUnitChanged += _defaultUnitChangedHandler = new WeakEventHandler(EhDefaultUnitChanged, unitEnvironment, nameof(unitEnvironment.DefaultUnitChanged));
           unitEnvironment.NumberOfDisplayedDigitsChanged += _numberOfDisplayedDigitsChangedHandler = new WeakEventHandler(EhNumberOfDisplayedDigitsChanged, unitEnvironment, nameof(unitEnvironment.NumberOfDisplayedDigitsChanged));
+          EhNumberOfDisplayedDigitsChanged(); // will update the target, e.g. if the UnitEnvironment was set later than the Quantity
         }
       }
     }

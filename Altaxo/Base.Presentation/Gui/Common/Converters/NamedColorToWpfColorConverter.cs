@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -22,18 +22,36 @@
 
 #endregion Copyright
 
-using System.Windows.Controls;
+using System;
+using System.Globalization;
+using System.Windows;
+using System.Windows.Data;
+using Altaxo.Drawing;
 
-namespace Altaxo.Gui.Graph.Gdi
+namespace Altaxo.Gui.Common.Converters
 {
   /// <summary>
-  /// Interaction logic for LayerPositionControl.xaml
+  /// Converter that converts a boolean to a visibility. True is translated to <see cref="Visibility.Visible"/>, False is translated to <see cref="Visibility.Collapsed"/>.
   /// </summary>
-  public partial class ItemLocationDirectControl : UserControl, IItemLocationDirectView
+  /// <seealso cref="System.Windows.Data.IValueConverter" />
+  public class NamedColorToWpfColorConverter : IValueConverter
   {
-    public ItemLocationDirectControl()
+    public static NamedColorToWpfColorConverter Instance { get; private set; } = new();
+
+    /// <inheritdoc/>
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
-      InitializeComponent();
+      if (value is NamedColor c)
+      {
+        return GuiHelper.ToWpf(c);
+      }
+      return Binding.DoNothing;
+    }
+
+    /// <inheritdoc/>
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+      throw new NotImplementedException();
     }
   }
 }

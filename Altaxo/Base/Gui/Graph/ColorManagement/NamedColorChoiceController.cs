@@ -23,49 +23,59 @@
 #endregion Copyright
 
 #nullable disable
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Altaxo.Drawing;
 
 namespace Altaxo.Gui.Graph.ColorManagement
 {
-  public interface INamedColorChoiceView
+  public interface INamedColorChoiceView : IDataContextAwareView
   {
-    bool ShowPlotColorsOnly { set; }
-
-    NamedColor SelectedColor { get; set; }
   }
 
   [ExpectedTypeOfView(typeof(INamedColorChoiceView))]
   public class NamedColorChoiceController : MVCANControllerEditImmutableDocBase<NamedColor, INamedColorChoiceView>
   {
-    public bool ShowPlotColorsOnly { get; set; }
-
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
     }
 
-    protected override void Initialize(bool initData)
-    {
-      base.Initialize(initData);
+    #region Bindings
 
-      if (initData)
+    private bool _ShowPlotColorsOnly;
+
+    public bool ShowPlotColorsOnly
+    {
+      get => _ShowPlotColorsOnly;
+      set
       {
-      }
-      if (_view is not null)
-      {
-        _view.ShowPlotColorsOnly = ShowPlotColorsOnly;
-        _view.SelectedColor = _doc;
+        if (!(_ShowPlotColorsOnly == value))
+        {
+          _ShowPlotColorsOnly = value;
+          OnPropertyChanged(nameof(ShowPlotColorsOnly));
+        }
       }
     }
 
+
+    public NamedColor SelectedColor
+    {
+      get => _doc;
+      set
+      {
+        if (!(_doc == value))
+        {
+          _doc = value;
+          OnPropertyChanged(nameof(SelectedColor));
+        }
+      }
+    }
+
+
+    #endregion
+
     public override bool Apply(bool disposeController)
     {
-      _doc = _view.SelectedColor;
-
       if (ShowPlotColorsOnly && _doc.ParentColorSet is null)
       {
         Current.Gui.ErrorMessageBox("You have chosen a custom color, but a plot color is required. Please choose one of the defined plot colors.", "Custom colors not allowed");

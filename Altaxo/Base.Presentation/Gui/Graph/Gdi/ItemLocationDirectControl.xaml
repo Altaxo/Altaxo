@@ -4,10 +4,12 @@
 						 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 						 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
+						 xmlns:axogcc="clr-namespace:Altaxo.Gui.Common.Converters"
 						 xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing"
 						 xmlns:axoggs="clr-namespace:Altaxo.Gui.Graph.Gdi.Shapes"
-   				   xmlns:axog="clr-namespace:Altaxo.Gui;assembly=AltaxoBase"
-						 mc:Ignorable="d"
+             xmlns:gdi="clr-namespace:Altaxo.Gui.Graph.Gdi;assembly=AltaxoBase" 
+             d:DataContext="{d:DesignInstance Type=gdi:ItemLocationDirectController}"
+             mc:Ignorable="d"
 >
 	<UserControl.Resources>
 		<Style TargetType="Label">
@@ -47,31 +49,35 @@
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="*" />
 		</Grid.RowDefinitions>
-		<Label x:Name="_guiLabelPositionX" Grid.Column="0" Grid.Row="2" Content="Pos. X:" />
-		<axogc:QuantityWithUnitTextBox x:Name="_guiPositionX"  Grid.Column="1" Grid.Row="2"  UnitEnvironment="{x:Static axog:PositionEnvironment.Instance}" />
+        <Label Grid.Row="2" Grid.Column="0" Content="Pos. X:" Visibility="{Binding ArePositionElementsVisible, Converter={x:Static axogcc:FalseToVisibilityCollapsedConverter.Instance}}" />
+        <axogc:QuantityWithUnitTextBox Grid.Row="2" Grid.Column="1" SelectedQuantity="{Binding XPosition, Mode=TwoWay}" UnitEnvironment="{Binding XPositionEnvironment}" IsEnabled="{Binding ArePositionElementsEnabled}" Visibility="{Binding ArePositionElementsVisible, Converter={x:Static axogcc:FalseToVisibilityCollapsedConverter.Instance}}" />
 
-		<Label x:Name="_guiLabelPositionY" Grid.Column="2" Grid.Row="2" Content="Pos. Y:" />
-		<axogc:QuantityWithUnitTextBox x:Name="_guiPositionY" Grid.Column="3" Grid.Row="2"  UnitEnvironment="{x:Static axog:PositionEnvironment.Instance}" />
+        <Label Grid.Row="2" Grid.Column="2"  Content="Pos. Y:" Visibility="{Binding ArePositionElementsVisible, Converter={x:Static axogcc:FalseToVisibilityCollapsedConverter.Instance}}"/>
+        <axogc:QuantityWithUnitTextBox Grid.Row="2" Grid.Column="3" SelectedQuantity="{Binding YPosition, Mode=TwoWay}" UnitEnvironment="{Binding YPositionEnvironment}" IsEnabled="{Binding ArePositionElementsEnabled}" Visibility="{Binding ArePositionElementsVisible, Converter={x:Static axogcc:FalseToVisibilityCollapsedConverter.Instance}}"  />
 
-		<Label x:Name="_guiSizeLabelX" Grid.Column="0" Grid.Row="4" Content="Size X:" />
-		<axogc:QuantityWithUnitTextBox x:Name="_guiSizeX"  Grid.Column="1" Grid.Row="4" SelectedQuantityChanged="EhSizeXChanged" UnitEnvironment="{x:Static axog:SizeEnvironment.Instance}" />
+        <Label Grid.Row="4" Grid.Column="0" Content="Size X:" Visibility="{Binding AreSizeElementsVisible, Converter={x:Static axogcc:FalseToVisibilityCollapsedConverter.Instance}}"/>
+        <axogc:QuantityWithUnitTextBox Grid.Row="4" Grid.Column="1" SelectedQuantity="{Binding XSize, Mode=TwoWay}" UnitEnvironment="{Binding XSizeEnvironment}" IsEnabled="{Binding AreSizeElementsEnabled}" Visibility="{Binding AreSizeElementsVisible, Converter={x:Static axogcc:FalseToVisibilityCollapsedConverter.Instance}}"  />
 
-		<Label x:Name="_guiSizeLabelY" Grid.Column="2" Grid.Row="4" Content="Size Y:" />
-		<axogc:QuantityWithUnitTextBox x:Name="_guiSizeY"  Grid.Column="3" Grid.Row="4"  SelectedQuantityChanged="EhSizeYChanged"  UnitEnvironment="{x:Static axog:SizeEnvironment.Instance}" />
+        <Label Grid.Row="4" Grid.Column="2" Content="Size Y:" Visibility="{Binding AreSizeElementsVisible, Converter={x:Static axogcc:FalseToVisibilityCollapsedConverter.Instance}}"/>
+        <axogc:QuantityWithUnitTextBox Grid.Row="4" Grid.Column="3" SelectedQuantity="{Binding YSize, Mode=TwoWay}" UnitEnvironment="{Binding YSizeEnvironment}" IsEnabled="{Binding AreSizeElementsEnabled}" Visibility="{Binding AreSizeElementsVisible, Converter={x:Static axogcc:FalseToVisibilityCollapsedConverter.Instance}}"  />
 
 		<Label Grid.Column="0" Grid.Row="6" Content="Rotation:" />
-		<axogcd:RotationComboBox  x:Name="_guiRotation" Grid.Column="1" Grid.Row="6" />
+		<axogcd:RotationComboBox Grid.Row="6" Grid.Column="1" SelectedQuantity="{Binding Rotation, Mode=TwoWay}" UnitEnvironment="{Binding RotationEnvironment}" />
 
 		<Label Grid.Column="2" Grid.Row="6">Shear:</Label>
-		<axogcd:ShearComboBox Grid.Column="3" Grid.Row="6" x:Name="_guiShear" />
+		<axogcd:ShearComboBox Grid.Row="6" Grid.Column="3" SelectedQuantity="{Binding Shear, Mode=TwoWay}" UnitEnvironment="{Binding ShearEnvironment}" />
 
-		<Label x:Name="_guiLabelScaleX" Grid.Column="0" Grid.Row="8" Content="ScaleX:" />
-		<axogcd:ScaleComboBox x:Name="_guiScaleX"  Grid.Column="1" Grid.Row="8"  SelectedQuantityChanged="EhScaleXChanged" />
+        <Label Grid.Row="8" Grid.Column="0"  Content="ScaleX:" Visibility="{Binding AreScaleElementsVisible, Converter={x:Static axogcc:FalseToVisibilityCollapsedConverter.Instance}}" />
+        <axogcd:ScaleComboBox  Grid.Row="8" Grid.Column="1" SelectedQuantity="{Binding XScale, Mode=TwoWay}" UnitEnvironment="{Binding ScaleEnvironment}" IsEnabled="{Binding AreScaleElementsEnabled}" Visibility="{Binding AreScaleElementsVisible, Converter={x:Static axogcc:FalseToVisibilityCollapsedConverter.Instance}}"   />
 
-		<Label x:Name="_guiLabelScaleY" Grid.Column="2" Grid.Row="8" Content="ScaleY:" />
-		<axogcd:ScaleComboBox x:Name="_guiScaleY"  Grid.Column="3" Grid.Row="8"  SelectedQuantityChanged="EhScaleYChanged" />
+        <Label Grid.Row="8" Grid.Column="2" Content="ScaleY:" Visibility="{Binding AreScaleElementsVisible, Converter={x:Static axogcc:FalseToVisibilityCollapsedConverter.Instance}}" />
+        <axogcd:ScaleComboBox Grid.Row="8"  Grid.Column="3" SelectedQuantity="{Binding YScale, Mode=TwoWay}" UnitEnvironment="{Binding ScaleEnvironment}" IsEnabled="{Binding AreScaleElementsEnabled}" Visibility="{Binding AreScaleElementsVisible, Converter={x:Static axogcc:FalseToVisibilityCollapsedConverter.Instance}}"    />
 
-		<axoggs:AnchoringControl x:Name="_guiLocalAnchor" Title="Local anchor" Grid.Column="0" Grid.Row="10" Grid.ColumnSpan="2" />
-		<axoggs:AnchoringControl x:Name="_guiParentAnchor" Title="Parent anchor" Grid.Column="2" Grid.Row="10" Grid.ColumnSpan="2" />
-	</Grid>
+        <Border Grid.Row="10" Grid.Column="0" Grid.ColumnSpan="2" IsEnabled="{Binding AreAnchorElementsEnabled}" Visibility="{Binding AreAnchorElementsVisible, Converter={x:Static axogcc:FalseToVisibilityCollapsedConverter.Instance}}" >
+        <axoggs:AnchoringControl DataContext="{Binding LocalAnchoringController}"  />
+        </Border>
+        <Border Grid.Row="10" Grid.Column="2" Grid.ColumnSpan="2" IsEnabled="{Binding AreAnchorElementsEnabled}" Visibility="{Binding AreAnchorElementsVisible, Converter={x:Static axogcc:FalseToVisibilityCollapsedConverter.Instance}}">
+        <axoggs:AnchoringControl  DataContext="{Binding ParentAnchoringController}"  />
+        </Border>
+    </Grid>
 </UserControl>

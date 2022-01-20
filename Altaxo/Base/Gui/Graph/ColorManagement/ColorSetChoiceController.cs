@@ -29,9 +29,8 @@ using Altaxo.Drawing.ColorManagement;
 
 namespace Altaxo.Gui.Graph.ColorManagement
 {
-  public interface IColorSetsView
+  public interface IColorSetsView : IDataContextAwareView
   {
-    NGTreeNode ColorSetTree { set; }
   }
 
   [ExpectedTypeOfView(typeof(IColorSetsView))]
@@ -46,6 +45,13 @@ namespace Altaxo.Gui.Graph.ColorManagement
       yield break;
     }
 
+    #region Bindings
+
+    public NGTreeNodeCollection ColorSetTree => _treeRootNode.Nodes;
+
+
+    #endregion
+
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -55,10 +61,6 @@ namespace Altaxo.Gui.Graph.ColorManagement
 
         ColorSetManager.Instance.TryGetList(_doc.Name, out var value);
         ColorControllerHelper.UpdateColorTreeViewTreeNodes(_treeRootNode, ShowPlotColorsOnly, value.List);
-      }
-      if (_view is not null)
-      {
-        _view.ColorSetTree = _treeRootNode;
       }
     }
 

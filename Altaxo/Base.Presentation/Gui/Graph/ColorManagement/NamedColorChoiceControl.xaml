@@ -5,8 +5,10 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 						  xmlns:axocoll="clr-namespace:Altaxo.Collections;assembly=AltaxoBase"
 						 xmlns:local="clr-namespace:Altaxo.Gui.Graph.ColorManagement"
- 						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
- 						 xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing"
+						 xmlns:localmodel="clr-namespace:Altaxo.Gui.Graph.ColorManagement;assembly=AltaxoBase"
+ 						 xmlns:axogcc="clr-namespace:Altaxo.Gui.Common.Converters"
+ 						 xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing" 
+             d:DataContext="{d:DesignInstance Type=localmodel:NamedColorChoiceController}"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
 	<UserControl.Resources>
@@ -47,9 +49,9 @@
 			<RowDefinition Height="*" />
 		</Grid.RowDefinitions>
 		<Label Content="Choose a color :" Grid.Row="0" />
-		<axogcd:ColorComboBox x:Name="_guiColor" Grid.Row="2" SelectedColorChanged="EhSelectedColorChanged" />
+        <axogcd:ColorComboBox Grid.Row="2" SelectedColor="{Binding SelectedColor, Mode=TwoWay}" ShowPlotColorsOnly="{Binding ShowPlotColorsOnly}"/>
 		<Label Content="Preview :" Grid.Row="4" />
 		<Rectangle Grid.Row="6" MinWidth="100" MinHeight="100" Fill="{StaticResource CheckerboardBrush}" />
-		<Rectangle x:Name="_guiColorPreview" Grid.Row="6" MinWidth="100" MinHeight="100" />
+		<Rectangle Grid.Row="6" MinWidth="100" MinHeight="100" Fill="{Binding SelectedColor, Converter={x:Static axogcc:NamedColorToWpfColorConverter.Instance}}" />
 	</Grid>
 </UserControl>

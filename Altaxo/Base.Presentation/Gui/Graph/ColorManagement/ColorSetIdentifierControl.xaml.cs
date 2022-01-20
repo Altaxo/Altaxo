@@ -23,10 +23,6 @@
 #endregion Copyright
 
 #nullable disable warnings
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using Altaxo.Collections;
@@ -105,11 +101,6 @@ namespace Altaxo.Gui.Graph.ColorManagement
       {
         return new TreeViewDataTemplateSelector(this);
       }
-    }
-
-    public NGTreeNode ColorSetTree
-    {
-      set { _treeView.ItemsSource = value.Nodes; }
     }
   }
 }

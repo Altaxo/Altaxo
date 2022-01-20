@@ -23,10 +23,6 @@
 #endregion Copyright
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -239,7 +235,9 @@ namespace Altaxo.Gui.Common
     {
       var thiss = (QuantityWithUnitTextBox)obj;
       if (args.NewValue is not null)
+      {
         thiss._converter.UnitEnvironment = (QuantityWithUnitGuiEnvironment)args.NewValue;
+      }
     }
 
     #endregion Dependency property UnitEnvironment

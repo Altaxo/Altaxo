@@ -26,30 +26,14 @@
 using System;
 using Altaxo.Graph;
 using Altaxo.Graph.Gdi;
+using Altaxo.Units;
 
 namespace Altaxo.Gui.Graph.Gdi
 {
   #region Interfaces
 
-  public interface IItemLocationByGridView
+  public interface IItemLocationByGridView : IDataContextAwareView
   {
-    double GridColumn { get; set; }
-
-    double GridRow { get; set; }
-
-    double GridColumnSpan { get; set; }
-
-    double GridRowSpan { get; set; }
-
-    double Rotation { get; set; }
-
-    double ShearX { get; set; }
-
-    double ScaleX { get; set; }
-
-    double ScaleY { get; set; }
-
-    bool ForceFitIntoCell { get; set; }
   }
 
   #endregion Interfaces
@@ -79,24 +63,168 @@ namespace Altaxo.Gui.Graph.Gdi
       return base.InitializeDocument(args);
     }
 
+    #region Bindings
+
+    public QuantityWithUnitGuiEnvironment RotationEnvironment => AngleEnvironment.Instance;
+
+    private DimensionfulQuantity _rotation;
+
+    public DimensionfulQuantity Rotation
+    {
+      get => _rotation;
+      set
+      {
+        if (!(_rotation == value))
+        {
+          _rotation = value;
+          OnPropertyChanged(nameof(Rotation));
+        }
+      }
+    }
+
+    public QuantityWithUnitGuiEnvironment ShearEnvironment => RelationEnvironment.Instance;
+
+    private DimensionfulQuantity _ShearX;
+
+    public DimensionfulQuantity ShearX
+    {
+      get => _ShearX;
+      set
+      {
+        if (!(_ShearX == value))
+        {
+          _ShearX = value;
+          OnPropertyChanged(nameof(ShearX));
+        }
+      }
+    }
+
+    public QuantityWithUnitGuiEnvironment ScaleEnvironment => RelationEnvironment.Instance;
+
+    private DimensionfulQuantity _ScaleX;
+
+    public DimensionfulQuantity ScaleX
+    {
+      get => _ScaleX;
+      set
+      {
+        if (!(_ScaleX == value))
+        {
+          _ScaleX = value;
+          OnPropertyChanged(nameof(ScaleX));
+        }
+      }
+    }
+
+
+    private DimensionfulQuantity _ScaleY;
+
+    public DimensionfulQuantity ScaleY
+    {
+      get => _ScaleY;
+      set
+      {
+        if (!(_ScaleY == value))
+        {
+          _ScaleY = value;
+          OnPropertyChanged(nameof(ScaleY));
+        }
+      }
+    }
+
+    private bool _ForceFitIntoCell;
+
+    public bool ForceFitIntoCell
+    {
+      get => _ForceFitIntoCell;
+      set
+      {
+        if (!(_ForceFitIntoCell == value))
+        {
+          _ForceFitIntoCell = value;
+          OnPropertyChanged(nameof(ForceFitIntoCell));
+        }
+      }
+    }
+
+    private double _GridRow;
+
+    public double GridRow
+    {
+      get => _GridRow;
+      set
+      {
+        if (!(_GridRow == value))
+        {
+          _GridRow = value;
+          OnPropertyChanged(nameof(GridRow));
+        }
+      }
+    }
+
+    private double _GridRowSpan;
+
+    public double GridRowSpan
+    {
+      get => _GridRowSpan;
+      set
+      {
+        if (!(_GridRowSpan == value))
+        {
+          _GridRowSpan = value;
+          OnPropertyChanged(nameof(GridRowSpan));
+        }
+      }
+    }
+
+    private double _GridColumn;
+
+    public double GridColumn
+    {
+      get => _GridColumn;
+      set
+      {
+        if (!(_GridColumn == value))
+        {
+          _GridColumn = value;
+          OnPropertyChanged(nameof(GridColumn));
+        }
+      }
+    }
+    private double _GridColumnSpan;
+
+    public double GridColumnSpan
+    {
+      get => _GridColumnSpan;
+      set
+      {
+        if (!(_GridColumnSpan == value))
+        {
+          _GridColumnSpan = value;
+          OnPropertyChanged(nameof(GridColumnSpan));
+        }
+      }
+    }
+
+
+
+    #endregion
+
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
 
       if (initData)
       {
-      }
-      if (_view is not null)
-      {
-        _view.GridColumn = DocToUserPosition(_doc.GridColumn);
-        _view.GridRow = DocToUserPosition(_doc.GridRow);
-        _view.GridColumnSpan = DocToUserSize(_doc.GridColumnSpan);
-        _view.GridRowSpan = DocToUserSize(_doc.GridRowSpan);
-        _view.Rotation = _doc.Rotation;
-        _view.ShearX = _doc.ShearX;
-        _view.ScaleX = _doc.ScaleX;
-        _view.ScaleY = _doc.ScaleY;
-        _view.ForceFitIntoCell = _doc.ForceFitIntoCell;
+        Rotation = new DimensionfulQuantity(_doc.Rotation, Altaxo.Units.Angle.Degree.Instance).AsQuantityIn(RotationEnvironment.DefaultUnit);
+        ShearX = new DimensionfulQuantity(_doc.ShearX, Altaxo.Units.Dimensionless.Unity.Instance).AsQuantityIn(ShearEnvironment.DefaultUnit);
+        ScaleX = new DimensionfulQuantity(_doc.ScaleX, Altaxo.Units.Dimensionless.Unity.Instance).AsQuantityIn(ScaleEnvironment.DefaultUnit);
+        ScaleY = new DimensionfulQuantity(_doc.ScaleY, Altaxo.Units.Dimensionless.Unity.Instance).AsQuantityIn(ScaleEnvironment.DefaultUnit);
+        ForceFitIntoCell = _doc.ForceFitIntoCell;
+        GridColumn = DocToUserPosition(_doc.GridColumn);
+        GridRow = DocToUserPosition(_doc.GridRow);
+        GridColumnSpan = DocToUserSize(_doc.GridColumnSpan);
+        GridRowSpan = DocToUserSize(_doc.GridRowSpan);
       }
     }
 
@@ -104,15 +232,16 @@ namespace Altaxo.Gui.Graph.Gdi
     {
       try
       {
-        _doc.GridColumn = UserToDocPosition(_view.GridColumn);
-        _doc.GridRow = UserToDocPosition(_view.GridRow);
-        _doc.GridColumnSpan = UserToDocSize(_view.GridColumnSpan);
-        _doc.GridRowSpan = UserToDocSize(_view.GridRowSpan);
-        _doc.Rotation = _view.Rotation;
-        _doc.ShearX = _view.ShearX;
-        _doc.ScaleX = _view.ScaleX;
-        _doc.ScaleY = _view.ScaleY;
-        _doc.ForceFitIntoCell = _view.ForceFitIntoCell;
+        _doc.GridColumn = UserToDocPosition(GridColumn);
+        _doc.GridRow = UserToDocPosition(GridRow);
+        _doc.GridColumnSpan = UserToDocSize(GridColumnSpan);
+        _doc.GridRowSpan = UserToDocSize(GridRowSpan);
+        _doc.Rotation = Rotation.AsValueIn(Altaxo.Units.Angle.Degree.Instance);
+        _doc.ShearX = ShearX.AsValueInSIUnits;
+        _doc.ScaleX = ScaleX.AsValueInSIUnits;
+        _doc.ScaleY = ScaleY.AsValueInSIUnits;
+
+        _doc.ForceFitIntoCell = ForceFitIntoCell;
       }
       catch (Exception)
       {

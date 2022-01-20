@@ -3,10 +3,10 @@
 						 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 						 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 						 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
-						 xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing"
-						 mc:Ignorable="d"
->
+						 xmlns:axogcc="clr-namespace:Altaxo.Gui.Common.Converters"
+                         xmlns:gdi="clr-namespace:Altaxo.Gui.Graph.Gdi;assembly=AltaxoBase" 
+                         d:DataContext="{d:DesignInstance Type=gdi:LayerPositionController}"
+                         mc:Ignorable="d">
 	<UserControl.Resources>
 		<Style TargetType="Label">
 			<Style.Setters>
@@ -30,11 +30,10 @@
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="4" />
 		</Grid.RowDefinitions>
-		<StackPanel Grid.Row="0">
-			<RadioButton x:Name="_guiDirectPositioning" Content="Use direct position/size" Checked="EhPositioningTypeChangedToDirect" />
-			<RadioButton x:Name="_guiGridPositioning" Content="Use grid position/span" Checked="EhPositioningTypeChangedToGrid" />
+		<StackPanel Grid.Row="0" Visibility="{Binding IsPositioningChoiceVisible, Converter={x:Static axogcc:FalseToVisibilityCollapsedConverter.Instance}}">
+			<RadioButton Content="Use direct position/size" IsChecked="{Binding UseDirectPositioning, Mode=TwoWay}" />
+			<RadioButton Content="Use grid position/span" IsChecked="{Binding UseGridPositioning, Mode=TwoWay}" />
 		</StackPanel>
-		<Border x:Name="_guiSubPositioningHost" Grid.Row="2">
-		</Border>
-	</Grid>
+        <ContentControl Grid.Row="2" Content="{Binding SubPositioningView}"/>
+    </Grid>
 </UserControl>

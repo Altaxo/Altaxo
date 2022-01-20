@@ -5,8 +5,9 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
  						 xmlns:axocoll="clr-namespace:Altaxo.Collections;assembly=AltaxoBase"
 						 xmlns:local="clr-namespace:Altaxo.Gui.Graph.ColorManagement"
- 						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
-
+						 xmlns:localmod="clr-namespace:Altaxo.Gui.Graph.ColorManagement;assembly=AltaxoBase"
+ 						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common" 
+             d:DataContext="{d:DesignInstance Type=localmod:ColorSetChoiceController}"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
 	<UserControl.Resources>
@@ -67,7 +68,7 @@
 			<RowDefinition Height="*" />
 		</Grid.RowDefinitions>
 		<Label Content="Please choose one of the available color sets:" />
-		<TreeView x:Name="_treeView" Grid.Row="2"
+        <TreeView Grid.Row="2" ItemsSource="{Binding ColorSetTree}"
 			ItemTemplateSelector="{Binding TreeViewItemTemplateSelector, RelativeSource={RelativeSource AncestorType=local:ColorSetIdentifierControl}}">
 
 			<ItemsControl.ItemContainerStyle>
