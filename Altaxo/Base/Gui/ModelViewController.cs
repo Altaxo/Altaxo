@@ -112,7 +112,7 @@ namespace Altaxo.Gui
     private IMVCAController? _doc;
     private Action? _setMemberToNullAction;
 
-    public ControllerAndSetNullMethod(IMVCAController doc, Action setMemberToNullAction)
+    public ControllerAndSetNullMethod(IMVCAController? doc, Action setMemberToNullAction)
     {
       _doc = doc;
       _setMemberToNullAction = setMemberToNullAction;

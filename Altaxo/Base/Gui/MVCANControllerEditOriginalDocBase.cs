@@ -306,23 +306,20 @@ namespace Altaxo.Gui
       {
         foreach (var subControllerItem in GetSubControllers())
         {
-          if (subControllerItem.Controller is not null)
-            subControllerItem.Controller.Dispose();
-          if (subControllerItem.SetMemberToNullAction is not null)
-            subControllerItem.SetMemberToNullAction();
+          subControllerItem.Controller?.Dispose();
+          subControllerItem.SetMemberToNullAction?.Invoke();
         }
 
         ViewObject = null;
 
-        if (_suspendToken is not null)
-        {
-          _suspendToken.Dispose();
-          _suspendToken = null;
-        }
 
-        if ((_clonedCopyOfDoc is IDisposable) && !object.ReferenceEquals(_doc, _clonedCopyOfDoc))
+        _suspendToken?.Dispose();
+        _suspendToken = null;
+
+
+        if ((_clonedCopyOfDoc is IDisposable disp) && !object.ReferenceEquals(_doc, _clonedCopyOfDoc))
         {
-          ((IDisposable)_clonedCopyOfDoc).Dispose();
+          disp.Dispose();
           _clonedCopyOfDoc = default;
         }
       }

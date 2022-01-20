@@ -175,6 +175,9 @@ namespace Altaxo.Gui.Graph.Gdi
 
     private void EhPositioningTypeChanged()
     {
+      if (_subController is null)
+        return;
+
       if (_subController.Apply(false))
         _instances[_subController.ModelObject.GetType()] = (IItemLocation)_subController.ModelObject;
 
