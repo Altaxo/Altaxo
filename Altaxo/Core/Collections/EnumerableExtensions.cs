@@ -25,8 +25,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Text;
 
 namespace Altaxo.Collections
 {
@@ -202,6 +200,27 @@ namespace Altaxo.Collections
         result = !it.MoveNext();
       }
       return result;
+    }
+
+    /// <summary>
+    /// Returns either the provided enumeration, or if it is null, an empty enumeration.
+    /// </summary>
+    /// <typeparam name="T">Type of elements of the enumeration.</typeparam>
+    /// <param name="org">The orginal enumeration (may be null)</param>
+    /// <returns>Either the original enumeration (if it is not null); otherwise, an empty enumeration.</returns>
+    public static IEnumerable<T> ThisOrEmpty<T>(this IEnumerable<T>? org)
+    {
+      return org ?? Empty<T>();
+    }
+
+    /// <summary>
+    /// Returns an empty enumeration of T.
+    /// </summary>
+    /// <typeparam name="T">The enumeration type.</typeparam>
+    /// <returns>Empty enumeration of T.</returns>
+    public static IEnumerable<T> Empty<T>()
+    {
+      yield break;
     }
 
     /// <summary>

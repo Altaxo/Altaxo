@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -23,11 +23,6 @@
 #endregion Copyright
 
 #nullable disable warnings
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows;
 using System.Windows.Controls;
 
 namespace Altaxo.Gui.Graph.Gdi
@@ -37,159 +32,9 @@ namespace Altaxo.Gui.Graph.Gdi
   /// </summary>
   public partial class XYPlotLayerControl : UserControl, IXYPlotLayerView
   {
-    private int _suppressEventCounter = 0;
-
-    public event Action<bool>? CreateOrMoveAxis;
-
-    public event Action? DeleteAxis;
-
-    public event Action? SecondChoiceChanged;
-
-    public event Action<string>? PageChanged;
-
     public XYPlotLayerControl()
     {
       InitializeComponent();
-    }
-
-    #region ILayerView Members
-
-    public void AddTab(string name, string text)
-    {
-      var tc = new TabItem
-      {
-        Name = name,
-        Header = text
-      };
-      _tabCtrl.Items.Add(tc);
-    }
-
-    public object CurrentContent
-    {
-      get
-      {
-        int sel = _tabCtrl.SelectedIndex;
-        var tp = (TabItem)_tabCtrl.Items[sel];
-        return tp.Content;
-      }
-      set
-      {
-        int sel = _tabCtrl.SelectedIndex;
-        var tp = (TabItem)_tabCtrl.Items[sel];
-        if (tp.Content is not null)
-          tp.Content = null;
-
-        tp.Content = (UIElement)value;
-      }
-    }
-
-    public void SelectTab(string name)
-    {
-      foreach (TabItem page in _tabCtrl.Items)
-      {
-        if (page.Name == name)
-        {
-          _tabCtrl.SelectedItem = page;
-          break;
-        }
-      }
-    }
-
-    public void InitializeSecondaryChoice(Altaxo.Collections.SelectableListNodeList items, LayerControllerTabType primaryChoice)
-    {
-      ++_suppressEventCounter;
-
-      GuiHelper.Initialize(_lbEdges, items);
-
-      _guiCreateNewAxis.Visibility = primaryChoice == LayerControllerTabType.Axes ? Visibility.Visible : Visibility.Collapsed;
-      _guiMoveAxis.Visibility = primaryChoice == LayerControllerTabType.Axes ? Visibility.Visible : Visibility.Collapsed;
-
-      --_suppressEventCounter;
-    }
-
-    public event System.ComponentModel.CancelEventHandler? TabValidating;
-
-    #endregion ILayerView Members
-
-    private void EhSecondChoice_SelectionChanged(object sender, SelectionChangedEventArgs e)
-    {
-      e.Handled = true;
-      if (_suppressEventCounter == 0 && SecondChoiceChanged is not null)
-      {
-        GuiHelper.SynchronizeSelectionFromGui(_lbEdges);
-        SecondChoiceChanged();
-      }
-    }
-
-    private int _tabControl_SelectionChanged_Calls;
-
-    private void EhTabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
-    {
-      if (!object.ReferenceEquals(e.OriginalSource, _tabCtrl))
-        return;
-      e.Handled = true;
-
-      if (0 == _tabControl_SelectionChanged_Calls)
-      {
-        ++_tabControl_SelectionChanged_Calls;
-        bool shouldBeCancelled = false;
-
-        if (e.RemovedItems.Count > 0 && TabValidating is not null)
-        {
-          if (!(e.RemovedItems[0] is TabItem))
-          {
-            Current.Gui.ErrorMessageBox(string.Format("Homework for the programmer: SelectionChangeHandler is not finalized with e.Handled=true"));
-            e.Handled = true;
-            goto end_of_function;
-          }
-
-          var tp = (TabItem)e.RemovedItems[0];
-          var cancelEventArgs = new System.ComponentModel.CancelEventArgs();
-          if (TabValidating is not null)
-            TabValidating(this, cancelEventArgs);
-          shouldBeCancelled = cancelEventArgs.Cancel;
-
-          if (shouldBeCancelled)
-            _tabCtrl.SelectedItem = tp;
-        }
-
-        if (!shouldBeCancelled)
-        {
-          foreach (var it in e.RemovedItems)
-            if (it is TabItem)
-              ((TabItem)it).Content = null;
-
-          if (PageChanged is not null)
-          {
-            var tp = (TabItem)_tabCtrl.SelectedItem;
-            PageChanged(tp.Name);
-          }
-        }
-
-end_of_function:
-        --_tabControl_SelectionChanged_Calls;
-      }
-    }
-
-    private void EhCreateNewAxis(object sender, RoutedEventArgs e)
-    {
-      e.Handled = true;
-      if (_suppressEventCounter == 0 && CreateOrMoveAxis is not null)
-        CreateOrMoveAxis(false);
-    }
-
-    private void EhMoveAxis(object sender, RoutedEventArgs e)
-    {
-      e.Handled = true;
-      if (_suppressEventCounter == 0 && CreateOrMoveAxis is not null)
-        CreateOrMoveAxis(true);
-    }
-
-    private void EhDeleteAxis(object sender, RoutedEventArgs e)
-    {
-      e.Handled = true;
-      if (_suppressEventCounter == 0 && DeleteAxis is not null)
-        DeleteAxis();
     }
   }
 }

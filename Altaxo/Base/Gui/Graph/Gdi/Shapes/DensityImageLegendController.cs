@@ -22,10 +22,9 @@
 
 #endregion Copyright
 
-#nullable disable
-using System;
 using System.Collections.Generic;
-using System.ComponentModel;
+using System.Linq;
+using System.Windows.Input;
 using Altaxo.Collections;
 using Altaxo.Graph;
 using Altaxo.Graph.Gdi;
@@ -42,10 +41,9 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
   [ExpectedTypeOfView(typeof(IXYPlotLayerView))]
   public class DensityImageLegendController : MVCANControllerEditOriginalDocBase<DensityImageLegend, IXYPlotLayerView>
   {
-    private string _currentPageName;
-    private LayerControllerTabType _primaryChoice; // which tab type is currently choosen
-    private int _currentScale; // which scale is choosen 0==X-AxisScale, 1==Y-AxisScale
+    protected string _initialTag;
 
+    private int _currentScale; // which scale is choosen 0==X-AxisScale, 1==Y-AxisScale
     private CSLineID _currentAxisID; // which style is currently choosen
     private CSPlaneID _currentPlaneID; // which plane is currently chosen for the grid
 
@@ -64,6 +62,17 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
 
     private object _lastControllerApplied;
 
+    public const string PositionTag = "Position";
+    public const string GraphItemsTag = "GraphicItems";
+    public const string ScaleTag = "Scale";
+    public const string CoordSystemTag = "CoordSys";
+    public const string ContentsTag = "Content";
+    public const string TitleAndFormatTag = "TitleFormat";
+    public const string MajorLabelsTag = "MajorLabels";
+    public const string MinorLabelsTag = "MinorLables";
+    public const string GridStyleTag = "GridStyle";
+    public const string SecondaryCommonTag = "2ndCommon";
+
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_axisScaleController, () => _axisScaleController = null);
@@ -72,7 +81,7 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
 
       if (_axisControl is not null)
       {
-        foreach (var item in _axisControl.Values)
+        foreach (var item in EnumerableExtensions.ThisOrEmpty(_axisControl.Values))
         {
           yield return new ControllerAndSetNullMethod(item.AxisStyleCondController, null);
           yield return new ControllerAndSetNullMethod(item.MajorLabelCondController, null);
@@ -98,12 +107,17 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
     public DensityImageLegendController()
     {
       _currentScale = 0;
-      _currentPageName = "Scale";
+      _initialTag = ScaleTag;
       _currentAxisID = CSLineID.X0;
+
+      CmdMoveAxis = new RelayCommand(() => EhCmdCreateOrMoveAxis(true));
+      CmdCreateAxis = new RelayCommand(() => EhCmdCreateOrMoveAxis(false));
+      CmdDeleteAxis = new RelayCommand(EhCmdDeleteAxis);
+
     }
 
     public DensityImageLegendController(DensityImageLegend layer)
-      : this(layer, "Scale", 1, CSLineID.X0)
+      : this(layer, ScaleTag, 1, CSLineID.X0)
     {
     }
 
@@ -114,6 +128,10 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
 
     private DensityImageLegendController(DensityImageLegend layer, string currentPage, int axisScaleIdx, CSLineID id)
     {
+      CmdMoveAxis = new RelayCommand(() => EhCmdCreateOrMoveAxis(true));
+      CmdCreateAxis = new RelayCommand(() => EhCmdCreateOrMoveAxis(false));
+      CmdDeleteAxis = new RelayCommand(EhCmdDeleteAxis);
+
       InitializeDocument(layer, currentPage, axisScaleIdx, id);
     }
 
@@ -121,8 +139,8 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
     {
       if (args is not null)
       {
-        if (args.Length > 1 && args[1] is string)
-          _currentPageName = (string)args[1];
+        if (args.Length > 1 && args[1] is string) // [1] is currentPage
+          _initialTag = (string)args[1];
 
         if (args.Length > 2 && args[2] is int)
           _currentScale = (int)args[2];
@@ -134,6 +152,133 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
       return base.InitializeDocument(args);
     }
 
+    #region Bindings
+
+    public ICommand CmdMoveAxis { get; set; }
+    public ICommand CmdCreateAxis { get; set; }
+    public ICommand CmdDeleteAxis { get; set; }
+
+    public SelectableListNodeList Tabs { get; } = new();
+
+    private string? _selectedTab;
+
+    public string? SelectedTab
+    {
+      get => _selectedTab;
+      set
+      {
+        if (!(_selectedTab == value))
+        {
+          _selectedTab = value;
+          EhPrimaryChoiceChanged(value);
+          OnPropertyChanged(nameof(SelectedTab));
+        }
+      }
+    }
+
+    protected void EhPrimaryChoiceChanged(string selectedTab)
+    {
+      switch (selectedTab)
+      {
+        case GraphItemsTag:
+        case ContentsTag:
+        case PositionTag:
+        case CoordSystemTag:
+          SetSecondaryChoiceToUnique();
+          break;
+
+        case ScaleTag:
+          SetSecondaryChoiceToScales();
+          break;
+
+        case GridStyleTag:
+          SetSecondaryChoiceToPlanes();
+          break;
+
+        case TitleAndFormatTag:
+        case MajorLabelsTag:
+        case MinorLabelsTag:
+          SetSecondaryChoiceToAxes();
+          break;
+      }
+    }
+
+
+    private SelectableListNodeList _secondaryChoices;
+
+    public SelectableListNodeList SecondaryChoices
+    {
+      get => _secondaryChoices;
+      set
+      {
+        if (!(_secondaryChoices == value))
+        {
+          _secondaryChoices = value;
+          OnPropertyChanged(nameof(SecondaryChoices));
+        }
+      }
+    }
+
+    private object _selectedSecondaryChoice;
+
+    public object SelectedSecondaryChoice
+    {
+      get => _selectedSecondaryChoice;
+      set
+      {
+        if (!(_selectedSecondaryChoice == value))
+        {
+          if (value is not null)
+          {
+            if (ApplyCurrentController(false, false))
+            {
+              _selectedSecondaryChoice = value;
+              EhSecondaryChoiceChanged(value);
+            }
+          }
+          _selectedSecondaryChoice = value;
+          OnPropertyChanged(nameof(SelectedSecondaryChoice));
+        }
+      }
+    }
+
+    public void EhSecondaryChoiceChanged(object value)
+    {
+      if (SelectedTab == ScaleTag && value is int currentScale)
+      {
+        _currentScale = currentScale;
+      }
+      else if (SelectedTab == TitleAndFormatTag || SelectedTab == MajorLabelsTag || SelectedTab == MinorLabelsTag)
+      {
+        _currentAxisID = value is CSLineID csLineID ? csLineID : (CSLineID)(_listOfAxes[0].Tag!);
+      }
+      else if (SelectedTab == GridStyleTag && value is CSPlaneID csPlaneID)
+      {
+        _currentPlaneID = csPlaneID;
+      }
+
+      SetCurrentTabController();
+    }
+
+
+    private bool _areAxisButtonsVisible;
+
+    public bool AreAxisButtonsVisible
+    {
+      get => _areAxisButtonsVisible;
+      set
+      {
+        if (!(_areAxisButtonsVisible == value))
+        {
+          _areAxisButtonsVisible = value;
+          OnPropertyChanged(nameof(AreAxisButtonsVisible));
+        }
+      }
+    }
+
+    #endregion
+
+
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -144,48 +289,26 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
 
         _listOfUniqueItem = new SelectableListNodeList
         {
-          new SelectableListNode("Common", null, true)
+          new SelectableListNode("Common", SecondaryCommonTag, true)
         };
-      }
 
-      if (_view is not null)
-      {
-        // add all necessary Tabs
-        _view.AddTab("Scale", "Scale");
-        _view.AddTab("CS", "Coord.System");
-        // _view.AddTab("Contents", "Contents");
-        _view.AddTab("Position", "Position");
-        _view.AddTab("TitleAndFormat", "Title&&Format");
-        _view.AddTab("MajorLabels", "Major labels");
-        _view.AddTab("MinorLabels", "Minor labels");
-        //_view.AddTab("GridStyle", "Grid style");
-
+        Tabs.Clear();
+        Tabs.Add(new SelectableListNodeWithController("Scale", ScaleTag, false));
+        Tabs.Add(new SelectableListNodeWithController("Coord.System", CoordSystemTag, false));
+        Tabs.Add(new SelectableListNodeWithController("Position", PositionTag, false));
+        Tabs.Add(new SelectableListNodeWithController("Title/Format", TitleAndFormatTag, false));
+        Tabs.Add(new SelectableListNodeWithController("Major labels", MajorLabelsTag, false));
+        Tabs.Add(new SelectableListNodeWithController("Minor labels", MinorLabelsTag, false));
         // Set the controller of the current visible Tab
-        SetCurrentTabController(true);
+        SelectedTab = _initialTag;
       }
     }
 
     public override bool Apply(bool disposeController)
     {
-      ApplyCurrentController(true);
+      ApplyCurrentController(true, disposeController);
 
       return ApplyEnd(true, disposeController);
-    }
-
-    protected override void AttachView()
-    {
-      _view.TabValidating += EhView_TabValidating;
-      _view.PageChanged += EhView_PageChanged;
-      _view.SecondChoiceChanged += EhView_SecondChoiceChanged;
-      _view.CreateOrMoveAxis += EhView_CreateOrMoveAxis;
-    }
-
-    protected override void DetachView()
-    {
-      _view.TabValidating -= EhView_TabValidating;
-      _view.PageChanged -= EhView_PageChanged;
-      _view.SecondChoiceChanged -= EhView_SecondChoiceChanged;
-      _view.CreateOrMoveAxis -= EhView_CreateOrMoveAxis;
     }
 
     private void SetCoordinateSystemDependentObjects()
@@ -219,161 +342,96 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
       _listOfPlanes.Add(new SelectableListNode("Front", _currentPlaneID, true));
     }
 
-    private void SetCurrentTabController(bool pageChanged)
+    private void SetCurrentTabController()
     {
-      switch (_currentPageName)
+      ThrowIfNotInitialized();
+
+      if (Tabs.FirstOrDefault(n => (string?)(n.Tag) == SelectedTab) is not SelectableListNodeWithController node)
+        return;
+
+      switch (SelectedTab)
       {
-        case "CS":
-          if (pageChanged)
-          {
-            _view.SelectTab(_currentPageName);
-            SetSecondaryChoiceToUnique();
-          }
+        case CoordSystemTag:
           if (_coordinateController is null)
           {
             _coordinateController = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { _doc.CoordinateSystem }, typeof(IMVCAController), UseDocument.Directly);
           }
-          _currentController = _coordinateController;
-          _view.CurrentContent = _coordinateController.ViewObject;
+          node.Controller = _currentController = _coordinateController;
           break;
 
-        case "Position":
-          if (pageChanged)
-          {
-            _view.SelectTab(_currentPageName);
-          }
+        case PositionTag:
           if (_layerPositionController is null)
           {
             _layerPositionController = new ItemLocationDirectController() { UseDocumentCopy = UseDocument.Directly };
             _layerPositionController.InitializeDocument(_doc.Location);
             Current.Gui.FindAndAttachControlTo(_layerPositionController);
           }
-          _currentController = _layerPositionController;
-          _view.CurrentContent = _layerPositionController.ViewObject;
+          node.Controller = _currentController = _layerPositionController;
           break;
 
-        case "Scale":
-          if (pageChanged)
-          {
-            _view.SelectTab(_currentPageName);
-            SetSecondaryChoiceToScales();
-          }
+        case ScaleTag:
           if (_axisScaleController is null)
           {
             _axisScaleController = new ScaleWithTicksController(null, true) { UseDocumentCopy = UseDocument.Directly };
             _axisScaleController.InitializeDocument(_doc.ScaleWithTicks);
-
             Current.Gui.FindAndAttachControlTo(_axisScaleController);
           }
-          _currentController = _axisScaleController;
-          _view.CurrentContent = _currentController.ViewObject;
+          node.Controller = _currentController = _axisScaleController;
           break;
 
-        case "TitleAndFormat":
-          if (pageChanged)
-          {
-            _view.SelectTab(_currentPageName);
-            SetSecondaryChoiceToAxes();
-          }
-
-          _view.CurrentContent = _axisControl[_currentAxisID].AxisStyleCondView;
-          _currentController = _axisControl[_currentAxisID].AxisStyleCondController;
-
+        case TitleAndFormatTag:
+          node.Controller = _currentController = _axisControl[_currentAxisID].AxisStyleCondController;
+          node.ViewObject = _axisControl[_currentAxisID].AxisStyleCondView;
           break;
 
-        case "MajorLabels":
-          if (pageChanged)
-          {
-            _view.SelectTab(_currentPageName);
-            SetSecondaryChoiceToAxes();
-          }
-
-          _view.CurrentContent = _axisControl[_currentAxisID].MajorLabelCondView;
-          _currentController = _axisControl[_currentAxisID].MajorLabelCondController;
+        case MajorLabelsTag:
+          node.Controller = _currentController = _axisControl[_currentAxisID].MajorLabelCondController;
+          node.ViewObject = _axisControl[_currentAxisID].MajorLabelCondView;
 
           break;
 
-        case "MinorLabels":
-          if (pageChanged)
-          {
-            _view.SelectTab(_currentPageName);
-            SetSecondaryChoiceToAxes();
-          }
-
-          _view.CurrentContent = _axisControl[_currentAxisID].MinorLabelCondView;
-          _currentController = _axisControl[_currentAxisID].MinorLabelCondController;
+        case MinorLabelsTag:
+          node.Controller = _currentController = _axisControl[_currentAxisID].MinorLabelCondController;
+          node.ViewObject = _axisControl[_currentAxisID].MinorLabelCondView;
           break;
       }
     }
 
     private void SetSecondaryChoiceToUnique()
     {
-      _primaryChoice = LayerControllerTabType.Unique;
-      _view.InitializeSecondaryChoice(_listOfUniqueItem, _primaryChoice);
+      AreAxisButtonsVisible = false;
+      SelectedSecondaryChoice = null;
+      SecondaryChoices = _listOfUniqueItem;
+      SelectedSecondaryChoice = SecondaryCommonTag;
     }
 
     private void SetSecondaryChoiceToScales()
     {
-      _listOfScales.ClearSelectionsAll();
-      _listOfScales[_currentScale].IsSelected = true;
-
-      _primaryChoice = LayerControllerTabType.Scales;
-      _view.InitializeSecondaryChoice(_listOfScales, _primaryChoice);
+      AreAxisButtonsVisible = false;
+      SelectedSecondaryChoice = null;
+      SecondaryChoices = _listOfScales;
+      SelectedSecondaryChoice = _currentScale;
     }
 
     private void SetSecondaryChoiceToAxes()
     {
-      foreach (var item in _listOfAxes)
-        item.IsSelected = ((CSLineID)item.Tag) == _currentAxisID;
-
-      _primaryChoice = LayerControllerTabType.Axes;
-      _view.InitializeSecondaryChoice(_listOfAxes, _primaryChoice);
+      AreAxisButtonsVisible = true;
+      SelectedSecondaryChoice = null;
+      SecondaryChoices = _listOfAxes;
+      SelectedSecondaryChoice = _currentAxisID;
     }
 
     private void SetSecondaryChoiceToPlanes()
     {
-      _primaryChoice = LayerControllerTabType.Planes;
-      _view.InitializeSecondaryChoice(_listOfPlanes, _primaryChoice);
+      AreAxisButtonsVisible = false;
+      SelectedSecondaryChoice = null;
+      SecondaryChoices = _listOfPlanes;
+      SelectedSecondaryChoice = _currentPlaneID;
     }
 
-    public void EhView_PageChanged(string firstChoice)
+    public void EhCmdCreateOrMoveAxis(bool moveAxis)
     {
-      ApplyCurrentController(false);
-
-      _currentPageName = firstChoice;
-      SetCurrentTabController(true);
-    }
-
-    public void EhView_SecondChoiceChanged()
-    {
-      if (!ApplyCurrentController(false))
-        return;
-
-      if (_primaryChoice == LayerControllerTabType.Scales)
-      {
-        _currentScale = (int)_listOfScales.FirstSelectedNode.Tag;
-      }
-      else if (_primaryChoice == LayerControllerTabType.Axes)
-      {
-        _currentAxisID = (CSLineID)_listOfAxes.FirstSelectedNode.Tag;
-      }
-      else if (_primaryChoice == LayerControllerTabType.Planes)
-      {
-        _currentPlaneID = (CSPlaneID)_listOfPlanes.FirstSelectedNode.Tag;
-      }
-
-      SetCurrentTabController(false);
-    }
-
-    private void EhView_TabValidating(object sender, CancelEventArgs e)
-    {
-      if (!ApplyCurrentController(true))
-        e.Cancel = true;
-    }
-
-    public void EhView_CreateOrMoveAxis(bool moveAxis)
-    {
-      if (!ApplyCurrentController(false))
+      if (!ApplyCurrentController(false, false))
         return;
 
       var creationArgs = new AxisCreationArguments();
@@ -415,10 +473,34 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
 
       _currentAxisID = newIdentity;
       SetSecondaryChoiceToAxes();
-      SetCurrentTabController(false);
+      SetCurrentTabController();
     }
 
-    private bool ApplyCurrentController(bool force)
+    private void EhCmdDeleteAxis()
+    {
+      if (!ApplyCurrentController(false, false))
+        return;
+
+      if (_listOfAxes.Count <= 1)
+        return;
+
+      var axisID = _currentAxisID;
+      if (true == Current.Gui.YesNoMessageBox("Are you sure that you want to delete this axis?", "Confirmation", false))
+      {
+        if (true == _doc.AxisStyles.Remove(axisID))
+        {
+          _axisControl.Remove(axisID);
+          var axisItem = _listOfAxes.First(x => axisID != (CSLineID)(x.Tag));
+          axisItem.IsSelected = true;
+          _currentAxisID = (CSLineID)(axisItem.Tag);
+          _listOfAxes.RemoveWhere(x => axisID == (CSLineID)(x.Tag));
+          SetSecondaryChoiceToAxes();
+          SetCurrentTabController();
+        }
+      }
+    }
+
+    private bool ApplyCurrentController(bool force, bool disposeCurrentController)
     {
       if (_currentController is null)
         return true;
@@ -426,7 +508,7 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
       if (!force && object.ReferenceEquals(_currentController, _lastControllerApplied))
         return true;
 
-      if (!_currentController.Apply(false))
+      if (!_currentController.Apply(disposeCurrentController))
         return false;
       _lastControllerApplied = _currentController;
 
@@ -447,7 +529,7 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
 
     public static bool ShowDialog(DensityImageLegend layer)
     {
-      return ShowDialog(layer, "Scale", new CSLineID(0, 0));
+      return ShowDialog(layer, ScaleTag, new CSLineID(0, 0));
     }
 
     public static bool ShowDialog(DensityImageLegend layer, string currentPage)
@@ -478,7 +560,7 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
       if (layer is null)
         return false;
 
-      ShowDialog(layer, "Position");
+      ShowDialog(layer, PositionTag);
 
       return false;
     }

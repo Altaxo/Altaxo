@@ -111,8 +111,8 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
 
     private void EhAxisStyleControllerDirty(IMVCANController ctrl)
     {
-      MajorLabelCondController.AnnounceEnabledChanged(_doc.AreMajorLabelsEnabled);
-      MinorLabelCondController.AnnounceEnabledChanged(_doc.AreMinorLabelsEnabled);
+      MajorLabelCondController.IsConditionalViewEnabled = _doc.AreMajorLabelsEnabled;
+      MinorLabelCondController.IsConditionalViewEnabled = _doc.AreMinorLabelsEnabled;
     }
 
     private AxisLabelStyle CreateMajorLabel()

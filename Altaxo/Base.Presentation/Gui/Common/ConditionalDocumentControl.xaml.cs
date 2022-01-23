@@ -22,12 +22,6 @@
 
 #endregion Copyright
 
-#nullable disable warnings
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows;
 using System.Windows.Controls;
 
 namespace Altaxo.Gui.Common
@@ -40,37 +34,6 @@ namespace Altaxo.Gui.Common
     public ConditionalDocumentControl()
     {
       InitializeComponent();
-    }
-
-    private void EhEnabledChanged(object sender, RoutedEventArgs e)
-    {
-      if (ConditionalViewEnabledChanged is not null)
-        ConditionalViewEnabledChanged();
-    }
-
-    public bool IsConditionalViewEnabled
-    {
-      get
-      {
-        return true == _guiEnableState.IsChecked;
-      }
-      set
-      {
-        _guiEnableState.IsChecked = value;
-        _guiContentHost.IsEnabled = value;
-      }
-    }
-
-    public event Action? ConditionalViewEnabledChanged;
-
-    public object ConditionalView
-    {
-      set { _guiContentHost.Child = value as UIElement; }
-    }
-
-    public string EnablingText
-    {
-      set { _guiEnableState.Content = value; }
     }
   }
 }

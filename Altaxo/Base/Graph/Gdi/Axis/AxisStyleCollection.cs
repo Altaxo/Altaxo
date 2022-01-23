@@ -25,6 +25,7 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using Altaxo.Graph.Gdi.Shapes;
 using Altaxo.Main.Properties;
@@ -142,6 +143,17 @@ namespace Altaxo.Graph.Gdi.Axis
       }
     }
 
+    public bool Contains(CSLineID id)
+    {
+      return this[id] is not null;
+    }
+
+    public bool TryGetValue(CSLineID id, [MaybeNullWhen(false)] out AxisStyle value)
+    {
+      value = this[id];
+      return value is not null;
+    }
+
     public void Add(AxisStyle value)
     {
       if (value is not null)
@@ -226,10 +238,7 @@ namespace Altaxo.Graph.Gdi.Axis
       return prop;
     }
 
-    public bool Contains(CSLineID id)
-    {
-      return this[id] is not null;
-    }
+
 
     public IEnumerable<CSLineID> AxisStyleIDs
     {

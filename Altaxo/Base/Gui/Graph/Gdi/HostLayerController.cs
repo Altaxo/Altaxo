@@ -22,12 +22,9 @@
 
 #endregion Copyright
 
-using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using Altaxo.Collections;
-using Altaxo.Graph;
 using Altaxo.Graph.Gdi;
 
 namespace Altaxo.Gui.Graph.Gdi
@@ -36,7 +33,7 @@ namespace Altaxo.Gui.Graph.Gdi
 
   public interface IHostLayerView : IDataContextAwareView
   {
-   }
+  }
 
   #endregion Interfaces
 
@@ -61,31 +58,6 @@ namespace Altaxo.Gui.Graph.Gdi
     public const string PositionTag = "Position";
     public const string HostGridTag = "HostGrid";
     public const string GraphItemsTag = "GraphicItems";
-
-
-    class MyListNode: SelectableListNode
-    {
-      public MyListNode(string text, object tag, bool isSelected) : base(text, tag, isSelected) { }
-
-      private IMVCANController? _Controller;
-
-      public IMVCANController? Controller
-      {
-        get => _Controller;
-        set
-        {
-          if (!(_Controller == value))
-          {
-            _Controller = value;
-            OnPropertyChanged(nameof(Controller));
-            OnPropertyChanged(nameof(ViewObject));
-          }
-        }
-      }
-
-      public object? ViewObject => Controller?.ViewObject;
-    }
-
 
     public HostLayerController(HostLayer layer)
       : this(layer, PositionTag)
@@ -142,9 +114,9 @@ namespace Altaxo.Gui.Graph.Gdi
         };
 
         Tabs.Clear();
-        Tabs.Add(new MyListNode("GraphicItems", GraphItemsTag, true));
-        Tabs.Add(new MyListNode("Position", PositionTag, false));
-        Tabs.Add(new MyListNode("HostGrid", HostGridTag, false));
+        Tabs.Add(new SelectableListNodeWithController("GraphicItems", GraphItemsTag, true));
+        Tabs.Add(new SelectableListNodeWithController("Position", PositionTag, false));
+        Tabs.Add(new SelectableListNodeWithController("HostGrid", HostGridTag, false));
         SelectedTab = _initialTab;
       }
     }
@@ -170,7 +142,7 @@ namespace Altaxo.Gui.Graph.Gdi
     {
       ThrowIfNotInitialized();
 
-      if (Tabs.FirstOrDefault(n => (string?)(n.Tag) == SelectedTab) is not MyListNode node)
+      if (Tabs.FirstOrDefault(n => (string?)(n.Tag) == SelectedTab) is not SelectableListNodeWithController node)
         return;
 
       switch (SelectedTab)
@@ -204,7 +176,7 @@ namespace Altaxo.Gui.Graph.Gdi
           break;
       }
     }
-    
+
     private bool ApplyCurrentController(bool force, bool disposeController)
     {
       ThrowIfNotInitialized();

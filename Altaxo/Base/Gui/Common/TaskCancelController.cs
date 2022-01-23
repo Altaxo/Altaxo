@@ -84,6 +84,22 @@ namespace Altaxo.Gui.Common
     public bool IsAbortVisible => _cancellationRequested && _interruptRequested;
 
 
+    private string _title = "Waiting for task completion ...";
+
+    public string Title
+    {
+      get => _title;
+      set
+      {
+        if (!(_title == value))
+        {
+          _title = value;
+          OnPropertyChanged(nameof(Title));
+        }
+      }
+    }
+
+
     bool _isCompleted;
 
     public bool IsCompleted
@@ -119,7 +135,14 @@ namespace Altaxo.Gui.Common
     double _progressValue;
     public double ProgressValue
     {
-      get => _progressValue;
+      get
+      {
+        if (_monitor is IExternalDrivenBackgroundMonitor edbm)
+          edbm.SetShouldReportNow();
+
+        return _progressValue;
+
+      }
       set
       {
         if (!(_progressValue == value))
@@ -133,7 +156,13 @@ namespace Altaxo.Gui.Common
     string _progressText = "An operation has not yet finished. If you feel that the operation takes unusual long time, you can interrupt it.";
     public string ProgressText
     {
-      get => _progressText;
+      get
+      {
+        if (_monitor is IExternalDrivenBackgroundMonitor edbm)
+          edbm.SetShouldReportNow();
+
+        return _progressText;
+      }
       set
       {
         if (!(_progressText == value))
