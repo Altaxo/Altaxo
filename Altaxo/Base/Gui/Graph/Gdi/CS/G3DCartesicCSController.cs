@@ -22,22 +22,43 @@
 
 #endregion Copyright
 
+#nullable disable
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Windows.Controls;
+using Altaxo.Graph.Gdi.CS;
 
 namespace Altaxo.Gui.Graph.Gdi.CS
 {
-  /// <summary>
-  /// Interaction logic for G2DCartesicCSControl.xaml
-  /// </summary>
-  public partial class G2DCartesicCSControl : UserControl, IG2DCartesicCSView
+  #region Interfaces
+
+  public interface IG3DCartesicCSView : IDataContextAwareView // view doesn't exist because there is nothing to show
   {
-    public G2DCartesicCSControl()
+  }
+
+  #endregion Interfaces
+
+  [UserControllerForObject(typeof(G3DCartesicCoordinateSystem), 101)]
+  [ExpectedTypeOfView(typeof(IG3DCartesicCSView))]
+  public class G3DCartesicCSController : MVCANControllerEditOriginalDocBase<G3DCartesicCoordinateSystem, IG3DCartesicCSView>
+  {
+    public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
-      InitializeComponent();
+      yield break;
+    }
+
+    public G3DCartesicCSController()
+    {
+    }
+
+    public G3DCartesicCSController(G2DCartesicCoordinateSystem doc)
+    {
+      InitializeDocument(doc);
+    }
+
+    public override bool Apply(bool disposeController)
+    {
+      return ApplyEnd(true, disposeController);
     }
   }
 }

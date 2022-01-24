@@ -22,11 +22,6 @@
 
 #endregion Copyright
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows;
 using System.Windows.Controls;
 
 namespace Altaxo.Gui.Common
@@ -40,34 +35,5 @@ namespace Altaxo.Gui.Common
     {
       InitializeComponent();
     }
-
-    private void EhSelectionChangeCommitted(object sender, SelectionChangedEventArgs e)
-    {
-      e.Handled = true;
-      GuiHelper.SynchronizeSelectionFromGui(_cbTypeChoice);
-      if (TypeChoiceChanged is not null)
-        TypeChoiceChanged(this, EventArgs.Empty);
-    }
-
-    #region ITypeAndInstanceView
-
-    public string TypeLabel
-    {
-      set { _lblCSType.Content = value; }
-    }
-
-    public void InitializeTypeNames(Collections.SelectableListNodeList list)
-    {
-      GuiHelper.Initialize(_cbTypeChoice, list);
-    }
-
-    public void SetInstanceControl(object instanceControl)
-    {
-      _instanceHost.Child = instanceControl as UIElement;
-    }
-
-    public event EventHandler? TypeChoiceChanged;
   }
-
-  #endregion ITypeAndInstanceView
 }

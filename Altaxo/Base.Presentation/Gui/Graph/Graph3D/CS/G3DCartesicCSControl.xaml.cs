@@ -40,52 +40,5 @@ namespace Altaxo.Gui.Graph.Graph3D.CS
       InitializeComponent();
     }
 
-    public bool ExchangeXY
-    {
-      get
-      {
-        return _chkExchangeXY.IsChecked == true;
-      }
-      set
-      {
-        _chkExchangeXY.IsChecked = value;
-      }
-    }
-
-    public bool ReverseX
-    {
-      get
-      {
-        return _chkXReverse.IsChecked == true;
-      }
-      set
-      {
-        _chkXReverse.IsChecked = value;
-      }
-    }
-
-    public bool ReverseY
-    {
-      get
-      {
-        return _chkYReverse.IsChecked == true;
-      }
-      set
-      {
-        _chkYReverse.IsChecked = value;
-      }
-    }
-
-    public bool ReverseZ
-    {
-      get
-      {
-        return _chkZReverse.IsChecked == true;
-      }
-      set
-      {
-        _chkZReverse.IsChecked = value;
-      }
-    }
   }
 }

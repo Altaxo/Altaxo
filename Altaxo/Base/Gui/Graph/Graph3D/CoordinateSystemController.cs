@@ -25,7 +25,6 @@
 #nullable disable
 using System;
 using System.Collections.Generic;
-using System.Text;
 using Altaxo.Collections;
 using Altaxo.Graph.Graph3D;
 using Altaxo.Gui.Common;
@@ -35,11 +34,10 @@ namespace Altaxo.Gui.Graph.Graph3D
 {
   [UserControllerForObject(typeof(G3DCoordinateSystem))]
   [ExpectedTypeOfView(typeof(ITypeAndInstanceView))]
-  public class CoordinateSystemController : MVCANDControllerEditImmutableDocBase<G3DCoordinateSystem, ITypeAndInstanceView>
+  public class CoordinateSystemController : MVCANDControllerEditImmutableDocBase<G3DCoordinateSystem, ITypeAndInstanceView>, ITypeAndInstanceController
   {
     private IMVCAController _instanceController;
 
-    private SelectableListNodeList _choiceList;
 
     /// <summary>Holds all instantiable subtypes of G2DCoordinateSystem</summary>
     private Type[] _cosSubTypes;
@@ -49,15 +47,55 @@ namespace Altaxo.Gui.Graph.Graph3D
       yield return new ControllerAndSetNullMethod(_instanceController, () => _instanceController = null);
     }
 
+    #region Bindings
+
+    public string TypeLabel => "Type:";
+
+    private SelectableListNodeList _typeNames = new SelectableListNodeList();
+
+    public SelectableListNodeList TypeNames
+    {
+      get => _typeNames;
+      set
+      {
+        if (!(_typeNames == value))
+        {
+          _typeNames = value;
+          OnPropertyChanged(nameof(TypeNames));
+        }
+      }
+    }
+
+    private Type _selectedType;
+
+    public Type SelectedType
+    {
+      get => _selectedType;
+      set
+      {
+        if (!(_selectedType == value))
+        {
+          _selectedType = value;
+          EhTypeChoiceChanged(value);
+          OnPropertyChanged(nameof(SelectedType));
+
+        }
+      }
+    }
+
+    public object? InstanceView => _instanceController?.ViewObject;
+
+
+    #endregion
+
+
     public override void Dispose(bool isDisposing)
     {
-      _choiceList = null;
+      _typeNames = null;
       _cosSubTypes = null;
 
       base.Dispose(isDisposing);
     }
-
-    #region IMVCController Members
 
     protected override void Initialize(bool initData)
     {
@@ -69,32 +107,23 @@ namespace Altaxo.Gui.Graph.Graph3D
         if (_cosSubTypes is null)
           _cosSubTypes = ReflectionService.GetNonAbstractSubclassesOf(typeof(G3DCoordinateSystem));
 
-        if (_choiceList is null)
-          _choiceList = new SelectableListNodeList();
-        _choiceList.Clear();
+        _typeNames.Clear();
         foreach (Type t in _cosSubTypes)
-          _choiceList.Add(new SelectableListNode(Current.Gui.GetUserFriendlyClassName(t), t, t == _doc.GetType()));
-      }
-
-      if (_view is not null)
-      {
-        // look for a controller-control
-        _view.TypeLabel = "Type:";
-        _view.InitializeTypeNames(_choiceList);
+          _typeNames.Add(new SelectableListNode(Current.Gui.GetUserFriendlyClassName(t), t, t == _doc.GetType()));
+        OnPropertyChanged(nameof(TypeNames));
+        SelectedType = _doc.GetType();
 
         // To avoid looping when a dedicated controller is unavailable, we first instantiate the controller alone and compare the types
         _instanceController = (IMVCAController)Current.Gui.GetController(new object[] { _doc }, typeof(IMVCAController), UseDocument.Directly);
         if (_instanceController is not null && (_instanceController.GetType() != GetType()))
         {
           Current.Gui.FindAndAttachControlTo(_instanceController);
-          if (_instanceController.ViewObject is not null)
-            _view.SetInstanceControl(_instanceController.ViewObject);
         }
         else
         {
           _instanceController = null;
-          _view.SetInstanceControl(null);
         }
+        OnPropertyChanged(nameof(InstanceView));
       }
     }
 
@@ -107,36 +136,16 @@ namespace Altaxo.Gui.Graph.Graph3D
       return ApplyEnd(result, disposeController);
     }
 
-    protected override void AttachView()
+    private void EhTypeChoiceChanged(Type t)
     {
-      base.AttachView();
-      _view.TypeChoiceChanged += EhTypeChoiceChanged;
-    }
-
-    protected override void DetachView()
-    {
-      _view.TypeChoiceChanged -= EhTypeChoiceChanged;
-      base.DetachView();
-    }
-
-    private void EhTypeChoiceChanged(object sender, EventArgs e)
-    {
-      var sel = _choiceList.FirstSelectedNode;
-
-      if (sel is not null)
+      if (_doc.GetType() != t)
       {
-        var t = (System.Type)sel.Tag;
-        if (_doc.GetType() != t)
-        {
-          _doc = (G3DCoordinateSystem)Activator.CreateInstance((System.Type)sel.Tag);
+        _doc = (G3DCoordinateSystem)Activator.CreateInstance(t);
 
-          OnMadeDirty(); // chance for controller up in hierarchy to catch new instance
+        OnMadeDirty(); // chance for controller up in hierarchy to catch new instance
 
-          Initialize(true);
-        }
+        Initialize(true);
       }
     }
-
-    #endregion IMVCController Members
   }
 }

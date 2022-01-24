@@ -583,7 +583,7 @@ namespace Altaxo.Gui.Graph.Gdi
       if (object.ReferenceEquals(_currentController, _coordinateController))
       {
         _doc.CoordinateSystem = (G2DCoordinateSystem)_coordinateController.ModelObject;
-        SetCoordinateSystemDependentObjects();
+        SetCoordinateSystemDependentObjects(); // ToDo why does this take so long execution time?
       }
 
       if (object.ReferenceEquals(_currentController, _layerPositionController))

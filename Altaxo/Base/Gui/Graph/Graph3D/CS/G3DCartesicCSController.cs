@@ -34,13 +34,6 @@ namespace Altaxo.Gui.Graph.Graph3D.CS
 
   public interface IG3DCartesicCSView
   {
-    bool ExchangeXY { get; set; }
-
-    bool ReverseX { get; set; }
-
-    bool ReverseY { get; set; }
-
-    bool ReverseZ { get; set; }
   }
 
   #endregion Interfaces
@@ -63,7 +56,68 @@ namespace Altaxo.Gui.Graph.Graph3D.CS
       InitializeDocument(doc);
     }
 
-    #region IMVCController Members
+    #region Bindings
+
+    private bool _exchangeXY;
+
+    public bool ExchangeXY
+    {
+      get => _exchangeXY;
+      set
+      {
+        if (!(_exchangeXY == value))
+        {
+          _exchangeXY = value;
+          OnPropertyChanged(nameof(ExchangeXY));
+        }
+      }
+    }
+    private bool _reverseX;
+
+    public bool ReverseX
+    {
+      get => _reverseX;
+      set
+      {
+        if (!(_reverseX == value))
+        {
+          _reverseX = value;
+          OnPropertyChanged(nameof(ReverseX));
+        }
+      }
+    }
+    private bool _reverseY;
+
+    public bool ReverseY
+    {
+      get => _reverseY;
+      set
+      {
+        if (!(_reverseY == value))
+        {
+          _reverseY = value;
+          OnPropertyChanged(nameof(ReverseY));
+        }
+      }
+    }
+
+    private bool _reverseZ;
+
+    public bool ReverseZ
+    {
+      get => _reverseZ;
+      set
+      {
+        if (!(_reverseZ == value))
+        {
+          _reverseZ = value;
+          OnPropertyChanged(nameof(ReverseZ));
+        }
+      }
+    }
+
+
+    #endregion
 
     protected override void Initialize(bool initData)
     {
@@ -71,23 +125,21 @@ namespace Altaxo.Gui.Graph.Graph3D.CS
 
       if (_view is not null)
       {
-        _view.ExchangeXY = _doc.IsXYInterchanged;
-        _view.ReverseX = _doc.IsXReversed;
-        _view.ReverseY = _doc.IsYReversed;
-        _view.ReverseZ = _doc.IsZReversed;
+        ExchangeXY = _doc.IsXYInterchanged;
+        ReverseX = _doc.IsXReversed;
+        ReverseY = _doc.IsYReversed;
+        ReverseZ = _doc.IsZReversed;
       }
     }
 
     public override bool Apply(bool disposeController)
     {
       _doc = _doc.WithXYInterchangedAndXYZReversed(
-      isXYInterchanged: _view.ExchangeXY,
-      isXReversed: _view.ReverseX,
-      isYReversed: _view.ReverseY,
-      isZReversed: _view.ReverseZ);
+      isXYInterchanged: ExchangeXY,
+      isXReversed: ReverseX,
+      isYReversed: ReverseY,
+      isZReversed: ReverseZ);
       return ApplyEnd(true, disposeController);
     }
-
-    #endregion IMVCController Members
   }
 }

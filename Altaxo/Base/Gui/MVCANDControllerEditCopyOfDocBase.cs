@@ -105,7 +105,9 @@ namespace Altaxo.Gui
     protected virtual void OnMadeDirty()
     {
       if (!_suppressDirtyEvent.IsSuspended && MadeDirty is not null)
+      {
         MadeDirty(this);
+      }
     }
 
     /// <summary>

@@ -24,23 +24,32 @@
 
 #nullable enable
 using System;
+using System.ComponentModel;
+using Altaxo.Collections;
 
 namespace Altaxo.Gui.Common
 {
-  using Altaxo.Collections;
-
-  #region Interfaces
-
-  public interface ITypeAndInstanceView
+  public interface ITypeAndInstanceView : IDataContextAwareView
   {
-    string TypeLabel { set; }
-
-    void InitializeTypeNames(SelectableListNodeList list);
-
-    void SetInstanceControl(object instanceControl);
-
-    event EventHandler? TypeChoiceChanged;
   }
 
-  #endregion Interfaces
+  public interface ITypeAndInstanceController : INotifyPropertyChanged
+  {
+    /// <summary>
+    /// Gets the label text associated with the type choice combo box.
+    /// </summary>
+    public string TypeLabel { get; }
+
+    /// <summary>
+    /// Gets the contents of the type choice combo box. The tags of the items must be of type <see cref="System.Type"/>
+    /// </summary>
+    /// <value>
+    /// The type names.
+    /// </value>
+    public SelectableListNodeList TypeNames { get; }
+
+    public Type SelectedType { get; set; }
+
+    public object? InstanceView { get; }
+  }
 }

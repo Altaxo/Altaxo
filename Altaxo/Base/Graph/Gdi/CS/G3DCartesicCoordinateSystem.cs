@@ -33,7 +33,7 @@ using Altaxo.Geometry;
 namespace Altaxo.Graph.Gdi.CS
 {
   [DisplayName("${res:ClassNames.Altaxo.Graph.Graph3D.CS.G3DCartesicCoordinateSystem}")]
-  internal class G3DCartesicCoordinateSystem : G2DCoordinateSystem
+   public class G3DCartesicCoordinateSystem : G2DCoordinateSystem
   {
     private struct TMatrix
     {

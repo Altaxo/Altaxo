@@ -48,23 +48,71 @@ namespace Altaxo.Gui.Graph.Gdi.CS
       InitializeDocument(doc);
     }
 
+    #region Bindings
+
+    private bool _exchangeXY;
+
+    public bool ExchangeXY
+    {
+      get => _exchangeXY;
+      set
+      {
+        if (!(_exchangeXY == value))
+        {
+          _exchangeXY = value;
+          OnPropertyChanged(nameof(ExchangeXY));
+        }
+      }
+    }
+    private bool _reverseX;
+
+    public bool ReverseX
+    {
+      get => _reverseX;
+      set
+      {
+        if (!(_reverseX == value))
+        {
+          _reverseX = value;
+          OnPropertyChanged(nameof(ReverseX));
+        }
+      }
+    }
+    private bool _reverseY;
+
+    public bool ReverseY
+    {
+      get => _reverseY;
+      set
+      {
+        if (!(_reverseY == value))
+        {
+          _reverseY = value;
+          OnPropertyChanged(nameof(ReverseY));
+        }
+      }
+    }
+
+    #endregion
+
+
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
 
-      if (_view is not null)
+      if (initData)
       {
-        _view.ExchangeXY = _doc.IsXYInterchanged;
-        _view.ReverseX = _doc.IsXReverse;
-        _view.ReverseY = _doc.IsYReverse;
+        ExchangeXY = _doc.IsXYInterchanged;
+        ReverseX = _doc.IsXReverse;
+        ReverseY = _doc.IsYReverse;
       }
     }
 
     public override bool Apply(bool disposeController)
     {
-      _doc.IsXYInterchanged = _view.ExchangeXY;
-      _doc.IsXReverse = _view.ReverseX;
-      _doc.IsYReverse = _view.ReverseY;
+      _doc.IsXYInterchanged = ExchangeXY;
+      _doc.IsXReverse = ReverseX;
+      _doc.IsYReverse = ReverseY;
       return ApplyEnd(true, disposeController);
     }
   }
