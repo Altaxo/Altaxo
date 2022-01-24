@@ -269,6 +269,21 @@ namespace Altaxo.Geometry
       );
     }
 
+    public VectorD4D Transform(VectorD4D p)
+    {
+      double x = p.X;
+      double y = p.Y;
+      double z = p.Z;
+      double w = p.W;
+
+      return new VectorD4D(
+     (x * M11 + y * M21 + z * M31 + w * M41),
+     (x * M12 + y * M22 + z * M32 + w * M42),
+     (x * M13 + y * M23 + z * M33 + w * M43),
+     (x * M14 + y * M24 + z * M34 + w * M44)
+     );
+    }
+
     /// <summary>
     /// Returns a new matrix based on the current matrix, but onto which another transformation was prepended.
     /// </summary>
