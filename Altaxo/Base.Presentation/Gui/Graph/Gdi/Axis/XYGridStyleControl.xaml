@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-						 xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing"
+						 xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing" xmlns:axis="clr-namespace:Altaxo.Gui.Graph.Gdi.Axis;assembly=AltaxoBase" d:DataContext="{d:DesignInstance Type=axis:XYGridStyleController}"
              mc:Ignorable="d">
 	<UserControl.Resources>
 		<LinearGradientBrush x:Key="HorzSeparatorBrush" StartPoint="0,0" EndPoint="0,1">
@@ -25,9 +25,9 @@
 	<GroupBox>
 		<GroupBox.Header>
 			<StackPanel Orientation="Horizontal">
-				<Label x:Name="_gridLabel" VerticalAlignment="Center" >Enable grid:</Label>
-				<CheckBox x:Name="_chkEnable" VerticalAlignment="Center" Checked="EhEnableCheckChanged" Unchecked="EhEnableCheckChanged"></CheckBox>
-			</StackPanel>
+				<Label VerticalAlignment="Center" >Enable grid:</Label>
+                <CheckBox VerticalAlignment="Center" Content="         " IsChecked="{Binding ShowGrid, Mode=TwoWay}" />
+            </StackPanel>
 		</GroupBox.Header>
 
 		<Grid>
@@ -46,11 +46,15 @@
 			<Rectangle Grid.Row="1" Grid.ColumnSpan="4" Style="{StaticResource HorzSeparatorStyle}" />
 			<Rectangle Grid.Row="3" Grid.ColumnSpan="4" Style="{StaticResource HorzSeparatorStyle}" />
 
-			<CheckBox Grid.Column="0" Grid.Row="2"  x:Name="_chkShowZeroOnly" Checked="EhShowZeroOnlyCheckChanged" Unchecked="EhShowZeroOnlyCheckChanged">At zero only</CheckBox>
-			<CheckBox Grid.Column="1" Grid.Row="2" x:Name="_chkShowMinor" Checked="EhShowMinorCheckChanged" Unchecked="EhShowMinorCheckChanged">Show minor grid</CheckBox>
+            <CheckBox Grid.Column="0" Grid.Row="2" Content="At zero only" IsChecked="{Binding ShowZeroOnly, Mode=TwoWay}" IsEnabled="{Binding ShowGrid}"/>
+            <CheckBox Grid.Column="1" Grid.Row="2" Content="Show minor grid" IsChecked="{Binding ShowMinorGrid, Mode=TwoWay}" IsEnabled="{Binding EnableMinorCheck}"/>
 
-			<axogcd:ColorTypeThicknessPenControl Grid.Column="0" Grid.Row="4" x:Name="_majorStyle" />
-			<axogcd:ColorTypeThicknessPenControl Grid.Column="1" Grid.Row="4" x:Name="_minorStyle" />
-		</Grid>
+            <Border Grid.Column="0" Grid.Row="4" IsEnabled="{Binding EnableMajorView}">
+            <axogcd:ColorTypeThicknessPenControl  DataContext="{Binding MajorController}" />
+            </Border>
+            <Border Grid.Column="1" Grid.Row="4" IsEnabled="{Binding EnableMinorView}">
+                <axogcd:ColorTypeThicknessPenControl  DataContext="{Binding MinorController}" />
+            </Border>
+        </Grid>
 	</GroupBox>
 </UserControl>

@@ -42,7 +42,7 @@
 		<Rectangle Grid.Row="3" Grid.ColumnSpan="2" Style="{StaticResource HorzSeparatorStyle}" />
 
 		<Label  Grid.Column="0" Grid.Row="0">Pen brush:</Label>
-        <axogcd:BrushComboBox Grid.Column="1" Grid.Row="0" SelectedBrush="{Binding Brush}" ShowPlotColorsOnly="{Binding ShowPlotColorsOnly}" CustomPenCommand="{Binding CmdShowCustomPen}"/>
+        <axogcd:BrushComboBox Grid.Column="1" Grid.Row="0" SelectedBrush="{Binding Brush, Mode=TwoWay}" ShowPlotColorsOnly="{Binding ShowPlotColorsOnly}" CustomPenCommand="{Binding CmdShowCustomPen}"/>
         <Label  Grid.Column="0" Grid.Row="2">Style:</Label>
 		<axogdd:DashPatternComboBox Grid.Column="1" Grid.Row="2" SelectedItem="{Binding DashPattern, Mode=TwoWay}" />
 		<Label  Grid.Column="0" Grid.Row="4">Thickness:</Label>

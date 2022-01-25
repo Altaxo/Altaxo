@@ -36,81 +36,9 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
   /// </summary>
   public partial class XYGridStyleControl : UserControl, IXYGridStyleView
   {
-    private NotifyChangedValue<bool> _isGridStyleEnabled = new NotifyChangedValue<bool>();
-    private NotifyChangedValue<string> _headerTitle = new NotifyChangedValue<string>();
-
     public XYGridStyleControl()
     {
       InitializeComponent();
     }
-
-    private void EhEnableCheckChanged(object sender, RoutedEventArgs e)
-    {
-      if (ShowGridChanged is not null)
-        ShowGridChanged(true == _chkEnable.IsChecked);
-    }
-
-    private void EhShowZeroOnlyCheckChanged(object sender, RoutedEventArgs e)
-    {
-      if (ShowZeroOnlyChanged is not null)
-        ShowZeroOnlyChanged(true == _chkShowZeroOnly.IsChecked);
-    }
-
-    private void EhShowMinorCheckChanged(object sender, RoutedEventArgs e)
-    {
-      if (ShowMinorGridChanged is not null)
-        ShowMinorGridChanged(true == _chkShowMinor.IsChecked);
-    }
-
-    #region IXYGridStyleView
-
-    public event Action<bool>? ShowGridChanged;
-
-    public event Action<bool>? ShowMinorGridChanged;
-
-    public event Action<bool>? ShowZeroOnlyChanged;
-
-    public void InitializeBegin()
-    {
-    }
-
-    public void InitializeEnd()
-    {
-    }
-
-    public void InitializeMajorGridStyle(Common.Drawing.IColorTypeThicknessPenController controller)
-    {
-      controller.ViewObject = _majorStyle;
-    }
-
-    public void InitializeMinorGridStyle(Common.Drawing.IColorTypeThicknessPenController controller)
-    {
-      controller.ViewObject = _minorStyle;
-    }
-
-    public void InitializeShowGrid(bool value)
-    {
-      _chkEnable.IsChecked = value;
-    }
-
-    public void InitializeShowMinorGrid(bool value)
-    {
-      _chkShowMinor.IsChecked = value;
-    }
-
-    public void InitializeShowZeroOnly(bool value)
-    {
-      _chkShowZeroOnly.IsChecked = value;
-    }
-
-    public void InitializeElementEnabling(bool majorstyle, bool minorstyle, bool showminor, bool showzeroonly)
-    {
-      _majorStyle.IsEnabled = majorstyle;
-      _minorStyle.IsEnabled = minorstyle;
-      _chkShowMinor.IsEnabled = showminor;
-      _chkShowZeroOnly.IsEnabled = showzeroonly;
-    }
-
-    #endregion IXYGridStyleView
   }
 }
