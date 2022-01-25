@@ -23,36 +23,45 @@
 #endregion Copyright
 
 #nullable disable
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Windows.Input;
 using Altaxo.Collections;
 using Altaxo.Graph.Gdi.Shapes;
 
 namespace Altaxo.Gui.Graph.Gdi.Shapes
 {
-  public interface IGraphicItemsView
+  public interface IGraphicItemsView : IDataContextAwareView
   {
-    SelectableListNodeList ItemsList { set; }
-
-    event Action SelectedItemsUp;
-
-    event Action SelectedItemsDown;
-
-    event Action SelectedItemsRemove;
   }
 
   [UserControllerForObject(typeof(GraphicCollection))]
   [ExpectedTypeOfView(typeof(IGraphicItemsView))]
   public class GraphicItemsController : MVCANControllerEditCopyOfDocBase<GraphicCollection, IGraphicItemsView>
   {
-    private SelectableListNodeList _itemsList;
+    private SelectableListNodeList _itemsList = new();
 
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
     }
+
+    public GraphicItemsController()
+    {
+      CmdSelectedItemsUp = new RelayCommand(EhSelectedItemsUp);
+      CmdSelectedItemsDown = new RelayCommand(EhSelectedItemsDown);
+      CmdSelectedItemsRemove = new RelayCommand(EhSelectedItemsRemove);
+    }
+
+    #region Bindings
+
+    public ICommand CmdSelectedItemsUp { get; }
+    public ICommand CmdSelectedItemsDown { get; }
+    public ICommand CmdSelectedItemsRemove { get; }
+
+    public SelectableListNodeList ItemsList => _itemsList;
+
+
+    #endregion
 
     public override void Dispose(bool isDisposing)
     {
@@ -66,17 +75,13 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
 
       if (initData)
       {
-        _itemsList = new SelectableListNodeList();
+        _itemsList.Clear();
 
         foreach (var item in _doc)
         {
           var node = new SelectableListNode(item.ToString(), item, false);
           _itemsList.Add(node);
         }
-      }
-      if (_view is not null)
-      {
-        _view.ItemsList = _itemsList;
       }
     }
 
@@ -91,24 +96,6 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
         }
       }
       return ApplyEnd(true, disposeController);
-    }
-
-    protected override void AttachView()
-    {
-      base.AttachView();
-
-      _view.SelectedItemsUp += EhSelectedItemsUp;
-      _view.SelectedItemsDown += EhSelectedItemsDown;
-      _view.SelectedItemsRemove += EhSelectedItemsRemove;
-    }
-
-    protected override void DetachView()
-    {
-      _view.SelectedItemsUp -= EhSelectedItemsUp;
-      _view.SelectedItemsDown -= EhSelectedItemsDown;
-      _view.SelectedItemsRemove -= EhSelectedItemsRemove;
-
-      base.DetachView();
     }
 
     private void EhSelectedItemsRemove()

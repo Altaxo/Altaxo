@@ -169,6 +169,10 @@ namespace Altaxo.Gui
     /// </summary>
     protected virtual void AttachView()
     {
+      if (_view is IDataContextAwareView view)
+      {
+        view.DataContext = this;
+      }
     }
 
     /// <summary>
@@ -176,6 +180,10 @@ namespace Altaxo.Gui
     /// </summary>
     protected virtual void DetachView()
     {
+      if (_view is IDataContextAwareView view)
+      {
+        view.DataContext = null;
+      }
     }
 
 

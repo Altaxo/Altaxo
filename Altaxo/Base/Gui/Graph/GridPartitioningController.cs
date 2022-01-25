@@ -23,7 +23,6 @@
 #endregion Copyright
 
 #nullable disable
-using System;
 using System.Collections.ObjectModel;
 using Altaxo.Geometry;
 using Altaxo.Graph;
@@ -33,33 +32,14 @@ using AUL = Altaxo.Units.Length;
 
 namespace Altaxo.Gui.Graph
 {
-  public interface IGridPartitioningView
+  public interface IGridPartitioningView : IDataContextAwareView
   {
-    QuantityWithUnitGuiEnvironment XPartitionEnvironment { set; }
-
-    QuantityWithUnitGuiEnvironment YPartitionEnvironment { set; }
-
-    /// <summary>Sets the default x quantity, i.e. the quantity that is used if the user inserts a new item in the XPartition.</summary>
-    DimensionfulQuantity DefaultXQuantity { set; }
-
-    /// <summary>Sets the default y quantity, i.e. the quantity that is used if the user inserts a new item in the YPartition.</summary>
-    DimensionfulQuantity DefaultYQuantity { set; }
-
-    ObservableCollection<DimensionfulQuantity> ColumnCollection { set; }
-
-    ObservableCollection<DimensionfulQuantity> RowCollection { set; }
   }
 
   [ExpectedTypeOfView(typeof(IGridPartitioningView))]
   [UserControllerForObject(typeof(GridPartitioning))]
   public class GridPartitioningController : MVCANControllerEditOriginalDocBase<GridPartitioning, IGridPartitioningView>
   {
-    private ObservableCollection<DimensionfulQuantity> _columnCollection;
-    private ObservableCollection<DimensionfulQuantity> _rowCollection;
-
-    private QuantityWithUnitGuiEnvironment _xSizeEnvironment;
-    private QuantityWithUnitGuiEnvironment _ySizeEnvironment;
-
     private ChangeableRelativePercentUnit _percentLayerXSizeUnit = new ChangeableRelativePercentUnit("Relative X-Size", "%", new DimensionfulQuantity(1, AUL.Point.Instance));
     private ChangeableRelativePercentUnit _percentLayerYSizeUnit = new ChangeableRelativePercentUnit("Relative Y-Size", "%", new DimensionfulQuantity(1, AUL.Point.Instance));
 
@@ -70,10 +50,54 @@ namespace Altaxo.Gui.Graph
       yield break;
     }
 
+    #region Bindings
+
+    public ObservableCollection<DimensionfulQuantity> ColumnCollection { get; } = new();
+
+    public ObservableCollection<DimensionfulQuantity> RowCollection { get; } = new();
+
+    private QuantityWithUnitGuiEnvironment _xSizeEnvironment;
+
+    public QuantityWithUnitGuiEnvironment XSizeEnvironment
+    {
+      get => _xSizeEnvironment;
+      set
+      {
+        if (!(_xSizeEnvironment == value))
+        {
+          _xSizeEnvironment = value;
+          OnPropertyChanged(nameof(XSizeEnvironment));
+        }
+      }
+    }
+    private QuantityWithUnitGuiEnvironment _ySizeEnvironment;
+
+    public QuantityWithUnitGuiEnvironment YSizeEnvironment
+    {
+      get => _ySizeEnvironment;
+      set
+      {
+        if (!(_ySizeEnvironment == value))
+        {
+          _ySizeEnvironment = value;
+          OnPropertyChanged(nameof(YSizeEnvironment));
+        }
+      }
+    }
+
+    /// <summary>Sets the default x quantity, i.e. the quantity that is used if the user inserts a new item in the XPartition.</summary>
+    public DimensionfulQuantity DefaultXQuantity { get; set; }
+
+    /// <summary>Sets the default y quantity, i.e. the quantity that is used if the user inserts a new item in the YPartition.</summary>
+    public DimensionfulQuantity DefaultYQuantity { get; set; }
+
+
+    #endregion
+
     public override void Dispose(bool isDisposing)
     {
-      _columnCollection = null;
-      _rowCollection = null;
+      ColumnCollection.Clear();
+      RowCollection.Clear();
       _xSizeEnvironment = null;
       _ySizeEnvironment = null;
       _percentLayerXSizeUnit = null;
@@ -107,27 +131,20 @@ namespace Altaxo.Gui.Graph
       {
         _percentLayerXSizeUnit.ReferenceQuantity = new DimensionfulQuantity(_parentLayerSize.X, AUL.Point.Instance);
         _percentLayerYSizeUnit.ReferenceQuantity = new DimensionfulQuantity(_parentLayerSize.Y, AUL.Point.Instance);
-        _xSizeEnvironment = new QuantityWithUnitGuiEnvironment(GuiLengthUnits.Collection, _percentLayerXSizeUnit);
-        _ySizeEnvironment = new QuantityWithUnitGuiEnvironment(GuiLengthUnits.Collection, _percentLayerYSizeUnit);
+        XSizeEnvironment = new QuantityWithUnitGuiEnvironment(GuiLengthUnits.Collection, _percentLayerXSizeUnit);
+        YSizeEnvironment = new QuantityWithUnitGuiEnvironment(GuiLengthUnits.Collection, _percentLayerYSizeUnit);
 
-        _columnCollection = new ObservableCollection<DimensionfulQuantity>();
-        _rowCollection = new ObservableCollection<DimensionfulQuantity>();
+        ColumnCollection.Clear();
+        RowCollection.Clear();
 
         foreach (var xp in _doc.XPartitioning)
-          _columnCollection.Add(xp.IsAbsolute ? new DimensionfulQuantity(xp.Value, AUL.Point.Instance) : new DimensionfulQuantity(xp.Value * 100, _percentLayerXSizeUnit));
+          ColumnCollection.Add(xp.IsAbsolute ? new DimensionfulQuantity(xp.Value, AUL.Point.Instance) : new DimensionfulQuantity(xp.Value * 100, _percentLayerXSizeUnit));
 
         foreach (var yp in _doc.YPartitioning)
-          _rowCollection.Add(yp.IsAbsolute ? new DimensionfulQuantity(yp.Value, AUL.Point.Instance) : new DimensionfulQuantity(yp.Value * 100, _percentLayerYSizeUnit));
-      }
-      if (_view is not null)
-      {
-        _view.XPartitionEnvironment = _xSizeEnvironment;
-        _view.YPartitionEnvironment = _ySizeEnvironment;
-        _view.DefaultXQuantity = new DimensionfulQuantity(0, _percentLayerXSizeUnit);
-        _view.DefaultYQuantity = new DimensionfulQuantity(0, _percentLayerYSizeUnit);
+          RowCollection.Add(yp.IsAbsolute ? new DimensionfulQuantity(yp.Value, AUL.Point.Instance) : new DimensionfulQuantity(yp.Value * 100, _percentLayerYSizeUnit));
 
-        _view.ColumnCollection = _columnCollection;
-        _view.RowCollection = _rowCollection;
+        DefaultXQuantity = new DimensionfulQuantity(0, _percentLayerXSizeUnit);
+        DefaultYQuantity = new DimensionfulQuantity(0, _percentLayerYSizeUnit);
       }
     }
 
@@ -136,7 +153,7 @@ namespace Altaxo.Gui.Graph
       _doc.XPartitioning.Clear();
       _doc.YPartitioning.Clear();
 
-      foreach (var val in _columnCollection)
+      foreach (var val in ColumnCollection)
       {
         if (object.ReferenceEquals(val.Unit, _percentLayerXSizeUnit))
           _doc.XPartitioning.Add(RADouble.NewRel(val.Value / 100));
@@ -144,7 +161,7 @@ namespace Altaxo.Gui.Graph
           _doc.XPartitioning.Add(RADouble.NewAbs(val.AsValueIn(AUL.Point.Instance)));
       }
 
-      foreach (var val in _rowCollection)
+      foreach (var val in RowCollection)
       {
         if (object.ReferenceEquals(val.Unit, _percentLayerYSizeUnit))
           _doc.YPartitioning.Add(RADouble.NewRel(val.Value / 100));

@@ -22,11 +22,6 @@
 
 #endregion Copyright
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows;
 using System.Windows.Controls;
 
 namespace Altaxo.Gui.Graph.Gdi.Shapes
@@ -36,46 +31,9 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
   /// </summary>
   public partial class GraphicItemsControl : UserControl, IGraphicItemsView
   {
-    public event Action? SelectedItemsUp;
-
-    public event Action? SelectedItemsDown;
-
-    public event Action? SelectedItemsRemove;
-
     public GraphicItemsControl()
     {
       InitializeComponent();
-    }
-
-    private void EhItemsSelectionChanged(object sender, SelectionChangedEventArgs e)
-    {
-      GuiHelper.SynchronizeSelectionFromGui(_guiItemsList);
-    }
-
-    public Collections.SelectableListNodeList ItemsList
-    {
-      set
-      {
-        GuiHelper.Initialize(_guiItemsList, value);
-      }
-    }
-
-    private void EhSelectedItemsUp_Click(object sender, RoutedEventArgs e)
-    {
-      if (SelectedItemsUp is not null)
-        SelectedItemsUp();
-    }
-
-    private void EhSelectedItemsDown_Click(object sender, RoutedEventArgs e)
-    {
-      if (SelectedItemsDown is not null)
-        SelectedItemsDown();
-    }
-
-    private void EhSelectedItemsRemove_Click(object sender, RoutedEventArgs e)
-    {
-      if (SelectedItemsRemove is not null)
-        SelectedItemsRemove();
     }
   }
 }
