@@ -24,6 +24,7 @@
 
 #nullable enable
 using System;
+using System.ComponentModel;
 
 namespace Altaxo.Gui
 {
@@ -86,7 +87,7 @@ namespace Altaxo.Gui
   /// <summary>
   /// Extends the <see cref="IMVCANController"/> by an event to signal that the user changed some data. This can be used for instance to update a preview panel etc.
   /// </summary>
-  public interface IMVCANDController : IMVCANController
+  public interface IMVCANDController : IMVCANController, INotifyPropertyChanged
   {
     /// <summary>Event fired when the user changed some data that will change the model.</summary>
     event Action<IMVCANDController>? MadeDirty;

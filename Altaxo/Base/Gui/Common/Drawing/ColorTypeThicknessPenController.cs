@@ -63,6 +63,26 @@ namespace Altaxo.Gui.Common.Drawing
       Initialize(true);
     }
 
+    /// <summary>
+    /// Gets or sets the pen (the current document of this controller). This property is intended for outside controllers to set the document when the controller is already created.
+    /// </summary>
+    /// <value>
+    /// The pen.
+    /// </value>
+    public PenX Pen
+    {
+      get => _doc;
+      set
+      {
+        _doc = value;
+        Initialize(true);
+        OnPropertyChanged(nameof(Pen));
+        OnPropertyChanged(nameof(Brush));
+        OnPropertyChanged(nameof(LineThickness));
+        OnPropertyChanged(nameof(DashPattern));
+      }
+    }
+
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
@@ -119,6 +139,12 @@ namespace Altaxo.Gui.Common.Drawing
     public ICommand CmdShowCustomPen { get; }
 
     #endregion
+
+    protected override void OnMadeDirty()
+    {
+      base.OnMadeDirty();
+      OnPropertyChanged(nameof(Pen));
+    }
 
     private void EhShowCustomPen()
     {

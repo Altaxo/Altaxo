@@ -78,19 +78,23 @@ namespace Altaxo.Gui
       }
       set
       {
-        if (_view is not null)
+        if (!object.ReferenceEquals(_view, value))
         {
-          DetachView();
-        }
-
-        _view = value as TView;
-
-        if (_view is not null)
-        {
-          using (var suppressor = _suppressDirtyEvent.SuspendGetToken())
+          if (_view is not null)
           {
-            Initialize(false);
-            AttachView();
+            DetachView();
+          }
+
+          _view = value as TView;
+
+          if (_view is not null)
+          {
+            using (var suppressor = _suppressDirtyEvent.SuspendGetToken())
+            {
+              Initialize(false);
+              AttachView();
+            }
+            OnPropertyChanged(nameof(ViewObject));
           }
         }
       }
@@ -102,7 +106,10 @@ namespace Altaxo.Gui
     protected virtual void OnMadeDirty()
     {
       if (!_suppressDirtyEvent.IsSuspended && MadeDirty is not null)
+      {
         MadeDirty(this);
+        OnPropertyChanged(nameof(ProvisionalModelObject));
+      }
     }
 
     /// <summary>

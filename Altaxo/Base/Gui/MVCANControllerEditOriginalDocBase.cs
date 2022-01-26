@@ -264,17 +264,21 @@ namespace Altaxo.Gui
       }
       set
       {
-        if (_view is not null)
+        if (!object.ReferenceEquals(_view, value))
         {
-          DetachView();
-        }
+          if (_view is not null)
+          {
+            DetachView();
+          }
 
-        _view = value as TView;
+          _view = value as TView;
 
-        if (_view is not null)
-        {
-          Initialize(false);
-          AttachView();
+          if (_view is not null)
+          {
+            Initialize(false);
+            AttachView();
+          }
+          OnPropertyChanged(nameof(ViewObject));
         }
       }
     }
