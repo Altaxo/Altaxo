@@ -31,29 +31,8 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
 {
   #region Interfaces
 
-  public interface IAxisStyleView
+  public interface IAxisStyleView : IDataContextAwareView
   {
-    bool ShowAxisLine { get; set; }
-
-    bool ShowMajorLabels { get; set; }
-
-    bool ShowMinorLabels { get; set; }
-
-    bool ShowCustomTickSpacing { get; set; }
-
-    event Action ShowAxisLineChanged;
-
-    event Action ShowMajorLabelsChanged;
-
-    event Action ShowMinorLabelsChanged;
-
-    event Action ShowCustomTickSpacingChanged;
-
-    object LineStyleView { set; }
-
-    object TickSpacingView { set; }
-
-    string AxisTitle { get; set; }
   }
 
   #endregion Interfaces
@@ -77,6 +56,92 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
       yield return new ControllerAndSetNullMethod(_tickSpacingController, () => _tickSpacingController = null);
     }
 
+    #region Binding
+
+    private string _axisTitle;
+
+    public string AxisTitle
+    {
+      get => _axisTitle;
+      set
+      {
+        if (!(_axisTitle == value))
+        {
+          _axisTitle = value;
+          OnPropertyChanged(nameof(AxisTitle));
+        }
+      }
+    }
+
+    private bool _showMajorLabels;
+
+    public bool ShowMajorLabels
+    {
+      get => _showMajorLabels;
+      set
+      {
+        if (!(_showMajorLabels == value))
+        {
+          _showMajorLabels = value;
+          EhShowMajorLabelsChanged();
+          OnPropertyChanged(nameof(ShowMajorLabels));
+        }
+      }
+    }
+
+    private bool _showMinorLabels;
+
+    public bool ShowMinorLabels
+    {
+      get => _showMinorLabels;
+      set
+      {
+        if (!(_showMinorLabels == value))
+        {
+          _showMinorLabels = value;
+          EhShowMinorLabelsChanged();
+          OnPropertyChanged(nameof(ShowMinorLabels));
+        }
+      }
+    }
+
+    private bool _showAxisLine;
+
+    public bool ShowAxisLine
+    {
+      get => _showAxisLine;
+      set
+      {
+        if (!(_showAxisLine == value))
+        {
+          _showAxisLine = value;
+          EhShowAxisLineChanged();
+          OnPropertyChanged(nameof(ShowAxisLine));
+        }
+      }
+    }
+    private bool _showCustomTickSpacing;
+
+    public bool ShowCustomTickSpacing
+    {
+      get => _showCustomTickSpacing;
+      set
+      {
+        if (!(_showCustomTickSpacing == value))
+        {
+          _showCustomTickSpacing = value;
+          EhShowCustomTickSpacingChanged();
+          OnPropertyChanged(nameof(ShowCustomTickSpacing));
+        }
+      }
+    }
+
+    public object? AxisLineView => _axisLineStyleController?.ViewObject;
+
+    public object? CustomTickSpacingView => _tickSpacingController?.ViewObject;
+
+    #endregion
+
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -93,31 +158,32 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
         {
           _axisLineStyleController = null;
         }
+        OnPropertyChanged(nameof(AxisLineView));
 
         if (_doc.TickSpacing is not null)
         {
           _tickSpacingController = new TickSpacingController() { UseDocumentCopy = UseDocument.Directly };
           _tickSpacingController.InitializeDocument(_doc.TickSpacing);
           Current.Gui.FindAndAttachControlTo(_tickSpacingController);
+          OnPropertyChanged(nameof(CustomTickSpacingView));
         }
+
+        AxisTitle = _doc.TitleText;
+        ShowAxisLine = _doc.IsAxisLineEnabled;
+        ShowMajorLabels = _doc.AreMajorLabelsEnabled;
+        ShowMinorLabels = _doc.AreMinorLabelsEnabled;
+        ShowCustomTickSpacing = _tickSpacingController?.ViewObject is not null;
       }
 
       if (_view is not null)
       {
-        _view.AxisTitle = _doc.TitleText;
-        _view.ShowAxisLine = _doc.IsAxisLineEnabled;
-        _view.ShowMajorLabels = _doc.AreMajorLabelsEnabled;
-        _view.ShowMinorLabels = _doc.AreMinorLabelsEnabled;
-        _view.LineStyleView = _axisLineStyleController is null ? null : _axisLineStyleController.ViewObject;
-        _view.ShowCustomTickSpacing = _doc.TickSpacing is not null;
-        _view.TickSpacingView = _tickSpacingController is not null ? _tickSpacingController.ViewObject : null;
       }
     }
 
     public override bool Apply(bool disposeController)
     {
       // read axis title
-      _doc.TitleText = _view.AxisTitle;
+      _doc.TitleText = AxisTitle;
 
       if (_axisLineStyleController is not null)
       {
@@ -127,42 +193,22 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
           _doc.AxisLineStyle = (AxisLineStyle)_axisLineStyleController.ModelObject;
       }
 
-      if (_view.ShowMajorLabels)
+      if (ShowMajorLabels)
         _doc.ShowMajorLabels(_context);
       else
         _doc.HideMajorLabels();
 
-      if (_view.ShowMinorLabels)
+      if (ShowMinorLabels)
         _doc.ShowMinorLabels(_context);
       else
         _doc.HideMinorLabels();
 
       if (_tickSpacingController is not null && !_tickSpacingController.Apply(disposeController))
         return false;
-      if (_view.ShowCustomTickSpacing && _tickSpacingController is not null)
+      if (ShowCustomTickSpacing && _tickSpacingController is not null)
         _doc.TickSpacing = (Altaxo.Graph.Scales.Ticks.TickSpacing)_tickSpacingController.ModelObject;
 
       return ApplyEnd(true, disposeController); // all ok
-    }
-
-    protected override void AttachView()
-    {
-      base.AttachView();
-
-      _view.ShowAxisLineChanged += EhShowAxisLineChanged;
-      _view.ShowMajorLabelsChanged += EhShowMajorLabelsChanged;
-      _view.ShowMinorLabelsChanged += EhShowMinorLabelsChanged;
-      _view.ShowCustomTickSpacingChanged += EhShowCustomTickSpacingChanged;
-    }
-
-    protected override void DetachView()
-    {
-      _view.ShowAxisLineChanged -= EhShowAxisLineChanged;
-      _view.ShowMajorLabelsChanged -= EhShowMajorLabelsChanged;
-      _view.ShowMinorLabelsChanged -= EhShowMinorLabelsChanged;
-      _view.ShowCustomTickSpacingChanged -= EhShowCustomTickSpacingChanged;
-
-      base.DetachView();
     }
 
     /// <summary>Can be called by an external controller if the state of either the major or the minor label has been changed by an external controller. This will update
@@ -171,14 +217,14 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
     {
       if (_view is not null)
       {
-        _view.ShowMajorLabels = _doc.AreMajorLabelsEnabled;
-        _view.ShowMinorLabels = _doc.AreMinorLabelsEnabled;
+        ShowMajorLabels = _doc.AreMajorLabelsEnabled;
+        ShowMinorLabels = _doc.AreMinorLabelsEnabled;
       }
     }
 
     private void EhShowCustomTickSpacingChanged()
     {
-      var isShown = _view.ShowCustomTickSpacing;
+      var isShown = ShowCustomTickSpacing;
 
       if (isShown)
       {
@@ -191,27 +237,26 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
           _tickSpacingController = new TickSpacingController() { UseDocumentCopy = UseDocument.Directly };
           _tickSpacingController.InitializeDocument(_doc.TickSpacing);
           Current.Gui.FindAndAttachControlTo(_tickSpacingController);
-          if (_view is not null)
-            _view.TickSpacingView = _tickSpacingController.ViewObject;
         }
       }
       else
       {
         _doc.TickSpacing = null;
-        _view.TickSpacingView = null;
         _tickSpacingController = null;
       }
+      OnPropertyChanged(nameof(CustomTickSpacingView));
     }
 
     private void EhShowAxisLineChanged()
     {
       var oldValue = _doc.IsAxisLineEnabled;
-      if (_view.ShowAxisLine && _doc.AxisLineStyle is null)
+      if (ShowAxisLine && (_doc.AxisLineStyle is null))
       {
         _doc.ShowAxisLine(_context);
         _axisLineStyleController = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { _doc.AxisLineStyle }, typeof(IMVCAController), UseDocument.Directly);
-        _view.LineStyleView = _axisLineStyleController.ViewObject;
       }
+      OnPropertyChanged(nameof(AxisLineView));
+
       if (oldValue != _doc.IsAxisLineEnabled)
         OnMadeDirty();
     }
@@ -219,7 +264,7 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
     private void EhShowMajorLabelsChanged()
     {
       var oldValue = _doc.AreMajorLabelsEnabled;
-      var newValue = _view.ShowMajorLabels;
+      var newValue = ShowMajorLabels;
 
       if (oldValue != newValue)
       {
@@ -234,7 +279,7 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
     private void EhShowMinorLabelsChanged()
     {
       var oldValue = _doc.AreMinorLabelsEnabled;
-      var newValue = _view.ShowMinorLabels;
+      var newValue = ShowMinorLabels;
 
       if (oldValue != newValue)
       {
