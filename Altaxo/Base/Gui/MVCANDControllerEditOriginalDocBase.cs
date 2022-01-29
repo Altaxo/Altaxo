@@ -115,7 +115,7 @@ namespace Altaxo.Gui
     /// <summary>
     /// Gets the provisional model object. This is the model object that is based on the current user input. In this class of controller, it is identical to the edited document (because the original document is edited).
     /// </summary>
-    public object ProvisionalModelObject
+    public virtual object ProvisionalModelObject
     {
       get
       {
@@ -125,5 +125,6 @@ namespace Altaxo.Gui
         return _doc;
       }
     }
+
   }
 }

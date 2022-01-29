@@ -54,7 +54,11 @@ namespace Altaxo.Gui.Common.Drawing
 
     static BrushComboBox()
     {
-      SelectedBrushProperty = DependencyProperty.Register("SelectedBrush", typeof(BrushX), typeof(BrushComboBox), new FrameworkPropertyMetadata(new BrushX(NamedColors.Black), EhSelectedBrushChanged, EhSelectedBrushCoerce));
+      SelectedBrushProperty = DependencyProperty.Register(
+        nameof(SelectedBrush),
+        typeof(BrushX),
+        typeof(BrushComboBox),
+        new FrameworkPropertyMetadata(new BrushX(NamedColors.Black), EhSelectedBrushChanged, EhSelectedBrushCoerce) { BindsTwoWayByDefault=true});
 
       CustomPenCommandProperty = DependencyProperty.RegisterAttached(
     nameof(CustomPenCommand),

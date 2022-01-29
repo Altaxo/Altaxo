@@ -69,6 +69,20 @@ namespace Altaxo.Gui.Common.Drawing
       }
     }
 
+    public FontXStyle SelectedFontStyle
+    {
+      get => _doc.Style;
+      set
+      {
+        if (!(SelectedFontStyle == value))
+        {
+         _doc = _doc.WithStyle(value);
+          OnPropertyChanged(nameof(SelectedFontStyle));
+        }
+      }
+    }
+
+
     #endregion
 
 

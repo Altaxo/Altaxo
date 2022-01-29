@@ -22,10 +22,10 @@
 
 #endregion Copyright
 
-#nullable disable
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Altaxo.Collections;
 using Altaxo.Drawing;
 using Altaxo.Graph;
 using Altaxo.Graph.Gdi.Background;
@@ -34,145 +34,109 @@ namespace Altaxo.Gui.Graph.Gdi.Background
 {
   #region Interfaces
 
-  public interface IBackgroundStyleViewEventSink
+  public interface IBackgroundStyleView : IDataContextAwareView
   {
-    /// <summary>
-    /// Called if the background color is changed.
-    /// </summary>
-    /// <param name="newValue">The new selected item of the combo box.</param>
-    void EhView_BackgroundBrushChanged(BrushX newValue);
-
-    /// <summary>
-    /// Called if the background style changed.
-    /// </summary>
-    /// <param name="newValue">The new index of the style.</param>
-    void EhView_BackgroundStyleChanged(int newValue);
-  }
-
-  public interface IBackgroundStyleView
-  {
-    /// <summary>
-    /// Get/sets the controller of this view.
-    /// </summary>
-    IBackgroundStyleViewEventSink Controller { get; set; }
-
-    /// <summary>
-    /// Initializes the content of the background color combo box.
-    /// </summary>
-    void BackgroundBrush_Initialize(BrushX brush);
-
-    /// <summary>
-    /// Initializes the enable state of the background color combo box.
-    /// </summary>
-    void BackgroundBrushEnable_Initialize(bool enable);
-
-    /// <summary>
-    /// Initializes the background styles.
-    /// </summary>
-    /// <param name="names"></param>
-    /// <param name="selection"></param>
-    void BackgroundStyle_Initialize(string[] names, int selection);
   }
 
   #endregion Interfaces
 
   /// <summary>
-  /// Controls a IBackgroundStyle instance.
+  /// Controls a IBackgroundStyle instance. 
   /// </summary>
   [UserControllerForObject(typeof(IBackgroundStyle))]
   [ExpectedTypeOfView(typeof(IBackgroundStyleView))]
-  public class BackgroundStyleController : MVCANDControllerEditOriginalDocBase<IBackgroundStyle, IBackgroundStyleView>, IBackgroundStyleViewEventSink
+  public class BackgroundStyleController : MVCANDControllerEditOriginalDocBase<IBackgroundStyle, IBackgroundStyleView>
   {
-    protected System.Type[] _backgroundStyles;
-
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
     }
 
-    public BackgroundStyleController(IBackgroundStyle doc)
+    public BackgroundStyleController(IBackgroundStyle? doc)
     {
-      InitializeDocument(doc);
+      _doc = doc;
+      Initialize(true);
     }
 
-    protected override void Initialize(bool initData)
-    {
-      base.Initialize(initData);
+    #region Bindings
 
-      if (initData)
+    private BrushX _backgroundBrush;
+
+    public BrushX BackgroundBrush
+    {
+      get => _backgroundBrush;
+      set
       {
-        _backgroundStyles = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(IBackgroundStyle));
-      }
-
-      if (_view is not null)
-      {
-        InitializeBackgroundStyle();
-      }
-    }
-
-    public override bool Apply(bool disposeController)
-    {
-      return ApplyEnd(true, disposeController);
-    }
-
-    protected override void AttachView()
-    {
-      base.AttachView();
-
-      _view.Controller = this;
-    }
-
-    protected override void DetachView()
-    {
-      _view.Controller = null;
-
-      base.DetachView();
-    }
-
-    private void InitializeBackgroundStyle()
-    {
-      int sel = Array.IndexOf(_backgroundStyles, _doc is null ? null : _doc.GetType());
-      _view.BackgroundStyle_Initialize(Current.Gui.GetUserFriendlyClassName(_backgroundStyles, true), sel + 1);
-
-      if (_doc is not null && _doc.SupportsBrush)
-        _view.BackgroundBrush_Initialize(_doc.Brush);
-      else
-        _view.BackgroundBrush_Initialize(new BrushX(NamedColors.Transparent));
-
-      _view.BackgroundBrushEnable_Initialize(_doc is not null && _doc.SupportsBrush);
-    }
-
-    public object TemporaryModelObject
-    {
-      get
-      {
-        return _doc;
+        if (!(_backgroundBrush == value))
+        {
+          _backgroundBrush = value;
+          OnPropertyChanged(nameof(BackgroundBrush));
+          if (_doc is not null && _doc.SupportsBrush)
+          {
+            _doc.Brush = value;
+            OnMadeDirty();
+          }
+        }
       }
     }
 
-    #region IPlotRangeViewEventSink Members
+    private bool _isBackgroundBrushEnabled;
 
-    public void EhView_BackgroundBrushChanged(BrushX brush)
+    public bool IsBackgroundBrushEnabled
     {
-      if (_doc is not null && _doc.SupportsBrush)
+      get => _isBackgroundBrushEnabled;
+      set
       {
-        _doc.Brush = brush;
-        OnMadeDirty();
+        if (!(_isBackgroundBrushEnabled == value))
+        {
+          _isBackgroundBrushEnabled = value;
+          OnPropertyChanged(nameof(IsBackgroundBrushEnabled));
+        }
+      }
+    }
+
+    private SelectableListNodeList _backgroundStyles = new SelectableListNodeList();
+
+    /// <summary>
+    /// Gets or sets the list background styles. Tag is of type <see cref="System.Type"/>, namely the type of the background style.
+    /// </summary>
+    public SelectableListNodeList BackgroundStyles
+    {
+      get => _backgroundStyles;
+      set
+      {
+        if (!(_backgroundStyles == value))
+        {
+          _backgroundStyles = value;
+          OnPropertyChanged(nameof(BackgroundStyles));
+        }
+      }
+    }
+
+    private Type _selectedBackgroundStyle;
+
+    public Type SelectedBackgroundStyle
+    {
+      get => _selectedBackgroundStyle;
+      set
+      {
+        if (!(_selectedBackgroundStyle == value))
+        {
+          _selectedBackgroundStyle = value;
+          OnPropertyChanged(nameof(SelectedBackgroundStyle));
+          EhView_BackgroundStyleChanged(value);
+        }
       }
     }
 
     /// <summary>
     /// Called if the background style changed.
     /// </summary>
-    /// <param name="newValue">The new index of the style.</param>
-    public void EhView_BackgroundStyleChanged(int newValue)
+    public void EhView_BackgroundStyleChanged(Type? newType)
     {
-      var backgroundColor = new BrushX(NamedColors.Transparent);
-
-      if (newValue != 0)
+      if (newType is not null)
       {
-        _doc = (IBackgroundStyle)Activator.CreateInstance(_backgroundStyles[newValue - 1]);
-        backgroundColor = _doc.Brush;
+        _doc = (IBackgroundStyle)Activator.CreateInstance(newType);
       }
       else // is null
       {
@@ -181,17 +145,63 @@ namespace Altaxo.Gui.Graph.Gdi.Background
 
       if (_doc is not null && _doc.SupportsBrush)
       {
-        _view.BackgroundBrush_Initialize(backgroundColor);
-        _view.BackgroundBrushEnable_Initialize(true);
+        if (BackgroundBrush.IsVisible)
+          _doc.Brush = BackgroundBrush;
+        else
+          BackgroundBrush = _doc.Brush;
+
+        IsBackgroundBrushEnabled = true;
       }
       else
       {
-        _view.BackgroundBrushEnable_Initialize(false);
+        IsBackgroundBrushEnabled = false;
       }
 
       OnMadeDirty();
     }
 
-    #endregion IPlotRangeViewEventSink Members
+
+    #endregion
+
+    protected override void Initialize(bool initData)
+    {
+      // base.Initialize, but without test if document is null
+      if (initData)
+      {
+        if (_useDocumentCopy && _suspendToken is null)
+          _suspendToken = GetSuspendTokenForControllerDocument();
+      }
+
+      if (initData)
+      {
+       var backgroundStyles = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(IBackgroundStyle));
+        _backgroundStyles.Clear();
+        _backgroundStyles.Add(new SelectableListNode("None", null, _doc is null));
+        foreach (var backtype in backgroundStyles)
+          _backgroundStyles.Add(new SelectableListNode(Current.Gui.GetUserFriendlyClassName(backtype), backtype, _doc?.GetType() == backtype));
+        _selectedBackgroundStyle = _doc?.GetType();
+
+        if (_doc is not null && _doc.SupportsBrush)
+          _backgroundBrush = _doc.Brush;
+        else
+          _backgroundBrush = BrushesX.Transparent;
+
+        _isBackgroundBrushEnabled = (_doc is not null && _doc.SupportsBrush);
+      }
+    }
+    public override bool Apply(bool disposeController)
+    {
+      return ApplyEnd(true, disposeController);
+    }
+
+    public override object ModelObject => _doc; // override because the return value can be null
+
+    public override object ProvisionalModelObject // override because the return value can be null
+    {
+      get
+      {
+        return _doc;
+      }
+    }
   }
 }
