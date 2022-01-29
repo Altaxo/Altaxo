@@ -25,12 +25,10 @@
 #nullable disable
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Altaxo.Collections;
 using Altaxo.Graph;
-using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Gdi.Axis;
+using Altaxo.Units;
 
 namespace Altaxo.Gui.Graph.Gdi.Axis
 {
@@ -114,31 +112,118 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
     }
   }
 
-  public interface IAxisCreationView
+  public interface IAxisCreationView : IDataContextAwareView
   {
-    bool UsePhysicalValue { get; set; }
-
-    double AxisPositionLogicalValue { get; set; }
-
-    Altaxo.Data.AltaxoVariant AxisPositionPhysicalValue { get; set; }
-
-    bool MoveAxis { get; set; }
-
-    void InitializeAxisTemplates(SelectableListNodeList list);
-
-    event Action SelectedAxisTemplateChanged;
   }
 
   [ExpectedTypeOfView(typeof(IAxisCreationView))]
   [UserControllerForObject(typeof(AxisCreationArguments))]
   public class AxisCreationController : MVCANControllerEditOriginalDocBase<AxisCreationArguments, IAxisCreationView>
   {
-    private SelectableListNodeList _axisTemplates;
-
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
     }
+
+    #region Bindings
+
+    private bool _usePhysicalValue;
+
+    public bool UsePhysicalValue
+    {
+      get => _usePhysicalValue;
+      set
+      {
+        if (!(_usePhysicalValue == value))
+        {
+          _usePhysicalValue = value;
+          OnPropertyChanged(nameof(UsePhysicalValue));
+        }
+      }
+    }
+
+    public QuantityWithUnitGuiEnvironment AxisPositionLogicalValueEnvironment => RelationEnvironment.Instance;
+
+    private DimensionfulQuantity _axisPositionLogicalValue;
+
+    public DimensionfulQuantity AxisPositionLogicalValue
+    {
+      get => _axisPositionLogicalValue;
+      set
+      {
+        if (!(_axisPositionLogicalValue == value))
+        {
+          _axisPositionLogicalValue = value;
+          OnPropertyChanged(nameof(AxisPositionLogicalValue));
+        }
+      }
+    }
+    private double _axisPositionPhysicalValue;
+
+    public double AxisPositionPhysicalValue
+    {
+      get => _axisPositionPhysicalValue;
+      set
+      {
+        if (!(_axisPositionPhysicalValue == value))
+        {
+          _axisPositionPhysicalValue = value;
+          OnPropertyChanged(nameof(AxisPositionPhysicalValue));
+        }
+      }
+    }
+    private bool _moveAxis;
+
+    public bool MoveAxis
+    {
+      get => _moveAxis;
+      set
+      {
+        if (!(_moveAxis == value))
+        {
+          _moveAxis = value;
+          OnPropertyChanged(nameof(MoveAxis));
+        }
+      }
+    }
+    private SelectableListNodeList _axisTemplates;
+
+    public SelectableListNodeList AxisTemplates
+    {
+      get => _axisTemplates;
+      set
+      {
+        if (!(_axisTemplates == value))
+        {
+          _axisTemplates = value;
+          OnPropertyChanged(nameof(AxisTemplates));
+        }
+      }
+    }
+    private CSAxisInformation _selectedAxisTemplate;
+
+    public CSAxisInformation SelectedAxisTemplate
+    {
+      get => _selectedAxisTemplate;
+      set
+      {
+        if (!(_selectedAxisTemplate == value))
+        {
+          _selectedAxisTemplate = value;
+          OnPropertyChanged(nameof(SelectedAxisTemplate));
+          EhSelectedAxisTemplateChanged();
+        }
+      }
+    }
+
+    private void EhSelectedAxisTemplateChanged()
+    {
+      _doc.TemplateStyle = (_axisTemplates.FirstSelectedNode.Tag as CSAxisInformation).Identifier;
+      SetViewAccordingToAxisIdentifier();
+    }
+
+
+    #endregion
 
     protected override void Initialize(bool initData)
     {
@@ -152,68 +237,52 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
           var node = new SelectableListNode(style.NameOfAxisStyle, style, style.Identifier == _doc.TemplateStyle);
           _axisTemplates.Add(node);
         }
+
         var selNode = _axisTemplates.FirstSelectedNode;
         if (selNode is null && 0 != _axisTemplates.Count)
         {
           selNode = _axisTemplates[0];
+          _selectedAxisTemplate = (selNode.Tag as CSAxisInformation);
           selNode.IsSelected = true;
         }
         if (selNode is not null)
         {
+          _selectedAxisTemplate = (selNode.Tag as CSAxisInformation);
           _doc.TemplateStyle = (selNode.Tag as CSAxisInformation).Identifier;
         }
-      }
-      if (_view is not null)
-      {
-        _view.MoveAxis = _doc.MoveAxis;
-        _view.InitializeAxisTemplates(_axisTemplates);
+        MoveAxis = _doc.MoveAxis;
         SetViewAccordingToAxisIdentifier();
       }
     }
 
-    public override bool Apply(bool disposeController)
+    private void SetViewAccordingToAxisIdentifier()
     {
-      _doc.MoveAxis = _view.MoveAxis;
-
-      if (_view.UsePhysicalValue)
+      UsePhysicalValue = _doc.TemplateStyle.UsePhysicalValueOtherFirst;
+      if (_doc.TemplateStyle.UsePhysicalValueOtherFirst)
       {
-        _doc.CurrentStyle = CSLineID.FromPhysicalVariant(_doc.TemplateStyle.ParallelAxisNumber, _view.AxisPositionPhysicalValue);
+        AxisPositionPhysicalValue = _doc.TemplateStyle.PhysicalValueOtherFirst;
       }
       else
       {
-        _doc.CurrentStyle = new CSLineID(_doc.TemplateStyle.ParallelAxisNumber, _view.AxisPositionLogicalValue);
+        AxisPositionLogicalValue = new DimensionfulQuantity(_doc.TemplateStyle.LogicalValueOtherFirst, Altaxo.Units.Dimensionless.Unity.Instance).AsQuantityIn(AxisPositionLogicalValueEnvironment.DefaultUnit);
+      }
+    }
+
+
+    public override bool Apply(bool disposeController)
+    {
+      _doc.MoveAxis = MoveAxis;
+
+      if (UsePhysicalValue)
+      {
+        _doc.CurrentStyle = CSLineID.FromPhysicalVariant(_doc.TemplateStyle.ParallelAxisNumber, AxisPositionPhysicalValue);
+      }
+      else
+      {
+        _doc.CurrentStyle = new CSLineID(_doc.TemplateStyle.ParallelAxisNumber, AxisPositionLogicalValue.AsValueInSIUnits);
       }
 
       return ApplyEnd(true, disposeController);
-    }
-
-    protected override void AttachView()
-    {
-      _view.SelectedAxisTemplateChanged += EhSelectedAxisTemplateChanged;
-    }
-
-    protected override void DetachView()
-    {
-      _view.SelectedAxisTemplateChanged -= EhSelectedAxisTemplateChanged;
-    }
-
-    private void EhSelectedAxisTemplateChanged()
-    {
-      _doc.TemplateStyle = (_axisTemplates.FirstSelectedNode.Tag as CSAxisInformation).Identifier;
-      SetViewAccordingToAxisIdentifier();
-    }
-
-    private void SetViewAccordingToAxisIdentifier()
-    {
-      _view.UsePhysicalValue = _doc.TemplateStyle.UsePhysicalValueOtherFirst;
-      if (_doc.TemplateStyle.UsePhysicalValueOtherFirst)
-      {
-        _view.AxisPositionPhysicalValue = _doc.TemplateStyle.PhysicalValueOtherFirst;
-      }
-      else
-      {
-        _view.AxisPositionLogicalValue = _doc.TemplateStyle.LogicalValueOtherFirst;
-      }
     }
   }
 }

@@ -22,12 +22,7 @@
 
 #endregion Copyright
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Windows.Controls;
-using Altaxo.Collections;
 
 namespace Altaxo.Gui.Graph.Gdi.Axis
 {
@@ -36,73 +31,9 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
   /// </summary>
   public partial class AxisCreationControl : UserControl, IAxisCreationView
   {
-    public event Action? SelectedAxisTemplateChanged;
-
     public AxisCreationControl()
     {
       InitializeComponent();
-    }
-
-    public bool UsePhysicalValue
-    {
-      get
-      {
-        return _guiUsePhysicalValue.IsChecked == true;
-      }
-      set
-      {
-        _guiUsePhysicalValue.IsChecked = value;
-        _guiUseLogicalValue.IsChecked = !value;
-      }
-    }
-
-    public double AxisPositionLogicalValue
-    {
-      get
-      {
-        return _guiLogicalValue.SelectedQuantityAsValueInSIUnits;
-      }
-      set
-      {
-        _guiLogicalValue.SelectedQuantityAsValueInSIUnits = value;
-      }
-    }
-
-    public Altaxo.Data.AltaxoVariant AxisPositionPhysicalValue
-    {
-      get
-      {
-        return _guiPhysicalValue.SelectedValue;
-      }
-      set
-      {
-        _guiPhysicalValue.SelectedValue = value;
-      }
-    }
-
-    public bool MoveAxis
-    {
-      get
-      {
-        return _guiMoveAxis.IsChecked == true;
-      }
-      set
-      {
-        _guiMoveAxis.IsChecked = value;
-        _guiCopyAxis.IsChecked = !value;
-      }
-    }
-
-    public void InitializeAxisTemplates(SelectableListNodeList list)
-    {
-      GuiHelper.Initialize(_guiTemplateAxis, list);
-    }
-
-    private void EhSelectedAxisTemplateChanged(object sender, SelectionChangedEventArgs e)
-    {
-      GuiHelper.SynchronizeSelectionFromGui(_guiTemplateAxis);
-      if (SelectedAxisTemplateChanged is not null)
-        SelectedAxisTemplateChanged();
     }
   }
 }

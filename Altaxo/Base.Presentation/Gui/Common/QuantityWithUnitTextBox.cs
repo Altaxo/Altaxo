@@ -167,8 +167,8 @@ namespace Altaxo.Gui.Common
     #region Dependency property
 
     public static readonly DependencyProperty SelectedQuantityProperty =
-    DependencyProperty.Register("SelectedQuantity", typeof(DimensionfulQuantity), typeof(QuantityWithUnitTextBox),
-    new FrameworkPropertyMetadata(EhSelectedQuantityChanged));
+    DependencyProperty.Register(nameof(SelectedQuantity), typeof(DimensionfulQuantity), typeof(QuantityWithUnitTextBox),
+    new FrameworkPropertyMetadata(EhSelectedQuantityChanged) { BindsTwoWayByDefault=true});
 
     /// <summary>
     /// Gets/sets the quantity. The quantity consist of a numeric value together with a unit.

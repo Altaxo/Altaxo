@@ -118,8 +118,8 @@ namespace Altaxo.Gui.Common
     }
 
     public static readonly DependencyProperty SelectedValueProperty =
-        DependencyProperty.Register("SelectedValue", typeof(double), typeof(NumericDoubleTextBox),
-        new FrameworkPropertyMetadata(EhSelectedValueChanged));
+        DependencyProperty.Register(nameof(SelectedValue), typeof(double), typeof(NumericDoubleTextBox),
+        new FrameworkPropertyMetadata(EhSelectedValueChanged) { BindsTwoWayByDefault=true});
 
     private static void EhSelectedValueChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
     {
