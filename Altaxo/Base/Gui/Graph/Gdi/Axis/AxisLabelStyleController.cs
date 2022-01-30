@@ -32,6 +32,7 @@ using Altaxo.Drawing;
 using Altaxo.Graph;
 using Altaxo.Graph.Gdi.Axis;
 using Altaxo.Graph.Gdi.Background;
+using Altaxo.Gui.Common;
 using Altaxo.Gui.Common.Drawing;
 using Altaxo.Gui.Graph.Gdi.Background;
 using Altaxo.Serialization;
@@ -108,24 +109,6 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
         {
           _labelBrush = value;
           OnPropertyChanged(nameof(LabelBrush));
-        }
-      }
-    }
-
-    private IBackgroundStyle _background;
-
-    /// <summary>
-    /// Initializes the background.
-    /// </summary>
-    public IBackgroundStyle Background
-    {
-      get => _background;
-      set
-      {
-        if (!(_background == value))
-        {
-          _background = value;
-          OnPropertyChanged(nameof(Background));
         }
       }
     }
@@ -288,114 +271,57 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
       }
     }
 
-    private SelectableListNodeList _horizontalAlignmentChoices;
+    private ItemsController<StringAlignment> _horizontalAlignment;
 
     /// <summary>
-    /// Initializes the horizontal aligment combo box.
+    /// Initializes the horizontal alignment combo box.
     /// </summary>
-    public SelectableListNodeList HorizontalAlignment
+    public ItemsController<StringAlignment> HorizontalAlignment
     {
-      get => _horizontalAlignmentChoices;
+      get => _horizontalAlignment;
       set
       {
-        if (!(_horizontalAlignmentChoices == value))
+        if (!(_horizontalAlignment == value))
         {
-          _horizontalAlignmentChoices = value;
+          _horizontalAlignment = value;
           OnPropertyChanged(nameof(HorizontalAlignment));
         }
       }
     }
 
-    private StringAlignment _selectedHorizontalAlignment;
+    private ItemsController<StringAlignment> _verticalAlignment;
 
-    public StringAlignment SelectedHorizontalAlignment
+    public ItemsController<StringAlignment> VerticalAlignment
     {
-      get => _selectedHorizontalAlignment;
+      get => _verticalAlignment;
       set
       {
-        if (!(_selectedHorizontalAlignment == value))
+        if (!(_verticalAlignment == value))
         {
-          _selectedHorizontalAlignment = value;
-          OnPropertyChanged(nameof(SelectedHorizontalAlignment));
-        }
-      }
-    }
-
-
-    private SelectableListNodeList _verticalAlignmentChoices;
-
-    /// <summary>
-    /// Initializes the vertical alignement combo box.
-    /// </summary>
-    public SelectableListNodeList VerticalAlignment
-    {
-      get => _verticalAlignmentChoices;
-      set
-      {
-        if (!(_verticalAlignmentChoices == value))
-        {
-          _verticalAlignmentChoices = value;
+          _verticalAlignment = value;
           OnPropertyChanged(nameof(VerticalAlignment));
         }
       }
     }
 
-    private StringAlignment _selectedVerticalAlignment;
+    private ItemsController<Type> _labelStyle;
 
-    public StringAlignment SelectedVerticalAlignment
+    public ItemsController<Type> LabelStyle
     {
-      get => _selectedVerticalAlignment;
+      get => _labelStyle;
       set
       {
-        if (!(_selectedVerticalAlignment == value))
+        if (!(_labelStyle == value))
         {
-          _selectedVerticalAlignment = value;
-          OnPropertyChanged(nameof(SelectedVerticalAlignment));
-        }
-      }
-    }
-
-
-    private SelectableListNodeList _labelStyles;
-
-    /// <summary>
-    /// Initializes the label style combo box.
-    /// </summary>
-    public SelectableListNodeList LabelStyles
-    {
-      get => _labelStyles;
-      set
-      {
-        if (!(_labelStyles == value))
-        {
-          _labelStyles = value;
-          OnPropertyChanged(nameof(LabelStyles));
-        }
-      }
-    }
-
-    private Type _selectedLabelStyle;
-
-    public Type SelectedLabelStyle
-    {
-      get => _selectedLabelStyle;
-      set
-      {
-        if (!(_selectedLabelStyle == value))
-        {
-          _selectedLabelStyle = value;
-          OnPropertyChanged(nameof(SelectedLabelStyle));
-          if (value is not null)
-          {
-            EhView_LabelStyleChanged(value);
-          }
+          _labelStyle = value;
+          OnPropertyChanged(nameof(LabelStyle));
         }
       }
     }
 
     void EhView_LabelStyleChanged(System.Type value)
     {
-      if (_doc.LabelFormat.GetType() != value)
+      if (value is not null && _doc.LabelFormat.GetType() != value)
       {
         _doc.LabelFormat = (Altaxo.Graph.Gdi.LabelFormatting.ILabelFormatting)Activator.CreateInstance(value);
         LabelFormattingSpecificController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _doc.LabelFormat }, typeof(IMVCANController), UseDocument.Directly);
@@ -445,9 +371,9 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
     public override void Dispose(bool isDisposing)
     {
       _labelSides = null;
-      _horizontalAlignmentChoices = null;
-      _verticalAlignmentChoices = null;
-      _labelStyles = null;
+      _horizontalAlignment.Dispose();
+      _verticalAlignment?.Dispose();
+      _labelStyle?.Dispose();
 
       base.Dispose(isDisposing);
     }
@@ -473,17 +399,17 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
         _labelSides.AddRange(list);
 
         // horizontal and vertical alignment
-        _horizontalAlignmentChoices = new Collections.SelectableListNodeList(_doc.HorizontalAlignment);
-        _verticalAlignmentChoices = new Collections.SelectableListNodeList(_doc.VerticalAlignment);
+        HorizontalAlignment = new ItemsController<StringAlignment>(new Collections.SelectableListNodeList(_doc.HorizontalAlignment));
+        VerticalAlignment = new ItemsController<StringAlignment>(new Collections.SelectableListNodeList(_doc.VerticalAlignment));
 
         // label formatting type
         var labelTypes = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(Altaxo.Graph.Gdi.LabelFormatting.ILabelFormatting));
-        _labelStyles = new Collections.SelectableListNodeList();
+        var labelStyles = new Collections.SelectableListNodeList();
         for (int i = 0; i < labelTypes.Length; ++i)
         {
-          _labelStyles.Add(new Collections.SelectableListNode(labelTypes[i].Name, labelTypes[i], labelTypes[i] == _doc.LabelFormat.GetType()));
+          labelStyles.Add(new Collections.SelectableListNode(labelTypes[i].Name, labelTypes[i], labelTypes[i] == _doc.LabelFormat.GetType()));
         }
-        SelectedLabelStyle = _doc.LabelFormat.GetType();
+        LabelStyle = new ItemsController<Type>(labelStyles, _doc.LabelFormat.GetType(), EhView_LabelStyleChanged);
 
         _labelFormattingSpecificController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _doc.LabelFormat }, typeof(IMVCANController), UseDocument.Directly);
 
@@ -497,7 +423,6 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
         Rotation = new DimensionfulQuantity(_doc.Rotation, Altaxo.Units.Angle.Degree.Instance).AsQuantityIn(RotationEnvironment.DefaultUnit);
         XOffset = new DimensionfulQuantity(_doc.XOffset, Altaxo.Units.Dimensionless.Unity.Instance).AsQuantityIn(OffsetEnvironment.DefaultUnit);
         YOffset = new DimensionfulQuantity(_doc.YOffset, Altaxo.Units.Dimensionless.Unity.Instance).AsQuantityIn(OffsetEnvironment.DefaultUnit);
-        Background = _doc.BackgroundStyle;
         SuppressedLabelsByValue = GUIConversion.ToString(_doc.SuppressedLabels.ByValues);
         SuppressedLabelsByNumber = GUIConversion.ToString(_doc.SuppressedLabels.ByNumbers);
         PrefixText = _doc.PrefixText;
@@ -517,8 +442,8 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
 
       _doc.Font = (FontX)_labelFontController.ModelObject;
       _doc.Brush = LabelBrush;
-      _doc.HorizontalAlignment = SelectedHorizontalAlignment;
-      _doc.VerticalAlignment = SelectedVerticalAlignment;
+      _doc.HorizontalAlignment = HorizontalAlignment.SelectedValue;
+      _doc.VerticalAlignment = VerticalAlignment.SelectedValue;
       _doc.AutomaticAlignment = AutomaticAlignment;
       _doc.Rotation = Rotation.AsValueIn(Altaxo.Units.Angle.Degree.Instance);
       _doc.XOffset = XOffset.AsValueIn(Altaxo.Units.Dimensionless.Unity.Instance);
@@ -555,7 +480,5 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
 
       return ApplyEnd(true, disposeController);
     }
-
-
   }
 }

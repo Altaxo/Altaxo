@@ -88,13 +88,13 @@
             <GroupBox Grid.Row="6" Grid.Column="2" Grid.ColumnSpan="2" Grid.RowSpan="5" Header="Offset (relative to M-size):" Margin="4,8,0,0" />
 
             <Label Grid.Row="8" Grid.Column="0" Content="Horz. alignment:" />
-            <ComboBox Grid.Row="8"  Grid.Column="1" ItemsSource="{Binding HorizontalAlignment}" SelectedValue="{Binding SelectedHorizontalAlignment, Mode=TwoWay}" SelectedValuePath="Tag" IsEnabled="{Binding AutomaticAlignment, Converter={x:Static axogcc:InverseBooleanConverter.Instance}}" />
+            <ComboBox Grid.Row="8"  Grid.Column="1" ItemsSource="{Binding HorizontalAlignment.Items}" SelectedItem="{Binding HorizontalAlignment.SelectedItem, Mode=TwoWay}" IsEnabled="{Binding AutomaticAlignment, Converter={x:Static axogcc:InverseBooleanConverter.Instance}}" />
 
             <Label Grid.Row="8" Grid.Column="2" Content="X:" />
             <axogc:QuantityWithUnitTextBox Grid.Row="8" Grid.Column="3" SelectedQuantity="{Binding XOffset, Mode=TwoWay}" UnitEnvironment="{Binding OffsetEnvironment}"  />
 
             <Label Grid.Row="10" Grid.Column="0" Content="Vert. alignment:" />
-            <ComboBox Grid.Row="10" Grid.Column="1" ItemsSource="{Binding VerticalAlignment}" SelectedValue="{Binding SelectedVerticalAlignment, Mode=TwoWay}" SelectedValuePath="Tag" IsEnabled="{Binding AutomaticAlignment, Converter={x:Static axogcc:InverseBooleanConverter.Instance}}" />
+            <ComboBox Grid.Row="10" Grid.Column="1" ItemsSource="{Binding VerticalAlignment.Items}" SelectedItem="{Binding VerticalAlignment.SelectedItem, Mode=TwoWay}" IsEnabled="{Binding AutomaticAlignment, Converter={x:Static axogcc:InverseBooleanConverter.Instance}}" />
 
             <Label Grid.Row="10" Grid.Column="2" Content="Y:" />
             <axogc:QuantityWithUnitTextBox Grid.Row="10" Grid.Column="3" SelectedQuantity="{Binding YOffset, Mode=TwoWay}" UnitEnvironment="{Binding OffsetEnvironment}"  />
@@ -116,7 +116,7 @@
 			<TextBox Grid.Row="18" Grid.Column="3" Text="{Binding PostfixText, Mode=TwoWay}"/>
 
 			<Label Grid.Row="20" Grid.Column="0" Content="Label style:" />
-			<ComboBox Grid.Row="20" Grid.Column="1" Grid.ColumnSpan="3" ItemsSource="{Binding LabelStyles}" SelectedValue="{Binding SelectedLabelStyle, Mode=TwoWay}"  SelectedValuePath="Tag"/>
+			<ComboBox Grid.Row="20" Grid.Column="1" Grid.ColumnSpan="3" ItemsSource="{Binding LabelStyle.Items}" SelectedItem="{Binding LabelStyle.SelectedItem, Mode=TwoWay}"/>
 		</Grid>
 		<ContentControl Grid.Row="22" Grid.Column="0" Grid.ColumnSpan="4" Content="{Binding LabelFormattingSpecificGuiControl}"/>
 	</StackPanel>
