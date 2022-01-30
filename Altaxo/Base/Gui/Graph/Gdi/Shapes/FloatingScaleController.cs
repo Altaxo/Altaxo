@@ -71,7 +71,7 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
   [ExpectedTypeOfView(typeof(IFloatingScaleView))]
   public class FloatingScaleController : MVCANControllerEditOriginalDocBase<FloatingScale, IFloatingScaleView>
   {
-    private AxisStyleControllerGlue _axisStyleControllerGlue;
+    protected AxisStyleController _axisStyleController;
     protected TickSpacing _tempTickSpacing;
     protected SelectableListNodeList _tickSpacingTypes;
     protected IMVCAController _tickSpacingController;
@@ -79,14 +79,7 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_tickSpacingController, () => _tickSpacingController = null);
-
-      if (_axisStyleControllerGlue is not null)
-      {
-        yield return new ControllerAndSetNullMethod(_axisStyleControllerGlue.AxisStyleController, null);
-        yield return new ControllerAndSetNullMethod(_axisStyleControllerGlue.MajorLabelCondController, null);
-        yield return new ControllerAndSetNullMethod(_axisStyleControllerGlue.MinorLabelCondController, null);
-        yield return new ControllerAndSetNullMethod(null, () => _axisStyleControllerGlue = null);
-      }
+      yield return new ControllerAndSetNullMethod(_axisStyleController, () => _axisStyleController = null);
     }
 
     public override void Dispose(bool isDisposing)
@@ -113,7 +106,9 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
           _tickSpacingTypes.Add(node);
         }
 
-        _axisStyleControllerGlue = new AxisStyleControllerGlue(_doc.AxisStyle);
+        _axisStyleController = new AxisStyleController();
+        _axisStyleController.InitializeDocument(_doc.AxisStyle);
+        Current.Gui.FindAndAttachControlTo(_axisStyleController);
       }
       if (_view is not null)
       {
@@ -125,9 +120,9 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
         _view.ScaleSegmentType = _doc.ScaleType;
         _view.InitializeTickSpacingTypes(_tickSpacingTypes);
 
-        _view.TitleFormatView = _axisStyleControllerGlue.AxisStyleView;
-        _view.MajorLabelView = _axisStyleControllerGlue.MajorLabelCondView;
-        _view.MinorLabelView = _axisStyleControllerGlue.MinorLabelCondView;
+        _view.TitleFormatView = _axisStyleController.ViewObject;
+        _view.MajorLabelView = _axisStyleController.MajorLabelCondView;
+        _view.MinorLabelView = _axisStyleController.MinorLabelCondView;
 
         _view.BackgroundPadding = _doc.BackgroundPadding;
         _view.SelectedBackground = _doc.Background;
@@ -150,13 +145,7 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
       _doc.TickSpacing = _tempTickSpacing;
 
       // Title/format
-      if (false == _axisStyleControllerGlue.AxisStyleController.Apply(disposeController))
-        return false;
-
-      if (_axisStyleControllerGlue.MajorLabelCondController is not null && false == _axisStyleControllerGlue.MajorLabelCondController.Apply(disposeController))
-        return false;
-
-      if (_axisStyleControllerGlue.MinorLabelCondController is not null && false == _axisStyleControllerGlue.MinorLabelCondController.Apply(disposeController))
+      if (false == _axisStyleController.Apply(disposeController))
         return false;
 
       _doc.BackgroundPadding = _view.BackgroundPadding;

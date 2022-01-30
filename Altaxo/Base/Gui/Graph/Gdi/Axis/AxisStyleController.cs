@@ -22,41 +22,229 @@
 
 #endregion Copyright
 
-#nullable disable
 using System;
+using System.ComponentModel;
+using Altaxo.Graph;
 using Altaxo.Graph.Gdi.Axis;
+using Altaxo.Gui.Common;
 using Altaxo.Gui.Graph.Scales.Ticks;
-
+#nullable disable
 namespace Altaxo.Gui.Graph.Gdi.Axis
 {
-  #region Interfaces
-
   public interface IAxisStyleView : IDataContextAwareView
   {
   }
 
-  #endregion Interfaces
-
   /// <summary>
-  /// Summary description for TitleFormatLayerController.
+  /// Controller for an <see cref="AxisStyle"/>. This controller itself can be bound to an <see cref="IAxisStyleView"/>,
+  /// and there exist subcontrollers that have their own views.
   /// </summary>
-  [UserControllerForObject(typeof(AxisStyle), 90)]
   [ExpectedTypeOfView(typeof(IAxisStyleView))]
+  [UserControllerForObject(typeof(AxisStyle))]
   public class AxisStyleController : MVCANDControllerEditOriginalDocBase<AxisStyle, IAxisStyleView>
   {
-    protected IMVCAController _axisLineStyleController;
-
-    protected TickSpacingController _tickSpacingController;
-
+    public CSAxisInformation AxisInformation { get; private set; }
     private Altaxo.Main.Properties.IReadOnlyPropertyBag _context;
 
     public override System.Collections.Generic.IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_axisLineStyleController, () => _axisLineStyleController = null);
+      yield return new ControllerAndSetNullMethod(_majorLabelCondController, () => _majorLabelCondController = null);
+      yield return new ControllerAndSetNullMethod(_minorLabelCondController, () => _minorLabelCondController = null);
       yield return new ControllerAndSetNullMethod(_tickSpacingController, () => _tickSpacingController = null);
     }
 
-    #region Binding
+    #region Bindings
+
+    #region AxisLine
+
+
+    private IMVCANController _axisLineStyleController;
+
+    public IMVCANController AxisLineStyleController
+    {
+      get
+      { 
+        if(_axisLineStyleController is null && _doc.AxisLineStyle is { } lineStyle)
+        {
+          _axisLineStyleController = new AxisLineStyleController();
+          _axisLineStyleController.InitializeDocument(lineStyle);
+        }
+        return _axisLineStyleController;
+      }
+    }
+
+
+    public object? AxisLineStyleView
+    {
+      get
+      {
+        if (_doc.AxisLineStyle is not null)
+        {
+          if (AxisLineStyleController is { } ctrl && ctrl.ViewObject is null)
+            Current.Gui.FindAndAttachControlTo(ctrl);
+
+         return AxisLineStyleController?.ViewObject;
+        }
+        else
+        {
+          return null;
+        }
+      }
+    }
+
+    public bool ShowAxisLine
+    {
+      get => _doc.AxisLineStyle is not null;
+      set
+      {
+        if (!(ShowAxisLine == value))
+        {
+          _axisLineStyleController?.Dispose();
+          _axisLineStyleController = null;
+          if (value is true)
+          {
+            _doc.ShowAxisLine(_context);
+          }
+          else
+          {
+            _doc.HideAxisLine();
+          }
+
+          OnPropertyChanged(nameof(AxisLineStyleController));
+          OnPropertyChanged(nameof(AxisLineStyleView));
+          OnPropertyChanged(nameof(ShowAxisLine));
+        }
+      }
+    }
+
+    #endregion AxisLine
+
+    #region Major Label
+
+    private ConditionalDocumentController<AxisLabelStyle> _majorLabelCondController;
+
+    public ConditionalDocumentController<AxisLabelStyle> MajorLabelCondController
+    {
+      get
+      {
+        if(_majorLabelCondController is null)
+        {
+          _majorLabelCondController = new ConditionalDocumentController<AxisLabelStyle>(
+            () => { ShowMajorLabels = true; return _doc.MajorLabelStyle; },
+            () => { ShowMajorLabels = false; })
+          {
+            UseDocumentCopy = UseDocument.Directly
+          };
+          _majorLabelCondController.InitializeDocument(_doc.MajorLabelStyle);
+        }
+        return _majorLabelCondController;
+      }
+    }
+
+    public bool ShowMajorLabels
+    {
+      get => _doc.MajorLabelStyle is not null;
+      set
+      {
+        if (!(ShowMajorLabels == value))
+        {
+          if (value == true)
+          {
+            _doc.ShowMajorLabels(_context);
+          }
+          else
+          {
+            _doc.HideMajorLabels();
+          }
+
+          if (_majorLabelCondController is not null)
+          {
+            _majorLabelCondController.IsConditionalViewEnabled = value;
+          }
+          OnPropertyChanged(nameof(ShowMajorLabels));
+        }
+      }
+    }
+    public IConditionalDocumentView MajorLabelCondView
+    {
+      get
+      {
+        if (MajorLabelCondController is null)
+          throw new InvalidOperationException("Instance is not initialized!");
+
+        if (MajorLabelCondController.ViewObject is null)
+          Current.Gui.FindAndAttachControlTo(MajorLabelCondController);
+        return (IConditionalDocumentView)MajorLabelCondController.ViewObject;
+      }
+    }
+
+    #endregion Major Label
+
+    #region Minor Label
+
+    private ConditionalDocumentController<AxisLabelStyle> _minorLabelCondController;
+
+    public ConditionalDocumentController<AxisLabelStyle> MinorLabelCondController
+    {
+      get
+      {
+        if(_minorLabelCondController is null)
+        {
+          _minorLabelCondController = new ConditionalDocumentController<AxisLabelStyle>(
+            () => { ShowMinorLabels = true; return _doc.MinorLabelStyle; },
+            () => { ShowMinorLabels = false; }
+            )
+          {
+            UseDocumentCopy = UseDocument.Directly
+          };
+          _minorLabelCondController.InitializeDocument(_doc.MinorLabelStyle);
+        }
+        return _minorLabelCondController;
+      }
+    }
+
+    public bool ShowMinorLabels
+    {
+      get => _doc.MinorLabelStyle is not null;
+      set
+      {
+        if (!(ShowMinorLabels == value))
+        {
+          if (value == true)
+          {
+            _doc.ShowMinorLabels(_context);
+          }
+          else
+          {
+            _doc.HideMinorLabels();
+          }
+
+          if(_minorLabelCondController is not null)
+          {
+            _minorLabelCondController.IsConditionalViewEnabled = value;
+          }
+          OnPropertyChanged(nameof(ShowMinorLabels));
+        }
+      }
+    }
+
+    public IConditionalDocumentView MinorLabelCondView
+    {
+      get
+      {
+        if (MinorLabelCondController is null)
+          throw new InvalidOperationException("Instance is not initialized!");
+
+        if (MinorLabelCondController.ViewObject is null)
+          Current.Gui.FindAndAttachControlTo(MinorLabelCondController);
+        return (IConditionalDocumentView)MinorLabelCondController.ViewObject;
+      }
+    }
+
+    #endregion Minor Label
+
+    #region AxisTitle
 
     private string _axisTitle;
 
@@ -73,72 +261,50 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
       }
     }
 
-    private bool _showMajorLabels;
+    #endregion
 
-    public bool ShowMajorLabels
-    {
-      get => _showMajorLabels;
-      set
-      {
-        if (!(_showMajorLabels == value))
-        {
-          _showMajorLabels = value;
-          EhShowMajorLabelsChanged();
-          OnPropertyChanged(nameof(ShowMajorLabels));
-        }
-      }
-    }
-
-    private bool _showMinorLabels;
-
-    public bool ShowMinorLabels
-    {
-      get => _showMinorLabels;
-      set
-      {
-        if (!(_showMinorLabels == value))
-        {
-          _showMinorLabels = value;
-          EhShowMinorLabelsChanged();
-          OnPropertyChanged(nameof(ShowMinorLabels));
-        }
-      }
-    }
-
-    private bool _showAxisLine;
-
-    public bool ShowAxisLine
-    {
-      get => _showAxisLine;
-      set
-      {
-        if (!(_showAxisLine == value))
-        {
-          _showAxisLine = value;
-          EhShowAxisLineChanged();
-          OnPropertyChanged(nameof(ShowAxisLine));
-        }
-      }
-    }
-    private bool _showCustomTickSpacing;
+    #region Custom Tick Spacing
 
     public bool ShowCustomTickSpacing
     {
-      get => _showCustomTickSpacing;
+      get => _doc.TickSpacing is not null;
       set
       {
-        if (!(_showCustomTickSpacing == value))
+        if (!(ShowCustomTickSpacing == value))
         {
-          _showCustomTickSpacing = value;
-          EhShowCustomTickSpacingChanged();
+          EhShowCustomTickSpacingChanged(value);
           OnPropertyChanged(nameof(ShowCustomTickSpacing));
         }
       }
     }
 
-    public object? AxisLineView => _axisLineStyleController?.ViewObject;
+    private void EhShowCustomTickSpacingChanged(bool isShown)
+    {
+      if (isShown)
+      {
+        if (_tickSpacingController is null)
+        {
+          if (_doc.TickSpacing is null)
+          {
+            _doc.TickSpacing = new Altaxo.Graph.Scales.Ticks.LinearTickSpacing();
+          }
+          _tickSpacingController = new TickSpacingController() { UseDocumentCopy = UseDocument.Directly };
+          _tickSpacingController.InitializeDocument(_doc.TickSpacing);
+          Current.Gui.FindAndAttachControlTo(_tickSpacingController);
+        }
+      }
+      else
+      {
+        _doc.TickSpacing = null;
+        _tickSpacingController = null;
+      }
+      OnPropertyChanged(nameof(CustomTickSpacingView));
+    }
+    protected TickSpacingController _tickSpacingController;
 
     public object? CustomTickSpacingView => _tickSpacingController?.ViewObject;
+
+    #endregion Custom Tick Spacing
 
     #endregion
 
@@ -146,37 +312,11 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
     {
       base.Initialize(initData);
 
-      if (initData)
+      if(initData)
       {
         _context = _doc.GetPropertyContext();
 
-        if (_doc.AxisLineStyle is not null)
-        {
-          _axisLineStyleController = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { _doc.AxisLineStyle }, typeof(IMVCAController), UseDocument.Directly);
-        }
-        else
-        {
-          _axisLineStyleController = null;
-        }
-        OnPropertyChanged(nameof(AxisLineView));
-
-        if (_doc.TickSpacing is not null)
-        {
-          _tickSpacingController = new TickSpacingController() { UseDocumentCopy = UseDocument.Directly };
-          _tickSpacingController.InitializeDocument(_doc.TickSpacing);
-          Current.Gui.FindAndAttachControlTo(_tickSpacingController);
-          OnPropertyChanged(nameof(CustomTickSpacingView));
-        }
-
         AxisTitle = _doc.TitleText;
-        ShowAxisLine = _doc.IsAxisLineEnabled;
-        ShowMajorLabels = _doc.AreMajorLabelsEnabled;
-        ShowMinorLabels = _doc.AreMinorLabelsEnabled;
-        ShowCustomTickSpacing = _tickSpacingController?.ViewObject is not null;
-      }
-
-      if (_view is not null)
-      {
       }
     }
 
@@ -209,87 +349,6 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
         _doc.TickSpacing = (Altaxo.Graph.Scales.Ticks.TickSpacing)_tickSpacingController.ModelObject;
 
       return ApplyEnd(true, disposeController); // all ok
-    }
-
-    /// <summary>Can be called by an external controller if the state of either the major or the minor label has been changed by an external controller. This will update
-    /// the state of the checkboxes for major and minor labels in the view that is controlled by this controller.</summary>
-    public void AnnounceExternalChangeOfMajorOrMinorLabelState()
-    {
-      if (_view is not null)
-      {
-        ShowMajorLabels = _doc.AreMajorLabelsEnabled;
-        ShowMinorLabels = _doc.AreMinorLabelsEnabled;
-      }
-    }
-
-    private void EhShowCustomTickSpacingChanged()
-    {
-      var isShown = ShowCustomTickSpacing;
-
-      if (isShown)
-      {
-        if (_tickSpacingController is null)
-        {
-          if (_doc.TickSpacing is null)
-          {
-            _doc.TickSpacing = new Altaxo.Graph.Scales.Ticks.LinearTickSpacing();
-          }
-          _tickSpacingController = new TickSpacingController() { UseDocumentCopy = UseDocument.Directly };
-          _tickSpacingController.InitializeDocument(_doc.TickSpacing);
-          Current.Gui.FindAndAttachControlTo(_tickSpacingController);
-        }
-      }
-      else
-      {
-        _doc.TickSpacing = null;
-        _tickSpacingController = null;
-      }
-      OnPropertyChanged(nameof(CustomTickSpacingView));
-    }
-
-    private void EhShowAxisLineChanged()
-    {
-      var oldValue = _doc.IsAxisLineEnabled;
-      if (ShowAxisLine && (_doc.AxisLineStyle is null))
-      {
-        _doc.ShowAxisLine(_context);
-        _axisLineStyleController = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { _doc.AxisLineStyle }, typeof(IMVCAController), UseDocument.Directly);
-      }
-      OnPropertyChanged(nameof(AxisLineView));
-
-      if (oldValue != _doc.IsAxisLineEnabled)
-        OnMadeDirty();
-    }
-
-    private void EhShowMajorLabelsChanged()
-    {
-      var oldValue = _doc.AreMajorLabelsEnabled;
-      var newValue = ShowMajorLabels;
-
-      if (oldValue != newValue)
-      {
-        if (newValue)
-          _doc.ShowMajorLabels(_context);
-        else
-          _doc.HideMajorLabels();
-        OnMadeDirty();
-      }
-    }
-
-    private void EhShowMinorLabelsChanged()
-    {
-      var oldValue = _doc.AreMinorLabelsEnabled;
-      var newValue = ShowMinorLabels;
-
-      if (oldValue != newValue)
-      {
-        if (newValue)
-          _doc.ShowMinorLabels(_context);
-        else
-          _doc.HideMinorLabels();
-
-        OnMadeDirty();
-      }
     }
   }
 }

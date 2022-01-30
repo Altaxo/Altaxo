@@ -44,7 +44,7 @@ namespace Altaxo.Gui.Common
     public event PropertyChangedEventHandler? PropertyChanged;
     protected virtual void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
-    Action<TItem>? _onSelectedItemChanged;
+    Action<TItem>? _onSelectedValueChanged;
 
     public ItemsController()
     {
@@ -81,10 +81,10 @@ namespace Altaxo.Gui.Common
     /// <param name="OnSelectedValueChanged">An optional action, that is executed if the selected value changed</param>
     public void Initialize(SelectableListNodeList list, TItem selectedValue, Action<TItem>? OnSelectedValueChanged=null)
     {
-      _Items = list;
-      _Items.SetSelection(n => object.ReferenceEquals(n, selectedValue));
-      _SelectedItem = _Items.FirstOrDefault(element => object.Equals(element.Tag, selectedValue));
-      _onSelectedItemChanged = OnSelectedValueChanged;
+      _items = list;
+      _items.SetSelection(n => object.ReferenceEquals(n, selectedValue));
+      _selectedItem = _items.FirstOrDefault(element => object.Equals(element.Tag, selectedValue));
+      _onSelectedValueChanged = OnSelectedValueChanged;
 
       OnPropertyChanged(nameof(Items));
       OnPropertyChanged(nameof(SelectedItem));
@@ -99,9 +99,9 @@ namespace Altaxo.Gui.Common
     /// <param name="OnSelectedItemChanged">An optional action, that is executed if the selected value changed.</param>
     public void Initialize(SelectableListNodeList list, Action<TItem>? OnSelectedItemChanged=null)
     {
-      _Items = list;
-      _SelectedItem = _Items.FirstSelectedNode;
-      _onSelectedItemChanged = OnSelectedItemChanged;
+      _items = list;
+      _selectedItem = _items.FirstSelectedNode;
+      _onSelectedValueChanged = OnSelectedItemChanged;
 
       OnPropertyChanged(nameof(Items));
       OnPropertyChanged(nameof(SelectedItem));
@@ -112,47 +112,47 @@ namespace Altaxo.Gui.Common
     {
       SelectedItem = null;
       Items = null;
-      _onSelectedItemChanged = null;
+      _onSelectedValueChanged = null;
       PropertyChanged = null;
     }
 
     #region Bindings
 
-    private SelectableListNodeList _Items;
+    private SelectableListNodeList _items;
 
     /// <summary>
     /// Gets or sets the items. Used to bind the items to the Gui element.
     /// </summary>
     public SelectableListNodeList Items
     {
-      get => _Items;
+      get => _items;
       set
       {
-        if (!(_Items == value))
+        if (!(_items == value))
         {
-          _Items = value;
+          _items = value;
           OnPropertyChanged(nameof(Items));
         }
       }
     }
 
-    private SelectableListNode _SelectedItem;
+    private SelectableListNode _selectedItem;
 
     /// <summary>
     /// Gets or sets the selected item. Used to bind the Selecteditem property of the Gui element.
     /// </summary>
     public SelectableListNode SelectedItem
     {
-      get => _SelectedItem;
+      get => _selectedItem;
       set
       {
-        if (!(object.Equals(_SelectedItem, value)))
+        if (!(object.Equals(_selectedItem, value)))
         {
-          _SelectedItem = value;
-          _Items.SetSelection(n => object.ReferenceEquals(n, value));
+          _selectedItem = value;
+          _items.SetSelection(n => object.ReferenceEquals(n, value));
           OnPropertyChanged(nameof(SelectedItem));
           OnPropertyChanged(nameof(SelectedValue));
-          _onSelectedItemChanged?.Invoke((TItem)value.Tag);
+          _onSelectedValueChanged?.Invoke((TItem)(value?.Tag ?? default));
         }
       }
     }
@@ -165,11 +165,11 @@ namespace Altaxo.Gui.Common
     {
       get
       {
-        return (TItem)(_SelectedItem?.Tag ?? default);
+        return (TItem)(_selectedItem?.Tag ?? default);
       }
       set
       {
-        SelectedItem = _Items.FirstOrDefault(element => object.Equals(element.Tag, value));
+        SelectedItem = _items.FirstOrDefault(element => object.Equals(element.Tag, value));
       }
     }
 

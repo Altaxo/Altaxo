@@ -28,6 +28,7 @@ using System.Windows.Input;
 using Altaxo.Collections;
 using Altaxo.Graph;
 using Altaxo.Graph.Gdi;
+using Altaxo.Graph.Gdi.Axis;
 using Altaxo.Graph.Gdi.Shapes;
 using Altaxo.Gui.Graph.Gdi.Axis;
 using Altaxo.Gui.Graph.Scales;
@@ -53,7 +54,7 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
     protected IMVCAController _coordinateController;
     protected IMVCANController _layerPositionController;
 
-    private Dictionary<CSLineID, AxisStyleControllerConditionalGlue> _axisControl;
+    private Dictionary<CSLineID, AxisStyleController> _axisController = new Dictionary<CSLineID, AxisStyleController>();
 
     private SelectableListNodeList _listOfScales;
     private SelectableListNodeList _listOfAxes;
@@ -79,16 +80,11 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
       yield return new ControllerAndSetNullMethod(_coordinateController, () => _coordinateController = null);
       yield return new ControllerAndSetNullMethod(_layerPositionController, () => _layerPositionController = null);
 
-      if (_axisControl is not null)
+      foreach (var entry in EnumerableExtensions.ThisOrEmpty(_axisController))
       {
-        foreach (var item in EnumerableExtensions.ThisOrEmpty(_axisControl.Values))
-        {
-          yield return new ControllerAndSetNullMethod(item.AxisStyleCondController, null);
-          yield return new ControllerAndSetNullMethod(item.MajorLabelCondController, null);
-          yield return new ControllerAndSetNullMethod(item.MinorLabelCondController, null);
-          yield return new ControllerAndSetNullMethod(null, () => _axisControl = null);
-        }
+        yield return new ControllerAndSetNullMethod(entry.Value, null);
       }
+      yield return new ControllerAndSetNullMethod(null, () => _axisController = null);
     }
 
     public override void Dispose(bool isDisposing)
@@ -326,13 +322,12 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
 
       // Axes
       // collect the AxisStyleIdentifier from the actual layer and also all possible AxisStyleIdentifier
-      _axisControl = new Dictionary<CSLineID, AxisStyleControllerConditionalGlue>();
+      _axisController.Values.ForEachDo(controller => controller?.Dispose());
+      _axisController.Clear();
       _listOfAxes = new SelectableListNodeList();
       foreach (CSLineID ids in _doc.CoordinateSystem.GetJoinedAxisStyleIdentifier(_doc.AxisStyles.AxisStyleIDs, new CSLineID[] { id }))
       {
         CSAxisInformation info = _doc.CoordinateSystem.GetAxisStyleInformation(ids);
-        var axisInfo = new AxisStyleControllerConditionalGlue(info, _doc.AxisStyles);
-        _axisControl.Add(info.Identifier, axisInfo);
         _listOfAxes.Add(new SelectableListNode(info.NameOfAxisStyle, info.Identifier, false));
       }
 
@@ -380,21 +375,53 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
           break;
 
         case TitleAndFormatTag:
-          node.Controller = _currentController = _axisControl[_currentAxisID].AxisStyleCondController;
-          node.ViewObject = _axisControl[_currentAxisID].AxisStyleCondView;
+          {
+            var axisStyleController = GetOrCreateAxisStyleController(_currentAxisID);
+            node.Controller = _currentController = axisStyleController;
+            if (axisStyleController.ViewObject is null)
+              Current.Gui.FindAndAttachControlTo(axisStyleController);
+            node.ViewObject = axisStyleController.ViewObject;
+          }
           break;
 
         case MajorLabelsTag:
-          node.Controller = _currentController = _axisControl[_currentAxisID].MajorLabelCondController;
-          node.ViewObject = _axisControl[_currentAxisID].MajorLabelCondView;
-
+          {
+            var axisStyleController = GetOrCreateAxisStyleController(_currentAxisID);
+            node.Controller = _currentController = axisStyleController.MajorLabelCondController;
+            node.ViewObject = axisStyleController.MajorLabelCondView;
+          }
           break;
 
         case MinorLabelsTag:
-          node.Controller = _currentController = _axisControl[_currentAxisID].MinorLabelCondController;
-          node.ViewObject = _axisControl[_currentAxisID].MinorLabelCondView;
+          {
+            var axisStyleController = GetOrCreateAxisStyleController(_currentAxisID);
+            node.Controller = _currentController = axisStyleController.MinorLabelCondController;
+            node.ViewObject = axisStyleController.MinorLabelCondView;
+          }
           break;
       }
+    }
+
+    /// <summary>
+    /// Gets or creates the axis style controller for the current line ID. If there is not axis style for the line ID,
+    /// an empty axis style is created before.
+    /// </summary>
+    /// <param name="currentLineID">The current line identifier.</param>
+    /// <returns>The axis style controller.</returns>
+    private AxisStyleController GetOrCreateAxisStyleController(CSLineID currentLineID)
+    {
+      if (!_axisController.TryGetValue(_currentAxisID, out var axisStyleController))
+      {
+        axisStyleController = new AxisStyleController();
+        if (!_doc.AxisStyles.TryGetValue(_currentAxisID, out var axisStyle))
+        {
+          axisStyle = new AxisStyle(_currentAxisID, false, false, false, null, _doc.GetPropertyContext());
+          _doc.AxisStyles.Add(axisStyle);
+        }
+        axisStyleController.InitializeDocument(axisStyle);
+        _axisController[_currentAxisID] = axisStyleController;
+      }
+      return axisStyleController;
     }
 
     private void SetSecondaryChoiceToUnique()
@@ -443,7 +470,7 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
       if (!Current.Gui.ShowDialog(ref creationArgs, "Create/move axis", false))
         return;
 
-      if (_axisControl.ContainsKey(creationArgs.CurrentStyle))
+      if (_axisController.ContainsKey(creationArgs.CurrentStyle))
         return; // the axis is already present
 
       var oldIdentity = creationArgs.TemplateStyle;
@@ -451,16 +478,14 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
       var newAxisInfo = _doc.CoordinateSystem.GetAxisStyleInformation(newIdentity);
 
       AxisCreationArguments.AddAxis(_doc.AxisStyles, creationArgs); // add the new axis to the document
-      _axisControl.Add(newIdentity, new AxisStyleControllerConditionalGlue(newAxisInfo, _doc.AxisStyles));
-
       SetSecondaryChoiceToUnique();
 
       _listOfAxes.ClearSelectionsAll();
       _listOfAxes.Add(new SelectableListNode(newAxisInfo.NameOfAxisStyle, newIdentity, true));
 
-      if (creationArgs.MoveAxis && _axisControl.ContainsKey(oldIdentity))
+      if (creationArgs.MoveAxis && _axisController.ContainsKey(oldIdentity))
       {
-        _axisControl.Remove(oldIdentity);
+        _axisController.Remove(oldIdentity);
         for (int i = _listOfAxes.Count - 1; i >= 0; --i)
         {
           if (((CSLineID)_listOfAxes[i].Tag) == oldIdentity)
@@ -489,7 +514,7 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
       {
         if (true == _doc.AxisStyles.Remove(axisID))
         {
-          _axisControl.Remove(axisID);
+          _axisController.Remove(axisID);
           var axisItem = _listOfAxes.First(x => axisID != (CSLineID)(x.Tag));
           axisItem.IsSelected = true;
           _currentAxisID = (CSLineID)(axisItem.Tag);

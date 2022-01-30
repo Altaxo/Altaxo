@@ -33,21 +33,17 @@
 
 		<CheckBox Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2"  Content="Show minor labels" IsChecked="{Binding ShowMinorLabels, Mode=TwoWay}" />
 
-		<GroupBox Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="4">
-			<GroupBox.HeaderTemplate>
-				<DataTemplate>
-					<CheckBox Content="Show axis line and ticks" IsChecked="{Binding ShowAxisLine, Mode=TwoWay}" />
-				</DataTemplate>
-			</GroupBox.HeaderTemplate>
-            <ContentControl Content="{Binding AxisLineView, FallbackValue=PlaceHolderForAxisLineView}" IsEnabled="{Binding ShowAxisLine}"/>
+        <GroupBox Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="4">
+            <GroupBox.Header>
+                <CheckBox Content="Show axis line and ticks" IsChecked="{Binding ShowAxisLine, Mode=TwoWay}" />
+            </GroupBox.Header>
+            <ContentControl Content="{Binding AxisLineStyleView, FallbackValue=PlaceHolderForAxisLineStyleView}" IsEnabled="{Binding ShowAxisLine}"/>
 		</GroupBox>
 
-		<GroupBox Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="4">
-			<GroupBox.HeaderTemplate>
-				<DataTemplate>
+        <GroupBox Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="4">
+			<GroupBox.Header>
 					<CheckBox Content="Custom tick spacing" IsChecked="{Binding ShowCustomTickSpacing, Mode=TwoWay}"  />
-				</DataTemplate>
-			</GroupBox.HeaderTemplate>
+			</GroupBox.Header>
             <ContentControl Content="{Binding CustomTickSpacingView, FallbackValue=PlaceHolderForCustomTickSpacingView}" IsEnabled="{Binding ShowCustomTickSpacing}"/>
         </GroupBox>
 	</Grid>
