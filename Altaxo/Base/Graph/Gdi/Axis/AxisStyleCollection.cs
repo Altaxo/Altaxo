@@ -33,7 +33,7 @@ using Altaxo.Main.Properties;
 namespace Altaxo.Graph.Gdi.Axis
 {
   /// <summary>
-  /// AxisStylesSummary collects all styles that correspond to one axis scale (i.e. either x-axis or y-axis)
+  /// AxisStyles collects all styles that correspond to one axis scale (i.e. either x-axis or y-axis)
   /// in one class. This contains the grid style of the axis, and one or more axis styles
   /// </summary>
   public class AxisStyleCollection

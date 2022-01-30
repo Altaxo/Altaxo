@@ -23,48 +23,98 @@
 #endregion Copyright
 
 using System;
+using System.ComponentModel;
 using Altaxo.Graph;
 using Altaxo.Graph.Gdi.Axis;
 using Altaxo.Gui.Common;
 #nullable disable
 namespace Altaxo.Gui.Graph.Gdi.Axis
 {
-  public class AxisStyleControllerConditionalGlue
+  public class AxisStyleControllerConditionalGlue : INotifyPropertyChanged
   {
     private AxisStyleCollection _doc;
 
     public CSAxisInformation AxisInformation { get; private set; }
 
-    public ConditionalDocumentController<AxisStyle> AxisStyleCondController { get; private set; }
-
-    public ConditionalDocumentController<AxisLabelStyle> MajorLabelCondController { get; private set; }
-
-    public ConditionalDocumentController<AxisLabelStyle> MinorLabelCondController { get; private set; }
+   
 
     private Altaxo.Main.Properties.IReadOnlyPropertyBag _context;
+
+    /// <summary>
+    /// Occurs when a property value changes.
+    /// </summary>
+    public event PropertyChangedEventHandler? PropertyChanged;
+    protected virtual void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+
 
     public AxisStyleControllerConditionalGlue(CSAxisInformation axisInfo, AxisStyleCollection axisStyleCollection)
     {
       _doc = axisStyleCollection;
       AxisInformation = axisInfo;
-
       _context = _doc.GetPropertyContext();
+    }
 
-      AxisStyleCondController = new ConditionalDocumentController<AxisStyle>(CreateAxisStyle, RemoveAxisStyle, CreateAxisStyleController) { UseDocumentCopy = UseDocument.Directly };
-      MajorLabelCondController = new ConditionalDocumentController<AxisLabelStyle>(CreateMajorLabel, RemoveMajorLabel) { UseDocumentCopy = UseDocument.Directly };
-      MinorLabelCondController = new ConditionalDocumentController<AxisLabelStyle>(CreateMinorLabel, RemoveMinorLabel) { UseDocumentCopy = UseDocument.Directly };
+    #region Bindings
 
-      if (_doc.Contains(AxisInformation.Identifier))
+    private ConditionalDocumentController<AxisStyle> _axisStyleCondController;
+
+    public ConditionalDocumentController<AxisStyle> AxisStyleCondController
+    {
+      get
       {
-        var axStyle = _doc[AxisInformation.Identifier];
-        AxisStyleCondController.InitializeDocument(axStyle);
-        if (axStyle.AreMajorLabelsEnabled)
-          MajorLabelCondController.InitializeDocument(axStyle.MajorLabelStyle);
-        if (axStyle.AreMinorLabelsEnabled)
-          MinorLabelCondController.InitializeDocument(axStyle.MinorLabelStyle);
+        if(_axisStyleCondController is null)
+        {
+          _axisStyleCondController = new ConditionalDocumentController<AxisStyle>(CreateAxisStyle, RemoveAxisStyle, CreateAxisStyleController) { UseDocumentCopy = UseDocument.Directly };
+          if (_doc.Contains(AxisInformation.Identifier))
+          {
+            var axStyle = _doc[AxisInformation.Identifier];
+            _axisStyleCondController.InitializeDocument(axStyle);
+          }
+        }
+        return _axisStyleCondController;
       }
     }
 
+
+    private ConditionalDocumentController<AxisLabelStyle> _majorLabelCondController;
+
+    public ConditionalDocumentController<AxisLabelStyle> MajorLabelCondController
+    {
+      get
+      {
+        if(_majorLabelCondController is null)
+        {
+          _majorLabelCondController = new ConditionalDocumentController<AxisLabelStyle>(CreateMajorLabel, RemoveMajorLabel) { UseDocumentCopy = UseDocument.Directly };
+          if (_doc.Contains(AxisInformation.Identifier))
+          {
+            var axStyle = _doc[AxisInformation.Identifier];
+            if (axStyle.AreMajorLabelsEnabled)
+              _majorLabelCondController.InitializeDocument(axStyle.MajorLabelStyle);
+          }
+        }
+        return _majorLabelCondController;
+      }
+    }
+
+    private ConditionalDocumentController<AxisLabelStyle> _minorLabelCondController;
+
+    public ConditionalDocumentController<AxisLabelStyle> MinorLabelCondController
+    {
+      get
+      {
+        if(_minorLabelCondController is null)
+        {
+          _minorLabelCondController = new ConditionalDocumentController<AxisLabelStyle>(CreateMinorLabel, RemoveMinorLabel) { UseDocumentCopy = UseDocument.Directly };
+          if (_doc.Contains(AxisInformation.Identifier))
+          {
+            var axStyle = _doc[AxisInformation.Identifier];
+            if (axStyle.AreMinorLabelsEnabled)
+              _minorLabelCondController.InitializeDocument(axStyle.MinorLabelStyle);
+          }
+        }
+        return _minorLabelCondController;
+      }
+    }
 
     public IConditionalDocumentView AxisStyleCondView
     {
@@ -76,12 +126,6 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
         if (AxisStyleCondController.ViewObject is null)
           Current.Gui.FindAndAttachControlTo(AxisStyleCondController);
         return (IConditionalDocumentView)AxisStyleCondController.ViewObject;
-      }
-      set
-      {
-        if (AxisStyleCondController is null)
-          throw new InvalidOperationException("Instance is not initialized!");
-        AxisStyleCondController.ViewObject = value;
       }
     }
 
@@ -96,12 +140,6 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
           Current.Gui.FindAndAttachControlTo(MajorLabelCondController);
         return (IConditionalDocumentView)MajorLabelCondController.ViewObject;
       }
-      set
-      {
-        if (MajorLabelCondController is null)
-          throw new InvalidOperationException("Instance is not initialized!");
-        MajorLabelCondController.ViewObject = value;
-      }
     }
 
     public IConditionalDocumentView MinorLabelCondView
@@ -115,13 +153,9 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
           Current.Gui.FindAndAttachControlTo(MinorLabelCondController);
         return (IConditionalDocumentView)MinorLabelCondController.ViewObject;
       }
-      set
-      {
-        if (MinorLabelCondController is null)
-          throw new InvalidOperationException("Instance is not initialized!");
-        MinorLabelCondController.ViewObject = value;
-      }
     }
+
+    #endregion
 
     private void OnAxisStyleCreation(AxisStyle result)
     {
