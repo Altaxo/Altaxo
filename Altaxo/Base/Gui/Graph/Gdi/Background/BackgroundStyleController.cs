@@ -24,11 +24,10 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using Altaxo.Collections;
 using Altaxo.Drawing;
-using Altaxo.Graph;
 using Altaxo.Graph.Gdi.Background;
+using Altaxo.Gui.Common;
 
 namespace Altaxo.Gui.Graph.Gdi.Background
 {
@@ -95,12 +94,9 @@ namespace Altaxo.Gui.Graph.Gdi.Background
       }
     }
 
-    private SelectableListNodeList _backgroundStyles = new SelectableListNodeList();
+    private ItemsController<Type?> _backgroundStyles;
 
-    /// <summary>
-    /// Gets or sets the list background styles. Tag is of type <see cref="System.Type"/>, namely the type of the background style.
-    /// </summary>
-    public SelectableListNodeList BackgroundStyles
+    public ItemsController<Type?> BackgroundStyles
     {
       get => _backgroundStyles;
       set
@@ -109,22 +105,6 @@ namespace Altaxo.Gui.Graph.Gdi.Background
         {
           _backgroundStyles = value;
           OnPropertyChanged(nameof(BackgroundStyles));
-        }
-      }
-    }
-
-    private Type _selectedBackgroundStyle;
-
-    public Type SelectedBackgroundStyle
-    {
-      get => _selectedBackgroundStyle;
-      set
-      {
-        if (!(_selectedBackgroundStyle == value))
-        {
-          _selectedBackgroundStyle = value;
-          OnPropertyChanged(nameof(SelectedBackgroundStyle));
-          EhView_BackgroundStyleChanged(value);
         }
       }
     }
@@ -174,12 +154,12 @@ namespace Altaxo.Gui.Graph.Gdi.Background
 
       if (initData)
       {
-       var backgroundStyles = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(IBackgroundStyle));
-        _backgroundStyles.Clear();
-        _backgroundStyles.Add(new SelectableListNode("None", null, _doc is null));
+        var backgroundStyles = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(IBackgroundStyle));
+        var styles = new SelectableListNodeList();
+        styles.Add(new SelectableListNode("None", null, _doc is null));
         foreach (var backtype in backgroundStyles)
-          _backgroundStyles.Add(new SelectableListNode(Current.Gui.GetUserFriendlyClassName(backtype), backtype, _doc?.GetType() == backtype));
-        _selectedBackgroundStyle = _doc?.GetType();
+          styles.Add(new SelectableListNode(Current.Gui.GetUserFriendlyClassName(backtype), backtype, _doc?.GetType() == backtype));
+        _backgroundStyles = new ItemsController<Type?>(styles, EhView_BackgroundStyleChanged);
 
         if (_doc is not null && _doc.SupportsBrush)
           _backgroundBrush = _doc.Brush;

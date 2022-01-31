@@ -25,33 +25,48 @@
 #nullable disable
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Altaxo.Collections;
 using Altaxo.Graph.Scales.Ticks;
+using Altaxo.Gui.Common;
 
 namespace Altaxo.Gui.Graph.Scales.Ticks
 {
-  public interface ITickSpacingView
+  public interface ITickSpacingView : IDataContextAwareView
   {
-    void InitializeTickSpacingType(SelectableListNodeList names);
-
-    void SetTickSpacingView(object guiobject);
-
-    event Action TickSpacingTypeChanged;
   }
 
   [ExpectedTypeOfView(typeof(ITickSpacingView))]
   [UserControllerForObject(typeof(TickSpacing))]
   public class TickSpacingController : MVCANDControllerEditOriginalDocBase<TickSpacing, ITickSpacingView>
   {
-    protected SelectableListNodeList _tickSpacingTypes;
-    protected IMVCAController _tickSpacingController;
+    ItemsController<Type> _tickSpacingTypes;
 
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
-      yield return new ControllerAndSetNullMethod(_tickSpacingController, () => _tickSpacingController = null);
+      yield return new ControllerAndSetNullMethod(_tickSpacingDetailsController, () => _tickSpacingDetailsController = null);
     }
+
+    #region Bindings
+
+    public ItemsController<Type> TickSpacingTypes => _tickSpacingTypes;
+
+    private IMVCAController _tickSpacingDetailsController;
+
+    public IMVCAController TickSpacingDetailsController
+    {
+      get => _tickSpacingDetailsController;
+      set
+      {
+        if (!(_tickSpacingDetailsController == value))
+        {
+          _tickSpacingDetailsController = value;
+          OnPropertyChanged(nameof(TickSpacingDetailsController));
+        }
+      }
+    }
+
+
+    #endregion
 
     public override void Dispose(bool isDisposing)
     {
@@ -63,72 +78,37 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
     {
       base.Initialize(initData);
 
-      InitTickSpacingTypes(initData);
-      InitTickSpacingController(initData);
+      if (initData)
+      {
+        var tickSpacingTypes = new SelectableListNodeList();
+        Type[] classes = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(TickSpacing));
+        for (int i = 0; i < classes.Length; i++)
+        {
+          var node = new SelectableListNode(Current.Gui.GetUserFriendlyClassName(classes[i]), classes[i], _doc.GetType() == classes[i]);
+          tickSpacingTypes.Add(node);
+        }
+        _tickSpacingTypes = new ItemsController<Type>(tickSpacingTypes, EhView_TickSpacingTypeChanged);
+
+        if (_doc is not null)
+          _tickSpacingDetailsController = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { _doc }, typeof(IMVCAController), UseDocument.Directly);
+        else
+          _tickSpacingDetailsController = null;
+
+      }
     }
 
     public override bool Apply(bool disposeController)
     {
-      if (_tickSpacingController is not null && false == _tickSpacingController.Apply(disposeController))
+      if (_tickSpacingDetailsController is not null && false == _tickSpacingDetailsController.Apply(disposeController))
         return false;
 
       return ApplyEnd(true, disposeController);
     }
 
-    protected override void AttachView()
+    public void EhView_TickSpacingTypeChanged(Type spaceType)
     {
-      base.AttachView();
-
-      _view.TickSpacingTypeChanged += EhView_TickSpacingTypeChanged;
-    }
-
-    protected override void DetachView()
-    {
-      _view.TickSpacingTypeChanged -= EhView_TickSpacingTypeChanged;
-
-      base.DetachView();
-    }
-
-    public void InitTickSpacingTypes(bool bInit)
-    {
-      if (bInit)
-      {
-        _tickSpacingTypes = new SelectableListNodeList();
-        Type[] classes = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(TickSpacing));
-        for (int i = 0; i < classes.Length; i++)
-        {
-          var node = new SelectableListNode(Current.Gui.GetUserFriendlyClassName(classes[i]), classes[i], _doc.GetType() == classes[i]);
-          _tickSpacingTypes.Add(node);
-        }
-      }
-
-      if (_view is not null)
-        _view.InitializeTickSpacingType(_tickSpacingTypes);
-    }
-
-    public void InitTickSpacingController(bool bInit)
-    {
-      if (bInit)
-      {
-        if (_doc is not null)
-          _tickSpacingController = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { _doc }, typeof(IMVCAController), UseDocument.Directly);
-        else
-          _tickSpacingController = null;
-      }
-      if (_view is not null)
-      {
-        _view.SetTickSpacingView(_tickSpacingController is not null ? _tickSpacingController.ViewObject : null);
-      }
-    }
-
-    public void EhView_TickSpacingTypeChanged()
-    {
-      var selNode = _tickSpacingTypes.FirstSelectedNode; // FirstSelectedNode can be null when the content of the box changes
-      if (selNode is null)
+      if (spaceType is null)
         return;
-
-      var spaceType = (Type)_tickSpacingTypes.FirstSelectedNode.Tag;
-
       if (spaceType == _doc.GetType())
         return;
 
@@ -142,7 +122,10 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
         _suspendToken = _doc.SuspendGetToken(); // now we suspend the new document
       }
 
-      InitTickSpacingController(true);
+      if (_doc is not null)
+        TickSpacingDetailsController = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { _doc }, typeof(IMVCAController), UseDocument.Directly);
+      else
+        TickSpacingDetailsController = null;
     }
   }
 }

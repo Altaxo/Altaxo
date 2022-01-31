@@ -4,11 +4,15 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:axog="clr-namespace:Altaxo.Gui;assembly=AltaxoBase"
     xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
+    xmlns:axogcc="clr-namespace:Altaxo.Gui.Common.Converters"
     xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing"
     xmlns:axogg="clr-namespace:Altaxo.Gui.Graph"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:Altaxo.Gui.Common.Drawing"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006">
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+    xmlns:shapes="clr-namespace:Altaxo.Gui.Graph.Gdi.Shapes;assembly=AltaxoBase" 
+    d:DataContext="{d:DesignInstance Type=shapes:FloatingScaleController}"
+    mc:Ignorable="d">
     <TabControl>
         <TabItem Header="Position/Size">
             <Grid>
@@ -29,19 +33,19 @@
                     <RowDefinition Height="4" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
-                <Label Grid.Row="0" Grid.Column="0">Pos.X:</Label>
+                <Label Grid.Row="0" Grid.Column="0" Content="Pos.X:"/>
                 <axogc:QuantityWithUnitTextBox
-                    x:Name="_edPositionX"
                     Grid.Row="0"
                     Grid.Column="1"
-                    UnitEnvironment="{x:Static axog:PositionEnvironment.Instance}" />
+                    SelectedQuantity="{Binding PositionX}"
+                    UnitEnvironment="{Binding PositionEnvironment}" />
 
                 <Label Grid.Row="0" Grid.Column="2">Pos.Y:</Label>
                 <axogc:QuantityWithUnitTextBox
-                    x:Name="_edPositionY"
                     Grid.Row="0"
                     Grid.Column="3"
-                    UnitEnvironment="{x:Static axog:PositionEnvironment.Instance}" />
+                    SelectedQuantity="{Binding PositionY}"
+                    UnitEnvironment="{Binding PositionEnvironment}" />
 
                 <GroupBox
                     Grid.Row="4"
@@ -49,8 +53,8 @@
                     Grid.ColumnSpan="4"
                     Header="Scale to measure:">
                     <StackPanel Orientation="Vertical">
-                        <RadioButton x:Name="_guiScale0" Content="X-scale" />
-                        <RadioButton x:Name="_guiScale1" Content="Y-scale" />
+                        <RadioButton Content="X-scale" IsChecked="{Binding IsScaleToMeasureXScale, Mode=TwoWay}" />
+                        <RadioButton Content="Y-scale" IsChecked="{Binding IsScaleToMeasureYScale, Mode=TwoWay}" />
                     </StackPanel>
                 </GroupBox>
 
@@ -70,68 +74,67 @@
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
                         <RadioButton
-                            x:Name="_guiIsLogicalValue"
                             Grid.Column="0"
                             Margin="0,4,0,0"
-                            Content="is logical value:" />
+                            Content="is logical value:" 
+                            IsChecked="{Binding IsScaleSpanTypeLogicalValue, Mode=TwoWay}"
+                            />
                         <axogc:QuantityWithUnitTextBox
-                            x:Name="_guiLogicalScaleSpan"
                             Grid.Row="0"
                             Grid.Column="1"
                             Margin="0,4,0,0"
-                            IsEnabled="{Binding ElementName=_guiIsLogicalValue, Path=IsChecked}"
-                            SelectedQuantityAsValueInSIUnits="0.5"
-                            UnitEnvironment="{x:Static axog:RelationEnvironment.Instance}" />
+                            IsEnabled="{Binding IsScaleSpanTypeLogicalValue}"
+                            SelectedQuantity="{Binding LogicalScaleSpan}"
+                            UnitEnvironment="{Binding LogicalScaleSpanEnvironment}" />
                         <RadioButton
-                            x:Name="_guiIsPhysicalEndOrgDifference"
                             Grid.Row="1"
                             Grid.Column="0"
                             Margin="0,4,0,0"
-                            Content="is physical end-org difference:" />
+                            Content="is physical end-org difference:" 
+                            IsChecked="{Binding IsScaleSpanTypePhysicalEndOrgDifference, Mode=TwoWay}"
+                            />
                         <axogc:NumericDoubleTextBox
-                            x:Name="_guiSpanDifferenceValue"
                             Grid.Row="1"
                             Grid.Column="1"
                             Margin="0,4,0,0"
-                            IsEnabled="{Binding ElementName=_guiIsPhysicalEndOrgDifference, Path=IsChecked}"
-                            SelectedValue="1" />
+                            IsEnabled="{Binding IsScaleSpanTypePhysicalEndOrgDifference}"
+                            SelectedValue="{Binding ScaleSpanPhysicalEndOrgDifference}" />
                         <RadioButton
-                            x:Name="_guiIsPhysicalEndOrgRatio"
                             Grid.Row="2"
                             Grid.Column="0"
                             Margin="0,4,0,0"
-                            Content="is physical end/org ratio:" />
+                            Content="is physical end/org ratio:"
+                            IsChecked="{Binding IsScaleSpanTypePhysicalEndOrgRatio, Mode=TwoWay}"
+                            />
                         <axogc:NumericDoubleTextBox
-                            x:Name="_guiSpanRatioValue"
                             Grid.Row="2"
                             Grid.Column="1"
                             Margin="0,4,0,0"
-                            IsEnabled="{Binding ElementName=_guiIsPhysicalEndOrgRatio, Path=IsChecked}"
-                            SelectedValue="2" />
+                            IsEnabled="{Binding IsScaleSpanTypePhysicalEndOrgRatio}"
+                            SelectedValue="{Binding ScaleSpanPhysicalEndOrgRatio}" />
                     </Grid>
                 </GroupBox>
             </Grid>
         </TabItem>
-        <TabItem x:Name="_guiTabScaleTicks" Header="Scale/Ticks">
+        <TabItem Header="Scale/Ticks">
             <StackPanel Orientation="Vertical">
                 <GroupBox Padding="4" Header="Scale:">
                     <StackPanel Orientation="Vertical">
                         <RadioButton
-                            x:Name="_guiScaleTypeNormal"
                             Content="As parent scale"
+                            IsChecked="{Binding IsScaleSegmentTypeNormal, Mode=TwoWay}"
                             ToolTip="Can be used to measure the difference of scale end and org, in combination with SpanTickSpacing" />
                         <RadioButton
-                            x:Name="_guiScaleTypeDifference"
                             Content="Difference to org (org is set to 0)"
+                            IsChecked="{Binding IsScaleSegmentTypeDifferenceToOrg, Mode=TwoWay}"
                             ToolTip="Can be used for a ruler that starts with zero, in combination with linear tick spacing" />
                         <RadioButton
-                            x:Name="_guiScaleTypeRatio"
                             Content="Ratio to org (org is set to 1)"
+                            IsChecked="{Binding IsScaleSegmentTypeRatioToOrg}"
                             ToolTip="Can be used for a ruler on a logarithmic scale, along with logarithmic tick spacing" />
                     </StackPanel>
                 </GroupBox>
                 <GroupBox
-                    x:Name="_guiTickSpacingGroupBox"
                     Margin="0,4,0,0"
                     Padding="4">
                     <GroupBox.Header>
@@ -141,19 +144,27 @@
                                 Grid.Column="0"
                                 Content="Tick spacing:" />
                             <ComboBox
-                                x:Name="_guiTickSpacingTypes"
                                 Grid.Row="6"
                                 Grid.Column="1"
-                                SelectionChanged="EhTickSpacingType_SelectionChange" />
+                                ItemsSource="{Binding TickSpacingController.TickSpacingTypes.Items}"
+                                SelectedItem="{Binding TickSpacingController.TickSpacingTypes.SelectedItem}"/>
                         </StackPanel>
                     </GroupBox.Header>
+                    <ContentControl Content="{Binding TickSpacingController.TickSpacingDetailsController.ViewObject}"/>
                 </GroupBox>
             </StackPanel>
         </TabItem>
-        <TabItem x:Name="_guiTabTitleFormat" Header="Title/Format" />
-        <TabItem x:Name="_guiTabMajorLabels" Header="MajorLabels" />
-        <TabItem x:Name="_guiTabMinorLabels" Header="MinorLabels" />
-        <TabItem x:Name="_guiBackground" Header="Background">
+        <TabItem Header="Title/Format" >
+            <ContentControl Content="{Binding AxisStyleController.ViewObject}"/>
+        </TabItem>
+
+        <TabItem Header="MajorLabels" >
+            <ContentControl Content="{Binding AxisStyleController.MajorLabelCondView}"/>
+        </TabItem>
+        <TabItem Header="MinorLabels" >
+            <ContentControl Content="{Binding AxisStyleController.MinorLabelCondView}"/>
+        </TabItem>
+        <TabItem Header="Background">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition />
@@ -169,57 +180,60 @@
                 </Grid.RowDefinitions>
                 <Label Content="Style:" />
                 <ComboBox
-                    x:Name="_guiBackgroundStyle"
                     Grid.Row="0"
-                    Grid.Column="1" />
+                    Grid.Column="1" 
+                    ItemsSource="{Binding BackgroundStyleController.BackgroundStyles.Items}"
+                    SelectedValue="{Binding BackgroundStyleController.BackgroundStyles.SelectedItem, Mode=TwoWay}"
+                    />
                 <Label
                     Grid.Row="1"
                     Grid.Column="0"
                     Content="Brush:" />
                 <axogcd:BrushComboBox
-                    x:Name="_guiBackgroundBrush"
                     Grid.Row="1"
-                    Grid.Column="1" />
+                    Grid.Column="1" 
+                    SelectedBrush="{Binding BackgroundStyleController.BackgroundBrush}"
+                    />
 
                 <Label
                     Grid.Row="2"
                     Grid.Column="0"
                     Content="Left margin:" />
                 <axogc:QuantityWithUnitTextBox
-                    x:Name="_guiMarginLeft"
                     Grid.Row="2"
                     Grid.Column="1"
-                    UnitEnvironment="{x:Static axog:SizeEnvironment.Instance}" />
+                    SelectedQuantity="{Binding LeftMargin}"
+                    UnitEnvironment="{Binding MarginEnvironment}" />
 
                 <Label
                     Grid.Row="3"
                     Grid.Column="0"
                     Content="Top margin:" />
                 <axogc:QuantityWithUnitTextBox
-                    x:Name="_guiMarginTop"
                     Grid.Row="3"
                     Grid.Column="1"
-                    UnitEnvironment="{x:Static axog:SizeEnvironment.Instance}" />
+                    SelectedQuantity="{Binding TopMargin}"
+                    UnitEnvironment="{Binding MarginEnvironment}" />
 
                 <Label
                     Grid.Row="4"
                     Grid.Column="0"
                     Content="Right margin:" />
                 <axogc:QuantityWithUnitTextBox
-                    x:Name="_guiMarginRight"
                     Grid.Row="4"
                     Grid.Column="1"
-                    UnitEnvironment="{x:Static axog:SizeEnvironment.Instance}" />
+                    SelectedQuantity="{Binding RightMargin}"
+                    UnitEnvironment="{Binding MarginEnvironment}" />
 
                 <Label
                     Grid.Row="5"
                     Grid.Column="0"
                     Content="Bottom margin:" />
                 <axogc:QuantityWithUnitTextBox
-                    x:Name="_guiMarginBottom"
                     Grid.Row="5"
                     Grid.Column="1"
-                    UnitEnvironment="{x:Static axog:SizeEnvironment.Instance}" />
+                    SelectedQuantity="{Binding BottomMargin}"
+                    UnitEnvironment="{Binding MarginEnvironment}" />
             </Grid>
         </TabItem>
     </TabControl>

@@ -100,7 +100,7 @@
             <axogc:QuantityWithUnitTextBox Grid.Row="10" Grid.Column="3" SelectedQuantity="{Binding YOffset, Mode=TwoWay}" UnitEnvironment="{Binding OffsetEnvironment}"  />
 
             <Label Grid.Row="12" Grid.Column="0" Content="Background:" />
-            <ComboBox Grid.Row="12"  Grid.Column="1" ItemsSource="{Binding BackgroundController.BackgroundStyles}" SelectedValue="{Binding BackgroundController.SelectedBackgroundStyle, Mode=TwoWay}" SelectedValuePath="Tag" />
+            <ComboBox Grid.Row="12"  Grid.Column="1" ItemsSource="{Binding BackgroundController.BackgroundStyles.Items}" SelectedItem="{Binding BackgroundController.BackgroundStyles.SelectedItem, Mode=TwoWay}"/>
             <Label Grid.Row="12" Grid.Column="2" Content="Brush:" />
             <axogcd:BrushComboBox Grid.Row="12"  Grid.Column="3" SelectedBrush="{Binding BackgroundController.BackgroundBrush, Mode=TwoWay}" IsEnabled="{Binding BackgroundController.IsBackgroundBrushEnabled}"  />
 

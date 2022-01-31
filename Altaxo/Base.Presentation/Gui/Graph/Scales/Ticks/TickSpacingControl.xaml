@@ -2,14 +2,14 @@
 						 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 						 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 						 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-						 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-						 mc:Ignorable="d"
+						 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:ticks="clr-namespace:Altaxo.Gui.Graph.Scales.Ticks;assembly=AltaxoBase" d:DataContext="{d:DesignInstance Type=ticks:TickSpacingController}"
+             mc:Ignorable="d"
 						 d:DesignHeight="300" d:DesignWidth="300">
 	<StackPanel Orientation="Vertical">
 		<StackPanel Orientation="Horizontal">
 			<Label Grid.Column="0" Grid.Row="6" Content="Tick spacing:" />
-			<ComboBox x:Name="_cbTickSpacingType" Grid.Column="1" Grid.Row="6" SelectionChanged="EhTickSpacingType_SelectionChangeCommitted" />
+			<ComboBox Grid.Column="1" Grid.Row="6" ItemsSource="{Binding TickSpacingTypes.Items}" SelectedItem="{Binding TickSpacingTypes.SelectedItem}"/>
 		</StackPanel>
-		<Border x:Name="_guiDetailsHost" />
+		<ContentControl Content="{Binding TickSpacingDetailsController.ViewObject}" />
 	</StackPanel>
 </UserControl>

@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2014 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -22,11 +22,6 @@
 
 #endregion Copyright
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows;
 using System.Windows.Controls;
 
 namespace Altaxo.Gui.Graph.Scales.Ticks
@@ -39,30 +34,6 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
     public TickSpacingControl()
     {
       InitializeComponent();
-    }
-
-    public event Action? TickSpacingTypeChanged;
-
-    public void InitializeTickSpacingType(Collections.SelectableListNodeList names)
-    {
-      //ComboBox _cbTickSpacingType = (ComboBox)LogicalTreeHelper.FindLogicalNode((DependencyObject)_tickSpacingGroupBox.Header, "_cbTickSpacingType");
-      GuiHelper.Initialize(_cbTickSpacingType, names);
-    }
-
-    private void EhTickSpacingType_SelectionChangeCommitted(object sender, SelectionChangedEventArgs e)
-    {
-      e.Handled = true;
-      if (TickSpacingTypeChanged is not null)
-      {
-        var _cbTickSpacingType = (ComboBox)sender;
-        GuiHelper.SynchronizeSelectionFromGui(_cbTickSpacingType);
-        TickSpacingTypeChanged();
-      }
-    }
-
-    public void SetTickSpacingView(object guiobject)
-    {
-      _guiDetailsHost.Child = guiobject as UIElement;
     }
   }
 }
