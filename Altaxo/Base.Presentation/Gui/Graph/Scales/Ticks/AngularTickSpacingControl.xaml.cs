@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -39,47 +39,5 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
     {
       InitializeComponent();
     }
-
-    private void _cbMajorTicks_SelectedIndexChanged(object sender, SelectionChangedEventArgs e)
-    {
-      e.Handled = true;
-      GuiHelper.SynchronizeSelectionFromGui(_cbMajorTicks);
-      if (MajorTicksChanged is not null)
-        MajorTicksChanged(sender, e);
-    }
-
-    private void _cbMinorTicks_SelectedIndexChanged(object sender, SelectionChangedEventArgs e)
-    {
-      e.Handled = true;
-      GuiHelper.SynchronizeSelectionFromGui(_cbMinorTicks);
-    }
-
-    #region IAngularTickSpacingView
-
-    public bool UsePositiveNegativeValues
-    {
-      get
-      {
-        return true == _chkPosNegValues.IsChecked;
-      }
-      set
-      {
-        _chkPosNegValues.IsChecked = value;
-      }
-    }
-
-    public Collections.SelectableListNodeList MajorTicks
-    {
-      set { GuiHelper.Initialize(_cbMajorTicks, value); }
-    }
-
-    public Collections.SelectableListNodeList MinorTicks
-    {
-      set { GuiHelper.Initialize(_cbMinorTicks, value); }
-    }
-
-    public event EventHandler? MajorTicksChanged;
   }
-
-  #endregion IAngularTickSpacingView
 }

@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -28,41 +28,88 @@ using System.Collections.Generic;
 using System.Text;
 using Altaxo.Collections;
 using Altaxo.Graph.Scales.Ticks;
+using Altaxo.Gui.Common;
 
 namespace Altaxo.Gui.Graph.Scales.Ticks
 {
   #region Interfaces
 
-  public interface IAngularTickSpacingView
+  public interface IAngularTickSpacingView : IDataContextAwareView
   {
-    bool UsePositiveNegativeValues { get; set; }
-
-    SelectableListNodeList MajorTicks { set; }
-
-    SelectableListNodeList MinorTicks { set; }
-
-    event EventHandler MajorTicksChanged;
   }
 
   #endregion Interfaces
 
   [UserControllerForObject(typeof(AngularTickSpacing), 200)]
   [ExpectedTypeOfView(typeof(IAngularTickSpacingView))]
-  public class AngularScaleController : MVCANControllerEditOriginalDocBase<AngularTickSpacing, IAngularTickSpacingView>
+  public class AngularTickSpacingController : MVCANControllerEditOriginalDocBase<AngularTickSpacing, IAngularTickSpacingView>
   {
-    private SelectableListNodeList _majorTickList;
-    private SelectableListNodeList _minorTickList;
-    private int _tempMajorDivider;
-
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
     }
 
+    #region Bindings
+
+    private bool _UsePositiveNegativeValues;
+
+    public bool UsePositiveNegativeValues
+    {
+      get => _UsePositiveNegativeValues;
+      set
+      {
+        if (!(_UsePositiveNegativeValues == value))
+        {
+          _UsePositiveNegativeValues = value;
+          OnPropertyChanged(nameof(UsePositiveNegativeValues));
+        }
+      }
+    }
+
+    private ItemsController<int> _MajorTicks;
+
+    public ItemsController<int> MajorTicks
+    {
+      get => _MajorTicks;
+      set
+      {
+        if (!(_MajorTicks == value))
+        {
+          _MajorTicks = value;
+          OnPropertyChanged(nameof(MajorTicks));
+        }
+      }
+    }
+    private void EhMajorTicksChanged(int majorDivider)
+    {
+      var itemList = BuildMinorTickList(majorDivider);
+      _MinorTicks.Items = itemList;
+      if (itemList.FirstSelectedNode is { } selNode)
+        _MinorTicks.SelectedValue = (int)selNode.Tag;
+    }
+
+    private ItemsController<int> _MinorTicks;
+
+    public ItemsController<int> MinorTicks
+    {
+      get => _MinorTicks;
+      set
+      {
+        if (!(_MinorTicks == value))
+        {
+          _MinorTicks = value;
+          OnPropertyChanged(nameof(MinorTicks));
+        }
+      }
+    }
+
+
+    #endregion
+
     public override void Dispose(bool isDisposing)
     {
-      _majorTickList = null;
-      _minorTickList = null;
+      MajorTicks = null;
+      MinorTicks = null;
       base.Dispose(isDisposing);
     }
 
@@ -72,72 +119,47 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
 
       if (initData)
       {
-        _tempMajorDivider = _doc.MajorTickDivider;
-        BuildMajorTickList();
-        BuildMinorTickList();
-      }
-
-      if (_view is not null)
-      {
-        _view.UsePositiveNegativeValues = _doc.UseSignedValues;
-        _view.MajorTicks = _majorTickList;
-        _view.MinorTicks = _minorTickList;
+        var majorDivider = _doc.MajorTickDivider;
+        MajorTicks = new ItemsController<int>(BuildMajorTickList(majorDivider), EhMajorTicksChanged);
+        MinorTicks = new ItemsController<int>(BuildMinorTickList(majorDivider));
+        UsePositiveNegativeValues = _doc.UseSignedValues;
       }
     }
 
     public override bool Apply(bool disposeController)
     {
-      _doc.UseSignedValues = _view.UsePositiveNegativeValues;
-      _doc.MajorTickDivider = _tempMajorDivider;
-      _doc.MinorTickDivider = (int)_minorTickList.FirstSelectedNode.Tag;
+      _doc.UseSignedValues = UsePositiveNegativeValues;
+      _doc.MajorTickDivider = _MajorTicks.SelectedValue;
+      _doc.MinorTickDivider = _MinorTicks.SelectedValue;
 
       return ApplyEnd(true, disposeController);
     }
 
-    protected override void AttachView()
-    {
-      base.AttachView();
-
-      _view.MajorTicksChanged += EhMajorTicksChanged;
-    }
-
-    protected override void DetachView()
-    {
-      _view.MajorTicksChanged -= EhMajorTicksChanged;
-
-      base.DetachView();
-    }
-
-    private void BuildMajorTickList()
+    private SelectableListNodeList BuildMajorTickList(int majorDivider)
     {
       int[] possibleDividers = _doc.GetPossibleDividers();
-      int selected = _tempMajorDivider;
-      _majorTickList = new SelectableListNodeList();
+      int selected = majorDivider;
+      var majorTickList = new SelectableListNodeList();
       foreach (int div in possibleDividers)
       {
-        _majorTickList.Add(new SelectableListNode((360.0 / div).ToString() + "°", div, div == selected));
+        majorTickList.Add(new SelectableListNode((360.0 / div).ToString() + "°", div, div == selected));
       }
+      return majorTickList;
     }
 
-    private void BuildMinorTickList()
+    private SelectableListNodeList BuildMinorTickList(int majorDivider)
     {
       int[] possibleDividers = _doc.GetPossibleDividers();
       int selected = _doc.MinorTickDivider;
-      if (selected < _tempMajorDivider)
-        selected = _tempMajorDivider;
-      _minorTickList = new SelectableListNodeList();
+      if (selected < majorDivider)
+        selected = majorDivider;
+      var minorTickList = new SelectableListNodeList();
       foreach (int div in possibleDividers)
       {
-        if (div >= _tempMajorDivider && 0 == (div % _tempMajorDivider))
-          _minorTickList.Add(new SelectableListNode((360.0 / div).ToString() + "°", div, div == selected));
+        if (div >= majorDivider && 0 == (div % majorDivider))
+          minorTickList.Add(new SelectableListNode((360.0 / div).ToString() + "°", div, div == selected));
       }
-    }
-
-    private void EhMajorTicksChanged(object sender, EventArgs e)
-    {
-      _tempMajorDivider = (int)_majorTickList.FirstSelectedNode.Tag;
-      BuildMinorTickList();
-      _view.MinorTicks = _minorTickList;
+      return minorTickList;
     }
   }
 }
