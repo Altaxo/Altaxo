@@ -394,7 +394,16 @@ namespace Altaxo.Collections
     /// Initialize the list with all possible values of an enumeration. The item given in the argument is marked as selected item. Note: the enumeration must not have the [Flags] attribute!
     /// </summary>
     /// <param name="selectedItem">Item of an enumeration that is currently selected.</param>
-    public SelectableListNodeList(System.Enum selectedItem)
+    public SelectableListNodeList(System.Enum selectedItem) : this(selectedItem, false)
+    {
+    }
+
+      /// <summary>
+      /// Initialize the list with all possible values of an enumeration. The item given in the argument is marked as selected item. Note: the enumeration must not have the [Flags] attribute!
+      /// </summary>
+      /// <param name="selectedItem">Item of an enumeration that is currently selected.</param>
+      /// <param name="useUserFriendlyName">If true, a user friendly name is used instead of the original name.</param>
+      public SelectableListNodeList(System.Enum selectedItem, bool useUserFriendlyName)
     {
       if (selectedItem.GetType().IsDefined(typeof(FlagsAttribute), inherit: false)) // is this an enumeration with the Flags attribute?
       {
@@ -404,8 +413,8 @@ namespace Altaxo.Collections
         {
           if (val is null)
             continue;
-
-          var node = new SelectableListNode(System.Enum.GetName(selectedItem.GetType(), val)!, val, IsChecked(val, Convert.ToInt64(selectedItem)));
+          var name = useUserFriendlyName ? Current.Gui.GetUserFriendlyName((Enum)val!) : System.Enum.GetName(selectedItem.GetType(), val)!;
+          var node = new SelectableListNode(name, val, IsChecked(val, Convert.ToInt64(selectedItem)));
           Add(node);
         }
       }
@@ -417,7 +426,8 @@ namespace Altaxo.Collections
         {
           if (!(value is null))
           {
-            Add(new SelectableListNode(value.ToString() ?? string.Empty, value, value.ToString() == selectedItem.ToString()));
+            var name = useUserFriendlyName ? Current.Gui.GetUserFriendlyName((Enum)value!) : value.ToString() ?? string.Empty;
+            Add(new SelectableListNode(name, value, value.ToString() == selectedItem.ToString()));
           }
         }
       }

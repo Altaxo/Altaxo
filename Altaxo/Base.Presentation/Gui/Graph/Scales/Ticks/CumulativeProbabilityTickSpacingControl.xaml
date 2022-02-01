@@ -3,10 +3,11 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
-						 xmlns:axog="clr-namespace:Altaxo.Gui;assembly=AltaxoBase"
+			 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
+             xmlns:ticks="clr-namespace:Altaxo.Gui.Graph.Scales.Ticks;assembly=AltaxoBase" 
+             d:DataContext="{d:DesignInstance Type=ticks:CumulativeProbabilityTickSpacingController}"
              mc:Ignorable="d"
-						 Padding="4">
+			 Padding="4">
 	<UserControl.Resources>
 		<Style TargetType="Label">
 			<Style.Setters>
@@ -55,44 +56,39 @@
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="4" />
 		</Grid.RowDefinitions>
-		<Label Grid.Column="0" Grid.Row="4" Content="Target number of major ticks:" />
-		<axogc:Int32UpDown x:Name="_edTargetNumberMajorTicks" Grid.Column="1" Grid.Row="4" Minimum="0" Change="1" />
-		<Label Grid.Column="0" Grid.Row="6" Content="Target number of minor ticks:" />
-		<axogc:Int32UpDown x:Name="_edTargetNumberMinorTicks" Grid.Column="1" Grid.Row="6" Minimum="0" Change="1" />
-		<Label Grid.Column="0" Grid.Row="10" Content="Org padding:" />
-		<axogc:QuantityWithUnitTextBox x:Name="_edMinGrace" Grid.Column="1" Grid.Row="10" UnitEnvironment="{x:Static axog:RelationEnvironment.Instance}" />
+		<Label Grid.Row="4" Grid.Column="0" Content="Target number of major ticks:" />
+        <axogc:Int32UpDown Grid.Row="4" Grid.Column="1" Minimum="0" Change="1" Value="{Binding TargetNumberOfMajorTicks}" />
+		<Label Grid.Row="6" Grid.Column="0" Content="Target number of minor ticks:" />
+		<axogc:Int32UpDown Grid.Row="6" Grid.Column="1" Minimum="0" Change="1" Value="{Binding TargetNumberOfMinorTicks}"/>
+		<Label Grid.Row="10" Grid.Column="0" Content="Org padding:" />
+		<axogc:QuantityWithUnitTextBox  Grid.Row="10" Grid.Column="1" SelectedQuantity="{Binding MinGrace}" UnitEnvironment="{Binding GraceEnvironment}" />
 		<Label Grid.Column="0" Grid.Row="12" Content="End padding:" />
-		<axogc:QuantityWithUnitTextBox x:Name="_edMaxGrace" Grid.Column="1" Grid.Row="12" UnitEnvironment="{x:Static axog:RelationEnvironment.Instance}" />
+		<axogc:QuantityWithUnitTextBox Grid.Row="12" Grid.Column="1" SelectedQuantity="{Binding MaxGrace}" UnitEnvironment="{Binding GraceEnvironment}" />
 		<Label Grid.Column="0" Grid.Row="14" Content="Snap to org:" />
-		<ComboBox x:Name="_cbSnapTicksToOrg" Grid.Column="1" Grid.Row="14" SelectionChanged="_cbSnapTicksToOrg_SelectionChangeCommitted" />
-		<Label Grid.Column="0" Grid.Row="16" Content="Snap to end:" />
-		<ComboBox x:Name="_cbSnapTicksToEnd" Grid.Column="1" Grid.Row="16" SelectionChanged="_cbSnapTicksToEnd_SelectionChangeCommitted" />
-		<Label Grid.Column="0" Grid.Row="18" Content="Transform tick values:" />
-		<Grid Grid.Column="1" Grid.Row="18">
+		<ComboBox Grid.Row="14" Grid.Column="1" ItemsSource="{Binding SnapTicksToOrg.Items}" SelectedItem="{Binding SnapTicksToOrg.SelectedItem, Mode=TwoWay}" />
+		<Label Grid.Row="16" Grid.Column="0" Content="Snap to end:" />
+		<ComboBox Grid.Row="16" Grid.Column="1" ItemsSource="{Binding SnapTicksToEnd.Items}" SelectedItem="{Binding SnapTicksToEnd.SelectedItem, Mode=TwoWay}" />
+		<Label Grid.Row="18" Grid.Column="0" Content="Transform tick values:" />
+		<Grid Grid.Row="18" Grid.Column="1" >
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="*" />
 				<ColumnDefinition Width="Auto" />
 				<ColumnDefinition Width="*" />
 			</Grid.ColumnDefinitions>
-			<ComboBox x:Name="_cbTransfoOperation" Grid.Column="1"  SelectedIndex="0" SelectionChanged="_edTransfoOperation_Changed">
-				<ComboBox.Items>
-					<ComboBoxItem Content=" X /  " />
-					<ComboBoxItem Content=" X *  " />
-				</ComboBox.Items>
-			</ComboBox>
-			<axogc:ValidatingTextBox x:Name="_edDivideBy" Grid.Column="2" Validating="_edDivideBy_Validating" />
+            <ComboBox Grid.Column="1" ItemsSource="{Binding TransformationIsMultiply.Items}" SelectedItem="{Binding TransformationIsMultiply, Mode=TwoWay}"/>
+            <axogc:NumericDoubleTextBox Grid.Column="2" SelectedValue="{Binding DivideBy}" DisallowZeroValues="True" />
 		</Grid>
-		<Label Grid.Column="0" Grid.Row="20" Content="Supress major values:" />
-		<axogc:ValidatingTextBox x:Name="_edSuppressMajorValues" Grid.Column="1" Grid.Row="20" />
-		<Label Grid.Column="0" Grid.Row="22" Content="Suppress major tick #:" />
-		<axogc:ValidatingTextBox x:Name="_edSuppressMajorTicksByNumber" Grid.Column="1" Grid.Row="22" />
-		<Label Grid.Column="0" Grid.Row="24" Content="Suppress minor values:" />
-		<axogc:ValidatingTextBox x:Name="_edSuppressMinorValues" Grid.Column="1" Grid.Row="24" />
-		<Label Grid.Column="0" Grid.Row="26" Content="Suppress minor tick #:" />
-		<axogc:ValidatingTextBox x:Name="_edSuppressMinorTicksByNumber" Grid.Column="1" Grid.Row="26" />
-		<Label Grid.Column="0" Grid.Row="28" Content="Add major tick values:" />
-		<axogc:ValidatingTextBox x:Name="_edAddMajorTickValues" Grid.Column="1" Grid.Row="28" />
-		<Label Grid.Column="0" Grid.Row="30" Content="Add minor tick values:" />
-		<axogc:ValidatingTextBox x:Name="_edAddMinorTickValues" Grid.Column="1" Grid.Row="30" />
+		<Label Grid.Row="20" Grid.Column="0" Content="Supress major values:" />
+		<TextBox Grid.Row="20" Grid.Column="1" Text="{Binding SuppressMajorTicksByValue, Mode=TwoWay}" />
+		<Label Grid.Row="22" Grid.Column="0" Content="Suppress major tick #:" />
+		<TextBox  Grid.Row="22" Grid.Column="1" Text="{Binding SuppressMajorTicksByNumber, Mode=TwoWay}"/>
+		<Label Grid.Row="24" Grid.Column="0" Content="Suppress minor values:" />
+		<TextBox Grid.Row="24" Grid.Column="1" Text="{Binding SuppressMinorTicksByValue, Mode=TwoWay}" />
+		<Label Grid.Row="26" Grid.Column="0" Content="Suppress minor tick #:" />
+		<TextBox Grid.Row="26" Grid.Column="1" Text="{Binding SuppressMinorTicksByValue, Mode=TwoWay}" />
+		<Label Grid.Row="28" Grid.Column="0" Content="Add major tick values:" />
+		<TextBox Grid.Row="28" Grid.Column="1" Text="{Binding AddMajorTickValues, Mode=TwoWay}" />
+		<Label Grid.Row="30" Grid.Column="0" Content="Add minor tick values:" />
+		<TextBox Grid.Row="30" Grid.Column="1" Text="{Binding AddMinorTickValues, Mode=TwoWay}"/>
 	</Grid>
 </UserControl>

@@ -140,7 +140,7 @@ namespace Altaxo.Gui.Common
             new FrameworkPropertyMetadata(DefaultValue,
                 new PropertyChangedCallback(OnValueChanged),
                 new CoerceValueCallback(CoerceValue)
-            )
+            ) { BindsTwoWayByDefault = true }
         );
 
     private static void OnValueChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
