@@ -31,6 +31,18 @@
             </Trigger>
         </Style.Triggers>
     </Style>
+    
+    <!--  *********************** Styles for ValidatingTextBoxN **************************************  -->
+    <Style
+        xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
+        BasedOn="{StaticResource {x:Type TextBox}}"
+        TargetType="{x:Type axogc:ValidatingTextBoxN}">
+        <Style.Triggers>
+            <Trigger Property="Validation.HasError" Value="true">
+                <Setter Property="ToolTip" Value="{Binding RelativeSource={x:Static RelativeSource.Self}, Path=(Validation.Errors)[0].ErrorContent}" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
 
     <!--  *********************** Styles for NumericDecimalTextBox **************************************  -->
     <Style

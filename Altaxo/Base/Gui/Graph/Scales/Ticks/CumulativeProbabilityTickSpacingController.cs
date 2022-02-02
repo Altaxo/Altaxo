@@ -23,11 +23,7 @@
 #endregion Copyright
 
 #nullable disable
-using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Text;
-using Altaxo.Calc;
 using Altaxo.Collections;
 using Altaxo.Data;
 using Altaxo.Graph.Scales.Ticks;
@@ -37,21 +33,14 @@ using Altaxo.Units;
 
 namespace Altaxo.Gui.Graph.Scales.Ticks
 {
-  #region Interfaces
-
   public interface ICumulativeProbabilityTickSpacingView : IDataContextAwareView
   {
   }
-
-  #endregion Interfaces
 
   [UserControllerForObject(typeof(CumulativeProbabilityTickSpacing), 200)]
   [ExpectedTypeOfView(typeof(ICumulativeProbabilityTickSpacingView))]
   public class CumulativeProbabilityTickSpacingController : MVCANControllerEditOriginalDocBase<CumulativeProbabilityTickSpacing, ICumulativeProbabilityTickSpacingView>
   {
-    private SelectableListNodeList _snapTicksToOrg = new SelectableListNodeList();
-    private SelectableListNodeList _snapTicksToEnd = new SelectableListNodeList();
-
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
@@ -59,38 +48,30 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
 
     #region Bindings
 
-    //double MinGrace { get; set; }
-
-    //double MaxGrace { get; set; }
-
-    //int TargetNumberMajorTicks { get; set; }
-
-    //int TargetNumberMinorTicks { get; set; }
-
-    private int _TargetNumberOfMajorTicks;
+    private int _targetNumberOfMajorTicks;
 
     public int TargetNumberOfMajorTicks
     {
-      get => _TargetNumberOfMajorTicks;
+      get => _targetNumberOfMajorTicks;
       set
       {
-        if (!(_TargetNumberOfMajorTicks == value))
+        if (!(_targetNumberOfMajorTicks == value))
         {
-          _TargetNumberOfMajorTicks = value;
+          _targetNumberOfMajorTicks = value;
           OnPropertyChanged(nameof(TargetNumberOfMajorTicks));
         }
       }
     }
-    private int _TargetNumberOfMinorTicks;
+    private int _targetNumberOfMinorTicks;
 
     public int TargetNumberOfMinorTicks
     {
-      get => _TargetNumberOfMinorTicks;
+      get => _targetNumberOfMinorTicks;
       set
       {
-        if (!(_TargetNumberOfMinorTicks == value))
+        if (!(_targetNumberOfMinorTicks == value))
         {
-          _TargetNumberOfMinorTicks = value;
+          _targetNumberOfMinorTicks = value;
           OnPropertyChanged(nameof(TargetNumberOfMinorTicks));
         }
       }
@@ -98,180 +79,180 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
 
     public QuantityWithUnitGuiEnvironment GraceEnvironment => RelationEnvironment.Instance;
 
-    private DimensionfulQuantity _MinGrace;
+    private DimensionfulQuantity _minGrace;
 
     public DimensionfulQuantity MinGrace
     {
-      get => _MinGrace;
+      get => _minGrace;
       set
       {
-        if (!(_MinGrace == value))
+        if (!(_minGrace == value))
         {
-          _MinGrace = value;
+          _minGrace = value;
           OnPropertyChanged(nameof(MinGrace));
         }
       }
     }
 
-    private DimensionfulQuantity _MaxGrace;
+    private DimensionfulQuantity _maxGrace;
 
     public DimensionfulQuantity MaxGrace
     {
-      get => _MaxGrace;
+      get => _maxGrace;
       set
       {
-        if (!(_MaxGrace == value))
+        if (!(_maxGrace == value))
         {
-          _MaxGrace = value;
+          _maxGrace = value;
           OnPropertyChanged(nameof(MaxGrace));
         }
       }
     }
 
-    private ItemsController<bool> _TransformationIsMultiply;
+    private ItemsController<bool> _transformationIsMultiply;
 
     public ItemsController<bool> TransformationIsMultiply
     {
-      get => _TransformationIsMultiply;
+      get => _transformationIsMultiply;
       set
       {
-        if (!(_TransformationIsMultiply == value))
+        if (!(_transformationIsMultiply == value))
         {
-          _TransformationIsMultiply = value;
+          _transformationIsMultiply = value;
           OnPropertyChanged(nameof(TransformationIsMultiply));
         }
       }
     }
 
-    private double _DivideBy;
+    private double _divideBy;
 
     public double DivideBy
     {
-      get => _DivideBy;
+      get => _divideBy;
       set
       {
-        if (!(_DivideBy == value))
+        if (!(_divideBy == value))
         {
-          _DivideBy = value;
+          _divideBy = value;
           OnPropertyChanged(nameof(DivideBy));
         }
       }
     }
 
-   
-    private string  _SuppressMajorTickValues;
 
-    public string  SuppressMajorTicksByValue
+    private string _suppressMajorTickValues;
+
+    public string SuppressMajorTicksByValue
     {
-      get => _SuppressMajorTickValues;
+      get => _suppressMajorTickValues;
       set
       {
-        if (!(_SuppressMajorTickValues == value))
+        if (!(_suppressMajorTickValues == value))
         {
-          _SuppressMajorTickValues = value;
+          _suppressMajorTickValues = value;
           OnPropertyChanged(nameof(SuppressMajorTicksByValue));
         }
       }
     }
 
-    private string _SuppressMajorTicksByNumber;
+    private string _suppressMajorTicksByNumber;
 
     public string SuppressMajorTicksByNumber
     {
-      get => _SuppressMajorTicksByNumber;
+      get => _suppressMajorTicksByNumber;
       set
       {
-        if (!(_SuppressMajorTicksByNumber == value))
+        if (!(_suppressMajorTicksByNumber == value))
         {
-          _SuppressMajorTicksByNumber = value;
+          _suppressMajorTicksByNumber = value;
           OnPropertyChanged(nameof(SuppressMajorTicksByNumber));
         }
       }
     }
 
-    private string _SuppressMinorTicksByValue;
+    private string _suppressMinorTicksByValue;
 
     public string SuppressMinorTicksByValue
     {
-      get => _SuppressMinorTicksByValue;
+      get => _suppressMinorTicksByValue;
       set
       {
-        if (!(_SuppressMinorTicksByValue == value))
+        if (!(_suppressMinorTicksByValue == value))
         {
-          _SuppressMinorTicksByValue = value;
+          _suppressMinorTicksByValue = value;
           OnPropertyChanged(nameof(SuppressMinorTicksByValue));
         }
       }
     }
-    private string _SuppressMinorTicksByNumber;
+    private string _suppressMinorTicksByNumber;
 
     public string SuppressMinorTicksByNumber
     {
-      get => _SuppressMinorTicksByNumber;
+      get => _suppressMinorTicksByNumber;
       set
       {
-        if (!(_SuppressMinorTicksByNumber == value))
+        if (!(_suppressMinorTicksByNumber == value))
         {
-          _SuppressMinorTicksByNumber = value;
+          _suppressMinorTicksByNumber = value;
           OnPropertyChanged(nameof(SuppressMinorTicksByNumber));
         }
       }
     }
-    private string _AddMajorTickValues;
+    private string _addMajorTickValues;
 
     public string AddMajorTickValues
     {
-      get => _AddMajorTickValues;
+      get => _addMajorTickValues;
       set
       {
-        if (!(_AddMajorTickValues == value))
+        if (!(_addMajorTickValues == value))
         {
-          _AddMajorTickValues = value;
+          _addMajorTickValues = value;
           OnPropertyChanged(nameof(AddMajorTickValues));
         }
       }
     }
 
-    private string  _AddMinorTickValues;
+    private string _addMinorTickValues;
 
-    public string  AddMinorTickValues
+    public string AddMinorTickValues
     {
-      get => _AddMinorTickValues;
+      get => _addMinorTickValues;
       set
       {
-        if (!(_AddMinorTickValues == value))
+        if (!(_addMinorTickValues == value))
         {
-          _AddMinorTickValues = value;
+          _addMinorTickValues = value;
           OnPropertyChanged(nameof(AddMinorTickValues));
         }
       }
     }
 
 
-    private ItemsController<BoundaryTickSnapping> _SnapTicksToOrg;
+    private ItemsController<BoundaryTickSnapping> _snapTicksToOrg;
 
     public ItemsController<BoundaryTickSnapping> SnapTicksToOrg
     {
-      get => _SnapTicksToOrg;
+      get => _snapTicksToOrg;
       set
       {
-        if (!(_SnapTicksToOrg == value))
+        if (!(_snapTicksToOrg == value))
         {
-          _SnapTicksToOrg = value;
+          _snapTicksToOrg = value;
           OnPropertyChanged(nameof(SnapTicksToOrg));
         }
       }
     }
-    private ItemsController<BoundaryTickSnapping> _SnapTicksToEnd;
+    private ItemsController<BoundaryTickSnapping> _snapTicksToEnd;
 
     public ItemsController<BoundaryTickSnapping> SnapTicksToEnd
     {
-      get => _SnapTicksToEnd;
+      get => _snapTicksToEnd;
       set
       {
-        if (!(_SnapTicksToEnd == value))
+        if (!(_snapTicksToEnd == value))
         {
-          _SnapTicksToEnd = value;
+          _snapTicksToEnd = value;
           OnPropertyChanged(nameof(SnapTicksToEnd));
         }
       }
@@ -279,6 +260,7 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
 
 
     #endregion Bindings
+
     public override void Dispose(bool isDisposing)
     {
       _snapTicksToOrg = null;
@@ -295,13 +277,13 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
         MinGrace = new DimensionfulQuantity(_doc.OrgGrace, Altaxo.Units.Dimensionless.Unity.Instance).AsQuantityIn(GraceEnvironment.DefaultUnit);
         MaxGrace = new DimensionfulQuantity(_doc.EndGrace, Altaxo.Units.Dimensionless.Unity.Instance).AsQuantityIn(GraceEnvironment.DefaultUnit);
 
-        SnapTicksToOrg = new ItemsController<BoundaryTickSnapping>(new SelectableListNodeList(_doc.SnapOrgToTick, useUserFriendlyName:true));
+        SnapTicksToOrg = new ItemsController<BoundaryTickSnapping>(new SelectableListNodeList(_doc.SnapOrgToTick, useUserFriendlyName: true));
         SnapTicksToEnd = new ItemsController<BoundaryTickSnapping>(new SelectableListNodeList(_doc.SnapEndToTick, useUserFriendlyName: true));
 
-       TargetNumberOfMajorTicks = _doc.TargetNumberOfMajorTicks;
-       TargetNumberOfMinorTicks = _doc.TargetNumberOfMinorTicks;
+        TargetNumberOfMajorTicks = _doc.TargetNumberOfMajorTicks;
+        TargetNumberOfMinorTicks = _doc.TargetNumberOfMinorTicks;
 
-       DivideBy =_doc.TransformationDivider;
+        DivideBy = _doc.TransformationDivider;
         var transformList = new SelectableListNodeList
         {
           new SelectableListNode(" X /  ", false, _doc.TransformationOperationIsMultiply==false),
@@ -309,13 +291,13 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
         };
         TransformationIsMultiply = new ItemsController<bool>(transformList);
 
-       SuppressMajorTicksByValue = GUIConversion.ToString(_doc.SuppressedMajorTicks.ByValues);
-       SuppressMinorTicksByValue = GUIConversion.ToString(_doc.SuppressedMinorTicks.ByValues);
-       SuppressMajorTicksByNumber = GUIConversion.ToString(_doc.SuppressedMajorTicks.ByNumbers);
-       SuppressMinorTicksByNumber = GUIConversion.ToString(_doc.SuppressedMinorTicks.ByNumbers);
+        SuppressMajorTicksByValue = GUIConversion.ToString(_doc.SuppressedMajorTicks.ByValues);
+        SuppressMinorTicksByValue = GUIConversion.ToString(_doc.SuppressedMinorTicks.ByValues);
+        SuppressMajorTicksByNumber = GUIConversion.ToString(_doc.SuppressedMajorTicks.ByNumbers);
+        SuppressMinorTicksByNumber = GUIConversion.ToString(_doc.SuppressedMinorTicks.ByNumbers);
 
-       AddMajorTickValues = GUIConversion.ToString(_doc.AdditionalMajorTicks.Values);
-       AddMinorTickValues = GUIConversion.ToString(_doc.AdditionalMinorTicks.Values);
+        AddMajorTickValues = GUIConversion.ToString(_doc.AdditionalMajorTicks.Values);
+        AddMinorTickValues = GUIConversion.ToString(_doc.AdditionalMinorTicks.Values);
       }
     }
 
@@ -393,8 +375,8 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
       _doc.OrgGrace = MinGrace.AsValueInSIUnits;
       _doc.EndGrace = MaxGrace.AsValueInSIUnits;
 
-      _doc.SnapOrgToTick = (BoundaryTickSnapping)_snapTicksToOrg.FirstSelectedNode.Tag;
-      _doc.SnapEndToTick = (BoundaryTickSnapping)_snapTicksToEnd.FirstSelectedNode.Tag;
+      _doc.SnapOrgToTick = _snapTicksToOrg.SelectedValue;
+      _doc.SnapEndToTick = _snapTicksToEnd.SelectedValue;
 
       _doc.TransformationDivider = DivideBy;
       _doc.TransformationOperationIsMultiply = TransformationIsMultiply.SelectedValue;
