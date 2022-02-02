@@ -44,6 +44,22 @@
         </Style.Triggers>
     </Style>
 
+    <!--  *********************** Styles for NullableDoubleTextBox **************************************  -->
+    <Style
+        xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
+        BasedOn="{StaticResource {x:Type TextBox}}"
+        TargetType="{x:Type axogc:NullableDoubleTextBox}">
+        <Style.Triggers>
+            <Trigger Property="Validation.HasError" Value="true">
+                <Setter Property="ToolTip" Value="{Binding RelativeSource={x:Static RelativeSource.Self}, Path=(Validation.Errors)[0].ErrorContent}" />
+            </Trigger>
+        </Style.Triggers>
+        <Style.Setters>
+            <Setter Property="HorizontalContentAlignment" Value="Right" />
+        </Style.Setters>
+    </Style>
+
+
     <!--  *********************** Styles for NumericDecimalTextBox **************************************  -->
     <Style
         xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
