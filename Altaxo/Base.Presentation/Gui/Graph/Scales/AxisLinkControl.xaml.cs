@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -40,74 +40,5 @@ namespace Altaxo.Gui.Graph.Scales
     {
       InitializeComponent();
     }
-
-    private void EnableCustom(bool bEnab)
-    {
-      _guiLinkAxisOrgA.IsEnabled = bEnab;
-      _guiLinkAxisOrgB.IsEnabled = bEnab;
-      _guiLinkAxisEndA.IsEnabled = bEnab;
-      _guiLinkAxisEndB.IsEnabled = bEnab;
-    }
-
-    private void EhLinkStraight_CheckedChanged(object sender, RoutedEventArgs e)
-    {
-      if (_guiLinkAxisStraight.IsChecked == true)
-        EnableCustom(false);
-    }
-
-    private void EhLinkCustom_CheckedChanged(object sender, RoutedEventArgs e)
-    {
-      if (_guiLinkAxisCustom.IsChecked == true)
-        EnableCustom(true);
-    }
-
-    #region IAxisLinkView
-
-    public bool IsStraightLink
-    {
-      get
-      {
-        return _guiLinkAxisStraight.IsChecked == true;
-      }
-      set
-      {
-        if (value)
-        {
-          _guiLinkAxisStraight.IsChecked = true;
-          EnableCustom(false);
-        }
-        else
-        {
-          _guiLinkAxisCustom.IsChecked = true;
-          EnableCustom(true);
-        }
-      }
-    }
-
-    public double OrgA
-    {
-      get { return _guiLinkAxisOrgA.SelectedValue; }
-      set { _guiLinkAxisOrgA.SelectedValue = value; }
-    }
-
-    public double OrgB
-    {
-      get { return _guiLinkAxisOrgB.SelectedValue; }
-      set { _guiLinkAxisOrgB.SelectedValue = value; }
-    }
-
-    public double EndA
-    {
-      get { return _guiLinkAxisEndA.SelectedValue; }
-      set { _guiLinkAxisEndA.SelectedValue = value; }
-    }
-
-    public double EndB
-    {
-      get { return _guiLinkAxisEndB.SelectedValue; }
-      set { _guiLinkAxisEndB.SelectedValue = value; }
-    }
-
-    #endregion IAxisLinkView
   }
 }

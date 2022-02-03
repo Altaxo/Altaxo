@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -30,32 +30,8 @@ namespace Altaxo.Gui.Graph.Scales
 {
   #region Interfaces
 
-  public interface IAxisLinkView
+  public interface IAxisLinkView : IDataContextAwareView
   {
-    /// <summary>
-    /// Initializes the type of the link. If <c>true</c>, the linke is initialized as 1:1 link and all other fields are ignored.
-    /// </summary>
-    bool IsStraightLink { get; set; }
-
-    /// <summary>
-    /// Initializes the content of the OrgA edit box.
-    /// </summary>
-    double OrgA { get; set; }
-
-    /// <summary>
-    /// Initializes the content of the OrgB edit box.
-    /// </summary>
-    double OrgB { get; set; }
-
-    /// <summary>
-    /// Initializes the content of the EndA edit box.
-    /// </summary>
-    double EndA { get; set; }
-
-    /// <summary>
-    /// Initializes the content of the EndB edit box.
-    /// </summary>
-    double EndB { get; set; }
   }
 
   #endregion Interfaces
@@ -72,32 +48,132 @@ namespace Altaxo.Gui.Graph.Scales
       yield break;
     }
 
+
+    #region Binding
+
+    private bool _isStraightLink;
+    /// <summary>
+    /// Initializes the type of the link. If <c>true</c>, the linke is initialized as 1:1 link and all other fields are ignored.
+    /// </summary>
+    public bool IsStraightLink
+    {
+      get => _isStraightLink;
+      set
+      {
+        if (!(_isStraightLink == value))
+        {
+          _isStraightLink = value;
+          OnPropertyChanged(nameof(IsStraightLink));
+          OnPropertyChanged(nameof(IsCustomLink));
+        }
+      }
+    }
+    public bool IsCustomLink => !IsStraightLink;
+
+
+    private double _orgA;
+
+    /// <summary>
+    /// Initializes the content of the OrgA edit box.
+    /// </summary>
+    public double OrgA
+    {
+      get => _orgA;
+      set
+      {
+        if (!(_orgA == value))
+        {
+          _orgA = value;
+          OnPropertyChanged(nameof(OrgA));
+        }
+      }
+    }
+
+
+    private double _orgB;
+
+    /// <summary>
+    /// Initializes the content of the OrgB edit box.
+    /// </summary>
+    public double OrgB
+    {
+      get => _orgB;
+      set
+      {
+        if (!(_orgB == value))
+        {
+          _orgB = value;
+          OnPropertyChanged(nameof(OrgB));
+        }
+      }
+    }
+
+
+    private double _endA;
+
+    /// <summary>
+    /// Initializes the content of the EndA edit box.
+    /// </summary>
+    public double EndA
+    {
+      get => _endA;
+      set
+      {
+        if (!(_endA == value))
+        {
+          _endA = value;
+          OnPropertyChanged(nameof(EndA));
+        }
+      }
+    }
+
+
+    private double _endB;
+
+    /// <summary>
+    /// Initializes the content of the EndB edit box.
+    /// </summary>
+    public double EndB
+    {
+      get => _endB;
+      set
+      {
+        if (!(_endB == value))
+        {
+          _endB = value;
+          OnPropertyChanged(nameof(EndB));
+        }
+      }
+    }
+
+
+    #endregion
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
 
-      if (_view is not null)
+      if (initData)
       {
-        _view.OrgA = _doc.OrgA;
-        _view.OrgB = _doc.OrgB;
-        _view.EndA = _doc.EndA;
-        _view.EndB = _doc.EndB;
-        _view.IsStraightLink = _doc.IsStraightLink;
+        OrgA = _doc.OrgA;
+        OrgB = _doc.OrgB;
+        EndA = _doc.EndA;
+        EndB = _doc.EndB;
+        IsStraightLink = _doc.IsStraightLink;
       }
     }
 
     public override bool Apply(bool disposeController)
     {
-      if (_view.IsStraightLink)
+      if (IsStraightLink)
       {
         _doc.SetToStraightLink();
       }
       else
       {
-        _doc.OrgA = _view.OrgA;
-        _doc.OrgB = _view.OrgB;
-        _doc.EndA = _view.EndA;
-        _doc.EndB = _view.EndB;
+        _doc.OrgA = OrgA;
+        _doc.OrgB = OrgB;
+        _doc.EndA = EndA;
+        _doc.EndB = EndB;
       }
 
       return ApplyEnd(true, disposeController);
