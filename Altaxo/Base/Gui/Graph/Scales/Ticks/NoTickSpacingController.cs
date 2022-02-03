@@ -23,10 +23,7 @@
 #endregion Copyright
 
 #nullable disable
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Altaxo.Graph.Scales.Ticks;
 
 namespace Altaxo.Gui.Graph.Scales.Ticks
@@ -46,15 +43,6 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
-    }
-
-    protected override void Initialize(bool initData)
-    {
-      base.Initialize(initData);
-
-      if (_view is not null)
-      {
-      }
     }
 
     public override bool Apply(bool disposeController)

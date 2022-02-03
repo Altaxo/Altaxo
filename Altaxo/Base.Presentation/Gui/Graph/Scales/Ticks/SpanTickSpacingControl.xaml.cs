@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -22,10 +22,6 @@
 
 #endregion Copyright
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Windows.Controls;
 
 namespace Altaxo.Gui.Graph.Scales.Ticks
@@ -38,49 +34,6 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
     public SpanTickSpacingControl()
     {
       InitializeComponent();
-    }
-
-    public double RelativePositionOfTick
-    {
-      get
-      {
-        return _guiRelTickPos.SelectedQuantityAsValueInSIUnits;
-      }
-      set
-      {
-        _guiRelTickPos.SelectedQuantityAsValueInSIUnits = value;
-      }
-    }
-
-    public bool ShowEndOrgRatio
-    {
-      get
-      {
-        return _rbRatio.IsChecked == true;
-      }
-      set
-      {
-        _rbRatio.IsChecked = value;
-        _rbDifference.IsChecked = !value;
-      }
-    }
-
-    public bool TransfoOperationIsMultiply
-    {
-      get { return _cbTransfoOperation.SelectedIndex == 1; }
-      set { _cbTransfoOperation.SelectedIndex = (value ? 1 : 0); }
-    }
-
-    public double DivideBy
-    {
-      get
-      {
-        return _edDivideBy.SelectedValue;
-      }
-      set
-      {
-        _edDivideBy.SelectedValue = value;
-      }
     }
   }
 }

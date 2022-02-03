@@ -64,8 +64,8 @@
 		<Label Grid.Column="0" Grid.Row="2" Content="No. of minor ticks:" />
 		<Border Grid.Column="1" Grid.Row="2" BorderThickness="1" BorderBrush="Gray">
 			<DockPanel>
-                <RadioButton Content="Automatic" VerticalAlignment="Center" DockPanel.Dock="Left" Margin="4,0,0,0" IsChecked="{Binding MinorTicksUserSpecified, Converter={x:Static axogcc:InverseBooleanConverter.Instance}}" />
-                <RadioButton Content="This value:" VerticalAlignment="Center" DockPanel.Dock="Left" Margin="4,0,0,0" IsChecked="{Binding MinorTicksUserSpecified}" />
+                <RadioButton Content="Automatic" VerticalAlignment="Center" DockPanel.Dock="Left" Margin="4,0,0,0" IsChecked="{Binding MinorTicksUserSpecified, Mode=TwoWay, Converter={x:Static axogcc:InverseBooleanConverter.Instance}}" />
+                <RadioButton Content="This value:" VerticalAlignment="Center" DockPanel.Dock="Left" Margin="4,0,0,0" IsChecked="{Binding MinorTicksUserSpecified, Mode=TwoWay}" />
                 <axogc:Int32UpDown Value="{Binding MinorTicks}" IsEnabled="{Binding MinorTicksUserSpecified}" Minimum="0" Change="1" Margin="4,0,0,0" />
             </DockPanel>
 		</Border>

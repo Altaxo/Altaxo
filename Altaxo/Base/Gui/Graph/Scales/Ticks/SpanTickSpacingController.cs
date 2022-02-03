@@ -23,25 +23,18 @@
 #endregion Copyright
 
 #nullable disable
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using Altaxo.Collections;
 using Altaxo.Graph.Scales.Ticks;
+using Altaxo.Gui.Common;
+using Altaxo.Units;
 
 namespace Altaxo.Gui.Graph.Scales.Ticks
 {
   #region Interfaces
 
-  public interface ISpanTickSpacingView
+  public interface ISpanTickSpacingView : IDataContextAwareView
   {
-    double RelativePositionOfTick { get; set; }
-
-    bool ShowEndOrgRatio { get; set; }
-
-    double DivideBy { get; set; }
-
-    bool TransfoOperationIsMultiply { get; set; }
   }
 
   #endregion Interfaces
@@ -55,26 +48,98 @@ namespace Altaxo.Gui.Graph.Scales.Ticks
       yield break;
     }
 
+    #region Bindings
+
+    private bool _isEndOrgRatio;
+
+    public bool IsEndOrgRatio
+    {
+      get => _isEndOrgRatio;
+      set
+      {
+        if (!(_isEndOrgRatio == value))
+        {
+          _isEndOrgRatio = value;
+          OnPropertyChanged(nameof(IsEndOrgRatio));
+        }
+      }
+    }
+
+
+    public QuantityWithUnitGuiEnvironment RelativePositionOfTickEnvironment => RelationEnvironment.Instance;
+
+    private DimensionfulQuantity _relativePositionOfTick;
+
+    public DimensionfulQuantity RelativePositionOfTick
+    {
+      get => _relativePositionOfTick;
+      set
+      {
+        if (!(_relativePositionOfTick == value))
+        {
+          _relativePositionOfTick = value;
+          OnPropertyChanged(nameof(RelativePositionOfTick));
+        }
+      }
+    }
+
+    private ItemsController<bool> _transformationIsMultiply;
+
+    public ItemsController<bool> TransformationIsMultiply
+    {
+      get => _transformationIsMultiply;
+      set
+      {
+        if (!(_transformationIsMultiply == value))
+        {
+          _transformationIsMultiply = value;
+          OnPropertyChanged(nameof(TransformationIsMultiply));
+        }
+      }
+    }
+
+    private double _divideBy;
+
+    public double DivideBy
+    {
+      get => _divideBy;
+      set
+      {
+        if (!(_divideBy == value))
+        {
+          _divideBy = value;
+          OnPropertyChanged(nameof(DivideBy));
+        }
+      }
+    }
+
+    #endregion
+
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
 
-      if (_view is not null)
+      if (initData)
       {
-        _view.RelativePositionOfTick = _doc.RelativeTickPosition;
-        _view.ShowEndOrgRatio = _doc.ShowEndOrgRatioInsteadOfDifference;
-        _view.DivideBy = _doc.TransformationDivider;
-        _view.TransfoOperationIsMultiply = _doc.TransformationOperationIsMultiply;
+        RelativePositionOfTick = new DimensionfulQuantity(_doc.RelativeTickPosition, Altaxo.Units.Dimensionless.Unity.Instance).AsQuantityIn(RelativePositionOfTickEnvironment.DefaultUnit);
+        IsEndOrgRatio = _doc.ShowEndOrgRatioInsteadOfDifference;
+        DivideBy = _doc.TransformationDivider;
+        TransformationIsMultiply = new ItemsController<bool>(
+          new SelectableListNodeList
+        {
+          new SelectableListNode(" X /  ", false, _doc.TransformationOperationIsMultiply==false),
+          new SelectableListNode(" X *  ", true, _doc.TransformationOperationIsMultiply==true)
+        });
       }
     }
 
     public override bool Apply(bool disposeController)
     {
-      _doc.RelativeTickPosition = _view.RelativePositionOfTick;
-      _doc.ShowEndOrgRatioInsteadOfDifference = _view.ShowEndOrgRatio;
+      _doc.RelativeTickPosition = RelativePositionOfTick.AsValueInSIUnits;
+      _doc.ShowEndOrgRatioInsteadOfDifference = IsEndOrgRatio;
 
-      _doc.TransformationDivider = _view.DivideBy;
-      _doc.TransformationOperationIsMultiply = _view.TransfoOperationIsMultiply;
+      _doc.TransformationDivider = DivideBy;
+      _doc.TransformationOperationIsMultiply = _transformationIsMultiply.SelectedValue;
 
       return ApplyEnd(true, disposeController);
     }
