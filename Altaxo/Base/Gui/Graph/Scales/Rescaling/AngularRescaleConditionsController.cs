@@ -28,14 +28,14 @@ using System.Collections.Generic;
 using System.Text;
 using Altaxo.Collections;
 using Altaxo.Graph.Scales.Rescaling;
+using Altaxo.Gui.Common;
 
 namespace Altaxo.Gui.Graph.Scales.Rescaling
 {
   #region Interfaces
 
-  public interface IAngularRescaleConditionsView
+  public interface IAngularRescaleConditionsView : IDataContextAwareView
   {
-    SelectableListNodeList Origin { set; }
   }
 
   #endregion Interfaces
@@ -44,16 +44,33 @@ namespace Altaxo.Gui.Graph.Scales.Rescaling
   [ExpectedTypeOfView(typeof(IAngularRescaleConditionsView))]
   public class AngularRescaleConditionsController : MVCANControllerEditOriginalDocBase<AngularRescaleConditions, IAngularRescaleConditionsView>
   {
-    private SelectableListNodeList _originList;
-
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
     }
 
+    #region Bindings
+
+    private ItemsController<int> _origin;
+
+    public ItemsController<int> Origin
+    {
+      get => _origin;
+      set
+      {
+        if (!(_origin == value))
+        {
+          _origin = value;
+          OnPropertyChanged(nameof(Origin));
+        }
+      }
+    }
+
+    #endregion
+
     public override void Dispose(bool isDisposing)
     {
-      _originList = null;
+      _origin?.Dispose();
       base.Dispose(isDisposing);
     }
 
@@ -63,25 +80,20 @@ namespace Altaxo.Gui.Graph.Scales.Rescaling
 
       if (initData)
       {
-        BuildOriginList();
+        _origin = new ItemsController<int>( BuildOriginList());
       }
 
-      if (_view is not null)
-      {
-        _view.Origin = _originList;
-      }
     }
 
     public override bool Apply(bool disposeController)
     {
-      _doc.ScaleOrigin = (int)_originList.FirstSelectedNode.Tag;
-
+      _doc.ScaleOrigin = Origin.SelectedValue;
       return ApplyEnd(true, disposeController);
     }
 
-    private void BuildOriginList()
+    private SelectableListNodeList BuildOriginList()
     {
-      _originList = new SelectableListNodeList
+      return new SelectableListNodeList
       {
         new SelectableListNode("-90°", -1, -1 == _doc.ScaleOrigin),
         new SelectableListNode("0°", 0, 0 == _doc.ScaleOrigin),

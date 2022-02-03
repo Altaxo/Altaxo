@@ -110,7 +110,7 @@ namespace Altaxo.Gui.Common
 
     public static readonly DependencyProperty SelectedValueProperty =
         DependencyProperty.Register("SelectedValue", typeof(TimeSpan), typeof(TimeSpanTextBox),
-        new FrameworkPropertyMetadata(EhSelectedValueChanged));
+        new FrameworkPropertyMetadata(EhSelectedValueChanged) { BindsTwoWayByDefault=true});
 
     private static void EhSelectedValueChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
     {

@@ -30,61 +30,205 @@ using System.Text;
 using Altaxo.Collections;
 using Altaxo.Graph.Scales;
 using Altaxo.Graph.Scales.Rescaling;
+using Altaxo.Gui.Common;
 using Altaxo.Serialization;
 
 namespace Altaxo.Gui.Graph.Scales.Rescaling
 {
-  public interface IDateTimeScaleRescaleConditionsView
+  public interface IDateTimeScaleRescaleConditionsView : IDataContextAwareView
   {
-    SelectableListNodeList OrgRescaling { set; }
-
-    SelectableListNodeList EndRescaling { set; }
-
-    SelectableListNodeList OrgRelativeTo { set; }
-
-    SelectableListNodeList EndRelativeTo { set; }
-
-    DateTime OrgValueDT { set; get; }
-
-    TimeSpan OrgValueTS { set; get; }
-
-    DateTime EndValueDT { set; get; }
-
-    TimeSpan EndValueTS { set; get; }
-
-    /// <summary>
-    /// If true, the TimeSpan box is shown for org; otherwise the DateTime box is shown.
-    /// </summary>
-    bool ShowOrgTS { set; }
-
-    /// <summary>
-    /// If true, the TimeSpan box is shown for org; otherwise the DateTime box is shown.
-    /// </summary>
-    bool ShowEndTS { set; }
-
-    event Action OrgValueChanged;
-
-    event Action EndValueChanged;
-
-    event Action OrgRelativeToChanged;
-
-    event Action EndRelativeToChanged;
   }
 
   [ExpectedTypeOfView(typeof(IDateTimeScaleRescaleConditionsView))]
   [UserControllerForObject(typeof(DateTimeScaleRescaleConditions))]
   public class DateTimeScaleRescaleConditionsController : MVCANControllerEditOriginalDocBase<DateTimeScaleRescaleConditions, IDateTimeScaleRescaleConditionsView>
   {
-    private SelectableListNodeList _orgRescalingChoices;
-    private SelectableListNodeList _endRescalingChoices;
-
-    private SelectableListNodeList _orgRelativeToChoices;
-    private SelectableListNodeList _endRelativeToChoices;
-
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
     }
+
+    #region Bindings
+
+    private ItemsController<BoundaryRescaling> _orgRescaling;
+
+    public ItemsController<BoundaryRescaling> OrgRescaling
+    {
+      get => _orgRescaling;
+      set
+      {
+        if (!(_orgRescaling == value))
+        {
+          _orgRescaling = value;
+          OnPropertyChanged(nameof(OrgRescaling));
+        }
+      }
+    }
+    private ItemsController<BoundaryRescaling> _endRescaling;
+
+    public ItemsController<BoundaryRescaling> EndRescaling
+    {
+      get => _endRescaling;
+      set
+      {
+        if (!(_endRescaling == value))
+        {
+          _endRescaling = value;
+          OnPropertyChanged(nameof(EndRescaling));
+        }
+      }
+    }
+
+    private ItemsController<BoundariesRelativeTo> _orgRelativeTo;
+
+    public ItemsController<BoundariesRelativeTo> OrgRelativeTo
+    {
+      get => _orgRelativeTo;
+      set
+      {
+        if (!(_orgRelativeTo == value))
+        {
+          _orgRelativeTo = value;
+          OnPropertyChanged(nameof(OrgRelativeTo));
+        }
+      }
+    }
+
+    private void EhOrgRelativeToChanged(BoundariesRelativeTo value)
+    {
+        ShowOrgTS = value != BoundariesRelativeTo.Absolute;
+    }
+
+    private ItemsController<BoundariesRelativeTo> _endRelativeTo;
+
+    public ItemsController<BoundariesRelativeTo> EndRelativeTo
+    {
+      get => _endRelativeTo;
+      set
+      {
+        if (!(_endRelativeTo == value))
+        {
+          _endRelativeTo = value;
+          OnPropertyChanged(nameof(EndRelativeTo));
+        }
+      }
+    }
+
+    private void EhEndRelativeToChanged(BoundariesRelativeTo value)
+    {
+        ShowEndTS = value != BoundariesRelativeTo.Absolute;
+    }
+
+    private DateTime _orgValueDT;
+
+    public DateTime OrgValueDT
+    {
+      get => _orgValueDT;
+      set
+      {
+        if (!(_orgValueDT == value))
+        {
+          _orgValueDT = value;
+          OnPropertyChanged(nameof(OrgValueDT));
+          EhOrgValueChanged();
+        }
+      }
+    }
+
+    private void EhOrgValueChanged()
+    {
+      if (OrgRescaling.SelectedValue == BoundaryRescaling.Auto)
+      {
+        OrgRescaling.SelectedValue = BoundaryRescaling.AutoTempFixed;
+      }
+    }
+
+
+    private DateTime _endValueDT;
+
+    public DateTime EndValueDT
+    {
+      get => _endValueDT;
+      set
+      {
+        if (!(_endValueDT == value))
+        {
+          _endValueDT = value;
+          OnPropertyChanged(nameof(EndValueDT));
+          EhEndValueChanged();
+        }
+      }
+    }
+
+    private void EhEndValueChanged()
+    {
+      if (EndRescaling.SelectedValue == BoundaryRescaling.Auto)
+      {
+        EndRescaling.SelectedValue = BoundaryRescaling.AutoTempFixed;
+      }
+    }
+
+    private TimeSpan _orgValueTS;
+
+    public TimeSpan OrgValueTS
+    {
+      get => _orgValueTS;
+      set
+      {
+        if (!(_orgValueTS == value))
+        {
+          _orgValueTS = value;
+          OnPropertyChanged(nameof(OrgValueTS));
+        }
+      }
+    }
+    private TimeSpan _endValueTS;
+
+    public TimeSpan EndValueTS
+    {
+      get => _endValueTS;
+      set
+      {
+        if (!(_endValueTS == value))
+        {
+          _endValueTS = value;
+          OnPropertyChanged(nameof(EndValueTS));
+        }
+      }
+    }
+
+    private bool _showOrgTS;
+
+    public bool ShowOrgTS
+    {
+      get => _showOrgTS;
+      set
+      {
+        if (!(_showOrgTS == value))
+        {
+          _showOrgTS = value;
+          OnPropertyChanged(nameof(ShowOrgTS));
+        }
+      }
+    }
+    private bool _showEndTS;
+
+    public bool ShowEndTS
+    {
+      get => _showEndTS;
+      set
+      {
+        if (!(_showEndTS == value))
+        {
+          _showEndTS = value;
+          OnPropertyChanged(nameof(ShowEndTS));
+        }
+      }
+    }
+
+
+    #endregion
+
 
     protected override void Initialize(bool initData)
     {
@@ -92,75 +236,67 @@ namespace Altaxo.Gui.Graph.Scales.Rescaling
 
       if (initData)
       {
-        _orgRescalingChoices = LinearScaleRescaleConditionsController.CreateListNodeList(_doc.OrgRescaling);
-        _endRescalingChoices = LinearScaleRescaleConditionsController.CreateListNodeList(_doc.EndRescaling);
+        _orgRescaling = new ItemsController<BoundaryRescaling>(LinearScaleRescaleConditionsController.CreateListNodeList(_doc.OrgRescaling));
+        _endRescaling = new ItemsController<BoundaryRescaling>(LinearScaleRescaleConditionsController.CreateListNodeList(_doc.EndRescaling));
 
-        _orgRelativeToChoices = new SelectableListNodeList(_doc.OrgRelativeTo);
-        _endRelativeToChoices = new SelectableListNodeList(_doc.EndRelativeTo);
-      }
-
-      if (_view is not null)
-      {
-        _view.OrgRescaling = _orgRescalingChoices;
-        _view.EndRescaling = _endRescalingChoices;
-        _view.OrgRelativeTo = _orgRelativeToChoices;
-        _view.EndRelativeTo = _endRelativeToChoices;
+        _orgRelativeTo = new ItemsController<BoundariesRelativeTo>(new SelectableListNodeList(_doc.OrgRelativeTo), EhOrgRelativeToChanged);
+        _endRelativeTo = new ItemsController<BoundariesRelativeTo>(new SelectableListNodeList(_doc.EndRelativeTo), EhEndRelativeToChanged);
 
         var org = GetOrgValueToShow();
         var end = GetEndValueToShow();
 
         if (org is DateTime)
         {
-          _view.OrgValueDT = (DateTime)org;
-          _view.ShowOrgTS = false;
+          OrgValueDT = (DateTime)org;
+          ShowOrgTS = false;
         }
         else
         {
-          _view.OrgValueTS = (TimeSpan)org;
-          _view.ShowOrgTS = true;
+         OrgValueTS = (TimeSpan)org;
+         ShowOrgTS = true;
         }
 
         if (end is DateTime)
         {
-          _view.EndValueDT = (DateTime)end;
-          _view.ShowEndTS = false;
+         EndValueDT = (DateTime)end;
+          ShowEndTS = false;
         }
         else
         {
-          _view.EndValueTS = (TimeSpan)end;
-          _view.ShowEndTS = true;
+          EndValueTS = (TimeSpan)end;
+         ShowEndTS = true;
         }
       }
     }
 
     public override bool Apply(bool disposeController)
     {
-      var orgRescaling = (BoundaryRescaling)_orgRescalingChoices.FirstSelectedNode.Tag;
-      var endRescaling = (BoundaryRescaling)_endRescalingChoices.FirstSelectedNode.Tag;
+      var orgRescaling = _orgRescaling.SelectedValue;
+      var endRescaling = _endRescaling.SelectedValue;
 
-      var orgRelativeTo = (BoundariesRelativeTo)_orgRelativeToChoices.FirstSelectedNode.Tag;
-      var endRelativeTo = (BoundariesRelativeTo)_endRelativeToChoices.FirstSelectedNode.Tag;
+      var orgRelativeTo = _orgRelativeTo.SelectedValue;
+      var endRelativeTo = _endRelativeTo.SelectedValue;
 
       long orgValue, endValue;
       DateTimeKind orgKind, endKind;
       if (orgRelativeTo == BoundariesRelativeTo.Absolute)
       {
-        orgValue = _view.OrgValueDT.Ticks;
-        orgKind = _view.OrgValueDT.Kind;
+        orgValue = OrgValueDT.Ticks;
+        orgKind = OrgValueDT.Kind;
       }
       else
       {
-        orgValue = _view.OrgValueTS.Ticks;
+        orgValue = OrgValueTS.Ticks;
         orgKind = DateTimeKind.Utc;
       }
       if (endRelativeTo == BoundariesRelativeTo.Absolute)
       {
-        endValue = _view.EndValueDT.Ticks;
-        endKind = _view.EndValueDT.Kind;
+        endValue = EndValueDT.Ticks;
+        endKind = EndValueDT.Kind;
       }
       else
       {
-        endValue = _view.EndValueTS.Ticks;
+        endValue = EndValueTS.Ticks;
         endKind = DateTimeKind.Utc;
       }
 
@@ -169,25 +305,7 @@ namespace Altaxo.Gui.Graph.Scales.Rescaling
       return ApplyEnd(true, disposeController);
     }
 
-    protected override void AttachView()
-    {
-      base.AttachView();
-
-      _view.OrgValueChanged += EhOrgValueChanged;
-      _view.EndValueChanged += EhEndValueChanged;
-
-      _view.OrgRelativeToChanged += EhOrgRelativeToChanged;
-      _view.EndRelativeToChanged += EhEndRelativeToChanged;
-    }
-
-    protected override void DetachView()
-    {
-      _view.OrgValueChanged -= EhOrgValueChanged;
-      _view.EndValueChanged -= EhEndValueChanged;
-      _view.OrgRelativeToChanged -= EhOrgRelativeToChanged;
-      _view.EndRelativeToChanged -= EhEndRelativeToChanged;
-      base.DetachView();
-    }
+   
 
     private object GetOrgValueToShow()
     {
@@ -218,7 +336,6 @@ namespace Altaxo.Gui.Graph.Scales.Rescaling
       else
       {
         if (_doc.OrgRelativeTo == BoundariesRelativeTo.Absolute)
-
           return new DateTime(_doc.UserProvidedOrgValue, _doc.UserProvidedOrgKind);
         else
           return TimeSpan.FromTicks(_doc.UserProvidedOrgValue);
@@ -258,74 +375,6 @@ namespace Altaxo.Gui.Graph.Scales.Rescaling
         else
           return TimeSpan.FromTicks(_doc.UserProvidedEndValue);
       }
-    }
-
-    private void EhOrgValueChanged()
-    {
-      var orgRescaling = (BoundaryRescaling)_orgRescalingChoices.FirstSelectedNode.Tag;
-      if (orgRescaling == BoundaryRescaling.Auto)
-      {
-        _orgRescalingChoices.ClearSelectionsAll();
-
-        foreach (var node in _orgRescalingChoices)
-        {
-          if (BoundaryRescaling.AutoTempFixed == (BoundaryRescaling)node.Tag)
-          {
-            node.IsSelected = true;
-            break;
-          }
-        }
-
-        if (_view is not null)
-          _view.OrgRescaling = _orgRescalingChoices;
-      }
-    }
-
-    private void EhEndValueChanged()
-    {
-      var endRescaling = (BoundaryRescaling)_endRescalingChoices.FirstSelectedNode.Tag;
-      if (endRescaling == BoundaryRescaling.Auto)
-      {
-        _endRescalingChoices.ClearSelectionsAll();
-
-        foreach (var node in _endRescalingChoices)
-        {
-          if (BoundaryRescaling.AutoTempFixed == (BoundaryRescaling)node.Tag)
-          {
-            node.IsSelected = true;
-            break;
-          }
-        }
-
-        if (_view is not null)
-          _view.EndRescaling = _endRescalingChoices;
-      }
-    }
-
-    private void EhOrgRelativeToChanged()
-    {
-      if (_orgRelativeToChoices.FirstSelectedNode is null)
-        return;
-
-      var orgRelativeTo = (BoundariesRelativeTo)_orgRelativeToChoices.FirstSelectedNode.Tag;
-
-      if (orgRelativeTo == BoundariesRelativeTo.Absolute)
-        _view.ShowOrgTS = false;
-      else
-        _view.ShowOrgTS = true;
-    }
-
-    private void EhEndRelativeToChanged()
-    {
-      if (_orgRelativeToChoices.FirstSelectedNode is null)
-        return;
-
-      var endRelativeTo = (BoundariesRelativeTo)_endRelativeToChoices.FirstSelectedNode.Tag;
-
-      if (endRelativeTo == BoundariesRelativeTo.Absolute)
-        _view.ShowEndTS = false;
-      else
-        _view.ShowEndTS = true;
     }
   }
 }

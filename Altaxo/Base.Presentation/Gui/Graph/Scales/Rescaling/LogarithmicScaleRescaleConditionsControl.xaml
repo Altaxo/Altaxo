@@ -4,7 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:rescaling="clr-namespace:Altaxo.Gui.Graph.Scales.Rescaling;assembly=AltaxoBase" d:DataContext="{d:DesignInstance Type=rescaling:LogarithmicScaleRescaleConditionsController}"
     d:DesignHeight="300"
     d:DesignWidth="300"
     mc:Ignorable="d">
@@ -34,7 +34,8 @@
             x:Name="_guiOrgRescaling"
             Grid.Row="0"
             Grid.Column="2"
-            SelectionChanged="EhComboBox_SelectionChanged">
+            ItemsSource="{Binding OrgRescaling.Items}"
+            SelectedItem="{Binding OrgRescaling.SelectedItem, Mode=TwoWay}">
             <ComboBox.ItemTemplate>
                 <DataTemplate>
                     <TextBlock Text="{Binding Text}" ToolTip="{Binding Description}" />
@@ -42,26 +43,25 @@
             </ComboBox.ItemTemplate>
         </ComboBox>
         <axogc:NumericDoubleTextBox
-            x:Name="_guiOrgValue"
             Grid.Row="0"
             Grid.Column="4"
             DisallowNegativeValues="True"
             DisallowZeroValues="True"
-            SelectedValueChanged="_guiOrgValue_SelectedValueChanged" />
+            SelectedValue="{Binding OrgValue}" />
         <ComboBox
-            x:Name="_guiOrgRelativeTo"
             Grid.Row="0"
             Grid.Column="6"
-            SelectionChanged="EhComboBox_SelectionChanged" />
+            ItemsSource="{Binding OrgRelativeTo.Items}"
+            SelectedItem="{Binding OrgRelativeTo.SelectedItem, Mode=TwoWay}" />
         <Label
             Grid.Row="2"
             Grid.Column="0"
             Content="End:" />
         <ComboBox
-            x:Name="_guiEndRescaling"
             Grid.Row="2"
             Grid.Column="2"
-            SelectionChanged="EhComboBox_SelectionChanged">
+            ItemsSource="{Binding EndRescaling.Items}"
+            SelectedItem="{Binding EndRescaling.SelectedItem, Mode=TwoWay}">
             <ComboBox.ItemTemplate>
                 <DataTemplate>
                     <TextBlock Text="{Binding Text}" ToolTip="{Binding Description}" />
@@ -69,16 +69,15 @@
             </ComboBox.ItemTemplate>
         </ComboBox>
         <axogc:NumericDoubleTextBox
-            x:Name="_guiEndValue"
             Grid.Row="2"
             Grid.Column="4"
             DisallowNegativeValues="True"
             DisallowZeroValues="True"
-            SelectedValueChanged="_guiEndValue_SelectedValueChanged" />
+            SelectedValue="{Binding EndValue}" />
         <ComboBox
-            x:Name="_guiEndRelativeTo"
             Grid.Row="2"
             Grid.Column="6"
-            SelectionChanged="EhComboBox_SelectionChanged" />
+            ItemsSource="{Binding EndRelativeTo.Items}"
+            SelectedItem="{Binding EndRelativeTo.SelectedItem, Mode=TwoWay}" />
     </Grid>
 </UserControl>

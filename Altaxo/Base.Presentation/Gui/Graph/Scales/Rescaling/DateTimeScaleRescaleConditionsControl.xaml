@@ -3,7 +3,10 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
+			 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
+			 xmlns:axogcc="clr-namespace:Altaxo.Gui.Common.Converters"
+             xmlns:rescaling="clr-namespace:Altaxo.Gui.Graph.Scales.Rescaling;assembly=AltaxoBase" 
+             d:DataContext="{d:DesignInstance Type=rescaling:DateTimeScaleRescaleConditionsController}"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
 	<Grid>
@@ -25,27 +28,27 @@
 		</Grid.RowDefinitions>
 
 		<Label Grid.Row="0" Grid.Column="0" Content="Org:" />
-		<ComboBox Grid.Row="0" Grid.Column="2" x:Name="_guiOrgRescaling" SelectionChanged="EhComboBox_SelectionChanged">
+		<ComboBox Grid.Row="0" Grid.Column="2" ItemsSource="{Binding OrgRescaling.Items}" SelectedItem="{Binding OrgRescaling.SelectedItem, Mode=TwoWay}">
 			<ComboBox.ItemTemplate>
 				<DataTemplate>
 					<TextBlock Text="{Binding Text}" ToolTip="{Binding Description}" />
 				</DataTemplate>
 			</ComboBox.ItemTemplate>
 		</ComboBox>
-		<axogc:DateTimeTextBox Grid.Row="0" Grid.Column="4" x:Name="_guiOrgValueDT" SelectedValueChanged="_guiOrgValue_SelectedValueChanged" />
-		<axogc:TimeSpanTextBox Grid.Row="0" Grid.Column="4" x:Name="_guiOrgValueTS" SelectedValueChanged="_guiOrgValue_SelectedValueChanged" />
-		<ComboBox Grid.Row="0" Grid.Column="6" x:Name="_guiOrgRelativeTo" SelectionChanged="EhOrgRelativeTo_SelectionChanged" />
+		<axogc:DateTimeTextBox Grid.Row="0" Grid.Column="4" SelectedValue="{Binding OrgValueDT}" Visibility="{Binding ShowOrgTS, Converter={x:Static axogcc:TrueToVisibilityCollapsedConverter.Instance}}" />
+        <axogc:TimeSpanTextBox Grid.Row="0" Grid.Column="4" SelectedValue="{Binding OrgValueTS}" Visibility="{Binding ShowOrgTS, Converter={x:Static axogcc:FalseToVisibilityCollapsedConverter.Instance}}" />
+		<ComboBox Grid.Row="0" Grid.Column="6" ItemsSource="{Binding OrgRelativeTo.Items}" SelectedItem="{Binding OrgRelativeTo.SelectedItem, Mode=TwoWay}"/>
 
 		<Label Grid.Row="2" Grid.Column="0" Content="End:" />
-		<ComboBox Grid.Row="2" Grid.Column="2" x:Name="_guiEndRescaling" SelectionChanged="EhComboBox_SelectionChanged">
+		<ComboBox Grid.Row="2" Grid.Column="2" ItemsSource="{Binding EndRescaling.Items}" SelectedItem="{Binding EndRescaling.SelectedItem, Mode=TwoWay}">
 			<ComboBox.ItemTemplate>
 				<DataTemplate>
 					<TextBlock Text="{Binding Text}" ToolTip="{Binding Description}" />
 				</DataTemplate>
 			</ComboBox.ItemTemplate>
 		</ComboBox>
-		<axogc:DateTimeTextBox Grid.Row="2" Grid.Column="4" x:Name="_guiEndValueDT" SelectedValueChanged="_guiEndValue_SelectedValueChanged" />
-		<axogc:TimeSpanTextBox Grid.Row="2" Grid.Column="4" x:Name="_guiEndValueTS" SelectedValueChanged="_guiEndValue_SelectedValueChanged" />
-		<ComboBox Grid.Row="2" Grid.Column="6" x:Name="_guiEndRelativeTo" SelectionChanged="EhEndRelativeTo_SelectionChanged" />
+        <axogc:DateTimeTextBox Grid.Row="2" Grid.Column="4" SelectedValue="{Binding EndValueDT}" Visibility="{Binding ShowEndTS, Converter={x:Static axogcc:TrueToVisibilityCollapsedConverter.Instance}}" />
+        <axogc:TimeSpanTextBox Grid.Row="2" Grid.Column="4" SelectedValue="{Binding EndValueTS}" Visibility="{Binding ShowEndTS, Converter={x:Static axogcc:FalseToVisibilityCollapsedConverter.Instance}}"/>
+		<ComboBox Grid.Row="2" Grid.Column="6" ItemsSource="{Binding EndRelativeTo.Items}" SelectedItem="{Binding EndRelativeTo.SelectedItem, Mode=TwoWay}" />
 	</Grid>
 </UserControl>

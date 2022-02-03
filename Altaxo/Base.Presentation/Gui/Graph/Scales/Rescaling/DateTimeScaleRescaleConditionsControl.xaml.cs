@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2015 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -22,19 +22,7 @@
 
 #endregion Copyright
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Altaxo.Gui.Graph.Scales.Rescaling
 {
@@ -43,138 +31,9 @@ namespace Altaxo.Gui.Graph.Scales.Rescaling
   /// </summary>
   public partial class DateTimeScaleRescaleConditionsControl : UserControl, IDateTimeScaleRescaleConditionsView
   {
-    public event Action? OrgValueChanged;
-
-    public event Action? EndValueChanged;
-
-    public event Action? OrgRelativeToChanged;
-
-    public event Action? EndRelativeToChanged;
-
     public DateTimeScaleRescaleConditionsControl()
     {
       InitializeComponent();
-    }
-
-    private void _guiOrgValue_SelectedValueChanged(object sender, DependencyPropertyChangedEventArgs e)
-    {
-      var ev = OrgValueChanged;
-      if (ev is not null)
-        ev();
-    }
-
-    private void _guiEndValue_SelectedValueChanged(object sender, DependencyPropertyChangedEventArgs e)
-    {
-      var ev = EndValueChanged;
-      if (ev is not null)
-        ev();
-    }
-
-    public Collections.SelectableListNodeList OrgRescaling
-    {
-      set { GuiHelper.Initialize(_guiOrgRescaling, value); }
-    }
-
-    public Collections.SelectableListNodeList EndRescaling
-    {
-      set { GuiHelper.Initialize(_guiEndRescaling, value); }
-    }
-
-    public Collections.SelectableListNodeList OrgRelativeTo
-    {
-      set { GuiHelper.Initialize(_guiOrgRelativeTo, value); }
-    }
-
-    public Collections.SelectableListNodeList EndRelativeTo
-    {
-      set { GuiHelper.Initialize(_guiEndRelativeTo, value); }
-    }
-
-    public DateTime OrgValueDT
-    {
-      get
-      {
-        return _guiOrgValueDT.SelectedValue;
-      }
-      set
-      {
-        _guiOrgValueDT.SelectedValue = value;
-      }
-    }
-
-    public TimeSpan OrgValueTS
-    {
-      get
-      {
-        return _guiOrgValueTS.SelectedValue;
-      }
-      set
-      {
-        _guiOrgValueTS.SelectedValue = value;
-      }
-    }
-
-    public DateTime EndValueDT
-    {
-      get
-      {
-        return _guiEndValueDT.SelectedValue;
-      }
-      set
-      {
-        _guiEndValueDT.SelectedValue = value;
-      }
-    }
-
-    public TimeSpan EndValueTS
-    {
-      get
-      {
-        return _guiEndValueTS.SelectedValue;
-      }
-      set
-      {
-        _guiEndValueTS.SelectedValue = value;
-      }
-    }
-
-    private void EhComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-    {
-      GuiHelper.SynchronizeSelectionFromGui((ComboBox)sender);
-    }
-
-    public bool ShowOrgTS
-    {
-      set
-      {
-        _guiOrgValueTS.Visibility = value ? Visibility.Visible : Visibility.Hidden;
-        _guiOrgValueDT.Visibility = value ? Visibility.Hidden : Visibility.Visible;
-      }
-    }
-
-    public bool ShowEndTS
-    {
-      set
-      {
-        _guiEndValueTS.Visibility = value ? Visibility.Visible : Visibility.Hidden;
-        _guiEndValueDT.Visibility = value ? Visibility.Hidden : Visibility.Visible;
-      }
-    }
-
-    private void EhOrgRelativeTo_SelectionChanged(object sender, SelectionChangedEventArgs e)
-    {
-      GuiHelper.SynchronizeSelectionFromGui((ComboBox)sender);
-      var ev = OrgRelativeToChanged;
-      if (ev is not null)
-        ev();
-    }
-
-    private void EhEndRelativeTo_SelectionChanged(object sender, SelectionChangedEventArgs e)
-    {
-      GuiHelper.SynchronizeSelectionFromGui((ComboBox)sender);
-      var ev = EndRelativeToChanged;
-      if (ev is not null)
-        ev();
     }
   }
 }
