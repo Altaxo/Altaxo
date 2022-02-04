@@ -31,22 +31,22 @@
 		</Grid.RowDefinitions>
 		<Label Grid.Row="0" Grid.Column="0" Content="Number of rows:" />
 		<Label Grid.Row="2" Grid.Column="0" Content="Number of columns:" />
-		<Label Grid.Row="4" Grid.Column="0" Content="Row spacing (%):" />
-		<Label Grid.Row="6" Grid.Column="0" Content="Column spacing (%):" />
-		<Label Grid.Row="8" Grid.Column="0" Content="Top margin (%):" />
-		<Label Grid.Row="10" Grid.Column="0" Content="Left margin (%):" />
-		<Label Grid.Row="12" Grid.Column="0" Content="Bottom margin (%):" />
-		<Label Grid.Row="14" Grid.Column="0" Content="Right margin (%):" />
+		<Label Grid.Row="4" Grid.Column="0" Content="Row spacing:" />
+		<Label Grid.Row="6" Grid.Column="0" Content="Column spacing:" />
+		<Label Grid.Row="8" Grid.Column="0" Content="Top margin:" />
+		<Label Grid.Row="10" Grid.Column="0" Content="Left margin:" />
+		<Label Grid.Row="12" Grid.Column="0" Content="Bottom margin:" />
+		<Label Grid.Row="14" Grid.Column="0" Content="Right margin:" />
 		<Label Grid.Row="16" Grid.Column="0" Content="Superfluous layers:" />
 
-		<axogc:Int32UpDown Grid.Row="0" Grid.Column="1" Minimum="1" Value="{Binding NumberOfRows, Mode=TwoWay}" />
-		<axogc:Int32UpDown Grid.Row="2" Grid.Column="1" Minimum="1" Value="{Binding NumberOfColumns, Mode=TwoWay}" />
-		<axogc:NumericDoubleTextBox Grid.Row="4" Grid.Column="1" SelectedValue="{Binding RowSpacing, Mode=TwoWay}" />
-        <axogc:NumericDoubleTextBox Grid.Row="6" Grid.Column="1" SelectedValue="{Binding ColumnSpacing, Mode=TwoWay}" />
-        <axogc:NumericDoubleTextBox Grid.Row="8" Grid.Column="1" SelectedValue="{Binding TopMargin, Mode=TwoWay}" />
-        <axogc:NumericDoubleTextBox Grid.Row="10" Grid.Column="1" SelectedValue="{Binding LeftMargin, Mode=TwoWay}" />
-        <axogc:NumericDoubleTextBox Grid.Row="12" Grid.Column="1" SelectedValue="{Binding BottomMargin, Mode=TwoWay}" />
-        <axogc:NumericDoubleTextBox Grid.Row="14" Grid.Column="1" SelectedValue="{Binding RightMargin, Mode=TwoWay}" />
-        <ComboBox Grid.Row="16" Grid.Column="1" SelectedValue="{Binding SelectedSuperfluousLayersAction, Mode=TwoWay}" ItemsSource="{Binding SuperfluousLayers}" SelectedValuePath="Tag" />
+		<axogc:Int32UpDown Grid.Row="0" Grid.Column="1" Minimum="1" Value="{Binding NumberOfRows}" />
+		<axogc:Int32UpDown Grid.Row="2" Grid.Column="1" Minimum="1" Value="{Binding NumberOfColumns}" />
+		<axogc:QuantityWithUnitTextBox Grid.Row="4" Grid.Column="1" SelectedQuantity="{Binding RowSpacing}" UnitEnvironment="{Binding SpacingEnvironment}"/>
+        <axogc:QuantityWithUnitTextBox Grid.Row="6" Grid.Column="1" SelectedQuantity="{Binding ColumnSpacing}" UnitEnvironment="{Binding SpacingEnvironment}"/>
+        <axogc:QuantityWithUnitTextBox Grid.Row="8" Grid.Column="1" SelectedQuantity="{Binding TopMargin}" UnitEnvironment="{Binding MarginEnvironment}"/>
+        <axogc:QuantityWithUnitTextBox Grid.Row="10" Grid.Column="1" SelectedQuantity="{Binding LeftMargin}" UnitEnvironment="{Binding MarginEnvironment}" />
+        <axogc:QuantityWithUnitTextBox Grid.Row="12" Grid.Column="1" SelectedQuantity="{Binding BottomMargin}" UnitEnvironment="{Binding MarginEnvironment}" />
+        <axogc:QuantityWithUnitTextBox Grid.Row="14" Grid.Column="1" SelectedQuantity="{Binding RightMargin}" UnitEnvironment="{Binding MarginEnvironment}" />
+        <ComboBox Grid.Row="16" Grid.Column="1" ItemsSource="{Binding SuperfluousLayers.Items}" SelectedItem="{Binding SuperfluousLayers.SelectedItem, Mode=TwoWay}"/>
 	</Grid>
 </UserControl>

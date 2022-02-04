@@ -26,19 +26,15 @@ using System;
 using System.Collections.Generic;
 using Altaxo.Collections;
 using Altaxo.Graph.Gdi;
+using Altaxo.Gui.Common;
 using Altaxo.Serialization;
+using Altaxo.Units;
 
 namespace Altaxo.Gui.Graph.Gdi
 {
-  #region interfaces
-
   public interface IArrangeLayersView : IDataContextAwareView
   {
   }
-
-
-
-  #endregion interfaces
 
   /// <summary>
   /// Controller for the <see cref="ArrangeLayersDocument" />.
@@ -54,91 +50,96 @@ namespace Altaxo.Gui.Graph.Gdi
 
     #region Bindings
 
-    private int _NumberOfRows;
+    private int _numberOfRows;
 
     public int NumberOfRows
     {
-      get => _NumberOfRows;
+      get => _numberOfRows;
       set
       {
-        if (!(_NumberOfRows == value))
+        if (!(_numberOfRows == value))
         {
-          _NumberOfRows = value;
+          _numberOfRows = value;
           OnPropertyChanged(nameof(NumberOfRows));
         }
       }
     }
 
-    private int _NumberOfColumns;
+    private int _numberOfColumns;
 
     public int NumberOfColumns
     {
-      get => _NumberOfColumns;
+      get => _numberOfColumns;
       set
       {
-        if (!(_NumberOfColumns == value))
+        if (!(_numberOfColumns == value))
         {
-          _NumberOfColumns = value;
+          _numberOfColumns = value;
           OnPropertyChanged(nameof(NumberOfColumns));
         }
       }
     }
 
-    private double _RowSpacing;
+    public QuantityWithUnitGuiEnvironment SpacingEnvironment => RelationEnvironment.Instance;
 
-    public double RowSpacing
+    private DimensionfulQuantity _rowSpacing;
+
+    public DimensionfulQuantity RowSpacing
     {
-      get => _RowSpacing;
+      get => _rowSpacing;
       set
       {
-        if (!(_RowSpacing == value))
+        if (!(_rowSpacing == value))
         {
-          _RowSpacing = value;
+          _rowSpacing = value;
           OnPropertyChanged(nameof(RowSpacing));
         }
       }
     }
 
-    private double _ColumnSpacing;
+    private DimensionfulQuantity _columnSpacing;
 
-    public double ColumnSpacing
+    public DimensionfulQuantity ColumnSpacing
     {
-      get => _ColumnSpacing;
+      get => _columnSpacing;
       set
       {
-        if (!(_ColumnSpacing == value))
+        if (!(_columnSpacing == value))
         {
-          _ColumnSpacing = value;
+          _columnSpacing = value;
           OnPropertyChanged(nameof(ColumnSpacing));
         }
       }
     }
 
-    private double _LeftMargin;
+    public QuantityWithUnitGuiEnvironment MarginEnvironment => RelationEnvironment.Instance;
 
-    public double LeftMargin
+
+    private DimensionfulQuantity _leftMargin;
+
+    public DimensionfulQuantity LeftMargin
     {
-      get => _LeftMargin;
+      get => _leftMargin;
       set
       {
-        if (!(_LeftMargin == value))
+        if (!(_leftMargin == value))
         {
-          _LeftMargin = value;
+          _leftMargin = value;
           OnPropertyChanged(nameof(LeftMargin));
         }
       }
     }
 
-    private double _TopMargin;
+    private DimensionfulQuantity _topMargin;
 
-    public double TopMargin
+    public DimensionfulQuantity TopMargin
     {
-      get => _TopMargin;
+      get => _topMargin;
       set
       {
-        if (!(_TopMargin == value))
+        if (!(_topMargin == value))
         {
-          _TopMargin = value;
+          _topMargin = value;
           OnPropertyChanged(nameof(TopMargin));
         }
       }
@@ -147,49 +148,47 @@ namespace Altaxo.Gui.Graph.Gdi
 
 
 
-    private double _RightMargin;
+    private DimensionfulQuantity _rightMargin;
 
-    public double RightMargin
+    public DimensionfulQuantity RightMargin
     {
-      get => _RightMargin;
+      get => _rightMargin;
       set
       {
-        if (!(_RightMargin == value))
+        if (!(_rightMargin == value))
         {
-          _RightMargin = value;
+          _rightMargin = value;
           OnPropertyChanged(nameof(RightMargin));
         }
       }
     }
 
-    private double _BottomMargin;
+    private DimensionfulQuantity _bottomMargin;
 
-    public double BottomMargin
+    public DimensionfulQuantity BottomMargin
     {
-      get => _BottomMargin;
+      get => _bottomMargin;
       set
       {
-        if (!(_BottomMargin == value))
+        if (!(_bottomMargin == value))
         {
-          _BottomMargin = value;
+          _bottomMargin = value;
           OnPropertyChanged(nameof(BottomMargin));
         }
       }
     }
 
-    public SelectableListNodeList SuperfluousLayers { get; } = new SelectableListNodeList();
+    private ItemsController<SuperfluousLayersAction> _superfluousLayers;
 
-    private SuperfluousLayersAction _SelectedSuperfluousLayersAction;
-
-    public SuperfluousLayersAction SelectedSuperfluousLayersAction
+    public ItemsController<SuperfluousLayersAction> SuperfluousLayers
     {
-      get => _SelectedSuperfluousLayersAction;
+      get => _superfluousLayers;
       set
       {
-        if (!(_SelectedSuperfluousLayersAction == value))
+        if (!(_superfluousLayers == value))
         {
-          _SelectedSuperfluousLayersAction = value;
-          OnPropertyChanged(nameof(SelectedSuperfluousLayersAction));
+          _superfluousLayers = value;
+          OnPropertyChanged(nameof(SuperfluousLayers));
         }
       }
     }
@@ -204,14 +203,13 @@ namespace Altaxo.Gui.Graph.Gdi
       {
         NumberOfRows = _doc.NumberOfRows;
         NumberOfColumns = _doc.NumberOfColumns;
-        RowSpacing = _doc.RowSpacing * 100;
-        ColumnSpacing = _doc.ColumnSpacing * 100;
-        LeftMargin = _doc.LeftMargin * 100;
-        TopMargin = _doc.TopMargin * 100;
-        RightMargin = _doc.RightMargin * 100;
-        BottomMargin = _doc.BottomMargin * 100;
-        Altaxo.Serialization.GUIConversion.GetListOfChoices(_doc.SuperfluousLayersAction);
-        SelectedSuperfluousLayersAction = _doc.SuperfluousLayersAction;
+        RowSpacing = new DimensionfulQuantity(_doc.RowSpacing, Altaxo.Units.Dimensionless.Unity.Instance).AsQuantityIn(SpacingEnvironment.DefaultUnit);
+        ColumnSpacing = new DimensionfulQuantity(_doc.ColumnSpacing, Altaxo.Units.Dimensionless.Unity.Instance).AsQuantityIn(SpacingEnvironment.DefaultUnit);
+        LeftMargin = new DimensionfulQuantity(_doc.LeftMargin, Altaxo.Units.Dimensionless.Unity.Instance).AsQuantityIn(MarginEnvironment.DefaultUnit);
+        TopMargin = new DimensionfulQuantity(_doc.TopMargin, Altaxo.Units.Dimensionless.Unity.Instance).AsQuantityIn(MarginEnvironment.DefaultUnit);
+        RightMargin = new DimensionfulQuantity(_doc.RightMargin, Altaxo.Units.Dimensionless.Unity.Instance).AsQuantityIn(MarginEnvironment.DefaultUnit);
+        BottomMargin = new DimensionfulQuantity(_doc.BottomMargin, Altaxo.Units.Dimensionless.Unity.Instance).AsQuantityIn(MarginEnvironment.DefaultUnit);
+        SuperfluousLayers = new ItemsController<SuperfluousLayersAction>(new SelectableListNodeList(_doc.SuperfluousLayersAction));
       }
     }
 
@@ -219,13 +217,13 @@ namespace Altaxo.Gui.Graph.Gdi
     {
       _doc.NumberOfRows = NumberOfRows;
       _doc.NumberOfColumns = NumberOfColumns;
-      _doc.RowSpacing = RowSpacing;
-      _doc.ColumnSpacing = ColumnSpacing;
-      _doc.LeftMargin = LeftMargin;
-      _doc.TopMargin = TopMargin;
-      _doc.RightMargin = RightMargin;
-      _doc.BottomMargin = BottomMargin;
-      _doc.SuperfluousLayersAction = SelectedSuperfluousLayersAction;
+      _doc.RowSpacing = RowSpacing.AsValueInSIUnits;
+      _doc.ColumnSpacing = ColumnSpacing.AsValueInSIUnits;
+      _doc.LeftMargin = LeftMargin.AsValueInSIUnits;
+      _doc.TopMargin = TopMargin.AsValueInSIUnits;
+      _doc.RightMargin = RightMargin.AsValueInSIUnits;
+      _doc.BottomMargin = BottomMargin.AsValueInSIUnits;
+      _doc.SuperfluousLayersAction = SuperfluousLayers.SelectedValue;
 
       return ApplyEnd(true, disposeController);
     }
