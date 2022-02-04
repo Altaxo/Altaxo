@@ -2,7 +2,10 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:axogcc="clr-namespace:Altaxo.Gui.Common.Converters"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:scales="clr-namespace:Altaxo.Gui.Graph.Scales;assembly=AltaxoBase" 
+             d:DataContext="{d:DesignInstance Type=scales:ScaleWithTicksController}"
              mc:Ignorable="d"
 >
 	<ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
@@ -24,25 +27,29 @@
 				<RowDefinition Height="Auto" />
 			</Grid.RowDefinitions>
 			<Label Grid.Column="0" Grid.Row="0" Content="Scale type:" />
-			<ComboBox x:Name="m_Scale_cbType" Grid.Column="1" Grid.Row="0" SelectionChanged="EhAxisType_SelectionChangeCommit" />
-			<Label x:Name="_guiLabelForLinkTarget"  Grid.Column="0" Grid.Row="2" Content="Link scale to:" />
-			<ComboBox x:Name="_cbLinkTarget" Grid.Column="1" Grid.Row="2" SelectionChanged="EhLinkTarget_SelectionChangeCommitted" />
-			<StackPanel Orientation="Horizontal" Grid.Row="4" Grid.Column="1">
-				<CheckBox x:Name="_guiLinkScaleType" Content="Link scale type" Margin="0,0,8,0" />
-				<CheckBox x:Name="_guiLinkTicks" Content="Link ticks straight" />
-			</StackPanel>
-			<Border x:Name="_guiScaleDetailsHost" Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2" />
-			<Border x:Name="_guiBoundaryHost" Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2" />
-			<Border x:Name="_guiLinkedScalePropertiesHost" Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2" />
+			<ComboBox Grid.Column="1" Grid.Row="0" ItemsSource="{Binding ScaleTypes.Items}" SelectedItem="{Binding ScaleTypes.SelectedItem, Mode=TwoWay}" />
+            
+			<Label  Grid.Column="0" Grid.Row="2" Content="Link scale to:" Visibility="{Binding ShowLinkTarget, Converter={x:Static axogcc:FalseToVisibilityCollapsedConverter.Instance}}" />
+            <ComboBox Grid.Column="1" Grid.Row="2" ItemsSource="{Binding LinkScaleChoices.Items}" SelectedItem="{Binding LinkScaleChoices.SelectedItem, Mode=TwoWay}" Visibility="{Binding ShowLinkTarget, Converter={x:Static axogcc:FalseToVisibilityCollapsedConverter.Instance}}"/>
 
-			<GroupBox x:Name="_tickSpacingGroupBox" Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="2">
+            <StackPanel Orientation="Horizontal" Grid.Row="4" Grid.Column="1">
+                <CheckBox Content="Link scale type" Margin="0,0,8,0" IsChecked="{Binding LinkScaleType, Mode=TwoWay}" Visibility="{Binding ShowOtherLinkProperties, Converter={x:Static axogcc:FalseToVisibilityCollapsedConverter.Instance}}" />
+                <CheckBox Content="Link ticks straight" IsChecked="{Binding LinkTicksStraight, Mode=TwoWay}" Visibility="{Binding ShowOtherLinkProperties, Converter={x:Static axogcc:FalseToVisibilityCollapsedConverter.Instance}}"/>
+			</StackPanel>
+			<ContentControl Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2" Content="{Binding ScaleController.ViewObject}" />
+            <ContentControl Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2" Content="{Binding RescalingController.ViewObject}" Visibility="{Binding ScaleController.ViewObject, Converter={x:Static axogcc:NotNullToVisibilityCollapsedConverter.Instance}}" />
+
+            <ContentControl Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2" Content="{Binding LinkedScaleParameterController.ViewObject}"/>
+
+			<GroupBox Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="2">
 				<GroupBox.Header>
 					<StackPanel Orientation="Horizontal">
 						<Label Content="Tick spacing:" />
-						<ComboBox x:Name="_cbTickSpacingType" SelectionChanged="EhTickSpacingType_SelectionChangeCommitted" />
+						<ComboBox ItemsSource="{Binding TickSpacingTypes.Items}" SelectedItem="{Binding TickSpacingTypes.SelectedItem, Mode=TwoWay}" />
 					</StackPanel>
 				</GroupBox.Header>
-			</GroupBox>
+                <ContentControl Content="{Binding TickSpacingController.ViewObject}"/>
+            </GroupBox>
 		</Grid>
 	</ScrollViewer>
 </UserControl>

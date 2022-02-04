@@ -26,20 +26,14 @@
 using System;
 using Altaxo.Collections;
 using Altaxo.Graph.Scales;
+using Altaxo.Gui.Common;
 
 namespace Altaxo.Gui.Graph.Scales
 {
   #region Interfaces
 
-  public interface IDensityScaleView
+  public interface IDensityScaleView : IDataContextAwareView
   {
-    void InitializeAxisType(SelectableListNodeList names);
-
-    void SetRescalingView(object guiobject);
-
-    void SetScaleView(object guiobject);
-
-    event Action AxisTypeChanged;
   }
 
   #endregion Interfaces
@@ -51,20 +45,65 @@ namespace Altaxo.Gui.Graph.Scales
   // [UserControllerForObject(typeof(NumericalScale),101)] // outcommented since this causes an infinite loop when searching for detailed scale controllers
   public class DensityScaleController : MVCANDControllerEditOriginalDocInstanceCanChangeBase<Scale, IDensityScaleView>
   {
-    protected IMVCAController _rescalingController;
-
-    protected IMVCAController _scaleController;
-
-    protected SelectableListNodeList _scaleTypes;
-
     public override System.Collections.Generic.IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_rescalingController, () => _rescalingController = null);
       yield return new ControllerAndSetNullMethod(_scaleController, () => _scaleController = null);
     }
 
+    #region Bindings
+
+    private ItemsController<Type> _scaleTypes;
+
+    public ItemsController<Type> ScaleTypes
+    {
+      get => _scaleTypes;
+      set
+      {
+        if (!(_scaleTypes == value))
+        {
+          _scaleTypes = value;
+          OnPropertyChanged(nameof(ScaleTypes));
+        }
+      }
+    }
+
+
+    private IMVCAController _scaleController;
+
+    public IMVCAController ScaleController
+    {
+      get => _scaleController;
+      set
+      {
+        if (!(_scaleController == value))
+        {
+          _scaleController = value;
+          OnPropertyChanged(nameof(ScaleController));
+        }
+      }
+    }
+
+    private IMVCAController _rescalingController;
+
+    public IMVCAController RescalingController
+    {
+      get => _rescalingController;
+      set
+      {
+        if (!(_rescalingController == value))
+        {
+          _rescalingController = value;
+          OnPropertyChanged(nameof(RescalingController));
+        }
+      }
+    }
+
+    #endregion
+
     public override void Dispose(bool isDisposing)
     {
+      _scaleTypes?.Dispose();
       _scaleTypes = null;
 
       base.Dispose(isDisposing);
@@ -79,9 +118,23 @@ namespace Altaxo.Gui.Graph.Scales
     {
       base.Initialize(initData);
 
-      InitScaleTypes(initData);
-      InitScaleController(initData);
-      InitRescalingController(initData);
+      if (initData)
+      {
+        // InitScaleTypes
+        var scaleTypes = new SelectableListNodeList();
+        Type[] classes = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(NumericalScale));
+        for (int i = 0; i < classes.Length; i++)
+        {
+          if (classes[i] == typeof(LinkedScale))
+            continue;
+          var node = new SelectableListNode(Current.Gui.GetUserFriendlyClassName(classes[i]), classes[i], _doc.GetType() == classes[i]);
+          scaleTypes.Add(node);
+        }
+        _scaleTypes = new ItemsController<Type>(scaleTypes, EhView_ScaleTypeChanged);
+
+        InitScaleController();
+        InitRescalingController();
+      }
     }
 
     public override bool Apply(bool disposeController)
@@ -101,72 +154,24 @@ namespace Altaxo.Gui.Graph.Scales
       return ApplyEnd(true, disposeController);
     }
 
-    protected override void AttachView()
+    protected void InitScaleController()
     {
-      base.AttachView();
-      _view.AxisTypeChanged += EhView_AxisTypeChanged;
+      ScaleController = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { _doc }, typeof(IMVCAController), UseDocument.Directly);
     }
 
-    protected override void DetachView()
+    public void InitRescalingController()
     {
-      _view.AxisTypeChanged -= EhView_AxisTypeChanged;
-      base.DetachView();
-    }
-
-    public void InitScaleTypes(bool bInit)
-    {
-      if (bInit)
-      {
-        _scaleTypes = new SelectableListNodeList();
-        Type[] classes = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(NumericalScale));
-        for (int i = 0; i < classes.Length; i++)
-        {
-          if (classes[i] == typeof(LinkedScale))
-            continue;
-          var node = new SelectableListNode(Current.Gui.GetUserFriendlyClassName(classes[i]), classes[i], _doc.GetType() == classes[i]);
-          _scaleTypes.Add(node);
-        }
-      }
-
-      if (_view is not null)
-        _view.InitializeAxisType(_scaleTypes);
-    }
-
-    public void InitScaleController(bool bInit)
-    {
-      if (bInit)
-      {
-        object scaleObject = _doc;
-        _scaleController = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { scaleObject }, typeof(IMVCAController), UseDocument.Directly);
-      }
-      if (_view is not null)
-      {
-        _view.SetScaleView(_scaleController is null ? null : _scaleController.ViewObject);
-      }
-    }
-
-    public void InitRescalingController(bool bInit)
-    {
-      if (bInit)
-      {
-        object rescalingObject = _doc.RescalingObject;
+       if(_doc.RescalingObject is { } rescalingObject)
         if (rescalingObject is not null)
-          _rescalingController = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { rescalingObject, _doc }, typeof(IMVCAController), UseDocument.Directly);
+          RescalingController = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { rescalingObject, _doc }, typeof(IMVCAController), UseDocument.Directly);
         else
-          _rescalingController = null;
-      }
-      if (_view is not null)
-      {
-        _view.SetRescalingView(_rescalingController is not null ? _rescalingController.ViewObject : null);
-      }
+          RescalingController = null;
     }
 
     #region View event handlers
 
-    public void EhView_AxisTypeChanged()
+    public void EhView_ScaleTypeChanged(Type axistype)
     {
-      var axistype = (Type)_scaleTypes.FirstSelectedNode.Tag;
-
       try
       {
         if (axistype != _doc.GetType())
@@ -197,9 +202,9 @@ namespace Altaxo.Gui.Graph.Scales
             _suspendToken = _doc.SuspendGetToken();
           }
 
-          InitScaleController(true);
+          InitScaleController();
           // now we have also to replace the controller and the control for the axis boundaries
-          InitRescalingController(true);
+          InitRescalingController();
         }
       }
       catch (Exception)

@@ -28,38 +28,15 @@ using Altaxo.Collections;
 using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Scales;
 using Altaxo.Graph.Scales.Ticks;
+using Altaxo.Gui.Common;
 
 namespace Altaxo.Gui.Graph.Scales
 {
   #region Interfaces
 
-  public interface IScaleWithTicksView
+  public interface IScaleWithTicksView : IDataContextAwareView
   {
-    void InitializeAxisType(SelectableListNodeList names);
-
-    void InitializeTickSpacingType(SelectableListNodeList names);
-
-    void InitializeLinkTargets(SelectableListNodeList names);
-
-    void SetLinkedScalePropertiesView(object guiobject);
-
-    bool LinkScaleType { get; set; }
-
-    bool LinkTickSpacing { get; set; }
-
-    void SetVisibilityOfLinkElements(bool showLinkTargets, bool showOtherLinkProperties);
-
-    void SetRescalingView(object guiobject);
-
-    void SetScaleView(object guiobject);
-
-    void SetTickSpacingView(object guiobject);
-
-    event Action ScaleTypeChanged;
-
-    event Action TickSpacingTypeChanged;
-
-    event Action LinkTargetChanged;
+    
   }
 
   #endregion Interfaces
@@ -70,26 +47,12 @@ namespace Altaxo.Gui.Graph.Scales
   [ExpectedTypeOfView(typeof(IScaleWithTicksView))]
   public class ScaleWithTicksController : MVCANControllerEditOriginalDocInstanceCanChangeBase<Scale, IScaleWithTicksView>
   {
-    protected IMVCAController _scaleController;
 
-    protected IMVCAController _linkedScaleParameterController;
-
-    protected IMVCAController _rescalingController;
-
-    protected IMVCAController _tickSpacingController;
-
-    protected SelectableListNodeList _scaleTypes;
-
-    protected SelectableListNodeList _tickSpacingTypes;
-
-    protected SelectableListNodeList _linkScaleChoices;
 
     /// <summary>
     /// If true, the scale type can not be changed.
     /// </summary>
     protected bool _lockScaleType;
-
-    protected bool _hideLinkTargets;
 
     public override System.Collections.Generic.IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
@@ -98,6 +61,185 @@ namespace Altaxo.Gui.Graph.Scales
       yield return new ControllerAndSetNullMethod(_tickSpacingController, () => _tickSpacingController = null);
       yield return new ControllerAndSetNullMethod(_linkedScaleParameterController, () => _linkedScaleParameterController = null);
     }
+
+    #region Bindings
+
+    private ItemsController<Type> _scaleTypes;
+
+    public ItemsController<Type> ScaleTypes
+    {
+      get => _scaleTypes;
+      set
+      {
+        if (!(_scaleTypes == value))
+        {
+          _scaleTypes = value;
+          OnPropertyChanged(nameof(ScaleTypes));
+        }
+      }
+    }
+
+
+
+    private ItemsController<Type> _tickSpacingTypes;
+
+    public ItemsController<Type> TickSpacingTypes
+    {
+      get => _tickSpacingTypes;
+      set
+      {
+        if (!(_tickSpacingTypes == value))
+        {
+          _tickSpacingTypes = value;
+          OnPropertyChanged(nameof(TickSpacingTypes));
+        }
+      }
+    }
+
+
+    private ItemsController<Scale?> _linkScaleChoices;
+
+    public ItemsController<Scale?> LinkScaleChoices
+    {
+      get => _linkScaleChoices;
+      set
+      {
+        if (!(_linkScaleChoices == value))
+        {
+          _linkScaleChoices = value;
+          OnPropertyChanged(nameof(LinkScaleChoices));
+        }
+      }
+    }
+
+    private bool _LinkScaleType;
+
+    public bool LinkScaleType
+    {
+      get => _LinkScaleType;
+      set
+      {
+        if (!(_LinkScaleType == value))
+        {
+          _LinkScaleType = value;
+          OnPropertyChanged(nameof(LinkScaleType));
+        }
+      }
+    }
+
+    private bool _LinkTicksStraight;
+
+    public bool LinkTicksStraight
+    {
+      get => _LinkTicksStraight;
+      set
+      {
+        if (!(_LinkTicksStraight == value))
+        {
+          _LinkTicksStraight = value;
+          OnPropertyChanged(nameof(LinkTicksStraight));
+        }
+      }
+    }
+
+    private IMVCAController _scaleController;
+
+    public IMVCAController ScaleController
+    {
+      get => _scaleController;
+      set
+      {
+        if (!(_scaleController == value))
+        {
+          _scaleController?.Dispose();
+          _scaleController = value;
+          OnPropertyChanged(nameof(ScaleController));
+        }
+      }
+    }
+
+
+    private IMVCAController _linkedScaleParameterController;
+
+    public IMVCAController LinkedScaleParameterController
+    {
+      get => _linkedScaleParameterController;
+      set
+      {
+        if (!(_linkedScaleParameterController == value))
+        {
+          _linkedScaleParameterController?.Dispose();
+          _linkedScaleParameterController = value;
+          OnPropertyChanged(nameof(LinkedScaleParameterController));
+        }
+      }
+    }
+
+
+    private IMVCAController _rescalingController;
+
+    public IMVCAController RescalingController
+    {
+      get => _rescalingController;
+      set
+      {
+        if (!(_rescalingController == value))
+        {
+          _rescalingController?.Dispose();
+          _rescalingController = value;
+          OnPropertyChanged(nameof(RescalingController));
+        }
+      }
+    }
+
+
+    private IMVCAController _tickSpacingController;
+
+    public IMVCAController TickSpacingController
+    {
+      get => _tickSpacingController;
+      set
+      {
+        if (!(_tickSpacingController == value))
+        {
+          _tickSpacingController?.Dispose();
+          _tickSpacingController = value;
+          OnPropertyChanged(nameof(TickSpacingController));
+        }
+      }
+    }
+
+    private bool _showLinkTargets;
+
+    public bool ShowLinkTargets
+    {
+      get => _showLinkTargets;
+      set
+      {
+        if (!(_showLinkTargets == value))
+        {
+          _showLinkTargets = value;
+          OnPropertyChanged(nameof(ShowLinkTargets));
+        }
+      }
+    }
+
+    private bool _showOtherLinkProperties;
+
+    public bool ShowOtherLinkProperties
+    {
+      get => _showOtherLinkProperties;
+      set
+      {
+        if (!(_showOtherLinkProperties == value))
+        {
+          _showOtherLinkProperties = value;
+          OnPropertyChanged(nameof(ShowOtherLinkProperties));
+        }
+      }
+    }
+
+    #endregion
 
     public override void Dispose(bool isDisposing)
     {
@@ -120,66 +262,51 @@ namespace Altaxo.Gui.Graph.Scales
       if (SetNewScaleInstance is null)
         _lockScaleType = true;
 
-      _hideLinkTargets = hideLinkTargets;
+      _showLinkTargets = !hideLinkTargets;
     }
 
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
 
-      if (_doc is LinkedScale)
-        _hideLinkTargets = false;
+      if (initData)
+      {
+        if (_doc is LinkedScale)
+          ShowLinkTargets = true;
 
-      FixScaleIfIsLinkedScaleWithInvalidTarget(initData);
-      InitLinkTargetScales(initData);
-      InitLinkProperties(initData);
-      InitScaleTypes(initData);
-      InitScaleController(initData);
-      InitRescalingController(initData);
-      InitTickSpacingTypes(initData);
-      InitTickSpacingController(initData);
+        FixScaleIfIsLinkedScaleWithInvalidTarget(initData);
+        InitLinkTargetScales();
+        InitLinkProperties(initData);
+        InitScaleTypes();
+        InitScaleController();
+        InitRescalingController();
+        InitTickSpacingTypes();
+        InitTickSpacingController();
+      }
     }
 
     public override bool Apply(bool disposeController)
     {
       if (_scaleController is not null && false == _scaleController.Apply(disposeController))
-        return false;
+        return ApplyEnd(false, disposeController);
 
       if (_linkedScaleParameterController is not null && false == _linkedScaleParameterController.Apply(disposeController))
-        return false;
+        return ApplyEnd(false, disposeController);
 
       if (_rescalingController is not null && false == _rescalingController.Apply(disposeController))
-        return false;
+        return ApplyEnd(false, disposeController);
 
       if (_tickSpacingController is not null && false == _tickSpacingController.Apply(disposeController))
-        return false;
+        return ApplyEnd(false, disposeController);
 
       var lscale = _doc as LinkedScale;
       if (lscale is not null)
       {
-        lscale.LinkScaleType = _view.LinkScaleType;
-        lscale.LinkTickSpacing = _view.LinkTickSpacing;
+        lscale.LinkScaleType = LinkScaleType;
+        lscale.LinkTickSpacing = LinkTicksStraight;
       }
 
       return ApplyEnd(true, disposeController); // all ok
-    }
-
-    protected override void AttachView()
-    {
-      base.AttachView();
-
-      _view.ScaleTypeChanged += EhView_ScaleTypeChanged;
-      _view.TickSpacingTypeChanged += EhView_TickSpacingTypeChanged;
-      _view.LinkTargetChanged += EhView_LinkTargetChanged;
-    }
-
-    protected override void DetachView()
-    {
-      _view.ScaleTypeChanged -= EhView_ScaleTypeChanged;
-      _view.TickSpacingTypeChanged -= EhView_TickSpacingTypeChanged;
-      _view.LinkTargetChanged -= EhView_LinkTargetChanged;
-
-      base.DetachView();
     }
 
     /// <summary>
@@ -211,7 +338,7 @@ namespace Altaxo.Gui.Graph.Scales
       }
     }
 
-    protected Scale ScaleLinkedTo
+    protected Scale? ScaleLinkedTo
     {
       get
       {
@@ -262,11 +389,9 @@ namespace Altaxo.Gui.Graph.Scales
       }
     }
 
-    private void InitLinkTargetScales(bool initData)
+    private void InitLinkTargetScales()
     {
-      if (initData)
-      {
-        _linkScaleChoices = new SelectableListNodeList
+        var linkScaleChoices = new SelectableListNodeList
         {
           new SelectableListNode("None", null, false)
         };
@@ -295,146 +420,94 @@ namespace Altaxo.Gui.Graph.Scales
 
                 var scaleName = j == 0 ? "x" : (j == 1 ? "y" : (j == 2 ? "z" : string.Format("{0}.", j)));
                 string name = string.Format("Layer[{0}] - {1} scale", i, scaleName);
-                _linkScaleChoices.Add(new SelectableListNode(name, scale, object.ReferenceEquals(scale, scaleLinkedTo)));
+                linkScaleChoices.Add(new SelectableListNode(name, scale, object.ReferenceEquals(scale, scaleLinkedTo)));
               }
             }
           }
         }
-
-        if (_linkScaleChoices.FirstSelectedNode is null)
-          _linkScaleChoices[0].IsSelected = true;
-      }
-
-      if (_view is not null)
-      {
-        _view.InitializeLinkTargets(_linkScaleChoices);
-      }
+      LinkScaleChoices = new ItemsController<Scale?>(linkScaleChoices, EhView_LinkTargetChanged);
     }
 
     public void InitLinkProperties(bool initData)
     {
-      if (initData)
-      {
         if (_doc is LinkedScale)
         {
           var linkedScaleParameters = ((LinkedScale)_doc).LinkParameters;
-          _linkedScaleParameterController = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { linkedScaleParameters }, typeof(IMVCAController), UseDocument.Directly);
+          LinkedScaleParameterController = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { linkedScaleParameters }, typeof(IMVCAController), UseDocument.Directly);
         }
         else
         {
-          DisposeAndSetToNull(ref _linkedScaleParameterController);
+          LinkedScaleParameterController = null;
         }
-      }
-
-      if (_view is not null)
-      {
-        if (_linkedScaleParameterController is not null)
-          _view.SetLinkedScalePropertiesView(_linkedScaleParameterController.ViewObject);
-        else
-          _view.SetLinkedScalePropertiesView(null);
 
         // other link properties
         var lscale = _doc as LinkedScale;
         if (lscale is not null)
         {
-          _view.LinkScaleType = lscale.LinkScaleType;
-          _view.LinkTickSpacing = lscale.LinkTickSpacing;
+          LinkScaleType = lscale.LinkScaleType;
+          LinkTicksStraight = lscale.LinkTickSpacing;
         }
-        _view.SetVisibilityOfLinkElements(!_hideLinkTargets, _doc is LinkedScale);
-      }
+        ShowOtherLinkProperties = _doc is LinkedScale;
     }
 
-    public void InitScaleTypes(bool initData)
+    public void InitScaleTypes()
     {
-      if (initData)
+      var scaleTypes = new SelectableListNodeList();
+      Type[] classes;
+
+      if (_lockScaleType) // if the scale type is locked (i.e.) can not be chosen by the user, we simply offer only the one scale type we have now
+        classes = new Type[] { _doc.GetType() };
+      else
+        classes = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(Scale));
+
+      for (int i = 0; i < classes.Length; i++)
       {
-        _scaleTypes = new SelectableListNodeList();
-        Type[] classes;
-
-        if (_lockScaleType) // if the scale type is locked (i.e.) can not be chosen by the user, we simply offer only the one scale type we have now
-          classes = new Type[] { _doc.GetType() };
-        else
-          classes = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(Scale));
-
-        for (int i = 0; i < classes.Length; i++)
-        {
-          if (classes[i] == typeof(LinkedScale))
-            continue;
-          var node = new SelectableListNode(Current.Gui.GetUserFriendlyClassName(classes[i]), classes[i], ScaleToEdit.GetType() == classes[i]);
-          _scaleTypes.Add(node);
-        }
+        if (classes[i] == typeof(LinkedScale))
+          continue;
+        var node = new SelectableListNode(Current.Gui.GetUserFriendlyClassName(classes[i]), classes[i], ScaleToEdit.GetType() == classes[i]);
+        scaleTypes.Add(node);
       }
 
-      if (_view is not null)
-        _view.InitializeAxisType(_scaleTypes);
+      ScaleTypes = new ItemsController<Type>(scaleTypes, EhView_ScaleTypeChanged);
     }
 
-    public void InitTickSpacingTypes(bool initData)
+    public void InitTickSpacingTypes()
     {
-      if (initData)
-      {
-        _tickSpacingTypes = new SelectableListNodeList();
+        var tickSpacingTypes = new SelectableListNodeList();
         Type[] classes = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(TickSpacing));
         for (int i = 0; i < classes.Length; i++)
         {
           var node = new SelectableListNode(Current.Gui.GetUserFriendlyClassName(classes[i]), classes[i], _doc.TickSpacing.GetType() == classes[i]);
-          _tickSpacingTypes.Add(node);
+          tickSpacingTypes.Add(node);
         }
-      }
-
-      if (_view is not null)
-        _view.InitializeTickSpacingType(_tickSpacingTypes);
+      TickSpacingTypes = new ItemsController<Type>(tickSpacingTypes, EhView_TickSpacingTypeChanged);
     }
 
-    public void InitScaleController(bool initData)
+    public void InitScaleController()
     {
-      if (initData)
-      {
-        _scaleController = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { ScaleToEdit }, typeof(IMVCAController), UseDocument.Directly);
-      }
-      if (_view is not null)
-      {
-        _view.SetScaleView(_scaleController is null ? null : _scaleController.ViewObject);
-      }
+        ScaleController = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { ScaleToEdit }, typeof(IMVCAController), UseDocument.Directly);
     }
 
-    public void InitRescalingController(bool bInit)
+    public void InitRescalingController()
     {
-      if (bInit)
-      {
-        if (ScaleToEdit.RescalingObject is not null && ScaleLinkedTo is null)
-          _rescalingController = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { ScaleToEdit.RescalingObject, ScaleToEdit }, typeof(IMVCAController), UseDocument.Directly);
-        else
-          DisposeAndSetToNull(ref _rescalingController);
-      }
-
-      if (_view is not null)
-      {
-        _view.SetRescalingView(_rescalingController is not null ? _rescalingController.ViewObject : null);
-      }
+      if (ScaleToEdit.RescalingObject is not null && ScaleLinkedTo is null)
+        RescalingController = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { ScaleToEdit.RescalingObject, ScaleToEdit }, typeof(IMVCAController), UseDocument.Directly);
+      else
+        RescalingController = null;
     }
 
-    public void InitTickSpacingController(bool bInit)
+    public void InitTickSpacingController()
     {
-      if (bInit)
-      {
-        if (_doc.TickSpacing is not null)
-          _tickSpacingController = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { _doc.TickSpacing }, typeof(IMVCAController), UseDocument.Directly);
-        else
-          DisposeAndSetToNull(ref _tickSpacingController);
-      }
-      if (_view is not null)
-      {
-        _view.SetTickSpacingView(_tickSpacingController is not null ? _tickSpacingController.ViewObject : null);
-      }
+      if (_doc.TickSpacing is not null)
+        TickSpacingController = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { _doc.TickSpacing }, typeof(IMVCAController), UseDocument.Directly);
+      else
+        TickSpacingController = null;
     }
 
     #region View event handlers
 
-    public void EhView_ScaleTypeChanged()
+    public void EhView_ScaleTypeChanged(Type scaleType)
     {
-      var scaleType = (Type)_scaleTypes.FirstSelectedNode.Tag;
-
       try
       {
         if (scaleType != ScaleToEdit.GetType())
@@ -458,11 +531,11 @@ namespace Altaxo.Gui.Graph.Scales
           {
           }
 
-          InitScaleController(true);
+          InitScaleController();
           // now we have also to replace the controller and the control for the axis boundaries
-          InitRescalingController(true);
-          InitTickSpacingTypes(true);
-          InitTickSpacingController(true);
+          InitRescalingController();
+          InitTickSpacingTypes();
+          InitTickSpacingController();
         }
       }
       catch (Exception)
@@ -470,33 +543,26 @@ namespace Altaxo.Gui.Graph.Scales
       }
     }
 
-    public void EhView_TickSpacingTypeChanged()
+    public void EhView_TickSpacingTypeChanged(Type spaceType)
     {
-      var selNode = _tickSpacingTypes.FirstSelectedNode; // FirstSelectedNode can be null when the content of the box changes
-      if (selNode is null)
+      if (spaceType is null)
         return;
-
-      var spaceType = (Type)_tickSpacingTypes.FirstSelectedNode.Tag;
 
       if (spaceType == _doc.TickSpacing.GetType())
         return;
 
       _doc.TickSpacing = (TickSpacing)Activator.CreateInstance(spaceType);
-      InitTickSpacingController(true);
+      InitTickSpacingController();
     }
 
-    public void EhView_LinkTargetChanged()
+    public void EhView_LinkTargetChanged(Scale? selectedScale)
     {
-      ScaleLinkedTo = (Scale)_linkScaleChoices.FirstSelectedNode.Tag;
-
+      ScaleLinkedTo = selectedScale;
       InitLinkProperties(true);
-      InitRescalingController(true);
+      InitRescalingController();
     }
 
-    public void EhView_LinkChanged(bool linked)
-    {
-    }
-
+    
     #endregion View event handlers
   }
 }

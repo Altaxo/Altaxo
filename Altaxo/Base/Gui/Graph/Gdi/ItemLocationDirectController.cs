@@ -394,7 +394,7 @@ namespace Altaxo.Gui.Graph.Gdi
         {
           _xScale = value;
           OnPropertyChanged(nameof(XScale));
-          ScaleYChanged?.Invoke(_xScale.AsValueInSIUnits);
+          ScaleXChanged?.Invoke(_xScale.AsValueInSIUnits);
         }
       }
     }

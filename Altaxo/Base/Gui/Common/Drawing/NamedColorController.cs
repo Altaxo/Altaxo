@@ -47,7 +47,7 @@ namespace Altaxo.Gui.Common.Drawing
       get => _doc;
       set
       {
-        if (!object.ReferenceEquals(NamedColor, value))
+        if (!object.Equals(NamedColor, value))
         {
           _doc = value;
           OnMadeDirty();
