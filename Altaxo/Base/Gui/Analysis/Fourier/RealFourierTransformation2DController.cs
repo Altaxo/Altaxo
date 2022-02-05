@@ -25,6 +25,7 @@
 using System;
 using System.Collections.Generic;
 using Altaxo.Collections;
+using Altaxo.Gui.Common;
 using Altaxo.Gui.Common.BasicTypes;
 using Altaxo.Units;
 using Altaxo.Worksheet.Commands.Analysis;
@@ -39,7 +40,6 @@ namespace Altaxo.Gui.Analysis.Fourier
   [UserControllerForObject(typeof(RealFourierTransformation2DOptions))]
   public class RealFourierTransformation2DController : MVCANControllerEditOriginalDocBase<RealFourierTransformation2DOptions, IRealFourierTransformation2DView>
   {
-    private SelectableListNodeList _fourierWindowChoices = new();
 
     EnumValueController? _outputQuantitiesController;
 
@@ -52,25 +52,20 @@ namespace Altaxo.Gui.Analysis.Fourier
 
     public object? OutputQuantitiesView => _outputQuantitiesController?.ViewObject;
 
-    public SelectableListNodeList FourierWindowChoices => _fourierWindowChoices;
+    private ItemsController<Type> _fourierWindowChoices;
 
-    private Type? _selectedFourierWindowType;
-
-    public Type? SelectedFourierWindowType
+    public ItemsController<Type> FourierWindowChoices
     {
-      get => _selectedFourierWindowType;
+      get => _fourierWindowChoices;
       set
       {
-        if (!(_selectedFourierWindowType == value))
+        if (!(_fourierWindowChoices == value))
         {
-          _selectedFourierWindowType = value;
-          OnPropertyChanged(nameof(SelectedFourierWindowType));
+          _fourierWindowChoices = value;
+          OnPropertyChanged(nameof(FourierWindowChoices));
         }
       }
     }
-
-
-
 
     bool _isUserDefinedXIncrement;
     public bool IsUserDefinedXIncrement
@@ -401,8 +396,7 @@ namespace Altaxo.Gui.Analysis.Fourier
         _outputQuantitiesController = new EnumValueController(_doc.OutputKind);
         Current.Gui.FindAndAttachControlTo(_outputQuantitiesController);
 
-        GetFourierWindowChoices(_doc.FourierWindow);
-        SelectedFourierWindowType = _doc.FourierWindow?.GetType();
+        FourierWindowChoices = new ItemsController<Type>(GetFourierWindowChoices(_doc.FourierWindow));
 
         IsUserDefinedXIncrement = _doc.IsUserDefinedRowIncrementValue;
         XIncrement = _doc.RowIncrementValue;
@@ -436,13 +430,13 @@ namespace Altaxo.Gui.Analysis.Fourier
       }
     }
 
-    private void GetFourierWindowChoices(Altaxo.Calc.Fourier.Windows.IWindows2D currentWindowChoice)
+    private SelectableListNodeList GetFourierWindowChoices(Altaxo.Calc.Fourier.Windows.IWindows2D currentWindowChoice)
     {
-      _fourierWindowChoices.Clear();
+      var fourierWindowChoices = new SelectableListNodeList();
 
       var types = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(Altaxo.Calc.Fourier.Windows.IWindows2D));
 
-      _fourierWindowChoices.Add(new SelectableListNode("None", null, currentWindowChoice is null));
+      fourierWindowChoices.Add(new SelectableListNode("None", null, currentWindowChoice is null));
 
       var currentType = currentWindowChoice?.GetType();
 
@@ -451,12 +445,13 @@ namespace Altaxo.Gui.Analysis.Fourier
         try
         {
           var o = Activator.CreateInstance(type);
-          _fourierWindowChoices.Add(new SelectableListNode(Current.Gui.GetUserFriendlyClassName(type), type, type == currentType));
+          fourierWindowChoices.Add(new SelectableListNode(Current.Gui.GetUserFriendlyClassName(type), type, type == currentType));
         }
         catch (Exception)
         {
         }
       }
+      return fourierWindowChoices;
     }
 
     public override bool Apply(bool disposeController)
@@ -481,7 +476,7 @@ namespace Altaxo.Gui.Analysis.Fourier
       _doc.ResultingFractionOfRowsUsed = ResultingFractionOfRowsUsed.AsValueInSIUnits;
       _doc.ResultingFractionOfColumnsUsed = ResultingFractionOfColumnsUsed.AsValueInSIUnits;
 
-      _doc.FourierWindow = SelectedFourierWindowType is Type fwt ? (Calc.Fourier.Windows.IWindows2D)Activator.CreateInstance(fwt) : null;
+      _doc.FourierWindow = FourierWindowChoices.SelectedValue is Type fwt ? (Calc.Fourier.Windows.IWindows2D)Activator.CreateInstance(fwt) : null;
 
       _doc.OutputFrequencyHeaderColumns = OutputFrequencyHeaderColumns;
       _doc.FrequencyRowHeaderColumnName = FrequencyRowHeaderColumnName;

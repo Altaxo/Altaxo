@@ -27,8 +27,8 @@
         <ComboBox
             Grid.Row="0"
             Grid.Column="1"
-            ItemsSource="{Binding AxisTemplates}"
-            SelectedValue="{Binding SelectedAxisTemplate, Mode=TwoWay}" SelectedValuePath="Tag"
+            ItemsSource="{Binding AxisTemplates.Items}"
+            SelectedItem="{Binding AxisTemplates.SelectedItem, Mode=TwoWay}"
              />
 
         <GroupBox

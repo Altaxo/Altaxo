@@ -183,9 +183,8 @@
         <ComboBox
             Grid.Row="10"
             Grid.Column="1"
-            ItemsSource="{Binding FourierWindowChoices}"
-            SelectedValue="{Binding SelectedFourierWindowType, Mode=TwoWay}"
-            SelectedValuePath="Tag"
+            ItemsSource="{Binding FourierWindowChoices.Items}"
+            SelectedItem="{Binding FourierWindowChoices.SelectedItem, Mode=TwoWay}"
             />
 
         <Label Grid.Row="12" Content="Use this fraction of row frequencies:" />

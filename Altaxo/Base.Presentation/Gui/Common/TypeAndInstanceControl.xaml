@@ -19,7 +19,7 @@
 			<RowDefinition Height="4" />
 		</Grid.RowDefinitions>
 		<Label Grid.Row="0" Grid.Column="0" Content="{Binding TypeLabel}" Margin="8,0,8,0" HorizontalAlignment="Right" />
-		<ComboBox Grid.Row="0" Grid.Column="1" ItemsSource="{Binding TypeNames}" SelectedValue="{Binding SelectedType}" SelectedValuePath="Tag" />
-		<ContentControl Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Content="{Binding InstanceView}"  />
+		<ComboBox Grid.Row="0" Grid.Column="1" ItemsSource="{Binding TypeNames.Items}" SelectedItem="{Binding TypeNames.SelectedItem}" />
+		<ContentControl Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Content="{Binding InstanceController.ViewObject}"  />
 	</Grid>
 </UserControl>

@@ -28,6 +28,7 @@ using System.Collections.Generic;
 using Altaxo.Collections;
 using Altaxo.Graph;
 using Altaxo.Graph.Gdi.Axis;
+using Altaxo.Gui.Common;
 using Altaxo.Units;
 
 namespace Altaxo.Gui.Graph.Gdi.Axis
@@ -186,9 +187,10 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
         }
       }
     }
-    private SelectableListNodeList _axisTemplates;
 
-    public SelectableListNodeList AxisTemplates
+    private ItemsController<CSAxisInformation> _axisTemplates;
+
+    public ItemsController<CSAxisInformation> AxisTemplates
     {
       get => _axisTemplates;
       set
@@ -200,25 +202,10 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
         }
       }
     }
-    private CSAxisInformation _selectedAxisTemplate;
 
-    public CSAxisInformation SelectedAxisTemplate
+    private void EhSelectedAxisTemplateChanged(CSAxisInformation value)
     {
-      get => _selectedAxisTemplate;
-      set
-      {
-        if (!(_selectedAxisTemplate == value))
-        {
-          _selectedAxisTemplate = value;
-          OnPropertyChanged(nameof(SelectedAxisTemplate));
-          EhSelectedAxisTemplateChanged();
-        }
-      }
-    }
-
-    private void EhSelectedAxisTemplateChanged()
-    {
-      _doc.TemplateStyle = (_axisTemplates.FirstSelectedNode.Tag as CSAxisInformation).Identifier;
+      _doc.TemplateStyle = value.Identifier;
       SetViewAccordingToAxisIdentifier();
     }
 
@@ -231,25 +218,26 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
 
       if (initData)
       {
-        _axisTemplates = new SelectableListNodeList();
+        var axisTemplates = new SelectableListNodeList();
         foreach (var style in _doc.AxisStyles)
         {
           var node = new SelectableListNode(style.NameOfAxisStyle, style, style.Identifier == _doc.TemplateStyle);
-          _axisTemplates.Add(node);
+          axisTemplates.Add(node);
         }
 
-        var selNode = _axisTemplates.FirstSelectedNode;
-        if (selNode is null && 0 != _axisTemplates.Count)
+        var selNode = axisTemplates.FirstSelectedNode;
+        if (selNode is null && 0 != axisTemplates.Count)
         {
-          selNode = _axisTemplates[0];
-          _selectedAxisTemplate = (selNode.Tag as CSAxisInformation);
+          selNode = axisTemplates[0];
           selNode.IsSelected = true;
         }
         if (selNode is not null)
         {
-          _selectedAxisTemplate = (selNode.Tag as CSAxisInformation);
           _doc.TemplateStyle = (selNode.Tag as CSAxisInformation).Identifier;
         }
+
+        _axisTemplates = new ItemsController<CSAxisInformation>(axisTemplates, EhSelectedAxisTemplateChanged);
+
         MoveAxis = _doc.MoveAxis;
         SetViewAccordingToAxisIdentifier();
       }

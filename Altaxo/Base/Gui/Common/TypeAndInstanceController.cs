@@ -46,10 +46,14 @@ namespace Altaxo.Gui.Common
     /// <value>
     /// The type names.
     /// </value>
-    public SelectableListNodeList TypeNames { get; }
+    public ItemsController<Type> TypeNames { get; }
 
-    public Type SelectedType { get; set; }
-
-    public object? InstanceView { get; }
+    /// <summary>
+    /// Gets the controller that controls the instance.
+    /// </summary>
+    /// <value>
+    /// The instance controller.
+    /// </value>
+    public IMVCAController? InstanceController { get; }
   }
 }

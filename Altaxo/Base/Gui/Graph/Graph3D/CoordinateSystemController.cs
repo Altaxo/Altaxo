@@ -36,9 +36,6 @@ namespace Altaxo.Gui.Graph.Graph3D
   [ExpectedTypeOfView(typeof(ITypeAndInstanceView))]
   public class CoordinateSystemController : MVCANDControllerEditImmutableDocBase<G3DCoordinateSystem, ITypeAndInstanceView>, ITypeAndInstanceController
   {
-    private IMVCAController _instanceController;
-
-
     /// <summary>Holds all instantiable subtypes of G2DCoordinateSystem</summary>
     private Type[] _cosSubTypes;
 
@@ -51,9 +48,9 @@ namespace Altaxo.Gui.Graph.Graph3D
 
     public string TypeLabel => "Type:";
 
-    private SelectableListNodeList _typeNames = new SelectableListNodeList();
+    private ItemsController<Type> _typeNames;
 
-    public SelectableListNodeList TypeNames
+    public ItemsController<Type> TypeNames
     {
       get => _typeNames;
       set
@@ -66,25 +63,21 @@ namespace Altaxo.Gui.Graph.Graph3D
       }
     }
 
-    private Type _selectedType;
+    private IMVCAController _instanceController;
 
-    public Type SelectedType
+    public IMVCAController InstanceController
     {
-      get => _selectedType;
+      get => _instanceController;
       set
       {
-        if (!(_selectedType == value))
+        if (!(_instanceController == value))
         {
-          _selectedType = value;
-          EhTypeChoiceChanged(value);
-          OnPropertyChanged(nameof(SelectedType));
-
+          _instanceController?.Dispose();
+          _instanceController = value;
+          OnPropertyChanged(nameof(InstanceController));
         }
       }
     }
-
-    public object? InstanceView => _instanceController?.ViewObject;
-
 
     #endregion
 
@@ -107,23 +100,23 @@ namespace Altaxo.Gui.Graph.Graph3D
         if (_cosSubTypes is null)
           _cosSubTypes = ReflectionService.GetNonAbstractSubclassesOf(typeof(G3DCoordinateSystem));
 
-        _typeNames.Clear();
+        var typeNames = new SelectableListNodeList();
         foreach (Type t in _cosSubTypes)
-          _typeNames.Add(new SelectableListNode(Current.Gui.GetUserFriendlyClassName(t), t, t == _doc.GetType()));
-        OnPropertyChanged(nameof(TypeNames));
-        SelectedType = _doc.GetType();
+          typeNames.Add(new SelectableListNode(Current.Gui.GetUserFriendlyClassName(t), t, t == _doc.GetType()));
+        TypeNames = new ItemsController<Type>(typeNames, EhTypeChoiceChanged);
 
         // To avoid looping when a dedicated controller is unavailable, we first instantiate the controller alone and compare the types
-        _instanceController = (IMVCAController)Current.Gui.GetController(new object[] { _doc }, typeof(IMVCAController), UseDocument.Directly);
-        if (_instanceController is not null && (_instanceController.GetType() != GetType()))
+        var instanceController = (IMVCAController)Current.Gui.GetController(new object[] { _doc }, typeof(IMVCAController), UseDocument.Directly);
+        if (instanceController is not null && (instanceController.GetType() != GetType()))
         {
-          Current.Gui.FindAndAttachControlTo(_instanceController);
+          Current.Gui.FindAndAttachControlTo(instanceController);
+        InstanceController= instanceController;
         }
         else
         {
-          _instanceController = null;
+          instanceController?.Dispose();
+          InstanceController = null;
         }
-        OnPropertyChanged(nameof(InstanceView));
       }
     }
 

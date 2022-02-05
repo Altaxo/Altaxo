@@ -27,6 +27,7 @@ using System;
 using System.Collections.Generic;
 using Altaxo.Calc.Regression.Multivariate;
 using Altaxo.Collections;
+using Altaxo.Gui.Common;
 using Altaxo.Gui.Common.BasicTypes;
 
 namespace Altaxo.Gui.Worksheet
@@ -77,23 +78,21 @@ namespace Altaxo.Gui.Worksheet
 
     public SelectableListNodeList CROSSPressCalculationTypes { get; } = new SelectableListNodeList();
 
-    public SelectableListNodeList AnalysisMethods { get; } = new SelectableListNodeList();
 
-    private Type _selectedAnalysisMethod;
+    private ItemsController<Type> _AnalysisMethods;
 
-    public Type SelectedAnalysisMethod
+    public ItemsController<Type> AnalysisMethods
     {
-      get => _selectedAnalysisMethod;
+      get => _AnalysisMethods;
       set
       {
-        if (!(_selectedAnalysisMethod == value))
+        if (!(_AnalysisMethods == value))
         {
-          _selectedAnalysisMethod = value;
-          OnPropertyChanged(nameof(SelectedAnalysisMethod));
+          _AnalysisMethods = value;
+          OnPropertyChanged(nameof(AnalysisMethods));
         }
       }
     }
-
 
     public CrossPRESSCalculationType SelectedCrossPressCalculationType
     {
@@ -129,7 +128,7 @@ namespace Altaxo.Gui.Worksheet
       {
         MaxNumberOfFactors = NumberOfFactors,
         CrossPRESSCalculation = SelectedCrossPressCalculationType,
-        AnalysisMethod = SelectedAnalysisMethod
+        AnalysisMethod = AnalysisMethods.SelectedValue
       };
 
       return ApplyEnd(true, disposeController);
@@ -157,7 +156,7 @@ namespace Altaxo.Gui.Worksheet
 
     void InitializeAnalysisMethods()
     {
-      AnalysisMethods.Clear();
+      var analysisMethods = new SelectableListNodeList();
       System.Reflection.Assembly[] assemblies = System.AppDomain.CurrentDomain.GetAssemblies();
       foreach (System.Reflection.Assembly assembly in assemblies)
       {
@@ -174,13 +173,13 @@ namespace Altaxo.Gui.Worksheet
                 (descriptionattributes.Length > 0) ?
                 ((System.ComponentModel.DescriptionAttribute)descriptionattributes[0]).Description : definedtype.ToString();
 
-              AnalysisMethods.Add(new SelectableListNode(name, definedtype, false));
+              analysisMethods.Add(new SelectableListNode(name, definedtype, false));
             }
           }
         } // end foreach type
       } // end foreach assembly
 
-      SelectedAnalysisMethod = (Type)AnalysisMethods[0].Tag;
+      AnalysisMethods = new ItemsController<Type>(analysisMethods);
     }
 
     private static bool ReferencesOwnAssembly(System.Reflection.AssemblyName[] references)
