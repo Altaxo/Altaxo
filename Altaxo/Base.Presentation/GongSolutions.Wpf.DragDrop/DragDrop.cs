@@ -24,11 +24,184 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using GongSolutions.Wpf.DragDrop.Icons;
 using GongSolutions.Wpf.DragDrop.Utilities;
+using Altaxo.Gui.Common;
+using Altaxo.Gui;
 
 namespace GongSolutions.Wpf.DragDrop
 {
   public static class DragDrop
   {
+    #region Extensions for MVVM by Lellid
+
+    public static readonly DependencyProperty DragMVVMHandlerProperty =
+     DependencyProperty.RegisterAttached("DragMVVMHandler", typeof(IMVVMDragHandler), typeof(DragDrop), new PropertyMetadata(EhMVVMDragHandlerChanged));
+
+    public static IMVVMDragHandler GetDragMVVMHandler(UIElement target)
+    {
+      return (IMVVMDragHandler)target.GetValue(DragMVVMHandlerProperty);
+    }
+
+    public static void SetDragMVVMHandler(UIElement target, IMVVMDragHandler value)
+    {
+      target.SetValue(DragMVVMHandlerProperty, value);
+    }
+
+    private static void EhMVVMDragHandlerChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+      if(d is FrameworkElement thiss)
+      {
+        if(e.OldValue is not null)
+        {
+          thiss.SetValue(DragHandlerProperty, null);
+        }
+        if(e.NewValue is IMVVMDragHandler)
+        {
+          thiss.SetValue(DragHandlerProperty, new MVVM_DragHandler(thiss));
+        }
+      }
+    }
+
+    public static readonly DependencyProperty DropMVVMHandlerProperty =
+    DependencyProperty.RegisterAttached("DropMVVMHandler", typeof(IMVVMDropHandler), typeof(DragDrop), new PropertyMetadata(EhMVVMDropHandlerChanged));
+
+    public static IMVVMDropHandler GetDropMVVMHandler(UIElement target)
+    {
+      return (IMVVMDropHandler)target.GetValue(DropMVVMHandlerProperty);
+    }
+
+    public static void SetDropMVVMHandler(UIElement target, IMVVMDropHandler value)
+    {
+      target.SetValue(DropMVVMHandlerProperty, value);
+    }
+
+    private static void EhMVVMDropHandlerChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+      if (d is FrameworkElement thiss)
+      {
+        if (e.OldValue is not null)
+        {
+          thiss.SetValue(DropHandlerProperty, null);
+        }
+        if (e.NewValue is IMVVMDropHandler)
+        {
+          var wrapper = new MVVM_DropHandler(thiss);
+          thiss.SetValue(DropHandlerProperty, wrapper);
+        }
+      }
+    }
+
+    private class MVVM_DragHandler : IDragSource
+    {
+      FrameworkElement _ctrl;
+      public MVVM_DragHandler(FrameworkElement ctrl)
+      {
+        _ctrl = ctrl;
+      }
+
+      public bool CanStartDrag(IDragInfo dragInfo)
+      {
+        if (_ctrl.GetValue(DragMVVMHandlerProperty) is IMVVMDragHandler dh)
+        {
+          return dh.CanStartDrag(dragInfo.SourceItems);
+        }
+        else
+        {
+          return false;
+        }
+      }
+
+      public void StartDrag(IDragInfo dragInfo)
+      {
+        if (_ctrl.GetValue(DragMVVMHandlerProperty) is IMVVMDragHandler dh)
+        {
+          dh.StartDrag(dragInfo.SourceItems, out var data, out var canCopy, out var canMove);
+          dragInfo.Effects = GuiHelper.ConvertCopyMoveToDragDropEffect(canCopy, canMove);
+          dragInfo.Data = data;
+        }
+      }
+
+      public void Dropped(IDropInfo dropInfo, DragDropEffects effects)
+      {
+        if (_ctrl.GetValue(DragMVVMHandlerProperty) is IMVVMDragHandler dh)
+        {
+          GuiHelper.ConvertDragDropEffectToCopyMove(effects, out var isCopy, out var isMove);
+          dh.DragEnded(isCopy, isMove);
+        }
+      }
+
+      public void DragCancelled()
+      {
+        if (_ctrl.GetValue(DragMVVMHandlerProperty) is IMVVMDragHandler dh)
+        {
+          dh.DragCancelled();
+        }
+      }
+    }
+
+    public class MVVM_DropHandler : IDropTarget
+    {
+      FrameworkElement _ctrl;
+
+      public MVVM_DropHandler(FrameworkElement ctrl)
+      {
+        _ctrl = ctrl;
+      }
+
+      public void DragOver(IDropInfo dropInfo)
+      {
+        if (CanAcceptData(dropInfo, out var resultingEffect, out var adornerType))
+        {
+          dropInfo.Effects = resultingEffect;
+          dropInfo.DropTargetAdorner = adornerType;
+        }
+      }
+
+      protected bool CanAcceptData(IDropInfo dropInfo, out System.Windows.DragDropEffects resultingEffect, out Type adornerType)
+      {
+        if (_ctrl.GetValue(DropMVVMHandlerProperty) is IMVVMDropHandler dh)
+        {
+
+          dh.DropCanAcceptData(
+          dropInfo.Data is System.Windows.IDataObject ? GuiHelper.ToAltaxo((System.Windows.IDataObject)dropInfo.Data) : dropInfo.Data,
+          dropInfo.TargetItem,
+          GuiHelper.ToAltaxo(dropInfo.InsertPosition),
+          dropInfo.KeyStates.HasFlag(DragDropKeyStates.ControlKey),
+          dropInfo.KeyStates.HasFlag(DragDropKeyStates.ShiftKey),
+          out var canCopy, out var canMove, out var itemIsSwallowingData);
+
+          resultingEffect = GuiHelper.ConvertCopyMoveToDragDropEffect(canCopy, canMove);
+          adornerType = itemIsSwallowingData ? DropTargetAdorners.Highlight : DropTargetAdorners.Insert;
+
+          return canCopy | canMove;
+        }
+        else
+        {
+          resultingEffect = default;
+          adornerType = default;
+          return false;
+        }
+      }
+
+      public void Drop(IDropInfo dropInfo)
+      {
+        if (_ctrl.GetValue(DropMVVMHandlerProperty) is IMVVMDropHandler dh)
+        {
+          dh.Drop(
+          dropInfo.Data is System.Windows.IDataObject ? GuiHelper.ToAltaxo((System.Windows.IDataObject)dropInfo.Data) : dropInfo.Data,
+          dropInfo.TargetItem,
+          GuiHelper.ToAltaxo(dropInfo.InsertPosition),
+          dropInfo.KeyStates.HasFlag(DragDropKeyStates.ControlKey),
+          dropInfo.KeyStates.HasFlag(DragDropKeyStates.ShiftKey),
+          out var isCopy, out var isMove);
+
+          dropInfo.Effects = GuiHelper.ConvertCopyMoveToDragDropEffect(isCopy, isMove); // it is important to get back the resulting effect to dropInfo, because dropInfo informs the drag handler about the resulting effect, which can e.g. delete the items after a move operation
+        }
+      }
+    }
+
+
+    #endregion
+
     public static readonly DataFormat DataFormat = DataFormats.GetDataFormat("GongSolutions.Wpf.DragDrop");
 
     public static readonly DependencyProperty DragAdornerTemplateProperty =

@@ -24,6 +24,7 @@
 
 #nullable enable
 using System;
+using System.Collections;
 
 namespace Altaxo.Gui.Common
 {
@@ -47,5 +48,50 @@ namespace Altaxo.Gui.Common
     /// The drop should be inserted in the target item.
     /// </summary>
     TargetItemCenter = 4
+  }
+
+  public interface IMVVMDragHandler
+  {
+    bool CanStartDrag(IEnumerable items);
+
+    void StartDrag(IEnumerable items, out object data, out bool canCopy, out bool canMove);
+
+    void DragEnded(bool isCopy, bool isMove);
+
+    void DragCancelled();
+  }
+
+  public interface IMVVMDropHandler
+  {
+    /// <summary>
+    /// Evaluate of a drop operation can accept the data.
+    /// </summary>
+    /// <param name="data">The data to drop.</param>
+    /// <param name="targetItem">The target item. This is the MVVM item that corresponds to the item in the Gui.</param>
+    /// <param name="insertPosition">The insert position.</param>
+    /// <param name="isCtrlKeyPressed">if set to <c>true</c> [is control key pressed].</param>
+    /// <param name="isShiftKeyPressed">if set to <c>true</c> [is shift key pressed].</param>
+    /// <param name="canCopy">if set to <c>true</c> [can copy].</param>
+    /// <param name="canMove">if set to <c>true</c> [can move].</param>
+    /// <param name="itemIsSwallowingData">if set to <c>true</c> [item is swallowing data].</param>
+    void DropCanAcceptData(object data, object targetItem, Gui.Common.DragDropRelativeInsertPosition insertPosition, bool isCtrlKeyPressed, bool isShiftKeyPressed, out bool canCopy, out bool canMove, out bool itemIsSwallowingData);
+
+    /// <summary>
+    /// Drops the specified data.
+    /// </summary>
+    /// <param name="data">The data to drop.</param>
+    /// <param name="targetItem">The target item. This is the MVVM item that corresponds to the item in the Gui.</param>
+    /// <param name="insertPosition">The insert position.</param>
+    /// <param name="isCtrlKeyPressed">if set to <c>true</c> [is control key pressed].</param>
+    /// <param name="isShiftKeyPressed">if set to <c>true</c> [is shift key pressed].</param>
+    /// <param name="isCopy">if set to <c>true</c> [is copy].</param>
+    /// <param name="isMove">if set to <c>true</c> [is move].</param>
+    void Drop(object data, object targetItem, Gui.Common.DragDropRelativeInsertPosition insertPosition, bool isCtrlKeyPressed, bool isShiftKeyPressed, out bool isCopy, out bool isMove);
+
+  }
+
+  public interface IMVVMDragDropHandler : IMVVMDragHandler, IMVVMDropHandler
+  {
+
   }
 }
