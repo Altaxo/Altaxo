@@ -29,8 +29,8 @@
 			<Label Grid.Column="0" Grid.Row="0" Content="Scale type:" />
 			<ComboBox Grid.Column="1" Grid.Row="0" ItemsSource="{Binding ScaleTypes.Items}" SelectedItem="{Binding ScaleTypes.SelectedItem, Mode=TwoWay}" />
             
-			<Label  Grid.Column="0" Grid.Row="2" Content="Link scale to:" Visibility="{Binding ShowLinkTarget, Converter={x:Static axogcc:FalseToVisibilityCollapsedConverter.Instance}}" />
-            <ComboBox Grid.Column="1" Grid.Row="2" ItemsSource="{Binding LinkScaleChoices.Items}" SelectedItem="{Binding LinkScaleChoices.SelectedItem, Mode=TwoWay}" Visibility="{Binding ShowLinkTarget, Converter={x:Static axogcc:FalseToVisibilityCollapsedConverter.Instance}}"/>
+			<Label  Grid.Column="0" Grid.Row="2" Content="Link scale to:" Visibility="{Binding ShowLinkTargets, Converter={x:Static axogcc:FalseToVisibilityCollapsedConverter.Instance}}" />
+            <ComboBox Grid.Column="1" Grid.Row="2" ItemsSource="{Binding LinkScaleChoices.Items}" SelectedItem="{Binding LinkScaleChoices.SelectedItem, Mode=TwoWay}" Visibility="{Binding ShowLinkTargets, Converter={x:Static axogcc:FalseToVisibilityCollapsedConverter.Instance}}"/>
 
             <StackPanel Orientation="Horizontal" Grid.Row="4" Grid.Column="1">
                 <CheckBox Content="Link scale type" Margin="0,0,8,0" IsChecked="{Binding LinkScaleType, Mode=TwoWay}" Visibility="{Binding ShowOtherLinkProperties, Converter={x:Static axogcc:FalseToVisibilityCollapsedConverter.Instance}}" />

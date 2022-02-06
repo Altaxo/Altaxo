@@ -3,10 +3,12 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-						 xmlns:dd="clr-namespace:GongSolutions.Wpf.DragDrop"
-						 xmlns:axocoll="clr-namespace:Altaxo.Collections;assembly=AltaxoBase"
-						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
-						 xmlns:axog="clr-namespace:Altaxo.Gui"
+			 xmlns:dd="clr-namespace:GongSolutions.Wpf.DragDrop"
+			 xmlns:axocoll="clr-namespace:Altaxo.Collections;assembly=AltaxoBase"
+			 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
+			 xmlns:axogb="clr-namespace:Altaxo.Gui.Behaviors"
+             xmlns:plot="clr-namespace:Altaxo.Gui.Graph.Gdi.Plot;assembly=AltaxoBase"
+             d:DataContext="{d:DesignInstance Type=plot:XYPlotLayerContentsController}"
              mc:Ignorable="d">
 	<UserControl.Resources>
 		<Thickness x:Key="ButtonMargin">8</Thickness>
@@ -43,9 +45,14 @@
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="4" />
 		</Grid.RowDefinitions>
-		<Label x:Name="_label1"  Grid.Column="0" Grid.Row="0">Available data:</Label>
-		<axogc:MultiSelectTreeView	x:Name="_guiAvailableContent" Grid.Column="0" Grid.Row="2" Grid.RowSpan="16" Focusable="True"
-																dd:DragDrop.IsDragSource="True" dd:DragDrop.DragHandler="{Binding AvailableItemTreeDragHandler, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}">
+        <Label Grid.Row="0" Grid.Column="0" Content="Available data:"/>
+        <axogc:MultiSelectTreeView	
+            Grid.Row="2" Grid.Column="0" Grid.RowSpan="16"
+            ItemsSource="{Binding AvailableContent.Nodes}"
+            Focusable="True"
+			dd:DragDrop.IsDragSource="True" 
+            dd:DragDrop.DragMVVMHandler="{Binding AvailableItemsDragHandler}"
+            >
 			<ItemsControl.ItemContainerStyle>
 				<!-- This Style binds a TreeViewItem to a TreeViewItemViewModel. -->
 				<Style TargetType="{x:Type TreeViewItem}">
@@ -69,12 +76,22 @@
 				</HierarchicalDataTemplate>
 			</ItemsControl.Resources>
 		</axogc:MultiSelectTreeView>
+        
 		<Label Grid.Column="2" Grid.Row="0">Layer contents:</Label>
-		<axogc:MultiSelectTreeView	x:Name="_guiPlotItemsTree" Grid.Column="2" Grid.Row="2" Grid.RowSpan="16"
-																ItemMouseDoubleClick="EhItemMouseDoubleClick"
-																dd:DragDrop.IsDragSource="True" dd:DragDrop.DragHandler="{Binding PlotItemTreeDragHandler, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}"
-																dd:DragDrop.IsDropTarget="True" dd:DragDrop.DropHandler="{Binding PlotItemTreeDropHandler, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}"
- 																Focusable="True">
+		<axogc:MultiSelectTreeView	
+            x:Name="_guiPlotItemsTree" 
+            Grid.Column="2" Grid.Row="2" Grid.RowSpan="16"
+            ItemsSource="{Binding PlotItems.Nodes}"
+            ItemMouseDoubleClickCommand="{Binding CmdPlotItemDoubleClick}"
+			ItemMouseDoubleClick="EhFocusPlotItemTree"
+			dd:DragDrop.IsDragSource="True" dd:DragDrop.DragMVVMHandler="{Binding PlotItemsDragDropHandler}"
+			dd:DragDrop.IsDropTarget="True" dd:DragDrop.DropMVVMHandler="{Binding PlotItemsDragDropHandler}"
+ 			Focusable="True"
+            axogb:CommandBindingBehavior.Copy="{Binding CmdPlotItemsCopy}"
+            axogb:CommandBindingBehavior.Cut="{Binding CmdPlotItemsCut}"
+            axogb:CommandBindingBehavior.Paste="{Binding CmdPlotItemsPaste}"
+            axogb:CommandBindingBehavior.Delete="{Binding CmdPlotItemsDelete}"
+            >
 			<ItemsControl.ItemContainerStyle>
 				<!-- This Style binds a TreeViewItem to a TreeViewItemViewModel. -->
 				<Style TargetType="{x:Type TreeViewItem}">
@@ -106,45 +123,69 @@
 					<MenuItem Header="Change columns for selected items" Command="{Binding CommandChangeColumnsForSelectedItems}" ToolTip="Exchange one or more columns with names common to all the selected plot items." />
 				</ContextMenu>
 			</axogc:MultiSelectTreeView.ContextMenu>
-			<axogc:MultiSelectTreeView.CommandBindings>
-				<CommandBinding Command="Copy" CanExecute="EhCommand_CopyCanExecute" Executed="EhCommand_CopyExecuted" />
-				<CommandBinding Command="Cut" CanExecute="EhCommand_CutCanExecute" Executed="EhCommand_CutExecuted" />
-				<CommandBinding Command="Paste" CanExecute="EhCommand_PasteCanExecute" Executed="EhCommand_PasteExecuted" />
-				<CommandBinding Command="Delete" CanExecute="EhCommand_DeleteCanExecute" Executed="EhCommand_DeleteExecuted" />
-			</axogc:MultiSelectTreeView.CommandBindings>
 		</axogc:MultiSelectTreeView>
 
-		<Button Grid.Column="1" Grid.Row="2" Height="{Binding ElementName=_btGroup, Path=ActualHeight}" Margin="{StaticResource ButtonMargin}"  Click="EhPutData_Click" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" ToolTip="Add the selected data columns as plot item.">
+		<Button Grid.Row="2" Grid.Column="1"  
+                Height="{Binding ElementName=_btGroup, Path=ActualHeight}" 
+                Margin="{StaticResource ButtonMargin}"
+                Command="{Binding CmdPutDataToPlotItems}"
+                Click="EhFocusPlotItemTree" 
+                HorizontalContentAlignment="Stretch" 
+                VerticalContentAlignment="Stretch"
+                ToolTip="Add the selected data columns as plot item.">
 			<Viewbox Style="{StaticResource ArrowViewBoxStyle}">
 				<Path Style="{StaticResource LeftArrowPathStyle}" />
 			</Viewbox>
 		</Button>
 
-		<Button Grid.Column="3" Grid.Row="2" Height="{Binding ElementName=_btGroup, Path=ActualHeight}"  HorizontalAlignment="Left" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Margin="{StaticResource ButtonMargin}" Click="EhListSelUp_Click" ToolTip="Move selected items upwards">
+		<Button Grid.Row="2" Grid.Column="3" 
+                Command="{Binding CmdPLotItemsMoveUpSelected}"
+                Click="EhFocusPlotItemTree" 
+                Height="{Binding ElementName=_btGroup, Path=ActualHeight}"
+                HorizontalAlignment="Left" 
+                HorizontalContentAlignment="Stretch" 
+                VerticalContentAlignment="Stretch" 
+                Margin="{StaticResource ButtonMargin}" 
+                ToolTip="Move selected items upwards">
 			<Viewbox Style="{StaticResource ArrowViewBoxStyle}">
 				<Path Style="{StaticResource UpArrowPathStyle}" />
 			</Viewbox>
 		</Button>
 
-		<Button Grid.Column="3" Grid.Row="2" Height="{Binding ElementName=_btGroup, Path=ActualHeight}" Margin="{StaticResource ButtonMargin}" Click="EhPlotItemsDelete_Click" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" HorizontalAlignment="Right" ToolTip="Remove selected items">
+		<Button Grid.Row="2" Grid.Column="3" 
+                Command="{Binding CmdPlotItemsDelete}"
+                Height="{Binding ElementName=_btGroup, Path=ActualHeight}"
+                Margin="{StaticResource ButtonMargin}" 
+                HorizontalContentAlignment="Stretch" 
+                VerticalContentAlignment="Stretch" 
+                HorizontalAlignment="Right" 
+                ToolTip="Remove selected items">
 			<Viewbox Style="{StaticResource ArrowViewBoxStyle}">
 				<Path Style="{StaticResource RemoveCrossPathStyle}" />
 			</Viewbox>
 		</Button>
 
-		<Button Grid.Column="3" Grid.Row="4" Height="{Binding ElementName=_btGroup, Path=ActualHeight}"  HorizontalAlignment="Left" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Margin="{StaticResource ButtonMargin}" Click="EhListSelDown_Click" ToolTip="Move selected items downwards">
+		<Button Grid.Row="4" Grid.Column="3" 
+                Command="{Binding CmdPLotItemsMoveDownSelected}"
+                Click="EhFocusPlotItemTree"
+                Height="{Binding ElementName=_btGroup, Path=ActualHeight}" 
+                HorizontalAlignment="Left"
+                HorizontalContentAlignment="Stretch"
+                VerticalContentAlignment="Stretch" 
+                Margin="{StaticResource ButtonMargin}" 
+                ToolTip="Move selected items downwards">
 			<Viewbox Style="{StaticResource ArrowViewBoxStyle}">
 				<Path Style="{StaticResource DownArrowPathStyle}" />
 			</Viewbox>
 		</Button>
 
-		<Button Grid.Column="3" Grid.Row="6" Content="Edit item" Margin="{StaticResource ButtonMargin}" Click="EhPlotAssociations_Click" ToolTip="Edit the selected plot item or the selected plot group." />
-		<Button x:Name="_btGroup" Grid.Column="3" Grid.Row="8" Content="Group" Margin="{StaticResource ButtonMargin}" Click="EhGroup_Click" ToolTip="Group the selected items into a new plot group or group them with the selected plot group." />
-		<Button Grid.Column="3" Grid.Row="10" Content="Ungroup" Margin="{StaticResource ButtonMargin}" Click="EhUngroup_Click" ToolTip="Ungroup the selected items, i.e. remove them from their current plot group." />
-		<Button Grid.Column="3" Grid.Row="12" Content="Edit range" Margin="{StaticResource ButtonMargin}" Click="EhEditRange_Click" ToolTip="Edits the range of all of the selected plot items." />
-		<CheckBox x:Name="_guiShowRange" Grid.Column="3" Grid.Row="14" Content="Show range" Margin="{StaticResource ButtonMargin}" Checked="EhShowRange_CheckedChanged" Unchecked="EhShowRange_CheckedChanged" ToolTip="If checked, shows the current set range of the plot items." />
+        <Button Grid.Row="6" Grid.Column="3" Command="{Binding CmdPlotItemOpen}" Click="EhFocusPlotItemTree" Content="Edit item" Margin="{StaticResource ButtonMargin}"  ToolTip="Edit the selected plot item or the selected plot group." />
+        <Button x:Name="_btGroup" Grid.Row="8" Grid.Column="3" Command="{Binding CmdPlotItemsGroup}" Click="EhFocusPlotItemTree" Content="Group" Margin="{StaticResource ButtonMargin}"  ToolTip="Group the selected items into a new plot group or group them with the selected plot group." />
+        <Button Grid.Row="10" Grid.Column="3" Command="{Binding CmdPlotItemsUngroup}" Click="EhFocusPlotItemTree" Content="Ungroup" Margin="{StaticResource ButtonMargin}" ToolTip="Ungroup the selected items, i.e. remove them from their current plot group." />
+        <Button Grid.Row="12" Grid.Column="3" Command="{Binding CmdPlotItemsEditRange}" Click="EhFocusPlotItemTree"  Content="Edit range" Margin="{StaticResource ButtonMargin}" ToolTip="Edits the range of all of the selected plot items." />
+		<CheckBox Grid.Row="14" Grid.Column="3" Content="Show range" Margin="{StaticResource ButtonMargin}"  IsChecked="{Binding ShowRange}" ToolTip="If checked, shows the current set range of the plot items." />
 
-		<Label Grid.Column="3" Grid.Row="16" Content="Data clipping:" Margin="4,0,0,0" />
-		<ComboBox Grid.Column="3" Grid.Row="17" x:Name="_guiClip" Margin="{StaticResource ComboboxMargin}" SelectionChanged="EhClipSelectionChanged" />
+		<Label Grid.Row="16" Grid.Column="3" Content="Data clipping:" Margin="4,0,0,0" />
+        <ComboBox Grid.Row="17" Grid.Column="3" ItemsSource="{Binding DataClipping.Items}" SelectedItem="{Binding DataClipping.SelectedItem}" Margin="{StaticResource ComboboxMargin}" />
 	</Grid>
 </UserControl>

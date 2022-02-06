@@ -224,6 +224,61 @@ namespace Altaxo.Collections
     }
 
     /// <summary>
+    /// Determines whether the specified enumeration has exactly one element.
+    /// </summary>
+    /// <typeparam name="T">Type of the elements of the enumeration.</typeparam>
+    /// <param name="org">The enumeration to test.</param>
+    /// <returns>
+    ///   <c>true</c> if the specified enumeration contains excactly one element; otherwise, <c>false</c>.
+    /// </returns>
+    /// <exception cref="System.ArgumentNullException">The enumeration to test is <c>null</c>.</exception>
+    public static bool HasSingleElement<T>(this IEnumerable<T> org)
+    {
+      if (org is null)
+        throw new ArgumentNullException(nameof(org));
+
+      using (var it = org.GetEnumerator())
+      {
+        return it.MoveNext() && !it.MoveNext();
+        
+      }
+    }
+
+    /// <summary>
+    /// Try to get the one and only element of the collection.
+    /// </summary>
+    /// <typeparam name="T">Type of the elements of the enumeration.</typeparam>
+    /// <param name="org">The enumeration.</param>
+    /// <param name="singleElement">If the enumeration contains exactly one element, this parameter contains the element. Otherwise, the parameter contains the default for this type.</param>
+    /// <returns> <c>true</c> if the specified enumeration contains excactly one element; otherwise, <c>false</c>.</returns>
+    /// <exception cref="System.ArgumentNullException">org</exception>
+    public static bool TryGetSingleElement<T>(this IEnumerable<T> org, out T singleElement)
+    {
+      if (org is null)
+        throw new ArgumentNullException(nameof(org));
+
+      using (var it = org.GetEnumerator())
+      {
+        if (!it.MoveNext())
+        {
+          singleElement = default;
+          return false;
+        }
+        var ele = it.Current;
+        if(it.MoveNext())
+        {
+          singleElement = default;
+          return false;
+        }
+        else
+        {
+          singleElement = ele;
+          return true;
+        }
+      }
+    }
+
+    /// <summary>
     /// Gets the element of a IEnumerabe that evaluates by means of a conversion function to the maximal value.
     /// This is different from Select(x => conversion(x)).Max() insofar as it not returns the maximum value, but the original element x which converts to the maximum value.
     /// </summary>

@@ -45,7 +45,20 @@ namespace Altaxo.Gui.Common
     /// <summary>
     /// Fired when a mouse double click on any item occurs.
     /// </summary>
-    public event EventHandler? ItemMouseDoubleClick;
+    public event RoutedEventHandler? ItemMouseDoubleClick;
+
+    /// <summary>
+    /// Command that is executed if an item in this tree view is double clicked.
+    /// </summary>
+    public ICommand ItemMouseDoubleClickCommand
+    {
+      get { return (ICommand)GetValue(ItemMouseDoubleClickCommandProperty); }
+      set { SetValue(ItemMouseDoubleClickCommandProperty, value); }
+    }
+
+    public static readonly DependencyProperty ItemMouseDoubleClickCommandProperty =
+        DependencyProperty.Register(nameof(ItemMouseDoubleClickCommand), typeof(ICommand), typeof(MultiSelectTreeView));
+
 
     public MultiSelectTreeView()
     {
@@ -228,8 +241,11 @@ namespace Altaxo.Gui.Common
 
     protected internal void OnItemDoubleClicked(MultiSelectTreeViewItem item)
     {
-      if (item is not null && ItemMouseDoubleClick is not null)
-        ItemMouseDoubleClick(this, EventArgs.Empty);
+      if (item is not null)
+      { 
+        ItemMouseDoubleClick?.Invoke(this, new RoutedEventArgs());
+        ItemMouseDoubleClickCommand?.Execute(item.DataContext);
+      }
     }
 
     #region Methods
