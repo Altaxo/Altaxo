@@ -23,13 +23,12 @@
 #endregion Copyright
 
 #nullable disable
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Altaxo.Collections;
 using Altaxo.Drawing;
 using Altaxo.Graph.Graph3D.LabelFormatting;
+using Altaxo.Gui.Common;
+using Altaxo.Units;
 
 namespace Altaxo.Gui.Graph.Graph3D.LabelFormatting
 {
@@ -37,16 +36,52 @@ namespace Altaxo.Gui.Graph.Graph3D.LabelFormatting
   [ExpectedTypeOfView(typeof(Graph.Gdi.LabelFormatting.IMultiLineLabelFormattingBaseView))]
   public class MultiLineLabelFormattingBaseController : MVCANControllerEditOriginalDocBase<MultiLineLabelFormattingBase, Graph.Gdi.LabelFormatting.IMultiLineLabelFormattingBaseView>
   {
-    private SelectableListNodeList _textBlockAlignmentChoices;
-
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
     }
 
+    #region Bindings
+
+    public QuantityWithUnitGuiEnvironment LineSpacingEnvironment => RelationEnvironment.Instance;
+
+    private DimensionfulQuantity _lineSpacing;
+
+    public DimensionfulQuantity LineSpacing
+    {
+      get => _lineSpacing;
+      set
+      {
+        if (!(_lineSpacing == value))
+        {
+          _lineSpacing = value;
+          OnPropertyChanged(nameof(LineSpacing));
+        }
+      }
+    }
+
+    private ItemsController<Alignment> _textBlockAlignment;
+
+    public ItemsController<Alignment> TextBlockAlignment
+    {
+      get => _textBlockAlignment;
+      set
+      {
+        if (!(_textBlockAlignment == value))
+        {
+          _textBlockAlignment = value;
+          OnPropertyChanged(nameof(TextBlockAlignment));
+        }
+      }
+    }
+
+
+    #endregion
+
+
     public override void Dispose(bool isDisposing)
     {
-      _textBlockAlignmentChoices = null;
+      _textBlockAlignment = null;
       base.Dispose(isDisposing);
     }
 
@@ -56,19 +91,16 @@ namespace Altaxo.Gui.Graph.Graph3D.LabelFormatting
 
       if (initData)
       {
-        _textBlockAlignmentChoices = new SelectableListNodeList(_doc.TextBlockAlignment);
+        TextBlockAlignment = new ItemsController<Alignment>(new SelectableListNodeList(_doc.TextBlockAlignment));
+        LineSpacing = new DimensionfulQuantity(_doc.LineSpacing, Altaxo.Units.Dimensionless.Unity.Instance).AsQuantityIn(LineSpacingEnvironment.DefaultUnit);
       }
-      if (_view is not null)
-      {
-        _view.LineSpacing = _doc.LineSpacing;
-        _view.TextBlockAlignement = _textBlockAlignmentChoices;
-      }
+
     }
 
     public override bool Apply(bool disposeController)
     {
-      _doc.LineSpacing = _view.LineSpacing;
-      _doc.TextBlockAlignment = (Alignment)_textBlockAlignmentChoices.FirstSelectedNode.Tag;
+      _doc.LineSpacing = LineSpacing.AsValueInSIUnits;
+      _doc.TextBlockAlignment = _textBlockAlignment.SelectedValue;
 
       return ApplyEnd(true, disposeController);
     }

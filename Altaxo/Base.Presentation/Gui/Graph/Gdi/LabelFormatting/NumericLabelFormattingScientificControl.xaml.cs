@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2014 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -22,10 +22,6 @@
 
 #endregion Copyright
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Windows.Controls;
 
 namespace Altaxo.Gui.Graph.Gdi.LabelFormatting
@@ -38,18 +34,6 @@ namespace Altaxo.Gui.Graph.Gdi.LabelFormatting
     public NumericLabelFormattingScientificControl()
     {
       InitializeComponent();
-    }
-
-    public bool ShowExponentAlways
-    {
-      get
-      {
-        return true == _guiShowExponentAlways.IsChecked;
-      }
-      set
-      {
-        _guiShowExponentAlways.IsChecked = value;
-      }
     }
   }
 }

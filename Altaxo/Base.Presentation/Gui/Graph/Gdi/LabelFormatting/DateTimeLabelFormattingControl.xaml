@@ -6,8 +6,11 @@
 						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
 						 xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing"
 						 xmlns:axoggl="clr-namespace:Altaxo.Gui.Graph.Gdi.LabelFormatting"
+						 xmlns:axogglmodel="clr-namespace:Altaxo.Gui.Graph.Gdi.LabelFormatting;assembly=AltaxoBase"
  						 xmlns:axog="clr-namespace:Altaxo.Gui;assembly=AltaxoBase"
- 						 xmlns:axocoll="clr-namespace:Altaxo.Collections;assembly=AltaxoBase">
+ 						 xmlns:axocoll="clr-namespace:Altaxo.Collections;assembly=AltaxoBase"
+             d:DataContext="{d:DesignInstance Type=axogglmodel:DateTimeLabelFormattingController}"
+             mc:Ignorable="d">
 	<StackPanel Orientation="Vertical">
 		<Grid>
 			<Grid.ColumnDefinitions>
@@ -25,24 +28,28 @@
 				<RowDefinition />
 			</Grid.RowDefinitions>
 			<Label Grid.Row="0" Grid.Column="0" Content="Time conversion: " VerticalAlignment="Center" />
-			<StackPanel x:Name="_guiTimeConversionPanel" Grid.Row="0" Grid.Column="1" Orientation="Horizontal">
-				<StackPanel.Resources>
-					<Style TargetType="RadioButton">
-						<Setter Property="Margin" Value="2,0,2,0" />
-						<Setter Property="VerticalAlignment" Value="Center" />
-					</Style>
-				</StackPanel.Resources>
-			</StackPanel>
+			<ItemsControl Grid.Row="0" Grid.Column="1" ItemsSource="{Binding TimeConversionChoices}" >
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.Resources>
+                    <DataTemplate DataType="{x:Type axocoll:SelectableListNode}">
+                        <RadioButton MinWidth="16" Height="16" Margin="2,0,2,0" VerticalAlignment="Center" IsChecked="{Binding IsSelected, Mode=TwoWay}" Content="{Binding Text}"  />
+                    </DataTemplate>
+                </ItemsControl.Resources>
+            </ItemsControl>
 
 			<Label Grid.Row="2" Grid.Column="0" Content="Formatting string" VerticalAlignment="Center" />
-			<TextBox x:Name="_guiFormattingText" Grid.Row="2" Grid.Column="1" AcceptsReturn="True" MinHeight="40" />
+			<TextBox Grid.Row="2" Grid.Column="1" Text="{Binding FormattingString, Mode=TwoWay}" AcceptsReturn="True" MinHeight="40" />
 
-			<CheckBox x:Name="_guiShowAlternateFormattingOnMidnight" Grid.Row="4" Grid.Column="0" Content="Show alternate formatting at midnight" Margin="4,0,4,0" />
-			<CheckBox x:Name="_guiShowAlternateFormattingOnNoon" Grid.Row="4" Grid.Column="1" Content="Show alternate formatting at noon" Margin="4,0,4,0" />
+			<CheckBox Grid.Row="4" Grid.Column="0" IsChecked="{Binding ShowAlternateFormattingOnMidnight, Mode=TwoWay}" Content="Show alternate formatting at midnight" Margin="4,0,4,0" />
+			<CheckBox Grid.Row="4" Grid.Column="1" IsChecked="{Binding ShowAlternateFormattingOnNoon, Mode=TwoWay}" Content="Show alternate formatting at noon" Margin="4,0,4,0" />
 
 			<Label Grid.Row="6" Grid.Column="0" Content="Alternate formatting string: " VerticalAlignment="Center" />
-			<TextBox x:Name="_guiAlternateFormattingText" Grid.Row="6" Grid.Column="1" AcceptsReturn="True" MinHeight="40" />
+			<TextBox Grid.Row="6" Grid.Column="1" Text="{Binding FormattingStringAlternate, Mode=TwoWay}"  AcceptsReturn="True" MinHeight="40" />
 		</Grid>
-		<axoggl:MultiLineLabelFormattingBaseControl x:Name="_guiMultiLineLabelFormattingControl" />
+		<ContentControl Content="{Binding BaseController.ViewObject}" />
 	</StackPanel>
 </UserControl>

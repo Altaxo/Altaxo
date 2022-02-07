@@ -23,11 +23,7 @@
 #endregion Copyright
 
 #nullable disable
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Altaxo.Collections;
 using Altaxo.Graph.Graph3D.LabelFormatting;
 
 namespace Altaxo.Gui.Graph.Graph3D.LabelFormatting
@@ -36,18 +32,50 @@ namespace Altaxo.Gui.Graph.Graph3D.LabelFormatting
   [UserControllerForObject(typeof(FreeLabelFormatting), 110)]
   public class FreeLabelFormattingController : MVCANControllerEditOriginalDocBase<FreeLabelFormatting, Gdi.LabelFormatting.IFreeLabelFormattingView>
   {
-    private SelectableListNodeList _textBlockAlignmentChoices;
-
-    private MultiLineLabelFormattingBaseController _baseController;
-
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_baseController, () => _baseController = null);
     }
 
+    #region Bindings
+
+    private string _formatString;
+
+    public string FormatString
+    {
+      get => _formatString;
+      set
+      {
+        if (!(_formatString == value))
+        {
+          _formatString = value;
+          OnPropertyChanged(nameof(FormatString));
+        }
+      }
+    }
+
+    private MultiLineLabelFormattingBaseController _baseController;
+
+    public MultiLineLabelFormattingBaseController BaseController
+    {
+      get => _baseController;
+      set
+      {
+        if (!(_baseController == value))
+        {
+          _baseController?.Dispose();
+          _baseController = value;
+          OnPropertyChanged(nameof(BaseController));
+        }
+      }
+    }
+
+
+    #endregion
+
+
     public override void Dispose(bool isDisposing)
     {
-      _textBlockAlignmentChoices = null;
       base.Dispose(isDisposing);
     }
 
@@ -59,12 +87,8 @@ namespace Altaxo.Gui.Graph.Graph3D.LabelFormatting
       {
         _baseController = new MultiLineLabelFormattingBaseController() { UseDocumentCopy = UseDocument.Directly };
         _baseController.InitializeDocument(_doc);
-        _textBlockAlignmentChoices = new SelectableListNodeList(_doc.TextBlockAlignment);
-      }
-      if (_view is not null)
-      {
-        _baseController.ViewObject = _view.MultiLineLabelFormattingBaseView;
-        _view.FormatString = _doc.FormatString;
+        Current.Gui.FindAndAttachControlTo(_baseController);
+        FormatString = _doc.FormatString;
       }
     }
 
@@ -73,7 +97,7 @@ namespace Altaxo.Gui.Graph.Graph3D.LabelFormatting
       if (!_baseController.Apply(disposeController))
         return false;
 
-      _doc.FormatString = _view.FormatString;
+      _doc.FormatString = FormatString;
 
       return ApplyEnd(true, disposeController);
     }

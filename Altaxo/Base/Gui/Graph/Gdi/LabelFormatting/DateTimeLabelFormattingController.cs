@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -23,41 +23,118 @@
 #endregion Copyright
 
 #nullable disable
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Altaxo.Collections;
 using Altaxo.Graph.Gdi.LabelFormatting;
+using Altaxo.Gui.Common;
 
 namespace Altaxo.Gui.Graph.Gdi.LabelFormatting
 {
-  public interface IDateTimeLabelFormattingView
+  public interface IDateTimeLabelFormattingView : IDataContextAwareView
   {
-    IMultiLineLabelFormattingBaseView MultiLineLabelFormattingBaseView { get; }
-
-    void InitializeTimeConversion(SelectableListNodeList items);
-
-    string FormattingString { get; set; }
-
-    string FormattingStringAlternate { get; set; }
-
-    bool ShowAlternateFormattingOnMidnight { get; set; }
-
-    bool ShowAlternateFormattingOnNoon { get; set; }
   }
 
   [ExpectedTypeOfView(typeof(IDateTimeLabelFormattingView))]
   [UserControllerForObject(typeof(DateTimeLabelFormatting), 110)]
   public class DateTimeLabelFormattingController : MVCANControllerEditOriginalDocBase<DateTimeLabelFormatting, IDateTimeLabelFormattingView>
   {
-    private SelectableListNodeList _timeConversionChoices;
-    private MultiLineLabelFormattingBaseController _baseController;
-
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_baseController, () => _baseController = null);
     }
+
+    #region Bindings
+
+    private bool _showAlternateFormattingOnMidnight;
+
+    public bool ShowAlternateFormattingOnMidnight
+    {
+      get => _showAlternateFormattingOnMidnight;
+      set
+      {
+        if (!(_showAlternateFormattingOnMidnight == value))
+        {
+          _showAlternateFormattingOnMidnight = value;
+          OnPropertyChanged(nameof(ShowAlternateFormattingOnMidnight));
+        }
+      }
+    }
+    private bool _showAlternateFormattingOnNoon;
+
+    public bool ShowAlternateFormattingOnNoon
+    {
+      get => _showAlternateFormattingOnNoon;
+      set
+      {
+        if (!(_showAlternateFormattingOnNoon == value))
+        {
+          _showAlternateFormattingOnNoon = value;
+          OnPropertyChanged(nameof(ShowAlternateFormattingOnNoon));
+        }
+      }
+    }
+
+    private string _FormattingString;
+
+    public string FormattingString
+    {
+      get => _FormattingString;
+      set
+      {
+        if (!(_FormattingString == value))
+        {
+          _FormattingString = value;
+          OnPropertyChanged(nameof(FormattingString));
+        }
+      }
+    }
+    private string _FormattingStringAlternate;
+
+    public string FormattingStringAlternate
+    {
+      get => _FormattingStringAlternate;
+      set
+      {
+        if (!(_FormattingStringAlternate == value))
+        {
+          _FormattingStringAlternate = value;
+          OnPropertyChanged(nameof(FormattingStringAlternate));
+        }
+      }
+    }
+
+    private MultiLineLabelFormattingBaseController _baseController;
+
+    public MultiLineLabelFormattingBaseController BaseController
+    {
+      get => _baseController;
+      set
+      {
+        if (!(_baseController == value))
+        {
+          _baseController?.Dispose();
+          _baseController = value;
+          OnPropertyChanged(nameof(BaseController));
+        }
+      }
+    }
+
+    private SingleSelectableListNodeList _timeConversionChoices;
+
+    public SingleSelectableListNodeList TimeConversionChoices
+    {
+      get => _timeConversionChoices;
+      set
+      {
+        if (!(_timeConversionChoices == value))
+        {
+          _timeConversionChoices = value;
+          OnPropertyChanged(nameof(TimeConversionChoices));
+        }
+      }
+    }
+
+    #endregion
 
     public override void Dispose(bool isDisposing)
     {
@@ -73,18 +150,17 @@ namespace Altaxo.Gui.Graph.Gdi.LabelFormatting
       {
         _baseController = new MultiLineLabelFormattingBaseController() { UseDocumentCopy = UseDocument.Directly };
         _baseController.InitializeDocument(_doc);
-        _timeConversionChoices = new SelectableListNodeList(_doc.LabelTimeConversion);
+        Current.Gui.FindAndAttachControlTo(_baseController);
+
+        TimeConversionChoices = new SingleSelectableListNodeList(_doc.LabelTimeConversion);
+
+        FormattingString = _doc.FormattingString;
+        ShowAlternateFormattingOnMidnight = _doc.ShowAlternateFormattingAtMidnight;
+        ShowAlternateFormattingOnNoon = _doc.ShowAlternateFormattingAtNoon;
+        FormattingStringAlternate = _doc.FormattingStringAlternate;
       }
 
-      if (_view is not null)
-      {
-        _baseController.ViewObject = _view.MultiLineLabelFormattingBaseView;
-        _view.InitializeTimeConversion(_timeConversionChoices);
-        _view.FormattingString = _doc.FormattingString;
-        _view.ShowAlternateFormattingOnMidnight = _doc.ShowAlternateFormattingAtMidnight;
-        _view.ShowAlternateFormattingOnNoon = _doc.ShowAlternateFormattingAtNoon;
-        _view.FormattingStringAlternate = _doc.FormattingStringAlternate;
-      }
+
     }
 
     public override bool Apply(bool disposeController)
@@ -92,12 +168,11 @@ namespace Altaxo.Gui.Graph.Gdi.LabelFormatting
       if (!_baseController.Apply(disposeController))
         return false;
 
-      _doc.LabelTimeConversion = (DateTimeLabelFormatting.TimeConversion)_timeConversionChoices.FirstSelectedNode.Tag;
-
-      _doc.FormattingString = _view.FormattingString;
-      _doc.ShowAlternateFormattingAtMidnight = _view.ShowAlternateFormattingOnMidnight;
-      _doc.ShowAlternateFormattingAtNoon = _view.ShowAlternateFormattingOnNoon;
-      _doc.FormattingStringAlternate = _view.FormattingStringAlternate;
+      _doc.LabelTimeConversion = (DateTimeLabelFormatting.TimeConversion)_timeConversionChoices.SelectedItem.Tag;
+      _doc.FormattingString = FormattingString;
+      _doc.ShowAlternateFormattingAtMidnight = ShowAlternateFormattingOnMidnight;
+      _doc.ShowAlternateFormattingAtNoon = ShowAlternateFormattingOnNoon;
+      _doc.FormattingStringAlternate = FormattingStringAlternate;
 
       return ApplyEnd(true, disposeController);
     }

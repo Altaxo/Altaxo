@@ -6,8 +6,11 @@
 						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
 						 xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing"
  						 xmlns:axoggl="clr-namespace:Altaxo.Gui.Graph.Gdi.LabelFormatting"
+ 						 xmlns:axogglmodel="clr-namespace:Altaxo.Gui.Graph.Gdi.LabelFormatting;assembly=AltaxoBase"
  						 xmlns:axog="clr-namespace:Altaxo.Gui;assembly=AltaxoBase"
- 						 xmlns:axocoll="clr-namespace:Altaxo.Collections;assembly=AltaxoBase">
+ 						 xmlns:axocoll="clr-namespace:Altaxo.Collections;assembly=AltaxoBase"
+                         d:DataContext="{d:DesignInstance Type=axogglmodel:FreeLabelFormattingController}"
+                         mc:Ignorable="d">
 	<StackPanel Orientation="Vertical">
 		<Grid>
 			<Grid.ColumnDefinitions>
@@ -19,13 +22,13 @@
 				<RowDefinition Height="4" />
 			</Grid.RowDefinitions>
 			<Label Grid.Row="0" Grid.Column="0" Content="Format string:" VerticalAlignment="Center" />
-			<TextBox x:Name="_guiFormatString" Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" AcceptsReturn="True" AcceptsTab="True"	MinHeight="50">
+			<TextBox Grid.Row="0" Grid.Column="1" Text="{Binding FormatString, Mode=TwoWay}" VerticalAlignment="Center" AcceptsReturn="True" AcceptsTab="True"	MinHeight="50">
 				<TextBox.ToolTip>
 					Insert the label by means of the placeholder '{0}'. You can use any appropriate modifier to change the format of the label.\0012 Examples:\r\n
 				If the label is a number: {0:F6} - formats the label as a fixed point number with 6 decimal places.
 				</TextBox.ToolTip>
 			</TextBox>
 		</Grid>
-		<axoggl:MultiLineLabelFormattingBaseControl x:Name="_guiMultiLineLabelFormattingControl" />
+		<ContentControl Content="{Binding BaseController.ViewObject}" />
 	</StackPanel>
 </UserControl>

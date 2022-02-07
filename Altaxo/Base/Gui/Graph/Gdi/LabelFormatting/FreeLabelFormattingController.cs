@@ -23,40 +23,61 @@
 #endregion Copyright
 
 #nullable disable
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Altaxo.Collections;
 using Altaxo.Graph.Gdi.LabelFormatting;
 
 namespace Altaxo.Gui.Graph.Gdi.LabelFormatting
 {
-  public interface IFreeLabelFormattingView
+  public interface IFreeLabelFormattingView : IDataContextAwareView
   {
-    IMultiLineLabelFormattingBaseView MultiLineLabelFormattingBaseView { get; }
-
-    string FormatString { get; set; }
   }
 
   [ExpectedTypeOfView(typeof(IFreeLabelFormattingView))]
   [UserControllerForObject(typeof(FreeLabelFormatting), 110)]
   public class FreeLabelFormattingController : MVCANControllerEditOriginalDocBase<FreeLabelFormatting, IFreeLabelFormattingView>
   {
-    private SelectableListNodeList _textBlockAlignmentChoices;
-
-    private MultiLineLabelFormattingBaseController _baseController;
-
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_baseController, () => _baseController = null);
     }
 
-    public override void Dispose(bool isDisposing)
+    #region Bindings
+
+    private string _formatString;
+
+    public string FormatString
     {
-      _textBlockAlignmentChoices = null;
-      base.Dispose(isDisposing);
+      get => _formatString;
+      set
+      {
+        if (!(_formatString == value))
+        {
+          _formatString = value;
+          OnPropertyChanged(nameof(FormatString));
+        }
+      }
     }
+
+    private MultiLineLabelFormattingBaseController _baseController;
+
+    public MultiLineLabelFormattingBaseController BaseController
+    {
+      get => _baseController;
+      set
+      {
+        if (!(_baseController == value))
+        {
+          _baseController?.Dispose();
+          _baseController = value;
+          OnPropertyChanged(nameof(BaseController));
+        }
+      }
+    }
+
+
+    #endregion
+
+
 
     protected override void Initialize(bool initData)
     {
@@ -66,12 +87,8 @@ namespace Altaxo.Gui.Graph.Gdi.LabelFormatting
       {
         _baseController = new MultiLineLabelFormattingBaseController() { UseDocumentCopy = UseDocument.Directly };
         _baseController.InitializeDocument(_doc);
-        _textBlockAlignmentChoices = new SelectableListNodeList(_doc.TextBlockAlignment);
-      }
-      if (_view is not null)
-      {
-        _baseController.ViewObject = _view.MultiLineLabelFormattingBaseView;
-        _view.FormatString = _doc.FormatString;
+        Current.Gui.FindAndAttachControlTo(_baseController);
+        FormatString = _doc.FormatString;
       }
     }
 
@@ -80,7 +97,7 @@ namespace Altaxo.Gui.Graph.Gdi.LabelFormatting
       if (!_baseController.Apply(disposeController))
         return false;
 
-      _doc.FormatString = _view.FormatString;
+      _doc.FormatString = FormatString;
 
       return ApplyEnd(true, disposeController);
     }

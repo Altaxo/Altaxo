@@ -23,17 +23,13 @@
 #endregion Copyright
 
 #nullable disable
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Altaxo.Graph.Gdi.LabelFormatting;
 
 namespace Altaxo.Gui.Graph.Gdi.LabelFormatting
 {
-  public interface INumericLabelFormattingScientificView
+  public interface INumericLabelFormattingScientificView : IDataContextAwareView
   {
-    bool ShowExponentAlways { get; set; }
   }
 
   [UserControllerForObject(typeof(NumericLabelFormattingScientific))]
@@ -45,19 +41,39 @@ namespace Altaxo.Gui.Graph.Gdi.LabelFormatting
       yield break;
     }
 
+    #region Bindings
+
+    private bool _showExponentAlways;
+
+    public bool ShowExponentAlways
+    {
+      get => _showExponentAlways;
+      set
+      {
+        if (!(_showExponentAlways == value))
+        {
+          _showExponentAlways = value;
+          OnPropertyChanged(nameof(ShowExponentAlways));
+        }
+      }
+    }
+
+
+    #endregion
+
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
 
-      if (_view is not null)
+      if (initData)
       {
-        _view.ShowExponentAlways = _doc.ShowExponentAlways;
+        ShowExponentAlways = _doc.ShowExponentAlways;
       }
     }
 
     public override bool Apply(bool disposeController)
     {
-      _doc.ShowExponentAlways = _view.ShowExponentAlways;
+      _doc.ShowExponentAlways = ShowExponentAlways;
 
       return ApplyEnd(true, disposeController);
     }

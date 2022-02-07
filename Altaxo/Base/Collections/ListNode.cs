@@ -25,7 +25,6 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Altaxo.Collections
 {
@@ -398,12 +397,12 @@ namespace Altaxo.Collections
     {
     }
 
-      /// <summary>
-      /// Initialize the list with all possible values of an enumeration. The item given in the argument is marked as selected item. Note: the enumeration must not have the [Flags] attribute!
-      /// </summary>
-      /// <param name="selectedItem">Item of an enumeration that is currently selected.</param>
-      /// <param name="useUserFriendlyName">If true, a user friendly name is used instead of the original name.</param>
-      public SelectableListNodeList(System.Enum selectedItem, bool useUserFriendlyName)
+    /// <summary>
+    /// Initialize the list with all possible values of an enumeration. The item given in the argument is marked as selected item. Note: the enumeration must not have the [Flags] attribute!
+    /// </summary>
+    /// <param name="selectedItem">Item of an enumeration that is currently selected.</param>
+    /// <param name="useUserFriendlyName">If true, a user friendly name is used instead of the original name.</param>
+    public SelectableListNodeList(System.Enum selectedItem, bool useUserFriendlyName)
     {
       if (selectedItem.GetType().IsDefined(typeof(FlagsAttribute), inherit: false)) // is this an enumeration with the Flags attribute?
       {
@@ -781,6 +780,211 @@ namespace Altaxo.Collections
       _isChecked = isChecked;
     }
   }
+
+  /// <summary>
+  /// A list node that is used by <see cref="SingleSelectableListNodeList"/> in order to make sure that
+  /// only one of the elements is selected.
+  /// </summary>
+  /// <seealso cref="Altaxo.Collections.SelectableListNode" />
+  public class SingleSelectableListNode : SelectableListNode
+  {
+    protected SingleSelectableListNode()
+    {
+    }
+
+    public SingleSelectableListNode(string text, object? tag, bool isSelected)
+        : base(text, tag, isSelected)
+    {
+    }
+
+    public SingleSelectableListNodeList? Parent { get; set; }
+
+    /// <summary>
+    /// Gets or sets a value indicating whether this item is selected.
+    /// </summary>
+    /// <value>
+    /// <c>true</c> if this item is selected; otherwise, <c>false</c>.
+    /// </value>
+    public override bool IsSelected
+    {
+      get
+      {
+        return _isSelected;
+      }
+      set
+      {
+
+        if (!(_isSelected == value))
+        {
+          _isSelected = value;
+          OnPropertyChanged(nameof(IsSelected));
+          if (value)
+          {
+            Parent?.EhSetIsSelected(this);
+          }
+        }
+      }
+    }
+  }
+
+  /// <summary>
+  /// A list of selectable items. It is ensured, that either none or maximal one of the items is selected.
+  /// If one item is selected, the other item that was selected before will be deselected.
+  /// </summary>
+  /// <seealso cref="System.Collections.ObjectModel.ObservableCollection&lt;Altaxo.Collections.SingleSelectableListNode&gt;" />
+  public class SingleSelectableListNodeList : System.Collections.ObjectModel.ObservableCollection<SingleSelectableListNode>
+  {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SelectableListNodeList" /> class.
+    /// </summary>
+    public SingleSelectableListNodeList()
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SelectableListNodeList" /> class.
+    /// </summary>
+    /// <param name="from">Items used to initially fill the list.</param>
+    public SingleSelectableListNodeList(IEnumerable<SingleSelectableListNode> from)
+            : base(from)
+    {
+    }
+
+    /// <summary>
+    /// Initializes the collection with a list of names. One of them is the selected item.
+    /// </summary>
+    /// <param name="names">Array of names that are used to initialize the list.</param>
+    /// <param name="selectedName">The selected name. Each item with this name is selected.</param>
+    public SingleSelectableListNodeList(string[] names, string selectedName)
+    {
+      foreach (var name in names)
+        Add(new SingleSelectableListNode(name, null, name == selectedName));
+    }
+
+    /// <summary>
+    /// Initialize the list with all possible values of an enumeration. The item given in the argument is marked as selected item. Note: the enumeration must not have the [Flags] attribute!
+    /// </summary>
+    /// <param name="selectedItem">Item of an enumeration that is currently selected.</param>
+    public SingleSelectableListNodeList(System.Enum selectedItem) : this(selectedItem, false)
+    {
+    }
+
+    /// <summary>
+    /// Initialize the list with all possible values of an enumeration. The item given in the argument is marked as selected item. Note: the enumeration must not have the [Flags] attribute!
+    /// </summary>
+    /// <param name="selectedItem">Item of an enumeration that is currently selected.</param>
+    /// <param name="useUserFriendlyName">If true, a user friendly name is used instead of the original name.</param>
+    public SingleSelectableListNodeList(System.Enum selectedItem, bool useUserFriendlyName)
+    {
+      if (selectedItem.GetType().IsDefined(typeof(FlagsAttribute), inherit: false)) // is this an enumeration with the Flags attribute?
+      {
+        throw new InvalidOperationException($"Flag enumerations are not supported by {nameof(SingleSelectableListNodeList)}. Please use {nameof(SelectableListNodeList)} instead.");
+      }
+      else
+      {
+        // enumeration without flags attribute
+        var values = System.Enum.GetValues(selectedItem.GetType());
+        foreach (var value in values)
+        {
+          if (!(value is null))
+          {
+            var name = useUserFriendlyName ? Current.Gui.GetUserFriendlyName((Enum)value!) : value.ToString() ?? string.Empty;
+            Add(new SingleSelectableListNode(name, value, value.ToString() == selectedItem.ToString()));
+          }
+        }
+      }
+    }
+
+
+    internal void EhSetIsSelected(SingleSelectableListNode itemThatWasSet)
+    {
+      if (itemThatWasSet.IsSelected == false)
+        throw new InvalidOperationException("Item should have IsSelected=true");
+
+      if (!object.ReferenceEquals(itemThatWasSet, _selectedItem))
+      {
+        // Do not set SelectedItem property here directly, in
+        // order to avoid endless loops (because SelectedItem itself try to set the IsSelected property)
+        if (_selectedItem is { } oldSelectedItem)
+        {
+          oldSelectedItem.IsSelected = false;
+        }
+        _selectedItem = itemThatWasSet;
+        OnPropertyChanged(new System.ComponentModel.PropertyChangedEventArgs(nameof(SelectedItem)));
+      }
+    }
+
+    private SingleSelectableListNode? _selectedItem;
+
+    public SingleSelectableListNode? SelectedItem
+    {
+      get => _selectedItem;
+      set
+      {
+        if (!(_selectedItem == value))
+        {
+          if (value is not null)
+          {
+            if (!object.ReferenceEquals(value.Parent, this))
+              throw new InvalidOperationException("Trying to set a node as selected item that is not part of this collection");
+            value.IsSelected = true; // the rest like notify is done by the logic that follows IsSelected=true
+          }
+          else
+          {
+            if(_selectedItem is { } oldSelectedItem)
+            {
+              oldSelectedItem.IsSelected = false;
+            }
+            _selectedItem = null;
+            OnPropertyChanged(new System.ComponentModel.PropertyChangedEventArgs(nameof(SelectedItem)));
+          }
+        }
+      }
+    }
+
+    #region Item set/remove overrides to make sure parent is set
+
+    protected override void InsertItem(int index, SingleSelectableListNode item)
+    {
+      item.Parent = this;
+      base.InsertItem(index, item);
+      if (item.IsSelected)
+      {
+        EhSetIsSelected(item);
+      }
+    }
+
+    protected override void SetItem(int index, SingleSelectableListNode item)
+    {
+      item.Parent = this;
+      base.SetItem(index, item);
+      if (item.IsSelected)
+      {
+        EhSetIsSelected(item);
+      }
+    }
+    protected override void RemoveItem(int index)
+    {
+      var item = this[index];
+      this[index].Parent = null;
+      base.RemoveItem(index);
+      if (item.IsSelected)
+      {
+        _selectedItem = null;
+        OnPropertyChanged(new System.ComponentModel.PropertyChangedEventArgs(nameof(SelectedItem)));
+      }
+    }
+    protected override void ClearItems()
+    {
+      foreach (var item in this)
+        item.Parent = null;
+      base.ClearItems();
+      SelectedItem = null;
+    }
+
+    #endregion
+  }
+
 
   /// <summary>
   /// Collection of <see cref="CheckableSelectableListNode"/>s.
