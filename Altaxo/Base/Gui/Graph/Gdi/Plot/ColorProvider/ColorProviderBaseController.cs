@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2016 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -31,43 +31,14 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.ColorProvider
   using Altaxo.Drawing;
   using Altaxo.Graph;
 
-  #region Interfaces
-
+  
   /// <summary>
   /// Interface for Gui elements that show the properties of the <see cref="ColorProviderBase"/> class.
   /// </summary>
-  public interface IColorProviderBaseView
+  public interface IColorProviderBaseView : IDataContextAwareView
   {
-    /// <summary>
-    /// Get/set the content of the ColorBelow combo box.
-    /// </summary>
-    NamedColor ColorBelow { get; set; }
-
-    /// <summary>
-    /// IGet/set the content of the ColorAbove combo box.
-    /// </summary>
-    NamedColor ColorAbove { get; set; }
-
-    /// <summary>
-    /// Get/set the content of the ColorInvalid combo box.
-    /// </summary>
-    NamedColor ColorInvalid { get; set; }
-
-    /// <summary>
-    /// Get/set the transparency value (0 .. 1).
-    /// </summary>
-    double Transparency { get; set; }
-
-    /// <summary>
-    /// Get/set the ColorSteps value (0..).
-    /// </summary>
-    int ColorSteps { get; set; }
-
-    /// <summary>Is called when any of the user choices of this control changed. Intended for updating the preview when something changed.</summary>
-    event Action ChoiceChanged;
+   
   }
-
-  #endregion Interfaces
 
   [ExpectedTypeOfView(typeof(IColorProviderBaseView))]
   [UserControllerForObject(typeof(ColorProviderBase))]
@@ -78,42 +49,116 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.ColorProvider
       yield break;
     }
 
+    #region Bindings
+
+    private NamedColor _colorBelow;
+
+    public NamedColor ColorBelow
+    {
+      get => _colorBelow;
+      set
+      {
+        if (!(_colorBelow == value))
+        {
+          _colorBelow = value;
+          OnPropertyChanged(nameof(ColorBelow));
+          OnMadeDirty();
+        }
+      }
+    }
+    private NamedColor _colorAbove;
+
+    public NamedColor ColorAbove
+    {
+      get => _colorAbove;
+      set
+      {
+        if (!(_colorAbove == value))
+        {
+          _colorAbove = value;
+          OnPropertyChanged(nameof(ColorAbove));
+          OnMadeDirty();
+        }
+      }
+    }
+    private NamedColor _colorInvalid;
+
+    public NamedColor ColorInvalid
+    {
+      get => _colorInvalid;
+      set
+      {
+        if (!(_colorInvalid == value))
+        {
+          _colorInvalid = value;
+          OnPropertyChanged(nameof(ColorInvalid));
+          OnMadeDirty();
+        }
+      }
+    }
+
+
+    private decimal _transparency;
+
+    public decimal Transparency
+    {
+      get => _transparency;
+      set
+      {
+        if (!(_transparency == value))
+        {
+          _transparency = value;
+          OnPropertyChanged(nameof(Transparency));
+          OnMadeDirty();
+        }
+      }
+    }
+
+    private int _colorSteps;
+
+    public int ColorSteps
+    {
+      get => _colorSteps;
+      set
+      {
+        if (!(_colorSteps == value))
+        {
+          _colorSteps = value;
+          OnPropertyChanged(nameof(ColorSteps));
+          OnMadeDirty();
+        }
+      }
+    }
+
+
+    #endregion
+
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
 
       if (_view is not null)
       {
-        _view.ColorBelow = _doc.ColorBelow;
-        _view.ColorAbove = _doc.ColorAbove;
-        _view.ColorInvalid = _doc.ColorInvalid;
-        _view.Transparency = _doc.Transparency;
-        _view.ColorSteps = _doc.ColorSteps;
+        ColorBelow = _doc.ColorBelow;
+        ColorAbove = _doc.ColorAbove;
+        ColorInvalid = _doc.ColorInvalid;
+        Transparency = (decimal)(_doc.Transparency*100);
+        ColorSteps = _doc.ColorSteps;
       }
     }
 
     public override bool Apply(bool disposeController)
     {
       _doc = _doc
-            .WithColorBelow(_view.ColorBelow)
-            .WithColorAbove(_view.ColorAbove)
-            .WithColorInvalid(_view.ColorInvalid)
-            .WithTransparency(_view.Transparency)
-            .WithColorSteps(_view.ColorSteps);
+            .WithColorBelow(ColorBelow)
+            .WithColorAbove(ColorAbove)
+            .WithColorInvalid(ColorInvalid)
+            .WithTransparency((double)(Transparency/100))
+            .WithColorSteps(ColorSteps);
 
       return ApplyEnd(true, disposeController);
     }
 
-    protected override void AttachView()
-    {
-      base.AttachView();
-      _view.ChoiceChanged += OnMadeDirty;
-    }
-
-    protected override void DetachView()
-    {
-      _view.ChoiceChanged -= OnMadeDirty;
-      base.DetachView();
-    }
+   
   }
 }

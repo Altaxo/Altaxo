@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2012 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -22,11 +22,6 @@
 
 #endregion Copyright
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows;
 using System.Windows.Controls;
 
 namespace Altaxo.Gui.Graph.Gdi.Plot.ColorProvider
@@ -36,118 +31,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.ColorProvider
   /// </summary>
   public partial class ColorProviderARGBGradientControl : UserControl, IColorProviderARGBGradientView
   {
-    public event Action? ChoiceChanged;
-
     public ColorProviderARGBGradientControl()
     {
       InitializeComponent();
-    }
-
-    public IColorProviderBaseView BaseView
-    {
-      get { return _guiBaseControl; }
-    }
-
-    public double Red0
-    {
-      get
-      {
-        return _guiRed0.ValueAsDouble;
-      }
-      set
-      {
-        _guiRed0.ValueAsDouble = value;
-      }
-    }
-
-    public double Red1
-    {
-      get
-      {
-        return _guiRed1.ValueAsDouble;
-      }
-      set
-      {
-        _guiRed1.ValueAsDouble = value;
-      }
-    }
-
-    public double Green0
-    {
-      get
-      {
-        return _guiGreen0.ValueAsDouble;
-      }
-      set
-      {
-        _guiGreen0.ValueAsDouble = value;
-      }
-    }
-
-    public double Green1
-    {
-      get
-      {
-        return _guiGreen1.ValueAsDouble;
-      }
-      set
-      {
-        _guiGreen1.ValueAsDouble = value;
-      }
-    }
-
-    public double Blue0
-    {
-      get
-      {
-        return _guiBlue0.ValueAsDouble;
-      }
-      set
-      {
-        _guiBlue0.ValueAsDouble = value;
-      }
-    }
-
-    public double Blue1
-    {
-      get
-      {
-        return _guiBlue1.ValueAsDouble;
-      }
-      set
-      {
-        _guiBlue1.ValueAsDouble = value;
-      }
-    }
-
-    public double Opaqueness0
-    {
-      get
-      {
-        return _guiOpaqueness0.ValueAsDouble;
-      }
-      set
-      {
-        _guiOpaqueness0.ValueAsDouble = value;
-      }
-    }
-
-    public double Opaqueness1
-    {
-      get
-      {
-        return _guiOpaqueness1.ValueAsDouble;
-      }
-      set
-      {
-        _guiOpaqueness1.ValueAsDouble = value;
-      }
-    }
-
-    private void EhDoubleUpDown_ValueChanged(object sender, RoutedPropertyChangedEventArgs<decimal> e)
-    {
-      if (ChoiceChanged is not null)
-        ChoiceChanged();
     }
   }
 }

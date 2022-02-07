@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2012 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -31,39 +31,162 @@ using Altaxo.Graph.Gdi.Plot.ColorProvider;
 
 namespace Altaxo.Gui.Graph.Gdi.Plot.ColorProvider
 {
-  public interface IColorProviderARGBGradientView
+  public interface IColorProviderARGBGradientView : IDataContextAwareView
   {
-    IColorProviderBaseView BaseView { get; }
-
-    double Red0 { get; set; }
-
-    double Red1 { get; set; }
-
-    double Green0 { get; set; }
-
-    double Green1 { get; set; }
-
-    double Blue0 { get; set; }
-
-    double Blue1 { get; set; }
-
-    double Opaqueness0 { get; set; }
-
-    double Opaqueness1 { get; set; }
-
-    event Action ChoiceChanged;
   }
 
   [ExpectedTypeOfView(typeof(IColorProviderARGBGradientView))]
   [UserControllerForObject(typeof(ColorProviderARGBGradient), 110)]
   public class ColorProviderARGBGradientController : MVCANDControllerEditImmutableDocBase<ColorProviderARGBGradient, IColorProviderARGBGradientView>
   {
-    private ColorProviderBaseController _baseController;
-
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_baseController, () => _baseController = null);
     }
+
+    #region Bindings
+
+    private ColorProviderBaseController _baseController;
+
+    public ColorProviderBaseController BaseController
+    {
+      get => _baseController;
+      set
+      {
+        if (!(_baseController == value))
+        {
+          _baseController?.Dispose();
+          _baseController = value;
+          OnPropertyChanged(nameof(BaseController));
+          OnMadeDirty();
+        }
+      }
+    }
+
+    private decimal _red0;
+
+    public decimal Red0
+    {
+      get => _red0;
+      set
+      {
+        if (!(_red0 == value))
+        {
+          _red0 = value;
+          OnPropertyChanged(nameof(Red0));
+          OnMadeDirty();
+        }
+      }
+    }
+    private decimal _red1;
+
+    public decimal Red1
+    {
+      get => _red1;
+      set
+      {
+        if (!(_red1 == value))
+        {
+          _red1 = value;
+          OnPropertyChanged(nameof(Red1));
+          OnMadeDirty();
+        }
+      }
+    }
+    private decimal _green0;
+
+    public decimal Green0
+    {
+      get => _green0;
+      set
+      {
+        if (!(_green0 == value))
+        {
+          _green0 = value;
+          OnPropertyChanged(nameof(Green0));
+          OnMadeDirty();
+        }
+      }
+    }
+    private decimal _green1;
+
+    public decimal Green1
+    {
+      get => _green1;
+      set
+      {
+        if (!(_green1 == value))
+        {
+          _green1 = value;
+          OnPropertyChanged(nameof(Green1));
+          OnMadeDirty();
+        }
+      }
+    }
+    private decimal _blue0;
+
+    public decimal Blue0
+    {
+      get => _blue0;
+      set
+      {
+        if (!(_blue0 == value))
+        {
+          _blue0 = value;
+          OnPropertyChanged(nameof(Blue0));
+          OnMadeDirty();
+        }
+      }
+    }
+    private decimal _blue1;
+
+    public decimal Blue1
+    {
+      get => _blue1;
+      set
+      {
+        if (!(_blue1 == value))
+        {
+          _blue1 = value;
+          OnPropertyChanged(nameof(Blue1));
+          OnMadeDirty();
+        }
+      }
+    }
+
+    private decimal _opaqueness0;
+
+    public decimal Opaqueness0
+    {
+      get => _opaqueness0;
+      set
+      {
+        if (!(_opaqueness0 == value))
+        {
+          _opaqueness0 = value;
+          OnPropertyChanged(nameof(Opaqueness0));
+          OnMadeDirty();
+        }
+      }
+    }
+    private decimal _opaqueness1;
+
+    public decimal Opaqueness1
+    {
+      get => _opaqueness1;
+      set
+      {
+        if (!(_opaqueness1 == value))
+        {
+          _opaqueness1 = value;
+          OnPropertyChanged(nameof(Opaqueness1));
+          OnMadeDirty();
+        }
+      }
+    }
+
+
+    #endregion
 
     protected override void Initialize(bool initData)
     {
@@ -74,19 +197,16 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.ColorProvider
         _baseController = new ColorProviderBaseController() { UseDocumentCopy = UseDocument.Directly };
         _baseController.InitializeDocument(_doc);
         _baseController.MadeDirty += EhBaseControllerChanged;
-      }
-      if (_view is not null)
-      {
-        _baseController.ViewObject = _view.BaseView;
+       
 
-        _view.Red0 = _doc.Red0;
-        _view.Red1 = _doc.Red1;
-        _view.Green0 = _doc.Green0;
-        _view.Green1 = _doc.Green1;
-        _view.Blue0 = _doc.Blue0;
-        _view.Blue1 = _doc.Blue1;
-        _view.Opaqueness0 = _doc.Opaqueness0;
-        _view.Opaqueness1 = _doc.Opaqueness1;
+        Red0 = (decimal)_doc.Red0;
+        Red1 = (decimal)_doc.Red1;
+        Green0 = (decimal)_doc.Green0;
+        Green1 = (decimal)_doc.Green1;
+        Blue0 = (decimal)_doc.Blue0;
+        Blue1 = (decimal)_doc.Blue1;
+        Opaqueness0 = (decimal)_doc.Opaqueness0;
+        Opaqueness1 = (decimal)_doc.Opaqueness1;
       }
     }
 
@@ -98,28 +218,16 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.ColorProvider
       _doc = (ColorProviderARGBGradient)_baseController.ModelObject;
 
       _doc = _doc
-            .WithRed0(_view.Red0)
-            .WithRed1(_view.Red1)
-            .WithGreen0(_view.Green0)
-            .WithGreen1(_view.Green1)
-            .WithBlue0(_view.Blue0)
-            .WithBlue1(_view.Blue1)
-            .WithOpaqueness0(_view.Opaqueness0)
-            .WithOpaqueness1(_view.Opaqueness1);
+            .WithRed0((double)Red0)
+            .WithRed1((double)Red1)
+            .WithGreen0((double)Green0)
+            .WithGreen1((double)Green1)
+            .WithBlue0((double)Blue0)
+            .WithBlue1((double)Blue1)
+            .WithOpaqueness0((double)Opaqueness0)
+            .WithOpaqueness1((double)Opaqueness1);
 
       return ApplyEnd(true, disposeController);
-    }
-
-    protected override void AttachView()
-    {
-      base.AttachView();
-      _view.ChoiceChanged += OnMadeDirty;
-    }
-
-    protected override void DetachView()
-    {
-      _view.ChoiceChanged -= OnMadeDirty;
-      base.DetachView();
     }
 
     private void EhBaseControllerChanged(IMVCANDController ctrl)

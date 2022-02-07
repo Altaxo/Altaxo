@@ -3,8 +3,10 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
-						 xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing"
+			 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
+			 xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing" 
+             xmlns:colorprovider="clr-namespace:Altaxo.Gui.Graph.Gdi.Plot.ColorProvider;assembly=AltaxoBase" 
+             d:DataContext="{d:DesignInstance Type=colorprovider:ColorProviderBaseController}"
              mc:Ignorable="d">
 	<UserControl.Resources>
 		<Style TargetType="Label">
@@ -32,15 +34,15 @@
 			<RowDefinition Height="4" />
 		</Grid.RowDefinitions>
 
-		<Label Grid.Column="0" Grid.Row="0" Content="Color below:" />
-		<axogcd:ColorComboBox x:Name="_cbColorBelow" Grid.Column="1" Grid.Row="0" SelectedColorChanged="EhColorBelowChanged" />
-		<Label Grid.Column="0" Grid.Row="2" Content="Color above:" />
-		<axogcd:ColorComboBox x:Name="_cbColorAbove" Grid.Column="1" Grid.Row="2"  SelectedColorChanged="EhColorAboveChanged" />
-		<Label Grid.Column="0" Grid.Row="4" Content="Color of invalid point:" />
-		<axogcd:ColorComboBox x:Name="_cbInvalid" Grid.Column="1" Grid.Row="4"  SelectedColorChanged="EhColorInvalidChanged" />
-		<Label Grid.Column="0" Grid.Row="6" Content="Transparency (%):" />
-		<axogc:DecimalUpDown x:Name="_edTransparency" Grid.Column="1" Grid.Row="6" Minimum="0" Maximum="100" Change="5" DecimalPlaces="1" ValueChanged="EhTransparencyChanged" />
-		<Label Grid.Column="0" Grid.Row="8" Content="Color steps:" />
-		<axogc:Int32UpDown x:Name="_edColorSteps" Grid.Column="1" Grid.Row="8" Minimum="0" MinimumReplacementText="No steps (Continuous)" ValueChanged="EhColorStepsChanged" />
+		<Label Grid.Row="0" Grid.Column="0" Content="Color below:" />
+		<axogcd:ColorComboBox Grid.Row="0" Grid.Column="1" SelectedColor="{Binding ColorBelow}" />
+		<Label Grid.Row="2" Grid.Column="0" Content="Color above:" />
+		<axogcd:ColorComboBox Grid.Row="2" Grid.Column="1" SelectedColor="{Binding ColorAbove}" />
+		<Label Grid.Row="4" Grid.Column="0" Content="Color of invalid point:" />
+		<axogcd:ColorComboBox Grid.Row="4" Grid.Column="1"  SelectedColor="{Binding ColorInvalid}" />
+		<Label Grid.Row="6" Grid.Column="0" Content="Transparency (%):" />
+		<axogc:DecimalUpDown Grid.Row="6" Grid.Column="1" Value="{Binding Transparency}" Minimum="0" Maximum="100" Change="5" DecimalPlaces="1" />
+		<Label Grid.Row="8" Grid.Column="0" Content="Color steps:" />
+		<axogc:Int32UpDown Grid.Row="8" Grid.Column="1" Value="{Binding ColorSteps}" Minimum="0" MinimumReplacementText="No steps (Continuous)" />
 	</Grid>
 </UserControl>

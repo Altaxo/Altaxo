@@ -3,8 +3,10 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
-						 xmlns:axogg="clr-namespace:Altaxo.Gui.Graph.Gdi.Plot.ColorProvider"
+			 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
+			 xmlns:axogg="clr-namespace:Altaxo.Gui.Graph.Gdi.Plot.ColorProvider"
+			 xmlns:axoggmodel="clr-namespace:Altaxo.Gui.Graph.Gdi.Plot.ColorProvider;assembly=AltaxoBase"
+             d:DataContext="{d:DesignInstance Type=axoggmodel:ColorProviderARGBGradientController}"
              mc:Ignorable="d">
 
 	<UserControl.Resources>
@@ -35,24 +37,24 @@
 				<RowDefinition Height="Auto" />
 			</Grid.RowDefinitions>
 			<Label Grid.Row="2" Grid.Column="0" Content="Red(0): " />
-			<axogc:DecimalUpDown x:Name="_guiRed0" Grid.Row="2" Grid.Column="1" Minimum="0" Maximum="1" DecimalPlaces="8" Change="0.05" IsGotoMinimumAndMaximumVisible="True" ValueChanged="EhDoubleUpDown_ValueChanged" />
+			<axogc:DecimalUpDown Grid.Row="2" Grid.Column="1" Value="{Binding Red0}" Minimum="0" Maximum="1" DecimalPlaces="8" Change="0.05" IsGotoMinimumAndMaximumVisible="True" />
 			<Label Grid.Row="2" Grid.Column="2" Content="Red(1): " />
-			<axogc:DecimalUpDown x:Name="_guiRed1" Grid.Row="2" Grid.Column="3" Minimum="0" Maximum="1" DecimalPlaces="8" Change="0.05"  IsGotoMinimumAndMaximumVisible="True" ValueChanged="EhDoubleUpDown_ValueChanged" />
+            <axogc:DecimalUpDown Grid.Row="2" Grid.Column="3" Value="{Binding Red1}" Minimum="0" Maximum="1" DecimalPlaces="8" Change="0.05"  IsGotoMinimumAndMaximumVisible="True"  />
 
 			<Label Grid.Row="3" Grid.Column="0" Content="Green(0): " />
-			<axogc:DecimalUpDown x:Name="_guiGreen0" Grid.Row="3" Grid.Column="1" Minimum="0" Maximum="1" DecimalPlaces="8" Change="0.05"  IsGotoMinimumAndMaximumVisible="True" ValueChanged="EhDoubleUpDown_ValueChanged" />
+            <axogc:DecimalUpDown Grid.Row="3" Grid.Column="1" Value="{Binding Green0}" Minimum="0" Maximum="1" DecimalPlaces="8" Change="0.05"  IsGotoMinimumAndMaximumVisible="True" />
 			<Label Grid.Row="3" Grid.Column="2" Content="Green(1): " />
-			<axogc:DecimalUpDown x:Name="_guiGreen1" Grid.Row="3" Grid.Column="3" Minimum="0" Maximum="1" DecimalPlaces="8" Change="0.05"  IsGotoMinimumAndMaximumVisible="True" ValueChanged="EhDoubleUpDown_ValueChanged" />
+            <axogc:DecimalUpDown Grid.Row="3" Grid.Column="3" Value="{Binding Green1}" Minimum="0" Maximum="1" DecimalPlaces="8" Change="0.05"  IsGotoMinimumAndMaximumVisible="True" />
 
 			<Label Grid.Row="4" Grid.Column="0" Content="Blue(0): " />
-			<axogc:DecimalUpDown x:Name="_guiBlue0" Grid.Row="4" Grid.Column="1" Minimum="0" Maximum="1" DecimalPlaces="8" Change="0.05"  IsGotoMinimumAndMaximumVisible="True" ValueChanged="EhDoubleUpDown_ValueChanged" />
+            <axogc:DecimalUpDown Grid.Row="4" Grid.Column="1" Value="{Binding Blue0}" Minimum="0" Maximum="1" DecimalPlaces="8" Change="0.05"  IsGotoMinimumAndMaximumVisible="True" />
 			<Label Grid.Row="4" Grid.Column="2" Content="Blue(1): " />
-			<axogc:DecimalUpDown x:Name="_guiBlue1" Grid.Row="4" Grid.Column="3" Minimum="0" Maximum="1" DecimalPlaces="8" Change="0.05"  IsGotoMinimumAndMaximumVisible="True" ValueChanged="EhDoubleUpDown_ValueChanged" />
+            <axogc:DecimalUpDown Grid.Row="4" Grid.Column="3" Value="{Binding Blue1}" Minimum="0" Maximum="1" DecimalPlaces="8" Change="0.05"  IsGotoMinimumAndMaximumVisible="True" />
 
 			<Label Grid.Row="5" Grid.Column="0" Content="Opaqueness(0): " />
-			<axogc:DecimalUpDown x:Name="_guiOpaqueness0" Grid.Row="5" Grid.Column="1" Minimum="0" Maximum="1" DecimalPlaces="8" Change="0.05"  IsGotoMinimumAndMaximumVisible="True" ValueChanged="EhDoubleUpDown_ValueChanged" />
+            <axogc:DecimalUpDown Grid.Row="5" Grid.Column="1" Value="{Binding Opaqueness0}" Minimum="0" Maximum="1" DecimalPlaces="8" Change="0.05"  IsGotoMinimumAndMaximumVisible="True"  />
 			<Label Grid.Row="5" Grid.Column="2" Content="Opaqueness(1): " />
-			<axogc:DecimalUpDown x:Name="_guiOpaqueness1" Grid.Row="5" Grid.Column="3" Minimum="0" Maximum="1" DecimalPlaces="8" Change="0.05"  IsGotoMinimumAndMaximumVisible="True" ValueChanged="EhDoubleUpDown_ValueChanged" />
+            <axogc:DecimalUpDown Grid.Row="5" Grid.Column="3" Value="{Binding Opaqueness1}" Minimum="0" Maximum="1" DecimalPlaces="8" Change="0.05"  IsGotoMinimumAndMaximumVisible="True" />
 		</Grid>
 	</StackPanel>
 </UserControl>

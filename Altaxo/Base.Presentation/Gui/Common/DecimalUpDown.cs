@@ -146,6 +146,7 @@ namespace Altaxo.Gui.Common
                 new PropertyChangedCallback(OnValueChanged),
                 new CoerceValueCallback(CoerceValue)
             )
+            { BindsTwoWayByDefault=true}
         );
 
     private static void OnValueChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)

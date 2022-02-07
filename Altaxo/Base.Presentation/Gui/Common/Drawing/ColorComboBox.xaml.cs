@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2012 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -47,7 +47,7 @@ namespace Altaxo.Gui.Common.Drawing
 
     static ColorComboBox()
     {
-      SelectedColorProperty = DependencyProperty.Register("SelectedColor", typeof(NamedColor), typeof(ColorComboBox), new FrameworkPropertyMetadata(NamedColors.Black, EhSelectedColorChanged, EhSelectedColorCoerce));
+      SelectedColorProperty = DependencyProperty.Register("SelectedColor", typeof(NamedColor), typeof(ColorComboBox), new FrameworkPropertyMetadata(NamedColors.Black, EhSelectedColorChanged, EhSelectedColorCoerce) { BindsTwoWayByDefault=true});
     }
 
     public ColorComboBox()
