@@ -26,46 +26,20 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Altaxo.Collections;
 using Altaxo.Graph.Gdi.Plot.Groups;
 using Altaxo.Graph.Plot.Groups;
+using Altaxo.Gui.Common;
 
 namespace Altaxo.Gui.Graph.Gdi.Plot.Groups
 {
-  #region Interfaces
-
   /// <summary>
   /// This view interface is for showing the options of the XYLineScatterPlotStyle
   /// </summary>
-  public interface IPlotGroupCollectionViewSimple
+  public interface IPlotGroupCollectionViewSimple : IDataContextAwareView
   {
-    /// <summary>
-    /// Initializes the plot group conditions.
-    /// </summary>
-    /// <param name="bColor">True if the color is changed.</param>
-    /// <param name="bLineType">True if the line type is changed.</param>
-    /// <param name="bSymbol">True if the symbol shape is changed.</param>
-    /// <param name="bConcurrently">True if all styles are changed concurrently.</param>
-    /// <param name="bStrict">True if the depending plot styles are enforced to have strictly the same properties than the parent style.</param>
-    void InitializePlotGroupConditions(bool bColor, bool bLineType, bool bSymbol, bool bConcurrently, Altaxo.Graph.Plot.Groups.PlotGroupStrictness bStrict);
-
-    #region Getter
-
-    Altaxo.Graph.Plot.Groups.PlotGroupStrictness PlotGroupStrict { get; }
-
-    bool PlotGroupColor { get; }
-
-    bool PlotGroupLineType { get; }
-
-    bool PlotGroupSymbol { get; }
-
-    bool PlotGroupConcurrently { get; }
-
-    bool PlotGroupUpdate { get; }
-
-    #endregion Getter
   }
 
-  #endregion Interfaces
 
   [ExpectedTypeOfView(typeof(IPlotGroupCollectionViewSimple))]
   public class PlotGroupCollectionControllerSimple : MVCANControllerEditOriginalDocBase<PlotGroupStyleCollection, IPlotGroupCollectionViewSimple>
@@ -75,31 +49,106 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Groups
       yield break;
     }
 
+    #region Bindings
+
+    private bool _PlotGroupColor;
+
+    public bool PlotGroupColor
+    {
+      get => _PlotGroupColor;
+      set
+      {
+        if (!(_PlotGroupColor == value))
+        {
+          _PlotGroupColor = value;
+          OnPropertyChanged(nameof(PlotGroupColor));
+        }
+      }
+    }
+    private bool _PlotGroupLineType;
+
+    public bool PlotGroupLineType
+    {
+      get => _PlotGroupLineType;
+      set
+      {
+        if (!(_PlotGroupLineType == value))
+        {
+          _PlotGroupLineType = value;
+          OnPropertyChanged(nameof(PlotGroupLineType));
+        }
+      }
+    }
+    private bool _PlotGroupSymbol;
+
+    public bool PlotGroupSymbol
+    {
+      get => _PlotGroupSymbol;
+      set
+      {
+        if (!(_PlotGroupSymbol == value))
+        {
+          _PlotGroupSymbol = value;
+          OnPropertyChanged(nameof(PlotGroupSymbol));
+        }
+      }
+    }
+    private bool _plotGroupSequential;
+
+    public bool PlotGroupSequential
+    {
+      get => _plotGroupSequential;
+      set
+      {
+        if (!(_plotGroupSequential == value))
+        {
+          _plotGroupSequential = value;
+          OnPropertyChanged(nameof(PlotGroupSequential));
+        }
+      }
+    }
+
+    private ItemsController<PlotGroupStrictness>  _plotGroupStrictness;
+
+    public ItemsController<PlotGroupStrictness> PlotGroupStrictness
+    {
+      get => _plotGroupStrictness;
+      set
+      {
+        if (!(_plotGroupStrictness == value))
+        {
+          _plotGroupStrictness = value;
+          OnPropertyChanged(nameof(PlotGroupStrictness));
+        }
+      }
+    }
+
+
+    #endregion
+
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
 
-      if (_view is not null)
+      if (initData)
       {
+        IsSimplePlotGrouping(_doc, out var sequential, out var color, out var linestyle, out var symbol);
 
-        IsSimplePlotGrouping(_doc, out var bSerial, out var color, out var linestyle, out var symbol);
+        PlotGroupColor = color;
+        PlotGroupLineType = linestyle;
+        PlotGroupSymbol = symbol;
+        PlotGroupSequential = sequential;
 
-        _view.InitializePlotGroupConditions(
-          color,
-          linestyle,
-          symbol,
-          !bSerial, //_parentPlotGroup.ChangeStylesConcurrently,
-          PlotGroupStrictness.Normal //_parentPlotGroup.ChangeStylesStrictly
-          );
+        PlotGroupStrictness = new ItemsController<Altaxo.Graph.Plot.Groups.PlotGroupStrictness>(new SelectableListNodeList(Altaxo.Graph.Plot.Groups.PlotGroupStrictness.Normal));
       }
     }
 
     public override bool Apply(bool disposeController)
     {
-      bool color = _view.PlotGroupColor;
-      bool linestyle = _view.PlotGroupLineType;
-      bool symbol = _view.PlotGroupSymbol;
-      bool serial = !_view.PlotGroupConcurrently;
+      bool color = PlotGroupColor;
+      bool linestyle = PlotGroupLineType;
+      bool symbol = PlotGroupSymbol;
+      bool serial = PlotGroupSequential;
 
       if (_doc.ContainsType(typeof(ColorGroupStyle)))
         _doc.RemoveType(typeof(ColorGroupStyle));
@@ -129,7 +178,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Groups
           _doc.Add(new ScatterSymbolGroupStyle() { IsStepEnabled = true });
       }
 
-      _doc.PlotGroupStrictness = _view.PlotGroupStrict;
+      _doc.PlotGroupStrictness = PlotGroupStrictness.SelectedValue;
 
       return ApplyEnd(true, disposeController);
     }

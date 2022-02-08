@@ -31,7 +31,7 @@
 				<RowDefinition Height="4" />
 			</Grid.RowDefinitions>
 			<Label Grid.Column="0" Grid.Row="0" Content="Colorization:" />
-            <ComboBox Grid.Column="1" Grid.ColumnSpan="3" Grid.Row="0" ItemsSource="{Binding AvailableClasses.Items}" SelectedItem="{Binding AvailableClasses.SelectedItem}" />
+            <ComboBox Grid.Column="1" Grid.ColumnSpan="3" Grid.Row="0" ItemsSource="{Binding AvailableClasses.Items}" SelectedItem="{Binding AvailableClasses.SelectedItem, Mode=TwoWay}" />
 		</Grid>
 		<ContentControl Content="{Binding DetailController.ViewObject}" HorizontalAlignment="Stretch" />
 		<Grid>
