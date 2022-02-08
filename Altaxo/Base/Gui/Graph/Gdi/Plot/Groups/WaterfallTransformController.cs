@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -31,22 +31,11 @@ using Altaxo.Units;
 
 namespace Altaxo.Gui.Graph.Gdi.Plot.Groups
 {
-  #region Interfaces
 
-  public interface IWaterfallTransformView
+  public interface IWaterfallTransformView : IDataContextAwareView
   {
-    void SetXScaleUnitEnvironment(QuantityWithUnitGuiEnvironment environment);
-
-    DimensionfulQuantity XScale { get; set; }
-
-    void SetYScaleUnitEnvironment(QuantityWithUnitGuiEnvironment environment);
-
-    DimensionfulQuantity YScale { get; set; }
-
-    bool UseClipping { get; set; }
   }
 
-  #endregion Interfaces
 
   [UserControllerForObject(typeof(WaterfallTransform))]
   [ExpectedTypeOfView(typeof(IWaterfallTransformView))]
@@ -57,17 +46,69 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Groups
       yield break;
     }
 
+    #region Bindings
+
+    public QuantityWithUnitGuiEnvironment XScaleEnvironment => RelationEnvironment.Instance;
+
+    private DimensionfulQuantity _xScale;
+
+    public DimensionfulQuantity XScale
+    {
+      get => _xScale;
+      set
+      {
+        if (!(_xScale == value))
+        {
+          _xScale = value;
+          OnPropertyChanged(nameof(XScale));
+        }
+      }
+    }
+
+
+    public QuantityWithUnitGuiEnvironment YScaleEnvironment => RelationEnvironment.Instance;
+
+    private DimensionfulQuantity _yScale;
+
+    public DimensionfulQuantity YScale
+    {
+      get => _yScale;
+      set
+      {
+        if (!(_yScale == value))
+        {
+          _yScale = value;
+          OnPropertyChanged(nameof(YScale));
+        }
+      }
+    }
+
+    private bool _useClipping;
+
+    public bool UseClipping
+    {
+      get => _useClipping;
+      set
+      {
+        if (!(_useClipping == value))
+        {
+          _useClipping = value;
+          OnPropertyChanged(nameof(UseClipping));
+        }
+      }
+    }
+
+    #endregion
+
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
 
-      if (_view is not null)
+      if (initData)
       {
-        _view.SetXScaleUnitEnvironment(RelationEnvironment.Instance);
-        _view.XScale = new DimensionfulQuantity(_doc.XScale, Altaxo.Units.Dimensionless.Unity.Instance).AsQuantityIn(RelationEnvironment.Instance.DefaultUnit);
-        _view.SetYScaleUnitEnvironment(RelationEnvironment.Instance);
-        _view.YScale = new DimensionfulQuantity(_doc.YScale, Altaxo.Units.Dimensionless.Unity.Instance).AsQuantityIn(RelationEnvironment.Instance.DefaultUnit);
-        _view.UseClipping = _doc.UseClipping;
+        XScale = new DimensionfulQuantity(_doc.XScale, Altaxo.Units.Dimensionless.Unity.Instance).AsQuantityIn(XScaleEnvironment.DefaultUnit);
+        YScale = new DimensionfulQuantity(_doc.YScale, Altaxo.Units.Dimensionless.Unity.Instance).AsQuantityIn(YScaleEnvironment.DefaultUnit);
+        UseClipping = _doc.UseClipping;
       }
     }
 
@@ -75,9 +116,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Groups
     {
       try
       {
-        _doc.UseClipping = _view.UseClipping;
-        _doc.XScale = _view.XScale.AsValueInSIUnits;
-        _doc.YScale = _view.YScale.AsValueInSIUnits;
+        _doc.UseClipping = UseClipping;
+        _doc.XScale = XScale.AsValueInSIUnits;
+        _doc.YScale = YScale.AsValueInSIUnits;
       }
       catch (Exception ex)
       {

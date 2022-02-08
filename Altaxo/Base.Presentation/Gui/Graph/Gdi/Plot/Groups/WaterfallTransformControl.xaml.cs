@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -22,12 +22,7 @@
 
 #endregion Copyright
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Windows.Controls;
-using Altaxo.Units;
 
 namespace Altaxo.Gui.Graph.Gdi.Plot.Groups
 {
@@ -40,55 +35,5 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Groups
     {
       InitializeComponent();
     }
-
-    #region IWaterfallTransformView Members
-
-    public void SetXScaleUnitEnvironment(QuantityWithUnitGuiEnvironment environment)
-    {
-      _edXScale.UnitEnvironment = environment;
-    }
-
-    public DimensionfulQuantity XScale
-    {
-      get
-      {
-        return _edXScale.SelectedQuantity;
-      }
-      set
-      {
-        _edXScale.SelectedQuantity = value;
-      }
-    }
-
-    public void SetYScaleUnitEnvironment(QuantityWithUnitGuiEnvironment environment)
-    {
-      _edYScale.UnitEnvironment = environment;
-    }
-
-    public DimensionfulQuantity YScale
-    {
-      get
-      {
-        return _edYScale.SelectedQuantity;
-      }
-      set
-      {
-        _edYScale.SelectedQuantity = value;
-      }
-    }
-
-    public bool UseClipping
-    {
-      get
-      {
-        return true == _chkClipValues.IsChecked;
-      }
-      set
-      {
-        _chkClipValues.IsChecked = value;
-      }
-    }
-
-    #endregion IWaterfallTransformView Members
   }
 }

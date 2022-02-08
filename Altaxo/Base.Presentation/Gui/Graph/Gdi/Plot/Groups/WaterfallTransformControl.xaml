@@ -3,8 +3,9 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
- 						 xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing"
+			 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
+             xmlns:groups="clr-namespace:Altaxo.Gui.Graph.Gdi.Plot.Groups;assembly=AltaxoBase" 
+             d:DataContext="{d:DesignInstance Type=groups:WaterfallTransformController}"
              mc:Ignorable="d">
 	<UserControl.Resources>
 		<Style TargetType="Label">
@@ -30,12 +31,12 @@
 		</Grid.RowDefinitions>
 
 		<Label Grid.Row="0" Content="X scale:" />
-		<axogc:QuantityWithUnitTextBox  x:Name="_edXScale" Grid.Column="1" Grid.Row="0" />
+		<axogc:QuantityWithUnitTextBox Grid.Column="1" Grid.Row="0" SelectedQuantity="{Binding XScale}" UnitEnvironment="{Binding XScaleEnvironment}" />
 
 		<Label Grid.Row="2" Content="Y scale:" />
-		<axogc:QuantityWithUnitTextBox  x:Name="_edYScale" Grid.Column="1" Grid.Row="2" />
+		<axogc:QuantityWithUnitTextBox  Grid.Column="1" Grid.Row="2" SelectedQuantity="{Binding YScale}" UnitEnvironment="{Binding YScaleEnvironment}" />
 
 		<Label Grid.Row="4" Content="Clip:" />
-		<CheckBox x:Name="_chkClipValues" Grid.Column="1" Grid.Row="4" VerticalAlignment="Center" />
+		<CheckBox Grid.Column="1" Grid.Row="4" IsChecked="{Binding UseClipping}" VerticalAlignment="Center" />
 	</Grid>
 </UserControl>
