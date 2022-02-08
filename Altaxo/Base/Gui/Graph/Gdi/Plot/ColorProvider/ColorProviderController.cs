@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -28,50 +28,17 @@ using System.Drawing;
 using Altaxo.Collections;
 using Altaxo.Graph.Gdi.Plot;
 using Altaxo.Graph.Gdi.Plot.ColorProvider;
-using Altaxo.Graph.Scales;
+using Altaxo.Gui.Common;
 
 namespace Altaxo.Gui.Graph.Gdi.Plot.ColorProvider
 {
-  #region Interfaces
-
   /// <summary>
   /// Interface that must be implemented by Gui classes that allow to select a color provider.
   /// </summary>
-  public interface IColorProviderView
+  public interface IColorProviderView : IDataContextAwareView
   {
-    /// <summary>
-    /// Set the list of available color providers.
-    /// </summary>
-    /// <param name="names">List of items.</param>
-    void InitializeAvailableClasses(SelectableListNodeList names);
-
-    /// <summary>
-    /// Sets the detailed view for the instance of the color provider.
-    /// </summary>
-    /// <param name="guiobject"></param>
-    void SetDetailView(object guiobject);
-
-    /// <summary>
-    /// Set the preview bitmap to be shown in the view.
-    /// </summary>
-    /// <param name="bitmap">Bitmap to show.</param>
-    void SetPreviewBitmap(System.Drawing.Bitmap bitmap);
-
-    /// <summary>
-    /// Gets a bitmap with a certain size.
-    /// </summary>
-    /// <param name="width">Pixel width of the bitmap.</param>
-    /// <param name="height">Pixel height of the bitmap.</param>
-    /// <returns>A bitmap that can be used for drawing.</returns>
-    System.Drawing.Bitmap GetPreviewBitmap(int width, int height);
-
-    /// <summary>
-    /// Fired when the selected color provider changed.
-    /// </summary>
-    event Action ColorProviderChanged;
   }
 
-  #endregion Interfaces
 
   /// <summary>
   /// Summary description for ColorProviderController.
@@ -80,34 +47,66 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.ColorProvider
   //[UserControllerForObject(typeof(IColorProvider), 101)]
   public class ColorProviderController : MVCANDControllerEditImmutableDocBase<IColorProvider, IColorProviderView>
   {
-    protected IMVCAController _detailController;
-    protected object _detailView;
-
-    protected SelectableListNodeList _availableClasses;
-
     public override System.Collections.Generic.IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
-      yield return new ControllerAndSetNullMethod(_detailController, () => _detailController = null);
+      yield return new ControllerAndSetNullMethod(_detailController, () => DetailController = null);
     }
+
+    #region Bindings
+
+    private ItemsController<Type> _availableClasses;
+
+    public ItemsController<Type> AvailableClasses
+    {
+      get => _availableClasses;
+      set
+      {
+        if (!(_availableClasses == value))
+        {
+
+          _availableClasses = value;
+          OnPropertyChanged(nameof(AvailableClasses));
+        }
+      }
+    }
+
+    private IMVCAController _detailController;
+
+    public IMVCAController DetailController
+    {
+      get => _detailController;
+      set
+      {
+        if (!(_detailController == value))
+        {
+          if (_detailController is IMVCANDController oldD)
+            oldD.MadeDirty -= EhDetailsChanged;
+          _detailController?.Dispose();
+          _detailController = value;
+          if (_detailController is IMVCANDController newD)
+            newD.MadeDirty += EhDetailsChanged;
+
+          OnPropertyChanged(nameof(DetailController));
+        }
+      }
+    }
+
+    #endregion
 
     public ColorProviderController(Action<IColorProvider> SetInstanceInParentDoc)
       : base(SetInstanceInParentDoc)
     {
     }
 
-    public override void Dispose(bool isDisposing)
-    {
-      _detailView = null;
-      base.Dispose(isDisposing);
-    }
-
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
 
-      InitClassTypes(initData);
-      InitDetailController(initData);
-      CreateAndSetPreviewBitmap();
+      if (initData)
+      {
+        InitClassTypes();
+        InitDetailController();
+      }
     }
 
     public override bool Apply(bool disposeController)
@@ -123,69 +122,42 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.ColorProvider
       return ApplyEnd(true, disposeController);
     }
 
-    protected override void AttachView()
+    public void InitClassTypes()
     {
-      base.AttachView();
-
-      _view.ColorProviderChanged += EhColorProviderSelectionChanged;
-    }
-
-    protected override void DetachView()
-    {
-      _view.ColorProviderChanged -= EhColorProviderSelectionChanged;
-
-      base.DetachView();
-    }
-
-    public void InitClassTypes(bool bInit)
-    {
-      if (bInit)
+      var availableClasses = new SelectableListNodeList();
+      Type[] classes = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(IColorProvider));
+      foreach (var ty in classes)
       {
-        _availableClasses = new SelectableListNodeList();
-        Type[] classes = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(IColorProvider));
-        for (int i = 0; i < classes.Length; i++)
-        {
-          if (classes[i] == typeof(LinkedScale))
-            continue;
-          var node = new SelectableListNode(Current.Gui.GetUserFriendlyClassName(classes[i]), classes[i], _doc.GetType() == classes[i]);
-          _availableClasses.Add(node);
-        }
+        var node = new SelectableListNode(Current.Gui.GetUserFriendlyClassName(ty), ty, _doc.GetType() == ty);
+        availableClasses.Add(node);
+      }
+      AvailableClasses = new ItemsController<Type>(availableClasses, EhColorProviderSelectionChanged);
+    }
+
+    public void InitDetailController()
+    {
+      object providerObject = _doc;
+
+      var detailController = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { providerObject }, typeof(IMVCANController), UseDocument.Directly);
+
+      if (detailController is not null && GetType() == detailController.GetType()) // the returned controller is of this common type here -> thus no specialized controller seems to exist for this type of color provider
+      {
+        detailController.Dispose();
+        detailController = null;
       }
 
-      if (_view is not null)
-        _view.InitializeAvailableClasses(_availableClasses);
+      if (detailController is not null)
+      {
+        Current.Gui.FindAndAttachControlTo(detailController);
+      }
+
+      DetailController = detailController;
     }
 
-    public void InitDetailController(bool bInit)
+    private void EhColorProviderSelectionChanged(Type chosenType)
     {
-      if (bInit)
-      {
-        object providerObject = _doc;
-
-        if (_detailController is IMVCANDController)
-          ((IMVCANDController)_detailController).MadeDirty -= EhDetailsChanged;
-
-        _detailController = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { providerObject }, typeof(IMVCANController), UseDocument.Directly);
-
-        if (_detailController is not null && GetType() == _detailController.GetType()) // the returned controller is of this common type here -> thus no specialized controller seems to exist for this type of color provider
-        {
-          _detailController.Dispose();
-          _detailController = null;
-        }
-
-        if (_detailController is IMVCANDController)
-          ((IMVCANDController)_detailController).MadeDirty += EhDetailsChanged;
-      }
-      if (_view is not null)
-      {
-        _detailView = _detailController is null ? null : _detailController.ViewObject;
-        _view.SetDetailView(_detailView);
-      }
-    }
-
-    private void EhColorProviderSelectionChanged()
-    {
-      var chosenType = (Type)_availableClasses.FirstSelectedNode.Tag;
+      if (chosenType is null)
+        return;
 
       try
       {
@@ -210,8 +182,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.ColorProvider
           _doc = newDoc;
           OnMadeDirty(); // Change for the controller up in hierarchy to grab new document
 
-          InitDetailController(true);
-          CreateAndSetPreviewBitmap();
+          InitDetailController();
         }
       }
       catch (Exception)
@@ -223,30 +194,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.ColorProvider
     {
       _detailController.Apply(false); // we use the instance directly, thus no further taking of the instance is neccessary here
       _doc = (IColorProvider)(_detailController.ModelObject);
-      CreateAndSetPreviewBitmap();
-    }
-
-    private Bitmap _previewBitmap;
-
-    private void CreateAndSetPreviewBitmap()
-    {
-      const int previewWidth = 128;
-      const int previewHeight = 16;
-      if (_view is not null)
-      {
-        if (_previewBitmap is null)
-          _previewBitmap = _view.GetPreviewBitmap(previewWidth, previewHeight); // new Bitmap(previewWidth, previewHeight, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-
-        for (int i = 0; i < previewWidth; i++)
-        {
-          double relVal = i / (double)(previewWidth - 1);
-          Color c = _doc.GetColor(relVal);
-          for (int j = 0; j < previewHeight; j++)
-            _previewBitmap.SetPixel(i, j, c);
-        }
-
-        _view.SetPreviewBitmap(_previewBitmap);
-      }
     }
   }
 }
+

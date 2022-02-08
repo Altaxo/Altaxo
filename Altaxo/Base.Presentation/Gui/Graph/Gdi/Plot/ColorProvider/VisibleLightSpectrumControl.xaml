@@ -3,8 +3,10 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
-						 xmlns:axogg="clr-namespace:Altaxo.Gui.Graph.Gdi.Plot.ColorProvider"
+			 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
+			 xmlns:axogg="clr-namespace:Altaxo.Gui.Graph.Gdi.Plot.ColorProvider"
+			 xmlns:axoggmodel="clr-namespace:Altaxo.Gui.Graph.Gdi.Plot.ColorProvider;assembly=AltaxoBase"
+             d:DataContext="{d:DesignInstance Type=axoggmodel:VisibleLightSpectrumController}"
              mc:Ignorable="d">
 
 	<UserControl.Resources>
@@ -18,7 +20,7 @@
 		</Style>
 	</UserControl.Resources>
 	<StackPanel Orientation="Vertical">
-		<axogg:ColorProviderBaseControl x:Name="_guiBaseControl" Grid.ColumnSpan="4" />
+		<axogg:ColorProviderBaseControl Grid.ColumnSpan="4" DataContext="{Binding BaseController}"/>
 		<Grid>
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="Auto" SharedSizeGroup="LabelColumn1" />
@@ -30,9 +32,9 @@
 				<RowDefinition Height="Auto" />
 			</Grid.RowDefinitions>
 			<Label Grid.Row="2" Grid.Column="0" Content="Brightness: " />
-			<axogc:DecimalUpDown x:Name="_guiBrightness" Grid.Row="2" Grid.Column="1" Minimum="0" Maximum="1" DecimalPlaces="8" Change="0.05" IsGotoMinimumAndMaximumVisible="True" ValueChanged="EhDoubleUpDown_ValueChanged" />
+			<axogc:DecimalUpDown Grid.Row="2" Grid.Column="1" Value="{Binding Brightness}" Minimum="0" Maximum="1" DecimalPlaces="8" Change="0.05" IsGotoMinimumAndMaximumVisible="True" />
 			<Label Grid.Row="2" Grid.Column="2" Content="Gamma: " />
-			<axogc:DecimalUpDown x:Name="_guiGamma" Grid.Row="2" Grid.Column="3" Minimum="0" Maximum="1000" DecimalPlaces="8" Change="0.05"  IsGotoMinimumAndMaximumVisible="True" ValueChanged="EhDoubleUpDown_ValueChanged" />
+			<axogc:DecimalUpDown Grid.Row="2" Grid.Column="3" Value="{Binding Gamma}" Minimum="0" Maximum="1000" DecimalPlaces="8" Change="0.05"  IsGotoMinimumAndMaximumVisible="True"  />
 		</Grid>
 	</StackPanel>
 </UserControl>

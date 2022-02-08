@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2012 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -22,11 +22,6 @@
 
 #endregion Copyright
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows;
 using System.Windows.Controls;
 
 namespace Altaxo.Gui.Graph.Gdi.Plot.ColorProvider
@@ -36,46 +31,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.ColorProvider
   /// </summary>
   public partial class VisibleLightSpectrumControl : UserControl, IVisibleLightSpectrumView
   {
-    public event Action? ChoiceChanged;
-
     public VisibleLightSpectrumControl()
     {
       InitializeComponent();
-    }
-
-    public IColorProviderBaseView BaseView
-    {
-      get { return _guiBaseControl; }
-    }
-
-    public double Gamma
-    {
-      get
-      {
-        return _guiGamma.ValueAsDouble;
-      }
-      set
-      {
-        _guiGamma.ValueAsDouble = value;
-      }
-    }
-
-    public double Brightness
-    {
-      get
-      {
-        return _guiBrightness.ValueAsDouble;
-      }
-      set
-      {
-        _guiBrightness.ValueAsDouble = value;
-      }
-    }
-
-    private void EhDoubleUpDown_ValueChanged(object sender, RoutedPropertyChangedEventArgs<decimal> e)
-    {
-      if (ChoiceChanged is not null)
-        ChoiceChanged();
     }
   }
 }

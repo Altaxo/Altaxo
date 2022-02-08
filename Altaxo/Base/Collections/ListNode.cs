@@ -25,6 +25,7 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Altaxo.Collections
 {
@@ -911,6 +912,7 @@ namespace Altaxo.Collections
         }
         _selectedItem = itemThatWasSet;
         OnPropertyChanged(new System.ComponentModel.PropertyChangedEventArgs(nameof(SelectedItem)));
+        OnPropertyChanged(new System.ComponentModel.PropertyChangedEventArgs(nameof(SelectedValue)));
       }
     }
 
@@ -937,8 +939,25 @@ namespace Altaxo.Collections
             }
             _selectedItem = null;
             OnPropertyChanged(new System.ComponentModel.PropertyChangedEventArgs(nameof(SelectedItem)));
+            OnPropertyChanged(new System.ComponentModel.PropertyChangedEventArgs(nameof(SelectedValue)));
           }
         }
+      }
+    }
+
+    /// <summary>
+    /// Gets or sets the selected value. It is not recommended to bind the SelectedValue property of the Gui element to this;
+    /// better bind the SelectedItem property of the Gui element to <see cref="SelectedItem"/>.
+    /// </summary>
+    public object SelectedValue
+    {
+      get
+      {
+        return SelectedItem?.Tag;
+      }
+      set
+      {
+        SelectedItem = this.FirstOrDefault(element => object.Equals(element.Tag, value));
       }
     }
 
@@ -972,6 +991,7 @@ namespace Altaxo.Collections
       {
         _selectedItem = null;
         OnPropertyChanged(new System.ComponentModel.PropertyChangedEventArgs(nameof(SelectedItem)));
+        OnPropertyChanged(new System.ComponentModel.PropertyChangedEventArgs(nameof(SelectedValue)));
       }
     }
     protected override void ClearItems()
@@ -985,6 +1005,24 @@ namespace Altaxo.Collections
     #endregion
   }
 
+  public class SingleSelectableListNodeList<TValue> : SingleSelectableListNodeList
+  {
+    /// <summary>
+    /// Gets or sets the selected value. It is not recommended to bind the SelectedValue property of the Gui element to this;
+    /// better bind the SelectedItem property of the Gui element to <see cref="SingleSelectableListNodeList.SelectedItem"/>.
+    /// </summary>
+    public new TValue SelectedValue
+    {
+      get
+      {
+        return (TValue)(SelectedItem?.Tag ?? default);
+      }
+      set
+      {
+        SelectedItem = this.FirstOrDefault(element => object.Equals(element.Tag, value));
+      }
+    }
+  }
 
   /// <summary>
   /// Collection of <see cref="CheckableSelectableListNode"/>s.

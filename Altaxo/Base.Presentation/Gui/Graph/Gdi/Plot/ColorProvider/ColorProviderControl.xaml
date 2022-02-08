@@ -3,8 +3,10 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-						  xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
-						 xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing"
+ 		     xmlns:axogc="clr-namespace:Altaxo.Gui.Common" 
+             xmlns:axogcc="clr-namespace:Altaxo.Gui.Common.Converters" 
+             xmlns:colorprovider="clr-namespace:Altaxo.Gui.Graph.Gdi.Plot.ColorProvider;assembly=AltaxoBase" 
+             d:DataContext="{d:DesignInstance Type=colorprovider:ColorProviderController}"
              mc:Ignorable="d">
 	<UserControl.Resources>
 		<Style TargetType="Label">
@@ -13,8 +15,9 @@
 				<Setter Property="HorizontalAlignment" Value="Right" />
 			</Style.Setters>
 		</Style>
-	</UserControl.Resources>
-	<StackPanel Orientation="Vertical" Grid.IsSharedSizeScope="True">
+        <axogcc:ColorProviderToImageConverter x:Key="ColorProviderToImage"/>
+    </UserControl.Resources>
+    <StackPanel Orientation="Vertical" Grid.IsSharedSizeScope="True">
 
 		<Grid>
 			<Grid.ColumnDefinitions>
@@ -28,9 +31,9 @@
 				<RowDefinition Height="4" />
 			</Grid.RowDefinitions>
 			<Label Grid.Column="0" Grid.Row="0" Content="Colorization:" />
-			<ComboBox x:Name="_cbColorProvider" Grid.Column="1" Grid.ColumnSpan="3" Grid.Row="0" SelectionChanged="EhColorProviderChanged" />
+            <ComboBox Grid.Column="1" Grid.ColumnSpan="3" Grid.Row="0" ItemsSource="{Binding AvailableClasses.Items}" SelectedItem="{Binding AvailableClasses.SelectedItem}" />
 		</Grid>
-		<Border x:Name="_detailsPanel" HorizontalAlignment="Stretch" />
+		<ContentControl Content="{Binding DetailController.ViewObject}" HorizontalAlignment="Stretch" />
 		<Grid>
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="Auto" SharedSizeGroup="LabelColumn1" />
@@ -43,7 +46,7 @@
 				<RowDefinition Height="4" />
 			</Grid.RowDefinitions>
 			<Label Grid.Column="0" Grid.Row="0" Content="Preview:" />
-			<axogc:ImageWithNoSizeRequest x:Name="_previewPanel" Grid.Column="1" Grid.ColumnSpan="3" Grid.Row="0" Stretch="Fill" />
+            <axogc:ImageWithNoSizeRequest  Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="3" Source="{Binding ProvisionalModelObject, Converter={StaticResource ColorProviderToImage}}" Stretch="Fill" />
 		</Grid>
 	</StackPanel>
 </UserControl>

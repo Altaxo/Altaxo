@@ -31,27 +31,71 @@ using Altaxo.Graph.Gdi.Plot.ColorProvider;
 
 namespace Altaxo.Gui.Graph.Gdi.Plot.ColorProvider
 {
-  public interface IVisibleLightSpectrumView
+  public interface IVisibleLightSpectrumView : IDataContextAwareView
   {
-    IColorProviderBaseView BaseView { get; }
-
-    double Gamma { get; set; }
-
-    double Brightness { get; set; }
-
-    event Action ChoiceChanged;
   }
 
   [ExpectedTypeOfView(typeof(IVisibleLightSpectrumView))]
   [UserControllerForObject(typeof(VisibleLightSpectrum), 110)]
   public class VisibleLightSpectrumController : MVCANDControllerEditImmutableDocBase<VisibleLightSpectrum, IVisibleLightSpectrumView>
   {
-    private ColorProviderBaseController _baseController;
-
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_baseController, () => _baseController = null);
     }
+
+    #region Bindings
+
+    private ColorProviderBaseController _baseController;
+
+    public ColorProviderBaseController BaseController
+    {
+      get => _baseController;
+      set
+      {
+        if (!(_baseController == value))
+        {
+          _baseController?.Dispose();
+          _baseController = value;
+          OnPropertyChanged(nameof(BaseController));
+          OnMadeDirty();
+        }
+      }
+    }
+
+    private decimal _brightness;
+
+    public decimal Brightness
+    {
+      get => _brightness;
+      set
+      {
+        if (!(_brightness == value))
+        {
+          _brightness = value;
+          OnPropertyChanged(nameof(Brightness));
+          OnMadeDirty();
+        }
+      }
+    }
+    private decimal _gamma;
+
+    public decimal Gamma
+    {
+      get => _gamma;
+      set
+      {
+        if (!(_gamma == value))
+        {
+          _gamma = value;
+          OnPropertyChanged(nameof(Gamma));
+          OnMadeDirty();
+        }
+      }
+    }
+
+
+    #endregion
 
     protected override void Initialize(bool initData)
     {
@@ -62,13 +106,8 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.ColorProvider
         _baseController = new ColorProviderBaseController() { UseDocumentCopy = UseDocument.Directly };
         _baseController.InitializeDocument(_doc);
         _baseController.MadeDirty += EhBaseControllerChanged;
-      }
-      if (_view is not null)
-      {
-        _baseController.ViewObject = _view.BaseView;
-
-        _view.Gamma = _doc.Gamma;
-        _view.Brightness = _doc.Brightness;
+        Gamma = (decimal)_doc.Gamma;
+        Brightness = (decimal)_doc.Brightness;
       }
     }
 
@@ -80,22 +119,10 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.ColorProvider
       _doc = (VisibleLightSpectrum)_baseController.ModelObject;
 
       _doc = _doc
-              .WithGamma(_view.Gamma)
-              .WithBrightness(_view.Brightness);
+              .WithGamma((double)Gamma)
+              .WithBrightness((double)Brightness);
 
       return ApplyEnd(true, disposeController);
-    }
-
-    protected override void AttachView()
-    {
-      base.AttachView();
-      _view.ChoiceChanged += OnMadeDirty;
-    }
-
-    protected override void DetachView()
-    {
-      _view.ChoiceChanged -= OnMadeDirty;
-      base.DetachView();
     }
 
     private void EhBaseControllerChanged(IMVCANDController ctrl)

@@ -1,7 +1,7 @@
 ﻿#region Copyright
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -34,56 +34,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.ColorProvider
   /// </summary>
   public partial class ColorProviderControl : UserControl, IColorProviderView
   {
-    private GdiToWpfBitmap _previewBitmap = new GdiToWpfBitmap(4, 4);
-
     public ColorProviderControl()
     {
       InitializeComponent();
     }
-
-    private void EhColorProviderChanged(object sender, SelectionChangedEventArgs e)
-    {
-      GuiHelper.SynchronizeSelectionFromGui(_cbColorProvider);
-      if (ColorProviderChanged is not null)
-        ColorProviderChanged();
-    }
-
-    #region
-
-    public void InitializeAvailableClasses(Collections.SelectableListNodeList names)
-    {
-      GuiHelper.Initialize(_cbColorProvider, names);
-    }
-
-    public void SetDetailView(object guiobject)
-    {
-      _detailsPanel.Child = guiobject as UIElement;
-    }
-
-    /// <summary>
-    /// Gets a bitmap with a certain size.
-    /// </summary>
-    /// <param name="width">Pixel width of the bitmap.</param>
-    /// <param name="height">Pixel height of the bitmap.</param>
-    /// <returns>A bitmap that can be used for drawing.</returns>
-    public System.Drawing.Bitmap GetPreviewBitmap(int width, int height)
-    {
-      if (_previewBitmap.GdiBitmap.Width != width || _previewBitmap.GdiBitmap.Height != height)
-      {
-        _previewBitmap.Resize(width, height);
-        _previewPanel.Source = _previewBitmap.WpfBitmap;
-      }
-
-      return _previewBitmap.GdiBitmap;
-    }
-
-    public void SetPreviewBitmap(System.Drawing.Bitmap bitmap)
-    {
-      _previewBitmap.EndGdiPainting();
-    }
-
-    public event Action? ColorProviderChanged;
-
-    #endregion
   }
 }
