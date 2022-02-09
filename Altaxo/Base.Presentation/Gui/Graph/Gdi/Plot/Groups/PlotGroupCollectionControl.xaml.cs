@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -22,11 +22,6 @@
 
 #endregion Copyright
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows;
 using System.Windows.Controls;
 
 namespace Altaxo.Gui.Graph.Gdi.Plot.Groups
@@ -40,41 +35,5 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Groups
     {
       InitializeComponent();
     }
-
-    private void EhGotoAdvanced(object sender, RoutedEventArgs e)
-    {
-      if (GotoAdvanced is not null)
-        GotoAdvanced();
-    }
-
-    private void EhGotoSimple(object sender, RoutedEventArgs e)
-    {
-      if (GotoSimple is not null)
-        GotoSimple();
-    }
-
-    #region IPlotGroupCollectionView
-
-    public event Action? GotoAdvanced;
-
-    public event Action? GotoSimple;
-
-    public void SetSimpleView(object viewObject)
-    {
-      _controlHost.Child = null;
-      _controlHost.Child = (UIElement)viewObject;
-      _btGotoSimple.Visibility = System.Windows.Visibility.Collapsed;
-      _btGotoAdvanced.Visibility = System.Windows.Visibility.Visible;
-    }
-
-    public void SetAdvancedView(object viewObject)
-    {
-      _controlHost.Child = null;
-      _controlHost.Child = (UIElement)viewObject;
-      _btGotoAdvanced.Visibility = System.Windows.Visibility.Collapsed;
-      _btGotoSimple.Visibility = System.Windows.Visibility.Visible;
-    }
-
-    #endregion IPlotGroupCollectionView
   }
 }

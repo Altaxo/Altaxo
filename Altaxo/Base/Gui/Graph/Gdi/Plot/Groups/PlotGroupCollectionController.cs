@@ -26,32 +26,14 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Windows.Input;
 using Altaxo.Graph.Gdi.Plot.Groups;
 
 namespace Altaxo.Gui.Graph.Gdi.Plot.Groups
 {
-  #region Interface
-
-  public interface IPlotGroupCollectionView
+  public interface IPlotGroupCollectionView : IDataContextAwareView
   {
-    /// <summary>
-    /// Sets the simple view object and makes it visible.
-    /// </summary>
-    /// <param name="viewObject">The object to visualize.</param>
-    void SetSimpleView(object viewObject);
-
-    /// <summary>
-    /// Sets the advanced view object  and makes it visible.
-    /// </summary>
-    /// <param name="viewObject">The object to visualize.</param>
-    void SetAdvancedView(object viewObject);
-
-    event Action GotoAdvanced;
-
-    event Action GotoSimple;
   }
-
-  #endregion Interface
 
   /// <summary>
   /// This is the controller for a <see cref="PlotGroupStyleCollection"/> that choose between the simple and the advanced presentation mode.
@@ -59,9 +41,6 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Groups
   [ExpectedTypeOfView(typeof(IPlotGroupCollectionView))]
   public class PlotGroupCollectionController : MVCANControllerEditOriginalDocBase<PlotGroupStyleCollection, IPlotGroupCollectionView>
   {
-    private PlotGroupCollectionControllerAdvanced _controllerAdvanced;
-    private PlotGroupCollectionControllerSimple _controllerSimple;
-
     public event Action GroupStyleChanged;
 
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
@@ -70,50 +49,108 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Groups
       yield return new ControllerAndSetNullMethod(_controllerSimple, () => _controllerSimple = null);
     }
 
+    #region Bindings
+
+    private PlotGroupCollectionControllerAdvanced _controllerAdvanced;
+
+    public PlotGroupCollectionControllerAdvanced ControllerAdvanced
+    {
+      get => _controllerAdvanced;
+      set
+      {
+        if (!(_controllerAdvanced == value))
+        {
+          _controllerAdvanced?.Dispose();
+          _controllerAdvanced = value;
+          if(_controllerAdvanced is not null)
+          {
+            _controllerAdvanced.GroupStyleChanged += new WeakActionHandler(EhGroupStyleChanged, _controllerAdvanced, nameof(_controllerAdvanced.GroupStyleChanged));
+          }
+          OnPropertyChanged(nameof(ControllerAdvanced));
+          OnPropertyChanged(nameof(IsSimpleViewActive));
+          OnPropertyChanged(nameof(CurrentView));
+        }
+      }
+    }
+
+
+    private PlotGroupCollectionControllerSimple _controllerSimple;
+
+    public PlotGroupCollectionControllerSimple ControllerSimple
+    {
+      get => _controllerSimple;
+      set
+      {
+        if (!(_controllerSimple == value))
+        {
+          _controllerSimple.Dispose();
+          _controllerSimple = value;
+          OnPropertyChanged(nameof(ControllerSimple));
+          OnPropertyChanged(nameof(IsSimpleViewActive));
+          OnPropertyChanged(nameof(CurrentView));
+        }
+      }
+    }
+
+    public object CurrentView
+    {
+      get
+      {
+        if(_controllerAdvanced is { } controllerAdvanced)
+        {
+          if (controllerAdvanced.ViewObject is null)
+            Current.Gui.FindAndAttachControlTo(controllerAdvanced);
+          return controllerAdvanced.ViewObject;
+        }
+        else if(_controllerSimple is { } controllerSimple)
+        {
+          if (controllerSimple.ViewObject is null)
+            Current.Gui.FindAndAttachControlTo(controllerSimple);
+          return controllerSimple.ViewObject;
+        }
+        else
+        {
+          return null;
+        }
+      }
+    }
+
+    public bool IsSimpleViewActive
+    {
+      get => _controllerSimple is not null;
+    }
+    public bool IsAdvancedViewActive
+    {
+      get => _controllerAdvanced is not null;
+    }
+
+    public ICommand CmdGotoSimple { get; }
+    public ICommand CmdGotoAdvanced { get; }
+    #endregion
+
+    public PlotGroupCollectionController()
+    {
+      CmdGotoSimple = new RelayCommand(EhView_GotoSimple);
+      CmdGotoAdvanced = new RelayCommand(EhView_GotoAdvanced);
+    }
+
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
 
       if (initData)
       {
-        if (_controllerSimple is not null)
-        {
-          _controllerSimple.Dispose();
-          _controllerSimple = null;
-        }
-        if (_controllerAdvanced is not null)
-        {
-          _controllerAdvanced.Dispose();
-          _controllerAdvanced = null;
-        }
-
         if (PlotGroupCollectionControllerSimple.IsSimplePlotGrouping(_doc, out var isSerialStepping, out var isColor, out var isLineStyle, out var isSymbolStyle))
         {
-          _controllerSimple = new PlotGroupCollectionControllerSimple() { UseDocumentCopy = UseDocument.Directly };
-          _controllerSimple.InitializeDocument(_doc);
+          var controllerSimple = new PlotGroupCollectionControllerSimple() { UseDocumentCopy = UseDocument.Directly };
+          controllerSimple.InitializeDocument(_doc);
+          ControllerSimple = controllerSimple;
         }
         else
         {
           var controllerAdvanced = new PlotGroupCollectionControllerAdvanced() { UseDocumentCopy = UseDocument.Directly };
           controllerAdvanced.InitializeDocument(_doc);
-          controllerAdvanced.GroupStyleChanged += new WeakActionHandler(EhGroupStyleChanged, controllerAdvanced, nameof(controllerAdvanced.GroupStyleChanged));
-          _controllerAdvanced = controllerAdvanced;
-        }
-      }
-
-      if (_view is not null)
-      {
-        if (_controllerSimple is not null)
-        {
-          if (_controllerSimple.ViewObject is null)
-            Current.Gui.FindAndAttachControlTo(_controllerSimple);
-          _view.SetSimpleView(_controllerSimple.ViewObject);
-        }
-        else if (_controllerAdvanced is not null)
-        {
-          if (_controllerAdvanced.ViewObject is null)
-            Current.Gui.FindAndAttachControlTo(_controllerAdvanced);
-          _view.SetAdvancedView(_controllerAdvanced.ViewObject);
+          ControllerAdvanced = controllerAdvanced;
         }
       }
     }
@@ -146,22 +183,6 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Groups
       return ApplyEnd(result, disposeController);
     }
 
-    protected override void AttachView()
-    {
-      base.AttachView();
-
-      _view.GotoAdvanced += new Action(EhView_GotoAdvanced);
-      _view.GotoSimple += new Action(EhView_GotoSimple);
-    }
-
-    protected override void DetachView()
-    {
-      _view.GotoAdvanced -= new Action(EhView_GotoAdvanced);
-      _view.GotoSimple -= new Action(EhView_GotoSimple);
-
-      base.DetachView();
-    }
-
     private void EhView_GotoSimple()
     {
       _controllerAdvanced.Apply(false);
@@ -169,13 +190,13 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Groups
 
       if (PlotGroupCollectionControllerSimple.IsSimplePlotGrouping(_doc))
       {
-        _controllerAdvanced = null;
-        _controllerSimple = new PlotGroupCollectionControllerSimple
+        ControllerAdvanced = null;
+        var controllerSimple = new PlotGroupCollectionControllerSimple
         {
           UseDocumentCopy = UseDocument.Directly
         };
-        _controllerSimple.InitializeDocument(_doc);
-        Initialize(false);
+        controllerSimple.InitializeDocument(_doc);
+        ControllerSimple = controllerSimple;
       }
       else
       {
@@ -187,7 +208,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Groups
     {
       _controllerSimple.Apply(false);
       _doc = (PlotGroupStyleCollection)_controllerSimple.ModelObject;
-      _controllerSimple = null;
+      ControllerSimple = null;
 
       var controllerAdvanced = new PlotGroupCollectionControllerAdvanced
       {
@@ -195,8 +216,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Groups
       };
       controllerAdvanced.InitializeDocument(_doc);
       controllerAdvanced.GroupStyleChanged += new WeakActionHandler(EhGroupStyleChanged, controllerAdvanced, nameof(controllerAdvanced.GroupStyleChanged));
-      _controllerAdvanced = controllerAdvanced;
-      Initialize(false);
+      ControllerAdvanced = controllerAdvanced;
     }
   }
 }

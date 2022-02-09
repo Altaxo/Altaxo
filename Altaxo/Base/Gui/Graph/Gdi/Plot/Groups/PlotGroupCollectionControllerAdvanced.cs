@@ -181,9 +181,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Groups
     public ICommand CmdUnindentGroupStyle { get; }
     public ICommand CmdMoveUpGroupStyle { get; }
     public ICommand CmdMoveDownGroupStyle { get; }
-
     public ICommand CmdCurrentGroupStyleDoubleClick { get; }
-    public object EhCurrentGroupStyle_DoubleClick { get; private set; }
 
     #endregion
 
@@ -213,6 +211,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Groups
        CoordinateTransformingGroupStyles = null;
       _availableNormalStyles = null;
       _currentNormalStyles = null;
+      GroupStyleChanged = null;
 
       base.Dispose(isDisposing);
     }
