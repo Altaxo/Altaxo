@@ -3,8 +3,12 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
- 						 xmlns:axocoll="clr-namespace:Altaxo.Collections;assembly=AltaxoBase"
-						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
+ 			 xmlns:axocoll="clr-namespace:Altaxo.Collections;assembly=AltaxoBase"
+			 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
+			 xmlns:axogcc="clr-namespace:Altaxo.Gui.Common.Converters"
+			 xmlns:axogb="clr-namespace:Altaxo.Gui.Behaviors"
+             xmlns:groups="clr-namespace:Altaxo.Gui.Graph.Gdi.Plot.Groups;assembly=AltaxoBase" 
+             d:DataContext="{d:DesignInstance Type=groups:PlotGroupCollectionControllerAdvanced}"
              mc:Ignorable="d">
     <UserControl.Resources>
         <Style TargetType="Button">
@@ -13,7 +17,7 @@
                 <Setter Property="HorizontalAlignment" Value="Stretch" />
             </Style.Setters>
         </Style>
-        <axogc:VisibilityHiddenForFalseConverter x:Key="HiddenForFalseConverter" />
+        <axogcc:FalseToVisibilityHiddenConverter x:Key="HiddenForFalseConverter" />
     </UserControl.Resources>
     <Grid>
         <Grid.Resources>
@@ -42,12 +46,12 @@
             <RowDefinition Height="8" />
         </Grid.RowDefinitions>
         <Label Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" Content="Coordinate transforming style:" HorizontalAlignment="Right" />
-        <ComboBox x:Name="_cbCoordTransfoStyle" Grid.Column="2" Grid.Row="0" SelectionChanged="_cbCoordTransfoStyle_SelectionChangeCommitted" />
-        <Button x:Name="_btEditCSTransfoStyle" Grid.Column="3" Grid.Row="0" HorizontalAlignment="Left" Content="..." Click="_btEditCSTransfoStyle_Click" ToolTip="Edit coordinate transforming style" />
+        <ComboBox Grid.Column="2" Grid.Row="0" ItemsSource="{Binding CoordinateTransformingGroupStyles.Items}" SelectedItem="{Binding CoordinateTransformingGroupStyles.SelectedItem, Mode=TwoWay}" />
+        <Button Grid.Column="3" Grid.Row="0" Command="{Binding CmdEditCoordinateTransformingGroupStyle}" HorizontalAlignment="Left" Content="..." ToolTip="Edit coordinate transforming style" />
 
         <Rectangle Grid.Column="0" Grid.ColumnSpan="4" Grid.Row="1" Height="4" Fill="LightBlue" VerticalAlignment="Bottom" />
         <Label Grid.Column="0" Grid.Row="2" Content="Available group styles:" HorizontalAlignment="Left" VerticalAlignment="Bottom" />
-        <ListBox x:Name="_lbGroupStylesAvailable" Grid.Column="0" Grid.Row="3" Grid.RowSpan="7">
+        <ListBox Grid.Column="0" Grid.Row="3" Grid.RowSpan="7" ItemsSource="{Binding AvailableNormalStyles}">
             <ItemsControl.ItemContainerStyle>
                 <!-- This Style binds a ListBoxItem to a SelectableListNode -->
                 <Style TargetType="{x:Type ListBoxItem}">
@@ -61,8 +65,8 @@
             </ItemsControl.ItemContainerStyle>
         </ListBox>
 
-        <Label Grid.Column="2" Grid.Row="2" Content="Currently used group styles:" VerticalAlignment="Bottom" HorizontalAlignment="Left" />
-        <ListBox x:Name="_lbGroupStyles" Grid.Column="2" Grid.Row="3" Grid.RowSpan="7" MinWidth="80" MouseDoubleClick="EhCurrentUsedGroupStyles_MouseDoubleClick">
+        <Label Grid.Row="2" Grid.Column="2" Content="Currently used group styles:" VerticalAlignment="Bottom" HorizontalAlignment="Left" />
+        <ListBox Grid.Row="3" Grid.Column="2" Grid.RowSpan="7" ItemsSource="{Binding CurrentNormalStyles}" MinWidth="80" axogb:DoubleClickTriggersCommand.Command="{Binding CmdCurrentGroupStyleDoubleClick}" >
             <ItemsControl.ItemContainerStyle>
                 <!-- This Style binds a ListBoxItem to a CheckableSelectableListNode -->
                 <Style TargetType="{x:Type ListBoxItem}">
@@ -79,43 +83,43 @@
             </ItemsControl.Resources>
         </ListBox>
 
-        <Button Grid.Column="1" Grid.Row="3" Click="_btAddNormalGroupStyle_Click" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" ToolTip="Add selected items">
+        <Button Grid.Row="3" Grid.Column="1" Command="{Binding CmdAddNormalGroupStyle}" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" ToolTip="Add selected items">
             <Viewbox Style="{StaticResource ArrowViewBoxStyle}">
                 <Path Style="{StaticResource LeftArrowPathStyle}" />
             </Viewbox>
         </Button>
-        <Button Grid.Column="1" Grid.Row="5"  Click="_btRemoveNormalGroupStyle_Click" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" ToolTip="Remove selected items">
+        <Button Grid.Row="5" Grid.Column="1" Command="{Binding CmdRemoveNormalGroupStyle}" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" ToolTip="Remove selected items">
             <Viewbox Style="{StaticResource ArrowViewBoxStyle}">
                 <Path Style="{StaticResource RightArrowPathStyle}" />
             </Viewbox>
         </Button>
 
-        <Button Grid.Column="3" Grid.Row="3" HorizontalAlignment="Left"  Click="_btIndent_Click" ToolTip="Indent selected items">
+        <Button Grid.Column="3" Grid.Row="3" HorizontalAlignment="Left"  Command="{Binding CmdIndentGroupStyle}" ToolTip="Indent selected items">
             <Viewbox Style="{StaticResource ArrowViewBoxStyle}">
                 <Path Style="{StaticResource LeftIndentPathStyle}" />
             </Viewbox>
         </Button>
 
-        <Button Grid.Column="3" Grid.Row="5" HorizontalAlignment="Left"  Click="_btUnindent_Click" ToolTip="Unindent selected items">
+        <Button Grid.Column="3" Grid.Row="5" HorizontalAlignment="Left"  Command="{Binding CmdUnindentGroupStyle}" ToolTip="Unindent selected items">
             <Viewbox Style="{StaticResource ArrowViewBoxStyle}">
                 <Path Style="{StaticResource RightIndentPathStyle}" />
             </Viewbox>
         </Button>
 
-        <Button Grid.Column="3" Grid.Row="7" HorizontalAlignment="Left" Click="_btUp_Click" ToolTip="Move selected items up">
+        <Button Grid.Column="3" Grid.Row="7" HorizontalAlignment="Left" Command="{Binding CmdMoveUpGroupStyle}" ToolTip="Move selected items up">
             <Viewbox Style="{StaticResource ArrowViewBoxStyle}">
                 <Path Style="{StaticResource UpArrowPathStyle}" />
             </Viewbox>
         </Button>
-        <Button Grid.Column="3" Grid.Row="9" HorizontalAlignment="Left" Click="_btDown_Click" ToolTip="Move selected items down">
+        <Button Grid.Column="3" Grid.Row="9" HorizontalAlignment="Left" Command="{Binding CmdMoveDownGroupStyle}" ToolTip="Move selected items down">
             <Viewbox Style="{StaticResource ArrowViewBoxStyle}">
                 <Path Style="{StaticResource DownArrowPathStyle}" />
             </Viewbox>
         </Button>
 
         <Label Grid.Column="0" Grid.Row="11" HorizontalAlignment="Left" Margin="0" VerticalAlignment="Bottom" Content="Update:" />
-        <ComboBox x:Name="_cbGroupStrictness" Grid.Column="0" Grid.Row="12" />
-        <CheckBox x:Name="_chkUpdateFromParentGroups" Grid.Column="2" Grid.Row="11" VerticalAlignment="Bottom" Content="Inherit from parent groups" />
-        <CheckBox x:Name="_chkDistributeToSubGroups" Grid.Column="2" Grid.Row="12"  VerticalAlignment="Center" Content="Distribute to child groups" />
+        <ComboBox Grid.Column="0" Grid.Row="12" ItemsSource="{Binding PlotGroupStrictness.Items}" SelectedItem="{Binding PlotGroupStrictness.SelectedItem, Mode=TwoWay}" />
+        <CheckBox Grid.Column="2" Grid.Row="11" IsChecked="{Binding InheritFromParent, Mode=TwoWay}" VerticalAlignment="Bottom" Content="Inherit from parent groups" />
+        <CheckBox Grid.Column="2" Grid.Row="12" IsChecked="{Binding DistributeToChilds, Mode=TwoWay}"  VerticalAlignment="Center" Content="Distribute to child groups" />
     </Grid>
 </UserControl>

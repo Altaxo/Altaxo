@@ -27,47 +27,20 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Windows.Input;
 using Altaxo.Collections;
 using Altaxo.Graph.Graph3D.Plot;
 using Altaxo.Graph.Graph3D.Plot.Groups;
 using Altaxo.Graph.Plot.Groups;
+using Altaxo.Gui.Common;
 using Altaxo.Main.Services;
 
 namespace Altaxo.Gui.Graph.Graph3D.Plot.Groups
 {
   #region Interfaces
 
-  public interface IPlotGroupCollectionViewAdvanced
+  public interface IPlotGroupCollectionViewAdvanced : IDataContextAwareView
   {
-    void InitializeAvailableCoordinateTransformingGroupStyles(SelectableListNodeList list);
-
-    void InitializeAvailableNormalGroupStyles(SelectableListNodeList list);
-
-    void InitializeUpdateMode(SelectableListNodeList list, bool inheritFromParent, bool distributeToChilds);
-
-    void InitializeCurrentNormalGroupStyles(CheckableSelectableListNodeList list);
-
-    void SynchronizeCurrentNormalGroupStyles();
-
-    void QueryUpdateMode(out bool inheritFromParent, out bool distributeToChilds);
-
-    event Action CoordinateTransformingGroupStyleChanged;
-
-    event Action RequestCoordinateTransformingGroupStyleEdit;
-
-    event Action RequestAddNormalGroupStyle;
-
-    event Action RequestRemoveNormalGroupStyle;
-
-    event Action RequestIndentGroupStyle;
-
-    event Action RequestUnindentGroupStyle;
-
-    event Action RequestMoveUpGroupStyle;
-
-    event Action RequestMoveDownGroupStyle;
-
-    event Action RequestGroupStyleDoubleClick;
   }
 
   #endregion Interfaces
@@ -94,13 +67,6 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Groups
     #endregion Inner classes
 
     private IGPlotItem _parent; // usually the parent is the PlotItemCollection
-
-    private SelectableListNodeList _availableTransfoStyles;
-    private SelectableListNodeList _availableNormalStyles;
-    private CheckableSelectableListNodeList _currentNormalStyles;
-    private SelectableListNodeList _availableUpdateModes;
-    private ICoordinateTransformingGroupStyle _currentTransfoStyle;
-
     public event Action GroupStyleChanged;
 
     /// <summary>
@@ -113,14 +79,144 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Groups
       yield break;
     }
 
+
+    #region Bindings
+
+    private ItemsController<ICoordinateTransformingGroupStyle?> _coordinateTransformingGroupStyles;
+
+    public ItemsController<ICoordinateTransformingGroupStyle?> CoordinateTransformingGroupStyles
+    {
+      get => _coordinateTransformingGroupStyles;
+      set
+      {
+        if (!(_coordinateTransformingGroupStyles == value))
+        {
+          _coordinateTransformingGroupStyles?.Dispose();
+          _coordinateTransformingGroupStyles = value;
+          OnPropertyChanged(nameof(CoordinateTransformingGroupStyles));
+        }
+      }
+    }
+
+    private ItemsController<PlotGroupStrictness> _plotGroupStrictness;
+
+    public ItemsController<PlotGroupStrictness> PlotGroupStrictness
+    {
+      get => _plotGroupStrictness;
+      set
+      {
+        if (!(_plotGroupStrictness == value))
+        {
+          _plotGroupStrictness = value;
+          OnPropertyChanged(nameof(PlotGroupStrictness));
+        }
+      }
+    }
+
+    private bool _inheritFromParent;
+
+    public bool InheritFromParent
+    {
+      get => _inheritFromParent;
+      set
+      {
+        if (!(_inheritFromParent == value))
+        {
+          _inheritFromParent = value;
+          OnPropertyChanged(nameof(InheritFromParent));
+        }
+      }
+    }
+    private bool _distributeToChilds;
+
+    public bool DistributeToChilds
+    {
+      get => _distributeToChilds;
+      set
+      {
+        if (!(_distributeToChilds == value))
+        {
+          _distributeToChilds = value;
+          OnPropertyChanged(nameof(DistributeToChilds));
+        }
+      }
+    }
+
+    private SelectableListNodeList _availableNormalStyles;
+
+    public SelectableListNodeList AvailableNormalStyles
+    {
+      get => _availableNormalStyles;
+      set
+      {
+        if (!(_availableNormalStyles == value))
+        {
+          _availableNormalStyles = value;
+          OnPropertyChanged(nameof(AvailableNormalStyles));
+        }
+      }
+    }
+
+
+    private CheckableSelectableListNodeList _currentNormalStyles;
+
+    public CheckableSelectableListNodeList CurrentNormalStyles
+    {
+      get => _currentNormalStyles;
+      set
+      {
+        if (!(_currentNormalStyles == value))
+        {
+          _currentNormalStyles = value;
+          OnPropertyChanged(nameof(CurrentNormalStyles));
+        }
+      }
+    }
+
+
+
+
+    public ICommand CmdEditCoordinateTransformingGroupStyle { get; }
+    public ICommand CmdAddNormalGroupStyle { get; }
+    public ICommand CmdRemoveNormalGroupStyle { get; }
+    public ICommand CmdIndentGroupStyle { get; }
+    public ICommand CmdUnindentGroupStyle { get; }
+    public ICommand CmdMoveUpGroupStyle { get; }
+    public ICommand CmdMoveDownGroupStyle { get; }
+
+    public ICommand CmdCurrentGroupStyleDoubleClick { get; }
+    public object EhCurrentGroupStyle_DoubleClick { get; private set; }
+
+    #endregion
+
+    public PlotGroupCollectionControllerAdvanced()
+    {
+      CmdEditCoordinateTransformingGroupStyle = new RelayCommand(EhView_CoordinateTransformingGroupStyleEdit);
+
+      CmdAddNormalGroupStyle = new RelayCommand(EhView_AddNormalGroupStyle);
+
+      CmdRemoveNormalGroupStyle = new RelayCommand(EhView_RemoveNormalGroupStyle);
+
+      CmdIndentGroupStyle = new RelayCommand(EhView_IndentGroupStyle);
+
+      CmdUnindentGroupStyle = new RelayCommand(EhView_UnindentGroupStyle);
+
+      CmdMoveUpGroupStyle = new RelayCommand(EhView_MoveUpGroupStyle);
+
+      CmdMoveDownGroupStyle = new RelayCommand(EhView_MoveDownGroupStyle);
+
+      CmdCurrentGroupStyleDoubleClick = new RelayCommand(EhView_EditGroupStyle);
+
+    }
+
+
+
     public override void Dispose(bool isDisposing)
     {
       _parent = null;
-      _availableTransfoStyles = null;
+      CoordinateTransformingGroupStyles = null;
       _availableNormalStyles = null;
       _currentNormalStyles = null;
-      _availableUpdateModes = null;
-      _currentTransfoStyle = null;
 
       base.Dispose(isDisposing);
     }
@@ -139,50 +235,54 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Groups
 
       if (initData)
       {
-        // available Update modes
-        _availableUpdateModes = new SelectableListNodeList();
-        foreach (object obj in Enum.GetValues(typeof(PlotGroupStrictness)))
-          _availableUpdateModes.Add(new SelectableListNode(obj.ToString(), obj, ((PlotGroupStrictness)obj) == PlotGroupStrictness.Normal));
-
-        Type[] types;
-        // Transfo-Styles
-        _currentTransfoStyle = _doc.CoordinateTransformingStyle is null ? null : (ICoordinateTransformingGroupStyle)_doc.CoordinateTransformingStyle.Clone();
-        _availableTransfoStyles = new SelectableListNodeList
         {
-          new SelectableListNode("None", null, _currentTransfoStyle is null)
+          // available Update modes
+          PlotGroupStrictness = new ItemsController<PlotGroupStrictness>(new SelectableListNodeList(Altaxo.Graph.Plot.Groups.PlotGroupStrictness.Normal));
+        }
+
+        { 
+          // Transfo-Styles
+          var currentTransfoStyle = _doc.CoordinateTransformingStyle is null ? null : (ICoordinateTransformingGroupStyle)_doc.CoordinateTransformingStyle.Clone();
+          var availableTransfoStyles = new SelectableListNodeList
+        {
+          new SelectableListNode("None", null, currentTransfoStyle is null)
         };
-        types = ReflectionService.GetNonAbstractSubclassesOf(typeof(ICoordinateTransformingGroupStyle));
-        foreach (Type t in types)
-        {
-          Type currentStyleType = _currentTransfoStyle is null ? null : _currentTransfoStyle.GetType();
-          ICoordinateTransformingGroupStyle style;
-          if (t == currentStyleType)
-            style = _currentTransfoStyle;
-          else
-            style = (ICoordinateTransformingGroupStyle)Activator.CreateInstance(t);
-
-          _availableTransfoStyles.Add(new SelectableListNode(Current.Gui.GetUserFriendlyClassName(t), style, t == currentStyleType));
-        }
-
-        // Normal Styles
-        _availableNormalStyles = new SelectableListNodeList();
-        if (_parent is not null) // if possible, collect only those styles that are applicable
-        {
-          var avstyles = new PlotGroupStyleCollection();
-          _parent.CollectStyles(avstyles);
-          foreach (IPlotGroupStyle style in avstyles)
-          {
-            if (!_doc.ContainsType(style.GetType()))
-              _availableNormalStyles.Add(new SelectableListNode(Current.Gui.GetUserFriendlyClassName(style.GetType()), style.GetType(), false));
-          }
-        }
-        else // or else, find all available styles
-        {
-          types = ReflectionService.GetNonAbstractSubclassesOf(typeof(IPlotGroupStyle));
+          var types = ReflectionService.GetNonAbstractSubclassesOf(typeof(ICoordinateTransformingGroupStyle));
           foreach (Type t in types)
           {
-            if (!_doc.ContainsType(t))
-              _availableNormalStyles.Add(new SelectableListNode(Current.Gui.GetUserFriendlyClassName(t), t, false));
+            Type currentStyleType = currentTransfoStyle is null ? null : currentTransfoStyle.GetType();
+            ICoordinateTransformingGroupStyle style;
+            if (t == currentStyleType)
+              style = currentTransfoStyle;
+            else
+              style = (ICoordinateTransformingGroupStyle)Activator.CreateInstance(t);
+
+            availableTransfoStyles.Add(new SelectableListNode(Current.Gui.GetUserFriendlyClassName(t), style, t == currentStyleType));
+          }
+          CoordinateTransformingGroupStyles = new ItemsController<ICoordinateTransformingGroupStyle>(availableTransfoStyles);
+        }
+
+        {
+          // Normal Styles
+          _availableNormalStyles = new SelectableListNodeList();
+          if (_parent is not null) // if possible, collect only those styles that are applicable
+          {
+            var avstyles = new PlotGroupStyleCollection();
+            _parent.CollectStyles(avstyles);
+            foreach (IPlotGroupStyle style in avstyles)
+            {
+              if (!_doc.ContainsType(style.GetType()))
+                _availableNormalStyles.Add(new SelectableListNode(Current.Gui.GetUserFriendlyClassName(style.GetType()), style.GetType(), false));
+            }
+          }
+          else // or else, find all available styles
+          {
+            var types = ReflectionService.GetNonAbstractSubclassesOf(typeof(IPlotGroupStyle));
+            foreach (Type t in types)
+            {
+              if (!_doc.ContainsType(t))
+                _availableNormalStyles.Add(new SelectableListNode(Current.Gui.GetUserFriendlyClassName(t), t, false));
+            }
           }
         }
 
@@ -199,95 +299,28 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Groups
           _currentNormalStyles.Add(node);
         }
         UpdateCurrentNormalIndentation();
-      }
 
-      if (_view is not null)
-      {
-        _view.InitializeAvailableCoordinateTransformingGroupStyles(_availableTransfoStyles);
-        _view.InitializeAvailableNormalGroupStyles(_availableNormalStyles);
-        _view.InitializeCurrentNormalGroupStyles(_currentNormalStyles);
-        _view.InitializeUpdateMode(_availableUpdateModes, _doc.InheritFromParentGroups, _doc.DistributeToChildGroups);
+        InheritFromParent = _doc.InheritFromParentGroups;
+        DistributeToChilds = _doc.DistributeToChildGroups;
       }
     }
 
     public override bool Apply(bool disposeController)
     {
-      foreach (SelectableListNode node in _availableTransfoStyles)
-      {
-        if (node.IsSelected)
-        {
-          _currentTransfoStyle = (ICoordinateTransformingGroupStyle)node.Tag;
-          _doc.CoordinateTransformingStyle = _currentTransfoStyle;
-          break;
-        }
-      }
+      
+      _doc.CoordinateTransformingStyle = CoordinateTransformingGroupStyles.SelectedValue;
 
-      _view.SynchronizeCurrentNormalGroupStyles(); // synchronize the checked state of the items
       foreach (CheckableSelectableListNode node in _currentNormalStyles)
       {
         IPlotGroupStyle style = _doc.GetPlotGroupStyle((Type)node.Tag);
         style.IsStepEnabled = node.IsChecked;
       }
 
-      _view.QueryUpdateMode(out var inherit, out var distribute);
-      _doc.InheritFromParentGroups = inherit;
-      _doc.DistributeToChildGroups = distribute;
-      foreach (SelectableListNode node in _availableUpdateModes)
-      {
-        if (node.IsSelected)
-        {
-          _doc.PlotGroupStrictness = (PlotGroupStrictness)node.Tag;
-          break;
-        }
-      }
+      _doc.InheritFromParentGroups = InheritFromParent;
+      _doc.DistributeToChildGroups = DistributeToChilds;
+      _doc.PlotGroupStrictness = PlotGroupStrictness.SelectedValue;
 
       return ApplyEnd(true, disposeController);
-    }
-
-    protected override void AttachView()
-    {
-      base.AttachView();
-
-      _view.CoordinateTransformingGroupStyleChanged += EhView_CoordinateTransformingGroupStyleChanged;
-
-      _view.RequestCoordinateTransformingGroupStyleEdit += EhView_CoordinateTransformingGroupStyleEdit;
-
-      _view.RequestAddNormalGroupStyle += EhView_AddNormalGroupStyle;
-
-      _view.RequestRemoveNormalGroupStyle += EhView_RemoveNormalGroupStyle;
-
-      _view.RequestIndentGroupStyle += EhView_IndentGroupStyle;
-
-      _view.RequestUnindentGroupStyle += EhView_UnindentGroupStyle;
-
-      _view.RequestMoveUpGroupStyle += EhView_MoveUpGroupStyle;
-
-      _view.RequestMoveDownGroupStyle += EhView_MoveDownGroupStyle;
-
-      _view.RequestGroupStyleDoubleClick += EhView_EditGroupStyle;
-    }
-
-    protected override void DetachView()
-    {
-      _view.CoordinateTransformingGroupStyleChanged -= EhView_CoordinateTransformingGroupStyleChanged;
-
-      _view.RequestCoordinateTransformingGroupStyleEdit -= EhView_CoordinateTransformingGroupStyleEdit;
-
-      _view.RequestAddNormalGroupStyle -= EhView_AddNormalGroupStyle;
-
-      _view.RequestRemoveNormalGroupStyle -= EhView_RemoveNormalGroupStyle;
-
-      _view.RequestIndentGroupStyle -= EhView_IndentGroupStyle;
-
-      _view.RequestUnindentGroupStyle -= EhView_UnindentGroupStyle;
-
-      _view.RequestMoveUpGroupStyle -= EhView_MoveUpGroupStyle;
-
-      _view.RequestMoveDownGroupStyle -= EhView_MoveDownGroupStyle;
-
-      _view.RequestGroupStyleDoubleClick -= EhView_EditGroupStyle;
-
-      base.DetachView();
     }
 
     /// <summary>
@@ -367,32 +400,12 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Groups
 
     #region IPlotGroupCollectionViewEventSink Members
 
-    public void EhView_CoordinateTransformingGroupStyleChanged()
-    {
-      foreach (SelectableListNode node in _availableTransfoStyles)
-      {
-        if (node.IsSelected)
-        {
-          _currentTransfoStyle = (ICoordinateTransformingGroupStyle)node.Tag;
-          break;
-        }
-      }
-    }
-
     public void EhView_CoordinateTransformingGroupStyleEdit()
     {
-      // look wheter there is a appropriate edit dialog available for the group style
-      foreach (SelectableListNode node in _availableTransfoStyles)
+      if (CoordinateTransformingGroupStyles.SelectedValue is { } currentTransfoStyle)
       {
-        if (node.IsSelected)
-        {
-          _currentTransfoStyle = (ICoordinateTransformingGroupStyle)node.Tag;
-          break;
-        }
+        Current.Gui.ShowDialog(new object[] { currentTransfoStyle }, "Edit transformation style");
       }
-
-      if (_currentTransfoStyle is not null)
-        Current.Gui.ShowDialog(new object[] { _currentTransfoStyle }, "Edit transformation style");
     }
 
     public void EhView_AddNormalGroupStyle()
@@ -424,9 +437,6 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Groups
         {
           _currentNormalStyles.Add(node);
         }
-
-        _view.InitializeAvailableNormalGroupStyles(_availableNormalStyles);
-        _view.InitializeCurrentNormalGroupStyles(_currentNormalStyles);
       }
     }
 
@@ -451,8 +461,6 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Groups
       }
 
       UpdateCurrentNormalIndentation();
-      _view.InitializeAvailableNormalGroupStyles(_availableNormalStyles);
-      _view.InitializeCurrentNormalGroupStyles(_currentNormalStyles);
     }
 
     public void EhView_IndentGroupStyle()
@@ -475,7 +483,6 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Groups
       // this requires the whole currentNormalStyle list to be updated
       UpdateCurrentNormalOrder();
       UpdateCurrentNormalIndentation();
-      _view.InitializeCurrentNormalGroupStyles(_currentNormalStyles);
     }
 
     public void EhView_UnindentGroupStyle()
@@ -498,7 +505,6 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Groups
       // this requires the whole currentNormalStyle list to be updated
       UpdateCurrentNormalOrder();
       UpdateCurrentNormalIndentation();
-      _view.InitializeCurrentNormalGroupStyles(_currentNormalStyles);
     }
 
     public void EhView_MoveUpGroupStyle()
@@ -527,7 +533,6 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Groups
       }
       // this requires the whole currentNormalStyle list to be updated
       UpdateCurrentNormalOrder();
-      _view.InitializeCurrentNormalGroupStyles(_currentNormalStyles);
     }
 
     public void EhView_MoveDownGroupStyle()
@@ -556,7 +561,6 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Groups
       }
       // this requires the whole currentNormalStyle list to be updated
       UpdateCurrentNormalOrder();
-      _view.InitializeCurrentNormalGroupStyles(_currentNormalStyles);
     }
 
     public void EhView_EditGroupStyle()

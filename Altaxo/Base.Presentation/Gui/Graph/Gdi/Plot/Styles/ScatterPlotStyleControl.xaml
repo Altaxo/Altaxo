@@ -6,6 +6,7 @@
              xmlns:axog="clr-namespace:Altaxo.Gui;assembly=AltaxoBase"
 						 xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing"
 						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
+						 xmlns:axogcc="clr-namespace:Altaxo.Gui.Common.Converters"
 						 xmlns:local="clr-namespace:Altaxo.Gui.Graph.Gdi.Plot.Styles"
 						 xmlns:agggpss="clr-namespace:Altaxo.Gui.Graph.Graph2D.Plot.Styles.ScatterSymbols"
              mc:Ignorable="d">
@@ -13,7 +14,7 @@
 	<UserControl.Resources>
 		<local:ScatterSymbolToImageSourceConverter x:Key="SymbolToImageSourceConverter" />
 		<local:ScatterSymbolInsetTypeToImageSourceConverter x:Key="InsetToImageSourceConverter" />
-		<axogc:VisibilityCollapsedForFalseConverter x:Key="CollapsedIfFalse" />
+		<axogcc:FalseToVisibilityCollapsedConverter x:Key="CollapsedIfFalse" />
 		<Style TargetType="Label">
 			<Style.Setters>
 				<Setter Property="Margin" Value="6,0,0,0" />

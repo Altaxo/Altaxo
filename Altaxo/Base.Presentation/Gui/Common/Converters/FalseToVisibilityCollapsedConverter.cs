@@ -33,6 +33,7 @@ namespace Altaxo.Gui.Common.Converters
   /// Converter that converts a boolean to a visibility. True is translated to <see cref="Visibility.Visible"/>, False is translated to <see cref="Visibility.Collapsed"/>.
   /// </summary>
   /// <seealso cref="System.Windows.Data.IValueConverter" />
+  [ValueConversion(typeof(bool), typeof(Visibility))]
   public class FalseToVisibilityCollapsedConverter : IValueConverter
   {
     public static FalseToVisibilityCollapsedConverter Instance { get; private set; } = new FalseToVisibilityCollapsedConverter();

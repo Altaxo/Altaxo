@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2021 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -23,39 +23,31 @@
 #endregion Copyright
 
 using System;
-using System.Globalization;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
 using System.Windows;
 using System.Windows.Data;
 
 namespace Altaxo.Gui.Common.Converters
 {
   /// <summary>
-  /// Converter that converts a boolean to a visibility. True is translated to <see cref="Visibility.Visible"/>, False is translated to <see cref="Visibility.Hidden"/>.
+  /// Converts true to Visibility.Visible and false to Visibility.Hidden.
   /// </summary>
-  /// <seealso cref="System.Windows.Data.IValueConverter" />
-  [ValueConversion(typeof(bool), typeof(Visibility))]
-  public class FalseToVisibilityHiddenConverter : IValueConverter
+  [ValueConversion(typeof(bool?), typeof(Visibility))]
+  public class FalseOrNullToVisibleHiddenConverter : IValueConverter
   {
-    public static FalseToVisibilityHiddenConverter Instance { get; private set; } = new FalseToVisibilityHiddenConverter();
-
-    /// <inheritdoc/>
-    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
     {
-      if (value is bool isVisible)
-      {
-        return isVisible ? Visibility.Visible : Visibility.Hidden;
-      }
-      return Binding.DoNothing;
+      var val = (bool?)value;
+      return true == val ? Visibility.Visible : Visibility.Hidden;
     }
 
-    /// <inheritdoc/>
-    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
     {
-      if (value is Visibility visibility)
-      {
-        return visibility == Visibility.Visible;
-      }
-      return Binding.DoNothing;
+      var val = (Visibility)value;
+      return val == Visibility.Visible ? true : false;
     }
   }
 }
