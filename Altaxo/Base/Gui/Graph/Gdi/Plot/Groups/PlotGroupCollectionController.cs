@@ -25,7 +25,6 @@
 #nullable disable
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Windows.Input;
 using Altaxo.Graph.Gdi.Plot.Groups;
 
@@ -62,7 +61,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Groups
         {
           _controllerAdvanced?.Dispose();
           _controllerAdvanced = value;
-          if(_controllerAdvanced is not null)
+          if (_controllerAdvanced is not null)
           {
             _controllerAdvanced.GroupStyleChanged += new WeakActionHandler(EhGroupStyleChanged, _controllerAdvanced, nameof(_controllerAdvanced.GroupStyleChanged));
           }
@@ -83,7 +82,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Groups
       {
         if (!(_controllerSimple == value))
         {
-          _controllerSimple.Dispose();
+          _controllerSimple?.Dispose();
           _controllerSimple = value;
           OnPropertyChanged(nameof(ControllerSimple));
           OnPropertyChanged(nameof(IsSimpleViewActive));
@@ -96,13 +95,13 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Groups
     {
       get
       {
-        if(_controllerAdvanced is { } controllerAdvanced)
+        if (_controllerAdvanced is { } controllerAdvanced)
         {
           if (controllerAdvanced.ViewObject is null)
             Current.Gui.FindAndAttachControlTo(controllerAdvanced);
           return controllerAdvanced.ViewObject;
         }
-        else if(_controllerSimple is { } controllerSimple)
+        else if (_controllerSimple is { } controllerSimple)
         {
           if (controllerSimple.ViewObject is null)
             Current.Gui.FindAndAttachControlTo(controllerSimple);

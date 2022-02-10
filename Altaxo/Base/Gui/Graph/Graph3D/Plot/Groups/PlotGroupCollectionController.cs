@@ -25,7 +25,6 @@
 #nullable disable
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Windows.Input;
 using Altaxo.Graph.Graph3D.Plot.Groups;
 
@@ -87,7 +86,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Groups
       {
         if (!(_controllerSimple == value))
         {
-          _controllerSimple.Dispose();
+          _controllerSimple?.Dispose();
           _controllerSimple = value;
           OnPropertyChanged(nameof(ControllerSimple));
           OnPropertyChanged(nameof(IsSimpleViewActive));

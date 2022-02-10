@@ -171,7 +171,7 @@ namespace Altaxo.Gui.Drawing
 
     static StyleListComboBoxBase()
     {
-      SelectedItemProperty = DependencyProperty.Register(nameof(SelectedItem), typeof(TItem), typeof(StyleListComboBoxBase<TManager, TList, TItem>), new FrameworkPropertyMetadata(null, EhSelectedItemChanged, EhSelectedItemCoerce));
+      SelectedItemProperty = DependencyProperty.Register(nameof(SelectedItem), typeof(TItem), typeof(StyleListComboBoxBase<TManager, TList, TItem>), new FrameworkPropertyMetadata(null, EhSelectedItemChanged, EhSelectedItemCoerce) { BindsTwoWayByDefault=true});
       IsTreeDropDownOpenProperty = DependencyProperty.Register(nameof(IsTreeDropDownOpen), typeof(bool), typeof(StyleListComboBoxBase<TManager, TList, TItem>), new FrameworkPropertyMetadata(false, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, new PropertyChangedCallback(EhIsTreeDropDownOpenChanged)));
     }
 

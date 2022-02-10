@@ -3,10 +3,12 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-						 xmlns:axog="clr-namespace:Altaxo.Gui;assembly=AltaxoBase"
-						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
-						 xmlns:axogdd="clr-namespace:Altaxo.Gui.Drawing.DashPatternManagement"
-						 xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing"
+			 xmlns:axog="clr-namespace:Altaxo.Gui;assembly=AltaxoBase"
+			 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
+			 xmlns:axogdd="clr-namespace:Altaxo.Gui.Drawing.DashPatternManagement"
+			 xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing"
+             xmlns:styles="clr-namespace:Altaxo.Gui.Graph.Gdi.Plot.Styles;assembly=AltaxoBase"
+             d:DataContext="{d:DesignInstance Type=styles:BarGraphPlotStyleController}"
              mc:Ignorable="d">
 	<UserControl.Resources>
 		<Style TargetType="Label">
@@ -46,31 +48,31 @@
 			<RowDefinition Height="4" />
 		</Grid.RowDefinitions>
 		<StackPanel Orientation="Vertical" Grid.Column="0" Grid.Row="0" VerticalAlignment="Center">
-			<CheckBox x:Name="_guiUseFill" Content="Use fill" Checked="EhUseFillChanged" Unchecked="EhUseFillChanged" />
-			<CheckBox x:Name="_guiIndependentFillColor" Content="Independent fill color:" Checked="EhIndependentFillColorChanged" Unchecked="EhIndependentFillColorChanged" />
+			<CheckBox Content="Use fill" IsChecked="{Binding UseFill, Mode=TwoWay}" />
+			<CheckBox Content="Independent fill color:" IsChecked="{Binding IndependentFillColor, Mode=TwoWay}" IsEnabled="{Binding UseFill}" />
 		</StackPanel>
-		<axogcd:BrushComboBox x:Name="_guiFillBrush" Grid.Column="1" Grid.Row="0" Margin="0,0,0,4" SelectedBrushChanged="EhFillBrushChanged" />
+		<axogcd:BrushComboBox Grid.Column="1" Grid.Row="0" SelectedBrush="{Binding FillBrush}" ShowPlotColorsOnly="{Binding ShowPlotColorsOnlyForFillBrush}" IsEnabled="{Binding UseFill}" Margin="0,0,0,4" />
 		<StackPanel Orientation="Vertical" Grid.Column="0" Grid.Row="2">
-			<CheckBox x:Name="_guiUseFrame" Content="Use frame" Checked="EhUseFrameChanged" Unchecked="EhUseFrameChanged" />
-			<CheckBox x:Name="_guiIndependentFrameColor" Content="Independent frame color:" Checked="EhIndependentFrameColorChanged" Unchecked="EhIndependentFrameColorChanged" />
+			<CheckBox Content="Use frame" IsChecked="{Binding UseFrame, Mode=TwoWay}" />
+			<CheckBox Content="Independent frame color:" IsChecked="{Binding IndependentFrameColor, Mode=TwoWay}" IsEnabled="{Binding UseFrame}" />
 		</StackPanel>
-		<axogcd:BrushComboBox x:Name="_guiFramePen" Grid.Column="1" Grid.Row="2" />
+        <axogcd:BrushComboBox Grid.Column="1" Grid.Row="2" SelectedBrush="{Binding FramePen.Brush}" ShowPlotColorsOnly="{Binding FramePen.ShowPlotColorsOnly}" IsEnabled="{Binding UseFrame}" />
 		<Label Content="Frame thickness:" Grid.Column="0" Grid.Row="4" />
-		<axogcd:LineThicknessComboBox x:Name="_guiFramePenWidth" Grid.Column="1" Grid.Row="4" />
+        <axogcd:LineThicknessComboBox Grid.Column="1" Grid.Row="4" SelectedQuantity="{Binding FramePen.LineThickness}"  IsEnabled="{Binding UseFrame}" />
 
 		<Label Content="Frame line style:" Grid.Column="0" Grid.Row="6" />
-		<axogdd:DashPatternComboBox x:Name="_guiFrameDashStyle" Grid.Column="1" Grid.Row="6" />
+        <axogdd:DashPatternComboBox Grid.Column="1" Grid.Row="6" SelectedItem="{Binding FramePen.DashPattern}"  IsEnabled="{Binding UseFrame}" />
 
 		<Label Grid.Column="0" Grid.Row="8" Content="Inner gap:" />
-		<axogc:QuantityWithUnitTextBox x:Name="_edInnerGap" Grid.Column="1" Grid.Row="8" UnitEnvironment="{x:Static axog:RelationEnvironment.Instance}" />
+		<axogc:QuantityWithUnitTextBox Grid.Column="1" Grid.Row="8" SelectedQuantity="{Binding InnerGap}" UnitEnvironment="{Binding GapEnvironment}" />
 
 		<Label Grid.Column="0" Grid.Row="10" Content="Outer gap:" />
-		<axogc:QuantityWithUnitTextBox x:Name="_edOuterGap" Grid.Column="1" Grid.Row="10" UnitEnvironment="{x:Static axog:RelationEnvironment.Instance}" />
+		<axogc:QuantityWithUnitTextBox Grid.Column="1" Grid.Row="10" SelectedQuantity="{Binding OuterGap}" UnitEnvironment="{Binding GapEnvironment}" />
 
 		<Label Grid.Column="0" Grid.Row="12" Content="Base value:" />
-		<axogc:QuantityWithUnitTextBox x:Name="_edBaseValue" Grid.Column="1" Grid.Row="12"  UnitEnvironment="{x:Static axog:RelationEnvironment.Instance}" />
+		<axogc:QuantityWithUnitTextBox Grid.Column="1" Grid.Row="12" SelectedQuantity="{Binding BaseValue}" UnitEnvironment="{Binding BaseValueEnvironment}" />
 
-		<CheckBox x:Name="_chkUsePreviousItem" Grid.Column="0" Grid.Row="14" Content="Start at prev. item with y-gap:" Checked="EhUsePreviousItem_CheckedChanged" Unchecked="EhUsePreviousItem_CheckedChanged" />
-		<axogc:QuantityWithUnitTextBox x:Name="_edYGap" Grid.Column="1" Grid.Row="14"  UnitEnvironment="{x:Static axog:RelationEnvironment.Instance}" />
+		<CheckBox Grid.Column="0" Grid.Row="14" Content="Start at prev. item with y-gap:" IsChecked="{Binding StartAtPreviousItem, Mode=TwoWay}"  />
+		<axogc:QuantityWithUnitTextBox Grid.Column="1" Grid.Row="14" SelectedQuantity="{Binding YGap}" UnitEnvironment="{Binding GapEnvironment}" IsEnabled="{Binding StartAtPreviousItem}" />
 	</Grid>
 </UserControl>

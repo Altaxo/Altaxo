@@ -26,7 +26,6 @@
 
 #nullable disable
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -40,7 +39,6 @@ using Altaxo.Graph.Gdi.Plot;
 using Altaxo.Graph.Gdi.Plot.Styles;
 using Altaxo.Graph.Plot.Data;
 using Altaxo.Gui.Common;
-using Altaxo.Gui.Graph.Plot.Data;
 using Altaxo.Main;
 using Altaxo.Serialization.Clipboard;
 
@@ -48,7 +46,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
 {
   public interface IXYPlotLayerContentsView : IDataContextAwareView
   {
-   
+
   }
 
 
@@ -166,9 +164,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
       }
     }
 
-    private bool  _showRange;
+    private bool _showRange;
 
-    public bool  ShowRange
+    public bool ShowRange
     {
       get => _showRange;
       set
@@ -184,8 +182,8 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
 
     public void EhShowRangeChanged(bool value)
     {
-        _plotItemsRootNode.Nodes.Clear();
-        PlotItemsToTree(_plotItemsRootNode, _doc); // rebuild the tree with the changed names
+      _plotItemsRootNode.Nodes.Clear();
+      PlotItemsToTree(_plotItemsRootNode, _doc); // rebuild the tree with the changed names
     }
 
     private ItemsController<LayerDataClipping> _dataClipping;
@@ -276,7 +274,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
 
       return ApplyEnd(true, disposeController); // all ok
     }
-    
+
 
     /// <summary>
     /// Gets the suspend token for the controller document. Here we try to suspend the parent XYPlotLayer instead of the PlotItemCollection, because we want to modify the
@@ -300,7 +298,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
       _availableItemsRootNode.ClearSelectionRecursively();
     }
 
-   
+
 
     private string GetNameOfItem(IGPlotItem item)
     {
@@ -916,7 +914,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
 
     public void PlotItem_Open()
     {
-        PlotItem_DoubleClick();
+      PlotItem_DoubleClick();
     }
 
     public bool PlotItems_CanDelete()
@@ -1002,13 +1000,8 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
 #endif
     }
 
-#endregion ILineScatterLayerContentsController Members
-#region Drag/drop support
-#region Available items
+    #endregion ILineScatterLayerContentsController Members
 
-    #endregion Available items
-
-    #endregion Drag/drop support
 
     #region Inner classes
 

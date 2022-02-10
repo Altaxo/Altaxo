@@ -130,7 +130,7 @@ namespace Altaxo.Gui.Common.Drawing
 
     public static readonly DependencyProperty SelectedQuantityProperty =
         DependencyProperty.Register("SelectedQuantity", typeof(DimensionfulQuantity), typeof(DimensionfulQuantityImageComboBox),
-        new FrameworkPropertyMetadata(EhSelectedQuantityChanged));
+        new FrameworkPropertyMetadata(EhSelectedQuantityChanged) { BindsTwoWayByDefault=true});
 
     private static void EhSelectedQuantityChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
     {

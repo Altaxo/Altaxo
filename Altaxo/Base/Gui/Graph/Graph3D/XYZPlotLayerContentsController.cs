@@ -41,113 +41,25 @@ using Altaxo.Graph.Graph3D.Plot;
 using Altaxo.Graph.Graph3D.Plot.Groups;
 using Altaxo.Graph.Graph3D.Plot.Styles;
 using Altaxo.Graph.Plot.Data;
-using Altaxo.Gui.Graph.Plot.Data;
+using Altaxo.Gui.Common;
 using Altaxo.Main;
 using Altaxo.Serialization.Clipboard;
 
 namespace Altaxo.Gui.Graph.Graph3D
 {
-  #region Interfaces
 
-  public interface IXYZPlotLayerContentsViewEventSink
-  {
-    void EhView_DataAvailableBeforeExpand(NGTreeNode node);
 
-    void EhView_ContentsDoubleClick(NGTreeNode selNode);
-
-    void AvailableItems_PutDataToPlotItems();
-
-    void PlotItems_MoveUpSelected();
-
-    void PlotItems_MoveDownSelected();
-
-    void PlotItems_GroupClick();
-
-    void PlotItems_UngroupClick();
-
-    void PlotItems_EditRangeClick();
-
-    void PlotItem_Open();
-
-    void PlotItems_Copy();
-
-    void PlotItems_Cut();
-
-    bool PlotItems_CanPaste();
-
-    void PlotItems_Paste();
-
-    bool PlotItems_CanDelete();
-
-    void PlotItems_Delete();
-
-    void PlotItems_ShowRangeChanged(bool showRange);
-
-    bool PlotItems_CanStartDrag(IEnumerable items);
-
-    void PlotItems_StartDrag(IEnumerable items, out object data, out bool canCopy, out bool canMove);
-
-    void PlotItems_DragEnded(bool isCopy, bool isMove);
-
-    void PlotItems_DragCancelled();
-
-    void PlotItems_DropCanAcceptData(object data, NGTreeNode targetItem, Gui.Common.DragDropRelativeInsertPosition insertPosition, bool isCtrlKeyPressed, bool isShiftKeyPressed, out bool canCopy, out bool canMove, out bool itemIsSwallowingData);
-
-    void PlotItems_Drop(object data, NGTreeNode targetItem, Gui.Common.DragDropRelativeInsertPosition insertPosition, bool isCtrlKeyPressed, bool isShiftKeyPressed, out bool isCopy, out bool isMove);
-
-    bool AvailableItems_CanStartDrag(IEnumerable items);
-
-    void AvailableItems_StartDrag(IEnumerable items, out object data, out bool canCopy, out bool canMove);
-
-    void AvailableItems_DragEnded(bool isCopy, bool isMove);
-
-    void AvailableItems_DragCancelled();
-  }
-
-  public interface IXYZPlotLayerContentsView
-  {
-    /// <summary>
-    /// Get/sets the controller of this view.
-    /// </summary>
-    IXYZPlotLayerContentsViewEventSink Controller { get; set; }
-
-    IEnumerable<object> PlotItemsSelected { get; }
-
-    IEnumerable<object> AvailableItemsSelected { get; }
-
-    /// <summary>
-    /// Initializes the treeview of available data with content.
-    /// </summary>
-    /// <param name="nodes"></param>
-    void InitializeAvailableItems(NGTreeNodeCollection nodes);
-
-    /// <summary>
-    /// Initializes the content list box by setting the items.
-    /// </summary>
-    /// <param name="items">Collection of items.</param>
-    void InitializePlotItems(NGTreeNodeCollection items);
-
-    /// <summary>
-    /// Initializes the data clipping choices. The view should show a appropriate control only after this function has been called.
-    /// </summary>
-    /// <param name="list">The list.</param>
-    void InitializeDataClipping(SelectableListNodeList list);
-
-    bool ShowRange { set; }
-  }
-
-  #endregion Interfaces
 
   /// <summary>
   /// Controls the content of a <see cref="PlotItemCollection" />
   /// </summary>
   [UserControllerForObject(typeof(PlotItemCollection))]
-  [ExpectedTypeOfView(typeof(IXYZPlotLayerContentsView))]
-  public class XYZPlotLayerContentsController
+  [ExpectedTypeOfView(typeof(Gdi.Plot.IXYPlotLayerContentsView))]
+  public partial class XYZPlotLayerContentsController
     :
-    MVCANControllerEditOriginalDocBase<PlotItemCollection, IXYZPlotLayerContentsView>,
-    IXYZPlotLayerContentsViewEventSink, IMVCANController
+    MVCANControllerEditOriginalDocBase<PlotItemCollection, Gdi.Plot.IXYPlotLayerContentsView>
   {
+    /*
     private NGTreeNode _plotItemsRootNode;
     private NGTreeNodeCollection _plotItemsTree;
     private NGTreeNode _availableItemsRootNode;
@@ -156,16 +68,158 @@ namespace Altaxo.Gui.Graph.Graph3D
     public ICommand CommandChangeColumnsForSelectedItems { get; protected set; }
 
     private bool _showRange = false;
+    */
+
+    public XYZPlotLayerContentsController()
+    {
+      CommandChangeTableForSelectedItems = new RelayCommand(EhChangeTableForSelectedItems, EhCanChangeTableForSelectedItems);
+      CommandChangeColumnsForSelectedItems = new RelayCommand(EhChangeColumnsForSelectedItems, EhCanChangeColumnsForSelectedItems);
+      CmdPutDataToPlotItems = new RelayCommand(AvailableItems_PutDataToPlotItems);
+      CmdPLotItemsMoveUpSelected = new RelayCommand(PlotItems_MoveUpSelected);
+      CmdPLotItemsMoveDownSelected = new RelayCommand(PlotItems_MoveDownSelected);
+      CmdPlotItemOpen = new RelayCommand(PlotItem_Open);
+      CmdPlotItemsGroup = new RelayCommand(PlotItems_GroupClick);
+      CmdPlotItemsUngroup = new RelayCommand(PlotItems_UngroupClick);
+      CmdPlotItemsEditRange = new RelayCommand(PlotItems_EditRangeClick);
+
+      CmdPlotItemsCopy = new RelayCommand(PlotItems_Copy, PlotItems_CanCopy);
+      CmdPlotItemsCut = new RelayCommand(PlotItems_Cut, PlotItems_CanCut);
+      CmdPlotItemsPaste = new RelayCommand(PlotItems_Paste, PlotItems_CanPaste);
+      CmdPlotItemsDelete = new RelayCommand(PlotItems_Delete, PlotItems_CanDelete);
+      CmdPlotItemDoubleClick = new RelayCommand(PlotItem_DoubleClick);
+      PlotItemsDragDropHandler = new PlotItems_DragDropHandler(this);
+      AvailableItemsDragHandler = new AvailableItems_DragHandler(this);
+    }
 
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
     }
 
+    #region Bindings
+
+    public ICommand CommandChangeTableForSelectedItems { get; }
+    public ICommand CommandChangeColumnsForSelectedItems { get; }
+
+    public ICommand CmdPutDataToPlotItems { get; }
+    public ICommand CmdPLotItemsMoveUpSelected { get; }
+    public ICommand CmdPLotItemsMoveDownSelected { get; }
+    public ICommand CmdPlotItemOpen { get; }
+    public ICommand CmdPlotItemsGroup { get; }
+    public ICommand CmdPlotItemsUngroup { get; }
+    public ICommand CmdPlotItemsEditRange { get; }
+    public ICommand CmdPlotItemsCopy { get; }
+    public ICommand CmdPlotItemsCut { get; }
+    public ICommand CmdPlotItemsPaste { get; }
+    public ICommand CmdPlotItemsDelete { get; }
+
+    public ICommand CmdPlotItemDoubleClick { get; }
+
+    public IMVVMDragDropHandler PlotItemsDragDropHandler { get; }
+
+    public IMVVMDragHandler AvailableItemsDragHandler { get; }
+
+
+    private NGTreeNode _availableItemsRootNode;
+
+    /// <summary>
+    /// Initializes the treeview of available data with content.
+    /// </summary>
+    public NGTreeNode AvailableContent
+    {
+      get => _availableItemsRootNode;
+      set
+      {
+        if (!(_availableItemsRootNode == value))
+        {
+          _availableItemsRootNode = value;
+          OnPropertyChanged(nameof(AvailableContent));
+        }
+      }
+    }
+
+    IEnumerable<NGTreeNode> AvailableItemsSelected
+    {
+      get
+      {
+        return TreeNodeExtensions.TakeFromHereToFirstLeaves(_availableItemsRootNode, false).Where(n => n.IsSelected);
+      }
+    }
+
+
+    private NGTreeNode _plotItemsRootNode;
+
+    /// <summary>
+    /// Initializes the content list box by setting the items.
+    /// </summary>
+    public NGTreeNode PlotItems
+    {
+      get => _plotItemsRootNode;
+      set
+      {
+        if (!(_plotItemsRootNode == value))
+        {
+          _plotItemsRootNode = value;
+          OnPropertyChanged(nameof(PlotItems));
+        }
+      }
+    }
+
+
+    IEnumerable<NGTreeNode> PlotItemsSelected
+    {
+      get
+      {
+        return TreeNodeExtensions.TakeFromHereToFirstLeaves(_plotItemsRootNode, false).Where(n => n.IsSelected);
+      }
+    }
+
+    private bool _showRange;
+
+    public bool ShowRange
+    {
+      get => _showRange;
+      set
+      {
+        if (!(_showRange == value))
+        {
+          _showRange = value;
+          OnPropertyChanged(nameof(ShowRange));
+          EhShowRangeChanged(value);
+        }
+      }
+    }
+
+    public void EhShowRangeChanged(bool value)
+    {
+      _plotItemsRootNode.Nodes.Clear();
+      PlotItemsToTree(_plotItemsRootNode, _doc); // rebuild the tree with the changed names
+    }
+
+    private ItemsController<LayerDataClipping> _dataClipping;
+
+    /// <summary>
+    /// The data clipping choices. 
+    /// </summary>
+    public ItemsController<LayerDataClipping> DataClipping
+    {
+      get => _dataClipping;
+      set
+      {
+        if (!(_dataClipping == value))
+        {
+          _dataClipping = value;
+          OnPropertyChanged(nameof(DataClipping));
+        }
+      }
+    }
+
+    #endregion
+
+
     public override void Dispose(bool isDisposing)
     {
       _plotItemsRootNode = null;
-      _plotItemsTree = null;
       _availableItemsRootNode = null;
 
       base.Dispose(isDisposing);
@@ -178,11 +232,8 @@ namespace Altaxo.Gui.Graph.Graph3D
       // now fill the tree view  with all plot associations currently inside
       if (initData)
       {
-        CommandChangeTableForSelectedItems = new RelayCommand(EhChangeTableForSelectedItems, EhCanChangeTableForSelectedItems);
-        CommandChangeColumnsForSelectedItems = new RelayCommand(EhChangeColumnsForSelectedItems, EhCanChangeColumnsForSelectedItems);
 
         _plotItemsRootNode = new NGTreeNode() { IsExpanded = true };
-        _plotItemsTree = _plotItemsRootNode.Nodes;
         _availableItemsRootNode = new NGTreeNode();
 
         PlotItemsToTree(_plotItemsRootNode, _doc);
@@ -199,27 +250,15 @@ namespace Altaxo.Gui.Graph.Graph3D
         var layer = Altaxo.Main.AbsoluteDocumentPath.GetRootNodeImplementing<XYZPlotLayer>(_doc);
         if (layer is null)
         {
-          _dataClippingChoices = null;
+          DataClipping = null;
         }
         else
         {
-          _dataClippingChoices = new SelectableListNodeList();
+          var dataClippingChoices = new SelectableListNodeList();
           foreach (var value in new[] { Altaxo.Graph.LayerDataClipping.None, Altaxo.Graph.LayerDataClipping.StrictToCS })
-            _dataClippingChoices.Add(new SelectableListNode(value.ToString(), value, value.ToString() == layer.ClipDataToFrame.ToString()));
+            dataClippingChoices.Add(new SelectableListNode(value.ToString(), value, value.ToString() == layer.ClipDataToFrame.ToString()));
+          DataClipping = new ItemsController<LayerDataClipping>(dataClippingChoices);
         }
-      }
-
-      // Available Items
-      if (_view is not null)
-      {
-        _view.InitializePlotItems(_plotItemsTree);
-
-        _view.InitializeAvailableItems(_availableItemsRootNode.Nodes);
-
-        _view.ShowRange = _showRange;
-
-        if (_dataClippingChoices is not null)
-          _view.InitializeDataClipping(_dataClippingChoices);
       }
     }
 
@@ -232,30 +271,19 @@ namespace Altaxo.Gui.Graph.Graph3D
 
       TreeNodeExtensions.FixAndTestParentChildRelations<IGPlotItem>(_doc, (x, y) => x.ParentObject = (Altaxo.Main.IDocumentNode)y);
 
-      if (_dataClippingChoices is not null)
+      if (DataClipping is not null)
       {
-        var selNode = _dataClippingChoices.FirstSelectedNode;
         var layer = Altaxo.Main.AbsoluteDocumentPath.GetRootNodeImplementing<XYZPlotLayer>(_doc);
-        if (layer is not null && selNode is not null)
-          layer.ClipDataToFrame = (Altaxo.Graph.LayerDataClipping)selNode.Tag;
+        if (layer is not null)
+        {
+          layer.ClipDataToFrame = DataClipping.SelectedValue;
+        }
       }
 
       if (!disposeController)
         Initialize(true); // Reload the applied contents to make sure it is synchronized
 
       return ApplyEnd(true, disposeController); // all ok
-    }
-
-    protected override void AttachView()
-    {
-      base.AttachView();
-      _view.Controller = this;
-    }
-
-    protected override void DetachView()
-    {
-      _view.Controller = null;
-      base.DetachView();
     }
 
     /// <summary>
@@ -275,32 +303,11 @@ namespace Altaxo.Gui.Graph.Graph3D
         return base.GetSuspendTokenForControllerDocument();
     }
 
-    private NGTreeNode[] PlotItemsSelected
-    {
-      get
-      {
-        if (_view is not null)
-          return _view.PlotItemsSelected.OfType<NGTreeNode>().ToArray();
-        else
-          return new NGTreeNode[0];
-      }
-    }
+
 
     private void AvailableItems_ClearSelection()
     {
       _availableItemsRootNode.ClearSelectionRecursively();
-    }
-
-    public void PlotItems_ShowRangeChanged(bool showRange)
-    {
-      var oldValue = _showRange;
-      _showRange = showRange;
-
-      if (oldValue != _showRange)
-      {
-        _plotItemsTree.Clear();
-        PlotItemsToTree(_plotItemsRootNode, _doc); // rebuild the tree with the changed names
-      }
     }
 
     private string GetNameOfItem(IGPlotItem item)
@@ -514,7 +521,7 @@ namespace Altaxo.Gui.Graph.Graph3D
     {
       var columnsAlreadyProcessed = new HashSet<Altaxo.Data.DataColumn>();
 
-      var selNodes = _view.AvailableItemsSelected.OfType<NGTreeNode>();
+      var selNodes = AvailableItemsSelected;
       var validNodes = NGTreeNode.NodesWithoutSelectedChilds(selNodes);
 
       // first, put the selected node into the list, even if it is not checked
@@ -584,14 +591,14 @@ namespace Altaxo.Gui.Graph.Graph3D
       var node = CreatePlotItemNode(dataCol);
       if (node is not null)
       {
-        _plotItemsTree.Add(node);
+        _plotItemsRootNode.Nodes.Add(node);
         _doc.Add((IGPlotItem)node.Tag);
       }
     }
 
     public void PlotItems_MoveUpSelected()
     {
-      var selNodes = PlotItemsSelected;
+      var selNodes = PlotItemsSelected.ToArray();
       if (selNodes.Length != 0)
       {
         // move the selected items upwards in the list
@@ -601,7 +608,7 @@ namespace Altaxo.Gui.Graph.Graph3D
 
     public void PlotItems_MoveDownSelected()
     {
-      var selNodes = PlotItemsSelected;
+      var selNodes = PlotItemsSelected.ToArray();
       if (selNodes.Length != 0)
       {
         // move the selected items downwards in the list
@@ -630,7 +637,7 @@ namespace Altaxo.Gui.Graph.Graph3D
     /// </summary>
     public void PlotItems_GroupClick()
     {
-      var selNodes = PlotItemsSelected;
+      var selNodes = PlotItemsSelected.ToArray();
 
       // retrieve the selected items
       if (selNodes.Length < 2)
@@ -714,7 +721,7 @@ namespace Altaxo.Gui.Graph.Graph3D
 
     public void PlotItems_UngroupClick()
     {
-      var selNodes = PlotItemsSelected;
+      var selNodes = PlotItemsSelected.ToArray();
 
       // retrieve the selected items
       if (selNodes.Length < 1)
@@ -765,8 +772,11 @@ namespace Altaxo.Gui.Graph.Graph3D
 #endif
     }
 
-    public void EhView_ContentsDoubleClick(NGTreeNode selNode)
+    public void PlotItem_DoubleClick()
     {
+      if (!PlotItemsSelected.TryGetSingleElement(out var selNode))
+        return;
+
       var pi = selNode.Tag as IGPlotItem;
       if (pi is not null)
       {
@@ -791,7 +801,7 @@ namespace Altaxo.Gui.Graph.Graph3D
 
     public void PlotItems_EditRangeClick()
     {
-      var selNodes = PlotItemsSelected;
+      var selNodes = PlotItemsSelected.ToArray();
 
       if (selNodes.Length == 0)
         return;
@@ -884,10 +894,7 @@ namespace Altaxo.Gui.Graph.Graph3D
 
     public void PlotItem_Open()
     {
-      var selNodes = PlotItemsSelected;
-
-      if (selNodes.Length == 1)
-        EhView_ContentsDoubleClick(selNodes[0]);
+      PlotItem_DoubleClick();
     }
 
     public bool PlotItems_CanDelete()
@@ -910,16 +917,23 @@ namespace Altaxo.Gui.Graph.Graph3D
         throw new InvalidProgramException("Trees of plot items and model nodes are not structural equivalent");
 #endif
     }
-
+    public bool PlotItems_CanCopy()
+    {
+      return PlotItemsSelected.Any();
+    }
     public void PlotItems_Copy()
     {
-      var selNodes = NGTreeNode.FilterIndependentNodes(PlotItemsSelected);
+      var selNodes = NGTreeNode.FilterIndependentNodes(PlotItemsSelected.ToArray());
 
       PlotItemCollection coll = PutSelectedPlotItemsToTemporaryDocumentForClipboard(selNodes);
 
       ClipboardSerialization.PutObjectToClipboard("Altaxo.Graph.Gdi.Plot.PlotItemCollection.AsXml", coll);
     }
 
+    public bool PlotItems_CanCut()
+    {
+      return PlotItemsSelected.Any();
+    }
     public void PlotItems_Cut()
     {
       var selNodes = PlotItemsSelected;
@@ -956,7 +970,7 @@ namespace Altaxo.Gui.Graph.Graph3D
           _doc.Add(clonedItem); // cloning neccessary because coll will be disposed afterwards, which would destroy all items
           var newNode = new NGTreeNode();
           PlotItemsToTree(newNode, clonedItem);
-          _plotItemsTree.Add(newNode);
+          _plotItemsRootNode.Nodes.Add(newNode);
         }
       }
 
