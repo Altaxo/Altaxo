@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -22,15 +22,7 @@
 
 #endregion Copyright
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows;
 using System.Windows.Controls;
-using Altaxo.Gui.Graph.Gdi.Plot.ColorProvider;
-using Altaxo.Gui.Graph.Plot.Data;
-using Altaxo.Gui.Graph.Scales;
 
 namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 {
@@ -43,40 +35,5 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
     {
       InitializeComponent();
     }
-
-    public void Init_DataColumn(string boxText, string toolTip, int status)
-    {
-      _guiDataColumn.Text = boxText;
-      _guiDataColumn.ToolTip = toolTip;
-      _guiDataColumn.Background = DefaultSeverityColumnColors.GetSeverityColor(status);
-    }
-
-    public void Init_DataColumnTransformation(string boxText, string toolTip)
-    {
-      if (boxText is null)
-      {
-        _guiDataColumnTransformation.Visibility = Visibility.Collapsed;
-      }
-      else
-      {
-        _guiDataColumnTransformation.Text = boxText;
-        _guiDataColumnTransformation.ToolTip = toolTip;
-        _guiDataColumnTransformation.Visibility = Visibility.Visible;
-      }
-    }
-
-    #region IColumnDrivenColorPlotStyleView
-
-    public IDensityScaleView ScaleView
-    {
-      get { return _ctrlScale; }
-    }
-
-    public IColorProviderView ColorProviderView
-    {
-      get { return _colorProviderControl; }
-    }
-
-    #endregion IColumnDrivenColorPlotStyleView
   }
 }

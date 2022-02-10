@@ -47,7 +47,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
-      yield return new ControllerAndSetNullMethod(_framePen, () => _framePen = null);
+      yield return new ControllerAndSetNullMethod(_framePen, () => FramePen = null);
     }
 
     #region Bindings

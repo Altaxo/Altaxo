@@ -38,34 +38,15 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
   using Graph.Plot.Data;
   using Scales;
 
-  public interface IColumnDrivenColorPlotStyleView
+  public interface IColumnDrivenColorPlotStyleView : IDataContextAwareView
   {
-    IDensityScaleView ScaleView { get; }
-
-    IColorProviderView ColorProviderView { get; }
-
-    /// <summary>
-    /// Initializes the name of the label column.
-    /// </summary>
-    /// <param name="columnAsText">Label column's name.</param>
-    /// <param name="toolTip"></param>
-    /// <param name="status"></param>
-    void Init_DataColumn(string columnAsText, string toolTip, int status);
-
-    /// <summary>
-    /// Initializes the transformation text.
-    /// </summary>
-    /// <param name="text">Text for the transformation</param>
-    /// <param name="toolTip"></param>
-    void Init_DataColumnTransformation(string text, string toolTip);
   }
 
   [UserControllerForObject(typeof(ColumnDrivenColorPlotStyle))]
   [ExpectedTypeOfView(typeof(IColumnDrivenColorPlotStyleView))]
   public class ColumnDrivenColorPlotStyleController : MVCANControllerEditOriginalDocBase<ColumnDrivenColorPlotStyle, IColumnDrivenColorPlotStyleView>, IColumnDataExternallyControlled
   {
-    private DensityScaleController _scaleController;
-    private ColorProviderController _colorProviderController;
+    
 
     /// <summary>
     /// The data table that the column of the style should belong to.
@@ -94,6 +75,114 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
       yield return new ControllerAndSetNullMethod(_colorProviderController, () => _colorProviderController = null);
     }
 
+    #region Bindings
+
+    private DensityScaleController _scaleController;
+
+    public DensityScaleController ScaleController
+    {
+      get => _scaleController;
+      set
+      {
+        if (!(_scaleController == value))
+        {
+          _scaleController?.Dispose();
+          _scaleController = value;
+          OnPropertyChanged(nameof(ScaleController));
+        }
+      }
+    }
+
+    private ColorProviderController _colorProviderController;
+
+    public ColorProviderController ColorProvider
+    {
+      get => _colorProviderController;
+      set
+      {
+        if (!(_colorProviderController == value))
+        {
+          _colorProviderController?.Dispose();
+          _colorProviderController = value;
+          OnPropertyChanged(nameof(ColorProvider));
+        }
+      }
+    }
+
+    private string _DataColumnText;
+
+    public string DataColumnText
+    {
+      get => _DataColumnText;
+      set
+      {
+        if (!(_DataColumnText == value))
+        {
+          _DataColumnText = value;
+          OnPropertyChanged(nameof(DataColumnText));
+        }
+      }
+    }
+    private string _DataColumnToolTip;
+
+    public string DataColumnToolTip
+    {
+      get => _DataColumnToolTip;
+      set
+      {
+        if (!(_DataColumnToolTip == value))
+        {
+          _DataColumnToolTip = value;
+          OnPropertyChanged(nameof(DataColumnToolTip));
+        }
+      }
+    }
+    private int _DataColumnStatus;
+
+    public int DataColumnStatus
+    {
+      get => _DataColumnStatus;
+      set
+      {
+        if (!(_DataColumnStatus == value))
+        {
+          _DataColumnStatus = value;
+          OnPropertyChanged(nameof(DataColumnStatus));
+        }
+      }
+    }
+    private string _DataColumnTransformationText;
+
+    public string DataColumnTransformationText
+    {
+      get => _DataColumnTransformationText;
+      set
+      {
+        if (!(_DataColumnTransformationText == value))
+        {
+          _DataColumnTransformationText = value;
+          OnPropertyChanged(nameof(DataColumnTransformationText));
+        }
+      }
+    }
+    private string _DataColumnTransformationToolTip;
+
+    public string DataColumnTransformationToolTip
+    {
+      get => _DataColumnTransformationToolTip;
+      set
+      {
+        if (!(_DataColumnTransformationToolTip == value))
+        {
+          _DataColumnTransformationToolTip = value;
+          OnPropertyChanged(nameof(DataColumnTransformationToolTip));
+        }
+      }
+    }
+
+
+    #endregion
+
     public override void Dispose(bool isDisposing)
     {
       base.Dispose(isDisposing);
@@ -110,12 +199,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
         _colorProviderController = new ColorProviderController(newColorProvider => _doc.ColorProvider = newColorProvider) { UseDocumentCopy = UseDocument.Directly };
         _colorProviderController.InitializeDocument(_doc.ColorProvider);
-      }
-
-      if (_view is not null)
-      {
-        _scaleController.ViewObject = _view.ScaleView;
-        _colorProviderController.ViewObject = _view.ColorProviderView;
+      
         InitializeDataColumnText();
       }
     }
@@ -145,8 +229,12 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
       var info = new PlotColumnInformation(_doc.DataColumn, _doc.DataColumnName);
       info.Update(_supposedParentDataTable, _supposedGroupNumber);
 
-      _view?.Init_DataColumn(info.PlotColumnBoxText, info.PlotColumnToolTip, (int)info.PlotColumnBoxState);
-      _view?.Init_DataColumnTransformation(info.TransformationTextToShow, info.TransformationToolTip);
+      DataColumnText = info.PlotColumnBoxText;
+      DataColumnToolTip = info.PlotColumnToolTip;
+      DataColumnStatus = (int)info.PlotColumnBoxState;
+
+      DataColumnTransformationText = info.TransformationTextToShow;
+      DataColumnTransformationToolTip = info.TransformationToolTip;
     }
 
     /// <summary>
