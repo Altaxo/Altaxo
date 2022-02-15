@@ -3,7 +3,7 @@ using Xunit;
 
 namespace Altaxo.Geometry
 {
-  public class Matrix4x4Homography_Tests
+  public class MatrixHomography_Tests
   {
     static PointD3D[] _base = new PointD3D[]
     {
@@ -20,7 +20,7 @@ namespace Altaxo.Geometry
     [Fact]
     public void TestIndentity()
     {
-      var m = Matrix4x4Homography.EvaluateHomography(_base.Select(x => (x, x)).ToArray());
+      var m = MatrixHomography.EvaluateHomography(_base.Select(x => (x, x)).ToArray());
 
       AssertEx.Equal(1.0, m.M11, 1E-9);
       AssertEx.Equal(1.0, m.M22, 1E-9);
@@ -48,7 +48,7 @@ namespace Altaxo.Geometry
     [Fact]
     public void TestScaling()
     {
-      var m = Matrix4x4Homography.EvaluateHomography(_base.Select(x => (x, new PointD3D(x.X * 3, x.Y * 5, x.Z * 7))).ToArray());
+      var m = MatrixHomography.EvaluateHomography(_base.Select(x => (x, new PointD3D(x.X * 3, x.Y * 5, x.Z * 7))).ToArray());
 
       AssertEx.Equal(3.0, m.M11, 1E-9);
       AssertEx.Equal(5.0, m.M22, 1E-9);
@@ -87,7 +87,7 @@ namespace Altaxo.Geometry
 
         var pairs = _base.Select(x => (x, n.Transform(x))).ToArray();
 
-        var m = Matrix4x4Homography.EvaluateHomography(pairs);
+        var m = MatrixHomography.EvaluateHomography(pairs);
 
         AssertEx.Equal(n.M11, m.M11, 1E-9);
         AssertEx.Equal(n.M12, m.M12, 1E-9);
@@ -137,7 +137,7 @@ namespace Altaxo.Geometry
 
         var pairs = _base.Select(x => (s.Transform(x), n.Transform(s.Transform(x)))).ToArray();
 
-        var m = Matrix4x4Homography.EvaluateHomography(pairs);
+        var m = MatrixHomography.EvaluateHomography(pairs);
 
         AssertEx.Equal(n.M11, m.M11, 1E-9);
         AssertEx.Equal(n.M12, m.M12, 1E-9);
