@@ -10,7 +10,7 @@
     xmlns:axogddl="clr-namespace:Altaxo.Gui.Drawing.D3D.LineCaps"
     xmlns:axoggc="clr-namespace:Altaxo.Gui.Drawing.D3D"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:styles="clr-namespace:Altaxo.Gui.Graph.Gdi.Plot.Styles;assembly=AltaxoBase" d:DataContext="{d:DesignInstance Type=styles:DropLinePlotStyleController}"
     mc:Ignorable="d">
 
     <UserControl.Resources>
@@ -76,18 +76,18 @@
         </Grid.RowDefinitions>
 
         <CheckBox
-            x:Name="_guiIndependentSkipFreq"
+           IsChecked="{Binding IndependentSkipFrequency, Mode=TwoWay}"
             Grid.Row="0"
             Grid.Column="0"
             Content="Independent skip frequency:" />
         <axogc:Int32UpDown
-            x:Name="_guiSkipFrequency"
+            Value="{Binding SkipFrequency}"
             Grid.Row="0"
             Grid.Column="2"
             Minimum="1" />
 
         <CheckBox
-            x:Name="_guiIgnoreMissingDataPoints"
+            IsChecked="{Binding IgnoreMissingDataPoints, Mode=TwoWay}"
             Grid.Row="2"
             Grid.Column="0"
             Grid.ColumnSpan="4"
@@ -95,7 +95,7 @@
             ToolTip="If true, missing data points are treated as if not present." />
 
         <CheckBox
-            x:Name="_guiIndependentOnShiftingGroupStyles"
+            IsChecked="{Binding IndependentOnShiftingGroupStyles, Mode=TwoWay}"
             Grid.Row="4"
             Grid.Column="0"
             Grid.ColumnSpan="4"
@@ -107,7 +107,7 @@
             Grid.ColumnSpan="3"
             Header="Drop targets:">
             <axogc:MultiChoiceCheckboxControl
-                x:Name="_guiDropLines"
+                DataContext="{Binding DropLineChoices}"
                 HorizontalContentAlignment="Stretch"
                 VerticalContentAlignment="Stretch" />
         </GroupBox>
@@ -117,9 +117,9 @@
             Grid.Column="0"
             Grid.ColumnSpan="3">
             <GroupBox.Header>
-                <CheckBox x:Name="_guiEnableUserDefinedDropTarget" Content="User defined drop target" />
+                <CheckBox IsChecked="{Binding EnableUserDefinedDropTarget, Mode=TwoWay}" Content="User defined drop target" />
             </GroupBox.Header>
-            <Grid x:Name="_guiUserDefinedDropTargetGrid" IsEnabled="{Binding ElementName=_guiEnableUserDefinedDropTarget, Path=IsChecked}">
+            <Grid x:Name="_guiUserDefinedDropTargetGrid" IsEnabled="{Binding EnableUserDefinedDropTarget}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" SharedSizeGroup="LabelColumn1" />
                     <ColumnDefinition Width="4" />
@@ -142,14 +142,14 @@
                     Grid.Column="0"
                     Content="Number of axis perpendicular to plane:" />
                 <axogc:Int32UpDown
-                    x:Name="_guiUserDefinedDropTargetAxis"
+                    Value="{Binding UserDefinedDropTargetAxis}"
                     Grid.Row="0"
                     Grid.Column="2"
                     Maximum="2"
                     Minimum="0"
-                    Value="2" />
+                    />
                 <CheckBox
-                    x:Name="_guiUserDefinedUsePhysicalBaseValue"
+                   IsChecked="{Binding UserDefinedPhysicalBaseValue, Mode=TwoWay}"
                     Grid.Row="2"
                     Grid.Column="0"
                     Grid.ColumnSpan="3"
@@ -159,21 +159,20 @@
                     Grid.Column="0"
                     Content="Base value (logical or physical):" />
                 <axogc:NumericDoubleTextBox
-                    x:Name="_guiUserDefinedBaseValue"
+                    SelectedValue="{Binding UserDefinedBaseValue}"
                     Grid.Row="4"
                     Grid.Column="2" />
             </Grid>
         </GroupBox>
 
         <CheckBox
-            x:Name="_guiIndependentColor"
+            IsChecked="{Binding IndependentColor, Mode=TwoWay}"
             Grid.Row="10"
             Grid.Column="0"
-            Checked="EhIndependentColorChanged"
             Content="Indep. color:"
-            Unchecked="EhIndependentColorChanged" />
+            />
         <axogcd:BrushComboBox
-            x:Name="_guiPenMaterial"
+            SelectedBrush="{Binding Pen.Brush}"
             Grid.Row="10"
             Grid.Column="2" />
 
@@ -182,7 +181,7 @@
             Grid.Column="0"
             Content="Style:" />
         <axogdd:DashPatternComboBox
-            x:Name="_guiPenDashStyle"
+            SelectedItem="{Binding Pen.DashPattern}"
             Grid.Row="12"
             Grid.Column="2" />
 
@@ -200,52 +199,52 @@
             Grid.Column="0"
             Content="Line start cap:" />
         <axogcd:LineCapComboBox
-            x:Name="_cbLineStartCap"
+            SelectedLineCap="{Binding Pen.StartCap.LineCap}"
             Grid.Row="14"
             Grid.Column="2"
             IsForEndCap="False" />
         <axogcd:LineCapSizeComboBox
-            x:Name="_cbLineStartCapSize"
+            SelectedQuantity="{Binding Pen.StartCap.MinimumAbsoluteSize}" UnitEnvironment="{Binding Pen.StartCap.MinimumAbsoluteSizeEnvironment}"
             Grid.Row="14"
             Grid.Column="4"
             ToolTip="Minimum absolute cap size" />
         <axogc:QuantityWithUnitTextBox
-            x:Name="_edLineStartCapRelSize"
+            SelectedQuantity="{Binding Pen.StartCap.MinimumRelativeSize}" UnitEnvironment="{Binding Pen.StartCap.MinimumRelativeSizeEnvironment}"
             Grid.Row="14"
             Grid.Column="5"
             Margin="4,0,0,0"
             ToolTip="Minimum cap size relative to pen width"
-            UnitEnvironment="{x:Static axog:RelationEnvironment.Instance}" />
+            />
 
         <Label
             Grid.Row="16"
             Grid.Column="0"
             Content="Line end cap:" />
         <axogcd:LineCapComboBox
-            x:Name="_cbLineEndCap"
+            SelectedLineCap="{Binding Pen.EndCap.LineCap}"
             Grid.Row="16"
             Grid.Column="2"
             IsForEndCap="False" />
         <axogcd:LineCapSizeComboBox
-            x:Name="_cbLineEndCapSize"
+            SelectedQuantity="{Binding Pen.EndCap.MinimumAbsoluteSize}" UnitEnvironment="{Binding Pen.EndCap.MinimumAbsoluteSizeEnvironment}"
             Grid.Row="16"
             Grid.Column="4"
             ToolTip="Minimum absolute cap size" />
         <axogc:QuantityWithUnitTextBox
-            x:Name="_edLineEndCapRelSize"
+            SelectedQuantity="{Binding Pen.EndCap.MinimumRelativeSize}" UnitEnvironment="{Binding Pen.EndCap.MinimumRelativeSizeEnvironment}"
             Grid.Row="16"
             Grid.Column="5"
             Margin="4,0,0,0"
             ToolTip="Minimum cap size relative to pen width"
-            UnitEnvironment="{x:Static axog:RelationEnvironment.Instance}" />
+             />
 
         <CheckBox
-            x:Name="_guiIndependentSymbolSize"
+            IsChecked="{Binding IndependentSymbolSize, Mode=TwoWay}"
             Grid.Row="18"
             Grid.Column="0"
             Content="Independent symbol size :" />
         <axogcd:LineCapSizeComboBox
-            x:Name="_guiSymbolSize"
+            SelectedQuantity="{Binding SymbolSize}" UnitEnvironment="{Binding SymbolSizeEnvironment}"
             Grid.Row="18"
             Grid.Column="2" />
 
@@ -254,7 +253,7 @@
             Grid.Column="0"
             Content="Line width 1 = " />
         <axogcd:LineThicknessComboBox
-            x:Name="_guiLineWidth1Offset"
+            SelectedQuantity="{Binding LineWidth1Offset}" UnitEnvironment="{Binding LineWidthEnvironment}"
             Grid.Row="20"
             Grid.Column="2" />
         <Label
@@ -262,10 +261,9 @@
             Grid.Column="3"
             Content="+" />
         <axogc:QuantityWithUnitTextBox
-            x:Name="_guiLineWidth1Factor"
+            SelectedQuantity="{Binding LineWidth1Factor}" UnitEnvironment="{Binding LineFactorEnvironment}"
             Grid.Row="20"
-            Grid.Column="4"
-            UnitEnvironment="{x:Static axog:RelationEnvironment.Instance}" />
+            Grid.Column="4"/>
         <Label
             Grid.Row="20"
             Grid.Column="5"
@@ -275,8 +273,8 @@
             Grid.Row="22"
             Grid.Column="0"
             Content="Line gap at start = " />
-        <axogcd:LineThicknessComboBox
-            x:Name="_guiGapAtStartOffset"
+            <axogcd:LineThicknessComboBox
+            SelectedQuantity="{Binding GapAtStartOffset}" UnitEnvironment="{Binding LineWidthEnvironment}"
             Grid.Row="22"
             Grid.Column="2" />
         <Label
@@ -284,10 +282,10 @@
             Grid.Column="3"
             Content="+" />
         <axogc:QuantityWithUnitTextBox
-            x:Name="_guiGapAtStartFactor"
+            SelectedQuantity="{Binding GapAtStartFactor}" UnitEnvironment="{Binding LineFactorEnvironment}"
             Grid.Row="22"
             Grid.Column="4"
-            UnitEnvironment="{x:Static axog:RelationEnvironment.Instance}" />
+            />
         <Label
             Grid.Row="22"
             Grid.Column="5"
@@ -298,7 +296,7 @@
             Grid.Column="0"
             Content="Line gap at end = " />
         <axogcd:LineThicknessComboBox
-            x:Name="_guiGapAtEndOffset"
+            SelectedQuantity="{Binding GapAtEndOffset}" UnitEnvironment="{Binding LineWidthEnvironment}"
             Grid.Row="24"
             Grid.Column="2" />
         <Label
@@ -306,10 +304,10 @@
             Grid.Column="3"
             Content="+" />
         <axogc:QuantityWithUnitTextBox
-            x:Name="_guiGapAtEndFactor"
+            SelectedQuantity="{Binding GapAtStartFactor}" UnitEnvironment="{Binding LineFactorEnvironment}"
             Grid.Row="24"
             Grid.Column="4"
-            UnitEnvironment="{x:Static axog:RelationEnvironment.Instance}" />
+            />
         <Label
             Grid.Row="24"
             Grid.Column="5"

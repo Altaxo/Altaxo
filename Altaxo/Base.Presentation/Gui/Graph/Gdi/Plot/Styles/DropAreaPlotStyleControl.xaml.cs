@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -22,157 +22,18 @@
 
 #endregion Copyright
 
-using System;
-using System.Windows;
 using System.Windows.Controls;
 
 namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 {
-  using Altaxo.Collections;
-  using Altaxo.Drawing;
-  using Common.Drawing;
-
   /// <summary>
   /// Interaction logic for XYPlotLineStyleControl.xaml
   /// </summary>
   public partial class DropAreaPlotStyleControl : UserControl, IDropAreaPlotStyleView
   {
-    private PenControlsGlue _framePenGlue;
-
-    public event Action? IndependentLineColorChanged { add { } remove { } }
-
-    public event Action? UseLineChanged;
-
-    public event Action? LinePenChanged { add { } remove { } }
-
-    public event Action? FillColorLinkageChanged;
-
-    public event Action? FrameColorLinkageChanged;
-
-    public event Action? FillBrushChanged;
-
-    public event Action? FramePenChanged;
-
     public DropAreaPlotStyleControl()
     {
       InitializeComponent();
-
-      _framePenGlue = new PenControlsGlue(false);
-      _framePenGlue.PenChanged += new EventHandler(EhFramePenChanged);
-      _framePenGlue.CbBrush = _guiFrameBrush;
-      _framePenGlue.CbDashPattern = _guiFrameDashStyle;
-      _framePenGlue.CbLineThickness = _guiFrameThickness1;
-    }
-
-    private void EhUseLineConnectChanged(object sender, RoutedEventArgs e)
-    {
-      GuiHelper.SynchronizeSelectionFromGui(_guiLineConnect);
-      if (_guiLineConnect.SelectedItem is not null) // null for SelectedItem can happen when the DataSource is chaning
-        UseLineChanged?.Invoke();
-    }
-
-    public void InitializeLineConnect(SelectableListNodeList list)
-    {
-      GuiHelper.Initialize(_guiLineConnect, list);
-    }
-
-    public bool ConnectCircular
-    {
-      get { return true == _guiConnectCircular.IsChecked; }
-      set { _guiConnectCircular.IsChecked = value; }
-    }
-
-    public bool IgnoreMissingDataPoints
-    {
-      get { return true == _guiIgnoreMissingPoints.IsChecked; }
-      set { _guiIgnoreMissingPoints.IsChecked = value; }
-    }
-
-    public bool IndependentOnShiftingGroupStyles
-    {
-      get { return true == _guiIndependentOnShiftingGroupStyles.IsChecked; }
-      set { _guiIndependentOnShiftingGroupStyles.IsChecked = value; }
-    }
-
-    public void InitializeFillDirection(SelectableListNodeList list)
-    {
-      GuiHelper.Initialize(_guiFillDirection, list);
-    }
-
-    private void EhFillDirectionChanged(object sender, SelectionChangedEventArgs e)
-    {
-      GuiHelper.SynchronizeSelectionFromGui(_guiFillDirection);
-    }
-
-    public void InitializeFillColorLinkage(SelectableListNodeList list)
-    {
-      _guiFillColorLinkage.Initialize(list);
-    }
-
-    private void EhFillColorLinkageChanged()
-    {
-
-    }
-
-    public bool ShowPlotColorsOnlyForFillBrush
-    {
-      set { _guiFillBrush.ShowPlotColorsOnly = value; }
-    }
-
-    public BrushX FillBrush
-    {
-      get
-      {
-        return _guiFillBrush.SelectedBrush;
-      }
-      set
-      {
-        _guiFillBrush.SelectedBrush = value ?? throw new ArgumentNullException(nameof(FillBrush));
-      }
-    }
-
-    private void EhFillBrushChanged(object sender, DependencyPropertyChangedEventArgs e)
-    {
-      FillBrushChanged?.Invoke();
-    }
-
-    public void InitializeFrameColorLinkage(SelectableListNodeList list)
-    {
-      _guiFrameColorLinkage.Initialize(list);
-    }
-
-    private void EhFillColorLinkageChanged(object sender, EventArgs e)
-    {
-      FillColorLinkageChanged?.Invoke();
-    }
-
-    public bool ShowPlotColorsOnlyForFramePen
-    {
-      set { _framePenGlue.ShowPlotColorsOnly = value; }
-    }
-
-    public PenX FramePen
-    {
-      get
-      {
-        return _framePenGlue.Pen;
-      }
-      set
-      {
-        if (value is null)
-          throw new ArgumentNullException("FramePen");
-        _framePenGlue.Pen = value;
-      }
-    }
-
-    private void EhFramePenChanged(object? sender, EventArgs e)
-    {
-      FramePenChanged?.Invoke();
-    }
-
-    private void EhFrameColorLinkageChanged(object sender, EventArgs e)
-    {
-      FrameColorLinkageChanged?.Invoke();
     }
   }
 }

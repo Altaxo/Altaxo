@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -41,108 +41,6 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
     public ColumnDrivenSymbolSizePlotStyleControl()
     {
       InitializeComponent();
-    }
-
-    public void Init_DataColumn(string boxText, string toolTip, int status)
-    {
-      _guiDataColumn.Text = boxText;
-      _guiDataColumn.ToolTip = toolTip;
-      _guiDataColumn.Background = DefaultSeverityColumnColors.GetSeverityColor(status);
-    }
-
-    public void Init_DataColumnTransformation(string boxText, string toolTip)
-    {
-      if (boxText is null)
-      {
-        _guiDataColumnTransformation.Visibility = Visibility.Collapsed;
-      }
-      else
-      {
-        _guiDataColumnTransformation.Text = boxText;
-        _guiDataColumnTransformation.ToolTip = toolTip;
-        _guiDataColumnTransformation.Visibility = Visibility.Visible;
-      }
-    }
-
-    #region IColumnDrivenSymbolSizePlotStyleView
-
-    public IDensityScaleView ScaleView
-    {
-      get { return _ctrlScale; }
-    }
-
-    public double SymbolSizeAt0
-    {
-      get
-      {
-        return _cbSymbolSizeAt0.SelectedQuantityAsValueInPoints;
-      }
-      set
-      {
-        _cbSymbolSizeAt0.SelectedQuantityAsValueInPoints = value;
-      }
-    }
-
-    public double SymbolSizeAt1
-    {
-      get
-      {
-        return _cbSymbolSizeAt1.SelectedQuantityAsValueInPoints;
-      }
-      set
-      {
-        _cbSymbolSizeAt1.SelectedQuantityAsValueInPoints = value;
-      }
-    }
-
-    public double SymbolSizeAbove
-    {
-      get
-      {
-        return _cbSymbolSizeAbove.SelectedQuantityAsValueInPoints;
-      }
-      set
-      {
-        _cbSymbolSizeAbove.SelectedQuantityAsValueInPoints = value;
-      }
-    }
-
-    public double SymbolSizeBelow
-    {
-      get
-      {
-        return _cbSymbolSizeBelow.SelectedQuantityAsValueInPoints;
-      }
-      set
-      {
-        _cbSymbolSizeBelow.SelectedQuantityAsValueInPoints = value;
-      }
-    }
-
-    public double SymbolSizeInvalid
-    {
-      get
-      {
-        return _cbSymbolSizeInvalid.SelectedQuantityAsValueInPoints;
-      }
-      set
-      {
-        _cbSymbolSizeInvalid.SelectedQuantityAsValueInPoints = value;
-      }
-    }
-
-    public int NumberOfSteps
-    {
-      get
-      {
-        return _edNumberOfSteps.Value;
-      }
-      set
-      {
-        _edNumberOfSteps.Value = value;
-      }
-    }
-
-    #endregion IColumnDrivenSymbolSizePlotStyleView
+    }  
   }
 }

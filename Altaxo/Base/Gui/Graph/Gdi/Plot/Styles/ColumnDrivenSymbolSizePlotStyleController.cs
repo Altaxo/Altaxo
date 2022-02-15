@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -33,48 +33,19 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
   using Altaxo.Data;
   using Altaxo.Graph.Gdi.Plot.Styles;
   using Altaxo.Graph.Scales;
+  using Altaxo.Units;
   using Data;
   using Graph.Plot.Data;
   using Scales;
 
-  public interface IColumnDrivenSymbolSizePlotStyleView
+  public interface IColumnDrivenSymbolSizePlotStyleView : IDataContextAwareView
   {
-    IDensityScaleView ScaleView { get; }
-
-    /// <summary>
-    /// Initializes the name of the label column.
-    /// </summary>
-    /// <param name="columnAsText">Label column's name.</param>
-    /// <param name="toolTip"></param>
-    /// <param name="status"></param>
-    void Init_DataColumn(string columnAsText, string toolTip, int status);
-
-    /// <summary>
-    /// Initializes the transformation text.
-    /// </summary>
-    /// <param name="text">Text for the transformation</param>
-    /// <param name="toolTip"></param>
-    void Init_DataColumnTransformation(string text, string toolTip);
-
-    double SymbolSizeAt0 { get; set; }
-
-    double SymbolSizeAt1 { get; set; }
-
-    double SymbolSizeAbove { get; set; }
-
-    double SymbolSizeBelow { get; set; }
-
-    double SymbolSizeInvalid { get; set; }
-
-    int NumberOfSteps { get; set; }
   }
 
   [UserControllerForObject(typeof(ColumnDrivenSymbolSizePlotStyle))]
   [ExpectedTypeOfView(typeof(IColumnDrivenSymbolSizePlotStyleView))]
   public class ColumnDrivenSymbolSizePlotStyleController : MVCANControllerEditOriginalDocBase<ColumnDrivenSymbolSizePlotStyle, IColumnDrivenSymbolSizePlotStyleView>, IColumnDataExternallyControlled
   {
-    private DensityScaleController _scaleController;
-
     /// <summary>
     /// The data table that the column of the style should belong to.
     /// </summary>
@@ -101,6 +72,196 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
       yield return new ControllerAndSetNullMethod(_scaleController, () => _scaleController = null);
     }
 
+    #region Bindings
+
+    private DensityScaleController _scaleController;
+
+    public DensityScaleController ScaleController
+    {
+      get => _scaleController;
+      set
+      {
+        if (!(_scaleController == value))
+        {
+          _scaleController?.Dispose();
+          _scaleController = value;
+          OnPropertyChanged(nameof(ScaleController));
+        }
+      }
+    }
+
+    private string _DataColumnText;
+
+    public string DataColumnText
+    {
+      get => _DataColumnText;
+      set
+      {
+        if (!(_DataColumnText == value))
+        {
+          _DataColumnText = value;
+          OnPropertyChanged(nameof(DataColumnText));
+        }
+      }
+    }
+    private string _DataColumnToolTip;
+
+    public string DataColumnToolTip
+    {
+      get => _DataColumnToolTip;
+      set
+      {
+        if (!(_DataColumnToolTip == value))
+        {
+          _DataColumnToolTip = value;
+          OnPropertyChanged(nameof(DataColumnToolTip));
+        }
+      }
+    }
+    private int _DataColumnStatus;
+
+    public int DataColumnStatus
+    {
+      get => _DataColumnStatus;
+      set
+      {
+        if (!(_DataColumnStatus == value))
+        {
+          _DataColumnStatus = value;
+          OnPropertyChanged(nameof(DataColumnStatus));
+        }
+      }
+    }
+    private string _DataColumnTransformationText;
+
+    public string DataColumnTransformationText
+    {
+      get => _DataColumnTransformationText;
+      set
+      {
+        if (!(_DataColumnTransformationText == value))
+        {
+          _DataColumnTransformationText = value;
+          OnPropertyChanged(nameof(DataColumnTransformationText));
+        }
+      }
+    }
+    private string _DataColumnTransformationToolTip;
+
+    public string DataColumnTransformationToolTip
+    {
+      get => _DataColumnTransformationToolTip;
+      set
+      {
+        if (!(_DataColumnTransformationToolTip == value))
+        {
+          _DataColumnTransformationToolTip = value;
+          OnPropertyChanged(nameof(DataColumnTransformationToolTip));
+        }
+      }
+    }
+
+    public QuantityWithUnitGuiEnvironment SymbolSizeEnvironment => SizeEnvironment.Instance;
+
+
+    private DimensionfulQuantity _symbolSizeAt0;
+
+    public DimensionfulQuantity SymbolSizeAt0
+    {
+      get => _symbolSizeAt0;
+      set
+      {
+        if (!(_symbolSizeAt0 == value))
+        {
+          _symbolSizeAt0 = value;
+          OnPropertyChanged(nameof(SymbolSizeAt0));
+        }
+      }
+    }
+
+    private DimensionfulQuantity _symbolSizeAt1;
+
+    public DimensionfulQuantity SymbolSizeAt1
+    {
+      get => _symbolSizeAt1;
+      set
+      {
+        if (!(_symbolSizeAt1 == value))
+        {
+          _symbolSizeAt1 = value;
+          OnPropertyChanged(nameof(SymbolSizeAt1));
+        }
+      }
+    }
+
+
+
+    private DimensionfulQuantity _symbolSizeAbove;
+
+    public DimensionfulQuantity SymbolSizeAbove
+    {
+      get => _symbolSizeAbove;
+      set
+      {
+        if (!(_symbolSizeAbove == value))
+        {
+          _symbolSizeAbove = value;
+          OnPropertyChanged(nameof(SymbolSizeAbove));
+        }
+      }
+    }
+
+
+    private DimensionfulQuantity _symbolSizeBelow;
+
+    public DimensionfulQuantity SymbolSizeBelow
+    {
+      get => _symbolSizeBelow;
+      set
+      {
+        if (!(_symbolSizeBelow == value))
+        {
+          _symbolSizeBelow = value;
+          OnPropertyChanged(nameof(SymbolSizeBelow));
+        }
+      }
+    }
+
+
+    private DimensionfulQuantity _symbolSizeInvalid;
+
+    public DimensionfulQuantity SymbolSizeInvalid
+    {
+      get => _symbolSizeInvalid;
+      set
+      {
+        if (!(_symbolSizeInvalid == value))
+        {
+          _symbolSizeInvalid = value;
+          OnPropertyChanged(nameof(SymbolSizeInvalid));
+        }
+      }
+    }
+
+
+    private int _numberOfSteps;
+
+    public int NumberOfSteps
+    {
+      get => _numberOfSteps;
+      set
+      {
+        if (!(_numberOfSteps == value))
+        {
+          _numberOfSteps = value;
+          OnPropertyChanged(nameof(NumberOfSteps));
+        }
+      }
+    }
+
+
+
+    #endregion
     public override void Dispose(bool isDisposing)
     {
       base.Dispose(isDisposing);
@@ -112,20 +273,16 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
       if (initData)
       {
-        _scaleController = new DensityScaleController(newScale => _doc.Scale = (NumericalScale)newScale);
-        _scaleController.InitializeDocument(_doc.Scale);
-      }
-
-      if (_view is not null)
-      {
-        _scaleController.ViewObject = _view.ScaleView;
+        var scaleController = new DensityScaleController(newScale => _doc.Scale = (NumericalScale)newScale);
+        scaleController.InitializeDocument(_doc.Scale);
+        ScaleController = scaleController;
         InitializeDataColumnText();
-        _view.SymbolSizeAt0 = _doc.SymbolSizeAt0;
-        _view.SymbolSizeAt1 = _doc.SymbolSizeAt1;
-        _view.SymbolSizeBelow = _doc.SymbolSizeBelow;
-        _view.SymbolSizeAbove = _doc.SymbolSizeAbove;
-        _view.SymbolSizeInvalid = _doc.SymbolSizeInvalid;
-        _view.NumberOfSteps = _doc.NumberOfSteps;
+        SymbolSizeAt0 =     new DimensionfulQuantity(_doc.SymbolSizeAt0, Altaxo.Units.Length.Point.Instance).AsQuantityIn(SymbolSizeEnvironment.DefaultUnit);
+        SymbolSizeAt1 =     new DimensionfulQuantity(_doc.SymbolSizeAt1, Altaxo.Units.Length.Point.Instance).AsQuantityIn(SymbolSizeEnvironment.DefaultUnit);
+        SymbolSizeBelow =   new DimensionfulQuantity(_doc.SymbolSizeBelow, Altaxo.Units.Length.Point.Instance).AsQuantityIn(SymbolSizeEnvironment.DefaultUnit);
+        SymbolSizeAbove =   new DimensionfulQuantity(_doc.SymbolSizeAbove, Altaxo.Units.Length.Point.Instance).AsQuantityIn(SymbolSizeEnvironment.DefaultUnit);
+        SymbolSizeInvalid = new DimensionfulQuantity(_doc.SymbolSizeInvalid, Altaxo.Units.Length.Point.Instance).AsQuantityIn(SymbolSizeEnvironment.DefaultUnit);
+        NumberOfSteps = _doc.NumberOfSteps;
       }
     }
 
@@ -142,12 +299,12 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
       _doc.Scale = (Altaxo.Graph.Scales.NumericalScale)_scaleController.ModelObject;
 
-      _doc.SymbolSizeAt0 = _view.SymbolSizeAt0;
-      _doc.SymbolSizeAt1 = _view.SymbolSizeAt1;
-      _doc.SymbolSizeBelow = _view.SymbolSizeBelow;
-      _doc.SymbolSizeAbove = _view.SymbolSizeAbove;
-      _doc.SymbolSizeInvalid = _view.SymbolSizeInvalid;
-      _doc.NumberOfSteps = _view.NumberOfSteps;
+      _doc.SymbolSizeAt0 = SymbolSizeAt0.AsValueIn(Altaxo.Units.Length.Point.Instance);
+      _doc.SymbolSizeAt1 = SymbolSizeAt1.AsValueIn(Altaxo.Units.Length.Point.Instance);
+      _doc.SymbolSizeBelow = SymbolSizeBelow.AsValueIn(Altaxo.Units.Length.Point.Instance);
+      _doc.SymbolSizeAbove = SymbolSizeAbove.AsValueIn(Altaxo.Units.Length.Point.Instance);
+      _doc.SymbolSizeInvalid = SymbolSizeInvalid.AsValueIn(Altaxo.Units.Length.Point.Instance);
+      _doc.NumberOfSteps = NumberOfSteps;
 
       return ApplyEnd(true, disposeController);
     }
@@ -157,8 +314,12 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
       var info = new PlotColumnInformation(_doc.DataColumn, _doc.DataColumnName);
       info.Update(_supposedParentDataTable, _supposedGroupNumber);
 
-      _view?.Init_DataColumn(info.PlotColumnBoxText, info.PlotColumnToolTip, (int)info.PlotColumnBoxState);
-      _view?.Init_DataColumnTransformation(info.TransformationTextToShow, info.TransformationToolTip);
+      DataColumnText = info.PlotColumnBoxText;
+      DataColumnToolTip = info.PlotColumnToolTip;
+      DataColumnStatus = (int)info.PlotColumnBoxState;
+
+      DataColumnTransformationText = info.TransformationTextToShow;
+      DataColumnTransformationToolTip = info.TransformationToolTip;
     }
 
     /// <summary>

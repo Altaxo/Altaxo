@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -33,76 +33,21 @@ using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Gdi.Plot.Styles;
 using Altaxo.Graph.Gdi.Plot.Styles.LineConnectionStyles;
 using Altaxo.Graph.Plot.Groups;
+using Altaxo.Gui.Common;
+using Altaxo.Gui.Common.Drawing;
 using Altaxo.Gui.Graph;
 using Altaxo.Gui.Graph.Plot.Groups;
 using Altaxo.Main;
 
 namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 {
-  #region Interfaces
 
   /// <summary>
   /// This view interface is for showing the options of the XYZPlotLineStyle
   /// </summary>
-  public interface IDropAreaPlotStyleView
+  public interface IDropAreaPlotStyleView : IDataContextAwareView
   {
-    bool ConnectCircular { get; set; }
-
-    bool IgnoreMissingDataPoints { get; set; }
-
-    bool IndependentOnShiftingGroupStyles { get; set; }
-
-    /// <summary>
-    /// Initializes the Line connection combobox.
-    /// </summary>
-    /// <param name="list">List of possible selections.</param>
-    void InitializeLineConnect(SelectableListNodeList list);
-
-    #region events
-
-    /// <summary>Occurs when the user choice for IndependentColor of the frame pen has changed.</summary>
-    event Action FrameColorLinkageChanged;
-
-    /// <summary>Occurs when the  frame pen has changed by user interaction.</summary>
-    event Action FramePenChanged;
-
-    #endregion events
-
-    #region Fill
-
-    /// <summary>Sets a value indicating whether plot colors only should be shown for the fill brush.</summary>
-    /// <value><c>true</c> if only plot colors should be shown for fill brush; otherwise, <c>false</c>.</value>
-    bool ShowPlotColorsOnlyForFillBrush { set; }
-
-    bool ShowPlotColorsOnlyForFramePen { set; }
-
-    void InitializeFillColorLinkage(SelectableListNodeList list);
-
-    void InitializeFrameColorLinkage(SelectableListNodeList list);
-
-    /// <summary>
-    /// Gets/sets the contents of the fill color combobox.
-    /// </summary>
-    BrushX FillBrush { get; set; }
-
-    PenX FramePen { get; set; }
-
-    /// <summary>
-    /// Initializes the fill direction combobox.
-    /// </summary>
-    /// <param name="list">List of possible selections.</param>
-    void InitializeFillDirection(SelectableListNodeList list);
-
-    /// <summary>Occurs when the user choice for IndependentColor of the fill brush has changed.</summary>
-    event Action FillColorLinkageChanged;
-
-    /// <summary>Occurs when the fill brush has changed by user interaction.</summary>
-    event Action FillBrushChanged;
-
-    #endregion Fill
   }
-
-  #endregion Interfaces
 
   /// <summary>
   /// Summary description for XYPlotLineStyleController.
@@ -114,16 +59,179 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
     /// <summary>Tracks the presence of a color group style in the parent collection.</summary>
     private ColorGroupStylePresenceTracker _colorGroupStyleTracker;
 
-    private SelectableListNodeList _lineConnectChoices;
-
-    private SelectableListNodeList _areaFillDirectionChoices;
-    private SelectableListNodeList _fillColorLinkageChoices;
-    private SelectableListNodeList _frameColorLinkageChoices;
-
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
-      yield break;
+      yield return new ControllerAndSetNullMethod(_framePen, () => FramePen = null);
     }
+
+    #region Bindings
+
+    private bool _connectCircular;
+
+    public bool ConnectCircular
+    {
+      get => _connectCircular;
+      set
+      {
+        if (!(_connectCircular == value))
+        {
+          _connectCircular = value;
+          OnPropertyChanged(nameof(ConnectCircular));
+        }
+      }
+    }
+
+
+    private bool _ignoreMissingDataPoints;
+
+    public bool IgnoreMissingDataPoints
+    {
+      get => _ignoreMissingDataPoints;
+      set
+      {
+        if (!(_ignoreMissingDataPoints == value))
+        {
+          _ignoreMissingDataPoints = value;
+          OnPropertyChanged(nameof(IgnoreMissingDataPoints));
+        }
+      }
+    }
+
+
+    private bool _independentOnShiftingGroupStyles;
+
+    public bool IndependentOnShiftingGroupStyles
+    {
+      get => _independentOnShiftingGroupStyles;
+      set
+      {
+        if (!(_independentOnShiftingGroupStyles == value))
+        {
+          _independentOnShiftingGroupStyles = value;
+          OnPropertyChanged(nameof(IndependentOnShiftingGroupStyles));
+        }
+      }
+    }
+
+    private ItemsController<Type> _lineConnectChoices;
+
+    public ItemsController<Type> LineConnectChoices
+    {
+      get => _lineConnectChoices;
+      set
+      {
+        if (!(_lineConnectChoices == value))
+        {
+          _lineConnectChoices = value;
+          OnPropertyChanged(nameof(LineConnectChoices));
+        }
+      }
+    }
+
+    private ItemsController<CSPlaneID> _areaFillDirectionChoices;
+
+    public ItemsController<CSPlaneID> AreaFillDirectionChoices
+    {
+      get => _areaFillDirectionChoices;
+      set
+      {
+        if (!(_areaFillDirectionChoices == value))
+        {
+          _areaFillDirectionChoices = value;
+          OnPropertyChanged(nameof(AreaFillDirectionChoices));
+        }
+      }
+    }
+
+
+
+    private ItemsController<ColorLinkage> _fillColorLinkageChoices;
+
+    public ItemsController<ColorLinkage> FillColorLinkageChoices
+    {
+      get => _fillColorLinkageChoices;
+      set
+      {
+        if (!(_fillColorLinkageChoices == value))
+        {
+          _fillColorLinkageChoices = value;
+          OnPropertyChanged(nameof(FillColorLinkageChoices));
+        }
+      }
+    }
+
+    private ItemsController<ColorLinkage> _frameColorLinkageChoices;
+
+    public ItemsController<ColorLinkage> FrameColorLinkageChoices
+    {
+      get => _frameColorLinkageChoices;
+      set
+      {
+        if (!(_frameColorLinkageChoices == value))
+        {
+          _frameColorLinkageChoices = value;
+          OnPropertyChanged(nameof(FrameColorLinkageChoices));
+        }
+      }
+    }
+
+    private bool _showPlotColorsOnlyForFillBrush;
+
+    public bool ShowPlotColorsOnlyForFillBrush
+    {
+      get => _showPlotColorsOnlyForFillBrush;
+      set
+      {
+        if (!(_showPlotColorsOnlyForFillBrush == value))
+        {
+          _showPlotColorsOnlyForFillBrush = value;
+          OnPropertyChanged(nameof(ShowPlotColorsOnlyForFillBrush));
+        }
+      }
+    }
+
+    private BrushX _fillBrush;
+
+    public BrushX FillBrush
+    {
+      get => _fillBrush;
+      set
+      {
+        if (!(_fillBrush == value))
+        {
+          _fillBrush = value;
+          OnPropertyChanged(nameof(FillBrush));
+          EhFillBrushChanged();
+        }
+      }
+    }
+
+    private ColorTypeThicknessPenController _framePen;
+
+    public ColorTypeThicknessPenController FramePen
+    {
+      get => _framePen;
+      set
+      {
+        if (!(_framePen == value))
+        {
+          if (_framePen is not null)
+            _framePen.MadeDirty -= EhFramePenChanged;
+          _framePen?.Dispose();
+
+          _framePen = value;
+
+          if (_framePen is not null)
+            _framePen.MadeDirty += EhFramePenChanged;
+
+          OnPropertyChanged(nameof(FramePen));
+        }
+      }
+    }
+
+
+
+    #endregion
 
     public override void Dispose(bool isDisposing)
     {
@@ -145,43 +253,35 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
       {
         _colorGroupStyleTracker = new ColorGroupStylePresenceTracker(_doc, EhColorGroupStyleAddedOrRemoved);
         InitializeLineConnectionChoices();
-        _fillColorLinkageChoices = new SelectableListNodeList(_doc.FillColorLinkage);
-        _frameColorLinkageChoices = new SelectableListNodeList(_doc.FrameColorLinkage);
+        FillColorLinkageChoices = new ItemsController<ColorLinkage>(new SelectableListNodeList(_doc.FillColorLinkage), EhFillColorLinkageChanged);
+        FrameColorLinkageChoices = new ItemsController<ColorLinkage>(new SelectableListNodeList(_doc.FrameColorLinkage), EhFrameColorLinkageChanged);
         InitializeFillDirectionChoices();
-      }
-
-      if (_view is not null)
-      {
         // Line properties
-        _view.InitializeLineConnect(_lineConnectChoices);
-        _view.ConnectCircular = _doc.ConnectCircular;
-        _view.IgnoreMissingDataPoints = _doc.IgnoreMissingDataPoints;
-        _view.IndependentOnShiftingGroupStyles = _doc.IndependentOnShiftingGroupStyles;
-        _view.FramePen = _doc.FramePen;
+        ConnectCircular = _doc.ConnectCircular;
+        IgnoreMissingDataPoints = _doc.IgnoreMissingDataPoints;
+        IndependentOnShiftingGroupStyles = _doc.IndependentOnShiftingGroupStyles;
+        FramePen = new ColorTypeThicknessPenController(_doc.FramePen);
 
         // Fill area
-        _view.InitializeFillColorLinkage(_fillColorLinkageChoices);
-        _view.InitializeFrameColorLinkage(_frameColorLinkageChoices);
-        _view.ShowPlotColorsOnlyForFillBrush = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.FillColorLinkage);
-        _view.ShowPlotColorsOnlyForFramePen = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.FrameColorLinkage);
-        _view.FillBrush = _doc.FillBrush ?? new BrushX(NamedColors.Transparent);
-        _view.InitializeFillDirection(_areaFillDirectionChoices);
+        
+        ShowPlotColorsOnlyForFillBrush = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.FillColorLinkage);
+        FramePen.ShowPlotColorsOnly = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.FrameColorLinkage);
+        FillBrush = _doc.FillBrush ?? new BrushX(NamedColors.Transparent);
       }
     }
 
     private void InitializeLineConnectionChoices()
     {
-      if (_lineConnectChoices is null)
-        _lineConnectChoices = new SelectableListNodeList();
-      else
-        _lineConnectChoices.Clear();
+       var lineConnectChoices = new SelectableListNodeList();
 
       var types = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(ILineConnectionStyle));
 
       foreach (var t in types)
       {
-        _lineConnectChoices.Add(new SelectableListNode(t.Name, t, t == _doc.Connection.GetType()));
+        lineConnectChoices.Add(new SelectableListNode(t.Name, t, t == _doc.Connection.GetType()));
       }
+
+      LineConnectChoices = new ItemsController<Type>(lineConnectChoices);
     }
 
     public override bool Apply(bool disposeController)
@@ -189,14 +289,13 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
       // don't trust user input, so all into a try statement
       try
       {
-        _doc.ConnectCircular = _view.ConnectCircular;
-        _doc.IgnoreMissingDataPoints = _view.IgnoreMissingDataPoints;
-        _doc.IndependentOnShiftingGroupStyles = _view.IndependentOnShiftingGroupStyles;
+        _doc.ConnectCircular = ConnectCircular;
+        _doc.IgnoreMissingDataPoints = IgnoreMissingDataPoints;
+        _doc.IndependentOnShiftingGroupStyles = IndependentOnShiftingGroupStyles;
 
         // Line Connect
 
-        var selNode = _lineConnectChoices.FirstSelectedNode;
-        var connectionType = (Type)(selNode.Tag);
+        var connectionType = LineConnectChoices.SelectedValue;
         if (connectionType == typeof(NoConnection))
           _doc.Connection = NoConnection.Instance;
         else
@@ -204,16 +303,12 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
         // Fill Area
 
-        // Line fill direction
-        selNode = _areaFillDirectionChoices.FirstSelectedNode;
-        if (selNode is not null)
-          _doc.FillDirection = ((CSPlaneID)selNode.Tag);
-        else
-          _doc.FillDirection = null;
+        //  fill direction
+        _doc.FillDirection = AreaFillDirectionChoices.SelectedValue;
 
         // Line fill color
-        _doc.FillBrush = _view.FillBrush;
-        _doc.FramePen = _view.FramePen;
+        _doc.FillBrush =FillBrush;
+        _doc.FramePen = FramePen.Pen;
         // _doc.FillColorLinkage = _view.FillColorLinkage; // already done during showing the view, see EhFillColorLinkageChanged()
 
         return ApplyEnd(true, disposeController);
@@ -225,97 +320,56 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
       }
     }
 
-    protected override void AttachView()
-    {
-      base.AttachView();
-
-      _view.FillColorLinkageChanged += EhFillColorLinkageChanged;
-      _view.FrameColorLinkageChanged += EhFrameColorLinkageChanged;
-      _view.FillBrushChanged += EhFillBrushChanged;
-      _view.FramePenChanged += EhFramePenChanged;
-    }
-
-    protected override void DetachView()
-    {
-      _view.FillColorLinkageChanged -= EhFillColorLinkageChanged;
-      _view.FrameColorLinkageChanged -= EhFrameColorLinkageChanged;
-      _view.FillBrushChanged -= EhFillBrushChanged;
-      _view.FramePenChanged -= EhFramePenChanged;
-      base.DetachView();
-    }
-
     public void InitializeFillDirectionChoices()
     {
-      _areaFillDirectionChoices = new SelectableListNodeList();
+      var areaFillDirectionChoices = new SelectableListNodeList();
       var layer = AbsoluteDocumentPath.GetRootNodeImplementing(_doc, typeof(IPlotArea)) as IPlotArea;
       if (layer is not null)
       {
         foreach (CSPlaneID id in layer.CoordinateSystem.GetJoinedPlaneIdentifier(layer.AxisStyleIDs, new CSPlaneID[] { _doc.FillDirection }))
         {
           CSPlaneInformation info = layer.CoordinateSystem.GetPlaneInformation(id);
-          _areaFillDirectionChoices.Add(new SelectableListNode(info.Name, id, id == _doc.FillDirection));
+          areaFillDirectionChoices.Add(new SelectableListNode(info.Name, id, id == _doc.FillDirection));
         }
       }
+      AreaFillDirectionChoices = new ItemsController<CSPlaneID>(areaFillDirectionChoices);
     }
 
     #region Color management
 
-    /// <summary>
-    /// Gets or sets a value indicating whether the line is shown or not. By definition here, the line is not shown only if the connection style is "Noline".
-    /// When setting this property, this influences not the connection style in the _view, but only the IsEnabled property of all Gui items associated with the line.
-    /// </summary>
-    /// <value>
-    /// 	<c>true</c> if the line used; otherwise, <c>false</c>.
-    /// </value>
-    private bool IsLineUsed
-    {
-      get
-      {
-        var selNode = _lineConnectChoices.FirstSelectedNode;
-        return !NoConnection.Instance.Equals(selNode.Tag);
-      }
-      set
-      {
-        //if(null!=_view)	_view.EnableLineControls = value;
-      }
-    }
+   
 
     private void EhColorGroupStyleAddedOrRemoved()
     {
       if (_view is not null)
       {
-        _doc.FillColorLinkage = (ColorLinkage)_fillColorLinkageChoices.FirstSelectedNode.Tag;
-        _view.ShowPlotColorsOnlyForFillBrush = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.FillColorLinkage);
-        _view.ShowPlotColorsOnlyForFramePen = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.FrameColorLinkage);
+        _doc.FillColorLinkage = FillColorLinkageChoices.SelectedValue;
+        ShowPlotColorsOnlyForFillBrush = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.FillColorLinkage);
+        FramePen.ShowPlotColorsOnly = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.FrameColorLinkage);
       }
     }
 
-    private void EhFillColorLinkageChanged()
+    private void EhFillColorLinkageChanged(ColorLinkage value)
     {
-      if (_view is not null)
-      {
-        _doc.FillColorLinkage = (ColorLinkage)_fillColorLinkageChoices.FirstSelectedNode.Tag;
+      _doc.FillColorLinkage = value;
         if (ColorLinkage.Dependent == _doc.FillColorLinkage)
           InternalSetFillColorToFrameColor();
         if (ColorLinkage.PreserveAlpha == _doc.FillColorLinkage)
           InternalSetFillColorRGBToLineColor();
 
-        _view.ShowPlotColorsOnlyForFillBrush = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.FillColorLinkage);
-      }
+        ShowPlotColorsOnlyForFillBrush = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.FillColorLinkage);
     }
 
-    private void EhFrameColorLinkageChanged()
+    private void EhFrameColorLinkageChanged(ColorLinkage value)
     {
-      if (_view is not null)
-      {
-        _doc.FrameColorLinkage = (ColorLinkage)_frameColorLinkageChoices.FirstSelectedNode.Tag;
+      _doc.FrameColorLinkage = value;
         if (ColorLinkage.Dependent == _doc.FrameColorLinkage)
           InternalSetFrameColorToFillColor();
         if (ColorLinkage.PreserveAlpha == _doc.FrameColorLinkage)
           InternalSetFrameColorRGBToFillColor();
 
-        _view.ShowPlotColorsOnlyForFramePen = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.FrameColorLinkage);
-      }
+        FramePen.ShowPlotColorsOnly = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.FrameColorLinkage);
+     
     }
 
     private void EhFillBrushChanged()
@@ -324,29 +378,29 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
       {
         if (ColorLinkage.Dependent == _doc.FrameColorLinkage)
         {
-          if (_view.FramePen.Color != _view.FillBrush.Color)
+          if (FramePen.Pen.Color != FillBrush.Color)
             InternalSetFrameColorToFillColor();
         }
         else if (ColorLinkage.PreserveAlpha == _doc.FrameColorLinkage)
         {
-          if (_view.FramePen.Color != _view.FillBrush.Color)
+          if (FramePen.Pen.Color != FillBrush.Color)
             InternalSetFrameColorRGBToFillColor();
         }
       }
     }
 
-    private void EhFramePenChanged()
+    private void EhFramePenChanged(object _)
     {
       if (_view is not null)
       {
         if (ColorLinkage.Dependent == _doc.FillColorLinkage)
         {
-          if (_view.FillBrush.Color != _view.FramePen.Color)
+          if (FillBrush.Color != FramePen.Pen.Color)
             InternalSetFillColorToFrameColor();
         }
         else if (ColorLinkage.PreserveAlpha == _doc.FillColorLinkage)
         {
-          if (_view.FillBrush.Color != _view.FramePen.Color)
+          if (FillBrush.Color !=FramePen.Pen.Color)
             InternalSetFillColorRGBToLineColor();
         }
       }
@@ -357,12 +411,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
     /// </summary>
     private void InternalSetFillColorToFrameColor()
     {
-      var newBrush = _view.FillBrush.WithColor(_view.FramePen.Color);
-
-      // Change fill brush without notification
-      _view.FillBrushChanged -= EhFillBrushChanged;
-      _view.FillBrush = newBrush;
-      _view.FillBrushChanged += EhFillBrushChanged;
+      FillBrush = FillBrush.WithColor(FramePen.Pen.Color);
     }
 
     /// <summary>
@@ -370,12 +419,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
     /// </summary>
     private void InternalSetFrameColorToFillColor()
     {
-      var newPen = _view.FramePen.WithColor(_view.FillBrush.Color);
-
-      // Change frame pen without notification
-      _view.FramePenChanged -= EhFramePenChanged;
-      _view.FramePen = newPen;
-      _view.FramePenChanged += EhFramePenChanged;
+      FramePen.Pen = FramePen.Pen.WithColor(FillBrush.Color);
     }
 
     /// <summary>
@@ -383,15 +427,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
     /// </summary>
     private void InternalSetFillColorRGBToLineColor()
     {
-      var newBrush = _view.FillBrush;
-      var c = _view.FramePen.Color.NewWithAlphaValue(newBrush.Color.Color.A);
-
-      newBrush = newBrush.WithColor(c);
-
-      // Change fill brush without notification
-      _view.FillBrushChanged -= EhFillBrushChanged;
-      _view.FillBrush = newBrush;
-      _view.FillBrushChanged += EhFillBrushChanged;
+      var newBrush =FillBrush;
+      var c = FramePen.Pen.Color.NewWithAlphaValue(newBrush.Color.Color.A);
+      FillBrush = newBrush.WithColor(c);
     }
 
     /// <summary>
@@ -399,12 +437,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
     /// </summary>
     private void InternalSetFrameColorRGBToFillColor()
     {
-      var newPen = _view.FramePen.WithColor(_view.FillBrush.Color.NewWithAlphaValue(_view.FramePen.Color.Color.A));
-
-      // Change frame pen without notification
-      _view.FramePenChanged -= EhFramePenChanged;
-      _view.FramePen = newPen;
-      _view.FramePenChanged += EhFramePenChanged;
+      FramePen.Pen = FramePen.Pen.WithColor(FillBrush.Color.NewWithAlphaValue(FramePen.Pen.Color.Color.A));
     }
 
     #endregion Color management

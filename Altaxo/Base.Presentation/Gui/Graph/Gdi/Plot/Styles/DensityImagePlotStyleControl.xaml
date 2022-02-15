@@ -6,7 +6,7 @@
 						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
 						 xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing"
 						 xmlns:axoggs="clr-namespace:Altaxo.Gui.Graph.Scales"
-						 xmlns:axogggpc="clr-namespace:Altaxo.Gui.Graph.Gdi.Plot.ColorProvider"
+						 xmlns:axogggpc="clr-namespace:Altaxo.Gui.Graph.Gdi.Plot.ColorProvider" xmlns:styles="clr-namespace:Altaxo.Gui.Graph.Gdi.Plot.Styles;assembly=AltaxoBase" d:DataContext="{d:DesignInstance Type=styles:DensityImagePlotStyleController}"
              mc:Ignorable="d">
 	<UserControl.Resources>
 		<Style TargetType="Label">
@@ -18,15 +18,15 @@
 	</UserControl.Resources>
 	<StackPanel Orientation="Vertical">
 		<GroupBox Header="Scale:">
-			<axoggs:DensityScaleControl x:Name="_ctrlScale" />
+			<axoggs:DensityScaleControl DataContext="{Binding ScaleController}" />
 		</GroupBox>
 
 		<GroupBox Header="Style:">
-			<axogggpc:ColorProviderControl x:Name="_colorProviderControl" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+			<axogggpc:ColorProviderControl DataContext="{Binding ColorProviderController}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
 		</GroupBox>
 
 		<GroupBox Header="Other:">
-			<CheckBox x:Name="_chkClipToLayer" Content="Clip to layer" />
+			<CheckBox Content="Clip to layer" IsChecked="{Binding ClipToLayer, Mode=TwoWay}"/>
 		</GroupBox>
 	</StackPanel>
 </UserControl>

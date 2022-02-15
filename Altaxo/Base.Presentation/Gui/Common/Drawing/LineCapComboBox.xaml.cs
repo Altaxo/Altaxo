@@ -122,7 +122,7 @@ namespace Altaxo.Gui.Common.Drawing
 
     public static readonly DependencyProperty SelectedLineCapProperty =
         DependencyProperty.Register(_nameOfValueProp, typeof(ILineCap), typeof(LineCapComboBox),
-        new FrameworkPropertyMetadata(FlatCap.Instance, OnSelectedLineCapChanged));
+        new FrameworkPropertyMetadata(FlatCap.Instance, OnSelectedLineCapChanged) { BindsTwoWayByDefault=true });
 
     private static void OnSelectedLineCapChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
     {

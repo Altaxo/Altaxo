@@ -3,9 +3,12 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
-						 xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing"
-						 xmlns:axoggs="clr-namespace:Altaxo.Gui.Graph.Scales"
+			 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
+			 xmlns:axogcc="clr-namespace:Altaxo.Gui.Common.Converters"
+			 xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing"
+			 xmlns:axoggs="clr-namespace:Altaxo.Gui.Graph.Scales" 
+             xmlns:styles="clr-namespace:Altaxo.Gui.Graph.Gdi.Plot.Styles;assembly=AltaxoBase"
+             d:DataContext="{d:DesignInstance Type=styles:ColumnDrivenSymbolSizePlotStyleController}"
              mc:Ignorable="d">
 	<UserControl.Resources>
 		<Style TargetType="Label">
@@ -17,14 +20,14 @@
 	</UserControl.Resources>
 	<StackPanel Orientation="Vertical">
 		<GroupBox Header="Scale">
-			<axoggs:DensityScaleControl x:Name="_ctrlScale" />
-		</GroupBox>
+            <axoggs:DensityScaleControl DataContext="{Binding ScaleController}" />
+        </GroupBox>
 
 		<GroupBox Header="Data column">
 			<StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="6">
-				<TextBox x:Name="_guiDataColumnTransformation" IsEnabled="True" IsReadOnly="True" />
-				<TextBox x:Name="_guiDataColumn" IsEnabled="True" IsReadOnly="True" MinWidth="100" />
-			</StackPanel>
+                <TextBox Text="{Binding DataColumnTransformationText}" ToolTip="{Binding DataColumnTransformationToolTip}" Visibility="{Binding DataColumnTransformationText, Converter={x:Static axogcc:NullToVisibilityCollapsedConverter.Instance}}" IsEnabled="True" IsReadOnly="True" />
+                <TextBox Text="{Binding DataColumnText}" ToolTip="{Binding DataColumnToolTip}" Background="{Binding DataColumnStatus, Converter={x:Static axogcc:PlotDataSeverityToBackground.Instance}}" IsEnabled="True" IsReadOnly="True" MinWidth="100" />
+            </StackPanel>
 		</GroupBox>
 
 		<GroupBox Header="Details:">
@@ -49,17 +52,17 @@
 					<RowDefinition Height="4" />
 				</Grid.RowDefinitions>
 				<Label Grid.Column="0" Grid.Row="0" Content="Symbol size at 0:" />
-				<axogcd:LineCapSizeComboBox x:Name="_cbSymbolSizeAt0" Grid.Column="1" Grid.Row="0" />
+				<axogcd:LineCapSizeComboBox Grid.Column="1" Grid.Row="0" SelectedQuantity="{Binding SymbolSizeAt0}" UnitEnvironment="{Binding SymbolSizeEnvironment}" />
 				<Label Grid.Column="0" Grid.Row="2" Content="Symbol size at 1:" />
-				<axogcd:LineCapSizeComboBox x:Name="_cbSymbolSizeAt1" Grid.Column="1" Grid.Row="2" />
+                <axogcd:LineCapSizeComboBox  Grid.Column="1" Grid.Row="2" SelectedQuantity="{Binding SymbolSizeAt1}" UnitEnvironment="{Binding SymbolSizeEnvironment}" />
 				<Label Grid.Column="0" Grid.Row="4" Content="Symbol size below 0:" />
-				<axogcd:LineCapSizeComboBox x:Name="_cbSymbolSizeBelow" Grid.Column="1" Grid.Row="4" />
+                <axogcd:LineCapSizeComboBox  Grid.Column="1" Grid.Row="4" SelectedQuantity="{Binding SymbolSizeBelow}" UnitEnvironment="{Binding SymbolSizeEnvironment}" />
 				<Label Grid.Column="0" Grid.Row="6" Content="Symbol size above 1:" />
-				<axogcd:LineCapSizeComboBox x:Name="_cbSymbolSizeAbove" Grid.Column="1" Grid.Row="6" />
+                <axogcd:LineCapSizeComboBox Grid.Column="1" Grid.Row="6" SelectedQuantity="{Binding SymbolSizeAbove}" UnitEnvironment="{Binding SymbolSizeEnvironment}"/>
 				<Label Grid.Column="0" Grid.Row="8" Content="Symbol size of invalid number:" />
-				<axogcd:LineCapSizeComboBox x:Name="_cbSymbolSizeInvalid" Grid.Column="1" Grid.Row="8" />
+                <axogcd:LineCapSizeComboBox Grid.Column="1" Grid.Row="8" SelectedQuantity="{Binding SymbolSizeInvalid}" UnitEnvironment="{Binding SymbolSizeEnvironment}" />
 				<Label Grid.Column="0" Grid.Row="10" Content="Number of steps:" />
-				<axogc:Int32UpDown x:Name="_edNumberOfSteps" Grid.Column="1" Grid.Row="10" />
+				<axogc:Int32UpDown Grid.Column="1" Grid.Row="10" Value="{Binding NumberOfSteps}" Minimum="0" />
 			</Grid>
 		</GroupBox>
 	</StackPanel>

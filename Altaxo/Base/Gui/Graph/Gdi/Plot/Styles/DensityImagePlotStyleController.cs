@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -23,11 +23,7 @@
 #endregion Copyright
 
 #nullable disable
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Altaxo.Graph.Gdi.Plot;
 using Altaxo.Graph.Gdi.Plot.Styles;
 
@@ -37,21 +33,11 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
   using ColorProvider;
   using Scales;
 
-  #region Interfaces
 
-  public interface IDensityImagePlotStyleView
+  public interface IDensityImagePlotStyleView : IDataContextAwareView
   {
-    IDensityScaleView DensityScaleView { get; }
-
-    IColorProviderView ColorProviderView { get; }
-
-    /// <summary>
-    /// Initializes the content of the ClipToLayer checkbox
-    /// </summary>
-    bool ClipToLayer { get; set; }
   }
 
-  #endregion Interfaces
 
   /// <summary>
   /// Controller for the density image plot style
@@ -60,8 +46,6 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
   [ExpectedTypeOfView(typeof(IDensityImagePlotStyleView))]
   public class DensityImagePlotStyleController : MVCANControllerEditOriginalDocBase<DensityImagePlotStyle, IDensityImagePlotStyleView>
   {
-    private IMVCANController _scaleController;
-    private IMVCANController _colorProviderController;
 
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
@@ -69,24 +53,69 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
       yield return new ControllerAndSetNullMethod(_colorProviderController, () => _colorProviderController = null);
     }
 
+    #region Bindings
+
+    private DensityScaleController _scaleController;
+
+    public DensityScaleController ScaleController
+    {
+      get => _scaleController;
+      set
+      {
+        if (!(_scaleController == value))
+        {
+          _scaleController?.Dispose();
+          _scaleController = value;
+          OnPropertyChanged(nameof(ScaleController));
+        }
+      }
+    }
+
+    private IMVCANController _colorProviderController;
+
+    public IMVCANController ColorProviderController
+    {
+      get => _colorProviderController;
+      set
+      {
+        if (!(_colorProviderController == value))
+        {
+          _colorProviderController = value;
+          OnPropertyChanged(nameof(ColorProviderController));
+        }
+      }
+    }
+
+    private bool _clipToLayer;
+
+    public bool ClipToLayer
+    {
+      get => _clipToLayer;
+      set
+      {
+        if (!(_clipToLayer == value))
+        {
+          _clipToLayer = value;
+          OnPropertyChanged(nameof(ClipToLayer));
+        }
+      }
+    }
+
+
+
+    #endregion
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
 
       if (initData)
       {
-        _scaleController = new DensityScaleController(newScale => _doc.Scale = (NumericalScale)newScale) { UseDocumentCopy = UseDocument.Directly };
-        _scaleController.InitializeDocument(_doc.Scale);
+        ScaleController = new DensityScaleController(newScale => _doc.Scale = (NumericalScale)newScale) { UseDocumentCopy = UseDocument.Directly };
+        ScaleController.InitializeDocument(_doc.Scale);
 
-        _colorProviderController = new ColorProviderController(newColorProvider => _doc.ColorProvider = newColorProvider) { UseDocumentCopy = UseDocument.Directly };
-        _colorProviderController.InitializeDocument(_doc.ColorProvider);
-      }
-
-      if (_view is not null)
-      {
-        _scaleController.ViewObject = _view.DensityScaleView;
-        _colorProviderController.ViewObject = _view.ColorProviderView;
-        _view.ClipToLayer = _doc.ClipToLayer;
+        ColorProviderController = new ColorProviderController(newColorProvider => _doc.ColorProvider = newColorProvider) { UseDocumentCopy = UseDocument.Directly };
+        ColorProviderController.InitializeDocument(_doc.ColorProvider);
+        ClipToLayer = _doc.ClipToLayer;
       }
     }
 
@@ -98,7 +127,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
       if (!_colorProviderController.Apply(disposeController))
         return false;
 
-      _doc.ClipToLayer = _view.ClipToLayer;
+      _doc.ClipToLayer = ClipToLayer;
       _doc.Scale = (NumericalScale)_scaleController.ModelObject;
       _doc.ColorProvider = (IColorProvider)_colorProviderController.ModelObject;
 

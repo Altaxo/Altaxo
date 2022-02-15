@@ -8,7 +8,7 @@
 						 xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing"
 						 xmlns:axoggc="clr-namespace:Altaxo.Gui.Drawing.D3D"
 						 xmlns:axogdp="clr-namespace:Altaxo.Gui.Drawing"
-						 xmlns:axogdd="clr-namespace:Altaxo.Gui.Drawing.DashPatternManagement"
+						 xmlns:axogdd="clr-namespace:Altaxo.Gui.Drawing.DashPatternManagement" xmlns:styles="clr-namespace:Altaxo.Gui.Graph.Gdi.Plot.Styles;assembly=AltaxoBase" d:DataContext="{d:DesignInstance Type=styles:DropAreaPlotStyleController}"
              mc:Ignorable="d">
 
 	<UserControl.Resources>
@@ -66,32 +66,32 @@
 		</Grid.RowDefinitions>
 
 		<Label Grid.Column="0" Grid.Row="0" Content="Line connection:" />
-		<ComboBox x:Name="_guiLineConnect" Grid.Column="2" Grid.Row="0" SelectionChanged="EhUseLineConnectChanged" />
-		<CheckBox x:Name="_guiConnectCircular" Grid.Column="2" Grid.Row="2" Content="Circular connection" />
-		<CheckBox x:Name="_guiIgnoreMissingPoints" Grid.Column="2" Grid.Row="6" Content="Ignore data gaps" />
-		<CheckBox x:Name="_guiIndependentOnShiftingGroupStyles"  Grid.Row="8" Grid.Column="2" Grid.ColumnSpan="4" Content="Independent on data shifting group styles" />
+        <ComboBox  Grid.Column="2" Grid.Row="0" ItemsSource="{Binding LineConnectChoices.Items}" SelectedItem="{Binding LineConnectChoices.SelectedItem, Mode=TwoWay}" />
+		<CheckBox  Grid.Column="2" Grid.Row="2" IsChecked="{Binding ConnectCircular, Mode=TwoWay}" Content="Circular connection" />
+		<CheckBox Grid.Column="2" Grid.Row="6" IsChecked="{Binding IgnoreMissingDataPoints, Mode=TwoWay}" Content="Ignore data gaps" />
+		<CheckBox Grid.Row="8" Grid.Column="2" Grid.ColumnSpan="4" IsChecked="{Binding IndependentOnShiftingGroupStyles, Mode=TwoWay}" Content="Independent on data shifting group styles" />
 
 		<Label Grid.Row="10" Grid.Column="0"  Content="Fill direction:" />
-		<ComboBox x:Name="_guiFillDirection" Grid.Row="10" Grid.Column="2" SelectionChanged="EhFillDirectionChanged" />
+		<ComboBox Grid.Row="10" Grid.Column="2" ItemsSource="{Binding AreaFillDirectionChoices.Items}" SelectedItem="{Binding AreaFillDirectionChoices.SelectedItem, Mode=TwoWay}" />
 
 		<Label Content="Fill color:" Grid.Row="12" Grid.Column="0" />
-		<axogcd:BrushComboBox x:Name="_guiFillBrush" Grid.Row="12" Grid.Column="2" SelectedBrushChanged="EhFillBrushChanged" />
+		<axogcd:BrushComboBox Grid.Row="12" Grid.Column="2" SelectedBrush="{Binding FillBrush}" ShowPlotColorsOnly="{Binding ShowPlotColorsOnlyForFillBrush}" />
 
 		<GroupBox Header="Fill color linkage:" Grid.Row="14" Grid.ColumnSpan="3">
-			<axogc:SingleChoiceRadioStackPanel x:Name="_guiFillColorLinkage" Orientation="Vertical" SelectionChanged="EhFillColorLinkageChanged" />
+			<axogc:SingleChoiceRadioStackPanel Orientation="Vertical" ItemsSource="{Binding FillColorLinkageChoices.Items}" SelectedItem="{Binding FillColorLinkageChoices.SelectedItem, Mode=TwoWay}" />
 		</GroupBox>
 
 		<Label Content="Frame pen:" Grid.Row="16" Grid.Column="0" />
-		<axogcd:BrushComboBox x:Name="_guiFrameBrush"  Grid.Row="16" Grid.Column="2" />
+		<axogcd:BrushComboBox Grid.Row="16" Grid.Column="2" SelectedBrush="{Binding FramePen.Brush}" />
 
 		<GroupBox Header="Frame color linkage:" Grid.Row="18" Grid.ColumnSpan="3">
-			<axogc:SingleChoiceRadioStackPanel x:Name="_guiFrameColorLinkage" Orientation="Vertical" SelectionChanged="EhFrameColorLinkageChanged" />
+			<axogc:SingleChoiceRadioStackPanel Orientation="Vertical" ItemsSource="{Binding FrameColorLinkageChoices.Items}" SelectedItem="{Binding FrameColorLinkageChoices.SelectedItem, Mode=TwoWay}" />
 		</GroupBox>
 
 		<Label Content="Dash style:" Grid.Row="20" Grid.Column="0" />
-		<axogdd:DashPatternComboBox x:Name="_guiFrameDashStyle" Grid.Row="20" Grid.Column="2" />
+		<axogdd:DashPatternComboBox Grid.Row="20" Grid.Column="2" SelectedItem="{Binding FramePen.DashPattern}" />
 
 		<Label Grid.Column="0" Grid.Row="22" Content="Thickness:" />
-		<axogcd:LineThicknessComboBox  Grid.Row="22" x:Name="_guiFrameThickness1" Grid.Column="2" />
+		<axogcd:LineThicknessComboBox  Grid.Row="22" Grid.Column="2" SelectedQuantity="{Binding FramePen.LineThickness}" UnitEnvironment="{Binding FramePen.LineThicknessEnvironment}" />
 	</Grid>
 </UserControl>
