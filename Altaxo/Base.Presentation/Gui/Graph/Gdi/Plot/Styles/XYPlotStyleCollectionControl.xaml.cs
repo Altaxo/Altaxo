@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -22,14 +22,7 @@
 
 #endregion Copyright
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
-using Altaxo.Collections;
 
 namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 {
@@ -38,78 +31,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
   /// </summary>
   public partial class XYPlotStyleCollectionControl : UserControl, IXYPlotStyleCollectionView, Altaxo.Gui.Graph.Graph3D.Plot.Styles.IXYZPlotStyleCollectionView
   {
-    public event Action? RequestAddStyle;
-
-    public event Action? RequestStyleUp;
-
-    public event Action? RequestStyleDown;
-
-    public event Action? RequestStyleEdit;
-
-    public event Action? RequestStyleRemove;
-
-    public event Action? PredefinedStyleSelected;
-
     public XYPlotStyleCollectionControl()
     {
       InitializeComponent();
     }
-
-    private void EhPredefinedSets_DoubleClick(object sender, MouseButtonEventArgs e)
-    {
-      if (PredefinedStyleSelected is not null && _predefinedSetsAvailable.SelectedItem is not null)
-      {
-        GuiHelper.SynchronizeSelectionFromGui(_predefinedSetsAvailable);
-        PredefinedStyleSelected?.Invoke();
-      }
-    }
-
-    private void EhSingleStylesAvailable_DoubleClick(object sender, MouseButtonEventArgs e)
-    {
-      if (RequestAddStyle is not null && _singleStylesAvailable.SelectedItem is not null)
-      {
-        GuiHelper.SynchronizeSelectionFromGui(_singleStylesAvailable);
-        RequestAddStyle?.Invoke();
-      }
-    }
-
-    private void EhCurrentStyles_DoubleClick(object sender, MouseButtonEventArgs e)
-    {
-      RequestStyleEdit?.Invoke();
-    }
-
-    private void EhStyleUp_Click(object sender, RoutedEventArgs e)
-    {
-      RequestStyleUp?.Invoke();
-    }
-
-    private void EhStyleDown_Click(object sender, RoutedEventArgs e)
-    {
-      RequestStyleDown?.Invoke();
-    }
-
-    private void EhStyleRemove_Click(object sender, RoutedEventArgs e)
-    {
-      RequestStyleRemove?.Invoke();
-    }
-
-    #region IXYPlotStyleCollectionView
-
-    public void InitializePredefinedStyles(SelectableListNodeList list)
-    {
-      GuiHelper.Initialize(_predefinedSetsAvailable, list);
-    }
-
-    public void InitializeStyleList(SelectableListNodeList list)
-    {
-      GuiHelper.Initialize(_lbStyles, list);
-    }
-
-    public void InitializeAvailableStyleList(SelectableListNodeList list)
-    {
-      GuiHelper.Initialize(_singleStylesAvailable, list);
-    }
-
-    #endregion IXYPlotStyleCollectionView
   }
 }

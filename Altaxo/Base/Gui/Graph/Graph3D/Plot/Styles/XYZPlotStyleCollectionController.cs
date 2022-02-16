@@ -26,39 +26,22 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows.Input;
 using Altaxo.Collections;
 using Altaxo.Graph.Graph3D;
 using Altaxo.Graph.Graph3D.Plot;
 using Altaxo.Graph.Graph3D.Plot.Styles;
+using Altaxo.Gui.Common;
 using Altaxo.Main;
 using Altaxo.Main.Services;
 
 namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 {
-  #region Interfaces
-
   /// <summary>
   /// Summary description for XYPlotStyleCollectionController.
   /// </summary>
-  public interface IXYZPlotStyleCollectionView
+  public interface IXYZPlotStyleCollectionView : IDataContextAwareView
   {
-    void InitializePredefinedStyles(SelectableListNodeList list);
-
-    void InitializeStyleList(SelectableListNodeList list);
-
-    void InitializeAvailableStyleList(SelectableListNodeList list);
-
-    event Action RequestAddStyle;
-
-    event Action RequestStyleUp;
-
-    event Action RequestStyleDown;
-
-    event Action RequestStyleEdit;
-
-    event Action RequestStyleRemove;
-
-    event Action PredefinedStyleSelected;
   }
 
   /// <summary>
@@ -72,7 +55,6 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
     event Action<int> StyleEditRequested;
   }
 
-  #endregion Interfaces
 
   [UserControllerForObject(typeof(G3DPlotStyleCollection))]
   [ExpectedTypeOfView(typeof(IXYZPlotStyleCollectionView))]
@@ -81,10 +63,6 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
     MVCANControllerEditOriginalDocBase<G3DPlotStyleCollection, IXYZPlotStyleCollectionView>,
     IXYZPlotStyleCollectionController
   {
-    private SelectableListNodeList _predefinedStyleSetsAvailable;
-    private SelectableListNodeList _singleStylesAvailable;
-    private SelectableListNodeList _currentItems;
-
     /// <summary>Is fired when user selected a style for editing. The argument is the index of the style to edit.</summary>
     public event Action<int> StyleEditRequested;
 
@@ -92,6 +70,74 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
     {
       yield break;
     }
+
+    public XYZPlotStyleCollectionController()
+    {
+      CmdAddPredefinedStyleSet = new RelayCommand(EhView_AddPredefinedStyleSet);
+      CmdAddSingleStyle = new RelayCommand(EhView_AddSingleStyle);
+      CmdStyleUp = new RelayCommand(EhView_StyleUp);
+      CmdStyleDown = new RelayCommand(EhView_StyleDown);
+      CmdStyleEdit = new RelayCommand(EhView_StyleEdit);
+      CmdStyleRemove = new RelayCommand(EhView_StyleRemove);
+    }
+
+    #region Bindings
+
+    public ICommand CmdAddPredefinedStyleSet { get; }
+    public ICommand CmdAddSingleStyle { get; }
+    public ICommand CmdStyleUp { get; }
+    public ICommand CmdStyleDown { get; }
+    public ICommand CmdStyleEdit { get; }
+    public ICommand CmdStyleRemove { get; }
+
+    private ItemsController<int> _predefinedStyleSetsAvailable;
+
+    public ItemsController<int> PredefinedStyleSetsAvailable
+    {
+      get => _predefinedStyleSetsAvailable;
+      set
+      {
+        if (!(_predefinedStyleSetsAvailable == value))
+        {
+          _predefinedStyleSetsAvailable = value;
+          OnPropertyChanged(nameof(PredefinedStyleSetsAvailable));
+        }
+      }
+    }
+
+    private ItemsController<Type> _singleStylesAvailable;
+
+    public ItemsController<Type> SingleStylesAvailable
+    {
+      get => _singleStylesAvailable;
+      set
+      {
+        if (!(_singleStylesAvailable == value))
+        {
+          _singleStylesAvailable = value;
+          OnPropertyChanged(nameof(SingleStylesAvailable));
+        }
+      }
+    }
+
+    private SelectableListNodeList _currentItems;
+
+    public SelectableListNodeList CurrentItems
+    {
+      get => _currentItems;
+      set
+      {
+        if (!(_currentItems == value))
+        {
+          _currentItems = value;
+          OnPropertyChanged(nameof(CurrentItems));
+        }
+      }
+    }
+
+
+    #endregion
+
 
     public override void Dispose(bool isDisposing)
     {
@@ -111,29 +157,24 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
       {
         // predefined styles
         string[] names = G3DPlotStyleCollectionTemplates.GetAvailableNames();
-        _predefinedStyleSetsAvailable = new SelectableListNodeList();
+        var predefinedStyleSetsAvailable = new SelectableListNodeList();
         for (int i = 0; i < names.Length; ++i)
-          _predefinedStyleSetsAvailable.Add(new SelectableListNode(names[i], i, false));
+          predefinedStyleSetsAvailable.Add(new SelectableListNode(names[i], i, false));
+        PredefinedStyleSetsAvailable = new ItemsController<int>(predefinedStyleSetsAvailable);
 
         // single styles
-        _singleStylesAvailable = new SelectableListNodeList();
+        var singleStylesAvailable = new SelectableListNodeList();
         Type[] avtypes = ReflectionService.GetNonAbstractSubclassesOf(typeof(IG3DPlotStyle));
         for (int i = 0; i < avtypes.Length; i++)
         {
           if (avtypes[i] != typeof(G3DPlotStyleCollection))
           {
-            _singleStylesAvailable.Add(new SelectableListNode(Current.Gui.GetUserFriendlyClassName(avtypes[i]), avtypes[i], false));
+            singleStylesAvailable.Add(new SelectableListNode(Current.Gui.GetUserFriendlyClassName(avtypes[i]), avtypes[i], false));
           }
         }
+        SingleStylesAvailable = new ItemsController<Type>(singleStylesAvailable);
 
         BuildCurrentStyleListNodeList();
-      }
-
-      if (_view is not null)
-      {
-        _view.InitializePredefinedStyles(_predefinedStyleSetsAvailable);
-        _view.InitializeAvailableStyleList(_singleStylesAvailable);
-        _view.InitializeStyleList(_currentItems);
       }
     }
 
@@ -142,29 +183,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
       return ApplyEnd(true, disposeController);
     }
 
-    protected override void AttachView()
-    {
-      base.AttachView();
-
-      _view.RequestAddStyle += EhView_AddStyle;
-      _view.RequestStyleUp += EhView_StyleUp;
-      _view.RequestStyleDown += EhView_StyleDown;
-      _view.RequestStyleEdit += EhView_StyleEdit;
-      _view.RequestStyleRemove += EhView_StyleRemove;
-      _view.PredefinedStyleSelected += EhView_PredefinedStyleSelected;
-    }
-
-    protected override void DetachView()
-    {
-      _view.RequestAddStyle -= EhView_AddStyle;
-      _view.RequestStyleUp -= EhView_StyleUp;
-      _view.RequestStyleDown -= EhView_StyleDown;
-      _view.RequestStyleEdit -= EhView_StyleEdit;
-      _view.RequestStyleRemove -= EhView_StyleRemove;
-      _view.PredefinedStyleSelected -= EhView_PredefinedStyleSelected;
-
-      base.DetachView();
-    }
+    
 
     #region IXYZPlotStyleCollectionViewEventSink Members
 
@@ -176,9 +195,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
         _currentItems.Add(new SelectableListNode(Current.Gui.GetUserFriendlyClassName(_doc[i].GetType()), _doc[i], false));
     }
 
-    public virtual void EhView_AddStyle()
+    public virtual void EhView_AddSingleStyle()
     {
-      var sel = _singleStylesAvailable.FirstSelectedNode;
+      var sel = _singleStylesAvailable.SelectedItem;
       if (sel is null)
         return;
 
@@ -230,9 +249,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
       OnCollectionChangeCommit();
     }
 
-    public void EhView_PredefinedStyleSelected()
+    public void EhView_AddPredefinedStyleSet()
     {
-      var sel = _predefinedStyleSetsAvailable.FirstSelectedNode;
+      var sel = _predefinedStyleSetsAvailable.SelectedItem;
       if (sel is null)
         return;
 

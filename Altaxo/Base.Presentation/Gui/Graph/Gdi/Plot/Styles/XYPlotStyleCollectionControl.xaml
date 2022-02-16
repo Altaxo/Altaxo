@@ -2,7 +2,10 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:axogb="clr-namespace:Altaxo.Gui.Behaviors" 
+             xmlns:styles="clr-namespace:Altaxo.Gui.Graph.Gdi.Plot.Styles;assembly=AltaxoBase" 
+             d:DataContext="{d:DesignInstance Type=styles:XYPlotStyleCollectionController}"
              mc:Ignorable="d">
 
 	<UserControl.Resources>
@@ -38,33 +41,33 @@
 		<TabControl Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2">
 
 			<TabItem Header="Predefined sets">
-				<ListBox x:Name="_predefinedSetsAvailable" MouseDoubleClick="EhPredefinedSets_DoubleClick" ToolTip="Double click to use this style set">
+				<ListBox ItemsSource="{Binding PredefinedStyleSetsAvailable.Items}" SelectedItem="{Binding PredefinedStyleSetsAvailable.SelectedItem, Mode=TwoWay}" axogb:DoubleClickTriggersCommand.Command="{Binding CmdAddPredefinedStyleSet}" ToolTip="Double click to use this style set">
 				</ListBox>
 			</TabItem>
 			<TabItem Header="Single styles">
-				<ListBox x:Name="_singleStylesAvailable" MouseDoubleClick="EhSingleStylesAvailable_DoubleClick" ToolTip="Double click to add this style to the style list">
+                <ListBox ItemsSource="{Binding SingleStylesAvailable.Items}" SelectedItem="{Binding SingleStylesAvailable.SelectedItem, Mode=TwoWay}" axogb:DoubleClickTriggersCommand.Command="{Binding CmdAddSingleStyle}" ToolTip="Double click to add this style to the style list">
 				</ListBox>
 			</TabItem>
 		</TabControl>
 
-		<ListBox x:Name="_lbStyles" Grid.Column="0" Grid.Row="3" Grid.RowSpan="6" SelectionMode="Extended" MouseDoubleClick="EhCurrentStyles_DoubleClick" ToolTip="Double click on an item to edit it">
+        <ListBox Grid.Column="0" Grid.Row="3" Grid.RowSpan="6" ItemsSource="{Binding CurrentItems}" SelectionMode="Extended" axogb:DoubleClickTriggersCommand.Command="{Binding CmdStyleEdit}" ToolTip="Double click on an item to edit it">
 			<ItemsControl.ItemContainerStyle>
 				<Style TargetType="{x:Type ListBoxItem}">
 					<Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
 				</Style>
 			</ItemsControl.ItemContainerStyle>
 		</ListBox>
-		<Button Grid.Column="1" Grid.Row="4" Click="EhStyleUp_Click" ToolTip="Move selected items up">
+		<Button Grid.Column="1" Grid.Row="4" Command="{Binding CmdStyleUp}" ToolTip="Move selected items up">
 			<Viewbox Style="{StaticResource ArrowViewBoxStyle}">
 				<Path Style="{StaticResource UpArrowPathStyle}" />
 			</Viewbox>
 		</Button>
-		<Button Grid.Column="1" Grid.Row="5" Click="EhStyleDown_Click" ToolTip="Move selected items down">
+		<Button Grid.Column="1" Grid.Row="5" Command="{Binding CmdStyleDown}" ToolTip="Move selected items down">
 			<Viewbox Style="{StaticResource ArrowViewBoxStyle}">
 				<Path Style="{StaticResource DownArrowPathStyle}" />
 			</Viewbox>
 		</Button>
-		<Button Grid.Column="1" Grid.Row="8" Click="EhStyleRemove_Click" ToolTip="Remove Selected items">
+		<Button Grid.Column="1" Grid.Row="8" Command="{Binding CmdStyleRemove}" ToolTip="Remove Selected items">
 			<Viewbox Style="{StaticResource ArrowViewBoxStyle}">
 				<Path Style="{StaticResource RemoveCrossPathStyle}" />
 			</Viewbox>
