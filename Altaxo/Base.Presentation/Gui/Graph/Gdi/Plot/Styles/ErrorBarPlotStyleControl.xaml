@@ -119,7 +119,7 @@
           <RowDefinition Height="4" />
         </Grid.RowDefinitions>
         <CheckBox Grid.Column="0" Grid.Row="0" IsChecked="{Binding IndependentColor, Mode=TwoWay}" Content="Independent color :" />
-        <axogcd:BrushComboBox Grid.Row="0" Grid.Column="2" Grid.ColumnSpan="4" SelectedBrush="{Binding Pen.Brush}" />
+        <axogcd:BrushComboBox Grid.Row="0" Grid.Column="2" Grid.ColumnSpan="4" SelectedBrush="{Binding Pen.Brush}" ShowPlotColorsOnly="{Binding Pen.ShowPlotColorsOnly}" />
 
         <CheckBox Grid.Row="2" Grid.Column="0" IsChecked="{Binding IndependentDashPattern, Mode=TwoWay}"  Content="Independent dash pattern :" />
         <axogddpm:DashPatternComboBox Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="4" SelectedItem="{Binding Pen.DashPattern}"/>

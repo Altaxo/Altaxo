@@ -172,7 +172,7 @@
             Content="Indep. color:"
             />
         <axogcd:BrushComboBox
-            SelectedBrush="{Binding Pen.Brush}"
+            SelectedBrush="{Binding Pen.Brush}" ShowPlotColorsOnly="{Binding Pen.ShowPlotColorsOnly}"
             Grid.Row="10"
             Grid.Column="2" />
 

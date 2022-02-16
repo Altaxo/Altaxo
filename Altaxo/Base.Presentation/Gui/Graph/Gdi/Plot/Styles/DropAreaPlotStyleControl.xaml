@@ -82,7 +82,7 @@
 		</GroupBox>
 
 		<Label Content="Frame pen:" Grid.Row="16" Grid.Column="0" />
-		<axogcd:BrushComboBox Grid.Row="16" Grid.Column="2" SelectedBrush="{Binding FramePen.Brush}" />
+		<axogcd:BrushComboBox Grid.Row="16" Grid.Column="2" SelectedBrush="{Binding FramePen.Brush}" ShowPlotColorsOnly="{Binding FramePen.ShowPlotColorsOnly}" />
 
 		<GroupBox Header="Frame color linkage:" Grid.Row="18" Grid.ColumnSpan="3">
 			<axogc:SingleChoiceRadioStackPanel Orientation="Vertical" ItemsSource="{Binding FrameColorLinkageChoices.Items}" SelectedItem="{Binding FrameColorLinkageChoices.SelectedItem, Mode=TwoWay}" />

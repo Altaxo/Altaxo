@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -31,49 +31,13 @@ using Altaxo.Drawing;
 using Altaxo.Drawing.ColorManagement;
 using Altaxo.Graph;
 using Altaxo.Graph.Gdi.Plot.Styles;
+using Altaxo.Gui.Common.Drawing;
 using Altaxo.Gui.Graph.Plot.Groups;
 
 namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 {
-  public interface IFillToCurvePlotStyleView
+  public interface IFillToCurvePlotStyleView : IDataContextAwareView
   {
-    bool UseFill { get; set; }
-
-    bool ShowPlotColorsOnlyForFillBrush { set; }
-
-    bool IndependentFillColor { get; set; }
-
-    BrushX FillBrush { get; set; }
-
-    bool UseFrame { get; set; }
-
-    bool ShowPlotColorsOnlyForFramePen { set; }
-
-    bool IndependentFrameColor { get; set; }
-
-    PenX FramePen { get; set; }
-
-    bool FillToPreviousItem { get; set; }
-
-    bool FillToNextItem { get; set; }
-
-    /// <summary>Occurs when the user choice for IndependentColor of the fill brush has changed.</summary>
-    event Action IndependentFillColorChanged;
-
-    /// <summary>Occurs when the user choice for IndependentColor of the frame pen has changed.</summary>
-    event Action IndependentFrameColorChanged;
-
-    /// <summary>Occurs when the user checked or unchecked the "use fill" checkbox.</summary>
-    event Action UseFillChanged;
-
-    /// <summary>Occurs when the user checked or unchecked the "use frame" checkbox.</summary>
-    event Action UseFrameChanged;
-
-    /// <summary>Occurs when the fill brush has changed by user interaction.</summary>
-    event Action FillBrushChanged;
-
-    /// <summary>Occurs when the  frame pen has changed by user interaction.</summary>
-    event Action FramePenChanged;
   }
 
   [UserControllerForObject(typeof(FillToCurvePlotStyle))]
@@ -85,9 +49,219 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
-      yield break;
+      yield return new ControllerAndSetNullMethod(_framePen, () => FramePen = null);
     }
 
+    #region Binding
+
+    private bool _useFill;
+
+    public bool UseFill
+    {
+      get => _useFill;
+      set
+      {
+        if (!(_useFill == value))
+        {
+          _useFill = value;
+          OnPropertyChanged(nameof(UseFill));
+          EhUseFillChanged(value);
+        }
+      }
+    }
+    private void EhUseFillChanged(bool newValue)
+    {
+      if (true == newValue)
+      {
+        if (UseFrame && false == IndependentFrameColor)
+        {
+          InternalSetFillColorToFrameColor();
+        }
+        else if (FillBrush is null || FillBrush.IsInvisible)
+        {
+          FillBrush = new BrushX(ColorSetManager.Instance.BuiltinDarkPlotColors[0]);
+        }
+      }
+    }
+
+    private bool _independentFillColor;
+
+    public bool IndependentFillColor
+    {
+      get => _independentFillColor;
+      set
+      {
+        if (!(_independentFillColor == value))
+        {
+          _independentFillColor = value;
+          OnPropertyChanged(nameof(IndependentFillColor));
+          EhIndependentFillColorChanged(value);
+        }
+      }
+    }
+    private void EhIndependentFillColorChanged(bool value)
+    {
+      _doc.IndependentFillColor = value;
+      if (false == value && UseFrame && false == IndependentFrameColor)
+        InternalSetFillColorToFrameColor();
+      ShowPlotColorsOnlyForFillBrush = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentFillColor);
+    }
+
+
+    private bool _showPlotColorsOnlyForFillBrush;
+    public bool ShowPlotColorsOnlyForFillBrush
+    {
+      get => _showPlotColorsOnlyForFillBrush;
+      set
+      {
+        if (!(_showPlotColorsOnlyForFillBrush == value))
+        {
+          _showPlotColorsOnlyForFillBrush = value;
+          OnPropertyChanged(nameof(ShowPlotColorsOnlyForFillBrush));
+        }
+      }
+    }
+
+
+    private BrushX _fillBrush;
+
+    public BrushX FillBrush
+    {
+      get => _fillBrush;
+      set
+      {
+        if (!(_fillBrush == value))
+        {
+          _fillBrush = value;
+          OnPropertyChanged(nameof(FillBrush));
+          EhFillBrushChanged(value);
+        }
+      }
+    }
+    private void EhFillBrushChanged(BrushX value)
+    {
+      if (UseFill && false == IndependentFillColor && UseFrame && false == IndependentFrameColor)
+      {
+        if (FramePen.Pen.Color != FillBrush.Color)
+          InternalSetFrameColorToFillColor();
+      }
+    }
+
+    private bool _useFrame;
+
+    public bool UseFrame
+    {
+      get => _useFrame;
+      set
+      {
+        if (!(_useFrame == value))
+        {
+          _useFrame = value;
+          OnPropertyChanged(nameof(UseFrame));
+          EhUseFrameChanged(value);
+        }
+      }
+    }
+    private void EhUseFrameChanged(bool newValue)
+    {
+      if (true == newValue)
+      {
+        if (UseFill && false == IndependentFillColor)
+        {
+          InternalSetFrameColorToFillColor();
+        }
+        else if (FramePen is null || FramePen.Pen.IsInvisible)
+        {
+          FramePen.Pen = new PenX(ColorSetManager.Instance.BuiltinDarkPlotColors[0]);
+        }
+      }
+    }
+
+    private bool _independentFrameColor;
+
+    public bool IndependentFrameColor
+    {
+      get => _independentFrameColor;
+      set
+      {
+        if (!(_independentFrameColor == value))
+        {
+          _independentFrameColor = value;
+          OnPropertyChanged(nameof(IndependentFrameColor));
+          EhIndependentFrameColorChanged(value);
+        }
+      }
+    }
+    private void EhIndependentFrameColorChanged(bool value)
+    {
+      _doc.IndependentFrameColor = value;
+      if (false == value && UseFill && false == IndependentFillColor)
+        InternalSetFrameColorToFillColor();
+      FramePen.ShowPlotColorsOnly = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentFrameColor);
+    }
+
+    
+
+    private ColorTypeThicknessPenController _framePen;
+
+    public ColorTypeThicknessPenController FramePen
+    {
+      get => _framePen;
+      set
+      {
+        if (!(_framePen == value))
+        {
+          if (_framePen is { } oldC)
+            oldC.MadeDirty -= EhFramePenChanged;
+          _framePen?.Dispose();
+          _framePen = value;
+          if (_framePen is { } newC)
+            newC.MadeDirty += EhFramePenChanged;
+          OnPropertyChanged(nameof(FramePen));
+        }
+      }
+    }
+    private void EhFramePenChanged(IMVCANDController _)
+    {
+      if (UseFill && false == IndependentFillColor && UseFrame && false == IndependentFrameColor)
+      {
+        if (FillBrush.Color != FramePen.Pen.Color)
+          InternalSetFillColorToFrameColor();
+      }
+    }
+
+    private bool _fillToPrevious;
+
+    public bool FillToPrevious
+    {
+      get => _fillToPrevious;
+      set
+      {
+        if (!(_fillToPrevious == value))
+        {
+          _fillToPrevious = value;
+          OnPropertyChanged(nameof(FillToPrevious));
+        }
+      }
+    }
+
+    private bool _fillToNext;
+
+    public bool FillToNext
+    {
+      get => _fillToNext;
+      set
+      {
+        if (!(_fillToNext == value))
+        {
+          _fillToNext = value;
+          OnPropertyChanged(nameof(FillToNext));
+        }
+      }
+    }
+
+
+    #endregion
     public override void Dispose(bool isDisposing)
     {
       _colorGroupStyleTracker = null;
@@ -101,30 +275,28 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
       if (initData)
       {
         _colorGroupStyleTracker = new ColorGroupStylePresenceTracker(_doc, EhColorGroupStyleAddedOrRemoved);
-      }
-      if (_view is not null)
-      {
-        _view.UseFill = _doc.FillBrush is not null && _doc.FillBrush.IsVisible;
-        _view.IndependentFillColor = _doc.IndependentFillColor;
-        _view.ShowPlotColorsOnlyForFillBrush = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentFillColor);
-        _view.FillBrush = _doc.FillBrush ?? new BrushX(NamedColors.Transparent);
+     
+        UseFill = _doc.FillBrush is not null && _doc.FillBrush.IsVisible;
+        IndependentFillColor = _doc.IndependentFillColor;
+        ShowPlotColorsOnlyForFillBrush = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentFillColor);
+        FillBrush = _doc.FillBrush ?? new BrushX(NamedColors.Transparent);
 
-        _view.UseFrame = _doc.FramePen is not null && _doc.FramePen.IsVisible;
-        _view.IndependentFrameColor = _doc.IndependentFrameColor;
-        _view.ShowPlotColorsOnlyForFramePen = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentFrameColor);
-        _view.FramePen = _doc.FramePen is not null ? _doc.FramePen : new PenX(NamedColors.Transparent);
+        UseFrame = _doc.FramePen is not null && _doc.FramePen.IsVisible;
+        IndependentFrameColor = _doc.IndependentFrameColor;
+        FramePen = new ColorTypeThicknessPenController(_doc.FramePen is not null ? _doc.FramePen : new PenX(NamedColors.Transparent));
+        FramePen.ShowPlotColorsOnly = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentFrameColor);
 
-        _view.FillToPreviousItem = _doc.FillToPreviousItem;
-        _view.FillToNextItem = _doc.FillToNextItem;
+        FillToPrevious = _doc.FillToPreviousItem;
+        FillToNext = _doc.FillToNextItem;
       }
     }
 
     public override bool Apply(bool disposeController)
     {
-      if (_view.UseFill)
+      if (UseFill)
       {
-        _doc.IndependentFillColor = _view.IndependentFillColor;
-        _doc.FillBrush = _view.UseFill ? _view.FillBrush : null;
+        _doc.IndependentFillColor = IndependentFillColor;
+        _doc.FillBrush = UseFill ? FillBrush : null;
       }
       else
       {
@@ -132,10 +304,10 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
         _doc.FillBrush = null;
       }
 
-      if (_view.UseFrame)
+      if (UseFrame)
       {
-        _doc.IndependentFrameColor = _view.IndependentFrameColor;
-        _doc.FramePen = _view.FramePen;
+        _doc.IndependentFrameColor = IndependentFrameColor;
+        _doc.FramePen = FramePen.Pen;
       }
       else
       {
@@ -143,38 +315,13 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
         _doc.FramePen = null;
       }
 
-      _doc.FillToPreviousItem = _view.FillToPreviousItem;
-      _doc.FillToNextItem = _view.FillToNextItem;
+      _doc.FillToPreviousItem = FillToPrevious;
+      _doc.FillToNextItem = FillToNext;
 
       return ApplyEnd(true, disposeController);
     }
 
-    protected override void AttachView()
-    {
-      base.AttachView();
-      _view.UseFillChanged += EhUseFillChanged;
-      _view.IndependentFillColorChanged += EhIndependentFillColorChanged;
-
-      _view.UseFrameChanged += EhUseFrameChanged;
-      _view.IndependentFrameColorChanged += EhIndependentFrameColorChanged;
-
-      _view.FillBrushChanged += EhFillBrushChanged;
-      _view.FramePenChanged += EhFramePenChanged;
-    }
-
-    protected override void DetachView()
-    {
-      _view.UseFillChanged -= EhUseFillChanged;
-      _view.IndependentFillColorChanged -= EhIndependentFillColorChanged;
-
-      _view.UseFrameChanged -= EhUseFrameChanged;
-      _view.IndependentFrameColorChanged -= EhIndependentFrameColorChanged;
-
-      _view.FillBrushChanged -= EhFillBrushChanged;
-      _view.FramePenChanged -= EhFramePenChanged;
-
-      base.DetachView();
-    }
+   
 
     #region Color management
 
@@ -182,106 +329,24 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
     {
       if (_view is not null)
       {
-        _doc.IndependentFillColor = _view.IndependentFillColor;
-        _doc.IndependentFrameColor = _view.IndependentFrameColor;
-        if (_view.UseFill)
-          _view.ShowPlotColorsOnlyForFillBrush = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentFillColor);
-        if (_view.UseFrame)
-          _view.ShowPlotColorsOnlyForFramePen = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentFrameColor);
+        _doc.IndependentFillColor = IndependentFillColor;
+        _doc.IndependentFrameColor = IndependentFrameColor;
+        if (UseFill)
+          ShowPlotColorsOnlyForFillBrush = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentFillColor);
+        if (UseFrame)
+          FramePen.ShowPlotColorsOnly = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentFrameColor);
       }
     }
 
-    private void EhIndependentFillColorChanged()
-    {
-      if (_view is not null)
-      {
-        _doc.IndependentFillColor = _view.IndependentFillColor;
-        if (false == _view.IndependentFillColor && _view.UseFrame && false == _view.IndependentFrameColor)
-          InternalSetFillColorToFrameColor();
-        _view.ShowPlotColorsOnlyForFillBrush = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentFillColor);
-      }
-    }
-
-    private void EhIndependentFrameColorChanged()
-    {
-      if (_view is not null)
-      {
-        _doc.IndependentFrameColor = _view.IndependentFrameColor;
-        if (false == _view.IndependentFrameColor && _view.UseFill && false == _view.IndependentFillColor)
-          InternalSetFrameColorToFillColor();
-        _view.ShowPlotColorsOnlyForFramePen = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentFrameColor);
-      }
-    }
-
-    private void EhFillBrushChanged()
-    {
-      if (_view is not null)
-      {
-        if (_view.UseFill && false == _view.IndependentFillColor && _view.UseFrame && false == _view.IndependentFrameColor)
-        {
-          if (_view.FramePen.Color != _view.FillBrush.Color)
-            InternalSetFrameColorToFillColor();
-        }
-      }
-    }
-
-    private void EhFramePenChanged()
-    {
-      if (_view is not null)
-      {
-        if (_view.UseFill && false == _view.IndependentFillColor && _view.UseFrame && false == _view.IndependentFrameColor)
-        {
-          if (_view.FillBrush.Color != _view.FramePen.Color)
-            InternalSetFillColorToFrameColor();
-        }
-      }
-    }
 
     private void InternalSetFillColorToFrameColor()
     {
-      _view.FillBrush = _view.FillBrush.WithColor(_view.FramePen.Color);
+      FillBrush = FillBrush.WithColor(FramePen.Pen.Color);
     }
 
     private void InternalSetFrameColorToFillColor()
     {
-      _view.FramePen = _view.FramePen.WithColor(_view.FillBrush.Color);
-    }
-
-    private void EhUseFillChanged()
-    {
-      var newValue = _view.UseFill;
-
-      if (true == newValue)
-      {
-        if (_view.UseFrame && false == _view.IndependentFrameColor)
-        {
-          InternalSetFillColorToFrameColor();
-        }
-        else if (_view.FillBrush is null || _view.FillBrush.IsInvisible)
-        {
-          _view.FillBrush = new BrushX(ColorSetManager.Instance.BuiltinDarkPlotColors[0]);
-        }
-      }
-      _view.UseFill = newValue; // to enable/disable gui items in the control
-    }
-
-    private void EhUseFrameChanged()
-    {
-      var newValue = _view.UseFrame;
-
-      if (true == newValue)
-      {
-        if (_view.UseFill && false == _view.IndependentFillColor)
-        {
-          InternalSetFrameColorToFillColor();
-        }
-        else if (_view.FramePen is null || _view.FramePen.IsInvisible)
-        {
-          _view.FramePen = new PenX(ColorSetManager.Instance.BuiltinDarkPlotColors[0]);
-        }
-      }
-
-      _view.UseFrame = newValue; // to enable/disable gui items in the control
+      FramePen.Pen = FramePen.Pen.WithColor(FillBrush.Color);
     }
 
     #endregion Color management

@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 						 xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing"
-						 xmlns:axogdd="clr-namespace:Altaxo.Gui.Drawing.DashPatternManagement"
+						 xmlns:axogdd="clr-namespace:Altaxo.Gui.Drawing.DashPatternManagement" xmlns:styles="clr-namespace:Altaxo.Gui.Graph.Gdi.Plot.Styles;assembly=AltaxoBase" d:DataContext="{d:DesignInstance Type=styles:FillToCurvePlotStyleController}"
              mc:Ignorable="d">
 	<UserControl.Resources>
 		<Style TargetType="Label">
@@ -40,25 +40,25 @@
 		</Grid.RowDefinitions>
 
 		<StackPanel Orientation="Vertical" Grid.Column="0" Grid.Row="0" VerticalAlignment="Center">
-			<CheckBox x:Name="_guiUseFill" Content="Use fill" Checked="EhUseFillChanged" Unchecked="EhUseFillChanged" />
-			<CheckBox x:Name="_guiIndependentFillColor" Content="Independent fill color:" Checked="EhIndependentFillColorChanged" Unchecked="EhIndependentFillColorChanged" />
+            <CheckBox Content="Use fill" IsChecked="{Binding UseFill, Mode=TwoWay}"  />
+            <CheckBox Content="Independent fill color:" IsChecked="{Binding IndependentFillColor, Mode=TwoWay}" IsEnabled="{Binding UseFill}" />
 		</StackPanel>
-		<axogcd:BrushComboBox x:Name="_guiFillBrush" Grid.Column="1" Grid.Row="0" Margin="0,0,0,4" SelectedBrushChanged="EhFillBrushChanged" />
+        <axogcd:BrushComboBox Grid.Column="1" Grid.Row="0" SelectedBrush="{Binding FillBrush}" ShowPlotColorsOnly="{Binding ShowPlotColorsOnlyForFillBrush}" IsEnabled="{Binding UseFill}" Margin="0,0,0,4" />
 		<StackPanel Orientation="Vertical" Grid.Column="0" Grid.Row="2">
-			<CheckBox x:Name="_guiUseFrame" Content="Use frame" Checked="EhUseFrameChanged" Unchecked="EhUseFrameChanged" />
-			<CheckBox x:Name="_guiIndependentFrameColor" Content="Independent frame color:" Checked="EhIndependentFrameColorChanged" Unchecked="EhIndependentFrameColorChanged" />
+            <CheckBox Content="Use frame" IsChecked="{Binding UseFrame, Mode=TwoWay}"  />
+            <CheckBox Content="Independent frame color:" IsChecked="{Binding IndependentFrameColor, Mode=TwoWay}" IsEnabled="{Binding UseFrame}" />
 		</StackPanel>
-		<axogcd:BrushComboBox x:Name="_guiFramePen" Grid.Column="1" Grid.Row="2" />
+        <axogcd:BrushComboBox Grid.Column="1" Grid.Row="2" SelectedBrush="{Binding FramePen.Brush}" ShowPlotColorsOnly="{Binding FramePen.ShowPlotColorsOnly}" IsEnabled="{Binding UseFrame}"/>
 		<Label Content="Frame thickness:" Grid.Column="0" Grid.Row="4" />
-		<axogcd:LineThicknessComboBox x:Name="_guiFramePenWidth" Grid.Column="1" Grid.Row="4" />
+        <axogcd:LineThicknessComboBox Grid.Column="1" Grid.Row="4" SelectedQuantity="{Binding FramePen.LineThickness}"  IsEnabled="{Binding UseFrame}"/>
 
 		<Label Content="Frame line style:" Grid.Column="0" Grid.Row="6" />
-		<axogdd:DashPatternComboBox x:Name="_guiFrameDashStyle" Grid.Column="1" Grid.Row="6" />
+        <axogdd:DashPatternComboBox Grid.Column="1" Grid.Row="6" SelectedItem="{Binding FramePen.DashPattern}"  IsEnabled="{Binding UseFrame}" />
 
 		<Label Grid.Column="0" Grid.Row="8" Content="Fill to previous:" />
-		<CheckBox x:Name="_chkFillPrevious" Grid.Column="1" Grid.Row="8" />
+		<CheckBox Grid.Column="1" Grid.Row="8" IsChecked="{Binding FillToPrevious, Mode=TwoWay}" Content="       " />
 
 		<Label Grid.Column="0" Grid.Row="10" Content="Fill to next:" />
-		<CheckBox x:Name="_chkFillNext" Grid.Column="1" Grid.Row="10" />
+		<CheckBox Grid.Column="1" Grid.Row="10" IsChecked="{Binding FillToNext, Mode=TwoWay}" Content="        " />
 	</Grid>
 </UserControl>
