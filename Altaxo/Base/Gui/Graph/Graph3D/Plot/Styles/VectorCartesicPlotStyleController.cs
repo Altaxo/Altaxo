@@ -38,9 +38,7 @@ using Altaxo.Gui.Graph.Plot.Groups;
 
 namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 {
-  #region Interfaces
-
-  public interface IVectorCartesicPlotStyleView
+  public interface IVectorCartesicPlotStyleView : IDataContextAwareView
   {
     bool IndependentColor { get; set; }
 
@@ -116,7 +114,6 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
     event Action IndependentColorChanged;
   }
 
-  #endregion Interfaces
 
   [UserControllerForObject(typeof(VectorCartesicPlotStyle))]
   [ExpectedTypeOfView(typeof(IVectorCartesicPlotStyleView))]
@@ -152,6 +149,10 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
     {
       yield break;
     }
+
+    #region Bindings
+
+    #endregion
 
     public override void Dispose(bool isDisposing)
     {
