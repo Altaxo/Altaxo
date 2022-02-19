@@ -36,6 +36,7 @@ namespace Altaxo.Drawing
   /// </summary>
   [Serializable]
   [System.ComponentModel.ImmutableObject(true)]
+  [System.ComponentModel.TypeConverterAttribute(typeof(NamedColorTypeConverter))]
   public struct NamedColor : IEquatable<NamedColor>, IEquatable<AxoColor>, Altaxo.Main.IImmutable
   {
     private AxoColor _color;

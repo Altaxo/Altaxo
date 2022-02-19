@@ -216,6 +216,9 @@ namespace Altaxo.Gui.Drawing
       var oldItem = (TItem)args.OldValue;
       var newItem = (TItem)args.NewValue;
 
+      if (newItem == default(TItem))
+        return;
+
       // make sure, that the item is part of the data items of the ComboBox
       if (_styleListManager.GetParentList(newItem) is null)
       {

@@ -35,7 +35,7 @@ using Altaxo.Main;
 
 namespace Altaxo.Gui.Drawing
 {
-  public interface IStyleListView
+  public interface IStyleListView : IDataContextAwareView
   {
     void AvailableLists_Initialize(NGTreeNodeCollection nodes);
 

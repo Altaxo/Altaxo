@@ -25,103 +25,28 @@
 #nullable disable
 using System;
 using System.Collections.Generic;
+using System.Windows.Input;
 using Altaxo.Collections;
 using Altaxo.Drawing;
 using Altaxo.Graph.Gdi.Plot.Styles;
 using Altaxo.Graph.Graph2D.Plot.Groups;
 using Altaxo.Graph.Graph2D.Plot.Styles;
 using Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols;
-using Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols.Frames;
+using Altaxo.Gui.Common;
+using Altaxo.Gui.Graph.Graph2D.Plot.Styles;
 using Altaxo.Gui.Graph.Plot.Groups;
+using Altaxo.Units;
 
 namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 {
-  #region Interfaces
 
   /// <summary>
   /// This view interface is for showing the options of the XYXYPlotScatterStyle
   /// </summary>
-  public interface IScatterPlotStyleView
+  public interface IScatterPlotStyleView : IDataContextAwareView
   {
-    /// <summary>
-    /// Material for the scatter symbol.
-    /// </summary>
-    NamedColor Color { get; set; }
-
-    /// <summary>
-    /// Indicates, whether only colors of plot color sets should be shown.
-    /// </summary>
-    bool ShowPlotColorsOnly { set; }
-
-    /// <summary>
-    /// Initializes the symbol size combobox.
-    /// </summary>
-    double SymbolSize { get; set; }
-
-    /// <summary>
-    /// Initializes the independent symbol size check box.
-    /// </summary>
-    bool IndependentSymbolSize { get; set; }
-
-    bool IndependentScatterSymbol { get; set; }
-
-    /// <summary>
-    /// Initializes the symbol shape combobox.
-    /// </summary>
-    IScatterSymbol ScatterSymbol { get; set; }
-
-    SelectableListNodeList Frame { set; }
-
-    SelectableListNodeList Inset { set; }
-
-    SelectableListNodeList SimilarSymbols { set; }
-
-    bool IndependentColor { get; set; }
-
-    bool IndependentSkipFrequency { get; set; }
-
-    int SkipFrequency { get; set; }
-
-    bool IgnoreMissingDataPoints { get; set; }
-
-    bool IndependentOnShiftingGroupStyles { get; set; }
-
-    bool OverrideInset { get; set; }
-
-    bool OverrideFrame { get; set; }
-
-    bool OverrideAbsoluteStructureWidth { get; set; }
-
-    double OverriddenAbsoluteStructureWidth { get; set; }
-
-    bool OverrideRelativeStructureWidth { get; set; }
-
-    double OverriddenRelativeStructureWidth { get; set; }
-
-    bool OverridePlotColorInfluence { get; set; }
-    PlotColorInfluence OverriddenPlotColorInfluence { get; set; }
-
-    bool OverrideFillColor { get; set; }
-    NamedColor OverriddenFillColor { get; set; }
-    bool OverrideFrameColor { get; set; }
-    NamedColor OverriddenFrameColor { get; set; }
-    bool OverrideInsetColor { get; set; }
-    NamedColor OverriddenInsetColor { get; set; }
-
-    #region events
-
-    event Action IndependentColorChanged;
-
-    event Action ScatterSymbolChanged;
-
-    event Action CreateNewSymbolSetFromOverrides;
-
-    event Action SimilarSymbolSetChosen;
-
-    #endregion events
   }
 
-  #endregion Interfaces
 
   /// <summary>
   /// Summary description for XYPlotScatterStyleController.
@@ -133,24 +58,536 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
     /// <summary>Tracks the presence of a color group style in the parent collection.</summary>
     private ColorGroupStylePresenceTracker _colorGroupStyleTracker;
 
-    private SelectableListNodeList _symbolInsetChoices;
-    private SelectableListNodeList _symbolFrameChoices;
+
+
+    public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+    {
+      yield return new ControllerAndSetNullMethod(_overriddenPlotColorInfluence, () => OverriddenPlotColorInfluence = null);
+    }
+
+    public ScatterPlotStyleController()
+    {
+      CmdCreateNewScatterSymbolSet = new RelayCommand(EhCreateNewSymbolSetFromOverrides);
+    }
+
+    #region Bindings
+
+    private bool _enableMain = true;
+
+    public bool EnableMain
+    {
+      get => _enableMain;
+      set
+      {
+        if (!(_enableMain == value))
+        {
+          _enableMain = value;
+          OnPropertyChanged(nameof(EnableMain));
+        }
+      }
+    }
+
+
+    private bool _independentSkipFrequency;
+
+    public bool IndependentSkipFrequency
+    {
+      get => _independentSkipFrequency;
+      set
+      {
+        if (!(_independentSkipFrequency == value))
+        {
+          _independentSkipFrequency = value;
+          OnPropertyChanged(nameof(IndependentSkipFrequency));
+        }
+      }
+    }
+
+    private int _skipFrequency;
+
+    public int SkipFrequency
+    {
+      get => _skipFrequency;
+      set
+      {
+        if (!(_skipFrequency == value))
+        {
+          _skipFrequency = value;
+          OnPropertyChanged(nameof(SkipFrequency));
+        }
+      }
+    }
+
+    private bool _ignoreMissingDataPoints;
+
+    public bool IgnoreMissingDataPoints
+    {
+      get => _ignoreMissingDataPoints;
+      set
+      {
+        if (!(_ignoreMissingDataPoints == value))
+        {
+          _ignoreMissingDataPoints = value;
+          OnPropertyChanged(nameof(IgnoreMissingDataPoints));
+        }
+      }
+    }
+
+
+    private bool _independentOnShiftingGroupStyles;
+
+    public bool IndependentOnShiftingGroupStyles
+    {
+      get => _independentOnShiftingGroupStyles;
+      set
+      {
+        if (!(_independentOnShiftingGroupStyles == value))
+        {
+          _independentOnShiftingGroupStyles = value;
+          OnPropertyChanged(nameof(IndependentOnShiftingGroupStyles));
+        }
+      }
+    }
+
+    private bool _independentScatterSymbol;
+
+    public bool IndependentScatterSymbol
+    {
+      get => _independentScatterSymbol;
+      set
+      {
+        if (!(_independentScatterSymbol == value))
+        {
+          _independentScatterSymbol = value;
+          OnPropertyChanged(nameof(IndependentScatterSymbol));
+        }
+      }
+    }
+
+
+
+    /// <summary>
+    /// Initializes the symbol shape combobox.
+    /// </summary>
+    private IScatterSymbol _scatterSymbol;
+
+    public IScatterSymbol ScatterSymbol
+    {
+      get => _scatterSymbol;
+      set
+      {
+        if (!(_scatterSymbol == value))
+        {
+          _scatterSymbol = value;
+          OnPropertyChanged(nameof(ScatterSymbol));
+          EhScatterSymbolChanged();
+        }
+      }
+    }
+
+    private ItemsController<IScatterSymbol> _similarSymbolChoices;
 
     /// <summary>List with symbol lists containing the same order of symbol shapes. The text here is the name of the symbol list (!),
     /// whereas the tag is the symbol with the same shape as the currently choosen shape. Because of this, the content must change every time
     /// the user choose another symbol</summary>
-    private SelectableListNodeList _similarSymbolChoices;
-
-    public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+    public ItemsController<IScatterSymbol> SimilarSymbolChoices
     {
-      yield break; // no subcontrollers
+      get => _similarSymbolChoices;
+      set
+      {
+        if (!(_similarSymbolChoices == value))
+        {
+          _similarSymbolChoices?.Dispose();
+          _similarSymbolChoices = value;
+          OnPropertyChanged(nameof(SimilarSymbolChoices));
+        }
+      }
     }
+
+
+    private bool _independentColor;
+
+    public bool IndependentColor
+    {
+      get => _independentColor;
+      set
+      {
+        if (!(_independentColor == value))
+        {
+          _independentColor = value;
+          OnPropertyChanged(nameof(IndependentColor));
+          EhIndependentColorChanged(value);
+        }
+      }
+    }
+
+    private void EhIndependentColorChanged(bool value)
+    {
+      _doc.IndependentColor = value;
+      ShowPlotColorsOnly = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentColor);
+    }
+    private void EhIndependentColorChanged() => EhIndependentColorChanged(IndependentColor);
+
+
+    private NamedColor _color;
+    /// <summary>
+    /// Material for the scatter symbol.
+    /// </summary>
+    public NamedColor Color
+    {
+      get => _color;
+      set
+      {
+        if (!(_color == value))
+        {
+          _color = value;
+          OnPropertyChanged(nameof(Color));
+        }
+      }
+    }
+
+    /// <summary>
+    /// Indicates, whether only colors of plot color sets should be shown.
+    /// </summary>
+    private bool _showPlotColorsOnly;
+
+    public bool ShowPlotColorsOnly
+    {
+      get => _showPlotColorsOnly;
+      set
+      {
+        if (!(_showPlotColorsOnly == value))
+        {
+          _showPlotColorsOnly = value;
+          OnPropertyChanged(nameof(ShowPlotColorsOnly));
+        }
+      }
+    }
+
+
+
+
+    private bool _independentSymbolSize;
+    /// <summary>
+    /// Initializes the independent symbol size check box.
+    /// </summary>
+    public bool IndependentSymbolSize
+    {
+      get => _independentSymbolSize;
+      set
+      {
+        if (!(_independentSymbolSize == value))
+        {
+          _independentSymbolSize = value;
+          OnPropertyChanged(nameof(IndependentSymbolSize));
+        }
+      }
+    }
+
+    public QuantityWithUnitGuiEnvironment SymbolSizeEnvironment => LineCapSizeEnvironment.Instance;
+
+
+    private DimensionfulQuantity _symbolSize;
+    /// <summary>
+    /// Initializes the symbol size combobox.
+    /// </summary>
+    public DimensionfulQuantity SymbolSize
+    {
+      get => _symbolSize;
+      set
+      {
+        if (!(_symbolSize == value))
+        {
+          _symbolSize = value;
+          OnPropertyChanged(nameof(SymbolSize));
+        }
+      }
+    }
+
+
+    private bool _overrideInset;
+
+    public bool OverrideInset
+    {
+      get => _overrideInset;
+      set
+      {
+        if (!(_overrideInset == value))
+        {
+          _overrideInset = value;
+          OnPropertyChanged(nameof(OverrideInset));
+        }
+      }
+    }
+
+    private ItemsController<Type?> _insets;
+
+    public ItemsController<Type?> Insets
+    {
+      get => _insets;
+      set
+      {
+        if (!(_insets == value))
+        {
+          _insets = value;
+          OnPropertyChanged(nameof(Insets));
+        }
+      }
+    }
+
+
+    private bool _overrideFrame;
+
+    public bool OverrideFrame
+    {
+      get => _overrideFrame;
+      set
+      {
+        if (!(_overrideFrame == value))
+        {
+          _overrideFrame = value;
+          OnPropertyChanged(nameof(OverrideFrame));
+        }
+      }
+    }
+
+    private ItemsController<Type?> _frames;
+
+    public ItemsController<Type?> Frames
+    {
+      get => _frames;
+      set
+      {
+        if (!(_frames == value))
+        {
+          _frames?.Dispose();
+          _frames = value;
+          OnPropertyChanged(nameof(Frames));
+        }
+      }
+    }
+
+
+
+    private bool _overrideAbsoluteStructureWidth;
+
+    public bool OverrideAbsoluteStructureWidth
+    {
+      get => _overrideAbsoluteStructureWidth;
+      set
+      {
+        if (!(_overrideAbsoluteStructureWidth == value))
+        {
+          _overrideAbsoluteStructureWidth = value;
+          OnPropertyChanged(nameof(OverrideAbsoluteStructureWidth));
+        }
+      }
+    }
+
+    public QuantityWithUnitGuiEnvironment AbsoluteWidthEnvironment => SizeEnvironment.Instance;
+
+    private DimensionfulQuantity _overriddenAbsoluteStructureWidth;
+
+    public DimensionfulQuantity OverriddenAbsoluteStructureWidth
+    {
+      get => _overriddenAbsoluteStructureWidth;
+      set
+      {
+        if (!(_overriddenAbsoluteStructureWidth == value))
+        {
+          _overriddenAbsoluteStructureWidth = value;
+          OnPropertyChanged(nameof(OverriddenAbsoluteStructureWidth));
+        }
+      }
+    }
+
+
+    private bool _overrideRelativeStructureWidth;
+
+    public bool OverrideRelativeStructureWidth
+    {
+      get => _overrideRelativeStructureWidth;
+      set
+      {
+        if (!(_overrideRelativeStructureWidth == value))
+        {
+          _overrideRelativeStructureWidth = value;
+          OnPropertyChanged(nameof(OverrideRelativeStructureWidth));
+        }
+      }
+    }
+
+    public QuantityWithUnitGuiEnvironment RelativeWidthEnvironment => RelationEnvironment.Instance;
+
+
+    private DimensionfulQuantity _overriddenRelativeStructureWidth;
+
+    public DimensionfulQuantity OverriddenRelativeStructureWidth
+    {
+      get => _overriddenRelativeStructureWidth;
+      set
+      {
+        if (!(_overriddenRelativeStructureWidth == value))
+        {
+          _overriddenRelativeStructureWidth = value;
+          OnPropertyChanged(nameof(OverriddenRelativeStructureWidth));
+        }
+      }
+    }
+
+
+
+    private bool _overridePlotColorInfluence;
+
+    public bool OverridePlotColorInfluence
+    {
+      get => _overridePlotColorInfluence;
+      set
+      {
+        if (!(_overridePlotColorInfluence == value))
+        {
+          _overridePlotColorInfluence = value;
+          OnPropertyChanged(nameof(OverridePlotColorInfluence));
+        }
+      }
+    }
+
+
+    private PlotColorInfluenceController _overriddenPlotColorInfluence;
+
+    public PlotColorInfluenceController OverriddenPlotColorInfluence
+    {
+      get => _overriddenPlotColorInfluence;
+      set
+      {
+        if (!(_overriddenPlotColorInfluence == value))
+        {
+          _overriddenPlotColorInfluence?.Dispose();
+          _overriddenPlotColorInfluence = value;
+          OnPropertyChanged(nameof(OverriddenPlotColorInfluence));
+        }
+      }
+    }
+
+
+    private bool _overrideFillColor;
+
+    public bool OverrideFillColor
+    {
+      get => _overrideFillColor;
+      set
+      {
+        if (!(_overrideFillColor == value))
+        {
+          _overrideFillColor = value;
+          OnPropertyChanged(nameof(OverrideFillColor));
+        }
+      }
+    }
+
+    private NamedColor _OverriddenFillColor;
+
+    public NamedColor OverriddenFillColor
+    {
+      get => _OverriddenFillColor;
+      set
+      {
+        if (!(_OverriddenFillColor == value))
+        {
+          _OverriddenFillColor = value;
+          OnPropertyChanged(nameof(OverriddenFillColor));
+        }
+      }
+    }
+
+
+    private bool _overrideFrameColor;
+
+    public bool OverrideFrameColor
+    {
+      get => _overrideFrameColor;
+      set
+      {
+        if (!(_overrideFrameColor == value))
+        {
+          _overrideFrameColor = value;
+          OnPropertyChanged(nameof(OverrideFrameColor));
+        }
+      }
+    }
+
+    private NamedColor _overriddenFrameColor;
+
+    public NamedColor OverriddenFrameColor
+    {
+      get => _overriddenFrameColor;
+      set
+      {
+        if (!(_overriddenFrameColor == value))
+        {
+          _overriddenFrameColor = value;
+          OnPropertyChanged(nameof(OverriddenFrameColor));
+        }
+      }
+    }
+
+
+    private bool _overrideInsetColor;
+
+    public bool OverrideInsetColor
+    {
+      get => _overrideInsetColor;
+      set
+      {
+        if (!(_overrideInsetColor == value))
+        {
+          _overrideInsetColor = value;
+          OnPropertyChanged(nameof(OverrideInsetColor));
+        }
+      }
+    }
+
+    private NamedColor _overriddenInsetColor;
+
+    public NamedColor OverriddenInsetColor
+    {
+      get => _overriddenInsetColor;
+      set
+      {
+        if (!(_overriddenInsetColor == value))
+        {
+          _overriddenInsetColor = value;
+          OnPropertyChanged(nameof(OverriddenInsetColor));
+        }
+      }
+    }
+
+    public ICommand CmdCreateNewScatterSymbolSet { get; }
+
+    private bool _areOverridesExpanded;
+
+    /// <summary>
+    /// Reflects the state of the overrides expander control (has no influence on the document)
+    /// </summary>
+    public bool AreOverridesExpanded
+    {
+      get => _areOverridesExpanded;
+      set
+      {
+        if (!(_areOverridesExpanded == value))
+        {
+          _areOverridesExpanded = value;
+          OnPropertyChanged(nameof(AreOverridesExpanded));
+        }
+      }
+    }
+
+
+    #endregion
 
     public override void Dispose(bool isDisposing)
     {
       _colorGroupStyleTracker = null;
-
-      _symbolInsetChoices = null;
 
       base.Dispose(isDisposing);
     }
@@ -163,71 +600,70 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
       {
         _colorGroupStyleTracker = new ColorGroupStylePresenceTracker(_doc, EhIndependentColorChanged);
 
-        // Frame
-        var frameTypes = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(IScatterSymbolFrame));
-        _symbolFrameChoices = new SelectableListNodeList
         {
-          new SelectableListNode("No frame", null, false)
+          // Frame
+          var frameTypes = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(IScatterSymbolFrame));
+          var symbolFrameChoices = new SelectableListNodeList
+        {
+          new SelectableListNode("No frame", null, _doc.OverriddenFrame is null)
         };
-        foreach (var ty in frameTypes)
-        {
-          _symbolFrameChoices.Add(new SelectableListNode(ty.Name, ty, false));
+          foreach (var ty in frameTypes)
+          {
+            symbolFrameChoices.Add(new SelectableListNode(ty.Name, ty, _doc.OverriddenFrame?.GetType() == ty));
+          }
+
+          Frames = new ItemsController<Type?>(symbolFrameChoices);
         }
 
-        // Insets
-        var insetTypes = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(IScatterSymbolInset));
-        _symbolInsetChoices = new SelectableListNodeList
         {
-          new SelectableListNode("No inset", null, false)
-        };
-        foreach (var ty in insetTypes)
-        {
-          _symbolInsetChoices.Add(new SelectableListNode(ty.Name, ty, false));
+          // Insets
+          var insetTypes = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(IScatterSymbolInset));
+          var symbolInsetChoices = new SelectableListNodeList
+            {
+            new SelectableListNode("No inset", null, _doc.OverriddenInset is null)
+            };
+          foreach (var ty in insetTypes)
+          {
+            symbolInsetChoices.Add(new SelectableListNode(ty.Name, ty, _doc.OverriddenInset?.GetType() == ty));
+          }
+          Insets = new ItemsController<Type?>(symbolInsetChoices);
         }
-      }
-      if (_view is not null)
-      {
-        _view.IndependentSkipFrequency = _doc.IndependentSkipFrequency;
-        _view.SkipFrequency = _doc.SkipFrequency;
-        _view.IgnoreMissingDataPoints = _doc.IgnoreMissingDataPoints;
-        _view.IndependentOnShiftingGroupStyles = _doc.IndependentOnShiftingGroupStyles;
 
-        _view.IndependentScatterSymbol = _doc.IndependentScatterSymbol;
-        _view.ScatterSymbol = _doc.ScatterSymbol;
+        OverrideFrame = _doc.OverrideFrame;
+        OverrideInset = _doc.OverrideInset;
+
+        OverrideAbsoluteStructureWidth = _doc.OverrideStructureWidthOffset.HasValue;
+        OverriddenAbsoluteStructureWidth = new DimensionfulQuantity(_doc.OverrideStructureWidthOffset ?? 0, Altaxo.Units.Length.Point.Instance).AsQuantityIn(AbsoluteWidthEnvironment.DefaultUnit);
+
+        OverrideRelativeStructureWidth = _doc.OverrideStructureWidthFactor.HasValue;
+        OverriddenRelativeStructureWidth = new DimensionfulQuantity(_doc.OverrideStructureWidthFactor ?? 0, Altaxo.Units.Dimensionless.Unity.Instance).AsQuantityIn(RelativeWidthEnvironment.DefaultUnit);
+
+        OverridePlotColorInfluence = _doc.OverridePlotColorInfluence.HasValue;
+        OverriddenPlotColorInfluence = new PlotColorInfluenceController(_doc.OverridePlotColorInfluence ?? PlotColorInfluence.None);
+
+        OverrideFillColor = _doc.OverrideFillColor.HasValue;
+        OverriddenFillColor = _doc.OverrideFillColor ?? _doc.ScatterSymbol.FillColor;
+        OverrideFrameColor = _doc.OverrideFrameColor.HasValue;
+        OverriddenFrameColor = _doc.OverrideFrameColor ?? _doc.ScatterSymbol.Frame?.Color ?? NamedColors.Transparent;
+        OverrideInsetColor = _doc.OverrideInsetColor.HasValue;
+        OverriddenInsetColor = _doc.OverrideInsetColor ?? _doc.ScatterSymbol.Inset?.Color ?? NamedColors.Transparent;
+
+        IndependentSkipFrequency = _doc.IndependentSkipFrequency;
+        SkipFrequency = _doc.SkipFrequency;
+        IgnoreMissingDataPoints = _doc.IgnoreMissingDataPoints;
+        IndependentOnShiftingGroupStyles = _doc.IndependentOnShiftingGroupStyles;
+
 
         // now we have to set all dialog elements to the right values
-        _view.IndependentColor = _doc.IndependentColor;
-        _view.ShowPlotColorsOnly = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentColor);
-        _view.Color = _doc.Color;
+        IndependentColor = _doc.IndependentColor;
+        ShowPlotColorsOnly = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentColor);
+        Color = _doc.Color;
 
-        _view.IndependentSymbolSize = _doc.IndependentSymbolSize;
-        _view.SymbolSize = _doc.SymbolSize;
+        IndependentSymbolSize = _doc.IndependentSymbolSize;
+        SymbolSize = new DimensionfulQuantity(_doc.SymbolSize, Altaxo.Units.Length.Point.Instance).AsQuantityIn(SymbolSizeEnvironment.DefaultUnit);
 
-        _view.OverrideFrame = _doc.OverrideFrame;
-        _symbolFrameChoices.ForEachDo(node => node.IsSelected = _doc.OverriddenFrame?.GetType() == (Type)node.Tag);
-        _view.Frame = _symbolFrameChoices;
-
-        _view.OverrideInset = _doc.OverrideInset;
-        _symbolInsetChoices.ForEachDo(node => node.IsSelected = _doc.OverriddenInset?.GetType() == (Type)node.Tag);
-        _view.Inset = _symbolInsetChoices;
-
-        _view.OverrideAbsoluteStructureWidth = _doc.OverrideStructureWidthOffset.HasValue;
-        _view.OverriddenAbsoluteStructureWidth = _doc.OverrideStructureWidthOffset ?? 0;
-
-        _view.OverrideRelativeStructureWidth = _doc.OverrideStructureWidthFactor.HasValue;
-        _view.OverriddenRelativeStructureWidth = _doc.OverrideStructureWidthFactor ?? 0;
-
-        _view.OverridePlotColorInfluence = _doc.OverridePlotColorInfluence.HasValue;
-        _view.OverriddenPlotColorInfluence = _doc.OverridePlotColorInfluence ?? PlotColorInfluence.None;
-
-        _view.OverrideFillColor = _doc.OverrideFillColor.HasValue;
-        _view.OverriddenFillColor = _doc.OverrideFillColor ?? _doc.ScatterSymbol.FillColor;
-        _view.OverrideFrameColor = _doc.OverrideFrameColor.HasValue;
-        _view.OverriddenFrameColor = _doc.OverrideFrameColor ?? _doc.ScatterSymbol.Frame?.Color ?? NamedColors.Transparent;
-        _view.OverrideInsetColor = _doc.OverrideInsetColor.HasValue;
-        _view.OverriddenInsetColor = _doc.OverrideInsetColor ?? _doc.ScatterSymbol.Inset?.Color ?? NamedColors.Transparent;
-
-        EhScatterSymbolChanged();
+        IndependentScatterSymbol = _doc.IndependentScatterSymbol;
+        ScatterSymbol = _doc.ScatterSymbol;
       }
     }
 
@@ -239,40 +675,40 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
       {
         // Skip points
 
-        _doc.IndependentSkipFrequency = _view.IndependentSkipFrequency;
-        _doc.SkipFrequency = _view.SkipFrequency;
-        _doc.IgnoreMissingDataPoints = _view.IgnoreMissingDataPoints;
-        _doc.IndependentOnShiftingGroupStyles = _view.IndependentOnShiftingGroupStyles;
+        _doc.IndependentSkipFrequency = IndependentSkipFrequency;
+        _doc.SkipFrequency = SkipFrequency;
+        _doc.IgnoreMissingDataPoints = IgnoreMissingDataPoints;
+        _doc.IndependentOnShiftingGroupStyles = IndependentOnShiftingGroupStyles;
 
         // Symbol Shape
-        _doc.IndependentScatterSymbol = _view.IndependentScatterSymbol;
-        _doc.ScatterSymbol = _view.ScatterSymbol;
+        _doc.IndependentScatterSymbol = IndependentScatterSymbol;
+        _doc.ScatterSymbol = ScatterSymbol;
 
         // Symbol Color
-        _doc.IndependentColor = _view.IndependentColor;
-        _doc.Color = _view.Color;
+        _doc.IndependentColor = IndependentColor;
+        _doc.Color = Color;
 
         // Symbol Size
-        _doc.IndependentSymbolSize = _view.IndependentSymbolSize;
-        _doc.SymbolSize = _view.SymbolSize;
+        _doc.IndependentSymbolSize = IndependentSymbolSize;
+        _doc.SymbolSize = SymbolSize.AsValueIn(Altaxo.Units.Length.Point.Instance);
 
-        _doc.OverrideFrame = _view.OverrideFrame;
-        _doc.OverriddenFrame = _symbolFrameChoices.FirstSelectedNode?.Tag is null ? null : (IScatterSymbolFrame)Activator.CreateInstance((Type)_symbolFrameChoices.FirstSelectedNode.Tag);
+        _doc.OverrideFrame = OverrideFrame;
+        _doc.OverriddenFrame = Frames.SelectedValue is null ? null : (IScatterSymbolFrame)Activator.CreateInstance(Frames.SelectedValue);
 
-        _doc.OverrideInset = _view.OverrideInset;
-        _doc.OverriddenInset = _symbolInsetChoices.FirstSelectedNode?.Tag is null ? null : (IScatterSymbolInset)Activator.CreateInstance((Type)_symbolInsetChoices.FirstSelectedNode.Tag);
+        _doc.OverrideInset = OverrideInset;
+        _doc.OverriddenInset = Insets.SelectedValue is null ? null : (IScatterSymbolInset)Activator.CreateInstance(Insets.SelectedValue);
 
-        _doc.OverrideStructureWidthOffset = _view.OverrideAbsoluteStructureWidth ? _view.OverriddenAbsoluteStructureWidth : (double?)null;
-        _doc.OverrideStructureWidthFactor = _view.OverrideRelativeStructureWidth ? _view.OverriddenRelativeStructureWidth : (double?)null;
+        _doc.OverrideStructureWidthOffset = OverrideAbsoluteStructureWidth ? OverriddenAbsoluteStructureWidth.AsValueIn(Altaxo.Units.Length.Point.Instance) : (double?)null;
+        _doc.OverrideStructureWidthFactor = OverrideRelativeStructureWidth ? OverriddenRelativeStructureWidth.AsValueInSIUnits : (double?)null;
 
-        _doc.OverridePlotColorInfluence = _view.OverridePlotColorInfluence ? _view.OverriddenPlotColorInfluence : (PlotColorInfluence?)null;
-        _doc.OverrideFillColor = _view.OverrideFillColor ? _view.OverriddenFillColor : (NamedColor?)null;
-        _doc.OverrideFrameColor = _view.OverrideFrameColor ? _view.OverriddenFrameColor : (NamedColor?)null;
-        _doc.OverrideInsetColor = _view.OverrideInsetColor ? _view.OverriddenInsetColor : (NamedColor?)null;
+        _doc.OverridePlotColorInfluence = OverridePlotColorInfluence ? (PlotColorInfluence)OverriddenPlotColorInfluence.ModelObject : (PlotColorInfluence?)null;
+        _doc.OverrideFillColor = OverrideFillColor ? OverriddenFillColor : (NamedColor?)null;
+        _doc.OverrideFrameColor = OverrideFrameColor ? OverriddenFrameColor : (NamedColor?)null;
+        _doc.OverrideInsetColor = OverrideInsetColor ? OverriddenInsetColor : (NamedColor?)null;
 
         if (!disposeController)
         {
-          _view.ScatterSymbol = _doc.ScatterSymbol;
+          ScatterSymbol = _doc.ScatterSymbol;
           EhScatterSymbolChanged();
         }
       }
@@ -285,75 +721,44 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
       return ApplyEnd(true, disposeController);
     }
 
-    protected override void AttachView()
-    {
-      base.AttachView();
-      _view.IndependentColorChanged += EhIndependentColorChanged;
-      _view.ScatterSymbolChanged += EhScatterSymbolChanged;
-      _view.CreateNewSymbolSetFromOverrides += EhCreateNewSymbolSetFromOverrides;
-      _view.SimilarSymbolSetChosen += EhSimilarShapeChosen;
-    }
-
-    protected override void DetachView()
-    {
-      _view.IndependentColorChanged -= EhIndependentColorChanged;
-      _view.ScatterSymbolChanged += EhScatterSymbolChanged;
-      _view.CreateNewSymbolSetFromOverrides -= EhCreateNewSymbolSetFromOverrides;
-      _view.SimilarSymbolSetChosen -= EhSimilarShapeChosen;
-      base.DetachView();
-    }
-
-    private void EhIndependentColorChanged()
-    {
-      if (_view is not null)
-      {
-        _doc.IndependentColor = _view.IndependentColor;
-        _view.ShowPlotColorsOnly = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentColor);
-      }
-    }
-
     private void EhScatterSymbolChanged()
     {
-      var symbol = _view.ScatterSymbol;
+      var symbol = ScatterSymbol;
 
       // Frame
-      if (!_view.OverrideFrame)
+      if (!OverrideFrame)
       {
-        _symbolFrameChoices.ForEachDo(n => n.IsSelected = (symbol.Frame?.GetType() == (Type)n.Tag));
-        _view.Frame = _symbolFrameChoices;
+        Frames.SelectedValue = symbol.Frame?.GetType();
       }
 
       // Inset
-      if (!_view.OverrideInset)
+      if (!OverrideInset)
       {
-        _symbolInsetChoices.SetSelection(node => symbol.Inset?.GetType() == (Type)node.Tag);
-        _view.Inset = _symbolInsetChoices;
+        Insets.SelectedValue = symbol.Inset?.GetType();
       }
 
       // Structure width
-      if (!_view.OverrideRelativeStructureWidth)
-        _view.OverriddenRelativeStructureWidth = symbol.RelativeStructureWidth;
+      if (!OverrideRelativeStructureWidth)
+        OverriddenRelativeStructureWidth = new DimensionfulQuantity(symbol.RelativeStructureWidth, Altaxo.Units.Dimensionless.Unity.Instance);
 
       // Plot color influence
-      if (!_view.OverridePlotColorInfluence)
-        _view.OverriddenPlotColorInfluence = symbol.PlotColorInfluence;
+      if (!OverridePlotColorInfluence)
+        OverriddenPlotColorInfluence.InitializeDocument(symbol.PlotColorInfluence);
 
       // Fill color
-      if (!_view.OverrideFillColor)
-        _view.OverriddenFillColor = symbol.FillColor;
+      if (!OverrideFillColor)
+        OverriddenFillColor = symbol.FillColor;
 
       // FrameColor
-      if (!_view.OverrideFrameColor && symbol.Frame is not null)
-        _view.OverriddenFrameColor = symbol.Frame.Color;
+      if (!OverrideFrameColor && symbol.Frame is not null)
+        OverriddenFrameColor = symbol.Frame.Color;
 
       // InsetColor
-      if (!_view.OverrideInsetColor && symbol.Inset is not null)
-        _view.OverriddenInsetColor = symbol.Inset.Color;
+      if (!OverrideInsetColor && symbol.Inset is not null)
+        OverriddenInsetColor = symbol.Inset.Color;
 
       // Initialize the list of similar symbols
       Initialize_SimilarSymbolList();
-      if (_view is not null)
-        _view.SimilarSymbols = _similarSymbolChoices;
     }
 
     private void EhCreateNewSymbolSetFromOverrides()
@@ -361,47 +766,47 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
       var newSymbol = CreateNewSymbolSetFromOverrides(_doc.ScatterSymbol, out var cancellationRequested);
       ClearAllOverridesThatAreEqualToScatterSymbol(newSymbol);
       _doc.ScatterSymbol = newSymbol;
-      _view.ScatterSymbol = newSymbol;
+      ScatterSymbol = newSymbol;
       EhScatterSymbolChanged();
     }
 
     private void ClearAllOverridesThatAreEqualToScatterSymbol(IScatterSymbol symbol)
     {
-      if (symbol.Frame?.GetType() == (Type)_symbolFrameChoices.FirstSelectedNode?.Tag)
-        _view.OverrideFrame = false;
+      if (symbol.Frame?.GetType() == Frames.SelectedValue)
+        OverrideFrame = false;
 
-      if (symbol.Inset?.GetType() == (Type)_symbolInsetChoices.FirstSelectedNode?.Tag)
-        _view.OverrideInset = false;
+      if (symbol.Inset?.GetType() == Insets.SelectedValue)
+        OverrideInset = false;
 
-      if ((_view.OverrideRelativeStructureWidth == false || symbol.RelativeStructureWidth == _view.OverriddenRelativeStructureWidth) && (_view.OverrideAbsoluteStructureWidth == false || _view.OverriddenAbsoluteStructureWidth == 0))
+      if ((OverrideRelativeStructureWidth == false || symbol.RelativeStructureWidth == OverriddenRelativeStructureWidth.AsValueInSIUnits) && (OverrideAbsoluteStructureWidth == false || OverriddenAbsoluteStructureWidth.AsValueIn(Altaxo.Units.Length.Point.Instance) == 0))
       {
-        _view.OverrideAbsoluteStructureWidth = false;
-        _view.OverrideRelativeStructureWidth = false;
+        OverrideAbsoluteStructureWidth = false;
+        OverrideRelativeStructureWidth = false;
       }
 
-      if (symbol.PlotColorInfluence == _view.OverriddenPlotColorInfluence)
-        _view.OverridePlotColorInfluence = false;
+      if (symbol.PlotColorInfluence == OverriddenPlotColorInfluence.Doc)
+        OverridePlotColorInfluence = false;
 
-      if (symbol.FillColor == _view.OverriddenFillColor)
-        _view.OverrideFillColor = false;
+      if (symbol.FillColor == OverriddenFillColor)
+        OverrideFillColor = false;
 
-      if (symbol.Frame is null || symbol.Frame.Color == _view.OverriddenFrameColor)
-        _view.OverrideFrameColor = false;
+      if (symbol.Frame is null || symbol.Frame.Color == OverriddenFrameColor)
+        OverrideFrameColor = false;
 
-      if (symbol.Inset is null || symbol.Inset.Color == _view.OverriddenInsetColor)
-        _view.OverrideInsetColor = false;
+      if (symbol.Inset is null || symbol.Inset.Color == OverriddenInsetColor)
+        OverrideInsetColor = false;
     }
 
     private IScatterSymbol CreateNewSymbolSetFromOverrides(IScatterSymbol symbol, out bool cancellationRequested)
     {
       cancellationRequested = false;
 
-      double overriddenAbsoluteStructureWidth = _view.OverrideAbsoluteStructureWidth ? _view.OverriddenAbsoluteStructureWidth : 0;
-      double overriddenRelativeStructureWidth = _view.OverrideRelativeStructureWidth ? _view.OverriddenRelativeStructureWidth : symbol.RelativeStructureWidth;
+      double overriddenAbsoluteStructureWidth = OverrideAbsoluteStructureWidth ? OverriddenAbsoluteStructureWidth.AsValueIn(Altaxo.Units.Length.Point.Instance) : 0;
+      double overriddenRelativeStructureWidth = OverrideRelativeStructureWidth ? OverriddenRelativeStructureWidth.AsValueInSIUnits : symbol.RelativeStructureWidth;
 
       double resultingRelativeStructureWidth = overriddenRelativeStructureWidth;
 
-      if (_view.OverrideAbsoluteStructureWidth && _view.OverriddenAbsoluteStructureWidth != 0)
+      if (OverrideAbsoluteStructureWidth && OverriddenAbsoluteStructureWidth.AsValueIn(Altaxo.Units.Length.Point.Instance) != 0)
       {
         if (overriddenRelativeStructureWidth <= 0)
         {
@@ -423,7 +828,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
           }
           else if (true == dlgResult)
           {
-            resultingRelativeStructureWidth = overriddenAbsoluteStructureWidth / _view.SymbolSize;
+            resultingRelativeStructureWidth = overriddenAbsoluteStructureWidth / SymbolSize.AsValueIn(Altaxo.Units.Length.Point.Instance);
           }
           else
           {
@@ -449,7 +854,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
           }
           else if (true == dlgResult)
           {
-            resultingRelativeStructureWidth = overriddenRelativeStructureWidth + overriddenAbsoluteStructureWidth / _view.SymbolSize;
+            resultingRelativeStructureWidth = overriddenRelativeStructureWidth + overriddenAbsoluteStructureWidth / SymbolSize.AsValueIn(Altaxo.Units.Length.Point.Instance);
           }
           else
           {
@@ -463,7 +868,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
       bool createNewSymbolList;
       int originalItemIndex;
       IEnumerable<IScatterSymbol> scatterSymbolsToModify;
-      if (_view.IndependentScatterSymbol)
+      if (IndependentScatterSymbol)
       {
         scatterSymbolsToModify = new IScatterSymbol[] { symbol };
         originalItemIndex = 0;
@@ -491,9 +896,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
       {
         var newSymbol = symbolToModify;
 
-        if (_view.OverrideInset)
+        if (OverrideInset)
         {
-          var newInsetType = (Type)_symbolInsetChoices.FirstSelectedNode?.Tag;
+          var newInsetType = Insets.SelectedValue;
           if (newInsetType != newSymbol.Inset?.GetType())
           {
             var newInset = newInsetType is null ? null : (IScatterSymbolInset)Activator.CreateInstance(newInsetType);
@@ -501,9 +906,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
           }
         }
 
-        if (_view.OverrideFrame)
+        if (OverrideFrame)
         {
-          var newFrameType = (Type)_symbolFrameChoices.FirstSelectedNode?.Tag;
+          var newFrameType = Frames.SelectedValue;
           if (newFrameType != newSymbol.Frame?.GetType())
           {
             var newFrame = newFrameType is null ? null : (IScatterSymbolFrame)Activator.CreateInstance(newFrameType);
@@ -511,20 +916,20 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
           }
         }
 
-        if (_view.OverrideRelativeStructureWidth || _view.OverrideRelativeStructureWidth)
+        if (OverrideRelativeStructureWidth || OverrideRelativeStructureWidth)
           newSymbol = newSymbol.WithRelativeStructureWidth(resultingRelativeStructureWidth);
 
-        if (_view.OverridePlotColorInfluence)
-          newSymbol = newSymbol.WithPlotColorInfluence(_view.OverriddenPlotColorInfluence);
+        if (OverridePlotColorInfluence)
+          newSymbol = newSymbol.WithPlotColorInfluence(OverriddenPlotColorInfluence.Doc);
 
-        if (_view.OverrideFillColor)
-          newSymbol = newSymbol.WithFillColor(_view.OverriddenFillColor);
+        if (OverrideFillColor)
+          newSymbol = newSymbol.WithFillColor(OverriddenFillColor);
 
-        if (_view.OverrideFrameColor && newSymbol.Frame is not null)
-          newSymbol = newSymbol.WithFrame(newSymbol.Frame.WithColor(_view.OverriddenFrameColor));
+        if (OverrideFrameColor && newSymbol.Frame is not null)
+          newSymbol = newSymbol.WithFrame(newSymbol.Frame.WithColor(OverriddenFrameColor));
 
-        if (_view.OverrideInsetColor && newSymbol.Inset is not null)
-          newSymbol = newSymbol.WithInset(newSymbol.Inset.WithColor(_view.OverriddenInsetColor));
+        if (OverrideInsetColor && newSymbol.Inset is not null)
+          newSymbol = newSymbol.WithInset(newSymbol.Inset.WithColor(OverriddenInsetColor));
 
         newSymbols.Add(newSymbol);
       }
@@ -585,13 +990,14 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
     /// </summary>
     private void Initialize_SimilarSymbolList()
     {
-      var currentSymbol = _view?.ScatterSymbol ?? _doc.ScatterSymbol;
+      var currentSymbol = ScatterSymbol ?? _doc.ScatterSymbol;
 
       if (object.ReferenceEquals(currentSymbol, _lastSymbolForWhichSimilarSetsWhereSearched))
         return; // then _similarSymbolChoices is already up-to-date
       _lastSymbolForWhichSimilarSetsWhereSearched = currentSymbol;
 
-      _similarSymbolChoices = new SelectableListNodeList();
+
+
       var currentList = ScatterSymbolListManager.Instance.GetParentList(currentSymbol);
       if (currentList is null)
         return; // return with an empty _similarSymbolChoices
@@ -610,21 +1016,21 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
       }
 
       // now bring this into the SelectableListNodeList
+      var similarSymbolChoices = new SelectableListNodeList();
       foreach (var entry in list)
       {
-        _similarSymbolChoices.Add(new SelectableListNode(
+        similarSymbolChoices.Add(new SelectableListNode(
           entry.Item1,
           entry.Item2[currentIndex], object.ReferenceEquals(currentList, entry.Item2)));
       }
+      SimilarSymbolChoices = new ItemsController<IScatterSymbol>(similarSymbolChoices, EhSimilarShapeChosen);
     }
 
-    private void EhSimilarShapeChosen()
+    private void EhSimilarShapeChosen(IScatterSymbol value)
     {
-      var node = _similarSymbolChoices.FirstSelectedNode;
-      if (node is not null)
+      if (value is IScatterSymbol newSymbol)
       {
-        var newSymbol = (IScatterSymbol)node.Tag;
-        _view.ScatterSymbol = newSymbol;
+        ScatterSymbol = newSymbol;
       }
     }
 

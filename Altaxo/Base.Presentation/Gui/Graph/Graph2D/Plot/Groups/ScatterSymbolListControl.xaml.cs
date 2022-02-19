@@ -341,77 +341,7 @@ namespace Altaxo.Gui.Graph.Graph2D.Plot.Groups
 
     #endregion Interface forwarding
 
-    #region New Interface
-
-    public event Action<double>? StructureWithForAllSelected;
-
-    public event Action<Type>? ShapeForAllSelected;
-
-    public event Action<Type>? FrameForAllSelected;
-
-    public event Action<Type>? InsetForAllSelected;
-
-    public event Action<PlotColorInfluence>? PlotColorInfluenceForAllSelected;
-
-    public event Action<NamedColor>? FillColorForAllSelected;
-
-    public event Action<NamedColor>? FrameColorForAllSelected;
-
-    public event Action<NamedColor>? InsetColorForAllSelected;
-
-    #endregion New Interface
-
-    public SelectableListNodeList ShapeChoices
-    { set { GuiHelper.Initialize(_guiShape, value); } }
-
-    public SelectableListNodeList FrameChoices
-    { set { GuiHelper.Initialize(_guiFrame, value); } }
-
-    public SelectableListNodeList InsetChoices
-    { set { GuiHelper.Initialize(_guiInset, value); } }
-
-    private void EhSetStructureWidth(object sender, RoutedEventArgs e)
-    {
-      StructureWithForAllSelected?.Invoke(_guiStructureWidth.SelectedQuantityAsValueInSIUnits);
-    }
-
-    private void EhSetShape(object sender, RoutedEventArgs e)
-    {
-      GuiHelper.SynchronizeSelectionFromGui(_guiShape);
-      ShapeForAllSelected(((SelectableListNode)_guiShape.SelectedValue).Tag as Type);
-    }
-
-    private void EhSetFrame(object sender, RoutedEventArgs e)
-    {
-      GuiHelper.SynchronizeSelectionFromGui(_guiFrame);
-      FrameForAllSelected(((SelectableListNode)_guiFrame.SelectedValue).Tag as Type);
-    }
-
-    private void EhSetInset(object sender, RoutedEventArgs e)
-    {
-      GuiHelper.SynchronizeSelectionFromGui(_guiInset);
-      InsetForAllSelected(((SelectableListNode)_guiInset.SelectedValue).Tag as Type);
-    }
-
-    private void EhSetPlotColorInfluence(object sender, RoutedEventArgs e)
-    {
-      PlotColorInfluenceForAllSelected?.Invoke(_guiPlotColorInfluence.SelectedValue);
-    }
-
-    private void EhSetFillColor(object sender, RoutedEventArgs e)
-    {
-      FillColorForAllSelected?.Invoke(_guiFillColor.SelectedColor);
-    }
-
-    private void EhSetFrameColor(object sender, RoutedEventArgs e)
-    {
-      FrameColorForAllSelected?.Invoke(_guiFrameColor.SelectedColor);
-    }
-
-    private void EhSetInsetColor(object sender, RoutedEventArgs e)
-    {
-      InsetColorForAllSelected?.Invoke(_guiInsetColor.SelectedColor);
-    }
+   
 
     public virtual DataTemplate CurrentItemsTemplate
     {

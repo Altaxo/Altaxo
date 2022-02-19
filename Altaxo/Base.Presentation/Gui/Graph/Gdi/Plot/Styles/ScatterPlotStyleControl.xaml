@@ -3,12 +3,13 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:axog="clr-namespace:Altaxo.Gui;assembly=AltaxoBase"
-						 xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing"
-						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
-						 xmlns:axogcc="clr-namespace:Altaxo.Gui.Common.Converters"
-						 xmlns:local="clr-namespace:Altaxo.Gui.Graph.Gdi.Plot.Styles"
-						 xmlns:agggpss="clr-namespace:Altaxo.Gui.Graph.Graph2D.Plot.Styles.ScatterSymbols"
+			 xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing"
+			 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
+			 xmlns:axogcc="clr-namespace:Altaxo.Gui.Common.Converters"
+			 xmlns:local="clr-namespace:Altaxo.Gui.Graph.Gdi.Plot.Styles"
+			 xmlns:localmodel="clr-namespace:Altaxo.Gui.Graph.Gdi.Plot.Styles;assembly=AltaxoBase"
+			 xmlns:agggpss="clr-namespace:Altaxo.Gui.Graph.Graph2D.Plot.Styles.ScatterSymbols"
+             d:DataContext="{d:DesignInstance Type=localmodel:ScatterPlotStyleController}"
              mc:Ignorable="d">
 
 	<UserControl.Resources>
@@ -77,19 +78,19 @@
 			<RowDefinition Height="4" />
 		</Grid.RowDefinitions>
 
-		<CheckBox x:Name="_chkIndependentSkipFreq" Grid.Row="0" Grid.Column="0" Content="Independent skip frequency: " />
-		<axogc:Int32UpDown x:Name="_edSymbolSkipFrequency" Grid.Row="0" Grid.Column="2" Minimum="1" />
+        <CheckBox Grid.Row="0" Grid.Column="0" IsChecked="{Binding IndependentSkipFrequency, Mode=TwoWay}" Content="Independent skip frequency :" IsEnabled="{Binding EnableMain}" />
+        <axogc:Int32UpDown Grid.Row="0" Grid.Column="2" Value="{Binding SkipFrequency}" Minimum="1" IsEnabled="{Binding EnableMain}" />
 
-		<CheckBox x:Name="_guiIgnoreMissingDataPoints" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="4" Content="Ignore missing data points" ToolTip="If true, missing data points are treated as if not present." />
+        <CheckBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="4" IsChecked="{Binding IgnoreMissingDataPoints, Mode=TwoWay}" Content="Ignore missing data points" ToolTip="If true, missing data points are treated as if not present." />
 
-		<CheckBox x:Name="_guiIndependentOnShiftingGroupStyles"  Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="4" Content="Independent on data shifting group styles" />
+        <CheckBox Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="4" IsChecked="{Binding IndependentOnShiftingGroupStyles, Mode=TwoWay}" Content="Independent on data shifting group styles" />
 
-		<CheckBox x:Name="_guiIndependentScatterSymbol" Grid.Row="6"  Grid.Column="0" Content="Independent scatter symbol:" />
-		<local:ScatterSymbolComboBox x:Name="_cbSymbolShape"  Grid.Row="6" Grid.Column="2" SelectedItemChanged="EhScatterSymbolChanged" />
+		<CheckBox Grid.Row="6"  Grid.Column="0" IsChecked="{Binding IndependentScatterSymbol, Mode=TwoWay}" Content="Independent scatter symbol:" />
+		<local:ScatterSymbolComboBox Grid.Row="6" Grid.Column="2" SelectedItem="{Binding ScatterSymbol}"  />
 
 		<Label Content="Similar symbol sets: " Grid.Row="8" Grid.Column="0" />
 
-		<ComboBox x:Name="_guiSimilarSymbolSets" Grid.Row="8" Grid.Column="2" SelectionChanged="EhSimilarSymbolChanged">
+		<ComboBox Grid.Row="8" Grid.Column="2" ItemsSource="{Binding SimilarSymbolChoices.Items}" SelectedItem="{Binding SimilarSymbolChoices.SelectedItem, Mode=TwoWay}">
 			<ComboBox.ItemTemplate>
 				<DataTemplate>
 					<StackPanel Orientation="Horizontal" Margin="2">
@@ -100,19 +101,19 @@
 			</ComboBox.ItemTemplate>
 		</ComboBox>
 
-		<CheckBox x:Name="_chkIndependentSize" Grid.Row="10"  Grid.Column="0" Content="Independent symbol size:" />
-		<axogcd:LineCapSizeComboBox x:Name="_cbSymbolSize" Grid.Row="10" Grid.Column="2" />
+		<CheckBox Grid.Row="10"  Grid.Column="0" IsChecked="{Binding IndependentSymbolSize, Mode=TwoWay}" Content="Independent symbol size:" IsEnabled="{Binding EnableMain}" />
+		<axogcd:LineCapSizeComboBox Grid.Row="10" Grid.Column="2" SelectedQuantity="{Binding SymbolSize}" UnitEnvironment="{Binding SymbolSizeEnvironment}" IsEnabled="{Binding EnableMain}" />
 
-		<CheckBox x:Name="_chkIndependentColor" Grid.Row="12" Grid.Column="0" Content="Independent color:" Checked="EhIndependentColorChanged" Unchecked="EhIndependentColorChanged" />
-		<axogcd:ColorComboBox x:Name="_cbColor" Grid.Row="12" Grid.Column="2" />
+		<CheckBox Grid.Row="12" Grid.Column="0" IsChecked="{Binding IndependentColor, Mode=TwoWay}" Content="Independent color:" IsEnabled="{Binding EnableMain}"/>
+		<axogcd:ColorComboBox Grid.Row="12" Grid.Column="2" SelectedColor="{Binding Color}" ShowPlotColorsOnly="{Binding ShowPlotColorsOnly}" IsEnabled="{Binding EnableMain}" />
 
-		<Expander x:Name="_guiOverridesExpander" Header="Overrides" Grid.Row="14" Grid.Column="0" Grid.ColumnSpan="3" />
+		<Expander Header="Overrides" Grid.Row="14" Grid.Column="0" Grid.ColumnSpan="3" IsExpanded="{Binding AreOverridesExpanded, Mode=TwoWay}" />
 
-		<CheckBox x:Name="_guiOverrideFrame" Content="Override frame:" Grid.Row="16" Grid.Column="0" Visibility="{Binding ElementName=_guiOverridesExpander, Path=IsExpanded, Converter={StaticResource CollapsedIfFalse}}" />
-		<ComboBox x:Name="_guiFrame" Grid.Row="16" Grid.Column="2" SelectionChanged="EhFrameChanged"  IsEnabled="{Binding ElementName=_guiOverrideFrame, Path=IsChecked}" Visibility="{Binding ElementName=_guiOverridesExpander, Path=IsExpanded, Converter={StaticResource CollapsedIfFalse}}" />
+		<CheckBox IsChecked="{Binding OverrideFrame}" Content="Override frame:" Grid.Row="16" Grid.Column="0" Visibility="{Binding AreOverridesExpanded, Converter={StaticResource CollapsedIfFalse}}" />
+        <ComboBox Grid.Row="16" Grid.Column="2" ItemsSource="{Binding Frames.Items}" SelectedItem="{Binding Frames.SelectedItem, Mode=TwoWay}" IsEnabled="{Binding OverrideFrame}" Visibility="{Binding AreOverridesExpanded, Converter={StaticResource CollapsedIfFalse}}" />
 
-		<CheckBox x:Name="_guiOverrideInset" Content="Override inset:" Grid.Row="18" Grid.Column="0" Visibility="{Binding ElementName=_guiOverridesExpander, Path=IsExpanded, Converter={StaticResource CollapsedIfFalse}}" />
-		<ComboBox x:Name="_guiInset" Grid.Row="18" Grid.Column="2" SelectionChanged="EhInsetChanged"  IsEnabled="{Binding ElementName=_guiOverrideInset, Path=IsChecked}" Visibility="{Binding ElementName=_guiOverridesExpander, Path=IsExpanded, Converter={StaticResource CollapsedIfFalse}}">
+        <CheckBox Grid.Row="18" Grid.Column="0" IsChecked="{Binding OverrideInset, Mode=TwoWay}" Content="Override inset:" Visibility="{Binding AreOverridesExpanded, Converter={StaticResource CollapsedIfFalse}}" />
+		<ComboBox Grid.Row="18" Grid.Column="2" ItemsSource="{Binding Insets.Items}" SelectedItem="{Binding Insets.SelectedItem, Mode=TwoWay}"  IsEnabled="{Binding OverrideInset}" Visibility="{Binding AreOverridesExpanded, Converter={StaticResource CollapsedIfFalse}}">
 			<ComboBox.ItemTemplate>
 				<DataTemplate>
 					<StackPanel Orientation="Horizontal" Margin="2">
@@ -123,24 +124,26 @@
 			</ComboBox.ItemTemplate>
 		</ComboBox>
 
-		<CheckBox x:Name="_guiOverrideAbsoluteStructureWidth" Grid.Row="20" Grid.Column="0" Content="Override absolute structure width:" Visibility="{Binding ElementName=_guiOverridesExpander, Path=IsExpanded, Converter={StaticResource CollapsedIfFalse}}" />
-		<axogcd:LineThicknessComboBox x:Name="_guiOverriddenAbsoluteStructureWidth" Grid.Row="20" Grid.Column="2"  IsEnabled="{Binding ElementName=_guiOverrideAbsoluteStructureWidth, Path=IsChecked}" Visibility="{Binding ElementName=_guiOverridesExpander, Path=IsExpanded, Converter={StaticResource CollapsedIfFalse}}" />
+		<CheckBox Grid.Row="20" Grid.Column="0" IsChecked="{Binding OverrideAbsoluteStructureWidth, Mode=TwoWay}" Content="Override absolute structure width:" Visibility="{Binding AreOverridesExpanded, Converter={StaticResource CollapsedIfFalse}}" />
+		<axogcd:LineThicknessComboBox Grid.Row="20" Grid.Column="2" SelectedQuantity="{Binding OverriddenAbsoluteStructureWidth}" UnitEnvironment="{Binding AbsoluteWidthEnvironment}"  IsEnabled="{Binding OverrideAbsoluteStructureWidth}" Visibility="{Binding AreOverridesExpanded, Converter={StaticResource CollapsedIfFalse}}" />
 
-		<CheckBox x:Name="_guiOverrideRelativeStructureWidth" Grid.Row="22" Grid.Column="0" Content="Override relative structure width:" Visibility="{Binding ElementName=_guiOverridesExpander, Path=IsExpanded, Converter={StaticResource CollapsedIfFalse}}" />
-		<axogc:QuantityWithUnitTextBox x:Name="_guiOverriddenRelativeStructureWidth"  Grid.Row="22" Grid.Column="2" UnitEnvironment="{x:Static axog:RelationEnvironment.Instance}" IsEnabled="{Binding ElementName=_guiOverrideRelativeStructureWidth, Path=IsChecked}" Visibility="{Binding ElementName=_guiOverridesExpander, Path=IsExpanded, Converter={StaticResource CollapsedIfFalse}}" />
+		<CheckBox Grid.Row="22" Grid.Column="0" IsChecked="{Binding OverrideRelativeStructureWidth}" Content="Override relative structure width:" Visibility="{Binding AreOverridesExpanded, Converter={StaticResource CollapsedIfFalse}}" />
+		<axogc:QuantityWithUnitTextBox Grid.Row="22" Grid.Column="2" SelectedQuantity="{Binding OverriddenRelativeStructureWidth}" UnitEnvironment="{Binding RelativeWidthEnvironment}" IsEnabled="{Binding OverrideRelativeStructureWidth}" Visibility="{Binding AreOverridesExpanded, Converter={StaticResource CollapsedIfFalse}}" />
 
-		<CheckBox x:Name="_guiOverridePlotColorInfluence" Grid.Row="24" Grid.Column="0" Content="Plot color influences:" Visibility="{Binding ElementName=_guiOverridesExpander, Path=IsExpanded, Converter={StaticResource CollapsedIfFalse}}" />
-		<agggpss:PlotColorInfluenceControl x:Name="_guiOverriddenPlotColorInfluence" Grid.Row="24" Grid.Column="2"  IsEnabled="{Binding ElementName=_guiOverridePlotColorInfluence, Path=IsChecked}" Visibility="{Binding ElementName=_guiOverridesExpander, Path=IsExpanded, Converter={StaticResource CollapsedIfFalse}}" />
+		<CheckBox Grid.Row="24" Grid.Column="0" IsChecked="{Binding OverridePlotColorInfluence, Mode=TwoWay}" Content="Plot color influences:" Visibility="{Binding AreOverridesExpanded, Converter={StaticResource CollapsedIfFalse}}" />
+        <ContentControl Grid.Row="24" Grid.Column="2" IsEnabled="{Binding OverridePlotColorInfluence}" Visibility="{Binding AreOverridesExpanded, Converter={StaticResource CollapsedIfFalse}}">
+		<agggpss:PlotColorInfluenceControl  DataContext="{Binding OverriddenPlotColorInfluence}" />
+        </ContentControl>   
+        
+        <CheckBox Grid.Row="26" Grid.Column="0" IsChecked="{Binding OverrideFillColor, Mode=TwoWay}" Content="Override fill color:" Visibility="{Binding AreOverridesExpanded, Converter={StaticResource CollapsedIfFalse}}" />
+        <axogcd:ColorComboBox Grid.Row="26" Grid.Column="2" SelectedColor="{Binding OverriddenFillColor}" IsEnabled="{Binding OverrideFillColor}" Visibility="{Binding AreOverridesExpanded, Converter={StaticResource CollapsedIfFalse}}" />
 
-		<CheckBox x:Name="_guiOverrideFillColor" Grid.Row="26" Grid.Column="0" Content="Override fill color:" Visibility="{Binding ElementName=_guiOverridesExpander, Path=IsExpanded, Converter={StaticResource CollapsedIfFalse}}" />
-		<axogcd:ColorComboBox x:Name="_guiOverriddenFillColor" Grid.Row="26" Grid.Column="2" IsEnabled="{Binding ElementName=_guiOverrideFillColor, Path=IsChecked}" Visibility="{Binding ElementName=_guiOverridesExpander, Path=IsExpanded, Converter={StaticResource CollapsedIfFalse}}" />
+		<CheckBox Grid.Row="28" Grid.Column="0" IsChecked="{Binding OverrideFrameColor, Mode=TwoWay}" Content="Override frame color:" Visibility="{Binding AreOverridesExpanded, Converter={StaticResource CollapsedIfFalse}}" />
+		<axogcd:ColorComboBox Grid.Row="28" Grid.Column="2" SelectedColor="{Binding OverriddenFrameColor}" IsEnabled="{Binding OverrideFrameColor}" Visibility="{Binding AreOverridesExpanded, Converter={StaticResource CollapsedIfFalse}}" />
 
-		<CheckBox x:Name="_guiOverrideFrameColor" Grid.Row="28" Grid.Column="0" Content="Override frame color:" Visibility="{Binding ElementName=_guiOverridesExpander, Path=IsExpanded, Converter={StaticResource CollapsedIfFalse}}" />
-		<axogcd:ColorComboBox x:Name="_guiOverriddenFrameColor" Grid.Row="28" Grid.Column="2" IsEnabled="{Binding ElementName=_guiOverrideFrameColor, Path=IsChecked}" Visibility="{Binding ElementName=_guiOverridesExpander, Path=IsExpanded, Converter={StaticResource CollapsedIfFalse}}" />
+		<CheckBox Grid.Row="30" Grid.Column="0" IsChecked="{Binding OverrideInsetColor, Mode=TwoWay}" Content="Override inset color:" Visibility="{Binding AreOverridesExpanded, Converter={StaticResource CollapsedIfFalse}}" />
+		<axogcd:ColorComboBox Grid.Row="30" Grid.Column="2" SelectedColor="{Binding OverriddenInsetColor}" IsEnabled="{Binding OverrideInsetColor}" Visibility="{Binding AreOverridesExpanded, Converter={StaticResource CollapsedIfFalse}}" />
 
-		<CheckBox x:Name="_guiOverrideInsetColor" Grid.Row="30" Grid.Column="0" Content="Override inset color:" Visibility="{Binding ElementName=_guiOverridesExpander, Path=IsExpanded, Converter={StaticResource CollapsedIfFalse}}" />
-		<axogcd:ColorComboBox x:Name="_guiOverriddenInsetColor" Grid.Row="30" Grid.Column="2" IsEnabled="{Binding ElementName=_guiOverrideInsetColor, Path=IsChecked}" Visibility="{Binding ElementName=_guiOverridesExpander, Path=IsExpanded, Converter={StaticResource CollapsedIfFalse}}" />
-
-		<Button Grid.Row="32" Grid.Column="0" Grid.ColumnSpan="3" Content="Create new symbol set from overrides" Click="EhCreateNewScatterSymbolSet" ToolTip="This will create a new scatter symbol set from the current overrides settings. You can then use the new symbol set in other plot items." Visibility="{Binding ElementName=_guiOverridesExpander, Path=IsExpanded, Converter={StaticResource CollapsedIfFalse}}" />
+		<Button Grid.Row="32" Grid.Column="0" Grid.ColumnSpan="3" Command="{Binding CmdCreateNewScatterSymbolSet}" Content="Create new symbol set from overrides" ToolTip="This will create a new scatter symbol set from the current overrides settings. You can then use the new symbol set in other plot items." Visibility="{Binding AreOverridesExpanded, Converter={StaticResource CollapsedIfFalse}}" />
 	</Grid>
 </UserControl>

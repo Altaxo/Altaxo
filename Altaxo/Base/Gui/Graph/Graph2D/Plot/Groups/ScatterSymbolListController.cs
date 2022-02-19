@@ -27,51 +27,178 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Windows.Input;
 using Altaxo.Collections;
 using Altaxo.Drawing;
 using Altaxo.Graph.Graph2D.Plot.Groups;
 using Altaxo.Graph.Graph2D.Plot.Styles;
 using Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols;
+using Altaxo.Gui.Common;
 using Altaxo.Gui.Drawing;
+using Altaxo.Gui.Graph.Graph2D.Plot.Styles;
+using Altaxo.Units;
 
 namespace Altaxo.Gui.Graph.Graph2D.Plot.Groups
 {
   public interface IScatterSymbolListView : IStyleListView
   {
-    SelectableListNodeList ShapeChoices { set; }
-
-    SelectableListNodeList FrameChoices { set; }
-    SelectableListNodeList InsetChoices { set; }
-
-    event Action<double> StructureWithForAllSelected;
-
-    event Action<Type> ShapeForAllSelected;
-
-    event Action<Type> FrameForAllSelected;
-
-    event Action<Type> InsetForAllSelected;
-
-    event Action<PlotColorInfluence> PlotColorInfluenceForAllSelected;
-
-    event Action<NamedColor> FillColorForAllSelected;
-
-    event Action<NamedColor> FrameColorForAllSelected;
-
-    event Action<NamedColor> InsetColorForAllSelected;
   }
 
   [ExpectedTypeOfView(typeof(IScatterSymbolListView))]
   [UserControllerForObject(typeof(ScatterSymbolList))]
   public class ScatterSymbolListController : StyleListController<ScatterSymbolListManager, ScatterSymbolList, IScatterSymbol>
   {
-    private SelectableListNodeList _shapes, _frames, _insets;
-
-    private IScatterSymbolListView _view1;
-
     public ScatterSymbolListController()
       : base(ScatterSymbolListManager.Instance)
     {
+      CmdSetStructureWidth = new RelayCommand(EhStructureWithForAllSelected);
+      CmdSetShape = new RelayCommand(EhShapeForAllSelected);
+      CmdSetFrame = new RelayCommand(EhFrameForAllSelected);
+      CmdSetInset = new RelayCommand(EhInsetForAllSelected);
+      CmdSetPlotColorInfluence = new RelayCommand(EhPlotColorInfluenceForAllSelected);
+      CmdSetFillColor = new RelayCommand(EhFillColorForAllSelected);
+      CmdSetFrameColor = new RelayCommand(EhFrameColorForAllSelected);
+      CmdSetInsetColor = new RelayCommand(EhInsetColorForAllSelected);
     }
+
+    #region Bindings
+
+    public ICommand CmdSetStructureWidth { get; }
+    public ICommand CmdSetShape { get; }
+    public ICommand CmdSetFrame { get; }
+    public ICommand CmdSetInset { get; }
+    public ICommand CmdSetPlotColorInfluence { get; }
+    public ICommand CmdSetFillColor { get; }
+    public ICommand CmdSetFrameColor { get; }
+    public ICommand CmdSetInsetColor { get; }
+
+    public QuantityWithUnitGuiEnvironment RelativeStructureWidthEnvironment => RelationEnvironment.Instance;
+
+    private DimensionfulQuantity _relativeStructureWidth;
+
+    public DimensionfulQuantity RelativeStructureWidth
+    {
+      get => _relativeStructureWidth;
+      set
+      {
+        if (!(_relativeStructureWidth == value))
+        {
+          _relativeStructureWidth = value;
+          OnPropertyChanged(nameof(RelativeStructureWidth));
+        }
+      }
+    }
+
+
+    private ItemsController<Type?> _shapes;
+
+    public ItemsController<Type?> Shapes
+    {
+      get => _shapes;
+      set
+      {
+        if (!(_shapes == value))
+        {
+          _shapes = value;
+          OnPropertyChanged(nameof(Shapes));
+        }
+      }
+    }
+
+
+    private ItemsController<Type?> _insets;
+
+    public ItemsController<Type?> Insets
+    {
+      get => _insets;
+      set
+      {
+        if (!(_insets == value))
+        {
+          _insets = value;
+          OnPropertyChanged(nameof(Insets));
+        }
+      }
+    }
+
+    private ItemsController<Type?> _frames;
+
+    public ItemsController<Type?> Frames
+    {
+      get => _frames;
+      set
+      {
+        if (!(_frames == value))
+        {
+          _frames?.Dispose();
+          _frames = value;
+          OnPropertyChanged(nameof(Frames));
+        }
+      }
+    }
+
+    private PlotColorInfluenceController _plotColorInfluence;
+
+    public PlotColorInfluenceController PlotColorInfluence
+    {
+      get => _plotColorInfluence;
+      set
+      {
+        if (!(_plotColorInfluence == value))
+        {
+          _plotColorInfluence?.Dispose();
+          _plotColorInfluence = value;
+
+          OnPropertyChanged(nameof(PlotColorInfluence));
+        }
+      }
+    }
+
+    private NamedColor _fillColor;
+
+    public NamedColor FillColor
+    {
+      get => _fillColor;
+      set
+      {
+        if (!(_fillColor == value))
+        {
+          _fillColor = value;
+          OnPropertyChanged(nameof(FillColor));
+        }
+      }
+    }
+
+    private NamedColor _frameColor;
+
+    public NamedColor FrameColor
+    {
+      get => _frameColor;
+      set
+      {
+        if (!(_frameColor == value))
+        {
+          _frameColor = value;
+          OnPropertyChanged(nameof(FrameColor));
+        }
+      }
+    }
+    private NamedColor _insetColor;
+
+    public NamedColor InsetColor
+    {
+      get => _insetColor;
+      set
+      {
+        if (!(_insetColor == value))
+        {
+          _insetColor = value;
+          OnPropertyChanged(nameof(InsetColor));
+        }
+      }
+    }
+
+    #endregion
 
     protected override void Initialize(bool initData)
     {
@@ -87,66 +214,25 @@ namespace Altaxo.Gui.Graph.Graph2D.Plot.Groups
         frames.Sort((x, y) => string.Compare(x.Item1, y.Item1));
         insets.Sort((x, y) => string.Compare(x.Item1, y.Item1));
 
-        _shapes = new SelectableListNodeList(shapes.Select(tuple => new SelectableListNode(tuple.Item1, tuple.Item2, false)));
-        _shapes[0].IsSelected = true;
-        _frames = new SelectableListNodeList(frames.Select(tuple => new SelectableListNode(tuple.Item1, tuple.Item2, false)));
-        _frames.Insert(0, new SelectableListNode("None", null, true));
-        _insets = new SelectableListNodeList(insets.Select(tuple => new SelectableListNode(tuple.Item1, tuple.Item2, false)));
-        _insets.Insert(0, new SelectableListNode("None", null, true));
+        Shapes = new ItemsController<Type?>(
+                    new SelectableListNodeList(shapes.Select(tuple => new SelectableListNode(tuple.Item1, tuple.Item2, false))));
+        Shapes.SelectedItem = Shapes.Items[0];
+
+        Frames = new ItemsController<Type?>(
+                    new SelectableListNodeList(
+                      EnumerableExtensions.AsEnumerable(new SelectableListNode("None", null, true)).Concat(
+                      frames.Select(tuple => new SelectableListNode(tuple.Item1, tuple.Item2, false)))));
+
+ 
+        Insets = new ItemsController<Type?>(
+                    new SelectableListNodeList(
+                      EnumerableExtensions.AsEnumerable(new SelectableListNode("None", null, true)).Concat(  
+                      insets.Select(tuple => new SelectableListNode(tuple.Item1, tuple.Item2, false)))));
+
       }
-
-      if (_view is not null)
-      {
-        _view1 = _view as IScatterSymbolListView;
-        _view1.ShapeChoices = _shapes;
-        _view1.FrameChoices = _frames;
-        _view1.InsetChoices = _insets;
-      }
     }
 
-    protected override void AttachView()
-    {
-      base.AttachView();
-
-      _view1.StructureWithForAllSelected += EhStructureWithForAllSelected;
-
-      _view1.ShapeForAllSelected += EhShapeForAllSelected;
-
-      _view1.FrameForAllSelected += EhFrameForAllSelected;
-
-      _view1.InsetForAllSelected += EhInsetForAllSelected;
-
-      _view1.PlotColorInfluenceForAllSelected += EhPlotColorInfluenceForAllSelected;
-
-      _view1.FillColorForAllSelected += EhFillColorForAllSelected;
-
-      _view1.FrameColorForAllSelected += EhFrameColorForAllSelected;
-
-      _view1.InsetColorForAllSelected += EhInsetColorForAllSelected;
-    }
-
-    protected override void DetachView()
-    {
-      _view1.StructureWithForAllSelected -= EhStructureWithForAllSelected;
-
-      _view1.ShapeForAllSelected -= EhShapeForAllSelected;
-
-      _view1.FrameForAllSelected -= EhFrameForAllSelected;
-
-      _view1.InsetForAllSelected -= EhInsetForAllSelected;
-
-      _view1.PlotColorInfluenceForAllSelected -= EhPlotColorInfluenceForAllSelected;
-
-      _view1.FillColorForAllSelected -= EhFillColorForAllSelected;
-
-      _view1.FrameColorForAllSelected -= EhFrameColorForAllSelected;
-
-      _view1.InsetColorForAllSelected -= EhInsetColorForAllSelected;
-
-      base.DetachView();
-    }
-
-    private void EhInsetColorForAllSelected(NamedColor obj)
+    private void EhInsetColorForAllSelected()
     {
       foreach (var node in _currentItems)
       {
@@ -154,7 +240,7 @@ namespace Altaxo.Gui.Graph.Graph2D.Plot.Groups
         {
           var item = (IScatterSymbol)node.Tag;
           if (item.Inset is not null)
-            node.Tag = item.WithInset(item.Inset.WithColor(obj));
+            node.Tag = item.WithInset(item.Inset.WithColor(InsetColor));
         }
       }
 
@@ -162,7 +248,7 @@ namespace Altaxo.Gui.Graph.Graph2D.Plot.Groups
       SetListDirty();
     }
 
-    private void EhFrameColorForAllSelected(NamedColor obj)
+    private void EhFrameColorForAllSelected()
     {
       foreach (var node in _currentItems)
       {
@@ -170,7 +256,7 @@ namespace Altaxo.Gui.Graph.Graph2D.Plot.Groups
         {
           var item = (IScatterSymbol)node.Tag;
           if (item.Frame is not null)
-            node.Tag = item.WithFrame(item.Frame.WithColor(obj));
+            node.Tag = item.WithFrame(item.Frame.WithColor(FrameColor));
         }
       }
 
@@ -178,14 +264,14 @@ namespace Altaxo.Gui.Graph.Graph2D.Plot.Groups
       SetListDirty();
     }
 
-    private void EhFillColorForAllSelected(NamedColor obj)
+    private void EhFillColorForAllSelected()
     {
       foreach (var node in _currentItems)
       {
         if (node.IsSelected)
         {
           var item = (IScatterSymbol)node.Tag;
-          node.Tag = item.WithFillColor(obj);
+          node.Tag = item.WithFillColor(FillColor);
         }
       }
 
@@ -193,8 +279,9 @@ namespace Altaxo.Gui.Graph.Graph2D.Plot.Groups
       SetListDirty();
     }
 
-    private void EhPlotColorInfluenceForAllSelected(PlotColorInfluence obj)
+    private void EhPlotColorInfluenceForAllSelected()
     {
+      var obj = PlotColorInfluence.Doc;
       foreach (var node in _currentItems)
       {
         if (node.IsSelected)
@@ -208,8 +295,9 @@ namespace Altaxo.Gui.Graph.Graph2D.Plot.Groups
       SetListDirty();
     }
 
-    private void EhInsetForAllSelected(Type obj)
+    private void EhInsetForAllSelected()
     {
+      var obj = Insets.SelectedValue;
       var insetTemplate = obj is null ? null : (IScatterSymbolInset)Activator.CreateInstance(obj);
 
       if (insetTemplate is null)
@@ -239,8 +327,9 @@ namespace Altaxo.Gui.Graph.Graph2D.Plot.Groups
       SetListDirty();
     }
 
-    private void EhFrameForAllSelected(Type obj)
+    private void EhFrameForAllSelected()
     {
+      var obj = Frames.SelectedValue;
       var frameTemplate = obj is null ? null : (IScatterSymbolFrame)Activator.CreateInstance(obj);
 
       if (frameTemplate is null)
@@ -270,9 +359,10 @@ namespace Altaxo.Gui.Graph.Graph2D.Plot.Groups
       SetListDirty();
     }
 
-    private void EhShapeForAllSelected(Type obj)
+    private void EhShapeForAllSelected()
     {
-      var shapeTemplate = (IScatterSymbol)Activator.CreateInstance(obj);
+
+      var shapeTemplate = (IScatterSymbol)Activator.CreateInstance(Shapes.SelectedValue);
 
       foreach (var node in _currentItems)
       {
@@ -299,14 +389,14 @@ namespace Altaxo.Gui.Graph.Graph2D.Plot.Groups
       SetListDirty();
     }
 
-    private void EhStructureWithForAllSelected(double obj)
+    private void EhStructureWithForAllSelected()
     {
       foreach (var node in _currentItems)
       {
         if (node.IsSelected)
         {
           var item = (IScatterSymbol)node.Tag;
-          node.Tag = item.WithRelativeStructureWidth(obj);
+          node.Tag = item.WithRelativeStructureWidth(RelativeStructureWidth.AsValueInSIUnits);
         }
       }
       View_CurrentItems_Initialize();

@@ -154,7 +154,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     #endregion
 
-    #region YErrorColumn
+    #region YColumn
 
 
     private string _yColumnText;

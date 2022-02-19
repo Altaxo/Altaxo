@@ -4,16 +4,22 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:Altaxo.Gui.Graph.Graph2D.Plot.Styles"
+             xmlns:localmodel="clr-namespace:Altaxo.Gui.Graph.Graph2D.Plot.Styles;assembly=AltaxoBase"
              xmlns:axog="clr-namespace:Altaxo.Gui;assembly=AltaxoBase"
  						 xmlns:axogd="clr-namespace:Altaxo.Gui.Drawing"
 						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
 						 xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing"
 						 xmlns:axogggpss="clr-namespace:Altaxo.Gui.Graph.Graph2D.Plot.Styles.ScatterSymbols"
-						 xmlns:axogggps="clr-namespace:Altaxo.Gui.Graph.Gdi.Plot.Styles">
+						 xmlns:axogggps="clr-namespace:Altaxo.Gui.Graph.Gdi.Plot.Styles" 
+             d:DataContext="{d:DesignInstance Type=localmodel:ScatterSymbolController}"
+             mc:Ignorable="d">
 	<UserControl.Resources>
 		<axogggps:ScatterSymbolInsetTypeToImageSourceConverter x:Key="InsetTypeToImageSourceConverter" />
 		<axogggps:ScatterSymbolTypeToImageSourceConverter x:Key="SymbolTypeToImageSourceConverter" />
-	</UserControl.Resources>
+        <axogggps:ScatterSymbolToImageSourceConverter SymbolSize="32" PlotColor="Black"  x:Key="converterBlack_White"/>
+        <axogggps:ScatterSymbolToImageSourceConverter SymbolSize="32" PlotColor="Blue"  x:Key="converterBlue_Golden"/>
+        <axogggps:ScatterSymbolToImageSourceConverter SymbolSize="32" PlotColor="Goldenrod"  x:Key="converterGolden_Blue"/>
+    </UserControl.Resources>
 	<Grid>
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto" />
@@ -47,7 +53,7 @@
 		</Grid.ColumnDefinitions>
 
 		<Label Content="Shape:" Grid.Row="0" Grid.Column="0" />
-		<ComboBox x:Name="_guiShape" Grid.Row="0" Grid.Column="2" SelectionChanged="EhShapeChanged">
+		<ComboBox Grid.Row="0" Grid.Column="2" ItemsSource="{Binding Shapes.Items}" SelectedItem="{Binding Shapes.SelectedItem, Mode=TwoWay}">
 			<ComboBox.ItemTemplate>
 				<DataTemplate>
 					<StackPanel Orientation="Horizontal" Margin="2">
@@ -59,13 +65,13 @@
 		</ComboBox>
 
 		<Label Content="Structur width:" Grid.Row="2" Grid.Column="0" />
-		<axogc:QuantityWithUnitTextBox x:Name="_guiStructureWidth"  Grid.Row="2" Grid.Column="2" UnitEnvironment="{x:Static axog:RelationEnvironment.Instance}" SelectedQuantityChanged="EhStructureWidthChanged" />
+		<axogc:QuantityWithUnitTextBox Grid.Row="2" Grid.Column="2" SelectedQuantity="{Binding RelativeStructureWidth}" UnitEnvironment="{Binding RelativeStructureWidthEnvironment}"  />
 
 		<Label Content="Frame:" Grid.Row="6" Grid.Column="0" />
-		<ComboBox x:Name="_guiFrame" Grid.Row="6" Grid.Column="2" SelectionChanged="EhFrameChanged" />
+		<ComboBox Grid.Row="6" Grid.Column="2" ItemsSource="{Binding Frames.Items}" SelectedItem="{Binding Frames.SelectedItem, Mode=TwoWay}" />
 
 		<Label Content="Inset:" Grid.Row="8" Grid.Column="0" />
-		<ComboBox x:Name="_guiInset" Grid.Row="8" Grid.Column="2" SelectionChanged="EhInsetChanged">
+		<ComboBox Grid.Row="8" Grid.Column="2" ItemsSource="{Binding Insets.Items}" SelectedItem="{Binding Insets.SelectedItem, Mode=TwoWay}">
 			<ComboBox.ItemTemplate>
 				<DataTemplate>
 					<StackPanel Orientation="Horizontal" Margin="2">
@@ -77,16 +83,16 @@
 		</ComboBox>
 
 		<Label Content="Plot color influence:" Grid.Row="10" Grid.Column="0" />
-		<axogggpss:PlotColorInfluenceControl x:Name="_guiPlotColorInfluence" Grid.Row="10" Grid.Column="2" SelectedValueChanged="EhPlotColorInfluenceChanged" />
+		<axogggpss:PlotColorInfluenceControl Grid.Row="10" Grid.Column="2" DataContext="{Binding PlotColorInfluence}" />
 
 		<Label Content="Fill color:" Grid.Row="12" Grid.Column="0" />
-		<axogcd:ColorComboBox x:Name="_guiFillColor" Grid.Row="12" Grid.Column="2" SelectedColorChanged="EhFillColorChanged" />
+		<axogcd:ColorComboBox Grid.Row="12" Grid.Column="2" SelectedColor="{Binding FillColor}" />
 
 		<Label Content="Frame color:" Grid.Row="14" Grid.Column="0" />
-		<axogcd:ColorComboBox x:Name="_guiFrameColor" Grid.Row="14" Grid.Column="2" SelectedColorChanged="EhFrameColorChanged" />
+		<axogcd:ColorComboBox Grid.Row="14" Grid.Column="2" SelectedColor="{Binding FrameColor}" />
 
 		<Label Content="Inset color:" Grid.Row="16" Grid.Column="0" />
-		<axogcd:ColorComboBox x:Name="_guiInsetColor" Grid.Row="16" Grid.Column="2" SelectedColorChanged="EhInsetColorChanged" />
+		<axogcd:ColorComboBox Grid.Row="16" Grid.Column="2" SelectedColor="{Binding InsetColor}" />
 
 		<GroupBox Header="Preview" Grid.Row="18" Grid.ColumnSpan="3">
 			<Grid>
@@ -104,15 +110,15 @@
 				</Grid.ColumnDefinitions>
 				<Label Content="Black plot color / white background:" Grid.Row="0" Grid.Column="0" />
 				<Border Background="White" Grid.Row="0" Grid.Column="2" Padding="4" BorderThickness="0.5" BorderBrush="Black">
-					<Image x:Name="_guiPreviewBlack_White" />
+					<Image Source="{Binding Doc, Converter={StaticResource converterBlack_White}}" />
 				</Border>
 				<Label Content="Blue plot color / golden background:" Grid.Row="2" Grid.Column="0" />
 				<Border Background="Goldenrod" Grid.Row="2" Grid.Column="2" Padding="4" BorderThickness="0.5" BorderBrush="Black">
-					<Image x:Name="_guiPreviewBlue_Goldenrod" />
+                    <Image Source="{Binding Doc, Converter={StaticResource converterBlue_Golden}}" />
 				</Border>
 				<Label Content="Golden plot color / blue background:" Grid.Row="4" Grid.Column="0" />
 				<Border Background="Blue" Grid.Row="4" Grid.Column="2" Padding="4" BorderThickness="0.5" BorderBrush="Black">
-					<Image x:Name="_guiPreviewGoldenrod_Blue" />
+                    <Image Source="{Binding Doc, Converter={StaticResource converterGolden_Blue}}" />
 				</Border>
 			</Grid>
 		</GroupBox>

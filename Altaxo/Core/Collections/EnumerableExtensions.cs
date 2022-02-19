@@ -224,6 +224,17 @@ namespace Altaxo.Collections
     }
 
     /// <summary>
+    /// Presents the argument as IEnumerable with one element.
+    /// </summary>
+    /// <typeparam name="T">The enumeration type.</typeparam>
+    /// <param name="element">The element to present.</param>
+    /// <returns></returns>
+    public static IEnumerable<T> AsEnumerable<T>(T element)
+    {
+      yield return element;
+    }
+
+    /// <summary>
     /// Determines whether the specified enumeration has exactly one element.
     /// </summary>
     /// <typeparam name="T">Type of the elements of the enumeration.</typeparam>
