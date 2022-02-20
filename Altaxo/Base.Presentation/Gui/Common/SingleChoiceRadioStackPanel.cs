@@ -170,7 +170,7 @@ namespace Altaxo.Gui.Common
   
   public class SingleChoiceRadioStackPanel : StackPanel
   {
-    private event EventHandler? SelectionChanged;
+    public event EventHandler? SelectionChanged;
 
     #region Dependency properties
 
