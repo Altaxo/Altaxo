@@ -3,7 +3,9 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-						 xmlns:axogg="clr-namespace:Altaxo.Gui.Graph"
+						 xmlns:axogg="clr-namespace:Altaxo.Gui.Graph" 
+             xmlns:plot="clr-namespace:Altaxo.Gui.Graph.Gdi.Plot;assembly=AltaxoBase"
+             d:DataContext="{d:DesignInstance Type=plot:G2DPlotItemController}"
              mc:Ignorable="d">
 	<Grid x:Name="_mainGrid">
 		<Grid.ColumnDefinitions>
@@ -15,15 +17,29 @@
 		</Grid.ColumnDefinitions>
 
 		<Border  Grid.Column="0"  Background="Bisque">
-			<GroupBox x:Name="_plotStyleCollectionControlHost" Header="Style arrangement:" Padding="2,4,2,2" />
-		</Border>
+            <GroupBox  Header="Style arrangement:" Padding="2,4,2,2" >
+                <ContentControl Content="{Binding StyleCollectionController.ViewObject}"/>
+            </GroupBox>
+        </Border>
 		<!--axogg:XYPlotStyleCollectionControl x:Name="_plotStyleCollControl" Grid.Column="0"/-->
-		<TabControl x:Name="_tabControl" Grid.Column="2" SelectionChanged="EhTabControl_SelectionChanged">
-		</TabControl>
-		<GridSplitter Grid.Column="3" Width="4" HorizontalAlignment="Stretch" />
+        <TabControl Grid.Column="2"  
+                    ItemsSource="{Binding Tabs}"
+                    SelectedValue="{Binding SelectedTab, Mode=TwoWay}" 
+                    SelectedValuePath="Tag"
+                    DisplayMemberPath="Text"
+                    >
+            <TabControl.ContentTemplate>
+                <DataTemplate>
+                    <ContentPresenter Content="{Binding ViewObject}"/>
+                </DataTemplate>
+            </TabControl.ContentTemplate>
+        </TabControl>
+        <GridSplitter Grid.Column="3" Width="4" HorizontalAlignment="Stretch" />
 		<Border Grid.Column="4"  Background="Bisque">
-			<GroupBox x:Name="_plotGroupCollectionControlHost" Header="Plot item grouping:"  Padding="2,4,2,2" />
-		</Border>
+            <GroupBox Header="Plot item grouping:"  Padding="2,4,2,2" >
+                <ContentControl Content="{Binding PlotGroupController.ViewObject}"/>
+            </GroupBox>
+        </Border>
 		<!--axogg:PlotGroupCollectionControl x:Name="_plotGroupCollectionControl" Grid.Column="3"/-->
 	</Grid>
 </UserControl>

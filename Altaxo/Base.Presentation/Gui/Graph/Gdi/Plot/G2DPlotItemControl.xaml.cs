@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -22,12 +22,6 @@
 
 #endregion Copyright
 
-#nullable disable warnings
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows;
 using System.Windows.Controls;
 
 namespace Altaxo.Gui.Graph.Gdi.Plot
@@ -41,56 +35,5 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
     {
       InitializeComponent();
     }
-
-    private void EhTabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
-    {
-      if (e.OriginalSource == _tabControl)
-      {
-        TabItem newItem = null;
-        TabItem oldItem = null;
-
-        if (e.AddedItems.Count > 0)
-          newItem = (TabItem)e.AddedItems[0];
-        if (e.RemovedItems.Count > 0)
-          oldItem = (TabItem)e.RemovedItems[0];
-
-        SelectedPage_Changed?.Invoke(this, new Altaxo.Main.InstanceChangedEventArgs(oldItem?.Content, newItem?.Content));
-      }
-    }
-
-    #region IG2DPlotItemView
-
-    public void ClearTabs()
-    {
-      // decouple controls from the tabitems
-      foreach (TabItem tabItem in _tabControl.Items)
-        tabItem.Content = null;
-      _tabControl.Items.Clear();
-    }
-
-    public void AddTab(string title, object view)
-    {
-      var tabItem = new TabItem() { Header = title, Content = view };
-      _tabControl.Items.Add(tabItem);
-    }
-
-    public void BringTabToFront(int index)
-    {
-      _tabControl.SelectedIndex = index;
-    }
-
-    public event EventHandler<Altaxo.Main.InstanceChangedEventArgs>? SelectedPage_Changed;
-
-    public void SetPlotStyleView(object view)
-    {
-      _plotStyleCollectionControlHost.Content = (UIElement)view;
-    }
-
-    public void SetPlotGroupCollectionView(object view)
-    {
-      _plotGroupCollectionControlHost.Content = (UIElement)view;
-    }
-
-    #endregion IG2DPlotItemView
   }
 }
