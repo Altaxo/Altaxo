@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2016 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -33,142 +33,21 @@ using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Gdi.Background;
 using Altaxo.Graph.Gdi.Plot.Styles;
 using Altaxo.Graph.Plot.Groups;
+using Altaxo.Gui.Common;
+using Altaxo.Gui.Common.Drawing;
 using Altaxo.Gui.Data;
+using Altaxo.Gui.Graph.Gdi.Background;
 using Altaxo.Gui.Graph.Plot.Data;
 using Altaxo.Gui.Graph.Plot.Groups;
 using Altaxo.Main;
+using Altaxo.Units;
 
 namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 {
-  #region Interfaces
 
-  public interface ILabelPlotStyleView
+  public interface ILabelPlotStyleView : IDataContextAwareView
   {
-    /// <summary>
-    /// Initializes the name of the label column.
-    /// </summary>
-    /// <param name="labelColumnAsText">Label column's name.</param>
-    /// <param name="toolTip"></param>
-    /// <param name="status"></param>
-    void Init_LabelColumn(string labelColumnAsText, string toolTip, int status);
-
-    /// <summary>
-    /// Initializes the transformation text.
-    /// </summary>
-    /// <param name="text">Text for the transformation</param>
-    /// <param name="toolTip"></param>
-    void Init_Transformation(string text, string toolTip);
-
-    bool IndependentSymbolSize { get; set; }
-
-    double SymbolSize { get; set; }
-
-    double FontSizeOffset { get; set; }
-    double FontSizeFactor { get; set; }
-
-    /// <summary>
-    /// Initializes/gets the font family combo box.
-    /// </summary>
-    FontX SelectedFont { get; set; }
-
-    /// <summary>
-    /// Initializes/gets the content of the Color combo box.
-    /// </summary>
-    BrushX LabelBrush { get; set; }
-
-    /// <summary>
-    /// Initializes/gets the background.
-    /// </summary>
-    IBackgroundStyle Background { get; set; }
-
-    /// <summary>
-    /// Initializes the background color linkage choice.
-    /// </summary>
-    /// <param name="list">The list with choices.</param>
-    void InitializeBackgroundColorLinkage(SelectableListNodeList list);
-
-    /// <summary>
-    /// Initializes the horizontal aligment combo box.
-    /// </summary>
-    /// <param name="list">The possible choices.</param>
-    void Init_AlignmentX(SelectableListNodeList list);
-
-    /// <summary>
-    /// Initializes the vertical alignment combo box.
-    /// </summary>
-    /// <param name="list">The possible choices.</param>
-    void Init_AlignmentY(SelectableListNodeList list);
-
-    /// <summary>
-    /// Initializes the content of the AttachToAxis checkbox. True if the label is attached to one of the four axes.
-    /// </summary>
-    bool AttachToAxis { get; set; }
-
-    /// <summary>
-    /// Initializes the AttachedAxis combo box.
-    /// </summary>
-    /// <param name="names">The possible choices.</param>
-    void Init_AttachedAxis(SelectableListNodeList names);
-
-    /// <summary>
-    /// Initializes the content of the RotationX edit box.
-    /// </summary>
-    double SelectedRotation { get; set; }
-
-    double OffsetXPoints { get; set; }
-
-    double OffsetXEmUnits { get; set; }
-
-    double OffsetXSymbolSizeUnits { get; set; }
-
-    double OffsetYPoints { get; set; }
-
-    double OffsetYEmUnits { get; set; }
-
-    double OffsetYSymbolSizeUnits { get; set; }
-
-    /// <summary>
-    /// Initializes the content of the Independent color checkbox
-    /// </summary>
-    bool IndependentColor { get; set; }
-
-    /// <summary>
-    /// Indicates, whether only colors of plot color sets should be shown.
-    /// </summary>
-    bool ShowPlotColorsOnly { set; }
-
-    bool ShowPlotColorsOnlyForBackgroundBrush { set; }
-
-    int SkipFrequency { get; set; }
-
-    bool IndependentSkipFrequency { get; set; }
-
-    bool IgnoreMissingDataPoints { get; set; }
-
-    bool IndependentOnShiftingGroupStyles { get; set; }
-
-    string LabelFormatString { get; set; }
-
-    #region events
-
-    /// <summary>
-    /// Occurs when the user choice for IndependentColor has changed.
-    /// </summary>
-    event Action LabelColorLinkageChanged;
-
-    /// <summary>Occurs when the user choice for IndependentColor of the background brush has changed.</summary>
-    event Action BackgroundColorLinkageChanged;
-
-    event Action LabelBrushChanged;
-
-    event Action BackgroundBrushChanged;
-
-    event Action UseBackgroundChanged;
-
-    #endregion events
   }
-
-  #endregion Interfaces
 
   /// <summary>
   /// Controller for label plot style.
@@ -179,11 +58,6 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
   {
     /// <summary>Tracks the presence of a color group style in the parent collection.</summary>
     private ColorGroupStylePresenceTracker _colorGroupStyleTracker;
-
-    private SelectableListNodeList _alignmentXChoices;
-    private SelectableListNodeList _alignmentYChoices;
-    private SelectableListNodeList _attachmentDirectionChoices;
-    private SelectableListNodeList _backgroundColorLinkageChoices;
 
     /// <summary>
     /// The data table that the column of the style should belong to.
@@ -208,17 +82,542 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
-      yield break;
+      yield return new ControllerAndSetNullMethod(_background, () => Background = null);
     }
+
+    #region Bindings
+
+    #region LabelColumn
+
+
+    private string _labelColumnText;
+
+    public string LabelColumnText
+    {
+      get => _labelColumnText;
+      set
+      {
+        if (!(_labelColumnText == value))
+        {
+          _labelColumnText = value;
+          OnPropertyChanged(nameof(LabelColumnText));
+        }
+      }
+    }
+    private string _labelColumnToolTip;
+
+    public string LabelColumnToolTip
+    {
+      get => _labelColumnToolTip;
+      set
+      {
+        if (!(_labelColumnToolTip == value))
+        {
+          _labelColumnToolTip = value;
+          OnPropertyChanged(nameof(LabelColumnToolTip));
+        }
+      }
+    }
+    private int _labelColumnStatus;
+
+    public int LabelColumnStatus
+    {
+      get => _labelColumnStatus;
+      set
+      {
+        if (!(_labelColumnStatus == value))
+        {
+          _labelColumnStatus = value;
+          OnPropertyChanged(nameof(LabelColumnStatus));
+        }
+      }
+    }
+    private string _labelColumnTransformationText;
+
+    public string LabelColumnTransformationText
+    {
+      get => _labelColumnTransformationText;
+      set
+      {
+        if (!(_labelColumnTransformationText == value))
+        {
+          _labelColumnTransformationText = value;
+          OnPropertyChanged(nameof(LabelColumnTransformationText));
+          OnPropertyChanged(nameof(IsLabelColumnTransformationVisible));
+        }
+      }
+    }
+
+    public bool IsLabelColumnTransformationVisible => !string.IsNullOrEmpty(LabelColumnTransformationText);
+
+    private string _labelColumnTransformationToolTip;
+
+    public string LabelColumnTransformationToolTip
+    {
+      get => _labelColumnTransformationToolTip;
+      set
+      {
+        if (!(_labelColumnTransformationToolTip == value))
+        {
+          _labelColumnTransformationToolTip = value;
+          OnPropertyChanged(nameof(LabelColumnTransformationToolTip));
+        }
+      }
+    }
+
+    #endregion
+
+
+    private bool _independentSkipFrequency;
+
+    public bool IndependentSkipFrequency
+    {
+      get => _independentSkipFrequency;
+      set
+      {
+        if (!(_independentSkipFrequency == value))
+        {
+          _independentSkipFrequency = value;
+          OnPropertyChanged(nameof(IndependentSkipFrequency));
+        }
+      }
+    }
+
+    private int _skipFrequency;
+
+    public int SkipFrequency
+    {
+      get => _skipFrequency;
+      set
+      {
+        if (!(_skipFrequency == value))
+        {
+          _skipFrequency = value;
+          OnPropertyChanged(nameof(SkipFrequency));
+        }
+      }
+    }
+
+    private bool _ignoreMissingDataPoints;
+
+    public bool IgnoreMissingDataPoints
+    {
+      get => _ignoreMissingDataPoints;
+      set
+      {
+        if (!(_ignoreMissingDataPoints == value))
+        {
+          _ignoreMissingDataPoints = value;
+          OnPropertyChanged(nameof(IgnoreMissingDataPoints));
+        }
+      }
+    }
+
+
+    private bool _independentOnShiftingGroupStyles;
+
+    public bool IndependentOnShiftingGroupStyles
+    {
+      get => _independentOnShiftingGroupStyles;
+      set
+      {
+        if (!(_independentOnShiftingGroupStyles == value))
+        {
+          _independentOnShiftingGroupStyles = value;
+          OnPropertyChanged(nameof(IndependentOnShiftingGroupStyles));
+        }
+      }
+    }
+
+    private string _labelFormatString;
+
+    public string LabelFormatString
+    {
+      get => _labelFormatString;
+      set
+      {
+        if (!(_labelFormatString == value))
+        {
+          _labelFormatString = value;
+          OnPropertyChanged(nameof(LabelFormatString));
+        }
+      }
+    }
+
+    private bool _attachToAxis;
+
+    public bool AttachToAxis
+    {
+      get => _attachToAxis;
+      set
+      {
+        if (!(_attachToAxis == value))
+        {
+          _attachToAxis = value;
+          OnPropertyChanged(nameof(AttachToAxis));
+        }
+      }
+    }
+
+    private ItemsController<CSPlaneID> _attachmentDirectionChoices;
+
+    public ItemsController<CSPlaneID> AttachmentDirectionChoices
+    {
+      get => _attachmentDirectionChoices;
+      set
+      {
+        if (!(_attachmentDirectionChoices == value))
+        {
+          _attachmentDirectionChoices = value;
+          OnPropertyChanged(nameof(AttachmentDirectionChoices));
+        }
+      }
+    }
+
+    private bool _independentColor;
+
+    public bool IndependentColor
+    {
+      get => _independentColor;
+      set
+      {
+        if (!(_independentColor == value))
+        {
+          _independentColor = value;
+          OnPropertyChanged(nameof(IndependentColor));
+          EhIndependentColorChanged(value);
+        }
+      }
+    }
+
+    private void EhIndependentColorChanged(bool value)
+    {
+      _doc.IndependentColor = value;
+      ShowPlotColorsOnly = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentColor);
+    }
+    private void EhIndependentColorChanged() => EhIndependentColorChanged(IndependentColor);
+
+    private BrushX _labelBrush;
+
+    public BrushX LabelBrush
+    {
+      get => _labelBrush;
+      set
+      {
+        if (!(_labelBrush == value))
+        {
+          _labelBrush = value;
+          OnPropertyChanged(nameof(LabelBrush));
+          EhLabelBrushChanged(value);
+        }
+      }
+    }
+
+
+    /// <summary>
+    /// Indicates, whether only colors of plot color sets should be shown.
+    /// </summary>
+    private bool _showPlotColorsOnly;
+
+    public bool ShowPlotColorsOnly
+    {
+      get => _showPlotColorsOnly;
+      set
+      {
+        if (!(_showPlotColorsOnly == value))
+        {
+          _showPlotColorsOnly = value;
+          OnPropertyChanged(nameof(ShowPlotColorsOnly));
+        }
+      }
+    }
+
+
+    private bool _independentSymbolSize;
+    /// <summary>
+    /// Initializes the independent symbol size check box.
+    /// </summary>
+    public bool IndependentSymbolSize
+    {
+      get => _independentSymbolSize;
+      set
+      {
+        if (!(_independentSymbolSize == value))
+        {
+          _independentSymbolSize = value;
+          OnPropertyChanged(nameof(IndependentSymbolSize));
+        }
+      }
+    }
+
+    public QuantityWithUnitGuiEnvironment SymbolSizeEnvironment => LineCapSizeEnvironment.Instance;
+
+
+    private DimensionfulQuantity _symbolSize;
+    /// <summary>
+    /// Initializes the symbol size combobox.
+    /// </summary>
+    public DimensionfulQuantity SymbolSize
+    {
+      get => _symbolSize;
+      set
+      {
+        if (!(_symbolSize == value))
+        {
+          _symbolSize = value;
+          OnPropertyChanged(nameof(SymbolSize));
+        }
+      }
+    }
+
+
+    private FontXController _font;
+
+    public FontXController Font
+    {
+      get => _font;
+      set
+      {
+        if (!(_font == value))
+        {
+          _font?.Dispose();
+          _font = value;
+          OnPropertyChanged(nameof(Font));
+        }
+      }
+    }
+
+    public QuantityWithUnitGuiEnvironment FontSizeOffsetEnvironment => FontSizeEnvironment.Instance;
+
+    private DimensionfulQuantity _fontSizeOffset;
+
+    public DimensionfulQuantity FontSizeOffset
+    {
+      get => _fontSizeOffset;
+      set
+      {
+        if (!(_fontSizeOffset == value))
+        {
+          _fontSizeOffset = value;
+          OnPropertyChanged(nameof(FontSizeOffset));
+        }
+      }
+    }
+
+
+    public QuantityWithUnitGuiEnvironment FontSizeFactorEnvironment => RelationEnvironment.Instance;
+
+    private DimensionfulQuantity _fontSizeFactor;
+
+    public DimensionfulQuantity FontSizeFactor
+    {
+      get => _fontSizeFactor;
+      set
+      {
+        if (!(_fontSizeFactor == value))
+        {
+          _fontSizeFactor = value;
+          OnPropertyChanged(nameof(FontSizeFactor));
+        }
+      }
+    }
+
+    public QuantityWithUnitGuiEnvironment RotationEnvironment => AngleEnvironment.Instance;
+
+    private DimensionfulQuantity _rotation;
+
+    public DimensionfulQuantity Rotation
+    {
+      get => _rotation;
+      set
+      {
+        if (!(_rotation == value))
+        {
+          _rotation = value;
+          OnPropertyChanged(nameof(Rotation));
+        }
+      }
+    }
+
+
+    private ItemsController<Alignment> _alignmentX;
+
+    public ItemsController<Alignment> AlignmentX
+    {
+      get => _alignmentX;
+      set
+      {
+        if (!(_alignmentX == value))
+        {
+          _alignmentX = value;
+          OnPropertyChanged(nameof(AlignmentX));
+        }
+      }
+    }
+
+    private ItemsController<Alignment> _alignmentY;
+
+    public ItemsController<Alignment> AlignmentY
+    {
+      get => _alignmentY;
+      set
+      {
+        if (!(_alignmentY == value))
+        {
+          _alignmentY = value;
+          OnPropertyChanged(nameof(AlignmentY));
+        }
+      }
+    }
+
+    public QuantityWithUnitGuiEnvironment OffsetPointsEnvironment => SizeEnvironment.Instance;
+    public QuantityWithUnitGuiEnvironment OffsetEmUnitsEnvironment => RelationEnvironment.Instance;
+    public QuantityWithUnitGuiEnvironment OffsetSymbolSizeEnvironment => RelationEnvironment.Instance;
+
+    private DimensionfulQuantity _offsetXPoints;
+
+    public DimensionfulQuantity OffsetXPoints
+    {
+      get => _offsetXPoints;
+      set
+      {
+        if (!(_offsetXPoints == value))
+        {
+          _offsetXPoints = value;
+          OnPropertyChanged(nameof(OffsetXPoints));
+        }
+      }
+    }
+
+
+    private DimensionfulQuantity _offsetXEmUnits;
+
+    public DimensionfulQuantity OffsetXEmUnits
+    {
+      get => _offsetXEmUnits;
+      set
+      {
+        if (!(_offsetXEmUnits == value))
+        {
+          _offsetXEmUnits = value;
+          OnPropertyChanged(nameof(OffsetXEmUnits));
+        }
+      }
+    }
+
+    private DimensionfulQuantity _offsetXSymbolSizeUnits;
+
+    public DimensionfulQuantity OffsetXSymbolSizeUnits
+    {
+      get => _offsetXSymbolSizeUnits;
+      set
+      {
+        if (!(_offsetXSymbolSizeUnits == value))
+        {
+          _offsetXSymbolSizeUnits = value;
+          OnPropertyChanged(nameof(OffsetXSymbolSizeUnits));
+        }
+      }
+    }
+
+
+    private DimensionfulQuantity _offsetYPoints;
+
+    public DimensionfulQuantity OffsetYPoints
+    {
+      get => _offsetYPoints;
+      set
+      {
+        if (!(_offsetYPoints == value))
+        {
+          _offsetYPoints = value;
+          OnPropertyChanged(nameof(OffsetYPoints));
+        }
+      }
+    }
+
+    private DimensionfulQuantity _offsetYEmUnits;
+
+    public DimensionfulQuantity OffsetYEmUnits
+    {
+      get => _offsetYEmUnits;
+      set
+      {
+        if (!(_offsetYEmUnits == value))
+        {
+          _offsetYEmUnits = value;
+          OnPropertyChanged(nameof(OffsetYEmUnits));
+        }
+      }
+    }
+
+    private DimensionfulQuantity _offsetYSymbolSizeUnits;
+
+    public DimensionfulQuantity OffsetYSymbolSizeUnits
+    {
+      get => _offsetYSymbolSizeUnits;
+      set
+      {
+        if (!(_offsetYSymbolSizeUnits == value))
+        {
+          _offsetYSymbolSizeUnits = value;
+          OnPropertyChanged(nameof(OffsetYSymbolSizeUnits));
+        }
+      }
+    }
+
+
+
+    private BackgroundStyleController _background;
+
+    public BackgroundStyleController Background
+    {
+      get => _background;
+      set
+      {
+        if (!(_background == value))
+        {
+          if (_background is { } oldC)
+            oldC.MadeDirty -= EhBackgroundChanged;
+
+          _background?.Dispose();
+          _background = value;
+          OnPropertyChanged(nameof(Background));
+
+          if (_background is { } newC)
+            newC.MadeDirty += EhBackgroundChanged;
+
+        }
+      }
+    }
+
+    private ItemsController<ColorLinkage> _backgroundColorLinkage;
+
+    public ItemsController<ColorLinkage> BackgroundColorLinkage
+    {
+      get => _backgroundColorLinkage;
+      set
+      {
+        if (!(_backgroundColorLinkage == value))
+        {
+          _backgroundColorLinkage?.Dispose();
+          _backgroundColorLinkage = value;
+          OnPropertyChanged(nameof(BackgroundColorLinkage));
+        }
+      }
+    }
+
+
+    #endregion
 
     public override void Dispose(bool isDisposing)
     {
       _colorGroupStyleTracker = null;
 
-      _alignmentXChoices = null;
-      _alignmentYChoices = null;
-      _attachmentDirectionChoices = null;
-      _backgroundColorLinkageChoices = null;
+      _alignmentX.Dispose();
+      _alignmentY?.Dispose();
+      _attachmentDirectionChoices?.Dispose();
+      _backgroundColorLinkage?.Dispose();
 
       base.Dispose(isDisposing);
     }
@@ -230,135 +629,114 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
       if (initData)
       {
         _colorGroupStyleTracker = new ColorGroupStylePresenceTracker(_doc, EhColorGroupStyleAddedOrRemoved);
-        _alignmentXChoices = new SelectableListNodeList(_doc.AlignmentX);
-        _alignmentYChoices = new SelectableListNodeList(_doc.AlignmentY);
-        _backgroundColorLinkageChoices = new SelectableListNodeList(_doc.BackgroundColorLinkage);
 
+        Background = new BackgroundStyleController(_doc.BackgroundStyle);
+        AlignmentX = new ItemsController<Alignment>(new SelectableListNodeList(_doc.AlignmentX));
+        AlignmentY = new ItemsController<Alignment>(new SelectableListNodeList(_doc.AlignmentY));
+        BackgroundColorLinkage = new ItemsController<ColorLinkage>(new SelectableListNodeList(_doc.BackgroundColorLinkage), EhBackgroundColorLinkageChanged);
+        InitializeLabelColumnText();
         InitializeAttachmentDirectionChoices();
-      }
-
-      if (_view is not null)
-      {
+      
         // Data
 
-        _view.SkipFrequency = _doc.SkipFrequency;
-        _view.IndependentSkipFrequency = _doc.IndependentSkipFrequency;
-        _view.IgnoreMissingDataPoints = _doc.IgnoreMissingDataPoints;
-        _view.IndependentOnShiftingGroupStyles = _doc.IndependentOnShiftingGroupStyles;
+        SkipFrequency = _doc.SkipFrequency;
+        IndependentSkipFrequency = _doc.IndependentSkipFrequency;
+        IgnoreMissingDataPoints = _doc.IgnoreMissingDataPoints;
+        IndependentOnShiftingGroupStyles = _doc.IndependentOnShiftingGroupStyles;
 
-        _view.LabelFormatString = _doc.LabelFormatString;
+        LabelFormatString = _doc.LabelFormatString;
 
-        InitializeLabelColumnText();
 
         // Visual
 
-        _view.IndependentSymbolSize = _doc.IndependentSymbolSize;
-        _view.SymbolSize = _doc.SymbolSize;
+        IndependentSymbolSize = _doc.IndependentSymbolSize;
+        SymbolSize = new DimensionfulQuantity(_doc.SymbolSize, Altaxo.Units.Length.Point.Instance).AsQuantityIn(SymbolSizeEnvironment.DefaultUnit);
+        
+        FontSizeOffset = new DimensionfulQuantity(_doc.FontSizeOffset, Altaxo.Units.Length.Point.Instance).AsQuantityIn(FontSizeOffsetEnvironment.DefaultUnit);
+        FontSizeFactor = new DimensionfulQuantity(_doc.FontSizeFactor, Altaxo.Units.Dimensionless.Unity.Instance).AsQuantityIn(FontSizeFactorEnvironment.DefaultUnit);
+        Font = new FontXController(_doc.Font);
+        ShowPlotColorsOnly = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentColor);
+        IndependentColor = _doc.IndependentColor;
+        LabelBrush = _doc.LabelBrush;
+        AttachToAxis = _doc.AttachedAxis is not null;
+        Rotation = new DimensionfulQuantity(_doc.Rotation, Altaxo.Units.Angle.Degree.Instance).AsQuantityIn(RotationEnvironment.DefaultUnit);
 
-        _view.FontSizeOffset = _doc.FontSizeOffset;
-        _view.FontSizeFactor = _doc.FontSizeFactor;
-        _view.SelectedFont = _doc.Font;
-        _view.ShowPlotColorsOnly = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentColor);
-        _view.IndependentColor = _doc.IndependentColor;
-        _view.LabelBrush = _doc.LabelBrush;
-        _view.Init_AlignmentX(_alignmentXChoices);
-        _view.Init_AlignmentY(_alignmentYChoices);
-        _view.AttachToAxis = _doc.AttachedAxis is not null;
-        _view.Init_AttachedAxis(_attachmentDirectionChoices);
-        _view.SelectedRotation = _doc.Rotation;
+        OffsetXPoints = new DimensionfulQuantity(_doc.OffsetXPoints, Altaxo.Units.Length.Point.Instance).AsQuantityIn(OffsetPointsEnvironment.DefaultUnit);
+        OffsetXEmUnits = new DimensionfulQuantity(_doc.OffsetXEmUnits, Altaxo.Units.Dimensionless.Unity.Instance).AsQuantityIn(OffsetEmUnitsEnvironment.DefaultUnit);
+        OffsetXSymbolSizeUnits = new DimensionfulQuantity(_doc.OffsetXSymbolSizeUnits, Altaxo.Units.Dimensionless.Unity.Instance).AsQuantityIn(OffsetSymbolSizeEnvironment.DefaultUnit);
 
-        _view.OffsetXPoints = _doc.OffsetXPoints;
-        _view.OffsetXEmUnits = _doc.OffsetXEmUnits;
-        _view.OffsetXSymbolSizeUnits = _doc.OffsetXSymbolSizeUnits;
+        OffsetYPoints = new DimensionfulQuantity(_doc.OffsetYPoints, Altaxo.Units.Length.Point.Instance).AsQuantityIn(OffsetPointsEnvironment.DefaultUnit);
+        OffsetYEmUnits = new DimensionfulQuantity(_doc.OffsetYEmUnits, Altaxo.Units.Dimensionless.Unity.Instance).AsQuantityIn(OffsetEmUnitsEnvironment.DefaultUnit);
+        OffsetYSymbolSizeUnits = new DimensionfulQuantity(_doc.OffsetYSymbolSizeUnits, Altaxo.Units.Dimensionless.Unity.Instance).AsQuantityIn(OffsetSymbolSizeEnvironment.DefaultUnit);
 
-        _view.OffsetYPoints = _doc.OffsetYPoints;
-        _view.OffsetYEmUnits = _doc.OffsetYEmUnits;
-        _view.OffsetYSymbolSizeUnits = _doc.OffsetYSymbolSizeUnits;
-
-        _view.Background = _doc.BackgroundStyle;
-        _view.InitializeBackgroundColorLinkage(_backgroundColorLinkageChoices);
       }
     }
 
     public override bool Apply(bool disposeController)
     {
       // Data
-      _doc.IndependentSkipFrequency = _view.IndependentSkipFrequency;
-      _doc.SkipFrequency = _view.SkipFrequency;
-      _doc.IgnoreMissingDataPoints = _view.IgnoreMissingDataPoints;
-      _doc.IndependentOnShiftingGroupStyles = _view.IndependentOnShiftingGroupStyles;
+      _doc.IndependentSkipFrequency = IndependentSkipFrequency;
+      _doc.SkipFrequency = SkipFrequency;
+      _doc.IgnoreMissingDataPoints = IgnoreMissingDataPoints;
+      _doc.IndependentOnShiftingGroupStyles = IndependentOnShiftingGroupStyles;
 
-      _doc.LabelFormatString = _view.LabelFormatString;
+      _doc.LabelFormatString = LabelFormatString;
 
-      if (_view.AttachToAxis && _attachmentDirectionChoices.FirstSelectedNode is not null)
-        _doc.AttachedAxis = (CSPlaneID)_attachmentDirectionChoices.FirstSelectedNode.Tag;
+      if (AttachToAxis && _attachmentDirectionChoices.SelectedValue is not null)
+        _doc.AttachedAxis = _attachmentDirectionChoices.SelectedValue;
       else
         _doc.AttachedAxis = null;
 
-      _doc.IndependentSymbolSize = _view.IndependentSymbolSize;
-      _doc.SymbolSize = _view.SymbolSize;
+      _doc.IndependentSymbolSize = IndependentSymbolSize;
+      _doc.SymbolSize = SymbolSize.AsValueIn(Altaxo.Units.Length.Point.Instance);
 
-      _doc.FontSizeOffset = _view.FontSizeOffset;
-      _doc.FontSizeFactor = _view.FontSizeFactor;
-      _doc.Font = _view.SelectedFont;
+      _doc.FontSizeOffset = FontSizeOffset.AsValueIn(Altaxo.Units.Length.Point.Instance); 
+      _doc.FontSizeFactor = FontSizeFactor.AsValueInSIUnits;
 
-      _doc.IndependentColor = _view.IndependentColor;
-      _doc.LabelBrush = _view.LabelBrush;
+      if (!Font.Apply(disposeController))
+        return ApplyEnd(false, disposeController);
+      _doc.Font = (FontX)Font.ModelObject;
 
-      _doc.Rotation = _view.SelectedRotation;
+      _doc.IndependentColor = IndependentColor;
+      _doc.LabelBrush = LabelBrush;
 
-      _doc.AlignmentX = (Alignment)_alignmentXChoices.FirstSelectedNode.Tag;
-      _doc.AlignmentY = (Alignment)_alignmentYChoices.FirstSelectedNode.Tag;
+      _doc.Rotation = Rotation.AsValueIn(Altaxo.Units.Angle.Degree.Instance);
 
-      _doc.OffsetXPoints = _view.OffsetXPoints;
-      _doc.OffsetYPoints = _view.OffsetYPoints;
+      _doc.AlignmentX = _alignmentX.SelectedValue;
+      _doc.AlignmentY = _alignmentY.SelectedValue;
 
-      _doc.OffsetXSymbolSizeUnits = _view.OffsetXSymbolSizeUnits;
-      _doc.OffsetYSymbolSizeUnits = _view.OffsetYSymbolSizeUnits;
+      _doc.OffsetXPoints = OffsetXPoints.AsValueIn(Altaxo.Units.Length.Point.Instance); ;
+      _doc.OffsetYPoints = OffsetYPoints.AsValueIn(Altaxo.Units.Length.Point.Instance); ;
 
-      _doc.OffsetXEmUnits = _view.OffsetXEmUnits;
-      _doc.OffsetYEmUnits = _view.OffsetYEmUnits;
+      _doc.OffsetXSymbolSizeUnits = OffsetXSymbolSizeUnits.AsValueInSIUnits;
+      _doc.OffsetYSymbolSizeUnits = OffsetYSymbolSizeUnits.AsValueInSIUnits;
 
-      _doc.BackgroundStyle = _view.Background;
+      _doc.OffsetXEmUnits = OffsetXEmUnits.AsValueInSIUnits;
+      _doc.OffsetYEmUnits = OffsetYEmUnits.AsValueInSIUnits;
+
+      if (!Background.Apply(disposeController))
+        return ApplyEnd(false, disposeController);
+
+      _doc.BackgroundStyle = (IBackgroundStyle?)Background.ModelObject;
 
       return ApplyEnd(true, disposeController);
-    }
-
-    protected override void AttachView()
-    {
-      base.AttachView();
-
-      _view.LabelColorLinkageChanged += EhLabelColorLinkageChanged;
-      _view.BackgroundColorLinkageChanged += EhBackgroundColorLinkageChanged;
-      _view.LabelBrushChanged += EhLabelBrushChanged;
-      _view.BackgroundBrushChanged += EhBackgroundBrushChanged;
-      _view.UseBackgroundChanged += EhUseBackgroundChanged;
-    }
-
-    protected override void DetachView()
-    {
-      _view.LabelColorLinkageChanged -= EhLabelColorLinkageChanged;
-      _view.BackgroundColorLinkageChanged -= EhBackgroundColorLinkageChanged;
-      _view.LabelBrushChanged -= EhLabelBrushChanged;
-      _view.BackgroundBrushChanged -= EhBackgroundBrushChanged;
-      _view.UseBackgroundChanged -= EhUseBackgroundChanged;
-      base.DetachView();
     }
 
     public void InitializeAttachmentDirectionChoices()
     {
       var layer = AbsoluteDocumentPath.GetRootNodeImplementing(_doc, typeof(IPlotArea)) as IPlotArea;
 
-      _attachmentDirectionChoices = new SelectableListNodeList();
+      var attachmentDirectionChoices = new SelectableListNodeList();
 
       if (layer is not null)
       {
         foreach (CSPlaneID id in layer.CoordinateSystem.GetJoinedPlaneIdentifier(layer.AxisStyleIDs, new CSPlaneID[] { _doc.AttachedAxis }))
         {
           CSPlaneInformation info = layer.CoordinateSystem.GetPlaneInformation(id);
-          _attachmentDirectionChoices.Add(new SelectableListNode(info.Name, id, id == _doc.AttachedAxis));
+          attachmentDirectionChoices.Add(new SelectableListNode(info.Name, id, id == _doc.AttachedAxis));
         }
       }
+      AttachmentDirectionChoices = new ItemsController<CSPlaneID>(attachmentDirectionChoices);
     }
 
     private void InitializeLabelColumnText()
@@ -366,8 +744,11 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
       var info = new PlotColumnInformation(_doc.LabelColumn, _doc.LabelColumnDataColumnName);
       info.Update(_supposedParentDataTable, _supposedGroupNumber);
 
-      _view?.Init_LabelColumn(info.PlotColumnBoxText, info.PlotColumnToolTip, (int)info.PlotColumnBoxState);
-      _view?.Init_Transformation(info.TransformationTextToShow, info.TransformationToolTip);
+      LabelColumnText = info.PlotColumnBoxText;
+      LabelColumnToolTip = info.PlotColumnToolTip;
+      LabelColumnStatus = (int)info.PlotColumnBoxState;
+      LabelColumnTransformationText = info.TransformationTextToShow;
+      LabelColumnTransformationToolTip = info.TransformationToolTip;
     }
 
     /// <summary>
@@ -400,83 +781,66 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
     {
       if (_view is not null)
       {
-        _doc.BackgroundColorLinkage = (ColorLinkage)_backgroundColorLinkageChoices.FirstSelectedNode.Tag;
-        _doc.IndependentColor = _view.IndependentColor;
+        _doc.BackgroundColorLinkage = (ColorLinkage)_backgroundColorLinkage.SelectedValue;
+        _doc.IndependentColor = IndependentColor;
 
-        _view.ShowPlotColorsOnly = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentColor);
+        ShowPlotColorsOnly = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentColor);
 
-        _view.ShowPlotColorsOnlyForBackgroundBrush = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.BackgroundColorLinkage);
+        Background.ShowPlotColorsOnly = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.BackgroundColorLinkage);
       }
     }
 
-    private void EhLabelColorLinkageChanged()
-    {
-      if (_view is not null)
-      {
-        _doc.IndependentColor = _view.IndependentColor;
-        _view.ShowPlotColorsOnly = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentColor);
-      }
-    }
+   
 
-    private void EhBackgroundColorLinkageChanged()
+    private void EhBackgroundColorLinkageChanged(ColorLinkage value)
     {
-      if (_view is not null)
-      {
-        _doc.BackgroundStyle = _view.Background;
-        _doc.BackgroundColorLinkage = (ColorLinkage)_backgroundColorLinkageChoices.FirstSelectedNode.Tag;
-        _view.ShowPlotColorsOnlyForBackgroundBrush = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.BackgroundColorLinkage);
+        _doc.BackgroundStyle = (IBackgroundStyle?)Background.ProvisionalModelObject;
+      _doc.BackgroundColorLinkage = (ColorLinkage)_backgroundColorLinkage.SelectedValue;
+        ShowPlotColorsOnly = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.BackgroundColorLinkage);
 
         if (ColorLinkage.Dependent == _doc.BackgroundColorLinkage && false == _doc.IndependentColor)
           InternalSetBackgroundColorToLabelColor();
         if (ColorLinkage.PreserveAlpha == _doc.BackgroundColorLinkage && false == _doc.IndependentColor)
           InternalSetBackgroundColorRGBToLabelColor();
 
-        _view.ShowPlotColorsOnlyForBackgroundBrush = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.BackgroundColorLinkage);
-      }
+        ShowPlotColorsOnly = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.BackgroundColorLinkage);
     }
 
-    private void EhBackgroundBrushChanged()
+    private void EhBackgroundChanged(IMVCAController _)
     {
-      if (_view is not null)
-      {
-        _doc.BackgroundStyle = _view.Background;
+      _doc.BackgroundStyle = (IBackgroundStyle?)Background.ProvisionalModelObject;
         if (_doc.IsBackgroundColorProvider)
         {
-          if (_view.LabelBrush.Color != _view.Background.Brush.Color)
+          if (LabelBrush.Color != Background.BackgroundBrush.Color)
             InternalSetLabelColorToBackgroundColor();
         }
+
+        if(!IndependentColor && _doc.BackgroundStyle is not null && _doc.BackgroundStyle.SupportsBrush)
+      {
+        if (ColorLinkage.Dependent == _doc.BackgroundColorLinkage && false == _doc.IndependentColor)
+          InternalSetBackgroundColorToLabelColor();
+        if (ColorLinkage.PreserveAlpha == _doc.BackgroundColorLinkage && false == _doc.IndependentColor)
+          InternalSetBackgroundColorRGBToLabelColor();
       }
     }
 
-    private void EhLabelBrushChanged()
-    {
-      if (_view is not null)
-      {
-        _doc.BackgroundStyle = _view.Background;
+    
 
-        if (_doc.IsBackgroundColorReceiver && false == _doc.IndependentColor)
+    private void EhLabelBrushChanged(BrushX value)
+    {
+      Background.Apply(false);
+      _doc.BackgroundStyle = (IBackgroundStyle?)Background.ModelObject;
+
+      if (_doc.IsBackgroundColorReceiver && false == _doc.IndependentColor)
         {
-          if (_doc.BackgroundColorLinkage == ColorLinkage.Dependent && _view.Background.Brush.Color != _view.LabelBrush.Color)
+          if (_doc.BackgroundColorLinkage == ColorLinkage.Dependent && Background.BackgroundBrush.Color != LabelBrush.Color)
             InternalSetBackgroundColorToLabelColor();
-          else if (_doc.BackgroundColorLinkage == ColorLinkage.PreserveAlpha && _view.Background.Brush.Color != _view.LabelBrush.Color)
+          else if (_doc.BackgroundColorLinkage == ColorLinkage.PreserveAlpha && Background.BackgroundBrush.Color != LabelBrush.Color)
             InternalSetBackgroundColorRGBToLabelColor();
         }
-      }
     }
 
-    private void EhUseBackgroundChanged()
-    {
-      _doc.BackgroundStyle = _view.Background;
-      var newValue = _doc.BackgroundStyle is not null && _doc.BackgroundStyle.SupportsBrush;
-
-      if (true == newValue)
-      {
-        if (false == _doc.IndependentColor)
-        {
-          InternalSetBackgroundColorToLabelColor();
-        }
-      }
-    }
+   
 
     /// <summary>
     /// Internal sets the background color to the color of the label.
@@ -485,9 +849,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
     {
       if (_doc.BackgroundStyle is not null && _doc.BackgroundStyle.SupportsBrush)
       {
-        var newBrush = _doc.BackgroundStyle.Brush.WithColor(_view.LabelBrush.Color);
+        var newBrush = _doc.BackgroundStyle.Brush.WithColor(LabelBrush.Color);
         _doc.BackgroundStyle.Brush = newBrush;
-        _view.Background = _doc.BackgroundStyle;
+        Background.Doc = _doc.BackgroundStyle;
       }
     }
 
@@ -499,11 +863,11 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
       if (_doc.BackgroundStyle is not null && _doc.BackgroundStyle.SupportsBrush)
       {
         var newBrush = _doc.BackgroundStyle.Brush;
-        var c = _view.LabelBrush.Color.NewWithAlphaValue(newBrush.Color.Color.A);
-        ;
+        var c = LabelBrush.Color.NewWithAlphaValue(newBrush.Color.Color.A);
+        
         newBrush = newBrush.WithColor(c);
         _doc.BackgroundStyle.Brush = newBrush;
-        _view.Background = _doc.BackgroundStyle;
+        Background.Doc = _doc.BackgroundStyle;
       }
     }
 
@@ -514,7 +878,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
     {
       if (_doc.BackgroundStyle is not null && _doc.BackgroundStyle.SupportsBrush)
       {
-        _view.LabelBrush = _view.LabelBrush.WithColor(_view.Background.Brush.Color);
+        LabelBrush = LabelBrush.WithColor(Background.BackgroundBrush.Color);
       }
     }
 

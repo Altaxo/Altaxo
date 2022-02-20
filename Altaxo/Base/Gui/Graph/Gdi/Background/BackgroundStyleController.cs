@@ -57,6 +57,15 @@ namespace Altaxo.Gui.Graph.Gdi.Background
       Initialize(true);
     }
 
+    public new IBackgroundStyle? Doc
+    {
+      get => _doc;
+      set
+      {
+        InitializeDocument(value);
+      }
+    }
+
     #region Bindings
 
     private BrushX _backgroundBrush;
@@ -94,6 +103,22 @@ namespace Altaxo.Gui.Graph.Gdi.Background
       }
     }
 
+    private bool _showPlotColorsOnly;
+
+    public bool ShowPlotColorsOnly
+    {
+      get => _showPlotColorsOnly;
+      set
+      {
+        if (!(_showPlotColorsOnly == value))
+        {
+          _showPlotColorsOnly = value;
+          OnPropertyChanged(nameof(ShowPlotColorsOnly));
+        }
+      }
+    }
+
+
     private ItemsController<Type?> _backgroundStyles;
 
     public ItemsController<Type?> BackgroundStyles
@@ -103,6 +128,7 @@ namespace Altaxo.Gui.Graph.Gdi.Background
       {
         if (!(_backgroundStyles == value))
         {
+          _backgroundStyles?.Dispose();
           _backgroundStyles = value;
           OnPropertyChanged(nameof(BackgroundStyles));
         }
@@ -154,19 +180,26 @@ namespace Altaxo.Gui.Graph.Gdi.Background
 
       if (initData)
       {
-        var backgroundStyles = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(IBackgroundStyle));
-        var styles = new SelectableListNodeList();
-        styles.Add(new SelectableListNode("None", null, _doc is null));
-        foreach (var backtype in backgroundStyles)
-          styles.Add(new SelectableListNode(Current.Gui.GetUserFriendlyClassName(backtype), backtype, _doc?.GetType() == backtype));
-        _backgroundStyles = new ItemsController<Type?>(styles, EhView_BackgroundStyleChanged);
+        if (BackgroundStyles is null)
+        {
+          var backgroundStyles = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(IBackgroundStyle));
+          var styles = new SelectableListNodeList();
+          styles.Add(new SelectableListNode("None", null, _doc is null));
+          foreach (var backtype in backgroundStyles)
+            styles.Add(new SelectableListNode(Current.Gui.GetUserFriendlyClassName(backtype), backtype, _doc?.GetType() == backtype));
+          BackgroundStyles = new ItemsController<Type?>(styles, EhView_BackgroundStyleChanged);
+        }
+        else
+        {
+          BackgroundStyles.SelectedValue = _doc?.GetType();
+        }
 
         if (_doc is not null && _doc.SupportsBrush)
-          _backgroundBrush = _doc.Brush;
+          BackgroundBrush = _doc.Brush;
         else
-          _backgroundBrush = BrushesX.Transparent;
+          BackgroundBrush = BrushesX.Transparent;
 
-        _isBackgroundBrushEnabled = (_doc is not null && _doc.SupportsBrush);
+        IsBackgroundBrushEnabled = (_doc is not null && _doc.SupportsBrush);
       }
     }
     public override bool Apply(bool disposeController)
@@ -174,14 +207,11 @@ namespace Altaxo.Gui.Graph.Gdi.Background
       return ApplyEnd(true, disposeController);
     }
 
-    public override object ModelObject => _doc; // override because the return value can be null
-
-    public override object ProvisionalModelObject // override because the return value can be null
+    /// <summary>
+    /// Overridden because here _doc can be null.
+    /// </summary>
+    protected override void ThrowIfNotInitialized()
     {
-      get
-      {
-        return _doc;
-      }
     }
   }
 }

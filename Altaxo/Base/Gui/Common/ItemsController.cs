@@ -110,9 +110,12 @@ namespace Altaxo.Gui.Common
 
     public void Dispose()
     {
-      SelectedItem = null;
-      Items = null;
+      // The order of the calls is important here
       _onSelectedValueChanged = null;
+      _items = null;
+      _selectedItem = null;
+      OnPropertyChanged(nameof(Items));
+      OnPropertyChanged(nameof(SelectedItem));
       PropertyChanged = null;
     }
 
@@ -152,7 +155,7 @@ namespace Altaxo.Gui.Common
           _items.SetSelection(n => object.ReferenceEquals(n, value));
           OnPropertyChanged(nameof(SelectedItem));
           OnPropertyChanged(nameof(SelectedValue));
-          _onSelectedValueChanged?.Invoke((TItem)(value?.Tag ?? default));
+          _onSelectedValueChanged?.Invoke((TItem)(value?.Tag ?? default(TItem)));
         }
       }
     }
@@ -165,7 +168,7 @@ namespace Altaxo.Gui.Common
     {
       get
       {
-        return (TItem)(_selectedItem?.Tag ?? default);
+        return (TItem)(_selectedItem?.Tag ?? default(TItem));
       }
       set
       {

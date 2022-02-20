@@ -59,7 +59,7 @@ namespace Altaxo.Gui.Common.Drawing
 
     public static readonly DependencyProperty SelectedFontStyleProperty =
         DependencyProperty.Register(_nameOfValueProp, typeof(FontXStyle), typeof(FontStyleComboBox),
-        new FrameworkPropertyMetadata(FontXStyle.Regular, EhSelectedFontStyleChanged));
+        new FrameworkPropertyMetadata(FontXStyle.Regular, EhSelectedFontStyleChanged) { BindsTwoWayByDefault=true});
 
     private static void EhSelectedFontStyleChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
     {

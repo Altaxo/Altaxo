@@ -40,6 +40,14 @@ namespace Altaxo.Gui.Common.Drawing
       yield break;
     }
 
+    public FontXController()
+    {
+    }
+    public FontXController(FontX doc)
+    {
+      InitializeDocument(doc);
+    }
+
     #region Bindings
 
     public string SelectedFontFamilyName

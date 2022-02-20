@@ -76,7 +76,7 @@ namespace Altaxo.Gui.Common.Drawing
     public static readonly DependencyProperty SelectedQuantityAsValueInPointsProperty =
         DependencyProperty.Register(nameof(SelectedQuantityAsValueInPoints),
           typeof(double), typeof(LengthImageComboBox),
-        new FrameworkPropertyMetadata(EhSelectedQuantityAsValueInPointsChanged));
+        new FrameworkPropertyMetadata(EhSelectedQuantityAsValueInPointsChanged) { BindsTwoWayByDefault=true});
 
     private static void EhSelectedQuantityAsValueInPointsChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
     {

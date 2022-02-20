@@ -149,6 +149,6 @@
 			<TextBlock Text="Background" />
 			<TextBlock Text="color linkage:" />
 		</StackPanel>
-		<axogc:SingleChoiceRadioStackPanel x:Name="_guiBackgroundColorLinkage" Grid.Row="26"  Grid.Column="1" SelectionChanged="EhBackgroundColorLinkageChanged" />
+		<axogc:SingleChoiceRadioStackPanel x:Name="_guiBackgroundColorLinkage" Grid.Row="26"  Grid.Column="1" />
 	</Grid>
 </UserControl>

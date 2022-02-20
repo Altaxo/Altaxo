@@ -248,7 +248,7 @@ namespace Altaxo.Gui.Common.Drawing
 
     public static readonly DependencyProperty SelectedFontFamilyNameProperty =
         DependencyProperty.Register(nameof(SelectedFontFamilyName), typeof(string), typeof(FontFamilyComboBox),
-        new FrameworkPropertyMetadata(Altaxo.Graph.Gdi.GdiFontManager.GenericSansSerifFontFamilyName, EhSelectedFontFamilyNameChanged));
+        new FrameworkPropertyMetadata(Altaxo.Graph.Gdi.GdiFontManager.GenericSansSerifFontFamilyName, EhSelectedFontFamilyNameChanged) { BindsTwoWayByDefault=true});
 
     private static void EhSelectedFontFamilyNameChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
     {
