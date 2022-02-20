@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-222 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -23,25 +23,16 @@
 #endregion Copyright
 
 #nullable disable
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Altaxo.Gui.Graph.Gdi.Plot
 {
+  using System.Windows.Input;
   using Altaxo.Graph.Gdi.Plot;
 
-  #region Interfaces
-
-  public interface IDensityImagePlotItemOptionView
+  public interface IDensityImagePlotItemOptionView : IDataContextAwareView
   {
-    event Action CopyImageToClipboard;
-
-    event Action SaveImageToDisc;
   }
-
-  #endregion Interfaces
 
   /// <summary>
   /// Controls the option tab page in the <see cref="DensityImagePlotItem"/> dialog. This tab page allows only
@@ -55,28 +46,27 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
       yield break;
     }
 
+    public DensityImagePlotItemOptionController()
+    {
+      CmdCopyImageToClipboard = new RelayCommand(EhCopyImageToClipboard);
+      CmdSaveImageToDisc = new RelayCommand(EhSaveImageToDisc);
+    }
+
     protected override void Initialize(bool initData)
     {
       // base.Initialize(initData); // no base initialize because we dont want to suspend the doc (this is only a helper controller)
     }
 
+    #region Bindings
+
+    public ICommand CmdCopyImageToClipboard { get; }
+    public ICommand CmdSaveImageToDisc { get; }
+
+    #endregion
+
     public override bool Apply(bool disposeController)
     {
       return true;
-    }
-
-    protected override void AttachView()
-    {
-      base.AttachView();
-      _view.CopyImageToClipboard += EhCopyImageToClipboard;
-      _view.SaveImageToDisc += EhSaveImageToDisc;
-    }
-
-    protected override void DetachView()
-    {
-      _view.CopyImageToClipboard -= EhCopyImageToClipboard;
-      _view.SaveImageToDisc -= EhSaveImageToDisc;
-      base.DetachView();
     }
 
     private void EhCopyImageToClipboard()

@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -22,11 +22,6 @@
 
 #endregion Copyright
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows;
 using System.Windows.Controls;
 
 namespace Altaxo.Gui.Graph.Gdi.Plot
@@ -40,25 +35,5 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
     {
       InitializeComponent();
     }
-
-    private void EhCopyImageToClipboard(object sender, RoutedEventArgs e)
-    {
-      if (CopyImageToClipboard is not null)
-        CopyImageToClipboard();
-    }
-
-    private void EhSaveImageToDisc(object sender, RoutedEventArgs e)
-    {
-      if (SaveImageToDisc is not null)
-        SaveImageToDisc();
-    }
-
-    #region IDensityImagePlotItemOptionView
-
-    public event Action? CopyImageToClipboard;
-
-    public event Action? SaveImageToDisc;
-
-    #endregion IDensityImagePlotItemOptionView
   }
 }
