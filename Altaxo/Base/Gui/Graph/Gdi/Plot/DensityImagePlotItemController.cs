@@ -26,18 +26,22 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Altaxo.Collections;
 using Altaxo.Graph.Gdi.Plot;
 using Altaxo.Gui.Common;
 using Altaxo.Gui.Graph.Plot.Data;
 
 namespace Altaxo.Gui.Graph.Gdi.Plot
 {
+  public interface IDensityImagePlotItemView : IDataContextAwareView
+  {
+
+  }
+
   [UserControllerForObject(typeof(DensityImagePlotItem))]
   [ExpectedTypeOfView(typeof(ITabbedElementView))]
-  internal class DensityImagePlotItemController : MVCANControllerEditOriginalDocBase<DensityImagePlotItem, ITabbedElementView>
+  internal class DensityImagePlotItemController : MVCANControllerEditOriginalDocBase<DensityImagePlotItem, IDensityImagePlotItemView>
   {
-    private TabbedElementController _innerController;
-
     private IMVCANController _styleController;
 
     /// <summary>Controls the option view where users can copy the image to disc or save the image.</summary>
@@ -51,8 +55,35 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
       yield return new ControllerAndSetNullMethod(_styleController, () => _styleController = null);
       yield return new ControllerAndSetNullMethod(_optionsController, () => _optionsController = null);
       yield return new ControllerAndSetNullMethod(_dataController, () => _dataController = null);
-      yield return new ControllerAndSetNullMethod(_innerController, () => _innerController = null);
     }
+
+    #region Bindings
+
+    public SelectableListNodeList Tabs { get; } = new();
+
+    private int? _selectedTab;
+
+    /// <summary>
+    /// Gets or sets the selected tab. The value of -1 selectes the data tab, values &gt;= 0 select one of the style tabs.
+    /// </summary>
+    /// <value>
+    /// The selected tab.
+    /// </value>
+    public int? SelectedTab
+    {
+      get => _selectedTab;
+      set
+      {
+        if (!(_selectedTab == value))
+        {
+          var oldValue = _selectedTab;
+          _selectedTab = value;
+          OnPropertyChanged(nameof(SelectedTab));
+        }
+      }
+    }
+
+    #endregion
 
     protected override void Initialize(bool initData)
     {
@@ -60,11 +91,10 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
 
       if (initData)
       {
-        _innerController = new TabbedElementController();
         InitializeStyle();
         InitializeDataView();
         InitializeOptionView();
-        _innerController.BringTabToFront(0);
+        SelectedTab = 0;
       }
     }
 
@@ -87,32 +117,10 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
       return ApplyEnd(result, disposeController);
     }
 
-    protected override void AttachView()
-    {
-      base.AttachView();
-      if (_innerController is not null)
-        _innerController.ViewObject = _view;
-    }
-
-    protected override void DetachView()
-    {
-      if (_innerController is not null)
-        _innerController.ViewObject = null;
-      base.DetachView();
-    }
-
     private void InitializeStyle()
     {
       _styleController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _doc.Style }, typeof(IMVCANController), UseDocument.Directly);
-      _innerController.AddTab("Style", _styleController, _styleController.ViewObject);
-    }
-
-    private void InitializeOptionView()
-    {
-      _optionsController = new DensityImagePlotItemOptionController() { UseDocumentCopy = UseDocument.Directly };
-      _optionsController.InitializeDocument(_doc);
-      Current.Gui.FindAndAttachControlTo(_optionsController);
-      _innerController.AddTab("Options", _optionsController, _optionsController.ViewObject);
+      Tabs.Add(new SelectableListNodeWithController("Style", 0, true) { Controller = _styleController });
     }
 
     private void InitializeDataView()
@@ -120,7 +128,15 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
       _dataController = new XYZMeshedColumnPlotDataController { UseDocumentCopy = UseDocument.Directly };
       _dataController.InitializeDocument(_doc.Data);
       Current.Gui.FindAndAttachControlTo(_dataController);
-      _innerController.AddTab("Data", _dataController, _dataController.ViewObject);
+      Tabs.Add(new SelectableListNodeWithController("Data", 1, false) { Controller = _dataController });
+    }
+
+    private void InitializeOptionView()
+    {
+      _optionsController = new DensityImagePlotItemOptionController() { UseDocumentCopy = UseDocument.Directly };
+      _optionsController.InitializeDocument(_doc);
+      Current.Gui.FindAndAttachControlTo(_optionsController);
+      Tabs.Add(new SelectableListNodeWithController("Options", 2, false) { Controller = _optionsController });
     }
   }
 }
