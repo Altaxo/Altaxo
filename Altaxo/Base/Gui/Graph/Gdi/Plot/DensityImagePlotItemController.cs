@@ -40,7 +40,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
 
   [UserControllerForObject(typeof(DensityImagePlotItem))]
   [ExpectedTypeOfView(typeof(ITabbedElementView))]
-  internal class DensityImagePlotItemController : MVCANControllerEditOriginalDocBase<DensityImagePlotItem, IDensityImagePlotItemView>
+  public class DensityImagePlotItemController : MVCANControllerEditOriginalDocBase<DensityImagePlotItem, IDensityImagePlotItemView>
   {
     private IMVCANController _styleController;
 

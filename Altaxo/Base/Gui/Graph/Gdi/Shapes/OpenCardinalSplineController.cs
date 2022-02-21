@@ -66,7 +66,8 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
         if (_lineCtrl.ViewObject is null)
           _lineCtrl.ViewObject = _view.LineGraphicView;
 
-        _splinePointsCtrl = new CardinalSplinePointsController(_view.SplinePointsView, _doc.CurvePoints, _doc.Tension, _doc);
+        _splinePointsCtrl = new CardinalSplinePointsController(_doc.CurvePoints, _doc.Tension, _doc);
+        _splinePointsCtrl.ViewObject = _view.SplinePointsView;
       }
     }
 
@@ -75,8 +76,10 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
       if (!_lineCtrl.Apply(disposeController))
         return false;
 
-      if (_splinePointsCtrl.Apply(out var list, out var tension))
+      if (_splinePointsCtrl.Apply(disposeController))
       {
+        var (list, tension) = ((List<PointD2D>, double))_splinePointsCtrl.ModelObject;
+
         if (!(list.Count >= 2))
         {
           Current.Gui.ErrorMessageBox("At least two points are required for the open cardinal spline. Please enter more points!");

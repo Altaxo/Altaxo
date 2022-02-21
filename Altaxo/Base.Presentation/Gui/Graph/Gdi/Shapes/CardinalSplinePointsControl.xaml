@@ -3,9 +3,11 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:axogg="clr-namespace:Altaxo.Gui.Graph"
-						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
-						 xmlns:axog ="clr-namespace:Altaxo.Gui;assembly=AltaxoBase">
+			 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
+			 xmlns:axog ="clr-namespace:Altaxo.Gui;assembly=AltaxoBase" 
+             xmlns:shapes="clr-namespace:Altaxo.Gui.Graph.Gdi.Shapes;assembly=AltaxoBase"
+             d:DataContext="{d:DesignInstance Type=shapes:CardinalSplinePointsController}"
+             mc:Ignorable="d">
 	<Grid>
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition />
@@ -18,22 +20,22 @@
 			<RowDefinition Height="*" />
 		</Grid.RowDefinitions>
 		<Label Grid.Column="0" Grid.Row="0" Content="Tension:" />
-		<axogc:QuantityWithUnitTextBox x:Name="_guiTension" Grid.Column="1" Grid.Row="0" UnitEnvironment="{x:Static axog:RelationEnvironment.Instance}" DisallowNegativeValues="True" />
+		<axogc:QuantityWithUnitTextBox Grid.Column="1" Grid.Row="0" SelectedQuantity="{Binding Tension}" UnitEnvironment="{Binding TensionEnvironment}" DisallowNegativeValues="True" />
 
 		<StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Grid.Column="1" Grid.Row="2">
-			<Button Content="Copy" Click="EhCopyCurvePoints" ToolTip="Copy the spline points in the local coordinates of the shape." />
-			<Button Content="Paste" Margin="8,0,0,0" Click="EhPasteCurvePoints" ToolTip="Paste the spline points in local coordinates of the shape." />
-			<Button Content="Copy Physical" Margin="8,0,0,0" Click="EhCopyCurvePointsAsPhysical" ToolTip="Copy the spline points in physical coordinates." />
-			<Button Content="Paste Physical" Margin="8,0,0,0" Click="EhPasteCurvePointsAsPhysical" ToolTip="Paste the spline points in physical coordinates." />
-			<Button Content="Copy Logical" Margin="8,0,0,0" Click="EhCopyCurvePointsAsLogical" ToolTip="Copy the spline points in logical coordinates." />
-			<Button Content="Paste Logical" Margin="8,0,0,0" Click="EhPasteCurvePointsAsLogical" ToolTip="Paste the spline points in logical coordinates." />
+			<Button Content="Copy" Command="{Binding CmdCopyCurvePoints}" ToolTip="Copy the spline points in the local coordinates of the shape." />
+            <Button Content="Paste" Margin="8,0,0,0" Command="{Binding CmdPasteCurvePoints}" ToolTip="Paste the spline points in local coordinates of the shape." />
+            <Button Content="Copy Physical" Margin="8,0,0,0" Command="{Binding CmdCopyCurvePointsAsPhysical}" ToolTip="Copy the spline points in physical coordinates." />
+            <Button Content="Paste Physical" Margin="8,0,0,0" Command="{Binding CmdPasteCurvePointsAsPhysical}" ToolTip="Paste the spline points in physical coordinates." />
+            <Button Content="Copy Logical" Margin="8,0,0,0" Command="{Binding CmdCopyCurvePointsAsLogical}" ToolTip="Copy the spline points in logical coordinates." />
+            <Button Content="Paste Logical" Margin="8,0,0,0" Command="{Binding CmdPasteCurvePointsAsLogical}" ToolTip="Paste the spline points in logical coordinates." />
 		</StackPanel>
 
 		<Label Grid.Column="0" Grid.Row="2" Content="Curve points:" />
-		<DataGrid x:Name="_guiCurvePoints" Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="3"
-									ItemsSource="{Binding}" AutoGenerateColumns="False"
-									AlternationCount="2" AlternatingRowBackground="Azure"
-									CanUserAddRows="True">
+		<DataGrid Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="3"
+				ItemsSource="{Binding CurvePointsEditable}" AutoGenerateColumns="False"
+			   	AlternationCount="2" AlternatingRowBackground="Azure"
+				CanUserAddRows="True">
 			<DataGrid.Resources>
 			</DataGrid.Resources>
 			<!-- On information why to set the Mode to OneWay for the CellTemplate and to TwoWay for the CellEditingTemplate, see the bug report 'DataGrid.CellEditingTemplate binding problem' here: http://forums.silverlight.net/t/118483.aspx/1 -->

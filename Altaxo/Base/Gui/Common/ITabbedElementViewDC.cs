@@ -22,29 +22,22 @@
 
 #endregion Copyright
 
-#nullable disable warnings
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Documents;
-using Altaxo.Geometry;
-using Altaxo.Graph;
-using Altaxo.Units;
+using System.Threading.Tasks;
 
-namespace Altaxo.Gui.Graph.Gdi.Shapes
+namespace Altaxo.Gui.Common
 {
   /// <summary>
-  /// Interaction logic for CardinalSplinePointsControl.xaml
+  /// Interface for a tabbed element view (data context aware).
+  /// The controller must have a 'Tabs' property (of type <see cref="Altaxo.Collections.SelectableListNodeList"/>
+  /// with items of type <see cref="Altaxo.Gui.SelectableListNodeWithController"/>,
+  /// and a 'SelectedTab' property of any type (the type should match the type of the tags in <see cref="Altaxo.Gui.SelectableListNodeWithController"/>.
   /// </summary>
-  public partial class CardinalSplinePointsControl : UserControl, ICardinalSplinePointsView
+  /// <seealso cref="Altaxo.Gui.IDataContextAwareView" />
+  public interface ITabbedElementViewDC : IDataContextAwareView
   {
-    public CardinalSplinePointsControl()
-    {
-      InitializeComponent();
-    }
   }
 }

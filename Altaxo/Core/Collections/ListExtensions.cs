@@ -358,6 +358,18 @@ namespace Altaxo.Collections
       }
     }
 
+    public static void AddRange<T>(this System.Collections.ObjectModel.ObservableCollection<T> collection, IEnumerable<T> itemsToAdd)
+    {
+      foreach (var i in itemsToAdd)
+        collection.Add(i);
+    }
+    public static void FillWith<T>(this System.Collections.ObjectModel.ObservableCollection<T> collection, IEnumerable<T> itemsToAdd)
+    {
+      collection.Clear();
+      foreach (var i in itemsToAdd)
+        collection.Add(i);
+    }
+
     /// <summary>
     /// Adds a range of items to a collection.
     /// </summary>
@@ -369,5 +381,14 @@ namespace Altaxo.Collections
       foreach (var t in itemsToAdd)
         destination.Add(t);
     }
+
+    public static void FillWith<T>(this ICollection<T> collection, IEnumerable<T> itemsToAdd)
+    {
+      collection.Clear();
+      foreach (var i in itemsToAdd)
+        collection.Add(i);
+    }
+
+   
   }
 }

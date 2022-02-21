@@ -25,61 +25,114 @@
 #nullable disable
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
+using System.Windows.Input;
 using Altaxo.Geometry;
 using Altaxo.Graph;
 using Altaxo.Graph.Gdi.Shapes;
 using Altaxo.Units;
+using Altaxo.Collections;
 using AUL = Altaxo.Units.Length;
 
 namespace Altaxo.Gui.Graph.Gdi.Shapes
 {
-  public interface ICardinalSplinePointsView
+  public interface ICardinalSplinePointsView : IDataContextAwareView
   {
-    double Tension { get; set; }
-
-    List<PointD2D> CurvePoints { get; set; }
-
-    event Action CurvePointsCopyTriggered;
-
-    event Action CurvePointsCopyAsPhysicalTriggered;
-
-    event Action CurvePointsCopyAsLogicalTriggered;
-
-    event Action CurvePointsPasteTriggered;
-
-    event Action CurvePointsPastePhysicalTriggered;
-
-    event Action CurvePointsPasteLogicalTriggered;
   }
 
-  public class CardinalSplinePointsController
+  [ExpectedTypeOfView(typeof(ICardinalSplinePointsView))]
+  public class CardinalSplinePointsController : MVCANControllerEditImmutableDocBase<(IList<PointD2D> CurvePoints, double Tension), ICardinalSplinePointsView>
   {
-    private ICardinalSplinePointsView _view;
-    private GraphicBase _doc;
+    GraphicBase _documentNode;
 
-    public CardinalSplinePointsController(ICardinalSplinePointsView view, List<PointD2D> curvePoints, double tension, GraphicBase documentNode)
+    public CardinalSplinePointsController( List<PointD2D> curvePoints, double tension, GraphicBase documentNode)
     {
-      _view = view;
-      _doc = documentNode;
+      _documentNode = documentNode;
+      _doc = (curvePoints, tension);
 
-      _view.CurvePointsCopyTriggered += new Action(EhCurvePointsCopyTriggered);
-      _view.CurvePointsCopyAsPhysicalTriggered += new Action(EhCurvePointsCopyPhysicalTriggered);
-      _view.CurvePointsCopyAsLogicalTriggered += new Action(EhCurvePointsCopyLogicalTriggered);
-      _view.CurvePointsPasteTriggered += new Action(EhCurvePointsPasteTriggered);
-      _view.CurvePointsPastePhysicalTriggered += new Action(EhCurvePointsPastePhysicalTriggered);
-      _view.CurvePointsPasteLogicalTriggered += new Action(EhCurvePointsPasteLogicalTriggered);
+      Tension = new DimensionfulQuantity(tension, Altaxo.Units.Dimensionless.Unity.Instance).AsQuantityIn(TensionEnvironment.DefaultUnit);
+      CurvePoints=curvePoints;
 
-      _view.Tension = tension;
-      _view.CurvePoints = curvePoints;
+      CmdCopyCurvePoints = new RelayCommand(EhCurvePointsCopyTriggered);
+      CmdCopyCurvePoints = new RelayCommand(EhCurvePointsPasteTriggered);
+      CmdCopyCurvePointsAsPhysical = new RelayCommand(EhCurvePointsCopyPhysicalTriggered);
+      CmdPasteCurvePointsAsPhysical = new RelayCommand(EhCurvePointsPastePhysicalTriggered);
+      CmdCopyCurvePointsAsLogical = new RelayCommand(EhCurvePointsCopyLogicalTriggered);
+      CmdPasteCurvePointsAsLogical = new RelayCommand(EhCurvePointsPasteLogicalTriggered);
     }
 
-    public bool Apply(out List<PointD2D> curvePoints, out double tension)
+    public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
-      curvePoints = _view.CurvePoints;
-      tension = _view.Tension;
-      return true;
+      yield break;
+    }
+
+    #region Bindings
+
+    public ICommand CmdCopyCurvePoints { get; }
+    public ICommand CmdPasteCurvePoints { get; }
+    public ICommand CmdCopyCurvePointsAsPhysical { get; }
+    public ICommand CmdPasteCurvePointsAsPhysical { get; }
+    public ICommand CmdCopyCurvePointsAsLogical { get; }
+    public ICommand CmdPasteCurvePointsAsLogical { get; }
+
+    public QuantityWithUnitGuiEnvironment TensionEnvironment => RelationEnvironment.Instance;
+
+    private DimensionfulQuantity _tension;
+
+    public DimensionfulQuantity Tension
+    {
+      get => _tension;
+      set
+      {
+        if (!(_tension == value))
+        {
+          _tension = value;
+          OnPropertyChanged(nameof(Tension));
+        }
+      }
+    }
+
+    private ObservableCollection<PointD2DClass> _curvePointsEditable=new ObservableCollection<PointD2DClass>();
+
+    public ObservableCollection<PointD2DClass> CurvePointsEditable
+    {
+      get => _curvePointsEditable;
+      set
+      {
+        if (!(_curvePointsEditable == value))
+        {
+          _curvePointsEditable = value;
+          OnPropertyChanged(nameof(CurvePointsEditable));
+        }
+      }
+    }
+
+
+    #endregion
+
+    private List<PointD2D> CurvePoints
+    {
+      get
+      {
+        var pts = new List<PointD2D>();
+        foreach (var p in _curvePointsEditable)
+          pts.Add(new PointD2D(p.X, p.Y));
+        return pts;
+      }
+      set
+      {
+        _curvePointsEditable.Clear();
+        foreach (var p in value)
+          _curvePointsEditable.Add(new PointD2DClass(p));
+      }
+    }
+
+    public override bool Apply(bool disposeController)
+    {
+      _doc = (CurvePoints, Tension.AsValueInSIUnits);
+      return ApplyEnd(true, disposeController);
     }
 
     private void EhCurvePointsPasteTriggered()
@@ -121,12 +174,12 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
           ));
       }
 
-      _view.CurvePoints = list;
+      CurvePoints = list;
     }
 
     private void EhCurvePointsPastePhysicalTriggered()
     {
-      var layer = Altaxo.Main.AbsoluteDocumentPath.GetRootNodeImplementing<Altaxo.Graph.Gdi.XYPlotLayer>(_doc);
+      var layer = Altaxo.Main.AbsoluteDocumentPath.GetRootNodeImplementing<Altaxo.Graph.Gdi.XYPlotLayer>(_documentNode);
 
       if (layer is null)
       {
@@ -134,7 +187,7 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
         return;
       }
 
-      var cachedTransformation = _doc.TransformationFromHereToParent(layer);
+      var cachedTransformation = _documentNode.TransformationFromHereToParent(layer);
 
       Altaxo.Data.DataTable table = Altaxo.Worksheet.Commands.EditCommands.GetTableFromClipboard();
       if (table is null)
@@ -181,12 +234,12 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
         }
       }
 
-      _view.CurvePoints = list;
+      CurvePoints = list;
     }
 
     private void EhCurvePointsPasteLogicalTriggered()
     {
-      var layer = Altaxo.Main.AbsoluteDocumentPath.GetRootNodeImplementing<Altaxo.Graph.Gdi.XYPlotLayer>(_doc);
+      var layer = Altaxo.Main.AbsoluteDocumentPath.GetRootNodeImplementing<Altaxo.Graph.Gdi.XYPlotLayer>(_documentNode);
 
       if (layer is null)
       {
@@ -194,7 +247,7 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
         return;
       }
 
-      var cachedTransformation = _doc.TransformationFromHereToParent(layer);
+      var cachedTransformation = _documentNode.TransformationFromHereToParent(layer);
 
       Altaxo.Data.DataTable table = Altaxo.Worksheet.Commands.EditCommands.GetTableFromClipboard();
       if (table is null)
@@ -241,12 +294,12 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
         }
       }
 
-      _view.CurvePoints = list;
+      CurvePoints = list;
     }
 
     private void EhCurvePointsCopyTriggered()
     {
-      var points = _view.CurvePoints;
+      var points = CurvePoints;
 
       var dao = Current.Gui.GetNewClipboardDataObject();
       var xcol = new Altaxo.Data.DoubleColumn();
@@ -262,7 +315,7 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
 
     private void EhCurvePointsCopyPhysicalTriggered()
     {
-      var layer = Altaxo.Main.AbsoluteDocumentPath.GetRootNodeImplementing<Altaxo.Graph.Gdi.XYPlotLayer>(_doc);
+      var layer = Altaxo.Main.AbsoluteDocumentPath.GetRootNodeImplementing<Altaxo.Graph.Gdi.XYPlotLayer>(_documentNode);
 
       if (layer is null)
       {
@@ -270,9 +323,9 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
         return;
       }
 
-      var cachedTransformation = _doc.TransformationFromHereToParent(layer);
+      var cachedTransformation = _documentNode.TransformationFromHereToParent(layer);
 
-      var points = _view.CurvePoints;
+      var points = CurvePoints;
 
       var xcol = new Altaxo.Data.DoubleColumn();
       var ycol = new Altaxo.Data.DoubleColumn();
@@ -297,7 +350,7 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
 
     private void EhCurvePointsCopyLogicalTriggered()
     {
-      var layer = Altaxo.Main.AbsoluteDocumentPath.GetRootNodeImplementing<Altaxo.Graph.Gdi.XYPlotLayer>(_doc);
+      var layer = Altaxo.Main.AbsoluteDocumentPath.GetRootNodeImplementing<Altaxo.Graph.Gdi.XYPlotLayer>(_documentNode);
 
       if (layer is null)
       {
@@ -305,8 +358,8 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
         return;
       }
 
-      var cachedTransformation = _doc.TransformationFromHereToParent(layer);
-      var points = _view.CurvePoints;
+      var cachedTransformation = _documentNode.TransformationFromHereToParent(layer);
+      var points = CurvePoints;
 
       var xcol = new Altaxo.Data.DoubleColumn();
       var ycol = new Altaxo.Data.DoubleColumn();
@@ -343,5 +396,63 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
         dao);
       Current.Gui.SetClipboardDataObject(dao, true);
     }
+
+    #region Editable Curve Points
+
+    public class PointD2DClass : System.ComponentModel.IEditableObject
+    {
+      public PointD2DClass()
+      {
+      }
+
+      public PointD2DClass(PointD2D p)
+      {
+        X = p.X;
+        Y = p.Y;
+      }
+
+      public double X { get; set; }
+
+      public double Y { get; set; }
+
+      public DimensionfulQuantity XQuantity
+      {
+        get
+        {
+          return new DimensionfulQuantity(X, Altaxo.Units.Length.Point.Instance).AsQuantityIn(PositionEnvironment.Instance.DefaultUnit);
+        }
+        set
+        {
+          X = value.AsValueIn(Altaxo.Units.Length.Point.Instance);
+        }
+      }
+
+      public DimensionfulQuantity YQuantity
+      {
+        get
+        {
+          return new DimensionfulQuantity(Y, Altaxo.Units.Length.Point.Instance).AsQuantityIn(PositionEnvironment.Instance.DefaultUnit);
+        }
+        set
+        {
+          Y = value.AsValueIn(Altaxo.Units.Length.Point.Instance);
+        }
+      }
+
+      public void BeginEdit()
+      {
+      }
+
+      public void CancelEdit()
+      {
+      }
+
+      public void EndEdit()
+      {
+      }
+    }
+
+
+    #endregion
   }
 }
