@@ -29,9 +29,9 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
   /// <summary>
   /// Interaction logic for DensityImagePlotItemControl.xaml
   /// </summary>
-  public partial class DensityImagePlotItemControl : UserControl, IDensityImagePlotItemOptionView
+  public partial class DensityImagePlotItemOptionControl : UserControl, IDensityImagePlotItemOptionView
   {
-    public DensityImagePlotItemControl()
+    public DensityImagePlotItemOptionControl()
     {
       InitializeComponent();
     }
