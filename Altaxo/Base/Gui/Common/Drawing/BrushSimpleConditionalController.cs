@@ -41,15 +41,16 @@ namespace Altaxo.Gui.Common.Drawing
   {
     public BrushSimpleConditionalController(BrushX doc)
     {
-      _doc = _originalDoc = doc;
+      _doc = _originalDoc = doc ?? new BrushX(NamedColors.Transparent);
+      
     }
 
     public BrushX Doc
     {
-      get => _isEnabled ? _brush : _brush.WithColor(NamedColors.Transparent);
+      get => _isEnabled ? Brush : Brush.WithColor(NamedColors.Transparent);
       set
       {
-        Brush = value;
+        Brush = value ?? new BrushX(NamedColors.Transparent);
         IsEnabled = value.IsVisible;
       }
     }
@@ -75,7 +76,7 @@ namespace Altaxo.Gui.Common.Drawing
         {
           _isEnabled = value;
           OnPropertyChanged(nameof(IsEnabled));
-          if(value && _brush.IsInvisible)
+          if(value && Brush.IsInvisible)
           {
             Brush = Brush.WithColor(NamedColors.AliceBlue);
           }
@@ -83,16 +84,15 @@ namespace Altaxo.Gui.Common.Drawing
       }
     }
 
-    private BrushX _brush;
 
     public BrushX Brush
     {
-      get => _brush;
+      get => _doc;
       set
       {
-        if (!(_brush == value))
+        if (!(_doc == value))
         {
-          _brush = value;
+          _doc = value;
           OnPropertyChanged(nameof(Brush));
           OnMadeDirty();
         }

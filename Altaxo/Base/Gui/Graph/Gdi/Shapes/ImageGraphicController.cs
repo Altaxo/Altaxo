@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -23,44 +23,132 @@
 #endregion Copyright
 
 #nullable disable
-using System;
 using System.Collections.Generic;
-using System.Text;
+using Altaxo.Collections;
 using Altaxo.Drawing;
 using Altaxo.Geometry;
 using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Gdi.Shapes;
-using Altaxo.Gui.Graph.Gdi;
+using Altaxo.Gui.Common;
+using Altaxo.Units;
 
 namespace Altaxo.Gui.Graph.Gdi.Shapes
 {
-  public interface IImageGraphicView
+  public interface IImageGraphicView : IDataContextAwareView
   {
-    PointD2D SourceSize { set; }
-
-    AspectRatioPreservingMode AspectPreserving { get; set; }
-
-    bool IsSizeCalculationBasedOnSourceSize { get; set; }
-
-    event Action AspectPreservingChanged;
-
-    event Action ScalingModeChanged;
-
-    object LocationView { set; }
   }
 
   [UserControllerForObject(typeof(ImageGraphic))]
   [ExpectedTypeOfView(typeof(IImageGraphicView))]
   public class ImageGraphicController : MVCANControllerEditOriginalDocBase<ImageGraphic, IImageGraphicView>
   {
-    private PointD2D _srcSize;
     private PointD2D _docScale;
     private ItemLocationDirect _docLocation;
-    private ItemLocationDirectController _locationController;
 
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_locationController, () => _locationController = null);
+    }
+
+    #region Bindings
+
+    private ItemLocationDirectController _locationController;
+
+    public ItemLocationDirectController LocationController
+    {
+      get => _locationController;
+      set
+      {
+        if (!(_locationController == value))
+        {
+          _locationController = value;
+          OnPropertyChanged(nameof(LocationController));
+        }
+      }
+    }
+
+    public QuantityWithUnitGuiEnvironment SrcSizeEnvironment = SizeEnvironment.Instance;
+    private DimensionfulQuantity _srcSizeX;
+
+    public DimensionfulQuantity SrcSizeX
+    {
+      get => _srcSizeX;
+      set
+      {
+        if (!(_srcSizeX == value))
+        {
+          _srcSizeX = value;
+          OnPropertyChanged(nameof(SrcSizeX));
+        }
+      }
+    }
+
+    private DimensionfulQuantity _srcSizeY;
+
+    public DimensionfulQuantity SrcSizeY
+    {
+      get => _srcSizeY;
+      set
+      {
+        if (!(_srcSizeY == value))
+        {
+          _srcSizeY = value;
+          OnPropertyChanged(nameof(SrcSizeY));
+        }
+      }
+    }
+
+    private ItemsController<AspectRatioPreservingMode> _keepAspect;
+
+    public ItemsController<AspectRatioPreservingMode> KeepAspect
+    {
+      get => _keepAspect;
+      set
+      {
+        if (!(_keepAspect == value))
+        {
+          _keepAspect = value;
+          OnPropertyChanged(nameof(KeepAspect));
+        }
+      }
+    }
+
+    private bool _isSizeCalculationBasedOnSourceSize;
+
+    public bool IsSizeCalculationBasedOnSourceSize
+    {
+      get => _isSizeCalculationBasedOnSourceSize;
+      set
+      {
+        if (!(_isSizeCalculationBasedOnSourceSize == value))
+        {
+          _isSizeCalculationBasedOnSourceSize = value;
+          OnPropertyChanged(nameof(IsSizeCalculationBasedOnSourceSize));
+          OnPropertyChanged(nameof(IsSizeCalculationAbsolute));
+          EhScalingModeChanged();
+        }
+      }
+    }
+    public bool IsSizeCalculationAbsolute
+    {
+      get => !IsSizeCalculationBasedOnSourceSize;
+      set => IsSizeCalculationBasedOnSourceSize = !value;
+    }
+
+
+    #endregion
+
+    private PointD2D SrcSize
+    {
+      get
+      {
+        return new PointD2D(SrcSizeX.AsValueIn(Altaxo.Units.Length.Point.Instance), SrcSizeY.AsValueIn(Altaxo.Units.Length.Point.Instance));
+      }
+      set
+      {
+        SrcSizeX = new DimensionfulQuantity(value.X, Altaxo.Units.Length.Point.Instance).AsQuantityIn(SrcSizeEnvironment.DefaultUnit);
+        SrcSizeY = new DimensionfulQuantity(value.Y, Altaxo.Units.Length.Point.Instance).AsQuantityIn(SrcSizeEnvironment.DefaultUnit);
+      }
     }
 
     protected override void Initialize(bool initData)
@@ -69,11 +157,22 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
 
       if (initData)
       {
-        _srcSize = _doc.GetImageSizePt();
-        _docScale = new PointD2D(_doc.Size.X / _srcSize.X, _doc.Size.Y / _srcSize.Y);
+        var keepAspect = new SelectableListNodeList()
+        {
+          new SelectableListNode("No",AspectRatioPreservingMode.None, AspectRatioPreservingMode.None== _doc.AspectRatioPreserving ),
+          new SelectableListNode("X priority", AspectRatioPreservingMode.PreserveXPriority, AspectRatioPreservingMode.PreserveXPriority == _doc.AspectRatioPreserving),
+          new SelectableListNode("Y priority", AspectRatioPreservingMode.PreserveYPriority, AspectRatioPreservingMode.PreserveYPriority == _doc.AspectRatioPreserving)
+        };
+        KeepAspect = new ItemsController<AspectRatioPreservingMode>(keepAspect, EhAspectRatioPreservingChanged);
+
+
+        var srcSize = _doc.GetImageSizePt();
+
+
+        _docScale = new PointD2D(_doc.Size.X / SrcSize.X, _doc.Size.Y / SrcSize.Y);
         _docLocation = new ItemLocationDirect();
         _docLocation.CopyFrom(_doc.Location);
-        _docLocation.Scale = new PointD2D(_doc.Size.X / _srcSize.X, _doc.Size.Y / _srcSize.Y);
+        _docLocation.Scale = new PointD2D(_doc.Size.X / SrcSize.X, _doc.Size.Y / SrcSize.Y);
         _locationController = new ItemLocationDirectController() { UseDocumentCopy = UseDocument.Directly };
         _locationController.InitializeDocument(new object[] { _docLocation });
         Current.Gui.FindAndAttachControlTo(_locationController);
@@ -84,13 +183,9 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
         _locationController.ScaleYChanged += EhLocController_ScaleYChanged;
         _locationController.ShowSizeElements(true, !_doc.IsSizeCalculationBasedOnSourceSize);
         _locationController.ShowScaleElements(true, _doc.IsSizeCalculationBasedOnSourceSize);
-      }
-      if (_view is not null)
-      {
-        _view.SourceSize = _srcSize;
-        _view.AspectPreserving = _doc.AspectRatioPreserving;
-        _view.IsSizeCalculationBasedOnSourceSize = _doc.IsSizeCalculationBasedOnSourceSize;
-        _view.LocationView = _locationController.ViewObject;
+
+        IsSizeCalculationBasedOnSourceSize = _doc.IsSizeCalculationBasedOnSourceSize;
+
       }
     }
 
@@ -109,30 +204,19 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
       return ApplyEnd(true, disposeController);
     }
 
-    protected override void AttachView()
-    {
-      _view.AspectPreservingChanged += EhAspectRatioPreservingChanged;
-      _view.ScalingModeChanged += EhScalingModeChanged;
-    }
 
-    protected override void DetachView()
-    {
-      _view.AspectPreservingChanged -= EhAspectRatioPreservingChanged;
-      _view.ScalingModeChanged -= EhScalingModeChanged;
-    }
 
-    private void EhAspectRatioPreservingChanged()
+    private void EhAspectRatioPreservingChanged(AspectRatioPreservingMode newValue)
     {
-      _doc.AspectRatioPreserving = _view.AspectPreserving;
-      _docScale = new PointD2D(_doc.Size.X / _srcSize.X, _doc.Size.Y / _srcSize.Y);
+      _doc.AspectRatioPreserving = newValue;
+      _docScale = new PointD2D(_doc.Size.X / SrcSize.X, _doc.Size.Y / SrcSize.Y);
       //_view.DocScale = _docScale;
       //_view.DocSize = _doc.Size;
     }
 
     private void EhScalingModeChanged()
     {
-      _doc.IsSizeCalculationBasedOnSourceSize = _view.IsSizeCalculationBasedOnSourceSize; // false if Size should be used directly, true if the Scale should be used
-
+      _doc.IsSizeCalculationBasedOnSourceSize = IsSizeCalculationBasedOnSourceSize; // false if Size should be used directly, true if the Scale should be used
       _locationController.ShowSizeElements(true, !_doc.IsSizeCalculationBasedOnSourceSize);
       _locationController.ShowScaleElements(true, _doc.IsSizeCalculationBasedOnSourceSize);
     }
@@ -144,10 +228,10 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
         var sizeY = _docLocation.SizeY;
         if (_doc.AspectRatioPreserving == AspectRatioPreservingMode.PreserveXPriority || _doc.AspectRatioPreserving == AspectRatioPreservingMode.PreserveYPriority)
         {
-          _docLocation.SizeY = sizeX * (_srcSize.Y / _srcSize.X);
+          _docLocation.SizeY = sizeX * (SrcSize.Y / SrcSize.X);
         }
         _docLocation.SizeX = sizeX;
-        _docScale = new PointD2D(_docLocation.AbsoluteSizeX / _srcSize.X, _docLocation.AbsoluteSizeY / _srcSize.Y);
+        _docScale = new PointD2D(_docLocation.AbsoluteSizeX / SrcSize.X, _docLocation.AbsoluteSizeY / SrcSize.Y);
         _locationController.ScaleX = _docScale.X;
         _locationController.ScaleY = _docScale.Y;
         _locationController.SizeY = _docLocation.SizeY;
@@ -161,10 +245,10 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
         var sizeX = _docLocation.SizeX;
         if (_doc.AspectRatioPreserving == AspectRatioPreservingMode.PreserveYPriority || _doc.AspectRatioPreserving == AspectRatioPreservingMode.PreserveXPriority)
         {
-          _docLocation.SizeX = sizeY * (_srcSize.X / _srcSize.Y);
+          _docLocation.SizeX = sizeY * (SrcSize.X / SrcSize.Y);
         }
         _docLocation.SizeY = sizeY;
-        _docScale = new PointD2D(_docLocation.AbsoluteSizeX / _srcSize.X, _docLocation.AbsoluteSizeY / _srcSize.Y);
+        _docScale = new PointD2D(_docLocation.AbsoluteSizeX / SrcSize.X, _docLocation.AbsoluteSizeY / SrcSize.Y);
         _locationController.ScaleX = _docScale.X;
         _locationController.ScaleY = _docScale.Y;
         _locationController.SizeX = _docLocation.SizeX;
@@ -180,7 +264,7 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
         {
           _docLocation.ScaleY = scaleX;
         }
-        var size = new PointD2D(_srcSize.X * _docLocation.ScaleX, _srcSize.Y * _docLocation.ScaleY);
+        var size = new PointD2D(SrcSize.X * _docLocation.ScaleX, SrcSize.Y * _docLocation.ScaleY);
         _docLocation.AbsoluteSize = size;
 
         _locationController.ScaleY = _docLocation.ScaleY;
@@ -198,7 +282,7 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
         {
           _docLocation.ScaleX = scaleY;
         }
-        var size = new PointD2D(_srcSize.X * _docLocation.ScaleX, _srcSize.Y * _docLocation.ScaleY);
+        var size = new PointD2D(SrcSize.X * _docLocation.ScaleX, SrcSize.Y * _docLocation.ScaleY);
         _docLocation.AbsoluteSize = size;
 
         _locationController.ScaleX = _docLocation.ScaleX;

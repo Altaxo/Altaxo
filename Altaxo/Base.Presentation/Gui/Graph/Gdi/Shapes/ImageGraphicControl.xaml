@@ -3,10 +3,12 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-						 xmlns:axog="clr-namespace:Altaxo.Gui;assembly=AltaxoBase"
-						 xmlns:local="clr-namespace:Altaxo.Gui.Common.Drawing"
-						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
-						 xmlns:axogg="clr-namespace:Altaxo.Gui.Graph"
+			 xmlns:axog="clr-namespace:Altaxo.Gui;assembly=AltaxoBase"
+			 xmlns:local="clr-namespace:Altaxo.Gui.Common.Drawing"
+			 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
+			 xmlns:axogg="clr-namespace:Altaxo.Gui.Graph" 
+             xmlns:shapes="clr-namespace:Altaxo.Gui.Graph.Gdi.Shapes;assembly=AltaxoBase"
+             d:DataContext="{d:DesignInstance Type=shapes:ImageGraphicController}"
              mc:Ignorable="d"
 >
 	<UserControl.Resources>
@@ -43,32 +45,26 @@
 					<RowDefinition Height="*" />
 				</Grid.RowDefinitions>
 				<GroupBox Header="Keep aspect ratio" Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="0" Margin="4">
-					<StackPanel>
-						<RadioButton x:Name="_guiKeepAspectNo" Content="No" Checked="EhKeepAspectChanged" />
-						<RadioButton x:Name="_guiKeepAspectX" Content="X priority" Checked="EhKeepAspectChanged" />
-						<RadioButton x:Name="_guiKeepAspectY" Content="Y priority" Checked="EhKeepAspectChanged" />
-					</StackPanel>
+                    <axogc:SingleChoiceRadioStackPanelDC ItemsSource="{Binding KeepAspect.Items}" SelectedItem="{Binding KeepAspect.SelectedItem, Mode=TwoWay}" Orientation="Vertical"/>
 				</GroupBox>
 
 				<GroupBox Header="Image size" Grid.Column="2" Grid.ColumnSpan="2" Grid.Row="0" Margin="4">
 					<StackPanel>
-						<RadioButton x:Name="_guiScaleWithAbs" Content="Absolute" Checked="EhScalingModeChanged" />
-						<RadioButton x:Name="_guiScaleWithSource" Content="Rel. to source:" Checked="EhScalingModeChanged" />
+						<RadioButton IsChecked="{Binding IsSizeCalculationAbsolute, Mode=TwoWay}" Content="Absolute" />
+						<RadioButton IsChecked="{Binding IsSizeCalculationBasedOnSourceSize, Mode=TwoWay}" Content="Rel. to source:"  />
 						<StackPanel Orientation="Horizontal">
 							<Label Content="(" Margin="0" />
-							<axogc:QuantityWithUnitTextBox x:Name="_guiSrcSizeX" UnitEnvironment="{x:Static axog:SizeEnvironment.Instance}" IsEnabled="False" />
+							<axogc:QuantityWithUnitTextBox SelectedQuantity="{Binding SrcSizeX}" UnitEnvironment="{Binding SrcSizeEnvironment}" IsEnabled="False" />
 							<Label Content="x" Margin="0" />
-							<axogc:QuantityWithUnitTextBox x:Name="_guiSrcSizeY" UnitEnvironment="{x:Static axog:SizeEnvironment.Instance}" IsEnabled="False" />
+							<axogc:QuantityWithUnitTextBox SelectedQuantity="{Binding SrcSizeY}" UnitEnvironment="{Binding SrcSizeEnvironment}" IsEnabled="False" />
 							<Label Content=")" Margin="0" />
 						</StackPanel>
 					</StackPanel>
 				</GroupBox>
 
 				<GroupBox  Grid.Row="2" Grid.ColumnSpan="4" Header="Location">
-					<Border x:Name="_guiLocationHost" />
+					<ContentControl Content="{Binding LocationController.ViewObject}" />
 				</GroupBox>
-
-				<!-- <axogg:PositionSizeRotationScaleControl x:Name="_ctrlPosSize" /> -->
 			</Grid>
 		</TabItem>
 	</TabControl>

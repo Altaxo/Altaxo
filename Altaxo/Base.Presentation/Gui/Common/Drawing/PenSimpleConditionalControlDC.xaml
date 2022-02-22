@@ -25,7 +25,10 @@
         <Label Grid.Column="0" Content="Show outline:" HorizontalAlignment="Right"/>
         <CheckBox Grid.Column="1" IsChecked="{Binding IsPenEnabled, Mode=TwoWay}" Content="     " HorizontalAlignment="Left" Margin="0,6,0,0" />
         <Label Grid.Column="2" Content="Pen brush:" HorizontalAlignment="Right"/>
-        <axogcd:BrushComboBox Grid.Column="3" SelectedBrush="{Binding Brush}" ShowPlotColorsOnly="{Binding ShowPlotColorsOnly}" IsEnabled="{Binding IsPenEnabled}" />
+        <axogcd:BrushComboBox Grid.Column="3" SelectedBrush="{Binding Brush}" 
+                              ShowPlotColorsOnly="{Binding ShowPlotColorsOnly}" 
+                              CustomPenCommand="{Binding CmdShowCustomPen}"
+                              IsEnabled="{Binding IsPenEnabled}" />
         <Label Grid.Row="2" Grid.Column="0" Content="Pen style:" HorizontalAlignment="Right" />
         <axogdd:DashPatternComboBox Grid.Row="2" Grid.Column="1" SelectedItem="{Binding DashPattern}" IsEnabled="{Binding IsPenEnabled}" />
         <Label Grid.Row="2" Grid.Column="2" Content="Thickness:" HorizontalAlignment="Right"/>
