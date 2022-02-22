@@ -18,7 +18,7 @@ namespace Altaxo.Gui.Common
   /// <summary>
   /// Interaction logic for TabbedElementControlDC.xaml
   /// </summary>
-  public partial class TabbedElementControlDC : UserControl
+  public partial class TabbedElementControlDC : UserControl, ITabbedElementViewDC
   {
     public TabbedElementControlDC()
     {

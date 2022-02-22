@@ -24,14 +24,14 @@
 
 using System.Windows.Controls;
 
-namespace Altaxo.Gui.Graph.Gdi.Shapes
+namespace Altaxo.Gui.Common.Drawing
 {
   /// <summary>
-  /// Interaction logic for ShapeGraphicControl.xaml
+  /// Interaction logic for BrushSimpleConditionalControl.xaml
   /// </summary>
-  public partial class ClosedPathShapeControl : UserControl, IClosedPathShapeView
+  public partial class BrushSimpleConditionalControlDC : UserControl
   {
-    public ClosedPathShapeControl()
+    public BrushSimpleConditionalControlDC()
     {
       InitializeComponent();
     }

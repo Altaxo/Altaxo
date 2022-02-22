@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -26,28 +26,20 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Windows;
 using System.Windows.Controls;
+using Altaxo.Drawing;
 
-namespace Altaxo.Gui.Graph.Gdi.Shapes
+namespace Altaxo.Gui.Common.Drawing
 {
   /// <summary>
-  /// Interaction logic for RegularPolygonControl.xaml
+  /// Interaction logic for PenSimpleConditionalControl.xaml
   /// </summary>
-  public partial class ClosedCardinalSplineControl : UserControl, IClosedCardinalSplineView
+  public partial class PenSimpleConditionalControlDC : UserControl, IPenSimpleConditionalView
   {
-    public ClosedCardinalSplineControl()
+    public PenSimpleConditionalControlDC()
     {
       InitializeComponent();
-    }
-
-    public IClosedPathShapeView ShapeGraphicView
-    {
-      get { return _guiShapeControl; }
-    }
-
-    public ICardinalSplinePointsView SplinePointsView
-    {
-      get { return _guiPointsControl; }
     }
   }
 }

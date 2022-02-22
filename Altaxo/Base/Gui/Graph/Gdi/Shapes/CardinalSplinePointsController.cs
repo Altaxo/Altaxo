@@ -43,7 +43,7 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
   }
 
   [ExpectedTypeOfView(typeof(ICardinalSplinePointsView))]
-  public class CardinalSplinePointsController : MVCANControllerEditImmutableDocBase<(IList<PointD2D> CurvePoints, double Tension), ICardinalSplinePointsView>
+  public class CardinalSplinePointsController : MVCANControllerEditImmutableDocBase<(List<PointD2D> CurvePoints, double Tension), ICardinalSplinePointsView>
   {
     GraphicBase _documentNode;
 

@@ -101,8 +101,7 @@ namespace Altaxo.Gui
     /// <exception cref="System.ObjectDisposedException">The controller was already disposed.</exception>
     protected virtual void Initialize(bool initData)
     {
-      if (_doc is null)
-        throw new InvalidOperationException("This controller was not initialized with a document.");
+      ThrowIfNotInitialized();
       if (IsDisposed)
         throw new ObjectDisposedException("The controller was already disposed. Type: " + GetType().FullName);
     }

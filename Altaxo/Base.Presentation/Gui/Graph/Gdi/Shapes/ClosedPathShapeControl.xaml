@@ -3,8 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-						 xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing"
-						 xmlns:axogg="clr-namespace:Altaxo.Gui.Graph"
+			 xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing"
+			 xmlns:axogg="clr-namespace:Altaxo.Gui.Graph" xmlns:shapes="clr-namespace:Altaxo.Gui.Graph.Gdi.Shapes;assembly=AltaxoBase" d:DataContext="{d:DesignInstance Type=shapes:ClosedPathShapeController}"
              mc:Ignorable="d"
 >
 	<UserControl.Resources>
@@ -35,13 +35,13 @@
 		<Rectangle Grid.Row="3" Grid.ColumnSpan="4" Style="{StaticResource HorzSeparatorStyle}" />
 
 		<GroupBox Grid.Row="0" Header="Outlining">
-			<axogcd:PenSimpleConditionalControl x:Name="_outlinePenControl" />
+			<axogcd:PenSimpleConditionalControlDC DataContext="{Binding PenController}" />
 		</GroupBox>
 		<GroupBox Grid.Row="2" Header="Filling">
-			<axogcd:BrushSimpleConditionalControl x:Name="_fillingBrushControl" />
+			<axogcd:BrushSimpleConditionalControlDC DataContext="{Binding BrushController}" />
 		</GroupBox>
 		<GroupBox  Grid.Row="4" Header="Location">
-			<Border x:Name="_guiLocationHost" />
+			<ContentControl Content="{Binding LocationController.ViewObject}" />
 		</GroupBox>
 	</Grid>
 </UserControl>

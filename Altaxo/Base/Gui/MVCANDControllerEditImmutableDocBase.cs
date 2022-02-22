@@ -116,8 +116,7 @@ namespace Altaxo.Gui
 
     protected override bool ApplyEnd(bool applyResult, bool disposeController)
     {
-      if (_doc is null)
-        throw NoDocumentException;
+      ThrowIfNotInitialized();
 
       if (true == applyResult)
       {
@@ -142,12 +141,11 @@ namespace Altaxo.Gui
     /// <summary>
     /// Gets the provisional model object. This is the model object that is based on the current user input.
     /// </summary>
-    public object ProvisionalModelObject
+    public virtual object ProvisionalModelObject
     {
       get
       {
-        if (_doc is null)
-          throw NoDocumentException;
+        ThrowIfNotInitialized();
         return _doc;
       }
     }

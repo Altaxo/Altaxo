@@ -30,28 +30,80 @@ using Altaxo.Drawing;
 using Altaxo.Graph;
 using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Gdi.Shapes;
+using Altaxo.Gui.Common.Drawing;
 
 namespace Altaxo.Gui.Graph.Gdi.Shapes
 {
-  public interface IClosedPathShapeView
+  public interface IClosedPathShapeView : IDataContextAwareView
   {
-    PenX DocPen { get; set; }
-
-    BrushX DocBrush { get; set; }
-
-    object LocationView { set; }
+   
   }
 
   [UserControllerForObject(typeof(ClosedPathShapeBase))]
   [ExpectedTypeOfView(typeof(IClosedPathShapeView))]
   public class ClosedPathShapeController : MVCANControllerEditOriginalDocBase<ClosedPathShapeBase, IClosedPathShapeView>
   {
-    private IMVCANController _locationController;
+  
 
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_locationController, () => _locationController = null);
+      yield return new ControllerAndSetNullMethod(_brushController, () => _brushController = null);
+      yield return new ControllerAndSetNullMethod(_penController, () => _penController = null);
     }
+
+    #region Bindings
+
+    private PenSimpleConditionalController _penController;
+
+    public PenSimpleConditionalController PenController
+    {
+      get => _penController;
+      set
+      {
+        if (!(_penController == value))
+        {
+          _penController = value;
+          OnPropertyChanged(nameof(PenController));
+        }
+      }
+    }
+
+    private BrushSimpleConditionalController _brushController;
+
+    public BrushSimpleConditionalController BrushController
+    {
+      get => _brushController;
+      set
+      {
+        if (!(_brushController == value))
+        {
+          _brushController = value;
+          OnPropertyChanged(nameof(BrushController));
+        }
+      }
+    }
+
+
+
+
+    private IMVCANController _locationController;
+
+    public IMVCANController LocationController
+    {
+      get => _locationController;
+      set
+      {
+        if (!(_locationController == value))
+        {
+          _locationController = value;
+          OnPropertyChanged(nameof(LocationController));
+        }
+      }
+    }
+
+
+    #endregion
 
     protected override void Initialize(bool initData)
     {
@@ -61,12 +113,9 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
       {
         _locationController = (IMVCANController)Current.Gui.GetController(new object[] { _doc.Location }, typeof(IMVCANController), UseDocument.Directly);
         Current.Gui.FindAndAttachControlTo(_locationController);
-      }
-      if (_view is not null)
-      {
-        _view.DocPen = _doc.Pen;
-        _view.DocBrush = _doc.Brush;
-        _view.LocationView = _locationController.ViewObject;
+
+        PenController = new PenSimpleConditionalController(_doc.Pen);
+        BrushController = new BrushSimpleConditionalController(_doc.Brush);
       }
     }
 
@@ -75,8 +124,8 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
       if (!_locationController.Apply(disposeController))
         return false;
 
-      _doc.Pen = _view.DocPen;
-      _doc.Brush = _view.DocBrush;
+      _doc.Pen = PenController.Pen;
+      _doc.Brush = BrushController.Doc;
 
       if (!object.ReferenceEquals(_doc.Location, _locationController.ModelObject))
         _doc.Location.CopyFrom((ItemLocationDirect)_locationController.ModelObject);
