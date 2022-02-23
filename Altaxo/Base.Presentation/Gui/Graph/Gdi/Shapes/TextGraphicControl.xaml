@@ -7,9 +7,10 @@
 						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
 						 xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing"
 						 xmlns:axogg="clr-namespace:Altaxo.Gui.Graph"
-						 xmlns:axoggs="clr-namespace:Altaxo.Gui.Graph.Gdi.Shapes"
-						 mc:Ignorable="d"
-						 Loaded="EhLoaded">
+						 xmlns:axoggs="clr-namespace:Altaxo.Gui.Graph.Gdi.Shapes" 
+			 xmlns:localmodel="clr-namespace:Altaxo.Gui.Graph.Gdi.Shapes;assembly=AltaxoBase" 
+             d:DataContext="{d:DesignInstance Type=localmodel:TextGraphicController}"
+             mc:Ignorable="d">
 	<UserControl.Resources>
 		<Style TargetType="Button">
 			<Style.Setters>
@@ -23,7 +24,8 @@
 				<Setter Property="HorizontalAlignment" Value="Right" />
 			</Style.Setters>
 		</Style>
-	</UserControl.Resources>
+        <axoggs:TextGraphicToImageConverter x:Key="TextGraphicToImageConverter"/>
+    </UserControl.Resources>
 	<TabControl>
 		<TabItem Header="Appearance">
 			<Grid>
@@ -50,82 +52,97 @@
 					<RowDefinition Height="4" />
 				</Grid.RowDefinitions>
 				<Label Grid.Column="0" Grid.Row="0" Content="Font:" />
-				<axogcd:FontFamilyComboBox x:Name="m_cbFonts" Grid.Column="1" Grid.Row="0" SelectedFontFamilyNameChanged="EhFontFamilyChanged" />
+				<axogcd:FontFamilyComboBox Grid.Column="1" Grid.Row="0" SelectedFontFamilyName="{Binding FontController.SelectedFontFamilyName}" />
 				<Label Grid.Column="2" Grid.Row="0" Content="Size:" />
-				<axogcd:FontSizeComboBox x:Name="m_cbFontSize" Grid.Column="3" Grid.Row="0" SelectedQuantityChanged="EhFontSize_Changed" />
+				<axogcd:FontSizeComboBox Grid.Column="3" Grid.Row="0" SelectedQuantityAsValueInPoints="{Binding FontController.SelectedFontSize}" />
 				<Label Grid.Column="4" Grid.Row="0" Content="Brush:" />
-				<axogcd:BrushComboBox x:Name="m_cbFontColor" Grid.Column="5" Grid.Row="0" SelectedBrushChanged="EhTextBrush_SelectionChangeCommitted" />
+				<axogcd:BrushComboBox Grid.Column="5" Grid.Row="0" SelectedBrush="{Binding FontBrush}" />
 
 				<Label Grid.Column="0" Grid.Row="2" Content="LineSpacing:" />
-				<axogc:QuantityWithUnitTextBox x:Name="_guiLineSpacing" Grid.Column="1" Grid.Row="2" UnitEnvironment="{x:Static axog:RelationEnvironment.Instance}" DisallowNegativeValues="True" SelectedQuantityChanged="EhLineSpacingChanged" />
+				<axogc:QuantityWithUnitTextBox Grid.Column="1" Grid.Row="2" SelectedQuantity="{Binding LineSpacing}" UnitEnvironment="{Binding LineSpacingEnvironment}" DisallowNegativeValues="True" />
 
 				<Label Grid.Column="2" Grid.Row="2" Content="Background:" />
-				<ComboBox x:Name="_cbBackgroundStyle" Grid.Column="3" Grid.ColumnSpan="2" Grid.Row="2" Margin="0,0,8,0" />
-				<axogcd:BrushComboBox x:Name="_cbBackgroundBrush" Grid.Column="5" Grid.Row="2" />
+				<ComboBox Grid.Column="3" Grid.ColumnSpan="2" Grid.Row="2" ItemsSource="{Binding BackgroundController.BackgroundStyles.Items}" SelectedItem="{Binding BackgroundController.BackgroundStyles.SelectedItem, Mode=TwoWay}" Margin="0,0,8,0" />
+				<axogcd:BrushComboBox Grid.Column="5" Grid.Row="2" SelectedBrush="{Binding BackgroundController.BackgroundBrush}" />
 
 				<StackPanel Orientation="Horizontal" Grid.Column="0" Grid.ColumnSpan="8" Grid.Row="6">
-					<Button Content="N" FontFamily="Times New Roman" ToolTip="Normal" Click="EhNormal_Click" />
-					<Button Content="B" FontFamily="Times New Roman" FontWeight="Bold" ToolTip="Bold" Click="EhBold_Click" />
-					<Button Content="I" FontFamily="Times New Roman" FontStyle="Italic" ToolTip="Italic" Click="EhItalic_Click" />
-					<Button FontFamily="Times New Roman" ToolTip="Underline" Click="EhUnderline_Click">
+					<Button Content="N" FontFamily="Times New Roman" ToolTip="Normal" Command="{Binding CmdNormal}" />
+                    <Button Content="B" FontFamily="Times New Roman" FontWeight="Bold" ToolTip="Bold" Command="{Binding CmdBold}" />
+                    <Button Content="I" FontFamily="Times New Roman" FontStyle="Italic" ToolTip="Italic" Command="{Binding CmdItalic}" />
+                    <Button FontFamily="Times New Roman" ToolTip="Underline" Command="{Binding CmdUnderline}">
 						<Grid>
 							<TextBlock Text="U" />
 							<Rectangle Height="1" Width="10" Fill="Red" VerticalAlignment="Bottom" />
 						</Grid>
 					</Button>
-					<Button FontFamily="Times New Roman" ToolTip="Strikeout" Click="EhStrikeout_Click">
+                    <Button FontFamily="Times New Roman" ToolTip="Strikeout" Command="{Binding CmdStrikeout}">
 						<Grid>
 							<TextBlock Text="S" />
 							<Rectangle Height="1" Width="10" Fill="Red" />
 						</Grid>
 					</Button>
-					<Button FontFamily="Times New Roman" ToolTip="Superscript" Click="EhSupIndex_Click">
+                    <Button FontFamily="Times New Roman" ToolTip="Superscript" Command="{Binding CmdSupIndex}">
 						<TextBlock>
 					<Run FontFamily="Times New Roman" Text="x" />
 					<Run FontFamily="Times New Roman" BaselineAlignment="Superscript"  FontSize="8" Text="2" Foreground="Red" />
 						</TextBlock>
 					</Button>
-					<Button FontFamily="Times New Roman" ToolTip="Supscript" Click="EhSubIndex_Click">
+                    <Button FontFamily="Times New Roman" ToolTip="Supscript" Command="{Binding CmdSubIndex}">
 						<TextBlock>
 					<Run FontFamily="Times New Roman" Text="x" />
 					<Run FontFamily="Times New Roman" BaselineAlignment="Subscript" FontSize="8" Text="2" Foreground="Red" />
 						</TextBlock>
 					</Button>
-					<Button Content="G" FontFamily="Symbol" ToolTip="Greek" Click="EhGreek_Click" />
+                    <Button Content="G" FontFamily="Symbol" ToolTip="Greek" Command="{Binding CmdGreek}" />
 					<Menu VerticalAlignment="Center">
 						<MenuItem Header="More modifiers ...">
-							<MenuItem Header="\=(a,b)   (sub- and superscript)" Tag="\=(a,b)" Click="EhMoreModifiersClicked" />
-							<MenuItem Header="\ad(x)    (dot over)" Tag="\ad(x)" Click="EhMoreModifiersClicked" />
-							<MenuItem Header="\ab(x)    (bar over)" Tag="\ab(x)" Click="EhMoreModifiersClicked" />
-							<MenuItem Header="\c(red,abc)   (set font color)" Tag="\c(red,abc)" Click="EhMoreModifiersClicked" />
-							<MenuItem Header="\p(200%,abc)   (set relative font size)" Tag="\p(200%,abc)" Click="EhMoreModifiersClicked" />
-							<MenuItem Header="\p(20pt,abc)   (set absolute font size)" Tag="\p(20pt,abc)" Click="EhMoreModifiersClicked" />
+                            <MenuItem Header="\=(a,b)   (sub- and superscript)" CommandParameter="\=(a,b)" Command="{Binding CmdMoreModifiers}" />
+                            <MenuItem Header="\ad(x)    (dot over)" CommandParameter="\ad(x)" Command="{Binding CmdMoreModifiers}" />
+                            <MenuItem Header="\ab(x)    (bar over)" CommandParameter="\ab(x)" Command="{Binding CmdMoreModifiers}" />
+                            <MenuItem Header="\c(red,abc)   (set font color)" CommandParameter="\c(red,abc)" Command="{Binding CmdMoreModifiers}" />
+                            <MenuItem Header="\p(200%,abc)   (set relative font size)" CommandParameter="\p(200%,abc)" Command="{Binding CmdMoreModifiers}" />
+                            <MenuItem Header="\p(20pt,abc)   (set absolute font size)" CommandParameter="\p(20pt,abc)" Command="{Binding CmdMoreModifiers}" />
 
-							<MenuItem Header="\id($DI)  (include document identifier)" Tag="\id($DI)" Click="EhMoreModifiersClicked" />
+                            <MenuItem Header="\id($DI)  (include document identifier)" CommandParameter="\id($DI)" Command="{Binding CmdMoreModifiers}" />
 
-							<MenuItem Header="\l(0)   (symbol for plot item 0)" Tag="\l(0)" Click="EhMoreModifiersClicked" />
-							<MenuItem Header="\l(0,0) (symbol for layer 0 / plot item 0)" Tag="\l(0,0)" Click="EhMoreModifiersClicked" />
+                            <MenuItem Header="\l(0)   (symbol for plot item 0)" CommandParameter="\l(0)" Command="{Binding CmdMoreModifiers}" />
+                            <MenuItem Header="\l(0,0) (symbol for layer 0 / plot item 0)" CommandParameter="\l(0,0)" Command="{Binding CmdMoreModifiers}" />
 
-							<MenuItem Header="\%(0) (text for plot item 0)" Tag="\%(0)" Click="EhMoreModifiersClicked" />
-							<MenuItem Header="\%(0,0) (text for layer 0 / plot item 0)" Tag="\%(0,0)" Click="EhMoreModifiersClicked" />
-							<MenuItem Click="EhMoreModifiersClicked">
+                            <MenuItem Header="\%(0) (text for plot item 0)" CommandParameter="\%(0)" Command="{Binding CmdMoreModifiers}" />
+                            <MenuItem Header="\%(0,0) (text for layer 0 / plot item 0)" CommandParameter="\%(0,0)" Command="{Binding CmdMoreModifiers}" />
+                            <MenuItem Command="{Binding CmdMoreModifiers}">
 								<MenuItem.Header>\%(0,0, "nameOfPropertyColum") (text for layer 0 / plot item 0, use the value of the property column)</MenuItem.Header>
-								<MenuItem.Tag>\%(0,0,"nameOfPropertyColumn")</MenuItem.Tag>
+                                <MenuItem.CommandParameter>\%(0,0,"nameOfPropertyColumn")</MenuItem.CommandParameter>
 							</MenuItem>
 						</MenuItem>
 					</Menu>
 				</StackPanel>
 
 				<ScrollViewer Grid.Column="0" Grid.Row="8" Grid.ColumnSpan="8" MinHeight="120">
-					<TextBox x:Name="_guiText" AcceptsReturn="True" AcceptsTab="True" TextChanged="EhEditText_TextChanged" />
+					<axogc:TextBoxWithBindableSelection x:Name="_guiText" Text="{Binding EditText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" SelectionInfo="{Binding TextSelection}"  AcceptsReturn="True" AcceptsTab="True" />
 				</ScrollViewer>
 
-				<Rectangle x:Name="_probePreviewSizeRectangle" Grid.Column="0" Grid.Row="10" Grid.ColumnSpan="8" MinHeight="120" SizeChanged="EhPreview_SizeChanged" />
-				<Image x:Name="m_pnPreview" SnapsToDevicePixels="True" Grid.Column="0" Grid.Row="10" Grid.ColumnSpan="8" Width="{Binding ElementName=_probePreviewSizeRectangle, Path=ActualWidth}" Height="{Binding ElementName=_probePreviewSizeRectangle, Path=ActualHeight}"  Stretch="Uniform" />
-			</Grid>
+				<Rectangle x:Name="_probePreviewSizeRectangle" Grid.Column="0" Grid.Row="10" Grid.ColumnSpan="8" MinHeight="120" />
+                <Image 
+                       SnapsToDevicePixels="True"
+                       Grid.Column="0" Grid.Row="10" Grid.ColumnSpan="8"
+                       Width="{Binding ElementName=_probePreviewSizeRectangle, Path=ActualWidth}"
+                       Height="{Binding ElementName=_probePreviewSizeRectangle, Path=ActualHeight}"
+
+                       Stretch="Uniform"                        
+                       >
+                    <Image.Source>
+                        <MultiBinding Converter="{StaticResource TextGraphicToImageConverter}">
+                            <Binding Path="Doc"/>
+                            <Binding ElementName="_probePreviewSizeRectangle" Path="ActualWidth"/>
+                            <Binding ElementName="_probePreviewSizeRectangle" Path="ActualHeight"/>
+                        </MultiBinding>
+                    </Image.Source>
+                </Image>
+            </Grid>
 		</TabItem>
 		<TabItem Header="Position">
-			<Border x:Name="_guiPositionHost" />
+			<ContentControl Content="{Binding LocationController.ViewObject}" />
 		</TabItem>
 	</TabControl>
 </UserControl>

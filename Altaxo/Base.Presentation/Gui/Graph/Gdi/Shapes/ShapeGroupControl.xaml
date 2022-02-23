@@ -3,8 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-						 xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing"
-						 xmlns:axogg="clr-namespace:Altaxo.Gui.Graph"
+             xmlns:shapes="clr-namespace:Altaxo.Gui.Graph.Gdi.Shapes;assembly=AltaxoBase" 
+             d:DataContext="{d:DesignInstance Type=shapes:ShapeGroupController}"
              mc:Ignorable="d">
 	<UserControl.Resources>
 		<LinearGradientBrush x:Key="HorzSeparatorBrush" StartPoint="0,0" EndPoint="0,1">
@@ -34,10 +34,10 @@
 		<Rectangle Grid.Row="3" Style="{StaticResource HorzSeparatorStyle}" />
 
 		<GroupBox  Grid.Row="0" Header="Location">
-			<Border x:Name="_guiLocationHost" />
+			<ContentControl Content="{Binding LocationController.ViewObject}" />
 		</GroupBox>
 		<GroupBox Grid.Row="2" Header="Items">
-			<ListBox x:Name="_guiShapeGroupItems" MouseDoubleClick="EhItemListDoubleClick">
+			<ListBox ItemsSource="{Binding GroupedItems.Items}" SelectedItem="{Binding GroupedItems.SelectedItem, Mode=TwoWay}">
 			</ListBox>
 		</GroupBox>
 	</Grid>

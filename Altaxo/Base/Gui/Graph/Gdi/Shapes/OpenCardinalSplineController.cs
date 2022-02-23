@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -23,25 +23,17 @@
 #endregion Copyright
 
 #nullable disable
-using System;
 using System.Collections.Generic;
-using System.Text;
+using Altaxo.Collections;
 using Altaxo.Geometry;
-using Altaxo.Graph;
 using Altaxo.Graph.Gdi.Shapes;
+using Altaxo.Gui.Common;
 
 namespace Altaxo.Gui.Graph.Gdi.Shapes
 {
-  public interface IOpenCardinalSplineView
-  {
-    IOpenPathShapeView LineGraphicView { get; }
-
-    ICardinalSplinePointsView SplinePointsView { get; }
-  }
-
   [UserControllerForObject(typeof(OpenCardinalSpline), 110)]
-  [ExpectedTypeOfView(typeof(IOpenCardinalSplineView))]
-  public class OpenCardinalSplineController : MVCANControllerEditOriginalDocBase<OpenCardinalSpline, IOpenCardinalSplineView>
+  [ExpectedTypeOfView(typeof(ITabbedElementViewDC))]
+  public class OpenCardinalSplineController : MVCANControllerEditOriginalDocBase<OpenCardinalSpline, ITabbedElementViewDC>
   {
     private OpenPathShapeController _lineCtrl;
     private CardinalSplinePointsController _splinePointsCtrl;
@@ -52,6 +44,34 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
       //yield return new ControllerAndSetNullMethod(_splinePointsCtrl, () => _splinePointsCtrl = null);
     }
 
+    #region Bindings
+
+    public SelectableListNodeList Tabs { get; } = new();
+
+    private int? _selectedTab;
+
+    /// <summary>
+    /// Gets or sets the selected tab. The value of -1 selectes the data tab, values &gt;= 0 select one of the style tabs.
+    /// </summary>
+    /// <value>
+    /// The selected tab.
+    /// </value>
+    public int? SelectedTab
+    {
+      get => _selectedTab;
+      set
+      {
+        if (!(_selectedTab == value))
+        {
+          var oldValue = _selectedTab;
+          _selectedTab = value;
+          OnPropertyChanged(nameof(SelectedTab));
+        }
+      }
+    }
+
+    #endregion
+
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -60,14 +80,17 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
       {
         _lineCtrl = new OpenPathShapeController() { UseDocumentCopy = UseDocument.Directly };
         _lineCtrl.InitializeDocument(_doc);
-      }
-      if (_view is not null)
-      {
-        if (_lineCtrl.ViewObject is null)
-          _lineCtrl.ViewObject = _view.LineGraphicView;
+        Current.Gui.FindAndAttachControlTo(_lineCtrl);
+
+
 
         _splinePointsCtrl = new CardinalSplinePointsController(_doc.CurvePoints, _doc.Tension, _doc);
-        _splinePointsCtrl.ViewObject = _view.SplinePointsView;
+        Current.Gui.FindAndAttachControlTo(_splinePointsCtrl);
+
+        Tabs.Add(new SelectableListNodeWithController("Appearance/Position", 0, true) { Controller = _lineCtrl });
+        Tabs.Add(new SelectableListNodeWithController("Curve", 1, false) { Controller = _splinePointsCtrl });
+        SelectedTab = 0;
+
       }
     }
 

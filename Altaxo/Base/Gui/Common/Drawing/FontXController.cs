@@ -33,7 +33,7 @@ namespace Altaxo.Gui.Common.Drawing
   }
 
   [ExpectedTypeOfView(typeof(IFontXView))]
-  public class FontXController : MVCANControllerEditImmutableDocBase<FontX, IFontXView>
+  public class FontXController : MVCANDControllerEditImmutableDocBase<FontX, IFontXView>
   {
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
@@ -60,6 +60,7 @@ namespace Altaxo.Gui.Common.Drawing
           ApplyFontFamily(value);
           OnPropertyChanged(nameof(SelectedFontFamilyName));
           OnPropertyChanged(nameof(SelectedFontSize));
+          OnMadeDirty();
         }
       }
     }
@@ -73,6 +74,7 @@ namespace Altaxo.Gui.Common.Drawing
         {
           _doc = _doc.WithSize(value);
           OnPropertyChanged(nameof(SelectedFontSize));
+          OnMadeDirty();
         }
       }
     }
@@ -86,6 +88,7 @@ namespace Altaxo.Gui.Common.Drawing
         {
          _doc = _doc.WithStyle(value);
           OnPropertyChanged(nameof(SelectedFontStyle));
+          OnMadeDirty();
         }
       }
     }
@@ -93,6 +96,14 @@ namespace Altaxo.Gui.Common.Drawing
 
     #endregion
 
+
+    public FontX Doc => _doc;
+
+    protected override void OnMadeDirty()
+    {
+      base.OnMadeDirty();
+      OnPropertyChanged(nameof(Doc));
+    }
 
     protected override void Initialize(bool initData)
     {

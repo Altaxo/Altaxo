@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -22,12 +22,7 @@
 
 #endregion Copyright
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Windows.Controls;
-using Altaxo.Units;
 
 namespace Altaxo.Gui.Graph.Gdi.Shapes
 {
@@ -39,35 +34,6 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
     public RegularPolygonControl()
     {
       InitializeComponent();
-    }
-
-    public IClosedPathShapeView ShapeGraphicView
-    {
-      get { return _guiShapeControl; }
-    }
-
-    public int Vertices
-    {
-      get
-      {
-        return _guiNumberOfVertices.Value;
-      }
-      set
-      {
-        _guiNumberOfVertices.Value = value;
-      }
-    }
-
-    public double CornerRadiusPt
-    {
-      get
-      {
-        return _guiCornerRadius.SelectedQuantity.AsValueIn(Altaxo.Units.Length.Point.Instance);
-      }
-      set
-      {
-        _guiCornerRadius.SelectedQuantity = new DimensionfulQuantity(value, Altaxo.Units.Length.Point.Instance).AsQuantityIn(_guiCornerRadius.UnitEnvironment.DefaultUnit);
-      }
     }
   }
 }

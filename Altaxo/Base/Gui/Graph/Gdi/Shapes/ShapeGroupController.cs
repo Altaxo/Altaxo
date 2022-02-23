@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -23,42 +23,66 @@
 #endregion Copyright
 
 #nullable disable
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Altaxo.Collections;
-using Altaxo.Graph;
 using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Gdi.Shapes;
+using Altaxo.Gui.Common;
 
 namespace Altaxo.Gui.Graph.Gdi.Shapes
 {
-  public interface IShapeGroupView
+  public interface IShapeGroupView : IDataContextAwareView
   {
-    object LocationView { set; }
-
-    void InitializeItemList(SelectableListNodeList list);
-
-    event Action SelectedItemEditing;
   }
 
   [UserControllerForObject(typeof(ShapeGroup))]
   [ExpectedTypeOfView(typeof(IShapeGroupView))]
   public class ShapeGroupController : MVCANControllerEditOriginalDocBase<ShapeGroup, IShapeGroupView>
   {
-    private SelectableListNodeList _itemList;
+    public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+    {
+      yield return new ControllerAndSetNullMethod(_locationController, () => LocationController = null);
+    }
+
+    #region Bindings
 
     private IMVCANController _locationController;
 
-    public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+    public IMVCANController LocationController
     {
-      yield return new ControllerAndSetNullMethod(_locationController, () => _locationController = null);
+      get => _locationController;
+      set
+      {
+        if (!(_locationController == value))
+        {
+          _locationController?.Dispose();
+          _locationController = value;
+          OnPropertyChanged(nameof(LocationController));
+        }
+      }
     }
+
+    private ItemsController<GraphicBase> _groupedItems;
+
+    public ItemsController<GraphicBase> GroupedItems
+    {
+      get => _groupedItems;
+      set
+      {
+        if (!(_groupedItems == value))
+        {
+          _groupedItems?.Dispose();
+          _groupedItems = value;
+          OnPropertyChanged(nameof(GroupedItems));
+        }
+      }
+    }
+
+    #endregion
 
     public override void Dispose(bool isDisposing)
     {
-      _itemList = null;
+      GroupedItems = null;
       base.Dispose(isDisposing);
     }
 
@@ -68,23 +92,17 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
 
       if (initData)
       {
-        _itemList = new SelectableListNodeList();
-
+        var itemList = new SelectableListNodeList();
         foreach (var d in _doc.GroupedObjects)
         {
           var node = new SelectableListNode(d.GetType().ToString(), d, false);
-          _itemList.Add(node);
+          itemList.Add(node);
         }
+        GroupedItems = new ItemsController<GraphicBase>(itemList);
 
-        _locationController = (IMVCANController)Current.Gui.GetController(new object[] { _doc.Location }, typeof(IMVCANController), UseDocument.Directly);
-        Current.Gui.FindAndAttachControlTo(_locationController);
-      }
-
-      if (_view is not null)
-      {
-        _view.InitializeItemList(_itemList);
-
-        _view.LocationView = _locationController.ViewObject;
+        var locationController = (IMVCANController)Current.Gui.GetController(new object[] { _doc.Location }, typeof(IMVCANController), UseDocument.Directly);
+        Current.Gui.FindAndAttachControlTo(locationController);
+        LocationController = locationController;
       }
     }
 
@@ -99,36 +117,25 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
       return ApplyEnd(true, disposeController);
     }
 
-    protected override void AttachView()
-    {
-      _view.SelectedItemEditing += EhEditSelectedItem;
-    }
-
-    protected override void DetachView()
-    {
-      _view.SelectedItemEditing -= EhEditSelectedItem;
-    }
-
     private void EhEditSelectedItem()
     {
       _locationController.Apply(false);
 
-      var node = _itemList.FirstSelectedNode;
-      if (node is null)
-        return;
-      var item = (GraphicBase)node.Tag;
-      if (Current.Gui.ShowDialog(ref item, "Edit shape group item " + node.Text, true))
+      if (GroupedItems.SelectedValue is { } item)
       {
-        _doc.AdjustPosition();
-        UpdateLocationView();
+        if (Current.Gui.ShowDialog(ref item, "Edit shape group item " + GroupedItems.SelectedItem.Text, true))
+        {
+          _doc.AdjustPosition();
+          UpdateLocationView();
+        }
       }
     }
 
     private void UpdateLocationView()
     {
-      _locationController = (IMVCANController)Current.Gui.GetController(new object[] { _doc.Location }, typeof(IMVCANController), UseDocument.Directly);
-      Current.Gui.FindAndAttachControlTo(_locationController);
-      _view.LocationView = _locationController.ViewObject;
+      var locationController = (IMVCANController)Current.Gui.GetController(new object[] { _doc.Location }, typeof(IMVCANController), UseDocument.Directly);
+      Current.Gui.FindAndAttachControlTo(locationController);
+      LocationController = locationController;
     }
   }
 }

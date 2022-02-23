@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -23,32 +23,78 @@
 #endregion Copyright
 
 #nullable disable
-using System;
 using System.Collections.Generic;
-using System.Text;
 using Altaxo.Graph.Gdi.Shapes;
+using Altaxo.Units;
 
 namespace Altaxo.Gui.Graph.Gdi.Shapes
 {
-  public interface IRegularPolygonView
+  public interface IRegularPolygonView : IDataContextAwareView
   {
-    IClosedPathShapeView ShapeGraphicView { get; }
-
-    int Vertices { get; set; }
-
-    double CornerRadiusPt { get; set; }
   }
 
   [UserControllerForObject(typeof(RegularPolygon), 110)]
   [ExpectedTypeOfView(typeof(IRegularPolygonView))]
   public class RegularPolygonController : MVCANControllerEditOriginalDocBase<RegularPolygon, IRegularPolygonView>
   {
-    private ClosedPathShapeController _shapeCtrl;
+
 
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
-      yield return new ControllerAndSetNullMethod(_shapeCtrl, () => _shapeCtrl = null);
+      yield return new ControllerAndSetNullMethod(_shapeCtrl, () => ShapeCtrl = null);
     }
+
+    #region Bindings
+
+    private ClosedPathShapeController _shapeCtrl;
+
+    public ClosedPathShapeController ShapeCtrl
+    {
+      get => _shapeCtrl;
+      set
+      {
+        if (!(_shapeCtrl == value))
+        {
+          _shapeCtrl?.Dispose();
+          _shapeCtrl = value;
+          OnPropertyChanged(nameof(ShapeCtrl));
+        }
+      }
+    }
+
+
+    private int _vertices;
+
+    public int Vertices
+    {
+      get => _vertices;
+      set
+      {
+        if (!(_vertices == value))
+        {
+          _vertices = value;
+          OnPropertyChanged(nameof(Vertices));
+        }
+      }
+    }
+
+    public QuantityWithUnitGuiEnvironment CornerRadiusEnvironment => SizeEnvironment.Instance;
+    private DimensionfulQuantity _cornerRadius;
+
+    public DimensionfulQuantity CornerRadius
+    {
+      get => _cornerRadius;
+      set
+      {
+        if (!(_cornerRadius == value))
+        {
+          _cornerRadius = value;
+          OnPropertyChanged(nameof(CornerRadius));
+        }
+      }
+    }
+
+    #endregion
 
     protected override void Initialize(bool initData)
     {
@@ -56,16 +102,13 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
 
       if (initData)
       {
-        _shapeCtrl = new ClosedPathShapeController() { UseDocumentCopy = UseDocument.Directly };
-        _shapeCtrl.InitializeDocument(_doc);
-      }
-      if (_view is not null)
-      {
-        if (_shapeCtrl.ViewObject is null)
-          _shapeCtrl.ViewObject = _view.ShapeGraphicView;
+        var shapeCtrl = new ClosedPathShapeController() { UseDocumentCopy = UseDocument.Directly };
+        shapeCtrl.InitializeDocument(_doc);
+        Current.Gui.FindAndAttachControlTo(shapeCtrl);
+        ShapeCtrl = shapeCtrl;
 
-        _view.Vertices = _doc.NumberOfVertices;
-        _view.CornerRadiusPt = _doc.CornerRadius;
+        Vertices = _doc.NumberOfVertices;
+        CornerRadius = new DimensionfulQuantity(_doc.CornerRadius, Altaxo.Units.Length.Point.Instance).AsQuantityIn(CornerRadiusEnvironment.DefaultUnit);
       }
     }
 
@@ -74,8 +117,8 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
       if (!_shapeCtrl.Apply(disposeController))
         return false;
 
-      _doc.CornerRadius = _view.CornerRadiusPt;
-      _doc.NumberOfVertices = _view.Vertices;
+      _doc.CornerRadius = CornerRadius.AsValueIn(Altaxo.Units.Length.Point.Instance);
+      _doc.NumberOfVertices = Vertices;
 
       return ApplyEnd(true, disposeController);
     }

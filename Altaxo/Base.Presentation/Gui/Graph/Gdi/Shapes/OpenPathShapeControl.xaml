@@ -16,10 +16,10 @@
 		</Grid.RowDefinitions>
 
 		<GroupBox Grid.Row="0" Header="Appearance">
-			<axogcd:PenAllPropertiesControl x:Name="_penControl" DataContext="{Binding PenController}" />
+			<axogcd:PenAllPropertiesControl DataContext="{Binding PenController}" />
 		</GroupBox>
 		<GroupBox Grid.Row="1" Header="Positioning">
-			<ContentControl x:Name="_guiLocationHost" Content="{Binding LocationView}" />
+			<ContentControl Content="{Binding LocationView}" />
 		</GroupBox>
 	</Grid>
 </UserControl>
