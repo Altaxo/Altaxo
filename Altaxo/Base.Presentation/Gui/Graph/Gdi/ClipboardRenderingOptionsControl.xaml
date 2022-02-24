@@ -3,8 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
- 						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
- 						 xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing"
+             xmlns:gdi="clr-namespace:Altaxo.Gui.Graph.Gdi;assembly=AltaxoBase" 
+             d:DataContext="{d:DesignInstance Type=gdi:ClipboardRenderingOptionsController}"
              mc:Ignorable="d"
 
 >
@@ -22,8 +22,8 @@
 		</Style>
 	</UserControl.Resources>
 	<StackPanel Orientation="Vertical" Grid.IsSharedSizeScope="True">
-		<Border x:Name="_guiEmbeddedOptionsViewHost">
-		</Border>
+		<ContentControl Content="{Binding EmbeddedController.ViewObject}">
+		</ContentControl>
 		<Border>
 			<Grid>
 				<Grid.ColumnDefinitions>
@@ -43,15 +43,15 @@
 					<RowDefinition Height="4" />
 				</Grid.RowDefinitions>
 				<Label Grid.Column="0" Grid.Row="0" Content="Render drop file:" />
-				<CheckBox x:Name="_guiRenderDropfile"  Grid.Column="1" Grid.Row="0" Content="               " ToolTip="If checked, the graph is rendered as a temporary file onto the disk. Please select the image format and pixel format of the file to be used." />
+				<CheckBox Grid.Column="1" Grid.Row="0" IsChecked="{Binding RenderDropFile, Mode=TwoWay}" Content="               " ToolTip="If checked, the graph is rendered as a temporary file onto the disk. Please select the image format and pixel format of the file to be used." />
 				<Label Grid.Column="0" Grid.Row="2" Content="Drop file's image format:" />
-				<ComboBox x:Name="_cbImageFormat" Grid.Column="1" Grid.Row="2" SelectionChanged="EhImageFormatSelected" IsEnabled="{Binding ElementName=_guiRenderDropfile, Path=IsChecked}" />
+				<ComboBox Grid.Column="1" Grid.Row="2" ItemsSource ="{Binding DropFileImageFormat.Items}" SelectedItem="{Binding DropFileImageFormat.SelectedItem, Mode=TwoWay}" IsEnabled="{Binding RenderDropFile}" />
 				<Label Grid.Column="0" Grid.Row="4" Content="Drop file's pixel format:" />
-				<ComboBox x:Name="_cbPixelFormat" Grid.Column="1" Grid.Row="4" SelectionChanged="EhPixelFormatSelected" IsEnabled="{Binding ElementName=_guiRenderDropfile, Path=IsChecked}" />
+				<ComboBox Grid.Column="1" Grid.Row="4" ItemsSource="{Binding DropFilePixelFormat.Items}" SelectedItem="{Binding DropFilePixelFormat.SelectedItem, Mode=TwoWay}" IsEnabled="{Binding RenderDropFile}" />
 				<Label Grid.Column="0" Grid.Row="6" Content="Render embedded graph object:" />
-				<CheckBox x:Name="_guiRenderEmbeddedObject"  Grid.Column="1" Grid.Row="6" Content="               " IsEnabled="{Binding ElementName=_guiRenderEnhancedMetafile, Path=IsChecked}" ToolTip="If checked, the graph can be pasted into another application as embedded object." />
+				<CheckBox Grid.Column="1" Grid.Row="6" IsChecked="{Binding RenderEmbeddedObject, Mode=TwoWay}" Content="               " IsEnabled="{Binding ElementName=_guiRenderEnhancedMetafile, Path=IsChecked}" ToolTip="If checked, the graph can be pasted into another application as embedded object." />
 				<Label Grid.Column="0" Grid.Row="8" Content="Render linked graph object:" />
-				<CheckBox x:Name="_guiRenderLinkedObject"  Grid.Column="1" Grid.Row="8" Content="               " ToolTip="If checked, the graph can be pasted into another application as linked object. This is possible only if the Altaxo project already has a filename, i.e. it is saved to disk. The link will be broken if the Altaxo project file is renamed or deleted afterwards." />
+				<CheckBox Grid.Column="1" Grid.Row="8" IsChecked="{Binding RenderLinkedObject, Mode=TwoWay}" Content="               " ToolTip="If checked, the graph can be pasted into another application as linked object. This is possible only if the Altaxo project already has a filename, i.e. it is saved to disk. The link will be broken if the Altaxo project file is renamed or deleted afterwards." />
 			</Grid>
 		</Border>
 	</StackPanel>

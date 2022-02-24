@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2014 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -23,38 +23,22 @@
 #endregion Copyright
 
 #nullable disable
-using System;
 using System.Collections.Generic;
 using System.Drawing.Imaging;
-using System.Linq;
-using System.Text;
 using Altaxo.Collections;
 using Altaxo.Graph.Gdi;
+using Altaxo.Gui.Common;
 
 namespace Altaxo.Gui.Graph.Gdi
 {
-  public interface IClipboardRenderingOptionsView
+  public interface IClipboardRenderingOptionsView : IDataContextAwareView
   {
-    object EmbeddedRenderingOptionsView { set; }
-
-    bool RenderDropfile { get; set; }
-
-    void SetDropFileImageFormat(SelectableListNodeList list);
-
-    void SetDropFilePixelFormat(SelectableListNodeList list);
-
-    bool RenderEmbeddedObject { get; set; }
-
-    bool RenderLinkedObject { get; set; }
   }
 
   [ExpectedTypeOfView(typeof(IClipboardRenderingOptionsView))]
   [UserControllerForObject(typeof(ClipboardRenderingOptions), 101)]
   public class ClipboardRenderingOptionsController : MVCANControllerEditOriginalDocBase<ClipboardRenderingOptions, IClipboardRenderingOptionsView>
   {
-    private EmbeddedObjectRenderingOptionsController _embeddedController;
-    private SelectableListNodeList _imageFormat;
-    private SelectableListNodeList _pixelFormat;
 
     private static readonly ImageFormat[] ImageFormats = new ImageFormat[]
     {
@@ -63,7 +47,7 @@ namespace Altaxo.Gui.Graph.Gdi
       ImageFormat.Exif,
       ImageFormat.Gif,
 			//ImageFormat.Icon,
-			ImageFormat.Jpeg,
+	  ImageFormat.Jpeg,
 			//ImageFormat.MemoryBmp,
 			ImageFormat.Png,
       ImageFormat.Tiff,
@@ -106,10 +90,112 @@ namespace Altaxo.Gui.Graph.Gdi
       yield return new ControllerAndSetNullMethod(_embeddedController, () => _embeddedController = null);
     }
 
+    #region Bindings
+
+    private EmbeddedObjectRenderingOptionsController _embeddedController;
+
+    public EmbeddedObjectRenderingOptionsController EmbeddedController
+    {
+      get => _embeddedController;
+      set
+      {
+        if (!(_embeddedController == value))
+        {
+          _embeddedController?.Dispose();
+          _embeddedController = value;
+          OnPropertyChanged(nameof(EmbeddedController));
+        }
+      }
+    }
+
+    private bool _renderDropFile;
+
+    public bool RenderDropFile
+    {
+      get => _renderDropFile;
+      set
+      {
+        if (!(_renderDropFile == value))
+        {
+          _renderDropFile = value;
+          OnPropertyChanged(nameof(RenderDropFile));
+        }
+      }
+    }
+
+    private ItemsController<ImageFormat> _dropFileImageFormat;
+
+    public ItemsController<ImageFormat> DropFileImageFormat
+    {
+      get => _dropFileImageFormat;
+      set
+      {
+        if (!(_dropFileImageFormat == value))
+        {
+          _dropFileImageFormat?.Dispose();
+          _dropFileImageFormat = value;
+          OnPropertyChanged(nameof(DropFileImageFormat));
+        }
+      }
+    }
+
+    private ItemsController<PixelFormat> _dropFilePixelFormat;
+
+    public ItemsController<PixelFormat> DropFilePixelFormat
+    {
+      get => _dropFilePixelFormat;
+      set
+      {
+        if (!(_dropFilePixelFormat == value))
+        {
+          _dropFileImageFormat?.Dispose();
+          _dropFilePixelFormat = value;
+          OnPropertyChanged(nameof(DropFilePixelFormat));
+        }
+      }
+    }
+
+
+
+
+    private bool _renderEmbeddedObject;
+
+    public bool RenderEmbeddedObject
+    {
+      get => _renderEmbeddedObject;
+      set
+      {
+        if (!(_renderEmbeddedObject == value))
+        {
+          _renderEmbeddedObject = value;
+          OnPropertyChanged(nameof(RenderEmbeddedObject));
+        }
+      }
+    }
+
+
+    private bool _renderLinkedObject;
+
+    public bool RenderLinkedObject
+    {
+      get => _renderLinkedObject;
+      set
+      {
+        if (!(_renderLinkedObject == value))
+        {
+          _renderLinkedObject = value;
+          OnPropertyChanged(nameof(RenderLinkedObject));
+        }
+      }
+    }
+
+
+
+    #endregion
     public override void Dispose(bool isDisposing)
     {
-      _imageFormat = null;
-      _pixelFormat = null;
+      DropFileImageFormat = null;
+      DropFilePixelFormat = null;
       base.Dispose(isDisposing);
     }
 
@@ -119,59 +205,55 @@ namespace Altaxo.Gui.Graph.Gdi
 
       if (initData)
       {
-        _embeddedController = new EmbeddedObjectRenderingOptionsController() { UseDocumentCopy = UseDocument.Directly };
-        _embeddedController.InitializeDocument(_doc);
-        Current.Gui.FindAndAttachControlTo(_embeddedController);
+        var embeddedController = new EmbeddedObjectRenderingOptionsController() { UseDocumentCopy = UseDocument.Directly };
+        embeddedController.InitializeDocument(_doc);
+        Current.Gui.FindAndAttachControlTo(embeddedController);
+        EmbeddedController = embeddedController;
 
-        _imageFormat = new SelectableListNodeList();
+        var imageFormat = new SelectableListNodeList();
         foreach (ImageFormat item in ImageFormats)
-          _imageFormat.Add(new SelectableListNode(item.ToString(), item, _doc.DropFileImageFormat == item));
+          imageFormat.Add(new SelectableListNode(item.ToString(), item, _doc.DropFileImageFormat == item));
+        DropFileImageFormat = new ItemsController<ImageFormat>(imageFormat);
 
-        _pixelFormat = new SelectableListNodeList();
+        var pixelFormat = new SelectableListNodeList();
         var hasMatched = false; // special prog to account for doubling of items in PixelFormats
         foreach (PixelFormat item in PixelFormats)
         {
           var select = _doc.DropFileBitmapPixelFormat == item;
-          _pixelFormat.Add(new SelectableListNode(item.ToString(), item, !hasMatched && select));
+          pixelFormat.Add(new SelectableListNode(item.ToString(), item, !hasMatched && select));
           hasMatched |= select;
         }
-      }
+        DropFilePixelFormat = new ItemsController<PixelFormat>(pixelFormat);
 
-      if (_view is not null)
-      {
-        _view.EmbeddedRenderingOptionsView = _embeddedController.ViewObject;
 
-        _view.RenderDropfile = _doc.RenderDropFile;
-        _view.RenderEmbeddedObject = _doc.RenderEmbeddedObject;
-        _view.RenderLinkedObject = _doc.RenderLinkedObject;
+        RenderDropFile = _doc.RenderDropFile;
+        RenderEmbeddedObject = _doc.RenderEmbeddedObject;
+        RenderLinkedObject = _doc.RenderLinkedObject;
 
-        _view.SetDropFileImageFormat(_imageFormat);
-        _view.SetDropFilePixelFormat(_pixelFormat);
       }
     }
 
-    #region IApplyController Members
 
     public override bool Apply(bool disposeController)
     {
       if (!_embeddedController.Apply(disposeController))
         return false;
 
-      _doc.RenderDropFile = _view.RenderDropfile;
-      var imgfmt = (ImageFormat)_imageFormat.FirstSelectedNode.Tag;
-      var pixfmt = (PixelFormat)_pixelFormat.FirstSelectedNode.Tag;
+      _doc.RenderDropFile = RenderDropFile;
+      var imgfmt = DropFileImageFormat.SelectedValue;
+      var pixfmt = DropFilePixelFormat.SelectedValue;
 
       if (!_doc.TrySetImageAndPixelFormat(imgfmt, pixfmt))
       {
         Current.Gui.ErrorMessageBox("This combination of image and pixel format is not working!");
         return false;
       }
-      _doc.RenderEmbeddedObject = _view.RenderEmbeddedObject;
-      _doc.RenderLinkedObject = _view.RenderLinkedObject;
+      _doc.RenderEmbeddedObject = RenderEmbeddedObject;
+      _doc.RenderLinkedObject = RenderLinkedObject;
 
       return ApplyEnd(true, disposeController);
     }
 
-    #endregion IApplyController Members
+
   }
 }

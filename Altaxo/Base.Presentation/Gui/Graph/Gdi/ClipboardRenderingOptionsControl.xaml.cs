@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -22,11 +22,6 @@
 
 #endregion Copyright
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows;
 using System.Windows.Controls;
 
 namespace Altaxo.Gui.Graph.Gdi
@@ -39,67 +34,6 @@ namespace Altaxo.Gui.Graph.Gdi
     public ClipboardRenderingOptionsControl()
     {
       InitializeComponent();
-    }
-
-    public bool RenderDropfile
-    {
-      get
-      {
-        return _guiRenderDropfile.IsChecked == true;
-      }
-      set
-      {
-        _guiRenderDropfile.IsChecked = value;
-      }
-    }
-
-    public void SetDropFileImageFormat(Altaxo.Collections.SelectableListNodeList list)
-    {
-      GuiHelper.Initialize(_cbImageFormat, list);
-    }
-
-    public void SetDropFilePixelFormat(Altaxo.Collections.SelectableListNodeList list)
-    {
-      GuiHelper.Initialize(_cbPixelFormat, list);
-    }
-
-    public bool RenderEmbeddedObject
-    {
-      get
-      {
-        return _guiRenderEmbeddedObject.IsChecked == true;
-      }
-      set
-      {
-        _guiRenderEmbeddedObject.IsChecked = value;
-      }
-    }
-
-    public bool RenderLinkedObject
-    {
-      get
-      {
-        return _guiRenderLinkedObject.IsChecked == true;
-      }
-      set
-      {
-        _guiRenderLinkedObject.IsChecked = value;
-      }
-    }
-
-    private void EhImageFormatSelected(object sender, SelectionChangedEventArgs e)
-    {
-      GuiHelper.SynchronizeSelectionFromGui(_cbImageFormat);
-    }
-
-    private void EhPixelFormatSelected(object sender, SelectionChangedEventArgs e)
-    {
-      GuiHelper.SynchronizeSelectionFromGui(_cbPixelFormat);
-    }
-
-    public object EmbeddedRenderingOptionsView
-    {
-      set { _guiEmbeddedOptionsViewHost.Child = value as UIElement; }
     }
   }
 }
