@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -22,12 +22,7 @@
 
 #endregion Copyright
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Windows.Controls;
-using Altaxo.Drawing;
 
 namespace Altaxo.Gui.Graph.Gdi
 {
@@ -39,94 +34,6 @@ namespace Altaxo.Gui.Graph.Gdi
     public EmbeddedObjectRenderingOptionsControl()
     {
       InitializeComponent();
-    }
-
-    public void SetSourceDpi(Altaxo.Collections.SelectableListNodeList list)
-    {
-      GuiHelper.Initialize(_cbSourceResolution, list);
-    }
-
-    public string SourceDpiResolution
-    {
-      get { return _cbSourceResolution.Text; }
-    }
-
-    public double OutputScaling
-    {
-      get { return _guiOutputScale.SelectedQuantityInSIUnits; }
-      set { _guiOutputScale.SelectedQuantityInSIUnits = value; }
-    }
-
-    public bool RenderEnhancedMetafile
-    {
-      get
-      {
-        return _guiRenderEnhancedMetafile.IsChecked == true;
-      }
-      set
-      {
-        _guiRenderEnhancedMetafile.IsChecked = value;
-      }
-    }
-
-    public bool RenderEnhancedMetafileAsVectorFormat
-    {
-      get
-      {
-        return _guiRenderEnhancedMetafileAsVectorFormat.IsChecked == true;
-      }
-      set
-      {
-        _guiRenderEnhancedMetafileAsVectorFormat.IsChecked = value;
-      }
-    }
-
-    public bool RenderWindowsMetafile
-    {
-      get
-      {
-        return _guiRenderWindowsMetafile.IsChecked == true;
-      }
-      set
-      {
-        _guiRenderWindowsMetafile.IsChecked = value;
-      }
-    }
-
-    public bool RenderBitmap
-    {
-      get
-      {
-        return _guiRenderBitmap.IsChecked == true;
-      }
-      set
-      {
-        _guiRenderBitmap.IsChecked = value;
-      }
-    }
-
-    public NamedColor BackgroundColor
-    {
-      get
-      {
-        return _cbBackgroundColor.SelectedColor;
-      }
-      set
-      {
-        _cbBackgroundColor.SelectedColor = value;
-      }
-    }
-
-    public BrushX BackgroundBrush
-    {
-      get
-      {
-        return _cbBackgroundBrush.SelectedBrush;
-      }
-      set
-      {
-        _cbBackgroundBrush.SelectedBrush = value;
-      }
     }
   }
 }
