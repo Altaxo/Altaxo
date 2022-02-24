@@ -2,7 +2,10 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:axogcc="clr-namespace:Altaxo.Gui.Common.Converters"
+             xmlns:gdi="clr-namespace:Altaxo.Gui.Graph.Gdi;assembly=AltaxoBase"
+             d:DataContext="{d:DesignInstance Type=gdi:DefaultLineScatterGraphDocumentController}"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
 	<Grid>
@@ -21,12 +24,12 @@
 			<RowDefinition Height="*" />
 		</Grid.RowDefinitions>
 		<TextBlock Text="Select a graph in this project to use as the default graph.&#x0a;Then press the 'Select' button to use this graph as the default graph." />
-		<ListBox x:Name="_guiGraphsInProject" SelectionMode="Single" Grid.Row="2" />
-		<Button Grid.Row="2" Grid.Column="2" Content="Select" VerticalAlignment="Center" Click="EhGraphFromProjectSelected" />
+		<ListBox ItemsSource="{Binding GraphsInProject.Items}" SelectedItem="{Binding GraphsInProject.SelectedItem}"  SelectionMode="Single" Grid.Row="2" />
+		<Button Grid.Row="2" Grid.Column="2" Content="Select" VerticalAlignment="Center" Command="{Binding CmdGraphFromProjectSelected}" />
 
-		<Label x:Name="_guiPreviewTitle" Grid.Row="4" Grid.Column="0" />
+		<Label Grid.Row="4" Grid.Column="0" Content="{Binding PreviewTitle}" />
 		<Border CornerRadius="4" BorderBrush="AliceBlue" BorderThickness="1" Grid.Row="6" Grid.Column="0">
-			<Image x:Name="_guiPreview" />
+			<Image Source="{Binding PreviewBitmap, Converter={x:Static axogcc:SystemDrawingBitmapToImageSourceConverter.Instance}}" />
 		</Border>
 	</Grid>
 </UserControl>

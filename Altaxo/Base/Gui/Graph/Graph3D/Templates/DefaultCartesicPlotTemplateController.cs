@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2016 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -23,37 +23,91 @@
 #endregion Copyright
 
 #nullable disable
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using System.Windows.Input;
 using Altaxo.Collections;
 using Altaxo.Graph.Graph3D;
+using Altaxo.Gui.Common;
 
 namespace Altaxo.Gui.Graph.Graph3D.Templates
 {
-  public interface IDefaultCartesicPlotTemplateView
+  public interface IDefaultCartesicPlotTemplateView : IDataContextAwareView
   {
-    SelectableListNodeList GraphsInProject { set; }
-
-    event Action GraphFromProjectSelected;
-
-    void SetPreviewBitmap(string title, System.Drawing.Bitmap bmp);
   }
 
   [ExpectedTypeOfView(typeof(IDefaultCartesicPlotTemplateView))]
   public class DefaultCartesicPlotTemplateController : MVCANControllerEditOriginalDocBase<GraphDocument, IDefaultCartesicPlotTemplateView>
   {
-    private SelectableListNodeList _graphsInProject = new SelectableListNodeList();
-
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
     }
 
+    public DefaultCartesicPlotTemplateController()
+    {
+      CmdGraphFromProjectSelected = new RelayCommand(EhGraphFromProjectSelected);
+    }
+
+    #region Bindings
+
+    public ICommand CmdGraphFromProjectSelected { get; }
+
+    private ItemsController<GraphDocument> _graphsInProject;
+
+    public ItemsController<GraphDocument> GraphsInProject
+    {
+      get => _graphsInProject;
+      set
+      {
+        if (!(_graphsInProject == value))
+        {
+          _graphsInProject?.Dispose();
+          _graphsInProject = value;
+          OnPropertyChanged(nameof(GraphsInProject));
+        }
+      }
+    }
+
+    private string _previewTitle;
+
+    public string PreviewTitle
+    {
+      get => _previewTitle;
+      set
+      {
+        if (!(_previewTitle == value))
+        {
+          _previewTitle = value;
+          OnPropertyChanged(nameof(PreviewTitle));
+        }
+      }
+    }
+
+    private System.Drawing.Bitmap _previewBitmap;
+
+    public System.Drawing.Bitmap PreviewBitmap
+    {
+      get => _previewBitmap;
+      set
+      {
+        if (!(_previewBitmap == value))
+        {
+          _previewBitmap?.Dispose();
+          _previewBitmap = value;
+          OnPropertyChanged(nameof(PreviewBitmap));
+        }
+      }
+    }
+
+
+
+    #endregion
+
     public override void Dispose(bool isDisposing)
     {
-      _graphsInProject = null;
+      GraphsInProject = null;
+      PreviewBitmap = null;
       base.Dispose(isDisposing);
     }
 
@@ -63,16 +117,15 @@ namespace Altaxo.Gui.Graph.Graph3D.Templates
 
       if (initData)
       {
-        _graphsInProject.Clear();
+        var graphsInProject = new SelectableListNodeList();
 
         foreach (GraphDocument graph in Current.Project.Graph3DDocumentCollection)
         {
-          _graphsInProject.Add(new SelectableListNode(graph.Name, graph, false));
+          graphsInProject.Add(new SelectableListNode(graph.Name, graph, false));
         }
-      }
-      if (_view is not null)
-      {
-        _view.GraphsInProject = _graphsInProject;
+        GraphsInProject = new ItemsController<GraphDocument>(graphsInProject);
+
+
         RenderPreview(_doc);
       }
     }
@@ -82,30 +135,16 @@ namespace Altaxo.Gui.Graph.Graph3D.Templates
       return ApplyEnd(true, disposeController);
     }
 
-    protected override void AttachView()
-    {
-      base.AttachView();
-
-      _view.GraphFromProjectSelected += EhGraphFromProjectSelected;
-    }
-
-    protected override void DetachView()
-    {
-      _view.GraphFromProjectSelected -= EhGraphFromProjectSelected;
-
-      base.DetachView();
-    }
-
     private void EhGraphFromProjectSelected()
     {
-      var node = _graphsInProject.FirstSelectedNode;
-      if (node is null)
+      var graph = _graphsInProject.SelectedValue;
+      if (graph is null)
         return;
 
-      if (!IsGraphAppropriate((GraphDocument)node.Tag))
+      if (!IsGraphAppropriate(graph))
         return;
 
-      _doc = (GraphDocument)((GraphDocument)node.Tag).Clone();
+      _doc = (GraphDocument)graph.Clone();
       StripGraphFromPlotItems(_doc);
 
       RenderPreview(_doc);
@@ -142,14 +181,14 @@ namespace Altaxo.Gui.Graph.Graph3D.Templates
 
       if (doc is not null)
       {
-        using (var bmp = GraphDocumentExportActions.RenderAsBitmap(doc, null, null, System.Drawing.Imaging.PixelFormat.Format32bppArgb, 150, 150))
-        {
-          _view.SetPreviewBitmap("Preview of graph template:", bmp);
-        }
+        var bmp = GraphDocumentExportActions.RenderAsBitmap(doc, null, null, System.Drawing.Imaging.PixelFormat.Format32bppArgb, 150, 150);
+        PreviewTitle = "Preview of graph template:";
+        PreviewBitmap = bmp;
       }
       else
       {
-        _view.SetPreviewBitmap("No graph document selected", null);
+        PreviewTitle = "No graph document selected";
+        PreviewBitmap = null;
       }
     }
   }

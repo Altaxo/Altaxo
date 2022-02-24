@@ -22,18 +22,39 @@
 
 #endregion Copyright
 
-using System.Windows.Controls;
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Data;
 
-namespace Altaxo.Gui.Graph.Gdi
+namespace Altaxo.Gui.Common.Converters
 {
   /// <summary>
-  /// Interaction logic for DefaultLineScatterGraphDocumentControl.xaml
+  /// Converts a <see cref="System.Drawing.Bitmap"/> to an ImageSource
   /// </summary>
-  public partial class DefaultLineScatterGraphDocumentControl : UserControl, IDefaultLineScatterGraphDocumentView, Altaxo.Gui.Graph.Graph3D.Templates.IDefaultCartesicPlotTemplateView
+  /// <seealso cref="System.Windows.Data.IValueConverter" />
+  public class SystemDrawingBitmapToImageSourceConverter : IValueConverter
   {
-    public DefaultLineScatterGraphDocumentControl()
+    public static SystemDrawingBitmapToImageSourceConverter Instance { get; } = new SystemDrawingBitmapToImageSourceConverter();
+
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
-      InitializeComponent();
+      if(value is System.Drawing.Bitmap bmp)
+      {
+        return GuiHelper.ToWpf(bmp);
+      }
+      else
+      {
+        return null!;
+      }
+    }
+
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+      throw new NotImplementedException();
     }
   }
 }
