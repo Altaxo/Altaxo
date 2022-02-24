@@ -3,8 +3,9 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
- 						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
- 						 xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing"
+			 xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing"
+             xmlns:gdi="clr-namespace:Altaxo.Gui.Graph.Gdi;assembly=AltaxoBase"
+             d:DataContext="{d:DesignInstance Type=gdi:GraphExportOptionsController}"
              mc:Ignorable="d"
 >
 	<UserControl.Resources>
@@ -42,16 +43,16 @@
 			<RowDefinition Height="4" />
 		</Grid.RowDefinitions>
 		<Label Grid.Column="0" Grid.Row="0" Content="Image format:" />
-		<ComboBox x:Name="_cbImageFormat" Grid.Column="1" Grid.Row="0" SelectionChanged="EhImageFormatSelected" />
+		<ComboBox Grid.Column="1" Grid.Row="0" ItemsSource="{Binding ImageFormat.Items}" SelectedItem="{Binding ImageFormat.SelectedItem, Mode=TwoWay}" />
 		<Label Grid.Column="0" Grid.Row="2" Content="Pixel format:" />
-		<ComboBox x:Name="_cbPixelFormat" Grid.Column="1" Grid.Row="2" SelectionChanged="EhPixelFormatSelected" />
+		<ComboBox Grid.Column="1" Grid.Row="2" ItemsSource="{Binding PixelFormat.Items}" SelectedItem="{Binding PixelFormat.SelectedItem, Mode=TwoWay}"/>
 		<Label Grid.Column="0" Grid.Row="4" Content="Source dpi resolution:" />
-		<ComboBox x:Name="_cbSourceResolution" Grid.Column="1" Grid.Row="4" IsEditable="True" />
+		<ComboBox Grid.Column="1" Grid.Row="4" ItemsSource="{Binding SourceDpi.Items}" SelectedItem="{Binding SourceDpi.SelectedItem, Mode=TwoWay}" Text="{Binding SourceDpiText, Mode=TwoWay}" IsEditable="True" />
 		<Label Grid.Column="0" Grid.Row="8" Content="Destination dpi resolution:" />
-		<ComboBox x:Name="_cbDestinationResolution" Grid.Column="1" Grid.Row="8" IsEditable="True" />
+		<ComboBox Grid.Column="1" Grid.Row="8" ItemsSource="{Binding DestinationDpi.Items}" SelectedItem="{Binding DestinationDpi.SelectedItem, Mode=TwoWay}" Text="{Binding DestinationDpiText, Mode=TwoWay}" IsEditable="True" />
 		<Label Grid.Column="0" Grid.Row="10" Content="Background:" />
-		<axogcd:BrushComboBox x:Name="_cbBackgroundBrush" Grid.Column="1" Grid.Row="10" />
-		<Label x:Name="_lblClipboardFormat" Grid.Column="0" Grid.Row="12" Content="Clipboard format:" />
-		<Border x:Name="_guiClipboardFormatHost" Grid.Column="1" Grid.Row="12" />
+		<axogcd:BrushComboBox Grid.Column="1" Grid.Row="10" SelectedBrush="{Binding BackgroundBrush}" />
+		<Label Grid.Column="0" Grid.Row="12" Content="Clipboard format:" IsEnabled="{Binding EnableClipboardFormat}" />
+		<ContentControl Grid.Column="1" Grid.Row="12" Content="{Binding ClipboardFormatController.ViewObject}" IsEnabled="{Binding EnableClipboardFormat}" />
 	</Grid>
 </UserControl>

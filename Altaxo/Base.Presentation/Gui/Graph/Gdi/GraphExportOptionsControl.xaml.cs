@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -22,13 +22,7 @@
 
 #endregion Copyright
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows;
 using System.Windows.Controls;
-using Altaxo.Drawing;
 
 namespace Altaxo.Gui.Graph.Gdi
 {
@@ -41,75 +35,5 @@ namespace Altaxo.Gui.Graph.Gdi
     {
       InitializeComponent();
     }
-
-    private void EhImageFormatSelected(object sender, SelectionChangedEventArgs e)
-    {
-      GuiHelper.SynchronizeSelectionFromGui(_cbImageFormat);
-    }
-
-    private void EhPixelFormatSelected(object sender, SelectionChangedEventArgs e)
-    {
-      GuiHelper.SynchronizeSelectionFromGui(_cbPixelFormat);
-    }
-
-    #region IGraphExportView Members
-
-    public void SetImageFormat(Altaxo.Collections.SelectableListNodeList list)
-    {
-      GuiHelper.Initialize(_cbImageFormat, list);
-    }
-
-    public void SetPixelFormat(Altaxo.Collections.SelectableListNodeList list)
-    {
-      GuiHelper.Initialize(_cbPixelFormat, list);
-    }
-
-    public void SetSourceDpi(Altaxo.Collections.SelectableListNodeList list)
-    {
-      GuiHelper.Initialize(_cbSourceResolution, list);
-    }
-
-    public void SetDestinationDpi(Altaxo.Collections.SelectableListNodeList list)
-    {
-      GuiHelper.Initialize(_cbDestinationResolution, list);
-    }
-
-    public bool EnableClipboardFormat
-    {
-      set
-      {
-        _guiClipboardFormatHost.IsEnabled = value;
-        _lblClipboardFormat.IsEnabled = value;
-      }
-    }
-
-    public void SetClipboardFormatView(object viewObject)
-    {
-      _guiClipboardFormatHost.Child = viewObject as UIElement;
-    }
-
-    public string SourceDpiResolution
-    {
-      get { return _cbSourceResolution.Text; }
-    }
-
-    public string DestinationDpiResolution
-    {
-      get { return _cbDestinationResolution.Text; }
-    }
-
-    public BrushX BackgroundBrush
-    {
-      get
-      {
-        return _cbBackgroundBrush.SelectedBrush;
-      }
-      set
-      {
-        _cbBackgroundBrush.SelectedBrush = value;
-      }
-    }
-
-    #endregion IGraphExportView Members
   }
 }

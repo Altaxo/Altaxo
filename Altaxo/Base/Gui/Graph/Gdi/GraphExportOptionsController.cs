@@ -32,87 +32,216 @@ using Altaxo.Collections;
 using Altaxo.Drawing;
 using Altaxo.Graph;
 using Altaxo.Graph.Gdi;
+using Altaxo.Gui.Common;
 using Altaxo.Serialization;
 
 namespace Altaxo.Gui.Graph.Gdi
 {
-  public interface IGraphExportOptionsView
+  public interface IGraphExportOptionsView : IDataContextAwareView
   {
-    void SetImageFormat(SelectableListNodeList list);
-
-    void SetPixelFormat(SelectableListNodeList list);
-
-    void SetSourceDpi(SelectableListNodeList list);
-
-    void SetDestinationDpi(SelectableListNodeList list);
-
-    string SourceDpiResolution { get; }
-
-    string DestinationDpiResolution { get; }
-
-    BrushX BackgroundBrush { get; set; }
   }
 
   [ExpectedTypeOfView(typeof(IGraphExportOptionsView))]
   [UserControllerForObject(typeof(GraphExportOptions))]
   public class GraphExportOptionsController : MVCANControllerEditOriginalDocBase<GraphExportOptions, IGraphExportOptionsView>
   {
-    private SelectableListNodeList _imageFormat;
-    private SelectableListNodeList _pixelFormat;
-    private SelectableListNodeList _sourceDpi;
-    private SelectableListNodeList _destinationDpi;
-
     private static readonly int[] Resolutions = new int[] { 75, 150, 300, 400, 600, 1000, 1200, 1600, 2000, 2400, 4800 };
 
     private static readonly ImageFormat[] ImageFormats = new ImageFormat[]
     {
-      ImageFormat.Bmp,
-      ImageFormat.Emf,
-      ImageFormat.Exif,
-      ImageFormat.Gif,
+      System.Drawing.Imaging.ImageFormat.Bmp,
+      System.Drawing.Imaging.ImageFormat.Emf,
+      System.Drawing.Imaging.ImageFormat.Exif,
+      System.Drawing.Imaging.ImageFormat.Gif,
 			//ImageFormat.Icon,
-			ImageFormat.Jpeg,
+			System.Drawing.Imaging.ImageFormat.Jpeg,
 			//ImageFormat.MemoryBmp,
-			ImageFormat.Png,
-      ImageFormat.Tiff,
-      ImageFormat.Wmf
+			System.Drawing.Imaging.ImageFormat.Png,
+      System.Drawing.Imaging.ImageFormat.Tiff,
+      System.Drawing.Imaging.ImageFormat.Wmf
     };
 
     private static readonly PixelFormat[] PixelFormats = new PixelFormat[]
     {
 			// The next three formats are the most used, so we have them on top
-			PixelFormat.Format24bppRgb,
-      PixelFormat.Format32bppRgb,
-      PixelFormat.Format32bppArgb,
+			System.Drawing.Imaging.PixelFormat.Format24bppRgb,
+      System.Drawing.Imaging.PixelFormat.Format32bppRgb,
+      System.Drawing.Imaging.PixelFormat.Format32bppArgb,
 
-      PixelFormat.Format1bppIndexed,
-      PixelFormat.Format4bppIndexed,
-      PixelFormat.Format8bppIndexed,
+      System.Drawing.Imaging.PixelFormat.Format1bppIndexed,
+      System.Drawing.Imaging.PixelFormat.Format4bppIndexed,
+      System.Drawing.Imaging.PixelFormat.Format8bppIndexed,
 
-      PixelFormat.Format16bppArgb1555,
-      PixelFormat.Format16bppGrayScale,
-      PixelFormat.Format16bppRgb555,
-      PixelFormat.Format16bppRgb565,
+      System.Drawing.Imaging.PixelFormat.Format16bppArgb1555,
+      System.Drawing.Imaging.PixelFormat.Format16bppGrayScale,
+      System.Drawing.Imaging.PixelFormat.Format16bppRgb555,
+      System.Drawing.Imaging.PixelFormat.Format16bppRgb565,
 
-      PixelFormat.Format24bppRgb,
+      System.Drawing.Imaging.PixelFormat.Format24bppRgb,
 
-      PixelFormat.Format32bppRgb,
-      PixelFormat.Format32bppArgb,
-      PixelFormat.Format32bppPArgb,
+      System.Drawing.Imaging.PixelFormat.Format32bppRgb,
+      System.Drawing.Imaging.PixelFormat.Format32bppArgb,
+      System.Drawing.Imaging.PixelFormat.Format32bppPArgb,
 
-      PixelFormat.Format48bppRgb,
+      System.Drawing.Imaging.PixelFormat.Format48bppRgb,
 
-      PixelFormat.Format64bppArgb,
-      PixelFormat.Format64bppPArgb,
+      System.Drawing.Imaging.PixelFormat.Format64bppArgb,
+      System.Drawing.Imaging.PixelFormat.Format64bppPArgb,
 
-      PixelFormat.Alpha,
-      PixelFormat.PAlpha
+      System.Drawing.Imaging.PixelFormat.Alpha,
+      System.Drawing.Imaging.PixelFormat.PAlpha
     };
 
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
     }
+
+    #region Bindings
+
+    private ItemsController<double> _sourceDpi;
+
+    public ItemsController<double> SourceDpi
+    {
+      get => _sourceDpi;
+      set
+      {
+        if (!(_sourceDpi == value))
+        {
+          _sourceDpi = value;
+          OnPropertyChanged(nameof(SourceDpi));
+        }
+      }
+    }
+
+    private string _sourceDpiText;
+
+    public string SourceDpiText
+    {
+      get => _sourceDpiText;
+      set
+      {
+        if (!(_sourceDpiText == value))
+        {
+          _sourceDpiText = value;
+          OnPropertyChanged(nameof(SourceDpiText));
+        }
+      }
+    }
+
+    private ItemsController<double> _DestinationDpi;
+
+    public ItemsController<double> DestinationDpi
+    {
+      get => _DestinationDpi;
+      set
+      {
+        if (!(_DestinationDpi == value))
+        {
+          _DestinationDpi = value;
+          OnPropertyChanged(nameof(DestinationDpi));
+        }
+      }
+    }
+    private string _DestinationDpiText;
+
+    public string DestinationDpiText
+    {
+      get => _DestinationDpiText;
+      set
+      {
+        if (!(_DestinationDpiText == value))
+        {
+          _DestinationDpiText = value;
+          OnPropertyChanged(nameof(DestinationDpiText));
+        }
+      }
+    }
+
+
+
+    private ItemsController<ImageFormat> _imageFormat;
+
+    public ItemsController<ImageFormat> ImageFormat
+    {
+      get => _imageFormat;
+      set
+      {
+        if (!(_imageFormat == value))
+        {
+          _imageFormat?.Dispose();
+          _imageFormat = value;
+          OnPropertyChanged(nameof(ImageFormat));
+        }
+      }
+    }
+
+    private ItemsController<PixelFormat> _pixelFormat;
+
+    public ItemsController<PixelFormat> PixelFormat
+    {
+      get => _pixelFormat;
+      set
+      {
+        if (!(_pixelFormat == value))
+        {
+          _imageFormat?.Dispose();
+          _pixelFormat = value;
+          OnPropertyChanged(nameof(PixelFormat));
+        }
+      }
+    }
+
+
+
+
+    private BrushX _backgroundBrush;
+
+    public BrushX BackgroundBrush
+    {
+      get => _backgroundBrush;
+      set
+      {
+        if (!(_backgroundBrush == value))
+        {
+          _backgroundBrush = value;
+          OnPropertyChanged(nameof(BackgroundBrush));
+        }
+      }
+    }
+
+    private bool _enableClipboardFormat;
+
+    public bool EnableClipboardFormat
+    {
+      get => _enableClipboardFormat;
+      set
+      {
+        if (!(_enableClipboardFormat == value))
+        {
+          _enableClipboardFormat = value;
+          OnPropertyChanged(nameof(EnableClipboardFormat));
+        }
+      }
+    }
+
+
+    private IMVCANController _clipboardFormatController;
+
+    public IMVCANController ClipboardFormatController
+    {
+      get => _clipboardFormatController;
+      set
+      {
+        if (!(_clipboardFormatController == value))
+        {
+          _clipboardFormatController = value;
+          OnPropertyChanged(nameof(ClipboardFormatController));
+        }
+      }
+    }
+
+    #endregion
 
     protected override void Initialize(bool initData)
     {
@@ -123,30 +252,24 @@ namespace Altaxo.Gui.Graph.Gdi
         bool hasMatched;
         bool select;
 
-        _imageFormat = new SelectableListNodeList();
+        var imageFormat = new SelectableListNodeList();
         foreach (ImageFormat item in ImageFormats)
-          _imageFormat.Add(new SelectableListNode(item.ToString(), item, _doc.ImageFormat == item));
+          imageFormat.Add(new SelectableListNode(item.ToString(), item, _doc.ImageFormat == item));
+        ImageFormat = new ItemsController<ImageFormat>(imageFormat);
 
-        _pixelFormat = new SelectableListNodeList();
+        var pixelFormat = new SelectableListNodeList();
         hasMatched = false; // special prog to account for doubling of items in PixelFormats
         foreach (PixelFormat item in PixelFormats)
         {
           select = _doc.PixelFormat == item;
-          _pixelFormat.Add(new SelectableListNode(item.ToString(), item, !hasMatched && select));
+          pixelFormat.Add(new SelectableListNode(item.ToString(), item, !hasMatched && select));
           hasMatched |= select;
         }
+        PixelFormat = new ItemsController<PixelFormat>(pixelFormat);
 
-        _sourceDpi = GetResolutions(_doc.SourceDpiResolution);
-        _destinationDpi = GetResolutions(_doc.DestinationDpiResolution);
-      }
-
-      if (_view is not null)
-      {
-        _view.SetImageFormat(_imageFormat);
-        _view.SetPixelFormat(_pixelFormat);
-        _view.SetSourceDpi(_sourceDpi);
-        _view.SetDestinationDpi(_destinationDpi);
-        _view.BackgroundBrush = _doc.BackgroundBrush ?? new BrushX(NamedColors.Transparent);
+        SourceDpi = new ItemsController<double>(GetResolutions(_doc.SourceDpiResolution));
+        DestinationDpi = new ItemsController<double>(GetResolutions(_doc.DestinationDpiResolution));
+        BackgroundBrush = _doc.BackgroundBrush ?? new BrushX(NamedColors.Transparent);
       }
     }
 
@@ -170,9 +293,9 @@ namespace Altaxo.Gui.Graph.Gdi
 
     public override bool Apply(bool disposeController)
     {
-      if (!GUIConversion.IsDouble(_view.SourceDpiResolution, out var sr))
+      if (!GUIConversion.IsDouble(SourceDpiText, out var sr))
         return false;
-      if (!GUIConversion.IsDouble(_view.DestinationDpiResolution, out var dr))
+      if (!GUIConversion.IsDouble(DestinationDpiText, out var dr))
         return false;
 
       if (!(sr > 0))
@@ -180,8 +303,8 @@ namespace Altaxo.Gui.Graph.Gdi
       if (!(dr > 0))
         return false;
 
-      var imgfmt = (ImageFormat)_imageFormat.FirstSelectedNode.Tag;
-      var pixfmt = (PixelFormat)_pixelFormat.FirstSelectedNode.Tag;
+      var imgfmt = _imageFormat.SelectedValue;
+      var pixfmt = _pixelFormat.SelectedValue;
 
       if (!_doc.TrySetImageAndPixelFormat(imgfmt, pixfmt))
       {
@@ -192,8 +315,8 @@ namespace Altaxo.Gui.Graph.Gdi
       _doc.SourceDpiResolution = sr;
       _doc.DestinationDpiResolution = dr;
 
-      if (_view.BackgroundBrush.IsVisible)
-        _doc.BackgroundBrush = _view.BackgroundBrush;
+      if (BackgroundBrush.IsVisible)
+        _doc.BackgroundBrush = BackgroundBrush;
       else
         _doc.BackgroundBrush = null;
 
