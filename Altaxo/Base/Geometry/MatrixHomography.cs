@@ -49,6 +49,17 @@ namespace Altaxo.Geometry
       }
     }
 
+    /// <summary>
+    /// Transforms a 2D point with a 3D homography matrix.
+    /// </summary>
+    /// <param name="m">The matrix.</param>
+    /// <param name="p">The point to transform.</param>
+    /// <returns>The transformed point.</returns>
+    public static double Transform(Matrix2x2 m, double p)
+    {
+      var pt = m.Transform(new PointD2D(p, 1));
+      return pt.X / pt.Y;
+    }
 
     /// <summary>
     /// Evaluates a 3x3 matrix, that best transforms (in the least square sense) 2D points x into 2D points y.
@@ -102,6 +113,18 @@ namespace Altaxo.Geometry
       }
     }
 
+
+    /// <summary>
+    /// Transforms a 2D point with a 3D homography matrix.
+    /// </summary>
+    /// <param name="m">The matrix.</param>
+    /// <param name="p">The point to transform.</param>
+    /// <returns>The transformed point.</returns>
+    public static PointD2D Transform(Matrix3x3 m, PointD2D p)
+    {
+      var pt = m.Transform(new PointD3D(p.X, p.Y, 1));
+      return new PointD2D(pt.X / pt.Z, pt.Y / pt.Z);
+    }
 
 
     /// <summary>
@@ -170,6 +193,19 @@ namespace Altaxo.Geometry
         return new Matrix4x4(v[0][15], v[1][15], v[2][15], v[3][15], v[4][15], v[5][15], v[6][15], v[7][15], v[8][15], v[9][15], v[10][15], v[11][15], v[12][15], v[13][15], v[14][15], v[15][15]);
       }
     }
+
+    /// <summary>
+    /// Transforms a 2D point with a 3D homography matrix.
+    /// </summary>
+    /// <param name="m">The matrix.</param>
+    /// <param name="p">The point to transform.</param>
+    /// <returns>The transformed point.</returns>
+    public static PointD3D Transform(Matrix4x4 m, PointD3D p)
+    {
+      var pt = m.Transform(new VectorD4D(p.X, p.Y, p.Z, 1));
+      return new PointD3D(pt.X / pt.W, pt.Y / pt.W, pt.Z/pt.W);
+    }
+
   }
 }
 
