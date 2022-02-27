@@ -31,13 +31,9 @@ using Altaxo.Units;
 namespace Altaxo.Gui.Common.Drawing
 {
 
-  #region Interfaces
-
   public interface IPenAllPropertiesView : IDataContextAwareView
   {
   }
-
-  #endregion Interfaces
 
   [ExpectedTypeOfView(typeof(IPenAllPropertiesView))]
   public class PenAllPropertiesController : MVCANDControllerEditImmutableDocBase<PenX, IPenAllPropertiesView>

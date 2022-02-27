@@ -123,7 +123,7 @@
 				<Label Content="* symbolSize" Grid.Row="4" Grid.Column="5" />
 
 				<Label Content="End cap:" Grid.Row="8" Grid.Column="0" />
-                <axogcd:LineCapComboBox Grid.Row="8" Grid.Column="2" Grid.ColumnSpan="4" SelectedLineCap="{Binding Pen.EndCap}" />
+                <axogcd:LineCapComboBox Grid.Row="8" Grid.Column="2" Grid.ColumnSpan="4" IsForEndCap="True" SelectedLineCap="{Binding Pen.EndCap.LineCap, Mode=TwoWay}" />
 
 				<Label Content="End cap size = " Grid.Row="10" Grid.Column="0" />
                 <axogcd:LineThicknessComboBox Grid.Row="10" Grid.Column="2" SelectedQuantity="{Binding EndCapSizeOffset}" UnitEnvironment="{Binding LineWidthEnvironment}" />
