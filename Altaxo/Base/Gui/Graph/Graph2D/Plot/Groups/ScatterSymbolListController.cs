@@ -234,7 +234,7 @@ namespace Altaxo.Gui.Graph.Graph2D.Plot.Groups
 
     private void EhInsetColorForAllSelected()
     {
-      foreach (var node in _currentItems)
+      foreach (var node in CurrentItems)
       {
         if (node.IsSelected)
         {
@@ -244,13 +244,12 @@ namespace Altaxo.Gui.Graph.Graph2D.Plot.Groups
         }
       }
 
-      View_CurrentItems_Initialize();
       SetListDirty();
     }
 
     private void EhFrameColorForAllSelected()
     {
-      foreach (var node in _currentItems)
+      foreach (var node in CurrentItems)
       {
         if (node.IsSelected)
         {
@@ -259,14 +258,13 @@ namespace Altaxo.Gui.Graph.Graph2D.Plot.Groups
             node.Tag = item.WithFrame(item.Frame.WithColor(FrameColor));
         }
       }
-
-      View_CurrentItems_Initialize();
+      
       SetListDirty();
     }
 
     private void EhFillColorForAllSelected()
     {
-      foreach (var node in _currentItems)
+      foreach (var node in CurrentItems)
       {
         if (node.IsSelected)
         {
@@ -274,15 +272,14 @@ namespace Altaxo.Gui.Graph.Graph2D.Plot.Groups
           node.Tag = item.WithFillColor(FillColor);
         }
       }
-
-      View_CurrentItems_Initialize();
+      
       SetListDirty();
     }
 
     private void EhPlotColorInfluenceForAllSelected()
     {
       var obj = PlotColorInfluence.Doc;
-      foreach (var node in _currentItems)
+      foreach (var node in CurrentItems)
       {
         if (node.IsSelected)
         {
@@ -291,7 +288,7 @@ namespace Altaxo.Gui.Graph.Graph2D.Plot.Groups
         }
       }
 
-      View_CurrentItems_Initialize();
+      
       SetListDirty();
     }
 
@@ -302,7 +299,7 @@ namespace Altaxo.Gui.Graph.Graph2D.Plot.Groups
 
       if (insetTemplate is null)
       {
-        foreach (var node in _currentItems)
+        foreach (var node in CurrentItems)
         {
           if (node.IsSelected)
           {
@@ -313,7 +310,7 @@ namespace Altaxo.Gui.Graph.Graph2D.Plot.Groups
       }
       else
       {
-        foreach (var node in _currentItems)
+        foreach (var node in CurrentItems)
         {
           if (node.IsSelected)
           {
@@ -323,7 +320,7 @@ namespace Altaxo.Gui.Graph.Graph2D.Plot.Groups
         }
       }
 
-      View_CurrentItems_Initialize();
+      
       SetListDirty();
     }
 
@@ -334,7 +331,7 @@ namespace Altaxo.Gui.Graph.Graph2D.Plot.Groups
 
       if (frameTemplate is null)
       {
-        foreach (var node in _currentItems)
+        foreach (var node in CurrentItems)
         {
           if (node.IsSelected)
           {
@@ -345,7 +342,7 @@ namespace Altaxo.Gui.Graph.Graph2D.Plot.Groups
       }
       else
       {
-        foreach (var node in _currentItems)
+        foreach (var node in CurrentItems)
         {
           if (node.IsSelected)
           {
@@ -355,7 +352,7 @@ namespace Altaxo.Gui.Graph.Graph2D.Plot.Groups
         }
       }
 
-      View_CurrentItems_Initialize();
+      
       SetListDirty();
     }
 
@@ -364,7 +361,7 @@ namespace Altaxo.Gui.Graph.Graph2D.Plot.Groups
 
       var shapeTemplate = (IScatterSymbol)Activator.CreateInstance(Shapes.SelectedValue);
 
-      foreach (var node in _currentItems)
+      foreach (var node in CurrentItems)
       {
         if (node.IsSelected)
         {
@@ -385,13 +382,13 @@ namespace Altaxo.Gui.Graph.Graph2D.Plot.Groups
           node.Text = ToDisplayName(newItem);
         }
       }
-      View_CurrentItems_Initialize();
+     
       SetListDirty();
     }
 
     private void EhStructureWithForAllSelected()
     {
-      foreach (var node in _currentItems)
+      foreach (var node in CurrentItems)
       {
         if (node.IsSelected)
         {
@@ -399,7 +396,7 @@ namespace Altaxo.Gui.Graph.Graph2D.Plot.Groups
           node.Tag = item.WithRelativeStructureWidth(RelativeStructureWidth.AsValueInSIUnits);
         }
       }
-      View_CurrentItems_Initialize();
+      
       SetListDirty();
     }
   }

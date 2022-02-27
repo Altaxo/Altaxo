@@ -3,8 +3,11 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:axogcc="clr-namespace:Altaxo.Gui.Common.Converters"
  						 xmlns:axocoll="clr-namespace:Altaxo.Collections;assembly=AltaxoBase"
  						 xmlns:dd="clr-namespace:GongSolutions.Wpf.DragDrop"
+             xmlns:drawing="clr-namespace:Altaxo.Gui.Drawing;assembly=AltaxoBase" 
+             d:DataContext="{d:DesignInstance Type=drawing:IStyleListController}"
              mc:Ignorable="d">
 	<UserControl.Resources>
 		<DataTemplate x:Key="CurrentItemsTemplateResource">
@@ -14,7 +17,9 @@
 		<HierarchicalDataTemplate x:Key="AvailableItemsTemplateResource" DataType="{x:Type axocoll:NGTreeNode}" ItemsSource="{Binding Nodes}">
 			<TextBlock Text="{Binding Text}" ToolTip="{Binding ToolTip}" />
 		</HierarchicalDataTemplate>
-	</UserControl.Resources>
+
+        <axogcc:BooleanToBrushConverter x:Key="IsMarkedToBrush" BrushForFalse="White" BrushForTrue="LightPink"/>
+    </UserControl.Resources>
 
 	<Grid>
 		<Grid.Resources>
@@ -54,7 +59,9 @@
 			<ColumnDefinition Width="Auto" />
 		</Grid.ColumnDefinitions>
 		<Label Content="Available lists:" Grid.Row="0" Grid.Column="0" />
-		<TreeView x:Name="_guiAvailableLists" Grid.Row="1" Grid.RowSpan="5" Grid.Column="0" ScrollViewer.VerticalScrollBarVisibility="Visible" SelectedItemChanged="EhAvailableList_SelectionChanged">
+		<TreeView Grid.Row="1" Grid.RowSpan="5" Grid.Column="0"
+                  ItemsSource="{Binding AvailableLists}"
+                  ScrollViewer.VerticalScrollBarVisibility="Visible" >
 			<ItemsControl.ItemContainerStyle>
 				<!-- This Style binds a TreeViewItem to a TreeViewItemViewModel. -->
 				<Style TargetType="{x:Type TreeViewItem}">
@@ -77,17 +84,32 @@
 		</TreeView>
 
 		<Label Content="Name of list:" Grid.Row="0" Grid.Column="4" />
-		<TextBox x:Name="_guiNewListName" Grid.Row="1" Grid.Column="4" ToolTip="Enter a unique name for the new list." VerticalAlignment="Top" TextChanged="EhCurrentItemListName_Changed" />
+        <TextBox Grid.Row="1" Grid.Column="4" 
+                 Text="{Binding NewListNameText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                 ToolTip="{Binding NewListNameToolTip}" 
+                 IsEnabled="{Binding NewListNameIsEnabled}"
+                 IsReadOnly="{Binding NewListNameIsEnabled, Converter={x:Static axogcc:InverseBooleanConverter.Instance}}"
+                 Background="{Binding NewListNameIsMarked, Converter={StaticResource IsMarkedToBrush}}"
+                 VerticalAlignment="Top" />
 
-		<CheckBox x:Name="_guiStoreInUserSettings" Content="Store list in user settings" Grid.Row="3" Grid.Column="4" ToolTip="If checked, the new list is stored in the user's settings." />
+        <CheckBox Grid.Row="3" Grid.Column="4"  
+                  IsChecked="{Binding StoreInUserSettings, Mode=TwoWay}"
+                  Content="Store list in user settings"
+                  ToolTip="If checked, the new list is stored in the user's settings." />
 
-		<Button x:Name="_guiStoreList" Content="Store list now" Grid.Row="5" Grid.Column="4" ToolTip="Stores the list in the collection of available lists" Click="EhCurrentList_Store" />
+		<Button Grid.Row="5" Grid.Column="4"
+                Command="{Binding CmdCurrentList_Store}"
+                Content="Store list now" 
+                ToolTip="Stores the list in the collection of available lists" />
 
-		<Label Content="Available items:" Grid.Row="7" Grid.Column="0" />
+		<Label Grid.Row="7" Grid.Column="0" Content="Available items:" />
 
-		<TreeView x:Name="_guiAvailableSymbols" Grid.Row="8" Grid.RowSpan="7" Grid.Column="0" ScrollViewer.VerticalScrollBarVisibility="Visible"
-			dd:DragDrop.IsDragSource="True" dd:DragDrop.DragHandler="{Binding AvailableItemsDragSource, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}"
-			dd:DragDrop.IsDropTarget="True" dd:DragDrop.DropHandler="{Binding AvailableItemsDropTarget, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}"
+        <!-- Available items -->
+		<TreeView Grid.Row="8" Grid.RowSpan="7" Grid.Column="0"
+                  ItemsSource="{Binding AvailableItems}"
+                  ScrollViewer.VerticalScrollBarVisibility="Visible"
+			dd:DragDrop.IsDragSource="True" dd:DragDrop.DragMVVMHandler="{Binding AvailableItemsDragDropHandler}"
+			dd:DragDrop.IsDropTarget="True" dd:DragDrop.DropMVVMHandler="{Binding AvailableItemsDragDropHandler}"
 			ItemTemplate="{Binding AvailableItemsTemplate, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}">
 			<ItemsControl.ItemContainerStyle>
 				<!-- This Style binds a TreeViewItem to a TreeViewItemViewModel. -->
@@ -104,39 +126,56 @@
 			</ItemsControl.ItemContainerStyle>
 		</TreeView>
 
-		<Button  Grid.Row="8" Grid.Column="2"  ToolTip="Adds the item to the list" Click="EhAvailableItem_AddToCurrent">
+		<Button  Grid.Row="8" Grid.Column="2"  ToolTip="Adds the item to the list" Command="{Binding CmdAvailableItem_AddToCurrent}">
 			<Viewbox Style="{StaticResource ArrowViewBoxStyle}">
 				<Path Style="{StaticResource LeftArrowPathStyle}" RenderTransformOrigin="2,2" />
 			</Viewbox>
 		</Button>
-		<Button  Grid.Row="12" Grid.Column="2"  ToolTip="Removes the item from the list" Click="EhCurrentItem_Remove">
+		<Button  Grid.Row="12" Grid.Column="2"  ToolTip="Removes the item from the list" Command="{Binding CmdCurrentItem_Remove}">
 			<Viewbox Style="{StaticResource ArrowViewBoxStyle}">
 				<Path Style="{StaticResource RightArrowPathStyle}" RenderTransformOrigin="2,2" />
 			</Viewbox>
 		</Button>
 
+        <!-- Current items -->
 		<Label Content="Items of list:" Grid.Row="7" Grid.Column="4" />
-		<ListBox x:Name="_guiCurrentItems" Grid.Row="8" Grid.RowSpan="7" Grid.Column="4" ScrollViewer.VerticalScrollBarVisibility="Visible" SelectionMode="Extended" SelectionChanged="EhCurrentItemsSelectionChanged"
- 		dd:DragDrop.IsDragSource="True" dd:DragDrop.DragHandler="{Binding CurrentItemsDragSource, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}"
- 		dd:DragDrop.IsDropTarget="True" dd:DragDrop.DropHandler="{Binding CurrentItemsDropTarget, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}"
-		ItemTemplate="{Binding CurrentItemsTemplate, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}"	/>
+        <ListBox Grid.Row="8" Grid.RowSpan="7" Grid.Column="4"
+                 ItemsSource="{Binding CurrentItems}" 
+                 ScrollViewer.VerticalScrollBarVisibility="Visible"
+                 SelectionMode="Extended" 
+ 		dd:DragDrop.IsDragSource="True" dd:DragDrop.DragMVVMHandler="{Binding CurrentItemsDragDropHandler}"
+ 		dd:DragDrop.IsDropTarget="True" dd:DragDrop.DropMVVMHandler="{Binding CurrentItemsDragDropHandler}"
+		ItemTemplate="{Binding CurrentItemsTemplate, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}"	>
+            <ItemsControl.ItemContainerStyle>
+                <Style TargetType="{x:Type ListBoxItem}">
+                    <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
+                    <!--
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                            <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                    -->
+                </Style>
+            </ItemsControl.ItemContainerStyle>
+        </ListBox>
 
-		<Button  Grid.Row="8" Grid.Column="6" ToolTip="Moves the item upwards in the list" Click="EhCurrentItem_MoveUp">
+        <Button  Grid.Row="8" Grid.Column="6" ToolTip="Moves the item upwards in the list" Command="{Binding CmdCurrentItem_MoveUp}">
 			<Viewbox Style="{StaticResource ArrowViewBoxStyle}">
 				<Path Style="{StaticResource UpArrowPathStyle}" />
 			</Viewbox>
 		</Button>
-		<Button Grid.Row="10" Grid.Column="6"  ToolTip="Moves the item downwards in the list" Click="EhCurrentItem_MoveDown">
+		<Button Grid.Row="10" Grid.Column="6"  ToolTip="Moves the item downwards in the list" Command="{Binding CmdCurrentItem_MoveDown}">
 			<Viewbox Style="{StaticResource ArrowViewBoxStyle}">
 				<Path Style="{StaticResource DownArrowPathStyle}" />
 			</Viewbox>
 		</Button>
 
-		<Button  Grid.Row="12" Grid.Column="6"  ToolTip="Removes the item from the list" Click="EhCurrentItem_Remove">
+		<Button  Grid.Row="12" Grid.Column="6"  ToolTip="Removes the item from the list" Command="{Binding CmdCurrentItem_Remove}">
 			<Viewbox Style="{StaticResource ArrowViewBoxStyle}">
 				<Path Style="{StaticResource RemoveCrossPathStyle}" />
 			</Viewbox>
 		</Button>
-		<Button Content="Edit" Grid.Row="14" Grid.Column="6"  ToolTip="Opens an edit dialog for the item (if it is editable)" Click="EhCurrentItem_Edit" />
+		<Button Content="Edit" Grid.Row="14" Grid.Column="6"  ToolTip="Opens an edit dialog for the item (if it is editable)" Command="{Binding CmdCurrentItem_Edit}" />
 	</Grid>
 </UserControl>

@@ -26,31 +26,16 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using System.Windows.Input;
 using Altaxo.Collections;
 using Altaxo.Drawing;
 using Altaxo.Drawing.ColorManagement;
-using Altaxo.Drawing.D3D;
-using Altaxo.Graph.Graph3D.Plot.Groups;
 using Altaxo.Main;
 
 namespace Altaxo.Gui.Drawing.ColorManagement
 {
   public interface IColorListView : IStyleListView
   {
-    void SetCustomColorView(object guiCustomColorViewObject);
-
-    event Action UserRequest_AddCustomColorToList;
-
-    event Action<double> UserRequest_ForAllSelectedItemsSetOpacity;
-
-    event Action<double> UserRequest_ForAllSelectedItemsShiftHue;
-
-    event Action<double> UserRequest_ForAllSelectedItemsSetSaturation;
-
-    event Action<double> UserRequest_ForAllSelectedItemsSetBrightness;
-
-    event Action<string> UserRequest_ForAllSelectedItemsSetColorName;
   }
 
   [ExpectedTypeOfView(typeof(IColorListView))]
@@ -64,6 +49,13 @@ namespace Altaxo.Gui.Drawing.ColorManagement
     {
       _customColorController = new NamedColorController();
       Current.Gui.FindAndAttachControlTo(_customColorController);
+
+      CmdAddCustomColorToList = new RelayCommand(EhUserRequest_AddCustomColorToList);
+      CmdForAllSelectedItemsSetOpacity = new RelayCommand(EhUserRequest_ForAllSelectedItemSetOpacity);
+      CmdForAllSelectedItemsShiftHue = new RelayCommand(EhUserRequest_ForAllSelectedItemShiftHue);
+      CmdForAllSelectedItemsSetSaturation = new RelayCommand(EhUserRequest_ForAllSelectedItemSetSaturation);
+      CmdForAllSelectedItemsSetBrightness = new RelayCommand(EhUserRequest_ForAllSelectedItemSetBrightness);
+      CmdForAllSelectedItemsSetColorName = new RelayCommand(EhUserRequest_ForAllSelectedItemSetColorName);
     }
 
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
@@ -76,6 +68,99 @@ namespace Altaxo.Gui.Drawing.ColorManagement
       return base.GetSubControllers().Concat(GetMySubControllers());
     }
 
+    #region Bindings
+
+    public ICommand CmdAddCustomColorToList { get; }
+
+    public ICommand CmdForAllSelectedItemsSetOpacity { get; }
+    public ICommand CmdForAllSelectedItemsShiftHue { get; }
+    public ICommand CmdForAllSelectedItemsSetSaturation { get; }
+    public ICommand CmdForAllSelectedItemsSetBrightness { get; }
+    public ICommand CmdForAllSelectedItemsSetColorName { get; }
+
+    public NamedColorController CustomColorController => _customColorController;
+
+    private double _opacity = 100;
+
+    public double Opacity
+    {
+      get => _opacity;
+      set
+      {
+        if (!(_opacity == value))
+        {
+          _opacity = value;
+          OnPropertyChanged(nameof(Opacity));
+        }
+      }
+    }
+
+    private double _shiftHue = 100;
+
+    public double ShiftHue
+    {
+      get => _shiftHue;
+      set
+      {
+        if (!(_shiftHue == value))
+        {
+          _shiftHue = value;
+          OnPropertyChanged(nameof(ShiftHue));
+        }
+      }
+    }
+
+    private double _saturation = 100;
+
+    public double Saturation
+    {
+      get => _saturation;
+      set
+      {
+        if (!(_saturation == value))
+        {
+          _saturation = value;
+          OnPropertyChanged(nameof(Saturation));
+        }
+      }
+    }
+
+    private double _brighness = 100;
+
+    public double Brighness
+    {
+      get => _brighness;
+      set
+      {
+        if (!(_brighness == value))
+        {
+          _brighness = value;
+          OnPropertyChanged(nameof(Brighness));
+        }
+      }
+    }
+
+    private string _colorName;
+
+    public string ColorName
+    {
+      get => _colorName;
+      set
+      {
+        if (!(_colorName == value))
+        {
+          _colorName = value;
+          OnPropertyChanged(nameof(ColorName));
+        }
+      }
+    }
+
+
+
+
+
+    #endregion
+
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -84,37 +169,10 @@ namespace Altaxo.Gui.Drawing.ColorManagement
       {
         _customColorController = new NamedColorController();
         _customColorController.InitializeDocument(NamedColors.White);
-      }
-
-      if (_view is not null)
-      {
+      
         if (_customColorController.ViewObject is null)
           Current.Gui.FindAndAttachControlTo(_customColorController);
-        ((IColorListView)_view).SetCustomColorView(_customColorController.ViewObject);
       }
-    }
-
-    protected override void AttachView()
-    {
-      base.AttachView();
-      ((IColorListView)_view).UserRequest_AddCustomColorToList += EhUserRequest_AddCustomColorToList;
-      ((IColorListView)_view).UserRequest_ForAllSelectedItemsSetOpacity += EhUserRequest_ForAllSelectedItemSetOpacity;
-      ((IColorListView)_view).UserRequest_ForAllSelectedItemsShiftHue += EhUserRequest_ForAllSelectedItemShiftHue;
-      ((IColorListView)_view).UserRequest_ForAllSelectedItemsSetSaturation += EhUserRequest_ForAllSelectedItemSetSaturation;
-      ((IColorListView)_view).UserRequest_ForAllSelectedItemsSetBrightness += EhUserRequest_ForAllSelectedItemSetBrightness;
-      ((IColorListView)_view).UserRequest_ForAllSelectedItemsSetColorName += EhUserRequest_ForAllSelectedItemSetColorName;
-    }
-
-    protected override void DetachView()
-    {
-      ((IColorListView)_view).UserRequest_AddCustomColorToList -= EhUserRequest_AddCustomColorToList;
-      ((IColorListView)_view).UserRequest_ForAllSelectedItemsSetOpacity -= EhUserRequest_ForAllSelectedItemSetOpacity;
-      ((IColorListView)_view).UserRequest_ForAllSelectedItemsShiftHue -= EhUserRequest_ForAllSelectedItemShiftHue;
-      ((IColorListView)_view).UserRequest_ForAllSelectedItemsSetSaturation -= EhUserRequest_ForAllSelectedItemSetSaturation;
-      ((IColorListView)_view).UserRequest_ForAllSelectedItemsSetBrightness -= EhUserRequest_ForAllSelectedItemSetBrightness;
-      ((IColorListView)_view).UserRequest_ForAllSelectedItemsSetColorName -= EhUserRequest_ForAllSelectedItemSetColorName;
-
-      base.DetachView();
     }
 
     private void EhUserRequest_AddCustomColorToList()
@@ -122,17 +180,17 @@ namespace Altaxo.Gui.Drawing.ColorManagement
       if (_customColorController.Apply(false))
       {
         var namedColor = (NamedColor)_customColorController.ModelObject;
-        _currentItems.Add(new SelectableListNode(ToDisplayName(namedColor), namedColor, false));
+        CurrentItems.Add(new SelectableListNode(ToDisplayName(namedColor), namedColor, false));
         SetListDirty();
       }
     }
 
-    private void EhUserRequest_ForAllSelectedItemSetOpacity(double opacity)
+    private void EhUserRequest_ForAllSelectedItemSetOpacity()
     {
-      var alphaValue = AxoColor.NormFloatToByte((float)opacity);
+      var alphaValue = AxoColor.NormFloatToByte((float)Opacity);
 
       bool anyChange = false;
-      foreach (var item in _currentItems.Where(node => node.IsSelected))
+      foreach (var item in CurrentItems.Where(node => node.IsSelected))
       {
         var color = ((NamedColor)item.Tag).Color;
         if (color.A != alphaValue)
@@ -150,13 +208,14 @@ namespace Altaxo.Gui.Drawing.ColorManagement
         SetListDirty();
     }
 
-    private void EhUserRequest_ForAllSelectedItemShiftHue(double hueShift)
+    private void EhUserRequest_ForAllSelectedItemShiftHue()
     {
+      var hueShift = ShiftHue;
       if (0 == hueShift || -1 == hueShift || 1 == hueShift)
         return;
 
       bool anyChange = false;
-      foreach (var item in _currentItems.Where(node => node.IsSelected))
+      foreach (var item in CurrentItems.Where(node => node.IsSelected))
       {
         var color = ((NamedColor)item.Tag).Color;
         var (a, h, s, b) = color.ToAhsb();
@@ -176,10 +235,11 @@ namespace Altaxo.Gui.Drawing.ColorManagement
         SetListDirty();
     }
 
-    private void EhUserRequest_ForAllSelectedItemSetSaturation(double saturation)
+    private void EhUserRequest_ForAllSelectedItemSetSaturation()
     {
+      var saturation = Saturation;
       bool anyChange = false;
-      foreach (var item in _currentItems.Where(node => node.IsSelected))
+      foreach (var item in CurrentItems.Where(node => node.IsSelected))
       {
         var color = ((NamedColor)item.Tag).Color;
         var (a, h, s, b) = color.ToAhsb();
@@ -201,10 +261,11 @@ namespace Altaxo.Gui.Drawing.ColorManagement
         SetListDirty();
     }
 
-    private void EhUserRequest_ForAllSelectedItemSetBrightness(double brightness)
+    private void EhUserRequest_ForAllSelectedItemSetBrightness()
     {
+      var brightness = Brighness;
       bool anyChange = false;
-      foreach (var item in _currentItems.Where(node => node.IsSelected))
+      foreach (var item in CurrentItems.Where(node => node.IsSelected))
       {
         var color = ((NamedColor)item.Tag).Color;
         var (a, h, s, b) = color.ToAhsb();
@@ -226,11 +287,12 @@ namespace Altaxo.Gui.Drawing.ColorManagement
         SetListDirty();
     }
 
-    private void EhUserRequest_ForAllSelectedItemSetColorName(string baseName)
+    private void EhUserRequest_ForAllSelectedItemSetColorName()
     {
+      var baseName = ColorName;
       bool anyChange = false;
 
-      var items = _currentItems.Where(node => node.IsSelected).ToArray();
+      var items = CurrentItems.Where(node => node.IsSelected).ToArray();
 
       if (items.Length == 0)
       {
@@ -308,14 +370,14 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 
     protected override void Controller_CurrentItems_Initialize()
     {
-      if (_currentItems is null)
-        _currentItems = new SelectableListNodeList();
+      if (CurrentItems is null)
+        CurrentItems = new SelectableListNodeList();
       else
-        _currentItems.Clear();
+        CurrentItems.Clear();
 
       foreach (var color in _doc)
       {
-        _currentItems.Add(new SelectableListNode(ToDisplayName(color), color, false));
+        CurrentItems.Add(new SelectableListNode(ToDisplayName(color), color, false));
       }
     }
 
@@ -326,7 +388,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
         return;
 
       foreach (var namedColor in avNodes)
-        _currentItems.Add(new SelectableListNode(ToDisplayName(namedColor), namedColor, false));
+        CurrentItems.Add(new SelectableListNode(ToDisplayName(namedColor), namedColor, false));
       SetListDirty();
     }
 

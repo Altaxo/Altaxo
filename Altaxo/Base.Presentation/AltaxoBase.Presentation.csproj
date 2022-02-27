@@ -14,6 +14,18 @@
     <Compile Remove="Properties\AssemblyInfo.cs" Visible="true" />
   </ItemGroup>
   <ItemGroup>
+    <None Remove="GongSolutions.Wpf.DragDrop\Icons\EffectCopy.png" />
+    <None Remove="GongSolutions.Wpf.DragDrop\Icons\EffectLink.png" />
+    <None Remove="GongSolutions.Wpf.DragDrop\Icons\EffectMove.png" />
+    <None Remove="GongSolutions.Wpf.DragDrop\Icons\EffectNone.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="GongSolutions.Wpf.DragDrop\Icons\EffectCopy.png" />
+    <Resource Include="GongSolutions.Wpf.DragDrop\Icons\EffectLink.png" />
+    <Resource Include="GongSolutions.Wpf.DragDrop\Icons\EffectMove.png" />
+    <Resource Include="GongSolutions.Wpf.DragDrop\Icons\EffectNone.png" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\Core\AltaxoCore.csproj" />
     <ProjectReference Include="..\Base\AltaxoBase.csproj" />
     <ProjectReference Include="..\..\Libraries\Markdig\Markdig.csproj" />

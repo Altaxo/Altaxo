@@ -24,10 +24,9 @@
 
 #nullable disable
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using System.Windows.Input;
 using Altaxo.Collections;
 using Altaxo.Drawing;
 using Altaxo.Gui.Common;
@@ -37,72 +36,62 @@ namespace Altaxo.Gui.Drawing
 {
   public interface IStyleListView : IDataContextAwareView
   {
-    void AvailableLists_Initialize(NGTreeNodeCollection nodes);
+  }
 
-    event Action<NGTreeNode> AvailableLists_SelectionChanged;
+  /// <summary>
+  /// Non-generic interface used as model for the Gui.
+  /// </summary>
+  public interface IStyleListController
+  {
+    public NGTreeNodeCollection AvailableLists { get; }
 
-    event Action CurrentItemListName_Changed;
+    public NGTreeNodeCollection AvailableItems { get; }
 
-    void AvailableItems_Initialize(NGTreeNodeCollection items);
+    SelectableListNodeList CurrentItems { get; }
 
-    void CurrentItemList_Initialize(SelectableListNodeList items);
+    string NewListNameText { get; set; }
 
-    void CurrentItemListName_Initialize(string name, bool isEnabled, bool isMarked, string toolTipText);
+    string NewListNameToolTip { get; set; }
 
-    string CurrentItemListName { get; }
+    bool NewListNameIsEnabled { get; set; }
 
-    event CanStartDragDelegate AvailableItems_CanStartDrag;
-
-    event StartDragDelegate AvailableItems_StartDrag;
-
-    event DragEndedDelegate AvailableItems_DragEnded;
-
-    event DragCancelledDelegate AvailableItems_DragCancelled;
-
-    event DropCanAcceptDataDelegate AvailableItems_DropCanAcceptData;
-
-    event DropDelegate AvailableItems_Drop;
-
-    event CanStartDragDelegate CurrentItems_CanStartDrag;
-
-    event StartDragDelegate CurrentItems_StartDrag;
-
-    event DragEndedDelegate CurrentItems_DragEnded;
-
-    event DragCancelledDelegate CurrentItems_DragCancelled;
-
-    event DropCanAcceptDataDelegate CurrentItems_DropCanAcceptData;
-
-    event DropDelegate CurrentItems_Drop;
+    bool NewListNameIsMarked { get; set; }
 
     bool StoreInUserSettings { get; set; }
 
-    event Action AvailableItem_AddToCurrent;
+    ICommand CmdCurrentList_Store { get; }
 
-    event Action CurrentItem_MoveUp;
+    ICommand CmdAvailableItem_AddToCurrent { get; }
 
-    event Action CurrentItem_MoveDown;
 
-    event Action CurrentItem_Remove;
+    ICommand CmdCurrentItem_Remove { get; }
 
-    event Action CurrentItem_Edit;
+    ICommand CmdCurrentItem_MoveUp { get; }
 
-    event Action CurrentList_Store;
+    ICommand CmdCurrentItem_MoveDown { get; }
+
+
+    ICommand CmdCurrentItem_Edit { get; }
+
+    IMVVMDragDropHandler AvailableItemsDragDropHandler { get; }
+    IMVVMDragDropHandler CurrentItemsDragDropHandler { get; }
+
+
   }
 
   [ExpectedTypeOfView(typeof(IStyleListView))]
-  public class StyleListController<TManager, TList, TItem>
+  public partial class StyleListController<TManager, TList, TItem>
     :
-    MVCANControllerEditImmutableDocBase<TList, IStyleListView>
-    where TItem : Altaxo.Main.IImmutable
-    where TList : IStyleList<TItem>
-    where TManager : IStyleListManager<TList, TItem>
+    MVCANControllerEditImmutableDocBase<TList, IStyleListView>, IStyleListController 
+      where TItem : Altaxo.Main.IImmutable
+      where TList : IStyleList<TItem>
+      where TManager : IStyleListManager<TList, TItem>
   {
     private TManager _manager;
 
     private NGTreeNode _availableListsRootNode;
     protected NGTreeNode _availableItemsRootNode;
-    protected SelectableListNodeList _currentItems;
+    // protected SelectableListNodeList _currentItems;
 
     private bool _currentItems_IsDirty;
     private bool _isNameOfNewListValid;
@@ -110,7 +99,130 @@ namespace Altaxo.Gui.Drawing
     public StyleListController(TManager managerInstance)
     {
       _manager = managerInstance;
+      CmdCurrentList_Store = new RelayCommand(EhCurrentList_Store);
+      CmdAvailableItem_AddToCurrent = new RelayCommand(EhAvailableItem_AddToCurrent);
+      CmdCurrentItem_Remove = new RelayCommand(EhCurrentItem_Remove);
+      CmdCurrentItem_MoveUp = new RelayCommand(EhCurrentItem_MoveUp);
+      CmdCurrentItem_MoveDown = new RelayCommand(EhCurrentItem_MoveDown);
+      CmdCurrentItem_Edit = new RelayCommand(EhCurrentItem_Edit);
+
+      AvailableItemsDragDropHandler = new AvailableItems_DragDropHandler(this);
+      CurrentItemsDragDropHandler = new CurrentItems_DragDropHandler(this);
     }
+
+    #region Bindings
+
+    public NGTreeNodeCollection AvailableLists => _availableListsRootNode.Nodes;
+
+    public NGTreeNodeCollection AvailableItems => _availableItemsRootNode.Nodes;
+
+    private SelectableListNodeList _currentItems;
+
+    public SelectableListNodeList CurrentItems
+    {
+      get => _currentItems;
+      set
+      {
+        if (!(_currentItems == value))
+        {
+          _currentItems = value;
+          OnPropertyChanged(nameof(CurrentItems));
+        }
+      }
+    }
+
+    private string _newListNameText;
+
+    public string NewListNameText
+    {
+      get => _newListNameText;
+      set
+      {
+        if (!(_newListNameText == value))
+        {
+          _newListNameText = value;
+          OnPropertyChanged(nameof(NewListNameText));
+          SetListDirty();
+        }
+      }
+    }
+
+    private string _newListNameToolTip = "Enter a unique name for the new list.";
+
+    public string NewListNameToolTip
+    {
+      get => _newListNameToolTip;
+      set
+      {
+        if (!(_newListNameToolTip == value))
+        {
+          _newListNameToolTip = value;
+          OnPropertyChanged(nameof(NewListNameToolTip));
+        }
+      }
+    }
+
+    private bool _newListNameIsEnabled;
+
+    public bool NewListNameIsEnabled
+    {
+      get => _newListNameIsEnabled;
+      set
+      {
+        if (!(_newListNameIsEnabled == value))
+        {
+          _newListNameIsEnabled = value;
+          OnPropertyChanged(nameof(NewListNameIsEnabled));
+        }
+      }
+    }
+    private bool _newListNameIsMarked;
+
+    public bool NewListNameIsMarked
+    {
+      get => _newListNameIsMarked;
+      set
+      {
+        if (!(_newListNameIsMarked == value))
+        {
+          _newListNameIsMarked = value;
+          OnPropertyChanged(nameof(NewListNameIsMarked));
+        }
+      }
+    }
+
+
+    private bool _storeInUserSettings;
+
+    public bool StoreInUserSettings
+    {
+      get => _storeInUserSettings;
+      set
+      {
+        if (!(_storeInUserSettings == value))
+        {
+          _storeInUserSettings = value;
+          OnPropertyChanged(nameof(StoreInUserSettings));
+        }
+      }
+    }
+
+    public ICommand CmdCurrentList_Store { get; }
+
+    public ICommand CmdAvailableItem_AddToCurrent { get; }
+
+    public ICommand CmdCurrentItem_Remove { get; }
+
+    public ICommand CmdCurrentItem_MoveUp { get; }
+
+    public ICommand CmdCurrentItem_MoveDown { get; }
+
+    public ICommand CmdCurrentItem_Edit { get; }
+
+    public IMVVMDragDropHandler AvailableItemsDragDropHandler { get; }
+    public IMVVMDragDropHandler CurrentItemsDragDropHandler { get; }
+
+    #endregion
 
     protected override void Initialize(bool initData)
     {
@@ -125,17 +237,18 @@ namespace Altaxo.Gui.Drawing
 
         // Current items
         Controller_CurrentItems_Initialize();
-      }
 
-      if (_view is not null)
-      {
-        View_AvailableLists_Initialize();
-        View_AvailableItems_Initialize();
-
-        _view.CurrentItemList_Initialize(_currentItems);
-        _view.StoreInUserSettings = IsListAtUserLevel(_doc);
-        _view.CurrentItemListName_Initialize(_doc.Name, IsListAtUserOrProjectLevel(_doc), false, "Name can not be changed because list is already stored!");
+        StoreInUserSettings = IsListAtUserLevel(_doc);
+        CurrentItemListName_Initialize(_doc.Name, IsListAtUserOrProjectLevel(_doc), false, "Name can not be changed because list is already stored!");
       }
+    }
+
+    private void CurrentItemListName_Initialize(string name, bool isEnabled, bool isMarked, string toolTip)
+    {
+      NewListNameText = name;
+      NewListNameIsEnabled = isEnabled;
+      NewListNameIsMarked = isMarked;
+      NewListNameToolTip = toolTip;
     }
 
     private bool IsListAtUserOrProjectLevel(TList list)
@@ -163,96 +276,6 @@ namespace Altaxo.Gui.Drawing
       yield break;
     }
 
-    protected override void AttachView()
-    {
-      base.AttachView();
-
-      _view.AvailableLists_SelectionChanged += EhAvailableLists_SelectionChanged;
-
-      _view.CurrentItemListName_Changed += EhCurrentItemListName_Changed;
-
-      _view.AvailableItems_CanStartDrag += EhAvailableItems_CanStartDrag;
-
-      _view.AvailableItems_StartDrag += EhAvailableItems_StartDrag;
-
-      _view.AvailableItems_DragEnded += AvailableItems_DragEnded;
-
-      _view.AvailableItems_DragCancelled += EhAvailableItems_DragCancelled;
-
-      _view.AvailableItems_DropCanAcceptData += EhAvailableItems_DropCanAcceptData;
-
-      _view.AvailableItems_Drop += EhAvailableItems_Drop;
-
-      _view.CurrentItems_CanStartDrag += EhCurrentItems_CanStartDrag;
-
-      _view.CurrentItems_StartDrag += EhCurrentItems_StartDrag;
-
-      _view.CurrentItems_DragEnded += EhCurrentItems_DragEnded;
-
-      _view.CurrentItems_DragCancelled += EhCurrentItems_DragCancelled;
-
-      _view.CurrentItems_DropCanAcceptData += EhCurrentItems_DropCanAcceptData;
-
-      _view.CurrentItems_Drop += EhCurrentItems_Drop;
-
-      _view.AvailableItem_AddToCurrent += EhAvailableItem_AddToCurrent;
-
-      _view.CurrentItem_MoveUp += EhCurrentItem_MoveUp;
-
-      _view.CurrentItem_MoveDown += EhCurrentItem_MoveDown;
-
-      _view.CurrentItem_Remove += EhCurrentItem_Remove;
-
-      _view.CurrentItem_Edit += EhCurrentItem_Edit;
-
-      _view.CurrentList_Store += EhCurrentList_Store;
-    }
-
-    protected override void DetachView()
-    {
-      _view.AvailableLists_SelectionChanged -= EhAvailableLists_SelectionChanged;
-
-      _view.CurrentItemListName_Changed -= EhCurrentItemListName_Changed;
-
-      _view.AvailableItems_CanStartDrag -= EhAvailableItems_CanStartDrag;
-
-      _view.AvailableItems_StartDrag -= EhAvailableItems_StartDrag;
-
-      _view.AvailableItems_DragEnded -= AvailableItems_DragEnded;
-
-      _view.AvailableItems_DragCancelled -= EhAvailableItems_DragCancelled;
-
-      _view.AvailableItems_DropCanAcceptData -= EhAvailableItems_DropCanAcceptData;
-
-      _view.AvailableItems_Drop -= EhAvailableItems_Drop;
-
-      _view.CurrentItems_CanStartDrag -= EhCurrentItems_CanStartDrag;
-
-      _view.CurrentItems_StartDrag -= EhCurrentItems_StartDrag;
-
-      _view.CurrentItems_DragEnded -= EhCurrentItems_DragEnded;
-
-      _view.CurrentItems_DragCancelled -= EhCurrentItems_DragCancelled;
-
-      _view.CurrentItems_DropCanAcceptData -= EhCurrentItems_DropCanAcceptData;
-
-      _view.CurrentItems_Drop -= EhCurrentItems_Drop;
-
-      _view.AvailableItem_AddToCurrent -= EhAvailableItem_AddToCurrent;
-
-      _view.CurrentItem_MoveUp -= EhCurrentItem_MoveUp;
-
-      _view.CurrentItem_MoveDown -= EhCurrentItem_MoveDown;
-
-      _view.CurrentItem_Remove -= EhCurrentItem_Remove;
-
-      _view.CurrentItem_Edit -= EhCurrentItem_Edit;
-
-      _view.CurrentList_Store -= EhCurrentList_Store;
-
-      base.DetachView();
-    }
-
     #region How to display items
 
     protected virtual string ToDisplayName(TItem item)
@@ -273,9 +296,7 @@ namespace Altaxo.Gui.Drawing
     private void Controller_AvailableLists_Initialize()
     {
       _availableListsRootNode = new NGTreeNode();
-
       var levelDict = new Dictionary<ItemDefinitionLevel, NGTreeNode>();
-
       var allListsWithLevel = _manager.GetEntryValues().ToArray();
       Array.Sort(allListsWithLevel, (x, y) =>
       {
@@ -296,11 +317,7 @@ namespace Altaxo.Gui.Drawing
         }
         levelNode.Nodes.Add(new NGTreeNode(listAndLevel.List.Name) { Tag = listAndLevel.List, IsSelected = object.ReferenceEquals(listAndLevel.List, _doc) });
       }
-    }
-
-    private void View_AvailableLists_Initialize()
-    {
-      _view.AvailableLists_Initialize(_availableListsRootNode.Nodes);
+      OnPropertyChanged(nameof(AvailableLists));
     }
 
     #endregion Available lists
@@ -314,12 +331,11 @@ namespace Altaxo.Gui.Drawing
       var availableItems = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(TItem));
       foreach (var item in availableItems)
         _availableItemsRootNode.Nodes.Add(new NGTreeNode(ToDisplayName(item)) { Tag = item, IsSelected = false });
+
+      OnPropertyChanged(nameof(AvailableItems));
     }
 
-    private void View_AvailableItems_Initialize()
-    {
-      _view.AvailableItems_Initialize(_availableItemsRootNode.Nodes);
-    }
+
 
     #endregion AvailableItens
 
@@ -327,28 +343,24 @@ namespace Altaxo.Gui.Drawing
 
     protected virtual void Controller_CurrentItems_Initialize()
     {
-      if (_currentItems is null)
-        _currentItems = new SelectableListNodeList();
-      else
-        _currentItems.Clear();
+
+      var currentItems = new SelectableListNodeList();
 
       foreach (var currentItem in _doc)
       {
-        _currentItems.Add(new SelectableListNode(ToDisplayName(currentItem), currentItem, false));
+        currentItems.Add(new SelectableListNode(ToDisplayName(currentItem), currentItem, false));
       }
+
+      CurrentItems = currentItems;
     }
 
-    protected virtual void View_CurrentItems_Initialize()
-    {
-      _view?.CurrentItemList_Initialize(_currentItems);
-    }
+
 
     private void ControllerAndView_CurrentItemsAndName_Initialize()
     {
       Controller_CurrentItems_Initialize();
-      _view?.CurrentItemList_Initialize(_currentItems);
-      _view.StoreInUserSettings = IsListAtUserLevel(_doc);
-      _view?.CurrentItemListName_Initialize(_doc.Name, IsListAtUserOrProjectLevel(_doc), false, "Name can't be changed because list is already stored!");
+      StoreInUserSettings = IsListAtUserLevel(_doc);
+      CurrentItemListName_Initialize(_doc.Name, IsListAtUserOrProjectLevel(_doc), false, "Name can't be changed because list is already stored!");
       _currentItems_IsDirty = false;
     }
 
@@ -356,7 +368,7 @@ namespace Altaxo.Gui.Drawing
 
     private bool TryToStoreList()
     {
-      if (_currentItems.Count == 0)
+      if (CurrentItems.Count == 0)
       {
         Current.Gui.ErrorMessageBox("The list does not contains any items, thus it can not be stored");
         return false;
@@ -368,8 +380,8 @@ namespace Altaxo.Gui.Drawing
         return false;
       }
 
-      bool isUser = _view.StoreInUserSettings;
-      var doc = _manager.CreateNewList(_view.CurrentItemListName, _currentItems.Select(node => (TItem)node.Tag));
+      bool isUser = StoreInUserSettings;
+      var doc = _manager.CreateNewList(NewListNameText, CurrentItems.Select(node => (TItem)node.Tag));
       _manager.TryRegisterList(doc, isUser ? Altaxo.Main.ItemDefinitionLevel.UserDefined : Altaxo.Main.ItemDefinitionLevel.Project, out doc);
       _doc = doc;
 
@@ -377,7 +389,6 @@ namespace Altaxo.Gui.Drawing
       _currentItems_IsDirty = false;
 
       Controller_AvailableLists_Initialize();
-      View_AvailableLists_Initialize();
       ControllerAndView_CurrentItemsAndName_Initialize();
 
       return true;
@@ -396,12 +407,11 @@ namespace Altaxo.Gui.Drawing
         if (IsListAtUserOrProjectLevel(_doc))
         {
           bool isListAtUserLevel = _manager.GetEntryValue(_doc.Name).Level == ItemDefinitionLevel.UserDefined;
-          bool shouldSwitchLevel = isListAtUserLevel ^ _view.StoreInUserSettings; // if true, we should switch the levels
+          bool shouldSwitchLevel = isListAtUserLevel ^ StoreInUserSettings; // if true, we should switch the levels
           if (shouldSwitchLevel)
           {
             _manager.SwitchItemDefinitionLevelBetweenUserAndProject(_doc.Name);
             Controller_AvailableLists_Initialize();
-            View_AvailableLists_Initialize();
             ControllerAndView_CurrentItemsAndName_Initialize();
           }
         }
@@ -420,12 +430,10 @@ namespace Altaxo.Gui.Drawing
 
     protected virtual void EhCurrentItem_Edit()
     {
-      var node = _currentItems.FirstSelectedNode;
-
-      if (!(node?.Tag is TItem))
+      var node = CurrentItems.FirstSelectedNode;
+      if (node is null)
         return;
-
-      var item = (TItem)(node?.Tag);
+      var item = (TItem)node.Tag;
       if (item is null)
         return;
 
@@ -440,17 +448,16 @@ namespace Altaxo.Gui.Drawing
         node.Tag = item;
 
         SetListDirty();
-        View_CurrentItems_Initialize();
       }
     }
 
     private void EhCurrentItem_Remove()
     {
-      var selNodes = _currentItems.Where((node) => node.IsSelected).ToArray();
+      var selNodes = CurrentItems.Where((node) => node.IsSelected).ToArray();
 
       foreach (var node in selNodes)
       {
-        _currentItems.Remove(node);
+        CurrentItems.Remove(node);
       }
 
       SetListDirty();
@@ -458,16 +465,14 @@ namespace Altaxo.Gui.Drawing
 
     private void EhCurrentItem_MoveDown()
     {
-      _currentItems.MoveSelectedItemsDown();
+      CurrentItems.MoveSelectedItemsDown();
       SetListDirty();
-      _view?.CurrentItemList_Initialize(_currentItems);
     }
 
     private void EhCurrentItem_MoveUp()
     {
-      _currentItems.MoveSelectedItemsUp();
+      CurrentItems.MoveSelectedItemsUp();
       SetListDirty();
-      _view?.CurrentItemList_Initialize(_currentItems);
     }
 
     protected virtual void EhAvailableItem_AddToCurrent()
@@ -487,7 +492,7 @@ namespace Altaxo.Gui.Drawing
 
       if (newItem is not null)
       {
-        _currentItems.Add(new SelectableListNode(ToDisplayName(newItem), newItem, false));
+        CurrentItems.Add(new SelectableListNode(ToDisplayName(newItem), newItem, false));
         SetListDirty();
       }
     }
@@ -535,238 +540,38 @@ namespace Altaxo.Gui.Drawing
 
     protected void SetListDirty()
     {
-      if (_manager.TryGetListByMembers(_currentItems.Select(node => (TItem)node.Tag), null, out var existingName))
+      if (_manager.TryGetListByMembers(CurrentItems.Select(node => (TItem)node.Tag), null, out var existingName))
       {
         _currentItems_IsDirty = false;
         _isNameOfNewListValid = true;
         _doc = _manager.GetList(existingName);
-        _view.CurrentItemListName_Initialize(existingName, false, false, "Name can't be changed because list is already stored!");
+        CurrentItemListName_Initialize(existingName, false, false, "Name can't be changed because list is already stored!");
         _availableListsRootNode.FromHereToLeavesDo(treeNode => treeNode.IsSelected = object.ReferenceEquals(treeNode.Tag, _doc));
       }
       else // this list is not known up to now
       {
         _currentItems_IsDirty = true;
         _isNameOfNewListValid = true;
-        string name = _view.CurrentItemListName;
+        string name = NewListNameText;
         _currentItems_IsDirty = true;
         if (!_manager.ContainsList(name) && !string.IsNullOrEmpty(name))
         {
           // is OK, we can use this name
-          _view.CurrentItemListName_Initialize(name, true, false, "The name is available as new name of the list");
+          CurrentItemListName_Initialize(name, true, false, "The name is available as new name of the list");
         }
         else if (string.IsNullOrEmpty(name))
         {
-          _view.CurrentItemListName_Initialize(name, true, true, "Please enter the name of the new list!");
+          CurrentItemListName_Initialize(name, true, true, "Please enter the name of the new list!");
           _isNameOfNewListValid = false;
         }
         else
         {
-          _view.CurrentItemListName_Initialize(name, true, true, "Please choose another name since this name is already in use!");
+          CurrentItemListName_Initialize(name, true, true, "Please choose another name since this name is already in use!");
           _isNameOfNewListValid = false;
         }
       }
     }
 
     private static DropReturnData DropFailedReturnData { get { return new DropReturnData { IsCopy = false, IsMove = false }; } }
-
-    #region Drag current items
-
-    private void EhCurrentItems_DragCancelled()
-    {
-      _draggedNode = null;
-    }
-
-    private void EhCurrentItems_DragEnded(bool isCopy, bool isMove)
-    {
-      if (isMove && _draggedNode is not null)
-      {
-        _currentItems.Remove(_draggedNode);
-        SetListDirty();
-      }
-
-      _draggedNode = null;
-    }
-
-    private SelectableListNode _draggedNode;
-
-    private StartDragData EhCurrentItems_StartDrag(IEnumerable items)
-    {
-      _draggedNode = items.OfType<SelectableListNode>().FirstOrDefault();
-
-      return new StartDragData
-      {
-        Data = _draggedNode.Tag,
-        CanCopy = true,
-        CanMove = true
-      };
-    }
-
-    private bool EhCurrentItems_CanStartDrag(IEnumerable items)
-    {
-      var selNode = items.OfType<SelectableListNode>().FirstOrDefault();
-      // to start a drag, at least one item must be selected
-      return selNode is not null;
-    }
-
-    #endregion Drag current items
-
-    #region Drop onto current items
-
-    private DropCanAcceptDataReturnData EhCurrentItems_DropCanAcceptData(object data, object nonGuiTargetItem, DragDropRelativeInsertPosition insertPosition, bool isCtrlKeyPressed, bool isShiftKeyPressed)
-    {
-      // investigate data
-
-      if (data is TItem)
-      {
-        return new DropCanAcceptDataReturnData
-        {
-          CanCopy = true,
-          CanMove = false,
-          ItemIsSwallowingData = false
-        };
-      }
-      else if (data is Type)
-      {
-        return new DropCanAcceptDataReturnData
-        {
-          CanCopy = true,
-          CanMove = false,
-          ItemIsSwallowingData = false
-        };
-      }
-      else
-      {
-        return new DropCanAcceptDataReturnData
-        {
-          CanCopy = false,
-          CanMove = false,
-          ItemIsSwallowingData = false
-        };
-      }
-    }
-
-    private DropReturnData EhCurrentItems_Drop(object data, object nonGuiTargetItem, DragDropRelativeInsertPosition insertPosition, bool isCtrlKeyPressed, bool isShiftKeyPressed)
-    {
-      var droppedItem = default(TItem);
-      if (data is Type)
-      {
-        object createdObj = null;
-        try
-        {
-          createdObj = System.Activator.CreateInstance((Type)data);
-        }
-        catch (Exception ex)
-        {
-          Current.Gui.ErrorMessageBox("This object could not be dropped because it could not be created, message: " + ex.ToString(), "Error");
-          return DropFailedReturnData;
-        }
-
-        if (!(createdObj is TItem))
-        {
-          return DropFailedReturnData;
-        }
-
-        droppedItem = (TItem)createdObj;
-      } // end if data is type
-      else if (data is TItem)
-      {
-        droppedItem = (TItem)data;
-      } // end if data is TItem
-      else
-      {
-        return DropFailedReturnData;
-      }
-
-      int targetIndex = int.MaxValue;
-      if (nonGuiTargetItem is SelectableListNode)
-      {
-        int idx = _currentItems.IndexOf((SelectableListNode)nonGuiTargetItem);
-        if (idx >= 0 && insertPosition.HasFlag(DragDropRelativeInsertPosition.AfterTargetItem))
-          ++idx;
-        targetIndex = idx;
-      }
-
-      var newNode = new SelectableListNode(droppedItem.ToString(), droppedItem, false);
-      if (targetIndex >= _currentItems.Count)
-        _currentItems.Add(newNode);
-      else
-        _currentItems.Insert(targetIndex, newNode);
-
-      SetListDirty();
-
-      return new DropReturnData
-      {
-        IsCopy = isCtrlKeyPressed,
-        IsMove = !isCtrlKeyPressed
-      };
-    }
-
-    #endregion Drop onto current items
-
-    #region Drag Available items
-
-    private void EhAvailableItems_DragCancelled()
-    {
-    }
-
-    private void AvailableItems_DragEnded(bool isCopy, bool isMove)
-    {
-    }
-
-    private StartDragData EhAvailableItems_StartDrag(IEnumerable items)
-    {
-      var node = items.OfType<SelectableListNode>().FirstOrDefault();
-
-      return new StartDragData
-      {
-        Data = node.Tag,
-        CanCopy = true,
-        CanMove = false
-      };
-    }
-
-    private bool EhAvailableItems_CanStartDrag(IEnumerable items)
-    {
-      var selNode = items.OfType<SelectableListNode>().FirstOrDefault();
-      // to start a drag, at least one item must be selected
-      return selNode is not null;
-    }
-
-    #endregion Drag Available items
-
-    #region Drop onto available items
-
-    private DropCanAcceptDataReturnData EhAvailableItems_DropCanAcceptData(object data, object nonGuiTargetItem, DragDropRelativeInsertPosition insertPosition, bool isCtrlKeyPressed, bool isShiftKeyPressed)
-    {
-      // when dropping onto available items, it's only purpose is to remove some items from the current item lists
-      // thus the only operation here is move
-      return new DropCanAcceptDataReturnData
-      {
-        CanCopy = false,
-        CanMove = true, // we want the item to be removed from the current item list
-        ItemIsSwallowingData = false
-      };
-    }
-
-    private DropReturnData EhAvailableItems_Drop(object data, object nonGuiTargetItem, DragDropRelativeInsertPosition insertPosition, bool isCtrlKeyPressed, bool isShiftKeyPressed)
-    {
-      // when dropping onto available items, it's only purpose is to remove some items from the item lists
-      // thus the only operation here is move
-
-      if (data is TItem)
-      {
-        return new DropReturnData
-        {
-          IsCopy = false,
-          IsMove = true // we want the item to be removed from the current item list
-        };
-      }
-      else
-      {
-        return DropFailedReturnData;
-      }
-    }
-
-    #endregion Drop onto available items
   }
 }

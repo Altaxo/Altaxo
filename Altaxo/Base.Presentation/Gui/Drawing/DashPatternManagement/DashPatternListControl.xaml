@@ -43,8 +43,8 @@
 				<RowDefinition Height="Auto" />
 			</Grid.RowDefinitions>
 			<Label Content="Custom dash pattern:" Grid.Row="1" />
-			<local:DashPatternComboBox x:Name="_guiCustomDashPattern" Grid.Row="2" />
-			<Button Content="&lt;&lt;&lt; Add this dash pattern to list" Grid.Row="4" Click="EhAddCustomDashPatternToList" />
+			<local:DashPatternComboBox x:Name="_guiCustomDashPattern" Grid.Row="2" SelectedItem="{Binding CustomDashPattern}" />
+			<Button Content="&lt;&lt;&lt; Add this dash pattern to list" Grid.Row="4" Command="{Binding CmdAddCustomDashPatternToList}" />
 		</Grid>
 	</Grid>
 </UserControl>

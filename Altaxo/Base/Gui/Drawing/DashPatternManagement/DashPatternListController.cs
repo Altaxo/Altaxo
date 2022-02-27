@@ -27,6 +27,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Windows.Input;
 using Altaxo.Collections;
 using Altaxo.Drawing;
 using Altaxo.Drawing.D3D;
@@ -37,7 +38,6 @@ namespace Altaxo.Gui.Drawing.DashPatternManagement
 {
   public interface IDashPatternListView : IStyleListView
   {
-    event Action<IDashPattern> UserRequest_AddCustomColorToList;
   }
 
   [ExpectedTypeOfView(typeof(IDashPatternListView))]
@@ -47,25 +47,35 @@ namespace Altaxo.Gui.Drawing.DashPatternManagement
     public DashPatternListController()
       : base(DashPatternListManager.Instance)
     {
+      CmdAddCustomDashPatternToList = new RelayCommand(EhUserRequest_AddCustomDashPatternToList);
     }
 
-    protected override void AttachView()
-    {
-      base.AttachView();
+    #region Bindings
 
-      ((IDashPatternListView)_view).UserRequest_AddCustomColorToList += EhUserRequest_AddCustomDashPatternToList;
+    public ICommand CmdAddCustomDashPatternToList { get; }
+
+    private IDashPattern _customDashPattern = new Altaxo.Drawing.DashPatterns.Solid();
+
+    public IDashPattern CustomDashPattern
+    {
+      get => _customDashPattern;
+      set
+      {
+        if (!(_customDashPattern == value))
+        {
+          _customDashPattern = value;
+          OnPropertyChanged(nameof(CustomDashPattern));
+        }
+      }
     }
 
-    protected override void DetachView()
-    {
-      ((IDashPatternListView)_view).UserRequest_AddCustomColorToList -= EhUserRequest_AddCustomDashPatternToList;
 
-      base.DetachView();
-    }
+    #endregion
 
-    private void EhUserRequest_AddCustomDashPatternToList(IDashPattern dashPattern)
+    private void EhUserRequest_AddCustomDashPatternToList()
     {
-      _currentItems.Add(new SelectableListNode(ToDisplayName(dashPattern), dashPattern, false));
+      var dashPattern = CustomDashPattern;
+      CurrentItems.Add(new SelectableListNode(ToDisplayName(dashPattern), dashPattern, false));
       SetListDirty();
     }
   }

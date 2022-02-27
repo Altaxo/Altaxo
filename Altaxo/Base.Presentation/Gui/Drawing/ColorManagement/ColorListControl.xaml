@@ -4,11 +4,13 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:Altaxo.Gui.Drawing.ColorManagement"
+             xmlns:localmodel="clr-namespace:Altaxo.Gui.Drawing.ColorManagement;assembly=AltaxoBase"
 						 xmlns:axocoll="clr-namespace:Altaxo.Collections;assembly=AltaxoBase"
              xmlns:axog="clr-namespace:Altaxo.Gui;assembly=AltaxoBase"
 						 xmlns:axogd="clr-namespace:Altaxo.Gui.Drawing"
 						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
-						 xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing"
+						 xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing" 
+             d:DataContext="{d:DesignInstance Type=localmodel:ColorSetController}"
              mc:Ignorable="d">
   <UserControl.Resources>
     <local:ColorToImageSourceConverter x:Key="ItemToItemImageConverter" />
@@ -104,29 +106,31 @@
             <RowDefinition Height="Auto" />
           </Grid.RowDefinitions>
           <Label Content="Opacity (%): " Grid.Column="0" />
-          <axogc:DoubleUpDown x:Name="_guiAlphaValueForAllSelectedItems" Grid.Column="2" Minimum="0" Maximum="100" Value="100" />
-          <Button Content="Set!" Grid.Column="4" Click="EhSetAlphaValueForAllSelectedItems" />
+          <axogc:DoubleUpDown Grid.Column="2" Minimum="0" 
+                              Value="{Binding Opacity}"
+                              Maximum="100" />
+                    <Button Content="Set!" Grid.Column="4" Command="{Binding CmdForAllSelectedItemsSetOpacity}" />
 
           <Label Content="Shift hue by (%): " Grid.Column="6" />
-          <axogc:DoubleUpDown x:Name="_guiForAllSelectedItemsHueShift" Grid.Column="8" Minimum="0" Maximum="100" Value="100" />
-          <Button Content="Set!" Grid.Column="10" Click="EhForAllSelectedItemsShiftHue" />
+          <axogc:DoubleUpDown Grid.Column="8" Minimum="0" Value="{Binding ShiftHue}" Maximum="100"  />
+          <Button Content="Set!" Grid.Column="10" Command="{Binding CmdForAllSelectedItemsShiftHue}" />
 
           <Label Content="Saturation (%): " Grid.Column="12" />
-          <axogc:DoubleUpDown x:Name="_guiForAllSelectedItemsSaturationValue" Grid.Column="14" Minimum="0" Maximum="100" Value="100" />
-          <Button Content="Set!" Grid.Column="16" Click="EhForAllSelectedItemsSetSaturation" />
+          <axogc:DoubleUpDown Grid.Column="14" Value="{Binding Saturation}" Minimum="0" Maximum="100"  />
+          <Button Content="Set!" Grid.Column="16" Command="{Binding CmdForAllSelectedItemsSetSaturation}" />
 
           <Label Content="Brightness (%): " Grid.Column="18" />
-          <axogc:DoubleUpDown x:Name="_guiForAllSelectedItemsBrightnessValue" Grid.Column="20" Minimum="0" Maximum="100" Value="100" />
-          <Button Content="Set!" Grid.Column="22" Click="EhForAllSelectedItemsSetBrightness" />
+          <axogc:DoubleUpDown Grid.Column="20" Value="{Binding Brighness}" Minimum="0" Maximum="100"  />
+          <Button Content="Set!" Grid.Column="22" Command="{Binding CmdForAllSelectedItemsSetBrightness}" />
 
           <!-- second row -->
           <Label Content="Color name: " Grid.Row="2" Grid.Column="0" />
-          <TextBox x:Name="_guiForAllSelectedItemsColorName" Grid.Row="2" Grid.Column="2" />
-          <Button Content="Set!" Grid.Row="2" Grid.Column="4" Click="EhForAllSelectedItemsSetColorName" />
+          <TextBox Grid.Row="2" Grid.Column="2" Text="{Binding ColorName, Mode=TwoWay}" />
+          <Button Content="Set!" Grid.Row="2" Grid.Column="4" Command="{Binding CmdForAllSelectedItemsSetColorName}" />
         </Grid>
       </GroupBox>
-      <Border x:Name="_guiCustomColorControlHost" Grid.Row="2" />
-      <Button Content="&lt;&lt;&lt; Add this color to list" Grid.Row="4" Click="EhAddCustomColorToList" />
+      <ContentControl Grid.Row="2" Content="{Binding CustomColorController.ViewObject}" />
+      <Button Content="&lt;&lt;&lt; Add this color to list" Grid.Row="4" Command="{Binding CmdAddCustomColorToList}" />
     </Grid>
   </Grid>
 </UserControl>
