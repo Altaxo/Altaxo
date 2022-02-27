@@ -61,9 +61,6 @@ namespace Altaxo.Gui.Drawing.ColorManagement
 
     public AxoColor CurrentColor { get { return _currentColor; } }
 
-    public event Action? ColorModelSelectionChanged;
-
-    public event Action? TextOnlyColorModelSelectionChanged;
 
     public event Action<AxoColor>? CurrentColorChanged;
 
@@ -305,10 +302,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
         _guiAltComponents[i].Text = altComponents[i];
     }
 
-    public void InitializeAvailableColorModels(SelectableListNodeList listOfColorModels)
-    {
-      GuiHelper.Initialize(_guiColorModel, listOfColorModels);
-    }
+   
 
     public void InitializeColorModel(IColorModel colorModel, bool silentSet)
     {
@@ -318,10 +312,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
         UpdateAllAccordingToCurrentModelAndCurrentColor();
     }
 
-    public void InitializeAvailableTextOnlyColorModels(SelectableListNodeList listOfTextOnlyColorModels)
-    {
-      GuiHelper.Initialize(_guiAltComponentsType, listOfTextOnlyColorModels);
-    }
+   
 
     public void InitializeTextOnlyColorModel(ITextOnlyColorModel colorModel, bool silentSet)
     {
@@ -356,16 +347,8 @@ namespace Altaxo.Gui.Drawing.ColorManagement
       UpdateAllAccordingToCurrentModelAndCurrentColor();
     }
 
-    private void EhColorModelSelectionChanged(object sender, SelectionChangedEventArgs e)
-    {
-      GuiHelper.SynchronizeSelectionFromGui(_guiColorModel);
-      ColorModelSelectionChanged?.Invoke();
-    }
+   
 
-    private void EhTextOnlyColorModelSelectionChanged(object sender, SelectionChangedEventArgs e)
-    {
-      GuiHelper.SynchronizeSelectionFromGui(_guiAltComponentsType);
-      TextOnlyColorModelSelectionChanged?.Invoke();
-    }
+    
   }
 }

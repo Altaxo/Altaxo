@@ -30,24 +30,17 @@ using System.Text;
 using System.Threading.Tasks;
 using Altaxo.Collections;
 using Altaxo.Drawing;
+using Altaxo.Gui.Common;
 
 namespace Altaxo.Gui.Drawing.ColorManagement
 {
-  public interface IColorModelView
+  public interface IColorModelView : IDataContextAwareView
   {
-    void InitializeAvailableColorModels(SelectableListNodeList listOfColorModels);
-
-    void InitializeAvailableTextOnlyColorModels(SelectableListNodeList listOfTextOnlyColorModels);
-
     void InitializeColorModel(IColorModel colorModel, bool silentSet);
 
     void InitializeTextOnlyColorModel(ITextOnlyColorModel colorModel, bool silentSet);
 
     void InitializeCurrentColor(AxoColor color);
-
-    event Action ColorModelSelectionChanged;
-
-    event Action TextOnlyColorModelSelectionChanged;
 
     event Action<AxoColor> CurrentColorChanged;
   }
@@ -55,8 +48,6 @@ namespace Altaxo.Gui.Drawing.ColorManagement
   [ExpectedTypeOfView(typeof(IColorModelView))]
   public class ColorModelController : MVCANDControllerEditImmutableDocBase<AxoColor, IColorModelView>
   {
-    private SelectableListNodeList _availableColorModels;
-    private SelectableListNodeList _availableTextOnlyColorModels;
 
     private IColorModel _currentColorModel;
     private ITextOnlyColorModel _currentTextOnlyColorModel;
@@ -66,36 +57,70 @@ namespace Altaxo.Gui.Drawing.ColorManagement
       yield break;
     }
 
+    #region Bindings
+
+    private ItemsController<Type> _availableColorModels;
+
+    public ItemsController<Type> AvailableColorModels
+    {
+      get => _availableColorModels;
+      set
+      {
+        if (!(_availableColorModels == value))
+        {
+          _availableColorModels = value;
+          OnPropertyChanged(nameof(AvailableColorModels));
+        }
+      }
+    }
+
+    private ItemsController<Type> _availableTextOnlyColorModels;
+
+    public ItemsController<Type> AvailableTextOnlyColorModels
+    {
+      get => _availableTextOnlyColorModels;
+      set
+      {
+        if (!(_availableTextOnlyColorModels == value))
+        {
+          _availableTextOnlyColorModels = value;
+          OnPropertyChanged(nameof(AvailableTextOnlyColorModels));
+        }
+      }
+    }
+
+
+
+    #endregion
+
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
 
       if (initData)
       {
-        _availableColorModels = new SelectableListNodeList();
-
+        // Availabe color models
+        var availableColorModels = new SelectableListNodeList();
         var models = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(IColorModel));
-
         _currentColorModel = new ColorModelRGB();
         foreach (var modelType in models)
         {
-          _availableColorModels.Add(new SelectableListNode(Current.Gui.GetUserFriendlyClassName(modelType), modelType, modelType == _currentColorModel.GetType()));
+          availableColorModels.Add(new SelectableListNode(Current.Gui.GetUserFriendlyClassName(modelType), modelType, modelType == _currentColorModel.GetType()));
         }
+        AvailableColorModels = new ItemsController<Type>(availableColorModels, EhColorModelSelectionChanged);
 
         // Text only color models
-        _availableTextOnlyColorModels = new SelectableListNodeList();
+       var availableTextOnlyColorModels = new SelectableListNodeList();
         var textOnlyModels = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(ITextOnlyColorModel));
-
         _currentTextOnlyColorModel = new TextOnlyColorModelRGB();
         foreach (var modelType in textOnlyModels)
         {
-          _availableTextOnlyColorModels.Add(new SelectableListNode(Current.Gui.GetUserFriendlyClassName(modelType), modelType, modelType == _currentTextOnlyColorModel.GetType()));
+          availableTextOnlyColorModels.Add(new SelectableListNode(Current.Gui.GetUserFriendlyClassName(modelType), modelType, modelType == _currentTextOnlyColorModel.GetType()));
         }
+        AvailableTextOnlyColorModels = new ItemsController<Type>(availableTextOnlyColorModels, EhTextOnlyColorModelSelectionChanged);
       }
       if (_view is not null)
       {
-        _view.InitializeAvailableColorModels(_availableColorModels);
-        _view.InitializeAvailableTextOnlyColorModels(_availableTextOnlyColorModels);
         _view.InitializeColorModel(_currentColorModel, false);
         _view.InitializeTextOnlyColorModel(_currentTextOnlyColorModel, false);
         _view.InitializeCurrentColor(_doc);
@@ -111,39 +136,31 @@ namespace Altaxo.Gui.Drawing.ColorManagement
     {
       base.AttachView();
 
-      _view.ColorModelSelectionChanged += EhColorModelSelectionChanged;
-      _view.TextOnlyColorModelSelectionChanged += EhTextOnlyColorModelSelectionChanged;
       _view.CurrentColorChanged += EhCurrentColorChanged;
     }
 
     protected override void DetachView()
     {
-      _view.ColorModelSelectionChanged -= EhColorModelSelectionChanged;
-      _view.TextOnlyColorModelSelectionChanged -= EhTextOnlyColorModelSelectionChanged;
       _view.CurrentColorChanged -= EhCurrentColorChanged;
 
       base.DetachView();
     }
 
-    private void EhColorModelSelectionChanged()
+    private void EhColorModelSelectionChanged(Type selType)
     {
-      var node = _availableColorModels.FirstSelectedNode;
-
-      if (node is not null && (Type)node.Tag != _currentColorModel.GetType())
+      if (selType is not null && selType != _currentColorModel.GetType())
       {
-        var newColorModel = (IColorModel)Activator.CreateInstance((Type)node.Tag);
+        var newColorModel = (IColorModel)Activator.CreateInstance(selType);
         _currentColorModel = newColorModel;
         _view.InitializeColorModel(_currentColorModel, false);
       }
     }
 
-    private void EhTextOnlyColorModelSelectionChanged()
+    private void EhTextOnlyColorModelSelectionChanged(Type selType)
     {
-      var node = _availableTextOnlyColorModels.FirstSelectedNode;
-
-      if (node is not null && (Type)node.Tag != _currentTextOnlyColorModel.GetType())
+      if (selType is not null && selType != _currentTextOnlyColorModel.GetType())
       {
-        var newTextOnlyColorModel = (ITextOnlyColorModel)Activator.CreateInstance((Type)node.Tag);
+        var newTextOnlyColorModel = (ITextOnlyColorModel)Activator.CreateInstance(selType);
         _currentTextOnlyColorModel = newTextOnlyColorModel;
         _view.InitializeTextOnlyColorModel(_currentTextOnlyColorModel, false);
       }
