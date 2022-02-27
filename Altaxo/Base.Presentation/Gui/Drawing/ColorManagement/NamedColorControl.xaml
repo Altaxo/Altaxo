@@ -3,8 +3,9 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:local="clr-namespace:Altaxo.Gui.Drawing.ColorManagement"
-						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
+             xmlns:localmodel="clr-namespace:Altaxo.Gui.Drawing.ColorManagement;assembly=AltaxoBase"
+			 xmlns:axogcc="clr-namespace:Altaxo.Gui.Common.Converters" 
+             d:DataContext="{d:DesignInstance Type=localmodel:NamedColorController}"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
 	<UserControl.Resources>
@@ -43,11 +44,19 @@
 			<RowDefinition Height="4" />
 			<RowDefinition Height="Auto" />
 		</Grid.RowDefinitions>
-		<TabControl x:Name="_guiTabControl" Grid.Row="0" Grid.Column="0" MinWidth="200" SelectionChanged="EhTabControl_SelectionChanged" />
+        <TabControl Grid.Row="0" Grid.Column="0" MinWidth="200" 
+                    DisplayMemberPath="Text"
+                    ItemsSource="{Binding SubController.Items}" SelectedItem="{Binding SubController.SelectedItem, Mode=TwoWay}" >
+            <TabControl.ContentTemplate>
+                <DataTemplate>
+                    <ContentPresenter Content="{Binding ViewObject}"/>
+                </DataTemplate>
+            </TabControl.ContentTemplate>
+        </TabControl>
 
-		<DockPanel Grid.Row="2" Grid.Column="0"  HorizontalAlignment="Right">
+        <DockPanel Grid.Row="2" Grid.Column="0"  HorizontalAlignment="Right">
 			<Label Grid.Row="2" Content="Color Name:" />
-			<TextBox x:Name="_guiColorName" Text="Aqua" MinWidth="120" DockPanel.Dock="Right" />
+			<TextBox Text="{Binding ColorName, Mode=TwoWay}" MinWidth="120" DockPanel.Dock="Right" />
 		</DockPanel>
 		<Grid Grid.Row="0" Grid.RowSpan="3" Grid.Column="2">
 			<Grid.RowDefinitions>
@@ -56,8 +65,8 @@
 			</Grid.RowDefinitions>
 			<Rectangle Grid.Row="0" Fill="{StaticResource CheckerboardBrush}" />
 			<Rectangle Grid.Row="1" Fill="{StaticResource CheckerboardBrush}" />
-			<Rectangle x:Name="_guiOldColorRectangle" Grid.Row="0" Fill="Yellow" />
-			<Rectangle x:Name="_guiNewColorRectangle" Grid.Row="1" Fill="Red" />
+			<Rectangle Grid.Row="0" Fill="{Binding OldColor, Converter={x:Static axogcc:NamedColorToWpfColorConverter.Instance}}" />
+            <Rectangle Grid.Row="1" Fill="{Binding NewColor, Converter={x:Static axogcc:NamedColorToWpfColorConverter.Instance}}" />
 		</Grid>
 	</Grid>
 </UserControl>

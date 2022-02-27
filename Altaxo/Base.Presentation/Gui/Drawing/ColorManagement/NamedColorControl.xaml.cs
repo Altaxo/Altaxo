@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2017 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -22,21 +22,7 @@
 
 #endregion Copyright
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using Altaxo.Drawing;
 
 namespace Altaxo.Gui.Drawing.ColorManagement
 {
@@ -45,56 +31,9 @@ namespace Altaxo.Gui.Drawing.ColorManagement
   /// </summary>
   public partial class NamedColorControl : UserControl, INamedColorView
   {
-    public event Action<object>? SubViewChanged;
-
     public NamedColorControl()
     {
       InitializeComponent();
-    }
-
-    public void InitializeSubViews(IEnumerable<Tuple<string, object>> tabsNamesAndViews)
-    {
-      _guiTabControl.Items.Clear();
-
-      foreach (var item in tabsNamesAndViews)
-      {
-        var tab = new TabItem() { Header = item.Item1, Content = item.Item2 };
-        _guiTabControl.Items.Add(tab);
-      }
-    }
-
-    private void EhAlphaValueChanged(object sender, RoutedPropertyChangedEventArgs<int> e)
-    {
-    }
-
-    public void SetOldColor(AxoColor oldColor)
-    {
-      _guiOldColorRectangle.Fill = new SolidColorBrush(GuiHelper.ToWpf(oldColor));
-    }
-
-    public void SetNewColor(AxoColor newColor)
-    {
-      _guiNewColorRectangle.Fill = new SolidColorBrush(GuiHelper.ToWpf(newColor));
-    }
-
-    public string ColorName
-    {
-      get
-      {
-        return _guiColorName.Text;
-      }
-      set
-      {
-        _guiColorName.Text = value;
-      }
-    }
-
-    private void EhTabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
-    {
-      if (e.AddedItems.Count == 1 && e.AddedItems[0] is TabItem newTabItem)
-      {
-        SubViewChanged?.Invoke(newTabItem.Content);
-      }
     }
   }
 }

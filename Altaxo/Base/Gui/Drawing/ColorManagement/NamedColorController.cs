@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2017 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -23,29 +23,15 @@
 #endregion Copyright
 
 #nullable disable
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Altaxo.Collections;
 using Altaxo.Drawing;
+using Altaxo.Gui.Common;
 
 namespace Altaxo.Gui.Drawing.ColorManagement
 {
-  public interface INamedColorView
+  public interface INamedColorView : IDataContextAwareView
   {
-    void InitializeSubViews(IEnumerable<Tuple<string, object>> tabsNamesAndViews);
-
-    void SetOldColor(AxoColor oldColor);
-
-    void SetNewColor(AxoColor oldColor);
-
-    string ColorName { get; set; }
-
-    /// <summary>
-    /// Occurs when the sub view has changed. Parameter is the content (view) of the subview currently selected.
-    /// </summary>
-    event Action<object> SubViewChanged;
   }
 
   [ExpectedTypeOfView(typeof(INamedColorView))]
@@ -66,6 +52,68 @@ namespace Altaxo.Gui.Drawing.ColorManagement
       yield return new ControllerAndSetNullMethod(_subControllerColorPicker, () => _subControllerColorPicker = null);
     }
 
+    #region Bindings
+
+    private AxoColor _oldColor;
+
+    public AxoColor OldColor
+    {
+      get => _oldColor;
+      set
+      {
+        if (!(_oldColor == value))
+        {
+          _oldColor = value;
+          OnPropertyChanged(nameof(OldColor));
+        }
+      }
+    }
+    private AxoColor _newColor;
+
+    public AxoColor NewColor
+    {
+      get => _newColor;
+      set
+      {
+        if (!(_newColor == value))
+        {
+          _newColor = value;
+          OnPropertyChanged(nameof(NewColor));
+        }
+      }
+    }
+    private string _colorName;
+
+    public string ColorName
+    {
+      get => _colorName;
+      set
+      {
+        if (!(_colorName == value))
+        {
+          _colorName = value;
+          OnPropertyChanged(nameof(ColorName));
+        }
+      }
+    }
+
+    private ItemsController<IMVCAController> _subController;
+
+    public ItemsController<IMVCAController> SubController
+    {
+      get => _subController;
+      set
+      {
+        if (!(_subController == value))
+        {
+          _subController = value;
+          OnPropertyChanged(nameof(SubController));
+        }
+      }
+    }
+
+
+    #endregion
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -85,24 +133,31 @@ namespace Altaxo.Gui.Drawing.ColorManagement
         _subControllerColorPicker = new ColorPickerController();
         _subControllerColorPicker.InitializeDocument(_doc.Color);
         _subControllerColorPicker.MadeDirty += EhController_Dirty;
-      }
-      if (_view is not null)
-      {
-        _view.InitializeSubViews(GetTabNamesAndViews());
-        _view.SetOldColor(_initialColor);
-        _view.SetNewColor(_doc);
-        _view.ColorName = _doc.Name;
+
+        var controllers = new SelectableListNodeList();
+        foreach (var item in GetTabNamesAndControllers())
+        {
+          controllers.Add(new SelectableListNodeWithController(item.TabName, item.Controller, false) { Controller = item.Controller });
+        }
+
+        SubController = new ItemsController<IMVCAController>(controllers, EhSubViewChanged);
+
+        OldColor = _initialColor;
+        NewColor = _doc;
+        ColorName = _doc.Name;
       }
     }
 
-    private IEnumerable<Tuple<string, object>> GetTabNamesAndViews()
+
+
+    private IEnumerable<(string TabName, IMVCAController Controller)> GetTabNamesAndControllers()
     {
       if (_subControllerColorModel is not null)
       {
         if (_subControllerColorModel.ViewObject is null)
           Current.Gui.FindAndAttachControlTo(_subControllerColorModel);
         if (_subControllerColorModel.ViewObject is not null)
-          yield return new Tuple<string, object>("Models", _subControllerColorModel.ViewObject);
+          yield return ("Models", _subControllerColorModel);
       }
 
       if (_subControllerColorCircle is not null)
@@ -110,7 +165,7 @@ namespace Altaxo.Gui.Drawing.ColorManagement
         if (_subControllerColorCircle.ViewObject is null)
           Current.Gui.FindAndAttachControlTo(_subControllerColorCircle);
         if (_subControllerColorCircle.ViewObject is not null)
-          yield return new Tuple<string, object>("Circle", _subControllerColorCircle.ViewObject);
+          yield return ("Circle", _subControllerColorCircle);
       }
 
       if (_subControllerColorPicker is not null)
@@ -118,13 +173,13 @@ namespace Altaxo.Gui.Drawing.ColorManagement
         if (_subControllerColorPicker.ViewObject is null)
           Current.Gui.FindAndAttachControlTo(_subControllerColorPicker);
         if (_subControllerColorPicker.ViewObject is not null)
-          yield return new Tuple<string, object>("Picker", _subControllerColorPicker.ViewObject);
+          yield return ("Picker", _subControllerColorPicker);
       }
     }
 
     public override bool Apply(bool disposeController)
     {
-      var userColorName = _view.ColorName;
+      var userColorName = ColorName;
 
       if (!string.IsNullOrEmpty(userColorName) && userColorName != NamedColor.GetColorName(_doc.Color))
       {
@@ -136,20 +191,9 @@ namespace Altaxo.Gui.Drawing.ColorManagement
       return ApplyEnd(true, disposeController);
     }
 
-    protected override void AttachView()
-    {
-      base.AttachView();
 
-      _view.SubViewChanged += EhSubViewChanged;
-    }
 
-    protected override void DetachView()
-    {
-      _view.SubViewChanged -= EhSubViewChanged;
-      base.DetachView();
-    }
-
-    private void EhSubViewChanged(object obj)
+    private void EhSubViewChanged(IMVCAController obj)
     {
       // Find controller correspondig to subview
       foreach (var ctrl in new IMVCANDController[] { _subControllerColorModel, _subControllerColorCircle, _subControllerColorPicker })
@@ -166,8 +210,8 @@ namespace Altaxo.Gui.Drawing.ColorManagement
       var color = (AxoColor)ctrl.ModelObject;
       color.IsFromArgb = true;
       _doc = new NamedColor(color);
-      _view?.SetNewColor(color);
-      _view.ColorName = _doc.Name;
+      NewColor = color;
+      ColorName = _doc.Name;
     }
   }
 }

@@ -26,6 +26,7 @@ using System;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
+using System.Windows.Media;
 using Altaxo.Drawing;
 
 namespace Altaxo.Gui.Common.Converters
@@ -43,8 +44,21 @@ namespace Altaxo.Gui.Common.Converters
     {
       if (value is NamedColor c)
       {
-        return GuiHelper.ToWpf(c);
+        var cc =  GuiHelper.ToWpf(c);
+        if (targetType == typeof(Brush))
+          return new SolidColorBrush(cc);
+        else
+          return cc;
       }
+      else if(value is AxoColor ac)
+      {
+        var cc = GuiHelper.ToWpf(ac);
+        if (targetType == typeof(Brush))
+          return new SolidColorBrush(cc);
+        else
+          return cc;
+      }
+
       return Binding.DoNothing;
     }
 
