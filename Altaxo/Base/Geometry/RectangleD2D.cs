@@ -244,8 +244,25 @@ namespace Altaxo.Geometry
 
     public bool Contains(PointD2D p)
     {
-      return p.X >= X && p.Y >= Y && p.X <= Right && p.Y <= Bottom;
+      return  _x <= p.X && _x < (_x+_w) && _y <= p.Y && p.Y < (_y+_h);
     }
+    public bool Contains(RectangleD2D r)
+    {
+      return (_x <= r._x) && (r._x + r._w) <= (_x + _w) &&
+             (_y <= r._y) && (r._y + r._h) <= (_y + _h);
+    }
+
+    /// <summary>
+    /// Tests if this rectangle and the provided rectangle intersects.
+    /// </summary>
+    /// <param name="r">The rectangle to test.</param>
+    /// <returns>True if this rectangle and the provided rectangle have a non-empty intersection area; otherwise <c>false</c>.</returns>
+    public bool IntersectsWith(RectangleD2D r)
+    {
+      return  (r._x < _x + _w) && (_x < (r._x + r._w)) &&
+              (r._y < _y + _h) && (_y < r._y + r._h);
+    }
+
 
     /// <summary>Inflates the rectangle by the specified values <paramref name="x"/> and <paramref name="y"/>.</summary>
     /// <param name="x">The value used to inflate the rectangle in x-direction.</param>

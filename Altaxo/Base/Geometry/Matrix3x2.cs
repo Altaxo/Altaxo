@@ -409,10 +409,6 @@ namespace Altaxo.Geometry
 
     #endregion Creation of new matrices by prepending or appending other matrices
 
-
-
-
-
     #region Conversion to other matrices
 
     /// <summary>

@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Geometry
@@ -203,7 +205,120 @@ namespace Altaxo.Geometry
     public static PointD3D Transform(Matrix4x4 m, PointD3D p)
     {
       var pt = m.Transform(new VectorD4D(p.X, p.Y, p.Z, 1));
-      return new PointD3D(pt.X / pt.W, pt.Y / pt.W, pt.Z/pt.W);
+      return new PointD3D(pt.X / pt.W, pt.Y / pt.W, pt.Z / pt.W);
+    }
+
+
+    public static Matrix3x2 EvaluateAffine(IEnumerable<(PointD2D x, PointD2D y)> pointPairs)
+    {
+      var count = pointPairs.Count();
+
+      if (count < 3)
+        throw new ArgumentException("To evaluate the affine transformation, at least 3 point pairs are necessary", nameof(pointPairs));
+
+      var u = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(count * 2, 6);
+      var y = new double[count * 2];
+
+      int i = 0;
+      foreach (var pair in pointPairs)
+      {
+        u[i, 0] = pair.x.X;
+        u[i, 1] = 0;
+        u[i, 2] = pair.x.Y;
+        u[i, 3] = 0;
+        u[i, 4] = 1;
+        u[i, 5] = 0;
+        y[i] = pair.y.X;
+        ++i;
+
+        u[i, 0] = 0;
+        u[i, 1] = pair.x.X;
+        u[i, 2] = 0;
+        u[i, 3] = pair.x.Y;
+        u[i, 4] = 0;
+        u[i, 5] = 1;
+        y[i] = pair.y.Y;
+        ++i;
+      }
+
+      var decomposition = MatrixMath.GetSingularValueDecomposition(u);
+
+      var parameter = new double[6];
+      decomposition.Backsubstitution(y, parameter);
+
+      return new Matrix3x2(parameter[0], parameter[1], parameter[2], parameter[3], parameter[4], parameter[5]);
+    }
+
+    public static Matrix4x3 EvaluateAffine(IEnumerable<(PointD3D x, PointD3D y)> pointPairs)
+    {
+      var count = pointPairs.Count();
+
+      if (count < 4)
+        throw new ArgumentException("To evaluate the affine transformation, at least 3 point pairs are necessary", nameof(pointPairs));
+
+      var u = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(count * 3, 12);
+      var y = new double[count * 3];
+
+      int i = 0;
+      foreach (var pair in pointPairs)
+      {
+        u[i, 0] = pair.x.X;
+        u[i, 1] = 0;
+        u[i, 2] = 0;
+        u[i, 3] = pair.x.Y;
+        u[i, 4] = 0;
+        u[i, 5] = 0;
+        u[i, 6] = pair.x.Z;
+        u[i, 7] = 0;
+        u[i, 8] = 0;
+        u[i, 9] = 1;
+        u[i, 10] = 0;
+        u[i, 11] = 0;
+        y[i] = pair.y.X;
+        ++i;
+
+        u[i, 0] = 0;
+        u[i, 1] = pair.x.X;
+        u[i, 2] = 0;
+        u[i, 3] = 0;
+        u[i, 4] = pair.x.Y;
+        u[i, 5] = 0;
+        u[i, 6] = 0;
+        u[i, 7] = pair.x.Z;
+        u[i, 8] = 0;
+        u[i, 9] = 0;
+        u[i, 10] = 1;
+        u[i, 11] = 0;
+        y[i] = pair.y.Y;
+        ++i;
+
+        u[i, 0] = 0;
+        u[i, 1] = 0;
+        u[i, 2] = pair.x.X;
+        u[i, 3] = 0;
+        u[i, 4] = 0;
+        u[i, 5] = pair.x.Y;
+        u[i, 6] = 0;
+        u[i, 7] = 0;
+        u[i, 8] = pair.x.Z;
+        u[i, 9] = 0;
+        u[i, 10] = 0;
+        u[i, 11] = 1;
+        y[i] = pair.y.Z;
+        ++i;
+      }
+
+      var decomposition = MatrixMath.GetSingularValueDecomposition(u);
+
+      var parameter = new double[12];
+      decomposition.Backsubstitution(y, parameter);
+
+      return new Matrix4x3(
+        parameter[0], parameter[1], parameter[2],
+        parameter[3], parameter[4], parameter[5],
+        parameter[6], parameter[7], parameter[8],
+        parameter[9], parameter[10], parameter[11]
+        );
     }
 
   }

@@ -270,5 +270,90 @@ namespace Altaxo.Geometry
       return string.Format(System.Globalization.CultureInfo.InvariantCulture,
         "PointD3D({0}, {1}, {2})", X, Y, Z);
     }
+
+    /// <summary>
+    /// Calculates the distance between two points.
+    /// </summary>
+    /// <param name="p1">First point.</param>
+    /// <param name="p2">Second point.</param>
+    /// <returns>The distance between points p1 and p2.</returns>
+    public static double Distance(PointD3D p1, PointD3D p2)
+    {
+      var x = p1.X - p2.X;
+      var y = p1.Y - p2.Y;
+      var z = p1.Z - p2.Z;
+      return Math.Sqrt(x * x + y * y + z*z);
+    }
+
+    /// <summary>
+    /// Calculates the squared distance between two points.
+    /// </summary>
+    /// <param name="p1">First point.</param>
+    /// <param name="p2">Second point.</param>
+    /// <returns>The distance between points p1 and p2.</returns>
+    public static double DistanceSquared(PointD3D p1, PointD3D p2)
+    {
+      var x = p1.X - p2.X;
+      var y = p1.Y - p2.Y;
+      var z = p1.Z - p2.Z;
+      return (x * x + y * y + z*z);
+    }
+
+    /// <summary>
+    /// Calculates the distance between this point and another point.
+    /// </summary>
+    /// <param name="p">Other point.</param>
+    /// <returns>The distance between this point and point p.</returns>
+    public double DistanceTo(PointD3D p)
+    {
+      return Distance(this, p);
+    }
+
+    /// <summary>
+    /// Calculates the squared distance between this point and another point.
+    /// </summary>
+    /// <param name="p">Other point.</param>
+    /// <returns>The distance between this point and point p.</returns>
+    public double DistanceSquaredTo(PointD3D p)
+    {
+      return DistanceSquared(this, p);
+    }
+
+    public double VectorLength
+    {
+      get
+      {
+        return Math.Sqrt(X * X + Y * Y + Z*Z);
+      }
+    }
+
+    public double VectorLengthSquared
+    {
+      get
+      {
+        return (X * X + Y * Y + Z*Z);
+      }
+    }
+
+    public PointD3D GetNormalized()
+    {
+      var s = 1 / VectorLength;
+      return new PointD3D(X * s, Y * s, Z * s);
+    }
+
+    public double DotProduct(PointD3D q)
+    {
+      return DotProduct(this, q);
+    }
+
+    public static double DotProduct(PointD3D p, PointD3D q)
+    {
+      return p.X * q.X + p.Y * q.Y + p.Z * q.Z;
+    }
+
+    public PointD3D GetSignFlipped()
+    {
+      return new PointD3D(-X, -Y, -Z);
+    }
   }
 }
