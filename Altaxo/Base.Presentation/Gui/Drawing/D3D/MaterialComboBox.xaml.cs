@@ -65,7 +65,7 @@ namespace Altaxo.Gui.Drawing.D3D
         "SelectedMaterial",
         typeof(IMaterial),
         typeof(MaterialComboBox),
-        new FrameworkPropertyMetadata(Materials.GetSolidMaterial(NamedColors.Black), EhSelectedMaterialChanged, EhSelectedMaterialCoerce));
+        new FrameworkPropertyMetadata(Materials.GetSolidMaterial(NamedColors.Black), EhSelectedMaterialChanged, EhSelectedMaterialCoerce) { BindsTwoWayByDefault=true});
 
       IsNoMaterialAllowedProperty = DependencyProperty.Register(
         nameof(IsNoMaterialAllowed),

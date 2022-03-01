@@ -30,6 +30,8 @@ using System.Text;
 using Altaxo.Collections;
 using Altaxo.Graph;
 using Altaxo.Graph.Graph3D.Axis;
+using Altaxo.Gui.Common;
+using Altaxo.Units;
 
 namespace Altaxo.Gui.Graph.Graph3D.Axis
 {
@@ -113,33 +115,138 @@ namespace Altaxo.Gui.Graph.Graph3D.Axis
     }
   }
 
-  public interface IAxisCreationView
+  public interface IAxisCreationView : IDataContextAwareView
   {
-    bool UsePhysicalValue { get; set; }
-
-    double AxisPositionLogicalValue { get; set; }
-    double AxisPositionLogicalValue2nd { get; set; }
-
-    Altaxo.Data.AltaxoVariant AxisPositionPhysicalValue { get; set; }
-    Altaxo.Data.AltaxoVariant AxisPositionPhysicalValue2nd { get; set; }
-
-    bool MoveAxis { get; set; }
-
-    void InitializeAxisTemplates(SelectableListNodeList list);
-
-    event Action SelectedAxisTemplateChanged;
   }
 
   [ExpectedTypeOfView(typeof(IAxisCreationView))]
   [UserControllerForObject(typeof(AxisCreationArguments))]
   public class AxisCreationController : MVCANControllerEditOriginalDocBase<AxisCreationArguments, IAxisCreationView>
   {
-    private SelectableListNodeList _axisTemplates;
-
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
     }
+
+    #region Bindings
+
+    private bool _usePhysicalValue;
+
+    public bool UsePhysicalValue
+    {
+      get => _usePhysicalValue;
+      set
+      {
+        if (!(_usePhysicalValue == value))
+        {
+          _usePhysicalValue = value;
+          OnPropertyChanged(nameof(UsePhysicalValue));
+        }
+      }
+    }
+
+    public QuantityWithUnitGuiEnvironment AxisPositionLogicalValueEnvironment => RelationEnvironment.Instance;
+
+    private DimensionfulQuantity _axisPositionLogicalValue;
+
+    public DimensionfulQuantity AxisPositionLogicalValue
+    {
+      get => _axisPositionLogicalValue;
+      set
+      {
+        if (!(_axisPositionLogicalValue == value))
+        {
+          _axisPositionLogicalValue = value;
+          OnPropertyChanged(nameof(AxisPositionLogicalValue));
+        }
+      }
+    }
+
+    private DimensionfulQuantity _axisPositionLogicalValue2nd;
+
+    public DimensionfulQuantity AxisPositionLogicalValue2nd
+    {
+      get => _axisPositionLogicalValue2nd;
+      set
+      {
+        if (!(_axisPositionLogicalValue2nd == value))
+        {
+          _axisPositionLogicalValue2nd = value;
+          OnPropertyChanged(nameof(AxisPositionLogicalValue2nd));
+        }
+      }
+    }
+
+    private double _axisPositionPhysicalValue;
+
+    public double AxisPositionPhysicalValue
+    {
+      get => _axisPositionPhysicalValue;
+      set
+      {
+        if (!(_axisPositionPhysicalValue == value))
+        {
+          _axisPositionPhysicalValue = value;
+          OnPropertyChanged(nameof(AxisPositionPhysicalValue));
+        }
+      }
+    }
+
+    private double _axisPositionPhysicalValue2nd;
+
+    public double AxisPositionPhysicalValue2nd
+    {
+      get => _axisPositionPhysicalValue2nd;
+      set
+      {
+        if (!(_axisPositionPhysicalValue2nd == value))
+        {
+          _axisPositionPhysicalValue2nd = value;
+          OnPropertyChanged(nameof(AxisPositionPhysicalValue2nd));
+        }
+      }
+    }
+
+
+    private bool _moveAxis;
+
+    public bool MoveAxis
+    {
+      get => _moveAxis;
+      set
+      {
+        if (!(_moveAxis == value))
+        {
+          _moveAxis = value;
+          OnPropertyChanged(nameof(MoveAxis));
+        }
+      }
+    }
+
+    private ItemsController<CSAxisInformation> _axisTemplates;
+
+    public ItemsController<CSAxisInformation> AxisTemplates
+    {
+      get => _axisTemplates;
+      set
+      {
+        if (!(_axisTemplates == value))
+        {
+          _axisTemplates = value;
+          OnPropertyChanged(nameof(AxisTemplates));
+        }
+      }
+    }
+
+    private void EhSelectedAxisTemplateChanged(CSAxisInformation value)
+    {
+      _doc.TemplateStyle = value.Identifier;
+      SetViewAccordingToAxisIdentifier();
+    }
+
+
+    #endregion
+
 
     protected override void Initialize(bool initData)
     {
@@ -147,74 +254,62 @@ namespace Altaxo.Gui.Graph.Graph3D.Axis
 
       if (initData)
       {
-        _axisTemplates = new SelectableListNodeList();
+        var axisTemplates = new SelectableListNodeList();
         foreach (var style in _doc.AxisStyles)
         {
           var node = new SelectableListNode(style.NameOfAxisStyle, style, style.Identifier == _doc.TemplateStyle);
-          _axisTemplates.Add(node);
+          axisTemplates.Add(node);
         }
-        var selNode = _axisTemplates.FirstSelectedNode;
-        if (selNode is null && 0 != _axisTemplates.Count)
+        var selNode = axisTemplates.FirstSelectedNode;
+        if (selNode is null && 0 != axisTemplates.Count)
         {
-          selNode = _axisTemplates[0];
+          selNode = axisTemplates[0];
           selNode.IsSelected = true;
         }
         if (selNode is not null)
         {
           _doc.TemplateStyle = (selNode.Tag as CSAxisInformation).Identifier;
         }
-      }
-      if (_view is not null)
-      {
-        _view.MoveAxis = _doc.MoveAxis;
-        _view.InitializeAxisTemplates(_axisTemplates);
+
+        _axisTemplates = new ItemsController<CSAxisInformation>(axisTemplates, EhSelectedAxisTemplateChanged);
+
+        MoveAxis = _doc.MoveAxis;
         SetViewAccordingToAxisIdentifier();
       }
     }
 
-    public override bool Apply(bool disposeController)
+    private void SetViewAccordingToAxisIdentifier()
     {
-      _doc.MoveAxis = _view.MoveAxis;
-
-      if (_view.UsePhysicalValue)
+      UsePhysicalValue = _doc.TemplateStyle.UsePhysicalValueOtherFirst;
+      if (_doc.TemplateStyle.UsePhysicalValueOtherFirst)
       {
-        _doc.CurrentStyle = CSLineID.FromPhysicalVariant(_doc.TemplateStyle.ParallelAxisNumber, _view.AxisPositionPhysicalValue, _view.AxisPositionPhysicalValue2nd);
+        AxisPositionPhysicalValue = _doc.TemplateStyle.PhysicalValueOtherFirst;
+        AxisPositionPhysicalValue2nd = _doc.TemplateStyle.PhysicalValueOtherSecond;
       }
       else
       {
-        _doc.CurrentStyle = new CSLineID(_doc.TemplateStyle.ParallelAxisNumber, _view.AxisPositionLogicalValue, _view.AxisPositionLogicalValue2nd);
+        AxisPositionLogicalValue = new DimensionfulQuantity(_doc.TemplateStyle.LogicalValueOtherFirst, Altaxo.Units.Dimensionless.Unity.Instance).AsQuantityIn(AxisPositionLogicalValueEnvironment.DefaultUnit);
+        AxisPositionLogicalValue2nd = new DimensionfulQuantity(_doc.TemplateStyle.LogicalValueOtherSecond, Altaxo.Units.Dimensionless.Unity.Instance).AsQuantityIn(AxisPositionLogicalValueEnvironment.DefaultUnit);
+      }
+    }
+
+
+    public override bool Apply(bool disposeController)
+    {
+      _doc.MoveAxis = MoveAxis;
+
+      if (UsePhysicalValue)
+      {
+        _doc.CurrentStyle = CSLineID.FromPhysicalVariant(_doc.TemplateStyle.ParallelAxisNumber, AxisPositionPhysicalValue, AxisPositionPhysicalValue2nd);
+      }
+      else
+      {
+        _doc.CurrentStyle = new CSLineID(_doc.TemplateStyle.ParallelAxisNumber, AxisPositionLogicalValue.AsValueInSIUnits, AxisPositionLogicalValue2nd.AsValueInSIUnits);
       }
 
       return ApplyEnd(true, disposeController);
     }
-
-    protected override void AttachView()
-    {
-      _view.SelectedAxisTemplateChanged += EhSelectedAxisTemplateChanged;
-    }
-
-    protected override void DetachView()
-    {
-      _view.SelectedAxisTemplateChanged -= EhSelectedAxisTemplateChanged;
-    }
-
-    private void EhSelectedAxisTemplateChanged()
-    {
-      _doc.TemplateStyle = (_axisTemplates.FirstSelectedNode.Tag as CSAxisInformation).Identifier;
-      SetViewAccordingToAxisIdentifier();
-    }
-
-    private void SetViewAccordingToAxisIdentifier()
-    {
-      _view.UsePhysicalValue = _doc.TemplateStyle.UsePhysicalValueOtherFirst;
-      if (_doc.TemplateStyle.UsePhysicalValueOtherFirst)
-      {
-        _view.AxisPositionPhysicalValue = _doc.TemplateStyle.PhysicalValueOtherFirst;
-      }
-      else
-      {
-        _view.AxisPositionLogicalValue = _doc.TemplateStyle.LogicalValueOtherFirst;
-      }
-    }
   }
+
+   
 }

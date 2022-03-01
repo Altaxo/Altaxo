@@ -30,13 +30,9 @@ using Altaxo.Units;
 
 namespace Altaxo.Gui.Graph.Gdi
 {
-  #region Interfaces
-
   public interface IItemLocationByGridView : IDataContextAwareView
   {
   }
-
-  #endregion Interfaces
 
   /// <summary>
   /// Summary description for LayerPositionController.

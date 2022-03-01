@@ -36,8 +36,6 @@ using Altaxo.Gui.Graph.Scales;
 #nullable disable
 namespace Altaxo.Gui.Graph.Gdi
 {
-  #region Interfaces
-
   public interface IXYPlotLayerView : IDataContextAwareView
   {
   }
@@ -58,7 +56,6 @@ namespace Altaxo.Gui.Graph.Gdi
     Planes
   };
 
-  #endregion Interfaces
 
   /// <summary>
   /// Summary description for LayerController.

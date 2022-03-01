@@ -29,13 +29,9 @@ using Altaxo.Graph.Gdi;
 
 namespace Altaxo.Gui.Graph.Gdi
 {
-  #region Interfaces
-
   public interface ILayerPositionView : IDataContextAwareView
   {
   }
-
-  #endregion Interfaces
 
   /// <summary>
   /// Summary description for LayerPositionController.

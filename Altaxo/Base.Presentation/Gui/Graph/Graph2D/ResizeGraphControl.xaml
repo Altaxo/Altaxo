@@ -3,12 +3,12 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:local="clr-namespace:Altaxo.Gui.Graph.Graph2D"
-						 xmlns:agc="clr-namespace:Altaxo.Gui.Common"
-						 xmlns:agcd="clr-namespace:Altaxo.Gui.Common.Drawing"
-  				  xmlns:axog="clr-namespace:Altaxo.Gui;assembly=AltaxoBase"
+             xmlns:local="clr-namespace:Altaxo.Gui.Graph.Graph2D;assembly=AltaxoBase"
+			 xmlns:agc="clr-namespace:Altaxo.Gui.Common"
+			 xmlns:agcd="clr-namespace:Altaxo.Gui.Common.Drawing"
+             d:DataContext="{d:DesignInstance Type=local:ResizeGraphController}"
              mc:Ignorable="d"
-             d:DesignHeight="300" d:DesignWidth="500">
+             >
 	<Grid>
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="Auto" />
@@ -50,50 +50,78 @@
 		</Grid.RowDefinitions>
 
 		<Expander Grid.ColumnSpan="9" ExpandDirection="Down" Header="Values of the graph before resizing">
-			<TextBox x:Name="_guiOldSituation" IsReadOnly="True" />
+			<TextBox Text="{Binding ReportOfOldValues, Mode=OneWay}" IsReadOnly="True" />
 		</Expander>
-		<CheckBox x:Name="_guiIsNewRootLayerSizeChosen" Content="New root layer size:" Grid.Row="2" Grid.Column="0" />
+        <CheckBox Grid.Row="2" Grid.Column="0"
+                  IsChecked="{Binding IsNewRootLayerSizeChosen, Mode=TwoWay}" 
+                  Content="New root layer size:" />
 		<Label Content="X:" Grid.Row="2" Grid.Column="2" />
-		<agc:QuantityWithUnitTextBox x:Name="_guiNewRootLayerSizeX" Grid.Row="2" Grid.Column="4" MinWidth="100" IsEnabled="{Binding ElementName=_guiIsNewRootLayerSizeChosen, Path=IsChecked}" UnitEnvironment="{x:Static axog:SizeEnvironment.Instance}" />
+		<agc:QuantityWithUnitTextBox Grid.Row="2" Grid.Column="4" 
+                                     SelectedQuantity="{Binding RootLayerSizeX}"
+                                     UnitEnvironment="{Binding RootLayerSizeEnvironment}"
+                                     IsEnabled="{Binding IsNewRootLayerSizeChosen}"
+                                     MinWidth="100"   />
 		<Label Content="Y:" Grid.Row="2" Grid.Column="6" />
-		<agc:QuantityWithUnitTextBox x:Name="_guiNewRootLayerSizeY" Grid.Row="2" Grid.Column="8" MinWidth="100" IsEnabled="{Binding ElementName=_guiIsNewRootLayerSizeChosen, Path=IsChecked}"   UnitEnvironment="{x:Static axog:SizeEnvironment.Instance}" />
+		<agc:QuantityWithUnitTextBox Grid.Row="2" Grid.Column="8" 
+                                     SelectedQuantity="{Binding RootLayerSizeY}"
+                                     UnitEnvironment="{Binding RootLayerSizeEnvironment}"
+                                     IsEnabled="{Binding IsNewRootLayerSizeChosen}"
+                                  MinWidth="100" />
 
-		<CheckBox x:Name="_guiIsNewStandardFontFamilyChosen" Content="New standard font family:" Grid.Row="4" Grid.Column="0" Checked="EhFontChoiceCheckedChanged" Unchecked="EhFontChoiceCheckedChanged" />
-		<agcd:FontFamilyComboBox x:Name="_guiNewStandardFontFamily" Grid.Row="4" Grid.Column="2" Grid.ColumnSpan="7" IsEnabled="{Binding ElementName=_guiIsNewStandardFontFamilyChosen, Path=IsChecked}"    SelectedFontFamilyNameChanged="EhSelectedFontFamilyChanged" />
+		<CheckBox IsChecked="{Binding IsNewStandardFontFamilyChosen, Mode=TwoWay}" Content="New standard font family:" Grid.Row="4" Grid.Column="0" />
+        <agcd:FontFamilyComboBox Grid.Row="4" Grid.Column="2" Grid.ColumnSpan="7"
+                                 SelectedFontFamilyName="{Binding StandardFontFamilyName}"
+                                 IsEnabled="{Binding IsNewStandardFontFamilyChosen}" />
 
-		<CheckBox x:Name="_guiIsResetAllFontsToStandardFontFamilyChosen" Content="Reset all fonts to standard font family" Grid.Row="6" Grid.Column="0" />
+        <CheckBox Grid.Row="6" Grid.Column="0" 
+                  IsChecked="{ Binding IsResetAllFontsToStandardFontFamilyChosen, Mode=TwoWay}"
+                  Content="Reset all fonts to standard font family" />
 
-		<CheckBox x:Name="_guiIsNewStandardFontSizeChosen" Content="New standard font size:" Grid.Row="8" Grid.Column="0" Checked="EhFontChoiceCheckedChanged" Unchecked="EhFontChoiceCheckedChanged" />
-		<agcd:FontSizeComboBox x:Name="_guiNewStandardFontSize" Grid.Row="8" Grid.Column="2" Grid.ColumnSpan="7" IsEnabled="{Binding ElementName=_guiIsNewStandardFontSizeChosen, Path=IsChecked}" SelectedQuantityChanged="EhSelectedFontSizeChanged" />
+        <CheckBox Grid.Row="8" Grid.Column="0" 
+                  IsChecked="{Binding IsNewStandardFontSizeChosen, Mode=TwoWay}"
+                  Content="New standard font size:" />
+        
+		<agcd:FontSizeComboBox Grid.Row="8" Grid.Column="2" Grid.ColumnSpan="7"
+                               SelectedQuantityAsValueInPoints="{Binding StandardFontSize}"
+                               IsEnabled="{Binding IsNewStandardFontSizeChosen}" />
 
 		<Expander Grid.Row="10" Grid.ColumnSpan="9" Header="New values derived from font family and size:">
-			<TextBox x:Name="_guiValuesDerivedFromNewStandard" />
+			<TextBox Text="{Binding ReportOfDerivedValues, Mode=OneTime}" IsReadOnly="True" />
 		</Expander>
 
 		<GroupBox Header="Action for font size:" Grid.Row="12" Grid.Column="0" Grid.ColumnSpan="7">
-			<agc:SingleChoiceRadioStackPanel x:Name="_guiActionForFontSize" />
+			<agc:SingleChoiceRadioStackPanelDC Orientation="Horizontal"
+                                               ItemsSource="{Binding ActionForFontSize.Items}" 
+                                               SelectedItem="{Binding ActionForFontSize.SelectedItem, Mode=TwoWay}" />
 		</GroupBox>
 
 		<GroupBox Header="Action for symbol size:" Grid.Row="14" Grid.Column="0" Grid.ColumnSpan="7">
-			<agc:SingleChoiceRadioStackPanel x:Name="_guiActionForSymbolSize" />
-		</GroupBox>
+            <agc:SingleChoiceRadioStackPanelDC Orientation="Horizontal"
+                                               ItemsSource="{Binding ActionForSymbolSize.Items}" 
+                                               SelectedItem="{Binding ActionForSymbolSize.SelectedItem, Mode=TwoWay}" />
+        </GroupBox>
 
 		<GroupBox Header="Action for line width:" Grid.Row="16" Grid.Column="0" Grid.ColumnSpan="7">
-			<agc:SingleChoiceRadioStackPanel x:Name="_guiActionForLineThickness" />
-		</GroupBox>
+			<agc:SingleChoiceRadioStackPanelDC Orientation="Horizontal"
+                                               ItemsSource="{Binding ActionForLineThickness.Items}" 
+                                               SelectedItem="{Binding ActionForLineThickness.SelectedItem, Mode=TwoWay}" />
+        </GroupBox>
 
 		<StackPanel Orientation="Vertical" Grid.Row="16" Grid.Column="8" VerticalAlignment="Bottom">
-			<CheckBox x:Name="_guiIsUserDefinedLineThicknessChosen" Content="User defined line width:"  Margin="0,0,0,4" />
-			<agcd:LineThicknessComboBox x:Name="_guiUserDefinedLineThicknessValue" IsEnabled="{Binding ElementName=_guiIsUserDefinedLineThicknessChosen, Path=IsChecked}" />
+			<CheckBox IsChecked="{Binding IsUserDefinedLineThicknessChosen, Mode=TwoWay}" Content="User defined line width:"  Margin="0,0,0,4" />
+			<agcd:LineThicknessComboBox 
+                                        SelectedQuantityAsValueInPoints="{Binding UserDefinedLineThicknessValue}"
+                                        IsEnabled="{Binding IsUserDefinedLineThicknessChosen}" />
 		</StackPanel>
 
 		<GroupBox Header="Action for tick length:" Grid.Row="18" Grid.Column="0" Grid.ColumnSpan="7">
-			<agc:SingleChoiceRadioStackPanel x:Name="_guiActionForTickLength" />
+			<agc:SingleChoiceRadioStackPanelDC ItemsSource="{Binding ActionForTickLength.Items}" SelectedItem="{Binding ActionForTickLength.SelectedItem, Mode=TwoWay}" />
 		</GroupBox>
 
 		<StackPanel Orientation="Vertical" Grid.Row="18" Grid.Column="8" VerticalAlignment="Bottom">
-			<CheckBox x:Name="_guiIsUserDefinedMajorTickLengthChosen" Content="User defined major tick length:" Margin="0,0,0,4" />
-			<agcd:LineThicknessComboBox x:Name="_guiUserDefinedMajorTickLength" IsEnabled="{Binding ElementName=_guiIsUserDefinedTickLengthChosen, Path=IsChecked}" />
+			<CheckBox IsChecked="{Binding IsUserDefinedMajorTickLengthChosen, Mode=TwoWay}" Content="User defined major tick length:" Margin="0,0,0,4" />
+			<agcd:LineThicknessComboBox SelectedQuantityAsValueInPoints="{Binding UserDefinedMajorTickLength}" 
+                                        IsEnabled="{Binding IsUserDefinedMajorTickLengthChosen}" />
 		</StackPanel>
 	</Grid>
 </UserControl>

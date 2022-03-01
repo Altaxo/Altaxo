@@ -34,7 +34,7 @@ namespace Altaxo.Gui.Common.Drawing.D3D
   }
 
   [ExpectedTypeOfView(typeof(IFontX3DView))]
-  public class FontX3DController : MVCANControllerEditImmutableDocBase<FontX3D, IFontX3DView>
+  public class FontX3DController : MVCANDControllerEditImmutableDocBase<FontX3D, IFontX3DView>
   {
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
@@ -54,6 +54,7 @@ namespace Altaxo.Gui.Common.Drawing.D3D
           OnPropertyChanged(nameof(SelectedFontFamilyName));
           OnPropertyChanged(nameof(SelectedFontSize));
           OnPropertyChanged(nameof(SelectedFontDepth));
+          OnMadeDirty();
         }
       }
     }
@@ -67,6 +68,7 @@ namespace Altaxo.Gui.Common.Drawing.D3D
         {
           _doc = _doc.WithSize(value);
           OnPropertyChanged(nameof(SelectedFontSize));
+          OnMadeDirty();
         }
       }
     }
@@ -81,11 +83,34 @@ namespace Altaxo.Gui.Common.Drawing.D3D
         {
           _doc = _doc.WithDepth(value);
           OnPropertyChanged(nameof(SelectedFontDepth));
+          OnMadeDirty();
+        }
+      }
+    }
+
+    public FontXStyle SelectedFontStyle
+    {
+      get => _doc.Style;
+      set
+      {
+        if (!(SelectedFontStyle == value))
+        {
+          _doc = _doc.WithStyle(value);
+          OnPropertyChanged(nameof(SelectedFontStyle));
+          OnMadeDirty();
         }
       }
     }
 
     #endregion
+
+    public FontX3D Doc => _doc;
+
+    protected override void OnMadeDirty()
+    {
+      base.OnMadeDirty();
+      OnPropertyChanged(nameof(Doc));
+    }
 
     protected override void Initialize(bool initData)
     {

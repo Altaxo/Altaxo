@@ -32,14 +32,9 @@ using AUL = Altaxo.Units.Length;
 
 namespace Altaxo.Gui.Graph.Gdi
 {
-  #region Interfaces
-
   public interface IItemLocationDirectView : IDataContextAwareView
   {
-
   }
-
-  #endregion Interfaces
 
   /// <summary>
   /// Summary description for LayerPositionController.

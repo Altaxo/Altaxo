@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2018 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -23,77 +23,307 @@
 #endregion Copyright
 
 #nullable disable
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using Altaxo.Collections;
 using Altaxo.Geometry;
 using Altaxo.Graph.Graph2D;
-using Altaxo.Main;
+using Altaxo.Gui.Common;
+using Altaxo.Units;
 
 namespace Altaxo.Gui.Graph.Graph2D
 {
-  public interface IResizeGraphView
+  public interface IResizeGraphView : IDataContextAwareView
   {
-    void SetReportOfOldValues(string report);
-
-    void SetReportOfDerivedValues(string report);
-
-    void SetOldRootLayerSize(PointD2D size);
-
-    void SetOldStandardFont(string font);
-
-    void SetOldStandardFontSize(double size);
-
-    void SetOldStandardLineThickness(double thickness);
-
-    void SetOldStandardMajorTickLength(double value);
-
-    bool IsNewRootLayerSizeChosen { get; }
-    PointD2D NewRootLayerSize { get; }
-    bool IsNewStandardFontFamilyChosen { get; }
-    string NewStandardFontFamily { get; }
-
-    bool IsResetAllFontsToStandardFontFamilyChosen { get; }
-
-    bool IsNewStandardFontSizeChosen { get; }
-    double NewStandardFontSize { get; }
-
-    SelectableListNodeList ActionsForFontSize { set; }
-
-    SelectableListNodeList ActionsForSymbolSize { set; }
-
-    SelectableListNodeList ActionsForLineThickness { set; }
-    bool IsUserDefinedLineThicknessChosen { get; }
-    double UserDefinedLineThickness { get; }
-
-    SelectableListNodeList ActionsForTickLength { set; }
-    bool IsUserDefinedMajorTickLengthChosen { get; }
-    double UserDefinedMajorTickLength { get; }
-
-    /// <summary>
-    /// Occurs when either chosen font family or size changed.
-    /// </summary>
-    event Action FontChanged;
   }
 
   [ExpectedTypeOfView(typeof(IResizeGraphView))]
   [UserControllerForObject(typeof(ResizeGraphOptions))]
   public class ResizeGraphController : MVCANControllerEditOriginalDocBase<ResizeGraphOptions, IResizeGraphView>
   {
-    private SelectableListNodeList _actionsForFontSize;
-    private SelectableListNodeList _actionsForSymbolSize;
-    private SelectableListNodeList _actionsForLineThickness;
-    private SelectableListNodeList _actionsForTickLength;
-
-    private string _reportOfOldValues;
-
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
     }
+
+    #region Bindings
+
+    private string _reportOfOldValues;
+
+    public string ReportOfOldValues
+    {
+      get => _reportOfOldValues;
+      set
+      {
+        if (!(_reportOfOldValues == value))
+        {
+          _reportOfOldValues = value;
+          OnPropertyChanged(nameof(ReportOfOldValues));
+        }
+      }
+    }
+
+    private string _reportOfDerivedValues;
+
+    public string ReportOfDerivedValues
+    {
+      get => _reportOfDerivedValues;
+      set
+      {
+        if (!(_reportOfDerivedValues == value))
+        {
+          _reportOfDerivedValues = value;
+          OnPropertyChanged(nameof(ReportOfDerivedValues));
+        }
+      }
+    }
+
+    private bool _isNewRootLayerSizeChosen;
+
+    public bool IsNewRootLayerSizeChosen
+    {
+      get => _isNewRootLayerSizeChosen;
+      set
+      {
+        if (!(_isNewRootLayerSizeChosen == value))
+        {
+          _isNewRootLayerSizeChosen = value;
+          OnPropertyChanged(nameof(IsNewRootLayerSizeChosen));
+        }
+      }
+    }
+
+    public QuantityWithUnitGuiEnvironment RootLayerSizeEnvironment => SizeEnvironment.Instance;
+
+    private DimensionfulQuantity _rootLayerSizeX;
+
+    public DimensionfulQuantity RootLayerSizeX
+    {
+      get => _rootLayerSizeX;
+      set
+      {
+        if (!(_rootLayerSizeX == value))
+        {
+          _rootLayerSizeX = value;
+          OnPropertyChanged(nameof(RootLayerSizeX));
+        }
+      }
+    }
+    private DimensionfulQuantity _rootLayerSizeY;
+
+    public DimensionfulQuantity RootLayerSizeY
+    {
+      get => _rootLayerSizeY;
+      set
+      {
+        if (!(_rootLayerSizeY == value))
+        {
+          _rootLayerSizeY = value;
+          OnPropertyChanged(nameof(RootLayerSizeY));
+        }
+      }
+    }
+
+    private bool _isNewStandardFontFamilyChosen;
+
+    public bool IsNewStandardFontFamilyChosen
+    {
+      get => _isNewStandardFontFamilyChosen;
+      set
+      {
+        if (!(_isNewStandardFontFamilyChosen == value))
+        {
+          _isNewStandardFontFamilyChosen = value;
+          OnPropertyChanged(nameof(IsNewStandardFontFamilyChosen));
+        }
+      }
+    }
+
+    private string _standardFontFamilyName;
+
+    public string StandardFontFamilyName
+    {
+      get => _standardFontFamilyName;
+      set
+      {
+        if (!(_standardFontFamilyName == value))
+        {
+          _standardFontFamilyName = value;
+          OnPropertyChanged(nameof(StandardFontFamilyName));
+          EhFontChanged();
+        }
+      }
+    }
+
+    private bool _isResetAllFontsToStandardFontFamilyChosen;
+
+    public bool IsResetAllFontsToStandardFontFamilyChosen
+    {
+      get => _isResetAllFontsToStandardFontFamilyChosen;
+      set
+      {
+        if (!(_isResetAllFontsToStandardFontFamilyChosen == value))
+        {
+          _isResetAllFontsToStandardFontFamilyChosen = value;
+          OnPropertyChanged(nameof(IsResetAllFontsToStandardFontFamilyChosen));
+        }
+      }
+    }
+
+    private bool _isNewStandardFontSizeChosen;
+
+    public bool IsNewStandardFontSizeChosen
+    {
+      get => _isNewStandardFontSizeChosen;
+      set
+      {
+        if (!(_isNewStandardFontSizeChosen == value))
+        {
+          _isNewStandardFontSizeChosen = value;
+          OnPropertyChanged(nameof(IsNewStandardFontSizeChosen));
+        }
+      }
+    }
+
+    private double _standardFontSize;
+
+    public double StandardFontSize
+    {
+      get => _standardFontSize;
+      set
+      {
+        if (!(_standardFontSize == value))
+        {
+          _standardFontSize = value;
+          OnPropertyChanged(nameof(StandardFontSize));
+        }
+      }
+    }
+
+    private ItemsController<ResizeGraphOptions.ScalarSizeActions> _actionForFontSize;
+
+    public ItemsController<ResizeGraphOptions.ScalarSizeActions> ActionForFontSize
+    {
+      get => _actionForFontSize;
+      set
+      {
+        if (!(_actionForFontSize == value))
+        {
+          _actionForFontSize = value;
+          OnPropertyChanged(nameof(ActionForFontSize));
+        }
+      }
+    }
+
+    private ItemsController<ResizeGraphOptions.ScalarSizeActions> _actionForSymbolSize;
+
+    public ItemsController<ResizeGraphOptions.ScalarSizeActions> ActionForSymbolSize
+    {
+      get => _actionForSymbolSize;
+      set
+      {
+        if (!(_actionForSymbolSize == value))
+        {
+          _actionForSymbolSize = value;
+          OnPropertyChanged(nameof(ActionForSymbolSize));
+        }
+      }
+    }
+
+    private ItemsController<ResizeGraphOptions.ScalarSizeActions> _actionForLineThickness;
+
+    public ItemsController<ResizeGraphOptions.ScalarSizeActions> ActionForLineThickness
+    {
+      get => _actionForLineThickness;
+      set
+      {
+        if (!(_actionForLineThickness == value))
+        {
+          _actionForLineThickness = value;
+          OnPropertyChanged(nameof(ActionForLineThickness));
+        }
+      }
+    }
+
+    private bool _isUserDefinedLineThicknessChosen;
+
+    public bool IsUserDefinedLineThicknessChosen
+    {
+      get => _isUserDefinedLineThicknessChosen;
+      set
+      {
+        if (!(_isUserDefinedLineThicknessChosen == value))
+        {
+          _isUserDefinedLineThicknessChosen = value;
+          OnPropertyChanged(nameof(IsUserDefinedLineThicknessChosen));
+        }
+      }
+    }
+
+    private double _userDefinedLineThicknessValue;
+
+    public double UserDefinedLineThicknessValue
+    {
+      get => _userDefinedLineThicknessValue;
+      set
+      {
+        if (!(_userDefinedLineThicknessValue == value))
+        {
+          _userDefinedLineThicknessValue = value;
+          OnPropertyChanged(nameof(UserDefinedLineThicknessValue));
+        }
+      }
+    }
+
+
+    private ItemsController<ResizeGraphOptions.ScalarSizeActions> _actionForTickLength;
+
+    public ItemsController<ResizeGraphOptions.ScalarSizeActions> ActionForTickLength
+    {
+      get => _actionForTickLength;
+      set
+      {
+        if (!(_actionForTickLength == value))
+        {
+          _actionForTickLength = value;
+          OnPropertyChanged(nameof(ActionForTickLength));
+        }
+      }
+    }
+
+
+    private bool _isUserDefinedMajorTickLengthChosen;
+
+    public bool IsUserDefinedMajorTickLengthChosen
+    {
+      get => _isUserDefinedMajorTickLengthChosen;
+      set
+      {
+        if (!(_isUserDefinedMajorTickLengthChosen == value))
+        {
+          _isUserDefinedMajorTickLengthChosen = value;
+          OnPropertyChanged(nameof(IsUserDefinedMajorTickLengthChosen));
+        }
+      }
+    }
+
+    private double _userDefinedMajorTickLength;
+
+    public double UserDefinedMajorTickLength
+    {
+      get => _userDefinedMajorTickLength;
+      set
+      {
+        if (!(_userDefinedMajorTickLength == value))
+        {
+          _userDefinedMajorTickLength = value;
+          OnPropertyChanged(nameof(UserDefinedMajorTickLength));
+        }
+      }
+    }
+
+
+    #endregion
 
     protected override void Initialize(bool initData)
     {
@@ -101,10 +331,10 @@ namespace Altaxo.Gui.Graph.Graph2D
 
       if (initData)
       {
-        _actionsForFontSize = new SelectableListNodeList(_doc.ActionForFontSize);
-        _actionsForSymbolSize = new SelectableListNodeList(_doc.ActionForSymbolSize);
-        _actionsForLineThickness = new SelectableListNodeList(_doc.ActionForLineThickness);
-        _actionsForTickLength = new SelectableListNodeList(_doc.ActionForTickLength);
+        ActionForFontSize = new ItemsController<ResizeGraphOptions.ScalarSizeActions>(new SelectableListNodeList(_doc.ActionForFontSize));
+        ActionForSymbolSize = new ItemsController<ResizeGraphOptions.ScalarSizeActions>(new SelectableListNodeList(_doc.ActionForSymbolSize));
+        ActionForLineThickness = new ItemsController<ResizeGraphOptions.ScalarSizeActions>(new SelectableListNodeList(_doc.ActionForLineThickness));
+        ActionForTickLength = new ItemsController<ResizeGraphOptions.ScalarSizeActions>(new SelectableListNodeList(_doc.ActionForTickLength));
 
         var cult = Altaxo.Settings.GuiCulture.Instance;
         var stb = new StringBuilder();
@@ -115,45 +345,26 @@ namespace Altaxo.Gui.Graph.Graph2D
         stb.AppendFormat(cult, "Standard font size: {0}", _doc.OldStandardFontSize.HasValue ? _doc.OldStandardFontSize.Value.ToString(cult) + " pt" : "<not set>");
         stb.AppendLine();
         stb.AppendFormat(cult, "Standard line width: {0}", _doc.OldLineThickness.HasValue ? _doc.OldLineThickness.Value.ToString(cult) + " pt" : "<not set>");
-        _reportOfOldValues = stb.ToString();
-      }
+        ReportOfOldValues = stb.ToString();
 
-      if (_view is not null)
-      {
-        _view.SetReportOfOldValues(_reportOfOldValues);
-        _view.SetOldRootLayerSize(_doc.OldRootLayerSize);
-        _view.SetOldStandardFont(_doc.OldStandardFontFamily);
+        RootLayerSizeX = new DimensionfulQuantity(_doc.OldRootLayerSize.X, Altaxo.Units.Length.Point.Instance).AsQuantityIn(RootLayerSizeEnvironment.DefaultUnit);
+        RootLayerSizeY = new DimensionfulQuantity(_doc.OldRootLayerSize.Y, Altaxo.Units.Length.Point.Instance).AsQuantityIn(RootLayerSizeEnvironment.DefaultUnit);
+
+        StandardFontFamilyName = _doc.OldStandardFontFamily;
         if (_doc.OldStandardFontSize.HasValue)
-          _view.SetOldStandardFontSize(_doc.OldStandardFontSize.Value);
+          StandardFontSize = _doc.OldStandardFontSize.Value;
         if (_doc.OldMajorTickLength.HasValue)
-          _view.SetOldStandardMajorTickLength(_doc.OldMajorTickLength.Value);
+          UserDefinedMajorTickLength = _doc.OldMajorTickLength.Value;
 
         if (_doc.OldLineThickness.HasValue)
-          _view.SetOldStandardLineThickness(_doc.OldLineThickness.Value);
-
-        _view.ActionsForFontSize = _actionsForFontSize;
-        _view.ActionsForSymbolSize = _actionsForSymbolSize;
-        _view.ActionsForLineThickness = _actionsForLineThickness;
-        _view.ActionsForTickLength = _actionsForTickLength;
+          UserDefinedLineThicknessValue = _doc.OldLineThickness.Value;
       }
-    }
-
-    protected override void AttachView()
-    {
-      base.AttachView();
-      _view.FontChanged += EhFontChanged;
-    }
-
-    protected override void DetachView()
-    {
-      _view.FontChanged -= EhFontChanged;
-      base.DetachView();
     }
 
     private void EhFontChanged()
     {
-      var fontFamily = _view.IsNewStandardFontFamilyChosen ? _view.NewStandardFontFamily : _doc.OldStandardFontFamily;
-      var fontSize = _view.IsNewStandardFontSizeChosen ? _view.NewStandardFontSize : _doc.OldStandardFontSize ?? 12;
+      var fontFamily = IsNewStandardFontFamilyChosen ? StandardFontFamilyName : _doc.OldStandardFontFamily;
+      var fontSize = IsNewStandardFontSizeChosen ? StandardFontSize : _doc.OldStandardFontSize ?? 12;
       var font = Altaxo.Graph.Gdi.GdiFontManager.GetFontX(fontFamily, fontSize, Altaxo.Drawing.FontXStyle.Regular);
 
       var bag = new Altaxo.Main.Properties.PropertyBag();
@@ -170,49 +381,49 @@ namespace Altaxo.Gui.Graph.Graph2D
       stb.AppendFormat(cult, "Derived line width: {0} pt", newLineWidth);
       stb.AppendLine();
       stb.AppendFormat(cult, "Derived major tick length: {0} pt", newMajorTickLength);
-      _view.SetReportOfDerivedValues(stb.ToString());
+      ReportOfDerivedValues = stb.ToString();
 
-      if (!_view.IsUserDefinedLineThicknessChosen)
-        _view.SetOldStandardLineThickness(newLineWidth);
+      if (!IsUserDefinedLineThicknessChosen)
+        UserDefinedLineThicknessValue = newLineWidth;
 
-      if (!_view.IsUserDefinedMajorTickLengthChosen)
-        _view.SetOldStandardMajorTickLength(newMajorTickLength);
+      if (!IsUserDefinedMajorTickLengthChosen)
+        UserDefinedMajorTickLength = newMajorTickLength;
     }
 
     public override bool Apply(bool disposeController)
     {
-      if (_view.IsNewRootLayerSizeChosen)
-        _doc.NewRootLayerSize = _view.NewRootLayerSize;
+      if (IsNewRootLayerSizeChosen)
+        _doc.NewRootLayerSize = new PointD2D(RootLayerSizeX.AsValueIn(Altaxo.Units.Length.Point.Instance), RootLayerSizeX.AsValueIn(Altaxo.Units.Length.Point.Instance));
       else
         _doc.NewRootLayerSize = null;
 
-      if (_view.IsNewStandardFontFamilyChosen)
-        _doc.NewStandardFontFamily = _view.NewStandardFontFamily;
+      if (IsNewStandardFontFamilyChosen)
+        _doc.NewStandardFontFamily = StandardFontFamilyName;
       else
         _doc.NewStandardFontFamily = null;
 
-      _doc.OptionResetAllFontsToStandardFont = _view.IsResetAllFontsToStandardFontFamilyChosen;
+      _doc.OptionResetAllFontsToStandardFont = IsResetAllFontsToStandardFontFamilyChosen;
 
-      if (_view.IsNewStandardFontSizeChosen)
-        _doc.NewStandardFontSize = _view.NewStandardFontSize;
+      if (IsNewStandardFontSizeChosen)
+        _doc.NewStandardFontSize = StandardFontSize;
       else
         _doc.NewStandardFontSize = null;
 
-      _doc.ActionForFontSize = (ResizeGraphOptions.ScalarSizeActions)_actionsForFontSize.FirstSelectedNode.Tag;
+      _doc.ActionForFontSize = ActionForFontSize.SelectedValue;
 
-      _doc.ActionForSymbolSize = (ResizeGraphOptions.ScalarSizeActions)_actionsForSymbolSize.FirstSelectedNode.Tag;
+      _doc.ActionForSymbolSize = ActionForSymbolSize.SelectedValue;
 
-      _doc.ActionForLineThickness = (ResizeGraphOptions.ScalarSizeActions)_actionsForLineThickness.FirstSelectedNode.Tag;
+      _doc.ActionForLineThickness = ActionForLineThickness.SelectedValue;
 
-      if (_view.IsUserDefinedLineThicknessChosen)
-        _doc.UserDefinedLineThickness = _view.UserDefinedLineThickness;
+      if (IsUserDefinedLineThicknessChosen)
+        _doc.UserDefinedLineThickness = UserDefinedLineThicknessValue;
       else
         _doc.UserDefinedLineThickness = null;
 
-      _doc.ActionForTickLength = (ResizeGraphOptions.ScalarSizeActions)_actionsForTickLength.FirstSelectedNode.Tag;
+      _doc.ActionForTickLength = ActionForTickLength.SelectedValue;
 
-      if (_view.IsUserDefinedMajorTickLengthChosen)
-        _doc.UserDefinedMajorTickLength = _view.UserDefinedMajorTickLength;
+      if (IsUserDefinedMajorTickLengthChosen)
+        _doc.UserDefinedMajorTickLength = UserDefinedMajorTickLength;
       else
         _doc.UserDefinedMajorTickLength = null;
 

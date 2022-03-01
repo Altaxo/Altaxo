@@ -3,11 +3,13 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
-						 xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing"
-						 xmlns:axog3m="clr-namespace:Altaxo.Gui.Drawing.D3D"
- 						 xmlns:axog="clr-namespace:Altaxo.Gui;assembly=AltaxoBase"
- 						 xmlns:axocoll="clr-namespace:Altaxo.Collections;assembly=AltaxoBase"
+			 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
+			 xmlns:axogcc="clr-namespace:Altaxo.Gui.Common.Converters"
+			 xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing"
+			 xmlns:axog3m="clr-namespace:Altaxo.Gui.Drawing.D3D"
+			 xmlns:axocoll="clr-namespace:Altaxo.Collections;assembly=AltaxoBase" 
+             xmlns:axis="clr-namespace:Altaxo.Gui.Graph.Graph3D.Axis;assembly=AltaxoBase" 
+             d:DataContext="{d:DesignInstance Type=axis:AxisLabelStyleController}"
              mc:Ignorable="d">
 	<UserControl.Resources>
 		<Style TargetType="Label">
@@ -72,72 +74,105 @@
 			</Grid.RowDefinitions>
 
 			<Label Grid.Column="0" Grid.Row="0" Content="Color:" />
-			<axog3m:MaterialComboBox x:Name="_guiLabelMaterial" Grid.Column="1" Grid.Row="0" />
+			<axog3m:MaterialComboBox Grid.Column="1" Grid.Row="0" SelectedMaterial="{Binding LabelBrush}" />
 
 			<Label Grid.Column="2" Grid.Row="0" Content="LabelSide:" />
-			<ItemsControl x:Name="_guiLabelSide" Grid.Column="3" Grid.Row="0" Style="{StaticResource TickItemsControlStyle}" ItemTemplate="{StaticResource TickItemsTemplate}" />
+            <ItemsControl Grid.Column="3" Grid.Row="0" ItemsSource="{Binding LabelSides}" Style="{StaticResource TickItemsControlStyle}" ItemTemplate="{StaticResource TickItemsTemplate}"  />
 
 			<Label Grid.Column="0" Grid.Row="2" Content="Font:" />
-			<axogcd:FontFamilyComboBox x:Name="_guiFontFamily" Grid.Column="1" Grid.Row="2" />
+			<axogcd:FontFamilyComboBox Grid.Column="1" Grid.Row="2" 
+                                       SelectedFontFamilyName="{Binding LabelFontController.SelectedFontFamilyName, Mode=TwoWay}" />
 
 			<Label Grid.Column="2" Grid.Row="2" Content="Style:" />
-			<axogcd:FontStyleComboBox x:Name="_guiFontStyle" Grid.Column="3" Grid.Row="2" />
+			<axogcd:FontStyleComboBox Grid.Column="3" Grid.Row="2" 
+                                      SelectedFontStyle="{Binding LabelFontController.SelectedFontStyle, Mode=TwoWay}" />
 
 			<Label Grid.Column="0" Grid.Row="4" Content="Font size:" />
-			<axogcd:FontSizeComboBox x:Name="_guiFontSize" Grid.Column="1" Grid.Row="4" />
+			<axogcd:FontSizeComboBox Grid.Column="1" Grid.Row="4" 
+                                     SelectedQuantityAsValueInPoints="{Binding LabelFontController.SelectedFontSize, Mode=TwoWay}" />
 
 			<Label Grid.Column="2" Grid.Row="4" Content="Font size:" />
-			<axogcd:FontSizeComboBox x:Name="m_cbFontDepth" Grid.Column="3" Grid.Row="4" />
+			<axogcd:FontSizeComboBox Grid.Column="3" Grid.Row="4" 
+                                     SelectedQuantityAsValueInPoints="{Binding LabelFontController.SelectedFontDepth, Mode=TwoWay}"/>
 
 			<Label Grid.Column="0" Grid.Row="6" Content="Rotation:" />
-			<axogcd:RotationComboBox x:Name="_guiRotationX" Grid.Column="1" Grid.Row="6" />
-			<axogcd:RotationComboBox x:Name="_guiRotationY" Grid.Column="2" Grid.Row="6" />
-			<axogcd:RotationComboBox x:Name="_guiRotationZ" Grid.Column="3" Grid.Row="6" />
+            <axogcd:RotationComboBox Grid.Column="1" Grid.Row="6" SelectedQuantity="{Binding RotationX, Mode=TwoWay}" UnitEnvironment="{Binding RotationEnvironment}" />
+            <axogcd:RotationComboBox Grid.Column="2" Grid.Row="6" SelectedQuantity="{Binding RotationY, Mode=TwoWay}" UnitEnvironment="{Binding RotationEnvironment}"/>
+            <axogcd:RotationComboBox Grid.Column="3" Grid.Row="6" SelectedQuantity="{Binding RotationZ, Mode=TwoWay}" UnitEnvironment="{Binding RotationEnvironment}"/>
 
 			<Label Grid.Column="0" Grid.Row="8" Content="Auto align:" />
-			<CheckBox x:Name="_guiAutomaticAlignment" Grid.Column="1" Grid.Row="8" VerticalAlignment="Center" Checked="_chkAutomaticAlignment_CheckedChanged" Unchecked="_chkAutomaticAlignment_CheckedChanged" />
+			<CheckBox Grid.Column="1" Grid.Row="8"
+                      IsChecked="{Binding AutomaticAlignment, Mode=TwoWay}"
+                      VerticalAlignment="Center"  />
 
 			<GroupBox Grid.Column="2" Grid.Row="8" Grid.ColumnSpan="2" Grid.RowSpan="5" Header="Offset (relative to M-size):" Margin="4,8,0,0" />
 
 			<Label Grid.Column="0" Grid.Row="10" Content="Horz. alignment:" />
-			<ComboBox x:Name="_guiAlignmentX" Grid.Column="1" Grid.Row="10" SelectionChanged="EhAlignmentX_SelectionChanged" />
+			<ComboBox Grid.Column="1" Grid.Row="10"
+                      ItemsSource="{Binding AlignmentX.Items}" 
+                      SelectedItem="{Binding AlignmentX.SelectedItem, Mode=TwoWay}" 
+                      IsEnabled="{Binding AutomaticAlignment, Converter={x:Static axogcc:InverseBooleanConverter.Instance}}" />
 
 			<Label Grid.Column="2" Grid.Row="10" Content="X:" />
-			<axogc:QuantityWithUnitTextBox x:Name="_guiOffsetX" Grid.Column="3" Grid.Row="10" UnitEnvironment="{x:Static axog:RelationEnvironment.Instance}" SelectedQuantityAsValueInSIUnits="0" />
+			<axogc:QuantityWithUnitTextBox Grid.Column="3" Grid.Row="10"
+                                           SelectedQuantity="{Binding OffsetX, Mode=TwoWay}" 
+                                           UnitEnvironment="{Binding OffsetEnvironment}" />
 
 			<Label Grid.Column="0" Grid.Row="12" Content="Vert. alignment:" />
-			<ComboBox x:Name="_guiAlignmentY" Grid.Column="1" Grid.Row="12" SelectionChanged="EhAlignmentY_SelectionChanged" />
+			<ComboBox Grid.Column="1" Grid.Row="12"
+                      ItemsSource="{Binding AlignmentY.Items}" 
+                      SelectedItem="{Binding AlignmentY.SelectedItem, Mode=TwoWay}" 
+                      IsEnabled="{Binding AutomaticAlignment, Converter={x:Static axogcc:InverseBooleanConverter.Instance}}" />
 
-			<Label Grid.Column="2" Grid.Row="12" Content="Y:" />
-			<axogc:QuantityWithUnitTextBox x:Name="_guiOffsetY" Grid.Column="3" Grid.Row="12" UnitEnvironment="{x:Static axog:RelationEnvironment.Instance}" SelectedQuantityAsValueInSIUnits="0" />
 
-			<Label Grid.Column="0" Grid.Row="14" Content="Depth alignment:" />
-			<ComboBox x:Name="_guiAlignmentZ" Grid.Column="1" Grid.Row="14" SelectionChanged="EhAlignmentZ_SelectionChanged" />
+            <Label Grid.Column="2" Grid.Row="12" Content="Y:" />
+			<axogc:QuantityWithUnitTextBox Grid.Column="3" Grid.Row="12" 
+                                           SelectedQuantity="{Binding OffsetY, Mode=TwoWay}" 
+                                           UnitEnvironment="{Binding OffsetEnvironment}" />
 
-			<Label Grid.Column="2" Grid.Row="14" Content="Z:" />
-			<axogc:QuantityWithUnitTextBox x:Name="_guiOffsetZ" Grid.Column="3" Grid.Row="14" UnitEnvironment="{x:Static axog:RelationEnvironment.Instance}" SelectedQuantityAsValueInSIUnits="0" />
+            <Label Grid.Column="0" Grid.Row="14" Content="Depth alignment:" />
+			<ComboBox Grid.Column="1" Grid.Row="14"
+                      ItemsSource="{Binding AlignmentZ.Items}" 
+                      SelectedItem="{Binding AlignmentZ.SelectedItem, Mode=TwoWay}" 
+                      IsEnabled="{Binding AutomaticAlignment, Converter={x:Static axogcc:InverseBooleanConverter.Instance}}" />
 
-			<Label Grid.Column="0" Grid.Row="16" Content="Background:" />
-			<ComboBox x:Name="_guiBackgroundStyle" Grid.Column="1" Grid.Row="16" />
+
+            <Label Grid.Column="2" Grid.Row="14" Content="Z:" />
+			<axogc:QuantityWithUnitTextBox Grid.Column="3" Grid.Row="14"
+                                           SelectedQuantity="{Binding OffsetZ, Mode=TwoWay}" 
+                                           UnitEnvironment="{Binding OffsetEnvironment}" />
+
+            <Label Grid.Column="0" Grid.Row="16" Content="Background:" />
+			<ComboBox Grid.Column="1" Grid.Row="16"
+                      ItemsSource="{Binding BackgroundController.BackgroundStyles.Items}" 
+                      SelectedItem="{Binding BackgroundController.BackgroundStyles.SelectedItem, Mode=TwoWay}" />
 
 			<Label Grid.Column="2" Grid.Row="16" Content="Brush:" />
-			<axog3m:MaterialComboBox x:Name="_guiBackgroundBrush" Grid.Column="3" Grid.Row="16" />
+			<axog3m:MaterialComboBox Grid.Column="3" Grid.Row="16" 
+                                     SelectedMaterial="{Binding BackgroundController.BackgroundMaterial, Mode=TwoWay}" 
+                                     IsEnabled="{Binding BackgroundController.IsBackgroundMaterialEnabled}"/>
 
 			<Label Grid.Column="0" Grid.Row="18" Content="Suppress values:" />
-			<TextBox x:Name="_guiSuppressLabelValues" Grid.Column="1" Grid.Row="18" />
+			<TextBox Grid.Column="1" Grid.Row="18" 
+                     Text="{Binding SuppressedLabelsByValue, Mode=TwoWay}" />
 
 			<Label Grid.Column="0" Grid.Row="20" Content="Supress label #:" />
 
-			<TextBox x:Name="_guiSuppressLabelsByNumber" Grid.Column="1" Grid.Row="20" />
+            <TextBox Grid.Column="1" Grid.Row="20" 
+                     Text="{Binding SuppressedLabelsByNumber, Mode=TwoWay}"/>
 
 			<Label Grid.Column="0" Grid.Row="22" Content="Prefix text:" />
-			<TextBox x:Name="_guiPrefixText" Grid.Column="1" Grid.Row="22" />
+            <TextBox Grid.Column="1" Grid.Row="22" 
+                     Text="{Binding PrefixText, Mode=TwoWay}"/>
 			<Label Grid.Column="2" Grid.Row="22" Content="Postfix text:" />
-			<TextBox x:Name="_guiPostfixText" Grid.Column="3" Grid.Row="22" />
+            <TextBox Grid.Column="3" Grid.Row="22" 
+                     Text="{Binding PostfixText, Mode=TwoWay}"/>
 
 			<Label Grid.Column="0" Grid.Row="24" Content="Label style:" />
-			<ComboBox x:Name="_guiLabelStyle" Grid.Column="1" Grid.Row="24" Grid.ColumnSpan="3" SelectionChanged="m_cbLabelStyle_SelectionChangeCommitted" />
+            <ComboBox Grid.Column="1" Grid.Row="24" Grid.ColumnSpan="3" 
+                      ItemsSource="{Binding LabelStyle.Items}"
+                      SelectedItem="{Binding LabelStyle.SelectedItem, Mode=TwoWay}" />
 		</Grid>
-		<Border x:Name="_guiLabelStyleSpecific" Grid.Column="0" Grid.ColumnSpan="4" Grid.Row="26" />
+        <ContentControl Grid.Column="0" Grid.ColumnSpan="4" Grid.Row="26" Content="{Binding LabelFormattingSpecificController.ViewObject}" />
 	</StackPanel>
 </UserControl>
