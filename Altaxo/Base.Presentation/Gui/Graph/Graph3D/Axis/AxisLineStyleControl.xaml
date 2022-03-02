@@ -3,9 +3,11 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-						 xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing"
-						 xmlns:axog3m="clr-namespace:Altaxo.Gui.Drawing.D3D"
-						 xmlns:axocoll="clr-namespace:Altaxo.Collections;assembly=AltaxoBase"
+			 xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing"
+			 xmlns:axog3m="clr-namespace:Altaxo.Gui.Drawing.D3D"
+			 xmlns:axocoll="clr-namespace:Altaxo.Collections;assembly=AltaxoBase"
+             xmlns:axis="clr-namespace:Altaxo.Gui.Graph.Graph3D.Axis;assembly=AltaxoBase"
+             d:DataContext="{d:DesignInstance Type=axis:AxisLineStyleController}"
              mc:Ignorable="d">
 	<UserControl.Resources>
 		<Style TargetType="Label">
@@ -57,11 +59,15 @@
 					<RowDefinition Height="Auto" />
 					<RowDefinition Height="Auto" />
 				</Grid.RowDefinitions>
-				<CheckBox x:Name="_chkEnableLine" Grid.Column="0" Grid.ColumnSpan="4">Enable</CheckBox>
-				<Label Grid.Column="0" Grid.Row="2">Pen brush:</Label>
-				<axog3m:MaterialComboBox x:Name="_lineBrushColor" Grid.Column="1" Grid.Row="2" />
+                <CheckBox Grid.Column="0" Grid.ColumnSpan="4" 
+                          IsChecked="{Binding ShowLine, Mode=TwoWay}"
+                          Content="Enable"/>
+                <Label Grid.Column="0" Grid.Row="2">Pen brush:</Label>
+				<axog3m:MaterialComboBox Grid.Column="1" Grid.Row="2" 
+                                         SelectedMaterial="{Binding AxisLinePenController.Material}"/>
 				<Label Grid.Column="2" Grid.Row="2">Thickness:</Label>
-				<axogcd:LineThicknessComboBox x:Name="_lineLineThickness" Grid.Column="3" Grid.Row="2" />
+				<axogcd:LineThicknessComboBox Grid.Column="3" Grid.Row="2" 
+                                              SelectedQuantityAsValueInPoints="{Binding AxisLinePenController.LineThickness}" />
 			</Grid>
 		</GroupBox>
 
@@ -78,13 +84,29 @@
 					<RowDefinition Height="Auto" />
 					<RowDefinition Height="Auto" />
 				</Grid.RowDefinitions>
-				<CheckBox x:Name="_chkCustomMajorColor" Grid.Column="0" Grid.Row="0" VerticalAlignment="Center" Checked="EhIndividualMajorColor_CheckChanged" Unchecked="EhIndividualMajorColor_CheckChanged">Color:</CheckBox>
-				<axog3m:MaterialComboBox x:Name="_majorLineColor" Grid.Column="1" Grid.Row="0" />
-				<CheckBox x:Name="_chkCustomMajorThickness" Grid.Column="2" Grid.Row="0" VerticalAlignment="Center" Style="{StaticResource CheckBoxWithLeftMargin}" Checked="EhIndividualMajorThickness_CheckChanged" Unchecked="EhIndividualMajorThickness_CheckChanged">Thickness:</CheckBox>
-				<axogcd:LineThicknessComboBox x:Name="_lineMajorThickness" Grid.Column="3" Grid.Row="0" />
-				<Label Grid.Column="0" Grid.Row="2">Length:</Label>
-				<axogcd:LineThicknessComboBox x:Name="_lineMajorLength"  Grid.Column="1" Grid.Row="2" />
-				<ItemsControl x:Name="_majorWhichTicksLayout" Grid.Column="3" Grid.Row="2" Style="{StaticResource TickItemsControlStyle}" ItemTemplate="{StaticResource TickItemsTemplate}" />
+                <CheckBox Grid.Column="0" Grid.Row="0"
+                          IsChecked="{Binding IndividualMajorColor, Mode=TwoWay}"
+                          Content="Color:"
+                          VerticalAlignment="Center" />
+                <axog3m:MaterialComboBox Grid.Column="1" Grid.Row="0" 
+                                         SelectedMaterial="{Binding MajorTicksPenController.Material}"
+                                         IsEnabled="{Binding IndividualMajorColor}" />
+
+                <CheckBox Grid.Column="2" Grid.Row="0"
+                          IsChecked="{Binding IndividualMajorThickness, Mode=TwoWay}"
+                          Content="Thickness: "
+                          VerticalAlignment="Center"
+                          Style="{StaticResource CheckBoxWithLeftMargin}" />
+                <axogcd:LineThicknessComboBox Grid.Column="3" Grid.Row="0" 
+                                              SelectedQuantityAsValueInPoints="{Binding MajorTicksPenController.LineThickness}"
+                                              IsEnabled="{Binding IndividualMajorThickness}"/>
+                <Label Grid.Column="0" Grid.Row="2" Content="Length:"/>
+                <axogcd:LineThicknessComboBox Grid.Column="1" Grid.Row="2" 
+                                              SelectedQuantity="{Binding MajorTickLength}" UnitEnvironment="{Binding MajorTickLengthEnvironment}"/>
+				<ItemsControl Grid.Column="3" Grid.Row="2" 
+                              ItemsSource="{Binding MajorPenTicks}"
+                              Style="{StaticResource TickItemsControlStyle}"
+                              ItemTemplate="{StaticResource TickItemsTemplate}" />
 			</Grid>
 		</GroupBox>
 		<GroupBox Grid.Row="4" Header="Minor Ticks">
@@ -100,13 +122,34 @@
 					<RowDefinition Height="Auto" />
 					<RowDefinition Height="Auto" />
 				</Grid.RowDefinitions>
-				<CheckBox x:Name="_chkCustomMinorColor" Grid.Column="0" Grid.Row="0" VerticalAlignment="Center" Checked="EhIndividualMinorColor_CheckChanged" Unchecked="EhIndividualMinorColor_CheckChanged">Color:</CheckBox>
-				<axog3m:MaterialComboBox x:Name="_minorLineColor" Grid.Column="1" Grid.Row="0" />
-				<CheckBox x:Name="_chkCustomMinorThickness" Grid.Column="2" Grid.Row="0" VerticalAlignment="Center" Style="{StaticResource CheckBoxWithLeftMargin}" Checked="EhIndividualMinorThickness_CheckChanged" Unchecked="EhIndividualMinorThickness_CheckChanged">Thickness:</CheckBox>
-				<axogcd:LineThicknessComboBox x:Name="_lineMinorThickness" Grid.Column="3" Grid.Row="0" />
-				<Label Grid.Column="0" Grid.Row="2">Length:</Label>
-				<axogcd:LineThicknessComboBox x:Name="_lineMinorLength"  Grid.Column="1" Grid.Row="2" />
-				<ItemsControl x:Name="_minorWhichTicksLayout" Grid.Column="3" Grid.Row="2" Style="{StaticResource TickItemsControlStyle}" ItemTemplate="{StaticResource TickItemsTemplate}" />
+                <CheckBox Grid.Column="0" Grid.Row="0" 
+                          IsChecked="{Binding IndividualMinorColor, Mode=TwoWay}"
+                          Content="Color:"
+                          VerticalAlignment="Center" />
+                
+                <axog3m:MaterialComboBox Grid.Column="1" Grid.Row="0" 
+                                         SelectedMaterial="{Binding MinorTicksPenController.Material}" 
+                                         IsEnabled="{Binding IndividualMinorColor}"/>
+
+                <CheckBox Grid.Column="2" Grid.Row="0"
+                          IsChecked="{Binding IndividualMinorThickness, Mode=TwoWay}"
+                          Content="Thickness: "
+                          VerticalAlignment="Center"
+                          Style="{StaticResource CheckBoxWithLeftMargin}" />
+                
+                <axogcd:LineThicknessComboBox Grid.Column="3" Grid.Row="0" 
+                                              SelectedQuantityAsValueInPoints="{Binding MajorTicksPenController.LineThickness}"
+                                              IsEnabled="{Binding IndividualMinorThickness}" />
+
+                <Label Grid.Column="0" Grid.Row="2" Content="Length:"/>
+
+                <axogcd:LineThicknessComboBox Grid.Column="1" Grid.Row="2" 
+                                              SelectedQuantity="{Binding MinorTickLength}"
+                                              UnitEnvironment="{Binding MinorTickLengthEnvironment}"/>
+				<ItemsControl Grid.Column="3" Grid.Row="2"
+                              ItemsSource="{Binding MinorPenTicks}"
+                              Style="{StaticResource TickItemsControlStyle}"
+                              ItemTemplate="{StaticResource TickItemsTemplate}" />
 			</Grid>
 		</GroupBox>
 	</Grid>

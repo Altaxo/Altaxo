@@ -78,12 +78,12 @@ namespace Altaxo.Gui.Graph.Graph3D.Axis
     {
     }
 
-    public void InitializeMajorGridStyle(IColorTypeThicknessPenController controller)
+    public void InitializeMajorGridStyle(IMVCANDController controller)
     {
       controller.ViewObject = _majorStyle;
     }
 
-    public void InitializeMinorGridStyle(IColorTypeThicknessPenController controller)
+    public void InitializeMinorGridStyle(IMVCANDController controller)
     {
       controller.ViewObject = _minorStyle;
     }

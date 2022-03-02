@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -23,14 +23,7 @@
 #endregion Copyright
 
 #nullable disable warnings
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Windows.Controls;
-using Altaxo.Drawing.D3D;
-using Altaxo.Graph.Graph3D;
-using Altaxo.Gui.Drawing.D3D;
 
 namespace Altaxo.Gui.Graph.Graph3D
 {
@@ -39,47 +32,9 @@ namespace Altaxo.Gui.Graph.Graph3D
   /// </summary>
   public partial class ColorTypeThicknessPenControl : UserControl, IColorTypeThicknessPenView
   {
-    private PenControlsGlue _glue;
-
     public ColorTypeThicknessPenControl()
     {
       InitializeComponent();
-
-      _glue = new PenControlsGlue(false)
-      {
-        CbBrush = _cbColor,
-        CbDashPattern = _cbLineType,
-        CbLineThickness1 = _cbThickness
-      };
     }
-
-    #region IColorTypeThicknessPenView
-
-    private IColorTypeThicknessPenViewEventSink _controller;
-
-    public IColorTypeThicknessPenViewEventSink Controller
-    {
-      get { return _controller; }
-      set { _controller = value; }
-    }
-
-    public PenX3D DocPen
-    {
-      get
-      {
-        return _glue.Pen;
-      }
-      set
-      {
-        _glue.Pen = value;
-      }
-    }
-
-    public void SetShowPlotColorsOnly(bool restrictChoiceToThisCollection)
-    {
-      _glue.CbBrush.ShowPlotColorsOnly = restrictChoiceToThisCollection;
-    }
-
-    #endregion IColorTypeThicknessPenView
   }
 }

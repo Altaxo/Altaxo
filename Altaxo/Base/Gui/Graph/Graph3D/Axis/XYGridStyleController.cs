@@ -36,9 +36,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Axis
 
     void InitializeEnd();
 
-    void InitializeMajorGridStyle(IColorTypeThicknessPenController controller);
+    void InitializeMajorGridStyle(IMVCANDController controller);
 
-    void InitializeMinorGridStyle(IColorTypeThicknessPenController controller);
+    void InitializeMinorGridStyle(IMVCANDController controller);
 
     void InitializeShowGrid(bool value);
 
@@ -64,8 +64,8 @@ namespace Altaxo.Gui.Graph.Graph3D.Axis
   [ExpectedTypeOfView(typeof(IXYGridStyleView))]
   public class XYGridStyleController : MVCANControllerEditOriginalDocBase<GridStyle, IXYGridStyleView>
   {
-    private IColorTypeThicknessPenController _majorController;
-    private IColorTypeThicknessPenController _minorController;
+    private IMVCANDController _majorController;
+    private IMVCANDController _minorController;
 
     public override System.Collections.Generic.IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {

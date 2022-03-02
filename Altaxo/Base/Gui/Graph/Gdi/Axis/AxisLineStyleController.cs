@@ -33,13 +33,10 @@ using Altaxo.Units;
 
 namespace Altaxo.Gui.Graph.Gdi.Axis
 {
-  #region Interfaces
-
   public interface IAxisLineStyleView : IDataContextAwareView
   {
   }
 
-  #endregion Interfaces
 
   [UserControllerForObject(typeof(AxisLineStyle))]
   [ExpectedTypeOfView(typeof(IAxisLineStyleView))]
@@ -277,8 +274,6 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
         MajorTickLength = new DimensionfulQuantity(_doc.MajorTickLength, Altaxo.Units.Length.Point.Instance).AsQuantityIn(MajorTickLengthEnvironment.DefaultUnit);
         MinorTickLength = new DimensionfulQuantity(_doc.MinorTickLength, Altaxo.Units.Length.Point.Instance).AsQuantityIn(MinorTickLengthEnvironment.DefaultUnit);
 
-
-
         var list = new List<SelectableListNode>();
         if (_doc.CachedAxisInformation is not null)
         {
@@ -298,6 +293,56 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
         MinorPenTicks = new SelectableListNodeList(list);
       }
     }
+
+    public override bool Apply(bool disposeController)
+    {
+      if (!AxisLinePenController.Apply(disposeController))
+        return ApplyEnd(false, disposeController);
+      if (!MajorTicksPenController.Apply(disposeController))
+        return ApplyEnd(false, disposeController);
+      if (!MinorTicksPenController.Apply(disposeController))
+        return ApplyEnd(false, disposeController);
+
+      _doc.AxisPen = (PenX)AxisLinePenController.ModelObject;
+      _doc.MajorPen = (PenX)MajorTicksPenController.ModelObject;
+      _doc.MinorPen = (PenX)MinorTicksPenController.ModelObject;
+      _doc.MajorTickLength = MajorTickLength.AsValueIn(Altaxo.Units.Length.Point.Instance);
+      _doc.MinorTickLength = MinorTickLength.AsValueIn(Altaxo.Units.Length.Point.Instance);
+
+      SelectableListNodeList list;
+      list = MajorPenTicks;
+      foreach (var item in list)
+      {
+        switch ((int)item.Tag)
+        {
+          case 0:
+            _doc.FirstDownMajorTicks = item.IsSelected;
+            break;
+
+          case 1:
+            _doc.FirstUpMajorTicks = item.IsSelected;
+            break;
+        }
+      }
+
+      list = MinorPenTicks;
+      foreach (var item in list)
+      {
+        switch ((int)item.Tag)
+        {
+          case 0:
+            _doc.FirstDownMinorTicks = item.IsSelected;
+            break;
+
+          case 1:
+            _doc.FirstUpMinorTicks = item.IsSelected;
+            break;
+        }
+      }
+
+      return ApplyEnd(true, disposeController);
+    }
+
 
     private void EhAxisLinePenController_PropertyChanged(object sender, PropertyChangedEventArgs e)
     {
@@ -355,53 +400,5 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
     }
 
 
-    public override bool Apply(bool disposeController)
-    {
-      if (!AxisLinePenController.Apply(disposeController))
-        return ApplyEnd(false, disposeController);
-      if (!MajorTicksPenController.Apply(disposeController))
-        return ApplyEnd(false, disposeController);
-      if (!MinorTicksPenController.Apply(disposeController))
-        return ApplyEnd(false, disposeController);
-
-      _doc.AxisPen = (PenX)AxisLinePenController.ModelObject;
-      _doc.MajorPen = (PenX)MajorTicksPenController.ModelObject;
-      _doc.MinorPen = (PenX)MinorTicksPenController.ModelObject;
-      _doc.MajorTickLength = MajorTickLength.AsValueIn(Altaxo.Units.Length.Point.Instance);
-      _doc.MinorTickLength = MinorTickLength.AsValueIn(Altaxo.Units.Length.Point.Instance);
-
-      SelectableListNodeList list;
-      list = MajorPenTicks;
-      foreach (var item in list)
-      {
-        switch ((int)item.Tag)
-        {
-          case 0:
-            _doc.FirstDownMajorTicks = item.IsSelected;
-            break;
-
-          case 1:
-            _doc.FirstUpMajorTicks = item.IsSelected;
-            break;
-        }
-      }
-
-      list = MinorPenTicks;
-      foreach (var item in list)
-      {
-        switch ((int)item.Tag)
-        {
-          case 0:
-            _doc.FirstDownMinorTicks = item.IsSelected;
-            break;
-
-          case 1:
-            _doc.FirstUpMinorTicks = item.IsSelected;
-            break;
-        }
-      }
-
-      return ApplyEnd(true, disposeController);
-    }
   }
 }

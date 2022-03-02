@@ -25,135 +25,149 @@
 #nullable disable
 using System;
 using System.Collections.Generic;
+using System.Windows.Input;
 using Altaxo.Drawing.D3D;
 using Altaxo.Gui.Drawing.D3D;
+using Altaxo.Units;
 
 namespace Altaxo.Gui.Graph.Graph3D
 {
-  #region interfaces
 
-  public interface IColorTypeThicknessPenView
-  {
-    IColorTypeThicknessPenViewEventSink Controller { get; set; }
-
-    PenX3D DocPen { get; set; }
-
-    void SetShowPlotColorsOnly(bool restrictChoiceToThisCollection);
-  }
-
-  public interface IColorTypeThicknessPenViewEventSink
-  {
-    void EhView_ShowFullPenDialog();
-  }
-
-  public interface IColorTypeThicknessPenController : IColorTypeThicknessPenViewEventSink, IMVCAController
+  public interface IColorTypeThicknessPenView : IDataContextAwareView
   {
   }
-
-  #endregion interfaces
 
   /// <summary>
   /// Summary description for ColorTypeWidthPenController.
   /// </summary>
-  public class ColorTypeThicknessPenController : IColorTypeThicknessPenController
+  public class ColorTypeThicknessPenController : MVCANDControllerEditImmutableDocBase<PenX3D, object>
   {
-    private PenX3D _doc;
-    private PenX3D _tempDoc;
-    private IColorTypeThicknessPenView _view;
-    private bool _showPlotColorsOnly;
-
-    public ColorTypeThicknessPenController(PenX3D doc)
+    public ColorTypeThicknessPenController()
     {
-      if (doc is null)
-        throw new ArgumentNullException("doc");
-      _doc = doc;
-      _tempDoc = _doc;
+      CmdShowCustomPen = new RelayCommand(EhShowCustomPen);
     }
 
-    private void Initialize()
+    public ColorTypeThicknessPenController(PenX3D pen) : this()
     {
-      if (_view is not null)
-      {
-        _view.DocPen = _tempDoc;
-        _view.SetShowPlotColorsOnly(_showPlotColorsOnly);
-      }
-    }
-
-    public void SetShowPlotColorsOnly(bool showPlotColorsOnly)
-    {
-      _showPlotColorsOnly = showPlotColorsOnly;
-      if (_view is not null)
-        _view.SetShowPlotColorsOnly(_showPlotColorsOnly);
-    }
-
-    #region IColorTypeThicknessPenViewEventSink Members
-
-    public void EhView_ShowFullPenDialog()
-    {
-      var ctrl = new PenAllPropertiesController(_tempDoc);
-      Current.Gui.ShowDialog(ctrl, "Pen properties");
-      if (_view is not null)
-        _view.DocPen = _tempDoc;
-    }
-
-    #endregion IColorTypeThicknessPenViewEventSink Members
-
-    #region IMVCController Members
-
-    public object ViewObject
-    {
-      get
-      {
-        return _view;
-      }
-      set
-      {
-        if (_view is not null)
-          _view.Controller = null;
-
-        _view = value as IColorTypeThicknessPenView;
-
-        Initialize();
-
-        if (_view is not null)
-          _view.Controller = this;
-      }
-    }
-
-    public object ModelObject
-    {
-      get
-      {
-        return _doc;
-      }
-    }
-
-    public void Dispose()
-    {
-    }
-
-    #endregion IMVCController Members
-
-    #region IApplyController Members
-
-    public bool Apply(bool disposeController)
-    {
-      _doc = _view.DocPen;
-      return true;
+      _doc = _originalDoc = pen ?? throw new ArgumentNullException(nameof(pen));
+      Initialize(true);
     }
 
     /// <summary>
-    /// Try to revert changes to the model, i.e. restores the original state of the model.
+    /// Gets or sets the pen (the current document of this controller). This property is intended for outside controllers to set the document when the controller is already created.
     /// </summary>
-    /// <param name="disposeController">If set to <c>true</c>, the controller should release all temporary resources, since the controller is not needed anymore.</param>
-    /// <returns>
-    ///   <c>True</c> if the revert operation was successfull; <c>false</c> if the revert operation was not possible (i.e. because the controller has not stored the original state of the model).
-    /// </returns>
-    public bool Revert(bool disposeController)
+    /// <value>
+    /// The pen.
+    /// </value>
+    public PenX3D Pen
     {
-      return false;
+      get => _doc;
+      set
+      {
+        _doc = value;
+        Initialize(true);
+        OnPropertyChanged(nameof(Pen));
+        OnPropertyChanged(nameof(Material));
+        OnPropertyChanged(nameof(DashPattern));
+        OnPropertyChanged(nameof(LineThickness));
+      }
     }
 
-    #endregion IApplyController Members
+    public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+    {
+      yield break;
+    }
+
+    #region Bindings
+
+    private bool _showPlotColorsOnly;
+    public bool ShowPlotColorsOnly
+    {
+      get => _showPlotColorsOnly;
+      set
+      {
+        if (!(_showPlotColorsOnly == value))
+        {
+          _showPlotColorsOnly = value;
+          OnPropertyChanged(nameof(ShowPlotColorsOnly));
+        }
+      }
+    }
+
+    public IMaterial Material
+    {
+      get => _doc.Material;
+      set
+      {
+        if (!object.ReferenceEquals(Material, value))
+        {
+          _doc = _doc.WithMaterial(value);
+          OnPropertyChanged(nameof(Material));
+          OnMadeDirty();
+        }
+      }
+    }
+
+    public double LineThickness
+    {
+      get => _doc.Thickness1;
+      set
+      {
+        if (!(LineThickness == value))
+        {
+          _doc = _doc.WithUniformThickness(value);
+          OnPropertyChanged(nameof(LineThickness));
+          OnMadeDirty();
+        }
+      }
+    }
+
+    public Altaxo.Drawing.IDashPattern DashPattern
+    {
+      get => _doc.DashPattern;
+      set
+      {
+        if (!object.ReferenceEquals(DashPattern, value))
+        {
+          _doc = _doc.WithDashPattern(value);
+          OnPropertyChanged(nameof(DashPattern));
+          OnMadeDirty();
+        }
+      }
+    }
+
+    public ICommand CmdShowCustomPen { get; }
+
+    #endregion
+
+    protected override void OnMadeDirty()
+    {
+      base.OnMadeDirty();
+      OnPropertyChanged(nameof(Pen));
+    }
+
+    public void EhShowCustomPen()
+    {
+      var ctrler = new PenAllPropertiesController(_doc)
+      {
+        ShowPlotColorsOnly = _showPlotColorsOnly,
+      };
+
+
+      if (Current.Gui.ShowDialog(ctrler, "Edit pen properties"))
+      {
+        _doc = (PenX3D)ctrler.ModelObject;
+        OnPropertyChanged(nameof(Material));
+        OnPropertyChanged(nameof(DashPattern));
+        OnPropertyChanged(nameof(LineThickness));
+        OnMadeDirty();
+      }
+    }
+
+    public override bool Apply(bool disposeController)
+    {
+      return ApplyEnd(true, disposeController);
+    }
   }
 }
+

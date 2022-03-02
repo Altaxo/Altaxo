@@ -25,36 +25,19 @@
 #nullable disable
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Text;
 using Altaxo.Collections;
 using Altaxo.Drawing.D3D;
 using Altaxo.Graph.Graph3D;
 using Altaxo.Graph.Graph3D.Axis;
+using Altaxo.Units;
 
 namespace Altaxo.Gui.Graph.Graph3D.Axis
 {
-  #region Interfaces
-
-  public interface IAxisLineStyleView
+  public interface IAxisLineStyleView : IDataContextAwareView
   {
-    bool ShowLine { get; set; }
-
-    PenX3D LinePen { get; set; }
-
-    PenX3D MajorPen { get; set; }
-
-    PenX3D MinorPen { get; set; }
-
-    double MajorTickLength { get; set; }
-
-    double MinorTickLength { get; set; }
-
-    SelectableListNodeList MajorPenTicks { get; set; }
-
-    SelectableListNodeList MinorPenTicks { get; set; }
   }
-
-  #endregion Interfaces
 
   [UserControllerForObject(typeof(AxisLineStyle))]
   [ExpectedTypeOfView(typeof(IAxisLineStyleView))]
@@ -65,20 +48,227 @@ namespace Altaxo.Gui.Graph.Graph3D.Axis
       yield break;
     }
 
+    #region Bindings
+
+    private bool _showLine;
+
+    public bool ShowLine
+    {
+      get => _showLine;
+      set
+      {
+        if (!(_showLine == value))
+        {
+          _showLine = value;
+          OnPropertyChanged(nameof(ShowLine));
+        }
+      }
+    }
+
+
+
+    private ColorTypeThicknessPenController _axisLinePenController;
+    private WeakPropertyChangedEventHandler _axisLinePenControllerHandler;
+
+    public ColorTypeThicknessPenController AxisLinePenController
+    {
+      get => _axisLinePenController;
+      set
+      {
+        if (!(_axisLinePenController == value))
+        {
+          if (_axisLinePenControllerHandler is not null)
+            _axisLinePenController.PropertyChanged -= _axisLinePenControllerHandler;
+
+          _axisLinePenController = value;
+
+          _axisLinePenControllerHandler = new WeakPropertyChangedEventHandler(EhAxisLinePenController_PropertyChanged, _axisLinePenController, nameof(PropertyChanged));
+          _axisLinePenController.PropertyChanged += _axisLinePenControllerHandler;
+
+          OnPropertyChanged(nameof(AxisLinePenController));
+        }
+      }
+    }
+
+
+
+    private ColorTypeThicknessPenController _majorTicksPenController;
+
+    public ColorTypeThicknessPenController MajorTicksPenController
+    {
+      get => _majorTicksPenController;
+      set
+      {
+        if (!(_majorTicksPenController == value))
+        {
+          _majorTicksPenController = value;
+          OnPropertyChanged(nameof(MajorTicksPenController));
+        }
+      }
+    }
+
+
+    private bool _individualMajorColor;
+
+    public bool IndividualMajorColor
+    {
+      get => _individualMajorColor;
+      set
+      {
+        if (!(_individualMajorColor == value))
+        {
+          _individualMajorColor = value;
+          EhIndividualMajorColorChanged(value);
+          OnPropertyChanged(nameof(IndividualMajorColor));
+        }
+      }
+    }
+    private bool _individualMajorThickness;
+
+    public bool IndividualMajorThickness
+    {
+      get => _individualMajorThickness;
+      set
+      {
+        if (!(_individualMajorThickness == value))
+        {
+          _individualMajorThickness = value;
+          EhIndividualMajorThicknessChanged(value);
+          OnPropertyChanged(nameof(IndividualMajorThickness));
+        }
+      }
+    }
+
+    public QuantityWithUnitGuiEnvironment MajorTickLengthEnvironment => SizeEnvironment.Instance;
+
+    private DimensionfulQuantity _majorTickLength;
+
+    public DimensionfulQuantity MajorTickLength
+    {
+      get => _majorTickLength;
+      set
+      {
+        if (!(_majorTickLength == value))
+        {
+          _majorTickLength = value;
+          OnPropertyChanged(nameof(MajorTickLength));
+        }
+      }
+    }
+
+    private SelectableListNodeList _majorPenTicks;
+
+    public SelectableListNodeList MajorPenTicks
+    {
+      get => _majorPenTicks;
+      set
+      {
+        if (!(_majorPenTicks == value))
+        {
+          _majorPenTicks = value;
+          OnPropertyChanged(nameof(MajorPenTicks));
+        }
+      }
+    }
+
+
+    private ColorTypeThicknessPenController _minorTicksPenController;
+
+    public ColorTypeThicknessPenController MinorTicksPenController
+    {
+      get => _minorTicksPenController;
+      set
+      {
+        if (!(_minorTicksPenController == value))
+        {
+          _minorTicksPenController = value;
+          OnPropertyChanged(nameof(MinorTicksPenController));
+        }
+      }
+    }
+
+    private bool _individualMinorColor;
+
+    public bool IndividualMinorColor
+    {
+      get => _individualMinorColor;
+      set
+      {
+        if (!(_individualMinorColor == value))
+        {
+          _individualMinorColor = value;
+          EhIndividualMinorColorChanged(value);
+          OnPropertyChanged(nameof(IndividualMinorColor));
+        }
+      }
+    }
+
+    private bool _individualMinorThickness;
+
+    public bool IndividualMinorThickness
+    {
+      get => _individualMinorThickness;
+      set
+      {
+        if (!(_individualMinorThickness == value))
+        {
+          _individualMinorThickness = value;
+          EhIndividualMinorThicknessChanged(value);
+          OnPropertyChanged(nameof(IndividualMinorThickness));
+        }
+      }
+    }
+
+    public QuantityWithUnitGuiEnvironment MinorTickLengthEnvironment => SizeEnvironment.Instance;
+
+    private DimensionfulQuantity _minorTickLength;
+
+    public DimensionfulQuantity MinorTickLength
+    {
+      get => _minorTickLength;
+      set
+      {
+        if (!(_minorTickLength == value))
+        {
+          _minorTickLength = value;
+          OnPropertyChanged(nameof(MinorTickLength));
+        }
+      }
+    }
+
+    private SelectableListNodeList _minorPenTicks;
+
+    public SelectableListNodeList MinorPenTicks
+    {
+      get => _minorPenTicks;
+      set
+      {
+        if (!(_minorPenTicks == value))
+        {
+          _minorPenTicks = value;
+          OnPropertyChanged(nameof(MinorPenTicks));
+        }
+      }
+    }
+
+
+    #endregion
+
+
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
 
       if (_view is not null)
       {
-        _view.ShowLine = true;
+        AxisLinePenController = new ColorTypeThicknessPenController(_doc.AxisPen); // without Gui, we have our own controls
+        MajorTicksPenController = new ColorTypeThicknessPenController(_doc.MajorPen);
+        MinorTicksPenController = new ColorTypeThicknessPenController(_doc.MinorPen);
 
-        _view.LinePen = _doc.AxisPen;
-        _view.MajorPen = _doc.MajorPen;
-        _view.MinorPen = _doc.MinorPen;
+        ShowLine = true;
 
-        _view.MajorTickLength = _doc.MajorTickLength;
-        _view.MinorTickLength = _doc.MinorTickLength;
+        MajorTickLength = new DimensionfulQuantity(_doc.MajorTickLength, Altaxo.Units.Length.Point.Instance).AsQuantityIn(MajorTickLengthEnvironment.DefaultUnit);
+        MinorTickLength = new DimensionfulQuantity(_doc.MinorTickLength, Altaxo.Units.Length.Point.Instance).AsQuantityIn(MinorTickLengthEnvironment.DefaultUnit);
 
         var list = new List<SelectableListNode>();
         if (_doc.CachedAxisInformation is not null)
@@ -89,7 +279,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Axis
           list.Add(new SelectableListNode(_doc.CachedAxisInformation.NameOfSecondUpSide, 3, _doc.SecondUpMajorTicks));
         }
         list.Sort((x, y) => string.Compare(x.Text, y.Text));
-        _view.MajorPenTicks = new SelectableListNodeList(list);
+        MajorPenTicks = new SelectableListNodeList(list);
 
         list = new List<SelectableListNode>();
         if (_doc.CachedAxisInformation is not null)
@@ -100,20 +290,27 @@ namespace Altaxo.Gui.Graph.Graph3D.Axis
           list.Add(new SelectableListNode(_doc.CachedAxisInformation.NameOfSecondUpSide, 3, _doc.SecondUpMinorTicks));
         }
         list.Sort((x, y) => string.Compare(x.Text, y.Text));
-        _view.MinorPenTicks = new SelectableListNodeList(list);
+        MinorPenTicks = new SelectableListNodeList(list);
       }
     }
 
     public override bool Apply(bool disposeController)
     {
-      _doc.AxisPen = _view.LinePen;
-      _doc.MajorPen = _view.MajorPen;
-      _doc.MinorPen = _view.MinorPen;
-      _doc.MajorTickLength = _view.MajorTickLength;
-      _doc.MinorTickLength = _view.MinorTickLength;
+      if (!AxisLinePenController.Apply(disposeController))
+        return ApplyEnd(false, disposeController);
+      if (!MajorTicksPenController.Apply(disposeController))
+        return ApplyEnd(false, disposeController);
+      if (!MinorTicksPenController.Apply(disposeController))
+        return ApplyEnd(false, disposeController);
+
+      _doc.AxisPen = (PenX3D)AxisLinePenController.ModelObject;
+      _doc.MajorPen = (PenX3D)MajorTicksPenController.ModelObject;
+      _doc.MinorPen = (PenX3D)MinorTicksPenController.ModelObject;
+      _doc.MajorTickLength = MajorTickLength.AsValueIn(Altaxo.Units.Length.Point.Instance);
+      _doc.MinorTickLength = MinorTickLength.AsValueIn(Altaxo.Units.Length.Point.Instance);
 
       SelectableListNodeList list;
-      list = _view.MajorPenTicks;
+      list = MajorPenTicks;
       foreach (var item in list)
       {
         switch ((int)item.Tag)
@@ -136,7 +333,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Axis
         }
       }
 
-      list = _view.MinorPenTicks;
+      list = MinorPenTicks;
       foreach (var item in list)
       {
         switch ((int)item.Tag)
@@ -161,5 +358,63 @@ namespace Altaxo.Gui.Graph.Graph3D.Axis
 
       return ApplyEnd(true, disposeController);
     }
+
+
+    private void EhAxisLinePenController_PropertyChanged(object sender, PropertyChangedEventArgs e)
+    {
+      if (e.PropertyName != nameof(ColorTypeThicknessPenController.ProvisionalModelObject))
+        return;
+
+      var linePen = (PenX3D)_axisLinePenController.ProvisionalModelObject;
+
+      if (false == IndividualMajorColor)
+      {
+        _majorTicksPenController.Pen = _majorTicksPenController.Pen.WithMaterial(linePen.Material);
+      }
+      if (false == IndividualMinorColor)
+      {
+        _minorTicksPenController.Pen = _minorTicksPenController.Pen.WithMaterial(linePen.Material);
+      }
+
+      if (false == IndividualMajorThickness)
+      {
+        _majorTicksPenController.Pen = _majorTicksPenController.Pen.WithThickness1(linePen.Thickness1).WithThickness2(linePen.Thickness2);
+      }
+      if (false == IndividualMinorThickness)
+      {
+        _minorTicksPenController.Pen = _minorTicksPenController.Pen.WithThickness1(linePen.Thickness1).WithThickness2(linePen.Thickness2);
+      }
+    }
+
+    private void EhIndividualMajorColorChanged(bool value)
+    {
+      if (false == value)
+      {
+        _majorTicksPenController.Pen = _majorTicksPenController.Pen.WithMaterial(_axisLinePenController.Pen.Material);
+      }
+    }
+    private void EhIndividualMinorColorChanged(bool value)
+    {
+      if (false == value)
+      {
+        _minorTicksPenController.Pen = _minorTicksPenController.Pen.WithMaterial(_axisLinePenController.Pen.Material);
+      }
+    }
+    private void EhIndividualMajorThicknessChanged(bool value)
+    {
+      if (false == value)
+      {
+        _majorTicksPenController.Pen = _majorTicksPenController.Pen.WithThickness1(_axisLinePenController.Pen.Thickness1).WithThickness2(_axisLinePenController.Pen.Thickness2);
+      }
+    }
+    private void EhIndividualMinorThicknessChanged(bool value)
+    {
+      if (false == value)
+      {
+        _minorTicksPenController.Pen = _minorTicksPenController.Pen.WithThickness1(_axisLinePenController.Pen.Thickness1).WithThickness2(_axisLinePenController.Pen.Thickness2);
+      }
+    }
+
+
   }
 }

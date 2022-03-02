@@ -56,11 +56,11 @@
 					<RowDefinition Height="Auto" />
 					<RowDefinition Height="Auto" />
 				</Grid.RowDefinitions>
-                <CheckBox x:Name="_chkEnableLine" Grid.Column="0" Grid.ColumnSpan="4" Content="Enable" IsChecked="{Binding ShowLine, Mode=TwoWay}"/>
+                <CheckBox Grid.Column="0" Grid.ColumnSpan="4" Content="Enable" IsChecked="{Binding ShowLine, Mode=TwoWay}"/>
                 <Label Grid.Column="0" Grid.Row="2" Content="Pen brush:"/>
-                <axogcd:BrushComboBox x:Name="_lineBrushColor" Grid.Column="1" Grid.Row="2" SelectedBrush="{Binding AxisLinePenController.Brush, Mode=TwoWay}" />
+                <axogcd:BrushComboBox Grid.Column="1" Grid.Row="2" SelectedBrush="{Binding AxisLinePenController.Brush, Mode=TwoWay}" />
                 <Label Grid.Column="2" Grid.Row="2" Content="Thickness:" />
-				<axogcd:LineThicknessComboBox x:Name="_lineLineThickness" Grid.Column="3" Grid.Row="2" SelectedQuantity="{Binding AxisLinePenController.LineThickness, Mode=TwoWay}" UnitEnvironment="{Binding AxisLinePenController.LineThicknessEnvironment}" />
+				<axogcd:LineThicknessComboBox Grid.Column="3" Grid.Row="2" SelectedQuantity="{Binding AxisLinePenController.LineThickness, Mode=TwoWay}" UnitEnvironment="{Binding AxisLinePenController.LineThicknessEnvironment}" />
 			</Grid>
 		</GroupBox>
 
@@ -77,13 +77,13 @@
 					<RowDefinition Height="Auto" />
 					<RowDefinition Height="Auto" />
 				</Grid.RowDefinitions>
-				<CheckBox x:Name="_chkCustomMajorColor" Grid.Column="0" Grid.Row="0" VerticalAlignment="Center" IsChecked="{Binding IndividualMajorColor}">Color:</CheckBox>
-				<axogcd:BrushComboBox x:Name="_majorLineColor" Grid.Column="1" Grid.Row="0" SelectedBrush="{Binding MajorTicksPenController.Brush, Mode=TwoWay}" IsEnabled="{Binding IndividualMajorColor}"/>
-				<CheckBox x:Name="_chkCustomMajorThickness" Grid.Column="2" Grid.Row="0" VerticalAlignment="Center" Style="{StaticResource CheckBoxWithLeftMargin}" IsChecked="{Binding IndividualMajorThickness, Mode=TwoWay}">Thickness:</CheckBox>
-				<axogcd:LineThicknessComboBox x:Name="_lineMajorThickness" Grid.Column="3" Grid.Row="0" SelectedQuantity="{Binding MajorTicksPenController.LineThickness, Mode=TwoWay}" UnitEnvironment="{Binding MajorTicksPenController.LineThicknessEnvironment}" IsEnabled="{Binding IndividualMajorThickness}"/>
+				<CheckBox  Grid.Column="0" Grid.Row="0" VerticalAlignment="Center" IsChecked="{Binding IndividualMajorColor}">Color:</CheckBox>
+				<axogcd:BrushComboBox Grid.Column="1" Grid.Row="0" SelectedBrush="{Binding MajorTicksPenController.Brush, Mode=TwoWay}" IsEnabled="{Binding IndividualMajorColor}"/>
+				<CheckBox  Grid.Column="2" Grid.Row="0" VerticalAlignment="Center" Style="{StaticResource CheckBoxWithLeftMargin}" IsChecked="{Binding IndividualMajorThickness, Mode=TwoWay}" Content="Thickness: "></CheckBox>
+				<axogcd:LineThicknessComboBox  Grid.Column="3" Grid.Row="0" SelectedQuantity="{Binding MajorTicksPenController.LineThickness, Mode=TwoWay}" UnitEnvironment="{Binding MajorTicksPenController.LineThicknessEnvironment}" IsEnabled="{Binding IndividualMajorThickness}"/>
 				<Label Grid.Column="0" Grid.Row="2">Length:</Label>
-				<axogcd:LineThicknessComboBox x:Name="_lineMajorLength"  Grid.Column="1" Grid.Row="2" SelectedQuantity="{Binding MajorTickLength, Mode=TwoWay}" UnitEnvironment="{Binding MajorTickLengthEnvironment}" />
-				<ItemsControl x:Name="_majorWhichTicksLayout" Grid.Column="3" Grid.Row="2" ItemsSource="{Binding MajorPenTicks}" Style="{StaticResource TickItemsControlStyle}" ItemTemplate="{StaticResource TickItemsTemplate}" />
+				<axogcd:LineThicknessComboBox   Grid.Column="1" Grid.Row="2" SelectedQuantity="{Binding MajorTickLength, Mode=TwoWay}" UnitEnvironment="{Binding MajorTickLengthEnvironment}" />
+				<ItemsControl  Grid.Column="3" Grid.Row="2" ItemsSource="{Binding MajorPenTicks}" Style="{StaticResource TickItemsControlStyle}" ItemTemplate="{StaticResource TickItemsTemplate}" />
 			</Grid>
 		</GroupBox>
 		<GroupBox Grid.Row="4" Header="Minor Ticks">
@@ -99,13 +99,13 @@
 					<RowDefinition Height="Auto" />
 					<RowDefinition Height="Auto" />
 				</Grid.RowDefinitions>
-				<CheckBox x:Name="_chkCustomMinorColor" Grid.Column="0" Grid.Row="0" VerticalAlignment="Center" IsChecked="{Binding IndividualMinorColor, Mode=TwoWay}">Color:</CheckBox>
-				<axogcd:BrushComboBox x:Name="_minorLineColor" Grid.Column="1" Grid.Row="0" SelectedBrush="{Binding MinorTicksPenController.Brush}" IsEnabled="{Binding IndividualMinorColor}"/>
-				<CheckBox x:Name="_chkCustomMinorThickness" Grid.Column="2" Grid.Row="0" VerticalAlignment="Center" Style="{StaticResource CheckBoxWithLeftMargin}" IsChecked="{Binding IndividualMinorThickness, Mode=TwoWay}">Thickness:</CheckBox>
-				<axogcd:LineThicknessComboBox x:Name="_lineMinorThickness" Grid.Column="3" Grid.Row="0" SelectedQuantity="{Binding MinorTicksPenController.LineThickness, Mode=TwoWay}" UnitEnvironment="{Binding MinorTicksPenController.LineThicknessEnvironment}" IsEnabled="{Binding IndividualMinorThickness}" />
+				<CheckBox Grid.Column="0" Grid.Row="0" VerticalAlignment="Center" IsChecked="{Binding IndividualMinorColor, Mode=TwoWay}">Color:</CheckBox>
+				<axogcd:BrushComboBox  Grid.Column="1" Grid.Row="0" SelectedBrush="{Binding MinorTicksPenController.Brush}" IsEnabled="{Binding IndividualMinorColor}"/>
+				<CheckBox Grid.Column="2" Grid.Row="0" VerticalAlignment="Center" Style="{StaticResource CheckBoxWithLeftMargin}" IsChecked="{Binding IndividualMinorThickness, Mode=TwoWay}" Content="Thickness: "></CheckBox>
+				<axogcd:LineThicknessComboBox Grid.Column="3" Grid.Row="0" SelectedQuantity="{Binding MinorTicksPenController.LineThickness, Mode=TwoWay}" UnitEnvironment="{Binding MinorTicksPenController.LineThicknessEnvironment}" IsEnabled="{Binding IndividualMinorThickness}" />
 				<Label Grid.Column="0" Grid.Row="2">Length:</Label>
-				<axogcd:LineThicknessComboBox x:Name="_lineMinorLength"  Grid.Column="1" Grid.Row="2" SelectedQuantity="{Binding MinorTickLength, Mode=TwoWay}" UnitEnvironment="{Binding MinorTickLengthEnvironment}"/>
-				<ItemsControl x:Name="_minorWhichTicksLayout" Grid.Column="3" Grid.Row="2" ItemsSource="{Binding MinorPenTicks}" Style="{StaticResource TickItemsControlStyle}" ItemTemplate="{StaticResource TickItemsTemplate}" />
+				<axogcd:LineThicknessComboBox Grid.Column="1" Grid.Row="2" SelectedQuantity="{Binding MinorTickLength, Mode=TwoWay}" UnitEnvironment="{Binding MinorTickLengthEnvironment}"/>
+				<ItemsControl Grid.Column="3" Grid.Row="2" ItemsSource="{Binding MinorPenTicks}" Style="{StaticResource TickItemsControlStyle}" ItemTemplate="{StaticResource TickItemsTemplate}" />
 			</Grid>
 		</GroupBox>
 	</Grid>

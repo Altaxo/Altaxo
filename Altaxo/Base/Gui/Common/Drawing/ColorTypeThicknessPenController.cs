@@ -30,24 +30,14 @@ using Altaxo.Units;
 
 namespace Altaxo.Gui.Common.Drawing
 {
-  #region interfaces
-
   public interface IColorTypeThicknessPenView : IDataContextAwareView
   {
   }
 
-
-
-  public interface IColorTypeThicknessPenController : IMVCANDController
-  {
-  }
-
-  #endregion interfaces
-
   /// <summary>
   /// Summary description for ColorTypeWidthPenController.
   /// </summary>
-  public class ColorTypeThicknessPenController : MVCANDControllerEditImmutableDocBase<PenX, object>, IColorTypeThicknessPenController
+  public class ColorTypeThicknessPenController : MVCANDControllerEditImmutableDocBase<PenX, object>
   {
 
     public ColorTypeThicknessPenController()

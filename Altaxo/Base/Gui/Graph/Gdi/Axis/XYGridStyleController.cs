@@ -122,10 +122,10 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
     public bool EnableMinorView => ShowGrid && !ShowZeroOnly && ShowMinorGrid;
 
 
-    private IColorTypeThicknessPenController _majorController;
+    private IMVCANDController _majorController;
     
 
-    public IColorTypeThicknessPenController MajorController
+    public IMVCANDController MajorController
     {
       get => _majorController;
       set
@@ -138,9 +138,9 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
       }
     }
 
-    private IColorTypeThicknessPenController _minorController;
+    private IMVCANDController _minorController;
 
-    public IColorTypeThicknessPenController MinorController
+    public IMVCANDController MinorController
     {
       get => _minorController;
       set
