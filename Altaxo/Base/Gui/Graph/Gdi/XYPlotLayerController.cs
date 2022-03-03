@@ -475,7 +475,7 @@ namespace Altaxo.Gui.Graph.Gdi
       if (!_axisController.TryGetValue(_currentAxisID, out var axisStyleController))
       {
         axisStyleController = new AxisStyleController();
-        if(!_doc.AxisStyles.TryGetValue(_currentAxisID, out var axisStyle))
+        if (!_doc.AxisStyles.TryGetValue(_currentAxisID, out var axisStyle))
         {
           axisStyle = new AxisStyle(_currentAxisID, false, false, false, null, _doc.GetPropertyContext());
           _doc.AxisStyles.Add(axisStyle);

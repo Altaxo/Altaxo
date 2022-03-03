@@ -33,7 +33,9 @@ using Altaxo.Gui.Common.Drawing;
 
 namespace Altaxo.Gui.Graph.Gdi.Axis
 {
-  public interface IGridPlanView : IDataContextAwareView { }
+  public interface IGridPlanView : IDataContextAwareView
+  {
+  }
 
   [ExpectedTypeOfView(typeof(IGridPlanView))]
   [UserControllerForObject(typeof(GridPlane))]

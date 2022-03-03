@@ -30,13 +30,9 @@ using Altaxo.Gui.Common.Drawing;
 
 namespace Altaxo.Gui.Graph.Gdi.Axis
 {
-  #region Interfaces
-
   public interface IXYGridStyleView : IDataContextAwareView
   {
   }
-
-  #endregion Interfaces
 
   /// <summary>
   /// Summary description for XYGridStyleController.

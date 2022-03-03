@@ -3,8 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-						 xmlns:axogg="clr-namespace:Altaxo.Gui.Graph"
-						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
+             xmlns:axis="clr-namespace:Altaxo.Gui.Graph.Graph3D.Axis;assembly=AltaxoBase"
+             d:DataContext="{d:DesignInstance Type=axis:AxisStyleController}"
              mc:Ignorable="d"
 >
 	<Grid>
@@ -28,29 +28,30 @@
 		</Grid.RowDefinitions>
 		<Label Grid.Column="0" Grid.Row="0"  Content="Title:" />
 		<DockPanel Grid.Row="0"   Grid.Column="1" Grid.ColumnSpan="3">
-			<Button x:Name="_guiEditTitle" Grid.Row="0" Grid.Column="3" Content="..." Margin="4,0,4,0" DockPanel.Dock="Right" Click="EhEditTitle_Click" />
-			<TextBox x:Name="m_Format_edTitle" />
+			<Button Grid.Row="0" Grid.Column="3" Content="..." Margin="4,0,4,0" DockPanel.Dock="Right" Command="{Binding CmdEditAxisTitle}" />
+            <TextBox Text="{Binding AxisTitle, Mode=TwoWay}" />
 		</DockPanel>
-		<CheckBox x:Name="_chkShowMajorLabels" Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="2"  Content="Show major labels" Checked="EhShowMajorLabelsChanged" Unchecked="EhShowMajorLabelsChanged" />
+        
+		<CheckBox Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="2" 
+                  IsChecked="{Binding ShowMajorLabels, Mode=TwoWay}"
+                  Content="Show major labels" />
 
-		<CheckBox x:Name="_chkShowMinorLabels" Grid.Column="0" Grid.Row="4" Grid.ColumnSpan="2"  Content="Show minor labels" Checked="EhShowMinorLabelsChanged" Unchecked="EhShowMinorLabelsChanged" />
+		<CheckBox Grid.Column="0" Grid.Row="4" Grid.ColumnSpan="2"
+                  IsChecked="{Binding ShowMinorLabels, Mode=TwoWay}"
+                  Content="Show minor labels" />
 
-		<GroupBox x:Name="_axisLineGroupBox" Grid.Column="0" Grid.Row="6" Grid.ColumnSpan="4">
-			<GroupBox.HeaderTemplate>
-				<DataTemplate>
-					<CheckBox Content="Show axis line and ticks" IsChecked="{Binding ElementName=_axisLineGroupBox,Path=Content.IsEnabled}" Checked="EhShowAxisLineChanged" Unchecked="EhShowAxisLineChanged" />
-				</DataTemplate>
-			</GroupBox.HeaderTemplate>
-			<Label Content="This is a placeholder for axis line style control" />
-		</GroupBox>
+		<GroupBox Grid.Column="0" Grid.Row="6" Grid.ColumnSpan="4">
+            <GroupBox.Header>
+                <CheckBox Content="Show axis line and ticks" IsChecked="{Binding ShowAxisLine, Mode=TwoWay}" />
+            </GroupBox.Header>
+            <ContentControl Content="{Binding AxisLineStyleView, FallbackValue=PlaceHolderForAxisLineStyleView}" IsEnabled="{Binding ShowAxisLine}"/>
+        </GroupBox>
 
-		<GroupBox x:Name="_guiCustomAxisTicksGroupBox" Grid.Column="0" Grid.Row="8" Grid.ColumnSpan="4">
-			<GroupBox.HeaderTemplate>
-				<DataTemplate>
-					<CheckBox Content="Custom tick spacing" IsChecked="{Binding ElementName=_guiCustomAxisTicksGroupBox,Path=Content.IsEnabled}" Checked="EhCustomTickSpacingChanged" Unchecked="EhCustomTickSpacingChanged" />
-				</DataTemplate>
-			</GroupBox.HeaderTemplate>
-			<Label Content="This is a placeholder for the custom tick spacing control" />
-		</GroupBox>
+		<GroupBox Grid.Column="0" Grid.Row="8" Grid.ColumnSpan="4">
+            <GroupBox.Header>
+                <CheckBox Content="Custom tick spacing" IsChecked="{Binding ShowCustomTickSpacing, Mode=TwoWay}"  />
+            </GroupBox.Header>
+            <ContentControl Content="{Binding CustomTickSpacingView, FallbackValue=PlaceHolderForCustomTickSpacingView}" IsEnabled="{Binding ShowCustomTickSpacing}"/>
+        </GroupBox>
 	</Grid>
 </UserControl>

@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -25,8 +25,8 @@
 #nullable disable
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
+using System.Windows.Input;
 using Altaxo.Collections;
 using Altaxo.Graph;
 using Altaxo.Graph.Graph3D;
@@ -37,29 +37,6 @@ using Altaxo.Gui.Graph.Scales;
 
 namespace Altaxo.Gui.Graph.Graph3D
 {
-  #region Interfaces
-
-  public interface IXYPlotLayerView
-  {
-    void AddTab(string name, string text);
-
-    object CurrentContent { get; set; }
-
-    void SelectTab(string name);
-
-    void InitializeSecondaryChoice(SelectableListNodeList items, LayerControllerTabType primaryChoice);
-
-    event CancelEventHandler TabValidating;
-
-    event Action<bool> CreateOrMoveAxis;
-
-    event Action DeleteAxis;
-
-    event Action SecondChoiceChanged;
-
-    event Action<string> PageChanged;
-  }
-
   /// <summary>Designates, which type of tab is choosen in the layer view. Dependent on this choise a list of secondary choices will be shown.</summary>
   public enum LayerControllerTabType
   {
@@ -76,18 +53,16 @@ namespace Altaxo.Gui.Graph.Graph3D
     Planes
   };
 
-  #endregion Interfaces
 
   /// <summary>
   /// Summary description for LayerController.
   /// </summary>
   [UserControllerForObject(typeof(XYZPlotLayer))]
-  [ExpectedTypeOfView(typeof(IXYPlotLayerView))]
-  public class XYPlotLayerController : MVCANControllerEditOriginalDocBase<XYZPlotLayer, IXYPlotLayerView>
+  [ExpectedTypeOfView(typeof(Altaxo.Gui.Graph.Gdi.IXYPlotLayerView))]
+  public class XYPlotLayerController : MVCANControllerEditOriginalDocBase<XYZPlotLayer, Altaxo.Gui.Graph.Gdi.IXYPlotLayerView>
   {
-    private string _currentPageName;
+    protected string _initialTag;
 
-    private LayerControllerTabType _primaryChoice; // which tab type is currently choosen
     private int _currentScale; // which scale is choosen 0==X-AxisScale, 1==Y-AxisScale
 
     private CSLineID _currentAxisID; // which style is currently choosen
@@ -102,8 +77,8 @@ namespace Altaxo.Gui.Graph.Graph3D
 
     protected IMVCANController _layerGraphItemsController;
 
-    private Dictionary<CSLineID, AxisStyleControllerConditionalGlue> _axisControl;
-    private Dictionary<CSPlaneID, IMVCANController> _GridStyleController;
+    private Dictionary<CSLineID, AxisStyleController> _axisController = new Dictionary<CSLineID, AxisStyleController>();
+    private Dictionary<CSPlaneID, IMVCANController> _gridStyleController;
     private object _lastControllerApplied;
 
     private SelectableListNodeList _listOfScales;
@@ -111,8 +86,62 @@ namespace Altaxo.Gui.Graph.Graph3D
     private SelectableListNodeList _listOfPlanes;
     private SelectableListNodeList _listOfUniqueItem;
 
+    public const string PositionTag = "Position";
+    public const string GraphItemsTag = "GraphicItems";
+    public const string ScaleTag = "Scale";
+    public const string CoordSystemTag = "CoordSys";
+    public const string ContentsTag = "Content";
+    public const string TitleAndFormatTag = "TitleFormat";
+    public const string MajorLabelsTag = "MajorLabels";
+    public const string MinorLabelsTag = "MinorLables";
+    public const string GridStyleTag = "GridStyle";
+    public const string SecondaryCommonTag = "2ndCommon";
+
+    public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+    {
+      yield return new ControllerAndSetNullMethod(_coordinateController, () => _coordinateController = null);
+      yield return new ControllerAndSetNullMethod(_layerPositionController, () => _layerPositionController = null);
+      yield return new ControllerAndSetNullMethod(_layerContentsController, () => _layerContentsController = null);
+
+      if (_axisScaleController is not null)
+      {
+        for (int i = 0; i < _axisScaleController.Length; ++i)
+          yield return new ControllerAndSetNullMethod(_axisScaleController[i], () => _axisScaleController[i] = null);
+      }
+
+      yield return new ControllerAndSetNullMethod(_layerGraphItemsController, () => _layerGraphItemsController = null);
+
+      foreach (var entry in EnumerableExtensions.ThisOrEmpty(_gridStyleController))
+      {
+        yield return new ControllerAndSetNullMethod(entry.Value, null);
+      }
+
+      yield return new ControllerAndSetNullMethod(null, () => _gridStyleController = null);
+
+      foreach (var entry in EnumerableExtensions.ThisOrEmpty(_axisController))
+      {
+        yield return new ControllerAndSetNullMethod(entry.Value, null);
+      }
+      yield return new ControllerAndSetNullMethod(null, () => _axisController = null);
+    }
+
+    public override void Dispose(bool isDisposing)
+    {
+      _lastControllerApplied = null;
+      _currentController = null;
+
+      _listOfScales = null;
+      _listOfAxes = null;
+      _listOfPlanes = null;
+      _listOfUniqueItem = null;
+
+      base.Dispose(isDisposing);
+    }
+
+
+
     public XYPlotLayerController(XYZPlotLayer layer, UseDocument useDocumentCopy)
-      : this(layer, "Scale", 1, null, useDocumentCopy)
+      : this(layer, ScaleTag, 1, null, useDocumentCopy)
     {
     }
 
@@ -129,10 +158,142 @@ namespace Altaxo.Gui.Graph.Graph3D
       _useDocumentCopy = useDocumentCopy == UseDocument.Copy;
       _currentAxisID = id;
       _currentScale = axisScaleIdx;
-      _currentPageName = currentPage;
+      _initialTag = currentPage;
+
+      CmdMoveAxis = new RelayCommand(() => EhCmdCreateOrMoveAxis(true));
+      CmdCreateAxis = new RelayCommand(() => EhCmdCreateOrMoveAxis(false));
+      CmdDeleteAxis = new RelayCommand(EhCmdDeleteAxis);
 
       InitializeDocument(layer);
     }
+
+    #region Bindings
+
+    public ICommand CmdMoveAxis { get; set; }
+    public ICommand CmdCreateAxis { get; set; }
+    public ICommand CmdDeleteAxis { get; set; }
+
+    public SelectableListNodeList Tabs { get; } = new();
+
+    private string? _selectedTab;
+
+    public string? SelectedTab
+    {
+      get => _selectedTab;
+      set
+      {
+        if (!(_selectedTab == value))
+        {
+          _selectedTab = value;
+          EhPrimaryChoiceChanged(value);
+          OnPropertyChanged(nameof(SelectedTab));
+        }
+      }
+    }
+
+    protected void EhPrimaryChoiceChanged(string selectedTab)
+    {
+      switch (selectedTab)
+      {
+        case GraphItemsTag:
+        case ContentsTag:
+        case PositionTag:
+        case CoordSystemTag:
+          SetSecondaryChoiceToUnique();
+          break;
+
+        case ScaleTag:
+          SetSecondaryChoiceToScales();
+          break;
+
+        case GridStyleTag:
+          SetSecondaryChoiceToPlanes();
+          break;
+
+        case TitleAndFormatTag:
+        case MajorLabelsTag:
+        case MinorLabelsTag:
+          SetSecondaryChoiceToAxes();
+          break;
+      }
+    }
+
+    private SelectableListNodeList _secondaryChoices;
+
+    public SelectableListNodeList SecondaryChoices
+    {
+      get => _secondaryChoices;
+      set
+      {
+
+        if (!(_secondaryChoices == value))
+        {
+          _secondaryChoices = value;
+          OnPropertyChanged(nameof(SecondaryChoices));
+        }
+      }
+    }
+
+
+    private object _selectedSecondaryChoice;
+
+    public object SelectedSecondaryChoice
+    {
+      get => _selectedSecondaryChoice;
+      set
+      {
+        if (!(_selectedSecondaryChoice == value))
+        {
+          if (value is not null)
+          {
+            if (ApplyCurrentController(false, false))
+            {
+              _selectedSecondaryChoice = value;
+              EhSecondaryChoiceChanged(value);
+            }
+          }
+          _selectedSecondaryChoice = value;
+          OnPropertyChanged(nameof(SelectedSecondaryChoice));
+        }
+      }
+    }
+
+    public void EhSecondaryChoiceChanged(object value)
+    {
+      if (SelectedTab == ScaleTag && value is int currentScale)
+      {
+        _currentScale = currentScale;
+      }
+      else if (SelectedTab == TitleAndFormatTag || SelectedTab == MajorLabelsTag || SelectedTab == MinorLabelsTag)
+      {
+        _currentAxisID = value is CSLineID csLineID ? csLineID : (CSLineID)(_listOfAxes[0].Tag!);
+      }
+      else if (SelectedTab == GridStyleTag && value is CSPlaneID csPlaneID)
+      {
+        _currentPlaneID = csPlaneID;
+      }
+
+      SetCurrentTabController();
+    }
+
+
+    private bool _areAxisButtonsVisible;
+
+    public bool AreAxisButtonsVisible
+    {
+      get => _areAxisButtonsVisible;
+      set
+      {
+        if (!(_areAxisButtonsVisible == value))
+        {
+          _areAxisButtonsVisible = value;
+          OnPropertyChanged(nameof(AreAxisButtonsVisible));
+        }
+      }
+    }
+
+    #endregion
+
 
     protected override void Initialize(bool initData)
     {
@@ -146,23 +307,19 @@ namespace Altaxo.Gui.Graph.Graph3D
         {
           new SelectableListNode("Common", null, true)
         };
-      }
 
-      if (_view is not null)
-      {
-        // add all necessary Tabs
-        _view.AddTab("Scale", "Scale");
-        _view.AddTab("CS", "Coord.System");
-        _view.AddTab("Contents", "Contents");
-        _view.AddTab("Position", "Position");
-        _view.AddTab("TitleAndFormat", "Title/Format");
-        _view.AddTab("MajorLabels", "Major labels");
-        _view.AddTab("MinorLabels", "Minor labels");
-        _view.AddTab("GridStyle", "Grid style");
-        _view.AddTab("GraphicItems", "GraphicItems");
-
+        Tabs.Clear();
+        Tabs.Add(new SelectableListNodeWithController("Scale", ScaleTag, false));
+        Tabs.Add(new SelectableListNodeWithController("Coord.system", CoordSystemTag, false));
+        Tabs.Add(new SelectableListNodeWithController("Contents", ContentsTag, false));
+        Tabs.Add(new SelectableListNodeWithController("Position", PositionTag, false));
+        Tabs.Add(new SelectableListNodeWithController("Title/Format", TitleAndFormatTag, false));
+        Tabs.Add(new SelectableListNodeWithController("Major labels", MajorLabelsTag, false));
+        Tabs.Add(new SelectableListNodeWithController("Minor labels", MinorLabelsTag, false));
+        Tabs.Add(new SelectableListNodeWithController("Grid style", GridStyleTag, false));
+        Tabs.Add(new SelectableListNodeWithController("Graphic items", GraphItemsTag, false));
         // Set the controller of the current visible Tab
-        SetCurrentTabController(true);
+        SelectedTab = _initialTag;
       }
     }
 
@@ -175,72 +332,7 @@ namespace Altaxo.Gui.Graph.Graph3D
       return ApplyEnd(true, disposeController);
     }
 
-    protected override void AttachView()
-    {
-      _view.TabValidating += EhView_TabValidating;
-      _view.PageChanged += EhView_PageChanged;
-      _view.SecondChoiceChanged += EhView_SecondChoiceChanged;
-      _view.CreateOrMoveAxis += EhView_CreateOrMoveAxis;
-      _view.DeleteAxis += EhView_DeleteAxis;
-    }
 
-    protected override void DetachView()
-    {
-      _view.TabValidating -= EhView_TabValidating;
-      _view.PageChanged -= EhView_PageChanged;
-      _view.SecondChoiceChanged -= EhView_SecondChoiceChanged;
-      _view.CreateOrMoveAxis -= EhView_CreateOrMoveAxis;
-      _view.DeleteAxis -= EhView_DeleteAxis;
-    }
-
-    public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
-    {
-      yield return new ControllerAndSetNullMethod(_coordinateController, () => _coordinateController = null);
-      yield return new ControllerAndSetNullMethod(_layerPositionController, () => _layerPositionController = null);
-      yield return new ControllerAndSetNullMethod(_layerContentsController, () => _layerContentsController = null);
-
-      if (_axisScaleController is not null)
-      {
-        for (int i = 0; i < _axisScaleController.Length; ++i)
-          yield return new ControllerAndSetNullMethod(_axisScaleController[i], () => _axisScaleController[i] = null);
-      }
-
-      yield return new ControllerAndSetNullMethod(_layerGraphItemsController, () => _layerGraphItemsController = null);
-
-      if (_GridStyleController is not null)
-      {
-        foreach (var entry in _GridStyleController)
-        {
-          yield return new ControllerAndSetNullMethod(entry.Value, null);
-        }
-      }
-
-      yield return new ControllerAndSetNullMethod(null, () => _GridStyleController = null);
-
-      if (_axisControl is not null)
-      {
-        foreach (var entry in _axisControl)
-        {
-          yield return new ControllerAndSetNullMethod(entry.Value.AxisStyleCondController, null);
-          yield return new ControllerAndSetNullMethod(entry.Value.MajorLabelCondController, null);
-          yield return new ControllerAndSetNullMethod(entry.Value.MinorLabelCondController, null);
-        }
-      }
-      yield return new ControllerAndSetNullMethod(null, () => _axisControl = null);
-    }
-
-    public override void Dispose(bool isDisposing)
-    {
-      _lastControllerApplied = null;
-      _currentController = null;
-
-      _listOfScales = null;
-      _listOfAxes = null;
-      _listOfPlanes = null;
-      _listOfUniqueItem = null;
-
-      base.Dispose(isDisposing);
-    }
 
     private void SetCoordinateSystemDependentObjects()
     {
@@ -260,83 +352,65 @@ namespace Altaxo.Gui.Graph.Graph3D
         _listOfScales.Add(new SelectableListNode("Z-Scale", 2, false));
 
       // collect the AxisStyleIdentifier from the actual layer and also all possible AxisStyleIdentifier
-      _axisControl = new Dictionary<CSLineID, AxisStyleControllerConditionalGlue>();
+      _axisController.Values.ForEachDo(controller => controller?.Dispose());
+      _axisController.Clear();
       _listOfAxes = new SelectableListNodeList();
       foreach (CSLineID ids in _doc.CoordinateSystem.GetJoinedAxisStyleIdentifier(_doc.AxisStyles.AxisStyleIDs, new CSLineID[] { id }))
       {
         CSAxisInformation info = _doc.CoordinateSystem.GetAxisStyleInformation(ids);
-
-        var axisInfo = new AxisStyleControllerConditionalGlue(info, _doc.AxisStyles);
-        _axisControl.Add(info.Identifier, axisInfo);
         _listOfAxes.Add(new SelectableListNode(info.NameOfAxisStyle, info.Identifier, false));
       }
 
       // Planes
       _listOfPlanes = new SelectableListNodeList();
       _currentPlaneID = CSPlaneID.Back3D;
-      _listOfPlanes.Add(new SelectableListNode("Left", CSPlaneID.Left3D, true));
-      _listOfPlanes.Add(new SelectableListNode("Front", CSPlaneID.Front3D, true));
-      _listOfPlanes.Add(new SelectableListNode("Right", CSPlaneID.Right3D, true));
+      _listOfPlanes.Add(new SelectableListNode("Left", CSPlaneID.Left3D, false));
+      _listOfPlanes.Add(new SelectableListNode("Front", CSPlaneID.Front3D, false));
+      _listOfPlanes.Add(new SelectableListNode("Right", CSPlaneID.Right3D, false));
       _listOfPlanes.Add(new SelectableListNode("Back", CSPlaneID.Back3D, true));
-      _listOfPlanes.Add(new SelectableListNode("Top", CSPlaneID.Top3D, true));
-      _listOfPlanes.Add(new SelectableListNode("Bottom", CSPlaneID.Bottom3D, true));
+      _listOfPlanes.Add(new SelectableListNode("Top", CSPlaneID.Top3D, false));
+      _listOfPlanes.Add(new SelectableListNode("Bottom", CSPlaneID.Bottom3D, false));
 
-      _GridStyleController = new Dictionary<CSPlaneID, IMVCANController>();
+      _gridStyleController = new Dictionary<CSPlaneID, IMVCANController>();
     }
 
-    private void SetCurrentTabController(bool pageChanged)
+    private void SetCurrentTabController()
     {
-      switch (_currentPageName)
+      ThrowIfNotInitialized();
+
+      if (Tabs.FirstOrDefault(n => (string?)(n.Tag) == SelectedTab) is not SelectableListNodeWithController node)
+        return;
+
+      switch (SelectedTab)
       {
-        case "GraphicItems":
-          if (pageChanged)
-          {
-            _view.SelectTab(_currentPageName);
-          }
+        case GraphItemsTag:
+
           if (_layerGraphItemsController is null)
           {
             _layerGraphItemsController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _doc.GraphObjects }, typeof(IMVCANController), UseDocument.Directly);
           }
-          _currentController = _layerGraphItemsController;
-          _view.CurrentContent = _currentController.ViewObject;
+          node.Controller = _currentController = _layerGraphItemsController;
           break;
 
-        case "Contents":
-          if (pageChanged)
-          {
-            _view.SelectTab(_currentPageName);
-            SetSecondaryChoiceToUnique();
-          }
+        case ContentsTag:
           if (_layerContentsController is null)
           {
             _layerContentsController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _doc.PlotItems }, typeof(IMVCANController), UseDocument.Directly);
           }
-          _currentController = _layerContentsController;
-          _view.CurrentContent = _currentController.ViewObject;
+          node.Controller = _currentController = _layerContentsController;
           break;
 
-        case "Position":
-          if (pageChanged)
-          {
-            _view.SelectTab(_currentPageName);
-            SetSecondaryChoiceToUnique();
-          }
+        case PositionTag:
           if (_layerPositionController is null)
           {
             _layerPositionController = new LayerPositionController() { UseDocumentCopy = UseDocument.Directly };
             _layerPositionController.InitializeDocument(_doc.Location, _doc);
             Current.Gui.FindAndAttachControlTo(_layerPositionController);
           }
-          _currentController = _layerPositionController;
-          _view.CurrentContent = _layerPositionController.ViewObject;
+          node.Controller = _currentController = _layerPositionController;
           break;
 
-        case "Scale":
-          if (pageChanged)
-          {
-            _view.SelectTab(_currentPageName);
-            SetSecondaryChoiceToScales();
-          }
+        case ScaleTag:
           if (_axisScaleController[_currentScale] is null)
           {
             var ctrl = new ScaleWithTicksController(scale => _doc.Scales[_currentScale] = scale, false);
@@ -344,153 +418,115 @@ namespace Altaxo.Gui.Graph.Graph3D
             _axisScaleController[_currentScale] = ctrl;
             Current.Gui.FindAndAttachControlTo(_axisScaleController[_currentScale]);
           }
-          _currentController = _axisScaleController[_currentScale];
-          _view.CurrentContent = _currentController.ViewObject;
+          node.Controller = _currentController = _axisScaleController[_currentScale];
           break;
 
-        case "CS":
-          if (pageChanged)
-          {
-            _view.SelectTab(_currentPageName);
-            SetSecondaryChoiceToUnique();
-          }
+        case CoordSystemTag:
           if (_coordinateController is null)
           {
             _coordinateController = new CoordinateSystemController() { UseDocumentCopy = UseDocument.Directly };
             _coordinateController.InitializeDocument(_doc.CoordinateSystem);
             Current.Gui.FindAndAttachControlTo(_coordinateController);
           }
-          _currentController = _coordinateController;
-          _view.CurrentContent = _coordinateController.ViewObject;
+          node.Controller = _currentController = _coordinateController;
           break;
 
-        case "GridStyle":
-          if (pageChanged)
-          {
-            _view.SelectTab(_currentPageName);
-            SetSecondaryChoiceToPlanes();
-          }
-
-          if (!_GridStyleController.ContainsKey(_currentPlaneID))
+        case GridStyleTag:
+          if (!_gridStyleController.ContainsKey(_currentPlaneID))
           {
             GridPlane p = _doc.GridPlanes.Contains(_currentPlaneID) ? _doc.GridPlanes[_currentPlaneID] : new GridPlane(_currentPlaneID);
             var ctrl = new GridPlaneController() { UseDocumentCopy = UseDocument.Directly };
             ctrl.InitializeDocument(p);
             Current.Gui.FindAndAttachControlTo(ctrl);
-            _GridStyleController.Add(_currentPlaneID, ctrl);
+            _gridStyleController.Add(_currentPlaneID, ctrl);
           }
-          _currentController = _GridStyleController[_currentPlaneID];
-          _view.CurrentContent = _currentController.ViewObject;
+          node.Controller = _currentController = _gridStyleController[_currentPlaneID];
 
           break;
 
-        case "TitleAndFormat":
-          if (pageChanged)
+        case TitleAndFormatTag:
           {
-            _view.SelectTab(_currentPageName);
-            SetSecondaryChoiceToAxes();
+            var axisStyleController = GetOrCreateAxisStyleController(_currentAxisID);
+            node.Controller = _currentController = axisStyleController;
+            if (axisStyleController.ViewObject is null)
+              Current.Gui.FindAndAttachControlTo(axisStyleController);
+            node.ViewObject = axisStyleController.ViewObject;
           }
-
-          _view.CurrentContent = _axisControl[_currentAxisID].AxisStyleCondView;
-          _currentController = _axisControl[_currentAxisID].AxisStyleCondController;
-
           break;
 
-        case "MajorLabels":
-          if (pageChanged)
+        case MajorLabelsTag:
           {
-            _view.SelectTab(_currentPageName);
-            SetSecondaryChoiceToAxes();
+            var axisStyleController = GetOrCreateAxisStyleController(_currentAxisID);
+            node.Controller = _currentController = axisStyleController.MajorLabelCondController;
+            node.ViewObject = axisStyleController.MajorLabelCondView;
           }
-
-          _view.CurrentContent = _axisControl[_currentAxisID].MajorLabelCondView;
-          _currentController = _axisControl[_currentAxisID].MajorLabelCondController;
-
           break;
 
         case "MinorLabels":
-          if (pageChanged)
           {
-            _view.SelectTab(_currentPageName);
-            SetSecondaryChoiceToAxes();
+            var axisStyleController = GetOrCreateAxisStyleController(_currentAxisID);
+            node.Controller = _currentController = axisStyleController.MinorLabelCondController;
+            node.ViewObject = axisStyleController.MinorLabelCondView;
           }
-
-          _view.CurrentContent = _axisControl[_currentAxisID].MinorLabelCondView;
-          _currentController = _axisControl[_currentAxisID].MinorLabelCondController;
-
           break;
       }
+    }
+
+    /// <summary>
+    /// Gets or creates the axis style controller for the current line ID. If there is not axis style for the line ID,
+    /// an empty axis style is created before.
+    /// </summary>
+    /// <param name="currentLineID">The current line identifier.</param>
+    /// <returns>The axis style controller.</returns>
+    private AxisStyleController GetOrCreateAxisStyleController(CSLineID currentLineID)
+    {
+      if (!_axisController.TryGetValue(_currentAxisID, out var axisStyleController))
+      {
+        axisStyleController = new AxisStyleController();
+        if (!_doc.AxisStyles.TryGetValue(_currentAxisID, out var axisStyle))
+        {
+          axisStyle = new AxisStyle(_currentAxisID, false, false, false, null, _doc.GetPropertyContext());
+          _doc.AxisStyles.Add(axisStyle);
+        }
+        axisStyleController.InitializeDocument(axisStyle);
+        _axisController[_currentAxisID] = axisStyleController;
+      }
+      return axisStyleController;
     }
 
     private void SetSecondaryChoiceToUnique()
     {
-      _primaryChoice = LayerControllerTabType.Unique;
-      _view.InitializeSecondaryChoice(_listOfUniqueItem, _primaryChoice);
+      AreAxisButtonsVisible = false;
+      SelectedSecondaryChoice = null;
+      SecondaryChoices = _listOfUniqueItem;
+      SelectedSecondaryChoice = SecondaryCommonTag;
     }
 
     private void SetSecondaryChoiceToScales()
     {
-      _listOfScales.ClearSelectionsAll();
-      _listOfScales[_currentScale].IsSelected = true;
-
-      _primaryChoice = LayerControllerTabType.Scales;
-      _view.InitializeSecondaryChoice(_listOfScales, _primaryChoice);
+      AreAxisButtonsVisible = false;
+      SelectedSecondaryChoice = null;
+      SecondaryChoices = _listOfScales;
+      SelectedSecondaryChoice = _currentScale;
     }
 
     private void SetSecondaryChoiceToAxes()
     {
-      foreach (var item in _listOfAxes)
-        item.IsSelected = ((CSLineID)item.Tag) == _currentAxisID;
-
-      _primaryChoice = LayerControllerTabType.Axes;
-      _view.InitializeSecondaryChoice(_listOfAxes, _primaryChoice);
+      AreAxisButtonsVisible = true;
+      SelectedSecondaryChoice = null;
+      SecondaryChoices = _listOfAxes;
+      SelectedSecondaryChoice = _currentAxisID;
     }
 
     private void SetSecondaryChoiceToPlanes()
     {
-      foreach (var item in _listOfPlanes)
-        item.IsSelected = ((CSPlaneID)item.Tag) == _currentPlaneID;
-
-      _primaryChoice = LayerControllerTabType.Planes;
-      _view.InitializeSecondaryChoice(_listOfPlanes, _primaryChoice);
+      AreAxisButtonsVisible = false;
+      SelectedSecondaryChoice = null;
+      SecondaryChoices = _listOfPlanes;
+      SelectedSecondaryChoice = _currentPlaneID;
     }
 
-    public void EhView_PageChanged(string firstChoice)
-    {
-      ApplyCurrentController(false, false);
-
-      _currentPageName = firstChoice;
-      SetCurrentTabController(true);
-    }
-
-    public void EhView_SecondChoiceChanged()
-    {
-      if (!ApplyCurrentController(false, false))
-        return;
-
-      if (_primaryChoice == LayerControllerTabType.Scales)
-      {
-        _currentScale = (int)_listOfScales.FirstSelectedNode.Tag;
-      }
-      else if (_primaryChoice == LayerControllerTabType.Axes)
-      {
-        _currentAxisID = (CSLineID)(_listOfAxes.FirstSelectedNode?.Tag ?? _listOfAxes[0].Tag);
-      }
-      else if (_primaryChoice == LayerControllerTabType.Planes)
-      {
-        _currentPlaneID = (CSPlaneID)_listOfPlanes.FirstSelectedNode.Tag;
-      }
-
-      SetCurrentTabController(false);
-    }
-
-    private void EhView_TabValidating(object sender, CancelEventArgs e)
-    {
-      if (!ApplyCurrentController(true, false))
-        e.Cancel = true;
-    }
-
-    public void EhView_CreateOrMoveAxis(bool moveAxis)
+    private void EhCmdCreateOrMoveAxis(bool moveAxis)
     {
       if (!ApplyCurrentController(false, false))
         return;
@@ -504,7 +540,7 @@ namespace Altaxo.Gui.Graph.Graph3D
       if (!Current.Gui.ShowDialog(ref creationArgs, "Create/move axis", false))
         return;
 
-      if (_axisControl.ContainsKey(creationArgs.CurrentStyle))
+      if (_axisController.ContainsKey(creationArgs.CurrentStyle))
         return; // the axis is already present
 
       var oldIdentity = creationArgs.TemplateStyle;
@@ -512,16 +548,14 @@ namespace Altaxo.Gui.Graph.Graph3D
       var newAxisInfo = _doc.CoordinateSystem.GetAxisStyleInformation(newIdentity);
 
       AxisCreationArguments.AddAxis(_doc.AxisStyles, creationArgs); // add the new axis to the document
-      _axisControl.Add(newIdentity, new AxisStyleControllerConditionalGlue(newAxisInfo, _doc.AxisStyles));
-
       SetSecondaryChoiceToUnique();
 
       _listOfAxes.ClearSelectionsAll();
       _listOfAxes.Add(new SelectableListNode(newAxisInfo.NameOfAxisStyle, newIdentity, true));
 
-      if (creationArgs.MoveAxis && _axisControl.ContainsKey(oldIdentity))
+      if (creationArgs.MoveAxis && _axisController.ContainsKey(oldIdentity))
       {
-        _axisControl.Remove(oldIdentity);
+        _axisController.Remove(oldIdentity);
         for (int i = _listOfAxes.Count - 1; i >= 0; --i)
         {
           if (((CSLineID)_listOfAxes[i].Tag) == oldIdentity)
@@ -534,10 +568,10 @@ namespace Altaxo.Gui.Graph.Graph3D
 
       _currentAxisID = newIdentity;
       SetSecondaryChoiceToAxes();
-      SetCurrentTabController(false);
+      SetCurrentTabController();
     }
 
-    public void EhView_DeleteAxis()
+    private void EhCmdDeleteAxis()
     {
       if (!ApplyCurrentController(false, false))
         return;
@@ -550,16 +584,18 @@ namespace Altaxo.Gui.Graph.Graph3D
       {
         if (true == _doc.AxisStyles.Remove(axisID))
         {
-          _axisControl.Remove(axisID);
+          _axisController.Remove(axisID);
           var axisItem = _listOfAxes.First(x => axisID != (CSLineID)(x.Tag));
           axisItem.IsSelected = true;
           _currentAxisID = (CSLineID)(axisItem.Tag);
           _listOfAxes.RemoveWhere(x => axisID == (CSLineID)(x.Tag));
           SetSecondaryChoiceToAxes();
-          SetCurrentTabController(false);
+          SetCurrentTabController();
         }
       }
     }
+
+
 
     private bool ApplyCurrentController(bool force, bool disposeCurrentController)
     {
@@ -595,7 +631,7 @@ namespace Altaxo.Gui.Graph.Graph3D
       {
         _doc.Location = (IItemLocation)_currentController.ModelObject;
       }
-      else if (_currentPageName == "GridStyle")
+      else if (_gridStyleController.Values.Contains(_currentController))
       {
         var gp = (GridPlane)_currentController.ModelObject;
         _doc.GridPlanes[_currentPlaneID] = gp.IsUsed ? gp : null;

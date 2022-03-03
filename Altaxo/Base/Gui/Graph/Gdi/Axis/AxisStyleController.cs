@@ -344,7 +344,8 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
         _doc.HideMinorLabels();
 
       if (_tickSpacingController is not null && !_tickSpacingController.Apply(disposeController))
-        return false;
+        return ApplyEnd(false, disposeController);
+
       if (ShowCustomTickSpacing && _tickSpacingController is not null)
         _doc.TickSpacing = (Altaxo.Graph.Scales.Ticks.TickSpacing)_tickSpacingController.ModelObject;
 

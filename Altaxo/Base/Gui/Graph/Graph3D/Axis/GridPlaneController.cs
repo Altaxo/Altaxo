@@ -36,24 +36,101 @@ using Altaxo.Gui.Graph.Graph3D.Material;
 
 namespace Altaxo.Gui.Graph.Graph3D.Axis
 {
-  [ExpectedTypeOfView(typeof(IMultiChildView))]
+  [ExpectedTypeOfView(typeof(Altaxo.Gui.Graph.Gdi.Axis.IGridPlanView))]
   [UserControllerForObject(typeof(GridPlane))]
-  public class GridPlaneController : MVCANControllerEditOriginalDocBase<GridPlane, IMultiChildView>
+  public class GridPlaneController : MVCANControllerEditOriginalDocBase<GridPlane, Altaxo.Gui.Graph.Gdi.Axis.IGridPlanView>
   {
-    private MultiChildController _innerController;
-
-    private IMVCANController _grid1;
-    private IMVCANController _grid2;
-    private IMVCANController _background;
-
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_grid1, () => _grid1 = null);
       yield return new ControllerAndSetNullMethod(_grid2, () => _grid2 = null);
       yield return new ControllerAndSetNullMethod(_background, () => _background = null);
-
-      yield return new ControllerAndSetNullMethod(_innerController, () => _innerController = null);
     }
+
+    #region Bindings
+
+    private IMVCANController _grid1;
+
+    public IMVCANController Grid1Controller
+    {
+      get => _grid1;
+      set
+      {
+        if (!(_grid1 == value))
+        {
+          _grid1 = value;
+          OnPropertyChanged(nameof(Grid1Controller));
+        }
+      }
+    }
+
+    private string _Grid1Name;
+
+    public string Grid1Name
+    {
+      get => _Grid1Name;
+      set
+      {
+        if (!(_Grid1Name == value))
+        {
+          _Grid1Name = value;
+          OnPropertyChanged(nameof(Grid1Name));
+        }
+      }
+    }
+
+
+    private IMVCANController _grid2;
+
+    public IMVCANController Grid2Controller
+    {
+      get => _grid2;
+      set
+      {
+        if (!(_grid2 == value))
+        {
+          _grid2 = value;
+          OnPropertyChanged(nameof(Grid2Controller));
+        }
+      }
+    }
+
+    private string _Grid2Name;
+
+    public string Grid2Name
+    {
+      get => _Grid2Name;
+      set
+      {
+        if (!(_Grid2Name == value))
+        {
+          _Grid2Name = value;
+          OnPropertyChanged(nameof(Grid2Name));
+        }
+      }
+    }
+
+
+    private IMVCANController _background;
+
+    public IMVCANController BackgroundController
+    {
+      get => _background;
+      set
+      {
+        if (!(_background == value))
+        {
+          _background = value;
+          OnPropertyChanged(nameof(BackgroundController));
+          OnPropertyChanged(nameof(BackgroundView));
+        }
+      }
+    }
+
+    public object? BackgroundView => _background?.ViewObject;
+
+
+    #endregion
 
     protected override void Initialize(bool initData)
     {
@@ -75,43 +152,27 @@ namespace Altaxo.Gui.Graph.Graph3D.Axis
         _background.InitializeDocument(_doc.Background ?? MaterialInvisible.Instance);
         Current.Gui.FindAndAttachControlTo(_background);
         var c3 = new ControlViewElement("Background", _background, _background.ViewObject);
-
-        _innerController = new MultiChildController(new ControlViewElement[] { c1, c2, c3 }, false);
       }
     }
 
     public override bool Apply(bool disposeController)
     {
-      if (false == _innerController.Apply(disposeController))
-        return false;
+      if (!_grid1.Apply(disposeController))
+        return ApplyEnd(false, disposeController);
+      if (!_grid2.Apply(disposeController))
+        return ApplyEnd(false, disposeController);
+      if (!_background.Apply(disposeController))
+        return ApplyEnd(false, disposeController);
 
       _doc.GridStyleFirst = (GridStyle)_grid1.ModelObject;
       _doc.GridStyleSecond = (GridStyle)_grid2.ModelObject;
       var backBrush = (IMaterial)_background.ModelObject;
-      if (backBrush is not null && !backBrush.IsVisible)
-        backBrush = null;
-      _doc.Background = backBrush;
+      _doc.Background = backBrush.IsVisible ? backBrush : null;
 
       return ApplyEnd(true, disposeController);
     }
 
-    protected override void AttachView()
-    {
-      base.AttachView();
-      if (_innerController is not null)
-      {
-        _innerController.ViewObject = _view;
-      }
-    }
-
-    protected override void DetachView()
-    {
-      if (_innerController is not null)
-      {
-        _innerController.ViewObject = null;
-      }
-      base.DetachView();
-    }
+  
 
     private static string GridName(int axisNumber)
     {

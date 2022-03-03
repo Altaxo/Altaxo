@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -22,11 +22,6 @@
 
 #endregion Copyright
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows;
 using System.Windows.Controls;
 
 namespace Altaxo.Gui.Graph.Graph3D.Axis
@@ -39,143 +34,6 @@ namespace Altaxo.Gui.Graph.Graph3D.Axis
     public AxisStyleControl()
     {
       InitializeComponent();
-    }
-
-    #region ITitleFormatLayerView
-
-    public bool ShowAxisLine
-    {
-      get
-      {
-        return ((UIElement)_axisLineGroupBox.Content).IsEnabled == true;
-      }
-      set
-      {
-        ((UIElement)_axisLineGroupBox.Content).IsEnabled = value;
-      }
-    }
-
-    public bool ShowMajorLabels
-    {
-      get
-      {
-        return _chkShowMajorLabels.IsChecked == true;
-      }
-      set
-      {
-        _chkShowMajorLabels.IsChecked = value;
-      }
-    }
-
-    public bool ShowMinorLabels
-    {
-      get
-      {
-        return _chkShowMinorLabels.IsChecked == true;
-      }
-      set
-      {
-        _chkShowMinorLabels.IsChecked = value;
-      }
-    }
-
-    public bool ShowCustomTickSpacing
-    {
-      get
-      {
-        return ((UIElement)_guiCustomAxisTicksGroupBox.Content).IsEnabled == true;
-      }
-      set
-      {
-        ((UIElement)_guiCustomAxisTicksGroupBox.Content).IsEnabled = value;
-      }
-    }
-
-    public event Action? ShowAxisLineChanged;
-
-    public event Action? ShowMajorLabelsChanged;
-
-    public event Action? ShowMinorLabelsChanged;
-
-    public event Action? ShowCustomTickSpacingChanged;
-
-    public event Action? EditTitle;
-
-    public object LineStyleView
-    {
-      set
-      {
-        var oldControl = (UIElement)_axisLineGroupBox.Content;
-        bool wasEnabled = oldControl.IsEnabled == true;
-
-        var newControl = value as UIElement;
-
-        if (newControl is null)
-          newControl = new Label();
-
-        newControl.IsEnabled = wasEnabled;
-        _axisLineGroupBox.Content = newControl;
-      }
-    }
-
-    public object TickSpacingView
-    {
-      set
-      {
-        var oldControl = (UIElement)_guiCustomAxisTicksGroupBox.Content;
-        bool wasEnabled = oldControl.IsEnabled == true;
-
-        var newControl = value as UIElement;
-
-        if (newControl is null)
-          newControl = new Label();
-
-        newControl.IsEnabled = wasEnabled;
-        _guiCustomAxisTicksGroupBox.Content = newControl;
-      }
-    }
-
-    public string AxisTitle
-    {
-      get
-      {
-        return m_Format_edTitle.Text;
-      }
-      set
-      {
-        m_Format_edTitle.Text = value;
-      }
-    }
-
-    #endregion ITitleFormatLayerView
-
-    private void EhShowAxisLineChanged(object sender, RoutedEventArgs e)
-    {
-      if (ShowAxisLineChanged is not null)
-        ShowAxisLineChanged();
-    }
-
-    private void EhShowMajorLabelsChanged(object sender, RoutedEventArgs e)
-    {
-      if (ShowMajorLabelsChanged is not null)
-        ShowMajorLabelsChanged();
-    }
-
-    private void EhShowMinorLabelsChanged(object sender, RoutedEventArgs e)
-    {
-      if (ShowMinorLabelsChanged is not null)
-        ShowMinorLabelsChanged();
-    }
-
-    private void EhCustomTickSpacingChanged(object sender, RoutedEventArgs e)
-    {
-      if (ShowCustomTickSpacingChanged is not null)
-        ShowCustomTickSpacingChanged();
-    }
-
-    private void EhEditTitle_Click(object sender, RoutedEventArgs e)
-    {
-      EditTitle?.Invoke();
     }
   }
 }

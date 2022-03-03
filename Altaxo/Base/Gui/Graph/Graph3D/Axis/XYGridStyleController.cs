@@ -28,34 +28,9 @@ using Altaxo.Graph.Graph3D.Axis;
 
 namespace Altaxo.Gui.Graph.Graph3D.Axis
 {
-  #region Interfaces
-
-  public interface IXYGridStyleView
+  public interface IXYGridStyleView : IDataContextAwareView
   {
-    void InitializeBegin();
-
-    void InitializeEnd();
-
-    void InitializeMajorGridStyle(IMVCANDController controller);
-
-    void InitializeMinorGridStyle(IMVCANDController controller);
-
-    void InitializeShowGrid(bool value);
-
-    void InitializeShowMinorGrid(bool value);
-
-    void InitializeShowZeroOnly(bool value);
-
-    void InitializeElementEnabling(bool majorstyle, bool minorstyle, bool showminor, bool showzeroonly);
-
-    event Action<bool> ShowGridChanged;
-
-    event Action<bool> ShowMinorGridChanged;
-
-    event Action<bool> ShowZeroOnlyChanged;
   }
-
-  #endregion Interfaces
 
   /// <summary>
   /// Summary description for XYGridStyleController.
@@ -64,14 +39,114 @@ namespace Altaxo.Gui.Graph.Graph3D.Axis
   [ExpectedTypeOfView(typeof(IXYGridStyleView))]
   public class XYGridStyleController : MVCANControllerEditOriginalDocBase<GridStyle, IXYGridStyleView>
   {
-    private IMVCANDController _majorController;
-    private IMVCANDController _minorController;
-
     public override System.Collections.Generic.IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_majorController, () => _majorController = null);
       yield return new ControllerAndSetNullMethod(_majorController, () => _minorController = null);
     }
+
+    #region Binding
+
+    private bool _showGrid;
+
+    public bool ShowGrid
+    {
+      get => _showGrid;
+      set
+      {
+        if (!(_showGrid == value))
+        {
+          _showGrid = value;
+          OnPropertyChanged(nameof(ShowGrid));
+          OnPropertyChanged(nameof(EnableMinorCheck));
+          OnPropertyChanged(nameof(EnableMajorView));
+          OnPropertyChanged(nameof(EnableMinorView));
+        }
+      }
+    }
+
+    private bool _showZeroOnly;
+
+    public bool ShowZeroOnly
+    {
+      get => _showZeroOnly;
+      set
+      {
+        if (!(_showZeroOnly == value))
+        {
+          _showZeroOnly = value;
+          OnPropertyChanged(nameof(ShowZeroOnly));
+          OnPropertyChanged(nameof(EnableMinorCheck));
+          OnPropertyChanged(nameof(EnableMinorView));
+        }
+      }
+    }
+
+    private bool _showMinorGrid;
+
+    public bool ShowMinorGrid
+    {
+      get => _showMinorGrid;
+      set
+      {
+        if (!(_showMinorGrid == value))
+        {
+          _showMinorGrid = value;
+          OnPropertyChanged(nameof(ShowMinorGrid));
+          OnPropertyChanged(nameof(EnableMinorView));
+        }
+      }
+    }
+
+    /// <summary>
+    /// Gets a value indicating whether the show minor check box is enabled
+    /// </summary>
+    public bool EnableMinorCheck => ShowGrid && !ShowZeroOnly;
+
+    /// <summary>
+    /// Gets a value indicating whether the show minor grid view is enabled
+    /// </summary>
+    public bool EnableMajorView => ShowGrid;
+
+    /// <summary>
+    /// Gets a value indicating whether the show minor grid view is enabled
+    /// </summary>
+    public bool EnableMinorView => ShowGrid && !ShowZeroOnly && ShowMinorGrid;
+
+
+    private IMVCANDController _majorController;
+
+
+    public IMVCANDController MajorController
+    {
+      get => _majorController;
+      set
+      {
+        if (!(_majorController == value))
+        {
+          _majorController = value;
+          OnPropertyChanged(nameof(MajorController));
+        }
+      }
+    }
+
+    private IMVCANDController _minorController;
+
+    public IMVCANDController MinorController
+    {
+      get => _minorController;
+      set
+      {
+        if (!(_minorController == value))
+        {
+          _minorController = value;
+          OnPropertyChanged(nameof(MinorController));
+        }
+      }
+    }
+
+    #endregion
+
 
     protected override void Initialize(bool initData)
     {
@@ -79,91 +154,32 @@ namespace Altaxo.Gui.Graph.Graph3D.Axis
 
       if (initData)
       {
-        _majorController = new ColorTypeThicknessPenController(_doc.MajorPen);
-        _minorController = new ColorTypeThicknessPenController(_doc.MinorPen);
-      }
+        MajorController = new ColorTypeThicknessPenController(_doc.MajorPen);
+        MinorController = new ColorTypeThicknessPenController(_doc.MinorPen);
 
-      if (_view is not null)
-      {
-        _view.InitializeBegin();
-
-        _view.InitializeMajorGridStyle(_majorController);
-        _view.InitializeMinorGridStyle(_minorController);
-        _view.InitializeShowMinorGrid(_doc.ShowMinor);
-        _view.InitializeShowZeroOnly(_doc.ShowZeroOnly);
-        _view.InitializeShowGrid(_doc.ShowGrid);
-        InitializeElementEnabling();
-
-        _view.InitializeEnd();
+        ShowMinorGrid = _doc.ShowMinor;
+        ShowZeroOnly = _doc.ShowZeroOnly;
+        ShowGrid = _doc.ShowGrid;
       }
     }
 
     public override bool Apply(bool disposeController)
     {
       if (!_majorController.Apply(disposeController))
-        return false;
-      _doc.MajorPen = (Altaxo.Drawing.D3D.PenX3D)_majorController.ModelObject;
+        return ApplyEnd(false, disposeController);
+      else 
+       _doc.MajorPen = (Altaxo.Drawing.D3D.PenX3D)_majorController.ModelObject;
 
       if (!_minorController.Apply(disposeController))
-        return false;
-      _doc.MinorPen = (Altaxo.Drawing.D3D.PenX3D)_minorController.ModelObject;
+        return ApplyEnd(false, disposeController);
+      else
+        _doc.MinorPen = (Altaxo.Drawing.D3D.PenX3D)_minorController.ModelObject;
+
+      _doc.ShowGrid = ShowGrid;
+      _doc.ShowZeroOnly = ShowZeroOnly;
+      _doc.ShowMinor = ShowMinorGrid;
 
       return ApplyEnd(true, disposeController);
     }
-
-    protected override void AttachView()
-    {
-      base.AttachView();
-      _view.ShowGridChanged += EhView_ShowGridChanged;
-      _view.ShowMinorGridChanged += EhView_ShowMinorGridChanged;
-      _view.ShowZeroOnlyChanged += EhView_ShowZeroOnlyChanged;
-    }
-
-    protected override void DetachView()
-    {
-      _view.ShowGridChanged -= EhView_ShowGridChanged;
-      _view.ShowMinorGridChanged -= EhView_ShowMinorGridChanged;
-      _view.ShowZeroOnlyChanged -= EhView_ShowZeroOnlyChanged;
-      base.DetachView();
-    }
-
-    public void InitializeElementEnabling()
-    {
-      if (_view is not null)
-      {
-        bool majorstyle = _doc.ShowGrid;
-        bool showzeroonly = _doc.ShowGrid;
-        bool showminor = _doc.ShowGrid && !_doc.ShowZeroOnly;
-        bool minorstyle = _doc.ShowMinor && showminor;
-        _view.InitializeElementEnabling(majorstyle, minorstyle, showminor, showzeroonly);
-      }
-    }
-
-    #region IXYGridStyleViewEventSink Members
-
-    public void EhView_ShowGridChanged(bool newval)
-    {
-      _doc.ShowGrid = newval;
-      InitializeElementEnabling();
-    }
-
-    public void EhView_ShowMinorGridChanged(bool newval)
-    {
-      _doc.ShowMinor = newval;
-      InitializeElementEnabling();
-    }
-
-    public void EhView_ShowZeroOnlyChanged(bool newval)
-    {
-      _doc.ShowZeroOnly = newval;
-      if (newval == true && _doc.ShowMinor)
-      {
-        _doc.ShowMinor = false;
-        _view.InitializeShowMinorGrid(_doc.ShowMinor);
-      }
-      InitializeElementEnabling();
-    }
-
-    #endregion IXYGridStyleViewEventSink Members
   }
 }
