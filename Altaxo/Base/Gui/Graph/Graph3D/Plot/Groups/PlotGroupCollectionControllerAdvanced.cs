@@ -37,13 +37,9 @@ using Altaxo.Main.Services;
 
 namespace Altaxo.Gui.Graph.Graph3D.Plot.Groups
 {
-  #region Interfaces
-
   public interface IPlotGroupCollectionViewAdvanced : IDataContextAwareView
   {
   }
-
-  #endregion Interfaces
 
   [UserControllerForObject(typeof(PlotGroupStyleCollection))]
   [ExpectedTypeOfView(typeof(IPlotGroupCollectionViewAdvanced))]

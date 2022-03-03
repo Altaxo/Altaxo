@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -23,20 +23,16 @@
 #endregion Copyright
 
 #nullable disable
-using System;
 using System.Collections.Generic;
-using System.Text;
 using Altaxo.Graph.Graph3D.CS;
 
 namespace Altaxo.Gui.Graph.Graph3D.CS
 {
-  #region Interfaces
 
-  public interface IG3DCartesicCSView
+  public interface IG3DCartesicCSView : IDataContextAwareView
   {
   }
 
-  #endregion Interfaces
 
   [UserControllerForObject(typeof(G3DCartesicCoordinateSystem), 101)]
   [ExpectedTypeOfView(typeof(IG3DCartesicCSView))]
@@ -123,7 +119,7 @@ namespace Altaxo.Gui.Graph.Graph3D.CS
     {
       base.Initialize(initData);
 
-      if (_view is not null)
+      if (initData)
       {
         ExchangeXY = _doc.IsXYInterchanged;
         ReverseX = _doc.IsXReversed;

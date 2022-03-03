@@ -24,17 +24,16 @@
 
 using System.Windows.Controls;
 
-namespace Altaxo.Gui.Graph.Graph3D.CS
+namespace Altaxo.Gui.Graph.Graph3D.Material
 {
   /// <summary>
-  /// Interaction logic for G2DCartesicCSControl.xaml
+  /// Interaction logic for MaterialControlSimple.xaml
   /// </summary>
-  public partial class G3DCartesicCSControl : UserControl, IG3DCartesicCSView
+  public partial class MaterialControlSimple : UserControl, IMaterialViewSimple
   {
-    public G3DCartesicCSControl()
+    public MaterialControlSimple()
     {
       InitializeComponent();
     }
-
   }
 }

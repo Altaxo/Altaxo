@@ -30,13 +30,9 @@ using Altaxo.Graph.Graph3D.Plot.Groups;
 
 namespace Altaxo.Gui.Graph.Graph3D.Plot.Groups
 {
-  #region Interface
-
   public interface IPlotGroupCollectionView : IDataContextAwareView
   {
   }
-
-  #endregion Interface
 
   /// <summary>
   /// This is the controller for a <see cref="PlotGroupStyleCollection"/> that choose between the simple and the advanced presentation mode.

@@ -32,11 +32,39 @@ using Altaxo.Gui.Drawing;
 
 namespace Altaxo.Gui.Graph.Graph3D.Plot.Groups
 {
-  [ExpectedTypeOfView(typeof(IStyleListView))]
-  [UserControllerForObject(typeof(ScatterSymbolGroupStyle))]
-  public class ScatterSymbolGroupStyleController : MVCANControllerEditOriginalDocBase<ScatterSymbolGroupStyle, IStyleListView>
+  public interface IScatterSymbolGroupStyleView : IDataContextAwareView
   {
+  }
+
+  [ExpectedTypeOfView(typeof(IScatterSymbolGroupStyleView))]
+  [UserControllerForObject(typeof(ScatterSymbolGroupStyle))]
+  public class ScatterSymbolGroupStyleController : MVCANControllerEditOriginalDocBase<ScatterSymbolGroupStyle, IScatterSymbolGroupStyleView>
+  {
+    public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+    {
+      yield return new ControllerAndSetNullMethod(_listController, () => ListController = null);
+    }
+
+    #region Bindings
+
     private ScatterSymbolListController _listController;
+
+    public ScatterSymbolListController ListController
+    {
+      get => _listController;
+      set
+      {
+        if (!(_listController == value))
+        {
+          _listController?.Dispose();
+          _listController = value;
+          OnPropertyChanged(nameof(ListController));
+        }
+      }
+    }
+
+
+    #endregion
 
     protected override void Initialize(bool initData)
     {
@@ -44,13 +72,10 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Groups
 
       if (initData)
       {
-        _listController = new ScatterSymbolListController();
-        _listController.InitializeDocument(_doc.ListOfValues);
-      }
-
-      if (_view is not null)
-      {
-        _listController.ViewObject = _view;
+        var listController = new ScatterSymbolListController();
+          listController.InitializeDocument(_doc.ListOfValues);
+        Current.Gui.FindAndAttachControlTo(listController);
+        ListController = listController;
       }
     }
 
@@ -64,9 +89,6 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Groups
       return ApplyEnd(true, disposeController);
     }
 
-    public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
-    {
-      yield return new ControllerAndSetNullMethod(_listController, () => _listController = null);
-    }
+  
   }
 }

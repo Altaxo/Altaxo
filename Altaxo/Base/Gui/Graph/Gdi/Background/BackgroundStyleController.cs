@@ -31,13 +31,9 @@ using Altaxo.Gui.Common;
 
 namespace Altaxo.Gui.Graph.Gdi.Background
 {
-  #region Interfaces
-
   public interface IBackgroundStyleView : IDataContextAwareView
   {
   }
-
-  #endregion Interfaces
 
   /// <summary>
   /// Controls a IBackgroundStyle instance. 

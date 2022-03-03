@@ -21,20 +21,18 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #endregion Copyright
-
 using System.Windows.Controls;
 
-namespace Altaxo.Gui.Graph.Graph3D.CS
+namespace Altaxo.Gui.Graph.Graph3D.Plot.Groups
 {
   /// <summary>
-  /// Interaction logic for G2DCartesicCSControl.xaml
+  /// Interaction logic for ScatterSymbolGroupStyleControl.xaml
   /// </summary>
-  public partial class G3DCartesicCSControl : UserControl, IG3DCartesicCSView
+  public partial class ScatterSymbolGroupStyleControl : UserControl, IScatterSymbolGroupStyleView
   {
-    public G3DCartesicCSControl()
+    public ScatterSymbolGroupStyleControl()
     {
       InitializeComponent();
     }
-
   }
 }

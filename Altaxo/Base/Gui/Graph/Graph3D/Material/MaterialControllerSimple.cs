@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2016 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -31,51 +31,75 @@ using Altaxo.Graph.Graph3D;
 
 namespace Altaxo.Gui.Graph.Graph3D.Material
 {
-  public interface IMaterialViewSimple
+  public interface IMaterialViewSimple : IDataContextAwareView
   {
-    /// <summary>
-    /// Sets a value indicating whether this instance is no material allowed. If true, this instance can return null if no material was selected.
-    /// </summary>
-    /// <value>
-    /// <c>true</c> if this instance is no material allowed; otherwise, <c>false</c>.
-    /// </value>
-    bool IsNoMaterialAllowed { set; }
-
-    IMaterial SelectedMaterial { get; set; }
   }
 
   [UserControllerForObject(typeof(IMaterial))]
   [ExpectedTypeOfView(typeof(IMaterialViewSimple))]
   public class MaterialControllerSimple : MVCANControllerEditImmutableDocBase<IMaterial, IMaterialViewSimple>
   {
-    /// <summary>
-    /// Sets a value indicating whether this instance is no material allowed. If true, this instance can return null if no material was selected.
-    /// </summary>
-    /// <value>
-    /// <c>true</c> if this instance is no material allowed; otherwise, <c>false</c>.
-    /// </value>
-    public bool IsNoMaterialAllowed { get; set; }
-
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
     }
 
+    #region Bindings
+
+    
+    private bool _isNoMaterialAllowed;
+
+   /// <summary>
+    /// Sets a value indicating whether this instance is no material allowed. If true, this instance can return null if no material was selected.
+    /// </summary>
+    /// <value>
+    /// <c>true</c> if this instance is no material allowed; otherwise, <c>false</c>.
+    /// </value>
+    public bool IsNoMaterialAllowed
+    {
+      get => _isNoMaterialAllowed;
+      set
+      {
+        if (!(_isNoMaterialAllowed == value))
+        {
+          _isNoMaterialAllowed = value;
+          OnPropertyChanged(nameof(IsNoMaterialAllowed));
+        }
+      }
+    }
+
+    private IMaterial _selectedMaterial;
+
+    public IMaterial SelectedMaterial
+    {
+      get => _selectedMaterial;
+      set
+      {
+        if (!(_selectedMaterial == value))
+        {
+          _selectedMaterial = value;
+          OnPropertyChanged(nameof(SelectedMaterial));
+        }
+      }
+    }
+
+    #endregion
+
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
 
-      if (_view is not null)
+      if (initData)
       {
-        _view.IsNoMaterialAllowed = IsNoMaterialAllowed;
-        _view.SelectedMaterial = _doc;
+        IsNoMaterialAllowed = IsNoMaterialAllowed;
+        SelectedMaterial = _doc;
       }
     }
 
     public override bool Apply(bool disposeController)
     {
       if (_view is not null)
-        _doc = _view.SelectedMaterial;
+        _doc = SelectedMaterial;
 
       if (IsNoMaterialAllowed && _doc is not null && !_doc.IsVisible)
         _doc = null;

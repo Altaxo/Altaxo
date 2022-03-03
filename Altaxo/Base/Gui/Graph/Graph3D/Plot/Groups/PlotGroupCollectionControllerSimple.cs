@@ -33,7 +33,6 @@ using Altaxo.Gui.Common;
 
 namespace Altaxo.Gui.Graph.Graph3D.Plot.Groups
 {
-  #region Interfaces
 
   /// <summary>
   /// This view interface is for showing the options of the XYLineScatterPlotStyle
@@ -41,8 +40,6 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Groups
   public interface IPlotGroupCollectionViewSimple : IDataContextAwareView
   {
   }
-
-  #endregion Interfaces
 
   [ExpectedTypeOfView(typeof(IPlotGroupCollectionViewSimple))]
   public class PlotGroupCollectionControllerSimple : MVCANControllerEditOriginalDocBase<PlotGroupStyleCollection, IPlotGroupCollectionViewSimple>
