@@ -65,7 +65,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     /// <summary>
     /// Converts the numerical values of the data colum into logical values.
     /// </summary>
-    private NumericalScale _scale;
+    private Scale _scale;
 
     /// <summary>
     /// Converts the logical value (from the scale) to a color value.
@@ -113,7 +113,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         if (s._dataColumnProxy is not null)
           s._dataColumnProxy.ParentObject = s;
 
-        s._scale = (NumericalScale)info.GetValue("Scale", s);
+        s._scale = (Scale)info.GetValue("Scale", s);
         if (s._scale is not null)
           s._scale.ParentObject = s;
 
@@ -161,7 +161,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       _appliesToFill = from._appliesToFill;
       _appliesToStroke = from._appliesToStroke;
       _appliesToBackground = from._appliesToBackground;
-      InternalSetScale((NumericalScale)from._scale.Clone());
+      InternalSetScale((Scale)from._scale.Clone());
       _colorProvider = from._colorProvider;
 
       if (copyWithDataReferences)
@@ -231,8 +231,33 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     protected void InternalSetDataColumnProxy(IReadableColumnProxy proxy)
     {
       ChildSetMember(ref _dataColumnProxy, proxy);
+      AdjustScaleTypeToColumnType(proxy.Document());
     }
 
+
+    /// <summary>
+    /// Adjusts the type of scale to be appropriate for the type of data column.
+    /// </summary>
+    /// <param name="column">The column.</param>
+    protected void AdjustScaleTypeToColumnType(IReadableColumn column)
+    {
+      if(column is null)
+      {
+
+      }
+      else if(column is TextColumn && Scale is not TextScale)
+      {
+        InternalSetScale(new TextScale());
+      }
+      else if(column is DateTimeColumn && (Scale is not DateTimeScale))
+      {
+        InternalSetScale(new DateTimeScale());
+      }
+      else if(column is INumericColumn && (Scale is not NumericalScale))
+      {
+        InternalSetScale(new LinearScale());
+      }
+    }
     #region Changed event handling
 
     protected override bool HandleHighPriorityChildChangeCases(object? sender, ref EventArgs e)
@@ -266,7 +291,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       {
         int len = dataColumn.Count.Value;
 
-        var bounds = _scale.DataBounds;
+        var bounds = _scale.DataBoundsObject;
 
         using (var suspendToken = bounds.SuspendGetToken())
         {
@@ -291,7 +316,10 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       set
       {
         if (ChildSetMember(ref _dataColumnProxy, ReadableColumnProxyBase.FromColumn(value)))
+        {
+          AdjustScaleTypeToColumnType(value);
           EhSelfChanged(EventArgs.Empty);
+        }
       }
     }
 
@@ -318,7 +346,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     /// </summary>
     /// <param name="scale"></param>
     [MemberNotNull(nameof(_scale))]
-    protected void InternalSetScale(NumericalScale scale)
+    protected void InternalSetScale(Scale scale)
     {
       if (ChildSetMember(ref _scale, scale))
       {
@@ -333,7 +361,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     /// <summary>
     /// Gets/sets the scale.
     /// </summary>
-    public NumericalScale Scale
+    public Scale Scale
     {
       get
       {
@@ -377,7 +405,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       var dataColumn = DataColumn;
       if (dataColumn is not null)
       {
-        return _colorProvider.GetColor(_scale.PhysicalToNormal(dataColumn[idx]));
+          return _colorProvider.GetColor(_scale.PhysicalVariantToNormal(dataColumn[idx]));
       }
       else
       {

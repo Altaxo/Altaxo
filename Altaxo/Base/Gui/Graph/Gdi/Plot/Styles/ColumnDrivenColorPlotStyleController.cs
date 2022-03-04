@@ -109,72 +109,72 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
       }
     }
 
-    private string _DataColumnText;
+    private string _dataColumnText;
 
     public string DataColumnText
     {
-      get => _DataColumnText;
+      get => _dataColumnText;
       set
       {
-        if (!(_DataColumnText == value))
+        if (!(_dataColumnText == value))
         {
-          _DataColumnText = value;
+          _dataColumnText = value;
           OnPropertyChanged(nameof(DataColumnText));
         }
       }
     }
-    private string _DataColumnToolTip;
+    private string _dataColumnToolTip;
 
     public string DataColumnToolTip
     {
-      get => _DataColumnToolTip;
+      get => _dataColumnToolTip;
       set
       {
-        if (!(_DataColumnToolTip == value))
+        if (!(_dataColumnToolTip == value))
         {
-          _DataColumnToolTip = value;
+          _dataColumnToolTip = value;
           OnPropertyChanged(nameof(DataColumnToolTip));
         }
       }
     }
-    private int _DataColumnStatus;
+    private int _dataColumnStatus;
 
     public int DataColumnStatus
     {
-      get => _DataColumnStatus;
+      get => _dataColumnStatus;
       set
       {
-        if (!(_DataColumnStatus == value))
+        if (!(_dataColumnStatus == value))
         {
-          _DataColumnStatus = value;
+          _dataColumnStatus = value;
           OnPropertyChanged(nameof(DataColumnStatus));
         }
       }
     }
-    private string _DataColumnTransformationText;
+    private string _dataColumnTransformationText;
 
     public string DataColumnTransformationText
     {
-      get => _DataColumnTransformationText;
+      get => _dataColumnTransformationText;
       set
       {
-        if (!(_DataColumnTransformationText == value))
+        if (!(_dataColumnTransformationText == value))
         {
-          _DataColumnTransformationText = value;
+          _dataColumnTransformationText = value;
           OnPropertyChanged(nameof(DataColumnTransformationText));
         }
       }
     }
-    private string _DataColumnTransformationToolTip;
+    private string _dataColumnTransformationToolTip;
 
     public string DataColumnTransformationToolTip
     {
-      get => _DataColumnTransformationToolTip;
+      get => _dataColumnTransformationToolTip;
       set
       {
-        if (!(_DataColumnTransformationToolTip == value))
+        if (!(_dataColumnTransformationToolTip == value))
         {
-          _DataColumnTransformationToolTip = value;
+          _dataColumnTransformationToolTip = value;
           OnPropertyChanged(nameof(DataColumnTransformationToolTip));
         }
       }
@@ -209,13 +209,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
       if (!_scaleController.Apply(disposeController))
         return false;
 
-      if (!(_scaleController.ModelObject is Altaxo.Graph.Scales.NumericalScale))
-      {
-        Current.Gui.ErrorMessageBox("Please choose a numerical scale, since only those scales are supported here");
-        return false;
-      }
-
-      _doc.Scale = (Altaxo.Graph.Scales.NumericalScale)_scaleController.ModelObject;
+      _doc.Scale = (Scale)_scaleController.ModelObject;
 
       if (!_colorProviderController.Apply(disposeController))
         return false;
@@ -253,10 +247,16 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
         _doc.DataColumnName,
         (column, table, group) =>
         {
-          _doc.DataColumn = column;
+          var oldScale = _doc.Scale;
+          _doc.DataColumn = column; // Scale may change when setting another type of data column, so make sure that the scale controller is updated with the new scale
+          var newScale = _doc.Scale;
           _supposedParentDataTable = table;
           _supposedGroupNumber = group;
           InitializeDataColumnText();
+          if(!object.ReferenceEquals(oldScale, newScale))
+          {
+            _scaleController.InitializeDocument(newScale); // update scale controller here if the scale has changed 
+          }
         }
       );
     }

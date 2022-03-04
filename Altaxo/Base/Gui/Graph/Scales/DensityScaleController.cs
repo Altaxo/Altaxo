@@ -30,13 +30,10 @@ using Altaxo.Gui.Common;
 
 namespace Altaxo.Gui.Graph.Scales
 {
-  #region Interfaces
-
+  
   public interface IDensityScaleView : IDataContextAwareView
   {
   }
-
-  #endregion Interfaces
 
   /// <summary>
   /// Lets the user choose a numerical scale.
@@ -122,7 +119,7 @@ namespace Altaxo.Gui.Graph.Scales
       {
         // InitScaleTypes
         var scaleTypes = new SelectableListNodeList();
-        Type[] classes = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(NumericalScale));
+        Type[] classes = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(Scale));
         for (int i = 0; i < classes.Length; i++)
         {
           if (classes[i] == typeof(LinkedScale))
