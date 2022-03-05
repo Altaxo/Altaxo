@@ -57,7 +57,9 @@
                                     SelectedItem="{Binding DashPattern, Mode=TwoWay}"  />
 
 		<Label Grid.Column="2" Grid.Row="2" Content="CrossSection" />
-		<ComboBox x:Name="_guiCrossSection" Grid.Column="3" Grid.Row="2" />
+		<ComboBox Grid.Column="3" Grid.Row="2"
+                  ItemsSource="{Binding CrossSection.Items}"
+                  SelectedItem="{Binding CrossSection.SelectedItem, Mode=TwoWay}"/>
 
         <Label Grid.Column="0" Grid.Row="4" Content="DashStartCap:" />
         <axogddl:LineCapComboBox Grid.Column="1" Grid.Row="4" 

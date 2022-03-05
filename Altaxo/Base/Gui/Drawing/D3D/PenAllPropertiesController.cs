@@ -29,7 +29,9 @@ using System.Collections.Generic;
 namespace Altaxo.Gui.Drawing.D3D
 {
   using System.Windows.Input;
+  using Altaxo.Collections;
   using Altaxo.Drawing.D3D;
+  using Altaxo.Gui.Common;
   using Altaxo.Units;
 
   public interface IPenAllPropertiesView : IDataContextAwareView
@@ -43,7 +45,6 @@ namespace Altaxo.Gui.Drawing.D3D
     {
       CmdShowCustomPen = new RelayCommand(EhShowCustomPen);
     }
-
 
     public PenAllPropertiesController(PenX3D pen) : this()
     {
@@ -110,6 +111,24 @@ namespace Altaxo.Gui.Drawing.D3D
       }
     }
 
+    private ItemsController<Type> _crossSection;
+
+    public ItemsController<Type> CrossSection
+    {
+      get => _crossSection;
+      set
+      {
+        if (!(_crossSection == value))
+        {
+          _crossSection = value;
+          OnPropertyChanged(nameof(CrossSection));
+        }
+      }
+    }
+
+
+
+   
 
 
     public Altaxo.Drawing.IDashPattern DashPattern
@@ -273,9 +292,38 @@ namespace Altaxo.Gui.Drawing.D3D
 
         EndCap = new StartEndCapController() { IsForEndCap = true };
         EndCap.InitializeDocument(_doc.LineEndCap);
+
+        InitializeCrossSection();
       }
     }
 
+
+    public void InitializeCrossSection()
+    {
+      var crossSectionChoices = new SelectableListNodeList();
+      var selectableTypes = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(ICrossSectionOfLine));
+
+      foreach (var t in selectableTypes)
+      {
+        crossSectionChoices.Add(new SelectableListNode(t.Name, t, t == _doc.CrossSection.GetType()));
+      }
+      CrossSection = new ItemsController<Type>(crossSectionChoices, EhCrossSection_SelectionChangeCommitted);
+    }
+
+    private void EhCrossSection_SelectionChangeCommitted(Type type)
+    {
+      if (type is not null)
+      {
+        var crossSection = (ICrossSectionOfLine)Activator.CreateInstance(type);
+        crossSection = crossSection.WithSize(_doc.Thickness1, _doc.Thickness2);
+        var oldPen = _doc;
+        _doc = _doc.WithCrossSection(crossSection);
+        if (!object.ReferenceEquals(_doc, oldPen))
+        {
+          OnMadeDirty();
+        }
+      }
+    }
 
     private void EhDashStartCapChanged(IMVCANDController obj)
     {
@@ -330,6 +378,7 @@ namespace Altaxo.Gui.Drawing.D3D
         OnPropertyChanged(nameof(Material));
         OnPropertyChanged(nameof(LineThickness1));
         OnPropertyChanged(nameof(LineThickness2));
+        CrossSection.SelectedValue = _doc.CrossSection.GetType();
         OnPropertyChanged(nameof(DashPattern));
         DashStartCap.InitializeDocument(_doc.DashStartCap);
         DashEndCap.InitializeDocument(_doc.DashEndCap);
