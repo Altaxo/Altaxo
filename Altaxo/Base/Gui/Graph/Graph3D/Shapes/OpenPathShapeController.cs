@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2016 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -25,31 +25,65 @@
 #nullable disable
 using System;
 using System.Collections.Generic;
-using System.Text;
-using Altaxo.Drawing.D3D;
-using Altaxo.Graph;
 using Altaxo.Graph.Graph3D;
 using Altaxo.Graph.Graph3D.Shapes;
+using Altaxo.Gui.Drawing.D3D;
 
 namespace Altaxo.Gui.Graph.Graph3D.Shapes
 {
-  public interface IOpenPathShapeView
+  public interface IOpenPathShapeView : IDataContextAwareView
   {
-    PenX3D DocPen { get; set; }
-
-    object LocationView { set; }
   }
 
   [UserControllerForObject(typeof(OpenPathShapeBase), 101)]
   [ExpectedTypeOfView(typeof(IOpenPathShapeView))]
   public class OpenPathShapeController : MVCANControllerEditOriginalDocBase<OpenPathShapeBase, IOpenPathShapeView>
   {
-    private IMVCANController _locationController;
 
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
-      yield return new ControllerAndSetNullMethod(_locationController, () => _locationController = null);
+      yield return new ControllerAndSetNullMethod(_penController, () => PenController = null);
+      yield return new ControllerAndSetNullMethod(_locationController, () => LocationController = null);
     }
+
+    #region Bindings
+
+    private PenAllPropertiesController _penController;
+
+    public PenAllPropertiesController PenController
+    {
+      get => _penController;
+      set
+      {
+        if (!(_penController == value))
+        {
+          _penController?.Dispose();
+          _penController = value;
+          OnPropertyChanged(nameof(PenController));
+        }
+      }
+    }
+
+    private IMVCANController _locationController;
+
+    public IMVCANController LocationController
+    {
+      get => _locationController;
+      set
+      {
+        if (!(_locationController == value))
+        {
+          _locationController?.Dispose();
+          _locationController = value;
+          OnPropertyChanged(nameof(LocationController));
+        }
+      }
+    }
+
+
+
+
+    #endregion
 
     protected override void Initialize(bool initData)
     {
@@ -57,13 +91,11 @@ namespace Altaxo.Gui.Graph.Graph3D.Shapes
 
       if (initData)
       {
-        _locationController = (IMVCANController)Current.Gui.GetController(new object[] { _doc.Location }, typeof(IMVCANController), UseDocument.Directly);
-        Current.Gui.FindAndAttachControlTo(_locationController);
-      }
-      if (_view is not null)
-      {
-        _view.DocPen = _doc.Pen;
-        _view.LocationView = _locationController.ViewObject;
+        var locationController = (IMVCANController)Current.Gui.GetController(new object[] { _doc.Location }, typeof(IMVCANController), UseDocument.Directly);
+        Current.Gui.FindAndAttachControlTo(locationController);
+        LocationController = locationController;
+
+        PenController = new PenAllPropertiesController(_doc.Pen);
       }
     }
 
@@ -79,7 +111,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Shapes
         if (!object.ReferenceEquals(_doc.Location, _locationController.ModelObject))
           _doc.Location.CopyFrom((ItemLocationDirect)_locationController.ModelObject);
 
-        _doc.Pen = _view.DocPen;
+        _doc.Pen = PenController.Pen;
       }
       catch (Exception ex)
       {

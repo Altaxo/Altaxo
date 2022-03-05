@@ -45,7 +45,7 @@ using Altaxo.Gui.Common.Drawing;
 
 namespace Altaxo.Gui.Drawing.DashPatternManagement
 {
-  public partial class DashPatternComboBox : DashPatternComboBoxBase, IDashPatternView
+  public partial class DashPatternComboBox : DashPatternComboBoxBase
   {
     private DashPatternToItemNameConverter _itemToItemNameConverter;
 

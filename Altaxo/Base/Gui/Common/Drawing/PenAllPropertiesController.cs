@@ -25,12 +25,12 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing.Drawing2D;
+using System.Windows.Input;
 using Altaxo.Drawing;
 using Altaxo.Units;
 
 namespace Altaxo.Gui.Common.Drawing
 {
-
   public interface IPenAllPropertiesView : IDataContextAwareView
   {
   }
@@ -40,12 +40,15 @@ namespace Altaxo.Gui.Common.Drawing
   {
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
-      yield return new ControllerAndSetNullMethod(_startCap, () => _startCap = null);
-      yield return new ControllerAndSetNullMethod(_endCap, () => _endCap = null);
+      yield return new ControllerAndSetNullMethod(_startCap, () => StartCap = null);
+      yield return new ControllerAndSetNullMethod(_endCap, () => EndCap = null);
     }
 
-    public PenAllPropertiesController() { }
-    public PenAllPropertiesController(PenX pen)
+    public PenAllPropertiesController()
+    {
+        CmdShowCustomPen = new RelayCommand(EhShowCustomPen);
+    }
+    public PenAllPropertiesController(PenX pen) : this()
     {
       _doc = _originalDoc = pen ?? throw new ArgumentNullException(nameof(pen));
       Initialize(true);
@@ -53,8 +56,23 @@ namespace Altaxo.Gui.Common.Drawing
 
     #region Binding
 
+    public ICommand CmdShowCustomPen { get; }
+
     private bool _showPlotColorsOnly;
-    public bool ShowPlotColorsOnly { get => _showPlotColorsOnly; set { if (!(ShowPlotColorsOnly == value)) { _showPlotColorsOnly = value; OnPropertyChanged(nameof(ShowPlotColorsOnly)); } } }
+
+    public bool ShowPlotColorsOnly
+    {
+      get => _showPlotColorsOnly;
+      set
+      {
+        if (!(_showPlotColorsOnly == value))
+        {
+          _showPlotColorsOnly = value;
+          OnPropertyChanged(nameof(ShowPlotColorsOnly));
+        }
+      }
+    }
+
 
     public BrushX Brush
     {
@@ -113,11 +131,54 @@ namespace Altaxo.Gui.Common.Drawing
       }
     }
 
-    StartEndCapController _startCap = new() { IsForEndCap = false };
-    public StartEndCapController StartCap => _startCap;
 
-    StartEndCapController _endCap = new() { IsForEndCap = true };
-    public StartEndCapController EndCap => _endCap;
+
+    StartEndCapController _startCap;
+
+    public StartEndCapController StartCap
+    {
+      get => _startCap;
+      set
+      {
+        if (!(_startCap == value))
+        {
+          if (_startCap is { } oldC)
+            oldC.MadeDirty -= EhStartCapChanged;
+
+          _startCap?.Dispose();
+          _startCap = value;
+
+          if (_startCap is { } newC)
+            newC.MadeDirty += EhStartCapChanged;
+
+          OnPropertyChanged(nameof(StartCap));
+        }
+      }
+    }
+
+
+    StartEndCapController _endCap;
+
+    public StartEndCapController EndCap
+    {
+      get => _endCap;
+      set
+      {
+        if (!(_endCap == value))
+        {
+          if (_endCap is { } oldC)
+            oldC.MadeDirty -= EhEndCapChanged;
+
+          _endCap?.Dispose();
+          _endCap = value;
+
+          if (_endCap is { } newC)
+            newC.MadeDirty += EhEndCapChanged;
+
+          OnPropertyChanged(nameof(EndCap));
+        }
+      }
+    }
 
 
     public LineJoin LineJoin
@@ -157,15 +218,15 @@ namespace Altaxo.Gui.Common.Drawing
     {
       if (initData)
       {
+        StartCap = new StartEndCapController() { IsForEndCap = false };
         StartCap.InitializeDocument(_doc.StartCap);
-        StartCap.MadeDirty -= EhStartCapChanged;
-        StartCap.MadeDirty += EhStartCapChanged;
 
+        EndCap = new StartEndCapController() { IsForEndCap = true };
         EndCap.InitializeDocument(_doc.EndCap);
-        EndCap.MadeDirty -= EhEndCapChanged;
-        EndCap.MadeDirty += EhEndCapChanged;
       }
     }
+
+  
 
     private void EhStartCapChanged(IMVCANDController obj)
     {
@@ -181,7 +242,6 @@ namespace Altaxo.Gui.Common.Drawing
       OnMadeDirty();
     }
 
-    #region IApplyController Members
 
     protected override void OnMadeDirty()
     {
@@ -194,6 +254,27 @@ namespace Altaxo.Gui.Common.Drawing
       return ApplyEnd(true, disposeController);
     }
 
-    #endregion IApplyController Members
+
+    private void EhShowCustomPen()
+    {
+      var ctrler = new PenAllPropertiesController(_doc)
+      {
+        ShowPlotColorsOnly = _showPlotColorsOnly,
+      };
+
+      if (Current.Gui.ShowDialog(ctrler, "Edit pen properties"))
+      {
+        _doc = (PenX)ctrler.ModelObject;
+        OnPropertyChanged(nameof(Brush));
+        OnPropertyChanged(nameof(LineThickness));
+        OnPropertyChanged(nameof(DashPattern));
+        OnPropertyChanged(nameof(DashCap));
+        StartCap.InitializeDocument(_doc.StartCap);
+        EndCap.InitializeDocument(_doc.EndCap);
+        OnPropertyChanged(nameof(LineJoin));
+        OnPropertyChanged(nameof(MiterLimit));
+        OnMadeDirty();
+      }
+    }
   }
 }

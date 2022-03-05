@@ -24,14 +24,14 @@
 
 using System.Windows.Controls;
 
-namespace Altaxo.Gui.Graph.Graph3D.Shapes
+namespace Altaxo.Gui.Drawing.DashPatternManagement
 {
   /// <summary>
-  /// Interaction logic for LineGraphicControl.xaml
+  /// Interaction logic for DashPatternControl.xaml
   /// </summary>
-  public partial class OpenPathShapeControl : UserControl, IOpenPathShapeView
+  public partial class DashPatternControl : UserControl, IDashPatternView
   {
-    public OpenPathShapeControl()
+    public DashPatternControl()
     {
       InitializeComponent();
     }

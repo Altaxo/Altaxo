@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2017 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -32,35 +32,56 @@ using Altaxo.Drawing;
 
 namespace Altaxo.Gui.Drawing.DashPatternManagement
 {
-  public interface IDashPatternView
+  public interface IDashPatternView : IDataContextAwareView
   {
-    IDashPattern SelectedItem { get; set; }
   }
 
   [ExpectedTypeOfView(typeof(IDashPatternView))]
   [UserControllerForObject(typeof(IDashPattern))]
   public class DashPatternController : MVCANControllerEditImmutableDocBase<IDashPattern, IDashPatternView>
   {
+    public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+    {
+      yield break;
+    }
+
+    #region Bindings
+
+    private IDashPattern _selectedItem;
+
+    public IDashPattern SelectedItem
+    {
+      get => _selectedItem;
+      set
+      {
+        if (!(_selectedItem == value))
+        {
+          _selectedItem = value;
+          OnPropertyChanged(nameof(SelectedItem));
+        }
+      }
+    }
+
+
+    #endregion
+
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
 
       if (_view is not null)
       {
-        _view.SelectedItem = _doc;
+        SelectedItem = _doc;
       }
     }
 
     public override bool Apply(bool disposeController)
     {
-      _doc = _view.SelectedItem;
+      _doc = SelectedItem;
 
       return ApplyEnd(true, disposeController);
     }
 
-    public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
-    {
-      yield break;
-    }
+   
   }
 }

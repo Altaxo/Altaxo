@@ -7,8 +7,10 @@
 						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
 						 xmlns:axog="clr-namespace:Altaxo.Gui;assembly=AltaxoBase"
 						 xmlns:axog3m="clr-namespace:Altaxo.Gui.Drawing.D3D"
+						 xmlns:axog3mModel="clr-namespace:Altaxo.Gui.Drawing.D3D;assembly=AltaxoBase"
 						 xmlns:axogdd="clr-namespace:Altaxo.Gui.Drawing.DashPatternManagement"
 						 xmlns:axogddl="clr-namespace:Altaxo.Gui.Drawing.D3D.LineCaps"
+             d:DataContext="{d:DesignInstance Type=axog3mModel:PenAllPropertiesController}"
              mc:Ignorable="d">
 	<Grid>
 		<Grid.RowDefinitions>
@@ -37,58 +39,115 @@
 			<ColumnDefinition Width="*" />
 		</Grid.ColumnDefinitions>
 
-		<Label Grid.Column="0" Grid.Row="0">Brush:</Label>
-		<axog3m:MaterialComboBox Grid.Column="1" Grid.Row="0" x:Name="_cbBrush" />
-		<Label Grid.Column="2" Grid.Row="0">Thickness1:</Label>
-		<axogcd:LineThicknessComboBox Grid.Column="3" Grid.Row="0" x:Name="_cbThickness1" />
+        <Label Grid.Column="0" Grid.Row="0" Content="Brush: "/>
+        <axog3m:MaterialComboBox Grid.Column="1" Grid.Row="0"
+                                 SelectedMaterial="{Binding Material}"
+                                 ShowPlotColorsOnly="{Binding ShowPlotColorsOnly}"
+                                 />
+        <Label Grid.Column="2" Grid.Row="0" Content="Thickness1: "/>
+        <axogcd:LineThicknessComboBox Grid.Column="3" Grid.Row="0" 
+                                      SelectedQuantityAsValueInPoints="{Binding LineThickness1}"/>
 
-		<Label Grid.Column="4" Grid.Row="0">Thickness2:</Label>
-		<axogcd:LineThicknessComboBox Grid.Column="5" Grid.Row="0" x:Name="_cbThickness2" />
+        <Label Grid.Column="4" Grid.Row="0" Content="Thickness2:"/>
+        <axogcd:LineThicknessComboBox Grid.Column="5" Grid.Row="0" 
+                                      SelectedQuantityAsValueInPoints="{Binding LineThickness2}" />
 
-		<Label Grid.Column="0" Grid.Row="2">Style:</Label>
-		<axogdd:DashPatternComboBox Grid.Column="1" Grid.Row="2" x:Name="_cbDashStyle" />
+        <Label Grid.Column="0" Grid.Row="2" Content="Style:"/>
+        <axogdd:DashPatternComboBox Grid.Column="1" Grid.Row="2" 
+                                    SelectedItem="{Binding DashPattern, Mode=TwoWay}"  />
 
 		<Label Grid.Column="2" Grid.Row="2" Content="CrossSection" />
 		<ComboBox x:Name="_guiCrossSection" Grid.Column="3" Grid.Row="2" />
 
-		<Label Grid.Column="0" Grid.Row="4" >DashStartCap:</Label>
-		<axogddl:LineCapComboBox Grid.Column="1" Grid.Row="4"  IsForEndCap="False" x:Name="_cbDashStartCap" />
-		<Label Grid.Column="2" Grid.Row="4">Min. abs. size:</Label>
-		<axogcd:LineCapSizeComboBox Grid.Column="3" Grid.Row="4" x:Name="_cbDashStartCapSize" ToolTip="Minimum absolute cap size" />
-		<Label Grid.Column="4" Grid.Row="4" Content="Min. rel. size:" />
-		<axogc:QuantityWithUnitTextBox Grid.Column ="5" Grid.Row="4" x:Name="_edDashStartCapRelSize" UnitEnvironment="{x:Static axog:RelationEnvironment.Instance}" ToolTip="Minimum cap size relative to pen width" />
+        <Label Grid.Column="0" Grid.Row="4" Content="DashStartCap:" />
+        <axogddl:LineCapComboBox Grid.Column="1" Grid.Row="4" 
+                                 SelectedLineCap="{Binding DashStartCap.LineCap, Mode=TwoWay}"
+                                 IsForEndCap="False" />
+        <Label Grid.Column="2" Grid.Row="4" Content="Min. abs. size:"/>
+        <axogcd:LineCapSizeComboBox Grid.Column="3" Grid.Row="4"
+                                    SelectedQuantity="{Binding DashStartCap.MinimumAbsoluteSize, Mode=TwoWay}"
+                                    UnitEnvironment="{Binding DashStartCap.MinimumAbsoluteSizeEnvironment, Mode=OneWayToSource}"
+                                    ToolTip="Minimum absolute cap size" />
+		
+        <Label Grid.Column="4" Grid.Row="4" Content="Min. rel. size:" />
+		<axogc:QuantityWithUnitTextBox Grid.Column ="5" Grid.Row="4"
+                                       SelectedQuantity="{Binding DashStartCap.MinimumRelativeSize, Mode=TwoWay}"
+                                       UnitEnvironment="{Binding DashStartCap.MinimumRelativeSizeEnvironment}" 
+                                       ToolTip="Minimum cap size relative to pen width" />
 
-		<Label Grid.Column="0" Grid.Row="6">DashEndCap:</Label>
-		<axogddl:LineCapComboBox Grid.Column="1" Grid.Row="6" IsForEndCap="True" x:Name="_cbDashEndCap" />
-		<Label Grid.Column="2" Grid.Row="6">Min. abs. size:</Label>
-		<axogcd:LineCapSizeComboBox Grid.Column="3" Grid.Row="6" x:Name="_cbDashEndCapSize" ToolTip="Minimum absolute cap size" />
-		<Label Grid.Column="4" Grid.Row="6" Content="Min. rel. size:" />
-		<axogc:QuantityWithUnitTextBox Grid.Column ="5" Grid.Row="6" x:Name="_edDashEndCapRelSize" UnitEnvironment="{x:Static axog:RelationEnvironment.Instance}" ToolTip="Minimum cap size relative to pen width" />
+        <Label Grid.Column="0" Grid.Row="6" Content="DashEndCap:"/>
+        <axogddl:LineCapComboBox Grid.Column="1" Grid.Row="6" 
+                                 SelectedLineCap="{Binding DashEndCap.LineCap, Mode=TwoWay}"
+                                 IsForEndCap="True"  />
 
-		<Label Grid.Column="0" Grid.Row="8" >LineStartCap:</Label>
-		<axogddl:LineCapComboBox Grid.Column="1" Grid.Row="8"  IsForEndCap="False" x:Name="_cbLineStartCap" />
-		<Label Grid.Column="2" Grid.Row="8">Min. abs. size:</Label>
-		<axogcd:LineCapSizeComboBox Grid.Column="3" Grid.Row="8" x:Name="_cbLineStartCapSize" ToolTip="Minimum absolute cap size" />
-		<Label Grid.Column="4" Grid.Row="8" Content="Min. rel. size:" />
-		<axogc:QuantityWithUnitTextBox Grid.Column ="5" Grid.Row="8" x:Name="_edLineStartCapRelSize" UnitEnvironment="{x:Static axog:RelationEnvironment.Instance}" ToolTip="Minimum cap size relative to pen width" />
+        <Label Grid.Column="2" Grid.Row="6" Content="Min. abs. size:"/>
+        <axogcd:LineCapSizeComboBox Grid.Column="3" Grid.Row="6"
+                                    SelectedQuantity="{Binding DashEndCap.MinimumAbsoluteSize, Mode=TwoWay}" 
+                                    UnitEnvironment="{Binding DashEndCap.MinimumAbsoluteSizeEnvironment, Mode=OneWayToSource}"  
+                                    ToolTip="Minimum absolute cap size" />
+		
+        <Label Grid.Column="4" Grid.Row="6" Content="Min. rel. size:" />
+		<axogc:QuantityWithUnitTextBox Grid.Column ="5" Grid.Row="6"
+                                       SelectedQuantity="{Binding DashEndCap.MinimumRelativeSize, Mode=TwoWay}" 
+                                       UnitEnvironment="{Binding DashEndCap.MinimumRelativeSizeEnvironment}"
+                                       ToolTip="Minimum cap size relative to pen width" />
 
-		<Label Grid.Column="0" Grid.Row="10">LineEndCap:</Label>
-		<axogddl:LineCapComboBox Grid.Column="1" Grid.Row="10" IsForEndCap="True" x:Name="_cbLineEndCap" />
-		<Label Grid.Column="2" Grid.Row="10">Min. abs. size:</Label>
-		<axogcd:LineCapSizeComboBox Grid.Column="3" Grid.Row="10" x:Name="_cbLineEndCapSize" ToolTip="Minimum absolute cap size" />
+        <Label Grid.Column="0" Grid.Row="8" Content="LineStartCap:" />
+        <axogddl:LineCapComboBox Grid.Column="1" Grid.Row="8"  
+                                 SelectedLineCap="{Binding StartCap.LineCap, Mode=TwoWay}"
+                                 IsForEndCap="False"  />
+
+        <Label Grid.Column="2" Grid.Row="8" Content="Min. abs. size:"/>
+        <axogcd:LineCapSizeComboBox Grid.Column="3" Grid.Row="8"
+                                    SelectedQuantity="{Binding StartCap.MinimumAbsoluteSize, Mode=TwoWay}" 
+                                    UnitEnvironment="{Binding StartCap.MinimumAbsoluteSizeEnvironment, Mode=OneWayToSource}"
+                                    ToolTip="Minimum absolute cap size" />
+		
+        <Label Grid.Column="4" Grid.Row="8" Content="Min. rel. size:" />
+		<axogc:QuantityWithUnitTextBox Grid.Column ="5" Grid.Row="8"
+                                       SelectedQuantity="{Binding StartCap.MinimumRelativeSize, Mode=TwoWay}" 
+                                       UnitEnvironment="{Binding StartCap.MinimumRelativeSizeEnvironment}"
+                                       ToolTip="Minimum cap size relative to pen width" />
+
+        <Label Grid.Column="0" Grid.Row="10" Content="LineEndCap:"/>
+        <axogddl:LineCapComboBox Grid.Column="1" Grid.Row="10"
+                                 SelectedLineCap="{Binding EndCap.LineCap, Mode=TwoWay}"
+                                 IsForEndCap="True"  />
+
+        <Label Grid.Column="2" Grid.Row="10" Content="Min. abs. size:"/>
+        <axogcd:LineCapSizeComboBox Grid.Column="3" Grid.Row="10"
+                                    SelectedQuantity="{Binding EndCap.MinimumAbsoluteSize, Mode=TwoWay}" 
+                                    UnitEnvironment="{Binding EndCap.MinimumAbsoluteSizeEnvironment, Mode=OneWayToSource}" 
+                                    ToolTip="Minimum absolute cap size" />
+        
 		<Label Grid.Column="4" Grid.Row="10" Content="Min. rel. size:" />
-		<axogc:QuantityWithUnitTextBox Grid.Column ="5" Grid.Row="10" x:Name="_edLineEndCapRelSize" UnitEnvironment="{x:Static axog:RelationEnvironment.Instance}" ToolTip="Minimum cap size relative to pen width" />
+		<axogc:QuantityWithUnitTextBox Grid.Column ="5" Grid.Row="10"
+                                       SelectedQuantity="{Binding EndCap.MinimumRelativeSize, Mode=TwoWay}"
+                                       UnitEnvironment="{Binding EndCap.MinimumRelativeSizeEnvironment}"
+                                       ToolTip="Minimum cap size relative to pen width" />
 
-		<Label Grid.Column="0" Grid.Row="12">Join:</Label>
-		<axog3m:LineJoinComboBox Grid.Column="1" Grid.Row="12" x:Name="_cbLineJoin" />
-		<Label Grid.Column="2" Grid.Row="12">Miter:</Label>
-		<axogcd:MiterLimitComboBox Grid.Column="3" Grid.Row="12" x:Name="_cbMiterLimit" />
+        <Label Grid.Column="0" Grid.Row="12" Content="Join:"/>
+        <axog3m:LineJoinComboBox Grid.Column="1" Grid.Row="12" 
+                                 SelectedLineJoin="{Binding LineJoin, Mode=TwoWay}" />
+
+        <Label Grid.Column="2" Grid.Row="12" Content="Miter:"/>
+        <axogcd:MiterLimitComboBox Grid.Column="3" Grid.Row="12"
+                                   SelectedQuantity="{Binding MiterLimit, Mode=TwoWay}" 
+                                   UnitEnvironment="{Binding MiterLimitEnvironment, Mode=OneWayToSource}" />
 
 		<GroupBox Grid.Column="0" Grid.Row="14" Grid.ColumnSpan="4" Header="Preview:">
 			<Grid>
 				<Rectangle Name="_previewRect" MinHeight="40" Fill="Azure" />
-				<Image Height="{Binding ElementName=_previewRect, Path=ActualHeight}" Width="{Binding ElementName=_previewRect, Path=ActualWidth}"  StretchDirection="Both" Stretch="Fill" x:Name="_previewPanel" />
-			</Grid>
+                <!-- Placeholder, see PenAllPropertiesControl for 2D pen -->
+                <!-- Currently, the preview is not functional -->
+                <Image
+                    Width="{Binding ElementName=_previewRect, Path=ActualWidth}"
+                    Height="{Binding ElementName=_previewRect, Path=ActualHeight}"
+                    Stretch="Fill"
+                    StretchDirection="Both"
+                    >
+                </Image>
+            </Grid>
 		</GroupBox>
 	</Grid>
 </UserControl>

@@ -25,111 +25,321 @@
 #nullable disable
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Altaxo.Gui.Drawing.D3D
 {
+  using System.Windows.Input;
   using Altaxo.Drawing.D3D;
-  using Altaxo.Graph.Graph3D;
+  using Altaxo.Units;
 
-  #region Interfaces
-
-  public interface IPenAllPropertiesView
+  public interface IPenAllPropertiesView : IDataContextAwareView
   {
-    PenX3D Pen { get; set; }
-
-    bool ShowPlotColorsOnly { set; }
   }
 
-  #endregion Interfaces
-
   [ExpectedTypeOfView(typeof(IPenAllPropertiesView))]
-  public class PenAllPropertiesController : IMVCAController
+  public class PenAllPropertiesController : MVCANDControllerEditImmutableDocBase<PenX3D, IPenAllPropertiesView>
   {
-    private IPenAllPropertiesView _view;
-    private PenX3D _doc;
-    private bool _showPlotColorsOnly;
-
-    public PenAllPropertiesController(PenX3D doc)
+    public PenAllPropertiesController()
     {
-      _doc = doc;
+      CmdShowCustomPen = new RelayCommand(EhShowCustomPen);
+    }
+
+
+    public PenAllPropertiesController(PenX3D pen) : this()
+    {
+      _doc = _originalDoc = pen ?? throw new ArgumentNullException(nameof(pen));
       Initialize(true);
     }
 
-    private void Initialize(bool initData)
+    public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
-      if (_view is not null)
-      {
-        _view.ShowPlotColorsOnly = _showPlotColorsOnly;
-        _view.Pen = _doc;
-      }
+      yield return new ControllerAndSetNullMethod(_dashStartCap, () => DashStartCap = null);
+      yield return new ControllerAndSetNullMethod(_dashEndCap, () => DashEndCap = null);
+
+      yield return new ControllerAndSetNullMethod(_startCap, () => StartCap = null);
+      yield return new ControllerAndSetNullMethod(_endCap, () => EndCap = null);
     }
 
-    public bool ShowPlotColorsOnly
+
+    #region Binding
+
+    public ICommand CmdShowCustomPen { get; }
+
+    private bool _showPlotColorsOnly;
+    public bool ShowPlotColorsOnly { get => _showPlotColorsOnly; set { if (!(ShowPlotColorsOnly == value)) { _showPlotColorsOnly = value; OnPropertyChanged(nameof(ShowPlotColorsOnly)); } } }
+
+    public IMaterial Material
     {
-      get
-      {
-        return _showPlotColorsOnly;
-      }
+      get => _doc.Material;
       set
       {
-        _showPlotColorsOnly = value;
-        if (_view is not null)
-          _view.ShowPlotColorsOnly = value;
-      }
-    }
-
-    #region IMVCController Members
-
-    public object ViewObject
-    {
-      get
-      {
-        return _view;
-      }
-      set
-      {
-        _view = value as IPenAllPropertiesView;
-
-        if (_view is not null)
+        if (!object.ReferenceEquals(Material, value))
         {
-          Initialize(false);
+          _doc = _doc.WithMaterial(value);
+          OnPropertyChanged(nameof(Material));
+          OnMadeDirty();
         }
       }
     }
 
-    public object ModelObject
+    public double LineThickness1
     {
-      get { return _doc; }
+      get => _doc.Thickness1;
+      set
+      {
+        if (!(LineThickness1 == value))
+        {
+          _doc = _doc.WithThickness1(value);
+          OnPropertyChanged(nameof(LineThickness1));
+          OnMadeDirty();
+        }
+      }
     }
 
-    public void Dispose()
+    public double LineThickness2
     {
+      get => _doc.Thickness2;
+      set
+      {
+        if (!(LineThickness2 == value))
+        {
+          _doc = _doc.WithThickness2(value);
+          OnPropertyChanged(nameof(LineThickness2));
+          OnMadeDirty();
+        }
+      }
     }
 
-    #endregion IMVCController Members
 
-    #region IApplyController Members
 
-    public bool Apply(bool disposeController)
+    public Altaxo.Drawing.IDashPattern DashPattern
     {
-      _doc = _view.Pen;
-      return true;
+      get => _doc.DashPattern;
+      set
+      {
+        if (!object.ReferenceEquals(DashPattern, value))
+        {
+          _doc = _doc.WithDashPattern(value);
+          OnPropertyChanged(nameof(DashPattern));
+          OnMadeDirty();
+        }
+      }
     }
 
-    /// <summary>
-    /// Try to revert changes to the model, i.e. restores the original state of the model.
-    /// </summary>
-    /// <param name="disposeController">If set to <c>true</c>, the controller should release all temporary resources, since the controller is not needed anymore.</param>
-    /// <returns>
-    ///   <c>True</c> if the revert operation was successfull; <c>false</c> if the revert operation was not possible (i.e. because the controller has not stored the original state of the model).
-    /// </returns>
-    public bool Revert(bool disposeController)
+
+
+    StartEndCapController _dashStartCap;
+
+    public StartEndCapController DashStartCap
     {
-      return false;
+      get => _dashStartCap;
+      set
+      {
+        if (!(_dashStartCap == value))
+        {
+          if (_dashStartCap is { } oldC)
+            oldC.MadeDirty -= EhDashStartCapChanged;
+
+          _dashStartCap?.Dispose();
+          _dashStartCap = value;
+
+          if (_dashStartCap is { } newC)
+            newC.MadeDirty += EhDashStartCapChanged;
+          OnPropertyChanged(nameof(DashStartCap));
+        }
+      }
     }
 
-    #endregion IApplyController Members
+
+    StartEndCapController _dashEndCap;
+
+    public StartEndCapController DashEndCap
+    {
+      get => _dashEndCap;
+      set
+      {
+        if (!(_dashEndCap == value))
+        {
+          if (_dashEndCap is { } oldC)
+            oldC.MadeDirty -= EhDashEndCapChanged;
+
+          _dashEndCap?.Dispose();
+          _dashEndCap = value;
+
+          if (_dashEndCap is { } newC)
+            newC.MadeDirty += EhDashEndCapChanged;
+
+          OnPropertyChanged(nameof(DashEndCap));
+        }
+      }
+    }
+
+
+    StartEndCapController _startCap;
+
+    public StartEndCapController StartCap
+    {
+      get => _startCap;
+      set
+      {
+        if (!(_startCap == value))
+        {
+          if (_startCap is { } oldC)
+            oldC.MadeDirty -= EhStartCapChanged;
+
+          _startCap?.Dispose();
+          _startCap = value;
+
+          if (_startCap is { } newC)
+            newC.MadeDirty += EhStartCapChanged;
+
+          OnPropertyChanged(nameof(StartCap));
+        }
+      }
+    }
+
+
+    StartEndCapController _endCap;
+
+    public StartEndCapController EndCap
+    {
+      get => _endCap;
+      set
+      {
+        if (!(_endCap == value))
+        {
+          if (_endCap is { } oldC)
+            oldC.MadeDirty -= EhEndCapChanged;
+
+          _endCap?.Dispose();
+          _endCap = value;
+
+          if (_endCap is { } newC)
+            newC.MadeDirty += EhEndCapChanged;
+
+          OnPropertyChanged(nameof(EndCap));
+        }
+      }
+    }
+
+    public PenLineJoin LineJoin
+    {
+      get => _doc.LineJoin;
+      set
+      {
+        if (!object.Equals(LineJoin, value))
+        {
+          _doc = _doc.WithLineJoin(value);
+          OnPropertyChanged(nameof(LineJoin));
+          OnMadeDirty();
+        }
+      }
+    }
+
+    public QuantityWithUnitGuiEnvironment MiterLimitEnvironment { get; set; } = Altaxo.Gui.RelationEnvironment.Instance;
+    public DimensionfulQuantity MiterLimit
+    {
+      get => new DimensionfulQuantity(_doc.MiterLimit, Altaxo.Units.Dimensionless.Unity.Instance).AsQuantityIn(MiterLimitEnvironment.DefaultUnit);
+      set
+      {
+        if (!(MiterLimit == value))
+        {
+          _doc = _doc.WithMiterLimit(value.AsValueIn(Altaxo.Units.Dimensionless.Unity.Instance));
+          OnPropertyChanged(nameof(MiterLimit));
+          OnMadeDirty();
+        }
+      }
+    }
+
+    public PenX3D Pen => _doc;
+
+    #endregion
+
+
+    protected override void Initialize(bool initData)
+    {
+      base.Initialize(initData);
+      if (initData)
+      {
+        DashStartCap = new StartEndCapController() { IsForEndCap = false };
+        DashStartCap.InitializeDocument(_doc.DashStartCap);
+
+        DashEndCap = new StartEndCapController() { IsForEndCap = true };
+        DashEndCap.InitializeDocument(_doc.DashEndCap);
+
+
+        StartCap = new StartEndCapController() { IsForEndCap = false };
+        StartCap.InitializeDocument(_doc.LineStartCap);
+
+        EndCap = new StartEndCapController() { IsForEndCap = true };
+        EndCap.InitializeDocument(_doc.LineEndCap);
+      }
+    }
+
+
+    private void EhDashStartCapChanged(IMVCANDController obj)
+    {
+      _doc = _doc.WithDashStartCap((ILineCap)obj.ProvisionalModelObject);
+      OnPropertyChanged(nameof(DashStartCap));
+      OnMadeDirty();
+    }
+
+    private void EhDashEndCapChanged(IMVCANDController obj)
+    {
+      _doc = _doc.WithDashEndCap((ILineCap)obj.ProvisionalModelObject);
+      OnPropertyChanged(nameof(EndCap));
+      OnMadeDirty();
+    }
+
+    private void EhStartCapChanged(IMVCANDController obj)
+    {
+      _doc = _doc.WithLineStartCap((ILineCap)obj.ProvisionalModelObject);
+      OnPropertyChanged(nameof(StartCap));
+      OnMadeDirty();
+    }
+
+    private void EhEndCapChanged(IMVCANDController obj)
+    {
+      _doc = _doc.WithLineEndCap((ILineCap)obj.ProvisionalModelObject);
+      OnPropertyChanged(nameof(EndCap));
+      OnMadeDirty();
+    }
+
+    protected override void OnMadeDirty()
+    {
+      OnPropertyChanged(nameof(Pen));
+      base.OnMadeDirty();
+    }
+
+    public override bool Apply(bool disposeController)
+    {
+      return ApplyEnd(true, disposeController);
+    }
+
+    private void EhShowCustomPen()
+    {
+      var ctrler = new PenAllPropertiesController(_doc)
+      {
+        ShowPlotColorsOnly = _showPlotColorsOnly,
+      };
+
+      if (Current.Gui.ShowDialog(ctrler, "Edit pen properties"))
+      {
+        _doc = (PenX3D)ctrler.ModelObject;
+        OnMadeDirty();
+        OnPropertyChanged(nameof(Material));
+        OnPropertyChanged(nameof(LineThickness1));
+        OnPropertyChanged(nameof(LineThickness2));
+        OnPropertyChanged(nameof(DashPattern));
+        DashStartCap.InitializeDocument(_doc.DashStartCap);
+        DashEndCap.InitializeDocument(_doc.DashEndCap);
+        StartCap.InitializeDocument(_doc.LineStartCap);
+        EndCap.InitializeDocument(_doc.LineEndCap);
+        OnPropertyChanged(nameof(LineJoin));
+        OnPropertyChanged(nameof(MiterLimit));
+        OnMadeDirty();
+      }
+    }
+
   }
 }

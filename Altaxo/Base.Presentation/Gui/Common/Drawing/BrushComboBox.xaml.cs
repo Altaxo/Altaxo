@@ -222,7 +222,7 @@ namespace Altaxo.Gui.Common.Drawing
 
     private void EhShowCustomPenDialog(object sender, RoutedEventArgs e)
     {
-      if (CustomPenCommand.CanExecute(SelectedBrush))
+      if (CustomPenCommand is not null && CustomPenCommand.CanExecute(SelectedBrush))
       {
         CustomPenCommand.Execute(SelectedBrush);
       }

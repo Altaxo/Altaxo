@@ -34,6 +34,7 @@ using Altaxo.Drawing.ColorManagement;
 
 namespace Altaxo.Gui.Drawing.D3D
 {
+  using System.Windows.Input;
   using Altaxo.Drawing;
   using Altaxo.Drawing.D3D;
   using Altaxo.Drawing.D3D.Material;
@@ -230,6 +231,40 @@ namespace Altaxo.Gui.Drawing.D3D
 
       if (SelectedMaterialChanged is not null)
         SelectedMaterialChanged(obj, args);
+    }
+
+    public static readonly DependencyProperty CustomPenCommandProperty =
+      DependencyProperty.RegisterAttached(
+        nameof(CustomPenCommand),
+        typeof(ICommand),
+        typeof(BrushComboBox),
+        new FrameworkPropertyMetadata(OnCustomPenCommandChanged)
+        );
+
+    public ICommand CustomPenCommand
+    {
+      get
+      {
+        return ((ICommand)GetValue(CustomPenCommandProperty));
+      }
+      set
+      {
+        SetValue(CustomPenCommandProperty, value);
+      }
+    }
+
+    protected static void OnCustomPenCommandChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
+    {
+      var thiss = (BrushComboBox)obj;
+      thiss._guiMenuShowCustomPen.Visibility = args.NewValue is null ? Visibility.Collapsed : Visibility.Visible;
+    }
+
+    private void EhShowCustomPenDialog(object sender, RoutedEventArgs e)
+    {
+      if (CustomPenCommand is not null && CustomPenCommand.CanExecute(SelectedMaterial))
+      {
+        CustomPenCommand.Execute(SelectedMaterial);
+      }
     }
 
     #endregion Dependency property
