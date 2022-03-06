@@ -3,11 +3,12 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
-						 xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing"
-						 xmlns:axogggpc="clr-namespace:Altaxo.Gui.Graph.Gdi.Plot.ColorProvider"
-						 xmlns:axoggs="clr-namespace:Altaxo.Gui.Graph.Scales"
-						 xmlns:axogdd3d="clr-namespace:Altaxo.Gui.Drawing.D3D"
+			 xmlns:axogcc="clr-namespace:Altaxo.Gui.Common.Converters"
+			 xmlns:axogggpc="clr-namespace:Altaxo.Gui.Graph.Gdi.Plot.ColorProvider"
+			 xmlns:axoggs="clr-namespace:Altaxo.Gui.Graph.Scales"
+			 xmlns:axogdd3d="clr-namespace:Altaxo.Gui.Drawing.D3D" 
+             xmlns:styles="clr-namespace:Altaxo.Gui.Graph.Graph3D.Plot.Styles;assembly=AltaxoBase" 
+             d:DataContext="{d:DesignInstance Type=styles:DataMeshPlotStyleController}"
              mc:Ignorable="d">
 	<UserControl.Resources>
 		<Style TargetType="Label">
@@ -20,21 +21,23 @@
 	<StackPanel Orientation="Vertical">
 		<GroupBox>
 			<GroupBox.Header>
-				<CheckBox x:Name="_guiUseCustomColorScale" Content="Use custom color scale:" Margin="4" Checked="EhUseCustomColorScaleChanged" Unchecked="EhUseCustomColorScaleChanged" />
+                <CheckBox IsChecked="{Binding IsCustomColorScaleUsed, Mode=TwoWay}"  Content="Use custom color scale:" Margin="4" />
 			</GroupBox.Header>
-			<axoggs:DensityScaleControl x:Name="_guiColorScale" />
-		</GroupBox>
+            <Border Visibility="{Binding IsCustomColorScaleUsed, Converter={x:Static axogcc:FalseToVisibilityCollapsedConverter.Instance}}">
+			<axoggs:DensityScaleControl DataContext="{Binding ScaleController}" />
+            </Border>
+        </GroupBox>
 
 		<GroupBox Header="Style:">
-			<axogggpc:ColorProviderControl x:Name="_colorProviderControl" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+			<axogggpc:ColorProviderControl DataContext="{Binding ColorProviderController}"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
 		</GroupBox>
 
 		<GroupBox Header="Material:">
-			<axogdd3d:MaterialControl x:Name="_guiMaterial" />
+			<axogdd3d:MaterialControl DataContext="{Binding MaterialController}" />
 		</GroupBox>
 
 		<GroupBox Header="Other:">
-			<CheckBox x:Name="_chkClipToLayer" Content="Clip to layer" />
+			<CheckBox IsChecked="{Binding ClipToLayer, Mode=TwoWay}" Content="Clip to layer" />
 		</GroupBox>
 	</StackPanel>
 </UserControl>

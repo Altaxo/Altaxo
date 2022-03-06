@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2016 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -23,43 +23,20 @@
 #endregion Copyright
 
 #nullable disable
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Altaxo.Drawing.D3D;
 using Altaxo.Graph.Gdi.Plot;
-using Altaxo.Graph.Gdi.Plot.Styles;
+using Altaxo.Graph.Graph3D.Plot.Styles;
+using Altaxo.Graph.Scales;
+using Altaxo.Gui.Drawing.D3D;
+using Altaxo.Gui.Graph.Gdi.Plot.ColorProvider;
+using Altaxo.Gui.Graph.Scales;
 
 namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 {
-  using Altaxo.Drawing.D3D;
-  using Altaxo.Graph.Graph3D.Plot.Styles;
-  using Altaxo.Graph.Scales;
-  using Drawing.D3D;
-  using Gdi.Plot.ColorProvider;
-  using Graph;
-  using Scales;
-
-  #region Interfaces
-
-  public interface IDataMeshPlotStyleView
+  public interface IDataMeshPlotStyleView : IDataContextAwareView
   {
-    IDensityScaleView ColorScaleView { get; }
-
-    bool IsCustomColorScaleUsed { get; set; }
-
-    IColorProviderView ColorProviderView { get; }
-
-    /// <summary>
-    /// Initializes the content of the ClipToLayer checkbox
-    /// </summary>
-    bool ClipToLayer { get; set; }
-
-    object MaterialViewObject { get; }
   }
-
-  #endregion Interfaces
 
   /// <summary>
   /// Controller for the density image plot style
@@ -68,16 +45,103 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
   [ExpectedTypeOfView(typeof(IDataMeshPlotStyleView))]
   public class DataMeshPlotStyleController : MVCANControllerEditOriginalDocBase<DataMeshPlotStyle, IDataMeshPlotStyleView>
   {
-    private IMVCANController _scaleController;
-    private IMVCANController _colorProviderController;
-    private IMVCANController _materialController;
-
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
-      yield return new ControllerAndSetNullMethod(_scaleController, () => _scaleController = null);
-      yield return new ControllerAndSetNullMethod(_colorProviderController, () => _colorProviderController = null);
-      yield return new ControllerAndSetNullMethod(_materialController, () => _materialController = null);
+      yield return new ControllerAndSetNullMethod(_scaleController, () => ScaleController = null);
+      yield return new ControllerAndSetNullMethod(_colorProviderController, () => ColorProviderController = null);
+      yield return new ControllerAndSetNullMethod(_materialController, () => MaterialController = null);
     }
+
+    #region Bindings
+
+
+    private bool _isCustomColorScaleUsed;
+
+    public bool IsCustomColorScaleUsed
+    {
+      get => _isCustomColorScaleUsed;
+      set
+      {
+        if (!(_isCustomColorScaleUsed == value))
+        {
+          _isCustomColorScaleUsed = value;
+          OnPropertyChanged(nameof(IsCustomColorScaleUsed));
+        }
+      }
+    }
+
+
+
+    private bool _clipToLayer;
+
+    /// <summary>
+    /// Initializes the content of the ClipToLayer checkbox
+    /// </summary>
+    public bool ClipToLayer
+    {
+      get => _clipToLayer;
+      set
+      {
+        if (!(_clipToLayer == value))
+        {
+          _clipToLayer = value;
+          OnPropertyChanged(nameof(ClipToLayer));
+        }
+      }
+    }
+
+    private IMVCANController _scaleController;
+
+    public IMVCANController ScaleController
+    {
+      get => _scaleController;
+      set
+      {
+        if (!(_scaleController == value))
+        {
+          _scaleController?.Dispose();
+          _scaleController = value;
+          OnPropertyChanged(nameof(ScaleController));
+        }
+      }
+    }
+
+    private IMVCANController _colorProviderController;
+
+    public IMVCANController ColorProviderController
+    {
+      get => _colorProviderController;
+      set
+      {
+        if (!(_colorProviderController == value))
+        {
+          _colorProviderController?.Dispose();
+          _colorProviderController = value;
+          OnPropertyChanged(nameof(ColorProviderController));
+        }
+      }
+    }
+
+    private IMVCANController _materialController;
+
+    public IMVCANController MaterialController
+    {
+      get => _materialController;
+      set
+      {
+        if (!(_materialController == value))
+        {
+          _materialController?.Dispose();
+          _materialController = value;
+          OnPropertyChanged(nameof(MaterialController));
+        }
+      }
+    }
+
+
+
+
+    #endregion
 
     protected override void Initialize(bool initData)
     {
@@ -85,26 +149,20 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
       if (initData)
       {
-        _scaleController = new DensityScaleController(newScale => _doc.ColorScale = (NumericalScale)newScale) { UseDocumentCopy = UseDocument.Directly };
-        _scaleController.InitializeDocument(_doc.ColorScale ?? new LinearScale());
+        var scaleController = new DensityScaleController(newScale => _doc.ColorScale = (NumericalScale)newScale) { UseDocumentCopy = UseDocument.Directly };
+        scaleController.InitializeDocument(_doc.ColorScale ?? new LinearScale());
+        ScaleController = scaleController;
 
-        _colorProviderController = new ColorProviderController(newColorProvider => _doc.ColorProvider = newColorProvider) { UseDocumentCopy = UseDocument.Directly };
-        _colorProviderController.InitializeDocument(_doc.ColorProvider);
+        var colorProviderController = new ColorProviderController(newColorProvider => _doc.ColorProvider = newColorProvider) { UseDocumentCopy = UseDocument.Directly };
+        colorProviderController.InitializeDocument(_doc.ColorProvider);
+        ColorProviderController = ColorProviderController;
 
-        _materialController = new MaterialController() { UseDocumentCopy = UseDocument.Directly };
-        _materialController.InitializeDocument(_doc.Material);
-      }
+        var materialController = new MaterialController() { UseDocumentCopy = UseDocument.Directly };
+        materialController.InitializeDocument(_doc.Material);
+        MaterialController = materialController;
 
-      if (_view is not null)
-      {
-        _scaleController.ViewObject = _view.ColorScaleView;
-        _view.IsCustomColorScaleUsed = _doc.ColorScale is not null;
-        _colorProviderController.ViewObject = _view.ColorProviderView;
-
-        if (_materialController.ViewObject is null)
-          _materialController.ViewObject = _view.MaterialViewObject;
-
-        _view.ClipToLayer = _doc.ClipToLayer;
+        IsCustomColorScaleUsed = _doc.ColorScale is not null;
+        ClipToLayer = _doc.ClipToLayer;
       }
     }
 
@@ -121,8 +179,8 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
       else
         _doc.Material = (IMaterial)_materialController.ModelObject;
 
-      _doc.ClipToLayer = _view.ClipToLayer;
-      _doc.ColorScale = _view.IsCustomColorScaleUsed ? (NumericalScale)_scaleController.ModelObject : null;
+      _doc.ClipToLayer = ClipToLayer;
+      _doc.ColorScale = IsCustomColorScaleUsed ? (NumericalScale)_scaleController.ModelObject : null;
       _doc.ColorProvider = (IColorProvider)_colorProviderController.ModelObject;
 
       return ApplyEnd(true, disposeController);
