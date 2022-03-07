@@ -119,7 +119,7 @@
             <GroupBox.Header>
                 <CheckBox IsChecked="{Binding EnableUserDefinedDropTarget, Mode=TwoWay}" Content="User defined drop target" />
             </GroupBox.Header>
-            <Grid x:Name="_guiUserDefinedDropTargetGrid" IsEnabled="{Binding EnableUserDefinedDropTarget}">
+            <Grid IsEnabled="{Binding EnableUserDefinedDropTarget}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" SharedSizeGroup="LabelColumn1" />
                     <ColumnDefinition Width="4" />
@@ -172,7 +172,9 @@
             Content="Indep. color:"
             />
         <axogcd:BrushComboBox
-            SelectedBrush="{Binding Pen.Brush}" ShowPlotColorsOnly="{Binding Pen.ShowPlotColorsOnly}"
+            SelectedBrush="{Binding Pen.Brush}" 
+            ShowPlotColorsOnly="{Binding Pen.ShowPlotColorsOnly}"
+            CustomPenCommand="{Binding Pen.CmdShowCustomPen}"
             Grid.Row="10"
             Grid.Column="2" />
 
@@ -204,12 +206,14 @@
             Grid.Column="2"
             IsForEndCap="False" />
         <axogcd:LineCapSizeComboBox
-            SelectedQuantity="{Binding Pen.StartCap.MinimumAbsoluteSize}" UnitEnvironment="{Binding Pen.StartCap.MinimumAbsoluteSizeEnvironment}"
+            SelectedQuantity="{Binding Pen.StartCap.MinimumAbsoluteSize}"
+            UnitEnvironment="{Binding Pen.StartCap.MinimumAbsoluteSizeEnvironment}"
             Grid.Row="14"
             Grid.Column="4"
             ToolTip="Minimum absolute cap size" />
         <axogc:QuantityWithUnitTextBox
-            SelectedQuantity="{Binding Pen.StartCap.MinimumRelativeSize}" UnitEnvironment="{Binding Pen.StartCap.MinimumRelativeSizeEnvironment}"
+            SelectedQuantity="{Binding Pen.StartCap.MinimumRelativeSize}"
+            UnitEnvironment="{Binding Pen.StartCap.MinimumRelativeSizeEnvironment}"
             Grid.Row="14"
             Grid.Column="5"
             Margin="4,0,0,0"
@@ -244,16 +248,18 @@
             Grid.Column="0"
             Content="Independent symbol size :" />
         <axogcd:LineCapSizeComboBox
-            SelectedQuantity="{Binding SymbolSize}" UnitEnvironment="{Binding SymbolSizeEnvironment}"
+            SelectedQuantity="{Binding SymbolSize}" 
+            UnitEnvironment="{Binding SymbolSizeEnvironment}"
             Grid.Row="18"
             Grid.Column="2" />
 
         <Label
             Grid.Row="20"
             Grid.Column="0"
-            Content="Line width 1 = " />
+            Content="Line width = " />
         <axogcd:LineThicknessComboBox
-            SelectedQuantity="{Binding LineWidth1Offset}" UnitEnvironment="{Binding LineWidthEnvironment}"
+            SelectedQuantity="{Binding LineWidth1Offset}"
+            UnitEnvironment="{Binding LineWidthEnvironment}"
             Grid.Row="20"
             Grid.Column="2" />
         <Label
@@ -261,7 +267,8 @@
             Grid.Column="3"
             Content="+" />
         <axogc:QuantityWithUnitTextBox
-            SelectedQuantity="{Binding LineWidth1Factor}" UnitEnvironment="{Binding LineFactorEnvironment}"
+            SelectedQuantity="{Binding LineWidth1Factor}"
+            UnitEnvironment="{Binding LineFactorEnvironment}"
             Grid.Row="20"
             Grid.Column="4"/>
         <Label
@@ -274,15 +281,17 @@
             Grid.Column="0"
             Content="Line gap at start = " />
             <axogcd:LineThicknessComboBox
-            SelectedQuantity="{Binding GapAtStartOffset}" UnitEnvironment="{Binding LineWidthEnvironment}"
-            Grid.Row="22"
-            Grid.Column="2" />
+                SelectedQuantity="{Binding GapAtStartOffset}" 
+                UnitEnvironment="{Binding LineWidthEnvironment}"
+                Grid.Row="22"
+                Grid.Column="2" />
         <Label
             Grid.Row="22"
             Grid.Column="3"
             Content="+" />
         <axogc:QuantityWithUnitTextBox
-            SelectedQuantity="{Binding GapAtStartFactor}" UnitEnvironment="{Binding LineFactorEnvironment}"
+            SelectedQuantity="{Binding GapAtStartFactor}"
+            UnitEnvironment="{Binding LineFactorEnvironment}"
             Grid.Row="22"
             Grid.Column="4"
             />
@@ -296,7 +305,8 @@
             Grid.Column="0"
             Content="Line gap at end = " />
         <axogcd:LineThicknessComboBox
-            SelectedQuantity="{Binding GapAtEndOffset}" UnitEnvironment="{Binding LineWidthEnvironment}"
+            SelectedQuantity="{Binding GapAtEndOffset}"
+            UnitEnvironment="{Binding LineWidthEnvironment}"
             Grid.Row="24"
             Grid.Column="2" />
         <Label
@@ -304,7 +314,8 @@
             Grid.Column="3"
             Content="+" />
         <axogc:QuantityWithUnitTextBox
-            SelectedQuantity="{Binding GapAtStartFactor}" UnitEnvironment="{Binding LineFactorEnvironment}"
+            SelectedQuantity="{Binding GapAtStartFactor}" 
+            UnitEnvironment="{Binding LineFactorEnvironment}"
             Grid.Row="24"
             Grid.Column="4"
             />

@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2016 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -27,83 +27,22 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Altaxo.Collections;
-using Altaxo.Drawing.D3D;
 using Altaxo.Graph;
 using Altaxo.Graph.Graph3D;
 using Altaxo.Graph.Graph3D.Plot.Styles;
-using Altaxo.Gui.Graph;
+using Altaxo.Gui.Drawing.D3D;
 using Altaxo.Gui.Graph.Plot.Groups;
 using Altaxo.Main;
 using Altaxo.Units;
 
 namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 {
-  #region Interfaces
-
   /// <summary>
   /// This view interface is for showing the options of the XYXYPlotScatterStyle
   /// </summary>
-  public interface IDropLinePlotStyleView
+  public interface IDropLinePlotStyleView : IDataContextAwareView
   {
-    bool AdditionalDropTargetIsEnabled { get; set; }
-
-    int AdditionalDropTargetPerpendicularAxisNumber { get; set; }
-
-    /// <summary>
-    /// Indicates whether _baseValue is a physical value or a logical value.
-    /// </summary>
-    bool AdditionalDropTargetUsePhysicalBaseValue { get; set; }
-
-    /// <summary>
-    /// The y-value where the item normally starts. This is either a logical value (_usePhysicalBaseValue==false) or a physical value.
-    /// </summary>
-    Altaxo.Data.AltaxoVariant AdditionalDropTargetBaseValue { get; set; }
-
-    /// <summary>
-    /// Initializes the plot style color combobox.
-    /// </summary>
-    PenX3D Pen { get; set; }
-
-    /// <summary>
-    /// Indicates, whether only colors of plot color sets should be shown.
-    /// </summary>
-    bool ShowPlotColorsOnly { set; }
-
-    bool IndependentColor { get; set; }
-
-    bool IndependentSymbolSize { get; set; }
-
-    double SymbolSize { get; set; }
-
-    double LineWidth1Offset { get; set; }
-    double LineWidth1Factor { get; set; }
-
-    double LineWidth2Offset { get; set; }
-    double LineWidth2Factor { get; set; }
-
-    /// <summary>
-    /// Intitalizes the drop line checkboxes.
-    /// </summary>
-    /// <param name="names">List of names plus the information if they are selected or not.</param>
-    void InitializeDropLineConditions(SelectableListNodeList names);
-
-    int SkipFrequency { get; set; }
-
-    bool IndependentSkipFrequency { get; set; }
-
-    double GapAtStartOffset { get; set; }
-    double GapAtStartFactor { get; set; }
-    double GapAtEndOffset { get; set; }
-    double GapAtEndFactor { get; set; }
-
-    #region events
-
-    event Action IndependentColorChanged;
-
-    #endregion events
   }
-
-  #endregion Interfaces
 
   /// <summary>
   /// Summary description for XYPlotScatterStyleController.
@@ -115,12 +54,347 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
     /// <summary>Tracks the presence of a color group style in the parent collection.</summary>
     private ColorGroupStylePresenceTracker _colorGroupStyleTracker;
 
-    private SelectableListNodeList _dropLineChoices;
-
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break; // no subcontrollers
     }
+
+    #region Bindings
+
+    private bool _independentSkipFrequency;
+
+    public bool IndependentSkipFrequency
+    {
+      get => _independentSkipFrequency;
+      set
+      {
+        if (!(_independentSkipFrequency == value))
+        {
+          _independentSkipFrequency = value;
+          OnPropertyChanged(nameof(IndependentSkipFrequency));
+        }
+      }
+    }
+
+    private int _SkipFrequency;
+
+    public int SkipFrequency
+    {
+      get => _SkipFrequency;
+      set
+      {
+        if (!(_SkipFrequency == value))
+        {
+          _SkipFrequency = value;
+          OnPropertyChanged(nameof(SkipFrequency));
+        }
+      }
+    }
+
+
+    private bool _ignoreMissingDataPoints;
+
+    public bool IgnoreMissingDataPoints
+    {
+      get => _ignoreMissingDataPoints;
+      set
+      {
+        if (!(_ignoreMissingDataPoints == value))
+        {
+          _ignoreMissingDataPoints = value;
+          OnPropertyChanged(nameof(IgnoreMissingDataPoints));
+        }
+      }
+    }
+
+
+    private bool _independentOnShiftingGroupStyles;
+
+    public bool IndependentOnShiftingGroupStyles
+    {
+      get => _independentOnShiftingGroupStyles;
+      set
+      {
+        if (!(_independentOnShiftingGroupStyles == value))
+        {
+          _independentOnShiftingGroupStyles = value;
+          OnPropertyChanged(nameof(IndependentOnShiftingGroupStyles));
+        }
+      }
+    }
+
+    private SelectableListNodeList _dropLineChoices;
+
+    public SelectableListNodeList DropLineChoices
+    {
+      get => _dropLineChoices;
+      set
+      {
+        if (!(_dropLineChoices == value))
+        {
+          _dropLineChoices = value;
+          OnPropertyChanged(nameof(DropLineChoices));
+        }
+      }
+    }
+
+
+    private bool _enableUserDefinedDropTarget;
+
+    public bool EnableUserDefinedDropTarget
+    {
+      get => _enableUserDefinedDropTarget;
+      set
+      {
+        if (!(_enableUserDefinedDropTarget == value))
+        {
+          _enableUserDefinedDropTarget = value;
+          OnPropertyChanged(nameof(EnableUserDefinedDropTarget));
+        }
+      }
+    }
+
+    private int _userDefinedDropTargetAxis = 2;
+
+    public int UserDefinedDropTargetAxis
+    {
+      get => _userDefinedDropTargetAxis;
+      set
+      {
+        if (!(_userDefinedDropTargetAxis == value))
+        {
+          _userDefinedDropTargetAxis = value;
+          OnPropertyChanged(nameof(UserDefinedDropTargetAxis));
+        }
+      }
+    }
+
+    private bool _UserDefinedPhysicalBaseValue;
+
+    public bool UserDefinedPhysicalBaseValue
+    {
+      get => _UserDefinedPhysicalBaseValue;
+      set
+      {
+        if (!(_UserDefinedPhysicalBaseValue == value))
+        {
+          _UserDefinedPhysicalBaseValue = value;
+          OnPropertyChanged(nameof(UserDefinedPhysicalBaseValue));
+        }
+      }
+    }
+
+    private double _userDefinedBaseValue;
+
+    public double UserDefinedBaseValue
+    {
+      get => _userDefinedBaseValue;
+      set
+      {
+        if (!(_userDefinedBaseValue == value))
+        {
+          _userDefinedBaseValue = value;
+          OnPropertyChanged(nameof(UserDefinedBaseValue));
+        }
+      }
+    }
+
+
+    private bool _independentColor;
+
+    public bool IndependentColor
+    {
+      get => _independentColor;
+      set
+      {
+        if (!(_independentColor == value))
+        {
+          _independentColor = value;
+          OnPropertyChanged(nameof(IndependentColor));
+          EhIndependentColorChanged();
+        }
+      }
+    }
+
+
+    private bool _independentSymbolSize;
+
+    public bool IndependentSymbolSize
+    {
+      get => _independentSymbolSize;
+      set
+      {
+        if (!(_independentSymbolSize == value))
+        {
+          _independentSymbolSize = value;
+          OnPropertyChanged(nameof(IndependentSymbolSize));
+        }
+      }
+    }
+
+    public QuantityWithUnitGuiEnvironment SymbolSizeEnvironment => LineCapSizeEnvironment.Instance;
+
+
+    private DimensionfulQuantity _symbolSize;
+
+    public DimensionfulQuantity SymbolSize
+    {
+      get => _symbolSize;
+      set
+      {
+        if (!(_symbolSize == value))
+        {
+          _symbolSize = value;
+          OnPropertyChanged(nameof(SymbolSize));
+        }
+      }
+    }
+
+    public QuantityWithUnitGuiEnvironment LineWidthEnvironment => LineCapSizeEnvironment.Instance;
+
+    private DimensionfulQuantity _lineWidth1Offset;
+
+    public DimensionfulQuantity LineWidth1Offset
+    {
+      get => _lineWidth1Offset;
+      set
+      {
+        if (!(_lineWidth1Offset == value))
+        {
+          _lineWidth1Offset = value;
+          OnPropertyChanged(nameof(LineWidth1Offset));
+        }
+      }
+    }
+
+    private DimensionfulQuantity _lineWidth2Offset;
+
+    public DimensionfulQuantity LineWidth2Offset
+    {
+      get => _lineWidth2Offset;
+      set
+      {
+        if (!(_lineWidth2Offset == value))
+        {
+          _lineWidth2Offset = value;
+          OnPropertyChanged(nameof(LineWidth2Offset));
+        }
+      }
+    }
+
+
+    public QuantityWithUnitGuiEnvironment LineFactorEnvironment => RelationEnvironment.Instance;
+
+    private DimensionfulQuantity _lineWidth1Factor;
+
+    public DimensionfulQuantity LineWidth1Factor
+    {
+      get => _lineWidth1Factor;
+      set
+      {
+        if (!(_lineWidth1Factor == value))
+        {
+          _lineWidth1Factor = value;
+          OnPropertyChanged(nameof(LineWidth1Factor));
+        }
+      }
+    }
+
+    private DimensionfulQuantity _lineWidth2Factor;
+
+    public DimensionfulQuantity LineWidth2Factor
+    {
+      get => _lineWidth2Factor;
+      set
+      {
+        if (!(_lineWidth2Factor == value))
+        {
+          _lineWidth2Factor = value;
+          OnPropertyChanged(nameof(LineWidth2Factor));
+        }
+      }
+    }
+
+
+
+    private DimensionfulQuantity _GapAtStartOffset;
+
+    public DimensionfulQuantity GapAtStartOffset
+    {
+      get => _GapAtStartOffset;
+      set
+      {
+        if (!(_GapAtStartOffset == value))
+        {
+          _GapAtStartOffset = value;
+          OnPropertyChanged(nameof(GapAtStartOffset));
+        }
+      }
+    }
+
+    private DimensionfulQuantity _GapAtStartFactor;
+
+    public DimensionfulQuantity GapAtStartFactor
+    {
+      get => _GapAtStartFactor;
+      set
+      {
+        if (!(_GapAtStartFactor == value))
+        {
+          _GapAtStartFactor = value;
+          OnPropertyChanged(nameof(GapAtStartFactor));
+        }
+      }
+    }
+
+    private DimensionfulQuantity _GapAtEndOffset;
+
+    public DimensionfulQuantity GapAtEndOffset
+    {
+      get => _GapAtEndOffset;
+      set
+      {
+        if (!(_GapAtEndOffset == value))
+        {
+          _GapAtEndOffset = value;
+          OnPropertyChanged(nameof(GapAtEndOffset));
+        }
+      }
+    }
+
+    private DimensionfulQuantity _GapAtEndFactor;
+
+    public DimensionfulQuantity GapAtEndFactor
+    {
+      get => _GapAtEndFactor;
+      set
+      {
+        if (!(_GapAtEndFactor == value))
+        {
+          _GapAtEndFactor = value;
+          OnPropertyChanged(nameof(GapAtEndFactor));
+        }
+      }
+    }
+
+    private PenAllPropertiesController _pen;
+
+    public PenAllPropertiesController Pen
+    {
+      get => _pen;
+      set
+      {
+        if (!(_pen == value))
+        {
+          _pen = value;
+          OnPropertyChanged(nameof(Pen));
+        }
+      }
+    }
+
+
+    #endregion
+
 
     public override void Dispose(bool isDisposing)
     {
@@ -140,36 +414,35 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
         _colorGroupStyleTracker = new ColorGroupStylePresenceTracker(_doc, EhIndependentColorChanged);
 
         InitializeDropLineChoices();
-      }
-      if (_view is not null)
-      {
-        _view.IndependentSkipFrequency = _doc.IndependentSkipFrequency;
-        _view.SkipFrequency = _doc.SkipFrequency;
-        _view.InitializeDropLineConditions(_dropLineChoices);
 
-        _view.AdditionalDropTargetIsEnabled = _doc.AdditionalDropTargetIsEnabled;
-        _view.AdditionalDropTargetPerpendicularAxisNumber = _doc.AdditionalDropTargetPerpendicularAxisNumber;
-        _view.AdditionalDropTargetUsePhysicalBaseValue = _doc.AdditionalDropTargetUsePhysicalBaseValue;
-        _view.AdditionalDropTargetBaseValue = _doc.AdditionalDropTargetBaseValue;
+        IndependentSkipFrequency = _doc.IndependentSkipFrequency;
+        SkipFrequency = _doc.SkipFrequency;
+
+        EnableUserDefinedDropTarget = _doc.AdditionalDropTargetIsEnabled;
+        UserDefinedDropTargetAxis = _doc.AdditionalDropTargetPerpendicularAxisNumber;
+        UserDefinedPhysicalBaseValue = _doc.AdditionalDropTargetUsePhysicalBaseValue;
+        UserDefinedBaseValue = _doc.AdditionalDropTargetBaseValue;
 
         // now we have to set all dialog elements to the right values
-        _view.IndependentColor = _doc.IndependentColor;
-        _view.ShowPlotColorsOnly = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentColor);
-        _view.Pen = _doc.Pen;
+        IndependentColor = _doc.IndependentColor;
+        Pen = new PenAllPropertiesController(_doc.Pen)
+        {
+          ShowPlotColorsOnly = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentColor)
+        };
 
-        _view.IndependentSymbolSize = _doc.IndependentSymbolSize;
-        _view.SymbolSize = _doc.SymbolSize;
+        IndependentSymbolSize = _doc.IndependentSymbolSize;
+        SymbolSize = new DimensionfulQuantity(_doc.SymbolSize, Altaxo.Units.Length.Point.Instance).AsQuantityIn(SymbolSizeEnvironment.DefaultUnit);
 
-        _view.LineWidth1Offset = _doc.LineWidth1Offset;
-        _view.LineWidth1Factor = _doc.LineWidth1Factor;
+        LineWidth1Offset = new DimensionfulQuantity(_doc.LineWidth1Offset, Altaxo.Units.Length.Point.Instance).AsQuantityIn(LineWidthEnvironment.DefaultUnit);
+        LineWidth1Factor = new DimensionfulQuantity(_doc.LineWidth1Factor, Altaxo.Units.Dimensionless.Unity.Instance).AsQuantityIn(LineFactorEnvironment.DefaultUnit);
 
-        _view.LineWidth2Offset = _doc.LineWidth2Offset;
-        _view.LineWidth2Factor = _doc.LineWidth2Factor;
+        LineWidth2Offset = new DimensionfulQuantity(_doc.LineWidth2Offset, Altaxo.Units.Length.Point.Instance).AsQuantityIn(LineWidthEnvironment.DefaultUnit);
+        LineWidth2Factor = new DimensionfulQuantity(_doc.LineWidth2Factor, Altaxo.Units.Dimensionless.Unity.Instance).AsQuantityIn(LineFactorEnvironment.DefaultUnit);
 
-        _view.GapAtStartOffset = _doc.GapAtStartOffset;
-        _view.GapAtStartFactor = _doc.GapAtStartFactor;
-        _view.GapAtEndOffset = _doc.GapAtEndOffset;
-        _view.GapAtEndFactor = _doc.GapAtEndFactor;
+        GapAtStartOffset = new DimensionfulQuantity(_doc.GapAtStartOffset, Altaxo.Units.Length.Point.Instance).AsQuantityIn(LineWidthEnvironment.DefaultUnit);
+        GapAtStartFactor = new DimensionfulQuantity(_doc.GapAtStartFactor, Altaxo.Units.Dimensionless.Unity.Instance).AsQuantityIn(LineFactorEnvironment.DefaultUnit);
+        GapAtEndOffset = new DimensionfulQuantity(_doc.GapAtEndOffset, Altaxo.Units.Length.Point.Instance).AsQuantityIn(LineWidthEnvironment.DefaultUnit);
+        GapAtEndFactor = new DimensionfulQuantity(_doc.GapAtEndFactor, Altaxo.Units.Dimensionless.Unity.Instance).AsQuantityIn(LineFactorEnvironment.DefaultUnit);
       }
     }
 
@@ -179,34 +452,34 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
       try
       {
         // Skip frequency
-        _doc.IndependentSkipFrequency = _view.IndependentSkipFrequency;
-        _doc.SkipFrequency = _view.SkipFrequency;
+        _doc.IndependentSkipFrequency = IndependentSkipFrequency;
+        _doc.SkipFrequency = SkipFrequency;
         // Drop targets
         _doc.DropTargets = new CSPlaneIDList(_dropLineChoices.Where(node => node.IsSelected).Select(node => (CSPlaneID)node.Tag));
 
-        _doc.AdditionalDropTargetIsEnabled = _view.AdditionalDropTargetIsEnabled;
-        _doc.AdditionalDropTargetPerpendicularAxisNumber = _view.AdditionalDropTargetPerpendicularAxisNumber;
-        _doc.AdditionalDropTargetUsePhysicalBaseValue = _view.AdditionalDropTargetUsePhysicalBaseValue;
-        _doc.AdditionalDropTargetBaseValue = _view.AdditionalDropTargetBaseValue;
+        _doc.AdditionalDropTargetIsEnabled = EnableUserDefinedDropTarget;
+        _doc.AdditionalDropTargetPerpendicularAxisNumber = UserDefinedDropTargetAxis;
+        _doc.AdditionalDropTargetUsePhysicalBaseValue = UserDefinedPhysicalBaseValue;
+        _doc.AdditionalDropTargetBaseValue = UserDefinedBaseValue;
 
         // Symbol Color
-        _doc.Pen = _view.Pen;
-        _doc.IndependentColor = _view.IndependentColor;
+        _doc.Pen = Pen.Pen;
+        _doc.IndependentColor = IndependentColor;
 
-        _doc.IndependentSymbolSize = _view.IndependentSymbolSize;
-        _doc.SymbolSize = _view.SymbolSize;
+        _doc.IndependentSymbolSize = IndependentSymbolSize;
+        _doc.SymbolSize = SymbolSize.AsValueIn(Altaxo.Units.Length.Point.Instance);
 
-        _doc.LineWidth1Offset = _view.LineWidth1Offset;
-        _doc.LineWidth1Factor = _view.LineWidth1Factor;
+        _doc.LineWidth1Offset = LineWidth1Offset.AsValueIn(Altaxo.Units.Length.Point.Instance);
+        _doc.LineWidth1Factor = LineWidth1Factor.AsValueInSIUnits;
 
-        _doc.LineWidth2Offset = _view.LineWidth2Offset;
-        _doc.LineWidth2Factor = _view.LineWidth2Factor;
+        _doc.LineWidth2Offset = LineWidth2Offset.AsValueIn(Altaxo.Units.Length.Point.Instance);
+        _doc.LineWidth2Factor = LineWidth2Factor.AsValueInSIUnits;
 
         // gap
-        _doc.GapAtStartOffset = _view.GapAtStartOffset;
-        _doc.GapAtStartFactor = _view.GapAtStartFactor;
-        _doc.GapAtEndOffset = _view.GapAtEndOffset;
-        _doc.GapAtEndFactor = _view.GapAtEndFactor;
+        _doc.GapAtStartOffset = GapAtStartOffset.AsValueIn(Altaxo.Units.Length.Point.Instance);
+        _doc.GapAtStartFactor = GapAtStartFactor.AsValueInSIUnits;
+        _doc.GapAtEndOffset = GapAtEndOffset.AsValueIn(Altaxo.Units.Length.Point.Instance);
+        _doc.GapAtEndFactor = GapAtEndFactor.AsValueInSIUnits;
       }
       catch (Exception ex)
       {
@@ -215,18 +488,6 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
       }
 
       return ApplyEnd(true, disposeController);
-    }
-
-    protected override void AttachView()
-    {
-      base.AttachView();
-      _view.IndependentColorChanged += EhIndependentColorChanged;
-    }
-
-    protected override void DetachView()
-    {
-      _view.IndependentColorChanged -= EhIndependentColorChanged;
-      base.DetachView();
     }
 
     public void InitializeDropLineChoices()
@@ -244,11 +505,10 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private void EhIndependentColorChanged()
     {
-      if (_view is not null)
-      {
-        _doc.IndependentColor = _view.IndependentColor;
-        _view.ShowPlotColorsOnly = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentColor);
-      }
+
+      _doc.IndependentColor = IndependentColor;
+      Pen.ShowPlotColorsOnly = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentColor);
+
     }
   } // end of class XYPlotScatterStyleController
 } // end of namespace

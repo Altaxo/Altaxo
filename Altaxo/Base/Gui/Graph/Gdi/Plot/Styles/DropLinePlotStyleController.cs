@@ -258,16 +258,16 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     public QuantityWithUnitGuiEnvironment LineWidthEnvironment => LineCapSizeEnvironment.Instance;
 
-    private DimensionfulQuantity _LineWidth1Offset;
+    private DimensionfulQuantity _lineWidth1Offset;
 
     public DimensionfulQuantity LineWidth1Offset
     {
-      get => _LineWidth1Offset;
+      get => _lineWidth1Offset;
       set
       {
-        if (!(_LineWidth1Offset == value))
+        if (!(_lineWidth1Offset == value))
         {
-          _LineWidth1Offset = value;
+          _lineWidth1Offset = value;
           OnPropertyChanged(nameof(LineWidth1Offset));
         }
       }
@@ -275,16 +275,16 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     public QuantityWithUnitGuiEnvironment LineFactorEnvironment => RelationEnvironment.Instance;
 
-    private DimensionfulQuantity _LineWidth1Factor;
+    private DimensionfulQuantity _lineWidth1Factor;
 
     public DimensionfulQuantity LineWidth1Factor
     {
-      get => _LineWidth1Factor;
+      get => _lineWidth1Factor;
       set
       {
-        if (!(_LineWidth1Factor == value))
+        if (!(_lineWidth1Factor == value))
         {
-          _LineWidth1Factor = value;
+          _lineWidth1Factor = value;
           OnPropertyChanged(nameof(LineWidth1Factor));
         }
       }
@@ -350,16 +350,16 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
       }
     }
 
-    private PenAllPropertiesController _Pen;
+    private PenAllPropertiesController _pen;
 
     public PenAllPropertiesController Pen
     {
-      get => _Pen;
+      get => _pen;
       set
       {
-        if (!(_Pen == value))
+        if (!(_pen == value))
         {
-          _Pen = value;
+          _pen = value;
           OnPropertyChanged(nameof(Pen));
         }
       }
@@ -401,8 +401,10 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
         // now we have to set all dialog elements to the right values
          IndependentColor = _doc.IndependentColor;
 
-        Pen = new PenAllPropertiesController(_doc.Pen);
-        Pen.ShowPlotColorsOnly = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentColor);
+        Pen = new PenAllPropertiesController(_doc.Pen)
+        {
+          ShowPlotColorsOnly = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentColor)
+        };
 
         IndependentSymbolSize = _doc.IndependentSymbolSize;
         SymbolSize = new DimensionfulQuantity(_doc.SymbolSize, Altaxo.Units.Length.Point.Instance).AsQuantityIn(SymbolSizeEnvironment.DefaultUnit);
