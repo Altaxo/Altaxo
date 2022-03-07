@@ -61,30 +61,92 @@
           <RowDefinition Height="4" />
         </Grid.RowDefinitions>
 
-        <CheckBox Grid.Row="0" Grid.Column="0" IsChecked="{Binding UseCommonErrorColumn, Mode=TwoWay}" Content="Use common error column:" />
+        <CheckBox Grid.Row="0" Grid.Column="0" 
+                  IsChecked="{Binding UseCommonErrorColumn, Mode=TwoWay}"
+                  Content="Use common error column:" />
 
-        <Label x:Name="_guiCommonErrorColumnLabel" Content="Common error column: " Grid.Row="2" Grid.Column="0" Visibility="{Binding UseCommonErrorColumn, Converter={x:Static axogcc:FalseToVisibilityHiddenConverter.Instance}}" />
-        <TextBox Text="{Binding CommonErrorColumnTransformationText}" ToolTip="{Binding CommonErrorColumnTransformationToolTip}"  IsEnabled="True" IsReadOnly="True" Grid.Row="2" Grid.Column="2" Visibility="{Binding UseCommonErrorColumn, Converter={x:Static axogcc:FalseToVisibilityHiddenConverter.Instance}}" />
-        <TextBox Text="{Binding CommonErrorColumnText}" ToolTip="{Binding CommonErrorColumnToolTip}" Background="{Binding CommonErrorColumnStatus, Converter={x:Static axogcc:PlotDataSeverityToBackground.Instance}}" IsEnabled="True" IsReadOnly="True" MinWidth="100" Grid.Row="2" Grid.Column="3" Visibility="{Binding UseCommonErrorColumn, Converter={x:Static axogcc:FalseToVisibilityHiddenConverter.Instance}}" />
+        <Label Grid.Row="2" Grid.Column="0" 
+               Content="Common error column: "
+               Visibility="{Binding UseCommonErrorColumn, Converter={x:Static axogcc:FalseToVisibilityHiddenConverter.Instance}}" />
+        <TextBox Grid.Row="2" Grid.Column="2"
+                 Text="{Binding CommonErrorColumnTransformationText}"
+                 Visibility="{Binding UseCommonErrorColumn, Converter={x:Static axogcc:FalseToVisibilityHiddenConverter.Instance}}"
+                 ToolTip="{Binding CommonErrorColumnTransformationToolTip}" 
+                 IsEnabled="True"
+                 IsReadOnly="True" />
+        <TextBox Grid.Row="2" Grid.Column="3" 
+                 Text="{Binding CommonErrorColumnText}"
+                 ToolTip="{Binding CommonErrorColumnToolTip}"
+                 Background="{Binding CommonErrorColumnStatus, Converter={x:Static axogcc:PlotDataSeverityToBackground.Instance}}" 
+                 Visibility="{Binding UseCommonErrorColumn, Converter={x:Static axogcc:FalseToVisibilityHiddenConverter.Instance}}"
+                 IsEnabled="True" 
+                 IsReadOnly="True" 
+                 MinWidth="100" />
 
-                <Label  Content="Positive error column:" Grid.Row="2" Grid.Column="0" Visibility="{Binding UseCommonErrorColumn, Converter={x:Static axogcc:TrueToVisibilityHiddenConverter.Instance}}" />
-                <TextBox Text="{Binding PositiveErrorColumnTransformationText}" ToolTip="{Binding PositiveErrorColumnTransformationToolTip}"  IsEnabled="True" IsReadOnly="True" Grid.Row="2" Grid.Column="2" Visibility="{Binding UseCommonErrorColumn, Converter={x:Static axogcc:TrueToVisibilityHiddenConverter.Instance}}" />
-                <TextBox Text="{Binding PositiveErrorColumnText}" ToolTip="{Binding PositiveErrorColumnToolTip}" Background="{Binding PositiveErrorColumnStatus, Converter={x:Static axogcc:PlotDataSeverityToBackground.Instance}}" IsEnabled="True" IsReadOnly="True" MinWidth="100" Grid.Row="2" Grid.Column="3" Visibility="{Binding UseCommonErrorColumn, Converter={x:Static axogcc:TrueToVisibilityHiddenConverter.Instance}}" />
-                <TextBlock Text="Go to 'Data' tab to change column!" Grid.Row="2" Grid.Column="4" Margin="4,0,0,0" />
-                <Label x:Name="_guiNegativeErrorColumnLabel" Content="Negative error column:" Grid.Row="4" Grid.Column="0" Visibility="{Binding UseCommonErrorColumn, Converter={x:Static axogcc:TrueToVisibilityHiddenConverter.Instance}}" />
-                <TextBox Text="{Binding NegativeErrorColumnTransformationText}" ToolTip="{Binding NegativeErrorColumnTransformationToolTip}" IsEnabled="True" IsReadOnly="True" Grid.Row="4" Grid.Column="2" Visibility="{Binding UseCommonErrorColumn, Converter={x:Static axogcc:TrueToVisibilityHiddenConverter.Instance}}" />
-                <TextBox Text="{Binding NegativeErrorColumnText}" ToolTip="{Binding NegativeErrorColumnToolTip}" Background="{Binding NegativeErrorColumnStatus, Converter={x:Static axogcc:PlotDataSeverityToBackground.Instance}}" IsEnabled="True" IsReadOnly="True" MinWidth="100" Grid.Row="4" Grid.Column="3" Visibility="{Binding UseCommonErrorColumn, Converter={x:Static axogcc:TrueToVisibilityHiddenConverter.Instance}}" />
-                <TextBlock x:Name="_guiNegativeErrorColumnHint" Text="Go to 'Data' tab to change column!" Grid.Row="4" Grid.Column="4" Margin="4,0,0,0" Visibility="{Binding UseCommonErrorColumn, Converter={x:Static axogcc:TrueToVisibilityHiddenConverter.Instance}}" />
+                <Label Grid.Row="2" Grid.Column="0"
+                       Visibility="{Binding UseCommonErrorColumn, Converter={x:Static axogcc:TrueToVisibilityHiddenConverter.Instance}}"   
+                       Content="Positive error column:" />
+                <TextBox Grid.Row="2" Grid.Column="2" 
+                         Text="{Binding PositiveErrorColumnTransformationText}"
+                         ToolTip="{Binding PositiveErrorColumnTransformationToolTip}"
+                         Visibility="{Binding UseCommonErrorColumn, Converter={x:Static axogcc:TrueToVisibilityHiddenConverter.Instance}}"                          IsEnabled="True" 
+                         IsReadOnly="True" />
+                <TextBox Grid.Row="2" Grid.Column="3"
+                         Text="{Binding PositiveErrorColumnText}" 
+                         ToolTip="{Binding PositiveErrorColumnToolTip}"
+                         Background="{Binding PositiveErrorColumnStatus, Converter={x:Static axogcc:PlotDataSeverityToBackground.Instance}}"
+                         Visibility="{Binding UseCommonErrorColumn, Converter={x:Static axogcc:TrueToVisibilityHiddenConverter.Instance}}"
+                         IsEnabled="True" 
+                         IsReadOnly="True"
+                         MinWidth="100" />
+                <TextBlock Grid.Row="2" Grid.Column="4"
+                           Text="Go to 'Data' tab to change column!"
+                           Margin="4,0,0,0" />
+
+                <Label Grid.Row="4" Grid.Column="0"
+                       Visibility="{Binding UseCommonErrorColumn, Converter={x:Static axogcc:TrueToVisibilityHiddenConverter.Instance}}" 
+                       Content="Negative error column:" />
+
+                <TextBox Grid.Row="4" Grid.Column="2"
+                         Text="{Binding NegativeErrorColumnTransformationText}"
+                         ToolTip="{Binding NegativeErrorColumnTransformationToolTip}"
+                         Visibility="{Binding UseCommonErrorColumn, Converter={x:Static axogcc:TrueToVisibilityHiddenConverter.Instance}}"
+                         IsEnabled="True"
+                         IsReadOnly="True" />
+                <TextBox Grid.Row="4" Grid.Column="3" 
+                         Text="{Binding NegativeErrorColumnText}" 
+                         ToolTip="{Binding NegativeErrorColumnToolTip}"
+                         Background="{Binding NegativeErrorColumnStatus, Converter={x:Static axogcc:PlotDataSeverityToBackground.Instance}}" 
+                         Visibility="{Binding UseCommonErrorColumn, Converter={x:Static axogcc:TrueToVisibilityHiddenConverter.Instance}}" 
+                         IsEnabled="True"
+                         IsReadOnly="True" 
+                         MinWidth="100" />
+                <TextBlock Grid.Row="4" Grid.Column="4" 
+                           Visibility="{Binding UseCommonErrorColumn, Converter={x:Static axogcc:TrueToVisibilityHiddenConverter.Instance}}"
+                           Text="Go to 'Data' tab to change column!"
+                           Margin="4,0,0,0" />
         <GroupBox Header="Value interpretation" Margin="4,4,0,0" Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="4">
-          <axogc:SingleChoiceRadioWrapPanel ItemsSource="{Binding MeaningOfValues.Items}" SelectedItem="{Binding MeaningOfValues.SelectedItem}" />
+          <axogc:SingleChoiceRadioWrapPanel 
+              ItemsSource="{Binding MeaningOfValues.Items}"
+              SelectedItem="{Binding MeaningOfValues.SelectedItem}" />
         </GroupBox>
 
-        <CheckBox Grid.Row="8" Grid.Column="0" IsChecked="{Binding IndependentSkipFrequency, Mode=TwoWay}" Content="Independent skip frequency :" />
-        <axogc:Int32UpDown Grid.Row="8" Grid.Column="2" Grid.ColumnSpan="2" Value="{Binding SkipFrequency}" Minimum="1" />
+        <CheckBox Grid.Row="8" Grid.Column="0" 
+                  IsChecked="{Binding IndependentSkipFrequency, Mode=TwoWay}"
+                  Content="Independent skip frequency :" />
+          
+        <axogc:Int32UpDown Grid.Row="8" Grid.Column="2" Grid.ColumnSpan="2" 
+                           Value="{Binding SkipFrequency}"
+                           Minimum="1" />
 
-        <CheckBox Grid.Row="10" Grid.Column="0" Grid.ColumnSpan="4" IsChecked="{Binding IgnoreMissingDataPoints, Mode=TwoWay}" Content="Ignore missing data points" ToolTip="If true, missing data points are treated as if not present." />
+        <CheckBox Grid.Row="10" Grid.Column="0" Grid.ColumnSpan="4"
+                  IsChecked="{Binding IgnoreMissingDataPoints, Mode=TwoWay}" 
+                  Content="Ignore missing data points"
+                  ToolTip="If true, missing data points are treated as if not present." />
 
-        <CheckBox IsChecked="{Binding IndependentOnShiftingGroupStyles, Mode=TwoWay}" Content="Independent on data shifting group styles" Grid.Row="12" Grid.Column="0" Grid.ColumnSpan="4" />
+        <CheckBox Grid.Row="12" Grid.Column="0" Grid.ColumnSpan="4"
+                  IsChecked="{Binding IndependentOnShiftingGroupStyles, Mode=TwoWay}" 
+                  Content="Independent on data shifting group styles" />
       </Grid>
     </GroupBox>
 
@@ -118,37 +180,67 @@
           <RowDefinition Height="Auto" />
           <RowDefinition Height="4" />
         </Grid.RowDefinitions>
-        <CheckBox Grid.Column="0" Grid.Row="0" IsChecked="{Binding IndependentColor, Mode=TwoWay}" Content="Independent color :" />
-        <axogcd:BrushComboBox Grid.Row="0" Grid.Column="2" Grid.ColumnSpan="4" SelectedBrush="{Binding Pen.Brush}" ShowPlotColorsOnly="{Binding Pen.ShowPlotColorsOnly}" />
+        <CheckBox Grid.Column="0" Grid.Row="0" 
+                  IsChecked="{Binding IndependentColor, Mode=TwoWay}"
+                  Content="Independent color :" />
+        <axogcd:BrushComboBox Grid.Row="0" Grid.Column="2" Grid.ColumnSpan="4"
+                              SelectedBrush="{Binding Pen.Brush}"
+                              ShowPlotColorsOnly="{Binding Pen.ShowPlotColorsOnly}" 
+                              CustomPenCommand="{Binding Pen.CmdShowCustomPen}" />
 
-        <CheckBox Grid.Row="2" Grid.Column="0" IsChecked="{Binding IndependentDashPattern, Mode=TwoWay}"  Content="Independent dash pattern :" />
-        <axogddpm:DashPatternComboBox Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="4" SelectedItem="{Binding Pen.DashPattern}"/>
+        <CheckBox Grid.Row="2" Grid.Column="0" 
+                  IsChecked="{Binding IndependentDashPattern, Mode=TwoWay}"
+                  Content="Independent dash pattern :" />
+        <axogddpm:DashPatternComboBox Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="4" 
+                                      SelectedItem="{Binding Pen.DashPattern}"/>
 
-        <CheckBox IsChecked="{Binding IndependentSymbolSize, Mode=TwoWay}" Content="Independent symbol size :"  Grid.Row="4" Grid.Column="0" />
-        <axogcd:LineCapSizeComboBox Grid.Row="4" Grid.Column="2" SelectedQuantity="{Binding SymbolSize}" UnitEnvironment="{Binding SymbolSizeEnvironment}" />
+        <CheckBox Grid.Row="4" Grid.Column="0"
+                  IsChecked="{Binding IndependentSymbolSize, Mode=TwoWay}"
+                  Content="Independent symbol size :"  />
+        <axogcd:LineCapSizeComboBox Grid.Row="4" Grid.Column="2"
+                                    SelectedQuantity="{Binding SymbolSize}"
+                                    UnitEnvironment="{Binding SymbolSizeEnvironment}" />
 
         <Label Content="Line width 1 = " Grid.Row="6" Grid.Column="0" />
-        <axogcd:LineThicknessComboBox Grid.Row="6" Grid.Column="2" SelectedQuantity="{Binding LineWidth1Offset}" UnitEnvironment="{Binding LineWidthEnvironment}" />
+        <axogcd:LineThicknessComboBox Grid.Row="6" Grid.Column="2"
+                                      SelectedQuantity="{Binding LineWidth1Offset}"
+                                      UnitEnvironment="{Binding LineWidthEnvironment}" />
         <Label Content="+" Grid.Row="6" Grid.Column="3" />
-        <axogc:QuantityWithUnitTextBox Grid.Row="6" Grid.Column="4" SelectedQuantity="{Binding LineWidth1Factor}" UnitEnvironment="{Binding LineFactorEnvironment}" />
+        <axogc:QuantityWithUnitTextBox Grid.Row="6" Grid.Column="4"
+                                       SelectedQuantity="{Binding LineWidth1Factor}" 
+                                       UnitEnvironment="{Binding LineFactorEnvironment}" />
         <Label Content="* symbolSize" Grid.Row="6" Grid.Column="5" />
 
         <Label Content="End cap :" Grid.Row="10" Grid.Column="0" />
-        <axogcd:LineCapComboBox Grid.Row="10" Grid.Column="2" Grid.ColumnSpan="4" SelectedLineCap="{Binding Pen.EndCap}" />
+        <axogcd:LineCapComboBox Grid.Row="10" Grid.Column="2" Grid.ColumnSpan="4"
+                                SelectedLineCap="{Binding Pen.EndCap}" />
 
         <Label Content="End cap size = " Grid.Row="12" Grid.Column="0" />
-        <axogcd:LineThicknessComboBox Grid.Row="12" Grid.Column="2" SelectedQuantity="{Binding EndCapSizeOffset}" UnitEnvironment="{Binding LineWidthEnvironment}" />
+        <axogcd:LineThicknessComboBox Grid.Row="12" Grid.Column="2" 
+                                      SelectedQuantity="{Binding EndCapSizeOffset}" 
+                                      UnitEnvironment="{Binding LineWidthEnvironment}" />
         <Label Content="+" Grid.Row="12" Grid.Column="3" />
-        <axogc:QuantityWithUnitTextBox Grid.Row="12" Grid.Column="4" SelectedQuantity="{Binding EndCapSizeFactor}"  UnitEnvironment="{Binding LineFactorEnvironment}" />
+        <axogc:QuantityWithUnitTextBox Grid.Row="12" Grid.Column="4"
+                                       SelectedQuantity="{Binding EndCapSizeFactor}"
+                                       UnitEnvironment="{Binding LineFactorEnvironment}" />
         <Label Content="* symbolSize" Grid.Row="12" Grid.Column="5" />
 
-        <CheckBox Content="Use line-symbol gap = " Grid.Row="14" Grid.Column="0"  IsChecked="{Binding UseSymbolGap, Mode=TwoWay}"/>
-        <axogcd:LineThicknessComboBox Grid.Row="14" Grid.Column="2" SelectedQuantity="{Binding SymbolGapOffset}" UnitEnvironment="{Binding LineWidthEnvironment}" />
+                <CheckBox Grid.Row="14" Grid.Column="0"
+                          IsChecked="{Binding UseSymbolGap, Mode=TwoWay}"
+                          Content="Use line-symbol gap = " />
+        <axogcd:LineThicknessComboBox Grid.Row="14" Grid.Column="2" 
+                                      SelectedQuantity="{Binding SymbolGapOffset}" 
+                                      UnitEnvironment="{Binding LineWidthEnvironment}" />
         <Label Content="+" Grid.Row="14" Grid.Column="3" />
-        <axogc:QuantityWithUnitTextBox Grid.Row="14" Grid.Column="4" SelectedQuantity="{Binding SymbolGapFactor}" UnitEnvironment="{Binding LineFactorEnvironment}" />
+        <axogc:QuantityWithUnitTextBox Grid.Row="14" Grid.Column="4"
+                                       SelectedQuantity="{Binding SymbolGapFactor}" 
+                                       UnitEnvironment="{Binding LineFactorEnvironment}" />
         <Label Content="* symbolSize" Grid.Row="14" Grid.Column="5" />
 
-        <CheckBox IsChecked="{Binding ForceVisibilityOfEndCap, Mode=TwoWay}" Content="Force visibility of end cap even if line-symbol gap is larger than error" Grid.Row="16" Grid.Column="0" Grid.ColumnSpan="6" ToolTip="If checked, the end cap will be shown even if the line length is zero, because the line-symbol gap is larger than the error itself." />
+                <CheckBox Grid.Row="16" Grid.Column="0" Grid.ColumnSpan="6"
+                          IsChecked="{Binding ForceVisibilityOfEndCap, Mode=TwoWay}" 
+                          Content="Force visibility of end cap even if line-symbol gap is larger than error"
+                          ToolTip="If checked, the end cap will be shown even if the line length is zero, because the line-symbol gap is larger than the error itself." />
       </Grid>
     </GroupBox>
   </StackPanel>

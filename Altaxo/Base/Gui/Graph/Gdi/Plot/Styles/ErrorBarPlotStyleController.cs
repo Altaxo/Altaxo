@@ -61,11 +61,11 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     public override bool InitializeDocument(params object[] args)
     {
-      if (args.Length >= 2 && (args[1] is DataTable))
-        _supposedParentDataTable = (DataTable)args[1];
+      if (args.Length >= 2 && (args[1] is DataTable dt))
+        _supposedParentDataTable = dt;
 
-      if (args.Length >= 3 && args[2] is int)
-        _supposedGroupNumber = (int)args[2];
+      if (args.Length >= 3 && args[2] is int gn)
+        _supposedGroupNumber = gn;
 
       return base.InitializeDocument(args);
     }
@@ -626,8 +626,10 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
         IndependentColor = _doc.IndependentColor;
         IndependentDashPattern = _doc.IndependentDashPattern;
-        Pen = new PenAllPropertiesController(_doc.Pen);
-        Pen.ShowPlotColorsOnly = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentColor);
+        Pen = new PenAllPropertiesController(_doc.Pen)
+        {
+          ShowPlotColorsOnly = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentColor)
+        };
 
         IndependentSymbolSize = _doc.IndependentSymbolSize;
         SymbolSize = new DimensionfulQuantity(_doc.SymbolSize, Altaxo.Units.Length.Point.Instance).AsQuantityIn(SymbolSizeEnvironment.DefaultUnit);

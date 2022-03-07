@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2016 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -25,105 +25,21 @@
 #nullable disable
 using System;
 using System.Collections.Generic;
-using System.Text;
 using Altaxo.Collections;
 using Altaxo.Data;
-using Altaxo.Drawing.D3D;
 using Altaxo.Graph.Graph3D.Plot.Styles;
+using Altaxo.Gui.Common;
 using Altaxo.Gui.Data;
-using Altaxo.Gui.Graph;
-using Altaxo.Gui.Graph.Graph3D.Plot.Data;
+using Altaxo.Gui.Drawing.D3D;
 using Altaxo.Gui.Graph.Plot.Data;
 using Altaxo.Gui.Graph.Plot.Groups;
+using Altaxo.Units;
 
 namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 {
-  #region Interfaces
-
-  public interface IErrorBarPlotStyleView
+  public interface IErrorBarPlotStyleView : IDataContextAwareView
   {
-    bool IndependentColor { get; set; }
-
-    bool IndependentDashPattern { get; set; }
-
-    bool ShowPlotColorsOnly { set; }
-
-    PenX3D Pen { get; set; }
-
-    bool IndependentSymbolSize { get; set; }
-
-    double SymbolSize { get; set; }
-
-    double LineWidth1Offset { get; set; }
-    double LineWidth1Factor { get; set; }
-    double LineWidth2Offset { get; set; }
-    double LineWidth2Factor { get; set; }
-
-    double EndCapSizeOffset { get; set; }
-    double EndCapSizeFactor { get; set; }
-
-    bool UseSymbolGap { get; set; }
-
-    double SymbolGapOffset { get; set; }
-
-    double SymbolGapFactor { get; set; }
-
-    bool ForceVisibilityOfEndCap { get; set; }
-
-    int SkipFrequency { get; set; }
-
-    bool IndependentSkipFrequency { get; set; }
-
-    bool IndependentOnShiftingGroupStyles { get; set; }
-
-    bool UseCommonErrorColumn { get; set; }
-
-    void Initialize_MeaningOfValues(SelectableListNodeList list);
-
-    /// <summary>
-    /// Initializes the common error column.
-    /// </summary>
-    /// <param name="columnAsText">Column's name.</param>
-    /// <param name="toolTip"></param>
-    /// <param name="status"></param>
-    void Initialize_CommonErrorColumn(string columnAsText, string toolTip, int status);
-
-    void Initialize_CommonErrorColumnTransformation(string transformationTextToShow, string transformationToolTip);
-
-    /// <summary>
-    /// Initializes the positive error column.
-    /// </summary>
-    /// <param name="positiveErrorColumnAsText">Column's name.</param>
-    /// <param name="positiveErrorColumnToolTip"></param>
-    /// <param name="positiveErrorColumnStatus"></param>
-    void Initialize_PositiveErrorColumn(string positiveErrorColumnAsText, string positiveErrorColumnToolTip, int positiveErrorColumnStatus);
-
-    void Initialize_PositiveErrorColumnTransformation(string transformationTextToShow, string transformationToolTip);
-
-    /// <summary>
-    /// Initializes the positive error column.
-    /// </summary>
-    /// <param name="negativeErrorColumnAsText">Column's name.</param>
-    /// <param name="negativeErrorColumnToolTip"></param>
-    /// <param name="negativeErrorColumnStatus"></param>
-    void Initialize_NegativeErrorColumn(string negativeErrorColumnAsText, string negativeErrorColumnToolTip, int negativeErrorColumnStatus);
-
-    void Initialize_NegativeErrorColumnTransformation(string transformationTextToShow, string transformationToolTip);
-
-    event Action<bool> UseCommonErrorColumnChanged;
-
-    /// <summary>
-    /// Occurs when the user choice for IndependentColor of the fill brush has changed.
-    /// </summary>
-    event Action IndependentColorChanged;
-
-    /// <summary>
-    /// Occurs when the user choice for IndependentDashPattern has changed.
-    /// </summary>
-    event Action IndependentDashPatternChanged;
   }
-
-  #endregion Interfaces
 
   [UserControllerForObject(typeof(ErrorBarPlotStyle))]
   [ExpectedTypeOfView(typeof(IErrorBarPlotStyleView))]
@@ -131,8 +47,6 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
   {
     /// <summary>Tracks the presence of a color group style in the parent collection.</summary>
     private ColorGroupStylePresenceTracker _colorGroupStyleTracker;
-
-    private SelectableListNodeList _meaningOfValues;
 
     /// <summary>
     /// The data table that the column of the style should belong to.
@@ -146,11 +60,11 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     public override bool InitializeDocument(params object[] args)
     {
-      if (args.Length >= 2 && (args[1] is DataTable))
-        _supposedParentDataTable = (DataTable)args[1];
+      if (args.Length >= 2 && (args[1] is DataTable dt))
+        _supposedParentDataTable = dt;
 
-      if (args.Length >= 3 && args[2] is int)
-        _supposedGroupNumber = (int)args[2];
+      if (args.Length >= 3 && args[2] is int gn)
+        _supposedGroupNumber = gn;
 
       return base.InitializeDocument(args);
     }
@@ -159,6 +73,572 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
     {
       yield break;
     }
+
+    #region Bindings
+
+    private bool _useCommonErrorColumn;
+
+    public bool UseCommonErrorColumn
+    {
+      get => _useCommonErrorColumn;
+      set
+      {
+        if (!(_useCommonErrorColumn == value))
+        {
+          _useCommonErrorColumn = value;
+          OnPropertyChanged(nameof(UseCommonErrorColumn));
+          EhUseCommonErrorColumnChanged(value);
+        }
+      }
+    }
+
+    #region CommonErrorColumn
+
+
+    private string _commonErrorColumnText;
+
+    public string CommonErrorColumnText
+    {
+      get => _commonErrorColumnText;
+      set
+      {
+        if (!(_commonErrorColumnText == value))
+        {
+          _commonErrorColumnText = value;
+          OnPropertyChanged(nameof(CommonErrorColumnText));
+        }
+      }
+    }
+    private string _commonErrorColumnToolTip;
+
+    public string CommonErrorColumnToolTip
+    {
+      get => _commonErrorColumnToolTip;
+      set
+      {
+        if (!(_commonErrorColumnToolTip == value))
+        {
+          _commonErrorColumnToolTip = value;
+          OnPropertyChanged(nameof(CommonErrorColumnToolTip));
+        }
+      }
+    }
+    private int _commonErrorColumnStatus;
+
+    public int CommonErrorColumnStatus
+    {
+      get => _commonErrorColumnStatus;
+      set
+      {
+        if (!(_commonErrorColumnStatus == value))
+        {
+          _commonErrorColumnStatus = value;
+          OnPropertyChanged(nameof(CommonErrorColumnStatus));
+        }
+      }
+    }
+    private string _commonErrorColumnTransformationText;
+
+    public string CommonErrorColumnTransformationText
+    {
+      get => _commonErrorColumnTransformationText;
+      set
+      {
+        if (!(_commonErrorColumnTransformationText == value))
+        {
+          _commonErrorColumnTransformationText = value;
+          OnPropertyChanged(nameof(CommonErrorColumnTransformationText));
+        }
+      }
+    }
+    private string _commonErrorColumnTransformationToolTip;
+
+    public string CommonErrorColumnTransformationToolTip
+    {
+      get => _commonErrorColumnTransformationToolTip;
+      set
+      {
+        if (!(_commonErrorColumnTransformationToolTip == value))
+        {
+          _commonErrorColumnTransformationToolTip = value;
+          OnPropertyChanged(nameof(CommonErrorColumnTransformationToolTip));
+        }
+      }
+    }
+
+    #endregion
+
+    #region Positive Error column
+
+    private string _positiveErrorColumnText;
+
+    public string PositiveErrorColumnText
+    {
+      get => _positiveErrorColumnText;
+      set
+      {
+        if (!(_positiveErrorColumnText == value))
+        {
+          _positiveErrorColumnText = value;
+          OnPropertyChanged(nameof(PositiveErrorColumnText));
+        }
+      }
+    }
+    private string _positiveErrorColumnToolTip;
+
+    public string PositiveErrorColumnToolTip
+    {
+      get => _positiveErrorColumnToolTip;
+      set
+      {
+        if (!(_positiveErrorColumnToolTip == value))
+        {
+          _positiveErrorColumnToolTip = value;
+          OnPropertyChanged(nameof(PositiveErrorColumnToolTip));
+        }
+      }
+    }
+    private int _positiveErrorColumnStatus;
+
+    public int PositiveErrorColumnStatus
+    {
+      get => _positiveErrorColumnStatus;
+      set
+      {
+        if (!(_positiveErrorColumnStatus == value))
+        {
+          _positiveErrorColumnStatus = value;
+          OnPropertyChanged(nameof(PositiveErrorColumnStatus));
+        }
+      }
+    }
+    private string _positiveErrorColumnTransformationText;
+
+    public string PositiveErrorColumnTransformationText
+    {
+      get => _positiveErrorColumnTransformationText;
+      set
+      {
+        if (!(_positiveErrorColumnTransformationText == value))
+        {
+          _positiveErrorColumnTransformationText = value;
+          OnPropertyChanged(nameof(PositiveErrorColumnTransformationText));
+        }
+      }
+    }
+    private string _positiveErrorColumnTransformationToolTip;
+
+    public string PositiveErrorColumnTransformationToolTip
+    {
+      get => _positiveErrorColumnTransformationToolTip;
+      set
+      {
+        if (!(_positiveErrorColumnTransformationToolTip == value))
+        {
+          _positiveErrorColumnTransformationToolTip = value;
+          OnPropertyChanged(nameof(PositiveErrorColumnTransformationToolTip));
+        }
+      }
+    }
+
+    #endregion
+
+    #region Negative Error column
+
+    private string _negativeErrorColumnText;
+
+    public string NegativeErrorColumnText
+    {
+      get => _negativeErrorColumnText;
+      set
+      {
+        if (!(_negativeErrorColumnText == value))
+        {
+          _negativeErrorColumnText = value;
+          OnPropertyChanged(nameof(NegativeErrorColumnText));
+        }
+      }
+    }
+    private string _negativeErrorColumnToolTip;
+
+    public string NegativeErrorColumnToolTip
+    {
+      get => _negativeErrorColumnToolTip;
+      set
+      {
+        if (!(_negativeErrorColumnToolTip == value))
+        {
+          _negativeErrorColumnToolTip = value;
+          OnPropertyChanged(nameof(NegativeErrorColumnToolTip));
+        }
+      }
+    }
+    private int _negativeErrorColumnStatus;
+
+    public int NegativeErrorColumnStatus
+    {
+      get => _negativeErrorColumnStatus;
+      set
+      {
+        if (!(_negativeErrorColumnStatus == value))
+        {
+          _negativeErrorColumnStatus = value;
+          OnPropertyChanged(nameof(NegativeErrorColumnStatus));
+        }
+      }
+    }
+    private string _negativeErrorColumnTransformationText;
+
+    public string NegativeErrorColumnTransformationText
+    {
+      get => _negativeErrorColumnTransformationText;
+      set
+      {
+        if (!(_negativeErrorColumnTransformationText == value))
+        {
+          _negativeErrorColumnTransformationText = value;
+          OnPropertyChanged(nameof(NegativeErrorColumnTransformationText));
+        }
+      }
+    }
+    private string _negativeErrorColumnTransformationToolTip;
+
+    public string NegativeErrorColumnTransformationToolTip
+    {
+      get => _negativeErrorColumnTransformationToolTip;
+      set
+      {
+        if (!(_negativeErrorColumnTransformationToolTip == value))
+        {
+          _negativeErrorColumnTransformationToolTip = value;
+          OnPropertyChanged(nameof(NegativeErrorColumnTransformationToolTip));
+        }
+      }
+    }
+
+    #endregion
+
+    private ItemsController<ErrorBarPlotStyle.ValueInterpretation> _meaningOfValues;
+
+    public ItemsController<ErrorBarPlotStyle.ValueInterpretation> MeaningOfValues
+    {
+      get => _meaningOfValues;
+      set
+      {
+        if (!(_meaningOfValues == value))
+        {
+          _meaningOfValues = value;
+          OnPropertyChanged(nameof(MeaningOfValues));
+        }
+      }
+    }
+
+
+
+    private bool _independentSkipFrequency;
+
+    public bool IndependentSkipFrequency
+    {
+      get => _independentSkipFrequency;
+      set
+      {
+        if (!(_independentSkipFrequency == value))
+        {
+          _independentSkipFrequency = value;
+          OnPropertyChanged(nameof(IndependentSkipFrequency));
+        }
+      }
+    }
+
+    private int _skipFrequency;
+
+    public int SkipFrequency
+    {
+      get => _skipFrequency;
+      set
+      {
+        if (!(_skipFrequency == value))
+        {
+          _skipFrequency = value;
+          OnPropertyChanged(nameof(SkipFrequency));
+        }
+      }
+    }
+
+    private bool _ignoreMissingDataPoints;
+
+    public bool IgnoreMissingDataPoints
+    {
+      get => _ignoreMissingDataPoints;
+      set
+      {
+        if (!(_ignoreMissingDataPoints == value))
+        {
+          _ignoreMissingDataPoints = value;
+          OnPropertyChanged(nameof(IgnoreMissingDataPoints));
+        }
+      }
+    }
+
+
+    private bool _independentOnShiftingGroupStyles;
+
+    public bool IndependentOnShiftingGroupStyles
+    {
+      get => _independentOnShiftingGroupStyles;
+      set
+      {
+        if (!(_independentOnShiftingGroupStyles == value))
+        {
+          _independentOnShiftingGroupStyles = value;
+          OnPropertyChanged(nameof(IndependentOnShiftingGroupStyles));
+        }
+      }
+    }
+
+    private bool _independentColor;
+
+    public bool IndependentColor
+    {
+      get => _independentColor;
+      set
+      {
+        if (!(_independentColor == value))
+        {
+          _independentColor = value;
+          OnPropertyChanged(nameof(IndependentColor));
+          EhIndependentColorChanged();
+        }
+      }
+    }
+
+    private bool _independentDashPattern;
+
+    public bool IndependentDashPattern
+    {
+      get => _independentDashPattern;
+      set
+      {
+        if (!(_independentDashPattern == value))
+        {
+          _independentDashPattern = value;
+          OnPropertyChanged(nameof(IndependentDashPattern));
+          EhIndependentDashPatternChanged(value);
+        }
+      }
+    }
+
+
+    private bool _independentSymbolSize;
+
+    public bool IndependentSymbolSize
+    {
+      get => _independentSymbolSize;
+      set
+      {
+        if (!(_independentSymbolSize == value))
+        {
+          _independentSymbolSize = value;
+          OnPropertyChanged(nameof(IndependentSymbolSize));
+        }
+      }
+    }
+
+    public QuantityWithUnitGuiEnvironment SymbolSizeEnvironment => LineCapSizeEnvironment.Instance;
+
+
+    private DimensionfulQuantity _symbolSize;
+
+    public DimensionfulQuantity SymbolSize
+    {
+      get => _symbolSize;
+      set
+      {
+        if (!(_symbolSize == value))
+        {
+          _symbolSize = value;
+          OnPropertyChanged(nameof(SymbolSize));
+        }
+      }
+    }
+
+    public QuantityWithUnitGuiEnvironment LineWidthEnvironment => LineCapSizeEnvironment.Instance;
+
+    private DimensionfulQuantity _lineWidth1Offset;
+
+    public DimensionfulQuantity LineWidth1Offset
+    {
+      get => _lineWidth1Offset;
+      set
+      {
+        if (!(_lineWidth1Offset == value))
+        {
+          _lineWidth1Offset = value;
+          OnPropertyChanged(nameof(LineWidth1Offset));
+        }
+      }
+    }
+
+    private DimensionfulQuantity _lineWidth2Offset;
+
+    public DimensionfulQuantity LineWidth2Offset
+    {
+      get => _lineWidth2Offset;
+      set
+      {
+        if (!(_lineWidth2Offset == value))
+        {
+          _lineWidth2Offset = value;
+          OnPropertyChanged(nameof(LineWidth2Offset));
+        }
+      }
+    }
+
+
+    public QuantityWithUnitGuiEnvironment LineFactorEnvironment => RelationEnvironment.Instance;
+
+    private DimensionfulQuantity _lineWidth1Factor;
+
+    public DimensionfulQuantity LineWidth1Factor
+    {
+      get => _lineWidth1Factor;
+      set
+      {
+        if (!(_lineWidth1Factor == value))
+        {
+          _lineWidth1Factor = value;
+          OnPropertyChanged(nameof(LineWidth1Factor));
+        }
+      }
+    }
+
+    private DimensionfulQuantity _lineWidth2Factor;
+
+    public DimensionfulQuantity LineWidth2Factor
+    {
+      get => _lineWidth2Factor;
+      set
+      {
+        if (!(_lineWidth2Factor == value))
+        {
+          _lineWidth2Factor = value;
+          OnPropertyChanged(nameof(LineWidth2Factor));
+        }
+      }
+    }
+
+
+    private bool _useSymbolGap;
+
+    public bool UseSymbolGap
+    {
+      get => _useSymbolGap;
+      set
+      {
+        if (!(_useSymbolGap == value))
+        {
+          _useSymbolGap = value;
+          OnPropertyChanged(nameof(UseSymbolGap));
+        }
+      }
+    }
+
+
+    private DimensionfulQuantity _symbolGapOffset;
+
+    public DimensionfulQuantity SymbolGapOffset
+    {
+      get => _symbolGapOffset;
+      set
+      {
+        if (!(_symbolGapOffset == value))
+        {
+          _symbolGapOffset = value;
+          OnPropertyChanged(nameof(SymbolGapOffset));
+        }
+      }
+    }
+
+    private DimensionfulQuantity _symbolGapFactor;
+
+    public DimensionfulQuantity SymbolGapFactor
+    {
+      get => _symbolGapFactor;
+      set
+      {
+        if (!(_symbolGapFactor == value))
+        {
+          _symbolGapFactor = value;
+          OnPropertyChanged(nameof(SymbolGapFactor));
+        }
+      }
+    }
+
+    private bool _forceVisibilityOfEndCap;
+
+    public bool ForceVisibilityOfEndCap
+    {
+      get => _forceVisibilityOfEndCap;
+      set
+      {
+        if (!(_forceVisibilityOfEndCap == value))
+        {
+          _forceVisibilityOfEndCap = value;
+          OnPropertyChanged(nameof(ForceVisibilityOfEndCap));
+        }
+      }
+    }
+
+
+    private DimensionfulQuantity _endCapSizeOffset;
+
+    public DimensionfulQuantity EndCapSizeOffset
+    {
+      get => _endCapSizeOffset;
+      set
+      {
+        if (!(_endCapSizeOffset == value))
+        {
+          _endCapSizeOffset = value;
+          OnPropertyChanged(nameof(EndCapSizeOffset));
+        }
+      }
+    }
+
+    private DimensionfulQuantity _endCapSizeFactor;
+
+    public DimensionfulQuantity EndCapSizeFactor
+    {
+      get => _endCapSizeFactor;
+      set
+      {
+        if (!(_endCapSizeFactor == value))
+        {
+          _endCapSizeFactor = value;
+          OnPropertyChanged(nameof(EndCapSizeFactor));
+        }
+      }
+    }
+
+    private PenAllPropertiesController _pen;
+
+    public PenAllPropertiesController Pen
+    {
+      get => _pen;
+      set
+      {
+        if (!(_pen == value))
+        {
+          _pen?.Dispose();
+          _pen = value;
+          OnPropertyChanged(nameof(Pen));
+        }
+      }
+    }
+
+    #endregion
+
+
 
     public override void Dispose(bool isDisposing)
     {
@@ -175,43 +655,37 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
       {
         _colorGroupStyleTracker = new ColorGroupStylePresenceTracker(_doc, EhIndependentColorChanged);
 
-        _meaningOfValues = new SelectableListNodeList(_doc.MeaningOfValues);
-      }
-      if (_view is not null)
-      {
-        _view.IndependentColor = _doc.IndependentColor;
-        _view.IndependentDashPattern = _doc.IndependentDashPattern;
-        _view.ShowPlotColorsOnly = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentColor);
-        _view.Pen = _doc.Pen;
+        _meaningOfValues = new ItemsController<ErrorBarPlotStyle.ValueInterpretation>(new SelectableListNodeList(_doc.MeaningOfValues));
 
-        _view.IndependentSymbolSize = _doc.IndependentSymbolSize;
-        _view.SymbolSize = _doc.SymbolSize;
+        IndependentColor = _doc.IndependentColor;
+        IndependentDashPattern = _doc.IndependentDashPattern;
+        Pen = new PenAllPropertiesController(_doc.Pen)
+        {
+          ShowPlotColorsOnly = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentColor)
+        };
+        IndependentSymbolSize = _doc.IndependentSymbolSize;
+        SymbolSize = new DimensionfulQuantity(_doc.SymbolSize, Altaxo.Units.Length.Point.Instance).AsQuantityIn(SymbolSizeEnvironment.DefaultUnit);
 
-        _view.LineWidth1Offset = _doc.LineWidth1Offset;
-        _view.LineWidth1Factor = _doc.LineWidth1Factor;
+        LineWidth1Offset = new DimensionfulQuantity(_doc.LineWidth1Offset, Altaxo.Units.Length.Point.Instance).AsQuantityIn(LineWidthEnvironment.DefaultUnit);
+        LineWidth1Factor = new DimensionfulQuantity(_doc.LineWidth1Factor, Altaxo.Units.Dimensionless.Unity.Instance).AsQuantityIn(LineFactorEnvironment.DefaultUnit);
+        LineWidth2Offset = new DimensionfulQuantity(_doc.LineWidth2Offset, Altaxo.Units.Length.Point.Instance).AsQuantityIn(LineWidthEnvironment.DefaultUnit);
+        LineWidth2Factor = new DimensionfulQuantity(_doc.LineWidth2Factor, Altaxo.Units.Dimensionless.Unity.Instance).AsQuantityIn(LineFactorEnvironment.DefaultUnit);
 
-        _view.LineWidth2Offset = _doc.LineWidth2Offset;
-        _view.LineWidth2Factor = _doc.LineWidth2Factor;
+        EndCapSizeOffset = new DimensionfulQuantity(_doc.EndCapSizeOffset, Altaxo.Units.Length.Point.Instance).AsQuantityIn(LineWidthEnvironment.DefaultUnit);
+        EndCapSizeFactor = new DimensionfulQuantity(_doc.EndCapSizeFactor, Altaxo.Units.Dimensionless.Unity.Instance).AsQuantityIn(LineFactorEnvironment.DefaultUnit);
 
-        _view.EndCapSizeOffset = _doc.EndCapSizeOffset;
-        _view.EndCapSizeFactor = _doc.EndCapSizeFactor;
+        ForceVisibilityOfEndCap = _doc.ForceVisibilityOfEndCap;
 
-        _view.ForceVisibilityOfEndCap = _doc.ForceVisibilityOfEndCap;
+        UseSymbolGap = _doc.UseSymbolGap;
+        SymbolGapOffset = new DimensionfulQuantity(_doc.SymbolGapOffset, Altaxo.Units.Length.Point.Instance).AsQuantityIn(LineWidthEnvironment.DefaultUnit);
+        SymbolGapFactor = new DimensionfulQuantity(_doc.SymbolGapFactor, Altaxo.Units.Dimensionless.Unity.Instance).AsQuantityIn(LineFactorEnvironment.DefaultUnit);
 
-        _view.UseSymbolGap = _doc.UseSymbolGap;
-        _view.SymbolGapOffset = _doc.SymbolGapOffset;
-        _view.SymbolGapFactor = _doc.SymbolGapFactor;
+        SkipFrequency = _doc.SkipFrequency;
+        IndependentSkipFrequency = _doc.IndependentSkipFrequency;
 
-        _view.SkipFrequency = _doc.SkipFrequency;
-        _view.IndependentSkipFrequency = _doc.IndependentSkipFrequency;
+        IndependentOnShiftingGroupStyles = _doc.IndependentOnShiftingGroupStyles;
 
-        _view.IndependentOnShiftingGroupStyles = _doc.IndependentOnShiftingGroupStyles;
-
-        _view.Initialize_MeaningOfValues(_meaningOfValues);
-
-        // Errors
-
-        _view.UseCommonErrorColumn = _doc.UseCommonErrorColumn;
+        UseCommonErrorColumn = _doc.UseCommonErrorColumn;
 
         if (_doc.UseCommonErrorColumn)
         {
@@ -227,55 +701,38 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     public override bool Apply(bool disposeController)
     {
-      _doc.IndependentColor = _view.IndependentColor;
-      _doc.IndependentDashPattern = _view.IndependentDashPattern;
-      _doc.Pen = _view.Pen;
-      _doc.IndependentSymbolSize = _view.IndependentSymbolSize;
-      _doc.SymbolSize = _view.SymbolSize;
+      _doc.IndependentColor = IndependentColor;
+      _doc.IndependentDashPattern = IndependentDashPattern;
+      _doc.Pen = Pen.Pen;
+      _doc.IndependentSymbolSize = IndependentSymbolSize;
+      _doc.SymbolSize = SymbolSize.AsValueIn(Altaxo.Units.Length.Point.Instance);
 
-      _doc.LineWidth1Offset = _view.LineWidth1Offset;
-      _doc.LineWidth1Factor = _view.LineWidth1Factor;
+      _doc.LineWidth1Offset = LineWidth1Offset.AsValueIn(Altaxo.Units.Length.Point.Instance);
+      _doc.LineWidth1Factor = LineWidth1Factor.AsValueInSIUnits;
 
-      _doc.LineWidth2Offset = _view.LineWidth2Offset;
-      _doc.LineWidth2Factor = _view.LineWidth2Factor;
+      _doc.LineWidth2Offset = LineWidth2Offset.AsValueIn(Altaxo.Units.Length.Point.Instance);
+      _doc.LineWidth2Factor = LineWidth2Factor.AsValueInSIUnits;
 
-      _doc.EndCapSizeOffset = _view.EndCapSizeOffset;
-      _doc.EndCapSizeFactor = _view.EndCapSizeFactor;
+      _doc.EndCapSizeOffset = EndCapSizeOffset.AsValueIn(Altaxo.Units.Length.Point.Instance);
+      _doc.EndCapSizeFactor = EndCapSizeFactor.AsValueInSIUnits;
 
-      _doc.ForceVisibilityOfEndCap = _view.ForceVisibilityOfEndCap;
 
-      _doc.UseSymbolGap = _view.UseSymbolGap;
-      _doc.SymbolGapOffset = _view.SymbolGapOffset;
-      _doc.SymbolGapFactor = _view.SymbolGapFactor;
+      _doc.ForceVisibilityOfEndCap = ForceVisibilityOfEndCap;
 
-      _doc.IndependentSkipFrequency = _view.IndependentSkipFrequency;
-      _doc.SkipFrequency = _view.SkipFrequency;
+      _doc.UseSymbolGap = UseSymbolGap;
+      _doc.SymbolGapOffset = SymbolGapOffset.AsValueIn(Altaxo.Units.Length.Point.Instance);
+      _doc.SymbolGapFactor = SymbolGapFactor.AsValueInSIUnits;
 
-      _doc.IndependentOnShiftingGroupStyles = _view.IndependentOnShiftingGroupStyles;
+      _doc.IndependentSkipFrequency = IndependentSkipFrequency;
+      _doc.SkipFrequency = SkipFrequency;
 
-      _doc.UseCommonErrorColumn = _view.UseCommonErrorColumn;
+      _doc.IndependentOnShiftingGroupStyles = IndependentOnShiftingGroupStyles;
 
-      _doc.MeaningOfValues = (ErrorBarPlotStyle.ValueInterpretation)_meaningOfValues.FirstSelectedNode.Tag;
+      _doc.UseCommonErrorColumn = UseCommonErrorColumn;
+
+      _doc.MeaningOfValues = MeaningOfValues.SelectedValue;
 
       return ApplyEnd(true, disposeController);
-    }
-
-    protected override void AttachView()
-    {
-      base.AttachView();
-
-      _view.IndependentColorChanged += EhIndependentColorChanged;
-      _view.IndependentDashPatternChanged += EhIndependentDashPatternChanged;
-      _view.UseCommonErrorColumnChanged += EhUseCommonErrorColumnChanged;
-    }
-
-    protected override void DetachView()
-    {
-      _view.IndependentColorChanged -= EhIndependentColorChanged;
-      _view.IndependentDashPatternChanged -= EhIndependentDashPatternChanged;
-      _view.UseCommonErrorColumnChanged -= EhUseCommonErrorColumnChanged;
-
-      base.DetachView();
     }
 
     private void InitializeCommonErrorColumnText()
@@ -283,8 +740,12 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
       var info = new PlotColumnInformation(_doc.CommonErrorColumn, _doc.CommonErrorColumnDataColumnName);
       info.Update(_supposedParentDataTable, _supposedGroupNumber);
 
-      _view?.Initialize_CommonErrorColumn(info.PlotColumnBoxText, info.PlotColumnToolTip, (int)info.PlotColumnBoxState);
-      _view?.Initialize_CommonErrorColumnTransformation(info.TransformationTextToShow, info.TransformationToolTip);
+      CommonErrorColumnText = info.PlotColumnBoxText;
+      CommonErrorColumnToolTip = info.PlotColumnToolTip;
+      CommonErrorColumnStatus = (int)info.PlotColumnBoxState;
+
+      CommonErrorColumnTransformationText = info.TransformationTextToShow;
+      CommonErrorColumnTransformationToolTip = info.TransformationToolTip;
     }
 
     private void InitializePositiveErrorColumnText()
@@ -292,8 +753,12 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
       var info = new PlotColumnInformation(_doc.PositiveErrorColumn, _doc.PositiveErrorColumnDataColumnName);
       info.Update(_supposedParentDataTable, _supposedGroupNumber);
 
-      _view?.Initialize_PositiveErrorColumn(info.PlotColumnBoxText, info.PlotColumnToolTip, (int)info.PlotColumnBoxState);
-      _view?.Initialize_PositiveErrorColumnTransformation(info.TransformationTextToShow, info.TransformationToolTip);
+      PositiveErrorColumnText = info.PlotColumnBoxText;
+      PositiveErrorColumnToolTip = info.PlotColumnToolTip;
+      PositiveErrorColumnStatus = (int)info.PlotColumnBoxState;
+
+      PositiveErrorColumnTransformationText = info.TransformationTextToShow;
+      PositiveErrorColumnTransformationToolTip = info.TransformationToolTip;
     }
 
     private void InitializeNegativeErrorColumnText()
@@ -301,8 +766,12 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
       var info = new PlotColumnInformation(_doc.NegativeErrorColumn, _doc.NegativeErrorColumnDataColumnName);
       info.Update(_supposedParentDataTable, _supposedGroupNumber);
 
-      _view?.Initialize_NegativeErrorColumn(info.PlotColumnBoxText, info.PlotColumnToolTip, (int)info.PlotColumnBoxState);
-      _view?.Initialize_NegativeErrorColumnTransformation(info.TransformationTextToShow, info.TransformationToolTip);
+      NegativeErrorColumnText = info.PlotColumnBoxText;
+      NegativeErrorColumnToolTip = info.PlotColumnToolTip;
+      NegativeErrorColumnStatus = (int)info.PlotColumnBoxState;
+
+      NegativeErrorColumnTransformationText = info.TransformationTextToShow;
+      NegativeErrorColumnTransformationToolTip = info.TransformationToolTip;
     }
 
     /// <summary>
@@ -360,11 +829,11 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
       }
     }
 
-    private void EhUseCommonErrorColumnChanged(bool useCommonErrorColumn)
+    private void EhUseCommonErrorColumnChanged(bool value)
     {
-      _doc.UseCommonErrorColumn = useCommonErrorColumn;
+      _doc.UseCommonErrorColumn = value;
 
-      _view.UseCommonErrorColumn = _doc.UseCommonErrorColumn;
+      UseCommonErrorColumn = _doc.UseCommonErrorColumn;
 
       if (_doc.UseCommonErrorColumn)
       {
@@ -379,19 +848,18 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     private void EhIndependentColorChanged()
     {
-      if (_view is not null)
-      {
-        _doc.IndependentColor = _view.IndependentColor;
-        _view.ShowPlotColorsOnly = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentColor);
-      }
+      EhIndependentColorChanged(IndependentColor);
     }
 
-    private void EhIndependentDashPatternChanged()
+    private void EhIndependentColorChanged(bool value)
     {
-      if (_view is not null)
-      {
-        _doc.IndependentDashPattern = _view.IndependentDashPattern;
-      }
+      _doc.IndependentColor = value;
+      Pen.ShowPlotColorsOnly = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentColor);
+    }
+
+    private void EhIndependentDashPatternChanged(bool value)
+    {
+      _doc.IndependentDashPattern = value;
     }
   }
 }
