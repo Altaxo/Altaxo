@@ -252,6 +252,21 @@ namespace Altaxo.Geometry
     }
 
     /// <summary>
+    /// Adds items to the quad tree.
+    /// </summary>
+    /// <param name="items">The items to add.</param>
+    /// <remarks>The items are added only if the quad boundaries intersect with the item's boundary.
+    /// Make sure that the root quad boundaries are big enough to accomodate all items intended to be added to the quad tree!.</remarks>
+    public void AddRange(IEnumerable<TItem> items)
+    {
+      if (items is not null)
+      {
+        foreach (var item in items)
+          Add(item);
+      }
+    }
+
+    /// <summary>
     /// Get the items in this tree that intersect with the specified rectangle.
     /// </summary>
     /// <param name="rect">The rectangular area in which to find items.</param>
