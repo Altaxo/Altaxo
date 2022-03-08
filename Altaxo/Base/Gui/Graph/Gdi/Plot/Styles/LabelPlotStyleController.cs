@@ -71,11 +71,11 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     public override bool InitializeDocument(params object[] args)
     {
-      if (args.Length >= 2 && (args[1] is DataTable))
-        _supposedParentDataTable = (DataTable)args[1];
+      if (args.Length >= 2 && (args[1] is DataTable dt))
+        _supposedParentDataTable = dt;
 
-      if (args.Length >= 3 && args[2] is int)
-        _supposedGroupNumber = (int)args[2];
+      if (args.Length >= 3 && args[2] is int gn)
+        _supposedGroupNumber = gn;
 
       return base.InitializeDocument(args);
     }
@@ -636,7 +636,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
         BackgroundColorLinkage = new ItemsController<ColorLinkage>(new SelectableListNodeList(_doc.BackgroundColorLinkage), EhBackgroundColorLinkageChanged);
         InitializeLabelColumnText();
         InitializeAttachmentDirectionChoices();
-      
+
         // Data
 
         SkipFrequency = _doc.SkipFrequency;
@@ -651,7 +651,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
         IndependentSymbolSize = _doc.IndependentSymbolSize;
         SymbolSize = new DimensionfulQuantity(_doc.SymbolSize, Altaxo.Units.Length.Point.Instance).AsQuantityIn(SymbolSizeEnvironment.DefaultUnit);
-        
+
         FontSizeOffset = new DimensionfulQuantity(_doc.FontSizeOffset, Altaxo.Units.Length.Point.Instance).AsQuantityIn(FontSizeOffsetEnvironment.DefaultUnit);
         FontSizeFactor = new DimensionfulQuantity(_doc.FontSizeFactor, Altaxo.Units.Dimensionless.Unity.Instance).AsQuantityIn(FontSizeFactorEnvironment.DefaultUnit);
         Font = new FontXController(_doc.Font);
@@ -690,7 +690,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
       _doc.IndependentSymbolSize = IndependentSymbolSize;
       _doc.SymbolSize = SymbolSize.AsValueIn(Altaxo.Units.Length.Point.Instance);
 
-      _doc.FontSizeOffset = FontSizeOffset.AsValueIn(Altaxo.Units.Length.Point.Instance); 
+      _doc.FontSizeOffset = FontSizeOffset.AsValueIn(Altaxo.Units.Length.Point.Instance);
       _doc.FontSizeFactor = FontSizeFactor.AsValueInSIUnits;
 
       if (!Font.Apply(disposeController))
@@ -779,43 +779,40 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
     private void EhColorGroupStyleAddedOrRemoved()
     {
-      if (_view is not null)
-      {
-        _doc.BackgroundColorLinkage = (ColorLinkage)_backgroundColorLinkage.SelectedValue;
-        _doc.IndependentColor = IndependentColor;
+      _doc.BackgroundColorLinkage = (ColorLinkage)_backgroundColorLinkage.SelectedValue;
+      _doc.IndependentColor = IndependentColor;
 
-        ShowPlotColorsOnly = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentColor);
+      ShowPlotColorsOnly = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentColor);
 
-        Background.ShowPlotColorsOnly = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.BackgroundColorLinkage);
-      }
+      Background.ShowPlotColorsOnly = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.BackgroundColorLinkage);
     }
 
-   
+
 
     private void EhBackgroundColorLinkageChanged(ColorLinkage value)
     {
-        _doc.BackgroundStyle = (IBackgroundStyle?)Background.ProvisionalModelObject;
+      _doc.BackgroundStyle = (IBackgroundStyle?)Background.ProvisionalModelObject;
       _doc.BackgroundColorLinkage = (ColorLinkage)_backgroundColorLinkage.SelectedValue;
-        ShowPlotColorsOnly = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.BackgroundColorLinkage);
+      Background.ShowPlotColorsOnly = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.BackgroundColorLinkage);
 
-        if (ColorLinkage.Dependent == _doc.BackgroundColorLinkage && false == _doc.IndependentColor)
-          InternalSetBackgroundColorToLabelColor();
-        if (ColorLinkage.PreserveAlpha == _doc.BackgroundColorLinkage && false == _doc.IndependentColor)
-          InternalSetBackgroundColorRGBToLabelColor();
+      if (ColorLinkage.Dependent == _doc.BackgroundColorLinkage && false == _doc.IndependentColor)
+        InternalSetBackgroundColorToLabelColor();
+      if (ColorLinkage.PreserveAlpha == _doc.BackgroundColorLinkage && false == _doc.IndependentColor)
+        InternalSetBackgroundColorRGBToLabelColor();
 
-        ShowPlotColorsOnly = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.BackgroundColorLinkage);
+      Background.ShowPlotColorsOnly = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.BackgroundColorLinkage);
     }
 
     private void EhBackgroundChanged(IMVCAController _)
     {
       _doc.BackgroundStyle = (IBackgroundStyle?)Background.ProvisionalModelObject;
-        if (_doc.IsBackgroundColorProvider)
-        {
-          if (LabelBrush.Color != Background.BackgroundBrush.Color)
-            InternalSetLabelColorToBackgroundColor();
-        }
+      if (_doc.IsBackgroundColorProvider)
+      {
+        if (LabelBrush.Color != Background.BackgroundBrush.Color)
+          InternalSetLabelColorToBackgroundColor();
+      }
 
-        if(!IndependentColor && _doc.BackgroundStyle is not null && _doc.BackgroundStyle.SupportsBrush)
+      if (!IndependentColor && _doc.BackgroundStyle is not null && _doc.BackgroundStyle.SupportsBrush)
       {
         if (ColorLinkage.Dependent == _doc.BackgroundColorLinkage && false == _doc.IndependentColor)
           InternalSetBackgroundColorToLabelColor();
@@ -824,7 +821,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
       }
     }
 
-    
+
 
     private void EhLabelBrushChanged(BrushX value)
     {
@@ -832,15 +829,15 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
       _doc.BackgroundStyle = (IBackgroundStyle?)Background.ModelObject;
 
       if (_doc.IsBackgroundColorReceiver && false == _doc.IndependentColor)
-        {
-          if (_doc.BackgroundColorLinkage == ColorLinkage.Dependent && Background.BackgroundBrush.Color != LabelBrush.Color)
-            InternalSetBackgroundColorToLabelColor();
-          else if (_doc.BackgroundColorLinkage == ColorLinkage.PreserveAlpha && Background.BackgroundBrush.Color != LabelBrush.Color)
-            InternalSetBackgroundColorRGBToLabelColor();
-        }
+      {
+        if (_doc.BackgroundColorLinkage == ColorLinkage.Dependent && Background.BackgroundBrush.Color != LabelBrush.Color)
+          InternalSetBackgroundColorToLabelColor();
+        else if (_doc.BackgroundColorLinkage == ColorLinkage.PreserveAlpha && Background.BackgroundBrush.Color != LabelBrush.Color)
+          InternalSetBackgroundColorRGBToLabelColor();
+      }
     }
 
-   
+
 
     /// <summary>
     /// Internal sets the background color to the color of the label.
@@ -864,7 +861,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
       {
         var newBrush = _doc.BackgroundStyle.Brush;
         var c = LabelBrush.Color.NewWithAlphaValue(newBrush.Color.Color.A);
-        
+
         newBrush = newBrush.WithColor(c);
         _doc.BackgroundStyle.Brush = newBrush;
         Background.Doc = _doc.BackgroundStyle;

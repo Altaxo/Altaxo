@@ -3,10 +3,12 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:axog="clr-namespace:Altaxo.Gui;assembly=AltaxoBase"
-              xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
-						 xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing"
-						 xmlns:axogdd="clr-namespace:Altaxo.Gui.Drawing.D3D"
+             xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
+             xmlns:axogcc="clr-namespace:Altaxo.Gui.Common.Converters"
+			 xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing"
+			 xmlns:axogdd="clr-namespace:Altaxo.Gui.Drawing.D3D" 
+             xmlns:styles="clr-namespace:Altaxo.Gui.Graph.Graph3D.Plot.Styles;assembly=AltaxoBase"
+             d:DataContext="{d:DesignInstance Type=styles:XYPlotLabelStyleController}"
              mc:Ignorable="d">
 	<UserControl.Resources>
 		<Style TargetType="Label">
@@ -61,94 +63,164 @@
 		</Grid.RowDefinitions>
 		<Label Content="Label column:" Grid.Row="0"  Grid.Column="0" />
 		<StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="6">
-			<TextBox x:Name="_guiLabelTransformation" IsEnabled="True" IsReadOnly="True" />
-			<TextBox x:Name="_guiLabelColumn" IsEnabled="True" IsReadOnly="True" MinWidth="100" />
-		</StackPanel>
+            <TextBox Text="{Binding LabelColumnTransformationText}" ToolTip="{Binding LabelColumnTransformationToolTip}"  IsEnabled="True" IsReadOnly="True" Visibility="{Binding IsLabelColumnTransformationVisible, Converter={x:Static axogcc:FalseToVisibilityCollapsedConverter.Instance}}" />
+            <TextBox Text="{Binding LabelColumnText}" ToolTip="{Binding LabelColumnToolTip}" Background="{Binding LabelColumnStatus, Converter={x:Static axogcc:PlotDataSeverityToBackground.Instance}}" IsEnabled="True" IsReadOnly="True" MinWidth="100" />
+        </StackPanel>
 
-		<CheckBox x:Name="_guiIndependentSkipFrequency" Grid.Row="2" Grid.Column="0" Content="Indep. skip freq.: " />
-		<axogc:Int32UpDown x:Name="_guiSkipFrequency"  Grid.Row="2" Grid.Column="1" Minimum="1" />
+		<CheckBox Grid.Row="2" Grid.Column="0"
+                  IsChecked="{Binding IndependentSkipFrequency, Mode=TwoWay}"
+                  Content="Indep. skip freq.: " />
+		<axogc:Int32UpDown Grid.Row="2" Grid.Column="1" 
+                           Value="{Binding SkipFrequency}" 
+                           Minimum="1" />
 
-		<CheckBox x:Name="_guiIndependentOnShiftingGroupStyles" Content="Do not shift position by shifting group styles" Grid.Row="2" Grid.Column="3" Grid.ColumnSpan="4" HorizontalAlignment="Left" />
+        <CheckBox Grid.Row="2" Grid.Column="3" Grid.ColumnSpan="4"
+                  IsChecked="{Binding IndependentOnShiftingGroupStyles, Mode=TwoWay}"
+                  Content="Do not shift position by shifting group styles"
+                  HorizontalAlignment="Left"
+                  VerticalAlignment="Center"/>
 
-		<Label Content="Label format:" Grid.Row="4" Grid.Column="0" />
-		<TextBox x:Name="_guiLabelFormat" Grid.Row="4" Grid.Column="1" />
+        <Label Content="Label format:" Grid.Row="4" Grid.Column="0" />
+		<TextBox Grid.Row="4" Grid.Column="1" 
+                 Text="{Binding LabelFormatString, Mode=TwoWay}"
+                 ToolTip="Enter either a format without braces or with curly braces. Without braces, you can enter a format string that is appropriate for the type of the label. Use e.g. F3 to format a numeric value with 3 decimal digits. If using curly braces, {0} is the value of the label column, {1} is the row index, {2} is the x-value, and {3} is the y-value." />
 
-		<CheckBox x:Name="_guiAttachToAxis" Grid.Row="6"   Grid.Column="0"  Content="Attach to axis:" Checked="EhAttachToAxis_CheckedChanged" Unchecked="EhAttachToAxis_CheckedChanged" />
-		<ComboBox x:Name="_guiAttachedAxis" Grid.Row="6"  Grid.Column="1" SelectionChanged="EhAttachedAxisChanged" />
+        <CheckBox Grid.Row="6" Grid.Column="0"
+                  IsChecked="{Binding AttachToAxis, Mode=TwoWay}"
+                  Content="Attach to axis:" />
+        
+		<ComboBox Grid.Row="6"  Grid.Column="1"
+                  ItemsSource="{Binding AttachmentDirectionChoices.Items}" 
+                  SelectedItem="{Binding AttachmentDirectionChoices.SelectedItem, Mode=TwoWay}" />
 
-		<!-- Styles -->
+        <!-- Styles -->
 
-		<CheckBox x:Name="_guiIndependentLabelColor" Content="Indep. color:" Grid.Row="8" Grid.Column="0" VerticalAlignment="Center"   Checked="EhIndependentColor_CheckChanged" Unchecked="EhIndependentColor_CheckChanged" />
-		<axogdd:MaterialComboBox x:Name="_guiLabelBrush"  Grid.Row="8" Grid.Column="1" Grid.ColumnSpan="3" SelectedMaterialChanged="EhLabelBrushChanged" />
+		<CheckBox Grid.Row="8" Grid.Column="0"
+                  IsChecked="{Binding IndependentColor, Mode=TwoWay}"
+                  Content="Indep. color:" 
+                  VerticalAlignment="Center" />
+		<axogdd:MaterialComboBox Grid.Row="8" Grid.Column="1" Grid.ColumnSpan="3" 
+                              SelectedMaterial="{Binding LabelBrush}"
+                              ShowPlotColorsOnly="{Binding ShowPlotColorsOnly}" />
 
-		<CheckBox x:Name="_guiIndependentSymbolSize" Content="Indep. symbol size :"  Grid.Row="8" Grid.Column="4" VerticalAlignment="Center" Margin="4,0,0,0" />
-		<axogcd:LineCapSizeComboBox x:Name="_guiSymbolSize" Grid.Row="8" Grid.Column="5" />
+        <CheckBox Grid.Row="8" Grid.Column="4"
+                  IsChecked="{Binding IndependentSymbolSize, Mode=TwoWay}"
+                  Content="Indep. symbol size :" 
+                  VerticalAlignment="Center"
+                  Margin="4,0,0,0" />
+		<axogcd:LineCapSizeComboBox Grid.Row="8" Grid.Column="5"
+                                    SelectedQuantity="{Binding SymbolSize}"
+                                    UnitEnvironment="{Binding SymbolSizeEnvironment}" />
 
-		<Label Content="Font:"  Grid.Row="10" Grid.Column="0" />
-		<axogcd:FontFamilyComboBox x:Name="_cbFontFamily" Grid.Row="10" Grid.Column="1" />
+        <Label Content="Font:"  Grid.Row="10" Grid.Column="0" />
+		<axogcd:FontFamilyComboBox Grid.Row="10" Grid.Column="1" 
+                                   SelectedFontFamilyName="{Binding Font.SelectedFontFamilyName}" />
 
-		<Label Content="Style:"  Grid.Row="10" Grid.Column="2" />
-		<axogcd:FontStyleComboBox x:Name="_cbFontStyle"  Grid.Row="10" Grid.Column="3" />
+        <Label Content="Style:"  Grid.Row="10" Grid.Column="2" />
+		<axogcd:FontStyleComboBox Grid.Row="10" Grid.Column="3" 
+                                  SelectedFontStyle="{Binding Font.SelectedFontStyle}" />
 
-		<Label  Content="Font depth:" Grid.Row="10" Grid.Column="4" />
-		<axogcd:FontSizeComboBox x:Name="_cbFontDepth"  Grid.Row="10" Grid.Column="5" />
+        <Label  Content="Font depth:" Grid.Row="10" Grid.Column="4" />
+		<axogcd:FontSizeComboBox Grid.Row="10" Grid.Column="5" 
+                                 SelectedQuantityAsValueInPoints="{Binding Font.SelectedFontDepth}"/>
 
 		<Label Content="Font size = " Grid.Row="12" Grid.Column="0" />
-		<axogcd:FontSizeComboBox x:Name="_guiFontSizeOffset" Grid.Row="12" Grid.Column="1" />
-		<Label Content="+" Grid.Row="12" Grid.Column="2" />
-		<axogc:QuantityWithUnitTextBox x:Name="_guiFontSizeFactor"  Grid.Row="12" Grid.Column="3" UnitEnvironment="{x:Static axog:RelationEnvironment.Instance}" />
-		<Label Content="* symbolSize" Grid.Row="12" Grid.Column="4" />
+		<axogcd:FontSizeComboBox Grid.Row="12" Grid.Column="1" 
+                                 SelectedQuantity="{Binding FontSizeOffset}"
+                                 UnitEnvironment="{Binding FontSizeOffsetEnvironment}" />
+        <Label Content="+" Grid.Row="12" Grid.Column="2" />
+		<axogc:QuantityWithUnitTextBox Grid.Row="12" Grid.Column="3" 
+                                       SelectedQuantity="{Binding FontSizeFactor}"
+                                       UnitEnvironment="{Binding FontSizeFactorEnvironment}" />
+        <Label Content="* symbolSize" Grid.Row="12" Grid.Column="4" />
 
 		<Label  Content="RotationX:" Grid.Row="14" Grid.Column="0" />
-		<axogcd:RotationComboBox x:Name="_guiRotationX"  Grid.Row="14" Grid.Column="1" />
+		<axogcd:RotationComboBox Grid.Row="14" Grid.Column="1" 
+                                 SelectedQuantity="{Binding RotationX}"
+                                 UnitEnvironment="{Binding RotationEnvironment}" />
 
-		<Label Content="RotationY:"  Grid.Row="14" Grid.Column="2" />
-		<axogcd:RotationComboBox x:Name="_guiRotationY"  Grid.Row="14" Grid.Column="3" />
+        <Label Content="RotationY:"  Grid.Row="14" Grid.Column="2" />
+		<axogcd:RotationComboBox Grid.Row="14" Grid.Column="3" 
+                                 SelectedQuantity="{Binding RotationY}"
+                                 UnitEnvironment="{Binding RotationEnvironment}" />
 
-		<Label Content="RotationZ:"  Grid.Row="14" Grid.Column="4" />
-		<axogcd:RotationComboBox x:Name="_guiRotationZ"  Grid.Row="14" Grid.Column="5" />
+        <Label Content="RotationZ:"  Grid.Row="14" Grid.Column="4" />
+		<axogcd:RotationComboBox Grid.Row="14" Grid.Column="5" 
+                                 SelectedQuantity="{Binding RotationZ}"
+                                 UnitEnvironment="{Binding RotationEnvironment}" />
 
-		<Label Content="AlignmentX:" Grid.Row="16" Grid.Column="0" />
-		<ComboBox x:Name="_guiAlignmentX"  Grid.Row="16" Grid.Column="1" SelectionChanged="EhAlignmentXChanged" />
+        <Label Content="AlignmentX:" Grid.Row="16" Grid.Column="0" />
+		<ComboBox Grid.Row="16" Grid.Column="1"
+                  ItemsSource="{Binding AlignmentX.Items}" 
+                  SelectedItem="{Binding AlignmentX.SelectedItem}" />
 
-		<Label Content="AlignmentY:"  Grid.Row="16" Grid.Column="2" />
-		<ComboBox x:Name="_guiAlignmentY"  Grid.Row="16" Grid.Column="3" SelectionChanged="EhAlignmentYChanged" />
+        <Label Content="AlignmentY:"  Grid.Row="16" Grid.Column="2" />
+		<ComboBox Grid.Row="16" Grid.Column="3"
+                  ItemsSource="{Binding AlignmentY.Items}"
+                  SelectedItem="{Binding AlignmentY.SelectedItem}" />
 
-		<Label  Content="AlignmentZ:" Grid.Row="16" Grid.Column="4" />
-		<ComboBox x:Name="_guiAlignmentZ"  Grid.Row="16" Grid.Column="5" SelectionChanged="EhAlignmentZChanged" />
+        <Label  Content="AlignmentZ:" Grid.Row="16" Grid.Column="4" />
+		<ComboBox Grid.Row="16" Grid.Column="5"
+                  ItemsSource="{Binding AlignmentZ.Items}"
+                  SelectedItem="{Binding AlignmentZ.SelectedItem}" />
 
-		<Label Content="OffsetX = " Grid.Row="18" Grid.Column="0" />
-		<axogcd:LineThicknessComboBox x:Name="_guiOffsetXPoints" Grid.Row="18" Grid.Column="1" />
-		<Label Content="+" Grid.Row="18" Grid.Column="2" />
-		<axogc:QuantityWithUnitTextBox x:Name="_guiOffsetXEmUnits"  Grid.Row="18" Grid.Column="3" UnitEnvironment="{x:Static axog:RelationEnvironment.Instance}" />
-		<Label Content="* fontSize +" Grid.Row="18" Grid.Column="4" />
-		<axogc:QuantityWithUnitTextBox x:Name="_guiOffsetXSymbolSizeUnits"  Grid.Row="18" Grid.Column="5" UnitEnvironment="{x:Static axog:RelationEnvironment.Instance}" />
-		<Label Content="* symbolSize" Grid.Row="18" Grid.Column="6" />
+        <Label Content="OffsetX = " Grid.Row="18" Grid.Column="0" />
+		<axogcd:LineThicknessComboBox Grid.Row="18" Grid.Column="1" 
+                                      SelectedQuantity="{Binding OffsetXPoints}"
+                                      UnitEnvironment="{Binding OffsetPointsEnvironment}" />
+        <Label Content="+" Grid.Row="18" Grid.Column="2" />
+		<axogc:QuantityWithUnitTextBox Grid.Row="18" Grid.Column="3"
+                                       SelectedQuantity="{Binding OffsetXEmUnits}" 
+                                       UnitEnvironment="{Binding OffsetEmUnitsEnvironment}" />
+        <Label Content="* fontSize +" Grid.Row="18" Grid.Column="4" />
+		<axogc:QuantityWithUnitTextBox Grid.Row="18" Grid.Column="5" 
+                                       SelectedQuantity="{Binding OffsetXSymbolSizeUnits}"
+                                       UnitEnvironment="{Binding OffsetSymbolSizeEnvironment}" MinWidth="80" />
+        <Label Content="* symbolSize" Grid.Row="18" Grid.Column="6" />
 
 		<Label Content="OffsetY = " Grid.Row="20" Grid.Column="0" />
-		<axogcd:LineThicknessComboBox x:Name="_guiOffsetYPoints" Grid.Row="20" Grid.Column="1" />
-		<Label Content="+" Grid.Row="20" Grid.Column="2" />
-		<axogc:QuantityWithUnitTextBox x:Name="_guiOffsetYEmUnits"  Grid.Row="20" Grid.Column="3" UnitEnvironment="{x:Static axog:RelationEnvironment.Instance}" />
-		<Label Content="* fontSize +" Grid.Row="20" Grid.Column="4" />
-		<axogc:QuantityWithUnitTextBox x:Name="_guiOffsetYSymbolSizeUnits"  Grid.Row="20" Grid.Column="5" UnitEnvironment="{x:Static axog:RelationEnvironment.Instance}" />
-		<Label Content="* symbolSize" Grid.Row="20" Grid.Column="6" />
+		<axogcd:LineThicknessComboBox Grid.Row="20" Grid.Column="1" 
+                                      SelectedQuantity="{Binding OffsetYPoints}" 
+                                      UnitEnvironment="{Binding OffsetPointsEnvironment}" />
+        <Label Content="+" Grid.Row="20" Grid.Column="2" />
+		<axogc:QuantityWithUnitTextBox Grid.Row="20" Grid.Column="3" 
+                                       SelectedQuantity="{Binding OffsetYEmUnits}" 
+                                       UnitEnvironment="{Binding OffsetEmUnitsEnvironment}" />
+        <Label Content="* fontSize +" Grid.Row="20" Grid.Column="4" />
+		<axogc:QuantityWithUnitTextBox Grid.Row="20" Grid.Column="5"
+                                       SelectedQuantity="{Binding OffsetYSymbolSizeUnits}"
+                                       UnitEnvironment="{Binding OffsetSymbolSizeEnvironment}" />
+        <Label Content="* symbolSize" Grid.Row="20" Grid.Column="6" />
 
 		<Label Content="OffsetZ = " Grid.Row="22" Grid.Column="0" />
-		<axogcd:LineThicknessComboBox x:Name="_guiOffsetZPoints" Grid.Row="22" Grid.Column="1" />
-		<Label Content="+" Grid.Row="22" Grid.Column="2" />
-		<axogc:QuantityWithUnitTextBox x:Name="_guiOffsetZEmUnits"  Grid.Row="22" Grid.Column="3" UnitEnvironment="{x:Static axog:RelationEnvironment.Instance}" />
-		<Label Content="* fontSize +" Grid.Row="22" Grid.Column="4" />
-		<axogc:QuantityWithUnitTextBox x:Name="_guiOffsetZSymbolSizeUnits"  Grid.Row="22" Grid.Column="5" UnitEnvironment="{x:Static axog:RelationEnvironment.Instance}" />
-		<Label Content="* symbolSize" Grid.Row="22" Grid.Column="6" />
+		<axogcd:LineThicknessComboBox Grid.Row="22" Grid.Column="1" 
+                                      SelectedQuantity="{Binding OffsetZPoints}" 
+                                      UnitEnvironment="{Binding OffsetPointsEnvironment}" />
+        <Label Content="+" Grid.Row="22" Grid.Column="2" />
+		<axogc:QuantityWithUnitTextBox Grid.Row="22" Grid.Column="3"
+                                       SelectedQuantity="{Binding OffsetZEmUnits}" 
+                                       UnitEnvironment="{Binding OffsetEmUnitsEnvironment}" />
+        <Label Content="* fontSize +" Grid.Row="22" Grid.Column="4" />
+		<axogc:QuantityWithUnitTextBox Grid.Row="22" Grid.Column="5"
+                                       SelectedQuantity="{Binding OffsetYSymbolSizeUnits}"
+                                       UnitEnvironment="{Binding OffsetSymbolSizeEnvironment}" />
+        <Label Content="* symbolSize" Grid.Row="22" Grid.Column="6" />
 
 		<Label Grid.Column="0" Grid.Row="24" Content="Background:" />
-		<ComboBox x:Name="_cbBackgroundStyle" Grid.Column="1" Grid.Row="24" />
-		<Label Grid.Column="2" Grid.Row="24" Content="Brush:" />
-		<axogdd:MaterialComboBox x:Name="_cbBackgroundBrush" Grid.Row="24" Grid.Column="3" Grid.ColumnSpan="3" />
-		<StackPanel Orientation="Vertical" Grid.Row="26" Grid.Column="0" Margin="0,0,4,0" VerticalAlignment="Center" HorizontalAlignment="Right">
+		<ComboBox Grid.Column="1" Grid.Row="24" 
+                  ItemsSource="{Binding Background.BackgroundStyles.Items}"
+                  SelectedItem="{Binding Background.BackgroundStyles.SelectedItem, Mode=TwoWay}" />
+        <Label Grid.Column="2" Grid.Row="24" Content="Brush:" />
+		<axogdd:MaterialComboBox Grid.Row="24" Grid.Column="3" Grid.ColumnSpan="3"
+                              SelectedMaterial="{Binding Background.BackgroundMaterial}" 
+                              ShowPlotColorsOnly="{Binding Background.ShowPlotColorsOnly}" />
+        <StackPanel Orientation="Vertical" Grid.Row="26" Grid.Column="0" Margin="0,0,4,0" VerticalAlignment="Center" HorizontalAlignment="Right">
 			<TextBlock Text="Background" />
 			<TextBlock Text="color linkage:" />
 		</StackPanel>
-		<axogc:SingleChoiceRadioStackPanel x:Name="_guiBackgroundColorLinkage" Grid.Row="26"  Grid.Column="1" SelectionChanged="EhBackgroundColorLinkageChanged"  />
-	</Grid>
+		<axogc:SingleChoiceRadioStackPanelDC Grid.Row="26"  Grid.Column="1"
+                                             ItemsSource="{Binding BackgroundColorLinkage.Items}" 
+                                             SelectedItem="{Binding BackgroundColorLinkage.SelectedItem, Mode=TwoWay}" 
+                                             Orientation="Horizontal" />
+    </Grid>
 </UserControl>

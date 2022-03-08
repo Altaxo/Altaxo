@@ -66,72 +66,128 @@
             <TextBox Text="{Binding LabelColumnText}" ToolTip="{Binding LabelColumnToolTip}" Background="{Binding LabelColumnStatus, Converter={x:Static axogcc:PlotDataSeverityToBackground.Instance}}" IsEnabled="True" IsReadOnly="True" MinWidth="100" />
         </StackPanel>
 
-		<CheckBox Grid.Row="2" Grid.Column="0" IsChecked="{Binding IndependentSkipFrequency, Mode=TwoWay}" Content="Indep. skip freq.: " />
-		<axogc:Int32UpDown  Grid.Row="2" Grid.Column="1" Minimum="1" Value="{Binding SkipFrequency}" />
+		<CheckBox Grid.Row="2" Grid.Column="0"
+                  IsChecked="{Binding IndependentSkipFrequency, Mode=TwoWay}"
+                  Content="Indep. skip freq.: " />
+		<axogc:Int32UpDown Grid.Row="2" Grid.Column="1"
+                           Value="{Binding SkipFrequency}" 
+                           Minimum="1" />
 
 		<CheckBox Grid.Column="2" Grid.ColumnSpan="2" IsChecked="{Binding IgnoreMissingDataPoints, Mode=TwoWay}" Margin="16,0,0,0" Grid.Row="2" VerticalAlignment="Center" Content="Ignore missing data points" ToolTip="If true, missing data points are treated as if not present." />
 
-        <CheckBox Grid.Row="4" Grid.Column="2" Grid.ColumnSpan="2" IsChecked="{Binding IndependentOnShiftingGroupStyles, Mode=TwoWay}" Content="Do not shift position by shifting group styles" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="16,0,0,0" />
+        <CheckBox Grid.Row="4" Grid.Column="2" Grid.ColumnSpan="2"
+                  IsChecked="{Binding IndependentOnShiftingGroupStyles, Mode=TwoWay}" Content="Do not shift position by shifting group styles" 
+                  HorizontalAlignment="Left"
+                  VerticalAlignment="Center"
+                  Margin="16,0,0,0" />
 
 		<Label Grid.Row="4" Grid.Column="0" Content="Label format:"  />
-		<TextBox Grid.Row="4" Grid.Column="1" Text="{Binding LabelFormatString, Mode=TwoWay}" ToolTip="Enter either a format without braces or with curly braces. Without braces, you can enter a format string that is appropriate for the type of the label. Use e.g. F3 to format a numeric value with 3 decimal digits. If using curly braces, {0} is the value of the label column, {1} is the row index, {2} is the x-value, and {3} is the y-value." />
+		<TextBox Grid.Row="4" Grid.Column="1" 
+                 Text="{Binding LabelFormatString, Mode=TwoWay}"
+                 ToolTip="Enter either a format without braces or with curly braces. Without braces, you can enter a format string that is appropriate for the type of the label. Use e.g. F3 to format a numeric value with 3 decimal digits. If using curly braces, {0} is the value of the label column, {1} is the row index, {2} is the x-value, and {3} is the y-value." />
 
-		<CheckBox Grid.Row="6"   Grid.Column="0" IsChecked="{Binding AttachToAxis, Mode=TwoWay}"  Content="Attach to axis:" />
-		<ComboBox Grid.Row="6"  Grid.Column="1" ItemsSource="{Binding AttachmentDirectionChoices.Items}" SelectedItem="{Binding AttachmentDirectionChoices.SelectedItem, Mode=TwoWay}" />
+		<CheckBox Grid.Row="6" Grid.Column="0"
+                  IsChecked="{Binding AttachToAxis, Mode=TwoWay}"
+                  Content="Attach to axis:" />
+		<ComboBox Grid.Row="6"  Grid.Column="1"
+                  ItemsSource="{Binding AttachmentDirectionChoices.Items}" 
+                  SelectedItem="{Binding AttachmentDirectionChoices.SelectedItem, Mode=TwoWay}" />
 
 		<!-- Styles -->
 
-		<CheckBox  Grid.Row="8" Grid.Column="0" IsChecked="{Binding IndependentColor, Mode=TwoWay}" Content="Indep. color:" VerticalAlignment="Center" />
-		<axogcd:BrushComboBox Grid.Row="8" Grid.Column="1"  SelectedBrush="{Binding LabelBrush}" ShowPlotColorsOnly="{Binding ShowPlotColorsOnly}" />
+		<CheckBox  Grid.Row="8" Grid.Column="0"
+                   IsChecked="{Binding IndependentColor, Mode=TwoWay}"
+                   Content="Indep. color:" 
+                   VerticalAlignment="Center" />
+		<axogcd:BrushComboBox Grid.Row="8" Grid.Column="1"
+                              SelectedBrush="{Binding LabelBrush}"
+                              ShowPlotColorsOnly="{Binding ShowPlotColorsOnly}" />
 
-		<CheckBox Grid.Row="8" Grid.Column="2" IsChecked="{Binding IndependentSymbolSize, Mode=TwoWay}" Content="Indep. symbol size : "  VerticalAlignment="Center" Margin="16,0,0,0" />
-		<axogcd:LineCapSizeComboBox Grid.Row="8" Grid.Column="3" SelectedQuantity="{Binding SymbolSize}" UnitEnvironment="{Binding SymbolSizeEnvironment}" />
+		<CheckBox Grid.Row="8" Grid.Column="2" 
+                  IsChecked="{Binding IndependentSymbolSize, Mode=TwoWay}"
+                  Content="Indep. symbol size : "  
+                  VerticalAlignment="Center" 
+                  Margin="16,0,0,0" />
+		<axogcd:LineCapSizeComboBox Grid.Row="8" Grid.Column="3"
+                                    SelectedQuantity="{Binding SymbolSize}"
+                                    UnitEnvironment="{Binding SymbolSizeEnvironment}" />
 
 		<Label Content="Font:"  Grid.Row="10" Grid.Column="0" />
-		<axogcd:FontFamilyComboBox Grid.Row="10" Grid.Column="1" SelectedFontFamilyName="{Binding Font.SelectedFontFamilyName}" />
+		<axogcd:FontFamilyComboBox Grid.Row="10" Grid.Column="1"
+                                   SelectedFontFamilyName="{Binding Font.SelectedFontFamilyName}" />
 
 		<Label Content="Style:"  Grid.Row="10" Grid.Column="2" />
-		<axogcd:FontStyleComboBox Grid.Row="10" Grid.Column="3" SelectedFontStyle="{Binding Font.SelectedFontStyle}" />
+		<axogcd:FontStyleComboBox Grid.Row="10" Grid.Column="3"
+                                  SelectedFontStyle="{Binding Font.SelectedFontStyle}" />
 
 		<Label Content="Font size = " Grid.Row="12" Grid.Column="0" />
-        <axogcd:FontSizeComboBox Grid.Row="12" Grid.Column="1"  SelectedQuantity="{Binding FontSizeOffset}" UnitEnvironment="{Binding FontSizeOffsetEnvironment}" />
+        <axogcd:FontSizeComboBox Grid.Row="12" Grid.Column="1"
+                                 SelectedQuantity="{Binding FontSizeOffset}"
+                                 UnitEnvironment="{Binding FontSizeOffsetEnvironment}" />
 		<Label Content="+" Grid.Row="12" Grid.Column="2" />
-		<axogc:QuantityWithUnitTextBox Grid.Row="12" Grid.Column="3" SelectedQuantity="{Binding FontSizeFactor}" UnitEnvironment="{Binding FontSizeFactorEnvironment}" />
+		<axogc:QuantityWithUnitTextBox Grid.Row="12" Grid.Column="3" 
+                                       SelectedQuantity="{Binding FontSizeFactor}"
+                                       UnitEnvironment="{Binding FontSizeFactorEnvironment}" />
 		<Label Content="* symbolSize" Grid.Row="12" Grid.Column="4" />
 
 		<Label  Content="Rotation:" Grid.Row="14" Grid.Column="0" />
-		<axogcd:RotationComboBox Grid.Row="14" Grid.Column="1" SelectedQuantity="{Binding Rotation}" UnitEnvironment="{Binding RotationEnvironment}" />
+		<axogcd:RotationComboBox Grid.Row="14" Grid.Column="1"
+                                 SelectedQuantity="{Binding Rotation}"
+                                 UnitEnvironment="{Binding RotationEnvironment}" />
 
 		<Label Content="AlignmentX:" Grid.Row="16" Grid.Column="0" />
-		<ComboBox Grid.Row="16" Grid.Column="1" ItemsSource="{Binding AlignmentX.Items}" SelectedItem="{Binding AlignmentX.SelectedItem}" />
+		<ComboBox Grid.Row="16" Grid.Column="1" 
+                  ItemsSource="{Binding AlignmentX.Items}" 
+                  SelectedItem="{Binding AlignmentX.SelectedItem}" />
 
 		<Label Content="AlignmentY:"  Grid.Row="16" Grid.Column="2" />
-		<ComboBox Grid.Row="16" Grid.Column="3" ItemsSource="{Binding AlignmentY.Items}" SelectedItem="{Binding AlignmentY.SelectedItem}" />
+		<ComboBox Grid.Row="16" Grid.Column="3"
+                  ItemsSource="{Binding AlignmentY.Items}"
+                  SelectedItem="{Binding AlignmentY.SelectedItem}" />
 
 		<Label Content="OffsetX = " Grid.Row="18" Grid.Column="0" />
-		<axogcd:LineThicknessComboBox Grid.Row="18" Grid.Column="1" SelectedQuantity="{Binding OffsetXPoints}" UnitEnvironment="{Binding OffsetPointsEnvironment}" />
+		<axogcd:LineThicknessComboBox Grid.Row="18" Grid.Column="1"
+                                      SelectedQuantity="{Binding OffsetXPoints}"
+                                      UnitEnvironment="{Binding OffsetPointsEnvironment}" />
 		<Label Content="+" Grid.Row="18" Grid.Column="2" />
-		<axogc:QuantityWithUnitTextBox Grid.Row="18" Grid.Column="3" SelectedQuantity="{Binding OffsetXEmUnits}" UnitEnvironment="{Binding OffsetEmUnitsEnvironment}" />
+		<axogc:QuantityWithUnitTextBox Grid.Row="18" Grid.Column="3"
+                                       SelectedQuantity="{Binding OffsetXEmUnits}" 
+                                       UnitEnvironment="{Binding OffsetEmUnitsEnvironment}" />
 		<Label Content="* fontSize +" Grid.Row="18" Grid.Column="4" />
-		<axogc:QuantityWithUnitTextBox Grid.Row="18" Grid.Column="5" SelectedQuantity="{Binding OffsetXSymbolSizeUnits}" UnitEnvironment="{Binding OffsetSymbolSizeEnvironment}" MinWidth="80" />
+		<axogc:QuantityWithUnitTextBox Grid.Row="18" Grid.Column="5"
+                                       SelectedQuantity="{Binding OffsetXSymbolSizeUnits}"
+                                       UnitEnvironment="{Binding OffsetSymbolSizeEnvironment}" MinWidth="80" />
 		<Label Content="* symbolSize" Grid.Row="18" Grid.Column="6" />
 
 		<Label Content="OffsetY = " Grid.Row="20" Grid.Column="0" />
-        <axogcd:LineThicknessComboBox Grid.Row="20" Grid.Column="1" SelectedQuantity="{Binding OffsetYPoints}" UnitEnvironment="{Binding OffsetPointsEnvironment}" />
+        <axogcd:LineThicknessComboBox Grid.Row="20" Grid.Column="1"
+                                      SelectedQuantity="{Binding OffsetYPoints}" 
+                                      UnitEnvironment="{Binding OffsetPointsEnvironment}" />
 		<Label Content="+" Grid.Row="20" Grid.Column="2" />
-        <axogc:QuantityWithUnitTextBox Grid.Row="20" Grid.Column="3" SelectedQuantity="{Binding OffsetYEmUnits}" UnitEnvironment="{Binding OffsetEmUnitsEnvironment}" />
+        <axogc:QuantityWithUnitTextBox Grid.Row="20" Grid.Column="3"
+                                       SelectedQuantity="{Binding OffsetYEmUnits}" 
+                                       UnitEnvironment="{Binding OffsetEmUnitsEnvironment}" />
 		<Label Content="* fontSize +" Grid.Row="20" Grid.Column="4" />
-        <axogc:QuantityWithUnitTextBox Grid.Row="20" Grid.Column="5" SelectedQuantity="{Binding OffsetYSymbolSizeUnits}" UnitEnvironment="{Binding OffsetSymbolSizeEnvironment}" />
+        <axogc:QuantityWithUnitTextBox Grid.Row="20" Grid.Column="5"
+                                       SelectedQuantity="{Binding OffsetYSymbolSizeUnits}"
+                                       UnitEnvironment="{Binding OffsetSymbolSizeEnvironment}" />
 		<Label Content="* symbolSize" Grid.Row="20" Grid.Column="6" />
 
 		<Label Grid.Column="0" Grid.Row="24" Content="Background:" />
-		<ComboBox Grid.Column="1" Grid.Row="24" ItemsSource="{Binding Background.BackgroundStyles.Items}" SelectedItem="{Binding Background.BackgroundStyles.SelectedItem, Mode=TwoWay}" />
+		<ComboBox Grid.Column="1" Grid.Row="24"
+                  ItemsSource="{Binding Background.BackgroundStyles.Items}"
+                  SelectedItem="{Binding Background.BackgroundStyles.SelectedItem, Mode=TwoWay}" />
 		<Label Grid.Column="2" Grid.Row="24" Content="Brush:" />
-		<axogcd:BrushComboBox Grid.Row="24" Grid.Column="3" SelectedBrush="{Binding Background.BackgroundBrush}" ShowPlotColorsOnly="{Binding Background.ShowPlotColorsOnly}" />
+		<axogcd:BrushComboBox Grid.Row="24" Grid.Column="3"
+                              SelectedBrush="{Binding Background.BackgroundBrush}" 
+                              ShowPlotColorsOnly="{Binding Background.ShowPlotColorsOnly}" />
 		<StackPanel Orientation="Vertical" Grid.Row="26" Grid.Column="0" Margin="0,0,4,0" VerticalAlignment="Center" HorizontalAlignment="Right">
 			<TextBlock Text="Background" />
 			<TextBlock Text="color linkage:" />
 		</StackPanel>
-		<axogc:SingleChoiceRadioStackPanelDC Grid.Row="26"  Grid.Column="1" Grid.ColumnSpan="6" ItemsSource="{Binding BackgroundColorLinkage.Items}" SelectedItem="{Binding BackgroundColorLinkage.SelectedItem, Mode=TwoWay}" Orientation="Horizontal" />
+		<axogc:SingleChoiceRadioStackPanelDC Grid.Row="26"  Grid.Column="1" Grid.ColumnSpan="6" 
+                                             ItemsSource="{Binding BackgroundColorLinkage.Items}" 
+                                             SelectedItem="{Binding BackgroundColorLinkage.SelectedItem, Mode=TwoWay}" 
+                                             Orientation="Horizontal" />
 	</Grid>
 </UserControl>
