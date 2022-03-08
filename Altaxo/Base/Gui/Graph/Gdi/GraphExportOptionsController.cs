@@ -185,7 +185,7 @@ namespace Altaxo.Gui.Graph.Gdi
       {
         if (!(_pixelFormat == value))
         {
-          _imageFormat?.Dispose();
+          _pixelFormat?.Dispose();
           _pixelFormat = value;
           OnPropertyChanged(nameof(PixelFormat));
         }
@@ -253,7 +253,7 @@ namespace Altaxo.Gui.Graph.Gdi
         bool select;
 
         var imageFormat = new SelectableListNodeList();
-        foreach (ImageFormat item in ImageFormats)
+        foreach (var item in ImageFormats)
           imageFormat.Add(new SelectableListNode(item.ToString(), item, _doc.ImageFormat == item));
         ImageFormat = new ItemsController<ImageFormat>(imageFormat);
 
@@ -268,7 +268,9 @@ namespace Altaxo.Gui.Graph.Gdi
         PixelFormat = new ItemsController<PixelFormat>(pixelFormat);
 
         SourceDpi = new ItemsController<double>(GetResolutions(_doc.SourceDpiResolution));
+        SourceDpiText = GUIConversion.ToString(_doc.SourceDpiResolution);
         DestinationDpi = new ItemsController<double>(GetResolutions(_doc.DestinationDpiResolution));
+        DestinationDpiText = GUIConversion.ToString(_doc.DestinationDpiResolution);
         BackgroundBrush = _doc.BackgroundBrush ?? new BrushX(NamedColors.Transparent);
       }
     }
