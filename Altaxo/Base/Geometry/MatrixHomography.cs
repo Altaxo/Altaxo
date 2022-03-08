@@ -16,14 +16,16 @@ namespace Altaxo.Geometry
     /// <param name="pointPairs">Pairs of points (x and y). The resulting 3x3 matrix should transform x into y.</param>
     /// <param name="setM22ToOne">If true, the resulting matrix is scaled so that the element M22 is 1.</param>
     /// <returns>A 2x2 matrix, that best transforms (in the least square sense) the points x into y.</returns>
-    public static Matrix2x2 EvaluateHomography(IReadOnlyList<(double x, double y)> pointPairs, bool setM22ToOne = true)
+    public static Matrix2x2 EvaluateHomography(IEnumerable<(double x, double y)> pointPairs, bool setM22ToOne = true)
     {
-      var mx = new DoubleMatrix(pointPairs.Count * 2, 9);
+      var count = pointPairs.Count();
+      var mx = new DoubleMatrix(count * 2, 9);
 
-      for (int i = 0, j = 0; i < pointPairs.Count; i++)
+      int j = 0;
+      foreach(var pair in pointPairs)
       {
-        var x = pointPairs[i].x;
-        var y = pointPairs[i].y;
+        var x = pair.x;
+        var y = pair.y;
 
         // X-Component
         mx[j, 0] = -x;
@@ -69,14 +71,16 @@ namespace Altaxo.Geometry
     /// <param name="pointPairs">Pairs of points (x and y). The resulting 3x3 matrix should transform x into y.</param>
     /// <param name="setM33ToOne">If true, the resulting matrix is scaled so that the element M33 is 1.</param>
     /// <returns>A 3x3 matrix, that best transforms (in the least square sense) the points x into y.</returns>
-    public static Matrix3x3 EvaluateHomography(IReadOnlyList<(PointD2D x, PointD2D y)> pointPairs, bool setM33ToOne = true)
+    public static Matrix3x3 EvaluateHomography(IEnumerable<(PointD2D x, PointD2D y)> pointPairs, bool setM33ToOne = true)
     {
-      var mx = new DoubleMatrix(pointPairs.Count * 2, 9);
+      var count = pointPairs.Count();
+      var mx = new DoubleMatrix(count * 2, 9);
 
-      for (int i = 0, j = 0; i < pointPairs.Count; i++)
+      int j = 0;
+      foreach(var pair in pointPairs)
       {
-        var x = pointPairs[i].x;
-        var y = pointPairs[i].y;
+        var x = pair.x;
+        var y = pair.y;
 
         // X-Component
         mx[j, 0] = -x.X;
@@ -135,14 +139,16 @@ namespace Altaxo.Geometry
     /// <param name="pointPairs">Pairs of points (x and y). The resulting 4x4 matrix should transform x into y.</param>
     /// <param name="setM44ToOne">If true, the resulting matrix is scaled so that the element M44 is 1.</param>
     /// <returns>A 4x4 matrix, that best transforms (in the least square sense) the points x into y.</returns>
-    public static Matrix4x4 EvaluateHomography(IReadOnlyList<(PointD3D x, PointD3D y)> pointPairs, bool setM44ToOne = true)
+    public static Matrix4x4 EvaluateHomography(IEnumerable<(PointD3D x, PointD3D y)> pointPairs, bool setM44ToOne = true)
     {
-      var mx = new DoubleMatrix(pointPairs.Count * 3, 16);
+      var count = pointPairs.Count();
+      var mx = new DoubleMatrix(count * 3, 16);
 
-      for (int i = 0, j = 0; i < pointPairs.Count; i++)
+      int j = 0;
+      foreach(var pair in pointPairs)
       {
-        var x = pointPairs[i].x;
-        var y = pointPairs[i].y;
+        var x = pair.x;
+        var y = pair.y;
 
         // X-Component
         mx[j, 0] = -x.X;
