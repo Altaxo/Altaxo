@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -23,9 +23,7 @@
 #endregion Copyright
 
 #nullable disable
-using System;
 using System.Collections.Generic;
-using System.Text;
 using Altaxo.Collections;
 using Altaxo.Graph.Gdi.Plot;
 using Altaxo.Gui.Common;
@@ -33,14 +31,9 @@ using Altaxo.Gui.Graph.Plot.Data;
 
 namespace Altaxo.Gui.Graph.Gdi.Plot
 {
-  public interface IDensityImagePlotItemView : IDataContextAwareView
-  {
-
-  }
-
   [UserControllerForObject(typeof(DensityImagePlotItem))]
-  [ExpectedTypeOfView(typeof(ITabbedElementView))]
-  public class DensityImagePlotItemController : MVCANControllerEditOriginalDocBase<DensityImagePlotItem, IDensityImagePlotItemView>
+  [ExpectedTypeOfView(typeof(ITabbedElementViewDC))]
+  public class DensityImagePlotItemController : MVCANControllerEditOriginalDocBase<DensityImagePlotItem, ITabbedElementViewDC>
   {
     private IMVCANController _styleController;
 
@@ -100,21 +93,19 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
 
     public override bool Apply(bool disposeController)
     {
-      bool result = true;
-
       if (_styleController is not null)
       {
         if (!_styleController.Apply(disposeController))
-          return false;
+          return ApplyEnd(false, disposeController);
       }
 
       if (_dataController is not null)
       {
         if (!_dataController.Apply(disposeController))
-          return false;
+          return ApplyEnd(false, disposeController);
       }
 
-      return ApplyEnd(result, disposeController);
+      return ApplyEnd(true, disposeController);
     }
 
     private void InitializeStyle()
