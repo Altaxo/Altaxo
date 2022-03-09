@@ -76,6 +76,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
       {
         if (!(_lineConnectChoices == value))
         {
+          _lineConnectChoices?.Dispose();
           _lineConnectChoices = value;
           OnPropertyChanged(nameof(LineConnectChoices));
         }
@@ -280,7 +281,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
     {
       _colorGroupStyleTracker = null;
 
-      _lineConnectChoices = null;
+      LineConnectChoices = null;
 
       base.Dispose(isDisposing);
     }
@@ -293,6 +294,10 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
       {
         _colorGroupStyleTracker = new ColorGroupStylePresenceTracker(_doc, EhColorGroupStyleAddedOrRemoved);
         InitializeLineConnectionChoices();
+        LinePen = new ColorTypeThicknessPenController(_doc.LinePen)
+        {
+          ShowPlotColorsOnly = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentLineColor)
+        };
 
         ConnectCircular = _doc.ConnectCircular;
         IgnoreMissingDataPoints = _doc.IgnoreMissingDataPoints;
@@ -300,10 +305,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
         IndependentLineColor = _doc.IndependentLineColor;
         IndependentDashStyle = _doc.IndependentDashStyle;
-        LinePen = new ColorTypeThicknessPenController(_doc.LinePen)
-        {
-          ShowPlotColorsOnly = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentLineColor)
-        };
+        
         
         IndependentSymbolSize = _doc.IndependentSymbolSize;
         SymbolSize = new DimensionfulQuantity(_doc.SymbolSize, Altaxo.Units.Length.Point.Instance).AsQuantityIn(SymbolSizeEnvironment.DefaultUnit);

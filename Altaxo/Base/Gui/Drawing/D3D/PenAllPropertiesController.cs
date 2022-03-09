@@ -67,7 +67,18 @@ namespace Altaxo.Gui.Drawing.D3D
     public ICommand CmdShowCustomPen { get; }
 
     private bool _showPlotColorsOnly;
-    public bool ShowPlotColorsOnly { get => _showPlotColorsOnly; set { if (!(ShowPlotColorsOnly == value)) { _showPlotColorsOnly = value; OnPropertyChanged(nameof(ShowPlotColorsOnly)); } } }
+    public bool ShowPlotColorsOnly
+    {
+      get => _showPlotColorsOnly;
+      set
+      {
+        if (!(ShowPlotColorsOnly == value))
+        {
+          _showPlotColorsOnly = value;
+          OnPropertyChanged(nameof(ShowPlotColorsOnly));
+        }
+      }
+    }
 
     public IMaterial Material
     {
@@ -128,7 +139,7 @@ namespace Altaxo.Gui.Drawing.D3D
 
 
 
-   
+
 
 
     public Altaxo.Drawing.IDashPattern DashPattern
@@ -270,8 +281,33 @@ namespace Altaxo.Gui.Drawing.D3D
       }
     }
 
-    public PenX3D Pen => _doc;
+    public PenX3D Pen
 
+    {
+      get => _doc;
+
+      set
+      {
+        if (!(_doc == value))
+        {
+          _doc = value;
+          Initialize(true);
+
+          OnPropertyChanged(nameof(Material));
+          OnPropertyChanged(nameof(LineThickness1));
+          OnPropertyChanged(nameof(LineThickness2));
+          OnPropertyChanged(nameof(CrossSection));
+          OnPropertyChanged(nameof(DashPattern));
+          OnPropertyChanged(nameof(DashStartCap));
+          OnPropertyChanged(nameof(DashEndCap));
+          OnPropertyChanged(nameof(StartCap));
+          OnPropertyChanged(nameof(EndCap));
+          OnPropertyChanged(nameof(LineJoin));
+          OnPropertyChanged(nameof(MiterLimit));
+          OnMadeDirty();
+        }
+      }
+    }
     #endregion
 
 

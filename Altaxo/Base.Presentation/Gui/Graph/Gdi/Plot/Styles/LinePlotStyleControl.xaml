@@ -69,25 +69,68 @@
 		</Grid.RowDefinitions>
 
 		<Label Grid.Column="0" Grid.Row="0" Content="Line connection:" />
-		<ComboBox Grid.Column="2" Grid.Row="0" ItemsSource="{Binding LineConnectChoices.Items}" SelectedItem="{Binding LineConnectChoices.SelectedItem, Mode=TwoWay}" />
-		<CheckBox Grid.Column="2" Grid.Row="2" IsChecked="{Binding ConnectCircular, Mode=TwoWay}" Content="Circular connection" />
-		<CheckBox Grid.Column="2" Grid.Row="6" IsChecked="{Binding IgnoreMissingDataPoints, Mode=TwoWay}" Content="Ignore data gaps" />
-		<CheckBox Grid.Row="8" Grid.Column="2" Grid.ColumnSpan="4" IsChecked="{Binding IndependentOnShiftingGroupStyles, Mode=TwoWay}" Content="Independent on data shifting group styles" />
+        
+		<ComboBox Grid.Column="2" Grid.Row="0" 
+                  ItemsSource="{Binding LineConnectChoices.Items}"
+                  SelectedItem="{Binding LineConnectChoices.SelectedItem, Mode=TwoWay}" />
+		
+        <CheckBox Grid.Column="2" Grid.Row="2" 
+                  IsChecked="{Binding ConnectCircular, Mode=TwoWay}"
+                  Content="Circular connection" />
+		
+        <CheckBox Grid.Column="2" Grid.Row="6" 
+                  IsChecked="{Binding IgnoreMissingDataPoints, Mode=TwoWay}"
+                  Content="Ignore data gaps" />
+		
+        <CheckBox Grid.Row="8" Grid.Column="2" Grid.ColumnSpan="4"
+                  IsChecked="{Binding IndependentOnShiftingGroupStyles, Mode=TwoWay}"
+                  Content="Independent on data shifting group styles" />
 
-		<CheckBox Grid.Column="0" Grid.Row="10" IsChecked="{Binding IndependentLineColor}" Content="Indep. color:"/>
-		<axogcd:BrushComboBox Grid.Column="2" Grid.Row="10" SelectedBrush="{Binding LinePen.Brush}" ShowPlotColorsOnly="{Binding LinePen.ShowPlotColorsOnly}" />
-		<CheckBox x:Name="_guiIndependentDashStyle" Grid.Column="0" Grid.Row="12" Content="Indep. dash style:" />
-		<axogdd:DashPatternComboBox Grid.Column="2" Grid.Row="12" SelectedItem="{Binding LinePen.DashPattern}" />
-		<Label Grid.Column="0" Grid.Row="14" Content="Thickness:" />
-		<axogcd:LineThicknessComboBox Grid.Column="2" Grid.Row="14" SelectedQuantity="{Binding LinePen.LineThickness}" UnitEnvironment="{Binding LinePen.LineThicknessEnvironment}" />
+		<CheckBox Grid.Column="0" Grid.Row="10" 
+                  IsChecked="{Binding IndependentLineColor}" 
+                  Content="Indep. color:"/>
+		
+        <axogcd:BrushComboBox Grid.Column="2" Grid.Row="10" 
+                              SelectedBrush="{Binding LinePen.Brush}"
+                              ShowPlotColorsOnly="{Binding LinePen.ShowPlotColorsOnly}" 
+                              CustomPenCommand="{Binding LinePen.CmdShowCustomPen}" />
+		
+        <CheckBox Grid.Column="0" Grid.Row="12" 
+                  IsChecked="{Binding IndependentDashStyle, Mode=TwoWay}"
+                  Content="Indep. dash style:" />
+		
+        <axogdd:DashPatternComboBox Grid.Column="2" Grid.Row="12"
+                                    SelectedItem="{Binding LinePen.DashPattern}" />
+		
+        <Label Grid.Column="0" Grid.Row="14" 
+               Content="Thickness:" />
+		
+        <axogcd:LineThicknessComboBox Grid.Column="2" Grid.Row="14"
+                                      SelectedQuantity="{Binding LinePen.LineThickness}"
+                                      UnitEnvironment="{Binding LinePen.LineThicknessEnvironment}" />
 
-        <CheckBox Grid.Row="16" Grid.Column="0" IsChecked="{Binding IndependentSymbolSize, Mode=TwoWay}" Content="Independent symbol size :"  />
-		<axogcd:LineCapSizeComboBox Grid.Row="16" Grid.Column="2" SelectedQuantity="{Binding SymbolSize}" UnitEnvironment="{Binding SymbolSizeEnvironment}" />
+        <CheckBox Grid.Row="16" Grid.Column="0" 
+                  IsChecked="{Binding IndependentSymbolSize, Mode=TwoWay}"
+                  Content="Independent symbol size :"  />
+		
+        <axogcd:LineCapSizeComboBox Grid.Row="16" Grid.Column="2"
+                                    SelectedQuantity="{Binding SymbolSize}"
+                                    UnitEnvironment="{Binding SymbolSizeEnvironment}" />
 
-        <CheckBox Grid.Row="18" Grid.Column="0" IsChecked="{Binding UseSymbolGap, Mode=TwoWay}" Content="Use line-symbol gap = " />
-		<axogcd:LineThicknessComboBox Grid.Row="18" Grid.Column="2" SelectedQuantity="{Binding SymbolGapOffset}" UnitEnvironment="{Binding GapOffsetEnvironment}" />
-		<Label Content="+" Grid.Row="18" Grid.Column="3" />
-		<axogc:QuantityWithUnitTextBox Grid.Row="18" Grid.Column="4" SelectedQuantity="{Binding SymbolGapFactor}" UnitEnvironment="{Binding GapFactorEnvironment}" />
-		<Label Content="* symbolSize" Grid.Row="18" Grid.Column="5" />
+        <CheckBox Grid.Row="18" Grid.Column="0"
+                  IsChecked="{Binding UseSymbolGap, Mode=TwoWay}"
+                  Content="Use line-symbol gap = " />
+		
+        <axogcd:LineThicknessComboBox Grid.Row="18" Grid.Column="2"
+                                      SelectedQuantity="{Binding SymbolGapOffset}" 
+                                      UnitEnvironment="{Binding GapOffsetEnvironment}" />
+		
+        <Label Content="+" Grid.Row="18" Grid.Column="3" />
+		
+        <axogc:QuantityWithUnitTextBox Grid.Row="18" Grid.Column="4"
+                                       SelectedQuantity="{Binding SymbolGapFactor}"
+                                       UnitEnvironment="{Binding GapFactorEnvironment}" />
+		
+        <Label Content="* symbolSize" Grid.Row="18" Grid.Column="5" />
 	</Grid>
 </UserControl>

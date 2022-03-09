@@ -28,6 +28,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Altaxo.Drawing.D3D.Material;
 using Altaxo.Drawing.DashPatternManagement;
 
 namespace Altaxo.Drawing.D3D
@@ -275,6 +276,14 @@ namespace Altaxo.Drawing.D3D
       var result = (PenX3D)MemberwiseClone();
       result._material = Materials.GetMaterialWithNewColor(result._material, color);
       return result;
+    }
+
+    public bool IsInvisible
+    {
+      get
+      {
+        return MaterialInvisible.Instance.Equals(this.Material);
+      }
     }
 
     public ICrossSectionOfLine CrossSection
