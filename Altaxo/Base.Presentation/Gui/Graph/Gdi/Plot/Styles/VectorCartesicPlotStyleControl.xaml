@@ -59,24 +59,63 @@
 					<RowDefinition Height="4" />
 				</Grid.RowDefinitions>
 
-				<Label Content="Column for x-component : " Grid.Row="0" Grid.Column="0" />
-                <TextBox Grid.Row="0" Grid.Column="2" Text="{Binding XColumnTransformationText}" ToolTip="{Binding XColumnTransformationToolTip}"  IsEnabled="True" IsReadOnly="True"  Visibility="{Binding XColumnTransformationText, Converter={x:Static axogcc:NullToVisibilityCollapsedConverter.Instance}}" />
-                <TextBox Grid.Row="0" Grid.Column="3" Text="{Binding XColumnText}" ToolTip="{Binding XColumnToolTip}" Background="{Binding XColumnStatus, Converter={x:Static axogcc:PlotDataSeverityToBackground.Instance}}" IsEnabled="True" IsReadOnly="True" MinWidth="100"  />
+                <Label Grid.Row="0" Grid.Column="0" 
+                       Content="Column for x-component : "  />
+                
+                <TextBox Grid.Row="0" Grid.Column="2"
+                         Text="{Binding XColumnTransformationText}"
+                         ToolTip="{Binding XColumnTransformationToolTip}" 
+                         IsEnabled="True" 
+                         IsReadOnly="True"  
+                         Visibility="{Binding XColumnTransformationText, Converter={x:Static axogcc:NullToVisibilityCollapsedConverter.Instance}}" />
+                
+                <TextBox Grid.Row="0" Grid.Column="3" 
+                         Text="{Binding XColumnText}"
+                         ToolTip="{Binding XColumnToolTip}"
+                         Background="{Binding XColumnStatus, Converter={x:Static axogcc:PlotDataSeverityToBackground.Instance}}"
+                         IsEnabled="True"
+                         IsReadOnly="True"
+                         MinWidth="100"  />
 
-                <Label Content="Column for y-component : " Grid.Row="2" Grid.Column="0" />
-                <TextBox Grid.Row="2" Grid.Column="2" Text="{Binding YColumnTransformationText}" ToolTip="{Binding YColumnTransformationToolTip}"  IsEnabled="True" IsReadOnly="True"  Visibility="{Binding YColumnTransformationText, Converter={x:Static axogcc:NullToVisibilityCollapsedConverter.Instance}}" />
-                <TextBox Grid.Row="2" Grid.Column="3" Text="{Binding YColumnText}" ToolTip="{Binding YColumnToolTip}" Background="{Binding YColumnStatus, Converter={x:Static axogcc:PlotDataSeverityToBackground.Instance}}" IsEnabled="True" IsReadOnly="True" MinWidth="100"  />
+                <Label Grid.Row="2" Grid.Column="0"
+                       Content="Column for y-component : "  />
+                
+                <TextBox Grid.Row="2" Grid.Column="2" 
+                         Text="{Binding YColumnTransformationText}" 
+                         ToolTip="{Binding YColumnTransformationToolTip}" 
+                         IsEnabled="True" IsReadOnly="True" 
+                         Visibility="{Binding YColumnTransformationText, Converter={x:Static axogcc:NullToVisibilityCollapsedConverter.Instance}}" />
+               
+                <TextBox Grid.Row="2" Grid.Column="3" 
+                         Text="{Binding YColumnText}" 
+                         ToolTip="{Binding YColumnToolTip}"
+                         Background="{Binding YColumnStatus, Converter={x:Static axogcc:PlotDataSeverityToBackground.Instance}}"
+                         IsEnabled="True" 
+                         IsReadOnly="True" 
+                         MinWidth="100"  />
 
-				<GroupBox Header="Value interpretation :" Margin="4,4,0,0" Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="4">
-                    <axogc:SingleChoiceRadioWrapPanel ItemsSource="{Binding MeaningOfValues.Items}" SelectedItem="{Binding MeaningOfValues.SelectedItem}"  />
+				<GroupBox Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="4" Header="Value interpretation :" Margin="4,4,0,0" >
+                    <axogc:SingleChoiceRadioWrapPanel 
+                        ItemsSource="{Binding MeaningOfValues.Items}"
+                        SelectedItem="{Binding MeaningOfValues.SelectedItem}"  />
 				</GroupBox>
 
-                <CheckBox Grid.Row="8" Grid.Column="0" IsChecked="{Binding IndependentSkipFrequency, Mode=TwoWay}" Content="Independent skip frequency :" />
-                <axogc:Int32UpDown Grid.Row="8" Grid.Column="2" Grid.ColumnSpan="2" Value="{Binding SkipFrequency}" Minimum="1" />
+                <CheckBox Grid.Row="8" Grid.Column="0" 
+                          IsChecked="{Binding IndependentSkipFrequency, Mode=TwoWay}"
+                          Content="Independent skip frequency :" />
+                
+                <axogc:Int32UpDown Grid.Row="8" Grid.Column="2" Grid.ColumnSpan="2"
+                                   Value="{Binding SkipFrequency}"
+                                   Minimum="1" />
 
-                <CheckBox Grid.Row="10" Grid.Column="0" Grid.ColumnSpan="4" IsChecked="{Binding IgnoreMissingDataPoints, Mode=TwoWay}" Content="Ignore missing data points" ToolTip="If true, missing data points are treated as if not present." />
+                <CheckBox Grid.Row="10" Grid.Column="0" Grid.ColumnSpan="4" 
+                          IsChecked="{Binding IgnoreMissingDataPoints, Mode=TwoWay}"
+                          Content="Ignore missing data points" 
+                          ToolTip="If true, missing data points are treated as if not present." />
 
-                <CheckBox Grid.Row="12" Grid.Column="0" Grid.ColumnSpan="4" IsChecked="{Binding IndependentOnShiftingGroupStyles, Mode=TwoWay}" Content="Independent on data shifting group styles"  />
+                <CheckBox Grid.Row="12" Grid.Column="0" Grid.ColumnSpan="4" 
+                          IsChecked="{Binding IndependentOnShiftingGroupStyles, Mode=TwoWay}"
+                          Content="Independent on data shifting group styles"  />
 			</Grid>
 		</GroupBox>
 
@@ -110,37 +149,88 @@
 					<RowDefinition Height="Auto" />
 					<RowDefinition Height="4" />
 				</Grid.RowDefinitions>
-                <CheckBox Grid.Row="0" Grid.Column="0" IsChecked="{Binding IndependentColor, Mode=TwoWay}" Content="Independent color :" />
-                <axogcd:BrushComboBox Grid.Row="0" Grid.Column="2" Grid.ColumnSpan="4" SelectedBrush="{Binding Pen.Brush}" ShowPlotColorsOnly="{Binding Pen.ShowPlotColorsOnly}"/>
+                
+                <CheckBox Grid.Row="0" Grid.Column="0"
+                          IsChecked="{Binding IndependentColor, Mode=TwoWay}"
+                          Content="Independent color :" />
+                
+                <axogcd:BrushComboBox Grid.Row="0" Grid.Column="2" Grid.ColumnSpan="4"
+                                      SelectedBrush="{Binding Pen.Brush}" 
+                                      ShowPlotColorsOnly="{Binding Pen.ShowPlotColorsOnly}"
+                                      CustomPenCommand="{Binding Pen.CmdShowCustomPen}" />
 
-                <CheckBox Grid.Row="2" Grid.Column="0" IsChecked="{Binding IndependentSymbolSize, Mode=TwoWay}" Content="Independent symbol size :" />
-                <axogcd:LineCapSizeComboBox Grid.Row="2" Grid.Column="2" SelectedQuantity="{Binding SymbolSize}" UnitEnvironment="{Binding SymbolSizeEnvironment}" />
+                <CheckBox Grid.Row="2" Grid.Column="0" 
+                          IsChecked="{Binding IndependentSymbolSize, Mode=TwoWay}"
+                          Content="Independent symbol size :" />
+                
+                <axogcd:LineCapSizeComboBox Grid.Row="2" Grid.Column="2" 
+                                            SelectedQuantity="{Binding SymbolSize}"
+                                            UnitEnvironment="{Binding SymbolSizeEnvironment}" />
 
-				<Label Grid.Row="4" Grid.Column="0" Content="Line width 1 = " />
-                <axogcd:LineThicknessComboBox Grid.Row="4" Grid.Column="2" SelectedQuantity="{Binding LineWidth1Offset}" UnitEnvironment="{Binding LineWidthEnvironment}"  />
+				<Label Grid.Row="4" Grid.Column="0" 
+                       Content="Line width 1 = " />
+                
+                <axogcd:LineThicknessComboBox Grid.Row="4" Grid.Column="2" 
+                                              SelectedQuantity="{Binding LineWidth1Offset}" 
+                                              UnitEnvironment="{Binding LineWidthEnvironment}"  />
+                
 				<Label Content="+" Grid.Row="4" Grid.Column="3" />
-                <axogc:QuantityWithUnitTextBox Grid.Row="4" Grid.Column="4" SelectedQuantity="{Binding LineWidth1Factor}" UnitEnvironment="{Binding LineFactorEnvironment}" />
+                
+                <axogc:QuantityWithUnitTextBox Grid.Row="4" Grid.Column="4" 
+                                               SelectedQuantity="{Binding LineWidth1Factor}" 
+                                               UnitEnvironment="{Binding LineFactorEnvironment}" />
+                
 				<Label Content="* symbolSize" Grid.Row="4" Grid.Column="5" />
 
 				<Label Content="End cap:" Grid.Row="8" Grid.Column="0" />
-                <axogcd:LineCapComboBox Grid.Row="8" Grid.Column="2" Grid.ColumnSpan="4" IsForEndCap="True" SelectedLineCap="{Binding Pen.EndCap.LineCap, Mode=TwoWay}" />
+                <axogcd:LineCapComboBox Grid.Row="8" Grid.Column="2" Grid.ColumnSpan="4" 
+                                        SelectedLineCap="{Binding Pen.EndCap.LineCap, Mode=TwoWay}"
+                                        IsForEndCap="True" />
 
-				<Label Content="End cap size = " Grid.Row="10" Grid.Column="0" />
-                <axogcd:LineThicknessComboBox Grid.Row="10" Grid.Column="2" SelectedQuantity="{Binding EndCapSizeOffset}" UnitEnvironment="{Binding LineWidthEnvironment}" />
+				<Label Grid.Row="10" Grid.Column="0" Content="End cap size = " />
+                
+                <axogcd:LineThicknessComboBox Grid.Row="10" Grid.Column="2" 
+                                              SelectedQuantity="{Binding EndCapSizeOffset}"
+                                              UnitEnvironment="{Binding LineWidthEnvironment}" />
+                
 				<Label Content="+" Grid.Row="10" Grid.Column="3" />
-                <axogc:QuantityWithUnitTextBox  Grid.Row="10" Grid.Column="4"  SelectedQuantity="{Binding EndCapSizeFactor}"  UnitEnvironment="{Binding LineFactorEnvironment}" />
+                
+                <axogc:QuantityWithUnitTextBox  Grid.Row="10" Grid.Column="4"
+                                                SelectedQuantity="{Binding EndCapSizeFactor}"
+                                                UnitEnvironment="{Binding LineFactorEnvironment}" />
+                
 				<Label Content="* symbolSize" Grid.Row="10" Grid.Column="5" />
 
-                <CheckBox Grid.Row="12" Grid.Column="0" IsChecked="{Binding UseSymbolGap, Mode=TwoWay}" Content="Use line-symbol gap = " />
-                <axogcd:LineThicknessComboBox Grid.Row="12" Grid.Column="2" SelectedQuantity="{Binding SymbolGapOffset}" UnitEnvironment="{Binding LineWidthEnvironment}"  />
+                <CheckBox Grid.Row="12" Grid.Column="0" 
+                          IsChecked="{Binding UseSymbolGap, Mode=TwoWay}"
+                          Content="Use line-symbol gap = " />
+                
+                <axogcd:LineThicknessComboBox Grid.Row="12" Grid.Column="2" 
+                                              SelectedQuantity="{Binding SymbolGapOffset}"
+                                              UnitEnvironment="{Binding LineWidthEnvironment}"  />
+                
 				<Label Content="+" Grid.Row="12" Grid.Column="3" />
-                <axogc:QuantityWithUnitTextBox Grid.Row="12" Grid.Column="4"  SelectedQuantity="{Binding SymbolGapFactor}" UnitEnvironment="{Binding LineFactorEnvironment}"  />
-				<Label Content="* symbolSize" Grid.Row="12" Grid.Column="5" />
+                
+                <axogc:QuantityWithUnitTextBox Grid.Row="12" Grid.Column="4"
+                                               SelectedQuantity="{Binding SymbolGapFactor}"
+                                               UnitEnvironment="{Binding LineFactorEnvironment}"  />
+                
+				<Label Grid.Row="12" Grid.Column="5" Content="* symbolSize" />
 
-				<CheckBox Grid.Row="14" Grid.Column="0" Content="Use manual vector length = " IsChecked="{Binding UseManualVectorLength, Mode=TwoWay}" />
-                <axogcd:LineThicknessComboBox Grid.Row="14" Grid.Column="2" SelectedQuantity="{Binding ManualVectorLengthOffset}" UnitEnvironment="{Binding LineWidthEnvironment}" />
+				<CheckBox Grid.Row="14" Grid.Column="0" 
+                          IsChecked="{Binding UseManualVectorLength, Mode=TwoWay}"
+                          Content="Use manual vector length = " />
+                
+                <axogcd:LineThicknessComboBox Grid.Row="14" Grid.Column="2" 
+                                              SelectedQuantity="{Binding ManualVectorLengthOffset}"
+                                              UnitEnvironment="{Binding LineWidthEnvironment}" />
+                
 				<Label Content="+" Grid.Row="14" Grid.Column="3" />
-                <axogc:QuantityWithUnitTextBox Grid.Row="14" Grid.Column="4"  SelectedQuantity="{Binding ManualVectorLengthFactor}" UnitEnvironment="{Binding LineFactorEnvironment}"  />
+                
+                <axogc:QuantityWithUnitTextBox Grid.Row="14" Grid.Column="4" 
+                                               SelectedQuantity="{Binding ManualVectorLengthFactor}"
+                                               UnitEnvironment="{Binding LineFactorEnvironment}"  />
+                
 				<Label Content="* symbolSize" Grid.Row="14" Grid.Column="5" />
 			</Grid>
 		</GroupBox>

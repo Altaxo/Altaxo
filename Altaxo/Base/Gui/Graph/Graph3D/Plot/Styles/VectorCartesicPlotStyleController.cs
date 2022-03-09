@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2016 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -25,93 +25,20 @@
 #nullable disable
 using System;
 using System.Collections.Generic;
-using System.Text;
 using Altaxo.Collections;
 using Altaxo.Data;
-using Altaxo.Drawing.D3D;
 using Altaxo.Graph.Graph3D.Plot.Styles;
+using Altaxo.Gui.Common;
 using Altaxo.Gui.Data;
-using Altaxo.Gui.Graph;
-using Altaxo.Gui.Graph.Graph3D.Plot.Data;
+using Altaxo.Gui.Drawing.D3D;
 using Altaxo.Gui.Graph.Plot.Data;
 using Altaxo.Gui.Graph.Plot.Groups;
+using Altaxo.Units;
 
 namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 {
   public interface IVectorCartesicPlotStyleView : IDataContextAwareView
   {
-    bool IndependentColor { get; set; }
-
-    bool ShowPlotColorsOnly { set; }
-
-    PenX3D Pen { get; set; }
-
-    bool IndependentSymbolSize { get; set; }
-
-    double SymbolSize { get; set; }
-
-    double LineWidth1Offset { get; set; }
-    double LineWidth1Factor { get; set; }
-    double LineWidth2Offset { get; set; }
-    double LineWidth2Factor { get; set; }
-
-    double EndCapSizeOffset { get; set; }
-    double EndCapSizeFactor { get; set; }
-
-    bool UseSymbolGap { get; set; }
-
-    double SymbolGapOffset { get; set; }
-
-    double SymbolGapFactor { get; set; }
-
-    int SkipFrequency { get; set; }
-
-    bool IndependentSkipFrequency { get; set; }
-
-    bool IndependentOnShiftingGroupStyles { get; set; }
-
-    bool UseManualVectorLength { get; set; }
-
-    double VectorLengthOffset { get; set; }
-
-    double VectorLengthFactor { get; set; }
-
-    void Initialize_MeaningOfValues(SelectableListNodeList list);
-
-    /// <summary>
-    /// Initializes the common error column.
-    /// </summary>
-    /// <param name="columnAsText">Column's name.</param>
-    /// <param name="toolTip">Column's tooltip.</param>
-    /// <param name="status">Column's status display.</param>
-    void Initialize_ColumnX(string columnAsText, string toolTip, int status);
-
-    void Initialize_ColumnXTransformation(string transformationTextToShow, string transformationToolTip);
-
-    /// <summary>
-    /// Initializes the positive error column.
-    /// </summary>
-    /// <param name="columnAsText">Column's name.</param>
-    /// <param name="columnToolTip">Column's tooltip.</param>
-    /// <param name="columnStatus">Column's status display.</param>
-    void Initialize_ColumnY(string columnAsText, string columnToolTip, int columnStatus);
-
-    void Initialize_ColumnYTransformation(string transformationTextToShow, string transformationToolTip);
-
-    /// <summary>
-    /// Initializes the positive error column.
-    /// </summary>
-    /// <param name="columnAsText">Column's name.</param>
-    /// <param name="columnToolTip">Column's tooltip.</param>
-    /// <param name="columnStatus">Column's status display.</param>
-    void Initialize_ColumnZ(string columnAsText, string columnToolTip, int columnStatus);
-
-    void Initialize_ColumnZTransformation(string transformationTextToShow, string transformationToolTip);
-
-    /// <summary>
-    /// Occurs when the user choice for IndependentColor of the fill brush has changed.
-    /// </summary>
-    event Action IndependentColorChanged;
   }
 
 
@@ -121,8 +48,6 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
   {
     /// <summary>Tracks the presence of a color group style in the parent collection.</summary>
     private ColorGroupStylePresenceTracker _colorGroupStyleTracker;
-
-    private SelectableListNodeList _meaningOfValues;
 
     /// <summary>
     /// The data table that the column of the style should belong to.
@@ -136,23 +61,619 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     public override bool InitializeDocument(params object[] args)
     {
-      if (args.Length >= 2 && (args[1] is DataTable))
-        _supposedParentDataTable = (DataTable)args[1];
+      if (args.Length >= 2 && (args[1] is DataTable dt))
+        _supposedParentDataTable = dt;
 
-      if (args.Length >= 3 && args[2] is int)
-        _supposedGroupNumber = (int)args[2];
+      if (args.Length >= 3 && args[2] is int gn)
+        _supposedGroupNumber = gn;
 
       return base.InitializeDocument(args);
     }
 
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
-      yield break;
+      yield return new ControllerAndSetNullMethod(_pen, () => Pen = null);
     }
 
     #region Bindings
 
+    #region XColumn
+
+
+    private string _xColumnText;
+
+    public string XColumnText
+    {
+      get => _xColumnText;
+      set
+      {
+        if (!(_xColumnText == value))
+        {
+          _xColumnText = value;
+          OnPropertyChanged(nameof(XColumnText));
+        }
+      }
+    }
+    private string _xColumnToolTip;
+
+    public string XColumnToolTip
+    {
+      get => _xColumnToolTip;
+      set
+      {
+        if (!(_xColumnToolTip == value))
+        {
+          _xColumnToolTip = value;
+          OnPropertyChanged(nameof(XColumnToolTip));
+        }
+      }
+    }
+    private int _xColumnStatus;
+
+    public int XColumnStatus
+    {
+      get => _xColumnStatus;
+      set
+      {
+        if (!(_xColumnStatus == value))
+        {
+          _xColumnStatus = value;
+          OnPropertyChanged(nameof(XColumnStatus));
+        }
+      }
+    }
+    private string _xColumnTransformationText;
+
+    public string XColumnTransformationText
+    {
+      get => _xColumnTransformationText;
+      set
+      {
+        if (!(_xColumnTransformationText == value))
+        {
+          _xColumnTransformationText = value;
+          OnPropertyChanged(nameof(XColumnTransformationText));
+        }
+      }
+    }
+    private string _xColumnTransformationToolTip;
+
+    public string XColumnTransformationToolTip
+    {
+      get => _xColumnTransformationToolTip;
+      set
+      {
+        if (!(_xColumnTransformationToolTip == value))
+        {
+          _xColumnTransformationToolTip = value;
+          OnPropertyChanged(nameof(XColumnTransformationToolTip));
+        }
+      }
+    }
+
     #endregion
+
+    #region YColumn
+
+
+    private string _yColumnText;
+
+    public string YColumnText
+    {
+      get => _yColumnText;
+      set
+      {
+        if (!(_yColumnText == value))
+        {
+          _yColumnText = value;
+          OnPropertyChanged(nameof(YColumnText));
+        }
+      }
+    }
+    private string _yColumnToolTip;
+
+    public string YColumnToolTip
+    {
+      get => _yColumnToolTip;
+      set
+      {
+        if (!(_yColumnToolTip == value))
+        {
+          _yColumnToolTip = value;
+          OnPropertyChanged(nameof(YColumnToolTip));
+        }
+      }
+    }
+    private int _yColumnStatus;
+
+    public int YColumnStatus
+    {
+      get => _yColumnStatus;
+      set
+      {
+        if (!(_yColumnStatus == value))
+        {
+          _yColumnStatus = value;
+          OnPropertyChanged(nameof(YColumnStatus));
+        }
+      }
+    }
+    private string _yColumnTransformationText;
+
+    public string YColumnTransformationText
+    {
+      get => _yColumnTransformationText;
+      set
+      {
+        if (!(_yColumnTransformationText == value))
+        {
+          _yColumnTransformationText = value;
+          OnPropertyChanged(nameof(YColumnTransformationText));
+        }
+      }
+    }
+    private string _yColumnTransformationToolTip;
+
+    public string YColumnTransformationToolTip
+    {
+      get => _yColumnTransformationToolTip;
+      set
+      {
+        if (!(_yColumnTransformationToolTip == value))
+        {
+          _yColumnTransformationToolTip = value;
+          OnPropertyChanged(nameof(YColumnTransformationToolTip));
+        }
+      }
+    }
+
+    #endregion
+
+    #region ZColumn
+
+
+    private string _zColumnText;
+
+    public string ZColumnText
+    {
+      get => _zColumnText;
+      set
+      {
+        if (!(_zColumnText == value))
+        {
+          _zColumnText = value;
+          OnPropertyChanged(nameof(ZColumnText));
+        }
+      }
+    }
+    private string _zColumnToolTip;
+
+    public string ZColumnToolTip
+    {
+      get => _zColumnToolTip;
+      set
+      {
+        if (!(_zColumnToolTip == value))
+        {
+          _zColumnToolTip = value;
+          OnPropertyChanged(nameof(ZColumnToolTip));
+        }
+      }
+    }
+    private int _zColumnStatus;
+
+    public int ZColumnStatus
+    {
+      get => _zColumnStatus;
+      set
+      {
+        if (!(_zColumnStatus == value))
+        {
+          _zColumnStatus = value;
+          OnPropertyChanged(nameof(ZColumnStatus));
+        }
+      }
+    }
+    private string _zColumnTransformationText;
+
+    public string ZColumnTransformationText
+    {
+      get => _zColumnTransformationText;
+      set
+      {
+        if (!(_zColumnTransformationText == value))
+        {
+          _zColumnTransformationText = value;
+          OnPropertyChanged(nameof(ZColumnTransformationText));
+        }
+      }
+    }
+    private string _zColumnTransformationToolTip;
+
+    public string ZColumnTransformationToolTip
+    {
+      get => _zColumnTransformationToolTip;
+      set
+      {
+        if (!(_zColumnTransformationToolTip == value))
+        {
+          _zColumnTransformationToolTip = value;
+          OnPropertyChanged(nameof(ZColumnTransformationToolTip));
+        }
+      }
+    }
+
+    #endregion
+
+
+    private ItemsController<VectorCartesicPlotStyle.ValueInterpretation> _meaningOfValues;
+
+    public ItemsController<VectorCartesicPlotStyle.ValueInterpretation> MeaningOfValues
+    {
+      get => _meaningOfValues;
+      set
+      {
+        if (!(_meaningOfValues == value))
+        {
+          _meaningOfValues = value;
+          OnPropertyChanged(nameof(MeaningOfValues));
+        }
+      }
+    }
+
+
+
+    private bool _independentSkipFrequency;
+
+    public bool IndependentSkipFrequency
+    {
+      get => _independentSkipFrequency;
+      set
+      {
+        if (!(_independentSkipFrequency == value))
+        {
+          _independentSkipFrequency = value;
+          OnPropertyChanged(nameof(IndependentSkipFrequency));
+        }
+      }
+    }
+
+    private int _skipFrequency;
+
+    public int SkipFrequency
+    {
+      get => _skipFrequency;
+      set
+      {
+        if (!(_skipFrequency == value))
+        {
+          _skipFrequency = value;
+          OnPropertyChanged(nameof(SkipFrequency));
+        }
+      }
+    }
+
+    private bool _ignoreMissingDataPoints;
+
+    public bool IgnoreMissingDataPoints
+    {
+      get => _ignoreMissingDataPoints;
+      set
+      {
+        if (!(_ignoreMissingDataPoints == value))
+        {
+          _ignoreMissingDataPoints = value;
+          OnPropertyChanged(nameof(IgnoreMissingDataPoints));
+        }
+      }
+    }
+
+
+    private bool _independentOnShiftingGroupStyles;
+
+    public bool IndependentOnShiftingGroupStyles
+    {
+      get => _independentOnShiftingGroupStyles;
+      set
+      {
+        if (!(_independentOnShiftingGroupStyles == value))
+        {
+          _independentOnShiftingGroupStyles = value;
+          OnPropertyChanged(nameof(IndependentOnShiftingGroupStyles));
+        }
+      }
+    }
+
+    private bool _independentColor;
+
+    public bool IndependentColor
+    {
+      get => _independentColor;
+      set
+      {
+        if (!(_independentColor == value))
+        {
+          _independentColor = value;
+          OnPropertyChanged(nameof(IndependentColor));
+          EhIndependentColorChanged(value);
+        }
+      }
+    }
+
+    private void EhIndependentColorChanged(bool value)
+    {
+      _doc.IndependentColor = value;
+      Pen.ShowPlotColorsOnly = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentColor);
+    }
+    private void EhIndependentColorChanged() => EhIndependentColorChanged(IndependentColor);
+
+
+    private bool _independentSymbolSize;
+
+    public bool IndependentSymbolSize
+    {
+      get => _independentSymbolSize;
+      set
+      {
+        if (!(_independentSymbolSize == value))
+        {
+          _independentSymbolSize = value;
+          OnPropertyChanged(nameof(IndependentSymbolSize));
+        }
+      }
+    }
+
+    public QuantityWithUnitGuiEnvironment SymbolSizeEnvironment => LineCapSizeEnvironment.Instance;
+
+
+    private DimensionfulQuantity _symbolSize;
+
+    public DimensionfulQuantity SymbolSize
+    {
+      get => _symbolSize;
+      set
+      {
+        if (!(_symbolSize == value))
+        {
+          _symbolSize = value;
+          OnPropertyChanged(nameof(SymbolSize));
+        }
+      }
+    }
+
+    public QuantityWithUnitGuiEnvironment LineWidthEnvironment => LineCapSizeEnvironment.Instance;
+
+    private DimensionfulQuantity _lineWidth1Offset;
+
+    public DimensionfulQuantity LineWidth1Offset
+    {
+      get => _lineWidth1Offset;
+      set
+      {
+        if (!(_lineWidth1Offset == value))
+        {
+          _lineWidth1Offset = value;
+          OnPropertyChanged(nameof(LineWidth1Offset));
+        }
+      }
+    }
+
+    private DimensionfulQuantity _lineWidth2Offset;
+    public DimensionfulQuantity LineWidth2Offset
+    {
+      get => _lineWidth2Offset;
+      set
+      {
+        if (!(_lineWidth2Offset == value))
+        {
+          _lineWidth2Offset = value;
+          OnPropertyChanged(nameof(LineWidth2Offset));
+        }
+      }
+    }
+
+    private DimensionfulQuantity _vectorLengthOffset;
+    public DimensionfulQuantity VectorLengthOffset
+    {
+      get => _vectorLengthOffset;
+      set
+      {
+        if (!(_vectorLengthOffset == value))
+        {
+          _vectorLengthOffset = value;
+          OnPropertyChanged(nameof(VectorLengthOffset));
+        }
+      }
+    }
+
+    public QuantityWithUnitGuiEnvironment LineFactorEnvironment => RelationEnvironment.Instance;
+
+    private DimensionfulQuantity _lineWidth1Factor;
+
+    public DimensionfulQuantity LineWidth1Factor
+    {
+      get => _lineWidth1Factor;
+      set
+      {
+        if (!(_lineWidth1Factor == value))
+        {
+          _lineWidth1Factor = value;
+          OnPropertyChanged(nameof(LineWidth1Factor));
+        }
+      }
+    }
+
+    private DimensionfulQuantity _lineWidth2Factor;
+
+    public DimensionfulQuantity LineWidth2Factor
+    {
+      get => _lineWidth2Factor;
+      set
+      {
+        if (!(_lineWidth2Factor == value))
+        {
+          _lineWidth2Factor = value;
+          OnPropertyChanged(nameof(LineWidth2Factor));
+        }
+      }
+    }
+
+    private DimensionfulQuantity _vectorLengthFactor;
+
+    public DimensionfulQuantity VectorLengthFactor
+    {
+      get => _vectorLengthFactor;
+      set
+      {
+        if (!(_vectorLengthFactor == value))
+        {
+          _vectorLengthFactor = value;
+          OnPropertyChanged(nameof(VectorLengthFactor));
+        }
+      }
+    }
+
+    private DimensionfulQuantity _endCapSizeOffset;
+
+    public DimensionfulQuantity EndCapSizeOffset
+    {
+      get => _endCapSizeOffset;
+      set
+      {
+        if (!(_endCapSizeOffset == value))
+        {
+          _endCapSizeOffset = value;
+          OnPropertyChanged(nameof(EndCapSizeOffset));
+        }
+      }
+    }
+
+    private DimensionfulQuantity _endCapSizeFactor;
+
+    public DimensionfulQuantity EndCapSizeFactor
+    {
+      get => _endCapSizeFactor;
+      set
+      {
+        if (!(_endCapSizeFactor == value))
+        {
+          _endCapSizeFactor = value;
+          OnPropertyChanged(nameof(EndCapSizeFactor));
+        }
+      }
+    }
+
+    private bool _useSymbolGap;
+
+    public bool UseSymbolGap
+    {
+      get => _useSymbolGap;
+      set
+      {
+        if (!(_useSymbolGap == value))
+        {
+          _useSymbolGap = value;
+          OnPropertyChanged(nameof(UseSymbolGap));
+        }
+      }
+    }
+
+
+    private DimensionfulQuantity _symbolGapOffset;
+
+    public DimensionfulQuantity SymbolGapOffset
+    {
+      get => _symbolGapOffset;
+      set
+      {
+        if (!(_symbolGapOffset == value))
+        {
+          _symbolGapOffset = value;
+          OnPropertyChanged(nameof(SymbolGapOffset));
+        }
+      }
+    }
+
+    private DimensionfulQuantity _symbolGapFactor;
+
+    public DimensionfulQuantity SymbolGapFactor
+    {
+      get => _symbolGapFactor;
+      set
+      {
+        if (!(_symbolGapFactor == value))
+        {
+          _symbolGapFactor = value;
+          OnPropertyChanged(nameof(SymbolGapFactor));
+        }
+      }
+    }
+
+    private bool _useManualVectorLength;
+
+    public bool UseManualVectorLength
+    {
+      get => _useManualVectorLength;
+      set
+      {
+        if (!(_useManualVectorLength == value))
+        {
+          _useManualVectorLength = value;
+          OnPropertyChanged(nameof(UseManualVectorLength));
+        }
+      }
+    }
+
+
+    private DimensionfulQuantity _manualVectorLengthOffset;
+
+    public DimensionfulQuantity ManualVectorLengthOffset
+    {
+      get => _manualVectorLengthOffset;
+      set
+      {
+        if (!(_manualVectorLengthOffset == value))
+        {
+          _manualVectorLengthOffset = value;
+          OnPropertyChanged(nameof(ManualVectorLengthOffset));
+        }
+      }
+    }
+    private DimensionfulQuantity _manualVectorLengthFactor;
+
+    public DimensionfulQuantity ManualVectorLengthFactor
+    {
+      get => _manualVectorLengthFactor;
+      set
+      {
+        if (!(_manualVectorLengthFactor == value))
+        {
+          _manualVectorLengthFactor = value;
+          OnPropertyChanged(nameof(ManualVectorLengthFactor));
+        }
+      }
+    }
+
+
+
+    private PenAllPropertiesController _pen;
+
+    public PenAllPropertiesController Pen
+    {
+      get => _pen;
+      set
+      {
+        if (!(_pen == value))
+        {
+          _pen?.Dispose();
+          _pen = value;
+          OnPropertyChanged(nameof(Pen));
+        }
+      }
+    }
+
+    #endregion
+
 
     public override void Dispose(bool isDisposing)
     {
@@ -169,40 +690,39 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
       {
         _colorGroupStyleTracker = new ColorGroupStylePresenceTracker(_doc, EhIndependentColorChanged);
 
-        _meaningOfValues = new SelectableListNodeList(_doc.MeaningOfValues);
-      }
-      if (_view is not null)
-      {
-        _view.UseManualVectorLength = _doc.UseManualVectorLength;
-        _view.VectorLengthOffset = _doc.VectorLengthOffset;
-        _view.VectorLengthFactor = _doc.VectorLengthFactor;
+        MeaningOfValues = new ItemsController<VectorCartesicPlotStyle.ValueInterpretation>(new SelectableListNodeList(_doc.MeaningOfValues));
+        Pen = new PenAllPropertiesController(_doc.Pen)
+        {
+          ShowPlotColorsOnly = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentColor)
+        };
 
-        _view.IndependentColor = _doc.IndependentColor;
-        _view.ShowPlotColorsOnly = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentColor);
-        _view.Pen = _doc.Pen;
+        UseManualVectorLength = _doc.UseManualVectorLength;
+        VectorLengthOffset = new DimensionfulQuantity(_doc.VectorLengthOffset, Altaxo.Units.Length.Point.Instance).AsQuantityIn(LineWidthEnvironment.DefaultUnit);
+        VectorLengthFactor = new DimensionfulQuantity(_doc.VectorLengthFactor, Altaxo.Units.Dimensionless.Unity.Instance).AsQuantityIn(LineFactorEnvironment.DefaultUnit);
 
-        _view.IndependentSymbolSize = _doc.IndependentSymbolSize;
-        _view.SymbolSize = _doc.SymbolSize;
+        IndependentColor = _doc.IndependentColor;
 
-        _view.LineWidth1Offset = _doc.LineWidth1Offset;
-        _view.LineWidth1Factor = _doc.LineWidth1Factor;
+        IndependentSymbolSize = _doc.IndependentSymbolSize;
+        SymbolSize = new DimensionfulQuantity(_doc.SymbolSize, Altaxo.Units.Length.Point.Instance).AsQuantityIn(SymbolSizeEnvironment.DefaultUnit);
 
-        _view.LineWidth2Offset = _doc.LineWidth2Offset;
-        _view.LineWidth2Factor = _doc.LineWidth2Factor;
+        LineWidth1Offset = new DimensionfulQuantity(_doc.LineWidth1Offset, Altaxo.Units.Length.Point.Instance).AsQuantityIn(LineWidthEnvironment.DefaultUnit);
+        LineWidth1Factor = new DimensionfulQuantity(_doc.LineWidth1Factor, Altaxo.Units.Dimensionless.Unity.Instance).AsQuantityIn(LineFactorEnvironment.DefaultUnit);
 
-        _view.EndCapSizeOffset = _doc.EndCapSizeOffset;
-        _view.EndCapSizeFactor = _doc.EndCapSizeFactor;
+        LineWidth2Offset = new DimensionfulQuantity(_doc.LineWidth2Offset, Altaxo.Units.Length.Point.Instance).AsQuantityIn(LineWidthEnvironment.DefaultUnit);
+        LineWidth2Factor = new DimensionfulQuantity(_doc.LineWidth2Factor, Altaxo.Units.Dimensionless.Unity.Instance).AsQuantityIn(LineFactorEnvironment.DefaultUnit);
 
-        _view.UseSymbolGap = _doc.UseSymbolGap;
-        _view.SymbolGapOffset = _doc.SymbolGapOffset;
-        _view.SymbolGapFactor = _doc.SymbolGapFactor;
+        EndCapSizeOffset = new DimensionfulQuantity(_doc.EndCapSizeOffset, Altaxo.Units.Length.Point.Instance).AsQuantityIn(LineWidthEnvironment.DefaultUnit);
+        EndCapSizeFactor = new DimensionfulQuantity(_doc.EndCapSizeFactor, Altaxo.Units.Dimensionless.Unity.Instance).AsQuantityIn(LineFactorEnvironment.DefaultUnit);
 
-        _view.SkipFrequency = _doc.SkipFrequency;
-        _view.IndependentSkipFrequency = _doc.IndependentSkipFrequency;
+        UseSymbolGap = _doc.UseSymbolGap;
+        SymbolGapOffset = new DimensionfulQuantity(_doc.SymbolGapOffset, Altaxo.Units.Length.Point.Instance).AsQuantityIn(LineWidthEnvironment.DefaultUnit);
+        SymbolGapFactor = new DimensionfulQuantity(_doc.SymbolGapFactor, Altaxo.Units.Dimensionless.Unity.Instance).AsQuantityIn(LineFactorEnvironment.DefaultUnit);
 
-        _view.IndependentOnShiftingGroupStyles = _doc.IndependentOnShiftingGroupStyles;
+        SkipFrequency = _doc.SkipFrequency;
+        IndependentSkipFrequency = _doc.IndependentSkipFrequency;
 
-        _view.Initialize_MeaningOfValues(_meaningOfValues);
+        IndependentOnShiftingGroupStyles = _doc.IndependentOnShiftingGroupStyles;
+
 
         // Errors
 
@@ -214,50 +734,36 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
     public override bool Apply(bool disposeController)
     {
-      _doc.UseManualVectorLength = _view.UseManualVectorLength;
-      _doc.VectorLengthOffset = _view.VectorLengthOffset;
-      _doc.VectorLengthFactor = _view.VectorLengthFactor;
+      _doc.UseManualVectorLength = UseManualVectorLength;
+      _doc.VectorLengthOffset = VectorLengthOffset.AsValueIn(Altaxo.Units.Length.Point.Instance);
+      _doc.VectorLengthFactor = VectorLengthFactor.AsValueInSIUnits;
 
-      _doc.IndependentColor = _view.IndependentColor;
-      _doc.Pen = _view.Pen;
-      _doc.IndependentSymbolSize = _view.IndependentSymbolSize;
-      _doc.SymbolSize = _view.SymbolSize;
+      _doc.IndependentColor = IndependentColor;
+      _doc.Pen = Pen.Pen;
+      _doc.IndependentSymbolSize = IndependentSymbolSize;
+      _doc.SymbolSize = SymbolSize.AsValueIn(Altaxo.Units.Length.Point.Instance);
 
-      _doc.LineWidth1Offset = _view.LineWidth1Offset;
-      _doc.LineWidth1Factor = _view.LineWidth1Factor;
+      _doc.LineWidth1Offset = LineWidth1Offset.AsValueIn(Altaxo.Units.Length.Point.Instance);
+      _doc.LineWidth1Factor = LineWidth1Factor.AsValueInSIUnits;
 
-      _doc.LineWidth2Offset = _view.LineWidth2Offset;
-      _doc.LineWidth2Factor = _view.LineWidth2Factor;
+      _doc.LineWidth2Offset = LineWidth2Offset.AsValueIn(Altaxo.Units.Length.Point.Instance);
+      _doc.LineWidth2Factor = LineWidth2Factor.AsValueInSIUnits;
 
-      _doc.EndCapSizeOffset = _view.EndCapSizeOffset;
-      _doc.EndCapSizeFactor = _view.EndCapSizeFactor;
+      _doc.EndCapSizeOffset = EndCapSizeOffset.AsValueIn(Altaxo.Units.Length.Point.Instance);
+      _doc.EndCapSizeFactor = EndCapSizeFactor.AsValueInSIUnits;
 
-      _doc.UseSymbolGap = _view.UseSymbolGap;
-      _doc.SymbolGapOffset = _view.SymbolGapOffset;
-      _doc.SymbolGapFactor = _view.SymbolGapFactor;
+      _doc.UseSymbolGap = UseSymbolGap;
+      _doc.SymbolGapOffset = SymbolGapOffset.AsValueIn(Altaxo.Units.Length.Point.Instance);
+      _doc.SymbolGapFactor = SymbolGapFactor.AsValueInSIUnits;
 
-      _doc.IndependentSkipFrequency = _view.IndependentSkipFrequency;
-      _doc.SkipFrequency = _view.SkipFrequency;
+      _doc.IndependentSkipFrequency = IndependentSkipFrequency;
+      _doc.SkipFrequency = SkipFrequency;
 
-      _doc.IndependentOnShiftingGroupStyles = _view.IndependentOnShiftingGroupStyles;
+      _doc.IndependentOnShiftingGroupStyles = IndependentOnShiftingGroupStyles;
 
-      _doc.MeaningOfValues = (VectorCartesicPlotStyle.ValueInterpretation)_meaningOfValues.FirstSelectedNode.Tag;
+      _doc.MeaningOfValues = _meaningOfValues.SelectedValue;
 
       return ApplyEnd(true, disposeController);
-    }
-
-    protected override void AttachView()
-    {
-      base.AttachView();
-
-      _view.IndependentColorChanged += EhIndependentColorChanged;
-    }
-
-    protected override void DetachView()
-    {
-      _view.IndependentColorChanged -= EhIndependentColorChanged;
-
-      base.DetachView();
     }
 
     private void InitializeColumnXText()
@@ -265,8 +771,11 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
       var info = new PlotColumnInformation(_doc.ColumnX, _doc.ColumnXDataColumnName);
       info.Update(_supposedParentDataTable, _supposedGroupNumber);
 
-      _view?.Initialize_ColumnX(info.PlotColumnBoxText, info.PlotColumnToolTip, (int)info.PlotColumnBoxState);
-      _view?.Initialize_ColumnXTransformation(info.TransformationTextToShow, info.TransformationToolTip);
+      XColumnText = info.PlotColumnBoxText;
+      XColumnToolTip = info.PlotColumnToolTip;
+      XColumnStatus = (int)info.PlotColumnBoxState;
+      XColumnTransformationText = info.TransformationTextToShow;
+      XColumnTransformationToolTip = info.TransformationToolTip;
     }
 
     private void InitializeColumnYText()
@@ -274,8 +783,11 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
       var info = new PlotColumnInformation(_doc.ColumnY, _doc.ColumnYDataColumnName);
       info.Update(_supposedParentDataTable, _supposedGroupNumber);
 
-      _view?.Initialize_ColumnY(info.PlotColumnBoxText, info.PlotColumnToolTip, (int)info.PlotColumnBoxState);
-      _view?.Initialize_ColumnYTransformation(info.TransformationTextToShow, info.TransformationToolTip);
+      YColumnText = info.PlotColumnBoxText;
+      YColumnToolTip = info.PlotColumnToolTip;
+      YColumnStatus = (int)info.PlotColumnBoxState;
+      YColumnTransformationText = info.TransformationTextToShow;
+      YColumnTransformationToolTip = info.TransformationToolTip;
     }
 
     private void InitializeColumnZText()
@@ -283,8 +795,11 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
       var info = new PlotColumnInformation(_doc.ColumnZ, _doc.ColumnZDataColumnName);
       info.Update(_supposedParentDataTable, _supposedGroupNumber);
 
-      _view?.Initialize_ColumnZ(info.PlotColumnBoxText, info.PlotColumnToolTip, (int)info.PlotColumnBoxState);
-      _view?.Initialize_ColumnZTransformation(info.TransformationTextToShow, info.TransformationToolTip);
+      ZColumnText = info.PlotColumnBoxText;
+      ZColumnToolTip = info.PlotColumnToolTip;
+      ZColumnStatus = (int)info.PlotColumnBoxState;
+      ZColumnTransformationText = info.TransformationTextToShow;
+      ZColumnTransformationToolTip = info.TransformationToolTip;
     }
 
     /// <summary>
@@ -335,15 +850,6 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
           InitializeColumnZText();
         }
       );
-    }
-
-    private void EhIndependentColorChanged()
-    {
-      if (_view is not null)
-      {
-        _doc.IndependentColor = _view.IndependentColor;
-        _view.ShowPlotColorsOnly = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentColor);
-      }
     }
   }
 }
