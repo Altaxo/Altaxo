@@ -333,6 +333,10 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
       if (initData)
       {
         _colorGroupStyleTracker = new ColorGroupStylePresenceTracker(_doc, EhColorGroupStyleAddedOrRemoved);
+        FramePen = new ColorTypeThicknessPenController(_doc.FramePen is not null ? _doc.FramePen : new PenX(NamedColors.Transparent))
+        {
+          ShowPlotColorsOnly = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentFrameColor)
+        };
 
         UseFill = _doc.FillBrush is not null && _doc.FillBrush.IsVisible;
         IndependentFillColor = _doc.IndependentFillColor;
@@ -341,10 +345,6 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
 
         UseFrame = _doc.FramePen is not null && _doc.FramePen.IsVisible;
         IndependentFrameColor = _doc.IndependentFrameColor;
-        FramePen = new ColorTypeThicknessPenController(_doc.FramePen is not null ? _doc.FramePen : new PenX(NamedColors.Transparent))
-        {
-          ShowPlotColorsOnly = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentFrameColor)
-        };
       
 
       InnerGap = new DimensionfulQuantity(_doc.InnerGap, Altaxo.Units.Dimensionless.Unity.Instance).AsQuantityIn(GapEnvironment.DefaultUnit);

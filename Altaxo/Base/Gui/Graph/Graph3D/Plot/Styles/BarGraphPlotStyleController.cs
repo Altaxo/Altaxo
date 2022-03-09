@@ -289,12 +289,14 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
       if (initData)
       {
         _colorGroupStyleTracker = new ColorGroupStylePresenceTracker(_doc, EhColorGroupStyleAddedOrRemoved);
+        PenController = new PenAllPropertiesController(_doc.Pen)
+        {
+          ShowPlotColorsOnly = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentColor)
+        };
 
         BarShiftStrategy = new ItemsController<BarShiftStrategy3D>(new SelectableListNodeList(_doc.BarShiftStrategy), EhBarShiftStrategyChanged);
 
         IndependentColor = _doc.IndependentColor;
-        PenController = new PenAllPropertiesController(_doc.Pen);
-        PenController.ShowPlotColorsOnly = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentColor);
         UseUniformCrossSectionThickness = _doc.UseUniformCrossSectionThickness;
 
         BarShiftStrategy = _barShiftStrategy;
