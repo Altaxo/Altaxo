@@ -71,6 +71,18 @@ namespace Altaxo.Calc.Regression
     }
 
     /// <summary>
+    /// Adds data points to the statistics.
+    /// </summary>
+    /// <param name="values">The data points to add.</param>
+    public void AddRange(IEnumerable<double> values)
+    {
+      foreach (var value in values)
+      {
+        Add(value);
+      }
+    }
+
+    /// <summary>
     /// Returns the mean (average) of the data values.
     /// </summary>
     public double Mean

@@ -23,6 +23,7 @@
 #endregion Copyright
 
 using System;
+using System.Collections.Generic;
 
 namespace Altaxo.Calc.Regression
 {
@@ -52,6 +53,18 @@ namespace Altaxo.Calc.Regression
       _sy += y;
       _syy += y * y;
       _syx += y * x;
+    }
+
+    /// <summary>
+    /// Adds data points to the statistics.
+    /// </summary>
+    /// <param name="values">The data points to add.</param>
+    public void AddRange(IEnumerable<(double x, double y)> values)
+    {
+      foreach (var (x, y) in values)
+      {
+        Add(x, y);
+      }
     }
 
     /// <summary>
