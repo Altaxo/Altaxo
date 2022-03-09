@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2016 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -27,61 +27,17 @@ using System;
 using System.Collections.Generic;
 using Altaxo.Collections;
 using Altaxo.Drawing.D3D;
-using Altaxo.Graph;
-using Altaxo.Graph.Graph3D;
 using Altaxo.Graph.Graph3D.Plot.Styles;
-using Altaxo.Gui.Graph;
 using Altaxo.Gui.Graph.Plot.Groups;
-using Altaxo.Main;
 
 namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 {
-  #region Interfaces
-
   /// <summary>
   /// This view interface is for showing the options of the XYXYPlotScatterStyle
   /// </summary>
-  public interface IScatterPlotStyleView
+  public interface IScatterPlotStyleView : IDataContextAwareView
   {
-    /// <summary>
-    /// Material for the scatter symbol.
-    /// </summary>
-    IMaterial SymbolMaterial { get; set; }
-
-    /// <summary>
-    /// Indicates, whether only colors of plot color sets should be shown.
-    /// </summary>
-    bool ShowPlotColorsOnly { set; }
-
-    /// <summary>
-    /// Initializes the symbol size combobox.
-    /// </summary>
-    double SymbolSize { get; set; }
-
-    /// <summary>
-    /// Initializes the independent symbol size check box.
-    /// </summary>
-    bool IndependentSymbolSize { get; set; }
-
-    /// <summary>
-    /// Initializes the symbol shape combobox.
-    /// </summary>
-    IScatterSymbol SymbolShape { get; set; }
-
-    bool IndependentColor { get; set; }
-
-    bool IndependentSkipFrequency { get; set; }
-
-    int SkipFrequency { get; set; }
-
-    #region events
-
-    event Action IndependentColorChanged;
-
-    #endregion events
   }
-
-  #endregion Interfaces
 
   /// <summary>
   /// Summary description for XYPlotScatterStyleController.
@@ -99,6 +55,160 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
     {
       yield break; // no subcontrollers
     }
+
+    #region Bindings
+
+    private bool _enableMain = true;
+
+    public bool EnableMain
+    {
+      get => _enableMain;
+      set
+      {
+        if (!(_enableMain == value))
+        {
+          _enableMain = value;
+          OnPropertyChanged(nameof(EnableMain));
+        }
+      }
+    }
+
+    /// <summary>
+    /// Initializes the symbol shape combobox.
+    /// </summary>
+    private IScatterSymbol _scatterSymbol;
+
+    public IScatterSymbol ScatterSymbol
+    {
+      get => _scatterSymbol;
+      set
+      {
+        if (!(_scatterSymbol == value))
+        {
+          _scatterSymbol = value;
+          OnPropertyChanged(nameof(ScatterSymbol));
+        }
+      }
+    }
+
+    private bool _independentSkipFrequency;
+
+    public bool IndependentSkipFrequency
+    {
+      get => _independentSkipFrequency;
+      set
+      {
+        if (!(_independentSkipFrequency == value))
+        {
+          _independentSkipFrequency = value;
+          OnPropertyChanged(nameof(IndependentSkipFrequency));
+        }
+      }
+    }
+
+    private int _skipFrequency;
+
+    public int SkipFrequency
+    {
+      get => _skipFrequency;
+      set
+      {
+        if (!(_skipFrequency == value))
+        {
+          _skipFrequency = value;
+          OnPropertyChanged(nameof(SkipFrequency));
+        }
+      }
+    }
+
+    private bool _independentColor;
+
+    public bool IndependentColor
+    {
+      get => _independentColor;
+      set
+      {
+        if (!(_independentColor == value))
+        {
+          _independentColor = value;
+          OnPropertyChanged(nameof(IndependentColor));
+          EhIndependentColorChanged(value);
+        }
+      }
+    }
+
+
+
+    private IMaterial _material;
+    /// <summary>
+    /// Material for the scatter symbol.
+    /// </summary>
+    public IMaterial Material
+    {
+      get => _material;
+      set
+      {
+        if (!(_material == value))
+        {
+          _material = value;
+          OnPropertyChanged(nameof(Material));
+        }
+      }
+    }
+
+    /// <summary>
+    /// Indicates, whether only colors of plot color sets should be shown.
+    /// </summary>
+    private bool _showPlotColorsOnly;
+
+    public bool ShowPlotColorsOnly
+    {
+      get => _showPlotColorsOnly;
+      set
+      {
+        if (!(_showPlotColorsOnly == value))
+        {
+          _showPlotColorsOnly = value;
+          OnPropertyChanged(nameof(ShowPlotColorsOnly));
+        }
+      }
+    }
+
+    private bool _independentSymbolSize;
+    /// <summary>
+    /// Initializes the independent symbol size check box.
+    /// </summary>
+    public bool IndependentSymbolSize
+    {
+      get => _independentSymbolSize;
+      set
+      {
+        if (!(_independentSymbolSize == value))
+        {
+          _independentSymbolSize = value;
+          OnPropertyChanged(nameof(IndependentSymbolSize));
+        }
+      }
+    }
+
+    private double _symbolSize;
+    /// <summary>
+    /// Initializes the symbol size combobox.
+    /// </summary>
+    public double SymbolSize
+    {
+      get => _symbolSize;
+      set
+      {
+        if (!(_symbolSize == value))
+        {
+          _symbolSize = value;
+          OnPropertyChanged(nameof(SymbolSize));
+        }
+      }
+    }
+
+    #endregion
 
     public override void Dispose(bool isDisposing)
     {
@@ -123,20 +233,18 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
         {
           _symbolShapeChoices.Add(new SelectableListNode(ty.Name, ty, ty == _doc.Shape.GetType()));
         }
-      }
-      if (_view is not null)
-      {
+
         // now we have to set all dialog elements to the right values
-        _view.IndependentColor = _doc.IndependentColor;
-        _view.ShowPlotColorsOnly = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentColor);
-        _view.SymbolMaterial = _doc.Material;
+        IndependentColor = _doc.IndependentColor;
+        ShowPlotColorsOnly = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentColor);
+        Material = _doc.Material;
 
-        _view.SymbolShape = _doc.Shape;
+        ScatterSymbol = _doc.Shape;
 
-        _view.IndependentSymbolSize = _doc.IndependentSymbolSize;
-        _view.SymbolSize = _doc.SymbolSize;
-        _view.SkipFrequency = _doc.SkipFrequency;
-        _view.IndependentSkipFrequency = _doc.IndependentSkipFrequency;
+        IndependentSymbolSize = _doc.IndependentSymbolSize;
+        SymbolSize = _doc.SymbolSize;
+        SkipFrequency = _doc.SkipFrequency;
+        IndependentSkipFrequency = _doc.IndependentSkipFrequency;
       }
     }
 
@@ -146,23 +254,22 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
       try
       {
         // Symbol Color
-        _doc.Material = _view.SymbolMaterial;
+        _doc.Material = Material;
 
-        _doc.IndependentColor = _view.IndependentColor;
+        _doc.IndependentColor = IndependentColor;
 
-        _doc.IndependentSymbolSize = _view.IndependentSymbolSize;
+        _doc.IndependentSymbolSize = IndependentSymbolSize;
 
         // Symbol Shape
-        _doc.Shape = _view.SymbolShape;
+        _doc.Shape = ScatterSymbol;
         // Symbol Style
 
         // Symbol Size
-        _doc.SymbolSize = _view.SymbolSize;
+        _doc.SymbolSize = SymbolSize;
 
         // Skip points
-
-        _doc.IndependentSkipFrequency = _view.IndependentSkipFrequency;
-        _doc.SkipFrequency = _view.SkipFrequency;
+        IndependentSkipFrequency = IndependentSkipFrequency;
+        SkipFrequency = SkipFrequency;
       }
       catch (Exception ex)
       {
@@ -173,25 +280,11 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
       return ApplyEnd(true, disposeController);
     }
 
-    protected override void AttachView()
+    private void EhIndependentColorChanged(bool value)
     {
-      base.AttachView();
-      _view.IndependentColorChanged += EhIndependentColorChanged;
+      _doc.IndependentColor = value;
+      ShowPlotColorsOnly = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentColor);
     }
-
-    protected override void DetachView()
-    {
-      _view.IndependentColorChanged -= EhIndependentColorChanged;
-      base.DetachView();
-    }
-
-    private void EhIndependentColorChanged()
-    {
-      if (_view is not null)
-      {
-        _doc.IndependentColor = _view.IndependentColor;
-        _view.ShowPlotColorsOnly = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentColor);
-      }
-    }
+    private void EhIndependentColorChanged() => EhIndependentColorChanged(IndependentColor);
   } // end of class XYPlotScatterStyleController
 } // end of namespace

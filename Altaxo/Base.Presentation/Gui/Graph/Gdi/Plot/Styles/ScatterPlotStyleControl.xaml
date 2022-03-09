@@ -78,8 +78,14 @@
 			<RowDefinition Height="4" />
 		</Grid.RowDefinitions>
 
-        <CheckBox Grid.Row="0" Grid.Column="0" IsChecked="{Binding IndependentSkipFrequency, Mode=TwoWay}" Content="Independent skip frequency :" IsEnabled="{Binding EnableMain}" />
-        <axogc:Int32UpDown Grid.Row="0" Grid.Column="2" Value="{Binding SkipFrequency}" Minimum="1" IsEnabled="{Binding EnableMain}" />
+        <CheckBox Grid.Row="0" Grid.Column="0" 
+                  IsChecked="{Binding IndependentSkipFrequency, Mode=TwoWay}"
+                  Content="Independent skip frequency :"
+                  IsEnabled="{Binding EnableMain}" />
+        <axogc:Int32UpDown Grid.Row="0" Grid.Column="2" 
+                           Value="{Binding SkipFrequency}"
+                           IsEnabled="{Binding EnableMain}" 
+                           Minimum="1" />
 
         <CheckBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="4" IsChecked="{Binding IgnoreMissingDataPoints, Mode=TwoWay}" Content="Ignore missing data points" ToolTip="If true, missing data points are treated as if not present." />
 
@@ -101,11 +107,24 @@
 			</ComboBox.ItemTemplate>
 		</ComboBox>
 
-		<CheckBox Grid.Row="10"  Grid.Column="0" IsChecked="{Binding IndependentSymbolSize, Mode=TwoWay}" Content="Independent symbol size:" IsEnabled="{Binding EnableMain}" />
-		<axogcd:LineCapSizeComboBox Grid.Row="10" Grid.Column="2" SelectedQuantity="{Binding SymbolSize}" UnitEnvironment="{Binding SymbolSizeEnvironment}" IsEnabled="{Binding EnableMain}" />
+		<CheckBox Grid.Row="10"  Grid.Column="0" 
+                  IsChecked="{Binding IndependentSymbolSize, Mode=TwoWay}" 
+                  Content="Independent symbol size:" 
+                  IsEnabled="{Binding EnableMain}" />
+		<axogcd:LineCapSizeComboBox Grid.Row="10" Grid.Column="2"
+                                    SelectedQuantity="{Binding SymbolSize}"
+                                    UnitEnvironment="{Binding SymbolSizeEnvironment}" 
+                                    IsEnabled="{Binding EnableMain}" />
 
-		<CheckBox Grid.Row="12" Grid.Column="0" IsChecked="{Binding IndependentColor, Mode=TwoWay}" Content="Independent color:" IsEnabled="{Binding EnableMain}"/>
-		<axogcd:ColorComboBox Grid.Row="12" Grid.Column="2" SelectedColor="{Binding Color}" ShowPlotColorsOnly="{Binding ShowPlotColorsOnly}" IsEnabled="{Binding EnableMain}" />
+		<CheckBox Grid.Row="12" Grid.Column="0"
+                  IsChecked="{Binding IndependentColor, Mode=TwoWay}"
+                  Content="Independent color:"
+                  IsEnabled="{Binding EnableMain}"/>
+		
+        <axogcd:ColorComboBox Grid.Row="12" Grid.Column="2"
+                              SelectedColor="{Binding Color}" 
+                              ShowPlotColorsOnly="{Binding ShowPlotColorsOnly}" 
+                              IsEnabled="{Binding EnableMain}" />
 
 		<Expander Header="Overrides" Grid.Row="14" Grid.Column="0" Grid.ColumnSpan="3" IsExpanded="{Binding AreOverridesExpanded, Mode=TwoWay}" />
 

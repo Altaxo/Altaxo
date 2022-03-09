@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2016 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -23,17 +23,7 @@
 #endregion Copyright
 
 #nullable disable warnings
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows;
 using System.Windows.Controls;
-using Altaxo.Collections;
-using Altaxo.Drawing.D3D;
-using Altaxo.Graph.Gdi;
-using Altaxo.Graph.Graph3D.Plot.Styles;
-using Altaxo.Gui.Common.Drawing;
 
 namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 {
@@ -42,102 +32,9 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
   /// </summary>
   public partial class ScatterPlotStyleControl : UserControl, IScatterPlotStyleView
   {
-    public event Action? IndependentColorChanged;
-
     public ScatterPlotStyleControl()
     {
       InitializeComponent();
-    }
-
-    public void EnableDisableMain(bool bEnable)
-    {
-      _chkIndependentColor.IsEnabled = bEnable;
-      _chkIndependentSize.IsEnabled = bEnable;
-
-      _cbColor.IsEnabled = bEnable;
-      _cbSymbolSize.IsEnabled = bEnable;
-      _edSymbolSkipFrequency.IsEnabled = bEnable;
-    }
-
-    #region IXYPlotScatterStyleView
-
-    public void InitializeSymbolStyle(SelectableListNodeList list)
-    {
-    }
-
-    public void InitializeSymbolShape(SelectableListNodeList list)
-    {
-      _cbSymbolShape.SelectedItem = list.FirstSelectedNode?.Tag as Altaxo.Graph.Graph3D.Plot.Styles.IScatterSymbol;
-    }
-
-    public bool IndependentColor
-    {
-      get
-      {
-        return true == _chkIndependentColor.IsChecked;
-      }
-      set
-      {
-        _chkIndependentColor.IsChecked = value;
-      }
-    }
-
-    public IMaterial SymbolMaterial
-    {
-      get { return _cbColor.SelectedMaterial; }
-      set { _cbColor.SelectedMaterial = value; }
-    }
-
-    public IScatterSymbol SymbolShape
-    {
-      get { return _cbSymbolShape.SelectedItem; }
-      set { _cbSymbolShape.SelectedItem = value; }
-    }
-
-    public bool IndependentSymbolSize
-    {
-      get { return true == _chkIndependentSize.IsChecked; }
-      set { _chkIndependentSize.IsChecked = value; }
-    }
-
-    public double SymbolSize
-    {
-      get { return _cbSymbolSize.SelectedQuantityAsValueInPoints; }
-      set { _cbSymbolSize.SelectedQuantityAsValueInPoints = value; }
-    }
-
-    public int SkipFrequency
-    {
-      get
-      {
-        return _edSymbolSkipFrequency.Value;
-      }
-      set
-      {
-        _edSymbolSkipFrequency.Value = value;
-      }
-    }
-
-    public bool IndependentSkipFrequency
-    {
-      get { return true == _chkIndependentSkipFreq.IsChecked; }
-      set { _chkIndependentSkipFreq.IsChecked = value; }
-    }
-
-    #endregion IXYPlotScatterStyleView
-
-    private void EhIndependentColorChanged(object sender, RoutedEventArgs e)
-    {
-      if (IndependentColorChanged is not null)
-        IndependentColorChanged();
-    }
-
-    public bool ShowPlotColorsOnly
-    {
-      set
-      {
-        _cbColor.ShowPlotColorsOnly = value;
-      }
     }
   }
 }

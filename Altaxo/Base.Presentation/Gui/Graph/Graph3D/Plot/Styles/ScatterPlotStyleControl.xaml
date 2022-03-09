@@ -3,11 +3,12 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:axog="clr-namespace:Altaxo.Gui;assembly=AltaxoBase"
-						 xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing"
-						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
- 						 xmlns:axoggc="clr-namespace:Altaxo.Gui.Drawing.D3D"
-						 xmlns:local="clr-namespace:Altaxo.Gui.Graph.Graph3D.Plot.Styles"
+			 xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing"
+			 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
+			 xmlns:axoggc="clr-namespace:Altaxo.Gui.Drawing.D3D"
+			 xmlns:local="clr-namespace:Altaxo.Gui.Graph.Graph3D.Plot.Styles"
+			 xmlns:localModel="clr-namespace:Altaxo.Gui.Graph.Graph3D.Plot.Styles;assembly=AltaxoBase"
+             d:DataContext="{d:DesignInstance Type=localModel:ScatterPlotStyleController}"
              mc:Ignorable="d">
 
 	<UserControl.Resources>
@@ -55,15 +56,35 @@
 		</Grid.RowDefinitions>
 
 		<Label Grid.Column="0" Grid.Row="0" Content="Shape:" />
-		<local:ScatterSymbolComboBox x:Name="_cbSymbolShape" Grid.Column="1" Grid.Row="0" />
+		<local:ScatterSymbolComboBox Grid.Column="1" Grid.Row="0"
+                                     SelectedItem="{Binding ScatterSymbol}"  />
 
-		<CheckBox x:Name="_chkIndependentColor" Grid.Column="0" Grid.Row="6" Content="Indep. color:" Checked="EhIndependentColorChanged" Unchecked="EhIndependentColorChanged" />
-		<axoggc:MaterialComboBox x:Name="_cbColor" Grid.Column="1" Grid.Row="6" />
+		<CheckBox Grid.Column="0" Grid.Row="6" 
+                  IsChecked="{Binding IndependentColor, Mode=TwoWay}"
+                  Content="Independent color:"
+                  IsEnabled="{Binding EnableMain}"/>
+        
+        <axoggc:MaterialComboBox Grid.Column="1" Grid.Row="6" 
+                              SelectedMaterial="{Binding Material}" 
+                              ShowPlotColorsOnly="{Binding ShowPlotColorsOnly}"
+                              IsEnabled="{Binding EnableMain}" />
 
-		<CheckBox x:Name="_chkIndependentSize" Grid.Column="0" Grid.Row="8" Content="Indep. symbol size:" />
-		<axogcd:LineCapSizeComboBox x:Name="_cbSymbolSize" Grid.Column="1" Grid.Row="8" />
+        <CheckBox Grid.Column="0" Grid.Row="8"
+                  IsChecked="{Binding IndependentSymbolSize, Mode=TwoWay}" 
+                  Content="Indep. symbol size:" 
+                  IsEnabled="{Binding EnableMain}" />
+        <axogcd:LineCapSizeComboBox Grid.Column="1" Grid.Row="8" 
+                                    SelectedQuantityAsValueInPoints="{Binding SymbolSize}"
+                                    IsEnabled="{Binding EnableMain}" />
 
-		<CheckBox x:Name="_chkIndependentSkipFreq" Grid.Column="0" Grid.Row="12" Content="Indep. skip frequency: " />
-		<axogc:Int32UpDown x:Name="_edSymbolSkipFrequency" Grid.Column="1" Grid.Row="12" Minimum="1" />
-	</Grid>
+        <CheckBox Grid.Column="0" Grid.Row="12" 
+                  IsChecked="{Binding IndependentSkipFrequency, Mode=TwoWay}"
+                  Content="Indep. skip frequency :"
+                  IsEnabled="{Binding EnableMain}" />
+        
+        <axogc:Int32UpDown Grid.Column="1" Grid.Row="12"
+                           Value="{Binding SkipFrequency}"
+                           IsEnabled="{Binding EnableMain}" 
+                           Minimum="1" />
+    </Grid>
 </UserControl>
