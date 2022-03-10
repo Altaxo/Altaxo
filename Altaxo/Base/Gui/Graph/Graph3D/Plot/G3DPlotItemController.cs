@@ -25,6 +25,8 @@
 #nullable disable
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using Altaxo.Collections;
 using Altaxo.Data;
 using Altaxo.Graph.Graph3D;
 using Altaxo.Graph.Graph3D.Plot;
@@ -40,35 +42,8 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot
 {
   #region Interfaces
 
-  public interface IG3DPlotItemView
+  public interface IG3DPlotItemView : IDataContextAwareView
   {
-    /// <summary>
-    /// Removes all Tab pages from the dialog.
-    /// </summary>
-    void ClearTabs();
-
-    /// <summary>
-    /// Adds a Tab page to the dialog
-    /// </summary>
-    /// <param name="title">The title of the tab page.</param>
-    /// <param name="view">The view (must be currently of type Control.</param>
-    void AddTab(string title, object view);
-
-    /// <summary>
-    /// Activates the tab page with the title <code>title</code>.
-    /// </summary>
-    /// <param name="index">The index of the tab page to focus.</param>
-    void BringTabToFront(int index);
-
-    event EventHandler<InstanceChangedEventArgs> SelectedPage_Changed;
-
-    /// <summary>
-    /// Sets the plot style view, i.e. the control where we can add or remove plot styles.
-    /// </summary>
-    /// <param name="view"></param>
-    void SetPlotStyleView(object view);
-
-    void SetPlotGroupCollectionView(object view);
   }
 
   #endregion Interfaces
@@ -84,11 +59,8 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot
 
     private PlotGroupStyleCollection _groupStyles;
 
-    /// <summary>Controller for the <see cref="PlotGroupStyleCollection"/> that is associated with the parent of this plot item.</summary>
-    private PlotGroupCollectionController _plotGroupController;
-
     private IPlotColumnDataController _dataController;
-    private IXYZPlotStyleCollectionController _styleCollectionController;
+    
     private List<IMVCANController> _styleControllerList = new List<IMVCANController>();
 
     private Dictionary<IG3DPlotStyle, IMVCANController> _styleControllerDictionary = new Dictionary<IG3DPlotStyle, IMVCANController>();
@@ -97,15 +69,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot
     {
       yield return new ControllerAndSetNullMethod(_plotGroupController, () => _plotGroupController = null);
       yield return new ControllerAndSetNullMethod(_dataController, () => _dataController = null);
-      yield return new ControllerAndSetNullMethod(_styleCollectionController, () =>
-      {
-        if (_styleCollectionController is not null)
-        {
-          _styleCollectionController.CollectionChangeCommit -= _styleCollectionController_CollectionChangeCommit;
-          _styleCollectionController.StyleEditRequested -= _styleCollectionController_StyleEditRequested;
-          _styleCollectionController = null;
-        }
-      });
+      yield return new ControllerAndSetNullMethod(_styleCollectionController, () => StyleCollectionController = null);
 
       if (_styleControllerList is not null)
       {
@@ -123,6 +87,97 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot
         yield return new ControllerAndSetNullMethod(null, () => _styleControllerDictionary = null);
       }
     }
+
+    #region Bindings
+
+    private IXYZPlotStyleCollectionController _styleCollectionController;
+
+    public IXYZPlotStyleCollectionController StyleCollectionController
+    {
+      get => _styleCollectionController;
+      set
+      {
+        if (!(_styleCollectionController == value))
+        {
+          if (_styleCollectionController is not null)
+          {
+            _styleCollectionController.CollectionChangeCommit -= EhStyleCollectionController_CollectionChangeCommit;
+            _styleCollectionController.StyleEditRequested -= EhStyleCollectionController_StyleEditRequested;
+          }
+
+          _styleCollectionController?.Dispose();
+          _styleCollectionController = value;
+
+          if (_styleCollectionController is not null)
+          {
+            _styleCollectionController.CollectionChangeCommit += EhStyleCollectionController_CollectionChangeCommit;
+            _styleCollectionController.StyleEditRequested += EhStyleCollectionController_StyleEditRequested;
+          }
+
+          OnPropertyChanged(nameof(StyleCollectionController));
+        }
+      }
+    }
+
+    /// <summary>Controller for the <see cref="PlotGroupStyleCollection"/> that is associated with the parent of this plot item.</summary>
+    private PlotGroupCollectionController _plotGroupController;
+
+    public PlotGroupCollectionController PlotGroupController
+    {
+      get => _plotGroupController;
+      set
+      {
+        if (!(_plotGroupController == value))
+        {
+          _plotGroupController?.Dispose();
+          _plotGroupController = value;
+          OnPropertyChanged(nameof(PlotGroupController));
+        }
+      }
+    }
+
+    public SelectableListNodeList Tabs { get; } = new();
+
+    private int? _selectedTab;
+
+    /// <summary>
+    /// Gets or sets the selected tab. The value of -1 selectes the data tab, values &gt;= 0 select one of the style tabs.
+    /// </summary>
+    /// <value>
+    /// The selected tab.
+    /// </value>
+    public int? SelectedTab
+    {
+      get => _selectedTab;
+      set
+      {
+        if (!(_selectedTab == value))
+        {
+          var oldValue = _selectedTab;
+          _selectedTab = value;
+          OnPropertyChanged(nameof(SelectedTab));
+          EhView_ActiveChildControlChanged(value, oldValue);
+        }
+      }
+    }
+
+    public IMVCAController? GetControllerFromTag(int? tag)
+    {
+      if (tag is { } selIndex && Tabs is { } tabs)
+      {
+        var node = (SelectableListNodeWithController)Tabs.FirstOrDefault(tab => selIndex.Equals(tab.Tag));
+        return node?.Controller;
+      }
+      else
+      {
+        return null;
+      }
+    }
+
+
+
+    #endregion
+
 
     /// <summary>
     /// We have to override GetSuspendTokenForControllerDocument here because we want to suspend the parent plot item collection instead of the plot item.
@@ -153,30 +208,19 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot
         var plotGroupController = new PlotGroupCollectionController();
         plotGroupController.InitializeDocument(_groupStyles);
         plotGroupController.GroupStyleChanged += new WeakActionHandler(EhPlotGroupChanged, plotGroupController, nameof(plotGroupController.GroupStyleChanged));
-        _plotGroupController = plotGroupController;
+        PlotGroupController = plotGroupController;
+        if (_plotGroupController.ViewObject is null)
+          Current.Gui.FindAndAttachControlTo(_plotGroupController);
 
         // find the style collection controller
-        _styleCollectionController = (IXYZPlotStyleCollectionController)Current.Gui.GetControllerAndControl(new object[] { _doc.Style }, typeof(IXYZPlotStyleCollectionController), UseDocument.Directly);
-        _styleCollectionController.CollectionChangeCommit += new EventHandler(_styleCollectionController_CollectionChangeCommit);
-        _styleCollectionController.StyleEditRequested += new Action<int>(_styleCollectionController_StyleEditRequested);
+       StyleCollectionController = (IXYZPlotStyleCollectionController)Current.Gui.GetControllerAndControl(new object[] { _doc.Style }, typeof(IXYZPlotStyleCollectionController), UseDocument.Directly);
 
         // Initialize the data controller
         _dataController = (IPlotColumnDataController)Current.Gui.GetControllerAndControl(new object[] { _doc.DataObject, _doc }, typeof(IPlotColumnDataController), UseDocument.Directly);
 
         // Initialize the style controller list
         InitializeStyleControllerList();
-      }
-
-      if (_view is not null)
-      {
-        if (_plotGroupController.ViewObject is null)
-          Current.Gui.FindAndAttachControlTo(_plotGroupController);
-        _view.SetPlotGroupCollectionView(_plotGroupController.ViewObject);
-
-        // add the style controller
-        _view.SetPlotStyleView(_styleCollectionController.ViewObject);
-
-        View_SetAllTabViews();
+        SelectedTab = -1; // select the data tab by default
       }
     }
 
@@ -186,22 +230,34 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot
       if (_applySuspend++ > 0)
       {
         _applySuspend--;
-        return true;
+        return ApplyEnd(true, disposeController);
       }
 
       bool applyResult = false;
 
-      if (!_dataController.Apply(disposeController))
-        return false;
+      if (_dataController is not null && !_dataController.Apply(disposeController))
+        return ApplyEnd(false, disposeController);
 
       if (!_styleCollectionController.Apply(disposeController))
-        return false;
+        return ApplyEnd(false, disposeController);
+
+      var activeSubStyleIndex = SelectedTab;
+      if (activeSubStyleIndex.HasValue && activeSubStyleIndex.Value >= 0)
+      {
+        if (false == _styleControllerList[activeSubStyleIndex.Value].Apply(false))
+        {
+          BringTabToFront(activeSubStyleIndex.Value);
+          applyResult = false;
+          goto end_of_function;
+        }
+        DistributeStyleChange(activeSubStyleIndex.Value, true);
+      }
 
       for (int i = 0; i < _styleControllerList.Count; ++i)
       {
         if (false == _styleControllerList[i].Apply(disposeController))
         {
-          _view.BringTabToFront(i);
+          BringTabToFront(i);
           applyResult = false;
           goto end_of_function;
         }
@@ -231,57 +287,24 @@ end_of_function:
       }
     }
 
-    protected override void AttachView()
-    {
-      base.AttachView();
-      _view.SelectedPage_Changed += EhView_ActiveChildControlChanged;
-    }
-
-    protected override void DetachView()
-    {
-      _view.SelectedPage_Changed -= EhView_ActiveChildControlChanged;
-      base.DetachView();
-    }
-
     private SuspendableObject _disablerOfActiveChildControlChanged = new SuspendableObject();
 
-    private void View_SetAllTabViews()
-    {
-      using (var suspendToken = _disablerOfActiveChildControlChanged.SuspendGetToken()) // avoid firing a lot of events by adding the tab controls
-      {
-        _view.ClearTabs();
-
-        // Add the data tab item
-        if (_dataController is not null)
-          _view.AddTab("Data", _dataController.ViewObject);
-
-        // set the plot style tab items
-        for (int i = 0; i < _styleControllerList.Count; ++i)
-        {
-          string title = string.Format("#{0}: {1}", (i + 1), Current.Gui.GetUserFriendlyClassName(_doc.Style[i].GetType()));
-          _view.AddTab(title, _styleControllerList[i].ViewObject);
-        }
-      }
-    }
-
-    protected void EhView_ActiveChildControlChanged(object sender, InstanceChangedEventArgs e)
+    protected void EhView_ActiveChildControlChanged(int? selectedTab, int? oldSelectedTab)
     {
       if (_disablerOfActiveChildControlChanged.IsSuspended)
         return;
 
       // test if it is the view of the normal styles
-      for (int i = 0; i < _styleControllerList.Count; i++)
+      if (oldSelectedTab.HasValue && oldSelectedTab >= 0 && GetControllerFromTag(oldSelectedTab) is { } oldStyleController)
       {
-        if (_styleControllerList[i] is not null && object.ReferenceEquals(_styleControllerList[i].ViewObject, e.OldInstance))
-        {
-          if (!_styleControllerList[i].Apply(false))
-            return;
+        if (!oldStyleController.Apply(false))
+          return;
 
-          DistributeStyleChange(i);
-        }
+        DistributeStyleChange(oldSelectedTab.Value, true);
       }
 
-      _dataController.SetAdditionalPlotColumns(GetAdditionalColumns()); // update list in case it has changed
+      if (_dataController is IPlotColumnDataController)
+        ((IPlotColumnDataController)_dataController).SetAdditionalPlotColumns(GetAdditionalColumns()); // update list in case it has changed
     }
 
     /// <summary>
@@ -315,6 +338,24 @@ end_of_function:
       }
 
       _dataController.SetAdditionalPlotColumns(GetAdditionalColumns());
+
+      using (var suspendToken = _disablerOfActiveChildControlChanged.SuspendGetToken()) // avoid firing a lot of events by adding the tab controls
+      {
+        Tabs.Clear();
+
+        // Add the data tab item
+        if (_dataController is not null)
+        {
+          Tabs.Add(new SelectableListNodeWithController("Scale", -1, false) { Controller = _dataController });
+        }
+
+        // set the plot style tab items
+        for (int i = 0; i < _styleControllerList.Count; ++i)
+        {
+          string title = $"#{(i + 1)}: {Current.Gui.GetUserFriendlyClassName(_doc.Style[i].GetType())}";
+          Tabs.Add(new SelectableListNodeWithController(title, i, false) { Controller = _styleControllerList[i] });
+        }
+      }
     }
 
     private IEnumerable<(string ColumnGroupNumberAndName, IEnumerable<(string ColumnLabel, IReadableColumn Column, string ColumnName, Action<IReadableColumn, DataTable, int> ColumnSetAction)> ColumnInfos)> GetAdditionalColumns()
@@ -360,16 +401,22 @@ end_of_function:
     /// for this styles are also updated.
     /// </summary>
     /// <param name="pivotelement"></param>
-    private void DistributeStyleChange(int pivotelement)
+    /// <param name="updateAllStyleControllers">If true, the style controllers are newly initialized. Set this parameter to false if this is unneccessary, e.g.
+    /// when applying the controller and closing it afterwards.</param>
+
+    private void DistributeStyleChange(int pivotelement, bool updateAllStyleControllers)
     {
       IPlotArea layer = AbsoluteDocumentPath.GetRootNodeImplementing<IPlotArea>(_doc);
       _doc.Style.DistributeSubStyleChange(pivotelement, layer, _doc.GetRangesAndPoints(layer));
 
-      // now all style controllers must be updated
-      for (int i = 0; i < _styleControllerList.Count; i++)
+      if (updateAllStyleControllers)
       {
-        if (_styleControllerList[i] is not null)
-          _styleControllerList[i].InitializeDocument(_doc.Style[i], (_doc.DataObject as Altaxo.Graph.Plot.Data.XYZColumnPlotData)?.DataTable, (_doc.DataObject as Altaxo.Graph.Plot.Data.XYZColumnPlotData)?.GroupNumber ?? 0);
+        // now all style controllers must be updated
+        for (int i = 0; i < _styleControllerList.Count; i++)
+        {
+          if (_styleControllerList[i] is not null)
+            _styleControllerList[i].InitializeDocument(_doc.Style[i], (_doc.DataObject as Altaxo.Graph.Plot.Data.XYZColumnPlotData)?.DataTable, (_doc.DataObject as Altaxo.Graph.Plot.Data.XYZColumnPlotData)?.GroupNumber ?? 0);
+        }
       }
     }
 
@@ -407,21 +454,22 @@ end_of_function:
       return result;
     }
 
-    private void _styleCollectionController_CollectionChangeCommit(object sender, EventArgs e)
+    private void EhStyleCollectionController_CollectionChangeCommit(object sender, EventArgs e)
     {
       if (true == _styleCollectionController.Apply(false))
       {
         InitializeStyleControllerList();
-        View_SetAllTabViews();
       }
     }
 
-    private void _styleCollectionController_StyleEditRequested(int styleIndex)
+    private void EhStyleCollectionController_StyleEditRequested(int styleIndex)
     {
-      if (_view is not null)
-      {
-        _view.BringTabToFront(styleIndex + GetFirstStyleTabIndex());
-      }
+      BringTabToFront(styleIndex);
+    }
+
+    protected void BringTabToFront(int styleIndex)
+    {
+      SelectedTab = styleIndex;
     }
   }
 }

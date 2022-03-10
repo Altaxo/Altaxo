@@ -29,7 +29,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
   /// <summary>
   /// Interaction logic for G2DPlotItemControl.xaml
   /// </summary>
-  public partial class G2DPlotItemControl : UserControl, IG2DPlotItemView
+  public partial class G2DPlotItemControl : UserControl, IG2DPlotItemView, Graph3D.Plot.IG3DPlotItemView
   {
     public G2DPlotItemControl()
     {

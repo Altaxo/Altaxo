@@ -59,8 +59,8 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
 
     private PlotGroupStyleCollection _groupStyles;
 
-
     private IMVCANController _dataController; // IPlotColumnDataController
+
     private List<IMVCANController> _styleControllerList = new List<IMVCANController>();
 
     private Dictionary<IG2DPlotStyle, IMVCANController> _styleControllerDictionary = new Dictionary<IG2DPlotStyle, IMVCANController>();
@@ -231,16 +231,16 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
       if (_applySuspend++ > 0)
       {
         _applySuspend--;
-        return true;
+        return ApplyEnd(true, disposeController);
       }
 
       bool applyResult = false;
 
       if (_dataController is not null && !_dataController.Apply(disposeController))
-        return false;
+        return ApplyEnd(false, disposeController);
 
       if (!_styleCollectionController.Apply(disposeController))
-        return false;
+        return ApplyEnd(false, disposeController);
 
       var activeSubStyleIndex = SelectedTab;
       if (activeSubStyleIndex.HasValue && activeSubStyleIndex.Value >=0)
