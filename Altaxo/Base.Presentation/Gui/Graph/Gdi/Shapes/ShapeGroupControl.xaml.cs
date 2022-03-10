@@ -29,7 +29,7 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
   /// <summary>
   /// Interaction logic for ShapeGroupControl.xaml
   /// </summary>
-  public partial class ShapeGroupControl : UserControl, IShapeGroupView
+  public partial class ShapeGroupControl : UserControl, IShapeGroupView, Graph3D.Shapes.IShapeGroupView
   {
     public ShapeGroupControl()
     {

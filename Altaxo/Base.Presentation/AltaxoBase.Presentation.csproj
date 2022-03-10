@@ -96,9 +96,6 @@
     <Page Update="Gui\Common\Drawing\PenSimpleConditionalControlDC.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
     </Page>
-    <Page Update="Gui\Graph\Graph3D\Shapes\ShapeGroupControl.xaml">
-      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
-    </Page>
   </ItemGroup>
   
   <UsingTask TaskName="GitVersionFile" AssemblyFile="..\..\MSBuildVersioning.dll" />

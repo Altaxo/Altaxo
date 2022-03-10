@@ -44,7 +44,14 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
       yield return new ControllerAndSetNullMethod(_locationController, () => LocationController = null);
     }
 
+    public ShapeGroupController()
+    {
+      CmdEditItem = new RelayCommand(EhEditSelectedItem);
+    }
+
     #region Bindings
+
+    public System.Windows.Input.ICommand CmdEditItem { get; }
 
     private IMVCANController _locationController;
 
@@ -109,7 +116,7 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
     public override bool Apply(bool disposeController)
     {
       if (!_locationController.Apply(disposeController))
-        return false;
+        return ApplyEnd(false, disposeController);
 
       if (!object.ReferenceEquals(_doc.Location, _locationController.ModelObject))
         _doc.Location.CopyFrom((ItemLocationDirect)_locationController.ModelObject);
