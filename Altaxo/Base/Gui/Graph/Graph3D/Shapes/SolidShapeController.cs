@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2016 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -23,32 +23,59 @@
 #endregion Copyright
 
 #nullable disable
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Altaxo.Graph.Graph3D;
 using Altaxo.Graph.Graph3D.Shapes;
 
 namespace Altaxo.Gui.Graph.Graph3D.Shapes
 {
-  public interface ISolidShapeView
+  public interface ISolidShapeView : IDataContextAwareView
   {
-    Altaxo.Drawing.D3D.IMaterial Material { get; set; }
-
-    object LocationView { set; }
   }
 
   [UserControllerForObject(typeof(SolidBodyShapeBase))]
   [ExpectedTypeOfView(typeof(ISolidShapeView))]
   public class ClosedPathShapeController : MVCANControllerEditOriginalDocBase<SolidBodyShapeBase, ISolidShapeView>
   {
-    private IMVCANController _locationController;
-
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
-      yield return new ControllerAndSetNullMethod(_locationController, () => _locationController = null);
+      yield return new ControllerAndSetNullMethod(_locationController, () => LocationController = null);
     }
+
+    #region Bindings
+
+    private IMVCANController _locationController;
+
+    public IMVCANController LocationController
+    {
+      get => _locationController;
+      set
+      {
+        if (!(_locationController == value))
+        {
+          _locationController?.Dispose();
+          _locationController = value;
+          OnPropertyChanged(nameof(LocationController));
+        }
+      }
+    }
+
+    private Altaxo.Drawing.D3D.IMaterial _material;
+
+    public Altaxo.Drawing.D3D.IMaterial Material
+    {
+      get => _material;
+      set
+      {
+        if (!(_material == value))
+        {
+          _material = value;
+          OnPropertyChanged(nameof(Material));
+        }
+      }
+    }
+
+    #endregion
 
     protected override void Initialize(bool initData)
     {
@@ -56,22 +83,19 @@ namespace Altaxo.Gui.Graph.Graph3D.Shapes
 
       if (initData)
       {
-        _locationController = (IMVCANController)Current.Gui.GetController(new object[] { _doc.Location }, typeof(IMVCANController), UseDocument.Directly);
-        Current.Gui.FindAndAttachControlTo(_locationController);
-      }
-      if (_view is not null)
-      {
-        _view.Material = _doc.Material;
-        _view.LocationView = _locationController.ViewObject;
+        var locationController = (IMVCANController)Current.Gui.GetController(new object[] { _doc.Location }, typeof(IMVCANController), UseDocument.Directly);
+        Current.Gui.FindAndAttachControlTo(locationController);
+        LocationController = locationController;
+        Material = _doc.Material;
       }
     }
 
     public override bool Apply(bool disposeController)
     {
       if (!_locationController.Apply(disposeController))
-        return false;
+        return ApplyEnd(false, disposeController);
 
-      _doc.Material = _view.Material;
+      _doc.Material = Material;
 
       if (!object.ReferenceEquals(_doc.Location, _locationController.ModelObject))
         _doc.Location.CopyFrom((ItemLocationDirect)_locationController.ModelObject);

@@ -3,8 +3,9 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-						 xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing"
-						 xmlns:axoggc="clr-namespace:Altaxo.Gui.Drawing.D3D"
+			 xmlns:axoggc="clr-namespace:Altaxo.Gui.Drawing.D3D"
+             xmlns:shapes="clr-namespace:Altaxo.Gui.Graph.Graph3D.Shapes;assembly=AltaxoBase" 
+             d:DataContext="{d:DesignInstance Type=shapes:ClosedPathShapeController}"
              mc:Ignorable="d"
 >
 	<UserControl.Resources>
@@ -35,10 +36,10 @@
 		<Rectangle Grid.Row="3" Grid.ColumnSpan="4" Style="{StaticResource HorzSeparatorStyle}" />
 
 		<GroupBox Grid.Row="2" Header="Material">
-			<axoggc:MaterialComboBox x:Name="_guiMaterial" />
+			<axoggc:MaterialComboBox SelectedMaterial="{Binding Material}" />
 		</GroupBox>
 		<GroupBox  Grid.Row="4" Header="Location">
-			<Border x:Name="_guiLocationHost" />
+			<ContentControl Content="{Binding LocationController.ViewObject}" />
 		</GroupBox>
 	</Grid>
 </UserControl>
