@@ -51,21 +51,39 @@
 					<RowDefinition Height="*" />
 					<RowDefinition Height="4" />
 				</Grid.RowDefinitions>
-				<Label Grid.Column="0" Grid.Row="0" Content="Font:" />
-				<axogcd:FontFamilyComboBox Grid.Column="1" Grid.Row="0" SelectedFontFamilyName="{Binding FontController.SelectedFontFamilyName}" />
-				<Label Grid.Column="2" Grid.Row="0" Content="Size:" />
-				<axogcd:FontSizeComboBox Grid.Column="3" Grid.Row="0" SelectedQuantityAsValueInPoints="{Binding FontController.SelectedFontSize}" />
-				<Label Grid.Column="4" Grid.Row="0" Content="Brush:" />
-				<axogcd:BrushComboBox Grid.Column="5" Grid.Row="0" SelectedBrush="{Binding FontBrush}" />
+				<Label Grid.Column="0" Grid.Row="0" 
+                       Content="Font:" />
+				<axogcd:FontFamilyComboBox Grid.Column="1" Grid.Row="0"
+                                           SelectedFontFamilyName="{Binding FontController.SelectedFontFamilyName}" />
+                
+				<Label Grid.Column="2" Grid.Row="0" 
+                       Content="Size:" />
+				<axogcd:FontSizeComboBox Grid.Column="3" Grid.Row="0"
+                                         SelectedQuantityAsValueInPoints="{Binding FontController.SelectedFontSize}" />
+                
+				<Label Grid.Column="4" Grid.Row="0" 
+                       Content="Brush:" />
+				<axogcd:BrushComboBox Grid.Column="5" Grid.Row="0" 
+                                      SelectedBrush="{Binding FontBrush}" />
 
-				<Label Grid.Column="0" Grid.Row="2" Content="LineSpacing:" />
-				<axogc:QuantityWithUnitTextBox Grid.Column="1" Grid.Row="2" SelectedQuantity="{Binding LineSpacing}" UnitEnvironment="{Binding LineSpacingEnvironment}" DisallowNegativeValues="True" />
+				<Label Grid.Column="0" Grid.Row="2" 
+                       Content="LineSpacing:" />
+				<axogc:QuantityWithUnitTextBox Grid.Column="1" Grid.Row="2"
+                                               SelectedQuantity="{Binding LineSpacing}"
+                                               UnitEnvironment="{Binding LineSpacingEnvironment}"
+                                               DisallowNegativeValues="True" />
 
-				<Label Grid.Column="2" Grid.Row="2" Content="Background:" />
-				<ComboBox Grid.Column="3" Grid.ColumnSpan="2" Grid.Row="2" ItemsSource="{Binding BackgroundController.BackgroundStyles.Items}" SelectedItem="{Binding BackgroundController.BackgroundStyles.SelectedItem, Mode=TwoWay}" Margin="0,0,8,0" />
-				<axogcd:BrushComboBox Grid.Column="5" Grid.Row="2" SelectedBrush="{Binding BackgroundController.BackgroundBrush}" />
+				<Label Grid.Column="2" Grid.Row="2" 
+                       Content="Background:" />
+				<ComboBox Grid.Column="3" Grid.ColumnSpan="2" Grid.Row="2"
+                          ItemsSource="{Binding BackgroundController.BackgroundStyles.Items}"
+                          SelectedItem="{Binding BackgroundController.BackgroundStyles.SelectedItem, Mode=TwoWay}"
+                          Margin="0,0,8,0" />
+                
+				<axogcd:BrushComboBox Grid.Column="5" Grid.Row="2" 
+                                      SelectedBrush="{Binding BackgroundController.BackgroundBrush}" />
 
-				<StackPanel Orientation="Horizontal" Grid.Column="0" Grid.ColumnSpan="8" Grid.Row="6">
+				<StackPanel Grid.Column="0" Grid.ColumnSpan="8" Grid.Row="6" Orientation="Horizontal" >
 					<Button Content="N" FontFamily="Times New Roman" ToolTip="Normal" Command="{Binding CmdNormal}" />
                     <Button Content="B" FontFamily="Times New Roman" FontWeight="Bold" ToolTip="Bold" Command="{Binding CmdBold}" />
                     <Button Content="I" FontFamily="Times New Roman" FontStyle="Italic" ToolTip="Italic" Command="{Binding CmdItalic}" />
@@ -102,12 +120,9 @@
                             <MenuItem Header="\c(red,abc)   (set font color)" CommandParameter="\c(red,abc)" Command="{Binding CmdMoreModifiers}" />
                             <MenuItem Header="\p(200%,abc)   (set relative font size)" CommandParameter="\p(200%,abc)" Command="{Binding CmdMoreModifiers}" />
                             <MenuItem Header="\p(20pt,abc)   (set absolute font size)" CommandParameter="\p(20pt,abc)" Command="{Binding CmdMoreModifiers}" />
-
                             <MenuItem Header="\id($DI)  (include document identifier)" CommandParameter="\id($DI)" Command="{Binding CmdMoreModifiers}" />
-
                             <MenuItem Header="\l(0)   (symbol for plot item 0)" CommandParameter="\l(0)" Command="{Binding CmdMoreModifiers}" />
                             <MenuItem Header="\l(0,0) (symbol for layer 0 / plot item 0)" CommandParameter="\l(0,0)" Command="{Binding CmdMoreModifiers}" />
-
                             <MenuItem Header="\%(0) (text for plot item 0)" CommandParameter="\%(0)" Command="{Binding CmdMoreModifiers}" />
                             <MenuItem Header="\%(0,0) (text for layer 0 / plot item 0)" CommandParameter="\%(0,0)" Command="{Binding CmdMoreModifiers}" />
                             <MenuItem Command="{Binding CmdMoreModifiers}">

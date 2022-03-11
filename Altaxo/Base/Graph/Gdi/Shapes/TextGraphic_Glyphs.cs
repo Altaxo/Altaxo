@@ -749,15 +749,17 @@ namespace Altaxo.Graph.Gdi.Shapes
         string result = string.Empty;
 
         // first of all, retrieve the actual name
-        var mylayer = obj as HostLayer;
-        if (mylayer is null)
+        if(obj is not HostLayer mylayer)
           return result;
 
-        var layer = mylayer as XYPlotLayer;
-        if (_layerNumber >= 0 && mylayer.SiblingLayers is not null && _layerNumber < mylayer.SiblingLayers.Count)
-          layer = mylayer.SiblingLayers[_layerNumber] as XYPlotLayer;
+        var layer = 
+          (_layerNumber >= 0 && mylayer.SiblingLayers is not null && _layerNumber < mylayer.SiblingLayers.Count) ?
+            mylayer.SiblingLayers[_layerNumber] as XYPlotLayer :
+            mylayer as XYPlotLayer;
+
         if (layer is null)
           return result;
+
         IGPlotItem? pa = null;
         if (_plotNumber < layer.PlotItems.Flattened.Length)
         {
@@ -826,12 +828,13 @@ namespace Altaxo.Graph.Gdi.Shapes
         Width = 0;
         Height = 0;
 
-        var mylayer = mc.LinkedObject as HostLayer;
-        if (mylayer is null)
+        if(mc.LinkedObject is not HostLayer mylayer)
           return;
-        var layer = mylayer as XYPlotLayer;
-        if (_layerNumber >= 0 && mylayer.SiblingLayers is not null && _layerNumber < mylayer.SiblingLayers.Count)
-          layer = mylayer.SiblingLayers[_layerNumber] as XYPlotLayer;
+
+        var layer = 
+          (_layerNumber >= 0 && mylayer.SiblingLayers is not null && _layerNumber < mylayer.SiblingLayers.Count) ?
+            mylayer.SiblingLayers[_layerNumber] as XYPlotLayer :
+            mylayer as XYPlotLayer;
 
         if (layer is null)
           return;
@@ -847,12 +850,13 @@ namespace Altaxo.Graph.Gdi.Shapes
 
       public override void Draw(Graphics g, DrawContext dc, double xbase, double ybase)
       {
-        var mylayer = (HostLayer)dc.LinkedObject;
+        if (dc.LinkedObject is not HostLayer mylayer)
+          return;
 
-        var layer = mylayer as XYPlotLayer;
-
-        if (_layerNumber >= 0 && mylayer.SiblingLayers is not null && _layerNumber < mylayer.SiblingLayers.Count)
-          layer = mylayer.SiblingLayers[_layerNumber] as XYPlotLayer;
+        var layer =
+          (_layerNumber >= 0 && mylayer.SiblingLayers is not null && _layerNumber < mylayer.SiblingLayers.Count) ?
+              (mylayer.SiblingLayers[_layerNumber] as XYPlotLayer) :
+              (mylayer as XYPlotLayer);
 
         if (layer is null)
           return;

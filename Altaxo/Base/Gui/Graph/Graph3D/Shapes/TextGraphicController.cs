@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2016 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -23,98 +23,230 @@
 #endregion Copyright
 
 #nullable disable
-using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Text;
 using Altaxo.Main;
 
 namespace Altaxo.Gui.Graph.Graph3D.Shapes
 {
-  using Altaxo.Drawing;
+  using System.Windows.Input;
   using Altaxo.Drawing.D3D;
   using Altaxo.Graph.Graph3D;
-  using Altaxo.Graph.Graph3D.Background;
   using Altaxo.Graph.Graph3D.Shapes;
+  using Altaxo.Gui.Common.Drawing.D3D;
+  using Altaxo.Gui.Graph.Graph3D.Background;
+  using Altaxo.Units;
 
   #region Interfaces
 
-  public interface ITextGraphicView
+  public interface ITextGraphicView : IDataContextAwareView
   {
-    void BeginUpdate();
-
-    void EndUpdate();
-
-    ITextGraphicViewEventSink Controller { set; }
-
-    IBackgroundStyle SelectedBackground { get; set; }
-
-    object LocationView { set; }
-
-    string EditText { get; set; }
-
-    FontX3D SelectedFont { get; set; }
-
-    double SelectedLineSpacing { get; set; }
-
-    IMaterial SelectedFontBrush { get; set; }
-
-    void InsertBeforeAndAfterSelectedText(string insbefore, string insafter);
-
-    void RevertToNormal();
-
-    void InvalidatePreviewPanel();
-  }
-
-  public interface ITextGraphicViewEventSink
-  {
-    void EhView_BoldClick();
-
-    void EhView_ItalicClick();
-
-    void EhView_UnderlineClick();
-
-    void EhView_SupIndexClick();
-
-    void EhView_SubIndexClick();
-
-    void EhView_GreekClick();
-
-    void EhView_NormalClick();
-
-    void EhView_StrikeoutClick();
-
-    void EhView_PreviewPanelPaint(System.Drawing.Graphics g);
-
-    void EhView_EditTextChanged();
-
-    void EhView_BackgroundStyleChanged();
-
-    void EhView_FontFamilyChanged();
-
-    void EhView_FontSizeChanged();
-
-    void EhView_FontDepthChanged();
-
-    void EhView_TextFillBrushChanged();
-
-    void EhView_LineSpacingChanged();
   }
 
   #endregion Interfaces
 
   [UserControllerForObject(typeof(TextGraphic))]
   [ExpectedTypeOfView(typeof(ITextGraphicView))]
-  internal class TextGraphicController : MVCANControllerEditOriginalDocBase<TextGraphic, ITextGraphicView>, ITextGraphicViewEventSink
+  public class TextGraphicController : MVCANControllerEditOriginalDocBase<TextGraphic, ITextGraphicView>
   {
-    private XYZPlotLayer _parentLayerOfOriginalDoc;
+    public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+    {
+      yield return new ControllerAndSetNullMethod(_locationController, () => LocationController = null);
+      yield return new ControllerAndSetNullMethod(_backgroundController, () => BackgroundController = null);
+      yield return new ControllerAndSetNullMethod(_fontController, () => FontController = null);
+    }
+
+    public TextGraphicController()
+    {
+      CmdNormal = new RelayCommand(EhView_NormalClick);
+      CmdBold = new RelayCommand(EhView_BoldClick);
+      CmdItalic = new RelayCommand(EhView_ItalicClick);
+      CmdUnderline = new RelayCommand(EhView_UnderlineClick);
+      CmdStrikeout = new RelayCommand(EhView_StrikeoutClick);
+      CmdSupIndex = new RelayCommand(EhView_SupIndexClick);
+      CmdSubIndex = new RelayCommand(EhView_SubIndexClick);
+      CmdGreek = new RelayCommand(EhView_GreekClick);
+      CmdMoreModifiers = new RelayCommand<string>(EhView_MoreModifiersClick);
+
+    }
+
+    #region Bindings
+
+    public ICommand CmdNormal { get; }
+    public ICommand CmdBold { get; }
+    public ICommand CmdItalic { get; }
+    public ICommand CmdUnderline { get; }
+    public ICommand CmdStrikeout { get; }
+    public ICommand CmdSupIndex { get; }
+    public ICommand CmdSubIndex { get; }
+    public ICommand CmdGreek { get; }
+    public ICommand CmdMoreModifiers { get; }
 
     private IMVCANController _locationController;
 
-    public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+    public IMVCANController LocationController
     {
-      yield return new ControllerAndSetNullMethod(_locationController, () => _locationController = null);
+      get => _locationController;
+      set
+      {
+        if (!(_locationController == value))
+        {
+          _locationController?.Dispose();
+          _locationController = value;
+          OnPropertyChanged(nameof(LocationController));
+        }
+      }
     }
+
+    private string _editText;
+
+    public string EditText
+    {
+      get => _editText;
+      set
+      {
+        if (!(_editText == value))
+        {
+          _editText = value;
+          OnPropertyChanged(nameof(EditText));
+          _doc.Text = value;
+          ++DocumentVersion;
+        }
+      }
+    }
+
+    private (int Start, int Length) _textSelection;
+
+    public (int Start, int Length) TextSelection
+    {
+      get => _textSelection;
+      set
+      {
+        if (!(_textSelection == value))
+        {
+          _textSelection = value;
+          OnPropertyChanged(nameof(TextSelection));
+        }
+      }
+    }
+
+    private BackgroundStyleController _backgroundController;
+
+    public BackgroundStyleController BackgroundController
+    {
+      get => _backgroundController;
+      set
+      {
+        if (!(_backgroundController == value))
+        {
+          if (_backgroundController is { } oldC)
+          {
+            oldC.MadeDirty -= EhBackgroundStyleChanged;
+          }
+          _backgroundController?.Dispose();
+          _backgroundController = value;
+          if (_backgroundController is { } newC)
+          {
+            newC.MadeDirty += EhBackgroundStyleChanged;
+          }
+
+          OnPropertyChanged(nameof(BackgroundController));
+        }
+      }
+    }
+
+    private void EhBackgroundStyleChanged(IMVCANDController obj)
+    {
+      _doc.Background = BackgroundController.Doc;
+      ++DocumentVersion;
+    }
+
+    private FontX3DController _fontController;
+
+    public FontX3DController FontController
+    {
+      get => _fontController;
+      set
+      {
+        if (!(_fontController == value))
+        {
+          if (_fontController is { } oldC)
+          {
+            oldC.MadeDirty -= EhFontChanged;
+          }
+          _fontController?.Dispose();
+          _fontController = value;
+          if (_fontController is { } newC)
+          {
+            newC.MadeDirty += EhFontChanged;
+          }
+          OnPropertyChanged(nameof(FontController));
+        }
+      }
+    }
+
+    public void EhFontChanged(IMVCAController _)
+    {
+      _doc.Font = FontController.Doc;
+      ++DocumentVersion;
+    }
+
+    private IMaterial _fontBrush;
+
+    public IMaterial FontBrush
+    {
+      get => _fontBrush;
+      set
+      {
+        if (!(_fontBrush == value))
+        {
+          _fontBrush = value;
+          OnPropertyChanged(nameof(FontBrush));
+          _doc.TextFillBrush = value;
+          ++DocumentVersion;
+        }
+      }
+    }
+
+
+    public QuantityWithUnitGuiEnvironment LineSpacingEnvironment => RelationEnvironment.Instance;
+
+    private DimensionfulQuantity _lineSpacing;
+
+    public DimensionfulQuantity LineSpacing
+    {
+      get => _lineSpacing;
+      set
+      {
+        if (!(_lineSpacing == value))
+        {
+          _lineSpacing = value;
+          OnPropertyChanged(nameof(LineSpacing));
+          _doc.LineSpacing = value.AsValueInSIUnits;
+          ++DocumentVersion;
+        }
+      }
+    }
+
+    private int _documentVersion;
+
+    public int DocumentVersion
+    {
+      get => _documentVersion;
+      set
+      {
+        if (!(_documentVersion == value))
+        {
+          _documentVersion = value;
+          OnPropertyChanged(nameof(DocumentVersion));
+          OnPropertyChanged(nameof(Doc));
+        }
+      }
+    }
+
+
+
+    #endregion
+
 
     protected override void Initialize(bool initData)
     {
@@ -122,35 +254,16 @@ namespace Altaxo.Gui.Graph.Graph3D.Shapes
 
       if (initData)
       {
-        _parentLayerOfOriginalDoc = AbsoluteDocumentPath.GetRootNodeImplementing<XYZPlotLayer>(_doc);
-
-        _locationController = (IMVCANController)Current.Gui.GetController(new object[] { _doc.Location }, typeof(IMVCANController), UseDocument.Directly);
-        Current.Gui.FindAndAttachControlTo(_locationController);
-      }
-
-      if (_view is not null)
-      {
-        _view.BeginUpdate();
-
-        _view.SelectedBackground = _doc.Background;
-
-        _view.EditText = _doc.Text;
-
-        // fill the font name combobox with all fonts
-        _view.SelectedFont = _doc.Font;
-
-        _view.SelectedLineSpacing = _doc.LineSpacing;
-
-        // fill the font size combobox with reasonable values
-        //this.m_cbFontSize.Items.AddRange(new string[] { "8", "9", "10", "11", "12", "14", "16", "18", "20", "22", "24", "26", "28", "36", "48", "72" });
-        //this.m_cbFontSize.Text = m_TextObject.Font.Size.ToString();
+        var locationController = (IMVCANController)Current.Gui.GetController(new object[] { _doc.Location }, typeof(IMVCANController), UseDocument.Directly);
+        Current.Gui.FindAndAttachControlTo(locationController);
+        LocationController = locationController;
+        BackgroundController = new BackgroundStyleController(_doc.Background);
+        FontController = new FontX3DController(_doc.Font);
+        LineSpacing = new DimensionfulQuantity(_doc.LineSpacing, Altaxo.Units.Dimensionless.Unity.Instance).AsQuantityIn(LineSpacingEnvironment.DefaultUnit);
 
         // fill the color dialog box
-        _view.SelectedFontBrush = _doc.TextFillBrush;
-
-        _view.LocationView = _locationController.ViewObject;
-
-        _view.EndUpdate();
+        FontBrush = _doc.TextFillBrush;
+        EditText = _doc.Text;
       }
     }
 
@@ -165,132 +278,94 @@ namespace Altaxo.Gui.Graph.Graph3D.Shapes
       return ApplyEnd(true, disposeController);
     }
 
-    protected override void AttachView()
+    public void InsertBeforeAndAfterSelectedText(string insbefore, string insafter)
     {
-      base.AttachView();
+      if (0 != TextSelection.Length)
+      {
+        // insert \b( at beginning of selection and ) at the end of the selection
+        int len = TextSelection.Length;
+        int start = TextSelection.Start;
+        int end = start + len;
+        EditText = EditText.Substring(0, start) + insbefore + EditText.Substring(start, end - start) + insafter + EditText.Substring(end, EditText.Length - end);
 
-      _view.Controller = this;
+        // now select the text plus the text before and after
+        TextSelection = (start, end - start + insbefore.Length + insafter.Length);
+        OnPropertyChanged(nameof(TextSelection));
+      }
     }
 
-    protected override void DetachView()
+    public void RevertToNormal()
     {
-      _view.Controller = null;
+      // remove a backslash x ( at the beginning and the closing brace at the end of the selection
+      if (TextSelection.Length >= 4)
+      {
+        int len = TextSelection.Length;
+        int start = TextSelection.Start;
+        int end = start + len;
 
-      base.DetachView();
+        if (EditText[start] == '\\' && EditText[start + 2] == '(' && EditText[end - 1] == ')')
+        {
+          EditText = EditText.Substring(0, start)
+            + EditText.Substring(start + 3, end - start - 4)
+            + EditText.Substring(end, EditText.Length - end);
+
+          // now select again the rest of the text
+          TextSelection = (start, end - start - 4);
+        }
+      }
     }
-
-    #region ITextGraphicViewEventSink Members
 
     public void EhView_BoldClick()
     {
       // insert \b( at beginning of selection and ) at the end of the selection
-      _view.InsertBeforeAndAfterSelectedText("\\b(", ")");
+      InsertBeforeAndAfterSelectedText("\\b(", ")");
     }
 
     public void EhView_ItalicClick()
     {
       // insert \b( at beginning of selection and ) at the end of the selection
-      _view.InsertBeforeAndAfterSelectedText("\\i(", ")");
+      InsertBeforeAndAfterSelectedText("\\i(", ")");
     }
 
     public void EhView_UnderlineClick()
     {
       // insert \b( at beginning of selection and ) at the end of the selection
-      _view.InsertBeforeAndAfterSelectedText("\\u(", ")");
+      InsertBeforeAndAfterSelectedText("\\u(", ")");
     }
 
     public void EhView_SupIndexClick()
     {
       // insert \b( at beginning of selection and ) at the end of the selection
-      _view.InsertBeforeAndAfterSelectedText("\\+(", ")");
+      InsertBeforeAndAfterSelectedText("\\+(", ")");
     }
 
     public void EhView_SubIndexClick()
     {
       // insert \b( at beginning of selection and ) at the end of the selection
-      _view.InsertBeforeAndAfterSelectedText("\\-(", ")");
+      InsertBeforeAndAfterSelectedText("\\-(", ")");
     }
 
     public void EhView_GreekClick()
     {
       // insert \b( at beginning of selection and ) at the end of the selection
-      _view.InsertBeforeAndAfterSelectedText("\\g(", ")");
+      InsertBeforeAndAfterSelectedText("\\g(", ")");
+    }
+
+    public void EhView_MoreModifiersClick(string parameter)
+    {
+      // insert \b( at beginning of selection and ) at the end of the selection
+      EditText = EditText + (string)parameter;
     }
 
     public void EhView_NormalClick()
     {
-      _view.RevertToNormal();
+      RevertToNormal();
     }
 
     public void EhView_StrikeoutClick()
     {
       // insert \b( at beginning of selection and ) at the end of the selection
-      _view.InsertBeforeAndAfterSelectedText("\\s(", ")");
+      InsertBeforeAndAfterSelectedText("\\s(", ")");
     }
-
-    public void EhView_PreviewPanelPaint(System.Drawing.Graphics g)
-    {
-      g.PageUnit = System.Drawing.GraphicsUnit.Point;
-
-      g.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceCopy;
-      g.FillRectangle(Brushes.Transparent, g.VisibleClipBounds);
-      g.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceOver;
-    }
-
-    public void EhView_EditTextChanged()
-    {
-      _doc.Text = _view.EditText;
-      _view.InvalidatePreviewPanel();
-    }
-
-    public void EhView_BackgroundStyleChanged()
-    {
-      _doc.Background = _view.SelectedBackground;
-      _view.InvalidatePreviewPanel();
-    }
-
-    public void EhView_LineSpacingChanged()
-    {
-      _doc.LineSpacing = _view.SelectedLineSpacing;
-      _view.InvalidatePreviewPanel();
-    }
-
-    public void EhView_FontFamilyChanged()
-    {
-      var font = _view.SelectedFont;
-      string ff = font.FontFamilyName;
-
-      // make sure that regular style is available
-      if (Altaxo.Graph.Gdi.GdiFontManager.IsFontFamilyAndStyleAvailable(ff, FontXStyle.Regular))
-        _doc.Font = FontManager3D.Instance.GetFont(ff, _doc.Font.Size, _doc.Font.Depth, FontXStyle.Regular);
-      else if (Altaxo.Graph.Gdi.GdiFontManager.IsFontFamilyAndStyleAvailable(ff, FontXStyle.Bold))
-        _doc.Font = FontManager3D.Instance.GetFont(ff, _doc.Font.Size, _doc.Font.Depth, FontXStyle.Bold);
-      else if (Altaxo.Graph.Gdi.GdiFontManager.IsFontFamilyAndStyleAvailable(ff, FontXStyle.Italic))
-        _doc.Font = FontManager3D.Instance.GetFont(ff, _doc.Font.Size, _doc.Font.Depth, FontXStyle.Italic);
-      else if (Altaxo.Graph.Gdi.GdiFontManager.IsFontFamilyAndStyleAvailable(ff, FontXStyle.Bold | FontXStyle.Italic))
-        _doc.Font = FontManager3D.Instance.GetFont(ff, _doc.Font.Size, _doc.Font.Depth, FontXStyle.Bold | FontXStyle.Italic);
-
-      _view.InvalidatePreviewPanel();
-    }
-
-    public void EhView_FontSizeChanged()
-    {
-      _doc.Font = _doc.Font.WithSize(_view.SelectedFont.Size);
-      _view.InvalidatePreviewPanel();
-    }
-
-    public void EhView_FontDepthChanged()
-    {
-      _doc.Font = _doc.Font.WithDepth(_view.SelectedFont.Depth);
-      _view.InvalidatePreviewPanel();
-    }
-
-    public void EhView_TextFillBrushChanged()
-    {
-      _doc.TextFillBrush = _view.SelectedFontBrush;
-      _view.InvalidatePreviewPanel();
-    }
-
-    #endregion ITextGraphicViewEventSink Members
   }
 }

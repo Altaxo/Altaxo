@@ -237,7 +237,7 @@ namespace Altaxo.Gui.Drawing.D3D
       DependencyProperty.RegisterAttached(
         nameof(CustomPenCommand),
         typeof(ICommand),
-        typeof(BrushComboBox),
+        typeof(MaterialComboBox),
         new FrameworkPropertyMetadata(OnCustomPenCommandChanged)
         );
 

@@ -593,12 +593,22 @@ namespace Altaxo.Graph.Gdi.Shapes
       var mc = new MeasureContext
       (
         fontCache: cache,
-        linkedObject: Altaxo.Main.AbsoluteDocumentPath.GetRootNodeImplementing<HostLayer>(this) ?? throw new InvalidProgramException(),
+        linkedObject: GetLinkedObject(),
         tabStop: Glyph.MeasureString(g, "MMMM", _font).X
       );
 
       if (_rootNode is not null)
         _rootNode.Measure(g, mc, 0);
+    }
+
+    private object GetLinkedObject()
+    {
+      // Here, for the linked object we not only use HostLayer from 2D, but also
+      // from 3D, because in order to show text preview an intermediate 3D TextGraphic object is created out of a 3D TextGraphic object
+     return
+        Altaxo.Main.AbsoluteDocumentPath.GetRootNodeImplementing<HostLayer>(this) ??
+        Altaxo.Main.AbsoluteDocumentPath.GetRootNodeImplementing<Altaxo.Graph.Graph3D.HostLayer>(this) ??
+        new object();
     }
 
     private void DrawGlyphs(Graphics g, DrawContext dc, double x, double y)
@@ -673,7 +683,7 @@ namespace Altaxo.Graph.Gdi.Shapes
         (
           fontCache: fontCache,
           isForPreview: bForPreview,
-          linkedObject: Altaxo.Main.AbsoluteDocumentPath.GetRootNodeImplementing<HostLayer>(this) ?? throw new InvalidProgramException(),
+          linkedObject: GetLinkedObject(),
           transformationMatrix: transformmatrix,
           cachedSymbolPositions: _cachedSymbolPositions
         );

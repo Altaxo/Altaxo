@@ -273,8 +273,6 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
       return ApplyEnd(true, disposeController);
     }
 
-    #region ITextGraphicViewEventSink Members
-
     public void InsertBeforeAndAfterSelectedText(string insbefore, string insafter)
     {
       if (0 != TextSelection.Length)
@@ -291,15 +289,13 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
       }
     }
 
-
-
     public void RevertToNormal()
     {
       // remove a backslash x ( at the beginning and the closing brace at the end of the selection
       if (TextSelection.Length >= 4)
       {
         int len = TextSelection.Length;
-        int start = TextSelection.Length;
+        int start = TextSelection.Start;
         int end = start + len;
 
         if (EditText[start] == '\\' && EditText[start + 2] == '(' && EditText[end - 1] == ')')
@@ -366,7 +362,5 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
       // insert \b( at beginning of selection and ) at the end of the selection
       InsertBeforeAndAfterSelectedText("\\s(", ")");
     }
-
-    #endregion ITextGraphicViewEventSink Members
   }
 }
