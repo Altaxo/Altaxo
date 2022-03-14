@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2014 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -27,37 +27,61 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Windows.Input;
 using Altaxo.Collections;
 using Altaxo.Graph.Graph3D;
 using Altaxo.Graph.Graph3D.Shapes;
+using Altaxo.Gui.Common;
 
 namespace Altaxo.Gui.Graph.Graph3D
 {
-  public interface IGraphicItemsView
+  public interface IGraphicItemsView : IDataContextAwareView
   {
-    SelectableListNodeList ItemsList { set; }
-
-    event Action SelectedItemsUp;
-
-    event Action SelectedItemsDown;
-
-    event Action SelectedItemsRemove;
   }
 
   [UserControllerForObject(typeof(GraphicCollection))]
   [ExpectedTypeOfView(typeof(IGraphicItemsView))]
   public class GraphicItemsController : MVCANControllerEditCopyOfDocBase<GraphicCollection, IGraphicItemsView>
   {
-    private SelectableListNodeList _itemsList;
-
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
     }
 
+    public GraphicItemsController()
+    {
+      CmdItemsUp = new RelayCommand(EhSelectedItemsUp);
+      CmdItemsDown = new RelayCommand(EhSelectedItemsDown);
+      CmdItemsRemove = new RelayCommand(EhSelectedItemsRemove);
+    }
+
+    #region Bindings
+
+    public ICommand CmdItemsUp { get; }
+    public ICommand CmdItemsDown { get; }
+    public ICommand CmdItemsRemove { get; }
+
+    private SelectableListNodeList _items;
+
+    public SelectableListNodeList Items
+    {
+      get => _items;
+      set
+      {
+        if (!(_items == value))
+        {
+          _items = value;
+          OnPropertyChanged(nameof(Items));
+        }
+      }
+    }
+
+
+    #endregion
+
     public override void Dispose(bool isDisposing)
     {
-      _itemsList = null;
+      Items = null;
       base.Dispose(isDisposing);
     }
 
@@ -67,17 +91,14 @@ namespace Altaxo.Gui.Graph.Graph3D
 
       if (initData)
       {
-        _itemsList = new SelectableListNodeList();
+        var itemsList = new SelectableListNodeList();
 
         foreach (var item in _doc)
         {
           var node = new SelectableListNode(item.ToString(), item, false);
-          _itemsList.Add(node);
+          itemsList.Add(node);
         }
-      }
-      if (_view is not null)
-      {
-        _view.ItemsList = _itemsList;
+        Items =itemsList;
       }
     }
 
@@ -86,7 +107,7 @@ namespace Altaxo.Gui.Graph.Graph3D
       using (var token = _doc.GetEventDisableToken())
       {
         _doc.Clear();
-        foreach (var node in _itemsList)
+        foreach (var node in _items)
         {
           _doc.Add((IGraphicBase)node.Tag);
         }
@@ -94,37 +115,19 @@ namespace Altaxo.Gui.Graph.Graph3D
       return ApplyEnd(true, disposeController);
     }
 
-    protected override void AttachView()
-    {
-      base.AttachView();
-
-      _view.SelectedItemsUp += EhSelectedItemsUp;
-      _view.SelectedItemsDown += EhSelectedItemsDown;
-      _view.SelectedItemsRemove += EhSelectedItemsRemove;
-    }
-
-    protected override void DetachView()
-    {
-      _view.SelectedItemsUp -= EhSelectedItemsUp;
-      _view.SelectedItemsDown -= EhSelectedItemsDown;
-      _view.SelectedItemsRemove -= EhSelectedItemsRemove;
-
-      base.DetachView();
-    }
-
     private void EhSelectedItemsRemove()
     {
-      _itemsList.RemoveSelectedItems();
+      _items.RemoveSelectedItems();
     }
 
     private void EhSelectedItemsDown()
     {
-      _itemsList.MoveSelectedItemsDown();
+      _items.MoveSelectedItemsDown();
     }
 
     private void EhSelectedItemsUp()
     {
-      _itemsList.MoveSelectedItemsUp();
+      _items.MoveSelectedItemsUp();
     }
   }
 }
