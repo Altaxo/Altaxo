@@ -29,7 +29,7 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
   /// <summary>
   /// Interaction logic for AnchoringControl.xaml
   /// </summary>
-  public partial class AnchoringControl : UserControl
+  public partial class AnchoringControl : UserControl, IAnchoringView 
   {
     public AnchoringControl()
     {
