@@ -22,107 +22,45 @@
 
 #endregion Copyright
 
-#nullable disable
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using Altaxo.Collections;
 using Altaxo.Graph.Graph3D;
+using Altaxo.Gui.Common;
 
 namespace Altaxo.Gui.Graph.Graph3D
 {
-  #region Interfaces
-
-  public interface IHostLayerView
-  {
-    void AddTab(string name, string text);
-
-    object CurrentContent { get; set; }
-
-    void SelectTab(string name);
-
-    event CancelEventHandler TabValidating;
-
-    event Action<string> PageChanged;
-  }
-
-  #endregion Interfaces
-
   /// <summary>
   /// Summary description for LayerController.
   /// </summary>
   [UserControllerForObject(typeof(HostLayer))]
-  [ExpectedTypeOfView(typeof(IHostLayerView))]
-  public class HostLayerController : MVCANControllerEditOriginalDocBase<HostLayer, IHostLayerView>
+  [ExpectedTypeOfView(typeof(ITabbedElementViewDC))]
+  public class HostLayerController : MVCANControllerEditOriginalDocBase<HostLayer, ITabbedElementViewDC>
   {
-    private string _currentPageName;
+    protected IMVCANController? _layerPositionController;
+    protected IMVCANController? _layerGraphItemsController;
+    protected IMVCANController? _layerGridController;
 
-    private IMVCAController _currentController;
+    private IMVCANController? _currentController;
+    private IMVCANController? _lastControllerApplied;
 
-    protected IMVCANController _layerPositionController;
-    protected IMVCANController _layerGraphItemsController;
-    protected IMVCANController _layerGridController;
+    private string? _initialTab;
 
-    private object _lastControllerApplied;
-
-    private SelectableListNodeList _listOfUniqueItem;
+    public const string PositionTag = "Position";
+    public const string HostGridTag = "HostGrid";
+    public const string GraphItemsTag = "GraphicItems";
 
     public HostLayerController(HostLayer layer)
-      : this(layer, "Position")
+      : this(layer, PositionTag)
     {
     }
 
     private HostLayerController(HostLayer layer, string currentPage)
     {
-      _currentPageName = currentPage;
+      _initialTab = currentPage;
       InitializeDocument(layer);
-    }
-
-    protected override void Initialize(bool initData)
-    {
-      base.Initialize(initData);
-
-      if (initData)
-      {
-        _listOfUniqueItem = new SelectableListNodeList
-        {
-          new SelectableListNode("Common", null, true)
-        };
-      }
-
-      if (_view is not null)
-      {
-        // add all necessary Tabs
-        _view.AddTab("GraphicItems", "GraphicItems");
-        _view.AddTab("Position", "Position");
-        _view.AddTab("HostGrid", "HostGrid");
-
-        // Set the controller of the current visible Tab
-        SetCurrentTabController(true);
-      }
-    }
-
-    public override bool Apply(bool disposeController)
-    {
-      ApplyCurrentController(true, disposeController);
-
-      return ApplyEnd(true, disposeController);
-    }
-
-    protected override void AttachView()
-    {
-      base.AttachView();
-
-      _view.TabValidating += EhView_TabValidating;
-      _view.PageChanged += EhView_PageChanged;
-    }
-
-    protected override void DetachView()
-    {
-      _view.TabValidating -= EhView_TabValidating;
-      _view.PageChanged -= EhView_PageChanged;
-
-      base.DetachView();
     }
 
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
@@ -132,80 +70,107 @@ namespace Altaxo.Gui.Graph.Graph3D
       yield return new ControllerAndSetNullMethod(_layerGridController, () => _layerGridController = null);
     }
 
+    #region Bindings
+
+    public SelectableListNodeList Tabs { get; } = new();
+
+    private string? _selectedTab;
+
+    public string? SelectedTab
+    {
+      get => _selectedTab;
+      set
+      {
+        if (!(_selectedTab == value))
+        {
+          if (ApplyCurrentController(true, false))
+          {
+            _selectedTab = value;
+            SetCurrentTabController();
+          }
+          OnPropertyChanged(nameof(SelectedTab));
+        }
+      }
+    }
+
+    #endregion
+
+
+    protected override void Initialize(bool initData)
+    {
+      base.Initialize(initData);
+
+      if (initData)
+      {
+      Tabs.Clear();
+      Tabs.Add(new SelectableListNodeWithController("GraphicItems", GraphItemsTag, true));
+      Tabs.Add(new SelectableListNodeWithController("Position", PositionTag, false));
+      Tabs.Add(new SelectableListNodeWithController("HostGrid", HostGridTag, false));
+      SelectedTab = _initialTab;
+    }
+  }
+
+    public override bool Apply(bool disposeController)
+    {
+      ApplyCurrentController(true, disposeController);
+
+      return ApplyEnd(true, disposeController);
+    }
+
     public override void Dispose(bool isDisposing)
     {
       _lastControllerApplied = null;
       _currentController = null;
-      _listOfUniqueItem = null;
+      Tabs.Clear();
 
       base.Dispose(isDisposing);
     }
 
-    private void SetCurrentTabController(bool pageChanged)
+
+
+    private void SetCurrentTabController()
     {
-      switch (_currentPageName)
+      ThrowIfNotInitialized();
+
+      if (Tabs.FirstOrDefault(n => (string?)(n.Tag) == SelectedTab) is not SelectableListNodeWithController node)
+        return;
+
+      switch (SelectedTab)
       {
-        case "GraphicItems":
-          if (pageChanged)
-          {
-            _view.SelectTab(_currentPageName);
-          }
+        case GraphItemsTag:
           if (_layerGraphItemsController is null)
           {
-            _layerGraphItemsController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _doc.GraphObjects }, typeof(IMVCANController), UseDocument.Directly);
+            node.Controller = _layerGraphItemsController = (IMVCANController?)Current.Gui.GetControllerAndControl(new object[] { _doc.GraphObjects }, typeof(IMVCANController), UseDocument.Directly);
           }
           _currentController = _layerGraphItemsController;
-          _view.CurrentContent = _currentController.ViewObject;
           break;
 
-        case "Position":
-          if (pageChanged)
-          {
-            _view.SelectTab(_currentPageName);
-          }
+        case PositionTag:
           if (_layerPositionController is null)
           {
-            _layerPositionController = new LayerPositionController() { UseDocumentCopy = UseDocument.Directly };
+            node.Controller = _layerPositionController = new LayerPositionController() { UseDocumentCopy = UseDocument.Directly };
             _layerPositionController.InitializeDocument(_doc.Location, _doc);
             Current.Gui.FindAndAttachControlTo(_layerPositionController);
           }
           _currentController = _layerPositionController;
-          _view.CurrentContent = _layerPositionController.ViewObject;
           break;
 
-        case "HostGrid":
-          if (pageChanged)
-          {
-            _view.SelectTab(_currentPageName);
-          }
+        case HostGridTag:
           if (_layerGridController is null)
           {
-            _layerGridController = new GridPartitioningController() { UseDocumentCopy = UseDocument.Directly };
+            node.Controller = _layerGridController = new GridPartitioningController() { UseDocumentCopy = UseDocument.Directly };
             _layerGridController.InitializeDocument(_doc.Grid, _doc);
             Current.Gui.FindAndAttachControlTo(_layerGridController);
           }
           _currentController = _layerGridController;
-          _view.CurrentContent = _layerGridController.ViewObject;
           break;
       }
     }
 
-    public void EhView_PageChanged(string firstChoice)
-    {
-      ApplyCurrentController(false, false);
-
-      _currentPageName = firstChoice;
-      SetCurrentTabController(true);
-    }
-
-    private void EhView_TabValidating(object sender, CancelEventArgs e)
-    {
-      if (!ApplyCurrentController(true, false))
-        e.Cancel = true;
-    }
-
     private bool ApplyCurrentController(bool force, bool disposeController)
     {
+      ThrowIfNotInitialized();
+
       if (_currentController is null)
         return true;
 
@@ -225,11 +190,14 @@ namespace Altaxo.Gui.Graph.Graph3D
       return true;
     }
 
+
+   
+
     #region Dialog
 
     public static bool ShowDialog(HostLayer layer)
     {
-      return ShowDialog(layer, "Position");
+      return ShowDialog(layer, PositionTag);
     }
 
     public static bool ShowDialog(HostLayer layer, string currentPage)
@@ -255,7 +223,7 @@ namespace Altaxo.Gui.Graph.Graph3D
       if (layer is null)
         return false;
 
-      ShowDialog(layer, "Position");
+      ShowDialog(layer, PositionTag);
 
       return false;
     }

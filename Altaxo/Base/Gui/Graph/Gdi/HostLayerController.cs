@@ -26,19 +26,17 @@ using System.Collections.Generic;
 using System.Linq;
 using Altaxo.Collections;
 using Altaxo.Graph.Gdi;
+using Altaxo.Gui.Common;
 
 namespace Altaxo.Gui.Graph.Gdi
 {
-  public interface IHostLayerView : IDataContextAwareView
-  {
-  }
 
   /// <summary>
   /// Summary description for LayerController.
   /// </summary>
   [UserControllerForObject(typeof(HostLayer))]
-  [ExpectedTypeOfView(typeof(IHostLayerView))]
-  public class HostLayerController : MVCANControllerEditOriginalDocBase<HostLayer, IHostLayerView>
+  [ExpectedTypeOfView(typeof(ITabbedElementViewDC))]
+  public class HostLayerController : MVCANControllerEditOriginalDocBase<HostLayer, ITabbedElementViewDC>
   {
     protected IMVCANController? _layerPositionController;
     protected IMVCANController? _layerGraphItemsController;
