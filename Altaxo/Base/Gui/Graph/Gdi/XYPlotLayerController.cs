@@ -96,7 +96,7 @@ namespace Altaxo.Gui.Graph.Gdi
     public const string ContentsTag = "Content";
     public const string TitleAndFormatTag = "TitleFormat";
     public const string MajorLabelsTag = "MajorLabels";
-    public const string MinorLabelsTag = "MinorLables";
+    public const string MinorLabelsTag = "MinorLabels";
     public const string GridStyleTag = "GridStyle";
     public const string SecondaryCommonTag = "2ndCommon";
 

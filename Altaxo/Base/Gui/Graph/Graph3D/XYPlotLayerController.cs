@@ -93,7 +93,7 @@ namespace Altaxo.Gui.Graph.Graph3D
     public const string ContentsTag = "Content";
     public const string TitleAndFormatTag = "TitleFormat";
     public const string MajorLabelsTag = "MajorLabels";
-    public const string MinorLabelsTag = "MinorLables";
+    public const string MinorLabelsTag = "MinorLabels";
     public const string GridStyleTag = "GridStyle";
     public const string SecondaryCommonTag = "2ndCommon";
 
@@ -462,7 +462,7 @@ namespace Altaxo.Gui.Graph.Graph3D
           }
           break;
 
-        case "MinorLabels":
+        case MinorLabelsTag:
           {
             var axisStyleController = GetOrCreateAxisStyleController(_currentAxisID);
             node.Controller = _currentController = axisStyleController.MinorLabelCondController;
@@ -644,7 +644,7 @@ namespace Altaxo.Gui.Graph.Graph3D
 
     public static bool ShowDialog(XYZPlotLayer layer)
     {
-      return ShowDialog(layer, "Scale", new CSLineID(0, 0, 0));
+      return ShowDialog(layer, ScaleTag, new CSLineID(0, 0, 0));
     }
 
     public static bool ShowDialog(XYZPlotLayer layer, string currentPage)
@@ -679,7 +679,7 @@ namespace Altaxo.Gui.Graph.Graph3D
       if (layer is null)
         return false;
 
-      ShowDialog(layer, "Position");
+      ShowDialog(layer, PositionTag);
 
       return false;
     }
@@ -692,7 +692,7 @@ namespace Altaxo.Gui.Graph.Graph3D
 
       var xylayer = hit.ParentLayer as XYZPlotLayer;
       if (xylayer is not null)
-        ShowDialog(xylayer, "Scale", style.AxisStyleID);
+        ShowDialog(xylayer, ScaleTag, style.AxisStyleID);
 
       return false;
     }
@@ -705,7 +705,7 @@ namespace Altaxo.Gui.Graph.Graph3D
 
       var xylayer = hit.ParentLayer as XYZPlotLayer;
       if (xylayer is not null)
-        ShowDialog(xylayer, "TitleAndFormat", style.AxisStyleID);
+        ShowDialog(xylayer, TitleAndFormatTag, style.AxisStyleID);
 
       return false;
     }
@@ -718,7 +718,7 @@ namespace Altaxo.Gui.Graph.Graph3D
 
       var xylayer = hit.ParentLayer as XYZPlotLayer;
       if (xylayer is not null)
-        ShowDialog(xylayer, "MajorLabels", style.AxisStyleID);
+        ShowDialog(xylayer, MajorLabelsTag, style.AxisStyleID);
 
       return false;
     }
@@ -731,7 +731,7 @@ namespace Altaxo.Gui.Graph.Graph3D
 
       var xylayer = hit.ParentLayer as XYZPlotLayer;
       if (xylayer is not null)
-        ShowDialog(xylayer, "MinorLabels", style.AxisStyleID);
+        ShowDialog(xylayer, MinorLabelsTag, style.AxisStyleID);
 
       return false;
     }

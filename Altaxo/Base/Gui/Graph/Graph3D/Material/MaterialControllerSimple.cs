@@ -27,6 +27,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Altaxo.Drawing.D3D;
+using Altaxo.Drawing.D3D.Material;
 using Altaxo.Graph.Graph3D;
 
 namespace Altaxo.Gui.Graph.Graph3D.Material
@@ -98,11 +99,10 @@ namespace Altaxo.Gui.Graph.Graph3D.Material
 
     public override bool Apply(bool disposeController)
     {
-      if (_view is not null)
-        _doc = SelectedMaterial;
+      _doc = SelectedMaterial ?? MaterialInvisible.Instance;
 
-      if (IsNoMaterialAllowed && _doc is not null && !_doc.IsVisible)
-        _doc = null;
+      if (!IsNoMaterialAllowed && !_doc.IsVisible)
+        return ApplyEnd(false, disposeController);
 
       return ApplyEnd(true, disposeController);
     }
