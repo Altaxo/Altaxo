@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -25,44 +25,14 @@
 #nullable disable
 using System;
 using Altaxo.Graph.Graph3D;
+using Altaxo.Units;
 
 namespace Altaxo.Gui.Graph.Graph3D
 {
   #region Interfaces
 
-  public interface IItemLocationByGridView
+  public interface IItemLocationByGridView : IDataContextAwareView
   {
-    double GridPosX { get; set; }
-
-    double GridPosY { get; set; }
-
-    double GridPosZ { get; set; }
-
-    double GridSpanX { get; set; }
-
-    double GridSpanY { get; set; }
-
-    double GridSpanZ { get; set; }
-
-    double RotationX { get; set; }
-
-    double RotationY { get; set; }
-
-    double RotationZ { get; set; }
-
-    double ShearX { get; set; }
-
-    double ShearY { get; set; }
-
-    double ShearZ { get; set; }
-
-    double ScaleX { get; set; }
-
-    double ScaleY { get; set; }
-
-    double ScaleZ { get; set; }
-
-    bool ForceFitIntoCell { get; set; }
   }
 
   #endregion Interfaces
@@ -92,36 +62,294 @@ namespace Altaxo.Gui.Graph.Graph3D
       return base.InitializeDocument(args);
     }
 
+    #region Bindings
+
+    public QuantityWithUnitGuiEnvironment RotationEnvironment => AngleEnvironment.Instance;
+
+    private DimensionfulQuantity _rotationX;
+
+    public DimensionfulQuantity RotationX
+    {
+      get => _rotationX;
+      set
+      {
+        if (!(_rotationX == value))
+        {
+          _rotationX = value;
+          OnPropertyChanged(nameof(RotationX));
+        }
+      }
+    }
+
+    private DimensionfulQuantity _rotationY;
+
+    public DimensionfulQuantity RotationY
+    {
+      get => _rotationY;
+      set
+      {
+        if (!(_rotationY == value))
+        {
+          _rotationY = value;
+          OnPropertyChanged(nameof(RotationY));
+        }
+      }
+    }
+
+    private DimensionfulQuantity _rotationZ;
+
+    public DimensionfulQuantity RotationZ
+    {
+      get => _rotationZ;
+      set
+      {
+        if (!(_rotationZ == value))
+        {
+          _rotationZ = value;
+          OnPropertyChanged(nameof(RotationZ));
+        }
+      }
+    }
+
+
+
+    public QuantityWithUnitGuiEnvironment ShearEnvironment => RelationEnvironment.Instance;
+
+    private DimensionfulQuantity _shearX;
+
+    public DimensionfulQuantity ShearX
+    {
+      get => _shearX;
+      set
+      {
+        if (!(_shearX == value))
+        {
+          _shearX = value;
+          OnPropertyChanged(nameof(ShearX));
+        }
+      }
+    }
+
+    private DimensionfulQuantity _shearY;
+
+    public DimensionfulQuantity ShearY
+    {
+      get => _shearY;
+      set
+      {
+        if (!(_shearY == value))
+        {
+          _shearY = value;
+          OnPropertyChanged(nameof(ShearY));
+        }
+      }
+    }
+
+    private DimensionfulQuantity _shearZ;
+
+    public DimensionfulQuantity ShearZ
+    {
+      get => _shearZ;
+      set
+      {
+        if (!(_shearZ == value))
+        {
+          _shearZ = value;
+          OnPropertyChanged(nameof(ShearZ));
+        }
+      }
+    }
+
+
+
+    public QuantityWithUnitGuiEnvironment ScaleEnvironment => RelationEnvironment.Instance;
+
+    private DimensionfulQuantity _scaleX;
+
+    public DimensionfulQuantity ScaleX
+    {
+      get => _scaleX;
+      set
+      {
+        if (!(_scaleX == value))
+        {
+          _scaleX = value;
+          OnPropertyChanged(nameof(ScaleX));
+        }
+      }
+    }
+
+
+    private DimensionfulQuantity _scaleY;
+
+    public DimensionfulQuantity ScaleY
+    {
+      get => _scaleY;
+      set
+      {
+        if (!(_scaleY == value))
+        {
+          _scaleY = value;
+          OnPropertyChanged(nameof(ScaleY));
+        }
+      }
+    }
+
+    private DimensionfulQuantity _scaleZ;
+
+    public DimensionfulQuantity ScaleZ
+    {
+      get => _scaleZ;
+      set
+      {
+        if (!(_scaleZ == value))
+        {
+          _scaleZ = value;
+          OnPropertyChanged(nameof(ScaleZ));
+        }
+      }
+    }
+
+
+    private bool _ForceFitIntoCell;
+
+    public bool ForceFitIntoCell
+    {
+      get => _ForceFitIntoCell;
+      set
+      {
+        if (!(_ForceFitIntoCell == value))
+        {
+          _ForceFitIntoCell = value;
+          OnPropertyChanged(nameof(ForceFitIntoCell));
+        }
+      }
+    }
+
+
+
+    private double _gridPosX;
+
+    public double GridPosX
+    {
+      get => _gridPosX;
+      set
+      {
+        if (!(_gridPosX == value))
+        {
+          _gridPosX = value;
+          OnPropertyChanged(nameof(GridPosX));
+        }
+      }
+    }
+    private double _gridSpanX;
+
+    public double GridSpanX
+    {
+      get => _gridSpanX;
+      set
+      {
+        if (!(_gridSpanX == value))
+        {
+          _gridSpanX = value;
+          OnPropertyChanged(nameof(GridSpanX));
+        }
+      }
+    }
+
+    private double _gridPosY;
+
+    public double GridPosY
+    {
+      get => _gridPosY;
+      set
+      {
+        if (!(_gridPosY == value))
+        {
+          _gridPosY = value;
+          OnPropertyChanged(nameof(GridPosY));
+        }
+      }
+    }
+
+    private double _gridSpanY;
+
+    public double GridSpanY
+    {
+      get => _gridSpanY;
+      set
+      {
+        if (!(_gridSpanY == value))
+        {
+          _gridSpanY = value;
+          OnPropertyChanged(nameof(GridSpanY));
+        }
+      }
+    }
+
+
+    private double _gridPosZ;
+
+    public double GridPosZ
+    {
+      get => _gridPosZ;
+      set
+      {
+        if (!(_gridPosZ == value))
+        {
+          _gridPosZ = value;
+          OnPropertyChanged(nameof(GridPosZ));
+        }
+      }
+    }
+
+    private double _gridSpanZ;
+
+    public double GridSpanZ
+    {
+      get => _gridSpanZ;
+      set
+      {
+        if (!(_gridSpanZ == value))
+        {
+          _gridSpanZ = value;
+          OnPropertyChanged(nameof(GridSpanZ));
+        }
+      }
+    }
+
+
+    #endregion
+
+
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
 
       if (initData)
       {
-      }
-      if (_view is not null)
-      {
-        _view.GridPosX = DocToUserPosition(_doc.GridPosX);
-        _view.GridPosY = DocToUserPosition(_doc.GridPosY);
-        _view.GridPosZ = DocToUserPosition(_doc.GridPosZ);
 
-        _view.GridSpanX = DocToUserSize(_doc.GridSpanX);
-        _view.GridSpanY = DocToUserSize(_doc.GridSpanY);
-        _view.GridSpanZ = DocToUserSize(_doc.GridSpanZ);
+        GridPosX = DocToUserPosition(_doc.GridPosX);
+        GridPosY = DocToUserPosition(_doc.GridPosY);
+        GridPosZ = DocToUserPosition(_doc.GridPosZ);
 
-        _view.RotationX = _doc.RotationX;
-        _view.RotationY = _doc.RotationY;
-        _view.RotationZ = _doc.RotationZ;
+        GridSpanX = DocToUserSize(_doc.GridSpanX);
+        GridSpanY = DocToUserSize(_doc.GridSpanY);
+        GridSpanZ = DocToUserSize(_doc.GridSpanZ);
 
-        _view.ShearX = _doc.ShearX;
-        _view.ShearY = _doc.ShearY;
-        _view.ShearZ = _doc.ShearZ;
+        RotationX = new DimensionfulQuantity(_doc.RotationX, Altaxo.Units.Angle.Degree.Instance).AsQuantityIn(RotationEnvironment.DefaultUnit);
+        RotationY = new DimensionfulQuantity(_doc.RotationY, Altaxo.Units.Angle.Degree.Instance).AsQuantityIn(RotationEnvironment.DefaultUnit);
+        RotationZ = new DimensionfulQuantity(_doc.RotationZ, Altaxo.Units.Angle.Degree.Instance).AsQuantityIn(RotationEnvironment.DefaultUnit);
 
-        _view.ScaleX = _doc.ScaleX;
-        _view.ScaleY = _doc.ScaleY;
-        _view.ScaleZ = _doc.ScaleZ;
+        ShearX = new DimensionfulQuantity(_doc.ShearX, Altaxo.Units.Dimensionless.Unity.Instance).AsQuantityIn(ShearEnvironment.DefaultUnit);
+        ShearY = new DimensionfulQuantity(_doc.ShearY, Altaxo.Units.Dimensionless.Unity.Instance).AsQuantityIn(ShearEnvironment.DefaultUnit);
+        ShearZ = new DimensionfulQuantity(_doc.ShearZ, Altaxo.Units.Dimensionless.Unity.Instance).AsQuantityIn(ShearEnvironment.DefaultUnit);
 
-        _view.ForceFitIntoCell = _doc.ForceFitIntoCell;
+        ScaleX = new DimensionfulQuantity(_doc.ScaleX, Altaxo.Units.Dimensionless.Unity.Instance).AsQuantityIn(ScaleEnvironment.DefaultUnit);
+        ScaleY = new DimensionfulQuantity(_doc.ScaleY, Altaxo.Units.Dimensionless.Unity.Instance).AsQuantityIn(ScaleEnvironment.DefaultUnit);
+        ScaleZ = new DimensionfulQuantity(_doc.ScaleZ, Altaxo.Units.Dimensionless.Unity.Instance).AsQuantityIn(ScaleEnvironment.DefaultUnit);
+
+        ForceFitIntoCell = _doc.ForceFitIntoCell;
       }
     }
 
@@ -129,27 +357,27 @@ namespace Altaxo.Gui.Graph.Graph3D
     {
       try
       {
-        _doc.GridPosX = UserToDocPosition(_view.GridPosX);
-        _doc.GridPosY = UserToDocPosition(_view.GridPosY);
-        _doc.GridPosZ = UserToDocPosition(_view.GridPosZ);
+        _doc.GridPosX = UserToDocPosition(GridPosX);
+        _doc.GridPosY = UserToDocPosition(GridPosY);
+        _doc.GridPosZ = UserToDocPosition(GridPosZ);
 
-        _doc.GridSpanX = UserToDocSize(_view.GridSpanX);
-        _doc.GridSpanY = UserToDocSize(_view.GridSpanY);
-        _doc.GridSpanZ = UserToDocSize(_view.GridSpanZ);
+        _doc.GridSpanX = UserToDocSize(GridSpanX);
+        _doc.GridSpanY = UserToDocSize(GridSpanY);
+        _doc.GridSpanZ = UserToDocSize(GridSpanZ);
 
-        _doc.RotationX = _view.RotationX;
-        _doc.RotationY = _view.RotationY;
-        _doc.RotationZ = _view.RotationZ;
+        _doc.RotationX = RotationX.AsValueIn(Altaxo.Units.Angle.Degree.Instance);
+        _doc.RotationY = RotationY.AsValueIn(Altaxo.Units.Angle.Degree.Instance);
+        _doc.RotationZ = RotationZ.AsValueIn(Altaxo.Units.Angle.Degree.Instance);
 
-        _doc.ShearX = _view.ShearX;
-        _doc.ShearY = _view.ShearY;
-        _doc.ShearZ = _view.ShearZ;
+        _doc.ShearX = ShearX.AsValueInSIUnits;
+        _doc.ShearY = ShearY.AsValueInSIUnits;
+        _doc.ShearZ = ShearZ.AsValueInSIUnits;
 
-        _doc.ScaleX = _view.ScaleX;
-        _doc.ScaleY = _view.ScaleY;
-        _doc.ScaleZ = _view.ScaleZ;
+        _doc.ScaleX = ScaleX.AsValueInSIUnits;
+        _doc.ScaleY = ScaleY.AsValueInSIUnits;
+        _doc.ScaleZ = ScaleZ.AsValueInSIUnits;
 
-        _doc.ForceFitIntoCell = _view.ForceFitIntoCell;
+        _doc.ForceFitIntoCell = ForceFitIntoCell;
       }
       catch (Exception)
       {

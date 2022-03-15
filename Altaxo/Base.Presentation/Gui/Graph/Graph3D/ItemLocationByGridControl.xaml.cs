@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2022Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -22,10 +22,6 @@
 
 #endregion Copyright
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Windows.Controls;
 
 namespace Altaxo.Gui.Graph.Graph3D
@@ -38,198 +34,6 @@ namespace Altaxo.Gui.Graph.Graph3D
     public ItemLocationByGridControl()
     {
       InitializeComponent();
-    }
-
-    public double RotationX
-    {
-      get
-      {
-        return _guiRotationX.SelectedQuantityAsValueInDegrees;
-      }
-      set
-      {
-        _guiRotationX.SelectedQuantityAsValueInDegrees = value;
-      }
-    }
-
-    public double RotationY
-    {
-      get
-      {
-        return _guiRotationY.SelectedQuantityAsValueInDegrees;
-      }
-      set
-      {
-        _guiRotationY.SelectedQuantityAsValueInDegrees = value;
-      }
-    }
-
-    public double RotationZ
-    {
-      get
-      {
-        return _guiRotationZ.SelectedQuantityAsValueInDegrees;
-      }
-      set
-      {
-        _guiRotationZ.SelectedQuantityAsValueInDegrees = value;
-      }
-    }
-
-    public double ShearX
-    {
-      get
-      {
-        return _guiShearX.SelectedQuantityInSIUnits;
-      }
-      set
-      {
-        _guiShearX.SelectedQuantityInSIUnits = value;
-      }
-    }
-
-    public double ShearY
-    {
-      get
-      {
-        return _guiShearY.SelectedQuantityInSIUnits;
-      }
-      set
-      {
-        _guiShearY.SelectedQuantityInSIUnits = value;
-      }
-    }
-
-    public double ShearZ
-    {
-      get
-      {
-        return _guiShearZ.SelectedQuantityInSIUnits;
-      }
-      set
-      {
-        _guiShearZ.SelectedQuantityInSIUnits = value;
-      }
-    }
-
-    public double ScaleX
-    {
-      get
-      {
-        return _guiScaleX.SelectedQuantityInSIUnits;
-      }
-      set
-      {
-        _guiScaleX.SelectedQuantityInSIUnits = value;
-      }
-    }
-
-    public double ScaleY
-    {
-      get
-      {
-        return _guiScaleY.SelectedQuantityInSIUnits;
-      }
-      set
-      {
-        _guiScaleY.SelectedQuantityInSIUnits = value;
-      }
-    }
-
-    public double ScaleZ
-    {
-      get
-      {
-        return _guiScaleZ.SelectedQuantityInSIUnits;
-      }
-      set
-      {
-        _guiScaleZ.SelectedQuantityInSIUnits = value;
-      }
-    }
-
-    public double GridPosX
-    {
-      get
-      {
-        return _guiPosX.Value;
-      }
-      set
-      {
-        _guiPosX.Value = value;
-      }
-    }
-
-    public double GridPosY
-    {
-      get
-      {
-        return _guiPosY.Value;
-      }
-      set
-      {
-        _guiPosY.Value = value;
-      }
-    }
-
-    public double GridPosZ
-    {
-      get
-      {
-        return _guiPosZ.Value;
-      }
-      set
-      {
-        _guiPosZ.Value = value;
-      }
-    }
-
-    public double GridSpanX
-    {
-      get
-      {
-        return _guiSpanX.Value;
-      }
-      set
-      {
-        _guiSpanX.Value = value;
-      }
-    }
-
-    public double GridSpanY
-    {
-      get
-      {
-        return _guiSpanY.Value;
-      }
-      set
-      {
-        _guiSpanY.Value = value;
-      }
-    }
-
-    public double GridSpanZ
-    {
-      get
-      {
-        return _guiSpanZ.Value;
-      }
-      set
-      {
-        _guiSpanZ.Value = value;
-      }
-    }
-
-    public bool ForceFitIntoCell
-    {
-      get
-      {
-        return true == _guiForceFitIntoCell.IsChecked;
-      }
-      set
-      {
-        _guiForceFitIntoCell.IsChecked = value;
-      }
     }
   }
 }

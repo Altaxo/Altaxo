@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -80,16 +80,16 @@ namespace Altaxo.Gui.Graph.Gdi
 
     public QuantityWithUnitGuiEnvironment ShearEnvironment => RelationEnvironment.Instance;
 
-    private DimensionfulQuantity _ShearX;
+    private DimensionfulQuantity _shearX;
 
     public DimensionfulQuantity ShearX
     {
-      get => _ShearX;
+      get => _shearX;
       set
       {
-        if (!(_ShearX == value))
+        if (!(_shearX == value))
         {
-          _ShearX = value;
+          _shearX = value;
           OnPropertyChanged(nameof(ShearX));
         }
       }
@@ -97,106 +97,106 @@ namespace Altaxo.Gui.Graph.Gdi
 
     public QuantityWithUnitGuiEnvironment ScaleEnvironment => RelationEnvironment.Instance;
 
-    private DimensionfulQuantity _ScaleX;
+    private DimensionfulQuantity _scaleX;
 
     public DimensionfulQuantity ScaleX
     {
-      get => _ScaleX;
+      get => _scaleX;
       set
       {
-        if (!(_ScaleX == value))
+        if (!(_scaleX == value))
         {
-          _ScaleX = value;
+          _scaleX = value;
           OnPropertyChanged(nameof(ScaleX));
         }
       }
     }
 
 
-    private DimensionfulQuantity _ScaleY;
+    private DimensionfulQuantity _scaleY;
 
     public DimensionfulQuantity ScaleY
     {
-      get => _ScaleY;
+      get => _scaleY;
       set
       {
-        if (!(_ScaleY == value))
+        if (!(_scaleY == value))
         {
-          _ScaleY = value;
+          _scaleY = value;
           OnPropertyChanged(nameof(ScaleY));
         }
       }
     }
 
-    private bool _ForceFitIntoCell;
+    private bool _forceFitIntoCell;
 
     public bool ForceFitIntoCell
     {
-      get => _ForceFitIntoCell;
+      get => _forceFitIntoCell;
       set
       {
-        if (!(_ForceFitIntoCell == value))
+        if (!(_forceFitIntoCell == value))
         {
-          _ForceFitIntoCell = value;
+          _forceFitIntoCell = value;
           OnPropertyChanged(nameof(ForceFitIntoCell));
         }
       }
     }
 
-    private double _GridRow;
+    private double _gridRow;
 
     public double GridRow
     {
-      get => _GridRow;
+      get => _gridRow;
       set
       {
-        if (!(_GridRow == value))
+        if (!(_gridRow == value))
         {
-          _GridRow = value;
+          _gridRow = value;
           OnPropertyChanged(nameof(GridRow));
         }
       }
     }
 
-    private double _GridRowSpan;
+    private double _gridRowSpan;
 
     public double GridRowSpan
     {
-      get => _GridRowSpan;
+      get => _gridRowSpan;
       set
       {
-        if (!(_GridRowSpan == value))
+        if (!(_gridRowSpan == value))
         {
-          _GridRowSpan = value;
+          _gridRowSpan = value;
           OnPropertyChanged(nameof(GridRowSpan));
         }
       }
     }
 
-    private double _GridColumn;
+    private double _gridColumn;
 
     public double GridColumn
     {
-      get => _GridColumn;
+      get => _gridColumn;
       set
       {
-        if (!(_GridColumn == value))
+        if (!(_gridColumn == value))
         {
-          _GridColumn = value;
+          _gridColumn = value;
           OnPropertyChanged(nameof(GridColumn));
         }
       }
     }
-    private double _GridColumnSpan;
+    private double _gridColumnSpan;
 
     public double GridColumnSpan
     {
-      get => _GridColumnSpan;
+      get => _gridColumnSpan;
       set
       {
-        if (!(_GridColumnSpan == value))
+        if (!(_gridColumnSpan == value))
         {
-          _GridColumnSpan = value;
+          _gridColumnSpan = value;
           OnPropertyChanged(nameof(GridColumnSpan));
         }
       }

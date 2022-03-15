@@ -41,29 +41,43 @@
 			<RowDefinition Height="*" />
 		</Grid.RowDefinitions>
 		<Label Grid.Column="0" Grid.Row="0" Content="Grid column:" />
-		<axogc:DoubleUpDown Grid.Column="1" Grid.Row="0" Value="{Binding GridColumn, Mode=TwoWay}" />
+		<axogc:DoubleUpDown Grid.Column="1" Grid.Row="0" 
+                            Value="{Binding GridColumn, Mode=TwoWay}" />
 
 		<Label Grid.Column="2" Grid.Row="0" Content="Grid row:" />
-		<axogc:DoubleUpDown Grid.Column="3" Grid.Row="0" Value="{Binding GridRow, Mode=TwoWay}" />
+		<axogc:DoubleUpDown Grid.Column="3" Grid.Row="0" 
+                            Value="{Binding GridRow, Mode=TwoWay}" />
 
 		<Label Grid.Column="0" Grid.Row="2" Content="Column span:" />
-		<axogc:DoubleUpDown  Grid.Column="1" Grid.Row="2" Value="{Binding GridColumnSpan, Mode=TwoWay}"/>
+		<axogc:DoubleUpDown  Grid.Column="1" Grid.Row="2"
+                             Value="{Binding GridColumnSpan, Mode=TwoWay}"/>
 
 		<Label Grid.Column="2" Grid.Row="2" Content="Row span:" />
-		<axogc:DoubleUpDown  Grid.Column="3" Grid.Row="2" Value="{Binding GridRowSpan, Mode=TwoWay}" />
+		<axogc:DoubleUpDown  Grid.Column="3" Grid.Row="2" 
+                             Value="{Binding GridRowSpan, Mode=TwoWay}" />
 
 		<Label Grid.Column="0" Grid.Row="4" Content="Rotation:" />
-		<axogcd:RotationComboBox  Grid.Column="1" Grid.Row="4" SelectedQuantity="{Binding Rotation, Mode=TwoWay}" UnitEnvironment="{Binding RotationEnvironment}" />
+		<axogcd:RotationComboBox  Grid.Column="1" Grid.Row="4" 
+                                  SelectedQuantity="{Binding Rotation, Mode=TwoWay}"
+                                  UnitEnvironment="{Binding RotationEnvironment}" />
 
-		<Label Grid.Column="2" Grid.Row="4">Shear:</Label>
-		<axogcd:ShearComboBox Grid.Column="3" Grid.Row="4" SelectedQuantity="{Binding ShearX, Mode=TwoWay}" UnitEnvironment="{Binding ShearEnvironment}" />
+        <Label Grid.Column="2" Grid.Row="4" Content="Shear:"/>
+        <axogcd:ShearComboBox Grid.Column="3" Grid.Row="4" 
+                              SelectedQuantity="{Binding ShearX, Mode=TwoWay}" 
+                              UnitEnvironment="{Binding ShearEnvironment}" />
 
 		<Label Grid.Column="0" Grid.Row="6" Content="ScaleX:" />
-        <axogcd:ScaleComboBox Grid.Column="1" Grid.Row="6"  SelectedQuantity="{Binding ScaleX, Mode=TwoWay}" UnitEnvironment="{Binding ScaleEnvironment}"/>
+        <axogcd:ScaleComboBox Grid.Column="1" Grid.Row="6" 
+                              SelectedQuantity="{Binding ScaleX, Mode=TwoWay}"
+                              UnitEnvironment="{Binding ScaleEnvironment}"/>
 
 		<Label Grid.Column="2" Grid.Row="6" Content="ScaleY:" />
-		<axogcd:ScaleComboBox  Grid.Column="3" Grid.Row="6" SelectedQuantity="{Binding ScaleY, Mode=TwoWay}" UnitEnvironment="{Binding ScaleEnvironment}"/>
+		<axogcd:ScaleComboBox  Grid.Column="3" Grid.Row="6"
+                               SelectedQuantity="{Binding ScaleY, Mode=TwoWay}"
+                               UnitEnvironment="{Binding ScaleEnvironment}"/>
 
-		<CheckBox Grid.ColumnSpan="4" Grid.Row="8" Content="Force content into grid cell (if rotated/sheared)" IsChecked="{Binding ForceFitIntoCell, Mode=TwoWay}" />
+		<CheckBox Grid.ColumnSpan="4" Grid.Row="8" 
+                  IsChecked="{Binding ForceFitIntoCell, Mode=TwoWay}"
+                  Content="Force content into grid cell (if rotated/sheared)" />
 	</Grid>
 </UserControl>
