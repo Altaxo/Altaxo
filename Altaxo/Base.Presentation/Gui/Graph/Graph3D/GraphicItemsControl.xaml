@@ -4,6 +4,7 @@
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:graph3d="clr-namespace:Altaxo.Gui.Graph.Graph3D;assembly=AltaxoBase"
+             xmlns:axogb="clr-namespace:Altaxo.Gui.Behaviors"
              d:DataContext="{d:DesignInstance Type=graph3d:GraphicItemsController}"
              mc:Ignorable="d">
 	<Grid>
@@ -22,7 +23,10 @@
 			<RowDefinition Height="Auto" />
 		</Grid.RowDefinitions>
 
-		<ListView Grid.Row="0" Grid.RowSpan="4" ItemsSource="{Binding Items}">
+		<ListView Grid.Row="0" Grid.RowSpan="4" 
+                  ItemsSource="{Binding Items}"
+                  axogb:DoubleClickTriggersCommand.Command="{Binding CmdItemEdit}"
+                  >
 			<ListView.View>
 				<GridView>
 					<GridViewColumn Header="Type" DisplayMemberBinding="{Binding Text}" Width="200" />
@@ -32,11 +36,6 @@
                 <!-- This Style binds a TreeViewItem to a TreeViewItemViewModel. -->
                 <Style TargetType="{x:Type ListViewItem}">
                     <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
-                    <Style.Triggers>
-                        <DataTrigger Binding="{Binding IsSelected}" Value="True">
-                            <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" />
-                        </DataTrigger>
-                    </Style.Triggers>
                 </Style>
             </ItemsControl.ItemContainerStyle>
         </ListView>

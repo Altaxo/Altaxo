@@ -53,6 +53,7 @@ namespace Altaxo.Gui.Graph.Graph3D
       CmdItemsUp = new RelayCommand(EhSelectedItemsUp);
       CmdItemsDown = new RelayCommand(EhSelectedItemsDown);
       CmdItemsRemove = new RelayCommand(EhSelectedItemsRemove);
+      CmdItemEdit = new RelayCommand(EhSelectedItemEdit);
     }
 
     #region Bindings
@@ -60,6 +61,7 @@ namespace Altaxo.Gui.Graph.Graph3D
     public ICommand CmdItemsUp { get; }
     public ICommand CmdItemsDown { get; }
     public ICommand CmdItemsRemove { get; }
+    public ICommand CmdItemEdit { get; }
 
     private SelectableListNodeList _items;
 
@@ -128,6 +130,18 @@ namespace Altaxo.Gui.Graph.Graph3D
     private void EhSelectedItemsUp()
     {
       _items.MoveSelectedItemsUp();
+    }
+
+    private void EhSelectedItemEdit()
+    {
+      if (_items.FirstSelectedNode?.Tag is IGraphicBase item)
+      {
+        var ctrl = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { item }, typeof(IMVCAController));
+        if (ctrl is not null)
+        {
+          Current.Gui.ShowDialog(ctrl, "Edit graphic item");
+        }
+      }
     }
   }
 }
