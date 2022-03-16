@@ -42,8 +42,6 @@ namespace Altaxo.Gui.Graph.Gdi
     // the document
     private HostLayer _layer;
 
-    private IMVCANController _subController;
-
     private Dictionary<Type, IItemLocation> _instances;
 
     protected bool _isRootLayerPosition = false;
@@ -92,7 +90,22 @@ namespace Altaxo.Gui.Graph.Gdi
       }
     }
 
-    public object SubPositioningView => _subController?.ViewObject;
+    private IMVCANController _subController;
+
+    public IMVCANController SubController
+    {
+      get => _subController;
+      set
+      {
+        if (!(_subController == value))
+        {
+          _subController = value;
+          OnPropertyChanged(nameof(SubController));
+        }
+      }
+    }
+
+
 
     #endregion
 
@@ -108,9 +121,9 @@ namespace Altaxo.Gui.Graph.Gdi
     {
       if (args.Length < 2)
         return false;
-      if (!(args[1] is HostLayer))
+      if (args[1] is not HostLayer hl)
         return false;
-      _layer = (HostLayer)args[1];
+      _layer = hl;
 
       return base.InitializeDocument(args);
     }
@@ -132,14 +145,12 @@ namespace Altaxo.Gui.Graph.Gdi
         UseDirectPositioning = _doc is ItemLocationDirect;
         CreateSubController();
       }
-
     }
 
     public override bool Apply(bool disposeController)
     {
-      var result = _subController.Apply(disposeController);
-      if (result == false)
-        return result;
+      if(false==_subController.Apply(disposeController))
+        return ApplyEnd(false, disposeController);
 
       return ApplyEnd(true, disposeController);
     }
@@ -149,24 +160,25 @@ namespace Altaxo.Gui.Graph.Gdi
       if (_doc is ItemLocationDirect)
       {
         ItemLocationDirectController ctrl;
-        _subController = ctrl = new ItemLocationDirectController() { UseDocumentCopy = UseDocument.Directly };
+        var subController = ctrl = new ItemLocationDirectController() { UseDocumentCopy = UseDocument.Directly };
         if (IsRootLayerPosition)
         {
           ctrl.ShowAnchorElements(false, false);
           ctrl.ShowPositionElements(false, false);
         }
-        _subController.InitializeDocument(_doc, _layer.ParentLayerSize);
+        subController.InitializeDocument(_doc, _layer.ParentLayerSize);
+        SubController = subController;
       }
       else if (_doc is ItemLocationByGrid)
       {
         if (_layer.ParentLayer is null)
           throw new InvalidOperationException("This should not be happen; the calling routine must ensure that ItemLocationDirect is used when no parent layer is present");
         _layer.ParentLayer.CreateGridIfNullOrEmpty();
-        _subController = new ItemLocationByGridController() { UseDocumentCopy = UseDocument.Directly };
-        _subController.InitializeDocument(_doc, _layer.ParentLayer.Grid);
+        var subController = new ItemLocationByGridController() { UseDocumentCopy = UseDocument.Directly };
+        subController.InitializeDocument(_doc, _layer.ParentLayer.Grid);
+        SubController = subController;
       }
       Current.Gui.FindAndAttachControlTo(_subController);
-      OnPropertyChanged(nameof(SubPositioningView));
     }
 
     private void EhPositioningTypeChanged()

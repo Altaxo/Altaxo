@@ -29,7 +29,7 @@ namespace Altaxo.Gui.Graph.Gdi
   /// <summary>
   /// Interaction logic for LayerPositionControl.xaml
   /// </summary>
-  public partial class LayerPositionControl : UserControl, ILayerPositionView
+  public partial class LayerPositionControl : UserControl, ILayerPositionView, Graph3D.ILayerPositionView
   {
     public LayerPositionControl()
     {

@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -31,15 +31,8 @@ namespace Altaxo.Gui.Graph.Graph3D
 {
   #region Interfaces
 
-  public interface ILayerPositionView
+  public interface ILayerPositionView : IDataContextAwareView
   {
-    bool UseDirectPositioning { get; set; }
-
-    object SubPositionView { set; }
-
-    event Action PositioningTypeChanged;
-
-    bool IsPositioningTypeChoiceVisible { set; }
   }
 
   #endregion Interfaces
@@ -53,8 +46,6 @@ namespace Altaxo.Gui.Graph.Graph3D
     // the document
     private HostLayer _layer;
 
-    private IMVCANController _subController;
-
     private Dictionary<Type, IItemLocation> _instances;
 
     protected bool _isRootLayerPosition = false;
@@ -63,6 +54,63 @@ namespace Altaxo.Gui.Graph.Graph3D
     {
       yield return new ControllerAndSetNullMethod(_subController, () => _subController = null);
     }
+
+    #region Bindings
+
+    private bool _UseDirectPositioning;
+
+    public bool UseDirectPositioning
+    {
+      get => _UseDirectPositioning;
+      set
+      {
+        if (!(_UseDirectPositioning == value))
+        {
+          _UseDirectPositioning = value;
+          EhPositioningTypeChanged();
+          OnPropertyChanged(nameof(UseDirectPositioning));
+          OnPropertyChanged(nameof(UseGridPositioning));
+        }
+      }
+    }
+
+    public bool UseGridPositioning
+    {
+      get => !UseDirectPositioning;
+      set => UseDirectPositioning = !value;
+    }
+
+
+    public bool IsPositioningChoiceVisible
+    {
+      get => !IsRootLayerPosition;
+    }
+
+    public bool IsRootLayerPosition
+    {
+      get
+      {
+        return (_layer is not null) && (_layer.ParentObject is GraphDocument);
+      }
+    }
+
+    private IMVCANController _subController;
+
+    public IMVCANController SubController
+    {
+      get => _subController;
+      set
+      {
+        if (!(_subController == value))
+        {
+          _subController = value;
+          OnPropertyChanged(nameof(SubController));
+        }
+      }
+    }
+
+    #endregion
+
 
     public override void Dispose(bool isDisposing)
     {
@@ -76,9 +124,9 @@ namespace Altaxo.Gui.Graph.Graph3D
     {
       if (args.Length < 2)
         return false;
-      if (!(args[1] is HostLayer))
+      if (args[1] is not HostLayer hl)
         return false;
-      _layer = (HostLayer)args[1];
+      _layer = hl;
 
       return base.InitializeDocument(args);
     }
@@ -97,68 +145,56 @@ namespace Altaxo.Gui.Graph.Graph3D
         if (_layer.ParentLayer is null && !(_doc is ItemLocationDirect))
           _doc = new ItemLocationDirect();
 
+        UseDirectPositioning = _doc is ItemLocationDirect;
         CreateSubController();
-      }
-
-      if (_view is not null)
-      {
-        _view.UseDirectPositioning = _doc is ItemLocationDirect;
-        _view.SubPositionView = _subController.ViewObject;
-        _view.IsPositioningTypeChoiceVisible = !IsRootLayerPosition;
       }
     }
 
     public override bool Apply(bool disposeController)
     {
-      var result = _subController.Apply(disposeController);
-      if (result == false)
-        return result;
+      if (false == _subController.Apply(disposeController))
+        return ApplyEnd(false, disposeController);
 
       return ApplyEnd(true, disposeController);
     }
 
-    protected override void AttachView()
-    {
-      base.AttachView();
-      _view.PositioningTypeChanged += EhPositioningTypeChanged;
-    }
 
-    protected override void DetachView()
-    {
-      _view.PositioningTypeChanged -= EhPositioningTypeChanged;
-      base.DetachView();
-    }
 
     private void CreateSubController()
     {
       if (_doc is ItemLocationDirect)
       {
         ItemLocationDirectController ctrl;
-        _subController = ctrl = new ItemLocationDirectController() { UseDocumentCopy = UseDocument.Directly };
+        var subController = ctrl = new ItemLocationDirectController() { UseDocumentCopy = UseDocument.Directly };
         if (IsRootLayerPosition)
         {
           ctrl.ShowAnchorElements(false, false);
           ctrl.ShowPositionElements(false, false);
         }
-        _subController.InitializeDocument(_doc, _layer.ParentLayerSize);
+        subController.InitializeDocument(_doc, _layer.ParentLayerSize);
+        SubController = subController;
       }
       else if (_doc is ItemLocationByGrid)
       {
         if (_layer.ParentLayer is null)
           throw new InvalidOperationException("This should not be happen; the calling routine must ensure that ItemLocationDirect is used when no parent layer is present");
         _layer.ParentLayer.CreateGridIfNullOrEmpty();
-        _subController = new ItemLocationByGridController() { UseDocumentCopy = UseDocument.Directly };
-        _subController.InitializeDocument(_doc, _layer.ParentLayer.Grid);
+        var subController = new ItemLocationByGridController() { UseDocumentCopy = UseDocument.Directly };
+        subController.InitializeDocument(_doc, _layer.ParentLayer.Grid);
+        SubController = subController;
       }
       Current.Gui.FindAndAttachControlTo(_subController);
     }
 
     private void EhPositioningTypeChanged()
     {
+      if (_subController is null)
+        return;
+
       if (_subController.Apply(false))
         _instances[_subController.ModelObject.GetType()] = (IItemLocation)_subController.ModelObject;
 
-      bool useDirectPositioning = _view.UseDirectPositioning || _layer.ParentLayer is null; // if this is the root layer, then choice of grid positioning is not available
+      bool useDirectPositioning = UseDirectPositioning || _layer.ParentLayer is null; // if this is the root layer, then choice of grid positioning is not available
 
       IItemLocation oldDoc = _doc;
       IItemLocation newDoc = null;
@@ -191,17 +227,10 @@ namespace Altaxo.Gui.Graph.Graph3D
 
         CreateSubController();
 
-        _view.UseDirectPositioning = useDirectPositioning;
-        _view.SubPositionView = _subController.ViewObject;
+        UseDirectPositioning = useDirectPositioning;
       }
     }
 
-    public bool IsRootLayerPosition
-    {
-      get
-      {
-        return (_layer is not null) && (_layer.ParentObject is GraphDocument);
-      }
-    }
+
   }
 }
