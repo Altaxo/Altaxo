@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
-						 xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing"
+						 xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing" xmlns:graph="clr-namespace:Altaxo.Gui.Graph;assembly=AltaxoBase" d:DataContext="{d:DesignInstance Type=graph:FitPolynomialDialogController}"
              mc:Ignorable="d">
 	<UserControl.Resources>
 		<Style TargetType="Label">
@@ -35,12 +35,12 @@
 			<RowDefinition Height="4" />
 		</Grid.RowDefinitions>
 		<Label Grid.Column="0" Grid.Row="0" Content="Order (1=linear):" />
-		<axogc:Int32UpDown x:Name="_edOrder" Grid.Column="1" Grid.Row="0" Minimum="0" />
+		<axogc:Int32UpDown Grid.Column="1" Grid.Row="0" Minimum="0" Value="{Binding Order}" />
 		<Label Grid.Column="0" Grid.Row="2" Content="Fit curve x min:" />
-		<axogc:ValidatingTextBox x:Name="_edFitCurveXmin" Grid.Column="1" Grid.Row="2" />
+		<axogc:NullableDoubleTextBox Grid.Column="1" Grid.Row="2" SelectedValue="{Binding FitCurveXmin}"/>
 		<Label Grid.Column="0" Grid.Row="4" Content="Fit curve x max:" />
-		<axogc:ValidatingTextBox x:Name="_edFitCurveXmax" Grid.Column="1" Grid.Row="2" />
+        <axogc:NullableDoubleTextBox Grid.Column="1" Grid.Row="4" SelectedValue="{Binding FitCurveXmax}" />
 		<Label Grid.Column="0" Grid.Row="6" Content="Show formula on graph:" />
-		<CheckBox x:Name="_chkShowFormulaOnGraph" Grid.Column="1" Grid.Row="6" />
+		<CheckBox Grid.Column="1" Grid.Row="6" IsChecked="{Binding ShowFormulaOnGraph, Mode=TwoWay}" />
 	</Grid>
 </UserControl>

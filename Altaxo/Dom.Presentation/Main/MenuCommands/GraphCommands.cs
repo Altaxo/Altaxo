@@ -705,7 +705,8 @@ namespace Altaxo.Graph.Commands
       var dlg = new FitPolynomialDialogController(2, double.NegativeInfinity, double.PositiveInfinity, false);
       if (Current.Gui.ShowDialog(dlg, "Polynomial fit", false))
       {
-        Altaxo.Graph.Procedures.PolynomialFitting.Fit(ctrl, dlg.Order, dlg.FitCurveXmin, dlg.FitCurveXmax, dlg.ShowFormulaOnGraph);
+        var result = (FitPolynomialOptions)dlg.ModelObject;
+        Altaxo.Graph.Procedures.PolynomialFitting.Fit(ctrl, result.Order, result.FitCurveXmin ?? double.NegativeInfinity, result.FitCurveXmax?? double.PositiveInfinity, result.ShowFormulaOnGraph);
       }
 
       /*
