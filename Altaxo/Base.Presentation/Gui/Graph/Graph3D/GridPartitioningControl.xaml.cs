@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2014 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -22,10 +22,6 @@
 
 #endregion Copyright
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Windows.Controls;
 
 namespace Altaxo.Gui.Graph.Graph3D
@@ -38,42 +34,6 @@ namespace Altaxo.Gui.Graph.Graph3D
     public GridPartitioningControl()
     {
       InitializeComponent();
-    }
-
-    public QuantityWithUnitGuiEnvironment XPartitionEnvironment { set { _guiXDefinitions.Environment = value; } }
-
-    public QuantityWithUnitGuiEnvironment YPartitionEnvironment { set { _guiYDefinitions.Environment = value; } }
-
-    public QuantityWithUnitGuiEnvironment ZPartitionEnvironment { set { _guiZDefinitions.Environment = value; } }
-
-    public Altaxo.Units.DimensionfulQuantity DefaultXQuantity { set { _guiXDefinitions.DefaultQuantity = value; } }
-
-    public Altaxo.Units.DimensionfulQuantity DefaultYQuantity { set { _guiYDefinitions.DefaultQuantity = value; } }
-
-    public Altaxo.Units.DimensionfulQuantity DefaultZQuantity { set { _guiZDefinitions.DefaultQuantity = value; } }
-
-    public System.Collections.ObjectModel.ObservableCollection<Altaxo.Units.DimensionfulQuantity> XPartitionValues
-    {
-      set
-      {
-        _guiXDefinitions.ItemsSource = value;
-      }
-    }
-
-    public System.Collections.ObjectModel.ObservableCollection<Altaxo.Units.DimensionfulQuantity> YPartitionValues
-    {
-      set
-      {
-        _guiYDefinitions.ItemsSource = value;
-      }
-    }
-
-    public System.Collections.ObjectModel.ObservableCollection<Altaxo.Units.DimensionfulQuantity> ZPartitionValues
-    {
-      set
-      {
-        _guiYDefinitions.ItemsSource = value;
-      }
     }
   }
 }

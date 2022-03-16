@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
-						 xmlns:axogg="clr-namespace:Altaxo.Gui.Graph"
+						 xmlns:axogg="clr-namespace:Altaxo.Gui.Graph" xmlns:graph3d="clr-namespace:Altaxo.Gui.Graph.Graph3D;assembly=AltaxoBase" d:DataContext="{d:DesignInstance Type=graph3d:GridPartitioningController}"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="400">
 	<UserControl.Resources>
@@ -25,12 +25,21 @@
 			<RowDefinition Height="4" />
 		</Grid.RowDefinitions>
 		<Label Content="X grid definitions:" Grid.Row="0" Grid.Column="0" />
-		<axogc:QuantityWithUnitList x:Name="_guiXDefinitions" Grid.Row="2" Grid.Column="0" />
+		<axogc:QuantityWithUnitList Grid.Row="2" Grid.Column="0"
+                                     ItemsSource="{Binding XPartitionValues}"
+                                    DefaultQuantity="{Binding DefaultXQuantity}"
+                                    Environment="{Binding XPartitionEnvironment}"/>
 
 		<Label Content="Y grid definitions:" Grid.Row="0" Grid.Column="2" />
-		<axogc:QuantityWithUnitList x:Name="_guiYDefinitions" Grid.Row="2" Grid.Column="2" />
+		<axogc:QuantityWithUnitList x:Name="_guiYDefinitions" Grid.Row="2" Grid.Column="2" 
+                                    ItemsSource="{Binding YPartitionValues}"
+                                    DefaultQuantity="{Binding DefaultYQuantity}"
+                                    Environment="{Binding YPartitionEnvironment}"/>
 
 		<Label Content=" Z grid definitions:" Grid.Row="0" Grid.Column="4" />
-		<axogc:QuantityWithUnitList x:Name="_guiZDefinitions" Grid.Row="2" Grid.Column="4" />
+		<axogc:QuantityWithUnitList x:Name="_guiZDefinitions" Grid.Row="2" Grid.Column="4"
+                                    ItemsSource="{Binding ZPartitionValues}"
+                                    DefaultQuantity="{Binding DefaultZQuantity}"
+                                    Environment="{Binding ZPartitionEnvironment}"/>
 	</Grid>
 </UserControl>

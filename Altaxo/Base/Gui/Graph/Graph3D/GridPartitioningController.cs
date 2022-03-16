@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2015 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -23,7 +23,6 @@
 #endregion Copyright
 
 #nullable disable
-using System;
 using System.Collections.ObjectModel;
 using Altaxo.Geometry;
 using Altaxo.Graph.Graph3D;
@@ -32,38 +31,14 @@ using AUL = Altaxo.Units.Length;
 
 namespace Altaxo.Gui.Graph.Graph3D
 {
-  public interface IGridPartitioningView
+  public interface IGridPartitioningView : IDataContextAwareView
   {
-    QuantityWithUnitGuiEnvironment XPartitionEnvironment { set; }
-
-    QuantityWithUnitGuiEnvironment YPartitionEnvironment { set; }
-
-    QuantityWithUnitGuiEnvironment ZPartitionEnvironment { set; }
-
-    /// <summary>Sets the default x quantity, i.e. the quantity that is used if the user inserts a new item in the XPartition.</summary>
-    DimensionfulQuantity DefaultXQuantity { set; }
-
-    /// <summary>Sets the default y quantity, i.e. the quantity that is used if the user inserts a new item in the YPartition.</summary>
-    DimensionfulQuantity DefaultYQuantity { set; }
-
-    /// <summary>Sets the default z quantity, i.e. the quantity that is used if the user inserts a new item in the YPartition.</summary>
-    DimensionfulQuantity DefaultZQuantity { set; }
-
-    ObservableCollection<DimensionfulQuantity> XPartitionValues { set; }
-
-    ObservableCollection<DimensionfulQuantity> YPartitionValues { set; }
-
-    ObservableCollection<DimensionfulQuantity> ZPartitionValues { set; }
   }
 
   [ExpectedTypeOfView(typeof(IGridPartitioningView))]
   [UserControllerForObject(typeof(GridPartitioning))]
   public class GridPartitioningController : MVCANControllerEditOriginalDocBase<GridPartitioning, IGridPartitioningView>
   {
-    private ObservableCollection<DimensionfulQuantity> _xPartitionValues;
-    private ObservableCollection<DimensionfulQuantity> _yPartitionValues;
-    private ObservableCollection<DimensionfulQuantity> _zPartitionValues;
-
     private QuantityWithUnitGuiEnvironment _xSizeEnvironment;
     private QuantityWithUnitGuiEnvironment _ySizeEnvironment;
     private QuantityWithUnitGuiEnvironment _zSizeEnvironment;
@@ -79,11 +54,82 @@ namespace Altaxo.Gui.Graph.Graph3D
       yield break;
     }
 
+    #region Bindings
+
+    public QuantityWithUnitGuiEnvironment XPartitionEnvironment => _xSizeEnvironment;
+
+
+
+    public QuantityWithUnitGuiEnvironment YPartitionEnvironment => _ySizeEnvironment;
+
+    public QuantityWithUnitGuiEnvironment ZPartitionEnvironment => _zSizeEnvironment;
+
+    /// <summary>Sets the default x quantity, i.e. the quantity that is used if the user inserts a new item in the XPartition.</summary>
+    private DimensionfulQuantity _defaultXQuantity;
+
+    public DimensionfulQuantity DefaultXQuantity
+    {
+      get => _defaultXQuantity;
+      set
+      {
+        if (!(_defaultXQuantity == value))
+        {
+          _defaultXQuantity = value;
+          OnPropertyChanged(nameof(DefaultXQuantity));
+        }
+      }
+    }
+
+
+    /// <summary>Sets the default y quantity, i.e. the quantity that is used if the user inserts a new item in the YPartition.</summary>
+
+    private DimensionfulQuantity _defaultYQuantity;
+
+    public DimensionfulQuantity DefaultYQuantity
+    {
+      get => _defaultYQuantity;
+      set
+      {
+        if (!(_defaultYQuantity == value))
+        {
+          _defaultYQuantity = value;
+          OnPropertyChanged(nameof(DefaultYQuantity));
+        }
+      }
+    }
+
+
+    /// <summary>Sets the default z quantity, i.e. the quantity that is used if the user inserts a new item in the YPartition.</summary>
+
+    private DimensionfulQuantity _defaultZQuantity;
+
+    public DimensionfulQuantity DefaultZQuantity
+    {
+      get => _defaultZQuantity;
+      set
+      {
+        if (!(_defaultZQuantity == value))
+        {
+          _defaultZQuantity = value;
+          OnPropertyChanged(nameof(DefaultZQuantity));
+        }
+      }
+    }
+
+
+    public ObservableCollection<DimensionfulQuantity> XPartitionValues { get; } = new ObservableCollection<DimensionfulQuantity>();
+
+    public ObservableCollection<DimensionfulQuantity> YPartitionValues { get; } = new ObservableCollection<DimensionfulQuantity>();
+
+    public ObservableCollection<DimensionfulQuantity> ZPartitionValues { get; } = new ObservableCollection<DimensionfulQuantity>();
+
+    #endregion
+
     public override void Dispose(bool isDisposing)
     {
-      _xPartitionValues = null;
-      _yPartitionValues = null;
-      _zPartitionValues = null;
+      XPartitionValues.Clear();
+      YPartitionValues.Clear();
+      ZPartitionValues.Clear();
       _xSizeEnvironment = null;
       _ySizeEnvironment = null;
       _zSizeEnvironment = null;
@@ -124,31 +170,20 @@ namespace Altaxo.Gui.Graph.Graph3D
         _ySizeEnvironment = new QuantityWithUnitGuiEnvironment(GuiLengthUnits.Collection, _percentLayerYSizeUnit);
         _zSizeEnvironment = new QuantityWithUnitGuiEnvironment(GuiLengthUnits.Collection, _percentLayerZSizeUnit);
 
-        _xPartitionValues = new ObservableCollection<DimensionfulQuantity>();
-        _yPartitionValues = new ObservableCollection<DimensionfulQuantity>();
-        _zPartitionValues = new ObservableCollection<DimensionfulQuantity>();
 
         foreach (var xp in _doc.XPartitioning)
-          _xPartitionValues.Add(xp.IsAbsolute ? new DimensionfulQuantity(xp.Value, AUL.Point.Instance) : new DimensionfulQuantity(xp.Value * 100, _percentLayerXSizeUnit));
+          XPartitionValues.Add(xp.IsAbsolute ? new DimensionfulQuantity(xp.Value, AUL.Point.Instance) : new DimensionfulQuantity(xp.Value * 100, _percentLayerXSizeUnit));
 
         foreach (var yp in _doc.YPartitioning)
-          _yPartitionValues.Add(yp.IsAbsolute ? new DimensionfulQuantity(yp.Value, AUL.Point.Instance) : new DimensionfulQuantity(yp.Value * 100, _percentLayerYSizeUnit));
+          YPartitionValues.Add(yp.IsAbsolute ? new DimensionfulQuantity(yp.Value, AUL.Point.Instance) : new DimensionfulQuantity(yp.Value * 100, _percentLayerYSizeUnit));
 
         foreach (var zp in _doc.ZPartitioning)
-          _zPartitionValues.Add(zp.IsAbsolute ? new DimensionfulQuantity(zp.Value, AUL.Point.Instance) : new DimensionfulQuantity(zp.Value * 100, _percentLayerZSizeUnit));
-      }
-      if (_view is not null)
-      {
-        _view.XPartitionEnvironment = _xSizeEnvironment;
-        _view.YPartitionEnvironment = _ySizeEnvironment;
-        _view.ZPartitionEnvironment = _zSizeEnvironment;
-        _view.DefaultXQuantity = new DimensionfulQuantity(0, _percentLayerXSizeUnit);
-        _view.DefaultYQuantity = new DimensionfulQuantity(0, _percentLayerYSizeUnit);
-        _view.DefaultZQuantity = new DimensionfulQuantity(0, _percentLayerZSizeUnit);
+          ZPartitionValues.Add(zp.IsAbsolute ? new DimensionfulQuantity(zp.Value, AUL.Point.Instance) : new DimensionfulQuantity(zp.Value * 100, _percentLayerZSizeUnit));
 
-        _view.XPartitionValues = _xPartitionValues;
-        _view.YPartitionValues = _yPartitionValues;
-        _view.ZPartitionValues = _zPartitionValues;
+
+        DefaultXQuantity = new DimensionfulQuantity(0, _percentLayerXSizeUnit);
+        DefaultYQuantity = new DimensionfulQuantity(0, _percentLayerYSizeUnit);
+        DefaultZQuantity = new DimensionfulQuantity(0, _percentLayerZSizeUnit);
       }
     }
 
@@ -158,7 +193,7 @@ namespace Altaxo.Gui.Graph.Graph3D
       _doc.YPartitioning.Clear();
       _doc.ZPartitioning.Clear();
 
-      foreach (var val in _xPartitionValues)
+      foreach (var val in XPartitionValues)
       {
         if (object.ReferenceEquals(val.Unit, _percentLayerXSizeUnit))
           _doc.XPartitioning.Add(RADouble.NewRel(val.Value / 100));
@@ -166,7 +201,7 @@ namespace Altaxo.Gui.Graph.Graph3D
           _doc.XPartitioning.Add(RADouble.NewAbs(val.AsValueIn(AUL.Point.Instance)));
       }
 
-      foreach (var val in _yPartitionValues)
+      foreach (var val in YPartitionValues)
       {
         if (object.ReferenceEquals(val.Unit, _percentLayerYSizeUnit))
           _doc.YPartitioning.Add(RADouble.NewRel(val.Value / 100));
@@ -174,7 +209,7 @@ namespace Altaxo.Gui.Graph.Graph3D
           _doc.YPartitioning.Add(RADouble.NewAbs(val.AsValueIn(AUL.Point.Instance)));
       }
 
-      foreach (var val in _zPartitionValues)
+      foreach (var val in ZPartitionValues)
       {
         if (object.ReferenceEquals(val.Unit, _percentLayerZSizeUnit))
           _doc.ZPartitioning.Add(RADouble.NewRel(val.Value / 100));
