@@ -32,13 +32,9 @@ using Altaxo.Gui.Common;
 
 namespace Altaxo.Gui.Graph.Scales.Rescaling
 {
-  #region Interfaces
-
   public interface IAngularScaleRescaleConditionsView : IDataContextAwareView
   {
   }
-
-  #endregion Interfaces
 
   [UserControllerForObject(typeof(AngularRescaleConditions))]
   [ExpectedTypeOfView(typeof(IAngularScaleRescaleConditionsView))]

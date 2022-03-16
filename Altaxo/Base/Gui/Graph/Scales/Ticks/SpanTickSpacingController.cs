@@ -31,13 +31,9 @@ using Altaxo.Units;
 
 namespace Altaxo.Gui.Graph.Scales.Ticks
 {
-  #region Interfaces
-
   public interface ISpanTickSpacingView : IDataContextAwareView
   {
   }
-
-  #endregion Interfaces
 
   [UserControllerForObject(typeof(SpanTickSpacing), 200)]
   [ExpectedTypeOfView(typeof(ISpanTickSpacingView))]

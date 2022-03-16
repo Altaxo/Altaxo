@@ -28,13 +28,9 @@ using Altaxo.Graph.Scales.Ticks;
 
 namespace Altaxo.Gui.Graph.Scales.Ticks
 {
-  #region Interfaces
-
   public interface INoTickSpacingView
   {
   }
-
-  #endregion Interfaces
 
   [UserControllerForObject(typeof(NoTickSpacing), 200)]
   [ExpectedTypeOfView(typeof(INoTickSpacingView))]

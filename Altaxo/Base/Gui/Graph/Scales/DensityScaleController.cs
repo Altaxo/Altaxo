@@ -30,7 +30,6 @@ using Altaxo.Gui.Common;
 
 namespace Altaxo.Gui.Graph.Scales
 {
-  
   public interface IDensityScaleView : IDataContextAwareView
   {
   }

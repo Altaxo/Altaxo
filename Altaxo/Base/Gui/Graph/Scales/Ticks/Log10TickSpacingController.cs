@@ -35,13 +35,9 @@ using Altaxo.Units;
 
 namespace Altaxo.Gui.Graph.Scales.Ticks
 {
-  #region Interfaces
-
   public interface ILog10TickSpacingView : IDataContextAwareView
   {
   }
-
-  #endregion Interfaces
 
   [UserControllerForObject(typeof(Log10TickSpacing), 200)]
   [ExpectedTypeOfView(typeof(ILog10TickSpacingView))]

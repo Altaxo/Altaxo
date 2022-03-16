@@ -58,8 +58,6 @@ namespace Altaxo.Gui.Graph.Graph3D
 
     public QuantityWithUnitGuiEnvironment XPartitionEnvironment => _xSizeEnvironment;
 
-
-
     public QuantityWithUnitGuiEnvironment YPartitionEnvironment => _ySizeEnvironment;
 
     public QuantityWithUnitGuiEnvironment ZPartitionEnvironment => _zSizeEnvironment;
@@ -170,6 +168,9 @@ namespace Altaxo.Gui.Graph.Graph3D
         _ySizeEnvironment = new QuantityWithUnitGuiEnvironment(GuiLengthUnits.Collection, _percentLayerYSizeUnit);
         _zSizeEnvironment = new QuantityWithUnitGuiEnvironment(GuiLengthUnits.Collection, _percentLayerZSizeUnit);
 
+        XPartitionValues.Clear();
+        YPartitionValues.Clear();
+        ZPartitionValues.Clear();
 
         foreach (var xp in _doc.XPartitioning)
           XPartitionValues.Add(xp.IsAbsolute ? new DimensionfulQuantity(xp.Value, AUL.Point.Instance) : new DimensionfulQuantity(xp.Value * 100, _percentLayerXSizeUnit));

@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
+						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common" xmlns:graph="clr-namespace:Altaxo.Gui.Graph;assembly=AltaxoBase" d:DataContext="{d:DesignInstance Type=graph:PlottingRangeController}"
              mc:Ignorable="d">
 
 	<GroupBox Header="PlotRange" Grid.ColumnSpan="2" Grid.RowSpan="2">
@@ -18,8 +18,11 @@
 			</Grid.RowDefinitions>
 			<Label Grid.Column="0" Content="From:" VerticalAlignment="Bottom" />
 			<Label Grid.Column="1" Content="To:" VerticalAlignment="Bottom" />
-			<axogc:Int32UpDown x:Name="_edFrom" Grid.Column="0" Grid.Row="1" Minimum="0" ValueChanged="_edFrom_Validating" />
-			<axogc:Int32UpDown x:Name="_edTo" Grid.Column="1" Grid.Row="1" IsGotoMinimumAndMaximumVisible="True" MaximumReplacementText="Maximum" ValueChanged="_edTo_Validating" />
+			<axogc:Int32UpDown Grid.Column="0" Grid.Row="1" Minimum="0" Value="{Binding Start}" />
+			<axogc:Int32UpDown x:Name="_edTo" Grid.Column="1" Grid.Row="1"
+                               IsGotoMinimumAndMaximumVisible="True" 
+                               MaximumReplacementText="Maximum"
+                               Value="{Binding Last}" />
 		</Grid>
 	</GroupBox>
 </UserControl>

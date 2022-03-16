@@ -37,11 +37,9 @@ using Altaxo.Units;
 
 namespace Altaxo.Gui.Graph.Scales.Ticks
 {
-
   public interface ILinearTickSpacingView : IDataContextAwareView
   {
   }
-
 
   [UserControllerForObject(typeof(LinearTickSpacing), 200)]
   [ExpectedTypeOfView(typeof(ILinearTickSpacingView))]

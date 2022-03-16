@@ -32,13 +32,9 @@ using Altaxo.Gui.Common;
 
 namespace Altaxo.Gui.Graph.Scales.Ticks
 {
-  #region Interfaces
-
   public interface IAngularTickSpacingView : IDataContextAwareView
   {
   }
-
-  #endregion Interfaces
 
   [UserControllerForObject(typeof(AngularTickSpacing), 200)]
   [ExpectedTypeOfView(typeof(IAngularTickSpacingView))]

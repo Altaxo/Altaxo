@@ -32,14 +32,9 @@ using Altaxo.Gui.Common;
 
 namespace Altaxo.Gui.Graph.Scales
 {
-  #region Interfaces
-
   public interface IScaleWithTicksView : IDataContextAwareView
   {
-    
   }
-
-  #endregion Interfaces
 
   /// <summary>
   /// Summary description for AxisScaleController.

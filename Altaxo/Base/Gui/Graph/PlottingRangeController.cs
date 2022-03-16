@@ -30,133 +30,95 @@ using Altaxo.Collections;
 
 namespace Altaxo.Gui.Graph
 {
-  #region Interfaces
-
-  public interface IPlottingRangeViewEventSink
+  public interface IPlottingRangeView : IDataContextAwareView
   {
-    /// <summary>
-    /// Called if one of the value has changed.
-    /// </summary>
-    /// <param name="fromValue">The old value.</param>
-    /// <param name="toValue">The new selected item of the combo box.</param>
-    void EhView_Changed(int fromValue, int toValue);
   }
-
-  public interface IPlottingRangeView
-  {
-    /// <summary>
-    /// Get/sets the controller of this view.
-    /// </summary>
-    IPlottingRangeViewEventSink Controller { get; set; }
-
-    /// <summary>
-    /// Initializes the view.
-    /// </summary>
-    /// <param name="from">First value of plot range.</param>
-    /// <param name="to">Last value of plot range.</param>
-    /// <param name="isInfinity">True if the plot range is infinite large.</param>
-    void Initialize(int from, int to, bool isInfinity);
-  }
-
-  #endregion Interfaces
 
   /// <summary>
   /// Summary description.
   /// </summary>
   [UserControllerForObject(typeof(ContiguousNonNegativeIntegerRange))]
   [ExpectedTypeOfView(typeof(IPlottingRangeView))]
-  public class PlottingRangeController : IPlottingRangeViewEventSink, IMVCAController
+  public class PlottingRangeController : MVCANControllerEditOriginalDocBase<ContiguousNonNegativeIntegerRange, IPlottingRangeView>
   {
-    private IPlottingRangeView _view;
-    private ContiguousNonNegativeIntegerRange _originalDoc;
-    private ContiguousNonNegativeIntegerRange _doc;
-
-    public PlottingRangeController(ContiguousNonNegativeIntegerRange doc)
+    public PlottingRangeController()
     {
-      _originalDoc = doc;
+    }
+      public PlottingRangeController(ContiguousNonNegativeIntegerRange doc)
+    {
       _doc = doc;
+      Initialize(true);
     }
 
-    public void Initialize()
+    public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
-      if (_view is not null)
-      {
-        _view.Initialize(_doc.Start, _doc.Last, _doc.IsInfinite);
-      }
+      yield break;
     }
 
-    #region IMVCController Members
+    #region Bindings
 
-    public object ViewObject
+    private int _start;
+
+    public int Start
     {
-      get { return _view; }
+      get => _start;
       set
       {
-        if (_view is not null)
-          _view.Controller = null;
-
-        _view = value as IPlottingRangeView;
-
-        Initialize();
-
-        if (_view is not null)
-          _view.Controller = this;
+        if (!(_start == value))
+        {
+          _start = value;
+          OnPropertyChanged(nameof(Start));
+        }
       }
     }
 
-    public object ModelObject
+    private int _last;
+
+    public int Last
     {
-      get
+      get => _last;
+      set
       {
-        return _originalDoc;
+        if (!(_last == value))
+        {
+          _last = value;
+          OnPropertyChanged(nameof(Last));
+        }
       }
     }
 
-    public void Dispose()
+    #endregion
+
+    protected override void Initialize(bool initData)
     {
+      base.Initialize(initData);
+
+      if (initData)
+      {
+        Start = _doc.Start;
+        if (_doc.IsInfinite)
+          Last = int.MaxValue;
+        else
+          Last = _doc.Last;
+      }
     }
 
-    #endregion IMVCController Members
 
-    #region IApplyController Members
-
-    public bool Apply(bool disposeController)
-    {
-      _originalDoc = _doc;
-      return true;
-    }
-
-    /// <summary>
-    /// Try to revert changes to the model, i.e. restores the original state of the model.
-    /// </summary>
-    /// <param name="disposeController">If set to <c>true</c>, the controller should release all temporary resources, since the controller is not needed anymore.</param>
-    /// <returns>
-    ///   <c>True</c> if the revert operation was successfull; <c>false</c> if the revert operation was not possible (i.e. because the controller has not stored the original state of the model).
-    /// </returns>
-    public bool Revert(bool disposeController)
-    {
-      return false;
-    }
-
-    #endregion IApplyController Members
-
-    #region IPlotRangeViewEventSink Members
-
-    public void EhView_Changed(int from, int to)
+    public override bool Apply(bool disposeController)
     {
       try
       {
-        if (to != int.MaxValue)
-          _doc = ContiguousNonNegativeIntegerRange.NewFromStartAndLast(from, to);
+        if (Last != int.MaxValue)
+          _doc = ContiguousNonNegativeIntegerRange.NewFromStartAndLast(Start, Last);
         else
-          _doc = ContiguousNonNegativeIntegerRange.NewFromStartToInfinity(from);
+          _doc = ContiguousNonNegativeIntegerRange.NewFromStartToInfinity(Start);
       }
       catch (Exception ex)
       {
         Current.Gui.ErrorMessageBox(ex.Message);
       }
-    }
 
-    #endregion IPlotRangeViewEventSink Members
+      return ApplyEnd(true, disposeController);
+    }
   }
 }

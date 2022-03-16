@@ -28,13 +28,9 @@ using Altaxo.Graph.Scales;
 
 namespace Altaxo.Gui.Graph.Scales
 {
-  #region Interfaces
-
   public interface IAxisLinkView : IDataContextAwareView
   {
   }
-
-  #endregion Interfaces
 
   /// <summary>
   /// Summary description for LinkAxisController.
