@@ -749,6 +749,26 @@ namespace Altaxo
         throw new ArgumentOutOfRangeException(string.Format("Unknown type of project item: {0}, or no project item type", type));
     }
 
+    /// <summary>
+    /// Loads an Altaxo project file. The loaded project does <b>not</b> become the current project!
+    /// Intended only for Altaxo scripts which need to access data in a different Altaxo project.
+    /// Make sure to dispose the returned document after usage.
+    /// </summary>
+    /// <param name="fullFileNameOfAltaxoProject">The full file name of the Altaxo project to load.</param>
+    /// <returns>The <see cref="AltaxoDocument"/> loaed from the file</returns>
+    /// <remarks>The file is opened in read-only mode.</remarks>
+    public static AltaxoDocument LoadStandaloneFromFile(string fullFileNameOfAltaxoProject)
+    {
+      var projectArchive = new ZipArchiveAsProjectArchiveNative(fullFileNameOfAltaxoProject, System.IO.Compression.ZipArchiveMode.Read);
+      var newdocument = new AltaxoDocument();
+      var info = new Altaxo.Serialization.Xml.XmlStreamDeserializationInfo();
+      using (var suspendToken = newdocument.SuspendGetToken())
+      {
+        newdocument.RestoreFromZippedFile(projectArchive, info);
+      }
+      return newdocument;
+    }
+
     #endregion Static functions
   }
 }
