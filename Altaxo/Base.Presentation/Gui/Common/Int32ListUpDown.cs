@@ -133,23 +133,41 @@ namespace Altaxo.Gui.Common
 
     #region AvailableValues
 
+    /// <summary>
+    /// Identifies the Value dependency property.
+    /// </summary>
+    public static readonly DependencyProperty AvailableValuesProperty =
+        DependencyProperty.Register(
+            nameof(AvailableValues),
+            typeof(IEnumerable<int>),
+            typeof(Int32ListUpDown),
+            new FrameworkPropertyMetadata(new int[] { 0 },
+                new PropertyChangedCallback(OnAvailabeValuesChanged),
+                new CoerceValueCallback(CoerceValue)
+            )
+        );
+
+    private static void OnAvailabeValuesChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+      var thiss = (Int32ListUpDown)d;
+      var list = new List<int>((IEnumerable<int>)(e.NewValue ?? new int[0]));
+
+      if (list.Count == 0)
+        list.Add(0);
+      else
+        list.Sort();
+
+      thiss._availableValues = list;
+      // set minimum and maximum and coerce current value
+      thiss.SetValue(MinimumProperty, list[0]);
+      thiss.SetValue(MaximumProperty, list[list.Count - 1]);
+      thiss.SetValue(ValueProperty, thiss.Value); // will coerce this value
+    }
+
     public IEnumerable<int> AvailableValues
     {
-      set
-      {
-        var list = new List<int>(value);
-
-        if (list.Count == 0)
-          list.Add(0);
-        else
-          list.Sort();
-
-        _availableValues = list;
-        // set minimum and maximum and coerce current value
-        SetValue(MinimumProperty, list[0]);
-        SetValue(MaximumProperty, list[list.Count - 1]);
-        SetValue(ValueProperty, Value); // will coerce this value
-      }
+      set => SetValue(AvailableValuesProperty, value);
+      get => (IEnumerable<int>)GetValue(AvailableValuesProperty);
     }
 
     #endregion AvailableValues

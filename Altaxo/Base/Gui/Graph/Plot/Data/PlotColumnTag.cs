@@ -27,10 +27,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Altaxo.Main;
 
 namespace Altaxo.Gui.Graph.Plot.Data
 {
-  public class PlotColumnTag
+  public record PlotColumnTag : IImmutable
   {
     public PlotColumnTag(int groupNumber, int columnNumber)
     {
@@ -38,7 +39,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
       ColumnNumber = columnNumber;
     }
 
-    public int GroupNumber { get; private set; }
-    public int ColumnNumber { get; private set; }
+    public int GroupNumber { get; init; }
+    public int ColumnNumber { get; init; }
   }
 }

@@ -35,7 +35,7 @@ using Altaxo.Graph.Plot.Data;
 using Altaxo.Gui.Graph.Plot.Data;
 using Altaxo.Main;
 
-namespace Altaxo.Gui.Graph.Graph3D.Plot.Data
+namespace Altaxo.Gui.Graph.Plot.Data
 {
   /// <summary>
   /// Controller for the plot data of an <see cref="XYColumnPlotData"/> instance.

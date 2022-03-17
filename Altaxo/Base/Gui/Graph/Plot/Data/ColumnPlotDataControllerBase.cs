@@ -26,6 +26,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -33,49 +34,24 @@ using Altaxo.Collections;
 using Altaxo.Data;
 using Altaxo.Data.Selections;
 using Altaxo.Graph.Plot.Data;
+using Altaxo.Gui.Common;
 using Altaxo.Gui.Data.Selections;
 using Altaxo.Gui.Graph.Plot.Data;
 using Altaxo.Main;
 
 namespace Altaxo.Gui.Graph.Plot.Data
 {
-  #region Interfaces
-
-  public interface IColumnPlotDataView
+  public interface IColumnPlotDataView : IDataContextAwareView
   {
-    /// <summary>
-    /// Initialize the list of available tables.
-    /// </summary>
-    /// <param name="items">The items.</param>
-    void AvailableTables_Initialize(SelectableListNodeList items);
-
-    /// <summary>
-    /// Initialize the list of available data columns in the selected table and for the selected group number.
-    /// </summary>
-    /// <param name="items">The items.</param>
-    void AvailableTableColumns_Initialize(NGTreeNodeCollection items);
+    
+    
 
     object AvailableTableColumns_SelectedItem { get; }
 
-    /// <summary>
-    /// Initialize the list of other available columns.
-    /// </summary>
-    /// <param name="items">The items.</param>
-    void OtherAvailableColumns_Initialize(SelectableListNodeList items);
+   
 
-    /// <summary>
-    /// Initialize the list of tables that fit to the current chosen columns.
-    /// </summary>
-    /// <param name="items">The items.</param>
-    void MatchingTables_Initialize(SelectableListNodeList items);
 
-    /// <summary>
-    /// Sets the row selection GUI control.
-    /// </summary>
-    /// <value>
-    /// The row selection GUI control.
-    /// </value>
-    object RowSelectionGuiControl { set; }
+   
 
     /// <summary>
     /// Initialize the list of columns needed by the plot item. This is organized into groups, each group corresponding to
@@ -106,13 +82,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
     /// <param name="tag">The tag.</param>
     void ShowTransformationSinglePrependAppendPopup(PlotColumnTag tag);
 
-    void GroupNumber_Initialize(IEnumerable<int> availableGroupNumbers, int groupNumber, bool isEnabled);
-
-    event Action SelectedTableChanged;
-
-    event Action SelectedMatchingTableChanged;
-
-    event Action<int> SelectedGroupNumberChanged;
+   
 
     event Action<PlotColumnTag> PlotItemColumn_AddTo;
 
@@ -182,8 +152,6 @@ namespace Altaxo.Gui.Graph.Plot.Data
       IEnumerable<(string ColumnGroupNumberAndName, IEnumerable<(string ColumnLabel, IReadableColumn Column, string ColumnName, Action<IReadableColumn, DataTable, int> ColumnSetAction)> ColumnInfos)> additionalColumns
       );
   }
-
-  #endregion Interfaces
 
   public abstract class ColumnPlotDataControllerBase<TModel>
     :
@@ -337,27 +305,17 @@ namespace Altaxo.Gui.Graph.Plot.Data
 
     protected bool _isDirty = false;
 
-    /// <summary>All datatables of the document</summary>
-    protected SelectableListNodeList _availableTables = new SelectableListNodeList();
 
-    /// <summary>All data columns in the selected data table and with the selected group number.</summary>
-    protected NGTreeNode _availableDataColumns = new NGTreeNode();
 
-    /// <summary>Other types of columns, e.g. constant columns, equally spaced columns and so on..</summary>
-    protected SelectableListNodeList _otherAvailableColumns = new SelectableListNodeList();
+  
 
-    /// <summary>All types of available column transformations.</summary>
-    protected SelectableListNodeList _availableTransformations = new SelectableListNodeList();
+  
 
-    /// <summary>ValueTuples from tables and group numbers, for which the columns in that group contain all that column names which are currently plot columns in our controller.</summary>
-    protected SelectableListNodeList _matchingTables = new SelectableListNodeList();
-
-    protected SortedSet<int> _groupNumbersAll;
 
     /// <summary>Tasks which updates the _fittingTables.</summary>
     protected Task _updateMatchingTablesTask;
 
-    protected RowSelectionController _rowSelectionController;
+   
 
     /// <summary>TokenSource to cancel the tasks which updates the _fittingTables.</summary>
     protected CancellationTokenSource _updateMatchingTablesTaskCancellationTokenSource = new CancellationTokenSource();
@@ -368,13 +326,13 @@ namespace Altaxo.Gui.Graph.Plot.Data
 
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
-      yield return new ControllerAndSetNullMethod(_rowSelectionController, () => _rowSelectionController = null);
+      yield return new ControllerAndSetNullMethod(_rowSelectionController, () => RowSelectionController = null);
     }
 
     public override void Dispose(bool isDisposing)
     {
       _columnGroup = null;
-      _availableTables = null;
+      _availableTables?.Dispose();
       _availableDataColumns = null;
 
       _updateMatchingTablesTaskCancellationTokenSource?.Cancel();
@@ -394,6 +352,179 @@ namespace Altaxo.Gui.Graph.Plot.Data
     }
 
     #endregion Infrastructur Dispose and GetSubControllers
+
+    #region Bindings
+
+    private ItemsController<DataTable> _availableTables;
+
+    public ItemsController<DataTable> AvailableTables
+    {
+      get => _availableTables;
+      set
+      {
+        if (!(_availableTables == value))
+        {
+          _availableTables?.Dispose();
+          _availableTables = value;
+          OnPropertyChanged(nameof(AvailableTables));
+        }
+      }
+    }
+
+    private ItemsController<(DataTable table, int groupNumber)> _matchingTables;
+
+    /// <summary>
+    /// Initialize the list of tables that fit to the current chosen columns.
+    /// ValueTuples from tables and group numbers, for which the columns in that group contain all that column names which are currently plot columns in our controller.
+    /// </summary>
+    public ItemsController<(DataTable table, int groupNumber)> MatchingTables
+    {
+      get => _matchingTables;
+      set
+      {
+        if (!(_matchingTables == value))
+        {
+          _matchingTables?.Dispose();
+          _matchingTables = value;
+          OnPropertyChanged(nameof(MatchingTables));
+        }
+      }
+    }
+
+    private ObservableCollection<int> _availabeGroupNumbers;
+
+    public ObservableCollection<int> AvailabeGroupNumbers
+    {
+      get => _availabeGroupNumbers;
+      set
+      {
+        if (!(_availabeGroupNumbers == value))
+        {
+          _availabeGroupNumbers = value;
+          OnPropertyChanged(nameof(AvailabeGroupNumbers));
+        }
+      }
+    }
+
+    private int _selectedGroupNumber;
+
+    public int SelectedGroupNumber
+    {
+      get => _selectedGroupNumber;
+      set
+      {
+        if (!(_selectedGroupNumber == value))
+        {
+          _selectedGroupNumber = value;
+          OnPropertyChanged(nameof(SelectedGroupNumber));
+          EhGroupNumberChanged(value);
+        }
+      }
+    }
+    private bool _isGroupNumberEnabled;
+
+    public bool IsGroupNumberEnabled
+    {
+      get => _isGroupNumberEnabled;
+      set
+      {
+        if (!(_isGroupNumberEnabled == value))
+        {
+          _isGroupNumberEnabled = value;
+          OnPropertyChanged(nameof(IsGroupNumberEnabled));
+        }
+      }
+    }
+
+    private RowSelectionController _rowSelectionController;
+
+    public RowSelectionController RowSelectionController
+    {
+      get => _rowSelectionController;
+      set
+      {
+        if (!(_rowSelectionController == value))
+        {
+          if (_rowSelectionController is { } oldC)
+            oldC.ItemsChanged -= EhRowSelectionItemsChanged;
+
+          _rowSelectionController?.Dispose();
+          _rowSelectionController = value;
+
+          if (_rowSelectionController is { } newC)
+          newC.ItemsChanged += EhRowSelectionItemsChanged;
+
+          OnPropertyChanged(nameof(RowSelectionController));
+        }
+      }
+    }
+
+    /// <summary>All data columns in the selected data table and with the selected group number.</summary>
+    protected NGTreeNode _availableDataColumns = new NGTreeNode();
+
+    /// <summary>
+    /// Initialize the list of available data columns in the selected table and for the selected group number.
+    /// </summary>
+    public NGTreeNodeCollection AvailableTableColumnsForListView => IsTableColumnsListVisible ? _availableDataColumns.Nodes : null;
+
+    /// <summary>
+    /// Initialize the list of available data columns in the selected table and for the selected group number.
+    /// </summary>
+    public NGTreeNodeCollection AvailableTableColumnsForTreeView => !IsTableColumnsListVisible ? _availableDataColumns.Nodes : null;
+
+    /// <summary>
+    /// Gets a value indicating whether the list view or tree view is visible. 
+    /// </summary>
+    /// <value>
+    ///   <c>true</c> if the list view is visible; otherwise, the tree view is visible.
+    /// </value>
+    public bool IsTableColumnsListVisible
+    {
+      get
+      {
+        bool isTreeWithSubnodes = _availableDataColumns.Nodes.Count > 0 && _availableDataColumns.Nodes[0].HasChilds;
+        return !isTreeWithSubnodes;
+      }
+    }
+
+    private ItemsController<Type> _otherAvailableColumns;
+
+    /// <summary>Other types of columns, e.g. constant columns, equally spaced columns and so on..</summary>
+    public ItemsController<Type> OtherAvailableColumns
+    {
+      get => _otherAvailableColumns;
+      set
+      {
+        if (!(_otherAvailableColumns == value))
+        {
+          _otherAvailableColumns?.Dispose();
+          _otherAvailableColumns = value;
+          OnPropertyChanged(nameof(OtherAvailableColumns));
+        }
+      }
+    }
+
+
+
+    private ItemsController<Type> _availableTransformations;
+
+    /// <summary>All types of available column transformations.</summary>
+    public ItemsController<Type> AvailableTransformations
+    {
+      get => _availableTransformations;
+      set
+      {
+        if (!(_availableTransformations == value))
+        {
+          _availableTransformations?.Dispose();
+          _availableTransformations = value;
+          OnPropertyChanged(nameof(AvailableTransformations));
+        }
+      }
+    }
+
+
+    #endregion
 
     #region Initialize, Apply, Attach, Detach
 
@@ -430,13 +561,13 @@ namespace Altaxo.Gui.Graph.Plot.Data
           _doc.GroupNumber = docGroupNumber;
         }
 
-        _rowSelectionController = new RowSelectionController
+        var rowSelectionController = new RowSelectionController
         {
           SupposedParentDataTable = _doc.DataTable
         };
-        _rowSelectionController.InitializeDocument(_doc.DataRowSelection);
-        _rowSelectionController.ItemsChanged += EhRowSelectionItemsChanged;
-        Current.Gui.FindAndAttachControlTo(_rowSelectionController);
+        rowSelectionController.InitializeDocument(_doc.DataRowSelection);
+        Current.Gui.FindAndAttachControlTo(rowSelectionController);
+        RowSelectionController = rowSelectionController;
 
         // initialize group 0
 
@@ -488,15 +619,18 @@ namespace Altaxo.Gui.Graph.Plot.Data
         // Initialize tables
         string[] tables = Current.Project.DataTableCollection.GetSortedTableNames();
 
-        _availableTables.Clear();
+        var availableTables = new SelectableListNodeList();
         DataTable tg = _doc.DataTable;
         foreach (var tableName in tables)
         {
-          _availableTables.Add(new SelectableListNode(tableName, Current.Project.DataTableCollection[tableName], tg is not null && tg.Name == tableName));
+          availableTables.Add(new SelectableListNode(tableName, Current.Project.DataTableCollection[tableName], tg is not null && tg.Name == tableName));
         }
+        AvailableTables = new ItemsController<DataTable>(availableTables, EhView_TableSelectionChanged);
 
         // Group number
-        _groupNumbersAll = tg is not null ? tg.DataColumns.GetGroupNumbersAll() : new SortedSet<int>();
+        AvailabeGroupNumbers = tg is not null ? new ObservableCollection<int>(tg.DataColumns.GetGroupNumbersAll()) : new ObservableCollection<int>();
+        SelectedGroupNumber = _doc.GroupNumber;
+        IsGroupNumberEnabled = AvailabeGroupNumbers.Count > 1 || (AvailabeGroupNumbers.Count == 1 && _doc.GroupNumber != AvailabeGroupNumbers.Min());
 
         // Initialize columns
         Controller_AvailableDataColumns_Initialize();
@@ -507,25 +641,12 @@ namespace Altaxo.Gui.Graph.Plot.Data
         Controller_AvailableTransformations_Initialize();
 
         TriggerUpdateOfMatchingTables();
-      }
 
-      if (_view is not null)
-      {
-        _view.AvailableTables_Initialize(_availableTables);
-        _view.GroupNumber_Initialize(_groupNumbersAll, _doc.GroupNumber, _groupNumbersAll.Count > 1 || (_groupNumbersAll.Count == 1 && _doc.GroupNumber != _groupNumbersAll.Min));
-
-        _view.AvailableTableColumns_Initialize(_availableDataColumns.Nodes);
 
         View_PlotColumns_Initialize();
         View_PlotColumns_UpdateAll();
 
-        _view.RowSelectionGuiControl = _rowSelectionController.ViewObject;
-
-        _view.OtherAvailableColumns_Initialize(_otherAvailableColumns);
-
-        _view.MatchingTables_Initialize(_matchingTables);
-
-        View_AvailableTransformations_Initialize();
+        
       }
     }
 
@@ -598,10 +719,6 @@ namespace Altaxo.Gui.Graph.Plot.Data
     {
       base.AttachView();
 
-      _view.SelectedTableChanged += EhView_TableSelectionChanged;
-
-      _view.SelectedMatchingTableChanged += EhView_MatchingTableSelectionChanged;
-
       _view.PlotItemColumn_AddTo += EhView_PlotColumnAddTo;
 
       _view.PlotItemColumn_Edit += EhView_PlotColumnEdit;
@@ -621,8 +738,6 @@ namespace Altaxo.Gui.Graph.Plot.Data
       _view.Transformation_Edit += EhView_TransformationEdit;
 
       _view.Transformation_Erase += EhView_TransformationErase;
-
-      _view.SelectedGroupNumberChanged += EhGroupNumberChanged;
 
       _view.AvailableTableColumns_CanStartDrag += EhAvailableDataColumns_CanStartDrag;
       _view.AvailableTableColumns_StartDrag += EhAvailableDataColumns_StartDrag;
@@ -645,9 +760,6 @@ namespace Altaxo.Gui.Graph.Plot.Data
 
     protected override void DetachView()
     {
-      _view.SelectedTableChanged -= EhView_TableSelectionChanged;
-
-      _view.SelectedMatchingTableChanged -= EhView_MatchingTableSelectionChanged;
 
       _view.PlotItemColumn_AddTo -= EhView_PlotColumnAddTo;
 
@@ -668,8 +780,6 @@ namespace Altaxo.Gui.Graph.Plot.Data
       _view.Transformation_Edit -= EhView_TransformationEdit;
 
       _view.Transformation_Erase -= EhView_TransformationErase;
-
-      _view.SelectedGroupNumberChanged -= EhGroupNumberChanged;
 
       _view.AvailableTableColumns_CanStartDrag -= EhAvailableDataColumns_CanStartDrag;
       _view.AvailableTableColumns_StartDrag -= EhAvailableDataColumns_StartDrag;
@@ -742,21 +852,18 @@ namespace Altaxo.Gui.Graph.Plot.Data
 
     #region AvailableDataTables
 
-    public void EhView_TableSelectionChanged()
+    public void EhView_TableSelectionChanged(DataTable tg)
     {
-      var node = _availableTables.FirstSelectedNode;
-      var tg = node?.Tag as DataTable;
-
       if (tg is null || object.ReferenceEquals(_doc.DataTable, tg))
         return;
 
       _doc.DataTable = tg;
-      _groupNumbersAll = _doc.DataTable.DataColumns.GetGroupNumbersAll();
-
+      var availableGN = _doc.DataTable.DataColumns.GetGroupNumbersAll();
+      AvailabeGroupNumbers = new ObservableCollection<int>(availableGN);
       // If data table has changed, try to choose a group number that matches as many as possible columns
       _doc.GroupNumber = ChooseBestMatchingGroupNumber(tg.DataColumns);
-      if (_view is not null)
-        _view.GroupNumber_Initialize(_groupNumbersAll, _doc.GroupNumber, _groupNumbersAll.Count > 1 || (_groupNumbersAll.Count == 1 && _groupNumbersAll.Min != _doc.GroupNumber));
+      SelectedGroupNumber = _doc.GroupNumber;
+      IsGroupNumberEnabled= availableGN.Count > 1 || (availableGN.Count == 1 && availableGN.Min != _doc.GroupNumber);
 
       ReplaceColumnsWithColumnsFromNewTableGroupAndUpdateColumnState();
 
@@ -779,9 +886,9 @@ namespace Altaxo.Gui.Graph.Plot.Data
             matchList.Add((DataColumn)_columnGroup[i].Columns[j].Column);
       }
 
-      int bestGroupNumber = _groupNumbersAll.Count > 0 ? _groupNumbersAll.Min : 0;
+      int bestGroupNumber = AvailabeGroupNumbers.Count > 0 ? AvailabeGroupNumbers.Min() : 0;
       int bestNumberOfPoints = 0;
-      foreach (var groupNumber in _groupNumbersAll)
+      foreach (var groupNumber in AvailabeGroupNumbers)
       {
         int numberOfPoints = 0;
         var colDict = newDataColl.GetNameDictionaryOfColumnsWithGroupNumber(groupNumber);
@@ -814,7 +921,6 @@ namespace Altaxo.Gui.Graph.Plot.Data
     {
       // Initialize columns
       Controller_AvailableDataColumns_Initialize();
-      _view?.AvailableTableColumns_Initialize(_availableDataColumns.Nodes);
 
       var dataTable = _doc.DataTable;
       if (dataTable is not null)
@@ -871,6 +977,9 @@ namespace Altaxo.Gui.Graph.Plot.Data
           _availableDataColumns.Nodes.Add(node);
         }
       }
+      OnPropertyChanged(nameof(IsTableColumnsListVisible));
+      OnPropertyChanged(nameof(AvailableTableColumnsForListView));
+      OnPropertyChanged(nameof(AvailableTableColumnsForTreeView));
     }
 
     #endregion AvailableDataColumns
@@ -882,25 +991,20 @@ namespace Altaxo.Gui.Graph.Plot.Data
     /// <summary>
     /// Occurs if the selection for the matching tables has changed.
     /// </summary>
-    public void EhView_MatchingTableSelectionChanged()
+    public void EhView_MatchingTableSelectionChanged((DataTable table, int groupNumber) tag)
     {
-      var node = _matchingTables.FirstSelectedNode;
-      if (node is null)
-        return; // no node selected
-
-      var tag = ((DataTable, int))node.Tag;
-
-      if (object.ReferenceEquals(_doc.DataTable, tag.Item1) && _doc.GroupNumber == tag.Item2) // then nothing will change
+      if (object.ReferenceEquals(_doc.DataTable, tag.table) && _doc.GroupNumber == tag.groupNumber) // then nothing will change
         return;
 
-      _doc.DataTable = tag.Item1;
-      _doc.GroupNumber = tag.Item2;
+      _doc.DataTable = tag.table;
+      _doc.GroupNumber = tag.groupNumber;
       ReplaceColumnsWithColumnsFromNewTableGroupAndUpdateColumnState();
 
-      _availableTables.SetSelection((nd) => object.ReferenceEquals(nd.Tag, _doc.DataTable));
-      _view?.AvailableTables_Initialize(_availableTables);
-      _groupNumbersAll = _doc.DataTable.DataColumns.GetGroupNumbersAll();
-      _view?.GroupNumber_Initialize(_groupNumbersAll, _doc.GroupNumber, _groupNumbersAll.Count > 1 || (_groupNumbersAll.Count == 1 && _groupNumbersAll.Min != _doc.GroupNumber));
+      AvailableTables.SelectedValue = _doc.DataTable;
+      var availableGN = _doc.DataTable.DataColumns.GetGroupNumbersAll();
+      AvailabeGroupNumbers = new ObservableCollection<int>(availableGN);
+      SelectedGroupNumber = _doc.GroupNumber;
+      IsGroupNumberEnabled = availableGN.Count > 1 || (availableGN.Count == 1 && availableGN.Min != _doc.GroupNumber);
     }
 
     private void TriggerUpdateOfMatchingTables()
@@ -911,9 +1015,6 @@ namespace Altaxo.Gui.Graph.Plot.Data
         while (_updateMatchingTablesTask?.Status == TaskStatus.Running)
           System.Threading.Thread.Sleep(20);
       }
-
-      _matchingTables = new SelectableListNodeList();
-      _view?.MatchingTables_Initialize(_matchingTables);
 
       var token = _updateMatchingTablesTaskCancellationTokenSource.Token;
       _updateMatchingTablesTask = Task.Factory.StartNew(() => UpdateMatchingTables(token));
@@ -931,8 +1032,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
           object.ReferenceEquals(entry.dataTable, _doc.DataTable)));
       }
 
-      _matchingTables = fittingTables2;
-      Current.Dispatcher.InvokeAndForget(() => _view?.MatchingTables_Initialize(_matchingTables));
+      MatchingTables = new ItemsController<(DataTable table, int groupNumber)>(fittingTables2, EhView_MatchingTableSelectionChanged);
     }
 
     private IEnumerable<(DataTable dataTable, int groupNumber)> GetTablesWithGroupThatFitExistingPlotColumns(System.Threading.CancellationToken token)
@@ -1018,6 +1118,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
 
     private void Controller_OtherAvailableColumns_Initialize()
     {
+      var otherAvailableColumns = new SelectableListNodeList();
       var types = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(IReadableColumn));
 
       foreach (var t in types)
@@ -1031,8 +1132,10 @@ namespace Altaxo.Gui.Graph.Plot.Data
         if (!(true == t.GetConstructor(Type.EmptyTypes)?.IsPublic))
           continue; // don't has an empty public constructor
 
-        _otherAvailableColumns.Add(new SelectableListNode(t.Name, t, false));
+        otherAvailableColumns.Add(new SelectableListNode(t.Name, t, false));
       }
+
+      OtherAvailableColumns = new ItemsController<Type>(otherAvailableColumns);
     }
 
     /// <summary>
@@ -1067,8 +1170,8 @@ namespace Altaxo.Gui.Graph.Plot.Data
 
     public void EhView_OtherAvailableColumnAddTo(PlotColumnTag tag)
     {
-      var node = _otherAvailableColumns.FirstSelectedNode;
-      if (node is not null)
+      var colType = _otherAvailableColumns.SelectedValue;
+      if (colType is not null)
       {
         SetDirty();
         var info = _columnGroup[tag.GroupNumber].Columns[tag.ColumnNumber];
@@ -1076,7 +1179,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
         IReadableColumn createdObj = null;
         try
         {
-          createdObj = (IReadableColumn)System.Activator.CreateInstance((Type)node.Tag);
+          createdObj = (IReadableColumn)System.Activator.CreateInstance(colType);
         }
         catch (Exception ex)
         {
@@ -1099,7 +1202,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
     private void Controller_AvailableTransformations_Initialize()
     {
       var types = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(IVariantToVariantTransformation));
-
+      var availableTransformations = new SelectableListNodeList();
       foreach (var t in types)
       {
         if (t.IsNestedPrivate)
@@ -1108,13 +1211,9 @@ namespace Altaxo.Gui.Graph.Plot.Data
         if (!(true == t.GetConstructor(Type.EmptyTypes)?.IsPublic))
           continue; // don't has an empty public constructor
 
-        _availableTransformations.Add(new SelectableListNode(t.Name, t, false));
+        availableTransformations.Add(new SelectableListNode(t.Name, t, false));
       }
-    }
-
-    private void View_AvailableTransformations_Initialize()
-    {
-      _view.AvailableTransformations_Initialize(_availableTransformations);
+      AvailableTransformations = new ItemsController<Type>(availableTransformations);
     }
 
     private static IVariantToVariantTransformation EditAvailableTransformation(IVariantToVariantTransformation createdTransformation, out bool wasEdited)
@@ -1187,13 +1286,13 @@ namespace Altaxo.Gui.Graph.Plot.Data
 
     public void EhView_TransformationAddTo(PlotColumnTag tag)
     {
-      var node = _availableTransformations.FirstSelectedNode;
-      if (node is not null)
+      var transfoType = AvailableTransformations.SelectedValue;
+      if (transfoType is not null)
       {
         var info = _columnGroup[tag.GroupNumber].Columns[tag.ColumnNumber];
         if (info.Transformation is null)
         {
-          EhTransformation_AddMultiple(tag, (Type)node.Tag, 0);
+          EhTransformation_AddMultiple(tag, transfoType, 0);
         }
         else
         {
@@ -1204,28 +1303,28 @@ namespace Altaxo.Gui.Graph.Plot.Data
 
     public void EhView_TransformationAddAsSingle(PlotColumnTag tag)
     {
-      var node = _availableTransformations.FirstSelectedNode;
-      if (node is not null)
+      var transfoType = AvailableTransformations.SelectedValue;
+      if (transfoType is not null)
       {
-        EhTransformation_AddMultiple(tag, (Type)node.Tag, 0);
+        EhTransformation_AddMultiple(tag, transfoType, 0);
       }
     }
 
     public void EhView_TransformationAddAsPrepending(PlotColumnTag tag)
     {
-      var node = _availableTransformations.FirstSelectedNode;
-      if (node is not null)
+      var transfoType = _availableTransformations.SelectedValue;
+      if (transfoType is not null)
       {
-        EhTransformation_AddMultiple(tag, (Type)node.Tag, 1);
+        EhTransformation_AddMultiple(tag, transfoType, 1);
       }
     }
 
     public void EhView_TransformationAddAsAppending(PlotColumnTag tag)
     {
-      var node = _availableTransformations.FirstSelectedNode;
-      if (node is not null)
+      var transfoType = _availableTransformations.SelectedValue;
+      if (transfoType is not null)
       {
-        EhTransformation_AddMultiple(tag, (Type)node.Tag, 2);
+        EhTransformation_AddMultiple(tag, transfoType, 2);
       }
     }
 
@@ -1411,8 +1510,8 @@ namespace Altaxo.Gui.Graph.Plot.Data
         }
         else if (createdObj is IVariantToVariantTransformation)
         {
-          _availableTransformations.ClearSelectionsAll(); // we artificially select the node that holds that type
-          var nodeToSelect = _availableTransformations.FirstOrDefault(node => (Type)node.Tag == (Type)data);
+          AvailableTransformations.Items.ClearSelectionsAll(); // we artificially select the node that holds that type
+          var nodeToSelect = AvailableTransformations.Items.FirstOrDefault(node => (Type)node.Tag == (Type)data);
           if (nodeToSelect is not null)
           {
             nodeToSelect.IsSelected = true;

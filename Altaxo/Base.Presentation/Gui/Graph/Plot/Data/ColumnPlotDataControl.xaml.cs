@@ -110,14 +110,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
       InitializeComponent();
     }
 
-    private void EhTables_SelectionChangeCommit(object sender, SelectionChangedEventArgs e)
-    {
-      if (SelectedTableChanged is not null)
-      {
-        GuiHelper.SynchronizeSelectionFromGui(_cbTables);
-        SelectedTableChanged?.Invoke();
-      }
-    }
+    
 
     private List<List<SingleColumnControl>> _columnControls;
 
@@ -176,41 +169,11 @@ namespace Altaxo.Gui.Graph.Plot.Data
 
     #region IXYColumnPlotDataView
 
-    public void AvailableTables_Initialize(SelectableListNodeList items)
-    {
-      GuiHelper.Initialize(_cbTables, items);
-    }
+    
 
-    public void MatchingTables_Initialize(SelectableListNodeList items)
-    {
-      GuiHelper.InitializeDeselectable(_guiMatchingTables, items);
-    }
+    
 
-    public void AvailableTableColumns_Initialize(NGTreeNodeCollection nodes)
-    {
-      bool isTreeWithSubnodes = nodes.Count > 0 && nodes[0].HasChilds;
-
-      if (isTreeWithSubnodes)
-      {
-        _guiAvailableTableColumnsList.ItemsSource = null;
-        _guiAvailableTableColumnsList.Visibility = Visibility.Hidden;
-
-        _guiAvailableTableColumnsTree.ItemsSource = nodes;
-        _guiAvailableTableColumnsTree.Visibility = Visibility.Visible;
-
-        _guiAvailableTableColumnsCurrentlyActive = _guiAvailableTableColumnsTree;
-      }
-      else
-      {
-        _guiAvailableTableColumnsTree.ItemsSource = null;
-        _guiAvailableTableColumnsTree.Visibility = Visibility.Hidden;
-
-        _guiAvailableTableColumnsList.ItemsSource = nodes;
-        _guiAvailableTableColumnsList.Visibility = Visibility.Visible;
-
-        _guiAvailableTableColumnsCurrentlyActive = _guiAvailableTableColumnsList;
-      }
-    }
+   
 
     public object AvailableTableColumns_SelectedItem
     {
@@ -225,10 +188,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
       }
     }
 
-    public void OtherAvailableColumns_Initialize(SelectableListNodeList items)
-    {
-      GuiHelper.Initialize(_guiOtherAvailableColumns, items);
-    }
+   
 
     public void AvailableTransformations_Initialize(SelectableListNodeList items)
     {
@@ -237,17 +197,6 @@ namespace Altaxo.Gui.Graph.Plot.Data
 
     #endregion IXYColumnPlotDataView
 
-    private void EhGroupNumber_Changed(object sender, RoutedPropertyChangedEventArgs<int> e)
-    {
-      SelectedGroupNumberChanged?.Invoke(_guiGroupNumber.Value);
-    }
-
-    public void GroupNumber_Initialize(IEnumerable<int> groupNumbers, int groupNumber, bool enableControl)
-    {
-      _guiGroupNumber.AvailableValues = groupNumbers;
-      _guiGroupNumber.Value = groupNumber;
-      _guiGroupNumber.IsEnabled = enableControl;
-    }
 
     #region AvailableDataColumns_DragHander
 
@@ -676,14 +625,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
       }
     }
 
-    public object RowSelectionGuiControl
-    {
-      set
-      {
-        _guiPlotRange.Content = value;
-      }
-    }
-
+   
     private void EhTransformationAddAsAppendingCommand(object parameter)
     {
       var tag = (PlotColumnTag)parameter;
@@ -716,10 +658,6 @@ namespace Altaxo.Gui.Graph.Plot.Data
       }
     }
 
-    private void EhMatchingTables_SelectionChangeCommit(object sender, SelectionChangedEventArgs e)
-    {
-      GuiHelper.SynchronizeSelectionFromGui(_guiMatchingTables);
-      SelectedMatchingTableChanged?.Invoke();
-    }
+   
   }
 }

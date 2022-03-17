@@ -4,9 +4,12 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
+						 xmlns:axogcc="clr-namespace:Altaxo.Gui.Common.Converters"
 						 xmlns:dd="clr-namespace:GongSolutions.Wpf.DragDrop"
 						 xmlns:local="clr-namespace:Altaxo.Gui.Graph.Plot.Data"
- 						 xmlns:axocoll="clr-namespace:Altaxo.Collections;assembly=AltaxoBase"
+						 xmlns:localModel="clr-namespace:Altaxo.Gui.Graph.Plot.Data;assembly=AltaxoBase"
+ 						 xmlns:axocoll="clr-namespace:Altaxo.Collections;assembly=AltaxoBase" 
+             d:DataContext="{d:DesignInstance Type=localModel:XYColumnPlotDataController}"
              mc:Ignorable="d">
 	<UserControl.Resources>
 		<Style TargetType="Button">
@@ -42,26 +45,40 @@
 
 		<StackPanel Orientation="Vertical" Grid.Row="0" Grid.Column="0">
 			<Label Content="Table: " />
-			<ComboBox x:Name="_cbTables" SelectionChanged="EhTables_SelectionChangeCommit" ToolTip="Choose among all available tables, then select a group number." />
+			<ComboBox ItemsSource="{Binding AvailableTables.Items}" SelectedItem="{Binding AvailableTables.SelectedItem, Mode=TwoWay}" ToolTip="Choose among all available tables, then select a group number." />
 		</StackPanel>
 
 		<StackPanel Orientation="Vertical" Grid.Row="0" Grid.Column="2">
 			<Label Content="GroupNumber: " />
-			<axogc:Int32ListUpDown x:Name="_guiGroupNumber" HorizontalAlignment="Left" MinWidth="80" Margin="6,0,0,0"  Minimum="0" IsGotoMinimumAndMaximumVisible="False" ValueChanged="EhGroupNumber_Changed" />
+			<axogc:Int32ListUpDown 
+                AvailableValues="{Binding AvailabeGroupNumbers}"
+                Value="{Binding SelectedGroupNumber, Mode=TwoWay}"
+                IsEnabled="{Binding IsGroupNumberEnabled}"
+                HorizontalAlignment="Left"
+                MinWidth="80"
+                Margin="6,0,0,0"
+                Minimum="0"
+                IsGotoMinimumAndMaximumVisible="False"
+                />
 		</StackPanel>
 
-		<GroupBox x:Name="_guiPlotRange" Header="Plot Range:" Grid.Row="0" Grid.RowSpan="2" Grid.Column="4" Margin="0,6,0,0"  Padding="0,4,0,0" VerticalAlignment="Top">
-		</GroupBox>
+		<GroupBox Header="Plot Range:" Grid.Row="0" Grid.RowSpan="2" Grid.Column="4" Margin="0,6,0,0"  Padding="0,4,0,0" VerticalAlignment="Top">
+            <ContentControl Content="{Binding RowSelectionController.ViewObject}"/>
+        </GroupBox>
 
 		<Label Content="Available columns: " Grid.Row="3" Grid.Column="0" />
 		<Label Content="Plot item columns: " FontWeight="Bold" Grid.Row="3" Grid.Column="2" />
 		<StackPanel Orientation="Horizontal" Grid.Row="3" Grid.Column="4" HorizontalAlignment="Right">
 			<Label Content="Tables with matching columns:" />
-			<ComboBox x:Name="_guiMatchingTables" SelectionChanged="EhMatchingTables_SelectionChangeCommit" ToolTip="Choose among those tables only, which contain columns with names like the plot columns below." />
+			<ComboBox ItemsSource="{Binding MatchingTables.Items}" SelectedItem="{Binding MatchingTables.SelectedItem, Mode=TwoWay}" ToolTip="Choose among those tables only, which contain columns with names like the plot columns below." />
 		</StackPanel>
 
-		<ListBox x:Name="_guiAvailableTableColumnsList" Grid.Row="4" Grid.Column="0"  ScrollViewer.VerticalScrollBarVisibility="Visible" IsKeyboardFocusWithinChanged="EhFocusWithinChanged"
-			 dd:DragDrop.IsDragSource="True" dd:DragDrop.DragHandler="{Binding AvailableDataColumnsDragSource, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}">
+        <ListBox Grid.Row="4" Grid.Column="0" x:Name="_guiAvailableTableColumnsList"
+                 ItemsSource="{Binding AvailableTableColumnsForListView}"
+                 Visibility="{Binding IsTableColumnsListVisible, Converter={x:Static axogcc:FalseToVisibilityHiddenConverter.Instance}}"
+                 ScrollViewer.VerticalScrollBarVisibility="Visible"
+                 IsKeyboardFocusWithinChanged="EhFocusWithinChanged"
+			        dd:DragDrop.IsDragSource="True" dd:DragDrop.DragHandler="{Binding AvailableDataColumnsDragSource, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}">
 			<ListBox.ItemTemplate>
 				<DataTemplate>
 					<TextBlock Text="{Binding Text}" ToolTip="{Binding ToolTip}" />
@@ -69,7 +86,10 @@
 			</ListBox.ItemTemplate>
 		</ListBox>
 
-		<TreeView x:Name="_guiAvailableTableColumnsTree" Grid.Row="4" Grid.Column="0" Visibility="Hidden"  ScrollViewer.VerticalScrollBarVisibility="Visible" IsKeyboardFocusWithinChanged="EhFocusWithinChanged"
+		<TreeView x:Name="_guiAvailableTableColumnsTree" Grid.Row="4" Grid.Column="0" 
+                  ItemsSource="{Binding AvailableTableColumnsForTreeView}"
+                  Visibility="{Binding IsTableColumnsListVisible, Converter={x:Static axogcc:TrueToVisibilityHiddenConverter.Instance}}"
+                 ScrollViewer.VerticalScrollBarVisibility="Visible" IsKeyboardFocusWithinChanged="EhFocusWithinChanged"
 			 dd:DragDrop.IsDragSource="True" dd:DragDrop.DragHandler="{Binding AvailableDataColumnsDragSource, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}">
 			<ItemsControl.ItemContainerStyle>
 				<!-- This Style binds a TreeViewItem to a TreeViewItemViewModel. -->
@@ -96,13 +116,25 @@
 
 		<Label Content="Other columns: " Grid.Row="6" Grid.Column="0" />
 
-		<ListBox x:Name="_guiOtherAvailableColumns" Grid.Row="7" Grid.Column="0"  ScrollViewer.VerticalScrollBarVisibility="Visible" IsKeyboardFocusWithinChanged="EhFocusWithinChanged"
-						 dd:DragDrop.IsDragSource="True" dd:DragDrop.DragHandler="{Binding OtherAvailableColumnsDragSource, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}" />
+        <!-- other available columns -->
+        <ListBox Grid.Row="7" Grid.Column="0" x:Name="_guiOtherAvailableColumns"
+                 ItemsSource="{Binding OtherAvailableColumns.Items}"
+                 SelectedItem="{Binding OtherAvailableColumns.SelectedItem, Mode=TwoWay}"
+                 ScrollViewer.VerticalScrollBarVisibility="Visible" 
+                 IsKeyboardFocusWithinChanged="EhFocusWithinChanged"
+				 dd:DragDrop.IsDragSource="True" 
+                 dd:DragDrop.DragHandler="{Binding OtherAvailableColumnsDragSource, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}" />
 
 		<Label Content="Available transformations: " Grid.Row="6" Grid.Column="2" Grid.ColumnSpan="3" />
 
-		<ListBox x:Name="_guiAvailableTransformations" Grid.Row="7" Grid.Column="2"  Grid.ColumnSpan="3" ScrollViewer.VerticalScrollBarVisibility="Visible" IsKeyboardFocusWithinChanged="EhFocusWithinChanged"
-						 dd:DragDrop.IsDragSource="True" dd:DragDrop.DragHandler="{Binding AvailableTransformationsDragSource, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}" />
+        <!-- available transformations -->
+        <ListBox Grid.Row="7" Grid.Column="2" Grid.ColumnSpan="3" x:Name="_guiAvailableTransformations"
+                 ItemsSource="{Binding AvailableTransformations.Items}"
+                 SelectedItem="{Binding AvailableTransformations.SelectedItem}"
+                 ScrollViewer.VerticalScrollBarVisibility="Visible"
+                 IsKeyboardFocusWithinChanged="EhFocusWithinChanged"
+				 dd:DragDrop.IsDragSource="True" 
+                 dd:DragDrop.DragHandler="{Binding AvailableTransformationsDragSource, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}" />
 
 		<GridSplitter Grid.Column="1" Grid.Row="0" Grid.RowSpan="8" Width="4" HorizontalAlignment="Center" VerticalAlignment="Stretch" ResizeDirection="Columns" />
 	</Grid>
