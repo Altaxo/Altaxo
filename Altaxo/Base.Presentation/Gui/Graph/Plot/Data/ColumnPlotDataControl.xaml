@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+						 xmlns:axogb="clr-namespace:Altaxo.Gui.Behaviors"
 						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
 						 xmlns:axogcc="clr-namespace:Altaxo.Gui.Common.Converters"
 						 xmlns:dd="clr-namespace:GongSolutions.Wpf.DragDrop"
@@ -77,21 +78,27 @@
                  ItemsSource="{Binding AvailableTableColumnsForListView}"
                  Visibility="{Binding IsTableColumnsListVisible, Converter={x:Static axogcc:FalseToVisibilityHiddenConverter.Instance}}"
                  ScrollViewer.VerticalScrollBarVisibility="Visible"
-                 IsKeyboardFocusWithinChanged="EhFocusWithinChanged"
-			        dd:DragDrop.IsDragSource="True" dd:DragDrop.DragHandler="{Binding AvailableDataColumnsDragSource, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}">
-			<ListBox.ItemTemplate>
+			     dd:DragDrop.IsDragSource="True" dd:DragDrop.DragMVVMHandler="{Binding AvailableDataColumnsDragHandler}">
+            <axogb:PushBindingManager.PushBindings>
+                <axogb:PushBinding TargetProperty="IsKeyboardFocusWithin" Path="IsAvailableDataColumnsListViewFocused"/>
+            </axogb:PushBindingManager.PushBindings>
+            <ListBox.ItemTemplate>
 				<DataTemplate>
 					<TextBlock Text="{Binding Text}" ToolTip="{Binding ToolTip}" />
 				</DataTemplate>
 			</ListBox.ItemTemplate>
 		</ListBox>
 
-		<TreeView x:Name="_guiAvailableTableColumnsTree" Grid.Row="4" Grid.Column="0" 
+		<TreeView Grid.Row="4" Grid.Column="0" 
                   ItemsSource="{Binding AvailableTableColumnsForTreeView}"
                   Visibility="{Binding IsTableColumnsListVisible, Converter={x:Static axogcc:TrueToVisibilityHiddenConverter.Instance}}"
-                 ScrollViewer.VerticalScrollBarVisibility="Visible" IsKeyboardFocusWithinChanged="EhFocusWithinChanged"
-			 dd:DragDrop.IsDragSource="True" dd:DragDrop.DragHandler="{Binding AvailableDataColumnsDragSource, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}">
-			<ItemsControl.ItemContainerStyle>
+                 ScrollViewer.VerticalScrollBarVisibility="Visible" 
+			      dd:DragDrop.IsDragSource="True"
+                  dd:DragDrop.DragMVVMHandler="{Binding AvailableDataColumnsDragHandler}">
+            <axogb:PushBindingManager.PushBindings>
+                <axogb:PushBinding TargetProperty="IsKeyboardFocusWithin" Path="IsAvailableDataColumnsTreeViewFocused"/>
+            </axogb:PushBindingManager.PushBindings>
+            <ItemsControl.ItemContainerStyle>
 				<!-- This Style binds a TreeViewItem to a TreeViewItemViewModel. -->
 				<Style TargetType="{x:Type TreeViewItem}">
 					<Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
@@ -112,7 +119,33 @@
 			</ItemsControl.Resources>
 		</TreeView>
 
-		<StackPanel x:Name="_guiTargetColumnsStack" Grid.Row="4" Grid.Column="2" Grid.ColumnSpan="3" Orientation="Vertical" Grid.IsSharedSizeScope="True" Margin="6,0,0,6"></StackPanel>
+		<ItemsControl Grid.Row="4" Grid.Column="2" Grid.ColumnSpan="3"
+                      ItemsSource="{Binding PlotItemColumns}"
+                    Grid.IsSharedSizeScope="True"
+                    Margin="6,0,0,6">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Vertical">
+                    </StackPanel>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <local:SingleColumnControl DataContext="{Binding}" />
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            <ItemsControl.GroupStyle>
+                <GroupStyle>
+                    <GroupStyle.HeaderTemplate>
+                        <DataTemplate>
+                            <TextBlock FontWeight="Bold" FontStyle="Italic" Text="{Binding Path=Name}"/>
+                        </DataTemplate>
+                    </GroupStyle.HeaderTemplate>
+                </GroupStyle>
+            </ItemsControl.GroupStyle>
+           
+            
+        </ItemsControl>
 
 		<Label Content="Other columns: " Grid.Row="6" Grid.Column="0" />
 
@@ -121,21 +154,27 @@
                  ItemsSource="{Binding OtherAvailableColumns.Items}"
                  SelectedItem="{Binding OtherAvailableColumns.SelectedItem, Mode=TwoWay}"
                  ScrollViewer.VerticalScrollBarVisibility="Visible" 
-                 IsKeyboardFocusWithinChanged="EhFocusWithinChanged"
 				 dd:DragDrop.IsDragSource="True" 
-                 dd:DragDrop.DragHandler="{Binding OtherAvailableColumnsDragSource, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}" />
+                 dd:DragDrop.DragMVVMHandler="{Binding OtherAvailableColumnsDragHander}" >
+            <axogb:PushBindingManager.PushBindings>
+                <axogb:PushBinding TargetProperty="IsKeyboardFocusWithin" Path="IsOtherAvailableColumnsFocused"/>
+            </axogb:PushBindingManager.PushBindings>
+        </ListBox>
 
-		<Label Content="Available transformations: " Grid.Row="6" Grid.Column="2" Grid.ColumnSpan="3" />
+        <Label Content="Available transformations: " Grid.Row="6" Grid.Column="2" Grid.ColumnSpan="3" />
 
         <!-- available transformations -->
         <ListBox Grid.Row="7" Grid.Column="2" Grid.ColumnSpan="3" x:Name="_guiAvailableTransformations"
                  ItemsSource="{Binding AvailableTransformations.Items}"
                  SelectedItem="{Binding AvailableTransformations.SelectedItem}"
                  ScrollViewer.VerticalScrollBarVisibility="Visible"
-                 IsKeyboardFocusWithinChanged="EhFocusWithinChanged"
 				 dd:DragDrop.IsDragSource="True" 
-                 dd:DragDrop.DragHandler="{Binding AvailableTransformationsDragSource, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}" />
+                 dd:DragDrop.DragMVVMHandler="{Binding AvailableTransformationsDragHandler}" >
+            <axogb:PushBindingManager.PushBindings>
+                <axogb:PushBinding TargetProperty="IsKeyboardFocusWithin" Path="IsAvailableTransformationsFocused"/>
+            </axogb:PushBindingManager.PushBindings>
+        </ListBox>
 
-		<GridSplitter Grid.Column="1" Grid.Row="0" Grid.RowSpan="8" Width="4" HorizontalAlignment="Center" VerticalAlignment="Stretch" ResizeDirection="Columns" />
+        <GridSplitter Grid.Column="1" Grid.Row="0" Grid.RowSpan="8" Width="4" HorizontalAlignment="Center" VerticalAlignment="Stretch" ResizeDirection="Columns" />
 	</Grid>
 </UserControl>

@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2016 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -23,156 +23,26 @@
 #endregion Copyright
 
 #nullable disable warnings
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Altaxo.Gui.Graph.Plot.Data
 {
   /// <summary>
   /// Interaction logic for SingleColumnControl.xaml
   /// </summary>
-  public partial class SingleColumnControl : Grid, INotifyPropertyChanged
+  public partial class SingleColumnControl : Grid
   {
-    private Brush _defaultBackBrush;
 
     public SingleColumnControl()
     {
       InitializeComponent();
-      _defaultBackBrush = _guiColumnText.Background;
-    }
-
-    public SingleColumnControl(object tag, string labelText)
-    {
-      Tag = tag;
-      LabelText = labelText;
-
-      InitializeComponent();
-
-      _defaultBackBrush = _guiColumnText.Background;
-    }
-
-    public SingleColumnControl(object tag, string labelText, string columnText, string columnTooltip, int severityLevel)
-    {
-      Tag = tag;
-      LabelText = labelText;
-
-      InitializeComponent();
-
-      _defaultBackBrush = _guiColumnText.Background;
-      SetSeverityLevel(severityLevel);
-      _guiColumnText.Text = columnText;
-      _guiColumnText.ToolTip = columnTooltip;
-    }
-
-    private string _labelText;
-
-    public event PropertyChangedEventHandler? PropertyChanged;
-
-    public string LabelText
-    {
-      get
-      {
-        return _labelText;
-      }
-      set
-      {
-        _labelText = value;
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(LabelText)));
-      }
-    }
-
-    public string ColumnText
-    {
-      get
-      {
-        return _guiColumnText.Text;
-      }
-      set
-      {
-        _guiColumnText.Text = value;
-      }
-    }
-
-    public string ToolTipText
-    {
-      get
-      {
-        return _guiColumnText.ToolTip as string;
-      }
-      set
-      {
-        _guiColumnText.ToolTip = value;
-      }
-    }
-
-    public string TransformationText
-    {
-      get
-      {
-        return _guiColumnTransformation.Text;
-      }
-      set
-      {
-        _guiColumnTransformation.Text = value;
-      }
-    }
-
-    public string TransformationToolTipText
-    {
-      get
-      {
-        return _guiColumnTransformation.ToolTip as string;
-      }
-      set
-      {
-        _guiColumnTransformation.ToolTip = value;
-      }
-    }
-
-    public void ShowTransformationSinglePrependAppendPopup(bool isOpen)
-    {
-      _guiPopup.IsOpen = isOpen;
-    }
-
-    public void SetSeverityLevel(int severity)
-    {
-      switch (severity)
-      {
-        case 0:
-          _guiColumnText.Background = _defaultBackBrush;
-          break;
-
-        case 1:
-          _guiColumnText.Background = Brushes.Yellow;
-          break;
-
-        case 2:
-          _guiColumnText.Background = Brushes.LightPink;
-          break;
-      }
     }
 
     private void EhPopupFocusChanged(object sender, DependencyPropertyChangedEventArgs e)
     {
       if (false == (bool)e.NewValue)
         _guiPopup.IsOpen = false;
-    }
-
-    private void EhPopup_Cancel(object sender, RoutedEventArgs e)
-    {
-      _guiPopup.IsOpen = false;
     }
   }
 }

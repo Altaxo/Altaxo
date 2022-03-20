@@ -4,9 +4,13 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
+						 xmlns:axogcc="clr-namespace:Altaxo.Gui.Common.Converters"
+						 xmlns:axogb="clr-namespace:Altaxo.Gui.Behaviors"
 						 xmlns:dd="clr-namespace:GongSolutions.Wpf.DragDrop"
 						 xmlns:local="clr-namespace:Altaxo.Gui.Graph.Plot.Data"
- 						 xmlns:axocoll="clr-namespace:Altaxo.Collections;assembly=AltaxoBase"
+						 xmlns:localModel="clr-namespace:Altaxo.Gui.Graph.Plot.Data;assembly=AltaxoBase"
+ 						 xmlns:axocoll="clr-namespace:Altaxo.Collections;assembly=AltaxoBase" 
+             d:DataContext="{d:DesignInstance Type=localModel:ColumnPlotDataExchangeColumnsController}"
              mc:Ignorable="d">
 	<UserControl.Resources>
 		<Style TargetType="Button">
@@ -42,24 +46,45 @@
 
 		<StackPanel Orientation="Vertical" Grid.Row="0" Grid.Column="2">
 			<Label Content="GroupNumber: " />
-			<axogc:Int32ListUpDown x:Name="_guiGroupNumber" HorizontalAlignment="Left" MinWidth="80" Margin="6,0,0,0"  Minimum="0" IsGotoMinimumAndMaximumVisible="False" ValueChanged="EhGroupNumber_Changed" />
+			<axogc:Int32ListUpDown  
+                                   AvailableValues="{Binding AvailabeGroupNumbers}"
+                                   Value="{Binding SelectedGroupNumber, Mode=TwoWay}"
+                                   HorizontalAlignment="Left" 
+                                   MinWidth="80"
+                                   Margin="6,0,0,0"
+                                   Minimum="0"
+                                   IsGotoMinimumAndMaximumVisible="False" />
 		</StackPanel>
 
-		<Label Content="Available columns: " Grid.Row="3" Grid.Column="0" />
-		<Label Content="Plot item columns: " FontWeight="Bold" Grid.Row="3" Grid.Column="2" />
+		<Label Grid.Row="3" Grid.Column="0" Content="Available columns: "  />
+        <Label Grid.Row="3" Grid.Column="2" Content="Plot item columns: " FontWeight="Bold"  />
 
-		<ListBox x:Name="_guiAvailableTableColumnsList" Grid.Row="4" Grid.Column="0"  ScrollViewer.VerticalScrollBarVisibility="Visible" IsKeyboardFocusWithinChanged="EhFocusWithinChanged"
-			 dd:DragDrop.IsDragSource="True" dd:DragDrop.DragHandler="{Binding AvailableDataColumnsDragSource, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}">
-			<ListBox.ItemTemplate>
+		<ListBox Grid.Row="4" Grid.Column="0" 
+                 ItemsSource="{Binding AvailableTableColumnsForListView}"
+                 Visibility="{Binding IsTableColumnsListVisible, Converter={x:Static axogcc:FalseToVisibilityHiddenConverter.Instance}}"
+                 ScrollViewer.VerticalScrollBarVisibility="Visible"
+			     dd:DragDrop.IsDragSource="True"
+                 dd:DragDrop.DragMVVMHandler="{Binding AvailableDataColumnsDragHandler}">
+            <axogb:PushBindingManager.PushBindings>
+                <axogb:PushBinding TargetProperty="IsKeyboardFocusWithin" Path="IsAvailableDataColumnsListViewFocused"/>
+            </axogb:PushBindingManager.PushBindings>
+            <ListBox.ItemTemplate>
 				<DataTemplate>
 					<TextBlock Text="{Binding Text}" ToolTip="{Binding ToolTip}" />
 				</DataTemplate>
 			</ListBox.ItemTemplate>
 		</ListBox>
 
-		<TreeView x:Name="_guiAvailableTableColumnsTree" Grid.Row="4" Grid.Column="0" Visibility="Hidden"  ScrollViewer.VerticalScrollBarVisibility="Visible" IsKeyboardFocusWithinChanged="EhFocusWithinChanged"
-			 dd:DragDrop.IsDragSource="True" dd:DragDrop.DragHandler="{Binding AvailableDataColumnsDragSource, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}">
-			<ItemsControl.ItemContainerStyle>
+		<TreeView Grid.Row="4" Grid.Column="0" 
+                  ItemsSource="{Binding AvailableTableColumnsForTreeView}"
+                  Visibility="{Binding IsTableColumnsListVisible, Converter={x:Static axogcc:TrueToVisibilityHiddenConverter.Instance}}"
+                  ScrollViewer.VerticalScrollBarVisibility="Visible" 
+			      dd:DragDrop.IsDragSource="True"
+                  dd:DragDrop.DragMVVMHandler="{Binding AvailableDataColumnsDragHandler}">
+            <axogb:PushBindingManager.PushBindings>
+                <axogb:PushBinding TargetProperty="IsKeyboardFocusWithin" Path="IsAvailableDataColumnsTreeViewFocused"/>
+            </axogb:PushBindingManager.PushBindings>
+            <ItemsControl.ItemContainerStyle>
 				<!-- This Style binds a TreeViewItem to a TreeViewItemViewModel. -->
 				<Style TargetType="{x:Type TreeViewItem}">
 					<Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
@@ -80,10 +105,41 @@
 			</ItemsControl.Resources>
 		</TreeView>
 
-		<StackPanel x:Name="_guiTargetColumnsStack" Grid.Row="4" Grid.Column="2" Grid.ColumnSpan="3" Orientation="Vertical" Grid.IsSharedSizeScope="True" Margin="6,0,0,6"></StackPanel>
+        <ItemsControl Grid.Row="4" Grid.Column="2" Grid.ColumnSpan="3"
+                      ItemsSource="{Binding PlotItemColumns}"
+                    Grid.IsSharedSizeScope="True"
+                    Margin="6,0,0,6">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Vertical">
+                    </StackPanel>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <local:SingleColumnControl DataContext="{Binding}" />
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+            <ItemsControl.GroupStyle>
+                <GroupStyle>
+                    <GroupStyle.HeaderTemplate>
+                        <DataTemplate>
+                            <TextBlock FontWeight="Bold" FontStyle="Italic" Text="{Binding Path=Name}"/>
+                        </DataTemplate>
+                    </GroupStyle.HeaderTemplate>
+                </GroupStyle>
+            </ItemsControl.GroupStyle>
 
-		<TextBlock x:Name="_guiErrorMessages" Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="3" />
 
-		<GridSplitter Grid.Column="1" Grid.Row="0" Grid.RowSpan="8" Width="4" HorizontalAlignment="Center" VerticalAlignment="Stretch" ResizeDirection="Columns" />
+        </ItemsControl>
+
+        <TextBlock Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="3" 
+                   Text="{Binding ErrorMessages}"/>
+
+		<GridSplitter Grid.Column="1" Grid.Row="0" Grid.RowSpan="8"
+                      Width="4" 
+                      HorizontalAlignment="Center" 
+                      VerticalAlignment="Stretch"
+                      ResizeDirection="Columns" />
 	</Grid>
 </UserControl>

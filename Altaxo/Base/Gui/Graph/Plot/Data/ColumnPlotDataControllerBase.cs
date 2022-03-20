@@ -43,96 +43,6 @@ namespace Altaxo.Gui.Graph.Plot.Data
 {
   public interface IColumnPlotDataView : IDataContextAwareView
   {
-    
-    
-
-    object AvailableTableColumns_SelectedItem { get; }
-
-   
-
-
-   
-
-    /// <summary>
-    /// Initialize the list of columns needed by the plot item. This is organized into groups, each group corresponding to
-    /// one plot style that needs data columns.
-    /// </summary>
-    /// <param name="groups">The groups.</param>
-    void PlotColumns_Initialize(IEnumerable<(
-      string GroupName, // group name
-    IEnumerable<( // list of column definitions
-        PlotColumnTag PlotColumnTag, // tag to identify the column and group
-        string ColumnLabel)>)> groups);
-
-    /// <summary>
-    /// Updates the information for one plot item column
-    /// </summary>
-    /// <param name="tag">The tag that identifies the plot item column by the group number and column number.</param>
-    /// <param name="colname">The name of the column as it will be shown in the text box.</param>
-    /// <param name="toolTip">The tool tip for the text box.</param>
-    /// <param name="transformationText">The text for the transformation box.</param>
-    /// <param name="transformationToolTip">The tooltip for the transformation box.</param>
-    /// <param name="state">The state of the column, as indicated by different background colors of the text box.</param>
-    void PlotColumn_Update(PlotColumnTag tag, string colname, string toolTip, string transformationText, string transformationToolTip, PlotColumnControlState state);
-
-    /// <summary>
-    /// Shows a popup menu for the column corresponding to <paramref name="tag"/>, questioning whether to add the
-    /// selected transformation as single transformation, as prepending transformation, or as appending transformation.
-    /// </summary>
-    /// <param name="tag">The tag.</param>
-    void ShowTransformationSinglePrependAppendPopup(PlotColumnTag tag);
-
-   
-
-    event Action<PlotColumnTag> PlotItemColumn_AddTo;
-
-    event Action<PlotColumnTag> PlotItemColumn_Edit;
-
-    event Action<PlotColumnTag> PlotItemColumn_Erase;
-
-    event Action<PlotColumnTag> OtherAvailableColumn_AddTo;
-
-    event Action<PlotColumnTag> Transformation_AddTo;
-
-    event Action<PlotColumnTag> Transformation_AddAsSingle;
-
-    event Action<PlotColumnTag> Transformation_AddAsPrepending;
-
-    event Action<PlotColumnTag> Transformation_AddAsAppending;
-
-    event Action<PlotColumnTag> Transformation_Edit;
-
-    event Action<PlotColumnTag> Transformation_Erase;
-
-    event CanStartDragDelegate AvailableTableColumns_CanStartDrag;
-
-    event StartDragDelegate AvailableTableColumns_StartDrag;
-
-    event DragEndedDelegate AvailableTableColumns_DragEnded;
-
-    event DragCancelledDelegate AvailableTableColumns_DragCancelled;
-
-    event CanStartDragDelegate OtherAvailableItems_CanStartDrag;
-
-    event StartDragDelegate OtherAvailableItems_StartDrag;
-
-    event DragEndedDelegate OtherAvailableItems_DragEnded;
-
-    event DragCancelledDelegate OtherAvailableItems_DragCancelled;
-
-    event DropCanAcceptDataDelegate PlotItemColumn_DropCanAcceptData;
-
-    event DropDelegate PlotItemColumn_Drop;
-
-    void AvailableTransformations_Initialize(SelectableListNodeList items);
-
-    event CanStartDragDelegate AvailableTransformations_CanStartDrag;
-
-    event StartDragDelegate AvailableTransformations_StartDrag;
-
-    event DragEndedDelegate AvailableTransformations_DragEnded;
-
-    event DragCancelledDelegate AvailableTransformations_DragCancelled;
   }
 
   public interface IPlotColumnDataController : IMVCANController
@@ -155,7 +65,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
 
   public abstract class ColumnPlotDataControllerBase<TModel>
     :
-    MVCANControllerEditOriginalDocBase<TModel, IColumnPlotDataView>, IPlotColumnDataController where TModel : IColumnPlotData
+    MVCANControllerEditOriginalDocBase<TModel, IColumnPlotDataView>, ISingleColumnControllerParent, IPlotColumnDataController where TModel : IColumnPlotData
   {
     #region Inner classes
 
@@ -293,6 +203,14 @@ namespace Altaxo.Gui.Graph.Plot.Data
       }
     }
 
+    protected enum ColumnSourceElement
+    {
+      AvailableTableColumnsList,
+      AvailableTableColumnsTree,
+      OtherAvailableColumns,
+      AvailableTransformations
+    }
+
     #endregion Inner classes
 
     #region Members
@@ -306,7 +224,10 @@ namespace Altaxo.Gui.Graph.Plot.Data
     protected bool _isDirty = false;
 
 
-
+    /// <summary>
+    /// Designates the latest focused element that can act as column source.
+    /// </summary>
+    ColumnSourceElement _lastActiveColumnsSource;
   
 
   
@@ -327,6 +248,14 @@ namespace Altaxo.Gui.Graph.Plot.Data
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_rowSelectionController, () => RowSelectionController = null);
+    }
+
+    public ColumnPlotDataControllerBase()
+    {
+      AvailableTransformationsDragHandler = new AvailableTransformationsDragHandlerImpl(this);
+      AvailableDataColumnsDragHandler = new AvailableDataColumnsDragHandlerImpl(this);
+      OtherAvailableColumnsDragHander = new OtherAvailableColumnsDragHandlerImpl(this);
+
     }
 
     public override void Dispose(bool isDisposing)
@@ -487,6 +416,22 @@ namespace Altaxo.Gui.Graph.Plot.Data
       }
     }
 
+    private IMVVMDragHandler _availableDataColumnsDragHandler;
+
+    public IMVVMDragHandler AvailableDataColumnsDragHandler
+    {
+      get => _availableDataColumnsDragHandler;
+      set
+      {
+        if (!(_availableDataColumnsDragHandler == value))
+        {
+          _availableDataColumnsDragHandler = value;
+          OnPropertyChanged(nameof(AvailableDataColumnsDragHandler));
+        }
+      }
+    }
+
+
     private ItemsController<Type> _otherAvailableColumns;
 
     /// <summary>Other types of columns, e.g. constant columns, equally spaced columns and so on..</summary>
@@ -500,6 +445,21 @@ namespace Altaxo.Gui.Graph.Plot.Data
           _otherAvailableColumns?.Dispose();
           _otherAvailableColumns = value;
           OnPropertyChanged(nameof(OtherAvailableColumns));
+        }
+      }
+    }
+
+    private IMVVMDragHandler _otherAvailableColumnsDragHander;
+
+    public IMVVMDragHandler OtherAvailableColumnsDragHander
+    {
+      get => _otherAvailableColumnsDragHander;
+      set
+      {
+        if (!(_otherAvailableColumnsDragHander == value))
+        {
+          _otherAvailableColumnsDragHander = value;
+          OnPropertyChanged(nameof(OtherAvailableColumnsDragHander));
         }
       }
     }
@@ -523,6 +483,107 @@ namespace Altaxo.Gui.Graph.Plot.Data
       }
     }
 
+    private bool _isAvailableTransformationsFocused;
+
+    public bool IsAvailableTransformationsFocused
+    {
+      get => _isAvailableTransformationsFocused;
+      set
+      {
+        if (!(_isAvailableTransformationsFocused == value))
+        {
+          _isAvailableTransformationsFocused = value;
+          OnPropertyChanged(nameof(IsAvailableTransformationsFocused));
+          if (value == true)
+            _lastActiveColumnsSource = ColumnSourceElement.AvailableTransformations;
+        }
+      }
+    }
+
+    private bool _isOtherAvailableColumnsFocused;
+
+    public bool IsOtherAvailableColumnsFocused
+    {
+      get => _isOtherAvailableColumnsFocused;
+      set
+      {
+        if (!(_isOtherAvailableColumnsFocused == value))
+        {
+          _isOtherAvailableColumnsFocused = value;
+          OnPropertyChanged(nameof(IsOtherAvailableColumnsFocused));
+          if (value == true)
+            _lastActiveColumnsSource = ColumnSourceElement.OtherAvailableColumns;
+        }
+      }
+    }
+
+    private bool _isAvailableDataColumnsListViewFocused;
+
+    public bool IsAvailableDataColumnsListViewFocused
+    {
+      get => _isAvailableDataColumnsListViewFocused;
+      set
+      {
+        if (!(_isAvailableDataColumnsListViewFocused == value))
+        {
+          _isAvailableDataColumnsListViewFocused = value;
+          OnPropertyChanged(nameof(IsAvailableDataColumnsListViewFocused));
+          if (value == true)
+            _lastActiveColumnsSource = ColumnSourceElement.AvailableTableColumnsList;
+        }
+      }
+    }
+
+    private bool _isAvailableDataColumnsTreeViewFocused;
+
+    public bool IsAvailableDataColumnsTreeViewFocused
+    {
+      get => _isAvailableDataColumnsTreeViewFocused;
+      set
+      {
+        if (!(_isAvailableDataColumnsTreeViewFocused == value))
+        {
+          _isAvailableDataColumnsTreeViewFocused = value;
+          OnPropertyChanged(nameof(IsAvailableDataColumnsTreeViewFocused));
+          if (value == true)
+            _lastActiveColumnsSource = ColumnSourceElement.AvailableTableColumnsTree;
+        }
+      }
+    }
+
+
+
+    private IMVVMDragHandler _availableTransformationsDragHandler;
+
+    public IMVVMDragHandler AvailableTransformationsDragHandler
+    {
+      get => _availableTransformationsDragHandler;
+      set
+      {
+        if (!(_availableTransformationsDragHandler == value))
+        {
+          _availableTransformationsDragHandler = value;
+          OnPropertyChanged(nameof(AvailableTransformationsDragHandler));
+        }
+      }
+    }
+
+
+
+    private ObservableCollection<SingleColumnController> _plotItemColumns;
+
+    public ObservableCollection<SingleColumnController> PlotItemColumns
+    {
+      get => _plotItemColumns;
+      set
+      {
+        if (!(_plotItemColumns == value))
+        {
+          _plotItemColumns = value;
+          OnPropertyChanged(nameof(PlotItemColumns));
+        }
+      }
+    }
 
     #endregion
 
@@ -643,10 +704,14 @@ namespace Altaxo.Gui.Graph.Plot.Data
         TriggerUpdateOfMatchingTables();
 
 
-        View_PlotColumns_Initialize();
-        View_PlotColumns_UpdateAll();
+       
 
         
+      }
+      if(_view is not null)
+      {
+        View_PlotColumns_Initialize();
+        View_PlotColumns_UpdateAll();
       }
     }
 
@@ -715,92 +780,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
       }
     }
 
-    protected override void AttachView()
-    {
-      base.AttachView();
-
-      _view.PlotItemColumn_AddTo += EhView_PlotColumnAddTo;
-
-      _view.PlotItemColumn_Edit += EhView_PlotColumnEdit;
-
-      _view.PlotItemColumn_Erase += EhView_PlotColumnErase;
-
-      _view.OtherAvailableColumn_AddTo += EhView_OtherAvailableColumnAddTo;
-
-      _view.Transformation_AddTo += EhView_TransformationAddTo;
-
-      _view.Transformation_AddAsSingle += EhView_TransformationAddAsSingle;
-
-      _view.Transformation_AddAsPrepending += EhView_TransformationAddAsPrepending;
-
-      _view.Transformation_AddAsAppending += EhView_TransformationAddAsAppending;
-
-      _view.Transformation_Edit += EhView_TransformationEdit;
-
-      _view.Transformation_Erase += EhView_TransformationErase;
-
-      _view.AvailableTableColumns_CanStartDrag += EhAvailableDataColumns_CanStartDrag;
-      _view.AvailableTableColumns_StartDrag += EhAvailableDataColumns_StartDrag;
-      _view.AvailableTableColumns_DragEnded += EhAvailableDataColumns_DragEnded;
-      _view.AvailableTableColumns_DragCancelled += EhAvailableDataColumns_DragCancelled;
-
-      _view.OtherAvailableItems_CanStartDrag += EhOtherAvailableItems_CanStartDrag;
-      _view.OtherAvailableItems_StartDrag += EhOtherAvailableItems_StartDrag;
-      _view.OtherAvailableItems_DragEnded += EhOtherAvailableItems_DragEnded;
-      _view.OtherAvailableItems_DragCancelled += EhOtherAvailableItems_DragCancelled;
-
-      _view.AvailableTransformations_CanStartDrag += EhAvailableTransformations_CanStartDrag;
-      _view.AvailableTransformations_StartDrag += EhAvailableTransformations_StartDrag;
-      _view.AvailableTransformations_DragEnded += EhAvailableTransformations_DragEnded;
-      _view.AvailableTransformations_DragCancelled += EhAvailableTransformations_DragCancelled;
-
-      _view.PlotItemColumn_DropCanAcceptData += EhColumnDropCanAcceptData;
-      _view.PlotItemColumn_Drop += EhColumnDrop;
-    }
-
-    protected override void DetachView()
-    {
-
-      _view.PlotItemColumn_AddTo -= EhView_PlotColumnAddTo;
-
-      _view.PlotItemColumn_Edit -= EhView_PlotColumnEdit;
-
-      _view.PlotItemColumn_Erase -= EhView_PlotColumnErase;
-
-      _view.OtherAvailableColumn_AddTo -= EhView_OtherAvailableColumnAddTo;
-
-      _view.Transformation_AddTo -= EhView_TransformationAddTo;
-
-      _view.Transformation_AddAsSingle -= EhView_TransformationAddAsSingle;
-
-      _view.Transformation_AddAsPrepending -= EhView_TransformationAddAsPrepending;
-
-      _view.Transformation_AddAsAppending -= EhView_TransformationAddAsAppending;
-
-      _view.Transformation_Edit -= EhView_TransformationEdit;
-
-      _view.Transformation_Erase -= EhView_TransformationErase;
-
-      _view.AvailableTableColumns_CanStartDrag -= EhAvailableDataColumns_CanStartDrag;
-      _view.AvailableTableColumns_StartDrag -= EhAvailableDataColumns_StartDrag;
-      _view.AvailableTableColumns_DragEnded -= EhAvailableDataColumns_DragEnded;
-      _view.AvailableTableColumns_DragCancelled -= EhAvailableDataColumns_DragCancelled;
-
-      _view.OtherAvailableItems_CanStartDrag -= EhOtherAvailableItems_CanStartDrag;
-      _view.OtherAvailableItems_StartDrag -= EhOtherAvailableItems_StartDrag;
-      _view.OtherAvailableItems_DragEnded -= EhOtherAvailableItems_DragEnded;
-      _view.OtherAvailableItems_DragCancelled -= EhOtherAvailableItems_DragCancelled;
-
-      _view.AvailableTransformations_CanStartDrag -= EhAvailableTransformations_CanStartDrag;
-      _view.AvailableTransformations_StartDrag -= EhAvailableTransformations_StartDrag;
-      _view.AvailableTransformations_DragEnded -= EhAvailableTransformations_DragEnded;
-      _view.AvailableTransformations_DragCancelled -= EhAvailableTransformations_DragCancelled;
-
-      _view.PlotItemColumn_DropCanAcceptData -= EhColumnDropCanAcceptData;
-      _view.PlotItemColumn_Drop -= EhColumnDrop;
-
-      base.DetachView();
-    }
+   
 
     #endregion Initialize, Apply, Attach, Detach
 
@@ -835,7 +815,15 @@ namespace Altaxo.Gui.Graph.Plot.Data
 
     private void View_PlotColumns_Initialize()
     {
-      _view.PlotColumns_Initialize(GetEnumerationForAllGroupsOfPlotColumns(_columnGroup));
+      var allItems = GetEnumerationForAllGroupsOfPlotColumns(_columnGroup);
+      _plotItemColumns.Clear();
+      foreach(var group in allItems)
+      {
+        foreach (var item in group.Item2)
+        {
+          _plotItemColumns.Add(new SingleColumnController() { GroupName = group.GroupName, LabelText = item.ColumnLabel, Tag = item.PlotColumnTag });
+        }
+      }
     }
 
     private void View_PlotColumns_UpdateAll()
@@ -844,7 +832,16 @@ namespace Altaxo.Gui.Graph.Plot.Data
         for (int j = 0; j < _columnGroup[i].Columns.Count; j++)
         {
           var info = _columnGroup[i].Columns[j];
-          _view.PlotColumn_Update(new PlotColumnTag(i, j), info.PlotColumnBoxText, info.PlotColumnToolTip, info.TransformationTextToShow, info.TransformationToolTip, info.PlotColumnBoxState);
+          var tag = new PlotColumnTag(i, j);
+          var ctrl = _plotItemColumns.FirstOrDefault(x => x.Tag == tag);
+          if(ctrl is not null)
+          {
+            ctrl.ColumnText = info.PlotColumnBoxText;
+            ctrl.ColumnToolTip = info.PlotColumnToolTip;
+            ctrl.TransformationText = info.TransformationTextToShow;
+            ctrl.TransformationToolTip = info.TransformationToolTip;
+            ctrl.SeverityLevel = (int)info.PlotColumnBoxState;
+          }
         }
     }
 
@@ -940,7 +937,16 @@ namespace Altaxo.Gui.Graph.Plot.Data
             }
 
             info.Update(_doc.DataTable, _doc.GroupNumber, true);
-            _view?.PlotColumn_Update(new PlotColumnTag(i, j), info.PlotColumnBoxText, info.PlotColumnToolTip, info.TransformationTextToShow, info.TransformationToolTip, info.PlotColumnBoxState);
+
+            var ctrl = _plotItemColumns.FirstOrDefault(x => x.Tag == new PlotColumnTag(i, j));
+            if (ctrl is not null)
+            {
+              ctrl.ColumnText = info.PlotColumnBoxText;
+              ctrl.ColumnToolTip = info.PlotColumnToolTip;
+              ctrl.TransformationText = info.TransformationTextToShow;
+              ctrl.TransformationToolTip = info.TransformationToolTip;
+              ctrl.SeverityLevel = (int)info.PlotColumnBoxState;
+            }
           }
         }
       }
@@ -1073,22 +1079,51 @@ namespace Altaxo.Gui.Graph.Plot.Data
 
     #region PlotColumns
 
-    public void EhView_PlotColumnAddTo(PlotColumnTag tag)
+    /// <summary>
+    /// Called if a <see cref="SingleColumnController"/> notifies, that the 'add column' button was pressed.
+    /// </summary>
+    /// <param name="tag">The plot column tag.</param>
+    public void EhPlotColumnAddTo(SingleColumnController ctrl)
     {
-      var node = _view?.AvailableTableColumns_SelectedItem as NGTreeNode;
+      switch (_lastActiveColumnsSource)
+      {
+        case ColumnSourceElement.AvailableTableColumnsList:
+        case ColumnSourceElement.AvailableTableColumnsTree:
+          EhView_PlotColumnAddTo(ctrl);
+          break;
+        case ColumnSourceElement.OtherAvailableColumns:
+          EhView_OtherAvailableColumnAddTo(ctrl);
+          break;
+        case ColumnSourceElement.AvailableTransformations:
+          EhView_TransformationAddTo(ctrl);
+          break;
+        default:
+          break;
+      }
+    }
+
+    public void EhView_PlotColumnAddTo(SingleColumnController ctrl)
+    {
+      var node = _availableDataColumns.FirstSelectedNode;
       if (node is not null)
       {
         SetDirty();
-        var info = _columnGroup[tag.GroupNumber].Columns[tag.ColumnNumber];
+        var info = _columnGroup[ctrl.Tag.GroupNumber].Columns[ctrl.Tag.ColumnNumber];
         info.UnderlyingColumn = (DataColumn)node.Tag;
         info.Update(_doc.DataTable, _doc.GroupNumber);
-        _view?.PlotColumn_Update(tag, info.PlotColumnBoxText, info.PlotColumnToolTip, info.TransformationTextToShow, info.TransformationToolTip, info.PlotColumnBoxState);
+
+        ctrl.ColumnText = info.PlotColumnBoxText;
+        ctrl.ColumnToolTip = info.PlotColumnToolTip;
+        ctrl.TransformationText = info.TransformationTextToShow;
+        ctrl.TransformationToolTip = info.TransformationToolTip;
+        ctrl.SeverityLevel = (int)info.PlotColumnBoxState;
         TriggerUpdateOfMatchingTables();
       }
     }
 
-    public void EhView_PlotColumnEdit(PlotColumnTag tag)
+    public void EhPlotColumnEdit(SingleColumnController ctrl)
     {
+      var tag = ctrl.Tag;
       var info = _columnGroup[tag.GroupNumber].Columns[tag.ColumnNumber];
 
       var editedColumn = EditOtherAvailableColumn(info.UnderlyingColumn, out var wasEdited);
@@ -1098,17 +1133,26 @@ namespace Altaxo.Gui.Graph.Plot.Data
         SetDirty();
         info.UnderlyingColumn = editedColumn;
         info.Update(_doc.DataTable, _doc.GroupNumber);
-        _view?.PlotColumn_Update(tag, info.PlotColumnBoxText, info.PlotColumnToolTip, info.TransformationTextToShow, info.TransformationToolTip, info.PlotColumnBoxState);
+        ctrl.ColumnText = info.PlotColumnBoxText;
+        ctrl.ColumnToolTip = info.PlotColumnToolTip;
+        ctrl.TransformationText = info.TransformationTextToShow;
+        ctrl.TransformationToolTip = info.TransformationToolTip;
+        ctrl.SeverityLevel = (int)info.PlotColumnBoxState;
       }
     }
 
-    public void EhView_PlotColumnErase(PlotColumnTag tag)
+    public void EhPlotColumnErase(SingleColumnController ctrl)
     {
+      var tag = ctrl.Tag;
       SetDirty();
       var info = _columnGroup[tag.GroupNumber].Columns[tag.ColumnNumber];
       info.UnderlyingColumn = null;
       info.Update(_doc.DataTable, _doc.GroupNumber);
-      _view?.PlotColumn_Update(tag, info.PlotColumnBoxText, info.PlotColumnToolTip, info.TransformationTextToShow, info.TransformationToolTip, info.PlotColumnBoxState);
+      ctrl.ColumnText = info.PlotColumnBoxText;
+      ctrl.ColumnToolTip = info.PlotColumnToolTip;
+      ctrl.TransformationText = info.TransformationTextToShow;
+      ctrl.TransformationToolTip = info.TransformationToolTip;
+      ctrl.SeverityLevel = (int)info.PlotColumnBoxState;
       TriggerUpdateOfMatchingTables();
     }
 
@@ -1168,8 +1212,9 @@ namespace Altaxo.Gui.Graph.Plot.Data
       return newlyCreatedColumn;
     }
 
-    public void EhView_OtherAvailableColumnAddTo(PlotColumnTag tag)
+    public void EhView_OtherAvailableColumnAddTo(SingleColumnController ctrl)
     {
+      var tag = ctrl.Tag;
       var colType = _otherAvailableColumns.SelectedValue;
       if (colType is not null)
       {
@@ -1190,7 +1235,11 @@ namespace Altaxo.Gui.Graph.Plot.Data
         {
           info.UnderlyingColumn = EditOtherAvailableColumn(createdObj, out var wasEdited);
           info.Update(_doc.DataTable, _doc.GroupNumber);
-          _view?.PlotColumn_Update(tag, info.PlotColumnBoxText, info.PlotColumnToolTip, info.TransformationTextToShow, info.TransformationToolTip, info.PlotColumnBoxState);
+          ctrl.ColumnText = info.PlotColumnBoxText;
+          ctrl.ColumnToolTip = info.PlotColumnToolTip;
+          ctrl.TransformationText = info.TransformationTextToShow;
+          ctrl.TransformationToolTip = info.TransformationToolTip;
+          ctrl.SeverityLevel = (int)info.PlotColumnBoxState;
         }
       }
     }
@@ -1234,8 +1283,9 @@ namespace Altaxo.Gui.Graph.Plot.Data
       return createdTransformation;
     }
 
-    private void EhTransformation_AddMultiple(PlotColumnTag tag, Type transformationType, int multipleType)
+    private void EhTransformation_AddMultiple(SingleColumnController ctrl, Type transformationType, int multipleType)
     {
+      var tag = ctrl.Tag;
       var info = _columnGroup[tag.GroupNumber].Columns[tag.ColumnNumber];
 
       // make sure we can create that transformation
@@ -1281,58 +1331,61 @@ namespace Altaxo.Gui.Graph.Plot.Data
       }
       SetDirty();
       info.Update(_doc.DataTable, _doc.GroupNumber);
-      _view?.PlotColumn_Update(tag, info.PlotColumnBoxText, info.PlotColumnToolTip, info.TransformationTextToShow, info.TransformationToolTip, info.PlotColumnBoxState);
+      ctrl.ColumnText = info.PlotColumnBoxText;
+      ctrl.ColumnToolTip = info.PlotColumnToolTip;
+      ctrl.TransformationText = info.TransformationTextToShow;
+      ctrl.TransformationToolTip = info.TransformationToolTip;
+      ctrl.SeverityLevel = (int)info.PlotColumnBoxState;
     }
 
-    public void EhView_TransformationAddTo(PlotColumnTag tag)
+    public void EhView_TransformationAddTo(SingleColumnController ctrl)
     {
+      var tag = ctrl.Tag;
       var transfoType = AvailableTransformations.SelectedValue;
       if (transfoType is not null)
       {
         var info = _columnGroup[tag.GroupNumber].Columns[tag.ColumnNumber];
         if (info.Transformation is null)
         {
-          EhTransformation_AddMultiple(tag, transfoType, 0);
+          EhTransformation_AddMultiple(ctrl, transfoType, 0);
         }
         else
         {
-          _view?.ShowTransformationSinglePrependAppendPopup(tag); // this will eventually fire one of three commands to add as single, as prepend or as append transformation
+          ctrl.IsTransformationPopupOpen = true; // this will eventually fire one of three commands to add as single, as prepend or as append transformation
         }
       }
     }
 
-    public void EhView_TransformationAddAsSingle(PlotColumnTag tag)
+    public void EhPlotColumnTransformationAddAsSingle(SingleColumnController ctrl)
     {
       var transfoType = AvailableTransformations.SelectedValue;
       if (transfoType is not null)
       {
-        EhTransformation_AddMultiple(tag, transfoType, 0);
+        EhTransformation_AddMultiple(ctrl, transfoType, 0);
       }
     }
 
-    public void EhView_TransformationAddAsPrepending(PlotColumnTag tag)
+    public void EhPlotColumnTransformationAddAsPrepending(SingleColumnController ctrl)
     {
       var transfoType = _availableTransformations.SelectedValue;
       if (transfoType is not null)
       {
-        EhTransformation_AddMultiple(tag, transfoType, 1);
+        EhTransformation_AddMultiple(ctrl, transfoType, 1);
       }
     }
 
-    public void EhView_TransformationAddAsAppending(PlotColumnTag tag)
+    public void EhPlotColumnTransformationAddAsAppending(SingleColumnController ctrl)
     {
       var transfoType = _availableTransformations.SelectedValue;
       if (transfoType is not null)
       {
-        EhTransformation_AddMultiple(tag, transfoType, 2);
+        EhTransformation_AddMultiple(ctrl, transfoType, 2);
       }
     }
 
-    public void EhView_TransformationEdit(PlotColumnTag tag)
+    public void EhPlotColumnTransformationEdit(SingleColumnController ctrl)
     {
-      if (tag is null)
-        return;
-
+      var tag = ctrl.Tag;
       var info = _columnGroup[tag.GroupNumber].Columns[tag.ColumnNumber];
 
       info.Transformation = EditAvailableTransformation(info.Transformation, out var wasEdited);
@@ -1340,204 +1393,32 @@ namespace Altaxo.Gui.Graph.Plot.Data
       {
         SetDirty();
         info.Update(_doc.DataTable, _doc.GroupNumber);
-        _view?.PlotColumn_Update(tag, info.PlotColumnBoxText, info.PlotColumnToolTip, info.TransformationTextToShow, info.TransformationToolTip, info.PlotColumnBoxState);
+        info.Update(_doc.DataTable, _doc.GroupNumber);
+        ctrl.ColumnText = info.PlotColumnBoxText;
+        ctrl.ColumnToolTip = info.PlotColumnToolTip;
+        ctrl.TransformationText = info.TransformationTextToShow;
+        ctrl.TransformationToolTip = info.TransformationToolTip;
+        ctrl.SeverityLevel = (int)info.PlotColumnBoxState;
       }
     }
 
-    public void EhView_TransformationErase(PlotColumnTag tag)
+    public void EhPlotColumnTransformationErase(SingleColumnController ctrl)
     {
+      var tag = ctrl.Tag;
       SetDirty();
       var info = _columnGroup[tag.GroupNumber].Columns[tag.ColumnNumber];
       info.Transformation = null;
       info.Update(_doc.DataTable, _doc.GroupNumber);
-      _view?.PlotColumn_Update(tag, info.PlotColumnBoxText, info.PlotColumnToolTip, info.TransformationTextToShow, info.TransformationToolTip, info.PlotColumnBoxState);
+      ctrl.ColumnText = info.PlotColumnBoxText;
+      ctrl.ColumnToolTip = info.PlotColumnToolTip;
+      ctrl.TransformationText = info.TransformationTextToShow;
+      ctrl.TransformationToolTip = info.TransformationToolTip;
+      ctrl.SeverityLevel = (int)info.PlotColumnBoxState;
     }
 
     #endregion Transformation
 
-    #region AvailableDataColumns drag handler
-
-    private bool EhAvailableDataColumns_CanStartDrag(IEnumerable items)
-    {
-      var selNode = items.OfType<NGTreeNode>().FirstOrDefault();
-      // to start a drag, at least one item must be selected
-      return selNode is not null && (selNode.Tag is DataColumn);
-    }
-
-    private StartDragData EhAvailableDataColumns_StartDrag(IEnumerable items)
-    {
-      var node = items.OfType<NGTreeNode>().FirstOrDefault();
-
-      if (node is not null && node.Tag is DataColumn)
-      {
-        return new StartDragData
-        {
-          Data = node.Tag,
-          CanCopy = true,
-          CanMove = false
-        };
-      }
-      else
-      {
-        return new StartDragData { Data = null, CanCopy = false, CanMove = false };
-      }
-    }
-
-    private void EhAvailableDataColumns_DragEnded(bool isCopy, bool isMove)
-    {
-    }
-
-    private void EhAvailableDataColumns_DragCancelled()
-
-    {
-    }
-
-    #endregion AvailableDataColumns drag handler
-
-    #region OtherAvailableItems drag handler
-
-    private bool EhOtherAvailableItems_CanStartDrag(IEnumerable items)
-    {
-      var selNode = items.OfType<SelectableListNode>().FirstOrDefault();
-      // to start a drag, at least one item must be selected
-      return selNode is not null;
-    }
-
-    private StartDragData EhOtherAvailableItems_StartDrag(IEnumerable items)
-    {
-      var node = items.OfType<SelectableListNode>().FirstOrDefault();
-
-      return new StartDragData
-      {
-        Data = node.Tag,
-        CanCopy = true,
-        CanMove = false
-      };
-    }
-
-    private void EhOtherAvailableItems_DragEnded(bool isCopy, bool isMove)
-    {
-    }
-
-    private void EhOtherAvailableItems_DragCancelled()
-
-    {
-    }
-
-    #endregion OtherAvailableItems drag handler
-
-    #region AvailableTransformations drag handler
-
-    private bool EhAvailableTransformations_CanStartDrag(IEnumerable items)
-    {
-      var selNode = items.OfType<SelectableListNode>().FirstOrDefault();
-      // to start a drag, at least one item must be selected
-      return selNode is not null;
-    }
-
-    private StartDragData EhAvailableTransformations_StartDrag(IEnumerable items)
-    {
-      var node = items.OfType<SelectableListNode>().FirstOrDefault();
-
-      return new StartDragData
-      {
-        Data = node.Tag,
-        CanCopy = true,
-        CanMove = true
-      };
-    }
-
-    private void EhAvailableTransformations_DragEnded(bool isCopy, bool isMove)
-    {
-    }
-
-    private void EhAvailableTransformations_DragCancelled()
-
-    {
-    }
-
-    #endregion AvailableTransformations drag handler
-
-    #region ColumnDrop hander
-
-    /// <summary>
-    ///
-    /// </summary>
-    /// <param name="data">The data to accept.</param>
-    /// <param name="nonGuiTargetItem">Object that can identify the drop target, for instance a non gui tree node or list node, or a tag.</param>
-    /// <param name="insertPosition">The insert position.</param>
-    /// <param name="isCtrlKeyPressed">if set to <c>true</c> [is control key pressed].</param>
-    /// <param name="isShiftKeyPressed">if set to <c>true</c> [is shift key pressed].</param>
-    /// <returns></returns>
-    public DropCanAcceptDataReturnData EhColumnDropCanAcceptData(object data, object nonGuiTargetItem, Gui.Common.DragDropRelativeInsertPosition insertPosition, bool isCtrlKeyPressed, bool isShiftKeyPressed)
-    {
-      // investigate data
-
-      return new DropCanAcceptDataReturnData
-      {
-        CanCopy = true,
-        CanMove = true,
-        ItemIsSwallowingData = false
-      };
-    }
-
-    public DropReturnData EhColumnDrop(object data, object nonGuiTargetItem, Gui.Common.DragDropRelativeInsertPosition insertPosition, bool isCtrlKeyPressed, bool isShiftKeyPressed)
-    {
-      var tag = nonGuiTargetItem as PlotColumnTag;
-      if (tag is null)
-        return new DropReturnData { IsCopy = false, IsMove = false };
-
-      _isDirty = true;
-
-      var info = _columnGroup[tag.GroupNumber].Columns[tag.ColumnNumber];
-
-      if (data is Type)
-      {
-        object createdObj = null;
-        try
-        {
-          createdObj = System.Activator.CreateInstance((Type)data);
-        }
-        catch (Exception ex)
-        {
-          Current.Gui.ErrorMessageBox("This object could not be dropped, message: " + ex.ToString(), "Error");
-        }
-
-        if (createdObj is IReadableColumn)
-        {
-          info.UnderlyingColumn = EditOtherAvailableColumn((IReadableColumn)createdObj, out var wasEdited);
-          TriggerUpdateOfMatchingTables();
-        }
-        else if (createdObj is IVariantToVariantTransformation)
-        {
-          AvailableTransformations.Items.ClearSelectionsAll(); // we artificially select the node that holds that type
-          var nodeToSelect = AvailableTransformations.Items.FirstOrDefault(node => (Type)node.Tag == (Type)data);
-          if (nodeToSelect is not null)
-          {
-            nodeToSelect.IsSelected = true;
-            EhView_TransformationAddTo(tag);
-          }
-        }
-
-        info.Update(_doc.DataTable, _doc.GroupNumber);
-        _view?.PlotColumn_Update(tag, info.PlotColumnBoxText, info.PlotColumnToolTip, info.TransformationTextToShow, info.TransformationToolTip, info.PlotColumnBoxState);
-      }
-      else if (data is DataColumn)
-      {
-        info.UnderlyingColumn = (DataColumn)data;
-        info.Update(_doc.DataTable, _doc.GroupNumber);
-        _view?.PlotColumn_Update(tag, info.PlotColumnBoxText, info.PlotColumnToolTip, info.TransformationTextToShow, info.TransformationToolTip, info.PlotColumnBoxState);
-        TriggerUpdateOfMatchingTables();
-      }
-
-      return new DropReturnData
-      {
-        IsCopy = true,
-        IsMove = false
-      };
-    }
-
-    #endregion ColumnDrop hander
+   
 
     /// <summary>
     /// Sets the additional columns that are used by some of the plot styles.
@@ -1594,5 +1475,205 @@ namespace Altaxo.Gui.Graph.Plot.Data
         View_PlotColumns_UpdateAll();
       }
     }
+
+    #region Drag Handlers
+
+    public class AvailableTransformationsDragHandlerImpl : IMVVMDragHandler
+    {
+      ColumnPlotDataControllerBase<TModel> _parent;
+
+      public AvailableTransformationsDragHandlerImpl(ColumnPlotDataControllerBase<TModel> parent)
+      {
+        _parent = parent;
+      }
+
+      public bool CanStartDrag(IEnumerable items)
+      {
+        return _parent.AvailableTransformations.SelectedItem is not null;
+      }
+
+      public void DragCancelled()
+      {
+      }
+
+      public void DragEnded(bool isCopy, bool isMove)
+      {
+      }
+
+      public void StartDrag(IEnumerable items, out object data, out bool canCopy, out bool canMove)
+      {
+        var ttype = _parent.AvailableTransformations.SelectedValue;
+
+        if(ttype is not null)
+        {
+          data = ttype;
+          canCopy = true;
+          canMove = true;
+        }
+        else
+        {
+          data = null;
+          canCopy = false;
+          canMove = false;
+        }
+      }
+    }
+
+    public class AvailableDataColumnsDragHandlerImpl : IMVVMDragHandler
+    {
+      ColumnPlotDataControllerBase<TModel> _parent;
+
+      public AvailableDataColumnsDragHandlerImpl(ColumnPlotDataControllerBase<TModel> parent)
+      {
+        _parent = parent;
+      }
+
+      public bool CanStartDrag(IEnumerable items)
+      {
+        var selNode = _parent._availableDataColumns.FirstSelectedNode;
+        // to start a drag, at least one item must be selected
+        return selNode is not null && (selNode.Tag is DataColumn);
+      }
+
+      public void StartDrag(IEnumerable items, out object data, out bool canCopy, out bool canMove)
+      {
+        var selNode = _parent._availableDataColumns.FirstSelectedNode;
+        // to start a drag, at least one item must be selected
+        if(selNode is not null && (selNode.Tag is DataColumn dc))
+        {
+          data = dc;
+          canCopy = true;
+          canMove = false;
+        }
+        else
+        {
+          data = null;
+          canCopy = false;
+          canMove = false;
+        }
+      }
+
+      public void DragCancelled()
+      {
+      }
+
+      public void DragEnded(bool isCopy, bool isMove)
+      {
+      }
+
+     
+    }
+
+    public class OtherAvailableColumnsDragHandlerImpl : IMVVMDragHandler
+    {
+      ColumnPlotDataControllerBase<TModel> _parent;
+
+      public OtherAvailableColumnsDragHandlerImpl(ColumnPlotDataControllerBase<TModel> parent)
+      {
+        _parent = parent;
+      }
+
+      public bool CanStartDrag(IEnumerable items)
+      {
+        var type = _parent.OtherAvailableColumns.SelectedValue;
+        // to start a drag, at least one item must be selected
+        return type is not null;
+      }
+
+      public void StartDrag(IEnumerable items, out object data, out bool canCopy, out bool canMove)
+      {
+        var type = _parent.OtherAvailableColumns.SelectedValue;
+        // to start a drag, at least one item must be selected
+        if (type is not null)
+        {
+          data = type;
+          canCopy = true;
+          canMove = false;
+        }
+        else
+        {
+          data = null;
+          canCopy = false;
+          canMove = false;
+        }
+      }
+
+      public void DragCancelled()
+      {
+      }
+
+      public void DragEnded(bool isCopy, bool isMove)
+      {
+      }
+    }
+
+
+
+
+
+
+    #region ColumnDrop hander
+
+    public void EhPlotColumnTransformationDrop(SingleColumnController ctrl, object data) => EhPlotColumnDrop(ctrl, data);
+
+    public void EhPlotColumnDrop(SingleColumnController ctrl, object data)
+    {
+      var tag = ctrl.Tag;
+      _isDirty = true;
+
+      var info = _columnGroup[tag.GroupNumber].Columns[tag.ColumnNumber];
+
+      if (data is Type)
+      {
+        object createdObj = null;
+        try
+        {
+          createdObj = System.Activator.CreateInstance((Type)data);
+        }
+        catch (Exception ex)
+        {
+          Current.Gui.ErrorMessageBox("This object could not be dropped, message: " + ex.ToString(), "Error");
+        }
+
+        if (createdObj is IReadableColumn)
+        {
+          info.UnderlyingColumn = EditOtherAvailableColumn((IReadableColumn)createdObj, out var wasEdited);
+          TriggerUpdateOfMatchingTables();
+        }
+        else if (createdObj is IVariantToVariantTransformation)
+        {
+          AvailableTransformations.Items.ClearSelectionsAll(); // we artificially select the node that holds that type
+          var nodeToSelect = AvailableTransformations.Items.FirstOrDefault(node => (Type)node.Tag == (Type)data);
+          if (nodeToSelect is not null)
+          {
+            nodeToSelect.IsSelected = true;
+            EhView_TransformationAddTo(ctrl);
+          }
+        }
+
+        info.Update(_doc.DataTable, _doc.GroupNumber);
+        ctrl.ColumnText = info.PlotColumnBoxText;
+        ctrl.ColumnToolTip = info.PlotColumnToolTip;
+        ctrl.TransformationText = info.TransformationTextToShow;
+        ctrl.TransformationToolTip = info.TransformationToolTip;
+        ctrl.SeverityLevel = (int)info.PlotColumnBoxState;
+      }
+      else if (data is DataColumn)
+      {
+        info.UnderlyingColumn = (DataColumn)data;
+        info.Update(_doc.DataTable, _doc.GroupNumber);
+        ctrl.ColumnText = info.PlotColumnBoxText;
+        ctrl.ColumnToolTip = info.PlotColumnToolTip;
+        ctrl.TransformationText = info.TransformationTextToShow;
+        ctrl.TransformationToolTip = info.TransformationToolTip;
+        ctrl.SeverityLevel = (int)info.PlotColumnBoxState;
+        TriggerUpdateOfMatchingTables();
+      }
+    }
+
+    #endregion ColumnDrop hander
+
+
+    #endregion
   }
 }

@@ -142,8 +142,7 @@ namespace Altaxo.Gui.Common
             typeof(IEnumerable<int>),
             typeof(Int32ListUpDown),
             new FrameworkPropertyMetadata(new int[] { 0 },
-                new PropertyChangedCallback(OnAvailabeValuesChanged),
-                new CoerceValueCallback(CoerceValue)
+                new PropertyChangedCallback(OnAvailabeValuesChanged)
             )
         );
 
@@ -163,6 +162,8 @@ namespace Altaxo.Gui.Common
       thiss.SetValue(MaximumProperty, list[list.Count - 1]);
       thiss.SetValue(ValueProperty, thiss.Value); // will coerce this value
     }
+
+   
 
     public IEnumerable<int> AvailableValues
     {
