@@ -408,7 +408,7 @@ namespace Altaxo.Gui.DataConnection
       var connString = axoConnString.OriginalConnectionString;
       if (string.IsNullOrEmpty(connString) || connString.IndexOf("provider=", StringComparison.OrdinalIgnoreCase) < 0)
       {
-        connString = "Provider=SQLNCLI11.1;";
+        connString = "Provider=SQLOLEDB;";
       }
 
       // let user change it
