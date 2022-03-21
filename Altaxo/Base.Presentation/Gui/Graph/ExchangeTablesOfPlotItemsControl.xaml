@@ -2,17 +2,21 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008">
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:graph="clr-namespace:Altaxo.Gui.Graph;assembly=AltaxoBase"
+             d:DataContext="{d:DesignInstance Type=graph:ExchangeTablesOfPlotItemsController}"
+             mc:Ignorable="d">
 	<UserControl.Resources>
 
 		<ContextMenu x:Key="TableItemsContextMenu">
-			<MenuItem Header="Choose new table..." Click="EhChooseTable" />
-			<MenuItem Header="Choose new folder..." Click="EhChooseFolder" />
+			<MenuItem Header="Choose new table..." Command="{Binding CmdChooseTable}" />
+			<MenuItem Header="Choose new folder..." Command="{Binding CmdChooseFolder}" />
 		</ContextMenu>
 
 		<Style x:Key="TableItemsContainer" TargetType="{x:Type ListViewItem}">
 			<Setter Property="ContextMenu" Value="{StaticResource TableItemsContextMenu}" />
-		</Style>
+            <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}"/>
+        </Style>
 	</UserControl.Resources>
 	<Grid>
 		<Grid.ColumnDefinitions>
@@ -28,8 +32,10 @@
 			<RowDefinition />
 		</Grid.RowDefinitions>
 		<!-- the catching of PreviewMouseRightButtonDown is a trick to maintain the selected items when using the context menu -->
-		<Label Content="Currently used table(s) and their replacement(s):" Grid.Row="0" Grid.ColumnSpan="2" Margin="4,0,4,0" />
-		<ListView x:Name="_guiTableList" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="4,0,4,0"
+		<Label Grid.Row="0" Grid.ColumnSpan="2" Content="Currently used table(s) and their replacement(s):"  Margin="4,0,4,0" />
+		<ListView Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" 
+                  ItemsSource="{Binding TableList}"
+                  Margin="4,0,4,0"
 							SelectionChanged="EhItemsSelectionChanged"
 							PreviewMouseRightButtonDown="EhTableList_MouseRightButtonDown"
 							ScrollViewer.VerticalScrollBarVisibility="Visible"
@@ -44,11 +50,11 @@
 		</ListView>
 
 		<Rectangle Grid.Row="2" Grid.ColumnSpan="2" Fill="Lavender" Height="4" Margin="0,6,0,6" />
-		<Button Content="Choose a table for replacement of selected tables..." Grid.Row="3" Margin="4" Click="EhChooseTable"
+		<Button Content="Choose a table for replacement of selected tables..." Grid.Row="3" Margin="4" Command="{Binding CmdChooseTable}"
 						ToolTip="Select a single table that is used as replacement table." />
-		<Button Content="Choose table(s) with the same name in another folder..." Grid.Row="4" Margin="4" Click="EhChooseFolder"
+		<Button Content="Choose table(s) with the same name in another folder..." Grid.Row="4" Margin="4" Command="{Binding CmdChooseFolder}"
 						ToolTip="Tries to find table(s) with the same short name in a folder of your choice." />
-		<Expander x:Name="_guiCommonSubstringPanel" Header="Replace common substrings in the names of selected tables" Grid.Row="5" Grid.ColumnSpan="2" Expanded="EhCommonSubstringOperations_VisibilityChanged" Collapsed="EhCommonSubstringOperations_VisibilityChanged">
+		<Expander Header="Replace common substrings in the names of selected tables" Grid.Row="5" Grid.ColumnSpan="2" IsExpanded="{Binding IsCommonSubstringOperationsVisible, Mode=TwoWay}" >
 			<Grid>
 				<Grid.RowDefinitions>
 					<RowDefinition Height="Auto" />
@@ -64,16 +70,31 @@
 				<Border Grid.RowSpan="5" Grid.ColumnSpan="3" BorderBrush="Lavender" BorderThickness="4" />
 				<StackPanel Orientation="Horizontal" Grid.Row="0" Grid.ColumnSpan="3" Background="Lavender"  Margin="4,4,4,0">
 					<Label Content="Search common substring:" />
-					<RadioButton x:Name="_guiSearchCommonSubstringCharacterwise" Content="character-wise" Checked="EhSearchCommonSubstringCharacterWiseChanged" VerticalAlignment="Center" Margin="4" />
-					<RadioButton x:Name="_guiSearchCommonSubstringSubfolderwise" Content="subfolder-wise" IsChecked="True" Checked="EhSearchCommonSubstringCharacterWiseChanged" VerticalAlignment="Center" Margin="4" />
+					<RadioButton Content="character-wise" IsChecked="{Binding SearchCommonSubstringCharacterwise, Mode=TwoWay}"  VerticalAlignment="Center" Margin="4" />
+					<RadioButton Content="subfolder-wise" IsChecked="{Binding SearchCommonSubstringSubfolderwise, Mode=TwoWay}"  VerticalAlignment="Center" Margin="4" />
 				</StackPanel>
-				<Label Content="Common substring (feel free to edit the text):" Grid.Row="1" Grid.Column="0" />
-				<TextBox x:Name="_guiCommonSubstring" Grid.Row="2" Grid.Column="0" TextChanged="EhCommonSubstringTextChanged" Margin="4,0,4,0" />
-				<ListBox x:Name="_guiListOfCommonSubstrings" Grid.Row="3" Grid.Column="0" SelectionMode="Single"  ScrollViewer.VerticalScrollBarVisibility="Auto" SelectionChanged="EhListOfCommonSubstringsSelectionChanged" Margin="4,2,4,4" />
-				<Label Content="Replace with:" Grid.Row="1" Grid.Column="1" />
-				<TextBox x:Name="_guiReplacementCandidate" IsReadOnly="True" Grid.Column="1" Grid.Row="2" Margin="4,0,4,0" />
-				<ListBox x:Name="_guiListOfReplacementCandidates" Grid.Row="3" Grid.Column="1" SelectionMode="Single" ScrollViewer.VerticalScrollBarVisibility="Auto"  SelectionChanged="EhListOfReplacementCandidatesSelectionChanged" Margin="4,2,4,4" />
-				<Button Content="Apply!" Grid.Row="2" Grid.Column="2" Click="EhApplyReplacementForCommonSubstring" Margin="4" />
+				<Label Grid.Row="1" Grid.Column="0" Content="Common substring (feel free to edit the text):"  />
+				<TextBox Grid.Row="2" Grid.Column="0" 
+                         Text="{Binding CommonSubstringText, Mode=TwoWay}"
+                         Margin="4,0,4,0" />
+				<ListBox Grid.Row="3" Grid.Column="0" 
+                         ItemsSource="{Binding ListOfCommonSubstrings.Items}"
+                         SelectedItem="{Binding ListOfCommonSubstrings.SelectedItem}"
+                         SelectionMode="Single"
+                         ScrollViewer.VerticalScrollBarVisibility="Auto"
+                         Margin="4,2,4,4" />
+                <Label   Grid.Row="1" Grid.Column="1" Content="Replace with:"/>
+				<TextBox Grid.Column="1" Grid.Row="2" 
+                         Text="{Binding ReplacementCandidateText}"
+                         IsReadOnly="True" 
+                         Margin="4,0,4,0" />
+				<ListBox Grid.Row="3" Grid.Column="1"
+                         ItemsSource="{Binding ListOfReplacementCandidates.Items}"
+                         SelectedItem="{Binding ListOfReplacementCandidates.SelectedItem}"
+                         SelectionMode="Single"
+                         ScrollViewer.VerticalScrollBarVisibility="Auto"
+                         Margin="4,2,4,4" />
+				<Button Content="Apply!" Grid.Row="2" Grid.Column="2" Command="CmdApplyReplacementForCommonSubstring" Margin="4" />
 			</Grid>
 		</Expander>
 	</Grid>

@@ -787,18 +787,23 @@ namespace Altaxo.Collections
   /// only one of the elements is selected.
   /// </summary>
   /// <seealso cref="Altaxo.Collections.SelectableListNode" />
-  public class SingleSelectableListNode : SelectableListNode
+  public class SelectableListNodeWithParent : SelectableListNode
   {
-    protected SingleSelectableListNode()
+    public interface IParent
+    {
+      void EhChild_IsSelectedChanged(SelectableListNodeWithParent child);
+    }
+
+    protected SelectableListNodeWithParent()
     {
     }
 
-    public SingleSelectableListNode(string text, object? tag, bool isSelected)
+    public SelectableListNodeWithParent(string text, object? tag, bool isSelected)
         : base(text, tag, isSelected)
     {
     }
 
-    public SingleSelectableListNodeList? Parent { get; set; }
+    public IParent? Parent { get; set; }
 
     /// <summary>
     /// Gets or sets a value indicating whether this item is selected.
@@ -819,10 +824,7 @@ namespace Altaxo.Collections
         {
           _isSelected = value;
           OnPropertyChanged(nameof(IsSelected));
-          if (value)
-          {
-            Parent?.EhSetIsSelected(this);
-          }
+          Parent?.EhChild_IsSelectedChanged(this);
         }
       }
     }
@@ -832,8 +834,8 @@ namespace Altaxo.Collections
   /// A list of selectable items. It is ensured, that either none or maximal one of the items is selected.
   /// If one item is selected, the other item that was selected before will be deselected.
   /// </summary>
-  /// <seealso cref="System.Collections.ObjectModel.ObservableCollection&lt;Altaxo.Collections.SingleSelectableListNode&gt;" />
-  public class SingleSelectableListNodeList : System.Collections.ObjectModel.ObservableCollection<SingleSelectableListNode>
+  /// <seealso cref="System.Collections.ObjectModel.ObservableCollection&lt;Altaxo.Collections.SelectableListNodeWithParent&gt;" />
+  public class SingleSelectableListNodeList : System.Collections.ObjectModel.ObservableCollection<SelectableListNodeWithParent>, SelectableListNodeWithParent.IParent
   {
     /// <summary>
     /// Initializes a new instance of the <see cref="SelectableListNodeList" /> class.
@@ -846,7 +848,7 @@ namespace Altaxo.Collections
     /// Initializes a new instance of the <see cref="SelectableListNodeList" /> class.
     /// </summary>
     /// <param name="from">Items used to initially fill the list.</param>
-    public SingleSelectableListNodeList(IEnumerable<SingleSelectableListNode> from)
+    public SingleSelectableListNodeList(IEnumerable<SelectableListNodeWithParent> from)
             : base(from)
     {
     }
@@ -859,7 +861,7 @@ namespace Altaxo.Collections
     public SingleSelectableListNodeList(string[] names, string selectedName)
     {
       foreach (var name in names)
-        Add(new SingleSelectableListNode(name, null, name == selectedName));
+        Add(new SelectableListNodeWithParent(name, null, name == selectedName));
     }
 
     /// <summary>
@@ -890,17 +892,17 @@ namespace Altaxo.Collections
           if (!(value is null))
           {
             var name = useUserFriendlyName ? Current.Gui.GetUserFriendlyName((Enum)value!) : value.ToString() ?? string.Empty;
-            Add(new SingleSelectableListNode(name, value, value.ToString() == selectedItem.ToString()));
+            Add(new SelectableListNodeWithParent(name, value, value.ToString() == selectedItem.ToString()));
           }
         }
       }
     }
 
 
-    internal void EhSetIsSelected(SingleSelectableListNode itemThatWasSet)
+    public void EhChild_IsSelectedChanged(SelectableListNodeWithParent itemThatWasSet)
     {
       if (itemThatWasSet.IsSelected == false)
-        throw new InvalidOperationException("Item should have IsSelected=true");
+        return;
 
       if (!object.ReferenceEquals(itemThatWasSet, _selectedItem))
       {
@@ -916,9 +918,9 @@ namespace Altaxo.Collections
       }
     }
 
-    private SingleSelectableListNode? _selectedItem;
+    private SelectableListNodeWithParent? _selectedItem;
 
-    public SingleSelectableListNode? SelectedItem
+    public SelectableListNodeWithParent? SelectedItem
     {
       get => _selectedItem;
       set
@@ -963,23 +965,23 @@ namespace Altaxo.Collections
 
     #region Item set/remove overrides to make sure parent is set
 
-    protected override void InsertItem(int index, SingleSelectableListNode item)
+    protected override void InsertItem(int index, SelectableListNodeWithParent item)
     {
       item.Parent = this;
       base.InsertItem(index, item);
       if (item.IsSelected)
       {
-        EhSetIsSelected(item);
+        EhChild_IsSelectedChanged(item);
       }
     }
 
-    protected override void SetItem(int index, SingleSelectableListNode item)
+    protected override void SetItem(int index, SelectableListNodeWithParent item)
     {
       item.Parent = this;
       base.SetItem(index, item);
       if (item.IsSelected)
       {
-        EhSetIsSelected(item);
+        EhChild_IsSelectedChanged(item);
       }
     }
     protected override void RemoveItem(int index)
@@ -1000,6 +1002,137 @@ namespace Altaxo.Collections
         item.Parent = null;
       base.ClearItems();
       SelectedItem = null;
+    }
+
+    #endregion
+  }
+
+  /// <summary>
+  /// A list of selectable items. Multiple selections are allowed. If the selection of one of the items changed, a property changed event
+  /// for the property <see cref="SelectedItems"/> is raised.
+  /// </summary>
+  public class MultipleSelectableListNodeList : System.Collections.ObjectModel.ObservableCollection<SelectableListNodeWithParent>, SelectableListNodeWithParent.IParent, System.ComponentModel.INotifyPropertyChanged
+  {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SelectableListNodeList" /> class.
+    /// </summary>
+    public MultipleSelectableListNodeList()
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SelectableListNodeList" /> class.
+    /// </summary>
+    /// <param name="from">Items used to initially fill the list.</param>
+    public MultipleSelectableListNodeList(IEnumerable<SelectableListNodeWithParent> from)
+            : base(from)
+    {
+    }
+
+   
+    /// <summary>
+    /// Initialize the list with all possible values of an enumeration. The item given in the argument is marked as selected item. Note: the enumeration must not have the [Flags] attribute!
+    /// </summary>
+    /// <param name="selectedItem">Item of an enumeration that is currently selected.</param>
+    public MultipleSelectableListNodeList(System.Enum selectedItem) : this(selectedItem, false)
+    {
+    }
+
+    /// <summary>
+    /// Initialize the list with all possible values of an enumeration. The item given in the argument is marked as selected item. Note: the enumeration must not have the [Flags] attribute!
+    /// </summary>
+    /// <param name="selectedItem">Item of an enumeration that is currently selected.</param>
+    /// <param name="useUserFriendlyName">If true, a user friendly name is used instead of the original name.</param>
+    public MultipleSelectableListNodeList(System.Enum selectedItem, bool useUserFriendlyName)
+    {
+      if (selectedItem.GetType().IsDefined(typeof(FlagsAttribute), inherit: false)) // is this an enumeration with the Flags attribute?
+      {
+       
+        // enumeration without flags attribute
+        var values = System.Enum.GetValues(selectedItem.GetType());
+        foreach (var value in values)
+        {
+          if (!(value is null))
+          {
+            var name = useUserFriendlyName ? Current.Gui.GetUserFriendlyName((Enum)value!) : value.ToString() ?? string.Empty;
+            Add(new SelectableListNodeWithParent(name, value, value.ToString() == selectedItem.ToString()));
+          }
+        }
+      }
+      else
+      {
+        throw new InvalidOperationException($"Non-flag enumerations are not supported by {nameof(MultipleSelectableListNodeList)}. Please use {nameof(SingleSelectableListNodeList)} instead.");
+      }
+    }
+
+
+    void SelectableListNodeWithParent.IParent.EhChild_IsSelectedChanged(SelectableListNodeWithParent itemThatWasChanged)
+    {
+      OnSelectedItemsChanged();
+    }
+
+
+    public IEnumerable<SelectableListNodeWithParent> SelectedItems
+  {
+    get
+    {
+        return this.Items.Where(x => x.IsSelected);
+    }
+  }
+
+    public void ClearSelectionsAll()
+    {
+      foreach (var item in Items)
+        item.IsSelected = false;
+    }
+
+    protected void OnSelectedItemsChanged()
+    {
+      OnPropertyChanged(new System.ComponentModel.PropertyChangedEventArgs(nameof(SelectedItems)));
+      SelectedItemsChanged?.Invoke();
+    }
+
+    public event Action SelectedItemsChanged;
+
+   
+
+    #region Item set/remove overrides to make sure parent is set
+
+    protected override void InsertItem(int index, SelectableListNodeWithParent item)
+    {
+      item.Parent = this;
+      base.InsertItem(index, item);
+      if (item.IsSelected)
+      {
+        OnSelectedItemsChanged();
+      }
+    }
+
+    protected override void SetItem(int index, SelectableListNodeWithParent item)
+    {
+      item.Parent = this;
+      base.SetItem(index, item);
+      if (item.IsSelected)
+      {
+        OnSelectedItemsChanged();
+      }
+    }
+    protected override void RemoveItem(int index)
+    {
+      var item = this[index];
+      this[index].Parent = null;
+      base.RemoveItem(index);
+      if (item.IsSelected)
+      {
+        OnSelectedItemsChanged();
+      }
+    }
+    protected override void ClearItems()
+    {
+      foreach (var item in this)
+        item.Parent = null;
+      base.ClearItems();
+      OnSelectedItemsChanged();
     }
 
     #endregion

@@ -31,8 +31,11 @@ using Altaxo.Collections;
 
 namespace Altaxo.Gui.Graph
 {
+  using System.ComponentModel;
+  using System.Windows.Input;
   using Altaxo.Data;
   using Altaxo.Graph.Gdi;
+  using Altaxo.Gui.Common;
   using Altaxo.Main;
 
   /// <summary>
@@ -206,58 +209,8 @@ namespace Altaxo.Gui.Graph
   /// <summary>
   /// Interface to the Gui view that shows the dialog in which the user can exchange the underlying tables of plot items.
   /// </summary>
-  public interface IExchangeTablesOfPlotItemsView
+  public interface IExchangeTablesOfPlotItemsView : IDataContextAwareView
   {
-    /// <summary>Initializes the exchange table list.</summary>
-    /// <param name="list">The list. First colum is 'old table' and should be bound to the 'Text' property. Second column is the new table name and should be bound to 'Text1' property. Third column is the status and should be bound to 'Text2' property.</param>
-    void InitializeExchangeTableList(SelectableListNodeList list);
-
-    /// <summary>Initializes the list of common substrings.</summary>
-    /// <param name="list">The list. There is only one column which should be bound to the <see cref="P:Altaxo.Collections.SelectableListNode.Text"/> property.</param>
-    void InitializeListOfCommonSubstrings(Collections.SelectableListNodeList list);
-
-    /// <summary>Initializes the list of replacement candidates.</summary>
-    /// <param name="list">The list. There is only one column which should be bound to the <see cref="P:Altaxo.Collections.SelectableListNode.Text"/> property.</param>
-    void InitializeListOfReplacementCandidates(Collections.SelectableListNodeList list);
-
-    /// <summary>Gets or sets the common substring text. The user should be able to edit this text in a text box.</summary>
-    /// <value>The common substring text.</value>
-    string CommonSubstringText { get; set; }
-
-    /// <summary>Normally, the common substring search is done in enties of subfolders. If the option is <c>true</c>, the search is done characterwise instead.</summary>
-    /// <value>The value is <c>true</c> if the search should be carried out characterwise. If the value is <c>false</c>, the search is carried out in entities of subfolders instead.<c>false</c>.</value>
-    bool SearchCommonSubstringsCharacterWise { get; set; }
-
-    /// <summary>Gets a value indicating whether the common substring panel is visible. Only if it is visible, all the operations will be carried out concerning common substrings.</summary>
-    /// <value>The value is <see langword="true"/> if this common substring panel is visible; otherwise, <see langword="false"/>.</value>
-    bool IsCommonSubstringPanelVisible { get; }
-
-    /// <summary>Fired when the user wants to choose another table for the selected tables.</summary>
-    event Action ChooseTableForSelectedItems;
-
-    /// <summary>Fired when the user wants to change the folder of the selected tables.</summary>
-    event Action ChooseFolderForSelectedItems;
-
-    /// <summary>Fired when the selection in the table list has changed.</summary>
-    event Action TableSelectionChanged;
-
-    /// <summary>Fired when the selection in the list of common substrings has changed.</summary>
-    event Action ListOfCommonSubstringsSelectionChanged;
-
-    /// <summary>Fired when the selection in the list of substring replacement candidates has changed.</summary>
-    event Action ListOfSubstringReplacementCandidatesSelectionChanged;
-
-    /// <summary>Fired when the choice, whether to search character-wise or subfolder-wise for the longest common substring, has changed.</summary>
-    event Action SearchCommonSubstringsCharacterWiseChanged;
-
-    /// <summary>Fired when the user wants to make the replacement of the common substring by the replacement candidate permanent.</summary>
-    event Action ApplySubstringReplacement;
-
-    /// <summary>Fired when the user changed the common substring text.</summary>
-    event Action CommonSubstringTextChanged;
-
-    /// <summary>Fired when the visibility of the substring replacement panel changed.</summary>
-    event Action CommonSubstringPanelVisibilityChanged;
   }
 
   /// <summary>
@@ -265,11 +218,11 @@ namespace Altaxo.Gui.Graph
   /// </summary>
   [UserControllerForObject(typeof(ExchangeTablesOfPlotItemsDocument))]
   [ExpectedTypeOfView(typeof(IExchangeTablesOfPlotItemsView))]
-  public class ExchangeTablesOfPlotItemsController : IMVCANController
+  public class ExchangeTablesOfPlotItemsController : MVCANControllerEditImmutableDocBase<ExchangeTablesOfPlotItemsDocument, IExchangeTablesOfPlotItemsView>
   {
     #region Inner classes
 
-    private class MyXTableListNode : SelectableListNode
+    private class MyXTableListNode : SelectableListNodeWithParent
     {
       private DataTable _newTable;
       private string _previewTableName;
@@ -349,57 +302,193 @@ namespace Altaxo.Gui.Graph
 
     #endregion Inner classes
 
-    private IExchangeTablesOfPlotItemsView _view;
-    private ExchangeTablesOfPlotItemsDocument _doc;
 
-    /// <summary>List of the tables that are referenced by the plots, the plot items etc.</summary>
-    private SelectableListNodeList _tableList;
 
     /// <summary>The common substring that is displayed in the text box, thus the user can modify it.</summary>
     private string _userModifiedCommonSubstring;
 
-    /// <summary>List of common substrings of the currently selected items in <see cref="_tableList"/>.</summary>
-    private SelectableListNodeList _commonSubstringsList;
 
-    /// <summary>List of possible replacement candidates for the currently selected common substring in <see cref="_commonSubstringsList"/>.</summary>
-    private SelectableListNodeList _substringReplacementCandidatesList;
 
     /// <summary>List with the names of all tables in the current project.</summary>
     private string[] _namesOfAllTables;
 
     private List<string> _listOfSelectedTableNames = new List<string>();
 
-    /// <summary>Initialize the controller with the document. If successfull, the function has to return true.</summary>
-    /// <param name="args">The arguments neccessary to create the controller. Normally, the first argument is the document, the second can be the parent of the document and so on.</param>
-    /// <returns>Returns <see langword="true"/> if successfull; otherwise <see langword="false"/>.</returns>
-    public bool InitializeDocument(params object[] args)
+    public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
-      if (args is null || 0 == args.Length || !(args[0] is ExchangeTablesOfPlotItemsDocument))
-        return false;
-
-      _doc = args[0] as ExchangeTablesOfPlotItemsDocument;
-      Initialize(true);
-      return true;
+      yield break;
     }
 
-    private void Initialize(bool initData)
+    public ExchangeTablesOfPlotItemsController()
     {
+      CmdApplyReplacementForCommonSubstring = new RelayCommand(EhApplySubstringReplacement);
+      CmdChooseFolder = new RelayCommand(EhChooseFolderForSelectedItems);
+      CmdChooseTable = new RelayCommand(EhChooseTableForSelectedItems);
+    }
+
+    #region Bindings
+
+
+    public ICommand CmdApplyReplacementForCommonSubstring { get; }
+
+    public ICommand CmdChooseTable { get; }
+
+    public ICommand CmdChooseFolder { get; }
+
+    private MultipleSelectableListNodeList _tableList;
+
+    /// <summary>List of the tables that are referenced by the plots, the plot items etc.
+    /// First column is 'old table' and should be bound to the 'Text' property. Second column is the new table name and should be bound to 'Text1' property. Third column is the status and should be bound to 'Text2' property.
+    /// </summary>
+    public MultipleSelectableListNodeList TableList
+    {
+      get => _tableList;
+      set
+      {
+        if (!(_tableList == value))
+        {
+          if (_tableList is { } oldC)
+            oldC.SelectedItemsChanged -= EhTableSelectionChanged;
+
+          _tableList = value;
+
+          if (_tableList is { } newC)
+            newC.SelectedItemsChanged += EhTableSelectionChanged;
+
+          OnPropertyChanged(nameof(TableList));
+        }
+      }
+    }
+
+
+    private ItemsController<string> _listOfCommonSubstrings;
+
+    /// <summary>Initializes the list of common substrings.
+    /// The list. There is only one column which should be bound to the <see cref="P:Altaxo.Collections.SelectableListNode.Text"/> property.
+    ///  List of common substrings of the currently selected items in <see cref="TableList"/>.
+    ///</summary>
+    public ItemsController<string> ListOfCommonSubstrings
+    {
+      get => _listOfCommonSubstrings;
+      set
+      {
+        if (!(_listOfCommonSubstrings == value))
+        {
+          _listOfCommonSubstrings = value;
+          OnPropertyChanged(nameof(ListOfCommonSubstrings));
+        }
+      }
+    }
+
+    private ItemsController<string> _listOfReplacementCandidates;
+
+    /// <summary>List of possible replacement candidates for the currently selected common substring in <see cref="_commonSubstringsList"/>.</summary>
+    public ItemsController<string> ListOfReplacementCandidates
+    {
+      get => _listOfReplacementCandidates;
+      set
+      {
+        if (!(_listOfReplacementCandidates == value))
+        {
+          _listOfReplacementCandidates = value;
+          OnPropertyChanged(nameof(ListOfReplacementCandidates));
+        }
+      }
+    }
+
+
+    private string _replacementCandidateText;
+
+    public string ReplacementCandidateText
+    {
+      get => _replacementCandidateText;
+      set
+      {
+        if (!(_replacementCandidateText == value))
+        {
+          _replacementCandidateText = value;
+          OnPropertyChanged(nameof(ReplacementCandidateText));
+        }
+      }
+    }
+
+    private string _commonSubstringText;
+
+    /// <summary>Gets or sets the common substring text. The user should be able to edit this text in a text box.</summary>
+    public string CommonSubstringText
+    {
+      get => _commonSubstringText;
+      set
+      {
+        if (!(_commonSubstringText == value))
+        {
+          _commonSubstringText = value;
+          OnPropertyChanged(nameof(CommonSubstringText));
+          EhCommonSubstringTextChanged();
+        }
+      }
+    }
+
+    private bool _isCommonSubstringOperationsVisible;
+
+    public bool IsCommonSubstringOperationsVisible
+    {
+      get => _isCommonSubstringOperationsVisible;
+      set
+      {
+        if (!(_isCommonSubstringOperationsVisible == value))
+        {
+          _isCommonSubstringOperationsVisible = value;
+          OnPropertyChanged(nameof(IsCommonSubstringOperationsVisible));
+          EhCommonSubstringPanelVisibilityChanged();
+        }
+      }
+    }
+
+    private bool _searchCommonSubstringCharacterwise;
+
+    public bool SearchCommonSubstringCharacterwise
+    {
+      get => _searchCommonSubstringCharacterwise;
+      set
+      {
+        if (!(_searchCommonSubstringCharacterwise == value))
+        {
+          _searchCommonSubstringCharacterwise = value;
+          OnPropertyChanged(nameof(SearchCommonSubstringCharacterwise));
+          EhSearchCommonSubstringsCharacterWiseChanged();
+        }
+      }
+    }
+
+    public bool SearchCommonSubstringSubfolderwise
+    {
+      get => !_searchCommonSubstringCharacterwise;
+      set => SearchCommonSubstringCharacterwise = !value;
+    }
+
+
+
+    #endregion
+
+    protected override void Initialize(bool initData)
+    {
+      base.Initialize(initData);
+
       if (initData)
       {
-        _tableList = new SelectableListNodeList();
+        var tableList = new MultipleSelectableListNodeList();
         foreach (var tablePath in _doc.TablesToChange.Keys)
         {
-          _tableList.Add(new MyXTableListNode(tablePath[tablePath.Count - 1], tablePath, false));
+          tableList.Add(new MyXTableListNode(tablePath[tablePath.Count - 1], tablePath, false));
         }
+        TableList = tableList;
 
         _listOfSelectedTableNames = new List<string>();
-        _substringReplacementCandidatesList = new SelectableListNodeList();
-        _commonSubstringsList = new SelectableListNodeList();
+        ListOfReplacementCandidates = new ItemsController<string>(new SelectableListNodeList(), EhListOfSubstringReplacementCandidatesSelectionChanged);
+         ListOfCommonSubstrings = new ItemsController<string>(new SelectableListNodeList(), EhListOfCommonSubstringsSelectionChanged);
       }
-      if (_view is not null)
-      {
-        _view.InitializeExchangeTableList(_tableList);
-      }
+      
     }
 
     #region User action events
@@ -460,7 +549,6 @@ namespace Altaxo.Gui.Graph
       }
 
       _tableList.ClearSelectionsAll();
-      _view.InitializeExchangeTableList(_tableList);
     }
 
     #endregion User action events
@@ -470,7 +558,7 @@ namespace Altaxo.Gui.Graph
     /// <summary>Called when the visibility of the substring replacement panel changed.</summary>
     private void EhCommonSubstringPanelVisibilityChanged()
     {
-      if (_view.IsCommonSubstringPanelVisible)
+      if (IsCommonSubstringOperationsVisible)
       {
         EhTableSelectionChanged();
       }
@@ -486,10 +574,18 @@ namespace Altaxo.Gui.Graph
       EhTableSelectionChanged();
     }
 
+
+    private void EhTableSelectionChanged(object sender, PropertyChangedEventArgs e)
+    {
+      if(e.PropertyName == nameof(MultipleSelectableListNodeList.SelectedItems))
+      {
+        EhTableSelectionChanged();
+      }
+    }
     /// <summary>Called when the selection in the table list has changed.</summary>
     private void EhTableSelectionChanged()
     {
-      if (_view.IsCommonSubstringPanelVisible)
+      if (IsCommonSubstringOperationsVisible)
       {
         // invalidate all that corresponds to the common substring business
         InvalidateAllCommonSubstringData();
@@ -498,48 +594,45 @@ namespace Altaxo.Gui.Graph
         if (_listOfSelectedTableNames.Count >= 2)
         {
           // we can found common substring if there are at least two items selected
-          if (_view.SearchCommonSubstringsCharacterWise)
+          if (SearchCommonSubstringCharacterwise)
             UpdateListOfCommonSubstringsCharacterWise();
           else
             UpdateListOfCommonSubstringsSubfolderWise();
 
-          _view.InitializeListOfCommonSubstrings(_commonSubstringsList);
-          if (_commonSubstringsList.FirstSelectedNode is not null)
+          if (ListOfCommonSubstrings.SelectedValue is not null)
           {
-            _userModifiedCommonSubstring = _commonSubstringsList.FirstSelectedNode.Text;
-            _view.CommonSubstringText = _userModifiedCommonSubstring;
+            _userModifiedCommonSubstring = ListOfCommonSubstrings.SelectedValue;
+            CommonSubstringText = _userModifiedCommonSubstring;
           }
 
           UpdateListOfSubstringReplacementCandidates(_userModifiedCommonSubstring);
-          _view.InitializeListOfReplacementCandidates(_substringReplacementCandidatesList);
         }
       }
     }
 
     /// <summary>Called when the selection in the list of common substrings has changed.</summary>
-    private void EhListOfCommonSubstringsSelectionChanged()
+    private void EhListOfCommonSubstringsSelectionChanged(string selectedValue)
     {
-      if (_commonSubstringsList.FirstSelectedNode is not null)
+      if (ListOfCommonSubstrings.SelectedValue is not null)
       {
-        _userModifiedCommonSubstring = _commonSubstringsList.FirstSelectedNode.Text;
-        _view.CommonSubstringText = _userModifiedCommonSubstring;
+        _userModifiedCommonSubstring = ListOfCommonSubstrings.SelectedValue;
+        CommonSubstringText = _userModifiedCommonSubstring;
       }
 
       UpdateListOfSubstringReplacementCandidates(_userModifiedCommonSubstring);
-      _view.InitializeListOfReplacementCandidates(_substringReplacementCandidatesList);
     }
 
     /// <summary>Called when the user changed the common substring text.</summary>
     private void EhCommonSubstringTextChanged()
     {
-      string substring = _view.CommonSubstringText;
+      string substring = CommonSubstringText;
       bool isModified = false;
       if (string.IsNullOrEmpty(substring))
       {
-        if (_commonSubstringsList.FirstSelectedNode is not null)
+        if (ListOfCommonSubstrings.SelectedValue is not null)
         {
-          _userModifiedCommonSubstring = _commonSubstringsList.FirstSelectedNode.Text;
-          _view.CommonSubstringText = _userModifiedCommonSubstring;
+          _userModifiedCommonSubstring = ListOfCommonSubstrings.SelectedValue;
+          CommonSubstringText = _userModifiedCommonSubstring;
           isModified = true;
         }
       }
@@ -552,14 +645,22 @@ namespace Altaxo.Gui.Graph
       if (isModified)
       {
         UpdateListOfSubstringReplacementCandidates(_userModifiedCommonSubstring);
-        _view.InitializeListOfReplacementCandidates(_substringReplacementCandidatesList);
       }
     }
 
     /// <summary>If the selection in the list of substring replacement candiates changed, then show a preview of the new table names in the table list.</summary>
-    private void EhListOfSubstringReplacementCandidatesSelectionChanged()
+    private void EhListOfSubstringReplacementCandidatesSelectionChanged(string selectedValue)
     {
-      var commonSubstringNode = _commonSubstringsList.FirstSelectedNode;
+      if(ListOfReplacementCandidates.SelectedItem is not null)
+      {
+        ReplacementCandidateText = ListOfReplacementCandidates.SelectedItem.ToString();
+      }
+      else
+      {
+        ReplacementCandidateText = null;
+      }
+
+      var commonSubstringNode = ListOfCommonSubstrings.SelectedItem;
       if (commonSubstringNode is null || string.IsNullOrEmpty(_userModifiedCommonSubstring))
         return;
       var commonSubstring = (IEnumerable<Collections.Text.SubstringPosition>)(commonSubstringNode.Tag);
@@ -575,7 +676,7 @@ namespace Altaxo.Gui.Graph
       else // maybeshortendstring is not part of the selected common substring
         return;
 
-      string replacementString = _substringReplacementCandidatesList.FirstSelectedNode is null ? null : _substringReplacementCandidatesList.FirstSelectedNode.Tag as string;
+      string replacementString = ListOfReplacementCandidates.SelectedValue;
       if (replacementString is null)
         return;
 
@@ -599,8 +700,8 @@ namespace Altaxo.Gui.Graph
     {
       _userModifiedCommonSubstring = null;
       _listOfSelectedTableNames.Clear();
-      _commonSubstringsList.Clear();
-      _substringReplacementCandidatesList.Clear();
+      ListOfCommonSubstrings.Items.Clear();
+      ListOfReplacementCandidates.Items.Clear();
 
       foreach (MyXTableListNode node in _tableList)
         node.PreviewTableName = null;
@@ -629,14 +730,14 @@ namespace Altaxo.Gui.Graph
       lcs.Evaluate();
       if (lcs.MaximumNumberOfWordsWithCommonSubstring == _listOfSelectedTableNames.Count)
       {
-        _commonSubstringsList = new SelectableListNodeList();
+        ListOfCommonSubstrings.Items.Clear();
         foreach (var pos in lcs.GetSubstringPositionsCommonToTheNumberOfWords(_listOfSelectedTableNames.Count))
         {
           var first = pos.FirstPosition;
           var commonString = _listOfSelectedTableNames[first.WordIndex].Substring(first.Start, first.Count);
-          _commonSubstringsList.Add(new SelectableListNode(commonString, pos, false));
+          ListOfCommonSubstrings.Items.Add(new SelectableListNode(commonString, pos, false));
         }
-        _commonSubstringsList[0].IsSelected = true;
+        ListOfCommonSubstrings.SelectedItem = ListOfCommonSubstrings.Items[0];
       }
     }
 
@@ -676,7 +777,7 @@ namespace Altaxo.Gui.Graph
       lcs.Evaluate();
       if (lcs.MaximumNumberOfWordsWithCommonSubstring == _listOfSelectedTableNames.Count)
       {
-        _commonSubstringsList = new SelectableListNodeList();
+        ListOfCommonSubstrings.Items.Clear();
         foreach (var pos in lcs.GetSubstringPositionsCommonToTheNumberOfWords(_listOfSelectedTableNames.Count))
         {
           var first = pos.FirstPosition;
@@ -689,9 +790,9 @@ namespace Altaxo.Gui.Graph
             var toStart = JoinPartsToName(word, 0, entry.Start);
             poss.Add(new Collections.Text.SubstringPosition(entry.WordIndex, toStart.Length, commonString.Length));
           }
-          _commonSubstringsList.Add(new SelectableListNode(commonString, poss, false));
+          ListOfCommonSubstrings.Items.Add(new SelectableListNode(commonString, poss, false));
         }
-        _commonSubstringsList[0].IsSelected = true;
+        ListOfCommonSubstrings.SelectedItem = ListOfCommonSubstrings.Items[0];
       }
     }
 
@@ -702,8 +803,8 @@ namespace Altaxo.Gui.Graph
     /// <param name="maybeShortendedSubstring">The maybe shortended substring.</param>
     private void UpdateListOfSubstringReplacementCandidates(string maybeShortendedSubstring)
     {
-      _substringReplacementCandidatesList.Clear();
-      var commonSubstringNode = _commonSubstringsList.FirstSelectedNode;
+      ListOfReplacementCandidates.Items.Clear();
+      var commonSubstringNode = ListOfCommonSubstrings.SelectedItem;
       if (string.IsNullOrEmpty(maybeShortendedSubstring))
         return;
 
@@ -765,75 +866,14 @@ namespace Altaxo.Gui.Graph
       var larr = allReplacementStrings.ToArray();
       Array.Sort(larr);
       foreach (var s in larr)
-        _substringReplacementCandidatesList.Add(new SelectableListNode(s, s, false));
-      if (_substringReplacementCandidatesList.Count > 0)
-        _substringReplacementCandidatesList[0].IsSelected = true;
-    }
-
-    #region IMVCANController
-
-    /// <summary>
-    /// Not used here.
-    /// </summary>
-    public UseDocument UseDocumentCopy
-    {
-      set { }
-    }
-
-    /// <summary>Returns the Gui element that shows the model to the user.</summary>
-    public object ViewObject
-    {
-      get
-      {
-        return _view;
-      }
-      set
-      {
-        if (_view is not null)
-        {
-          _view.ChooseTableForSelectedItems -= EhChooseTableForSelectedItems;
-          _view.ChooseFolderForSelectedItems -= EhChooseFolderForSelectedItems;
-          _view.TableSelectionChanged -= EhTableSelectionChanged;
-          _view.ListOfCommonSubstringsSelectionChanged -= EhListOfCommonSubstringsSelectionChanged;
-          _view.ListOfSubstringReplacementCandidatesSelectionChanged -= EhListOfSubstringReplacementCandidatesSelectionChanged;
-          _view.SearchCommonSubstringsCharacterWiseChanged -= EhSearchCommonSubstringsCharacterWiseChanged;
-          _view.ApplySubstringReplacement -= EhApplySubstringReplacement;
-          _view.CommonSubstringTextChanged -= EhCommonSubstringTextChanged;
-          _view.CommonSubstringPanelVisibilityChanged -= EhCommonSubstringPanelVisibilityChanged;
-        }
-
-        _view = value as IExchangeTablesOfPlotItemsView;
-
-        if (_view is not null)
-        {
-          Initialize(false);
-
-          _view.ChooseTableForSelectedItems += EhChooseTableForSelectedItems;
-          _view.ChooseFolderForSelectedItems += EhChooseFolderForSelectedItems;
-          _view.TableSelectionChanged += EhTableSelectionChanged;
-          _view.ListOfCommonSubstringsSelectionChanged += EhListOfCommonSubstringsSelectionChanged;
-          _view.ListOfSubstringReplacementCandidatesSelectionChanged += EhListOfSubstringReplacementCandidatesSelectionChanged;
-          _view.SearchCommonSubstringsCharacterWiseChanged += EhSearchCommonSubstringsCharacterWiseChanged;
-          _view.ApplySubstringReplacement += EhApplySubstringReplacement;
-          _view.CommonSubstringTextChanged += EhCommonSubstringTextChanged;
-          _view.CommonSubstringPanelVisibilityChanged += EhCommonSubstringPanelVisibilityChanged;
-        }
-      }
-    }
-
-    /// <summary>Returns the model (document) that this controller manages.</summary>
-    public object ModelObject
-    {
-      get { return _doc; }
-    }
-
-    public void Dispose()
-    {
+        ListOfReplacementCandidates.Items.Add(new SelectableListNode(s, s, false));
+      if (ListOfReplacementCandidates.Items.Count > 0)
+        ListOfReplacementCandidates.SelectedItem = ListOfReplacementCandidates.Items[0];
     }
 
     /// <summary>Called when the user input has to be applied to the document being controlled. Returns true if Apply is successfull.</summary>
     /// <returns>True if the apply was successfull, otherwise false.</returns>
-    public bool Apply(bool disposeController)
+    public override bool Apply(bool disposeController)
     {
       _doc.TablesToChange.Clear();
       foreach (MyXTableListNode entry in _tableList)
@@ -845,21 +885,7 @@ namespace Altaxo.Gui.Graph
         }
       }
       _doc.ApplyTableExchanges();
-      return true;
+      return ApplyEnd(true, disposeController);
     }
-
-    /// <summary>
-    /// Try to revert changes to the model, i.e. restores the original state of the model.
-    /// </summary>
-    /// <param name="disposeController">If set to <c>true</c>, the controller should release all temporary resources, since the controller is not needed anymore.</param>
-    /// <returns>
-    ///   <c>True</c> if the revert operation was successfull; <c>false</c> if the revert operation was not possible (i.e. because the controller has not stored the original state of the model).
-    /// </returns>
-    public bool Revert(bool disposeController)
-    {
-      return false;
-    }
-
-    #endregion IMVCANController
   }
 }
