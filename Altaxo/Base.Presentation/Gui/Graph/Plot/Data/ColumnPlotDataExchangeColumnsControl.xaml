@@ -61,6 +61,7 @@
 
 		<ListBox Grid.Row="4" Grid.Column="0" 
                  ItemsSource="{Binding AvailableTableColumnsForListView}"
+                 SelectedItem="{Binding AvailableTableColumnsListSelectedItem}"
                  Visibility="{Binding IsTableColumnsListVisible, Converter={x:Static axogcc:FalseToVisibilityHiddenConverter.Instance}}"
                  ScrollViewer.VerticalScrollBarVisibility="Visible"
 			     dd:DragDrop.IsDragSource="True"

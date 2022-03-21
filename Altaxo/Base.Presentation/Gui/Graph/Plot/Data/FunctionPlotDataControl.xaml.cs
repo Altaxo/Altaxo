@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -22,11 +22,6 @@
 
 #endregion Copyright
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows;
 using System.Windows.Controls;
 
 namespace Altaxo.Gui.Graph.Plot.Data
@@ -40,23 +35,5 @@ namespace Altaxo.Gui.Graph.Plot.Data
     {
       InitializeComponent();
     }
-
-    private void EhEditText_Click(object sender, RoutedEventArgs e)
-    {
-      if (EditText is not null)
-        EditText(this, e);
-    }
-
-    #region IFunctionPlotDataView Members
-
-    public event EventHandler? EditText;
-
-    public void InitializeFunctionText(string text, bool editable)
-    {
-      _edText.Text = text;
-      _btEditText.IsEnabled = editable;
-    }
-
-    #endregion IFunctionPlotDataView Members
   }
 }

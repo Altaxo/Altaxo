@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel;
 using System.Windows.Input;
 using Altaxo.Gui.Common;
 
@@ -85,7 +80,21 @@ namespace Altaxo.Gui.Graph.Plot.Data
 
     #region Bindings
 
-    ISingleColumnControllerParent _parent;
+    private ISingleColumnControllerParent _parent;
+
+    public ISingleColumnControllerParent Parent
+    {
+      get => _parent;
+      set
+      {
+        if (!(_parent == value))
+        {
+          _parent = value;
+          OnPropertyChanged(nameof(Parent));
+        }
+      }
+    }
+
 
     public ICommand CmdColumnAddTo { get; }
     public ICommand CmdColumnEdit { get; }
@@ -102,7 +111,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
 
     public ICommand CmdCloseTransformationPopup { get; }
 
-    public PlotColumnTag Tag {get; set;}
+    public PlotColumnTag Tag { get; set; }
 
     private string _groupName;
 
@@ -137,7 +146,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
 
     private string _columnText;
 
-    
+
 
     public string ColumnText
     {
@@ -337,12 +346,9 @@ namespace Altaxo.Gui.Graph.Plot.Data
         isCopy = false;
         isMove = false;
 
-        if(targetItem is PlotColumnTag tag)
-        {
-          _parent.EhPlotColumnDrop(data);
-          isCopy = true;
-          isMove = false;
-        }
+        _parent.EhPlotColumnDrop(data);
+        isCopy = true;
+        isMove = false;
       }
 
       public void DropCanAcceptData(object data, object targetItem, DragDropRelativeInsertPosition insertPosition, bool isCtrlKeyPressed, bool isShiftKeyPressed, out bool canCopy, out bool canMove, out bool itemIsSwallowingData)
@@ -370,12 +376,9 @@ namespace Altaxo.Gui.Graph.Plot.Data
         isCopy = false;
         isMove = false;
 
-        if (targetItem is PlotColumnTag tag)
-        {
-          _parent.EhPlotColumnDrop(data);
-          isCopy = true;
-          isMove = false;
-        }
+        _parent.EhPlotColumnDrop(data);
+        isCopy = true;
+        isMove = false;
       }
 
       public void DropCanAcceptData(object data, object targetItem, DragDropRelativeInsertPosition insertPosition, bool isCtrlKeyPressed, bool isShiftKeyPressed, out bool canCopy, out bool canMove, out bool itemIsSwallowingData)

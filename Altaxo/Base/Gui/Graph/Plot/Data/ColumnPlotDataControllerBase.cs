@@ -36,8 +36,6 @@ using Altaxo.Data.Selections;
 using Altaxo.Graph.Plot.Data;
 using Altaxo.Gui.Common;
 using Altaxo.Gui.Data.Selections;
-using Altaxo.Gui.Graph.Plot.Data;
-using Altaxo.Main;
 
 namespace Altaxo.Gui.Graph.Plot.Data
 {
@@ -228,15 +226,15 @@ namespace Altaxo.Gui.Graph.Plot.Data
     /// Designates the latest focused element that can act as column source.
     /// </summary>
     ColumnSourceElement _lastActiveColumnsSource;
-  
 
-  
+
+
 
 
     /// <summary>Tasks which updates the _fittingTables.</summary>
     protected Task _updateMatchingTablesTask;
 
-   
+
 
     /// <summary>TokenSource to cancel the tasks which updates the _fittingTables.</summary>
     protected CancellationTokenSource _updateMatchingTablesTaskCancellationTokenSource = new CancellationTokenSource();
@@ -381,7 +379,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
           _rowSelectionController = value;
 
           if (_rowSelectionController is { } newC)
-          newC.ItemsChanged += EhRowSelectionItemsChanged;
+            newC.ItemsChanged += EhRowSelectionItemsChanged;
 
           OnPropertyChanged(nameof(RowSelectionController));
         }
@@ -395,6 +393,27 @@ namespace Altaxo.Gui.Graph.Plot.Data
     /// Initialize the list of available data columns in the selected table and for the selected group number.
     /// </summary>
     public NGTreeNodeCollection AvailableTableColumnsForListView => IsTableColumnsListVisible ? _availableDataColumns.Nodes : null;
+
+    private NGTreeNode _availableTableColumnsListSelectedItem;
+
+    public NGTreeNode AvailableTableColumnsListSelectedItem
+    {
+      get => _availableTableColumnsListSelectedItem;
+      set
+      {
+        if (!(_availableTableColumnsListSelectedItem == value))
+        {
+          _availableTableColumnsListSelectedItem = value;
+          OnPropertyChanged(nameof(AvailableTableColumnsListSelectedItem));
+          if (value is not null)
+          {
+            _availableDataColumns.ClearSelectionRecursively();
+            value.IsSelected = true;
+          }
+        }
+      }
+    }
+
 
     /// <summary>
     /// Initialize the list of available data columns in the selected table and for the selected group number.
@@ -570,7 +589,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
 
 
 
-    private ObservableCollection<SingleColumnController> _plotItemColumns;
+    private ObservableCollection<SingleColumnController> _plotItemColumns = new ObservableCollection<SingleColumnController>();
 
     public ObservableCollection<SingleColumnController> PlotItemColumns
     {
@@ -704,11 +723,11 @@ namespace Altaxo.Gui.Graph.Plot.Data
         TriggerUpdateOfMatchingTables();
 
 
-       
 
-        
+
+
       }
-      if(_view is not null)
+      if (_view is not null)
       {
         View_PlotColumns_Initialize();
         View_PlotColumns_UpdateAll();
@@ -780,7 +799,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
       }
     }
 
-   
+
 
     #endregion Initialize, Apply, Attach, Detach
 
@@ -817,11 +836,11 @@ namespace Altaxo.Gui.Graph.Plot.Data
     {
       var allItems = GetEnumerationForAllGroupsOfPlotColumns(_columnGroup);
       _plotItemColumns.Clear();
-      foreach(var group in allItems)
+      foreach (var group in allItems)
       {
         foreach (var item in group.Item2)
         {
-          _plotItemColumns.Add(new SingleColumnController() { GroupName = group.GroupName, LabelText = item.ColumnLabel, Tag = item.PlotColumnTag });
+          _plotItemColumns.Add(new SingleColumnController() { Parent = this, GroupName = group.GroupName, LabelText = item.ColumnLabel, Tag = item.PlotColumnTag });
         }
       }
     }
@@ -834,7 +853,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
           var info = _columnGroup[i].Columns[j];
           var tag = new PlotColumnTag(i, j);
           var ctrl = _plotItemColumns.FirstOrDefault(x => x.Tag == tag);
-          if(ctrl is not null)
+          if (ctrl is not null)
           {
             ctrl.ColumnText = info.PlotColumnBoxText;
             ctrl.ColumnToolTip = info.PlotColumnToolTip;
@@ -860,7 +879,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
       // If data table has changed, try to choose a group number that matches as many as possible columns
       _doc.GroupNumber = ChooseBestMatchingGroupNumber(tg.DataColumns);
       SelectedGroupNumber = _doc.GroupNumber;
-      IsGroupNumberEnabled= availableGN.Count > 1 || (availableGN.Count == 1 && availableGN.Min != _doc.GroupNumber);
+      IsGroupNumberEnabled = availableGN.Count > 1 || (availableGN.Count == 1 && availableGN.Min != _doc.GroupNumber);
 
       ReplaceColumnsWithColumnsFromNewTableGroupAndUpdateColumnState();
 
@@ -1418,7 +1437,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
 
     #endregion Transformation
 
-   
+
 
     /// <summary>
     /// Sets the additional columns that are used by some of the plot styles.
@@ -1504,7 +1523,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
       {
         var ttype = _parent.AvailableTransformations.SelectedValue;
 
-        if(ttype is not null)
+        if (ttype is not null)
         {
           data = ttype;
           canCopy = true;
@@ -1539,7 +1558,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
       {
         var selNode = _parent._availableDataColumns.FirstSelectedNode;
         // to start a drag, at least one item must be selected
-        if(selNode is not null && (selNode.Tag is DataColumn dc))
+        if (selNode is not null && (selNode.Tag is DataColumn dc))
         {
           data = dc;
           canCopy = true;
@@ -1561,7 +1580,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
       {
       }
 
-     
+
     }
 
     public class OtherAvailableColumnsDragHandlerImpl : IMVVMDragHandler
@@ -1606,11 +1625,6 @@ namespace Altaxo.Gui.Graph.Plot.Data
       {
       }
     }
-
-
-
-
-
 
     #region ColumnDrop hander
 

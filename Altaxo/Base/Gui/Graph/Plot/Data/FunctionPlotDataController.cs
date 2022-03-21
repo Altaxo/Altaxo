@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -23,27 +23,23 @@
 #endregion Copyright
 
 #nullable disable
-using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Windows.Input;
 using Altaxo.Graph.Plot.Data;
 
 namespace Altaxo.Gui.Graph.Plot.Data
 {
   #region Interfaces
 
-  public interface IFunctionPlotDataView
+  public interface IFunctionPlotDataView : IDataContextAwareView
   {
-    event EventHandler EditText;
-
-    void InitializeFunctionText(string text, bool editable);
   }
 
   #endregion Interfaces
 
   [UserControllerForObject(typeof(XYFunctionPlotData))]
   [ExpectedTypeOfView(typeof(IFunctionPlotDataView))]
-  internal class FunctionPlotDataController : MVCANControllerEditOriginalDocBase<XYFunctionPlotData, IFunctionPlotDataView>
+  public class FunctionPlotDataController : MVCANControllerEditOriginalDocBase<XYFunctionPlotData, IFunctionPlotDataView>
   {
     private IMVCAController _functionController;
 
@@ -51,6 +47,47 @@ namespace Altaxo.Gui.Graph.Plot.Data
     {
       yield return new ControllerAndSetNullMethod(_functionController, () => _functionController = null);
     }
+
+    public FunctionPlotDataController()
+    {
+      CmdEdit = new RelayCommand(EhView_EditText);
+    }
+
+    #region Bindings
+
+    public ICommand CmdEdit { get; }
+
+    private string _functionText;
+
+    public string FunctionText
+    {
+      get => _functionText;
+      set
+      {
+        if (!(_functionText == value))
+        {
+          _functionText = value;
+          OnPropertyChanged(nameof(FunctionText));
+        }
+      }
+    }
+
+    private bool _functionTextIsEditable;
+
+    public bool FunctionTextIsEditable
+    {
+      get => _functionTextIsEditable;
+      set
+      {
+        if (!(_functionTextIsEditable == value))
+        {
+          _functionTextIsEditable = value;
+          OnPropertyChanged(nameof(FunctionTextIsEditable));
+        }
+      }
+    }
+
+    #endregion
 
     protected override void Initialize(bool initData)
     {
@@ -70,7 +107,8 @@ namespace Altaxo.Gui.Graph.Plot.Data
         else
           text = _doc.Function.ToString();
 
-        _view.InitializeFunctionText(text, editable);
+        FunctionText = text;
+        FunctionTextIsEditable = editable;
       }
     }
 
@@ -79,19 +117,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
       return ApplyEnd(true, disposeController);
     }
 
-    protected override void AttachView()
-    {
-      base.AttachView();
-      _view.EditText += EhView_EditText;
-    }
-
-    protected override void DetachView()
-    {
-      _view.EditText -= EhView_EditText;
-      base.DetachView();
-    }
-
-    private void EhView_EditText(object sender, EventArgs e)
+    private void EhView_EditText()
     {
       if (Current.Gui.ShowDialog(_functionController, "Edit script"))
       {

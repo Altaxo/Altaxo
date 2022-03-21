@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2018 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -23,8 +23,6 @@
 #endregion Copyright
 
 #nullable disable
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -32,30 +30,14 @@ using System.Threading.Tasks;
 using Altaxo.Collections;
 using Altaxo.Data;
 using Altaxo.Graph.Plot.Data;
+using Altaxo.Gui.Common;
 
 namespace Altaxo.Gui.Graph.Plot.Data
 {
   #region Interfaces
 
-  public interface IColumnPlotDataExchangeTableView
+  public interface IColumnPlotDataExchangeTableView : IDataContextAwareView
   {
-    /// <summary>
-    /// Initialize the list of available tables.
-    /// </summary>
-    /// <param name="items">The items.</param>
-    void AvailableTables_Initialize(SelectableListNodeList items);
-
-    /// <summary>
-    /// Initialize the list of tables that fit to the current chosen columns.
-    /// </summary>
-    /// <param name="items">The items.</param>
-    void MatchingTables_Initialize(SelectableListNodeList items);
-
-    event Action SelectedTableChanged;
-
-    event Action SelectedMatchingTableChanged;
-
-    void Diagnostics_Initialize(int numberOfPlotItems, int numberOfSuccessfullyChangedColumns, int numberOfUnsuccessfullyChangedColumns);
   }
 
   #endregion Interfaces
@@ -69,12 +51,6 @@ namespace Altaxo.Gui.Graph.Plot.Data
     #region Members
 
     protected bool _isDirty = false;
-
-    /// <summary>All datatables of the document</summary>
-    protected SelectableListNodeList _availableTables = new SelectableListNodeList();
-
-    /// <summary>Tuples from tables and group numbers, for which the columns in that group contain all that column names which are currently plot columns in our controller.</summary>
-    protected SelectableListNodeList _matchingTables = new SelectableListNodeList();
 
     /// <summary>Tasks which updates the _fittingTables.</summary>
     protected Task _updateMatchingTablesTask;
@@ -90,6 +66,121 @@ namespace Altaxo.Gui.Graph.Plot.Data
     {
       yield break;
     }
+
+    #region Bindings
+
+    private ItemsController<DataTable> _availableTables;
+
+    /// <summary>All datatables of the document</summary>
+    public ItemsController<DataTable> AvailableTables
+    {
+      get => _availableTables;
+      set
+      {
+        if (!(_availableTables == value))
+        {
+          _availableTables?.Dispose();
+          _availableTables = value;
+          OnPropertyChanged(nameof(AvailableTables));
+        }
+      }
+    }
+
+    private ItemsController<DataTable> _matchingTables;
+
+    /// <summary>Tuples from tables and group numbers, for which the columns in that group contain all that column names which are currently plot columns in our controller.</summary>
+    public ItemsController<DataTable> MatchingTables
+    {
+      get => _matchingTables;
+      set
+      {
+        if (!(_matchingTables == value))
+        {
+          _matchingTables?.Dispose();
+          _matchingTables = value;
+          OnPropertyChanged(nameof(MatchingTables));
+        }
+      }
+    }
+
+    private string _diagnosticsNumberOfPlotItemsText = "-x plot items changed";
+
+    public string DiagnosticsNumberOfPlotItemsText
+    {
+      get => _diagnosticsNumberOfPlotItemsText;
+      set
+      {
+        if (!(_diagnosticsNumberOfPlotItemsText == value))
+        {
+          _diagnosticsNumberOfPlotItemsText = value;
+          OnPropertyChanged(nameof(DiagnosticsNumberOfPlotItemsText));
+        }
+      }
+    }
+
+    private string _diagnosticsNumberOfSuccessfullyChangedColumnsText = "- x columns successfully exchanged";
+
+    public string DiagnosticsNumberOfSuccessfullyChangedColumnsText
+    {
+      get => _diagnosticsNumberOfSuccessfullyChangedColumnsText;
+      set
+      {
+        if (!(_diagnosticsNumberOfSuccessfullyChangedColumnsText == value))
+        {
+          _diagnosticsNumberOfSuccessfullyChangedColumnsText = value;
+          OnPropertyChanged(nameof(DiagnosticsNumberOfSuccessfullyChangedColumnsText));
+        }
+      }
+    }
+
+    private bool _DiagnosticsNumberOfSuccessfullyChangedColumnsIsVisible;
+
+    public bool DiagnosticsNumberOfSuccessfullyChangedColumnsIsVisible
+    {
+      get => _DiagnosticsNumberOfSuccessfullyChangedColumnsIsVisible;
+      set
+      {
+        if (!(_DiagnosticsNumberOfSuccessfullyChangedColumnsIsVisible == value))
+        {
+          _DiagnosticsNumberOfSuccessfullyChangedColumnsIsVisible = value;
+          OnPropertyChanged(nameof(DiagnosticsNumberOfSuccessfullyChangedColumnsIsVisible));
+        }
+      }
+    }
+
+
+    private string _DiagnosticsNumberOfUnsuccessfullyChangedColumnsText = "- x columns failed to exchange";
+
+    public string DiagnosticsNumberOfUnsuccessfullyChangedColumnsText
+    {
+      get => _DiagnosticsNumberOfUnsuccessfullyChangedColumnsText;
+      set
+      {
+        if (!(_DiagnosticsNumberOfUnsuccessfullyChangedColumnsText == value))
+        {
+          _DiagnosticsNumberOfUnsuccessfullyChangedColumnsText = value;
+          OnPropertyChanged(nameof(DiagnosticsNumberOfUnsuccessfullyChangedColumnsText));
+        }
+      }
+    }
+
+    private bool _DiagnosticsNumberOfUnsuccessfullyChangedColumnsIsVisible;
+
+    public bool DiagnosticsNumberOfUnsuccessfullyChangedColumnsIsVisible
+    {
+      get => _DiagnosticsNumberOfUnsuccessfullyChangedColumnsIsVisible;
+      set
+      {
+        if (!(_DiagnosticsNumberOfUnsuccessfullyChangedColumnsIsVisible == value))
+        {
+          _DiagnosticsNumberOfUnsuccessfullyChangedColumnsIsVisible = value;
+          OnPropertyChanged(nameof(DiagnosticsNumberOfUnsuccessfullyChangedColumnsIsVisible));
+        }
+      }
+    }
+
+
+    #endregion
 
     public override void Dispose(bool isDisposing)
     {
@@ -126,21 +217,17 @@ namespace Altaxo.Gui.Graph.Plot.Data
         // Initialize tables
         string[] tables = Current.Project.DataTableCollection.GetSortedTableNames();
 
-        _availableTables.Clear();
+        var availableTables = new SelectableListNodeList();
         DataTable tg = _doc.OriginalTable;
         foreach (var tableName in tables)
         {
-          _availableTables.Add(new SelectableListNode(tableName, Current.Project.DataTableCollection[tableName], tg is not null && tg.Name == tableName));
+          availableTables.Add(new SelectableListNode(tableName, Current.Project.DataTableCollection[tableName], tg is not null && tg.Name == tableName));
         }
+        AvailableTables = new ItemsController<DataTable>(availableTables, EhView_TableSelectionChanged);
 
         TriggerUpdateOfMatchingTables();
-      }
 
-      if (_view is not null)
-      {
-        _view.AvailableTables_Initialize(_availableTables);
-        _view.MatchingTables_Initialize(_matchingTables);
-        _view.Diagnostics_Initialize(0, 0, 0);
+        Diagnostics_Initialize(0, 0, 0);
       }
     }
 
@@ -149,33 +236,45 @@ namespace Altaxo.Gui.Graph.Plot.Data
       return ApplyEnd(true, disposeController);
     }
 
-    protected override void AttachView()
+    public void Diagnostics_Initialize(int numberOfPlotItems, int numberOfSuccessfullyChangedColumns, int numberOfUnsuccessfullyChangedColumns)
     {
-      base.AttachView();
+      string text1, text2, text3;
 
-      _view.SelectedTableChanged += EhView_TableSelectionChanged;
+      if (0 == numberOfPlotItems)
+        text1 = "- No plot items with exchanged tables";
+      else if (1 == numberOfPlotItems)
+        text1 = "- One plot item with an exchanged table";
+      else
+        text1 = string.Format(Altaxo.Settings.GuiCulture.Instance, "- {0} plot items with exchanged tables", numberOfPlotItems);
 
-      _view.SelectedMatchingTableChanged += EhView_MatchingTableSelectionChanged;
-    }
+      if (0 == numberOfSuccessfullyChangedColumns)
+        text2 = null;
+      else if (1 == numberOfSuccessfullyChangedColumns)
+        text2 = "- One successfully changed column";
+      else
+        text2 = string.Format(Altaxo.Settings.GuiCulture.Instance, "- {0} successfully changed columns", numberOfSuccessfullyChangedColumns);
 
-    protected override void DetachView()
-    {
-      _view.SelectedTableChanged -= EhView_TableSelectionChanged;
+      if (0 == numberOfUnsuccessfullyChangedColumns)
+        text3 = null;
+      else if (1 == numberOfUnsuccessfullyChangedColumns)
+        text3 = "- One column could not be replaced!";
+      else
+        text3 = string.Format(Altaxo.Settings.GuiCulture.Instance, "- {0} columns could not be replaced!", numberOfUnsuccessfullyChangedColumns);
 
-      _view.SelectedMatchingTableChanged -= EhView_MatchingTableSelectionChanged;
+      DiagnosticsNumberOfPlotItemsText = text1;
+      DiagnosticsNumberOfSuccessfullyChangedColumnsText = text2;
+      DiagnosticsNumberOfUnsuccessfullyChangedColumnsText = text3;
 
-      base.DetachView();
+      DiagnosticsNumberOfSuccessfullyChangedColumnsIsVisible = text2 is not null;
+      DiagnosticsNumberOfUnsuccessfullyChangedColumnsIsVisible = text3 is not null;
     }
 
     #endregion Initialize, Apply, Attach, Detach
 
     #region AvailableDataTables
 
-    public void EhView_TableSelectionChanged()
+    public void EhView_TableSelectionChanged(DataTable tg)
     {
-      var node = _availableTables.FirstSelectedNode;
-      var tg = node?.Tag as DataTable;
-
       if (tg is null || object.ReferenceEquals(_doc.NewTable, tg))
         return;
 
@@ -192,22 +291,14 @@ namespace Altaxo.Gui.Graph.Plot.Data
     /// <summary>
     /// Occurs if the selection for the matching tables has changed.
     /// </summary>
-    public void EhView_MatchingTableSelectionChanged()
+    public void EhView_MatchingTableSelectionChanged(DataTable tag)
     {
-      var node = _matchingTables.FirstSelectedNode;
-      if (node is null)
-        return; // no node selected
-
-      var tag = (DataTable)node.Tag;
-
       if (object.ReferenceEquals(_doc.NewTable, tag)) // then nothing will change
         return;
 
       _doc.NewTable = tag;
       UpdateDiagnostics();
-
-      _availableTables.SetSelection((nd) => object.ReferenceEquals(nd.Tag, _doc.NewTable));
-      _view?.AvailableTables_Initialize(_availableTables);
+     // _availableTables.SelectedValue = _doc.NewTable;
     }
 
     private void TriggerUpdateOfMatchingTables()
@@ -218,9 +309,6 @@ namespace Altaxo.Gui.Graph.Plot.Data
         while (_updateMatchingTablesTask?.Status == TaskStatus.Running)
           System.Threading.Thread.Sleep(20);
       }
-
-      _matchingTables = new SelectableListNodeList();
-      _view?.MatchingTables_Initialize(_matchingTables);
 
       var token = _updateMatchingTablesTaskCancellationTokenSource.Token;
       _updateMatchingTablesTask = Task.Factory.StartNew(() => UpdateMatchingTables(token));
@@ -238,8 +326,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
           object.ReferenceEquals(table, _doc.NewTable)));
       }
 
-      _matchingTables = fittingTables2;
-      Current.Dispatcher.InvokeAndForget(() => _view?.MatchingTables_Initialize(_matchingTables));
+      MatchingTables = new ItemsController<DataTable>(fittingTables2, EhView_MatchingTableSelectionChanged);
     }
 
     /// <summary>
@@ -315,7 +402,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
     private void UpdateDiagnostics()
     {
       (int NumberOfPlotItemsChanged, int NumberOfSuccessFullyChangedColumns, int NumberOfUnsuccessfullyChangedColumns) = _doc.TestChangeTableForPlotItems();
-      _view?.Diagnostics_Initialize(NumberOfPlotItemsChanged, NumberOfSuccessFullyChangedColumns, NumberOfUnsuccessfullyChangedColumns);
+      Diagnostics_Initialize(NumberOfPlotItemsChanged, NumberOfSuccessFullyChangedColumns, NumberOfUnsuccessfullyChangedColumns);
     }
   }
 }

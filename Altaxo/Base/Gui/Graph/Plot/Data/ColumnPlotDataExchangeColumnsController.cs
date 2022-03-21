@@ -211,7 +211,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
 
     #region Bindings
 
-    private ObservableCollection<int> _availabeGroupNumbers;
+    private ObservableCollection<int> _availabeGroupNumbers = new ObservableCollection<int>();
 
     public ObservableCollection<int> AvailabeGroupNumbers
     {
@@ -263,6 +263,25 @@ namespace Altaxo.Gui.Graph.Plot.Data
     /// Initialize the list of available data columns in the selected table and for the selected group number.
     /// </summary>
     public NGTreeNodeCollection AvailableTableColumnsForListView => IsTableColumnsListVisible ? _availableDataColumns.Nodes : null;
+
+    private NGTreeNode _availableTableColumnsListSelectedItem;
+    public NGTreeNode AvailableTableColumnsListSelectedItem
+    {
+      get => _availableTableColumnsListSelectedItem;
+      set
+      {
+        if (!(_availableTableColumnsListSelectedItem == value))
+        {
+          _availableTableColumnsListSelectedItem = value;
+          OnPropertyChanged(nameof(AvailableTableColumnsListSelectedItem));
+          if (value is not null)
+          {
+            _availableDataColumns.ClearSelectionRecursively();
+            value.IsSelected = true;
+          }
+        }
+      }
+    }
 
     /// <summary>
     /// Initialize the list of available data columns in the selected table and for the selected group number.
@@ -333,7 +352,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
       }
     }
 
-    private ObservableCollection<SingleColumnController> _plotItemColumns;
+    private ObservableCollection<SingleColumnController> _plotItemColumns = new ObservableCollection<SingleColumnController>();
 
     public ObservableCollection<SingleColumnController> PlotItemColumns
     {
@@ -467,7 +486,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
       {
         foreach (var item in group.Item2)
         {
-          _plotItemColumns.Add(new SingleColumnController() { GroupName = group.GroupName, LabelText = item.ColumnLabel, Tag = item.PlotColumnTag });
+          _plotItemColumns.Add(new SingleColumnController() { Parent=this, GroupName = group.GroupName, LabelText = item.ColumnLabel, Tag = item.PlotColumnTag });
         }
       }
     }

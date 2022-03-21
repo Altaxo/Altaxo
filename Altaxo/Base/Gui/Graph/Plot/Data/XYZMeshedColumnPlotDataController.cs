@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2014 Dr. Dirk Lellinger
+//    Copyright (C) 2022 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -23,29 +23,46 @@
 #endregion Copyright
 
 #nullable disable
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Altaxo.Graph.Plot.Data;
 
 namespace Altaxo.Gui.Graph.Plot.Data
 {
-  public interface IXYZMeshedColumnPlotDataView
+  public interface IXYZMeshedColumnPlotDataView : IDataContextAwareView
   {
-    void SetDataView(object viewObject);
   }
 
   [ExpectedTypeOfView(typeof(IXYZMeshedColumnPlotDataView))]
   [UserControllerForObject(typeof(XYZMeshedColumnPlotData))]
   public class XYZMeshedColumnPlotDataController : MVCANControllerEditOriginalDocBase<XYZMeshedColumnPlotData, IXYZMeshedColumnPlotDataView>
   {
-    private IMVCANController _dataProxyController;
+
 
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_dataProxyController, () => _dataProxyController = null);
     }
+
+    #region Bindings
+
+    private IMVCANController _dataProxyController;
+
+    public IMVCANController DataProxyController
+    {
+      get => _dataProxyController;
+      set
+      {
+        if (!(_dataProxyController == value))
+        {
+          _dataProxyController?.Dispose();
+          _dataProxyController = value;
+          OnPropertyChanged(nameof(DataProxyController));
+        }
+      }
+    }
+
+
+    #endregion
 
     protected override void Initialize(bool initData)
     {
@@ -53,23 +70,17 @@ namespace Altaxo.Gui.Graph.Plot.Data
 
       if (initData)
       {
-        _dataProxyController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _doc.DataTableMatrix }, typeof(IMVCANController), UseDocument.Directly);
+        DataProxyController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _doc.DataTableMatrix }, typeof(IMVCANController), UseDocument.Directly);
       }
-      if (_view is not null)
-      {
-        _view.SetDataView(_dataProxyController.ViewObject);
-      }
+
     }
 
     public override bool Apply(bool disposeController)
     {
-      bool result;
+      if (false == _dataProxyController.Apply(disposeController))
+        return ApplyEnd(false, disposeController);
 
-      result = _dataProxyController.Apply(disposeController);
-      if (!result)
-        return result;
-
-      return ApplyEnd(result, disposeController);
+      return ApplyEnd(true, disposeController);
     }
   }
 }
