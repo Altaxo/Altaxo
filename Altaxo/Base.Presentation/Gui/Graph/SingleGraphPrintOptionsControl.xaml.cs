@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -22,11 +22,6 @@
 
 #endregion Copyright
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows;
 using System.Windows.Controls;
 
 namespace Altaxo.Gui.Graph
@@ -40,120 +35,5 @@ namespace Altaxo.Gui.Graph
     {
       InitializeComponent();
     }
-
-    private void EhPrintLocationChanged(object sender, SelectionChangedEventArgs e)
-    {
-      if (PrintLocationChanged is not null)
-        PrintLocationChanged();
-      e.Handled = true;
-    }
-
-    private void EhRotatePageAutomaticallyChanged(object sender, RoutedEventArgs e)
-    {
-      if (RotatePageAutomaticallyChanged is not null)
-        RotatePageAutomaticallyChanged(_chkRotatePageAutomatically.IsChecked == true);
-      e.Handled = true;
-    }
-
-    private void EhFitGraphToPrintIfSmallerChanged(object sender, RoutedEventArgs e)
-    {
-      if (FitGraphToPrintIfSmallerChanged is not null)
-        FitGraphToPrintIfSmallerChanged(_chkFitGraphToPrintIfSmaller.IsChecked == true);
-      e.Handled = true;
-    }
-
-    private void EhFitGraphToPrintIfLargerChanged(object sender, RoutedEventArgs e)
-    {
-      if (FitGraphToPrintIfLargerChanged is not null)
-        FitGraphToPrintIfLargerChanged(_chkFitGraphToPrintIfLarger.IsChecked == true);
-      e.Handled = true;
-    }
-
-    private void EhPrintCropMarksChanged(object sender, RoutedEventArgs e)
-    {
-      if (PrintCropMarksChanged is not null)
-        PrintCropMarksChanged(_chkPrintCropMarks.IsChecked == true);
-      e.Handled = true;
-    }
-
-    private void EhTilePagesChanged(object sender, RoutedEventArgs e)
-    {
-      if (TilePagesChanged is not null)
-        TilePagesChanged(_chkTilePages.IsChecked == true);
-      e.Handled = true;
-    }
-
-    private void EhUseFixedZoomFactorChanged(object sender, RoutedEventArgs e)
-    {
-      if (UseFixedZoomFactorChanged is not null)
-        UseFixedZoomFactorChanged(_chkUseFixedZoomFactor.IsChecked == true);
-      e.Handled = true;
-    }
-
-    private void EhZoomFactorChanged(object sender, DependencyPropertyChangedEventArgs e)
-    {
-      if (ZoomFactorChanged is not null)
-        ZoomFactorChanged(_edZoomFactor.SelectedQuantityInSIUnits);
-    }
-
-    #region ISingleGraphPrintOptionsView
-
-    public void Init_PrintLocation(Collections.SelectableListNodeList list)
-    {
-      GuiHelper.Initialize(_cbPrintLocation, list);
-    }
-
-    public void Init_FitGraphToPrintIfLarger(bool val)
-    {
-      _chkFitGraphToPrintIfLarger.IsChecked = val;
-    }
-
-    public void Init_FitGraphToPrintIfSmaller(bool val)
-    {
-      _chkFitGraphToPrintIfSmaller.IsChecked = val;
-    }
-
-    public void Init_PrintCopMarks(bool val)
-    {
-      _chkPrintCropMarks.IsChecked = val;
-    }
-
-    public void Init_RotatePageAutomatically(bool value)
-    {
-      _chkRotatePageAutomatically.IsChecked = value;
-    }
-
-    public void Init_TilePages(bool value)
-    {
-      _chkTilePages.IsChecked = value;
-    }
-
-    public void Init_UseFixedZoomFactor(bool val)
-    {
-      _chkUseFixedZoomFactor.IsChecked = val;
-    }
-
-    public void Init_ZoomFactor(double val)
-    {
-      _edZoomFactor.SelectedQuantityInSIUnits = val;
-    }
-
-    public event Action? PrintLocationChanged;
-
-    public event Action<bool>? FitGraphToPrintIfLargerChanged;
-
-    public event Action<bool>? FitGraphToPrintIfSmallerChanged;
-
-    public event Action<bool>? PrintCropMarksChanged;
-
-    public event Action<bool>? RotatePageAutomaticallyChanged;
-
-    public event Action<bool>? TilePagesChanged;
-
-    public event Action<bool>? UseFixedZoomFactorChanged;
-
-    public event Action<double>? ZoomFactorChanged;
-
-    #endregion ISingleGraphPrintOptionsView
   }
 }

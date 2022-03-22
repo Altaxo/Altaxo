@@ -36,10 +36,8 @@
 		<ListView Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" 
                   ItemsSource="{Binding TableList}"
                   Margin="4,0,4,0"
-							SelectionChanged="EhItemsSelectionChanged"
-							PreviewMouseRightButtonDown="EhTableList_MouseRightButtonDown"
-							ScrollViewer.VerticalScrollBarVisibility="Visible"
-							ItemContainerStyle="{StaticResource TableItemsContainer}">
+				  ScrollViewer.VerticalScrollBarVisibility="Visible"
+				 ItemContainerStyle="{StaticResource TableItemsContainer}">
 			<ListView.View>
 				<GridView>
 					<GridViewColumn Header="Current table" DisplayMemberBinding="{Binding Text}" Width="400" />
@@ -94,7 +92,7 @@
                          SelectionMode="Single"
                          ScrollViewer.VerticalScrollBarVisibility="Auto"
                          Margin="4,2,4,4" />
-				<Button Content="Apply!" Grid.Row="2" Grid.Column="2" Command="CmdApplyReplacementForCommonSubstring" Margin="4" />
+				<Button Content="Apply!" Grid.Row="2" Grid.Column="2" Command="{Binding CmdApplyReplacementForCommonSubstring}" Margin="4" />
 			</Grid>
 		</Expander>
 	</Grid>

@@ -3,7 +3,9 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-						 xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing"
+			 xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing"
+             xmlns:graph="clr-namespace:Altaxo.Gui.Graph;assembly=AltaxoBase" 
+             d:DataContext="{d:DesignInstance Type=graph:SingleGraphPrintOptionsController}"
              mc:Ignorable="d">
 	<Grid>
 		<Grid.ColumnDefinitions>
@@ -26,14 +28,34 @@
 			<RowDefinition Height="4" />
 		</Grid.RowDefinitions>
 		<Label Grid.Row="0" Grid.Column="0" Content="Print area:" />
-		<ComboBox x:Name="_cbPrintLocation" Grid.Row="0" Grid.Column="2" SelectionChanged="EhPrintLocationChanged" />
-		<CheckBox x:Name="_chkRotatePageAutomatically" Grid.Row="2" Grid.Column="0"  Content="Rotate page automatically" Checked="EhRotatePageAutomaticallyChanged" Unchecked="EhRotatePageAutomaticallyChanged" />
-		<CheckBox x:Name="_chkFitGraphToPrintIfSmaller" Grid.Row="4" Grid.Column="0"  Content="Fit graph to print if smaller" Checked="EhFitGraphToPrintIfSmallerChanged" Unchecked="EhFitGraphToPrintIfSmallerChanged" />
-		<CheckBox x:Name="_chkFitGraphToPrintIfLarger" Grid.Row="4" Grid.Column="2"  Content="Fit graph to print if larger" Checked="EhFitGraphToPrintIfLargerChanged" Unchecked="EhFitGraphToPrintIfLargerChanged" />
-		<CheckBox x:Name="_chkPrintCropMarks" Grid.Row="2" Grid.Column="2"  Content="Print crop marks" Checked="EhPrintCropMarksChanged" Unchecked="EhPrintCropMarksChanged" />
-		<CheckBox x:Name="_chkTilePages" Grid.Row="6" Grid.Column="0"  Content="Tile pages" Checked="EhTilePagesChanged" Unchecked="EhTilePagesChanged" />
-		<CheckBox x:Name="_chkUseFixedZoomFactor" Grid.Row="8" Grid.Column="0"  Content="Use fixed zoom factor" Checked="EhUseFixedZoomFactorChanged" Unchecked="EhUseFixedZoomFactorChanged" />
+		<ComboBox x:Name="_cbPrintLocation" Grid.Row="0" Grid.Column="2" 
+                  ItemsSource="{Binding PrintLocation.Items}"
+                  SelectedItem="{Binding PrintLocation.SelectedItem, Mode=TwoWay}" />
+		<CheckBox Grid.Row="2" Grid.Column="0"  
+                  IsChecked="{Binding RotatePageAutomatically, Mode=TwoWay}"
+                  Content="Rotate page automatically" />
+        
+		<CheckBox Grid.Row="4" Grid.Column="0" 
+                  IsChecked="{Binding FitGraphToPrintIfSmaller, Mode=TwoWay}"
+                  Content="Fit graph to print if smaller" />
+
+        <CheckBox Grid.Row="4" Grid.Column="2"
+                  IsChecked="{Binding FitGraphToPrintIfLarger, Mode=TwoWay}"
+                  Content="Fit graph to print if larger" />
+
+        <CheckBox Grid.Row="2" Grid.Column="2" 
+                  IsChecked="{Binding PrintCropMarks, Mode=TwoWay}"
+                  Content="Print crop marks"  />
+        
+		<CheckBox Grid.Row="6" Grid.Column="0" 
+                  IsChecked="{Binding TilePages, Mode=TwoWay}"
+                  Content="Tile pages"  />
+		<CheckBox Grid.Row="8" Grid.Column="0"
+                  IsChecked="{Binding UseFixedZoomFactor, Mode=TwoWay}"
+                  Content="Use fixed zoom factor" />
 		<Label Grid.Row="10" Grid.Column="0" Content="Zoom factor:" />
-		<axogcd:ScaleComboBox x:Name="_edZoomFactor" Grid.Row="10" Grid.Column="2" SelectedQuantityChanged="EhZoomFactorChanged" />
+		<axogcd:ScaleComboBox Grid.Row="10" Grid.Column="2"
+                              SelectedQuantity="{Binding ZoomFactor}"
+                              UnitEnvironment="{Binding ZoomFactorEnvironment}" />
 	</Grid>
 </UserControl>
