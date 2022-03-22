@@ -28,38 +28,151 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Altaxo.Data;
+using Altaxo.Gui.Common;
+using Altaxo.Units;
 
 namespace Altaxo.Gui.Data
 {
-  public interface IDataSourceImportOptionsView
+  public interface IDataSourceImportOptionsView : IDataContextAwareView
   {
-    bool DoNotSaveTableData { get; set; }
-
-    bool ExecuteScriptAfterImport { get; set; }
-
-    void InitializeTriggerSource(Altaxo.Collections.SelectableListNodeList list);
-
-    double MinimumWaitingTimeAfterUpdateInSeconds { get; set; }
-
-    double MaximumWaitingTimeAfterUpdateInSeconds { get; set; }
-
-    double MinimumWaitingTimeAfterFirstTriggerInSeconds { get; set; }
-
-    double MaximumWaitingTimeAfterFirstTriggerInSeconds { get; set; }
-
-    double MinimumWaitingTimeAfterLastTriggerInSeconds { get; set; }
   }
 
   [ExpectedTypeOfView(typeof(IDataSourceImportOptionsView))]
   [UserControllerForObject(typeof(IDataSourceImportOptions))]
   public class DataSourceImportOptionsController : MVCANControllerEditOriginalDocBase<DataSourceImportOptions, IDataSourceImportOptionsView>
   {
-    private Altaxo.Collections.SelectableListNodeList _triggerChoices;
-
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
     }
+
+    #region Bindings
+
+    public QuantityWithUnitGuiEnvironment TimeEnvironment => Altaxo.Gui.TimeEnvironment.Instance;
+
+    private DimensionfulQuantity _minimumWaitingTimeAfterUpdate;
+
+    public DimensionfulQuantity MinimumWaitingTimeAfterUpdate
+    {
+      get => _minimumWaitingTimeAfterUpdate;
+      set
+      {
+        if (!(_minimumWaitingTimeAfterUpdate == value))
+        {
+          _minimumWaitingTimeAfterUpdate = value;
+          OnPropertyChanged(nameof(MinimumWaitingTimeAfterUpdate));
+        }
+      }
+    }
+
+    private DimensionfulQuantity _maximumWaitingTimeAfterUpdate;
+
+    public DimensionfulQuantity MaximumWaitingTimeAfterUpdate
+    {
+      get => _maximumWaitingTimeAfterUpdate;
+      set
+      {
+        if (!(_maximumWaitingTimeAfterUpdate == value))
+        {
+          _maximumWaitingTimeAfterUpdate = value;
+          OnPropertyChanged(nameof(MaximumWaitingTimeAfterUpdate));
+        }
+      }
+    }
+
+    private DimensionfulQuantity _minimumWaitingTimeAfterFirstTrigger;
+
+    public DimensionfulQuantity MinimumWaitingTimeAfterFirstTrigger
+    {
+      get => _minimumWaitingTimeAfterFirstTrigger;
+      set
+      {
+        if (!(_minimumWaitingTimeAfterFirstTrigger == value))
+        {
+          _minimumWaitingTimeAfterFirstTrigger = value;
+          OnPropertyChanged(nameof(MinimumWaitingTimeAfterFirstTrigger));
+        }
+      }
+    }
+
+    private DimensionfulQuantity _maximumWaitingTimeAfterFirstTrigger;
+
+    public DimensionfulQuantity MaximumWaitingTimeAfterFirstTrigger
+    {
+      get => _maximumWaitingTimeAfterFirstTrigger;
+      set
+      {
+        if (!(_maximumWaitingTimeAfterFirstTrigger == value))
+        {
+          _maximumWaitingTimeAfterFirstTrigger = value;
+          OnPropertyChanged(nameof(MaximumWaitingTimeAfterFirstTrigger));
+        }
+      }
+    }
+
+    private DimensionfulQuantity _minimumWaitingTimeAfterLastTrigger;
+
+    public DimensionfulQuantity MinimumWaitingTimeAfterLastTrigger
+    {
+      get => _minimumWaitingTimeAfterLastTrigger;
+      set
+      {
+        if (!(_minimumWaitingTimeAfterLastTrigger == value))
+        {
+          _minimumWaitingTimeAfterLastTrigger = value;
+          OnPropertyChanged(nameof(MinimumWaitingTimeAfterLastTrigger));
+        }
+      }
+    }
+
+    private bool _doNotSaveTableData;
+
+    public bool DoNotSaveTableData
+    {
+      get => _doNotSaveTableData;
+      set
+      {
+        if (!(_doNotSaveTableData == value))
+        {
+          _doNotSaveTableData = value;
+          OnPropertyChanged(nameof(DoNotSaveTableData));
+        }
+      }
+    }
+
+    private bool _executeScriptAfterImport;
+
+    public bool ExecuteScriptAfterImport
+    {
+      get => _executeScriptAfterImport;
+      set
+      {
+        if (!(_executeScriptAfterImport == value))
+        {
+          _executeScriptAfterImport = value;
+          OnPropertyChanged(nameof(ExecuteScriptAfterImport));
+        }
+      }
+    }
+
+    private ItemsController<ImportTriggerSource> _triggerSource;
+
+    public ItemsController<ImportTriggerSource> TriggerSource
+    {
+      get => _triggerSource;
+      set
+      {
+        if (!(_triggerSource == value))
+        {
+          _triggerSource?.Dispose();
+          _triggerSource = value;
+          OnPropertyChanged(nameof(TriggerSource));
+        }
+      }
+    }
+
+
+    #endregion
 
     protected override void Initialize(bool initData)
     {
@@ -67,71 +180,69 @@ namespace Altaxo.Gui.Data
 
       if (initData)
       {
-        _triggerChoices = new Collections.SelectableListNodeList(_doc.ImportTriggerSource);
-      }
-      if (_view is not null)
-      {
-        _view.InitializeTriggerSource(_triggerChoices);
-        _view.DoNotSaveTableData = _doc.DoNotSaveCachedTableData;
-        _view.ExecuteScriptAfterImport = _doc.ExecuteTableScriptAfterImport;
-        _view.MinimumWaitingTimeAfterUpdateInSeconds = _doc.MinimumWaitingTimeAfterUpdateInSeconds;
-        _view.MaximumWaitingTimeAfterUpdateInSeconds = _doc.MaximumWaitingTimeAfterUpdateInSeconds;
-        _view.MinimumWaitingTimeAfterFirstTriggerInSeconds = _doc.MinimumWaitingTimeAfterFirstTriggerInSeconds;
-        _view.MaximumWaitingTimeAfterFirstTriggerInSeconds = _doc.MaximumWaitingTimeAfterFirstTriggerInSeconds;
-        _view.MinimumWaitingTimeAfterLastTriggerInSeconds = _doc.MinimumWaitingTimeAfterLastTriggerInSeconds;
+        TriggerSource = new ItemsController<ImportTriggerSource>(new Collections.SelectableListNodeList(_doc.ImportTriggerSource));
+     
+        DoNotSaveTableData = _doc.DoNotSaveCachedTableData;
+        ExecuteScriptAfterImport = _doc.ExecuteTableScriptAfterImport;
+        MinimumWaitingTimeAfterUpdate = new DimensionfulQuantity(_doc.MinimumWaitingTimeAfterUpdateInSeconds, Altaxo.Units.Time.Second.Instance).AsQuantityIn(TimeEnvironment.DefaultUnit);
+        MaximumWaitingTimeAfterUpdate = new DimensionfulQuantity(_doc.MaximumWaitingTimeAfterUpdateInSeconds, Altaxo.Units.Time.Second.Instance).AsQuantityIn(TimeEnvironment.DefaultUnit);
+        MinimumWaitingTimeAfterFirstTrigger = new DimensionfulQuantity(_doc.MinimumWaitingTimeAfterFirstTriggerInSeconds, Altaxo.Units.Time.Second.Instance).AsQuantityIn(TimeEnvironment.DefaultUnit);
+        MaximumWaitingTimeAfterFirstTrigger = new DimensionfulQuantity(_doc.MaximumWaitingTimeAfterFirstTriggerInSeconds, Altaxo.Units.Time.Second.Instance).AsQuantityIn(TimeEnvironment.DefaultUnit);
+        MinimumWaitingTimeAfterLastTrigger = new DimensionfulQuantity(_doc.MinimumWaitingTimeAfterLastTriggerInSeconds, Altaxo.Units.Time.Second.Instance).AsQuantityIn(TimeEnvironment.DefaultUnit);
       }
     }
 
     public override bool Apply(bool disposeController)
     {
-      _doc.DoNotSaveCachedTableData = _view.DoNotSaveTableData;
-      _doc.ExecuteTableScriptAfterImport = _view.ExecuteScriptAfterImport;
-      _doc.ImportTriggerSource = (Altaxo.Data.ImportTriggerSource)_triggerChoices.FirstSelectedNode.Tag;
+      _doc.DoNotSaveCachedTableData = DoNotSaveTableData;
+      _doc.ExecuteTableScriptAfterImport = ExecuteScriptAfterImport;
+      _doc.ImportTriggerSource = TriggerSource.SelectedValue;
 
-      var minUpdate = _view.MinimumWaitingTimeAfterUpdateInSeconds;
-      var maxUpdate = _view.MaximumWaitingTimeAfterUpdateInSeconds;
-      var minFirstTrig = _view.MinimumWaitingTimeAfterFirstTriggerInSeconds;
-      var maxFirstTrig = _view.MaximumWaitingTimeAfterFirstTriggerInSeconds;
-      var minLastTrig = _view.MinimumWaitingTimeAfterLastTriggerInSeconds;
+      var minUpdate = MinimumWaitingTimeAfterUpdate.AsValueIn(Altaxo.Units.Time.Second.Instance);
+      var maxUpdate = MaximumWaitingTimeAfterUpdate.AsValueIn(Altaxo.Units.Time.Second.Instance);
+      var minFirstTrig = MinimumWaitingTimeAfterFirstTrigger.AsValueIn(Altaxo.Units.Time.Second.Instance);
+      var maxFirstTrig =MaximumWaitingTimeAfterFirstTrigger.AsValueIn(Altaxo.Units.Time.Second.Instance);
+      var minLastTrig = MinimumWaitingTimeAfterLastTrigger.AsValueIn(Altaxo.Units.Time.Second.Instance);
 
       if (!(maxUpdate > 0))
       {
         Current.Gui.ErrorMessageBox("MaximumWaitingTimeAfterUpdate should be > 0");
-        return false;
+        return ApplyEnd(false, disposeController);
       }
       if (!(minUpdate >= 0))
       {
         Current.Gui.ErrorMessageBox("MinimumWaitingTimeAfterUpdate should be >= 0");
-        return false;
+        return ApplyEnd(false, disposeController);
+
       }
       if (!(maxUpdate >= minUpdate))
       {
         Current.Gui.ErrorMessageBox("MaximumWaitingTimeAfterUpdate should be >= MinimumWaitingTimeAfterUpdate");
-        return false;
+        return ApplyEnd(false, disposeController);
       }
 
       if (!(minFirstTrig >= 0))
       {
         Current.Gui.ErrorMessageBox("MinimumWaitingTimeAfterFirstTrigger should be > 0");
-        return false;
+        return ApplyEnd(false, disposeController);
       }
 
       if (!(maxFirstTrig >= 0))
       {
         Current.Gui.ErrorMessageBox("MaximumWaitingTimeAfterFirstTrigger should be > 0");
-        return false;
+        return ApplyEnd(false, disposeController);
       }
 
       if (!(minLastTrig >= 0))
       {
         Current.Gui.ErrorMessageBox("MinimumWaitingTimeAfterLastTrigger should be > 0");
-        return false;
+        return ApplyEnd(false, disposeController);
       }
 
       if (!(maxFirstTrig >= minFirstTrig))
       {
         Current.Gui.ErrorMessageBox("MaximumWaitingTimeAfterFirstTrigger should be >= MinimumWaitingTimeAfterFirstTrigger");
-        return false;
+        return ApplyEnd(false, disposeController);
       }
 
       _doc.MinimumWaitingTimeAfterUpdateInSeconds = minUpdate;
