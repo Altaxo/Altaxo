@@ -25,12 +25,17 @@
 #nullable disable
 using System;
 using System.Collections.Generic;
+using System.Windows.Input;
 using Altaxo.Collections;
 using Altaxo.Data;
 using Altaxo.Main;
 
 namespace Altaxo.Gui.Graph
 {
+  public interface ISingleColumnChoiceView : IDataContextAwareView
+  {
+  }
+
   #region SingleColumnChoice document
 
   /// <summary>
@@ -45,29 +50,9 @@ namespace Altaxo.Gui.Graph
 
   #endregion SingleColumnChoice document
 
-  #region interfaces
-
-  public interface ISingleColumnChoiceView
-  {
-    ISingleColumnChoiceViewEventSink Controller { get; set; }
-
-    /// <summary>
-    /// Initializes the treeview of available data with content.
-    /// </summary>
-    /// <param name="nodes"></param>
-    void Initialize(NGTreeNodeCollection nodes);
-  }
-
-  public interface ISingleColumnChoiceViewEventSink
-  {
-    void EhView_AfterSelectNode(NGTreeNode node);
-  }
-
-  #endregion interfaces
-
   [UserControllerForObject(typeof(SingleColumnChoice))]
   [ExpectedTypeOfView(typeof(ISingleColumnChoiceView))]
-  public class SingleColumnChoiceController : IMVCAController, ISingleColumnChoiceViewEventSink
+  public class SingleColumnChoiceController : MVCANControllerEditImmutableDocBase<SingleColumnChoice, ISingleColumnChoiceView>
   {
     #region My private nodes
 
@@ -149,19 +134,44 @@ namespace Altaxo.Gui.Graph
 
     #endregion My private nodes
 
-    private ISingleColumnChoiceView _view;
-    private SingleColumnChoice _doc;
 
     private DataColumn _selectedColumn = null;
-    private NGTreeNode _rootNode = new NGTreeNode();
+
+    public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+    {
+      yield break;
+    }
 
     public SingleColumnChoiceController(SingleColumnChoice doc)
     {
+      CmdSelectedItemChanged = new RelayCommand(EhView_AfterSelectNode);
       _doc = doc;
       Initialize(true);
     }
 
-    public void Initialize(bool initData)
+    #region Bindings
+
+    public ICommand CmdSelectedItemChanged { get; }
+
+    private NGTreeNode _rootNode = new NGTreeNode();
+
+    public NGTreeNode RootNode
+    {
+      get => _rootNode;
+      set
+      {
+        if (!(_rootNode == value))
+        {
+          _rootNode = value;
+          OnPropertyChanged(nameof(RootNode));
+        }
+      }
+    }
+
+
+    #endregion
+
+    protected override void Initialize(bool initData)
     {
       if (initData)
       {
@@ -194,11 +204,6 @@ namespace Altaxo.Gui.Graph
               selColumnNode.IsSelected = true;
           }
         }
-      }
-
-      if (_view is not null)
-      {
-        _view.Initialize(_rootNode.Nodes);
       }
     }
 
@@ -269,87 +274,25 @@ namespace Altaxo.Gui.Graph
       return null;
     }
 
-    #region IMVCController Members
-
-    public object ViewObject
-    {
-      get
-      {
-        return _view;
-      }
-      set
-      {
-        if (_view is not null)
-          _view.Controller = null;
-
-        _view = value as ISingleColumnChoiceView;
-
-        Initialize(false);
-
-        if (_view is not null)
-          _view.Controller = this;
-      }
-    }
-
-    public object ModelObject
-    {
-      get
-      {
-        return _doc;
-      }
-    }
-
-    public void Dispose()
-    {
-    }
-
-    #endregion IMVCController Members
-
-    #region IApplyController Members
-
-    public bool Apply(bool disposeController)
+    public override bool Apply(bool disposeController)
     {
       if (_selectedColumn is not null)
       {
         _doc.SelectedColumn = _selectedColumn;
-        return true;
+        return ApplyEnd(true, disposeController);
       }
 
-      return false;
+      return ApplyEnd(false, disposeController);
     }
 
-    /// <summary>
-    /// Try to revert changes to the model, i.e. restores the original state of the model.
-    /// </summary>
-    /// <param name="disposeController">If set to <c>true</c>, the controller should release all temporary resources, since the controller is not needed anymore.</param>
-    /// <returns>
-    ///   <c>True</c> if the revert operation was successfull; <c>false</c> if the revert operation was not possible (i.e. because the controller has not stored the original state of the model).
-    /// </returns>
-    public bool Revert(bool disposeController)
+    public void EhView_AfterSelectNode()
     {
-      return false;
-    }
+      var node = _rootNode.FirstSelectedNode;
 
-    #endregion IApplyController Members
-
-    #region ISingleColumnChoiceViewEventSink Members
-
-    protected NGTreeNode GetRootNode(NGTreeNode node)
-    {
-      while (node.ParentNode is not null)
-        node = node.ParentNode;
-
-      return node;
-    }
-
-    public void EhView_AfterSelectNode(NGTreeNode node)
-    {
-      if (node.Tag is DataColumn)
-        _selectedColumn = (DataColumn)node.Tag;
+      if (node.Tag is DataColumn dc)
+        _selectedColumn = dc;
       else
         _selectedColumn = null;
     }
-
-    #endregion ISingleColumnChoiceViewEventSink Members
   }
 }

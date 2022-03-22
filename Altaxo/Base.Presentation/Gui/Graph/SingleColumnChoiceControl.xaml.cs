@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -22,59 +22,18 @@
 
 #endregion Copyright
 
-#nullable disable warnings
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows;
 using System.Windows.Controls;
-using Altaxo.Collections;
 
 namespace Altaxo.Gui.Graph
 {
   /// <summary>
   /// Interaction logic for SingleColumnChoiceControl.xaml
   /// </summary>
-  [UserControlForController(typeof(ISingleColumnChoiceViewEventSink))]
   public partial class SingleColumnChoiceControl : UserControl, ISingleColumnChoiceView
   {
-    private ISingleColumnChoiceViewEventSink _controller;
-
     public SingleColumnChoiceControl()
     {
       InitializeComponent();
     }
-
-    private void _tvColumns_AfterSelect(object sender, RoutedPropertyChangedEventArgs<object> e)
-    {
-      if (_controller is not null)
-      {
-        var selitem = _tvColumns.SelectedItem as NGTreeNode;
-        if (selitem is not null)
-          _controller.EhView_AfterSelectNode(selitem);
-      }
-    }
-
-    #region ISingleColumnChoiceView
-
-    public ISingleColumnChoiceViewEventSink Controller
-    {
-      get
-      {
-        return _controller;
-      }
-      set
-      {
-        _controller = value;
-      }
-    }
-
-    public void Initialize(Collections.NGTreeNodeCollection nodes)
-    {
-      _tvColumns.ItemsSource = nodes;
-    }
-
-    #endregion ISingleColumnChoiceView
   }
 }
