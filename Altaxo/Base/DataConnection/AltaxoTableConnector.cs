@@ -109,7 +109,14 @@ namespace Altaxo.DataConnection
           }
           else
           {
-            axoColumn = _table.DataColumns.EnsureExistence(axoColName, axoColType, Data.ColumnKind.V, 0);
+            if (ct == typeof(string) && _table.DataColumns.Contains(axoColName))
+            {
+              axoColumn = _table.DataColumns[axoColName];
+            }
+            else
+            {
+              axoColumn = _table.DataColumns.EnsureExistence(axoColName, axoColType, Data.ColumnKind.V, 0);
+            }
           }
 
           mapping.Add(new AltaxoColumnMapping(axoColumn, GetColumnItemSetter(ct, axoColumn.GetType())));
