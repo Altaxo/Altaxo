@@ -25,119 +25,373 @@
 #nullable disable
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing.Printing;
 using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using Altaxo.Collections;
 using Altaxo.Graph;
 using Altaxo.Graph.Gdi;
+using Altaxo.Gui.Common;
+using Altaxo.Units;
+using System.Management;
+using System.Drawing.Printing;
 
 namespace Altaxo.Gui.Graph
 {
-  public interface IPrintingView
-  {
-    void InitializeAvailablePrinters(SelectableListNodeList list);
-
-    void InitializeDocumentPrintOptionsView(object view);
-
-    void InitializeAvailablePaperSizes(Collections.SelectableListNodeList list);
-
-    void InitializeAvailablePaperSources(Collections.SelectableListNodeList list);
-
-    void InitializePaperOrientationLandscape(bool isLandScape);
-
-    void InitializePaperMarginsInHundrethInch(double left, double right, double top, double bottom);
-
-    void InitializePrintPreview(System.Drawing.Printing.PreviewPageInfo[] preview);
-
-    void InitializeNumberOfCopies(int val);
-
-    void InitializeCollateCopies(bool val);
-
+  public interface IPrintingView : IDataContextAwareView
+ {
     void ShowPrinterPropertiesDialog(PrinterSettings currentSettings);
-
-    event Action SelectedPrinterChanged;
-
-    event Action EditPrinterProperties;
-
-    event Action<bool> PaperOrientationLandscapeChanged;
-
-    event Action PaperSizeChanged;
-
-    event Action PaperSourceChanged;
-
-    event Action<double> MarginLeftChanged;
-
-    event Action<double> MarginRightChanged;
-
-    event Action<double> MarginTopChanged;
-
-    event Action<double> MarginBottomChanged;
-
-    event Action<int> NumberOfCopiesChanged;
-
-    event Action<bool> CollateCopiesChanged;
   }
 
   [ExpectedTypeOfView(typeof(IPrintingView))]
-  public class PrintingController : IMVCANController
+  public class PrintingController : MVCANControllerEditImmutableDocBase<GraphDocument, IPrintingView>
   {
-    private IPrintingView _view;
-    private SelectableListNodeList _installedPrinters;
-    private Altaxo.Graph.Gdi.GraphDocument _doc;
+    /// <summary>Number of the page that is currently previewed.</summary>
+    private int _previewPageNumber;
+    private System.Drawing.Printing.PreviewPageInfo[] _previewData;
+    private System.Threading.CancellationToken _printerStatusCancellationToken;
+    private System.Threading.CancellationTokenSource _printerStatusCancellationTokenSource;
+
+    public PrintingController()
+    {
+      CmdShowPrinterProperties = new RelayCommand(EhEditPrinterProperties);
+      CmdPreviewFirstPage = new   RelayCommand(EhPreviewFirstPage);
+      CmdPreviewPreviousPage = new RelayCommand(EhPreviewPreviousPage);
+      CmdPreviewNextPage = new RelayCommand(EhPreviewNextPage);
+      CmdPreviewLastPage = new RelayCommand(EhPreviewLastPage);
+
+
+      _printerStatusCancellationTokenSource = new System.Threading.CancellationTokenSource();
+      _printerStatusCancellationToken = _printerStatusCancellationTokenSource.Token;
+    }
+
+public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+    {
+      yield return new ControllerAndSetNullMethod(_documentPrintOptionsController, () => DocumentPrintOptionsController=null);
+    }
+
+    public override void Dispose(bool isDisposing)
+    {
+      _printerStatusCancellationTokenSource.Cancel();
+      base.Dispose(isDisposing);
+    }
+
+    #region Bindings
+
+    public ICommand CmdShowPrinterProperties { get; }
+
+    public ICommand CmdPreviewFirstPage { get; }
+    public ICommand CmdPreviewPreviousPage { get; }
+
+    public ICommand CmdPreviewNextPage { get; }
+    public ICommand CmdPreviewLastPage { get; }
+
 
     private SingleGraphPrintOptionsController _documentPrintOptionsController;
 
-    private SelectableListNodeList _currentPaperSources;
-    private SelectableListNodeList _currentPaperSizes;
 
-    private void Initialize(bool initData)
+    public SingleGraphPrintOptionsController DocumentPrintOptionsController
     {
-      if (initData)
+      get => _documentPrintOptionsController;
+      set
       {
-        _documentPrintOptionsController = new SingleGraphPrintOptionsController() { UseDocumentCopy = UseDocument.Directly };
-        if (_doc.PrintOptions is null)
-          _doc.PrintOptions = new SingleGraphPrintOptions();
-        _documentPrintOptionsController.InitializeDocument(_doc.PrintOptions);
-        Current.Gui.FindAndAttachControlTo(_documentPrintOptionsController);
-        _doc.PrintOptions.PropertyChanged += new Altaxo.WeakPropertyChangedEventHandler(EhDocumentPrintOptionsChanged, _doc.PrintOptions, nameof(_doc.PrintOptions.PropertyChanged));
+        if (!(_documentPrintOptionsController == value))
+        {
+          _documentPrintOptionsController?.Dispose();
+          _documentPrintOptionsController = value;
 
-        InitAvailablePaperSizes(true);
-        InitAvailablePaperSources(true);
-      }
+          if(_documentPrintOptionsController is { } newC)
+            newC.PropertyChanged += new Altaxo.WeakPropertyChangedEventHandler(EhDocumentPrintOptionsChanged, _doc.PrintOptions, nameof(_doc.PrintOptions.PropertyChanged));
 
-      if (_view is not null)
-      {
-        var currentPrinterSettings = Current.PrintingService.PrintDocument.PrinterSettings;
-        _installedPrinters = new SelectableListNodeList();
 
-        foreach (string printer in PrinterSettings.InstalledPrinters)
-          _installedPrinters.Add(new SelectableListNode(printer, printer, currentPrinterSettings.PrinterName == printer));
-
-        _view.InitializeAvailablePrinters(_installedPrinters);
-
-        _view.InitializeDocumentPrintOptionsView(_documentPrintOptionsController.ViewObject);
-
-        InitAvailablePaperSources(false);
-        InitAvailablePaperSizes(false);
-        InitPaperOrientation();
-        InitPaperMargins();
-        _view.InitializeNumberOfCopies(Current.PrintingService.PrintDocument.PrinterSettings.Copies);
-        _view.InitializeCollateCopies(Current.PrintingService.PrintDocument.PrinterSettings.Collate);
-
-        RequestPreview();
+          OnPropertyChanged(nameof(DocumentPrintOptionsController));
+        }
       }
     }
 
-    private void EhSelectedPrinterChanged()
-    {
-      if (_installedPrinters.FirstSelectedNode is not null)
-        Current.PrintingService.PrintDocument.PrinterSettings.PrinterName = (string)_installedPrinters.FirstSelectedNode.Tag;
+    private ItemsController<string> _availablePrinters;
 
-      InitAvailablePaperSizes(true);
-      InitAvailablePaperSources(true);
+    public ItemsController<string> AvailablePrinters
+    {
+      get => _availablePrinters;
+      set
+      {
+        if (!(_availablePrinters == value))
+        {
+          _availablePrinters?.Dispose();
+          _availablePrinters = value;
+          OnPropertyChanged(nameof(AvailablePrinters));
+        }
+      }
+    }
+
+
+    private ItemsController<PaperSize> _availablePaperSizes;
+
+    public ItemsController<PaperSize> AvailablePaperSizes
+    {
+      get => _availablePaperSizes;
+      set
+      {
+        if (!(_availablePaperSizes == value))
+        {
+          _availablePaperSizes?.Dispose();
+          _availablePaperSizes = value;
+          OnPropertyChanged(nameof(AvailablePaperSizes));
+        }
+      }
+    }
+
+    private ItemsController<PaperSource> _availablePaperSources;
+
+    public ItemsController<PaperSource> AvailablePaperSources
+    {
+      get => _availablePaperSources;
+      set
+      {
+        if (!(_availablePaperSources == value))
+        {
+          _availablePaperSources?.Dispose();
+          _availablePaperSources = value;
+          OnPropertyChanged(nameof(AvailablePaperSources));
+        }
+      }
+    }
+
+    private bool _isPaperOrientationLandscape;
+
+    public bool IsPaperOrientationLandscape
+    {
+      get => _isPaperOrientationLandscape;
+      set
+      {
+        if (!(_isPaperOrientationLandscape == value))
+        {
+          _isPaperOrientationLandscape = value;
+          OnPropertyChanged(nameof(IsPaperOrientationLandscape));
+          EhPaperOrientationLandscapeChanged(value);
+        }
+      }
+    }
+
+
+    public bool IsPaperOrientationPortrait
+    {
+      get => !_isPaperOrientationLandscape;
+      set => _isPaperOrientationLandscape = !value;
+    }
+
+    public QuantityWithUnitGuiEnvironment MarginEnvironment => PaperMarginEnvironment.Instance;
+
+    private DimensionfulQuantity _marginLeft;
+
+    public DimensionfulQuantity MarginLeft
+    {
+      get => _marginLeft;
+      set
+      {
+        if (!(_marginLeft == value))
+        {
+          _marginLeft = value;
+          OnPropertyChanged(nameof(MarginLeft));
+          EhMarginLeftChanged(value.AsValueIn(SIPrefix.Centi, Altaxo.Units.Length.Inch.Instance));
+        }
+      }
+    }
+    private DimensionfulQuantity _marginRight;
+
+    public DimensionfulQuantity MarginRight
+    {
+      get => _marginRight;
+      set
+      {
+        if (!(_marginRight == value))
+        {
+          _marginRight = value;
+          OnPropertyChanged(nameof(MarginRight));
+          EhMarginRightChanged(value.AsValueIn(SIPrefix.Centi, Altaxo.Units.Length.Inch.Instance));
+        }
+      }
+    }
+
+    private DimensionfulQuantity _marginTop;
+
+    public DimensionfulQuantity MarginTop
+    {
+      get => _marginTop;
+      set
+      {
+        if (!(_marginTop == value))
+        {
+          _marginTop = value;
+          OnPropertyChanged(nameof(MarginTop));
+          EhMarginTopChanged(value.AsValueIn(SIPrefix.Centi, Altaxo.Units.Length.Inch.Instance));
+        }
+      }
+    }
+    private DimensionfulQuantity _marginBottom;
+
+    public DimensionfulQuantity MarginBottom
+    {
+      get => _marginBottom;
+      set
+      {
+        if (!(_marginBottom == value))
+        {
+          _marginBottom = value;
+          OnPropertyChanged(nameof(MarginBottom));
+          EhMarginBottomChanged(value.AsValueIn(SIPrefix.Centi, Altaxo.Units.Length.Inch.Instance));
+        }
+      }
+    }
+
+
+    private int _numberOfCopies;
+
+    public int NumberOfCopies
+    {
+      get => _numberOfCopies;
+      set
+      {
+        if (!(_numberOfCopies == value))
+        {
+          _numberOfCopies = value;
+          OnPropertyChanged(nameof(NumberOfCopies));
+          EhNumberOfCopiesChanged(value);
+        }
+      }
+    }
+
+
+    private bool _collateCopies;
+
+    public bool CollateCopies
+    {
+      get => _collateCopies;
+      set
+      {
+        if (!(_collateCopies == value))
+        {
+          _collateCopies = value;
+          OnPropertyChanged(nameof(CollateCopies));
+          EhCollateCopiesChanged(value);
+        }
+      }
+    }
+
+    private string _printerStatus = "Ready";
+
+    public string PrinterStatus
+    {
+      get => _printerStatus;
+      set
+      {
+        if (!(_printerStatus == value))
+        {
+          _printerStatus = value;
+          OnPropertyChanged(nameof(PrinterStatus));
+        }
+      }
+    }
+    private string _printerLocation = "Unknown";
+
+    public string PrinterLocation
+    {
+      get => _printerLocation;
+      set
+      {
+        if (!(_printerLocation == value))
+        {
+          _printerLocation = value;
+          OnPropertyChanged(nameof(PrinterLocation));
+        }
+      }
+    }
+    private string _printerComment = "Unknown";
+
+    public string PrinterComment
+    {
+      get => _printerComment;
+      set
+      {
+        if (!(_printerComment == value))
+        {
+          _printerComment = value;
+          OnPropertyChanged(nameof(PrinterComment));
+        }
+      }
+    }
+
+
+    private string _previewPageNumberText;
+
+    public string PreviewPageNumberText
+    {
+      get => _previewPageNumberText;
+      set
+      {
+        if (!(_previewPageNumberText == value))
+        {
+          _previewPageNumberText = value;
+          OnPropertyChanged(nameof(PreviewPageNumberText));
+        }
+      }
+    }
+
+    public PreviewPageInfo CurrentPreviewData
+    {
+      get => _previewData is not null && _previewPageNumber < _previewData.Length ? _previewData[_previewPageNumber] : null;
+    }
+
+
+    #endregion
+
+    protected override void Initialize(bool initData)
+    {
+      if (initData)
+      {
+        var documentPrintOptionsController = new SingleGraphPrintOptionsController() { UseDocumentCopy = UseDocument.Directly };
+        if (_doc.PrintOptions is null)
+          _doc.PrintOptions = new SingleGraphPrintOptions();
+        documentPrintOptionsController.InitializeDocument(_doc.PrintOptions);
+        Current.Gui.FindAndAttachControlTo(documentPrintOptionsController);
+        DocumentPrintOptionsController = documentPrintOptionsController;
+
+
+        InitAvailablePaperSizes();
+        InitAvailablePaperSources();
+      
+        var currentPrinterSettings = Current.PrintingService.PrintDocument.PrinterSettings;
+        var installedPrinters = new SelectableListNodeList();
+
+        foreach (string printer in PrinterSettings.InstalledPrinters)
+          installedPrinters.Add(new SelectableListNode(printer, printer, currentPrinterSettings.PrinterName == printer));
+
+        AvailablePrinters = new ItemsController<string>(installedPrinters, EhSelectedPrinterChanged);
+        InitAvailablePaperSources();
+        InitAvailablePaperSizes();
+        InitPaperOrientation();
+        InitPaperMargins();
+        NumberOfCopies = Current.PrintingService.PrintDocument.PrinterSettings.Copies;
+        CollateCopies = Current.PrintingService.PrintDocument.PrinterSettings.Collate;
+
+        RequestPreview();
+
+        System.Threading.Tasks.Task.Factory.StartNew(UpdatePrinterStatusGuiElements, _printerStatusCancellationToken);
+      }
+    }
+
+    private void EhSelectedPrinterChanged(string newPrinter)
+    {
+      if (newPrinter is not null)
+        Current.PrintingService.PrintDocument.PrinterSettings.PrinterName = newPrinter;
+
+      InitAvailablePaperSizes();
+      InitAvailablePaperSources();
       InitPaperOrientation();
       InitPaperMargins();
       RequestPreview();
@@ -152,8 +406,8 @@ namespace Altaxo.Gui.Graph
       // We take the default page settings of the printer now for the print document
       Current.PrintingService.PrintDocument.DefaultPageSettings = Current.PrintingService.PrintDocument.PrinterSettings.DefaultPageSettings;
 
-      InitAvailablePaperSizes(true);
-      InitAvailablePaperSources(true);
+      InitAvailablePaperSizes();
+      InitAvailablePaperSources();
       InitPaperOrientation();
       InitPaperMargins();
       RequestPreview();
@@ -168,19 +422,17 @@ namespace Altaxo.Gui.Graph
         RequestPreview();
     }
 
-    private void EhPaperSourceChanged()
+    private void EhPaperSourceChanged(PaperSource newValue)
     {
-      var sel = _currentPaperSources.FirstSelectedNode;
-      if (sel is not null)
-        Current.PrintingService.PrintDocument.DefaultPageSettings.PaperSource = (PaperSource)(sel.Tag);
+      if (newValue is not null)
+        Current.PrintingService.PrintDocument.DefaultPageSettings.PaperSource = newValue;
     }
 
-    private void EhPaperSizeChanged()
+    private void EhPaperSizeChanged(PaperSize newValue)
     {
-      var sel = _currentPaperSizes.FirstSelectedNode;
-      if (sel is not null)
+      if (newValue is not null)
       {
-        Current.PrintingService.PrintDocument.DefaultPageSettings.PaperSize = (PaperSize)(sel.Tag);
+        Current.PrintingService.PrintDocument.DefaultPageSettings.PaperSize = newValue;
         RequestPreview();
       }
     }
@@ -219,59 +471,85 @@ namespace Altaxo.Gui.Graph
       Current.PrintingService.PrintDocument.PrinterSettings.Collate = val;
     }
 
-    private void InitAvailablePaperSources(bool initData)
+    private void EhPreviewFirstPage()
     {
-      if (initData)
-      {
-        var sources = Current.PrintingService.PrintDocument.PrinterSettings.PaperSources;
-        var currSource = Current.PrintingService.PrintDocument.DefaultPageSettings.PaperSource;
+      _previewPageNumber = 0;
+      UpdatePreviewPageAndText();
+    }
 
-        _currentPaperSources = new SelectableListNodeList();
-        foreach (PaperSource paper in sources)
-        {
-          _currentPaperSources.Add(new SelectableListNode(paper.SourceName, paper, paper.SourceName == currSource.SourceName));
-        }
+    private void EhPreviewPreviousPage()
+    {
+      _previewPageNumber = Math.Max(0, _previewPageNumber - 1);
+      UpdatePreviewPageAndText();
+    }
+
+    private void EhPreviewNextPage()
+    {
+      _previewPageNumber = Math.Min(_previewPageNumber + 1, _previewData is not null ? _previewData.Length - 1 : 0);
+      UpdatePreviewPageAndText();
+    }
+
+    private void EhPreviewLastPage()
+    {
+      _previewPageNumber = _previewData is not null ? _previewData.Length - 1 : 0;
+      UpdatePreviewPageAndText();
+    }
+
+    private void UpdatePreviewPageAndText()
+    {
+      if (_previewData is null)
+      {
+        PreviewPageNumberText = string.Empty;
       }
-
-      if (_view is not null)
+      else
       {
-        _view.InitializeAvailablePaperSources(_currentPaperSources);
+        _previewPageNumber = Math.Max(0, Math.Min(_previewPageNumber, _previewData.Length - 1));
+        PreviewPageNumberText = string.Format("{0} of {1}", _previewPageNumber + 1, _previewData.Length);
+        UpdatePreview();
       }
     }
 
-    private void InitAvailablePaperSizes(bool initData)
+    private void InitAvailablePaperSources()
     {
-      if (initData)
-      {
+        var sources = Current.PrintingService.PrintDocument.PrinterSettings.PaperSources;
+        var currSource = Current.PrintingService.PrintDocument.DefaultPageSettings.PaperSource;
+
+        var currentPaperSources = new SelectableListNodeList();
+        foreach (PaperSource paper in sources)
+        {
+          currentPaperSources.Add(new SelectableListNode(paper.SourceName, paper, paper.SourceName == currSource.SourceName));
+        }
+
+      AvailablePaperSources = new ItemsController<PaperSource>(currentPaperSources, EhPaperSourceChanged);
+    }
+
+    private void InitAvailablePaperSizes()
+    {
+     
         var sizes = Current.PrintingService.PrintDocument.PrinterSettings.PaperSizes;
         var currSize = Current.PrintingService.PrintDocument.DefaultPageSettings.PaperSize;
 
-        _currentPaperSizes = new SelectableListNodeList();
+        var currentPaperSizes = new SelectableListNodeList();
         foreach (PaperSize paper in sizes)
         {
-          _currentPaperSizes.Add(new SelectableListNode(paper.PaperName, paper, paper.PaperName == currSize.PaperName));
+          currentPaperSizes.Add(new SelectableListNode(paper.PaperName, paper, paper.PaperName == currSize.PaperName));
         }
-      }
 
-      if (_view is not null)
-      {
-        _view.InitializeAvailablePaperSizes(_currentPaperSizes);
-      }
+      AvailablePaperSizes = new ItemsController<PaperSize>(currentPaperSizes, EhPaperSizeChanged);
     }
 
     private void InitPaperOrientation()
     {
-      if (_view is not null)
-        _view.InitializePaperOrientationLandscape(Current.PrintingService.PrintDocument.DefaultPageSettings.Landscape);
+        IsPaperOrientationLandscape = Current.PrintingService.PrintDocument.DefaultPageSettings.Landscape;
     }
 
     private void InitPaperMargins()
     {
-      if (_view is not null)
-      {
-        var m = Current.PrintingService.PrintDocument.DefaultPageSettings.Margins;
-        _view.InitializePaperMarginsInHundrethInch(m.Left, m.Right, m.Top, m.Bottom);
-      }
+      var m = Current.PrintingService.PrintDocument.DefaultPageSettings.Margins;
+      MarginLeft = new DimensionfulQuantity(m.Left, SIPrefix.Centi, Altaxo.Units.Length.Inch.Instance).AsQuantityIn(MarginEnvironment.DefaultUnit);
+      MarginRight = new DimensionfulQuantity(m.Right, SIPrefix.Centi, Altaxo.Units.Length.Inch.Instance).AsQuantityIn(MarginEnvironment.DefaultUnit);
+      MarginTop = new DimensionfulQuantity(m.Top, SIPrefix.Centi, Altaxo.Units.Length.Inch.Instance).AsQuantityIn(MarginEnvironment.DefaultUnit);
+      MarginBottom = new DimensionfulQuantity(m.Bottom, SIPrefix.Centi, Altaxo.Units.Length.Inch.Instance).AsQuantityIn(MarginEnvironment.DefaultUnit);
     }
 
     private void CopyPageSettings(PageSettings source, PageSettings dest)
@@ -315,27 +593,7 @@ namespace Altaxo.Gui.Graph
 
     public void RequestPreview()
     {
-      _previewRequested = true;
-      if (_previewTask is null)
-      {
-        _previewRequested = false;
-        InitiatePreview();
-      }
-    }
-
-    private void InitiatePreview()
-    {
-      _previewRequested = false;
-      //Console.WriteLine("Begin InitiatePreview");
-      //create CancellationTokenSource, so we can use the overload of
-      //the Task.Factory that allows us to pass in a SynchronizationContext
-      var tokenSource = new CancellationTokenSource();
-      CancellationToken token = tokenSource.Token;
-
-      _previewTask = Task.Factory.StartNew<PreviewPageInfo[]>(CreatePreviewPageInfo);
-      _previewTask.ContinueWith(EhSetPrintPreview, token, TaskContinuationOptions.None, TaskScheduler.FromCurrentSynchronizationContext());
-
-      //Console.WriteLine("End InitiatePreview");
+      OnPropertyChanged(nameof(CurrentPreviewData));
     }
 
     private PreviewPageInfo[] CreatePreviewPageInfo()
@@ -365,99 +623,63 @@ namespace Altaxo.Gui.Graph
       return _previewController.GetPreviewPageInfo();
     }
 
-    private void EhSetPrintPreview(Task<PreviewPageInfo[]> t)
+    private void UpdatePreview()
     {
-      if (_view is not null)
-        _view.InitializePrintPreview(t.Result);
+      OnPropertyChanged(nameof(CurrentPreviewData));
+    }
 
-      if (_previewRequested)
+    private void UpdatePrinterStatusGuiElements()
+    {
+      for (; ; )
       {
-        //Console.WriteLine("EhSetPrintPreview next Initiate");
-        InitiatePreview();
-      }
-      else
-      {
-        _previewTask = null;
-        //Console.WriteLine("End EhSetPrintPreview null");
-      }
+        if (_printerStatusCancellationToken.IsCancellationRequested)
+          break;
 
-      //Console.WriteLine("End EhSetPrintPreview");
+        string printerName = AvailablePrinters.SelectedValue;
+        if (string.IsNullOrEmpty(printerName))
+        {
+          System.Threading.Thread.Sleep(100);
+          continue;
+        }
+
+        string comment = string.Empty;
+        string status = string.Empty;
+        string location = string.Empty;
+        bool? isOffline = null;
+
+        string escapedPrinterName = printerName.Replace("\\", "\\\\");
+        //string query = string.Format("SELECT * from Win32_Printer WHERE Name LIKE '%{0}'", escapedPrinterName);
+        string query = string.Format("SELECT * from Win32_Printer WHERE Name = '{0}'", escapedPrinterName);
+        var searcher = new System.Management.ManagementObjectSearcher(query);
+        ManagementObjectCollection coll = searcher.Get();
+        foreach (ManagementObject printer in coll)
+        {
+          status = (string)printer.GetPropertyValue("Status");
+          comment = (string)printer.GetPropertyValue("Comment");
+          location = (string)printer.GetPropertyValue("Location");
+          isOffline = (bool)printer.GetPropertyValue("WorkOffline");
+          break;
+        }
+
+        if (true == isOffline)
+          status = "Offline";
+
+        if (_printerStatusCancellationToken.IsCancellationRequested)
+          break;
+
+        Current.Dispatcher.InvokeIfRequired(() =>
+        {
+          PrinterStatus= status;
+          PrinterComment= comment;
+          PrinterLocation = location;
+        });
+        System.Threading.Thread.Sleep(100);
+      }
     }
 
     #endregion Preview
 
-    #region IMVCANController
-
-    public bool InitializeDocument(params object[] args)
-    {
-      if (args is null || args.Length == 0 || !(args[0] is Altaxo.Graph.Gdi.GraphDocument))
-        return false;
-
-      _doc = (Altaxo.Graph.Gdi.GraphDocument)args[0];
-
-      Initialize(true);
-
-      return true;
-    }
-
-    public UseDocument UseDocumentCopy
-    {
-      set { }
-    }
-
-    public object ViewObject
-    {
-      get
-      {
-        return _view;
-      }
-      set
-      {
-        if (_view is not null)
-        {
-          _view.SelectedPrinterChanged -= EhSelectedPrinterChanged;
-          _view.EditPrinterProperties -= EhEditPrinterProperties;
-          _view.PaperOrientationLandscapeChanged -= EhPaperOrientationLandscapeChanged;
-          _view.PaperSizeChanged -= EhPaperSizeChanged;
-          _view.PaperSourceChanged -= EhPaperSourceChanged;
-          _view.MarginLeftChanged -= EhMarginLeftChanged;
-          _view.MarginRightChanged -= EhMarginRightChanged;
-          _view.MarginTopChanged -= EhMarginTopChanged;
-          _view.MarginBottomChanged -= EhMarginBottomChanged;
-          _view.NumberOfCopiesChanged -= EhNumberOfCopiesChanged;
-          _view.CollateCopiesChanged -= EhCollateCopiesChanged;
-        }
-
-        _view = value as IPrintingView;
-
-        if (_view is not null)
-        {
-          Initialize(false);
-          _view.SelectedPrinterChanged += EhSelectedPrinterChanged;
-          _view.EditPrinterProperties += EhEditPrinterProperties;
-          _view.PaperOrientationLandscapeChanged += EhPaperOrientationLandscapeChanged;
-          _view.PaperSizeChanged += EhPaperSizeChanged;
-          _view.PaperSourceChanged += EhPaperSourceChanged;
-          _view.MarginLeftChanged += EhMarginLeftChanged;
-          _view.MarginRightChanged += EhMarginRightChanged;
-          _view.MarginTopChanged += EhMarginTopChanged;
-          _view.MarginBottomChanged += EhMarginBottomChanged;
-          _view.NumberOfCopiesChanged += EhNumberOfCopiesChanged;
-          _view.CollateCopiesChanged += EhCollateCopiesChanged;
-        }
-      }
-    }
-
-    public object ModelObject
-    {
-      get { return _doc; }
-    }
-
-    public void Dispose()
-    {
-    }
-
-    public bool Apply(bool disposeController)
+    public override bool Apply(bool disposeController)
     {
       var previewTask = _previewTask;
       if (previewTask is not null)
@@ -466,19 +688,5 @@ namespace Altaxo.Gui.Graph
       Current.PrintingService.PrintDocument.DocumentName = _doc.Name;
       return true;
     }
-
-    /// <summary>
-    /// Try to revert changes to the model, i.e. restores the original state of the model.
-    /// </summary>
-    /// <param name="disposeController">If set to <c>true</c>, the controller should release all temporary resources, since the controller is not needed anymore.</param>
-    /// <returns>
-    ///   <c>True</c> if the revert operation was successfull; <c>false</c> if the revert operation was not possible (i.e. because the controller has not stored the original state of the model).
-    /// </returns>
-    public bool Revert(bool disposeController)
-    {
-      return false;
-    }
-
-    #endregion IMVCANController
   }
 }
