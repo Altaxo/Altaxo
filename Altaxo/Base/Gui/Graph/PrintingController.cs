@@ -72,7 +72,8 @@ namespace Altaxo.Gui.Graph
 
     public override void Dispose(bool isDisposing)
     {
-      _printerStatusCancellationTokenSource.Cancel();
+      _printerStatusCancellationTokenSource?.Cancel();
+      _printerStatusCancellationTokenSource?.Dispose();
       base.Dispose(isDisposing);
     }
 
@@ -169,6 +170,7 @@ namespace Altaxo.Gui.Graph
         {
           _isPaperOrientationLandscape = value;
           OnPropertyChanged(nameof(IsPaperOrientationLandscape));
+          OnPropertyChanged(nameof(IsPaperOrientationPortrait));
           EhPaperOrientationLandscapeChanged(value);
         }
       }
@@ -612,8 +614,6 @@ namespace Altaxo.Gui.Graph
     private bool _previewRequested;
     private Task<PreviewPageInfo[]> _previewTask;
 
-
-
     private PreviewPageInfo[] CreatePreviewPageInfo()
     {
       //Console.WriteLine("Begin CreatePreviewPageInfo");
@@ -689,50 +689,36 @@ namespace Altaxo.Gui.Graph
 
     private void UpdatePrinterStatusGuiElements()
     {
-      for (; ; )
+      for (; !_printerStatusCancellationToken.IsCancellationRequested;)
       {
-        if (_printerStatusCancellationToken.IsCancellationRequested)
-          break;
-
         string printerName = AvailablePrinters.SelectedValue;
-        if (string.IsNullOrEmpty(printerName))
+        if (!string.IsNullOrEmpty(printerName))
         {
-          System.Threading.Thread.Sleep(100);
-          continue;
-        }
+          string comment = string.Empty;
+          string status = string.Empty;
+          string location = string.Empty;
 
-        string comment = string.Empty;
-        string status = string.Empty;
-        string location = string.Empty;
-        bool? isOffline = null;
+          string escapedPrinterName = printerName.Replace("\\", "\\\\");
+          //string query = string.Format("SELECT * from Win32_Printer WHERE Name LIKE '%{0}'", escapedPrinterName);
+          string query = string.Format("SELECT * from Win32_Printer WHERE Name = '{0}'", escapedPrinterName);
+          var searcher = new System.Management.ManagementObjectSearcher(query);
+          ManagementObjectCollection coll = searcher.Get();
 
-        string escapedPrinterName = printerName.Replace("\\", "\\\\");
-        //string query = string.Format("SELECT * from Win32_Printer WHERE Name LIKE '%{0}'", escapedPrinterName);
-        string query = string.Format("SELECT * from Win32_Printer WHERE Name = '{0}'", escapedPrinterName);
-        var searcher = new System.Management.ManagementObjectSearcher(query);
-        ManagementObjectCollection coll = searcher.Get();
-        foreach (ManagementObject printer in coll)
-        {
-          status = (string)printer.GetPropertyValue("Status");
-          comment = (string)printer.GetPropertyValue("Comment");
-          location = (string)printer.GetPropertyValue("Location");
-          isOffline = (bool)printer.GetPropertyValue("WorkOffline");
-          break;
-        }
+          foreach (ManagementObject printer in coll)
+          {
+            var isOffline = (bool)printer.GetPropertyValue("WorkOffline");
+            status = true == isOffline ? "Offline" : (string)printer.GetPropertyValue("Status");
+            comment = (string)printer.GetPropertyValue("Comment");
+            location = (string)printer.GetPropertyValue("Location");
+            break;
+          }
 
-        if (true == isOffline)
-          status = "Offline";
 
-        if (_printerStatusCancellationToken.IsCancellationRequested)
-          break;
-
-        Current.Dispatcher.InvokeIfRequired(() =>
-        {
           PrinterStatus = status;
           PrinterComment = comment;
           PrinterLocation = location;
-        });
-        System.Threading.Thread.Sleep(100);
+        }
+        System.Threading.Thread.Sleep(200);
       }
     }
 

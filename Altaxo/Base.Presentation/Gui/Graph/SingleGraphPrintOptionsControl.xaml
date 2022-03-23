@@ -56,6 +56,7 @@
 		<Label Grid.Row="10" Grid.Column="0" Content="Zoom factor:" />
 		<axogcd:ScaleComboBox Grid.Row="10" Grid.Column="2"
                               SelectedQuantity="{Binding ZoomFactor}"
-                              UnitEnvironment="{Binding ZoomFactorEnvironment}" />
+                              UnitEnvironment="{Binding ZoomFactorEnvironment}"
+                              IsEnabled="{Binding UseFixedZoomFactor}"/>
 	</Grid>
 </UserControl>
