@@ -180,21 +180,26 @@
 					<RowDefinition Height="4" />
 					<RowDefinition Height="Auto" />
 				</Grid.RowDefinitions>
-				<Rectangle x:Name="_previewRect" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="11" Fill="AliceBlue" />
-                <axogc:ImageWithNoSizeRequest Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="11"
-                                              Width="{Binding ElementName=_previewRect, Path=ActualWidth}"
-                                              Height="{Binding ElementName=_previewRect, Path=ActualHeight}"
+                <Rectangle x:Name="_previewRect" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="11" Fill="AliceBlue" >
+                    <axogb:PushBindingManager.PushBindings>
+                        <axogb:PushBinding TargetProperty = "ActualWidth" Path="PreviewWidth"/>
+                        <axogb:PushBinding TargetProperty = "ActualHeight" Path="PreviewHeight"/>
+                    </axogb:PushBindingManager.PushBindings>
+                </Rectangle>
+                <Image Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="11"
+                                              Width="{Binding PreviewWidth}"
+                                              Height="{Binding PreviewHeight}"
                                               Stretch="Fill"
                                               StretchDirection="Both"
                                               SnapsToDevicePixels="True" >
-                    <axogc:ImageWithNoSizeRequest.Source>
+                    <Image.Source>
                         <MultiBinding Converter="{StaticResource PreviewConverter}">
                             <Binding Path="CurrentPreviewData"/>
-                            <Binding RelativeSource="{RelativeSource Mode=Self}" Path="ActualWidth"/>
-                            <Binding RelativeSource="{RelativeSource Mode=Self}" Path="ActualHeight"/>
+                            <Binding Path="PreviewWidth"/>
+                            <Binding Path="PreviewHeight"/>
                         </MultiBinding>
-                    </axogc:ImageWithNoSizeRequest.Source>
-                </axogc:ImageWithNoSizeRequest>
+                    </Image.Source>
+                </Image>
                 <Button  Grid.Column="1" Grid.Row="2" Content="|&lt;" Command="{Binding CmdPreviewFirstPage}" />
                 <Button   Grid.Column="3" Grid.Row="2"  Content="&lt;" Command="{Binding CmdPreviewPreviousPage}" />
 				<Label  Grid.Column="5" Grid.Row="2"  Content="{Binding PreviewPageNumberText}" />

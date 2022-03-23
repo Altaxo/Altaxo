@@ -25,10 +25,8 @@
 #nullable disable
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing.Printing;
-using System.Linq;
-using System.Text;
+using System.Management;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -37,13 +35,11 @@ using Altaxo.Graph;
 using Altaxo.Graph.Gdi;
 using Altaxo.Gui.Common;
 using Altaxo.Units;
-using System.Management;
-using System.Drawing.Printing;
 
 namespace Altaxo.Gui.Graph
 {
   public interface IPrintingView : IDataContextAwareView
- {
+  {
     void ShowPrinterPropertiesDialog(PrinterSettings currentSettings);
   }
 
@@ -59,7 +55,7 @@ namespace Altaxo.Gui.Graph
     public PrintingController()
     {
       CmdShowPrinterProperties = new RelayCommand(EhEditPrinterProperties);
-      CmdPreviewFirstPage = new   RelayCommand(EhPreviewFirstPage);
+      CmdPreviewFirstPage = new RelayCommand(EhPreviewFirstPage);
       CmdPreviewPreviousPage = new RelayCommand(EhPreviewPreviousPage);
       CmdPreviewNextPage = new RelayCommand(EhPreviewNextPage);
       CmdPreviewLastPage = new RelayCommand(EhPreviewLastPage);
@@ -69,9 +65,9 @@ namespace Altaxo.Gui.Graph
       _printerStatusCancellationToken = _printerStatusCancellationTokenSource.Token;
     }
 
-public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+    public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
-      yield return new ControllerAndSetNullMethod(_documentPrintOptionsController, () => DocumentPrintOptionsController=null);
+      yield return new ControllerAndSetNullMethod(_documentPrintOptionsController, () => DocumentPrintOptionsController = null);
     }
 
     public override void Dispose(bool isDisposing)
@@ -104,7 +100,7 @@ public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
           _documentPrintOptionsController?.Dispose();
           _documentPrintOptionsController = value;
 
-          if(_documentPrintOptionsController is { } newC)
+          if (_documentPrintOptionsController is { } newC)
             newC.PropertyChanged += new Altaxo.WeakPropertyChangedEventHandler(EhDocumentPrintOptionsChanged, _doc.PrintOptions, nameof(_doc.PrintOptions.PropertyChanged));
 
 
@@ -181,8 +177,8 @@ public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
 
     public bool IsPaperOrientationPortrait
     {
-      get => !_isPaperOrientationLandscape;
-      set => _isPaperOrientationLandscape = !value;
+      get => !IsPaperOrientationLandscape;
+      set => IsPaperOrientationLandscape = !value;
     }
 
     public QuantityWithUnitGuiEnvironment MarginEnvironment => PaperMarginEnvironment.Instance;
@@ -348,6 +344,36 @@ public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     }
 
 
+    private double _previewHeight;
+
+    public double PreviewHeight
+    {
+      get => _previewHeight;
+      set
+      {
+        if (!(_previewHeight == value))
+        {
+          _previewHeight = value;
+          OnPropertyChanged(nameof(PreviewHeight));
+        }
+      }
+    }
+    private double _previewWidth;
+
+    public double PreviewWidth
+    {
+      get => _previewWidth;
+      set
+      {
+        if (!(_previewWidth == value))
+        {
+          _previewWidth = value;
+          OnPropertyChanged(nameof(PreviewWidth));
+        }
+      }
+    }
+
+
     #endregion
 
     protected override void Initialize(bool initData)
@@ -364,7 +390,7 @@ public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
 
         InitAvailablePaperSizes();
         InitAvailablePaperSources();
-      
+
         var currentPrinterSettings = Current.PrintingService.PrintDocument.PrinterSettings;
         var installedPrinters = new SelectableListNodeList();
 
@@ -415,17 +441,16 @@ public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
 
     private void EhPaperOrientationLandscapeChanged(bool isLandscape)
     {
-      var oldValue = Current.PrintingService.PrintDocument.DefaultPageSettings.Landscape;
       Current.PrintingService.PrintDocument.DefaultPageSettings.Landscape = isLandscape;
-
-      if (oldValue != isLandscape)
-        RequestPreview();
+      RequestPreview();
     }
 
     private void EhPaperSourceChanged(PaperSource newValue)
     {
       if (newValue is not null)
+      {
         Current.PrintingService.PrintDocument.DefaultPageSettings.PaperSource = newValue;
+      }
     }
 
     private void EhPaperSizeChanged(PaperSize newValue)
@@ -504,43 +529,42 @@ public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
       else
       {
         _previewPageNumber = Math.Max(0, Math.Min(_previewPageNumber, _previewData.Length - 1));
-        PreviewPageNumberText = string.Format("{0} of {1}", _previewPageNumber + 1, _previewData.Length);
-        UpdatePreview();
+        RequestPreview();
       }
     }
 
     private void InitAvailablePaperSources()
     {
-        var sources = Current.PrintingService.PrintDocument.PrinterSettings.PaperSources;
-        var currSource = Current.PrintingService.PrintDocument.DefaultPageSettings.PaperSource;
+      var sources = Current.PrintingService.PrintDocument.PrinterSettings.PaperSources;
+      var currSource = Current.PrintingService.PrintDocument.DefaultPageSettings.PaperSource;
 
-        var currentPaperSources = new SelectableListNodeList();
-        foreach (PaperSource paper in sources)
-        {
-          currentPaperSources.Add(new SelectableListNode(paper.SourceName, paper, paper.SourceName == currSource.SourceName));
-        }
+      var currentPaperSources = new SelectableListNodeList();
+      foreach (PaperSource paper in sources)
+      {
+        currentPaperSources.Add(new SelectableListNode(paper.SourceName, paper, paper.SourceName == currSource.SourceName));
+      }
 
       AvailablePaperSources = new ItemsController<PaperSource>(currentPaperSources, EhPaperSourceChanged);
     }
 
     private void InitAvailablePaperSizes()
     {
-     
-        var sizes = Current.PrintingService.PrintDocument.PrinterSettings.PaperSizes;
-        var currSize = Current.PrintingService.PrintDocument.DefaultPageSettings.PaperSize;
 
-        var currentPaperSizes = new SelectableListNodeList();
-        foreach (PaperSize paper in sizes)
-        {
-          currentPaperSizes.Add(new SelectableListNode(paper.PaperName, paper, paper.PaperName == currSize.PaperName));
-        }
+      var sizes = Current.PrintingService.PrintDocument.PrinterSettings.PaperSizes;
+      var currSize = Current.PrintingService.PrintDocument.DefaultPageSettings.PaperSize;
+
+      var currentPaperSizes = new SelectableListNodeList();
+      foreach (PaperSize paper in sizes)
+      {
+        currentPaperSizes.Add(new SelectableListNode(paper.PaperName, paper, paper.PaperName == currSize.PaperName));
+      }
 
       AvailablePaperSizes = new ItemsController<PaperSize>(currentPaperSizes, EhPaperSizeChanged);
     }
 
     private void InitPaperOrientation()
     {
-        IsPaperOrientationLandscape = Current.PrintingService.PrintDocument.DefaultPageSettings.Landscape;
+      IsPaperOrientationLandscape = Current.PrintingService.PrintDocument.DefaultPageSettings.Landscape;
     }
 
     private void InitPaperMargins()
@@ -568,11 +592,8 @@ public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
 
     private void EhDocumentPrintOptionsChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
     {
+      DocumentPrintOptionsController.Apply(false);
       RequestPreview();
-    }
-
-    private void UpdatePrinterProperties()
-    {
     }
 
     private PrintDocument GetCloneOfPrintDocument(PrintDocument source)
@@ -591,10 +612,7 @@ public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     private bool _previewRequested;
     private Task<PreviewPageInfo[]> _previewTask;
 
-    public void RequestPreview()
-    {
-      OnPropertyChanged(nameof(CurrentPreviewData));
-    }
+
 
     private PreviewPageInfo[] CreatePreviewPageInfo()
     {
@@ -623,9 +641,50 @@ public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
       return _previewController.GetPreviewPageInfo();
     }
 
-    private void UpdatePreview()
+    public void RequestPreview()
     {
+      _previewRequested = true;
+      if (_previewTask is null)
+      {
+        _previewRequested = false;
+        InitiatePreview();
+      }
+    }
+
+    private void InitiatePreview()
+    {
+      _previewRequested = false;
+      //Console.WriteLine("Begin InitiatePreview");
+      //create CancellationTokenSource, so we can use the overload of
+      //the Task.Factory that allows us to pass in a SynchronizationContext
+      var tokenSource = new CancellationTokenSource();
+      CancellationToken token = tokenSource.Token;
+
+      _previewTask = Task.Factory.StartNew<PreviewPageInfo[]>(CreatePreviewPageInfo);
+      _previewTask.ContinueWith(EhSetPrintPreview, token, TaskContinuationOptions.None, TaskScheduler.FromCurrentSynchronizationContext());
+
+      //Console.WriteLine("End InitiatePreview");
+    }
+
+    private void EhSetPrintPreview(Task<PreviewPageInfo[]> t)
+    {
+      _previewData = t.Result;
       OnPropertyChanged(nameof(CurrentPreviewData));
+      PreviewPageNumberText = _previewData is not null ? $"{_previewPageNumber + 1} of {_previewData.Length}" : String.Empty;
+
+
+      if (_previewRequested)
+      {
+        //Console.WriteLine("EhSetPrintPreview next Initiate");
+        InitiatePreview();
+      }
+      else
+      {
+        _previewTask = null;
+        //Console.WriteLine("End EhSetPrintPreview null");
+      }
+
+      //Console.WriteLine("End EhSetPrintPreview");
     }
 
     private void UpdatePrinterStatusGuiElements()
@@ -669,8 +728,8 @@ public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
 
         Current.Dispatcher.InvokeIfRequired(() =>
         {
-          PrinterStatus= status;
-          PrinterComment= comment;
+          PrinterStatus = status;
+          PrinterComment = comment;
           PrinterLocation = location;
         });
         System.Threading.Thread.Sleep(100);

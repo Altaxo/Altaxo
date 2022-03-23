@@ -20,10 +20,10 @@ namespace Altaxo.Gui.Behaviors
   /// <example>
   /// <code>
   /// <TextBlock Name="myTextBlock">
-  ///   <pb:PushBindingManager.PushBindings>
-  ///      <pb:PushBinding TargetProperty = "ActualHeight" Path="Height"/>
-  ///      <pb:PushBinding TargetProperty = "ActualWidth" Path="Width"/>
-  ///   </pb:PushBindingManager.PushBindings>
+  ///   <axogb:PushBindingManager.PushBindings>
+  ///      <axogb:PushBinding TargetProperty = "ActualHeight" Path="Height"/>
+  ///      <axogb:PushBinding TargetProperty = "ActualWidth" Path="Width"/>
+  ///   </axogb:PushBindingManager.PushBindings>
   /// </TextBlock>
   /// </code>
   /// </example>
