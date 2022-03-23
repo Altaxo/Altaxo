@@ -244,7 +244,7 @@ namespace Altaxo.Geometry
 
     public bool Contains(PointD2D p)
     {
-      return  _x <= p.X && _x < (_x+_w) && _y <= p.Y && p.Y < (_y+_h);
+      return _x <= p.X && p.X < (_x + _w) && _y <= p.Y && p.Y < (_y + _h);
     }
     public bool Contains(RectangleD2D r)
     {
