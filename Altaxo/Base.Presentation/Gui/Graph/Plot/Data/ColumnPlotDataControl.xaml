@@ -12,46 +12,53 @@
  						 xmlns:axocoll="clr-namespace:Altaxo.Collections;assembly=AltaxoBase" 
              d:DataContext="{d:DesignInstance Type=localModel:XYColumnPlotDataController}"
              mc:Ignorable="d">
-	<UserControl.Resources>
-		<Style TargetType="Button">
-			<Style.Setters>
-				<Setter Property="Margin" Value="8,0,8,0" />
-				<Setter Property="Padding" Value="4,0,4,0" />
-			</Style.Setters>
-		</Style>
-	</UserControl.Resources>
+    <UserControl.Resources>
+        <Style TargetType="Button">
+            <Style.Setters>
+                <Setter Property="Margin" Value="8,0,8,0" />
+                <Setter Property="Padding" Value="4,0,4,0" />
+            </Style.Setters>
+        </Style>
 
-	<Grid x:Name="_guiOuterGrid">
-		<Grid.Resources>
-			<ResourceDictionary Source="pack://application:,,,/AltaxoBase.Presentation;component/CommonStyles.xaml" />
-		</Grid.Resources>
-		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="Auto" />
-			<ColumnDefinition Width="4" />
-			<ColumnDefinition Width="Auto" />
-			<ColumnDefinition Width="4" />
-			<ColumnDefinition Width="*" />
-			<ColumnDefinition Width="4" />
-		</Grid.ColumnDefinitions>
-		<Grid.RowDefinitions>
-			<RowDefinition Height="Auto" />
-			<RowDefinition Height="Auto" />
-			<RowDefinition Height="4" />
-			<RowDefinition Height="Auto" />
-			<RowDefinition Height="3*" />
-			<RowDefinition Height="4" />
-			<RowDefinition Height="Auto" />
-			<RowDefinition Height="*" />
-		</Grid.RowDefinitions>
+        <CollectionViewSource x:Key="PlotItemColumnsGrouped" Source="{Binding PlotItemColumns}">
+            <CollectionViewSource.GroupDescriptions>
+                <PropertyGroupDescription PropertyName="GroupName" />
+            </CollectionViewSource.GroupDescriptions>
+        </CollectionViewSource>
 
-		<StackPanel Orientation="Vertical" Grid.Row="0" Grid.Column="0">
-			<Label Content="Table: " />
-			<ComboBox ItemsSource="{Binding AvailableTables.Items}" SelectedItem="{Binding AvailableTables.SelectedItem, Mode=TwoWay}" ToolTip="Choose among all available tables, then select a group number." />
-		</StackPanel>
+    </UserControl.Resources>
 
-		<StackPanel Orientation="Vertical" Grid.Row="0" Grid.Column="2">
-			<Label Content="GroupNumber: " />
-			<axogc:Int32ListUpDown 
+    <Grid x:Name="_guiOuterGrid">
+        <Grid.Resources>
+            <ResourceDictionary Source="pack://application:,,,/AltaxoBase.Presentation;component/CommonStyles.xaml" />
+        </Grid.Resources>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="4" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="4" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="4" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="4" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="3*" />
+            <RowDefinition Height="4" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <StackPanel Orientation="Vertical" Grid.Row="0" Grid.Column="0">
+            <Label Content="Table: " />
+            <ComboBox ItemsSource="{Binding AvailableTables.Items}" SelectedItem="{Binding AvailableTables.SelectedItem, Mode=TwoWay}" ToolTip="Choose among all available tables, then select a group number." />
+        </StackPanel>
+
+        <StackPanel Orientation="Vertical" Grid.Row="0" Grid.Column="2">
+            <Label Content="GroupNumber: " />
+            <axogc:Int32ListUpDown 
                 AvailableValues="{Binding AvailabeGroupNumbers}"
                 Value="{Binding SelectedGroupNumber, Mode=TwoWay}"
                 IsEnabled="{Binding IsGroupNumberEnabled}"
@@ -61,20 +68,20 @@
                 Minimum="0"
                 IsGotoMinimumAndMaximumVisible="False"
                 />
-		</StackPanel>
+        </StackPanel>
 
-		<GroupBox Header="Plot Range:" Grid.Row="0" Grid.RowSpan="2" Grid.Column="4" Margin="0,6,0,0"  Padding="0,4,0,0" VerticalAlignment="Top">
+        <GroupBox Header="Plot Range:" Grid.Row="0" Grid.RowSpan="2" Grid.Column="4" Margin="0,6,0,0"  Padding="0,4,0,0" VerticalAlignment="Top">
             <ContentControl Content="{Binding RowSelectionController.ViewObject}"/>
         </GroupBox>
 
-		<Label Content="Available columns: " Grid.Row="3" Grid.Column="0" />
-		<Label Content="Plot item columns: " FontWeight="Bold" Grid.Row="3" Grid.Column="2" />
-		<StackPanel Orientation="Horizontal" Grid.Row="3" Grid.Column="4" HorizontalAlignment="Right">
-			<Label Content="Tables with matching columns:" />
-			<ComboBox ItemsSource="{Binding MatchingTables.Items}" SelectedItem="{Binding MatchingTables.SelectedItem, Mode=TwoWay}" ToolTip="Choose among those tables only, which contain columns with names like the plot columns below." />
-		</StackPanel>
+        <Label Content="Available columns: " Grid.Row="3" Grid.Column="0" />
+        <Label Content="Plot item columns: " FontWeight="Bold" Grid.Row="3" Grid.Column="2" />
+        <StackPanel Orientation="Horizontal" Grid.Row="3" Grid.Column="4" HorizontalAlignment="Right">
+            <Label Content="Tables with matching columns:" />
+            <ComboBox ItemsSource="{Binding MatchingTables.Items}" SelectedItem="{Binding MatchingTables.SelectedItem, Mode=TwoWay}" ToolTip="Choose among those tables only, which contain columns with names like the plot columns below." />
+        </StackPanel>
 
-        <ListBox Grid.Row="4" Grid.Column="0" x:Name="_guiAvailableTableColumnsList"
+        <ListBox Grid.Row="4" Grid.Column="0" 
                  ItemsSource="{Binding AvailableTableColumnsForListView}"
                  SelectedItem="{Binding AvailableTableColumnsListSelectedItem}"
                  Visibility="{Binding IsTableColumnsListVisible, Converter={x:Static axogcc:FalseToVisibilityHiddenConverter.Instance}}"
@@ -84,13 +91,13 @@
                 <axogb:PushBinding TargetProperty="IsKeyboardFocusWithin" Path="IsAvailableDataColumnsListViewFocused"/>
             </axogb:PushBindingManager.PushBindings>
             <ListBox.ItemTemplate>
-				<DataTemplate>
-					<TextBlock Text="{Binding Text}" ToolTip="{Binding ToolTip}" />
-				</DataTemplate>
-			</ListBox.ItemTemplate>
-		</ListBox>
+                <DataTemplate>
+                    <TextBlock Text="{Binding Text}" ToolTip="{Binding ToolTip}" />
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
 
-		<TreeView Grid.Row="4" Grid.Column="0" 
+        <TreeView Grid.Row="4" Grid.Column="0" 
                   ItemsSource="{Binding AvailableTableColumnsForTreeView}"
                   Visibility="{Binding IsTableColumnsListVisible, Converter={x:Static axogcc:TrueToVisibilityHiddenConverter.Instance}}"
                  ScrollViewer.VerticalScrollBarVisibility="Visible" 
@@ -100,58 +107,69 @@
                 <axogb:PushBinding TargetProperty="IsKeyboardFocusWithin" Path="IsAvailableDataColumnsTreeViewFocused"/>
             </axogb:PushBindingManager.PushBindings>
             <ItemsControl.ItemContainerStyle>
-				<!-- This Style binds a TreeViewItem to a TreeViewItemViewModel. -->
-				<Style TargetType="{x:Type TreeViewItem}">
-					<Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
-					<Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
-					<Setter Property="FontWeight" Value="Normal" />
-					<Style.Triggers>
-						<DataTrigger Binding="{Binding IsSelected}" Value="True">
-							<Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" />
-						</DataTrigger>
-					</Style.Triggers>
-				</Style>
-			</ItemsControl.ItemContainerStyle>
+                <!-- This Style binds a TreeViewItem to a TreeViewItemViewModel. -->
+                <Style TargetType="{x:Type TreeViewItem}">
+                    <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
+                    <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
+                    <Setter Property="FontWeight" Value="Normal" />
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                            <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </ItemsControl.ItemContainerStyle>
 
-			<ItemsControl.Resources>
-				<HierarchicalDataTemplate DataType="{x:Type axocoll:NGTreeNode}" ItemsSource="{Binding Nodes}">
-					<TextBlock Text="{Binding Text}" ToolTip="{Binding ToolTip}" />
-				</HierarchicalDataTemplate>
-			</ItemsControl.Resources>
-		</TreeView>
+            <ItemsControl.Resources>
+                <HierarchicalDataTemplate DataType="{x:Type axocoll:NGTreeNode}" ItemsSource="{Binding Nodes}">
+                    <TextBlock Text="{Binding Text}" ToolTip="{Binding ToolTip}" />
+                </HierarchicalDataTemplate>
+            </ItemsControl.Resources>
+        </TreeView>
 
-		<ItemsControl Grid.Row="4" Grid.Column="2" Grid.ColumnSpan="3"
-                      ItemsSource="{Binding PlotItemColumns}"
-                    Grid.IsSharedSizeScope="True"
-                    Margin="6,0,0,6">
+        <ItemsControl Grid.Row="4" Grid.Column="2" Grid.ColumnSpan="3"
+                      ItemsSource="{Binding Source={StaticResource PlotItemColumnsGrouped}}"
+                      Grid.IsSharedSizeScope="True"
+                      Margin="6,0,0,6">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <StackPanel Orientation="Vertical">
-                    </StackPanel>
+                    <StackPanel Orientation="Vertical"/>
                 </ItemsPanelTemplate>
             </ItemsControl.ItemsPanel>
             <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <local:SingleColumnControl DataContext="{Binding}" />
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <local:SingleColumnControl DataContext="{Binding}" />
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
             <ItemsControl.GroupStyle>
                 <GroupStyle>
-                    <GroupStyle.HeaderTemplate>
-                        <DataTemplate>
-                            <TextBlock FontWeight="Bold" FontStyle="Italic" Text="{Binding Path=Name}"/>
-                        </DataTemplate>
-                    </GroupStyle.HeaderTemplate>
+                    <GroupStyle.ContainerStyle>
+                        <Style TargetType="{x:Type GroupItem}">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="{x:Type GroupItem}">
+                                        <GroupBox>
+                                            <GroupBox.Header>
+                                                <!-- Here, Name is only a placeholder for the group name, its not name of the bound item -->
+                                                <TextBlock Text="{Binding Name}"
+                                                       FontWeight="Bold" 
+                                                       FontStyle="Italic"/>
+                                            </GroupBox.Header>
+                                            <ItemsPresenter/>
+                                        </GroupBox>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </GroupStyle.ContainerStyle>
                 </GroupStyle>
             </ItemsControl.GroupStyle>
-           
-            
         </ItemsControl>
 
-		<Label Content="Other columns: " Grid.Row="6" Grid.Column="0" />
+        <Label Content="Other columns: " Grid.Row="6" Grid.Column="0" />
 
         <!-- other available columns -->
-        <ListBox Grid.Row="7" Grid.Column="0" x:Name="_guiOtherAvailableColumns"
+        <ListBox Grid.Row="7" Grid.Column="0" 
                  ItemsSource="{Binding OtherAvailableColumns.Items}"
                  SelectedItem="{Binding OtherAvailableColumns.SelectedItem, Mode=TwoWay}"
                  ScrollViewer.VerticalScrollBarVisibility="Visible" 
@@ -165,7 +183,7 @@
         <Label Content="Available transformations: " Grid.Row="6" Grid.Column="2" Grid.ColumnSpan="3" />
 
         <!-- available transformations -->
-        <ListBox Grid.Row="7" Grid.Column="2" Grid.ColumnSpan="3" x:Name="_guiAvailableTransformations"
+        <ListBox Grid.Row="7" Grid.Column="2" Grid.ColumnSpan="3" 
                  ItemsSource="{Binding AvailableTransformations.Items}"
                  SelectedItem="{Binding AvailableTransformations.SelectedItem}"
                  ScrollViewer.VerticalScrollBarVisibility="Visible"
@@ -176,6 +194,10 @@
             </axogb:PushBindingManager.PushBindings>
         </ListBox>
 
-        <GridSplitter Grid.Column="1" Grid.Row="0" Grid.RowSpan="8" Width="4" HorizontalAlignment="Center" VerticalAlignment="Stretch" ResizeDirection="Columns" />
-	</Grid>
+        <GridSplitter Grid.Column="1" Grid.Row="0" Grid.RowSpan="8"
+                      Width="4" 
+                      HorizontalAlignment="Center"
+                      VerticalAlignment="Stretch"
+                      ResizeDirection="Columns" />
+    </Grid>
 </UserControl>

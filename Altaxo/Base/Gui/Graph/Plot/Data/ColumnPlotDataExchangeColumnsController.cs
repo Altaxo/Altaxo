@@ -176,7 +176,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
 
     protected bool _isDirty = false;
 
-    protected List<GroupInfo> _columnGroup;
+    protected List<GroupInfo> _columnGroups;
 
 
     /// <summary>
@@ -381,9 +381,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
 
         // initialize group 0
 
-        if (_columnGroup is null)
-          _columnGroup = new List<GroupInfo>();
-
+        _columnGroups = new List<GroupInfo>();
         string previousColumnGroup = null;
         GroupInfo currentGroupInfo = null;
         foreach (var info in _doc.Columns)
@@ -391,7 +389,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
           if (info.ColumnGroup != previousColumnGroup)
           {
             currentGroupInfo = new GroupInfo() { GroupName = info.ColumnGroup };
-            _columnGroup.Add(currentGroupInfo);
+            _columnGroups.Add(currentGroupInfo);
           }
 
           var pcinfo = new PlotColumnInformationInternal(null, info.ColumnName)
@@ -442,26 +440,29 @@ namespace Altaxo.Gui.Graph.Plot.Data
 
     private IEnumerable<(
       string GroupName, // group name
-    IEnumerable<( // list of column definitions
+      IEnumerable<( // list of column definitions
         PlotColumnTag PlotColumnTag, // tag to identify the column and group
-        string ColumnLabel)>)>
+        string ColumnLabel)> Columns)>
       GetEnumerationForAllGroupsOfPlotColumns()
     {
       string currentColumnGroup = null;
       var list = new List<(PlotColumnTag PlotColumnTag, string ColumnLabel)>();
-      int columnNumber = -1;
+      int columnNumber = 0;
+      int columnGroupNumber = -1;
       foreach (var info in _doc.Columns)
       {
-        ++columnNumber;
         if (info.ColumnGroup != currentColumnGroup)
         {
-          currentColumnGroup = info.ColumnGroup;
           if (list.Count > 0)
             yield return (currentColumnGroup, list);
 
+          ++columnGroupNumber;
+          columnNumber = 0;
+          currentColumnGroup = info.ColumnGroup;
           list = new List<(PlotColumnTag PlotColumnTag, string ColumnLabel)>();
         }
-        list.Add((new PlotColumnTag(_doc.GroupNumber, columnNumber), info.ColumnLabel));
+        list.Add((new PlotColumnTag(columnGroupNumber, columnNumber), info.ColumnLabel));
+        ++columnNumber;
       }
 
       if (list is not null && list.Count > 0)
@@ -494,11 +495,11 @@ namespace Altaxo.Gui.Graph.Plot.Data
 
     private void View_PlotColumns_UpdateAll()
     {
-      for (int i = 0; i < _columnGroup.Count; ++i)
+      for (int i = 0; i < _columnGroups.Count; ++i)
       {
-        for (int j = 0; j < _columnGroup[i].Columns.Count; j++)
+        for (int j = 0; j < _columnGroups[i].Columns.Count; j++)
         {
-          var info = _columnGroup[i].Columns[j];
+          var info = _columnGroups[i].Columns[j];
           var tag = new PlotColumnTag(i, j);
           var ctrl = _plotItemColumns.FirstOrDefault(x => x.Tag == tag);
           if (ctrl is not null)
@@ -516,7 +517,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
     public override bool Apply(bool disposeController)
     {
       int idx = 0;
-      foreach (var columnGroup in _columnGroup)
+      foreach (var columnGroup in _columnGroups)
       {
         foreach (var info in columnGroup.Columns)
         {
@@ -548,7 +549,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
       if (node is not null)
       {
         SetDirty();
-        var info = _columnGroup[tag.GroupNumber].Columns[tag.ColumnNumber];
+        var info = _columnGroups[tag.GroupNumber].Columns[tag.ColumnNumber];
         info.UpdateWithNameOfUnderlyingDataColumn((string)node.Tag);
         ctrl.ColumnText = info.PlotColumnBoxText;
         ctrl.ColumnToolTip = info.PlotColumnToolTip;
@@ -566,7 +567,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
     {
       var tag = ctrl.Tag;
       SetDirty();
-      var info = _columnGroup[tag.GroupNumber].Columns[tag.ColumnNumber];
+      var info = _columnGroups[tag.GroupNumber].Columns[tag.ColumnNumber];
       info.UpdateWithNameOfUnderlyingDataColumn(null);
       ctrl.ColumnText = info.PlotColumnBoxText;
       ctrl.ColumnToolTip = info.PlotColumnToolTip;
@@ -639,7 +640,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
 
       _isDirty = true;
 
-      var info = _columnGroup[tag.GroupNumber].Columns[tag.ColumnNumber];
+      var info = _columnGroups[tag.GroupNumber].Columns[tag.ColumnNumber];
 
       if (data is Type)
       {
