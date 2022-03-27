@@ -3,8 +3,10 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:local="clr-namespace:Altaxo.Gui.Drawing.D3D"
-						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common">
+             xmlns:localModel="clr-namespace:Altaxo.Gui.Drawing.D3D;assembly=AltaxoBase"
+			 xmlns:axogc="clr-namespace:Altaxo.Gui.Common" 
+             d:DataContext="{d:DesignInstance Type=localModel:MaterialController}"
+             mc:Ignorable="d">
 	<Grid>
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="Auto" SharedSizeGroup="LabelColumn1" />
@@ -21,12 +23,26 @@
 		</Grid.RowDefinitions>
 
 		<Label Content="Smoothness:" Grid.Row="0" Grid.Column="0" />
-		<axogc:DoubleUpDown x:Name="_guiSmoothness" Grid.Row="0" Grid.Column="2" Minimum="0" Maximum="1" Change="0.125" ToolTip="Value inbetween 0 and 1. A value of 0 indicates a rough surface, and a value of 1 a very shiny surface." />
+		<axogc:DoubleUpDown Grid.Row="0" Grid.Column="2"
+                            Value="{Binding Smoothness}"
+                            Minimum="0" 
+                            Maximum="1" 
+                            Change="0.125" 
+                            ToolTip="Value inbetween 0 and 1. A value of 0 indicates a rough surface, and a value of 1 a very shiny surface." />
 
 		<Label Content="Metalness:" Grid.Row="2" Grid.Column="0" />
-		<axogc:DoubleUpDown x:Name="_guiMetalness" Grid.Row="2" Grid.Column="2" Minimum="0" Maximum="1" Change="0.125" ToolTip="Value inbetween 0 and 1. 0 means the specular highlight has the color of the light source, as is often the case for plastics. 1 means the specular highlight has the color of the material, as is often the case for metals." />
+		<axogc:DoubleUpDown Grid.Row="2" Grid.Column="2"
+                            Value="{Binding Metalness}"
+                            Minimum="0" 
+                            Maximum="1" 
+                            Change="0.125" 
+                            ToolTip="Value inbetween 0 and 1. 0 means the specular highlight has the color of the light source, as is often the case for plastics. 1 means the specular highlight has the color of the material, as is often the case for metals." />
 
 		<Label Content="Refractive index:" Grid.Row="4" Grid.Column="0" />
-		<axogc:DoubleUpDown x:Name="_guiIndexOfRefraction" Grid.Row="4" Grid.Column="2" Minimum="1" Change="0.5" ToolTip="Value >= 1. Only needed for transparent or semi-transparent materials." />
+		<axogc:DoubleUpDown Grid.Row="4" Grid.Column="2"
+                            Value="{Binding IndexOfRefraction}"
+                            Minimum="1" 
+                            Change="0.5" 
+                            ToolTip="Value >= 1. Only needed for transparent or semi-transparent materials." />
 	</Grid>
 </UserControl>

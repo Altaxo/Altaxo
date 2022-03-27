@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2016 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -25,33 +25,80 @@
 #nullable disable
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Altaxo.Drawing.D3D;
-using Altaxo.Drawing.D3D.Material;
 
 namespace Altaxo.Gui.Drawing.D3D
 {
-  public interface IMaterialView
+  public interface IMaterialView : IDataContextAwareView
   {
-    double IndexOfRefraction { get; set; }
-    double Smoothness { get; set; }
-    double Metalness { get; set; }
   }
 
   [ExpectedTypeOfView(typeof(IMaterialView))]
   [UserControllerForObject(typeof(IMaterial))]
   public class MaterialController : MVCANControllerEditImmutableDocBase<IMaterial, IMaterialView>
   {
+    public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+    {
+      yield break;
+    }
+
+    #region Bindings
+
+    private double _indexOfRefraction;
+
+    public double IndexOfRefraction
+    {
+      get => _indexOfRefraction;
+      set
+      {
+        if (!(_indexOfRefraction == value))
+        {
+          _indexOfRefraction = value;
+          OnPropertyChanged(nameof(IndexOfRefraction));
+        }
+      }
+    }
+    private double _smoothness;
+
+    public double Smoothness
+    {
+      get => _smoothness;
+      set
+      {
+        if (!(_smoothness == value))
+        {
+          _smoothness = value;
+          OnPropertyChanged(nameof(Smoothness));
+        }
+      }
+    }
+    private double _metalness;
+
+    public double Metalness
+    {
+      get => _metalness;
+      set
+      {
+        if (!(_metalness == value))
+        {
+          _metalness = value;
+          OnPropertyChanged(nameof(Metalness));
+        }
+      }
+    }
+
+
+    #endregion
+
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
 
-      if (_view is not null)
+      if (initData)
       {
-        _view.IndexOfRefraction = _doc.IndexOfRefraction;
-        _view.Smoothness = _doc.Smoothness;
-        _view.Metalness = _doc.Metalness;
+        IndexOfRefraction = _doc.IndexOfRefraction;
+        Smoothness = _doc.Smoothness;
+        Metalness = _doc.Metalness;
       }
     }
 
@@ -59,7 +106,7 @@ namespace Altaxo.Gui.Drawing.D3D
     {
       try
       {
-        _doc = _doc.WithSpecularProperties(smoothness: _view.Smoothness, metalness: _view.Metalness, indexOfRefraction: _view.IndexOfRefraction);
+        _doc = _doc.WithSpecularProperties(smoothness: Smoothness, metalness: Metalness, indexOfRefraction: IndexOfRefraction);
         return ApplyEnd(true, disposeController);
       }
       catch (Exception ex)
@@ -72,9 +119,6 @@ namespace Altaxo.Gui.Drawing.D3D
       }
     }
 
-    public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
-    {
-      yield break;
-    }
+
   }
 }

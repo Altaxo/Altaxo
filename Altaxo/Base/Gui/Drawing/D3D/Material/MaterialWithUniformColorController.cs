@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2016 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -25,32 +25,92 @@
 #nullable disable
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Altaxo.Drawing;
 using Altaxo.Drawing.D3D.Material;
 
 namespace Altaxo.Gui.Drawing.D3D.Material
 {
-  public interface IMaterialWithUniformColorView : IMaterialView
+  public interface IMaterialWithUniformColorView : IMaterialView, IDataContextAwareView
   {
-    NamedColor Color { get; set; }
   }
 
   [ExpectedTypeOfView(typeof(IMaterialWithUniformColorView))]
   [UserControllerForObject(typeof(MaterialWithUniformColor), 101)]
   public class MaterialWithUniformColorController : MVCANControllerEditImmutableDocBase<MaterialWithUniformColor, IMaterialWithUniformColorView>
   {
+    #region Bindings
+
+    private double _indexOfRefraction;
+
+    public double IndexOfRefraction
+    {
+      get => _indexOfRefraction;
+      set
+      {
+        if (!(_indexOfRefraction == value))
+        {
+          _indexOfRefraction = value;
+          OnPropertyChanged(nameof(IndexOfRefraction));
+        }
+      }
+    }
+    private double _smoothness;
+
+    public double Smoothness
+    {
+      get => _smoothness;
+      set
+      {
+        if (!(_smoothness == value))
+        {
+          _smoothness = value;
+          OnPropertyChanged(nameof(Smoothness));
+        }
+      }
+    }
+    private double _metalness;
+
+    public double Metalness
+    {
+      get => _metalness;
+      set
+      {
+        if (!(_metalness == value))
+        {
+          _metalness = value;
+          OnPropertyChanged(nameof(Metalness));
+        }
+      }
+    }
+
+    private NamedColor _color;
+
+    public NamedColor Color
+    {
+      get => _color;
+      set
+      {
+        if (!(_color == value))
+        {
+          _color = value;
+          OnPropertyChanged(nameof(Color));
+        }
+      }
+    }
+
+
+    #endregion
+
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
 
-      if (_view is not null)
+      if (initData)
       {
-        _view.Smoothness = _doc.Smoothness;
-        _view.Metalness = _doc.Metalness;
-        _view.IndexOfRefraction = _doc.IndexOfRefraction;
-        _view.Color = _doc.Color;
+        Smoothness = _doc.Smoothness;
+        Metalness = _doc.Metalness;
+        IndexOfRefraction = _doc.IndexOfRefraction;
+        Color = _doc.Color;
       }
     }
 
@@ -58,7 +118,7 @@ namespace Altaxo.Gui.Drawing.D3D.Material
     {
       try
       {
-        _doc = (MaterialWithUniformColor)_doc.WithSpecularProperties(smoothness: _view.Smoothness, metalness: _view.Metalness, indexOfRefraction: _view.IndexOfRefraction).WithColor(_view.Color);
+        _doc = (MaterialWithUniformColor)_doc.WithSpecularProperties(smoothness: Smoothness, metalness: Metalness, indexOfRefraction: IndexOfRefraction).WithColor(Color);
         return ApplyEnd(true, disposeController);
       }
       catch (Exception ex)

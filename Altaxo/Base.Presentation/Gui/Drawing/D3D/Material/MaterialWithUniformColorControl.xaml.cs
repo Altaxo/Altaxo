@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2016 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -22,20 +22,7 @@
 
 #endregion Copyright
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using Altaxo.Drawing;
 
 namespace Altaxo.Gui.Drawing.D3D.Material
 {
@@ -47,58 +34,6 @@ namespace Altaxo.Gui.Drawing.D3D.Material
     public MaterialWithUniformColorControl()
     {
       InitializeComponent();
-    }
-
-    public NamedColor Color
-    {
-      get
-      {
-        return _guiColor.SelectedColor;
-      }
-
-      set
-      {
-        _guiColor.SelectedColor = value;
-      }
-    }
-
-    public double Smoothness
-    {
-      get
-      {
-        return _guiBaseMaterial.Smoothness;
-      }
-
-      set
-      {
-        _guiBaseMaterial.Smoothness = value;
-      }
-    }
-
-    public double IndexOfRefraction
-    {
-      get
-      {
-        return _guiBaseMaterial.IndexOfRefraction;
-      }
-
-      set
-      {
-        _guiBaseMaterial.IndexOfRefraction = value;
-      }
-    }
-
-    public double Metalness
-    {
-      get
-      {
-        return _guiBaseMaterial.Metalness;
-      }
-
-      set
-      {
-        _guiBaseMaterial.Metalness = value;
-      }
     }
   }
 }

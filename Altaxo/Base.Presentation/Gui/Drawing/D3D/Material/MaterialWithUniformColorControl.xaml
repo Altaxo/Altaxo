@@ -4,9 +4,12 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:Altaxo.Gui.Drawing.D3D.Material"
+             xmlns:localModel="clr-namespace:Altaxo.Gui.Drawing.D3D.Material;assembly=AltaxoBase"
              xmlns:localssub="clr-namespace:Altaxo.Gui.Drawing.D3D"
  						 xmlns:axogcd="clr-namespace:Altaxo.Gui.Common.Drawing"
-             Grid.IsSharedSizeScope="True">
+             d:DataContext="{d:DesignInstance Type=localModel:MaterialWithUniformColorController}"
+             Grid.IsSharedSizeScope="True"
+             mc:Ignorable="d">
 	<StackPanel Orientation="Vertical">
 		<Grid>
 			<Grid.ColumnDefinitions>
@@ -19,8 +22,9 @@
 				<RowDefinition Height="4" />
 			</Grid.RowDefinitions>
 			<Label Content="Color:" Grid.Row="0" Grid.Column="0" />
-			<axogcd:ColorComboBox x:Name="_guiColor" Grid.Row="0" Grid.Column="2" />
+			<axogcd:ColorComboBox Grid.Row="0" Grid.Column="2" 
+                                  SelectedColor="{Binding Color}" />
 		</Grid>
-		<localssub:MaterialControl x:Name="_guiBaseMaterial" Grid.Row="2" Grid.ColumnSpan="3" />
+		<localssub:MaterialControl Grid.Row="2" Grid.ColumnSpan="3" />
 	</StackPanel>
 </UserControl>
