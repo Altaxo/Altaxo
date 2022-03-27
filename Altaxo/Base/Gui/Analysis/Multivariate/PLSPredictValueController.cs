@@ -24,60 +24,62 @@
 
 #nullable disable
 using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using Altaxo.Collections;
+using Altaxo.Gui.Common;
 
 namespace Altaxo.Gui.Worksheet
 {
-  #region Interfaces
-
   public interface IPLSPredictValueView : IDataContextAwareView
   {
   }
-
-  #endregion Interfaces
 
   /// <summary>
   /// Summary description for PLSPredictValueController.
   /// </summary>
   [ExpectedTypeOfView(typeof(IPLSPredictValueView))]
-  public class PLSPredictValueController : MVCANControllerEditImmutableDocBase<(string CalibrationTable, string DestinationTable), IPLSPredictValueView>
+  public class PLSPredictValueController : MVCANControllerEditImmutableDocBase<(DataTable CalibrationTable, DataTable? DestinationTable), IPLSPredictValueView>
   {
-    public string[] CalibrationTables { get; private set; }
-    public string[] DestinationTables { get; private set; }
-
-    private string _selectedDestinationTableName;
-
-    public string SelectedDestinationTableName
-    {
-      get => _selectedDestinationTableName;
-      set
-      {
-        if (!(_selectedDestinationTableName == value))
-        {
-          _selectedDestinationTableName = value;
-          OnPropertyChanged(nameof(SelectedDestinationTableName));
-        }
-      }
-    }
-
-    private string _selectedCalibrationTableName;
-
-    public string SelectedCalibrationTableName
-    {
-      get => _selectedCalibrationTableName;
-      set
-      {
-        if (!(_selectedCalibrationTableName == value))
-        {
-          _selectedCalibrationTableName = value;
-          OnPropertyChanged(nameof(SelectedCalibrationTableName));
-        }
-      }
-    }
-
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
     }
+
+    #region Bindings
+
+    private ItemsController<DataTable> _calibrationTables;
+
+    public ItemsController<DataTable> CalibrationTables
+    {
+      get => _calibrationTables;
+      set
+      {
+        if (!(_calibrationTables == value))
+        {
+          _calibrationTables = value;
+          OnPropertyChanged(nameof(CalibrationTables));
+        }
+      }
+    }
+
+
+    private ItemsController<DataTable?> _destinationTables;
+
+    public ItemsController<DataTable?> DestinationTables
+    {
+      get => _destinationTables;
+      set
+      {
+        if (!(_destinationTables == value))
+        {
+          _destinationTables = value;
+          OnPropertyChanged(nameof(DestinationTables));
+        }
+      }
+    }
+
+    #endregion
 
     protected override void Initialize(bool initData)
     {
@@ -85,38 +87,39 @@ namespace Altaxo.Gui.Worksheet
 
       if (initData)
       {
-        CalibrationTables = Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.GetAvailablePLSCalibrationTables();
-        DestinationTables = GetAvailableDestinationTables();
+        var calibrationTables = Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.GetAvailablePLSCalibrationTables();
 
+        CalibrationTables = new ItemsController<DataTable>(
+          new Collections.SelectableListNodeList(
+            calibrationTables.Select(t => new SelectableListNode(t.Name, t, false))));
+        if (CalibrationTables.Items.Count > 0)
+          CalibrationTables.SelectedItem = CalibrationTables.Items[0];
+
+
+        DestinationTables = new ItemsController<DataTable?>(GetAvailableDestinationTables());
       }
     }
 
-    private string[] GetAvailableDestinationTables()
+    private SelectableListNodeList GetAvailableDestinationTables()
     {
-      var result = new System.Collections.ArrayList
-      {
-        "New table"
-      };
-      foreach (Altaxo.Data.DataTable table in Current.Project.DataTableCollection)
-        result.Add(table.Name);
+      var result = new SelectableListNodeList();
 
-      return (string[])result.ToArray(typeof(string));
+      result.Add(new SelectableListNode("New table", null, true));
+      foreach (Altaxo.Data.DataTable table in Current.Project.DataTableCollection)
+        result.Add(new SelectableListNode(table.Name, table, false));
+
+      return result;
     }
 
     public override bool Apply(bool disposeController)
     {
-      if (string.IsNullOrEmpty(SelectedCalibrationTableName))
+      if (CalibrationTables.SelectedValue is null)
       {
         Current.Gui.ErrorMessageBox("Please choose a calibration table");
         return ApplyEnd(false, disposeController);
       }
-      if (string.IsNullOrEmpty(SelectedDestinationTableName))
-      {
-        Current.Gui.ErrorMessageBox("Please choose a destination table");
-        return ApplyEnd(false, disposeController);
-      }
 
-      _doc = (SelectedCalibrationTableName, SelectedDestinationTableName);
+      _doc = (CalibrationTables.SelectedValue, DestinationTables.SelectedValue);
 
       return ApplyEnd(true, disposeController);
     }

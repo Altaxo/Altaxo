@@ -38,14 +38,10 @@ namespace Altaxo.Gui.Analysis.Fourier
   [UserControllerForObject(typeof(AnalysisRealFourierTransformationCommands.RealFourierTransformOptions))]
   public class RealFourierTransformationController : MVCANControllerEditOriginalDocBase<AnalysisRealFourierTransformationCommands.RealFourierTransformOptions, IRealFourierTransformationView>
   {
-    EnumValueController _outputQuantitiesController;
-
-    EnumValueController _outputPlacementController;
-
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
-      yield return new ControllerAndSetNullMethod(_outputQuantitiesController, () => _outputQuantitiesController = null);
-      yield return new ControllerAndSetNullMethod(_outputPlacementController, () => _outputPlacementController = null);
+      yield return new ControllerAndSetNullMethod(_outputQuantitiesController, () => OutputQuantitiesController = null);
+      yield return new ControllerAndSetNullMethod(_outputPlacementController, () => OutputPlacementController = null);
     }
 
     #region Bindings
@@ -59,8 +55,38 @@ namespace Altaxo.Gui.Analysis.Fourier
     public string XIncrement { get; set; }
     public bool XIncrementWarning { get; set; }
 
-    public EnumValueController OutputQuantitiesController => _outputQuantitiesController;
-    public EnumValueController OutputPlacementController => _outputPlacementController;
+
+    private EnumValueController _outputQuantitiesController;
+
+    public EnumValueController OutputQuantitiesController
+    {
+      get => _outputQuantitiesController;
+      set
+      {
+        if (!(_outputQuantitiesController == value))
+        {
+          _outputQuantitiesController?.Dispose();
+         _outputQuantitiesController = value;
+          OnPropertyChanged(nameof(OutputQuantitiesController));
+        }
+      }
+    }
+    private EnumValueController  _outputPlacementController;
+
+    public EnumValueController  OutputPlacementController
+    {
+      get => _outputPlacementController;
+      set
+      {
+        if (!(_outputPlacementController == value))
+        {
+          _outputPlacementController?.Dispose();
+          _outputPlacementController = value;
+          OnPropertyChanged(nameof(OutputPlacementController));
+        }
+      }
+    }
+
 
     #endregion
 
@@ -70,11 +96,8 @@ namespace Altaxo.Gui.Analysis.Fourier
 
       if (initData)
       {
-        _outputQuantitiesController = new EnumValueController();
-        _outputQuantitiesController.InitializeDocument(_doc.Output);
-
-        _outputPlacementController = new EnumValueController();
-        _outputPlacementController.InitializeDocument(_doc.OutputPlacement);
+        OutputQuantitiesController = new EnumValueController(_doc.Output);
+        OutputPlacementController = new EnumValueController(_doc.OutputPlacement);
 
 
         _columnToTransform = AbsoluteDocumentPath.GetPathString(_doc.ColumnToTransform, int.MaxValue);

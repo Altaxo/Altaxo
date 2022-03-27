@@ -14,8 +14,12 @@
 			<RowDefinition Height="12" />
 		</Grid.RowDefinitions>
 		<Label Grid.Row="0" VerticalAlignment="Bottom" Content="PLS calibration model:" />
-		<ComboBox Grid.Row="1" ItemsSource="{Binding CalibrationTables}" SelectedValue="{Binding SelectedCalibrationTableName, Mode=TwoWay}"  />
+		<ComboBox Grid.Row="1" 
+                  ItemsSource="{Binding CalibrationTables.Items}"
+                  SelectedValue="{Binding CalibrationTables.SelectedItem, Mode=TwoWay}"  />
 		<Label Grid.Row="3" VerticalAlignment="Bottom" Content="Destination table:" />
-		<ComboBox Grid.Row="4" ItemsSource="{Binding DestinationTables}" SelectedValue="{Binding SelectedDestinationTableName, Mode=TwoWay}"/>
+		<ComboBox Grid.Row="4" 
+                  ItemsSource="{Binding DestinationTables.Items}" 
+                  SelectedValue="{Binding DestinationTables.SelectedItem, Mode=TwoWay}"/>
 	</Grid>
 </UserControl>

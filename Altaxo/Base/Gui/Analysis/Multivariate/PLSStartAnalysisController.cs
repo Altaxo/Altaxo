@@ -32,11 +32,9 @@ using Altaxo.Gui.Common.BasicTypes;
 
 namespace Altaxo.Gui.Worksheet
 {
-
   public interface IPLSStartAnalysisView : IDataContextAwareView
   {
   }
-
 
   /// <summary>
   /// Summary description for PLSStartAnalysisController.
@@ -76,39 +74,39 @@ namespace Altaxo.Gui.Worksheet
       }
     }
 
-    public SelectableListNodeList CROSSPressCalculationTypes { get; } = new SelectableListNodeList();
 
 
-    private ItemsController<Type> _AnalysisMethods;
+    private ItemsController<Type> _analysisMethods;
 
     public ItemsController<Type> AnalysisMethods
     {
-      get => _AnalysisMethods;
+      get => _analysisMethods;
       set
       {
-        if (!(_AnalysisMethods == value))
+        if (!(_analysisMethods == value))
         {
-          _AnalysisMethods = value;
+          _analysisMethods = value;
           OnPropertyChanged(nameof(AnalysisMethods));
         }
       }
     }
 
-    public CrossPRESSCalculationType SelectedCrossPressCalculationType
+    private ItemsController<CrossPRESSCalculationType> _CROSSPressCalculationTypes;
+
+    public ItemsController<CrossPRESSCalculationType> CROSSPressCalculationTypes
     {
-      get
-      {
-        return CROSSPressCalculationTypes.FirstSelectedNode?.Tag is CrossPRESSCalculationType cp ? cp : CrossPRESSCalculationType.None;
-      }
+      get => _CROSSPressCalculationTypes;
       set
       {
-        CROSSPressCalculationTypes.ForEachDo(x => x.IsSelected = (value == (CrossPRESSCalculationType)x.Tag));
+        if (!(_CROSSPressCalculationTypes == value))
+        {
+          _CROSSPressCalculationTypes = value;
+          OnPropertyChanged(nameof(CROSSPressCalculationTypes));
+        }
       }
     }
 
-
     #endregion
-
 
     protected override void Initialize(bool initData)
     {
@@ -127,7 +125,7 @@ namespace Altaxo.Gui.Worksheet
       _doc = new MultivariateAnalysisOptions()
       {
         MaxNumberOfFactors = NumberOfFactors,
-        CrossPRESSCalculation = SelectedCrossPressCalculationType,
+        CrossPRESSCalculation = CROSSPressCalculationTypes.SelectedValue,
         AnalysisMethod = AnalysisMethods.SelectedValue
       };
 
@@ -136,7 +134,7 @@ namespace Altaxo.Gui.Worksheet
 
     void InitializeCrossPressCalculationTypes()
     {
-      CROSSPressCalculationTypes.Clear();
+      var list = new SelectableListNodeList();
 
       foreach(CrossPRESSCalculationType v in Enum.GetValues(typeof(CrossPRESSCalculationType)))
       {
@@ -149,9 +147,9 @@ namespace Altaxo.Gui.Worksheet
           _ => Enum.GetName(typeof(CrossPRESSCalculationType), v)
         };
 
-        CROSSPressCalculationTypes.Add(new SelectableListNode(text, v, v == _doc.CrossPRESSCalculation));
-        SelectedCrossPressCalculationType = _doc.CrossPRESSCalculation;
+        list.Add(new SelectableListNode(text, v, v == _doc.CrossPRESSCalculation));
       }
+      CROSSPressCalculationTypes = new ItemsController<CrossPRESSCalculationType>(list);
     }
 
     void InitializeAnalysisMethods()

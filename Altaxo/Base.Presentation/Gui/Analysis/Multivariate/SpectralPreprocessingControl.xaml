@@ -17,12 +17,18 @@
 			<RowDefinition Height="4" />
 		</Grid.RowDefinitions>
 		<GroupBox Grid.Column="0" Grid.Row="0" Header="Preprocessing">
-            <axogc:SingleChoiceRadioStackPanel ItemsSource="{Binding SpectralPreprocessingMethods}"/>
+            <axogc:SingleChoiceRadioStackPanelDC ItemsSource="{Binding SpectralPreprocessingMethods.Items}"
+                                                 SelectedItem="{Binding SpectralPreprocessingMethods.SelectedItem, Mode=TwoWay}"
+                                                 Orientation="Vertical"/>
 		</GroupBox>
 		<GroupBox Grid.Column="1" Grid.Row="0" Header="Detrending">
-            <axogc:SingleChoiceRadioStackPanel ItemsSource="{Binding DetrendingMethods}"/>
+            <axogc:SingleChoiceRadioStackPanelDC ItemsSource="{Binding DetrendingMethods.Items}"
+                                                 SelectedItem="{Binding DetrendingMethods.SelectedItem, Mode=TwoWay}"
+                                                 Orientation="Vertical"/>
         </GroupBox>
 
-		<CheckBox Grid.Column="0" Grid.Row="2" Content="Variance scale (spectral ensemble)" IsChecked="{Binding EnsembleScale}" />
+		<CheckBox Grid.Column="0" Grid.Row="2" 
+                  IsChecked="{Binding EnsembleScale, Mode=TwoWay}" 
+                  Content="Variance scale (spectral ensemble)" />
 	</Grid>
 </UserControl>

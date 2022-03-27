@@ -24,6 +24,7 @@
 
 #nullable enable
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Calc.Regression.Multivariate;
@@ -497,16 +498,13 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
     #region PLS Retrieving original data
 
-    public static string[] GetAvailablePLSCalibrationTables()
+    public static IEnumerable<DataTable> GetAvailablePLSCalibrationTables()
     {
-      var result = new System.Collections.ArrayList();
       foreach (Altaxo.Data.DataTable table in Current.Project.DataTableCollection)
       {
         if (table.GetTableProperty("Content") is MultivariateContentMemento)
-          result.Add(table.Name);
+          yield return table;
       }
-
-      return (string[])result.ToArray(typeof(string));
     }
 
     #endregion PLS Retrieving original data
@@ -561,14 +559,15 @@ namespace Altaxo.Worksheet.Commands.Analysis
     /// <param name="modelTableName">On return, contains the name of the table containing the calibration model.</param>
     /// <param name="destinationTableName">On return, contains the name of the destination table, or null if a new table should be used as destination.</param>
     /// <returns>True if OK, false if the users pressed Cancel.</returns>
-    public static bool QuestCalibrationModelAndDestinationTable([MaybeNullWhen(false)] out string modelTableName, [MaybeNullWhen(false)] out string destinationTableName)
+    public static bool QuestCalibrationModelAndDestinationTable([MaybeNullWhen(false)] out string modelTableName, out string? destinationTableName)
     {
       var ctrl = new PLSPredictValueController();
 
       if (Current.Gui.ShowDialog(ctrl, "Select model and calibration table"))
       {
-        modelTableName = ctrl.SelectedCalibrationTableName;
-        destinationTableName = ctrl.SelectedDestinationTableName;
+        var (calibrationTable, destinationTable) = ((DataTable CalibrationTable, DataTable? DestinationTable))ctrl.ModelObject;
+        modelTableName = calibrationTable.Name;
+        destinationTableName = destinationTable?.Name;
         return true;
       }
       else

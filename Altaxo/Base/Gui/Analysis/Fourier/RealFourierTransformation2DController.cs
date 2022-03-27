@@ -40,17 +40,28 @@ namespace Altaxo.Gui.Analysis.Fourier
   [UserControllerForObject(typeof(RealFourierTransformation2DOptions))]
   public class RealFourierTransformation2DController : MVCANControllerEditOriginalDocBase<RealFourierTransformation2DOptions, IRealFourierTransformation2DView>
   {
-
-    EnumValueController? _outputQuantitiesController;
-
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
-      yield return new ControllerAndSetNullMethod(_outputQuantitiesController, () => _outputQuantitiesController = null);
+      yield return new ControllerAndSetNullMethod(_outputQuantitiesController, () => OutputQuantitiesController = null);
     }
 
     #region Bindings
 
-    public object? OutputQuantitiesView => _outputQuantitiesController?.ViewObject;
+    private EnumValueController _outputQuantitiesController;
+
+    public EnumValueController OutputQuantitiesController
+    {
+      get => _outputQuantitiesController;
+      set
+      {
+        if (!(_outputQuantitiesController == value))
+        {
+          _outputQuantitiesController?.Dispose();
+          _outputQuantitiesController = value;
+          OnPropertyChanged(nameof(OutputQuantitiesController));
+        }
+      }
+    }
 
     private ItemsController<Type> _fourierWindowChoices;
 
@@ -393,7 +404,7 @@ namespace Altaxo.Gui.Analysis.Fourier
 
       if (initData)
       {
-        _outputQuantitiesController = new EnumValueController(_doc.OutputKind);
+        OutputQuantitiesController = new EnumValueController(_doc.OutputKind);
         Current.Gui.FindAndAttachControlTo(_outputQuantitiesController);
 
         FourierWindowChoices = new ItemsController<Type>(GetFourierWindowChoices(_doc.FourierWindow));

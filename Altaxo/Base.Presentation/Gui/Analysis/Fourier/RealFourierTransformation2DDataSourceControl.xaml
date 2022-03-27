@@ -3,6 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:fourier="clr-namespace:Altaxo.Gui.Analysis.Fourier;assembly=AltaxoBase"
+             d:DataContext="{d:DesignInstance Type=fourier:RealFourierTransformation2DDataSourceController}"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
 	<Grid>
@@ -15,19 +17,19 @@
 			<Expander.Header>
 				<TextBlock Text="Data source import options" FontWeight="Bold" />
 			</Expander.Header>
-			<ContentControl Content="{Binding ImportOptionsView}" />
+            <ContentControl Content="{Binding DataSourceOptionsController.ViewObject}" />
 		</Expander>
 		<Expander Grid.Row="1" IsExpanded="True" Background="Lavender">
 			<Expander.Header>
 				<TextBlock Text="Fourier options" FontWeight="Bold" />
 			</Expander.Header>
-			<ContentControl Content="{Binding FourierOptionsView}"/>
+            <ContentControl Content="{Binding FourierTransformationOptionsController.ViewObject}"/>
 		</Expander>
 		<Expander Grid.Row="2" Background="BlanchedAlmond">
 			<Expander.Header>
 				<TextBlock Text="Input data source" FontWeight="Bold" />
 			</Expander.Header>
-			<ContentControl Content="{Binding InputDataView}" />
+            <ContentControl Content="{Binding InputDataController.ViewObject}" />
 		</Expander>
 	</Grid>
 </UserControl>

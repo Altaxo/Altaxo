@@ -3,7 +3,9 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common" xmlns:worksheet="clr-namespace:Altaxo.Gui.Worksheet;assembly=AltaxoBase" d:DataContext="{d:DesignInstance Type=worksheet:PLSStartAnalysisController}"
+			 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
+             xmlns:worksheet="clr-namespace:Altaxo.Gui.Worksheet;assembly=AltaxoBase"
+             d:DataContext="{d:DesignInstance Type=worksheet:PLSStartAnalysisController}"
              mc:Ignorable="d">
 	<UserControl.Resources>
 		<Style TargetType="RadioButton">
@@ -24,22 +26,14 @@
 			<RowDefinition Height="4" />
 		</Grid.RowDefinitions>
 		<Label Grid.Row="0" Content="Method:" />
-		<ComboBox Grid.Row="1" ItemsSource="{Binding AnalysisMethods.Items}" SelectedItem="{Binding AnalysisMethods.SelectedItem}" />
+		<ComboBox Grid.Row="1" ItemsSource="{Binding AnalysisMethods.Items}" SelectedItem="{Binding AnalysisMethods.SelectedItem, Mode=TwoWay}" />
 		<Label Grid.Row="3" Content="Maximum number of factors to calculate:" />
 		<axogc:Int32UpDown Grid.Row="4" Minimum="0" Value="{Binding NumberOfFactors}" />
 		<GroupBox Grid.Row="6" Header="Cross validation calculation">
-            <ItemsControl ItemsSource="{Binding CROSSPressCalculationTypes}">
-                <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <StackPanel Orientation="Vertical"/>
-                </ItemsPanelTemplate>
-            </ItemsControl.ItemsPanel>
-            <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                    <RadioButton Content="{Binding Text}" IsChecked="{Binding IsChecked, Mode=TwoWay}"/>
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-            </ItemsControl>
+            <axogc:SingleChoiceRadioStackPanelDC 
+                ItemsSource="{Binding CROSSPressCalculationTypes.Items}"
+                SelectedItem="{Binding CROSSPressCalculationTypes.SelectedItem, Mode=TwoWay}"
+                Orientation="Vertical"/>
         </GroupBox>
 	</Grid>
 </UserControl>

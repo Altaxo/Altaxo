@@ -38,24 +38,68 @@ namespace Altaxo.Gui.Analysis.Fourier
   [UserControllerForObject(typeof(FourierTransformation2DDataSource))]
   public class RealFourierTransformation2DDataSourceController : MVCANControllerEditOriginalDocBase<FourierTransformation2DDataSource, IRealFourierTransformation2DDataSourceView>, IMVCSupportsApplyCallback
   {
-    private IMVCANController _dataSourceOptionsController;
-    private IMVCANController _fourierTransformationOptionsController;
-    private IMVCANController _inputDataController;
 
     public event Action SuccessfullyApplied;
 
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
-      yield return new ControllerAndSetNullMethod(_dataSourceOptionsController, () => _dataSourceOptionsController = null);
-      yield return new ControllerAndSetNullMethod(_fourierTransformationOptionsController, () => _fourierTransformationOptionsController = null);
-      yield return new ControllerAndSetNullMethod(_inputDataController, () => _inputDataController = null);
+      yield return new ControllerAndSetNullMethod(_dataSourceOptionsController, () => DataSourceOptionsController = null);
+      yield return new ControllerAndSetNullMethod(_fourierTransformationOptionsController, () => FourierTransformationOptionsController = null);
+      yield return new ControllerAndSetNullMethod(_inputDataController, () => InputDataController = null);
     }
 
     #region Bindings
 
-    public object? ImportOptionsView => _dataSourceOptionsController?.ViewObject;
-    public object? FourierOptionsView => _fourierTransformationOptionsController?.ViewObject;
-    public object? InputDataView => _inputDataController?.ViewObject;
+    private IMVCANController _dataSourceOptionsController;
+
+    public IMVCANController DataSourceOptionsController
+    {
+      get => _dataSourceOptionsController;
+      set
+      {
+        if (!(_dataSourceOptionsController == value))
+        {
+          _dataSourceOptionsController?.Dispose();
+          _dataSourceOptionsController = value;
+          OnPropertyChanged(nameof(DataSourceOptionsController));
+        }
+      }
+    }
+
+    private IMVCANController _fourierTransformationOptionsController;
+
+
+    public IMVCANController FourierTransformationOptionsController
+    {
+      get => _fourierTransformationOptionsController;
+      set
+      {
+        if (!(_fourierTransformationOptionsController == value))
+        {
+          _fourierTransformationOptionsController?.Dispose();
+          _fourierTransformationOptionsController = value;
+          OnPropertyChanged(nameof(FourierTransformationOptionsController));
+        }
+      }
+    }
+
+    private IMVCANController _inputDataController;
+
+    public IMVCANController InputDataController
+    {
+      get => _inputDataController;
+      set
+      {
+        if (!(_inputDataController == value))
+        {
+          _inputDataController?.Dispose();
+          _inputDataController = value;
+          OnPropertyChanged(nameof(InputDataController));
+        }
+      }
+    }
+
+
 
     #endregion
 
@@ -65,9 +109,9 @@ namespace Altaxo.Gui.Analysis.Fourier
 
       if (initData)
       {
-        _dataSourceOptionsController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _doc.ImportOptions }, typeof(IMVCANController), UseDocument.Directly);
-        _fourierTransformationOptionsController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _doc.FourierTransformation2DOptions }, typeof(IMVCANController), UseDocument.Directly);
-        _inputDataController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _doc.InputData }, typeof(IMVCANController), UseDocument.Directly);
+        DataSourceOptionsController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _doc.ImportOptions }, typeof(IMVCANController), UseDocument.Directly);
+        FourierTransformationOptionsController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _doc.FourierTransformation2DOptions }, typeof(IMVCANController), UseDocument.Directly);
+        InputDataController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _doc.InputData }, typeof(IMVCANController), UseDocument.Directly);
       }
     }
 

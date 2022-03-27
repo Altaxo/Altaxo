@@ -27,16 +27,13 @@ using System;
 using System.Collections.Generic;
 using Altaxo.Calc.Regression.Multivariate;
 using Altaxo.Collections;
+using Altaxo.Gui.Common;
 
 namespace Altaxo.Gui.Worksheet
 {
-  #region Interfaces
-
   public interface ISpectralPreprocessingView : IDataContextAwareView
   {
   }
-
-  #endregion Interfaces
 
   /// <summary>
   /// Controls the SpectralPreprocessingControl GUI for choosing <see cref="SpectralPreprocessingOptions" />
@@ -81,18 +78,44 @@ namespace Altaxo.Gui.Worksheet
       }
     }
 
-    public SelectableListNodeList SpectralPreprocessingMethods { get; } = new SelectableListNodeList();
+    private ItemsController<SpectralPreprocessingMethod> _spectralPreprocessingMethods;
 
-    public SelectableListNodeList DetrendingMethods { get; } = new SelectableListNodeList();
+    public ItemsController<SpectralPreprocessingMethod> SpectralPreprocessingMethods
+    {
+      get => _spectralPreprocessingMethods;
+      set
+      {
+        if (!(_spectralPreprocessingMethods == value))
+        {
+          _spectralPreprocessingMethods = value;
+          OnPropertyChanged(nameof(SpectralPreprocessingMethods));
+        }
+      }
+    }
+
+    private ItemsController<int> _detrendingMethods;
+
+    public ItemsController<int> DetrendingMethods
+    {
+      get => _detrendingMethods;
+      set
+      {
+        if (!(_detrendingMethods == value))
+        {
+          _detrendingMethods = value;
+          OnPropertyChanged(nameof(DetrendingMethods));
+        }
+      }
+    }
+
 
     #endregion
 
     void InitializeSpectralPreprocessingMethods()
     {
+      var spectralPreprocessingMethods = new SelectableListNodeList();
       foreach (SpectralPreprocessingMethod v in Enum.GetValues(typeof(SpectralPreprocessingMethod)))
       {
-        SpectralPreprocessingMethods.Clear();
-
         var text = v switch
         {
           SpectralPreprocessingMethod.None => "None",
@@ -103,17 +126,21 @@ namespace Altaxo.Gui.Worksheet
           _ => Enum.GetName(typeof(SpectralPreprocessingMethod), v)
         };
 
-        SpectralPreprocessingMethods.Add(new SelectableListNode(text, v, v == _doc.Method));
+        spectralPreprocessingMethods.Add(new SelectableListNode(text, v, v == _doc.Method));
       }
+
+      SpectralPreprocessingMethods = new ItemsController<SpectralPreprocessingMethod>(spectralPreprocessingMethods);
     }
 
     void InitializeDetrendingMethods()
     {
-      DetrendingMethods.Clear();
-      DetrendingMethods.Add(new SelectableListNode("None", -1, -1 == _doc.DetrendingOrder));
-      DetrendingMethods.Add(new SelectableListNode("Spectrum mean", 0, 0 == _doc.DetrendingOrder));
-      DetrendingMethods.Add(new SelectableListNode("Linear", 1, 1 == _doc.DetrendingOrder));
-      DetrendingMethods.Add(new SelectableListNode("Quadratic", 2, 2 == _doc.DetrendingOrder));
+      var detrendingMethods = new SelectableListNodeList();
+      detrendingMethods.Add(new SelectableListNode("None", -1, -1 == _doc.DetrendingOrder));
+      detrendingMethods.Add(new SelectableListNode("Spectrum mean", 0, 0 == _doc.DetrendingOrder));
+      detrendingMethods.Add(new SelectableListNode("Linear", 1, 1 == _doc.DetrendingOrder));
+      detrendingMethods.Add(new SelectableListNode("Quadratic", 2, 2 == _doc.DetrendingOrder));
+
+      DetrendingMethods = new ItemsController<int>(detrendingMethods);
     }
 
     protected override void Initialize(bool initData)
@@ -130,8 +157,8 @@ namespace Altaxo.Gui.Worksheet
 
     public override bool Apply(bool disposeController)
     {
-      _doc.Method = SpectralPreprocessingMethods.FirstSelectedNode?.Tag is SpectralPreprocessingMethod m ? m : SpectralPreprocessingMethod.None;
-      _doc.DetrendingOrder = DetrendingMethods.FirstSelectedNode?.Tag is int d ? d : -1;
+      _doc.Method = SpectralPreprocessingMethods.SelectedValue;
+      _doc.DetrendingOrder = DetrendingMethods.SelectedValue;
       _doc.EnsembleScale = EnsembleScale;
       return ApplyEnd(true, disposeController);
     }

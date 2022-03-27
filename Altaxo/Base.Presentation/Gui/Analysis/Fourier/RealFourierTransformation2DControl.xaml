@@ -210,7 +210,7 @@
             IsChecked="{Binding CenterFrequencies, Mode=TwoWay}"/>
 
         <Label Grid.Row="18">Output:</Label>
-        <ContentControl  Grid.Row="18" Grid.Column="1" Content="{Binding OutputQuantitiesView}"/>
+        <ContentControl  Grid.Row="18" Grid.Column="1" Content="{Binding OutputQuantitiesController.ViewObject}"/>
 
         <CheckBox
             Grid.Row="20"

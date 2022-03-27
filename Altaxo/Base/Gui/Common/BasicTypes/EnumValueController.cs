@@ -24,6 +24,7 @@
 
 #nullable enable
 using System;
+using System.ComponentModel;
 using Altaxo.Collections;
 
 namespace Altaxo.Gui.Common.BasicTypes
@@ -34,7 +35,7 @@ namespace Altaxo.Gui.Common.BasicTypes
 
   [UserControllerForObject(typeof(System.Enum))]
   [ExpectedTypeOfView(typeof(IEnumValueView))]
-  public class EnumValueController : IMVCANController
+  public class EnumValueController : IMVCANController, INotifyPropertyChanged
   {
     private System.Enum? _doc;
     private long _tempDoc;
@@ -42,6 +43,9 @@ namespace Altaxo.Gui.Common.BasicTypes
     private bool _isFlagsEnum;
     private SelectableListNodeList _list = new SelectableListNodeList();
     private int _checkedChangeLock = 0;
+
+    public event PropertyChangedEventHandler PropertyChanged;
+    protected void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
     /// <summary>
     /// Gets or sets the maximum number of entries that will be shown in short design mode (e.g. radio buttons instead of combobox).
@@ -199,10 +203,10 @@ namespace Altaxo.Gui.Common.BasicTypes
 
     public bool InitializeDocument(params object[] args)
     {
-      if (args.Length == 0 || !(args[0] is System.Enum))
+      if (args.Length == 0 || args[0] is not System.Enum enu)
         return false;
 
-      _doc = (System.Enum)args[0];
+      _doc = enu;
       _tempDoc = ((IConvertible)_doc).ToInt64(System.Globalization.CultureInfo.InvariantCulture);
 
       Initialize(true);
@@ -227,15 +231,19 @@ namespace Altaxo.Gui.Common.BasicTypes
       }
       set
       {
-        if (_view is not null)
-          _view.DataContext = null;
-
-        _view = value as IEnumValueView;
-
-        if (_view is not null)
+        if (!object.ReferenceEquals(_view, value))
         {
-          _view.DataContext = this;
-          Initialize(false);
+          if (_view is not null)
+            _view.DataContext = null;
+
+          _view = value as IEnumValueView;
+
+          if (_view is not null)
+          {
+            _view.DataContext = this;
+            Initialize(false);
+          }
+          OnPropertyChanged(nameof(ViewObject));
         }
       }
     }
