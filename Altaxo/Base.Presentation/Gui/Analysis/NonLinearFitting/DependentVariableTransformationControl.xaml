@@ -5,8 +5,9 @@
     xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:dd="clr-namespace:GongSolutions.Wpf.DragDrop"
-    xmlns:local="clr-namespace:Altaxo.Gui.Analysis.NonLinearFitting"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:localModel="clr-namespace:Altaxo.Gui.Analysis.NonLinearFitting;assembly=AltaxoBase"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+    d:DataContext="{d:DesignInstance Type=localModel:DependentVariableTransformationController}"
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d">
@@ -49,7 +50,7 @@
             axogc:EventToCommandBinding.Command0="{Binding TransformationEditCommand}"
             axogc:EventToCommandBinding.CommandParameter0="{Binding Tag, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Grid}}}"
             axogc:EventToCommandBinding.EventName0="MouseDoubleClick"
-            dd:DragDrop.DropHandler="{Binding ColumnTextBoxesDropTarget, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}"
+            dd:DragDrop.DropMVVMHandler="{Binding ColumnDropHandler}"
             dd:DragDrop.IsDropTarget="True"
             IsReadOnly="True"
             Text="{Binding TransformationTextToShow, Mode=OneWay}"
@@ -78,12 +79,12 @@
 
         <Popup
             Name="_guiPopup"
+            PlacementTarget="{Binding ElementName=_guiColumnTransformation}"
             AllowsTransparency="False"
             HorizontalOffset="0"
             IsKeyboardFocusWithinChanged="EhPopupFocusChanged"
-            IsOpen="False"
+            IsOpen="{Binding IsTransformationPopupOpen, Mode=TwoWay}" 
             Placement="Relative"
-            PlacementTarget="{Binding ElementName=_guiColumnTransformation}"
             VerticalOffset="0">
             <StackPanel Background="AliceBlue" Orientation="Vertical">
                 <MenuItem
@@ -98,7 +99,8 @@
                     Command="{Binding TransformationAddAsAppendingCommand}"
                     CommandParameter="{Binding Tag, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Grid}}}"
                     Header="Append transformation" />
-                <MenuItem Click="EhPopup_Cancel" Header="Cancel" />
+                <MenuItem Header="Cancel" 
+                          Command="{Binding CmdCloseTransformationPopup}" />
             </StackPanel>
         </Popup>
 
@@ -113,9 +115,9 @@
             Grid.Row="4"
             Grid.Column="0"
             Grid.ColumnSpan="3"
-            dd:DragDrop.DragHandler="{Binding AvailableTransformationsDragSource, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}"
+            dd:DragDrop.DragMVVMHandler="{Binding AvailableTransformationDragHandler}"
             dd:DragDrop.IsDragSource="True"
-            IsKeyboardFocusWithinChanged="EhFocusWithinChanged"
+            IsKeyboardFocusWithinChanged="EhPopupFocusChanged"
             ItemsSource="{Binding AvailableTransformations}"
             ScrollViewer.VerticalScrollBarVisibility="Visible">
             <ListBox.ItemContainerStyle>

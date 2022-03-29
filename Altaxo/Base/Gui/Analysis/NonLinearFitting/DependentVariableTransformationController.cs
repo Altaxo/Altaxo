@@ -32,29 +32,12 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using Altaxo.Collections;
 using Altaxo.Data.Transformations;
+using Altaxo.Gui.Common;
 
 namespace Altaxo.Gui.Analysis.NonLinearFitting
 {
   public interface IDependentVariableTransformationView : IDataContextAwareView
   {
-    /// <summary>
-    /// Shows a popup menu for the column corresponding to <paramref name="tag"/>, questioning whether to add the
-    /// selected transformation as single transformation, as prepending transformation, or as appending transformation.
-    /// </summary>
-    void ShowTransformationSinglePrependAppendPopup(bool isOpen);
-
-    event CanStartDragDelegate AvailableTransformations_CanStartDrag;
-
-    event StartDragDelegate AvailableTransformations_StartDrag;
-
-    event DragEndedDelegate AvailableTransformations_DragEnded;
-
-    event DragCancelledDelegate AvailableTransformations_DragCancelled;
-
-    event DropCanAcceptDataDelegate PlotItemColumn_DropCanAcceptData;
-
-    event DropDelegate PlotItemColumn_Drop;
-
   }
 
   [ExpectedTypeOfView(typeof(IDependentVariableTransformationView))]
@@ -83,34 +66,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
     {
     }
 
-    protected override void AttachView()
-    {
-      base.AttachView();
-
-      _view.AvailableTransformations_CanStartDrag += EhAvailableTransformations_CanStartDrag;
-      _view.AvailableTransformations_StartDrag += EhAvailableTransformations_StartDrag;
-      _view.AvailableTransformations_DragEnded += EhAvailableTransformations_DragEnded;
-      _view.AvailableTransformations_DragCancelled += EhAvailableTransformations_DragCancelled;
-
-      _view.PlotItemColumn_DropCanAcceptData += EhColumnDropCanAcceptData;
-      _view.PlotItemColumn_Drop += EhColumnDrop;
-
-
-    }
-
-    protected override void DetachView()
-    {
-      _view.AvailableTransformations_CanStartDrag -= EhAvailableTransformations_CanStartDrag;
-      _view.AvailableTransformations_StartDrag -= EhAvailableTransformations_StartDrag;
-      _view.AvailableTransformations_DragEnded -= EhAvailableTransformations_DragEnded;
-      _view.AvailableTransformations_DragCancelled -= EhAvailableTransformations_DragCancelled;
-
-      _view.PlotItemColumn_DropCanAcceptData -= EhColumnDropCanAcceptData;
-      _view.PlotItemColumn_Drop -= EhColumnDrop;
-
-
-      base.DetachView();
-    }
+    
 
     protected override void Initialize(bool initData)
     {
@@ -228,7 +184,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
         }
         else
         {
-          _view?.ShowTransformationSinglePrependAppendPopup(true); // this will eventually fire one of three commands to add as single, as prepend or as append transformation
+          IsTransformationPopupOpen = true; // this will eventually fire one of three commands to add as single, as prepend or as append transformation
         }
       }
       Update();
@@ -236,7 +192,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
     public void EhView_TransformationAddAsSingle()
     {
-      _view.ShowTransformationSinglePrependAppendPopup(false);
+      IsTransformationPopupOpen = false;
 
       var node = _availableTransformations.FirstSelectedNode;
       if (node is not null)
@@ -247,7 +203,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
     public void EhView_TransformationAddAsPrepending()
     {
-      _view.ShowTransformationSinglePrependAppendPopup(false);
+      IsTransformationPopupOpen = false;
 
 
       var node = _availableTransformations.FirstSelectedNode;
@@ -259,8 +215,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
     public void EhView_TransformationAddAsAppending()
     {
-      _view.ShowTransformationSinglePrependAppendPopup(false);
-
+      IsTransformationPopupOpen = false;
 
       var node = _availableTransformations.FirstSelectedNode;
       if (node is not null)
@@ -315,6 +270,21 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
         else
         {
           return "No transformation applied";
+        }
+      }
+    }
+
+    private bool _isTransformationPopupOpen;
+
+    public bool IsTransformationPopupOpen
+    {
+      get => _isTransformationPopupOpen;
+      set
+      {
+        if (!(_isTransformationPopupOpen == value))
+        {
+          _isTransformationPopupOpen = value;
+          OnPropertyChanged(nameof(IsTransformationPopupOpen));
         }
       }
     }
@@ -380,7 +350,6 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
     #endregion TransformationAddAsSingle command
 
-
     #region TransformationAddAsPrepending command
 
     private ICommand _transformationAddAsPrependingCommand;
@@ -410,95 +379,109 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
     #endregion TransformationAddAsAppending command
 
+    #region CmdCloseTransformationPopup
+
+    ICommand _cmdCloseTransformationPopup;
+    public ICommand CmdCloseTransformationPopup => _cmdCloseTransformationPopup ??= new RelayCommand(() => IsTransformationPopupOpen = false);
+
+    #endregion
+
     #region AvailableTransformations drag handler
 
-    private bool EhAvailableTransformations_CanStartDrag(IEnumerable items)
-    {
-      var selNode = items.OfType<SelectableListNode>().FirstOrDefault();
-      // to start a drag, at least one item must be selected
-      return selNode is not null;
-    }
+    AvailableTransformationsDragHandlerImpl _availableTransformationDragHandler;
+    public AvailableTransformationsDragHandlerImpl AvailableTransformationDragHandler => _availableTransformationDragHandler ??= new AvailableTransformationsDragHandlerImpl();
 
-    private StartDragData EhAvailableTransformations_StartDrag(IEnumerable items)
+    public class AvailableTransformationsDragHandlerImpl : IMVVMDragHandler
     {
-      var node = items.OfType<SelectableListNode>().FirstOrDefault();
-
-      return new StartDragData
+      public bool CanStartDrag(IEnumerable items)
       {
-        Data = node.Tag,
-        CanCopy = true,
-        CanMove = true
-      };
-    }
+        var selNode = items.OfType<SelectableListNode>().FirstOrDefault();
+        // to start a drag, at least one item must be selected
+        return selNode is not null;
+      }
 
-    private void EhAvailableTransformations_DragEnded(bool isCopy, bool isMove)
-    {
-    }
+     
 
-    private void EhAvailableTransformations_DragCancelled()
+      public void StartDrag(IEnumerable items, out object data, out bool canCopy, out bool canMove)
+      {
+        var node = items.OfType<SelectableListNode>().FirstOrDefault();
+        data = node.Tag;
+        canCopy = true;
+        canMove = true;
+      }
 
-    {
+      public void DragCancelled()
+      {
+        
+      }
+
+      public void DragEnded(bool isCopy, bool isMove)
+      {
+        
+      }
     }
 
     #endregion AvailableTransformations drag handler
 
     #region ColumnDrop hander
 
-    /// <summary>
-    ///
-    /// </summary>
-    /// <param name="data">The data to accept.</param>
-    /// <param name="nonGuiTargetItem">Object that can identify the drop target, for instance a non gui tree node or list node, or a tag.</param>
-    /// <param name="insertPosition">The insert position.</param>
-    /// <param name="isCtrlKeyPressed">if set to <c>true</c> [is control key pressed].</param>
-    /// <param name="isShiftKeyPressed">if set to <c>true</c> [is shift key pressed].</param>
-    /// <returns></returns>
-    public DropCanAcceptDataReturnData EhColumnDropCanAcceptData(object data, object nonGuiTargetItem, Gui.Common.DragDropRelativeInsertPosition insertPosition, bool isCtrlKeyPressed, bool isShiftKeyPressed)
+
+    private ColumnDropHandlerImpl _columnDropHandler;
+    public ColumnDropHandlerImpl ColumnDropHandler => _columnDropHandler ??= new ColumnDropHandlerImpl(this);
+
+    public class ColumnDropHandlerImpl : IMVVMDropHandler
     {
-      // investigate data
+      DependentVariableTransformationController _parent;
 
-      return new DropCanAcceptDataReturnData
+      public ColumnDropHandlerImpl(DependentVariableTransformationController parent)
       {
-        CanCopy = true,
-        CanMove = true,
-        ItemIsSwallowingData = false
-      };
-    }
-
-    public DropReturnData EhColumnDrop(object data, object nonGuiTargetItem, Gui.Common.DragDropRelativeInsertPosition insertPosition, bool isCtrlKeyPressed, bool isShiftKeyPressed)
-    {
-      if (data is Type)
-      {
-        object createdObj = null;
-        try
-        {
-          createdObj = System.Activator.CreateInstance((Type)data);
-        }
-        catch (Exception ex)
-        {
-          Current.Gui.ErrorMessageBox("This object could not be dropped, message: " + ex.ToString(), "Error");
-        }
-
-        if (createdObj is IDoubleToDoubleTransformation)
-        {
-          _availableTransformations.ClearSelectionsAll(); // we artificially select the node that holds that type
-          var nodeToSelect = _availableTransformations.FirstOrDefault(node => (Type)node.Tag == (Type)data);
-          if (nodeToSelect is not null)
-          {
-            nodeToSelect.IsSelected = true;
-            EhView_TransformationAddTo();
-          }
-        }
-
-        Update();
+        _parent = parent;
       }
-      
 
-      return new DropReturnData
+      public void DropCanAcceptData(object data, object targetItem, DragDropRelativeInsertPosition insertPosition, bool isCtrlKeyPressed, bool isShiftKeyPressed, out bool canCopy, out bool canMove, out bool itemIsSwallowingData)
       {
-        IsCopy = true,
-        IsMove = false
-      };
+        // investigate data
+        canCopy = true;
+        canMove = true;
+        itemIsSwallowingData = false;
+      }
+
+
+      public void Drop(object data, object targetItem, DragDropRelativeInsertPosition insertPosition, bool isCtrlKeyPressed, bool isShiftKeyPressed, out bool isCopy, out bool isMove)
+      {
+        if (data is Type)
+        {
+          object createdObj = null;
+          try
+          {
+            createdObj = System.Activator.CreateInstance((Type)data);
+          }
+          catch (Exception ex)
+          {
+            Current.Gui.ErrorMessageBox("This object could not be dropped, message: " + ex.ToString(), "Error");
+          }
+
+          if (createdObj is IDoubleToDoubleTransformation)
+          {
+            _parent._availableTransformations.ClearSelectionsAll(); // we artificially select the node that holds that type
+            var nodeToSelect = _parent._availableTransformations.FirstOrDefault(node => (Type)node.Tag == (Type)data);
+            if (nodeToSelect is not null)
+            {
+              nodeToSelect.IsSelected = true;
+              _parent.EhView_TransformationAddTo();
+            }
+          }
+
+          _parent.Update();
+        }
+
+
+        
+          isCopy = true;
+        isMove = false;
+        
+      }
+
     }
 
     #endregion ColumnDrop hander
