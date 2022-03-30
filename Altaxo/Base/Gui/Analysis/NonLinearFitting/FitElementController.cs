@@ -66,6 +66,8 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
     event Action<FitElement> DeletionOfThisFitElementRequested;
 
     bool FitFunctionSelected { set; }
+
+    int Index { get; set; }
   }
 
   #endregion interfaces
@@ -83,6 +85,8 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
     public event EventHandler FitFunctionSelectionChange;
 
     public event Action<FitElement> DeletionOfThisFitElementRequested;
+
+    public int Index { get; set; }
 
     public FitElementController(FitElement doc)
     {

@@ -26,17 +26,17 @@
 using System;
 using System.Collections.Generic;
 using Altaxo.Calc.Regression.Nonlinear;
+using Altaxo.Collections;
 
 namespace Altaxo.Gui.Analysis.NonLinearFitting
 {
   #region Interfaces
 
-  public interface IFitEnsembleView
+  public interface IFitEnsembleView : IDataContextAwareView
   {
-    void Initialize(FitEnsemble ensemble, IEnumerable<object> fitEleControls);
   }
 
-  public interface IFitEnsembleController : IMVCAController
+  public interface IFitEnsembleController : IMVCANController
   {
     void Refresh();
   }
@@ -48,14 +48,14 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
   /// </summary>
   [UserControllerForObject(typeof(FitEnsemble))]
   [ExpectedTypeOfView(typeof(IFitEnsembleView))]
-  public class FitEnsembleController : IFitEnsembleController
+  public class FitEnsembleController : MVCANControllerEditImmutableDocBase<FitEnsemble, IFitElementView>, IFitEnsembleController
   {
-    private IFitEnsembleView _view;
-    private FitEnsemble _doc;
-
-    private List<IFitElementController> _fitEleController;
-    private List<object> _fitEleControls;
     private int _currentFitFunctionSelIndex;
+
+    public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+    {
+      yield break;
+    }
 
     public FitEnsembleController(FitEnsemble doc)
     {
@@ -63,46 +63,64 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       Initialize(true);
     }
 
-    private void Uninitialize()
+    #region Bindings
+
+    private SelectableListNodeList    _fitElementControllers;
+
+    public SelectableListNodeList FitElementControllers
     {
-      if (_fitEleController is not null)
+      get => _fitElementControllers;
+      set
       {
-        for (int i = 0; i < _fitEleController.Count; i++)
+        if (!(_fitElementControllers == value))
         {
-          DetachFitElementController(_fitEleController[i]);
+          _fitElementControllers = value;
+          OnPropertyChanged(nameof(FitElementControllers));
         }
       }
-      _fitEleController = new List<IFitElementController>();
     }
 
-    public void Initialize(bool initData)
+
+    #endregion
+
+    public override void Dispose(bool isDisposing)
+    {
+      base.Dispose(isDisposing);
+      Uninitialize();
+    }
+
+    private void Uninitialize()
+    {
+      if (_fitElementControllers is not null)
+      {
+        for (int i = 0; i < _fitElementControllers.Count; i++)
+        {
+          DetachFitElementController(GetFitElementController(i));
+        }
+      }
+      _fitElementControllers.Clear();
+    }
+
+   protected override void Initialize(bool initData)
     {
       if (initData)
       {
         Uninitialize();
 
-        _fitEleController = new List<IFitElementController>(_doc.Count);
-        _fitEleControls = new List<object>(_doc.Count);
-
+        var fitElementControllers = new SelectableListNodeList();
         for (int i = 0; i < _doc.Count; i++)
         {
-          _fitEleController.Add((IFitElementController)Current.Gui.GetControllerAndControl(new object[] { _doc[i] }, typeof(IFitElementController)));
-          _fitEleControls.Add(_fitEleController[i].ViewObject);
-          AttachFitElementController(_fitEleController[i]);
+          var ctrl = (IFitElementController)Current.Gui.GetControllerAndControl(new object[] { _doc[i] }, typeof(IFitElementController));
+          ctrl.Index = i;
+
+          fitElementControllers.Add(new SelectableListNodeWithController("", i, false)
+          {
+            Controller = ctrl
+          });
+          AttachFitElementController(ctrl);
         }
+        FitElementControllers = fitElementControllers;
       }
-      if (_view is not null)
-      {
-        _view.Initialize(_doc, _fitEleControls);
-      }
-    }
-
-    private void AttachView()
-    {
-    }
-
-    private void DetachView()
-    {
     }
 
     private void AttachFitElementController(IFitElementController c)
@@ -117,13 +135,19 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       c.DeletionOfThisFitElementRequested -= EhDeletionOfFitElementRequested;
     }
 
+    private IFitElementController GetFitElementController(int idx)
+    {
+      var ctrl = ((SelectableListNodeWithController)_fitElementControllers[idx]).Controller;
+      return (IFitElementController)ctrl;
+    }
+
     private void EhFitFunctionSelectionChange(object sender, System.EventArgs e)
     {
-      _currentFitFunctionSelIndex = GetIndexOfController(sender);
+      _currentFitFunctionSelIndex = ((IFitElementController)sender).Index;
 
-      for (int i = 0; i < _fitEleController.Count; i++)
+      for (int i = 0; i < _fitElementControllers.Count; i++)
       {
-        _fitEleController[i].FitFunctionSelected = (_currentFitFunctionSelIndex == i);
+        GetFitElementController(i).FitFunctionSelected = (_currentFitFunctionSelIndex == i);
       }
     }
 
@@ -134,89 +158,23 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
         if (object.ReferenceEquals(_doc[i], fitElement))
         {
           _doc.RemoveAt(i);
-          DetachFitElementController(_fitEleController[i]);
-          _fitEleController.RemoveAt(i);
-          _fitEleControls.RemoveAt(i);
+          DetachFitElementController(GetFitElementController(i));
+          _fitElementControllers.RemoveAt(i);
           break;
         }
       }
-
-      _view.Initialize(_doc, _fitEleControls);
     }
 
-    private int GetIndexOfController(object sender)
-    {
-      for (int i = 0; i < _fitEleController.Count; i++)
-        if (object.ReferenceEquals(sender, _fitEleController[i]))
-          return i;
-
-      return -1;
-    }
+   
 
     public void Refresh()
     {
       Initialize(true);
     }
 
-    #region IMVCController Members
-
-    public object ViewObject
+    public override bool Apply(bool disposeController)
     {
-      get
-      {
-        return _view;
-      }
-      set
-      {
-        if (_view is not null)
-        {
-          DetachView();
-        }
-
-        _view = value as IFitEnsembleView;
-
-        if (_view is not null)
-        {
-          Initialize(false);
-
-          AttachView();
-        }
-      }
+      return ApplyEnd(true, disposeController);
     }
-
-    public object ModelObject
-    {
-      get
-      {
-        return _doc;
-      }
-    }
-
-    public void Dispose()
-    {
-    }
-
-    #endregion IMVCController Members
-
-    #region IApplyController Members
-
-    public bool Apply(bool disposeController)
-    {
-      return true;
-    }
-
-    /// <summary>
-    /// Try to revert changes to the model, i.e. restores the original state of the model.
-    /// </summary>
-    /// <param name="disposeController">If set to <c>true</c>, the controller should release all temporary resources, since the controller is not needed anymore.</param>
-    /// <returns>
-    ///   <c>True</c> if the revert operation was successfull; <c>false</c> if the revert operation was not possible (i.e. because the controller has not stored the original state of the model).
-    /// </returns>
-    public bool Revert(bool disposeController)
-    {
-      return false;
-    }
-
-    #endregion IApplyController Members
   }
 }

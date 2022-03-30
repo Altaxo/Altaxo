@@ -3,9 +3,24 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:nonlinearfitting="clr-namespace:Altaxo.Gui.Analysis.NonLinearFitting;assembly=AltaxoBase"
+             d:DataContext="{d:DesignInstance Type=nonlinearfitting:FitEnsembleController}"
              mc:Ignorable="d"
              MinWidth="60" MinHeight="60">
 	<ScrollViewer>
-		<StackPanel x:Name="_itemsHost" Orientation="Vertical" Grid.IsSharedSizeScope="True" />
-	</ScrollViewer>
+        <ItemsControl x:Name="_itemsHost"
+            ItemsSource="{Binding FitElementControllers}"
+             Grid.IsSharedSizeScope="True" >
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Vertical"/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <ContentControl Content="{Binding ViewObject}"/>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </ScrollViewer>
 </UserControl>
