@@ -5,36 +5,44 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 						 xmlns:axocoll="clr-namespace:Altaxo.Collections;assembly=AltaxoBase"
 						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
+						 xmlns:axogcc="clr-namespace:Altaxo.Gui.Common.Converters"
+						 xmlns:axogb="clr-namespace:Altaxo.Gui.Behaviors"
+             xmlns:nonlinearfitting="clr-namespace:Altaxo.Gui.Analysis.NonLinearFitting;assembly=AltaxoBase"
+             d:DataContext="{d:DesignInstance Type=nonlinearfitting:FitFunctionSelectionController}"
              mc:Ignorable="d">
+    <UserControl.Resources>
+        <axogcc:MarkdownToFlowDocumentConverter x:Key="MD2FlowDocConverter"/>
+        <axogb:BindingProxy x:Key="Proxy" Data="{Binding}" />
+    </UserControl.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="4" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
-        <TreeView x:Name="_guiFitFunctions" Grid.Column="0" MinWidth="120" SelectedItemChanged="EhFitFunctions_AfterSelect" MouseDoubleClick="EhMouseDoubleClick">
-            <ItemsControl.ItemContainerStyle>
-                <Style TargetType="{x:Type TreeViewItem}">
-                    <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
-                    <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
-                    <Setter Property="FontWeight" Value="Normal" />
-                    <Style.Triggers>
-                        <DataTrigger Binding="{Binding IsSelected}" Value="True">
-                            <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" />
-                        </DataTrigger>
-                    </Style.Triggers>
-                </Style>
-            </ItemsControl.ItemContainerStyle>
+        <TreeView x:Name="_guiFitFunctions" Grid.Column="0" 
+                  ItemsSource="{Binding FitFunctionsRoot.Nodes}"
+                  MinWidth="120" 
+                  axogb:DoubleClickTriggersCommand.IsHandled="True" 
+                  axogb:DoubleClickTriggersCommand.Command="{Binding CmdItemDoubleClicked}"
+                  >
+            <axogb:PushBindingManager.PushBindings>
+                <axogb:PushBinding TargetProperty="SelectedItem" Path="SelectedFitFunction"/>
+            </axogb:PushBindingManager.PushBindings>
 
             <ItemsControl.Resources>
-                <HierarchicalDataTemplate DataType="{x:Type axocoll:NGTreeNode}" ItemsSource="{Binding Nodes}">
+                <HierarchicalDataTemplate DataType="{x:Type axocoll:NGTreeNode}"
+                                          ItemsSource="{Binding Nodes}">
                     <!--Image Width="16" Height="16" Margin="3,0"/ -->
                     <TextBlock Text="{Binding Text}" Tag="{Binding}">
                         <TextBlock.ContextMenu>
                             <ContextMenu>
-                                <MenuItem Header="Edit" Tag="{Binding MySelf}" IsEnabled="{Binding IsMenuEditEnabled}" Click="EhEditItem" />
-                                <MenuItem Header="Edit copy of this" Tag="{Binding MySelf}" IsEnabled="{Binding IsMenuEditCopyEnabled}" Click="EhEditCopyOfThisItem" />
-                                <MenuItem Header="Remove" Tag="{Binding MySelf}" IsEnabled="{Binding IsMenuRemoveEnabled}" Click="EhRemoveItem" />
+                                <MenuItem Header="Edit" 
+                                          Command="{Binding Source={StaticResource Proxy}, Path=Data.CmdEditItem}" />
+                                <MenuItem Header="Edit copy of this" 
+                                          Command="{Binding Source={StaticResource Proxy}, Path=Data.CmdEditCopyOfItem}" />
+                                <MenuItem Header="Remove" 
+                                          Command="{Binding Source={StaticResource Proxy}, Path=Data.CmdRemoveItem}" />
                             </ContextMenu>
                         </TextBlock.ContextMenu>
                     </TextBlock>
@@ -42,10 +50,11 @@
             </ItemsControl.Resources>
         </TreeView>
         <GridSplitter Grid.Column="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" ResizeDirection="Columns" />
-        <axogc:FlowDocumentScrollViewerWithDefaultSize x:Name="_rtfDescription" Grid.Column="2" MinWidth="60"  DefaultWidth="300" DefaultHeigth="270">
-            <FlowDocument>
-                <Paragraph>Description of the fit function details:</Paragraph>
-            </FlowDocument>
+        <axogc:FlowDocumentScrollViewerWithDefaultSize Grid.Column="2"
+                                                       Document="{Binding FitFunctionDescription, Converter={StaticResource MD2FlowDocConverter }}"
+                                                       MinWidth="60"
+                                                       DefaultWidth="300"
+                                                       DefaultHeigth="270">
         </axogc:FlowDocumentScrollViewerWithDefaultSize>
     </Grid>
 </UserControl>

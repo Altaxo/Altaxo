@@ -24,7 +24,9 @@
 
 #nullable disable
 using System;
+using System.Collections.Generic;
 using System.Text;
+using System.Windows.Input;
 using Altaxo.Calc.Regression.Nonlinear;
 using Altaxo.Collections;
 using Altaxo.Drawing;
@@ -35,34 +37,14 @@ using Altaxo.Scripting;
 
 namespace Altaxo.Gui.Analysis.NonLinearFitting
 {
-  public interface IFitFunctionSelectionView
+  public interface IFitFunctionSelectionView : IDataContextAwareView
   {
-    void SetFitFunctions(NGTreeNodeCollection list);
-
-    // void SetRtfDocumentation(string rtfString);
-
-    NamedColor GetRtfBackgroundColor();
-
-    // events
-
-    event Action<IFitFunctionInformation> SelectionChanged;
-
-    event Action<IFitFunctionInformation> EditItem;
-
-    event Action<IFitFunctionInformation> EditCopyOfItem;
-
-    event Action<IFitFunctionInformation> RemoveItem;
-
-    event Action<IFitFunctionInformation> ItemDoubleClicked;
   }
 
-  public interface IFitFunctionSelectionController : IMVCAController
-  {
-    void Refresh();
-  }
+
 
   [ExpectedTypeOfView(typeof(IFitFunctionSelectionView))]
-  public class FitFunctionSelectionController : IMVCAController
+  public class FitFunctionSelectionController : MVCANControllerEditImmutableDocBase<IFitFunction, IFitFunctionSelectionView>
   {
     #region Other
 
@@ -165,41 +147,101 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
     public event Action<IFitFunctionInformation> FitFunctionSelected;
 
-    private IFitFunction _doc;
     private IFitFunctionInformation _tempdoc;
-    private IFitFunctionSelectionView _view;
-
-    private NGTreeNode _fitFunctionsRoot;
 
     private RootNode _nodeBuiltin;
     private RootNode _nodeApplication;
     private RootNode _nodeUserDefined;
     private RootNode _nodeProject;
 
-    public FitFunctionSelectionController(IFitFunction doc)
+    public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+    {
+      yield break;
+    }
+
+    /// <summary>
+    /// Doc can be null here, so disable initialized checking.
+    /// </summary>
+    protected override void ThrowIfNotInitialized()
+    {
+    }
+
+    public FitFunctionSelectionController(IFitFunction doc) : this()
     {
       _doc = doc;
       _tempdoc = null;
       Initialize(true);
     }
 
-    private void AttachView()
+    public FitFunctionSelectionController()
+      {
+      CmdEditItem = new RelayCommand(EhView_EditItem, EhView_CanEditItem);
+      CmdEditCopyOfItem = new RelayCommand(EhView_CreateItemFromHere, EhView_CanEditItem);
+      CmdRemoveItem = new RelayCommand(EhView_RemoveItem, EhView_CanEditItem);
+      CmdItemDoubleClicked = new RelayCommand(EhView_ItemDoubleClicked);
+      }
+
+   
+
+    #region Bindings
+
+    public ICommand CmdEditItem { get; }
+    public ICommand CmdEditCopyOfItem { get; }
+    public ICommand CmdRemoveItem { get; }
+    public ICommand CmdItemDoubleClicked { get; }
+
+    private NGTreeNode _fitFunctionsRoot;
+
+    public NGTreeNode FitFunctionsRoot
     {
-      _view.SelectionChanged += EhView_SelectionChanged;
-      _view.EditItem += EhView_EditItem;
-      _view.EditCopyOfItem += EhView_CreateItemFromHere;
-      _view.RemoveItem += EhView_RemoveItem;
-      _view.ItemDoubleClicked += EhView_ItemDoubleClicked;
+      get => _fitFunctionsRoot;
+      set
+      {
+        if (!(_fitFunctionsRoot == value))
+        {
+          _fitFunctionsRoot = value;
+          OnPropertyChanged(nameof(FitFunctionsRoot));
+        }
+      }
     }
 
-    private void DetachView()
+    private NGTreeNode _selectedFitFunction;
+
+    public NGTreeNode SelectedFitFunction
     {
-      _view.SelectionChanged -= EhView_SelectionChanged;
-      _view.EditItem -= EhView_EditItem;
-      _view.EditCopyOfItem -= EhView_CreateItemFromHere;
-      _view.RemoveItem -= EhView_RemoveItem;
-      _view.ItemDoubleClicked -= EhView_ItemDoubleClicked;
+      get => _selectedFitFunction;
+      set
+      {
+        if (!(_selectedFitFunction == value))
+        {
+          _selectedFitFunction = value;
+          OnPropertyChanged(nameof(SelectedFitFunction));
+          if(value?.Tag is IFitFunctionInformation fitinfo)
+          {
+            EhView_SelectionChanged(fitinfo);
+            FitFunctionDescription = fitinfo.Description;
+          }
+        }
+      }
     }
+
+
+    private string _fitFunctionDescription;
+
+    public string FitFunctionDescription
+    {
+      get => _fitFunctionDescription;
+      set
+      {
+        if (!(_fitFunctionDescription == value))
+        {
+          _fitFunctionDescription = value;
+          OnPropertyChanged(nameof(FitFunctionDescription));
+        }
+      }
+    }
+
+    #endregion
 
     public void Refresh()
     {
@@ -221,11 +263,6 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
         AddFitFunctionList(_nodeApplication, Current.FitFunctionService.GetApplicationFitFunctions(), FitFunctionContextMenuStyle.Edit);
         AddFitFunctionList(_nodeUserDefined, Current.FitFunctionService.GetUserDefinedFitFunctions(), FitFunctionContextMenuStyle.EditAndDelete);
         AddFitFunctionList(_nodeProject, Current.FitFunctionService.GetDocumentFitFunctions(), FitFunctionContextMenuStyle.EditAndDelete);
-      }
-
-      if (_view is not null)
-      {
-        _view.SetFitFunctions(_fitFunctionsRoot.Nodes);
       }
     }
 
@@ -307,38 +344,59 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       _tempdoc = selectedtag;
     }
 
-    public void EhView_EditItem(IFitFunctionInformation selectedtag)
+    public void EhView_EditItem()
     {
-      EditItemOrItemCopy(selectedtag, false);
+        EditItemOrItemCopy(false);
     }
 
-    public void EhView_CreateItemFromHere(IFitFunctionInformation selectedtag)
+    private bool EhView_CanEditItem()
     {
-      EditItemOrItemCopy(selectedtag, true);
-    }
-
-    public void EditItemOrItemCopy(IFitFunctionInformation selectedtag, bool editItemCopy)
-    {
-      IFitFunction func = null;
-      if (selectedtag is DocumentFitFunctionInformation)
+      if (SelectedFitFunction?.Tag is IFitFunctionInformation selectedtag)
       {
-        func = selectedtag.CreateFitFunction();
-      }
-      else if (selectedtag is FileBasedFitFunctionInformation)
-      {
-        func = Altaxo.Main.Services.FitFunctionService.ReadUserDefinedFitFunction(selectedtag as Altaxo.Main.Services.FileBasedFitFunctionInformation);
-      }
-
-      if (func is not null)
-      {
-        var editedFunc = Edit(func, editItemCopy);
-
-        if (editedFunc is not null)
+        if (selectedtag is DocumentFitFunctionInformation)
         {
-          var selNode = SelectFitFunction(editedFunc);
+          return true;
+        }
+        else if (selectedtag is FileBasedFitFunctionInformation)
+        {
+          return true;
+        }
+      }
+      return false;
+    }
 
-          if (selNode is not null)
-            FitFunctionSelected((IFitFunctionInformation)selNode.Tag);
+    public void EhView_CreateItemFromHere()
+    {
+        EditItemOrItemCopy(true);
+    }
+
+    
+    public void EditItemOrItemCopy(bool editItemCopy)
+    {
+      if (SelectedFitFunction?.Tag is IFitFunctionInformation selectedtag)
+      {
+
+        IFitFunction func = null;
+        if (selectedtag is DocumentFitFunctionInformation)
+        {
+          func = selectedtag.CreateFitFunction();
+        }
+        else if (selectedtag is FileBasedFitFunctionInformation)
+        {
+          func = Altaxo.Main.Services.FitFunctionService.ReadUserDefinedFitFunction(selectedtag as Altaxo.Main.Services.FileBasedFitFunctionInformation);
+        }
+
+        if (func is not null)
+        {
+          var editedFunc = Edit(func, editItemCopy);
+
+          if (editedFunc is not null)
+          {
+            var selNode = SelectFitFunction(editedFunc);
+
+            if (selNode?.Tag is IFitFunctionInformation fitinfo)
+              FitFunctionSelected?.Invoke(fitinfo);
+          }
         }
       }
     }
@@ -377,24 +435,30 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       return null;
     }
 
-    public void EhView_RemoveItem(IFitFunctionInformation selectedtag)
+    public void EhView_RemoveItem()
     {
-      if (selectedtag is DocumentFitFunctionInformation)
+      if (SelectedFitFunction?.Tag is IFitFunctionInformation selectedtag)
       {
-        Current.Project.FitFunctionScripts.Remove(selectedtag.CreateFitFunction() as FitFunctionScript);
-        Initialize(true);
-      }
-      else if (selectedtag is FileBasedFitFunctionInformation)
-      {
-        Current.FitFunctionService.RemoveUserDefinedFitFunction(selectedtag as Altaxo.Main.Services.FileBasedFitFunctionInformation);
-        Initialize(true);
+        if (selectedtag is DocumentFitFunctionInformation)
+        {
+          Current.Project.FitFunctionScripts.Remove(selectedtag.CreateFitFunction() as FitFunctionScript);
+          Initialize(true);
+        }
+        else if (selectedtag is FileBasedFitFunctionInformation)
+        {
+          Current.FitFunctionService.RemoveUserDefinedFitFunction(selectedtag as Altaxo.Main.Services.FileBasedFitFunctionInformation);
+          Initialize(true);
+        }
       }
     }
 
-    public void EhView_ItemDoubleClicked(IFitFunctionInformation selectedtag)
+    public void EhView_ItemDoubleClicked()
     {
-      _tempdoc = selectedtag;
-      FitFunctionSelected?.Invoke(selectedtag);
+      if (SelectedFitFunction?.Tag is IFitFunctionInformation fitinfo)
+      {
+        _tempdoc = fitinfo;
+        FitFunctionSelected?.Invoke(fitinfo);
+      }
     }
 
     #region IMVCController Members
@@ -435,21 +499,21 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
     #region IApplyController Members
 
-    public bool Apply(bool disposeController)
+    public override bool Apply(bool disposeController)
     {
       if (_tempdoc is null) // nothing selected, so return the original doc
-        return true;
+        return ApplyEnd(true, disposeController);
 
       try
       {
         _doc = _tempdoc.CreateFitFunction();
-        return true;
+        return ApplyEnd(true, disposeController);
       }
       catch (Exception ex)
       {
         Current.Gui.ErrorMessageBox("Can not create fit function. An exception was thrown: " + ex.Message);
       }
-      return false;
+      return ApplyEnd(false, disposeController);
     }
 
     /// <summary>

@@ -36,11 +36,6 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
   {
   }
 
-  public interface IFitEnsembleController : IMVCANController
-  {
-    void Refresh();
-  }
-
   #endregion Interfaces
 
   /// <summary>
@@ -48,7 +43,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
   /// </summary>
   [UserControllerForObject(typeof(FitEnsemble))]
   [ExpectedTypeOfView(typeof(IFitEnsembleView))]
-  public class FitEnsembleController : MVCANControllerEditImmutableDocBase<FitEnsemble, IFitElementView>, IFitEnsembleController
+  public class FitEnsembleController : MVCANControllerEditImmutableDocBase<FitEnsemble, IFitEnsembleView>
   {
     private int _currentFitFunctionSelIndex;
 
@@ -61,6 +56,10 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
     {
       _doc = doc;
       Initialize(true);
+    }
+
+    public FitEnsembleController()
+    {
     }
 
     #region Bindings
@@ -97,8 +96,8 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
         {
           DetachFitElementController(GetFitElementController(i));
         }
+        _fitElementControllers.Clear();
       }
-      _fitElementControllers.Clear();
     }
 
    protected override void Initialize(bool initData)

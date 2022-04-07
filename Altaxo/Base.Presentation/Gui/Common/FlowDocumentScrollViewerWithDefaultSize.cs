@@ -71,7 +71,10 @@ namespace Altaxo.Gui.Common
     protected override Size ArrangeOverride(Size arrangeBounds)
     {
       var result = base.ArrangeOverride(arrangeBounds);
-      this.Document.PageWidth = result.Width;
+      if (this.Document is { } doc)
+      {
+        doc.PageWidth = result.Width;
+      }
       return result;
     }
   }

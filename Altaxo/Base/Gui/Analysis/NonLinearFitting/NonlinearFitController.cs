@@ -111,7 +111,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
     private IMVCANController _parameterController;
     private FitFunctionSelectionController _funcselController;
-    private IFitEnsembleController _fitEnsembleController;
+    private IMVCANController _fitEnsembleController;
     private Common.EquallySpacedInterval _generationInterval;
     private Common.EquallySpacedIntervalController _generationIntervalController;
     private double _chiSquare;
@@ -158,7 +158,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       if (initData)
       {
         _parameterController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _doc.CurrentParameters }, typeof(IMVCANController));
-        _fitEnsembleController = (IFitEnsembleController)Current.Gui.GetControllerAndControl(new object[] { _doc.FitEnsemble }, typeof(IFitEnsembleController));
+        _fitEnsembleController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _doc.FitEnsemble }, typeof(IMVCANController));
 
         _funcselController = new FitFunctionSelectionController(_doc.FitEnsemble.Count == 0 ? null : _doc.FitEnsemble[0].FitFunction);
         _funcselController.FitFunctionSelected += EhController_SelectFitFunction;
@@ -465,7 +465,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       {
         // _doc.FitEnsemble.InitializeParameterSetFromEnsembleParameters(_doc.CurrentParameters);
 
-        _fitEnsembleController.Refresh();
+        _fitEnsembleController.InitializeDocument(_doc.FitEnsemble);
         _parameterController.InitializeDocument(_doc.CurrentParameters);
       }
     }
