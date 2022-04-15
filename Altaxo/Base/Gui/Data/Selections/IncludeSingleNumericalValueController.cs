@@ -34,15 +34,8 @@ using Altaxo.Gui.Graph.Plot.Data;
 
 namespace Altaxo.Gui.Data.Selections
 {
-  public interface IIncludeSingleNumericalValueView
+  public interface IIncludeSingleNumericalValueView : IDataContextAwareView
   {
-    void Init_Column(string boxText, string toolTip, int status);
-
-    void Init_ColumnTransformation(string boxText, string toolTip);
-
-    void Init_Index(int idx);
-
-    double Value { get; set; }
   }
 
   [UserControllerForObject(typeof(IncludeSingleNumericalValue), 100)]
@@ -70,16 +63,118 @@ namespace Altaxo.Gui.Data.Selections
       return base.InitializeDocument(args);
     }
 
+    #region Bindings
+
+    private string _ColumnText;
+
+    public string ColumnText
+    {
+      get => _ColumnText;
+      set
+      {
+        if (!(_ColumnText == value))
+        {
+          _ColumnText = value;
+          OnPropertyChanged(nameof(ColumnText));
+        }
+      }
+    }
+    private string _ColumnToolTip;
+
+    public string ColumnToolTip
+    {
+      get => _ColumnToolTip;
+      set
+      {
+        if (!(_ColumnToolTip == value))
+        {
+          _ColumnToolTip = value;
+          OnPropertyChanged(nameof(ColumnToolTip));
+        }
+      }
+    }
+    private int _ColumnStatus;
+
+    public int ColumnStatus
+    {
+      get => _ColumnStatus;
+      set
+      {
+        if (!(_ColumnStatus == value))
+        {
+          _ColumnStatus = value;
+          OnPropertyChanged(nameof(ColumnStatus));
+        }
+      }
+    }
+    private string _ColumnTransformationText;
+
+    public string ColumnTransformationText
+    {
+      get => _ColumnTransformationText;
+      set
+      {
+        if (!(_ColumnTransformationText == value))
+        {
+          _ColumnTransformationText = value;
+          OnPropertyChanged(nameof(ColumnTransformationText));
+        }
+      }
+    }
+    private string _ColumnTransformationToolTip;
+
+    public string ColumnTransformationToolTip
+    {
+      get => _ColumnTransformationToolTip;
+      set
+      {
+        if (!(_ColumnTransformationToolTip == value))
+        {
+          _ColumnTransformationToolTip = value;
+          OnPropertyChanged(nameof(ColumnTransformationToolTip));
+        }
+      }
+    }
+    private string _DataLabel;
+
+    public string DataLabel
+    {
+      get => _DataLabel;
+      set
+      {
+        if (!(_DataLabel == value))
+        {
+          _DataLabel = value;
+          OnPropertyChanged(nameof(DataLabel));
+        }
+      }
+    }
+    private double _Value;
+
+    public double Value
+    {
+      get => _Value;
+      set
+      {
+        if (!(_Value == value))
+        {
+          _Value = value;
+          OnPropertyChanged(nameof(Value));
+        }
+      }
+    }
+
+
+    #endregion
+
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
 
       if (initData)
       {
-      }
-      if (_view is not null)
-      {
-        _view.Value = _doc.Value;
+      
+        Value = _doc.Value;
         View_InitializeColumn();
       }
     }
@@ -88,8 +183,11 @@ namespace Altaxo.Gui.Data.Selections
     {
       var info = new PlotColumnInformation(_doc.Column, _doc.ColumnName) { PlotColumnBoxStateIfColumnIsMissing = PlotColumnControlState.Error };
       info.Update(_supposedParentDataTable, _supposedGroupNumber);
-      _view?.Init_Column(info.PlotColumnBoxText, info.PlotColumnToolTip, (int)info.PlotColumnBoxState);
-      _view?.Init_ColumnTransformation(info.TransformationTextToShow, info.TransformationToolTip);
+      ColumnText = info.PlotColumnBoxText;
+      ColumnToolTip = info.PlotColumnToolTip;
+      ColumnStatus = (int)info.PlotColumnBoxState;
+      ColumnTransformationText = info.TransformationTextToShow;
+      ColumnTransformationToolTip= info.TransformationToolTip;
     }
 
     public override bool Apply(bool disposeController)
@@ -107,7 +205,7 @@ namespace Altaxo.Gui.Data.Selections
         return ApplyEnd(false, disposeController);
       }
 
-      double value = _view.Value;
+      double value = Value;
 
       _doc = new IncludeSingleNumericalValue(value, column);
 
@@ -145,7 +243,7 @@ namespace Altaxo.Gui.Data.Selections
 
     void IDataColumnController.SetIndex(int idx)
     {
-      _view.Init_Index(idx);
+      DataLabel = $"Col#{idx}:";
     }
   }
 }
