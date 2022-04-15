@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2018 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -25,24 +25,12 @@
 #nullable disable
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Altaxo.Analysis.Statistics.Histograms;
-using Altaxo.Data;
 
 namespace Altaxo.Gui.Analysis.Statistics
 {
-  public interface ILogarithmicBinningView
+  public interface ILogarithmicBinningView : IDataContextAwareView
   {
-    bool IsUserDefinedBinOffset { get; set; }
-
-    double BinOffset { get; set; }
-
-    bool IsUserDefinedBinWidth { get; set; }
-
-    double BinWidth { get; set; }
-
-    double ResultingBinCount { set; }
   }
 
   [UserControllerForObject(typeof(LogarithmicBinning))]
@@ -54,35 +42,108 @@ namespace Altaxo.Gui.Analysis.Statistics
       yield break;
     }
 
+    #region Bindings
+
+    private bool _isUserDefinedBinOffset;
+
+    public bool IsUserDefinedBinOffset
+    {
+      get => _isUserDefinedBinOffset;
+      set
+      {
+        if (!(_isUserDefinedBinOffset == value))
+        {
+          _isUserDefinedBinOffset = value;
+          OnPropertyChanged(nameof(IsUserDefinedBinOffset));
+        }
+      }
+    }
+    private double _binOffset;
+
+    public double BinOffset
+    {
+      get => _binOffset;
+      set
+      {
+        if (!(_binOffset == value))
+        {
+          _binOffset = value;
+          OnPropertyChanged(nameof(BinOffset));
+        }
+      }
+    }
+    private bool _isUserDefinedBinWidth;
+
+    public bool IsUserDefinedBinWidth
+    {
+      get => _isUserDefinedBinWidth;
+      set
+      {
+        if (!(_isUserDefinedBinWidth == value))
+        {
+          _isUserDefinedBinWidth = value;
+          OnPropertyChanged(nameof(IsUserDefinedBinWidth));
+        }
+      }
+    }
+    private double _binWidth;
+
+    public double BinWidth
+    {
+      get => _binWidth;
+      set
+      {
+        if (!(_binWidth == value))
+        {
+          _binWidth = value;
+          OnPropertyChanged(nameof(BinWidth));
+        }
+      }
+    }
+    private double _resultingBinCount;
+
+    public double ResultingBinCount
+    {
+      get => _resultingBinCount;
+      set
+      {
+        if (!(_resultingBinCount == value))
+        {
+          _resultingBinCount = value;
+          OnPropertyChanged(nameof(ResultingBinCount));
+        }
+      }
+    }
+
+
+    #endregion Bindings
+
+
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
 
       if (initData)
       {
-      }
+        IsUserDefinedBinOffset = _doc.IsUserDefinedBinOffset;
+        IsUserDefinedBinWidth = _doc.IsUserDefinedBinWidth;
 
-      if (_view is not null)
-      {
-        _view.IsUserDefinedBinOffset = _doc.IsUserDefinedBinOffset;
-        _view.IsUserDefinedBinWidth = _doc.IsUserDefinedBinWidth;
-
-        _view.BinOffset = _doc.BinOffset;
-        _view.BinWidth = Math.Pow(10, _doc.BinWidthInDecades);
-        _view.ResultingBinCount = _doc.NumberOfBins;
+        BinOffset = _doc.BinOffset;
+        BinWidth = Math.Pow(10, _doc.BinWidthInDecades);
+        ResultingBinCount = _doc.NumberOfBins;
       }
     }
 
     public override bool Apply(bool disposeController)
     {
-      _doc.IsUserDefinedBinOffset = _view.IsUserDefinedBinOffset;
-      _doc.IsUserDefinedBinWidth = _view.IsUserDefinedBinWidth;
+      _doc.IsUserDefinedBinOffset = IsUserDefinedBinOffset;
+      _doc.IsUserDefinedBinWidth = IsUserDefinedBinWidth;
 
       if (_doc.IsUserDefinedBinOffset)
-        _doc.BinOffset = _view.BinOffset;
+        _doc.BinOffset = BinOffset;
 
       if (_doc.IsUserDefinedBinWidth)
-        _doc.BinWidthInDecades = Math.Log10(_view.BinWidth);
+        _doc.BinWidthInDecades = Math.Log10(BinWidth);
 
       return ApplyEnd(true, disposeController);
     }

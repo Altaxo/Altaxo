@@ -6,6 +6,8 @@
     xmlns:axogcc="clr-namespace:Altaxo.Gui.Common.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:statistics="clr-namespace:Altaxo.Gui.Analysis.Statistics;assembly=AltaxoBase" 
+    d:DataContext="{d:DesignInstance Type=statistics:LogarithmicBinningController}"
     mc:Ignorable="d">
     <UserControl.Resources>
         <axogcc:InverseBooleanConverter x:Key="InverseBooleanConverter" />
@@ -26,28 +28,29 @@
             <RowDefinition Height="4" />
         </Grid.RowDefinitions>
 
-        <CheckBox x:Name="_guiIsUserDefinedBinOffset" Content="User defined bin offset:" />
+        <CheckBox IsChecked="{Binding IsUserDefinedBinOffset, Mode=TwoWay}"
+                  Content="User defined bin offset:" />
         <axogc:NumericDoubleTextBox
-            x:Name="_guiBinOffset"
             Grid.Row="0"
             Grid.Column="1"
-            IsReadOnly="{Binding ElementName=_guiIsUserDefinedBinOffset, Path=IsChecked, Converter={StaticResource InverseBooleanConverter}}" />
+            SelectedValue="{Binding BinOffset}"
+            IsReadOnly="{Binding IsUserDefinedBinOffset, Converter={StaticResource InverseBooleanConverter}}" />
 
         <CheckBox
-            x:Name="_guiIsUserDefinedBinWidth"
             Grid.Row="2"
+            IsChecked="{Binding IsUserDefinedBinWidth, Mode=TwoWay}"
             Content="User defined bin width (as factor &gt; 1):" />
         <axogc:NumericDoubleTextBox
-            x:Name="_guiBinWidth"
             Grid.Row="2"
             Grid.Column="1"
-            IsReadOnly="{Binding ElementName=_guiIsUserDefinedBinWidth, Path=IsChecked, Converter={StaticResource InverseBooleanConverter}}" />
+            SelectedValue="{Binding BinWidth}"
+            IsReadOnly="{Binding IsUserDefinedBinWidth, Converter={StaticResource InverseBooleanConverter}}" />
 
         <Label Grid.Row="4" Content="Resulting number of bins:" />
         <axogc:NumericDoubleTextBox
-            x:Name="_guiBinCount"
             Grid.Row="4"
             Grid.Column="1"
+            SelectedValue="{Binding ResultingBinCount}"
             IsReadOnly="True" />
     </Grid>
 </UserControl>

@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2018 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -22,19 +22,7 @@
 
 #endregion Copyright
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Altaxo.Gui.Analysis.Statistics
 {
@@ -46,59 +34,6 @@ namespace Altaxo.Gui.Analysis.Statistics
     public LogarithmicBinningControl()
     {
       InitializeComponent();
-    }
-
-    public bool IsUserDefinedBinOffset
-    {
-      get
-      {
-        return true == _guiIsUserDefinedBinOffset.IsChecked;
-      }
-      set
-      {
-        _guiIsUserDefinedBinOffset.IsChecked = value;
-      }
-    }
-
-    public double BinOffset
-    {
-      get
-      {
-        return _guiBinOffset.SelectedValue;
-      }
-      set
-      {
-        _guiBinOffset.SelectedValue = value;
-      }
-    }
-
-    public bool IsUserDefinedBinWidth
-    {
-      get
-      {
-        return true == _guiIsUserDefinedBinWidth.IsChecked;
-      }
-      set
-      {
-        _guiIsUserDefinedBinWidth.IsChecked = value;
-      }
-    }
-
-    public double BinWidth
-    {
-      get
-      {
-        return _guiBinWidth.SelectedValue;
-      }
-      set
-      {
-        _guiBinWidth.SelectedValue = value;
-      }
-    }
-
-    public double ResultingBinCount
-    {
-      set { _guiBinCount.SelectedValue = value; }
     }
   }
 }
