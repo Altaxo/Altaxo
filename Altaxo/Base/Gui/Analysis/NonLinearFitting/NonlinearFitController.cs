@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using System.Windows.Input;
 using Altaxo.Calc.Regression.Nonlinear;
 using Altaxo.Collections;
 using Altaxo.Data;
@@ -38,90 +39,26 @@ using Altaxo.Graph.Plot.Data;
 using Altaxo.Gui.Scripting;
 using Altaxo.Main.Services;
 using Altaxo.Scripting;
+using Altaxo.Units;
 
 namespace Altaxo.Gui.Analysis.NonLinearFitting
 {
-  #region interfaces
-
-  public interface INonlinearFitView
+  public interface INonlinearFitView : IDataContextAwareView
   {
-    bool ShowUnusedDependentVariables { get; set; }
-
-    bool ShowConfidenceBands { get; set; }
-
-    double ConfidenceLevel { get; set; }
-
-    INonlinearFitViewEventSink Controller { get; set; }
-
-    void SetParameterControl(object control);
-
-    void SetSelectFunctionControl(object control);
-
-    void SetFitEnsembleControl(object control);
-
-    void SetChiSquare(double chiSquare);
-
-    void SwitchToFitEnsemblePage();
-
-    object GetGenerationIntervalControl();
   }
-
-  public interface INonlinearFitViewEventSink
-  {
-    void EhView_DoFit();
-
-    void EhView_DoSimplex();
-
-    void EhView_EvaluateChiSqr();
-
-    void EhView_SelectFitFunction();
-
-    void EhView_NewFitFunction();
-
-    void EhView_CopyParameterV();
-
-    void EhView_CopyParameterVAsCDef();
-
-    void EhView_CopyParameterNV();
-
-    void EhView_CopyParameterNVV();
-
-    void EhView_CopyParameterNCM();
-
-    void EhView_CopyParameterNSVCVInOneRow();
-
-    void EhView_PasteParameterV();
-
-    void EhView_DoSimulation(bool useInterval, bool generateUnusedVarsAlso);
-  }
-
-  #endregion interfaces
 
   /// <summary>
   /// Summary description for NonlinearFitController.
   /// </summary>
-  /// <seealso cref="Altaxo.Gui.Analysis.NonLinearFitting.INonlinearFitViewEventSink" />
   /// <seealso cref="Altaxo.Gui.IMVCAController" />
   [UserControllerForObject(typeof(NonlinearFitDocument))]
   [ExpectedTypeOfView(typeof(INonlinearFitView))]
-  public class NonlinearFitController : INonlinearFitViewEventSink, IMVCANController
+  public class NonlinearFitController : MVCANControllerEditImmutableDocBase<NonlinearFitDocument, INonlinearFitView>
   {
-    private NonlinearFitDocument _doc;
-    private INonlinearFitView _view;
-
-    private IMVCANController _parameterController;
-    private FitFunctionSelectionController _funcselController;
-    private IMVCANController _fitEnsembleController;
     private Common.EquallySpacedInterval _generationInterval;
-    private Common.EquallySpacedIntervalController _generationIntervalController;
-    private double _chiSquare;
     private double _sigmaSquare;
     private int _numberOfFitPoints;
     private double[] _covarianceMatrix; // length of covariance matrix is always a square number
-
-    private bool _showUnusedDependentVariables = true;
-    private bool _showConfidenceBands;
-    private double _confidenceLevel = 0.95;
 
     /// <summary>
     /// If a fit was made, new function plot items with a new Guid identifier are created. This is the identifier of the old function plot items.
@@ -131,38 +68,306 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
     private XYPlotLayer _activeLayer;
 
-    public bool InitializeDocument(params object[] args)
+    public override bool InitializeDocument(params object[] args)
     {
       if (args is null || args.Length == 0)
         return false;
 
-      if (!(args[0] is NonlinearFitDocument))
+      if (args[0] is NonlinearFitDocument fitdoc)
+       _originalDoc = _doc = fitdoc;
+      else
         return false;
 
-      _doc = (NonlinearFitDocument)args[0];
 
-      if (args.Length > 1 && args[1] is string)
-        _previousFitDocumentIdentifier = (string)args[1];
+      if (args.Length > 1 && args[1] is string prevId)
+        _previousFitDocumentIdentifier = prevId;
 
-      if (args.Length > 2 && args[2] is XYPlotLayer)
-        _activeLayer = (XYPlotLayer)args[2];
+      if (args.Length > 2 && args[2] is XYPlotLayer plotLayer)
+        _activeLayer = plotLayer;
 
       Initialize(true);
       return true;
     }
 
-    public UseDocument UseDocumentCopy { get; set; }
-
-    public void Initialize(bool initData)
+    public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
+      yield return new ControllerAndSetNullMethod(_fitFunctionSelectionController, () => FitFunctionSelectionController = null);
+      yield return new ControllerAndSetNullMethod(_fitEnsembleController, () => FitEnsembleController = null);
+      yield return new ControllerAndSetNullMethod(_parameterController, () => ParameterController = null);
+      yield return new ControllerAndSetNullMethod(_generationIntervalController, () => GenerationIntervalController = null);
+    }
+
+    #region Bindings
+
+    #region Tabs
+
+    public const string TabSelection = "Selection";
+    public const string TabDetails = "Details";
+    public const string TabFit = "Fit";
+    public const string TabSimulation = "Simulation";
+
+    private string _selectedTab;
+
+    public string SelectedTab
+    {
+      get => _selectedTab;
+      set
+      {
+        if (!(_selectedTab == value))
+        {
+          _selectedTab = value;
+          OnPropertyChanged(nameof(SelectedTab));
+        }
+      }
+    }
+
+
+    #endregion
+
+    #region FitFunctionSelection
+    ICommand _cmdSelectFitFunction;
+    public ICommand CmdSelectFitFunction => _cmdSelectFitFunction ??= new RelayCommand(EhView_SelectFitFunction);
+
+    ICommand _cmdCreateNewFitFunction;
+    public ICommand CmdCreateNewFitFunction => _cmdCreateNewFitFunction ??= new RelayCommand(EhView_NewFitFunction);
+
+    private FitFunctionSelectionController _fitFunctionSelectionController;
+
+    public FitFunctionSelectionController FitFunctionSelectionController
+    {
+      get => _fitFunctionSelectionController;
+      set
+      {
+        if (!(_fitFunctionSelectionController == value))
+        {
+          _fitFunctionSelectionController?.Dispose();
+          _fitFunctionSelectionController = value;
+          OnPropertyChanged(nameof(FitFunctionSelectionController));
+        }
+      }
+    }
+
+    #endregion
+
+    #region FitEnsemble
+
+
+    private IMVCANController _fitEnsembleController;
+
+    public IMVCANController FitEnsembleController
+    {
+      get => _fitEnsembleController;
+      set
+      {
+        if (!(_fitEnsembleController == value))
+        {
+          _fitEnsembleController?.Dispose();
+          _fitEnsembleController = value;
+          OnPropertyChanged(nameof(FitEnsembleController));
+        }
+      }
+    }
+
+
+    #endregion
+
+    #region MakeFit
+
+    private ICommand _cmdCopyParameterNV;
+    public ICommand CmdCopyParameterNV => _cmdCopyParameterNV ??= new RelayCommand(EhView_CopyParameterNV);
+
+    private ICommand _cmdCopyParameterNVV;
+    public ICommand CmdCopyParameterNVV => _cmdCopyParameterNVV ??= new RelayCommand(EhView_CopyParameterNVV);
+
+    private ICommand _cmdCopyParameterVAsCDef;
+    public ICommand CmdCopyParameterVAsCDef => _cmdCopyParameterVAsCDef ??= new RelayCommand(EhView_CopyParameterVAsCDef);
+
+    private ICommand _cmdCopyParameterV;
+    public ICommand CmdCopyParameterV => _cmdCopyParameterV ??= new RelayCommand(EhView_CopyParameterV);
+
+    private ICommand _cmdCopyParameterWithCVM;
+    public ICommand CmdCopyParameterWithCVM => _cmdCopyParameterWithCVM ??= new RelayCommand(EhView_CopyParameterNCM);
+
+
+    private ICommand _cmdCopyParameterNSVCVInOneRow;
+    public ICommand CmdCopyParameterNSVCVInOneRow => _cmdCopyParameterNSVCVInOneRow ??= new RelayCommand(EhView_CopyParameterNSVCVInOneRow);
+
+
+    private ICommand _cmdPasteParameterV;
+    public ICommand CmdPasteParameterV => _cmdPasteParameterV ??= new RelayCommand(EhView_PasteParameterV);
+
+    private ICommand _cmdEvaluateChiSquare;
+    public ICommand CmdEvaluateChiSquare => _cmdEvaluateChiSquare ??= new RelayCommand(EhView_EvaluateChiSqr);
+
+    private ICommand _cmdDoFit;
+    public ICommand CmdDoFit => _cmdDoFit ??= new RelayCommand(EhView_DoFit);
+
+    private ICommand _cmdDoSimplex;
+    public ICommand CmdDoSimplex => _cmdDoSimplex ??= new RelayCommand(EhView_DoSimplex);
+
+    private double _chiSquareValue;
+
+    public double ChiSquareValue
+    {
+      get => _chiSquareValue;
+      set
+      {
+        if (!(_chiSquareValue == value))
+        {
+          _chiSquareValue = value;
+          OnPropertyChanged(nameof(ChiSquareValue));
+        }
+      }
+    }
+
+
+    private bool _showUnusedDependentVariables = true;
+
+    public bool ShowUnusedDependentVariables
+    {
+      get => _showUnusedDependentVariables;
+      set
+      {
+        if (!(_showUnusedDependentVariables == value))
+        {
+          _showUnusedDependentVariables = value;
+          OnPropertyChanged(nameof(ShowUnusedDependentVariables));
+        }
+      }
+    }
+
+    private bool _showConfidenceBands;
+
+    public bool ShowConfidenceBands
+    {
+      get => _showConfidenceBands;
+      set
+      {
+        if (!(_showConfidenceBands == value))
+        {
+          _showConfidenceBands = value;
+          OnPropertyChanged(nameof(ShowConfidenceBands));
+        }
+      }
+    }
+
+    public QuantityWithUnitGuiEnvironment ConfidenceLevelEnvironment => RelationEnvironment.Instance;
+
+    private DimensionfulQuantity _confidenceLevel = new DimensionfulQuantity(0.95, Altaxo.Units.Dimensionless.Unity.Instance).AsQuantityIn(RelationEnvironment.Instance.DefaultUnit);
+
+    public DimensionfulQuantity ConfidenceLevel
+    {
+      get => _confidenceLevel;
+      set
+      {
+        if (!(_confidenceLevel == value))
+        {
+          _confidenceLevel = value;
+          OnPropertyChanged(nameof(ConfidenceLevel));
+        }
+      }
+    }
+
+
+
+
+    private IMVCANController _parameterController;
+
+    public IMVCANController ParameterController
+    {
+      get => _parameterController;
+      set
+      {
+        if (!(_parameterController == value))
+        {
+          _parameterController?.Dispose();
+          _parameterController = value;
+          OnPropertyChanged(nameof(ParameterController));
+        }
+      }
+    }
+
+
+    #endregion
+
+    #region Simulate
+
+    private bool _useUnusedDependentVarsAlsoInSimulation;
+
+    public bool UseUnusedDependentVarsAlsoInSimulation
+    {
+      get => _useUnusedDependentVarsAlsoInSimulation;
+      set
+      {
+        if (!(_useUnusedDependentVarsAlsoInSimulation == value))
+        {
+          _useUnusedDependentVarsAlsoInSimulation = value;
+          OnPropertyChanged(nameof(UseUnusedDependentVarsAlsoInSimulation));
+        }
+      }
+    }
+
+    private ICommand _cmdDoSimulation;
+    public ICommand CmdDoSimulation => _cmdDoSimulation ??= new RelayCommand(EhView_DoSimulation);
+
+
+    private bool _simulationGenerateFromIndependentVars;
+
+    public bool SimulationGenerateFromIndependentVars
+    {
+      get => _simulationGenerateFromIndependentVars;
+      set
+      {
+        if (!(_simulationGenerateFromIndependentVars == value))
+        {
+          _simulationGenerateFromIndependentVars = value;
+          OnPropertyChanged(nameof(SimulationGenerateFromIndependentVars));
+          OnPropertyChanged(nameof(SimulationFromEquallySpacedInterval));
+        }
+      }
+    }
+
+    public bool SimulationFromEquallySpacedInterval
+    {
+      get => !SimulationGenerateFromIndependentVars;
+      set => SimulationGenerateFromIndependentVars = !value;
+    }
+
+
+    private Common.EquallySpacedIntervalController _generationIntervalController;
+
+    public Common.EquallySpacedIntervalController GenerationIntervalController
+    {
+      get => _generationIntervalController;
+      set
+      {
+        if (!(_generationIntervalController == value))
+        {
+          _generationIntervalController?.Dispose();
+          _generationIntervalController = value;
+          OnPropertyChanged(nameof(GenerationIntervalController));
+        }
+      }
+    }
+
+
+    #endregion
+
+    #endregion
+
+    protected override void Initialize(bool initData)
+    {
+      base.Initialize(initData);
+
       if (initData)
       {
-        _parameterController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _doc.CurrentParameters }, typeof(IMVCANController));
-        _fitEnsembleController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _doc.FitEnsemble }, typeof(IMVCANController));
+        ParameterController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _doc.CurrentParameters }, typeof(IMVCANController));
+        FitEnsembleController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _doc.FitEnsemble }, typeof(IMVCANController));
 
-        _funcselController = new FitFunctionSelectionController(_doc.FitEnsemble.Count == 0 ? null : _doc.FitEnsemble[0].FitFunction);
-        _funcselController.FitFunctionSelected += EhController_SelectFitFunction;
-        Current.Gui.FindAndAttachControlTo(_funcselController);
+        var fitFunctionSelectionController = new FitFunctionSelectionController(_doc.FitEnsemble.Count == 0 ? null : _doc.FitEnsemble[0].FitFunction);
+        fitFunctionSelectionController.FitFunctionSelected += EhController_SelectFitFunction;
+        Current.Gui.FindAndAttachControlTo(fitFunctionSelectionController);
+        FitFunctionSelectionController = fitFunctionSelectionController;
 
         {
           var fitEnsemble = _doc.FitEnsemble;
@@ -170,27 +375,22 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
         }
 
         _generationInterval = new Common.EquallySpacedInterval();
-        _generationIntervalController = new Common.EquallySpacedIntervalController();
-        _generationIntervalController.InitializeDocument(_generationInterval);
+        var generationIntervalController = new Common.EquallySpacedIntervalController();
+        generationIntervalController.InitializeDocument(_generationInterval);
+        GenerationIntervalController = generationIntervalController;
 
         if (_activeLayer is not null)
         {
           var (hasConfidenceItems, confidenceLevel) = HasConfidencePlotItems(_activeLayer);
-          _showConfidenceBands = hasConfidenceItems;
+          ShowConfidenceBands = hasConfidenceItems;
           if (hasConfidenceItems)
-            _confidenceLevel = confidenceLevel;
+          {
+            ConfidenceLevel = new DimensionfulQuantity(confidenceLevel, Altaxo.Units.Dimensionless.Unity.Instance).AsQuantityIn(ConfidenceLevelEnvironment.DefaultUnit);
+          }
         }
       }
 
-      if (_view is not null)
-      {
-        _view.SetParameterControl(_parameterController.ViewObject);
-        _view.SetSelectFunctionControl(_funcselController.ViewObject);
-        _view.SetFitEnsembleControl(_fitEnsembleController.ViewObject);
-        _view.ConfidenceLevel = _confidenceLevel;
-        _view.ShowConfidenceBands = _showConfidenceBands;
-        _view.ShowUnusedDependentVariables = _showUnusedDependentVariables;
-      }
+
     }
 
     private void EhFitEnsemble_Changed(object sender, EventArgs e)
@@ -198,7 +398,6 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       _parameterController.InitializeDocument(_doc.CurrentParameters);
     }
 
-    #region INonlinearFitViewEventSink
 
     public void EhView_EvaluateChiSqr()
     {
@@ -206,7 +405,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       {
         var fitAdapter = new LevMarAdapter(_doc.FitEnsemble, _doc.CurrentParameters);
 
-        var fitThread = new System.Threading.Thread(new System.Threading.ThreadStart(() => _chiSquare = fitAdapter.EvaluateChiSquare()));
+        var fitThread = new System.Threading.Thread(new System.Threading.ThreadStart(() => ChiSquareValue = fitAdapter.EvaluateChiSquare()));
         fitThread.Start();
         Current.Gui.ShowBackgroundCancelDialog(10000, fitThread, null);
         if (!(fitThread.ThreadState.HasFlag(System.Threading.ThreadState.Aborted)))
@@ -224,18 +423,16 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
     public void EhView_DoFit()
     {
-      _showConfidenceBands = _view.ShowConfidenceBands;
       if (_showConfidenceBands)
       {
-        var level = _view.ConfidenceLevel;
+        var level = ConfidenceLevel.AsValueInSIUnits;
         if (!(level > 0 && level < 1))
         {
           Current.Gui.ErrorMessageBox("Confidence level must be > 0 and < 1");
           return;
         }
-        _confidenceLevel = level;
+        _confidenceLevel = new DimensionfulQuantity(level, Altaxo.Units.Dimensionless.Unity.Instance).AsQuantityIn(ConfidenceLevelEnvironment.DefaultUnit);
       }
-      _showUnusedDependentVariables = _view.ShowUnusedDependentVariables;
 
       if (true == _parameterController.Apply(false))
       {
@@ -253,7 +450,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
         Current.Gui.ShowBackgroundCancelDialog(10000, fitThread, null);
         if (!(fitThread.ThreadState.HasFlag(System.Threading.ThreadState.Aborted)))
         {
-          _chiSquare = fitAdapter.ResultingChiSquare;
+          ChiSquareValue = fitAdapter.ResultingChiSquare;
           _sigmaSquare = fitAdapter.ResultingSigmaSquare;
           _numberOfFitPoints = fitAdapter.NumberOfData;
           _covarianceMatrix = (double[])fitAdapter.CovarianceMatrix.Clone();
@@ -352,7 +549,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
         Current.Gui.ShowBackgroundCancelDialog(10000, fitThread, reportMonitor);
         if (!(fitThread.ThreadState.HasFlag(System.Threading.ThreadState.Aborted)))
         {
-          _chiSquare = fitAdapter.ResultingChiSquare;
+          ChiSquareValue = fitAdapter.ResultingChiSquare;
 
           fitAdapter.CopyParametersBackTo(_doc.CurrentParameters);
 
@@ -368,8 +565,11 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       }
     }
 
-    public void EhView_DoSimulation(bool useInterval, bool generateUnusedDependentVariables)
+    public void EhView_DoSimulation()
     {
+      var useInterval = SimulationFromEquallySpacedInterval;
+      var generateUnusedDependentVariables = UseUnusedDependentVarsAlsoInSimulation;
+
       if (useInterval && !_generationIntervalController.Apply(false))
       {
         Current.Gui.ErrorMessageBox("Your interval specification contains errors, please correct them!");
@@ -472,17 +672,17 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
     public void EhView_SelectFitFunction()
     {
-      if (_funcselController.Apply(false))
+      if (_fitFunctionSelectionController.Apply(false))
       {
-        Select((IFitFunction)_funcselController.ModelObject);
-        _view.SwitchToFitEnsemblePage();
+        Select((IFitFunction)_fitFunctionSelectionController.ModelObject);
+        SelectedTab = TabDetails;
       }
     }
 
     private void EhController_SelectFitFunction(IFitFunctionInformation fitFunctionInformation)
     {
       Select(fitFunctionInformation.CreateFitFunction());
-      _view.SwitchToFitEnsemblePage();
+      SelectedTab = TabDetails;
     }
 
     public void EhView_NewFitFunction()
@@ -503,17 +703,14 @@ Label_EditScript:
         Current.Project.FitFunctionScripts.Add(script);
 
         Select(script);
-        _funcselController.Refresh();
-        _view.SwitchToFitEnsemblePage();
+        _fitFunctionSelectionController.Refresh();
+        SelectedTab = TabDetails;
       }
     }
 
     public void OnAfterFittingStep()
     {
       _parameterController.InitializeDocument(_doc.CurrentParameters);
-
-      if (_view is not null)
-        _view.SetChiSquare(_chiSquare);
 
       if (_activeLayer is not null)
       {
@@ -545,7 +742,7 @@ Label_EditScript:
         _previousFitDocumentIdentifier,
         _showUnusedDependentVariables,
         _showConfidenceBands,
-        _confidenceLevel,
+        _confidenceLevel.AsValueInSIUnits,
         _sigmaSquare,
         _numberOfFitPoints,
         _covarianceMatrix
@@ -1193,65 +1390,12 @@ Label_EditScript:
       }
     }
 
-    #endregion INonlinearFitViewEventSink
 
-    #region IMVCController Members
-
-    public object ViewObject
+    public override bool Apply(bool disposeController)
     {
-      get
-      {
-        return _view;
-      }
-      set
-      {
-        if (_view is not null)
-          _view.Controller = null;
-
-        _view = value as INonlinearFitView;
-
-        if (_view is not null)
-        {
-          _view.Controller = this;
-          Initialize(false);
-          _generationIntervalController.ViewObject = _view.GetGenerationIntervalControl();
-        }
-      }
+      return ApplyEnd(true, disposeController);
     }
 
-    public object ModelObject
-    {
-      get
-      {
-        return _doc;
-      }
-    }
 
-    public void Dispose()
-    {
-    }
-
-    #endregion IMVCController Members
-
-    #region IApplyController Members
-
-    public bool Apply(bool disposeController)
-    {
-      return true;
-    }
-
-    /// <summary>
-    /// Try to revert changes to the model, i.e. restores the original state of the model.
-    /// </summary>
-    /// <param name="disposeController">If set to <c>true</c>, the controller should release all temporary resources, since the controller is not needed anymore.</param>
-    /// <returns>
-    ///   <c>True</c> if the revert operation was successfull; <c>false</c> if the revert operation was not possible (i.e. because the controller has not stored the original state of the model).
-    /// </returns>
-    public bool Revert(bool disposeController)
-    {
-      return false;
-    }
-
-    #endregion IApplyController Members
   }
 }
