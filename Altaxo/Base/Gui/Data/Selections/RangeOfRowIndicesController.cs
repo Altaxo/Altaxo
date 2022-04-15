@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2016 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -23,19 +23,14 @@
 #endregion Copyright
 
 #nullable disable
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Altaxo.Gui.Data.Selections
 {
   using Altaxo.Data.Selections;
 
-  public interface IRangeOfRowIndicesView
+  public interface IRangeOfRowIndicesView : IDataContextAwareView
   {
-    int RangeStart { get; set; }
-    int RangeEndInclusive { get; set; }
   }
 
   [UserControllerForObject(typeof(RangeOfRowIndices), 100)]
@@ -47,24 +42,57 @@ namespace Altaxo.Gui.Data.Selections
       yield break;
     }
 
+    #region Bindings
+
+    private int _rangeStart;
+
+    public int RangeStart
+    {
+      get => _rangeStart;
+      set
+      {
+        if (!(_rangeStart == value))
+        {
+          _rangeStart = value;
+          OnPropertyChanged(nameof(RangeStart));
+        }
+      }
+    }
+
+    private int _rangeEndInclusive;
+
+    public int RangeEndInclusive
+    {
+      get => _rangeEndInclusive;
+      set
+      {
+        if (!(_rangeEndInclusive == value))
+        {
+          _rangeEndInclusive = value;
+          OnPropertyChanged(nameof(RangeEndInclusive));
+        }
+      }
+    }
+
+
+    #endregion
+
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
 
       if (initData)
       {
-      }
-      if (_view is not null)
-      {
-        _view.RangeStart = _doc.Start;
-        _view.RangeEndInclusive = _doc.LastInclusive;
+
+        RangeStart = _doc.Start;
+        RangeEndInclusive = _doc.LastInclusive;
       }
     }
 
     public override bool Apply(bool disposeController)
     {
-      int start = _view.RangeStart;
-      int endIncl = _view.RangeEndInclusive;
+      int start = RangeStart;
+      int endIncl = RangeEndInclusive;
       _doc = RangeOfRowIndices.FromStartAndEndInclusive(start, endIncl);
 
       return ApplyEnd(true, disposeController);

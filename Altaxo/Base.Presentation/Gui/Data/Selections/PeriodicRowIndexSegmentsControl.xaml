@@ -3,8 +3,9 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:local="clr-namespace:Altaxo.Gui.Data.Selections"
- 						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
+             xmlns:localModel="clr-namespace:Altaxo.Gui.Data.Selections;assembly=AltaxoBase"
+ 			 xmlns:axogc="clr-namespace:Altaxo.Gui.Common" 
+             d:DataContext="{d:DesignInstance Type=localModel:PeriodicRowIndexSegmentsController}"
              mc:Ignorable="d">
 	<Grid>
 		<Grid.ColumnDefinitions>
@@ -17,13 +18,24 @@
 		</Grid.ColumnDefinitions>
 
 		<Label Grid.Column="0" Content="Start:" />
-		<axogc:Int32UpDown x:Name="_guiPlotRangeFrom" Grid.Column="1" Change="1"  IsGotoMinimumAndMaximumVisible="False"
-											  ToolTip="Enter either a positive or a negative number. A value of 0 means the first point, a value of 1 the second point, and so on. A value of -1 means the last point, a value of -2 means the second to last point and so on." />
+		<axogc:Int32UpDown Grid.Column="1"
+                           Value="{Binding StartIndex}"
+                           Change="1" 
+                           IsGotoMinimumAndMaximumVisible="False"
+						   ToolTip="Enter either a positive or a negative number. A value of 0 means the first point, a value of 1 the second point, and so on. A value of -1 means the last point, a value of -2 means the second to last point and so on." />
 		<Label  Grid.Column="2" Content="Period length:" />
-		<axogc:Int32UpDown x:Name="_guiLengthOfPeriod" Grid.Column="3" Change="1" Minimum="1" IsGotoMinimumAndMaximumVisible="False"
-											 ToolTip="Length of one period. Must be a number greater than or equal to 1." />
+		<axogc:Int32UpDown Grid.Column="3" 
+                           Value="{Binding LengthOfPeriod}"
+                           Change="1" 
+                           Minimum="1"
+                           IsGotoMinimumAndMaximumVisible="False"
+						   ToolTip="Length of one period. Must be a number greater than or equal to 1." />
 		<Label  Grid.Column="4" Content="Items per period:" />
-		<axogc:Int32UpDown x:Name="_guiNumberOfItemsPerPeriod" Grid.Column="5" Change="1" Minimum="1"  Maximum="{Binding ElementName=_guiLengthOfPeriod, Path=Value}" IsGotoMinimumAndMaximumVisible="False"
-											 ToolTip="Number of items per period. Must at least be 1, and less than or equal to the period length." />
+		<axogc:Int32UpDown Grid.Column="5" 
+                           Value="{Binding NumberOfItemsPerPeriod}"
+                           Change="1" Minimum="1"
+                           Maximum="{Binding ElementName=_guiLengthOfPeriod, Path=Value}" 
+                           IsGotoMinimumAndMaximumVisible="False"
+						   ToolTip="Number of items per period. Must at least be 1, and less than or equal to the period length." />
 	</Grid>
 </UserControl>

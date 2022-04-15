@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2016 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -23,20 +23,14 @@
 #endregion Copyright
 
 #nullable disable
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using Altaxo.Data.Selections;
 
 namespace Altaxo.Gui.Data.Selections
 {
-  using Altaxo.Data.Selections;
 
-  public interface IPeriodicRowIndexSegmentsView
+  public interface IPeriodicRowIndexSegmentsView : IDataContextAwareView
   {
-    int StartIndex { get; set; }
-    int LengthOfPeriod { get; set; }
-    int NumberOfItemsPerPeriod { get; set; }
   }
 
   [UserControllerForObject(typeof(PeriodicRowIndexSegments), 100)]
@@ -48,26 +42,74 @@ namespace Altaxo.Gui.Data.Selections
       yield break;
     }
 
+    #region Bindings
+
+    private int _startIndex;
+
+    public int StartIndex
+    {
+      get => _startIndex;
+      set
+      {
+        if (!(_startIndex == value))
+        {
+          _startIndex = value;
+          OnPropertyChanged(nameof(StartIndex));
+        }
+      }
+    }
+
+    private int _lengthOfPeriod;
+
+    public int LengthOfPeriod
+    {
+      get => _lengthOfPeriod;
+      set
+      {
+        if (!(_lengthOfPeriod == value))
+        {
+          _lengthOfPeriod = value;
+          OnPropertyChanged(nameof(LengthOfPeriod));
+        }
+      }
+    }
+
+    private int _numberOfItemsPerPeriod;
+
+    public int NumberOfItemsPerPeriod
+    {
+      get => _numberOfItemsPerPeriod;
+      set
+      {
+        if (!(_numberOfItemsPerPeriod == value))
+        {
+          _numberOfItemsPerPeriod = value;
+          OnPropertyChanged(nameof(NumberOfItemsPerPeriod));
+        }
+      }
+    }
+
+
+    #endregion
+
+
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
 
       if (initData)
       {
-      }
-      if (_view is not null)
-      {
-        _view.StartIndex = _doc.Start;
-        _view.LengthOfPeriod = _doc.LengthOfPeriod;
-        _view.NumberOfItemsPerPeriod = _doc.NumberOfItemsPerPeriod;
+        StartIndex = _doc.Start;
+        LengthOfPeriod = _doc.LengthOfPeriod;
+        NumberOfItemsPerPeriod = _doc.NumberOfItemsPerPeriod;
       }
     }
 
     public override bool Apply(bool disposeController)
     {
-      int start = _view.StartIndex;
-      int lengthPeriod = _view.LengthOfPeriod;
-      int itemsPerPeriod = _view.NumberOfItemsPerPeriod;
+      int start = StartIndex;
+      int lengthPeriod = LengthOfPeriod;
+      int itemsPerPeriod = NumberOfItemsPerPeriod;
       _doc = new PeriodicRowIndexSegments(start, lengthPeriod, itemsPerPeriod);
 
       return ApplyEnd(true, disposeController);

@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2016 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -22,19 +22,7 @@
 
 #endregion Copyright
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Altaxo.Gui.Data.Selections
 {
@@ -46,45 +34,6 @@ namespace Altaxo.Gui.Data.Selections
     public PeriodicRowIndexSegmentsControl()
     {
       InitializeComponent();
-    }
-
-    public int StartIndex
-    {
-      get
-      {
-        return _guiPlotRangeFrom.Value;
-      }
-
-      set
-      {
-        _guiPlotRangeFrom.Value = value;
-      }
-    }
-
-    public int LengthOfPeriod
-    {
-      get
-      {
-        return _guiLengthOfPeriod.Value;
-      }
-
-      set
-      {
-        _guiLengthOfPeriod.Value = value;
-      }
-    }
-
-    public int NumberOfItemsPerPeriod
-    {
-      get
-      {
-        return _guiNumberOfItemsPerPeriod.Value;
-      }
-
-      set
-      {
-        _guiNumberOfItemsPerPeriod.Value = value;
-      }
     }
   }
 }

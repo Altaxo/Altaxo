@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2016 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -22,21 +22,7 @@
 
 #endregion Copyright
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using Altaxo.Gui.Common;
-using Altaxo.Gui.Graph.Plot.Data;
 
 namespace Altaxo.Gui.Data.Selections
 {
@@ -48,70 +34,6 @@ namespace Altaxo.Gui.Data.Selections
     public RangeOfNumericalValuesControl()
     {
       InitializeComponent();
-    }
-
-    public void Init_Column(string boxText, string toolTip, int status)
-    {
-      _guiColumn.Text = boxText;
-      _guiColumn.ToolTip = toolTip;
-      _guiColumn.Background = DefaultSeverityColumnColors.GetSeverityColor(status);
-    }
-
-    public void Init_ColumnTransformation(string boxText, string toolTip)
-    {
-      if (boxText is null)
-      {
-        _guiColumnTransformation.Visibility = Visibility.Collapsed;
-      }
-      else
-      {
-        _guiColumnTransformation.Text = boxText;
-        _guiColumnTransformation.ToolTip = toolTip;
-        _guiColumnTransformation.Visibility = Visibility.Visible;
-      }
-    }
-
-    public void Init_LowerInclusive(Altaxo.Collections.SelectableListNodeList list)
-    {
-      GuiHelper.Initialize(_guiLowerInclusive, list);
-    }
-
-    public void Init_UpperInclusive(Altaxo.Collections.SelectableListNodeList list)
-    {
-      GuiHelper.Initialize(_guiUpperInclusive, list);
-    }
-
-    public void Init_Index(int idx)
-    {
-      _guiDataLabel.Content = string.Format("Col#{0}:", idx);
-    }
-
-    public double LowerValue
-    {
-      get { return _guiFromValue.Value; }
-      set
-      {
-        _guiFromValue.Value = value;
-      }
-    }
-
-    public double UpperValue
-    {
-      get { return _guiToValue.Value; }
-      set
-      {
-        _guiToValue.Value = value;
-      }
-    }
-
-    private void EhLowerInclusiveChanged(object sender, SelectionChangedEventArgs e)
-    {
-      GuiHelper.SynchronizeSelectionFromGui(_guiLowerInclusive);
-    }
-
-    private void EhUpperInclusiveChanged(object sender, SelectionChangedEventArgs e)
-    {
-      GuiHelper.SynchronizeSelectionFromGui(_guiUpperInclusive);
     }
   }
 }

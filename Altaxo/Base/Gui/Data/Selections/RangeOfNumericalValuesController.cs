@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2016 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -23,31 +23,17 @@
 #endregion Copyright
 
 #nullable disable
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Altaxo.Collections;
 using Altaxo.Data;
 using Altaxo.Data.Selections;
+using Altaxo.Gui.Common;
 using Altaxo.Gui.Graph.Plot.Data;
 
 namespace Altaxo.Gui.Data.Selections
 {
-  public interface IRangeOfNumericalValuesView
+  public interface IRangeOfNumericalValuesView : IDataContextAwareView
   {
-    void Init_Column(string boxText, string toolTip, int status);
-
-    void Init_ColumnTransformation(string boxText, string toolTip);
-
-    void Init_LowerInclusive(Altaxo.Collections.SelectableListNodeList list);
-
-    void Init_UpperInclusive(Altaxo.Collections.SelectableListNodeList list);
-
-    void Init_Index(int idx);
-
-    double LowerValue { get; set; }
-    double UpperValue { get; set; }
   }
 
   [UserControllerForObject(typeof(RangeOfNumericalValues), 100)]
@@ -64,8 +50,6 @@ namespace Altaxo.Gui.Data.Selections
     /// </summary>
     private int _supposedGroupNumber;
 
-    private SelectableListNodeList _lowerInclusive;
-    private SelectableListNodeList _upperInclusive;
 
     public override bool InitializeDocument(params object[] args)
     {
@@ -78,27 +62,178 @@ namespace Altaxo.Gui.Data.Selections
       return base.InitializeDocument(args);
     }
 
+    #region Bindings
+
+    private string _columnText;
+
+    public string ColumnText
+    {
+      get => _columnText;
+      set
+      {
+        if (!(_columnText == value))
+        {
+          _columnText = value;
+          OnPropertyChanged(nameof(ColumnText));
+        }
+      }
+    }
+    private string _columnToolTip;
+
+    public string ColumnToolTip
+    {
+      get => _columnToolTip;
+      set
+      {
+        if (!(_columnToolTip == value))
+        {
+          _columnToolTip = value;
+          OnPropertyChanged(nameof(ColumnToolTip));
+        }
+      }
+    }
+    private int _columnStatus;
+
+    public int ColumnStatus
+    {
+      get => _columnStatus;
+      set
+      {
+        if (!(_columnStatus == value))
+        {
+          _columnStatus = value;
+          OnPropertyChanged(nameof(ColumnStatus));
+        }
+      }
+    }
+    private string _columnTransformationText;
+
+    public string ColumnTransformationText
+    {
+      get => _columnTransformationText;
+      set
+      {
+        if (!(_columnTransformationText == value))
+        {
+          _columnTransformationText = value;
+          OnPropertyChanged(nameof(ColumnTransformationText));
+        }
+      }
+    }
+    private string _columnTransformationToolTip;
+
+    public string ColumnTransformationToolTip
+    {
+      get => _columnTransformationToolTip;
+      set
+      {
+        if (!(_columnTransformationToolTip == value))
+        {
+          _columnTransformationToolTip = value;
+          OnPropertyChanged(nameof(ColumnTransformationToolTip));
+        }
+      }
+    }
+    private string _dataLabel;
+
+    public string DataLabel
+    {
+      get => _dataLabel;
+      set
+      {
+        if (!(_dataLabel == value))
+        {
+          _dataLabel = value;
+          OnPropertyChanged(nameof(DataLabel));
+        }
+      }
+    }
+    private double _lowerValue;
+
+    public double LowerValue
+    {
+      get => _lowerValue;
+      set
+      {
+        if (!(_lowerValue == value))
+        {
+          _lowerValue = value;
+          OnPropertyChanged(nameof(LowerValue));
+        }
+      }
+    }
+
+    private double _upperValue;
+
+    public double UpperValue
+    {
+      get => _upperValue;
+      set
+      {
+        if (!(_upperValue == value))
+        {
+          _upperValue = value;
+          OnPropertyChanged(nameof(UpperValue));
+        }
+      }
+    }
+
+
+    private ItemsController<bool> _lowerInclusive;
+
+    public ItemsController<bool> LowerInclusive
+    {
+      get => _lowerInclusive;
+      set
+      {
+        if (!(_lowerInclusive == value))
+        {
+          _lowerInclusive = value;
+          OnPropertyChanged(nameof(LowerInclusive));
+        }
+      }
+    }
+
+    private ItemsController<bool> _upperInclusive;
+
+    public ItemsController<bool> UpperInclusive
+    {
+      get => _upperInclusive;
+      set
+      {
+        if (!(_upperInclusive == value))
+        {
+          _upperInclusive = value;
+          OnPropertyChanged(nameof(UpperInclusive));
+        }
+      }
+    }
+
+
+
+    #endregion
+
+
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
 
       if (initData)
       {
-        _lowerInclusive = new SelectableListNodeList();
-        _upperInclusive = new SelectableListNodeList();
+        var lowerInclusive = new SelectableListNodeList();
+        var upperInclusive = new SelectableListNodeList();
 
-        _lowerInclusive.Add(new SelectableListNode("<", false, !_doc.IsLowerValueInclusive));
-        _lowerInclusive.Add(new SelectableListNode("<=", true, _doc.IsLowerValueInclusive));
+        lowerInclusive.Add(new SelectableListNode("<", false, !_doc.IsLowerValueInclusive));
+        lowerInclusive.Add(new SelectableListNode("<=", true, _doc.IsLowerValueInclusive));
 
-        _upperInclusive.Add(new SelectableListNode("<", false, !_doc.IsUpperValueInclusive));
-        _upperInclusive.Add(new SelectableListNode("<=", true, _doc.IsUpperValueInclusive));
-      }
-      if (_view is not null)
-      {
-        _view.LowerValue = _doc.LowerValue;
-        _view.Init_LowerInclusive(_lowerInclusive);
-        _view.UpperValue = _doc.UpperValue;
-        _view.Init_UpperInclusive(_upperInclusive);
+        upperInclusive.Add(new SelectableListNode("<", false, !_doc.IsUpperValueInclusive));
+        upperInclusive.Add(new SelectableListNode("<=", true, _doc.IsUpperValueInclusive));
+
+        LowerInclusive = new ItemsController<bool>(lowerInclusive);
+        UpperInclusive = new ItemsController<bool>(upperInclusive);
+
+        LowerValue = _doc.LowerValue;
+        UpperValue = _doc.UpperValue;
 
         View_InitializeColumn();
       }
@@ -108,8 +243,11 @@ namespace Altaxo.Gui.Data.Selections
     {
       var info = new PlotColumnInformation(_doc.Column, _doc.ColumnName) { PlotColumnBoxStateIfColumnIsMissing = PlotColumnControlState.Error };
       info.Update(_supposedParentDataTable, _supposedGroupNumber);
-      _view?.Init_Column(info.PlotColumnBoxText, info.PlotColumnToolTip, (int)info.PlotColumnBoxState);
-      _view?.Init_ColumnTransformation(info.TransformationTextToShow, info.TransformationToolTip);
+      ColumnText = info.PlotColumnBoxText;
+      ColumnToolTip = info.PlotColumnToolTip;
+      ColumnStatus = (int)info.PlotColumnBoxState;
+      ColumnTransformationText = info.TransformationTextToShow;
+      ColumnTransformationToolTip = info.TransformationToolTip;
     }
 
     public override bool Apply(bool disposeController)
@@ -127,11 +265,11 @@ namespace Altaxo.Gui.Data.Selections
         return ApplyEnd(false, disposeController);
       }
 
-      bool isLowerInclusive = (bool)_lowerInclusive.FirstSelectedNode.Tag;
-      bool isUpperInclusive = (bool)_upperInclusive.FirstSelectedNode.Tag;
+      bool isLowerInclusive = LowerInclusive.SelectedValue;
+      bool isUpperInclusive = UpperInclusive.SelectedValue;
 
-      double lower = _view.LowerValue;
-      double upper = _view.UpperValue;
+      double lower = LowerValue;
+      double upper = UpperValue;
 
       _doc = new RangeOfNumericalValues(lower, isLowerInclusive, upper, isUpperInclusive, column);
 
@@ -169,7 +307,7 @@ namespace Altaxo.Gui.Data.Selections
 
     void IDataColumnController.SetIndex(int idx)
     {
-      _view.Init_Index(idx);
+      DataLabel = $"Col#{idx}:";
     }
   }
 }

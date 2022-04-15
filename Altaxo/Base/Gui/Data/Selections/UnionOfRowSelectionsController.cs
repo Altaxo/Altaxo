@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2016 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -23,18 +23,13 @@
 #endregion Copyright
 
 #nullable disable
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using Altaxo.Data.Selections;
 
 namespace Altaxo.Gui.Data.Selections
 {
-  using Altaxo.Data.Selections;
-
-  public interface IUnionOfRowSelectionView
+  public interface IUnionOfRowSelectionView : IDataContextAwareView
   {
-    bool MergeAdjoiningSegments { get; set; }
   }
 
   [UserControllerForObject(typeof(UnionOfRowSelections), 100)]
@@ -46,23 +41,39 @@ namespace Altaxo.Gui.Data.Selections
       yield break;
     }
 
+    #region Bindings
+
+    private bool _mergeAdjoiningSegments;
+
+    public bool MergeAdjoiningSegments
+    {
+      get => _mergeAdjoiningSegments;
+      set
+      {
+        if (!(_mergeAdjoiningSegments == value))
+        {
+          _mergeAdjoiningSegments = value;
+          OnPropertyChanged(nameof(MergeAdjoiningSegments));
+        }
+      }
+    }
+
+
+    #endregion
+
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
 
       if (initData)
       {
-      }
-
-      if (_view is not null)
-      {
-        _view.MergeAdjoiningSegments = _doc.MergeAdjoinigSegments;
+        MergeAdjoiningSegments = _doc.MergeAdjoinigSegments;
       }
     }
 
     public override bool Apply(bool disposeController)
     {
-      var mergeAdjoiningSegments = _view.MergeAdjoiningSegments;
+      var mergeAdjoiningSegments = MergeAdjoiningSegments;
 
       _doc = _doc.WithMergeAdjoiningSegments(mergeAdjoiningSegments);
       _originalDoc = _doc;
