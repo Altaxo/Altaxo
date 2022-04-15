@@ -65,100 +65,100 @@ namespace Altaxo.Gui.Data.Selections
 
     #region Bindings
 
-    private string _ColumnText;
+    private string _columnText;
 
     public string ColumnText
     {
-      get => _ColumnText;
+      get => _columnText;
       set
       {
-        if (!(_ColumnText == value))
+        if (!(_columnText == value))
         {
-          _ColumnText = value;
+          _columnText = value;
           OnPropertyChanged(nameof(ColumnText));
         }
       }
     }
-    private string _ColumnToolTip;
+    private string _columnToolTip;
 
     public string ColumnToolTip
     {
-      get => _ColumnToolTip;
+      get => _columnToolTip;
       set
       {
-        if (!(_ColumnToolTip == value))
+        if (!(_columnToolTip == value))
         {
-          _ColumnToolTip = value;
+          _columnToolTip = value;
           OnPropertyChanged(nameof(ColumnToolTip));
         }
       }
     }
-    private int _ColumnStatus;
+    private int _columnStatus;
 
     public int ColumnStatus
     {
-      get => _ColumnStatus;
+      get => _columnStatus;
       set
       {
-        if (!(_ColumnStatus == value))
+        if (!(_columnStatus == value))
         {
-          _ColumnStatus = value;
+          _columnStatus = value;
           OnPropertyChanged(nameof(ColumnStatus));
         }
       }
     }
-    private string _ColumnTransformationText;
+    private string _columnTransformationText;
 
     public string ColumnTransformationText
     {
-      get => _ColumnTransformationText;
+      get => _columnTransformationText;
       set
       {
-        if (!(_ColumnTransformationText == value))
+        if (!(_columnTransformationText == value))
         {
-          _ColumnTransformationText = value;
+          _columnTransformationText = value;
           OnPropertyChanged(nameof(ColumnTransformationText));
         }
       }
     }
-    private string _ColumnTransformationToolTip;
+    private string _columnTransformationToolTip;
 
     public string ColumnTransformationToolTip
     {
-      get => _ColumnTransformationToolTip;
+      get => _columnTransformationToolTip;
       set
       {
-        if (!(_ColumnTransformationToolTip == value))
+        if (!(_columnTransformationToolTip == value))
         {
-          _ColumnTransformationToolTip = value;
+          _columnTransformationToolTip = value;
           OnPropertyChanged(nameof(ColumnTransformationToolTip));
         }
       }
     }
-    private string _DataLabel;
+    private string _dataLabel;
 
     public string DataLabel
     {
-      get => _DataLabel;
+      get => _dataLabel;
       set
       {
-        if (!(_DataLabel == value))
+        if (!(_dataLabel == value))
         {
-          _DataLabel = value;
+          _dataLabel = value;
           OnPropertyChanged(nameof(DataLabel));
         }
       }
     }
-    private double _Value;
+    private double _value;
 
     public double Value
     {
-      get => _Value;
+      get => _value;
       set
       {
-        if (!(_Value == value))
+        if (!(_value == value))
         {
-          _Value = value;
+          _value = value;
           OnPropertyChanged(nameof(Value));
         }
       }

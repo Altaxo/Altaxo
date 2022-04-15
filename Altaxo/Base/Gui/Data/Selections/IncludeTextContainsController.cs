@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2016 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -23,11 +23,7 @@
 #endregion Copyright
 
 #nullable disable
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Altaxo.Collections;
 using Altaxo.Data;
 using Altaxo.Data.Selections;
 using Altaxo.Gui.Graph.Plot.Data;
@@ -59,20 +55,166 @@ namespace Altaxo.Gui.Data.Selections
       return base.InitializeDocument(args);
     }
 
+    #region Bindings
+
+    private string _columnText;
+
+    public string ColumnText
+    {
+      get => _columnText;
+      set
+      {
+        if (!(_columnText == value))
+        {
+          _columnText = value;
+          OnPropertyChanged(nameof(ColumnText));
+        }
+      }
+    }
+    private string _columnToolTip;
+
+    public string ColumnToolTip
+    {
+      get => _columnToolTip;
+      set
+      {
+        if (!(_columnToolTip == value))
+        {
+          _columnToolTip = value;
+          OnPropertyChanged(nameof(ColumnToolTip));
+        }
+      }
+    }
+    private int _columnStatus;
+
+    public int ColumnStatus
+    {
+      get => _columnStatus;
+      set
+      {
+        if (!(_columnStatus == value))
+        {
+          _columnStatus = value;
+          OnPropertyChanged(nameof(ColumnStatus));
+        }
+      }
+    }
+    private string _columnTransformationText;
+
+    public string ColumnTransformationText
+    {
+      get => _columnTransformationText;
+      set
+      {
+        if (!(_columnTransformationText == value))
+        {
+          _columnTransformationText = value;
+          OnPropertyChanged(nameof(ColumnTransformationText));
+        }
+      }
+    }
+    private string _columnTransformationToolTip;
+
+    public string ColumnTransformationToolTip
+    {
+      get => _columnTransformationToolTip;
+      set
+      {
+        if (!(_columnTransformationToolTip == value))
+        {
+          _columnTransformationToolTip = value;
+          OnPropertyChanged(nameof(ColumnTransformationToolTip));
+        }
+      }
+    }
+    private string _dataLabel;
+
+    public string DataLabel
+    {
+      get => _dataLabel;
+      set
+      {
+        if (!(_dataLabel == value))
+        {
+          _dataLabel = value;
+          OnPropertyChanged(nameof(DataLabel));
+        }
+      }
+    }
+    private string _value;
+
+    public string Value
+    {
+      get => _value;
+      set
+      {
+        if (!(_value == value))
+        {
+          _value = value;
+          OnPropertyChanged(nameof(Value));
+        }
+      }
+    }
+
+    private bool _ignoreCase;
+
+    public bool IgnoreCase
+    {
+      get => _ignoreCase;
+      set
+      {
+        if (!(_ignoreCase == value))
+        {
+          _ignoreCase = value;
+          OnPropertyChanged(nameof(IgnoreCase));
+        }
+      }
+    }
+    private string _actionString = "that is text:";
+
+    public string ActionString
+    {
+      get => _actionString;
+      set
+      {
+        if (!(_actionString == value))
+        {
+          _actionString = value;
+          OnPropertyChanged(nameof(ActionString));
+        }
+      }
+    }
+    private string _valueToolTip = "Text value to include";
+
+    public string ValueToolTip
+    {
+      get => _valueToolTip;
+      set
+      {
+        if (!(_valueToolTip == value))
+        {
+          _valueToolTip = value;
+          OnPropertyChanged(nameof(ValueToolTip));
+        }
+      }
+    }
+
+
+
+    #endregion
+
+
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
 
       if (initData)
       {
-      }
-      if (_view is not null)
-      {
-        _view.Value = _doc.Value;
-        _view.IgnoreCase = _doc.IgnoreCase;
+        Value = _doc.Value;
+        IgnoreCase = _doc.IgnoreCase;
         View_InitializeColumn();
-        _view.ActionString = "that contains text:";
-        _view.TextFieldToolTip = "Enter text that should be contained in data";
+        ActionString = "that contains text:";
+        ValueToolTip = "Enter text that should be contained in data";
       }
     }
 
@@ -80,8 +222,11 @@ namespace Altaxo.Gui.Data.Selections
     {
       var info = new PlotColumnInformation(_doc.Column, _doc.ColumnName) { PlotColumnBoxStateIfColumnIsMissing = PlotColumnControlState.Error };
       info.Update(_supposedParentDataTable, _supposedGroupNumber);
-      _view?.Init_Column(info.PlotColumnBoxText, info.PlotColumnToolTip, (int)info.PlotColumnBoxState);
-      _view?.Init_ColumnTransformation(info.TransformationTextToShow, info.TransformationToolTip);
+      ColumnText = info.PlotColumnBoxText;
+      ColumnToolTip = info.PlotColumnToolTip;
+      ColumnStatus = (int)info.PlotColumnBoxState;
+      ColumnTransformationText = info.TransformationTextToShow;
+      ColumnTransformationToolTip = info.TransformationToolTip;
     }
 
     public override bool Apply(bool disposeController)
@@ -99,8 +244,8 @@ namespace Altaxo.Gui.Data.Selections
         return ApplyEnd(false, disposeController);
       }
 
-      var value = _view.Value;
-      var ignoreCase = _view.IgnoreCase;
+      var value = Value;
+      var ignoreCase = IgnoreCase;
 
       _doc = new IncludeTextContains(value, ignoreCase, column);
 
@@ -138,7 +283,7 @@ namespace Altaxo.Gui.Data.Selections
 
     void IDataColumnController.SetIndex(int idx)
     {
-      _view.Init_Index(idx);
+      DataLabel = $"Col#{idx}:";
     }
   }
 }

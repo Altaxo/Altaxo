@@ -3,10 +3,9 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:local="clr-namespace:Altaxo.Gui.Data.Selections"
-						 xmlns:aggpd="clr-namespace:Altaxo.Gui.Graph.Plot.Data"
-						 xmlns:agc="clr-namespace:Altaxo.Gui.Common"
-						 xmlns:system ="clr-namespace:System;assembly=mscorlib"
+             xmlns:localModel="clr-namespace:Altaxo.Gui.Data.Selections;assembly=AltaxoBase"
+			 xmlns:axogcc="clr-namespace:Altaxo.Gui.Common.Converters"
+             d:DataContext="{d:DesignInstance Type=localModel:IncludeSingleTextValueController}"
              mc:Ignorable="d">
 	<Grid>
 		<Grid.ColumnDefinitions>
@@ -21,11 +20,31 @@
 			<ColumnDefinition Width="*" MinWidth="8" />
 		</Grid.ColumnDefinitions>
 		<Label  Content="Include from" Grid.Column="0" />
-		<Label x:Name="_guiDataLabel" Content="Col#1" Grid.Column="1" />
-		<TextBox x:Name="_guiColumnTransformation" MinWidth="40" Grid.Column="2" IsEnabled="True" IsReadOnly="True" />
-		<TextBox x:Name="_guiColumn" Grid.Column="3" IsEnabled="True" IsReadOnly="True" MinWidth="40" ToolTip="This field is read-only. Please select a data column for this field below." />
-		<Label x:Name="_guiActionLabel" Grid.Column="4" Content="that is text: " />
-		<TextBox x:Name="_guiValue" Grid.Column="5"  MinWidth="60" ToolTip="Text value to include" />
-		<CheckBox x:Name="_guiIgnoreCase" Content="Ignore case" Grid.Column="6" VerticalAlignment="Center" Margin="6,0,6,0" />
+		<Label Content="{Binding DataLabel}" Grid.Column="1" />
+        <TextBox Grid.Column="2"
+                 Text="{Binding ColumnTransformationText}"
+                 ToolTip="{Binding ColumnTransformationToolTip}"
+                 Visibility="{Binding ColumnTransformationText, Converter={x:Static axogcc:NullToVisibilityCollapsedConverter.Instance}}"
+                 MinWidth="40" 
+                 IsEnabled="True"
+                 IsReadOnly="True" />
+		<TextBox Grid.Column="3"
+                 Text="{Binding ColumnText}"
+                 ToolTip="{Binding ColumnToolTip}"
+                 Background="{Binding ColumnStatus, Converter={x:Static axogcc:PlotDataSeverityToBackground.Instance}}"
+                 IsEnabled="True"
+                 IsReadOnly="True"
+                 MinWidth="40" />
+		<Label Grid.Column="4" 
+               Content="{Binding ActionString}" />
+        <TextBox Grid.Column="5"
+                 Text="{Binding Value, Mode=TwoWay}"
+                 ToolTip="{Binding ValueToolTip}"
+                 MinWidth="60" />
+        <CheckBox Grid.Column="6" 
+                  IsChecked="{Binding IgnoreCase, Mode=TwoWay}"
+                  Content="Ignore case"
+                  VerticalAlignment="Center"
+                  Margin="6,0,6,0" />
 	</Grid>
 </UserControl>

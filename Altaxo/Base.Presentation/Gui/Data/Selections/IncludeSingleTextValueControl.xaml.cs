@@ -49,55 +49,5 @@ namespace Altaxo.Gui.Data.Selections
     {
       InitializeComponent();
     }
-
-    public void Init_Column(string boxText, string toolTip, int status)
-    {
-      _guiColumn.Text = boxText;
-      _guiColumn.ToolTip = toolTip;
-      _guiColumn.Background = DefaultSeverityColumnColors.GetSeverityColor(status);
-    }
-
-    public void Init_ColumnTransformation(string boxText, string toolTip)
-    {
-      if (boxText is null)
-      {
-        _guiColumnTransformation.Visibility = Visibility.Collapsed;
-      }
-      else
-      {
-        _guiColumnTransformation.Text = boxText;
-        _guiColumnTransformation.ToolTip = toolTip;
-        _guiColumnTransformation.Visibility = Visibility.Visible;
-      }
-    }
-
-    public void Init_Index(int idx)
-    {
-      _guiDataLabel.Content = string.Format("Col#{0}:", idx);
-    }
-
-    public string Value
-    {
-      get { return _guiValue.Text; }
-      set
-      {
-        _guiValue.Text = value;
-      }
-    }
-
-    public bool IgnoreCase
-    {
-      get
-      {
-        return _guiIgnoreCase.IsChecked == true;
-      }
-      set
-      {
-        _guiIgnoreCase.IsChecked = value;
-      }
-    }
-
-    public string ActionString { set => _guiActionLabel.Content = value; }
-    public string TextFieldToolTip { set => _guiValue.ToolTip = value; }
   }
 }
