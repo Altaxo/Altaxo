@@ -30,42 +30,14 @@ using System.Text;
 
 namespace Altaxo.Gui.Data.Selections
 {
+  using System.Collections.ObjectModel;
   using Altaxo.Data;
   using Altaxo.Data.Selections;
   using Altaxo.Main.Services;
   using Collections;
 
-  public interface IRowSelectionView
+  public interface IRowSelectionView : IDataContextAwareView
   {
-    void InitRowSelections(List<RSEntry> rowSelections, SelectableListNodeList rowSelectionSimpleTypes, SelectableListNodeList rowSelectionCollectionTypes);
-
-    void ChangeRowSelection(int idx, SelectableListNodeList rowSelectionTypes);
-
-    event Action<int, Type> SelectionTypeChanged;
-
-    event Action<int> CmdAddNewSelection;
-
-    event Action<int> CmdRemoveSelection;
-
-    event Action<int> CmdIndentSelection;
-
-    event Action<int> CmdUnindentSelection;
-  }
-
-  public class RSEntry
-  {
-    public IRowSelection RowSelection { get; set; }
-
-    public int IndentationLevel { get; set; }
-
-    /// <summary>
-    /// If true, this item is connected with the next item on the same level by intersection. If false, it is connected by union.
-    /// </summary>
-    public bool IsInterSection { get; set; }
-
-    public IMVCANController DetailsController { get; set; }
-
-    public object GuiItem { get; set; }
   }
 
   // The following rules will apply:
@@ -83,15 +55,10 @@ namespace Altaxo.Gui.Data.Selections
   [ExpectedTypeOfView(typeof(IRowSelectionView))]
   public class RowSelectionController : MVCANControllerEditCopyOfDocBase<IRowSelection, IRowSelectionView>
   {
-    private SelectableListNodeList _rowSelectionSimpleTypes;
-    private SelectableListNodeList _rowSelectionCollectionTypes;
-
-    private List<RSEntry> _rsEntryList;
-
     /// <summary>
     /// The data table that the column of the style should belong to.
     /// </summary>
-    private DataTable _supposedParentDataTable;
+    public DataTable _supposedParentDataTable { get; private set; }
 
     /// <summary>
     /// The group number that the column of the style should belong to.
@@ -100,19 +67,28 @@ namespace Altaxo.Gui.Data.Selections
 
     public override bool InitializeDocument(params object[] args)
     {
-      if (args.Length >= 2 && (args[1] is DataTable))
-        _supposedParentDataTable = (DataTable)args[1];
+      if (args.Length >= 2 && (args[1] is DataTable dt))
+        _supposedParentDataTable = dt;
 
-      if (args.Length >= 3 && args[2] is int)
-        _supposedGroupNumber = (int)args[2];
+      if (args.Length >= 3 && args[2] is int gn)
+        _supposedGroupNumber = gn;
 
       return base.InitializeDocument(args);
     }
 
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
-      yield break;
+      foreach (var c in _rowSelections)
+        yield return new ControllerAndSetNullMethod(c, () => { });
+      _rowSelections.Clear();
     }
+
+    #region Bindings
+
+    ObservableCollection<RowSelectionItemController> _rowSelections = new();
+    public ObservableCollection<RowSelectionItemController> RowSelections => _rowSelections;
+
+    #endregion
 
     protected override void Initialize(bool initData)
     {
@@ -120,27 +96,11 @@ namespace Altaxo.Gui.Data.Selections
 
       if (initData)
       {
-        // available row selection types
-        var types = ReflectionService.GetNonAbstractSubclassesOf(typeof(IRowSelection));
-        _rowSelectionSimpleTypes = new SelectableListNodeList();
-        _rowSelectionCollectionTypes = new SelectableListNodeList();
-        foreach (var type in types)
-        {
-          if (typeof(IRowSelectionCollection).IsAssignableFrom(type))
-            _rowSelectionCollectionTypes.Add(new SelectableListNode(type.Name, type, false));
-          else
-            _rowSelectionSimpleTypes.Add(new SelectableListNode(type.Name, type, false));
-        }
+       
 
         // RS entries
-        _rsEntryList = new List<RSEntry>();
-        ConvertRowSelectionToListOfRSEntries(_doc, _rsEntryList, 0);
-        AmendRSEntryListWithDetailControllers(_rsEntryList);
-      }
-
-      if (_view is not null)
-      {
-        _view.InitRowSelections(_rsEntryList, _rowSelectionSimpleTypes, _rowSelectionCollectionTypes);
+        ConvertRowSelectionToListOfRSEntries(_doc, _rowSelections, 0);
+        AmendRSEntryListWithDetailControllers(_rowSelections);
       }
     }
 
@@ -150,11 +110,11 @@ namespace Altaxo.Gui.Data.Selections
     /// <param name="document">The document.</param>
     /// <param name="list">The list.</param>
     /// <param name="indentLevel">The indent level.</param>
-    private static void ConvertRowSelectionToListOfRSEntries(IRowSelection document, List<RSEntry> list, int indentLevel)
+    private  void ConvertRowSelectionToListOfRSEntries(IRowSelection document, ObservableCollection<RowSelectionItemController> list, int indentLevel)
     {
       if (document is IRowSelectionCollection)
       {
-        list.Add(new RSEntry { IndentationLevel = indentLevel, RowSelection = document });
+        list.Add(new RowSelectionItemController(document, this) { IndentationLevel = indentLevel });
 
         foreach (var child in (IEnumerable<IRowSelection>)document)
         {
@@ -163,15 +123,15 @@ namespace Altaxo.Gui.Data.Selections
       }
       else if (document is not null) // doc is single entity
       {
-        list.Add(new RSEntry { IndentationLevel = indentLevel, RowSelection = document });
+        list.Add(new RowSelectionItemController(document, this) { IndentationLevel = indentLevel });
       }
       else
       {
-        list.Add(new RSEntry { IndentationLevel = indentLevel, RowSelection = new AllRows() });
+        list.Add(new RowSelectionItemController(new AllRows(), this) { IndentationLevel = indentLevel });
       }
     }
 
-    private void AmendRSEntryListWithDetailControllers(List<RSEntry> list)
+    private void AmendRSEntryListWithDetailControllers(ObservableCollection<RowSelectionItemController> list)
     {
       foreach (var entry in list)
       {
@@ -189,7 +149,7 @@ namespace Altaxo.Gui.Data.Selections
       }
     }
 
-    private void AmendRSEntryListWithDetailControllers(List<RSEntry> list, int idx)
+    private void AmendRSEntryListWithDetailControllers(ObservableCollection<RowSelectionItemController> list, int idx)
     {
       var entry = list[idx];
       {
@@ -220,24 +180,24 @@ namespace Altaxo.Gui.Data.Selections
     /// <returns></returns>
     private bool ApplyAllControllers(bool disposeController)
     {
-      for (int i = 0; i < _rsEntryList.Count; ++i)
+      for (int i = 0; i < _rowSelections.Count; ++i)
       {
-        var ctrl = _rsEntryList[i].DetailsController;
+        var ctrl = _rowSelections[i].DetailsController;
         if (ctrl is null)
           continue;
 
-        bool result = _rsEntryList[i].DetailsController.Apply(disposeController);
+        bool result = _rowSelections[i].DetailsController.Apply(disposeController);
 
         if (false == result)
           return result;
         else
-          _rsEntryList[i].RowSelection = (IRowSelection)ctrl.ModelObject;
+          _rowSelections[i].RowSelection = (IRowSelection)ctrl.ModelObject;
       }
 
       return true;
     }
 
-    private static IRowSelection ConvertListOfRSEntriesToRowSelection(List<RSEntry> list, int startIndex)
+    private static IRowSelection ConvertListOfRSEntriesToRowSelection(ObservableCollection<RowSelectionItemController> list, int startIndex)
     {
       if (list[startIndex].RowSelection is IRowSelectionCollection)
       {
@@ -273,83 +233,59 @@ namespace Altaxo.Gui.Data.Selections
       if (!ApplyAllControllers(disposeController))
         return ApplyEnd(false, disposeController);
 
-      _doc = ConvertListOfRSEntriesToRowSelection(_rsEntryList, 0);
+      _doc = ConvertListOfRSEntriesToRowSelection(_rowSelections, 0);
 
       return ApplyEnd(true, disposeController);
     }
 
-    protected override void AttachView()
+   
+
+    public void EhCmdUnindentSelection(RowSelectionItemController child)
     {
-      base.AttachView();
+      var idx = _rowSelections.IndexOf(child);
+      if (idx < 0)
+        return;
 
-      _view.SelectionTypeChanged += EhSelectionTypeChanged;
-
-      _view.CmdAddNewSelection += EhCmdAddNewSelection;
-
-      _view.CmdRemoveSelection += EhCmdRemoveSelection;
-
-      _view.CmdIndentSelection += EhCmdIndentSelection;
-
-      _view.CmdUnindentSelection += EhCmdUnindentSelection;
-    }
-
-    protected override void DetachView()
-    {
-      _view.SelectionTypeChanged -= EhSelectionTypeChanged;
-
-      _view.CmdAddNewSelection -= EhCmdAddNewSelection;
-
-      _view.CmdRemoveSelection -= EhCmdRemoveSelection;
-
-      _view.CmdIndentSelection -= EhCmdIndentSelection;
-
-      _view.CmdUnindentSelection -= EhCmdUnindentSelection;
-
-      base.DetachView();
-    }
-
-    private void EhCmdUnindentSelection(int idx)
-    {
       if (0 == idx) // item 0 can never be indented
         return;
 
-      var rsEntry = _rsEntryList[idx];
+      var rsEntry = _rowSelections[idx];
 
       if (!(rsEntry.IndentationLevel >= 2))
         return; // we can unindent only if level >= 2;
 
-      int parentIndex = GetParentIndex(idx);
       int? nextParentIdx = GetNextSibling(idx);
 
       rsEntry.IndentationLevel--; // unindent item
 
       if (nextParentIdx.HasValue)
       {
-        _rsEntryList.Insert(nextParentIdx.Value, rsEntry);
+        _rowSelections.Insert(nextParentIdx.Value, rsEntry);
       }
       else
       {
-        _rsEntryList.Add(rsEntry);
+        _rowSelections.Add(rsEntry);
       }
 
-      _rsEntryList.RemoveAt(idx);
-
-      _view.InitRowSelections(_rsEntryList, _rowSelectionSimpleTypes, _rowSelectionCollectionTypes);
+      _rowSelections.RemoveAt(idx);
 
       OnItemsChanged();
     }
 
-    private void EhCmdIndentSelection(int idx)
+    public void EhCmdIndentSelection(RowSelectionItemController child)
     {
+      var idx = _rowSelections.IndexOf(child);
+      if (idx < 0)
+        return;
+
       if (0 == idx) // item 0 can never be indented
         return;
 
-      int startLevel = _rsEntryList[idx].IndentationLevel;
+      int startLevel = _rowSelections[idx].IndentationLevel;
 
-      if (_rsEntryList[idx - 1].IndentationLevel == (startLevel + 1)) // if prev items has already the new indentation level, then we simply bring this item to the same indentation level, too
+      if (_rowSelections[idx - 1].IndentationLevel == (startLevel + 1)) // if prev items has already the new indentation level, then we simply bring this item to the same indentation level, too
       {
-        _rsEntryList[idx].IndentationLevel++;
-        _view.ChangeRowSelection(idx, (_rsEntryList[idx].RowSelection is IRowSelectionCollection) ? _rowSelectionCollectionTypes : _rowSelectionSimpleTypes);
+        _rowSelections[idx].IndentationLevel++;
         return;
       }
 
@@ -381,23 +317,28 @@ namespace Altaxo.Gui.Data.Selections
 
       IncreaseIndentationForThisAndChilds(idx);
       IncreaseIndentationForThisAndChilds(idxSibling);
-      _rsEntryList.Insert(idx, new RSEntry { IndentationLevel = _rsEntryList[parentIndex].IndentationLevel + 1, RowSelection = new IntersectionOfRowSelections() });
-      AmendRSEntryListWithDetailControllers(_rsEntryList, idx);
-      _view.InitRowSelections(_rsEntryList, _rowSelectionSimpleTypes, _rowSelectionCollectionTypes);
+      _rowSelections.Insert(idx, new RowSelectionItemController(new IntersectionOfRowSelections(), this) { IndentationLevel = _rowSelections[parentIndex].IndentationLevel + 1 });
+      AmendRSEntryListWithDetailControllers(_rowSelections, idx);
 
       OnItemsChanged();
     }
 
-    private void EhCmdRemoveSelection(int idx)
+    
+
+   public void EhCmdRemoveSelection(RowSelectionItemController child)
     {
-      int startIndentationLevel = _rsEntryList[idx].IndentationLevel;
-      int lastIndex = _rsEntryList.Count;
+      var idx = _rowSelections.IndexOf(child);
+      if (idx < 0)
+        return;
+
+      int startIndentationLevel = _rowSelections[idx].IndentationLevel;
+      int lastIndex = _rowSelections.Count;
       int parentIdx = idx == 0 ? -1 : GetParentIndex(idx);
 
       // search for the last index with a higher level -> all this items are childs of our node
-      for (int i = idx + 1; i < _rsEntryList.Count; ++i)
+      for (int i = idx + 1; i < _rowSelections.Count; ++i)
       {
-        if (_rsEntryList[i].IndentationLevel <= startIndentationLevel)
+        if (_rowSelections[i].IndentationLevel <= startIndentationLevel)
         {
           lastIndex = i;
           break;
@@ -407,79 +348,71 @@ namespace Altaxo.Gui.Data.Selections
       // remove all the childs now
       for (int i = lastIndex - 1; i >= idx; --i)
       {
-        _rsEntryList[i].DetailsController?.Dispose();
-        _rsEntryList.RemoveAt(i);
+        _rowSelections[i].DetailsController?.Dispose();
+        _rowSelections.RemoveAt(i);
       }
 
       // if there is only one child left, set it instead of the parent collection
-      if (parentIdx >= 0 && parentIdx <= _rsEntryList.Count)
+      if (parentIdx >= 0 && parentIdx <= _rowSelections.Count)
       {
         int numberOfChilds = GetNumberOfChilds(parentIdx);
-        if (1 == numberOfChilds && ((IRowSelectionCollection)_rsEntryList[parentIdx].RowSelection).IsCollectionWithOneItemEquivalentToThisItem)
+        if (1 == numberOfChilds && ((IRowSelectionCollection)_rowSelections[parentIdx].RowSelection).IsCollectionWithOneItemEquivalentToThisItem)
         {
-          _rsEntryList[parentIdx + 1].IndentationLevel--; // unindent the only child item
-          _rsEntryList.RemoveAt(parentIdx); // remove parent item
+          _rowSelections[parentIdx + 1].IndentationLevel--; // unindent the only child item
+          _rowSelections.RemoveAt(parentIdx); // remove parent item
         }
         else if (0 == numberOfChilds)
         {
-          _rsEntryList.RemoveAt(parentIdx);
+          _rowSelections.RemoveAt(parentIdx);
         }
       }
 
-      if (_rsEntryList.Count == 0) // in case we have deleted everything
+      if (_rowSelections.Count == 0) // in case we have deleted everything
       {
-        _rsEntryList.Add(new RSEntry() { IndentationLevel = 0, RowSelection = new AllRows() });
-        AmendRSEntryListWithDetailControllers(_rsEntryList);
+        _rowSelections.Add(new RowSelectionItemController(new AllRows(), this) { IndentationLevel = 0});
+        AmendRSEntryListWithDetailControllers(_rowSelections);
       }
-
-      _view.InitRowSelections(_rsEntryList, _rowSelectionSimpleTypes, _rowSelectionCollectionTypes);
 
       OnItemsChanged();
     }
 
-    private void EhCmdAddNewSelection(int idx)
+    public void EhCmdAddNewSelection(RowSelectionItemController child)
     {
-      var level = _rsEntryList[idx].IndentationLevel;
-      if (0 == idx && !(_rsEntryList[idx].RowSelection is IRowSelectionCollection)) // if there is a simple item at index 0
+      var idx = _rowSelections.IndexOf(child);
+      if (idx < 0)
+        return;
+
+      var level = _rowSelections[idx].IndentationLevel;
+      if (0 == idx && _rowSelections[idx].RowSelection is not IRowSelectionCollection) // if there is a simple item at index 0
       {
-        _rsEntryList.Insert(0, new RSEntry() { IndentationLevel = 0, RowSelection = new IntersectionOfRowSelections() }); // add collection at index 0
+        _rowSelections.Insert(0, new RowSelectionItemController(new IntersectionOfRowSelections(), this) { IndentationLevel = 0 }); // add collection at index 0
         level = 1;
         idx = 1;
-        _rsEntryList[1].IndentationLevel = level; // increase Indentation level of simple item
+        _rowSelections[1].IndentationLevel = level; // increase Indentation level of simple item
       }
-      else if (_rsEntryList[idx].RowSelection is IRowSelectionCollection)
+      else if (_rowSelections[idx].RowSelection is IRowSelectionCollection)
       {
         ++level;
       }
 
-      _rsEntryList.Insert(idx + 1, new RSEntry() { IndentationLevel = level, RowSelection = new AllRows() }); // insert the new item just after the clicked item
-
-      AmendRSEntryListWithDetailControllers(_rsEntryList);
-      _view.InitRowSelections(_rsEntryList, _rowSelectionSimpleTypes, _rowSelectionCollectionTypes);
-
+      _rowSelections.Insert(idx + 1, new RowSelectionItemController(new AllRows(), this) { IndentationLevel = level}); // insert the new item just after the clicked item
+      AmendRSEntryListWithDetailControllers(_rowSelections);
       OnItemsChanged();
     }
 
-    private void EhSelectionTypeChanged(int idx, Type type)
+    public void EhSelectionTypeChanged(RowSelectionItemController child)
     {
-      // Create an item of the new type
-      var newSel = (IRowSelection)Activator.CreateInstance(type);
-
-      _rsEntryList[idx].RowSelection = newSel;
-      AmendRSEntryListWithDetailControllers(_rsEntryList, idx);
-      _view.ChangeRowSelection(idx, (_rsEntryList[idx].RowSelection is IRowSelectionCollection) ? _rowSelectionCollectionTypes : _rowSelectionSimpleTypes);
-
       OnItemsChanged();
     }
 
     private int GetParentIndex(int idx)
     {
-      var level = _rsEntryList[idx].IndentationLevel;
+      var level = _rowSelections[idx].IndentationLevel;
       if (level == 0)
         throw new InvalidOperationException();
 
       for (int i = idx - 1; i >= 0; --i)
-        if (_rsEntryList[i].IndentationLevel < level)
+        if (_rowSelections[i].IndentationLevel < level)
           return i;
 
       throw new InvalidProgramException();
@@ -487,18 +420,18 @@ namespace Altaxo.Gui.Data.Selections
 
     private int GetNumberOfChilds(int idx)
     {
-      if (!(_rsEntryList[idx].RowSelection is IRowSelectionCollection))
+      if (_rowSelections[idx].RowSelection is not IRowSelectionCollection)
         throw new InvalidProgramException();
 
-      var startLevel = _rsEntryList[idx].IndentationLevel;
+      var startLevel = _rowSelections[idx].IndentationLevel;
 
       int childCount = 0;
-      for (int i = idx + 1; i < _rsEntryList.Count; ++i)
+      for (int i = idx + 1; i < _rowSelections.Count; ++i)
       {
-        if (_rsEntryList[i].IndentationLevel <= startLevel)
+        if (_rowSelections[i].IndentationLevel <= startLevel)
           break;
 
-        if (_rsEntryList[i].IndentationLevel == (startLevel + 1))
+        if (_rowSelections[i].IndentationLevel == (startLevel + 1))
           ++childCount;
       }
 
@@ -507,14 +440,14 @@ namespace Altaxo.Gui.Data.Selections
 
     private int? GetNextSibling(int idx)
     {
-      var startLevel = _rsEntryList[idx].IndentationLevel;
+      var startLevel = _rowSelections[idx].IndentationLevel;
 
-      for (int i = idx + 1; i < _rsEntryList.Count; ++i)
+      for (int i = idx + 1; i < _rowSelections.Count; ++i)
       {
-        if (_rsEntryList[i].IndentationLevel < startLevel)
+        if (_rowSelections[i].IndentationLevel < startLevel)
           return null; // no sibling found
 
-        if (_rsEntryList[i].IndentationLevel == startLevel)
+        if (_rowSelections[i].IndentationLevel == startLevel)
           return i;
       }
 
@@ -523,14 +456,14 @@ namespace Altaxo.Gui.Data.Selections
 
     private int? GetPreviousSibling(int idx)
     {
-      var startLevel = _rsEntryList[idx].IndentationLevel;
+      var startLevel = _rowSelections[idx].IndentationLevel;
 
       for (int i = idx - 1; i >= 0; --i)
       {
-        if (_rsEntryList[i].IndentationLevel < startLevel)
+        if (_rowSelections[i].IndentationLevel < startLevel)
           return null; // no sibling found
 
-        if (_rsEntryList[i].IndentationLevel == startLevel)
+        if (_rowSelections[i].IndentationLevel == startLevel)
           return i;
       }
 
@@ -539,16 +472,16 @@ namespace Altaxo.Gui.Data.Selections
 
     private void IncreaseIndentationForThisAndChilds(int idx)
     {
-      var startLevel = _rsEntryList[idx].IndentationLevel;
+      var startLevel = _rowSelections[idx].IndentationLevel;
 
-      _rsEntryList[idx].IndentationLevel++;
+      _rowSelections[idx].IndentationLevel++;
 
-      for (int i = idx + 1; i < _rsEntryList.Count; ++i)
+      for (int i = idx + 1; i < _rowSelections.Count; ++i)
       {
-        if (_rsEntryList[i].IndentationLevel <= startLevel)
+        if (_rowSelections[i].IndentationLevel <= startLevel)
           break;
 
-        _rsEntryList[i].IndentationLevel++;
+        _rowSelections[i].IndentationLevel++;
       }
     }
 
@@ -564,9 +497,9 @@ namespace Altaxo.Gui.Data.Selections
     /// </returns>
     public IEnumerable<Tuple<string, IReadableColumn, string, Action<IReadableColumn, DataTable, int>>> GetAdditionalColumns()
     {
-      for (int i = 0; i < _rsEntryList.Count; ++i)
+      for (int i = 0; i < _rowSelections.Count; ++i)
       {
-        var rsEntry = _rsEntryList[i];
+        var rsEntry = _rowSelections[i];
         var rowSel = rsEntry.RowSelection;
         if (rsEntry.DetailsController is IDataColumnController)
         {

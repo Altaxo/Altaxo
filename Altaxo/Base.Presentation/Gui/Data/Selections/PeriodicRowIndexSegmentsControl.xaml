@@ -34,7 +34,7 @@
 		<axogc:Int32UpDown Grid.Column="5" 
                            Value="{Binding NumberOfItemsPerPeriod}"
                            Change="1" Minimum="1"
-                           Maximum="{Binding ElementName=_guiLengthOfPeriod, Path=Value}" 
+                           Maximum="{Binding LengthOfPeriod}" 
                            IsGotoMinimumAndMaximumVisible="False"
 						   ToolTip="Number of items per period. Must at least be 1, and less than or equal to the period length." />
 	</Grid>

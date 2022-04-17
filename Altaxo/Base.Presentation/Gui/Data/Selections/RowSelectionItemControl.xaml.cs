@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2016 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -43,56 +43,11 @@ namespace Altaxo.Gui.Data.Selections
   /// <summary>
   /// Interaction logic for RowSelectionItemControl.xaml
   /// </summary>
-  public partial class RowSelectionItemControl : Grid
+  public partial class RowSelectionItemControl : UserControl, IRowSelectionItemView
   {
-    private FrameworkElement _selectionDetailControl;
-
     public RowSelectionItemControl()
     {
       InitializeComponent();
-    }
-
-    public RowSelectionItemControl(SelectableListNodeList rowSelectionTypes, object detailsControl)
-    {
-      InitializeComponent();
-
-      GuiHelper.Initialize(_guiRowSelectionType, rowSelectionTypes);
-      RowSelectionDetailControl = detailsControl;
-    }
-
-    public object RowSelectionDetailControl
-    {
-      set
-      {
-        if (_selectionDetailControl is not null)
-        {
-          Children.Remove(_selectionDetailControl);
-        }
-
-        _selectionDetailControl = value as FrameworkElement;
-
-        if (_selectionDetailControl is not null)
-        {
-          _selectionDetailControl.SetValue(Grid.ColumnProperty, 1);
-          Children.Add(_selectionDetailControl);
-        }
-      }
-    }
-
-    public int IndentationLevel
-    {
-      set
-      {
-        Margin = new Thickness(value * 10, 0, 0, 0);
-      }
-    }
-
-    public object SelectedSelection
-    {
-      get
-      {
-        return _guiRowSelectionType.SelectedValue;
-      }
     }
   }
 }

@@ -3,8 +3,20 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:local="clr-namespace:Altaxo.Gui.Data.Selections"
+             xmlns:local="clr-namespace:Altaxo.Gui.Data.Selections" 
+             xmlns:localModel="clr-namespace:Altaxo.Gui.Data.Selections;assembly=AltaxoBase" 
+             d:DataContext="{d:DesignInstance Type=localModel:RowSelectionController}"
              mc:Ignorable="d">
-	<StackPanel x:Name="_guiStackPanel" Orientation="Vertical">
-	</StackPanel>
+    <ItemsControl ItemsSource="{Binding RowSelections}" >
+        <ItemsControl.ItemsPanel>
+            <ItemsPanelTemplate>
+                <StackPanel Orientation="Vertical"/>
+            </ItemsPanelTemplate>
+        </ItemsControl.ItemsPanel>
+        <ItemsControl.ItemTemplate>
+            <DataTemplate>
+                <local:RowSelectionItemControl DataContext="{Binding}"/>
+            </DataTemplate>
+        </ItemsControl.ItemTemplate>
+    </ItemsControl>
 </UserControl>

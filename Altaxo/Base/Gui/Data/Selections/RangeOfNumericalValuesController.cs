@@ -53,11 +53,11 @@ namespace Altaxo.Gui.Data.Selections
 
     public override bool InitializeDocument(params object[] args)
     {
-      if (args.Length >= 2 && (args[1] is DataTable))
-        _supposedParentDataTable = (DataTable)args[1];
+      if (args.Length >= 2 && (args[1] is DataTable dt))
+        _supposedParentDataTable = dt;
 
-      if (args.Length >= 3 && args[2] is int)
-        _supposedGroupNumber = (int)args[2];
+      if (args.Length >= 3 && args[2] is int gn)
+        _supposedGroupNumber = gn;
 
       return base.InitializeDocument(args);
     }

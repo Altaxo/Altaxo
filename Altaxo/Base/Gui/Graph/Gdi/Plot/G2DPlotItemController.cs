@@ -351,7 +351,7 @@ end_of_function:
         // Add the data tab item
         if (_dataController is not null)
         {
-          Tabs.Add(new SelectableListNodeWithController("Scale", -1, false) { Controller = _dataController });
+          Tabs.Add(new SelectableListNodeWithController("Data", -1, false) { Controller = _dataController });
         }
 
         // set the plot style tab items

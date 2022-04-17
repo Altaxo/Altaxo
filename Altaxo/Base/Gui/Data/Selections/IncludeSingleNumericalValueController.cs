@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2016 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -23,11 +23,7 @@
 #endregion Copyright
 
 #nullable disable
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Altaxo.Collections;
 using Altaxo.Data;
 using Altaxo.Data.Selections;
 using Altaxo.Gui.Graph.Plot.Data;
@@ -54,11 +50,11 @@ namespace Altaxo.Gui.Data.Selections
 
     public override bool InitializeDocument(params object[] args)
     {
-      if (args.Length >= 2 && (args[1] is DataTable))
-        _supposedParentDataTable = (DataTable)args[1];
+      if (args.Length >= 2 && (args[1] is DataTable dt))
+        _supposedParentDataTable = dt;
 
-      if (args.Length >= 3 && args[2] is int)
-        _supposedGroupNumber = (int)args[2];
+      if (args.Length >= 3 && args[2] is int gn)
+        _supposedGroupNumber = gn;
 
       return base.InitializeDocument(args);
     }
@@ -173,7 +169,7 @@ namespace Altaxo.Gui.Data.Selections
 
       if (initData)
       {
-      
+
         Value = _doc.Value;
         View_InitializeColumn();
       }
@@ -187,7 +183,7 @@ namespace Altaxo.Gui.Data.Selections
       ColumnToolTip = info.PlotColumnToolTip;
       ColumnStatus = (int)info.PlotColumnBoxState;
       ColumnTransformationText = info.TransformationTextToShow;
-      ColumnTransformationToolTip= info.TransformationToolTip;
+      ColumnTransformationToolTip = info.TransformationToolTip;
     }
 
     public override bool Apply(bool disposeController)

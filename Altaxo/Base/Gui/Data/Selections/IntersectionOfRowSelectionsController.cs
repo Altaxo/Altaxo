@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2016 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -22,17 +22,13 @@
 
 #endregion Copyright
 
-#nullable disable
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Altaxo.Gui.Data.Selections
 {
   using Altaxo.Data.Selections;
 
-  public interface IIntersectionOfRowSelectionView
+  public interface IIntersectionOfRowSelectionView : IDataContextAwareView
   {
   }
 

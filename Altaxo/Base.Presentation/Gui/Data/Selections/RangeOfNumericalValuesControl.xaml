@@ -39,7 +39,7 @@
         <TextBox Grid.Column="4" 
                  Text="{Binding ColumnTransformationText}"
                  ToolTip="{Binding ColumnTransformationToolTip}"
-                 Visibility="{Binding ColumnTransformationText, Converter={x:Static axogcc:NullToVisibilityCollapsedConverter.Instance}}"
+                 Visibility="{Binding ColumnTransformationText, Converter={x:Static axogcc:NullOrStringEmptyToVisibilityCollapsedConverter.Instance}}"
                  MinWidth="40" IsEnabled="True" IsReadOnly="True" />
 		<TextBox Grid.Column="5"
                  Text="{Binding ColumnText}"

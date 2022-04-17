@@ -24,10 +24,10 @@
 
 #nullable disable
 using System.Collections.Generic;
+using Altaxo.Data.Selections;
 
 namespace Altaxo.Gui.Data.Selections
 {
-  using Altaxo.Data.Selections;
 
   public interface IRangeOfRowIndicesView : IDataContextAwareView
   {

@@ -33,7 +33,7 @@
         <Label Grid.Column="3" Content="{Binding DataLabel}"/>
 		<TextBox Text="{Binding ColumnTransformationText}"
                  ToolTip="{Binding ColumnTransformationToolTip}"
-                 Visibility="{Binding ColumnTransformationText, Converter={x:Static axogcc:NullToVisibilityCollapsedConverter.Instance}}"
+                 Visibility="{Binding ColumnTransformationText, Converter={x:Static axogcc:NullOrStringEmptyToVisibilityCollapsedConverter.Instance}}"
                  MinWidth="40" Grid.Column="4" 
                  IsEnabled="True"
                  IsReadOnly="True" />
