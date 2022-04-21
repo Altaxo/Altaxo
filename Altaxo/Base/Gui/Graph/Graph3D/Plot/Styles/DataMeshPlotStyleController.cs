@@ -155,7 +155,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
 
         var colorProviderController = new ColorProviderController(newColorProvider => _doc.ColorProvider = newColorProvider) { UseDocumentCopy = UseDocument.Directly };
         colorProviderController.InitializeDocument(_doc.ColorProvider);
-        ColorProviderController = ColorProviderController;
+        ColorProviderController = colorProviderController;
 
         var materialController = new MaterialController() { UseDocumentCopy = UseDocument.Directly };
         materialController.InitializeDocument(_doc.Material);
