@@ -258,13 +258,13 @@ namespace Altaxo.Gui.Graph.Plot.Data
 
     public override void Dispose(bool isDisposing)
     {
-      _columnGroup = null;
-      _availableTables?.Dispose();
-      _availableDataColumns = null;
-
       _updateMatchingTablesTaskCancellationTokenSource?.Cancel();
       while (_updateMatchingTablesTask?.Status == TaskStatus.Running)
         Thread.Sleep(20);
+
+      _columnGroup.Clear();
+      _availableTables?.Dispose();
+      _availableDataColumns.Nodes.Clear();
       _updateMatchingTablesTaskCancellationTokenSource?.Dispose();
       _updateMatchingTablesTaskCancellationTokenSource = null;
       _updateMatchingTablesTask?.Dispose();
