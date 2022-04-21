@@ -255,7 +255,7 @@ namespace Altaxo.Gui.Drawing.D3D
 
     protected static void OnCustomPenCommandChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
     {
-      var thiss = (BrushComboBox)obj;
+      var thiss = (MaterialComboBox)obj;
       thiss._guiMenuShowCustomPen.Visibility = args.NewValue is null ? Visibility.Collapsed : Visibility.Visible;
     }
 
