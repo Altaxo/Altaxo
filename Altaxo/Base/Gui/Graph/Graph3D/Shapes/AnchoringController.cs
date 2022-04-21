@@ -264,7 +264,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Shapes
       get
       {
         var value = PivotZQuantity;
-        if (object.ReferenceEquals(value.Unit, _percentLayerYSizeUnit))
+        if (object.ReferenceEquals(value.Unit, _percentLayerZSizeUnit))
           return RADouble.NewRel(value.Value / 100);
         else
           return RADouble.NewAbs(value.AsValueIn(AUL.Point.Instance));

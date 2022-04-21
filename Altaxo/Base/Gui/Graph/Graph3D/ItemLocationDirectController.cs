@@ -713,10 +713,10 @@ namespace Altaxo.Gui.Graph.Graph3D
         ZScale = new DimensionfulQuantity(_doc.ScaleZ, Altaxo.Units.Dimensionless.Unity.Instance).AsQuantityIn(ScaleEnvironment.DefaultUnit);
 
         _localAnchoringController = new AnchoringController();
-        _localAnchoringController.InitializeDocument(new AnchoringModel { Title = "Local anchor", ReferenceSize = _doc.AbsoluteSize, PivotX = _doc.LocalAnchorX, PivotY = _doc.LocalAnchorY });
+        _localAnchoringController.InitializeDocument(new AnchoringModel { Title = "Local anchor", ReferenceSize = _doc.AbsoluteSize, PivotX = _doc.LocalAnchorX, PivotY = _doc.LocalAnchorY, PivotZ = _doc.LocalAnchorZ });
 
         _parentAnchoringController = new AnchoringController();
-        _parentAnchoringController.InitializeDocument(new AnchoringModel { Title = "Parent anchor", ReferenceSize = _doc.ParentSize, PivotX = _doc.ParentAnchorX, PivotY = _doc.ParentAnchorY });
+        _parentAnchoringController.InitializeDocument(new AnchoringModel { Title = "Parent anchor", ReferenceSize = _doc.ParentSize, PivotX = _doc.ParentAnchorX, PivotY = _doc.ParentAnchorY, PivotZ = _doc.ParentAnchorZ });
       }
     }
 
