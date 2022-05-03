@@ -273,6 +273,9 @@
           <MenuItem id="WorksheetImportJcamp" label="${res:XML.MainMenu.FileMenu.Import.Jcamp}"
 						icon="Icons.16x16.NewDocumentIcon" description="${res:XML.MainMenu.FileMenu.Import.Jcamp.Description}"
 						class="Altaxo.Worksheet.Commands.ImportJcamp" />
+          <MenuItem id="WorksheetImportRenishawWdf" label="${res:XML.MainMenu.FileMenu.Import.RenishawWdf}"
+						icon="Icons.16x16.NewDocumentIcon" description="${res:XML.MainMenu.FileMenu.Import.RenishawWdf.Description}"
+						class="Altaxo.Worksheet.Commands.ImportRenishawWdf" />
           <MenuItem id="WorksheetImportOriginOpj" label="${res:XML.MainMenu.FileMenu.Import.OriginOpj}"
 						icon="Icons.16x16.NewDocumentIcon" description="${res:XML.MainMenu.FileMenu.Import.OriginOpj.Description}"
 						class="Altaxo.Main.Commands.FileImportOriginOpj" />

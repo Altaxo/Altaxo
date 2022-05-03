@@ -107,6 +107,14 @@ namespace Altaxo.Worksheet.Commands
     }
   }
 
+  public class ImportRenishawWdf : AbstractWorksheetControllerCommand
+  {
+    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
+    {
+      Altaxo.Data.FileCommands.ShowImportRenishawWdfDialog(ctrl.DataTable);
+    }
+  }
+
   public class ExportAscii : AbstractWorksheetControllerCommand
   {
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)

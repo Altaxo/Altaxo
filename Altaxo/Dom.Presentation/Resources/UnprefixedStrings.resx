@@ -1852,4 +1852,10 @@
   <data name="XML.MainMenu.WorksheetMenu.SortPropColDescending.Description" xml:space="preserve">
     <value>Sorts the property column(s) in descending order</value>
   </data>
+  <data name="XML.MainMenu.FileMenu.Import.RenishawWdf" xml:space="preserve">
+    <value>Renishaw .wdf files</value>
+  </data>
+  <data name="XML.MainMenu.FileMenu.Import.RenishawWdf.Description" xml:space="preserve">
+    <value>Import a Renishaw .wdf file used in Raman spectroscopy</value>
+  </data>
 </root>
