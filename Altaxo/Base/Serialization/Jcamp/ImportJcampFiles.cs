@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -24,157 +24,188 @@
 
 #nullable enable
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using Altaxo.Data;
 
 namespace Altaxo.Serialization.Jcamp
 {
+  /// <summary>
+  /// Reader for Jcamp-Dx files.
+  /// </summary>
   public class Import
   {
+    private const string XLabelHeader = "##XLABEL=";
+    private const string YLabelHeader = "##YLABEL=";
+    private const string XUnitHeader = "##XUNITS=";
+    private const string YUnitHeader = "##YUNITS=";
+    private const string TimeHeader = "##TIME=";
+    private const string DateHeader = "##DATE=";
+    private const string FirstXHeader = "##FIRSTX=";
+    private const string DeltaXHeader = "##DELTAX=";
+    private const string XFactorHeader = "##XFACTOR=";
+    private const string YFactorHeader = "##YFACTOR=";
+    private const string XYBlockHeader = "##XYDATA=";
+    private const string BlockEndHeader = "##END=";
+
     private static readonly char[] splitChars = new char[] { ' ', '\t' };
+    private static readonly char[] _plusMinusChars = new char[] { '+', '-' };
+    private static readonly char[] _trimCharsDateTime = new char[] { ' ', '\t', ';' };
+
+
+    protected double _xFirst = double.NaN;
+    protected double _xInc = double.NaN;
+    protected double _xScale = double.NaN;
+    protected double _yScale = double.NaN;
+
+
+    public double XFirst => _xFirst;
+    public double XIncrement => _xInc;
+    public double XScale => _xScale;
+    public double YScale => _yScale;
+
+    /// <summary>The label of the x-axis.</summary>
+    public string? XLabel { get; protected set; } = null;
+
+    /// <summary>The label of the y-axis.</summary>
+    public string? YLabel { get; protected set; } = null;
+
+    /// <summary>The unit of the x-axis.</summary>
+    public string? XUnit { get; protected set; } = null;
+
+    /// <summary>The unit of the y-axis.</summary>
+    public string? YUnit { get; protected set; } = null;
 
     /// <summary>
-    /// Imports a Jcamp file into an DataTable. The file must not be a multi spectrum file (an exception is thrown in this case).
+    /// Messages about any errors during the import of the Jcamp file.
     /// </summary>
-    /// <param name="table">On return, contains the newly created data table with the spectral data.</param>
+    public string? ErrorMessages { get; protected set; } = null;
+
+    /// <summary>
+    /// Creation date/time of the Jcamp file. Be aware that due to different date/time formats, the creation time may be wrong.
+    /// If the creation time could not be parsed, the value is <see cref="DateTime.MinValue"/>.
+    /// </summary>
+    public DateTime CreationTime { get; protected set; } = DateTime.MinValue;
+
+    (double X, double Y)[] _xyValues;
+    IReadOnlyList<(double X, double Y)> XYValues => _xyValues;
+
+
+
+
+    /// <summary>
+    /// Imports a Jcamp file. The file must not be a multi spectrum file (an exception is thrown in this case).
+    /// </summary>
     /// <param name="stream">The stream where to import from.</param>
     /// <returns>Null if successful, otherwise an error description.</returns>
-    public static string? ToDataTable(System.IO.Stream stream, out DataTable? table)
+    public Import(System.IO.Stream stream, DataTable? table) : this(new StreamReader(stream))
     {
-      table = null;
-      TextReader tr;
-      try
-      {
-        tr = new StreamReader(stream);
-        return ToDataTable(tr, out table);
-      }
-      catch (Exception ex)
-      {
-        return ex.Message;
-      }
     }
 
     /// <summary>
     /// Imports a Jcamp file into an DataTable. The file must not be a multi spectrum file (an exception is thrown in this case).
     /// </summary>
-    /// <param name="table">On return, contains the newly created data table with the spectral data.</param>
     /// <param name="tr">A <see cref="System.IO.TextReader"/> where to import from.</param>
     /// <returns>Null if successful, otherwise an error description.</returns>
-    public static string? ToDataTable(TextReader tr, out DataTable table)
+    public Import(TextReader tr)
     {
-      const string XLabelHeader = "##XLABEL=";
-      const string YLabelHeader = "##YLABEL=";
-      const string XUnitHeader = "##XUNITS=";
-      const string YUnitHeader = "##YUNITS=";
-      const string TimeHeader = "##TIME=";
-      const string DateHeader = "##DATE=";
-      const string FirstXHeader = "##FIRSTX=";
-      const string DeltaXHeader = "##DELTAX=";
-      const string XFactorHeader = "##XFACTOR=";
-      const string YFactorHeader = "##YFACTOR=";
-      const string XYBlockHeader = "##XYDATA=(X++(Y..Y))";
-      const string BlockEndHeader = "##END=";
+      DateTime dateValue = DateTime.MinValue;
+      DateTime timeValue = DateTime.MinValue;
 
-      table = new DataTable();
+      var xyValues = new List<(double X, double Y)>();
 
       try
       {
         string? line;
         int lineCounter = 0;
 
-        double xFirst = double.NaN;
-        double xInc = double.NaN;
-        double xScale = double.NaN;
-        double yScale = double.NaN;
-        string? xLabel = null, yLabel = null, xUnit = null, yUnit = null;
-        DateTime dateValue = DateTime.MinValue;
-        DateTime timeValue = DateTime.MinValue;
-
         do
         {
           line = tr.ReadLine() ?? throw new InvalidDataException("Unexpected end of file");
           lineCounter++;
 
-
-          if (line.StartsWith(XLabelHeader))
-            xLabel = line.Substring(XLabelHeader.Length).Trim();
-          else if (line.StartsWith(YLabelHeader))
-            yLabel = line.Substring(YLabelHeader.Length).Trim();
-          else if (line.StartsWith(XUnitHeader))
-            xUnit = line.Substring(XUnitHeader.Length).Trim();
-          else if (line.StartsWith(YUnitHeader))
-            yUnit = line.Substring(YUnitHeader.Length).Trim();
-          else if (line.StartsWith(TimeHeader))
-            DateTime.TryParse(line.Substring(TimeHeader.Length), out timeValue);
-          else if (line.StartsWith(DateHeader))
+          try
           {
-            string dateString = line.Substring(DateHeader.Length);
-            string[] tokens = dateString.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
-            if (tokens.Length != 3)
-              throw new FormatException("Unknown Date format in line " + lineCounter.ToString());
 
-            int year = int.Parse(tokens[0]);
-            int month = int.Parse(tokens[1]);
-            int day = int.Parse(tokens[2]);
-            if (year < 100)
-              year += 2000;
-            // DateTime.TryParse(line.Substring(DateHeader.Length), System.Globalization.DateTimeFormatInfo.InvariantInfo, System.Globalization.DateTimeStyles.AssumeLocal, out dateValue);
-            dateValue = DateTime.MinValue.AddYears(year - 1);
-            dateValue = dateValue.AddMonths(month - 1);
-            dateValue = dateValue.AddDays(day - 1);
+            if (line.StartsWith(XLabelHeader))
+            {
+              XLabel = line.Substring(XLabelHeader.Length).Trim();
+            }
+            else if (line.StartsWith(YLabelHeader))
+            {
+              YLabel = line.Substring(YLabelHeader.Length).Trim();
+            }
+            else if (line.StartsWith(XUnitHeader))
+            {
+              XUnit = line.Substring(XUnitHeader.Length).Trim();
+            }
+            else if (line.StartsWith(YUnitHeader))
+            {
+              YUnit = line.Substring(YUnitHeader.Length).Trim();
+            }
+            else if (line.StartsWith(TimeHeader))
+            {
+              var timeV = ParseTime(line.Substring(TimeHeader.Length));
+              if(timeV.HasValue)
+              {
+                timeValue = timeV.Value;
+              }
+            }
+            else if (line.StartsWith(DateHeader))
+            {
+              // Note: Parsing date and time is error prone
+              // Maybe it can help to determine the number format first, and on that base try to guess the culture?
+
+              var (dateV, timeV) = HandleDateLine(line.Substring(DateHeader.Length));
+
+              if (dateV.HasValue)
+                dateValue = dateV.Value;
+
+              if (timeV.HasValue)
+                timeValue = timeV.Value;
+            }
+            else if (line.StartsWith(FirstXHeader))
+            {
+              DoubleParse(line.Substring(FirstXHeader.Length), out _xFirst);
+            }
+            else if (line.StartsWith(DeltaXHeader))
+            {
+              DoubleParse(line.Substring(DeltaXHeader.Length), out _xInc);
+            }
+            else if (line.StartsWith(XFactorHeader))
+            {
+              DoubleParse(line.Substring(XFactorHeader.Length), out _xScale);
+            }
+            else if (line.StartsWith(YFactorHeader))
+            {
+              DoubleParse(line.Substring(YFactorHeader.Length), out _yScale);
+            }
           }
-          else if (line.StartsWith(FirstXHeader))
-            double.TryParse(line.Substring(FirstXHeader.Length), NumberStyles.Float, NumberFormatInfo.InvariantInfo, out xFirst);
-          else if (line.StartsWith(DeltaXHeader))
-            double.TryParse(line.Substring(DeltaXHeader.Length), NumberStyles.Float, NumberFormatInfo.InvariantInfo, out xInc);
-          else if (line.StartsWith(XFactorHeader))
-            double.TryParse(line.Substring(XFactorHeader.Length), NumberStyles.Float, NumberFormatInfo.InvariantInfo, out xScale);
-          else if (line.StartsWith(YFactorHeader))
-            double.TryParse(line.Substring(YFactorHeader.Length), NumberStyles.Float, NumberFormatInfo.InvariantInfo, out yScale);
+          catch (Exception ex)
+          {
+            throw new FormatException($"Line {lineCounter}: {ex.Message}");
+          }
         } while (!line.StartsWith(XYBlockHeader));
 
-        // adjust some variables if not given
-        if (double.IsNaN(xInc))
-          xInc = 1;
-        if (double.IsNaN(xScale))
-          xScale = 1;
-        if (double.IsNaN(yScale))
-          yScale = 1;
 
-        DateTime combinedTime = DateTime.MinValue;
+
+        // adjust some variables if not given
+        if (double.IsNaN(_xInc))
+          _xInc = 1;
+        if (double.IsNaN(_xScale))
+          _xScale = 1;
+        if (double.IsNaN(_yScale))
+          _yScale = 1;
+
+        CreationTime = DateTime.MinValue;
         if (dateValue != DateTime.MinValue)
-          combinedTime = dateValue;
+          CreationTime = dateValue;
         if (timeValue != DateTime.MinValue)
-          combinedTime = combinedTime.Add(timeValue.TimeOfDay);
+          CreationTime = CreationTime.Add(timeValue.TimeOfDay);
 
         if (line.StartsWith(XYBlockHeader))
         {
-          var xCol = new DoubleColumn();
-          var yCol = new DoubleColumn();
-          table.DataColumns.Add(xCol, xLabel is null ? "X" : xLabel, ColumnKind.X);
-          table.DataColumns.Add(yCol, yLabel is null ? "Y" : yLabel, ColumnKind.V);
-
-          if (combinedTime != DateTime.MinValue)
-          {
-            table.PropCols.Add(new DateTimeColumn(), "Date", ColumnKind.V);
-            table.PropCols["Date"][1] = combinedTime;
-          }
-
-          if (xUnit is not null || yUnit is not null)
-          {
-            table.PropCols.Add(new TextColumn(), "Unit", ColumnKind.V);
-            table.PropCols["Unit"][0] = xUnit;
-            table.PropCols["Unit"][1] = yUnit;
-          }
-
-          if (xLabel is not null || yLabel is not null)
-          {
-            table.PropCols.Add(new TextColumn(), "Label", ColumnKind.V);
-            table.PropCols["Label"][0] = xLabel;
-            table.PropCols["Label"][1] = yLabel;
-          }
-
           for (; ; )
           {
             line = tr.ReadLine();
@@ -185,30 +216,192 @@ namespace Altaxo.Serialization.Jcamp
             string[] tokens = line.Split(splitChars, StringSplitOptions.RemoveEmptyEntries);
             if (tokens.Length == 0)
               continue;
+            if (tokens.Length == 1)
+            {
+              // then the line contains of numbers separated only by + or -
+              tokens = SplitLineByPlusOrMinus(line);
+            }
 
             // all tokens must contain numeric values, and the first token is the actual x value
-            if (!double.TryParse(tokens[0], NumberStyles.Float, NumberFormatInfo.InvariantInfo, out var xValue))
+            if (!DoubleTryParse(tokens[0], out var xValue))
               throw new FormatException("Non numeric value found in line " + lineCounter.ToString());
 
             for (int i = 1; i < tokens.Length; i++)
             {
-              if (!double.TryParse(tokens[i], NumberStyles.Float, NumberFormatInfo.InvariantInfo, out var yValue))
+              if (!DoubleTryParse(tokens[i], out var yValue))
                 throw new FormatException("Non numeric value found in line" + lineCounter.ToString());
 
-              xCol[xCol.Count] = xValue * xScale;
-              yCol[yCol.Count] = yValue * yScale;
-              xValue += xInc;
+              xyValues.Add((xValue * _xScale, yValue * _yScale));
+              xValue += _xInc;
             }
           }
+          _xyValues = xyValues.ToArray();
         }
       }
       catch (Exception ex)
       {
-        return ex.Message;
+        ErrorMessages = (ErrorMessages ?? String.Empty) + ex.Message;
       }
+    }
+
+    /// <summary>
+    /// Imports the data of this <see cref="Import"/> instance into a <see cref="DataTable"/>.
+    /// </summary>
+    /// <param name="table">The table.</param>
+    public void ToDataTable(DataTable table)
+    {
+      var xCol = new DoubleColumn();
+      var yCol = new DoubleColumn();
+      table.DataColumns.Add(xCol, string.IsNullOrEmpty(XLabel) ? "X" : XLabel, ColumnKind.X);
+      table.DataColumns.Add(yCol, string.IsNullOrEmpty(YLabel) ? "Y" : YLabel, ColumnKind.V);
+
+      if (CreationTime != DateTime.MinValue)
+      {
+        table.PropCols.Add(new DateTimeColumn(), "Date", ColumnKind.V);
+        table.PropCols["Date"][1] = CreationTime;
+      }
+
+      if (!string.IsNullOrEmpty(XUnit) || !string.IsNullOrEmpty(YUnit))
+      {
+        table.PropCols.Add(new TextColumn(), "Unit", ColumnKind.V);
+        table.PropCols["Unit"][0] = XUnit;
+        table.PropCols["Unit"][1] = YUnit;
+      }
+
+      if (!string.IsNullOrEmpty(XLabel) || !string.IsNullOrEmpty(YLabel))
+      {
+        table.PropCols.Add(new TextColumn(), "Label", ColumnKind.V);
+        table.PropCols["Label"][0] = XLabel;
+        table.PropCols["Label"][1] = YLabel;
+      }
+
+      for(int i=0;i<_xyValues.Length;++i)
+      {
+        xCol[i] = _xyValues[i].X;
+        yCol[i] = _xyValues[i].Y;
+      }
+    }
+
+    public static string[] SplitLineByPlusOrMinus(string s)
+    {
+      var list = new List<string>();
+      s = s.Trim();
+      int idx;
+      int start = 0;
+      do
+      {
+        idx = s.IndexOfAny(_plusMinusChars, start + 1);
+        if (idx > 1)
+        {
+          list.Add(s.Substring(start, idx - start));
+          start = idx;
+        }
+        else
+        {
+          list.Add(s.Substring(start));
+        }
+      } while (idx >= 0);
+
+      return list.ToArray();
+    }
+
+
+    /// <summary>
+    /// Handles the date line (a line that has started with ##DATE=
+    /// </summary>
+    /// <param name="s">The remaining of the line</param>
+    protected (DateTime? dateValue, DateTime? timeValue) HandleDateLine(string s)
+    {
+      DateTime? time = null;
+      DateTime? date = null;
+      // In some formats, the TIME string is included here
+
+      var idxTime = s.IndexOf("TIME=");
+      if (idxTime >= 0) // Handle the time string
+      {
+        time = ParseTime(s.Substring(idxTime + "TIME=".Length));
+        s = s.Substring(0, idxTime);
+      }
+
+      date = ParseDate(s);
+
+      return (date, time);
+    }
+
+    public static DateTime? ParseTime(string s)
+    {
+      s = s.Trim(_trimCharsDateTime);
+      DateTime time;
+      if (DateTime.TryParseExact(s, "HH:mm:ss.fff", CultureInfo.InvariantCulture, DateTimeStyles.AssumeLocal, out time))
+        return time;
+      if (DateTime.TryParseExact(s, "HH:mm:ss.ff", CultureInfo.InvariantCulture, DateTimeStyles.AssumeLocal, out time))
+        return time;
+      if (DateTime.TryParseExact(s, "HH:mm:ss.f", CultureInfo.InvariantCulture, DateTimeStyles.AssumeLocal, out time))
+        return time;
+      if (DateTime.TryParseExact(s, "HH:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.AssumeLocal, out time))
+        return time;
+      if (DateTime.TryParseExact(s, "HH-mm-ss", CultureInfo.InvariantCulture, DateTimeStyles.AssumeLocal, out time))
+        return time;
 
       return null;
     }
+
+
+    public static DateTime? ParseDate(string s)
+    {
+      s = s.Trim(_trimCharsDateTime);
+      DateTime date;
+      if (DateTime.TryParseExact(s, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.AssumeLocal, out date) && IsDateReasonable(date))
+        return date;
+      if (DateTime.TryParseExact(s, "yy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.AssumeLocal, out date) && IsDateReasonable(date))
+        return date;
+      if (DateTime.TryParseExact(s, "dd-MM-yyyy", CultureInfo.InvariantCulture, DateTimeStyles.AssumeLocal, out date) && IsDateReasonable(date))
+        return date;
+      if (DateTime.TryParseExact(s, "dd-MM-yy", CultureInfo.InvariantCulture, DateTimeStyles.AssumeLocal, out date) && IsDateReasonable(date))
+        return date;
+
+      if (DateTime.TryParseExact(s, "yyyy/MM/dd", CultureInfo.InvariantCulture, DateTimeStyles.AssumeLocal, out date) && IsDateReasonable(date))
+        return date;
+      if (DateTime.TryParseExact(s, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.AssumeLocal, out date) && IsDateReasonable(date))
+        return date;
+      if (DateTime.TryParseExact(s, "MM/dd/yy", CultureInfo.InvariantCulture, DateTimeStyles.AssumeLocal, out date) && IsDateReasonable(date))
+        return date;
+      if (DateTime.TryParseExact(s, "dd/MM/yy", CultureInfo.InvariantCulture, DateTimeStyles.AssumeLocal, out date) && IsDateReasonable(date))
+        return date;
+
+      return null;
+    }
+
+    public static bool IsDateReasonable(DateTime date)
+    {
+      if (date.Year < 1980 || date.Year > DateTime.UtcNow.Year)
+        return false;
+      if (date.Month < 0 || date.Month > 12)
+        return false;
+      if (date.Day < 0 || date.Day > 31)
+        return false;
+
+      return true;
+    }
+
+    private static NumberFormatInfo _numberFormatCommaDecimalSeparator = new NumberFormatInfo() { NumberDecimalSeparator = "," };
+
+    public static bool DoubleTryParse(string s, out double x)
+    {
+      if (double.TryParse(s, NumberStyles.Float, NumberFormatInfo.InvariantInfo, out x))
+        return true;
+
+      return double.TryParse(s, NumberStyles.Float, _numberFormatCommaDecimalSeparator, out x);
+    }
+
+    public static void DoubleParse(string s, out double x)
+    {
+      if (double.TryParse(s, NumberStyles.Float, NumberFormatInfo.InvariantInfo, out x))
+        return;
+
+      x = double.Parse(s, NumberStyles.Float, _numberFormatCommaDecimalSeparator);
+    }
+
 
     /// <summary>
     /// Compare the values in a double array with values in a double column and see if they match.
@@ -253,8 +446,10 @@ namespace Altaxo.Serialization.Jcamp
 
       foreach (string filename in filenames)
       {
-        var stream = new FileStream(filename, FileMode.Open, FileAccess.Read, FileShare.Read);
-        string? error = ToDataTable(stream, out var localTable);
+        using var stream = new FileStream(filename, FileMode.Open, FileAccess.Read, FileShare.Read);
+        var localTable = new DataTable();
+        var imported = new Import(stream, localTable);
+        string? error = imported.ErrorMessages;
         stream.Close();
 
         if (error is not null)
@@ -347,10 +542,10 @@ namespace Altaxo.Serialization.Jcamp
     /// Shows the SPC file import dialog, and imports the files to the table if the user clicked on "OK".
     /// </summary>
     /// <param name="table">The table to import the SPC files to.</param>
-    public static void ShowDialog(Altaxo.Data.DataTable table)
+    public static void ShowDialog(DataTable table)
     {
       var options = new Altaxo.Gui.OpenFileOptions();
-      options.AddFilter("*.dx", "JCamp-DX files (*.dx)");
+      options.AddFilter("*.dx;*.jdx", "JCamp-DX files (*.dx;*.jdx)");
       options.AddFilter("*.*", "All files (*.*)");
       options.FilterIndex = 0;
       options.Multiselect = true; // allow selecting more than one file
