@@ -181,6 +181,120 @@ namespace Altaxo.Collections
     }
 
     /// <summary>
+    /// Returns the indices of the elements which fullfill a given condition, given by the element's value.
+    /// </summary>
+    /// <typeparam name="T">The type of element to consider</typeparam>
+    /// <param name="org">The enumeration of elements.</param>
+    /// <param name="condition">The condition. The argument is the element's value.</param>
+    /// <returns>The indices of all elements in the enumeration for which the condition is fulfilled, i.e. returns true.</returns>
+    public static IEnumerable<int> IndicesInt32Where<T>(this IEnumerable<T> org, Func<T, bool> condition)
+    {
+      if (org is null)
+        throw new ArgumentNullException(nameof(org));
+      if (condition is null)
+        throw new ArgumentNullException(nameof(condition));
+
+      using (var it = org.GetEnumerator())
+      {
+        int index = 0;
+        while (it.MoveNext())
+        {
+          if(condition(it.Current))
+          {
+            yield return index;
+          }
+          ++index;
+        }
+      }
+    }
+
+    /// <summary>
+    /// Returns the indices of the elements which fullfill a given condition, given by the element's value and its index.
+    /// </summary>
+    /// <typeparam name="T">The type of element to consider</typeparam>
+    /// <param name="org">The enumeration of elements.</param>
+    /// <param name="condition">The condition. The first argument is the element's index, the second argument is the element's value.</param>
+    /// <returns>The indices of all elements in the enumeration for which the condition is fulfilled, i.e. returns true.</returns>
+    public static IEnumerable<int> IndicesInt32Where<T>(this IEnumerable<T> org, Func<int, T, bool> condition)
+    {
+      if (org is null)
+        throw new ArgumentNullException(nameof(org));
+      if (condition is null)
+        throw new ArgumentNullException(nameof(condition));
+
+      using (var it = org.GetEnumerator())
+      {
+        int index = 0;
+        while (it.MoveNext())
+        {
+          if (condition(index, it.Current))
+          {
+            yield return index;
+          }
+          ++index;
+        }
+      }
+    }
+
+    /// <summary>
+    /// Returns tuples of index and element of all elements in an enumeration which fullfill a given condition, given by the element's value.
+    /// </summary>
+    /// <typeparam name="T">The type of element to consider</typeparam>
+    /// <param name="org">The enumeration of elements.</param>
+    /// <param name="condition">The condition. The argument is the element's value</param>
+    /// <returns>Tuples of (index and element value) of all elements in the enumeration for which the condition is fulfilled, i.e. returns true.</returns>
+    public static IEnumerable<(int Index, T Value)> IndicesInt32AndValuesWhere<T>(this IEnumerable<T> org, Func<T, bool> condition)
+    {
+      if (org is null)
+        throw new ArgumentNullException(nameof(org));
+      if (condition is null)
+        throw new ArgumentNullException(nameof(condition));
+
+      using (var it = org.GetEnumerator())
+      {
+        int index = 0;
+        while (it.MoveNext())
+        {
+          var v = it.Current;
+          if (condition(v))
+          {
+            yield return (index, v);
+          }
+          ++index;
+        }
+      }
+    }
+
+    /// <summary>
+    /// Returns tuples of index and element of all elements in an enumeration which fullfill a given condition, given by the element's value and its index.
+    /// </summary>
+    /// <typeparam name="T">The type of element to consider</typeparam>
+    /// <param name="org">The enumeration of elements.</param>
+    /// <param name="condition">The condition. First argument is the element's index, second argument is the element's value.</param>
+    /// <returns>Tuples of (index and element value) of all elements in the enumeration for which the condition is fulfilled, i.e. returns true.</returns>
+    public static IEnumerable<(int Index, T Value)> IndicesInt32AndValuesWhere<T>(this IEnumerable<T> org, Func<int, T, bool> condition)
+    {
+      if (org is null)
+        throw new ArgumentNullException(nameof(org));
+      if (condition is null)
+        throw new ArgumentNullException(nameof(condition));
+
+      using (var it = org.GetEnumerator())
+      {
+        int index = 0;
+        while (it.MoveNext())
+        {
+          var v = it.Current;
+          if (condition( index, v))
+          {
+            yield return (index, v);
+          }
+          ++index;
+        }
+      }
+    }
+
+    /// <summary>
     /// Determines whether the specified enumeration is empty.
     /// </summary>
     /// <typeparam name="T">Type of the elements of the enumeration.</typeparam>

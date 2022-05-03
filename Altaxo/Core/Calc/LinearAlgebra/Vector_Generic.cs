@@ -176,6 +176,22 @@ namespace Altaxo.Calc.LinearAlgebra
       }
     }
 
+    public T[] this[int[] indices]
+    {
+      get
+      {
+        return indices.Select(idx => _array[idx]).ToArray();
+      }
+    }
+
+    public T[] this[bool[] condition]
+    {
+      get
+      {
+        return _array.Where((x, i) => condition[i]).ToArray();
+      }
+    }
+
     /// <summary>
     /// Sets all elements of the vector back to the default value.
     /// </summary>
