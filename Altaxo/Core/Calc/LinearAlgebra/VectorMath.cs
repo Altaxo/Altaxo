@@ -25,6 +25,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Altaxo.Calc.LinearAlgebra
 {
@@ -130,5 +131,65 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
     #endregion Extensible Vector
+
+    public static T[] ElementsAt<T>(this T[] array, int[] indices)
+    {
+      return indices.Select(idx => array[idx]).ToArray();
+    }
+    public static IReadOnlyList<T> ElementsAt<T>(this IReadOnlyList<T> array, int[] indices)
+    {
+      return indices.Select(idx => array[idx]).ToArray();
+    }
+
+    public static T[] ElementsWhere<T>(this T[] array, bool[] condition)
+    {
+      return array.Where((x, i) => condition[i]).ToArray();
+    }
+    public static IReadOnlyList<T> ElementsWhere<T>(this IReadOnlyList<T> array, bool[] condition)
+    {
+      return array.Where((x, i) => condition[i]).ToArray();
+    }
+
+
+    public static T[] ElementsWhere<T>(this T[] array, IEnumerable<bool> condition)
+    {
+      static IEnumerable<T> RFunc(T[] array, IEnumerable<bool> condition)
+      {
+        int idx = 0;
+        foreach (var b in condition)
+        {
+          if (idx >= array.Length)
+          {
+            break;
+          }
+          if (b)
+          {
+            yield return array[idx];
+          }
+          ++idx;
+        }
+      }
+      return RFunc(array, condition).ToArray();
+    }
+    public static IReadOnlyList<T> ElementsWhere<T>(this IReadOnlyList<T> array, IEnumerable<bool> condition)
+    {
+      static IEnumerable<T> RFunc(IReadOnlyList<T> array, IEnumerable<bool> condition)
+      {
+        int idx = 0;
+        foreach (var b in condition)
+        {
+          if (idx >= array.Count)
+          {
+            break;
+          }
+          if (b)
+          {
+            yield return array[idx];
+          }
+          ++idx;
+        }
+      }
+      return RFunc(array, condition).ToArray();
+    }
   }
 }

@@ -55,10 +55,6 @@
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>VectorMath_ValidRelated_FloatTypes.generated.cs</LastGenOutput>
     </None>
-    <None Update="Calc\LinearAlgebra\VectorMath_Indexing.tt">
-      <LastGenOutput>VectorMath_Indexing.generated.cs</LastGenOutput>
-      <Generator>TextTemplatingFileGenerator</Generator>
-    </None>
     <None Update="Calc\LinearAlgebra\VectorMath_WrapperTypes.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>VectorMath_WrapperTypes.generated.cs</LastGenOutput>
@@ -111,11 +107,6 @@
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>VectorMath_ValidRelated_FloatTypes.tt</DependentUpon>
-    </Compile>
-    <Compile Update="Calc\LinearAlgebra\VectorMath_Indexing.generated.cs">
-      <DependentUpon>VectorMath_Indexing.tt</DependentUpon>
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
     </Compile>
     <Compile Update="Calc\LinearAlgebra\VectorMath_WrapperTypes.generated.cs">
       <DesignTime>True</DesignTime>
