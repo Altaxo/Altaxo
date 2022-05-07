@@ -324,6 +324,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Axis
       {
         _context = _doc.GetPropertyContext();
         AxisTitle = _doc.TitleText;
+        EhShowCustomTickSpacingChanged(_doc.TickSpacing is not null);
       }
     }
 

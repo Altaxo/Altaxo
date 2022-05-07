@@ -315,8 +315,8 @@ namespace Altaxo.Gui.Graph.Gdi.Axis
       if(initData)
       {
         _context = _doc.GetPropertyContext();
-
         AxisTitle = _doc.TitleText;
+        EhShowCustomTickSpacingChanged(_doc.TickSpacing is not null);
       }
     }
 
