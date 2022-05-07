@@ -141,7 +141,7 @@ namespace Altaxo.Gui.Common
             nameof(AvailableValues),
             typeof(IEnumerable<int>),
             typeof(Int32ListUpDown),
-            new FrameworkPropertyMetadata(new int[] { 0 },
+            new FrameworkPropertyMetadata(null, // null is a sign, that this control is not initialized with a list
                 new PropertyChangedCallback(OnAvailabeValuesChanged)
             )
         );
@@ -149,18 +149,32 @@ namespace Altaxo.Gui.Common
     private static void OnAvailabeValuesChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
       var thiss = (Int32ListUpDown)d;
-      var list = new List<int>((IEnumerable<int>)(e.NewValue ?? new int[0]));
 
-      if (list.Count == 0)
-        list.Add(0);
+      if (e.NewValue is not null)
+      {
+        var list = new List<int>((IEnumerable<int>)(e.NewValue ?? new int[0]));
+
+        if (list.Count == 0)
+          list.Add(0);
+        else
+          list.Sort();
+
+        thiss._availableValues = list;
+        // set minimum and maximum and coerce current value
+        thiss.SetValue(MinimumProperty, list[0]);
+        thiss.SetValue(MaximumProperty, list[list.Count - 1]);
+        thiss.SetValue(ValueProperty, thiss.Value); // will coerce this value
+      }
       else
-        list.Sort();
-
-      thiss._availableValues = list;
-      // set minimum and maximum and coerce current value
-      thiss.SetValue(MinimumProperty, list[0]);
-      thiss.SetValue(MaximumProperty, list[list.Count - 1]);
-      thiss.SetValue(ValueProperty, thiss.Value); // will coerce this value
+      {
+        // the new value is null, so this control is either just initialized, or uninitialized
+        thiss._availableValues = new List<int>() { int.MinValue, int.MaxValue};
+        thiss.SetValue(MinimumProperty, int.MinValue);
+        thiss.SetValue(MaximumProperty, int.MaxValue);
+        // Note: do not try to coerce the value here, since that will have unintended side effects if the control is uninitialized
+        // (it will coerce the value to a number that was not intended, and the changed number will trigger the binding so
+        // that in the controller the number is set to a unintended value)
+      }
     }
 
    
