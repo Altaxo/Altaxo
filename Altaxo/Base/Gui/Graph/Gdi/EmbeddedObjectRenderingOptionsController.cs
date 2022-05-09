@@ -202,6 +202,7 @@ namespace Altaxo.Gui.Graph.Gdi
       if (initData)
       {
         SourceDpi = new ItemsController<double>(GetResolutions(_doc.SourceDpiResolution));
+        SourceDpiText = GUIConversion.ToString(_doc.SourceDpiResolution);
 
         OutputScaling = new DimensionfulQuantity(_doc.OutputScalingFactor, Altaxo.Units.Dimensionless.Unity.Instance).AsQuantityIn(OutputScalingEnvironment.DefaultUnit);
 
