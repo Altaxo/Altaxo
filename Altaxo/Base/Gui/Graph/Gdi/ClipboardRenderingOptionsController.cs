@@ -148,7 +148,7 @@ namespace Altaxo.Gui.Graph.Gdi
       {
         if (!(_dropFilePixelFormat == value))
         {
-          _dropFileImageFormat?.Dispose();
+          _dropFilePixelFormat?.Dispose();
           _dropFilePixelFormat = value;
           OnPropertyChanged(nameof(DropFilePixelFormat));
         }
