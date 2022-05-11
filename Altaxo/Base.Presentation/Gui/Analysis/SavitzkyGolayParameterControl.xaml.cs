@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -23,11 +23,6 @@
 #endregion Copyright
 
 #nullable disable warnings
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows;
 using System.Windows.Controls;
 
 namespace Altaxo.Gui.Worksheet
@@ -35,81 +30,11 @@ namespace Altaxo.Gui.Worksheet
   /// <summary>
   /// Interaction logic for SavitzkyGolayParameterControl.xaml
   /// </summary>
-  [UserControlForController(typeof(ISavitzkyGolayParameterViewEventSink))]
   public partial class SavitzkyGolayParameterControl : UserControl, ISavitzkyGolayParameterView
   {
     public SavitzkyGolayParameterControl()
     {
       InitializeComponent();
     }
-
-    private void _edNumberOfPoints_Validating(object sender, RoutedPropertyChangedEventArgs<int> e)
-    {
-      if (Controller is not null)
-        Controller.EhValidatingNumberOfPoints(_edNumberOfPoints.Value);
-    }
-
-    private void _edPolynomialOrder_Validating(object sender, RoutedPropertyChangedEventArgs<int> e)
-    {
-      if (Controller is not null)
-        Controller.EhValidatingPolynomialOrder(_edPolynomialOrder.Value);
-    }
-
-    private void _edDerivativeOrder_Validating(object sender, RoutedPropertyChangedEventArgs<int> e)
-    {
-      if (Controller is not null)
-        Controller.EhValidatingDerivativeOrder(_edDerivativeOrder.Value);
-    }
-
-    #region ISavitzkyGolayParameterView
-
-    public ISavitzkyGolayParameterViewEventSink _controller;
-
-    public ISavitzkyGolayParameterViewEventSink Controller
-    {
-      get
-      {
-        return _controller;
-      }
-      set
-      {
-        _controller = value;
-      }
-    }
-
-    public void InitializeNumberOfPoints(int val, int max)
-    {
-      _edNumberOfPoints.Maximum = max;
-      _edNumberOfPoints.Value = val;
-    }
-
-    public void InitializeDerivativeOrder(int val, int max)
-    {
-      _edDerivativeOrder.Maximum = max;
-      _edDerivativeOrder.Value = val;
-    }
-
-    public void InitializePolynomialOrder(int val, int max)
-    {
-      _edPolynomialOrder.Maximum = max;
-      _edPolynomialOrder.Value = val;
-    }
-
-    public int GetNumberOfPoints()
-    {
-      return _edNumberOfPoints.Value;
-    }
-
-    public int GetDerivativeOrder()
-    {
-      return _edDerivativeOrder.Value;
-    }
-
-    public int GetPolynomialOrder()
-    {
-      return _edPolynomialOrder.Value;
-    }
-
-    #endregion ISavitzkyGolayParameterView
   }
 }

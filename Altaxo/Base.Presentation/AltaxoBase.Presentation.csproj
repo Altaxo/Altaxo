@@ -45,6 +45,33 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Gui\Analysis\Spectroscopy\BaselineEstimation\ALSControl.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Gui\Analysis\Spectroscopy\BaselineEstimation\BaselineEstimationControl.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Gui\Analysis\Spectroscopy\BaselineEstimation\AirPLSControl.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Gui\Analysis\Spectroscopy\BaselineEstimation\SNIP_BaseControl.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Gui\Analysis\Spectroscopy\Cropping\CroppingByXValuesControl.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Gui\Analysis\Spectroscopy\Cropping\CroppingControl.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Gui\Analysis\Spectroscopy\Cropping\CroppingByIndicesControl.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Gui\Analysis\Spectroscopy\Normalization\NormalizationControl.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Gui\Analysis\Spectroscopy\Smoothing\SmoothingControl.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Gui\Common\BasicTypes\DecimalValueControl.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -66,6 +93,42 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Page Update="Gui\Analysis\Spectroscopy\BaselineEstimation\ALSControl.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Gui\Analysis\Spectroscopy\BaselineEstimation\BaselineEstimationControl.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Gui\Analysis\Spectroscopy\BaselineEstimation\AirPLSControl.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Gui\Analysis\Spectroscopy\BaselineEstimation\SNIP_BaseControl.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Gui\Analysis\Spectroscopy\Cropping\CroppingByXValuesControl.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Gui\Analysis\Spectroscopy\Cropping\CroppingControl.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Gui\Analysis\Spectroscopy\Cropping\CroppingByIndicesControl.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Gui\Analysis\Spectroscopy\Normalization\NormalizationControl.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Gui\Analysis\Spectroscopy\Smoothing\SmoothingControl.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="Gui\Common\BasicTypes\DecimalValueControl.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
@@ -96,6 +159,10 @@
     <Page Update="Gui\Common\Drawing\PenSimpleConditionalControlDC.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
     </Page>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Gui\Analysis\Spectroscopy\PeakFinding\" />
   </ItemGroup>
   
   <UsingTask TaskName="GitVersionFile" AssemblyFile="..\..\MSBuildVersioning.dll" />

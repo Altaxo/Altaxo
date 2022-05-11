@@ -30,8 +30,25 @@ namespace Altaxo.Science.Spectroscopy.Normalization
   /// Executes min-max normalization : y' = (y-min)/(max-min), in which min and max are the minimal and maximal values of the array.
   /// </summary>
   /// <seealso cref="Altaxo.Science.Spectroscopy.Normalization.INormalization" />
-  public class MinMaxNormalization : INormalization
+  public class NormalizationMinMax : INormalization
   {
+    #region Serialization
+
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(NormalizationMinMax), 0)]
+    public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+      }
+
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      {
+        return new NormalizationMinMax();
+      }
+    }
+    #endregion
+
+
     /// <inheritdoc/>
     public double[] Execute(double[] x)
     {

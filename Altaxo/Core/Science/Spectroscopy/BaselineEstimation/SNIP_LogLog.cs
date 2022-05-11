@@ -42,54 +42,60 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
   /// ANALYSIS OF PIXE SPECTRA IN GEOSCIENCE APPLICATIONS, Nuclear Instruments and Methods in Physics Research 934 (1988) 396-402 
   /// North-Holland, Amsterdam</para>
   // </remarks>
-  public class SNIP_LogLog : IBaselineEstimation
+  public record SNIP_LogLog : SNIP_Base, IBaselineEstimation
   {
-    int _halfWidth = 15;
-    int _numberOfRegularStages = 40;
+    #region Serialization
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="SNIP_Linear"/> class.
-    /// </summary>
-    /// <param name="halfWidth">Half of the width of the averaging window. This value should be set to
-    /// roughly the FWHM (full width half maximum) of the broadest peak in the spectrum.</param>
-    public SNIP_LogLog(int halfWidth)
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(SNIP_Linear), 0)]
+    public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      _halfWidth = halfWidth;
-    }
-
-    /// <summary>
-    /// Gets or sets the number of regular stages. Default is 40.
-    /// </summary>
-    /// <value>
-    /// The number of regular stages.
-    /// </value>
-    /// <exception cref="System.ArgumentOutOfRangeException">Number of stages must be at least one. - NumberOfRegularStages</exception>
-    public int NumberOfRegularStages
-    {
-      get { return _numberOfRegularStages; }
-      set
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        if (value < 1)
-          throw new ArgumentOutOfRangeException("Number of stages must be at least one.", nameof(NumberOfRegularStages));
-        _numberOfRegularStages = value;
+        var s = (SNIP_Linear)obj;
+        info.AddValue("HalfWidth", s.HalfWidth);
+        info.AddValue("IsHalfWidthInXUnits", s.IsHalfWidthInXUnits);
+        info.AddValue("NumberOfIterations", s.NumberOfRegularIterations);
+      }
+
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      {
+        var halfWidth = info.GetDouble("HalfWidth");
+        var isHalfWidthInXUnits = info.GetBoolean("IsHalfWidthInXUnits");
+        var numberOfIterations = info.GetInt32("NumberOfIterations");
+
+        return o is null ? new SNIP_Linear
+        {
+          HalfWidth = halfWidth,
+          IsHalfWidthInXUnits = isHalfWidthInXUnits,
+          NumberOfRegularIterations = numberOfIterations
+        } :
+          ((SNIP_Linear)o) with
+          {
+            HalfWidth = halfWidth,
+            IsHalfWidthInXUnits = isHalfWidthInXUnits,
+            NumberOfRegularIterations = numberOfIterations
+          };
       }
     }
+    #endregion
+
 
     /// <summary>
     /// Executes the algorithm with the provided spectrum.
     /// </summary>
-    /// <param name="array">The array of spectral values. All values y[i] in the spectrum must be y[i] &gt; 0</param>
+    /// <param name="xArray">The x values of the spectral values.</param>
+    /// <param name="yArray">The array of spectral values. All values y[i] in the spectrum must be y[i] &gt; 0</param>
     /// <returns>The evaluated background of the provided spectrum.</returns>
-    public double[] Execute(IEnumerable<double> array)
+    public override double[] Execute(double[] xArray, double[] yArray)
     {
       const double sqrt2 = 1.41421356237;
 
       // Log-Log the data
-      var srcY = array.Select(x => Math.Log(Math.Log(x + 1) + 1)).ToArray();
+      var srcY = yArray.Select(x => Math.Log(Math.Log(x + 1) + 1)).ToArray();
       var tmpY = new double[srcY.Length];
 
       int last = srcY.Length - 1;
-      int w = _halfWidth;
+      var w = _isHalfWidthInXUnits ? Math.Max(1, (int)(_halfWidth / (xArray[1] - xArray[0]))) : Math.Max(1, (int)_halfWidth);
 
       for (int iStage = _numberOfRegularStages - 1; ; --iStage)
       {

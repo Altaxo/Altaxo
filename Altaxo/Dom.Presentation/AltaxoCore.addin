@@ -661,8 +661,16 @@
 						class="Altaxo.Worksheet.Commands.AnalysisExportPLSCalibration" />
           <MenuItem id="MultColsToMatrix" label="${res:XML.MainMenu.AnalysisMenu.MultiplyColumnsToMatrix}"
 						description="${res:XML.MainMenu.AnalysisMenu.MultiplyColumnsToMatrix.Description}" class="Altaxo.Worksheet.Commands.AnalysisMultiplyColumnsToMatrix" />
+
         </MenuItem>
-      </MenuItem>
+        <MenuItem id="IdSpectroscopy" label="Spectroscopy"  type="Menu">
+            <MenuItem id="Preprocessing" label="Preprocess" description="aa"
+                      class="Altaxo.Worksheet.Commands.SpectroscopyPreprocessing" />
+        </MenuItem>
+          
+        </MenuItem>
+     
+        
     </Condition>
     <!-- Graph-Analysis menu -->
     <Condition name = "WindowActive" activewindow="Altaxo.Gui.Graph.Gdi.Viewing.GraphController" action="Exclude">

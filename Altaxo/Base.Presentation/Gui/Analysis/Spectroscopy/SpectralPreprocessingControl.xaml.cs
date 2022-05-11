@@ -22,21 +22,18 @@
 
 #endregion Copyright
 
-using System.Collections.Generic;
+using System.Windows.Controls;
 
-namespace Altaxo.Science.Spectroscopy.BaselineEstimation
+namespace Altaxo.Gui.Analysis.Spectroscopy
 {
   /// <summary>
-  /// Interface to all baseline estimation algorithms for simple (1D) spectra.
+  /// Interaction logic for SpectralPreprocessingView.xaml
   /// </summary>
-  public interface IBaselineEstimation
+  public partial class SpectralPreprocessingControl : UserControl, ISpectralPreprocessingOptionsView
   {
-    /// <summary>
-    /// Executes the algorithm with the provided spectrum.
-    /// </summary>
-    /// <param name="xArray">The x values of the spectral values.</param>
-    /// <param name="yArray">The array of spectral values.</param>
-    /// <returns>The evaluated background of the provided spectrum.</returns>
-    public double[] Execute(double[] xArray, double[] yArray);
+    public SpectralPreprocessingControl()
+    {
+      InitializeComponent();
+    }
   }
 }

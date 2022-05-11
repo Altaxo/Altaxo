@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -31,22 +31,22 @@ namespace Altaxo.Calc.Regression
   /// <summary>
   /// Stores the set of parameters necessary to calculate Savitzky-Golay coefficients.
   /// </summary>
-  public class SavitzkyGolayParameters
+  public record SavitzkyGolayParameters
   {
     /// <summary>
     /// Number of points used for Savitzky Golay Coefficients. Must be a odd positive number.
     /// </summary>
-    public int NumberOfPoints = 7;
+    public int NumberOfPoints { get; init; } = 7;
 
     /// <summary>
     /// Polynomial order used to calculate Savitzky-Golay coefficients. Has to be a positive number.
     /// </summary>
-    public int PolynomialOrder = 2;
+    public int PolynomialOrder { get; init; } = 2;
 
     /// <summary>
     /// Derivative order. Has to be zero or positive. A value of zero is used to smooth a function.
     /// </summary>
-    public int DerivativeOrder = 0;
+    public int DerivativeOrder { get; init; } = 0;
   }
 
   /// <summary>

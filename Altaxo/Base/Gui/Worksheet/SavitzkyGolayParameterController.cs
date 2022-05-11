@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -24,36 +24,15 @@
 
 #nullable disable
 using System;
+using System.Collections.Generic;
 using Altaxo.Calc.Regression;
 
 namespace Altaxo.Gui.Worksheet
 {
   #region Interfaces
 
-  public interface ISavitzkyGolayParameterViewEventSink
+  public interface ISavitzkyGolayParameterView : IDataContextAwareView
   {
-    void EhValidatingNumberOfPoints(int val);
-
-    void EhValidatingPolynomialOrder(int val);
-
-    void EhValidatingDerivativeOrder(int val);
-  }
-
-  public interface ISavitzkyGolayParameterView
-  {
-    ISavitzkyGolayParameterViewEventSink Controller { set; }
-
-    void InitializeNumberOfPoints(int val, int max);
-
-    void InitializeDerivativeOrder(int val, int max);
-
-    void InitializePolynomialOrder(int val, int max);
-
-    int GetNumberOfPoints();
-
-    int GetDerivativeOrder();
-
-    int GetPolynomialOrder();
   }
 
   #endregion Interfaces
@@ -63,117 +42,98 @@ namespace Altaxo.Gui.Worksheet
   /// </summary>
   [UserControllerForObject(typeof(SavitzkyGolayParameters), 100)]
   [ExpectedTypeOfView(typeof(ISavitzkyGolayParameterView))]
-  public class SavitzkyGolayParameterController : IMVCAController, ISavitzkyGolayParameterViewEventSink
+  public class SavitzkyGolayParameterController : MVCANControllerEditImmutableDocBase<SavitzkyGolayParameters, ISavitzkyGolayParameterView>
   {
-    private SavitzkyGolayParameters _doc;
-    private ISavitzkyGolayParameterView _view;
 
-    private int _numberOfPoints;
-    private int _polynomialOrder;
-    private int _derivativeOrder;
+    public SavitzkyGolayParameterController()
+    {
+
+    }
 
     public SavitzkyGolayParameterController(SavitzkyGolayParameters parameters)
     {
-      _doc = parameters;
-      _numberOfPoints = parameters.NumberOfPoints;
-      _polynomialOrder = parameters.PolynomialOrder;
-      _derivativeOrder = parameters.DerivativeOrder;
+      _originalDoc =  _doc = parameters;
+      Initialize(true);
     }
 
-    #region IApplyController Members
-
-    private void Initialize()
+    public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
-      if (_view is not null)
-      {
-        _view.InitializeNumberOfPoints(_numberOfPoints, int.MaxValue);
-        _view.InitializePolynomialOrder(_polynomialOrder, _numberOfPoints);
-        _view.InitializeDerivativeOrder(_derivativeOrder, _polynomialOrder);
-      }
+      yield break;
     }
 
-    public bool Apply(bool disposeController)
+
+    #region Bindings
+
+    private int _numberOfPoints;
+
+    public int NumberOfPoints
     {
-      if (_view is not null)
-      {
-        _doc.NumberOfPoints = _numberOfPoints;
-        _doc.DerivativeOrder = _derivativeOrder;
-        _doc.PolynomialOrder = _polynomialOrder;
-        return true;
-      }
-
-      return true;
-    }
-
-    /// <summary>
-    /// Try to revert changes to the model, i.e. restores the original state of the model.
-    /// </summary>
-    /// <param name="disposeController">If set to <c>true</c>, the controller should release all temporary resources, since the controller is not needed anymore.</param>
-    /// <returns>
-    ///   <c>True</c> if the revert operation was successfull; <c>false</c> if the revert operation was not possible (i.e. because the controller has not stored the original state of the model).
-    /// </returns>
-    public bool Revert(bool disposeController)
-    {
-      return false;
-    }
-
-    #endregion IApplyController Members
-
-    #region IMVCController Members
-
-    public object ViewObject
-    {
-      get
-      {
-        return _view;
-      }
+      get => _numberOfPoints;
       set
       {
-        if (_view is not null)
-          _view.Controller = null;
-
-        _view = value as ISavitzkyGolayParameterView;
-
-        Initialize();
-
-        if (_view is not null)
-          _view.Controller = this;
+        if (!(_numberOfPoints == value))
+        {
+          _numberOfPoints = value;
+          OnPropertyChanged(nameof(NumberOfPoints));
+        }
       }
     }
 
-    public object ModelObject
+    private int _polynomialOrder;
+
+    public int PolynomialOrder
     {
-      get
+      get => _polynomialOrder;
+      set
       {
-        return _doc;
+        if (!(_polynomialOrder == value))
+        {
+          _polynomialOrder = value;
+          OnPropertyChanged(nameof(PolynomialOrder));
+        }
       }
     }
 
-    public void Dispose()
+    private int _derivativeOrder;
+
+    public int DerivativeOrder
     {
+      get => _derivativeOrder;
+      set
+      {
+        if (!(_derivativeOrder == value))
+        {
+          _derivativeOrder = value;
+          OnPropertyChanged(nameof(DerivativeOrder));
+        }
+      }
     }
 
-    #endregion IMVCController Members
+    #endregion
 
-    public void EhValidatingNumberOfPoints(int val)
+
+    protected override void Initialize(bool initData)
     {
-      _numberOfPoints = val;
-      _polynomialOrder = Math.Min(_polynomialOrder, val);
-      _view.InitializePolynomialOrder(_polynomialOrder, val);
-      EhValidatingPolynomialOrder(_polynomialOrder);
+      base.Initialize(initData);
+      if(initData)
+      {
+        NumberOfPoints = _doc.NumberOfPoints;
+        DerivativeOrder = _doc.DerivativeOrder;
+        PolynomialOrder = _doc.PolynomialOrder;
+      }
     }
 
-    public void EhValidatingPolynomialOrder(int val)
+    public override bool Apply(bool disposeController)
     {
-      _polynomialOrder = val;
-      _derivativeOrder = Math.Min(_derivativeOrder, val);
-      _view.InitializeDerivativeOrder(_derivativeOrder, val);
-      EhValidatingDerivativeOrder(_derivativeOrder);
+      _doc = _doc with
+      {
+        NumberOfPoints = NumberOfPoints,
+        DerivativeOrder = DerivativeOrder,
+        PolynomialOrder = PolynomialOrder,
+      };
+
+      return ApplyEnd(true, disposeController);
     }
 
-    public void EhValidatingDerivativeOrder(int val)
-    {
-      _derivativeOrder = val;
-    }
   }
 }

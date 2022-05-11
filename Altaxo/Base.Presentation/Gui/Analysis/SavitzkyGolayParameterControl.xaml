@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
+						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common" xmlns:worksheet="clr-namespace:Altaxo.Gui.Worksheet;assembly=AltaxoBase" d:DataContext="{d:DesignInstance Type=worksheet:SavitzkyGolayParameterController}"
              mc:Ignorable="d">
 
 	<UserControl.Resources>
@@ -30,10 +30,20 @@
 			<RowDefinition Height="12" />
 		</Grid.RowDefinitions>
 		<Label Grid.Column="0" Grid.Row="0" Content="Number of points:" />
-		<axogc:Int32UpDown x:Name="_edNumberOfPoints" Grid.Column="1" Grid.Row="0" Minimum="3" Change="2" ValueChanged="_edNumberOfPoints_Validating" />
+		<axogc:Int32UpDown Grid.Column="1" Grid.Row="0"
+                           Value="{Binding NumberOfPoints}"
+                           Minimum="3"
+                           Change="2" />
+        
 		<Label Grid.Column="0" Grid.Row="2" Content="Polynomial order:" />
-		<axogc:Int32UpDown x:Name="_edPolynomialOrder" Grid.Column="1" Grid.Row="2" ValueChanged="_edPolynomialOrder_Validating" />
+		<axogc:Int32UpDown Grid.Column="1" Grid.Row="2" 
+                           Value="{Binding PolynomialOrder}"
+                           Minimum="1" />
+        
 		<Label Grid.Column="0" Grid.Row="4" Content="Derivative order (use 0 for smoothing):" />
-		<axogc:Int32UpDown x:Name="_edDerivativeOrder" Grid.Column="1" Grid.Row="4" ValueChanged="_edDerivativeOrder_Validating" />
+        <axogc:Int32UpDown Grid.Column="1" Grid.Row="4"
+                           Value="{Binding DerivativeOrder}"
+                           Minimum="0"
+                           Maximum="{Binding PolynomialOrder}" />
 	</Grid>
 </UserControl>

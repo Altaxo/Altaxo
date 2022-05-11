@@ -22,21 +22,11 @@
 
 #endregion Copyright
 
-using System.Collections.Generic;
 
-namespace Altaxo.Science.Spectroscopy.BaselineEstimation
+namespace Altaxo.Science.Spectroscopy.Smoothing
 {
-  /// <summary>
-  /// Interface to all baseline estimation algorithms for simple (1D) spectra.
-  /// </summary>
-  public interface IBaselineEstimation
+  public interface ISmoothing
   {
-    /// <summary>
-    /// Executes the algorithm with the provided spectrum.
-    /// </summary>
-    /// <param name="xArray">The x values of the spectral values.</param>
-    /// <param name="yArray">The array of spectral values.</param>
-    /// <returns>The evaluated background of the provided spectrum.</returns>
-    public double[] Execute(double[] xArray, double[] yArray);
+    double[] Execute(double[] data);
   }
 }

@@ -22,21 +22,31 @@
 
 #endregion Copyright
 
-using System.Collections.Generic;
+using System.Linq;
 
 namespace Altaxo.Science.Spectroscopy.BaselineEstimation
 {
-  /// <summary>
-  /// Interface to all baseline estimation algorithms for simple (1D) spectra.
-  /// </summary>
-  public interface IBaselineEstimation
+  public class BaselineEstimationNone : IBaselineEstimation
   {
-    /// <summary>
-    /// Executes the algorithm with the provided spectrum.
-    /// </summary>
-    /// <param name="xArray">The x values of the spectral values.</param>
-    /// <param name="yArray">The array of spectral values.</param>
-    /// <returns>The evaluated background of the provided spectrum.</returns>
-    public double[] Execute(double[] xArray, double[] yArray);
+    #region Serialization
+
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(BaselineEstimationNone), 0)]
+    public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+      }
+
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      {
+        return new BaselineEstimationNone();
+      }
+    }
+    #endregion
+
+    public double[] Execute(double[] xArray, double[] array)
+    {
+      return (double[])array.ToArray();
+    }
   }
 }

@@ -37,7 +37,7 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
   /// <para>[1] Z.-M. Zhang et al., Baseline correction using adaptive iteratively reweighted penalized least
   /// squares, Analyst, 2010, 135, 1138–1146, doi:10.1039/b922045c</para>
   // </remarks>
-  public class AirPLS : IBaselineEstimation
+  public record AirPLS : IBaselineEstimation
   {
     private double _lambda = 100;
 
@@ -50,12 +50,26 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
     public double Lambda
     {
       get => _lambda;
-      set
+      init
       {
         if (!(value > 0))
           throw new ArgumentException("Value must be > 0", nameof(Lambda));
         _lambda = value;
       }
+    }
+
+    private bool _scaleLambdaWithXUnits;
+
+    /// <summary>
+    /// If true, lambda is scaled with the x units, so that the effect of baseline estimation is independent on the resolution of the spectrum.
+    /// </summary>
+    /// <value>
+    ///   <c>true</c> lambda is scaled with the x units, so that the effect of baseline estimation is independent on the resolution of the spectrum; otherwise, <c>false</c>.
+    /// </value>
+    public bool ScaleLambdaWithXUnits
+    {
+      get => _scaleLambdaWithXUnits;
+      init => _scaleLambdaWithXUnits = value;
     }
 
     private double _terminationRatio = 1e-3;
@@ -68,7 +82,7 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
     public double TerminationRatio
     {
       get => _terminationRatio;
-      set
+      init
       {
         if (!(value > 0 && value < 1))
           throw new ArgumentException("Value must be > 0 and < 1", nameof(TerminationRatio));
@@ -92,7 +106,7 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
     public int MaximumNumberOfIterations
     {
       get => _maximumNumberOfIterations;
-      set
+      init
       {
         if (!(value >= 1))
           throw new ArgumentOutOfRangeException("Value must be >=1", nameof(MaximumNumberOfIterations));
@@ -100,11 +114,68 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
       }
     }
 
-    /// <inheritdoc/>
-    public double[] Execute(IEnumerable<double> array)
+    private int _order = 1;
+
+    public int Order
     {
-      var x = array.ToArray();
-      var countM1 = x.Length - 1;
+      get => _order;
+      set
+      {
+        if (!(value >= 1 && value <= 2))
+          throw new ArgumentOutOfRangeException("Order must be 1 or 2", nameof(Order));
+        _order = value;
+      }
+    }
+
+    #region Serialization
+
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AirPLS), 0)]
+    public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        var s = (AirPLS)obj;
+        info.AddValue("Lambda", s.Lambda);
+        info.AddValue("ScaleLambdaWithXUnits", s.ScaleLambdaWithXUnits);
+        info.AddValue("TerminationRatio", s.TerminationRatio);
+        info.AddValue("Order", s.Order);
+        info.AddValue("MaxNumberOfIterations", s.MaximumNumberOfIterations);
+      }
+
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      {
+        var lambda = info.GetDouble("Lambda");
+        var scaleLambdaWithXUnits = info.GetBoolean("ScaleLambdaWithXUnits");
+        var terminationRatio = info.GetDouble("TerminationRatio");
+        var order = info.GetInt32("Order");
+        var maxNumberOfIterations = info.GetInt32("MaxNumberOfIterations");
+
+        return o is null ? new AirPLS
+        {
+          Lambda = lambda,
+          ScaleLambdaWithXUnits = scaleLambdaWithXUnits,
+          TerminationRatio  = terminationRatio,
+          Order = order,
+          MaximumNumberOfIterations = maxNumberOfIterations,
+        } :
+          ((AirPLS)o) with
+          {
+            Lambda = lambda,
+            ScaleLambdaWithXUnits = scaleLambdaWithXUnits,
+            TerminationRatio = terminationRatio,
+            Order = order,
+            MaximumNumberOfIterations = maxNumberOfIterations,
+          };
+      }
+    }
+    #endregion
+
+
+    /// <inheritdoc/>
+    public double[] Execute(double[] xArray, double[] yArray)
+    {
+      var y = yArray;
+      var countM1 = y.Length - 1;
       var wx = new double[countM1 + 1]; // x multiplied with weights
       var z = new double[countM1 + 1];
 
@@ -115,9 +186,9 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
 
       // Calculate L1-norm of x
       double l1NormOfX = 0;
-      for (int i = 0; i < x.Length; ++i)
+      for (int i = 0; i < y.Length; ++i)
       {
-        l1NormOfX += Math.Abs(x[i]);
+        l1NormOfX += Math.Abs(y[i]);
       }
 
 
@@ -145,7 +216,7 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
 
         // Update wx by multiply weights with original x
         for (int i = 0; i <= countM1; ++i)
-          wx[i] = x[i] * weights[i];
+          wx[i] = y[i] * weights[i];
 
         solver.SolveDestructiveBanded(m, 1, 1, wx, z);
 
@@ -153,7 +224,7 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
         double l1normOfNegativeDifferences = 0;
         for (int i = 0; i <= countM1; ++i)
         {
-          var diff = z[i] - x[i];
+          var diff = z[i] - y[i];
           if (diff > 0)
           {
             l1normOfNegativeDifferences += diff;
@@ -168,7 +239,7 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
         // update weights (Eq.(9) in Ref.[1])
         for (int i = 0; i <= countM1; ++i)
         {
-          var diff = x[i] - z[i];
+          var diff = y[i] - z[i];
           weights[i] = diff <= 0 ? Math.Exp(iteration * diff / l1normOfNegativeDifferences) : 0;
         }
       }
