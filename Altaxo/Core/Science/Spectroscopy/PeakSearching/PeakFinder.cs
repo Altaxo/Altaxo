@@ -987,6 +987,11 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
         imin = VectorMath.GetConstantVector((double)tupleI.Item1, x.Length);
         imax = VectorMath.GetConstantVector((double)tupleI.Item2, x.Length);
       }
+      else if (interval is ValueTuple<double, double> tupleD)
+      {
+        imin = VectorMath.GetConstantVector((double)tupleD.Item1, x.Length);
+        imax = VectorMath.GetConstantVector((double)tupleD.Item2, x.Length);
+      }
       else if (interval is int iV)
       {
         imin = VectorMath.GetConstantVector((double)iV, x.Length);

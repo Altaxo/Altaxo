@@ -46,7 +46,7 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
 
     public double[] Execute(double[] xArray, double[] array)
     {
-      return (double[])array.ToArray();
+      return new double[array.Length];
     }
   }
 }
