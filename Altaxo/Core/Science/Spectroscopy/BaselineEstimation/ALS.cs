@@ -109,7 +109,7 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
       }
     }
 
-    private int _order = 1;
+    private int _order = 2;
 
     public int Order
     {
