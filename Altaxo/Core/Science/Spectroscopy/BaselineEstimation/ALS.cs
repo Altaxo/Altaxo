@@ -37,9 +37,9 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
   /// <para>[1] P. H. C. Eilers and H. F. M. Boelens, Baseline correction with
   /// asymmetric least squares smoothing, Leiden University Medical Centre report, 2005</para>
   // </remarks>
-  public record ALS : IBaselineEstimation
+  public record ALS : ALSBase, IBaselineEstimation
   {
-    private double _lambda = 1E6;
+    private double _lambda = 1E5;
 
     /// <summary>
     /// Gets or sets the smoothing parameter lambda.
@@ -72,7 +72,7 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
       init => _scaleLambdaWithXUnits = value;
     }
 
-    private double _p = 0.1;
+    private double _p = 1E-3;
     /// <summary>
     /// Gets or sets the weighting parameter.
     /// The default value is 0.1.
@@ -92,7 +92,7 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
     }
 
 
-    private int _maximumNumberOfIterations = 10;
+    private int _maximumNumberOfIterations = 100;
 
     /// <summary>
     /// Gets or sets the maximum number of iterations. The default value is 10.
@@ -180,58 +180,65 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
       for (int i = 0; i <= countM1; ++i)
         weights[i] = 1;
 
-      // Calculate L1-norm of x
-      double l1NormOfX = 0;
-      for (int i = 0; i < y.Length; ++i)
+      // Set up the band matrix (W + lambda D'D)
+      // TODO: when band matrices are available, replace with true band matrix (will save storage space)
+      var m = new DoubleBandMatrix(countM1 + 1, countM1 + 1, _order, _order);
+      var lambda = _lambda;
+
+      // Fill the Band matrix for the first time
+      // as long as lambda is constant (it is here),
+      // only the diagonal of the band matrix changes when the weight changes
+      switch (_order)
       {
-        l1NormOfX += Math.Abs(y[i]);
+        case 1:
+          {
+            FillBandMatrixOrder1(m, weights, lambda, countM1);
+          }
+          break;
+        case 2:
+          {
+            FillBandMatrixOrder2(m, weights, lambda, countM1);
+          }
+          break;
+        default:
+          {
+            throw new NotImplementedException($"A order of {_order} is not implemented yet");
+          }
       }
 
 
-      // Set up the band matrix (W + lambda D'D)
-      // TODO: when band matrices are available, replace with true band matrix (will save storage space)
-      var m = new MatrixWrapperStructForLeftSpineJaggedArray<double>(countM1 + 1, countM1 + 1);
-      var lambda = _lambda;
-
-      var solver = new GaussianEliminationSolver();
+      object tempStorage = null;
 
       for (int iteration = 1; iteration <= _maximumNumberOfIterations; ++iteration)
       {
-        // Fill the (1,1) band matrix with (W + lambda D'D) (Eq.(6) in Ref.[1])
-        m[0, 0] = weights[0] + lambda;
-        m[0, 1] = -lambda;
-
-        for (int i = 1; i < countM1; ++i)
-        {
-          m[i, i - 1] = -lambda;
-          m[i, i] = weights[i] + 2 * lambda;
-          m[i, i + 1] = -lambda;
-        }
-        m[countM1, countM1 - 1] = -lambda;
-        m[countM1, countM1] = weights[countM1] + lambda;
-
         // Update wx by multiply weights with original x
         for (int i = 0; i <= countM1; ++i)
           wx[i] = y[i] * weights[i];
 
-        solver.SolveDestructiveBanded(m, 1, 1, wx, z);
-
-        // Calculate L1 norm of the vector of the negative differences between x and z
-        double l1normOfNegativeDifferences = 0;
-        for (int i = 0; i <= countM1; ++i)
+        switch (_order)
         {
-          var diff = z[i] - y[i];
-          if (diff > 0)
-          {
-            l1normOfNegativeDifferences += diff;
-          }
+          case 1:
+            {
+              UpdateBandMatrixDiagonalOrder1(m, weights, lambda, countM1);
+              GaussianEliminationSolver.SolveTriDiagonal(m, wx, z, ref tempStorage);
+            }
+            break;
+          case 2:
+            {
+              UpdateBandMatrixDiagonalOrder2(m, weights, lambda, countM1);
+              GaussianEliminationSolver.SolvePentaDiagonal(m, wx, z, ref tempStorage);
+            }
+            break;
+          default:
+            {
+              throw new NotImplementedException($"A order of {_order} is not implemented yet");
+            }
         }
 
         // update weights 
         for (int i = 0; i <= countM1; ++i)
         {
-          var diff = y[i] - z[i];
-          weights[i] = diff <= 0 ? 1-_p : _p;
+          weights[i] = y[i] > z[i] ? _p : 1 - _p;
         }
       }
 

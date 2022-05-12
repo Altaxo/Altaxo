@@ -7,15 +7,12 @@
 #endregion Copyright
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
 using Xunit;
 
 namespace Altaxo.Calc.LinearAlgebra
 {
-
   public class GaussianEliminationSolverTest
   {
     private GaussianEliminationSolver solver = new GaussianEliminationSolver();
@@ -24,9 +21,9 @@ namespace Altaxo.Calc.LinearAlgebra
     public void SolverCoreTest3d()
     {
       var a = new double[][] {
-                new double[] { 2,1,-1 },
-                new double[] { -3,-1,2 },
-                new double[] { -2,1,2 }
+                new double[] {  2, 1,-1 },
+                new double[] { -3,-1, 2 },
+                new double[] { -2, 1, 2 }
             };
 
       var b = new double[] { 8, -11, -3 };
@@ -152,5 +149,189 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
     #endregion Banded matrix
+
+    #region Tri diagonal matrix
+    [Fact]
+    public void TestTridiagonal()
+    {
+      var rnd = new Random(17);
+
+
+      for (int N = 3; N < 10; ++N)
+      {
+        DoubleMatrix A = new DoubleMatrix(N, N);
+        var x = new double[N];
+        var a = new double[N];
+        var xx = new double[N];
+
+
+
+        for (int i = 0; i < N; ++i)
+        {
+          A[i, i] = rnd.NextDouble();
+          if (i > 0)
+          {
+            A[i, i - 1] = rnd.NextDouble();
+            A[i - 1, i] = rnd.NextDouble();
+          }
+
+          x[i] = rnd.NextDouble();
+        }
+
+
+        MatrixMath.Multiply(A, VectorMath.ToVector(x), VectorMath.ToVector(a));
+
+        for (int i = 0; i < N; ++i)
+          for (int j = 0; j < N; ++j)
+            if (Math.Abs(i - j) > 1)
+              A[i, j] = double.NaN;
+
+        object tempStorage = new Tuple<double[], double[], double[]>(
+          Enumerable.Repeat(double.NaN, N).ToArray(),
+          Enumerable.Repeat(double.NaN, N).ToArray(),
+          Enumerable.Repeat(double.NaN, N).ToArray()
+          );
+        GaussianEliminationSolver.SolveTriDiagonal(A, a, xx, ref tempStorage);
+
+        for (int i = 0; i < x.Length; ++i)
+          AssertEx.AreEqual(x[i], xx[i], 1E-6, 1e-6);
+      }
+    }
+
+    #endregion
+
+    #region Five diagonal matrix
+    [Fact]
+    public void TestPentaDiagonal()
+    {
+      var rnd = new Random(17);
+
+
+      for (int N = 5; N < 10; ++N)
+      {
+        DoubleMatrix A = new DoubleMatrix(N, N);
+        var x = new double[N];
+        var a = new double[N];
+        var xx = new double[N];
+
+
+
+        for (int i = 0; i < N; ++i)
+        {
+          A[i, i] = rnd.NextDouble();
+          if (i > 0)
+          {
+            A[i, i - 1] = rnd.NextDouble();
+            A[i - 1, i] = rnd.NextDouble();
+          }
+          if (i > 1)
+          {
+            A[i, i - 2] = rnd.NextDouble();
+            A[i - 2, i] = rnd.NextDouble();
+          }
+
+          x[i] = rnd.NextDouble();
+        }
+
+
+        MatrixMath.Multiply(A, VectorMath.ToVector(x), VectorMath.ToVector(a));
+
+        for (int i = 0; i < N; ++i)
+          for (int j = 0; j < N; ++j)
+            if (Math.Abs(i - j) > 2)
+              A[i, j] = double.NaN;
+
+
+        object tempStorage = new Tuple<double[], double[], double[], double[], double[], double[]>(
+          Enumerable.Repeat(double.NaN, N).ToArray(),
+          Enumerable.Repeat(double.NaN, N).ToArray(),
+          Enumerable.Repeat(double.NaN, N).ToArray(),
+          Enumerable.Repeat(double.NaN, N).ToArray(),
+          Enumerable.Repeat(double.NaN, N).ToArray(),
+          Enumerable.Repeat(double.NaN, N).ToArray()
+          );
+        GaussianEliminationSolver.SolvePentaDiagonal(A, a, xx);
+
+        for (int i = 0; i < x.Length; ++i)
+          AssertEx.AreEqual(x[i], xx[i], 1E-6, 1e-6);
+      }
+    }
+
+    [Fact]
+    public void TestPentaDiagonalWithBandMatrix()
+    {
+      var rnd = new Random(17);
+
+      for (int N = 5; N < 10; ++N)
+      {
+        var A = new DoubleBandMatrix(N, N, 2, 2);
+        var x = new double[N];
+        var a = new double[N];
+        var xx = new double[N];
+
+
+
+        for (int i = 0; i < N; ++i)
+        {
+          A[i, i] = rnd.NextDouble();
+          if (i > 0)
+          {
+            A[i, i - 1] = rnd.NextDouble();
+            A[i - 1, i] = rnd.NextDouble();
+          }
+          if (i > 1)
+          {
+            A[i, i - 2] = rnd.NextDouble();
+            A[i - 2, i] = rnd.NextDouble();
+          }
+
+          x[i] = rnd.NextDouble();
+        }
+
+
+        MatrixMath.Multiply(A, VectorMath.ToVector(x), VectorMath.ToVector(a));
+
+        object tempStorage = new Tuple<double[], double[], double[], double[], double[], double[]>(
+          Enumerable.Repeat(double.NaN, N).ToArray(),
+          Enumerable.Repeat(double.NaN, N).ToArray(),
+          Enumerable.Repeat(double.NaN, N).ToArray(),
+          Enumerable.Repeat(double.NaN, N).ToArray(),
+          Enumerable.Repeat(double.NaN, N).ToArray(),
+          Enumerable.Repeat(double.NaN, N).ToArray()
+          );
+        GaussianEliminationSolver.SolvePentaDiagonal(A, a, xx);
+
+        for (int i = 0; i < x.Length; ++i)
+          AssertEx.AreEqual(x[i], xx[i], 1E-6, 1e-6);
+      }
+    }
+
+    [Fact]
+    public void TestFiveDiagonalBookExample()
+    {
+      var A = new DoubleMatrix(6, 6);
+
+      var a = new double[6] { -2, -4, 3, -7, -1, 4 };
+      var xx = new double[6];
+
+      A[0, 0] = 2; A[0, 1] = -2; A[0, 2] = -2; A[0, 3] = 0; A[0, 4] = 0; A[0, 5] = 0;
+      A[1, 0] = -2; A[1, 1] = 5; A[1, 2] = -4; A[1, 3] = -3; A[1, 4] = 0; A[1, 5] = 0;
+      A[2, 0] = -1; A[2, 1] = -2; A[2, 2] = 11; A[2, 3] = -1; A[2, 4] = -4; A[2, 5] = 0;
+      A[3, 0] = 0; A[3, 1] = -1; A[3, 2] = 1; A[3, 3] = 7; A[3, 4] = -4; A[3, 5] = -10;
+      A[4, 0] = 0; A[4, 1] = 0; A[4, 2] = -1; A[4, 3] = -1; A[4, 4] = 9; A[4, 5] = -8;
+      A[5, 0] = 0; A[5, 1] = 0; A[5, 2] = 0; A[5, 3] = -1; A[5, 4] = 0; A[5, 5] = 5;
+
+
+      GaussianEliminationSolver.SolvePentaDiagonal(A, a, xx);
+
+      for (int i = 0; i < 6; i++)
+      {
+        AssertEx.AreEqual(1, xx[i], 1e-6, 1e-6);
+      }
+
+    }
+
+    #endregion
+
   }
 }

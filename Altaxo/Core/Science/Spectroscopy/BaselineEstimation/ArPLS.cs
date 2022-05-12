@@ -37,7 +37,7 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
   /// <para>[1] Sung-June Baek et al., Baseline correction using asymmetrically reweighted penalized least squares smoothing,
   /// Analyst, 2015, 140, 250-257 doi: 10.1039/C4AN01061B</para>
   // </remarks>
-  public record ArPLS : IBaselineEstimation
+  public record ArPLS : ALSBase, IBaselineEstimation
   {
     private double _lambda = 1E5;
 
@@ -112,7 +112,7 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
       }
     }
 
-    private int _order = 1;
+    private int _order = 2;
 
     public int Order
     {
@@ -198,8 +198,29 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
       var m = new MatrixWrapperStructForLeftSpineJaggedArray<double>(countM1 + 1, countM1 + 1);
       var lambda = _lambda;
 
-      var solver = new GaussianEliminationSolver();
+      // Fill the Band matrix for the first time
+      // as long as lambda is constant (it is here),
+      // only the diagonal of the band matrix changes when the weight changes
+      switch (_order)
+      {
+        case 1:
+          {
+            FillBandMatrixOrder1(m, weights, lambda, countM1);
+          }
+          break;
+        case 2:
+          {
+            FillBandMatrixOrder2(m, weights, lambda, countM1);
+          }
+          break;
+        default:
+          {
+            throw new NotImplementedException($"A order of {_order} is not implemented yet");
+          }
+      }
 
+
+      object tempStorage = null;
       for (int iteration = 1; iteration <= _maximumNumberOfIterations; ++iteration)
       {
         // Update wx by multiply weights with original x
@@ -212,14 +233,14 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
         {
           case 1:
             {
-              FillBandMatrixOrder1(m, weights, lambda, countM1);
-              solver.SolveDestructiveBanded(m, 1, 1, wx, z);
+              UpdateBandMatrixDiagonalOrder1(m, weights, lambda, countM1);
+              GaussianEliminationSolver.SolveTriDiagonal(m, wx, z, ref tempStorage);
             }
             break;
           case 2:
             {
-              FillBandMatrixOrder2(m, weights, lambda, countM1);
-              solver.SolveDestructiveBanded(m, 2, 2, wx, z);
+              UpdateBandMatrixDiagonalOrder2(m, weights, lambda, countM1);
+              GaussianEliminationSolver.SolvePentaDiagonal(m, wx, z, ref tempStorage);
             }
             break;
           default:
@@ -269,54 +290,6 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
       }
 
       return z;
-    }
-
-    public void FillBandMatrixOrder1(MatrixWrapperStructForLeftSpineJaggedArray<double> m, double[] weights, double lambda, int countM1)
-    {
-      // Fill the (1,1) band matrix with (W + lambda D'D) (Eq.(6) in Ref.[1])
-      m[0, 0] = weights[0] + lambda;
-      m[0, 1] = -lambda;
-
-      for (int i = 1; i < countM1; ++i)
-      {
-        m[i, i - 1] = -lambda;
-        m[i, i] = weights[i] + 2 * lambda;
-        m[i, i + 1] = -lambda;
-      }
-      m[countM1, countM1 - 1] = -lambda;
-      m[countM1, countM1] = weights[countM1] + lambda;
-    }
-
-    public void FillBandMatrixOrder2(MatrixWrapperStructForLeftSpineJaggedArray<double> m, double[] weights, double lambda, int countM1)
-    {
-      // Fill the (2,2) band matrix with (W + lambda D'D) (Eq.(6) in Ref.[1])
-      m[0, 0] = weights[0] + lambda;
-      m[0, 1] = -2 * lambda;
-      m[0, 2] = lambda;
-
-      m[1, 0] = -2 * lambda;
-      m[1, 1] = weights[1] + 5 * lambda;
-      m[1, 2] = -4 * lambda;
-      m[1, 3] = lambda;
-
-      for (int i = 2; i < countM1 - 1; ++i)
-      {
-        m[i, i - 2] = lambda;
-        m[i, i - 1] = -4 * lambda;
-        m[i, i] = weights[i] + 6 * lambda;
-        m[i, i + 1] = -4 * lambda;
-        m[i, i + 2] = lambda;
-      }
-
-      m[countM1 - 1, countM1 - 3] = lambda;
-      m[countM1 - 1, countM1 - 2] = -4 * lambda;
-      m[countM1 - 1, countM1 - 1] = weights[countM1 - 1] + 5 * lambda;
-      m[countM1 - 1, countM1] = -2 * lambda;
-
-
-      m[countM1, countM1 - 2] = lambda;
-      m[countM1, countM1 - 1] = -2 * lambda;
-      m[countM1, countM1] = weights[countM1] + lambda;
     }
   }
 }

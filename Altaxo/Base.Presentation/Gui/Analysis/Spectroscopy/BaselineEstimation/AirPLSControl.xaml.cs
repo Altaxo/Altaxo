@@ -29,7 +29,7 @@ namespace Altaxo.Gui.Analysis.Spectroscopy.BaselineEstimation
   /// <summary>
   /// Interaction logic for SpikeRemovalOptionsControl.xaml
   /// </summary>
-  public partial class AirPLSControl : UserControl,  IALSView
+  public partial class AirPLSControl : UserControl, IAirPLSView, IArPLSView 
   {
     public AirPLSControl()
     {

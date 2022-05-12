@@ -365,6 +365,197 @@ namespace Altaxo.Calc.LinearAlgebra
 
     #region Band matrix
 
+    /// <summary>
+    /// Solves a system where the matrix a is tri diagonal, i.e. has one lower and one upper band.
+    /// The method is non-destructive, i.e. both matrix m and vector a are not changed.
+    /// </summary>
+    /// <param name="A">Tridiagonal matrix.</param>
+    /// <param name="a">Right part of the solution (remains unmodified).</param>
+    /// <param name="x">Vector to store the result, i.e. the solution to the problem A x = a.</param>
+    /// <remarks>
+    /// <para>References:</para>
+    /// <para>[1] Engeln-Müllges, Numerik-Algorithmen, 10th ed., page 165</para>
+    /// </remarks>
+    public static void SolveTriDiagonal(IMatrix<double> A, double[] a, double[] x)
+    {
+      object? tempStorage = null;
+      SolveTriDiagonal(A, a, x, ref tempStorage);
+    }
+
+    /// <summary>
+    /// Solves a system where the matrix a is tri diagonal, i.e. has one lower and one upper band.
+    /// The method is non-destructive, i.e. both matrix m and vector a are not changed.
+    /// </summary>
+    /// <param name="A">Tridiagonal matrix.</param>
+    /// <param name="a">Right part of the solution (remains unmodified).</param>
+    /// <param name="x">Vector to store the result, i.e. the solution to the problem A x = a.</param>
+    /// <param name="tempStorage">Object that accomodates temporary storage. Can be reused in repeated calls.</param>
+    /// <remarks>
+    /// <para>References:</para>
+    /// <para>[1] Engeln-Müllges, Numerik-Algorithmen, 10th ed., page 165</para>
+    /// </remarks>
+    public static void SolveTriDiagonal(IMatrix<double> A, double[] a, double[] x, ref object? tempStorage)
+    {
+      if(A is null)
+        throw new ArgumentNullException(nameof(A));
+      if (A.RowCount != A.ColumnCount)
+        throw new ArgumentException("Matrix A must be a square matrix", nameof(A));
+      if (a is null)
+        throw new ArgumentNullException(nameof(a));
+      if (x is null)
+        throw new ArgumentNullException(nameof(x));
+
+      // Start of algorithm 4.70, page 167, book of Engeln-Müllges, Numerik-Algorithmen, 10th ed.
+
+      var n = Math.Min(A.RowCount, A.ColumnCount);
+
+      double[] alpha, gamma, r;
+
+      if (tempStorage is Tuple<double[], double[], double[]> tup &&
+        tup.Item1?.Length >= n &&
+        tup.Item2?.Length >= n &&
+        tup.Item3?.Length >= n)
+      {
+        alpha = tup.Item1;
+        gamma = tup.Item2;
+        r = tup.Item3;
+      }
+      else
+      {
+        alpha = new double[n];
+        gamma = new double[n];
+        r = new double[n];
+        tempStorage = new Tuple<double[], double[], double[]>(alpha, gamma, r);
+      }
+
+      alpha[0] = A[0, 0];
+      gamma[0] = A[0, 1] / alpha[0];
+      for (int i = 1; i < n - 1; ++i)
+      {
+        alpha[i] = A[i, i] - A[i, i - 1] * gamma[i - 1];
+        gamma[i] = A[i, i + 1] / alpha[i];
+      }
+      alpha[n - 1] = A[n - 1, n - 1] - A[n - 1, n - 2] * gamma[n - 2];
+
+      // Forward elimination
+      r[0] = a[0] / A[0, 0];
+      for (int i = 1; i < n; ++i)
+      {
+        r[i] = (a[i] - A[i, i - 1] * r[i - 1]) / alpha[i];
+      }
+      // Backward elimination
+      x[n - 1] = r[n - 1];
+      for (int i = n - 2; i >= 0; --i)
+      {
+        x[i] = r[i] - gamma[i] * x[i + 1];
+      }
+    }
+
+    /// <summary>
+    /// Solves a system where the matrix a is pentadiagonal, i.e. has two lower and two upper bands.
+    /// The method is non-destructive, i.e. both matrix m and vector a are not changed.
+    /// </summary>
+    /// <param name="A">Pentadiagonal matrix.</param>
+    /// <param name="a">Right part of the solution (remains unmodified).</param>
+    /// <param name="x">Vector to store the result, i.e. the solution to the problem A x = a.</param>
+    /// <remarks>
+    /// <para>References:</para>
+    /// <para>[1] Engeln-Müllges, Numerik-Algorithmen, 10th ed., page 177</para>
+    /// </remarks>
+    public static void SolvePentaDiagonal(IMatrix<double> A, double[] a, double[] x)
+    {
+      object? tempStorage = null;
+      SolvePentaDiagonal(A, a, x, ref tempStorage);
+    }
+
+    /// <summary>
+    /// Solves a system where the matrix a is five diagonal, i.e. has two lower and two upper bands.
+    /// The method is non-destructive, i.e. both matrix m and vector a are not changed.
+    /// </summary>
+    /// <param name="A">Pentadiagonal matrix.</param>
+    /// <param name="a">Right part of the solution (remains unmodified).</param>
+    /// <param name="x">Vector to store the result, i.e. the solution to the problem A x = a.</param>
+    /// <param name="tempStorage">Object that accomodates temporary storage. Can be reused in repeated calls.</param>
+    /// <remarks>
+    /// <para>References:</para>
+    /// <para>[1] Engeln-Müllges, Numerik-Algorithmen, 10th ed., page 177</para>
+    /// </remarks>
+    public static void SolvePentaDiagonal(IMatrix<double> A, double[] a, double[] x, ref object tempStorage)
+    {
+      // Start of algorithm 4.77, page 178, book of Engeln-Müllges, Numerik-Algorithmen, 10th ed.
+
+      var n = Math.Min(A.RowCount, A.ColumnCount);
+
+      double[] alpha, beta, gamma, delta, epsilon, r;
+
+      if (tempStorage is Tuple<double[], double[], double[], double[], double[], double[]> tup &&
+        tup.Item1?.Length >= n &&
+        tup.Item2?.Length >= n &&
+        tup.Item3?.Length >= n &&
+        tup.Item4?.Length >= n &&
+        tup.Item5?.Length >= n &&
+        tup.Item6?.Length >= n)
+      {
+        alpha = tup.Item1;
+        beta = tup.Item2;
+        gamma = tup.Item3;
+        delta = tup.Item4;
+        epsilon = tup.Item5;
+        r = tup.Item6;
+      }
+      else
+      {
+        alpha = new double[n];
+        beta = new double[n];
+        gamma = new double[n];
+        delta = new double[n];
+        epsilon = new double[n];
+        r = new double[n];
+        tempStorage = new Tuple<double[], double[], double[], double[], double[], double[]>(alpha, beta, gamma, delta, epsilon, r);
+      }
+
+      alpha[0] = A[0, 0]; // 1.1
+      gamma[0] = A[0, 1] / alpha[0]; // 1.2
+      delta[0] = A[0, 2] / alpha[0]; // 1.3
+      beta[1] = A[1, 0]; // 1.4
+      alpha[1] = A[1, 1] - beta[1] * gamma[0]; // 1.5
+      gamma[1] = (A[1, 2] - beta[1] * delta[0]) / alpha[1]; // 1.6
+      delta[1] = A[1, 3] / alpha[1];
+      for (int i = 2; i < n - 2; ++i)
+      {
+        beta[i] = A[i, i - 1] - A[i, i - 2] * gamma[i - 2]; // 1.8.1
+        alpha[i] = A[i, i] - A[i, i - 2] * delta[i - 2] - beta[i] * gamma[i - 1]; // 1.8.2
+        gamma[i] = (A[i, i + 1] - beta[i] * delta[i - 1]) / alpha[i]; // 1.8.3
+        delta[i] = A[i, i + 2] / alpha[i]; // 1.8.4
+      }
+      beta[n - 2] = A[n - 2, n - 3] - A[n - 2, n - 4] * gamma[n - 4]; // 1.9
+      alpha[n - 2] = A[n - 2, n - 2] - A[n - 2, n - 4] * delta[n - 4] - beta[n - 2] * gamma[n - 3]; // 1.10
+      gamma[n - 2] = (A[n - 2, n - 1] - beta[n - 2] * delta[n - 3]) / alpha[n - 2]; // 1.11
+      beta[n - 1] = A[n - 1, n - 2] - A[n - 1, n - 3] * gamma[n - 3]; // 1.12
+      alpha[n - 1] = A[n - 1, n - 1] - A[n - 1, n - 3] * delta[n - 3] - beta[n - 1] * gamma[n - 2]; // 1.13
+
+      for (int i = 2; i < n; ++i) // 1.14
+      {
+        epsilon[i] = A[i, i-2];
+      }
+
+      // forward elimination
+      r[0] = a[0] / alpha[0]; // 2.1
+      r[1] = (a[1] - beta[1] * r[0]) / alpha[1]; // 2.2
+      for (int i = 2; i < n; ++i) // 2.3
+      {
+        r[i] = (a[i] - epsilon[i] * r[i - 2] - beta[i] * r[i - 1]) / alpha[i];
+      }
+
+      // backward elimination
+      x[n - 1] = r[n - 1]; // 3.1
+      x[n - 2] = r[n - 2] - gamma[n - 2] * x[n - 1]; // 3.2
+      for (int i = n - 3; i >= 0; --i) // 3.3
+      {
+        x[i] = r[i] - gamma[i] * x[i + 1] - delta[i] * x[i + 2];
+      }
+    }
+
     /// <summary>Solves a system of linear equations Ax = b with a band matrix A, using Gaussian elimination with partial pivoting.
     /// Attention! Both matrix A and vector b are destroyed (changed).</summary>
     /// <param name="A">Elements of matrix 'A'. The matrix is modified!</param>

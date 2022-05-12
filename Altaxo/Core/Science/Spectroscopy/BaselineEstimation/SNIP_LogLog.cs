@@ -112,8 +112,8 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
         {
           var iLeft = i - w;
           var iRight = i + w;
-          var yLeft = iLeft < 0 ? srcY[0] : srcY[iLeft];
-          var yRight = iRight > last ? srcY[last] : srcY[iRight];
+          var yLeft = iLeft >= 0 ? srcY[iLeft] : double.PositiveInfinity;
+          var yRight = iRight <= last ? srcY[iRight] : double.PositiveInfinity;
           var yMid = 0.5 * (yLeft + yRight);
           tmpY[i] = Math.Min(yMid, srcY[i]);
         }

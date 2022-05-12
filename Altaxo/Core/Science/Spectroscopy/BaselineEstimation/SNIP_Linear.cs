@@ -88,7 +88,7 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
     public override double[] Execute(double[] xArray, double[] yArray)
     {
       const double sqrt2 = 1.41421356237;
-      var srcY = yArray;
+      var srcY = (double[])yArray.Clone();
       var tmpY = new double[srcY.Length];
 
       int last = srcY.Length - 1;
@@ -109,8 +109,8 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
         {
           var iLeft = i - w;
           var iRight = i + w;
-          var yLeft = iLeft < 0 ? srcY[0] : srcY[iLeft];
-          var yRight = iRight > last ? srcY[last] : srcY[iRight];
+          var yLeft = iLeft >= 0 ? srcY[iLeft] : double.PositiveInfinity;
+          var yRight = iRight <= last ? srcY[iRight] : double.PositiveInfinity;
           var yMid = 0.5 * (yLeft + yRight);
           tmpY[i] = Math.Min(yMid, srcY[i]);
         }
