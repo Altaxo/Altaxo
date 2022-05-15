@@ -69,6 +69,15 @@
     <Compile Update="Gui\Analysis\Spectroscopy\Normalization\NormalizationControl.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Gui\Analysis\Spectroscopy\PeakFitting\PeakFittingControl.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Gui\Analysis\Spectroscopy\PeakSearching\PeakSearchingByTopologyControl.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Gui\Analysis\Spectroscopy\PeakSearching\PeakSearchingControl.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Gui\Analysis\Spectroscopy\Smoothing\SmoothingControl.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -125,6 +134,18 @@
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
     </Page>
+    <Page Update="Gui\Analysis\Spectroscopy\PeakFitting\PeakFittingControl.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Gui\Analysis\Spectroscopy\PeakSearching\PeakSearchingByTopologyControl.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Gui\Analysis\Spectroscopy\PeakSearching\PeakSearchingControl.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="Gui\Analysis\Spectroscopy\Smoothing\SmoothingControl.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
@@ -159,10 +180,6 @@
     <Page Update="Gui\Common\Drawing\PenSimpleConditionalControlDC.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
     </Page>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Gui\Analysis\Spectroscopy\PeakFinding\" />
   </ItemGroup>
   
   <UsingTask TaskName="GitVersionFile" AssemblyFile="..\..\MSBuildVersioning.dll" />

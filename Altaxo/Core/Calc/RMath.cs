@@ -205,6 +205,40 @@ namespace Altaxo.Calc
         return (1 - fraction) * leftValue + fraction * rightValue;
     }
 
+
+    /// <summary>
+    /// Interpolates values of an array.
+    /// </summary>
+    /// <param name="index">The index into the array. Can be fractional.</param>
+    /// <param name="array">The array.</param>
+    /// <param name="extendToSides">If true and the value of index is out of range, the values of the array
+    /// at the left side or the right side will be returned; otherwise, if the index is out of range, an exception will be thrown.</param>
+    /// <returns>The interpolated value at the fractional index.</returns>
+    public static double InterpolateLinear(double index, double[] array, bool extendToSides=false)
+    {
+      if (!(index >= 0))
+        {
+        if (extendToSides)
+          return array[0];
+        else
+          throw new ArgumentOutOfRangeException(nameof(index));
+        }
+      else if(!(index <= array.Length-1))
+      {
+        if (extendToSides)
+          return array[array.Length-1];
+        else
+          throw new ArgumentOutOfRangeException(nameof(index));
+      }
+      else if(index == array.Length-1)
+      {
+        return array[array.Length-1];
+      }
+
+      int idx = (int)index;
+      return InterpolateLinear(index - idx, array[idx], array[idx + 1]);
+    }
+
     #endregion Number tests
 
     public static double Log1p(double x)

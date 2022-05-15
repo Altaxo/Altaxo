@@ -32,6 +32,8 @@ using Altaxo.Gui.Common;
 using Altaxo.Science.Spectroscopy.BaselineEstimation;
 using Altaxo.Science.Spectroscopy.Cropping;
 using Altaxo.Science.Spectroscopy.Normalization;
+using Altaxo.Science.Spectroscopy.PeakFitting;
+using Altaxo.Science.Spectroscopy.PeakSearching;
 using Altaxo.Science.Spectroscopy.Smoothing;
 using Altaxo.Science.Spectroscopy.SpikeRemoval;
 
@@ -48,6 +50,10 @@ namespace Altaxo.Gui.Analysis.Spectroscopy
     public ICropping Cropping { get; init; } = new CroppingNone();
 
     public INormalization Normalization { get; init; } = new NormalizationNone();
+
+    public IPeakSearching PeakSearching { get; init; } = new PeakSearchingNone();
+
+    public IPeakFitting PeakFitting { get; init; } = new PeakFittingNone();
   }
 
   public interface ISpectralPreprocessingOptionsView : IDataContextAwareView
@@ -141,6 +147,22 @@ namespace Altaxo.Gui.Analysis.Spectroscopy
           { Controller = controller });
         }
 
+        {
+          var controller = new PeakSearching.PeakSearchingController();
+          controller.InitializeDocument(_doc.PeakSearching);
+          Current.Gui.FindAndAttachControlTo(controller);
+          controllers.Add(new SelectableListNodeWithController("PeakSearching", controller, false)
+          { Controller = controller });
+        }
+
+        {
+          var controller = new PeakFitting.PeakFittingController();
+          controller.InitializeDocument(_doc.PeakFitting);
+          Current.Gui.FindAndAttachControlTo(controller);
+          controllers.Add(new SelectableListNodeWithController("PeakFitting", controller, false)
+          { Controller = controller });
+        }
+
 
         TabControllers = new ItemsController<IMVCANController>(controllers, EhSelectedTabChanged);
         _selectedController = (IMVCANController)controllers[0].Tag;
@@ -181,6 +203,12 @@ namespace Altaxo.Gui.Analysis.Spectroscopy
         case ISmoothing sm:
           _doc = _doc with { Smoothing = sm };
           break;
+        case IPeakSearching ps:
+          _doc = _doc with { PeakSearching = ps };
+          break;
+        case IPeakFitting pf:
+          _doc = _doc with { PeakFitting = pf };
+          break;
 
       }
     }
@@ -196,7 +224,5 @@ namespace Altaxo.Gui.Analysis.Spectroscopy
 
       return ApplyEnd(true, disposeController);
     }
-
-   
   }
 }

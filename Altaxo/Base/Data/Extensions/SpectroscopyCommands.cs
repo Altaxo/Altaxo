@@ -3,8 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Altaxo.Calc;
 using Altaxo.Gui;
 using Altaxo.Gui.Analysis.Spectroscopy;
+using Altaxo.Science.Spectroscopy.PeakFitting;
+using Altaxo.Science.Spectroscopy.PeakSearching;
 
 namespace Altaxo.Data
 {
@@ -33,10 +36,14 @@ namespace Altaxo.Data
       var srcTable = ctrl.DataTable;
       var dstTable = new DataTable();
 
+      var peakTable = new DataTable();
+
       var dict = new Dictionary<DataColumn, DataColumn>();
 
+      int runningColumnNumber = -1;
       foreach(var selColIdx in selectedColumns)
       {
+        ++runningColumnNumber;
         var yCol = ctrl.DataTable[selColIdx];
         var xCol = ctrl.DataTable.DataColumns.FindXColumnOf(yCol);
 
@@ -96,12 +103,67 @@ namespace Altaxo.Data
 
         for (int i = 0; i < len; i++)
           yDst[i] = yArr[i];
+
+        // if peak searching is enabled, make further processing
+       
+        {
+          var peakResults = doc.PeakSearching.Execute(yArr);
+          var cPos = peakTable.DataColumns.EnsureExistence($"Position{runningColumnNumber}", typeof(DoubleColumn), ColumnKind.X, runningColumnNumber);
+          var cPro = peakTable.DataColumns.EnsureExistence($"Prominence{runningColumnNumber}", typeof(DoubleColumn), ColumnKind.V, runningColumnNumber);
+          var cHei = peakTable.DataColumns.EnsureExistence($"Height{runningColumnNumber}", typeof(DoubleColumn), ColumnKind.V, runningColumnNumber);
+          var cWid = peakTable.DataColumns.EnsureExistence($"Width{runningColumnNumber}", typeof(DoubleColumn), ColumnKind.V, runningColumnNumber);
+
+          var descriptions = peakResults.PeakDescriptions;
+          for(int i = 0; i < descriptions.Count; i++)
+          {
+            cPos[i] = RMath.InterpolateLinear(descriptions[i].PositionIndex, xArr);
+            cPro[i] = descriptions[i].Prominence;
+            cHei[i] = descriptions[i].Height;
+            cWid[i] = Math.Abs(RMath.InterpolateLinear(descriptions[i].PositionIndex - 0.5*descriptions[i].Width, xArr) -
+                      RMath.InterpolateLinear(descriptions[i].PositionIndex + 0.5 * descriptions[i].Width, xArr));
+          }
+
+          if (doc.PeakFitting is not PeakFittingNone)
+          {
+            var fitResults = doc.PeakFitting.Execute(xArr, yArr, peakResults.PeakDescriptions);
+
+            var cFPos = peakTable.DataColumns.EnsureExistence($"FitPosition{runningColumnNumber}", typeof(DoubleColumn), ColumnKind.X, runningColumnNumber);
+            var cFHei = peakTable.DataColumns.EnsureExistence($"FitHeight{runningColumnNumber}", typeof(DoubleColumn), ColumnKind.V, runningColumnNumber);
+            var cFWid = peakTable.DataColumns.EnsureExistence($"FitWidth{runningColumnNumber}", typeof(DoubleColumn), ColumnKind.V, runningColumnNumber);
+            var cFNot = peakTable.DataColumns.EnsureExistence($"FitNotes{runningColumnNumber}", typeof(TextColumn), ColumnKind.V, runningColumnNumber);
+
+
+            for (int i = 0; i < descriptions.Count; i++)
+            {
+              var r = fitResults.PeakDescriptions[i];
+              cFPos[i] = r.PositionInXUnits;
+              cFHei[i] = r.Height;
+              cFWid[i] = r.Width;
+              cFNot[i] = r.Notes;
+            }
+          }
+        }
+      }
+      {
+        var dstName = srcTable.Name + "_Preprocessed";
+        if (Current.Project.DataTableCollection.Contains(dstName))
+          dstName = Current.Project.DataTableCollection.FindNewItemName(dstName);
+        dstTable.Name = dstName;
+        Current.Project.DataTableCollection.Add(dstTable);
+        Current.ProjectService.OpenOrCreateWorksheetForTable(dstTable);
       }
 
-      var dstName = srcTable.Name + "_Preprocessed";
-      dstTable.Name = Current.Project.DataTableCollection.FindNewItemName(dstName);
-      Current.Project.DataTableCollection.Add(dstTable);
-      Current.ProjectService.OpenOrCreateWorksheetForTable(dstTable);
+      if(peakTable.DataRowCount > 0)
+      {
+        var dstName = srcTable.Name + "_Peaks";
+        if (Current.Project.DataTableCollection.Contains(dstName))
+          dstName = Current.Project.DataTableCollection.FindNewItemName(dstName);
+        peakTable.Name = dstName;
+        Current.Project.DataTableCollection.Add(peakTable);
+        Current.ProjectService.OpenOrCreateWorksheetForTable(peakTable);
+      }
+      
+
     }
   }
 }
