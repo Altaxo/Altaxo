@@ -66,14 +66,23 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
     public double PositionIndex { get; init; }
 
     public double PositionInXUnits { get; init; }
+    public double PositionInXUnitsVariance { get; init; }
 
     /// <summary>The height parameter.</summary>
     public double Height { get; init; }
 
+    /// <summary>The height variance.</summary>
+    public double HeightVariance { get; init; }
+
     /// <summary>The width parameter.</summary>
     public double Width { get; init; }
 
+    /// <summary>The width variance.</summary>
+    public double WidthVariance { get; init; }
+
+
     public double Area { get; init; }
 
+    public PeakFitFunctions.FunctionWrapper? FitFunction { get; init; }
   }
 }

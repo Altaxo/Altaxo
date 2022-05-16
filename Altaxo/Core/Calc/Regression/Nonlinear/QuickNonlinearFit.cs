@@ -10,6 +10,56 @@ namespace Altaxo.Calc.Regression.Nonlinear
   {
     IFitFunction _fitFunction;
 
+    double _sumChiSquare;
+    double _sigmaSquare;
+
+    double[] _parameters = new double[0];
+    double[] _parameterVariances = new double[0];
+
+    bool _isExecuted;
+
+    void CheckExecuted()
+    {
+      if (!_isExecuted)
+        throw new InvalidOperationException("Please execute the fit before accessing the results");
+    }
+
+    public double SumChiSquare
+    {
+      get
+      {
+        CheckExecuted();
+        return _sumChiSquare;
+      }
+    }
+
+    public double SigmaSquare
+    {
+      get
+      {
+        CheckExecuted();
+        return _sigmaSquare;
+      }
+    }
+
+    public IReadOnlyList<double> ParameterVariances
+    {
+      get
+      {
+        CheckExecuted();
+        return _parameterVariances;
+      }
+    }
+
+    public IReadOnlyList<double> Parameters
+    {
+      get
+      {
+        CheckExecuted();
+        return _parameters;
+      }
+    }
+
 
     public QuickNonlinearRegression(IFitFunction fitFunction)
     {
@@ -23,6 +73,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
       public double[] Fit(double[] xValues, double[] yValues, double[] initialGuess, bool[] isFixed)
     {
+      _isExecuted = false;
       if (xValues.Length != yValues.Length)
         throw new ArgumentException("Length of x array is unequal length of y array");
 
@@ -35,14 +86,19 @@ namespace Altaxo.Calc.Regression.Nonlinear
       int info = 0;
 
       NLFit.LevenbergMarquardtFit(new NLFit.LMFunction(adapter.EvaluateFunctionDifferences), param, ys, 1E-10, ref info);
+      var resultingCovariances = new double[param.Length * param.Length];
+      NLFit.ComputeCovariances(new NLFit.LMFunction(adapter.EvaluateFunctionDifferences), param, ys.Length, param.Length, resultingCovariances, out _sumChiSquare, out _sigmaSquare);
 
-      var result = (double[])initialGuess.Clone();
+      _parameters = (double[])initialGuess.Clone();
+      _parameterVariances = new double[_parameters.Length];
       for (int i = 0; i < param.Length; ++i)
       {
-        result[adapter.ParameterMapping[i]] = param[i];
+        _parameters[adapter.ParameterMapping[i]] = param[i];
+        _parameterVariances[adapter.ParameterMapping[i]] = resultingCovariances[i + i*param.Length];
       }
 
-      return result;
+      _isExecuted = true;
+      return _parameters;
     }
 
    private class Adapter

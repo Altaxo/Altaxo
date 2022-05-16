@@ -426,17 +426,20 @@ namespace Altaxo.Worksheet.Commands
     /// <param name="bLine">If true, the line style is activated (the points are connected by lines).</param>
     /// <param name="bScatter">If true, the scatter style is activated (the points are plotted as symbols).</param>
     /// <param name="preferredGraphName">Preferred name of the graph. Can be null if you have no preference.</param>
-    public static void PlotLine(DataTable table, Altaxo.Collections.IAscendingIntegerCollection selectedColumns, bool bLine, bool bScatter, string? preferredGraphName)
+    public static Altaxo.Gui.Graph.Gdi.Viewing.IGraphController PlotLine(DataTable table, Altaxo.Collections.IAscendingIntegerCollection selectedColumns, bool bLine, bool bScatter, string? preferredGraphName)
     {
       var graph = Altaxo.Graph.Gdi.GraphTemplates.TemplateWithXYPlotLayerWithG2DCartesicCoordinateSystem.CreateGraph(table.GetPropertyContext(), preferredGraphName, table.Name, true);
       var context = graph.GetPropertyContext();
 
+      Altaxo.Gui.Graph.Gdi.Viewing.IGraphController result;
       if (bLine && bScatter)
-        Plot(table, selectedColumns, graph, PlotStyle_Line_Symbol(context), GroupStyle_Color_Line_Symbol);
+        result = Plot(table, selectedColumns, graph, PlotStyle_Line_Symbol(context), GroupStyle_Color_Line_Symbol);
       else if (bLine)
-        Plot(table, selectedColumns, graph, PlotStyle_Line(context), GroupStyle_Color_Line);
+        result = Plot(table, selectedColumns, graph, PlotStyle_Line(context), GroupStyle_Color_Line);
       else
-        Plot(table, selectedColumns, graph, PlotStyle_Symbol(context), GroupStyle_Color_Symbol);
+        result = Plot(table, selectedColumns, graph, PlotStyle_Symbol(context), GroupStyle_Color_Symbol);
+
+      return result;
     }
 
     /// <summary>

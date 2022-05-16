@@ -73,5 +73,7 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
     /// the width.</summary>
     public double RelativeHeightOfWidthDetermination { get; init; }
 
+    public double AbsoluteHeightOfWidthDetermination { get; init; }
+
   }
 }

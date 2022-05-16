@@ -34,7 +34,7 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
   /// <seealso cref="Altaxo.Science.Spectroscopy.Normalization.INormalization" />
   public record PeakSearchingByTopology : IPeakSearching
   {
-    private double? _minimalProminence;
+    private double? _minimalProminence = 0.01;
 
     public double? MinimalProminence
     {
@@ -93,6 +93,7 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
           Height = pf.PeakHeights![i],
           Width = pf.Widths![i],
           RelativeHeightOfWidthDetermination = 0.5,
+          AbsoluteHeightOfWidthDetermination = pf.WidthHeights![i],
         };
       }
 
