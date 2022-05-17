@@ -26,6 +26,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Altaxo.Calc;
+using Altaxo.Calc.FitFunctions.Peaks;
+using Altaxo.Calc.FitFunctions.Probability;
 using Altaxo.Calc.Regression.Nonlinear;
 
 namespace Altaxo.Science.Spectroscopy.PeakFitting
@@ -36,6 +38,8 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
   /// </summary>
   public record PeakFittingTogetherWithSeparateVariances : IPeakFitting
   {
+    IFitFunctionPeak _fitFunction = new VoigtArea();
+
     #region Serialization
 
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PeakFittingTogetherWithSeparateVariances), 0)]
@@ -44,27 +48,36 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (PeakFittingTogetherWithSeparateVariances)obj;
+        info.AddValue("FitFunction", s.FitFunction);
       }
 
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var minimalProminence = info.GetNullableDouble("MinimalProminence");
-        return new PeakFittingTogetherWithSeparateVariances()
+        var fitFunction = info.GetValue<IFitFunctionPeak>("FitFunction", null); return new PeakFittingTogetherWithSeparateVariances()
         {
+          FitFunction = fitFunction,
         };
       }
     }
     #endregion
 
+    public IFitFunctionPeak FitFunction
+    {
+      get { return _fitFunction; }
+      init {  _fitFunction = value ?? throw new ArgumentNullException(nameof(FitFunction)); }
+    }
+
     /// <inheritdoc/>
     public IPeakFittingResult Execute(double[] xArray, double[] yArray, IEnumerable<PeakSearching.PeakDescription> peakDescriptions)
     {
-      var fitFunc = new PeakFitFunctions.Gauss(1);
-      int numberOfParametersPerPeak = 3;
+      var fitFunc = _fitFunction.WithNumberOfTerms(1);
+      int numberOfParametersPerPeak = fitFunc.NumberOfParameters;
 
       var xyValues = new HashSet<(double X, double Y)>();
       var paramList  = new List<double>();
       var dictionaryOfNotFittedPeaks = new Dictionary<PeakSearching.PeakDescription, PeakFitting.PeakDescription>();
+      var peakParam = new List<(int FirstPoint, int LastPoint, double FirstPos, double LastPos)>();
+
 
       foreach (var description in peakDescriptions)
       {
@@ -81,12 +94,16 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
           xyValues.Add((xArray[i], yArray[i]));
 
         var xPosition = RMath.InterpolateLinear(description.PositionIndex, xArray);
-        var xWidth = Math.Abs(RMath.InterpolateLinear(description.PositionIndex + 0.5 * description.Width, xArray) -
-          RMath.InterpolateLinear(description.PositionIndex - 0.5 * description.Width, xArray));
+        var xRight = RMath.InterpolateLinear(description.PositionIndex + 0.5 * description.Width, xArray);
+        var xLeft = RMath.InterpolateLinear(description.PositionIndex - 0.5 * description.Width, xArray);
+        var xWidth = Math.Abs(xRight - xLeft);
 
-        paramList.Add(description.Height);
-        paramList.Add(xPosition);
-        paramList.Add(fitFunc.GetWidthParameterFromWidthAtRelativeHeight(xWidth, description.AbsoluteHeightOfWidthDetermination / description.Height));
+        var paras = fitFunc.GetInitialParametersFromHeightPositionAndWidthAtRelativeHeight(description.Height, xPosition, xWidth, description.AbsoluteHeightOfWidthDetermination / description.Height);
+        if (paras.Length != numberOfParametersPerPeak)
+          throw new InvalidProgramException();
+        foreach(var p in paras)
+          paramList.Add(p);
+        peakParam.Add((first, last, xLeft, xRight));
 
       }
 
@@ -101,7 +118,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
       }
 
       var param = paramList.ToArray();
-      fitFunc = new PeakFitFunctions.Gauss(param.Length/3);
+      fitFunc = _fitFunction.WithNumberOfTerms(param.Length/numberOfParametersPerPeak);
       var fit = new QuickNonlinearRegression(fitFunc);
       param = fit.Fit(xCut, yCut, param);
       var fitFunctionWrapper = new PeakFitFunctions.FunctionWrapper(fitFunc, param);
@@ -127,10 +144,6 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
         yCut = new double[len];
         Array.Copy(xArray, first, xCut, 0, len);
         Array.Copy(yArray, first, yCut, 0, len);
-
-        var xPosition = RMath.InterpolateLinear(description.PositionIndex, xArray);
-        var xWidth = Math.Abs(RMath.InterpolateLinear(description.PositionIndex + 0.5 * description.Width, xArray) -
-          RMath.InterpolateLinear(description.PositionIndex - 0.5 * description.Width, xArray));
 
         // Save parameter
         Array.Copy(param, 0, parameterTemp, 0, param.Length);
@@ -166,15 +179,16 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
           list.Add(new PeakDescription
           {
             SearchDescription = description,
-            Height = param[idx + 0],
-            HeightVariance = variancesSeparate[idx + 0],
-            PositionInXUnits = param[idx + 1],
-            PositionInXUnitsVariance = variancesSeparate[idx + 1],
-            Width = param[idx + 2],
-            WidthVariance = variancesSeparate[idx + 2],
-            FitFunction = fitFunctionWrapper,
-          }); ;
-          idx += numberOfParametersPerPeak;
+            FirstFitPoint = peakParam[idx].FirstPoint,
+            LastFitPoint = peakParam[idx].LastPoint,
+            FirstFitPosition = peakParam[idx].FirstPos,
+            LastFitPosition = peakParam[idx].LastPos,
+            PeakParameter = param.Skip(idx* numberOfParametersPerPeak).Take(numberOfParametersPerPeak).ToArray(),
+            PeakParameterVariance = variancesSeparate.Skip(idx* numberOfParametersPerPeak).Take(numberOfParametersPerPeak).ToArray(),
+            FitFunction = fitFunc,
+            FitFunctionParameter = (double[])param.Clone(),
+          });
+          ++idx; 
         }
       }
 

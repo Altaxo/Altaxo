@@ -22,23 +22,18 @@
 
 #endregion Copyright
 
+using System.Windows.Controls;
 
-using System.Collections.Generic;
-
-namespace Altaxo.Science.Spectroscopy.PeakFitting
+namespace Altaxo.Gui.Analysis.Spectroscopy.PeakFitting
 {
   /// <summary>
-  /// Interface to peak searching methods.
+  /// Interaction logic for SpikeRemovalOptionsControl.xaml
   /// </summary>
-  public interface IPeakFitting
+  public partial class PeakFittingSeparatelyControl : UserControl, IPeakFittingSeparatelyView
   {
-    /// <summary>
-    /// Executes the normalization algorithm.
-    /// </summary>
-    /// <param name="xArray">The array of x-values.</param>
-    /// <param name="yArray">The array of y-values.</param>
-    /// <param name="peakDescriptions">Description of the peaks (output of peak searching algorithms, see <see cref="PeakSearching.IPeakSearching"/>).</param>
-    /// <returns>The results of the peak fitting.</returns>
-    IPeakFittingResult Execute(double[] xArray, double[] yArray, IEnumerable<PeakSearching.PeakDescription> peakDescriptions);
+    public PeakFittingSeparatelyControl()
+    {
+      InitializeComponent();
+    }
   }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Altaxo.Calc;
+using Altaxo.Calc.Regression.Nonlinear;
 using Altaxo.Collections;
 using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Gdi.Plot;
@@ -16,6 +17,8 @@ namespace Altaxo.Data
 {
   public class SpectroscopyCommands
   {
+    private static SpectralPreprocessingOptions? _lastOptions = null;
+
     /// <summary>
     /// Shows the dialog to get the preprocessing options.
     /// </summary>
@@ -33,13 +36,14 @@ namespace Altaxo.Data
         return false;
       }
 
-      var doc = new SpectralPreprocessingOptions();
+      var doc = _lastOptions?? new SpectralPreprocessingOptions();
       var controller = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { doc }, typeof(IMVCANController));
 
       if (false == Current.Gui.ShowDialog(controller, "Spectral preprocessing"))
         return false;
 
       options = (SpectralPreprocessingOptions)controller.ModelObject;
+      _lastOptions = options;
       return true;
     }
 
@@ -156,26 +160,49 @@ namespace Altaxo.Data
           {
             var fitResults = doc.PeakFitting.Execute(xArr, yArr, peakResults.PeakDescriptions);
 
-            var cFPos = peakTable.DataColumns.EnsureExistence($"FitPosition{runningColumnNumber}", typeof(DoubleColumn), ColumnKind.X, runningColumnNumber);
-            var cFPosVar = peakTable.DataColumns.EnsureExistence($"FitPosition.Err{runningColumnNumber}", typeof(DoubleColumn), ColumnKind.Err, runningColumnNumber);
-            var cFHei = peakTable.DataColumns.EnsureExistence($"FitHeight{runningColumnNumber}", typeof(DoubleColumn), ColumnKind.V, runningColumnNumber);
-            var cFHeiVar = peakTable.DataColumns.EnsureExistence($"FitHeight.Err{runningColumnNumber}", typeof(DoubleColumn), ColumnKind.Err, runningColumnNumber);
-            var cFWid = peakTable.DataColumns.EnsureExistence($"FitWidth{runningColumnNumber}", typeof(DoubleColumn), ColumnKind.V, runningColumnNumber);
-            var cFWidVar = peakTable.DataColumns.EnsureExistence($"FitWidth.Err{runningColumnNumber}", typeof(DoubleColumn), ColumnKind.Err, runningColumnNumber);
             var cFNot = peakTable.DataColumns.EnsureExistence($"FitNotes{runningColumnNumber}", typeof(TextColumn), ColumnKind.V, runningColumnNumber);
+            var cFPos = peakTable.DataColumns.EnsureExistence($"FitPosition{runningColumnNumber}", typeof(DoubleColumn), ColumnKind.X, runningColumnNumber);
+            var cFArea = peakTable.DataColumns.EnsureExistence($"FitArea{runningColumnNumber}", typeof(DoubleColumn), ColumnKind.V, runningColumnNumber);
+            var cFHei = peakTable.DataColumns.EnsureExistence($"FitHeight{runningColumnNumber}", typeof(DoubleColumn), ColumnKind.V, runningColumnNumber);
+            var cFWid = peakTable.DataColumns.EnsureExistence($"FitWidth{runningColumnNumber}", typeof(DoubleColumn), ColumnKind.V, runningColumnNumber);
+            var cFirstPoint = peakTable.DataColumns.EnsureExistence($"FitFirstPoint{runningColumnNumber}", typeof(DoubleColumn), ColumnKind.V, runningColumnNumber);
+            var cLastPoint = peakTable.DataColumns.EnsureExistence($"FitLastPoint{runningColumnNumber}", typeof(DoubleColumn), ColumnKind.V, runningColumnNumber);
+            var cNumberOfPoints = peakTable.DataColumns.EnsureExistence($"FitNumberOfPoints{runningColumnNumber}", typeof(DoubleColumn), ColumnKind.V, runningColumnNumber);
+
+
 
 
             for (int i = 0; i < descriptions.Count; i++)
             {
               var r = fitResults.PeakDescriptions[i];
-              cFPos[i] = r.PositionInXUnits;
-              cFPosVar[i] = r.PositionInXUnitsVariance;
-              cFHei[i] = r.Height;
-              cFHeiVar[i] = r.HeightVariance;
-              cFWid[i] = r.Width;
-              cFWidVar[i] = r.WidthVariance;
+              
+
+              if(r.FitFunction is { } fitFunction)
+              {
+                var (pos, area, height, fwhm) = fitFunction.GetPositionAreaHeightFWHMFromSinglePeakParameters(r.PeakParameter);
+
+                cFPos[i] = pos;
+                cFArea[i] = area;
+                cFHei[i] = height;
+                cFWid[i] = fwhm;
+                cFirstPoint[i] = r.FirstFitPoint;
+                cLastPoint[i] = r.LastFitPoint;
+                cNumberOfPoints[i] = Math.Abs(r.LastFitPoint - r.FirstFitPoint);
+
+                var parameterNames = fitFunction.ParameterNamesForOnePeak;
+                for(int j=0;j<parameterNames.Length;j++)
+                {
+                  var cParaValue = peakTable.DataColumns.EnsureExistence($"{parameterNames[j]}{runningColumnNumber}", typeof(DoubleColumn), ColumnKind.V, runningColumnNumber);
+                  var cParaVariance = peakTable.DataColumns.EnsureExistence($"{parameterNames[j]}{runningColumnNumber}.Err", typeof(DoubleColumn), ColumnKind.Err, runningColumnNumber);
+
+                  cParaValue[i] = r.PeakParameter[j];
+                  cParaVariance[i] = r.PeakParameterVariance[j];
+                }
+              }
               cFNot[i] = r.Notes;
             }
+
+
 
 
             // -----------------------------------------------------------------------------
@@ -185,7 +212,7 @@ namespace Altaxo.Data
             var selColumnsForPeakGraph = new AscendingIntegerCollection();
             selColumnsForPeakGraph.Add(dstTable.DataColumns.GetColumnNumber(yDst));
             string preferredGraphName = "GPeaks";
-            var graphController = PlotCommands.PlotLine(dstTable, selectedColumns, bLine: false, bScatter: true, preferredGraphName);
+            var graphController = PlotCommands.PlotLine(dstTable, selColumnsForPeakGraph, bLine: false, bScatter: true, preferredGraphName);
             var graph = graphController.Doc;
             var layer = (XYPlotLayer)graph.RootLayer.Layers[0];
             var pi = Altaxo.Collections.TreeNodeExtensions.TakeFromHereToFirstLeaves<IGPlotItem>(layer.PlotItems).OfType<XYColumnPlotItem>().FirstOrDefault();
@@ -202,13 +229,21 @@ namespace Altaxo.Data
             var group = new PlotItemCollection();
             layer.PlotItems.Add(group);
             // add fit function(s)
-            var fitFunctionHashTable = new HashSet<IScalarFunctionDD>();
+            var fitFunctionHashTable = new HashSet<(IFitFunction FitFunction, double[] Parameter)>();
             foreach (var peakDesc in fitResults.PeakDescriptions.Where(pd => pd.FitFunction is not null))
             {
-              if (!fitFunctionHashTable.Contains(peakDesc.FitFunction))
+              if (!fitFunctionHashTable.Contains((peakDesc.FitFunction, peakDesc.FitFunctionParameter)))
               {
-                fitFunctionHashTable.Add(peakDesc.FitFunction);
-                var data = new XYFunctionPlotData(peakDesc.FitFunction);
+                fitFunctionHashTable.Add((peakDesc.FitFunction, peakDesc.FitFunctionParameter));
+                // var data = new XYFunctionPlotData(peakDesc.FitFunction);
+                var fitElement = new FitElement(peakDesc.FitFunction);
+                var fitDocument = new NonlinearFitDocument();
+                fitDocument.FitEnsemble.Add(fitElement);
+                fitDocument.SetDefaultParametersForFitElement(0);
+                for(int i=0;i< peakDesc.FitFunctionParameter.Length; i++)
+                fitDocument.CurrentParameters[i].Parameter = peakDesc.FitFunctionParameter[i];
+                var data = new XYNonlinearFitFunctionPlotData(System.Guid.NewGuid().ToString(), fitDocument, 0,0,null,0,null);
+
                 var plotStyle = PlotCommands.PlotStyle_Line(graph.GetPropertyContext());
                 var lineStyle = plotStyle.OfType<LinePlotStyle>().FirstOrDefault();
                 if(lineStyle is not null && lineStyle.Color.ParentColorSet is { } parentCSet )

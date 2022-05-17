@@ -72,6 +72,9 @@
     <Compile Update="Gui\Analysis\Spectroscopy\PeakFitting\PeakFittingControl.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Gui\Analysis\Spectroscopy\PeakFitting\PeakFittingSeparatelyControl.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Gui\Analysis\Spectroscopy\PeakSearching\PeakSearchingByTopologyControl.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -135,6 +138,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Gui\Analysis\Spectroscopy\PeakFitting\PeakFittingControl.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Gui\Analysis\Spectroscopy\PeakFitting\PeakFittingSeparatelyControl.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
     </Page>

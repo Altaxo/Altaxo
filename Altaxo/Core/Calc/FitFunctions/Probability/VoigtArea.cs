@@ -26,38 +26,38 @@
 using System;
 using Altaxo.Calc.FitFunctions.Peaks;
 using Altaxo.Calc.Regression.Nonlinear;
-using Altaxo.Main;
 
 namespace Altaxo.Calc.FitFunctions.Probability
 {
   /// <summary>
-  /// Fit fuction with one or more gaussian shaped peaks (bell shape), with a background polynomial
+  /// Fit fuction with one or more Voigt shaped peaks, with a background polynomial
   /// of variable order.
   /// </summary>
   [FitFunctionClass]
-  public class GaussArea
-        : IFitFunctionWithGradient, IImmutable, IFitFunctionPeak
+  public record VoigtArea : IFitFunction, IFitFunctionPeak
   {
+    const string ParameterBaseName0 = "A";
+    const string ParameterBaseName1 = "xc";
+    const string ParameterBaseName2 = "w";
+    const string ParameterBaseName3 = "gamma";
+
+
     /// <summary>The order of the background polynomial.</summary>
     private readonly int _orderOfBackgroundPolynomial;
     /// <summary>The order of the polynomial with negative exponents.</summary>
     private readonly int _numberOfTerms;
-
-    const string ParameterBaseName0 = "A";
-    const string ParameterBaseName1 = "xc";
-    const string ParameterBaseName2 = "w";
 
     #region Serialization
 
     /// <summary>
     /// 2021-06-12 Initial version
     /// </summary>
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(GaussArea), 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(VoigtArea), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (GaussArea)obj;
+        var s = (VoigtArea)obj;
         info.AddValue("NumberOfTerms", s._numberOfTerms);
         info.AddValue("OrderOfBackgroundPolynomial", s._orderOfBackgroundPolynomial);
       }
@@ -66,19 +66,19 @@ namespace Altaxo.Calc.FitFunctions.Probability
       {
         var numberOfTerms = info.GetInt32("NumberOfTerms");
         var orderOfBackgroundPolynomial = info.GetInt32("OrderOfBackgroundPolynomial");
-        return new GaussArea(numberOfTerms, orderOfBackgroundPolynomial);
+        return new VoigtArea(numberOfTerms, orderOfBackgroundPolynomial);
       }
     }
 
     #endregion Serialization
 
-    public GaussArea()
+    public VoigtArea()
     {
       _numberOfTerms = 1;
       _orderOfBackgroundPolynomial = -1;
     }
 
-    public GaussArea(int numberOfGaussianTerms, int orderOfBackgroundPolynomial)
+    public VoigtArea(int numberOfGaussianTerms, int orderOfBackgroundPolynomial)
     {
       _numberOfTerms = numberOfGaussianTerms;
       _orderOfBackgroundPolynomial = orderOfBackgroundPolynomial;
@@ -86,22 +86,23 @@ namespace Altaxo.Calc.FitFunctions.Probability
       if (!(_orderOfBackgroundPolynomial >= -1))
         throw new ArgumentOutOfRangeException("Order of background polynomial has to be greater than or equal to zero, or -1 in order to deactivate it.");
       if (!(_numberOfTerms >= 1))
-        throw new ArgumentOutOfRangeException("Number of gaussian terms has to be greater than or equal to 1");
+        throw new ArgumentOutOfRangeException("Number of terms has to be greater than or equal to 1");
 
     }
 
-    [FitFunctionCreator("GaussArea", "General", 1, 1, 4)]
-    [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Probability.GaussArea}")]
+    [FitFunctionCreator("VoigtArea", "General", 1, 1, 4)]
+    [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Probability.Voigt}")]
     public static IFitFunction Create_1_0()
     {
-      return new GaussArea(1, 0);
+      return new VoigtArea(1, 0);
     }
 
-    [FitFunctionCreator("GaussArea", "Probability", 1, 1, 4)]
-    [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Probability.GaussArea}")]
+    [FitFunctionCreator("VoigtArea", "Peaks", 1, 1, 4)]
+    [FitFunctionCreator("VoigtArea", "Probability", 1, 1, 4)]
+    [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Probability.Voigt}")]
     public static IFitFunction Create_1_M1()
     {
-      return new GaussArea(1, -1);
+      return new VoigtArea(1, -1);
     }
 
     /// <summary>
@@ -123,14 +124,14 @@ namespace Altaxo.Calc.FitFunctions.Probability
     /// </summary>
     /// <param name="orderOfBackgroundPolynomial">The order of the background polynomial. If set to -1, the background polynomial will be disabled.</param>
     /// <returns>New instance with the background polynomial of the provided order.</returns>
-    public GaussArea WithOrderOfBackgroundPolynomial(int orderOfBackgroundPolynomial)
+    public VoigtArea WithOrderOfBackgroundPolynomial(int orderOfBackgroundPolynomial)
     {
       if (!(orderOfBackgroundPolynomial >= -1))
         throw new ArgumentOutOfRangeException($"{nameof(orderOfBackgroundPolynomial)} must be greater than or equal to 0, or -1 in order to deactivate it.");
 
       if (!(_orderOfBackgroundPolynomial == orderOfBackgroundPolynomial))
       {
-        return new GaussArea(_numberOfTerms, orderOfBackgroundPolynomial);
+        return new VoigtArea(_numberOfTerms, orderOfBackgroundPolynomial);
       }
       else
       {
@@ -139,7 +140,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
     }
 
     /// <summary>
-    /// Gets the number of Gaussian terms.
+    /// Gets the number of Voigt terms.
     /// </summary>
     public int NumberOfTerms
     {
@@ -179,7 +180,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
     {
       get
       {
-        return _numberOfTerms * 3 + _orderOfBackgroundPolynomial + 1;
+        return _numberOfTerms * 4 + _orderOfBackgroundPolynomial + 1;
       }
     }
 
@@ -195,15 +196,16 @@ namespace Altaxo.Calc.FitFunctions.Probability
 
     public string ParameterName(int i)
     {
-      int k = i - 3 * _numberOfTerms;
+      int k = i - 4 * _numberOfTerms;
       if (k < 0)
       {
-        int j = i / 3;
-        return (i % 3) switch
+        int j = i / 4;
+        return (i % 4) switch
         {
           0 => FormattableString.Invariant($"{ParameterBaseName0}{j}"),
           1 => FormattableString.Invariant($"{ParameterBaseName1}{j}"),
           2 => FormattableString.Invariant($"{ParameterBaseName2}{j}"),
+          3 => FormattableString.Invariant($"{ParameterBaseName3}{j}"),
           _ => throw new InvalidProgramException()
         };
       }
@@ -215,8 +217,8 @@ namespace Altaxo.Calc.FitFunctions.Probability
 
     public double DefaultParameterValue(int i)
     {
-      int k = i - 3 * _numberOfTerms;
-      if (k < 0 && i % 3 == 2)
+      int k = i - 4 * _numberOfTerms;
+      if (k < 0 && i % 4 == 2)
         return 1;
       else
         return 0;
@@ -230,16 +232,15 @@ namespace Altaxo.Calc.FitFunctions.Probability
     public void Evaluate(double[] X, double[] P, double[] Y)
     {
       // evaluation of gaussian terms
-      double sumGauss = 0, sumPolynomial = 0;
-      for (int i = 0, j = 0; i < _numberOfTerms; ++i, j += 3)
+      double sumTerms = 0, sumPolynomial = 0;
+      for (int i = 0, j = 0; i < _numberOfTerms; ++i, j += 4)
       {
-        double x = (X[0] - P[j + 1]) / P[j + 2];
-        sumGauss += P[j] / P[j + 2] * Math.Exp(-0.5 * x * x);
+        sumTerms += P[j] * Altaxo.Calc.ComplexErrorFunctionRelated.Voigt(X[0] - P[j + 1], P[j + 2], P[j + 3]);
       }
 
       if (_orderOfBackgroundPolynomial >= 0)
       {
-        int offset = 3 * _numberOfTerms;
+        int offset = 4 * _numberOfTerms;
         // evaluation of terms x^0 .. x^n
         sumPolynomial = P[_orderOfBackgroundPolynomial + offset];
         for (int i = _orderOfBackgroundPolynomial - 1; i >= 0; i--)
@@ -248,7 +249,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
           sumPolynomial += P[i + offset];
         }
       }
-      Y[0] = sumGauss / Math.Sqrt(2 * Math.PI) + sumPolynomial;
+      Y[0] = sumTerms + sumPolynomial;
     }
 
     /// <summary>
@@ -258,28 +259,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
 
     #endregion IFitFunction Members
 
-    public void EvaluateGradient(double[] X, double[] P, double[][] DY)
-    {
-      // at first, the gaussian terms
-      for (int i = 0, j = 0; i < _numberOfTerms; ++i, j += 3)
-      {
-        var x = (X[0] - P[j + 1]) / P[j + 2];
-        var expTerm = Math.Exp(-0.5 * x * x) / (P[j + 2] * Math.Sqrt(2 * Math.PI));
-        DY[0][j + 0] = expTerm;
-        DY[0][j + 1] = expTerm * x * P[j] / P[j + 2];
-        DY[0][j + 2] = expTerm * P[j] / P[j + 2] * (x * x - 1);
-      }
-
-      if (_orderOfBackgroundPolynomial >= 0)
-      {
-        double xn = 1;
-        for (int i = 0, j = 3 * _numberOfTerms; i <= _orderOfBackgroundPolynomial; ++i, ++j)
-        {
-          DY[0][j] = xn;
-          xn *= X[0];
-        }
-      }
-    }
+ 
 
     /// <inheritdoc/>
     public double[] GetInitialParametersFromHeightPositionAndWidthAtRelativeHeight(double height, double position, double width, double relativeHeight)
@@ -287,34 +267,33 @@ namespace Altaxo.Calc.FitFunctions.Probability
       if (!(relativeHeight > 0 && relativeHeight < 1))
         throw new ArgumentException("RelativeHeight should be in the open interval (0,1)", nameof(relativeHeight));
 
-      double w = 0.5 * width / Math.Sqrt(-2 * Math.Log(relativeHeight));
-      return new double[] { height*w*Math.Sqrt(2*Math.PI), position, w };
+      var w = 0.5 * width / Math.Sqrt(-2 * Math.Log(relativeHeight));
+      var amp = height * w * Math.Sqrt(2 * Math.PI);
+
+      return new double[4] { amp, position, w, 0 };
     }
 
     /// <inheritdoc/>
     IFitFunctionPeak IFitFunctionPeak.WithNumberOfTerms(int numberOfTerms)
     {
-      return new GaussArea { NumberOfTerms = numberOfTerms, OrderOfBackgroundPolynomial = this.OrderOfBackgroundPolynomial };
+      return new VoigtArea { NumberOfTerms = numberOfTerms, OrderOfBackgroundPolynomial = this.OrderOfBackgroundPolynomial };
     }
 
-
     /// <inheritdoc/>
-    public string[] ParameterNamesForOnePeak => new string[] { ParameterBaseName0, ParameterBaseName1, ParameterBaseName2 };
+    public string[] ParameterNamesForOnePeak => new string[] { ParameterBaseName0, ParameterBaseName1, ParameterBaseName2, ParameterBaseName3 };
 
     /// <inheritdoc/>
     public (double Position, double Area, double Height, double FWHM) GetPositionAreaHeightFWHMFromSinglePeakParameters(double[] parameters)
     {
-      if(parameters == null || parameters.Length != 3)
+      if (parameters is null || parameters.Length != 4)
         throw new ArgumentException(nameof(parameters));
 
       var area = parameters[0];
       var pos = parameters[1];
-      var height = area / (parameters[2] * Math.Sqrt(2 * Math.PI));
-      var fwhm = parameters[2] * Math.Sqrt(2 * Math.Log(2));
+      var height = parameters[0]* Altaxo.Calc.ComplexErrorFunctionRelated.Voigt(0, parameters[2], parameters[3]);
+      var fwhm = 2*Altaxo.Calc.ComplexErrorFunctionRelated.VoigtHalfWidthHalfMaximum(parameters[2], parameters[3]);
 
       return (pos, area, height, fwhm);
     }
-
-
   }
 }

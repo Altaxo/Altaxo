@@ -22,23 +22,15 @@
 
 #endregion Copyright
 
+using System;
 
-using System.Collections.Generic;
-
-namespace Altaxo.Science.Spectroscopy.PeakFitting
+namespace Altaxo.Calc.Regression.Nonlinear
 {
   /// <summary>
-  /// Interface to peak searching methods.
+  /// Marks a class as containing one or more static functions that create a fit function class.
   /// </summary>
-  public interface IPeakFitting
+  [AttributeUsage(AttributeTargets.Class)]
+  public class FitFunctionClassAttribute : System.Attribute
   {
-    /// <summary>
-    /// Executes the normalization algorithm.
-    /// </summary>
-    /// <param name="xArray">The array of x-values.</param>
-    /// <param name="yArray">The array of y-values.</param>
-    /// <param name="peakDescriptions">Description of the peaks (output of peak searching algorithms, see <see cref="PeakSearching.IPeakSearching"/>).</param>
-    /// <returns>The results of the peak fitting.</returns>
-    IPeakFittingResult Execute(double[] xArray, double[] yArray, IEnumerable<PeakSearching.PeakDescription> peakDescriptions);
   }
 }

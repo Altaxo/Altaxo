@@ -28,17 +28,13 @@ using System.Collections.Generic;
 namespace Altaxo.Science.Spectroscopy.PeakFitting
 {
   /// <summary>
-  /// Interface to peak searching methods.
+  /// Interface to the results of peak searching algorithms.
   /// </summary>
-  public interface IPeakFitting
+  public interface IPeakFittingResult
   {
     /// <summary>
-    /// Executes the normalization algorithm.
+    /// Gets the peak descriptions.
     /// </summary>
-    /// <param name="xArray">The array of x-values.</param>
-    /// <param name="yArray">The array of y-values.</param>
-    /// <param name="peakDescriptions">Description of the peaks (output of peak searching algorithms, see <see cref="PeakSearching.IPeakSearching"/>).</param>
-    /// <returns>The results of the peak fitting.</returns>
-    IPeakFittingResult Execute(double[] xArray, double[] yArray, IEnumerable<PeakSearching.PeakDescription> peakDescriptions);
+    public IReadOnlyList<PeakDescription> PeakDescriptions { get; }
   }
 }
