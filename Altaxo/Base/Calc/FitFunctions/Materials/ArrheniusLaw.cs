@@ -34,7 +34,7 @@ namespace Altaxo.Calc.FitFunctions.Materials
   {
     private TransformedValueRepresentation _dependentVariableTransform;
 
-    public ArrheniusLaw(TemperatureRepresentation temperatureUnitOfX, TransformedValueRepresentation dependentVariableTransform, EnergyRepresentation paramEnergyUnit)
+    private ArrheniusLaw(TemperatureRepresentation temperatureUnitOfX, TransformedValueRepresentation dependentVariableTransform, EnergyRepresentation paramEnergyUnit)
       : base(temperatureUnitOfX, paramEnergyUnit)
     {
       _dependentVariableTransform = dependentVariableTransform;
@@ -60,7 +60,7 @@ namespace Altaxo.Calc.FitFunctions.Materials
     }
 
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Calc.FitFunctions.Materials.ArrheniusLaw", 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ArrheniusLaw), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
