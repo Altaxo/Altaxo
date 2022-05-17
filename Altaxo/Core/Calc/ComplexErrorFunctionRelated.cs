@@ -15,6 +15,7 @@
  *   (C) 2012 Massachusetts Institute of Technology
  *   (C) 2013 Forschungszentrum Jülich GmbH
  *   (C) 2022 Dr. Dirk Lellinger (port to C#)
+ *   C# code based on commit 9f7d79390c1e31b4c7cf6b53f0b3beffa045d005 (20-Apr-2022) at https://jugit.fz-juelich.de/mlz/libcerf
  *
  * Licence:
  *   Permission is hereby granted, free of charge, to any person obtaining
@@ -41,7 +42,8 @@
  *   Joachim Wuttke, Forschungszentrum Jülich, 2013, package maintainer
  *
  * Website:
- *   http://apps.jcns.fz-juelich.de/libcerf
+ *   https://jugit.fz-juelich.de/mlz/libcerf
+ *   
  *
  * Revision history:
  *   ../CHANGELOG
@@ -52,11 +54,6 @@
 
 
 using System;
-using System.Numerics;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using SNComplex = System.Numerics.Complex;
 
 namespace Altaxo.Calc
@@ -64,15 +61,17 @@ namespace Altaxo.Calc
   public class ComplexErrorFunctionRelated
   {
     #region Constants
-    const double HUGE_VAL = double.PositiveInfinity;
-    const double DBL_EPSILON = 2.2204460492503131e-16;
+    private const double HUGE_VAL = double.PositiveInfinity;
+    private const double DBL_EPSILON = 2.2204460492503131e-16;
 
     /// <summary>sqrt(pi)/2</summary>
-    const double spi2 = 0.8862269254527580136490837416705725913990; // sqrt(pi)/2
+    private const double spi2 = 0.8862269254527580136490837416705725913990; // sqrt(pi)/2
+
     /// <summary>sqrt(2*pi)</summary>
-    const double s2pi = 2.5066282746310005024157652848110; // sqrt(2*pi)
+    private const double s2pi = 2.5066282746310005024157652848110; // sqrt(2*pi)
+
     /// <summary>pi</summary>
-    const double pi = 3.141592653589793238462643383279503;
+    private const double pi = 3.141592653589793238462643383279503;
 
     #endregion
 
@@ -82,7 +81,7 @@ namespace Altaxo.Calc
     /* Lookup-table for Chebyshev polynomials for smaller |x|                     */
     /******************************************************************************/
 
-    static double erfcx_y100(double y100)
+    private static double erfcx_y100(double y100)
     {
       // Steven G. Johnson, October 2012.
 
@@ -606,7 +605,12 @@ namespace Altaxo.Calc
     /*  Library function erfcx                                                    */
     /******************************************************************************/
 
-    double erfcx(double x)
+    /// <summary>
+    /// The underflow-compensating function erfcx(x) = exp(x^2)*erfc(x) for real arguments.
+    /// </summary>
+    /// <param name="x">The real argument x.</param>
+    /// <returns>Value of the underflow-compensating function erfcx(z) = exp(x^2)*erfc(x).</returns>
+    public static double Erfcx(double x)
     {
       // Steven G. Johnson, October 2012.
 
@@ -663,25 +667,40 @@ namespace Altaxo.Calc
     /*  Simple wrappers: cerfcx, cerfi, erfi, dawson                              */
     /******************************************************************************/
 
-    SNComplex cerfcx(SNComplex z)
+    /// <summary>
+    /// The underflow-compensating function cerfcx(z) = exp(z^2)*cerfc(z).
+    /// </summary>
+    /// <param name="z">The complex argument z.</param>
+    /// <returns>Value of the underflow-compensating function cerfcx(z) = exp(z^2)*cerfc(z).</returns>
+    public static SNComplex Cerfcx(SNComplex z)
     {
       // Compute erfcx(z) = exp(z^2) erfc(z),
       // the complex underflow-compensated complementary error function,
       // trivially related to Faddeeva's w_of_z.
 
-      return w_of_z(new SNComplex(-z.Imaginary, z.Real));
+      return W_of_z(new SNComplex(-z.Imaginary, z.Real));
     }
 
-    SNComplex cerfi(SNComplex z)
+    /// <summary>
+    /// The imaginary error function cerfi(z) = -i cerf(iz).
+    /// </summary>
+    /// <param name="z">The complex argument z.</param>
+    /// <returns>Value of the imaginary error function cerfi(z) = -i cerf(iz).</returns>
+    public static SNComplex Cerfi(SNComplex z)
     {
       // Compute erfi(z) = -i erf(iz),
       // the rotated complex error function.
 
-      SNComplex e = cerf(new SNComplex(-z.Imaginary, z.Real));
+      SNComplex e = Cerf(new SNComplex(-z.Imaginary, z.Real));
       return new SNComplex(e.Imaginary, -e.Real);
     }
 
-    double erfi(double x)
+    /// <summary>
+    /// The imaginary error function erfi(x) = -i cerf(ix).
+    /// </summary>
+    /// <param name="x">The real argument x.</param>
+    /// <returns>Value of the imaginary error function erfi(x) = -i cerf(ix).</returns>
+    public static double Erfi(double x)
     {
       // Compute erfi(x) = -i erf(ix),
       // the imaginary error function.
@@ -689,7 +708,12 @@ namespace Altaxo.Calc
       return x * x > 720 ? (x > 0 ? double.PositiveInfinity : double.NegativeInfinity) : Math.Exp(x * x) * im_w_of_x(x);
     }
 
-    double dawson(double x)
+    /// <summary>
+    /// Dawson's integral D(x) = sqrt(pi)/2 * exp(-x^2) * erfi(x) for real values.
+    /// </summary>
+    /// <param name="x">The real argument x.</param>
+    /// <returns>Value of Dawson's integral D(x) = sqrt(pi)/2 * exp(-x^2) * erfi(x) for real values.</returns>
+    public static double Dawson(double x)
     {
 
       // Compute dawson(x) = sqrt(pi)/2 * exp(-x^2) * erfi(x),
@@ -698,21 +722,40 @@ namespace Altaxo.Calc
       return spi2 * im_w_of_x(x);
     }
 
-    double re_w_of_z(double x, double y)
+    /// <summary>
+    /// Faddeeva's scaled complex error function w(z) = exp(-z^2) erfc(-iz), returning the real part of the result as a real number.
+    /// </summary>
+    /// <param name="x">The real part of the complex argument z.</param>
+    /// <param name="y">The imaginary part of the complex argument z.</param>
+    /// <returns>Real part of Faddeeva's scaled complex error function w(z) = exp(-z^2) erfc(-iz).</returns>
+    public static double Re_w_of_z(double x, double y)
     {
-      return w_of_z(new SNComplex(x, y)).Real;
+      return W_of_z(new SNComplex(x, y)).Real;
     }
 
-    double im_w_of_z(double x, double y)
+    /// <summary>
+    /// Faddeeva's scaled complex error function w(z) = exp(-z^2) erfc(-iz), returning the purely imaginary result as a real number.
+    /// </summary>
+    /// <param name="x">The real part of the complex argument z.</param>
+    /// <param name="y">The imaginary part of the complex argument z.</param>
+    /// <returns>Imaginary part of Faddeeva's scaled complex error function w(z) = exp(-z^2) erfc(-iz).</returns>
+    public static double Im_w_of_z(double x, double y)
     {
-      return w_of_z(new SNComplex(x, y)).Imaginary;
+      return W_of_z(new SNComplex(x, y)).Imaginary;
     }
 
     /******************************************************************************/
     /*  voigt                                                                     */
     /******************************************************************************/
 
-    public double voigt(double x, double sigma, double gamma)
+    /// <summary>
+    /// The convolution of a Gaussian and a Lorentzian probability density function.
+    /// </summary>
+    /// <param name="x">The real argument x.</param>
+    /// <param name="sigma">The parameter sigma (of the Gaussian).</param>
+    /// <param name="gamma">The parameter gamma (of the Lorentzian).</param>
+    /// <returns>The value of the Voigt function, a convolution of a Gaussian and a Lorentzian probability density function.</returns>
+    public static double Voigt(double x, double sigma, double gamma)
     {
       // Joachim Wuttke, January 2013.
 
@@ -757,7 +800,7 @@ namespace Altaxo.Calc
         {
           // Regular case, both parameters are nonzero
           SNComplex z = new SNComplex(x, gam) / Math.Sqrt(2) / sig;
-          return (w_of_z(z)).Real / s2pi / sig;
+          return (W_of_z(z)).Real / s2pi / sig;
           // TODO: correct and activate the following:
           //            double w = sqrt(gam*gam+sig*sig); // to work in reduced units
           //            SNComplex z = C(x/w,gam/w) / sqrt(2) / (sig/w);
@@ -770,7 +813,12 @@ namespace Altaxo.Calc
     /*  cerf                                                                      */
     /******************************************************************************/
 
-    SNComplex cerf(SNComplex z)
+    /// <summary>
+    /// Complex error function.
+    /// </summary>
+    /// <param name="z">The complex argument.</param>
+    /// <returns>Value of the complex error function of z.</returns>
+    public static SNComplex Cerf(SNComplex z)
     {
 
       // Steven G. Johnson, October 2012.
@@ -811,7 +859,7 @@ namespace Altaxo.Calc
            values when multiplying w in an overflow situation. */
         return 1.0 - Math.Exp(mRe_z2) *
             (new SNComplex(Math.Cos(mIm_z2), Math.Sin(mIm_z2))
-             * w_of_z(new SNComplex(-y, x)));
+             * W_of_z(new SNComplex(-y, x)));
       }
       else
       { // x < 0
@@ -828,7 +876,7 @@ namespace Altaxo.Calc
            values when multiplying w in an overflow situation. */
         return Math.Exp(mRe_z2) *
             (new SNComplex(Math.Cos(mIm_z2), Math.Sin(mIm_z2))
-             * w_of_z(new SNComplex(y, -x))) - 1.0;
+             * W_of_z(new SNComplex(y, -x))) - 1.0;
       }
 
 // Use Taylor series for small |z|, to avoid cancellation inaccuracy
@@ -874,7 +922,12 @@ taylor_erfi:
     /*  cerfc                                                                     */
     /******************************************************************************/
 
-    SNComplex cerfc(SNComplex z)
+    /// <summary>
+    /// The complex complementary error function cerfc(z) = 1 - cerf(z).
+    /// </summary>
+    /// <param name="z">The complex argument z.</param>
+    /// <returns>Value of the complex complementary error function cerfc(z) = 1 - cerf(z).</returns>
+    public static SNComplex Cerfc(SNComplex z)
     {
       // Steven G. Johnson, October 2012.
 
@@ -895,8 +948,8 @@ taylor_erfi:
         if (x * x > 750) // underflow
           return new SNComplex(x >= 0 ? 0.0 : 2.0,
                    -y); // preserve sign of 0
-        return new SNComplex(x >= 0 ? Math.Exp(-x * x) * erfcx(x)
-                 : 2 - Math.Exp(-x * x) * erfcx(-x),
+        return new SNComplex(x >= 0 ? Math.Exp(-x * x) * Erfcx(x)
+                 : 2 - Math.Exp(-x * x) * Erfcx(-x),
                  -y); // preserve sign of zero
       }
 
@@ -907,17 +960,22 @@ taylor_erfi:
 
       if (x >= 0)
         return SNComplex.Exp(new SNComplex(mRe_z2, mIm_z2))
-            * w_of_z(new SNComplex(-y, x));
+            * W_of_z(new SNComplex(-y, x));
       else
         return 2.0 - SNComplex.Exp(new SNComplex(mRe_z2, mIm_z2))
-            * w_of_z(new SNComplex(y, -x));
+            * W_of_z(new SNComplex(y, -x));
     } // cerfc
 
     /******************************************************************************/
     /*  cdawson                                                                   */
     /******************************************************************************/
 
-    SNComplex cdawson(SNComplex z)
+    /// <summary>
+    /// Dawson's integral D(z) = sqrt(pi)/2 * exp(-z^2) * erfi(z).
+    /// </summary>
+    /// <param name="z">The complex argument z.</param>
+    /// <returns>Value of Dawson's integral D(z) = sqrt(pi)/2 * exp(-z^2) * erfi(z).</returns>
+    public static SNComplex CDawson(SNComplex z)
     {
 
       // Steven G. Johnson, October 2012.
@@ -945,8 +1003,8 @@ taylor_erfi:
         }
         return new SNComplex(x, // preserve sign of 0
                  spi2 * (y >= 0
-                         ? Math.Exp(y2) - erfcx(y)
-                         : erfcx(-y) - Math.Exp(y2)));
+                         ? Math.Exp(y2) - Erfcx(y)
+                         : Erfcx(-y) - Math.Exp(y2)));
       }
 
       double mRe_z2 = (y - x) * (x + y); // Re(-z^2), being careful of overflow
@@ -965,7 +1023,7 @@ taylor_erfi:
           else if (Math.Abs(mIm_z2) < 5e-3)
             goto taylor_realaxis;
         }
-        SNComplex res = SNComplex.Exp(mz2) - w_of_z(z);
+        SNComplex res = SNComplex.Exp(mz2) - W_of_z(z);
         return spi2 * new SNComplex(-res.Imaginary, res.Real);
       }
       else
@@ -979,7 +1037,7 @@ taylor_erfi:
         }
         else if (double.IsNaN(y))
           return new SNComplex(x == 0 ? 0 : double.NaN, double.NaN);
-        SNComplex res = w_of_z(-z) - SNComplex.Exp(mz2);
+        SNComplex res = W_of_z(-z) - SNComplex.Exp(mz2);
         return spi2 * new SNComplex(-res.Imaginary, res.Real);
       }
 
@@ -1073,7 +1131,7 @@ taylor_realaxis:
     /* Lookup-table for Chebyshev polynomials for smaller |x|                     */
     /******************************************************************************/
 
-    static double w_im_y100(double y100, double x)
+    private static double w_im_y100(double y100, double x)
     {
       // Steven G. Johnson, October 2012.
 
@@ -1596,7 +1654,7 @@ taylor_realaxis:
     /*  Library function im_w_of_z                                                */
     /******************************************************************************/
 
-    double im_w_of_x(double x)
+    private static double im_w_of_x(double x)
     {
 
       // Steven G. Johnson, October 2012.
@@ -1638,35 +1696,34 @@ taylor_realaxis:
 
     #region w_of_z.c
 
-    public int faddeeva_algorithm { get; private set; }
-    public int faddeeva_nofterms { get; private set; }
+
 
     /******************************************************************************/
     /*  auxiliary functions                                                       */
     /******************************************************************************/
 
-    static double sinc(double x, double sinx)
+    private static double sinc(double x, double sinx)
     {
       // return sinc(x) = sin(x)/x, given both x and sin(x)
       // [since we only use this in cases where sin(x) has already been computed]
       return Math.Abs(x) < 1e-4 ? 1 - (0.1666666666666666666667) * x * x : sinx / x;
     }
 
-    static double sinh_taylor(double x)
+    private static double sinh_taylor(double x)
     {
       // sinh(x) via Taylor series, accurate to machine precision for |x| < 1e-2
       return x * (1 + (x * x) * (0.1666666666666666666667
                                + 0.00833333333333333333333 * (x * x)));
     }
 
-    static double sqr(double x) { return x * x; }
+    private static double sqr(double x) { return x * x; }
 
     /******************************************************************************/
     /* precomputed table of expa2n2[n-1] = exp(-a2*n*n)                           */
     /* for double-precision a2 = 0.26865... in w_of_z, below.                     */
     /******************************************************************************/
 
-    static readonly double[] expa2n2 = new double[] {
+    private static readonly double[] expa2n2 = new double[] {
     7.64405281671221563e-01,
     3.41424527166548425e-01,
     8.91072646929412548e-02,
@@ -1726,8 +1783,16 @@ taylor_realaxis:
     /*  w_of_z, Faddeeva's scaled complex error function                          */
     /******************************************************************************/
 
-    SNComplex w_of_z(SNComplex z)
+    /// <summary>
+    /// Faddeeva's scaled complex error function w(z) = exp(-z^2) erfc(-iz).
+    /// </summary>
+    /// <param name="z">The complex argument z.</param>
+    /// <returns>Value of Faddeeva's scaled complex error function w(z) = exp(-z^2) erfc(-iz).</returns>
+    public static SNComplex W_of_z(SNComplex z)
     {
+      int faddeeva_algorithm;
+      int faddeeva_nofterms;
+
       faddeeva_nofterms = 0;
 
       // Steven G. Johnson, October 2012.
@@ -1736,7 +1801,7 @@ taylor_realaxis:
       {
         // Purely imaginary input, purely real output.
         // However, use creal(z) to give correct sign of 0 in cimag(w).
-        return new SNComplex(erfcx(z.Imaginary), z.Real);
+        return new SNComplex(Erfcx(z.Imaginary), z.Real);
       }
       if (z.Imaginary == 0)
       {
@@ -1921,7 +1986,7 @@ taylor_realaxis:
         }
         double expx2erfcxy = // avoid spurious overflow for large negative y
             y > -6 // for y < -6, erfcx(y) = 2*exp(y*y) to double precision
-            ? expx2 * erfcx(y) : 2 * Math.Exp(y * y - x * x);
+            ? expx2 * Erfcx(y) : 2 * Math.Exp(y * y - x * x);
         if (y > 5)
         { // imaginary terms cancel
           faddeeva_algorithm += 10;
@@ -2003,13 +2068,20 @@ finish:
  * Olivero & Longbothum [1977]
  * Journal of Quantitative Spectroscopy and Radiative Transfer. 17:233
  */
-    double hwhm0(double sigma, double gamma)
+    private static double hwhm0(double sigma, double gamma)
     {
       return 0.5 * (1.06868 * gamma + Math.Sqrt(0.86743 * gamma * gamma + 4 * 2 * Math.Log(2) * sigma * sigma));
     }
 
 
-    public double voigt_hwhm(double sigma, double gamma)
+    /// <summary>
+    /// The half width at half maximum of the <see cref="Voigt(double, double, double)"/> profile.
+    /// </summary>
+    /// <param name="sigma">The parameter sigma (of the Gaussian).</param>
+    /// <param name="gamma">The parameter gamma (of the Lorentzian).</param>
+    /// <returns>The half width at half maximum of the Voigt profile, see <see cref="Voigt(double, double, double)"/>.</returns>
+    /// <exception cref="System.InvalidProgramException"></exception>
+    public static double VoigtHalfWidthHalfMaximum(double sigma, double gamma)
     {
       double HM;
       double a, b, c;   /* 3 points used by regula falsi */
@@ -2041,14 +2113,14 @@ finish:
         g *= 1e30;
       }
 
-      HM = voigt(0.0, s, g) / 2;
+      HM = Voigt(0.0, s, g) / 2;
 
       /* Choose initial points a,b that bracket the expected root */
       c = hwhm0(s, g);
       a = c * 0.995;
       b = c * 1.005;
-      del_a = voigt(a, s, g) - HM;
-      del_b = voigt(b, s, g) - HM;
+      del_a = Voigt(a, s, g) - HM;
+      del_b = Voigt(b, s, g) - HM;
 
       /* Iteration using regula falsi (Illinois variant).
        * Empirically, this takes <5 iterations to converge to FLT_EPSILON
@@ -2062,7 +2134,7 @@ finish:
         c = (b * del_a - a * del_b) / (del_a - del_b);
         if (Math.Abs(b - a) < 2 * DBL_EPSILON * Math.Abs(b + a))
           return prefac * c;
-        del_c = voigt(c, s, g) - HM;
+        del_c = Voigt(c, s, g) - HM;
 
         if (del_b * del_c > 0)
         {
