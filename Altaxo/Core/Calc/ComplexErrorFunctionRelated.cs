@@ -58,6 +58,21 @@ using SNComplex = System.Numerics.Complex;
 
 namespace Altaxo.Calc
 {
+  /// <summary>
+  /// Contains functions that are related to the complex error function of complex argument.
+  /// </summary>
+  /// <remarks>
+  /// <para>Citation:</para>
+  /// <para>S. G. Johnson, J. Wuttke: libcerf, numeric library for complex error functions, see <see href="https://jugit.fz-juelich.de/mlz/libcerf"/>.</para>
+  /// <para>Most function evaluations in this library rely on Faddeeva's function w(z).
+  /// This function has been reimplemented from scratch by Steven G.Johnson;
+  /// project web site http://ab-initio.mit.edu/Faddeeva. The implementation partly relies on algorithms from the following publications:
+  /// </para>
+  /// <para>References:</para>
+  /// <para>Walter Gautschi, Efficient computation of the complex error function, SIAM J. Numer. Anal. 7, 187 (1970).</para>
+  /// <para>G. P. M. Poppe and C. M. J. Wijers, More efficient computation of the complex error function, ACM Trans. Math. Soft. 16, 38 (1990).</para>
+  /// <para>Mofreh R. Zaghloul and Ahmed N. Ali, Algorithm 916: Computing the Faddeyeva and Voigt Functions, ACM Trans. Math. Soft. 38, 15 (2011).</para>
+  /// </remarks>
   public class ComplexErrorFunctionRelated
   {
     #region Constants
