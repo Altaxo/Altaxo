@@ -388,6 +388,8 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
             ConfidenceLevel = new DimensionfulQuantity(confidenceLevel, Altaxo.Units.Dimensionless.Unity.Instance).AsQuantityIn(ConfidenceLevelEnvironment.DefaultUnit);
           }
         }
+
+        SelectedTab = TabSelection;
       }
 
 
