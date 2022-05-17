@@ -196,8 +196,13 @@ namespace Altaxo.Gui.Graph.Gdi.Plot.Styles
     {
       _doc.IndependentFrameColor = value;
       if (false == value && UseFill && false == IndependentFillColor)
+      {
         InternalSetFrameColorToFillColor();
-      FramePen.ShowPlotColorsOnly = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentFrameColor);
+      }
+      if (FramePen is { } framePen)
+      {
+        framePen.ShowPlotColorsOnly = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentFrameColor);
+      }
     }
 
     
