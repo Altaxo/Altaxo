@@ -91,7 +91,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
     }
 
     [FitFunctionCreator("VoigtArea", "General", 1, 1, 4)]
-    [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Probability.Voigt}")]
+    [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Probability.VoigtArea}")]
     public static IFitFunction Create_1_0()
     {
       return new VoigtArea(1, 0);
@@ -99,7 +99,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
 
     [FitFunctionCreator("VoigtArea", "Peaks", 1, 1, 4)]
     [FitFunctionCreator("VoigtArea", "Probability", 1, 1, 4)]
-    [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Probability.Voigt}")]
+    [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Probability.VoigtArea}")]
     public static IFitFunction Create_1_M1()
     {
       return new VoigtArea(1, -1);
@@ -111,13 +111,16 @@ namespace Altaxo.Calc.FitFunctions.Probability
     public int OrderOfBackgroundPolynomial
     {
       get { return _orderOfBackgroundPolynomial; }
+      /*
       init {
         if (!(_orderOfBackgroundPolynomial >= -1))
           throw new ArgumentOutOfRangeException("Order of background polynomial must either be -1 (to disable it) or >=0", nameof(OrderOfBackgroundPolynomial));
         _orderOfBackgroundPolynomial = value;
       }
+      */
     }
 
+    
 
     /// <summary>
     /// Creates a new instance with the provided order of the background polynomial.
@@ -138,6 +141,8 @@ namespace Altaxo.Calc.FitFunctions.Probability
         return this;
       }
     }
+
+    
 
     /// <summary>
     /// Gets the number of Voigt terms.
@@ -276,7 +281,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
     /// <inheritdoc/>
     IFitFunctionPeak IFitFunctionPeak.WithNumberOfTerms(int numberOfTerms)
     {
-      return new VoigtArea { NumberOfTerms = numberOfTerms, OrderOfBackgroundPolynomial = this.OrderOfBackgroundPolynomial };
+      return new VoigtArea( numberOfTerms, this.OrderOfBackgroundPolynomial);
     }
 
     /// <inheritdoc/>

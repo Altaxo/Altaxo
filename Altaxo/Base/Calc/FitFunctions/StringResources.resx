@@ -1008,6 +1008,60 @@ The domain of the function is $-\infty \leq x \leq \infty$.
 
 </value>
   </data>
+  <data name="Probability.VoigtArea" xml:space="preserve">
+    <value># VoigtArea
+
+This function evaluates a sum of Voigt terms, plus a background polynomial with one or multiple terms, according to
+
+$$
+y(x) = A_0 \times Voigt \left ( x-x_{c0}, w_0, \gamma_0 \right ) + ... + A_{n-1} \times Voigt \left ( x-x_{c{n-1}}, w_{n-1}, \gamma_{n-1} \right ) + b_0 + b_1 x^1 + ... + b_m x^m 
+$$
+
+in which:
+
+- $A_0 ... A_{n-1}$ are the areas under the Voigt terms
+
+- $x_{c0} ... x_{cn-1}$ are the locations of the Voigt terms
+
+- $w_0 ... w_{n-1}$ are the widths of the Gaussian part of the Voigt terms
+
+- $\gamma_0 ... \gamma_{n-1}$ are the parameters of the Lorentzian part of the Voigt terms
+
+- $b_0 ... b_m$ are the coefficients of the background polynomial of order  $m$
+
+- $n$ is the number of Voigt terms ($n \geq 1$)
+- $m$ is the order of the background polynomial (set $m=-1$ to disable the background polynomial)
+
+The Voigt function is a convolution of a Gaussian function and a Lorentzian function:
+
+Voigt:
+$$
+Voigt(x) = \int G(\tau)L(x-\tau) d\tau
+$$
+
+Gauss:
+
+$$
+G(x,w) = \frac{1}{w \sqrt{2 \pi}} \exp \left ( -\frac{x^2}{2 w^2} \right ) 
+$$
+
+Lorentzian:
+$$
+L(x, \gamma) = \frac{\gamma}{\pi(x^2 + \gamma^2)}
+$$
+
+The number of Voigt terms $n$ and the order of the background polynomial $m$ can be changed by double-clicking on the fit function. The default values are $n=1$ and $m=-1$. 
+
+The domain of the function is $-\infty \leq x \leq \infty$. 
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.Probability.VoigtArea.Fig1.png)
+^^^ Fig. 1: VoigtArea ($n=1$, $m=0$) with $A_0=40$, $x_{c0}=7$, $w_0=3$, $b_0=1$, and $\gamma_0=2$ (green) or  $\gamma_0=0$ (orange), respectively. Note that in the limit $\gamma_0=0$ the Gauss function is returned.
+---
+
+
+</value>
+  </data>
   <data name="Relaxation.Modulus.HavriliakNegamiModulusRelaxationFrequency" xml:space="preserve">
     <value># Havriliak-Negami modulus relaxation (circular frequency)
 
