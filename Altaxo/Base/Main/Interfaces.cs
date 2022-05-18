@@ -27,12 +27,7 @@ using System;
 
 namespace Altaxo.Main
 {
-  /// <summary>
-  /// Implement this interface if the class is immutable.
-  /// </summary>
-  public interface IImmutable
-  {
-  }
+  
 
   /// <summary>
   /// Interface for instances that are able to copy properties from another object.
