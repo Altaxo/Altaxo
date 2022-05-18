@@ -44,9 +44,14 @@ namespace Altaxo.Gui.Common.Drawing
 
     private static readonly double[] _initialValues = new double[] { 4, 6, 8, 10, 12, 16, 20, 24, 28, 32 };
 
+    static LineCapSizeComboBox()
+    {
+      UnitEnvironmentProperty.OverrideMetadata(typeof(LineCapSizeComboBox), new FrameworkPropertyMetadata(LineCapSizeEnvironment.Instance));
+      SelectedQuantityProperty.OverrideMetadata(typeof(LineCapSizeComboBox), new FrameworkPropertyMetadata(new DimensionfulQuantity(0, AUL.Point.Instance)));
+    }
+
     public LineCapSizeComboBox()
     {
-      UnitEnvironment = LineCapSizeEnvironment.Instance;
       InitializeComponent();
 
       foreach (var e in _initialValues)

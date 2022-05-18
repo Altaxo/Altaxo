@@ -44,9 +44,14 @@ namespace Altaxo.Gui.Common.Drawing
 
     private static readonly double[] _initialValues = new double[] { 0.001, 0.125, 0.25, 0.5, 1, 2, 3, 5, 10 };
 
+    static LineThicknessComboBox()
+    {
+      UnitEnvironmentProperty.OverrideMetadata(typeof(LineThicknessComboBox), new FrameworkPropertyMetadata(LineThicknessEnvironment.Instance));
+      SelectedQuantityProperty.OverrideMetadata(typeof(LineThicknessComboBox), new FrameworkPropertyMetadata(new DimensionfulQuantity(0, AUL.Point.Instance)));
+    }
+
     public LineThicknessComboBox()
     {
-      UnitEnvironment = LineThicknessEnvironment.Instance;
       InitializeComponent();
 
       foreach (var e in _initialValues)

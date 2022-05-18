@@ -44,9 +44,14 @@ namespace Altaxo.Gui.Common.Drawing
 
     private static readonly double[] _initialValues = new double[] { 4, 6, 8, 10, 12, 16, 18, 20, 24, 28, 32, 36, 54, 72 };
 
+    static FontSizeComboBox()
+    {
+      UnitEnvironmentProperty.OverrideMetadata(typeof(FontSizeComboBox), new FrameworkPropertyMetadata(FontSizeEnvironment.Instance));
+      SelectedQuantityProperty.OverrideMetadata(typeof(FontSizeComboBox), new FrameworkPropertyMetadata(new DimensionfulQuantity(0, AUL.Point.Instance)));
+    }
+
     public FontSizeComboBox()
     {
-      UnitEnvironment = FontSizeEnvironment.Instance;
       InitializeComponent();
 
       foreach (var e in _initialValues)
