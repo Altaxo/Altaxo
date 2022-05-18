@@ -36,10 +36,8 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
   /// Executes area normalization : y' = (y-min)/(mean), in which min and mean are the minimal and the mean values of the array.
   /// </summary>
   /// <seealso cref="Altaxo.Science.Spectroscopy.Normalization.INormalization" />
-  public record PeakFittingSeparately : IPeakFitting
+  public record PeakFittingSeparately : PeakFittingBase, IPeakFitting
   {
-    IFitFunctionPeak _fitFunction = new VoigtArea();
-
     #region Serialization
 
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PeakFittingSeparately), 0)]
@@ -62,25 +60,21 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
     }
     #endregion
 
-    public IFitFunctionPeak FitFunction
-    {
-      get { return _fitFunction; }
-      init { _fitFunction = value ?? throw new ArgumentNullException(nameof(FitFunction)); }
-    }
+    
 
 
     /// <inheritdoc/>
     public IPeakFittingResult Execute(double[] xArray, double[] yArray, IEnumerable<PeakSearching.PeakDescription> peakDescriptions)
     {
-      var fitFunc = _fitFunction.WithNumberOfTerms(1);
+      var fitFunc = FitFunction.WithNumberOfTerms(1);
       int numberOfParametersPerPeak = fitFunc.NumberOfParameters;
 
       var list = new List<PeakFitting.PeakDescription>();
 
       foreach (var description in peakDescriptions)
       {
-        int first = (int)Math.Max(0, description.PositionIndex - description.Width / 2);
-        int last = (int)Math.Min(xArray.Length - 1, description.PositionIndex + description.Width / 2);
+        int first = (int)Math.Max(0, Math.Floor(description.PositionIndex - FitWidthScalingFactor * description.Width / 2));
+        int last = (int)Math.Min(xArray.Length - 1, Math.Ceiling(description.PositionIndex + FitWidthScalingFactor * description.Width / 2));
         int len = last - first + 1;
         if (len < numberOfParametersPerPeak)
         {
@@ -94,9 +88,9 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
         Array.Copy(yArray, first, yCut, 0, len);
 
         var xPosition = RMath.InterpolateLinear(description.PositionIndex, xArray);
-        var xRight = RMath.InterpolateLinear(description.PositionIndex + 0.5 * description.Width, xArray);
-        var xLeft = RMath.InterpolateLinear(description.PositionIndex - 0.5 * description.Width, xArray);
-        var xWidth = Math.Abs(xRight-xLeft);
+        var xWidth = Math.Abs(RMath.InterpolateLinear(description.PositionIndex + 0.5 * description.Width, xArray) -
+                              RMath.InterpolateLinear(description.PositionIndex - 0.5 * description.Width, xArray)
+                             );
 
 
         
@@ -111,8 +105,8 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
           SearchDescription = description,
           FirstFitPoint = first,
           LastFitPoint = last,
-          FirstFitPosition = xLeft,
-          LastFitPosition = xRight,
+          FirstFitPosition = xArray[first],
+          LastFitPosition = xArray[last],
           PeakParameter = (double[])param.Clone(),
           PeakParameterVariance = fit.ParameterVariances.ToArray(),
           FitFunction = fitFunc,

@@ -29,5 +29,13 @@
                 ItemsSource="{Binding FitFunctions.Items}"
                 SelectedItem="{Binding FitFunctions.SelectedItem}"/>
         </GroupBox>
+
+        <Label Grid.Row="2" Grid.Column="0"
+               Content="Scale fit width by:"/>
+
+        <axogc:QuantityWithUnitTextBox Grid.Row="2" Grid.Column="2"
+                                       UnitEnvironment="{Binding FitWidthScalingFactorEnvironment}"
+                                       SelectedQuantity="{Binding FitWidthScalingFactor}"
+                                       MinWidth="100"/>
     </Grid>
 </UserControl>

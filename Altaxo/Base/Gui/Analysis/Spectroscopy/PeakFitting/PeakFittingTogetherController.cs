@@ -40,7 +40,7 @@ namespace Altaxo.Gui.Analysis.Spectroscopy.PeakFitting
 
   [UserControllerForObject(typeof(PeakFittingTogether))]
   [ExpectedTypeOfView(typeof(IPeakFittingSeparatelyView))]
-  public class PeakFittingTogetherController : MVCANControllerEditImmutableDocBase<PeakFittingTogether, IPeakFittingSeparatelyView>
+  public class PeakFittingTogetherController : PeakFittingBaseController<PeakFittingTogether, IPeakFittingSeparatelyView>
   {
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
@@ -49,20 +49,7 @@ namespace Altaxo.Gui.Analysis.Spectroscopy.PeakFitting
 
     #region Bindings
 
-    private ItemsController<Type> _fitFunctions;
-
-    public ItemsController<Type> FitFunctions
-    {
-      get => _fitFunctions;
-      set
-      {
-        if (!(_fitFunctions == value))
-        {
-          _fitFunctions = value;
-          OnPropertyChanged(nameof(FitFunctions));
-        }
-      }
-    }
+    
 
 
     #endregion
@@ -80,6 +67,7 @@ namespace Altaxo.Gui.Analysis.Spectroscopy.PeakFitting
         FitFunctions = new ItemsController<Type>(ftypeList);
         FitFunctions.SelectedValue = _doc.FitFunction.GetType();
 
+        FitWidthScalingFactor = new DimensionfulQuantity(_doc.FitWidthScalingFactor, Altaxo.Units.Dimensionless.Unity.Instance).AsQuantityIn(FitWidthScalingFactorEnvironment.DefaultUnit);
       }
     }
 
@@ -88,6 +76,7 @@ namespace Altaxo.Gui.Analysis.Spectroscopy.PeakFitting
       _doc = _doc with
       {
         FitFunction = (IFitFunctionPeak)Activator.CreateInstance(FitFunctions.SelectedValue),
+        FitWidthScalingFactor = FitWidthScalingFactor.AsValueInSIUnits,
       };
 
       return ApplyEnd(true, disposeController);

@@ -168,6 +168,8 @@ namespace Altaxo.Data
             var cFirstPoint = peakTable.DataColumns.EnsureExistence($"FitFirstPoint{runningColumnNumber}", typeof(DoubleColumn), ColumnKind.V, runningColumnNumber);
             var cLastPoint = peakTable.DataColumns.EnsureExistence($"FitLastPoint{runningColumnNumber}", typeof(DoubleColumn), ColumnKind.V, runningColumnNumber);
             var cNumberOfPoints = peakTable.DataColumns.EnsureExistence($"FitNumberOfPoints{runningColumnNumber}", typeof(DoubleColumn), ColumnKind.V, runningColumnNumber);
+            var cFirstXValue = peakTable.DataColumns.EnsureExistence($"FitFirstXValue{runningColumnNumber}", typeof(DoubleColumn), ColumnKind.V, runningColumnNumber);
+            var cLastXValue = peakTable.DataColumns.EnsureExistence($"FitLastXValue{runningColumnNumber}", typeof(DoubleColumn), ColumnKind.V, runningColumnNumber);
 
 
 
@@ -188,6 +190,8 @@ namespace Altaxo.Data
                 cFirstPoint[i] = r.FirstFitPoint;
                 cLastPoint[i] = r.LastFitPoint;
                 cNumberOfPoints[i] = Math.Abs(r.LastFitPoint - r.FirstFitPoint);
+                cFirstXValue[i] = r.FirstFitPosition;
+                cLastXValue[i] = r.LastFitPosition;
 
                 var parameterNames = fitFunction.ParameterNamesForOnePeak;
                 for(int j=0;j<parameterNames.Length;j++)
