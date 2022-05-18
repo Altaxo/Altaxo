@@ -26,6 +26,7 @@
 using System;
 using Altaxo.Calc.FitFunctions.Peaks;
 using Altaxo.Calc.Regression.Nonlinear;
+using Altaxo.Main;
 
 namespace Altaxo.Calc.FitFunctions.Probability
 {
@@ -34,7 +35,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
   /// of variable order.
   /// </summary>
   [FitFunctionClass]
-  public record VoigtArea : IFitFunction, IFitFunctionPeak
+  public class VoigtArea : IFitFunction, IFitFunctionPeak, IImmutable
   {
     const string ParameterBaseName0 = "A";
     const string ParameterBaseName1 = "xc";
@@ -142,26 +143,30 @@ namespace Altaxo.Calc.FitFunctions.Probability
       }
     }
 
-    
-
     /// <summary>
     /// Gets the number of Voigt terms.
     /// </summary>
-    public int NumberOfTerms
+    public int NumberOfTerms => _numberOfTerms;
+
+    /// <summary>
+    /// Creates a new instance with the provided number of Lorentzian (Cauchy) terms.
+    /// </summary>
+    /// <param name="numberOfTerms">The number of Lorentzian (Cauchy) terms (should be greater than or equal to 1).</param>
+    /// <returns>New instance with the provided number of Lorentzian (Cauchy) terms.</returns>
+    public VoigtArea WithNumberOfTerms(int numberOfTerms)
     {
-      get
+      if (!(numberOfTerms >= 1))
+        throw new ArgumentOutOfRangeException($"{nameof(numberOfTerms)} must be greater than or equal to 1");
+
+      if (!(_numberOfTerms == numberOfTerms))
       {
-        return _numberOfTerms;
+        return new VoigtArea(numberOfTerms, _orderOfBackgroundPolynomial);
       }
-      init
+      else
       {
-        if (!(value >= 1))
-          throw new ArgumentOutOfRangeException("Number of terms must be >=1", nameof(NumberOfTerms));
-        _numberOfTerms = value;
+        return this;
       }
     }
-
-    
 
     #region IFitFunction Members
 

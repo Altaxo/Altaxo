@@ -90,6 +90,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
 
     }
 
+    [FitFunctionCreator("LorentzianArea", "Peaks", 1, 1, 4)]
     [FitFunctionCreator("LorentzianArea", "General", 1, 1, 4)]
     [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Probability.CauchyArea}")]
     public static IFitFunction Create_1_0()
