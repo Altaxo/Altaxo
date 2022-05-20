@@ -68,15 +68,36 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
 
       if (dev is null)
       {
+        var featureLevels = new[] { FeatureLevel.Level_11_0, FeatureLevel.Level_10_1, FeatureLevel.Level_10_0 };
+
         var result = D3D11.D3D11CreateDevice(
               null, // hardwareAdapter,
               DriverType.Hardware,
-              DeviceCreationFlags.BgraSupport | DeviceCreationFlags.Debug,
-              new[] { FeatureLevel.Level_11_0, FeatureLevel.Level_10_1, FeatureLevel.Level_10_0 },
+              DeviceCreationFlags.BgraSupport
+#if DEBUG_D3DX11
+              | DeviceCreationFlags.Debug
+#endif
+              ,
+              featureLevels,
               out dev);
-
+#if DEBUG_D3DX11
+        // if Debugging is enabled, but device creation failed due to missing Debug SDK,
+        // there is the error code -2005270483
+        // in that case, create the device without debugging enabled
+        if (result.Failure && result.Code == -2005270483)
+        {
+          result = D3D11.D3D11CreateDevice(
+                null, // hardwareAdapter,
+                DriverType.Hardware,
+                DeviceCreationFlags.BgraSupport,
+                featureLevels,
+                out dev);
+        }
+#endif
         if (result.Failure)
-          throw new InvalidOperationException("DirectX device could not be created.");
+        {
+          throw new InvalidOperationException($"DirectX device could not be created. D3D11CreateDevice failed with error code: {result}");
+        }
       }
 
       return dev;
@@ -99,7 +120,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
 
       if (!device.IsDisposed)
       {
-         device.ImmediateContext.ClearState(); 
+        device.ImmediateContext.ClearState();
         _devices.Add(device);
         device = null;
       }
