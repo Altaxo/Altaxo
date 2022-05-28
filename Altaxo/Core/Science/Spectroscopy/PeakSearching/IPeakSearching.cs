@@ -33,7 +33,7 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
   public interface IPeakSearching
   {
     /// <summary>
-    /// Executes the normalization algorithm.
+    /// Executes the peak searching algorithm.
     /// </summary>
     /// <param name="input">The input array.</param>
     /// <returns>The results of the peak searching.</returns>

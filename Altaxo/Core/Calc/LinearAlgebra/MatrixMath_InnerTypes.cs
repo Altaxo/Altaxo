@@ -1082,6 +1082,121 @@ namespace Altaxo.Calc.LinearAlgebra
 
     #endregion Wrapper from linear array (column major order, i.e. LAPACK convention) to read/write matrix
 
+    #region Wrapper from 2-dimensional array
+
+    /// <summary>
+    /// Wraps a 2d array to a read-only matrix. 
+    /// </summary>
+    public class ROMatrixFrom2DArray<T> : IROMatrix<T> where T : struct
+    {
+      protected T[,] _array;
+      int _rows;
+      int _columns;
+
+      #region IROMatrix Members
+
+      /// <summary>
+      /// Initializes a new instance of the <see cref="ROMatrixFrom2DArray{T}"/> class.
+      /// </summary>
+      /// <param name="array">The linear array in column major order.</param>
+      /// <param name="nRows">The number of rows of the matrix. The number of colums are calculated from the length of the array and the number of rows.</param>
+      /// <exception cref="System.ArgumentException"></exception>
+      public ROMatrixFrom2DArray(T[,] array)
+      {
+        _array = array;
+        _rows = array.GetLength(0);
+        _columns = array.GetLength(1);
+      }
+
+
+      /// <inheritdoc/>
+      public T this[int row, int col]
+      {
+        get
+        {
+          return _array[row, col];
+        }
+      }
+
+      /// <inheritdoc/>
+      public int RowCount
+      {
+        get { return _rows; }
+      }
+
+      /// <inheritdoc/>
+      public int ColumnCount
+      {
+        get { return _columns; }
+      }
+
+      #endregion IROMatrix Members
+    }
+
+    /// <summary>
+    /// Wraps a 2D array to a read-only matrix. 
+    /// </summary>
+    public class RWMatrixFrom2DArray<T> : IMatrix<T> where T : struct
+    {
+      protected T[,] _array;
+      int _rows;
+      int _columns;
+
+      #region IROMatrix Members
+
+      /// <summary>
+      /// Initializes a new instance of the <see cref="ROMatrixFrom2DArray{T}"/> class.
+      /// </summary>
+      /// <param name="array">The linear array in column major order.</param>
+      /// <exception cref="System.ArgumentException"></exception>
+      public RWMatrixFrom2DArray(T[,] array)
+      {
+        _array = array;
+        _rows = array.GetLength(0);
+        _columns = array.GetLength(1);
+      }
+
+
+      /// <inheritdoc/>
+      public T this[int row, int col]
+      {
+        get
+        {
+          return _array[row, col];
+        }
+        set
+        {
+          _array[row, col] = value;
+        }
+      }
+
+      /// <inheritdoc/>
+      public int RowCount
+      {
+        get { return _rows; }
+      }
+
+      /// <inheritdoc/>
+      public int ColumnCount
+      {
+        get { return _columns; }
+      }
+
+      #endregion IROMatrix Members
+    }
+
+    public static IROMatrix<T> ToROMatrix<T>(this T[,] array) where T: struct
+    {
+      return new ROMatrixFrom2DArray<T>(array);
+    }
+
+    public static IMatrix<T> ToMatrix<T>(this T[,] array) where T : struct
+    {
+      return new RWMatrixFrom2DArray<T>(array);
+    }
+
+    #endregion
+
     #region LeftSpineJaggedArrayMatrix
 
     /// <summary>

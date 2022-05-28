@@ -1,4 +1,7 @@
 del /F /S /Q .\temp\*
+del /S /Q *.csproj.user
+del /S /Q *_wpftmp.csproj
+
 rem rmdir /S /Q .\.vs
 
 rmdir /S /Q .\AddIns\D3D\D3DPresentation\obj
