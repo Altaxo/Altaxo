@@ -39,6 +39,25 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
   /// </remarks>
   public record WaveletRicker2ndDerivative : IWaveletForPeakSearching
   {
+    #region Serialization
+
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(WaveletRicker2ndDerivative), 0)]
+    public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        var s = (WaveletRicker2ndDerivative)obj;
+      }
+
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      {
+        return new WaveletRicker2ndDerivative();
+      }
+    }
+
+    #endregion
+
+
     /// <inheritdoc/>
     public double WaveletFunction(double x, double width)
     {

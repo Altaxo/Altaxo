@@ -215,7 +215,7 @@ namespace Altaxo.Data
 
             var selColumnsForPeakGraph = new AscendingIntegerCollection();
             selColumnsForPeakGraph.Add(dstTable.DataColumns.GetColumnNumber(yDst));
-            string preferredGraphName = "GPeaks";
+            string preferredGraphName = dstTable.FolderName + "GPeaks";
             var graphController = PlotCommands.PlotLine(dstTable, selColumnsForPeakGraph, bLine: false, bScatter: true, preferredGraphName);
             var graph = graphController.Doc;
             var layer = (XYPlotLayer)graph.RootLayer.Layers[0];
@@ -268,17 +268,7 @@ namespace Altaxo.Data
             // -----------------------------------------------------------------------------
           }
         }
-
-        
-
-
-
-       
-
-
       } // for each selected column
-
-      
 
       if (peakTable.DataRowCount > 0)
       {

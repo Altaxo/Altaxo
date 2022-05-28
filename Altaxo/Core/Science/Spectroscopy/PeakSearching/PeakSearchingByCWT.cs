@@ -36,56 +36,144 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
   /// <para>References:</para>
   /// <para>[1] Bioinformatics (2006) 22 (17): 2059-2065. doi: 10.1093/bioinformatics/btl355</para>
   /// </remarks>
-  public record PeakSearchingByCWT : IPeakSearching
+  public record PeakSearchingByCwt : IPeakSearching
   {
+    IWaveletForPeakSearching _wavelet = new WaveletRicker();
+
+    /// <summary>
+    /// Gets the wavelet function used for transformation. Default is <see cref="WaveletRicker"/>.
+    /// </summary>
+    /// <value>
+    /// The wavelet.
+    /// </value>
+    /// <exception cref="System.ArgumentNullException">Wavelet</exception>
+    public IWaveletForPeakSearching Wavelet
+    {
+      get => _wavelet;
+      init => _wavelet = value ?? throw new ArgumentNullException(nameof(Wavelet));
+    }
+
     int _pointsPerOctave = 8;
 
-    public int PointsPerOctave
+    /// <summary>
+    /// The width of the wavelets is varied logarithmically. The value gives the number of points per octave of width variation (octave = factor of two).
+    /// The default value is 8.
+    /// </summary>
+    /// <value>
+    /// The number of points per octave.
+    /// </value>
+    /// <exception cref="System.ArgumentOutOfRangeException">Points per octave must be >= 4 - NumberOfPointsPerOctave</exception>
+    public int NumberOfPointsPerOctave
     {
       get
       {
         return _pointsPerOctave;
       }
-      set
+      init
       {
         if (!(value >= 4))
-          throw new ArgumentOutOfRangeException("Points per octave must be >= 4", nameof(PointsPerOctave));
+          throw new ArgumentOutOfRangeException("Points per octave must be >= 4", nameof(NumberOfPointsPerOctave));
         _pointsPerOctave = value; 
       }
     }
 
-    IWaveletForPeakSearching _wavelet = new WaveletRicker();
-    public IWaveletForPeakSearching Wavelet
+    private double _minimalRidgeLengthInOctaves=2;
+
+    /// <summary>
+    /// Gets the minimal ridge length in octaves a ridge must have, in order to be considered as an indication of a peak.
+    /// </summary>
+    /// <value>
+    /// The minimal ridge length in octaves.
+    /// </value>
+    public double MinimalRidgeLengthInOctaves
     {
-      get => _wavelet;
-      set => _wavelet = value ?? throw new ArgumentNullException(nameof(Wavelet));
+      get => _minimalRidgeLengthInOctaves;
+      init
+      {
+          _minimalRidgeLengthInOctaves = value;
+      }
     }
 
-    private double _requiredSignalToNoiseRatio=3;
+    private double _minimalWidthOfRidgeMaximumInOctaves = 2;
 
-    public double RequiredSignalToNoiseRatio
+    /// <summary>
+    /// Going along a ridge, the maximum of the Cwt coefficient indicates the best fit of the peak with the wavelet. The width of the peak can be derived from this location.
+    /// The value designates the minimal width of the ridge maximum. Default value is 2 octaves (1 to the left, 1 to the right).
+    /// </summary>
+    /// <value>
+    /// The minimal width of the ridge maximum in octaves.
+    /// </value>
+    public double MinimalWidthOfRidgeMaximumInOctaves
     {
-      get => _requiredSignalToNoiseRatio;
-      set
+      get => _minimalWidthOfRidgeMaximumInOctaves;
+      init
       {
-        _requiredSignalToNoiseRatio = value;
+          _minimalWidthOfRidgeMaximumInOctaves = value;
+      }
+    }
+
+    private double _minimalSignalToNoiseRatio = 3;
+
+    /// <summary>
+    /// Gets the minimal signal to noise ratio a peak must have in order to be included in the result list.
+    /// </summary>
+    /// <value>
+    /// The minimal signal to noise ratio. Default value is 3.
+    /// </value>
+    public double MinimalSignalToNoiseRatio
+    {
+      get => _minimalSignalToNoiseRatio;
+      init
+      {
+        _minimalSignalToNoiseRatio = value;
+      }
+    }
+
+    private double _minimalRelativeGaussianAmplitude = 0.005;
+
+    /// <summary>
+    /// Gets the minimal relative gaussian amplitude (relative to the maximum Gaussian amplitude) of the signal, that a peak must have in order to be included in the result.
+    /// The default value is 0.005 (0.5%).
+    /// </summary>
+    /// <value>
+    /// The minimal relative gaussian amplitude.
+    /// </value>
+    public double MinimalRelativeGaussianAmplitude 
+    {
+      get => _minimalRelativeGaussianAmplitude ;
+      init
+      {
+          _minimalRelativeGaussianAmplitude  = value;
       }
     }
 
     #region Serialization
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PeakSearchingByCWT), 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PeakSearchingByCwt), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (PeakSearchingByCWT)obj;
+        var s = (PeakSearchingByCwt)obj;
+
+        info.AddValue("Wavelet", s.Wavelet);
+        info.AddValue("NumberOfPointsPerOctave", s.NumberOfPointsPerOctave);
+        info.AddValue("MinimalRidgeLengthInOctaves", s.MinimalRidgeLengthInOctaves);
+        info.AddValue("MinimalWidthOfRidgeMaximumInOctaves", s.MinimalWidthOfRidgeMaximumInOctaves);
+        info.AddValue("MinimalSignalToNoiseRatio", s.MinimalSignalToNoiseRatio);
+        info.AddValue("MinimalRelativeGaussianAmplitude", s.MinimalRelativeGaussianAmplitude);
       }
 
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        return new PeakSearchingByCWT()
+        return new PeakSearchingByCwt()
         {
+          Wavelet = info.GetValue<IWaveletForPeakSearching>("Wavelet", null),
+          NumberOfPointsPerOctave = info.GetInt32("NumberOfPointsPerOctave"),
+          MinimalRidgeLengthInOctaves = info.GetDouble("MinimalRidgeLengthInOctaves"),
+          MinimalWidthOfRidgeMaximumInOctaves = info.GetDouble("MinimalWidthOfRidgeMaximumInOctaves"),
+          MinimalSignalToNoiseRatio = info.GetDouble("MinimalSignalToNoiseRatio"),
+          MinimalRelativeGaussianAmplitude = info.GetDouble("MinimalRelativeGaussianAmplitude")
         };
       }
     }
@@ -93,9 +181,9 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
 
     public IPeakSearchingResult Execute(double[] input)
     {
-      int numberOfStages = (int)(PointsPerOctave * Math.Log(input.Length) / Math.Log(2));
+      int numberOfStages = (int)(NumberOfPointsPerOctave * Math.Log(input.Length) / Math.Log(2));
 
-      var widths = Enumerable.Range(0, numberOfStages).Select(stage => Math.Pow(2, stage / (double)PointsPerOctave)).ToArray();
+      var widths = Enumerable.Range(0, numberOfStages).Select(stage => Math.Pow(2, stage / (double)NumberOfPointsPerOctave)).ToArray();
       var max_distances = widths.Select(x => (int)Math.Ceiling(x / 4.0)).ToArray();
 
       var gap_thresh = 1;
@@ -105,32 +193,35 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
       // filter the ridge lines
 
       double maximalGaussAmplitude = double.NegativeInfinity;
+      int minimalRequiredRidgeLength = Math.Max(1, (int)Math.Ceiling(_pointsPerOctave * MinimalRidgeLengthInOctaves));
+      int minimalOrderOfRidgeMaximum = Math.Max(1, (int)Math.Ceiling(_pointsPerOctave * MinimalWidthOfRidgeMaximumInOctaves / 2.0));
+
       var filteredRidgeLines1 = new List<RidgeLine>();
       foreach (var ridgeLine in ridgeLines)
       {
-        var maxPoint = ridgeLine.GetPointAtMaximalCwtCoefficient(PointsPerOctave);
+        var maxPoint = ridgeLine.GetPointAtMaximalCwtCoefficient(minimalOrderOfRidgeMaximum);
 
         if (ridgeLine.PointAtLowestWidth.Row == 0 &&                 // ridge line should proceed to stage 0
-           ridgeLine.Count >= (2 * PointsPerOctave) &&                // ridge line should have at least 2 octaves
-           (maxPoint.CwtCoefficient / noise[maxPoint.Column]) >= _requiredSignalToNoiseRatio && // required signal-to-noise ration at maximum Cwt coefficient
+           ridgeLine.Count >= minimalRequiredRidgeLength &&                // ridge line should have at least 2 octaves
+           (maxPoint.CwtCoefficient / noise[maxPoint.Column]) >= _minimalSignalToNoiseRatio && // required signal-to-noise ration at maximum Cwt coefficient
            maxPoint.Row > 0
           )
         {
           filteredRidgeLines1.Add(ridgeLine);
         }
 
-        var (gaussAmplitude, gaussSigma) = _wavelet.GetParametersForGaussianPeak(maxPoint.CwtCoefficient, maxPoint.Row);
+        var (gaussAmplitude, gaussSigma) = _wavelet.GetParametersForGaussianPeak(maxPoint.CwtCoefficient, widths[maxPoint.Row]);
 
         maximalGaussAmplitude = Math.Max(maximalGaussAmplitude, gaussAmplitude);
       }
 
       // filter level 2 => discard peaks with Gaussian amplitudes below a value relative to the maximal Gaussian amplitude
       var peakDescriptions = new List<PeakDescription>();
-      foreach (var ridgeLine in ridgeLines)
+      foreach (var ridgeLine in filteredRidgeLines1)
       {
-        var maxPoint = ridgeLine.GetPointAtMaximalCwtCoefficient(PointsPerOctave);
-        var (gaussAmplitude, gaussSigma) = _wavelet.GetParametersForGaussianPeak(maxPoint.CwtCoefficient, maxPoint.Row);
-        if (gaussAmplitude > (maximalGaussAmplitude * 0.005))
+        var maxPoint = ridgeLine.GetPointAtMaximalCwtCoefficient(minimalOrderOfRidgeMaximum);
+        var (gaussAmplitude, gaussSigma) = _wavelet.GetParametersForGaussianPeak(maxPoint.CwtCoefficient, widths[maxPoint.Row]);
+        if (gaussAmplitude > (maximalGaussAmplitude * _minimalRelativeGaussianAmplitude))
         {
           var peakDescription = new PeakDescription()
           {

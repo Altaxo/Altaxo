@@ -38,6 +38,25 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
   /// </remarks>
   public record WaveletRicker : IWaveletForPeakSearching
   {
+    #region Serialization
+
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(WaveletRicker), 0)]
+    public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        var s = (WaveletRicker)obj;
+      }
+
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      {
+        return new WaveletRicker();
+      }
+    }
+
+    #endregion
+
+
     /// <inheritdoc/>
     public double WaveletFunction(double x, double width)
     {
