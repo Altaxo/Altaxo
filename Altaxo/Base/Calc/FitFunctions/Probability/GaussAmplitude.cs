@@ -24,6 +24,8 @@
 
 #nullable enable
 using System;
+using Altaxo.Calc.FitFunctions.Peaks;
+using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Calc.Regression.Nonlinear;
 using Altaxo.Main;
 
@@ -35,12 +37,16 @@ namespace Altaxo.Calc.FitFunctions.Probability
   /// </summary>
   [FitFunctionClass]
   public class GaussAmplitude
-        : IFitFunctionWithGradient, IImmutable
+        : IFitFunctionWithGradient, IImmutable, IFitFunctionPeak
   {
     /// <summary>The order of the background polynomial.</summary>
     private readonly int _orderOfBackgroundPolynomial;
     /// <summary>The order of the polynomial with negative exponents.</summary>
     private readonly int _numberOfTerms;
+
+    const string ParameterBaseName0 = "a";
+    const string ParameterBaseName1 = "xc";
+    const string ParameterBaseName2 = "w";
 
     #region Serialization
 
@@ -66,8 +72,6 @@ namespace Altaxo.Calc.FitFunctions.Probability
     }
 
     #endregion Serialization
-
-
 
     public GaussAmplitude()
     {
@@ -104,7 +108,19 @@ namespace Altaxo.Calc.FitFunctions.Probability
     /// <summary>
     /// Gets the order of the background polynomial.
     /// </summary>
-    public int OrderOfBackgroundPolynomial => _orderOfBackgroundPolynomial;
+    public int OrderOfBackgroundPolynomial
+    {
+      get
+      {
+        return _orderOfBackgroundPolynomial;
+      }
+      init
+      {
+        if (!(_orderOfBackgroundPolynomial >= -1))
+          throw new ArgumentOutOfRangeException("Order of background polynomial must either be -1 (to disable it) or >=0", nameof(OrderOfBackgroundPolynomial));
+        _orderOfBackgroundPolynomial = value;
+      }
+    }
 
     /// <summary>
     /// Creates a new instance with the provided order of the background polynomial.
@@ -129,7 +145,19 @@ namespace Altaxo.Calc.FitFunctions.Probability
     /// <summary>
     /// Gets the number of Gaussian terms.
     /// </summary>
-    public int NumberOfTerms => _numberOfTerms;
+    public int NumberOfTerms
+    {
+      get
+      {
+        return _numberOfTerms;
+      }
+      init
+      {
+        if (!(value >= 1))
+          throw new ArgumentOutOfRangeException("Number of terms must be >=1", nameof(NumberOfTerms));
+        _numberOfTerms = value;
+      }
+    }
 
     /// <summary>
     /// Creates a new instance with the provided number of Gaussian terms.
@@ -274,5 +302,67 @@ namespace Altaxo.Calc.FitFunctions.Probability
         }
       }
     }
+
+    #region IFitFunctionPeak
+
+    /// <inheritdoc/>
+    public double[] GetInitialParametersFromHeightPositionAndWidthAtRelativeHeight(double height, double position, double width, double relativeHeight)
+    {
+      if (!(relativeHeight > 0 && relativeHeight < 1))
+        throw new ArgumentException("RelativeHeight should be in the open interval (0,1)", nameof(relativeHeight));
+
+      double w = 0.5 * width / Math.Sqrt(-2 * Math.Log(relativeHeight));
+      return new double[] { height, position, w };
+    }
+
+    /// <inheritdoc/>
+    IFitFunctionPeak IFitFunctionPeak.WithNumberOfTerms(int numberOfTerms)
+    {
+      return new GaussAmplitude { NumberOfTerms = numberOfTerms, OrderOfBackgroundPolynomial = this.OrderOfBackgroundPolynomial };
+    }
+
+    /// <inheritdoc/>
+    public string[] ParameterNamesForOnePeak => new string[] { ParameterBaseName0, ParameterBaseName1, ParameterBaseName2 };
+
+    /// <inheritdoc/>
+    public (double Position, double Area, double Height, double FWHM) GetPositionAreaHeightFWHMFromSinglePeakParameters(double[] parameters)
+    {
+      var (pos, _, area, _, height, _, fwhm, _) = GetPositionAreaHeightFwhmFromSinglePeakParameters(parameters, null);
+      return (pos, area, height, fwhm);
+    }
+
+    static double SafeSqrt(double x) => Math.Sqrt(Math.Max(0, x));
+
+    /// <inheritdoc/>
+    public (double Position, double PositionVariance, double Area, double AreaVariance, double Height, double HeightVariance, double FWHM, double FWHMVariance)
+      GetPositionAreaHeightFwhmFromSinglePeakParameters(double[] parameters, IROMatrix<double>? cv)
+    {
+      const double Sqrt2Pi = 2.5066282746310005024;
+      const double SqrtLog4 = 1.1774100225154746910;
+
+      if (parameters == null || parameters.Length != 3)
+        throw new ArgumentException(nameof(parameters));
+
+      var height = parameters[0];
+      var pos = parameters[1];
+      var sigma = parameters[2];
+
+      var area = height * (sigma * Sqrt2Pi);
+      var fwhm = sigma * 2 * SqrtLog4;
+
+      double posVariance = 0, areaVariance = 0, heightVariance = 0, fwhmVariance = 0;
+
+      if (cv is not null)
+      {
+        areaVariance = Sqrt2Pi * SafeSqrt(RMath.Pow2(area) * cv[2, 2] + area * sigma * (cv[0, 2] + cv[2, 0]) + RMath.Pow2(sigma) * cv[0, 0]);
+        posVariance = Math.Sqrt(cv[1, 1]);
+        heightVariance = Math.Sqrt(cv[0, 0]);
+        fwhmVariance = 2 * Math.Sqrt(cv[2, 2]) * SqrtLog4;
+      }
+      return (pos, posVariance, area, areaVariance, height, heightVariance, fwhm, fwhmVariance);
+    }
+
+
+    #endregion
   }
 }

@@ -25,6 +25,7 @@
 #nullable enable
 using System;
 using Altaxo.Calc.FitFunctions.Peaks;
+using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Calc.Regression.Nonlinear;
 using Altaxo.Main;
 
@@ -121,7 +122,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
       */
     }
 
-    
+
 
     /// <summary>
     /// Creates a new instance with the provided order of the background polynomial.
@@ -269,7 +270,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
 
     #endregion IFitFunction Members
 
- 
+
 
     /// <inheritdoc/>
     public double[] GetInitialParametersFromHeightPositionAndWidthAtRelativeHeight(double height, double position, double width, double relativeHeight)
@@ -286,7 +287,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
     /// <inheritdoc/>
     IFitFunctionPeak IFitFunctionPeak.WithNumberOfTerms(int numberOfTerms)
     {
-      return new VoigtArea( numberOfTerms, this.OrderOfBackgroundPolynomial);
+      return new VoigtArea(numberOfTerms, this.OrderOfBackgroundPolynomial);
     }
 
     /// <inheritdoc/>
@@ -300,10 +301,131 @@ namespace Altaxo.Calc.FitFunctions.Probability
 
       var area = parameters[0];
       var pos = parameters[1];
-      var height = parameters[0]* Altaxo.Calc.ComplexErrorFunctionRelated.Voigt(0, parameters[2], parameters[3]);
-      var fwhm = 2*Altaxo.Calc.ComplexErrorFunctionRelated.VoigtHalfWidthHalfMaximum(parameters[2], parameters[3]);
+      var height = parameters[0] * Altaxo.Calc.ComplexErrorFunctionRelated.Voigt(0, parameters[2], parameters[3]);
+      var fwhm = 2 * Altaxo.Calc.ComplexErrorFunctionRelated.VoigtHalfWidthHalfMaximum(parameters[2], parameters[3]);
 
       return (pos, area, height, fwhm);
     }
+
+    static double SafeSqrt(double x) => Math.Sqrt(Math.Max(0, x));
+
+    public (double Position, double PositionVariance, double Area, double AreaVariance, double Height, double HeightVariance, double FWHM, double FWHMVariance)
+      GetPositionAreaHeightFwhmFromSinglePeakParameters(double[] parameters, IROMatrix<double> cv)
+    {
+      const double Sqrt2Pi = 2.5066282746310005024;
+      const double SqrtLog4 = 1.1774100225154746910;
+
+      if (parameters is null || parameters.Length != 4)
+        throw new ArgumentException(nameof(parameters));
+
+
+      var area = parameters[0];
+      var pos = parameters[1];
+      var sigma = Math.Abs(parameters[2]);
+      var gamma = Math.Abs(parameters[3]);
+
+      var areaVariance = cv is null ? 0 : Math.Sqrt(cv[0, 0]);
+      var posVariance = cv is null ? 0 : Math.Sqrt(cv[1, 1]);
+
+      double height;
+      double fwhm;
+      double heightVariance = 0;
+      double fwhmVariance = 0;
+
+      double C2 = 0.86676; // Approximation constant for FWHM of Voigt
+      double C1 = 2 - Math.Sqrt(C2);
+
+      if (sigma == 0) // limiting case sigma -> 0
+      {
+        // we have a pure Lorenzian
+        height = area / (gamma * Math.PI);
+        fwhm = 2 * gamma;
+
+        if (cv is not null)
+        {
+          heightVariance = Math.Sqrt(area * area * cv[3, 3] - area * gamma * (cv[0, 3] + cv[3, 0]) + gamma * gamma * cv[0, 0]) / (gamma * gamma * Math.PI);
+          fwhmVariance = 2 * Math.Sqrt(cv[3, 3]);
+        }
+      }
+      else if (gamma == 0)
+      {
+        // we have a pure Gaussian
+        height = area / (Sqrt2Pi * sigma);
+        fwhm = 2 * sigma * SqrtLog4;
+
+        if (cv is not null)
+        {
+          heightVariance = Math.Sqrt(
+                                      RMath.Pow2(area) * (2 * cv[3, 3] + cv[2, 2] * Math.PI + (cv[2, 3] + cv[3, 2]) * Sqrt2Pi) -
+                                      area * ((cv[0, 2] + cv[2, 0]) * Math.PI + (cv[0, 3] + cv[3, 0]) * Sqrt2Pi) * sigma +
+                                      cv[0, 0] * Math.PI * RMath.Pow2(sigma)
+                                    ) / (Math.Sqrt(2) * Math.PI * RMath.Pow2(sigma));
+
+          fwhmVariance = Math.Sqrt(
+                                    RMath.Pow2(C1) * cv[3, 3] +
+                                    8 * Math.Log(2) * cv[2, 2] +
+                                    2 * C1 * SqrtLog4 * (cv[2, 3] + cv[3, 2])
+                                  );
+        }
+      }
+      else
+      {
+        // expErfcTerm is normally: Math.Exp(0.5 * RMath.Pow2(gamma / sigma)) * Erfc(gamma / (Math.Sqrt(2) * sigma))
+        // but for large gamma/sigma, we need a approximation, because the exp term becomes too large
+        double expErfcTerm; 
+
+        // for gamma > 20*sigma we need an approximation of the expErfcTerm, since the expTerm will get too large and the Erfc term too small
+        // we use a series expansion
+
+        if (gamma >= 20*sigma) // approximation by series expansion is needed
+        {
+          var x = sigma / gamma;
+          var xx = x * x;
+          expErfcTerm = Math.Sqrt(2 / Math.PI) * ((((((((2027025 * xx - 135135) * xx + 10395) * xx - 945) * xx + 105) * xx - 15) * xx + 3) * xx - 1) * xx + 1) * x;
+        }
+        else // normal case
+        {
+          var expTerm = Math.Exp(0.5 * RMath.Pow2(gamma / sigma));
+          var erfcTerm = Altaxo.Calc.ErrorFunction.Erfc(gamma / (Math.Sqrt(2) * sigma));
+          expErfcTerm = expTerm * erfcTerm;
+        }
+
+        height = area * expErfcTerm / (sigma * Sqrt2Pi);
+
+
+        double fwhmSqrtTerm = Math.Sqrt(C2 * gamma * gamma + 8 * sigma * sigma * Math.Log(2));
+        fwhm = C1 * gamma + fwhmSqrtTerm;
+
+
+        if (cv is not null)
+        {
+          var dHeightByDArea = expErfcTerm / (sigma * Sqrt2Pi);
+          var dHeightByDSigma = area * (2 * gamma * sigma - expErfcTerm * Sqrt2Pi * (RMath.Pow2(gamma) + RMath.Pow2(sigma)) ) / RMath.Pow2(Sqrt2Pi * sigma * sigma);
+          var dHeightByDGamma = area * (gamma * expErfcTerm / (Sqrt2Pi * RMath.Pow3(sigma)) - 1 / (Math.PI * RMath.Pow2(sigma)));
+
+          heightVariance = Math.Sqrt(
+            cv[0, 0] * RMath.Pow2(dHeightByDArea) +
+            dHeightByDGamma * ((cv[0, 3] + cv[3, 0]) * dHeightByDArea +
+            cv[3, 3] * dHeightByDGamma) +
+            ((cv[0, 2] + cv[2, 0]) * dHeightByDArea +
+            (cv[2, 3] + cv[3, 2]) * dHeightByDGamma) * dHeightByDSigma +
+            cv[2, 2] * RMath.Pow2(dHeightByDSigma));
+
+
+          var dFwhmByDSigma = 8 * sigma * Math.Log(2) / fwhmSqrtTerm;
+          var dFwhmByDGamma = (2 - Math.Sqrt(C2)) + C2 * gamma / fwhmSqrtTerm;
+
+          fwhmVariance = Math.Sqrt(
+                                cv[3, 3] * RMath.Pow2(dFwhmByDGamma) +
+                                dFwhmByDSigma * ((cv[2, 3] + cv[3, 2]) * dFwhmByDGamma +
+                                cv[2, 2] * dFwhmByDSigma));
+
+        }
+
+      }
+      return (pos, posVariance, area, areaVariance, height, heightVariance, fwhm, fwhmVariance);
+    }
   }
 }
+
+

@@ -24,6 +24,7 @@
 
 
 using Altaxo.Calc.FitFunctions.Peaks;
+using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Calc.Regression.Nonlinear;
 
 namespace Altaxo.Science.Spectroscopy.PeakFitting
@@ -67,9 +68,9 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
     public double[]? PeakParameter { get; init; }
 
     /// <summary>
-    /// Gets the fit parameter variances of the peak.
+    /// Gets the fit covariance matrix of the parameters of the peak.
     /// </summary>
-    public double[]? PeakParameterVariance { get; init; }
+    public IROMatrix<double>? PeakParameterVariance { get; init; }
 
     /// <summary>
     /// Gets the fit function that was used to fit the peak.

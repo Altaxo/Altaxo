@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Regression.Nonlinear
 {
@@ -15,6 +16,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
     double[] _parameters = new double[0];
     double[] _parameterVariances = new double[0];
+    IROMatrix<double>? _covariances;
 
     bool _isExecuted;
 
@@ -60,6 +62,21 @@ namespace Altaxo.Calc.Regression.Nonlinear
       }
     }
 
+    /// <summary>
+    /// Gets the resulting covariances of the fit.
+    /// </summary>
+    /// <value>
+    /// The covariances.
+    /// </value>
+    public IROMatrix<double> Covariances
+    {
+      get
+      {
+        CheckExecuted();
+        return _covariances;
+      }
+    }
+
 
     public QuickNonlinearRegression(IFitFunction fitFunction)
     {
@@ -87,6 +104,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
       NLFit.LevenbergMarquardtFit(new NLFit.LMFunction(adapter.EvaluateFunctionDifferences), param, ys, 1E-10, ref info);
       var resultingCovariances = new double[param.Length * param.Length];
+      _covariances = MatrixMath.ToROMatrixFromColumnMajorLinearArray(resultingCovariances, param.Length);
       NLFit.ComputeCovariances(new NLFit.LMFunction(adapter.EvaluateFunctionDifferences), param, ys.Length, param.Length, resultingCovariances, out _sumChiSquare, out _sigmaSquare);
 
       _parameters = (double[])initialGuess.Clone();

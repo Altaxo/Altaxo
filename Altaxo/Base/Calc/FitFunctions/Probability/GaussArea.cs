@@ -25,6 +25,7 @@
 #nullable enable
 using System;
 using Altaxo.Calc.FitFunctions.Peaks;
+using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Calc.Regression.Nonlinear;
 using Altaxo.Main;
 
@@ -42,10 +43,9 @@ namespace Altaxo.Calc.FitFunctions.Probability
     private readonly int _orderOfBackgroundPolynomial;
     /// <summary>The order of the polynomial with negative exponents.</summary>
     private readonly int _numberOfTerms;
-
-    const string ParameterBaseName0 = "A";
-    const string ParameterBaseName1 = "xc";
-    const string ParameterBaseName2 = "w";
+    private const string ParameterBaseName0 = "A";
+    private const string ParameterBaseName1 = "xc";
+    private const string ParameterBaseName2 = "w";
 
     #region Serialization
 
@@ -110,7 +110,8 @@ namespace Altaxo.Calc.FitFunctions.Probability
     public int OrderOfBackgroundPolynomial
     {
       get { return _orderOfBackgroundPolynomial; }
-      init {
+      init
+      {
         if (!(_orderOfBackgroundPolynomial >= -1))
           throw new ArgumentOutOfRangeException("Order of background polynomial must either be -1 (to disable it) or >=0", nameof(OrderOfBackgroundPolynomial));
         _orderOfBackgroundPolynomial = value;
@@ -155,7 +156,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
       }
     }
 
-    
+
 
     #region IFitFunction Members
 
@@ -288,7 +289,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
         throw new ArgumentException("RelativeHeight should be in the open interval (0,1)", nameof(relativeHeight));
 
       double w = 0.5 * width / Math.Sqrt(-2 * Math.Log(relativeHeight));
-      return new double[] { height*w*Math.Sqrt(2*Math.PI), position, w };
+      return new double[] { height * w * Math.Sqrt(2 * Math.PI), position, w };
     }
 
     /// <inheritdoc/>
@@ -304,17 +305,40 @@ namespace Altaxo.Calc.FitFunctions.Probability
     /// <inheritdoc/>
     public (double Position, double Area, double Height, double FWHM) GetPositionAreaHeightFWHMFromSinglePeakParameters(double[] parameters)
     {
-      if(parameters == null || parameters.Length != 3)
+      var (pos, _, area, _, height, _, fwhm, _) = GetPositionAreaHeightFwhmFromSinglePeakParameters(parameters, null);
+      return (pos, area, height, fwhm);
+    }
+
+    private static double SafeSqrt(double x) => Math.Sqrt(Math.Max(0, x));
+
+    /// <inheritdoc/>
+    public (double Position, double PositionVariance, double Area, double AreaVariance, double Height, double HeightVariance, double FWHM, double FWHMVariance)
+      GetPositionAreaHeightFwhmFromSinglePeakParameters(double[] parameters, IROMatrix<double>? cv)
+    {
+      const double Sqrt2Pi = 2.5066282746310005024;
+      const double SqrtLog4 = 1.1774100225154746910;
+
+      if (parameters == null || parameters.Length != 3)
         throw new ArgumentException(nameof(parameters));
 
       var area = parameters[0];
       var pos = parameters[1];
-      var height = area / (parameters[2] * Math.Sqrt(2 * Math.PI));
-      var fwhm = parameters[2] * Math.Sqrt(2 * Math.Log(2));
+      var sigma = parameters[2];
 
-      return (pos, area, height, fwhm);
+      var height = area / (sigma * Sqrt2Pi);
+      var fwhm = sigma * 2 * SqrtLog4;
+
+      double posVariance = 0, areaVariance = 0, heightVariance = 0, fwhmVariance = 0;
+
+      if (cv is not null)
+      {
+        areaVariance = Math.Sqrt(cv[0, 0]);
+        posVariance = Math.Sqrt(cv[1, 1]);
+        heightVariance = SafeSqrt(RMath.Pow2(area) * cv[2, 2] - area * sigma * (cv[0, 2] + cv[2, 0]) + RMath.Pow2(sigma) * cv[0, 0]) / (RMath.Pow2(sigma) * Sqrt2Pi);
+        fwhmVariance = Math.Sqrt(cv[2, 2]) * 2 * SqrtLog4;
+      }
+      return (pos, posVariance, area, areaVariance, height, heightVariance, fwhm, fwhmVariance);
+
     }
-
-
   }
 }

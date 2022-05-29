@@ -162,9 +162,13 @@ namespace Altaxo.Data
 
             var cFNot = peakTable.DataColumns.EnsureExistence($"FitNotes{runningColumnNumber}", typeof(TextColumn), ColumnKind.V, runningColumnNumber);
             var cFPos = peakTable.DataColumns.EnsureExistence($"FitPosition{runningColumnNumber}", typeof(DoubleColumn), ColumnKind.X, runningColumnNumber);
+            var cFPosVar = peakTable.DataColumns.EnsureExistence($"FitPosition{runningColumnNumber}.Err", typeof(DoubleColumn), ColumnKind.Err, runningColumnNumber);
             var cFArea = peakTable.DataColumns.EnsureExistence($"FitArea{runningColumnNumber}", typeof(DoubleColumn), ColumnKind.V, runningColumnNumber);
+            var cFAreaVar = peakTable.DataColumns.EnsureExistence($"FitArea{runningColumnNumber}.Err", typeof(DoubleColumn), ColumnKind.Err, runningColumnNumber);
             var cFHei = peakTable.DataColumns.EnsureExistence($"FitHeight{runningColumnNumber}", typeof(DoubleColumn), ColumnKind.V, runningColumnNumber);
-            var cFWid = peakTable.DataColumns.EnsureExistence($"FitWidth{runningColumnNumber}", typeof(DoubleColumn), ColumnKind.V, runningColumnNumber);
+            var cFHeiVar = peakTable.DataColumns.EnsureExistence($"FitHeight{runningColumnNumber}.Err", typeof(DoubleColumn), ColumnKind.Err, runningColumnNumber);
+            var cFWid = peakTable.DataColumns.EnsureExistence($"FitFwhm{runningColumnNumber}", typeof(DoubleColumn), ColumnKind.V, runningColumnNumber);
+            var cFWidVar = peakTable.DataColumns.EnsureExistence($"FitFwhm{runningColumnNumber}.Err", typeof(DoubleColumn), ColumnKind.Err, runningColumnNumber);
             var cFirstPoint = peakTable.DataColumns.EnsureExistence($"FitFirstPoint{runningColumnNumber}", typeof(DoubleColumn), ColumnKind.V, runningColumnNumber);
             var cLastPoint = peakTable.DataColumns.EnsureExistence($"FitLastPoint{runningColumnNumber}", typeof(DoubleColumn), ColumnKind.V, runningColumnNumber);
             var cNumberOfPoints = peakTable.DataColumns.EnsureExistence($"FitNumberOfPoints{runningColumnNumber}", typeof(DoubleColumn), ColumnKind.V, runningColumnNumber);
@@ -181,12 +185,16 @@ namespace Altaxo.Data
 
               if(r.FitFunction is { } fitFunction)
               {
-                var (pos, area, height, fwhm) = fitFunction.GetPositionAreaHeightFWHMFromSinglePeakParameters(r.PeakParameter);
+                var (pos, posVar, area, areaVar, height, heightVar, fwhm, fwhmVar) = fitFunction.GetPositionAreaHeightFwhmFromSinglePeakParameters(r.PeakParameter, r.PeakParameterVariance);
 
                 cFPos[i] = pos;
+                cFPosVar[i] = posVar;
                 cFArea[i] = area;
+                cFAreaVar[i] = areaVar;
                 cFHei[i] = height;
+                cFHeiVar[i] = heightVar;
                 cFWid[i] = fwhm;
+                cFWidVar[i] = fwhmVar;
                 cFirstPoint[i] = r.FirstFitPoint;
                 cLastPoint[i] = r.LastFitPoint;
                 cNumberOfPoints[i] = Math.Abs(r.LastFitPoint - r.FirstFitPoint);
@@ -200,7 +208,7 @@ namespace Altaxo.Data
                   var cParaVariance = peakTable.DataColumns.EnsureExistence($"{parameterNames[j]}{runningColumnNumber}.Err", typeof(DoubleColumn), ColumnKind.Err, runningColumnNumber);
 
                   cParaValue[i] = r.PeakParameter[j];
-                  cParaVariance[i] = r.PeakParameterVariance[j];
+                  cParaVariance[i] = Math.Sqrt(r.PeakParameterVariance[j,j]);
                 }
               }
               cFNot[i] = r.Notes;

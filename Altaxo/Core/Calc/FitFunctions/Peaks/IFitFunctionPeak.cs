@@ -27,6 +27,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Calc.Regression.Nonlinear;
 
 namespace Altaxo.Calc.FitFunctions.Peaks
@@ -63,5 +64,15 @@ namespace Altaxo.Calc.FitFunctions.Peaks
     /// <param name="parameters">The parameters.</param>
     /// <returns>The position, the area under the peak, the height, and the Full Width Half Maximum (FWHM).</returns>
     (double Position, double Area, double Height, double FWHM) GetPositionAreaHeightFWHMFromSinglePeakParameters(double[] parameters);
+
+    /// <summary>
+    /// Gets the position, the area under the peak, the height, and the Full Width Half Maximum (FWHM) from the parameters of a single peak.
+    /// If the covariance matrix is given, then also the variances of position, area, height, FWHM are calculated (otherwise, zero values are returned for the variances).
+    /// </summary>
+    /// <param name="parameters">The parameters.</param>
+    /// <param name="cv">The covariance matrix. Can be null (in this case the returned variance values are zero).</param>
+    /// <returns>The position, the area under the peak, the height, and the Full Width Half Maximum (FWHM), together with their variances.</returns>
+    public (double Position, double PositionVariance, double Area, double AreaVariance, double Height, double HeightVariance, double FWHM, double FWHMVariance)
+        GetPositionAreaHeightFwhmFromSinglePeakParameters(double[] parameters, IROMatrix<double>? cv);
   }
 }

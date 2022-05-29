@@ -95,7 +95,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
 
         
 
-        var param = fitFunc.GetInitialParametersFromHeightPositionAndWidthAtRelativeHeight(description.Height, xPosition, xWidth, description.AbsoluteHeightOfWidthDetermination / description.Height); ;
+        var param = fitFunc.GetInitialParametersFromHeightPositionAndWidthAtRelativeHeight(description.Height, xPosition, xWidth, description.AbsoluteHeightOfWidthDetermination / description.Height); 
 
         var fit = new QuickNonlinearRegression(fitFunc);
         param = fit.Fit(xCut, yCut,param);
@@ -108,7 +108,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
           FirstFitPosition = xArray[first],
           LastFitPosition = xArray[last],
           PeakParameter = (double[])param.Clone(),
-          PeakParameterVariance = fit.ParameterVariances.ToArray(),
+          PeakParameterVariance = fit.Covariances,
           FitFunction = fitFunc,
           FitFunctionParameter = (double[])param.Clone(),
         }); 

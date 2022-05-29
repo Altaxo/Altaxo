@@ -2079,14 +2079,30 @@ finish:
 
     #region width.c
 
-    /* This approximation claims accuracy of 0.02%
- * Olivero & Longbothum [1977]
- * Journal of Quantitative Spectroscopy and Radiative Transfer. 17:233
- */
-    private static double hwhm0(double sigma, double gamma)
+    /// <summary>
+    /// An approximation formula for the half width at half maximum of the <see cref="Voigt(double, double, double)"/> profile.
+    /// The maximal relative error is 0.0216%. The error is vanishing in the limiting cases sigma&gt;&gt;gamma and gamma&gt;&gt;sigma.
+    /// </summary>
+    /// <param name="sigma">The parameter sigma (of the Gaussian).</param>
+    /// <param name="gamma">The parameter gamma (of the Lorentzian).</param>
+    /// <returns>The half width at half maximum of the Voigt profile, see <see cref="Voigt(double, double, double)"/>.</returns>
+    /// <exception cref="System.InvalidProgramException"></exception>
+    /// <remarks>
+    /// <para>References:</para>
+    /// <para>[1] Olivero, Longbothum, Journal of Quantitative Spectroscopy and Radiative Transfer, 1977, 17:233</para>
+    /// <para>D. Lellinger: The constant C1 was calculated from C2 in order to ensure asymptotic correct behavior. C2 was chosen so that the maximum relative error
+    /// is symmetrically around zero.</para>
+    /// </remarks>
+    public static double VoigtHalfWidthHalfMaximumApproximation(double sigma, double gamma)
     {
-      return 0.5 * (1.06868 * gamma + Math.Sqrt(0.86743 * gamma * gamma + 4 * 2 * Math.Log(2) * sigma * sigma));
+      const double C2 = 0.86676; // for relative error always < 0.000216 _and_ asymptotic correct behaviour
+      double C2S = 2 - Math.Sqrt(C2);
+      return 0.5 * (C2S * gamma + Math.Sqrt(C2 * gamma * gamma + 4 * 2 * Math.Log(2) * sigma * sigma));
     }
+    /// <summary>
+    /// Gets the maximal relative error of the <see cref="VoigtHalfWidthHalfMaximumApproximation(double, double)"/>.
+    /// </summary>
+    public const double VoigtHalfWidthHalfMaximumApproximationMaximalRelativeError = 0.000216;
 
 
     /// <summary>
@@ -2131,7 +2147,7 @@ finish:
       HM = Voigt(0.0, s, g) / 2;
 
       /* Choose initial points a,b that bracket the expected root */
-      c = hwhm0(s, g);
+      c = VoigtHalfWidthHalfMaximumApproximation(s, g);
       a = c * 0.995;
       b = c * 1.005;
       del_a = Voigt(a, s, g) - HM;

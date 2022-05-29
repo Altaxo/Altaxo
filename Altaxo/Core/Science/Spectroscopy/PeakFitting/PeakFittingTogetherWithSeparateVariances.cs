@@ -169,6 +169,12 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
         }
         else
         {
+          var fitCov = fit.Covariances;
+          var localCov = new Altaxo.Calc.LinearAlgebra.DoubleMatrix(numberOfParametersPerPeak, numberOfParametersPerPeak);
+          for (int i = 0; i < numberOfParametersPerPeak; i++)
+            for (int j = 0; j < numberOfParametersPerPeak; ++j)
+              localCov[i, j] = fitCov[i + idx * numberOfParametersPerPeak, j + idx * numberOfParametersPerPeak];
+
           list.Add(new PeakDescription
           {
             SearchDescription = description,
@@ -177,7 +183,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
             FirstFitPosition = xArray[peakParam[idx].FirstPoint],
             LastFitPosition = xArray[peakParam[idx].LastPoint],
             PeakParameter = param.Skip(idx* numberOfParametersPerPeak).Take(numberOfParametersPerPeak).ToArray(),
-            PeakParameterVariance = variancesSeparate.Skip(idx* numberOfParametersPerPeak).Take(numberOfParametersPerPeak).ToArray(),
+            PeakParameterVariance = localCov,
             FitFunction = fitFunc,
             FitFunctionParameter = (double[])param.Clone(),
           });

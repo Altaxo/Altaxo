@@ -988,7 +988,7 @@ namespace Altaxo.Calc.LinearAlgebra
       /// Initializes a new instance of the <see cref="ROMatrixFromColumnMajorLinearArray{T}"/> class.
       /// </summary>
       /// <param name="array">The linear array in column major order.</param>
-      /// <param name="nRows">The number of rows of the matrix. The number of colums are calculated from the length of the array and the number of rows.</param>
+      /// <param name="nRows">The number of rows of the matrix. The number of columns are calculated from the length of the array and the number of rows.</param>
       /// <exception cref="System.ArgumentException"></exception>
       public ROMatrixFromColumnMajorLinearArray(T[] array, int nRows)
       {
@@ -1081,6 +1081,118 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
     #endregion Wrapper from linear array (column major order, i.e. LAPACK convention) to read/write matrix
+
+    #region Wrapper from linear array (row major order) to IROMatrix
+
+    /// <summary>
+    /// Wraps a linear array to a read-only matrix. The array is column oriented, i.e. consecutive elements
+    /// belong mostly to one column. This is the convention used for LAPACK routines.
+    /// </summary>
+    public class ROMatrixFromRowMajorLinearArray<T> : IROMatrix<T> where T : struct
+    {
+      protected T[] _array;
+      protected int _rows;
+      protected int _columns;
+
+      #region IROMatrix Members
+
+      /// <summary>
+      /// Initializes a new instance of the <see cref="ROMatrixFromColumnMajorLinearArray{T}"/> class.
+      /// </summary>
+      /// <param name="array">The linear array in column major order.</param>
+      /// <param name="nColumns">The number of columns of the matrix. The number of rows are calculated from the length of the array and the number of columns.</param>
+      /// <exception cref="System.ArgumentException"></exception>
+      public ROMatrixFromRowMajorLinearArray(T[] array, int nColumns)
+      {
+        if (array.Length % nColumns != 0)
+          throw new ArgumentException(string.Format("Length of array {0} is not a multiple of nColumns={1}", array.Length, nColumns));
+
+        _array = array;
+        _rows = array.Length / nColumns;
+        _columns = nColumns;
+      }
+
+      /// <summary>
+      /// Initializes a new instance of the <see cref="ROMatrixFromRowMajorLinearArray{T}"/> class.
+      /// </summary>
+      /// <param name="wrapper">Wrapper that wraps a linear array in column major order and provides the number of rows and columns.</param>
+      public ROMatrixFromRowMajorLinearArray(MatrixWrapperStructForRowMajorOrderLinearArray<T> wrapper)
+      {
+        _array = wrapper.Array;
+        _rows = wrapper.RowCount;
+        _columns = wrapper.ColumnCount;
+      }
+
+      /// <inheritdoc/>
+      public T this[int row, int col]
+      {
+        get
+        {
+          return _array[row * _columns + col];
+        }
+      }
+
+      /// <inheritdoc/>
+      public int RowCount
+      {
+        get { return _rows; }
+      }
+
+      /// <inheritdoc/>
+      public int ColumnCount
+      {
+        get { return _columns; }
+      }
+
+      #endregion IROMatrix Members
+    }
+
+    #endregion Wrapper from linear array (row major order) to IROMatrix
+
+    #region Wrapper from linear array (row major order) to read/write matrix
+
+    /// <summary>
+    /// Wraps a linear array to a read-write matrix. The array is row oriented, i.e. consecutive elements
+    /// belong mostly to one row.
+    /// </summary>
+    public class MatrixFromRowMajorLinearArray<T> : ROMatrixFromRowMajorLinearArray<T>, IMatrix<T> where T : struct
+    {
+      /// <summary>
+      /// Initializes a new instance of the <see cref="MatrixFromColumnMajorLinearArray{T}"/> class.
+      /// </summary>
+      /// <param name="array">The linear array in column major order.</param>
+      /// <param name="nRows">The number of rows of the matrix. The number of colums are calculated from the length of the array and the number of rows.</param>
+      /// <exception cref="System.ArgumentException"></exception>
+      public MatrixFromRowMajorLinearArray(T[] array, int nRows)
+        : base(array, nRows)
+      {
+      }
+
+      /// <summary>
+      /// Initializes a new instance of the <see cref="MatrixFromColumnMajorLinearArray{T}"/> class.
+      /// </summary>
+      /// <param name="wrapper">Wrapper that wraps a linear array in column major order and provides the number of rows and columns.</param>
+      public MatrixFromRowMajorLinearArray(MatrixWrapperStructForRowMajorOrderLinearArray<T> wrapper)
+        : base(wrapper)
+      {
+      }
+
+      /// <inheritdoc/>
+      public new T this[int row, int col]
+      {
+        get
+        {
+          return _array[row * _columns + col];
+        }
+
+        set
+        {
+          _array[row * _columns + col] = value;
+        }
+      }
+    }
+
+    #endregion Wrapper from linear array (row major order) to read/write matrix
 
     #region Wrapper from 2-dimensional array
 
