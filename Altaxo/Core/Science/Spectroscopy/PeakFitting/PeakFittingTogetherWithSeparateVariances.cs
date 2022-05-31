@@ -91,7 +91,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
                               RMath.InterpolateLinear(description.PositionIndex - 0.5 * description.Width, xArray)
                              );
 
-        var paras = fitFunc.GetInitialParametersFromHeightPositionAndWidthAtRelativeHeight(description.Height, xPosition, xWidth, description.AbsoluteHeightOfWidthDetermination / description.Height);
+        var paras = fitFunc.GetInitialParametersFromHeightPositionAndWidthAtRelativeHeight(description.Prominence, xPosition, xWidth, description.RelativeHeightOfWidthDetermination);
         if (paras.Length != numberOfParametersPerPeak)
           throw new InvalidProgramException();
         foreach(var p in paras)
@@ -173,7 +173,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
           var localCov = new Altaxo.Calc.LinearAlgebra.DoubleMatrix(numberOfParametersPerPeak, numberOfParametersPerPeak);
           for (int i = 0; i < numberOfParametersPerPeak; i++)
             for (int j = 0; j < numberOfParametersPerPeak; ++j)
-              localCov[i, j] = fitCov[i + idx * numberOfParametersPerPeak, j + idx * numberOfParametersPerPeak];
+              localCov[i, j] = fitCov[i, j];
 
           list.Add(new PeakDescription
           {
@@ -183,7 +183,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
             FirstFitPosition = xArray[peakParam[idx].FirstPoint],
             LastFitPosition = xArray[peakParam[idx].LastPoint],
             PeakParameter = param.Skip(idx* numberOfParametersPerPeak).Take(numberOfParametersPerPeak).ToArray(),
-            PeakParameterVariance = localCov,
+            PeakParameterCovariances = localCov,
             FitFunction = fitFunc,
             FitFunctionParameter = (double[])param.Clone(),
           });

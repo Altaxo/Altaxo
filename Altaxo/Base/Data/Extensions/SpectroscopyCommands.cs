@@ -185,7 +185,7 @@ namespace Altaxo.Data
 
               if(r.FitFunction is { } fitFunction)
               {
-                var (pos, posVar, area, areaVar, height, heightVar, fwhm, fwhmVar) = fitFunction.GetPositionAreaHeightFwhmFromSinglePeakParameters(r.PeakParameter, r.PeakParameterVariance);
+                var (pos, posVar, area, areaVar, height, heightVar, fwhm, fwhmVar) = fitFunction.GetPositionAreaHeightFwhmFromSinglePeakParameters(r.PeakParameter, r.PeakParameterCovariances);
 
                 cFPos[i] = pos;
                 cFPosVar[i] = posVar;
@@ -208,7 +208,7 @@ namespace Altaxo.Data
                   var cParaVariance = peakTable.DataColumns.EnsureExistence($"{parameterNames[j]}{runningColumnNumber}.Err", typeof(DoubleColumn), ColumnKind.Err, runningColumnNumber);
 
                   cParaValue[i] = r.PeakParameter[j];
-                  cParaVariance[i] = Math.Sqrt(r.PeakParameterVariance[j,j]);
+                  cParaVariance[i] = Math.Sqrt(r.PeakParameterCovariances[j,j]);
                 }
               }
               cFNot[i] = r.Notes;

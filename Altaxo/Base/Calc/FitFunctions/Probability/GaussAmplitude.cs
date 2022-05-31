@@ -76,7 +76,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
     public GaussAmplitude()
     {
       _numberOfTerms = 1;
-      _orderOfBackgroundPolynomial = 0;
+      _orderOfBackgroundPolynomial = -1;
     }
 
     public GaussAmplitude(int numberOfGaussianTerms, int orderOfBackgroundPolynomial)
@@ -354,7 +354,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
 
       if (cv is not null)
       {
-        areaVariance = Sqrt2Pi * SafeSqrt(RMath.Pow2(area) * cv[2, 2] + area * sigma * (cv[0, 2] + cv[2, 0]) + RMath.Pow2(sigma) * cv[0, 0]);
+        areaVariance = Sqrt2Pi * SafeSqrt(RMath.Pow2(height) * cv[2, 2] + height * sigma * (cv[0, 2] + cv[2, 0]) + RMath.Pow2(sigma) * cv[0, 0]);
         posVariance = Math.Sqrt(cv[1, 1]);
         heightVariance = Math.Sqrt(cv[0, 0]);
         fwhmVariance = 2 * Math.Sqrt(cv[2, 2]) * SqrtLog4;

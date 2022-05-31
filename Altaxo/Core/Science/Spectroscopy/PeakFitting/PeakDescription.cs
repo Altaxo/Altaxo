@@ -70,7 +70,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
     /// <summary>
     /// Gets the fit covariance matrix of the parameters of the peak.
     /// </summary>
-    public IROMatrix<double>? PeakParameterVariance { get; init; }
+    public IROMatrix<double>? PeakParameterCovariances { get; init; }
 
     /// <summary>
     /// Gets the fit function that was used to fit the peak.
