@@ -133,6 +133,11 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
     {
       public object FunctionType;
 
+      public ICommand CmdEditItem { get; }
+      public ICommand CmdEditCopyOfItem { get; }
+      public ICommand CmdRemoveItem { get; }
+
+
       public override string NodeType { get { return "BuiltinLeafNode"; } }
 
       public FitFunctionLeafNode(string text, object functionType)
@@ -140,6 +145,24 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       {
         FunctionType = functionType;
         Tag = functionType;
+        CmdEditItem = new RelayCommand<object>(EhView_EditItem, (o) => IsMenuEditEnabled);
+        CmdEditCopyOfItem = new RelayCommand<object>(EhView_CreateItemFromHere, (o) => IsMenuEditCopyEnabled);
+        CmdRemoveItem = new RelayCommand<object>(EhView_RemoveItem, (o) => IsMenuRemoveEnabled);
+      }
+
+      public void EhView_EditItem(object parameter)
+      {
+        (parameter as FitFunctionSelectionController)?.EditItemOrItemCopy(this.FunctionType, false);
+      }
+
+      public void EhView_CreateItemFromHere(object parameter)
+      {
+        (parameter as FitFunctionSelectionController)?.EditItemOrItemCopy(this.FunctionType, true);
+      }
+
+      public void EhView_RemoveItem(object parameter)
+      {
+        (parameter as FitFunctionSelectionController)?.EhView_RemoveItem(this.FunctionType);
       }
     }
 
@@ -175,9 +198,6 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
     public FitFunctionSelectionController()
       {
-      CmdEditItem = new RelayCommand(EhView_EditItem, EhView_CanEditItem);
-      CmdEditCopyOfItem = new RelayCommand(EhView_CreateItemFromHere, EhView_CanEditItem);
-      CmdRemoveItem = new RelayCommand(EhView_RemoveItem, EhView_CanEditItem);
       CmdItemDoubleClicked = new RelayCommand(EhView_ItemDoubleClicked);
       }
 
@@ -185,9 +205,6 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
     #region Bindings
 
-    public ICommand CmdEditItem { get; }
-    public ICommand CmdEditCopyOfItem { get; }
-    public ICommand CmdRemoveItem { get; }
     public ICommand CmdItemDoubleClicked { get; }
 
     private NGTreeNode _fitFunctionsRoot;
@@ -343,37 +360,10 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
     {
       _tempdoc = selectedtag;
     }
-
-    public void EhView_EditItem()
-    {
-        EditItemOrItemCopy(false);
-    }
-
-    private bool EhView_CanEditItem()
-    {
-      if (SelectedFitFunction?.Tag is IFitFunctionInformation selectedtag)
-      {
-        if (selectedtag is DocumentFitFunctionInformation)
-        {
-          return true;
-        }
-        else if (selectedtag is FileBasedFitFunctionInformation)
-        {
-          return true;
-        }
-      }
-      return false;
-    }
-
-    public void EhView_CreateItemFromHere()
-    {
-        EditItemOrItemCopy(true);
-    }
-
     
-    public void EditItemOrItemCopy(bool editItemCopy)
+    public void EditItemOrItemCopy(object parameter, bool editItemCopy)
     {
-      if (SelectedFitFunction?.Tag is IFitFunctionInformation selectedtag)
+      if (parameter is IFitFunctionInformation selectedtag)
       {
 
         IFitFunction func = null;
@@ -435,9 +425,9 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       return null;
     }
 
-    public void EhView_RemoveItem()
+    public void EhView_RemoveItem(object parameter)
     {
-      if (SelectedFitFunction?.Tag is IFitFunctionInformation selectedtag)
+      if (parameter is IFitFunctionInformation selectedtag)
       {
         if (selectedtag is DocumentFitFunctionInformation)
         {

@@ -38,11 +38,17 @@
                         <TextBlock.ContextMenu>
                             <ContextMenu>
                                 <MenuItem Header="Edit" 
-                                          Command="{Binding Source={StaticResource Proxy}, Path=Data.CmdEditItem}" />
+                                          Command="{Binding Path=PlacementTarget.Tag.CmdEditItem,
+                                          RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContextMenu}}" 
+                                          CommandParameter="{Binding Source={StaticResource Proxy}, Path=Data}"/>
                                 <MenuItem Header="Edit copy of this" 
-                                          Command="{Binding Source={StaticResource Proxy}, Path=Data.CmdEditCopyOfItem}" />
+                                          Command="{Binding Path=PlacementTarget.Tag.CmdEditCopyOfItem,
+                                          RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContextMenu}}" 
+                                          CommandParameter="{Binding Source={StaticResource Proxy}, Path=Data}"/>
                                 <MenuItem Header="Remove" 
-                                          Command="{Binding Source={StaticResource Proxy}, Path=Data.CmdRemoveItem}" />
+                                          Command="{Binding Path=PlacementTarget.Tag.CmdRemoveItem,
+                                          RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContextMenu}}" 
+                                          CommandParameter="{Binding Source={StaticResource Proxy}, Path=Data}"/>
                             </ContextMenu>
                         </TextBlock.ContextMenu>
                     </TextBlock>

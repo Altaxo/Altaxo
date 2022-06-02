@@ -164,6 +164,8 @@ namespace Altaxo.Gui
         return true;
       else if (parameter is T tpara)
         return _canExecute.Invoke(tpara);
+      else if (parameter is null && default(T) is null)
+        return _canExecute.Invoke(default(T));
       else
         throw new ArgumentException("Argument is expected to be of type " + typeof(T).ToString(), nameof(parameter));
     }
@@ -176,6 +178,8 @@ namespace Altaxo.Gui
     {
       if (parameter is T tpara)
         _execute(tpara);
+      else if (parameter is null && default(T) is null)
+        _execute.Invoke(default(T));
       else
         throw new ArgumentException("Argument is expected to be of type " + typeof(T).ToString(), nameof(parameter));
 
