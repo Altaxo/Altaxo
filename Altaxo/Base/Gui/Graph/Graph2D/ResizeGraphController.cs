@@ -393,7 +393,7 @@ namespace Altaxo.Gui.Graph.Graph2D
     public override bool Apply(bool disposeController)
     {
       if (IsNewRootLayerSizeChosen)
-        _doc.NewRootLayerSize = new PointD2D(RootLayerSizeX.AsValueIn(Altaxo.Units.Length.Point.Instance), RootLayerSizeX.AsValueIn(Altaxo.Units.Length.Point.Instance));
+        _doc.NewRootLayerSize = new PointD2D(RootLayerSizeX.AsValueIn(Altaxo.Units.Length.Point.Instance), RootLayerSizeY.AsValueIn(Altaxo.Units.Length.Point.Instance));
       else
         _doc.NewRootLayerSize = null;
 
