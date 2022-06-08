@@ -320,6 +320,21 @@ namespace Altaxo.Calc.FitFunctions.Peaks
 
       double area = height * w * Math.Sqrt(Math.PI/(Math.Pow(2, 1/m)-1)) * GammaRelated.Gamma(m-0.5)/GammaRelated.Gamma(m);
       double areaVariance = 0;
+      if (cv is not null)
+      {
+        // calculation of the area variance
+        double gammaMminus0p5 = GammaRelated.Gamma(m - 0.5);
+        double gammaM = GammaRelated.Gamma(m);
+        double gammaMplus1 = GammaRelated.Gamma(m + 1);
+        double digammaMminus0p5 = SpecialFunctions.DiGamma(m - 0.5);
+        double digammaM = SpecialFunctions.DiGamma(m);
+        double TwoBy1ByM = Math.Pow(2, 1 / m);
+
+        areaVariance =
+          (Math.PI * RMath.Pow2(gammaMminus0p5) * (4 * RMath.Pow2(-1 + TwoBy1ByM) * RMath.Pow4(m) * (RMath.Pow2(height) * cv[2, 2] + height * (cv[0, 2] + cv[2, 0]) * w + cv[0, 0] * RMath.Pow2(w)) * RMath.Pow2(gammaM) +
+         2 * (-1 + TwoBy1ByM) * height * w * (height * (cv[2, 3] + cv[3, 2]) + (cv[0, 3] + cv[3, 0]) * w) * RMath.Pow2(gammaMplus1) * (TwoBy1ByM * Math.Log(2) + 2 * (-1 + TwoBy1ByM) * RMath.Pow2(m) * (digammaMminus0p5 - digammaM)) +
+         RMath.Pow2(height) * cv[3, 3] * RMath.Pow2(w) * RMath.Pow2(gammaM) * RMath.Pow2(TwoBy1ByM * Math.Log(2) + 2 * (-1 + TwoBy1ByM) * RMath.Pow2(m) * (digammaMminus0p5 - digammaM)))) / (4 * RMath.Pow3(-1 + TwoBy1ByM) * RMath.Pow4(gammaMplus1));
+      }
 
       return (pos, posVariance, area, areaVariance, height, heightVariance, fwhm, fwhmVariance);
     }
