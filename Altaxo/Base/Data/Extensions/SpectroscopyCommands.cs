@@ -36,7 +36,7 @@ namespace Altaxo.Data
         return false;
       }
 
-      var doc = _lastOptions?? new SpectralPreprocessingOptions();
+      var doc = _lastOptions ?? new SpectralPreprocessingOptions();
       var controller = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { doc }, typeof(IMVCANController));
 
       if (false == Current.Gui.ShowDialog(controller, "Spectral preprocessing"))
@@ -103,7 +103,7 @@ namespace Altaxo.Data
         (xArr, yArr) = doc.Cropping.Execute(xArr, yArr);
         // 4. Baseline
         var baseline = doc.BaselineEstimation.Execute(xArr, yArr);
-        for (int i = 0; i < len; i++)
+        for (int i = 0; i < yArr.Length; i++)
         {
           yArr[i] -= baseline[i];
         }
@@ -120,7 +120,7 @@ namespace Altaxo.Data
           srcTable.DataColumns.GetColumnGroup(xCol)
           );
 
-          for (int i = 0; i < len; i++)
+          for (int i = 0; i < xArr.Length; i++)
             xDst[i] = xArr[i];
 
           dictionarySrcXCol_To_DstXCol.Add(xCol, xDst);
@@ -134,7 +134,7 @@ namespace Altaxo.Data
           );
         dictionarySrcYCol_To_DstYCol[yCol] = yDst;
 
-        for (int i = 0; i < len; i++)
+        for (int i = 0; i < yArr.Length; i++)
           yDst[i] = yArr[i];
 
         // if peak searching is enabled, make further processing
@@ -181,9 +181,9 @@ namespace Altaxo.Data
             for (int i = 0; i < descriptions.Count; i++)
             {
               var r = fitResults.PeakDescriptions[i];
-              
 
-              if(r.FitFunction is { } fitFunction)
+
+              if (r.FitFunction is { } fitFunction)
               {
                 var (pos, posVar, area, areaVar, height, heightVar, fwhm, fwhmVar) = fitFunction.GetPositionAreaHeightFwhmFromSinglePeakParameters(r.PeakParameter, r.PeakParameterCovariances);
 
@@ -202,13 +202,13 @@ namespace Altaxo.Data
                 cLastXValue[i] = r.LastFitPosition;
 
                 var parameterNames = fitFunction.ParameterNamesForOnePeak;
-                for(int j=0;j<parameterNames.Length;j++)
+                for (int j = 0; j < parameterNames.Length; j++)
                 {
                   var cParaValue = peakTable.DataColumns.EnsureExistence($"{parameterNames[j]}{runningColumnNumber}", typeof(DoubleColumn), ColumnKind.V, runningColumnNumber);
                   var cParaVariance = peakTable.DataColumns.EnsureExistence($"{parameterNames[j]}{runningColumnNumber}.Err", typeof(DoubleColumn), ColumnKind.Err, runningColumnNumber);
 
                   cParaValue[i] = r.PeakParameter[j];
-                  cParaVariance[i] = Math.Sqrt(r.PeakParameterCovariances[j,j]);
+                  cParaVariance[i] = Math.Sqrt(r.PeakParameterCovariances[j, j]);
                 }
               }
               cFNot[i] = r.Notes;
@@ -231,7 +231,7 @@ namespace Altaxo.Data
             if (pi is not null)
             {
               var scatter = pi.Style.OfType<ScatterPlotStyle>().FirstOrDefault();
-              if(scatter is not null)
+              if (scatter is not null)
               {
                 scatter.SymbolSize = 3;
               }
@@ -252,18 +252,18 @@ namespace Altaxo.Data
                 var fitDocument = new NonlinearFitDocument();
                 fitDocument.FitEnsemble.Add(fitElement);
                 fitDocument.SetDefaultParametersForFitElement(0);
-                for(int i=0;i< peakDesc.FitFunctionParameter.Length; i++)
-                fitDocument.CurrentParameters[i].Parameter = peakDesc.FitFunctionParameter[i];
-                var data = new XYNonlinearFitFunctionPlotData(System.Guid.NewGuid().ToString(), fitDocument, 0,0,null,0,null);
+                for (int i = 0; i < peakDesc.FitFunctionParameter.Length; i++)
+                  fitDocument.CurrentParameters[i].Parameter = peakDesc.FitFunctionParameter[i];
+                var data = new XYNonlinearFitFunctionPlotData(System.Guid.NewGuid().ToString(), fitDocument, 0, 0, null, 0, null);
 
                 var plotStyle = PlotCommands.PlotStyle_Line(graph.GetPropertyContext());
                 var lineStyle = plotStyle.OfType<LinePlotStyle>().FirstOrDefault();
-                if(lineStyle is not null && lineStyle.Color.ParentColorSet is { } parentCSet )
+                if (lineStyle is not null && lineStyle.Color.ParentColorSet is { } parentCSet)
                 {
                   var idx = parentCSet.IndexOf(lineStyle.Color);
-                  if(idx>=0)
+                  if (idx >= 0)
                   {
-                    lineStyle.Color = parentCSet[(idx+1)%parentCSet.Count];
+                    lineStyle.Color = parentCSet[(idx + 1) % parentCSet.Count];
                   }
                 }
                 var functionPlotItem = new XYFunctionPlotItem(data, plotStyle);
@@ -288,7 +288,7 @@ namespace Altaxo.Data
         Current.ProjectService.OpenOrCreateWorksheetForTable(peakTable);
       }
 
-      
+
 
     }
   }
