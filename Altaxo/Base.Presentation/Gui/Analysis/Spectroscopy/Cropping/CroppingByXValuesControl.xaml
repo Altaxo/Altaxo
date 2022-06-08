@@ -28,7 +28,7 @@
         <axogc:NumericDoubleTextBox Grid.Row="0" Grid.Column="2"
                            SelectedValue="{Binding MinimalValue}" />
         <Label Grid.Row="2" Grid.Column="0"
-               Content="Maximal index:"/>
+               Content="Maximal value:"/>
         <axogc:NumericDoubleTextBox Grid.Row="2" Grid.Column="2"
                            SelectedValue="{Binding MaximalValue}" />
     </Grid>
