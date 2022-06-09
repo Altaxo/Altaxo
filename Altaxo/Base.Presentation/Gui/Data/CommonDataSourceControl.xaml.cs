@@ -22,14 +22,18 @@
 
 #endregion Copyright
 
-using Altaxo.Science.Spectroscopy;
+using System.Windows.Controls;
 
-namespace Altaxo.Gui.Analysis.Spectroscopy
+namespace Altaxo.Gui.Data
 {
-
-  [UserControllerForObject(typeof(SpectralPreprocessingOptions))]
-  [ExpectedTypeOfView(typeof(ISpectralPreprocessingOptionsView))]
-  public class SpectralPreprocessingController : SpectralPreprocessingControllerBase<SpectralPreprocessingOptions>
+  /// <summary>
+  /// Interaction logic for CommonDataSourceControl.xaml
+  /// </summary>
+  public partial class CommonDataSourceControl : UserControl, ICommonDataSourceViewN
   {
+    public CommonDataSourceControl()
+    {
+      InitializeComponent();
+    }
   }
 }

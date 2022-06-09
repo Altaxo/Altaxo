@@ -22,14 +22,17 @@
 
 #endregion Copyright
 
-using Altaxo.Science.Spectroscopy;
-
-namespace Altaxo.Gui.Analysis.Spectroscopy
+namespace Altaxo.Science.Spectroscopy.Sanitizing
 {
-
-  [UserControllerForObject(typeof(SpectralPreprocessingOptions))]
-  [ExpectedTypeOfView(typeof(ISpectralPreprocessingOptionsView))]
-  public class SpectralPreprocessingController : SpectralPreprocessingControllerBase<SpectralPreprocessingOptions>
+  /// <summary>Brings the raw spectrum to reasonable values, i.e. removes NaNs, cuts of negative values etc.</summary>
+  public interface ISanitizer
   {
+    /// <summary>
+    /// Executes the sanitizer.
+    /// </summary>
+    /// <param name="x">The x-values of the spectrum.</param>
+    /// <param name="y">The y-values of the spectrum.</param>
+    /// <returns>X and y-values of the sanitized spectrum.</returns>
+    (double[] x, double[] y) Execute(double[] x, double[] y);
   }
 }

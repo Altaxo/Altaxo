@@ -110,8 +110,8 @@ namespace Altaxo.Gui.Analysis.Fourier
       if (initData)
       {
         DataSourceOptionsController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _doc.ImportOptions }, typeof(IMVCANController), UseDocument.Directly);
-        FourierTransformationOptionsController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _doc.FourierTransformation2DOptions }, typeof(IMVCANController), UseDocument.Directly);
-        InputDataController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _doc.InputData }, typeof(IMVCANController), UseDocument.Directly);
+        FourierTransformationOptionsController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _doc.ProcessOptions }, typeof(IMVCANController), UseDocument.Directly);
+        InputDataController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _doc.ProcessData }, typeof(IMVCANController), UseDocument.Directly);
       }
     }
 

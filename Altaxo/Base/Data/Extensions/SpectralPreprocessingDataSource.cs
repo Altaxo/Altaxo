@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2019 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -22,16 +22,16 @@
 
 #endregion Copyright
 
-#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using Altaxo.Science.Spectroscopy;
 
 namespace Altaxo.Data
 {
-  public class ConvertXYVToMatrixDataSource : TableDataSourceBase, Altaxo.Data.IAltaxoTableDataSource
+  public class SpectralPreprocessingDataSource : TableDataSourceBase, Altaxo.Data.IAltaxoTableDataSource
   {
-    private ConvertXYVToMatrixOptions _processOptions;
+    private SpectralPreprocessingOptions _processOptions;
     private DataTableMultipleColumnProxy _processData;
     private IDataSourceImportOptions _importOptions;
 
@@ -42,14 +42,14 @@ namespace Altaxo.Data
     #region Version 0
 
     /// <summary>
-    /// 2019-04-01 initial version.
+    /// 2022-06-08 initial version.
     /// </summary>
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ConvertXYVToMatrixDataSource), 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(SpectralPreprocessingDataSource), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (ConvertXYVToMatrixDataSource)obj;
+        var s = (SpectralPreprocessingDataSource)obj;
 
         info.AddValue("ProcessData", s._processData);
         info.AddValue("ProcessOptions", s._processOptions);
@@ -58,10 +58,10 @@ namespace Altaxo.Data
 
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        if (o is ConvertXYVToMatrixDataSource s)
+        if (o is SpectralPreprocessingDataSource s)
           s.DeserializeSurrogate0(info);
         else
-          s = new ConvertXYVToMatrixDataSource(info, 0);
+          s = new SpectralPreprocessingDataSource(info, 0);
         return s;
       }
     }
@@ -70,13 +70,13 @@ namespace Altaxo.Data
     private void DeserializeSurrogate0(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
     {
       ChildSetMember(ref _processData, (DataTableMultipleColumnProxy)info.GetValue("ProcessData", this));
-      ChildSetMember(ref _processOptions, (ConvertXYVToMatrixOptions)info.GetValue("ProcessOptions", this));
+      _processOptions = (SpectralPreprocessingOptions)info.GetValue("ProcessOptions", this);
       ChildSetMember(ref _importOptions, (IDataSourceImportOptions)info.GetValue("ImportOptions", this));
     }
 
     #endregion Version 0
 
-    protected ConvertXYVToMatrixDataSource(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, int version)
+    protected SpectralPreprocessingDataSource(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, int version)
     {
       switch (version)
       {
@@ -88,12 +88,7 @@ namespace Altaxo.Data
       }
     }
 
-
-
-
     #endregion Serialization
-
-
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ConvertXYVToMatrixDataSource"/> class.
@@ -108,7 +103,7 @@ namespace Altaxo.Data
     /// or
     /// importOptions
     /// </exception>
-    public ConvertXYVToMatrixDataSource(DataTableMultipleColumnProxy inputData, ConvertXYVToMatrixOptions dataSourceOptions, IDataSourceImportOptions importOptions)
+    public SpectralPreprocessingDataSource(DataTableMultipleColumnProxy inputData, SpectralPreprocessingOptions dataSourceOptions, IDataSourceImportOptions importOptions)
     {
       if (inputData is null)
         throw new ArgumentNullException(nameof(inputData));
@@ -119,42 +114,42 @@ namespace Altaxo.Data
 
       using (var token = SuspendGetToken())
       {
-        ProcessOptions = dataSourceOptions;
+        _processOptions = dataSourceOptions;
         ImportOptions = importOptions;
         ProcessData = inputData;
       }
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="ConvertXYVToMatrixDataSource"/> class.
+    /// Initializes a new instance of the <see cref="SpectralPreprocessingDataSource"/> class.
     /// </summary>
     /// <param name="from">Another instance to copy from.</param>
-    public ConvertXYVToMatrixDataSource(ConvertXYVToMatrixDataSource from)
+    public SpectralPreprocessingDataSource(SpectralPreprocessingDataSource from)
     {
       CopyFrom(from);
     }
 
     [MemberNotNull(nameof(_importOptions), nameof(_processOptions), nameof(_processData))]
-    public void CopyFrom(ConvertXYVToMatrixDataSource from)
+    public void CopyFrom(SpectralPreprocessingDataSource from)
     {
       if (ReferenceEquals(this, from))
-#pragma warning disable CS8774 // Member must have a non-null value when exiting.
+#pragma warning disable CS8774 // Member must have a non-null SpectralPreprocessingDataSource when exiting.
         return;
 #pragma warning restore CS8774 // Member must have a non-null value when exiting.
 
       using (var token = SuspendGetToken())
       {
-        ConvertXYVToMatrixOptions? dataSourceOptions = null;
-        DataTableMultipleColumnProxy? inputData = null;
+        SpectralPreprocessingOptions? processOptions = null;
+        DataTableMultipleColumnProxy? processData = null;
         IDataSourceImportOptions? importOptions = null;
 
         CopyHelper.Copy(ref importOptions, from._importOptions);
-        CopyHelper.Copy(ref dataSourceOptions, from._processOptions);
-        CopyHelper.Copy(ref inputData, from._processData);
+        processOptions = from._processOptions;
+        CopyHelper.Copy(ref processData, from._processData);
 
-        ProcessOptions = dataSourceOptions;
+        ProcessOptions = processOptions;
         ImportOptions = importOptions;
-        ProcessData = inputData;
+        ProcessData = processData;
       }
     }
 
@@ -168,7 +163,7 @@ namespace Altaxo.Data
       if (ReferenceEquals(this, obj))
         return true;
 
-      if (obj is ConvertXYVToMatrixDataSource from)
+      if (obj is SpectralPreprocessingDataSource from)
       {
         CopyFrom(from);
 
@@ -188,7 +183,7 @@ namespace Altaxo.Data
     /// </returns>
     public object Clone()
     {
-      return new ConvertXYVToMatrixDataSource(this);
+      return new SpectralPreprocessingDataSource(this);
     }
 
     #region IAltaxoTableDataSource
@@ -201,7 +196,7 @@ namespace Altaxo.Data
     {
       try
       {
-        ConvertXYVToMatrixActions.ConvertXYVToMatrix(_processData, _processOptions, destinationTable);
+        SpectroscopyCommands.ExecuteSpectralPreprocessing(_processData, _processOptions, destinationTable);
       }
       catch (Exception ex)
       {
@@ -278,25 +273,13 @@ namespace Altaxo.Data
       }
     }
 
-    object IAltaxoTableDataSource.ProcessOptionsObject
-    {
-      get => _processOptions;
-      set => ProcessOptions = (ConvertXYVToMatrixOptions)value;
-    }
-
-    object IAltaxoTableDataSource.ProcessDataObject
-    {
-      get => _processData;
-      set => ProcessData = (DataTableMultipleColumnProxy)value;
-    }
-
     /// <summary>
     /// Gets or sets the options for this data source.
     /// </summary>
     /// <value>
     /// The options for this data source.
     /// </value>
-    public ConvertXYVToMatrixOptions ProcessOptions
+    public SpectralPreprocessingOptions ProcessOptions
     {
       get
       {
@@ -305,18 +288,34 @@ namespace Altaxo.Data
       [MemberNotNull(nameof(_processOptions))]
       set
       {
-        if (ChildSetMember(ref _processOptions, value ?? throw new ArgumentNullException(nameof(value))))
+        if (value is null)
+          throw new ArgumentNullException(nameof(ProcessOptions));
+
+        if (!object.Equals(_processOptions, value))
         {
+          _processOptions = value;
           EhChildChanged(_processOptions, EventArgs.Empty);
         }
       }
+    }
+
+    object IAltaxoTableDataSource.ProcessOptionsObject
+    {
+      get => _processOptions;
+      set => ProcessOptions = (SpectralPreprocessingOptions)value;
+    }
+
+    object IAltaxoTableDataSource.ProcessDataObject
+    {
+      get => _processData;
+      set => ProcessData = (DataTableMultipleColumnProxy)value;
     }
 
     #region Change event handling
 
     protected override bool HandleHighPriorityChildChangeCases(object? sender, ref EventArgs e)
     {
-      if (object.ReferenceEquals(_processData, sender)) // incoming call from data proxy
+      if (sender is not null && object.ReferenceEquals(_processData, sender)) // incoming call from data proxy
       {
         if (_importOptions.ImportTriggerSource == ImportTriggerSource.DataSourceChanged)
         {
@@ -339,8 +338,7 @@ namespace Altaxo.Data
     {
       if (_processData is not null)
         yield return new Main.DocumentNodeAndName(_processData, "ProcessData");
-      if (_processOptions is not null)
-        yield return new Main.DocumentNodeAndName(_processOptions, "ProcessOptions");
+
       if (_importOptions is not null)
         yield return new Main.DocumentNodeAndName(_importOptions, "ImportOptions");
     }
@@ -364,5 +362,6 @@ namespace Altaxo.Data
     }
 
     #endregion IAltaxoTableDataSource
+
   }
 }

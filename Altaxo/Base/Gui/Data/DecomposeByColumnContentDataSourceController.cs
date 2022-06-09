@@ -55,10 +55,10 @@ namespace Altaxo.Gui.Data
       if (initData)
       {
         _dataSourceOptionsController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _doc.ImportOptions }, typeof(IMVCANController), UseDocument.Directly);
-        _processOptionsController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _doc.DecomposeByColumnContentOptions }, typeof(IMVCANController), UseDocument.Directly);
+        _processOptionsController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _doc.ProcessOptions }, typeof(IMVCANController), UseDocument.Directly);
 
         _processDataController = new DecomposeByColumnContentDataController() { UseDocumentCopy = UseDocument.Directly };
-        _processDataController.InitializeDocument(_doc.InputData);
+        _processDataController.InitializeDocument(_doc.ProcessData);
         Current.Gui.FindAndAttachControlTo(_processDataController);
       }
 

@@ -25,8 +25,6 @@
 #nullable disable
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Altaxo.Data;
 
 namespace Altaxo.Gui.Data
@@ -38,6 +36,10 @@ namespace Altaxo.Gui.Data
     void SetImportOptionsControl(object p);
 
     void SetProcessDataControl(object p);
+  }
+
+  public interface ICommonDataSourceViewN : IDataContextAwareView
+  {
   }
 
   [ExpectedTypeOfView(typeof(ICommonDataSourceView))]
@@ -64,10 +66,10 @@ namespace Altaxo.Gui.Data
       if (initData)
       {
         _dataSourceOptionsController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _doc.ImportOptions }, typeof(IMVCANController), UseDocument.Directly);
-        _processOptionsController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _doc.DataSourceOptions }, typeof(IMVCANController), UseDocument.Directly);
+        _processOptionsController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _doc.ProcessOptions }, typeof(IMVCANController), UseDocument.Directly);
 
         _processDataController = new ExpandCyclingVariableDataController() { UseDocumentCopy = UseDocument.Directly };
-        _processDataController.InitializeDocument(_doc.InputData);
+        _processDataController.InitializeDocument(_doc.ProcessData);
         Current.Gui.FindAndAttachControlTo(_processDataController);
       }
 

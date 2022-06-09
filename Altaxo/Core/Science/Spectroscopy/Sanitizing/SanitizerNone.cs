@@ -22,14 +22,33 @@
 
 #endregion Copyright
 
-using Altaxo.Science.Spectroscopy;
-
-namespace Altaxo.Gui.Analysis.Spectroscopy
+namespace Altaxo.Science.Spectroscopy.Sanitizing
 {
-
-  [UserControllerForObject(typeof(SpectralPreprocessingOptions))]
-  [ExpectedTypeOfView(typeof(ISpectralPreprocessingOptionsView))]
-  public class SpectralPreprocessingController : SpectralPreprocessingControllerBase<SpectralPreprocessingOptions>
+  /// <summary>
+  /// Represents a <see cref="ISanitizer"/> that does nothing.
+  /// </summary>
+  public record SanitizerNone : ISanitizer
   {
+    #region Serialization
+
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(SanitizerNone), 0)]
+    public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+      }
+
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      {
+        return new SanitizerNone();
+      }
+    }
+    #endregion
+
+
+    public (double[] x, double[] y) Execute(double[] x, double[] y)
+    {
+      return ((double[])x.Clone(), (double[])y.Clone());
+    }
   }
 }

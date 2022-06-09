@@ -1260,7 +1260,7 @@ namespace Altaxo.Serialization.Ascii
       if (dataSource is not null)
       {
         dataSource.SourceFileNames = fileNames;
-        dataSource.AsciiImportOptions = importOptions;
+        dataSource.ProcessOptions = importOptions;
       }
       else
       {

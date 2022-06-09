@@ -424,5 +424,17 @@ namespace Altaxo.Data
 
       base.Dispose(disposing);
     }
+
+    object IAltaxoTableDataSource.ProcessOptionsObject
+    {
+      get => _importScript;
+      set => _importScript = (FileImportScript)value;
+    }
+
+    object IAltaxoTableDataSource.ProcessDataObject
+    {
+      get => _files;
+      set => _files = (List<AbsoluteAndRelativeFileName>)value;
+    }
   }
 }

@@ -36,7 +36,7 @@ namespace Altaxo.Serialization.Ascii
   {
     private IDataSourceImportOptions _importOptions;
 
-    private AsciiImportOptions _asciiImportOptions;
+    private AsciiImportOptions _processOptions;
 
     private List<AbsoluteAndRelativeFileName> _asciiFiles = new List<AbsoluteAndRelativeFileName>();
 
@@ -67,7 +67,7 @@ namespace Altaxo.Serialization.Ascii
         var s = (AsciiImportDataSource)obj;
 
         info.AddValue("ImportOptions", s._importOptions);
-        info.AddValue("AsciiImportOptions", s._asciiImportOptions);
+        info.AddValue("AsciiImportOptions", s._processOptions);
         info.AddArray("AsciiFiles", s._asciiFiles.ToArray(), s._asciiFiles.Count);
       }
 
@@ -81,12 +81,12 @@ namespace Altaxo.Serialization.Ascii
       }
     }
 
-    [MemberNotNull(nameof(_importOptions), nameof(_asciiImportOptions))]
+    [MemberNotNull(nameof(_importOptions), nameof(_processOptions))]
     private void DeserializeSurrogate0(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
     {
       _isDeserializationInProgress = true;
       ChildSetMember(ref _importOptions, (IDataSourceImportOptions)info.GetValue("ImportOptions", this));
-      ChildSetMember(ref _asciiImportOptions, (AsciiImportOptions)info.GetValue("AsciiImportOptions", this));
+      ChildSetMember(ref _processOptions, (AsciiImportOptions)info.GetValue("AsciiImportOptions", this));
       var count = info.OpenArray("AsciiFiles");
       for (int i = 0; i < count; ++i)
         _asciiFiles.Add((AbsoluteAndRelativeFileName)info.GetValue("e", this));
@@ -116,14 +116,14 @@ namespace Altaxo.Serialization.Ascii
 
     #region Construction
 
-    [MemberNotNull(nameof(_asciiFiles), nameof(_importOptions), nameof(_asciiImportOptions))]
+    [MemberNotNull(nameof(_asciiFiles), nameof(_importOptions), nameof(_processOptions))]
     private void CopyFrom(AsciiImportDataSource from)
     {
       using (var token = SuspendGetToken())
       {
         _asciiFiles = new List<AbsoluteAndRelativeFileName>(CopyHelper.GetEnumerationMembersNotNullCloned(from._asciiFiles));
         ChildCloneToMember(ref _importOptions, from._importOptions);
-        ChildCloneToMember(ref _asciiImportOptions, from._asciiImportOptions);
+        ChildCloneToMember(ref _processOptions, from._processOptions);
         EhSelfChanged(EventArgs.Empty);
         token.Resume();
       }
@@ -158,7 +158,7 @@ namespace Altaxo.Serialization.Ascii
       {
         _asciiFiles.Add(new AbsoluteAndRelativeFileName(fileName));
       }
-      ChildCopyToMember(ref _asciiImportOptions, options);
+      ChildCopyToMember(ref _processOptions, options);
       _importOptions = new DataSourceImportOptions() { ParentObject = this };
     }
 
@@ -174,8 +174,8 @@ namespace Altaxo.Serialization.Ascii
 
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
-      if (_asciiImportOptions is not null)
-        yield return new Main.DocumentNodeAndName(_asciiImportOptions, () => _asciiImportOptions = null!, "AsciiImportOptions");
+      if (_processOptions is not null)
+        yield return new Main.DocumentNodeAndName(_processOptions, () => _processOptions = null!, "AsciiImportOptions");
 
       if (_importOptions is not null)
         yield return new Main.DocumentNodeAndName(_importOptions, () => _importOptions = null!, "ImportOptions");
@@ -203,17 +203,17 @@ namespace Altaxo.Serialization.Ascii
         {
           using (var stream = new System.IO.FileStream(validFileNames[0], System.IO.FileMode.Open, System.IO.FileAccess.Read, System.IO.FileShare.ReadWrite))
           {
-            AsciiImporter.ImportFromAsciiStream(destinationTable, stream, AsciiImporter.FileUrlStart + validFileNames[0], _asciiImportOptions);
+            AsciiImporter.ImportFromAsciiStream(destinationTable, stream, AsciiImporter.FileUrlStart + validFileNames[0], _processOptions);
           }
         }
         else
         {
           bool success;
           string? errors;
-          if (_asciiImportOptions.ImportMultipleStreamsVertically)
-            success = AsciiImporter.TryImportFromMultipleAsciiFilesVertically(destinationTable, validFileNames, false, _asciiImportOptions, out errors);
+          if (_processOptions.ImportMultipleStreamsVertically)
+            success = AsciiImporter.TryImportFromMultipleAsciiFilesVertically(destinationTable, validFileNames, false, _processOptions, out errors);
           else
-            success = AsciiImporter.TryImportFromMultipleAsciiFilesHorizontally(destinationTable, validFileNames, false, _asciiImportOptions, out errors);
+            success = AsciiImporter.TryImportFromMultipleAsciiFilesHorizontally(destinationTable, validFileNames, false, _processOptions, out errors);
         }
       }
 
@@ -305,16 +305,28 @@ namespace Altaxo.Serialization.Ascii
       }
     }
 
-    public AsciiImportOptions AsciiImportOptions
+    public AsciiImportOptions ProcessOptions
     {
       get
       {
-        return _asciiImportOptions.Clone();
+        return _processOptions.Clone();
       }
       set
       {
-        _asciiImportOptions = value.Clone();
+        _processOptions = value.Clone();
       }
+    }
+
+    object IAltaxoTableDataSource.ProcessOptionsObject
+    {
+      get => _processOptions;
+      set => ProcessOptions = (AsciiImportOptions)value;
+    }
+
+    object IAltaxoTableDataSource.ProcessDataObject
+    {
+      get => SourceFileNames;
+      set => SourceFileNames = (IEnumerable<string>)value;
     }
 
     #endregion Properties

@@ -62,7 +62,7 @@ namespace Altaxo.Gui.Worksheet
         //_doc.SourceFileName
 
         _commonImportOptionsController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _doc.ImportOptions }, typeof(IMVCANController), UseDocument.Directly);
-        _specificImportOptionsController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _doc.AsciiImportOptions, new AsciiImportOptionsAnalysisDataProvider(this) }, typeof(IMVCANController), UseDocument.Directly);
+        _specificImportOptionsController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _doc.ProcessOptions, new AsciiImportOptionsAnalysisDataProvider(this) }, typeof(IMVCANController), UseDocument.Directly);
         _specificImportSourceController = new MultipleFilesController();
         _specificImportSourceController.InitializeDocument(_doc.SourceFileNames);
         Current.Gui.FindAndAttachControlTo(_specificImportSourceController);
@@ -87,7 +87,7 @@ namespace Altaxo.Gui.Worksheet
       if (!result)
         return result;
       else
-        _doc.AsciiImportOptions = (AsciiImportOptions)_specificImportOptionsController.ModelObject; // AsciiImportOptions is cloned in property set
+        _doc.ProcessOptions = (AsciiImportOptions)_specificImportOptionsController.ModelObject; // AsciiImportOptions is cloned in property set
 
       result = _specificImportSourceController.Apply(false);
       if (!result)

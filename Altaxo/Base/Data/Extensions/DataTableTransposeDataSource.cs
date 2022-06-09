@@ -120,9 +120,9 @@ namespace Altaxo.Data
 
       using (var token = SuspendGetToken())
       {
-        TransposeOptions = dataSourceOptions;
+        ProcessOptions = dataSourceOptions;
         ImportOptions = importOptions;
-        InputData = inputData;
+        ProcessData = inputData;
       }
     }
 
@@ -149,9 +149,9 @@ namespace Altaxo.Data
         CopyHelper.Copy(ref dataSourceOptions, from._processOptions);
         CopyHelper.Copy(ref inputData, from._processData);
 
-        TransposeOptions = dataSourceOptions;
+        ProcessOptions = dataSourceOptions;
         ImportOptions = importOptions;
-        InputData = inputData;
+        ProcessData = inputData;
       }
     }
     /// <summary>
@@ -235,7 +235,7 @@ namespace Altaxo.Data
     /// <value>
     /// The input data. This data is the input for the 2D-Fourier transformation.
     /// </value>
-    public DataTableProxy InputData
+    public DataTableProxy ProcessData
     {
       get
       {
@@ -281,7 +281,7 @@ namespace Altaxo.Data
     /// The transpose options.
     /// </value>
     /// <exception cref="System.ArgumentNullException">FourierTransformation2DOptions</exception>
-    public DataTableTransposeOptions TransposeOptions
+    public DataTableTransposeOptions ProcessOptions
     {
       get
       {
@@ -297,6 +297,18 @@ namespace Altaxo.Data
 
         _processOptions = value;
       }
+    }
+
+    object IAltaxoTableDataSource.ProcessOptionsObject
+    {
+      get => _processOptions;
+      set => ProcessOptions = (DataTableTransposeOptions)value;
+    }
+
+    object IAltaxoTableDataSource.ProcessDataObject
+    {
+      get => _processData;
+      set => ProcessData = (DataTableProxy)value;
     }
 
     #region Change event handling

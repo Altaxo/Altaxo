@@ -26,8 +26,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using Altaxo.Data;
 
@@ -205,6 +203,18 @@ namespace Altaxo.DataConnection
           UpdateWatching();
         }
       }
+    }
+
+    object IAltaxoTableDataSource.ProcessOptionsObject
+    {
+      get => DataQuery;
+      set => DataQuery = (OleDbDataQuery)value;
+    }
+
+    object IAltaxoTableDataSource.ProcessDataObject
+    {
+      get => null;
+      set { }
     }
 
     #endregion Properties

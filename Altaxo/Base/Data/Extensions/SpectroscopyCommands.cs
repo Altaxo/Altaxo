@@ -1,4 +1,28 @@
-﻿using System;
+﻿#region Copyright
+
+/////////////////////////////////////////////////////////////////////////////
+//    Altaxo:  a data processing and data plotting program
+//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
+//    This program is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with this program; if not, write to the Free Software
+//    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+//
+/////////////////////////////////////////////////////////////////////////////
+
+#endregion Copyright
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Altaxo.Calc;
@@ -9,7 +33,7 @@ using Altaxo.Graph.Gdi.Plot;
 using Altaxo.Graph.Gdi.Plot.Styles;
 using Altaxo.Graph.Plot.Data;
 using Altaxo.Gui;
-using Altaxo.Gui.Analysis.Spectroscopy;
+using Altaxo.Science.Spectroscopy;
 using Altaxo.Science.Spectroscopy.PeakFitting;
 using Altaxo.Worksheet.Commands;
 
@@ -17,7 +41,7 @@ namespace Altaxo.Data
 {
   public class SpectroscopyCommands
   {
-    private static SpectralPreprocessingOptions? _lastOptions = null;
+    private static PeakSearchingAndFittingOptions? _lastOptions = null;
 
     /// <summary>
     /// Shows the dialog to get the preprocessing options.
@@ -25,7 +49,7 @@ namespace Altaxo.Data
     /// <param name="ctrl">The worksheet containing the spectra.</param>
     /// <param name="options">On successfull return, contains the preprocessing options.</param>
     /// <returns>True if successful; otherwise, false.</returns>
-    public static bool ShowDialogGetPreprocessingOptions(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl, out SpectralPreprocessingOptions options)
+    public static bool ShowDialogGetPreprocessingOptions(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl, out PeakSearchingAndFittingOptions options)
     {
       options = null;
       var selectedColumns = ctrl.SelectedDataColumns;
@@ -36,53 +60,54 @@ namespace Altaxo.Data
         return false;
       }
 
-      var doc = _lastOptions ?? new SpectralPreprocessingOptions();
+      var doc = _lastOptions ?? new PeakSearchingAndFittingOptions();
       var controller = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { doc }, typeof(IMVCANController));
 
       if (false == Current.Gui.ShowDialog(controller, "Spectral preprocessing"))
         return false;
 
-      options = (SpectralPreprocessingOptions)controller.ModelObject;
+      options = (PeakSearchingAndFittingOptions)controller.ModelObject;
       _lastOptions = options;
       return true;
     }
 
-    public static void SpectralPreprocessingShowDialog(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
+    public const string ColumnsV = "V-Columns";
+
+    public static string ExecuteSpectralPreprocessing(DataTableMultipleColumnProxy inputData, SpectralPreprocessingOptions doc, DataTable dstTable)
     {
-      if (!ShowDialogGetPreprocessingOptions(ctrl, out var doc))
-        return;
-
-      // now process the data
-      var srcTable = ctrl.DataTable;
-      var dstTable = new DataTable();
-      {
-        var dstName = srcTable.Name + "_Preprocessed";
-        if (Current.Project.DataTableCollection.Contains(dstName))
-          dstName = Current.Project.DataTableCollection.FindNewItemName(dstName);
-        dstTable.Name = dstName;
-        Current.Project.DataTableCollection.Add(dstTable);
-        Current.ProjectService.OpenOrCreateWorksheetForTable(dstTable);
-      }
+      var srcTable = inputData.DataTable;
+      if (srcTable is null)
+        throw new InvalidOperationException($"No source table available for spectral preprocessing");
 
 
-      var peakTable = new DataTable();
+
+
+      dstTable.DataColumns.RemoveColumnsAll();
+      dstTable.PropCols.RemoveColumnsAll();
+
+      var srcYCols = inputData.GetDataColumns(ColumnsV);
+      if (srcYCols.Count == 0)
+        throw new InvalidOperationException($"No V-columns available for spectral preprocessing");
+
 
       var dictionarySrcXCol_To_DstXCol = new Dictionary<DataColumn, DataColumn>();
 
       var dictionarySrcYCol_To_DstYCol = new Dictionary<DataColumn, DataColumn>();
 
       int runningColumnNumber = -1;
-      var selectedColumns = ctrl.SelectedDataColumns;
-      foreach (var selColIdx in selectedColumns)
+
+      foreach (var yCol in srcYCols)
       {
         ++runningColumnNumber;
-        var yCol = ctrl.DataTable[selColIdx];
-        var xCol = ctrl.DataTable.DataColumns.FindXColumnOf(yCol);
+
+        var xCol = srcTable.DataColumns.FindXColumnOf(yCol);
 
         if (xCol is null)
         {
           continue;
         }
+
+
         var len = Math.Min(yCol.Count, xCol.Count);
 
         var xArr = new double[len];
@@ -95,21 +120,27 @@ namespace Altaxo.Data
 
         // now apply the preprocessing steps
 
-        // 1. Spike removal
+
+        // Sanitizing
+        (xArr, yArr) = doc.Sanitizer.Execute(xArr, yArr);
+        //  Spike removal
         yArr = doc.SpikeRemoval.Execute(yArr);
-        // 2. 
+        // Resampler
+        (xArr, yArr) = doc.Resampling.Execute(xArr, yArr);
+        // Smoothing 
         yArr = doc.Smoothing.Execute(yArr);
-        // 3. Cropping
+        // Cropping
         (xArr, yArr) = doc.Cropping.Execute(xArr, yArr);
-        // 4. Baseline
+        // Baseline
         var baseline = doc.BaselineEstimation.Execute(xArr, yArr);
         for (int i = 0; i < yArr.Length; i++)
         {
           yArr[i] -= baseline[i];
         }
-        // 5. Normalization
+        // Normalization
         yArr = doc.Normalization.Execute(yArr);
 
+        // Store result
 
         if (!dictionarySrcXCol_To_DstXCol.ContainsKey(xCol))
         {
@@ -136,6 +167,74 @@ namespace Altaxo.Data
 
         for (int i = 0; i < yArr.Length; i++)
           yDst[i] = yArr[i];
+
+        // store the property columns
+        for (int i = 0; i < srcTable.PropCols.ColumnCount; ++i)
+        {
+          var pCol = dstTable.PropCols.EnsureExistence(
+            srcTable.PropCols.GetColumnName(i),
+            srcTable.PropCols[i].GetType(),
+            srcTable.PropCols.GetColumnKind(i),
+            srcTable.PropCols.GetColumnGroup(i));
+
+          var idxSrc = srcTable.DataColumns.GetColumnNumber(yCol);
+          var idxDst = dstTable.DataColumns.GetColumnNumber(yDst);
+          pCol[idxDst] = srcTable.PropCols[i][idxSrc];
+        }
+      }
+
+      return String.Empty;
+    }
+
+    public static void SpectralPreprocessingShowDialog(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
+    {
+      if (!ShowDialogGetPreprocessingOptions(ctrl, out var doc))
+        return;
+
+      // now process the data
+      var srcTable = ctrl.DataTable;
+      var dstTable = new DataTable();
+
+
+      {
+        var dstName = srcTable.Name + "_Preprocessed";
+        if (Current.Project.DataTableCollection.Contains(dstName))
+          dstName = Current.Project.DataTableCollection.FindNewItemName(dstName);
+        dstTable.Name = dstName;
+        Current.Project.DataTableCollection.Add(dstTable);
+        Current.ProjectService.OpenOrCreateWorksheetForTable(dstTable);
+      }
+
+      var dataProxy = new DataTableMultipleColumnProxy(ColumnsV, srcTable, null, ctrl.SelectedDataColumns);
+      ExecuteSpectralPreprocessing(dataProxy, doc, dstTable);
+
+      dstTable.DataSource = new SpectralPreprocessingDataSource(
+        dataProxy,
+        new SpectralPreprocessingOptions(doc), // downcast to SpectralPreprocessingOptions
+        new DataSourceImportOptions());
+
+
+      var peakTable = new DataTable();
+
+
+
+      int runningColumnNumber = -1;
+      var selectedColumns = ctrl.SelectedDataColumns;
+      foreach (var yCol in dataProxy.GetDataColumns(ColumnsV))
+      {
+        ++runningColumnNumber;
+
+        var xCol = ctrl.DataTable.DataColumns.FindXColumnOf(yCol);
+
+        if (xCol is null)
+        {
+          continue;
+        }
+
+        var yDst = dstTable.DataColumns[srcTable.DataColumns.GetColumnName(yCol)];
+        var yArr = ((DoubleColumn)yDst).Array;
+        var xDst = dstTable.DataColumns.FindXColumnOf(yDst);
+        var xArr = ((DoubleColumn)xDst).Array;
 
         // if peak searching is enabled, make further processing
 

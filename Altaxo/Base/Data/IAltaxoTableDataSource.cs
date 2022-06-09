@@ -40,6 +40,9 @@ namespace Altaxo.Data
 
     IDataSourceImportOptions ImportOptions { get; set; }
 
+    object ProcessOptionsObject { get; set; }
+    object ProcessDataObject { get; set; }
+
     /// <summary>
     /// Called after deserization of a data source instance, when it is already associated with a data table.
     /// </summary>

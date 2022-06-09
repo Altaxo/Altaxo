@@ -72,7 +72,7 @@ namespace Altaxo.Data
       ChildSetMember(ref _processData, (DataTableMultipleColumnProxy)info.GetValue("ProcessData", this));
       ChildSetMember(ref _processOptions, (DecomposeByColumnContentOptions)info.GetValue("ProcessOptions", this));
       ChildSetMember(ref _importOptions, (IDataSourceImportOptions)info.GetValue("ImportOptions", this));
-      InputData = _processData;
+      ProcessData = _processData;
     }
 
     #endregion Version 0
@@ -115,9 +115,9 @@ namespace Altaxo.Data
 
       using (var token = SuspendGetToken())
       {
-        DecomposeByColumnContentOptions = dataSourceOptions;
+        ProcessOptions = dataSourceOptions;
         ImportOptions = importOptions;
-        InputData = inputData;
+        ProcessData = inputData;
       }
     }
 
@@ -143,9 +143,9 @@ namespace Altaxo.Data
         CopyHelper.Copy(ref dataSourceOptions, from._processOptions);
         CopyHelper.Copy(ref inputData, from._processData);
 
-        DecomposeByColumnContentOptions = dataSourceOptions;
+        ProcessOptions = dataSourceOptions;
         ImportOptions = importOptions;
-        InputData = inputData;
+        ProcessData = inputData;
       }
     }
 
@@ -226,7 +226,7 @@ namespace Altaxo.Data
     /// <value>
     /// The input data. This data is the input for the 2D-Fourier transformation.
     /// </value>
-    public DataTableMultipleColumnProxy InputData
+    public DataTableMultipleColumnProxy ProcessData
     {
       get
       {
@@ -272,7 +272,7 @@ namespace Altaxo.Data
     /// The 2D Fourier transformation options.
     /// </value>
     /// <exception cref="System.ArgumentNullException">FourierTransformation2DOptions</exception>
-    public DecomposeByColumnContentOptions DecomposeByColumnContentOptions
+    public DecomposeByColumnContentOptions ProcessOptions
     {
       get
       {
@@ -286,6 +286,18 @@ namespace Altaxo.Data
           EhChildChanged(_processOptions, EventArgs.Empty);
         }
       }
+    }
+
+    object IAltaxoTableDataSource.ProcessOptionsObject
+    {
+      get => _processOptions;
+      set => ProcessOptions = (DecomposeByColumnContentOptions)value;
+    }
+
+    object IAltaxoTableDataSource.ProcessDataObject
+    {
+      get => _processData;
+      set => ProcessData = (DataTableMultipleColumnProxy)value;
     }
 
     #region Change event handling

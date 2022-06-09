@@ -26,8 +26,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Text;
 using Altaxo.Data;
 
 namespace Altaxo.Worksheet.Commands.Analysis
@@ -37,8 +35,8 @@ namespace Altaxo.Worksheet.Commands.Analysis
   /// </summary>
   public class FourierTransformation2DDataSource : TableDataSourceBase, Altaxo.Data.IAltaxoTableDataSource
   {
-    private RealFourierTransformation2DOptions _transformationOptions;
-    private DataTableMatrixProxy _inputData;
+    private RealFourierTransformation2DOptions _processOptions;
+    private DataTableMatrixProxy _processData;
     private IDataSourceImportOptions _importOptions;
 
     public Action<IAltaxoTableDataSource>? _dataSourceChanged;
@@ -66,23 +64,23 @@ namespace Altaxo.Worksheet.Commands.Analysis
       {
         var s = (FourierTransformation2DDataSource)obj;
 
-        info.AddValue("InputData", s._inputData);
-        info.AddValue("TransformationOptions", s._transformationOptions);
+        info.AddValue("InputData", s._processData);
+        info.AddValue("TransformationOptions", s._processOptions);
         info.AddValue("ImportOptions", s._importOptions);
       }
     }
 
-    [MemberNotNull(nameof(_importOptions), nameof(_inputData), nameof(_transformationOptions))]
+    [MemberNotNull(nameof(_importOptions), nameof(_processData), nameof(_processOptions))]
     private void DeserializeSurrogate0(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
     {
-      _inputData = (DataTableMatrixProxy)info.GetValue("InputData", this);
-      if (_inputData is not null)
-        _inputData.ParentObject = this;
+      _processData = (DataTableMatrixProxy)info.GetValue("InputData", this);
+      if (_processData is not null)
+        _processData.ParentObject = this;
 
-      _transformationOptions = (RealFourierTransformation2DOptions)info.GetValue("TransformationOptions", this);
+      _processOptions = (RealFourierTransformation2DOptions)info.GetValue("TransformationOptions", this);
       _importOptions = (IDataSourceImportOptions)info.GetValue("ImportOptions", this);
 
-      InputData = _inputData;
+      ProcessData = _processData;
     }
 
     #endregion Version 0
@@ -127,9 +125,9 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
       using (var token = SuspendGetToken())
       {
-        FourierTransformation2DOptions = transformationOptions;
+        ProcessOptions = transformationOptions;
         ImportOptions = importOptions;
-        InputData = inputData;
+        ProcessData = inputData;
       }
     }
 
@@ -142,12 +140,12 @@ namespace Altaxo.Worksheet.Commands.Analysis
       CopyFrom(from);
     }
 
-    [MemberNotNull(nameof(_importOptions), nameof(_transformationOptions), nameof(_inputData))]
+    [MemberNotNull(nameof(_importOptions), nameof(_processOptions), nameof(_processData))]
     protected void CopyFrom(FourierTransformation2DDataSource from)
     {
       ChildCopyToMember(ref _importOptions, from._importOptions);
-      ChildCopyToMember(ref _transformationOptions, from._transformationOptions);
-      ChildCopyToMember(ref _inputData, from._inputData);
+      ChildCopyToMember(ref _processOptions, from._processOptions);
+      ChildCopyToMember(ref _processData, from._processData);
     }
 
     /// <summary>
@@ -176,11 +174,11 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
-      if (_inputData is not null)
-        yield return new Main.DocumentNodeAndName(_inputData, () => _inputData = null!, "Data");
+      if (_processData is not null)
+        yield return new Main.DocumentNodeAndName(_processData, () => _processData = null!, "Data");
 
-      if (_transformationOptions is not null)
-        yield return new Main.DocumentNodeAndName(_transformationOptions, () => _transformationOptions = null!, "TransformationOptions");
+      if (_processOptions is not null)
+        yield return new Main.DocumentNodeAndName(_processOptions, () => _processOptions = null!, "TransformationOptions");
 
       if (_importOptions is not null)
         yield return new Main.DocumentNodeAndName(_importOptions, () => _importOptions = null!, "ImportOptions");
@@ -205,7 +203,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
     {
       try
       {
-        FourierCommands.ExecuteFouriertransformation2D(_inputData, _transformationOptions, destinationTable);
+        FourierCommands.ExecuteFouriertransformation2D(_processData, _processOptions, destinationTable);
       }
       catch (Exception ex)
       {
@@ -243,19 +241,19 @@ namespace Altaxo.Worksheet.Commands.Analysis
     /// <value>
     /// The input data. This data is the input for the 2D-Fourier transformation.
     /// </value>
-    public DataTableMatrixProxy InputData
+    public DataTableMatrixProxy ProcessData
     {
       get
       {
-        return _inputData;
+        return _processData;
       }
-      [MemberNotNull(nameof(_inputData))]
+      [MemberNotNull(nameof(_processData))]
       set
       {
         if (value is null)
-          throw new ArgumentNullException(nameof(InputData));
+          throw new ArgumentNullException(nameof(ProcessData));
 
-        if (ChildSetMember(ref _inputData, value))
+        if (ChildSetMember(ref _processData, value))
         {
           EhInputDataChanged(this, EventArgs.Empty);
         }
@@ -293,21 +291,33 @@ namespace Altaxo.Worksheet.Commands.Analysis
     /// The 2D Fourier transformation options.
     /// </value>
     /// <exception cref="System.ArgumentNullException">FourierTransformation2DOptions</exception>
-    public RealFourierTransformation2DOptions FourierTransformation2DOptions
+    public RealFourierTransformation2DOptions ProcessOptions
     {
       get
       {
-        return _transformationOptions;
+        return _processOptions;
       }
-      [MemberNotNull(nameof(_transformationOptions))]
+      [MemberNotNull(nameof(_processOptions))]
       set
       {
         if (value is null)
-          throw new ArgumentNullException("FourierTransformation2DOptions");
+          throw new ArgumentNullException(nameof(ProcessOptions));
 
-        if (ChildSetMember(ref _transformationOptions, value))
+        if (ChildSetMember(ref _processOptions, value))
           EhSelfChanged(EventArgs.Empty);
       }
+    }
+
+    object IAltaxoTableDataSource.ProcessOptionsObject
+    {
+      get => _processOptions;
+      set => ProcessOptions = (RealFourierTransformation2DOptions)value;
+    }
+
+    object IAltaxoTableDataSource.ProcessDataObject
+    {
+      get => _processData;
+      set => ProcessData = (DataTableMatrixProxy)value;
     }
 
     /// <summary>
@@ -336,8 +346,8 @@ namespace Altaxo.Worksheet.Commands.Analysis
     /// <param name="ReportProxies">The report proxies.</param>
     public void VisitDocumentReferences(Main.DocNodeProxyReporter ReportProxies)
     {
-      if (_inputData is not null)
-        _inputData.VisitDocumentReferences(ReportProxies);
+      if (_processData is not null)
+        _processData.VisitDocumentReferences(ReportProxies);
     }
   }
 }
