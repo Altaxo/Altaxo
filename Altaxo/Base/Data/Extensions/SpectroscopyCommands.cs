@@ -196,6 +196,11 @@ namespace Altaxo.Data
       var dstTable = new DataTable();
 
 
+
+
+      var dataProxy = new DataTableMultipleColumnProxy(ColumnsV, srcTable, null, ctrl.SelectedDataColumns);
+      ExecuteSpectralPreprocessing(dataProxy, doc, dstTable);
+
       {
         var dstName = srcTable.Name + "_Preprocessed";
         if (Current.Project.DataTableCollection.Contains(dstName))
@@ -204,9 +209,6 @@ namespace Altaxo.Data
         Current.Project.DataTableCollection.Add(dstTable);
         Current.ProjectService.OpenOrCreateWorksheetForTable(dstTable);
       }
-
-      var dataProxy = new DataTableMultipleColumnProxy(ColumnsV, srcTable, null, ctrl.SelectedDataColumns);
-      ExecuteSpectralPreprocessing(dataProxy, doc, dstTable);
 
       dstTable.DataSource = new SpectralPreprocessingDataSource(
         dataProxy,
