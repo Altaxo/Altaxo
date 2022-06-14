@@ -62,8 +62,17 @@ namespace Altaxo.Science.Spectroscopy
       }
     }
     #endregion
+    public PeakSearchingAndFittingOptions()
+    {
 
+    }
 
+    public PeakSearchingAndFittingOptions(PeakSearchingAndFittingOptions from)
+      : base(from)
+    {
+      PeakSearching = from.PeakSearching;
+      PeakFitting = from.PeakFitting;
+    }
 
     public IPeakSearching PeakSearching { get; init; } = new PeakSearchingNone();
 

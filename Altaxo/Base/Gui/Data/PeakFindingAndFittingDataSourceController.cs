@@ -26,8 +26,8 @@ using Altaxo.Data;
 
 namespace Altaxo.Gui.Data
 {
-  [UserControllerForObject(typeof(SpectralPreprocessingDataSource))]
-  public class SpectralPreprocessingDataSourceController : DataSourceControllerBase<SpectralPreprocessingDataSource>
+  [UserControllerForObject(typeof(PeakFindingAndFittingDataSource))]
+  public class PeakFindingAndFittingDataSourceController : DataSourceControllerBase<PeakFindingAndFittingDataSource>
   {
   }
 }

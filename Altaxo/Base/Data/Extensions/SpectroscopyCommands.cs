@@ -35,6 +35,7 @@ using Altaxo.Graph.Plot.Data;
 using Altaxo.Gui;
 using Altaxo.Science.Spectroscopy;
 using Altaxo.Science.Spectroscopy.PeakFitting;
+using Altaxo.Science.Spectroscopy.PeakSearching;
 using Altaxo.Worksheet.Commands;
 
 namespace Altaxo.Data
@@ -73,32 +74,22 @@ namespace Altaxo.Data
 
     public const string ColumnsV = "V-Columns";
 
-    public static string ExecuteSpectralPreprocessing(DataTableMultipleColumnProxy inputData, SpectralPreprocessingOptions doc, DataTable dstTable)
+
+    public static List<(DataColumn xCol, DataColumn yCol, double[] xArray, double[] yArray)> GetColumnsAndArrays(DataTableMultipleColumnProxy inputData, out DataTable srcTable)
     {
-      var srcTable = inputData.DataTable;
+      var resultList = new List<(DataColumn xCol, DataColumn yCol, double[] xArray, double[] yArray)>();
+      srcTable = inputData.DataTable;
       if (srcTable is null)
         throw new InvalidOperationException($"No source table available for spectral preprocessing");
-
-
-
-
-      dstTable.DataColumns.RemoveColumnsAll();
-      dstTable.PropCols.RemoveColumnsAll();
 
       var srcYCols = inputData.GetDataColumns(ColumnsV);
       if (srcYCols.Count == 0)
         throw new InvalidOperationException($"No V-columns available for spectral preprocessing");
 
 
-      var dictionarySrcXCol_To_DstXCol = new Dictionary<DataColumn, DataColumn>();
-
-      var dictionarySrcYCol_To_DstYCol = new Dictionary<DataColumn, DataColumn>();
-
-      int runningColumnNumber = -1;
-
       foreach (var yCol in srcYCols)
       {
-        ++runningColumnNumber;
+
 
         var xCol = srcTable.DataColumns.FindXColumnOf(yCol);
 
@@ -118,9 +109,44 @@ namespace Altaxo.Data
           yArr[i] = yCol[i];
         }
 
+        resultList.Add((xCol, yCol, xArr, yArr));
+      }
+      return resultList;
+    }
+
+    public static List<(
+      DataColumn xOrgCol,
+      DataColumn yOrgCol,
+      DataColumn xPreprocessedCol,
+      DataColumn yPreprocessedCol,
+      double[] xArray,
+      double[] yArray)>
+      ExecuteSpectralPreprocessing(DataTableMultipleColumnProxy inputData, SpectralPreprocessingOptions doc, DataTable dstTable)
+    {
+      var resultList = new List<(
+      DataColumn xOrgCol,
+      DataColumn yOrgCol,
+      DataColumn xPreprocessedCol,
+      DataColumn yPreprocessedCol,
+      double[] xArray,
+      double[] yArray)>();
+
+      var dictionarySrcXCol_To_DstXCol = new Dictionary<DataColumn, DataColumn>();
+      var dictionarySrcYCol_To_DstYCol = new Dictionary<DataColumn, DataColumn>();
+      int runningColumnNumber = -1;
+
+      dstTable.DataColumns.RemoveColumnsAll();
+      dstTable.PropCols.RemoveColumnsAll();
+
+      foreach (var entry in GetColumnsAndArrays(inputData, out var srcTable))
+      {
+        ++runningColumnNumber;
+        var xCol = entry.xCol;
+        var yCol = entry.yCol;
+        var xArr = entry.xArray;
+        var yArr = entry.yArray;
+
         // now apply the preprocessing steps
-
-
         // Sanitizing
         (xArr, yArr) = doc.Sanitizer.Execute(xArr, yArr);
         //  Spike removal
@@ -157,6 +183,7 @@ namespace Altaxo.Data
           dictionarySrcXCol_To_DstXCol.Add(xCol, xDst);
         }
 
+
         var yDst = dstTable.DataColumns.EnsureExistence(
           srcTable.DataColumns.GetColumnName(yCol),
           yCol.GetType(),
@@ -181,67 +208,51 @@ namespace Altaxo.Data
           var idxDst = dstTable.DataColumns.GetColumnNumber(yDst);
           pCol[idxDst] = srcTable.PropCols[i][idxSrc];
         }
+
+        resultList.Add((xCol, yCol, dictionarySrcXCol_To_DstXCol[xCol], yDst, xArr, yArr));
       }
 
-      return String.Empty;
+      return resultList;
     }
 
-    public static void SpectralPreprocessingShowDialog(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
+    public static List<(
+      DataColumn xOrgCol,
+      DataColumn yOrgCol,
+      DataColumn xPreprocessedCol,
+      DataColumn yPreprocessedCol,
+      IPeakFittingResult fittingResult)>
+      ExecutePeakFindingAndFitting(DataTableMultipleColumnProxy inputData, PeakSearchingAndFittingOptions doc, DataTable peakTable, DataTable? preprocessedSpectraTable = null)
     {
-      if (!ShowDialogGetPreprocessingOptions(ctrl, out var doc))
-        return;
+      var resultList = new List<(
+      DataColumn xOrgCol,
+      DataColumn yOrgCol,
+      DataColumn xPreprocessedCol,
+      DataColumn yPreprocessedCol,
+      IPeakFittingResult fittingResult)>();
 
-      // now process the data
-      var srcTable = ctrl.DataTable;
-      var dstTable = new DataTable();
+      preprocessedSpectraTable ??= new DataTable();
 
+      var spectralPreprocessingResult = ExecuteSpectralPreprocessing(inputData, doc, preprocessedSpectraTable);
 
-
-
-      var dataProxy = new DataTableMultipleColumnProxy(ColumnsV, srcTable, null, ctrl.SelectedDataColumns);
-      ExecuteSpectralPreprocessing(dataProxy, doc, dstTable);
-
-      {
-        var dstName = srcTable.Name + "_Preprocessed";
-        if (Current.Project.DataTableCollection.Contains(dstName))
-          dstName = Current.Project.DataTableCollection.FindNewItemName(dstName);
-        dstTable.Name = dstName;
-        Current.Project.DataTableCollection.Add(dstTable);
-        Current.ProjectService.OpenOrCreateWorksheetForTable(dstTable);
-      }
-
-      dstTable.DataSource = new SpectralPreprocessingDataSource(
-        dataProxy,
-        new SpectralPreprocessingOptions(doc), // downcast to SpectralPreprocessingOptions
-        new DataSourceImportOptions());
-
-
-      var peakTable = new DataTable();
-
-
-
+      peakTable.DataColumns.RemoveColumnsAll();
+      peakTable.PropCols.RemoveColumnsAll();
       int runningColumnNumber = -1;
-      var selectedColumns = ctrl.SelectedDataColumns;
-      foreach (var yCol in dataProxy.GetDataColumns(ColumnsV))
+      foreach (var entry in spectralPreprocessingResult)
       {
         ++runningColumnNumber;
 
-        var xCol = ctrl.DataTable.DataColumns.FindXColumnOf(yCol);
+        var xArr = entry.xArray;
+        var yArr = entry.yArray;
 
-        if (xCol is null)
+        // now apply the steps
+        var peakResults = doc.PeakSearching.Execute(yArr);
+        var fitResults = doc.PeakFitting.Execute(xArr, yArr, peakResults.PeakDescriptions);
+
+        // Store the results
+
+        if (doc.PeakSearching is not PeakSearchingNone)
         {
-          continue;
-        }
 
-        var yDst = dstTable.DataColumns[srcTable.DataColumns.GetColumnName(yCol)];
-        var yArr = ((DoubleColumn)yDst).Array;
-        var xDst = dstTable.DataColumns.FindXColumnOf(yDst);
-        var xArr = ((DoubleColumn)xDst).Array;
-
-        // if peak searching is enabled, make further processing
-
-        {
-          var peakResults = doc.PeakSearching.Execute(yArr);
           var cPos = peakTable.DataColumns.EnsureExistence($"Position{runningColumnNumber}", typeof(DoubleColumn), ColumnKind.X, runningColumnNumber);
           var cPro = peakTable.DataColumns.EnsureExistence($"Prominence{runningColumnNumber}", typeof(DoubleColumn), ColumnKind.V, runningColumnNumber);
           var cHei = peakTable.DataColumns.EnsureExistence($"Height{runningColumnNumber}", typeof(DoubleColumn), ColumnKind.V, runningColumnNumber);
@@ -259,8 +270,6 @@ namespace Altaxo.Data
 
           if (doc.PeakFitting is not PeakFittingNone)
           {
-            var fitResults = doc.PeakFitting.Execute(xArr, yArr, peakResults.PeakDescriptions);
-
             var cFNot = peakTable.DataColumns.EnsureExistence($"FitNotes{runningColumnNumber}", typeof(TextColumn), ColumnKind.V, runningColumnNumber);
             var cFPos = peakTable.DataColumns.EnsureExistence($"FitPosition{runningColumnNumber}", typeof(DoubleColumn), ColumnKind.X, runningColumnNumber);
             var cFPosVar = peakTable.DataColumns.EnsureExistence($"FitPosition{runningColumnNumber}.Err", typeof(DoubleColumn), ColumnKind.Err, runningColumnNumber);
@@ -316,70 +325,46 @@ namespace Altaxo.Data
             }
 
 
-
-
-            // -----------------------------------------------------------------------------
-            // Peak plotting
-            // -----------------------------------------------------------------------------
-
-            var selColumnsForPeakGraph = new AscendingIntegerCollection();
-            selColumnsForPeakGraph.Add(dstTable.DataColumns.GetColumnNumber(yDst));
-            string preferredGraphName = dstTable.FolderName + "GPeaks";
-            var graphController = PlotCommands.PlotLine(dstTable, selColumnsForPeakGraph, bLine: false, bScatter: true, preferredGraphName);
-            var graph = graphController.Doc;
-            var layer = (XYPlotLayer)graph.RootLayer.Layers[0];
-            var pi = Altaxo.Collections.TreeNodeExtensions.TakeFromHereToFirstLeaves<IGPlotItem>(layer.PlotItems).OfType<XYColumnPlotItem>().FirstOrDefault();
-            if (pi is not null)
-            {
-              var scatter = pi.Style.OfType<ScatterPlotStyle>().FirstOrDefault();
-              if (scatter is not null)
-              {
-                scatter.SymbolSize = 3;
-              }
-            }
-
-
-            var group = new PlotItemCollection();
-            layer.PlotItems.Add(group);
-            // add fit function(s)
-            var fitFunctionHashTable = new HashSet<(IFitFunction FitFunction, double[] Parameter)>();
-            foreach (var peakDesc in fitResults.PeakDescriptions.Where(pd => pd.FitFunction is not null))
-            {
-              if (!fitFunctionHashTable.Contains((peakDesc.FitFunction, peakDesc.FitFunctionParameter)))
-              {
-                fitFunctionHashTable.Add((peakDesc.FitFunction, peakDesc.FitFunctionParameter));
-                // var data = new XYFunctionPlotData(peakDesc.FitFunction);
-                var fitElement = new FitElement(peakDesc.FitFunction);
-                var fitDocument = new NonlinearFitDocument();
-                fitDocument.FitEnsemble.Add(fitElement);
-                fitDocument.SetDefaultParametersForFitElement(0);
-                for (int i = 0; i < peakDesc.FitFunctionParameter.Length; i++)
-                  fitDocument.CurrentParameters[i].Parameter = peakDesc.FitFunctionParameter[i];
-                var data = new XYNonlinearFitFunctionPlotData(System.Guid.NewGuid().ToString(), fitDocument, 0, 0, null, 0, null);
-
-                var plotStyle = PlotCommands.PlotStyle_Line(graph.GetPropertyContext());
-                var lineStyle = plotStyle.OfType<LinePlotStyle>().FirstOrDefault();
-                if (lineStyle is not null && lineStyle.Color.ParentColorSet is { } parentCSet)
-                {
-                  var idx = parentCSet.IndexOf(lineStyle.Color);
-                  if (idx >= 0)
-                  {
-                    lineStyle.Color = parentCSet[(idx + 1) % parentCSet.Count];
-                  }
-                }
-                var functionPlotItem = new XYFunctionPlotItem(data, plotStyle);
-                group.Add(functionPlotItem);
-              }
-            }
-
-            // -----------------------------------------------------------------------------
-            // End of peak plotting
-            // -----------------------------------------------------------------------------
           }
         }
-      } // for each selected column
 
-      if (peakTable.DataRowCount > 0)
+        resultList.Add((entry.xOrgCol, entry.yOrgCol, entry.xPreprocessedCol, entry.yPreprocessedCol, fitResults));
+      }
+
+
+      return resultList;
+    }
+
+    public static void SpectralPreprocessingShowDialog(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
+    {
+      if (!ShowDialogGetPreprocessingOptions(ctrl, out var doc))
+        return;
+
+      // now process the data
+      var srcTable = ctrl.DataTable;
+      var preprocessingTable = new DataTable();
+
+      var peakTable = new DataTable();
+
+
+      var dataProxy = new DataTableMultipleColumnProxy(ColumnsV, srcTable, null, ctrl.SelectedDataColumns);
+      var result = ExecutePeakFindingAndFitting(dataProxy, doc, peakTable, preprocessingTable);
+
+      {
+        var dstName = srcTable.Name + "_Preprocessed";
+        if (Current.Project.DataTableCollection.Contains(dstName))
+          dstName = Current.Project.DataTableCollection.FindNewItemName(dstName);
+        preprocessingTable.Name = dstName;
+        Current.Project.DataTableCollection.Add(preprocessingTable);
+        Current.ProjectService.OpenOrCreateWorksheetForTable(preprocessingTable);
+
+
+        preprocessingTable.DataSource = new SpectralPreprocessingDataSource(
+          dataProxy,
+          new SpectralPreprocessingOptions(doc), // downcast to SpectralPreprocessingOptions
+          new DataSourceImportOptions());
+      }
+
       {
         var dstName = srcTable.Name + "_Peaks";
         if (Current.Project.DataTableCollection.Contains(dstName))
@@ -387,7 +372,79 @@ namespace Altaxo.Data
         peakTable.Name = dstName;
         Current.Project.DataTableCollection.Add(peakTable);
         Current.ProjectService.OpenOrCreateWorksheetForTable(peakTable);
+
+
+        peakTable.DataSource = new PeakFindingAndFittingDataSource(
+          dataProxy,
+          new PeakSearchingAndFittingOptions(doc), // downcast to PeakFindingAndFittingOptions
+          new DataSourceImportOptions());
       }
+
+
+
+      // -----------------------------------------------------------------------------
+      // Peak plotting
+      // -----------------------------------------------------------------------------
+
+      foreach (var entry in result)
+      {
+        var selColumnsForPeakGraph = new AscendingIntegerCollection();
+        selColumnsForPeakGraph.Add(preprocessingTable.DataColumns.GetColumnNumber(entry.yPreprocessedCol));
+        string preferredGraphName = preprocessingTable.FolderName + "GPeaks";
+        var graphController = PlotCommands.PlotLine(preprocessingTable, selColumnsForPeakGraph, bLine: false, bScatter: true, preferredGraphName);
+        var graph = graphController.Doc;
+        var layer = (XYPlotLayer)graph.RootLayer.Layers[0];
+        var pi = Altaxo.Collections.TreeNodeExtensions.TakeFromHereToFirstLeaves<IGPlotItem>(layer.PlotItems).OfType<XYColumnPlotItem>().FirstOrDefault();
+        if (pi is not null)
+        {
+          var scatter = pi.Style.OfType<ScatterPlotStyle>().FirstOrDefault();
+          if (scatter is not null)
+          {
+            scatter.SymbolSize = 3;
+          }
+        }
+
+
+        var group = new PlotItemCollection();
+        layer.PlotItems.Add(group);
+        // add fit function(s)
+        var fitFunctionHashTable = new HashSet<(IFitFunction FitFunction, double[] Parameter)>();
+        foreach (var peakDesc in entry.fittingResult.PeakDescriptions.Where(pd => pd.FitFunction is not null))
+        {
+          if (!fitFunctionHashTable.Contains((peakDesc.FitFunction, peakDesc.FitFunctionParameter)))
+          {
+            fitFunctionHashTable.Add((peakDesc.FitFunction, peakDesc.FitFunctionParameter));
+            // var data = new XYFunctionPlotData(peakDesc.FitFunction);
+            var fitElement = new FitElement(peakDesc.FitFunction);
+            var fitDocument = new NonlinearFitDocument();
+            fitDocument.FitEnsemble.Add(fitElement);
+            fitDocument.SetDefaultParametersForFitElement(0);
+            for (int i = 0; i < peakDesc.FitFunctionParameter.Length; i++)
+              fitDocument.CurrentParameters[i].Parameter = peakDesc.FitFunctionParameter[i];
+            var data = new XYNonlinearFitFunctionPlotData(System.Guid.NewGuid().ToString(), fitDocument, 0, 0, null, 0, null);
+
+            var plotStyle = PlotCommands.PlotStyle_Line(graph.GetPropertyContext());
+            var lineStyle = plotStyle.OfType<LinePlotStyle>().FirstOrDefault();
+            if (lineStyle is not null && lineStyle.Color.ParentColorSet is { } parentCSet)
+            {
+              var idx = parentCSet.IndexOf(lineStyle.Color);
+              if (idx >= 0)
+              {
+                lineStyle.Color = parentCSet[(idx + 1) % parentCSet.Count];
+              }
+            }
+            var functionPlotItem = new XYFunctionPlotItem(data, plotStyle);
+            group.Add(functionPlotItem);
+          }
+        }
+
+        // -----------------------------------------------------------------------------
+        // End of peak plotting
+        // -----------------------------------------------------------------------------
+
+      } // for each selected column
+
+
 
 
 
