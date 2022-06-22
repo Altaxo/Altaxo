@@ -25,11 +25,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using System.Xml;
-using Altaxo.Graph;
 using Altaxo.Gui;
 using Altaxo.Text.Renderers;
 using Markdig;
@@ -49,7 +45,7 @@ namespace Altaxo.Text
       dlg.AddFilter("*.*", "All files (*.*)");
       dlg.AddExtension = true;
 
-      if (oldFileName is not null)
+      if (!string.IsNullOrEmpty(oldFileName))
       {
         dlg.InitialDirectory = System.IO.Path.GetDirectoryName(oldFileName);
         dlg.FileName = oldFileName;

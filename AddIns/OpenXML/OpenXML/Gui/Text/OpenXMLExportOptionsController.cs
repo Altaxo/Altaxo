@@ -22,12 +22,8 @@
 
 #endregion Copyright
 
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
 using Altaxo.Text;
 using Altaxo.Units;
@@ -43,8 +39,6 @@ namespace Altaxo.Gui.Text
   [UserControllerForObject(typeof(TextDocumentToOpenXmlExportOptionsAndData))]
   public class OpenXMLExportOptionsController : MVCANControllerEditOriginalDocBase<TextDocumentToOpenXmlExportOptions, IOpenXMLExportOptionsView>, INotifyPropertyChanged
   {
-    public event PropertyChangedEventHandler? PropertyChanged;
-
     public OpenXMLExportOptionsController()
     {
       CommandSelectOutputFile = new RelayCommand(EhSelectOutputFile);
@@ -68,11 +62,6 @@ namespace Altaxo.Gui.Text
     }
 
     #region Bindable properties
-
-    protected virtual void OnPropertyChanged(string propertyName)
-    {
-      PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-    }
 
     private DimensionfulQuantity _maximumImageWidth = new DimensionfulQuantity(0, Altaxo.Units.Length.Point.Instance);
     private bool _applyMaximumImageWidth;
