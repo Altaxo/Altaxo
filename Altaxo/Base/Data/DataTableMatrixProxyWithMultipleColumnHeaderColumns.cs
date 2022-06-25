@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2014 Dr. Dirk Lellinger
+//    Copyright (C) 2022 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -22,38 +22,44 @@
 
 #endregion Copyright
 
-#nullable enable
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using Altaxo.Collections;
 
 namespace Altaxo.Data
 {
   /// <summary>
   /// Holds reference to a matrix-like arrangement of data from a <see cref="DataTable"/>. The matrix data consist of 2 or more <see cref="DataColumn"/>s and all or selected data rows.
-  /// Furthermore, a row header column and a column header column can deliver corresponding physical values for each matrix row and column, respectively.
+  /// Furthermore, a row header column and multiple column header columns can deliver corresponding physical values for each matrix row and column, respectively.
+  /// This class is intended e.g. to hold spectral data together with one or multiple target variables for chemometrical analysis.
   /// </summary>
-  public class DataTableMatrixProxy : DataTableMatrixProxyBase
+  public class DataTableMatrixProxyWithMultipleColumnHeaderColumns : DataTableMatrixProxyBase
   {
-
     #region Serialization
 
     #region Version 0
 
     /// <summary>
-    /// 2014-07-08 initial version.
+    /// 2022-06-25 initial version.
     /// </summary>
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DataTableMatrixProxy), 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DataTableMatrixProxyWithMultipleColumnHeaderColumns), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (DataTableMatrixProxy)obj;
+        var s = (DataTableMatrixProxyWithMultipleColumnHeaderColumns)obj;
         info.AddValueOrNull("Table", s._dataTable);
         info.AddValue("Group", s._groupNumber);
         info.AddValue("RowHeaderColumn", s._rowHeaderColumn);
-        info.AddValue("ColumnHeaderColumn", s._columnHeaderColumns?.Count > 0 ? s._columnHeaderColumns[0] : null);
+        {
+          info.CreateArray("ColumnHeaderColumns", s._columnHeaderColumns.Count);
+          for (int i = 0; i < s._columnHeaderColumns.Count; ++i)
+          {
+            info.AddValue("e", s._columnHeaderColumns[i]);
+          }
+          info.CommitArray();
+        }
+
         info.AddValue("UseAllAvailableColumnsOfGroup", s._useAllAvailableColumnsOfGroup);
         info.AddValue("UseAllAvailableDataRows", s._useAllAvailableDataRows);
 
@@ -73,9 +79,9 @@ namespace Altaxo.Data
         }
       }
 
-      protected virtual DataTableMatrixProxy SDeserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      protected virtual DataTableMatrixProxyBase SDeserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (DataTableMatrixProxy?)o ?? new DataTableMatrixProxy();
+        var s = (DataTableMatrixProxyWithMultipleColumnHeaderColumns?)o ?? new DataTableMatrixProxyWithMultipleColumnHeaderColumns();
 
         s.ChildSetMember(ref s._dataTable, info.GetValueOrNull<DataTableProxy>("Table", s));
         s._groupNumber = info.GetInt32("Group");
@@ -128,6 +134,16 @@ namespace Altaxo.Data
     #endregion Serialization
 
     /// <summary>
+    /// Deserialization constructor
+    /// </summary>
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
+    protected DataTableMatrixProxyWithMultipleColumnHeaderColumns()
+    {
+    }
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
+
+
+    /// <summary>
     /// Creates a new object that is a copy of the current instance.
     /// </summary>
     /// <returns>
@@ -135,22 +151,13 @@ namespace Altaxo.Data
     /// </returns>
     public override object Clone()
     {
-      var result = new DataTableMatrixProxy();
+      var result = new DataTableMatrixProxyWithMultipleColumnHeaderColumns();
       result.CopyFrom(this);
       return result;
     }
 
     /// <summary>
-    /// Deserialization constructor
-    /// </summary>
-#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
-    protected DataTableMatrixProxy()
-    {
-    }
-#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="DataTableMatrixProxy"/> class. The selected collections determine which columns and rows contribute to the matrix, and which
+    /// Initializes a new instance of the <see cref="DataTableMatrixProxyBase"/> class. The selected collections determine which columns and rows contribute to the matrix, and which
     /// row header column and column header column is used. The group number is determined by the first selected column (or, if no column is selected, by the first column of the data table).
     /// </summary>
     /// <param name="table">The underlying table.</param>
@@ -158,54 +165,56 @@ namespace Altaxo.Data
     /// <param name="selectedDataColumns">The selected data columns.</param>
     /// <param name="selectedPropertyColumns">The selected property columns.</param>
     /// <exception cref="System.ArgumentNullException">table must not be null.</exception>
-    public DataTableMatrixProxy(DataTable table, IAscendingIntegerCollection selectedDataRows, IAscendingIntegerCollection selectedDataColumns, IAscendingIntegerCollection selectedPropertyColumns)
-      : base(table, selectedDataRows, selectedDataColumns, selectedPropertyColumns)
+    public DataTableMatrixProxyWithMultipleColumnHeaderColumns(DataTable table, IAscendingIntegerCollection selectedDataRows, IAscendingIntegerCollection selectedDataColumns, IAscendingIntegerCollection selectedPropertyColumns)
     {
+      if (table is null)
+        throw new ArgumentNullException("table");
 
-    }
-
-    [Obsolete("This is intended for legacy deserialization (of XYZMeshedColumnPlotData) only.")]
-    public static DataTableMatrixProxy CreateEmptyInstance()
-    {
-      var result = new DataTableMatrixProxy
+      _dataTable = new DataTableProxy(table)
       {
-        _participatingDataColumns = new AscendingIntegerCollection(),
-        _participatingDataRows = new AscendingIntegerCollection(),
-        _dataColumns = new List<IReadableColumnProxy>(),
-
-        _dataTable = null!
+        ParentObject = this
       };
-      result.InternalSetRowHeaderColumn(ReadableColumnProxyBase.FromColumn(null));
-      result.InternalSetColumnHeaderColumn(ReadableColumnProxyBase.FromColumn(null));
 
-      return result;
-    }
-
-    [Obsolete("This is intended for legacy deserialization (of XYZMeshedColumnPlotData) only.")]
-    public DataTableMatrixProxy(IReadableColumnProxy xColumn, IReadableColumnProxy yColumn, IReadableColumnProxy[] dataColumns)
-      : base(xColumn, yColumn, dataColumns)
-    {
-    }
-
-
-    /// <summary>Column that correlate each column of the resulting matrix to a corresponding physical value. This value can be used for instance for calculating the x- or y- position in the coordinate system.</summary>
-    [MaybeNull]
-    public IReadableColumn ColumnHeaderColumn
-    {
-      get
+      var converter = new DataTableToMatrixConverter(table)
       {
-        return _columnHeaderColumns.Count == 0 ? null : _columnHeaderColumns[0].Document();
-      }
-      set
+        SelectedDataRows = selectedDataRows,
+        SelectedDataColumns = selectedDataColumns,
+        SelectedPropertyColumns = selectedPropertyColumns,
+        ReplacementValueForNaNMatrixElements = 0,
+        ReplacementValueForInfiniteMatrixElements = 0,
+        MatrixGenerator = DoubleMatrixAsNullDevice.GetMatrix // the data are not needed, thus we send it into a NullDevice
+      };
+
+      converter.Execute();
+
+      _groupNumber = converter.DataColumnsGroupNumber;
+      _useAllAvailableColumnsOfGroup = converter.AreAllAvailableColumnsOfGroupIncluded();
+      _useAllAvailableDataRows = converter.AreAllAvailableRowsIncluded();
+
+      _rowHeaderColumn = ReadableColumnProxyBase.FromColumn(converter.RowHeaderColumn);
+      _rowHeaderColumn.ParentObject = this;
+
+      foreach (var colHeaderCol in converter.ColumnHeaderColumns)
       {
-        var oldValue = ColumnHeaderColumn;
-        if (!object.ReferenceEquals(oldValue, value))
-        {
-          InternalSetColumnHeaderColumn(ReadableColumnProxyBase.FromColumn(value));
-          _isDirty = true;
-        }
+        var columnHeaderColumnProxy = ReadableColumnProxyBase.FromColumn(colHeaderCol);
+
+        columnHeaderColumnProxy.ParentObject = this;
+        _columnHeaderColumns.Add(columnHeaderColumnProxy);
       }
+
+      _dataColumns = new List<IReadableColumnProxy>();
+      _participatingDataColumns = new AscendingIntegerCollection(converter.GetParticipatingDataColumns());
+      for (int i = 0; i < _participatingDataColumns.Count; i++)
+      {
+        _dataColumns.Add(ReadableColumnProxyBase.FromColumn(table.DataColumns[_participatingDataColumns[i]]));
+
+        // set the event chain
+        _dataColumns[i].ParentObject = this;
+      }
+
+      _participatingDataRows = new AscendingIntegerCollection(converter.GetParticipatingDataRows());
     }
+
 
   }
 }

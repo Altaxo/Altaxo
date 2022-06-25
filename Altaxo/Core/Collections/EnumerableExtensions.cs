@@ -199,7 +199,7 @@ namespace Altaxo.Collections
         int index = 0;
         while (it.MoveNext())
         {
-          if(condition(it.Current))
+          if (condition(it.Current))
           {
             yield return index;
           }
@@ -285,7 +285,7 @@ namespace Altaxo.Collections
         while (it.MoveNext())
         {
           var v = it.Current;
-          if (condition( index, v))
+          if (condition(index, v))
           {
             yield return (index, v);
           }
@@ -365,7 +365,7 @@ namespace Altaxo.Collections
       using (var it = org.GetEnumerator())
       {
         return it.MoveNext() && !it.MoveNext();
-        
+
       }
     }
 
@@ -390,7 +390,7 @@ namespace Altaxo.Collections
           return false;
         }
         var ele = it.Current;
-        if(it.MoveNext())
+        if (it.MoveNext())
         {
           singleElement = default;
           return false;
@@ -567,6 +567,21 @@ namespace Altaxo.Collections
 
       for (int i = upperIndexExclusive - 1; i >= lowerIndexInclusive; --i)
         yield return list[i];
+    }
+
+    /// <summary>
+    /// Disposes all elements of the enumeration.
+    /// </summary>
+    /// <param name="sequence">The sequence of elements to dispose.</param>
+    public static void DisposeElements(this IEnumerable<IDisposable?>? sequence)
+    {
+      if (sequence is not null)
+      {
+        foreach (var ele in sequence)
+        {
+          ele?.Dispose();
+        }
+      }
     }
 
     /// <summary>

@@ -84,7 +84,7 @@ namespace Altaxo.Data
     private INumericColumn? _rowHeaderColumn;
 
     /// <summary>Column that correlate each column of the resulting matrix to a corresponding physical value. This value can be used for instance for calculating the x- or y- position in the coordinate system.</summary>
-    private INumericColumn? _columnHeaderColumn;
+    private List<INumericColumn> _columnHeaderColumns;
 
     /// <summary>Resulting matrix.</summary>
     private IMatrix<double>? _resultingMatrix;
@@ -93,7 +93,7 @@ namespace Altaxo.Data
     private IROVector<double>? _rowHeaderVector;
 
     /// <summary>Resulting column header vector. The members of this vector correspond to the column of the matrix with the same index.</summary>
-    private IROVector<double>? _columnHeaderVector;
+    private List<IROVector<double>> _columnHeaderVectors;
 
     #endregion Working / resulting members
 
@@ -400,9 +400,17 @@ namespace Altaxo.Data
         if (!_executionDone)
           throw new InvalidOperationException("ColumnHeaderColumn is not known yet. Please call Execute first.");
 
-        return _columnHeaderColumn!;
+        return _columnHeaderColumns.Count == 0 ? null : _columnHeaderColumns[0];
       }
     }
+
+    /// <summary>
+    /// Gets all selected column header columns.
+    /// </summary>
+    /// <value>
+    /// The column header columns.
+    /// </value>
+    public IReadOnlyList<INumericColumn> ColumnHeaderColumns => _columnHeaderColumns;
 
     /// <summary>
     /// Gets the resulting column header vector. Each member of this vector corresponds to the column of the matrix with the same index.
@@ -419,7 +427,7 @@ namespace Altaxo.Data
         if (!_executionDone)
           throw new InvalidOperationException("ColumnHeaderVector is not known yet. Please call Execute first.");
 
-        return _columnHeaderVector!;
+        return _columnHeaderVectors[0]!;
       }
     }
 
@@ -497,14 +505,14 @@ namespace Altaxo.Data
       if (!_executionDone)
         throw new InvalidOperationException("ColumnHeaderVector is not known yet, thus row spacing is not known. Please call Execute first.");
 
-      if (_columnHeaderVector is null)
+      if (_columnHeaderVectors is null || _columnHeaderVectors.Count == 0)
       {
         errorMessage = "A column header was not selected, or the selected column is not a numeric column. Thus column spacing could not be evaluated.";
         columnSpacing = double.NaN;
         return false;
       }
 
-      return TryGetRowOrColumnSpacing(_columnHeaderVector, "column", out columnSpacing, out errorMessage);
+      return TryGetRowOrColumnSpacing(_columnHeaderVectors[0], "column", out columnSpacing, out errorMessage);
     }
 
     /// <summary>
@@ -547,7 +555,7 @@ namespace Altaxo.Data
     [MemberNotNull(
       nameof(_participatingDataColumns),
       nameof(_participatingDataRows),
-      nameof(_columnHeaderVector),
+      nameof(_columnHeaderVectors),
       nameof(_rowHeaderVector),
       nameof(_resultingMatrix))]
     public void Execute()
@@ -570,14 +578,16 @@ namespace Altaxo.Data
     /// <summary>
     /// Creates and fills the column header vector.
     /// </summary>
-    [MemberNotNull(nameof(_columnHeaderVector))]
+    [MemberNotNull(nameof(_columnHeaderVectors), nameof(_columnHeaderColumns))]
     private void GetColumnHeaderVector()
     {
       if (_participatingDataColumns is null || _participatingDataRows is null)
         throw new InvalidProgramException();
 
+      _columnHeaderColumns = new List<INumericColumn>();
+      _columnHeaderVectors = new List<IROVector<double>>();
+
       // find out if there is a y property column or not
-      _columnHeaderColumn = null;
       if (_selectedPropertyColumns is not null && _selectedPropertyColumns.Count > 0)
       {
         // then use the first numeric column as y column that you find
@@ -585,22 +595,22 @@ namespace Altaxo.Data
         {
           if (_sourceTable.PropCols[_selectedPropertyColumns[i]] is INumericColumn)
           {
-            _columnHeaderColumn = (INumericColumn)_sourceTable.PropCols[_selectedPropertyColumns[i]];
-            break;
+            _columnHeaderColumns.Add((INumericColumn)_sourceTable.PropCols[_selectedPropertyColumns[i]]);
           }
         }
       }
 
-      if (_columnHeaderColumn is not null)
+      foreach (var colHeaderCol in _columnHeaderColumns)
       {
         double[] arr = new double[_participatingDataColumns.Count];
         for (int i = 0; i < _participatingDataColumns.Count; ++i)
-          arr[i] = _columnHeaderColumn[_participatingDataColumns[i]];
-        _columnHeaderVector = VectorMath.ToVector(arr);
+          arr[i] = colHeaderCol[_participatingDataColumns[i]];
+        _columnHeaderVectors.Add(VectorMath.ToVector(arr));
       }
-      else
+
+      if (_columnHeaderVectors.Count == 0)
       {
-        _columnHeaderVector = VectorMath.CreateEquidistantSequenceByStartStepLength(0.0, 1.0, _participatingDataColumns.Count);
+        _columnHeaderVectors.Add(VectorMath.CreateEquidistantSequenceByStartStepLength(0.0, 1.0, _participatingDataColumns.Count));
       }
     }
 
