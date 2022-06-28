@@ -22,120 +22,13 @@
 
 #endregion Copyright
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using Altaxo.Gui.Data;
 using Altaxo.Worksheet.Commands.Analysis;
 
 namespace Altaxo.Gui.Analysis.Fourier
 {
-  public interface IRealFourierTransformation2DDataSourceView : IDataContextAwareView
-  {
-  }
-
-  [ExpectedTypeOfView(typeof(IRealFourierTransformation2DDataSourceView))]
   [UserControllerForObject(typeof(FourierTransformation2DDataSource))]
-  public class RealFourierTransformation2DDataSourceController : MVCANControllerEditOriginalDocBase<FourierTransformation2DDataSource, IRealFourierTransformation2DDataSourceView>, IMVCSupportsApplyCallback
+  public class RealFourierTransformation2DDataSourceController : DataSourceControllerBase<FourierTransformation2DDataSource>
   {
-
-    public event Action SuccessfullyApplied;
-
-    public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
-    {
-      yield return new ControllerAndSetNullMethod(_dataSourceOptionsController, () => DataSourceOptionsController = null);
-      yield return new ControllerAndSetNullMethod(_fourierTransformationOptionsController, () => FourierTransformationOptionsController = null);
-      yield return new ControllerAndSetNullMethod(_inputDataController, () => InputDataController = null);
-    }
-
-    #region Bindings
-
-    private IMVCANController _dataSourceOptionsController;
-
-    public IMVCANController DataSourceOptionsController
-    {
-      get => _dataSourceOptionsController;
-      set
-      {
-        if (!(_dataSourceOptionsController == value))
-        {
-          _dataSourceOptionsController?.Dispose();
-          _dataSourceOptionsController = value;
-          OnPropertyChanged(nameof(DataSourceOptionsController));
-        }
-      }
-    }
-
-    private IMVCANController _fourierTransformationOptionsController;
-
-
-    public IMVCANController FourierTransformationOptionsController
-    {
-      get => _fourierTransformationOptionsController;
-      set
-      {
-        if (!(_fourierTransformationOptionsController == value))
-        {
-          _fourierTransformationOptionsController?.Dispose();
-          _fourierTransformationOptionsController = value;
-          OnPropertyChanged(nameof(FourierTransformationOptionsController));
-        }
-      }
-    }
-
-    private IMVCANController _inputDataController;
-
-    public IMVCANController InputDataController
-    {
-      get => _inputDataController;
-      set
-      {
-        if (!(_inputDataController == value))
-        {
-          _inputDataController?.Dispose();
-          _inputDataController = value;
-          OnPropertyChanged(nameof(InputDataController));
-        }
-      }
-    }
-
-
-
-    #endregion
-
-    protected override void Initialize(bool initData)
-    {
-      base.Initialize(initData);
-
-      if (initData)
-      {
-        DataSourceOptionsController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _doc.ImportOptions }, typeof(IMVCANController), UseDocument.Directly);
-        FourierTransformationOptionsController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _doc.ProcessOptions }, typeof(IMVCANController), UseDocument.Directly);
-        InputDataController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _doc.ProcessData }, typeof(IMVCANController), UseDocument.Directly);
-      }
-    }
-
-    public override bool Apply(bool disposeController)
-    {
-      bool result;
-
-      result = _dataSourceOptionsController.Apply(disposeController);
-      if (!result)
-        return result;
-
-      result = _fourierTransformationOptionsController.Apply(disposeController);
-      if (!result)
-        return result;
-
-      if (_inputDataController is not null)
-      {
-        result = _inputDataController.Apply(disposeController);
-        if (!result)
-          return result;
-      }
-
-      SuccessfullyApplied?.Invoke();
-      return ApplyEnd(true, disposeController);
-    }
   }
 }

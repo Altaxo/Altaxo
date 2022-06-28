@@ -29,6 +29,11 @@ using Altaxo.Science.Spectroscopy;
 
 namespace Altaxo.Data
 {
+  /// <summary>
+  /// Table data source for applying the <see cref="PeakSearchingAndFittingOptions"/> to columns of a table.
+  /// </summary>
+  /// <seealso cref="Altaxo.Data.TableDataSourceBase" />
+  /// <seealso cref="Altaxo.Data.IAltaxoTableDataSource" />
   public class PeakFindingAndFittingDataSource : TableDataSourceBase, Altaxo.Data.IAltaxoTableDataSource
   {
     private PeakSearchingAndFittingOptions _processOptions;

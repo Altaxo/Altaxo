@@ -29,7 +29,7 @@ using Altaxo.Data;
 namespace Altaxo.Gui.Data
 {
   [ExpectedTypeOfView(typeof(ICommonDataSourceViewN))]
-  public class DataSourceControllerBase<TItem> : MVCANControllerEditOriginalDocBase<TItem, ICommonDataSourceViewN> where TItem : IAltaxoTableDataSource
+  public class DataSourceControllerBase<TItem> : MVCANControllerEditOriginalDocBase<TItem, ICommonDataSourceViewN>, IMVCSupportsApplyCallback where TItem : IAltaxoTableDataSource
   {
     private IMVCANController _inputOptionsController;
     private IMVCANController _processOptionsController;
@@ -106,9 +106,15 @@ namespace Altaxo.Gui.Data
       {
         InputOptionsController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _doc.ImportOptions }, typeof(IMVCANController), UseDocument.Directly);
         ProcessOptionsController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _doc.ProcessOptionsObject }, typeof(IMVCANController), UseDocument.Directly);
-        ProcessDataController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _doc.ProcessDataObject }, typeof(IMVCANController), UseDocument.Directly);
+        ProcessDataController = GetProcessDataController();
       }
     }
+
+    protected virtual IMVCANController GetProcessDataController()
+    {
+      return (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _doc.ProcessDataObject }, typeof(IMVCANController), UseDocument.Directly);
+    }
+
 
     public override bool Apply(bool disposeController)
     {

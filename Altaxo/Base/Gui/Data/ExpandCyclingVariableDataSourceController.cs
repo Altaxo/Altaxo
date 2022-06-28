@@ -23,8 +23,6 @@
 #endregion Copyright
 
 #nullable disable
-using System;
-using System.Collections.Generic;
 using Altaxo.Data;
 
 namespace Altaxo.Gui.Data
@@ -42,74 +40,16 @@ namespace Altaxo.Gui.Data
   {
   }
 
-  [ExpectedTypeOfView(typeof(ICommonDataSourceView))]
   [UserControllerForObject(typeof(ExpandCyclingVariableColumnDataSource))]
-  public class ExpandCyclingVariableDataSourceController : MVCANControllerEditOriginalDocBase<ExpandCyclingVariableColumnDataSource, ICommonDataSourceView>, IMVCSupportsApplyCallback
+  public class ExpandCyclingVariableDataSourceController : DataSourceControllerBase<ExpandCyclingVariableColumnDataSource>
   {
-    private IMVCANController _dataSourceOptionsController;
-    private IMVCANController _processOptionsController;
-    private IMVCANController _processDataController;
-
-    public event Action SuccessfullyApplied;
-
-    public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
+    protected override IMVCANController GetProcessDataController()
     {
-      yield return new ControllerAndSetNullMethod(_dataSourceOptionsController, () => _dataSourceOptionsController = null);
-      yield return new ControllerAndSetNullMethod(_processOptionsController, () => _processOptionsController = null);
-      yield return new ControllerAndSetNullMethod(_processDataController, () => _processDataController = null);
-    }
 
-    protected override void Initialize(bool initData)
-    {
-      base.Initialize(initData);
-
-      if (initData)
-      {
-        _dataSourceOptionsController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _doc.ImportOptions }, typeof(IMVCANController), UseDocument.Directly);
-        _processOptionsController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _doc.ProcessOptions }, typeof(IMVCANController), UseDocument.Directly);
-
-        _processDataController = new ExpandCyclingVariableDataController() { UseDocumentCopy = UseDocument.Directly };
-        _processDataController.InitializeDocument(_doc.ProcessData);
-        Current.Gui.FindAndAttachControlTo(_processDataController);
-      }
-
-      if (_view is not null)
-      {
-        _view.SetImportOptionsControl(_dataSourceOptionsController.ViewObject);
-        _view.SetProcessOptionsControl(_processOptionsController.ViewObject);
-        if (_processDataController is not null)
-        {
-          _view.SetProcessDataControl(_processDataController.ViewObject);
-        }
-      }
-    }
-
-    public override bool Apply(bool disposeController)
-    {
-      bool result;
-
-      result = _dataSourceOptionsController.Apply(disposeController);
-      if (!result)
-        return result;
-
-      result = _processOptionsController.Apply(disposeController);
-      if (!result)
-        return result;
-
-      if (_processDataController is not null)
-      {
-        result = _processDataController.Apply(disposeController);
-        if (!result)
-          return result;
-      }
-
-      var ev = SuccessfullyApplied;
-      if (ev is not null)
-      {
-        ev();
-      }
-
-      return ApplyEnd(true, disposeController);
+      var processDataController = new ExpandCyclingVariableDataController() { UseDocumentCopy = UseDocument.Directly };
+      processDataController.InitializeDocument(_doc.ProcessData);
+      Current.Gui.FindAndAttachControlTo(processDataController);
+      return processDataController;
     }
   }
 }
