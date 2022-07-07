@@ -532,7 +532,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
       options = new MultivariateAnalysisOptions
       {
         MaxNumberOfFactors = 20,
-        CrossPRESSCalculation = CrossPRESSCalculationType.ExcludeGroupsOfSimilarMeasurements
+        CrossValidationGroupingStrategy = new CrossValidationGroupingStrategyExcludeGroupsOfSimilarMeasurements()
       };
 
       var ctrlAA = new PLSStartAnalysisController(options);

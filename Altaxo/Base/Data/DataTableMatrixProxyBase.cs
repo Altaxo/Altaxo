@@ -78,7 +78,7 @@ namespace Altaxo.Data
       }
     }
 
-    private class HeaderColumnWrapper : IROVector<double>, IReadableColumn
+    protected class HeaderColumnWrapper : IROVector<double>, IReadableColumn
     {
       private IReadableColumn _col;
       private IAscendingIntegerCollection _participatingDataRows;

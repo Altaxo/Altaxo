@@ -368,7 +368,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       MultivariateRegression regress = CreateNewRegressionObject();
       regress.AnalyzeFromPreprocessed(matrixX, matrixY, numFactors);
       plsContent.NumberOfFactors = regress.NumberOfFactors;
-      plsContent.CrossValidationType = plsOptions.CrossPRESSCalculation;
+      plsContent.CrossValidationGroupingStrategy = plsOptions.CrossValidationGroupingStrategy;
       press = regress.GetPRESSFromPreprocessed(matrixX);
 
       Import(regress.CalibrationModel, table);
@@ -405,12 +405,12 @@ namespace Altaxo.Calc.Regression.Multivariate
       var crosspresscol = new Altaxo.Data.DoubleColumn();
 
       double meanNumberOfExcludedSpectra = 0;
-      if (plsOptions.CrossPRESSCalculation != CrossPRESSCalculationType.None)
+      if (plsOptions.CrossValidationGroupingStrategy is not null && plsOptions.CrossValidationGroupingStrategy is not CrossValidationGroupingStrategyNone)
       {
         // now a cross validation - this can take a long time for bigger matrices
 
         MultivariateRegression.GetCrossPRESS(
-          xOfX, matrixX, matrixY, plsOptions.MaxNumberOfFactors, GetGroupingStrategy(plsOptions),
+          xOfX, matrixX, matrixY, plsOptions.MaxNumberOfFactors, plsOptions.CrossValidationGroupingStrategy,
           plsContent.SpectralPreprocessing,
           CreateNewRegressionObject(),
           out var crossPRESSMatrix);
@@ -478,6 +478,21 @@ namespace Altaxo.Calc.Regression.Multivariate
     }
 
     /// <summary>
+    /// Stores the information that a given column was calculated inside the DataSource object of the table.
+    /// </summary>
+    /// <param name="table">The table.</param>
+    /// <param name="columnName">Name of the column that was calculated.</param>
+    /// <param name="firstArg">The first argument (e.g. number of factors).</param>
+    /// <param name="secondArg">The second argument (optional, e.g. number of target variable).</param>
+    protected void StoreCalculatedColumn(DataTable table, string columnName, int firstArg, int?secondArg=null)
+    {
+      if (table.DataSource is DimensionReductionAndRegressionDataSource drrd)
+      {
+        drrd.ProcessOptions = drrd.ProcessOptions.WithColumnToCalculate(columnName, firstArg, secondArg);
+      }
+    }
+
+    /// <summary>
     /// Calculates the leverage of the spectral data.
     /// </summary>
     /// <param name="table">Table where the calibration model is stored.</param>
@@ -509,6 +524,8 @@ namespace Altaxo.Calc.Regression.Multivariate
           xLeverage.ColumnCount == 1 ? GetXLeverage_ColumnName(numberOfFactors) : GetXLeverage_ColumnName(i, numberOfFactors),
           Altaxo.Data.ColumnKind.V, GetXLeverage_ColumnGroup());
       }
+
+      StoreCalculatedColumn(table, _XLeverage_ColumnName, numberOfFactors);
     }
 
     /// <summary>
@@ -551,21 +568,15 @@ namespace Altaxo.Calc.Regression.Multivariate
       regress.PredictedYAndSpectralResidualsFromPreprocessed(matrixX, numberOfFactors, predictedY, spectralResiduals);
 
       MultivariateRegression.PostprocessY(mcalib.PreprocessingModel, predictedY);
+
+
     }
 
     #endregion Abstract members
 
     #region static Helper methods
 
-    /// <summary>
-    /// Creates the corresponding grouping strategy out of the CrossPRESSCalculation enumeration in plsOptions.
-    /// </summary>
-    /// <param name="plsOptions">The options for PLS analysis</param>
-    /// <returns>The used grouping strategy. Returns null if no cross validation is choosen.</returns>
-    public static ICrossValidationGroupingStrategy GetGroupingStrategy(MultivariateAnalysisOptions plsOptions)
-    {
-      return GetGroupingStrategy(plsOptions.CrossPRESSCalculation);
-    }
+   
 
     /// <summary>
     /// Creates the corresponding grouping strategy out of the CrossPRESSCalculation enumeration in plsOptions.
@@ -577,13 +588,13 @@ namespace Altaxo.Calc.Regression.Multivariate
       switch (crossValidationType)
       {
         case CrossPRESSCalculationType.ExcludeEveryMeasurement:
-          return new ExcludeSingleMeasurementsGroupingStrategy();
+          return new CrossValidationGroupingStrategyExcludeSingleMeasurements();
 
         case CrossPRESSCalculationType.ExcludeGroupsOfSimilarMeasurements:
-          return new ExcludeGroupsGroupingStrategy();
+          return new CrossValidationGroupingStrategyExcludeGroupsOfSimilarMeasurements();
 
         case CrossPRESSCalculationType.ExcludeHalfEnsemblyOfMeasurements:
-          return new ExcludeHalfObservationsGroupingStrategy();
+          return new CrossValidationGroupingStrategyExcludeHalfObservations();
 
         default:
           throw new InvalidOperationException($"Can not get grouping strategy for {nameof(CrossPRESSCalculationType)} {crossValidationType}");
@@ -728,6 +739,76 @@ namespace Altaxo.Calc.Regression.Multivariate
       } // end fill in yvalues
 
       return matrixY;
+    }
+
+    public static void GetXYMatricesOfSpectralColumns(
+      MultivariateContentMemento plsContent,
+      DataTableMatrixProxyWithMultipleColumnHeaderColumns data,
+      out IMatrix<double>? matrixX,
+      out IMatrix<double>? matrixY,
+      out IROVector<double>? xOfX)
+    {
+      int numberOfSpectra = data.ColumnCount;
+      int pointsPerSpectra = data.RowCount;
+      int numberOfTargetVariables = data.ColumnHeaderColumnsCount;
+
+      matrixX = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(numberOfSpectra, pointsPerSpectra);
+      matrixY = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(numberOfSpectra, numberOfTargetVariables);
+      var xOfXRW = VectorMath.CreateExtensibleVector<double>(pointsPerSpectra);
+      xOfX = xOfXRW;
+
+      var concentrationIndices = new AscendingIntegerCollection();
+      var measurementIndices = new AscendingIntegerCollection();
+      var spectralIndices = new AscendingIntegerCollection();
+      var srcTable = data.DataTable;
+
+
+      for (int i = 0; i < numberOfSpectra; i++)
+      {
+        var col = data.GetDataColumnProxy(i)?.Document();
+        if (col is null)
+          throw new InvalidOperationException($"Data column at index {i} is null!");
+
+        var idxSpectralColumn = srcTable.DataColumns.GetColumnNumber((DataColumn)col);
+        measurementIndices.Add(idxSpectralColumn);
+
+        for (int j = 0; j < pointsPerSpectra; j++)
+        {
+          matrixX[i, j] = data.UseAllAvailableDataRows ?  col[j] : col[data.ParticipatingDataRows[j]];
+        }
+
+        for(int j=0; j < numberOfTargetVariables; j++)
+        {
+          var pcol = data.GetColumnHeaderWrapper(j);
+          matrixY[i, j] = pcol[i];
+        }
+      }
+
+      var xCol = data.GetRowHeaderWrapper();
+      for(int j=0;j<pointsPerSpectra;++j)
+      {
+        xOfXRW[j] = xCol[j];
+      }
+
+
+      for(int j=0;j<numberOfTargetVariables;++j)
+      {
+        var pcol = (DataColumn)data.GetColumnHeaderColumn(j).Document();
+        var idxPropertyColumn = srcTable.PropCols.GetColumnNumber(pcol);
+        concentrationIndices.Add(idxPropertyColumn);
+      }
+
+      for(int j=0;j<pointsPerSpectra;j++)
+      {
+        spectralIndices.Add(data.ParticipatingDataRows[j]);
+      }
+
+
+      plsContent.SpectrumIsRow = false;
+      plsContent.ConcentrationIndices = concentrationIndices;
+      plsContent.MeasurementIndices = measurementIndices;
+      plsContent.SpectralIndices = spectralIndices;
+      plsContent.OriginalDataTableName = data.DataTable.Name;
     }
 
     /// <summary>
@@ -1306,7 +1387,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       var spectralResiduals = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(matrixX.RowCount, 1);
       CalculateCrossPredictedY(
         calib,
-        GetGroupingStrategy(plsMemo.CrossValidationType),
+        plsMemo.CrossValidationGroupingStrategy,
         plsMemo.SpectralPreprocessing,
         calib.PreprocessingModel.XOfX,
         matrixX,
@@ -1389,6 +1470,7 @@ namespace Altaxo.Calc.Regression.Multivariate
           ycolumn[i] = predictedY[i, whichY];
 
         table.DataColumns.Add(ycolumn, ycolname, Altaxo.Data.ColumnKind.V, GetYPredicted_ColumnGroup());
+        StoreCalculatedColumn(table, _YPredicted_ColumnName, numberOfFactors, whichY);
       }
 
       // subract the original y data
@@ -1405,6 +1487,7 @@ namespace Altaxo.Calc.Regression.Multivariate
           ycolumn[i] = predictedY[i, whichY];
 
         table.DataColumns.Add(ycolumn, ycolname, Altaxo.Data.ColumnKind.V, GetYResidual_ColumnGroup());
+        StoreCalculatedColumn(table, _YResidual_ColumnName, numberOfFactors, whichY);
       }
 
       if (saveXResidual)
@@ -1418,6 +1501,7 @@ namespace Altaxo.Calc.Regression.Multivariate
           ycolumn[i] = spectralResiduals[i, 0];
         }
         table.DataColumns.Add(ycolumn, ycolname, Altaxo.Data.ColumnKind.V, GetXResidual_ColumnGroup());
+        StoreCalculatedColumn(table, _SpectralResidual_ColumnName, numberOfFactors, whichY);
       }
     }
 
@@ -1431,6 +1515,7 @@ namespace Altaxo.Calc.Regression.Multivariate
           col[j] = predictionScores[j, i];
 
         table.DataColumns.Add(col, GetPredictionScore_ColumnName(i, preferredNumberOfFactors), Altaxo.Data.ColumnKind.V, GetPredictionScore_ColumnGroup());
+        StoreCalculatedColumn(table, _PredictionScore_ColumnName, preferredNumberOfFactors, i);
       }
     }
 
@@ -1581,46 +1666,121 @@ namespace Altaxo.Calc.Regression.Multivariate
       SpectralPreprocessingOptions preprocessOptions
       )
     {
-      var plsContent = new MultivariateContentMemento
-      {
-        Analysis = this
-      };
+      var proxy = new DataTableMatrixProxyWithMultipleColumnHeaderColumns(srctable, selectedRows, selectedColumns, selectedPropertyColumns);
 
       // now we have to create a new table where to place the calculated factors and loads
       // we will do that in a vertical oriented manner, i.e. even if the loads are
       // here in horizontal vectors: in our table they are stored in (vertical) columns
       string newName = AnalysisName + " of " + Main.ProjectFolder.GetNamePart(srctable.Name);
       newName = Main.ProjectFolder.CreateFullName(srctable.Name, newName);
-      var table = new Altaxo.Data.DataTable(newName);
-      // Fill the Table
-      using (var suspendToken = table.SuspendGetToken())
+      var destinationTable = new Altaxo.Data.DataTable(newName);
+      Current.Project.DataTableCollection.Add(destinationTable);
+      // create a new worksheet without any columns
+      Current.ProjectService.CreateNewWorksheet(destinationTable);
+
+      return ExecuteAnalysis(mainDocument, proxy, plsOptions, preprocessOptions, destinationTable);
+    }
+
+    /// <summary>
+    /// Makes a PLS (a partial least squares) analysis of the table or the selected columns / rows and stores the results in a newly created table.
+    /// Here, the spectra are stored in the data columns of the proxy, the target variables are located in the ColumnHeaderColumns of the proxy.
+    /// </summary>
+    /// <param name="mainDocument">The main document of the application.</param>
+    /// <param name="data">The matrix proxy that contains all data. Each spectrum is represented by a data column in the proxy. The target variables
+    /// are stored in the column header columns of the proxy.</param>
+    /// <param name="plsOptions">Provides information about the max number of factors and the calculation of cross PRESS value.</param>
+    /// <param name="preprocessOptions">Provides information about how to preprocess the spectra.</param>
+    /// <param name="destinationTable">Destination table to store the results into.</param>
+    /// <returns></returns>
+    public virtual string? ExecuteAnalysis(
+      Altaxo.AltaxoDocument mainDocument,
+      DataTableMatrixProxyWithMultipleColumnHeaderColumns data,
+      MultivariateAnalysisOptions plsOptions,
+      SpectralPreprocessingOptions preprocessOptions,
+      DataTable destinationTable
+      )
+    {
+      var plsContent = new MultivariateContentMemento
       {
-        table.SetTableProperty("Content", plsContent);
+        Analysis = this
+      };
+
+     
+
+      if (destinationTable.DataSource is DimensionReductionAndRegressionDataSource drrd)
+      {
+        var dataSourceOptions = drrd.ProcessOptions with
+        {
+          Preprocessing = preprocessOptions,
+          WorksheetAnalysis = this,
+          MaximumNumberOfFactors = plsOptions.MaxNumberOfFactors,
+          CrossValidationGroupingStrategy = plsOptions.CrossValidationGroupingStrategy,
+        };
+        drrd.ProcessOptions = dataSourceOptions;
+      }
+      else
+      {
+        var dataSourceOptions = new DimensionReductionAndRegressionOptions()
+        {
+          Preprocessing = preprocessOptions,
+          WorksheetAnalysis = this,
+          MaximumNumberOfFactors = plsOptions.MaxNumberOfFactors,
+          CrossValidationGroupingStrategy = plsOptions.CrossValidationGroupingStrategy,
+        };
+        destinationTable.DataSource = new DimensionReductionAndRegressionDataSource(data, dataSourceOptions, new DataSourceImportOptions());
+      }
+
+      // Get matrices
+      GetXYMatricesOfSpectralColumns(plsContent, data, out var matrixX, out var matrixY, out var xOfX);
+
+      if (matrixX is null || matrixY is null || xOfX is null)
+      {
+        return "Error getting matrixX, matrixY and xOfX";
+      }
+
+      return ExecuteAnalysis(mainDocument, plsContent, data.DataTable, matrixX, matrixY, xOfX, plsOptions, preprocessOptions, destinationTable);
+    }
+
+    
+
+    /// <summary>
+    /// Makes a PLS (a partial least squares) analysis of the table or the selected columns / rows and stores the results in a newly created table.
+    /// </summary>
+    /// <param name="mainDocument">The main document of the application.</param>
+    /// <param name="srctable">The table where the data come from.</param>
+    /// <param name="matrixX">The matrix of spectra (each row in the matrix is one spectrum).</param>
+    /// <param name="matrixY">The matrix of target variables (each row in the matrix contains the target variables for one measurement).</param>
+    /// <param name="xOfX">The x values of the spectra (all spectra must have the same x values).</param>
+    /// <param name="plsOptions">Provides information about the max number of factors and the calculation of cross PRESS value.</param>
+    /// <param name="preprocessOptions">Provides information about how to preprocess the spectra.</param>
+    /// <param name="destinationTable">Destination table to store the results into.</param>
+    /// <returns></returns>
+    public virtual string? ExecuteAnalysis(
+      Altaxo.AltaxoDocument mainDocument,
+      MultivariateContentMemento plsContent,
+      Altaxo.Data.DataTable srctable,
+      IMatrix<double> matrixX,
+      IMatrix<double> matrixY,
+      IROVector<double> xOfX,
+      MultivariateAnalysisOptions plsOptions,
+      SpectralPreprocessingOptions preprocessOptions,
+      DataTable destinationTable
+      )
+    {
+      // Fill the Table
+      using (var suspendToken = destinationTable.SuspendGetToken())
+      {
+        destinationTable.SetTableProperty("Content", plsContent);
         plsContent.OriginalDataTableName = srctable.Name;
 
-        // Get matrices
-        var error = GetXYMatrices(
-          srctable,
-          selectedColumns,
-          selectedRows,
-          selectedPropertyColumns,
-          bHorizontalOrientedSpectrum,
-          plsContent,
-          out var matrixX, out var matrixY, out var xOfX);
-
-        if (matrixX is null || matrixY is null || xOfX is null)
-        {
-          return error ?? "Error getting matrixX, matrixY and xOfX";
-        }
-
-        StoreXOfX(xOfX, table);
+        StoreXOfX(xOfX, destinationTable);
 
         // Preprocess
         plsContent.SpectralPreprocessing = preprocessOptions;
         MultivariateRegression.PreprocessForAnalysis(preprocessOptions, xOfX, matrixX, matrixY,
           out var meanX, out var scaleX, out var meanY, out var scaleY);
 
-        StorePreprocessedData(meanX, scaleX, meanY, scaleY, table);
+        StorePreprocessedData(meanX, scaleX, meanY, scaleY, destinationTable);
 
         // Analyze and Store
 
@@ -1629,22 +1789,22 @@ namespace Altaxo.Calc.Regression.Multivariate
           matrixY,
           plsOptions,
           plsContent,
-          table, out var press);
+          destinationTable, out var press);
 
-        StorePRESSData(press, table);
+        StorePRESSData(press, destinationTable);
 
-        if (plsOptions.CrossPRESSCalculation != CrossPRESSCalculationType.None)
-          CalculateCrossPRESS(xOfX, matrixX, matrixY, plsOptions, plsContent, table);
+        if (plsOptions.CrossValidationGroupingStrategy is not null && plsOptions.CrossValidationGroupingStrategy is not CrossValidationGroupingStrategyNone)
+        {
+          CalculateCrossPRESS(xOfX, matrixX, matrixY, plsOptions, plsContent, destinationTable);
+        }
 
-        StoreFRatioData(table, plsContent);
+        StoreFRatioData(destinationTable, plsContent);
 
-        StoreOriginalY(table, plsContent);
+        StoreOriginalY(destinationTable, plsContent);
 
         suspendToken.Dispose();
       }
-      Current.Project.DataTableCollection.Add(table);
-      // create a new worksheet without any columns
-      Current.ProjectService.CreateNewWorksheet(table);
+     
 
       return null;
     }

@@ -147,6 +147,17 @@ namespace Altaxo
       }
     }
 
+    /// <summary>
+    /// Copies an immutable object.
+    /// </summary>
+    /// <typeparam name="T">Type of object to copy.</typeparam>
+    /// <param name="to">Reference to copy to.</param>
+    /// <param name="from">Object to copy.</param>
+    public static void CopyI<T>([NotNullIfNotNull("from")][AllowNull] ref T to, [MaybeNull] T from) where T : Main.IImmutable?
+    {
+        to = from;
+    }
+
 
     /// <summary>Gets a copy of an instance, either by using <see cref="Altaxo.Main.ICopyFrom"/> or <see cref="ICloneable"/> interface.</summary>
     /// <typeparam name="T">The type of the instance to copy.</typeparam>

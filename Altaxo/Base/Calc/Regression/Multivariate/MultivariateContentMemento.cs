@@ -74,7 +74,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <summary>
     /// Denotes how the cross validation is made (the exact method how the spectra are grouped and mutually excluded).
     /// </summary>
-    private CrossPRESSCalculationType _crossPRESSCalculationType;
+    private ICrossValidationGroupingStrategy _crossPRESSCalculationType;
 
     /// <summary>
     /// The name of the class used to analyse the data.
@@ -242,9 +242,9 @@ namespace Altaxo.Calc.Regression.Multivariate
 
         // added fix after version 2 : forgotten to serialize crossPRESSCalculationType
         if (info.GetNodeName() == "CrossPRESSCalculationType")
-          s._crossPRESSCalculationType = (CrossPRESSCalculationType)info.GetValue("CrossPRESSCalculationType", s);
+          s._crossPRESSCalculationType = WorksheetAnalysis.GetGroupingStrategy((CrossPRESSCalculationType)info.GetValue("CrossPRESSCalculationType", s));
         else
-          s._crossPRESSCalculationType = CrossPRESSCalculationType.ExcludeGroupsOfSimilarMeasurements;
+          s._crossPRESSCalculationType = new CrossValidationGroupingStrategyExcludeGroupsOfSimilarMeasurements();
 
         return s;
       }
@@ -303,7 +303,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       set { _MeanNumberOfMeasurementsInCrossPRESSCalculation = value; }
     }
 
-    public CrossPRESSCalculationType CrossValidationType
+    public ICrossValidationGroupingStrategy CrossValidationGroupingStrategy
     {
       get { return _crossPRESSCalculationType; }
       set { _crossPRESSCalculationType = value; }

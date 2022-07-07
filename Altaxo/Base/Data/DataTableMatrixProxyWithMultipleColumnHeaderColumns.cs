@@ -24,6 +24,7 @@
 
 using System;
 using System.Collections.Generic;
+using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Collections;
 
 namespace Altaxo.Data
@@ -168,7 +169,7 @@ namespace Altaxo.Data
     public DataTableMatrixProxyWithMultipleColumnHeaderColumns(DataTable table, IAscendingIntegerCollection selectedDataRows, IAscendingIntegerCollection selectedDataColumns, IAscendingIntegerCollection selectedPropertyColumns)
     {
       if (table is null)
-        throw new ArgumentNullException("table");
+        throw new ArgumentNullException(nameof(table));
 
       _dataTable = new DataTableProxy(table)
       {
@@ -194,6 +195,7 @@ namespace Altaxo.Data
       _rowHeaderColumn = ReadableColumnProxyBase.FromColumn(converter.RowHeaderColumn);
       _rowHeaderColumn.ParentObject = this;
 
+      _columnHeaderColumns = new List<IReadableColumnProxy>();
       foreach (var colHeaderCol in converter.ColumnHeaderColumns)
       {
         var columnHeaderColumnProxy = ReadableColumnProxyBase.FromColumn(colHeaderCol);
@@ -215,6 +217,36 @@ namespace Altaxo.Data
       _participatingDataRows = new AscendingIntegerCollection(converter.GetParticipatingDataRows());
     }
 
+
+    /// <summary>
+    /// Gets the number of column header columns.
+    /// </summary>
+   
+    public int ColumnHeaderColumnsCount => _columnHeaderColumns.Count;
+
+    /// <summary>Column that correlate each column of the resulting matrix to a corresponding physical value. This value can be used for instance for calculating the x- or y- position in the coordinate system.</summary>
+    public IReadableColumnProxy GetColumnHeaderColumn(int idx)
+    {
+      if(idx< 0 || idx >= _columnHeaderColumns.Count)
+        throw new ArgumentOutOfRangeException(nameof(idx));
+
+      return _columnHeaderColumns[idx];
+    }
+
+    /// <summary>
+    /// Gets a wrapper vector around the column header data.
+    /// </summary>
+    /// <returns>Wrapper vector around the column header data. Each element of this vector corresponds to the column with the same index of the matrix.</returns>
+    public IROVector<double> GetColumnHeaderWrapper(int idx)
+    {
+      if (idx < 0 || idx >= _columnHeaderColumns.Count)
+        throw new ArgumentOutOfRangeException(nameof(idx));
+
+      if (_columnHeaderColumns[idx] is { } chcProxy && chcProxy.Document() is { } columnHeaderColumn)
+        return new HeaderColumnWrapper(columnHeaderColumn, _participatingDataColumns);
+      else
+        throw new InvalidOperationException($"Header column [{idx}] is null. Thus a wrapper could not be created.");
+    }
 
   }
 }

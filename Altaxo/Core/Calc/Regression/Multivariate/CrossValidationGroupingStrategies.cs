@@ -47,10 +47,56 @@ namespace Altaxo.Calc.Regression.Multivariate
   }
 
   /// <summary>
-  /// This strategy groups together similar observations, i.e. observations that have exactly the same y-values.
+  /// Represents the no-grouping strategy. Thus a call to <see cref="ICrossValidationGroupingStrategy.Group(IROMatrix{double})"/> will result in
+  /// a <see cref="NotImplementedException"/>.
   /// </summary>
-  public class ExcludeGroupsGroupingStrategy : ICrossValidationGroupingStrategy
+  public record CrossValidationGroupingStrategyNone : ICrossValidationGroupingStrategy
   {
+    #region Serialization
+
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(CrossValidationGroupingStrategyNone), 0)]
+    public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+      }
+
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      {
+        return new CrossValidationGroupingStrategyNone();
+      }
+    }
+    #endregion
+
+
+    public int[][] Group(IROMatrix<double> matrixY)
+    {
+      throw new NotImplementedException();
+    }
+  }
+
+  /// <summary>
+  /// This strategy groups together similar observations, i.e. observations that have exactly the same target values.
+  /// </summary>
+  public record CrossValidationGroupingStrategyExcludeGroupsOfSimilarMeasurements : ICrossValidationGroupingStrategy, Main.IImmutable
+  {
+    #region Serialization
+
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(CrossValidationGroupingStrategyExcludeGroupsOfSimilarMeasurements), 0)]
+    public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+      }
+
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      {
+        return new CrossValidationGroupingStrategyExcludeGroupsOfSimilarMeasurements();
+      }
+    }
+    #endregion
+
+
     /// <summary>
     /// <see cref="ICrossValidationGroupingStrategy.Group" />
     /// </summary>
@@ -108,18 +154,34 @@ namespace Altaxo.Calc.Regression.Multivariate
   }
 
   /// <summary>
-  /// This strategy groups the observations into two groups. It try to part observations with the same y-values
+  /// This strategy groups the observations into two groups. It try to part observations with the same target values
   /// equally into the one group and the other group.
   /// </summary>
-  public class ExcludeHalfObservationsGroupingStrategy : ICrossValidationGroupingStrategy
+  public record CrossValidationGroupingStrategyExcludeHalfObservations : ICrossValidationGroupingStrategy, Main.IImmutable
   {
+    #region Serialization
+
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(CrossValidationGroupingStrategyExcludeHalfObservations), 0)]
+    public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+      }
+
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      {
+        return new CrossValidationGroupingStrategyExcludeHalfObservations();
+      }
+    }
+    #endregion
+
     public int[][] Group(IROMatrix<double> Y)
     {
       var groups = new List<int>[2];
       for (int i = 0; i < 2; i++)
         groups[i] = new List<int>();
 
-      int[][] similarGroups = new ExcludeGroupsGroupingStrategy().Group(Y);
+      int[][] similarGroups = new CrossValidationGroupingStrategyExcludeGroupsOfSimilarMeasurements().Group(Y);
 
       int destinationGroupNumber = 0;
       for (int g = 0; g < similarGroups.Length; g++)
@@ -139,10 +201,27 @@ namespace Altaxo.Calc.Regression.Multivariate
   }
 
   /// <summary>
-  /// Stragegy that groups not at all, so each observation appears in an own group.
+  /// Stragegy that groups each observation in an own group.
   /// </summary>
-  public class ExcludeSingleMeasurementsGroupingStrategy : ICrossValidationGroupingStrategy
+  public record CrossValidationGroupingStrategyExcludeSingleMeasurements : ICrossValidationGroupingStrategy, Main.IImmutable
   {
+    #region Serialization
+
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(CrossValidationGroupingStrategyExcludeSingleMeasurements), 0)]
+    public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+      }
+
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      {
+        return new CrossValidationGroupingStrategyExcludeSingleMeasurements();
+      }
+    }
+    #endregion
+
+
     public int[][] Group(IROMatrix<double> Y)
     {
       int[][] groups = new int[Y.RowCount][];

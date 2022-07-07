@@ -91,9 +91,9 @@ namespace Altaxo.Gui.Worksheet
       }
     }
 
-    private ItemsController<CrossPRESSCalculationType> _CROSSPressCalculationTypes;
+    private ItemsController<Type> _CROSSPressCalculationTypes;
 
-    public ItemsController<CrossPRESSCalculationType> CROSSPressCalculationTypes
+    public ItemsController<Type> CROSSPressCalculationTypes
     {
       get => _CROSSPressCalculationTypes;
       set
@@ -125,7 +125,7 @@ namespace Altaxo.Gui.Worksheet
       _doc = new MultivariateAnalysisOptions()
       {
         MaxNumberOfFactors = NumberOfFactors,
-        CrossPRESSCalculation = CROSSPressCalculationTypes.SelectedValue,
+        CrossValidationGroupingStrategy = (ICrossValidationGroupingStrategy)Activator.CreateInstance(CROSSPressCalculationTypes.SelectedValue),
         AnalysisMethod = AnalysisMethods.SelectedValue
       };
 
@@ -136,20 +136,31 @@ namespace Altaxo.Gui.Worksheet
     {
       var list = new SelectableListNodeList();
 
-      foreach(CrossPRESSCalculationType v in Enum.GetValues(typeof(CrossPRESSCalculationType)))
-      {
-        var text = v switch
-        {
-          CrossPRESSCalculationType.None => "None",
-          CrossPRESSCalculationType.ExcludeEveryMeasurement => "Exclude every measurement",
-          CrossPRESSCalculationType.ExcludeGroupsOfSimilarMeasurements => "Exclude groups of similar measurements",
-          CrossPRESSCalculationType.ExcludeHalfEnsemblyOfMeasurements => "Exclude half ensemble of measurements",
-          _ => Enum.GetName(typeof(CrossPRESSCalculationType), v)
-        };
+      
 
-        list.Add(new SelectableListNode(text, v, v == _doc.CrossPRESSCalculation));
+      var fixedTypes = new HashSet<Type>
+      {
+        typeof(CrossValidationGroupingStrategyNone),
+        typeof(CrossValidationGroupingStrategyExcludeSingleMeasurements),
+        typeof(CrossValidationGroupingStrategyExcludeGroupsOfSimilarMeasurements),
+        typeof(CrossValidationGroupingStrategyExcludeHalfObservations),
+      };
+
+
+      list.Add(new SelectableListNode("None", typeof(CrossValidationGroupingStrategyNone), false));
+      list.Add(new SelectableListNode("Exclude every measurement", typeof(CrossValidationGroupingStrategyExcludeSingleMeasurements), false));
+      list.Add(new SelectableListNode("Exclude groups of similar measurements", typeof(CrossValidationGroupingStrategyExcludeGroupsOfSimilarMeasurements), false));
+      list.Add(new SelectableListNode("Exclude half ensemble of measurements", typeof(CrossValidationGroupingStrategyExcludeHalfObservations), false));
+
+      foreach (var t in Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(ICrossValidationGroupingStrategy)))
+      {
+        if (!fixedTypes.Contains(t))
+        {
+          list.Add(new SelectableListNode(t.Name, t, false));
+        }
       }
-      CROSSPressCalculationTypes = new ItemsController<CrossPRESSCalculationType>(list);
+      CROSSPressCalculationTypes = new ItemsController<Type>(list);
+      CROSSPressCalculationTypes.SelectedValue = _doc.CrossValidationGroupingStrategy.GetType();
     }
 
     void InitializeAnalysisMethods()
