@@ -29,6 +29,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Altaxo.Data;
+using Altaxo.Science.Spectroscopy.EnsembleMeanScale;
 
 namespace Altaxo.Calc.Regression.Multivariate
 {
@@ -38,6 +39,8 @@ namespace Altaxo.Calc.Regression.Multivariate
   public record DimensionReductionAndRegressionOptions : Main.IImmutable
   {
     public SpectralPreprocessingOptions Preprocessing { get; init; } = new SpectralPreprocessingOptions();
+
+    public IEnsembleMeanScalePreprocessor MeanScaleProcessing { get; init; } = new Altaxo.Science.Spectroscopy.EnsembleMeanScale.EnsembleMeanAndScaleCorrection();
 
     /// <summary>
     /// Gets the analysis method.

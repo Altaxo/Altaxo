@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+using System;
 using System.Collections.Generic;
 
 namespace Altaxo.Science.Spectroscopy.BaselineEstimation
@@ -29,14 +30,14 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
   /// <summary>
   /// Interface to all baseline estimation algorithms for simple (1D) spectra.
   /// </summary>
-  public interface IBaselineEstimation
+  public interface IBaselineEstimation : ISingleSpectrumPreprocessor
   {
     /// <summary>
-    /// Executes the algorithm with the provided spectrum.
+    /// Executes the baseline estimation algorithm with the provided spectrum.
     /// </summary>
     /// <param name="xArray">The x values of the spectral values.</param>
     /// <param name="yArray">The array of spectral values.</param>
-    /// <returns>The evaluated background of the provided spectrum.</returns>
-    public double[] Execute(double[] xArray, double[] yArray);
+    /// <param name="resultingBaseline">The location to which the estimated baseline should be copied.</param>
+    public abstract void Execute(ReadOnlySpan<double> xArray, ReadOnlySpan<double> yArray, Span<double> resultingBaseline);
   }
 }

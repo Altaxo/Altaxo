@@ -22,19 +22,28 @@
 
 #endregion Copyright
 
-
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace Altaxo.Science.Spectroscopy.PeakFitting
+namespace Altaxo.Science.Spectroscopy
 {
   /// <summary>
-  /// Interface to the results of peak searching algorithms.
+  /// Interface to a class that is able to pre-process a single spectrum.
+  /// The convention is: if data need to be changed in an array, a new instance must be allocated for this.
   /// </summary>
-  public interface IPeakFittingResult
+  public interface ISingleSpectrumPreprocessor
   {
     /// <summary>
-    /// Gets the peak descriptions.
+    /// Executes the processor.
     /// </summary>
-    public IReadOnlyList<PeakDescription> PeakDescriptions { get; }
+    /// <param name="x">The x-values of the spectrum.</param>
+    /// <param name="y">The y-values of the spectrum.</param>
+    /// <param name="regions">The spectral regions. Can be null (if the array is one region). Each element in this array
+    /// is the start index of a new spectral region.</param>
+    /// <returns>X-values, y-values and regions of the processed spectrum.</returns>
+    (double[] x, double[] y, int[]? regions) Execute(double[] x, double[] y, int[]? regions);
   }
 }

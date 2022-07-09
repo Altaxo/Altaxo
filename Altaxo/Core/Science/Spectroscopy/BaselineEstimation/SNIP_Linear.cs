@@ -79,17 +79,21 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
     }
     #endregion
 
+   
+
     /// <summary>
     /// Executes the algorithm with the provided spectrum.
     /// </summary>
     /// <param name="xArray">The x values of the spectral values.</param>
     /// <param name="yArray">The array of spectral values.</param>
+    /// <param name="result">The location where the baseline corrected spectrum should be stored.</param>
     /// <returns>The evaluated background of the provided spectrum.</returns>
-    public override double[] Execute(double[] xArray, double[] yArray)
+    public override void Execute(ReadOnlySpan<double> xArray, ReadOnlySpan<double> yArray, Span<double> result)
     {
       const double sqrt2 = 1.41421356237;
-      var srcY = (double[])yArray.Clone();
-      var tmpY = new double[srcY.Length];
+      var srcY = new double[yArray.Length]; 
+      var tmpY = new double[yArray.Length];
+      yArray.CopyTo(srcY);
 
       int last = srcY.Length - 1;
       var w = _isHalfWidthInXUnits ? Math.Max(1, (int)(_halfWidth / (xArray[1] - xArray[0]))) : Math.Max(1, (int)_halfWidth);
@@ -118,8 +122,7 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
         (tmpY, srcY) = (srcY, tmpY);
       }
 
-      return srcY;
+      srcY.CopyTo(result);
     }
-
   }
 }

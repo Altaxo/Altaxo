@@ -22,6 +22,12 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Analyzer\NullComparisonAnalyzer\NullComparisonAnalyzer.csproj" PrivateAssets="all" ReferenceOutputAssembly="false" OutputItemType="Analyzer" />
   </ItemGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net48' ">
+    <PackageReference Include="System.Collections.Immutable" Version="6.0.0" />
+    <PackageReference Include="IndexRange" Version="1.0.0" />
+  </ItemGroup>
+  
   <ItemGroup>
     <None Update="Calc\LinearAlgebra\MatrixMath_BinaryOperations.tt">
       <Generator>TextTemplatingFileGenerator</Generator>

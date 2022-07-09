@@ -25,14 +25,7 @@
 namespace Altaxo.Science.Spectroscopy.Resampling
 {
   /// <summary>Resamples the spectrum, i.e. sample the spectrum at different x-values, probably equidistant.</summary>
-  public interface IResampling
+  public interface IResampling : ISingleSpectrumPreprocessor
   {
-    /// <summary>
-    /// Executes the resampler.
-    /// </summary>
-    /// <param name="x">The x-values of the spectrum.</param>
-    /// <param name="y">The y-values of the spectrum.</param>
-    /// <returns>X and y-values of the resampled spectrum.</returns>
-    (double[] x, double[] y) Execute(double[] x, double[] y);
   }
 }

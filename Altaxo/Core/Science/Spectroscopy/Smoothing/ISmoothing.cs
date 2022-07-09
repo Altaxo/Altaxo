@@ -25,8 +25,11 @@
 
 namespace Altaxo.Science.Spectroscopy.Smoothing
 {
-  public interface ISmoothing
+  /// <summary>
+  /// Interface to algorithms which can smooth a spectrum.
+  /// </summary>
+  /// <seealso cref="Altaxo.Science.Spectroscopy.ISingleSpectrumPreprocessor" />
+  public interface ISmoothing : ISingleSpectrumPreprocessor
   {
-    double[] Execute(double[] data);
   }
 }

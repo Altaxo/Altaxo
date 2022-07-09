@@ -179,7 +179,21 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
     }
     #endregion
 
-    public IPeakSearchingResult Execute(double[] input)
+    public IReadOnlyList<(IReadOnlyList<PeakDescription> PeakDescriptions, int StartOfRegion, int EndOfRegion)> Execute(double[] y, int[]? regions)
+    {
+      var peakDescriptions = new List<(IReadOnlyList<PeakDescription> PeakDescriptions, int StartOfRegion, int EndOfRegion)>();
+      foreach (var (start, end) in RegionHelper.GetRegionRanges(regions, y.Length))
+      {
+        var sub = new double[end - start];
+        Array.Copy(y, start, sub, 0, end - start);
+        var result = Execute(sub);
+        peakDescriptions.Add((result, start, end));
+      }
+
+      return peakDescriptions;
+    }
+
+    public List<PeakDescription> Execute(double[] input)
     {
       int numberOfStages = (int)(NumberOfPointsPerOctave * Math.Log(input.Length) / Math.Log(2));
 
@@ -238,22 +252,7 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
       }
 
       peakDescriptions.Sort((p1, p2) => Comparer<double>.Default.Compare(p1.PositionIndex, p2.PositionIndex));
-      return new Result() { PeakDescriptions = peakDescriptions };
+      return peakDescriptions;
     }
-
-
-    #region Result
-
-    class Result : IPeakSearchingResult
-    {
-      IReadOnlyList<PeakDescription> _description = new PeakDescription[0];
-
-      public IReadOnlyList<PeakDescription> PeakDescriptions
-      {
-        get => _description;
-        init => _description = value ?? throw new ArgumentNullException();
-      }
-    }
-    #endregion
   }
 }

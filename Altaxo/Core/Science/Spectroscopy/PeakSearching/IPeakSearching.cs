@@ -35,20 +35,13 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
     /// <summary>
     /// Executes the peak searching algorithm.
     /// </summary>
-    /// <param name="input">The input array.</param>
-    /// <returns>The results of the peak searching.</returns>
-    IPeakSearchingResult Execute(double[] input);
-  }
-
-  /// <summary>
-  /// Interface to the results of peak searching algorithms.
-  /// </summary>
-  public interface IPeakSearchingResult
-  {
-    /// <summary>
-    /// Gets the peak descriptions.
-    /// </summary>
-    public IReadOnlyList<PeakDescription> PeakDescriptions { get; }
+    /// <param name="y">The y values of the spectrum.</param>
+    /// <param name="regions">The spectral regions. Can be null (if the array is one region). Each element in this array
+    /// is the start index of a new spectral region.</param>
+    /// <returns>The results of the peak searching. For each spectral regions, a tuple of the peak descriptions in that range, together
+    /// with the start and end index (exclusive) of that range is returned. Please note that the peak descriptions
+    /// contain position indices that are relative to the corresponding range (thus not to the underlying spectral array).</returns>
+    IReadOnlyList<(IReadOnlyList<PeakDescription> PeakDescriptions, int StartOfRegion, int EndOfRegion)> Execute(double[] y, int[]? regions);
   }
 
   /// <summary>
@@ -56,7 +49,7 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
   /// </summary>
   public record PeakDescription
   {
-    /// <summary>The peak position as index of the array.</summary>
+    /// <summary>The peak position as index of the spectral range.</summary>
     public double PositionIndex { get; init; }
 
     /// <summary>The peak prominence.</summary>
@@ -74,6 +67,5 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
     public double RelativeHeightOfWidthDetermination { get; init; }
 
     public double AbsoluteHeightOfWidthDetermination { get; init; }
-
   }
 }

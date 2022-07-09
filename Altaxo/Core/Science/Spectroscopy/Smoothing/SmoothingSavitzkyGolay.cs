@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+using System;
 using Altaxo.Calc.Regression;
 
 namespace Altaxo.Science.Spectroscopy.Smoothing
@@ -63,14 +64,27 @@ namespace Altaxo.Science.Spectroscopy.Smoothing
     }
     #endregion
 
-    public double[] Execute(double[] data)
+    /// <inheritdoc/>
+    public (double[] x, double[] y, int[]? regions) Execute(double[] x, double[] y, int[]? regions)
     {
-      var sg = new SavitzkyGolay(NumberOfPoints, DerivativeOrder, PolynomialOrder);
-
-      var result = new double[data.Length];
-      sg.Apply(data, result);
-
-      return result;
+      var yy = new double[y.Length];
+      foreach (var (start, end) in RegionHelper.GetRegionRanges(regions, x.Length))
+      {
+        if ((end - start) >= NumberOfPoints)
+        {
+          var sg = new SavitzkyGolay(NumberOfPoints, DerivativeOrder, PolynomialOrder);
+          var dataRange = new double[end - start];
+          var result = new double[end - start];
+          Array.Copy(y, start, dataRange, 0, end - start);
+          sg.Apply(dataRange, result);
+          Array.Copy(result, 0, yy, start, end - start);
+        }
+        else // if number of point in region is too small, we can not apply smooting
+        {
+          throw new InvalidOperationException($"Spectrum region[{start}..{end}] is too small for applying Savitzky-Golay with a point width of {NumberOfPoints}!");
+        }
+      }
+      return (x, yy, regions);
     }
   }
 }

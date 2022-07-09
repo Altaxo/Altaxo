@@ -22,10 +22,15 @@
 
 #endregion Copyright
 
+using System;
 using System.Linq;
 
 namespace Altaxo.Science.Spectroscopy.BaselineEstimation
 {
+  /// <summary>
+  /// Does nothing (null operation).
+  /// </summary>
+  /// <seealso cref="Altaxo.Science.Spectroscopy.BaselineEstimation.IBaselineEstimation" />
   public class BaselineEstimationNone : IBaselineEstimation
   {
     #region Serialization
@@ -44,9 +49,18 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
     }
     #endregion
 
-    public double[] Execute(double[] xArray, double[] array)
+    /// <inheritdoc/>
+    public (double[] x, double[] y, int[]? regions) Execute(double[] x, double[] y, int[]? regions)
     {
-      return new double[array.Length];
+      return (x, y, regions);
+    }
+
+    public void Execute(ReadOnlySpan<double> xArray, ReadOnlySpan<double> yArray, Span<double> resultingBaseline)
+    {
+      for(int i=0; i < resultingBaseline.Length; i++)
+      {
+        resultingBaseline[i] = 0;
+      }
     }
   }
 }

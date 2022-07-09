@@ -45,10 +45,9 @@ namespace Altaxo.Science.Spectroscopy.Resampling
     }
     #endregion
 
-
-    public (double[] x, double[] y) Execute(double[] x, double[] y)
+    public (double[] x, double[] y, int[]? regions) Execute(double[] x, double[] y, int[]? regions)
     {
-      return ((double[])x.Clone(), (double[])y.Clone());
+      return (x, y, regions);
     }
   }
 }

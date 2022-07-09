@@ -64,7 +64,7 @@ namespace Altaxo.Science.Spectroscopy.Cropping
     #endregion
 
 
-    public (double[] x, double[] y) Execute(double[] x, double[] y)
+    public (double[] x, double[] y, int[]? regions) Execute(double[] x, double[] y, int[]? regions)
     {
       var min = MinimalValue;
       var max = MaximalValue;
@@ -76,16 +76,35 @@ namespace Altaxo.Science.Spectroscopy.Cropping
 
       var lx = new List<double>(x.Length);
       var ly = new List<double>(y.Length);
+      var lr = new List<int>();
 
-      for (int i = 0; i < x.Length; i++)
+      foreach (var (start, end) in RegionHelper.GetRegionRanges(regions, x.Length))
       {
-        if (x[i] >= min && x[i] <= max)
+        for (int i = start; i < end; i++)
         {
-          lx.Add(x[i]);
-          ly.Add(y[i]);
+          if (x[i] >= min && x[i] <= max)
+          {
+            lx.Add(x[i]);
+            ly.Add(y[i]);
+          }
+        }
+
+        if (lx.Count != 0)
+        {
+          if (lr.Count == 0 || lr[lr.Count - 1] != lx.Count) // Avoid adding the same number if the previous range was empty
+          {
+            lr.Add(lx.Count);
+          }
         }
       }
-      return (lx.ToArray(), ly.ToArray());
+
+      // remove the last element of the range, because that is the end element
+      if(lr.Count >0) 
+      {
+        lr.RemoveAt(lr.Count - 1);
+      }
+
+      return (lx.ToArray(), ly.ToArray(), lr.Count > 0 ? lr.ToArray() : null);
     }
   }
 }

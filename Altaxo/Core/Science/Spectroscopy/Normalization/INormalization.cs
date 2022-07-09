@@ -28,13 +28,7 @@ namespace Altaxo.Science.Spectroscopy.Normalization
   /// <summary>
   /// Interface to normalization methods.
   /// </summary>
-  public interface INormalization
+  public interface INormalization : ISingleSpectrumPreprocessor
   {
-    /// <summary>
-    /// Executes the normalization algorithm.
-    /// </summary>
-    /// <param name="input">The input array.</param>
-    /// <returns>The normalized array.</returns>
-    double[] Execute(double[] input);
   }
 }

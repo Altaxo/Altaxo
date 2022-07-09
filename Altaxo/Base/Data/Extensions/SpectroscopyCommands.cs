@@ -120,7 +120,8 @@ namespace Altaxo.Data
       DataColumn xPreprocessedCol,
       DataColumn yPreprocessedCol,
       double[] xArray,
-      double[] yArray)>
+      double[] yArray,
+      int[]? regions)>
       ExecuteSpectralPreprocessing(DataTableMultipleColumnProxy inputData, SpectralPreprocessingOptions doc, DataTable dstTable)
     {
       var resultList = new List<(
@@ -129,7 +130,8 @@ namespace Altaxo.Data
       DataColumn xPreprocessedCol,
       DataColumn yPreprocessedCol,
       double[] xArray,
-      double[] yArray)>();
+      double[] yArray,
+      int[]? regions)>();
 
       var dictionarySrcXCol_To_DstXCol = new Dictionary<DataColumn, DataColumn>();
       var dictionarySrcYCol_To_DstYCol = new Dictionary<DataColumn, DataColumn>();
@@ -147,24 +149,8 @@ namespace Altaxo.Data
         var yArr = entry.yArray;
 
         // now apply the preprocessing steps
-        // Sanitizing
-        (xArr, yArr) = doc.Sanitizer.Execute(xArr, yArr);
-        //  Spike removal
-        yArr = doc.SpikeRemoval.Execute(yArr);
-        // Resampler
-        (xArr, yArr) = doc.Resampling.Execute(xArr, yArr);
-        // Smoothing 
-        yArr = doc.Smoothing.Execute(yArr);
-        // Cropping
-        (xArr, yArr) = doc.Cropping.Execute(xArr, yArr);
-        // Baseline
-        var baseline = doc.BaselineEstimation.Execute(xArr, yArr);
-        for (int i = 0; i < yArr.Length; i++)
-        {
-          yArr[i] -= baseline[i];
-        }
-        // Normalization
-        yArr = doc.Normalization.Execute(yArr);
+        int[]? regions = null;
+        (xArr, yArr, regions) = doc.Execute(xArr, yArr, regions);
 
         // Store result
 
@@ -209,7 +195,7 @@ namespace Altaxo.Data
           pCol[idxDst] = srcTable.PropCols[i][idxSrc];
         }
 
-        resultList.Add((xCol, yCol, dictionarySrcXCol_To_DstXCol[xCol], yDst, xArr, yArr));
+        resultList.Add((xCol, yCol, dictionarySrcXCol_To_DstXCol[xCol], yDst, xArr, yArr, regions));
       }
 
       return resultList;
@@ -220,7 +206,7 @@ namespace Altaxo.Data
       DataColumn yOrgCol,
       DataColumn xPreprocessedCol,
       DataColumn yPreprocessedCol,
-      IPeakFittingResult fittingResult)>
+      IReadOnlyList<(IReadOnlyList<Science.Spectroscopy.PeakFitting.PeakDescription> PeakDescriptions, int StartOfRegion, int EndOfRegion)> fittingResult)>
       ExecutePeakFindingAndFitting(DataTableMultipleColumnProxy inputData, PeakSearchingAndFittingOptions doc, DataTable peakTable, DataTable? preprocessedSpectraTable = null)
     {
       var resultList = new List<(
@@ -228,7 +214,7 @@ namespace Altaxo.Data
       DataColumn yOrgCol,
       DataColumn xPreprocessedCol,
       DataColumn yPreprocessedCol,
-      IPeakFittingResult fittingResult)>();
+      IReadOnlyList<(IReadOnlyList<Science.Spectroscopy.PeakFitting.PeakDescription> PeakDescriptions, int StartOfRegion, int EndOfRegion)> fittingResult)>();
 
       preprocessedSpectraTable ??= new DataTable();
 
@@ -245,8 +231,8 @@ namespace Altaxo.Data
         var yArr = entry.yArray;
 
         // now apply the steps
-        var peakResults = doc.PeakSearching.Execute(yArr);
-        var fitResults = doc.PeakFitting.Execute(xArr, yArr, peakResults.PeakDescriptions);
+        var peakResults = doc.PeakSearching.Execute(yArr, entry.regions);
+        var fitResults = doc.PeakFitting.Execute(xArr, yArr, peakResults);
 
         // Store the results
 
@@ -258,14 +244,20 @@ namespace Altaxo.Data
           var cHei = peakTable.DataColumns.EnsureExistence($"Height{runningColumnNumber}", typeof(DoubleColumn), ColumnKind.V, runningColumnNumber);
           var cWid = peakTable.DataColumns.EnsureExistence($"Width{runningColumnNumber}", typeof(DoubleColumn), ColumnKind.V, runningColumnNumber);
 
-          var descriptions = peakResults.PeakDescriptions;
-          for (int i = 0; i < descriptions.Count; i++)
+          int idxRow = 0;
+          for (int ri = 0; ri < peakResults.Count; ri++)
           {
-            cPos[i] = RMath.InterpolateLinear(descriptions[i].PositionIndex, xArr);
-            cPro[i] = descriptions[i].Prominence;
-            cHei[i] = descriptions[i].Height;
-            cWid[i] = Math.Abs(RMath.InterpolateLinear(descriptions[i].PositionIndex - 0.5 * descriptions[i].Width, xArr) -
-                      RMath.InterpolateLinear(descriptions[i].PositionIndex + 0.5 * descriptions[i].Width, xArr));
+            var descriptions = peakResults[ri].PeakDescriptions;
+            for (int pi = 0; pi < descriptions.Count; pi++)
+            {
+              cPos[idxRow] = RMath.InterpolateLinear(descriptions[pi].PositionIndex, xArr);
+              cPro[idxRow] = descriptions[pi].Prominence;
+              cHei[idxRow] = descriptions[pi].Height;
+              cWid[idxRow] = Math.Abs(RMath.InterpolateLinear(descriptions[pi].PositionIndex - 0.5 * descriptions[pi].Width, xArr) -
+                        RMath.InterpolateLinear(descriptions[pi].PositionIndex + 0.5 * descriptions[pi].Width, xArr));
+
+              ++idxRow;
+            }
           }
 
           if (doc.PeakFitting is not PeakFittingNone)
@@ -288,43 +280,48 @@ namespace Altaxo.Data
 
 
 
-            for (int i = 0; i < descriptions.Count; i++)
+            idxRow = 0;
+            for (int ri = 0; ri < peakResults.Count; ri++)
             {
-              var r = fitResults.PeakDescriptions[i];
-
-
-              if (r.FitFunction is { } fitFunction)
+              var descriptions = fitResults[ri].PeakDescriptions;
+              for (int pi = 0; pi < descriptions.Count; pi++)
               {
-                var (pos, posVar, area, areaVar, height, heightVar, fwhm, fwhmVar) = fitFunction.GetPositionAreaHeightFwhmFromSinglePeakParameters(r.PeakParameter, r.PeakParameterCovariances);
+                var r = descriptions[pi];
 
-                cFPos[i] = pos;
-                cFPosVar[i] = posVar;
-                cFArea[i] = area;
-                cFAreaVar[i] = areaVar;
-                cFHei[i] = height;
-                cFHeiVar[i] = heightVar;
-                cFWid[i] = fwhm;
-                cFWidVar[i] = fwhmVar;
-                cFirstPoint[i] = r.FirstFitPoint;
-                cLastPoint[i] = r.LastFitPoint;
-                cNumberOfPoints[i] = Math.Abs(r.LastFitPoint - r.FirstFitPoint);
-                cFirstXValue[i] = r.FirstFitPosition;
-                cLastXValue[i] = r.LastFitPosition;
-
-                var parameterNames = fitFunction.ParameterNamesForOnePeak;
-                for (int j = 0; j < parameterNames.Length; j++)
+                if (r.FitFunction is { } fitFunction)
                 {
-                  var cParaValue = peakTable.DataColumns.EnsureExistence($"{parameterNames[j]}{runningColumnNumber}", typeof(DoubleColumn), ColumnKind.V, runningColumnNumber);
-                  var cParaVariance = peakTable.DataColumns.EnsureExistence($"{parameterNames[j]}{runningColumnNumber}.Err", typeof(DoubleColumn), ColumnKind.Err, runningColumnNumber);
+                  var (pos, posVar, area, areaVar, height, heightVar, fwhm, fwhmVar) = fitFunction.GetPositionAreaHeightFwhmFromSinglePeakParameters(r.PeakParameter, r.PeakParameterCovariances);
 
-                  cParaValue[i] = r.PeakParameter[j];
-                  cParaVariance[i] = Math.Sqrt(r.PeakParameterCovariances[j, j]);
+                  cFPos[idxRow] = pos;
+                  cFPosVar[idxRow] = posVar;
+                  cFArea[idxRow] = area;
+                  cFAreaVar[idxRow] = areaVar;
+                  cFHei[idxRow] = height;
+                  cFHeiVar[idxRow] = heightVar;
+                  cFWid[idxRow] = fwhm;
+                  cFWidVar[idxRow] = fwhmVar;
+                  cFirstPoint[idxRow] = r.FirstFitPoint;
+                  cLastPoint[idxRow] = r.LastFitPoint;
+                  cNumberOfPoints[idxRow] = Math.Abs(r.LastFitPoint - r.FirstFitPoint);
+                  cFirstXValue[idxRow] = r.FirstFitPosition;
+                  cLastXValue[idxRow] = r.LastFitPosition;
+
+                  var parameterNames = fitFunction.ParameterNamesForOnePeak;
+                  for (int j = 0; j < parameterNames.Length; j++)
+                  {
+                    var cParaValue = peakTable.DataColumns.EnsureExistence($"{parameterNames[j]}{runningColumnNumber}", typeof(DoubleColumn), ColumnKind.V, runningColumnNumber);
+                    var cParaVariance = peakTable.DataColumns.EnsureExistence($"{parameterNames[j]}{runningColumnNumber}.Err", typeof(DoubleColumn), ColumnKind.Err, runningColumnNumber);
+
+                    cParaValue[idxRow] = r.PeakParameter[j];
+                    cParaVariance[idxRow] = Math.Sqrt(r.PeakParameterCovariances[j, j]);
+                  }
+
+
                 }
+                cFNot[idxRow] = r.Notes;
+                ++idxRow;
               }
-              cFNot[i] = r.Notes;
             }
-
-
           }
         }
 
@@ -386,10 +383,10 @@ namespace Altaxo.Data
       // Peak plotting
       // -----------------------------------------------------------------------------
 
-      foreach (var entry in result)
+      foreach (var resultForOneColumn in result)
       {
         var selColumnsForPeakGraph = new AscendingIntegerCollection();
-        selColumnsForPeakGraph.Add(preprocessingTable.DataColumns.GetColumnNumber(entry.yPreprocessedCol));
+        selColumnsForPeakGraph.Add(preprocessingTable.DataColumns.GetColumnNumber(resultForOneColumn.yPreprocessedCol));
         string preferredGraphName = preprocessingTable.FolderName + "GPeaks";
         var graphController = PlotCommands.PlotLine(preprocessingTable, selColumnsForPeakGraph, bLine: false, bScatter: true, preferredGraphName);
         var graph = graphController.Doc;
@@ -409,45 +406,44 @@ namespace Altaxo.Data
         layer.PlotItems.Add(group);
         // add fit function(s)
         var fitFunctionHashTable = new HashSet<(IFitFunction FitFunction, double[] Parameter)>();
-        foreach (var peakDesc in entry.fittingResult.PeakDescriptions.Where(pd => pd.FitFunction is not null))
+        foreach (var resultForOneRegion in resultForOneColumn.fittingResult)
         {
-          if (!fitFunctionHashTable.Contains((peakDesc.FitFunction, peakDesc.FitFunctionParameter)))
+          foreach (var peakDesc in resultForOneRegion.PeakDescriptions.Where(pd => pd.FitFunction is not null))
           {
-            fitFunctionHashTable.Add((peakDesc.FitFunction, peakDesc.FitFunctionParameter));
-            // var data = new XYFunctionPlotData(peakDesc.FitFunction);
-            var fitElement = new FitElement(peakDesc.FitFunction);
-            var fitDocument = new NonlinearFitDocument();
-            fitDocument.FitEnsemble.Add(fitElement);
-            fitDocument.SetDefaultParametersForFitElement(0);
-            for (int i = 0; i < peakDesc.FitFunctionParameter.Length; i++)
-              fitDocument.CurrentParameters[i].Parameter = peakDesc.FitFunctionParameter[i];
-            var data = new XYNonlinearFitFunctionPlotData(System.Guid.NewGuid().ToString(), fitDocument, 0, 0, null, 0, null);
-
-            var plotStyle = PlotCommands.PlotStyle_Line(graph.GetPropertyContext());
-            var lineStyle = plotStyle.OfType<LinePlotStyle>().FirstOrDefault();
-            if (lineStyle is not null && lineStyle.Color.ParentColorSet is { } parentCSet)
+            if (!fitFunctionHashTable.Contains((peakDesc.FitFunction, peakDesc.FitFunctionParameter)))
             {
-              var idx = parentCSet.IndexOf(lineStyle.Color);
-              if (idx >= 0)
+              fitFunctionHashTable.Add((peakDesc.FitFunction, peakDesc.FitFunctionParameter));
+              // var data = new XYFunctionPlotData(peakDesc.FitFunction);
+              var fitElement = new FitElement(peakDesc.FitFunction);
+              var fitDocument = new NonlinearFitDocument();
+              fitDocument.FitEnsemble.Add(fitElement);
+              fitDocument.SetDefaultParametersForFitElement(0);
+              for (int i = 0; i < peakDesc.FitFunctionParameter.Length; i++)
+                fitDocument.CurrentParameters[i].Parameter = peakDesc.FitFunctionParameter[i];
+              var data = new XYNonlinearFitFunctionPlotData(System.Guid.NewGuid().ToString(), fitDocument, 0, 0, null, 0, null);
+
+              var plotStyle = PlotCommands.PlotStyle_Line(graph.GetPropertyContext());
+              var lineStyle = plotStyle.OfType<LinePlotStyle>().FirstOrDefault();
+              if (lineStyle is not null && lineStyle.Color.ParentColorSet is { } parentCSet)
               {
-                lineStyle.Color = parentCSet[(idx + 1) % parentCSet.Count];
+                var idx = parentCSet.IndexOf(lineStyle.Color);
+                if (idx >= 0)
+                {
+                  lineStyle.Color = parentCSet[(idx + 1) % parentCSet.Count];
+                }
               }
+              var functionPlotItem = new XYFunctionPlotItem(data, plotStyle);
+              group.Add(functionPlotItem);
             }
-            var functionPlotItem = new XYFunctionPlotItem(data, plotStyle);
-            group.Add(functionPlotItem);
           }
         }
+      }
 
         // -----------------------------------------------------------------------------
         // End of peak plotting
         // -----------------------------------------------------------------------------
 
       } // for each selected column
-
-
-
-
-
-    }
+    
   }
 }

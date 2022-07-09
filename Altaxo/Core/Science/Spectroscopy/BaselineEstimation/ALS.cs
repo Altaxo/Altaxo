@@ -168,7 +168,7 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
 
 
     /// <inheritdoc/>
-    public double[] Execute(double[] xArray, double[] yArray)
+    public override void Execute(ReadOnlySpan<double> xArray, ReadOnlySpan<double> yArray, Span<double> resultingBaseline)
     {
       var y = yArray;
       var countM1 = y.Length - 1;
@@ -242,7 +242,7 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
         }
       }
 
-      return z;
+      z.CopyTo(resultingBaseline);
     }
   }
 }

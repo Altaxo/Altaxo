@@ -44,14 +44,9 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
     }
     #endregion
 
-    public IPeakFittingResult Execute(double[] xArray, double[] yArray, IEnumerable<PeakSearching.PeakDescription> peakDescriptions)
+    public IReadOnlyList<(IReadOnlyList<PeakDescription> PeakDescriptions, int StartOfRegion, int EndOfRegion)> Execute(double[] xArray, double[] yArray, IReadOnlyList<(IReadOnlyList<PeakSearching.PeakDescription> PeakDescriptions, int StartOfRegion, int EndOfRegion)> peakDescriptions)
     {
-      return new Result();
-    }
-
-    class Result : IPeakFittingResult
-    {
-      public IReadOnlyList<PeakDescription> PeakDescriptions => new PeakDescription[0];
+      return new List<(IReadOnlyList<PeakDescription> PeakDescriptions, int StartOfRegion, int EndOfRegion)>();
     }
   }
 }

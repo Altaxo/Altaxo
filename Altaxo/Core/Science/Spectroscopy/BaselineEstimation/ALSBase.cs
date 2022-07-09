@@ -31,7 +31,7 @@ using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Science.Spectroscopy.BaselineEstimation
 {
-  public abstract record ALSBase
+  public abstract record ALSBase : IBaselineEstimation
   {
     public void FillBandMatrixOrder1(IMatrix<double> m, double[] weights, double lambda, int countM1)
     {
@@ -106,5 +106,29 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
       m[countM1, countM1] = weights[countM1] + lambda;
     }
 
+    /// <inheritdoc/>
+    public (double[] x, double[] y, int[]? regions) Execute(double[] x, double[] y, int[]? regions)
+    {
+      var yBaseline = new double[y.Length];
+      foreach (var (start, end) in RegionHelper.GetRegionRanges(regions, x.Length))
+      {
+        var xSpan = new ReadOnlySpan<double>(x, start, end - start);
+        var ySpan = new ReadOnlySpan<double>(y, start, end - start);
+        var yBaselineSpan = new Span<double>(yBaseline, start, end - start);
+        Execute(xSpan, ySpan, yBaselineSpan);
+      }
+
+      // subtract baseline
+      var yy = new double[y.Length];
+      for (int i = 0; i < y.Length; i++)
+      {
+        yy[i] = y[i] - yBaseline[i];
+      }
+
+      return (x, yy, regions);
+    }
+
+    /// <inheritdoc/>
+    public abstract void Execute(ReadOnlySpan<double> xArray, ReadOnlySpan<double> yArray, Span<double> resultingBaseline);
   }
 }

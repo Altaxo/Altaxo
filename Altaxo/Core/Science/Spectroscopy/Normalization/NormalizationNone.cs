@@ -43,10 +43,10 @@ namespace Altaxo.Science.Spectroscopy.Normalization
     }
     #endregion
 
-
-    public double[] Execute(double[] input)
+    /// <inheritdoc/>
+    public (double[] x, double[] y, int[]? regions) Execute(double[] x, double[] y, int[]? regions)
     {
-      return (double[])input.Clone();
+      return (x, y, regions);
     }
   }
 }

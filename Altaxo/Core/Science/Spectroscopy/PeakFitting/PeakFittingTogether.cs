@@ -59,10 +59,26 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
     }
     #endregion
 
-   
+
+    public IReadOnlyList<(IReadOnlyList<PeakDescription> PeakDescriptions, int StartOfRegion, int EndOfRegion)> Execute(double[] xArray, double[] yArray, IReadOnlyList<(IReadOnlyList<PeakSearching.PeakDescription> PeakDescriptions, int StartOfRegion, int EndOfRegion)> peakDescriptions)
+    {
+      var peakFitDescriptions = new List<(IReadOnlyList<PeakDescription> PeakDescriptions, int StartOfRegion, int EndOfRegion)>();
+      foreach (var (peakDesc, start, end) in peakDescriptions)
+      {
+        var subX = new double[end - start];
+        var subY = new double[end - start];
+        Array.Copy(xArray, start, subX, 0, end - start);
+        Array.Copy(yArray, start, subY, 0, end - start);
+        var result = Execute(subX, subY, peakDesc);
+        peakFitDescriptions.Add((result, start, end));
+      }
+
+      return peakFitDescriptions;
+    }
+
 
     /// <inheritdoc/>
-    public IPeakFittingResult Execute(double[] xArray, double[] yArray, IEnumerable<PeakSearching.PeakDescription> peakDescriptions)
+    public List<PeakDescription> Execute(double[] xArray, double[] yArray, IEnumerable<PeakSearching.PeakDescription> peakDescriptions)
     {
       var fitFunc = FitFunction.WithNumberOfTerms(1);
       int numberOfParametersPerPeak = fitFunc.NumberOfParameters;
@@ -153,26 +169,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
         }
       }
 
-      return new Result()
-      {
-        PeakDescriptions = list
-      };
+      return list;
     }
-
-    #region Result
-
-    class Result : IPeakFittingResult
-    {
-      IReadOnlyList<PeakDescription> _description = new PeakDescription[0];
-
-      public IReadOnlyList<PeakDescription> PeakDescriptions
-      {
-        get => _description;
-        init => _description = value ?? throw new ArgumentNullException();
-      }
-
-
-    }
-    #endregion
   }
 }

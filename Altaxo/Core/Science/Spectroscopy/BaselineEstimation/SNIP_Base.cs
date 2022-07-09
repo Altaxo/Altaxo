@@ -23,6 +23,7 @@
 #endregion Copyright
 
 using System;
+using System.Collections.Generic;
 
 namespace Altaxo.Science.Spectroscopy.BaselineEstimation
 {
@@ -78,6 +79,38 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
       }
     }
 
-    public abstract double[] Execute(double[] xArray, double[] yArray);
+    /// <inheritdoc/>
+    public (double[] x, double[] y, int[]? regions) Execute(double[] x, double[] y, int[]? regions)
+    {
+      var yBaseline = new double[y.Length];
+      foreach (var (start, end) in RegionHelper.GetRegionRanges(regions, x.Length))
+      {
+        var xSpan = new ReadOnlySpan<double>(x, start, end - start);
+        var ySpan = new ReadOnlySpan<double>(y, start, end - start);
+        var yBaselineSpan = new Span<double>(yBaseline, start, end - start);
+        Execute(xSpan, ySpan, yBaselineSpan);
+      }
+
+      // subtract baseline
+      var yy = new double[y.Length];
+      for (int i = 0; i < y.Length; i++)
+      {
+        yy[i] = y[i] - yBaseline[i];
+      }
+
+      return (x, yy, regions);
+    }
+
+
+    /// <summary>
+    /// Executes the algorithm with the provided spectrum.
+    /// </summary>
+    /// <param name="xArray">The x values of the spectral values.</param>
+    /// <param name="yArray">The array of spectral values.</param>
+    /// <param name="resultingBaseline">The location to which the result should be copied.</param>
+    /// <returns>The evaluated background of the provided spectrum.</returns>
+    public abstract void Execute(ReadOnlySpan<double> xArray, ReadOnlySpan<double> yArray, Span<double> resultingBaseline);
+
+   
   }
 }

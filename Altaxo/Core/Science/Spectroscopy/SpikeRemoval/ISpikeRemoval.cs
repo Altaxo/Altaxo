@@ -25,8 +25,11 @@
 
 namespace Altaxo.Science.Spectroscopy.SpikeRemoval
 {
-  public interface ISpikeRemoval
+  /// <summary>
+  /// Interface to a class that can remove spikes from a spectrum.
+  /// </summary>
+  /// <seealso cref="Altaxo.Science.Spectroscopy.ISingleSpectrumPreprocessor" />
+  public interface ISpikeRemoval : ISingleSpectrumPreprocessor
   {
-    double[] Execute(double[] data);
   }
 }

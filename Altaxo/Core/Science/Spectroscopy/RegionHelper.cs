@@ -28,13 +28,42 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Altaxo.Science.Spectroscopy.Cropping
+namespace Altaxo.Science.Spectroscopy
 {
   /// <summary>
-  /// Interface to a <see cref="Altaxo.Science.Spectroscopy.ISingleSpectrumPreprocessor"/> that does cropping of the data.
+  /// Class that helps with region arrays.
   /// </summary>
-  /// <seealso cref="Altaxo.Science.Spectroscopy.ISingleSpectrumPreprocessor" />
-  public interface ICropping : ISingleSpectrumPreprocessor
+  public static class RegionHelper
   {
+    /// <summary>
+    /// Gets the region ranges.
+    /// </summary>
+    /// <param name="regions">The regions. Each element designates the start index of a new region.
+    /// It is not neccessary to set the first point of the array to zero. If null or an empty array is provided,
+    /// the full region is returned.</param>
+    /// <param name="arrayLength">Length of the array.</param>
+    /// <returns>Enumeration of regions as tuple of start index and end index (exclusive).</returns>
+    public static IEnumerable<(int Start, int End)> GetRegionRanges(int[]? regions, int arrayLength)
+    {
+      if (regions is null || regions.Length == 0)
+      {
+        yield return (0, arrayLength);
+      }
+      else
+      {
+        if (regions[0] != 0)
+        {
+          yield return (0, regions[0]);
+        }
+        for(int i=1;i<regions.Length;i++)
+        {
+          yield return (regions[i-1], regions[i]);
+        }
+        if (regions[regions.Length - 1] < arrayLength)
+        {
+          yield return (regions[regions.Length - 1], arrayLength);
+        }
+      }
+    }
   }
 }

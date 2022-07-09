@@ -22,12 +22,11 @@
 
 #endregion Copyright
 
-using System.Linq;
 
 namespace Altaxo.Science.Spectroscopy.Normalization
 {
   /// <summary>
-  /// Executes SVN (standard  normal variate) normalization : y' = (y-mean)/(std), in which meam and std are the mean value and the standard deviation of the array values.
+  /// Executes SNV (standard  normal variate) normalization : y' = (y-mean)/(std), in which meam and std are the mean value and the standard deviation of the array values.
   /// </summary>
   /// <seealso cref="Altaxo.Science.Spectroscopy.Normalization.INormalization" />
   public class NormalizationStandardNormalVariate : INormalization
@@ -48,15 +47,27 @@ namespace Altaxo.Science.Spectroscopy.Normalization
     }
     #endregion
 
-
     /// <inheritdoc/>
-    public double[] Execute(double[] x)
+    public (double[] x, double[] y, int[]? regions) Execute(double[] x, double[] y, int[]? regions)
     {
       var q = new Altaxo.Calc.Regression.QuickStatistics();
-      q.AddRange(x);
-      var min = q.Mean;
-      var delta = q.StandardDeviation;
-      return x.Select(yy => (yy - min) / delta).ToArray();
+      var yy = new double[y.Length];
+      foreach (var (start, end) in RegionHelper.GetRegionRanges(regions, x.Length))
+      {
+        q.Clear();
+        for (int i = start; i < end; ++i)
+        {
+          q.Add(x[i]);
+        }
+        var min = q.Mean;
+        var delta = q.StandardDeviation;
+
+        for (int i = start; i < end; ++i)
+        {
+          yy[i] = (y[i] - min) / delta;
+        }
+      }
+      return (x, yy, regions);
     }
   }
 }

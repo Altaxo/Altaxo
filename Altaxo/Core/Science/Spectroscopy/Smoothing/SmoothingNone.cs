@@ -44,9 +44,10 @@ namespace Altaxo.Science.Spectroscopy.Smoothing
     #endregion
 
 
-    public double[] Execute(double[] data)
+    /// <inheritdoc/>
+    public (double[] x, double[] y, int[]? regions) Execute(double[] x, double[] y, int[]? regions)
     {
-      return (double[])data.Clone();
+      return (x, y, regions);
     }
   }
 }

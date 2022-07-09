@@ -22,10 +22,24 @@
 
 #endregion Copyright
 
-namespace Altaxo.Science.Spectroscopy.Sanitizing
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Altaxo.Science.Spectroscopy
 {
-  /// <summary>Brings the raw spectrum to reasonable values, i.e. removes NaNs, cuts of negative values etc.</summary>
-  public interface ISanitizer : ISingleSpectrumPreprocessor
+  /// <summary>
+  /// Interface to a set of <see cref="ISingleSpectrumPreprocessor"/>s.
+  /// </summary>
+  /// <seealso cref="Altaxo.Science.Spectroscopy.ISingleSpectrumPreprocessor" />
+  public interface ISingleSpectrumPreprocessorCompound : ISingleSpectrumPreprocessor
   {
+    /// <summary>
+    /// Gets the processor elements of which this compound consists.
+    /// </summary>
+    /// <returns>The processor elements of which this compound consists.</returns>
+    IEnumerable<ISingleSpectrumPreprocessor> GetProcessorElements();
   }
 }

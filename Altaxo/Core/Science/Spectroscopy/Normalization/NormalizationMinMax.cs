@@ -22,7 +22,7 @@
 
 #endregion Copyright
 
-using System.Linq;
+using System;
 
 namespace Altaxo.Science.Spectroscopy.Normalization
 {
@@ -48,14 +48,28 @@ namespace Altaxo.Science.Spectroscopy.Normalization
     }
     #endregion
 
-
     /// <inheritdoc/>
-    public double[] Execute(double[] x)
+    public (double[] x, double[] y, int[]? regions) Execute(double[] x, double[] y, int[]? regions)
     {
-      var min = x.Min();
-      var max = x.Max();
-      var delta = max - min;
-      return x.Select(yy => (yy - min) / delta).ToArray();
+      var yy = new double[y.Length];
+
+      foreach (var (start, end) in RegionHelper.GetRegionRanges(regions, x.Length))
+      {
+        double min = double.PositiveInfinity;
+        double max = double.NegativeInfinity;
+        for (int i = start; i < end; ++i)
+        {
+          min = Math.Min(min, y[i]);
+          max = Math.Max(max, y[i]);
+        }
+        var delta = max - min;
+
+        for (int i = start; i < end; ++i)
+        {
+          yy[i] = (y[i] - min) / delta;
+        }
+      }
+      return (x, yy, regions);
     }
   }
 }

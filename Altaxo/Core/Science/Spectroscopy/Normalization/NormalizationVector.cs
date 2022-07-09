@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+using System;
 using System.Linq;
 using Altaxo.Calc.LinearAlgebra;
 
@@ -49,12 +50,25 @@ namespace Altaxo.Science.Spectroscopy.Normalization
     }
     #endregion
 
-
     /// <inheritdoc/>
-    public double[] Execute(double[] x)
+    public (double[] x, double[] y, int[]? regions) Execute(double[] x, double[] y, int[]? regions)
     {
-      var delta = VectorMath.L2Norm(x);
-      return x.Select(yy => (yy) / delta).ToArray();
+      var yy = new double[y.Length];
+      foreach (var (start, end) in RegionHelper.GetRegionRanges(regions, x.Length))
+      {
+        double sums = 0;
+        for (int i = start; i < end; ++i)
+        {
+          sums += y[i] * y[i];
+        }
+        var delta = Math.Sqrt(sums/(end - start));
+
+        for (int i = start; i < end; ++i)
+        {
+          yy[i] = y[i] / delta;
+        }
+      }
+      return (x, yy, regions);
     }
   }
 }

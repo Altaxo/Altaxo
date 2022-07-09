@@ -25,6 +25,10 @@
 
 namespace Altaxo.Science.Spectroscopy.SpikeRemoval
 {
+  /// <summary>
+  /// Does nothing (null operation).
+  /// </summary>
+  /// <seealso cref="Altaxo.Science.Spectroscopy.SpikeRemoval.ISpikeRemoval" />
   public class SpikeRemovalNone : ISpikeRemoval
   {
     #region Serialization
@@ -43,10 +47,10 @@ namespace Altaxo.Science.Spectroscopy.SpikeRemoval
     }
     #endregion
 
-
-    public double[] Execute(double[] data)
+    /// <inheritdoc/>
+    public (double[] x, double[] y, int[]? regions) Execute(double[] x, double[] y, int[]? regions)
     {
-      return (double[])data.Clone();
+      return (x, y, regions);
     }
   }
 }

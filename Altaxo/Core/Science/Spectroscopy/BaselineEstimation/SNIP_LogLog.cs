@@ -86,13 +86,18 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
     /// <param name="xArray">The x values of the spectral values.</param>
     /// <param name="yArray">The array of spectral values. All values y[i] in the spectrum must be y[i] &gt; 0</param>
     /// <returns>The evaluated background of the provided spectrum.</returns>
-    public override double[] Execute(double[] xArray, double[] yArray)
+    public override void Execute(ReadOnlySpan<double> xArray, ReadOnlySpan<double> yArray, Span<double> result)
     {
       const double sqrt2 = 1.41421356237;
 
       // Log-Log the data
-      var srcY = yArray.Select(x => Math.Log(Math.Log(x + 1) + 1)).ToArray();
-      var tmpY = new double[srcY.Length];
+      var srcY = new double[yArray.Length];
+      var tmpY = new double[yArray.Length];
+      for (int i = 0; i < yArray.Length; i++)
+      {
+        srcY[i] = Math.Log(Math.Log(yArray[i] + 1) + 1);
+      }
+
 
       int last = srcY.Length - 1;
       var w = _isHalfWidthInXUnits ? Math.Max(1, (int)(_halfWidth / (xArray[1] - xArray[0]))) : Math.Max(1, (int)_halfWidth);
@@ -127,7 +132,7 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
         srcY[i] = Math.Exp(Math.Exp(srcY[i]) - 1) - 1;
       }
 
-      return srcY;
+      srcY.CopyTo(result);
     }
   }
 }

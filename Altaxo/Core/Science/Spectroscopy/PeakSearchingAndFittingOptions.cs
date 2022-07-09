@@ -62,6 +62,7 @@ namespace Altaxo.Science.Spectroscopy
       }
     }
     #endregion
+
     public PeakSearchingAndFittingOptions()
     {
 

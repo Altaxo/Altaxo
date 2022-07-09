@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+using System.Collections.Generic;
 using Altaxo.Main;
 using Altaxo.Science.Spectroscopy.BaselineEstimation;
 using Altaxo.Science.Spectroscopy.Cropping;
@@ -33,7 +34,7 @@ using Altaxo.Science.Spectroscopy.SpikeRemoval;
 
 namespace Altaxo.Science.Spectroscopy
 {
-  public record SpectralPreprocessingOptions : IImmutable
+  public record SpectralPreprocessingOptions : IImmutable, ISingleSpectrumPreprocessorCompound
   {
     #region Serialization
 
@@ -109,5 +110,26 @@ namespace Altaxo.Science.Spectroscopy
     public ICropping Cropping { get; init; } = new CroppingNone();
 
     public INormalization Normalization { get; init; } = new NormalizationNone();
+
+    public IEnumerable<ISingleSpectrumPreprocessor> GetProcessorElements()
+    {
+      yield return Sanitizer;
+      yield return SpikeRemoval;
+      yield return Resampling;
+      yield return Smoothing;
+      yield return Cropping;
+      yield return BaselineEstimation;
+      yield return Normalization;
+        
+    }
+
+    public (double[] x, double[] y, int[]? regions) Execute(double[] x, double[] y, int[]? regions)
+    {
+      foreach(var processor in GetProcessorElements())
+      {
+        (x, y, regions) = processor.Execute(x, y, regions);
+      }
+      return (x, y, regions);
+    }
   }
 }

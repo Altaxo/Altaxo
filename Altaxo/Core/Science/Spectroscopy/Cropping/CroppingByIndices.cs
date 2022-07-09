@@ -23,13 +23,23 @@
 #endregion Copyright
 
 using System;
+using System.Collections.Generic;
 
 namespace Altaxo.Science.Spectroscopy.Cropping
 {
+  /// <summary>
+  /// Does cropping of a spectrum by indices.
+  /// </summary>
   public record CroppingByIndices : ICropping
   {
+    /// <summary>
+    /// Gets the starting index of the cropping region.
+    /// </summary>
     public int MinimalIndex { get; init; }
 
+    /// <summary>
+    /// Gets the end index (inclusive) of the cropping region.
+    /// </summary>
     public int MaximalIndex { get; init; }
 
 
@@ -65,23 +75,57 @@ namespace Altaxo.Science.Spectroscopy.Cropping
     #endregion
 
 
-    public (double[] x, double[] y) Execute(double[] x, double[] y)
+    public (double[] x, double[] y, int[]? regions) Execute(double[] x, double[] y, int[]? regions)
     {
-      var min = Math.Max(0, MinimalIndex >= 0 ? MinimalIndex : x.Length + MinimalIndex);
-      var max = Math.Min(x.Length - 1, MaximalIndex >= 0 ? MaximalIndex : x.Length + MaximalIndex);
-
-      if (min > max)
+      int newArrayLength = 0;
+      foreach (var (start, end) in GetCroppedRegions(regions, x.Length))
       {
-        (max, min) = (min, max);
+        newArrayLength += (end-start);
       }
 
-      var xs = new double[max - min + 1];
-      var ys = new double[max - min + 1];
+      var xs = new double[newArrayLength];
+      var ys = new double[newArrayLength];
+      var rs = new List<int>();
 
-      Array.Copy(x, min, xs, 0, xs.Length);
-      Array.Copy(y, min, ys, 0, ys.Length);
+      int destinationStart = 0;
+      foreach (var (start, end) in GetCroppedRegions(regions, x.Length))
+      {
+        Array.Copy(x, start, xs, destinationStart, end - start);
+        Array.Copy(y, start, ys, destinationStart, end - start);
 
-      return (xs, ys);
+        if(destinationStart > 0)
+        {
+          rs.Add(destinationStart);
+        }
+      }
+
+      return (xs, ys, rs.Count>0 ? rs.ToArray() : null);
+    }
+
+    /// <summary>
+    /// Gets the cropped regions.
+    /// </summary>
+    /// <param name="regions">The regions. Each element is the start index of a new region</param>
+    /// <param name="arrayLength">Total length of the array.</param>
+    /// <returns>Enumeration of start and end (exclusive) index of the cropped regions.</returns>
+    public IEnumerable<(int start, int end)> GetCroppedRegions(int[] regions, int arrayLength)
+    {
+      foreach (var (start, end) in RegionHelper.GetRegionRanges(regions, arrayLength))
+      {
+        int regionLength = end - start;
+        var min = Math.Max(0, MinimalIndex >= 0 ? MinimalIndex : regionLength + MinimalIndex);
+        var max = Math.Min(regionLength - 1, MaximalIndex >= 0 ? MaximalIndex : regionLength + MaximalIndex);
+
+        if (min > max)
+        {
+          (max, min) = (min, max);
+        }
+
+        if (max > min)
+        {
+          yield return (start + min, start + max + 1);
+        }
+      }
     }
   }
 }
