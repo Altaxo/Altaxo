@@ -122,6 +122,7 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
 
       var x = new double[100];
       var y = new double[100];
+      var z = new double[100];
 
       for (int i = 0; i < y.Length; i++)
       {
@@ -129,7 +130,7 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
         y[i] = 10 + i % 2 + i + 40 * Math.Exp(-RMath.Pow2((i - 50) / 2.0));
       }
 
-      var z = method.Execute(y, y);
+      method.Execute(x, y, z);
 
 
       for (int i = 0; i < y.Length; i++)
@@ -146,6 +147,7 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
 
       var x = new double[100];
       var y = new double[100];
+      var z = new double[100];
 
       for (int i = 0; i < y.Length; i++)
       {
@@ -153,7 +155,7 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
         y[i] = 10 + i % 2 + i + 40 * Math.Exp(-RMath.Pow2((i - 50) / 2.0));
       }
 
-      var z = method.Execute(y, y);
+      method.Execute(x, y, z);
 
 
       for (int i = 0; i < y.Length; i++)
@@ -170,6 +172,7 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
 
       var x = new double[100];
       var y = new double[100];
+      var z = new double[100];
 
       for (int i = 0; i < y.Length; i++)
       {
@@ -177,7 +180,7 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
         y[i] = 10 + i % 2 + i + 40 * Math.Exp(-RMath.Pow2((i - 50) / 2.0));
       }
 
-      var z = method.Execute(y, y);
+      method.Execute(x, y, z);
 
 
       for (int i = 0; i < y.Length; i++)

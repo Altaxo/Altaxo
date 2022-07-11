@@ -49,7 +49,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       return new PLS1Regression();
     }
 
-    public override void Import(
+    public override void StoreCalibrationModelInTable(
       IMultivariateCalibrationModel calibrationSet,
       DataTable table)
     {

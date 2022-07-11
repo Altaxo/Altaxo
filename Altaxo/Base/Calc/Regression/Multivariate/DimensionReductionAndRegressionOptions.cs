@@ -29,6 +29,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Altaxo.Data;
+using Altaxo.Science.Spectroscopy;
 using Altaxo.Science.Spectroscopy.EnsembleMeanScale;
 
 namespace Altaxo.Calc.Regression.Multivariate
@@ -38,7 +39,7 @@ namespace Altaxo.Calc.Regression.Multivariate
   /// </summary>
   public record DimensionReductionAndRegressionOptions : Main.IImmutable
   {
-    public SpectralPreprocessingOptions Preprocessing { get; init; } = new SpectralPreprocessingOptions();
+    public ISingleSpectrumPreprocessor Preprocessing { get; init; } = new NoopSpectrumPreprocessor();
 
     public IEnsembleMeanScalePreprocessor MeanScaleProcessing { get; init; } = new Altaxo.Science.Spectroscopy.EnsembleMeanScale.EnsembleMeanAndScaleCorrection();
 
@@ -89,25 +90,6 @@ namespace Altaxo.Calc.Regression.Multivariate
       }
 
       return this with { ColumnsToCalculate = additionalColumns };
-    }
-
-
-    public void ExecuteAnalysis(DataTableMatrixProxyWithMultipleColumnHeaderColumns data, DataTable destinationTable)
-    {
-      var plsOptions = new MultivariateAnalysisOptions()
-      {
-        AnalysisMethod = WorksheetAnalysis.GetType(),
-        CrossValidationGroupingStrategy = CrossValidationGroupingStrategy,
-        MaxNumberOfFactors = MaximumNumberOfFactors
-      };
-
-      WorksheetAnalysis.ExecuteAnalysis(
-        Current.Project,
-        data,
-        plsOptions,
-        Preprocessing,
-        destinationTable
-        );
     }
   }
 }

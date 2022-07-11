@@ -38,6 +38,11 @@ namespace Altaxo.Calc.Regression.Multivariate
     private DataTableMatrixProxyWithMultipleColumnHeaderColumns _processData;
     private IDataSourceImportOptions _importOptions;
 
+    /// <summary>
+    /// Some data that will be created when executing the data source.
+    /// </summary>
+    private DimensionReductionAndRegressionResult _processResult;
+
     public Action<IAltaxoTableDataSource>? _dataSourceChanged;
 
     #region Serialization
@@ -57,6 +62,7 @@ namespace Altaxo.Calc.Regression.Multivariate
         info.AddValue("ProcessData", s._processData);
         info.AddValue("ProcessOptions", s._processOptions);
         info.AddValue("ImportOptions", s._importOptions);
+        info.AddValue("ProcessResult", s._processResult);
       }
 
 
@@ -77,6 +83,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       ChildSetMember(ref _processData, (DataTableMatrixProxyWithMultipleColumnHeaderColumns)info.GetValue("ProcessData", this));
       _processOptions = (DimensionReductionAndRegressionOptions)info.GetValue("ProcessOptions", this);
       ChildSetMember(ref _importOptions, (IDataSourceImportOptions)info.GetValue("ImportOptions", this));
+      _processResult = (DimensionReductionAndRegressionResult)info.GetValue("ProcessResult", this);
 
       ProcessData = _processData;
     }
@@ -156,6 +163,7 @@ namespace Altaxo.Calc.Regression.Multivariate
         ProcessOptions = dataSourceOptions;
         ImportOptions = importOptions;
         ProcessData = inputData;
+        ProcessResult = from._processResult;
 
       }
     }
@@ -199,7 +207,12 @@ namespace Altaxo.Calc.Regression.Multivariate
     {
       try
       {
-        _processOptions.ExecuteAnalysis(_processData, destinationTable);
+        _processOptions.WorksheetAnalysis.ExecuteAnalysis(
+          Current.Project,
+          _processData,
+          _processOptions,
+          destinationTable
+          );
       }
       catch (Exception ex)
       {
@@ -296,6 +309,26 @@ namespace Altaxo.Calc.Regression.Multivariate
         {
           _processOptions = value;
           EhChildChanged(_processOptions, EventArgs.Empty);
+        }
+      }
+    }
+
+    /// <summary>
+    /// Some data that will be created when executing the data source.
+    /// </summary>
+    public DimensionReductionAndRegressionResult ProcessResult
+    {
+      get
+      {
+        return _processResult;
+      }
+      [MemberNotNull(nameof(_processResult))]
+      set
+      {
+        if (!object.ReferenceEquals(_processResult, value))
+        {
+          _processResult = value;
+          EhChildChanged(_processResult, EventArgs.Empty);
         }
       }
     }

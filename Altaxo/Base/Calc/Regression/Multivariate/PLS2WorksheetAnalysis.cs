@@ -108,7 +108,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       return true;
     }
 
-    public override void Import(
+    public override void StoreCalibrationModelInTable(
       IMultivariateCalibrationModel calibrationSet,
       DataTable table)
     {

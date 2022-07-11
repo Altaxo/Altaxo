@@ -65,5 +65,35 @@ namespace Altaxo.Science.Spectroscopy
         }
       }
     }
+
+
+    /// <summary>
+    /// Trys to identify spectral regions by supplying the spectral x values.
+    /// A end_of_region is recognized when the gap between two x-values is ten times higher
+    /// than the previous gap, or if the sign of the gap value changes.
+    /// This method fails if a spectral region contains only a single point (since no gap value can be obtained then).
+    /// (But in this case almost all spectral correction methods also fails).
+    /// </summary>
+    /// <param name="xvalues">The vector of x values for the spectra (wavelength, frequencies...).</param>
+    /// <returns>The array of regions. Each element in the array is the starting index of a new region into the vector xvalues.</returns>
+    public static int[] IdentifyRegions(IReadOnlyList<double> xvalues)
+    {
+      var list = new List<int>();
+
+      int len = xvalues.Count;
+
+      for (int i = 0; i < len - 2; i++)
+      {
+        double gap = Math.Abs(xvalues[i + 1] - xvalues[i]);
+        double nextgap = Math.Abs(xvalues[i + 2] - xvalues[i + 1]);
+        if (gap != 0 && (Math.Sign(gap) == -Math.Sign(nextgap) || Math.Abs(nextgap) > 10 * Math.Abs(gap)))
+        {
+          list.Add(i + 2);
+          i++;
+        }
+      }
+
+      return list.ToArray();
+    }
   }
 }

@@ -893,7 +893,7 @@ namespace Altaxo.Worksheet.Commands
       Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.PCAOnColumns(ctrl);
     }
   }
-
+  /*
   public class AnalysisPLSOnRows : AbstractWorksheetControllerCommand
   {
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
@@ -901,6 +901,7 @@ namespace Altaxo.Worksheet.Commands
       Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.PLSOnRows(ctrl);
     }
   }
+  */
 
   public class AnalysisPLSOnCols : AbstractWorksheetControllerCommand
   {

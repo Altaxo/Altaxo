@@ -23,7 +23,6 @@
 #endregion Copyright
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -1498,22 +1497,15 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <param name="dest">The destination matrix to copy to.</param>
     public static void Copy(IROMatrix<double> src, IMatrix<double> dest)
     {
-      if (dest is IMatrixLevel1<double> ml1)
-      {
-        ml1.CopyFrom(src);
-      }
-      else
-      {
+      if (dest.RowCount != src.RowCount || dest.ColumnCount != src.ColumnCount)
+        throw new ArithmeticException(string.Format("The provided resultant matrix (actual dim({0},{1}))has not the dimension of the source matrix ({2},{3})", dest.RowCount, dest.ColumnCount, src.RowCount, src.ColumnCount));
 
-        if (dest.RowCount != src.RowCount || dest.ColumnCount != src.ColumnCount)
-          throw new ArithmeticException(string.Format("The provided resultant matrix (actual dim({0},{1}))has not the dimension of the source matrix ({2},{3})", dest.RowCount, dest.ColumnCount, src.RowCount, src.ColumnCount));
+      int rows = src.RowCount;
+      int cols = src.ColumnCount;
+      for (int i = 0; i < rows; i++)
+        for (int j = 0; j < cols; j++)
+          dest[i, j] = src[i, j];
 
-        int rows = src.RowCount;
-        int cols = src.ColumnCount;
-        for (int i = 0; i < rows; i++)
-          for (int j = 0; j < cols; j++)
-            dest[i, j] = src[i, j];
-      }
     }
 
     /// <summary>

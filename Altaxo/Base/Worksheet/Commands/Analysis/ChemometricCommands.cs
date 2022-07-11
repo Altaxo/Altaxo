@@ -371,6 +371,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
     #region PLS Analysis
 
+    /*
     public static void PLSOnRows(IWorksheetController ctrl)
     {
       if (!QuestPLSAnalysisOptions(out var options, out var preprocessOptions))
@@ -382,15 +383,16 @@ namespace Altaxo.Worksheet.Commands.Analysis
       if (!string.IsNullOrEmpty(err))
         Current.Gui.ErrorMessageBox(err, "An error occured");
     }
+    */
 
     public static void PLSOnColumns(IWorksheetController ctrl)
     {
-      if (!QuestPLSAnalysisOptions(out var options, out var preprocessOptions))
+      if (!QuestPLSAnalysisOptions(out var options))
         return;
 
-      var analysis = (WorksheetAnalysis)(System.Activator.CreateInstance(options.AnalysisMethod) ?? throw new InvalidProgramException($"Unable to create instance of type {options.AnalysisMethod}. Is a constructor missing?"));
+      var analysis = options.WorksheetAnalysis;
 
-      var err = analysis.ExecuteAnalysis(Current.Project, ctrl.DataTable, ctrl.SelectedDataColumns, ctrl.SelectedDataRows, ctrl.SelectedPropertyColumns, false, options, preprocessOptions);
+      var err = analysis.ExecuteAnalysis(Current.Project, ctrl.DataTable, ctrl.SelectedDataColumns, ctrl.SelectedDataRows, ctrl.SelectedPropertyColumns, false, options);
       if (err is not null)
         Current.Gui.ErrorMessageBox(err, "An error occured");
     }
@@ -521,13 +523,29 @@ namespace Altaxo.Worksheet.Commands.Analysis
       return plsMemo.Analysis;
     }
 
-    /// <summary>
-    /// Asks the user for the maximum number of factors and the cross validation calculation.
-    /// </summary>
-    /// <param name="options">The PLS options to ask for. On return, this is the user's choice.</param>
-    /// <param name="preprocessOptions">The spectral preprocessing options to ask for (output).</param>
-    /// <returns>True if the user has made his choice, false if the user pressed the Cancel button.</returns>
-    public static bool QuestPLSAnalysisOptions(out MultivariateAnalysisOptions options, out SpectralPreprocessingOptions preprocessOptions)
+    public static bool QuestPLSAnalysisOptions(out DimensionReductionAndRegressionOptions options)
+    {
+      var o = new DimensionReductionAndRegressionOptions();
+      var controller = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { o }, typeof(IMVCANController));
+      if(true == Current.Gui.ShowDialog(controller,"Start analysis"))
+      {
+        options =(DimensionReductionAndRegressionOptions)controller.ModelObject;
+        return true;
+      }
+      else
+      {
+        options = null;
+        return false;
+      }
+    }
+
+      /// <summary>
+      /// Asks the user for the maximum number of factors and the cross validation calculation.
+      /// </summary>
+      /// <param name="options">The PLS options to ask for. On return, this is the user's choice.</param>
+      /// <param name="preprocessOptions">The spectral preprocessing options to ask for (output).</param>
+      /// <returns>True if the user has made his choice, false if the user pressed the Cancel button.</returns>
+      public static bool QuestPLSAnalysisOptions(out MultivariateAnalysisOptions options, out SpectralPreprocessingOptions preprocessOptions)
     {
       options = new MultivariateAnalysisOptions
       {
