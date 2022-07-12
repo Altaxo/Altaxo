@@ -436,29 +436,20 @@ namespace Altaxo.Worksheet.Commands.Analysis
       if (destTable is null)
         throw new ArgumentNullException(nameof(destTable));
 
-      int numberOfFactors = 0;
+      var (preferredNumberOfFactors, _) =  GetPreferredNumberOfFactorsAndNumberOfConcentrations(modelTable);
+      if (preferredNumberOfFactors < 0)
+        return;
 
-      var memento = modelTable.GetTableProperty("Content") as MultivariateContentMemento;
+      var analysis = GetAnalysis(modelTable);
 
-      if (memento is not null)
-        numberOfFactors = memento.PreferredNumberOfFactors;
-
-      if (numberOfFactors == 0)
+      if (analysis is not null)
       {
-        QuestPreferredNumberOfFactors(modelTable);
-        memento = modelTable.GetTableProperty("Content") as MultivariateContentMemento;
-        if (memento is not null)
-          numberOfFactors = memento.PreferredNumberOfFactors;
-      }
-
-      if (!(memento is null))
-      {
-        memento.Analysis.PredictValues(
+        analysis.PredictValues(
           ctrl.DataTable,
           ctrl.SelectedDataColumns,
           ctrl.SelectedDataRows,
           spectrumIsRow,
-          numberOfFactors,
+          preferredNumberOfFactors,
           modelTable,
           destTable);
 
@@ -504,8 +495,12 @@ namespace Altaxo.Worksheet.Commands.Analysis
     {
       foreach (Altaxo.Data.DataTable table in Current.Project.DataTableCollection)
       {
-        if (table.GetTableProperty("Content") is MultivariateContentMemento)
+        if ((table.DataSource is DimensionReductionAndRegressionDataSource) ||
+            (table.GetTableProperty("Content") is MultivariateContentMemento)
+          )
+        {
           yield return table;
+        }
       }
     }
 
@@ -515,12 +510,10 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
     public static WorksheetAnalysis GetAnalysis(DataTable table)
     {
-      var plsMemo = table.GetTableProperty("Content") as MultivariateContentMemento;
+      if(!IsDimensionReductionAndRegressionModel(table, out var plsMemo, out var dataSource))
+        throw new ArgumentException("Table does not contain an multivariate analysis");
 
-      if (plsMemo is null)
-        throw new ArgumentException("Table does not contain a PLSContentMemento");
-
-      return plsMemo.Analysis;
+      return dataSource.ProcessOptions.WorksheetAnalysis ?? plsMemo.Analysis;
     }
 
     public static bool QuestPLSAnalysisOptions(out DimensionReductionAndRegressionOptions options)
@@ -537,38 +530,6 @@ namespace Altaxo.Worksheet.Commands.Analysis
         options = null;
         return false;
       }
-    }
-
-      /// <summary>
-      /// Asks the user for the maximum number of factors and the cross validation calculation.
-      /// </summary>
-      /// <param name="options">The PLS options to ask for. On return, this is the user's choice.</param>
-      /// <param name="preprocessOptions">The spectral preprocessing options to ask for (output).</param>
-      /// <returns>True if the user has made his choice, false if the user pressed the Cancel button.</returns>
-      public static bool QuestPLSAnalysisOptions(out MultivariateAnalysisOptions options, out SpectralPreprocessingOptions preprocessOptions)
-    {
-      options = new MultivariateAnalysisOptions
-      {
-        MaxNumberOfFactors = 20,
-        CrossValidationGroupingStrategy = new CrossValidationGroupingStrategyExcludeGroupsOfSimilarMeasurements()
-      };
-
-      var ctrlAA = new PLSStartAnalysisController(options);
-      Current.Gui.FindAndAttachControlTo(ctrlAA);
-
-      preprocessOptions = new SpectralPreprocessingOptions();
-      var ctrlBB = new SpectralPreprocessingController(preprocessOptions);
-      Current.Gui.FindAndAttachControlTo(ctrlBB);
-
-      var tabController = new TabbedElementController();
-      tabController.AddTab("Factors", ctrlAA, ctrlAA.ViewObject);
-      tabController.AddTab("Preprocessing", ctrlBB, ctrlBB.ViewObject);
-      if (Current.Gui.ShowDialog(tabController, "Enter analysis parameters", false))
-      {
-        options = (MultivariateAnalysisOptions)ctrlAA.ModelObject;
-        return true;
-      }
-      return false;
     }
 
     /// <summary>
@@ -694,24 +655,22 @@ namespace Altaxo.Worksheet.Commands.Analysis
     /// <param name="table">The table of PLS output data.</param>
     public static void PlotPredictionScores(Altaxo.Data.DataTable table)
     {
-      var plsMemo = table.GetTableProperty("Content") as MultivariateContentMemento;
-      if (plsMemo is null)
+      var (preferredNumberOfFactors, numberOfConcentrationData) = GetPreferredNumberOfFactorsAndNumberOfConcentrations(table);
+      if (preferredNumberOfFactors < 0)
         return;
-      if (plsMemo.PreferredNumberOfFactors <= 0)
-        QuestPreferredNumberOfFactors(plsMemo);
 
-      GetAnalysis(table).CalculateAndStorePredictionScores(table, plsMemo.PreferredNumberOfFactors);
+      GetAnalysis(table).CalculateAndStorePredictionScores(table, preferredNumberOfFactors);
 
       var sel = new AscendingIntegerCollection();
 
-      for (int i = 0; i < plsMemo.NumberOfConcentrationData; i++)
+      for (int i = 0; i < numberOfConcentrationData; i++)
       {
-        string name = WorksheetAnalysis.GetPredictionScore_ColumnName(i, plsMemo.PreferredNumberOfFactors);
+        string name = WorksheetAnalysis.GetPredictionScore_ColumnName(i, preferredNumberOfFactors);
         if (table.ContainsDataColumn(name))
           sel.Add(table.DataColumns.GetColumnNumber(table[name]));
       }
 
-      string newName = string.Format("GPredScores#{0}F", plsMemo.PreferredNumberOfFactors);
+      string newName = string.Format("GPredScores#{0}F", preferredNumberOfFactors);
       newName = Main.ProjectFolder.CreateFullName(table.Name, newName);
       Worksheet.Commands.PlotCommands.PlotLine(table, sel, true, false, newName);
     }
@@ -806,6 +765,14 @@ namespace Altaxo.Worksheet.Commands.Analysis
       layer.DefaultYAxisTitleString = string.Format("Y cross predicted{0} (#factors:{1})", whichY, numberOfFactors);
     }
 
+    private static bool  IsDimensionReductionAndRegressionModel(Altaxo.Data.DataTable table, out MultivariateContentMemento plsMemo, out DimensionReductionAndRegressionDataSource dataSource)
+    {
+      plsMemo = table.GetTableProperty("Content") as MultivariateContentMemento;
+      dataSource = table.DataSource as DimensionReductionAndRegressionDataSource;
+      return plsMemo is not null || dataSource is not null;
+    }
+
+
     /// <summary>
     /// Asks the user for the preferred number of factors to use for calculation and plotting and stores that number in the
     /// PLS content tag of the table.
@@ -813,24 +780,56 @@ namespace Altaxo.Worksheet.Commands.Analysis
     /// <param name="table">The table which contains the PLS model.</param>
     public static void QuestPreferredNumberOfFactors(Altaxo.Data.DataTable table)
     {
-      var plsMemo = table.GetTableProperty("Content") as MultivariateContentMemento;
-      if (plsMemo is null)
+      if (!IsDimensionReductionAndRegressionModel(table, out var memo, out var dsource))
         return;
 
-      QuestPreferredNumberOfFactors(plsMemo);
+      QuestPreferredNumberOfFactors(memo, dsource);
     }
 
-    public static void QuestPreferredNumberOfFactors(MultivariateContentMemento plsMemo)
+    public static int QuestPreferredNumberOfFactors(MultivariateContentMemento plsMemo, DimensionReductionAndRegressionDataSource dsource)
     {
+      int preferredNumberOfFactors = dsource?.ProcessResult?.PreferredNumberOfFactors ?? plsMemo?.PreferredNumberOfFactors ?? 1;
+
       // quest the number of factors to export
-      var ivictrl = new IntegerValueInputController(1, "Please choose preferred number of factors(>0):")
+      var ivictrl = new IntegerValueInputController(preferredNumberOfFactors, "Please choose preferred number of factors(>0):")
       {
         Validator = new IntegerValueInputController.ZeroOrPositiveIntegerValidator()
       };
       if (!Current.Gui.ShowDialog(ivictrl, "Number of factors", false))
-        return;
+      {
+        preferredNumberOfFactors = ivictrl.EnteredContents;
 
-      plsMemo.PreferredNumberOfFactors = ivictrl.EnteredContents;
+        if (plsMemo is not null)
+          plsMemo.PreferredNumberOfFactors = preferredNumberOfFactors;
+
+        if (dsource is not null)
+          dsource.ProcessResult = dsource.ProcessResult with { PreferredNumberOfFactors = preferredNumberOfFactors };
+      }
+
+      return preferredNumberOfFactors;
+    }
+
+    public static int GetOrQuestPreferredNumberOfFactors(Altaxo.Data.DataTable table)
+    {
+      if (!IsDimensionReductionAndRegressionModel(table, out var plsMemo, out var dsource))
+        return -1;
+      int preferredNumberOfFactors = dsource?.ProcessResult?.PreferredNumberOfFactors ?? plsMemo?.PreferredNumberOfFactors ?? -1;
+      if (preferredNumberOfFactors <= 1)
+        preferredNumberOfFactors = QuestPreferredNumberOfFactors(plsMemo, dsource);
+
+      return preferredNumberOfFactors;
+    }
+
+    public static (int preferredNumberOfFactors, int numberOfConcentrationData) GetPreferredNumberOfFactorsAndNumberOfConcentrations(DataTable table)
+    {
+      if (!IsDimensionReductionAndRegressionModel(table, out var plsMemo, out var dsource))
+        return (-1, -1);
+      int preferredNumberOfFactors = GetOrQuestPreferredNumberOfFactors(table);
+      if (preferredNumberOfFactors < 0)
+        return (-1, -1);
+      var numberOfConcentrationData = dsource?.ProcessData?.ColumnHeaderColumnsCount ?? plsMemo?.NumberOfConcentrationData ?? 0;
+
+      return (preferredNumberOfFactors, numberOfConcentrationData);
     }
 
     /// <summary>
@@ -839,17 +838,15 @@ namespace Altaxo.Worksheet.Commands.Analysis
     /// <param name="table">The table with the PLS model data.</param>
     public static void PlotYResiduals(Altaxo.Data.DataTable table)
     {
-      var plsMemo = table.GetTableProperty("Content") as MultivariateContentMemento;
-      if (plsMemo is null)
+      var (preferredNumberOfFactors, numberOfConcentrationData) = GetPreferredNumberOfFactorsAndNumberOfConcentrations(table);
+      if (preferredNumberOfFactors < 0)
         return;
-      if (plsMemo.PreferredNumberOfFactors <= 0)
-        QuestPreferredNumberOfFactors(plsMemo);
 
-      for (int nComponent = 0; nComponent < plsMemo.NumberOfConcentrationData; nComponent++)
+      for (int nComponent = 0; nComponent < numberOfConcentrationData; nComponent++)
       {
-        string newName = string.Format("GYResidualsC{0}#{1}F", nComponent, plsMemo.PreferredNumberOfFactors);
+        string newName = string.Format("GYResidualsC{0}#{1}F", nComponent, preferredNumberOfFactors);
         var graphctrl = CreateNewGraphWithXYLayer(table.GetPropertyContext(), Main.ProjectFolder.CreateFullName(table.Name, newName), table.Name);
-        PlotYResiduals(table, graphctrl.Doc.GetFirstXYPlotLayer(), nComponent, plsMemo.PreferredNumberOfFactors);
+        PlotYResiduals(table, graphctrl.Doc.GetFirstXYPlotLayer(), nComponent, preferredNumberOfFactors);
       }
     }
 
@@ -859,17 +856,15 @@ namespace Altaxo.Worksheet.Commands.Analysis
     /// <param name="table">The table with the PLS model data.</param>
     public static void PlotYCrossResiduals(Altaxo.Data.DataTable table)
     {
-      var plsMemo = table.GetTableProperty("Content") as MultivariateContentMemento;
-      if (plsMemo is null)
+      var (preferredNumberOfFactors, numberOfConcentrationData) = GetPreferredNumberOfFactorsAndNumberOfConcentrations(table);
+      if (preferredNumberOfFactors < 0)
         return;
-      if (plsMemo.PreferredNumberOfFactors <= 0)
-        QuestPreferredNumberOfFactors(plsMemo);
 
-      for (int nComponent = 0; nComponent < plsMemo.NumberOfConcentrationData; nComponent++)
+      for (int nComponent = 0; nComponent < numberOfConcentrationData; nComponent++)
       {
-        string newName = string.Format("GYCrossResidualsC{0}#{1}F", nComponent, plsMemo.PreferredNumberOfFactors);
+        string newName = string.Format("GYCrossResidualsC{0}#{1}F", nComponent, preferredNumberOfFactors);
         var graphctrl = CreateNewGraphWithXYLayer(table.GetPropertyContext(), Main.ProjectFolder.CreateFullName(table.Name, newName), table.Name);
-        PlotYCrossResiduals(table, graphctrl.Doc.GetFirstXYPlotLayer(), nComponent, plsMemo.PreferredNumberOfFactors);
+        PlotYCrossResiduals(table, graphctrl.Doc.GetFirstXYPlotLayer(), nComponent, preferredNumberOfFactors);
       }
     }
 
@@ -879,17 +874,16 @@ namespace Altaxo.Worksheet.Commands.Analysis
     /// <param name="table">The table with the PLS model data.</param>
     public static void PlotPredictedVersusActualY(Altaxo.Data.DataTable table)
     {
-      var plsMemo = table.GetTableProperty("Content") as MultivariateContentMemento;
-      if (plsMemo is null)
+      var (preferredNumberOfFactors, numberOfConcentrationData) = GetPreferredNumberOfFactorsAndNumberOfConcentrations(table);
+      if (preferredNumberOfFactors < 0)
         return;
-      if (plsMemo.PreferredNumberOfFactors <= 0)
-        QuestPreferredNumberOfFactors(plsMemo);
 
-      for (int nComponent = 0; nComponent < plsMemo.NumberOfConcentrationData; nComponent++)
+
+      for (int nComponent = 0; nComponent < numberOfConcentrationData; nComponent++)
       {
-        string newName = string.Format("GPredVsActC{0}#{1}F", nComponent, plsMemo.PreferredNumberOfFactors);
+        string newName = string.Format("GPredVsActC{0}#{1}F", nComponent, preferredNumberOfFactors);
         var graphctrl = CreateNewGraphWithXYLayer(table.GetPropertyContext(), Main.ProjectFolder.CreateFullName(table.Name, newName), table.Name);
-        PlotPredictedVersusActualY(table, graphctrl.Doc.GetFirstXYPlotLayer(), nComponent, plsMemo.PreferredNumberOfFactors);
+        PlotPredictedVersusActualY(table, graphctrl.Doc.GetFirstXYPlotLayer(), nComponent, preferredNumberOfFactors);
       }
     }
 
@@ -909,7 +903,23 @@ namespace Altaxo.Worksheet.Commands.Analysis
     /// <param name="allowGuiForMessages">If <see langword="true"/> and an error occurs, an error message box is presented to the user.</param>
     public static void PlotCrossPredictedVersusActualY(Altaxo.Data.DataTable table, bool allowGuiForMessages)
     {
-      var plsMemo = table.GetTableProperty("Content") as MultivariateContentMemento;
+      if (!IsDimensionReductionAndRegressionModel(table, out var plsMemo, out var dsource))
+        return;
+
+      if (dsource is not null)
+        PlotCrossPredictedVersusActualY(table, dsource, allowGuiForMessages);
+      else
+        PlotCrossPredictedVersusActualY(table, plsMemo, allowGuiForMessages);
+    }
+
+    /// <summary>
+    /// Plots the cross prediction values of all y components invidually in a  graph (using <see cref="MultivariateContentMemento"/>).
+    /// </summary>
+    /// <param name="table">The table with the PLS model data.</param>
+    /// <param name="plsMemo">The PLS memento.</param>
+    /// <param name="allowGuiForMessages">If <see langword="true"/> and an error occurs, an error message box is presented to the user.</param>
+    private static void PlotCrossPredictedVersusActualY(Altaxo.Data.DataTable table, MultivariateContentMemento plsMemo, bool allowGuiForMessages)
+    {
       if (plsMemo is null)
       {
         string msg = string.Format("The table <<{0}>> does not seem to contain multivariate analysis data (content memento is missing)", table.Name);
@@ -936,7 +946,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
       }
 
       if (plsMemo.PreferredNumberOfFactors <= 0)
-        QuestPreferredNumberOfFactors(plsMemo);
+        QuestPreferredNumberOfFactors(plsMemo,null);
 
       for (int nComponent = 0; nComponent < plsMemo.NumberOfConcentrationData; nComponent++)
       {
@@ -947,22 +957,43 @@ namespace Altaxo.Worksheet.Commands.Analysis
     }
 
     /// <summary>
+    /// Plots the cross prediction values of all y components invidually in a  graph (using <see cref="DimensionReductionAndRegressionDataSource"/>).
+    /// </summary>
+    /// <param name="table">The table with the PLS model data.</param>
+    /// <param name="dsource">The PLS memento.</param>
+    /// <param name="allowGuiForMessages">If <see langword="true"/> and an error occurs, an error message box is presented to the user.</param>
+    private static void PlotCrossPredictedVersusActualY(Altaxo.Data.DataTable table, DimensionReductionAndRegressionDataSource dsource, bool allowGuiForMessages)
+    {
+      var (preferredNumberOfFactors, numberOfConcentrationData) = GetPreferredNumberOfFactorsAndNumberOfConcentrations(table);
+      if (preferredNumberOfFactors < 0)
+        return;
+
+      for (int nComponent = 0; nComponent < numberOfConcentrationData; nComponent++)
+      {
+        string newName = string.Format("GCrossPredVsActC{0}#{1}F", nComponent, preferredNumberOfFactors);
+        var graphctrl = CreateNewGraphWithXYLayer(table.GetPropertyContext(), Main.ProjectFolder.CreateFullName(table.Name, newName), table.Name);
+        PlotCrossPredictedVersusActualY(table, graphctrl.Doc.GetFirstXYPlotLayer(), nComponent, preferredNumberOfFactors);
+      }
+    }
+
+
+   
+
+    /// <summary>
     /// Plots the x (spectral) residuals of all spectra invidually in a graph.
     /// </summary>
     /// <param name="table">The table with the PLS model data.</param>
     public static void PlotXResiduals(Altaxo.Data.DataTable table)
     {
-      var plsMemo = table.GetTableProperty("Content") as MultivariateContentMemento;
-      if (plsMemo is null)
+      var (preferredNumberOfFactors, numberOfConcentrationData) = GetPreferredNumberOfFactorsAndNumberOfConcentrations(table);
+      if (preferredNumberOfFactors < 0)
         return;
-      if (plsMemo.PreferredNumberOfFactors <= 0)
-        QuestPreferredNumberOfFactors(plsMemo);
 
-      for (int nComponent = 0; nComponent < plsMemo.NumberOfConcentrationData; nComponent++)
+      for (int nComponent = 0; nComponent < numberOfConcentrationData; nComponent++)
       {
-        string newName = string.Format("GXResidualsC{0}#{1}F", nComponent, plsMemo.PreferredNumberOfFactors);
+        string newName = string.Format("GXResidualsC{0}#{1}F", nComponent, preferredNumberOfFactors);
         var graphctrl = CreateNewGraphWithXYLayer(table.GetPropertyContext(), Main.ProjectFolder.CreateFullName(table.Name, newName), table.Name);
-        PlotXResiduals(table, graphctrl.Doc.GetFirstXYPlotLayer(), nComponent, plsMemo.PreferredNumberOfFactors);
+        PlotXResiduals(table, graphctrl.Doc.GetFirstXYPlotLayer(), nComponent, preferredNumberOfFactors);
       }
     }
 
@@ -972,17 +1003,15 @@ namespace Altaxo.Worksheet.Commands.Analysis
     /// <param name="table">The table with the PLS model data.</param>
     public static void PlotXCrossResiduals(Altaxo.Data.DataTable table)
     {
-      var plsMemo = table.GetTableProperty("Content") as MultivariateContentMemento;
-      if (plsMemo is null)
+      var (preferredNumberOfFactors, numberOfConcentrationData) = GetPreferredNumberOfFactorsAndNumberOfConcentrations(table);
+      if (preferredNumberOfFactors < 0)
         return;
-      if (plsMemo.PreferredNumberOfFactors <= 0)
-        QuestPreferredNumberOfFactors(plsMemo);
 
-      for (int nComponent = 0; nComponent < plsMemo.NumberOfConcentrationData; nComponent++)
+      for (int nComponent = 0; nComponent < numberOfConcentrationData; nComponent++)
       {
-        string newName = string.Format("GXCrossResidualsC{0}#{1}F", nComponent, plsMemo.PreferredNumberOfFactors);
+        string newName = string.Format("GXCrossResidualsC{0}#{1}F", nComponent, preferredNumberOfFactors);
         var graphctrl = CreateNewGraphWithXYLayer(table.GetPropertyContext(), Main.ProjectFolder.CreateFullName(table.Name, newName), table.Name);
-        PlotXResiduals(table, graphctrl.Doc.GetFirstXYPlotLayer(), nComponent, plsMemo.PreferredNumberOfFactors);
+        PlotXResiduals(table, graphctrl.Doc.GetFirstXYPlotLayer(), nComponent, preferredNumberOfFactors);
       }
     }
 
@@ -1086,17 +1115,15 @@ namespace Altaxo.Worksheet.Commands.Analysis
     /// <param name="table">The table with the PLS model data.</param>
     public static void PlotXLeverage(Altaxo.Data.DataTable table)
     {
-      var plsMemo = table.GetTableProperty("Content") as MultivariateContentMemento;
-      if (plsMemo is null)
+      var (preferredNumberOfFactors, numberOfConcentrationData) = GetPreferredNumberOfFactorsAndNumberOfConcentrations(table);
+      if (preferredNumberOfFactors < 0)
         return;
-      if (plsMemo.PreferredNumberOfFactors <= 0)
-        QuestPreferredNumberOfFactors(plsMemo);
 
-      string newName = string.Format("GXLeverage#{0}F", plsMemo.PreferredNumberOfFactors);
+      string newName = string.Format("GXLeverage#{0}F", preferredNumberOfFactors);
       newName = Main.ProjectFolder.CreateFullName(table.Name, newName);
 
       var graphctrl = CreateNewGraphWithXYLayer(table.GetPropertyContext(), Main.ProjectFolder.CreateFullName(table.Name, newName), table.Name);
-      PlotXLeverage(table, graphctrl.Doc.GetFirstXYPlotLayer(), plsMemo.PreferredNumberOfFactors);
+      PlotXLeverage(table, graphctrl.Doc.GetFirstXYPlotLayer(), preferredNumberOfFactors);
     }
 
     #endregion PLS Plot Commands

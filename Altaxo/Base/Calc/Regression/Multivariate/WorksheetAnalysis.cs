@@ -1467,7 +1467,38 @@ namespace Altaxo.Calc.Regression.Multivariate
       }
     }
 
+    private static bool IsDimensionReductionAndRegressionModel(Altaxo.Data.DataTable table, out MultivariateContentMemento plsMemo, out DimensionReductionAndRegressionDataSource dataSource)
+    {
+      plsMemo = table.GetTableProperty("Content") as MultivariateContentMemento;
+      dataSource = table.DataSource as DimensionReductionAndRegressionDataSource;
+      return plsMemo is not null || dataSource is not null;
+    }
+
     public virtual void CalculatePredictedAndResidual(
+     DataTable table,
+     int whichY,
+     int numberOfFactors,
+     bool saveYPredicted,
+     bool saveYResidual,
+     bool saveXResidual)
+    {
+      if(!IsDimensionReductionAndRegressionModel(table, out var plsMemo, out var dataSource))
+        throw new ArgumentException("Table does not contain a multivariate model.");
+
+      if(dataSource is not null)
+      {
+        throw new NotImplementedException();
+        // CalculatePredictedAndResidual(dataSource, table, whichY, numberOfFactors, saveYPredicted, saveYResidual, saveXResidual);
+
+      }
+      else
+      {
+        CalculatePredictedAndResidual(plsMemo, table, whichY, numberOfFactors, saveYPredicted, saveYResidual, saveXResidual);
+      }
+    }
+
+    private void CalculatePredictedAndResidual(
+      MultivariateContentMemento plsMemo,
       DataTable table,
       int whichY,
       int numberOfFactors,
@@ -1475,10 +1506,6 @@ namespace Altaxo.Calc.Regression.Multivariate
       bool saveYResidual,
       bool saveXResidual)
     {
-      var plsMemo = GetContentAsMultivariateContentMemento(table);
-
-      if (plsMemo is null)
-        throw new ArgumentException("Table does not contain a PLSContentMemento");
 
       IMultivariateCalibrationModel calib = GetCalibrationModel(table);
       //      Export(table,out calib);
@@ -1533,6 +1560,8 @@ namespace Altaxo.Calc.Regression.Multivariate
         StoreCalculatedColumn(table, _SpectralResidual_ColumnName, numberOfFactors, whichY);
       }
     }
+
+    
 
     public void CalculateAndStorePredictionScores(DataTable table, int preferredNumberOfFactors)
     {

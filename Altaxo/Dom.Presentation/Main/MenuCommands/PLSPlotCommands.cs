@@ -47,7 +47,11 @@ namespace Altaxo.Worksheet.Commands
         return false;
       }
 
-      return ctrl.DataTable?.GetTableProperty("Content") is Altaxo.Calc.Regression.Multivariate.MultivariateContentMemento;
+      return
+        // 2022-07-12 we switched to DimensionReductionAndRegressionDataSource
+        ctrl.DataTable.DataSource is Altaxo.Calc.Regression.Multivariate.DimensionReductionAndRegressionDataSource ||
+        // before 2022-07-12:
+        ctrl.DataTable?.GetTableProperty("Content") is Altaxo.Calc.Regression.Multivariate.MultivariateContentMemento;
     }
   }
 
