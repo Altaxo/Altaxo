@@ -72,7 +72,6 @@ namespace Altaxo.Calc.Regression.Multivariate
     public double[] CrossPRESS { get { return _crossPRESS; } }
 
     public CrossPRESSEvaluator(
-      int[] spectralRegions,
       double[] xOfX,
       int numFactors,
       ICrossValidationGroupingStrategy groupingStrategy,
@@ -84,40 +83,48 @@ namespace Altaxo.Calc.Regression.Multivariate
     {
     }
 
-    public void EhCrossPRESS(int[] group, IMatrix<double> XX, IMatrix<double> YY, IMatrix<double> XU, IMatrix<double> YU)
+    /// <summary>
+    /// Calculates the CrossPRESS values.
+    /// </summary>
+    /// <param name="group">The group of spectra used for prediction. The array contains the indices of the measurements used for prediction.</param>
+    /// <param name="analysisMatrixXRaw">The matrix of unpreprocessed spectra used for analysis.</param>
+    /// <param name="analysisMatrixYRaw">The matrix of unpreprocessed target variables used for analysis.</param>
+    /// <param name="predictionMatrixXRaw">The matrix of unpreprocessed spectra used for prediction.</param>
+    /// <param name="predictionMatrixYRaw">The matrix of unpreprocessed target variables corresponding to the spectra used for prediction (for comparison with the predicted values).</param>
+    public void EhCrossPRESS(int[] group, IMatrix<double> analysisMatrixXRaw, IMatrix<double> analysisMatrixYRaw, IMatrix<double> predictionMatrixXRaw, IMatrix<double> predictionMatrixYRaw)
     {
-      if (_predictedY is null || _predictedY.RowCount != YU.RowCount || _predictedY.ColumnCount != YU.ColumnCount)
-        _predictedY = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(YU.RowCount, YU.ColumnCount);
+      if (_predictedY is null || _predictedY.RowCount != predictionMatrixYRaw.RowCount || _predictedY.ColumnCount != predictionMatrixYRaw.ColumnCount)
+        _predictedY = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(predictionMatrixYRaw.RowCount, predictionMatrixYRaw.ColumnCount);
 
       MultivariateRegression.PreprocessForAnalysis(
         _singleSpectrumPreprocessor,
         _ensembleOfSpectraPreprocessor,
         _xOfX,
-        XX,
-        YY,
-        out var resultXOfX, out var resultMatrixX, out var resultMatrixY,
+        analysisMatrixXRaw,
+        analysisMatrixYRaw,
+        out var xOfXPre, out var analysisMatrixXPre, out var analysisMatrixYPre,
         out var meanX, out var scaleX, out var meanY, out var scaleY);
-      _analysis.AnalyzeFromPreprocessed(XX, YY, _numFactors);
+      _analysis.AnalyzeFromPreprocessed(analysisMatrixXPre, analysisMatrixYPre, _numFactors);
       _numFactors = Math.Min(_numFactors, _analysis.NumberOfFactors);
 
       MultivariateRegression.PreprocessSpectraForPrediction(
          _singleSpectrumPreprocessor,
         _ensembleOfSpectraPreprocessor,
         _xOfX,
-        XU, meanX, scaleX,
-        out var resultXU, out var _);
+        predictionMatrixXRaw, meanX, scaleX,
+        out var predictionMatrixXPre, out var _);
 
       // allocate the crossPRESS vector here, since now we know about the number of factors a bit more
       if (_crossPRESS is null)
         _crossPRESS = new double[_numFactors + 1]; // one more since we want to have the value at factors=0 (i.e. the variance of the y-matrix)
 
       // for all factors do now a prediction of the remaining spectra
-      _crossPRESS[0] += MatrixMath.SumOfSquares(YU);
+      _crossPRESS[0] += MatrixMath.SumOfSquares(predictionMatrixYRaw);
       for (int nFactor = 1; nFactor <= _numFactors; nFactor++)
       {
-        _analysis.PredictYFromPreprocessed(resultXU, nFactor, _predictedY);
+        _analysis.PredictYFromPreprocessed(predictionMatrixXPre, nFactor, _predictedY);
         MultivariateRegression.PostprocessY(_predictedY, meanY, scaleY);
-        _crossPRESS[nFactor] += MatrixMath.SumOfSquaredDifferences(YU, _predictedY);
+        _crossPRESS[nFactor] += MatrixMath.SumOfSquaredDifferences(predictionMatrixYRaw, _predictedY);
       }
     }
   }

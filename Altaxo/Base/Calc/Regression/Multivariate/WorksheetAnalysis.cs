@@ -383,16 +383,16 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <summary>
     /// Calculate the cross PRESS values and stores the results in the provided table.
     /// </summary>
-    /// <param name="xOfX">Vector of spectral wavelengths. Necessary to divide the spectras in different regions.</param>
-    /// <param name="matrixX">Matrix of spectra (horizontal oriented).</param>
-    /// <param name="matrixY">Matrix of concentrations.</param>
+    /// <param name="xOfXRaw">Vector of spectral wavelengths. Necessary to divide the spectras in different regions.</param>
+    /// <param name="matrixXRaw">Matrix of unpreprocessed spectra (horizontal oriented).</param>
+    /// <param name="matrixYRaw">Matrix of unpreprocessed concentrations.</param>
     /// <param name="plsOptions">Analysis options.</param>
     /// <param name="plsContent">Information about this analysis.</param>
     /// <param name="destinationTable">Table to store the results.</param>
     public virtual void CalculateCrossPRESS(
-      double[] xOfX,
-      IMatrix<double> matrixX,
-      IMatrix<double> matrixY,
+      double[] xOfXRaw,
+      IMatrix<double> matrixXRaw,
+      IMatrix<double> matrixYRaw,
       DimensionReductionAndRegressionOptions plsOptions,
       ref DimensionReductionAndRegressionResult plsContent,
       DataTable destinationTable
@@ -407,7 +407,7 @@ namespace Altaxo.Calc.Regression.Multivariate
         // now a cross validation - this can take a long time for bigger matrices
 
         MultivariateRegression.GetCrossPRESS(
-          xOfX, matrixX, matrixY,
+          xOfXRaw, matrixXRaw, matrixYRaw,
           plsOptions.MaximumNumberOfFactors,
           plsOptions.CrossValidationGroupingStrategy,
           plsOptions.Preprocessing,
@@ -1434,18 +1434,18 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// </summary>
     /// <param name="mainDocument">The main document of the application.</param>
     /// <param name="srcData">The table where the data come from.</param>
-    /// <param name="matrixX">The matrix of spectra (each row in the matrix is one spectrum).</param>
-    /// <param name="matrixY">The matrix of target variables (each row in the matrix contains the target variables for one measurement).</param>
-    /// <param name="xOfX">The x values of the spectra (all spectra must have the same x values).</param>
+    /// <param name="matrixXRaw">The matrix of spectra (each row in the matrix is one spectrum).</param>
+    /// <param name="matrixYRaw">The matrix of target variables (each row in the matrix contains the target variables for one measurement).</param>
+    /// <param name="xOfXRaw">The x values of the spectra (all spectra must have the same x values).</param>
     /// <param name="options">Provides information about how to preprocess the spectra.</param>
     /// <param name="destinationTable">Destination table to store the results into.</param>
     /// <returns></returns>
     public virtual string? ExecuteAnalysis(
       Altaxo.AltaxoDocument mainDocument,
       DataTableMatrixProxyWithMultipleColumnHeaderColumns srcData,
-      IMatrix<double> matrixX,
-      IMatrix<double> matrixY,
-      double[] xOfX,
+      IMatrix<double> matrixXRaw,
+      IMatrix<double> matrixYRaw,
+      double[] xOfXRaw,
       DimensionReductionAndRegressionOptions options,
       DataTable destinationTable,
       ref DimensionReductionAndRegressionResult regressionResult
@@ -1458,11 +1458,11 @@ namespace Altaxo.Calc.Regression.Multivariate
         MultivariateRegression.PreprocessForAnalysis(
           options.Preprocessing,
           options.MeanScaleProcessing,
-          xOfX, matrixX, matrixY,
-          out var resultXOfX, out var resultMatrixX, out var resultMatrixY,
+          xOfXRaw, matrixXRaw, matrixYRaw,
+          out var xOfXPre, out var matrixXPre, out var matrixYPre,
           out var meanX, out var scaleX, out var meanY, out var scaleY);
 
-        StoreXOfX(resultXOfX, destinationTable);
+        StoreXOfX(xOfXPre, destinationTable);
 
 
         StorePreprocessedData(meanX, scaleX, meanY, scaleY, destinationTable);
@@ -1470,19 +1470,19 @@ namespace Altaxo.Calc.Regression.Multivariate
         // Analyze and Store
 
         ExecuteAnalysis(
-          resultMatrixX,
-          resultMatrixY,
+          matrixXPre,
+          matrixYPre,
           options,
           destinationTable, out var press);
 
 
-        regressionResult = regressionResult with {  NumberOfMeasurements = matrixX.RowCount, CalculatedNumberOfFactors = press.Count-1 };
+        regressionResult = regressionResult with {  NumberOfMeasurements = matrixXRaw.RowCount, CalculatedNumberOfFactors = press.Count-1 };
 
         StorePRESSData(press, destinationTable);
 
         if (options.CrossValidationGroupingStrategy is not null && options.CrossValidationGroupingStrategy is not CrossValidationGroupingStrategyNone)
         {
-          CalculateCrossPRESS(resultXOfX, resultMatrixX, resultMatrixY, options, ref regressionResult, destinationTable);
+          CalculateCrossPRESS(xOfXRaw, matrixXRaw, matrixYRaw, options, ref regressionResult, destinationTable);
         }
 
         StoreFRatioData(destinationTable, ref regressionResult);
