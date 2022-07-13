@@ -25,6 +25,8 @@
 using System;
 using System.Collections.Generic;
 using Altaxo.Calc.LinearAlgebra;
+using Altaxo.Science.Spectroscopy;
+using Altaxo.Science.Spectroscopy.EnsembleMeanScale;
 
 namespace Altaxo.Calc.Regression.Multivariate
 {
@@ -63,16 +65,19 @@ namespace Altaxo.Calc.Regression.Multivariate
       get;
     }
 
-    SpectralPreprocessingOptions PreprocessOptions
+    ISingleSpectrumPreprocessor PreprocessSingleSpectrum
     {
       get;
     }
+
+    IEnsembleMeanScalePreprocessor PreprocessEnsembleOfSpectra { get; }
   }
 
   public class MultivariatePreprocessingModel : IMultivariatePreprocessingModel
   {
 #nullable disable
-    private SpectralPreprocessingOptions _preprocessOptions;
+    ISingleSpectrumPreprocessor _preprocessSingleSpectrum;
+    IEnsembleMeanScalePreprocessor _preprocessEnsembleOfSpectra;
 
     private int[] _spectralRegions;
     private IReadOnlyList<double> _xOfX;
@@ -82,10 +87,16 @@ namespace Altaxo.Calc.Regression.Multivariate
     private IROVector<double> _yScale;
 #nullable enable
 
-    public SpectralPreprocessingOptions PreprocessOptions
+    public ISingleSpectrumPreprocessor PreprocessSingleSpectrum
     {
-      get { return _preprocessOptions; }
-      set { _preprocessOptions = value; }
+      get { return _preprocessSingleSpectrum; }
+      set { _preprocessSingleSpectrum = value; }
+    }
+
+    public IEnsembleMeanScalePreprocessor PreprocessEnsembleOfSpectra
+    {
+      get { return _preprocessEnsembleOfSpectra; }
+      set { _preprocessEnsembleOfSpectra = value; }
     }
 
     public int[] SpectralRegions

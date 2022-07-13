@@ -25,6 +25,7 @@
 #nullable enable
 using System;
 using Altaxo.Collections;
+using Altaxo.Data;
 
 namespace Altaxo.Calc.Regression.Multivariate
 {
@@ -242,7 +243,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 
         // added fix after version 2 : forgotten to serialize crossPRESSCalculationType
         if (info.GetNodeName() == "CrossPRESSCalculationType")
-          s._crossPRESSCalculationType = WorksheetAnalysis.GetGroupingStrategy((CrossPRESSCalculationType)info.GetValue("CrossPRESSCalculationType", s));
+          s._crossPRESSCalculationType = GetGroupingStrategy((CrossPRESSCalculationType)info.GetValue("CrossPRESSCalculationType", s));
         else
           s._crossPRESSCalculationType = new CrossValidationGroupingStrategyExcludeGroupsOfSimilarMeasurements();
 
@@ -352,5 +353,119 @@ namespace Altaxo.Calc.Regression.Multivariate
         _ClassNameOfAnalysisClass = value.GetType().FullName!;
       }
     }
+
+    /// <summary>
+    /// Creates the corresponding grouping strategy out of the CrossPRESSCalculation enumeration in plsOptions.
+    /// </summary>
+    /// <param name="crossValidationType">Type of cross validation.</param>
+    /// <returns>The used grouping strategy. Returns null if no cross validation is choosen.</returns>
+    public static ICrossValidationGroupingStrategy GetGroupingStrategy(CrossPRESSCalculationType crossValidationType)
+    {
+      switch (crossValidationType)
+      {
+        case CrossPRESSCalculationType.ExcludeEveryMeasurement:
+          return new CrossValidationGroupingStrategyExcludeSingleMeasurements();
+
+        case CrossPRESSCalculationType.ExcludeGroupsOfSimilarMeasurements:
+          return new CrossValidationGroupingStrategyExcludeGroupsOfSimilarMeasurements();
+
+        case CrossPRESSCalculationType.ExcludeHalfEnsemblyOfMeasurements:
+          return new CrossValidationGroupingStrategyExcludeHalfObservations();
+
+        default:
+          throw new InvalidOperationException($"Can not get grouping strategy for {nameof(CrossPRESSCalculationType)} {crossValidationType}");
+      }
+    }
+
+
+    private static (Altaxo.Science.Spectroscopy.ISingleSpectrumPreprocessor SinglePreprocessing,
+      Altaxo.Science.Spectroscopy.EnsembleMeanScale.IEnsembleMeanScalePreprocessor EnsemblePreprocessing)
+      ConvertPreprocessing(SpectralPreprocessingOptions options)
+    {
+      var singleProcessor = new Altaxo.Science.Spectroscopy.SpectralPreprocessingOptions();
+        
+      Altaxo.Science.Spectroscopy.EnsembleMeanScale.IEnsembleMeanScalePreprocessor ensembleProcessor=null;
+
+      switch (options.Method)
+      {
+        case SpectralPreprocessingMethod.None:
+          break;
+        case SpectralPreprocessingMethod.MultiplicativeScatteringCorrection:
+          ensembleProcessor = new Altaxo.Science.Spectroscopy.EnsembleMeanScale.MultiplicativeScatterCorrection() { EnsembleScale = options.EnsembleScale };
+          break;
+        case SpectralPreprocessingMethod.StandardNormalVariate:
+          singleProcessor = singleProcessor with { Normalization = new Altaxo.Science.Spectroscopy.Normalization.NormalizationStandardNormalVariate() };
+          break;
+        case SpectralPreprocessingMethod.FirstDerivative:
+          singleProcessor = singleProcessor with { Smoothing = new Altaxo.Science.Spectroscopy.Smoothing.SmoothingSavitzkyGolay() { NumberOfPoints = 7, DerivativeOrder = 1, PolynomialOrder = 2 } };
+          break;
+        case SpectralPreprocessingMethod.SecondDerivative:
+          singleProcessor = singleProcessor with { Smoothing = new Altaxo.Science.Spectroscopy.Smoothing.SmoothingSavitzkyGolay() { NumberOfPoints = 7, DerivativeOrder = 1, PolynomialOrder = 2 } };
+          break;
+        default:
+          throw new NotImplementedException($"option {options.Method} is unknown.");
+      }
+
+      if(options.UseDetrending)
+      {
+        singleProcessor = singleProcessor with { BaselineEstimation = new Altaxo.Science.Spectroscopy.BaselineEstimation.PolynomialDetrending { DetrendingOrder = options.DetrendingOrder } };
+      }
+
+      ensembleProcessor ??= new Altaxo.Science.Spectroscopy.EnsembleMeanScale.EnsembleMeanAndScaleCorrection { EnsembleScale = options.EnsembleScale };
+      return (singleProcessor, ensembleProcessor);
+    }
+
+    /// <summary>
+    /// Convert a <see cref="MultivariateContentMemento"/> into a <see cref="DimensionReductionAndRegressionDataSource"/>.
+    /// </summary>
+    /// <param name="plsMemo">The PLS memo to convert.</param>
+    /// <param name="dataSource">On success, the converted data source.</param>
+    /// <returns>True if the conversion was successful; otherwise, false.</returns>
+    public static bool TryConvertToDatasource(MultivariateContentMemento plsMemo, out DimensionReductionAndRegressionDataSource dataSource)
+    {
+      try
+      {
+        DimensionReductionAndRegressionOptions processOptions;
+        DataTableMatrixProxyWithMultipleColumnHeaderColumns processData;
+        DimensionReductionAndRegressionResult processResult;
+
+        // process data
+        var table = Current.Project.DataTableCollection[plsMemo.OriginalDataTableName];
+        processData = new DataTableMatrixProxyWithMultipleColumnHeaderColumns(table, plsMemo.SpectralIndices, plsMemo.MeasurementIndices, plsMemo.ConcentrationIndices); 
+
+      // process Options
+      var (singlePreprocessor, ensemblePreprocessor) = ConvertPreprocessing(plsMemo._spectralPreprocessing);
+        processOptions = new DimensionReductionAndRegressionOptions
+        {
+          MaximumNumberOfFactors = plsMemo._CalculatedNumberOfFactors,
+          WorksheetAnalysis = plsMemo.Analysis,
+          Preprocessing = singlePreprocessor,
+          MeanScaleProcessing = ensemblePreprocessor,
+          CrossValidationGroupingStrategy = plsMemo.CrossValidationGroupingStrategy
+        };
+
+        // process Result
+        processResult = new DimensionReductionAndRegressionResult
+        {
+          CalculatedNumberOfFactors = plsMemo._CalculatedNumberOfFactors,
+          PreferredNumberOfFactors = plsMemo.PreferredNumberOfFactors,
+          MeanNumberOfMeasurementsInCrossPRESSCalculation = plsMemo.MeanNumberOfMeasurementsInCrossPRESSCalculation,
+          NumberOfMeasurements = plsMemo.MeasurementIndices.Count
+        };
+
+
+        dataSource = new DimensionReductionAndRegressionDataSource(processData, processOptions, new DataSourceImportOptions())
+        {
+          ProcessResult = processResult,
+        };
+
+        return true;
+      }
+      catch (Exception ex)
+      {
+        dataSource = null;
+        return false;
+      }
+   }
   }
 }

@@ -177,10 +177,11 @@ namespace Altaxo.Calc.Regression.Multivariate
         NumberOfFactors = numberOfFactors
       };
       var preprocessSet = new MultivariatePreprocessingModel();
-      var plsMemo = table.GetTableProperty("Content") as MultivariateContentMemento;
-      if (plsMemo is not null)
-        preprocessSet.PreprocessOptions = plsMemo.SpectralPreprocessing;
-      calibrationSet.SetPreprocessingModel(preprocessSet);
+      if (IsDimensionReductionAndRegressionModel(table, out var dataSource))
+      {
+        preprocessSet.PreprocessSingleSpectrum = dataSource.ProcessOptions.Preprocessing;
+        preprocessSet.PreprocessEnsembleOfSpectra = dataSource.ProcessOptions.MeanScaleProcessing;
+      }
 
       var sel = new Altaxo.Collections.AscendingIntegerCollection();
       Altaxo.Data.DataColumn? col;
@@ -256,6 +257,7 @@ namespace Altaxo.Calc.Regression.Multivariate
         sel.Add(table.DataColumns.GetColumnNumber(col));
         calibrationSet.CrossProduct[yn] = DataTableWrapper.ToRORowMatrix(table.DataColumns, sel, numberOfFactors);
       }
+      calibrationSet.SetPreprocessingModel(preprocessSet);
     }
   }
 }

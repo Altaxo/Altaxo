@@ -176,11 +176,15 @@ namespace Altaxo.Calc.Regression.Multivariate
         NumberOfY = numberOfY,
         NumberOfFactors = numberOfFactors
       };
+
+
       var preprocessSet = new MultivariatePreprocessingModel();
-      var plsMemo = table.GetTableProperty("Content") as MultivariateContentMemento;
-      if (plsMemo is not null)
-        preprocessSet.PreprocessOptions = plsMemo.SpectralPreprocessing;
-      calibrationSet.SetPreprocessingModel(preprocessSet);
+
+      if(IsDimensionReductionAndRegressionModel(table, out var dataSource))
+      {
+        preprocessSet.PreprocessSingleSpectrum = dataSource.ProcessOptions.Preprocessing;
+        preprocessSet.PreprocessEnsembleOfSpectra = dataSource.ProcessOptions.MeanScaleProcessing;
+      }
 
       var sel = new Altaxo.Collections.AscendingIntegerCollection();
       Altaxo.Data.DataColumn? col;
@@ -253,6 +257,7 @@ namespace Altaxo.Calc.Regression.Multivariate
         NotFound(GetCrossProduct_ColumnName());
       sel.Add(table.DataColumns.GetColumnNumber(col));
       calibrationSet.CrossProduct = DataTableWrapper.ToRORowMatrix(table.DataColumns, sel, numberOfFactors);
+      calibrationSet.SetPreprocessingModel(preprocessSet);
     }
 
     #endregion Calculation after analysis

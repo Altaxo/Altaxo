@@ -94,7 +94,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     {
       writer.WriteStartElement("SpectralPreprocessing");
 
-      _memento.SpectralPreprocessing.Export(writer);
+     // _memento.SpectralPreprocessing.Export(writer);
 
       writer.WriteEndElement();
     }

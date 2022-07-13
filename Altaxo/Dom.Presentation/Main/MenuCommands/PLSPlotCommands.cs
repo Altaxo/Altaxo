@@ -28,32 +28,6 @@ using Altaxo.AddInItems;
 
 namespace Altaxo.Worksheet.Commands
 {
-  /// <summary>
-  /// This condition is true if the active view content is a worksheet which contains PLS model data.
-  /// </summary>
-  public class PLSModelConditionEvaluator : IConditionEvaluator
-  {
-    public bool IsValid(object caller, Condition condition)
-    {
-      var selectedData = condition.Properties["ContainsPLSModelData"];
-
-      if (Current.Workbench.ActiveViewContent is null)
-      {
-        return false;
-      }
-
-      if (!(Current.Workbench.ActiveViewContent is Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl))
-      {
-        return false;
-      }
-
-      return
-        // 2022-07-12 we switched to DimensionReductionAndRegressionDataSource
-        ctrl.DataTable.DataSource is Altaxo.Calc.Regression.Multivariate.DimensionReductionAndRegressionDataSource ||
-        // before 2022-07-12:
-        ctrl.DataTable?.GetTableProperty("Content") is Altaxo.Calc.Regression.Multivariate.MultivariateContentMemento;
-    }
-  }
 
   public class PLSQuestPreferredNumberOfFactors : AbstractWorksheetControllerCommand
   {

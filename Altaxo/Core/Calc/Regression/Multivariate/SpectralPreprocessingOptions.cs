@@ -234,89 +234,12 @@ namespace Altaxo.Calc.Regression.Multivariate
       return list.ToArray();
     }
 
-    /// <summary>
-    /// Gets the preprocessing method choosen.
-    /// </summary>
-    /// <returns>The preprocessing method.</returns>
-    private ISpectralPreprocessor GetPreprocessingMethod()
-    {
-      ISpectralPreprocessor result;
-      switch (_method)
-      {
-        default:
-        case SpectralPreprocessingMethod.None:
-          result = new NoSpectralCorrection();
-          break;
+    
 
-        case SpectralPreprocessingMethod.MultiplicativeScatteringCorrection:
-          result = new MultiplicativeScatterCorrection();
-          break;
+    
 
-        case SpectralPreprocessingMethod.StandardNormalVariate:
-          result = new StandardNormalVariateCorrection();
-          break;
 
-        case SpectralPreprocessingMethod.FirstDerivative:
-          result = new SavitzkyGolayCorrection(7, 1, 2);
-          break;
-
-        case SpectralPreprocessingMethod.SecondDerivative:
-          result = new SavitzkyGolayCorrection(11, 2, 3);
-          break;
-      }
-      return result;
-    }
-
-    /// <summary>
-    /// Processes the spectra in matrix xMatrix according to the set-up options.
-    /// </summary>
-    /// <param name="xMatrix">The matrix of spectra. Each spectrum is a row of the matrix.</param>
-    /// <param name="xMean">Will be filled with the spectral mean.</param>
-    /// <param name="xScale">Will be filled with the inverse spectral variance.(Or with 1 if the user has not choosen this option).</param>
-    public void Process(IMatrix<double> xMatrix, IVector<double> xMean, IVector<double> xScale)
-    {
-      // before processing, fill xScale with 1
-      VectorMath.FillWith(xScale, 1);
-
-      GetPreprocessingMethod().Process(xMatrix, xMean, xScale, _regions);
-
-      if (UseDetrending)
-        new DetrendingCorrection(_detrendingOrder).Process(xMatrix, xMean, xScale, _regions);
-
-      if (EnsembleMeanAfterProcessing || EnsembleScale)
-        new EnsembleMeanAndScaleCorrection(EnsembleMeanAfterProcessing, EnsembleScale).Process(xMatrix, xMean, xScale, _regions);
-    }
-
-    /// <summary>
-    /// Processes the spectra in matrix xMatrix according to the set-up options for prediction.
-    /// Since it is prediction, the xMean and xScale vectors must be supplied here!
-    /// </summary>
-    /// <param name="xMatrix">The matrix of spectra. Each spectrum is a row of the matrix.</param>
-    /// <param name="xMean">Vector of spectral mean, must be supplied here.</param>
-    /// <param name="xScale">Vector of inverse spectral variance, must be supplied here.</param>
-    public void ProcessForPrediction(IMatrix<double> xMatrix, IReadOnlyList<double> xMean, IReadOnlyList<double> xScale)
-    {
-      GetPreprocessingMethod().ProcessForPrediction(xMatrix, xMean, xScale, _regions);
-
-      if (UseDetrending)
-        new DetrendingCorrection(_detrendingOrder).ProcessForPrediction(xMatrix, xMean, xScale, _regions);
-
-      if (EnsembleMeanAfterProcessing || EnsembleScale)
-        new EnsembleMeanAndScaleCorrection(EnsembleMeanAfterProcessing, EnsembleScale).ProcessForPrediction(xMatrix, xMean, xScale, _regions);
-    }
-
-    public void Export(XmlWriter writer)
-    {
-      writer.WriteStartElement("SpectralRegions");
-      for (int i = 0; i < _regions.Length; i++)
-        writer.WriteElementString("e", XmlConvert.ToString(_regions[i]));
-      writer.WriteEndElement();
-
-      GetPreprocessingMethod().Export(writer);
-
-      if (UseDetrending)
-        new DetrendingCorrection(_detrendingOrder).Export(writer);
-    }
+    
 
     #region ICloneable Members
 

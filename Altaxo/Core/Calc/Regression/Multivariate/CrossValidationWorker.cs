@@ -32,11 +32,6 @@ namespace Altaxo.Calc.Regression.Multivariate
 {
   public class CrossValidationWorker
   {
-    /// <summary>
-    /// The spectral regions of the unpreprocessed spectra. Each element in this array is the starting index of a new spectral region.
-    /// </summary>
-    protected int[] _spectralRegions;
-
     /// <summary>The x-values common to all unpreprocessed spectra (wavelength, frequency etc.)</summary>
     protected double[] _xOfX;
 
@@ -51,7 +46,6 @@ namespace Altaxo.Calc.Regression.Multivariate
     public int NumberOfFactors { get { return _numFactors; } }
 
     public CrossValidationWorker(
-      int[] spectralRegions,
       double[] xOfX,
       int numFactors,
       ICrossValidationGroupingStrategy groupingStrategy,
@@ -60,7 +54,6 @@ namespace Altaxo.Calc.Regression.Multivariate
       MultivariateRegression analysis
       )
     {
-      _spectralRegions = spectralRegions;
       _xOfX = xOfX;
       _numFactors = numFactors;
       _groupingStrategy = groupingStrategy;
@@ -87,7 +80,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       IEnsembleMeanScalePreprocessor preprocessEnsembleOfSpectra,
       MultivariateRegression analysis
       )
-      : base(spectralRegions, xOfX, numFactors, groupingStrategy, preprocessSingleSpectrum, preprocessEnsembleOfSpectra, analysis)
+      : base(xOfX, numFactors, groupingStrategy, preprocessSingleSpectrum, preprocessEnsembleOfSpectra, analysis)
     {
     }
 
@@ -99,7 +92,6 @@ namespace Altaxo.Calc.Regression.Multivariate
       MultivariateRegression.PreprocessForAnalysis(
         _singleSpectrumPreprocessor,
         _ensembleOfSpectraPreprocessor,
-        _spectralRegions,
         _xOfX,
         XX,
         YY,
@@ -111,10 +103,9 @@ namespace Altaxo.Calc.Regression.Multivariate
       MultivariateRegression.PreprocessSpectraForPrediction(
          _singleSpectrumPreprocessor,
         _ensembleOfSpectraPreprocessor,
-        _spectralRegions,
         _xOfX,
         XU, meanX, scaleX,
-        out var resultXU);
+        out var resultXU, out var _);
 
       // allocate the crossPRESS vector here, since now we know about the number of factors a bit more
       if (_crossPRESS is null)
@@ -148,7 +139,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       MultivariateRegression analysis,
       IMatrix<double> YCrossValidationPrediction
       )
-      : base(spectralRegions, xOfX, numFactors, groupingStrategy, preprocessSingleSpectrum, preprocessEnsembleOfSpectra, analysis)
+      : base(xOfX, numFactors, groupingStrategy, preprocessSingleSpectrum, preprocessEnsembleOfSpectra, analysis)
     {
       _YCrossValidationPrediction = YCrossValidationPrediction;
     }
@@ -162,7 +153,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 
       MultivariateRegression.PreprocessForAnalysis(
         _singleSpectrumPreprocessor, _ensembleOfSpectraPreprocessor,
-        _spectralRegions, _xOfX,
+        _xOfX,
         XX, YY,
         out var resultXOfX, out var resultXX, out var resultYY,
         out var meanX, out var scaleX, out var meanY, out var scaleY);
@@ -173,9 +164,8 @@ namespace Altaxo.Calc.Regression.Multivariate
       MultivariateRegression.PreprocessSpectraForPrediction(
         _singleSpectrumPreprocessor,
         _ensembleOfSpectraPreprocessor,
-        _spectralRegions,
         _xOfX,
-        XU, meanX, scaleX, out var resultXU);
+        XU, meanX, scaleX, out var resultXU, out var _);
 
       _analysis.PredictYFromPreprocessed(resultXU, _numFactors, _predictedY);
       MultivariateRegression.PostprocessY(_predictedY, meanY, scaleY);
@@ -204,7 +194,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       IEnsembleMeanScalePreprocessor preprocessEnsembleOfSpectra,
       MultivariateRegression analysis
       )
-      : base(spectralRegions, xOfX, numFactors, groupingStrategy, preprocessSingleSpectrum, preprocessEnsembleOfSpectra, analysis)
+      : base(xOfX, numFactors, groupingStrategy, preprocessSingleSpectrum, preprocessEnsembleOfSpectra, analysis)
     {
       _numberOfPoints = numberOfPoints;
     }
@@ -216,7 +206,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       MultivariateRegression.PreprocessForAnalysis(
         _singleSpectrumPreprocessor,
         _ensembleOfSpectraPreprocessor,
-        _spectralRegions, _xOfX,
+        _xOfX,
         XX, YY,
         out var resultXOfX, out var resultXX, out var resultYY,
         out var meanX, out var scaleX, out var meanY, out var scaleY);
@@ -227,8 +217,8 @@ namespace Altaxo.Calc.Regression.Multivariate
       MultivariateRegression.PreprocessSpectraForPrediction(
          _singleSpectrumPreprocessor,
         _ensembleOfSpectraPreprocessor,
-        _spectralRegions, _xOfX,
-        XU, meanX, scaleX, out var resultXU);
+        _xOfX,
+        XU, meanX, scaleX, out var resultXU, out var _);
       IROMatrix<double> xResidual = _analysis.SpectralResidualsFromPreprocessed(resultXU, _numFactors);
 
       if (_XCrossResiduals is null)
@@ -258,7 +248,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       MultivariateRegression analysis,
       CrossValidationResult result
       )
-      : base(spectralRegions, xOfX, numFactors, groupingStrategy, preprocessSingleSpectrum, preprocessEnsembleOfSpectra, analysis)
+      : base(xOfX, numFactors, groupingStrategy, preprocessSingleSpectrum, preprocessEnsembleOfSpectra, analysis)
     {
       _result = result;
     }
@@ -268,7 +258,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       MultivariateRegression.PreprocessForAnalysis(
         _singleSpectrumPreprocessor,
         _ensembleOfSpectraPreprocessor,
-        _spectralRegions, _xOfX, XX, YY,
+        _xOfX, XX, YY,
         out var resultXOfX, out var resultXX, out var resultYY,
         out var meanX, out var scaleX, out var meanY, out var scaleY);
 
@@ -278,9 +268,9 @@ namespace Altaxo.Calc.Regression.Multivariate
       MultivariateRegression.PreprocessSpectraForPrediction(
         _singleSpectrumPreprocessor,
         _ensembleOfSpectraPreprocessor,
-        _spectralRegions, _xOfX,
+        _xOfX,
          XU, meanX, scaleX,
-         out var resultXU);
+         out var resultXU, out var _);
 
       if (_predictedY is null || _predictedY.RowCount != YU.RowCount || _predictedY.ColumnCount != YU.ColumnCount)
         _predictedY = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(YU.RowCount, YU.ColumnCount);
