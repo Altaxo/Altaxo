@@ -463,7 +463,7 @@ namespace Altaxo.Data
     /// Adds a data column proxy to the data column collection without cloning it (i.e. the proxy is directly added).
     /// </summary>
     /// <param name="proxy">The proxy.</param>
-    private void InternalAddColumnHeaderColumnNoClone(IReadableColumnProxy proxy)
+    protected void InternalAddColumnHeaderColumnNoClone(IReadableColumnProxy proxy)
     {
       if (proxy is not null)
       {

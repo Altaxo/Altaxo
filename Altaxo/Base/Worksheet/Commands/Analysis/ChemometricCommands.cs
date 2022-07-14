@@ -448,7 +448,6 @@ namespace Altaxo.Worksheet.Commands.Analysis
           ctrl.DataTable,
           ctrl.SelectedDataColumns,
           ctrl.SelectedDataRows,
-          spectrumIsRow,
           preferredNumberOfFactors,
           modelTable,
           destTable);
@@ -550,10 +549,18 @@ namespace Altaxo.Worksheet.Commands.Analysis
     public static bool QuestCalibrationModelAndDestinationTable([MaybeNullWhen(false)] out string modelTableName, out string? destinationTableName)
     {
       var ctrl = new PLSPredictValueController();
+      ctrl.InitializeDocument(new object[] { new CalibrationAndDestinationTable(null, null) });
 
       if (Current.Gui.ShowDialog(ctrl, "Select model and calibration table"))
       {
-        var (calibrationTable, destinationTable) = ((DataTable CalibrationTable, DataTable? DestinationTable))ctrl.ModelObject;
+        var (calibrationTable, destinationTable) = (CalibrationAndDestinationTable)ctrl.ModelObject;
+        if(calibrationTable is null)
+        {
+          modelTableName = null;
+          destinationTableName = null;
+          return false;
+        }
+
         modelTableName = calibrationTable.Name;
         destinationTableName = destinationTable?.Name;
         return true;
@@ -651,6 +658,10 @@ namespace Altaxo.Worksheet.Commands.Analysis
       };
       GetAnalysis(table).CalculatePreprocessedSpectra(table, desttable);
       Current.Project.DataTableCollection.Add(desttable);
+      desttable.DataSource = new DimensionReductionAndRegressionPreprocessedXDataSource(
+        new DataTableProxy(table),
+        new DataSourceImportOptions()
+        );
 
       string newName = string.Format("GPreprocSpectra");
       newName = Main.ProjectFolder.CreateFullName(table.Name, newName);

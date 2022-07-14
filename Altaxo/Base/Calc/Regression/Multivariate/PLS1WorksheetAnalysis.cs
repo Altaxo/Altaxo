@@ -36,6 +36,22 @@ namespace Altaxo.Calc.Regression.Multivariate
   [System.ComponentModel.Description("PLS1")]
   public class PLS1WorksheetAnalysis : WorksheetAnalysis
   {
+    #region Serialization
+
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PLS1WorksheetAnalysis), 0)]
+    public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+      }
+
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      {
+        return new PLS1WorksheetAnalysis();
+      }
+    }
+    #endregion
+
     public override string AnalysisName
     {
       get

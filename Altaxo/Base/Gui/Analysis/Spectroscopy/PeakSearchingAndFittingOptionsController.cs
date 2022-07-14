@@ -22,6 +22,8 @@
 
 #endregion Copyright
 
+using System;
+using System.Collections.Generic;
 using Altaxo.Collections;
 using Altaxo.Science.Spectroscopy;
 using Altaxo.Science.Spectroscopy.PeakFitting;
@@ -33,30 +35,21 @@ namespace Altaxo.Gui.Analysis.Spectroscopy
   [ExpectedTypeOfView(typeof(ISpectralPreprocessingOptionsView))]
   public class PeakSearchingAndFittingOptionsController : SpectralPreprocessingControllerBase<PeakSearchingAndFittingOptions>
   {
-    protected override void AddControllers(SelectableListNodeList controllers)
+    
+
+    protected override IEnumerable<(string Label, object Doc, Func<IMVCANController> GetController)> GetComponents()
     {
-      base.AddControllers(controllers);
+      foreach (var pair in SpectralPreprocessingController.GetComponents(_doc.Preprocessing))
+        yield return pair;
 
-      {
-        var controller = new PeakSearching.PeakSearchingController();
-        controller.InitializeDocument(_doc.PeakSearching);
-        Current.Gui.FindAndAttachControlTo(controller);
-        controllers.Add(new SelectableListNodeWithController("PeakSearching", controller, false)
-        { Controller = controller });
-      }
-
-      {
-        var controller = new PeakFitting.PeakFittingController();
-        controller.InitializeDocument(_doc.PeakFitting);
-        Current.Gui.FindAndAttachControlTo(controller);
-        controllers.Add(new SelectableListNodeWithController("PeakFitting", controller, false)
-        { Controller = controller });
-      }
+      yield return ("PeakSearching", _doc.PeakSearching, () => new PeakSearching.PeakSearchingController());
+      yield return ("PeakFitting", _doc.PeakFitting, () => new PeakFitting.PeakFittingController());
     }
 
     protected override void UpdateDoc(object model)
     {
-      base.UpdateDoc(model);
+      var pre = SpectralPreprocessingController.UpdateDoc(_doc.Preprocessing, model);
+      _doc = _doc with {  Preprocessing = pre };
 
       switch (model)
       {
@@ -67,7 +60,6 @@ namespace Altaxo.Gui.Analysis.Spectroscopy
         case IPeakFitting pf:
           _doc = _doc with { PeakFitting = pf };
           break;
-
       }
     }
   }

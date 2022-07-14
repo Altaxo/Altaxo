@@ -44,6 +44,9 @@ namespace Altaxo.Gui.Analysis.Multivariate
   [UserControllerForObject(typeof(DimensionReductionAndRegressionOptions))]
   public class DimensionReductionAndRegressionOptionsController : MVCANControllerEditImmutableDocBase<DimensionReductionAndRegressionOptions, IDimensionReductionAndRegressionOptionsView>
   {
+    private Dictionary<Type, ISingleSpectrumPreprocessor> _knownSingleSpectrumPreprocessors = new();
+    private Dictionary<Type, IEnsembleMeanScalePreprocessor> _knownEnsembleMeanScalePreprocessors = new();
+
     public DimensionReductionAndRegressionOptionsController()
     {
     }
@@ -181,6 +184,9 @@ namespace Altaxo.Gui.Analysis.Multivariate
 
       if (initData)
       {
+        _knownSingleSpectrumPreprocessors[_doc.Preprocessing.GetType()] = _doc.Preprocessing;
+        _knownEnsembleMeanScalePreprocessors[_doc.MeanScaleProcessing.GetType()] = _doc.MeanScaleProcessing;
+
         NumberOfFactors = _doc.MaximumNumberOfFactors;
         InitializeSingleSpectrumPreprocessor();
         InitializeEnsembleMeanScalePreprocessor();
@@ -207,7 +213,6 @@ namespace Altaxo.Gui.Analysis.Multivariate
 
     }
 
-    private Dictionary<Type, ISingleSpectrumPreprocessor> _knownSingleSpectrumPreprocessors = new();
 
     private void EhSingleSpectrumPreprocessorChanged(Type newProcessorType)
     {
@@ -259,7 +264,6 @@ namespace Altaxo.Gui.Analysis.Multivariate
 
     }
 
-    private Dictionary<Type, IEnsembleMeanScalePreprocessor> _knownEnsembleMeanScalePreprocessors = new();
 
     private void EhEnsembleMeanScalePreprocessorChanged(Type newProcessorType)
     {

@@ -19,6 +19,25 @@ namespace Altaxo.Science.Spectroscopy.EnsembleMeanScale
     /// </summary>
     public bool EnsembleScale { get; init; }
 
+    #region Serialization
+
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(MultiplicativeScatterCorrection), 0)]
+    public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        var s = (MultiplicativeScatterCorrection)obj;
+        info.AddValue("EnsembleScale", s.EnsembleScale);
+      }
+
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      {
+        bool ensembleScale = info.GetBoolean("EnsembleScale");
+        return new MultiplicativeScatterCorrection() { EnsembleScale = ensembleScale };
+      }
+    }
+    #endregion
+
 
     /// <summary>
     /// Processes the spectra in matrix xMatrix.

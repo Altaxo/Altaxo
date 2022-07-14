@@ -42,7 +42,9 @@ namespace Altaxo.Data
 {
   public class SpectroscopyCommands
   {
-    private static PeakSearchingAndFittingOptions? _lastOptions = null;
+    private static PeakSearchingAndFittingOptions? _lastPeakFindingFittingOptions = null;
+
+    private static SpectralPreprocessingOptions? _lastPreprocessOptions = null;
 
     /// <summary>
     /// Shows the dialog to get the preprocessing options.
@@ -50,7 +52,7 @@ namespace Altaxo.Data
     /// <param name="ctrl">The worksheet containing the spectra.</param>
     /// <param name="options">On successfull return, contains the preprocessing options.</param>
     /// <returns>True if successful; otherwise, false.</returns>
-    public static bool ShowDialogGetPreprocessingOptions(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl, out PeakSearchingAndFittingOptions options)
+    public static bool ShowDialogGetPreprocessingOptions(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl, out SpectralPreprocessingOptions options)
     {
       options = null;
       var selectedColumns = ctrl.SelectedDataColumns;
@@ -61,14 +63,42 @@ namespace Altaxo.Data
         return false;
       }
 
-      var doc = _lastOptions ?? new PeakSearchingAndFittingOptions();
+      var doc = _lastPreprocessOptions ?? new SpectralPreprocessingOptions();
+      var controller = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { doc }, typeof(IMVCANController));
+
+      if (false == Current.Gui.ShowDialog(controller, "Spectral preprocessing"))
+        return false;
+
+      options = (SpectralPreprocessingOptions)controller.ModelObject;
+      _lastPreprocessOptions = options;
+      return true;
+    }
+
+    /// <summary>
+    /// Shows the dialog to get the preprocessing options.
+    /// </summary>
+    /// <param name="ctrl">The worksheet containing the spectra.</param>
+    /// <param name="options">On successfull return, contains the preprocessing options.</param>
+    /// <returns>True if successful; otherwise, false.</returns>
+    public static bool ShowDialogGetPeakFindingFittingOptions(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl, out PeakSearchingAndFittingOptions options)
+    {
+      options = null;
+      var selectedColumns = ctrl.SelectedDataColumns;
+
+      if (selectedColumns is null || selectedColumns.Count == 0)
+      {
+        Current.Gui.InfoMessageBox("Please select one or more columns with spectral data");
+        return false;
+      }
+
+      var doc = _lastPeakFindingFittingOptions ?? new PeakSearchingAndFittingOptions();
       var controller = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { doc }, typeof(IMVCANController));
 
       if (false == Current.Gui.ShowDialog(controller, "Spectral preprocessing"))
         return false;
 
       options = (PeakSearchingAndFittingOptions)controller.ModelObject;
-      _lastOptions = options;
+      _lastPeakFindingFittingOptions = options;
       return true;
     }
 
@@ -218,7 +248,7 @@ namespace Altaxo.Data
 
       preprocessedSpectraTable ??= new DataTable();
 
-      var spectralPreprocessingResult = ExecuteSpectralPreprocessing(inputData, doc, preprocessedSpectraTable);
+      var spectralPreprocessingResult = ExecuteSpectralPreprocessing(inputData, doc.Preprocessing, preprocessedSpectraTable);
 
       peakTable.DataColumns.RemoveColumnsAll();
       peakTable.PropCols.RemoveColumnsAll();
@@ -332,9 +362,9 @@ namespace Altaxo.Data
       return resultList;
     }
 
-    public static void SpectralPreprocessingShowDialog(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
+    public static void SpectralPeakFindingFittingShowDialog(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
-      if (!ShowDialogGetPreprocessingOptions(ctrl, out var doc))
+      if (!ShowDialogGetPeakFindingFittingOptions(ctrl, out var doc))
         return;
 
       // now process the data
@@ -358,7 +388,7 @@ namespace Altaxo.Data
 
         preprocessingTable.DataSource = new SpectralPreprocessingDataSource(
           dataProxy,
-          new SpectralPreprocessingOptions(doc), // downcast to SpectralPreprocessingOptions
+          new SpectralPreprocessingOptions(doc.Preprocessing), // downcast to SpectralPreprocessingOptions
           new DataSourceImportOptions());
       }
 
@@ -439,11 +469,36 @@ namespace Altaxo.Data
         }
       }
 
-        // -----------------------------------------------------------------------------
-        // End of peak plotting
-        // -----------------------------------------------------------------------------
+    }
 
-      } // for each selected column
-    
+    public static void SpectralPreprocessingShowDialog(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
+    {
+      if (!ShowDialogGetPreprocessingOptions(ctrl, out var doc))
+        return;
+
+      // now process the data
+      var srcTable = ctrl.DataTable;
+      var preprocessingTable = new DataTable();
+
+
+      var dataProxy = new DataTableMultipleColumnProxy(ColumnsV, srcTable, null, ctrl.SelectedDataColumns);
+      var result = ExecuteSpectralPreprocessing(dataProxy, doc, preprocessingTable);
+
+      {
+        var dstName = srcTable.Name + "_Preprocessed";
+        if (Current.Project.DataTableCollection.Contains(dstName))
+          dstName = Current.Project.DataTableCollection.FindNewItemName(dstName);
+        preprocessingTable.Name = dstName;
+        Current.Project.DataTableCollection.Add(preprocessingTable);
+        Current.ProjectService.OpenOrCreateWorksheetForTable(preprocessingTable);
+
+
+        preprocessingTable.DataSource = new SpectralPreprocessingDataSource(
+          dataProxy,
+          new SpectralPreprocessingOptions(doc), // downcast to SpectralPreprocessingOptions
+          new DataSourceImportOptions());
+      }
+    }
+
   }
 }

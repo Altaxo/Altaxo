@@ -647,16 +647,10 @@
         <MenuItem id="ChemometricsMenu" label="${res:XML.MainMenu.Analysis.ChemometricsMenu}"  type="Menu">
           <MenuItem id="PCAOnCols" label="${res:XML.MainMenu.AnalysisMenu.PCAOnColumns}" description="${res:XML.MainMenu.AnalysisMenu.PCAOnColumns.Description}"
 					class="Altaxo.Worksheet.Commands.AnalysisPCAOnCols" />
-          <MenuItem id="PCAOnRows" label="${res:XML.MainMenu.AnalysisMenu.PCAOnRows}" description="${res:XML.MainMenu.AnalysisMenu.PCAOnRows.Description}"
-						class="Altaxo.Worksheet.Commands.AnalysisPCAOnRows" />
           <MenuItem id="PLSOnCols" label="${res:XML.MainMenu.AnalysisMenu.PLSOnColumns}" description="${res:XML.MainMenu.AnalysisMenu.PLSOnColumns.Description}"
 						class="Altaxo.Worksheet.Commands.AnalysisPLSOnCols" />
-          <MenuItem id="PLSOnRows" label="${res:XML.MainMenu.AnalysisMenu.PLSOnRows}" description="${res:XML.MainMenu.AnalysisMenu.PLSOnRows.Description}"
-						class="Altaxo.Worksheet.Commands.AnalysisPLSOnRows" />
           <MenuItem id="PLSPredictOnCols" label="${res:XML.MainMenu.AnalysisMenu.PLSPredictOnColumns}" description="${res:XML.MainMenu.AnalysisMenu.PLSPredictOnColumns.Description}"
 						class="Altaxo.Worksheet.Commands.AnalysisPLSPredictOnCols" />
-          <MenuItem id="PLSPredictOnRows" label="${res:XML.MainMenu.AnalysisMenu.PLSPredictOnRows}" description="${res:XML.MainMenu.AnalysisMenu.PLSPredictOnRows.Description}"
-						class="Altaxo.Worksheet.Commands.AnalysisPLSPredictOnRows" />
           <MenuItem id="ExportPLSCalibration" label="${res:XML.MainMenu.AnalysisMenu.ExportPLSCalibration}" description="${res:XML.MainMenu.AnalysisMenu.ExportPLSCalibration.Description}"
 						class="Altaxo.Worksheet.Commands.AnalysisExportPLSCalibration" />
           <MenuItem id="MultColsToMatrix" label="${res:XML.MainMenu.AnalysisMenu.MultiplyColumnsToMatrix}"
@@ -666,6 +660,8 @@
         <MenuItem id="IdSpectroscopy" label="Spectroscopy"  type="Menu">
             <MenuItem id="Preprocessing" label="Preprocess" description="aa"
                       class="Altaxo.Worksheet.Commands.SpectroscopyPreprocessing" />
+            <MenuItem id="PeakFindingFitting" label="PeakFinding+Fitting" description="aa"
+                      class="Altaxo.Worksheet.Commands.SpectroscopyPeakFindingFitting" />
         </MenuItem>
           
         </MenuItem>

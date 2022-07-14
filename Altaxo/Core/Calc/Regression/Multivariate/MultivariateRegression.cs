@@ -451,19 +451,19 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// </summary>
     /// <param name="calib">The calibration model containing the instructions to process the spectra.</param>
     /// <param name="preprocessOptions">Contains the information how to preprocess the spectra.</param>
-    /// <param name="matrixX">The matrix of spectra. Each spectrum is a row of the matrix. Before the call,
+    /// <param name="matrixXRaw">The matrix of spectra. Each spectrum is a row of the matrix. Before the call,
     /// this are the raw (unprocessed) spectra. After the call, the matrix contains the processed spectra.</param>
     public static void PreprocessSpectraForPrediction(
       IMultivariateCalibrationModel calib,
-      double[] xOfX,
-      IROMatrix<double> matrixX,
-      out IMatrix<double> resultMatrixX, out double[] resultXOfX)
+      double[] xOfXRaw,
+      IROMatrix<double> matrixXRaw,
+      out IMatrix<double> matrixXPre, out double[] xOfXPre)
     {
       PreprocessSpectraForPrediction(
         calib.PreprocessingModel.PreprocessSingleSpectrum,
         calib.PreprocessingModel.PreprocessEnsembleOfSpectra,
-        xOfX,  matrixX, calib.PreprocessingModel.XMean, calib.PreprocessingModel.XScale,
-        out resultMatrixX, out resultXOfX);
+        xOfXRaw,  matrixXRaw, calib.PreprocessingModel.XMean, calib.PreprocessingModel.XScale,
+        out matrixXPre, out xOfXPre);
     }
 
     /// <summary>

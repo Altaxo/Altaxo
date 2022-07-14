@@ -22,7 +22,15 @@
 
 #endregion Copyright
 
+using System;
+using System.Collections.Generic;
+using Altaxo.Collections;
 using Altaxo.Science.Spectroscopy;
+using Altaxo.Science.Spectroscopy.BaselineEstimation;
+using Altaxo.Science.Spectroscopy.Cropping;
+using Altaxo.Science.Spectroscopy.Normalization;
+using Altaxo.Science.Spectroscopy.Smoothing;
+using Altaxo.Science.Spectroscopy.SpikeRemoval;
 
 namespace Altaxo.Gui.Analysis.Spectroscopy
 {
@@ -31,5 +39,50 @@ namespace Altaxo.Gui.Analysis.Spectroscopy
   [ExpectedTypeOfView(typeof(ISpectralPreprocessingOptionsView))]
   public class SpectralPreprocessingController : SpectralPreprocessingControllerBase<SpectralPreprocessingOptions>
   {
+    protected override IEnumerable<(string Label, object Doc, Func<IMVCANController> GetController)> GetComponents()
+    {
+      return GetComponents(_doc);
+    }
+
+    public static IEnumerable<(string Label, object Doc, Func<IMVCANController> GetController)> GetComponents(SpectralPreprocessingOptions _doc)
+    {
+      yield return ("Spike removal", _doc.SpikeRemoval, () => new SpikeRemoval.SpikeRemovalController());
+      yield return ("Smoothing", _doc.Smoothing, () => new Smoothing.SmoothingController());
+      yield return ("Baseline", _doc.BaselineEstimation, () => new BaselineEstimation.BaselineEstimationController());
+      yield return ("Cropping", _doc.Cropping, () => new Cropping.CroppingController());
+      yield return ("Normalization", _doc.Normalization, () => new Normalization.NormalizationController());
+    }
+
+    protected override void UpdateDoc(object model)
+    {
+      _doc = UpdateDoc(_doc, model);
+    }
+
+    public static SpectralPreprocessingOptions UpdateDoc(SpectralPreprocessingOptions _doc, object model)
+    {
+      switch (model)
+      {
+        case null:
+          break;
+        case ISpikeRemoval sr:
+          _doc = _doc with { SpikeRemoval = sr };
+          break;
+        case INormalization no:
+          _doc = _doc with { Normalization = no };
+          break;
+        case ICropping cr:
+          _doc = _doc with { Cropping = cr };
+          break;
+        case IBaselineEstimation be:
+          _doc = _doc with { BaselineEstimation = be };
+          break;
+        case ISmoothing sm:
+          _doc = _doc with { Smoothing = sm };
+          break;
+      }
+
+      return _doc;
+    }
+
   }
 }

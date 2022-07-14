@@ -31,9 +31,9 @@ namespace Altaxo.Calc.Regression.Multivariate
   public record DimensionReductionAndRegressionResult : Main.IImmutable
   {
     /// <summary>
-    /// Number of factors for calculation and plotting.
+    /// Number of spectra in analysis.
     /// </summary>
-    public int PreferredNumberOfFactors { get; init; }
+    public int NumberOfMeasurements { get; init; }
 
     /// <summary>
     /// Number of factors calculated.
@@ -41,15 +41,50 @@ namespace Altaxo.Calc.Regression.Multivariate
     public int CalculatedNumberOfFactors { get; init; }
 
     /// <summary>
+    /// Number of factors for calculation and plotting.
+    /// </summary>
+    public int PreferredNumberOfFactors { get; init; }
+
+    
+
+    /// <summary>
     /// Mean number of observations included in Cross PRESS calculation (used to calculate F-Ratio).
     /// </summary>
     public double MeanNumberOfMeasurementsInCrossPRESSCalculation { get; init; }
 
+    
 
-    /// <summary>
-    /// Number of spectra in analysis.
-    /// </summary>
-    public int NumberOfMeasurements { get; init; }
 
+    #region Serialization
+
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DimensionReductionAndRegressionResult), 0)]
+    public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        var s = (DimensionReductionAndRegressionResult)obj;
+        info.AddValue("NumberOfMeasurements", s.NumberOfMeasurements);
+        info.AddValue("CalculatedNumberOfFactors", s.CalculatedNumberOfFactors);
+        info.AddValue("PreferredNumberOfFactors", s.PreferredNumberOfFactors);
+        info.AddValue("MeanNumberOfMeasurementsInCrossPRESSCalculation", s.MeanNumberOfMeasurementsInCrossPRESSCalculation);
+      }
+
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      {
+        var numberOfMeasurements = info.GetInt32("NumberOfMeasurements");
+        var calculatedNumberOfFactors = info.GetInt32("CalculatedNumberOfFactors");
+        var preferredNumberOfFactors = info.GetInt32("PreferredNumberOfFactors");
+        var meanNumberOfMeasurementsInCrossPRESSCalculation = info.GetDouble("MeanNumberOfMeasurementsInCrossPRESSCalculation");
+
+        return new DimensionReductionAndRegressionResult()
+        {
+          NumberOfMeasurements = numberOfMeasurements,
+          CalculatedNumberOfFactors = calculatedNumberOfFactors,
+          PreferredNumberOfFactors = preferredNumberOfFactors,
+          MeanNumberOfMeasurementsInCrossPRESSCalculation = meanNumberOfMeasurementsInCrossPRESSCalculation
+        };
+      }
+    }
+    #endregion
   }
 }

@@ -24,7 +24,7 @@
 
 #nullable disable
 using System.Collections.Generic;
-using System.Data;
+using Altaxo.Data;
 using System.Linq;
 using Altaxo.Collections;
 using Altaxo.Gui.Common;
@@ -35,11 +35,13 @@ namespace Altaxo.Gui.Worksheet
   {
   }
 
+  public record CalibrationAndDestinationTable(DataTable CalibrationTable, DataTable DestinationTable);
+
   /// <summary>
   /// Summary description for PLSPredictValueController.
   /// </summary>
   [ExpectedTypeOfView(typeof(IPLSPredictValueView))]
-  public class PLSPredictValueController : MVCANControllerEditImmutableDocBase<(DataTable CalibrationTable, DataTable? DestinationTable), IPLSPredictValueView>
+  public class PLSPredictValueController : MVCANControllerEditImmutableDocBase<CalibrationAndDestinationTable, IPLSPredictValueView>
   {
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
@@ -119,7 +121,7 @@ namespace Altaxo.Gui.Worksheet
         return ApplyEnd(false, disposeController);
       }
 
-      _doc = (CalibrationTables.SelectedValue, DestinationTables.SelectedValue);
+      _doc = new CalibrationAndDestinationTable(CalibrationTables.SelectedValue, DestinationTables.SelectedValue);
 
       return ApplyEnd(true, disposeController);
     }

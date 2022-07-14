@@ -115,14 +115,20 @@ namespace Altaxo.Calc.Regression.Multivariate
         out var predictionMatrixXPre, out var _);
 
       // allocate the crossPRESS vector here, since now we know about the number of factors a bit more
-      if (_crossPRESS is null)
-        _crossPRESS = new double[_numFactors + 1]; // one more since we want to have the value at factors=0 (i.e. the variance of the y-matrix)
+      _crossPRESS ??= new double[_numFactors + 1]; // one more since we want to have the value at factors=0 (i.e. the variance of the y-matrix)
 
       // for all factors do now a prediction of the remaining spectra
-      _crossPRESS[0] += MatrixMath.SumOfSquares(predictionMatrixYRaw);
-      for (int nFactor = 1; nFactor <= _numFactors; nFactor++)
+      for (int nFactor = 0; nFactor <= _numFactors; nFactor++)
       {
-        _analysis.PredictYFromPreprocessed(predictionMatrixXPre, nFactor, _predictedY);
+        if(nFactor == 0)
+        {
+          MatrixMath.ZeroMatrix(_predictedY); // For zero factors, the predicted y would be zero
+        }
+        else
+        {
+          _analysis.PredictYFromPreprocessed(predictionMatrixXPre, nFactor, _predictedY);
+        }
+
         MultivariateRegression.PostprocessY(_predictedY, meanY, scaleY);
         _crossPRESS[nFactor] += MatrixMath.SumOfSquaredDifferences(predictionMatrixYRaw, _predictedY);
       }

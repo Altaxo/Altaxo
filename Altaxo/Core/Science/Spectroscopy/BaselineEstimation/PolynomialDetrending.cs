@@ -40,6 +40,27 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
   public class PolynomialDetrending :  IBaselineEstimation, Main.IImmutable
   {
     private int _order = 0;
+
+    #region Serialization
+
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PolynomialDetrending), 0)]
+    public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        var s = (PolynomialDetrending)obj;
+        info.AddValue("Order", s._order);
+      }
+
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      {
+        var order = info.GetInt32("Order");
+        return new PolynomialDetrending() { DetrendingOrder = order };
+      }
+    }
+    #endregion
+
+
     public int DetrendingOrder
     {
       get => _order;

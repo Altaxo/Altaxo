@@ -87,7 +87,16 @@ namespace Altaxo.Data
         s.ChildSetMember(ref s._dataTable, info.GetValueOrNull<DataTableProxy>("Table", s));
         s._groupNumber = info.GetInt32("Group");
         s.InternalSetRowHeaderColumn((IReadableColumnProxy)info.GetValue("RowHeaderColumn", s));
-        s.InternalSetColumnHeaderColumn((IReadableColumnProxy)info.GetValue("ColumnHeaderColumn", s));
+        {
+          s._columnHeaderColumns ??= new List<IReadableColumnProxy>();
+          var countColumnHeaderColums = info.OpenArray("ColumnHeaderColumns");
+          for (int i = 0; i < countColumnHeaderColums; ++i)
+          {
+            var columnProxy = info.GetValue<IReadableColumnProxy>("e", null);
+            s.InternalAddColumnHeaderColumnNoClone(columnProxy);
+          }
+          info.CloseArray(countColumnHeaderColums);
+        }
 
         s._useAllAvailableColumnsOfGroup = info.GetBoolean("UseAllAvailableColumnsOfGroup");
         s._useAllAvailableDataRows = info.GetBoolean("UseAllAvailableDataRows");

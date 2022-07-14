@@ -105,14 +105,26 @@ namespace Altaxo.Gui.Data
       if (initData)
       {
         InputOptionsController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _doc.ImportOptions }, typeof(IMVCANController), UseDocument.Directly);
-        ProcessOptionsController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _doc.ProcessOptionsObject }, typeof(IMVCANController), UseDocument.Directly);
+
+        if (_doc.ProcessOptionsObject is not null)
+        {
+          ProcessOptionsController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _doc.ProcessOptionsObject }, typeof(IMVCANController), UseDocument.Directly);
+        }
+
         ProcessDataController = GetProcessDataController();
       }
     }
 
     protected virtual IMVCANController GetProcessDataController()
     {
-      return (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _doc.ProcessDataObject }, typeof(IMVCANController), UseDocument.Directly);
+      if (_doc.ProcessDataObject is not null)
+      {
+        return (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _doc.ProcessDataObject }, typeof(IMVCANController), UseDocument.Directly);
+      }
+      else
+      {
+        return null;
+      }
     }
 
 

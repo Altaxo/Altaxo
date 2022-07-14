@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+using System;
 using System.Collections.Generic;
 using Altaxo.Collections;
 using Altaxo.Gui.Common;
@@ -41,7 +42,7 @@ namespace Altaxo.Gui.Analysis.Spectroscopy
   }
 
 
-  public class SpectralPreprocessingControllerBase<TOptions> : MVCANControllerEditImmutableDocBase<TOptions, ISpectralPreprocessingOptionsView> where TOptions : SpectralPreprocessingOptions
+  public abstract class SpectralPreprocessingControllerBase<TOptions> : MVCANControllerEditImmutableDocBase<TOptions, ISpectralPreprocessingOptionsView> where TOptions : class
   {
     IMVCANController _selectedController;
 
@@ -96,47 +97,16 @@ namespace Altaxo.Gui.Analysis.Spectroscopy
       }
     }
 
+    protected abstract IEnumerable<(string Label, object Doc, Func<IMVCANController> GetController)> GetComponents();
+
     protected virtual void AddControllers(SelectableListNodeList controllers)
     {
-
-
+      foreach(var pair in GetComponents())
       {
-        var controller = new SpikeRemoval.SpikeRemovalController();
-        controller.InitializeDocument(_doc.SpikeRemoval);
+        var controller = pair.GetController();
+        controller.InitializeDocument(new object[] { pair.Doc });
         Current.Gui.FindAndAttachControlTo(controller);
-        controllers.Add(new SelectableListNodeWithController("Spike removal", controller, false)
-        { Controller = controller });
-      }
-
-      {
-        var controller = new Smoothing.SmoothingController();
-        controller.InitializeDocument(_doc.Smoothing);
-        Current.Gui.FindAndAttachControlTo(controller);
-        controllers.Add(new SelectableListNodeWithController("Smoothing", controller, false)
-        { Controller = controller });
-      }
-
-      {
-        var controller = new BaselineEstimation.BaselineEstimationController();
-        controller.InitializeDocument(_doc.BaselineEstimation);
-        Current.Gui.FindAndAttachControlTo(controller);
-        controllers.Add(new SelectableListNodeWithController("Baseline", controller, false)
-        { Controller = controller });
-      }
-
-      {
-        var controller = new Cropping.CroppingController();
-        controller.InitializeDocument(_doc.Cropping);
-        Current.Gui.FindAndAttachControlTo(controller);
-        controllers.Add(new SelectableListNodeWithController("Cropping", controller, false)
-        { Controller = controller });
-      }
-
-      {
-        var controller = new Normalization.NormalizationController();
-        controller.InitializeDocument(_doc.Normalization);
-        Current.Gui.FindAndAttachControlTo(controller);
-        controllers.Add(new SelectableListNodeWithController("Normalization", controller, false)
+        controllers.Add(new SelectableListNodeWithController(pair.Label, controller, false)
         { Controller = controller });
       }
     }
@@ -153,30 +123,8 @@ namespace Altaxo.Gui.Analysis.Spectroscopy
       _selectedController = controller;
     }
 
-    protected virtual void UpdateDoc(object model)
-    {
-      switch (model)
-      {
-        case null:
-          break;
-        case ISpikeRemoval sr:
-          _doc = _doc with { SpikeRemoval = sr };
-          break;
-        case INormalization no:
-          _doc = _doc with { Normalization = no };
-          break;
-        case ICropping cr:
-          _doc = _doc with { Cropping = cr };
-          break;
-        case IBaselineEstimation be:
-          _doc = _doc with { BaselineEstimation = be };
-          break;
-        case ISmoothing sm:
-          _doc = _doc with { Smoothing = sm };
-          break;
+    protected abstract void UpdateDoc(object model);
 
-      }
-    }
 
     public override bool Apply(bool disposeController)
     {

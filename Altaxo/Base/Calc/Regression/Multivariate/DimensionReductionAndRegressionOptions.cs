@@ -69,6 +69,93 @@ namespace Altaxo.Calc.Regression.Multivariate
     public ImmutableDictionary<string, ImmutableHashSet<(int, int?)>> ColumnsToCalculate { get; init; } = ImmutableDictionary.Create<string, ImmutableHashSet<(int, int?)>>();
 
 
+    #region Serialization
+
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(DimensionReductionAndRegressionOptions), 0)]
+    public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        var s = (DimensionReductionAndRegressionOptions)obj;
+        info.AddValue("SinglePreprocessing", s.Preprocessing);
+        info.AddValue("EnsemblePreprocessing", s.MeanScaleProcessing);
+        info.AddValue("Analysis", s.WorksheetAnalysis);
+        info.AddValue("MaximumNumberOfFactors", s.MaximumNumberOfFactors);
+        info.AddValue("CrossValidationGroupingStrategy", s.CrossValidationGroupingStrategy);
+
+        info.CreateArray("ColumnsToCalculate", s.ColumnsToCalculate.Count);
+        foreach(var dictEntry in s.ColumnsToCalculate)
+        {
+          info.CreateElement("e");
+          info.AddValue("ColumnName", dictEntry.Key);
+          info.CreateArray("Indices", dictEntry.Value.Count);
+          foreach (var pair in dictEntry.Value)
+          {
+            info.CreateElement("e");
+            info.AddValue("NF", pair.Item1);
+            info.AddValue("WY", pair.Item2);
+
+          info.CommitElement();
+          }
+          info.CommitArray(); // Indices
+          info.CommitElement(); // e
+        }
+
+        info.CommitArray(); // ColumnsToCalculate
+      }
+
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      {
+        var singlePreprocessing = info.GetValue<ISingleSpectrumPreprocessor>("SinglePreprocessing", null);
+        var ensemblePreprocessing = info.GetValue<IEnsembleMeanScalePreprocessor>("EnsemblePreprocessing", null);
+        var analysis = info.GetValue<WorksheetAnalysis>("Analysis", null);
+        var maxNumberOfFactors = info.GetInt32("MaximumNumberOfFactors");
+        var crossValidationStrategy = info.GetValue<ICrossValidationGroupingStrategy>("CrossValidationGroupingStrategy", null);
+
+        var dict = new Dictionary<string, ImmutableHashSet<(int, int?)>>();
+        var countColumnsToCalculate = info.OpenArray("ColumnsToCalculate");
+        {
+          for (int i=0;i< countColumnsToCalculate; i++)
+          {
+            info.OpenElement();
+            var name = info.GetString("ColumnName");
+            var countIndices = info.OpenArray("Indices");
+            {
+              var hashSet = new HashSet<(int, int?)>();
+              for (int j=0;j<countIndices;j++)
+              {
+                info.OpenElement();
+                {
+                  var first = info.GetInt32("NF");
+                  var second = info.GetNullableInt32("WY");
+                  hashSet.Add((first, second));
+                }
+                info.CloseElement();
+
+              }
+              dict.Add(name, hashSet.ToImmutableHashSet());
+            }
+            info.CloseArray(countIndices);
+            info.CloseElement();
+          }
+        }
+        info.CloseArray(countColumnsToCalculate);
+
+
+        return new DimensionReductionAndRegressionOptions()
+        {
+          Preprocessing = singlePreprocessing,
+          MeanScaleProcessing = ensemblePreprocessing,
+          WorksheetAnalysis = analysis,
+          MaximumNumberOfFactors = maxNumberOfFactors,
+          CrossValidationGroupingStrategy = crossValidationStrategy,
+          ColumnsToCalculate = dict.ToImmutableDictionary(),
+        };
+      }
+    }
+    #endregion
+
+
     /// <summary>
     /// Gets a new instance of this class, in which the designated column to calculated is added to the dictionary <see cref="ColumnsToCalculate"/>.
     /// </summary>

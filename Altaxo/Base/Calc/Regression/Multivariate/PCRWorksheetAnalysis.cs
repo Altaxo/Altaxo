@@ -36,6 +36,22 @@ namespace Altaxo.Calc.Regression.Multivariate
   [System.ComponentModel.Description("PCR")]
   public class PCRWorksheetAnalysis : WorksheetAnalysis
   {
+    #region Serialization
+
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PCRWorksheetAnalysis), 0)]
+    public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+      }
+
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      {
+        return new PCRWorksheetAnalysis();
+      }
+    }
+    #endregion
+
     public override string AnalysisName
     {
       get

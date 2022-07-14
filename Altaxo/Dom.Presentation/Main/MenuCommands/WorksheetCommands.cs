@@ -967,5 +967,13 @@ namespace Altaxo.Worksheet.Commands
     }
   }
 
+  public class SpectroscopyPeakFindingFitting : AbstractWorksheetControllerCommand
+  {
+    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
+    {
+      Altaxo.Data.SpectroscopyCommands.SpectralPeakFindingFittingShowDialog(ctrl);
+    }
+  }
+
   #endregion Analysis
 }
