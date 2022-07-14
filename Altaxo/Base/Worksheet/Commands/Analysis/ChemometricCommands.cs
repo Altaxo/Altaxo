@@ -399,32 +399,12 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
     /// <summary>
     /// This predicts the selected columns/rows against a user choosen calibration model.
-    /// The spectra are presumed to be horizontally oriented, i.e. each spectrum is in one row.
-    /// </summary>
-    /// <param name="ctrl">The worksheet controller containing the selected data.</param>
-    public static void PredictOnRows(IWorksheetController ctrl)
-    {
-      PredictValues(ctrl, true);
-    }
-
-    /// <summary>
-    /// This predicts the selected columns/rows against a user choosen calibration model.
     /// The spectra are presumed to be vertically oriented, i.e. each spectrum is in one column.
     /// </summary>
     /// <param name="ctrl">The worksheet controller containing the selected data.</param>
     public static void PredictOnColumns(IWorksheetController ctrl)
     {
-      PredictValues(ctrl, false);
-    }
-
-    /// <summary>
-    /// This predicts the selected columns/rows against a user choosen calibration model.
-    /// The orientation of spectra is given by the parameter <c>spectrumIsRow</c>.
-    /// </summary>
-    /// <param name="ctrl">The worksheet controller containing the selected data.</param>
-    /// <param name="spectrumIsRow">If true, the spectra is horizontally oriented, else it is vertically oriented.</param>
-    public static void PredictValues(IWorksheetController ctrl, bool spectrumIsRow)
-    {
+      
       if (false == QuestCalibrationModelAndDestinationTable(out var modelName, out var destName) || modelName is null)
         return; // Cancelled by user
 
@@ -814,7 +794,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
       {
         Validator = new IntegerValueInputController.ZeroOrPositiveIntegerValidator()
       };
-      if (!Current.Gui.ShowDialog(ivictrl, "Number of factors", false))
+      if (Current.Gui.ShowDialog(ivictrl, "Number of factors", false))
       {
         preferredNumberOfFactors = ivictrl.EnteredContents;
 

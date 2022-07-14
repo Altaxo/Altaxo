@@ -911,14 +911,6 @@ namespace Altaxo.Worksheet.Commands
     }
   }
 
-  public class AnalysisPLSPredictOnRows : AbstractWorksheetControllerCommand
-  {
-    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
-    {
-      Altaxo.Worksheet.Commands.Analysis.ChemometricCommands.PredictOnRows(ctrl);
-    }
-  }
-
   public class AnalysisPLSPredictOnCols : AbstractWorksheetControllerCommand
   {
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)

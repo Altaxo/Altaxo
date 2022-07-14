@@ -257,7 +257,7 @@ namespace Altaxo.Calc.Regression.Multivariate
           CalculateXLeverage(destTable, numberOfFactors);
           break;
         case _PredictionScore_ColumnName:
-          CalculateAndStorePredictionScores(destTable, numberOfFactors, whichY??0);
+          CalculateAndStorePredictionScores(destTable, numberOfFactors, whichY ?? 0);
           break;
 
         default:
@@ -609,12 +609,12 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// </exception>
     public void EnsureMatchingXOfX(IReadOnlyList<double> xOfXPredicition, IReadOnlyList<double> xOfXModel)
     {
-      if(xOfXPredicition.Count != xOfXModel.Count)
+      if (xOfXPredicition.Count != xOfXModel.Count)
         throw new InvalidOperationException($"Number of spectral points after preprocessing ({xOfXPredicition}) does not match number of spectal points of model ({xOfXModel.Count})");
 
-      for(int i=0;i< xOfXModel.Count; i++)
+      for (int i = 0; i < xOfXModel.Count; i++)
       {
-        if(xOfXPredicition[i] != xOfXModel[i])
+        if (xOfXPredicition[i] != xOfXModel[i])
         {
           throw new InvalidOperationException($"X-values of preprocessed data: x[{i}]={xOfXPredicition[i]} does not match that of the model: x[{i}]={xOfXModel[i]}");
         }
@@ -1348,22 +1348,39 @@ namespace Altaxo.Calc.Regression.Multivariate
       CalculatePredictedY(calibModel, xOfXRaw, matrixXRaw, numberOfFactors, predictedY, null);
 
       // now save the predicted y in the destination table
-      var labelCol = new Altaxo.Data.DoubleColumn();
+
+      var labelCol = destTable.DataColumns.EnsureExistence(_MeasurementLabel_ColumnName, typeof(DoubleColumn), ColumnKind.Label, 0);
       for (int i = 0; i < selectedColumns.Count; i++)
       {
         labelCol[i] = selectedColumns[i];
       }
-      destTable.DataColumns.Add(labelCol, "MeasurementLabel", Altaxo.Data.ColumnKind.Label, 0);
+
+      // the property columns in the table containing the spectra will be converted to data columns in the destinationTable
+      // here, we only create them already, to make sure they appear left from the predicted columns
+      var srcPC = new DataColumn[tableWithSpectraToPredict.PropertyColumnCount];
+      var dstPC = new DataColumn[tableWithSpectraToPredict.PropertyColumnCount];
+      for (int idxPC = 0; idxPC < tableWithSpectraToPredict.PropertyColumnCount; ++idxPC)
+      {
+        var src = tableWithSpectraToPredict.PropertyColumns[idxPC];
+        srcPC[idxPC] = src;
+        dstPC[idxPC] = destTable.DataColumns.EnsureExistence( tableWithSpectraToPredict.PropertyColumns.GetColumnName(idxPC),
+                                                              tableWithSpectraToPredict.PropertyColumns[idxPC].GetType(),
+                                                              tableWithSpectraToPredict.PropertyColumns.GetColumnKind(idxPC),
+                                                              tableWithSpectraToPredict.PropertyColumns.GetColumnGroup(idxPC));
+      }
 
       for (int k = 0; k < predictedY.ColumnCount; k++)
       {
-        var predictedYcol = new Altaxo.Data.DoubleColumn();
-
+        var predictedYcol = destTable.DataColumns.EnsureExistence(GetYPredicted_ColumnName(k, numberOfFactors), typeof(DoubleColumn), ColumnKind.V, 0);
         for (int i = 0; i < predictedY.RowCount; i++)
         {
           predictedYcol[i] = predictedY[i, k];
+
+          for (int idxPC = 0; idxPC < dstPC.Length; ++idxPC)
+          {
+            dstPC[idxPC][i] = srcPC[idxPC][selectedColumns[i]];
+          }
         }
-        destTable.DataColumns.Add(predictedYcol, "Predicted Y" + k.ToString(), Altaxo.Data.ColumnKind.V, 0);
       }
     }
 
@@ -1468,7 +1485,7 @@ namespace Altaxo.Calc.Regression.Multivariate
         destinationTable.DataSource = dataSource;
       }
 
-      if(!object.ReferenceEquals(dataSource.ProcessOptions, options))
+      if (!object.ReferenceEquals(dataSource.ProcessOptions, options))
       {
         dataSource.ProcessOptions = options;
       }
