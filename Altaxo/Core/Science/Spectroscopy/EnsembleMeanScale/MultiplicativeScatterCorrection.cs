@@ -38,7 +38,6 @@ namespace Altaxo.Science.Spectroscopy.EnsembleMeanScale
     }
     #endregion
 
-
     /// <summary>
     /// Processes the spectra in matrix xMatrix.
     /// </summary>
@@ -56,6 +55,9 @@ namespace Altaxo.Science.Spectroscopy.EnsembleMeanScale
       // The reason for this deviation is that we don't want to store two separate xMean vectors: one used
       // for MSC (the x in linear regression) and another to center the MSC corrected spectra
 
+      var xMatrixOrg = new DoubleMatrix(xMatrix);
+      VectorMath.FillWith(xMean, 0);
+
       IVector<double>? xMeanBefore = null;
       double threshold = 1E-14 * MatrixMath.SumOfSquares(xMatrix) / xMatrix.RowCount;
       for (int cycle = 0; cycle < 50; cycle++)
@@ -69,12 +71,17 @@ namespace Altaxo.Science.Spectroscopy.EnsembleMeanScale
         {
           double sum = 0;
           for (int i = 0; i < rows; i++)
+          {
             sum += xMatrix[i, n];
-          xMean[n] = sum / rows;
+          }
+          xMean[n] += sum / rows; // xMean is in the first cycle 0 before, thus becomes mean. In later cycles it is incrementally updated.
         }
 
         // 2.) Process the spectras
-        ProcessForPrediction(xMatrix, regions, xMean, xScale);
+        foreach (var (start, end) in RegionHelper.GetRegionRanges(regions, xMatrix.ColumnCount))
+        {
+          ProcessForPrediction(xMatrixOrg, xMean, start, end, xMatrix);
+        }
 
         // 3. Compare the xMean with the xMean_before
         if (xMeanBefore is null)
@@ -110,7 +117,7 @@ namespace Altaxo.Science.Spectroscopy.EnsembleMeanScale
     {
       foreach(var (start, end) in RegionHelper.GetRegionRanges(regions, xMatrix.ColumnCount))
       { 
-        ProcessForPrediction(xMatrix, xMean, xScale,start, end);
+        ProcessForPrediction(xMatrix, xMean, start, end, xMatrix);
       }
 
       if (EnsembleScale)
@@ -124,26 +131,28 @@ namespace Altaxo.Science.Spectroscopy.EnsembleMeanScale
     /// </summary>
     /// <param name="xMatrix">The matrix of spectra. Each spectrum is a row of the matrix.</param>
     /// <param name="xMean">Output: On return, contains the ensemble mean of the spectra.</param>
-    /// <param name="xScale">Not used.</param>
     /// <param name="regionstart">Starting index of the region to process.</param>
     /// <param name="regionend">End index of the region to process (exclusive).</param>
-    private void ProcessForPrediction(IMatrix<double> xMatrix, IReadOnlyList<double> xMean, IReadOnlyList<double> xScale, int regionstart, int regionend)
+    /// <param name="resultMatrix">The resulting matrix.</param>
+    private void ProcessForPrediction(IROMatrix<double> xMatrix, IReadOnlyList<double> xMean, int regionstart, int regionend, IMatrix<double> resultMatrix)
     {
-      int regionlength = regionend - regionstart;
-
       for (int n = 0; n < xMatrix.RowCount; n++)
       {
         // 2.) Do linear regression of the current spectrum versus the mean spectrum
         var regression = new QuickLinearRegression();
         for (int i = regionstart; i < regionend; i++)
+        {
           regression.Add(xMean[i], xMatrix[n, i]);
+        }
 
         double intercept = regression.GetA0();
         double slope = regression.GetA1();
 
         // 3.) Subtract intercept and divide by slope
         for (int i = regionstart; i < regionend; i++)
-          xMatrix[n, i] = (xMatrix[n, i] - intercept) / slope;
+        {
+          resultMatrix[n, i] = xMatrix[n, i] - (intercept + slope * xMean[i]);
+        }
       }
     }
 
