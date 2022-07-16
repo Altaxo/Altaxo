@@ -967,5 +967,13 @@ namespace Altaxo.Worksheet.Commands
     }
   }
 
+  public class SpectroscopyRamanNeonCalibration : AbstractWorksheetControllerCommand
+  {
+    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
+    {
+      Altaxo.Data.SpectroscopyCommands.Raman_CalibrateWithNeonSpectrum(ctrl);
+    }
+  }
+
   #endregion Analysis
 }

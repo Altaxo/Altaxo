@@ -662,6 +662,10 @@
                       class="Altaxo.Worksheet.Commands.SpectroscopyPreprocessing" />
             <MenuItem id="PeakFindingFitting" label="PeakFinding+Fitting" description="aa"
                       class="Altaxo.Worksheet.Commands.SpectroscopyPeakFindingFitting" />
+            <MenuItem id="IdSpectroscopyRaman" label="Raman.."  type="Menu">
+                <MenuItem id="IdRamanNeonCalibration" label="Neon calibration" description="Uses a Neon spectrum for calibration"
+                      class="Altaxo.Worksheet.Commands.SpectroscopyRamanNeonCalibration" />
+            </MenuItem>
         </MenuItem>
           
         </MenuItem>

@@ -36,6 +36,7 @@ using Altaxo.Gui;
 using Altaxo.Science.Spectroscopy;
 using Altaxo.Science.Spectroscopy.PeakFitting;
 using Altaxo.Science.Spectroscopy.PeakSearching;
+using Altaxo.Science.Spectroscopy.Raman;
 using Altaxo.Worksheet.Commands;
 
 namespace Altaxo.Data
@@ -499,6 +500,51 @@ namespace Altaxo.Data
           new DataSourceImportOptions());
       }
     }
+
+    public static void Raman_CalibrateWithNeonSpectrum(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
+    {
+      if(ctrl.SelectedDataColumns.Count == 0)
+      {
+        Current.Gui.ErrorMessageBox("Please select the column containing the intensity of the Neon spectrum");
+        return;
+      }
+      if (ctrl.SelectedDataColumns.Count > 1)
+      {
+        Current.Gui.ErrorMessageBox("Please select only the one column containing the intensity of the Neon spectrum");
+        return;
+      }
+
+      var y_column = ctrl.DataTable.DataColumns[ctrl.SelectedDataColumns[0]];
+      var x_column = ctrl.DataTable.DataColumns.FindXColumnOf(y_column);
+
+      var len = Math.Min(x_column.Count, y_column.Count);
+
+      if(x_column is null)
+      {
+        Current.Gui.ErrorMessageBox("Could not find x-column corresponding to spectrum. Please set the kind of this column to 'X'");
+        return;
+      }
+
+      object neonOptionsObj = new NeonCalibrationOptions();
+      if (!Current.Gui.ShowDialog(ref neonOptionsObj, "Choose options for Neon calibration"))
+        return;
+
+      var neonOptions = (NeonCalibrationOptions)neonOptionsObj;
+
+      var arrayX = new double[len];
+      var arrayY = new double[len];
+
+      for(int i= 0; i < len; i++)
+      {
+        arrayX[i] = x_column[i];
+        arrayY[i] = y_column[i];
+      }
+
+      var coarseMatch = neonOptions.FindCoarseMatch(arrayX, arrayY);
+
+
+
+      }
 
   }
 }
