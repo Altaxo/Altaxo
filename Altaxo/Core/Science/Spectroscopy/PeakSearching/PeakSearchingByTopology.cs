@@ -90,7 +90,9 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
     {
       var pf = new PeakFinder();
 
-      pf.SetProminence(_minimalProminence ?? 0.0);
+      var workingMinimalProminence = (_minimalProminence ?? 0.0) * (y.Max()-y.Min());
+
+      pf.SetProminence(workingMinimalProminence);
       pf.SetRelativeHeight(0.5);
       pf.SetWidth(0.0);
       pf.SetHeight(0.0);

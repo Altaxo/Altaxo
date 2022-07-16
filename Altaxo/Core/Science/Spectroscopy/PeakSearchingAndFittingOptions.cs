@@ -49,7 +49,13 @@ namespace Altaxo.Science.Spectroscopy
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (PeakSearchingAndFittingOptions)o ?? new PeakSearchingAndFittingOptions();
-        var preprocessing = info.GetValue<SpectralPreprocessingOptions>("Preprocessing", parent);
+
+        var ds = new SpectralPreprocessingOptions.SerializationSurrogate0();
+        info.GetString("BaseType");
+        var preprocessing = (SpectralPreprocessingOptions)ds.Deserialize(null, info, null);
+
+
+        // var preprocessing = info.GetValue<SpectralPreprocessingOptions>("Preprocessing", parent);
         var peakSearching = info.GetValue<IPeakSearching>("PeakSearching", parent);
         var peakFitting = info.GetValue<IPeakFitting>("PeakFitting", parent);
 
@@ -112,5 +118,8 @@ namespace Altaxo.Science.Spectroscopy
     public IPeakSearching PeakSearching { get; init; } = new PeakSearchingNone();
 
     public IPeakFitting PeakFitting { get; init; } = new PeakFittingNone();
+
+
+   
   }
 }

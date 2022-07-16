@@ -112,7 +112,7 @@ namespace Altaxo.Calc.Regression.Multivariate
         _ensembleOfSpectraPreprocessor,
         _xOfX,
         predictionMatrixXRaw, meanX, scaleX,
-        out var predictionMatrixXPre, out var _);
+        out var _, out var predictionMatrixXPre);
 
       // allocate the crossPRESS vector here, since now we know about the number of factors a bit more
       _crossPRESS ??= new double[_numFactors + 1]; // one more since we want to have the value at factors=0 (i.e. the variance of the y-matrix)
@@ -129,7 +129,7 @@ namespace Altaxo.Calc.Regression.Multivariate
           _analysis.PredictYFromPreprocessed(predictionMatrixXPre, nFactor, _predictedY);
         }
 
-        MultivariateRegression.PostprocessY(_predictedY, meanY, scaleY);
+        MultivariateRegression.PostprocessTargetVariablesInline(_predictedY, meanY, scaleY);
         _crossPRESS[nFactor] += MatrixMath.SumOfSquaredDifferences(predictionMatrixYRaw, _predictedY);
       }
     }
@@ -143,7 +143,6 @@ namespace Altaxo.Calc.Regression.Multivariate
 #nullable enable
 
     public CrossPredictedYEvaluator(
-      int[] spectralRegions,
       double[] xOfX,
       int numFactors,
       ICrossValidationGroupingStrategy groupingStrategy,
@@ -178,10 +177,10 @@ namespace Altaxo.Calc.Regression.Multivariate
         _singleSpectrumPreprocessor,
         _ensembleOfSpectraPreprocessor,
         _xOfX,
-        XU, meanX, scaleX, out var resultXU, out var _);
+        XU, meanX, scaleX, out var _, out var resultXU);
 
       _analysis.PredictYFromPreprocessed(resultXU, _numFactors, _predictedY);
-      MultivariateRegression.PostprocessY(_predictedY, meanY, scaleY);
+      MultivariateRegression.PostprocessTargetVariablesInline(_predictedY, meanY, scaleY);
 
       for (int i = 0; i < group.Length; i++)
         MatrixMath.SetRow(_predictedY, i, _YCrossValidationPrediction, group[i]);
@@ -199,7 +198,6 @@ namespace Altaxo.Calc.Regression.Multivariate
 
     public CrossPredictedXResidualsEvaluator(
       int numberOfPoints,
-      int[] spectralRegions,
       double[] xOfX,
       int numFactors,
       ICrossValidationGroupingStrategy groupingStrategy,
@@ -231,7 +229,7 @@ namespace Altaxo.Calc.Regression.Multivariate
          _singleSpectrumPreprocessor,
         _ensembleOfSpectraPreprocessor,
         _xOfX,
-        XU, meanX, scaleX, out var resultXU, out var _);
+        XU, meanX, scaleX, out var _, out var resultXU);
       IROMatrix<double> xResidual = _analysis.SpectralResidualsFromPreprocessed(resultXU, _numFactors);
 
       if (_XCrossResiduals is null)
@@ -283,7 +281,7 @@ namespace Altaxo.Calc.Regression.Multivariate
         _ensembleOfSpectraPreprocessor,
         _xOfX,
          XU, meanX, scaleX,
-         out var resultXU, out var _);
+         out var _, out var resultXU);
 
       if (_predictedY is null || _predictedY.RowCount != YU.RowCount || _predictedY.ColumnCount != YU.ColumnCount)
         _predictedY = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(YU.RowCount, YU.ColumnCount);
@@ -293,7 +291,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       for (int nFactor = 0; nFactor <= _numFactors; nFactor++)
       {
         _analysis.PredictedYAndSpectralResidualsFromPreprocessed(resultXU, nFactor, _predictedY, _spectralResidual);
-        MultivariateRegression.PostprocessY(_predictedY, meanY, scaleY);
+        MultivariateRegression.PostprocessTargetVariablesInline(_predictedY, meanY, scaleY);
 
         for (int i = 0; i < group.Length; i++)
         {

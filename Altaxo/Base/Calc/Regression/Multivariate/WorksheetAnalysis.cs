@@ -485,9 +485,9 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <param name="mcalib"></param>
     /// <param name="groupingStrategy"></param>
     /// <param name="preprocessOptions"></param>
-    /// <param name="xOfX"></param>
-    /// <param name="matrixX">Matrix of horizontal spectra, centered and preprocessed.</param>
-    /// <param name="matrixY">Matrix of concentrations, centered.</param>
+    /// <param name="xOfXRaw"></param>
+    /// <param name="matrixXRaw">Matrix of horizontal spectra, centered and preprocessed.</param>
+    /// <param name="matrixYRaw">Matrix of concentrations, centered.</param>
     /// <param name="numberOfFactors"></param>
     /// <param name="predictedY"></param>
     /// <param name="spectralResiduals"></param>
@@ -496,17 +496,17 @@ namespace Altaxo.Calc.Regression.Multivariate
       ICrossValidationGroupingStrategy groupingStrategy,
        ISingleSpectrumPreprocessor preprocessSingleSpectrum,
       IEnsembleMeanScalePreprocessor preprocessEnsembleOfSpectra,
-      double[] xOfX,
-      IMatrix<double> matrixX,
-      IMatrix<double> matrixY,
+      double[] xOfXRaw,
+      IMatrix<double> matrixXRaw,
+      IMatrix<double> matrixYRaw,
       int numberOfFactors,
       IMatrix<double> predictedY,
       IMatrix<double> spectralResiduals)
     {
       MultivariateRegression.GetCrossYPredicted(
-        RegionHelper.IdentifyRegions(xOfX),
-        xOfX,
-        matrixX, matrixY, numberOfFactors, groupingStrategy, preprocessSingleSpectrum, preprocessEnsembleOfSpectra,
+        xOfXRaw, matrixXRaw, matrixYRaw,
+        numberOfFactors, groupingStrategy,
+        preprocessSingleSpectrum, preprocessEnsembleOfSpectra,
         CreateNewRegressionObject(),
         predictedY);
     }
@@ -554,7 +554,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 
       IMultivariateCalibrationModel calib = GetCalibrationModel(table);
 
-      GetXYMatricesOfSpectralColumns(dataSource.ProcessData, out var matrixX, out var _, out var xOfX);
+      GetXYMatricesOfSpectralColumns(dataSource.ProcessData, out var xOfX, out var matrixX, out var _);
 
       /*
       MultivariateRegression.PreprocessSpectraForPrediction(
@@ -638,14 +638,14 @@ namespace Altaxo.Calc.Regression.Multivariate
       MatrixMath.LeftSpineJaggedArrayMatrix<double> predictedY,
       IMatrix<double>? spectralResiduals)
     {
-      MultivariateRegression.PreprocessSpectraForPrediction(mcalib, xOfXRaw, matrixXRaw, out var matrixXPre, out var xOfXPre);
+      MultivariateRegression.PreprocessSpectraForPrediction(mcalib, xOfXRaw, matrixXRaw, out var xOfXPre, out var matrixXPre);
 
       EnsureMatchingXOfX(xOfXPre, mcalib.PreprocessingModel.XOfX);
 
       MultivariateRegression regress = CreateNewRegressionObject();
       regress.SetCalibrationModel(mcalib);
       regress.PredictedYAndSpectralResidualsFromPreprocessed(matrixXPre, numberOfFactors, predictedY, spectralResiduals);
-      MultivariateRegression.PostprocessY(mcalib.PreprocessingModel, predictedY);
+      MultivariateRegression.PostprocessTargetVariablesInline(mcalib.PreprocessingModel, predictedY);
     }
 
     #endregion Abstract members
@@ -743,19 +743,27 @@ namespace Altaxo.Calc.Regression.Multivariate
       return result;
     }
 
+    /// <summary>
+    /// Gets the spectral and target variable matrices (both unpreprocessed) for analysis.
+    /// </summary>
+    /// <param name="data">The data object storing which columns participate.</param>
+    /// <param name="xOfXRaw">On return, contains the x-values (wavelength, frequency, etc) of the spectra</param>
+    /// <param name="matrixXRaw">On return, contains the spectra. Each row represents one spectrum.</param>
+    /// <param name="matrixYRaw">On return, contains the target variables. Each row represents one measurement (belonging to one spectrum).</param>
+    /// <exception cref="System.InvalidOperationException">Data column at index {i} is null!</exception>
     public static void GetXYMatricesOfSpectralColumns(
       DataTableMatrixProxyWithMultipleColumnHeaderColumns data,
-      out IMatrix<double>? matrixX,
-      out IMatrix<double>? matrixY,
-      out double[]? xOfX)
+      out double[] xOfXRaw,
+      out IMatrix<double>? matrixXRaw,
+      out IMatrix<double>? matrixYRaw)
     {
       int numberOfSpectra = data.ColumnCount;
       int pointsPerSpectra = data.RowCount;
       int numberOfTargetVariables = data.ColumnHeaderColumnsCount;
 
-      matrixX = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(numberOfSpectra, pointsPerSpectra);
-      matrixY = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(numberOfSpectra, numberOfTargetVariables);
-      xOfX = new double[pointsPerSpectra];
+      matrixXRaw = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(numberOfSpectra, pointsPerSpectra);
+      matrixYRaw = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(numberOfSpectra, numberOfTargetVariables);
+      xOfXRaw = new double[pointsPerSpectra];
 
       var concentrationIndices = new AscendingIntegerCollection();
       var measurementIndices = new AscendingIntegerCollection();
@@ -774,20 +782,20 @@ namespace Altaxo.Calc.Regression.Multivariate
 
         for (int j = 0; j < pointsPerSpectra; j++)
         {
-          matrixX[i, j] = data.UseAllAvailableDataRows ? col[j] : col[data.ParticipatingDataRows[j]];
+          matrixXRaw[i, j] = data.UseAllAvailableDataRows ? col[j] : col[data.ParticipatingDataRows[j]];
         }
 
         for (int j = 0; j < numberOfTargetVariables; j++)
         {
           var pcol = data.GetColumnHeaderWrapper(j);
-          matrixY[i, j] = pcol[i];
+          matrixYRaw[i, j] = pcol[i];
         }
       }
 
       var xCol = data.GetRowHeaderWrapper();
       for (int j = 0; j < pointsPerSpectra; ++j)
       {
-        xOfX[j] = xCol[j];
+        xOfXRaw[j] = xCol[j];
       }
 
 
@@ -1156,18 +1164,18 @@ namespace Altaxo.Calc.Regression.Multivariate
       IMultivariateCalibrationModel calib = GetCalibrationModel(table);
       //      Export(table,out calib);
 
-      GetXYMatricesOfSpectralColumns(ddrs.ProcessData, out var matrixX, out var matrixY, out var xOfX);
+      GetXYMatricesOfSpectralColumns(ddrs.ProcessData, out var xOfXRaw, out var matrixXRaw, out var matrixYRaw);
 
-      var predictedY = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(matrixX.RowCount, calib.NumberOfY);
-      var spectralResiduals = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(matrixX.RowCount, 1);
+      var predictedY = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(matrixXRaw.RowCount, calib.NumberOfY);
+      var spectralResiduals = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(matrixXRaw.RowCount, 1);
       CalculateCrossPredictedY(
         calib,
         ddrs.ProcessOptions.CrossValidationGroupingStrategy,
         ddrs.ProcessOptions.Preprocessing,
         ddrs.ProcessOptions.MeanScaleProcessing,
-        xOfX,
-        matrixX,
-        matrixY,
+        xOfXRaw,
+        matrixXRaw,
+        matrixYRaw,
         numberOfFactors,
         predictedY,
         spectralResiduals);
@@ -1186,7 +1194,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       }
 
       // subtract the original y data
-      MatrixMath.SubtractColumn(predictedY, matrixY, whichY, predictedY);
+      MatrixMath.SubtractColumn(predictedY, matrixYRaw, whichY, predictedY);
 
       if (saveYResidual)
       {
@@ -1207,7 +1215,7 @@ namespace Altaxo.Calc.Regression.Multivariate
         string ycolname = GetXCrossResidual_ColumnName(whichY, numberOfFactors);
         var ycolumn = new Altaxo.Data.DoubleColumn();
 
-        for (int i = 0; i < matrixX.RowCount; i++)
+        for (int i = 0; i < matrixXRaw.RowCount; i++)
         {
           ycolumn[i] = spectralResiduals[i, 0];
         }
@@ -1237,7 +1245,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       IMultivariateCalibrationModel calib = GetCalibrationModel(table);
       //      Export(table,out calib);
 
-      GetXYMatricesOfSpectralColumns(dataSource.ProcessData, out var matrixX, out var matrixY, out var xOfX);
+      GetXYMatricesOfSpectralColumns(dataSource.ProcessData, out var xOfX, out var matrixX, out var matrixY);
 
       var predictedY = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(matrixX.RowCount, calib.NumberOfY);
       var spectralResiduals = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(matrixX.RowCount, 1);
@@ -1342,7 +1350,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 
       // Fill matrixX with spectra
       var proxy = new DataTableMatrixProxyWithMultipleColumnHeaderColumns(tableWithSpectraToPredict, selectedRows, selectedColumns, new AscendingIntegerCollection());
-      GetXYMatricesOfSpectralColumns(proxy, out var matrixXRaw, out _, out var xOfXRaw);
+      GetXYMatricesOfSpectralColumns(proxy, out var xOfXRaw, out var matrixXRaw, out _);
 
       var predictedY = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(matrixXRaw.RowCount, calibModel.NumberOfY);
       CalculatePredictedY(calibModel, xOfXRaw, matrixXRaw, numberOfFactors, predictedY, null);
@@ -1398,9 +1406,9 @@ namespace Altaxo.Calc.Regression.Multivariate
 
       IMultivariateCalibrationModel calib = GetCalibrationModel(calibtable);
 
-      GetXYMatricesOfSpectralColumns(dataSource.ProcessData, out var matrixX, out var matrixY, out double[] xOfX);
+      GetXYMatricesOfSpectralColumns(dataSource.ProcessData, out double[] xOfX, out var matrixX, out var matrixY);
 
-      MultivariateRegression.PreprocessSpectraForPrediction(calib, xOfX, matrixX, out var resultMatrixX, out var resultXOfX);
+      MultivariateRegression.PreprocessSpectraForPrediction(calib, xOfX, matrixX, out var resultXOfX, out var resultMatrixX);
 
       // for the new table, save the spectra as column
       var xcol = new DoubleColumn();
@@ -1491,7 +1499,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       }
 
       // Get matrices
-      GetXYMatricesOfSpectralColumns(dataSource.ProcessData, out var matrixX, out var matrixY, out var xOfX);
+      GetXYMatricesOfSpectralColumns(dataSource.ProcessData, out var xOfX, out var matrixX, out var matrixY);
 
       if (matrixX is null || matrixY is null || xOfX is null)
       {
