@@ -75,7 +75,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <summary>
     /// Denotes how the cross validation is made (the exact method how the spectra are grouped and mutually excluded).
     /// </summary>
-    private ICrossValidationGroupingStrategy _crossPRESSCalculationType;
+    private CrossPRESSCalculationType _crossPRESSCalculationType;
 
     /// <summary>
     /// The name of the class used to analyse the data.
@@ -97,7 +97,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     #region Serialization for CrossPRESSCalculationType
 
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(CrossPRESSCalculationType), 0)]
-    public class CrossPRESSCalculationTypeXmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    public class CrossPRESSCalculationTypeXmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
@@ -243,9 +243,9 @@ namespace Altaxo.Calc.Regression.Multivariate
 
         // added fix after version 2 : forgotten to serialize crossPRESSCalculationType
         if (info.GetNodeName() == "CrossPRESSCalculationType")
-          s._crossPRESSCalculationType = GetGroupingStrategy((CrossPRESSCalculationType)info.GetValue("CrossPRESSCalculationType", s));
+          s._crossPRESSCalculationType = (CrossPRESSCalculationType)info.GetValue("CrossPRESSCalculationType", s);
         else
-          s._crossPRESSCalculationType = new CrossValidationGroupingStrategyExcludeGroupsOfSimilarMeasurements();
+          s._crossPRESSCalculationType = CrossPRESSCalculationType.ExcludeGroupsOfSimilarMeasurements;
 
         return s;
       }
@@ -306,8 +306,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 
     public ICrossValidationGroupingStrategy CrossValidationGroupingStrategy
     {
-      get { return _crossPRESSCalculationType; }
-      set { _crossPRESSCalculationType = value; }
+      get { return GetGroupingStrategy(_crossPRESSCalculationType); }
     }
 
     /// <summary>
