@@ -1333,7 +1333,6 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <param name="destTable">The table to store the prediction result.</param>
     /// <param name="tableContainingModel">The table where the calibration model is stored.</param>
     /// <param name="numberOfFactors">Number of factors used to predict the values.</param>
-    /// <param name="spectrumIsRow">If true, the spectra is horizontally oriented, else it is vertically oriented.</param>
     public virtual void PredictValues(
       DataTable tableWithSpectraToPredict,
       IAscendingIntegerCollection selectedColumns,
@@ -1342,6 +1341,30 @@ namespace Altaxo.Calc.Regression.Multivariate
       DataTable tableContainingModel,
       DataTable destTable)
     {
+      var proxy = new DataTableMatrixProxyWithMultipleColumnHeaderColumns(tableWithSpectraToPredict, selectedRows, selectedColumns, new AscendingIntegerCollection());
+      PredictValues(proxy, numberOfFactors, tableContainingModel, destTable);
+
+      if(destTable.DataSource is null)
+      {
+        destTable.DataSource = new DimensionReductionAndRegressionPredictionDataSource(new DimensionReductionAndRegressionPredictionProcessData(new DataTableProxy(tableContainingModel), (DataTableMatrixProxyWithMultipleColumnHeaderColumns)proxy.Clone()), new DataSourceImportOptions());
+      }
+    }
+
+    /// <summary>
+    /// This predicts the selected columns/rows against a user choosen calibration model.
+    /// The orientation of spectra is given by the parameter <c>spectrumIsRow</c>.
+    /// </summary>
+    /// <param name="proxy">Data proxy holding the spectra to predict values for.</param>
+    /// <param name="destTable">The table to store the prediction result.</param>
+    /// <param name="tableContainingModel">The table where the calibration model is stored.</param>
+    /// <param name="numberOfFactors">Number of factors used to predict the values.</param>
+    public virtual void PredictValues(
+      DataTableMatrixProxyWithMultipleColumnHeaderColumns proxy,
+      int numberOfFactors,
+      DataTable tableContainingModel,
+      DataTable destTable)
+    {
+      var tableWithSpectraToPredict = proxy.DataTable;
       if (!IsDimensionReductionAndRegressionModel(tableContainingModel, out var dataSource))
         throw new InvalidOperationException($"Provided table {tableContainingModel?.Name} does not contain a multivariate model.");
 
@@ -1349,7 +1372,6 @@ namespace Altaxo.Calc.Regression.Multivariate
       //      Export(modelTable, out calibModel);
 
       // Fill matrixX with spectra
-      var proxy = new DataTableMatrixProxyWithMultipleColumnHeaderColumns(tableWithSpectraToPredict, selectedRows, selectedColumns, new AscendingIntegerCollection());
       GetXYMatricesOfSpectralColumns(proxy, out var xOfXRaw, out var matrixXRaw, out _);
 
       var predictedY = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(matrixXRaw.RowCount, calibModel.NumberOfY);
@@ -1358,9 +1380,9 @@ namespace Altaxo.Calc.Regression.Multivariate
       // now save the predicted y in the destination table
 
       var labelCol = destTable.DataColumns.EnsureExistence(_MeasurementLabel_ColumnName, typeof(DoubleColumn), ColumnKind.Label, 0);
-      for (int i = 0; i < selectedColumns.Count; i++)
+      for (int i = 0; i < proxy.ParticipatingDataColumns.Count; i++)
       {
-        labelCol[i] = selectedColumns[i];
+        labelCol[i] = proxy.ParticipatingDataColumns[i];
       }
 
       // the property columns in the table containing the spectra will be converted to data columns in the destinationTable
@@ -1386,7 +1408,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 
           for (int idxPC = 0; idxPC < dstPC.Length; ++idxPC)
           {
-            dstPC[idxPC][i] = srcPC[idxPC][selectedColumns[i]];
+            dstPC[idxPC][i] = srcPC[idxPC][proxy.ParticipatingDataColumns[i]];
           }
         }
       }
