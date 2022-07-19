@@ -1416,12 +1416,40 @@ namespace Altaxo.Calc.Regression.Multivariate
         xcol[i] = resultXOfX[i];
       desttable.DataColumns.Add(xcol, _XOfX_ColumnName, ColumnKind.X, 0);
 
+      var columnHeaderWrappers = new (IROVector<double> Wrapper, DataColumn dstPropCol)[dataSource.ProcessData.ColumnHeaderColumnsCount];
+      for (int i = 0; i < columnHeaderWrappers.Length; ++i)
+      {
+        var wrapper = dataSource.ProcessData.GetColumnHeaderWrapper(i);
+        var srcPCol = dataSource.ProcessData.GetColumnHeaderColumn(i).Document();
+        var srcTable = dataSource.ProcessData.DataTable;
+        DataColumn dstPropCol;
+        if (srcPCol is DataColumn dc)
+        {
+          
+          var name = srcTable.PropCols.GetColumnName(dc);
+          var kind = srcTable.PropCols.GetColumnKind(dc);
+          var groupNumber = srcTable.PropCols.GetColumnGroup(dc);
+          dstPropCol = desttable.PropCols.EnsureExistence(name, dc.GetType(), kind, groupNumber);
+        }
+        else
+        {
+          dstPropCol = desttable.PropCols.EnsureExistence(srcPCol.FullName, DataColumn.GetColumnTypeAppropriateForElementType(srcPCol.ItemType), ColumnKind.V, 0);
+        }
+        columnHeaderWrappers[i] = (wrapper, dstPropCol);
+      };
+
       for (int n = 0; n < resultMatrixX.RowCount; n++)
       {
-        var col = new DoubleColumn();
+        var col = desttable.DataColumns.EnsureExistence(FormattableString.Invariant($"{n}"), typeof(DoubleColumn), ColumnKind.V, 0);
         for (int i = resultMatrixX.ColumnCount - 1; i >= 0; i--)
+        {
           col[i] = resultMatrixX[n, i];
-        desttable.DataColumns.Add(col, n.ToString(), ColumnKind.V, 0);
+        }
+        // add the properties
+        for (int k = 0; k < columnHeaderWrappers.Length; ++k)
+        {
+          columnHeaderWrappers[k].dstPropCol[desttable.DataColumns.GetColumnNumber(col)] = columnHeaderWrappers[k].Wrapper[n];
+        }
       }
     }
 

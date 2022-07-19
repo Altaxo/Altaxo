@@ -568,6 +568,46 @@ namespace Altaxo.Data
       return (DataColumn)(Activator.CreateInstance(type) ?? throw new InvalidProgramException($"Can not create instance of type {type}. Is a public constructor missing?"));
     }
 
+    /// <summary>
+    /// Gets the column typeappropriate for the given element type. Example: when typeof(double) is given, the return value is typeof(DoubleColumn).
+    /// </summary>
+    /// <param name="type">The element type.</param>
+    /// <returns>The column type appropriate for the element type. If nothing specific is found, typeof(TextColumn) is returned.</returns>
+    public static Type GetColumnTypeAppropriateForElementType(Type type)
+    {
+      if (type == typeof(double) ||
+        type == typeof(float) ||
+        type == typeof(decimal) ||
+        type == typeof(long) ||
+        type == typeof(ulong) ||
+        type == typeof(int) ||
+        type == typeof(uint) ||
+        type == typeof(short) ||
+        type == typeof(ushort) ||
+        type == typeof(byte) ||
+        type == typeof(sbyte))
+      {
+        return typeof(DoubleColumn);
+      }
+      else if (type == typeof(bool))
+      {
+        return typeof(BooleanColumn);
+      }
+      else if (type == typeof(DateTime))
+      {
+        return typeof(DateTimeColumn);
+      }
+      else if (type == typeof(string))
+      {
+        return typeof(TextColumn);
+      }
+      else
+      {
+        return typeof(TextColumn);
+      }
+    }
+    
+
 
     /// <summary>
     /// Provides a setter property to which a vector can be assigned to. Copies all elements of the vector to this column.
