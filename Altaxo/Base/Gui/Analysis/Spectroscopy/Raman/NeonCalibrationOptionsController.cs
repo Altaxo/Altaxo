@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Altaxo.Gui.Common;
+using Altaxo.Science.Spectroscopy;
 using Altaxo.Science.Spectroscopy.Raman;
 
 namespace Altaxo.Gui.Analysis.Spectroscopy.Raman
@@ -15,7 +16,7 @@ namespace Altaxo.Gui.Analysis.Spectroscopy.Raman
   {
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
-      yield break;
+      yield return new ControllerAndSetNullMethod(_peakFindingController, () =>PeakFindingController = null);
     }
 
     #region Bindings
@@ -51,6 +52,23 @@ namespace Altaxo.Gui.Analysis.Spectroscopy.Raman
     }
 
 
+    private PeakSearchingAndFittingOptionsController _peakFindingController;
+
+    public PeakSearchingAndFittingOptionsController PeakFindingController
+    {
+      get => _peakFindingController;
+      set
+      {
+        if (!(_peakFindingController == value))
+        {
+          _peakFindingController?.Dispose();
+          _peakFindingController = value;
+          OnPropertyChanged(nameof(PeakFindingController));
+        }
+      }
+    }
+
+
 
     #endregion
 
@@ -66,15 +84,28 @@ namespace Altaxo.Gui.Analysis.Spectroscopy.Raman
           LaserWavelength_Nanometer = 532;
         else
           LaserWavelength_Nanometer = _doc.LaserWavelength_Nanometer;
+
+        var peakFindingController = new PeakSearchingAndFittingOptionsController();
+        peakFindingController.InitializeDocument(_doc.PeakFindingOptions);
+        Current.Gui.FindAndAttachControlTo(peakFindingController);
+        PeakFindingController = peakFindingController;
       }
     }
 
     public override bool Apply(bool disposeController)
     {
+      PeakSearchingAndFittingOptions findOptions;
+      if (!PeakFindingController.Apply(disposeController))
+        return ApplyEnd(false, disposeController);
+      else
+        findOptions = (PeakSearchingAndFittingOptions)PeakFindingController.ModelObject;
+
+
       _doc = _doc with
       {
         LaserWavelength_Nanometer = LaserWavelength_Nanometer,
         XAxisUnit = XAxisUnit.SelectedValue,
+        PeakFindingOptions = findOptions,
       };
 
       return ApplyEnd(true, disposeController);

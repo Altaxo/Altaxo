@@ -321,7 +321,7 @@ namespace Altaxo.Data
 
                 if (r.FitFunction is { } fitFunction)
                 {
-                  var (pos, posVar, area, areaVar, height, heightVar, fwhm, fwhmVar) = fitFunction.GetPositionAreaHeightFwhmFromSinglePeakParameters(r.PeakParameter, r.PeakParameterCovariances);
+                  var (pos, posVar, area, areaVar, height, heightVar, fwhm, fwhmVar) = fitFunction.GetPositionAreaHeightFWHMFromSinglePeakParameters(r.PeakParameter, r.PeakParameterCovariances);
 
                   cFPos[idxRow] = pos;
                   cFPosVar[idxRow] = posVar;
@@ -540,11 +540,50 @@ namespace Altaxo.Data
         arrayY[i] = y_column[i];
       }
 
-      var coarseMatch = neonOptions.FindCoarseMatch(arrayX, arrayY);
 
+      var calibration = new NeonCalibration();
+      var matches = calibration.GetPeakMatchings(neonOptions,arrayX, arrayY);
+
+      var dstTable = new DataTable();
+      dstTable.Name = ctrl.DataTable.FolderName +  "WRamanCalibration";
+      Current.Project.DataTableCollection.Add(dstTable);
+
+      using(var token = dstTable.SuspendGetToken())
+      {
+        var colNist = dstTable.DataColumns.EnsureExistence("NistNeonPeakWavelength [nm]", typeof(DoubleColumn), ColumnKind.X, 0);
+        var colMeas = dstTable.DataColumns.EnsureExistence("MeasuredNeonPeakWavelength [nm]", typeof(DoubleColumn), ColumnKind.V, 0);
+        var colDiff = dstTable.DataColumns.EnsureExistence("DifferenceOfPeakWavelengths [nm]", typeof(DoubleColumn), ColumnKind.V, 0);
+        for(int i=0;i<matches.Count;++i)
+        {
+          var match = matches[i];
+          colNist[i] = match.NistWL;
+          colMeas[i] = match.MeasWL;
+          colDiff[i] = match.NistWL - match.MeasWL;
+        }
+
+        var pcolLaserWL = dstTable.PropertyColumns.EnsureExistence("AssumedLaserWavelength [nm]", typeof(DoubleColumn), ColumnKind.V, 0);
+        foreach(var dc in new[] { colMeas, colDiff})
+        {
+          var idx = dstTable.DataColumns.GetColumnNumber(dc);
+          pcolLaserWL[idx] = neonOptions.LaserWavelength_Nanometer;
+        }
+
+        if (calibration.XArray_nm is { } xArr && calibration.YPreprocessed is {} yArr && calibration.Converter is { } converter)
+        {
+          var colCorrWL = dstTable.DataColumns.EnsureExistence("Preprocessed_Wavelength [nm]", typeof(DoubleColumn), ColumnKind.X, 1);
+          var colCorrY = dstTable.DataColumns.EnsureExistence("Preprocessed_Signal", typeof(DoubleColumn), ColumnKind.V, 1);
+
+          for(int i=0;i<xArr.Length;++i)
+          {
+            colCorrWL[i] = converter.ConvertWavelengthMeasToNist(xArr[i]);
+            colCorrY[i] = yArr[i];
+          }
+        }
 
 
       }
 
+      Current.ProjectService.OpenOrCreateWorksheetForTable(dstTable);
+      }
   }
 }

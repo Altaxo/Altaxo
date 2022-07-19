@@ -13,6 +13,8 @@
             <RowDefinition Height="4"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="4"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
 
@@ -26,5 +28,9 @@
                                      SelectedValue="{Binding LaserWavelength_Nanometer}"
                                      ToolTip="Enter approximate wavelength of laser excitation in nm. Ususal values are 532 and 785 nm."
                                      />
+
+        <GroupBox Grid.Row="5" Header="Preprocessing / Peak finding">
+            <ContentControl Content="{Binding PeakFindingController.ViewObject}"/>
+        </GroupBox>
     </Grid>
 </UserControl>

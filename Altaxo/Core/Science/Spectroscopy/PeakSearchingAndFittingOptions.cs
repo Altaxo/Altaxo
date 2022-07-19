@@ -115,7 +115,7 @@ namespace Altaxo.Science.Spectroscopy
       PeakFitting = from.PeakFitting;
     }
 
-    public IPeakSearching PeakSearching { get; init; } = new PeakSearchingNone();
+    public IPeakSearching PeakSearching { get; init; } = new PeakSearching.PeakSearchingByTopology();
 
     public IPeakFitting PeakFitting { get; init; } = new PeakFittingNone();
 

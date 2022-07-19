@@ -47,7 +47,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
         gamma = (1 + d) / (1 - d);
         parameters[3] = gamma;
 
-        var (pos, _, area, _, height, _, fwhm, _) = v.GetPositionAreaHeightFwhmFromSinglePeakParameters(parameters, null);
+        var (pos, _, area, _, height, _, fwhm, _) = v.GetPositionAreaHeightFWHMFromSinglePeakParameters(parameters, null);
 
         AssertEx.AreEqual(areaG, area, 0, 1E-14);
         AssertEx.AreEqual(positionG, pos, 0, 1E-14);
@@ -66,7 +66,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
         sigma = (1 + d) / (1 - d);
         parameters[2] = sigma;
 
-        var (pos, _, area, _, height, _, fwhm, _) = v.GetPositionAreaHeightFwhmFromSinglePeakParameters(parameters, null);
+        var (pos, _, area, _, height, _, fwhm, _) = v.GetPositionAreaHeightFWHMFromSinglePeakParameters(parameters, null);
 
         AssertEx.AreEqual(areaG, area, 0, 1E-14);
         AssertEx.AreEqual(positionG, pos, 0, 1E-14);

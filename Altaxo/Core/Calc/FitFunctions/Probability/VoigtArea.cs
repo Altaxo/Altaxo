@@ -310,7 +310,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
     static double SafeSqrt(double x) => Math.Sqrt(Math.Max(0, x));
 
     public (double Position, double PositionVariance, double Area, double AreaVariance, double Height, double HeightVariance, double FWHM, double FWHMVariance)
-      GetPositionAreaHeightFwhmFromSinglePeakParameters(double[] parameters, IROMatrix<double> cv)
+      GetPositionAreaHeightFWHMFromSinglePeakParameters(double[] parameters, IROMatrix<double> cv)
     {
       const double Sqrt2Pi = 2.5066282746310005024;
       const double SqrtLog4 = 1.1774100225154746910;

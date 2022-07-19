@@ -301,7 +301,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
     static double SafeSqrt(double x) => Math.Sqrt(Math.Max(0, x));
 
     public (double Position, double PositionVariance, double Area, double AreaVariance, double Height, double HeightVariance, double FWHM, double FWHMVariance)
-      GetPositionAreaHeightFwhmFromSinglePeakParameters(double[] parameters, IROMatrix<double> cv)
+      GetPositionAreaHeightFWHMFromSinglePeakParameters(double[] parameters, IROMatrix<double> cv)
     {
       if (parameters is null || parameters.Length != 4)
         throw new ArgumentException(nameof(parameters));

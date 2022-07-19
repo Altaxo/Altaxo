@@ -90,6 +90,7 @@ namespace Altaxo.Gui.Analysis.Spectroscopy.PeakSearching
         CreateSubController();
 
         var methodTypes = new List<Type>(ReflectionService.GetNonAbstractSubclassesOf(typeof(IPeakSearching)));
+        methodTypes.Remove(typeof(Altaxo.Science.Spectroscopy.PeakSearching.PeakSearchingNone));
         methodTypes.Sort(new TypeSorter());
 
         var methods = new SelectableListNodeList();

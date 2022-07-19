@@ -73,6 +73,6 @@ namespace Altaxo.Calc.FitFunctions.Peaks
     /// <param name="cv">The covariance matrix. Can be null (in this case the returned variance values are zero).</param>
     /// <returns>The position, the area under the peak, the height, and the Full Width Half Maximum (FWHM), together with their variances.</returns>
     public (double Position, double PositionVariance, double Area, double AreaVariance, double Height, double HeightVariance, double FWHM, double FWHMVariance)
-        GetPositionAreaHeightFwhmFromSinglePeakParameters(double[] parameters, IROMatrix<double>? cv);
+        GetPositionAreaHeightFWHMFromSinglePeakParameters(double[] parameters, IROMatrix<double>? cv);
   }
 }

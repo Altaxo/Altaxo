@@ -51,9 +51,11 @@ namespace Altaxo.Calc.FitFunctions.Probability
     #region Serialization
 
     /// <summary>
-    /// 2021-06-07 Initial version
+    /// 2021-06-07 Initial version 0
+    /// 2022-07-18 Moved from AltaxoBase to AltaxoCore
     /// </summary>
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(GaussAmplitude), 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Calc.FitFunctions.Probability.GaussAmplitude", 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(GaussAmplitude), 1)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
@@ -327,7 +329,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
     /// <inheritdoc/>
     public (double Position, double Area, double Height, double FWHM) GetPositionAreaHeightFWHMFromSinglePeakParameters(double[] parameters)
     {
-      var (pos, _, area, _, height, _, fwhm, _) = GetPositionAreaHeightFwhmFromSinglePeakParameters(parameters, null);
+      var (pos, _, area, _, height, _, fwhm, _) = GetPositionAreaHeightFWHMFromSinglePeakParameters(parameters, null);
       return (pos, area, height, fwhm);
     }
 
@@ -335,7 +337,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
 
     /// <inheritdoc/>
     public (double Position, double PositionVariance, double Area, double AreaVariance, double Height, double HeightVariance, double FWHM, double FWHMVariance)
-      GetPositionAreaHeightFwhmFromSinglePeakParameters(double[] parameters, IROMatrix<double>? cv)
+      GetPositionAreaHeightFWHMFromSinglePeakParameters(double[] parameters, IROMatrix<double>? cv)
     {
       const double Sqrt2Pi = 2.5066282746310005024;
       const double SqrtLog4 = 1.1774100225154746910;

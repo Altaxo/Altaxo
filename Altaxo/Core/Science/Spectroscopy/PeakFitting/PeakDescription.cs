@@ -81,5 +81,20 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
     /// Gets the complete fit function parameter values (may include parameters of all peaks that were fitted).
     /// </summary>
     public double[]? FitFunctionParameter { get; init; }
+
+    /// <summary>
+    /// Gets the position, the area, the height and the Full Width Half Maximum of the fitted peak.
+    /// </summary>
+    /// <exception cref="System.InvalidOperationException">FitFunction or PeakParameter is null (in instance of {this.GetType()}).</exception>
+    public (double Position, double Area, double Height, double FWHM) PositionAreaHeightFWHM
+    {
+      get
+      {
+        if (FitFunction is { } ff && PeakParameter is { } para)
+          return ff.GetPositionAreaHeightFWHMFromSinglePeakParameters(para);
+        else
+          throw new System.InvalidOperationException($"FitFunction or PeakParameter is null (in instance of {this.GetType()}).");
+      }
+    }
   }
 }

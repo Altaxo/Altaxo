@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Altaxo.Calc;
 
 namespace Altaxo.Science.Spectroscopy.Raman
 {
+  /// <summary>
+  /// Represents the results of a calibration of a Raman device with light from a Neon lamp.
+  /// </summary>
   public class NeonCalibration
   {
-
-
     #region Nist Neon Peak data
 
     /// <summary>
@@ -462,5 +462,328 @@ namespace Altaxo.Science.Spectroscopy.Raman
     };
 
     #endregion
+
+    #region Wavelength converter
+
+    public record WavelengthConverter
+    {
+      public double NistWL_Left { get; init; }
+      public double MeasWL_Left { get; init; }
+      public double NistWL_Right { get; init; }
+      public double MeasWL_Right { get; init; }
+
+
+
+      public double ConvertWavelengthNistToMeas(double x)
+      {
+        var r = (x - NistWL_Left) / (NistWL_Right - NistWL_Left);
+        return (1 - r) * MeasWL_Left + r * MeasWL_Right;
+      }
+
+      public double ConvertWavelengthMeasToNist(double x)
+      {
+        var r = (x - MeasWL_Left) / (MeasWL_Right - MeasWL_Left);
+        return (1 - r) * NistWL_Left + r * NistWL_Right;
+      }
+
+    }
+
+    #endregion
+
+    #region Operational data
+
+    /// <summary>
+    /// The x-vales of the Neon measurement, converted to nm, presumed that the laser has the wavelength
+    /// </summary>
+    private double[]? _xArray_nm;
+    private double[]? _yPreprocessed;
+    private double _assumedLaserWavelength_nm = double.NaN;
+
+    private List<PeakSearching.PeakDescription>? _peakSearchingDescriptions;
+    private IReadOnlyList<PeakFitting.PeakDescription>? _peakFittingDescriptions;
+
+    public WavelengthConverter Converter { get; protected set; }
+
+    public double[]? XArray_nm => _xArray_nm;
+
+    public double[]? YPreprocessed => _yPreprocessed;
+
+    #endregion
+
+    public List<(double NistWL, double MeasWL)>
+      GetPeakMatchings(NeonCalibrationOptions options, double[] x, double[] y)
+    {
+      var coarse = FindCoarseMatch(options, x, y);
+
+      if (coarse is null)
+      {
+        return new List<(double NistWL, double MeasWL)>();
+      }
+
+      if (_peakFittingDescriptions is not null)
+        return GetPeakMatchingsBasedOnPeakFittingResults(coarse.Value);
+      else
+        return GetPeakMatchingsBasedOnPeakSearchingResults(coarse.Value);
+
+    }
+
+    private List<(double NistWL, double MeasWL)> GetPeakMatchingsBasedOnPeakSearchingResults((double NistWL_Left, double MeasWL_Left, double NistWL_Right, double MeasWL_Right) coarse)
+    {
+      var (NistWL_Left, MeasWL_Left, NistWL_Right, MeasWL_Right) = coarse;
+      var x_nm = _xArray_nm;
+
+      var converter = new WavelengthConverter
+      {
+        NistWL_Left = NistWL_Left,
+        MeasWL_Left = MeasWL_Left,
+        NistWL_Right = NistWL_Right,
+        MeasWL_Right = MeasWL_Right
+      };
+      Converter = converter;
+
+      var foundPeaks = _peakSearchingDescriptions;
+
+      var result = new List<(double NistWL, double MeasWL)>();
+
+      foreach (var peakDesc in foundPeaks)
+      {
+        var measPeakCenterWL = RMath.InterpolateLinear(peakDesc.PositionIndex, x_nm);
+        // Note that for left and right we use full width = 2 x half width
+        var measPeakLeftWL = RMath.InterpolateLinear(peakDesc.PositionIndex - peakDesc.Width, x_nm);
+        var measPeakRightWL = RMath.InterpolateLinear(peakDesc.PositionIndex + peakDesc.Width, x_nm);
+
+        // convert the wavelength to calibrated wavelength
+        var measPeakLeftWLToNist = converter.ConvertWavelengthMeasToNist(measPeakLeftWL);
+        var measPeakRightWLToNist = converter.ConvertWavelengthMeasToNist(measPeakRightWL);
+        var nistPeaks = NistNeonPeaks.Where(p => p.Wavelength_Nanometer >= measPeakLeftWLToNist && p.Wavelength_Nanometer <= measPeakRightWLToNist);
+
+        foreach (var nistPeak in nistPeaks)
+        {
+          result.Add((nistPeak.Wavelength_Nanometer, measPeakCenterWL));
+        }
+      }
+
+      return result;
+    }
+
+    private List<(double NistWL, double MeasWL)> GetPeakMatchingsBasedOnPeakFittingResults((double NistWL_Left, double MeasWL_Left, double NistWL_Right, double MeasWL_Right) coarse)
+    {
+      var (NistWL_Left, MeasWL_Left, NistWL_Right, MeasWL_Right) = coarse;
+      var x_nm = _xArray_nm;
+
+      var converter = new WavelengthConverter
+      {
+        NistWL_Left = NistWL_Left,
+        MeasWL_Left = MeasWL_Left,
+        NistWL_Right = NistWL_Right,
+        MeasWL_Right = MeasWL_Right
+      };
+      Converter = converter;
+
+      var foundPeaks = _peakFittingDescriptions;
+
+      var result = new List<(double NistWL, double MeasWL)>();
+
+      foreach (var peakDesc in foundPeaks)
+      {
+        var (measPeakCenterWL, _,_,fwhm) = peakDesc.FitFunction.GetPositionAreaHeightFWHMFromSinglePeakParameters(peakDesc.PeakParameter);
+        // Note that for left and right we use full width = 2 x half width
+        var measPeakLeftWL = measPeakCenterWL - fwhm;
+        var measPeakRightWL = measPeakCenterWL + fwhm;
+
+        // convert the wavelength to calibrated wavelength
+        var measPeakLeftWLToNist = converter.ConvertWavelengthMeasToNist(measPeakLeftWL);
+        var measPeakRightWLToNist = converter.ConvertWavelengthMeasToNist(measPeakRightWL);
+        var nistPeaks = NistNeonPeaks.Where(p => p.Wavelength_Nanometer >= measPeakLeftWLToNist && p.Wavelength_Nanometer <= measPeakRightWLToNist);
+
+        foreach (var nistPeak in nistPeaks)
+        {
+          result.Add((nistPeak.Wavelength_Nanometer, measPeakCenterWL));
+        }
+      }
+
+      return result;
+    }
+
+
+
+    /// Finds a coarse match bewtween the peaks in the measured Neon spectrum and the Nist table.
+    /// </summary>
+    /// <param name="options">The options used for calculation.</param>
+    /// <param name="x">The x values of the measured Neon spectrum.</param>
+    /// <param name="y">The y values of the measured Neon spectrum.</param>
+    /// <returns>A tuple of wavelength (in nm): Nist wavelength and Meas wavelength at the left of the range, Nist wavelength and meas wavelength at the right of the range.</returns>
+    /// The returned value is null if no peaks could be matched.
+    public (double NistWL_Left, double MeasWL_Left, double NistWL_Right, double MeasWL_Right)?
+    FindCoarseMatch(NeonCalibrationOptions options, double[] x, double[] y)
+    {
+      var tolWL = options.Wavelength_Tolerance_nm;
+      var x_nm = _xArray_nm = new double[x.Length];
+      _assumedLaserWavelength_nm = options.LaserWavelength_Nanometer;
+
+      ConvertXAxisToNanometer(options, x, x_nm);
+
+      Array.Sort(x_nm, y); // Sort x-axis ascending
+
+      var peakOptions = options.PeakFindingOptions;
+
+      (x_nm, y, _) = peakOptions.Preprocessing.Execute(x_nm, y, null);
+      _yPreprocessed = y;
+
+      var peakSearchingResults = peakOptions.PeakSearching.Execute(y, null);
+      _peakSearchingDescriptions = peakSearchingResults[0].PeakDescriptions.ToList();
+      _peakSearchingDescriptions.Sort((a, b) => Comparer<double>.Default.Compare(a.PositionIndex, b.PositionIndex));
+
+      if (peakOptions.PeakFitting is { } peakFitting && peakOptions.PeakFitting is not PeakFitting.PeakFittingNone)
+      {
+        var peakFittingDescriptions = peakFitting.Execute(x_nm, y, peakSearchingResults);
+        _peakFittingDescriptions = peakFittingDescriptions[0].PeakDescriptions;
+      }
+
+      // The boundaries for the search in the NIST table
+      double boundaryWLSearchLeft;
+      double boundaryWLSearchRight;
+      (double WL, double Height)[] measArr;
+
+      if (_peakFittingDescriptions is not null)
+      {
+        // The boundaries for the search in the NIST table
+        boundaryWLSearchLeft = _peakFittingDescriptions[0].PositionAreaHeightFWHM.Position - options.Wavelength_Tolerance_nm;
+        boundaryWLSearchRight = _peakFittingDescriptions[^1].PositionAreaHeightFWHM.Position + options.Wavelength_Tolerance_nm;
+        measArr = _peakFittingDescriptions.Select(r => (WL: r.PositionAreaHeightFWHM.Position, r.PositionAreaHeightFWHM.Height)).ToArray();
+
+      }
+      else
+      {
+        boundaryWLSearchLeft = RMath.InterpolateLinear(_peakSearchingDescriptions[0].PositionIndex, x_nm) - options.Wavelength_Tolerance_nm;
+        boundaryWLSearchRight = RMath.InterpolateLinear(_peakSearchingDescriptions[^1].PositionIndex, x_nm) + options.Wavelength_Tolerance_nm;
+        measArr = _peakSearchingDescriptions.Select(r => (WL: RMath.InterpolateLinear(r.PositionIndex, x_nm), r.Prominence)).ToArray();
+      }
+
+      // The inner boundaries are chosen so that the left search is done for 1/4 at the left of the full range,
+      // and the right search is done for 1/4 at the right of the full range
+      double innerBoundaryWLLeft = boundaryWLSearchLeft + (boundaryWLSearchRight - boundaryWLSearchLeft) / 4.0;
+      double innerBoundaryWLRight = boundaryWLSearchRight - (boundaryWLSearchRight - boundaryWLSearchLeft) / 4.0;
+
+
+      var peaks = NeonCalibration.NistNeonPeaks
+                    .Where(pair => pair.Wavelength_Nanometer >= boundaryWLSearchLeft && pair.Wavelength_Nanometer <= boundaryWLSearchRight);
+
+      // Maximum intensity of selected Nist peaks
+      var maxIts = peaks.Select(pair => pair.Intensity).Max();
+
+      // Normalize selected Nist peaks to max. intensity of 1
+      var nistArr = peaks.Select(pair => (WL: pair.Wavelength_Nanometer, Its: pair.Intensity / maxIts)).ToArray();
+
+      var left = GetNextPeakToGreaterWavelength(nistArr, innerBoundaryWLLeft);
+      var right = GetNextPeakToLessWavelength(nistArr, innerBoundaryWLRight);
+
+      var listOfCandidates = new List<(double Sum, double NistLeft, double MeasLeft, double NistRight, double MeasRight)>();
+      for (int lr = 0; left.WL < right.WL - tolWL; ++lr)
+      {
+        // pick up peaks in measured table that are within the tolerance
+        var candidatesLeft = measArr.Where(pair => pair.WL >= left.WL - tolWL && pair.WL <= left.WL + tolWL).ToArray();
+        var candidatesRight = measArr.Where(pair => pair.WL >= right.WL - tolWL && pair.WL <= right.WL + tolWL).ToArray();
+
+        foreach (var candidateLeft in candidatesLeft)
+        {
+          foreach (var candidateRight in candidatesRight)
+          {
+            // calculate the x-axis stretching that would occur when choosing so
+            // the streching should be inside the range from 90% to 110%, otherwise it is not reasonable
+            var r = (candidateRight.WL - candidateLeft.WL) / (right.WL - left.WL);
+            if (!(r >= 0.9 && r <= 1 / 0.9))
+              continue;
+
+            // calculate correlation function
+
+            // need a function that translates real wavelength to wavelength of the measurement system, i.e.
+            // left => candLeft.WL and right => candRight.WL
+            double ConvertWavelengthNistToMeas(double x)
+            {
+              var r = (x - left.WL) / (right.WL - left.WL);
+              return (1 - r) * candidateLeft.WL + r * candidateRight.WL;
+            }
+
+            double sum = 0;
+            foreach (var nistPeak in nistArr)
+            {
+              sum += GetIntensityAtWL(x_nm, y, ConvertWavelengthNistToMeas(nistPeak.WL));
+            }
+
+            listOfCandidates.Add((sum, left.WL, candidateLeft.WL, right.WL, candidateRight.WL));
+          }
+        }
+
+        if (lr % 2 == 0)
+        {
+          left = GetNextPeakToGreaterWavelength(nistArr, left.WL);
+        }
+        else
+        {
+          right = GetNextPeakToLessWavelength(nistArr, right.WL);
+        }
+      }
+      // Sort list, so that the largest sum value (the hottest candidate) is at the top of the list
+      listOfCandidates.Sort((a, b) => Comparer<double>.Default.Compare(b.Sum, a.Sum));
+
+
+
+      return listOfCandidates.Count == 0 ? null : (listOfCandidates[0].NistLeft, listOfCandidates[0].MeasLeft, listOfCandidates[0].NistRight, listOfCandidates[0].MeasRight);
+    }
+
+
+    private static (double WL, double Its) GetNextPeakToGreaterWavelength((double WL, double Its)[] peaks, double actualWavelength)
+    {
+      for (int i = 0; i < peaks.Length; ++i)
+      {
+        if (peaks[i].WL > actualWavelength)
+          return peaks[i];
+      }
+      return (double.NaN, double.NaN);
+    }
+
+    private static (double WL, double Its) GetNextPeakToLessWavelength((double WL, double Its)[] peaks, double actualWavelength)
+    {
+      for (int i = peaks.Length - 1; i >= 0; --i)
+      {
+        if (peaks[i].WL < actualWavelength)
+          return peaks[i];
+      }
+      return (double.NaN, double.NaN);
+    }
+
+    private static double GetIntensityAtWL(double[] WL, double[] Its, double actualWavelength)
+    {
+
+      for (int i = 1; i < WL.Length; ++i)
+      {
+        if (WL[i - 1] <= actualWavelength && WL[i] > actualWavelength)
+          return Math.Max(Its[i - 1], Its[i]);
+      }
+      return 0;
+    }
+
+    private static void ConvertXAxisToNanometer(NeonCalibrationOptions options, double[] x, double[] x_nm)
+    {
+      // convert x to nanometer
+      switch (options.XAxisUnit)
+      {
+        case XAxisUnit.RelativeShiftInverseCentimeter:
+          for (int i = 0; i < x.Length; i++)
+            x_nm[i] = 1 / (1 / options.LaserWavelength_Nanometer - x[i] / 1E7);
+          break;
+        case XAxisUnit.AbsoluteWavelengthNanometer:
+          for (int i = 0; i < x.Length; i++)
+            x_nm[i] = x[i];
+          break;
+        case XAxisUnit.AbsoluteWavenumberInverseCentimeter:
+          for (int i = 0; i < x.Length; i++)
+            x_nm[i] = 1E7 / x[i];
+          break;
+        default:
+          break;
+      }
+    }
   }
 }
