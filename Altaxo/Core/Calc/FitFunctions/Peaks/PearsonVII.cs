@@ -24,7 +24,6 @@
 
 #nullable enable
 using System;
-using Altaxo.Calc.FitFunctions.Peaks;
 using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Calc.Regression.Nonlinear;
 using Altaxo.Main;
@@ -38,10 +37,11 @@ namespace Altaxo.Calc.FitFunctions.Peaks
   [FitFunctionClass]
   public class PearsonVII : IFitFunction, IFitFunctionPeak, IImmutable
   {
-    const string ParameterBaseName0 = "a";
-    const string ParameterBaseName1 = "xc";
-    const string ParameterBaseName2 = "w";
-    const string ParameterBaseName3 = "m";
+    private const string ParameterBaseName0 = "a";
+    private const string ParameterBaseName1 = "xc";
+    private const string ParameterBaseName2 = "w";
+    private const string ParameterBaseName3 = "m";
+    const int NumberOfParametersPerPeak = 4;
 
 
     /// <summary>The order of the background polynomial.</summary>
@@ -92,7 +92,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
 
     }
 
-    [FitFunctionCreator("PearsonVII", "Peaks", 1, 1, 4)]
+    [FitFunctionCreator("PearsonVII", "Peaks", 1, 1, NumberOfParametersPerPeak)]
     [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Peaks.PearsonVII}")]
     public static IFitFunction Create_1_M1()
     {
@@ -183,7 +183,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
     {
       get
       {
-        return _numberOfTerms * 4 + _orderOfBackgroundPolynomial + 1;
+        return _numberOfTerms * NumberOfParametersPerPeak + _orderOfBackgroundPolynomial + 1;
       }
     }
 
@@ -199,11 +199,11 @@ namespace Altaxo.Calc.FitFunctions.Peaks
 
     public string ParameterName(int i)
     {
-      int k = i - 4 * _numberOfTerms;
+      int k = i - NumberOfParametersPerPeak * _numberOfTerms;
       if (k < 0)
       {
-        int j = i / 4;
-        return (i % 4) switch
+        int j = i / NumberOfParametersPerPeak;
+        return (i % NumberOfParametersPerPeak) switch
         {
           0 => FormattableString.Invariant($"{ParameterBaseName0}{j}"),
           1 => FormattableString.Invariant($"{ParameterBaseName1}{j}"),
@@ -220,8 +220,8 @@ namespace Altaxo.Calc.FitFunctions.Peaks
 
     public double DefaultParameterValue(int i)
     {
-      int k = i - 4 * _numberOfTerms;
-      if (k < 0 && i % 4 == 2)
+      int k = i - NumberOfParametersPerPeak * _numberOfTerms;
+      if (k < 0 && i % NumberOfParametersPerPeak == 2)
         return 1;
       else
         return 0;
@@ -236,7 +236,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
     {
       // evaluation of gaussian terms
       double sumTerms = 0, sumPolynomial = 0;
-      for (int i = 0, j = 0; i < _numberOfTerms; ++i, j += 4)
+      for (int i = 0, j = 0; i < _numberOfTerms; ++i, j += NumberOfParametersPerPeak)
       {
         double x = (X[0] - P[j + 1]) / P[j + 2];
         sumTerms += P[j] * Math.Pow(1 + (Math.Pow(2, 1 / P[j + 3]) - 1) * RMath.Pow2(x), -P[j + 3]);
@@ -244,7 +244,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
 
       if (_orderOfBackgroundPolynomial >= 0)
       {
-        int offset = 4 * _numberOfTerms;
+        int offset = NumberOfParametersPerPeak * _numberOfTerms;
         // evaluation of terms x^0 .. x^n
         sumPolynomial = P[_orderOfBackgroundPolynomial + offset];
         for (int i = _orderOfBackgroundPolynomial - 1; i >= 0; i--)
@@ -271,8 +271,8 @@ namespace Altaxo.Calc.FitFunctions.Peaks
       if (!(relativeHeight > 0 && relativeHeight < 1))
         throw new ArgumentException("RelativeHeight should be in the open interval (0,1)", nameof(relativeHeight));
 
-      var w = Math.Abs(0.5* width * Math.Sqrt(relativeHeight/(1-relativeHeight)));
-      return new double[4] { height, position, w, 1 }; // Parameters for the Lorentz limit
+      var w = Math.Abs(0.5 * width * Math.Sqrt(relativeHeight / (1 - relativeHeight)));
+      return new double[NumberOfParametersPerPeak] { height, position, w, 1 }; // Parameters for the Lorentz limit
     }
 
     /// <inheritdoc/>
@@ -287,23 +287,25 @@ namespace Altaxo.Calc.FitFunctions.Peaks
     /// <inheritdoc/>
     public (double Position, double Area, double Height, double FWHM) GetPositionAreaHeightFWHMFromSinglePeakParameters(double[] parameters)
     {
-      if (parameters is null || parameters.Length != 4)
+      if (parameters is null || parameters.Length != NumberOfParametersPerPeak)
         throw new ArgumentException(nameof(parameters));
 
-      var area = parameters[0];
+      var height = parameters[0];
       var pos = parameters[1];
-      var height = parameters[0] * Altaxo.Calc.ComplexErrorFunctionRelated.Voigt(0, parameters[2], parameters[3]);
-      var fwhm = 2 * Altaxo.Calc.ComplexErrorFunctionRelated.VoigtHalfWidthHalfMaximum(parameters[2], parameters[3]);
+      var w = Math.Abs(parameters[2]);
+      var m = parameters[3];
+      double fwhm = 2 * w;
+      double area = height * w * Math.Sqrt(1 / (Math.Pow(2, 1 / m) - 1)) * GammaRelated.Beta(m - 0.5, 0.5);
 
       return (pos, area, height, fwhm);
     }
 
-    static double SafeSqrt(double x) => Math.Sqrt(Math.Max(0, x));
+    private static double SafeSqrt(double x) => Math.Sqrt(Math.Max(0, x));
 
     public (double Position, double PositionVariance, double Area, double AreaVariance, double Height, double HeightVariance, double FWHM, double FWHMVariance)
       GetPositionAreaHeightFWHMFromSinglePeakParameters(double[] parameters, IROMatrix<double> cv)
     {
-      if (parameters is null || parameters.Length != 4)
+      if (parameters is null || parameters.Length != NumberOfParametersPerPeak)
         throw new ArgumentException(nameof(parameters));
 
 
@@ -315,25 +317,42 @@ namespace Altaxo.Calc.FitFunctions.Peaks
       var heightVariance = cv is null ? 0 : Math.Sqrt(cv[0, 0]);
       var posVariance = cv is null ? 0 : Math.Sqrt(cv[1, 1]);
 
-      double fwhm=2*w;
-      double fwhmVariance = cv is null ? 0 : 2 * Math.Sqrt(cv[2,2]);
+      double fwhm = 2 * w;
+      double fwhmVariance = cv is null ? 0 : 2 * Math.Sqrt(cv[2, 2]);
 
-      double area = height * w * Math.Sqrt(Math.PI/(Math.Pow(2, 1/m)-1)) * GammaRelated.Gamma(m-0.5)/GammaRelated.Gamma(m);
+      double area = height * w * Math.Sqrt(1 / (Math.Pow(2, 1 / m) - 1)) * GammaRelated.Beta(m - 0.5, 0.5);
       double areaVariance = 0;
+
       if (cv is not null)
       {
+        var deriv = new double[NumberOfParametersPerPeak];
+        var resVec = new DoubleVector(NumberOfParametersPerPeak);
+
+        var betaTerm = GammaRelated.Beta(m - 0.5, 0.5);
+        var powTerm = Math.Sqrt(Math.Pow(2, 1 / m) - 1);
+        double digammaMminus0p5 = SpecialFunctions.DiGamma(m - 0.5);
+        double digammaM = SpecialFunctions.DiGamma(m);
+
+        deriv[0] = w * betaTerm / powTerm;
+        deriv[1] = 0;
+        deriv[2] = height * deriv[0];
+        deriv[3] = height * w * betaTerm * (Math.Log(2) * Math.Pow(2, 1 / m) + 2 * powTerm * powTerm * m * m * (digammaMminus0p5 - digammaM)) / (m * powTerm * powTerm * powTerm);
+        MatrixMath.Multiply(cv, deriv, resVec);
+        areaVariance = SafeSqrt(VectorMath.DotProduct(deriv, resVec));
+
+        /*
         // calculation of the area variance
         double gammaMminus0p5 = GammaRelated.Gamma(m - 0.5);
         double gammaM = GammaRelated.Gamma(m);
         double gammaMplus1 = GammaRelated.Gamma(m + 1);
-        double digammaMminus0p5 = SpecialFunctions.DiGamma(m - 0.5);
-        double digammaM = SpecialFunctions.DiGamma(m);
         double TwoBy1ByM = Math.Pow(2, 1 / m);
 
         areaVariance =
           (Math.PI * RMath.Pow2(gammaMminus0p5) * (4 * RMath.Pow2(-1 + TwoBy1ByM) * RMath.Pow4(m) * (RMath.Pow2(height) * cv[2, 2] + height * (cv[0, 2] + cv[2, 0]) * w + cv[0, 0] * RMath.Pow2(w)) * RMath.Pow2(gammaM) +
          2 * (-1 + TwoBy1ByM) * height * w * (height * (cv[2, 3] + cv[3, 2]) + (cv[0, 3] + cv[3, 0]) * w) * RMath.Pow2(gammaMplus1) * (TwoBy1ByM * Math.Log(2) + 2 * (-1 + TwoBy1ByM) * RMath.Pow2(m) * (digammaMminus0p5 - digammaM)) +
          RMath.Pow2(height) * cv[3, 3] * RMath.Pow2(w) * RMath.Pow2(gammaM) * RMath.Pow2(TwoBy1ByM * Math.Log(2) + 2 * (-1 + TwoBy1ByM) * RMath.Pow2(m) * (digammaMminus0p5 - digammaM)))) / (4 * RMath.Pow3(-1 + TwoBy1ByM) * RMath.Pow4(gammaMplus1));
+        */
+
       }
 
       return (pos, posVariance, area, areaVariance, height, heightVariance, fwhm, fwhmVariance);
