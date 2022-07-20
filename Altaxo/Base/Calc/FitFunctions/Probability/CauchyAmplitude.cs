@@ -24,6 +24,8 @@
 
 #nullable enable
 using System;
+using Altaxo.Calc.FitFunctions.Peaks;
+using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Calc.Regression.Nonlinear;
 using Altaxo.Main;
 
@@ -39,8 +41,13 @@ namespace Altaxo.Calc.FitFunctions.Probability
   /// </remarks>
   [FitFunctionClass]
   public class CauchyAmplitude
-        : IFitFunctionWithGradient, IImmutable
+        : IFitFunctionWithGradient, IFitFunctionPeak, IImmutable
   {
+    const string ParameterBaseName0 = "a";
+    const string ParameterBaseName1 = "xc";
+    const string ParameterBaseName2 = "w";
+    const int NumberOfParametersPerPeak = 3;
+
     /// <summary>The number of Lorentzian (Cauchy) terms.</summary>
     private readonly int _numberOfTerms;
 
@@ -75,7 +82,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
     public CauchyAmplitude()
     {
       _numberOfTerms = 1;
-      _orderOfBackgroundPolynomial = 0;
+      _orderOfBackgroundPolynomial = -1;
     }
 
     public CauchyAmplitude(int numberOfTerms, int orderOfBackgroundPolynomial)
@@ -169,7 +176,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
     {
       get
       {
-        return _numberOfTerms * 3 + _orderOfBackgroundPolynomial + 1;
+        return _numberOfTerms * NumberOfParametersPerPeak + _orderOfBackgroundPolynomial + 1;
       }
     }
 
@@ -185,15 +192,15 @@ namespace Altaxo.Calc.FitFunctions.Probability
 
     public string ParameterName(int i)
     {
-      int k = i - 3 * _numberOfTerms;
+      int k = i - NumberOfParametersPerPeak * _numberOfTerms;
       if (k < 0)
       {
-        int j = i / 3;
-        return (i % 3) switch
+        int j = i / NumberOfParametersPerPeak;
+        return (i % NumberOfParametersPerPeak) switch
         {
-          0 => FormattableString.Invariant($"a{j}"),
-          1 => FormattableString.Invariant($"xc{j}"),
-          2 => FormattableString.Invariant($"w{j}"),
+          0 => FormattableString.Invariant($"{ParameterBaseName0}{j}"),
+          1 => FormattableString.Invariant($"{ParameterBaseName1}{j}"),
+          2 => FormattableString.Invariant($"{ParameterBaseName2}{j}"),
           _ => throw new InvalidProgramException()
         };
       }
@@ -205,8 +212,8 @@ namespace Altaxo.Calc.FitFunctions.Probability
 
     public double DefaultParameterValue(int i)
     {
-      int k = i - 3 * _numberOfTerms;
-      if (k < 0 && i % 3 == 2)
+      int k = i - NumberOfParametersPerPeak * _numberOfTerms;
+      if (k < 0 && i % NumberOfParametersPerPeak == 2)
         return 1;
       else
         return 0;
@@ -221,7 +228,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
     {
       // evaluation of terms
       double sumTerms = 0, sumPolynomial = 0;
-      for (int i = 0, j = 0; i < _numberOfTerms; ++i, j += 3)
+      for (int i = 0, j = 0; i < _numberOfTerms; ++i, j += NumberOfParametersPerPeak)
       {
         double x = (X[0] - P[j + 1]) / P[j + 2];
         sumTerms += P[j] / (1 + x * x);
@@ -229,7 +236,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
 
       if (_orderOfBackgroundPolynomial >= 0)
       {
-        int offset = 3 * _numberOfTerms;
+        int offset = NumberOfParametersPerPeak * _numberOfTerms;
         // evaluation of terms x^0 .. x^n
         sumPolynomial = P[_orderOfBackgroundPolynomial + offset];
         for (int i = _orderOfBackgroundPolynomial - 1; i >= 0; i--)
@@ -251,7 +258,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
     public void EvaluateGradient(double[] X, double[] P, double[][] DY)
     {
       // at first, the gaussian terms
-      for (int i = 0, j = 0; i < _numberOfTerms; ++i, j += 3)
+      for (int i = 0, j = 0; i < _numberOfTerms; ++i, j += NumberOfParametersPerPeak)
       {
         var x = (X[0] - P[j + 1]) / P[j + 2];
         var term = 1 / (1 + x * x);
@@ -263,12 +270,63 @@ namespace Altaxo.Calc.FitFunctions.Probability
       if (_orderOfBackgroundPolynomial >= 0)
       {
         double xn = 1;
-        for (int i = 0, j = 3 * _numberOfTerms; i <= _orderOfBackgroundPolynomial; ++i, ++j)
+        for (int i = 0, j = NumberOfParametersPerPeak * _numberOfTerms; i <= _orderOfBackgroundPolynomial; ++i, ++j)
         {
           DY[0][j] = xn;
           xn *= X[0];
         }
       }
+    }
+
+    /// <inheritdoc/>
+    public string[] ParameterNamesForOnePeak => new string[] { ParameterBaseName0, ParameterBaseName1, ParameterBaseName2};
+
+
+    /// <inheritdoc/>
+    IFitFunctionPeak IFitFunctionPeak.WithNumberOfTerms(int numberOfTerms)
+    {
+      return new CauchyAmplitude(numberOfTerms, this.OrderOfBackgroundPolynomial);
+    }
+
+    /// <inheritdoc/>
+    public double[] GetInitialParametersFromHeightPositionAndWidthAtRelativeHeight(double height, double position, double width, double relativeHeight)
+    {
+      var result = new double[NumberOfParametersPerPeak];
+      result[0] = height;
+      result[1] = position;
+      result[2] = 0.5*width * Math.Sqrt(relativeHeight / (1 - relativeHeight));
+      return result;
+    }
+
+    /// <inheritdoc/>
+    public (double Position, double Area, double Height, double FWHM) GetPositionAreaHeightFWHMFromSinglePeakParameters(double[] parameters)
+    {
+      var height = parameters[0];
+      var pos = parameters[1];
+      var area = height * Math.PI * parameters[2];
+      var fwhm = 2 * parameters[2];
+      return (pos, area, height, fwhm);
+    }
+
+    /// <inheritdoc/>
+    public (double Position, double PositionVariance, double Area, double AreaVariance, double Height, double HeightVariance, double FWHM, double FWHMVariance) GetPositionAreaHeightFWHMFromSinglePeakParameters(double[] parameters, IROMatrix<double>? cv)
+    {
+      var height = parameters[0];
+      var pos = parameters[1];
+      var w = parameters[2];
+      var area = height * Math.PI * parameters[2];
+      var fwhm = 2 * parameters[2];
+
+      double posVariance=0, areaVariance=0, heightVariance=0, fwhmVariance=0;
+      if(cv is not null)
+      {
+        heightVariance = Math.Sqrt(cv[0, 0]);
+        posVariance = Math.Sqrt(cv[1, 1]);
+        fwhmVariance = 2*Math.Sqrt(cv[2, 2]);
+        areaVariance = Math.PI*Math.Sqrt(height*height*cv[2,2] + height*w*(cv[2,0]+cv[0,2]) + w*w*cv[0,0]);
+      }
+
+      return (pos, posVariance, area, areaVariance, height, heightVariance, fwhm, fwhmVariance);
     }
   }
 }
