@@ -32,11 +32,11 @@ namespace Altaxo.Calc.FitFunctions.Peaks
 {
   /// <summary>
   /// Fit fuction with one or more PearsonIV shaped peaks, with a background polynomial
-  /// of variable order.
+  /// of variable order. The PearsonIV is relocated and scaled, so that the amplitude parameter is the maximum height of the peak, and the position parameter is the x-value of the maximum.
   /// </summary>
   /// <remarks>See <see href="https://en.wikipedia.org/wiki/Pearson_distribution#The_Pearson_type_IV_distribution"/>.</remarks>
   [FitFunctionClass]
-  public class PearsonIV : IFitFunction, IFitFunctionPeak, IImmutable
+  public class PearsonIVAmplitude : IFitFunction, IFitFunctionPeak, IImmutable
   {
     const string ParameterBaseName0 = "a";
     const string ParameterBaseName1 = "xc";
@@ -56,12 +56,12 @@ namespace Altaxo.Calc.FitFunctions.Peaks
     /// <summary>
     /// 2022-07-20 Initial version
     /// </summary>
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PearsonIV), 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PearsonIVAmplitude), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (PearsonIV)obj;
+        var s = (PearsonIVAmplitude)obj;
         info.AddValue("NumberOfTerms", s._numberOfTerms);
         info.AddValue("OrderOfBackgroundPolynomial", s._orderOfBackgroundPolynomial);
       }
@@ -70,19 +70,19 @@ namespace Altaxo.Calc.FitFunctions.Peaks
       {
         var numberOfTerms = info.GetInt32("NumberOfTerms");
         var orderOfBackgroundPolynomial = info.GetInt32("OrderOfBackgroundPolynomial");
-        return new PearsonIV(numberOfTerms, orderOfBackgroundPolynomial);
+        return new PearsonIVAmplitude(numberOfTerms, orderOfBackgroundPolynomial);
       }
     }
 
     #endregion Serialization
 
-    public PearsonIV()
+    public PearsonIVAmplitude()
     {
       _numberOfTerms = 1;
       _orderOfBackgroundPolynomial = -1;
     }
 
-    public PearsonIV(int numberOfTerms, int orderOfBackgroundPolynomial)
+    public PearsonIVAmplitude(int numberOfTerms, int orderOfBackgroundPolynomial)
     {
       _numberOfTerms = numberOfTerms;
       _orderOfBackgroundPolynomial = orderOfBackgroundPolynomial;
@@ -94,11 +94,11 @@ namespace Altaxo.Calc.FitFunctions.Peaks
 
     }
 
-    [FitFunctionCreator("PearsonIV", "Peaks", 1, 1, NumberOfParametersPerPeak)]
-    [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Peaks.PearsonIV}")]
+    [FitFunctionCreator("PearsonIVAmplitude", "Peaks", 1, 1, NumberOfParametersPerPeak)]
+    [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Peaks.PearsonIVAmplitude}")]
     public static IFitFunction Create_1_M1()
     {
-      return new PearsonIV(1, -1);
+      return new PearsonIVAmplitude(1, -1);
     }
 
     /// <summary>
@@ -116,14 +116,14 @@ namespace Altaxo.Calc.FitFunctions.Peaks
     /// </summary>
     /// <param name="orderOfBackgroundPolynomial">The order of the background polynomial. If set to -1, the background polynomial will be disabled.</param>
     /// <returns>New instance with the background polynomial of the provided order.</returns>
-    public PearsonIV WithOrderOfBackgroundPolynomial(int orderOfBackgroundPolynomial)
+    public PearsonIVAmplitude WithOrderOfBackgroundPolynomial(int orderOfBackgroundPolynomial)
     {
       if (!(orderOfBackgroundPolynomial >= -1))
         throw new ArgumentOutOfRangeException($"{nameof(orderOfBackgroundPolynomial)} must be greater than or equal to 0, or -1 in order to deactivate it.");
 
       if (!(_orderOfBackgroundPolynomial == orderOfBackgroundPolynomial))
       {
-        return new PearsonIV(_numberOfTerms, orderOfBackgroundPolynomial);
+        return new PearsonIVAmplitude(_numberOfTerms, orderOfBackgroundPolynomial);
       }
       else
       {
@@ -141,14 +141,14 @@ namespace Altaxo.Calc.FitFunctions.Peaks
     /// </summary>
     /// <param name="numberOfTerms">The number of Lorentzian (Cauchy) terms (should be greater than or equal to 1).</param>
     /// <returns>New instance with the provided number of Lorentzian (Cauchy) terms.</returns>
-    public PearsonIV WithNumberOfTerms(int numberOfTerms)
+    public PearsonIVAmplitude WithNumberOfTerms(int numberOfTerms)
     {
       if (!(numberOfTerms >= 1))
         throw new ArgumentOutOfRangeException($"{nameof(numberOfTerms)} must be greater than or equal to 1");
 
       if (!(_numberOfTerms == numberOfTerms))
       {
-        return new PearsonIV(numberOfTerms, _orderOfBackgroundPolynomial);
+        return new PearsonIVAmplitude(numberOfTerms, _orderOfBackgroundPolynomial);
       }
       else
       {
@@ -234,8 +234,10 @@ namespace Altaxo.Calc.FitFunctions.Peaks
       double sumTerms = 0, sumPolynomial = 0;
       for (int i = 0, j = 0; i < _numberOfTerms; ++i, j += NumberOfParametersPerPeak)
       {
-        double x = (X[0] - P[j + 1]) / P[j + 2];
-        sumTerms += P[j] * Math.Pow(1 + RMath.Pow2(x), -P[j + 3]) * Math.Exp(-P[j + 4] * Math.Atan(x));
+        double z0 = -P[j + 4] / (2 * P[j + 3]);
+        double z = (X[0] - P[j + 1]) / P[j + 2] + z0;
+        sumTerms += P[j] * Math.Pow((1 + z*z)/(1+z0*z0), -P[j + 3]) *
+          Math.Exp(-P[j + 4] * (Math.Atan(z)-Math.Atan(z0)));
       }
 
       if (_orderOfBackgroundPolynomial >= 0)
@@ -274,99 +276,19 @@ namespace Altaxo.Calc.FitFunctions.Peaks
     /// <inheritdoc/>
     IFitFunctionPeak IFitFunctionPeak.WithNumberOfTerms(int numberOfTerms)
     {
-      return new PearsonIV(numberOfTerms, this.OrderOfBackgroundPolynomial);
+      return new PearsonIVAmplitude(numberOfTerms, this.OrderOfBackgroundPolynomial);
     }
 
     /// <inheritdoc/>
     public string[] ParameterNamesForOnePeak => new string[] { ParameterBaseName0, ParameterBaseName1, ParameterBaseName2, ParameterBaseName3, ParameterBaseName4 };
 
-    /*
-    /// <summary>
-    /// Gets the half width half maximum of a given side of the peak.
-    /// </summary>
-    /// <param name="w">The width parameter.</param>
-    /// <param name="m">The m parameter.</param>
-    /// <param name="v">The v parameter.</param>
-    /// <param name="rightSide">If set to <c>true</c>, the HWHM of the right side of the peak is determined; otherwise, the HWMH of the left side is determined.</param>
-    /// <returns></returns>
-    public static double GetHWHM1(double w, double m, double v, bool rightSide)
-    {
-      w = Math.Abs(w);
-      var sign = rightSide ? 1 : -1;
-      double zmax = -v / (2 * m);
-      double ymax = Math.Pow(1 + zmax*zmax, -m) * Math.Exp(-v * Math.Atan(zmax));
-      double ymaxHalf = ymax / 2;
-
-      var zapp = zmax + sign* Math.Sqrt(Math.Pow(2, m) - 1);
-      double y = Math.Pow(1 + zapp * zapp, -m) * Math.Exp(-v * Math.Atan(zapp));
-    }
-    */
-
-    /// <summary>
-    /// Gets the half width half maximum of a given side of the peak.
-    /// </summary>
-    /// <param name="w">The width parameter.</param>
-    /// <param name="m">The m parameter.</param>
-    /// <param name="v">The v parameter.</param>
-    /// <param name="rightSide">If set to <c>true</c>, the HWHM of the right side of the peak is determined; otherwise, the HWMH of the left side is determined.</param>
-    /// <returns></returns>
-    public static double GetHWHM(double w, double m, double v, bool rightSide)
-    {
-      w = Math.Abs(w);
-      var sign = rightSide ? 1 : -1;
-      double xmax = -v * w / (2 * m);
-      double ymax = Math.Pow(1 + RMath.Pow2(v / (2 * m)), -m) * Math.Exp(-v * Math.Atan(-v / (2 * m)));
-      double ymaxHalf = ymax / 2;
-
-      // goto the left in steps of w, until the amplitude falls below ymaxHalf
-      double xNear = xmax;
-      double xFar;
-      for (xFar = xmax + sign*w; ; xFar += sign * w)
-      {
-        var y = Math.Pow(1 + RMath.Pow2(xFar / w), -m) * Math.Exp(-v * Math.Atan(xFar / w));
-        if (y < ymaxHalf)
-          break;
-        else
-          xNear = xFar;
-      }
-
-      if (xNear > xFar)
-      {
-        (xNear, xFar) = (xFar, xNear);
-      }
-
-      // now make a bisection
-      var rootFinder = new Altaxo.Calc.RootFinding.BisectionRootFinder(x => ymaxHalf - Math.Pow(1 + RMath.Pow2(x / w), -m) * Math.Exp(-v * Math.Atan(x / w)));
-      var xfound = rootFinder.Solve(xNear, xFar, false);
-      return Math.Abs(xfound - xmax);
-    }
-
     /// <inheritdoc/>
     public (double Position, double Area, double Height, double FWHM) GetPositionAreaHeightFWHMFromSinglePeakParameters(double[] parameters)
     {
-      if (parameters is null || parameters.Length != NumberOfParametersPerPeak)
-        throw new ArgumentException(nameof(parameters));
+      var result = GetPositionAreaHeightFWHMFromSinglePeakParameters(parameters, null);
 
-      var amp = parameters[0];
-      var loc = parameters[1];
-      var w = parameters[2];
-      var m = parameters[3];
-      var v = parameters[4];
-
-      var xmax = loc - v * w / (2 * m);
-      var ymax = amp * Math.Pow(1 + RMath.Pow2(-v / (2 * m)), -m) * Math.Exp(-v * Math.Atan(-v / (2 * m)));
-
-
-      var area = (amp * w * Altaxo.Calc.GammaRelated.Beta(m - 0.5, 0.5)) /
-                (Altaxo.Calc.GammaRelated.Gamma(new Altaxo.Calc.Complex(m, v / 2)) / Altaxo.Calc.GammaRelated.Gamma(m)).GetModulusSquared();
-      var pos = xmax;
-      var height = ymax;
-      var fwhm = GetHWHM(w, m, v, true) + GetHWHM(w, m, v, false);
-
-      return (pos, area, height, fwhm);
+      return (result.Position, result.Area, result.Height, result.FWHM);
     }
-
-
 
     static double SafeSqrt(double x) => Math.Sqrt(Math.Max(0, x));
 
@@ -382,14 +304,9 @@ namespace Altaxo.Calc.FitFunctions.Peaks
       var m = parameters[3];
       var v = parameters[4];
 
-      var xmax = loc - v * w / (2 * m);
-      var ymax = amp * Math.Pow(1 + RMath.Pow2(-v / (2 * m)), -m) * Math.Exp(-v * Math.Atan(-v / (2 * m)));
-
-
-      var area = (amp * w * Altaxo.Calc.GammaRelated.Beta(m - 0.5, 0.5)) /
-                (Altaxo.Calc.GammaRelated.Gamma(new Altaxo.Calc.Complex(m, v / 2)) / Altaxo.Calc.GammaRelated.Gamma(m)).GetModulusSquared();
-      var pos = xmax;
-      var height = ymax;
+      var area = GetArea(amp, w, m, v);
+      var pos = loc;
+      var height = amp;
       var fwhm = GetHWHM(w, m, v, true) + GetHWHM(w, m, v, false);
 
       double posVariance = 0, areaVariance = 0, heightVariance = 0, fwhmVariance = 0;
@@ -400,35 +317,20 @@ namespace Altaxo.Calc.FitFunctions.Peaks
         var resVec = new DoubleVector(5);
 
         // PositionVariance
-        deriv[0] = 0;
-        deriv[1] = 1;
-        deriv[2] = -v / (2 * m);
-        deriv[3] = v * w / (2 * m * m);
-        deriv[4] = -w / (2 * m);
-        MatrixMath.Multiply(cv, deriv, resVec);
-        posVariance = SafeSqrt(VectorMath.DotProduct(deriv, resVec));
-
-        var expTerm = Math.Exp(-v * Math.Atan(-v / (2 * m)));
-        var powTerm = Math.Pow(1 + RMath.Pow2(-v / (2 * m)), -m);
+        posVariance = SafeSqrt(cv[1, 1]);
 
         // Height variance
-        deriv[0] = powTerm * expTerm;
-        deriv[1] = 0;
-        deriv[2] = 0;
-        deriv[3] = amp * powTerm * expTerm * 2 * v * v * (v - m);
-        deriv[4] = amp * powTerm * expTerm * (2 * (m - v) * v + (4 * m * m + v * v) * (-Math.Atan(-v / (2 * m)) - Math.Log(1 + v * v / (4 * m * m)))) / (4 * m * m + v * v);
-        MatrixMath.Multiply(cv, deriv, resVec);
-        heightVariance = SafeSqrt(VectorMath.DotProduct(deriv, resVec));
+        heightVariance = SafeSqrt(cv[0,0]);
 
         // Area variance
-        deriv[0] = GetArea(1, pos, w, m, v);
+        deriv[0] = GetArea(1, w, m, v);
         deriv[1] = 0;
         double absDelta = w * 1E-5;
-        deriv[2] = (GetArea(amp, pos, w + absDelta, m, v) - GetArea(amp, pos, w - absDelta, m, v)) / (2 * absDelta);
+        deriv[2] = (GetArea(amp, w + absDelta, m, v) - GetArea(amp, w - absDelta, m, v)) / (2 * absDelta);
         absDelta = m * 1E-5;
-        deriv[3] = (GetArea(amp, pos, w, m + absDelta, v) - GetArea(amp, pos, w, m - absDelta, v)) / (2 * absDelta);
+        deriv[3] = (GetArea(amp, w, m + absDelta, v) - GetArea(amp, w, m - absDelta, v)) / (2 * absDelta);
         absDelta = v == 0 ? 1E-5 : Math.Abs(v * 1E-5);
-        deriv[4] = (GetArea(amp, pos, w, m, v + absDelta) - GetArea(amp, pos, w, m, v - absDelta)) / (2 * absDelta);
+        deriv[4] = (GetArea(amp, w, m, v + absDelta) - GetArea(amp, w, m, v - absDelta)) / (2 * absDelta);
         MatrixMath.Multiply(cv, deriv, resVec);
         areaVariance = SafeSqrt(VectorMath.DotProduct(deriv, resVec));
 
@@ -436,11 +338,11 @@ namespace Altaxo.Calc.FitFunctions.Peaks
         deriv[0] = 0;
         deriv[1] = 0;
         absDelta = w * 1E-5;
-        deriv[2] = (GetFWHM(amp, pos, w, m + absDelta, v) - GetFWHM(amp, pos, w, m - absDelta, v)) / (2 * absDelta);
+        deriv[2] = (GetFWHM(w + absDelta, m, v) - GetFWHM(w - absDelta, m, v)) / (2 * absDelta);
         absDelta = m * 1E-5;
-        deriv[3] = (GetFWHM(amp, pos, w, m + absDelta, v) - GetFWHM(amp, pos, w, m - absDelta, v)) / (2 * absDelta);
+        deriv[3] = (GetFWHM(w, m + absDelta, v) - GetFWHM(w, m - absDelta, v)) / (2 * absDelta);
         absDelta = v == 0 ? 1E-5 : Math.Abs(v * 1E-5);
-        deriv[4] = (GetFWHM(amp, pos, w, m, v + absDelta) - GetFWHM(amp, pos, w, m, v - absDelta)) / (2 * absDelta);
+        deriv[4] = (GetFWHM(w, m, v + absDelta) - GetFWHM(w, m, v - absDelta)) / (2 * absDelta);
         MatrixMath.Multiply(cv, deriv, resVec);
         fwhmVariance = SafeSqrt(VectorMath.DotProduct(deriv, resVec));
       }
@@ -448,15 +350,127 @@ namespace Altaxo.Calc.FitFunctions.Peaks
       return (pos, posVariance, area, areaVariance, height, heightVariance, fwhm, fwhmVariance);
     }
 
-    private double GetArea(double amp, double pos, double w, double m, double v)
+    /// <summary>
+    /// Gets the area under the peak.
+    /// </summary>
+    /// <param name="amp">The amplitude parameter.</param>
+    /// <param name="w">The width parameter.</param>
+    /// <param name="m">The m exponent.</param>
+    /// <param name="v">The skewness parameter.</param>
+    /// <returns>The area under the peak.</returns>
+    public static double GetArea(double amp, double w, double m, double v)
     {
-      return (amp * w * GammaRelated.Beta(m - 0.5, 0.5)) /
-          (GammaRelated.Gamma(new Altaxo.Calc.Complex(m, v / 2)) /GammaRelated.Gamma(m)).GetModulusSquared();
+      var lnresult1 = (2 * GammaRelated.LnGamma(m) -
+                    GammaRelated.LnGamma(new Altaxo.Calc.Complex(m, v / 2))  -
+                    GammaRelated.LnGamma(new Altaxo.Calc.Complex(m, -v / 2))).Re;
+
+      var z0 = -v / (2 * m);
+
+      var lnresult2 = v * Math.Atan(z0);
+
+      var lnresult3 = m * Math.Log(1 + z0 * z0) + Math.Log(GammaRelated.Beta(m-0.5,0.5));
+
+      return amp*w*Math.Exp(lnresult1 + lnresult2 + lnresult3);
     }
 
-    private double GetFWHM(double amp, double pos, double w, double m, double v)
+    /// <summary>
+    /// Gets the full width half maximum (FWHM)
+    /// </summary>
+    /// <param name="w">The width parameter.</param>
+    /// <param name="m">The m exponent.</param>
+    /// <param name="v">The skewness parameter.</param>
+    /// <returns>The FWHM of the peak.</returns>
+    public static double GetFWHM(double w, double m, double v)
     {
       return GetHWHM(w, m, v, true) + GetHWHM(w, m, v, false);
+    }
+
+    /// <summary>
+    /// Gets the half width half maximum of a given side of the peak.
+    /// </summary>
+    /// <param name="w">The width parameter.</param>
+    /// <param name="m">The m parameter.</param>
+    /// <param name="v">The v parameter.</param>
+    /// <param name="rightSide">If set to <c>true</c>, the HWHM of the right side of the peak is determined; otherwise, the HWMH of the left side is determined.</param>
+    /// <returns>The half width half maximum of the given side of the peak. The returned value is always positive.</returns>
+    /// <remarks>Newton-Raphson iteration is used to calculate HWMH, because a analytical formula is not available.</remarks>
+    public static double GetHWHM(double w, double m, double v, bool rightSide)
+    {
+      w = Math.Abs(w);
+      var sign = rightSide ? 1 : -1;
+      double z0 = -v / (2 * m);
+      double OnePlusZ0S = 1 + z0 * z0;
+      double AtanZ0 = Math.Atan(z0);
+
+      double funcsimp(double z, double m, double v)
+      {
+        var zs = z + z0;
+        return Math.Pow((1 + zs * zs) / OnePlusZ0S, -m) * Math.Exp(-v * (Math.Atan(zs) - AtanZ0)) - 0.5;
+      }
+
+      double dervsimp(double z, double m, double v)
+      {
+        var zs = z + z0;
+        return -Math.Pow((1 + zs * zs) / OnePlusZ0S, -1 - m) * (v + 2 * m * zs) * Math.Exp(-v * (Math.Atan(zs) - AtanZ0)) / OnePlusZ0S;
+      }
+
+
+      // go forward in exponentially increasing steps, until the amplitude falls below ymaxHalf, in order to bracked the solution
+      double zNear = 0;
+      double zFar;
+      for (double d = 1; ; d *= 2)
+      {
+        zFar = d * sign;
+        var y = funcsimp(zFar, m, v);
+        if (y < 0)
+          break;
+        else
+          zNear = zFar;
+      }
+      if (zNear > zFar)
+      {
+        (zNear, zFar) = (zFar, zNear);
+      }
+
+
+      // use Newton-Raphson to refine the result
+      double z = 0.5 * (zNear + zFar); // starting value
+      double funcVal;
+      int i;
+      for (i = 40; i > 0; --i)
+      {
+        funcVal = funcsimp(z, m, v);
+        if(rightSide)
+        {
+          if (funcVal > 0 && z > zNear)
+            zNear = z;
+          if (funcVal < 0 && z < zFar)
+            zFar = z;
+        }
+        else // leftSide
+        {
+          if (funcVal < 0 && z > zNear)
+            zNear = z;
+          if (funcVal > 0 && z < zFar)
+            zFar = z;
+        }
+
+        var dz = funcVal / dervsimp(z, m, v);
+        var znext = z - dz;
+        if (znext <= zNear)
+          znext = (z + zNear) / 2;
+        else if (znext >= zFar)
+          znext = (z + zFar) / 2;
+
+        if (z == znext)
+          break;
+
+        z = znext;
+
+        if (Math.Abs(dz) < 1E-15 * Math.Abs(z))
+          break;
+      }
+      return Math.Abs(z * w);
     }
   }
 }

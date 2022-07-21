@@ -335,8 +335,8 @@ namespace Altaxo.Calc.FitFunctions.Peaks
 
         deriv[0] = w * betaTerm / powTerm;
         deriv[1] = 0;
-        deriv[2] = height * deriv[0];
-        deriv[3] = height * w * betaTerm * (Math.Log(2) * Math.Pow(2, 1 / m) + 2 * powTerm * powTerm * m * m * (digammaMminus0p5 - digammaM)) / (m * powTerm * powTerm * powTerm);
+        deriv[2] = height * betaTerm / powTerm;
+        deriv[3] = height * w * GammaRelated.Beta(m - 0.5, 1.5) * (Math.Log(2) * Math.Pow(2, 1 / m) + 2 * powTerm * powTerm * m * m * (digammaMminus0p5 - digammaM)) / (m * powTerm * powTerm * powTerm);
         MatrixMath.Multiply(cv, deriv, resVec);
         areaVariance = SafeSqrt(VectorMath.DotProduct(deriv, resVec));
 
