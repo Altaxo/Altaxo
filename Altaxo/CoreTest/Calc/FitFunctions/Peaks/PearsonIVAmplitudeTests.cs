@@ -28,7 +28,7 @@ using Xunit;
 
 namespace Altaxo.Calc.FitFunctions.Peaks
 {
-  public class PearsonIVModTests
+  public class PearsonIVAmplitudeTests
   {
     [Fact]
     public void TestDerivatives1()
@@ -113,8 +113,8 @@ namespace Altaxo.Calc.FitFunctions.Peaks
        left = PearsonIVAmplitude.GetHWHM(w, m, v, false);
        right = PearsonIVAmplitude.GetHWHM(w, m, v, true);
 
-      AssertEx.AreEqual(0.55376556020520717, left, 1E-15, 2E-15);
-      AssertEx.AreEqual(0.5869027590038256, right, 1E-15, 2E-15);
+      AssertEx.AreEqual(0.5537655602052538, left, 1E-15, 2E-15);
+      AssertEx.AreEqual(0.58690275900381228, right, 1E-15, 2E-15);
     }
 
     [Fact]

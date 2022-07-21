@@ -236,8 +236,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
       {
         double z0 = -P[j + 4] / (2 * P[j + 3]);
         double z = (X[0] - P[j + 1]) / P[j + 2] + z0;
-        sumTerms += P[j] * Math.Pow((1 + z*z)/(1+z0*z0), -P[j + 3]) *
-          Math.Exp(-P[j + 4] * (Math.Atan(z)-Math.Atan(z0)));
+        sumTerms += P[j] * Math.Exp(-P[j + 3] * Math.Log((1 + z * z) / (1 + z0 * z0)) - P[j + 4] * (Math.Atan(z)-Math.Atan(z0)) );
       }
 
       if (_orderOfBackgroundPolynomial >= 0)
@@ -405,13 +404,13 @@ namespace Altaxo.Calc.FitFunctions.Peaks
       double funcsimp(double z, double m, double v)
       {
         var zs = z + z0;
-        return Math.Pow((1 + zs * zs) / OnePlusZ0S, -m) * Math.Exp(-v * (Math.Atan(zs) - AtanZ0)) - 0.5;
+        return Math.Exp(-m * Math.Log((1 + zs * zs) / OnePlusZ0S) -v * (Math.Atan(zs) - AtanZ0)) - 0.5;
       }
 
       double dervsimp(double z, double m, double v)
       {
         var zs = z + z0;
-        return -Math.Pow((1 + zs * zs) / OnePlusZ0S, -1 - m) * (v + 2 * m * zs) * Math.Exp(-v * (Math.Atan(zs) - AtanZ0)) / OnePlusZ0S;
+        return -(v + 2 * m * zs) * Math.Exp((-1-m)*Math.Log((1 + zs * zs) / OnePlusZ0S) -v * (Math.Atan(zs) - AtanZ0)) / OnePlusZ0S;
       }
 
 
