@@ -217,10 +217,22 @@ namespace Altaxo.Calc.FitFunctions.Peaks
     public double DefaultParameterValue(int i)
     {
       int k = i - NumberOfParametersPerPeak * _numberOfTerms;
-      if (k < 0 && i % NumberOfParametersPerPeak == 2)
-        return 1;
+      if (k < 0)
+      {
+        return i % NumberOfParametersPerPeak switch
+        {
+          0 => 1, // amplitude
+          1 => 0, // position
+          2 => 1, // width
+          3 => 1, // m (Lorentzian),
+          4 => 0, // v (symmetric)
+          _ => 0
+        };
+      }
       else
-        return 0;
+      {
+        return 0; // no background
+      }
     }
 
     public IVarianceScaling? DefaultVarianceScaling(int i)
@@ -398,28 +410,24 @@ namespace Altaxo.Calc.FitFunctions.Peaks
       w = Math.Abs(w);
       var sign = rightSide ? 1 : -1;
       double z0 = -v / (2 * m);
-      double OnePlusZ0S = 1 + z0 * z0;
-      double AtanZ0 = Math.Atan(z0);
 
       double funcsimp(double z, double m, double v)
       {
-        var zs = z + z0;
-        return Math.Exp(-m * Math.Log((1 + zs * zs) / OnePlusZ0S) -v * (Math.Atan(zs) - AtanZ0)) - 0.5;
+        return Math.Log(2) + v * (Math.Atan(z0) - Math.Atan(z)) + m * (Math.Log(1 + z0 * z0) - (Math.Abs(z) > 1E100 ? 2 * Math.Log(Math.Abs(z)) : Math.Log(1 + z * z)));
       }
 
       double dervsimp(double z, double m, double v)
       {
-        var zs = z + z0;
-        return -(v + 2 * m * zs) * Math.Exp((-1-m)*Math.Log((1 + zs * zs) / OnePlusZ0S) -v * (Math.Atan(zs) - AtanZ0)) / OnePlusZ0S;
+        return (-v - 2 * m * z) / (1 + z * z);
       }
 
 
       // go forward in exponentially increasing steps, until the amplitude falls below ymaxHalf, in order to bracked the solution
-      double zNear = 0;
+      double zNear = z0;
       double zFar;
       for (double d = 1; ; d *= 2)
       {
-        zFar = d * sign;
+        zFar = z0 + d * sign;
         var y = funcsimp(zFar, m, v);
         if (y < 0)
           break;
@@ -439,7 +447,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
       for (i = 40; i > 0; --i)
       {
         funcVal = funcsimp(z, m, v);
-        if(rightSide)
+        if (rightSide)
         {
           if (funcVal > 0 && z > zNear)
             zNear = z;
@@ -469,8 +477,23 @@ namespace Altaxo.Calc.FitFunctions.Peaks
         if (Math.Abs(dz) < 1E-15 * Math.Abs(z))
           break;
       }
-      return Math.Abs(z * w);
+      return Math.Abs((z-z0) * w);
     }
+
+    /// <summary>
+    /// Gets an approximate value (19% error) for the full width half maximum
+    /// </summary>
+    /// <param name="w">The width parameter of PearsonIV.</param>
+    /// <param name="m">The m parameter of PearsonIV.</param>
+    /// <param name="v">The v parameter of PearsonIV.</param>
+    /// <returns>An approximate value for the FWHM (full width half maximum).
+    /// The maximal error in the range m: (1e-3..1e3) and v: (-1e3..1e3) is 18%.</returns>
+    public static double GetFWHMApproximation(double w, double m, double v)
+    {
+      return w * Math.Sqrt(Math.Pow(2, 1 / m) - 1) *
+             (Math.PI  / Math.Atan2(Math.Exp(1) * m, Math.Abs(v)));
+    }
+
   }
 }
 

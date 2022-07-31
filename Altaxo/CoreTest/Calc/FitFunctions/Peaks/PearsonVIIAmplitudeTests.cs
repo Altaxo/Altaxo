@@ -28,7 +28,7 @@ using Xunit;
 
 namespace Altaxo.Calc.FitFunctions.Peaks
 {
-  public class PearsonVIITests
+  public class PearsonVIIAmplitudeTests
   {
     [Fact]
     public void TestDerivatives()
@@ -44,7 +44,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
       double[] X = new double[1];
       double[] Y = new double[1];
 
-      var func = new PearsonVII();
+      var func = new PearsonVIIAmplitude();
 
       for (int i = 0; i < pars.Length; i++)
       {

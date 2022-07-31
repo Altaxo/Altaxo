@@ -35,7 +35,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
   /// of variable order.
   /// </summary>
   [FitFunctionClass]
-  public class PearsonVII : IFitFunction, IFitFunctionPeak, IImmutable
+  public class PearsonVIIAmplitude : IFitFunction, IFitFunctionPeak, IImmutable
   {
     private const string ParameterBaseName0 = "a";
     private const string ParameterBaseName1 = "xc";
@@ -53,13 +53,15 @@ namespace Altaxo.Calc.FitFunctions.Peaks
 
     /// <summary>
     /// 2022-06-01 Initial version
+    /// 2022-07-30 Renamed from PearsonVII into PearsonVIIAmplitude
     /// </summary>
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PearsonVII), 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoCore", "Altaxo.Calc.FitFunctions.Peaks.PearsonVII", 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PearsonVIIAmplitude), 1)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (PearsonVII)obj;
+        var s = (PearsonVIIAmplitude)obj;
         info.AddValue("NumberOfTerms", s._numberOfTerms);
         info.AddValue("OrderOfBackgroundPolynomial", s._orderOfBackgroundPolynomial);
       }
@@ -68,19 +70,19 @@ namespace Altaxo.Calc.FitFunctions.Peaks
       {
         var numberOfTerms = info.GetInt32("NumberOfTerms");
         var orderOfBackgroundPolynomial = info.GetInt32("OrderOfBackgroundPolynomial");
-        return new PearsonVII(numberOfTerms, orderOfBackgroundPolynomial);
+        return new PearsonVIIAmplitude(numberOfTerms, orderOfBackgroundPolynomial);
       }
     }
 
     #endregion Serialization
 
-    public PearsonVII()
+    public PearsonVIIAmplitude()
     {
       _numberOfTerms = 1;
       _orderOfBackgroundPolynomial = -1;
     }
 
-    public PearsonVII(int numberOfTerms, int orderOfBackgroundPolynomial)
+    public PearsonVIIAmplitude(int numberOfTerms, int orderOfBackgroundPolynomial)
     {
       _numberOfTerms = numberOfTerms;
       _orderOfBackgroundPolynomial = orderOfBackgroundPolynomial;
@@ -92,11 +94,11 @@ namespace Altaxo.Calc.FitFunctions.Peaks
 
     }
 
-    [FitFunctionCreator("PearsonVII", "Peaks", 1, 1, NumberOfParametersPerPeak)]
-    [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Peaks.PearsonVII}")]
+    [FitFunctionCreator("PearsonVIIAmplitude", "Peaks", 1, 1, NumberOfParametersPerPeak)]
+    [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Peaks.PearsonVIIAmplitude}")]
     public static IFitFunction Create_1_M1()
     {
-      return new PearsonVII(1, -1);
+      return new PearsonVIIAmplitude(1, -1);
     }
 
     /// <summary>
@@ -121,14 +123,14 @@ namespace Altaxo.Calc.FitFunctions.Peaks
     /// </summary>
     /// <param name="orderOfBackgroundPolynomial">The order of the background polynomial. If set to -1, the background polynomial will be disabled.</param>
     /// <returns>New instance with the background polynomial of the provided order.</returns>
-    public PearsonVII WithOrderOfBackgroundPolynomial(int orderOfBackgroundPolynomial)
+    public PearsonVIIAmplitude WithOrderOfBackgroundPolynomial(int orderOfBackgroundPolynomial)
     {
       if (!(orderOfBackgroundPolynomial >= -1))
         throw new ArgumentOutOfRangeException($"{nameof(orderOfBackgroundPolynomial)} must be greater than or equal to 0, or -1 in order to deactivate it.");
 
       if (!(_orderOfBackgroundPolynomial == orderOfBackgroundPolynomial))
       {
-        return new PearsonVII(_numberOfTerms, orderOfBackgroundPolynomial);
+        return new PearsonVIIAmplitude(_numberOfTerms, orderOfBackgroundPolynomial);
       }
       else
       {
@@ -146,14 +148,14 @@ namespace Altaxo.Calc.FitFunctions.Peaks
     /// </summary>
     /// <param name="numberOfTerms">The number of Lorentzian (Cauchy) terms (should be greater than or equal to 1).</param>
     /// <returns>New instance with the provided number of Lorentzian (Cauchy) terms.</returns>
-    public PearsonVII WithNumberOfTerms(int numberOfTerms)
+    public PearsonVIIAmplitude WithNumberOfTerms(int numberOfTerms)
     {
       if (!(numberOfTerms >= 1))
         throw new ArgumentOutOfRangeException($"{nameof(numberOfTerms)} must be greater than or equal to 1");
 
       if (!(_numberOfTerms == numberOfTerms))
       {
-        return new PearsonVII(numberOfTerms, _orderOfBackgroundPolynomial);
+        return new PearsonVIIAmplitude(numberOfTerms, _orderOfBackgroundPolynomial);
       }
       else
       {
@@ -221,12 +223,22 @@ namespace Altaxo.Calc.FitFunctions.Peaks
     public double DefaultParameterValue(int i)
     {
       int k = i - NumberOfParametersPerPeak * _numberOfTerms;
-      if (k < 0 && i % NumberOfParametersPerPeak == 2)
-        return 1;
+      if (k < 0)
+      {
+        return i % NumberOfParametersPerPeak switch
+        {
+          0 => 1, // amplitude
+          1 => 0, // position
+          2 => 1, // width
+          3 => 1, // m (Lorentzian),
+          _ => 0
+        };
+      }
       else
-        return 0;
+      {
+        return 0; // no background
+      }
     }
-
     public IVarianceScaling? DefaultVarianceScaling(int i)
     {
       return null;
@@ -278,7 +290,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
     /// <inheritdoc/>
     IFitFunctionPeak IFitFunctionPeak.WithNumberOfTerms(int numberOfTerms)
     {
-      return new PearsonVII(numberOfTerms, this.OrderOfBackgroundPolynomial);
+      return new PearsonVIIAmplitude(numberOfTerms, this.OrderOfBackgroundPolynomial);
     }
 
     /// <inheritdoc/>

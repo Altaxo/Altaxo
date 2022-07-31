@@ -865,6 +865,109 @@ In order to get a good fit nevertheless, it is necessary  that you logarithmize 
 
 ---</value>
   </data>
+  <data name="Peaks.PearsonIVAmplitude" xml:space="preserve">
+    <value># PearsonIVAmplitude
+
+This function evaluates a sum of PearsonIV terms, plus a background polynomial with one or multiple terms, according to
+
+$$
+y(x) = a_0 \times PearsonIV \left ( x-x_{c0}, w_0, m_0, \nu_0 \right ) + ... + a_{n-1} \times PearsonIV \left ( x-x_{c{n-1}}, w_{n-1}, m_{n-1}, \nu_{n-1} \right ) + b_0 + b_1 x^1 + ... + b_q x^q 
+$$
+
+in which:
+
+- $a_0 ... a_{n-1}$ are the amplitudes (height of the maxima) of the PearsonIV terms
+
+- $x_{c0} ... x_{cn-1}$ are the locations of the PearsonIV terms
+
+- $w_0 ... w_{n-1}$ are the widths of the PearsonIV terms
+
+- $m_0 ... m_{n-1}$ are the exponents of the PearsonIV terms ($m&gt;0$)
+
+- $\nu_0 ... \nu_{n-1}$ are the skewness parameters of the PearsonIV terms
+
+- $b_0 ... b_q$ are the coefficients of the background polynomial of order  $q$
+
+- $n$ is the number of PearsonIV terms ($n \geq 1$)
+- $q$ is the order of the background polynomial (set $q=-1$ to disable the background polynomial)
+
+
+The original PearsonIV function was modified, such as that the location parameters describe the location of the maximal value of the function, and the amplitude parameter is the maximum y-value of the function:
+
+[Original PearsonIV function](https://en.wikipedia.org/wiki/Pearson_distribution):
+$$
+PearsonIV_{Original}(x) = (1+z^2)^{-m} \exp (- \nu \arctan(z)) ; z = \frac{x-x_c}{w}
+$$
+
+Modified version used in Altaxo:
+
+$$
+PearsonIV(x) = \left ( \frac{1+z^2}{1+z_0^2} \right )^{-m} \exp (- \nu [\arctan(z)-\arctan(z_0)]) ; z_0 = -\frac{\nu}{2 m}, z = z_0 + \frac{x-x_c}{w} 
+$$
+
+The number of PearsonIV terms $n$ and the order of the background polynomial $q$ can be changed by double-clicking on the fit function. The default values are $n=1$ and $q=-1$. 
+
+The domain of the function is $-\infty \leq x \leq \infty$. 
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.Peaks.PearsonIVAmplitude.Fig1.png)
+^^^ Fig. 1: PearsonIV ($n=1$, $q=0$) with $a=4$, $x_c=7$, $w=3$, $m=2$, $b_0=1$, and $\nu=0$ (green) or  $\nu=5$ (orange), respectively. Note that in the limit $\nu=0$ the PearsonVII function is returned.
+---
+
+Literature:
+
+[1] Description of the Pearson distribution family in [Wikipedia](https://en.wikipedia.org/wiki/Pearson_distribution)
+
+
+</value>
+  </data>
+  <data name="Peaks.PearsonVIIAmplitude" xml:space="preserve">
+    <value># PearsonVIIAmplitude
+
+This function evaluates a sum of PearsonVII terms, plus a background polynomial with one or multiple terms, according to
+
+$$
+y(x) = a_0 \times PearsonVII \left ( x-x_{c0}, w_0, m_0 \right ) + ... + a_{n-1} \times PearsonVII \left ( x-x_{c{n-1}}, w_{n-1}, m_{n-1} \right ) + b_0 + b_1 x^1 + ... + b_q x^q 
+$$
+
+in which:
+
+- $a_0 ... a_{n-1}$ are the amplitudes (height of the maxima) of the PearsonVII terms
+
+- $x_{c0} ... x_{cn-1}$ are the locations of the PearsonVII terms
+
+- $w_0 ... w_{n-1}$ are the widths of the PearsonVII terms
+
+- $m_0 ... m_{n-1}$ are the exponents of the PearsonVII terms ($m&gt;0$)
+
+- $b_0 ... b_q$ are the coefficients of the background polynomial of order  $q$
+
+- $n$ is the number of PearsonVII terms ($n \geq 1$)
+- $q$ is the order of the background polynomial (set $q=-1$ to disable the background polynomial)
+
+
+The PearsonVII function is (see [Wikipedia](https://en.wikipedia.org/wiki/Pearson_distribution):
+$$
+PearsonVII(x) = (1+z^2)^{-m}  ; z = \frac{x-x_c}{w}
+$$
+
+
+The number of PearsonVII terms $n$ and the order of the background polynomial $q$ can be changed by double-clicking on the fit function. The default values are $n=1$ and $q=-1$. 
+
+The domain of the function is $-\infty \leq x \leq \infty$. 
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.Peaks.PearsonVIIAmplitude.Fig1.png)
+^^^ Fig. 1: PearsonVII ($n=1$, $q=0$) with $a=4$, $x_c=7$, $w=3$, and $m=2$ (green) or  $m=5$ (orange), respectively. Note that in the limit $m=1$ this is the Cauchy function, and in the limit $m \rightarrow \infty$ a Gaussian.
+---
+
+Literature:
+
+[1] Description of the Pearson distribution family in [Wikipedia](https://en.wikipedia.org/wiki/Pearson_distribution)
+
+
+</value>
+  </data>
   <data name="Probability.CauchyAmplitude" xml:space="preserve">
     <value># CauchyAmplitude
 
