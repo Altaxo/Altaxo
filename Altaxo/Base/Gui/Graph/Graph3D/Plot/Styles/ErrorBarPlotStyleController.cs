@@ -654,15 +654,14 @@ namespace Altaxo.Gui.Graph.Graph3D.Plot.Styles
       if (initData)
       {
         _colorGroupStyleTracker = new ColorGroupStylePresenceTracker(_doc, EhIndependentColorChanged);
-
         _meaningOfValues = new ItemsController<ErrorBarPlotStyle.ValueInterpretation>(new SelectableListNodeList(_doc.MeaningOfValues));
-
-        IndependentColor = _doc.IndependentColor;
-        IndependentDashPattern = _doc.IndependentDashPattern;
         Pen = new PenAllPropertiesController(_doc.Pen)
         {
           ShowPlotColorsOnly = _colorGroupStyleTracker.MustUsePlotColorsOnly(_doc.IndependentColor)
         };
+
+        IndependentColor = _doc.IndependentColor;
+        IndependentDashPattern = _doc.IndependentDashPattern;
         IndependentSymbolSize = _doc.IndependentSymbolSize;
         SymbolSize = new DimensionfulQuantity(_doc.SymbolSize, Altaxo.Units.Length.Point.Instance).AsQuantityIn(SymbolSizeEnvironment.DefaultUnit);
 
