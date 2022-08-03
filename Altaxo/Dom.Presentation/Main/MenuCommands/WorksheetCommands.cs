@@ -975,5 +975,13 @@ namespace Altaxo.Worksheet.Commands
     }
   }
 
+  public class SpectroscopyRamanSiliconCalibration : AbstractWorksheetControllerCommand
+  {
+    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
+    {
+      Altaxo.Data.SpectroscopyCommands.Raman_CalibrateWithSiliconSpectrum(ctrl);
+    }
+  }
+
   #endregion Analysis
 }

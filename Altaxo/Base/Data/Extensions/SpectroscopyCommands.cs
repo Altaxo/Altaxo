@@ -579,11 +579,76 @@ namespace Altaxo.Data
             colCorrY[i] = yArr[i];
           }
         }
+      }
+      Current.ProjectService.OpenOrCreateWorksheetForTable(dstTable);
+      }
+
+    /// <summary>
+    /// Does the relative part of a Raman calibration by utilizing a silicon spectrum.
+    /// </summary>
+    /// <param name="ctrl">The worksheet controller.</param>
+    public static void Raman_CalibrateWithSiliconSpectrum(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
+    {
+      if (ctrl.SelectedDataColumns.Count == 0)
+      {
+        Current.Gui.ErrorMessageBox("Please select the column containing the intensity of the Silicon spectrum");
+        return;
+      }
+      if (ctrl.SelectedDataColumns.Count > 1)
+      {
+        Current.Gui.ErrorMessageBox("Please select only the one column containing the intensity of the Silicon spectrum");
+        return;
+      }
+
+      var y_column = ctrl.DataTable.DataColumns[ctrl.SelectedDataColumns[0]];
+      var x_column = ctrl.DataTable.DataColumns.FindXColumnOf(y_column);
+
+      var len = Math.Min(x_column.Count, y_column.Count);
+
+      if (x_column is null)
+      {
+        Current.Gui.ErrorMessageBox("Could not find x-column corresponding to spectrum. Please set the kind of this column to 'X'");
+        return;
+      }
+
+      object siliconOptionsObj = new SiliconCalibrationOptions();
+      if (!Current.Gui.ShowDialog(ref siliconOptionsObj, "Choose options for Silicon calibration"))
+        return;
+
+      var siliconOptions = (SiliconCalibrationOptions)siliconOptionsObj;
+
+      var arrayX = new double[len];
+      var arrayY = new double[len];
+
+      for (int i = 0; i < len; i++)
+      {
+        arrayX[i] = x_column[i];
+        arrayY[i] = y_column[i];
+      }
 
 
+      var calibration = new SiliconCalibration();
+      var match = calibration.FindMatch(siliconOptions, arrayX, arrayY);
+
+      if(match is null)
+      {
+        Current.Gui.ErrorMessageBox("No silcon peak could be found");
+        return;
+      }
+
+      var dstTable = new DataTable();
+      dstTable.Name = ctrl.DataTable.FolderName + "WRamanCalibration";
+      Current.Project.DataTableCollection.Add(dstTable);
+
+      using (var token = dstTable.SuspendGetToken())
+      {
+        var colPos = dstTable.DataColumns.EnsureExistence("SiliconPeakShift", typeof(DoubleColumn), ColumnKind.V, 1);
+        var colPosErr = dstTable.DataColumns.EnsureExistence("SiliconPeakShift.Err", typeof(DoubleColumn), ColumnKind.Err, 1);
+        colPos[0] = match.Value.Position;
+        colPosErr[0] = match.Value.PositionTolerance;
       }
 
       Current.ProjectService.OpenOrCreateWorksheetForTable(dstTable);
-      }
+    }
   }
 }

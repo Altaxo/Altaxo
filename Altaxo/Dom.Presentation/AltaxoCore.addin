@@ -665,6 +665,8 @@
             <MenuItem id="IdSpectroscopyRaman" label="Raman.."  type="Menu">
                 <MenuItem id="IdRamanNeonCalibration" label="Neon calibration" description="Uses a Neon spectrum for calibration"
                       class="Altaxo.Worksheet.Commands.SpectroscopyRamanNeonCalibration" />
+              <MenuItem id="IdRamanSiCalibration" label="Silicon calibration" description="Uses a Silicon spectrum for calibration"
+                    class="Altaxo.Worksheet.Commands.SpectroscopyRamanSiliconCalibration" />
             </MenuItem>
         </MenuItem>
           
