@@ -33,6 +33,7 @@ using Altaxo.Graph.Gdi.Plot;
 using Altaxo.Graph.Gdi.Plot.Styles;
 using Altaxo.Graph.Plot.Data;
 using Altaxo.Gui;
+using Altaxo.Gui.Worksheet.Viewing;
 using Altaxo.Science.Spectroscopy;
 using Altaxo.Science.Spectroscopy.PeakFitting;
 using Altaxo.Science.Spectroscopy.PeakSearching;
@@ -503,7 +504,7 @@ namespace Altaxo.Data
 
     public static void Raman_CalibrateWithNeonSpectrum(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
-      if(ctrl.SelectedDataColumns.Count == 0)
+      if (ctrl.SelectedDataColumns.Count == 0)
       {
         Current.Gui.ErrorMessageBox("Please select the column containing the intensity of the Neon spectrum");
         return;
@@ -517,9 +518,9 @@ namespace Altaxo.Data
       var y_column = ctrl.DataTable.DataColumns[ctrl.SelectedDataColumns[0]];
       var x_column = ctrl.DataTable.DataColumns.FindXColumnOf(y_column);
 
-      var len = Math.Min(x_column.Count, y_column.Count);
+     
 
-      if(x_column is null)
+      if (x_column is null)
       {
         Current.Gui.ErrorMessageBox("Could not find x-column corresponding to spectrum. Please set the kind of this column to 'X'");
         return;
@@ -531,10 +532,22 @@ namespace Altaxo.Data
 
       var neonOptions = (NeonCalibrationOptions)neonOptionsObj;
 
+      var dstTable = new DataTable();
+      dstTable.Name = ctrl.DataTable.FolderName + "WRamanCalibration";
+      Current.Project.DataTableCollection.Add(dstTable);
+
+      Raman_CalibrateWithNeonSpectrum(dstTable, neonOptions, x_column, y_column);
+      Current.ProjectService.OpenOrCreateWorksheetForTable(dstTable);
+    }
+
+    public static void Raman_CalibrateWithNeonSpectrum(DataTable dstTable, NeonCalibrationOptions neonOptions, IReadableColumn x_column, IReadableColumn y_column)
+    {
+      var len = Math.Min(x_column.Count??0, y_column.Count??0);
+
       var arrayX = new double[len];
       var arrayY = new double[len];
 
-      for(int i= 0; i < len; i++)
+      for (int i = 0; i < len; i++)
       {
         arrayX[i] = x_column[i];
         arrayY[i] = y_column[i];
@@ -542,18 +555,16 @@ namespace Altaxo.Data
 
 
       var calibration = new NeonCalibration();
-      var matches = calibration.GetPeakMatchings(neonOptions,arrayX, arrayY);
+      var matches = calibration.GetPeakMatchings(neonOptions, arrayX, arrayY);
 
-      var dstTable = new DataTable();
-      dstTable.Name = ctrl.DataTable.FolderName +  "WRamanCalibration";
-      Current.Project.DataTableCollection.Add(dstTable);
+     
 
-      using(var token = dstTable.SuspendGetToken())
+      using (var token = dstTable.SuspendGetToken())
       {
         var colNist = dstTable.DataColumns.EnsureExistence("NistNeonPeakWavelength [nm]", typeof(DoubleColumn), ColumnKind.X, 0);
         var colMeas = dstTable.DataColumns.EnsureExistence("MeasuredNeonPeakWavelength [nm]", typeof(DoubleColumn), ColumnKind.V, 0);
         var colDiff = dstTable.DataColumns.EnsureExistence("DifferenceOfPeakWavelengths [nm]", typeof(DoubleColumn), ColumnKind.V, 0);
-        for(int i=0;i<matches.Count;++i)
+        for (int i = 0; i < matches.Count; ++i)
         {
           var match = matches[i];
           colNist[i] = match.NistWL;
@@ -562,26 +573,25 @@ namespace Altaxo.Data
         }
 
         var pcolLaserWL = dstTable.PropertyColumns.EnsureExistence("AssumedLaserWavelength [nm]", typeof(DoubleColumn), ColumnKind.V, 0);
-        foreach(var dc in new[] { colMeas, colDiff})
+        foreach (var dc in new[] { colMeas, colDiff })
         {
           var idx = dstTable.DataColumns.GetColumnNumber(dc);
           pcolLaserWL[idx] = neonOptions.LaserWavelength_Nanometer;
         }
 
-        if (calibration.XArray_nm is { } xArr && calibration.YPreprocessed is {} yArr && calibration.Converter is { } converter)
+        if (calibration.XArray_nm is { } xArr && calibration.YPreprocessed is { } yArr && calibration.Converter is { } converter)
         {
           var colCorrWL = dstTable.DataColumns.EnsureExistence("Preprocessed_Wavelength [nm]", typeof(DoubleColumn), ColumnKind.X, 1);
           var colCorrY = dstTable.DataColumns.EnsureExistence("Preprocessed_Signal", typeof(DoubleColumn), ColumnKind.V, 1);
 
-          for(int i=0;i<xArr.Length;++i)
+          for (int i = 0; i < xArr.Length; ++i)
           {
             colCorrWL[i] = converter.ConvertWavelengthMeasToNist(xArr[i]);
             colCorrY[i] = yArr[i];
           }
         }
       }
-      Current.ProjectService.OpenOrCreateWorksheetForTable(dstTable);
-      }
+    }
 
     /// <summary>
     /// Does the relative part of a Raman calibration by utilizing a silicon spectrum.
@@ -617,6 +627,19 @@ namespace Altaxo.Data
 
       var siliconOptions = (SiliconCalibrationOptions)siliconOptionsObj;
 
+      var dstTable = new DataTable();
+      dstTable.Name = ctrl.DataTable.FolderName + "WRamanCalibration";
+      Current.Project.DataTableCollection.Add(dstTable);
+
+      Raman_CalibrateWithSiliconSpectrum(dstTable, siliconOptions, x_column, y_column);
+
+      Current.ProjectService.OpenOrCreateWorksheetForTable(dstTable);
+    }
+
+
+    public static void Raman_CalibrateWithSiliconSpectrum(DataTable dstTable, SiliconCalibrationOptions siliconOptions, IReadableColumn x_column, IReadableColumn y_column)
+    {
+      var len = Math.Min(x_column.Count ?? 0, y_column.Count ?? 0);
       var arrayX = new double[len];
       var arrayY = new double[len];
 
@@ -630,15 +653,13 @@ namespace Altaxo.Data
       var calibration = new SiliconCalibration();
       var match = calibration.FindMatch(siliconOptions, arrayX, arrayY);
 
-      if(match is null)
+      if (match is null)
       {
         Current.Gui.ErrorMessageBox("No silcon peak could be found");
         return;
       }
 
-      var dstTable = new DataTable();
-      dstTable.Name = ctrl.DataTable.FolderName + "WRamanCalibration";
-      Current.Project.DataTableCollection.Add(dstTable);
+      
 
       using (var token = dstTable.SuspendGetToken())
       {
@@ -647,8 +668,6 @@ namespace Altaxo.Data
         colPos[0] = match.Value.Position;
         colPosErr[0] = match.Value.PositionTolerance;
       }
-
-      Current.ProjectService.OpenOrCreateWorksheetForTable(dstTable);
     }
   }
 }
