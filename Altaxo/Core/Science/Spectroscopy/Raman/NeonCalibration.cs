@@ -508,6 +508,8 @@ namespace Altaxo.Science.Spectroscopy.Raman
 
     public double[]? YPreprocessed => _yPreprocessed;
 
+    public List<(double NistWL, double MeasWL)> PeakMatchings {get; private set; }
+
     #endregion
 
     public List<(double NistWL, double MeasWL)>
@@ -521,10 +523,38 @@ namespace Altaxo.Science.Spectroscopy.Raman
       }
 
       if (_peakFittingDescriptions is not null)
-        return GetPeakMatchingsBasedOnPeakFittingResults(coarse.Value);
+        PeakMatchings = GetPeakMatchingsBasedOnPeakFittingResults(coarse.Value);
       else
-        return GetPeakMatchingsBasedOnPeakSearchingResults(coarse.Value);
+        PeakMatchings = GetPeakMatchingsBasedOnPeakSearchingResults(coarse.Value);
 
+      if(options.FilterOutPeaksCorrespondingToMultipleNistPeaks)
+      {
+        PeakMatchings = FilterOutMatchesOfMeasuredPeaksCorrespondsToMultipleNistPeaks(PeakMatchings);
+      }
+
+      return PeakMatchings;
+    }
+
+    List<(double NistWL, double MeasWL)> FilterOutMatchesOfMeasuredPeaksCorrespondsToMultipleNistPeaks(List<(double NistWL, double MeasWL)> list)
+    {
+      var countDict = new Dictionary<double, int>();
+      foreach(var pair in list)
+      {
+        if (!countDict.TryGetValue(pair.MeasWL, out var cnt))
+        {
+          cnt = 0;
+        }
+       countDict[pair.MeasWL] = cnt + 1;
+      }
+
+      var result = new List<(double NistWL, double MeasWL)>();
+      foreach(var pair in list)
+      {
+        if (countDict[pair.MeasWL] == 1)
+          result.Add(pair);
+      }
+
+      return result;
     }
 
     private List<(double NistWL, double MeasWL)> GetPeakMatchingsBasedOnPeakSearchingResults((double NistWL_Left, double MeasWL_Left, double NistWL_Right, double MeasWL_Right) coarse)

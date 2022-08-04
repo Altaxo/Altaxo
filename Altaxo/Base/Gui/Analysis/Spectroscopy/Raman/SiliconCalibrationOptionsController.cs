@@ -24,7 +24,9 @@
 
 using System.Collections.Generic;
 using Altaxo.Science.Spectroscopy;
+using Altaxo.Science.Spectroscopy.Calibration;
 using Altaxo.Science.Spectroscopy.Raman;
+using Altaxo.Science.Spectroscopy.Resampling;
 using Altaxo.Units;
 
 namespace Altaxo.Gui.Analysis.Spectroscopy.Raman
@@ -134,6 +136,17 @@ namespace Altaxo.Gui.Analysis.Spectroscopy.Raman
         return ApplyEnd(false, disposeController);
       else
         findOptions = (PeakSearchingAndFittingOptions)PeakFindingController.ModelObject;
+
+      if (findOptions.Preprocessing.Calibration is not CalibrationNone)
+      {
+        Current.Gui.InfoMessageBox("This calibration needs the original x/y-values, thus calibration in the preprocessing steps is disabled here.", "Note");
+        findOptions = findOptions with { Preprocessing = findOptions.Preprocessing with { Calibration = new CalibrationNone() } };
+      }
+      if (findOptions.Preprocessing.Resampling is not ResamplingNone)
+      {
+        Current.Gui.InfoMessageBox("This calibration needs the original x-values, thus resampling in the preprocessing steps is disabled here.", "Note");
+        findOptions = findOptions with { Preprocessing = findOptions.Preprocessing with { Resampling = new ResamplingNone() } };
+      }
 
 
       _doc = _doc with

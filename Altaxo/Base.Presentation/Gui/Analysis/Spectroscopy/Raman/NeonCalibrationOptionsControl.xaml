@@ -15,6 +15,8 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="4"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="4"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
 
@@ -29,7 +31,13 @@
                                      ToolTip="Enter approximate wavelength of laser excitation in nm. Ususal values are 532 and 785 nm."
                                      />
 
-        <GroupBox Grid.Row="5" Header="Preprocessing / Peak finding">
+        <CheckBox Grid.Row="5" 
+                  Content="Filter out peaks corresponding to multiple Nist peaks"
+                  IsChecked="{Binding FilterOutPeaksCorrespondingToMultipleNistPeaks, Mode=TwoWay}"
+                  ToolTip="This filters out peaks that appear broader, because at this position there are multiple Nist peaks very close together."
+                  />
+
+        <GroupBox Grid.Row="7" Header="Preprocessing / Peak finding">
             <ContentControl Content="{Binding PeakFindingController.ViewObject}"/>
         </GroupBox>
     </Grid>

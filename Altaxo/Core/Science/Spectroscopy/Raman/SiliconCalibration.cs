@@ -48,6 +48,16 @@ namespace Altaxo.Science.Spectroscopy.Raman
 
     #endregion
 
+    #region Result data
+
+    public bool IsPeakFound { get; private set; }
+
+    public double SiliconPeakPosition { get; private set; } = double.NaN;
+
+    public double SiliconPeakPositionVariance { get; private set; } = double.NaN;
+
+    #endregion
+
 
 
 
@@ -96,6 +106,10 @@ namespace Altaxo.Science.Spectroscopy.Raman
       else
       {
         var para = listOfCandidates[0].FitFunction.GetPositionAreaHeightFWHMFromSinglePeakParameters(listOfCandidates[0].PeakParameter, listOfCandidates[0].PeakParameterCovariances);
+
+        IsPeakFound = true;
+        SiliconPeakPosition = para.Position;
+        SiliconPeakPositionVariance = para.PositionVariance;
         return (para.Position, para.PositionVariance);
       }
     }

@@ -29,7 +29,71 @@ namespace Altaxo.Science.Spectroscopy.Raman
     /// </summary>
     public double Wavelength_Tolerance_nm { get; init; } = 30;
 
-    public PeakSearchingAndFittingOptions PeakFindingOptions { get; init; } = new PeakSearchingAndFittingOptions() { Preprocessing = new SpectralPreprocessingOptions {  BaselineEstimation = new BaselineEstimation.SNIP_Linear { HalfWidth = 15, IsHalfWidthInXUnits = true} } };
-   
+    /// <summary>
+    /// If true, peaks in the measured spectrum, that corresponds to multiple Nist peaks, are filtered out.
+    /// </summary>
+    /// <value>
+    ///   <c>true</c> if [filter out peaks corresponding to multiple nist peaks]; otherwise, <c>false</c>.
+    /// </value>
+    public bool FilterOutPeaksCorrespondingToMultipleNistPeaks { get; init; } = true;
+
+    public PeakSearchingAndFittingOptions PeakFindingOptions { get; init; } = new PeakSearchingAndFittingOptions()
+    {
+      Preprocessing = new SpectralPreprocessingOptions
+      {
+        BaselineEstimation = new BaselineEstimation.SNIP_Linear
+        {
+          HalfWidth = 15,
+          IsHalfWidthInXUnits = true
+        }
+      },
+      PeakSearching = new PeakSearching.PeakSearchingByCwt
+      {
+         MinimalRelativeGaussianAmplitude = 0.0005,
+      },
+      PeakFitting = new PeakFitting.PeakFittingSeparately()
+      {
+        FitFunction = new Altaxo.Calc.FitFunctions.Probability.GaussAmplitude(),
+        FitWidthScalingFactor = 2,
+      }
+    };
+
+    #region Serialization
+
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(NeonCalibrationOptions), 0)]
+    public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        var s = (NeonCalibrationOptions)obj;
+        info.AddEnum("XAxisUnit", s.XAxisUnit);
+        info.AddValue("ApproximateLaserWavelength(nm)", s.LaserWavelength_Nanometer);
+        info.AddValue("WavelengthTolerance(nm)", s.Wavelength_Tolerance_nm);
+        info.AddValue("FilterOutPeaksCorrespondingToMultipleNistPeaks", s.FilterOutPeaksCorrespondingToMultipleNistPeaks);
+        info.AddValue("PeakFindingOptions", s.PeakFindingOptions);
+      }
+
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      {
+        var xAxisUnit = (XAxisUnit)info.GetEnum("XAxisUnit", typeof(XAxisUnit));
+        var approximateLaserWavelength = info.GetDouble("ApproximateLaserWavelength(nm)");
+        var wavelengthTol = info.GetDouble("WavelengthTolerance(nm)");
+        var filterOut = info.GetBoolean("FilterOutPeaksCorrespondingToMultipleNistPeaks");
+        var peakOptions = info.GetValue<PeakSearchingAndFittingOptions>("PeakFindingOptions", null);
+
+
+        return new NeonCalibrationOptions()
+        {
+          XAxisUnit = xAxisUnit,
+          LaserWavelength_Nanometer = approximateLaserWavelength,
+          Wavelength_Tolerance_nm = wavelengthTol,
+          FilterOutPeaksCorrespondingToMultipleNistPeaks = filterOut,
+          PeakFindingOptions = peakOptions,
+        };
+      }
+    }
+    #endregion
+
+
   }
 }

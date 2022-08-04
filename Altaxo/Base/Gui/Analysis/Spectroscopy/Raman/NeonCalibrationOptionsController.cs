@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
 using Altaxo.Gui.Common;
 using Altaxo.Science.Spectroscopy;
+using Altaxo.Science.Spectroscopy.Calibration;
 using Altaxo.Science.Spectroscopy.Raman;
+using Altaxo.Science.Spectroscopy.Resampling;
 
 namespace Altaxo.Gui.Analysis.Spectroscopy.Raman
 {
@@ -68,6 +70,21 @@ namespace Altaxo.Gui.Analysis.Spectroscopy.Raman
       }
     }
 
+    private bool _filterOutPeaksCorrespondingToMultipleNistPeaks;
+
+    public bool FilterOutPeaksCorrespondingToMultipleNistPeaks
+    {
+      get => _filterOutPeaksCorrespondingToMultipleNistPeaks;
+      set
+      {
+        if (!(_filterOutPeaksCorrespondingToMultipleNistPeaks == value))
+        {
+          _filterOutPeaksCorrespondingToMultipleNistPeaks = value;
+          OnPropertyChanged(nameof(FilterOutPeaksCorrespondingToMultipleNistPeaks));
+        }
+      }
+    }
+
 
 
     #endregion
@@ -85,6 +102,8 @@ namespace Altaxo.Gui.Analysis.Spectroscopy.Raman
         else
           LaserWavelength_Nanometer = _doc.LaserWavelength_Nanometer;
 
+        FilterOutPeaksCorrespondingToMultipleNistPeaks = _doc.FilterOutPeaksCorrespondingToMultipleNistPeaks;
+
         var peakFindingController = new PeakSearchingAndFittingOptionsController();
         peakFindingController.InitializeDocument(_doc.PeakFindingOptions);
         Current.Gui.FindAndAttachControlTo(peakFindingController);
@@ -100,11 +119,22 @@ namespace Altaxo.Gui.Analysis.Spectroscopy.Raman
       else
         findOptions = (PeakSearchingAndFittingOptions)PeakFindingController.ModelObject;
 
+      if(findOptions.Preprocessing.Calibration is not CalibrationNone)
+      {
+        Current.Gui.InfoMessageBox("This calibration needs the original x/y-values, thus calibration in the preprocessing steps is disabled here.", "Note");
+        findOptions = findOptions with { Preprocessing = findOptions.Preprocessing with { Calibration = new CalibrationNone() } };
+      }
+      if (findOptions.Preprocessing.Resampling is not ResamplingNone)
+      {
+        Current.Gui.InfoMessageBox("This calibration needs the original x-values, thus resampling in the preprocessing steps is disabled here.", "Note");
+        findOptions = findOptions with { Preprocessing = findOptions.Preprocessing with { Resampling = new ResamplingNone() } };
+      }
 
       _doc = _doc with
       {
         LaserWavelength_Nanometer = LaserWavelength_Nanometer,
         XAxisUnit = XAxisUnit.SelectedValue,
+        FilterOutPeaksCorrespondingToMultipleNistPeaks = FilterOutPeaksCorrespondingToMultipleNistPeaks,
         PeakFindingOptions = findOptions,
       };
 

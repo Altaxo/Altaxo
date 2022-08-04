@@ -31,6 +31,7 @@ using Altaxo.Science.Spectroscopy.Resampling;
 using Altaxo.Science.Spectroscopy.Sanitizing;
 using Altaxo.Science.Spectroscopy.Smoothing;
 using Altaxo.Science.Spectroscopy.SpikeRemoval;
+using Altaxo.Science.Spectroscopy.Calibration;
 
 namespace Altaxo.Science.Spectroscopy
 {
@@ -38,11 +39,13 @@ namespace Altaxo.Science.Spectroscopy
   {
     #region Serialization
 
+    #region Version 0
+
     /// <summary>
     /// 2022-06-09 Initial version
     /// </summary>
     /// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(SpectralPreprocessingOptions), 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoCore", "Altaxo.Science.Spectroscopy.SpectralPreprocessingOptions", 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
@@ -81,6 +84,57 @@ namespace Altaxo.Science.Spectroscopy
     }
     #endregion
 
+    #region Version 1
+
+    /// <summary>
+    /// 2022-06-09 V0: Initial version
+    /// 2022-08-04 V1: Added Calibration element
+    /// </summary>
+    /// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(SpectralPreprocessingOptions), 1)]
+    public class SerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        var s = (SpectralPreprocessingOptions)obj;
+        info.AddValue("Sanitizer", s.Sanitizer);
+        info.AddValue("SpikeRemoval", s.SpikeRemoval);
+        info.AddValue("Calibration", s.Calibration);
+        info.AddValue("Resampling", s.Resampling);
+        info.AddValue("Smoothing", s.Smoothing);
+        info.AddValue("BaselineEstimation", s.BaselineEstimation);
+        info.AddValue("Cropping", s.Cropping);
+        info.AddValue("Normalization", s.Normalization);
+      }
+
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      {
+        var sanitizer = info.GetValue<ISanitizer>("Sanitizer", parent);
+        var spikeRemoval = info.GetValue<ISpikeRemoval>("SpikeRemoval", parent);
+        var calibration = info.GetValue<ICalibration>("Calibration", parent);
+        var resampling = info.GetValue<IResampling>("Resampling", parent);
+        var smoothing = info.GetValue<ISmoothing>("Smoothing", parent);
+        var baselineEstimation = info.GetValue<IBaselineEstimation>("BaselineEstimation", parent);
+        var cropping = info.GetValue<ICropping>("Cropping", parent);
+        var normalization = info.GetValue<INormalization>("Normalization", parent);
+
+        return ((SpectralPreprocessingOptions)o ?? new SpectralPreprocessingOptions()) with
+        {
+          Sanitizer = sanitizer,
+          SpikeRemoval = spikeRemoval,
+          Calibration = calibration,
+          Resampling = resampling,
+          Smoothing = smoothing,
+          BaselineEstimation = baselineEstimation,
+          Cropping = cropping,
+          Normalization = normalization,
+        };
+      }
+    }
+    #endregion
+
+    #endregion
+
     public SpectralPreprocessingOptions()
     {
 
@@ -90,6 +144,7 @@ namespace Altaxo.Science.Spectroscopy
     {
       Sanitizer = from.Sanitizer;
       SpikeRemoval = from.SpikeRemoval;
+      Calibration = from.Calibration;
       Resampling = from.Resampling;
       Smoothing = from.Smoothing;
       BaselineEstimation = from.BaselineEstimation;
@@ -100,6 +155,8 @@ namespace Altaxo.Science.Spectroscopy
     public ISanitizer Sanitizer { get; init; } = new SanitizerNone();
 
     public ISpikeRemoval SpikeRemoval { get; init; } = new SpikeRemovalNone();
+
+    public ICalibration Calibration { get; init; } = new CalibrationNone();
 
     public IResampling Resampling { get; init; } = new ResamplingNone();
 
@@ -115,6 +172,7 @@ namespace Altaxo.Science.Spectroscopy
     {
       yield return Sanitizer;
       yield return SpikeRemoval;
+      yield return Calibration;
       yield return Resampling;
       yield return Smoothing;
       yield return Cropping;

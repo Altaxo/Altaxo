@@ -283,7 +283,7 @@ namespace Altaxo.Data
     {
       get
       {
-        return _xColumn.Document();
+        return _yColumn.Document();
       }
     }
 

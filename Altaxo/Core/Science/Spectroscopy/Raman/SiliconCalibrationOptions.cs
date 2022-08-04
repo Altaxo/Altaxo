@@ -62,5 +62,38 @@ namespace Altaxo.Science.Spectroscopy.Raman
         FitWidthScalingFactor = 2,
       }
     };
+
+    #region Serialization
+
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(SiliconCalibrationOptions), 0)]
+    public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        var s = (SiliconCalibrationOptions)obj;
+        info.AddValue("Temperature", s.Temperature);
+        info.AddValue("RelativeShiftTolerance", s.RelativeShift_Tolerance_invcm);
+        info.AddValue("PeakFindingOptions", s.PeakFindingOptions);
+      }
+
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      {
+        var temperature = info.GetValue<Units.DimensionfulQuantity>("Temperature", null);
+        var tolerance = info.GetDouble("RelativeShiftTolerance");
+        var peakOptions = info.GetValue<PeakSearchingAndFittingOptions>("PeakFindingOptions", null);
+
+
+        return new SiliconCalibrationOptions()
+        {
+          Temperature = temperature,
+          RelativeShift_Tolerance_invcm = tolerance,
+          PeakFindingOptions = peakOptions,
+        };
+      }
+    }
+    #endregion
+
+
+
   }
 }

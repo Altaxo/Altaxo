@@ -28,16 +28,24 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Altaxo.Science.Spectroscopy.Raman;
+using Altaxo.Data;
 
-namespace Altaxo.Data.Extensions
+namespace Altaxo.Science.Spectroscopy.Raman
 {
-  public class RamanCalibrationDataSource : TableDataSourceBase
+  public class RamanCalibrationDataSource : TableDataSourceBase, IAltaxoTableDataSource
   {
+    #region ColumnNames
+
+    public const string ColumnName_XCalibration_UncalibratedX = "XCalibration_UncalibratedX";
+    public const string ColumnName_XCalibration_CalibratedX = "XCalibration_CalibratedX";
+    public const string PropertyName_CalibratedLaserWavelength = "CalibratedLaserWavelength [nm]";
+
+    #endregion
+
     private IDataSourceImportOptions _importOptions;
 
     NeonCalibrationOptions? _neonCalibrationOptions1;
-    DataTableXYColumnProxy?  _neonCalibrationData1;
+    DataTableXYColumnProxy? _neonCalibrationData1;
     NeonCalibrationOptions? _neonCalibrationOptions2;
     DataTableXYColumnProxy? _neonCalibrationData2;
     SiliconCalibrationOptions? _siliconCalibrationOptions;
@@ -52,10 +60,10 @@ namespace Altaxo.Data.Extensions
     /// <summary>
     /// 2014-11-02 initial version.
     /// </summary>
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(RamanCalibrationDataSource), 0)]
-    private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    [Serialization.Xml.XmlSerializationSurrogateFor(typeof(RamanCalibrationDataSource), 0)]
+    private class XmlSerializationSurrogate0 : Serialization.Xml.IXmlSerializationSurrogate
     {
-      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      public virtual void Serialize(object obj, Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (RamanCalibrationDataSource)obj;
 
@@ -71,7 +79,7 @@ namespace Altaxo.Data.Extensions
 
 
 
-      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      public object Deserialize(object? o, Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         if (o is RamanCalibrationDataSource s)
           s.DeserializeSurrogate0(info);
@@ -81,8 +89,8 @@ namespace Altaxo.Data.Extensions
       }
     }
 
-    [MemberNotNull(nameof(_importOptions) )]
-    void DeserializeSurrogate0(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+    [MemberNotNull(nameof(_importOptions))]
+    void DeserializeSurrogate0(Serialization.Xml.IXmlDeserializationInfo info)
     {
       ChildSetMember(ref _importOptions, (IDataSourceImportOptions)info.GetValue("ImportOptions", this));
 
@@ -96,7 +104,7 @@ namespace Altaxo.Data.Extensions
 
     #endregion Version 0
 
-    protected RamanCalibrationDataSource(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, int version)
+    protected RamanCalibrationDataSource(Serialization.Xml.IXmlDeserializationInfo info, int version)
     {
       switch (version)
       {
@@ -115,10 +123,8 @@ namespace Altaxo.Data.Extensions
     /// <summary>
     /// Initializes a new instance of the <see cref="RamanCalibrationDataSource"/> class.
     /// </summary>
-    /// <param name="inputData">The input data designates the original source of data (used then for the processing).</param>
-    /// <param name="dataSourceOptions">The Fourier transformation options.</param>
     /// <param name="importOptions">The data source import options.</param>
-    /// <exception cref="System.ArgumentNullException">
+    /// <exception cref="ArgumentNullException">
     /// inputData
     /// or
     /// transformationOptions
@@ -128,12 +134,9 @@ namespace Altaxo.Data.Extensions
     public RamanCalibrationDataSource(IDataSourceImportOptions importOptions)
     {
       if (importOptions is null)
-        throw new ArgumentNullException("importOptions");
+        throw new ArgumentNullException(nameof(importOptions));
 
-      using (var token = SuspendGetToken())
-      {
-        ImportOptions = importOptions;
-      }
+      ChildSetMember(ref _importOptions, importOptions);
     }
 
     /// <summary>
@@ -142,21 +145,36 @@ namespace Altaxo.Data.Extensions
     /// <param name="from">Another instance to copy from.</param>
     public RamanCalibrationDataSource(RamanCalibrationDataSource from)
     {
-      CopyFrom(from);
+      IDataSourceImportOptions importOptions = null;
+      CopyHelper.Copy(ref importOptions, from._importOptions);
+      ChildSetMember(ref _importOptions, importOptions);
+
+      DataTableXYColumnProxy neon1 = null, neon2 = null, silicon = null;
+      CopyHelper.Copy(ref neon1, from._neonCalibrationData1);
+      CopyHelper.Copy(ref neon2, from._neonCalibrationData2);
+      CopyHelper.Copy(ref silicon, from._siliconCalibrationData);
+      ChildSetMember(ref _neonCalibrationData1, neon1);
+      ChildSetMember(ref _neonCalibrationData2, neon2);
+      ChildSetMember(ref _siliconCalibrationData, silicon);
+
+      _neonCalibrationOptions1 = from._neonCalibrationOptions1;
+      _neonCalibrationOptions2 = from._neonCalibrationOptions2;
+      _siliconCalibrationOptions = from._siliconCalibrationOptions;
     }
 
-    [MemberNotNull(nameof(_importOptions) )]
+    [MemberNotNull(nameof(_importOptions))]
     void CopyFrom(RamanCalibrationDataSource from)
     {
       using (var token = SuspendGetToken())
       {
-        DataTableXYColumnProxy neon1=null, neon2=null, silicon=null;
+        DataTableXYColumnProxy neon1 = null, neon2 = null, silicon = null;
         IDataSourceImportOptions importOptions = null;
 
         CopyHelper.Copy(ref neon1, from._neonCalibrationData1);
         CopyHelper.Copy(ref neon2, from._neonCalibrationData2);
         CopyHelper.Copy(ref silicon, from._siliconCalibrationData);
         CopyHelper.Copy(ref importOptions, from._importOptions);
+        ImportOptions = importOptions;
 
         if (from._neonCalibrationOptions1 is not null && from._neonCalibrationData1 is not null)
         {
@@ -170,9 +188,6 @@ namespace Altaxo.Data.Extensions
         {
           SetSiliconCalibration(from._siliconCalibrationOptions, silicon);
         }
-
-        ImportOptions = importOptions;
-
       }
     }
 
@@ -215,18 +230,77 @@ namespace Altaxo.Data.Extensions
     {
       try
       {
-        if(_neonCalibrationData1 is { } neondata1 && _neonCalibrationOptions1 is { } neonOptions1)
+        NeonCalibration? neonCalibration1 = null;
+        NeonCalibration? neonCalibration2 = null;
+        SiliconCalibration? siliconCalibration = null;
+
+
+        if (_neonCalibrationData1 is { } neondata1 && _neonCalibrationOptions1 is { } neonOptions1)
         {
-          SpectroscopyCommands.Raman_CalibrateWithNeonSpectrum(destinationTable, neonOptions1, neondata1.XColumn, neondata1.YColumn);
+          neonCalibration1 = SpectroscopyCommands.Raman_CalibrateWithNeonSpectrum(destinationTable, neonOptions1, neondata1.XColumn, neondata1.YColumn);
         }
         if (_neonCalibrationData2 is { } neondata2 && _neonCalibrationOptions2 is { } neonOptions2)
         {
-          SpectroscopyCommands.Raman_CalibrateWithNeonSpectrum(destinationTable, neonOptions2, neondata2.XColumn, neondata2.YColumn);
+          neonCalibration2 = SpectroscopyCommands.Raman_CalibrateWithNeonSpectrum(destinationTable, neonOptions2, neondata2.XColumn, neondata2.YColumn);
         }
         if (_siliconCalibrationData is { } silicondata && _siliconCalibrationOptions is { } siliconOptions)
         {
-          SpectroscopyCommands.Raman_CalibrateWithSiliconSpectrum(destinationTable, siliconOptions, silicondata.XColumn, silicondata.YColumn);
+          siliconCalibration = SpectroscopyCommands.Raman_CalibrateWithSiliconSpectrum(destinationTable, siliconOptions, silicondata.XColumn, silicondata.YColumn);
         }
+
+        if (siliconCalibration is not null && neonCalibration1 is not null)
+        {
+          var x = neonCalibration1.PeakMatchings.Select(p => p.NistWL).ToArray();
+          var y = neonCalibration1.PeakMatchings.Select(p => p.NistWL - p.MeasWL).ToArray();
+          Array.Sort(x, y);
+          var spline = new Calc.Interpolation.CrossValidatedCubicSpline();
+          spline.Interpolate(x, y);
+          var xx = new double[x.Length];
+          for (var i = 0; i < xx.Length; i++)
+          {
+            var diff = spline.GetYOfX(x[i]);
+            xx[i] = x[i] - diff; // we calculate the splines measured wavelengh
+          }
+          spline = new Calc.Interpolation.CrossValidatedCubicSpline();
+          spline.Interpolate(xx, y);
+
+
+          var assumedLaserWavelength = _neonCalibrationOptions1.LaserWavelength_Nanometer;
+
+          var siliconWL_Uncalibrated = 1 / (1 / assumedLaserWavelength - 1E-7 * siliconCalibration.SiliconPeakPosition);
+
+          // transform no Nist wavelength
+          var siliconWL_Nist = siliconWL_Uncalibrated + spline.GetYOfX(siliconWL_Uncalibrated);
+
+          var laserWL_Calibrated = 1 / (1 / siliconWL_Nist + 1E-7 * _siliconCalibrationOptions.GetOfficialShiftValue_Silicon_invcm());
+
+          // with the calibrated laser wavelength, we are now be able to convert our shift values to calibrated shift values
+
+          var x_uncalibrated = destinationTable.DataColumns.EnsureExistence(ColumnName_XCalibration_UncalibratedX, typeof(DoubleColumn), ColumnKind.X, 10);
+          x_uncalibrated.Clear();
+          var x_calibrated = destinationTable.DataColumns.EnsureExistence(ColumnName_XCalibration_CalibratedX, typeof(DoubleColumn), ColumnKind.X, 10);
+          x_calibrated.Clear();
+
+          var pcol = destinationTable.PropCols.EnsureExistence(PropertyName_CalibratedLaserWavelength, typeof(DoubleColumn), ColumnKind.V, 0);
+          pcol.Clear();
+          pcol[destinationTable.DataColumns.GetColumnNumber(x_calibrated)] = laserWL_Calibrated;
+
+          var originalShiftColumn = _siliconCalibrationData.XColumn;
+          for (var i = 0; i < (originalShiftColumn.Count ?? 0); ++i)
+          {
+            var shift_uncalibrated = _siliconCalibrationData.XColumn[i];
+            // transform to approximate wavelength
+            var approxWL = 1 / (1 / assumedLaserWavelength - 1E-7 * shift_uncalibrated);
+            // transform to calibrated Nist wavelength
+            var nistWL = approxWL + spline.GetYOfX(approxWL);
+            // backtransform to shift, now using calibrated laser wavelength
+            var shift_calibrated = 1E7 / laserWL_Calibrated - 1E7 / nistWL;
+
+            x_uncalibrated[i] = shift_uncalibrated;
+            x_calibrated[i] = shift_calibrated;
+          }
+        }
+
       }
       catch (Exception ex)
       {
@@ -234,14 +308,39 @@ namespace Altaxo.Data.Extensions
       }
     }
 
+    public bool IsContainingValidXAxisCalibration(DataTable table)
+    {
+      var uncalibColumn = table.DataColumns.TryGetColumn(ColumnName_XCalibration_UncalibratedX);
+      var calibColumn = table.DataColumns.TryGetColumn(ColumnName_XCalibration_CalibratedX);
+      return uncalibColumn is not null && calibColumn is not null && Math.Min(uncalibColumn.Count, calibColumn.Count) >= 2;
+    }
+
+    public (double x_uncalibrated, double x_calibrated)[] GetXAxisCalibration(DataTable table)
+    {
+      var uncalibColumn = table.DataColumns.TryGetColumn(ColumnName_XCalibration_UncalibratedX);
+      var calibColumn = table.DataColumns.TryGetColumn(ColumnName_XCalibration_CalibratedX);
+      var len = Math.Min(uncalibColumn.Count, calibColumn.Count);
+
+      if (!(uncalibColumn is not null && calibColumn is not null && Math.Min(uncalibColumn.Count, calibColumn.Count) >= 2))
+        throw new InvalidOperationException($"This data source does not contain a valid x-axis calibration. Please check this with {nameof(IsContainingValidXAxisCalibration)} beforehand!");
+
+
+      var result = new (double x_uncalibrated, double x_calibrated)[len];
+
+      for (var i = 0; i < len; ++i)
+        result[i] = (uncalibColumn[i], calibColumn[i]);
+
+      return result;
+    }
+
     /// <summary>
     /// Occurs when the data source has changed and the import trigger source is DataSourceChanged. The argument is the sender of this event.
     /// </summary>
-    public event Action<Data.IAltaxoTableDataSource> DataSourceChanged
+    public event Action<IAltaxoTableDataSource> DataSourceChanged
     {
       add
       {
-        bool isFirst = _dataSourceChanged is null;
+        var isFirst = _dataSourceChanged is null;
         _dataSourceChanged += value;
         if (isFirst)
         {
@@ -251,20 +350,22 @@ namespace Altaxo.Data.Extensions
       remove
       {
         _dataSourceChanged -= value;
-        bool isLast = _dataSourceChanged is null;
+        var isLast = _dataSourceChanged is null;
         if (isLast)
         {
         }
       }
     }
 
+    public bool IsNeonCalibration1Empty => _neonCalibrationData1 is null || _neonCalibrationOptions1 is null;
+
     public void SetNeonCalibration1(NeonCalibrationOptions options, DataTableXYColumnProxy data)
     {
       var b1 = ChildSetMember(ref _neonCalibrationData1, data);
-      var b2 = !object.Equals(_neonCalibrationOptions1, options);
+      var b2 = !Equals(_neonCalibrationOptions1, options);
       _neonCalibrationOptions1 = options;
 
-      if(b1 || b2)
+      if (b1 || b2)
       {
         EhChildChanged(_neonCalibrationData1, EventArgs.Empty);
       }
@@ -273,7 +374,7 @@ namespace Altaxo.Data.Extensions
     public void SetNeonCalibration2(NeonCalibrationOptions options, DataTableXYColumnProxy data)
     {
       var b1 = ChildSetMember(ref _neonCalibrationData2, data);
-      var b2 = !object.Equals(_neonCalibrationOptions2, options);
+      var b2 = !Equals(_neonCalibrationOptions2, options);
       _neonCalibrationOptions2 = options;
 
       if (b1 || b2)
@@ -286,7 +387,7 @@ namespace Altaxo.Data.Extensions
     public void SetSiliconCalibration(SiliconCalibrationOptions options, DataTableXYColumnProxy data)
     {
       var b1 = ChildSetMember(ref _siliconCalibrationData, data);
-      var b2 = !object.Equals(_siliconCalibrationOptions, options);
+      var b2 = !Equals(_siliconCalibrationOptions, options);
       _siliconCalibrationOptions = options;
 
       if (b1 || b2)
@@ -302,8 +403,8 @@ namespace Altaxo.Data.Extensions
     /// <value>
     /// The import options.
     /// </value>
-    /// <exception cref="System.ArgumentNullException">ImportOptions</exception>
-    public Data.IDataSourceImportOptions ImportOptions
+    /// <exception cref="ArgumentNullException">ImportOptions</exception>
+    public IDataSourceImportOptions ImportOptions
     {
       get
       {
@@ -319,13 +420,16 @@ namespace Altaxo.Data.Extensions
       }
     }
 
+    public object ProcessOptionsObject { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+    public object ProcessDataObject { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
     #region Change event handling
 
     protected override bool HandleHighPriorityChildChangeCases(object? sender, ref EventArgs e)
     {
-      if (object.ReferenceEquals(_neonCalibrationData1, sender) ||
-        object.ReferenceEquals(_neonCalibrationData2, sender) ||
-        object.ReferenceEquals(_siliconCalibrationData, sender) 
+      if (ReferenceEquals(_neonCalibrationData1, sender) ||
+        ReferenceEquals(_neonCalibrationData2, sender) ||
+        ReferenceEquals(_siliconCalibrationData, sender)
         ) // incoming call from data proxy
       {
         if (_importOptions.ImportTriggerSource == ImportTriggerSource.DataSourceChanged)

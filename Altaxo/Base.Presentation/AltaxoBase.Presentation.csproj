@@ -57,6 +57,9 @@
     <Compile Update="Gui\Analysis\Spectroscopy\BaselineEstimation\SNIP_BaseControl.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Gui\Analysis\Spectroscopy\Calibration\CalibrationControl.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Gui\Analysis\Spectroscopy\Cropping\CroppingByXValuesControl.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -121,6 +124,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Gui\Analysis\Spectroscopy\BaselineEstimation\SNIP_BaseControl.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Gui\Analysis\Spectroscopy\Calibration\CalibrationControl.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
     </Page>

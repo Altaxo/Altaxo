@@ -33,6 +33,7 @@ using Altaxo.Graph.Gdi.Plot;
 using Altaxo.Graph.Gdi.Plot.Styles;
 using Altaxo.Graph.Plot.Data;
 using Altaxo.Gui;
+using Altaxo.Gui.Analysis.Spectroscopy.Raman;
 using Altaxo.Gui.Worksheet.Viewing;
 using Altaxo.Science.Spectroscopy;
 using Altaxo.Science.Spectroscopy.PeakFitting;
@@ -526,21 +527,35 @@ namespace Altaxo.Data
         return;
       }
 
-      object neonOptionsObj = new NeonCalibrationOptions();
-      if (!Current.Gui.ShowDialog(ref neonOptionsObj, "Choose options for Neon calibration"))
+      var doc = new NeonCalibrationOptionsAndDestinationTable();
+      var controller = new OptionsAndDestinationTableController<NeonCalibrationOptions>();
+      controller.InitializeDocument(doc);
+      if (!Current.Gui.ShowDialog(controller, "Choose options for Neon calibration"))
         return;
 
-      var neonOptions = (NeonCalibrationOptions)neonOptionsObj;
+      doc = (NeonCalibrationOptionsAndDestinationTable)controller.ModelObject;
+      var dstTable = doc.DestinationTable;
 
-      var dstTable = new DataTable();
-      dstTable.Name = ctrl.DataTable.FolderName + "WRamanCalibration";
-      Current.Project.DataTableCollection.Add(dstTable);
+      if (dstTable is null)
+      {
+        dstTable = new DataTable();
+        dstTable.Name = ctrl.DataTable.FolderName + "WRamanCalibration";
+        dstTable.DataSource = new RamanCalibrationDataSource(new DataSourceImportOptions());
+        Current.Project.DataTableCollection.Add(dstTable);
+      }
 
-      Raman_CalibrateWithNeonSpectrum(dstTable, neonOptions, x_column, y_column);
+      var dataSource = (RamanCalibrationDataSource)dstTable.DataSource;
+      var proxy = new DataTableXYColumnProxy(ctrl.DataTable, x_column, y_column, null);
+      if (dataSource.IsNeonCalibration1Empty)
+        dataSource.SetNeonCalibration1(doc.Options, proxy);
+      else
+        dataSource.SetNeonCalibration2(doc.Options, proxy);
+      dataSource.FillData(dstTable);
       Current.ProjectService.OpenOrCreateWorksheetForTable(dstTable);
+
     }
 
-    public static void Raman_CalibrateWithNeonSpectrum(DataTable dstTable, NeonCalibrationOptions neonOptions, IReadableColumn x_column, IReadableColumn y_column)
+    public static NeonCalibration? Raman_CalibrateWithNeonSpectrum(DataTable dstTable, NeonCalibrationOptions neonOptions, IReadableColumn x_column, IReadableColumn y_column)
     {
       var len = Math.Min(x_column.Count??0, y_column.Count??0);
 
@@ -591,6 +606,8 @@ namespace Altaxo.Data
           }
         }
       }
+
+      return calibration;
     }
 
     /// <summary>
@@ -621,23 +638,34 @@ namespace Altaxo.Data
         return;
       }
 
-      object siliconOptionsObj = new SiliconCalibrationOptions();
-      if (!Current.Gui.ShowDialog(ref siliconOptionsObj, "Choose options for Silicon calibration"))
+
+      var doc = new SiliconCalibrationOptionsAndDestinationTable();
+      var controller = new OptionsAndDestinationTableController<SiliconCalibrationOptions>();
+      controller.InitializeDocument(doc);
+      if (!Current.Gui.ShowDialog(controller, "Choose options for Silicon calibration"))
         return;
 
-      var siliconOptions = (SiliconCalibrationOptions)siliconOptionsObj;
+      doc = (SiliconCalibrationOptionsAndDestinationTable)controller.ModelObject;
+      var dstTable = doc.DestinationTable;
 
-      var dstTable = new DataTable();
-      dstTable.Name = ctrl.DataTable.FolderName + "WRamanCalibration";
-      Current.Project.DataTableCollection.Add(dstTable);
+      if (dstTable is null)
+      {
+        dstTable = new DataTable();
+        dstTable.Name = ctrl.DataTable.FolderName + "WRamanCalibration";
 
-      Raman_CalibrateWithSiliconSpectrum(dstTable, siliconOptions, x_column, y_column);
+        dstTable.DataSource = new RamanCalibrationDataSource(new DataSourceImportOptions());
+        Current.Project.DataTableCollection.Add(dstTable);
+      }
 
+      var dataSource = (RamanCalibrationDataSource)dstTable.DataSource;
+      var proxy = new DataTableXYColumnProxy(ctrl.DataTable, x_column, y_column, null);
+      dataSource.SetSiliconCalibration(doc.Options, proxy);
+      dataSource.FillData(dstTable);
       Current.ProjectService.OpenOrCreateWorksheetForTable(dstTable);
     }
 
 
-    public static void Raman_CalibrateWithSiliconSpectrum(DataTable dstTable, SiliconCalibrationOptions siliconOptions, IReadableColumn x_column, IReadableColumn y_column)
+    public static SiliconCalibration? Raman_CalibrateWithSiliconSpectrum(DataTable dstTable, SiliconCalibrationOptions siliconOptions, IReadableColumn x_column, IReadableColumn y_column)
     {
       var len = Math.Min(x_column.Count ?? 0, y_column.Count ?? 0);
       var arrayX = new double[len];
@@ -656,7 +684,7 @@ namespace Altaxo.Data
       if (match is null)
       {
         Current.Gui.ErrorMessageBox("No silcon peak could be found");
-        return;
+        return null;
       }
 
       
@@ -668,6 +696,8 @@ namespace Altaxo.Data
         colPos[0] = match.Value.Position;
         colPosErr[0] = match.Value.PositionTolerance;
       }
+
+      return calibration;
     }
   }
 }
