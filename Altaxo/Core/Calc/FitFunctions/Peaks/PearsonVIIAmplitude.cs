@@ -225,7 +225,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
       int k = i - NumberOfParametersPerPeak * _numberOfTerms;
       if (k < 0)
       {
-        return i % NumberOfParametersPerPeak switch
+        return (i % NumberOfParametersPerPeak) switch
         {
           0 => 1, // amplitude
           1 => 0, // position
