@@ -407,6 +407,11 @@ namespace Altaxo.Calc.FitFunctions.Peaks
     /// <remarks>Newton-Raphson iteration is used to calculate HWMH, because a analytical formula is not available.</remarks>
     public static double GetHWHM(double w, double m, double v, bool rightSide)
     {
+      if (!(m > 0))
+      {
+        return double.NaN;
+      }
+
       w = Math.Abs(w);
       var sign = rightSide ? 1 : -1;
       double z0 = -v / (2 * m);
@@ -424,8 +429,8 @@ namespace Altaxo.Calc.FitFunctions.Peaks
 
       // go forward in exponentially increasing steps, until the amplitude falls below ymaxHalf, in order to bracked the solution
       double zNear = z0;
-      double zFar;
-      for (double d = 1; ; d *= 2)
+      double zFar = z0;
+      for (double d = 1; d<=double.MaxValue ; d *= 2)
       {
         zFar = z0 + d * sign;
         var y = funcsimp(zFar, m, v);

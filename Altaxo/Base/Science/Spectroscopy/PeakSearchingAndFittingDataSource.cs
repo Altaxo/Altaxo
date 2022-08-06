@@ -25,18 +25,18 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using Altaxo.Science.Spectroscopy;
+using Altaxo.Data;
 
-namespace Altaxo.Data
+namespace Altaxo.Science.Spectroscopy
 {
   /// <summary>
   /// Table data source for applying the <see cref="PeakSearchingAndFittingOptions"/> to columns of a table.
   /// </summary>
   /// <seealso cref="Altaxo.Data.TableDataSourceBase" />
   /// <seealso cref="Altaxo.Data.IAltaxoTableDataSource" />
-  public class PeakFindingAndFittingDataSource : TableDataSourceBase, Altaxo.Data.IAltaxoTableDataSource
+  public class PeakSearchingAndFittingDataSource : TableDataSourceBase, Altaxo.Data.IAltaxoTableDataSource
   {
-    private PeakSearchingAndFittingOptions _processOptions;
+    private PeakSearchingAndFittingOptionsDocNode _processOptions;
     private DataTableMultipleColumnProxy _processData;
     private IDataSourceImportOptions _importOptions;
 
@@ -49,24 +49,28 @@ namespace Altaxo.Data
     /// <summary>
     /// 2022-06-08 initial version.
     /// </summary>
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PeakFindingAndFittingDataSource), 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Data.PeakFindingAndFittingDataSource", 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
+        throw new InvalidOperationException("Serialization of old version");
+
+        /*
         var s = (PeakFindingAndFittingDataSource)obj;
 
         info.AddValue("ProcessData", s._processData);
         info.AddValue("ProcessOptions", s._processOptions);
         info.AddValue("ImportOptions", s._importOptions);
+        */
       }
 
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        if (o is PeakFindingAndFittingDataSource s)
+        if (o is PeakSearchingAndFittingDataSource s)
           s.DeserializeSurrogate0(info);
         else
-          s = new PeakFindingAndFittingDataSource(info, 0);
+          s = new PeakSearchingAndFittingDataSource(info, 0);
         return s;
       }
     }
@@ -75,18 +79,59 @@ namespace Altaxo.Data
     private void DeserializeSurrogate0(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
     {
       ChildSetMember(ref _processData, (DataTableMultipleColumnProxy)info.GetValue("ProcessData", this));
-      _processOptions = (PeakSearchingAndFittingOptions)info.GetValue("ProcessOptions", this);
+      ProcessOptions = (PeakSearchingAndFittingOptions)info.GetValue("ProcessOptions", this);
       ChildSetMember(ref _importOptions, (IDataSourceImportOptions)info.GetValue("ImportOptions", this));
     }
 
     #endregion Version 0
 
-    protected PeakFindingAndFittingDataSource(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, int version)
+    #region Version 1
+
+    /// <summary>
+    /// 2022-06-08 initial version.
+    /// 2022-08-05 change processOptions from PeakFindingAndFittingOptions to PeakFindingAndFittingOptionsDocNode, change namespace from Altaxo.Data to Altaxo.Science.Spectroscopy, change class name from PeakFindingAndFittingDataSource to PeakSearchingAndFittingDataSource
+    /// </summary>
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PeakSearchingAndFittingDataSource), 1)]
+    private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        var s = (PeakSearchingAndFittingDataSource)obj;
+
+        info.AddValue("ProcessData", s._processData);
+        info.AddValue("ProcessOptions", s._processOptions);
+        info.AddValue("ImportOptions", s._importOptions);
+      }
+
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      {
+        if (o is PeakSearchingAndFittingDataSource s)
+          s.DeserializeSurrogate1(info);
+        else
+          s = new PeakSearchingAndFittingDataSource(info, 1);
+        return s;
+      }
+    }
+
+    [MemberNotNull(nameof(_importOptions), nameof(_processOptions), nameof(_processData))]
+    private void DeserializeSurrogate1(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+    {
+      ChildSetMember(ref _processData, (DataTableMultipleColumnProxy)info.GetValue("ProcessData", this));
+      ChildSetMember(ref _processOptions, (PeakSearchingAndFittingOptionsDocNode)info.GetValue("ProcessOptions", this));
+      ChildSetMember(ref _importOptions, (IDataSourceImportOptions)info.GetValue("ImportOptions", this));
+    }
+
+    #endregion Version 0
+
+    protected PeakSearchingAndFittingDataSource(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, int version)
     {
       switch (version)
       {
         case 0:
           DeserializeSurrogate0(info);
+          break;
+        case 1:
+          DeserializeSurrogate1(info);
           break;
         default:
           throw new ArgumentOutOfRangeException(nameof(version));
@@ -108,7 +153,7 @@ namespace Altaxo.Data
     /// or
     /// importOptions
     /// </exception>
-    public PeakFindingAndFittingDataSource(DataTableMultipleColumnProxy inputData, PeakSearchingAndFittingOptions dataSourceOptions, IDataSourceImportOptions importOptions)
+    public PeakSearchingAndFittingDataSource(DataTableMultipleColumnProxy inputData, PeakSearchingAndFittingOptions dataSourceOptions, IDataSourceImportOptions importOptions)
     {
       if (inputData is null)
         throw new ArgumentNullException(nameof(inputData));
@@ -117,25 +162,23 @@ namespace Altaxo.Data
       if (importOptions is null)
         throw new ArgumentNullException(nameof(importOptions));
 
-      using (var token = SuspendGetToken())
-      {
-        _processOptions = dataSourceOptions;
-        ImportOptions = importOptions;
-        ProcessData = inputData;
-      }
+      ChildSetMember(ref _processOptions, new PeakSearchingAndFittingOptionsDocNode(dataSourceOptions));
+      ChildSetMember(ref _processData, inputData);
+      ChildSetMember(ref _importOptions, importOptions);
+
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="PeakFindingAndFittingDataSource"/> class.
+    /// Initializes a new instance of the <see cref="PeakSearchingAndFittingDataSource"/> class.
     /// </summary>
     /// <param name="from">Another instance to copy from.</param>
-    public PeakFindingAndFittingDataSource(PeakFindingAndFittingDataSource from)
+    public PeakSearchingAndFittingDataSource(PeakSearchingAndFittingDataSource from)
     {
       CopyFrom(from);
     }
 
     [MemberNotNull(nameof(_importOptions), nameof(_processOptions), nameof(_processData))]
-    public void CopyFrom(PeakFindingAndFittingDataSource from)
+    public void CopyFrom(PeakSearchingAndFittingDataSource from)
     {
       if (ReferenceEquals(this, from))
 #pragma warning disable CS8774 // Member must have a non-null SpectralPreprocessingDataSource when exiting.
@@ -144,15 +187,13 @@ namespace Altaxo.Data
 
       using (var token = SuspendGetToken())
       {
-        PeakSearchingAndFittingOptions? processOptions = null;
         DataTableMultipleColumnProxy? processData = null;
         IDataSourceImportOptions? importOptions = null;
 
         CopyHelper.Copy(ref importOptions, from._importOptions);
-        processOptions = from._processOptions;
         CopyHelper.Copy(ref processData, from._processData);
 
-        ProcessOptions = processOptions;
+        ProcessOptions = from.ProcessOptions;
         ImportOptions = importOptions;
         ProcessData = processData;
       }
@@ -168,7 +209,7 @@ namespace Altaxo.Data
       if (ReferenceEquals(this, obj))
         return true;
 
-      if (obj is PeakFindingAndFittingDataSource from)
+      if (obj is PeakSearchingAndFittingDataSource from)
       {
         CopyFrom(from);
 
@@ -188,7 +229,7 @@ namespace Altaxo.Data
     /// </returns>
     public object Clone()
     {
-      return new PeakFindingAndFittingDataSource(this);
+      return new PeakSearchingAndFittingDataSource(this);
     }
 
     #region IAltaxoTableDataSource
@@ -201,7 +242,8 @@ namespace Altaxo.Data
     {
       try
       {
-        SpectroscopyCommands.ExecutePeakFindingAndFitting(_processData, _processOptions, destinationTable);
+        var peakFindingAndFittingOptions = _processOptions.GetPeakSearchingAndFittingOptions();
+        SpectroscopyCommands.ExecutePeakFindingAndFitting(_processData, peakFindingAndFittingOptions, destinationTable);
       }
       catch (Exception ex)
       {
@@ -288,7 +330,7 @@ namespace Altaxo.Data
     {
       get
       {
-        return _processOptions;
+        return _processOptions.GetPeakSearchingAndFittingOptions();
       }
       [MemberNotNull(nameof(_processOptions))]
       set
@@ -296,9 +338,9 @@ namespace Altaxo.Data
         if (value is null)
           throw new ArgumentNullException(nameof(ProcessOptions));
 
-        if (!object.Equals(_processOptions, value))
+        if (_processOptions is null || !object.Equals(_processOptions.GetPeakSearchingAndFittingOptions(), value))
         {
-          _processOptions = value;
+          ChildSetMember(ref _processOptions, new PeakSearchingAndFittingOptionsDocNode(value));
           EhChildChanged(_processOptions, EventArgs.Empty);
         }
       }
@@ -306,7 +348,7 @@ namespace Altaxo.Data
 
     object IAltaxoTableDataSource.ProcessOptionsObject
     {
-      get => _processOptions;
+      get => ProcessOptions;
       set => ProcessOptions = (PeakSearchingAndFittingOptions)value;
     }
 
@@ -341,6 +383,9 @@ namespace Altaxo.Data
 
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
+      if (_processOptions is not null)
+        yield return new Main.DocumentNodeAndName(_processOptions, "ProcessOptions");
+
       if (_processData is not null)
         yield return new Main.DocumentNodeAndName(_processData, "ProcessData");
 
@@ -364,6 +409,7 @@ namespace Altaxo.Data
     public void VisitDocumentReferences(Main.DocNodeProxyReporter ReportProxies)
     {
       _processData?.VisitDocumentReferences(ReportProxies);
+      _processOptions?.VisitDocumentReferences(ReportProxies);
     }
 
     #endregion IAltaxoTableDataSource

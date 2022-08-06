@@ -25,13 +25,13 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using Altaxo.Science.Spectroscopy;
+using Altaxo.Data;
 
-namespace Altaxo.Data
+namespace Altaxo.Science.Spectroscopy
 {
   public class SpectralPreprocessingDataSource : TableDataSourceBase, Altaxo.Data.IAltaxoTableDataSource
   {
-    private SpectralPreprocessingOptions _processOptions;
+    private SpectralPreprocessingOptionsDocNode _processOptions;
     private DataTableMultipleColumnProxy _processData;
     private IDataSourceImportOptions _importOptions;
 
@@ -44,16 +44,20 @@ namespace Altaxo.Data
     /// <summary>
     /// 2022-06-08 initial version.
     /// </summary>
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(SpectralPreprocessingDataSource), 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Data.SpectralPreprocessingDataSource", 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
+        throw new InvalidOperationException("Try to serialize old version");
+
+        /*
         var s = (SpectralPreprocessingDataSource)obj;
 
         info.AddValue("ProcessData", s._processData);
         info.AddValue("ProcessOptions", s._processOptions);
         info.AddValue("ImportOptions", s._importOptions);
+        */
       }
 
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
@@ -70,11 +74,49 @@ namespace Altaxo.Data
     private void DeserializeSurrogate0(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
     {
       ChildSetMember(ref _processData, (DataTableMultipleColumnProxy)info.GetValue("ProcessData", this));
-      _processOptions = (SpectralPreprocessingOptions)info.GetValue("ProcessOptions", this);
+      ProcessOptions = (SpectralPreprocessingOptions)info.GetValue("ProcessOptions", this);
       ChildSetMember(ref _importOptions, (IDataSourceImportOptions)info.GetValue("ImportOptions", this));
     }
 
     #endregion Version 0
+
+    #region Version 1
+
+    /// <summary>
+    /// 2022-06-08 initial version.
+    /// 2022-08-05 change processOptions from SpectralPreprocessingOptions to SpectralPreprocessingOptionsDocNode, change namespace from Altaxo.Data to Altaxo.Science.Spectroscopy
+    /// </summary>
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(SpectralPreprocessingDataSource), 1)]
+    private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        var s = (SpectralPreprocessingDataSource)obj;
+
+        info.AddValue("ProcessData", s._processData);
+        info.AddValue("ProcessOptions", s._processOptions);
+        info.AddValue("ImportOptions", s._importOptions);
+      }
+
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      {
+        if (o is SpectralPreprocessingDataSource s)
+          s.DeserializeSurrogate1(info);
+        else
+          s = new SpectralPreprocessingDataSource(info, 1);
+        return s;
+      }
+    }
+
+    [MemberNotNull(nameof(_importOptions), nameof(_processOptions), nameof(_processData))]
+    private void DeserializeSurrogate1(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+    {
+      ChildSetMember(ref _processData, (DataTableMultipleColumnProxy)info.GetValue("ProcessData", this));
+      ChildSetMember(ref _processOptions, (SpectralPreprocessingOptionsDocNode)info.GetValue("ProcessOptions", this));
+      ChildSetMember(ref _importOptions, (IDataSourceImportOptions)info.GetValue("ImportOptions", this));
+    }
+
+    #endregion Version 1
 
     protected SpectralPreprocessingDataSource(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, int version)
     {
@@ -82,6 +124,9 @@ namespace Altaxo.Data
       {
         case 0:
           DeserializeSurrogate0(info);
+          break;
+        case 1:
+          DeserializeSurrogate1(info);
           break;
         default:
           throw new ArgumentOutOfRangeException(nameof(version));
@@ -112,12 +157,9 @@ namespace Altaxo.Data
       if (importOptions is null)
         throw new ArgumentNullException(nameof(importOptions));
 
-      using (var token = SuspendGetToken())
-      {
-        _processOptions = dataSourceOptions;
-        ImportOptions = importOptions;
-        ProcessData = inputData;
-      }
+      ChildSetMember(ref _processOptions, new SpectralPreprocessingOptionsDocNode(dataSourceOptions));
+      ChildSetMember(ref _processData, inputData);
+      ChildSetMember(ref _importOptions, importOptions);
     }
 
     /// <summary>
@@ -139,15 +181,13 @@ namespace Altaxo.Data
 
       using (var token = SuspendGetToken())
       {
-        SpectralPreprocessingOptions? processOptions = null;
         DataTableMultipleColumnProxy? processData = null;
         IDataSourceImportOptions? importOptions = null;
 
         CopyHelper.Copy(ref importOptions, from._importOptions);
-        processOptions = from._processOptions;
         CopyHelper.Copy(ref processData, from._processData);
 
-        ProcessOptions = processOptions;
+        ProcessOptions = from.ProcessOptions;
         ImportOptions = importOptions;
         ProcessData = processData;
       }
@@ -196,7 +236,8 @@ namespace Altaxo.Data
     {
       try
       {
-        SpectroscopyCommands.ExecuteSpectralPreprocessing(_processData, _processOptions, destinationTable);
+        var spectralPreprocessingOptions = _processOptions.GetSpectralPreprocessingOptions();
+        SpectroscopyCommands.ExecuteSpectralPreprocessing(_processData, spectralPreprocessingOptions, destinationTable);
       }
       catch (Exception ex)
       {
@@ -283,7 +324,7 @@ namespace Altaxo.Data
     {
       get
       {
-        return _processOptions;
+        return _processOptions.GetSpectralPreprocessingOptions();
       }
       [MemberNotNull(nameof(_processOptions))]
       set
@@ -291,9 +332,9 @@ namespace Altaxo.Data
         if (value is null)
           throw new ArgumentNullException(nameof(ProcessOptions));
 
-        if (!object.Equals(_processOptions, value))
+        if (_processOptions is null || !object.Equals(_processOptions.GetSpectralPreprocessingOptions(), value))
         {
-          _processOptions = value;
+          ChildSetMember(ref _processOptions, new SpectralPreprocessingOptionsDocNode(value));
           EhChildChanged(_processOptions, EventArgs.Empty);
         }
       }
@@ -301,7 +342,7 @@ namespace Altaxo.Data
 
     object IAltaxoTableDataSource.ProcessOptionsObject
     {
-      get => _processOptions;
+      get => ProcessOptions;
       set => ProcessOptions = (SpectralPreprocessingOptions)value;
     }
 
@@ -336,6 +377,9 @@ namespace Altaxo.Data
 
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
+      if (_processOptions is not null)
+        yield return new Main.DocumentNodeAndName(_processOptions, "ProcessOptions");
+
       if (_processData is not null)
         yield return new Main.DocumentNodeAndName(_processData, "ProcessData");
 
@@ -359,6 +403,7 @@ namespace Altaxo.Data
     public void VisitDocumentReferences(Main.DocNodeProxyReporter ReportProxies)
     {
       _processData?.VisitDocumentReferences(ReportProxies);
+      _processOptions?.VisitDocumentReferences(ReportProxies);
     }
 
     #endregion IAltaxoTableDataSource

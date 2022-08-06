@@ -40,7 +40,13 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
   {
     #region Serialization
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PeakFittingSeparately), 0)]
+    #region Version 0
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoCore", "Altaxo.Science.Spectroscopy.PeakFitting.PeakFittingSeparately", 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
@@ -58,6 +64,40 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
         };
       }
     }
+
+    #endregion
+
+    #region Version 1
+
+    /// <summary>
+    /// 2022-08-06 Added FitWidthScalingFactor
+    /// </summary>
+    /// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PeakFittingSeparately), 1)]
+    public class SerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        var s = (PeakFittingSeparately)obj;
+        info.AddValue("FitFunction", s.FitFunction);
+        info.AddValue("FitWidthScalingFactor", s.FitWidthScalingFactor);
+      }
+
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      {
+        var fitFunction = info.GetValue<IFitFunctionPeak>("FitFunction", null);
+        var fitWidthScaling = info.GetDouble("FitWidthScalingFactor");
+        return new PeakFittingSeparately()
+        {
+          FitFunction = fitFunction,
+          FitWidthScalingFactor = fitWidthScaling,
+        };
+      }
+    }
+
+    #endregion
+
+
     #endregion
 
     public IReadOnlyList<(IReadOnlyList<PeakDescription> PeakDescriptions, int StartOfRegion, int EndOfRegion)> Execute(double[] xArray, double[] yArray, IReadOnlyList<(IReadOnlyList<PeakSearching.PeakDescription> PeakDescriptions, int StartOfRegion, int EndOfRegion)> peakDescriptions)

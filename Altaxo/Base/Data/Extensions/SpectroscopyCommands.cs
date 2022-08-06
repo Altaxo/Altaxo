@@ -404,7 +404,7 @@ namespace Altaxo.Data
         Current.ProjectService.OpenOrCreateWorksheetForTable(peakTable);
 
 
-        peakTable.DataSource = new PeakFindingAndFittingDataSource(
+        peakTable.DataSource = new PeakSearchingAndFittingDataSource(
           dataProxy,
           new PeakSearchingAndFittingOptions(doc), // downcast to PeakFindingAndFittingOptions
           new DataSourceImportOptions());

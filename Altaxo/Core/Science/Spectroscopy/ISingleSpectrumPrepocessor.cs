@@ -46,4 +46,23 @@ namespace Altaxo.Science.Spectroscopy
     /// <returns>X-values, y-values and regions of the processed spectrum.</returns>
     (double[] x, double[] y, int[]? regions) Execute(double[] x, double[] y, int[]? regions);
   }
+
+  /// <summary>
+  /// Additional interface that is used if the spectral preprocessor
+  /// is referencing a table, for instance a calibration table.
+  /// </summary>
+  public interface IReferencingTable
+  {
+    /// <summary>
+    /// Gets the name of the table.
+    /// </summary>
+    string? TableName { get; init; }
+
+    /// <summary>
+    /// Returns a new instance, in which the table name is set to the provided name.
+    /// </summary>
+    /// <param name="tableName">Name of the table.</param>
+    /// <returns>New instance, in which the table name is set to the provided name.</returns>
+    IReferencingTable WithTableName(string tableName);
+  }
 }

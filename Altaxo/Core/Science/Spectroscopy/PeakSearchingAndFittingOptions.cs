@@ -28,9 +28,14 @@ using Altaxo.Science.Spectroscopy.PeakSearching;
 
 namespace Altaxo.Science.Spectroscopy
 {
-  public record PeakSearchingAndFittingOptions 
+  public record PeakSearchingAndFittingOptions
   {
-   public SpectralPreprocessingOptions Preprocessing { get; init; } = new SpectralPreprocessingOptions();
+    public SpectralPreprocessingOptions Preprocessing { get; init; } = new SpectralPreprocessingOptions();
+
+    public IPeakSearching PeakSearching { get; init; } = new PeakSearching.PeakSearchingByTopology();
+
+    public IPeakFitting PeakFitting { get; init; } = new PeakFittingNone();
+
 
     #region Serialization
 
@@ -115,11 +120,8 @@ namespace Altaxo.Science.Spectroscopy
       PeakFitting = from.PeakFitting;
     }
 
-    public IPeakSearching PeakSearching { get; init; } = new PeakSearching.PeakSearchingByTopology();
-
-    public IPeakFitting PeakFitting { get; init; } = new PeakFittingNone();
 
 
-   
+
   }
 }

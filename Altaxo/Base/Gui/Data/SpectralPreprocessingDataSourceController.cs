@@ -22,7 +22,7 @@
 
 #endregion Copyright
 
-using Altaxo.Data;
+using Altaxo.Science.Spectroscopy;
 
 namespace Altaxo.Gui.Data
 {

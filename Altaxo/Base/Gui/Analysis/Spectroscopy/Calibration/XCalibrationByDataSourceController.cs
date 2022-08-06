@@ -75,12 +75,17 @@ namespace Altaxo.Gui.Analysis.Spectroscopy.Calibration
 
       if(initData)
       {
+        DataTable? docTable = null;
         DataTable? youngest=null;
+
         foreach(var t in Current.Project.DataTableCollection)
         {
-          if(t.DataSource is RamanCalibrationDataSource rcds && rcds.IsContainingValidXAxisCalibration(t))
+          if(t.DataSource is IXCalibrationDataSource rcds && rcds.IsContainingValidXAxisCalibration(t))
           {
             list.Add(new SelectableListNode(t.Name, t, false));
+
+            if (t.Name == _doc.TableName)
+              docTable = t;
 
             if (youngest is null || t.CreationTimeUtc > youngest.CreationTimeUtc)
               youngest = t;
@@ -88,8 +93,15 @@ namespace Altaxo.Gui.Analysis.Spectroscopy.Calibration
         }
 
         AvailableCalibrationTables = new ItemsController<DataTable>(list);
-        if(youngest is not null)
+
+        if (docTable is not null)
+        {
+          AvailableCalibrationTables.SelectedValue = docTable;
+        }
+        else if (youngest is not null)
+        {
           AvailableCalibrationTables.SelectedValue = youngest;
+        }
       }
     }
 
@@ -98,10 +110,10 @@ namespace Altaxo.Gui.Analysis.Spectroscopy.Calibration
     {
       if(AvailableCalibrationTables.SelectedValue is { } calibTable)
       {
-        var rcds = (RamanCalibrationDataSource)calibTable.DataSource;
+        var rcds = (IXCalibrationDataSource)calibTable.DataSource;
 
         var calibrationData = rcds.GetXAxisCalibration(calibTable);
-        _doc = _doc with { AbsoluteTableName = calibTable.Name, RelativeTableName = null,  CalibrationTable = calibrationData.ToImmutableArray()};
+        _doc = _doc with { TableName = calibTable.Name, CalibrationTable = calibrationData.ToImmutableArray()};
         return ApplyEnd(true, disposeController);
       }
       else

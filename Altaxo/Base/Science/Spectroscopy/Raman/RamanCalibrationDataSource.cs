@@ -32,7 +32,7 @@ using Altaxo.Data;
 
 namespace Altaxo.Science.Spectroscopy.Raman
 {
-  public class RamanCalibrationDataSource : TableDataSourceBase, IAltaxoTableDataSource
+  public class RamanCalibrationDataSource : TableDataSourceBase, IAltaxoTableDataSource, Calibration.IXCalibrationDataSource
   {
     #region ColumnNames
 

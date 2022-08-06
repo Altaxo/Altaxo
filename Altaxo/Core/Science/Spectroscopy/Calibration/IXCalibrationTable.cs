@@ -22,12 +22,25 @@
 
 #endregion Copyright
 
-using Altaxo.Science.Spectroscopy;
+using System.Collections.Immutable;
 
-namespace Altaxo.Gui.Data
+namespace Altaxo.Science.Spectroscopy.Calibration
 {
-  [UserControllerForObject(typeof(PeakSearchingAndFittingDataSource))]
-  public class PeakFindingAndFittingDataSourceController : DataSourceControllerBase<PeakSearchingAndFittingDataSource>
+  /// <summary>
+  /// Interface to a spectral preprocessor that contains an x-axis calibration table.
+  /// </summary>
+  public interface IXCalibrationTable
   {
+    /// <summary>
+    /// Gets the calibration table.
+    /// </summary>
+    public ImmutableArray<(double x_uncalibrated, double x_calibrated)> CalibrationTable  { get; }
+
+    /// <summary>
+    /// Returns a new instance with the provided calibration table.
+    /// </summary>
+    /// <param name="calibrationTable">The calibration table.</param>
+    /// <returns>A new instance with the provided calibration table.</returns>
+    public IXCalibrationTable WithCalibrationTable(ImmutableArray<(double x_uncalibrated, double x_calibrated)> calibrationTable);
   }
 }

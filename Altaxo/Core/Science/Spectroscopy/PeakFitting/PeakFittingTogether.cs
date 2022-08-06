@@ -40,7 +40,9 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
 
     #region Serialization
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PeakFittingTogether), 0)]
+    #region Version 0
+
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoCore", "Altaxo.Science.Spectroscopy.PeakFitting.PeakFittingTogether", 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
@@ -57,6 +59,38 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
         };
       }
     }
+
+    #endregion
+
+    #region Version 1
+
+    /// <summary>
+    /// 2022-08-06 Added FitWidthScalingFactor
+    /// </summary>
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PeakFittingTogether), 1)]
+    public class SerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        var s = (PeakFittingTogether)obj;
+        info.AddValue("FitFunction", s.FitFunction);
+        info.AddValue("FitWidthScalingFactor", s.FitWidthScalingFactor);
+      }
+
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      {
+        var fitFunction = info.GetValue<IFitFunctionPeak>("FitFunction", null);
+        var fitWidthScaling = info.GetDouble("FitWidthScalingFactor");
+        return new PeakFittingTogether()
+        {
+          FitFunction = fitFunction,
+          FitWidthScalingFactor = fitWidthScaling,
+        };
+      }
+    }
+
+    #endregion
+
     #endregion
 
 
