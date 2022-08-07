@@ -26,30 +26,42 @@ using System;
 using Altaxo.Calc.LinearAlgebra;
 using Xunit;
 
-namespace Altaxo.Calc.FitFunctions.Peaks
+namespace Altaxo.Calc.FitFunctions.Probability
 {
-  public class PearsonIVAmplitudeTests
+  public class PearsonIVAreaTests
   {
     [Fact]
     public void TestDerivatives1()
     {
-      // see PearsonIV (amplitudeModified).nb
-      double amp = 3;
+      // see PearsonIV (area).nb
+      double area = 3;
       double pos = 7;
       double w = 5;
       double m = 11;
       double v = 13;
 
-      var ymaxDerivs = new double[] { 1, 0, 0, 0, 0 };
-      var xmaxDerivs = new double[] { 0, 1, 0, 0, 0 };
-      var areaDerivs = new double[] { 3.2274058360605690545, 0, 1.9364435016363414327, -0.70837802505116421171, 0.19708150944514741889 };
+      // xmax and ymax
+      AssertEx.AreEqual(4.0454545454545454545, PearsonIVArea.GetPositionOfMaximum(pos, w, m, v), 1E-13, 1E-13);
+      AssertEx.AreEqual(0.92953912596931261608, PearsonIVArea.GetHeight(area, w, m, v), 1E-13, 1E-7);
+
+      // some function values
+      AssertEx.AreEqual(1.6331838838125936862e-8, PearsonIVArea.GetYOfOneTerm(11, area, pos, w, m, v), 0, 1E-7);
+      AssertEx.AreEqual(1.5080908460474988131e-11, PearsonIVArea.GetYOfOneTerm(13, area, pos, w, m, v), 0, 1E-7);
+      AssertEx.AreEqual(4.0285468880544237296e-14, PearsonIVArea.GetYOfOneTerm(15, area, pos, w, m, v), 0, 1E-7);
+      AssertEx.AreEqual(2.7947780603941940291e-16, PearsonIVArea.GetYOfOneTerm(17, area, pos, w, m, v), 0, 1E-7);
+      AssertEx.AreEqual(4.6177002802783070291e-26, PearsonIVArea.GetYOfOneTerm(33, area, pos, w, m, v), 0, 1E-7);
+
+      // derivatives
+      var ymaxDerivs = new double[] { 0.30984637532310420536, 0, -0.18590782519386252322, 0.068007673831486242285, -0.018920766227318379511 };
+      var xmaxDerivs = new double[] { 0, 1.0000000000000000000, -0.59090909090909090909, 0.26859504132231404959, -0.22727272727272727273};
+      var areaDerivs = new double[] { 1, 0, 0, 0, 0 };
       var fwhmDerivs = new double[] { 0, 0, 0.59352560729636783014, -0.21021029561763018768, 0.05968873919496908876 };
 
-      double[] pars = new double[] { amp, pos, w, m, v };
+      double[] pars = new double[] { area, pos, w, m, v };
       double[] X = new double[1];
       double[] Y = new double[1];
 
-      var func = new PearsonIVAmplitude();
+      var func = new PearsonIVArea();
 
       for (int i = 0; i < pars.Length; i++)
       {
@@ -67,21 +79,33 @@ namespace Altaxo.Calc.FitFunctions.Peaks
     public void TestDerivatives2()
     {
       // see PearsonIV (amplitudeModified).nb
-      double amp = 3;
+      double area = 3;
       double pos = 7;
       double w = 5;
       double m = 300;
       double v = -1290;
 
-      var ymaxDerivs = new double[] { 1, 0, 0, 0, 0 };
-      var xmaxDerivs = new double[] { 0, 1, 0, 0, 0 };
-      var areaDerivs = new double[] { 1.21532065684380740658, 0, 0.72919239410628444395, -0.016091029911639133025, -0.0023241047381251426829 };
+      // xmax and ymax
+      AssertEx.AreEqual(17.75, PearsonIVArea.GetPositionOfMaximum(pos, w, m, v), 1E-13, 1E-13);
+      AssertEx.AreEqual(2.4684843321852291775, PearsonIVArea.GetHeight(area, w, m, v), 1E-13, 1E-7);
 
-      double[] pars = new double[] { amp, pos, w, m, v };
+      // some function values
+      AssertEx.AreEqual(6.5225877998941783518e-98, PearsonIVArea.GetYOfOneTerm(11, area, pos, w, m, v), 0, 1E-7);
+      AssertEx.AreEqual(6.8627695789204139079e-37, PearsonIVArea.GetYOfOneTerm(13, area, pos, w, m, v), 0, 1E-7);
+      AssertEx.AreEqual(7.743249341205252392e-10, PearsonIVArea.GetYOfOneTerm(15, area, pos, w, m, v), 0, 1E-7);
+      AssertEx.AreEqual(0.67399094168103023601, PearsonIVArea.GetYOfOneTerm(17, area, pos, w, m, v), 0, 1E-7);
+      AssertEx.AreEqual(3.170430439424699735e-72, PearsonIVArea.GetYOfOneTerm(33, area, pos, w, m, v), 0, 1E-7);
+
+      // derivatives
+      var ymaxDerivs = new double[] {0.82282811072840972582, 0, -0.49369686643704583549, 0.0108943690435190037832, 0.0015735260484856793697 };
+      var xmaxDerivs = new double[] {0, 1.0000000000000000000, 2.1500000000000000000, -0.035833333333333333333, -0.0083333333333333333333 };
+      var areaDerivs = new double[] { 1, 0, 0, 0, 0 };
+
+      double[] pars = new double[] { area, pos, w, m, v };
       double[] X = new double[1];
       double[] Y = new double[1];
 
-      var func = new PearsonIVAmplitude();
+      var func = new PearsonIVArea();
 
       for (int i = 0; i < pars.Length; i++)
       {
@@ -101,8 +125,8 @@ namespace Altaxo.Calc.FitFunctions.Peaks
       double w = 5;
       double m = 11;
       double v = 13;
-      var left = PearsonIVAmplitude.GetHWHM(w, m, v, false);
-      var right = PearsonIVAmplitude.GetHWHM(w, m, v, true);
+      var left = PearsonIVArea.GetHWHM(w, m, v, false);
+      var right = PearsonIVArea.GetHWHM(w, m, v, true);
 
       AssertEx.AreEqual(1.610212109928116475803608029, left, 1E-15, 1E-13);
       AssertEx.AreEqual(1.357415926553722674910974552, right, 1E-15, 1E-13);
@@ -110,24 +134,24 @@ namespace Altaxo.Calc.FitFunctions.Peaks
       w = 5;
       m = 300;
       v = -1290;
-      left = PearsonIVAmplitude.GetHWHM(w, m, v, false);
-      right = PearsonIVAmplitude.GetHWHM(w, m, v, true);
+      left = PearsonIVArea.GetHWHM(w, m, v, false);
+      right = PearsonIVArea.GetHWHM(w, m, v, true);
 
       AssertEx.AreEqual(0.5537655602052538, left, 1E-15, 1E-13);
       AssertEx.AreEqual(0.58690275900381228, right, 1E-15, 1E-13);
     }
 
     [Fact]
-    public void TestArea()
+    public void TestHeight()
     {
       double result;
 
-      result = PearsonIVAmplitude.GetArea(3, 5, 11, 13);
-      AssertEx.AreEqual(9.6822175081817071635, result, 1E-13, 1E-12);
+      result = PearsonIVArea.GetHeight(3, 5, 11, 13);
+      AssertEx.AreEqual(0.92953912596931261608, result, 1E-13, 1E-12);
 
 
-      result = PearsonIVAmplitude.GetArea(3, 27, 300, -1290);
-      AssertEx.AreEqual(19.688194640869679987, result, 1E-13, 1E-12);
+      result = PearsonIVArea.GetHeight(3, 27, 300, -1290);
+      AssertEx.AreEqual(0.45712672818244984768, result, 1E-13, 1E-12);
     }
 
     /// <summary>
@@ -272,28 +296,30 @@ namespace Altaxo.Calc.FitFunctions.Peaks
         //if (Math.Abs(mexp) > 8 || Math.Abs(vexp) > 8)
         //continue;
 
-        var left = PearsonIVAmplitude.GetHWHM(1, m, v, false);
-        var right = PearsonIVAmplitude.GetHWHM(1, m, v, true);
+        var left = PearsonIVArea.GetHWHM(1, m, v, false);
+        var right = PearsonIVArea.GetHWHM(1, m, v, true);
 
         AssertEx.AreEqual(-expectedleft, left, 1E-8, 1E-8);
         AssertEx.AreEqual(expectedright, right, 1E-8, 1E-8);
 
-        var fwhm = PearsonIVAmplitude.GetFWHM(1, m, v);
+        var fwhm = PearsonIVArea.GetFWHM(1, m, v);
         var expectedfwhm = expectedright - expectedleft;
 
         AssertEx.AreEqual(expectedfwhm, fwhm, 1E-8, 1E-8);
 
-
         // but has left and right really the half amplitude?
         // we do make this test only for fwhm values < 1E100
         // and m>1/2
-        if (Math.Abs(fwhm) < 1E100 )
+        if (Math.Abs(fwhm) < 1E100 && m>0.5)
         {
-          var ymax = PearsonIVAmplitude.GetYOfOneTerm(0, 1, 0, 1, m, v);
-          var yleft = PearsonIVAmplitude.GetYOfOneTerm(-left, 1, 0, 1, m, v);
-          var yright = PearsonIVAmplitude.GetYOfOneTerm(right, 1, 0, 1, m, v);
-          AssertEx.AreEqual(0.5, yleft/ymax , 0, 1E-7);
-          AssertEx.AreEqual(0.5, yright/ymax, 0, 1E-7);
+          var xmax = PearsonIVArea.GetPositionOfMaximum(0, 1, m, v);
+          var ymax = PearsonIVArea.GetHeight(1, 1, m, v);
+          var xleft = xmax - left;
+          var xright = xmax + right;
+          var yleft = PearsonIVArea.GetYOfOneTerm(xleft, 1, 0, 1, m, v);
+          var yright = PearsonIVArea.GetYOfOneTerm(xright, 1, 0, 1, m, v);
+          AssertEx.AreEqual(0.5, yleft / ymax, 0, 1E-7);
+          AssertEx.AreEqual(0.5, yright / ymax, 0, 1E-7);
         }
 
       }
@@ -312,11 +338,11 @@ namespace Altaxo.Calc.FitFunctions.Peaks
         for (int idx_m = 0; idx_m <= 150; idx_m++)
         {
           double m = Math.Pow(10, (idx_m - 75) / 25.0);
-          var fwhmP = PearsonIVAmplitude.GetFWHM(w, m, v);
-          var fwhmN = PearsonIVAmplitude.GetFWHM(w, m, -v);
+          var fwhmP = PearsonIVArea.GetFWHM(w, m, v);
+          var fwhmN = PearsonIVArea.GetFWHM(w, m, -v);
 
-          var fwhmApproxP = PearsonIVAmplitude.GetFWHMApproximation(w, m, v);
-          var fwhmApproxN = PearsonIVAmplitude.GetFWHMApproximation(w, m, -v);
+          var fwhmApproxP = PearsonIVArea.GetFWHMApproximation(w, m, v);
+          var fwhmApproxN = PearsonIVArea.GetFWHMApproximation(w, m, -v);
 
           // FWHM should be independent of whether v is positive or negative
           AssertEx.AreEqual(fwhmP, fwhmN, 1E-8, 1E-8);

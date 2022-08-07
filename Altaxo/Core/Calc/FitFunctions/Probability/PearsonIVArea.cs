@@ -24,21 +24,22 @@
 
 #nullable enable
 using System;
+using Altaxo.Calc.FitFunctions.Peaks;
 using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Calc.Regression.Nonlinear;
 using Altaxo.Main;
 
-namespace Altaxo.Calc.FitFunctions.Peaks
+namespace Altaxo.Calc.FitFunctions.Probability
 {
   /// <summary>
   /// Fit fuction with one or more PearsonIV shaped peaks, with a background polynomial
-  /// of variable order. The PearsonIV is relocated and scaled, so that the amplitude parameter is the maximum height of the peak, and the position parameter is the x-value of the maximum.
+  /// of variable order. This is the original version from Wikipedia, with area as the scaling parameter.
   /// </summary>
   /// <remarks>See <see href="https://en.wikipedia.org/wiki/Pearson_distribution#The_Pearson_type_IV_distribution"/>.</remarks>
   [FitFunctionClass]
-  public class PearsonIVAmplitude : IFitFunction, IFitFunctionPeak, IImmutable
+  public class PearsonIVArea : IFitFunction, IFitFunctionPeak, IImmutable
   {
-    const string ParameterBaseName0 = "a";
+    const string ParameterBaseName0 = "A";
     const string ParameterBaseName1 = "xc";
     const string ParameterBaseName2 = "w";
     const string ParameterBaseName3 = "m";
@@ -54,14 +55,14 @@ namespace Altaxo.Calc.FitFunctions.Peaks
     #region Serialization
 
     /// <summary>
-    /// 2022-07-20 Initial version
+    /// 2022-08-07 Initial version
     /// </summary>
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PearsonIVAmplitude), 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PearsonIVArea), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (PearsonIVAmplitude)obj;
+        var s = (PearsonIVArea)obj;
         info.AddValue("NumberOfTerms", s._numberOfTerms);
         info.AddValue("OrderOfBackgroundPolynomial", s._orderOfBackgroundPolynomial);
       }
@@ -70,19 +71,19 @@ namespace Altaxo.Calc.FitFunctions.Peaks
       {
         var numberOfTerms = info.GetInt32("NumberOfTerms");
         var orderOfBackgroundPolynomial = info.GetInt32("OrderOfBackgroundPolynomial");
-        return new PearsonIVAmplitude(numberOfTerms, orderOfBackgroundPolynomial);
+        return new PearsonIVArea(numberOfTerms, orderOfBackgroundPolynomial);
       }
     }
 
     #endregion Serialization
 
-    public PearsonIVAmplitude()
+    public PearsonIVArea()
     {
       _numberOfTerms = 1;
       _orderOfBackgroundPolynomial = -1;
     }
 
-    public PearsonIVAmplitude(int numberOfTerms, int orderOfBackgroundPolynomial)
+    public PearsonIVArea(int numberOfTerms, int orderOfBackgroundPolynomial)
     {
       _numberOfTerms = numberOfTerms;
       _orderOfBackgroundPolynomial = orderOfBackgroundPolynomial;
@@ -94,11 +95,11 @@ namespace Altaxo.Calc.FitFunctions.Peaks
 
     }
 
-    [FitFunctionCreator("PearsonIVAmplitude", "Peaks", 1, 1, NumberOfParametersPerPeak)]
-    [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Peaks.PearsonIVAmplitude}")]
+    [FitFunctionCreator("PearsonIVArea", "Probability", 1, 1, NumberOfParametersPerPeak)]
+    [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Probability.PearsonIVArea}")]
     public static IFitFunction Create_1_M1()
     {
-      return new PearsonIVAmplitude(1, -1);
+      return new PearsonIVArea(1, -1);
     }
 
     /// <summary>
@@ -116,14 +117,14 @@ namespace Altaxo.Calc.FitFunctions.Peaks
     /// </summary>
     /// <param name="orderOfBackgroundPolynomial">The order of the background polynomial. If set to -1, the background polynomial will be disabled.</param>
     /// <returns>New instance with the background polynomial of the provided order.</returns>
-    public PearsonIVAmplitude WithOrderOfBackgroundPolynomial(int orderOfBackgroundPolynomial)
+    public PearsonIVArea WithOrderOfBackgroundPolynomial(int orderOfBackgroundPolynomial)
     {
       if (!(orderOfBackgroundPolynomial >= -1))
         throw new ArgumentOutOfRangeException($"{nameof(orderOfBackgroundPolynomial)} must be greater than or equal to 0, or -1 in order to deactivate it.");
 
       if (!(_orderOfBackgroundPolynomial == orderOfBackgroundPolynomial))
       {
-        return new PearsonIVAmplitude(_numberOfTerms, orderOfBackgroundPolynomial);
+        return new PearsonIVArea(_numberOfTerms, orderOfBackgroundPolynomial);
       }
       else
       {
@@ -141,14 +142,14 @@ namespace Altaxo.Calc.FitFunctions.Peaks
     /// </summary>
     /// <param name="numberOfTerms">The number of Lorentzian (Cauchy) terms (should be greater than or equal to 1).</param>
     /// <returns>New instance with the provided number of Lorentzian (Cauchy) terms.</returns>
-    public PearsonIVAmplitude WithNumberOfTerms(int numberOfTerms)
+    public PearsonIVArea WithNumberOfTerms(int numberOfTerms)
     {
       if (!(numberOfTerms >= 1))
         throw new ArgumentOutOfRangeException($"{nameof(numberOfTerms)} must be greater than or equal to 1");
 
       if (!(_numberOfTerms == numberOfTerms))
       {
-        return new PearsonIVAmplitude(numberOfTerms, _orderOfBackgroundPolynomial);
+        return new PearsonIVArea(numberOfTerms, _orderOfBackgroundPolynomial);
       }
       else
       {
@@ -221,7 +222,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
       {
         return (i % NumberOfParametersPerPeak) switch
         {
-          0 => 1, // amplitude
+          0 => 1, // area
           1 => 0, // position
           2 => 1, // width
           3 => 1, // m (Lorentzian),
@@ -246,7 +247,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
       double sumTerms = 0, sumPolynomial = 0;
       for (int i = 0, j = 0; i < _numberOfTerms; ++i, j += NumberOfParametersPerPeak)
       {
-        sumTerms += GetYOfOneTerm(X[0], P[j], P[j + 1], P[j + 2], P[j + 3], P[j + 4]); 
+        sumTerms += GetYOfOneTerm(X[0], P[j], P[j + 1], P[j + 2], P[j + 3], P[j + 4]);
       }
 
       if (_orderOfBackgroundPolynomial >= 0)
@@ -278,24 +279,40 @@ namespace Altaxo.Calc.FitFunctions.Peaks
       if (!(relativeHeight > 0 && relativeHeight < 1))
         throw new ArgumentException("RelativeHeight should be in the open interval (0,1)", nameof(relativeHeight));
 
+      
+      // we assume a Lorentzian: m=1 and v=0
       var w = Math.Abs(0.5 * width * Math.Sqrt(relativeHeight / (1 - relativeHeight)));
-      return new double[NumberOfParametersPerPeak] { height, position, w, 1, 0 }; // Parameters for the Lorentz limit
+      var area = height * w * Math.PI;
+
+      return new double[NumberOfParametersPerPeak] { area, position, w, 1, 0 }; // Parameters for the Lorentz limit
     }
 
     /// <inheritdoc/>
     IFitFunctionPeak IFitFunctionPeak.WithNumberOfTerms(int numberOfTerms)
     {
-      return new PearsonIVAmplitude(numberOfTerms, this.OrderOfBackgroundPolynomial);
+      return new PearsonIVArea(numberOfTerms, this.OrderOfBackgroundPolynomial);
     }
 
     /// <inheritdoc/>
     public string[] ParameterNamesForOnePeak => new string[] { ParameterBaseName0, ParameterBaseName1, ParameterBaseName2, ParameterBaseName3, ParameterBaseName4 };
 
-    public static double GetYOfOneTerm(double x, double amplitude, double pos, double w, double m, double v)
+
+    /// <summary>
+    /// Gets the function value for one PearsonIVArea term.
+    /// </summary>
+    /// <param name="x">The x value.</param>
+    /// <param name="area">The area parameter.</param>
+    /// <param name="loc">The loc parameter.</param>
+    /// <param name="w">The w parameter.</param>
+    /// <param name="m">The m parameter.</param>
+    /// <param name="v">The v parameter.</param>
+    /// <returns></returns>
+    public static double GetYOfOneTerm(double x, double area, double loc, double w, double m, double v)
     {
-      double z0 = -v / (2 * m);
-      double z = (x - pos) / w + z0;
-      return amplitude * Math.Exp(-m * Math.Log((1 + z * z) / (1 + z0 * z0)) - v * (Math.Atan(z) - Math.Atan(z0)));
+      // prefactor without w
+      var lnprefactor = 2 * (GammaRelated.LnGamma(new Altaxo.Calc.Complex(m, v / 2)).Re - GammaRelated.LnGamma(m)) - GammaRelated.LnBeta(m - 0.5, 0.5);
+      var z = (x - loc) / w;
+      return (area / w) * Math.Exp(lnprefactor - m * Math.Log(1 + z * z) - v * Math.Atan(z));
     }
 
     /// <inheritdoc/>
@@ -308,21 +325,23 @@ namespace Altaxo.Calc.FitFunctions.Peaks
 
     static double SafeSqrt(double x) => Math.Sqrt(Math.Max(0, x));
 
+    
+
     public (double Position, double PositionVariance, double Area, double AreaVariance, double Height, double HeightVariance, double FWHM, double FWHMVariance)
       GetPositionAreaHeightFWHMFromSinglePeakParameters(double[] parameters, IROMatrix<double> cv)
     {
       if (parameters is null || parameters.Length != NumberOfParametersPerPeak)
         throw new ArgumentException(nameof(parameters));
 
-      var amp = parameters[0];
+      var area = parameters[0];
       var loc = parameters[1];
       var w = parameters[2];
       var m = parameters[3];
       var v = parameters[4];
 
-      var area = GetArea(amp, w, m, v);
-      var pos = loc;
-      var height = amp;
+      
+      var pos = loc - w*v/(2*m);
+      var height = GetHeight(area, w, m, v);
       var fwhm = GetHWHM(w, m, v, true) + GetHWHM(w, m, v, false);
 
       double posVariance = 0, areaVariance = 0, heightVariance = 0, fwhmVariance = 0;
@@ -332,23 +351,31 @@ namespace Altaxo.Calc.FitFunctions.Peaks
         var deriv = new double[5];
         var resVec = new DoubleVector(5);
 
-        // PositionVariance
-        posVariance = SafeSqrt(cv[1, 1]);
-
-        // Height variance
-        heightVariance = SafeSqrt(cv[0,0]);
+       
 
         // Area variance
-        deriv[0] = GetArea(1, w, m, v);
+        areaVariance = SafeSqrt(cv[0,0]);
+
+        // PositionVariance
+        deriv[0] = 0;
+        deriv[1] = 1;
+        deriv[2] = -v / (2 * m);
+        deriv[3] = v * w / (2 * m * m);
+        deriv[4] = -w / (2 * m);
+        MatrixMath.Multiply(cv, deriv, resVec);
+        posVariance = SafeSqrt(VectorMath.DotProduct(deriv, resVec));
+
+        // Height variance
+        deriv[0] = GetHeight(1, w, m, v);
         deriv[1] = 0;
         double absDelta = w * 1E-5;
-        deriv[2] = (GetArea(amp, w + absDelta, m, v) - GetArea(amp, w - absDelta, m, v)) / (2 * absDelta);
+        deriv[2] = (GetHeight(area, w + absDelta, m, v) - GetHeight(area, w - absDelta, m, v)) / (2 * absDelta);
         absDelta = m * 1E-5;
-        deriv[3] = (GetArea(amp, w, m + absDelta, v) - GetArea(amp, w, m - absDelta, v)) / (2 * absDelta);
+        deriv[3] = (GetHeight(area, w, m + absDelta, v) - GetHeight(area, w, m - absDelta, v)) / (2 * absDelta);
         absDelta = v == 0 ? 1E-5 : Math.Abs(v * 1E-5);
-        deriv[4] = (GetArea(amp, w, m, v + absDelta) - GetArea(amp, w, m, v - absDelta)) / (2 * absDelta);
+        deriv[4] = (GetHeight(area, w, m, v + absDelta) - GetHeight(area, w, m, v - absDelta)) / (2 * absDelta);
         MatrixMath.Multiply(cv, deriv, resVec);
-        areaVariance = SafeSqrt(VectorMath.DotProduct(deriv, resVec));
+        heightVariance = SafeSqrt(VectorMath.DotProduct(deriv, resVec));
 
         // FWHM variance
         deriv[0] = 0;
@@ -367,26 +394,29 @@ namespace Altaxo.Calc.FitFunctions.Peaks
     }
 
     /// <summary>
-    /// Gets the area under the peak.
+    /// Gets the position of the maximum function value.
     /// </summary>
-    /// <param name="amp">The amplitude parameter.</param>
+    /// <param name="loc">The loc parameter.</param>
+    /// <param name="w">The w parameter.</param>
+    /// <param name="m">The m parameter.</param>
+    /// <param name="v">The v parameter.</param>
+    /// <returns>The position of the maximum function value.</returns>
+    public static double GetPositionOfMaximum(double loc, double w, double m, double v)
+    {
+      return loc - w * v / (2 * m);
+    }
+
+    /// <summary>
+    /// Gets the maximum function value.
+    /// </summary>
+    /// <param name="area">The area parameter.</param>
     /// <param name="w">The width parameter.</param>
     /// <param name="m">The m exponent.</param>
     /// <param name="v">The skewness parameter.</param>
     /// <returns>The area under the peak.</returns>
-    public static double GetArea(double amp, double w, double m, double v)
+    public static double GetHeight(double area, double w, double m, double v)
     {
-      var lnprefactor = (
-                        GammaRelated.LnBeta(m-0.5, 0.5) +
-                        2 * GammaRelated.LnGamma(m) -
-                        2 * GammaRelated.LnGamma(new Altaxo.Calc.Complex(m, v / 2)).Re
-                      );
-
-      var z0 = -v / (2 * m);
-
-      var lnbody = m * Math.Log(1 + z0 * z0) + v * Math.Atan(z0);
-
-      return amp*w*Math.Exp(lnprefactor + lnbody);
+      return GetYOfOneTerm(GetPositionOfMaximum(0, w, m, v), area, 0, w, m, v);
     }
 
     /// <summary>
@@ -484,7 +514,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
 
         z = znext;
 
-        if (Math.Abs(dz) < 1E-15 * Math.Abs(z))
+        if (Math.Abs(dz) < 5E-15 * Math.Abs(z))
           break;
       }
       return Math.Abs((z-z0) * w);

@@ -1111,6 +1111,65 @@ The domain of the function is $-\infty \leq x \leq \infty$.
 
 </value>
   </data>
+  <data name="Probability.PearsonIVArea" xml:space="preserve">
+    <value># PearsonIVArea
+
+This function evaluates a sum of PearsonIV terms, plus a background polynomial with one or multiple terms, according to
+
+$$
+y(x) = A_0 \times PearsonIV \left ( x-x_{c0}, w_0, m_0, \nu_0 \right ) + ... + A_{n-1} \times PearsonIV \left ( x-x_{c{n-1}}, w_{n-1}, m_{n-1}, \nu_{n-1} \right ) + b_0 + b_1 x^1 + ... + b_q x^q 
+$$
+
+in which:
+
+- $A_0 ... A_{n-1}$ are the areas of the PearsonIV terms
+
+- $x_{c0} ... x_{cn-1}$ are the location parameters of the PearsonIV terms
+
+- $w_0 ... w_{n-1}$ are the widths of the PearsonIV terms
+
+- $m_0 ... m_{n-1}$ are the exponents of the PearsonIV terms ($m&gt;1/2$)
+
+- $\nu_0 ... \nu_{n-1}$ are the skewness parameters of the PearsonIV terms
+
+- $b_0 ... b_q$ are the coefficients of the background polynomial of order  $q$
+
+- $n$ is the number of PearsonIV terms ($n \geq 1$)
+- $q$ is the order of the background polynomial (set $q=-1$ to disable the background polynomial)
+
+
+&gt; Please note that the location parameters $x_c$ are **not** the location of the maximum function values of the terms!
+&gt; (see figure below)
+
+The [PearsonIV function](https://en.wikipedia.org/wiki/Pearson_distribution) is scaled in a way that its area
+under the curve is 1: 
+
+$$
+PearsonIV(x) = \frac{ \left| \frac{\Gamma(m + i v/2)}{\Gamma(m)} \right|^2}{w Beta(m-1/2, 1/2)} (1+z^2)^{-m} \exp (- \nu \arctan(z)) ; z = \frac{x-x_c}{w}
+$$
+
+The location of the maximum function value is at:
+
+$$
+x_{max} = x_c - \frac{w v}{ 2 m}
+$$
+
+The number of PearsonIV terms $n$ and the order of the background polynomial $q$ can be changed by double-clicking on the fit function. The default values are $n=1$ and $q=-1$. 
+
+The domain of the function is $-\infty \leq x \leq \infty$. 
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.Probability.PearsonIVArea.Fig1.png)
+^^^ Fig. 1: PearsonIVArea ($n=1$, $q=0$) with $A=20$, $x_c=7$, $w=3$, $m=2$, $b_0=1$, and $\nu=0$ (green) or  $\nu=5$ (orange), respectively. Note that despite the fact that $x_c=7$ is equal for both functions, the locations of the maxima are quite different. Only if $\nu=0$, the location of the maximum function value is  $x_c$.
+---
+
+Literature:
+
+[1] Description of the Pearson distribution family in [Wikipedia](https://en.wikipedia.org/wiki/Pearson_distribution)
+
+
+</value>
+  </data>
   <data name="Probability.VoigtArea" xml:space="preserve">
     <value># VoigtArea
 
