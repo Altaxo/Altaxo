@@ -24,6 +24,7 @@
 
 #nullable enable
 using System;
+using System.Collections.Generic;
 using Altaxo.Data;
 
 namespace Altaxo.Serialization.Galactic
@@ -33,12 +34,26 @@ namespace Altaxo.Serialization.Galactic
   /// </summary>
   public class Import
   {
+    [Flags]
+    public enum Ftflgs : byte
+    {
+      TSPREC = 0x01,
+      TCGRAM = 0x02,
+      TMULTI = 0x04,
+      TRANDM = 0x08,
+      TORDRD = 0x10,
+      TALABS = 0x20,
+      TXYXYS = 0x40,
+      TXVALS = 0x80,
+    };
+
+
     /// <summary>
     /// The main header structure of the SPC file. This structure is located at the very beginning of the file.
     /// </summary>
     public struct SPCHDR
     {
-      public byte ftflgs;
+      public Ftflgs ftflgs;
       public byte fversn;
       public byte fexper;
       public byte fexp;
@@ -91,28 +106,30 @@ namespace Altaxo.Serialization.Galactic
     /// <param name="yvalues">The y values of the spectrum.</param>
     /// <param name="filename">The filename where to import from.</param>
     /// <returns>Null if successful, otherwise an error description.</returns>
-    public static string? ToArrays(string filename, out double[]? xvalues, out double[]? yvalues)
+    public static string? ToArrays(string filename, out double[]? xvalues, out List<double[]> listOfYArrays)
     {
       System.IO.Stream? stream = null;
 
-      var hdr = new SPCHDR();
+      var spchdr = new SPCHDR();
       var subhdr = new SUBHDR();
+
+      listOfYArrays = new List<double[]>();
 
       try
       {
         stream = new System.IO.FileStream(filename, System.IO.FileMode.Open, System.IO.FileAccess.Read, System.IO.FileShare.Read);
         var binreader = new System.IO.BinaryReader(stream);
 
-        hdr.ftflgs = binreader.ReadByte(); // ftflgs : not-evenly spaced data
-        hdr.fversn = binreader.ReadByte(); // fversn : new version
-        hdr.fexper = binreader.ReadByte(); // fexper : general experimental technique
-        hdr.fexp = binreader.ReadByte(); // fexp   : fractional scaling exponent (0x80 for floating point)
+        spchdr.ftflgs = (Ftflgs)binreader.ReadByte(); // ftflgs : not-evenly spaced data
+        spchdr.fversn = binreader.ReadByte(); // fversn : new version
+        spchdr.fexper = binreader.ReadByte(); // fexper : general experimental technique
+        spchdr.fexp = binreader.ReadByte(); // fexp   : fractional scaling exponent (0x80 for floating point)
 
-        hdr.fnpts = binreader.ReadInt32(); // fnpts  : number of points
+        spchdr.fnpts = binreader.ReadInt32(); // fnpts  : number of points
 
-        hdr.ffirst = binreader.ReadDouble(); // ffirst : first x-value
-        hdr.flast = binreader.ReadDouble(); // flast : last x-value
-        hdr.fnsub = binreader.ReadInt32(); // fnsub : 1 (one) subfile only
+        spchdr.ffirst = binreader.ReadDouble(); // ffirst : first x-value
+        spchdr.flast = binreader.ReadDouble(); // flast : last x-value
+        spchdr.fnsub = binreader.ReadInt32(); // fnsub : 1 (one) subfile only
 
         binreader.ReadByte(); //  Type of X axis units (see definitions below)
         binreader.ReadByte(); //  Type of Y axis units (see definitions below)
@@ -125,68 +142,75 @@ namespace Altaxo.Serialization.Galactic
         //   following the x-values array
         // ---------------------------------------------------------------------
 
-        if (hdr.fversn != 0x4B)
+        if (spchdr.fversn != 0x4B)
         {
-          if (hdr.fversn == 0x4D)
-            throw new System.FormatException(string.Format("This SPC file has the old format version of {0}, the only version supported here is the new version {1}", hdr.fversn, 0x4B));
+          if (spchdr.fversn == 0x4D)
+            throw new System.FormatException(string.Format("This SPC file has the old format version of {0}, the only version supported here is the new version {1}", spchdr.fversn, 0x4B));
           else
-            throw new System.FormatException(string.Format("This SPC file has a version of {0}, the only version recognized here is {1}", hdr.fversn, 0x4B));
+            throw new System.FormatException(string.Format("This SPC file has a version of {0}, the only version recognized here is {1}", spchdr.fversn, 0x4B));
         }
 
-        if (0 != (hdr.ftflgs & 0x80))
+        if (spchdr.ftflgs.HasFlag(Ftflgs.TXVALS))
         {
-          xvalues = new double[hdr.fnpts];
-          for (int i = 0; i < hdr.fnpts; i++)
+          xvalues = new double[spchdr.fnpts];
+          for (int i = 0; i < spchdr.fnpts; i++)
             xvalues[i] = binreader.ReadSingle();
         }
-        else if (0 == hdr.ftflgs) // evenly spaced data
+        else  // evenly spaced data
         {
-          xvalues = new double[hdr.fnpts];
-          for (int i = 0; i < hdr.fnpts; i++)
-            xvalues[i] = hdr.ffirst + i * (hdr.flast - hdr.ffirst) / (hdr.fnpts - 1);
-        }
-        else
-        {
-          throw new System.FormatException("The SPC file must not be a multifile; only single file format is accepted!");
+          xvalues = new double[spchdr.fnpts];
+          for (int i = 0; i < spchdr.fnpts; i++)
+            xvalues[i] = spchdr.ffirst + i * (spchdr.flast - spchdr.ffirst) / (spchdr.fnpts - 1);
         }
 
-        // ---------------------------------------------------------------------
-        //   following the y SUBHEADER
-        // ---------------------------------------------------------------------
+        int numberOfSubFiles = 1;
+        if (spchdr.ftflgs.HasFlag(Ftflgs.TMULTI))
+          numberOfSubFiles = spchdr.fnsub;
 
-        subhdr.subflgs = binreader.ReadByte(); // subflgs : always 0
-        subhdr.subexp = binreader.ReadByte(); // subexp : y-values scaling exponent (set to 0x80 means floating point representation)
-        subhdr.subindx = binreader.ReadInt16(); // subindx :  Integer index number of trace subfile (0=first)
 
-        subhdr.subtime = binreader.ReadSingle(); // subtime;   Floating time for trace (Z axis corrdinate)
-        subhdr.subnext = binreader.ReadSingle(); // subnext;   Floating time for next trace (May be same as beg)
-        subhdr.subnois = binreader.ReadSingle(); // subnois;   Floating peak pick noise level if high byte nonzero
-
-        subhdr.subnpts = binreader.ReadInt32(); // subnpts;  Integer number of subfile points for TXYXYS type
-        subhdr.subscan = binreader.ReadInt32(); // subscan; Integer number of co-added scans or 0 (for collect)
-        subhdr.subwlevel = binreader.ReadSingle();        // subwlevel;  Floating W axis value (if fwplanes non-zero)
-        subhdr.subresv = binreader.ReadInt32(); // subresv[4];   Reserved area (must be set to zero)
-
-        // ---------------------------------------------------------------------
-        //   following the y-values array
-        // ---------------------------------------------------------------------
-        yvalues = new double[hdr.fnpts];
-
-        if (hdr.fexp == 0x80) //floating point format
+        for (int idxSubFile = 0; idxSubFile < numberOfSubFiles; idxSubFile++)
         {
-          for (int i = 0; i < hdr.fnpts; i++)
-            yvalues[i] = binreader.ReadSingle();
-        }
-        else // fixed exponent format
-        {
-          for (int i = 0; i < hdr.fnpts; i++)
-            yvalues[i] = binreader.ReadInt32() * Math.Pow(2, hdr.fexp - 32);
+
+          // ---------------------------------------------------------------------
+          //   following the y SUBHEADER
+          // ---------------------------------------------------------------------
+
+          subhdr.subflgs = binreader.ReadByte(); // subflgs : always 0
+          subhdr.subexp = binreader.ReadByte(); // subexp : y-values scaling exponent (set to 0x80 means floating point representation)
+          subhdr.subindx = binreader.ReadInt16(); // subindx :  Integer index number of trace subfile (0=first)
+
+          subhdr.subtime = binreader.ReadSingle(); // subtime;   Floating time for trace (Z axis corrdinate)
+          subhdr.subnext = binreader.ReadSingle(); // subnext;   Floating time for next trace (May be same as beg)
+          subhdr.subnois = binreader.ReadSingle(); // subnois;   Floating peak pick noise level if high byte nonzero
+
+          subhdr.subnpts = binreader.ReadInt32(); // subnpts;  Integer number of subfile points for TXYXYS type
+          subhdr.subscan = binreader.ReadInt32(); // subscan; Integer number of co-added scans or 0 (for collect)
+          subhdr.subwlevel = binreader.ReadSingle();        // subwlevel;  Floating W axis value (if fwplanes non-zero)
+          subhdr.subresv = binreader.ReadInt32(); // subresv[4];   Reserved area (must be set to zero)
+
+          // ---------------------------------------------------------------------
+          //   following the y-values array
+          // ---------------------------------------------------------------------
+          var yvalues = new double[spchdr.fnpts];
+
+          if (spchdr.fexp == 0x80) //floating point format
+          {
+            for (int i = 0; i < spchdr.fnpts; i++)
+              yvalues[i] = binreader.ReadSingle();
+          }
+          else // fixed exponent format
+          {
+            for (int i = 0; i < spchdr.fnpts; i++)
+              yvalues[i] = binreader.ReadInt32() * Math.Pow(2, spchdr.fexp - 32);
+          }
+
+          listOfYArrays.Add(yvalues); 
         }
       }
       catch (Exception e)
       {
         xvalues = null;
-        yvalues = null;
+        listOfYArrays.Clear();
         return e.ToString();
       }
       finally
@@ -283,22 +307,26 @@ namespace Altaxo.Serialization.Galactic
         }
 
         // now add the y-values
-        var ycol = new Altaxo.Data.DoubleColumn();
-        ycol.CopyDataFrom(yvalues);
-        table.DataColumns.Add(ycol,
-          table.DataColumns.FindUniqueColumnName(System.IO.Path.GetFileNameWithoutExtension(filename)),
-          Altaxo.Data.ColumnKind.V,
-          lastColumnGroup);
 
-        // add also a property column named "FilePath" if not existing so far
-        if (!table.PropCols.ContainsColumn("FilePath"))
-          table.PropCols.Add(new Altaxo.Data.TextColumn(), "FilePath");
-
-        // now set the file name property cell
-        if (table.PropCols["FilePath"] is Altaxo.Data.TextColumn)
+        for (int idxCol = 0; idxCol < yvalues.Count; ++idxCol)
         {
-          table.PropCols["FilePath"][table.DataColumns.GetColumnNumber(ycol)] = filename;
-        }
+          var ycol = new Altaxo.Data.DoubleColumn();
+          ycol.CopyDataFrom(yvalues[idxCol]);
+          table.DataColumns.Add(ycol,
+            table.DataColumns.FindUniqueColumnName(System.IO.Path.GetFileNameWithoutExtension(filename)),
+            Altaxo.Data.ColumnKind.V,
+            lastColumnGroup);
+
+          // add also a property column named "FilePath" if not existing so far
+          if (!table.PropCols.ContainsColumn("FilePath"))
+            table.PropCols.Add(new Altaxo.Data.TextColumn(), "FilePath");
+
+          // now set the file name property cell
+          if (table.PropCols["FilePath"] is Altaxo.Data.TextColumn)
+          {
+            table.PropCols["FilePath"][table.DataColumns.GetColumnNumber(ycol)] = filename;
+          }
+        } // foreach yarray in yvalues
       } // foreache file
 
       return errorList.Length == 0 ? null : errorList.ToString();
