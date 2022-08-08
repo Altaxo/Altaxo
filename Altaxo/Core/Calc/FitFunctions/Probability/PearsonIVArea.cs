@@ -458,7 +458,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
 
       double dervsimp(double z, double m, double v)
       {
-        return (-v - 2 * m * z) / (1 + z * z);
+        return Math.Abs(z) < 1E100 ?  (-v - 2 * m * z) / (1 + z * z) : (-v / z - 2 * m) / z;
       }
 
 

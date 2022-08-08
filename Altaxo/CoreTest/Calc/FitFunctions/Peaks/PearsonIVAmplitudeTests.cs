@@ -114,7 +114,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
       right = PearsonIVAmplitude.GetHWHM(w, m, v, true);
 
       AssertEx.AreEqual(0.5537655602052538, left, 1E-15, 1E-13);
-      AssertEx.AreEqual(0.58690275900381228, right, 1E-15, 1E-13);
+      AssertEx.AreEqual(0.58690275900381228, right, 1E-15, 2E-13);
     }
 
     [Fact]

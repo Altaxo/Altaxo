@@ -412,82 +412,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
     /// <remarks>Newton-Raphson iteration is used to calculate HWMH, because a analytical formula is not available.</remarks>
     public static double GetHWHM(double w, double m, double v, bool rightSide)
     {
-      if (!(m > 0))
-      {
-        return double.NaN;
-      }
-
-      w = Math.Abs(w);
-      var sign = rightSide ? 1 : -1;
-      double z0 = -v / (2 * m);
-
-      double funcsimp(double z, double m, double v)
-      {
-        return Math.Log(2) + v * (Math.Atan(z0) - Math.Atan(z)) + m * (Math.Log(1 + z0 * z0) - (Math.Abs(z) > 1E100 ? 2 * Math.Log(Math.Abs(z)) : Math.Log(1 + z * z)));
-      }
-
-      double dervsimp(double z, double m, double v)
-      {
-        return (-v - 2 * m * z) / (1 + z * z);
-      }
-
-
-      // go forward in exponentially increasing steps, until the amplitude falls below ymaxHalf, in order to bracked the solution
-      double zNear = z0;
-      double zFar = z0;
-      for (double d = 1; d<=double.MaxValue ; d *= 2)
-      {
-        zFar = z0 + d * sign;
-        var y = funcsimp(zFar, m, v);
-        if (y < 0)
-          break;
-        else
-          zNear = zFar;
-      }
-      if (zNear > zFar)
-      {
-        (zNear, zFar) = (zFar, zNear);
-      }
-
-
-      // use Newton-Raphson to refine the result
-      double z = 0.5 * (zNear + zFar); // starting value
-      double funcVal;
-      int i;
-      for (i = 40; i > 0; --i)
-      {
-        funcVal = funcsimp(z, m, v);
-        if (rightSide)
-        {
-          if (funcVal > 0 && z > zNear)
-            zNear = z;
-          if (funcVal < 0 && z < zFar)
-            zFar = z;
-        }
-        else // leftSide
-        {
-          if (funcVal < 0 && z > zNear)
-            zNear = z;
-          if (funcVal > 0 && z < zFar)
-            zFar = z;
-        }
-
-        var dz = funcVal / dervsimp(z, m, v);
-        var znext = z - dz;
-        if (znext <= zNear)
-          znext = (z + zNear) / 2;
-        else if (znext >= zFar)
-          znext = (z + zFar) / 2;
-
-        if (z == znext)
-          break;
-
-        z = znext;
-
-        if (Math.Abs(dz) < 1E-15 * Math.Abs(z))
-          break;
-      }
-      return Math.Abs((z-z0) * w);
+      return Probability.PearsonIVArea.GetHWHM(w, m, v, rightSide);
     }
 
     /// <summary>
@@ -500,8 +425,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
     /// The maximal error in the range m: (1e-3..1e3) and v: (-1e3..1e3) is 18%.</returns>
     public static double GetFWHMApproximation(double w, double m, double v)
     {
-      return w * Math.Sqrt(Math.Pow(2, 1 / m) - 1) *
-             (Math.PI  / Math.Atan2(Math.Exp(1) * m, Math.Abs(v)));
+      return Probability.PearsonIVArea.GetFWHMApproximation(w, m, v);
     }
 
   }
