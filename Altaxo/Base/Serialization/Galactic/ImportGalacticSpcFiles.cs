@@ -248,7 +248,7 @@ namespace Altaxo.Serialization.Galactic
     /// <param name="filenames">An array of filenames to import.</param>
     /// <param name="table">The table the spectra should be imported to.</param>
     /// <returns>Null if no error occurs, or an error description.</returns>
-    public static string? ImportSpcFiles(string[] filenames, Altaxo.Data.DataTable table)
+    public static string? ImportSpcFiles(string[] filenames, Altaxo.Data.DataTable table, GalacticSPCImportOptions importOptions)
     {
       Altaxo.Data.DoubleColumn? xcol = null;
       var errorList = new System.Text.StringBuilder();
@@ -262,6 +262,7 @@ namespace Altaxo.Serialization.Galactic
           xcol = (Altaxo.Data.DoubleColumn)xColumnOfRightMost;
       }
 
+      int idxYColumn = 0;
       foreach (string filename in filenames)
       {
         string? error = ToArrays(filename, out var xvalues, out var yvalues);
@@ -303,28 +304,38 @@ namespace Altaxo.Serialization.Galactic
           xcol = new Altaxo.Data.DoubleColumn();
           xcol.CopyDataFrom(xvalues);
           lastColumnGroup = table.DataColumns.GetUnusedColumnGroupNumber();
-          table.DataColumns.Add(xcol, "SPC X values", Altaxo.Data.ColumnKind.X, lastColumnGroup);
+          table.DataColumns.Add(xcol, "X", Altaxo.Data.ColumnKind.X, lastColumnGroup);
         }
 
         // now add the y-values
 
         for (int idxCol = 0; idxCol < yvalues.Count; ++idxCol)
         {
-          var ycol = new Altaxo.Data.DoubleColumn();
-          ycol.CopyDataFrom(yvalues[idxCol]);
-          table.DataColumns.Add(ycol,
-            table.DataColumns.FindUniqueColumnName(System.IO.Path.GetFileNameWithoutExtension(filename)),
-            Altaxo.Data.ColumnKind.V,
-            lastColumnGroup);
-
-          // add also a property column named "FilePath" if not existing so far
-          if (!table.PropCols.ContainsColumn("FilePath"))
-            table.PropCols.Add(new Altaxo.Data.TextColumn(), "FilePath");
-
-          // now set the file name property cell
-          if (table.PropCols["FilePath"] is Altaxo.Data.TextColumn)
+          string columnName;
+          if (importOptions.UseNeutralColumnName)
           {
-            table.PropCols["FilePath"][table.DataColumns.GetColumnNumber(ycol)] = filename;
+            columnName = $"{(string.IsNullOrEmpty(importOptions.NeutralColumnName) ? "Y" : importOptions.NeutralColumnName)}{idxYColumn}";
+          }
+          else
+          {
+            columnName = table.DataColumns.FindUniqueColumnName(System.IO.Path.GetFileNameWithoutExtension(filename));
+          }
+          var ycol = table.DataColumns.EnsureExistence(columnName, typeof(DoubleColumn), ColumnKind.V, lastColumnGroup);
+          ++idxYColumn;
+
+          ycol.CopyDataFrom(yvalues[idxCol]);
+
+          if (importOptions.IncludeFilePathAsProperty)
+          {
+            // add also a property column named "FilePath" if not existing so far
+            if (!table.PropCols.ContainsColumn("FilePath"))
+              table.PropCols.Add(new Altaxo.Data.TextColumn(), "FilePath");
+
+            // now set the file name property cell
+            if (table.PropCols["FilePath"] is Altaxo.Data.TextColumn)
+            {
+              table.PropCols["FilePath"][table.DataColumns.GetColumnNumber(ycol)] = filename;
+            }
           }
         } // foreach yarray in yvalues
       } // foreache file
@@ -350,7 +361,10 @@ namespace Altaxo.Serialization.Galactic
         string[] filenames = options.FileNames;
         Array.Sort(filenames); // Windows seems to store the filenames reverse to the clicking order or in arbitrary order
 
-        string? errors = ImportSpcFiles(filenames, table);
+        var importOptions = new GalacticSPCImportOptions();
+        string? errors = ImportSpcFiles(filenames, table, importOptions);
+
+        table.DataSource = new GalacticSPCImportDataSource(filenames, importOptions);
 
         if (errors is not null)
         {

@@ -258,7 +258,7 @@ namespace Altaxo.Gui.Pads.FileBrowser
             if (Current.Workbench.ActiveViewContent is Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
             {
               string[] files = new string[] { item.FullName };
-              Altaxo.Serialization.Galactic.Import.ImportSpcFiles(files, ctrl.DataTable);
+              Altaxo.Serialization.Galactic.Import.ImportSpcFiles(files, ctrl.DataTable, new Altaxo.Serialization.Galactic.GalacticSPCImportOptions());
             }
             break;
 
