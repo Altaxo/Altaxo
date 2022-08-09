@@ -9,8 +9,6 @@ namespace Altaxo.Gui.Common
 {
   public class TaskCancelController : INotifyPropertyChanged, IDisposable
   {
-    CancellationTokenSource _ctsSoft;
-    CancellationTokenSource _ctsHard;
     Task _task;
     IProgressMonitor _monitor;
     System.Threading.Timer _timer;
@@ -22,11 +20,9 @@ namespace Altaxo.Gui.Common
     public event PropertyChangedEventHandler? PropertyChanged;
     public void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
-    public TaskCancelController(Task task, CancellationTokenSource ctsSoft, CancellationTokenSource ctsHard, IProgressMonitor monitor, int delayMilliseconds)
+    public TaskCancelController(Task task, IProgressMonitor monitor, int delayMilliseconds)
     {
       _task = task;
-      _ctsSoft = ctsSoft;
-      _ctsHard = ctsHard;
       _monitor = monitor;
       _delayMilliseconds = delayMilliseconds;
       CmdCancel = new RelayCommand(EhCancel);
@@ -55,7 +51,7 @@ namespace Altaxo.Gui.Common
 
     private void EhInterrupt()
     {
-      _ctsHard?.Cancel();
+      _monitor.SetCancellationPendingHard();
       _interruptRequested = true;
       OnPropertyChanged(nameof(IsCancelVisible));
       OnPropertyChanged(nameof(IsInterruptVisible));
@@ -64,7 +60,7 @@ namespace Altaxo.Gui.Common
 
     private void EhCancel()
     {
-      _ctsSoft?.Cancel();
+      _monitor.SetCancellationPendingSoft();
       _cancellationRequested = true;
       OnPropertyChanged(nameof(IsCancelVisible));
       OnPropertyChanged(nameof(IsInterruptVisible));
@@ -138,7 +134,9 @@ namespace Altaxo.Gui.Common
       get
       {
         if (_monitor is IExternalDrivenBackgroundMonitor edbm)
+        {
           edbm.SetShouldReportNow();
+        }
 
         return _progressValue;
 
@@ -159,7 +157,9 @@ namespace Altaxo.Gui.Common
       get
       {
         if (_monitor is IExternalDrivenBackgroundMonitor edbm)
+        {
           edbm.SetShouldReportNow();
+        }
 
         return _progressText;
       }
@@ -190,10 +190,10 @@ namespace Altaxo.Gui.Common
       }
       else
       {
-        if (_monitor.HasReportText)
-          ProgressText = _monitor.GetReportText();
-
-        ProgressValue = _monitor.GetProgressFraction();
+        if (_monitor.HasReportUpdate)
+        {
+          (ProgressText, ProgressValue) = _monitor.GetReportUpdate();
+        }
       }
     }
 

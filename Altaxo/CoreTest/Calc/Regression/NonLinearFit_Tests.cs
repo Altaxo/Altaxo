@@ -23,6 +23,7 @@
 #endregion Copyright
 
 using System;
+using System.Threading;
 using Altaxo.Calc;
 using Altaxo.Calc.Regression;
 using Xunit;
@@ -138,7 +139,7 @@ namespace AltaxoTest.Calc.Regression
       double[] ys = new double[21];
       int info = 0;
 
-      NLFit.LevenbergMarquardtFit(new NLFit.LMFunction(FitFunction2plus5x), param, ys, 1E-10, ref info);
+      NLFit.LevenbergMarquardtFit(new NLFit.LMFunction(FitFunction2plus5x), param, ys, 1E-10, CancellationToken.None, ref info);
 
       AssertEx.Equal(2, param[0], 1E-5, "Fit parameter 0 should be 2 in this model");
       AssertEx.Equal(5, param[1], 1E-5, "Fit parameter 1 should be 5 in this model");
@@ -153,7 +154,7 @@ namespace AltaxoTest.Calc.Regression
       double[] ys = new double[1];
       int info = 0;
 
-      NLFit.LevenbergMarquardtFit(new NLFit.LMFunction(FitFunction2plus5xMod), param, ys, 1E-10, ref info);
+      NLFit.LevenbergMarquardtFit(new NLFit.LMFunction(FitFunction2plus5xMod), param, ys, 1E-10, CancellationToken.None, ref info);
 
       AssertEx.Equal(0, info, "Info should be 0 due to inappropriate length of ys in this model");
     }
@@ -192,7 +193,7 @@ namespace AltaxoTest.Calc.Regression
       double[] ys = new double[3];
       int info = 0;
 
-      NLFit.LevenbergMarquardtFit(new NLFit.LMFunction(FitFunction7malCos3xplus1), param, ys, 1E-10, ref info);
+      NLFit.LevenbergMarquardtFit(new NLFit.LMFunction(FitFunction7malCos3xplus1), param, ys, 1E-10, CancellationToken.None, ref info);
 
       AssertEx.Equal(7, param[0], 1E-4, "Fit parameter 0 should be 7 in this model");
       AssertEx.Equal(3, param[1], 1E-4, "Fit parameter 1 should be 3 in this model");
@@ -229,7 +230,7 @@ namespace AltaxoTest.Calc.Regression
 
       do
       {
-        NLFit.LevenbergMarquardtFit(new NLFit.LMFunction(FitFunction7malCos3xplus1Mod), param, ys, 1E-10, ref info);
+        NLFit.LevenbergMarquardtFit(new NLFit.LMFunction(FitFunction7malCos3xplus1Mod), param, ys, 1E-10, CancellationToken.None, ref info);
       } while (info == 5);
 
       AssertEx.Equal(7, param[0], 1E-4, "Fit parameter 0 should be 7 in this model");
@@ -268,7 +269,7 @@ namespace AltaxoTest.Calc.Regression
 
       do
       {
-        NLFit.LevenbergMarquardtFit(new NLFit.LMFunction(poly2), param, ys, 1E-10, ref info);
+        NLFit.LevenbergMarquardtFit(new NLFit.LMFunction(poly2), param, ys, 1E-10, CancellationToken.None, ref info);
       } while (info == 5);
 
       AssertEx.Equal(0.1111111, param[0], 1E-4, "Fit parameter 0 should be 0.11111 in this model");
@@ -324,7 +325,7 @@ namespace AltaxoTest.Calc.Regression
 
       do
       {
-        NLFit.LevenbergMarquardtFit(new NLFit.LMFunction(poly3), param, ys, 1E-10, ref info);
+        NLFit.LevenbergMarquardtFit(new NLFit.LMFunction(poly3), param, ys, 1E-10, CancellationToken.None, ref info);
       } while (info == 5);
 
       AssertEx.Equal(0.1111111, param[0], 1E-4, "Fit parameter 0 should be 0.11111 in this model");
@@ -370,7 +371,7 @@ namespace AltaxoTest.Calc.Regression
 
       do
       {
-        NLFit.LevenbergMarquardtFit(new NLFit.LMFunction(poly4), param, ys, 1E-10, ref info);
+        NLFit.LevenbergMarquardtFit(new NLFit.LMFunction(poly4), param, ys, 1E-10, CancellationToken.None, ref info);
       } while (info == 5);
 
       AssertEx.Equal(1.08222543840634, param[0], 1E-4, "Fit parameter 0 should be 1.08222543840634 in this model");
@@ -425,7 +426,7 @@ namespace AltaxoTest.Calc.Regression
 
       do
       {
-        NLFit.LevenbergMarquardtFit(new NLFit.LMFunction(poly5), param, ys, 1E-10, ref info);
+        NLFit.LevenbergMarquardtFit(new NLFit.LMFunction(poly5), param, ys, 1E-10, CancellationToken.None, ref info);
       } while (info == 5);
 
       AssertEx.Equal(1.13158682895444, param[0], 1E-4, "Fit parameter 0 should be 1.13158682895444 in this model");

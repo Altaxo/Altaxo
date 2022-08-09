@@ -36,7 +36,7 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
   /// <para>References:</para>
   /// <para>[1] Z.-M. Zhang et al., Baseline correction using adaptive iteratively reweighted penalized least
   /// squares, Analyst, 2010, 135, 1138–1146, doi:10.1039/b922045c</para>
-  // </remarks>
+  /// </remarks>
   public record AirPLS : ALSBase, IBaselineEstimation
   {
     private double _lambda = 100;

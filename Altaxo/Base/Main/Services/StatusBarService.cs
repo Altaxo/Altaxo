@@ -142,7 +142,7 @@ namespace Altaxo.Main.Services
 
     public IProgressReporter CreateProgressReporter(CancellationToken cancellationToken = default(CancellationToken))
     {
-      var progress = new ProgressCollector(Current.Dispatcher.SynchronizingObject, cancellationToken);
+      var progress = new ProgressCollector(Current.Dispatcher.SynchronizingObject, cancellationToken, cancellationToken);
       AddProgress(progress);
       return progress.ProgressReporter;
     }

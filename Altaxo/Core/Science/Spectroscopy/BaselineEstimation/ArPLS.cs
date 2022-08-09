@@ -36,7 +36,7 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
   /// <para>References:</para>
   /// <para>[1] Sung-June Baek et al., Baseline correction using asymmetrically reweighted penalized least squares smoothing,
   /// Analyst, 2015, 140, 250-257 doi: 10.1039/C4AN01061B</para>
-  // </remarks>
+  /// </remarks>
   public record ArPLS : ALSBase, IBaselineEstimation
   {
     private double _lambda = 1E5;

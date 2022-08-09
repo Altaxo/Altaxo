@@ -50,11 +50,11 @@ namespace Altaxo.Main.Services
 
     public event PropertyChangedEventHandler? PropertyChanged;
 
-    public ProgressCollector(ISynchronizeInvoke eventThread, CancellationToken cancellationToken)
+    public ProgressCollector(ISynchronizeInvoke eventThread, CancellationToken cancellationTokenSoft, CancellationToken cancellationTokenHard)
     {
       _taskName = nameof(ProgressCollector);
       _eventThread = eventThread ?? throw new ArgumentNullException(nameof(eventThread));
-      _rootReporter = new ReporterImpl(this, null, 1, cancellationToken);
+      _rootReporter = new ReporterImpl(this, null, 1, cancellationTokenSoft, cancellationTokenHard);
     }
 
     private void OnPropertyChanged(string propertyName)
@@ -86,14 +86,14 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// This monitor doesn't support progess text, thus here the return value is always false.
     /// </summary>
-    public bool HasReportText { get { return false; } }
+    public bool HasReportUpdate { get { return false; } }
 
     /// <summary>
     /// Gets the report text. Since report text is not supported by this progress monitor, the return value is always an empty string.
     /// </summary>
-    public string GetReportText()
+    public (string text, double progressFraction) GetReportUpdate()
     {
-      return string.Empty;
+      return (string.Empty, _progressValue);
     }
 
     /// <summary>Gets the progress as fraction. If you are not able to calculate the progress, this function should return <see cref="double.NaN"/>.</summary>
@@ -273,23 +273,35 @@ namespace Altaxo.Main.Services
       }
     }
 
+    public void SetCancellationPendingSoft()
+    {
+      throw new NotImplementedException();
+    }
+
+    public void SetCancellationPendingHard()
+    {
+      throw new NotImplementedException();
+    }
+
     private sealed class ReporterImpl : IProgressReporter
     {
       private readonly ProgressCollector _progressCollector;
       private readonly ReporterImpl? _parentReporter;
       private readonly double _scaleFactor;
-      private readonly CancellationToken _cancellationToken;
+      private readonly CancellationToken _cancellationTokenSoft;
+      private readonly CancellationToken _cancellationTokenHard;
       private LinkedListNode<string>? _nameEntry;
       private double _currentProgressValue;
       private OperationStatus _localStatusValue, _currentStatusValue;
       private int _numberOfChildrenWithWarnings, _numberOfChildrenWithErrors;
 
-      public ReporterImpl(ProgressCollector collector, ReporterImpl? parent, double scaleFactor, CancellationToken cancellationToken)
+      public ReporterImpl(ProgressCollector collector, ReporterImpl? parent, double scaleFactor, CancellationToken cancellationTokenSoft, CancellationToken cancellationTokenHard)
       {
         _progressCollector = collector;
         _parentReporter = parent;
         _scaleFactor = scaleFactor;
-        _cancellationToken = cancellationToken;
+        _cancellationTokenSoft = cancellationTokenSoft;
+        _cancellationTokenHard = cancellationTokenHard;
       }
 
       public bool ShowingDialog
@@ -332,8 +344,14 @@ namespace Altaxo.Main.Services
 
       public CancellationToken CancellationToken
       {
-        get { return _cancellationToken; }
+        get { return _cancellationTokenSoft; }
       }
+
+      public CancellationToken CancellationTokenHard
+      {
+        get { return _cancellationTokenHard; }
+      }
+
 
       public double Progress
       {
@@ -350,6 +368,14 @@ namespace Altaxo.Main.Services
       void IProgress<double>.Report(double value)
       {
         Progress = value;
+      }
+
+      void IProgress<string>.Report(string text)
+      {
+      }
+      void IProgress<(string text, double progressFraction)>.Report((string text, double progressFraction) value)
+      {
+        Progress = value.progressFraction;
       }
 
       private void UpdateProgress(double progress)
@@ -421,12 +447,12 @@ namespace Altaxo.Main.Services
 
       public IProgressReporter CreateSubTask(double workAmount)
       {
-        return new ReporterImpl(_progressCollector, this, workAmount, _cancellationToken);
+        return new ReporterImpl(_progressCollector, this, workAmount, _cancellationTokenSoft, _cancellationTokenHard);
       }
 
-      public IProgressReporter CreateSubTask(double workAmount, CancellationToken cancellationToken)
+      public IProgressReporter CreateSubTask(double workAmount, CancellationToken cancellationTokenSoft, CancellationToken cancellationTokenHard)
       {
-        return new ReporterImpl(_progressCollector, this, workAmount, cancellationToken);
+        return new ReporterImpl(_progressCollector, this, workAmount, cancellationTokenSoft, cancellationTokenHard);
       }
 
       public void Dispose()

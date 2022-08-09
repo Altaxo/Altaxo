@@ -24,6 +24,7 @@
 
 
 using System.Collections.Generic;
+using System.Threading;
 
 namespace Altaxo.Science.Spectroscopy.PeakFitting
 {
@@ -38,9 +39,10 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
     /// <param name="xArray">The array of x-values.</param>
     /// <param name="yArray">The array of y-values.</param>
     /// <param name="peakDescriptions">Description of the peaks (output of peak searching algorithms, see <see cref="PeakSearching.IPeakSearching"/>).</param>
+    /// <param name="cancellationToken">Token used to cancel this task.</param>
     /// <returns>The results of the peak fitting. For each spectral regions, a tuple of the peak descriptions in that range, together
     /// with the start and end index (exclusive) of that range is returned. Please note that the peak descriptions
     /// contain position indices that are relative to the corresponding range (thus not to the underlying spectral array).</returns>
-    IReadOnlyList<(IReadOnlyList<PeakDescription> PeakDescriptions, int StartOfRegion, int EndOfRegion)> Execute(double[] xArray, double[] yArray, IReadOnlyList<(IReadOnlyList<PeakSearching.PeakDescription> PeakDescriptions, int StartOfRegion, int EndOfRegion)> peakDescriptions);
+    IReadOnlyList<(IReadOnlyList<PeakDescription> PeakDescriptions, int StartOfRegion, int EndOfRegion)> Execute(double[] xArray, double[] yArray, IReadOnlyList<(IReadOnlyList<PeakSearching.PeakDescription> PeakDescriptions, int StartOfRegion, int EndOfRegion)> peakDescriptions, CancellationToken cancellationToken);
   }
 }

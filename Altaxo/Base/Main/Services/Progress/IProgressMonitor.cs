@@ -34,15 +34,24 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// Indicates that new report text has arrived that was not displayed yet.
     /// </summary>
-    bool HasReportText { get; }
+    bool HasReportUpdate { get; }
 
     /// <summary>
-    /// Gets the report text. When called, the function has to reset the <see cref="HasReportText"/> flag.
+    /// Gets the report update. When called, the function has to reset the <see cref="HasReportUpdate"/> flag.
+    /// If you are not able to calculate the progress [0..1], this function should return <see cref="double.NaN"/>.
     /// </summary>
-    string GetReportText();
+    (string text, double progressFraction) GetReportUpdate();
 
-    /// <summary>Gets the progress as fraction. If you are not able to calculate the progress, this function should return <see cref="double.NaN"/>.</summary>
-    /// <returns>The progress as fraction value [0..1], or <see cref="double.NaN"/>.</returns>
-    double GetProgressFraction();
+
+    /// <summary>
+    /// Sets a flag that tries to interrupt the task softly. This will typically leave an incomplete, but not corrupted result.
+    /// </summary>
+    void SetCancellationPendingSoft();
+
+    /// <summary>
+    /// Sets a flag that tries to interrupt the task hardly. This will typically leave a corrupted result.
+    /// </summary>
+    void SetCancellationPendingHard();
+
   }
 }

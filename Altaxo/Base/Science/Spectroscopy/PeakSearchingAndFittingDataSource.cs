@@ -25,6 +25,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Threading;
 using Altaxo.Data;
 
 namespace Altaxo.Science.Spectroscopy
@@ -243,7 +244,7 @@ namespace Altaxo.Science.Spectroscopy
       try
       {
         var peakFindingAndFittingOptions = _processOptions.GetPeakSearchingAndFittingOptions();
-        SpectroscopyCommands.ExecutePeakFindingAndFitting(_processData, peakFindingAndFittingOptions, destinationTable);
+        SpectroscopyCommands.ExecutePeakFindingAndFitting(_processData, peakFindingAndFittingOptions, destinationTable, null, null, CancellationToken.None, CancellationToken.None);
       }
       catch (Exception ex)
       {

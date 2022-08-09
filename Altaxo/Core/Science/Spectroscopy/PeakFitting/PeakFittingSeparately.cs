@@ -24,10 +24,9 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Threading;
 using Altaxo.Calc;
 using Altaxo.Calc.FitFunctions.Peaks;
-using Altaxo.Calc.FitFunctions.Probability;
 using Altaxo.Calc.Regression.Nonlinear;
 
 namespace Altaxo.Science.Spectroscopy.PeakFitting
@@ -100,16 +99,17 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
 
     #endregion
 
-    public IReadOnlyList<(IReadOnlyList<PeakDescription> PeakDescriptions, int StartOfRegion, int EndOfRegion)> Execute(double[] xArray, double[] yArray, IReadOnlyList<(IReadOnlyList<PeakSearching.PeakDescription> PeakDescriptions, int StartOfRegion, int EndOfRegion)> peakDescriptions)
-      {
+    public IReadOnlyList<(IReadOnlyList<PeakDescription> PeakDescriptions, int StartOfRegion, int EndOfRegion)> Execute(double[] xArray, double[] yArray, IReadOnlyList<(IReadOnlyList<PeakSearching.PeakDescription> PeakDescriptions, int StartOfRegion, int EndOfRegion)> peakDescriptions, CancellationToken cancellationToken)
+    {
       var peakFitDescriptions = new List<(IReadOnlyList<PeakDescription> PeakDescriptions, int StartOfRegion, int EndOfRegion)>();
       foreach (var (peakDesc, start, end) in peakDescriptions)
       {
+        cancellationToken.ThrowIfCancellationRequested();
         var subX = new double[end - start];
         var subY = new double[end - start];
         Array.Copy(xArray, start, subX, 0, end - start);
         Array.Copy(yArray, start, subY, 0, end - start);
-        var result = Execute(subX, subY, peakDesc);
+        var result = Execute(subX, subY, peakDesc, cancellationToken);
         peakFitDescriptions.Add((result, start, end));
       }
 
@@ -117,7 +117,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
     }
 
     /// <inheritdoc/>
-    public List<PeakDescription> Execute(double[] xArray, double[] yArray, IEnumerable<PeakSearching.PeakDescription> peakDescriptions)
+    public List<PeakDescription> Execute(double[] xArray, double[] yArray, IEnumerable<PeakSearching.PeakDescription> peakDescriptions, CancellationToken cancellationToken)
     {
       var fitFunc = FitFunction.WithNumberOfTerms(1);
       int numberOfParametersPerPeak = fitFunc.NumberOfParameters;
@@ -149,10 +149,10 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
 
         var initialHeight = Math.Max(description.Height, description.Prominence);
         var initialRelativeHeight = (description.Prominence / initialHeight) * description.RelativeHeightOfWidthDetermination;
-        var param = fitFunc.GetInitialParametersFromHeightPositionAndWidthAtRelativeHeight(initialHeight, xPosition, xWidth, initialRelativeHeight); 
+        var param = fitFunc.GetInitialParametersFromHeightPositionAndWidthAtRelativeHeight(initialHeight, xPosition, xWidth, initialRelativeHeight);
 
         var fit = new QuickNonlinearRegression(fitFunc);
-        param = fit.Fit(xCut, yCut,param);
+        param = fit.Fit(xCut, yCut, param, cancellationToken);
 
         list.Add(new PeakDescription
         {
@@ -165,7 +165,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
           PeakParameterCovariances = fit.Covariances,
           FitFunction = fitFunc,
           FitFunctionParameter = (double[])param.Clone(),
-        }); 
+        });
       }
 
       return list;

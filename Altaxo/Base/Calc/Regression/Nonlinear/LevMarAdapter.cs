@@ -26,6 +26,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Threading;
 using Altaxo.Collections;
 
 namespace Altaxo.Calc.Regression.Nonlinear
@@ -616,21 +617,21 @@ namespace Altaxo.Calc.Regression.Nonlinear
       return true;
     }
 
-    public void Fit()
+    public void Fit(CancellationToken cancellationToken)
     {
       /* Up to new Fit2 is very slow, so we not use it until it is clear what causes this slow convergence
 if (CanUseJacobianVersion())
     Fit2Jac();
 else
 */
-      Fit1();
+      Fit1(cancellationToken);
     }
 
-    public void Fit1()
+    public void Fit1(CancellationToken cancellationToken)
     {
       int info = 0;
       double[] differences = new double[NumberOfData];
-      NLFit.LevenbergMarquardtFit(new NLFit.LMFunction(EvaluateFitDifferences), _cachedVaryingParameters, differences, 1E-10, ref info);
+      NLFit.LevenbergMarquardtFit(new NLFit.LMFunction(EvaluateFitDifferences), _cachedVaryingParameters, differences, 1E-10, cancellationToken, ref info);
 
       _resultingCovariances = new double[_cachedVaryingParameters.Length * _cachedVaryingParameters.Length];
       NLFit.ComputeCovariances(new NLFit.LMFunction(EvaluateFitDifferences), _cachedVaryingParameters, NumberOfData, _cachedVaryingParameters.Length, _resultingCovariances, out _resultingSumChiSquare, out _resultingSigmaSquare);

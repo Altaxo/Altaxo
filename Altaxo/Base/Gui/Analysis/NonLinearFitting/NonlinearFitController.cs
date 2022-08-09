@@ -397,7 +397,8 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
     private void EhFitEnsemble_Changed(object sender, EventArgs e)
     {
-      _parameterController.InitializeDocument(_doc.CurrentParameters);
+      _parameterController?.InitializeDocument(_doc.CurrentParameters);
+
     }
 
 
@@ -447,9 +448,11 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
         var fitAdapter = new LevMarAdapter(_doc.FitEnsemble, _doc.CurrentParameters);
 
-        var fitThread = new System.Threading.Thread(new System.Threading.ThreadStart(fitAdapter.Fit));
+
+        var backgroundMonitor = new ExternalDrivenBackgroundMonitor();
+        var fitThread = new System.Threading.Thread(new System.Threading.ThreadStart(() => fitAdapter.Fit(backgroundMonitor.CancellationTokenHard)));
         fitThread.Start();
-        Current.Gui.ShowBackgroundCancelDialog(10000, fitThread, null);
+        Current.Gui.ShowBackgroundCancelDialog(10000, fitThread, backgroundMonitor);
         if (!(fitThread.ThreadState.HasFlag(System.Threading.ThreadState.Aborted)))
         {
           ChiSquareValue = fitAdapter.ResultingChiSquare;

@@ -24,6 +24,7 @@
 
 #nullable enable
 using System;
+using System.Threading;
 
 namespace Altaxo.Calc.Regression.Nonlinear
 {
@@ -156,10 +157,10 @@ namespace Altaxo.Calc.Regression.Nonlinear
     /// <summary>
     /// Executes the fit. Afterwards, you can get the fit parameters by <see cref="GetParameter"/>, or the resulting Chi².
     /// </summary>
-    public void Fit()
+    public void Fit(CancellationToken cancellationToken)
     {
       _fitAdapter = new LevMarAdapter(_fitDoc.FitEnsemble, _fitDoc.CurrentParameters);
-      _fitAdapter.Fit();
+      _fitAdapter.Fit(cancellationToken);
       _fitAdapter.CopyParametersBackTo(_fitDoc.CurrentParameters);
     }
 

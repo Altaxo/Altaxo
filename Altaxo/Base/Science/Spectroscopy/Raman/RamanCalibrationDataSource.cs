@@ -28,6 +28,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Threading;
 using Altaxo.Data;
 
 namespace Altaxo.Science.Spectroscopy.Raman
@@ -35,6 +36,9 @@ namespace Altaxo.Science.Spectroscopy.Raman
   public class RamanCalibrationDataSource : TableDataSourceBase, IAltaxoTableDataSource, Calibration.IXCalibrationDataSource
   {
     #region ColumnNames
+
+    public const string ColumnName_NeonCalibration_SplineX_MeasuredWavelength = "NeonCalibration_MeasuredWL";
+    public const string ColumnName_NeonCalibration_SplineY_DifferenceWavelength = "NeonCalibration_DifferenceWL";
 
     public const string ColumnName_XCalibration_UncalibratedX = "XCalibration_UncalibratedX";
     public const string ColumnName_XCalibration_CalibratedX = "XCalibration_CalibratedX";
@@ -228,6 +232,16 @@ namespace Altaxo.Science.Spectroscopy.Raman
     /// <param name="destinationTable">The destination table.</param>
     public void FillData(DataTable destinationTable)
     {
+      FillData(destinationTable, CancellationToken.None);
+    }
+
+      /// <summary>
+      /// Fills (or refills) the data table with the processed data. The data source is represented by this instance, the destination table is provided in the argument <paramref name="destinationTable" />.
+      /// </summary>
+      /// <param name="destinationTable">The destination table.</param>
+      /// <param name="cancellationToken">CancellationToken used to cancel the task.</param>
+      public void FillData(DataTable destinationTable, CancellationToken cancellationToken)
+    {
       try
       {
         NeonCalibration? neonCalibration1 = null;
@@ -237,32 +251,48 @@ namespace Altaxo.Science.Spectroscopy.Raman
 
         if (_neonCalibrationData1 is { } neondata1 && _neonCalibrationOptions1 is { } neonOptions1)
         {
-          neonCalibration1 = SpectroscopyCommands.Raman_CalibrateWithNeonSpectrum(destinationTable, neonOptions1, neondata1.XColumn, neondata1.YColumn);
+          neonCalibration1 = SpectroscopyCommands.Raman_CalibrateWithNeonSpectrum(destinationTable, neonOptions1, neondata1.XColumn, neondata1.YColumn, cancellationToken);
         }
         if (_neonCalibrationData2 is { } neondata2 && _neonCalibrationOptions2 is { } neonOptions2)
         {
-          neonCalibration2 = SpectroscopyCommands.Raman_CalibrateWithNeonSpectrum(destinationTable, neonOptions2, neondata2.XColumn, neondata2.YColumn);
+          neonCalibration2 = SpectroscopyCommands.Raman_CalibrateWithNeonSpectrum(destinationTable, neonOptions2, neondata2.XColumn, neondata2.YColumn, cancellationToken);
         }
         if (_siliconCalibrationData is { } silicondata && _siliconCalibrationOptions is { } siliconOptions)
         {
-          siliconCalibration = SpectroscopyCommands.Raman_CalibrateWithSiliconSpectrum(destinationTable, siliconOptions, silicondata.XColumn, silicondata.YColumn);
+          siliconCalibration = SpectroscopyCommands.Raman_CalibrateWithSiliconSpectrum(destinationTable, siliconOptions, silicondata.XColumn, silicondata.YColumn, cancellationToken);
         }
 
         if (siliconCalibration is not null && neonCalibration1 is not null)
         {
           var x = neonCalibration1.PeakMatchings.Select(p => p.NistWL).ToArray();
-          var y = neonCalibration1.PeakMatchings.Select(p => p.NistWL - p.MeasWL).ToArray();
-          Array.Sort(x, y);
+          var p = neonCalibration1.PeakMatchings.ToArray();
+          Array.Sort(x, p);
+          var y = p.Select(p => (p.NistWL - p.MeasWL)).ToArray();
+          var dy = p.Select(p => p.MeasWLVariance).ToArray();
+          // spline difference Nist wavelength - Measured wavelength versus the Nist wavelength
+          // why x is Nist wavelength (and not measured wavelength)? Because it has per definition no error, whereas measured wavelength has
           var spline = new Calc.Interpolation.CrossValidatedCubicSpline();
-          spline.Interpolate(x, y);
+          if (dy.Max() > 0) 
+          {
+            spline.Interpolate(x, y, 1, dy); // if we have calculated the variance, we use it for splining
+          }
+          else
+          {
+            spline.Interpolate(x, y); // otherwise, we spline with unknown variance
+          }
+
+
+          // now, we calculate the splined measured wavelength in dependence on the Nist wavelength
           var xx = new double[x.Length];
           for (var i = 0; i < xx.Length; i++)
           {
             var diff = spline.GetYOfX(x[i]);
-            xx[i] = x[i] - diff; // we calculate the splines measured wavelengh
+            xx[i] = x[i] - diff; // we calculate the splined measured wavelengh
           }
+          // new spline y=(Nist wavelength - Measured wavelength) versus x = (splined) measured wavelength
           spline = new Calc.Interpolation.CrossValidatedCubicSpline();
-          spline.Interpolate(xx, y);
+          spline.Interpolate(xx, y); // out spline now contains a function that has the measured wavelength as argument, and returns the correction offset to get the calibrated wavelength
+         
 
 
           var assumedLaserWavelength = _neonCalibrationOptions1.LaserWavelength_Nanometer;
@@ -298,6 +328,19 @@ namespace Altaxo.Science.Spectroscopy.Raman
 
             x_uncalibrated[i] = shift_uncalibrated;
             x_calibrated[i] = shift_calibrated;
+          }
+
+          {
+            // output the neon spline
+            var x_neonMeasWL = destinationTable.DataColumns.EnsureExistence(ColumnName_NeonCalibration_SplineX_MeasuredWavelength, typeof(DoubleColumn), ColumnKind.X, 9);
+            var y_neonDiffWL = destinationTable.DataColumns.EnsureExistence(ColumnName_NeonCalibration_SplineY_DifferenceWavelength, typeof(DoubleColumn), ColumnKind.V, 9);
+
+            for (int i = 0; i < _siliconCalibrationData.XColumn.Count; ++i)
+            {
+              double wl = 1 / (1 / laserWL_Calibrated - 1E-7 * _siliconCalibrationData.XColumn[i]);
+              x_neonMeasWL[i] = wl;
+              y_neonDiffWL[i] = spline.GetYOfX(wl);
+            }
           }
         }
 

@@ -25,6 +25,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 
 namespace Altaxo.Science.Spectroscopy.Raman
 {
@@ -58,20 +59,17 @@ namespace Altaxo.Science.Spectroscopy.Raman
 
     #endregion
 
-
-
-
-
-
+    /// <summary>
     /// Finds the Silicon peak.
     /// </summary>
     /// <param name="options">The options used for calculation.</param>
     /// <param name="x">The x values of the measured Neon spectrum.</param>
     /// <param name="y">The y values of the measured Neon spectrum.</param>
+    /// <param name="cancellationToken">Token used to cancel this task.</param>
     /// <returns>The position (as shift value) and position tolerance of the silicon peak.</returns>
     /// The returned value is null if no peaks could be matched.
     public (double Position, double PositionTolerance)?
-    FindMatch(SiliconCalibrationOptions options, double[] x, double[] y)
+    FindMatch(SiliconCalibrationOptions options, double[] x, double[] y, CancellationToken cancellationToken)
     {
       // make sure that peak fitting is activated
       if (options.PeakFindingOptions.PeakFitting is null || options.PeakFindingOptions.PeakFitting is PeakFitting.PeakFittingNone)
@@ -81,6 +79,7 @@ namespace Altaxo.Science.Spectroscopy.Raman
       Array.Sort(x, y); // Sort x-axis ascending
       var peakOptions = options.PeakFindingOptions;
       (x, y, _) = peakOptions.Preprocessing.Execute(x, y, null);
+      _xArray = x;
       _yPreprocessed = y;
 
       var peakSearchingResults = peakOptions.PeakSearching.Execute(y, null);
@@ -88,7 +87,7 @@ namespace Altaxo.Science.Spectroscopy.Raman
       _peakSearchingDescriptions.Sort((a, b) => Comparer<double>.Default.Compare(a.PositionIndex, b.PositionIndex));
 
       var peakFitting = peakOptions.PeakFitting;
-      var peakFittingDescriptions = peakFitting.Execute(x, y, peakSearchingResults);
+      var peakFittingDescriptions = peakFitting.Execute(x, y, peakSearchingResults, cancellationToken);
       _peakFittingDescriptions = peakFittingDescriptions[0].PeakDescriptions;
 
       // now look for the peak around 425 nm

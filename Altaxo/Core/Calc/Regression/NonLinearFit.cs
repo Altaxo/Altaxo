@@ -76,6 +76,7 @@
 // ----------
 
 using System;
+using System.Threading;
 using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Regression
@@ -167,6 +168,7 @@ namespace Altaxo.Calc.Regression
         double[] xvec,
         double[] fvec,
         double tol,
+        CancellationToken cancellationToken,
         ref int info)
     {
       int m, n;
@@ -189,7 +191,7 @@ namespace Altaxo.Calc.Regression
       double[] wa4 = new double[m];
 
       LevenbergMarquardtFit(fcn, xvec, fvec, tol, ref info, iwa, diag, fjac, ipvt, qtf, wa1,
-          wa2, wa3, wa4);
+          wa2, wa3, wa4, cancellationToken);
     }
 
     /// <summary>
@@ -271,7 +273,8 @@ namespace Altaxo.Calc.Regression
         double[] wa1,
         double[] wa2,
         double[] wa3,
-        double[] wa4)
+        double[] wa4,
+        CancellationToken cancellationToken)
     //
     //       iwa is an integer work array of length n.
     //
@@ -312,7 +315,7 @@ namespace Altaxo.Calc.Regression
       LevenbergMarquardtFit(fcn, xvec, fvec, ftol, xtol, gtol, maxfev, epsfcn,
           diag, mode, factor, nprint, ref info, ref nfev, fjac, m,
           ipvt, qtf, wa1, wa2, wa3,
-          wa4);
+          wa4, cancellationToken);
 
       if (info == 8)
         info = 4;
@@ -323,7 +326,8 @@ namespace Altaxo.Calc.Regression
         int maxfev, double epsfcn, double[] diag, int mode,
         double factor, int nprint, ref int info, ref int nfev, double[] fjac,
         int ldfjac, int[] ipvt,
-        double[] qtf, double[] wa1, double[] wa2, double[] wa3, double[] wa4)
+        double[] qtf, double[] wa1, double[] wa2, double[] wa3, double[] wa4,
+        CancellationToken cancellationToken)
     //
     // The purpose of LevenbergMarquardtFit is to minimize the sum of the
     // squares of m nonlinear functions in n variables by a modification of
@@ -657,6 +661,8 @@ L80:
 // beginning of the inner loop
 
 L200:
+
+      cancellationToken.ThrowIfCancellationRequested();
 
 // determine the levenberg-marquardt parameter
       lmpar(n, fjac, ldfjac, ipvt, diag, qtf, delta,

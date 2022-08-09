@@ -41,7 +41,7 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
   /// <para>[1] C.G. Ryan et al., SNIP, A STATISTICS-SENSITIVE BACKGROUND TREATMENT FOR THE QUANTITATIVE 
   /// ANALYSIS OF PIXE SPECTRA IN GEOSCIENCE APPLICATIONS, Nuclear Instruments and Methods in Physics Research 934 (1988) 396-402 
   /// North-Holland, Amsterdam</para>
-  // </remarks>
+  /// </remarks>
   public record SNIP_LogLog : SNIP_Base, IBaselineEstimation
   {
     #region Serialization

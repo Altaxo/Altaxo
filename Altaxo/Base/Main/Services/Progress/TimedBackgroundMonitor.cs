@@ -33,7 +33,8 @@ namespace Altaxo.Main.Services
     private System.Timers.Timer _timer = new System.Timers.Timer(200);
     private bool _shouldReport;
 #pragma warning disable CS0649
-    private CancellationToken _cancellationToken;
+    private CancellationToken _cancellationTokenSoft;
+    private CancellationToken _cancellationTokenHard;
 #pragma warning restore CS0649
     private string _reportText;
     private double _progressFraction = double.NaN;
@@ -104,7 +105,7 @@ namespace Altaxo.Main.Services
     {
       get
       {
-        return _cancellationToken.IsCancellationRequested;
+        return _cancellationTokenSoft.IsCancellationRequested || _cancellationTokenHard.IsCancellationRequested;
       }
     }
 
@@ -148,7 +149,15 @@ namespace Altaxo.Main.Services
     {
       get
       {
-        return _cancellationToken;
+        return _cancellationTokenSoft;
+      }
+    }
+
+    public CancellationToken CancellationTokenHard
+    {
+      get
+      {
+        return _cancellationTokenHard;
       }
     }
 
@@ -165,7 +174,7 @@ namespace Altaxo.Main.Services
       throw new NotImplementedException();
     }
 
-    public IProgressReporter CreateSubTask(double workAmount, CancellationToken cancellationToken)
+    public IProgressReporter CreateSubTask(double workAmount, CancellationToken cancellationTokenSoft, CancellationToken cancellationTokenHard)
     {
       throw new NotImplementedException();
     }
@@ -178,6 +187,15 @@ namespace Altaxo.Main.Services
     public void Dispose()
     {
       _timer?.Dispose();
+    }
+
+    void IProgress<string>.Report(string value)
+    {
+    }
+
+    void IProgress<(string text, double progressFraction)>.Report((string text, double progressFraction) value)
+    {
+      Progress = value.progressFraction;
     }
   }
 }

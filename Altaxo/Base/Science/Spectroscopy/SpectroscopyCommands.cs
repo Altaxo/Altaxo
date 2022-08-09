@@ -25,6 +25,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using Altaxo.Calc;
 using Altaxo.Calc.Regression.Nonlinear;
 using Altaxo.Collections;
@@ -36,6 +37,7 @@ using Altaxo.Graph.Plot.Data;
 using Altaxo.Gui;
 using Altaxo.Gui.Science.Spectroscopy.Raman;
 using Altaxo.Gui.Worksheet.Viewing;
+using Altaxo.Main.Services;
 using Altaxo.Science.Spectroscopy.PeakFitting;
 using Altaxo.Science.Spectroscopy.PeakSearching;
 using Altaxo.Science.Spectroscopy.Raman;
@@ -240,7 +242,13 @@ namespace Altaxo.Science.Spectroscopy
       DataColumn xPreprocessedCol,
       DataColumn yPreprocessedCol,
       IReadOnlyList<(IReadOnlyList<PeakFitting.PeakDescription> PeakDescriptions, int StartOfRegion, int EndOfRegion)> fittingResult)>
-      ExecutePeakFindingAndFitting(DataTableMultipleColumnProxy inputData, PeakSearchingAndFittingOptions doc, DataTable peakTable, DataTable? preprocessedSpectraTable = null)
+      ExecutePeakFindingAndFitting( DataTableMultipleColumnProxy inputData,
+                                    PeakSearchingAndFittingOptions doc,
+                                    DataTable peakTable,
+                                    DataTable? preprocessedSpectraTable,
+                                    IProgress<string>? progressReporter,
+                                    CancellationToken cancellationTokenSoft,
+                                    CancellationToken cancellationTokenHard)
     {
       var resultList = new List<(
       DataColumn xOrgCol,
@@ -253,6 +261,8 @@ namespace Altaxo.Science.Spectroscopy
 
       var spectralPreprocessingResult = ExecuteSpectralPreprocessing(inputData, doc.Preprocessing, preprocessedSpectraTable);
 
+
+
       peakTable.DataColumns.RemoveColumnsAll();
       peakTable.PropCols.RemoveColumnsAll();
       var runningColumnNumber = -1;
@@ -260,12 +270,22 @@ namespace Altaxo.Science.Spectroscopy
       {
         ++runningColumnNumber;
 
+        if (cancellationTokenSoft.IsCancellationRequested)
+        {
+          break;
+        }
+        if(progressReporter is { }  pr)
+        {
+          pr.Report($"Peak search+fit column {inputData.DataTable.DataColumns.GetColumnName(entry.yOrgCol)}");
+        }
+
+
         var xArr = entry.xArray;
         var yArr = entry.yArray;
 
         // now apply the steps
         var peakResults = doc.PeakSearching.Execute(yArr, entry.regions);
-        var fitResults = doc.PeakFitting.Execute(xArr, yArr, peakResults);
+        var fitResults = doc.PeakFitting.Execute(xArr, yArr, peakResults, cancellationTokenHard);
 
         // Store the results
 
@@ -373,12 +393,37 @@ namespace Altaxo.Science.Spectroscopy
       // now process the data
       var srcTable = ctrl.DataTable;
       var preprocessingTable = new DataTable();
-
       var peakTable = new DataTable();
-
-
       var dataProxy = new DataTableMultipleColumnProxy(ColumnsV, srcTable, null, ctrl.SelectedDataColumns);
-      var result = ExecutePeakFindingAndFitting(dataProxy, doc, peakTable, preprocessingTable);
+
+
+      List<(
+      DataColumn xOrgCol,
+      DataColumn yOrgCol,
+      DataColumn xPreprocessedCol,
+      DataColumn yPreprocessedCol,
+      IReadOnlyList<(IReadOnlyList<PeakFitting.PeakDescription> PeakDescriptions, int StartOfRegion, int EndOfRegion)> fittingResult)> result = null;
+
+      var progressMonitor = new ExternalDrivenBackgroundMonitor();
+
+      var fitTask = System.Threading.Tasks.Task.Run(() =>
+      {
+        try
+        {
+          result = ExecutePeakFindingAndFitting(dataProxy, doc, peakTable, preprocessingTable, progressMonitor, progressMonitor.CancellationToken, progressMonitor.CancellationTokenHard);
+        }
+        catch(OperationCanceledException)
+        {
+        }
+      }
+      );
+      Current.Gui.ShowTaskCancelDialog(10000, fitTask, progressMonitor);
+
+      if(result is null)
+      {
+        return;
+      }
+      
 
       {
         var dstName = srcTable.Name + "_Preprocessed";
@@ -550,12 +595,20 @@ namespace Altaxo.Science.Spectroscopy
         dataSource.SetNeonCalibration1(doc.Options, proxy);
       else
         dataSource.SetNeonCalibration2(doc.Options, proxy);
-      dataSource.FillData(dstTable);
+
+      var backgroundMonitor = new ExternalDrivenBackgroundMonitor();
+      var task = System.Threading.Tasks.Task.Run(() => dataSource.FillData(dstTable, backgroundMonitor.CancellationTokenHard));
+      Current.Gui.ShowTaskCancelDialog(5000, task, backgroundMonitor);
+      if (task.IsFaulted || task.IsCanceled)
+      {
+        Current.Gui.ErrorMessageBox("The Neon calibration task has not completed successfully, thus the calibration table may be corrupted!");
+      }
+
       Current.ProjectService.OpenOrCreateWorksheetForTable(dstTable);
 
     }
 
-    public static NeonCalibration? Raman_CalibrateWithNeonSpectrum(DataTable dstTable, NeonCalibrationOptions neonOptions, IReadableColumn x_column, IReadableColumn y_column)
+    public static NeonCalibration? Raman_CalibrateWithNeonSpectrum(DataTable dstTable, NeonCalibrationOptions neonOptions, IReadableColumn x_column, IReadableColumn y_column, CancellationToken cancellationToken)
     {
       var len = Math.Min(x_column.Count ?? 0, y_column.Count ?? 0);
 
@@ -570,7 +623,7 @@ namespace Altaxo.Science.Spectroscopy
 
 
       var calibration = new NeonCalibration();
-      var matches = calibration.GetPeakMatchings(neonOptions, arrayX, arrayY);
+      var matches = calibration.GetPeakMatchings(neonOptions, arrayX, arrayY, cancellationToken);
 
 
 
@@ -579,12 +632,14 @@ namespace Altaxo.Science.Spectroscopy
         var colNist = dstTable.DataColumns.EnsureExistence("NistNeonPeakWavelength [nm]", typeof(DoubleColumn), ColumnKind.X, 0);
         var colMeas = dstTable.DataColumns.EnsureExistence("MeasuredNeonPeakWavelength [nm]", typeof(DoubleColumn), ColumnKind.V, 0);
         var colDiff = dstTable.DataColumns.EnsureExistence("DifferenceOfPeakWavelengths [nm]", typeof(DoubleColumn), ColumnKind.V, 0);
+        var colDiffVar = dstTable.DataColumns.EnsureExistence("DifferenceOfPeakWavelengths.Variance [nm]", typeof(DoubleColumn), ColumnKind.Err, 0);
         for (var i = 0; i < matches.Count; ++i)
         {
           var match = matches[i];
           colNist[i] = match.NistWL;
           colMeas[i] = match.MeasWL;
           colDiff[i] = match.NistWL - match.MeasWL;
+          colDiffVar[i] = match.MeasWLVariance;
         }
 
         var pcolLaserWL = dstTable.PropertyColumns.EnsureExistence("AssumedLaserWavelength [nm]", typeof(DoubleColumn), ColumnKind.V, 0);
@@ -660,12 +715,22 @@ namespace Altaxo.Science.Spectroscopy
       var dataSource = (RamanCalibrationDataSource)dstTable.DataSource;
       var proxy = new DataTableXYColumnProxy(ctrl.DataTable, x_column, y_column, null);
       dataSource.SetSiliconCalibration(doc.Options, proxy);
-      dataSource.FillData(dstTable);
+
+
+      var backgroundMonitor = new ExternalDrivenBackgroundMonitor();
+      var task = System.Threading.Tasks.Task.Run(()=>dataSource.FillData(dstTable, backgroundMonitor.CancellationTokenHard));
+      Current.Gui.ShowTaskCancelDialog(5000, task, backgroundMonitor);
+      if(task.IsFaulted || task.IsCanceled)
+      {
+        Current.Gui.ErrorMessageBox("The Silicon calibration task has not completed successfully, thus the calibration table may be corrupted!");
+      }
+
+
       Current.ProjectService.OpenOrCreateWorksheetForTable(dstTable);
     }
 
 
-    public static SiliconCalibration? Raman_CalibrateWithSiliconSpectrum(DataTable dstTable, SiliconCalibrationOptions siliconOptions, IReadableColumn x_column, IReadableColumn y_column)
+    public static SiliconCalibration? Raman_CalibrateWithSiliconSpectrum(DataTable dstTable, SiliconCalibrationOptions siliconOptions, IReadableColumn x_column, IReadableColumn y_column, CancellationToken cancellationToken)
     {
       var len = Math.Min(x_column.Count ?? 0, y_column.Count ?? 0);
       var arrayX = new double[len];
@@ -679,7 +744,7 @@ namespace Altaxo.Science.Spectroscopy
 
 
       var calibration = new SiliconCalibration();
-      var match = calibration.FindMatch(siliconOptions, arrayX, arrayY);
+      var match = calibration.FindMatch(siliconOptions, arrayX, arrayY, cancellationToken);
 
       if (match is null)
       {

@@ -812,7 +812,7 @@ namespace Altaxo.Main.Services
     /// Dictionary of context menu providers. Key is the type of the gui root element (Winforms: Control, Wpf: UIElement).
     /// Value is an Action with the following parameters: object parent (Gui parent element), object owner (Owner of the addin element), string addInPath, double x, double y)
     /// </summary>
-    public Dictionary<System.Type, Action<object, object, string, double, double>> RegistedContextMenuProviders = new Dictionary<Type, Action<object, object, string, double, double>>();
+    public Dictionary<System.Type, Action<object, object, string, double, double>> RegisteredContextMenuProviders = new Dictionary<Type, Action<object, object, string, double, double>>();
 
     public List<System.Type> RegisteredGuiTechnologies = new List<Type>();
 
@@ -835,7 +835,7 @@ namespace Altaxo.Main.Services
     }
 
     public abstract bool ShowBackgroundCancelDialog(int millisecondsDelay, Thread thread, IExternalDrivenBackgroundMonitor monitor);
-    public abstract bool ShowTaskCancelDialog(int millisecondsDelay, System.Threading.Tasks.Task task, CancellationTokenSource ctsSoft, CancellationTokenSource ctsHard, IExternalDrivenBackgroundMonitor monitor);
+    public abstract bool ShowTaskCancelDialog(int millisecondsDelay, System.Threading.Tasks.Task task, IExternalDrivenBackgroundMonitor monitor);
 
     public struct ScreenInformation
     {

@@ -32,7 +32,7 @@ namespace Altaxo
   /// Allows a thread to report text to a receiver. Additionally, the thread can look to the property <see cref="CancellationPending" />, and
   /// if it is <c>true</c>, return in a safe way.
   /// </summary>
-  public interface IProgressReporter : IProgress<double>, IDisposable
+  public interface IProgressReporter : IProgress<double>, IProgress<string>, IProgress<(string text, double progressFraction)>, IDisposable
   {
     /// <summary>
     /// Sets the amount of work already done within this task.
@@ -62,13 +62,17 @@ namespace Altaxo
     /// </summary>
     /// <param name="workAmount">The amount of work this sub-task performs in relation to the work of this task.
     /// That means, this parameter is used as a scaling factor for work performed within the subtask.</param>
-    /// <param name="cancellationToken">
-    /// A cancellation token that can be used to cancel the sub-task.
+    /// <param name="cancellationTokenSoft">
+    /// A cancellation token that can be used to cancel the sub-task, typically with incomplete, but not corrupted result.
     /// Note: cancelling the main task will not cancel the sub-task.
+    /// </param>
+    /// <param name="cancellationTokenHard">
+    /// A cancellation token that can be used to hard cancel the sub-task, typically with corrupted result.
+    /// Note: cancelling the main task will cancel the sub-task.
     /// </param>
     /// <returns>A new progress monitor representing the sub-task.
     /// Multiple child progress monitors can be used at once; even concurrently on multiple threads.</returns>
-    IProgressReporter CreateSubTask(double workAmount, CancellationToken cancellationToken);
+    IProgressReporter CreateSubTask(double workAmount, CancellationToken cancellationTokenSoft, CancellationToken cancellationTokenHard);
 
     /// <summary>
     /// Gets/Sets the name to show while the task is active.
@@ -76,9 +80,19 @@ namespace Altaxo
     string TaskName { get; set; }
 
     /// <summary>
-    /// Gets the cancellation token.
+    /// Gets the cancellation token (soft).
+    /// Typical use of the soft cancellation token is to interrupt some work, without compromising the result (the result typically is incomplete, but not corrupted).
     /// </summary>
+    /// <seealso cref="CancellationTokenHard"/>
     CancellationToken CancellationToken { get; }
+
+    /// <summary>
+    /// Gets the cancellation token (hard).
+    /// Typical use of the hard cancellation token is to abort some work, with corrupting the result. If the result is not corrupted, then use the <seealso cref="CancellationToken"/>.
+    /// </summary>
+    /// <seealso cref="CancellationToken"/>
+    CancellationToken CancellationTokenHard { get; }
+
 
     /// <summary>
     /// True if we should report the progress now.

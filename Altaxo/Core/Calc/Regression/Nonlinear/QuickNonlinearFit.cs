@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Altaxo.Calc.LinearAlgebra;
 
@@ -83,12 +84,12 @@ namespace Altaxo.Calc.Regression.Nonlinear
       _fitFunction = fitFunction ?? throw new ArgumentNullException(nameof(fitFunction));
     }
 
-    public double[] Fit(double[] xValues, double[] yValues, double[] initialGuess)
+    public double[] Fit(double[] xValues, double[] yValues, double[] initialGuess, CancellationToken cancellationToken)
     {
-      return Fit(xValues, yValues, initialGuess, new bool[initialGuess.Length]);
+      return Fit(xValues, yValues, initialGuess, new bool[initialGuess.Length], cancellationToken);
     }
 
-      public double[] Fit(double[] xValues, double[] yValues, double[] initialGuess, bool[] isFixed)
+      public double[] Fit(double[] xValues, double[] yValues, double[] initialGuess, bool[] isFixed, CancellationToken cancellationToken)
     {
       _isExecuted = false;
       if (xValues.Length != yValues.Length)
@@ -102,7 +103,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
       double[] ys = new double[yValues.Length];
       int info = 0;
 
-      NLFit.LevenbergMarquardtFit(new NLFit.LMFunction(adapter.EvaluateFunctionDifferences), param, ys, 1E-10, ref info);
+      NLFit.LevenbergMarquardtFit(new NLFit.LMFunction(adapter.EvaluateFunctionDifferences), param, ys, 1E-10, cancellationToken, ref info);
       var resultingCovariances = new double[param.Length * param.Length];
       _covariances = MatrixMath.ToROMatrixFromColumnMajorLinearArray(resultingCovariances, param.Length);
       NLFit.ComputeCovariances(new NLFit.LMFunction(adapter.EvaluateFunctionDifferences), param, ys.Length, param.Length, resultingCovariances, out _sumChiSquare, out _sigmaSquare);

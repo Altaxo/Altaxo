@@ -69,6 +69,21 @@ namespace Altaxo.Main.Services
     {
     }
 
+    public IProgressReporter CreateSubTask(double workAmount, CancellationToken cancellationTokenSoft, CancellationToken cancellationTokenHard)
+    {
+      return this;
+    }
+
+    public void Report(string value)
+    {
+     
+    }
+
+    public void Report((string text, double progressFraction) value)
+    {
+      
+    }
+
     public string ReportText
     {
       get
@@ -109,7 +124,9 @@ namespace Altaxo.Main.Services
 
     public string TaskName { get; set; } = string.Empty;
 
-    public CancellationToken CancellationToken { get; set; }
+    public CancellationToken CancellationToken => CancellationToken.None;
+
+    public CancellationToken CancellationTokenHard => CancellationToken.None;
 
     #endregion IBackgroundMonitor Members
   }

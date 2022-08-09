@@ -32,7 +32,7 @@ namespace Altaxo.Main.Services
   /// Monitor, which gives the request to report the progress by calling <see cref="SetShouldReportNow"/>.
   /// </summary>
   /// <seealso cref="Altaxo.Main.Services.IExternalDrivenBackgroundMonitor" />
-  public class ExternalDrivenBackgroundMonitor : IExternalDrivenBackgroundMonitor
+  public class ExternalDrivenBackgroundMonitor : IExternalDrivenBackgroundMonitor, IDisposable
   {
     protected bool _shouldReport;
     private string _reportText;
@@ -42,13 +42,15 @@ namespace Altaxo.Main.Services
     private string _taskName;
 
     private bool _cancellationPending;
-    private Lazy<CancellationTokenSource> _cancellationTokenSource;
+    private Lazy<CancellationTokenSource> _cancellationTokenSourceSoft;
+    private Lazy<CancellationTokenSource> _cancellationTokenSourceHard;
 
     public ExternalDrivenBackgroundMonitor()
     {
       _reportText = string.Empty;
       _taskName = nameof(ExternalDrivenBackgroundMonitor);
-      _cancellationTokenSource = new Lazy<CancellationTokenSource>(() => new CancellationTokenSource());
+      _cancellationTokenSourceSoft = new Lazy<CancellationTokenSource>(() => new CancellationTokenSource());
+      _cancellationTokenSourceHard = new Lazy<CancellationTokenSource>(() => new CancellationTokenSource());
     }
 
     #region IBackgroundMonitor Members
@@ -73,6 +75,20 @@ namespace Altaxo.Main.Services
       _hasFreshReportText = true;
     }
 
+    void System.IProgress<string>.Report(string text) => ReportProgress(text);
+    void System.IProgress<(string text, double progressFraction)>.Report((string text, double progressFraction) tuple) => ReportProgress(tuple.text, tuple.progressFraction);
+
+    void IProgressMonitor.SetCancellationPendingSoft()
+    {
+      _cancellationTokenSourceSoft.Value.Cancel();
+    }
+
+    void IProgressMonitor.SetCancellationPendingHard()
+    {
+      _cancellationTokenSourceHard.Value.Cancel();
+    }
+
+
     public void ReportProgress(string text, double progressFraction)
     {
       _shouldReport = false;
@@ -81,15 +97,15 @@ namespace Altaxo.Main.Services
       _progressFraction = progressFraction;
     }
 
-    public bool HasReportText
+    public bool HasReportUpdate
     {
       get { return _hasFreshReportText; }
     }
 
-    public string GetReportText()
+    public (string text, double progressFraction) GetReportUpdate()
     {
       _hasFreshReportText = false;
-      return _reportText;
+      return (_reportText, _progressFraction);
     }
 
     public double GetProgressFraction()
@@ -127,15 +143,35 @@ namespace Altaxo.Main.Services
     {
       get
       {
-        return _cancellationTokenSource.Value.Token;
+        return _cancellationTokenSourceSoft.Value.Token;
+      }
+    }
+
+    public CancellationToken CancellationTokenHard
+    {
+      get
+      {
+        return _cancellationTokenSourceHard.Value.Token;
       }
     }
 
     public void SetCancellationPending()
     {
       _cancellationPending = true;
-      if (_cancellationTokenSource.IsValueCreated)
-        _cancellationTokenSource.Value.Cancel();
+
+      if(_cancellationTokenSourceHard.IsValueCreated)
+      {
+        // we do the hard cancellation only if either there is not soft token source created,
+        // or if the soft token source is already cancelled
+        if (!_cancellationTokenSourceSoft.IsValueCreated || _cancellationTokenSourceSoft.Value.IsCancellationRequested)
+        {
+          _cancellationTokenSourceHard.Value.Cancel();
+        }
+      }
+      if (_cancellationTokenSourceSoft.IsValueCreated)
+      {
+        _cancellationTokenSourceSoft.Value.Cancel();
+      }
     }
 
     public IProgressReporter CreateSubTask(double workAmount)
@@ -143,7 +179,7 @@ namespace Altaxo.Main.Services
       throw new NotImplementedException();
     }
 
-    public IProgressReporter CreateSubTask(double workAmount, CancellationToken cancellationToken)
+    public IProgressReporter CreateSubTask(double workAmount, CancellationToken cancellationTokenSoft, CancellationToken cancellationTokenHard)
     {
       throw new NotImplementedException();
     }
@@ -165,6 +201,7 @@ namespace Altaxo.Main.Services
     {
       private IProgressReporter _parent;
       private CancellationToken? _cancellationToken;
+      private CancellationToken? _cancellationTokenHard;
       private double _progress;
       private double _progressOffset;
       private double _progressSpan;
@@ -176,12 +213,13 @@ namespace Altaxo.Main.Services
         _progressSpan = workSpan;
       }
 
-      public SubTask(IProgressReporter parent, double workSpan, CancellationToken cancellationToken)
+      public SubTask(IProgressReporter parent, double workSpan, CancellationToken cancellationTokenSoft, CancellationToken cancellationTokenHard)
       {
         _parent = parent;
         _progressOffset = parent.Progress;
         _progressSpan = workSpan;
-        _cancellationToken = cancellationToken;
+        _cancellationToken = cancellationTokenSoft;
+        _cancellationTokenHard = cancellationTokenHard;
       }
 
 
@@ -208,6 +246,7 @@ namespace Altaxo.Main.Services
         set => _parent.TaskName = value; }
 
       public CancellationToken CancellationToken => _cancellationToken ?? _parent.CancellationToken;
+      public CancellationToken CancellationTokenHard => _cancellationTokenHard ?? _parent.CancellationTokenHard;
 
       public bool ShouldReportNow => _parent.ShouldReportNow;
 
@@ -218,9 +257,9 @@ namespace Altaxo.Main.Services
         return new SubTask(this, workAmount);
       }
 
-      public IProgressReporter CreateSubTask(double workAmount, CancellationToken cancellationToken)
+      public IProgressReporter CreateSubTask(double workAmount, CancellationToken cancellationTokenSoft, CancellationToken cancellationTokenHard)
       {
-        return new SubTask(this, workAmount, cancellationToken);
+        return new SubTask(this, workAmount, cancellationTokenSoft, cancellationTokenHard);
       }
 
       public void Dispose()
@@ -243,6 +282,10 @@ namespace Altaxo.Main.Services
         Progress = progressValue;
         _parent.ReportProgress(text);
       }
+
+      void System.IProgress<string>.Report(string text) => ReportProgress(text);
+      void System.IProgress<(string text, double progressFraction)>.Report((string text, double progressFraction) tuple) => ReportProgress(tuple.text, tuple.progressFraction);
+
     }
 
   }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using Altaxo.Calc;
 
 namespace Altaxo.Science.Spectroscopy.Raman
@@ -508,18 +509,18 @@ namespace Altaxo.Science.Spectroscopy.Raman
 
     public double[]? YPreprocessed => _yPreprocessed;
 
-    public List<(double NistWL, double MeasWL)> PeakMatchings {get; private set; }
+    public List<(double NistWL, double MeasWL, double MeasWLVariance)> PeakMatchings {get; private set; }
 
     #endregion
 
-    public List<(double NistWL, double MeasWL)>
-      GetPeakMatchings(NeonCalibrationOptions options, double[] x, double[] y)
+    public List<(double NistWL, double MeasWL, double MeasWLVariance)>
+      GetPeakMatchings(NeonCalibrationOptions options, double[] x, double[] y, CancellationToken cancellationToken)
     {
-      var coarse = FindCoarseMatch(options, x, y);
+      var coarse = FindCoarseMatch(options, x, y, cancellationToken);
 
       if (coarse is null)
       {
-        return new List<(double NistWL, double MeasWL)>();
+        return new List<(double NistWL, double MeasWL, double MeasWLVariance)>();
       }
 
       if (_peakFittingDescriptions is not null)
@@ -535,7 +536,7 @@ namespace Altaxo.Science.Spectroscopy.Raman
       return PeakMatchings;
     }
 
-    List<(double NistWL, double MeasWL)> FilterOutMatchesOfMeasuredPeaksCorrespondsToMultipleNistPeaks(List<(double NistWL, double MeasWL)> list)
+    List<(double NistWL, double MeasWL, double MeasWLVariance)> FilterOutMatchesOfMeasuredPeaksCorrespondsToMultipleNistPeaks(List<(double NistWL, double MeasWL, double MeasWLVariance)> list)
     {
       var countDict = new Dictionary<double, int>();
       foreach(var pair in list)
@@ -547,7 +548,7 @@ namespace Altaxo.Science.Spectroscopy.Raman
        countDict[pair.MeasWL] = cnt + 1;
       }
 
-      var result = new List<(double NistWL, double MeasWL)>();
+      var result = new List<(double NistWL, double MeasWL, double MeasWLVariance)>();
       foreach(var pair in list)
       {
         if (countDict[pair.MeasWL] == 1)
@@ -557,7 +558,7 @@ namespace Altaxo.Science.Spectroscopy.Raman
       return result;
     }
 
-    private List<(double NistWL, double MeasWL)> GetPeakMatchingsBasedOnPeakSearchingResults((double NistWL_Left, double MeasWL_Left, double NistWL_Right, double MeasWL_Right) coarse)
+    private List<(double NistWL, double MeasWL, double MeasWLVariance)> GetPeakMatchingsBasedOnPeakSearchingResults((double NistWL_Left, double MeasWL_Left, double NistWL_Right, double MeasWL_Right) coarse)
     {
       var (NistWL_Left, MeasWL_Left, NistWL_Right, MeasWL_Right) = coarse;
       var x_nm = _xArray_nm;
@@ -573,7 +574,7 @@ namespace Altaxo.Science.Spectroscopy.Raman
 
       var foundPeaks = _peakSearchingDescriptions;
 
-      var result = new List<(double NistWL, double MeasWL)>();
+      var result = new List<(double NistWL, double MeasWL, double MeasWLVariance)>();
 
       foreach (var peakDesc in foundPeaks)
       {
@@ -589,14 +590,14 @@ namespace Altaxo.Science.Spectroscopy.Raman
 
         foreach (var nistPeak in nistPeaks)
         {
-          result.Add((nistPeak.Wavelength_Nanometer, measPeakCenterWL));
+          result.Add((nistPeak.Wavelength_Nanometer, measPeakCenterWL, 0));
         }
       }
 
       return result;
     }
 
-    private List<(double NistWL, double MeasWL)> GetPeakMatchingsBasedOnPeakFittingResults((double NistWL_Left, double MeasWL_Left, double NistWL_Right, double MeasWL_Right) coarse)
+    private List<(double NistWL, double MeasWL, double MeasWLVariance)> GetPeakMatchingsBasedOnPeakFittingResults((double NistWL_Left, double MeasWL_Left, double NistWL_Right, double MeasWL_Right) coarse)
     {
       var (NistWL_Left, MeasWL_Left, NistWL_Right, MeasWL_Right) = coarse;
       var x_nm = _xArray_nm;
@@ -612,11 +613,11 @@ namespace Altaxo.Science.Spectroscopy.Raman
 
       var foundPeaks = _peakFittingDescriptions;
 
-      var result = new List<(double NistWL, double MeasWL)>();
+      var result = new List<(double NistWL, double MeasWL, double MeasWLVariance)>();
 
       foreach (var peakDesc in foundPeaks)
       {
-        var (measPeakCenterWL, _,_,fwhm) = peakDesc.FitFunction.GetPositionAreaHeightFWHMFromSinglePeakParameters(peakDesc.PeakParameter);
+        var (measPeakCenterWL, measPeakCenterWLVariance, _, _,_,_,fwhm,_) = peakDesc.FitFunction.GetPositionAreaHeightFWHMFromSinglePeakParameters(peakDesc.PeakParameter, peakDesc.PeakParameterCovariances);
         // Note that for left and right we use full width = 2 x half width
         var measPeakLeftWL = measPeakCenterWL - fwhm;
         var measPeakRightWL = measPeakCenterWL + fwhm;
@@ -628,7 +629,7 @@ namespace Altaxo.Science.Spectroscopy.Raman
 
         foreach (var nistPeak in nistPeaks)
         {
-          result.Add((nistPeak.Wavelength_Nanometer, measPeakCenterWL));
+          result.Add((nistPeak.Wavelength_Nanometer, measPeakCenterWL, measPeakCenterWLVariance));
         }
       }
 
@@ -637,6 +638,7 @@ namespace Altaxo.Science.Spectroscopy.Raman
 
 
 
+    /// <summary>
     /// Finds a coarse match bewtween the peaks in the measured Neon spectrum and the Nist table.
     /// </summary>
     /// <param name="options">The options used for calculation.</param>
@@ -645,7 +647,7 @@ namespace Altaxo.Science.Spectroscopy.Raman
     /// <returns>A tuple of wavelength (in nm): Nist wavelength and Meas wavelength at the left of the range, Nist wavelength and meas wavelength at the right of the range.</returns>
     /// The returned value is null if no peaks could be matched.
     public (double NistWL_Left, double MeasWL_Left, double NistWL_Right, double MeasWL_Right)?
-    FindCoarseMatch(NeonCalibrationOptions options, double[] x, double[] y)
+    FindCoarseMatch(NeonCalibrationOptions options, double[] x, double[] y, CancellationToken cancellationToken)
     {
       var tolWL = options.Wavelength_Tolerance_nm;
       var x_nm = _xArray_nm = new double[x.Length];
@@ -666,7 +668,7 @@ namespace Altaxo.Science.Spectroscopy.Raman
 
       if (peakOptions.PeakFitting is { } peakFitting && peakOptions.PeakFitting is not PeakFitting.PeakFittingNone)
       {
-        var peakFittingDescriptions = peakFitting.Execute(x_nm, y, peakSearchingResults);
+        var peakFittingDescriptions = peakFitting.Execute(x_nm, y, peakSearchingResults, cancellationToken);
         _peakFittingDescriptions = peakFittingDescriptions[0].PeakDescriptions;
       }
 

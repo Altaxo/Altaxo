@@ -36,7 +36,7 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
   /// <para>References:</para>
   /// <para>[1] P. H. C. Eilers and H. F. M. Boelens, Baseline correction with
   /// asymmetric least squares smoothing, Leiden University Medical Centre report, 2005</para>
-  // </remarks>
+  /// </remarks>
   public record ALS : ALSBase, IBaselineEstimation
   {
     private double _lambda = 1E5;

@@ -121,13 +121,13 @@ namespace Altaxo.Gui.Common
 
       if (_monitor is not null)
       {
-        if (_monitor.HasReportText)
+        if (_monitor.HasReportUpdate)
         {
-          _guiProgressText.Text = _monitor.GetReportText();
-          double frac = _monitor.GetProgressFraction();
-          if (!double.IsNaN(frac))
+          (string text, double fraction) = _monitor.GetReportUpdate();
+          _guiProgressText.Text = text;
+          if (!double.IsNaN(fraction))
           {
-            _guiProgressFraction.Value = Math.Min(1, Math.Max(0, frac));
+            _guiProgressFraction.Value = Math.Min(1, Math.Max(0, fraction));
           }
         }
         _monitor.SetShouldReportNow();
@@ -145,6 +145,7 @@ namespace Altaxo.Gui.Common
       if (_thread.IsAlive)
       {
         _wasCancelledByUser = true;
+        _monitor.SetCancellationPendingHard();
         _thread.Interrupt();
       }
       _btInterrupt.Visibility = System.Windows.Visibility.Collapsed;
@@ -156,7 +157,7 @@ namespace Altaxo.Gui.Common
       _wasCancelledByUser = true;
       if (_monitor is not null)
       {
-        _monitor.SetCancellationPending();
+        _monitor.SetCancellationPendingSoft();
         _btCancel.Visibility = System.Windows.Visibility.Collapsed;
         _btInterrupt.Visibility = System.Windows.Visibility.Visible;
       }

@@ -25,6 +25,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using Altaxo.Calc;
 using Altaxo.Calc.FitFunctions.Peaks;
 using Altaxo.Calc.FitFunctions.Probability;
@@ -96,7 +97,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
     #endregion
 
 
-    public IReadOnlyList<(IReadOnlyList<PeakDescription> PeakDescriptions, int StartOfRegion, int EndOfRegion)> Execute(double[] xArray, double[] yArray, IReadOnlyList<(IReadOnlyList<PeakSearching.PeakDescription> PeakDescriptions, int StartOfRegion, int EndOfRegion)> peakDescriptions)
+    public IReadOnlyList<(IReadOnlyList<PeakDescription> PeakDescriptions, int StartOfRegion, int EndOfRegion)> Execute(double[] xArray, double[] yArray, IReadOnlyList<(IReadOnlyList<PeakSearching.PeakDescription> PeakDescriptions, int StartOfRegion, int EndOfRegion)> peakDescriptions, CancellationToken cancellationToken)
     {
       var peakFitDescriptions = new List<(IReadOnlyList<PeakDescription> PeakDescriptions, int StartOfRegion, int EndOfRegion)>();
       foreach (var (peakDesc, start, end) in peakDescriptions)
@@ -105,7 +106,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
         var subY = new double[end - start];
         Array.Copy(xArray, start, subX, 0, end - start);
         Array.Copy(yArray, start, subY, 0, end - start);
-        var result = Execute(subX, subY, peakDesc);
+        var result = Execute(subX, subY, peakDesc, cancellationToken);
         peakFitDescriptions.Add((result, start, end));
       }
 
@@ -113,7 +114,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
     }
 
     /// <inheritdoc/>
-    public List<PeakDescription> Execute(double[] xArray, double[] yArray, IEnumerable<PeakSearching.PeakDescription> peakDescriptions)
+    public List<PeakDescription> Execute(double[] xArray, double[] yArray, IEnumerable<PeakSearching.PeakDescription> peakDescriptions, CancellationToken cancellationToken)
     {
       var fitFunc = FitFunction.WithNumberOfTerms(1);
       int numberOfParametersPerPeak = fitFunc.NumberOfParameters;
@@ -165,7 +166,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
       var param = paramList.ToArray();
       fitFunc = FitFunction.WithNumberOfTerms(param.Length/numberOfParametersPerPeak);
       var fit = new QuickNonlinearRegression(fitFunc);
-      param = fit.Fit(xCut, yCut, param);
+      param = fit.Fit(xCut, yCut, param, cancellationToken);
       var fitFunctionWrapper = new PeakFitFunctions.FunctionWrapper(fitFunc, param);
 
       // in order to get the variances for each single peak separately:
@@ -196,7 +197,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
         // unfix our set of parameters
         for (int i = 0; i < numberOfParametersPerPeak; i++)
           isFixed[idx + i] = false;
-        fit.Fit(xCut, yCut, param, isFixed);
+        fit.Fit(xCut, yCut, param, isFixed, cancellationToken);
         // fix again our set of parameters
         for (int i = 0; i < numberOfParametersPerPeak; i++)
           isFixed[idx + i] = true;

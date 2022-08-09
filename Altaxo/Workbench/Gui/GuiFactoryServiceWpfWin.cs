@@ -40,7 +40,7 @@ namespace Altaxo.Gui
     public GuiFactoryServiceWpfWin()
     {
       RegisteredGuiTechnologies.Add(typeof(System.Windows.FrameworkElement));
-      RegistedContextMenuProviders.Add(typeof(System.Windows.FrameworkElement), ShowWpfContextMenu);
+      RegisteredContextMenuProviders.Add(typeof(System.Windows.FrameworkElement), ShowWpfContextMenu);
     }
 
     private static void ShowWpfContextMenu(object parent, object owner, string addInPath, double x, double y)
@@ -673,7 +673,7 @@ return System.Windows.Forms.DialogResult.OK == dlgview.ShowDialog(MainWindow);
     /// <returns>The context menu. Returns Null if there is no registered context menu provider</returns>
     public override void ShowContextMenu(object parent, object owner, string addInTreePath, double x, double y)
     {
-      foreach (var entry in RegistedContextMenuProviders)
+      foreach (var entry in RegisteredContextMenuProviders)
       {
         if (ReflectionService.IsSubClassOfOrImplements(parent.GetType(), entry.Key))
         {
@@ -703,7 +703,7 @@ return System.Windows.Forms.DialogResult.OK == dlgview.ShowDialog(MainWindow);
       return false;
     }
 
-    public override bool ShowTaskCancelDialog(int millisecondsDelay, System.Threading.Tasks.Task task, CancellationTokenSource ctsSoft, CancellationTokenSource ctsHard, IExternalDrivenBackgroundMonitor monitor)
+    public override bool ShowTaskCancelDialog(int millisecondsDelay, System.Threading.Tasks.Task task, IExternalDrivenBackgroundMonitor monitor)
     {
       if (Current.Dispatcher.InvokeRequired)
         throw new ApplicationException("Trying to show a BackgroundCancelDialog initiated by a background thread. This nesting is not supported");
@@ -713,7 +713,7 @@ return System.Windows.Forms.DialogResult.OK == dlgview.ShowDialog(MainWindow);
 
       if (!task.IsCompleted)
       {
-        var dlg = new TaskCancelDialog() { DataContext = new TaskCancelController(task, ctsSoft, ctsHard, monitor, 0) };
+        var dlg = new TaskCancelDialog() { DataContext = new TaskCancelController(task, monitor, 0) };
         if (!task.IsCompleted)
         {
           dlg.Owner = MainWindowWpf;
