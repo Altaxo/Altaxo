@@ -329,7 +329,7 @@ namespace Altaxo.Science.Spectroscopy
             var cNumberOfPoints = peakTable.DataColumns.EnsureExistence($"FitNumberOfPoints{runningColumnNumber}", typeof(DoubleColumn), ColumnKind.V, runningColumnNumber);
             var cFirstXValue = peakTable.DataColumns.EnsureExistence($"FitFirstXValue{runningColumnNumber}", typeof(DoubleColumn), ColumnKind.V, runningColumnNumber);
             var cLastXValue = peakTable.DataColumns.EnsureExistence($"FitLastXValue{runningColumnNumber}", typeof(DoubleColumn), ColumnKind.V, runningColumnNumber);
-
+            var cSumChiSquareByNMF = peakTable.DataColumns.EnsureExistence($"SumChiSquareByN-F{runningColumnNumber}", typeof(DoubleColumn), ColumnKind.V, runningColumnNumber);
 
 
 
@@ -355,9 +355,13 @@ namespace Altaxo.Science.Spectroscopy
                   cFWidVar[idxRow] = fwhmVar;
                   cFirstPoint[idxRow] = r.FirstFitPoint;
                   cLastPoint[idxRow] = r.LastFitPoint;
+                  int numberOfFitPoints = 1 + Math.Abs(r.LastFitPoint - r.FirstFitPoint);
                   cNumberOfPoints[idxRow] = Math.Abs(r.LastFitPoint - r.FirstFitPoint);
                   cFirstXValue[idxRow] = r.FirstFitPosition;
                   cLastXValue[idxRow] = r.LastFitPosition;
+
+                  int NMinusF = numberOfFitPoints - r.PeakParameter.Length;
+                  cSumChiSquareByNMF[idxRow] = r.SumChiSquare / NMinusF;
 
                   var parameterNames = fitFunction.ParameterNamesForOnePeak;
                   for (var j = 0; j < parameterNames.Length; j++)
@@ -435,7 +439,7 @@ namespace Altaxo.Science.Spectroscopy
 
 
         preprocessingTable.DataSource = new SpectralPreprocessingDataSource(
-          dataProxy,
+          (DataTableMultipleColumnProxy)dataProxy.Clone(),
           new SpectralPreprocessingOptions(doc.Preprocessing), // downcast to SpectralPreprocessingOptions
           new DataSourceImportOptions());
       }
@@ -450,7 +454,7 @@ namespace Altaxo.Science.Spectroscopy
 
 
         peakTable.DataSource = new PeakSearchingAndFittingDataSource(
-          dataProxy,
+          (DataTableMultipleColumnProxy)dataProxy.Clone(),
           new PeakSearchingAndFittingOptions(doc), // downcast to PeakFindingAndFittingOptions
           new DataSourceImportOptions());
       }

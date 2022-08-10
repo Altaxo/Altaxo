@@ -463,6 +463,14 @@ namespace Altaxo.Science.Spectroscopy.Raman
       }
     }
 
+    public NeonCalibrationOptions? NeonCalibrationOptions1 => _neonCalibrationOptions1;
+    public NeonCalibrationOptions? NeonCalibrationOptions2 => _neonCalibrationOptions2;
+    public SiliconCalibrationOptions? SiliconCalibrationOptions => _siliconCalibrationOptions;
+
+    public DataTableXYColumnProxy? NeonCalibrationData1 => _neonCalibrationData1;
+    public DataTableXYColumnProxy? NeonCalibrationData2 => _neonCalibrationData2;
+    public DataTableXYColumnProxy? SiliconCalibrationData => _siliconCalibrationData;
+
     public object ProcessOptionsObject { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
     public object ProcessDataObject { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
