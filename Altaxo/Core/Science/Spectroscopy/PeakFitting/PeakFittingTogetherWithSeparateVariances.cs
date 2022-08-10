@@ -179,6 +179,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
       var parameterTemp = new double[param.Length];
       var variancesSeparate = new double[param.Length]; // Array to accomodate the parameter variances evaluated for each peak separately
       var covariancesSeparate = new DoubleMatrix[param.Length]; // Array of matrices that holds the covariances of each peak separately
+      var sumChiSquareSeparate = new double[param.Length];
       foreach (var description in peakDescriptions)
       {
         if (dictionaryOfNotFittedPeaks.ContainsKey(description))
@@ -213,6 +214,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
           for (int j = 0; j < numberOfParametersPerPeak; ++j)
             covMatrix[i, j] = fit.Covariances[i, j];
         covariancesSeparate[idx/numberOfParametersPerPeak] = covMatrix;
+        sumChiSquareSeparate[idx/numberOfParametersPerPeak] = fit.SumChiSquare;
 
         idx += numberOfParametersPerPeak;
       }
@@ -241,6 +243,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
             PeakParameterCovariances = covariancesSeparate[idx],
             FitFunction = fitFunc,
             FitFunctionParameter = (double[])param.Clone(),
+            SumChiSquare = sumChiSquareSeparate[idx],
           });
           ++idx; 
         }

@@ -83,6 +83,11 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
     public double[]? FitFunctionParameter { get; init; }
 
     /// <summary>
+    /// Gets the chi square value of the fit.
+    /// </summary>
+    public double SumChiSquare { get; init; }
+
+    /// <summary>
     /// Gets the position, the area, the height and the Full Width Half Maximum of the fitted peak.
     /// </summary>
     /// <exception cref="System.InvalidOperationException">FitFunction or PeakParameter is null (in instance of {this.GetType()}).</exception>

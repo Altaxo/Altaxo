@@ -165,6 +165,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
           PeakParameterCovariances = fit.Covariances,
           FitFunction = fitFunc,
           FitFunctionParameter = (double[])param.Clone(),
+          SumChiSquare = fit.SumChiSquare,
         });
       }
 
