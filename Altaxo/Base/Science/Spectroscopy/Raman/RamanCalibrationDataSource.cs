@@ -244,6 +244,9 @@ namespace Altaxo.Science.Spectroscopy.Raman
     {
       try
       {
+        destinationTable.DataColumns.RemoveColumnsAll();
+        destinationTable.PropCols.RemoveColumnsAll();
+
         NeonCalibration? neonCalibration1 = null;
         NeonCalibration? neonCalibration2 = null;
         SiliconCalibration? siliconCalibration = null;
