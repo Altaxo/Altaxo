@@ -25,6 +25,7 @@
 #nullable enable
 
 using System;
+using System.Collections.Generic;
 using System.Text;
 using System.Xml;
 
@@ -387,7 +388,7 @@ namespace Altaxo.Serialization.Xml
       CommitArray();
     }
 
-    public void AddArray(string name, string?[] val, int count)
+    public void AddArray(string name, IReadOnlyList<string?> val, int count)
     {
       CreateArray(name, count);
 
@@ -474,7 +475,7 @@ namespace Altaxo.Serialization.Xml
       } // end switch
     }
 
-    public void AddArray(string name, object[] val, int count)
+    public void AddArray(string name, IReadOnlyList<object> val, int count)
     {
       CreateArray(name, count);
 
@@ -488,7 +489,7 @@ namespace Altaxo.Serialization.Xml
       CommitArray();
     }
 
-    public void AddArrayOfNullableElements(string name, object?[] val, int count)
+    public void AddArrayOfNullableElements(string name, IReadOnlyList<object?> val, int count)
     {
       CreateArray(name, count);
 

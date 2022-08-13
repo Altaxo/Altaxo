@@ -246,9 +246,9 @@ namespace Altaxo.Scripting
         s._NumberOfParameters = info.GetInt32("NumberOfParameters");
         s._IsUsingUserDefinedParameterNames = info.GetBoolean("UserDefinedParameters");
         if (s._IsUsingUserDefinedParameterNames)
-          info.GetArray("UserDefinedParameterNames", out s._UserDefinedParameterNames);
-        info.GetArray("IndependentVariableNames", out s._IndependentVariablesNames);
-        info.GetArray("DependentVariableNames", out s._DependentVariablesNames);
+          s._UserDefinedParameterNames = info.GetArrayOfStrings("UserDefinedParameterNames");
+        s._IndependentVariablesNames = info.GetArrayOfStrings("IndependentVariableNames");
+        s._DependentVariablesNames = info.GetArrayOfStrings("DependentVariableNames");
 
         var surr = new XmlSerializationSurrogate1
         {
@@ -326,9 +326,9 @@ namespace Altaxo.Scripting
         s._NumberOfParameters = info.GetInt32("NumberOfParameters");
         s._IsUsingUserDefinedParameterNames = info.GetBoolean("UserDefinedParameters");
         if (s._IsUsingUserDefinedParameterNames)
-          info.GetArray("UserDefinedParameterNames", out s._UserDefinedParameterNames);
-        info.GetArray("IndependentVariableNames", out s._IndependentVariablesNames);
-        info.GetArray("DependentVariableNames", out s._DependentVariablesNames);
+          s._UserDefinedParameterNames = info.GetArrayOfStrings("UserDefinedParameterNames");
+        s._IndependentVariablesNames = info.GetArrayOfStrings("IndependentVariableNames");
+        s._DependentVariablesNames = info.GetArrayOfStrings("DependentVariableNames");
 
         var surr = new XmlSerializationSurrogate2
         {

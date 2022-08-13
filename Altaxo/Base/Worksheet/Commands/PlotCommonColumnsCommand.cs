@@ -34,10 +34,10 @@ namespace Altaxo.Worksheet.Commands
   /// <summary>
   /// Saves the options for the 'Plot common columns' command and contains the logic to execute that command with the stored options.
   /// </summary>
-  public class PlotCommonColumnsCommand
+  public class PlotCommonColumnsCommand 
   {
-    private List<Altaxo.Data.DataTable> _tables = new List<Altaxo.Data.DataTable>();
-    private List<string> _yCommonColumnNamesForPlotting = new List<string>();
+    protected List<Altaxo.Data.DataTable> _tables = new List<Altaxo.Data.DataTable>();
+    protected List<string> _yCommonColumnNamesForPlotting = new List<string>();
 
     /// <summary>The tables that contain the common columns to plot.</summary>
     public List<Altaxo.Data.DataTable> Tables { get { return _tables; } }
@@ -90,7 +90,7 @@ namespace Altaxo.Worksheet.Commands
     /// <summary>
     /// Executes the 'Plot common column' command.
     /// </summary>
-    public void Execute()
+    public virtual void Execute()
     {
       Altaxo.Gui.Graph.Gdi.Viewing.IGraphController graphctrl;
       Altaxo.Graph.Gdi.GraphDocument graph;

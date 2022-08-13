@@ -30,10 +30,12 @@ using System.Text;
 
 namespace Altaxo.Gui.Pads.ProjectBrowser
 {
+  using System.Collections.Immutable;
   using Altaxo;
   using Altaxo.Data;
   using Altaxo.Gui.Common;
   using Altaxo.Main;
+  using Markdig.Extensions.Tables;
 
   public static class ProjectBrowserExtensions
   {
@@ -255,6 +257,40 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 
       if (true == Current.Gui.ShowDialog(ref command, "Plot common columns", false))
         command.Execute();
+    }
+
+    public static void ExtractCommonColumns(this ProjectBrowseController ctrl)
+    {
+      var dataTables = ctrl.GetSelectedListItems().OfType<DataTable>().ToList();
+      if (dataTables.Count == 0)
+        return;
+
+      var commonColumnNames = ExtractCommonColumnsToTableDataSource.GetCommonColumnNamesUnordered(dataTables);
+      if (0 == commonColumnNames.Count)
+      {
+        Current.Gui.InfoMessageBox("The selected tables do not seem to have common columns", "Please note");
+        return;
+      }
+
+      var dataSource = new ExtractCommonColumnsToTableDataSource(
+        new ExtractCommonColumnsToTableData(dataTables.Select(t => new DataTableProxy(t)), string.Empty, ImmutableArray<string>.Empty),
+        new ExtractCommonColumnsToTableOptions(),
+        new DataSourceImportOptions()
+        );
+
+      if(Current.Gui.ShowDialog(ref dataSource, "Extract common columns", false))
+      {
+        var commonFolderName = Altaxo.Main.ProjectFolder.GetCommonFolderOfNames(dataTables.Select(table => table.Name));
+        DataTable destinationTable = new DataTable();
+        var tableName = commonFolderName + "WExtractedData";
+        if(Current.Project.DataTableCollection.Contains(tableName))
+          tableName = Current.Project.DataTableCollection.FindNewItemName(tableName);
+        destinationTable.Name = tableName;
+        Current.Project.DataTableCollection.Add(destinationTable);
+        destinationTable.DataSource = dataSource;
+        dataSource.FillData(destinationTable);
+        Current.ProjectService.ShowDocumentView(destinationTable);
+      }
     }
 
     #region Clipboard commands

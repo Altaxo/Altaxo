@@ -160,7 +160,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
         info.GetValueOrNull<IVarianceScaling>("e", this); // do not use this value
       info.CloseArray(arraycount);
 
-      info.GetArray("ParameterNames", out _parameterNames);
+      _parameterNames = info.GetArrayOfStrings("ParameterNames");
       for (int i = 0; i < _parameterNames.Length; ++i)
         if (_parameterNames[i] == string.Empty)
           _parameterNames[i] = null; // serialization can not distinguish between an empty string and a null string
@@ -241,7 +241,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
         info.GetValueOrNull<IVarianceScaling>("e", this); // do not use this value
       info.CloseArray(arraycount);
 
-      info.GetArray("ParameterNames", out _parameterNames);
+      _parameterNames = info.GetArrayOfStrings("ParameterNames");
       for (int i = 0; i < _parameterNames.Length; ++i)
         if (_parameterNames[i] == string.Empty)
           _parameterNames[i] = null; // serialization can not distinguish between an empty string and a null string
@@ -323,7 +323,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
         _dependentVariableTransformations[i] = info.GetValueOrNull<IDoubleToDoubleTransformation>("e", this);
       info.CloseArray(arraycount);
 
-      info.GetArray("ParameterNames", out _parameterNames);
+      _parameterNames = info.GetArrayOfStrings("ParameterNames");
       for (int i = 0; i < _parameterNames.Length; ++i)
         if (_parameterNames[i] == string.Empty)
           _parameterNames[i] = null; // serialization can not distinguish between an empty string and a null string

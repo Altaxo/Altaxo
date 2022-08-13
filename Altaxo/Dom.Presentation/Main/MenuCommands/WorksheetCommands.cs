@@ -424,6 +424,29 @@ namespace Altaxo.Worksheet.Commands
     }
   }
 
+  public class WorksheetRemovePropertyColumnsOnly : AbstractWorksheetControllerCommand
+  {
+    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
+    {
+      using (var token = ctrl.DataTable.SuspendGetToken())
+      {
+        ctrl.DataTable.PropertyColumns.RemoveColumnsAll();
+      }
+    }
+  }
+
+  public class WorksheetRemoveDataAndPropertyColumns : AbstractWorksheetControllerCommand
+  {
+    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
+    {
+      using (var token = ctrl.DataTable.SuspendGetToken())
+      {
+        ctrl.DataTable.DataColumns.RemoveColumnsAll();
+        ctrl.DataTable.PropertyColumns.RemoveColumnsAll();
+      }
+    }
+  }
+
   public class DecomposeCyclingIndependentVariable : AbstractWorksheetControllerCommand
   {
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)

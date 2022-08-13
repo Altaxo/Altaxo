@@ -229,6 +229,14 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
     }
   }
 
+  public class CmdExtractCommonColumns : ProjectBrowseControllerCommand
+  {
+    protected override void Run(ProjectBrowseController ctrl)
+    {
+      ctrl.ExtractCommonColumns();
+    }
+  }
+
   public class CmdMultiRenameItems : ProjectBrowseControllerCommand
   {
     protected override void Run(ProjectBrowseController ctrl)

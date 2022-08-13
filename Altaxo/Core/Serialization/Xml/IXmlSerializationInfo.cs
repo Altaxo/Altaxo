@@ -25,6 +25,7 @@
 #nullable enable
 
 using System;
+using System.Collections.Generic;
 
 namespace Altaxo.Serialization.Xml
 {
@@ -92,7 +93,7 @@ namespace Altaxo.Serialization.Xml
 
     void AddArray(string name, DateTime[] val, int count);
 
-    void AddArray(string name, string?[] val, int count);
+    void AddArray(string name, IReadOnlyList<string?> val, int count);
 
     /// <summary>
     /// Adds an array of nullable boolean values. The array <paramref name="val"/> contains the boolean values, whereas
@@ -104,8 +105,8 @@ namespace Altaxo.Serialization.Xml
     /// <param name="count">The count.</param>
     void AddArray(string name, System.Collections.BitArray val, System.Collections.BitArray cond, int count);
 
-    void AddArray(string name, object[] val, int count);
-    void AddArrayOfNullableElements(string name, object?[] val, int count);
+    void AddArray(string name, IReadOnlyList<object> val, int count);
+    void AddArrayOfNullableElements(string name, IReadOnlyList<object?> val, int count);
 
     void CreateElement(string name);
 

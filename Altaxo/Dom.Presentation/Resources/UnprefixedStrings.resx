@@ -1858,4 +1858,16 @@
   <data name="XML.MainMenu.FileMenu.Import.RenishawWdf.Description" xml:space="preserve">
     <value>Import a Renishaw .wdf file used in Raman spectroscopy</value>
   </data>
+  <data name="XML.MainMenu.WorksheetMenu.RemoveDataAndPropertyColumns" xml:space="preserve">
+    <value>Remove all data and property columns</value>
+  </data>
+  <data name="XML.MainMenu.WorksheetMenu.RemoveDataAndPropertyColumns.Description" xml:space="preserve">
+    <value>Remove all data and property columns in the current table</value>
+  </data>
+  <data name="XML.MainMenu.WorksheetMenu.RemovePropertyColumnsOnly" xml:space="preserve">
+    <value>Remove all property columns</value>
+  </data>
+  <data name="XML.MainMenu.WorksheetMenu.RemovePropertyColumnsOnly.Description" xml:space="preserve">
+    <value>Remove all property columns in the current table</value>
+  </data>
 </root>

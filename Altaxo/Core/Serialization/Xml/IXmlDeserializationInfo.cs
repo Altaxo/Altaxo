@@ -109,7 +109,7 @@ namespace Altaxo.Serialization.Xml
 
     void GetArray(DateTime[] val, int count);
 
-    void GetArray(string name, out string[] val);
+    string[] GetArrayOfStrings(string name);
 
     void GetArray(string?[] val, int count);
 
@@ -121,6 +121,7 @@ namespace Altaxo.Serialization.Xml
     /// <param name="count">The element count.</param>
     void GetArray(System.Collections.BitArray values, System.Collections.BitArray conditions, int count);
 
+    T[] GetArrayOfValues<T>(string name, object parent);
 
     void OpenElement();
 

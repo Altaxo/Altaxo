@@ -539,11 +539,12 @@ namespace Altaxo.Serialization.Xml
       }
     }
 
-    public void GetArray(string name, out string[] val)
+    public string[] GetArrayOfStrings(string name)
     {
       int count = GetInt32Attribute("Count");
-      val = new string[count];
+      var val = new string[count];
       GetArray(val, count);
+      return val;
     }
 
     public void GetArray(string?[] val, int count)
@@ -592,6 +593,16 @@ namespace Altaxo.Serialization.Xml
       }
     }
 
+
+    public T[] GetArrayOfValues<T>(string name, object? parent)
+    {
+      var count = OpenArray(name);
+      var result = new T[count];
+      for (int i = 0; i < count; ++i)
+        result[i] = (T)GetValue("e", parent);
+      CloseArray(count);
+      return result;
+    }
 
 
     public void OpenElement()

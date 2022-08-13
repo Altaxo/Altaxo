@@ -1,0 +1,71 @@
+﻿<UserControl x:Class="Altaxo.Gui.Data.ExtractCommonColumnsToTableOptionsControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Altaxo.Gui.Data;assembly=AltaxoBase" 
+             d:DataContext="{d:DesignInstance Type=local:ExtractCommonColumnsToTableOptionsController}"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid>
+        
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="4"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="4"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="4"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="4"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="4"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="4"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="4"/>
+        </Grid.ColumnDefinitions>
+
+        <CheckBox Grid.Row="0" Grid.Column="0"
+                  IsChecked="{Binding UseUserDefinedNameForXColumn, Mode=TwoWay}"
+                  Content="Use user defined name for x-column:"/>
+        <TextBox Grid.Row="0" Grid.Column="2"
+                 Text="{Binding UserDefinedNameForXColumn, Mode=TwoWay}"
+                 IsEnabled="{Binding UseUserDefinedNameForXColumn}"
+                 />
+
+        <CheckBox Grid.Row="2" Grid.Column="0"
+                  IsChecked="{Binding UseUserDefinedNamesForYColumns, Mode=TwoWay}"
+                  Content="Use user defined name(s) for y-column(s):"/>
+
+        <TextBox Grid.Row="2" Grid.Column="2"
+                 Text="{Binding UserDefinedNamesForYColumns, Mode=TwoWay}"
+                 IsEnabled="{Binding UseUserDefinedNamesForYColumns}"
+                 ToolTip="Place each column name in a separate line"
+                 AcceptsReturn="true"
+                 MinHeight="100"
+                 MinWidth="100"
+                 />
+
+        <CheckBox Grid.Row="4" Grid.Column="0"
+                  IsChecked="{Binding IntersectXValues, Mode=TwoWay}"
+                  Content="Intersect x-values"
+                  ToolTip="If checked, the intersection of the x-values of all tables is used. If unchecked, the union of the x-values is used."
+                  />
+
+        <CheckBox Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="4"
+                  IsChecked="{Binding CreatePropertyColumnWithSourceTableName, Mode=TwoWay}"
+                  Content="Create property column with table names"
+                  ToolTip="If checked, a property column 'OriginalTableName' is created and filled with the name of the originating table."
+                  />
+        <CheckBox Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="4"
+                  IsChecked="{Binding CopyColumnProperties, Mode=TwoWay}"
+                  Content="Copy column properties"
+                  ToolTip="If checked, the column properties of the participating y-columns are copied to the destination table."
+                  />
+
+
+    </Grid>
+</UserControl>
