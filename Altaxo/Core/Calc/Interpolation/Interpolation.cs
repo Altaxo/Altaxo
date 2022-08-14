@@ -97,6 +97,37 @@ namespace Altaxo.Calc.Interpolation
     double GetYOfX(double x);
   }
 
+  /// <summary>
+  /// Interface to options for creation of an <see cref="IInterpolationCurve"/>.
+  /// </summary>
+  public interface IInterpolationCurveOptions
+  {
+    /// <summary>
+    /// Sets the interpolation data by providing values for x and y. Both vectors must be of equal length.
+    /// </summary>
+    /// <param name="xvec">Vector of x (independent) data.</param>
+    /// <param name="yvec">Vector of y (dependent) data.</param>
+    /// <param name="yVariance">Vector of the variances of y (optional, only used for some functions).</param>
+    /// <returns>A <see cref="IInterpolationCurve"/> object.</returns>
+    IInterpolationCurve Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec, IReadOnlyList<double>? yVariance=null);
+  }
+
+  /// <summary>
+  /// Interface to options for creation of an <see cref="IInterpolationFunction"/> (which includes <see cref="IInterpolationCurve"/>).
+  /// </summary>
+  public interface IInterpolationFunctionOptions : IInterpolationCurveOptions
+  {
+    /// <summary>
+    /// Sets the interpolation data by providing values for x and y. Both vectors must be of equal length.
+    /// </summary>
+    /// <param name="xvec">Vector of x (independent) data.</param>
+    /// <param name="yvec">Vector of y (dependent) data.</param>
+    /// <param name="yVariance">Vector of the variances of y (optional, only used for some functions).</param>
+    /// <returns>A <see cref="IInterpolationFunction"/> object.</returns>
+    new IInterpolationFunction Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec, IReadOnlyList<double>? yVariance=null);
+  }
+
+
   /// <summary>Condition how to manage the left and right boundary of a spline.</summary>
   public enum BoundaryConditions
   {
@@ -163,7 +194,7 @@ namespace Altaxo.Calc.Interpolation
     /// <summary>
     /// Represents the smallest number where 1+DBL_EPSILON is not equal to 1.
     /// </summary>
-    protected const double DBL_EPSILON = 2.2204460492503131e-016;
+    public const double DBL_EPSILON = 2.2204460492503131e-016;
 
     /// <summary>Reference to the vector of the independent variable.</summary>
     protected IReadOnlyList<double> x = _emptyDouble;
@@ -603,6 +634,46 @@ namespace Altaxo.Calc.Interpolation
   #region LinearInterpolation
 
   /// <summary>
+  /// Options for a linear interpolation (<see cref="LinearInterpolation"/>).
+  /// </summary>
+  public record LinearInterpolationOptions : IInterpolationFunctionOptions
+  {
+    #region Serialization
+
+    /// <summary>
+    /// 2022-08-14 initial version
+    /// </summary>
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(LinearInterpolationOptions), 0)]
+    public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+      }
+
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      {
+        return new AkimaCubicSplineOptions();
+      }
+    }
+
+    #endregion
+
+
+    /// <inheritdoc/>
+    public IInterpolationFunction Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec, IReadOnlyList<double>? yVariance = null)
+    {
+      var spline = new LinearInterpolation();
+      spline.Interpolate(xvec, yvec);
+      return spline;
+    }
+
+    IInterpolationCurve IInterpolationCurveOptions.Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec, IReadOnlyList<double>? yVariance)
+    {
+      return Interpolate(xvec, yvec, yVariance);
+    }
+  }
+
+  /// <summary>
   /// Contains static methods for linear interpolation of data.
   /// </summary>
   public class LinearInterpolation : IInterpolationFunction
@@ -813,6 +884,64 @@ tryinterpolation:
 
   #region PolynomialRegressionAsInterpolation
 
+  /// <summary>
+  /// Options for a polynomial regression used as interpolation method (<see cref=PolynomialRegressionAsInterpolation"/>).
+  /// </summary>
+  public record PolynomialRegressionAsInterpolationOptions : IInterpolationFunctionOptions
+  {
+    int _order = 2;
+
+
+    #region Serialization
+
+    /// <summary>
+    /// 2022-08-14 initial version
+    /// </summary>
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PolynomialRegressionAsInterpolation), 0)]
+    public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        var s = (PolynomialRegressionAsInterpolationOptions)obj;
+        info.AddValue("Order", s._order);
+      }
+
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      {
+        var order = info.GetInt32("Order");
+        return new PolynomialRegressionAsInterpolationOptions() {Order = order };
+      }
+    }
+
+    #endregion
+
+    public int Order
+    {
+      get => _order;
+      init
+      {
+        if (!(value >= 0))
+          throw new ArgumentOutOfRangeException(nameof(Order));
+        _order = value;
+      }
+    }
+
+    
+
+    /// <inheritdoc/>
+    public IInterpolationFunction Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec, IReadOnlyList<double>? yVariance = null)
+    {
+      var spline = new PolynomialRegressionAsInterpolation() { RegressionOrder = Order};
+      spline.Interpolate(xvec, yvec);
+      return spline;
+    }
+
+    IInterpolationCurve IInterpolationCurveOptions.Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec, IReadOnlyList<double>? yVariance)
+    {
+      return Interpolate(xvec, yvec, yVariance);
+    }
+  }
+
   public class PolynomialRegressionAsInterpolation : IInterpolationFunction
   {
     private Regression.LinearFitBySvd? _fit;
@@ -865,6 +994,48 @@ tryinterpolation:
   #endregion PolynomialRegressionAsInterpolation
 
   #region FritschCarlsonCubicSpline
+
+  /// <summary>
+  /// Options for an Fritsch-Carlson cubic spline (<see cref="FritschCarlsonCubicSpline"/>).
+  /// </summary>
+  public record FritschCarlsonCubicSplineOptions : IInterpolationFunctionOptions
+  {
+    #region Serialization
+
+    /// <summary>
+    /// 2022-08-14 initial version
+    /// </summary>
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(FritschCarlsonCubicSplineOptions), 0)]
+    public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+      }
+
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      {
+        return new FritschCarlsonCubicSplineOptions();
+      }
+    }
+
+    #endregion
+
+
+    /// <inheritdoc/>
+    public IInterpolationFunction Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec, IReadOnlyList<double>? yVariance = null)
+    {
+      var spline = new FritschCarlsonCubicSpline();
+      spline.Interpolate(xvec, yvec);
+      return spline;
+    }
+
+    IInterpolationCurve IInterpolationCurveOptions.Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec, IReadOnlyList<double>? yVariance)
+    {
+      return Interpolate(xvec, yvec, yVariance);
+    }
+
+  }
+
 
   /// <summary><para>
   /// Calculate the Fritsch-Carlson monotone cubic spline interpolation for the
@@ -1108,6 +1279,46 @@ tryinterpolation:
   #region AkimaCubicSpline
 
   /// <summary>
+  /// Options for an Akima cubic spline (<see cref="AkimaCubicSpline"/>).
+  /// </summary>
+  public record AkimaCubicSplineOptions : IInterpolationFunctionOptions
+  {
+    #region Serialization
+
+    /// <summary>
+    /// 2022-08-14 initial version
+    /// </summary>
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AkimaCubicSplineOptions), 0)]
+    public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+      }
+
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      {
+        return new AkimaCubicSplineOptions();
+      }
+    }
+
+    #endregion
+
+
+    /// <inheritdoc/>
+    public IInterpolationFunction Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec, IReadOnlyList<double>? yVariance = null)
+    {
+      var spline = new AkimaCubicSpline();
+      spline.Interpolate(xvec, yvec);
+      return spline;
+    }
+
+    IInterpolationCurve IInterpolationCurveOptions.Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec, IReadOnlyList<double>? yVariance)
+    {
+      return Interpolate(xvec, yvec, yVariance);
+    }
+  }
+
+  /// <summary>
   /// Akima cubic spline interpolation for the given abscissa
   /// vector x and ordinate vector y.
   /// All vectors must have conformant dimenions.
@@ -1271,6 +1482,41 @@ tryinterpolation:
   #endregion AkimaCubicSpline
 
   #region BezierCubicSpline
+
+  /// <summary>
+  /// Options for a Bezier cubic spline (<see cref="BezierCubicSpline"/>).
+  /// </summary>
+  public record BezierCubicSplineOptions : IInterpolationCurveOptions
+  {
+    #region Serialization
+
+    /// <summary>
+    /// 2022-08-14 initial version
+    /// </summary>
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(BezierCubicSplineOptions), 0)]
+    public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+      }
+
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      {
+        return new BezierCubicSplineOptions();
+      }
+    }
+
+    #endregion
+
+    /// <inheritdoc/>
+    public IInterpolationCurve Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec, IReadOnlyList<double>? yVariance = null)
+    {
+      var spline = new BezierCubicSpline();
+      spline.Interpolate(xvec, yvec);
+      return spline;
+    }
+  }
+
 
   /// <summary>
   /// Calculate the Bezier cubic spline interpolation for the
@@ -1497,6 +1743,40 @@ void DrawClosedCurve (Scene &scene)
   #region CardinalCubicSpline
 
   /// <summary>
+  /// Options for a cardinal cubic spline (<see cref="CardinalCubicSpline"/>).
+  /// </summary>
+  public record CardinalCubicSplineOptions : IInterpolationCurveOptions
+  {
+    #region Serialization
+
+    /// <summary>
+    /// 2022-08-14 initial version
+    /// </summary>
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(CardinalCubicSplineOptions), 0)]
+    public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+      }
+
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      {
+        return new CardinalCubicSplineOptions();
+      }
+    }
+
+    #endregion
+
+    /// <inheritdoc/>
+    public IInterpolationCurve Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec, IReadOnlyList<double>? yVariance = null)
+    {
+      var spline = new CardinalCubicSpline();
+      spline.Interpolate(xvec, yvec);
+      return spline;
+    }
+  }
+
+  /// <summary>
   /// Calculate the Cardinal cubic spline interpolation for the
   /// given abscissa vector x and ordinate vector y.
   /// All vectors must have conformant dimensions.
@@ -1716,6 +1996,73 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
   #endregion CardinalCubicSpline
 
   #region RationalCubicSpline
+
+  /// <summary>
+  /// Options for a rational cubic spline (<see cref="RationalCubicSpline"/>).
+  /// </summary>
+  public record RationalCubicSplineOptions : IInterpolationFunctionOptions
+  {
+    double _smoothing;
+
+    /// <summary>
+    /// Set the value of the smoothing paramenter. A value of 0
+    /// for the smoothing parameter results in a standard cubic spline.
+    /// A value of p with -1 &lt; p &lt; 0 results in "unsmoothing" that means
+    /// overshooting oscillations. A value of p with p &gt; 0 gives increasing
+    /// smoothness. p to infinity results in a linear interpolation. A value
+    /// smaller or equal to -1.0 leads to an exception.
+    /// </summary>
+    public double Smoothing
+    {
+      get
+      {
+        return _smoothing;
+      }
+      init
+      {
+        if (!(value >= -1))
+          throw new ArgumentOutOfRangeException("The value must be >= -1", nameof(Smoothing));
+
+          _smoothing = value;
+      }
+    }
+
+    #region Serialization
+
+    /// <summary>
+    /// 2022-08-14 initial version
+    /// </summary>
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(RationalCubicSplineOptions), 0)]
+    public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        var s = (RationalCubicSplineOptions)obj;
+        info.AddValue("Smoothing", s.Smoothing);
+      }
+
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      {
+        var smoothing = info.GetDouble("Smoothing");
+        return new RationalCubicSplineOptions() { Smoothing = smoothing };
+      }
+    }
+
+    #endregion
+
+    /// <inheritdoc/>
+    public IInterpolationFunction Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec, IReadOnlyList<double>? yVariance = null)
+    {
+      var spline = new RationalCubicSpline() { Smoothing = Smoothing };
+      spline.Interpolate(xvec, yvec);
+      return spline;
+    }
+
+    IInterpolationCurve IInterpolationCurveOptions.Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec, IReadOnlyList<double>? yVariance)
+    {
+      return Interpolate(xvec, yvec, yVariance);
+    }
+  }
 
   /// <summary>
   /// This kind of generalized splines give much more pleasent results
@@ -2449,6 +2796,74 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
   #region ExponentialSpline
 
   /// <summary>
+  /// Options for an exponential spline (<see cref=ExponentialSpline"/>).
+  /// </summary>
+  public record ExponentialSplineOptions : IInterpolationFunctionOptions
+  {
+    double _smoothing;
+
+    /// <summary>
+    /// Set the value of the smoothing paramenter. A value of 0
+    /// for the smoothing parameter results in a standard cubic spline.
+    /// A value of p with -1 &lt; p &lt; 0 results in "unsmoothing" that means
+    /// overshooting oscillations. A value of p with p &gt; 0 gives increasing
+    /// smoothness. p to infinity results in a linear interpolation. A value
+    /// smaller or equal to -1.0 leads to an exception.
+    /// </summary>
+    public double Smoothing
+    {
+      get
+      {
+        return _smoothing;
+      }
+      init
+      {
+        if (!(value >= -1))
+          throw new ArgumentOutOfRangeException("The value must be >= -1", nameof(Smoothing));
+
+        _smoothing = value;
+      }
+    }
+
+    #region Serialization
+
+    /// <summary>
+    /// 2022-08-14 initial version
+    /// </summary>
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ExponentialSplineOptions), 0)]
+    public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        var s = (ExponentialSplineOptions)obj;
+        info.AddValue("Smoothing", s.Smoothing);
+      }
+
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      {
+        var smoothing = info.GetDouble("Smoothing");
+        return new ExponentialSplineOptions() { Smoothing = smoothing };
+      }
+    }
+
+    #endregion
+
+    /// <inheritdoc/>
+    public IInterpolationFunction Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec, IReadOnlyList<double>? yVariance = null)
+    {
+      var spline = new ExponentialSpline() { Smoothing = Smoothing };
+      spline.Interpolate(xvec, yvec);
+      return spline;
+    }
+
+    IInterpolationCurve IInterpolationCurveOptions.Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec, IReadOnlyList<double>? yVariance)
+    {
+      return Interpolate(xvec, yvec, yVariance);
+    }
+  }
+
+
+  /// <summary>
   /// Exponential Splines.
   /// </summary>
   /// <remarks>
@@ -2688,6 +3103,47 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
 
   #region PolynomialInterpolation
 
+  /// <summary>
+  /// Options for a polynomial interpolation (<see crefPolynomialInterpolation"/>).
+  /// </summary>
+  public record PolynomialInterpolationOptions : IInterpolationFunctionOptions
+  {
+    #region Serialization
+
+    /// <summary>
+    /// 2022-08-14 initial version
+    /// </summary>
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PolynomialInterpolationOptions), 0)]
+    public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+      }
+
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      {
+        return new PolynomialInterpolationOptions();
+      }
+    }
+
+    #endregion
+
+    /// <inheritdoc/>
+    public IInterpolationFunction Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec, IReadOnlyList<double>? yVariance = null)
+    {
+      var spline = new PolynomialInterpolation();
+      spline.Interpolate(xvec, yvec);
+      return spline;
+    }
+
+    IInterpolationCurve IInterpolationCurveOptions.Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec, IReadOnlyList<double>? yVariance)
+    {
+      return Interpolate(xvec, yvec, yVariance);
+    }
+  }
+
+
+
   public class PolynomialInterpolation : CurveBase, IInterpolationFunction
   {
     protected DoubleVector C = new DoubleVector();
@@ -2795,6 +3251,77 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
   #endregion PolynomialInterpolation
 
   #region RationalInterpolation
+
+  /// <summary>
+  /// Options for a rational interpolation (<see cref=RationalInterpolation"/>).
+  /// </summary>
+  public record RationalInterpolationOptions : IInterpolationFunctionOptions
+  {
+    int _numeratorDegree = 2;
+
+    double _precision = CurveBase.DBL_EPSILON;
+   
+
+    #region Serialization
+
+    /// <summary>
+    /// 2022-08-14 initial version
+    /// </summary>
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(RationalInterpolationOptions), 0)]
+    public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        var s = (RationalInterpolationOptions)obj;
+        info.AddValue("NumeratorDegree", s._numeratorDegree);
+        info.AddValue("Precision", s._precision);
+      }
+
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      {
+        var numeratorDegree = info.GetInt32("NumeratorDegree");
+        var precision = info.GetDouble("Precision");
+        return new RationalInterpolationOptions() { _numeratorDegree = numeratorDegree, _precision = precision };
+      }
+    }
+
+    #endregion
+
+    public int NumeratorDegree
+    {
+      get => _numeratorDegree;
+      init
+      {
+        if (!(value >= 0))
+          throw new ArgumentOutOfRangeException(nameof(NumeratorDegree));
+        _numeratorDegree = value;
+      }
+    }
+
+    public double Precision
+    {
+      get => _precision;
+      init
+      {
+        if (!(value > 0))
+          throw new ArgumentOutOfRangeException(nameof(Precision));
+       _precision = value;
+      }
+    }
+
+    /// <inheritdoc/>
+    public IInterpolationFunction Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec, IReadOnlyList<double>? yVariance = null)
+    {
+      var spline = new RationalInterpolation() { NumeratorDegree = NumeratorDegree, Precision = Precision };
+      spline.Interpolate(xvec, yvec);
+      return spline;
+    }
+
+    IInterpolationCurve IInterpolationCurveOptions.Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec, IReadOnlyList<double>? yVariance)
+    {
+      return Interpolate(xvec, yvec, yVariance);
+    }
+  }
 
   public class RationalInterpolation : CurveBase, IInterpolationFunction
   {

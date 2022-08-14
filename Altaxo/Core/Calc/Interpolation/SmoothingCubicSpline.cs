@@ -31,6 +31,95 @@ using Altaxo.Calc.LinearAlgebra;
 namespace Altaxo.Calc.Interpolation
 {
   /// <summary>
+  /// Options for a smoothing cubic spline (<see cref="SmoothingCubicSpline"/>).
+  /// </summary>
+  public record SmoothingCubicSplineOptions : IInterpolationFunctionOptions
+  {
+    private double _smoothness = 1;
+    private double _errorVariance;
+
+    #region Serialization
+
+    /// <summary>
+    /// 2022-08-14 initial version
+    /// </summary>
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(SmoothingCubicSplineOptions), 0)]
+    public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        var s = (SmoothingCubicSplineOptions)obj;
+        info.AddValue("Smoothness", s._smoothness);
+        info.AddValue("ErrorVariance", s._errorVariance);
+      }
+
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      {
+        var smoothing = info.GetDouble("Smoothness");
+        var errorVariance = info.GetDouble("ErrorVariance");
+        return new SmoothingCubicSplineOptions() { Smoothness = smoothing, ErrorVariance = errorVariance };
+      }
+    }
+
+    #endregion
+
+    /// <summary>
+    /// Get/sets the smoothness parameter. Must be in the interval [0, PositiveInfinity], where a
+    /// value of 0 means no smoothing (evaluation of a cubic spline), while a value of Infinity
+    /// means evaluation of a regression.
+    /// </summary>
+    /// <remarks>The <see cref="SmoothingCubicSplineBase.SmoothingParameter"/> is calculated by
+    /// SmoothingParameter = Smoothness/(1+Smoothness).</remarks>
+    public double Smoothness
+    {
+      get => _smoothness;
+      init
+      {
+        if (!(value >=0 && value <= double.PositiveInfinity))
+          throw new ArgumentOutOfRangeException(nameof(Smoothness));
+
+        _smoothness = value;
+      }
+    }
+
+
+    /// <summary>
+    /// If the error variance of the provided points is unknown, set this value to -1. Then a cross validating cubic spline is fitted to the data.
+    /// If the error variance is known and is equal for all points, set this value to the error variance of the points (must be greater than zero).
+    /// If the error variance is known and different for each point, set this value to 1, and provide the error variance for each point
+    /// by calling <see cref="Interpolate(IReadOnlyList{double}, IReadOnlyList{double}, IReadOnlyList{double}?)"/>
+    /// </summary>
+    public double ErrorVariance
+    {
+      get => _errorVariance;
+      init
+      {
+        if (double.IsNaN(value))
+          throw new ArgumentOutOfRangeException(nameof(ErrorVariance));
+        _errorVariance = !(value > 0) ? -1 : value;
+      }
+    }
+
+    /// <inheritdoc/>
+    public IInterpolationFunction Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec, IReadOnlyList<double>? yVariance = null)
+    {
+      var spline = new SmoothingCubicSpline() { Smoothness = Smoothness, ErrorVariance = ErrorVariance };
+      if (yVariance is null)
+        spline.Interpolate(xvec, yvec);
+      else
+        spline.Interpolate(xvec, yvec, _errorVariance, yVariance);
+      return spline;
+    }
+
+    /// <inheritdoc/>
+    IInterpolationCurve IInterpolationCurveOptions.Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec, IReadOnlyList<double>? yVariance = null)
+    {
+      return Interpolate(xvec, yvec, yVariance);
+    }
+  }
+
+
+  /// <summary>
   /// Calculates a smoothing cubic spline, whose smoothness is determined by the property <see cref="Smoothness"/>.
   /// </summary>
   public class SmoothingCubicSpline : SmoothingCubicSplineBase, IInterpolationFunction

@@ -31,6 +31,74 @@ using Altaxo.Calc.LinearAlgebra;
 namespace Altaxo.Calc.Interpolation
 {
   /// <summary>
+  /// Options for a cross validated cubic spline (<see cref="CrossValidatedCubicSpline"/>).
+  /// </summary>
+  public record CrossValidatedCubicSplineOptions : IInterpolationFunctionOptions
+  {
+    private double _errorVariance;
+
+    #region Serialization
+
+    /// <summary>
+    /// 2022-08-14 initial version
+    /// </summary>
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(CrossValidatedCubicSplineOptions), 0)]
+    public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        var s = (CrossValidatedCubicSplineOptions)obj;
+        info.AddValue("ErrorVariance", s._errorVariance);
+      }
+
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      {
+        var errorVariance = info.GetDouble("ErrorVariance");
+        return new CrossValidatedCubicSplineOptions() { ErrorVariance = errorVariance };
+      }
+    }
+
+    #endregion
+
+
+
+    /// <summary>
+    /// If the error variance of the provided points is unknown, set this value to -1. Then a cross validating cubic spline is fitted to the data.
+    /// If the error variance is known and is equal for all points, set this value to the error variance of the points (must be greater than zero).
+    /// If the error variance is known and different for each point, set this value to 1, and provide the error variance for each point
+    /// by calling <see cref="Interpolate(IReadOnlyList{double}, IReadOnlyList{double}, IReadOnlyList{double}?)"/>
+    /// </summary>
+    public double ErrorVariance
+    {
+      get => _errorVariance;
+      init
+      {
+        if (double.IsNaN(value))
+          throw new ArgumentOutOfRangeException(nameof(ErrorVariance));
+        _errorVariance = !(value > 0) ? -1 : value;
+      }
+    }
+
+    /// <inheritdoc/>
+    public IInterpolationFunction Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec, IReadOnlyList<double>? yVariance = null)
+    {
+      var spline = new CrossValidatedCubicSpline() { ErrorVariance = ErrorVariance };
+      if (yVariance is null)
+        spline.Interpolate(xvec, yvec);
+      else
+        spline.Interpolate(xvec, yvec, _errorVariance, yVariance);
+      return spline;
+    }
+
+    /// <inheritdoc/>
+    IInterpolationCurve IInterpolationCurveOptions.Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec, IReadOnlyList<double>? yVariance = null)
+    {
+      return Interpolate(xvec, yvec, yVariance);
+    }
+  }
+
+
+  /// <summary>
   /// Calculates a natural cubic spline curve which smoothes a given set
   /// of data points, using statistical considerations to determine the amount
   /// of smoothing required as described in reference 2.
