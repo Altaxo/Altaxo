@@ -31,17 +31,17 @@ namespace Altaxo.Gui.Worksheet
   /// <summary>
   /// Controls the Smoothing parameter of a rational cubic spline.
   /// </summary>
-  [UserControllerForObject(typeof(Altaxo.Calc.Interpolation.RationalInterpolationOptions), 100)]
-  public class RationalInterpolationOptionsController : PropertyGridController
+  [UserControllerForObject(typeof(Altaxo.Calc.Interpolation.PolynomialRegressionAsInterpolationOptions), 100)]
+  public class PolynomialRegressionAsInterpolationOptionsController : PropertyGridController
   {
-    private RationalInterpolationOptions Spline => (RationalInterpolationOptions)_doc;
+    private PolynomialRegressionAsInterpolationOptions Spline => (PolynomialRegressionAsInterpolationOptions)_doc;
 
     protected override void InitializeValueInfos()
     {
-      var controller = new Altaxo.Gui.Common.BasicTypes.IntegerValueController(Spline.NumeratorDegree);
-      controller.UserMinimum = 1;
+      var controller = new Altaxo.Gui.Common.BasicTypes.IntegerValueController(Spline.Order);
+      controller.UserMinimum = 0;
       Current.Gui.FindAndAttachControlTo(controller);
-      ValueInfos.Add(new ValueInfo("Numerator degree N (N>(n-1)/2, where n is the original number of points for this interpolation) :", controller));
+      ValueInfos.Add(new ValueInfo("Order of the polynom:", controller));
     }
 
     public override bool Apply(bool disposeController)
@@ -53,7 +53,7 @@ namespace Altaxo.Gui.Worksheet
       }
       else
       {
-        _doc = Spline with { NumeratorDegree = (int)controller.ModelObject };
+        _doc = Spline with { Order = (int)controller.ModelObject };
         return ApplyEnd(true, disposeController);
       }
     }
