@@ -4,7 +4,9 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Altaxo.Calc.Interpolation;
 using Altaxo.Data;
+using Altaxo.Gui.Common;
 
 namespace Altaxo.Gui.Data
 {
@@ -16,7 +18,7 @@ namespace Altaxo.Gui.Data
   {
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
-      yield break;
+      yield return new ControllerAndSetNullMethod(_interpolationDetails, () => InterpolationDetails = null);
     }
 
     #region Bindings
@@ -141,6 +143,130 @@ namespace Altaxo.Gui.Data
       }
     }
 
+    private bool _useResampling;
+
+    public bool UseResampling
+    {
+      get => _useResampling;
+      set
+      {
+        if (!(_useResampling == value))
+        {
+          _useResampling = value;
+          OnPropertyChanged(nameof(UseResampling));
+        }
+      }
+    }
+
+    private ItemsController<Type> _interpolationFunction;
+
+    public ItemsController<Type> InterpolationFunction
+    {
+      get => _interpolationFunction;
+      set
+      {
+        if (!(_interpolationFunction == value))
+        {
+          _interpolationFunction = value;
+          OnPropertyChanged(nameof(InterpolationFunction));
+        }
+      }
+    }
+
+    private double _interpolationInterval;
+
+    public double InterpolationInterval
+    {
+      get => _interpolationInterval;
+      set
+      {
+        if (!(_interpolationInterval == value))
+        {
+          _interpolationInterval = value;
+          OnPropertyChanged(nameof(InterpolationInterval));
+        }
+      }
+    }
+
+    private bool _useUserDefinedInterpolationRangeStart;
+
+    public bool UseUserDefinedInterpolationRangeStart
+    {
+      get => _useUserDefinedInterpolationRangeStart;
+      set
+      {
+        if (!(_useUserDefinedInterpolationRangeStart == value))
+        {
+          _useUserDefinedInterpolationRangeStart = value;
+          OnPropertyChanged(nameof(UseUserDefinedInterpolationRangeStart));
+        }
+      }
+    }
+
+    private double? _interpolationRangeStart;
+
+    public double? InterpolationRangeStart
+    {
+      get => _interpolationRangeStart;
+      set
+      {
+        if (!(_interpolationRangeStart == value))
+        {
+          _interpolationRangeStart = value;
+          OnPropertyChanged(nameof(InterpolationRangeStart));
+        }
+      }
+    }
+
+
+    private bool _useUserDefinedInterpolationRangeEnd;
+
+    public bool UseUserDefinedInterpolationRangeEnd
+    {
+      get => _useUserDefinedInterpolationRangeEnd;
+      set
+      {
+        if (!(_useUserDefinedInterpolationRangeEnd == value))
+        {
+          _useUserDefinedInterpolationRangeEnd = value;
+          OnPropertyChanged(nameof(UseUserDefinedInterpolationRangeEnd));
+        }
+      }
+    }
+
+    private double?  _interpolationRangeEnd;
+
+    public double?  InterpolationRangeEnd
+    {
+      get => _interpolationRangeEnd;
+      set
+      {
+        if (!(_interpolationRangeEnd == value))
+        {
+          _interpolationRangeEnd = value;
+          OnPropertyChanged(nameof(InterpolationRangeEnd));
+        }
+      }
+    }
+
+    private IMVCANController _interpolationDetails;
+
+    public IMVCANController InterpolationDetails
+    {
+      get => _interpolationDetails;
+      set
+      {
+        if (!(_interpolationDetails == value))
+        {
+          _interpolationDetails?.Dispose();
+          _interpolationDetails = value;
+          OnPropertyChanged(nameof(InterpolationDetails));
+        }
+      }
+    }
+
+    private IInterpolationFunctionOptions? _lastInterpolationFunction;
+
     #endregion
 
     protected override void Initialize(bool initData)
@@ -157,6 +283,41 @@ namespace Altaxo.Gui.Data
         PlaceMultipleYColumnsAdjacentInDestinationTable = _doc.PlaceMultipleYColumnsAdjacentInDestinationTable;
         CreatePropertyColumnWithSourceTableName = _doc.CreatePropertyColumnWithSourceTableName;
         CopyColumnProperties =  _doc.CopyColumnProperties;
+        UseResampling = _doc.UseResampling;
+
+
+        InterpolationInterval = _doc.InterpolationInterval;
+
+        UseUserDefinedInterpolationRangeStart = _doc.UserSpecifiedInterpolationStart.HasValue;
+        InterpolationRangeStart = _doc.UserSpecifiedInterpolationStart;
+        UseUserDefinedInterpolationRangeEnd = _doc.UserSpecifiedInterpolationEnd.HasValue;
+        InterpolationRangeEnd = _doc.UserSpecifiedInterpolationEnd;
+
+
+        InterpolationFunction = new ItemsController<Type>(
+          new Collections.SelectableListNodeList(
+            Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(IInterpolationFunctionOptions))
+            .Select(t => new Collections.SelectableListNode(t.Name, t, false))
+          ),
+          EhInterpolationFunctionChanged
+          );
+        if (_doc.Interpolation is not null)
+          InterpolationFunction.SelectedValue = _doc.Interpolation.GetType();
+        else
+          InterpolationFunction.SelectedValue = (Type)InterpolationFunction.Items[0].Tag;
+      }
+    }
+
+    private void EhInterpolationFunctionChanged(Type type)
+    {
+      if(type is not null && type != _lastInterpolationFunction?.GetType())
+      {
+        _lastInterpolationFunction = (IInterpolationFunctionOptions)Activator.CreateInstance(type);
+
+        if (_lastInterpolationFunction is not null)
+        {
+          InterpolationDetails = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _lastInterpolationFunction }, typeof(IMVCANController));
+        }
       }
     }
 
@@ -175,7 +336,28 @@ namespace Altaxo.Gui.Data
         PlaceMultipleYColumnsAdjacentInDestinationTable = PlaceMultipleYColumnsAdjacentInDestinationTable,
         CreatePropertyColumnWithSourceTableName = CreatePropertyColumnWithSourceTableName,
         CopyColumnProperties = CopyColumnProperties,
+        Interpolation = null,
       };
+
+      if(UseResampling)
+      {
+        if (InterpolationDetails is not null)
+        {
+          if (false == InterpolationDetails.Apply(disposeController))
+            return ApplyEnd(false, disposeController);
+
+          _lastInterpolationFunction = (IInterpolationFunctionOptions)InterpolationDetails.ModelObject;
+        }
+
+
+        _doc = _doc with
+        {
+          Interpolation = _lastInterpolationFunction,
+          InterpolationInterval = InterpolationInterval,
+          UserSpecifiedInterpolationStart = InterpolationRangeStart,
+          UserSpecifiedInterpolationEnd = InterpolationRangeEnd,
+        };
+      }
 
       return ApplyEnd(true, disposeController);
     }

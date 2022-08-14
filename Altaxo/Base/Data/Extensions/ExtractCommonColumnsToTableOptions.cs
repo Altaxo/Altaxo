@@ -25,6 +25,7 @@
 #nullable enable
 using System.Collections.Immutable;
 using System.Linq;
+using Altaxo.Calc.Interpolation;
 
 namespace Altaxo.Data
 {
@@ -67,6 +68,32 @@ namespace Altaxo.Data
     /// </summary>
     public bool CopyColumnProperties { get; init; } = false;
 
+    public bool UseResampling => Interpolation is not null;
+
+    /// <summary>
+    /// If resampling of the data is neccessary, this gets the interpolation function (otherwise, it is set to null).
+    /// </summary>
+    /// <value>
+    /// The interpolation function.
+    /// </value>
+    public IInterpolationFunctionOptions? Interpolation { get; init; }
+
+    /// <summary>
+    /// Gets the interpolation interval.
+    /// </summary>
+    public double InterpolationInterval { get; init; } = 1;
+
+    /// <summary>
+    /// Gets the interpolation start specified by the user. If the value is null, the range start of the ranges of x-values common to all x-columns is used.
+    /// </summary>
+    public double? UserSpecifiedInterpolationStart { get; init; }
+
+    /// <summary>
+    /// Gets the interpolation end specified by the user. If the value is null, the range end of the ranges of x-values common to all x-columns is used.
+    /// </summary>
+    public double? UserSpecifiedInterpolationEnd { get; init; }
+
+
     #region Serialization
 
     /// <summary>
@@ -85,8 +112,15 @@ namespace Altaxo.Data
         info.AddValue("PlaceMultipleYColumnsAdjacentInDestinationTable", s.PlaceMultipleYColumnsAdjacentInDestinationTable);
         info.AddValue("CreatePropertyColumnWithSourceTableName", s.CreatePropertyColumnWithSourceTableName);
         info.AddValue("CopyColumnProperties", s.CopyColumnProperties);
-        info.AddValue("UseResampling", false);
+        info.AddValue("UseResampling", s.UseResampling);
 
+        if(s.UseResampling)
+        {
+          info.AddValue("InterpolationFunction", s.Interpolation);
+          info.AddValue("InterpolationInterval", s.InterpolationInterval);
+          info.AddValue("UserInterpolationStart", s.UserSpecifiedInterpolationStart);
+          info.AddValue("UserInterpolationEnd", s.UserSpecifiedInterpolationEnd);
+        }
       }
 
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
@@ -100,9 +134,15 @@ namespace Altaxo.Data
         var copyColumnProperties = info.GetBoolean("CopyColumnProperties");
         var useResampling = info.GetBoolean("UseResampling");
 
-        if(useResampling)
+        IInterpolationFunctionOptions? interpolationFunction = null;
+        double interpolationInterval = 1;
+        double? interpolationStart = null, interpolationEnd = null;
+        if (useResampling)
         {
-
+          interpolationFunction = info.GetValue<IInterpolationFunctionOptions>("InterpolationFunction", null);
+          interpolationInterval = info.GetDouble("InterpolationInterval");
+          interpolationStart = info.GetNullableDouble("UserInterpolationStart");
+          interpolationEnd = info.GetNullableDouble("UserInterpolationEnd");
         }
 
         return o is null ? new ExtractCommonColumnsToTableOptions
@@ -113,6 +153,10 @@ namespace Altaxo.Data
           PlaceMultipleYColumnsAdjacentInDestinationTable = placeMultipleYColumnsAdjacentInDestinationTable,
           CreatePropertyColumnWithSourceTableName = createPropertyColumnWithSourceTableName,
           CopyColumnProperties = copyColumnProperties,
+          Interpolation = interpolationFunction,
+          InterpolationInterval = interpolationInterval,
+          UserSpecifiedInterpolationStart = interpolationStart,
+          UserSpecifiedInterpolationEnd = interpolationEnd,
         } :
           ((ExtractCommonColumnsToTableOptions)o) with
           {
@@ -122,6 +166,10 @@ namespace Altaxo.Data
             PlaceMultipleYColumnsAdjacentInDestinationTable = placeMultipleYColumnsAdjacentInDestinationTable,
             CreatePropertyColumnWithSourceTableName = createPropertyColumnWithSourceTableName,
             CopyColumnProperties = copyColumnProperties,
+            Interpolation = interpolationFunction,
+            InterpolationInterval = interpolationInterval,
+            UserSpecifiedInterpolationStart = interpolationStart,
+            UserSpecifiedInterpolationEnd = interpolationEnd,
           };
       }
     }

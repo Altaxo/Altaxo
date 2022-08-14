@@ -27,7 +27,9 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
+using System.Drawing;
 using System.Linq;
+using System.Security.Policy;
 using Altaxo.Main;
 
 namespace Altaxo.Data
@@ -301,50 +303,100 @@ namespace Altaxo.Data
       destinationTable.DataColumns.RemoveColumnsAll();
       destinationTable.PropertyColumns.RemoveColumnsAll();
 
-      var setOfXValues = new List<HashSet<AltaxoVariant>>();
-      foreach (var t in cachedData)
-      {
-        var hash = new HashSet<AltaxoVariant>();
-        var len = t.XColumn.Count;
-        for (int i = 0; i < len; ++i)
-          hash.Add(t.XColumn[i]);
-        setOfXValues.Add(hash);
-      }
+      
 
-      if (setOfXValues.Count == 0)
-        return;
-
-      var commonX = new HashSet<AltaxoVariant>(setOfXValues[0]);
-      if (useCommonX)
-      {
-        for (int i = 1; i < setOfXValues.Count; i++)
-          commonX.IntersectWith(setOfXValues[i]);
-      }
-      else // union
-      {
-        for (int i = 1; i < setOfXValues.Count; i++)
-          commonX.UnionWith(setOfXValues[i]);
-      }
-
-      if (commonX.Count == 0)
-        return;
-
-      var sortedX = commonX.ToList();
-      sortedX.Sort();
 
       // Dictionary that has the x-value as key, and its row index as value
       var xToIndex = new Dictionary<AltaxoVariant, int>();
-
-
       var xDstColumnName = !string.IsNullOrEmpty(options.UserDefinedNameForXColumn) ? options.UserDefinedNameForXColumn : data.XColumnName;
       var xDstCol = destinationTable.DataColumns.EnsureExistence(xDstColumnName, cachedData[0].XColumn.GetType(), ColumnKind.X, 0);
 
-      for (int i = 0; i < sortedX.Count; i++)
+
+      if (options.UseResampling) // Use resampling
       {
-        xToIndex[sortedX[i]] = i;
-        xDstCol[i] = sortedX[i];
+        double rangeStart = double.NegativeInfinity, rangeEnd = double.PositiveInfinity;
+        foreach (var t in cachedData)
+        {
+          double min = double.PositiveInfinity, max = double.NegativeInfinity;
+          var len = t.XColumn.Count;
+          for (int i = 0; i < len; ++i)
+          {
+            double x = t.XColumn[i];
+            min = Math.Min(min, x);
+            max = Math.Max(max, x);
+          }
+
+          rangeStart = Math.Max(rangeStart, min);
+          rangeEnd = Math.Min(rangeEnd, max);
+        }
+
+        double start = options.UserSpecifiedInterpolationStart ?? rangeStart;
+        double end = options.UserSpecifiedInterpolationEnd ?? rangeEnd;
+
+        if (!(start < end))
+        {
+          throw new InvalidOperationException($"Interpolation start {start} is greater than end {end}");
+        }
+
+        var step = Math.Abs(options.InterpolationInterval);
+
+        var approximateNumberOfPoints = (end - start) / step;
+
+        if (approximateNumberOfPoints > int.MaxValue / sizeof(double))
+        {
+          throw new InvalidOperationException($"Interpolation start {start}, end {end}, and step ({step}) will result in too many points (approx. {Math.Round(approximateNumberOfPoints)})");
+        }
+
+        int numberOfPoints = (int)Math.Ceiling(approximateNumberOfPoints);
+        for (int i = 0; i < numberOfPoints; ++i)
+        {
+          var x = start + i * step;
+          xToIndex[x] = i;
+          xDstCol[i] = x;
+        }
+      }
+      else // no resampling
+      {
+        var setOfXValues = new List<HashSet<AltaxoVariant>>();
+        foreach (var t in cachedData)
+        {
+          var hash = new HashSet<AltaxoVariant>();
+          var len = t.XColumn.Count;
+          for (int i = 0; i < len; ++i)
+            hash.Add(t.XColumn[i]);
+          setOfXValues.Add(hash);
+        }
+
+        if (setOfXValues.Count == 0)
+          return;
+
+        var commonX = new HashSet<AltaxoVariant>(setOfXValues[0]);
+
+
+        if (useCommonX)
+        {
+          for (int i = 1; i < setOfXValues.Count; i++)
+            commonX.IntersectWith(setOfXValues[i]);
+        }
+        else // union
+        {
+          for (int i = 1; i < setOfXValues.Count; i++)
+            commonX.UnionWith(setOfXValues[i]);
+        }
+
+        if (commonX.Count == 0)
+          return;
+
+        var sortedX = commonX.ToList();
+        sortedX.Sort();
+        for (int i = 0; i < sortedX.Count; i++)
+        {
+          xToIndex[sortedX[i]] = i;
+          xDstCol[i] = sortedX[i];
+        }
       }
 
+      
 
       var pcolOriginalTableName = options.CreatePropertyColumnWithSourceTableName ?
         destinationTable.PropertyColumns.EnsureExistence("OriginalTableName", typeof(TextColumn), ColumnKind.V, 0) :
@@ -365,11 +417,26 @@ namespace Altaxo.Data
                                  data.YColumnNames[iy];
 
             var yDstCol = destinationTable.DataColumns.EnsureExistence($"{yDstColumnName}.{idxTable}", t.YColumns[iy].GetType(), ColumnKind.V, 0);
-            for (int srcIdx = 0; srcIdx < len; ++srcIdx)
+
+            if (options.UseResampling)
             {
-              if (xToIndex.TryGetValue(xSrcCol[srcIdx], out int dstIdx))
+              var xArr = ((DoubleColumn)xSrcCol).ToArray();
+              var yArr = ((DoubleColumn)t.YColumns[iy]).ToArray();
+              Array.Sort(xArr, yArr);
+              var interpolatingFunction = options.Interpolation.Interpolate(xArr, yArr);
+              for(int i = 0; i < xDstCol.Count;++i)
               {
-                yDstCol[dstIdx] = t.YColumns[iy][srcIdx];
+                yDstCol[i] = interpolatingFunction.GetYOfX(xDstCol[i]);
+              }
+            }
+            else
+            {
+              for (int srcIdx = 0; srcIdx < len; ++srcIdx)
+              {
+                if (xToIndex.TryGetValue(xSrcCol[srcIdx], out int dstIdx))
+                {
+                  yDstCol[dstIdx] = t.YColumns[iy][srcIdx];
+                }
               }
             }
 
@@ -414,11 +481,26 @@ namespace Altaxo.Data
                      data.YColumnNames[iy];
 
             var yDstCol = destinationTable.DataColumns.EnsureExistence($"{yDstColumnName}.{idxTable}", t.YColumns[iy].GetType(), ColumnKind.V, 0);
-            for (int srcIdx = 0; srcIdx < len; ++srcIdx)
+
+            if (options.UseResampling)
             {
-              if (xToIndex.TryGetValue(xSrcCol[srcIdx], out int dstIdx))
+              var xArr = ((DoubleColumn)xSrcCol).ToArray();
+              var yArr = ((DoubleColumn)t.YColumns[iy]).ToArray();
+              Array.Sort(xArr, yArr);
+              var interpolatingFunction = options.Interpolation.Interpolate(xArr, yArr);
+              for (int i = 0; i < xDstCol.Count; ++i)
               {
-                yDstCol[dstIdx] = t.YColumns[iy][srcIdx];
+                yDstCol[i] = interpolatingFunction.GetYOfX(xDstCol[i]);
+              }
+            }
+            else
+            {
+              for (int srcIdx = 0; srcIdx < len; ++srcIdx)
+              {
+                if (xToIndex.TryGetValue(xSrcCol[srcIdx], out int dstIdx))
+                {
+                  yDstCol[dstIdx] = t.YColumns[iy][srcIdx];
+                }
               }
             }
 

@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2019 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -23,10 +23,7 @@
 #endregion Copyright
 
 #nullable disable
-using System;
 using Altaxo.Calc.Interpolation;
-using Altaxo.Gui.Common;
-using Altaxo.Gui.Common.BasicTypes;
 using Altaxo.Gui.Common.PropertyGrid;
 
 namespace Altaxo.Gui.Worksheet
@@ -34,28 +31,18 @@ namespace Altaxo.Gui.Worksheet
   /// <summary>
   /// Controls the Smoothing parameter of a rational cubic spline.
   /// </summary>
-  [UserControllerForObject(typeof(Altaxo.Calc.Interpolation.SmoothingCubicSpline), 100)]
-  public class SmoothingCubicSplineController : PropertyGridController
+  [UserControllerForObject(typeof(Altaxo.Calc.Interpolation.RationalCubicSplineOptions), 100)]
+  public class RationalCubicSplineOptionsController : PropertyGridController
   {
-    private SmoothingCubicSpline Spline => (SmoothingCubicSpline)_doc;
+    private RationalCubicSplineOptions Spline => (RationalCubicSplineOptions)_doc;
 
     protected override void InitializeValueInfos()
     {
-      {
-        var controller = new Altaxo.Gui.Common.BasicTypes.NumericDoubleValueController(Spline.ErrorVariance);
-        controller.Minimum = -1;
-        controller.IsMinimumValueInclusive = true;
-        Current.Gui.FindAndAttachControlTo(controller);
-        ValueInfos.Add(new ValueInfo("Error variance (if unknown, set it to -1) :", controller));
-      }
-
-      {
-        var controller = new Altaxo.Gui.Common.BasicTypes.NumericDoubleValueController(Spline.Smoothness);
-        controller.Minimum = 0;
-        controller.IsMinimumValueInclusive = true;
-        Current.Gui.FindAndAttachControlTo(controller);
-        ValueInfos.Add(new ValueInfo("Smoothness (Range: 0 to infinity; 0: cubic spline; infinity: linear regression)  :", controller));
-      }
+      var controller = new Altaxo.Gui.Common.BasicTypes.NumericDoubleValueController(Spline.Smoothing);
+      controller.Minimum = -0.5;
+      controller.IsMinimumValueInclusive = false;
+      Current.Gui.FindAndAttachControlTo(controller);
+      ValueInfos.Add(new ValueInfo("Smoothing parameter p (-0.5<p<0: overshooting; p=0: cubic spline; p=infinity: linear interpolation):", controller));
     }
 
     public override bool Apply(bool disposeController)
@@ -67,21 +54,9 @@ namespace Altaxo.Gui.Worksheet
       }
       else
       {
-        Spline.ErrorVariance = (double)controller.ModelObject;
+        _doc = Spline with { Smoothing = (double)controller.ModelObject };
+        return ApplyEnd(true, disposeController);
       }
-
-      controller = ValueInfos[1].Controller;
-      if (false == controller.Apply(disposeController))
-      {
-        return ApplyEnd(false, disposeController);
-      }
-      else
-      {
-        Spline.Smoothness = (double)controller.ModelObject;
-      }
-
-
-      return ApplyEnd(true, disposeController);
     }
   }
 }

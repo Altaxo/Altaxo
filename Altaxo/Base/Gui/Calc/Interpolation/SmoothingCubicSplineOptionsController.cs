@@ -23,21 +23,18 @@
 #endregion Copyright
 
 #nullable disable
-using System;
 using Altaxo.Calc.Interpolation;
-using Altaxo.Gui.Common;
-using Altaxo.Gui.Common.BasicTypes;
 using Altaxo.Gui.Common.PropertyGrid;
 
-namespace Altaxo.Gui.Worksheet
+namespace Altaxo.Gui.Calc.Interpolation
 {
   /// <summary>
   /// Controls the Smoothing parameter of a rational cubic spline.
   /// </summary>
-  [UserControllerForObject(typeof(Altaxo.Calc.Interpolation.SmoothingCubicSpline), 100)]
-  public class SmoothingCubicSplineController : PropertyGridController
+  [UserControllerForObject(typeof(Altaxo.Calc.Interpolation.SmoothingCubicSplineOptions), 100)]
+  public class SmoothingCubicSplineOptionsController : PropertyGridController
   {
-    private SmoothingCubicSpline Spline => (SmoothingCubicSpline)_doc;
+    private SmoothingCubicSplineOptions Spline => (SmoothingCubicSplineOptions)_doc;
 
     protected override void InitializeValueInfos()
     {
@@ -61,13 +58,15 @@ namespace Altaxo.Gui.Worksheet
     public override bool Apply(bool disposeController)
     {
       var controller = ValueInfos[0].Controller;
+
+      double errorVariance, smoothness;
       if (false == controller.Apply(disposeController))
       {
         return ApplyEnd(false, disposeController);
       }
       else
       {
-        Spline.ErrorVariance = (double)controller.ModelObject;
+        errorVariance = (double)controller.ModelObject;
       }
 
       controller = ValueInfos[1].Controller;
@@ -77,8 +76,10 @@ namespace Altaxo.Gui.Worksheet
       }
       else
       {
-        Spline.Smoothness = (double)controller.ModelObject;
+        smoothness = (double)controller.ModelObject;
       }
+
+      _doc = Spline with { ErrorVariance = errorVariance, Smoothness = smoothness };
 
 
       return ApplyEnd(true, disposeController);

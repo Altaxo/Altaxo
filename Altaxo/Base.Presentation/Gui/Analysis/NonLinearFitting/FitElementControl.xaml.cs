@@ -433,7 +433,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
     #region IFitElementView
 
-    public void Initialize(Calc.Regression.Nonlinear.FitElement fitElement)
+    public void Initialize(Altaxo.Calc.Regression.Nonlinear.FitElement fitElement)
     {
       _fitElement = fitElement;
 

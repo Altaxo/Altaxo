@@ -27,6 +27,7 @@ using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Input;
+using Altaxo.Calc;
 using Altaxo.Data;
 using Altaxo.Geometry;
 using Altaxo.Graph;
@@ -144,7 +145,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
         var layerCoord = _cachedActiveLayerTransformation.InverseTransformPoint(rootLayerCoord);
         Current.DataDisplay.WriteTwoLines(
           string.Format("Layer({0}) XS={1} pt, YS={2} pt", _cachedActiveLayer.Name, crossLayerCoord.X, crossLayerCoord.Y),
-          string.Format("DeltaXS={0} pt, DeltaYS={1} pt, Distance={2} pt", layerCoord.X - crossLayerCoord.X, layerCoord.Y - crossLayerCoord.Y, Calc.RMath.Hypot(layerCoord.X - crossLayerCoord.X, layerCoord.Y - crossLayerCoord.Y))
+          string.Format("DeltaXS={0} pt, DeltaYS={1} pt, Distance={2} pt", layerCoord.X - crossLayerCoord.X, layerCoord.Y - crossLayerCoord.Y, RMath.Hypot(layerCoord.X - crossLayerCoord.X, layerCoord.Y - crossLayerCoord.Y))
           );
       }
       else

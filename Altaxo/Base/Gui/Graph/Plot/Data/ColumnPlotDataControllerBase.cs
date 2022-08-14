@@ -30,6 +30,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Altaxo.Calc;
 using Altaxo.Collections;
 using Altaxo.Data;
 using Altaxo.Data.Selections;
@@ -995,7 +996,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
       else // Create a tree of nodes
       {
         int levels = (int)(Math.Floor(Math.Log(columns.Count, DataColumnBundleNode.MaxNumberOfColumnsInOneNode)));
-        int numberOfColumnsInRootLevel = (int)Calc.RMath.Pow(DataColumnBundleNode.MaxNumberOfColumnsInOneNode, levels);
+        int numberOfColumnsInRootLevel = (int)RMath.Pow(DataColumnBundleNode.MaxNumberOfColumnsInOneNode, levels);
         for (int i = 0; i < columns.Count; i += numberOfColumnsInRootLevel)
         {
           var node = new DataColumnBundleNode(dataTable, columns, i, Math.Min(numberOfColumnsInRootLevel, columns.Count - i));

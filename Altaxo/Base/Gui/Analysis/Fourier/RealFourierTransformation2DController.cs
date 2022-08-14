@@ -24,6 +24,7 @@
 
 using System;
 using System.Collections.Generic;
+using Altaxo.Calc.Fourier.Windows;
 using Altaxo.Collections;
 using Altaxo.Gui.Common;
 using Altaxo.Gui.Common.BasicTypes;
@@ -487,7 +488,7 @@ namespace Altaxo.Gui.Analysis.Fourier
       _doc.ResultingFractionOfRowsUsed = ResultingFractionOfRowsUsed.AsValueInSIUnits;
       _doc.ResultingFractionOfColumnsUsed = ResultingFractionOfColumnsUsed.AsValueInSIUnits;
 
-      _doc.FourierWindow = FourierWindowChoices.SelectedValue is Type fwt ? (Calc.Fourier.Windows.IWindows2D)Activator.CreateInstance(fwt) : null;
+      _doc.FourierWindow = FourierWindowChoices.SelectedValue is Type fwt ? (IWindows2D)Activator.CreateInstance(fwt) : null;
 
       _doc.OutputFrequencyHeaderColumns = OutputFrequencyHeaderColumns;
       _doc.FrequencyRowHeaderColumnName = FrequencyRowHeaderColumnName;
