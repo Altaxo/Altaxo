@@ -107,6 +107,7 @@ namespace Altaxo.Science.Spectroscopy
       return true;
     }
 
+    public const string ColumnX = "X-Column";
     public const string ColumnsV = "V-Columns";
 
 
@@ -121,18 +122,20 @@ namespace Altaxo.Science.Spectroscopy
       if (srcYCols.Count == 0)
         throw new InvalidOperationException($"No V-columns available for spectral preprocessing");
 
+      var srcXCols = inputData.GetDataColumns(ColumnX);
+      if(srcXCols.Count > 1)
+        throw new InvalidOperationException($"There is more than one x-columns available for spectral preprocessing!");
+
+      DataColumn? srcXCol = srcXCols.Count > 0 ? srcXCols[0] : null;
 
       foreach (var yCol in srcYCols)
       {
-
-
-        var xCol = srcTable.DataColumns.FindXColumnOf(yCol);
+        var xCol = srcXCol ?? srcTable.DataColumns.FindXColumnOf(yCol);
 
         if (xCol is null)
         {
           continue;
         }
-
 
         var len = Math.Min(yCol.Count, xCol.Count);
 
@@ -391,6 +394,18 @@ namespace Altaxo.Science.Spectroscopy
 
     public static void SpectralPeakFindingFittingShowDialog(WorksheetController ctrl)
     {
+      if(ctrl.SelectedDataColumns.Count == 0)
+      {
+        Current.Gui.ErrorMessageBox("Please select one or more data columns from one group!");
+      }
+
+      var srcXColumn = ctrl.DataTable.DataColumns.FindXColumnOf(ctrl.DataTable.DataColumns[ctrl.SelectedDataColumns[0]]);
+      if(srcXColumn is null)
+      {
+        Current.Gui.ErrorMessageBox("Could not find an x-column for the selected data columns!");
+        return;
+      }
+
       if (!ShowDialogGetPeakFindingFittingOptions(ctrl, out var doc))
         return;
 
@@ -399,7 +414,8 @@ namespace Altaxo.Science.Spectroscopy
       var preprocessingTable = new DataTable();
       var peakTable = new DataTable();
       var dataProxy = new DataTableMultipleColumnProxy(ColumnsV, srcTable, null, ctrl.SelectedDataColumns);
-
+      dataProxy.AddDataColumn(ColumnX, srcXColumn);
+     
 
       List<(
       DataColumn xOrgCol,

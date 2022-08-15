@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
+//    Copyright (C) 2014 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -22,12 +22,25 @@
 
 #endregion Copyright
 
-using Altaxo.Science.Spectroscopy;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Windows;
+using System.Windows.Controls;
 
-namespace Altaxo.Gui.Data
+namespace Altaxo.Gui.Science.Spectroscopy
 {
-  [UserControllerForObject(typeof(SpectralPreprocessingDataSource))]
-  public class SpectralPreprocessingDataSourceController : DataSourceControllerBase<SpectralPreprocessingDataSource>
+  using Altaxo.Collections;
+
+  /// <summary>
+  /// Interaction logic for DecomposeByColumnContentControl.xaml
+  /// </summary>
+  public partial class SpectralPreprocessingDataControl : UserControl, ISpectralPreprocessingDataView
   {
+    public SpectralPreprocessingDataControl()
+    {
+      InitializeComponent();
+    }
   }
 }

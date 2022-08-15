@@ -297,7 +297,7 @@ namespace Altaxo.Gui.Data
         InterpolationFunction = new ItemsController<Type>(
           new Collections.SelectableListNodeList(
             Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(IInterpolationFunctionOptions))
-            .Select(t => new Collections.SelectableListNode(t.Name, t, false))
+            .Select(t => new Collections.SelectableListNode(TrimOptionsFromName(t.Name), t, false))
           ),
           EhInterpolationFunctionChanged
           );
@@ -307,6 +307,15 @@ namespace Altaxo.Gui.Data
           InterpolationFunction.SelectedValue = (Type)InterpolationFunction.Items[0].Tag;
       }
     }
+
+    static string TrimOptionsFromName(string name)
+    {
+      if (name.EndsWith("Options"))
+        return name.Substring(0, name.Length - 7);
+      else
+        return name;
+    }
+
 
     private void EhInterpolationFunctionChanged(Type type)
     {

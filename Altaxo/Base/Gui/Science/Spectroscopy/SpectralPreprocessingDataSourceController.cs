@@ -22,12 +22,21 @@
 
 #endregion Copyright
 
+
+using Altaxo.Gui.Data;
 using Altaxo.Science.Spectroscopy;
 
-namespace Altaxo.Gui.Data
+namespace Altaxo.Gui.Science.Spectroscopy
 {
-  [UserControllerForObject(typeof(PeakSearchingAndFittingDataSource))]
-  public class PeakFindingAndFittingDataSourceController : DataSourceControllerBase<PeakSearchingAndFittingDataSource>
+  [UserControllerForObject(typeof(SpectralPreprocessingDataSource))]
+  public class SpectralPreprocessingDataSourceController : DataSourceControllerBase<SpectralPreprocessingDataSource>
   {
+    protected override IMVCANController GetProcessDataController()
+    {
+      var ctrl = new SpectralPreprocessingDataController();
+      ctrl.InitializeDocument(_doc.ProcessData);
+      Current.Gui.FindAndAttachControlTo(ctrl);
+      return ctrl;
+    }
   }
 }
