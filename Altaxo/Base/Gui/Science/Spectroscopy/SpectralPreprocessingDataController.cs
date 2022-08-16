@@ -180,12 +180,12 @@ namespace Altaxo.Gui.Science.Spectroscopy
       }
     }
 
-    private void EhSelectedTableChanged(DataTable obj)
+    private void EhSelectedTableChanged(DataTable selectedTable)
     {
       var groupNumber = AvailableGroups is not null ? SelectedGroup : _doc.GroupNumber;
 
       // Initialize group numbers
-      var availableGroups = _doc.DataTable.DataColumns.GetGroupNumbersAll();
+      var availableGroups = (selectedTable ?? _doc.DataTable).DataColumns.GetGroupNumbersAll();
       AvailableGroups = new ObservableCollection<int>(availableGroups);
 
       if (availableGroups.Contains(groupNumber))

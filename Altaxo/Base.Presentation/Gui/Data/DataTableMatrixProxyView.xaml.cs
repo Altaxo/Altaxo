@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2012 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -22,207 +22,18 @@
 
 #endregion Copyright
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows;
 using System.Windows.Controls;
 
 namespace Altaxo.Gui.Data
 {
-  using Altaxo.Collections;
-
   /// <summary>
   /// Interaction logic for XYPlotDataControl.xaml
   /// </summary>
   public partial class DataTableMatrixProxyView : UserControl, IDataTableMatrixProxyView
   {
-    public event Action? SelectedTableChanged;
-
-    public event Action? SelectedColumnKindChanged;
-
-    public event Action? UseSelectedItemAsXColumn;
-
-    public event Action? UseSelectedItemAsYColumn;
-
-    public event Action? UseSelectedItemAsVColumns;
-
-    public event Action? SelectedGroupNumberChanged;
-
-    public event Action? UseAllAvailableDataColumnsChanged;
-
-    public event Action? UseAllAvailableDataRowsChanged;
-
-    public event Action? ClearXColumn;
-
-    public event Action? ClearYColumn;
-
-    public event Action? ClearVColumns;
-
     public DataTableMatrixProxyView()
     {
       InitializeComponent();
-    }
-
-    private void EhTables_SelectionChangeCommit(object sender, SelectionChangedEventArgs e)
-    {
-      GuiHelper.SynchronizeSelectionFromGui(_guiAvailableTables);
-      if (SelectedTableChanged is not null)
-        SelectedTableChanged();
-    }
-
-    private void EhToX_Click(object sender, RoutedEventArgs e)
-    {
-      GuiHelper.SynchronizeSelectionFromGui(_guiAvailableColumnNames);
-      if (UseSelectedItemAsXColumn is not null)
-        UseSelectedItemAsXColumn();
-    }
-
-    private void EhEraseX_Click(object sender, RoutedEventArgs e)
-    {
-      if (ClearXColumn is not null)
-        ClearXColumn();
-    }
-
-    private void EhToY_Click(object sender, RoutedEventArgs e)
-    {
-      GuiHelper.SynchronizeSelectionFromGui(_guiAvailableColumnNames);
-      if (UseSelectedItemAsYColumn is not null)
-        UseSelectedItemAsYColumn();
-    }
-
-    private void EhEraseY_Click(object sender, RoutedEventArgs e)
-    {
-      if (ClearYColumn is not null)
-        ClearYColumn();
-    }
-
-    private void EhToV_Click(object sender, RoutedEventArgs e)
-    {
-      GuiHelper.SynchronizeSelectionFromGui(_guiAvailableColumnNames);
-      if (UseSelectedItemAsVColumns is not null)
-        UseSelectedItemAsVColumns();
-    }
-
-    private void EhEraseV_Click(object sender, RoutedEventArgs e)
-    {
-      GuiHelper.SynchronizeSelectionFromGui(_guiVColumnNames);
-      if (ClearVColumns is not null)
-        ClearVColumns();
-    }
-
-    private void EhDataColumnsSelected(object sender, RoutedEventArgs e)
-    {
-      if (SelectedColumnKindChanged is not null)
-        SelectedColumnKindChanged();
-    }
-
-    private void EhPropertyColumnsSelected(object sender, RoutedEventArgs e)
-    {
-      if (SelectedColumnKindChanged is not null)
-        SelectedColumnKindChanged();
-    }
-
-    public void InitializeAvailableTables(SelectableListNodeList items)
-    {
-      GuiHelper.Initialize(_guiAvailableTables, items);
-    }
-
-    public void InitializeAvailableColumns(SelectableListNodeList items)
-    {
-      GuiHelper.Initialize(_guiAvailableColumnNames, items);
-    }
-
-    public void Initialize_XColumn(string colname)
-    {
-      _guiXColumnName.Text = colname;
-    }
-
-    public void Initialize_YColumn(string colname)
-    {
-      _guiYColumName.Text = colname;
-    }
-
-    public bool AreDataColumnsShown
-    {
-      get { return true == _guiDataColumnsSelection.IsChecked; }
-    }
-
-    public void Initialize_VColumns(SelectableListNodeList items)
-    {
-      GuiHelper.Initialize(_guiVColumnNames, items);
-    }
-
-    public void EnableUseButtons(bool enableUseAsXColumn, bool enableUseAsYColumn, bool enableUseAsVColumns)
-    {
-      _guiTakeAsXColumn.IsEnabled = enableUseAsXColumn;
-      _guiTakeAsYColumn.IsEnabled = enableUseAsYColumn;
-      _guiTakeAsVColumns.IsEnabled = enableUseAsVColumns;
-    }
-
-    private void EhUseAllAvailableColumnsOfGroupChanged(object sender, RoutedEventArgs e)
-    {
-      var ev = UseAllAvailableDataColumnsChanged;
-      if (ev is not null)
-        ev();
-    }
-
-    private void EhUseAllAvailableDataRowsChanged(object sender, RoutedEventArgs e)
-    {
-      var ev = UseAllAvailableDataRowsChanged;
-      if (ev is not null)
-        ev();
-
-      _guiDataRowsHost.Visibility = _guiUseAllAvailableDataRows.IsChecked == true ? Visibility.Hidden : Visibility.Visible;
-    }
-
-    private void EhGroupNumberChanged(object sender, RoutedPropertyChangedEventArgs<int> e)
-    {
-      var ev = SelectedGroupNumberChanged;
-      if (ev is not null)
-        ev();
-    }
-
-    public int GroupNumber
-    {
-      get
-      {
-        return _guiGroupNumber.Value;
-      }
-      set
-      {
-        _guiGroupNumber.Value = value;
-      }
-    }
-
-    public bool UseAllAvailableDataColumns
-    {
-      get
-      {
-        return _guiUseAllAvailableColumnsOfGroup.IsChecked == true;
-      }
-      set
-      {
-        _guiUseAllAvailableColumnsOfGroup.IsChecked = value;
-      }
-    }
-
-    public bool UseAllAvailableDataRows
-    {
-      get
-      {
-        return _guiUseAllAvailableDataRows.IsChecked == true;
-      }
-      set
-      {
-        _guiUseAllAvailableDataRows.IsChecked = value;
-      }
-    }
-
-    public void Initialize_DataRowsControl(object obj)
-    {
-      _guiDataRowsHost.Content = obj;
     }
   }
 }

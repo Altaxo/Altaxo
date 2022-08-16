@@ -25,92 +25,237 @@
 #nullable disable
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Data.Common;
 using System.Linq;
+using System.Windows.Input;
 using Altaxo.Collections;
 using Altaxo.Data;
+using Altaxo.Gui.Common;
+using Altaxo.Science.Spectroscopy;
 
 namespace Altaxo.Gui.Data
 {
-  public interface IDataTableMatrixProxyView
+  public interface IDataTableMatrixProxyView : IDataContextAwareView
   {
-    event Action SelectedTableChanged;
-
-    event Action SelectedGroupNumberChanged;
-
-    event Action UseAllAvailableDataColumnsChanged;
-
-    event Action UseAllAvailableDataRowsChanged;
-
-    event Action SelectedColumnKindChanged;
-
-    event Action UseSelectedItemAsXColumn;
-
-    event Action UseSelectedItemAsYColumn;
-
-    event Action UseSelectedItemAsVColumns;
-
-    event Action ClearXColumn;
-
-    event Action ClearYColumn;
-
-    event Action ClearVColumns;
-
-    /// <summary>Gets a value indicating whether data columns or property columns are shown in the view.</summary>
-    /// <value><see langword="true"/> if data columns are shown; otherwise, <see langword="false"/>.</value>
-    bool AreDataColumnsShown { get; }
-
-    void InitializeAvailableTables(SelectableListNodeList items);
-
-    void InitializeAvailableColumns(SelectableListNodeList items);
-
-    void Initialize_XColumn(string colname);
-
-    void Initialize_YColumn(string colname);
-
-    void Initialize_VColumns(SelectableListNodeList items);
-
-    void EnableUseButtons(bool enableUseAsXColumn, bool enableUseAsYColumn, bool enableUseAsVColumns);
-
-    void Initialize_DataRowsControl(object obj);
-
-    int GroupNumber { get; set; }
-
-    bool UseAllAvailableDataColumns { get; set; }
-
-    bool UseAllAvailableDataRows { get; set; }
   }
 
   [ExpectedTypeOfView(typeof(IDataTableMatrixProxyView))]
   [UserControllerForObject(typeof(DataTableMatrixProxy))]
   public class DataTableMatrixProxyController : MVCANControllerEditOriginalDocBase<DataTableMatrixProxy, IDataTableMatrixProxyView>
   {
-    private Altaxo.Data.IReadableColumn _xColumn;
-    private Altaxo.Data.IReadableColumn _yColumn;
-    private SelectableListNodeList _valueColumns = new SelectableListNodeList();
-
     private int _maxPossiblePlotRangeTo;
 
-    private SelectableListNodeList _availableTables = new SelectableListNodeList();
-    private SelectableListNodeList _availableColumns = new SelectableListNodeList();
-    private bool _areDataColumnsShown = true;
-
-    private Altaxo.Gui.Common.AscendingIntegerCollectionController _rowsController;
 
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_rowsController, () => _rowsController = null);
     }
 
-    public override void Dispose(bool isDisposing)
+    public DataTableMatrixProxyController()
     {
-      _xColumn = null;
-      _yColumn = null;
-      _valueColumns = null;
-      _availableTables = null;
-      _availableColumns = null;
+      CmdTakeAsXColumn = new RelayCommand(EhUseSelectedItemAsXColumn);
+      CmdTakeAsYColumn = new RelayCommand(EhUseSelectedItemAsYColumn);
+      CmdTakeAsVColumns = new RelayCommand(EhUseSelectedItemAsVColumns);
 
-      base.Dispose(isDisposing);
+      CmdEraseXColumn = new RelayCommand(EhClearXColumn);
+      CmdEraseYColumn = new RelayCommand(EhClearYColumn);
+      CmdEraseVColumns = new RelayCommand(EhClearVColumns);
     }
+
+
+    #region Bindings
+
+    public ICommand CmdTakeAsXColumn { get; }
+    public ICommand CmdEraseXColumn { get; }
+    public ICommand CmdTakeAsYColumn { get; }
+    public ICommand CmdEraseYColumn { get; }
+    public ICommand CmdTakeAsVColumns { get; }
+    public ICommand CmdEraseVColumns { get; }
+
+
+    private ItemsController<DataTable> _dataTable;
+
+    public ItemsController<DataTable> DataTable
+    {
+      get => _dataTable;
+      set
+      {
+        if (!(_dataTable == value))
+        {
+          _dataTable = value;
+          OnPropertyChanged(nameof(DataTable));
+        }
+      }
+    }
+
+    private ObservableCollection<int> _availableGroups;
+
+    public ObservableCollection<int> AvailableGroups
+    {
+      get => _availableGroups;
+      set
+      {
+        if (!(_availableGroups == value))
+        {
+          _availableGroups = value;
+          OnPropertyChanged(nameof(AvailableGroups));
+        }
+      }
+    }
+
+    private int _selectedGroup = int.MinValue;
+
+    public int SelectedGroup
+    {
+      get => _selectedGroup;
+      set
+      {
+        if (!(_selectedGroup == value))
+        {
+          _selectedGroup = value;
+          OnPropertyChanged(nameof(SelectedGroup));
+          EhSelectedGroupNumberChanged(value);
+        }
+      }
+    }
+
+    private bool _useAllAvailableVColumnsOfGroup;
+
+    public bool UseAllAvailableVColumnsOfGroup
+    {
+      get => _useAllAvailableVColumnsOfGroup;
+      set
+      {
+        if (!(_useAllAvailableVColumnsOfGroup == value))
+        {
+          _useAllAvailableVColumnsOfGroup = value;
+          OnPropertyChanged(nameof(UseAllAvailableVColumnsOfGroup));
+        }
+      }
+    }
+
+    private bool _showDataColumns = true;
+
+    public bool ShowDataColumns
+    {
+      get => _showDataColumns;
+      set
+      {
+        if (!(_showDataColumns == value))
+        {
+          _showDataColumns = value;
+          OnPropertyChanged(nameof(ShowDataColumns));
+          OnPropertyChanged(nameof(ShowPropertyColumns));
+          FillAvailableColumnList();
+        }
+      }
+    }
+
+    public bool ShowPropertyColumns
+    {
+      get => !ShowDataColumns;
+      set => ShowDataColumns = !value;
+    }
+
+
+
+
+
+    private SelectableListNodeList _availableColumns;
+
+    public SelectableListNodeList AvailableColumns
+    {
+      get => _availableColumns;
+      set
+      {
+        if (!(_availableColumns == value))
+        {
+          _availableColumns = value;
+          OnPropertyChanged(nameof(AvailableColumns));
+        }
+      }
+    }
+
+    private SelectableListNodeList _participatingVColumns;
+
+    public SelectableListNodeList ParticipatingVColumns
+    {
+      get => _participatingVColumns;
+      set
+      {
+        if (!(_participatingVColumns == value))
+        {
+          _participatingVColumns = value;
+          OnPropertyChanged(nameof(ParticipatingVColumns));
+        }
+      }
+    }
+
+    private SelectableListNode _participatingXColumn;
+
+    public SelectableListNode ParticipatingXColumn
+    {
+      get => _participatingXColumn;
+      set
+      {
+        if (!(_participatingXColumn == value))
+        {
+          _participatingXColumn = value;
+          OnPropertyChanged(nameof(ParticipatingXColumn));
+        }
+      }
+    }
+
+    private SelectableListNode _participatingYColumn;
+
+    public SelectableListNode ParticipatingYColumn
+    {
+      get => _participatingYColumn;
+      set
+      {
+        if (!(_participatingYColumn == value))
+        {
+          _participatingYColumn = value;
+          OnPropertyChanged(nameof(ParticipatingYColumn));
+        }
+      }
+    }
+
+    private bool _useAllAvailableDataRows;
+
+    public bool UseAllAvailableDataRows
+    {
+      get => _useAllAvailableDataRows;
+      set
+      {
+        if (!(_useAllAvailableDataRows == value))
+        {
+          _useAllAvailableDataRows = value;
+          OnPropertyChanged(nameof(UseAllAvailableDataRows));
+        }
+      }
+    }
+
+
+    private Altaxo.Gui.Common.AscendingIntegerCollectionController _rowsController;
+
+    public Altaxo.Gui.Common.AscendingIntegerCollectionController RowsController
+    {
+      get => _rowsController;
+      set
+      {
+        if (!(_rowsController == value))
+        {
+          _rowsController = value;
+          OnPropertyChanged(nameof(RowsController));
+        }
+      }
+    }
+
+
+
+    #endregion
 
     protected override void Initialize(bool initData)
     {
@@ -118,28 +263,52 @@ namespace Altaxo.Gui.Data
 
       if (initData)
       {
-        _xColumn = _doc.RowHeaderColumn;
-        _yColumn = _doc.ColumnHeaderColumn;
+        var xCol = _doc.RowHeaderColumn;
+        if (xCol is DataColumn dxc)
+          ParticipatingXColumn = new SelectableListNode(DataColumnCollection.GetParentDataColumnCollectionOf(dxc).GetColumnName(dxc), dxc, false);
+        else if (xCol is not null)
+          ParticipatingXColumn = new SelectableListNode(xCol.FullName, xCol, false);
+        else
+          ParticipatingXColumn = null;
+
+
+        var yCol = _doc.ColumnHeaderColumn;
+        if (yCol is DataColumn dyc)
+          ParticipatingYColumn = new SelectableListNode(DataColumnCollection.GetParentDataColumnCollectionOf(dyc).GetColumnName(dyc), dyc, false);
+        else if (yCol is not null)
+          ParticipatingXColumn = new SelectableListNode(yCol.FullName, yCol, false);
+        else
+          ParticipatingYColumn = null;
+
         // Initialize value columns
-        _valueColumns.Clear();
+        var vCols = new SelectableListNodeList();
         for (int i = 0; i < _doc.ColumnCount; ++i)
         {
-          var col = _doc.GetDataColumnProxy(i);
-          _valueColumns.Add(new SelectableListNode(col.Document() is not null ? col.Document().FullName : "Unresolved column", col, false));
+          var col = _doc.GetDataColumnProxy(i).Document();
+          if(col is not null)
+            vCols.Add(new SelectableListNode(
+              col is DataColumn dc ? DataColumnCollection.GetParentDataColumnCollectionOf(dc).GetColumnName(dc) : col.FullName,
+              col,
+              false));
         }
+        ParticipatingVColumns = vCols;
+
 
         CalcMaxPossiblePlotRangeTo();
 
         // Initialize tables
         string[] tables = Current.Project.DataTableCollection.GetSortedTableNames();
-
-        string dataTableName = _doc.DataTable?.Name ?? string.Empty;
-
-        _availableTables.Clear();
+        string dataTableName = _doc.DataTable is null ? string.Empty : _doc.DataTable.Name;
+        var availableTables = new SelectableListNodeList();
         foreach (var tableName in tables)
         {
-          _availableTables.Add(new SelectableListNode(tableName, Current.Project.DataTableCollection[tableName], dataTableName == tableName));
+          availableTables.Add(new SelectableListNode(tableName, Current.Project.DataTableCollection[tableName], false));
         }
+        DataTable = new ItemsController<DataTable>(availableTables, EhSelectedTableChanged);
+        DataTable.SelectedValue = _doc.DataTable;
+
+        UseAllAvailableVColumnsOfGroup = _doc.UseAllAvailableDataColumnsOfGroup;
+        UseAllAvailableDataRows = _doc.UseAllAvailableDataRows;
 
         // Initialize columns
         FillAvailableColumnList();
@@ -147,203 +316,191 @@ namespace Altaxo.Gui.Data
         _rowsController = new Common.AscendingIntegerCollectionController();
         _rowsController.InitializeDocument(_doc.ParticipatingDataRows.Clone());
       }
+    }
 
-      if (_view is not null)
+    private void EhSelectedTableChanged(DataTable selectedTable)
+    {
+      var groupNumber = AvailableGroups is not null ? SelectedGroup : _doc.GroupNumber;
+
+      // Initialize group numbers
+      var availableGroups = (selectedTable ?? _doc.DataTable).DataColumns.GetGroupNumbersAll();
+      AvailableGroups = new ObservableCollection<int>(availableGroups);
+
+      if (availableGroups.Contains(groupNumber))
       {
-        EhSelectedColumnKindChanged(); // ask view which column kind is now selected
-        UpdateButtonEnablingInView(); // do that in every case, even if nothing has changed
-
-        _view.InitializeAvailableTables(_availableTables);
-        _view.InitializeAvailableColumns(_availableColumns);
-
-        _view.GroupNumber = _doc.GroupNumber;
-        _view.UseAllAvailableDataColumns = _doc.UseAllAvailableDataColumnsOfGroup;
-        _view.UseAllAvailableDataRows = _doc.UseAllAvailableDataRows;
-
-        _view.Initialize_XColumn(_xColumn is null ? string.Empty : _xColumn.FullName);
-        _view.Initialize_YColumn(_yColumn is null ? string.Empty : _yColumn.FullName);
-        _view.Initialize_VColumns(_valueColumns);
-        CalcMaxPossiblePlotRangeTo();
-
-        if (_rowsController.ViewObject is null)
-          Current.Gui.FindAndAttachControlTo(_rowsController);
-        _view.Initialize_DataRowsControl(_rowsController.ViewObject);
+        SelectedGroup = groupNumber;
+        EhSelectedGroupNumberChanged(groupNumber);
+      }
+      else if (availableGroups.Count > 0)
+      {
+        SelectedGroup = availableGroups.First();
+        EhSelectedGroupNumberChanged(availableGroups.First());
       }
     }
 
-    public override bool Apply(bool disposeController)
+    private void EhSelectedGroupNumberChanged(int groupNumber)
     {
-      _doc.DataTable = _availableTables.FirstSelectedNode.Tag as DataTable;
-      _doc.GroupNumber = _view.GroupNumber;
-      _doc.UseAllAvailableDataColumnsOfGroup = _view.UseAllAvailableDataColumns;
-      _doc.UseAllAvailableDataRows = _view.UseAllAvailableDataRows;
+      var table = DataTable.SelectedValue;
+      if (table is null)
+        return;
 
-      _doc.RowHeaderColumn = _xColumn;
-      _doc.ColumnHeaderColumn = _yColumn;
-      _doc.SetDataColumns(_valueColumns.Select(n => (IReadableColumnProxy)n.Tag));
-
-      if (!_doc.UseAllAvailableDataRows)
+      // Initialize available columns
+      var columnList = table.DataColumns.GetListOfColumnsWithGroupNumber(groupNumber);
+      var columnDict = new Dictionary<string, DataColumn>();
+      foreach (var c in columnList)
       {
-        if (!_rowsController.Apply(disposeController))
-          return false;
-        _doc.SetDataRows((IAscendingIntegerCollection)_rowsController.ModelObject);
+        columnDict.Add(DataColumnCollection.GetParentDataColumnCollectionOf(c).GetColumnName(c), c);
       }
 
-      var tempView = ViewObject;
-      ViewObject = null;
-      Initialize(true);
-      ViewObject = tempView;
+      var propcolDict = new Dictionary<string, DataColumn>();
+      foreach (var c in table.PropCols.Columns)
+      {
+        propcolDict.Add(DataColumnCollection.GetParentDataColumnCollectionOf(c).GetColumnName(c), c);
+      }
 
-      return ApplyEnd(true, disposeController); // successfull
-    }
 
-    protected override void AttachView()
-    {
-      base.AttachView();
+      // X-Column
+      string xColName = ParticipatingXColumn?.Text;
+      if(!string.IsNullOrEmpty(xColName) &&  columnDict.TryGetValue(xColName, out var newXCol))
+      {
+        ParticipatingXColumn = new SelectableListNode(xColName, newXCol, false);
+      }
+      else
+      {
+        ParticipatingXColumn = null;
+      }
 
-      _view.SelectedTableChanged += EhSelectedTableChanged;
-      _view.SelectedColumnKindChanged += EhSelectedColumnKindChanged;
-      _view.UseSelectedItemAsXColumn += EhUseSelectedItemAsXColumn;
-      _view.UseSelectedItemAsYColumn += EhUseSelectedItemAsYColumn;
-      _view.UseSelectedItemAsVColumns += EhUseSelectedItemAsVColumns;
-      _view.ClearXColumn += EhClearXColumn;
-      _view.ClearYColumn += EhClearYColumn;
-      _view.ClearVColumns += EhClearVColumns;
-    }
+      // Y-Column
+      string yColName = ParticipatingYColumn?.Text;
+      if (!string.IsNullOrEmpty(yColName) && propcolDict.TryGetValue(xColName, out var newYCol))
+      {
+        ParticipatingYColumn = new SelectableListNode(yColName, newYCol, false);
+      }
+      else
+      {
+        ParticipatingYColumn = null;
+      }
 
-    protected override void DetachView()
-    {
-      _view.SelectedTableChanged -= EhSelectedTableChanged;
-      _view.SelectedColumnKindChanged -= EhSelectedColumnKindChanged;
-      _view.UseSelectedItemAsXColumn -= EhUseSelectedItemAsXColumn;
-      _view.UseSelectedItemAsYColumn -= EhUseSelectedItemAsYColumn;
-      _view.UseSelectedItemAsVColumns -= EhUseSelectedItemAsVColumns;
-      _view.ClearXColumn -= EhClearXColumn;
-      _view.ClearYColumn -= EhClearYColumn;
-      _view.ClearVColumns -= EhClearVColumns;
+      // V-Columns
+      DataColumn[] participatingColumns;
+      participatingColumns = ParticipatingVColumns.Select(n => (DataColumn)n.Tag).ToArray();
+      var participatingColNames = participatingColumns.Select(c => DataColumnCollection.GetParentDataColumnCollectionOf(c).GetColumnName(c)).ToArray();
 
-      base.DetachView();
-    }
+      ParticipatingVColumns = new SelectableListNodeList(
+        participatingColNames.Where(cn => columnDict.ContainsKey(cn)).Select(cn => new SelectableListNode(cn, columnDict[cn], false)));
 
-    private void CalcMaxPossiblePlotRangeTo()
-    {
-      int len = int.MaxValue;
-      if (_xColumn.Count.HasValue)
-        len = Math.Min(len, _xColumn.Count.Value);
-      if (_yColumn.Count.HasValue)
-        len = Math.Min(len, _yColumn.Count.Value);
-
-      _maxPossiblePlotRangeTo = len - 1;
+      FillAvailableColumnList();
     }
 
     private void FillAvailableColumnList()
     {
-      _availableColumns.Clear();
-
-      var node = _availableTables.FirstSelectedNode;
-      DataTable tg = node is null ? null : node.Tag as DataTable;
+      var availableColumns = new SelectableListNodeList();
+      
+      DataTable tg = DataTable.SelectedValue;
 
       if (tg is not null)
       {
-        if (_areDataColumnsShown)
+        if (ShowDataColumns)
         {
           for (int i = 0; i < tg.DataColumnCount; ++i)
-            _availableColumns.Add(new SelectableListNode(tg.DataColumns.GetColumnName(i), tg.DataColumns[i], false));
+            availableColumns.Add(new SelectableListNode(tg.DataColumns.GetColumnName(i), tg.DataColumns[i], false));
         }
         else
         {
           for (int i = 0; i < tg.PropertyColumnCount; ++i)
-            _availableColumns.Add(new SelectableListNode(tg.PropertyColumns.GetColumnName(i), tg.PropertyColumns[i], false));
+            availableColumns.Add(new SelectableListNode(tg.PropertyColumns.GetColumnName(i), tg.PropertyColumns[i], false));
         }
       }
-
-      if (_view is not null)
-      {
-        _view.InitializeAvailableColumns(_availableColumns);
-      }
+      AvailableColumns = availableColumns;
     }
 
-    private void UpdateButtonEnablingInView()
+
+    public override bool Apply(bool disposeController)
     {
-      if (_view is not null)
+      _doc.DataTable = DataTable.SelectedValue;
+      _doc.GroupNumber = SelectedGroup;
+      _doc.UseAllAvailableDataColumnsOfGroup = UseAllAvailableVColumnsOfGroup;
+      _doc.UseAllAvailableDataRows = UseAllAvailableDataRows;
+
+      _doc.RowHeaderColumn = (IReadableColumn)ParticipatingXColumn?.Tag;
+      _doc.ColumnHeaderColumn = (IReadableColumn)ParticipatingYColumn?.Tag;
+      _doc.SetDataColumns(ParticipatingVColumns.Select(n => ReadableColumnProxy.FromColumn(((IReadableColumn)n.Tag))));
+
+      if (!_doc.UseAllAvailableDataRows)
       {
-        _view.EnableUseButtons(_areDataColumnsShown, !_areDataColumnsShown, _areDataColumnsShown);
+        if (!_rowsController.Apply(disposeController))
+        {
+          return ApplyEnd(false, disposeController);
+        }
+        _doc.SetDataRows((IAscendingIntegerCollection)_rowsController.ModelObject);
       }
+
+      return ApplyEnd(true, disposeController); // successfull
     }
 
-    private void EhSelectedTableChanged()
+    private void CalcMaxPossiblePlotRangeTo()
     {
-      FillAvailableColumnList();
+      var xColumn = ParticipatingXColumn?.Tag as IReadableColumn;
+      var yColumn = ParticipatingYColumn?.Tag as IReadableColumn;
+
+
+      int len = int.MaxValue;
+      if (xColumn?.Count is int xCount)
+        len = Math.Min(len, xCount);
+      if (yColumn?.Count is int yCount)
+        len = Math.Min(len, yCount);
+
+      _maxPossiblePlotRangeTo = len - 1;
     }
 
-    private void EhSelectedColumnKindChanged()
-    {
-      var newValue = _view.AreDataColumnsShown;
-      if (_areDataColumnsShown != newValue)
-      {
-        _areDataColumnsShown = newValue;
-        FillAvailableColumnList();
-        UpdateButtonEnablingInView();
-      }
-    }
 
     private void EhUseSelectedItemAsXColumn()
     {
-      var node = _availableColumns.FirstSelectedNode;
-      _xColumn = node is null ? null : node.Tag as DataColumn;
-      if (_view is not null)
-        _view.Initialize_XColumn(_xColumn is null ? string.Empty : _xColumn.FullName);
+      var node = AvailableColumns.FirstSelectedNode;
+      ParticipatingXColumn = new SelectableListNode(node.Text, node.Tag, false);
     }
 
     private void EhUseSelectedItemAsYColumn()
     {
-      var node = _availableColumns.FirstSelectedNode;
-      _yColumn = node is null ? null : node.Tag as DataColumn;
-
-      if (_view is not null)
-        _view.Initialize_YColumn(_yColumn is null ? string.Empty : _yColumn.FullName);
+      var node = AvailableColumns.FirstSelectedNode;
+      ParticipatingYColumn = new SelectableListNode(node.Text, node.Tag, false);
     }
 
     private void EhUseSelectedItemAsVColumns()
     {
-      foreach (var node in _availableColumns.Where(n => n.IsSelected))
+      foreach (var node in AvailableColumns.Where(n => n.IsSelected))
       {
         var colToAdd = node.Tag as IReadableColumn;
         if (colToAdd is null)
           continue;
 
         // before adding this node, check that it is not already present
-        var proxyToAdd = ReadableColumnProxyBase.FromColumn(colToAdd);
-        if (_valueColumns.Any(n => proxyToAdd.DocumentPath().Equals(((IReadableColumnProxy)n.Tag).DocumentPath())))
+        if (ParticipatingVColumns.Any(n => n.Text == node.Text))
           continue;
 
-        _valueColumns.Add(new SelectableListNode(colToAdd.FullName, proxyToAdd, false));
+        ParticipatingVColumns.Add(new SelectableListNode(node.Text, colToAdd, false));
       }
     }
 
     private void EhClearXColumn()
     {
-      _xColumn = null;
-      if (_view is not null)
-        _view.Initialize_XColumn(_xColumn is null ? string.Empty : _xColumn.FullName);
+      ParticipatingXColumn = null;
     }
 
     private void EhClearYColumn()
     {
-      _yColumn = null;
-      if (_view is not null)
-        _view.Initialize_YColumn(_yColumn is null ? string.Empty : _yColumn.FullName);
+      ParticipatingYColumn = null;
     }
 
     private void EhClearVColumns()
     {
-      if (_valueColumns.FirstSelectedNode is not null) // if anything selected, clear only the selected nodes
+      if (ParticipatingVColumns.FirstSelectedNode is not null) // if anything selected, clear only the selected nodes
       {
-        _valueColumns.RemoveSelectedItems();
+        ParticipatingVColumns.RemoveSelectedItems();
       }
       else // if nothing selected, clear all nodes
       {
-        _valueColumns.Clear();
+        ParticipatingVColumns.Clear();
       }
     }
   }

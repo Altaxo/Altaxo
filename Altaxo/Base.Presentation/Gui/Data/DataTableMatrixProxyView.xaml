@@ -3,7 +3,10 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
+			 xmlns:axogc="clr-namespace:Altaxo.Gui.Common" 
+			 xmlns:axogcc="clr-namespace:Altaxo.Gui.Common.Converters" 
+             xmlns:data="clr-namespace:Altaxo.Gui.Data;assembly=AltaxoBase" 
+             d:DataContext="{d:DesignInstance Type=data:DataTableMatrixProxyController}"
              mc:Ignorable="d">
 	<UserControl.Resources>
 		<Style TargetType="Button">
@@ -43,13 +46,27 @@
 			<RowDefinition Height="4" />
 			<RowDefinition Height="Auto" />
 		</Grid.RowDefinitions>
-		<Label Content="Table:" Grid.Column="0" Grid.Row="0" HorizontalAlignment="Right" />
-		<ComboBox x:Name="_guiAvailableTables" Grid.Column="2" Grid.ColumnSpan="4" Grid.Row="0" Margin="8,0,8,0" SelectionChanged="EhTables_SelectionChangeCommit" />
-		<Label Grid.Row="2" Grid.Column="0" Content="Data column group number:"   HorizontalAlignment="Right" />
-		<axogc:Int32UpDown Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="4" x:Name="_guiGroupNumber"  Margin="8,0,8,0" ValueChanged="EhGroupNumberChanged" />
-		<CheckBox Grid.Row="4" x:Name="_guiUseAllAvailableColumnsOfGroup" Content="Use all available V-columns of group" Checked="EhUseAllAvailableColumnsOfGroupChanged" Unchecked="EhUseAllAvailableColumnsOfGroupChanged" />
+        <Label Grid.Row="0" Grid.Column="0"
+               Content="Table:" 
+               HorizontalAlignment="Right" />
+        <ComboBox Grid.Row="0" Grid.Column="2" Grid.ColumnSpan="4"
+                  ItemsSource="{Binding DataTable.Items}"
+                  SelectedItem="{Binding DataTable.SelectedItem, Mode=TwoWay}"
+                  Margin="8,0,8,0" />
+        
+		<Label Grid.Row="2" Grid.Column="0" 
+               Content="Data column group number:"
+               HorizontalAlignment="Right" />
+		<axogc:Int32ListUpDown Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="4"
+                               AvailableValues="{Binding AvailableGroups}"
+                               Value="{Binding SelectedGroup, Mode=TwoWay}"
+                               Margin="8,0,8,0" />
+        
+		<CheckBox Grid.Row="4" 
+                  IsChecked="{Binding UseAllAvailableVColumnsOfGroup}"
+                  Content="Use all available V-columns of group" />
 
-		<Label Grid.Column="0" Grid.Row="6">
+        <Label Grid.Row="6" Grid.Column="0" >
 			<StackPanel Orientation="Vertical">
 				<TextBlock Text="Available columns:" />
 				<Rectangle Fill="Black" Height="1" />
@@ -57,17 +74,31 @@
 		</Label>
 		<StackPanel Orientation="Horizontal" Grid.Column="2" Grid.ColumnSpan="4" Grid.Row="6" Margin="8,0,8,0">
 			<Label Content="Show:" />
-			<RadioButton x:Name="_guiDataColumnsSelection" Content="Data columns" Margin="4" IsChecked="True" VerticalAlignment="Center" Checked="EhDataColumnsSelected" />
-			<RadioButton x:Name="_guiPropertyColumnsSelection" Content="Property columns" Margin="4" VerticalAlignment="Center" Checked="EhPropertyColumnsSelected" />
+			<RadioButton IsChecked="{Binding ShowDataColumns}"
+                         Content="Data columns"
+                         Margin="4"
+                         VerticalAlignment="Center" />
+			<RadioButton IsChecked="{Binding ShowPropertyColumns}"
+                         Content="Property columns"
+                         Margin="4"
+                         VerticalAlignment="Center" />
 		</StackPanel>
 
 		<axogc:BorderWithSizeGreedLimit Grid.Row="8" Grid.RowSpan="9" HeightGreedLimit="400">
-			<ListBox x:Name="_guiAvailableColumnNames" SelectionMode="Extended" ScrollViewer.VerticalScrollBarVisibility="Visible" />
-		</axogc:BorderWithSizeGreedLimit>
+            <ListBox ItemsSource="{Binding AvailableColumns}"
+                     SelectionMode="Extended" 
+                     ScrollViewer.VerticalScrollBarVisibility="Visible" >
+                <ListBox.Resources>
+                    <Style TargetType="{x:Type ListBoxItem}">
+                        <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}"/>
+                    </Style>
+                </ListBox.Resources>
+            </ListBox>
+        </axogc:BorderWithSizeGreedLimit>
 
 		<GridSplitter Grid.Column="1" Grid.Row="0" Grid.RowSpan="17" Width="4" HorizontalAlignment="Center" VerticalAlignment="Stretch" ResizeDirection="Columns" Margin="4,0,4,0" />
 
-		<Button x:Name="_guiTakeAsXColumn"  Grid.Column="2" Grid.Row="8" Click="EhToX_Click">
+        <Button Grid.Row="8" Grid.Column="2" Command="{Binding CmdTakeAsXColumn}" IsEnabled="{Binding ShowDataColumns}">
 			<StackPanel Orientation="Horizontal">
 				<Viewbox Style="{StaticResource ArrowViewBoxStyle}">
 					<Path Style="{StaticResource LeftArrowPathStyle}" />
@@ -75,14 +106,17 @@
 				<TextBlock Text="X" Margin="4,0,0,0" />
 			</StackPanel>
 		</Button>
-		<TextBox x:Name="_guiXColumnName" Grid.Column="3" Grid.Row="8" IsEnabled="False" />
-		<Button x:Name="m_btEraseX" Grid.Column="4" Grid.Row="8" Click="EhEraseX_Click">
+        <TextBox Grid.Row="8" Grid.Column="3"
+                 Text="{Binding ParticipatingXColumn.Text}"
+                 IsEnabled="{Binding ShowDataColumns}" />
+
+        <Button Grid.Row="8" Grid.Column="4"  Command="{Binding CmdEraseXColumn}">
 			<Viewbox Style="{StaticResource ArrowViewBoxStyle}">
 				<Path Style="{StaticResource RemoveCrossPathStyle}" />
 			</Viewbox>
 		</Button>
 
-		<Button x:Name="_guiTakeAsYColumn"  Grid.Column="2" Grid.Row="10" Click="EhToY_Click">
+        <Button Grid.Row="10" Grid.Column="2" Command="{Binding CmdTakeAsYColumn}" IsEnabled="{Binding ShowPropertyColumns}">
 			<StackPanel Orientation="Horizontal">
 				<Viewbox Style="{StaticResource ArrowViewBoxStyle}">
 					<Path Style="{StaticResource LeftArrowPathStyle}" />
@@ -90,14 +124,20 @@
 				<TextBlock Text="Y" Margin="4,0,0,0" />
 			</StackPanel>
 		</Button>
-		<TextBox x:Name="_guiYColumName" Grid.Column="3" Grid.Row="10" IsEnabled="False" />
-		<Button x:Name="m_btEraseY"  Grid.Column="4" Grid.Row="10" Click="EhEraseY_Click">
+
+        <TextBox Grid.Row="10" Grid.Column="3"
+                 Text="{Binding ParticipatingYColumn.Text}"
+                 IsEnabled="{Binding ShowPropertyColumns}" />
+        <Button Grid.Row="10" Grid.Column="4" Command="{Binding CmdEraseYColumn}">
 			<Viewbox Style="{StaticResource ArrowViewBoxStyle}">
 				<Path Style="{StaticResource RemoveCrossPathStyle}" />
 			</Viewbox>
 		</Button>
 
-		<Button x:Name="_guiTakeAsVColumns"  Grid.Column="2" Grid.Row="12" VerticalAlignment="Center" Click="EhToV_Click">
+        <Button Grid.Row="12" Grid.Column="2" 
+                Command="{Binding CmdTakeAsVColumns}"
+                IsEnabled="{Binding ShowDataColumns}"
+                VerticalAlignment="Center" >
 			<StackPanel Orientation="Horizontal">
 				<Viewbox Style="{StaticResource ArrowViewBoxStyle}">
 					<Path Style="{StaticResource LeftArrowPathStyle}" />
@@ -107,18 +147,36 @@
 		</Button>
 
 		<axogc:BorderWithSizeGreedLimit  Grid.Column="3" Grid.Row="12" Grid.RowSpan="2" HeightGreedLimit="400">
-			<ListBox x:Name="_guiVColumnNames" ScrollViewer.VerticalScrollBarVisibility="Visible" SelectionMode="Extended" />
-		</axogc:BorderWithSizeGreedLimit>
+            <ListBox ItemsSource="{Binding ParticipatingVColumns}"
+                     ScrollViewer.VerticalScrollBarVisibility="Visible" 
+                     SelectionMode="Extended" >
+                <ListBox.Resources>
+                    <Style TargetType="{x:Type ListBoxItem}">
+                        <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}"/>
+                    </Style>
+                </ListBox.Resources>
+            </ListBox>
+        </axogc:BorderWithSizeGreedLimit>
 
-		<Button x:Name="m_btEraseV"  Grid.Column="4" Grid.Row="12" VerticalAlignment="Center" Click="EhEraseV_Click">
+        <Button Grid.Row="12" Grid.Column="4" 
+                Command="{Binding CmdEraseVColumns}"
+                VerticalAlignment="Center" >
 			<Viewbox Style="{StaticResource ArrowViewBoxStyle}">
 				<Path Style="{StaticResource RemoveCrossPathStyle}" />
 			</Viewbox>
 		</Button>
 
-		<CheckBox Grid.Column="2" Grid.ColumnSpan="3" Grid.Row="14" Margin="0,6,0,0" x:Name="_guiUseAllAvailableDataRows" Content="Use all available data rows" Checked="EhUseAllAvailableDataRowsChanged" Unchecked="EhUseAllAvailableDataRowsChanged" />
+        <CheckBox Grid.Row="14" Grid.Column="2" Grid.ColumnSpan="3" 
+                  IsChecked="{Binding UseAllAvailableDataRows}"
+                  Content="Use all available data rows"
+                  Margin="0,6,0,0" />
 
-		<GroupBox x:Name="_guiDataRowsHost" Header="Plot Range:" Grid.Column="2" Grid.ColumnSpan="3" Grid.Row="16" Margin="0,16,0,0"  Padding="0,4,0,0">
-		</GroupBox>
+        <GroupBox Grid.Row="16" Grid.Column="2" Grid.ColumnSpan="3" 
+                  Visibility="{Binding UseAllAvailableDataRows, Converter={x:Static axogcc:TrueToVisibilityCollapsedConverter.Instance}}"
+                  Header="Plot Range:"
+                  Margin="0,16,0,0"  
+                  Padding="0,4,0,0">
+            <ContentControl Content="{Binding RowsController.ViewObject}"/>
+        </GroupBox>
 	</Grid>
 </UserControl>
