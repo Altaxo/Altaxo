@@ -36,7 +36,9 @@
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="4" />
 			<RowDefinition Height="Auto" />
-			<RowDefinition MinHeight="4" Height="*" />
+            <RowDefinition Height="4" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition MinHeight="4" Height="*" />
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="4" />
 			<RowDefinition Height="Auto" />
@@ -47,7 +49,7 @@
 		</Grid.RowDefinitions>
         <Label Grid.Row="0" Grid.Column="0" Content="Available data:"/>
         <axogc:MultiSelectTreeView	
-            Grid.Row="2" Grid.Column="0" Grid.RowSpan="16"
+            Grid.Row="2" Grid.Column="0" Grid.RowSpan="18"
             ItemsSource="{Binding AvailableContent.Nodes}"
             Focusable="True"
 			dd:DragDrop.IsDragSource="True" 
@@ -80,7 +82,7 @@
 		<Label Grid.Column="2" Grid.Row="0">Layer contents:</Label>
 		<axogc:MultiSelectTreeView	
             x:Name="_guiPlotItemsTree" 
-            Grid.Column="2" Grid.Row="2" Grid.RowSpan="16"
+            Grid.Column="2" Grid.Row="2" Grid.RowSpan="18"
             ItemsSource="{Binding PlotItems.Nodes}"
             ItemMouseDoubleClickCommand="{Binding CmdPlotItemDoubleClick}"
 			ItemMouseDoubleClick="EhFocusPlotItemTree"
@@ -180,12 +182,13 @@
 		</Button>
 
         <Button Grid.Row="6" Grid.Column="3" Command="{Binding CmdPlotItemOpen}" Click="EhFocusPlotItemTree" Content="Edit item" Margin="{StaticResource ButtonMargin}"  ToolTip="Edit the selected plot item or the selected plot group." />
-        <Button x:Name="_btGroup" Grid.Row="8" Grid.Column="3" Command="{Binding CmdPlotItemsGroup}" Click="EhFocusPlotItemTree" Content="Group" Margin="{StaticResource ButtonMargin}"  ToolTip="Group the selected items into a new plot group or group them with the selected plot group." />
-        <Button Grid.Row="10" Grid.Column="3" Command="{Binding CmdPlotItemsUngroup}" Click="EhFocusPlotItemTree" Content="Ungroup" Margin="{StaticResource ButtonMargin}" ToolTip="Ungroup the selected items, i.e. remove them from their current plot group." />
-        <Button Grid.Row="12" Grid.Column="3" Command="{Binding CmdPlotItemsEditRange}" Click="EhFocusPlotItemTree"  Content="Edit range" Margin="{StaticResource ButtonMargin}" ToolTip="Edits the range of all of the selected plot items." />
-		<CheckBox Grid.Row="14" Grid.Column="3" Content="Show range" Margin="{StaticResource ButtonMargin}"  IsChecked="{Binding ShowRange}" ToolTip="If checked, shows the current set range of the plot items." />
+        <Button Grid.Row="8" Grid.Column="3" Command="{Binding CmdPlotItemsGroupIntoExistent}" Click="EhFocusPlotItemTree" Content="Group to existing" Margin="{StaticResource ButtonMargin}"  ToolTip="Group the selected items into a new plot group or group them with the selected plot group." />
+        <Button Grid.Row="10" Grid.Column="3" Command="{Binding CmdPlotItemsGroupIntoNew}" Click="EhFocusPlotItemTree" Content="Group to new" Margin="{StaticResource ButtonMargin}"  ToolTip="Group the selected items always into a new plot group." />
+        <Button Grid.Row="12" Grid.Column="3" Command="{Binding CmdPlotItemsUngroup}" Click="EhFocusPlotItemTree" Content="Ungroup" Margin="{StaticResource ButtonMargin}" ToolTip="Ungroup the selected items, i.e. remove them from their current plot group." />
+        <Button Grid.Row="14" Grid.Column="3" Command="{Binding CmdPlotItemsEditRange}" Click="EhFocusPlotItemTree"  Content="Edit range" Margin="{StaticResource ButtonMargin}" ToolTip="Edits the range of all of the selected plot items." />
+		<CheckBox Grid.Row="16" Grid.Column="3" Content="Show range" Margin="{StaticResource ButtonMargin}"  IsChecked="{Binding ShowRange}" ToolTip="If checked, shows the current set range of the plot items." />
 
-		<Label Grid.Row="16" Grid.Column="3" Content="Data clipping:" Margin="4,0,0,0" />
-        <ComboBox Grid.Row="17" Grid.Column="3" ItemsSource="{Binding DataClipping.Items}" SelectedItem="{Binding DataClipping.SelectedItem}" Margin="{StaticResource ComboboxMargin}" />
+		<Label Grid.Row="18" Grid.Column="3" Content="Data clipping:" Margin="4,0,0,0" />
+        <ComboBox Grid.Row="19" Grid.Column="3" ItemsSource="{Binding DataClipping.Items}" SelectedItem="{Binding DataClipping.SelectedItem}" Margin="{StaticResource ComboboxMargin}" />
 	</Grid>
 </UserControl>

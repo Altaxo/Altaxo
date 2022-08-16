@@ -111,6 +111,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Page Update="Gui\Data\DataTableXYColumnProxyControl.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="Gui\Science\Spectroscopy\BaselineEstimation\ALSControl.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>

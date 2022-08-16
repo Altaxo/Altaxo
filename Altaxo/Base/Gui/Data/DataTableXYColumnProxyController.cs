@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2016 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -23,44 +23,28 @@
 #endregion Copyright
 
 #nullable disable
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
-namespace Altaxo.Gui.Science.Spectroscopy
+namespace Altaxo.Gui.Data
 {
   using System.Collections.ObjectModel;
-  using System.Windows.Input;
   using Altaxo.Collections;
   using Altaxo.Data;
   using Altaxo.Gui.Common;
-  using Altaxo.Science.Spectroscopy;
 
-  public interface ISpectralPreprocessingDataView : IDataContextAwareView  {  }
+  public interface IDataTableXYColumnProxyView : IDataContextAwareView { }
 
-  [ExpectedTypeOfView(typeof(ISpectralPreprocessingDataView))]
-  public class SpectralPreprocessingDataController : MVCANControllerEditOriginalDocBase<DataTableMultipleColumnProxy, ISpectralPreprocessingDataView>
+  [ExpectedTypeOfView(typeof(IDataTableXYColumnProxyView))]
+  [UserControllerForObject(typeof(DataTableXYColumnProxy))]
+  public class DataTableXYColumnProxyController : MVCANControllerEditOriginalDocBase<DataTableXYColumnProxy, IDataTableXYColumnProxyView>
   {
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
     }
 
-    public SpectralPreprocessingDataController()
-    {
-      CmdAddToParticipatingColumns = new RelayCommand(EhAddToParticipatingColumns);
-      CmdRemoveFromParticipatingColumns = new RelayCommand(EhRemoveFromParticipatingColumns);
-      CmdParticipatingColumnsUp = new RelayCommand(EhParticipatingColumnsUp);
-      CmdParticipatingColumnsDown = new RelayCommand(EhParticipatingColumnsDown);
-    }
-
     #region Bindings
-
-    public ICommand CmdAddToParticipatingColumns { get; }
-    public ICommand CmdRemoveFromParticipatingColumns { get; }
-    public ICommand CmdParticipatingColumnsUp { get; }
-    public ICommand CmdParticipatingColumnsDown { get; }
 
     private ItemsController<DataTable> _dataTable;
 
@@ -124,42 +108,22 @@ namespace Altaxo.Gui.Science.Spectroscopy
       }
     }
 
+    private ItemsController<DataColumn> _yColumn;
 
-
-    private SelectableListNodeList _availableColumns;
-
-    public SelectableListNodeList AvailableColumns
+    public ItemsController<DataColumn> YColumn
     {
-      get => _availableColumns;
+      get => _yColumn;
       set
       {
-        if (!(_availableColumns == value))
+        if (!(_yColumn == value))
         {
-          _availableColumns = value;
-          OnPropertyChanged(nameof(AvailableColumns));
+          _yColumn = value;
+          OnPropertyChanged(nameof(YColumn));
         }
       }
     }
-
-    private SelectableListNodeList _selectedColumns;
-
-    public SelectableListNodeList ParticipatingColumns
-    {
-      get => _selectedColumns;
-      set
-      {
-        if (!(_selectedColumns == value))
-        {
-          _selectedColumns = value;
-          OnPropertyChanged(nameof(ParticipatingColumns));
-        }
-      }
-    }
-
 
     #endregion
-
-    
 
     protected override void Initialize(bool initData)
     {
@@ -193,7 +157,7 @@ namespace Altaxo.Gui.Science.Spectroscopy
         SelectedGroup = groupNumber;
         EhSelectedGroupNumberChanged(groupNumber);
       }
-      else if(availableGroups.Count>0)
+      else if (availableGroups.Count > 0)
       {
         SelectedGroup = availableGroups.First();
         EhSelectedGroupNumberChanged(availableGroups.First());
@@ -214,9 +178,8 @@ namespace Altaxo.Gui.Science.Spectroscopy
 
 
       // X-Column
-      var xCol = XColumn?.SelectedValue ??
-                (_doc.ContainsIdentifier(SpectroscopyCommands.ColumnX) ? _doc.GetDataColumns(SpectroscopyCommands.ColumnX).FirstOrDefault() : null);
-      string xColName = xCol is null ? null : DataColumnCollection.GetParentDataColumnCollectionOf(xCol).GetColumnName(xCol);
+      var xCol = XColumn?.SelectedValue ?? _doc.XColumn;
+      string xColName = xCol is not DataColumn xdc ? null : DataColumnCollection.GetParentDataColumnCollectionOf(xdc).GetColumnName(xdc);
 
 
       XColumn = new ItemsController<DataColumn>(
@@ -226,45 +189,40 @@ namespace Altaxo.Gui.Science.Spectroscopy
             )
           )
         );
-
-      if (xCol is not null && table.DataColumns.ContainsColumn(xCol) && table.DataColumns.GetColumnGroup(xCol) == groupNumber)
-        XColumn.SelectedValue = xCol;
+      if (xCol is DataColumn xxdc && table.DataColumns.ContainsColumn(xxdc) && table.DataColumns.GetColumnGroup(xxdc) == groupNumber)
+        XColumn.SelectedValue = xxdc;
       if (!string.IsNullOrEmpty(xColName))
         XColumn.SelectedValue = XColumn.Items.Where(n => n.Text == xColName).Select(n => (DataColumn)n.Tag).FirstOrDefault();
       else
         XColumn.SelectedValue = null;
 
 
-      // Available columns
-      AvailableColumns =
-         new SelectableListNodeList(
-           columnList.Select(c => new SelectableListNode(
-             table.DataColumns.GetColumnName(c),
-             c,
-             false))
-         );
 
 
-      // Participating columns
-      DataColumn[] participatingColumns;
-      if (ParticipatingColumns is null)
-      {
-        participatingColumns = _doc.GetDataColumns(SpectroscopyCommands.ColumnsV).ToArray();
-      }
+      // Y-Column
+      var yCol = YColumn?.SelectedValue ?? _doc.YColumn;
+      string yColName = yCol is not DataColumn ydc ? null : DataColumnCollection.GetParentDataColumnCollectionOf(ydc).GetColumnName(ydc);
+
+
+      YColumn = new ItemsController<DataColumn>(
+        new SelectableListNodeList(
+          columnList.Select(
+            c => new SelectableListNode(table.DataColumns.GetColumnName(c), c, false)
+            )
+          )
+        );
+      if (yCol is DataColumn yydc && table.DataColumns.ContainsColumn(yydc) && table.DataColumns.GetColumnGroup(yydc) == groupNumber)
+        YColumn.SelectedValue = yydc;
+      if (!string.IsNullOrEmpty(yColName))
+        YColumn.SelectedValue = YColumn.Items.Where(n => n.Text == yColName).Select(n => (DataColumn)n.Tag).FirstOrDefault();
       else
-      {
-        participatingColumns = ParticipatingColumns.Select(n => (DataColumn)n.Tag).ToArray();
-      }
-      var participatingColNames = participatingColumns.Select(c => DataColumnCollection.GetParentDataColumnCollectionOf(c).GetColumnName(c)).ToArray();
-
-      ParticipatingColumns = new SelectableListNodeList(
-        participatingColNames.Where(cn => columnDict.ContainsKey(cn)).Select(cn => new SelectableListNode(cn, columnDict[cn], false)));
-}
+        YColumn.SelectedValue = null;
+    }
 
     public override bool Apply(bool disposeController)
     {
       var dataTable = DataTable.SelectedValue;
-      if(dataTable is null)
+      if (dataTable is null)
       {
         Current.Gui.ErrorMessageBox("Please select a data table");
         return ApplyEnd(false, disposeController);
@@ -273,47 +231,25 @@ namespace Altaxo.Gui.Science.Spectroscopy
 
       var xCol = XColumn.SelectedValue;
 
-      if(xCol is null)
+      if (xCol is null)
       {
         Current.Gui.ErrorMessageBox("Please select an x-column!");
         return ApplyEnd(false, disposeController);
       }
 
-      var yCol = ParticipatingColumns.Select(n => (DataColumn)n.Tag).ToArray();
+      var yCol = YColumn.SelectedValue;
 
-      if(yCol.Length==0)
+      if (yCol is null)
       {
-        Current.Gui.ErrorMessageBox("Please select at least one participating column!");
+        Current.Gui.ErrorMessageBox("Please select an y-column!");
         return ApplyEnd(false, disposeController);
       }
 
-      _doc = new DataTableMultipleColumnProxy(dataTable, groupNumber);
-      _doc.EnsureExistenceOfIdentifier(SpectroscopyCommands.ColumnX, 1);
-      _doc.EnsureExistenceOfIdentifier(SpectroscopyCommands.ColumnsV);
-      _doc.SetDataColumn(SpectroscopyCommands.ColumnX, XColumn.SelectedValue);
-      _doc.SetDataColumns(SpectroscopyCommands.ColumnsV, ParticipatingColumns.Select(n => (DataColumn)n.Tag));
 
+
+
+      _doc = new DataTableXYColumnProxy(dataTable, xCol, yCol);
       return ApplyEnd(true, disposeController);
-    }
-
-    private void EhAddToParticipatingColumns()
-    {
-      ParticipatingColumns.AddRange(AvailableColumns.Where(n => n.IsSelected).Select(n => new SelectableListNode(n.Text, n.Tag, true)));
-    }
-
-    private void EhRemoveFromParticipatingColumns()
-    {
-      ParticipatingColumns.RemoveSelectedItems();
-    }
-
-    private void EhParticipatingColumnsUp()
-    {
-      ParticipatingColumns.MoveSelectedItemsUp();
-    }
-
-    private void EhParticipatingColumnsDown()
-    {
-      ParticipatingColumns.MoveSelectedItemsDown();
     }
   }
 }

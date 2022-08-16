@@ -67,7 +67,8 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
       CmdPLotItemsMoveUpSelected = new RelayCommand(PlotItems_MoveUpSelected);
       CmdPLotItemsMoveDownSelected = new RelayCommand(PlotItems_MoveDownSelected);
       CmdPlotItemOpen = new RelayCommand(PlotItem_Open);
-      CmdPlotItemsGroup = new RelayCommand(PlotItems_GroupClick);
+      CmdPlotItemsGroupIntoExistent = new RelayCommand(PlotItems_GroupIntoExistentGroup);
+      CmdPlotItemsGroupIntoNew = new RelayCommand(PlotItems_GroupIntoNewGroup);
       CmdPlotItemsUngroup = new RelayCommand(PlotItems_UngroupClick);
       CmdPlotItemsEditRange = new RelayCommand(PlotItems_EditRangeClick);
 
@@ -95,7 +96,8 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
     public ICommand CmdPLotItemsMoveUpSelected { get; }
     public ICommand CmdPLotItemsMoveDownSelected { get; }
     public ICommand CmdPlotItemOpen { get; }
-    public ICommand CmdPlotItemsGroup { get; }
+    public ICommand CmdPlotItemsGroupIntoExistent { get; }
+    public ICommand CmdPlotItemsGroupIntoNew { get; }
     public ICommand CmdPlotItemsUngroup { get; }
     public ICommand CmdPlotItemsEditRange { get; }
     public ICommand CmdPlotItemsCopy { get; }
@@ -605,9 +607,23 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
     }
 
     /// <summary>
+    /// Group the selected nodes into a new group.
+    /// </summary>
+    public void PlotItems_GroupIntoNewGroup() => PlotItems_GroupClick(true);
+
+    /// <summary>
+    /// Group the selected nodes. The items were grouped into the first group that was selected.
+    /// If no group is selected, the items are grouped into a new group.
+    /// </summary>
+    public void PlotItems_GroupIntoExistentGroup() => PlotItems_GroupClick(false);
+
+    /// <summary>
     /// Group the selected nodes.
     /// </summary>
-    public void PlotItems_GroupClick()
+    /// <param name="groupIntoNewGroup">If true, all items where grouped into a new group.
+    /// If false, the items were grouped into the first group that was selected. If no group is selected,
+    /// the behavior is the same as if this parameter is true.</param>
+    public void PlotItems_GroupClick(bool groupIntoNewGroup)
     {
       var selNodes = PlotItemsSelected.ToArray();
 
@@ -618,12 +634,15 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
       // look, if one of the selected items is a plot group
       // if found, use this group and add the remaining items to this
       int foundindex = -1;
-      for (int i = 0; i < selNodes.Length; i++)
+      if (!groupIntoNewGroup)
       {
-        if (selNodes[i].Tag is PlotItemCollection)
+        for (int i = 0; i < selNodes.Length; i++)
         {
-          foundindex = i;
-          break;
+          if (selNodes[i].Tag is PlotItemCollection)
+          {
+            foundindex = i;
+            break;
+          }
         }
       }
 

@@ -95,10 +95,45 @@
             </StackPanel>
         </Button>
 
-        <Button Grid.Row="8" Grid.Column="6" VerticalAlignment="Center" Command="{Binding CmdRemoveFromParticipatingColumns}" >
-            <Viewbox Style="{StaticResource ArrowViewBoxStyle}">
-                <Path Style="{StaticResource RemoveCrossPathStyle}" />
-            </Viewbox>
-        </Button>
+       
+
+        <StackPanel Grid.Row="8" Grid.Column="6" Orientation="Vertical">
+            
+            
+            
+            <Button
+            Grid.Row="0"
+            Grid.Column="0"
+            Command="{Binding CmdParticipatingColumnsUp}">
+                <Button.Content>
+                    <Viewbox Style="{StaticResource ArrowViewBoxStyle}">
+                        <Path Style="{StaticResource UpArrowPathStyle}" />
+                    </Viewbox>
+                </Button.Content>
+            </Button>
+
+            <Button
+            Grid.Row="0"
+            Grid.Column="0"
+                Margin="0,8,0,0"
+            Command="{Binding CmdParticipatingColumnsDown}">
+                <Button.Content>
+                    <Viewbox Style="{StaticResource ArrowViewBoxStyle}">
+                        <Path Style="{StaticResource DownArrowPathStyle}" />
+                    </Viewbox>
+                </Button.Content>
+            </Button>
+
+            <Button Grid.Row="8" Grid.Column="6" 
+                    VerticalAlignment="Center"
+                    Command="{Binding CmdRemoveFromParticipatingColumns}" 
+                    Margin="0,8,0,8">
+                <Viewbox Style="{StaticResource ArrowViewBoxStyle}">
+                    <Path Style="{StaticResource RemoveCrossPathStyle}" />
+                </Viewbox>
+            </Button>
+
+        </StackPanel>
+
     </Grid>
 </UserControl>

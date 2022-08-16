@@ -42,6 +42,7 @@ namespace Altaxo.Science.Spectroscopy.Raman
 
     public const string ColumnName_XCalibration_UncalibratedX = "XCalibration_UncalibratedX";
     public const string ColumnName_XCalibration_CalibratedX = "XCalibration_CalibratedX";
+    public const string ColumnName_XCalibration_XDeviation = "XCalibration_XDeviation";
     public const string PropertyName_CalibratedLaserWavelength = "CalibratedLaserWavelength [nm]";
 
     #endregion
@@ -311,8 +312,10 @@ namespace Altaxo.Science.Spectroscopy.Raman
 
           var x_uncalibrated = destinationTable.DataColumns.EnsureExistence(ColumnName_XCalibration_UncalibratedX, typeof(DoubleColumn), ColumnKind.X, 10);
           x_uncalibrated.Clear();
-          var x_calibrated = destinationTable.DataColumns.EnsureExistence(ColumnName_XCalibration_CalibratedX, typeof(DoubleColumn), ColumnKind.X, 10);
+          var x_calibrated = destinationTable.DataColumns.EnsureExistence(ColumnName_XCalibration_CalibratedX, typeof(DoubleColumn), ColumnKind.V, 10);
           x_calibrated.Clear();
+          var x_deviation = destinationTable.DataColumns.EnsureExistence(ColumnName_XCalibration_XDeviation, typeof(DoubleColumn), ColumnKind.V, 10);
+          x_deviation.Clear();
 
           var pcol = destinationTable.PropCols.EnsureExistence(PropertyName_CalibratedLaserWavelength, typeof(DoubleColumn), ColumnKind.V, 0);
           pcol.Clear();
@@ -331,6 +334,7 @@ namespace Altaxo.Science.Spectroscopy.Raman
 
             x_uncalibrated[i] = shift_uncalibrated;
             x_calibrated[i] = shift_calibrated;
+            x_deviation[i] = shift_calibrated - shift_uncalibrated;
           }
 
           {

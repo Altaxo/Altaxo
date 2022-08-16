@@ -122,7 +122,7 @@ namespace Altaxo.Science.Spectroscopy
       if (srcYCols.Count == 0)
         throw new InvalidOperationException($"No V-columns available for spectral preprocessing");
 
-      var srcXCols = inputData.GetDataColumns(ColumnX);
+      var srcXCols = inputData.ContainsIdentifier(ColumnX) ? inputData.GetDataColumns(ColumnX) : new DataColumn[0];
       if(srcXCols.Count > 1)
         throw new InvalidOperationException($"There is more than one x-columns available for spectral preprocessing!");
 
@@ -394,17 +394,8 @@ namespace Altaxo.Science.Spectroscopy
 
     public static void SpectralPeakFindingFittingShowDialog(WorksheetController ctrl)
     {
-      if(ctrl.SelectedDataColumns.Count == 0)
-      {
-        Current.Gui.ErrorMessageBox("Please select one or more data columns from one group!");
-      }
-
-      var srcXColumn = ctrl.DataTable.DataColumns.FindXColumnOf(ctrl.DataTable.DataColumns[ctrl.SelectedDataColumns[0]]);
-      if(srcXColumn is null)
-      {
-        Current.Gui.ErrorMessageBox("Could not find an x-column for the selected data columns!");
+      if (!TryGetDataProxyForSpectralPreprocessing(ctrl, out var dataProxy))
         return;
-      }
 
       if (!ShowDialogGetPeakFindingFittingOptions(ctrl, out var doc))
         return;
@@ -413,8 +404,6 @@ namespace Altaxo.Science.Spectroscopy
       var srcTable = ctrl.DataTable;
       var preprocessingTable = new DataTable();
       var peakTable = new DataTable();
-      var dataProxy = new DataTableMultipleColumnProxy(ColumnsV, srcTable, null, ctrl.SelectedDataColumns);
-      dataProxy.AddDataColumn(ColumnX, srcXColumn);
      
 
       List<(
@@ -536,11 +525,41 @@ namespace Altaxo.Science.Spectroscopy
           }
         }
       }
+    }
 
+    public static bool TryGetDataProxyForSpectralPreprocessing(WorksheetController ctrl, out DataTableMultipleColumnProxy? proxy)
+    {
+      if (ctrl.SelectedDataColumns.Count == 0)
+      {
+        Current.Gui.ErrorMessageBox("Please select one or more data columns from one group!");
+        proxy= null;
+        return false;
+      }
+
+      var srcTable = ctrl.DataTable;
+      var col = ctrl.DataTable.DataColumns;
+      var groupNumber = col.GetColumnGroup(col[ctrl.SelectedDataColumns[0]]);
+      var xColumn = col.FindXColumnOfGroup(groupNumber);
+
+      if (xColumn is null)
+      {
+        Current.Gui.ErrorMessageBox($"Please designate one column of group {groupNumber} to be the x-column!");
+        proxy= null;
+        return false;
+      }
+
+      proxy = new DataTableMultipleColumnProxy(ColumnsV, srcTable, null, ctrl.SelectedDataColumns);
+      proxy.EnsureExistenceOfIdentifier(ColumnX, 1);
+      proxy.AddDataColumn(ColumnX, xColumn);
+
+      return true;
     }
 
     public static void SpectralPreprocessingShowDialog(WorksheetController ctrl)
     {
+      if (!TryGetDataProxyForSpectralPreprocessing(ctrl, out var dataProxy))
+        return;
+
       if (!ShowDialogGetPreprocessingOptions(ctrl, out var doc))
         return;
 
@@ -548,8 +567,6 @@ namespace Altaxo.Science.Spectroscopy
       var srcTable = ctrl.DataTable;
       var preprocessingTable = new DataTable();
 
-
-      var dataProxy = new DataTableMultipleColumnProxy(ColumnsV, srcTable, null, ctrl.SelectedDataColumns);
       var result = ExecuteSpectralPreprocessing(dataProxy, doc, preprocessingTable);
 
       {

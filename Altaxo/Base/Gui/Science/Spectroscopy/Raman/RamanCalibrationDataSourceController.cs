@@ -178,14 +178,17 @@ namespace Altaxo.Gui.Science.Spectroscopy.Raman
         if (_doc.NeonCalibrationOptions1 is not null)
         {
           NeonCalibrationOptions1Controller = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _doc.NeonCalibrationOptions1 }, typeof(IMVCANController), UseDocument.Directly);
+          NeonCalibrationData1Controller = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _doc.NeonCalibrationData1 }, typeof(IMVCANController), UseDocument.Directly);
         }
         if (_doc.NeonCalibrationOptions2 is not null)
         {
           NeonCalibrationOptions2Controller = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _doc.NeonCalibrationOptions2 }, typeof(IMVCANController), UseDocument.Directly);
+          NeonCalibrationData2Controller = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _doc.NeonCalibrationData2 }, typeof(IMVCANController), UseDocument.Directly);
         }
         if (_doc.SiliconCalibrationOptions is not null)
         {
           SiliconCalibrationOptionsController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _doc.SiliconCalibrationOptions }, typeof(IMVCANController), UseDocument.Directly);
+          SiliconCalibrationDataController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _doc.SiliconCalibrationData }, typeof(IMVCANController), UseDocument.Directly);
         }
 
       }
