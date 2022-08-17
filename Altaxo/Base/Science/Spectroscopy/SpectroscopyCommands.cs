@@ -111,10 +111,13 @@ namespace Altaxo.Science.Spectroscopy
     public const string ColumnsV = "V-Columns";
 
 
-    public static List<(DataColumn xCol, DataColumn yCol, double[] xArray, double[] yArray)> GetColumnsAndArrays(DataTableMultipleColumnProxy inputData, out DataTable srcTable)
+    public static List<(DataColumn xCol, DataColumn yCol, double[] xArray, double[] yArray)> GetColumnsAndArrays(
+      DataTableMultipleColumnProxy inputData,
+      out DataTable srcTable)
     {
       var resultList = new List<(DataColumn xCol, DataColumn yCol, double[] xArray, double[] yArray)>();
       srcTable = inputData.DataTable;
+      int groupNumber = inputData.GroupNumber;
       if (srcTable is null)
         throw new InvalidOperationException($"No source table available for spectral preprocessing");
 
@@ -122,32 +125,39 @@ namespace Altaxo.Science.Spectroscopy
       if (srcYCols.Count == 0)
         throw new InvalidOperationException($"No V-columns available for spectral preprocessing");
 
+      DataColumn srcXCol;
       var srcXCols = inputData.ContainsIdentifier(ColumnX) ? inputData.GetDataColumns(ColumnX) : new DataColumn[0];
-      if(srcXCols.Count > 1)
-        throw new InvalidOperationException($"There is more than one x-columns available for spectral preprocessing!");
-
-      DataColumn? srcXCol = srcXCols.Count > 0 ? srcXCols[0] : null;
-
-      foreach (var yCol in srcYCols)
+      if (srcXCols.Count == 0)
       {
-        var xCol = srcXCol ?? srcTable.DataColumns.FindXColumnOf(yCol);
-
-        if (xCol is null)
+        srcXCol = srcTable.DataColumns.FindXColumnOfGroup(groupNumber);
+        if (srcXCol is null)
         {
-          continue;
+          throw new InvalidOperationException($"There was no x-column contained in the data, and no x-column can be found for group {groupNumber} in table {srcTable.Name}. Please assign an x-column!");
         }
-
-        var len = Math.Min(yCol.Count, xCol.Count);
+        inputData.EnsureExistenceOfIdentifier(ColumnX, 1);
+        inputData.SetDataColumn(ColumnX, srcXCol);
+      }
+      else if(srcXCols.Count == 1)
+      {
+        srcXCol = srcXCols[0];
+      }
+      else
+      {
+        throw new InvalidOperationException($"There is more than one x-columns available for spectral preprocessing!");
+      }
+      foreach (var srcYCol in srcYCols)
+      {
+        var len = Math.Min(srcYCol.Count, srcXCol.Count);
 
         var xArr = new double[len];
         var yArr = new double[len];
         for (var i = 0; i < len; i++)
         {
-          xArr[i] = xCol[i];
-          yArr[i] = yCol[i];
+          xArr[i] = srcXCol[i];
+          yArr[i] = srcYCol[i];
         }
 
-        resultList.Add((xCol, yCol, xArr, yArr));
+        resultList.Add((srcXCol, srcYCol, xArr, yArr));
       }
       return resultList;
     }
@@ -645,63 +655,6 @@ namespace Altaxo.Science.Spectroscopy
 
     }
 
-    public static NeonCalibration? Raman_CalibrateWithNeonSpectrum(DataTable dstTable, NeonCalibrationOptions neonOptions, IReadableColumn x_column, IReadableColumn y_column, CancellationToken cancellationToken)
-    {
-      var len = Math.Min(x_column.Count ?? 0, y_column.Count ?? 0);
-
-      var arrayX = new double[len];
-      var arrayY = new double[len];
-
-      for (var i = 0; i < len; i++)
-      {
-        arrayX[i] = x_column[i];
-        arrayY[i] = y_column[i];
-      }
-
-
-      var calibration = new NeonCalibration();
-      var matches = calibration.GetPeakMatchings(neonOptions, arrayX, arrayY, cancellationToken);
-
-
-
-      using (var token = dstTable.SuspendGetToken())
-      {
-        var colNist = dstTable.DataColumns.EnsureExistence("NistNeonPeakWavelength [nm]", typeof(DoubleColumn), ColumnKind.X, 0);
-        var colMeas = dstTable.DataColumns.EnsureExistence("MeasuredNeonPeakWavelength [nm]", typeof(DoubleColumn), ColumnKind.V, 0);
-        var colDiff = dstTable.DataColumns.EnsureExistence("DifferenceOfPeakWavelengths [nm]", typeof(DoubleColumn), ColumnKind.V, 0);
-        var colDiffVar = dstTable.DataColumns.EnsureExistence("DifferenceOfPeakWavelengths.Variance [nm]", typeof(DoubleColumn), ColumnKind.Err, 0);
-        for (var i = 0; i < matches.Count; ++i)
-        {
-          var match = matches[i];
-          colNist[i] = match.NistWL;
-          colMeas[i] = match.MeasWL;
-          colDiff[i] = match.NistWL - match.MeasWL;
-          colDiffVar[i] = match.MeasWLVariance;
-        }
-
-        var pcolLaserWL = dstTable.PropertyColumns.EnsureExistence("AssumedLaserWavelength [nm]", typeof(DoubleColumn), ColumnKind.V, 0);
-        foreach (var dc in new[] { colMeas, colDiff })
-        {
-          var idx = dstTable.DataColumns.GetColumnNumber(dc);
-          pcolLaserWL[idx] = neonOptions.LaserWavelength_Nanometer;
-        }
-
-        if (calibration.XArray_nm is { } xArr && calibration.YPreprocessed is { } yArr && calibration.Converter is { } converter)
-        {
-          var colCorrWL = dstTable.DataColumns.EnsureExistence("Preprocessed_Wavelength [nm]", typeof(DoubleColumn), ColumnKind.X, 1);
-          var colCorrY = dstTable.DataColumns.EnsureExistence("Preprocessed_Signal", typeof(DoubleColumn), ColumnKind.V, 1);
-
-          for (var i = 0; i < xArr.Length; ++i)
-          {
-            colCorrWL[i] = converter.ConvertWavelengthMeasToNist(xArr[i]);
-            colCorrY[i] = yArr[i];
-          }
-        }
-      }
-
-      return calibration;
-    }
-
     /// <summary>
     /// Does the relative part of a Raman calibration by utilizing a silicon spectrum.
     /// </summary>
@@ -764,42 +717,6 @@ namespace Altaxo.Science.Spectroscopy
 
 
       Current.ProjectService.OpenOrCreateWorksheetForTable(dstTable);
-    }
-
-
-    public static SiliconCalibration? Raman_CalibrateWithSiliconSpectrum(DataTable dstTable, SiliconCalibrationOptions siliconOptions, IReadableColumn x_column, IReadableColumn y_column, CancellationToken cancellationToken)
-    {
-      var len = Math.Min(x_column.Count ?? 0, y_column.Count ?? 0);
-      var arrayX = new double[len];
-      var arrayY = new double[len];
-
-      for (var i = 0; i < len; i++)
-      {
-        arrayX[i] = x_column[i];
-        arrayY[i] = y_column[i];
-      }
-
-
-      var calibration = new SiliconCalibration();
-      var match = calibration.FindMatch(siliconOptions, arrayX, arrayY, cancellationToken);
-
-      if (match is null)
-      {
-        Current.Gui.ErrorMessageBox("No silcon peak could be found");
-        return null;
-      }
-
-
-
-      using (var token = dstTable.SuspendGetToken())
-      {
-        var colPos = dstTable.DataColumns.EnsureExistence("SiliconPeakShift", typeof(DoubleColumn), ColumnKind.V, 1);
-        var colPosErr = dstTable.DataColumns.EnsureExistence("SiliconPeakShift.Err", typeof(DoubleColumn), ColumnKind.Err, 1);
-        colPos[0] = match.Value.Position;
-        colPosErr[0] = match.Value.PositionTolerance;
-      }
-
-      return calibration;
     }
   }
 }

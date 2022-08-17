@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Altaxo.Calc;
+using Altaxo.Calc.Interpolation;
 
 namespace Altaxo.Science.Spectroscopy.Raman
 {
@@ -58,9 +59,21 @@ namespace Altaxo.Science.Spectroscopy.Raman
       }
     };
 
+    /// <summary>
+    /// Gets the interpolation method used for interpolating the differences of Nist wavelength and measured wavelength
+    /// in dependence on the measured wavelength.
+    /// </summary>
+    public IInterpolationFunctionOptions InterpolationMethod { get; init; } = new CrossValidatedCubicSplineOptions();
+
+    /// <summary>
+    /// Gets a value indicating whether the position variance obtained from the peak fit should be ignored
+    /// during the interpolation step. If set to true, the position variance is ignored and all points are weighted equally.
+    /// </summary>
+    public bool InterpolationIgnoreVariance { get; init; } = true;
+
     #region Serialization
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(NeonCalibrationOptions), 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoCore", "Altaxo.Science.Spectroscopy.Raman.NeonCalibrationOptions", 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
@@ -92,6 +105,49 @@ namespace Altaxo.Science.Spectroscopy.Raman
         };
       }
     }
+
+    /// <summary>
+    /// 2022-08-17 Added InterpolationMethod, and InterpolationIgnoreVariance
+    /// </summary>
+    /// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(NeonCalibrationOptions), 1)]
+    public class SerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        var s = (NeonCalibrationOptions)obj;
+        info.AddEnum("XAxisUnit", s.XAxisUnit);
+        info.AddValue("ApproximateLaserWavelength", s.LaserWavelength_Nanometer);
+        info.AddValue("WavelengthTolerance", s.Wavelength_Tolerance_nm);
+        info.AddValue("FilterOutPeaksCorrespondingToMultipleNistPeaks", s.FilterOutPeaksCorrespondingToMultipleNistPeaks);
+        info.AddValue("PeakFindingOptions", s.PeakFindingOptions);
+        info.AddValue("InterpolationMethod", s.InterpolationMethod);
+        info.AddValue("InterpolationIgnoreVariance", s.InterpolationIgnoreVariance);
+      }
+
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      {
+        var xAxisUnit = (XAxisUnit)info.GetEnum("XAxisUnit", typeof(XAxisUnit));
+        var approximateLaserWavelength = info.GetDouble("ApproximateLaserWavelength");
+        var wavelengthTol = info.GetDouble("WavelengthTolerance");
+        var filterOut = info.GetBoolean("FilterOutPeaksCorrespondingToMultipleNistPeaks");
+        var peakOptions = info.GetValue<PeakSearchingAndFittingOptions>("PeakFindingOptions", null);
+        var interpolationMethod = info.GetValue<IInterpolationFunctionOptions>("InterpolationMethod", null);
+        var interpolationIgnore = info.GetBoolean("InterpolationIgnoreVariance");
+
+        return new NeonCalibrationOptions()
+        {
+          XAxisUnit = xAxisUnit,
+          LaserWavelength_Nanometer = approximateLaserWavelength,
+          Wavelength_Tolerance_nm = wavelengthTol,
+          FilterOutPeaksCorrespondingToMultipleNistPeaks = filterOut,
+          PeakFindingOptions = peakOptions,
+          InterpolationMethod  = interpolationMethod,
+          InterpolationIgnoreVariance = interpolationIgnore,
+        };
+      }
+    }
+
     #endregion
 
 

@@ -26,8 +26,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Threading;
 using Altaxo.Data;
 
@@ -37,13 +35,33 @@ namespace Altaxo.Science.Spectroscopy.Raman
   {
     #region ColumnNames
 
-    public const string ColumnName_NeonCalibration_SplineX_MeasuredWavelength = "NeonCalibration_MeasuredWL";
-    public const string ColumnName_NeonCalibration_SplineY_DifferenceWavelength = "NeonCalibration_DifferenceWL";
+    public const string ColumnName_Group0_NeonCalibration_NistPeakWavelength = "NistNeonPeakWavelength[nm]";
+    public const string ColumnName_Group0_NeonCalibration_MeasuredPeakWavelength = "MeasuredNeonPeakWavelength [nm]";
+    public const string ColumnName_Group0_NeonCalibration_DifferenceOfPeakWavelengths = "DifferenceOfPeakWavelengths [nm]";
+    public const string ColumnName_Group0_NeonCalibration_DifferenceOfPeakWavelengthsVariance = "DifferenceOfPeakWavelengths.Variance [nm]";
+    public const string PColumnName_Group0_NeonCalibration_AssumedLaserWavelength = "AssumedLaserWavelength [nm]";
 
-    public const string ColumnName_XCalibration_UncalibratedX = "XCalibration_UncalibratedX";
-    public const string ColumnName_XCalibration_CalibratedX = "XCalibration_CalibratedX";
-    public const string ColumnName_XCalibration_XDeviation = "XCalibration_XDeviation";
-    public const string PropertyName_CalibratedLaserWavelength = "CalibratedLaserWavelength [nm]";
+    public const string ColumnName_Group1_NeonCalibration1_PreprocessedSpectrumWavelength = "Neon1_Preprocessed_Wavelength [nm]";
+    public const string ColumnName_Group1_NeonCalibration1_PreprocessedSignal = "Neon1_Preprocessed_Signal";
+
+    public const string ColumnName_Group2_NeonCalibration2_PreprocessedSpectrumWavelength = "Neon2_Preprocessed_Wavelength [nm]";
+    public const string ColumnName_Group2_NeonCalibration2_PreprocessedSignal = "Neon2_Preprocessed_Signal";
+
+    public const string ColumnName_Group3_NeonCalibration_SplineX_MeasuredWavelength = "NeonCalibration_MeasuredWL";
+    public const string ColumnName_Group3_NeonCalibration_SplineY_DifferenceWavelength = "NeonCalibration_DifferenceWL";
+
+    public const string ColumnName_Group4_SiliconCalibration_PeakShift = "SiliconPeakShift [cm-1]";
+    public const string ColumnName_Group4_SiliconCalibration_PeakShiftVariance = "SiliconPeakShift.Variance [cm-1]";
+
+
+    public const string ColumnName_Group5_SiliconCalibration_PreprocessedSpectrumWavelength = "Silicon_Preprocessed_Wavelength [nm]";
+    public const string ColumnName_Group5_SiliconCalibration_PreprocessedSignal = "Silicon_Preprocessed_Signal";
+
+
+    public const string ColumnName_Group6_XCalibration_UncalibratedX = "XCalibration_UncalibratedX";
+    public const string ColumnName_Group6_XCalibration_CalibratedX = "XCalibration_CalibratedX";
+    public const string ColumnName_Group6_XCalibration_XDeviation = "XCalibration_XDeviation";
+    public const string PColumnName_Group6_CalibratedLaserWavelength = "CalibratedLaserWavelength [nm]";
 
     #endregion
 
@@ -236,12 +254,12 @@ namespace Altaxo.Science.Spectroscopy.Raman
       FillData(destinationTable, CancellationToken.None);
     }
 
-      /// <summary>
-      /// Fills (or refills) the data table with the processed data. The data source is represented by this instance, the destination table is provided in the argument <paramref name="destinationTable" />.
-      /// </summary>
-      /// <param name="destinationTable">The destination table.</param>
-      /// <param name="cancellationToken">CancellationToken used to cancel the task.</param>
-      public void FillData(DataTable destinationTable, CancellationToken cancellationToken)
+    /// <summary>
+    /// Fills (or refills) the data table with the processed data. The data source is represented by this instance, the destination table is provided in the argument <paramref name="destinationTable" />.
+    /// </summary>
+    /// <param name="destinationTable">The destination table.</param>
+    /// <param name="cancellationToken">CancellationToken used to cancel the task.</param>
+    public void FillData(DataTable destinationTable, CancellationToken cancellationToken)
     {
       try
       {
@@ -255,99 +273,50 @@ namespace Altaxo.Science.Spectroscopy.Raman
 
         if (_neonCalibrationData1 is { } neondata1 && _neonCalibrationOptions1 is { } neonOptions1)
         {
-          neonCalibration1 = SpectroscopyCommands.Raman_CalibrateWithNeonSpectrum(destinationTable, neonOptions1, neondata1.XColumn, neondata1.YColumn, cancellationToken);
+          neonCalibration1 = CalibrateWithNeonSpectrum(destinationTable, neonOptions1, neondata1.XColumn, neondata1.YColumn, cancellationToken);
         }
         if (_neonCalibrationData2 is { } neondata2 && _neonCalibrationOptions2 is { } neonOptions2)
         {
-          neonCalibration2 = SpectroscopyCommands.Raman_CalibrateWithNeonSpectrum(destinationTable, neonOptions2, neondata2.XColumn, neondata2.YColumn, cancellationToken);
+          neonCalibration2 = CalibrateWithNeonSpectrum(destinationTable, neonOptions2, neondata2.XColumn, neondata2.YColumn, cancellationToken);
         }
         if (_siliconCalibrationData is { } silicondata && _siliconCalibrationOptions is { } siliconOptions)
         {
-          siliconCalibration = SpectroscopyCommands.Raman_CalibrateWithSiliconSpectrum(destinationTable, siliconOptions, silicondata.XColumn, silicondata.YColumn, cancellationToken);
+          siliconCalibration = CalibrateWithSiliconSpectrum(destinationTable, siliconOptions, silicondata.XColumn, silicondata.YColumn, cancellationToken);
         }
 
-        if (siliconCalibration is not null && neonCalibration1 is not null)
+        using (var token = destinationTable.SuspendGetToken())
         {
-          var x = neonCalibration1.PeakMatchings.Select(p => p.NistWL).ToArray();
-          var p = neonCalibration1.PeakMatchings.ToArray();
-          Array.Sort(x, p);
-          var y = p.Select(p => (p.NistWL - p.MeasWL)).ToArray();
-          var dy = p.Select(p => p.MeasWLVariance).ToArray();
-          // spline difference Nist wavelength - Measured wavelength versus the Nist wavelength
-          // why x is Nist wavelength (and not measured wavelength)? Because it has per definition no error, whereas measured wavelength has
-          var spline = new Calc.Interpolation.CrossValidatedCubicSpline();
-          if (dy.Max() > 0) 
+          if (neonCalibration1 is not null && neonCalibration2 is not null)
           {
-            spline.Interpolate(x, y, 1, dy); // if we have calculated the variance, we use it for splining
+            if (_neonCalibrationOptions1.LaserWavelength_Nanometer != _neonCalibrationOptions2.LaserWavelength_Nanometer)
+              throw new InvalidOperationException($"When using both NeonCalibration1 and NeonCalibration2, the assumed laser wavelength must be the same!");
+
+            var combinedNeonPeakMatchings = new List<(double NistWL, double MeasWL, double MeasWLVariance)>();
+            combinedNeonPeakMatchings.AddRange(neonCalibration1.PeakMatchings);
+            combinedNeonPeakMatchings.AddRange(neonCalibration2.PeakMatchings);
+            WriteNeonPeakPositionsToTable(destinationTable, _neonCalibrationOptions1.LaserWavelength_Nanometer, combinedNeonPeakMatchings);
+
+            WritePreprocessedSpectraToTable(destinationTable, neonCalibration1, false);
+            WritePreprocessedSpectraToTable(destinationTable, neonCalibration2, true);
+
+            var spline = NeonCalibration.GetSplineMeasuredWavelengthToWavelengthDifference(_neonCalibrationOptions1, combinedNeonPeakMatchings);
+            WriteSplinedPositionDifferencesToTable(destinationTable, neonCalibration1.XArray_nm.Concat(neonCalibration2.XArray_nm), spline);
           }
-          else
+          else if (neonCalibration1 is not null) // we only consider NeonCalibration1
           {
-            spline.Interpolate(x, y); // otherwise, we spline with unknown variance
-          }
-
-
-          // now, we calculate the splined measured wavelength in dependence on the Nist wavelength
-          var xx = new double[x.Length];
-          for (var i = 0; i < xx.Length; i++)
-          {
-            var diff = spline.GetYOfX(x[i]);
-            xx[i] = x[i] - diff; // we calculate the splined measured wavelengh
-          }
-          // new spline y=(Nist wavelength - Measured wavelength) versus x = (splined) measured wavelength
-          spline = new Calc.Interpolation.CrossValidatedCubicSpline();
-          spline.Interpolate(xx, y); // out spline now contains a function that has the measured wavelength as argument, and returns the correction offset to get the calibrated wavelength
-         
-
-
-          var assumedLaserWavelength = _neonCalibrationOptions1.LaserWavelength_Nanometer;
-
-          var siliconWL_Uncalibrated = 1 / (1 / assumedLaserWavelength - 1E-7 * siliconCalibration.SiliconPeakPosition);
-
-          // transform no Nist wavelength
-          var siliconWL_Nist = siliconWL_Uncalibrated + spline.GetYOfX(siliconWL_Uncalibrated);
-
-          var laserWL_Calibrated = 1 / (1 / siliconWL_Nist + 1E-7 * _siliconCalibrationOptions.GetOfficialShiftValue_Silicon_invcm());
-
-          // with the calibrated laser wavelength, we are now be able to convert our shift values to calibrated shift values
-
-          var x_uncalibrated = destinationTable.DataColumns.EnsureExistence(ColumnName_XCalibration_UncalibratedX, typeof(DoubleColumn), ColumnKind.X, 10);
-          x_uncalibrated.Clear();
-          var x_calibrated = destinationTable.DataColumns.EnsureExistence(ColumnName_XCalibration_CalibratedX, typeof(DoubleColumn), ColumnKind.V, 10);
-          x_calibrated.Clear();
-          var x_deviation = destinationTable.DataColumns.EnsureExistence(ColumnName_XCalibration_XDeviation, typeof(DoubleColumn), ColumnKind.V, 10);
-          x_deviation.Clear();
-
-          var pcol = destinationTable.PropCols.EnsureExistence(PropertyName_CalibratedLaserWavelength, typeof(DoubleColumn), ColumnKind.V, 0);
-          pcol.Clear();
-          pcol[destinationTable.DataColumns.GetColumnNumber(x_calibrated)] = laserWL_Calibrated;
-
-          var originalShiftColumn = _siliconCalibrationData.XColumn;
-          for (var i = 0; i < (originalShiftColumn.Count ?? 0); ++i)
-          {
-            var shift_uncalibrated = _siliconCalibrationData.XColumn[i];
-            // transform to approximate wavelength
-            var approxWL = 1 / (1 / assumedLaserWavelength - 1E-7 * shift_uncalibrated);
-            // transform to calibrated Nist wavelength
-            var nistWL = approxWL + spline.GetYOfX(approxWL);
-            // backtransform to shift, now using calibrated laser wavelength
-            var shift_calibrated = 1E7 / laserWL_Calibrated - 1E7 / nistWL;
-
-            x_uncalibrated[i] = shift_uncalibrated;
-            x_calibrated[i] = shift_calibrated;
-            x_deviation[i] = shift_calibrated - shift_uncalibrated;
+            WriteNeonPeakPositionsToTable(destinationTable, _neonCalibrationOptions1.LaserWavelength_Nanometer, neonCalibration1.PeakMatchings);
+            WritePreprocessedSpectraToTable(destinationTable, neonCalibration1, false);
+            WriteSplinedPositionDifferencesToTable(destinationTable, neonCalibration1.XArray_nm, neonCalibration1.MeasuredWavelengthToWavelengthDifference);
           }
 
+          if(siliconCalibration is not null)
           {
-            // output the neon spline
-            var x_neonMeasWL = destinationTable.DataColumns.EnsureExistence(ColumnName_NeonCalibration_SplineX_MeasuredWavelength, typeof(DoubleColumn), ColumnKind.X, 9);
-            var y_neonDiffWL = destinationTable.DataColumns.EnsureExistence(ColumnName_NeonCalibration_SplineY_DifferenceWavelength, typeof(DoubleColumn), ColumnKind.V, 9);
+            WriteSiliconPeakToTable(destinationTable, (siliconCalibration.SiliconPeakPosition, siliconCalibration.SiliconPeakPositionVariance));
+          }
 
-            for (int i = 0; i < _siliconCalibrationData.XColumn.Count; ++i)
-            {
-              double wl = 1 / (1 / laserWL_Calibrated - 1E-7 * _siliconCalibrationData.XColumn[i]);
-              x_neonMeasWL[i] = wl;
-              y_neonDiffWL[i] = spline.GetYOfX(wl);
-            }
+          if (siliconCalibration is not null && neonCalibration1 is not null)
+          {
+            ExecuteFullCalibration(destinationTable, neonCalibration1, siliconCalibration);
           }
         }
 
@@ -358,17 +327,213 @@ namespace Altaxo.Science.Spectroscopy.Raman
       }
     }
 
+    protected void ExecuteFullCalibration(DataTable destinationTable, NeonCalibration neonCalibration1, SiliconCalibration siliconCalibration)
+    {
+      var x = neonCalibration1.PeakMatchings.Select(p => p.NistWL).ToArray();
+      var p = neonCalibration1.PeakMatchings.ToArray();
+      Array.Sort(x, p);
+      var y = p.Select(p => (p.NistWL - p.MeasWL)).ToArray();
+      var dy = p.Select(p => p.MeasWLVariance).ToArray();
+
+      var splineFunction = neonCalibration1.MeasuredWavelengthToWavelengthDifference;
+
+      var assumedLaserWavelength = _neonCalibrationOptions1.LaserWavelength_Nanometer;
+
+      var siliconWL_Uncalibrated = 1 / (1 / assumedLaserWavelength - 1E-7 * siliconCalibration.SiliconPeakPosition);
+
+      // transform no Nist wavelength
+      var siliconWL_Nist = siliconWL_Uncalibrated + splineFunction(siliconWL_Uncalibrated);
+
+      var laserWL_Calibrated = 1 / (1 / siliconWL_Nist + 1E-7 * _siliconCalibrationOptions.GetOfficialShiftValue_Silicon_invcm());
+
+      // with the calibrated laser wavelength, we are now be able to convert our shift values to calibrated shift values
+
+      var x_uncalibrated = destinationTable.DataColumns.EnsureExistence(ColumnName_Group6_XCalibration_UncalibratedX, typeof(DoubleColumn), ColumnKind.X, 6);
+      x_uncalibrated.Clear();
+      var x_calibrated = destinationTable.DataColumns.EnsureExistence(ColumnName_Group6_XCalibration_CalibratedX, typeof(DoubleColumn), ColumnKind.V, 6);
+      x_calibrated.Clear();
+      var x_deviation = destinationTable.DataColumns.EnsureExistence(ColumnName_Group6_XCalibration_XDeviation, typeof(DoubleColumn), ColumnKind.V, 6);
+      x_deviation.Clear();
+
+      var pcol = destinationTable.PropCols.EnsureExistence(PColumnName_Group6_CalibratedLaserWavelength, typeof(DoubleColumn), ColumnKind.V, 6);
+      pcol.Clear();
+      pcol[destinationTable.DataColumns.GetColumnNumber(x_calibrated)] = laserWL_Calibrated;
+
+      var originalShiftColumn = _siliconCalibrationData.XColumn;
+      for (var i = 0; i < (originalShiftColumn.Count ?? 0); ++i)
+      {
+        var shift_uncalibrated = _siliconCalibrationData.XColumn[i];
+        // transform to approximate wavelength
+        var approxWL = 1 / (1 / assumedLaserWavelength - 1E-7 * shift_uncalibrated);
+        // transform to calibrated Nist wavelength
+        var nistWL = approxWL + splineFunction(approxWL);
+        // backtransform to shift, now using calibrated laser wavelength
+        var shift_calibrated = 1E7 / laserWL_Calibrated - 1E7 / nistWL;
+
+        x_uncalibrated[i] = shift_uncalibrated;
+        x_calibrated[i] = shift_calibrated;
+        x_deviation[i] = shift_calibrated - shift_uncalibrated;
+      }
+
+      {
+        // output the neon spline
+        var x_neonMeasWL = destinationTable.DataColumns.EnsureExistence(ColumnName_Group3_NeonCalibration_SplineX_MeasuredWavelength, typeof(DoubleColumn), ColumnKind.X, 3);
+        var y_neonDiffWL = destinationTable.DataColumns.EnsureExistence(ColumnName_Group3_NeonCalibration_SplineY_DifferenceWavelength, typeof(DoubleColumn), ColumnKind.V, 3);
+        x_neonMeasWL.Clear();
+        y_neonDiffWL.Clear();
+        for (int i = 0; i < _siliconCalibrationData.XColumn.Count; ++i)
+        {
+          double wl = 1 / (1 / laserWL_Calibrated - 1E-7 * _siliconCalibrationData.XColumn[i]);
+          x_neonMeasWL[i] = wl;
+          y_neonDiffWL[i] = splineFunction(wl);
+        }
+      }
+    }
+
+    public static NeonCalibration? CalibrateWithNeonSpectrum(
+      DataTable dstTable,
+      NeonCalibrationOptions neonOptions,
+      IReadableColumn x_column,
+      IReadableColumn y_column,
+      CancellationToken cancellationToken)
+    {
+      var len = Math.Min(x_column.Count ?? 0, y_column.Count ?? 0);
+
+      var arrayX = new double[len];
+      var arrayY = new double[len];
+
+      for (var i = 0; i < len; i++)
+      {
+        arrayX[i] = x_column[i];
+        arrayY[i] = y_column[i];
+      }
+
+
+      var calibration = new NeonCalibration();
+      calibration.Evaluate(neonOptions, arrayX, arrayY, cancellationToken);
+
+      //WriteNeonCalibrationResultsToTable(dstTable, neonOptions, calibration);
+
+      return calibration;
+    }
+
+
+    /// <summary>
+    /// Writes the splined position differences to the desination table.
+    /// </summary>
+    /// <param name="dstTable">The destination table.</param>
+    /// <param name="xvalues">The xvalues (can be unordered or multiple).</param>
+    /// <param name="spline">The spline.</param>
+    private static void WriteSplinedPositionDifferencesToTable(DataTable dstTable, IEnumerable<double> xvalues, Func<double, double> spline)
+    {
+      var xArray = xvalues.Distinct().ToArray();
+      Array.Sort(xArray);
+      // use the spline
+      
+        var colSplineX = dstTable.DataColumns.EnsureExistence(ColumnName_Group3_NeonCalibration_SplineX_MeasuredWavelength, typeof(DoubleColumn), ColumnKind.X, 3);
+        var colSplineY = dstTable.DataColumns.EnsureExistence(ColumnName_Group3_NeonCalibration_SplineY_DifferenceWavelength, typeof(DoubleColumn), ColumnKind.V, 3);
+        colSplineX.Clear();
+        colSplineY.Clear();
+        for (int i = 0; i < xArray.Length; ++i)
+        {
+          colSplineX[i] = xArray[i];
+          colSplineY[i] = spline(xArray[i]);
+        }
+    }
+
+    private static void WritePreprocessedSpectraToTable(DataTable dstTable, NeonCalibration calibration, bool isNeon2)
+    {
+      if (calibration.XArray_nm is { } xArr && calibration.YPreprocessed is { } yArr && calibration.Converter is { } converter)
+      {
+        var colCorrWL = dstTable.DataColumns.EnsureExistence(isNeon2 ? ColumnName_Group2_NeonCalibration2_PreprocessedSpectrumWavelength: ColumnName_Group1_NeonCalibration1_PreprocessedSpectrumWavelength, typeof(DoubleColumn), ColumnKind.X, isNeon2 ? 2:1);
+        var colCorrY = dstTable.DataColumns.EnsureExistence(isNeon2 ? ColumnName_Group2_NeonCalibration2_PreprocessedSignal: ColumnName_Group1_NeonCalibration1_PreprocessedSignal, typeof(DoubleColumn), ColumnKind.V, isNeon2?2:1);
+        colCorrWL.Clear();
+        colCorrY.Clear();
+
+        for (var i = 0; i < xArr.Length; ++i)
+        {
+          colCorrWL[i] = converter.ConvertWavelengthMeasToNist(xArr[i]);
+          colCorrY[i] = yArr[i];
+        }
+      }
+    }
+
+    /// <summary>
+    /// Writes the neon peak positions to table.
+    /// </summary>
+    /// <param name="dstTable">The destination table.</param>
+    /// <param name="assumedLaserWavelength_nm">The assumed laser wavelength in nm.</param>
+    /// <param name="matches">The peak position matches.</param>
+    private static void WriteNeonPeakPositionsToTable(DataTable dstTable, double assumedLaserWavelength_nm, List<(double NistWL, double MeasWL, double MeasWLVariance)> matches)
+    {
+      var colNist = dstTable.DataColumns.EnsureExistence(ColumnName_Group0_NeonCalibration_NistPeakWavelength, typeof(DoubleColumn), ColumnKind.X, 0);
+      var colMeas = dstTable.DataColumns.EnsureExistence(ColumnName_Group0_NeonCalibration_MeasuredPeakWavelength, typeof(DoubleColumn), ColumnKind.V, 0);
+      var colDiff = dstTable.DataColumns.EnsureExistence(ColumnName_Group0_NeonCalibration_DifferenceOfPeakWavelengths, typeof(DoubleColumn), ColumnKind.V, 0);
+      var colDiffVar = dstTable.DataColumns.EnsureExistence(ColumnName_Group0_NeonCalibration_DifferenceOfPeakWavelengthsVariance, typeof(DoubleColumn), ColumnKind.Err, 0);
+      for (var i = 0; i < matches.Count; ++i)
+      {
+        var match = matches[i];
+        colNist[i] = match.NistWL;
+        colMeas[i] = match.MeasWL;
+        colDiff[i] = match.NistWL - match.MeasWL;
+        colDiffVar[i] = match.MeasWLVariance;
+      }
+
+      var pcolLaserWL = dstTable.PropertyColumns.EnsureExistence(PColumnName_Group0_NeonCalibration_AssumedLaserWavelength, typeof(DoubleColumn), ColumnKind.V, 0);
+      foreach (var dc in new[] { colMeas, colDiff })
+      {
+        var idx = dstTable.DataColumns.GetColumnNumber(dc);
+        pcolLaserWL[idx] = assumedLaserWavelength_nm;
+      }
+    }
+
+    public static SiliconCalibration? CalibrateWithSiliconSpectrum(DataTable dstTable, SiliconCalibrationOptions siliconOptions, IReadableColumn x_column, IReadableColumn y_column, CancellationToken cancellationToken)
+    {
+      var len = Math.Min(x_column.Count ?? 0, y_column.Count ?? 0);
+      var arrayX = new double[len];
+      var arrayY = new double[len];
+
+      for (var i = 0; i < len; i++)
+      {
+        arrayX[i] = x_column[i];
+        arrayY[i] = y_column[i];
+      }
+
+
+      var calibration = new SiliconCalibration();
+      var match = calibration.FindMatch(siliconOptions, arrayX, arrayY, cancellationToken);
+
+      if (match is null)
+      {
+        Current.Gui.ErrorMessageBox("No silcon peak could be found");
+        return null;
+      }
+
+      return calibration;
+    }
+
+    private static void WriteSiliconPeakToTable(DataTable dstTable, (double Position, double PositionTolerance)? match)
+    {
+        var colPos = dstTable.DataColumns.EnsureExistence(ColumnName_Group4_SiliconCalibration_PeakShift, typeof(DoubleColumn), ColumnKind.V, 4);
+        var colPosErr = dstTable.DataColumns.EnsureExistence(ColumnName_Group4_SiliconCalibration_PeakShiftVariance, typeof(DoubleColumn), ColumnKind.Err, 4);
+        colPos.Clear();
+        colPosErr.Clear();
+
+        colPos[0] = match.Value.Position;
+        colPosErr[0] = match.Value.PositionTolerance;
+    }
+
     public bool IsContainingValidXAxisCalibration(DataTable table)
     {
-      var uncalibColumn = table.DataColumns.TryGetColumn(ColumnName_XCalibration_UncalibratedX);
-      var calibColumn = table.DataColumns.TryGetColumn(ColumnName_XCalibration_CalibratedX);
+      var uncalibColumn = table.DataColumns.TryGetColumn(ColumnName_Group6_XCalibration_UncalibratedX);
+      var calibColumn = table.DataColumns.TryGetColumn(ColumnName_Group6_XCalibration_CalibratedX);
       return uncalibColumn is not null && calibColumn is not null && Math.Min(uncalibColumn.Count, calibColumn.Count) >= 2;
     }
 
     public (double x_uncalibrated, double x_calibrated)[] GetXAxisCalibration(DataTable table)
     {
-      var uncalibColumn = table.DataColumns.TryGetColumn(ColumnName_XCalibration_UncalibratedX);
-      var calibColumn = table.DataColumns.TryGetColumn(ColumnName_XCalibration_CalibratedX);
+      var uncalibColumn = table.DataColumns.TryGetColumn(ColumnName_Group6_XCalibration_UncalibratedX);
+      var calibColumn = table.DataColumns.TryGetColumn(ColumnName_Group6_XCalibration_CalibratedX);
       var len = Math.Min(uncalibColumn.Count, calibColumn.Count);
 
       if (!(uncalibColumn is not null && calibColumn is not null && Math.Min(uncalibColumn.Count, calibColumn.Count) >= 2))

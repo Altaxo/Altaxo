@@ -35,7 +35,7 @@ namespace Altaxo.Calc.Interpolation
   /// </summary>
   public record CrossValidatedCubicSplineOptions : IInterpolationFunctionOptions
   {
-    private double _errorVariance;
+    private double _errorVariance = -1;
 
     #region Serialization
 
@@ -63,9 +63,10 @@ namespace Altaxo.Calc.Interpolation
 
 
     /// <summary>
-    /// If the error variance of the provided points is unknown, set this value to -1. Then a cross validating cubic spline is fitted to the data.
+    /// If the error variance of the provided points is unknown, set this value to -1 (default value).
+    /// Then a cross validating cubic spline is fitted to the data.
     /// If the error variance is known and is equal for all points, set this value to the error variance of the points (must be greater than zero).
-    /// If the error variance is known and different for each point, set this value to 1, and provide the error variance for each point
+    /// If the error variance, provide the error variance for each point (in this case, <see cref="ErrorVariance"/> is ignored and internally set to 1).
     /// by calling <see cref="Interpolate(IReadOnlyList{double}, IReadOnlyList{double}, IReadOnlyList{double}?)"/>
     /// </summary>
     public double ErrorVariance
@@ -82,12 +83,18 @@ namespace Altaxo.Calc.Interpolation
     /// <inheritdoc/>
     public IInterpolationFunction Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec, IReadOnlyList<double>? yVariance = null)
     {
-      var spline = new CrossValidatedCubicSpline() { ErrorVariance = ErrorVariance };
-      if (yVariance is null)
-        spline.Interpolate(xvec, yvec);
+      if (yVariance is not null)
+      {
+        var spline = new CrossValidatedCubicSpline() { ErrorVariance = 1 };
+        spline.Interpolate(xvec, yvec, 1, yVariance);
+        return spline;
+      }
       else
-        spline.Interpolate(xvec, yvec, _errorVariance, yVariance);
-      return spline;
+      {
+        var spline = new CrossValidatedCubicSpline() { ErrorVariance = ErrorVariance };
+        spline.Interpolate(xvec, yvec);
+        return spline;
+      }
     }
 
     /// <inheritdoc/>

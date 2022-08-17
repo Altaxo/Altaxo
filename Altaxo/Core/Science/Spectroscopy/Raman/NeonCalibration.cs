@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using Altaxo.Calc;
+using Altaxo.Calc.Interpolation;
 
 namespace Altaxo.Science.Spectroscopy.Raman
 {
@@ -497,7 +498,13 @@ namespace Altaxo.Science.Spectroscopy.Raman
     /// The x-vales of the Neon measurement, converted to nm, presumed that the laser has the wavelength
     /// </summary>
     private double[]? _xArray_nm;
+
+    /// <summary>
+    /// The y (signal) values of the preprocessed spectrum.
+    /// </summary>
     private double[]? _yPreprocessed;
+
+
     private double _assumedLaserWavelength_nm = double.NaN;
 
     private List<PeakSearching.PeakDescription>? _peakSearchingDescriptions;
@@ -505,22 +512,55 @@ namespace Altaxo.Science.Spectroscopy.Raman
 
     public WavelengthConverter Converter { get; protected set; }
 
+    /// <summary>
+    /// The x-vales of the Neon measurement, converted to nm, presumed that the laser has the wavelength
+    /// </summary>
     public double[]? XArray_nm => _xArray_nm;
 
+    /// <summary>
+    /// The y (signal) values of the preprocessed spectrum.
+    /// </summary>
     public double[]? YPreprocessed => _yPreprocessed;
 
-    public List<(double NistWL, double MeasWL, double MeasWLVariance)> PeakMatchings {get; private set; }
+    /// <summary>
+    /// Gets the peak matchings, i.e. the correspondence between official Nist peak position, and measured peak position.
+    /// </summary>
+    public List<(double NistWL, double MeasWL, double MeasWLVariance)> PeakMatchings { get; private set; } = new();
+
+    /// <summary>
+    /// Gets an interpolation function that maps the measured wavelength to the difference between Nist and measured wavelength.
+    /// </summary>
+    public Func<double, double>? MeasuredWavelengthToWavelengthDifference { get; private set; }
 
     #endregion
 
-    public List<(double NistWL, double MeasWL, double MeasWLVariance)>
-      GetPeakMatchings(NeonCalibrationOptions options, double[] x, double[] y, CancellationToken cancellationToken)
+
+    /// <summary>
+    /// Evaluates the Neon calibration. After the calibration is evaluated, properties like <see cref="PeakMatchings"/>
+    /// and <see cref="MeasuredWavelengthToWavelengthDifference"/> are useable.
+    /// </summary>
+    /// <param name="options">The calibration options.</param>
+    /// <param name="x">The array of x-values of the Neon spectrum.</param>
+    /// <param name="y">The array of y-values of the Neon spectrum.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>True if the evaluation was successfull; otherwise, if no peaks could be matched, false.</returns>
+    public bool Evaluate(NeonCalibrationOptions options, double[] x, double[] y, CancellationToken cancellationToken)
     {
+      if(options is null)
+        throw new ArgumentNullException(nameof(options));
+      if (x is null)
+        throw new ArgumentNullException(nameof(x));
+      if (y is null)
+        throw new ArgumentNullException(nameof(y));
+      if (x.Length != y.Length)
+        throw new ArgumentException($"Length of {nameof(x)}-array ({x.Length}) does not match length of {nameof(y)}-array ({y.Length})");
+
       var coarse = FindCoarseMatch(options, x, y, cancellationToken);
 
       if (coarse is null)
       {
-        return new List<(double NistWL, double MeasWL, double MeasWLVariance)>();
+        PeakMatchings = new();
+        return false;
       }
 
       if (_peakFittingDescriptions is not null)
@@ -533,8 +573,56 @@ namespace Altaxo.Science.Spectroscopy.Raman
         PeakMatchings = FilterOutMatchesOfMeasuredPeaksCorrespondsToMultipleNistPeaks(PeakMatchings);
       }
 
-      return PeakMatchings;
+      MeasuredWavelengthToWavelengthDifference = GetSplineMeasuredWavelengthToWavelengthDifference(options,PeakMatchings);
+
+      return true;
     }
+
+    /// <summary>
+    /// Creates a spline that corresponds the measured wavelength to the wavelength difference between the
+    /// official Nist wavelength and measured wavelength.
+    /// </summary>
+    public static Func<double, double> GetSplineMeasuredWavelengthToWavelengthDifference(NeonCalibrationOptions options, List<(double NistWL, double MeasWL, double MeasWLVariance)> PeakMatchings)
+    {
+      var x = PeakMatchings.Select(p => p.NistWL).ToArray();
+      var p = PeakMatchings.ToArray();
+      Array.Sort(x, p);
+      var y = p.Select(p => (p.NistWL - p.MeasWL)).ToArray();
+      var dy = p.Select(p => p.MeasWLVariance).ToArray();
+      // spline difference Nist wavelength - Measured wavelength versus the Nist wavelength
+      // why x is Nist wavelength (and not measured wavelength)? Because it has per definition no error, whereas measured wavelength has
+      IInterpolationFunction spline;
+      if (!options.InterpolationIgnoreVariance && dy.Max() > 0 && dy.Select(v=>RMath.IsFinite(v)).Count() >= 1)
+      {
+        // first, sanitize the variance:
+        // if for some values it is Infinity, we replace those with the mean of the finite variances
+        var meanVariance = dy.Where(v => RMath.IsFinite(v)).Average();
+        for(int i=0;i<dy.Length;i++)
+        {
+          if (!RMath.IsFinite(dy[i]))
+            dy[i] = meanVariance;
+        }
+        spline = options.InterpolationMethod.Interpolate(x, y, dy);
+      }
+      else
+      {
+        spline = options.InterpolationMethod.Interpolate(x, y);
+      }
+
+
+      // now, we calculate the splined measured wavelength in dependence on the Nist wavelength
+      var xx = new double[x.Length];
+      for (var i = 0; i < xx.Length; i++)
+      {
+        var diff = spline.GetYOfX(x[i]);
+        xx[i] = x[i] - diff; // we calculate the splined measured wavelengh
+      }
+      // new spline y=(Nist wavelength - Measured wavelength) versus x = (splined) measured wavelength
+      spline = options.InterpolationMethod.Interpolate(xx, y); // out spline now contains a function that has the measured wavelength as argument, and returns the correction offset to get the calibrated wavelength
+
+      return spline.GetYOfX;
+    }
+
 
     List<(double NistWL, double MeasWL, double MeasWLVariance)> FilterOutMatchesOfMeasuredPeaksCorrespondsToMultipleNistPeaks(List<(double NistWL, double MeasWL, double MeasWLVariance)> list)
     {
