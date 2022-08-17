@@ -538,7 +538,7 @@ namespace Altaxo.Data
     /// Clears the data column collection, then adds data column proxies, using a list of existing data column proxies. The proxies are cloned before adding them to the collection.
     /// </summary>
     /// <param name="fromList">The enumeration of data proxies to clone.</param>
-    private void InternalSetColumnHeaderColumnsWithCloning(IEnumerable<IReadableColumnProxy> fromList)
+    protected void InternalSetColumnHeaderColumnsWithCloning(IEnumerable<IReadableColumnProxy> fromList)
     {
       var oldColumns = _columnHeaderColumns;
       _columnHeaderColumns = new List<IReadableColumnProxy>();

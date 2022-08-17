@@ -22,24 +22,18 @@
 
 #endregion Copyright
 
-#nullable disable
-using Altaxo.Calc.Regression.Multivariate;
-using Altaxo.Data;
-using Altaxo.Gui.Data;
+using System.Windows.Controls;
 
-namespace Altaxo.Gui.Analysis.Multivariate
+namespace Altaxo.Gui.Data
 {
-  
-
-  [UserControllerForObject(typeof(DimensionReductionAndRegressionDataSource))]
-  public class DimensionReductionAndRegressionDataSourceController : DataSourceControllerBase<DimensionReductionAndRegressionDataSource>
+  /// <summary>
+  /// Interaction logic for XYPlotDataControl.xaml
+  /// </summary>
+  public partial class DataTableMatrixProxyWithMultipleColumnHeaderColumnsControl : UserControl, IDataTableMatrixProxyWithMultipleColumnHeaderColumnsView
   {
-    protected override IMVCANController GetProcessDataController()
+    public DataTableMatrixProxyWithMultipleColumnHeaderColumnsControl()
     {
-      var processDataController = new DataTableMatrixProxyWithMultipleColumnHeaderColumnsController() { UseDocumentCopy = UseDocument.Directly };
-      processDataController.InitializeDocument(_doc.ProcessData);
-      Current.Gui.FindAndAttachControlTo(processDataController);
-      return processDataController;
+      InitializeComponent();
     }
   }
 }

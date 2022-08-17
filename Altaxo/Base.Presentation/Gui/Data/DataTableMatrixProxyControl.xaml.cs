@@ -29,9 +29,9 @@ namespace Altaxo.Gui.Data
   /// <summary>
   /// Interaction logic for XYPlotDataControl.xaml
   /// </summary>
-  public partial class DataTableMatrixProxyView : UserControl, IDataTableMatrixProxyView
+  public partial class DataTableMatrixProxyControl : UserControl, IDataTableMatrixProxyView
   {
-    public DataTableMatrixProxyView()
+    public DataTableMatrixProxyControl()
     {
       InitializeComponent();
     }

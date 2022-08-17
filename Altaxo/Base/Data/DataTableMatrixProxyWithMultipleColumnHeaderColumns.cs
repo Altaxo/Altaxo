@@ -257,5 +257,15 @@ namespace Altaxo.Data
         throw new InvalidOperationException($"Header column [{idx}] is null. Thus a wrapper could not be created.");
     }
 
+    /// <summary>
+    /// Sets the data columns from an enumeration of data column proxies.
+    /// </summary>
+    /// <param name="dataColumnProxies">The enumeration of data column proxies. The proxies will be cloned before they are added to the data column collection.</param>
+    public void SetColumnHeaderColumns(IEnumerable<IReadableColumnProxy> dataColumnProxies)
+    {
+      InternalSetColumnHeaderColumnsWithCloning(dataColumnProxies);
+      _isDirty = true;
+    }
+
   }
 }

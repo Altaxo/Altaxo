@@ -36,13 +36,13 @@ using Altaxo.Science.Spectroscopy;
 
 namespace Altaxo.Gui.Data
 {
-  public interface IDataTableMatrixProxyView : IDataContextAwareView
+  public interface IDataTableMatrixProxyWithMultipleColumnHeaderColumnsView : IDataContextAwareView
   {
   }
 
-  [ExpectedTypeOfView(typeof(IDataTableMatrixProxyView))]
-  [UserControllerForObject(typeof(DataTableMatrixProxy))]
-  public class DataTableMatrixProxyController : MVCANControllerEditOriginalDocBase<DataTableMatrixProxy, IDataTableMatrixProxyView>
+  [ExpectedTypeOfView(typeof(IDataTableMatrixProxyWithMultipleColumnHeaderColumnsView))]
+  [UserControllerForObject(typeof(DataTableMatrixProxyWithMultipleColumnHeaderColumns))]
+  public class DataTableMatrixProxyWithMultipleColumnHeaderColumnsController : MVCANControllerEditOriginalDocBase<DataTableMatrixProxyWithMultipleColumnHeaderColumns, IDataTableMatrixProxyWithMultipleColumnHeaderColumnsView>
   {
     private int _maxPossiblePlotRangeTo;
 
@@ -52,14 +52,14 @@ namespace Altaxo.Gui.Data
       yield return new ControllerAndSetNullMethod(_rowsController, () => _rowsController = null);
     }
 
-    public DataTableMatrixProxyController()
+    public DataTableMatrixProxyWithMultipleColumnHeaderColumnsController()
     {
       CmdTakeAsXColumn = new RelayCommand(EhUseSelectedItemAsXColumn);
-      CmdTakeAsYColumn = new RelayCommand(EhUseSelectedItemAsYColumn);
+      CmdTakeAsYColumns = new RelayCommand(EhUseSelectedItemAsYColumns);
       CmdTakeAsVColumns = new RelayCommand(EhUseSelectedItemAsVColumns);
 
       CmdEraseXColumn = new RelayCommand(EhClearXColumn);
-      CmdEraseYColumn = new RelayCommand(EhClearYColumn);
+      CmdEraseYColumns = new RelayCommand(EhClearYColumns);
       CmdEraseVColumns = new RelayCommand(EhClearVColumns);
     }
 
@@ -68,8 +68,8 @@ namespace Altaxo.Gui.Data
 
     public ICommand CmdTakeAsXColumn { get; }
     public ICommand CmdEraseXColumn { get; }
-    public ICommand CmdTakeAsYColumn { get; }
-    public ICommand CmdEraseYColumn { get; }
+    public ICommand CmdTakeAsYColumns { get; }
+    public ICommand CmdEraseYColumns { get; }
     public ICommand CmdTakeAsVColumns { get; }
     public ICommand CmdEraseVColumns { get; }
 
@@ -210,17 +210,19 @@ namespace Altaxo.Gui.Data
       }
     }
 
-    private SelectableListNode _participatingYColumn;
 
-    public SelectableListNode ParticipatingYColumn
+
+    private SelectableListNodeList _participatingYColumns;
+
+    public SelectableListNodeList ParticipatingYColumns
     {
-      get => _participatingYColumn;
+      get => _participatingYColumns;
       set
       {
-        if (!(_participatingYColumn == value))
+        if (!(_participatingYColumns == value))
         {
-          _participatingYColumn = value;
-          OnPropertyChanged(nameof(ParticipatingYColumn));
+          _participatingYColumns = value;
+          OnPropertyChanged(nameof(ParticipatingYColumns));
         }
       }
     }
@@ -269,10 +271,6 @@ namespace Altaxo.Gui.Data
         var xCol = _doc.RowHeaderColumn;
         ParticipatingXColumn = xCol is null ? null : new SelectableListNode(GetColumnNameOrNull(xCol), xCol, false);
 
-
-        var yCol = _doc.ColumnHeaderColumn;
-        ParticipatingYColumn = yCol is null ? null : new SelectableListNode(GetColumnNameOrNull(yCol), yCol, false);
-
         // Initialize value columns
         var vCols = new SelectableListNodeList();
         for (int i = 0; i < _doc.ColumnCount; ++i)
@@ -286,7 +284,16 @@ namespace Altaxo.Gui.Data
         ParticipatingVColumns = vCols;
 
 
-        CalcMaxPossiblePlotRangeTo();
+        var yCols = new SelectableListNodeList();
+        for (int i = 0; i < _doc.ColumnHeaderColumnsCount; ++i)
+        {
+          var col = _doc.GetColumnHeaderColumn(i).Document();
+          if (col is not null)
+          {
+            vCols.Add(new SelectableListNode(GetColumnNameOrNull(col), col, false));
+          }
+        }
+        ParticipatingYColumns = yCols;
 
         // Initialize tables
         string[] tables = Current.Project.DataTableCollection.GetSortedTableNames();
@@ -374,22 +381,17 @@ namespace Altaxo.Gui.Data
         ParticipatingXColumn = null;
       }
 
-      // Y-Column
-      string yColName = ParticipatingYColumn?.Text;
-      if (!string.IsNullOrEmpty(yColName) && propcolDict.TryGetValue(yColName, out var newYCol))
-      {
-        ParticipatingYColumn = new SelectableListNode(yColName, newYCol, false);
-      }
-      else
-      {
-        ParticipatingYColumn = null;
-      }
-
       // V-Columns
       var participatingColNames = ParticipatingVColumns.Select(n => n.Text).ToArray();
-
       ParticipatingVColumns = new SelectableListNodeList(
         participatingColNames.Where(cn => columnDict.ContainsKey(cn)).Select(cn => new SelectableListNode(cn, columnDict[cn], false)));
+
+
+      // Y-Columns
+      var participatingYColNames = ParticipatingYColumns.Select(n => n.Text).ToArray();
+      ParticipatingYColumns = new SelectableListNodeList(
+        participatingYColNames.Where(cn => propcolDict.ContainsKey(cn)).Select(cn => new SelectableListNode(cn, columnDict[cn], false)));
+
 
       FillAvailableColumnList();
     }
@@ -443,8 +445,9 @@ namespace Altaxo.Gui.Data
       _doc.UseAllAvailableDataRows = UseAllAvailableDataRows;
 
       _doc.RowHeaderColumn = (IReadableColumn)ParticipatingXColumn?.Tag;
-      _doc.ColumnHeaderColumn = (IReadableColumn)ParticipatingYColumn?.Tag;
       _doc.SetDataColumns(ParticipatingVColumns.Select(n => ReadableColumnProxy.FromColumn(((IReadableColumn)n.Tag))));
+
+      _doc.SetColumnHeaderColumns(ParticipatingYColumns.Select(n => ReadableColumnProxy.FromColumn(((IReadableColumn)n.Tag))));
 
       if (!_doc.UseAllAvailableDataRows)
       {
@@ -458,32 +461,26 @@ namespace Altaxo.Gui.Data
       return ApplyEnd(true, disposeController); // successfull
     }
 
-    private void CalcMaxPossiblePlotRangeTo()
-    {
-      var xColumn = ParticipatingXColumn?.Tag as IReadableColumn;
-      var yColumn = ParticipatingYColumn?.Tag as IReadableColumn;
-
-
-      int len = int.MaxValue;
-      if (xColumn?.Count is int xCount)
-        len = Math.Min(len, xCount);
-      if (yColumn?.Count is int yCount)
-        len = Math.Min(len, yCount);
-
-      _maxPossiblePlotRangeTo = len - 1;
-    }
-
-
     private void EhUseSelectedItemAsXColumn()
     {
       var node = AvailableColumns.FirstSelectedNode;
       ParticipatingXColumn = new SelectableListNode(node.Text, node.Tag, false);
     }
 
-    private void EhUseSelectedItemAsYColumn()
+    private void EhUseSelectedItemAsYColumns()
     {
-      var node = AvailableColumns.FirstSelectedNode;
-      ParticipatingYColumn = new SelectableListNode(node.Text, node.Tag, false);
+      foreach (var node in AvailableColumns.Where(n => n.IsSelected))
+      {
+        var colToAdd = node.Tag as IReadableColumn;
+        if (colToAdd is null)
+          continue;
+
+        // before adding this node, check that it is not already present
+        if (ParticipatingYColumns.Any(n => n.Text == node.Text))
+          continue;
+
+        ParticipatingYColumns.Add(new SelectableListNode(node.Text, colToAdd, false));
+      }
     }
 
     private void EhUseSelectedItemAsVColumns()
@@ -507,9 +504,16 @@ namespace Altaxo.Gui.Data
       ParticipatingXColumn = null;
     }
 
-    private void EhClearYColumn()
+    private void EhClearYColumns()
     {
-      ParticipatingYColumn = null;
+      if (ParticipatingYColumns.FirstSelectedNode is not null) // if anything selected, clear only the selected nodes
+      {
+        ParticipatingYColumns.RemoveSelectedItems();
+      }
+      else // if nothing selected, clear all nodes
+      {
+        ParticipatingYColumns.Clear();
+      }
     }
 
     private void EhClearVColumns()
