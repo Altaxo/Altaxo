@@ -60,8 +60,6 @@ namespace Altaxo.Calc.Interpolation
 
     #endregion
 
-
-
     /// <summary>
     /// If the error variance of the provided points is unknown, set this value to -1 (default value).
     /// Then a cross validating cubic spline is fitted to the data.
@@ -85,8 +83,12 @@ namespace Altaxo.Calc.Interpolation
     {
       if (yVariance is not null)
       {
-        var spline = new CrossValidatedCubicSpline() { ErrorVariance = 1 };
-        spline.Interpolate(xvec, yvec, 1, yVariance);
+        var varianceScaleFactor = ErrorVariance > 0 ? ErrorVariance : 1;
+        var spline = new CrossValidatedCubicSpline()
+        {
+          ErrorVariance =1 // has no effect, because this parameter is given below
+        };
+        spline.Interpolate(xvec, yvec, varianceScaleFactor, yVariance);
         return spline;
       }
       else
@@ -193,7 +195,9 @@ namespace Altaxo.Calc.Interpolation
       out int ier)
     {
 #nullable disable
-      cubgcv(_x, _f, _df, n, _y0, _c, n - 1, _variance, 1, _se, _wkr, _wkt, _wku, _wkv, out ier);
+      // Note: cubgcv expects in parameter 'var' the mean square error, or a negative value (if unknown)
+      // in order to keep the sign, we provide -1 if the variance is negative, or the square of the variance, if the variance is positive
+      cubgcv(_x, _f, _df, n, _y0, _c, n - 1, _variance < 0 ? -1 : _variance*_variance, 1, _se, _wkr, _wkt, _wku, _wkv, out ier);
 #nullable enable
     }
 
