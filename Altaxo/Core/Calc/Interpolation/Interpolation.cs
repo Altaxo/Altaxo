@@ -897,7 +897,7 @@ tryinterpolation:
     /// <summary>
     /// 2022-08-14 initial version
     /// </summary>
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PolynomialRegressionAsInterpolation), 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PolynomialRegressionAsInterpolationOptions), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)

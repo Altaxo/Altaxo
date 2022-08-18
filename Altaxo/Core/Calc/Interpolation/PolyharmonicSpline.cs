@@ -30,6 +30,50 @@ using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Interpolation
 {
+  public record PolyharmonicSpline1DOptions : IInterpolationFunctionOptions
+  {
+    public double RegularizationParameter { get; init; } = PolyharmonicSpline.DefaultRegularizationParameter;
+
+    public int DerivativeOrder { get; init; } = PolyharmonicSpline.DefaultDerivativeOrder;
+
+    #region Serialization
+
+    /// <summary>
+    /// 2022-08-18 initial version
+    /// </summary>
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PolyharmonicSpline1DOptions), 0)]
+    public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        var s = (PolyharmonicSpline1DOptions)obj;
+        info.AddValue("DerivativeOrder", s.DerivativeOrder);
+        info.AddValue("RegularizationParameter", s.RegularizationParameter);
+      }
+
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      {
+        var order = info.GetInt32("DerivativeOrder");
+        var regularizationParameter = info.GetDouble("RegularizationParameter");
+        return new PolyharmonicSpline1DOptions() { DerivativeOrder=order, RegularizationParameter = regularizationParameter };
+      }
+    }
+
+    #endregion
+
+    public IInterpolationFunction Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec, IReadOnlyList<double>? yVariance = null)
+    {
+      var spline = new PolyharmonicSpline() { DerivativeOrder = DerivativeOrder, RegularizationParameter  = RegularizationParameter };
+      spline.Construct(xvec, yvec);
+      return spline;
+    }
+
+    IInterpolationCurve IInterpolationCurveOptions.Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec, IReadOnlyList<double>? yVariance)
+    {
+      return Interpolate(xvec, yvec, yVariance);
+    }
+  }
+
   /// <summary>
   /// Interpolation method for scattered data in any dimension based on radial basis functions.
   /// In 2D this is the so called Thin Plate Spline, which is an interpolation method that finds a "minimally bended"
@@ -44,7 +88,7 @@ namespace Altaxo.Calc.Interpolation
   /// Extension to any number of dimensions:
   /// TIM GUTZMER AND JENS MARKUS MELENK, MATHEMATICS OF COMPUTATION, Volume 70, Number 234, Pages 699{703, S 0025-5718(00)01299-0, Article electronically published on October 18, 2000
   ///</remarks>
-  public class PolyharmonicSpline
+  public class PolyharmonicSpline : IInterpolationFunction
   {
     /// <summary>Default value of the <see cref="RegularizationParameter"/>.</summary>
     public const double DefaultRegularizationParameter = 0;
@@ -421,6 +465,36 @@ namespace Altaxo.Calc.Interpolation
         _mtx_v[N + d] = 0;
 
       _mtx_v = solver.Solve(_mtx_v);
+    }
+
+
+    double[] _X1 = new double[1];
+    double IInterpolationFunction.GetYOfX(double x)
+    {
+      if (_coordDim != 1)
+        throw new InvalidOperationException("Spline was constructed with a dimension != 1");
+      _X1[0] = x;
+      return GetInterpolatedValue(_X1);
+    }
+
+    void IInterpolationCurve.Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec)
+    {
+      Construct(xvec, yvec);
+    }
+
+    double IInterpolationCurve.GetYOfU(double u)
+    {
+      if (_coordDim != 1)
+        throw new InvalidOperationException("Spline was constructed with a dimension != 1");
+      _X1[0] = u;
+      return GetInterpolatedValue(_X1);
+    }
+
+    double IInterpolationCurve.GetXOfU(double u)
+    {
+      if (_coordDim != 1)
+        throw new InvalidOperationException("Spline was constructed with a dimension != 1");
+      return u;
     }
 
 #nullable restore
