@@ -17,6 +17,8 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="4"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="4"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
 
@@ -37,8 +39,17 @@
                   ToolTip="This filters out peaks that appear broader, because at this position there are multiple Nist peaks very close together."
                   />
 
-        <GroupBox Grid.Row="7" Header="Preprocessing / Peak finding">
+        <Expander Grid.Row="7" Header="Interpolation method">
+            <StackPanel Orientation="Vertical">
+                <ComboBox ItemsSource="{Binding InterpolationMethod.InterpolationMethod.Items}"
+                          SelectedValue="{Binding InterpolationMethod.InterpolationMethod.SelectedItem}"/>
+                <ContentControl Content="{Binding InterpolationMethod.InterpolationDetailsController.ViewObject}"/>
+                <CheckBox IsChecked="{Binding InterpolationIgnoreVariance, Mode=TwoWay}" Content="Ignore variance from fit"/>
+            </StackPanel>
+        </Expander>
+
+        <Expander Grid.Row="9" Header="Preprocessing / Peak finding">
             <ContentControl Content="{Binding PeakFindingController.ViewObject}"/>
-        </GroupBox>
+        </Expander>
     </Grid>
 </UserControl>

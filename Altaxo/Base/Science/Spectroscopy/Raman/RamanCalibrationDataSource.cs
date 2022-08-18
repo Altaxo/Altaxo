@@ -300,13 +300,13 @@ namespace Altaxo.Science.Spectroscopy.Raman
             WritePreprocessedSpectraToTable(destinationTable, neonCalibration2, true);
 
             var spline = NeonCalibration.GetSplineMeasuredWavelengthToWavelengthDifference(_neonCalibrationOptions1, combinedNeonPeakMatchings);
-            WriteSplinedPositionDifferencesToTable(destinationTable, neonCalibration1.XArray_nm.Concat(neonCalibration2.XArray_nm), spline);
+            WriteSplinedPositionDifferencesToTable(destinationTable, neonCalibration1.XOriginal_nm.Concat(neonCalibration2.XOriginal_nm), spline);
           }
           else if (neonCalibration1 is not null) // we only consider NeonCalibration1
           {
             WriteNeonPeakPositionsToTable(destinationTable, _neonCalibrationOptions1.LaserWavelength_Nanometer, neonCalibration1.PeakMatchings);
             WritePreprocessedSpectraToTable(destinationTable, neonCalibration1, false);
-            WriteSplinedPositionDifferencesToTable(destinationTable, neonCalibration1.XArray_nm, neonCalibration1.MeasuredWavelengthToWavelengthDifference);
+            WriteSplinedPositionDifferencesToTable(destinationTable, neonCalibration1.XOriginal_nm, neonCalibration1.MeasuredWavelengthToWavelengthDifference);
           }
 
           if(siliconCalibration is not null)
@@ -443,7 +443,7 @@ namespace Altaxo.Science.Spectroscopy.Raman
 
     private static void WritePreprocessedSpectraToTable(DataTable dstTable, NeonCalibration calibration, bool isNeon2)
     {
-      if (calibration.XArray_nm is { } xArr && calibration.YPreprocessed is { } yArr && calibration.Converter is { } converter)
+      if (calibration.XPreprocessed_nm is { } xArr && calibration.YPreprocessed is { } yArr && calibration.Converter is { } converter)
       {
         var colCorrWL = dstTable.DataColumns.EnsureExistence(isNeon2 ? ColumnName_Group2_NeonCalibration2_PreprocessedSpectrumWavelength: ColumnName_Group1_NeonCalibration1_PreprocessedSpectrumWavelength, typeof(DoubleColumn), ColumnKind.X, isNeon2 ? 2:1);
         var colCorrY = dstTable.DataColumns.EnsureExistence(isNeon2 ? ColumnName_Group2_NeonCalibration2_PreprocessedSignal: ColumnName_Group1_NeonCalibration1_PreprocessedSignal, typeof(DoubleColumn), ColumnKind.V, isNeon2?2:1);

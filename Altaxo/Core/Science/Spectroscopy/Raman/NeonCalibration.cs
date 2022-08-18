@@ -497,7 +497,12 @@ namespace Altaxo.Science.Spectroscopy.Raman
     /// <summary>
     /// The x-vales of the Neon measurement, converted to nm, presumed that the laser has the wavelength
     /// </summary>
-    private double[]? _xArray_nm;
+    private double[]? _xOriginal_nm;
+
+    /// <summary>
+    /// The x-values (after preprocessing) of the Neon measurement, converted to nm, presumed that the laser has the wavelength.
+    /// </summary>
+    private double[]? _xPreprocessed_nm;
 
     /// <summary>
     /// The y (signal) values of the preprocessed spectrum.
@@ -513,9 +518,15 @@ namespace Altaxo.Science.Spectroscopy.Raman
     public WavelengthConverter Converter { get; protected set; }
 
     /// <summary>
-    /// The x-vales of the Neon measurement, converted to nm, presumed that the laser has the wavelength
+    /// The x-values of the Neon measurement, converted to nm, presumed that the laser has the wavelength
     /// </summary>
-    public double[]? XArray_nm => _xArray_nm;
+    public double[]? XOriginal_nm => _xOriginal_nm;
+
+    /// <summary>
+    /// The x-values (after preprocessing) of the Neon measurement, converted to nm, presumed that the laser has the wavelength
+    /// </summary>
+    public double[]? XPreprocessed_nm => _xPreprocessed_nm;
+
 
     /// <summary>
     /// The y (signal) values of the preprocessed spectrum.
@@ -546,7 +557,7 @@ namespace Altaxo.Science.Spectroscopy.Raman
     /// <returns>True if the evaluation was successfull; otherwise, if no peaks could be matched, false.</returns>
     public bool Evaluate(NeonCalibrationOptions options, double[] x, double[] y, CancellationToken cancellationToken)
     {
-      if(options is null)
+      if (options is null)
         throw new ArgumentNullException(nameof(options));
       if (x is null)
         throw new ArgumentNullException(nameof(x));
@@ -568,12 +579,12 @@ namespace Altaxo.Science.Spectroscopy.Raman
       else
         PeakMatchings = GetPeakMatchingsBasedOnPeakSearchingResults(coarse.Value);
 
-      if(options.FilterOutPeaksCorrespondingToMultipleNistPeaks)
+      if (options.FilterOutPeaksCorrespondingToMultipleNistPeaks)
       {
         PeakMatchings = FilterOutMatchesOfMeasuredPeaksCorrespondsToMultipleNistPeaks(PeakMatchings);
       }
 
-      MeasuredWavelengthToWavelengthDifference = GetSplineMeasuredWavelengthToWavelengthDifference(options,PeakMatchings);
+      MeasuredWavelengthToWavelengthDifference = GetSplineMeasuredWavelengthToWavelengthDifference(options, PeakMatchings);
 
       return true;
     }
@@ -592,12 +603,12 @@ namespace Altaxo.Science.Spectroscopy.Raman
       // spline difference Nist wavelength - Measured wavelength versus the Nist wavelength
       // why x is Nist wavelength (and not measured wavelength)? Because it has per definition no error, whereas measured wavelength has
       IInterpolationFunction spline;
-      if (!options.InterpolationIgnoreVariance && dy.Max() > 0 && dy.Select(v=>RMath.IsFinite(v)).Count() >= 1)
+      if (!options.InterpolationIgnoreVariance && dy.Max() > 0 && dy.Select(v => RMath.IsFinite(v)).Count() >= 1)
       {
         // first, sanitize the variance:
         // if for some values it is Infinity, we replace those with the mean of the finite variances
         var meanVariance = dy.Where(v => RMath.IsFinite(v)).Average();
-        for(int i=0;i<dy.Length;i++)
+        for (int i = 0; i < dy.Length; i++)
         {
           if (!RMath.IsFinite(dy[i]))
             dy[i] = meanVariance;
@@ -618,7 +629,13 @@ namespace Altaxo.Science.Spectroscopy.Raman
         xx[i] = x[i] - diff; // we calculate the splined measured wavelengh
       }
       // new spline y=(Nist wavelength - Measured wavelength) versus x = (splined) measured wavelength
-      spline = options.InterpolationMethod.Interpolate(xx, y); // out spline now contains a function that has the measured wavelength as argument, and returns the correction offset to get the calibrated wavelength
+      if (options.InterpolationIgnoreVariance)
+        spline = options.InterpolationMethod.Interpolate(xx, y); // out spline now contains a function that has the measured wavelength as argument, and returns the correction offset to get the calibrated wavelength
+      else
+        spline = options.InterpolationMethod.Interpolate(xx, y, dy); // out spline now contains a function that has the measured wavelength as argument, and returns the correction offset to get the calibrated wavelength
+
+      //spline = new RationalCubicSpline();
+      //spline.Interpolate(xx, y);
 
       return spline.GetYOfX;
     }
@@ -627,17 +644,17 @@ namespace Altaxo.Science.Spectroscopy.Raman
     List<(double NistWL, double MeasWL, double MeasWLVariance)> FilterOutMatchesOfMeasuredPeaksCorrespondsToMultipleNistPeaks(List<(double NistWL, double MeasWL, double MeasWLVariance)> list)
     {
       var countDict = new Dictionary<double, int>();
-      foreach(var pair in list)
+      foreach (var pair in list)
       {
         if (!countDict.TryGetValue(pair.MeasWL, out var cnt))
         {
           cnt = 0;
         }
-       countDict[pair.MeasWL] = cnt + 1;
+        countDict[pair.MeasWL] = cnt + 1;
       }
 
       var result = new List<(double NistWL, double MeasWL, double MeasWLVariance)>();
-      foreach(var pair in list)
+      foreach (var pair in list)
       {
         if (countDict[pair.MeasWL] == 1)
           result.Add(pair);
@@ -649,7 +666,7 @@ namespace Altaxo.Science.Spectroscopy.Raman
     private List<(double NistWL, double MeasWL, double MeasWLVariance)> GetPeakMatchingsBasedOnPeakSearchingResults((double NistWL_Left, double MeasWL_Left, double NistWL_Right, double MeasWL_Right) coarse)
     {
       var (NistWL_Left, MeasWL_Left, NistWL_Right, MeasWL_Right) = coarse;
-      var x_nm = _xArray_nm;
+      var x_nm = _xPreprocessed_nm;
 
       var converter = new WavelengthConverter
       {
@@ -688,7 +705,6 @@ namespace Altaxo.Science.Spectroscopy.Raman
     private List<(double NistWL, double MeasWL, double MeasWLVariance)> GetPeakMatchingsBasedOnPeakFittingResults((double NistWL_Left, double MeasWL_Left, double NistWL_Right, double MeasWL_Right) coarse)
     {
       var (NistWL_Left, MeasWL_Left, NistWL_Right, MeasWL_Right) = coarse;
-      var x_nm = _xArray_nm;
 
       var converter = new WavelengthConverter
       {
@@ -705,7 +721,7 @@ namespace Altaxo.Science.Spectroscopy.Raman
 
       foreach (var peakDesc in foundPeaks)
       {
-        var (measPeakCenterWL, measPeakCenterWLVariance, _, _,_,_,fwhm,_) = peakDesc.FitFunction.GetPositionAreaHeightFWHMFromSinglePeakParameters(peakDesc.PeakParameter, peakDesc.PeakParameterCovariances);
+        var (measPeakCenterWL, measPeakCenterWLVariance, _, _, _, _, fwhm, _) = peakDesc.FitFunction.GetPositionAreaHeightFWHMFromSinglePeakParameters(peakDesc.PeakParameter, peakDesc.PeakParameterCovariances);
         // Note that for left and right we use full width = 2 x half width
         var measPeakLeftWL = measPeakCenterWL - fwhm;
         var measPeakRightWL = measPeakCenterWL + fwhm;
@@ -738,7 +754,7 @@ namespace Altaxo.Science.Spectroscopy.Raman
     FindCoarseMatch(NeonCalibrationOptions options, double[] x, double[] y, CancellationToken cancellationToken)
     {
       var tolWL = options.Wavelength_Tolerance_nm;
-      var x_nm = _xArray_nm = new double[x.Length];
+      var x_nm = _xOriginal_nm = new double[x.Length];
       _assumedLaserWavelength_nm = options.LaserWavelength_Nanometer;
 
       ConvertXAxisToNanometer(options, x, x_nm);
@@ -748,6 +764,7 @@ namespace Altaxo.Science.Spectroscopy.Raman
       var peakOptions = options.PeakFindingOptions;
 
       (x_nm, y, _) = peakOptions.Preprocessing.Execute(x_nm, y, null);
+      _xPreprocessed_nm = x_nm;
       _yPreprocessed = y;
 
       var peakSearchingResults = peakOptions.PeakSearching.Execute(y, null);

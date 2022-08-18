@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using Altaxo.Calc.Interpolation;
+using Altaxo.Gui.Calc.Interpolation;
 using Altaxo.Gui.Common;
 using Altaxo.Science.Spectroscopy;
 using Altaxo.Science.Spectroscopy.Calibration;
@@ -85,6 +87,38 @@ namespace Altaxo.Gui.Science.Spectroscopy.Raman
       }
     }
 
+    private InterpolationFunctionOptionsController _interpolationMethod;
+
+    public InterpolationFunctionOptionsController InterpolationMethod
+    {
+      get => _interpolationMethod;
+      set
+      {
+        if (!(_interpolationMethod == value))
+        {
+          _interpolationMethod?.Dispose();
+          _interpolationMethod = value;
+          OnPropertyChanged(nameof(InterpolationMethod));
+        }
+      }
+    }
+
+
+    private bool _interpolationIgnoreVariance;
+
+    public bool InterpolationIgnoreVariance
+    {
+      get => _interpolationIgnoreVariance;
+      set
+      {
+        if (!(_interpolationIgnoreVariance == value))
+        {
+          _interpolationIgnoreVariance = value;
+          OnPropertyChanged(nameof(InterpolationIgnoreVariance));
+        }
+      }
+    }
+
 
 
     #endregion
@@ -108,12 +142,16 @@ namespace Altaxo.Gui.Science.Spectroscopy.Raman
         peakFindingController.InitializeDocument(_doc.PeakFindingOptions);
         Current.Gui.FindAndAttachControlTo(peakFindingController);
         PeakFindingController = peakFindingController;
+
+        InterpolationMethod = new InterpolationFunctionOptionsController(_doc.InterpolationMethod);
+        InterpolationIgnoreVariance = _doc.InterpolationIgnoreVariance;
       }
     }
 
     public override bool Apply(bool disposeController)
     {
       PeakSearchingAndFittingOptions findOptions;
+      IInterpolationFunctionOptions interpolationMethod;
       if (!PeakFindingController.Apply(disposeController))
         return ApplyEnd(false, disposeController);
       else
@@ -130,12 +168,20 @@ namespace Altaxo.Gui.Science.Spectroscopy.Raman
         findOptions = findOptions with { Preprocessing = findOptions.Preprocessing with { Resampling = new ResamplingNone() } };
       }
 
+      if (!InterpolationMethod.Apply(disposeController))
+        return ApplyEnd(false, disposeController);
+      else
+        interpolationMethod = (IInterpolationFunctionOptions)InterpolationMethod.ModelObject;
+
+
       _doc = _doc with
       {
         LaserWavelength_Nanometer = LaserWavelength_Nanometer,
         XAxisUnit = XAxisUnit.SelectedValue,
         FilterOutPeaksCorrespondingToMultipleNistPeaks = FilterOutPeaksCorrespondingToMultipleNistPeaks,
         PeakFindingOptions = findOptions,
+        InterpolationMethod = interpolationMethod,
+        InterpolationIgnoreVariance = InterpolationIgnoreVariance,
       };
 
       return ApplyEnd(true, disposeController);
