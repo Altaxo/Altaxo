@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -23,13 +23,7 @@
 #endregion Copyright
 
 #nullable disable warnings
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows;
 using System.Windows.Controls;
-using Altaxo.Collections;
 
 namespace Altaxo.Gui.Worksheet
 {
@@ -38,80 +32,9 @@ namespace Altaxo.Gui.Worksheet
   /// </summary>
   public partial class InterpolationControl : UserControl, IInterpolationParameterView
   {
-    public event Action<ValidationEventArgs<string>>? ValidatingFrom;
-
-    public event Action<ValidationEventArgs<string>>? ValidatingTo;
-
-    public event Action<ValidationEventArgs<string>>? ValidatingNumberOfPoints;
-
-    public event Action? ChangedInterpolationMethod;
-
     public InterpolationControl()
     {
       InitializeComponent();
-    }
-
-    public void InitializeClassList(SelectableListNodeList list)
-    {
-      GuiHelper.Initialize(_cbInterpolationClass, list);
-    }
-
-    public void InitializeNumberOfPoints(string val)
-    {
-      _edNumberOfPoints.Text = val;
-    }
-
-    public void InitializeXOrg(string val)
-    {
-      _edFrom.Text = val;
-    }
-
-    public void InitializeXEnd(string val)
-    {
-      _edTo.Text = val;
-    }
-
-    private UIElement _detailControl;
-
-    public void SetDetailControl(object detailControl)
-    {
-      if (_detailControl is not null)
-        _mainGrid.Children.Remove(_detailControl);
-
-      _detailControl = (UIElement)detailControl;
-
-      if (_detailControl is not null)
-      {
-        _detailControl.SetValue(Grid.RowProperty, 4);
-        _detailControl.SetValue(Grid.ColumnProperty, 2);
-        _mainGrid.Children.Add(_detailControl);
-      }
-    }
-
-    private void EhValueTo_Validating(object sender, ValidationEventArgs<string> e)
-    {
-      if (ValidatingTo is not null)
-        ValidatingTo(e);
-    }
-
-    private void EhValueNumberOfPoints_Validating(object sender, Altaxo.Gui.ValidationEventArgs<string> e)
-    {
-      if (ValidatingNumberOfPoints is not null)
-        ValidatingNumberOfPoints(e);
-    }
-
-    private void EhValueFrom_Validating(object sender, Altaxo.Gui.ValidationEventArgs<string> e)
-    {
-      if (ValidatingFrom is not null)
-        ValidatingFrom(e);
-    }
-
-    private void EhInterpolationClassChanged(object sender, SelectionChangedEventArgs e)
-    {
-      e.Handled = true;
-      GuiHelper.SynchronizeSelectionFromGui(_cbInterpolationClass);
-      if (ChangedInterpolationMethod is not null)
-        ChangedInterpolationMethod();
     }
   }
 }

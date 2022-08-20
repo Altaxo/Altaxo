@@ -26,39 +26,24 @@
 using System;
 using System.Collections.Generic;
 using Altaxo.Calc;
+using Altaxo.Calc.Interpolation;
 using Altaxo.Collections;
+using Altaxo.Gui.Calc.Interpolation;
 
 namespace Altaxo.Gui.Worksheet
 {
   #region Interfaces
 
-  public interface IInterpolationParameterView
+  public interface IInterpolationParameterView : IDataContextAwareView
   {
-    void InitializeClassList(SelectableListNodeList list);
-
-    void InitializeNumberOfPoints(string val);
-
-    void InitializeXOrg(string val);
-
-    void InitializeXEnd(string val);
-
-    void SetDetailControl(object detailControl);
-
-    event Action<ValidationEventArgs<string>> ValidatingFrom;
-
-    event Action<ValidationEventArgs<string>> ValidatingTo;
-
-    event Action<ValidationEventArgs<string>> ValidatingNumberOfPoints;
-
-    event Action ChangedInterpolationMethod;
   }
 
-  public class InterpolationParameters
+  public record InterpolationParameters
   {
-    public Altaxo.Calc.Interpolation.IInterpolationFunction InterpolationInstance;
-    public double XOrg;
-    public double XEnd;
-    public int NumberOfPoints;
+    public IInterpolationFunctionOptions Interpolation { get; init; } = new FritschCarlsonCubicSplineOptions();
+    public double XOrg { get; init; } = 0;
+    public double XEnd { get; init; } = 1;
+    public int NumberOfPoints { get; init; } = 100;
   }
 
   #endregion Interfaces
@@ -68,215 +53,110 @@ namespace Altaxo.Gui.Worksheet
   /// </summary>
   [UserControllerForObject(typeof(InterpolationParameters), 100)]
   [ExpectedTypeOfView(typeof(IInterpolationParameterView))]
-  public class InterpolationParameterController : IMVCAController
+  public class InterpolationParameterController : MVCANControllerEditImmutableDocBase<InterpolationParameters, IInterpolationParameterView>
   {
-    private InterpolationParameters _doc;
-    private IInterpolationParameterView _view;
-
-    private int? _numberOfPoints;
-    private double? _xOrg;
-    private double? _xEnd;
-
-    private Altaxo.Calc.Interpolation.IInterpolationFunction _interpolationInstance;
-    private IMVCAController _interpolationDetailController;
-    private SelectableListNodeList _classListA = new SelectableListNodeList();
-
-    public InterpolationParameterController(InterpolationParameters parameters)
+    public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
-      _doc = parameters;
-      _numberOfPoints = parameters.NumberOfPoints;
-      _xOrg = parameters.XOrg;
-      _xEnd = parameters.XEnd;
-      _interpolationInstance = parameters.InterpolationInstance;
-    }
+      yield return new ControllerAndSetNullMethod(_interpolationMethod, () => InterpolationMethod = null);
+    }      
 
-    private void SetInterpolationDetailController(IMVCAController ctrl)
+    #region Bindings
+
+    private InterpolationFunctionOptionsController _interpolationMethod;
+
+    public InterpolationFunctionOptionsController InterpolationMethod
     {
-      IMVCAController oldController = _interpolationDetailController;
-      _interpolationDetailController = ctrl;
-
-      if (_view is not null)
-      {
-        _view.SetDetailControl(ctrl is null ? null : ctrl.ViewObject);
-      }
-    }
-
-    #region IApplyController Members
-
-    private void Initialize()
-    {
-      if (_view is not null)
-      {
-        _view.InitializeNumberOfPoints(Altaxo.Serialization.GUIConversion.ToString(_numberOfPoints));
-        _view.InitializeXOrg(Altaxo.Serialization.GUIConversion.ToString(_xOrg));
-        _view.InitializeXEnd(Altaxo.Serialization.GUIConversion.ToString(_xEnd));
-
-        RetrieveClassList();
-
-        if (_classListA.FirstSelectedNode is null)
-          _classListA[0].IsSelected = true;
-
-        _view.InitializeClassList(_classListA);
-        EhInterpolationClassChanged(); // to make sure the right InterpolationInstance is set
-      }
-    }
-
-    private void RetrieveClassList()
-    {
-      System.Type[] rawTypes = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(Altaxo.Calc.Interpolation.IInterpolationFunction));
-
-      var list = new List<System.Type>();
-      foreach (System.Type type in rawTypes)
-      {
-        if (type.IsClass && type.IsPublic && !type.IsAbstract && type.GetConstructor(new System.Type[] { }) is not null)
-          list.Add(type);
-      }
-
-      foreach (var clsType in list)
-        _classListA.Add(new SelectableListNode(Current.Gui.GetUserFriendlyClassName(clsType), clsType, _interpolationInstance is not null && clsType == _interpolationInstance.GetType()));
-    }
-
-    public bool Apply(bool disposeController)
-    {
-      if (_interpolationDetailController is not null && false == _interpolationDetailController.Apply(disposeController))
-      {
-        return false;
-      }
-
-      if (_interpolationInstance is null || _numberOfPoints is null || _xOrg is null || _xEnd is null)
-        return false;
-
-      _doc.NumberOfPoints = (int)_numberOfPoints;
-      _doc.XOrg = (double)_xOrg;
-      _doc.XEnd = (double)_xEnd;
-      _doc.InterpolationInstance = _interpolationInstance;
-
-      return true;
-    }
-
-    /// <summary>
-    /// Try to revert changes to the model, i.e. restores the original state of the model.
-    /// </summary>
-    /// <param name="disposeController">If set to <c>true</c>, the controller should release all temporary resources, since the controller is not needed anymore.</param>
-    /// <returns>
-    ///   <c>True</c> if the revert operation was successfull; <c>false</c> if the revert operation was not possible (i.e. because the controller has not stored the original state of the model).
-    /// </returns>
-    public bool Revert(bool disposeController)
-    {
-      return false;
-    }
-
-    #endregion IApplyController Members
-
-    #region IMVCController Members
-
-    public object ViewObject
-    {
-      get
-      {
-        return _view;
-      }
+      get => _interpolationMethod;
       set
       {
-        if (_view is not null)
+        if (!(_interpolationMethod == value))
         {
-          _view.ChangedInterpolationMethod -= EhInterpolationClassChanged;
-          _view.ValidatingFrom -= EhValidatingXOrg;
-          _view.ValidatingTo -= EhValidatingXEnd;
-          _view.ValidatingNumberOfPoints -= EhValidatingNumberOfPoints;
-        }
-
-        _view = value as IInterpolationParameterView;
-
-        if (_view is not null)
-        {
-          _view.ChangedInterpolationMethod += EhInterpolationClassChanged;
-          _view.ValidatingFrom += EhValidatingXOrg;
-          _view.ValidatingTo += EhValidatingXEnd;
-          _view.ValidatingNumberOfPoints += EhValidatingNumberOfPoints;
-
-          Initialize();
+          _interpolationMethod?.Dispose();
+          _interpolationMethod = value;
+          OnPropertyChanged(nameof(InterpolationMethod));
         }
       }
     }
 
-    public object ModelObject
+    private double _xOrg;
+
+    public double XOrg
     {
-      get
+      get => _xOrg;
+      set
       {
-        return _doc;
+        if (!(_xOrg == value))
+        {
+          _xOrg = value;
+          OnPropertyChanged(nameof(XOrg));
+        }
       }
     }
 
-    public void Dispose()
+    private double _xEnd;
+
+    public double XEnd
     {
+      get => _xEnd;
+      set
+      {
+        if (!(_xEnd == value))
+        {
+          _xEnd = value;
+          OnPropertyChanged(nameof(XEnd));
+        }
+      }
     }
 
-    #endregion IMVCController Members
+    private int _numberOfPoints;
 
-    #region IInterpolationParameterViewEventSink Members
-
-    public void EhInterpolationClassChanged()
+    public int NumberOfPoints
     {
-      var sel = _classListA.FirstSelectedNode;
-      _interpolationInstance = (Altaxo.Calc.Interpolation.IInterpolationFunction)System.Activator.CreateInstance((System.Type)sel.Tag);
-      SetInterpolationDetailController((IMVCAController)Current.Gui.GetControllerAndControl(new object[] { _interpolationInstance }, typeof(IMVCAController)));
+      get => _numberOfPoints;
+      set
+      {
+        if (!(_numberOfPoints == value))
+        {
+          _numberOfPoints = value;
+          OnPropertyChanged(nameof(NumberOfPoints));
+        }
+      }
     }
 
-    public void EhValidatingNumberOfPoints(ValidationEventArgs<string> e)
+
+
+
+    #endregion
+
+    protected override void Initialize(bool initData)
     {
-      _numberOfPoints = null;
-      if (!Altaxo.Serialization.GUIConversion.IsInteger(e.ValueToValidate, out var var))
-      {
-        e.AddError("Value has to be an integer!");
-        return;
-      }
+      base.Initialize(initData);
 
-      if (var < 2)
+      if(initData)
       {
-        e.AddError("Value has to be >=2");
-        return;
+        InterpolationMethod = new InterpolationFunctionOptionsController(_doc.Interpolation);
+        XOrg = _doc.XOrg;
+        XEnd = _doc.XEnd;
+        NumberOfPoints = _doc.NumberOfPoints;
       }
-
-      _numberOfPoints = var;
     }
 
-    public void EhValidatingXOrg(ValidationEventArgs<string> e)
+    public override bool Apply(bool disposeController)
     {
-      _xOrg = null;
-      if (!Altaxo.Serialization.GUIConversion.IsDouble(e.ValueToValidate, out var var))
+      IInterpolationFunctionOptions interpolation = null;
+
+      if (InterpolationMethod.Apply(disposeController))
       {
-        e.AddError("Value has to be a number");
-        return;
+        interpolation = (IInterpolationFunctionOptions)InterpolationMethod.ModelObject;
+      }
+      else
+      {
+        return ApplyEnd(false, disposeController);
       }
 
-      if (!var.IsFinite())
-      {
-        e.AddError("Value has to be a finite number");
-        return;
-      }
+      _doc = _doc with { Interpolation = interpolation, XOrg = XOrg, XEnd = XEnd, NumberOfPoints = NumberOfPoints };
 
-      _xOrg = var;
+      return ApplyEnd(true, disposeController);
     }
-
-    public void EhValidatingXEnd(ValidationEventArgs<string> e)
-    {
-      _xEnd = null;
-      if (!Altaxo.Serialization.GUIConversion.IsDouble(e.ValueToValidate, out var var))
-      {
-        e.AddError("Value has to be a number");
-        return;
-      }
-
-      if (!var.IsFinite())
-      {
-        e.AddError("Value has to be a finite number");
-        return;
-      }
-
-      _xEnd = var;
-    }
-
-    #endregion IInterpolationParameterViewEventSink Members
   }
 }

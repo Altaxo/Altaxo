@@ -3,10 +3,11 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-						 xmlns:diag="clr-namespace:System.Diagnostics;assembly=WindowsBase"
-						 xmlns:local="clr-namespace:Altaxo.Gui.Common"
+             xmlns:axogc="clr-namespace:Altaxo.Gui.Common" 
+             xmlns:worksheet="clr-namespace:Altaxo.Gui.Worksheet;assembly=AltaxoBase"
+             d:DataContext="{d:DesignInstance Type=worksheet:InterpolationParameterController}"
              mc:Ignorable="d"
-						 DataContext="{Binding RelativeSource={RelativeSource Self}}">
+			 >
 	<UserControl.Resources>
 		<ResourceDictionary Source="../Common/Resources/styledictionary.xaml" />
 	</UserControl.Resources>
@@ -17,18 +18,39 @@
 		</Grid.ColumnDefinitions>
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto" />
-			<RowDefinition Height="Auto" />
-			<RowDefinition Height="Auto" />
-			<RowDefinition Height="Auto" />
-			<RowDefinition Height="Auto" />
-		</Grid.RowDefinitions>
-		<Label Grid.Row="0">Using:</Label>
-		<Label Grid.Row="1">From:</Label>
-		<Label Grid.Row="2">To:</Label>
-		<Label Grid.Row="3">Number of points:</Label>
-		<ComboBox Grid.Row="0" Grid.Column="1" Margin="4" Name="_cbInterpolationClass" SelectionChanged="EhInterpolationClassChanged" />
-		<local:ValidatingTextBox Grid.Row="1" Grid.Column="1" Margin="4" x:Name="_edFrom" Style="{StaticResource ValidatingTextBoxStyle}" Validating="EhValueFrom_Validating" />
-		<local:ValidatingTextBox Grid.Row="2" Grid.Column="1" Margin="4" x:Name="_edTo" Style="{StaticResource ValidatingTextBoxStyle}" Validating="EhValueTo_Validating" />
-		<local:ValidatingTextBox Grid.Row="3" Grid.Column="1" Margin="4" x:Name="_edNumberOfPoints" Style="{StaticResource ValidatingTextBoxStyle}" Validating="EhValueNumberOfPoints_Validating" />
-	</Grid>
+            <RowDefinition Height="4" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="4" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="4" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="4" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="4" />
+        </Grid.RowDefinitions>
+
+        <GroupBox Grid.Row="0" Grid.ColumnSpan="2" Header="Interpolation method:" >
+            <StackPanel Orientation="Vertical">
+                <ComboBox 
+                  ItemsSource="{Binding InterpolationMethod.InterpolationMethod.Items}"
+                  SelectedItem="{Binding InterpolationMethod.InterpolationMethod.SelectedItem, Mode=TwoWay}"
+                    Margin="0,4,0,0"
+                   />
+
+                <ContentControl 
+                        Content="{Binding InterpolationMethod.InterpolationDetailsController.ViewObject}"
+                    Margin="0,4,0,0"/>
+            </StackPanel>
+        </GroupBox>
+        
+        <Label Grid.Row="2" Content="From:" />
+        <axogc:NumericDoubleTextBox Grid.Row="2" Grid.Column="1" SelectedValue="{Binding XOrg}"/>
+
+        <Label Grid.Row="4" Content="To:"/>
+        <axogc:NumericDoubleTextBox Grid.Row="4" Grid.Column="1" SelectedValue="{Binding XEnd}"/>
+
+        <Label Grid.Row="6" Content="Number of points:"/>
+        <axogc:Int32UpDown Grid.Row="6" Grid.Column="1" Value="{Binding NumberOfPoints}" Minimum="2"/>
+       
+    </Grid>
 </UserControl>

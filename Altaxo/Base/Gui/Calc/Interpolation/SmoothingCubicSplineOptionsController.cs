@@ -50,19 +50,9 @@ namespace Altaxo.Gui.Calc.Interpolation
 
     public override bool Apply(bool disposeController)
     {
+      double smoothness;
       var controller = ValueInfos[0].Controller;
 
-      double stddev, smoothness;
-      if (false == controller.Apply(disposeController))
-      {
-        return ApplyEnd(false, disposeController);
-      }
-      else
-      {
-        stddev = (double)controller.ModelObject;
-      }
-
-      controller = ValueInfos[1].Controller;
       if (false == controller.Apply(disposeController))
       {
         return ApplyEnd(false, disposeController);
@@ -72,7 +62,7 @@ namespace Altaxo.Gui.Calc.Interpolation
         smoothness = (double)controller.ModelObject;
       }
 
-      _doc = Spline with { ErrorStandardDeviation = stddev, Smoothness = smoothness };
+      _doc = Spline with { Smoothness = smoothness };
 
 
       return ApplyEnd(true, disposeController);

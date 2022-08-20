@@ -28,6 +28,7 @@ using System.Collections.Generic;
 using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Calc.Regression;
 using Altaxo.Data;
+using Altaxo.Gui;
 using Altaxo.Gui.Worksheet;
 using Altaxo.Gui.Worksheet.Viewing;
 
@@ -109,13 +110,12 @@ namespace Altaxo.Worksheet.Commands.Analysis
       if (ctrl.SelectedDataColumns.Count == 0)
         return;
 
-      object paramobject = new InterpolationParameters();
+      var p = new InterpolationParameters();
 
-      if (!Current.Gui.ShowDialog(ref paramobject, "Interpolation"))
+      var controller = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { p }, typeof(IMVCANController));
+      if (!Current.Gui.ShowDialog(controller, "Interpolation", false))
         return;
-
-      var parameters = (InterpolationParameters)paramobject;
-
+      var parameters = (InterpolationParameters)controller.ModelObject;
       Interpolation(ctrl, parameters);
     }
 
@@ -159,20 +159,20 @@ namespace Altaxo.Worksheet.Commands.Analysis
     {
       Interpolation(
         xCol, yCol,
-        parameters.InterpolationInstance,
+        parameters.Interpolation,
         VectorMath.CreateEquidistantSequenceByStartEndLength(parameters.XOrg, parameters.XEnd, parameters.NumberOfPoints),
         xRes, yRes);
     }
 
     public static void Interpolation(Altaxo.Data.DataColumn xCol, Altaxo.Data.DataColumn yCol,
-      Calc.Interpolation.IInterpolationFunction interpolInstance, IReadOnlyList<double> samplePoints,
+      Calc.Interpolation.IInterpolationFunctionOptions interpolInstance, IReadOnlyList<double> samplePoints,
       Altaxo.Data.DataColumn xRes, Altaxo.Data.DataColumn yRes)
     {
       int rows = Math.Min(xCol.Count, yCol.Count);
       var yVec = DataColumnWrapper.ToROVector((INumericColumn)yCol, rows);
       var xVec = DataColumnWrapper.ToROVector((INumericColumn)xCol, rows);
 
-      interpolInstance.Interpolate(xVec, yVec);
+      var spline = interpolInstance.Interpolate(xVec, yVec);
 
       using (var suspendToken_xRes = xRes.SuspendGetToken())
       {
@@ -183,7 +183,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
             //double r = i / (double)(parameters.NumberOfPoints - 1);
             //double x = parameters.XOrg * (1 - r) + parameters.XEnd * (r);
             double x = samplePoints[i];
-            double y = interpolInstance.GetYOfX(x);
+            double y = spline.GetYOfX(x);
             xRes[i] = x;
             yRes[i] = y;
           }
