@@ -38,13 +38,6 @@ namespace Altaxo.Gui.Calc.Interpolation
 
     protected override void InitializeValueInfos()
     {
-      {
-        var controller = new Altaxo.Gui.Common.BasicTypes.NumericDoubleValueController(Spline.ErrorVariance);
-        controller.Minimum = -1;
-        controller.IsMinimumValueInclusive = true;
-        Current.Gui.FindAndAttachControlTo(controller);
-        ValueInfos.Add(new ValueInfo("Error variance (if unknown, set it to -1) :", controller));
-      }
 
       {
         var controller = new Altaxo.Gui.Common.BasicTypes.NumericDoubleValueController(Spline.Smoothness);
@@ -59,14 +52,14 @@ namespace Altaxo.Gui.Calc.Interpolation
     {
       var controller = ValueInfos[0].Controller;
 
-      double errorVariance, smoothness;
+      double stddev, smoothness;
       if (false == controller.Apply(disposeController))
       {
         return ApplyEnd(false, disposeController);
       }
       else
       {
-        errorVariance = (double)controller.ModelObject;
+        stddev = (double)controller.ModelObject;
       }
 
       controller = ValueInfos[1].Controller;
@@ -79,7 +72,7 @@ namespace Altaxo.Gui.Calc.Interpolation
         smoothness = (double)controller.ModelObject;
       }
 
-      _doc = Spline with { ErrorVariance = errorVariance, Smoothness = smoothness };
+      _doc = Spline with { ErrorStandardDeviation = stddev, Smoothness = smoothness };
 
 
       return ApplyEnd(true, disposeController);

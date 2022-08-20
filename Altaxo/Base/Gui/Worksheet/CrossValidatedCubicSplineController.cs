@@ -42,11 +42,11 @@ namespace Altaxo.Gui.Worksheet
 
     protected override void InitializeValueInfos()
     {
-      var controller = new Altaxo.Gui.Common.BasicTypes.NumericDoubleValueController(Spline.ErrorVariance);
+      var controller = new Altaxo.Gui.Common.BasicTypes.NumericDoubleValueController(Spline.ErrorStandardDeviation);
       controller.Minimum = -1;
       controller.IsMinimumValueInclusive = true;
       Current.Gui.FindAndAttachControlTo(controller);
-      ValueInfos.Add(new ValueInfo("Error variance (if unknown, set it to -1) :", controller));
+      ValueInfos.Add(new ValueInfo("Standard deviation (if unknown, set it to -1) :", controller));
     }
 
     public override bool Apply(bool disposeController)
@@ -58,7 +58,7 @@ namespace Altaxo.Gui.Worksheet
       }
       else
       {
-        Spline.ErrorVariance = (double)controller.ModelObject;
+        Spline.ErrorStandardDeviation = (double)controller.ModelObject;
         return ApplyEnd(true, disposeController);
       }
     }

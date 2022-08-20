@@ -36,24 +36,24 @@ namespace Altaxo.Calc.Interpolation
   /// of smoothing required as described in reference 2.
   /// </summary>
   /// <remarks>
-  ///  If the error variance
+  ///  If the error standard deviation
   /// is known, it should be supplied to the routine in 'var'. The degree of
   /// smoothing is then determined by minimizing an unbiased estimate of the
-  /// true mean square error.  On the other hand, if the error variance is
+  /// true mean square error.  On the other hand, if the error standard deviation is
   /// not known, 'var' should be set to -1.0. The routine then determines the
   /// degree of smoothing by minimizing the generalized cross validation.
   /// This is asymptotically the same as minimizing the true mean square error
-  /// (see reference 1).  In this case, an estimate of the error variance is
+  /// (see reference 1).  In this case, an estimate of the error standard deviation is
   /// returned in 'var' which may be compared with any a priori approximate
   /// estimates. In either case, an estimate of the true mean square error
   /// is returned in 'wk[4]'.  This estimate, however, depends on the error
-  /// variance estimate, and should only be accepted if the error variance
+  /// standard deviation estimate, and should only be accepted if the error standard deviation
   /// estimate is reckoned to be correct.
   /// Bayesian estimates of the standard error of each smoothed data value are
   /// returned in the array 'se' (if a non null vector is given for the
   /// paramenter 'se' - use (double*)0 if you don't want estimates).
-  /// These also depend on the error variance estimate and should only
-  /// be accepted if the error variance estimate is reckoned to be correct.
+  /// These also depend on the error standard deviation estimate and should only
+  /// be accepted if the error standard deviation estimate is reckoned to be correct.
   /// See reference 4.
   /// The number of arithmetic operations and the amount of storage required by
   /// the routine are both proportional to 'n', so that very large data sets may
@@ -116,7 +116,7 @@ namespace Altaxo.Calc.Interpolation
 
 
 
-    protected double _variance;
+    protected double _standardDeviation;
     private bool _interpolationSuccessfullyExecuted;
     private bool _standardErrorEstimatesCalculated;
 
@@ -146,55 +146,55 @@ namespace Altaxo.Calc.Interpolation
 
     public SmoothingCubicSplineBase()
     {
-      _variance = -1.0; // unknown variance
+      _standardDeviation = -1.0; // unknown standard deviation
     }
 
     /// <summary>
-    /// Evaluates either a cross validated cubic spline (if <see cref="ErrorVariance"/> is negative,
-    /// or a smoothing cubic spline (if <see cref="ErrorVariance"/> is greater than or equal to zero).
+    /// Evaluates either a cross validated cubic spline (if <see cref="ErrorStandardDeviation"/> is negative,
+    /// or a smoothing cubic spline (if <see cref="ErrorStandardDeviation"/> is greater than or equal to zero).
     /// </summary>
     /// <param name="x">The abscissae values.</param>
     /// <param name="y">The ordinate values.</param>
     public override void Interpolate(IReadOnlyList<double> x, IReadOnlyList<double> y)
     {
-      Interpolate(x, y, _variance, null);
+      Interpolate(x, y, _standardDeviation, null);
     }
 
 
     /// <summary>
-    /// Evaluates either a cross validated cubic spline (<paramref name="variance"/> set to a negative value),
-    /// or a smoothing cubic spline (<paramref name="variance"/> set to a non-negative value).
+    /// Evaluates either a cross validated cubic spline (<paramref name="standardDeviation"/> set to a negative value),
+    /// or a smoothing cubic spline (<paramref name="standardDeviation"/> set to a non-negative value).
     /// </summary>
     /// <param name="x">The abscissae values.</param>
     /// <param name="y">The ordinate values.</param>
-    /// <param name="variance">
+    /// <param name="standardDeviation">
     /// If set to a negative value, a cross validated cubic spline is evaluated.
-    /// If set to a positive value, the value designates the variance (=square of the standard deviation) of the ordinate values.
+    /// If set to a positive value, the value designates the standard deviation) of the ordinate values.
     /// </param>
-    public void Interpolate(IReadOnlyList<double> x, IReadOnlyList<double> y, double variance)
+    public void Interpolate(IReadOnlyList<double> x, IReadOnlyList<double> y, double standardDeviation)
     {
-      Interpolate(x, y, variance, null);
+      Interpolate(x, y, standardDeviation, null);
     }
 
     /// <summary>
-    /// Evaluates either a cross validated cubic spline (<paramref name="variance"/> set to a negative value),
-    /// or a smoothing cubic spline (<paramref name="variance"/> set to a non-negative value).
+    /// Evaluates either a cross validated cubic spline (<paramref name="standardDeviation"/> set to a negative value),
+    /// or a smoothing cubic spline (<paramref name="standardDeviation"/> set to a non-negative value).
     /// </summary>
     /// <param name="x">The abscissae values.</param>
     /// <param name="y">The ordinate values.</param>
-    /// <param name="variance">
+    /// <param name="standardDeviation">
     /// If set to a negative value, a cross validated cubic spline is evaluated (in this case the parameter <paramref name="dy"/> must be null).
-    /// If set to a non-negative value, and parameter <paramref name="dy"/> is null, the value designates the variance (=square of the standard deviation) of the ordinate values.
+    /// If set to a non-negative value, and parameter <paramref name="dy"/> is null, the value designates the standard deviation) of the ordinate values.
     /// If set to a non-negative value, and parameter <paramref name="dy"/> is not null, the value designates a scaling factor for the values in <paramref name="dy"/>.
     /// </param>
     /// <param name="dy">
     /// Relative standard deviation of the error associated with the data point i.
     /// Each element must be positive. The values are scaled so that their mean square value is 1, and unscaled again on normal exit.
-    /// The mean square value of the elements is returned in <see cref="MeanSquareOfInputVariance"/> on normal exit.
-    /// If the absolute standard deviations are known, these should be provided here and the error
-    /// variance parameter <paramref name="variance"/> should then be set to 1.
+    /// The mean square value of the elements is returned in <see cref="MeanSquareOfInputStandardDeviation"/> on normal exit.
+    /// If the absolute standard deviations are known, these should be provided here and the 
+    /// parameter <paramref name="standardDeviation"/> should then be set to 1.
     /// If the relative standard deviations are unknown, set each element to 1, or set this parameter to null.</param>
-    public void Interpolate(IReadOnlyList<double> x, IReadOnlyList<double> y, double variance, IReadOnlyList<double>? dy)
+    public void Interpolate(IReadOnlyList<double> x, IReadOnlyList<double> y, double standardDeviation, IReadOnlyList<double>? dy)
     {
       // check input parameters
       if (x is null)
@@ -209,8 +209,8 @@ namespace Altaxo.Calc.Interpolation
         throw new ArgumentException($"Length mismatch between {nameof(y)} and {nameof(x)}");
       if (dy is not null && !MatchingIndexRange(x, dy))
         throw new ArgumentException($"Length mismatch between {nameof(dy)} and {nameof(x)}");
-      if (dy is not null && !(variance > 0))
-        throw new ArgumentException($"The parameter {nameof(variance)} must be greater than 0 if the array {nameof(dy)} is provided!");
+      if (dy is not null && !(standardDeviation > 0))
+        throw new ArgumentException($"The parameter {nameof(standardDeviation)} must be greater than 0 if the array {nameof(dy)} is provided!");
 
 
       if (CheckArguments)
@@ -324,7 +324,7 @@ namespace Altaxo.Calc.Interpolation
       {
         // number of points is >= 3
 
-        _variance = variance;
+        _standardDeviation = standardDeviation;
 
         if (dy is not null) // if deviations of the points are known, copy them
         {
@@ -338,7 +338,7 @@ namespace Altaxo.Calc.Interpolation
         }
 
 
-        InterpolationKernel(_x, _f, _df, n, _y0, _c, n - 1, _variance, CalculateStandardErrorEstimates ? 1 : 0, _se, _wkr, _wkt, _wku, _wkv, out int error);
+        InterpolationKernel(_x, _f, _df, n, _y0, _c, n - 1, _standardDeviation, CalculateStandardErrorEstimates ? 1 : 0, _se, _wkr, _wkt, _wku, _wkv, out int error);
 
         switch (error)
         {
@@ -354,7 +354,7 @@ namespace Altaxo.Calc.Interpolation
           case 131:
             throw new ArgumentException("Abscissa (x-values) are not ordered! Please order them before calling " + nameof(Interpolate));
           case 132:
-            throw new ArgumentException("Of the provided ordinate (y) variance values at least one value is negative");
+            throw new ArgumentException("Of the provided ordinate (y) standard deviation values at least one value is negative");
           case 133:
             throw new InvalidProgramException("The job value is neither 1 nor 2");
         }
@@ -584,13 +584,13 @@ namespace Altaxo.Calc.Interpolation
     }
 
     /// <summary>
-    /// Mean square value of the error variances in dy[i] (if they were provided).
+    /// Mean square value of the standard deviations in dy[i] (if they were provided).
     /// The values of <see cref="GeneralizedCrossValidation"/>, <see cref="MeanSquareResidual"/> and <see cref="EstimatedTrueMeanSquareError"/>
     /// are calculated with the dy[i] scaled to have a mean square value 1.
     /// The unscaled values of <see cref="GeneralizedCrossValidation"/>, <see cref="MeanSquareResidual"/> and <see cref="EstimatedTrueMeanSquareError"/>
     /// may be calculated by dividing by this value.
     /// </summary>
-    public double MeanSquareOfInputVariance
+    public double MeanSquareOfInputStandardDeviation
     {
       get
       {
@@ -1244,16 +1244,16 @@ namespace Altaxo.Calc.Interpolation
 
 
     /// <summary>
-    /// If the error variance of the provided points is unknown, set this value to -1. Then a cross validating cubic spline is fitted to the data.
-    /// If the error variance is known and is equal for all points, set this value to the error variance of the points.
-    /// If the error variance is known and different for each point, set this value to 1, and provide the error variance for each point
+    /// If the error standard deviation of the provided points is unknown, set this value to -1. Then a cross validating cubic spline is fitted to the data.
+    /// If the error standard deviation is known and is equal for all points, set this value to the error standard deviation of the points.
+    /// If the error standard deviation is known and different for each point, set this value to 1, and provide the error standard deviation for each point
     /// by calling <see cref="Interpolate(IReadOnlyList{double}, IReadOnlyList{double}, double, IReadOnlyList{double})"/>.
     /// </summary>
-    public double ErrorVariance
+    public double ErrorStandardDeviation
     {
       get
       {
-        return _variance;
+        return _standardDeviation;
       }
       set
       {
@@ -1261,9 +1261,9 @@ namespace Altaxo.Calc.Interpolation
           throw new ArgumentException("Value must not be NaN", nameof(value));
 
         if (!(value >= 0))
-          _variance = -1;
+          _standardDeviation = -1;
         else
-          _variance = value;
+          _standardDeviation = value;
       }
     }
   }

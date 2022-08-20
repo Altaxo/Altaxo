@@ -107,9 +107,9 @@ namespace Altaxo.Calc.Interpolation
     /// </summary>
     /// <param name="xvec">Vector of x (independent) data.</param>
     /// <param name="yvec">Vector of y (dependent) data.</param>
-    /// <param name="yVariance">Vector of the variances of y (optional, only used for some functions).</param>
+    /// <param name="yStdDev">Vector of the standard deviation of y (optional, only used for some functions).</param>
     /// <returns>A <see cref="IInterpolationCurve"/> object.</returns>
-    IInterpolationCurve Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec, IReadOnlyList<double>? yVariance=null);
+    IInterpolationCurve Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec, IReadOnlyList<double>? yStdDev=null);
   }
 
   /// <summary>
@@ -122,9 +122,9 @@ namespace Altaxo.Calc.Interpolation
     /// </summary>
     /// <param name="xvec">Vector of x (independent) data.</param>
     /// <param name="yvec">Vector of y (dependent) data.</param>
-    /// <param name="yVariance">Vector of the variances of y (optional, only used for some functions).</param>
+    /// <param name="yStdDev">Vector of the standard deviations of y (optional, only used for some functions).</param>
     /// <returns>A <see cref="IInterpolationFunction"/> object.</returns>
-    new IInterpolationFunction Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec, IReadOnlyList<double>? yVariance=null);
+    new IInterpolationFunction Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec, IReadOnlyList<double>? yStdDev=null);
   }
 
 
@@ -660,16 +660,16 @@ namespace Altaxo.Calc.Interpolation
 
 
     /// <inheritdoc/>
-    public IInterpolationFunction Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec, IReadOnlyList<double>? yVariance = null)
+    public IInterpolationFunction Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec, IReadOnlyList<double>? yStdDev = null)
     {
       var spline = new LinearInterpolation();
       spline.Interpolate(xvec, yvec);
       return spline;
     }
 
-    IInterpolationCurve IInterpolationCurveOptions.Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec, IReadOnlyList<double>? yVariance)
+    IInterpolationCurve IInterpolationCurveOptions.Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec, IReadOnlyList<double>? yStdDev)
     {
-      return Interpolate(xvec, yvec, yVariance);
+      return Interpolate(xvec, yvec, yStdDev);
     }
   }
 
@@ -929,16 +929,16 @@ tryinterpolation:
     
 
     /// <inheritdoc/>
-    public IInterpolationFunction Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec, IReadOnlyList<double>? yVariance = null)
+    public IInterpolationFunction Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec, IReadOnlyList<double>? yStdDev = null)
     {
       var spline = new PolynomialRegressionAsInterpolation() { RegressionOrder = Order};
       spline.Interpolate(xvec, yvec);
       return spline;
     }
 
-    IInterpolationCurve IInterpolationCurveOptions.Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec, IReadOnlyList<double>? yVariance)
+    IInterpolationCurve IInterpolationCurveOptions.Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec, IReadOnlyList<double>? yStdDev)
     {
-      return Interpolate(xvec, yvec, yVariance);
+      return Interpolate(xvec, yvec, yStdDev);
     }
   }
 
@@ -1022,16 +1022,16 @@ tryinterpolation:
 
 
     /// <inheritdoc/>
-    public IInterpolationFunction Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec, IReadOnlyList<double>? yVariance = null)
+    public IInterpolationFunction Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec, IReadOnlyList<double>? yStdDev = null)
     {
       var spline = new FritschCarlsonCubicSpline();
       spline.Interpolate(xvec, yvec);
       return spline;
     }
 
-    IInterpolationCurve IInterpolationCurveOptions.Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec, IReadOnlyList<double>? yVariance)
+    IInterpolationCurve IInterpolationCurveOptions.Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec, IReadOnlyList<double>? yStdDev)
     {
-      return Interpolate(xvec, yvec, yVariance);
+      return Interpolate(xvec, yvec, yStdDev);
     }
 
   }
@@ -1305,16 +1305,16 @@ tryinterpolation:
 
 
     /// <inheritdoc/>
-    public IInterpolationFunction Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec, IReadOnlyList<double>? yVariance = null)
+    public IInterpolationFunction Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec, IReadOnlyList<double>? yStdDev = null)
     {
       var spline = new AkimaCubicSpline();
       spline.Interpolate(xvec, yvec);
       return spline;
     }
 
-    IInterpolationCurve IInterpolationCurveOptions.Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec, IReadOnlyList<double>? yVariance)
+    IInterpolationCurve IInterpolationCurveOptions.Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec, IReadOnlyList<double>? yStdDev)
     {
-      return Interpolate(xvec, yvec, yVariance);
+      return Interpolate(xvec, yvec, yStdDev);
     }
   }
 
@@ -1509,7 +1509,7 @@ tryinterpolation:
     #endregion
 
     /// <inheritdoc/>
-    public IInterpolationCurve Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec, IReadOnlyList<double>? yVariance = null)
+    public IInterpolationCurve Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec, IReadOnlyList<double>? yStdDev = null)
     {
       var spline = new BezierCubicSpline();
       spline.Interpolate(xvec, yvec);
@@ -1768,7 +1768,7 @@ void DrawClosedCurve (Scene &scene)
     #endregion
 
     /// <inheritdoc/>
-    public IInterpolationCurve Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec, IReadOnlyList<double>? yVariance = null)
+    public IInterpolationCurve Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec, IReadOnlyList<double>? yStdDev = null)
     {
       var spline = new CardinalCubicSpline();
       spline.Interpolate(xvec, yvec);
@@ -2051,16 +2051,16 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
     #endregion
 
     /// <inheritdoc/>
-    public IInterpolationFunction Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec, IReadOnlyList<double>? yVariance = null)
+    public IInterpolationFunction Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec, IReadOnlyList<double>? yStdDev = null)
     {
       var spline = new RationalCubicSpline() { Smoothing = Smoothing };
       spline.Interpolate(xvec, yvec);
       return spline;
     }
 
-    IInterpolationCurve IInterpolationCurveOptions.Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec, IReadOnlyList<double>? yVariance)
+    IInterpolationCurve IInterpolationCurveOptions.Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec, IReadOnlyList<double>? yStdDev)
     {
-      return Interpolate(xvec, yvec, yVariance);
+      return Interpolate(xvec, yvec, yStdDev);
     }
   }
 
@@ -2849,16 +2849,16 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
     #endregion
 
     /// <inheritdoc/>
-    public IInterpolationFunction Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec, IReadOnlyList<double>? yVariance = null)
+    public IInterpolationFunction Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec, IReadOnlyList<double>? yStdDev = null)
     {
       var spline = new ExponentialSpline() { Smoothing = Smoothing };
       spline.Interpolate(xvec, yvec);
       return spline;
     }
 
-    IInterpolationCurve IInterpolationCurveOptions.Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec, IReadOnlyList<double>? yVariance)
+    IInterpolationCurve IInterpolationCurveOptions.Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec, IReadOnlyList<double>? yStdDev)
     {
-      return Interpolate(xvec, yvec, yVariance);
+      return Interpolate(xvec, yvec, yStdDev);
     }
   }
 
@@ -3129,16 +3129,16 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
     #endregion
 
     /// <inheritdoc/>
-    public IInterpolationFunction Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec, IReadOnlyList<double>? yVariance = null)
+    public IInterpolationFunction Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec, IReadOnlyList<double>? yStdDev = null)
     {
       var spline = new PolynomialInterpolation();
       spline.Interpolate(xvec, yvec);
       return spline;
     }
 
-    IInterpolationCurve IInterpolationCurveOptions.Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec, IReadOnlyList<double>? yVariance)
+    IInterpolationCurve IInterpolationCurveOptions.Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec, IReadOnlyList<double>? yStdDev)
     {
-      return Interpolate(xvec, yvec, yVariance);
+      return Interpolate(xvec, yvec, yStdDev);
     }
   }
 
@@ -3310,16 +3310,16 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
     }
 
     /// <inheritdoc/>
-    public IInterpolationFunction Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec, IReadOnlyList<double>? yVariance = null)
+    public IInterpolationFunction Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec, IReadOnlyList<double>? yStdDev = null)
     {
       var spline = new RationalInterpolation() { NumeratorDegree = NumeratorDegree, Precision = Precision };
       spline.Interpolate(xvec, yvec);
       return spline;
     }
 
-    IInterpolationCurve IInterpolationCurveOptions.Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec, IReadOnlyList<double>? yVariance)
+    IInterpolationCurve IInterpolationCurveOptions.Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec, IReadOnlyList<double>? yStdDev)
     {
-      return Interpolate(xvec, yvec, yVariance);
+      return Interpolate(xvec, yvec, yStdDev);
     }
   }
 

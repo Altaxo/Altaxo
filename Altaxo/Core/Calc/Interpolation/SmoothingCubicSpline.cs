@@ -36,7 +36,7 @@ namespace Altaxo.Calc.Interpolation
   public record SmoothingCubicSplineOptions : IInterpolationFunctionOptions
   {
     private double _smoothness = 1;
-    private double _errorVariance;
+    private double _errorStandardDeviation=-1;
 
     #region Serialization
 
@@ -50,14 +50,14 @@ namespace Altaxo.Calc.Interpolation
       {
         var s = (SmoothingCubicSplineOptions)obj;
         info.AddValue("Smoothness", s._smoothness);
-        info.AddValue("ErrorVariance", s._errorVariance);
+        info.AddValue("ErrorStandardDeviation", s._errorStandardDeviation);
       }
 
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var smoothing = info.GetDouble("Smoothness");
-        var errorVariance = info.GetDouble("ErrorVariance");
-        return new SmoothingCubicSplineOptions() { Smoothness = smoothing, ErrorVariance = errorVariance };
+        var stddev = info.GetDouble("ErrorStandardDeviation");
+        return new SmoothingCubicSplineOptions() { Smoothness = smoothing, _errorStandardDeviation = stddev };
       }
     }
 
@@ -82,39 +82,21 @@ namespace Altaxo.Calc.Interpolation
       }
     }
 
-
-    /// <summary>
-    /// If the error variance of the provided points is unknown, set this value to -1. Then a cross validating cubic spline is fitted to the data.
-    /// If the error variance is known and is equal for all points, set this value to the error variance of the points (must be greater than zero).
-    /// If the error variance is known and different for each point, set this value to 1, and provide the error variance for each point
-    /// by calling <see cref="Interpolate(IReadOnlyList{double}, IReadOnlyList{double}, IReadOnlyList{double}?)"/>
-    /// </summary>
-    public double ErrorVariance
-    {
-      get => _errorVariance;
-      init
-      {
-        if (double.IsNaN(value))
-          throw new ArgumentOutOfRangeException(nameof(ErrorVariance));
-        _errorVariance = !(value > 0) ? -1 : value;
-      }
-    }
-
     /// <inheritdoc/>
-    public IInterpolationFunction Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec, IReadOnlyList<double>? yVariance = null)
+    public IInterpolationFunction Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec, IReadOnlyList<double>? yStdDev = null)
     {
-      var spline = new SmoothingCubicSpline() { Smoothness = Smoothness, ErrorVariance = ErrorVariance };
-      if (yVariance is null)
+      var spline = new SmoothingCubicSpline() { Smoothness = Smoothness, ErrorStandardDeviation =  _errorStandardDeviation };
+      if (yStdDev is null)
         spline.Interpolate(xvec, yvec);
       else
-        spline.Interpolate(xvec, yvec, _errorVariance, yVariance);
+        spline.Interpolate(xvec, yvec, _errorStandardDeviation, yStdDev);
       return spline;
     }
 
     /// <inheritdoc/>
-    IInterpolationCurve IInterpolationCurveOptions.Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec, IReadOnlyList<double>? yVariance = null)
+    IInterpolationCurve IInterpolationCurveOptions.Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec, IReadOnlyList<double>? yStdDev = null)
     {
-      return Interpolate(xvec, yvec, yVariance);
+      return Interpolate(xvec, yvec, yStdDev);
     }
   }
 
@@ -131,7 +113,7 @@ namespace Altaxo.Calc.Interpolation
     /// </summary>
     public SmoothingCubicSpline()
     {
-      _variance = -1.0; // unknown variance
+      _standardDeviation = -1.0; // unknown standard deviation
     }
 
     protected override void InterpolationKernel(

@@ -35,7 +35,7 @@ namespace Altaxo.Calc.Interpolation
   /// </summary>
   public record CrossValidatedCubicSplineOptions : IInterpolationFunctionOptions
   {
-    private double _errorVariance = -1;
+    private double _errorStandardDeviation = -1;
 
     #region Serialization
 
@@ -48,61 +48,61 @@ namespace Altaxo.Calc.Interpolation
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (CrossValidatedCubicSplineOptions)obj;
-        info.AddValue("ErrorVariance", s._errorVariance);
+        info.AddValue("StandardDeviation", s._errorStandardDeviation);
       }
 
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var errorVariance = info.GetDouble("ErrorVariance");
-        return new CrossValidatedCubicSplineOptions() { ErrorVariance = errorVariance };
+        var stddev = info.GetDouble("StandardDeviation");
+        return new CrossValidatedCubicSplineOptions() { ErrorStandardDeviation = stddev };
       }
     }
 
     #endregion
 
     /// <summary>
-    /// If the error variance of the provided points is unknown, set this value to -1 (default value).
+    /// If the error standard deviation of the provided points is unknown, set this value to -1 (default value).
     /// Then a cross validating cubic spline is fitted to the data.
-    /// If the error variance is known and is equal for all points, set this value to the error variance of the points (must be greater than zero).
-    /// If the error variance, provide the error variance for each point (in this case, <see cref="ErrorVariance"/> is ignored and internally set to 1).
+    /// If the error standard deviation is known and is equal for all points, set this value to the error standard deviation of the points (must be greater than zero).
+    /// If the error standard deviation, provide the error standard deviation for each point (in this case, <see cref="ErrorStandardDeviation"/> is ignored and internally set to 1).
     /// by calling <see cref="Interpolate(IReadOnlyList{double}, IReadOnlyList{double}, IReadOnlyList{double}?)"/>
     /// </summary>
-    public double ErrorVariance
+    public double ErrorStandardDeviation
     {
-      get => _errorVariance;
+      get => _errorStandardDeviation;
       init
       {
         if (double.IsNaN(value))
-          throw new ArgumentOutOfRangeException(nameof(ErrorVariance));
-        _errorVariance = !(value > 0) ? -1 : value;
+          throw new ArgumentOutOfRangeException(nameof(ErrorStandardDeviation));
+        _errorStandardDeviation = !(value > 0) ? -1 : value;
       }
     }
 
     /// <inheritdoc/>
-    public IInterpolationFunction Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec, IReadOnlyList<double>? yVariance = null)
+    public IInterpolationFunction Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec, IReadOnlyList<double>? yStdDev = null)
     {
-      if (yVariance is not null)
+      if (yStdDev is not null)
       {
-        var varianceScaleFactor = ErrorVariance > 0 ? ErrorVariance : 1;
+        var stddevScaleFactor = ErrorStandardDeviation > 0 ? ErrorStandardDeviation : 1;
         var spline = new CrossValidatedCubicSpline()
         {
-          ErrorVariance =1 // has no effect, because this parameter is given below
+          ErrorStandardDeviation =1 // has no effect, because this parameter is given below
         };
-        spline.Interpolate(xvec, yvec, varianceScaleFactor, yVariance);
+        spline.Interpolate(xvec, yvec, stddevScaleFactor, yStdDev);
         return spline;
       }
       else
       {
-        var spline = new CrossValidatedCubicSpline() { ErrorVariance = ErrorVariance };
+        var spline = new CrossValidatedCubicSpline() { ErrorStandardDeviation = ErrorStandardDeviation };
         spline.Interpolate(xvec, yvec);
         return spline;
       }
     }
 
     /// <inheritdoc/>
-    IInterpolationCurve IInterpolationCurveOptions.Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec, IReadOnlyList<double>? yVariance = null)
+    IInterpolationCurve IInterpolationCurveOptions.Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec, IReadOnlyList<double>? yStdDev = null)
     {
-      return Interpolate(xvec, yvec, yVariance);
+      return Interpolate(xvec, yvec, yStdDev);
     }
   }
 
@@ -113,24 +113,24 @@ namespace Altaxo.Calc.Interpolation
   /// of smoothing required as described in reference 2.
   /// </summary>
   /// <remarks>
-  /// If the error variance
+  /// If the error standard deviation
   /// is known, it should be supplied to the routine in 'var'. The degree of
   /// smoothing is then determined by minimizing an unbiased estimate of the
-  /// true mean square error.  On the other hand, if the error variance is
+  /// true mean square error.  On the other hand, if the error standard deviation is
   /// not known, 'var' should be set to -1.0. The routine then determines the
   /// degree of smoothing by minimizing the generalized cross validation.
   /// This is asymptotically the same as minimizing the true mean square error
-  /// (see reference 1).  In this case, an estimate of the error variance is
+  /// (see reference 1).  In this case, an estimate of the error standard deviation is
   /// returned in 'var' which may be compared with any a priori approximate
   /// estimates. In either case, an estimate of the true mean square error
   /// is returned in 'wk[4]'.  This estimate, however, depends on the error
-  /// variance estimate, and should only be accepted if the error variance
+  /// standard deviation estimate, and should only be accepted if the error standard deviation
   /// estimate is reckoned to be correct.
   /// Bayesian estimates of the standard error of each smoothed data value are
   /// returned in the array 'se' (if a non null vector is given for the
   /// paramenter 'se' - use (double*)0 if you don't want estimates).
-  /// These also depend on the error variance estimate and should only
-  /// be accepted if the error variance estimate is reckoned to be correct.
+  /// These also depend on the error standard deviation estimate and should only
+  /// be accepted if the error standard deviation estimate is reckoned to be correct.
   /// See reference 4.
   /// The number of arithmetic operations and the amount of storage required by
   /// the routine are both proportional to 'n', so that very large data sets may
@@ -174,7 +174,7 @@ namespace Altaxo.Calc.Interpolation
   {
     public CrossValidatedCubicSpline()
     {
-      _variance = -1.0; // unknown variance
+      _standardDeviation = -1.0; // unknown standard deviation
     }
 
     protected override void InterpolationKernel(
@@ -195,9 +195,9 @@ namespace Altaxo.Calc.Interpolation
       out int ier)
     {
 #nullable disable
-      // Note: cubgcv expects in parameter 'var' the mean square error, or a negative value (if unknown)
-      // in order to keep the sign, we provide -1 if the variance is negative, or the square of the variance, if the variance is positive
-      cubgcv(_x, _f, _df, n, _y0, _c, n - 1, _variance < 0 ? -1 : _variance*_variance, 1, _se, _wkr, _wkt, _wku, _wkv, out ier);
+      // Note: cubgcv expects in parameter 'var' the variance (square of std.dev.), or a negative value (if unknown)
+      // in order to keep the sign, we provide -1 if the standard deviation is negative, or if positive, the the square of standard deviation
+      cubgcv(_x, _f, _df, n, _y0, _c, n - 1, _standardDeviation < 0 ? -1 : _standardDeviation*_standardDeviation, 1, _se, _wkr, _wkt, _wku, _wkv, out ier);
 #nullable enable
     }
 

@@ -587,7 +587,7 @@ new double[]{  0.99295634E+00,  -0.12715313E+01,  -0.71666212E+00,   0.28007023E
         AreEqual(data._teststat[3], spline.MeanSquareResidual, 1e-5, 0, "MeanSquareResidual");
         AreEqual(data._teststat[4], spline.EstimatedTrueMeanSquareError, 1e-5, 0, "EstimatedTrueMeanSquareError");
         AreEqual(data._teststat[5], spline.EstimatedErrorVariance, 1e-5, 0, "EstimatedErrorVariance");
-        AreEqual(data._teststat[6], spline.MeanSquareOfInputVariance, 1e-5, 0, "MeanSquareOfInputVariance");
+        AreEqual(data._teststat[6], spline.MeanSquareOfInputStandardDeviation, 1e-5, 0, "MeanSquareOfInputVariance");
       }
     }
 
@@ -668,7 +668,7 @@ new double[]{  0.99295634E+00,  -0.12715313E+01,  -0.71666212E+00,   0.28007023E
           AreEqual(data._teststat[3] * (yscaling * yscaling), spline.MeanSquareResidual, 1e-5, 0, "MeanSquareResidual");
           AreEqual(data._teststat[4] * (yscaling * yscaling), spline.EstimatedTrueMeanSquareError, 1e-5, 0, "EstimatedTrueMeanSquareError");
           AreEqual(data._teststat[5] * (yscaling * yscaling), spline.EstimatedErrorVariance, 1e-5, 0, "EstimatedErrorVariance");
-          AreEqual(data._teststat[6], spline.MeanSquareOfInputVariance, 1e-5, 0, "MeanSquareOfInputVariance");
+          AreEqual(data._teststat[6], spline.MeanSquareOfInputStandardDeviation, 1e-5, 0, "MeanSquareOfInputVariance");
         }
       }
     }
@@ -751,7 +751,7 @@ new double[]{  0.99295634E+00,  -0.12715313E+01,  -0.71666212E+00,   0.28007023E
           AreEqual(data._teststat[3], spline.MeanSquareResidual, 1e-5, 0, "MeanSquareResidual");
           AreEqual(data._teststat[4], spline.EstimatedTrueMeanSquareError, 1e-5, 0, "EstimatedTrueMeanSquareError");
           AreEqual(data._teststat[5], spline.EstimatedErrorVariance, 1e-5, 0, "EstimatedErrorVariance");
-          AreEqual(data._teststat[6], spline.MeanSquareOfInputVariance, 1e-5, 0, "MeanSquareOfInputVariance");
+          AreEqual(data._teststat[6], spline.MeanSquareOfInputStandardDeviation, 1e-5, 0, "MeanSquareOfInputVariance");
         }
       }
     }
