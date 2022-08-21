@@ -35,7 +35,7 @@ namespace Altaxo.Science.Spectroscopy.Raman
   {
     #region ColumnNames
 
-    public const string ColumnName_Group0_NeonCalibration_NistPeakWavelength = "NistNeonPeakWavelength[nm]";
+    public const string ColumnName_Group0_NeonCalibration_NistPeakWavelength = "NistNeonPeakWavelength [nm]";
     public const string ColumnName_Group0_NeonCalibration_MeasuredPeakWavelength = "MeasuredNeonPeakWavelength [nm]";
     public const string ColumnName_Group0_NeonCalibration_DifferenceOfPeakWavelengths = "DifferenceOfPeakWavelengths [nm]";
     public const string ColumnName_Group0_NeonCalibration_DifferenceOfPeakWavelengthsStdDev = "DifferenceOfPeakWavelengths.Err [nm]";
@@ -47,8 +47,8 @@ namespace Altaxo.Science.Spectroscopy.Raman
     public const string ColumnName_Group2_NeonCalibration2_PreprocessedSpectrumWavelength = "Neon2_Preprocessed_Wavelength [nm]";
     public const string ColumnName_Group2_NeonCalibration2_PreprocessedSignal = "Neon2_Preprocessed_Signal";
 
-    public const string ColumnName_Group3_NeonCalibration_SplineX_MeasuredWavelength = "NeonCalibration_MeasuredWL";
-    public const string ColumnName_Group3_NeonCalibration_SplineY_DifferenceWavelength = "NeonCalibration_DifferenceWL";
+    public const string ColumnName_Group3_NeonCalibration_SplineX_MeasuredWavelength = "NeonCalibration_MeasuredWL [nm]";
+    public const string ColumnName_Group3_NeonCalibration_SplineY_DifferenceWavelength = "NeonCalibration_DifferenceWL [nm]";
 
     public const string ColumnName_Group4_SiliconCalibration_PeakShift = "SiliconPeakShift [cm-1]";
     public const string ColumnName_Group4_SiliconCalibration_PeakShiftStdDev = "SiliconPeakShift.Err [cm-1]";
