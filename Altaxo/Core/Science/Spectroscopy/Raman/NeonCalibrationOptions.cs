@@ -66,10 +66,10 @@ namespace Altaxo.Science.Spectroscopy.Raman
     public IInterpolationFunctionOptions InterpolationMethod { get; init; } = new CrossValidatedCubicSplineOptions();
 
     /// <summary>
-    /// Gets a value indicating whether the position variance obtained from the peak fit should be ignored
-    /// during the interpolation step. If set to true, the position variance is ignored and all points are weighted equally.
+    /// Gets a value indicating whether the position error obtained from the peak fit should be ignored
+    /// during the interpolation step. If set to true, the position error is ignored and all points are weighted equally.
     /// </summary>
-    public bool InterpolationIgnoreVariance { get; init; } = true;
+    public bool InterpolationIgnoreStdDev { get; init; } = true;
 
     #region Serialization
 
@@ -107,7 +107,7 @@ namespace Altaxo.Science.Spectroscopy.Raman
     }
 
     /// <summary>
-    /// 2022-08-17 Added InterpolationMethod, and InterpolationIgnoreVariance
+    /// 2022-08-17 Added InterpolationMethod, and InterpolationIgnoreStdDev
     /// </summary>
     /// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(NeonCalibrationOptions), 1)]
@@ -122,7 +122,7 @@ namespace Altaxo.Science.Spectroscopy.Raman
         info.AddValue("FilterOutPeaksCorrespondingToMultipleNistPeaks", s.FilterOutPeaksCorrespondingToMultipleNistPeaks);
         info.AddValue("PeakFindingOptions", s.PeakFindingOptions);
         info.AddValue("InterpolationMethod", s.InterpolationMethod);
-        info.AddValue("InterpolationIgnoreVariance", s.InterpolationIgnoreVariance);
+        info.AddValue("InterpolationIgnoreStdDev", s.InterpolationIgnoreStdDev);
       }
 
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
@@ -133,7 +133,7 @@ namespace Altaxo.Science.Spectroscopy.Raman
         var filterOut = info.GetBoolean("FilterOutPeaksCorrespondingToMultipleNistPeaks");
         var peakOptions = info.GetValue<PeakSearchingAndFittingOptions>("PeakFindingOptions", null);
         var interpolationMethod = info.GetValue<IInterpolationFunctionOptions>("InterpolationMethod", null);
-        var interpolationIgnore = info.GetBoolean("InterpolationIgnoreVariance");
+        var interpolationIgnore = info.GetBoolean("InterpolationIgnoreStdDev");
 
         return new NeonCalibrationOptions()
         {
@@ -143,7 +143,7 @@ namespace Altaxo.Science.Spectroscopy.Raman
           FilterOutPeaksCorrespondingToMultipleNistPeaks = filterOut,
           PeakFindingOptions = peakOptions,
           InterpolationMethod  = interpolationMethod,
-          InterpolationIgnoreVariance = interpolationIgnore,
+          InterpolationIgnoreStdDev = interpolationIgnore,
         };
       }
     }

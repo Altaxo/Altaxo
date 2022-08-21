@@ -55,7 +55,7 @@ namespace Altaxo.Science.Spectroscopy.Raman
 
     public double SiliconPeakPosition { get; private set; } = double.NaN;
 
-    public double SiliconPeakPositionVariance { get; private set; } = double.NaN;
+    public double SiliconPeakPositionStdDev { get; private set; } = double.NaN;
 
     #endregion
 
@@ -108,8 +108,8 @@ namespace Altaxo.Science.Spectroscopy.Raman
 
         IsPeakFound = true;
         SiliconPeakPosition = para.Position;
-        SiliconPeakPositionVariance = para.PositionVariance;
-        return (para.Position, para.PositionVariance);
+        SiliconPeakPositionStdDev = para.PositionStdDev;
+        return (para.Position, para.PositionStdDev);
       }
     }
   }

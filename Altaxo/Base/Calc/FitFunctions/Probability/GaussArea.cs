@@ -312,7 +312,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
     private static double SafeSqrt(double x) => Math.Sqrt(Math.Max(0, x));
 
     /// <inheritdoc/>
-    public (double Position, double PositionVariance, double Area, double AreaVariance, double Height, double HeightVariance, double FWHM, double FWHMVariance)
+    public (double Position, double PositionStdDev, double Area, double AreaStdDev, double Height, double HeightStdDev, double FWHM, double FWHMStdDev)
       GetPositionAreaHeightFWHMFromSinglePeakParameters(double[] parameters, IROMatrix<double>? cv)
     {
       const double Sqrt2Pi = 2.5066282746310005024;
@@ -328,16 +328,16 @@ namespace Altaxo.Calc.FitFunctions.Probability
       var height = area / (sigma * Sqrt2Pi);
       var fwhm = sigma * 2 * SqrtLog4;
 
-      double posVariance = 0, areaVariance = 0, heightVariance = 0, fwhmVariance = 0;
+      double posStdDev = 0, areaStdDev = 0, heightStdDev = 0, fwhmStdDev = 0;
 
       if (cv is not null)
       {
-        areaVariance = Math.Sqrt(cv[0, 0]);
-        posVariance = Math.Sqrt(cv[1, 1]);
-        heightVariance = SafeSqrt(RMath.Pow2(area) * cv[2, 2] - area * sigma * (cv[0, 2] + cv[2, 0]) + RMath.Pow2(sigma) * cv[0, 0]) / (RMath.Pow2(sigma) * Sqrt2Pi);
-        fwhmVariance = Math.Sqrt(cv[2, 2]) * 2 * SqrtLog4;
+        areaStdDev = Math.Sqrt(cv[0, 0]);
+        posStdDev = Math.Sqrt(cv[1, 1]);
+        heightStdDev = SafeSqrt(RMath.Pow2(area) * cv[2, 2] - area * sigma * (cv[0, 2] + cv[2, 0]) + RMath.Pow2(sigma) * cv[0, 0]) / (RMath.Pow2(sigma) * Sqrt2Pi);
+        fwhmStdDev = Math.Sqrt(cv[2, 2]) * 2 * SqrtLog4;
       }
-      return (pos, posVariance, area, areaVariance, height, heightVariance, fwhm, fwhmVariance);
+      return (pos, posStdDev, area, areaStdDev, height, heightStdDev, fwhm, fwhmStdDev);
 
     }
   }

@@ -314,7 +314,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
 
     private static double SafeSqrt(double x) => Math.Sqrt(Math.Max(0, x));
 
-    public (double Position, double PositionVariance, double Area, double AreaVariance, double Height, double HeightVariance, double FWHM, double FWHMVariance)
+    public (double Position, double PositionStdDev, double Area, double AreaStdDev, double Height, double HeightStdDev, double FWHM, double FWHMStdDev)
       GetPositionAreaHeightFWHMFromSinglePeakParameters(double[] parameters, IROMatrix<double> cv)
     {
       if (parameters is null || parameters.Length != NumberOfParametersPerPeak)
@@ -326,14 +326,14 @@ namespace Altaxo.Calc.FitFunctions.Peaks
       var w = Math.Abs(parameters[2]);
       var m = parameters[3];
 
-      var heightVariance = cv is null ? 0 : Math.Sqrt(cv[0, 0]);
-      var posVariance = cv is null ? 0 : Math.Sqrt(cv[1, 1]);
+      var heightStdDev = cv is null ? 0 : Math.Sqrt(cv[0, 0]);
+      var posStdDev = cv is null ? 0 : Math.Sqrt(cv[1, 1]);
 
       double fwhm = 2 * w;
-      double fwhmVariance = cv is null ? 0 : 2 * Math.Sqrt(cv[2, 2]);
+      double fwhmStdDev = cv is null ? 0 : 2 * Math.Sqrt(cv[2, 2]);
 
       double area = height * w * Math.Sqrt(1 / (Math.Pow(2, 1 / m) - 1)) * GammaRelated.Beta(m - 0.5, 0.5);
-      double areaVariance = 0;
+      double areaStdDev = 0;
 
       if (cv is not null)
       {
@@ -350,7 +350,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
         deriv[2] = height * betaTerm / powTerm;
         deriv[3] = height * w * GammaRelated.Beta(m - 0.5, 1.5) * (Math.Log(2) * Math.Pow(2, 1 / m) + 2 * powTerm * powTerm * m * m * (digammaMminus0p5 - digammaM)) / (m * powTerm * powTerm * powTerm);
         MatrixMath.Multiply(cv, deriv, resVec);
-        areaVariance = SafeSqrt(VectorMath.DotProduct(deriv, resVec));
+        areaStdDev = SafeSqrt(VectorMath.DotProduct(deriv, resVec));
 
         /*
         // calculation of the area variance
@@ -367,7 +367,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
 
       }
 
-      return (pos, posVariance, area, areaVariance, height, heightVariance, fwhm, fwhmVariance);
+      return (pos, posStdDev, area, areaStdDev, height, heightStdDev, fwhm, fwhmStdDev);
     }
   }
 }

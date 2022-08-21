@@ -309,7 +309,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
 
     static double SafeSqrt(double x) => Math.Sqrt(Math.Max(0, x));
 
-    public (double Position, double PositionVariance, double Area, double AreaVariance, double Height, double HeightVariance, double FWHM, double FWHMVariance)
+    public (double Position, double PositionStdDev, double Area, double AreaStdDev, double Height, double HeightStdDev, double FWHM, double FWHMStdDev)
       GetPositionAreaHeightFWHMFromSinglePeakParameters(double[] parameters, IROMatrix<double>? cv)
     {
       const double Sqrt2Pi = 2.5066282746310005024;
@@ -324,13 +324,13 @@ namespace Altaxo.Calc.FitFunctions.Probability
       var sigma = Math.Abs(parameters[2]);
       var gamma = Math.Abs(parameters[3]);
 
-      var areaVariance = cv is null ? 0 : Math.Sqrt(cv[0, 0]);
-      var posVariance = cv is null ? 0 : Math.Sqrt(cv[1, 1]);
+      var areaStdDev = cv is null ? 0 : Math.Sqrt(cv[0, 0]);
+      var posStdDev = cv is null ? 0 : Math.Sqrt(cv[1, 1]);
 
       double height;
       double fwhm;
-      double heightVariance = 0;
-      double fwhmVariance = 0;
+      double heightStdDev = 0;
+      double fwhmStdDev = 0;
 
       double C2 = 0.86676; // Approximation constant for FWHM of Voigt
       double C1 = 2 - Math.Sqrt(C2);
@@ -343,8 +343,8 @@ namespace Altaxo.Calc.FitFunctions.Probability
 
         if (cv is not null)
         {
-          heightVariance = Math.Sqrt(area * area * cv[3, 3] - area * gamma * (cv[0, 3] + cv[3, 0]) + gamma * gamma * cv[0, 0]) / (gamma * gamma * Math.PI);
-          fwhmVariance = 2 * Math.Sqrt(cv[3, 3]);
+          heightStdDev = Math.Sqrt(area * area * cv[3, 3] - area * gamma * (cv[0, 3] + cv[3, 0]) + gamma * gamma * cv[0, 0]) / (gamma * gamma * Math.PI);
+          fwhmStdDev = 2 * Math.Sqrt(cv[3, 3]);
         }
       }
       else if (gamma == 0)
@@ -355,13 +355,13 @@ namespace Altaxo.Calc.FitFunctions.Probability
 
         if (cv is not null)
         {
-          heightVariance = Math.Sqrt(
+          heightStdDev = Math.Sqrt(
                                       RMath.Pow2(area) * (2 * cv[3, 3] + cv[2, 2] * Math.PI + (cv[2, 3] + cv[3, 2]) * Sqrt2Pi) -
                                       area * ((cv[0, 2] + cv[2, 0]) * Math.PI + (cv[0, 3] + cv[3, 0]) * Sqrt2Pi) * sigma +
                                       cv[0, 0] * Math.PI * RMath.Pow2(sigma)
                                     ) / (Math.Sqrt(2) * Math.PI * RMath.Pow2(sigma));
 
-          fwhmVariance = Math.Sqrt(
+          fwhmStdDev = Math.Sqrt(
                                     RMath.Pow2(C1) * cv[3, 3] +
                                     8 * Math.Log(2) * cv[2, 2] +
                                     2 * C1 * SqrtLog4 * (cv[2, 3] + cv[3, 2])
@@ -403,7 +403,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
           var dHeightByDSigma = area * (2 * gamma * sigma - expErfcTerm * Sqrt2Pi * (RMath.Pow2(gamma) + RMath.Pow2(sigma)) ) / RMath.Pow2(Sqrt2Pi * sigma * sigma);
           var dHeightByDGamma = area * (gamma * expErfcTerm / (Sqrt2Pi * RMath.Pow3(sigma)) - 1 / (Math.PI * RMath.Pow2(sigma)));
 
-          heightVariance = Math.Sqrt(
+          heightStdDev = Math.Sqrt(
             cv[0, 0] * RMath.Pow2(dHeightByDArea) +
             dHeightByDGamma * ((cv[0, 3] + cv[3, 0]) * dHeightByDArea +
             cv[3, 3] * dHeightByDGamma) +
@@ -415,7 +415,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
           var dFwhmByDSigma = 8 * sigma * Math.Log(2) / fwhmSqrtTerm;
           var dFwhmByDGamma = (2 - Math.Sqrt(C2)) + C2 * gamma / fwhmSqrtTerm;
 
-          fwhmVariance = Math.Sqrt(
+          fwhmStdDev = Math.Sqrt(
                                 cv[3, 3] * RMath.Pow2(dFwhmByDGamma) +
                                 dFwhmByDSigma * ((cv[2, 3] + cv[3, 2]) * dFwhmByDGamma +
                                 cv[2, 2] * dFwhmByDSigma));
@@ -423,7 +423,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
         }
 
       }
-      return (pos, posVariance, area, areaVariance, height, heightVariance, fwhm, fwhmVariance);
+      return (pos, posStdDev, area, areaStdDev, height, heightStdDev, fwhm, fwhmStdDev);
     }
   }
 }

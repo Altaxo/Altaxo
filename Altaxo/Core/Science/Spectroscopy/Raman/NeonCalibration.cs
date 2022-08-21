@@ -536,7 +536,7 @@ namespace Altaxo.Science.Spectroscopy.Raman
     /// <summary>
     /// Gets the peak matchings, i.e. the correspondence between official Nist peak position, and measured peak position.
     /// </summary>
-    public List<(double NistWL, double MeasWL, double MeasWLVariance)> PeakMatchings { get; private set; } = new();
+    public List<(double NistWL, double MeasWL, double MeasWLStdDev)> PeakMatchings { get; private set; } = new();
 
     /// <summary>
     /// Gets an interpolation function that maps the measured wavelength to the difference between Nist and measured wavelength.
@@ -593,25 +593,25 @@ namespace Altaxo.Science.Spectroscopy.Raman
     /// Creates a spline that corresponds the measured wavelength to the wavelength difference between the
     /// official Nist wavelength and measured wavelength.
     /// </summary>
-    public static Func<double, double> GetSplineMeasuredWavelengthToWavelengthDifference(NeonCalibrationOptions options, List<(double NistWL, double MeasWL, double MeasWLVariance)> PeakMatchings)
+    public static Func<double, double> GetSplineMeasuredWavelengthToWavelengthDifference(NeonCalibrationOptions options, List<(double NistWL, double MeasWL, double MeasWLStdDev)> PeakMatchings)
     {
       var x = PeakMatchings.Select(p => p.NistWL).ToArray();
       var p = PeakMatchings.ToArray();
       Array.Sort(x, p);
       var y = p.Select(p => (p.NistWL - p.MeasWL)).ToArray();
-      var dy = p.Select(p => p.MeasWLVariance).ToArray();
+      var dy = p.Select(p => p.MeasWLStdDev).ToArray();
       // spline difference Nist wavelength - Measured wavelength versus the Nist wavelength
       // why x is Nist wavelength (and not measured wavelength)? Because it has per definition no error, whereas measured wavelength has
       IInterpolationFunction spline;
-      if (!options.InterpolationIgnoreVariance && dy.Max() > 0 && dy.Select(v => RMath.IsFinite(v)).Count() >= 1)
+      if (!options.InterpolationIgnoreStdDev && dy.Max() > 0 && dy.Select(v => RMath.IsFinite(v)).Count() >= 1)
       {
-        // first, sanitize the variance:
-        // if for some values it is Infinity, we replace those with the mean of the finite variances
-        var meanVariance = dy.Where(v => RMath.IsFinite(v)).Average();
+        // first, sanitize the standard deviations:
+        // if for some values it is Infinity, we replace those with the mean of the finite standard deviations
+        var meanStdDev = dy.Where(v => RMath.IsFinite(v)).Average();
         for (int i = 0; i < dy.Length; i++)
         {
           if (!RMath.IsFinite(dy[i]))
-            dy[i] = meanVariance;
+            dy[i] = meanStdDev;
         }
         spline = options.InterpolationMethod.Interpolate(x, y, dy);
       }
@@ -629,7 +629,7 @@ namespace Altaxo.Science.Spectroscopy.Raman
         xx[i] = x[i] - diff; // we calculate the splined measured wavelengh
       }
       // new spline y=(Nist wavelength - Measured wavelength) versus x = (splined) measured wavelength
-      if (options.InterpolationIgnoreVariance)
+      if (options.InterpolationIgnoreStdDev)
         spline = options.InterpolationMethod.Interpolate(xx, y); // out spline now contains a function that has the measured wavelength as argument, and returns the correction offset to get the calibrated wavelength
       else
         spline = options.InterpolationMethod.Interpolate(xx, y, dy); // out spline now contains a function that has the measured wavelength as argument, and returns the correction offset to get the calibrated wavelength
@@ -641,7 +641,7 @@ namespace Altaxo.Science.Spectroscopy.Raman
     }
 
 
-    List<(double NistWL, double MeasWL, double MeasWLVariance)> FilterOutMatchesOfMeasuredPeaksCorrespondsToMultipleNistPeaks(List<(double NistWL, double MeasWL, double MeasWLVariance)> list)
+    List<(double NistWL, double MeasWL, double MeasWLStdDev)> FilterOutMatchesOfMeasuredPeaksCorrespondsToMultipleNistPeaks(List<(double NistWL, double MeasWL, double MeasWLStdDev)> list)
     {
       var countDict = new Dictionary<double, int>();
       foreach (var pair in list)
@@ -653,7 +653,7 @@ namespace Altaxo.Science.Spectroscopy.Raman
         countDict[pair.MeasWL] = cnt + 1;
       }
 
-      var result = new List<(double NistWL, double MeasWL, double MeasWLVariance)>();
+      var result = new List<(double NistWL, double MeasWL, double MeasWLStdDev)>();
       foreach (var pair in list)
       {
         if (countDict[pair.MeasWL] == 1)
@@ -663,7 +663,7 @@ namespace Altaxo.Science.Spectroscopy.Raman
       return result;
     }
 
-    private List<(double NistWL, double MeasWL, double MeasWLVariance)> GetPeakMatchingsBasedOnPeakSearchingResults((double NistWL_Left, double MeasWL_Left, double NistWL_Right, double MeasWL_Right) coarse)
+    private List<(double NistWL, double MeasWL, double MeasWLStdDev)> GetPeakMatchingsBasedOnPeakSearchingResults((double NistWL_Left, double MeasWL_Left, double NistWL_Right, double MeasWL_Right) coarse)
     {
       var (NistWL_Left, MeasWL_Left, NistWL_Right, MeasWL_Right) = coarse;
       var x_nm = _xPreprocessed_nm;
@@ -679,7 +679,7 @@ namespace Altaxo.Science.Spectroscopy.Raman
 
       var foundPeaks = _peakSearchingDescriptions;
 
-      var result = new List<(double NistWL, double MeasWL, double MeasWLVariance)>();
+      var result = new List<(double NistWL, double MeasWL, double MeasWLStdDev)>();
 
       foreach (var peakDesc in foundPeaks)
       {
@@ -702,7 +702,7 @@ namespace Altaxo.Science.Spectroscopy.Raman
       return result;
     }
 
-    private List<(double NistWL, double MeasWL, double MeasWLVariance)> GetPeakMatchingsBasedOnPeakFittingResults((double NistWL_Left, double MeasWL_Left, double NistWL_Right, double MeasWL_Right) coarse)
+    private List<(double NistWL, double MeasWL, double MeasWLStdDev)> GetPeakMatchingsBasedOnPeakFittingResults((double NistWL_Left, double MeasWL_Left, double NistWL_Right, double MeasWL_Right) coarse)
     {
       var (NistWL_Left, MeasWL_Left, NistWL_Right, MeasWL_Right) = coarse;
 
@@ -717,11 +717,11 @@ namespace Altaxo.Science.Spectroscopy.Raman
 
       var foundPeaks = _peakFittingDescriptions;
 
-      var result = new List<(double NistWL, double MeasWL, double MeasWLVariance)>();
+      var result = new List<(double NistWL, double MeasWL, double MeasWLStdDev)>();
 
       foreach (var peakDesc in foundPeaks)
       {
-        var (measPeakCenterWL, measPeakCenterWLVariance, _, _, _, _, fwhm, _) = peakDesc.FitFunction.GetPositionAreaHeightFWHMFromSinglePeakParameters(peakDesc.PeakParameter, peakDesc.PeakParameterCovariances);
+        var (measPeakCenterWL, measPeakCenterWLStdDev, _, _, _, _, fwhm, _) = peakDesc.FitFunction.GetPositionAreaHeightFWHMFromSinglePeakParameters(peakDesc.PeakParameter, peakDesc.PeakParameterCovariances);
         // Note that for left and right we use full width = 2 x half width
         var measPeakLeftWL = measPeakCenterWL - fwhm;
         var measPeakRightWL = measPeakCenterWL + fwhm;
@@ -733,7 +733,7 @@ namespace Altaxo.Science.Spectroscopy.Raman
 
         foreach (var nistPeak in nistPeaks)
         {
-          result.Add((nistPeak.Wavelength_Nanometer, measPeakCenterWL, measPeakCenterWLVariance));
+          result.Add((nistPeak.Wavelength_Nanometer, measPeakCenterWL, measPeakCenterWLStdDev));
         }
       }
 

@@ -38,7 +38,7 @@ namespace Altaxo.Science.Spectroscopy.Raman
     public const string ColumnName_Group0_NeonCalibration_NistPeakWavelength = "NistNeonPeakWavelength[nm]";
     public const string ColumnName_Group0_NeonCalibration_MeasuredPeakWavelength = "MeasuredNeonPeakWavelength [nm]";
     public const string ColumnName_Group0_NeonCalibration_DifferenceOfPeakWavelengths = "DifferenceOfPeakWavelengths [nm]";
-    public const string ColumnName_Group0_NeonCalibration_DifferenceOfPeakWavelengthsVariance = "DifferenceOfPeakWavelengths.Variance [nm]";
+    public const string ColumnName_Group0_NeonCalibration_DifferenceOfPeakWavelengthsStdDev = "DifferenceOfPeakWavelengths.Err [nm]";
     public const string PColumnName_Group0_NeonCalibration_AssumedLaserWavelength = "AssumedLaserWavelength [nm]";
 
     public const string ColumnName_Group1_NeonCalibration1_PreprocessedSpectrumWavelength = "Neon1_Preprocessed_Wavelength [nm]";
@@ -51,7 +51,7 @@ namespace Altaxo.Science.Spectroscopy.Raman
     public const string ColumnName_Group3_NeonCalibration_SplineY_DifferenceWavelength = "NeonCalibration_DifferenceWL";
 
     public const string ColumnName_Group4_SiliconCalibration_PeakShift = "SiliconPeakShift [cm-1]";
-    public const string ColumnName_Group4_SiliconCalibration_PeakShiftVariance = "SiliconPeakShift.Variance [cm-1]";
+    public const string ColumnName_Group4_SiliconCalibration_PeakShiftStdDev = "SiliconPeakShift.Err [cm-1]";
 
 
     public const string ColumnName_Group5_SiliconCalibration_PreprocessedSpectrumWavelength = "Silicon_Preprocessed_Wavelength [nm]";
@@ -291,7 +291,7 @@ namespace Altaxo.Science.Spectroscopy.Raman
             if (_neonCalibrationOptions1.LaserWavelength_Nanometer != _neonCalibrationOptions2.LaserWavelength_Nanometer)
               throw new InvalidOperationException($"When using both NeonCalibration1 and NeonCalibration2, the assumed laser wavelength must be the same!");
 
-            var combinedNeonPeakMatchings = new List<(double NistWL, double MeasWL, double MeasWLVariance)>();
+            var combinedNeonPeakMatchings = new List<(double NistWL, double MeasWL, double MeasWLStdDev)>();
             combinedNeonPeakMatchings.AddRange(neonCalibration1.PeakMatchings);
             combinedNeonPeakMatchings.AddRange(neonCalibration2.PeakMatchings);
             WriteNeonPeakPositionsToTable(destinationTable, _neonCalibrationOptions1.LaserWavelength_Nanometer, combinedNeonPeakMatchings);
@@ -311,7 +311,7 @@ namespace Altaxo.Science.Spectroscopy.Raman
 
           if(siliconCalibration is not null)
           {
-            WriteSiliconPeakToTable(destinationTable, (siliconCalibration.SiliconPeakPosition, siliconCalibration.SiliconPeakPositionVariance));
+            WriteSiliconPeakToTable(destinationTable, (siliconCalibration.SiliconPeakPosition, siliconCalibration.SiliconPeakPositionStdDev));
           }
 
           if (siliconCalibration is not null && neonCalibration1 is not null)
@@ -333,7 +333,7 @@ namespace Altaxo.Science.Spectroscopy.Raman
       var p = neonCalibration1.PeakMatchings.ToArray();
       Array.Sort(x, p);
       var y = p.Select(p => (p.NistWL - p.MeasWL)).ToArray();
-      var dy = p.Select(p => p.MeasWLVariance).ToArray();
+      var dy = p.Select(p => p.MeasWLStdDev).ToArray();
 
       var splineFunction = neonCalibration1.MeasuredWavelengthToWavelengthDifference;
 
@@ -464,19 +464,19 @@ namespace Altaxo.Science.Spectroscopy.Raman
     /// <param name="dstTable">The destination table.</param>
     /// <param name="assumedLaserWavelength_nm">The assumed laser wavelength in nm.</param>
     /// <param name="matches">The peak position matches.</param>
-    private static void WriteNeonPeakPositionsToTable(DataTable dstTable, double assumedLaserWavelength_nm, List<(double NistWL, double MeasWL, double MeasWLVariance)> matches)
+    private static void WriteNeonPeakPositionsToTable(DataTable dstTable, double assumedLaserWavelength_nm, List<(double NistWL, double MeasWL, double MeasWLStdDev)> matches)
     {
       var colNist = dstTable.DataColumns.EnsureExistence(ColumnName_Group0_NeonCalibration_NistPeakWavelength, typeof(DoubleColumn), ColumnKind.X, 0);
       var colMeas = dstTable.DataColumns.EnsureExistence(ColumnName_Group0_NeonCalibration_MeasuredPeakWavelength, typeof(DoubleColumn), ColumnKind.V, 0);
       var colDiff = dstTable.DataColumns.EnsureExistence(ColumnName_Group0_NeonCalibration_DifferenceOfPeakWavelengths, typeof(DoubleColumn), ColumnKind.V, 0);
-      var colDiffVar = dstTable.DataColumns.EnsureExistence(ColumnName_Group0_NeonCalibration_DifferenceOfPeakWavelengthsVariance, typeof(DoubleColumn), ColumnKind.Err, 0);
+      var colDiffVar = dstTable.DataColumns.EnsureExistence(ColumnName_Group0_NeonCalibration_DifferenceOfPeakWavelengthsStdDev, typeof(DoubleColumn), ColumnKind.Err, 0);
       for (var i = 0; i < matches.Count; ++i)
       {
         var match = matches[i];
         colNist[i] = match.NistWL;
         colMeas[i] = match.MeasWL;
         colDiff[i] = match.NistWL - match.MeasWL;
-        colDiffVar[i] = match.MeasWLVariance;
+        colDiffVar[i] = match.MeasWLStdDev;
       }
 
       var pcolLaserWL = dstTable.PropertyColumns.EnsureExistence(PColumnName_Group0_NeonCalibration_AssumedLaserWavelength, typeof(DoubleColumn), ColumnKind.V, 0);
@@ -515,7 +515,7 @@ namespace Altaxo.Science.Spectroscopy.Raman
     private static void WriteSiliconPeakToTable(DataTable dstTable, (double Position, double PositionTolerance)? match)
     {
         var colPos = dstTable.DataColumns.EnsureExistence(ColumnName_Group4_SiliconCalibration_PeakShift, typeof(DoubleColumn), ColumnKind.V, 4);
-        var colPosErr = dstTable.DataColumns.EnsureExistence(ColumnName_Group4_SiliconCalibration_PeakShiftVariance, typeof(DoubleColumn), ColumnKind.Err, 4);
+        var colPosErr = dstTable.DataColumns.EnsureExistence(ColumnName_Group4_SiliconCalibration_PeakShiftStdDev, typeof(DoubleColumn), ColumnKind.Err, 4);
         colPos.Clear();
         colPosErr.Clear();
 

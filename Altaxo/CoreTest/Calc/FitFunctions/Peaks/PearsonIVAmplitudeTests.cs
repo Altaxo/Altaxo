@@ -56,10 +56,10 @@ namespace Altaxo.Calc.FitFunctions.Peaks
         var cov = new DoubleMatrix(pars.Length, pars.Length);
         cov[i, i] = 1;
         var result = func.GetPositionAreaHeightFWHMFromSinglePeakParameters(pars, cov);
-        AssertEx.AreEqual(Math.Abs(areaDerivs[i]), result.AreaVariance, 1E-13, 1E-7);
-        AssertEx.AreEqual(Math.Abs(xmaxDerivs[i]), result.PositionVariance, 1E-13, 1E-7);
-        AssertEx.AreEqual(Math.Abs(ymaxDerivs[i]), result.HeightVariance, 1E-13, 1E-7);
-        AssertEx.AreEqual(Math.Abs(fwhmDerivs[i]), result.FWHMVariance, 1E-13, 1E-7);
+        AssertEx.AreEqual(Math.Abs(areaDerivs[i]), result.AreaStdDev, 1E-13, 1E-7);
+        AssertEx.AreEqual(Math.Abs(xmaxDerivs[i]), result.PositionStdDev, 1E-13, 1E-7);
+        AssertEx.AreEqual(Math.Abs(ymaxDerivs[i]), result.HeightStdDev, 1E-13, 1E-7);
+        AssertEx.AreEqual(Math.Abs(fwhmDerivs[i]), result.FWHMStdDev, 1E-13, 1E-7);
       }
     }
 
@@ -88,9 +88,9 @@ namespace Altaxo.Calc.FitFunctions.Peaks
         var cov = new DoubleMatrix(pars.Length, pars.Length);
         cov[i, i] = 1;
         var result = func.GetPositionAreaHeightFWHMFromSinglePeakParameters(pars, cov);
-        AssertEx.AreEqual(Math.Abs(areaDerivs[i]), result.AreaVariance, 1E-13, 1E-7);
-        AssertEx.AreEqual(Math.Abs(xmaxDerivs[i]), result.PositionVariance, 1E-13, 1E-7);
-        AssertEx.AreEqual(Math.Abs(ymaxDerivs[i]), result.HeightVariance, 1E-13, 1E-7);
+        AssertEx.AreEqual(Math.Abs(areaDerivs[i]), result.AreaStdDev, 1E-13, 1E-7);
+        AssertEx.AreEqual(Math.Abs(xmaxDerivs[i]), result.PositionStdDev, 1E-13, 1E-7);
+        AssertEx.AreEqual(Math.Abs(ymaxDerivs[i]), result.HeightStdDev, 1E-13, 1E-7);
         // AssertEx.AreEqual(Math.Abs(fwhmDerivs[i]), result.FWHMVariance, 1E-13, 1E-7);
       }
     }

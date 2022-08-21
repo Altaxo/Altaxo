@@ -51,7 +51,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
         var cov = new DoubleMatrix(pars.Length, pars.Length);
         cov[i, i] = 1;
         var result = func.GetPositionAreaHeightFWHMFromSinglePeakParameters(pars, cov);
-        AssertEx.AreEqual(Math.Abs(areaDerivs[i]), result.AreaVariance, 1E-13, 1E-7);
+        AssertEx.AreEqual(Math.Abs(areaDerivs[i]), result.AreaStdDev, 1E-13, 1E-7);
       }
     }
   }

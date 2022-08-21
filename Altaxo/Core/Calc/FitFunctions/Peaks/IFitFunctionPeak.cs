@@ -67,12 +67,12 @@ namespace Altaxo.Calc.FitFunctions.Peaks
 
     /// <summary>
     /// Gets the position, the area under the peak, the height, and the Full Width Half Maximum (FWHM) from the parameters of a single peak.
-    /// If the covariance matrix is given, then also the variances of position, area, height, FWHM are calculated (otherwise, zero values are returned for the variances).
+    /// If the covariance matrix is given, then also the standard deviations of position, area, height, FWHM are calculated (otherwise, zero values are returned for the standard deviations).
     /// </summary>
     /// <param name="parameters">The parameters.</param>
     /// <param name="cv">The covariance matrix. Can be null (in this case the returned variance values are zero).</param>
-    /// <returns>The position, the area under the peak, the height, and the Full Width Half Maximum (FWHM), together with their variances.</returns>
-    public (double Position, double PositionVariance, double Area, double AreaVariance, double Height, double HeightVariance, double FWHM, double FWHMVariance)
+    /// <returns>The position, the area under the peak, the height, and the Full Width Half Maximum (FWHM), together with their standard devivations.</returns>
+    public (double Position, double PositionStdDev, double Area, double AreaStdDev, double Height, double HeightStdDev, double FWHM, double FWHMStdDev)
         GetPositionAreaHeightFWHMFromSinglePeakParameters(double[] parameters, IROMatrix<double>? cv);
   }
 }

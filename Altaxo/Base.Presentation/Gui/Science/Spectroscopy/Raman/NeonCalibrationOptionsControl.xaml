@@ -39,16 +39,16 @@
                   ToolTip="This filters out peaks that appear broader, because at this position there are multiple Nist peaks very close together."
                   />
 
-        <Expander Grid.Row="7" Header="Interpolation method">
-            <StackPanel Orientation="Vertical">
+        <Expander Grid.Row="7" Header="Interpolation method" IsExpanded="true">
+            <StackPanel Orientation="Vertical" Margin="0,4,0,4">
                 <ComboBox ItemsSource="{Binding InterpolationMethod.InterpolationMethod.Items}"
                           SelectedValue="{Binding InterpolationMethod.InterpolationMethod.SelectedItem}"/>
                 <ContentControl Content="{Binding InterpolationMethod.InterpolationDetailsController.ViewObject}"/>
-                <CheckBox IsChecked="{Binding InterpolationIgnoreVariance, Mode=TwoWay}" Content="Ignore variance from fit"/>
+                <CheckBox IsChecked="{Binding InterpolationIgnoreVariance, Mode=TwoWay}" Content="Ignore position error from fit"/>
             </StackPanel>
         </Expander>
 
-        <Expander Grid.Row="9" Header="Preprocessing / Peak finding">
+        <Expander Grid.Row="9" Header="Preprocessing / Peak finding" IsExpanded="true" Margin="0,4,0,4">
             <ContentControl Content="{Binding PeakFindingController.ViewObject}"/>
         </Expander>
     </Grid>

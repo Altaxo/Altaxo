@@ -308,7 +308,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
 
     static double SafeSqrt(double x) => Math.Sqrt(Math.Max(0, x));
 
-    public (double Position, double PositionVariance, double Area, double AreaVariance, double Height, double HeightVariance, double FWHM, double FWHMVariance)
+    public (double Position, double PositionStdDev, double Area, double AreaStdDev, double Height, double HeightStdDev, double FWHM, double FWHMStdDev)
       GetPositionAreaHeightFWHMFromSinglePeakParameters(double[] parameters, IROMatrix<double> cv)
     {
       if (parameters is null || parameters.Length != NumberOfParametersPerPeak)
@@ -325,7 +325,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
       var height = amp;
       var fwhm = GetHWHM(w, m, v, true) + GetHWHM(w, m, v, false);
 
-      double posVariance = 0, areaVariance = 0, heightVariance = 0, fwhmVariance = 0;
+      double posStdDev = 0, areaStdDev = 0, heightStdDev = 0, fwhmStdDev = 0;
 
       if (cv is not null)
       {
@@ -333,10 +333,10 @@ namespace Altaxo.Calc.FitFunctions.Peaks
         var resVec = new DoubleVector(5);
 
         // PositionVariance
-        posVariance = SafeSqrt(cv[1, 1]);
+        posStdDev = SafeSqrt(cv[1, 1]);
 
         // Height variance
-        heightVariance = SafeSqrt(cv[0,0]);
+        heightStdDev = SafeSqrt(cv[0,0]);
 
         // Area variance
         deriv[0] = GetArea(1, w, m, v);
@@ -348,7 +348,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
         absDelta = v == 0 ? 1E-5 : Math.Abs(v * 1E-5);
         deriv[4] = (GetArea(amp, w, m, v + absDelta) - GetArea(amp, w, m, v - absDelta)) / (2 * absDelta);
         MatrixMath.Multiply(cv, deriv, resVec);
-        areaVariance = SafeSqrt(VectorMath.DotProduct(deriv, resVec));
+        areaStdDev = SafeSqrt(VectorMath.DotProduct(deriv, resVec));
 
         // FWHM variance
         deriv[0] = 0;
@@ -360,10 +360,10 @@ namespace Altaxo.Calc.FitFunctions.Peaks
         absDelta = v == 0 ? 1E-5 : Math.Abs(v * 1E-5);
         deriv[4] = (GetFWHM(w, m, v + absDelta) - GetFWHM(w, m, v - absDelta)) / (2 * absDelta);
         MatrixMath.Multiply(cv, deriv, resVec);
-        fwhmVariance = SafeSqrt(VectorMath.DotProduct(deriv, resVec));
+        fwhmStdDev = SafeSqrt(VectorMath.DotProduct(deriv, resVec));
       }
 
-      return (pos, posVariance, area, areaVariance, height, heightVariance, fwhm, fwhmVariance);
+      return (pos, posStdDev, area, areaStdDev, height, heightStdDev, fwhm, fwhmStdDev);
     }
 
     /// <summary>

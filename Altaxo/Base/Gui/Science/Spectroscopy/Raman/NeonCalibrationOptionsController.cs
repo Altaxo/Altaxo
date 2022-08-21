@@ -144,7 +144,7 @@ namespace Altaxo.Gui.Science.Spectroscopy.Raman
         PeakFindingController = peakFindingController;
 
         InterpolationMethod = new InterpolationFunctionOptionsController(_doc.InterpolationMethod);
-        InterpolationIgnoreVariance = _doc.InterpolationIgnoreVariance;
+        InterpolationIgnoreVariance = _doc.InterpolationIgnoreStdDev;
       }
     }
 
@@ -181,7 +181,7 @@ namespace Altaxo.Gui.Science.Spectroscopy.Raman
         FilterOutPeaksCorrespondingToMultipleNistPeaks = FilterOutPeaksCorrespondingToMultipleNistPeaks,
         PeakFindingOptions = findOptions,
         InterpolationMethod = interpolationMethod,
-        InterpolationIgnoreVariance = InterpolationIgnoreVariance,
+        InterpolationIgnoreStdDev = InterpolationIgnoreVariance,
       };
 
       return ApplyEnd(true, disposeController);
