@@ -39,7 +39,6 @@ namespace Altaxo.Gui.Common
   public partial class BackgroundCancelControl : UserControl
   {
     private const int TimerTick_ms = 100;
-    //private System.Exception _threadException;
     private System.Threading.Thread _thread;
     private IExternalDrivenBackgroundMonitor _monitor;
     private bool _wasCancelledByUser;
@@ -74,9 +73,10 @@ namespace Altaxo.Gui.Common
       _monitor = new ExternalDrivenBackgroundMonitor();
       _thread = new System.Threading.Thread(() => action(_monitor));
 
-      _btCancel.Visibility = _monitor is not null ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
-      _btInterrupt.Visibility = _monitor is null ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
-      _btAbort.Visibility = System.Windows.Visibility.Collapsed;
+      _btCancelSoft.Visibility = _monitor is not null ? Visibility.Visible : Visibility.Collapsed;
+      _btInterrupt.Visibility = _monitor is null ? Visibility.Visible :Visibility.Collapsed;
+      _btCancelHard.Visibility = Visibility.Collapsed;
+      _btAbort.Visibility = Visibility.Collapsed;
 
       _showUpDownConter = milliSecondsUntilShowUp / TimerTick_ms;
       _thread.Start();
@@ -135,19 +135,34 @@ namespace Altaxo.Gui.Common
       }
     }
 
-    private void EhCancelClicked(object sender, RoutedEventArgs e)
+    private void EhCancelSoftClicked(object sender, RoutedEventArgs e)
     {
       _wasCancelledByUser = true;
+      _btCancelSoft.Visibility = Visibility.Collapsed;
       if (_monitor is not null)
       {
+        _btCancelHard.Visibility = Visibility.Visible;
         _monitor.SetCancellationPendingSoft();
-        _btCancel.Visibility = System.Windows.Visibility.Collapsed;
-        _btInterrupt.Visibility = System.Windows.Visibility.Visible;
       }
       else
       {
-        _btCancel.Visibility = System.Windows.Visibility.Collapsed;
-        _btInterrupt.Visibility = System.Windows.Visibility.Visible;
+        _btInterrupt.Visibility = Visibility.Visible;
+        EhInterruptClicked(sender, e);
+      }
+    }
+
+    private void EhCancelHardClicked(object sender, RoutedEventArgs e)
+    {
+      _wasCancelledByUser = true;
+      _btCancelHard.Visibility = Visibility.Collapsed;
+      if (_monitor is not null)
+      {
+        _btInterrupt.Visibility = Visibility.Visible;
+        _monitor.SetCancellationPendingHard();
+      }
+      else
+      {
+        _btInterrupt.Visibility = Visibility.Visible;
         EhInterruptClicked(sender, e);
       }
     }
@@ -159,8 +174,8 @@ namespace Altaxo.Gui.Common
         _wasCancelledByUser = true;
         _thread.Interrupt();
       }
-      _btInterrupt.Visibility = System.Windows.Visibility.Collapsed;
-      _btAbort.Visibility = System.Windows.Visibility.Visible;
+      _btInterrupt.Visibility = Visibility.Collapsed;
+      _btAbort.Visibility = Visibility.Visible;
     }
 
     

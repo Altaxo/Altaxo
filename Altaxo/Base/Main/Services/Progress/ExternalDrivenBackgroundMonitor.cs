@@ -40,8 +40,6 @@ namespace Altaxo.Main.Services
     private double _progressFraction = double.NaN;
     private OperationStatus _operationStatus;
     private string _taskName;
-
-    private bool _cancellationPending;
     private Lazy<CancellationTokenSource> _cancellationTokenSourceSoft;
     private Lazy<CancellationTokenSource> _cancellationTokenSourceHard;
 
@@ -78,15 +76,7 @@ namespace Altaxo.Main.Services
     void System.IProgress<string>.Report(string text) => ReportProgress(text);
     void System.IProgress<(string text, double progressFraction)>.Report((string text, double progressFraction) tuple) => ReportProgress(tuple.text, tuple.progressFraction);
 
-    void IProgressMonitor.SetCancellationPendingSoft()
-    {
-      _cancellationTokenSourceSoft.Value.Cancel();
-    }
-
-    void IProgressMonitor.SetCancellationPendingHard()
-    {
-      _cancellationTokenSourceHard.Value.Cancel();
-    }
+    
 
 
     public void ReportProgress(string text, double progressFraction)
@@ -117,7 +107,8 @@ namespace Altaxo.Main.Services
     {
       get
       {
-        return _cancellationPending;
+        return (_cancellationTokenSourceSoft.IsValueCreated && _cancellationTokenSourceSoft.Value.IsCancellationRequested) ||
+                (_cancellationTokenSourceHard.IsValueCreated && _cancellationTokenSourceHard.Value.IsCancellationRequested);
       }
     }
 
@@ -157,8 +148,6 @@ namespace Altaxo.Main.Services
 
     public void SetCancellationPending()
     {
-      _cancellationPending = true;
-
       if(_cancellationTokenSourceHard.IsValueCreated)
       {
         // we do the hard cancellation only if either there is not soft token source created,
@@ -172,6 +161,16 @@ namespace Altaxo.Main.Services
       {
         _cancellationTokenSourceSoft.Value.Cancel();
       }
+    }
+
+    void IProgressMonitor.SetCancellationPendingSoft()
+    {
+      _cancellationTokenSourceSoft.Value.Cancel();
+    }
+
+    void IProgressMonitor.SetCancellationPendingHard()
+    {
+      _cancellationTokenSourceHard.Value.Cancel();
     }
 
     public IProgressReporter CreateSubTask(double workAmount)
