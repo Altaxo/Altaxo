@@ -41,23 +41,23 @@ namespace Altaxo.Worksheet.Commands
         return false;
       }
 
-      if (!(Current.Workbench.ActiveViewContent is Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl))
+      if (Current.Workbench.ActiveViewContent is not Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl || ctrl.DataTable is not { } dataTable)
       {
         return false;
       }
 
-      if(ctrl.DataTable?.GetTableProperty("Content") is Altaxo.Calc.Regression.Multivariate.MultivariateContentMemento plsMemo)
+      if(dataTable?.GetTableProperty("Content") is Altaxo.Calc.Regression.Multivariate.MultivariateContentMemento plsMemo)
       {
         if(Altaxo.Calc.Regression.Multivariate.MultivariateContentMemento.TryConvertToDatasource(plsMemo, out var dataSource))
         {
-          ctrl.DataTable.DataSource = dataSource;
-          ctrl.DataTable.RemoveTableProperty("Content");
+          dataTable.DataSource = dataSource;
+          dataTable.RemoveTableProperty("Content");
         }
       }
 
       return
         // 2022-07-12 we switched to DimensionReductionAndRegressionDataSource
-        ctrl.DataTable.DataSource is Altaxo.Calc.Regression.Multivariate.DimensionReductionAndRegressionDataSource;
+        dataTable.DataSource is Altaxo.Calc.Regression.Multivariate.DimensionReductionAndRegressionDataSource;
     }
   }
 }
