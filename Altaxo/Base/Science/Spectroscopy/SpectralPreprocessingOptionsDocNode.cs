@@ -157,7 +157,10 @@ namespace Altaxo.Science.Spectroscopy
     {
       using (var suspendToken = SuspendGetToken()) 
       {
-        Report(_calibrationTableProxy, this, "CalibrationTableProxy");
+        if (_calibrationTableProxy is not null)
+        {
+          Report(_calibrationTableProxy, this, "CalibrationTableProxy");
+        }
         suspendToken.Resume();
       }
     }
