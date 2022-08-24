@@ -27,15 +27,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Collections.Immutable;
+using Altaxo;
+using Altaxo.Data;
+using Altaxo.Gui.Common;
+using Altaxo.Main;
+using Markdig.Extensions.Tables;
 
 namespace Altaxo.Gui.Pads.ProjectBrowser
 {
-  using System.Collections.Immutable;
-  using Altaxo;
-  using Altaxo.Data;
-  using Altaxo.Gui.Common;
-  using Altaxo.Main;
-  using Markdig.Extensions.Tables;
 
   public static class ProjectBrowserExtensions
   {
@@ -292,6 +292,92 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
         Current.ProjectService.ShowDocumentView(destinationTable);
       }
     }
+
+    /// <summary>
+    /// This command will executes all data sources in all selected tables in the project browser.
+    /// For that, it takes into account the dependencies of each data source to other tables,
+    /// and execute those sources first, which do not have dependencies to tables for which the data source
+    /// is executed later.
+    /// </summary>
+    /// <param name="ctrl">The control.</param>
+    public static void ExecuteAllDataSources(this ProjectBrowseController ctrl)
+    {
+      // find all selected tables with data sources in it
+      var dataTables = ctrl
+        .GetSelectedListItems()
+        .OfType<DataTable>()
+        .Where(t => t.DataSource is not null)
+        .ToList();
+      if (dataTables.Count == 0)
+        return;
+
+      // dictionary with a table as key, and table(s) it depend on as values
+      var dict = new Dictionary<DataTable, HashSet<DataTable>>();
+
+      void MyReport(IProxy proxy, object owner, string propertyName, DataTable table)
+      {
+        var doc = proxy?.DocumentObject();
+        if (doc is DataTable dt0)
+          dict[table].Add(dt0);
+        else if (doc is DataColumn dc && DataTable.GetParentDataTableOf(dc) is DataTable dt1)
+          dict[table].Add(dt1);
+      }
+
+      // now sort them according to their dependencies
+      foreach (var t in dataTables)
+      {
+        dict.Add(t, new HashSet<DataTable>());
+        t.DataSource.VisitDocumentReferences((p, o, n) => MyReport(p, o, n, t));
+      }
+
+      dataTables.Sort((t1, t2) =>
+      {
+        if (dict[t1].Contains(t2) && dict[t2].Contains(t1))
+        {
+          return 0; // this is a direct circular dependency, but we test for it later anyway
+        }
+        else if (dict[t1].Contains(t2))
+        {
+          return +1; // t1 should be shifted to a place after t2
+        }
+        else if (dict[t2].Contains(t1))
+        {
+          return -1; // t1 should be shifted to a place before t2
+        }
+        else
+        {
+          return 0; // not dependent on each other, thus neutral
+        }
+      });
+
+      // Test for circular dependencies
+      // if there is one, the sorting would not be perfect
+      // so we test if the sorting is perfect
+
+      // make an initial test set of all tables 
+      var testSetOfTables = new HashSet<DataTable>(dataTables);
+
+      // the first table should not depend on any of the tables in the test set
+      foreach(var t in dataTables)
+      {
+        testSetOfTables.Remove(t); // we remove our own table from the test set, of course
+        if (dict[t].Intersect(testSetOfTables).FirstOrDefault() is { }  dependentTable)
+        {
+          Current.Gui.ErrorMessageBox("Some of the data sources of the tables are circular dependent on each other.\r\n"+
+                                      $"For instance, table {t.Name} is dependent on {dependentTable.Name} and vice versa\r\n" +
+                                      "Thus the command can not be executed");
+          return;
+        }
+      }
+
+      // now we can execute the data sources
+      foreach(var t in dataTables)
+      {
+        t.DataSource.FillData(t);
+      }
+    }
+
+    
 
     #region Clipboard commands
 

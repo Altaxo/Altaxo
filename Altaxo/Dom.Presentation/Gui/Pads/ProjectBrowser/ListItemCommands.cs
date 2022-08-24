@@ -237,6 +237,14 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
     }
   }
 
+  public class CmdExecuteAllDataSources : ProjectBrowseControllerCommand
+  {
+    protected override void Run(ProjectBrowseController ctrl)
+    {
+      ctrl.ExecuteAllDataSources();
+    }
+  }
+
   public class CmdMultiRenameItems : ProjectBrowseControllerCommand
   {
     protected override void Run(ProjectBrowseController ctrl)
