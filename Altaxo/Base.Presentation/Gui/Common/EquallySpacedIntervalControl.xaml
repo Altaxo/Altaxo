@@ -3,26 +3,19 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-						 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
+			 xmlns:axogcb="clr-namespace:Altaxo.Gui.Common;assembly=AltaxoBase" 
+			 xmlns:axogc="clr-namespace:Altaxo.Gui.Common" 
+             d:DataContext="{d:DesignInstance Type=axogcb:EquallySpacedIntervalController}"
              mc:Ignorable="d">
-	<UserControl.Resources>
-		<Style TargetType="Label">
-			<Style.Setters>
-				<Setter Property="Margin" Value="4,0,0,0" />
-				<Setter Property="HorizontalAlignment" Value="Right" />
-			</Style.Setters>
-		</Style>
-		<Style TargetType="RadioButton">
-			<Style.Setters>
-				<Setter Property="Margin" Value="8,4,8,0" />
-			</Style.Setters>
-		</Style>
-	</UserControl.Resources>
 	<Grid>
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="Auto" />
-			<ColumnDefinition Width="*" />
-		</Grid.ColumnDefinitions>
+			<ColumnDefinition Width="4" />
+            <ColumnDefinition Width="Auto" MinWidth="40" />
+            <ColumnDefinition Width="16" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="4" />
+        </Grid.ColumnDefinitions>
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="4" />
@@ -37,17 +30,35 @@
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="4" />
 		</Grid.RowDefinitions>
-		<RadioButton x:Name="_rbStartEndIntv" Grid.Column="0" Grid.Row="0" Content="Start, End, Intv." Checked="_rbStartEndCount_CheckedChanged" />
-		<RadioButton x:Name="_rbStartCountInterval" Grid.Column="1" Grid.Row="0" Content="Start, Count, Intv." Checked="_rbStartEndCount_CheckedChanged" />
-		<RadioButton x:Name="_rbStartEndCount" Grid.Column="0" Grid.Row="2" Content="Start, End, Count" Checked="_rbStartEndCount_CheckedChanged" />
-		<RadioButton x:Name="_rbEndCountIntv" Grid.Column="1" Grid.Row="2" Content="End, Count, Intv." Checked="_rbStartEndCount_CheckedChanged" />
+        <Label Grid.Row="0" Grid.Column="0"
+               Content="Type of interval:"/>
+        <ComboBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3"
+                  ItemsSource="{Binding IntervalChoice.Items}"
+                  SelectedItem="{Binding IntervalChoice.SelectedItem}"/>
+        
 		<Label Grid.Column="0" Grid.Row="4" Content="Start:" />
-		<axogc:ValidatingTextBox x:Name="_edStart" Grid.Column="1" Grid.Row="4" Validating="_edStart_TextChanged" />
-		<Label Grid.Column="0" Grid.Row="6" Content="End:" />
-		<axogc:ValidatingTextBox x:Name="_edEnd" Grid.Column="1" Grid.Row="6" Validating="_edEnd_TextChanged" />
-		<Label Grid.Column="0" Grid.Row="8" Content="Interval:" />
-		<axogc:ValidatingTextBox x:Name="_edIntv" Grid.Column="1" Grid.Row="8" Validating="_edIntv_TextChanged" />
-		<Label Grid.Column="0" Grid.Row="10" Content="Count:" />
-		<axogc:ValidatingTextBox x:Name="_edCount" Grid.Column="1" Grid.Row="10" Validating="_edCount_TextChanged" />
-	</Grid>
+        <axogc:NumericDoubleTextBox Grid.Row="4" Grid.Column="2"
+                                    SelectedValue="{Binding Start}"
+                                    IsEnabled="{Binding IsStartEnabled}"/>
+
+        <Label Grid.Row="6" Grid.Column="0" Content="End:" />
+        <axogc:NumericDoubleTextBox Grid.Row="6" Grid.Column="2" 
+                                    SelectedValue="{Binding End}"
+                                    IsEnabled="{Binding IsEndEnabled}"/>
+        
+        <Label Grid.Row="8" Grid.Column="0" Content="Step size:" />
+        <axogc:NumericDoubleTextBox Grid.Row="8" Grid.Column="2" 
+                                    SelectedValue="{Binding Step}"
+                                    IsEnabled="{Binding IsStepEnabled}"/>
+        
+        <Label Grid.Row="10" Grid.Column="0" Content="Count:" />
+        <axogc:NumericDoubleTextBox Grid.Row="10" Grid.Column="2" 
+                                    SelectedValue="{Binding Count}"
+                                    IsEnabled="{Binding IsCountEnabled}"/>
+
+        <Label Grid.Row="0" Grid.Column="4"
+               Content="Preview:"/>
+        <ListBox Grid.Row="2" Grid.RowSpan="9" Grid.Column="4"
+                 ItemsSource="{Binding PreviewList}" IsEnabled="False"/>
+    </Grid>
 </UserControl>

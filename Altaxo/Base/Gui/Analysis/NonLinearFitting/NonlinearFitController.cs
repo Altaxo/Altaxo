@@ -28,6 +28,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Windows.Input;
+using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Calc.Regression.Nonlinear;
 using Altaxo.Collections;
 using Altaxo.Data;
@@ -55,7 +56,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
   [ExpectedTypeOfView(typeof(INonlinearFitView))]
   public class NonlinearFitController : MVCANControllerEditImmutableDocBase<NonlinearFitDocument, INonlinearFitView>
   {
-    private Common.EquallySpacedInterval _generationInterval;
+    private ISpacedInterval _generationInterval;
     private double _sigmaSquare;
     private int _numberOfFitPoints;
     private double[] _covarianceMatrix; // length of covariance matrix is always a square number
@@ -374,7 +375,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
           fitEnsemble.Changed += new WeakEventHandler(EhFitEnsemble_Changed, fitEnsemble, nameof(fitEnsemble.Changed));
         }
 
-        _generationInterval = new Common.EquallySpacedInterval();
+        _generationInterval = new LinearlySpacedIntervalByStartCountStep(0,1000,1);
         var generationIntervalController = new Common.EquallySpacedIntervalController();
         generationIntervalController.InitializeDocument(_generationInterval);
         GenerationIntervalController = generationIntervalController;
@@ -391,8 +392,6 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
         SelectedTab = TabSelection;
       }
-
-
     }
 
     private void EhFitEnsemble_Changed(object sender, EventArgs e)
@@ -575,10 +574,17 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       var useInterval = SimulationFromEquallySpacedInterval;
       var generateUnusedDependentVariables = UseUnusedDependentVarsAlsoInSimulation;
 
-      if (useInterval && !_generationIntervalController.Apply(false))
+      if (useInterval)
       {
-        Current.Gui.ErrorMessageBox("Your interval specification contains errors, please correct them!");
-        return;
+        if (_generationIntervalController.Apply(false))
+        {
+          _generationInterval = (ISpacedInterval)GenerationIntervalController.ModelObject;
+        }
+        else
+        {
+          Current.Gui.ErrorMessageBox("Your interval specification contains errors, please correct them!");
+          return;
+        }
       }
 
       System.Threading.Thread simulationThread;
@@ -1112,7 +1118,7 @@ Label_EditScript:
       }
     }
 
-    public void OnSimulationWithInterval(bool calculateUnusedDependentVariablesAlso, Common.EquallySpacedInterval interval)
+    public void OnSimulationWithInterval(bool calculateUnusedDependentVariablesAlso, ISpacedInterval interval)
     {
       // we investigate for every fit element the corresponding table, and add columns to that table
       var fitAdapter = new LevMarAdapter(_doc.FitEnsemble, _doc.CurrentParameters);

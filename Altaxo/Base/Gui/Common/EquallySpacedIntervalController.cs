@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -26,377 +26,341 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
+using Altaxo.Calc.LinearAlgebra;
+using Altaxo.Collections;
 using Altaxo.Serialization;
 
 namespace Altaxo.Gui.Common
 {
-  public class EquallySpacedInterval : ICloneable
-  {
-    public EquallySpacedIntervalSpecificationMethod Method { get; set; }
-
-    public double Start { get; set; }
-
-    public double End { get; set; }
-
-    public double Count { get; set; }
-
-    public double Interval { get; set; }
-
-    public double this[int k]
-    {
-      get
-      {
-        return Start + k * Interval;
-      }
-    }
-
-    public object Clone()
-    {
-      return MemberwiseClone();
-    }
-  }
-
-  public enum EquallySpacedIntervalSpecificationMethod
-  {
-    StartEndInterval,
-    StartEndCount,
-    StartCountInterval,
-    EndCountInterval
-  }
-
   #region Interfaces
 
-  public interface IEquallySpacedIntervalView
+  public interface IEquallySpacedIntervalView : IDataContextAwareView
   {
-    event Action<EquallySpacedIntervalSpecificationMethod>? MethodChanged;
-
-    event Action<string>? StartChanged;
-
-    event Action<string>? EndChanged;
-
-    event Action<string>? CountChanged;
-
-    event Action<string>? IntervalChanged;
-
-    event Action<CancelEventArgs>? CountValidating;
-
-    event Action<CancelEventArgs>? IntervalValidating;
-
-    void EnableEditBoxes(bool start, bool end, bool count, bool interval);
-
-    void InitializeMethod(EquallySpacedIntervalSpecificationMethod method);
-
-    void InitializeStart(string? text);
-
-    void InitializeEnd(string? text);
-
-    void InitializeCount(string? text);
-
-    void InitializeInterval(string? text);
   }
 
   #endregion Interfaces
 
   /// <summary>
-  /// Summary description for FitEnsembleController.
+  /// Controller for an equally spaced interval.
   /// </summary>
-  [UserControllerForObject(typeof(EquallySpacedInterval))]
   [ExpectedTypeOfView(typeof(IEquallySpacedIntervalView))]
-  public class EquallySpacedIntervalController : MVCANControllerEditOriginalDocBase<EquallySpacedInterval, IEquallySpacedIntervalView>
+  public class EquallySpacedIntervalController : MVCANControllerEditImmutableDocBase<ISpacedInterval, IEquallySpacedIntervalView>
   {
-    private EquallySpacedIntervalSpecificationMethod _currentMethod;
-
-    private double _start, _end, _count, _interval;
-
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
     }
 
-    protected override void Initialize(bool initData)
+    public EquallySpacedIntervalController()
     {
-      if (_doc is null)
-        throw CreateNotInitializedException;
+    }
 
-      base.Initialize(initData);
-      if (initData)
+    public EquallySpacedIntervalController(ISpacedInterval doc)
+    {
+      _doc = _originalDoc = doc ?? throw new ArgumentNullException(nameof(doc));
+      Initialize(true);
+    }
+
+    #region Bindings
+
+    private ItemsController<Type> _intervalChoice;
+
+    public ItemsController<Type> IntervalChoice
+    {
+      get => _intervalChoice;
+      set
       {
-        _currentMethod = _doc.Method;
-        _start = _doc.Start;
-        _end = _doc.End;
-        _count = _doc.Count;
-        _interval = _doc.Interval;
-      }
-      if (_view is not null)
-      {
-        _view.InitializeMethod(_currentMethod);
-        EhMethodChanged(_currentMethod);
-
-        // Start, End, Count, Interval initialisieren
-        string? sStart = null, sEnd = null, sCount = null, sInterval = null;
-
-        if (!double.IsNaN(_start))
-          sStart = GUIConversion.ToString(_start);
-
-        if (!double.IsNaN(_end))
-          sStart = GUIConversion.ToString(_end);
-
-        if (!double.IsNaN(_count))
-          sStart = GUIConversion.ToString(_count);
-
-        if (!double.IsNaN(_interval))
-          sStart = GUIConversion.ToString(_interval);
-
-        _view.InitializeStart(sStart);
-        _view.InitializeEnd(sEnd);
-        _view.InitializeCount(sCount);
-        _view.InitializeInterval(sInterval);
+        if (!(_intervalChoice == value))
+        {
+          _intervalChoice = value;
+          OnPropertyChanged(nameof(IntervalChoice));
+        }
       }
     }
+
+    private SelectableListNodeList _previewList;
+
+    public SelectableListNodeList PreviewList
+    {
+      get => _previewList;
+      set
+      {
+        if (!(_previewList == value))
+        {
+          _previewList = value;
+          OnPropertyChanged(nameof(PreviewList));
+        }
+      }
+    }
+
+    private double _start;
+
+    public double Start
+    {
+      get => _start;
+      set
+      {
+        if (!(_start == value))
+        {
+          _start = value;
+          OnPropertyChanged(nameof(Start));
+          if (IsStartEnabled)
+          {
+            OnStartEndStepCountChanged(_doc.GetType());
+          }
+        }
+      }
+    }
+
+    private bool _isStartEnabled;
+
+    public bool IsStartEnabled
+    {
+      get => _isStartEnabled;
+      set
+      {
+        if (!(_isStartEnabled == value))
+        {
+          _isStartEnabled = value;
+          OnPropertyChanged(nameof(IsStartEnabled));
+        }
+      }
+    }
+
+
+    private double _end;
+
+    public double End
+    {
+      get => _end;
+      set
+      {
+        if (!(_end == value))
+        {
+          _end = value;
+          OnPropertyChanged(nameof(End));
+          if (IsEndEnabled)
+          {
+            OnStartEndStepCountChanged(_doc.GetType());
+          }
+        }
+      }
+    }
+
+    private bool _isEndEnabled;
+
+    public bool IsEndEnabled
+    {
+      get => _isEndEnabled;
+      set
+      {
+        if (!(_isEndEnabled == value))
+        {
+          _isEndEnabled = value;
+          OnPropertyChanged(nameof(IsEndEnabled));
+        }
+      }
+    }
+
+
+    private double _step;
+
+    public double Step
+    {
+      get => _step;
+      set
+      {
+        if (!(_step == value))
+        {
+          _step = value;
+          OnPropertyChanged(nameof(Step));
+          if (IsStepEnabled)
+          {
+            OnStartEndStepCountChanged(_doc.GetType());
+          }
+        }
+      }
+    }
+
+    private bool _isStepEnabled;
+
+    public bool IsStepEnabled
+    {
+      get => _isStepEnabled;
+      set
+      {
+        if (!(_isStepEnabled == value))
+        {
+          _isStepEnabled = value;
+          OnPropertyChanged(nameof(IsStepEnabled));
+        }
+      }
+    }
+
+
+    private int _count;
+
+    public int Count
+    {
+      get => _count;
+      set
+      {
+        if (!(_count == value))
+        {
+          _count = value;
+          OnPropertyChanged(nameof(Count));
+          if(IsCountEnabled)
+          {
+            OnStartEndStepCountChanged(_doc.GetType());
+          }
+        }
+      }
+    }
+
+    private bool _isCountEnabled;
+
+    public bool IsCountEnabled
+    {
+      get => _isCountEnabled;
+      set
+      {
+        if (!(_isCountEnabled == value))
+        {
+          _isCountEnabled = value;
+          OnPropertyChanged(nameof(IsCountEnabled));
+        }
+      }
+    }
+
+    #endregion
+
+    protected override void Initialize(bool initData)
+    {
+      base.Initialize(initData);
+
+      if(initData)
+      {
+        // first, set the properties silently
+        _start = _doc.Start;
+        _end = _doc.End;
+        _step = _doc.Step;
+        _count = _doc.Count;
+
+        var types = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(ISpacedInterval));
+
+        IntervalChoice = new ItemsController<Type>(
+          new SelectableListNodeList(types.Select(t => new SelectableListNode(t.Name, t, false))),
+          EhIntervalTypeChanged);
+        IntervalChoice.SelectedValue = _doc.GetType();
+
+        OnStartEndStepCountChanged(_doc.GetType());
+      }
+    }
+
+    private void EhIntervalTypeChanged(Type newType)
+    {
+      if(newType is not null && _doc.GetType() != newType)
+      {
+        OnStartEndStepCountChanged(newType);
+      }
+    }
+
+    void OnStartEndStepCountChanged(Type type)
+    {
+      if (true == CreateDocument(type, true))
+      {
+        CreatePreviewList();
+
+        Start = _doc.Start;
+        End = _doc.End;
+        Step = _doc.Step;
+        Count = _doc.Count;
+      }
+
+      IsStartEnabled = _doc.IsStartEditable;
+      IsEndEnabled = _doc.IsEndEditable;
+      IsStepEnabled = _doc.IsStepEditable;
+      IsCountEnabled = _doc.IsCountEditable;
+    }
+
+    bool CreateDocument(Type newType, bool silentlyIgnoreException=true)
+    {
+      try
+      {
+        if (newType.Name.EndsWith("StartCountStep"))
+        {
+          _doc = (ISpacedInterval)Activator.CreateInstance(newType, new object[] { Start, Count, Step });
+        }
+        else if (newType.Name.EndsWith("EndCountStep"))
+        {
+          _doc = (ISpacedInterval)Activator.CreateInstance(newType, new object[] { End, Count, Step });
+        }
+        else if (newType.Name.EndsWith("StartEndCount"))
+        {
+          _doc = (ISpacedInterval)Activator.CreateInstance(newType, new object[] { Start, End, Count });
+        }
+        else if (newType.Name.EndsWith("StartEndStep"))
+        {
+          _doc = (ISpacedInterval)Activator.CreateInstance(newType, new object[] { Start, End, Step });
+        }
+        else
+        {
+          Current.Gui.ErrorMessageBox($"Can not construct object of type {newType}");
+          return false;
+        }
+      }
+      catch(Exception ex)
+      {
+        // if we have a brand new type, maybe the current parameters are not appropriate
+        // thus we try to use a default constructor
+        if(newType != _doc.GetType())
+        {
+          try
+          {
+            _doc = (ISpacedInterval)Activator.CreateInstance(newType);
+            return true;
+          }
+          catch(Exception)
+          {
+          }
+        }
+
+        if (!silentlyIgnoreException)
+        {
+          Current.Gui.ErrorMessageBox($"Can not create {newType.Name}. Reason: {(ex is System.Reflection.TargetInvocationException ex1? ex1.InnerException: ex.Message)}");
+        }
+        return false;
+      }
+      return true;
+    }
+
+    void CreatePreviewList()
+    {
+      SelectableListNodeList list;
+
+      if(_doc.Count<=7)
+      {
+        list = new SelectableListNodeList(_doc.Select(number => new SelectableListNode(number.ToString(), number, false)));
+      }
+      else
+      {
+        list = new SelectableListNodeList(_doc.Take(3).Select(number => new SelectableListNode(number.ToString(), null, false)));
+        list.Add(new SelectableListNode("...", null, false));
+        for (int i = _doc.Count - 3; i< _doc.Count; ++i)
+          list.Add(new SelectableListNode(_doc[i].ToString(), null, false));
+      }
+
+      PreviewList = list;
+    }
+
 
     public override bool Apply(bool disposeController)
     {
-      if (_doc is null)
-        throw CreateNotInitializedException;
-
-      if (double.IsNaN(_start))
-        return false;
-      if (double.IsNaN(_end))
-        return false;
-      if (double.IsNaN(_count))
-        return false;
-      if (double.IsNaN(_interval))
-        return false;
-
-      if (!(_count > 0))
-        return false;
-      if (Math.Round(_count, MidpointRounding.AwayFromZero) != _count)
-        return false;
-
-      _doc.Method = _currentMethod;
-      _doc.Start = _start;
-      _doc.End = _end;
-      _doc.Count = _count;
-      _doc.Interval = _interval;
+      if (false == CreateDocument(IntervalChoice.SelectedValue, silentlyIgnoreException: false))
+        return ApplyEnd(false, disposeController);
 
       return ApplyEnd(true, disposeController);
-    }
-
-    protected override void AttachView()
-    {
-      if (_view is null)
-        throw CreateNoViewException;
-
-      base.AttachView();
-      _view.MethodChanged += EhMethodChanged;
-      _view.StartChanged += EhStartChanged;
-      _view.EndChanged += EhEndChanged;
-      _view.CountChanged += EhCountChanged;
-      _view.IntervalChanged += EhIntervalChanged;
-      _view.CountValidating += EhCountValidating;
-      _view.IntervalValidating += EhIntervalValidating;
-    }
-
-    protected override void DetachView()
-    {
-      if (_view is null)
-        throw CreateNoViewException;
-
-      _view.MethodChanged -= EhMethodChanged;
-      _view.StartChanged -= EhStartChanged;
-      _view.EndChanged -= EhEndChanged;
-      _view.CountChanged -= EhCountChanged;
-      _view.IntervalChanged -= EhIntervalChanged;
-      _view.CountValidating -= EhCountValidating;
-      _view.IntervalValidating -= EhIntervalValidating;
-
-      base.DetachView();
-    }
-
-    private void EhMethodChanged(EquallySpacedIntervalSpecificationMethod method)
-    {
-      if (_view is null)
-        return;
-
-
-      _currentMethod = method;
-      switch (method)
-      {
-        case EquallySpacedIntervalSpecificationMethod.StartEndCount:
-          _view.EnableEditBoxes(true, true, true, false);
-          break;
-
-        case EquallySpacedIntervalSpecificationMethod.StartEndInterval:
-          _view.EnableEditBoxes(true, true, false, true);
-          break;
-
-        case EquallySpacedIntervalSpecificationMethod.StartCountInterval:
-          _view.EnableEditBoxes(true, false, true, true);
-          break;
-
-        case EquallySpacedIntervalSpecificationMethod.EndCountInterval:
-          _view.EnableEditBoxes(false, true, true, true);
-          break;
-
-        default:
-          throw new ArgumentException("method unknown");
-      }
-    }
-
-    private double GetInterval()
-    {
-      return (_end - _start) / (_count - 1);
-    }
-
-    private double GetStart()
-    {
-      return _end - (_count - 1) * _interval;
-    }
-
-    private double GetEnd()
-    {
-      return _start + (_count - 1) * _interval;
-    }
-
-    private double GetCount()
-    {
-      return 1 + (_end - _start) / _interval;
-    }
-
-    private void ChangeDependentVariable()
-    {
-      if (_view is null)
-        return;
-
-      switch (_currentMethod)
-      {
-        case EquallySpacedIntervalSpecificationMethod.StartEndCount:
-          _interval = GetInterval();
-          _view.InitializeInterval(GUIConversion.ToString(_interval));
-          break;
-
-        case EquallySpacedIntervalSpecificationMethod.StartEndInterval:
-          _count = GetCount();
-          _view.InitializeCount(GUIConversion.ToString(_count));
-          break;
-
-        case EquallySpacedIntervalSpecificationMethod.StartCountInterval:
-          _end = GetEnd();
-          _view.InitializeEnd(GUIConversion.ToString(_end));
-          break;
-
-        case EquallySpacedIntervalSpecificationMethod.EndCountInterval:
-          _start = GetStart();
-          _view.InitializeStart(GUIConversion.ToString(_start));
-          break;
-
-        default:
-          throw new ArgumentException("method unknown");
-      }
-    }
-
-    private void EhStartChanged(string text)
-    {
-      if (_currentMethod == EquallySpacedIntervalSpecificationMethod.EndCountInterval)
-        return;
-
-      if (!GUIConversion.IsDouble(text, out var start))
-        return;
-      _start = start;
-
-      ChangeDependentVariable();
-    }
-
-    private void EhEndChanged(string text)
-    {
-      if (_currentMethod == EquallySpacedIntervalSpecificationMethod.StartCountInterval)
-        return;
-
-      if (!GUIConversion.IsDouble(text, out var end))
-        return;
-      _end = end;
-
-      ChangeDependentVariable();
-    }
-
-    private void EhCountChanged(string text)
-    {
-      if (_currentMethod == EquallySpacedIntervalSpecificationMethod.StartEndInterval)
-        return;
-
-      if (!GUIConversion.IsDouble(text, out var count))
-        return;
-      _count = count;
-
-      ChangeDependentVariable();
-    }
-
-    private void EhIntervalChanged(string text)
-    {
-      if (_currentMethod == EquallySpacedIntervalSpecificationMethod.StartEndCount)
-        return;
-
-      if (!GUIConversion.IsDouble(text, out var interval))
-        return;
-      _interval = interval;
-
-      ChangeDependentVariable();
-    }
-
-    private void RoundCountToInteger()
-    {
-      _count = Math.Abs(_count);
-      _count = Math.Round(_count, MidpointRounding.AwayFromZero);
-      if (_count < 2 && !(_start == _end))
-        _count = 2;
-      if (_count < 1)
-        _count = 1;
-    }
-
-    private void RoundCountToIntegerAndAdjustInterval()
-    {
-      RoundCountToInteger();
-      // now calculate the appropriate interval
-      _interval = GetInterval();
-    }
-
-    private void EhCountValidating(CancelEventArgs e)
-    {
-      if (_view is null)
-        return;
-
-      switch (_currentMethod)
-      {
-        case EquallySpacedIntervalSpecificationMethod.StartCountInterval:
-        case EquallySpacedIntervalSpecificationMethod.EndCountInterval:
-          RoundCountToInteger();
-          _view.InitializeCount(GUIConversion.ToString(_count));
-          break;
-
-        case EquallySpacedIntervalSpecificationMethod.StartEndCount:
-          RoundCountToIntegerAndAdjustInterval();
-          _view.InitializeInterval(GUIConversion.ToString(_interval));
-          _view.InitializeCount(GUIConversion.ToString(_count));
-          break;
-      }
-    }
-
-    private void EhIntervalValidating(CancelEventArgs e)
-    {
-      if (_view is null)
-        return;
-
-      if (_currentMethod == EquallySpacedIntervalSpecificationMethod.StartEndInterval)
-      {
-        if (((_end > _start) && _interval < 0) || ((_end < _start) && _interval > 0))
-        {
-          _interval = -_interval;
-          _count = GetCount();
-        }
-        RoundCountToIntegerAndAdjustInterval();
-        _view.InitializeInterval(GUIConversion.ToString(_interval));
-        _view.InitializeCount(GUIConversion.ToString(_count));
-      }
     }
   }
 }

@@ -25,13 +25,39 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Altaxo.Main;
 
 namespace Altaxo.Calc.LinearAlgebra
 {
+  public interface ISpacedInterval : IROVector<double>, IImmutable
+  {
+    /// <summary>
+    /// Start of the interval (inclusive).
+    /// </summary>
+    double Start { get; }
+
+    /// <summary>
+    /// Start of the interval (inclusive if step can divide the interval by an integer number).
+    /// </summary>
+    double End { get; }
+
+    /// <summary>
+    /// Gets the step size.
+    /// </summary>
+    double Step { get; }
+
+    bool IsStartEditable { get; }
+    bool IsEndEditable { get; }
+    bool IsStepEditable { get; }
+    bool IsCountEditable { get; }
+
+
+  }
+
   /// <summary>
-  /// Defines a linearly spaced closed interval defined by start, end and step size.
+  /// Defines a linearly spaced closed interval defined by end, number of elements, and step size.
   /// </summary>
-  public record LinearlySpacedIntervalByStartEndStep : ISpacedInterval
+  public record LinearlySpacedIntervalByEndCountStep : ISpacedInterval
   {
     /// <summary>
     /// Start of the interval (inclusive).
@@ -54,66 +80,57 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>The number of elements.</summary>
     public int Length => Count;
 
-
     #region Serialization
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(LinearlySpacedIntervalByStartEndStep), 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(LinearlySpacedIntervalByEndCountStep), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (LinearlySpacedIntervalByStartEndStep)obj;
-        info.AddValue("Start", s.Start);
+        var s = (LinearlySpacedIntervalByEndCountStep)obj;
         info.AddValue("End", s.End);
+        info.AddValue("Count", s.Count);
         info.AddValue("Step", s.Step);
       }
 
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var start = info.GetDouble("Start");
         var end = info.GetDouble("End");
+        var count = info.GetInt32("Count");
         var step = info.GetDouble("Step");
 
-        return new LinearlySpacedIntervalByStartEndStep(start, end, step);
+        return new LinearlySpacedIntervalByEndCountStep(end, count, step);
       }
     }
     #endregion
 
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="LinearlySpacedIntervalByStartEndStep"/> class.
+    /// Initializes a new instance of the <see cref="LinearlySpacedIntervalByEndCountStep"/> class.
     /// </summary>
-    /// <param name="start">The start of the interval (inclusive).</param>
     /// <param name="end">The end of the interval (inclusive).</param>
+    /// <param name="count">The number of elements.</param>
     /// <param name="step">The step size.</param>
-    public LinearlySpacedIntervalByStartEndStep(double start, double end, double step)
+    public LinearlySpacedIntervalByEndCountStep(double end, int count, double step)
     {
-      if (!(Math.Sign(end - start) == Math.Sign(step)))
-        throw new ArgumentException($"Sign of {nameof(step)}={step} does not match sign of ({nameof(end)}-{nameof(start)})={end - start}");
+      if (count < 0)
+        throw new ArgumentOutOfRangeException(nameof(count), "Must be >=0");
 
-      Start = start;
       End = end;
+      Count = count;
       Step = step;
-
-      if (End - Start == 0)
-      {
-        Count = 1;
-      }
-      else
-      {
-        var r = (End - Start) / Step;
-        var ru = Math.Ceiling(r);
-        Count = Math.Abs((ru - r) / ru) < 1E-6 ? Math.Max(0, (int)(ru + 1)) : Math.Max(0, (int)ru);
-      }
+      Start = End - Math.Max(0, count - 1) * Step;
     }
 
     /// <summary>
-    /// Initializes a new default instance of the <see cref="LinearlySpacedIntervalByStartEndStep"/> class,
+    /// Initializes a new default instance of the <see cref="LinearlySpacedIntervalByEndCountStep"/> class,
     /// with an interval [0,100], step size of 1 and count=101.
     /// </summary>
-    public LinearlySpacedIntervalByStartEndStep() : this(0, 100, 1)
+    public LinearlySpacedIntervalByEndCountStep() : this(100, 101, 1)
     {
     }
+
+
 
     /// <summary>
     /// Gets the element at the specified index.
@@ -139,9 +156,9 @@ namespace Altaxo.Calc.LinearAlgebra
       }
     }
 
-    public bool IsStartEditable => true;
+    public bool IsStartEditable => false;
     public bool IsEndEditable => true;
     public bool IsStepEditable => true;
-    public bool IsCountEditable => false;
+    public bool IsCountEditable => true;
   }
 }

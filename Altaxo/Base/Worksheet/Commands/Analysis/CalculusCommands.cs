@@ -31,6 +31,7 @@ using Altaxo.Data;
 using Altaxo.Gui;
 using Altaxo.Gui.Worksheet;
 using Altaxo.Gui.Worksheet.Viewing;
+using Altaxo.Science.Spectroscopy.Resampling;
 
 namespace Altaxo.Worksheet.Commands.Analysis
 {
@@ -110,16 +111,16 @@ namespace Altaxo.Worksheet.Commands.Analysis
       if (ctrl.SelectedDataColumns.Count == 0)
         return;
 
-      var p = new InterpolationParameters();
+      var p = new ResamplingByInterpolation();
 
       var controller = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { p }, typeof(IMVCANController));
       if (!Current.Gui.ShowDialog(controller, "Interpolation", false))
         return;
-      var parameters = (InterpolationParameters)controller.ModelObject;
+      var parameters = (ResamplingByInterpolation)controller.ModelObject;
       Interpolation(ctrl, parameters);
     }
 
-    public static void Interpolation(IWorksheetController ctrl, InterpolationParameters parameters)
+    public static void Interpolation(IWorksheetController ctrl, ResamplingByInterpolation parameters)
     {
       var _columnToGroupNumber = new Dictionary<DataColumn, int>();
 
@@ -154,13 +155,13 @@ namespace Altaxo.Worksheet.Commands.Analysis
     }
 
     public static void Interpolation(Altaxo.Data.DataColumn xCol, Altaxo.Data.DataColumn yCol,
-    InterpolationParameters parameters,
+    ResamplingByInterpolation parameters,
     Altaxo.Data.DataColumn xRes, Altaxo.Data.DataColumn yRes)
     {
       Interpolation(
         xCol, yCol,
         parameters.Interpolation,
-        VectorMath.CreateEquidistantSequenceByStartEndLength(parameters.XOrg, parameters.XEnd, parameters.NumberOfPoints),
+        parameters.SamplingPoints,
         xRes, yRes);
     }
 
