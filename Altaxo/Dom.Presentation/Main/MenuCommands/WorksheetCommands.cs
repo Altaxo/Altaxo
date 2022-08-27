@@ -555,6 +555,31 @@ namespace Altaxo.Worksheet.Commands
     }
   }
 
+  public class OpenProcessSourceTablesScriptDialog : AbstractWorksheetControllerCommand
+  {
+    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
+    {
+      var table = new DataTable();
+      table.Name = Current.Project.DataTableCollection.FindNewItemNameInFolder(ctrl.DataTable.FolderName);
+      Current.Project.DataTableCollection.Add(table);
+
+      var script = new ProcessSourceTablesScript();
+      var data = new ProcessSourceTablesScriptData(new[] { ("SourceTable", new DataTableProxy(ctrl.DataTable))});
+      var dataSource = new ProcessSourceTablesScriptDataSource(data, script, new DataSourceImportOptions());
+
+
+      object[] args = new object[] { dataSource } ;
+
+      if (Current.Gui.ShowDialog(args, "Process source tables script of " + table.Name))
+      {
+        table.DataSource = dataSource;
+        table.DataSource.FillData(table);
+      }
+      Current.ProjectService.OpenOrCreateWorksheetForTable(table);
+    }
+  }
+
+
   #endregion Worksheet
 
   #region Column commands
@@ -978,13 +1003,6 @@ namespace Altaxo.Worksheet.Commands
   {
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
-
-/* Unmerged change from project 'AltaxoDom.Presentation (net6.0-windows)'
-Before:
-      Altaxo.Data.SpectroscopyCommands.SpectralPreprocessingShowDialog(ctrl);
-After:
-      SpectroscopyCommands.SpectralPreprocessingShowDialog(ctrl);
-*/
       Science.Spectroscopy.SpectroscopyCommands.SpectralPreprocessingShowDialog(ctrl);
     }
   }

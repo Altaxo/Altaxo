@@ -1870,4 +1870,10 @@
   <data name="XML.MainMenu.WorksheetMenu.RemovePropertyColumnsOnly.Description" xml:space="preserve">
     <value>Remove all property columns in the current table</value>
   </data>
+  <data name="XML.MainMenu.WorksheetMenu.AnalyzeTableData" xml:space="preserve">
+    <value>Analyze worksheet data with a script ...</value>
+  </data>
+  <data name="XML.MainMenu.WorksheetMenu.AnalyzeTableData.Description" xml:space="preserve">
+    <value>Analyze data in this worksheet using a script, writing the results in to a new table.</value>
+  </data>
 </root>

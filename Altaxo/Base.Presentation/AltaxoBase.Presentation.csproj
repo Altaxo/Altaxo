@@ -111,12 +111,19 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Page Update="Gui\Data\ProcessSourceTablesScriptDataSourceControl.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+    </Page>
     <Page Update="Gui\Data\DataTableMatrixProxyWithMultipleColumnHeaderColumnsControl.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
     </Page>
     <Page Update="Gui\Data\DataTableXYColumnProxyControl.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Gui\Data\ProcessSourceTablesScriptDataControl.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Update="Gui\Science\Spectroscopy\BaselineEstimation\ALSControl.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>

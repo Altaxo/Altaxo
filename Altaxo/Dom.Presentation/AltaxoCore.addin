@@ -534,6 +534,10 @@
 					class="Altaxo.Worksheet.Commands.WorksheetDuplicate" />
         <MenuItem id="ClearDataAll" label="${res:XML.MainMenu.WorksheetMenu.ClearDataAll}" description="${res:XML.MainMenu.WorksheetMenu.ClearDataAll.Description}"
 					class="Altaxo.Worksheet.Commands.WorksheetClearDataAll" />
+        <MenuItem id="AnalyzeTableData" 
+                  label="${res:XML.MainMenu.WorksheetMenu.AnalyzeTableData}"
+                  description="${res:XML.MainMenu.WorksheetMenu.AnalyzeTableData.Description}"
+                        class="Altaxo.Worksheet.Commands.OpenProcessSourceTablesScriptDialog" />
         <MenuItem id="ExtractTableData" label="${res:XML.MainMenu.WorksheetMenu.ExtractTableData}" description="${res:XML.MainMenu.WorksheetMenu.ExtractTableData.Description}"
 					class="Altaxo.Worksheet.Commands.OpenExtractTableDataScriptDialog" />
         <MenuItem id="MoveRows" label="${res:XML.MainMenu.WorksheetMenu.MoveSelectedRows}" description="${res:XML.MainMenu.WorksheetMenu.MoveSelectedRows.Description}"

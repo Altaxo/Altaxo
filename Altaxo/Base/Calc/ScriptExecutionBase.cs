@@ -25,6 +25,8 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
+using Altaxo.Collections;
+using Altaxo.Data;
 
 namespace Altaxo.Calc
 {
@@ -1161,6 +1163,20 @@ namespace Altaxo.Calc
     /// Returns the file filters.
     /// </summary>
     public virtual (string Filter, string Description)[] FileFilters { get; } = new[] { ("*.*", "All files (*.*)") };
+  }
+
+  public class ProcessSourceTablesScriptExeBase : ScriptExecutionBase
+  {
+    /// <summary>
+    /// This method must be overriden by the import script in order to be able to execute the script.
+    /// This method is the entry point of the import script.
+    /// </summary>
+    /// <param name="myTable">The table on which the table script is executed.</param>
+    /// <param name="sourceTables">The list of source tables that should be processed by this script.</param>
+    /// <param name="reporter">Progress reporter that can be used by the script to report the progress of its work.</param>
+    public virtual void Execute(Altaxo.Data.DataTable myTable, IReadOnlyListDictionary<string, DataTable> sourceTables, Altaxo.IProgressReporter reporter)
+    {
+    }
   }
 
 

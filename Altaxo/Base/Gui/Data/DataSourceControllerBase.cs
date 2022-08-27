@@ -29,7 +29,7 @@ using Altaxo.Data;
 namespace Altaxo.Gui.Data
 {
   [ExpectedTypeOfView(typeof(ICommonDataSourceViewN))]
-  public class DataSourceControllerBase<TItem> : MVCANControllerEditOriginalDocBase<TItem, ICommonDataSourceViewN>, IMVCSupportsApplyCallback where TItem : IAltaxoTableDataSource
+  public class DataSourceControllerBase<TItem> : MVCANControllerEditOriginalDocBase<TItem, IDataContextAwareView>, IMVCSupportsApplyCallback where TItem : IAltaxoTableDataSource
   {
     private IMVCANController _inputOptionsController;
     private IMVCANController _processOptionsController;
@@ -75,6 +75,8 @@ namespace Altaxo.Gui.Data
           _processOptionsController?.Dispose();
           _processOptionsController = value;
           OnPropertyChanged(nameof(ProcessOptionsController));
+          OnPropertyChanged(nameof(ControllerAtPosition2));
+          OnPropertyChanged(nameof(ControllerAtPosition3));
         }
       }
     }
@@ -89,11 +91,66 @@ namespace Altaxo.Gui.Data
           _processDataController?.Dispose();
           _processDataController = value;
           OnPropertyChanged(nameof(ProcessDataController));
+          OnPropertyChanged(nameof(ControllerAtPosition2));
+          OnPropertyChanged(nameof(ControllerAtPosition3));
+        }
+      }
+    }
+
+    public IMVCANController ControllerAtPosition2
+    {
+      get
+      {
+        return ShowProcessDataBeforeProcessOptions ? ProcessDataController : ProcessOptionsController;
+      }
+    }
+
+    private bool _isPosition2Expanded;
+
+    public bool IsPosition2Expanded
+    {
+      get => _isPosition2Expanded;
+      set
+      {
+        if (!(_isPosition2Expanded == value))
+        {
+          _isPosition2Expanded = value;
+          OnPropertyChanged(nameof(IsPosition2Expanded));
         }
       }
     }
 
 
+    public IMVCANController ControllerAtPosition3
+    {
+      get
+      {
+        return ShowProcessDataBeforeProcessOptions ?  ProcessOptionsController : ProcessDataController;
+      }
+    }
+
+    private bool _isPosition3Expanded;
+
+    public bool IsPosition3Expanded
+    {
+      get => _isPosition3Expanded;
+      set
+      {
+        if (!(_isPosition3Expanded == value))
+        {
+          _isPosition3Expanded = value;
+          OnPropertyChanged(nameof(IsPosition3Expanded));
+        }
+      }
+    }
+
+    /// <summary>
+    /// If true, the process data view is shown before (on top) of the process options view. If false (default), the process options view is shown on top of the process data view.
+    /// </summary>
+    public virtual bool ShowProcessDataBeforeProcessOptions
+    {
+      get => false;
+    }
 
 
     #endregion
@@ -105,15 +162,34 @@ namespace Altaxo.Gui.Data
       if (initData)
       {
         InputOptionsController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _doc.ImportOptions }, typeof(IMVCANController), UseDocument.Directly);
-
-        if (_doc.ProcessOptionsObject is not null)
-        {
-          ProcessOptionsController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _doc.ProcessOptionsObject }, typeof(IMVCANController), UseDocument.Directly);
-        }
-
+        ProcessOptionsController = GetProcessOptionsController();
         ProcessDataController = GetProcessDataController();
+
+        if (ShowProcessDataBeforeProcessOptions)
+        {
+          IsPosition2Expanded = IsProcessDataInitiallyExpanded();
+          IsPosition3Expanded = IsProcessOptionsInitiallyExpanded();
+        }
+        else
+        {
+          IsPosition2Expanded = IsProcessOptionsInitiallyExpanded();
+          IsPosition3Expanded = IsProcessDataInitiallyExpanded();
+        }
       }
     }
+
+    protected virtual IMVCANController GetProcessOptionsController()
+    {
+      if (_doc.ProcessOptionsObject is not null)
+      {
+        return (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _doc.ProcessOptionsObject }, typeof(IMVCANController), UseDocument.Directly);
+      }
+      else
+      {
+        return null;
+      }
+    }
+
 
     protected virtual IMVCANController GetProcessDataController()
     {
@@ -126,6 +202,27 @@ namespace Altaxo.Gui.Data
         return null;
       }
     }
+
+
+   
+
+
+    /// <summary>
+    /// Determines whether the process options view is initially expanded.
+    /// </summary>
+    /// <returns>
+    ///   <c>true</c> if the process options view is initially expanded; otherwise, <c>false</c>.
+    /// </returns>
+    protected virtual bool IsProcessOptionsInitiallyExpanded() => true;
+
+
+    /// <summary>
+    /// Determines whether the process data view is initially expanded.
+    /// </summary>
+    /// <returns>
+    ///   <c>true</c> if the process data view is initially expanded; otherwise, <c>false</c>.
+    /// </returns>
+    protected virtual bool IsProcessDataInitiallyExpanded() => false;
 
 
     public override bool Apply(bool disposeController)
