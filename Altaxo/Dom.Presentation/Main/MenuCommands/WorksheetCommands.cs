@@ -207,6 +207,20 @@ namespace Altaxo.Worksheet.Commands
     }
   }
 
+  /// <summary>
+  /// Opens a dialog to select a value (text, numeric, or DateTime), then
+  /// fills the selected cells or the entire table with it.
+  /// </summary>
+  /// <seealso cref="Altaxo.Worksheet.Commands.AbstractWorksheetControllerCommand" />
+  public class FillWithValue : AbstractWorksheetControllerCommand
+  {
+    /// <inheritdoc/>
+    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
+    {
+      Altaxo.Worksheet.Commands.EditCommands.FillWithValue(ctrl);
+    }
+  }
+
   #endregion Edit commands
 
   #region Plot commands

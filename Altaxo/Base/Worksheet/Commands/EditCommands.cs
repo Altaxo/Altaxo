@@ -221,6 +221,63 @@ namespace Altaxo.Worksheet.Commands
       }
     }
 
+    /// <summary>
+    /// Opens a dialog to enter a row number,
+    /// and then jumps to that row in the worksheet view.
+    /// </summary>
+    /// <param name="ctrl">The worksheet controller.</param>
+    public static void FillWithValue(IWorksheetController ctrl)
+    {
+      var controller = new Gui.Common.AltaxoVariantController(new AltaxoVariant(0.0));
+      if (true == Current.Gui.ShowDialog(controller, "Enter value to fill with.."))
+      {
+        var valueToFillWith = (AltaxoVariant)controller.ModelObject;
+
+        if(ctrl.AreDataCellsSelected)
+        {
+          foreach(var dci in ctrl.SelectedDataColumns)
+          {
+            var dc = ctrl.DataTable[dci];
+            if (ctrl.SelectedDataRows.Count > 0)
+            {
+              foreach (var dri in ctrl.SelectedDataRows)
+              {
+                dc[dri] = valueToFillWith;
+              }
+            }
+            else
+            {
+              for(int dri=0; dri < dc.Count;++dri)
+              {
+                dc[dri] = valueToFillWith;
+              }
+            }
+          }
+        }
+        if(ctrl.ArePropertyCellsSelected)
+        {
+          foreach(var pci in ctrl.SelectedPropertyColumns)
+          {
+            var pc = ctrl.DataTable.PropertyColumns[pci];
+            if (ctrl.SelectedPropertyRows.Count > 0)
+            {
+              foreach (var pri in ctrl.SelectedPropertyRows)
+              {
+                pc[pri] = valueToFillWith;
+              }
+            }
+            else
+            {
+              for(int pri=0;pri<ctrl.DataTable.DataColumnCount;++pri)
+              {
+                pc[pri] = valueToFillWith;
+              }
+            }
+          }
+        }
+      }
+    }
+
     public static void CopyToClipboard(IWorksheetController dg)
     {
       Altaxo.Data.DataTable dt = dg.DataTable;

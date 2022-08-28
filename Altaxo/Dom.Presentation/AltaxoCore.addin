@@ -412,6 +412,8 @@
       <Condition name = "WindowActive" activewindow="Altaxo.Gui.Worksheet.Viewing.WorksheetController" action="Exclude">
         <MenuItem id="GotoTableRow" label="Goto row.." description="Goto table row number"
           class="Altaxo.Worksheet.Commands.GotoTableRow" />
+        <MenuItem id="FillWithValue" label="Fill with value.." description="Fills the selected cells with a value"
+          class="Altaxo.Worksheet.Commands.FillWithValue" />
       </Condition>
     </MenuItem>
     <!-- View menu -->
