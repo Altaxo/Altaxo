@@ -129,16 +129,16 @@ namespace Altaxo.Text.Renderers.OpenXML.Inlines
 
     private static void WriteFigureLinkLiteralInline(OpenXMLRenderer renderer, LiteralInline obj)
     {
-      if (!(renderer.CurrentFigureCaptionListIndex is { } currentFigureCaptionListIndex))
+      if (!(renderer.CurrentFigureLinkListIndex is { } currentFigureLinkListIndex))
         throw new InvalidProgramException("Current figure caption list index must be set in the renderer!");
 
       var text = obj.Content.ToString();
-      var numberPosition = renderer.FigureLinkList![currentFigureCaptionListIndex].Number.Position;
-      var numberLength = renderer.FigureLinkList[currentFigureCaptionListIndex].Number.Count;
+      var numberPosition = renderer.FigureLinkList![currentFigureLinkListIndex].Number.Position;
+      var numberLength = renderer.FigureLinkList[currentFigureLinkListIndex].Number.Count;
       var textBeforeNumber = text.Substring(0, numberPosition - obj.Span.Start);
       var textAfterNumber = text.Substring(numberPosition + numberLength - obj.Span.Start);
 
-      var figureCaptionIndex = renderer.FigureLinkList[currentFigureCaptionListIndex].CaptionListIndex;
+      var figureCaptionIndex = renderer.FigureLinkList[currentFigureLinkListIndex].CaptionListIndex;
       var bookmarkId = GetBookmarkId(renderer, figureCaptionIndex);
 
       if (!string.IsNullOrEmpty(textBeforeNumber))
