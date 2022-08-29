@@ -1,4 +1,5 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop" InitialTargets="DoCompileShaders;GenAssInfo">
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+  <Target Name="Compile" DependsOnTargets="DoCompileShaders;GenAssInfo"/>
   <PropertyGroup>
     <TargetFrameworks>net48;net6.0-windows</TargetFrameworks>
     <LangVersion>preview</LangVersion>

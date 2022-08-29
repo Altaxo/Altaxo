@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -183,11 +183,10 @@ namespace Altaxo.Gui.Graph.Gdi
 
     private void EhPositioningTypeChanged()
     {
-      if (_subController is null)
-        return;
-
-      if (_subController.Apply(false))
+      if (_subController is not null && _subController.Apply(false))
+      {
         _instances[_subController.ModelObject.GetType()] = (IItemLocation)_subController.ModelObject;
+      }
 
       bool useDirectPositioning = UseDirectPositioning || _layer.ParentLayer is null; // if this is the root layer, then choice of grid positioning is not available
 

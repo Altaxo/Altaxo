@@ -34,6 +34,6 @@
 			<RadioButton Content="Use direct position/size" IsChecked="{Binding UseDirectPositioning, Mode=TwoWay}" />
 			<RadioButton Content="Use grid position/span" IsChecked="{Binding UseGridPositioning, Mode=TwoWay}" />
 		</StackPanel>
-        <ContentControl Grid.Row="2" Content="{Binding SubPositioningView}"/>
+        <ContentControl Grid.Row="2" Content="{Binding SubController.ViewObject}"/>
     </Grid>
 </UserControl>
