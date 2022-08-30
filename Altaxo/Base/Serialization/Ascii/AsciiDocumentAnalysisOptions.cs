@@ -50,7 +50,7 @@ namespace Altaxo.Serialization.Ascii
     public static readonly PropertyKey<AsciiDocumentAnalysisOptions> PropertyKeyAsciiDocumentAnalysisOptions;
 
     /// <summary>Default number of Ascii lines to analyze.</summary>
-    public const int DefaultNumberOfLinesToAnalyze = 100;
+    public const int DefaultNumberOfLinesToAnalyze = 1000;
 
     /// <summary>Number of lines of the Ascii document to analyze.</summary>
     private int _numberOfLinesToAnalyze;
