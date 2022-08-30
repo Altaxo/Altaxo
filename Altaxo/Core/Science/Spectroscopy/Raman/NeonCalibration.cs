@@ -517,6 +517,14 @@ namespace Altaxo.Science.Spectroscopy.Raman
 
     public WavelengthConverter Converter { get; protected set; }
 
+    public string ErrorMessage { get; protected set; } = string.Empty;
+
+    /// <summary>
+    /// Gets a value indicating whether this calibration is valid.
+    /// If the return value is false, please check the property <see cref="ErrorMessage"/> for details.
+    /// </summary>
+    public bool IsValid => string.IsNullOrEmpty(ErrorMessage);
+
     /// <summary>
     /// The x-values of the Neon measurement, converted to nm, presumed that the laser has the wavelength
     /// </summary>
@@ -565,12 +573,14 @@ namespace Altaxo.Science.Spectroscopy.Raman
         throw new ArgumentNullException(nameof(y));
       if (x.Length != y.Length)
         throw new ArgumentException($"Length of {nameof(x)}-array ({x.Length}) does not match length of {nameof(y)}-array ({y.Length})");
+      ErrorMessage = string.Empty;
 
       var coarse = FindCoarseMatch(options, x, y, cancellationToken);
 
       if (coarse is null)
       {
         PeakMatchings = new();
+        AddErrorMessage("Could not find matchings between measured peak positions and NIST peak positions");
         return false;
       }
 
@@ -867,6 +877,17 @@ namespace Altaxo.Science.Spectroscopy.Raman
 
 
       return listOfCandidates.Count == 0 ? null : (listOfCandidates[0].NistLeft, listOfCandidates[0].MeasLeft, listOfCandidates[0].NistRight, listOfCandidates[0].MeasRight);
+    }
+
+    private void AddErrorMessage(string msg)
+    {
+      if (string.IsNullOrEmpty(msg))
+        throw new ArgumentNullException(nameof(msg));
+
+      if (string.IsNullOrEmpty(ErrorMessage))
+        ErrorMessage = msg;
+      else
+        ErrorMessage += "\r\n" + msg;
     }
 
 

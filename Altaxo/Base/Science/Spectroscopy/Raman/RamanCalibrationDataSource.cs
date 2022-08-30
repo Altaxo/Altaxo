@@ -274,10 +274,18 @@ namespace Altaxo.Science.Spectroscopy.Raman
         if (_neonCalibrationData1 is { } neondata1 && _neonCalibrationOptions1 is { } neonOptions1)
         {
           neonCalibration1 = CalibrateWithNeonSpectrum(destinationTable, neonOptions1, neondata1.XColumn, neondata1.YColumn, cancellationToken);
+          if(!string.IsNullOrEmpty(neonCalibration1?.ErrorMessage))
+          {
+            destinationTable.Notes.WriteLine($"Error during execution of data source ({this.GetType().Name}): {neonCalibration1?.ErrorMessage}");
+          }
         }
         if (_neonCalibrationData2 is { } neondata2 && _neonCalibrationOptions2 is { } neonOptions2)
         {
           neonCalibration2 = CalibrateWithNeonSpectrum(destinationTable, neonOptions2, neondata2.XColumn, neondata2.YColumn, cancellationToken);
+          if (!string.IsNullOrEmpty(neonCalibration2?.ErrorMessage))
+          {
+            destinationTable.Notes.WriteLine($"Error during execution of data source ({this.GetType().Name}): {neonCalibration2?.ErrorMessage}");
+          }
         }
         if (_siliconCalibrationData is { } silicondata && _siliconCalibrationOptions is { } siliconOptions)
         {
@@ -286,7 +294,7 @@ namespace Altaxo.Science.Spectroscopy.Raman
 
         using (var token = destinationTable.SuspendGetToken())
         {
-          if (neonCalibration1 is not null && neonCalibration2 is not null)
+          if (neonCalibration1 is not null && neonCalibration1.IsValid && neonCalibration2 is not null && neonCalibration2.IsValid)
           {
             if (_neonCalibrationOptions1.LaserWavelength_Nanometer != _neonCalibrationOptions2.LaserWavelength_Nanometer)
               throw new InvalidOperationException($"When using both NeonCalibration1 and NeonCalibration2, the assumed laser wavelength must be the same!");
@@ -302,7 +310,7 @@ namespace Altaxo.Science.Spectroscopy.Raman
             var spline = NeonCalibration.GetSplineMeasuredWavelengthToWavelengthDifference(_neonCalibrationOptions1, combinedNeonPeakMatchings);
             WriteSplinedPositionDifferencesToTable(destinationTable, neonCalibration1.XOriginal_nm.Concat(neonCalibration2.XOriginal_nm), spline);
           }
-          else if (neonCalibration1 is not null) // we only consider NeonCalibration1
+          else if (neonCalibration1 is not null && neonCalibration1.IsValid) // we only consider NeonCalibration1
           {
             WriteNeonPeakPositionsToTable(destinationTable, _neonCalibrationOptions1.LaserWavelength_Nanometer, neonCalibration1.PeakMatchings);
             WritePreprocessedSpectraToTable(destinationTable, neonCalibration1, false);
