@@ -51,6 +51,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Interpolation
@@ -945,6 +946,8 @@ tryinterpolation:
   public class PolynomialRegressionAsInterpolation : IInterpolationFunction
   {
     private Regression.LinearFitBySvd? _fit;
+    double _xMean = 0;
+    double _xScale = 1;
 
     public int RegressionOrder { get; set; }
 
@@ -960,8 +963,16 @@ tryinterpolation:
 
     public void Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec)
     {
+      // Center and scale x in order
+      // to avoid numeric errors at high orders
+      var xmin = xvec.Min();
+      var xmax = xvec.Max();
+      _xMean = 0.5 * (xmin + xmax);
+      _xScale = 1/(0.5 * (xmax - xmin));
+
       var err = VectorMath.GetConstantVector(1.0, yvec.Count);
-      _fit = new Regression.LinearFitBySvd(xvec, yvec, err, xvec.Count, RegressionOrder + 1, Regression.LinearFitBySvd.GetPolynomialFunctionBase(RegressionOrder), 1E-6);
+      var xScaled = xvec.Select(x => (x - _xMean) * _xScale).ToArray();
+      _fit = new Regression.LinearFitBySvd(xScaled, yvec, err, xvec.Count, RegressionOrder + 1, Regression.LinearFitBySvd.GetPolynomialFunctionBase(RegressionOrder), 1E-6);
     }
 
     public double GetYOfX(double x)
@@ -969,12 +980,13 @@ tryinterpolation:
       if (_fit is null)
         throw new InvalidOperationException($"Results not available yet - please execute an interpolation first");
 
+      var xcs = (x - _xMean) * _xScale;
       double[] paras = _fit.Parameter;
 
       double result = 0;
       for (int i = paras.Length - 1; i >= 0; i--)
       {
-        result *= x;
+        result *= xcs;
         result += paras[i];
       }
       return result;
