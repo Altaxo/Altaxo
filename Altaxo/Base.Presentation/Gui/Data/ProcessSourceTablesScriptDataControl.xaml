@@ -32,10 +32,10 @@
         <Label Grid.Row="0" Grid.Column="0"
                Content="Available tables"/>
 
-        <ListBox Grid.Row="2" Grid.Column="0" ScrollViewer.VerticalScrollBarVisibility="Visible"
-                  ItemsSource="{Binding AvailableTables}"
-                 SelectionMode="Extended"
-                 >
+        <ListBox Grid.Row="2" Grid.Column="0" 
+                 ScrollViewer.VerticalScrollBarVisibility="Visible"
+                 ItemsSource="{Binding AvailableTables}"
+                 SelectionMode="Extended">
                 <ListBox.Resources>
                     <Style TargetType="{x:Type ListBoxItem}">
                         <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}"/>

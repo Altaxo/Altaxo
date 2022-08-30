@@ -10,7 +10,7 @@
     <Grid Grid.IsSharedSizeScope="True">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" MaxHeight="200" />
+            <RowDefinition Height="Auto" />
             <RowDefinition  Height="*" />
         </Grid.RowDefinitions>
         <Expander Grid.Row="0" Background="BlanchedAlmond">
@@ -26,7 +26,7 @@
                     <TextBlock Text="Data source" FontWeight="Bold" Visibility="{Binding ShowProcessDataBeforeProcessOptions, Converter={x:Static axogcc:FalseToVisibilityCollapsedConverter.Instance}}" />
                 </StackPanel>
             </Expander.Header>
-            <ContentControl Content="{Binding ControllerAtPosition2.ViewObject}" />
+            <ContentControl Content="{Binding ControllerAtPosition2.ViewObject}" MaxHeight="200" />
         </Expander>
         <Expander Grid.Row="2" IsExpanded="{Binding IsPosition3Expanded}" Background="BlanchedAlmond">
             <Expander.Header>
