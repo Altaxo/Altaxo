@@ -290,7 +290,7 @@ namespace Altaxo.Gui.Data
           var col = _doc.GetColumnHeaderColumn(i).Document();
           if (col is not null)
           {
-            vCols.Add(new SelectableListNode(GetColumnNameOrNull(col), col, false));
+            yCols.Add(new SelectableListNode(GetColumnNameOrNull(col), col, false));
           }
         }
         ParticipatingYColumns = yCols;
@@ -390,7 +390,7 @@ namespace Altaxo.Gui.Data
       // Y-Columns
       var participatingYColNames = ParticipatingYColumns.Select(n => n.Text).ToArray();
       ParticipatingYColumns = new SelectableListNodeList(
-        participatingYColNames.Where(cn => propcolDict.ContainsKey(cn)).Select(cn => new SelectableListNode(cn, columnDict[cn], false)));
+        participatingYColNames.Where(cn => propcolDict.ContainsKey(cn)).Select(cn => new SelectableListNode(cn, propcolDict[cn], false)));
 
 
       FillAvailableColumnList();
