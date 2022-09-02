@@ -71,14 +71,19 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
     }
     #endregion
 
-    public IReadOnlyList<(IReadOnlyList<PeakDescription> PeakDescriptions, int StartOfRegion, int EndOfRegion)> Execute(double[] y, int[]? regions)
+    public IReadOnlyList<(IReadOnlyList<PeakDescription> PeakDescriptions, int StartOfRegion, int EndOfRegion)> Execute(double[]? x, double[] y, int[]? regions)
     {
       var peakDescriptions = new List<(IReadOnlyList<PeakDescription> PeakDescriptions, int StartOfRegion, int EndOfRegion)>();
       foreach(var (start, end) in RegionHelper.GetRegionRanges(regions, y.Length))
       {
-        var sub = new double[end - start];
-        Array.Copy(y, start, sub, 0, end - start);
-        var result = Execute(sub);
+        var subX = x is null ? null : new double[end - start];
+        if (subX is not null)
+          Array.Copy(x, start, subX, 0, end - start);
+
+        var subY = new double[end - start];
+        Array.Copy(y, start, subY, 0, end - start);
+
+        var result = Execute(subX, subY);
         peakDescriptions.Add((result, start, end));
       }
 
@@ -86,7 +91,7 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
     }
 
     /// <inheritdoc/>
-    public PeakDescription[] Execute(double[] y)
+    public PeakDescription[] Execute(double[]? x, double[] y)
     {
       var pf = new PeakFinder();
 
@@ -105,6 +110,7 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
         arr[i] = new PeakDescription()
         {
           PositionIndex = pf.PeakPositions[i],
+          PositionValue = x is null ? pf.PeakPositions[i] : x[pf.PeakPositions[i]],
           Prominence = pf.Prominences![i],
           Height = pf.PeakHeights![i],
           Width = pf.Widths![i],

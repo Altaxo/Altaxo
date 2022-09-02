@@ -35,13 +35,14 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
     /// <summary>
     /// Executes the peak searching algorithm.
     /// </summary>
+    /// <param name="x">The x values of the spectrum. Can be null (then, only the positions as indices are calculated).</param>
     /// <param name="y">The y values of the spectrum.</param>
     /// <param name="regions">The spectral regions. Can be null (if the array is one region). Each element in this array
     /// is the start index of a new spectral region.</param>
     /// <returns>The results of the peak searching. For each spectral regions, a tuple of the peak descriptions in that range, together
     /// with the start and end index (exclusive) of that range is returned. Please note that the peak descriptions
     /// contain position indices that are relative to the corresponding range (thus not to the underlying spectral array).</returns>
-    IReadOnlyList<(IReadOnlyList<PeakDescription> PeakDescriptions, int StartOfRegion, int EndOfRegion)> Execute(double[] y, int[]? regions);
+    IReadOnlyList<(IReadOnlyList<PeakDescription> PeakDescriptions, int StartOfRegion, int EndOfRegion)> Execute(double[]? x, double[] y, int[]? regions);
   }
 
   /// <summary>
@@ -51,6 +52,12 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
   {
     /// <summary>The peak position as index of the spectral range.</summary>
     public double PositionIndex { get; init; }
+
+    /// <summary>
+    /// Gets the position value. If a x-axis was given for the peak finding algorithm, this
+    /// will contain the x-value of the position. Otherwise, it would be the same value as the <see cref="PositionIndex"/>.
+    /// </summary>
+    public double PositionValue { get; init; }
 
     /// <summary>The peak prominence.</summary>
     public double Prominence { get; init; }

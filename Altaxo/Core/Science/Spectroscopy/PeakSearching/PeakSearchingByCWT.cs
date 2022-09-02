@@ -179,29 +179,34 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
     }
     #endregion
 
-    public IReadOnlyList<(IReadOnlyList<PeakDescription> PeakDescriptions, int StartOfRegion, int EndOfRegion)> Execute(double[] y, int[]? regions)
+    public IReadOnlyList<(IReadOnlyList<PeakDescription> PeakDescriptions, int StartOfRegion, int EndOfRegion)> Execute(double[]? x, double[] y, int[]? regions)
     {
       var peakDescriptions = new List<(IReadOnlyList<PeakDescription> PeakDescriptions, int StartOfRegion, int EndOfRegion)>();
       foreach (var (start, end) in RegionHelper.GetRegionRanges(regions, y.Length))
       {
-        var sub = new double[end - start];
-        Array.Copy(y, start, sub, 0, end - start);
-        var result = Execute(sub);
+        var subX = x is null ? null : new double[end - start];
+        if (subX is not null)
+          Array.Copy(x, start, subX, 0, end - start);
+
+        var subY = new double[end - start];
+        Array.Copy(y, start, subY, 0, end - start);
+
+        var result = Execute(subX, subY);
         peakDescriptions.Add((result, start, end));
       }
 
       return peakDescriptions;
     }
 
-    public List<PeakDescription> Execute(double[] input)
+    public List<PeakDescription> Execute(double[]? x, double[] y)
     {
-      int numberOfStages = (int)(NumberOfPointsPerOctave * Math.Log(input.Length) / Math.Log(2));
+      int numberOfStages = (int)(NumberOfPointsPerOctave * Math.Log(y.Length) / Math.Log(2));
 
       var widths = Enumerable.Range(0, numberOfStages).Select(stage => Math.Pow(2, stage / (double)NumberOfPointsPerOctave)).ToArray();
       var max_distances = widths.Select(x => (int)Math.Ceiling(x / 4.0)).ToArray();
 
       var gap_thresh = 1;
-      var (ridgeLines, cwtMatrix) = PeakFinderCWT.Execute(input, widths, _wavelet.WaveletFunction, (i) => max_distances[i], gap_thresh);
+      var (ridgeLines, cwtMatrix) = PeakFinderCWT.Execute(y, widths, _wavelet.WaveletFunction, (i) => max_distances[i], gap_thresh);
       var noise = PeakFinderCWT.GetNoiseLevel(cwtMatrix.ToROMatrix(), null, 0.5);
 
       // filter the ridge lines
@@ -243,8 +248,9 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
             Width = gaussSigma * 2,
             RelativeHeightOfWidthDetermination = Math.Exp(-0.5),
             PositionIndex = maxPoint.Column,
-            Height = input[maxPoint.Column],
-            AbsoluteHeightOfWidthDetermination = input[maxPoint.Column] - gaussAmplitude * (1 - Math.Exp(-0.5))
+            PositionValue = x is null ? maxPoint.Column : x[maxPoint.Column],
+            Height = y[maxPoint.Column],
+            AbsoluteHeightOfWidthDetermination = y[maxPoint.Column] - gaussAmplitude * (1 - Math.Exp(-0.5))
           };
 
           peakDescriptions.Add(peakDescription);

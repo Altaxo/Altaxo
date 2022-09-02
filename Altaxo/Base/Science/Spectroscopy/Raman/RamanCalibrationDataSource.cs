@@ -294,14 +294,20 @@ namespace Altaxo.Science.Spectroscopy.Raman
 
         using (var token = destinationTable.SuspendGetToken())
         {
-          if (neonCalibration1 is not null && neonCalibration1.IsValid && neonCalibration2 is not null && neonCalibration2.IsValid)
+          if (neonCalibration1 is not null && neonCalibration1.IsValid && neonCalibration2 is not null && (neonCalibration2.IsValid || neonCalibration2.PeakSearchingDescriptions?.Count>0))
           {
             if (_neonCalibrationOptions1.LaserWavelength_Nanometer != _neonCalibrationOptions2.LaserWavelength_Nanometer)
               throw new InvalidOperationException($"When using both NeonCalibration1 and NeonCalibration2, the assumed laser wavelength must be the same!");
 
+            if(neonCalibration2.PeakMatchings.Count==0) 
+            {
+              neonCalibration2.EvaluatePeakMatchings(_neonCalibrationOptions2, neonCalibration1.CoarseMatch.Value);
+            }
+
             var combinedNeonPeakMatchings = new List<(double NistWL, double MeasWL, double MeasWLStdDev)>();
             combinedNeonPeakMatchings.AddRange(neonCalibration1.PeakMatchings);
             combinedNeonPeakMatchings.AddRange(neonCalibration2.PeakMatchings);
+            combinedNeonPeakMatchings.Sort((x, y) => Comparer<double>.Default.Compare(x.NistWL, y.NistWL));
             WriteNeonPeakPositionsToTable(destinationTable, _neonCalibrationOptions1.LaserWavelength_Nanometer, combinedNeonPeakMatchings);
 
             WritePreprocessedSpectraToTable(destinationTable, neonCalibration1, false);
@@ -331,7 +337,8 @@ namespace Altaxo.Science.Spectroscopy.Raman
       }
       catch (Exception ex)
       {
-        destinationTable.Notes.WriteLine("Error during execution of data source ({0}): {1}", GetType().Name, ex.Message);
+        destinationTable.Notes.WriteLine($"{DateTime.Now} - Error during execution of data source ({GetType().Name}): {ex.Message}");
+        Current.Console.WriteLine($"{DateTime.Now} - Error during execution of data source ({GetType().Name} of table {destinationTable.Name}): {ex.Message}");
       }
     }
 

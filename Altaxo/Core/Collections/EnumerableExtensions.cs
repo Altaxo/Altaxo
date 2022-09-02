@@ -585,6 +585,42 @@ namespace Altaxo.Collections
     }
 
     /// <summary>
+    /// Takes a join of two sequences, but only takes into account those pair, which fulfill a given condition.
+    /// </summary>
+    /// <typeparam name="T1">The element type of the 1st sequence.</typeparam>
+    /// <typeparam name="T2">The element type of the 2nd sequence.</typeparam>
+    /// <param name="seq1">The first sequence.</param>
+    /// <param name="seq2">The second sequence.</param>
+    /// <param name="Condition">A condition that is evaluated for each pair of (T1, T2). Only if the return value is true, the pair (T1, T2) is put into the output sequence.</param>
+    /// <returns>The resulting sequence with elements of type (T1, T2).</returns>
+    public static IEnumerable<(T1, T2)> JoinConditional<T1, T2>(this IEnumerable<T1> seq1, IEnumerable<T2> seq2, Func<T1, T2, bool> Condition)
+    {
+      foreach (T1 t1 in seq1)
+        foreach (T2 t2 in seq2)
+          if (Condition(t1, t2))
+            yield return (t1, t2);
+    }
+
+    /// <summary>
+    /// Takes a join of two sequences, but only takes into account those pair, which fulfill a given condition.
+    /// </summary>
+    /// <typeparam name="T1">The element type of the 1st sequence.</typeparam>
+    /// <typeparam name="T2">The element type of the 2nd sequence.</typeparam>
+    /// <typeparam name="TResult">The element type of the resulting sequence.</typeparam>
+    /// <param name="seq1">The first sequence.</param>
+    /// <param name="seq2">The second sequence.</param>
+    /// <param name="Condition">A condition that is evaluated for each pair of (T1, T2). Only if the return value is true, the pair (T1, T2) is put into the output sequence.</param>
+    /// <param name="CreateResult">A function that takes a pair of T1 and T2 as parameters, and returns the result.</param>
+    /// <returns>The resulting sequence of with elements of type TResult.</returns>
+    public static IEnumerable<TResult> JoinConditional<T1, T2, TResult>(this IEnumerable<T1> seq1, IEnumerable<T2> seq2, Func<T1, T2, bool> Condition, Func<T1, T2, TResult> CreateResult)
+    {
+      foreach (T1 t1 in seq1)
+        foreach (T2 t2 in seq2)
+          if (Condition(t1, t2))
+            yield return CreateResult(t1, t2);
+    }
+
+    /// <summary>
     /// Determines whether two enumerations are structural equivalent. They are structurally equivalent if i) both enumerations are null, ii) both enumerations are empty,
     /// or c) both enumerations have the same number of elements and contain the same elements in the same order.
     /// Please not that if one enumeration is null and the other is empty, they are not considered equivalent.

@@ -40,11 +40,11 @@ namespace Altaxo.Science.Spectroscopy.Raman
     /// <summary>
     /// The x-vales of the Neon measurement, converted to nm, presumed that the laser has the wavelength
     /// </summary>
-    private double[]? _xArray;
+    private double[]? _xPreprocessed;
     private double[]? _yPreprocessed;
     private List<PeakSearching.PeakDescription>? _peakSearchingDescriptions;
     private IReadOnlyList<PeakFitting.PeakDescription>? _peakFittingDescriptions;
-    public double[]? XArray => _xArray;
+    public double[]? XPreprocessed => _xPreprocessed;
     public double[]? YPreprocessed => _yPreprocessed;
 
     #endregion
@@ -79,10 +79,10 @@ namespace Altaxo.Science.Spectroscopy.Raman
       Array.Sort(x, y); // Sort x-axis ascending
       var peakOptions = options.PeakFindingOptions;
       (x, y, _) = peakOptions.Preprocessing.Execute(x, y, null);
-      _xArray = x;
+      _xPreprocessed = x;
       _yPreprocessed = y;
 
-      var peakSearchingResults = peakOptions.PeakSearching.Execute(y, null);
+      var peakSearchingResults = peakOptions.PeakSearching.Execute(x, y, null);
       _peakSearchingDescriptions = peakSearchingResults[0].PeakDescriptions.ToList();
       _peakSearchingDescriptions.Sort((a, b) => Comparer<double>.Default.Compare(a.PositionIndex, b.PositionIndex));
 
@@ -95,7 +95,7 @@ namespace Altaxo.Science.Spectroscopy.Raman
       double boundarySearchLeft = options.GetOfficialShiftValue_Silicon_invcm() - options.RelativeShift_Tolerance_invcm;
       double boundarySearchRight = options.GetOfficialShiftValue_Silicon_invcm() + options.RelativeShift_Tolerance_invcm;
 
-      var listOfCandidates = _peakFittingDescriptions.Where(d => d.PositionAreaHeightFWHM.Position >= boundarySearchLeft && d.PositionAreaHeightFWHM.Position <= boundarySearchRight).ToList();
+      var listOfCandidates = _peakFittingDescriptions.Where(d => d.FitFunction is not null && d.PositionAreaHeightFWHM.Position >= boundarySearchLeft && d.PositionAreaHeightFWHM.Position <= boundarySearchRight).ToList();
       listOfCandidates.Sort((x, y) => Comparer<double>.Default.Compare(y.PositionAreaHeightFWHM.Height, x.PositionAreaHeightFWHM.Height));
 
       if (listOfCandidates.Count == 0)

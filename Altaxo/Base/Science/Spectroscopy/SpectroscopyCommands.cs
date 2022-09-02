@@ -297,7 +297,7 @@ namespace Altaxo.Science.Spectroscopy
         var yArr = entry.yArray;
 
         // now apply the steps
-        var peakResults = doc.PeakSearching.Execute(yArr, entry.regions);
+        var peakResults = doc.PeakSearching.Execute(xArr, yArr, entry.regions);
         var fitResults = doc.PeakFitting.Execute(xArr, yArr, peakResults, cancellationTokenHard);
 
         // Store the results
