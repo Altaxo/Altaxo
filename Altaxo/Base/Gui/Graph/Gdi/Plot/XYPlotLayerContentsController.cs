@@ -676,7 +676,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
         {
           var selNode = selNodes[i];
           var selPlotItem = (IGPlotItem)selNode.Tag;
-
+          /*
           if (selNode.Nodes.Count > 0) // if it is a group, add the members of the group to avoid more than one recursion
           {
             while (selNode.Nodes.Count > 0)
@@ -692,6 +692,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
             }
           }
           else // item to add is not a group
+          */
           {
             selNode.Remove();
             selPlotItem.Remove();
