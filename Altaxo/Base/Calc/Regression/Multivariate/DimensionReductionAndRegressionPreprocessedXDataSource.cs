@@ -349,6 +349,10 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <param name="ReportProxies">The report proxies.</param>
     public void VisitDocumentReferences(Main.DocNodeProxyReporter ReportProxies)
     {
+      if (_processData is not null)
+      {
+        ReportProxies(_processData, this, nameof(ProcessData));
+      }
     }
 
     #endregion IAltaxoTableDataSource

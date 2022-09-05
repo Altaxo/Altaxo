@@ -23,6 +23,7 @@
 #endregion Copyright
 
 using System;
+using System.Data;
 using Altaxo.Data;
 
 namespace Altaxo.Calc.Regression.Multivariate
@@ -89,6 +90,21 @@ namespace Altaxo.Calc.Regression.Multivariate
         (DataTableProxy)TableWithModel.Clone(),
         (DataTableMatrixProxyWithMultipleColumnHeaderColumns)DataToPredict.Clone()
       );
+    }
+
+    /// <summary>
+    /// Replaces path of items (intended for data items like tables and columns) by other paths. Thus it is possible
+    /// to change a plot so that the plot items refer to another table.
+    /// </summary>
+    /// <param name="Report">Function that reports the found <see cref="T:Altaxo.Main.DocNodeProxy"/> instances to the visitor.</param>
+    public void VisitDocumentReferences(Altaxo.Main.DocNodeProxyReporter Report)
+    {
+      using (var suspendToken = SuspendGetToken()) // Suspend important here because otherwise Table reports a changed event, which will delete all column proxies not belonging to the new table
+      {
+        Report(TableWithModel, this, nameof(TableWithModel));
+        DataToPredict.VisitDocumentReferences(Report);
+        suspendToken.Resume();
+      }
     }
   }
 }

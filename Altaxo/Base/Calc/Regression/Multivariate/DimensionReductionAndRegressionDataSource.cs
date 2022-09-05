@@ -398,7 +398,9 @@ namespace Altaxo.Calc.Regression.Multivariate
     public void VisitDocumentReferences(Main.DocNodeProxyReporter ReportProxies)
     {
       if (_processData is not null)
+      {
         _processData.VisitDocumentReferences(ReportProxies);
+      }
     }
 
     #endregion IAltaxoTableDataSource
