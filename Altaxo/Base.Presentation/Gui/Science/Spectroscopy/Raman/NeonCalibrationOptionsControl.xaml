@@ -12,34 +12,47 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="4"/>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
             <RowDefinition Height="4"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="4"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="4"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="4"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="4"/>
         </Grid.RowDefinitions>
 
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="4"/>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="4"/>
+        </Grid.ColumnDefinitions>
 
-        <GroupBox Grid.Row="0" Header="Unit of spectrum's x-axis:">
+
+        <GroupBox Grid.Row="0" Grid.ColumnSpan="3" Header="Unit of spectrum's x-axis:">
             <axogc:SingleChoiceRadioStackPanelDC ItemsSource="{Binding XAxisUnit.Items}" 
                                                  SelectedItem="{Binding XAxisUnit.SelectedItem, Mode=TwoWay}"/>
         </GroupBox>
 
-        <Label Grid.Row="2" Content="Approx. wavelength of Laser (nm):"/>
-        <axogc:NullableDoubleTextBox Grid.Row="3"
+        <Label Grid.Row="2" Grid.Column="0" 
+               Content="Approx. wavelength of Laser (nm):"/>
+        <axogc:NullableDoubleTextBox Grid.Row="2" Grid.Column="2"
                                      SelectedValue="{Binding LaserWavelength_Nanometer}"
                                      ToolTip="Enter approximate wavelength of laser excitation in nm. Ususal values are 532 and 785 nm."
+                                     MinWidth="100"
                                      />
 
-        <CheckBox Grid.Row="5" 
+        <CheckBox Grid.Row="4" Grid.ColumnSpan="3"
                   Content="Filter out peaks corresponding to multiple Nist peaks"
                   IsChecked="{Binding FilterOutPeaksCorrespondingToMultipleNistPeaks, Mode=TwoWay}"
                   ToolTip="This filters out peaks that appear broader, because at this position there are multiple Nist peaks very close together."
                   />
 
-        <Expander Grid.Row="7" Header="Interpolation method" IsExpanded="true">
+        <Expander Grid.Row="6" Grid.ColumnSpan="3"
+                  Header="Interpolation method"
+                  IsExpanded="true">
             <StackPanel Orientation="Vertical" Margin="0,4,0,4">
                 <ComboBox ItemsSource="{Binding InterpolationMethod.InterpolationMethod.Items}"
                           SelectedValue="{Binding InterpolationMethod.InterpolationMethod.SelectedItem}"/>
@@ -48,8 +61,15 @@
             </StackPanel>
         </Expander>
 
-        <Expander Grid.Row="9" Header="Preprocessing / Peak finding" IsExpanded="true" Margin="0,4,0,4">
+        <Expander Grid.Row="8" Grid.ColumnSpan="3" 
+                  Header="Preprocessing / Peak finding"
+                  IsExpanded="true" Margin="0,4,0,4">
             <ContentControl Content="{Binding PeakFindingController.ViewObject}"/>
         </Expander>
+
+        <Label Grid.Row="10" Grid.Column="0"
+               Content="Peak matching tolerance (nm):"/>
+        <axogc:NumericDoubleTextBox Grid.Row="10" Grid.Column="2"
+                                    SelectedValue="{Binding SearchTolerance}"/>
     </Grid>
 </UserControl>

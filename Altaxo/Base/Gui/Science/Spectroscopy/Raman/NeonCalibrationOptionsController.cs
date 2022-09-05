@@ -119,6 +119,20 @@ namespace Altaxo.Gui.Science.Spectroscopy.Raman
       }
     }
 
+    private double _searchTolerance;
+
+    public double SearchTolerance
+    {
+      get => _searchTolerance;
+      set
+      {
+        if (!(_searchTolerance == value))
+        {
+          _searchTolerance = value;
+          OnPropertyChanged(nameof(SearchTolerance));
+        }
+      }
+    }
 
 
     #endregion
@@ -145,6 +159,8 @@ namespace Altaxo.Gui.Science.Spectroscopy.Raman
 
         InterpolationMethod = new InterpolationFunctionOptionsController(_doc.InterpolationMethod);
         InterpolationIgnoreVariance = _doc.InterpolationIgnoreStdDev;
+
+        SearchTolerance = _doc.Wavelength_Tolerance_nm;
       }
     }
 
@@ -182,6 +198,7 @@ namespace Altaxo.Gui.Science.Spectroscopy.Raman
         PeakFindingOptions = findOptions,
         InterpolationMethod = interpolationMethod,
         InterpolationIgnoreStdDev = InterpolationIgnoreVariance,
+        Wavelength_Tolerance_nm = SearchTolerance,
       };
 
       return ApplyEnd(true, disposeController);
