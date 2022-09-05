@@ -88,6 +88,7 @@
 		<axogc:BorderWithSizeGreedLimit Grid.Row="8" Grid.RowSpan="9" HeightGreedLimit="400">
             <ListBox ItemsSource="{Binding AvailableColumns}"
                      SelectionMode="Extended" 
+                     VirtualizingStackPanel.IsVirtualizing="False"
                      ScrollViewer.VerticalScrollBarVisibility="Visible" >
                 <ListBox.Resources>
                     <Style TargetType="{x:Type ListBoxItem}">
@@ -150,6 +151,7 @@
 		<axogc:BorderWithSizeGreedLimit  Grid.Column="3" Grid.Row="12" Grid.RowSpan="2" HeightGreedLimit="400">
             <ListBox ItemsSource="{Binding ParticipatingVColumns}"
                      ScrollViewer.VerticalScrollBarVisibility="Visible" 
+                     VirtualizingStackPanel.IsVirtualizing="False"
                      SelectionMode="Extended" >
                 <ListBox.Resources>
                     <Style TargetType="{x:Type ListBoxItem}">

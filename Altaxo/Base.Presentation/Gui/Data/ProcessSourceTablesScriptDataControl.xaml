@@ -35,6 +35,7 @@
         <ListBox Grid.Row="2" Grid.Column="0" 
                  ScrollViewer.VerticalScrollBarVisibility="Visible"
                  ItemsSource="{Binding AvailableTables}"
+                 VirtualizingStackPanel.IsVirtualizing="False"
                  SelectionMode="Extended">
                 <ListBox.Resources>
                     <Style TargetType="{x:Type ListBoxItem}">
@@ -50,6 +51,7 @@
         
         <ListView Grid.Row="2" Grid.Column="4" ScrollViewer.VerticalScrollBarVisibility="Visible"
                  ItemsSource="{Binding ParticipatingTables}"
+                  VirtualizingStackPanel.IsVirtualizing="False"
                  SelectionMode="Extended"
                  >
             <ListView.View>
