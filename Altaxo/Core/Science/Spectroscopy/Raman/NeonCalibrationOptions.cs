@@ -63,7 +63,7 @@ namespace Altaxo.Science.Spectroscopy.Raman
     /// Gets the interpolation method used for interpolating the differences of Nist wavelength and measured wavelength
     /// in dependence on the measured wavelength.
     /// </summary>
-    public IInterpolationFunctionOptions InterpolationMethod { get; init; } = new CrossValidatedCubicSplineOptions();
+    public IInterpolationFunctionOptions InterpolationMethod { get; init; } = new PolyharmonicSpline1DOptions { RegularizationParameter = 10, DerivativeOrder=2 };
 
     /// <summary>
     /// Gets a value indicating whether the position error obtained from the peak fit should be ignored
