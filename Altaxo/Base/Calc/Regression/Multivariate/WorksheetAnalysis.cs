@@ -1425,6 +1425,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     {
       if (!IsDimensionReductionAndRegressionModel(calibtable, out var dataSource))
         throw new ArgumentException("Table does not contain a PLSContentMemento");
+      var processData = dataSource.ProcessData;
 
       IMultivariateCalibrationModel calib = GetCalibrationModel(calibtable);
 
@@ -1433,10 +1434,14 @@ namespace Altaxo.Calc.Regression.Multivariate
       MultivariateRegression.PreprocessSpectraForPrediction(calib, xOfX, matrixX, out var resultXOfX, out var resultMatrixX);
 
       // for the new table, save the spectra as column
-      var xcol = new DoubleColumn();
-      for (int i = resultMatrixX.ColumnCount - 1; i >= 0; i--)
-        xcol[i] = resultXOfX[i];
-      desttable.DataColumns.Add(xcol, _XOfX_ColumnName, ColumnKind.X, 0);
+      {
+        string xColumnName = _XOfX_ColumnName;
+        if (processData.RowHeaderColumn is DataColumn dc)
+          xColumnName = DataColumnCollection.GetParentDataColumnCollectionOf(dc).GetColumnName(dc);
+        var xcol = desttable.DataColumns.EnsureExistence(xColumnName, typeof(DoubleColumn), ColumnKind.X, 0);
+        for (int i = resultMatrixX.ColumnCount - 1; i >= 0; i--)
+          xcol[i] = resultXOfX[i];
+      }
 
       var columnHeaderWrappers = new (IROVector<double> Wrapper, DataColumn dstPropCol)[dataSource.ProcessData.ColumnHeaderColumnsCount];
       for (int i = 0; i < columnHeaderWrappers.Length; ++i)
@@ -1462,7 +1467,11 @@ namespace Altaxo.Calc.Regression.Multivariate
 
       for (int n = 0; n < resultMatrixX.RowCount; n++)
       {
-        var col = desttable.DataColumns.EnsureExistence(FormattableString.Invariant($"{n}"), typeof(DoubleColumn), ColumnKind.V, 0);
+        string yColumnName = FormattableString.Invariant($"{n}");
+        if (processData.GetDataColumnProxy(n).Document() is DataColumn dc)
+          yColumnName = DataColumnCollection.GetParentDataColumnCollectionOf(dc).GetColumnName(dc);
+
+        var col = desttable.DataColumns.EnsureExistence(yColumnName, typeof(DoubleColumn), ColumnKind.V, 0);
         for (int i = resultMatrixX.ColumnCount - 1; i >= 0; i--)
         {
           col[i] = resultMatrixX[n, i];
