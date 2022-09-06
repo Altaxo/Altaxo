@@ -52,7 +52,7 @@ namespace Altaxo.Science.Spectroscopy.Raman
       {
         BaselineEstimation = new BaselineEstimation.SNIP_Linear
         {
-          HalfWidth = 15,
+          HalfWidth = 30,
           IsHalfWidthInXUnits = true,
         }
       },
