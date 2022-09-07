@@ -27,6 +27,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
+using Altaxo.Collections;
 using Altaxo.Data;
 
 namespace Altaxo.Science.Spectroscopy.Raman
@@ -374,10 +375,27 @@ namespace Altaxo.Science.Spectroscopy.Raman
       pcol.Clear();
       pcol[destinationTable.DataColumns.GetColumnNumber(x_calibrated)] = laserWL_Calibrated;
 
-      var originalShiftColumn = _siliconCalibrationData.XColumn;
-      for (var i = 0; i < (originalShiftColumn.Count ?? 0); ++i)
+      // Create a list of all the shift values that are used by silicon, neon1, and neon2
+      List<double> xShiftValues;
       {
-        var shift_uncalibrated = _siliconCalibrationData.XColumn[i];
+        var xShiftValuesHash = new HashSet<double>(((DoubleColumn)_siliconCalibrationData.XColumn).Array);
+        if (_neonCalibrationData1 is not null && _neonCalibrationOptions1.XAxisUnit == XAxisUnit.RelativeShiftInverseCentimeter)
+        {
+          xShiftValuesHash.AddRange(((DoubleColumn)_neonCalibrationData1.XColumn).Array);
+        }
+        if (_neonCalibrationData2 is not null && _neonCalibrationOptions2.XAxisUnit == XAxisUnit.RelativeShiftInverseCentimeter)
+        {
+          xShiftValuesHash.AddRange(((DoubleColumn)_neonCalibrationData2.XColumn).Array);
+        }
+        xShiftValues = xShiftValuesHash.ToList();
+        xShiftValues.Sort();
+      }
+
+
+      var originalShiftColumn = _siliconCalibrationData.XColumn;
+      for (var i = 0; i < xShiftValues.Count; ++i)
+      {
+        var shift_uncalibrated = xShiftValues[i];
         // transform to approximate wavelength
         var approxWL = 1 / (1 / assumedLaserWavelength - 1E-7 * shift_uncalibrated);
         // transform to calibrated Nist wavelength
@@ -396,9 +414,10 @@ namespace Altaxo.Science.Spectroscopy.Raman
         var y_neonDiffWL = destinationTable.DataColumns.EnsureExistence(ColumnName_Group3_NeonCalibration_SplineY_DifferenceWavelength, typeof(DoubleColumn), ColumnKind.V, 3);
         x_neonMeasWL.Clear();
         y_neonDiffWL.Clear();
-        for (int i = 0; i < _siliconCalibrationData.XColumn.Count; ++i)
+
+        for (int i = 0; i < xShiftValues.Count; ++i)
         {
-          double wl = 1 / (1 / laserWL_Calibrated - 1E-7 * _siliconCalibrationData.XColumn[i]);
+          double wl = 1 / (1 / laserWL_Calibrated - 1E-7 * xShiftValues[i]);
           x_neonMeasWL[i] = wl;
           y_neonDiffWL[i] = splineFunction(wl);
         }
