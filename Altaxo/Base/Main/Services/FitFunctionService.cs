@@ -304,21 +304,23 @@ namespace Altaxo.Main.Services
             DateTime creationTime = DateTime.MinValue;
             string description = string.Empty;
 
-            var xmlReader = new System.Xml.XmlTextReader(fullfilename);
-            xmlReader.MoveToContent();
-            while (xmlReader.Read())
+            using (var xmlReader = new System.Xml.XmlTextReader(fullfilename))
             {
-              if (xmlReader.NodeType == System.Xml.XmlNodeType.Element && xmlReader.LocalName == "Category")
+              xmlReader.MoveToContent();
+              while (xmlReader.Read())
               {
-                category = xmlReader.ReadElementString();
-                name = xmlReader.ReadElementString("Name");
-                creationTime = System.Xml.XmlConvert.ToDateTime(xmlReader.ReadElementString("CreationTime"), System.Xml.XmlDateTimeSerializationMode.Local);
-                if (xmlReader.LocalName == "Description")
-                  description = xmlReader.ReadElementString("Description");
-                break;
+                if (xmlReader.NodeType == System.Xml.XmlNodeType.Element && xmlReader.LocalName == "Category")
+                {
+                  category = xmlReader.ReadElementString();
+                  name = xmlReader.ReadElementString("Name");
+                  creationTime = System.Xml.XmlConvert.ToDateTime(xmlReader.ReadElementString("CreationTime"), System.Xml.XmlDateTimeSerializationMode.Local);
+                  if (xmlReader.LocalName == "Description")
+                    description = xmlReader.ReadElementString("Description");
+                  break;
+                }
               }
+              xmlReader.Close();
             }
-            xmlReader.Close();
 
             if (!(category is null || name is null))
               AddFitFunctionEntry(category, name, creationTime, description, fullfilename);
