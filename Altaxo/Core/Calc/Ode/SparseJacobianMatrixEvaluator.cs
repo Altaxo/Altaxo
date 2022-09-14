@@ -57,7 +57,7 @@ namespace Altaxo.Calc.Ode
     /// <param name="x">The value of the independent variable (usually named x or t).</param>
     /// <param name="y">The array of y values.</param>
     /// <param name="jac">At return, contains the matrix with jacobian values. If you provide null as this parameter, a new matrix is allocated.</param>
-    public void EvaluateJacobian(double x, double[] y, [AllowNull][NotNull] ref IMatrix<double> jac)
+    public void EvaluateJacobian(double x, double[] y, [AllowNull][NotNull] ref Matrix<double> jac)
     {
       int N = y.Length;
       if (_derivatives_current.Length != N)
@@ -68,10 +68,12 @@ namespace Altaxo.Calc.Ode
 
       if (jac is null)
       {
-        jac = new SparseDoubleMatrix(y.Length, y.Length);
+        jac = CreateMatrix.Sparse<double>(y.Length, y.Length);
       }
-      var jacnative = (SparseDoubleMatrix)jac;
-      jacnative.Clear();
+      else
+      {
+        jac.Clear();
+      }
 
       _f(x, y, _derivatives_current); // evaluate rates at old point x
 
@@ -88,7 +90,7 @@ namespace Altaxo.Calc.Ode
           var jval = (_derivatives_variated[ci] - _derivatives_current[ci]) / (variation);
           if (!(jval == 0))
           {
-            jacnative[ri, ci] = jval;
+            jac[ri, ci] = jval;
           }
         }
       }

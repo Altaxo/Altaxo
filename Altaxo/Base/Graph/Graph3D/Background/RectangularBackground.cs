@@ -28,6 +28,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using Altaxo.Calc;
 using Altaxo.Drawing.D3D;
 using Altaxo.Geometry;
 using Altaxo.Graph.Graph3D.GraphicsContext;
@@ -229,7 +230,7 @@ namespace Altaxo.Graph.Graph3D.Background
       set
       {
         var oldValue = _customDistance;
-        if (value.HasValue && !Altaxo.Calc.RMath.IsFinite(value.Value))
+        if (value.HasValue && !(value.Value.IsFinite()))
           throw new ArgumentException("Distance has to be a finite number", nameof(value));
         _customDistance = value;
         if (value != oldValue)

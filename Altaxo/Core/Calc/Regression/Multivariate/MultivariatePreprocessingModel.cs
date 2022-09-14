@@ -40,27 +40,27 @@ namespace Altaxo.Calc.Regression.Multivariate
       get;
     }
 
-    IReadOnlyList<double> XOfX
+    System.Collections.Generic.IReadOnlyList<double> XOfX
     {
       get;
     }
 
-    IROVector<double> XMean
+    IReadOnlyList<double> XMean
     {
       get;
     }
 
-    IROVector<double> XScale
+    IReadOnlyList<double> XScale
     {
       get;
     }
 
-    IROVector<double> YMean
+    IReadOnlyList<double> YMean
     {
       get;
     }
 
-    IROVector<double> YScale
+    IReadOnlyList<double> YScale
     {
       get;
     }
@@ -80,11 +80,11 @@ namespace Altaxo.Calc.Regression.Multivariate
     IEnsembleMeanScalePreprocessor _preprocessEnsembleOfSpectra;
 
     private int[] _spectralRegions;
-    private IReadOnlyList<double> _xOfX;
-    private IROVector<double> _xMean;
-    private IROVector<double> _xScale;
-    private IROVector<double> _yMean;
-    private IROVector<double> _yScale;
+    private System.Collections.Generic.IReadOnlyList<double> _xOfX;
+    private IReadOnlyList<double> _xMean;
+    private IReadOnlyList<double> _xScale;
+    private IReadOnlyList<double> _yMean;
+    private IReadOnlyList<double> _yScale;
 #nullable enable
 
     public ISingleSpectrumPreprocessor PreprocessSingleSpectrum
@@ -105,31 +105,31 @@ namespace Altaxo.Calc.Regression.Multivariate
       set { _spectralRegions = value; }
     }
 
-    public IReadOnlyList<double> XOfX
+    public System.Collections.Generic.IReadOnlyList<double> XOfX
     {
       get { return _xOfX; }
       set { _xOfX = value; }
     }
 
-    public IROVector<double> XMean
+    public IReadOnlyList<double> XMean
     {
       get { return _xMean; }
       set { _xMean = value; }
     }
 
-    public IROVector<double> XScale
+    public IReadOnlyList<double> XScale
     {
       get { return _xScale; }
       set { _xScale = value; }
     }
 
-    public IROVector<double> YMean
+    public IReadOnlyList<double> YMean
     {
       get { return _yMean; }
       set { _yMean = value; }
     }
 
-    public IROVector<double> YScale
+    public IReadOnlyList<double> YScale
     {
       get { return _yScale; }
       set { _yScale = value; }

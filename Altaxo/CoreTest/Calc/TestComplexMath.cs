@@ -25,6 +25,7 @@
 using System;
 using Altaxo.Calc;
 using Xunit;
+using Complex64T = System.Numerics.Complex;
 
 namespace AltaxoTest.Calc
 {
@@ -34,26 +35,26 @@ namespace AltaxoTest.Calc
     [Fact]
     public void TestExp()
     {
-      Complex result;
+      Complex64T result;
 
-      result = ComplexMath.Exp(new Complex(0.5, 0.5));
-      AssertEx.Equal(1.446889036584169158051583, result.Re, 1e-15);
-      AssertEx.Equal(0.7904390832136149118432626, result.Im, 1e-15);
+      result = ComplexMath.Exp(new Complex64T(0.5, 0.5));
+      AssertEx.Equal(1.446889036584169158051583, result.Real, 1e-15);
+      AssertEx.Equal(0.7904390832136149118432626, result.Imaginary, 1e-15);
     }
 
     [Fact]
     public void TestLog()
     {
-      Complex arg;
-      Complex result;
+      Complex64T arg;
+      Complex64T result;
 
-      arg = new Complex(1 / 2.0, 1 / 3.0);
+      arg = new Complex64T(1 / 2.0, 1 / 3.0);
 
-      AssertEx.Equal(0.6009252125773315488532035, arg.GetModulus(), 1e-15);
+      AssertEx.Equal(0.6009252125773315488532035, arg.Magnitude, 1e-15);
 
       result = ComplexMath.Log(arg);
-      AssertEx.Equal(-0.5092847904972866327857336, result.Re, 1e-15);
-      AssertEx.Equal(0.5880026035475675512456111, result.Im, 1e-15);
+      AssertEx.Equal(-0.5092847904972866327857336, result.Real, 1e-15);
+      AssertEx.Equal(0.5880026035475675512456111, result.Imaginary, 1e-15);
     }
   }
 }

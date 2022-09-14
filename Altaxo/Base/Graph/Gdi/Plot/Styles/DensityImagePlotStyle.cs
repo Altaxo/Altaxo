@@ -37,6 +37,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 {
   using System.ComponentModel;
   using System.Diagnostics.CodeAnalysis;
+  using Altaxo.Calc;
   using Altaxo.Graph.Scales.Ticks;
   using ColorProvider;
   using Drawing;
@@ -373,9 +374,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       var myPlotAssociation = (XYZMeshedColumnPlotData)plotObject;
       myPlotAssociation.DataTableMatrix.GetWrappers(
         gl.XAxis.PhysicalVariantToNormal, // transformation function for row header values
-        Altaxo.Calc.RMath.IsFinite,       // selection functiton for row header values
+        Precision.IsFinite,       // selection functiton for row header values
         gl.YAxis.PhysicalVariantToNormal, // transformation function for column header values
-        Altaxo.Calc.RMath.IsFinite,       // selection functiton for column header values
+        Precision.IsFinite,       // selection functiton for column header values
         out var matrix,
         out var logicalRowHeaderValues,
         out var logicalColumnHeaderValues

@@ -23,6 +23,7 @@
 #endregion Copyright
 
 using System;
+using System.Collections.Generic;
 using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Regression.Multivariate
@@ -33,7 +34,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     private IROMatrix<double> _xScores;
     private IROMatrix<double> _xLoads;
     private IROMatrix<double> _yLoads;
-    private IROVector<double> _crossProduct;
+    private IReadOnlyList<double> _crossProduct;
 #nullable enable
 
     public IROMatrix<double> XScores
@@ -54,7 +55,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       set { _yLoads = value; }
     }
 
-    public IROVector<double> CrossProduct
+    public IReadOnlyList<double> CrossProduct
     {
       get { return _crossProduct; }
       set { _crossProduct = value; }

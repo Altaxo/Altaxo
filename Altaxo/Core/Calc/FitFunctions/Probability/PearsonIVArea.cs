@@ -28,6 +28,7 @@ using Altaxo.Calc.FitFunctions.Peaks;
 using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Calc.Regression.Nonlinear;
 using Altaxo.Main;
+using Complex64T = System.Numerics.Complex;
 
 namespace Altaxo.Calc.FitFunctions.Probability
 {
@@ -310,7 +311,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
     public static double GetYOfOneTerm(double x, double area, double loc, double w, double m, double v)
     {
       // prefactor without w
-      var lnprefactor = 2 * (GammaRelated.LnGamma(new Altaxo.Calc.Complex(m, v / 2)).Re - GammaRelated.LnGamma(m)) - GammaRelated.LnBeta(m - 0.5, 0.5);
+      var lnprefactor = 2 * (GammaRelated.LnGamma(new Complex64T(m, v / 2)).Real - GammaRelated.LnGamma(m)) - GammaRelated.LnBeta(m - 0.5, 0.5);
       var z = (x - loc) / w;
       return (area / w) * Math.Exp(lnprefactor - m * Math.Log(1 + z * z) - v * Math.Atan(z));
     }
@@ -349,7 +350,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
       if (cv is not null)
       {
         var deriv = new double[5];
-        var resVec = new DoubleVector(5);
+        var resVec = VectorMath.ToVector(new double[5]);
 
        
 

@@ -75,7 +75,7 @@ namespace Altaxo.Calc.LinearAlgebra
       if (Xty.RowCount != XtX.ColumnCount)
         throw new ArgumentException("Number of rows in " + nameof(Xty) + " should match number of columns in " + nameof(XtX), nameof(Xty));
 
-      var matrixGenerator = new Func<int, int, DoubleMatrix>((rows, cols) => new DoubleMatrix(rows, cols));
+      var matrixGenerator = new Func<int, int, Matrix<double>>((rows, cols) => CreateMatrix.Dense<double>(rows, cols));
 
       // if nargin < 3
       //   tol = 10 * eps * norm(XtX, 1) * length(XtX);
@@ -144,7 +144,7 @@ namespace Altaxo.Calc.LinearAlgebra
         // z(PP')=(Xty(PP)'/XtX(PP,PP)');
         var subXty = Xty.SubMatrix(P, 0, matrixGenerator); // Xty(PP)'
         var subXtX = XtX.SubMatrix(P, P, matrixGenerator);
-        var solver = new DoubleLUDecomp(subXtX);
+        var solver = subXtX.LU();
         var subSolution = solver.Solve(subXty);
         var z = matrixGenerator(n, 1);
         for (int i = 0, ii = 0; i < n; ++i)
@@ -187,7 +187,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
           subXty = Xty.SubMatrix(P, 0, matrixGenerator);
           subXtX = XtX.SubMatrix(P, P, matrixGenerator);
-          solver = new DoubleLUDecomp(subXtX);
+          solver = subXtX.LU();
           subSolution = solver.Solve(subXty);
 
           for (int i = 0, ii = 0; i < n; ++i)

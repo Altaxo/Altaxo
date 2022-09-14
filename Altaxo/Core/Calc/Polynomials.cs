@@ -32,6 +32,7 @@
 //                               harmonicy.cc
 
 using System;
+using Complex64T = System.Numerics.Complex;
 
 namespace Altaxo.Calc
 {
@@ -441,9 +442,9 @@ namespace Altaxo.Calc
     /// <param name="theta">First angle.</param>
     /// <param name="phi">Second angle.</param>
     /// <returns>The spherical harmonics Y_lm(theta,phi).</returns>
-    public static Complex SphericalHarmonicY(int l, int m, double theta, double phi)
+    public static Complex64T SphericalHarmonicY(int l, int m, double theta, double phi)
     {
-      Complex e;
+      Complex64T e;
       double p, f, smphi;
       int sm;
 
@@ -466,7 +467,7 @@ namespace Altaxo.Calc
 
       // phase factor with signed m
       smphi = sm * phi;
-      e = Complex.FromRealImaginary(Math.Cos(smphi), Math.Sin(smphi));
+      e = new Complex64T(Math.Cos(smphi), Math.Sin(smphi));
 
       // sign convention
       sm = odd((m + sm) / 2) ? -1 : 1;

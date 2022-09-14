@@ -29,7 +29,7 @@ namespace Altaxo.Calc.LinearAlgebra
       var b = new double[] { 8, -11, -3 };
       var x = new double[3];
       solver.SolveDestructive(new MatrixWrapperStructForLeftSpineJaggedArray<double>(a, 3, 3), b, x);
-      var answer = new DoubleVector(3) { [0] = 2, [1] = 3, [2] = -1 };
+      var answer = CreateVector.DenseOfArray(new double[] { 2, 3,  -1 });
       Assert.True(VectorMath.LInfinityNorm(x, answer) < 1e-10);
     }
 
@@ -51,17 +51,17 @@ namespace Altaxo.Calc.LinearAlgebra
     public void SolverCoreTestMatrixNd()
     {
       const int N = 50;
-      var a = new DoubleMatrix(N, N);
+      var a = CreateMatrix.Dense<double>(N, N);
       // Make matrix diagonal
       for (int i = 0; i < N; i++)
         a[i, i] = 1;
       // Apply random rotations around each pair of axes. This will keep det(A) ~ 1
-      var rand = new Random();
+      var rand = new System.Random();
       for (int i = 0; i < N; i++)
         for (int j = i + 1; j < N; j++)
         {
           double angle = rand.NextDouble() * 2 * Math.PI;
-          var r = new DoubleMatrix(N, N);
+          var r = CreateMatrix.Dense<double>(N, N);
           for (int k = 0; k < N; k++)
             r[k, k] = 1;
           r[i, i] = r[j, j] = Math.Cos(angle);
@@ -71,20 +71,20 @@ namespace Altaxo.Calc.LinearAlgebra
         }
 
       // Generate random vector
-      var b = DoubleVector.Zeros(N);
+      var b = CreateVector.Dense<double>(N);
       for (int i = 0; i < N; i++)
         b[i] = rand.NextDouble();
 
       // Solve system
       var sw = new Stopwatch();
       sw.Start();
-      var x = solver.Solve(a, b, (len) => new DoubleVector(len));
+      var x = solver.Solve(a, b, (len) => CreateVector.Dense<double>(len));
       sw.Stop();
       Trace.WriteLine("Gaussian elimination took: " + sw.ElapsedTicks);
 
       // Solve system
       sw.Start();
-      var x2 = solver.Solve(a, b, (l) => new DoubleVector(l));
+      var x2 = solver.Solve(a, b, (l) => CreateVector.Dense<double>(l));
       sw.Stop();
       Trace.WriteLine("Jama solve elimination took: " + sw.ElapsedTicks);
 
@@ -99,10 +99,11 @@ namespace Altaxo.Calc.LinearAlgebra
 
     #region Banded matrix
 
+    /*
     [Fact]
     public void TextBanded01()
     {
-      var rnd = new Random(642332);
+      var rnd = new System.Random(642332);
 
       for (int testRuns = 0; testRuns < 1000; ++testRuns)
       {
@@ -112,7 +113,7 @@ namespace Altaxo.Calc.LinearAlgebra
           {
             for (int upperBandwidth = 0; upperBandwidth <= (N + 1) / 2; ++upperBandwidth) // for all upper bandwidths
             {
-              var A = new DoubleMatrix(N, N);
+              var A = CreateMatrix.Dense<double>(N, N);
 
               for (int i = 0; i < N; ++i)
               {
@@ -122,7 +123,7 @@ namespace Altaxo.Calc.LinearAlgebra
                 for (int j = start; j < end; ++j)
                   A[i, j] = rnd.Next(1, 99);
               }
-              var x = new DoubleVector(N);
+              var x = CreateVector.Dense<double>(N);
 
               for (int i = 0; i < N; ++i)
                 x[i] = rnd.Next(-99, 99);
@@ -135,7 +136,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
               var xr = new double[N];
 
-              solver.SolveDestructiveBanded(A, lowerBandwidth, upperBandwidth, b.GetInternalData(), xr);
+              solver.SolveDestructiveBanded(A, lowerBandwidth, upperBandwidth, b.ToArray(), xr);
 
               // compare result
               for (int i = 0; i < N; ++i)
@@ -147,19 +148,19 @@ namespace Altaxo.Calc.LinearAlgebra
         }
       }
     }
-
+    */
     #endregion Banded matrix
 
     #region Tri diagonal matrix
     [Fact]
     public void TestTridiagonal()
     {
-      var rnd = new Random(17);
+      var rnd = new System.Random(17);
 
 
       for (int N = 3; N < 10; ++N)
       {
-        DoubleMatrix A = new DoubleMatrix(N, N);
+        var A = CreateMatrix.Dense<double>(N, N);
         var x = new double[N];
         var a = new double[N];
         var xx = new double[N];
@@ -204,12 +205,12 @@ namespace Altaxo.Calc.LinearAlgebra
     [Fact]
     public void TestPentaDiagonal()
     {
-      var rnd = new Random(17);
+      var rnd = new System.Random(17);
 
 
       for (int N = 5; N < 10; ++N)
       {
-        DoubleMatrix A = new DoubleMatrix(N, N);
+        var A = CreateMatrix.Dense<double>(N, N);
         var x = new double[N];
         var a = new double[N];
         var xx = new double[N];
@@ -260,7 +261,7 @@ namespace Altaxo.Calc.LinearAlgebra
     [Fact]
     public void TestPentaDiagonalWithBandMatrix()
     {
-      var rnd = new Random(17);
+      var rnd = new System.Random(17);
 
       for (int N = 5; N < 10; ++N)
       {
@@ -309,7 +310,7 @@ namespace Altaxo.Calc.LinearAlgebra
     [Fact]
     public void TestFiveDiagonalBookExample()
     {
-      var A = new DoubleMatrix(6, 6);
+      var A = CreateMatrix.Dense<double>(6, 6);
 
       var a = new double[6] { -2, -4, 3, -7, -1, 4 };
       var xx = new double[6];

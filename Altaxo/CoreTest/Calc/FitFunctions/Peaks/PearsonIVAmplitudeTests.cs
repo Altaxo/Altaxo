@@ -53,7 +53,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
 
       for (int i = 0; i < pars.Length; i++)
       {
-        var cov = new DoubleMatrix(pars.Length, pars.Length);
+        var cov = CreateMatrix.Dense<double>(pars.Length, pars.Length);
         cov[i, i] = 1;
         var result = func.GetPositionAreaHeightFWHMFromSinglePeakParameters(pars, cov);
         AssertEx.AreEqual(Math.Abs(areaDerivs[i]), result.AreaStdDev, 1E-13, 1E-7);
@@ -85,7 +85,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
 
       for (int i = 0; i < pars.Length; i++)
       {
-        var cov = new DoubleMatrix(pars.Length, pars.Length);
+        var cov = CreateMatrix.Dense<double>(pars.Length, pars.Length);
         cov[i, i] = 1;
         var result = func.GetPositionAreaHeightFWHMFromSinglePeakParameters(pars, cov);
         AssertEx.AreEqual(Math.Abs(areaDerivs[i]), result.AreaStdDev, 1E-13, 1E-7);

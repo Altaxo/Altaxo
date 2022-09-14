@@ -641,7 +641,7 @@ namespace Altaxo.Data
     /// Creates a wrapper that implements IROVector with starting index = 0 and number of elements = Count.
     /// </summary>
     /// <returns></returns>
-    public virtual Altaxo.Calc.LinearAlgebra.IROVector<double> ToROVector()
+    public virtual IReadOnlyList<double> ToROVector()
     {
       return ToROVector(0, Count);
     }
@@ -663,7 +663,7 @@ namespace Altaxo.Data
     /// <param name="start">Index of first element of this DataColumn, where the wrapper vector starts with.</param>
     /// <param name="count">Number of elements of the wrapper vector.</param>
     /// <returns>The wrapper vector.</returns>
-    public virtual Altaxo.Calc.LinearAlgebra.IROVector<double> ToROVector(int start, int count)
+    public virtual IReadOnlyList<double> ToROVector(int start, int count)
     {
       throw new ArithmeticException(string.Format("Column {0} is a {1} and can thus not be converted to IROVector", Name, GetType()));
     }

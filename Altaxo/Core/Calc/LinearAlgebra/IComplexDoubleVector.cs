@@ -23,6 +23,7 @@
 #endregion Copyright
 
 using System;
+using ComplexT = System.Numerics.Complex;
 
 namespace Altaxo.Calc.LinearAlgebra
 {
@@ -30,7 +31,7 @@ namespace Altaxo.Calc.LinearAlgebra
   {
     /// <summary>Gets the element of the sequence at index i.</summary>
     /// <value>The element at index i.</value>
-    Complex this[int i] { get; }
+    ComplexT this[int i] { get; }
   }
 
   /// <summary>
@@ -49,7 +50,7 @@ namespace Altaxo.Calc.LinearAlgebra
   {
     /// <summary>Read/write Accessor for the element at index i.</summary>
     /// <value>The element at index i.</value>
-    new Complex this[int i] { get; set; }
+    new ComplexT this[int i] { get; set; }
   }
 
   /// <summary>

@@ -44,18 +44,18 @@ namespace Altaxo.Calc.Optimization
   public abstract class CostFunction : ICostFunction
   {
     ///<summary>Method to override to compute the cost function value of x</summary>
-    public abstract double Value(DoubleVector x);
+    public abstract double Value(Vector<double> x);
 
     ///<summary>Method to override to calculate the grad_f, the first derivative of
     /// the cost function with respect to x</summary>
-    public virtual DoubleVector Gradient(DoubleVector x)
+    public virtual Vector<double> Gradient(Vector<double> x)
     {
       double eps = 1e-8;
       double fp, fm;
-      var grad = new DoubleVector(x.Length, 0.0);
+      var grad = CreateVector.Dense<double>(x.Count);
 
-      var xx = new DoubleVector(x);
-      for (int i = 0; i < x.Length; i++)
+      var xx = x.Clone();
+      for (int i = 0; i < x.Count; i++)
       {
         xx[i] += eps;
         fp = Value(xx);
@@ -69,7 +69,7 @@ namespace Altaxo.Calc.Optimization
 
     ///<summary>Method to override to calculate the Hessian of f, the second derivative of
     /// the cost function with respect to x</summary>
-    public virtual DoubleMatrix Hessian(DoubleVector x)
+    public virtual Matrix<double> Hessian(Vector<double> x)
     {
       throw new OptimizationException("Hessian Evaluation not implemented");
     }
@@ -94,7 +94,7 @@ namespace Altaxo.Calc.Optimization
       _func = func;
     }
 
-    public override double Value(DoubleVector x)
+    public override double Value(Vector<double> x)
     {
       return _func(x[0]);
     }
@@ -109,7 +109,7 @@ namespace Altaxo.Calc.Optimization
       _func = func;
     }
 
-    public override double Value(DoubleVector x)
+    public override double Value(Vector<double> x)
     {
       return _func(x[0], x[1]);
     }

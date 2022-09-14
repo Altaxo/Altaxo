@@ -39,7 +39,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     protected IExtensibleVector<double> _PRESS;
 #nullable enable
 
-    public override IROVector<double> GetPRESSFromPreprocessed(IROMatrix<double> matrixX)
+    public override IReadOnlyList<double> GetPRESSFromPreprocessed(IROMatrix<double> matrixX)
     {
       CalculatePRESS(
         matrixX,
@@ -155,7 +155,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       ref int numFactors,
       out IROMatrix<double> xLoads, // out: the loads of the X matrix
       out IROMatrix<double> xScores, // matrix of weighting values
-      out IROVector<double> V  // vector of cross products
+      out IReadOnlyList<double> V  // vector of cross products
       )
     {
       var matrixX = new MatrixMath.LeftSpineJaggedArrayMatrix<double>(X.RowCount, X.ColumnCount);
@@ -174,7 +174,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       IROMatrix<double> Y, // matrix of concentrations (a mixture is a row of this matrix)
       IROMatrix<double> xLoads, // out: the loads of the X matrix
       IROMatrix<double> xScores, // matrix of weighting values
-      IReadOnlyList<double> V,  // vector of cross products
+      System.Collections.Generic.IReadOnlyList<double> V,  // vector of cross products
       int maxNumberOfFactors,
       IVector<double> PRESS //vector of Y PRESS values
       )
@@ -212,7 +212,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       IROMatrix<double> xLoads,
       IROMatrix<double> yLoads,
       IROMatrix<double> xScores,
-      IReadOnlyList<double> crossProduct,
+      System.Collections.Generic.IReadOnlyList<double> crossProduct,
       int numberOfFactors,
       IMatrix<double>? predictedY,
       IMatrix<double>? spectralResiduals)
@@ -236,7 +236,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       IROMatrix<double> xLoads,
       IROMatrix<double> yLoads,
       IROMatrix<double> xScores,
-      IReadOnlyList<double> crossProduct,
+      System.Collections.Generic.IReadOnlyList<double> crossProduct,
       int numberOfFactors,
       IMatrix<double> predictionScores)
     {
@@ -264,7 +264,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       IROMatrix<double> yLoads,
       IROMatrix<double> xScores,
       int numberOfFactors,
-      out IROVector<double> press)
+      out IReadOnlyList<double> press)
     {
       int numMeasurements = yLoads.RowCount;
 
@@ -297,9 +297,9 @@ namespace Altaxo.Calc.Regression.Multivariate
       IROMatrix<double> xLoads,
       IROMatrix<double> yLoads,
       IROMatrix<double> xScores,
-      IReadOnlyList<double> crossProduct,
+      System.Collections.Generic.IReadOnlyList<double> crossProduct,
       int numberOfFactors,
-      out IROVector<double> PRESS)
+      out IReadOnlyList<double> PRESS)
     {
       IMatrix<double> predictedY = new JaggedArrayMatrix(yLoads.RowCount, yLoads.ColumnCount);
       var press = VectorMath.CreateExtensibleVector<double>(numberOfFactors + 1);
@@ -318,7 +318,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       IROMatrix<double> xLoads,
       IROMatrix<double> yLoads,
       IROMatrix<double> xScores,
-      IReadOnlyList<double> crossProduct,
+      System.Collections.Generic.IReadOnlyList<double> crossProduct,
       int numberOfFactors,
       IMatrix<double> spectralResiduals)
     {

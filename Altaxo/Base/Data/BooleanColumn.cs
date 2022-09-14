@@ -29,7 +29,7 @@ using System.Collections.Generic;
 
 namespace Altaxo.Data
 {
-  public class BooleanColumn : DataColumn, Altaxo.Calc.LinearAlgebra.IROVector<bool?>
+  public class BooleanColumn : DataColumn, IReadOnlyList<bool?>
   {
     static readonly BitArray _emptyBitArray = new BitArray(0);
     private BitArray _data = _emptyBitArray;
@@ -220,11 +220,6 @@ namespace Altaxo.Data
     }
 
     public override int Count
-    {
-      get { return _count; }
-    }
-
-    int Calc.LinearAlgebra.IROVector<bool?>.Length
     {
       get { return _count; }
     }

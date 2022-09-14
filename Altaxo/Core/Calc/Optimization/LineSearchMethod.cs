@@ -48,6 +48,6 @@ namespace Altaxo.Calc.Optimization
     /// <param name="direction">Direction of search.</param>
     /// <param name="step">Scaling factor to calculate the second evaluation point after the start point. The second evaluation point is calculated from <c>x+direction*step</c>.</param>
     /// <returns>The point where the given const function is minimal.</returns>
-    public abstract DoubleVector Search(DoubleVector x, DoubleVector direction, double step);
+    public abstract Vector<double> Search(Vector<double> x, Vector<double> direction, double step);
   }
 }

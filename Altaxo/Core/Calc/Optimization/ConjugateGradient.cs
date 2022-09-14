@@ -44,22 +44,22 @@ namespace Altaxo.Calc.Optimization
   public class ConjugateGradient : FunctionMinimizeMethod
   {
 #nullable disable
-    private DoubleVector g;
-    //DoubleVector gold;
+    private Vector<double> g;
+    //Vector<double> gold;
 
     private int restartCount = 0;
     private int restartCounter = 0;
 
     private LineSearchMethod lineSearchMethod_;
 
-    private DoubleVector[] iterationDirections_;
+    private Vector<double>[] iterationDirections_;
     private double[] iterationTrialSteps_;
-    private DoubleVector[] iterationGradients_;
+    private Vector<double>[] iterationGradients_;
 
     private double delta_new;
     private double delta_old;
     private double delta_mid;
-    private DoubleVector s;
+    private Vector<double> s;
 
 #nullable enable
 
@@ -116,36 +116,36 @@ namespace Altaxo.Calc.Optimization
 
     ///<summary> Initialize the optimization method </summary>
     ///<remarks> The use of this function is intended for testing/debugging purposes only </remarks>
-    public override void InitializeMethod(DoubleVector initialvector)
+    public override void InitializeMethod(Vector<double> initialvector)
     {
       g = GradientEvaluation(initialvector);
 
       // Calculate Diagonal preconditioner
-      DoubleMatrix h = HessianEvaluation(initialvector);
-      var m_inv = new DoubleMatrix(initialvector.Length, initialvector.Length);
-      for (int i = 0; i < initialvector.Length; i++)
+      var h = HessianEvaluation(initialvector);
+      var m_inv = CreateMatrix.Dense<double>(initialvector.Count, initialvector.Count);
+      for (int i = 0; i < initialvector.Count; i++)
         m_inv[i, i] = 1 / h[i, i];
       s = m_inv * g;
 
-      DoubleVector d = -s;
+      Vector<double> d = -s;
 
-      delta_new = g.GetDotProduct(d);
+      delta_new = g.DotProduct(d);
 
       restartCounter = 0;
       /* ------------------------------ */
-      iterationVectors_ = new DoubleVector[endCriteria_.maxIteration + 1];
+      iterationVectors_ = new Vector<double>[endCriteria_.maxIteration + 1];
       iterationVectors_[0] = initialvector;
 
       iterationValues_ = new double[endCriteria_.maxIteration + 1];
       iterationValues_[0] = FunctionEvaluation(iterationVectors_[0]);
 
-      iterationGradients_ = new DoubleVector[endCriteria_.maxIteration + 1];
-      iterationGradients_[0] = new DoubleVector(g);
+      iterationGradients_ = new Vector<double>[endCriteria_.maxIteration + 1];
+      iterationGradients_[0] = g.Clone();
 
       iterationGradientNorms_ = new double[endCriteria_.maxIteration + 1];
-      iterationGradientNorms_[0] = g.L2Norm;
+      iterationGradientNorms_[0] = g.L2Norm();
 
-      iterationDirections_ = new DoubleVector[endCriteria_.maxIteration + 1];
+      iterationDirections_ = new Vector<double>[endCriteria_.maxIteration + 1];
       iterationDirections_[0] = d;
 
       iterationTrialSteps_ = new double[endCriteria_.maxIteration + 1];
@@ -156,43 +156,43 @@ namespace Altaxo.Calc.Optimization
     ///<remarks> The use of this function is intended for testing/debugging purposes only </remarks>
     public override void IterateMethod()
     {
-      DoubleVector d = iterationDirections_[endCriteria_.iterationCounter - 1];
-      DoubleVector x = iterationVectors_[endCriteria_.iterationCounter - 1];
-      DoubleVector g = iterationGradients_[endCriteria_.iterationCounter - 1];
+      Vector<double> d = iterationDirections_[endCriteria_.iterationCounter - 1];
+      Vector<double> x = iterationVectors_[endCriteria_.iterationCounter - 1];
+      Vector<double> g = iterationGradients_[endCriteria_.iterationCounter - 1];
       double stp = iterationTrialSteps_[endCriteria_.iterationCounter - 1];
 
       // Shanno-Phua's Formula for Trial Step
       if (restartCounter == 0 && endCriteria_.iterationCounter > 1)
       {
-        double dg = d.GetDotProduct(g);
-        double dg0 = iterationDirections_[endCriteria_.iterationCounter - 2].GetDotProduct(
+        double dg = d.DotProduct(g);
+        double dg0 = iterationDirections_[endCriteria_.iterationCounter - 2].DotProduct(
           iterationGradients_[endCriteria_.iterationCounter - 2]) / stp;
         stp = dg0 / dg;
       }
 
-      delta_mid = g.GetDotProduct(g);
+      delta_mid = g.DotProduct(g);
 
       // Conduct line search
       x = lineSearchMethod_.Search(x, d, stp);
       g = GradientEvaluation(x);
 
       delta_old = delta_new;
-      delta_mid = g.GetDotProduct(s);
+      delta_mid = g.DotProduct(s);
 
       // Calculate Diagonal preconditioner
-      DoubleMatrix h = HessianEvaluation(x);
-      var m_inv = new DoubleMatrix(x.Length, x.Length);
-      for (int i = 0; i < x.Length; i++)
+      var h = HessianEvaluation(x);
+      var m_inv = CreateMatrix.Dense<double>(x.Count, x.Count);
+      for (int i = 0; i < x.Count; i++)
         m_inv[i, i] = 1 / h[i, i];
       s = m_inv * g;
 
       // Calculate Beta
-      delta_new = g.GetDotProduct(s);
+      delta_new = g.DotProduct(s);
       double beta = (delta_new - delta_mid) / delta_old;
 
       // Check for restart conditions
       restartCounter++;
-      if (restartCounter == restartCount || (restartCounter == x.Length && restartCount == 0) || beta <= 0)
+      if (restartCounter == restartCount || (restartCounter == x.Count && restartCount == 0) || beta <= 0)
       {
         restartCount = 0;
         beta = 0;
@@ -204,7 +204,7 @@ namespace Altaxo.Calc.Optimization
       iterationVectors_[endCriteria_.iterationCounter] = x;
       iterationValues_[endCriteria_.iterationCounter] = FunctionEvaluation(x);
       iterationGradients_[endCriteria_.iterationCounter] = g;
-      iterationGradientNorms_[endCriteria_.iterationCounter] = g.L2Norm;
+      iterationGradientNorms_[endCriteria_.iterationCounter] = g.L2Norm();
       iterationDirections_[endCriteria_.iterationCounter] = d;
       iterationTrialSteps_[endCriteria_.iterationCounter] = stp;
     }

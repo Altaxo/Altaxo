@@ -54,6 +54,7 @@
 \*-----------------------------------------------------------------------------*/
 
 using System;
+using Complex64T = System.Numerics.Complex;
 
 namespace Altaxo.Calc
 {
@@ -1250,7 +1251,7 @@ L40:
     /// References:
     ///
     /// (1) G.P.M. Poppe, C.M.J. Wijers; More Efficient Computation of
-    ///     the Complex Error-Function, ACM Trans. Math. Software,
+    ///     the Complex64T Error-Function, ACM Trans. Math. Software,
     ///     Vol. 16, no. 1, pp. 47.
     /// (2) Algorithm 680, collected algorithms from ACM.
     ///
@@ -1260,7 +1261,7 @@ L40:
     /// Last change: B. M. Gammel, 18.03.1996 error handling
     /// </code>
     /// </remarks>
-    public static Complex Faddeeva(Complex z)
+    public static Complex64T Faddeeva(Complex64T z)
     {
       return Faddeeva(z, false);
     }
@@ -1291,7 +1292,7 @@ L40:
     /// References:
     ///
     /// (1) G.P.M. Poppe, C.M.J. Wijers; More Efficient Computation of
-    ///     the Complex Error-Function, ACM Trans. Math. Software,
+    ///     the Complex64T Error-Function, ACM Trans. Math. Software,
     ///     Vol. 16, no. 1, pp. 47.
     /// (2) Algorithm 680, collected algorithms from ACM.
     ///
@@ -1301,7 +1302,7 @@ L40:
     /// Last change: B. M. Gammel, 18.03.1996 error handling
     /// </code>
     /// </remarks>
-    public static Complex Faddeeva(Complex z, bool bDebug)
+    public static Complex64T Faddeeva(Complex64T z, bool bDebug)
     {
       // The maximum value of rmaxreal equals the root of the largest number
       // rmax which can still be implemented on the computer in double precision
@@ -1320,8 +1321,8 @@ L40:
       int i, j, n, nu, np1, kapn;
       bool a, b;
 
-      xi = z.Re;
-      yi = z.Im;
+      xi = z.Real;
+      yi = z.Imaginary;
       xabs = Math.Abs(xi);
       yabs = Math.Abs(yi);
       x = xabs / 6.3;
@@ -1333,7 +1334,7 @@ L40:
         if (bDebug)
           throw new ArgumentException("Absolute value of argument so large w(z) overflows");
         else
-          return Complex.NaN;
+          return new Complex64T(double.NaN, double.NaN);
       }
 
       qrho = x * x + y * y;
@@ -1457,7 +1458,7 @@ L40:
             if (bDebug)
               throw new ArgumentException("Absolute value of argument so large w(z) overflows");
             else
-              return Complex.NaN;
+              return new Complex64T(double.NaN, double.NaN);
           }
 
           w1 = Math.Exp(xquad) * 2;
@@ -1473,7 +1474,7 @@ L40:
       else if (xi < 0.0)
         v = -v;
 
-      return new Complex(u, v);
+      return new Complex64T(u, v);
     }
 
     #endregion Faddeeva

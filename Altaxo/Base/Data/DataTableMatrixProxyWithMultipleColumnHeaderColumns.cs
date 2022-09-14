@@ -246,7 +246,7 @@ namespace Altaxo.Data
     /// Gets a wrapper vector around the column header data.
     /// </summary>
     /// <returns>Wrapper vector around the column header data. Each element of this vector corresponds to the column with the same index of the matrix.</returns>
-    public IROVector<double> GetColumnHeaderWrapper(int idx)
+    public IReadOnlyList<double> GetColumnHeaderWrapper(int idx)
     {
       if (idx < 0 || idx >= _columnHeaderColumns.Count)
         throw new ArgumentOutOfRangeException(nameof(idx));

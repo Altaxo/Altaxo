@@ -24,6 +24,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Regression
@@ -78,14 +79,14 @@ namespace Altaxo.Calc.Regression
         throw new ArgumentException("Argument polynomialorder must not be smaller than total number of points");
       if (derivativeorder > polynomialorder)
         throw new ArgumentException("Argument derivativeorder must not be greater than polynomialorder!");
-      if (coefficients is null || coefficients.Length < totalpoints)
+      if (coefficients is null || coefficients.Count < totalpoints)
         throw new ArgumentException("Vector of coefficients is either null or too short");
       // totalpoints must be greater than 1
 
       // Set up the design matrix
       // this is the matrix of i^j where i ranges from -leftpoints..rightpoints and j from 0 to polynomialorder
       // as usual for regression, we not use the matrix directly, but instead the covariance matrix At*A
-      var mat = new Matrix(polynomialorder + 1, polynomialorder + 1);
+      var mat = CreateMatrix.Dense<double>(polynomialorder + 1, polynomialorder + 1);
 
       double[] val = new double[totalpoints];
       for (int i = 0; i < totalpoints; i++)
@@ -93,7 +94,7 @@ namespace Altaxo.Calc.Regression
 
       for (int ord = 0; ord <= polynomialorder; ord++)
       {
-        double sum = VectorMath.Sum(val);
+        double sum = val.Sum();
         for (int i = 0; i <= ord; i++)
           mat[ord - i, i] = sum;
         for (int i = 0; i < totalpoints; i++)
@@ -102,7 +103,7 @@ namespace Altaxo.Calc.Regression
 
       for (int ord = polynomialorder - 1; ord >= 0; ord--)
       {
-        double sum = VectorMath.Sum(val);
+        double sum = val.Sum();
         for (int i = 0; i <= ord; i++)
           mat[polynomialorder - i, polynomialorder - ord + i] = sum;
         for (int i = 0; i < totalpoints; i++)
@@ -110,11 +111,11 @@ namespace Altaxo.Calc.Regression
       }
 
       // now solve the equation
-      ILuDecomposition decompose = mat.GetLuDecomposition();
+      var decompose = mat.LU();
       // ISingularValueDecomposition decompose = mat.GetSingularValueDecomposition();
-      var y = new Matrix(polynomialorder + 1, 1);
+      var y = CreateMatrix.Dense<double>(polynomialorder + 1, 1);
       y[derivativeorder, 0] = 1;
-      IMapackMatrix result = decompose.Solve(y);
+      var result = decompose.Solve(y);
 
       // to get the coefficients, the parameter have to be multiplied by i^j and summed up
       for (int i = -leftpoints; i <= rightpoints; i++)

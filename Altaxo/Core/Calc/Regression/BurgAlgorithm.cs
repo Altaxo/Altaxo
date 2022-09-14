@@ -28,6 +28,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using Altaxo.Calc.LinearAlgebra;
+using Complex64T = System.Numerics.Complex;
 
 namespace Altaxo.Calc.Regression
 {
@@ -71,7 +72,7 @@ namespace Altaxo.Calc.Regression
     /// <summary>
     /// Returns the coefficients that were calculated during the last run of the algorithm.
     /// </summary>
-    public IROVector<double> Coefficients
+    public IReadOnlyList<double> Coefficients
     {
       get
       {
@@ -96,7 +97,7 @@ namespace Altaxo.Calc.Regression
     /// </summary>
     /// <param name="x">Signal for building the model.</param>
     /// <param name="numberOfCoefficients">Number of coefficients of the model.</param>
-    public void Execute(IReadOnlyList<double> x, int numberOfCoefficients)
+    public void Execute(System.Collections.Generic.IReadOnlyList<double> x, int numberOfCoefficients)
     {
       EnsureAllocation(x.Count, numberOfCoefficients);
       _meanSquareError = Execution(x, _AkWrapper, null, null, this);
@@ -107,7 +108,7 @@ namespace Altaxo.Calc.Regression
     /// </summary>
     /// <param name="x">Signal for building the model.</param>
     /// <param name="coefficients">Vector to be filled with the coefficients of the model.</param>
-    public void Execute(IReadOnlyList<double> x, IVector<double> coefficients)
+    public void Execute(System.Collections.Generic.IReadOnlyList<double> x, IVector<double> coefficients)
     {
       _meanSquareError = Execution(x, coefficients, null, null, this);
     }
@@ -118,7 +119,7 @@ namespace Altaxo.Calc.Regression
     /// <param name="x">Signal for building the model.</param>
     /// <param name="coefficients">Vector to be filled with the coefficients of the model.</param>
     /// <param name="errors">Vector to be filled with the sum of forward and backward prediction error for every stage of the model.</param>
-    public void Execute(IReadOnlyList<double> x, IVector<double> coefficients, IVector<double> errors)
+    public void Execute(System.Collections.Generic.IReadOnlyList<double> x, IVector<double> coefficients, IVector<double> errors)
     {
       _meanSquareError = Execution(x, coefficients, errors, null, this);
     }
@@ -130,7 +131,7 @@ namespace Altaxo.Calc.Regression
     /// <param name="coefficients">Vector to be filled with the coefficients of the model.</param>
     /// <param name="errors">Vector to be filled with the sum of forward and backward prediction error for every stage of the model.</param>
     /// <param name="reflectionCoefficients">Vector to be filled with the reflection coefficients.</param>
-    public void Execute(IReadOnlyList<double> x, IVector<double> coefficients, IVector<double> errors, IVector<double> reflectionCoefficients)
+    public void Execute(System.Collections.Generic.IReadOnlyList<double> x, IVector<double> coefficients, IVector<double> errors, IVector<double> reflectionCoefficients)
     {
       _meanSquareError = Execution(x, coefficients, errors, reflectionCoefficients, this);
     }
@@ -146,7 +147,7 @@ namespace Altaxo.Calc.Regression
     /// </remarks>
     public void PredictRecursivelyForward(IVector<double> x, int firstPoint)
     {
-      PredictRecursivelyForward(x, firstPoint, x.Length - firstPoint);
+      PredictRecursivelyForward(x, firstPoint, x.Count - firstPoint);
     }
 
     /// <summary>
@@ -189,7 +190,7 @@ namespace Altaxo.Calc.Regression
     /// is predicted. The return value is the square root of the sum of squared differences between predicted signal values and original values, divided by the number of predicted values.
     /// The number of predicted values is the length of the signal x minus the number of coefficents of the model.
     /// </remarks>
-    public double GetMeanPredictionErrorNonrecursivelyForward(IReadOnlyList<double> x)
+    public double GetMeanPredictionErrorNonrecursivelyForward(System.Collections.Generic.IReadOnlyList<double> x)
     {
       if (_Ak is null)
         throw new InvalidOperationException(ErrorNoExecution);
@@ -263,7 +264,7 @@ namespace Altaxo.Calc.Regression
     /// is predicted. The return value is the square root of the sum of squared differences between predicted signal values and original values, divided by the number of predicted values.
     /// The number of predicted values is the length of the signal x minus the number of coefficents of the model.
     /// </remarks>
-    public double GetMeanPredictionErrorNonrecursivelyBackward(IReadOnlyList<double> x)
+    public double GetMeanPredictionErrorNonrecursivelyBackward(System.Collections.Generic.IReadOnlyList<double> x)
     {
       if (_Ak is null)
         throw new InvalidOperationException(ErrorNoExecution);
@@ -292,16 +293,16 @@ namespace Altaxo.Calc.Regression
       var Ak = _Ak ?? throw new InvalidOperationException(ErrorNoExecution);
 
       double w = fdt * 2 * Math.PI;
-      Complex z = new Complex(Math.Cos(w), Math.Sin(w));
+      Complex64T z = new Complex64T(Math.Cos(w), Math.Sin(w));
       var zz = z;
 
-      Complex denom = Ak[1] * zz;
+      Complex64T denom = Ak[1] * zz;
       for (int i = 2; i < Ak.Length; ++i)
       {
         zz *= z;
         denom += Ak[i] * zz;
       }
-      return 1 / (1 + denom).GetModulusSquared();
+      return 1 / (1 + denom).MagnitudeSquared();
     }
 
     /// <summary>
@@ -320,7 +321,7 @@ namespace Altaxo.Calc.Regression
         _AkWrapper = VectorMath.ToVector(_Ak, 1, _numberOfCoefficients);
       }
 
-      if (_numberOfCoefficients != _AkWrapper.Length)
+      if (_numberOfCoefficients != _AkWrapper.Count)
         _AkWrapper = VectorMath.ToVector(_Ak, 1, _numberOfCoefficients);
 
       if (_b is null || _b.Length < xLength)
@@ -336,7 +337,7 @@ namespace Altaxo.Calc.Regression
     /// <param name="x">Signal for building the model.</param>
     /// <param name="coefficients">Vector to be filled with the coefficients of the model.</param>
     /// <returns>The mean square error of backward and forward prediction.</returns>
-    public static double Execution(IReadOnlyList<double> x, IVector<double> coefficients)
+    public static double Execution(System.Collections.Generic.IReadOnlyList<double> x, IVector<double> coefficients)
     {
       return Execution(x, coefficients, null, null, null);
     }
@@ -348,7 +349,7 @@ namespace Altaxo.Calc.Regression
     /// <param name="coefficients">Vector to be filled with the coefficients of the model.</param>
     /// <param name="errors">Vector to be filled with the sum of forward and backward prediction error for every stage of the model.</param>
     /// <returns>The mean square error of backward and forward prediction.</returns>
-    public static double Execution(IReadOnlyList<double> x, IVector<double> coefficients, IVector<double> errors)
+    public static double Execution(System.Collections.Generic.IReadOnlyList<double> x, IVector<double> coefficients, IVector<double> errors)
     {
       return Execution(x, coefficients, errors, null, null);
     }
@@ -361,7 +362,7 @@ namespace Altaxo.Calc.Regression
     /// <param name="errors">Vector to be filled with the sum of forward and backward prediction error for every stage of the model.</param>
     /// <param name="reflectionCoefficients">Vector to be filled with the reflection coefficients.</param>
     /// <returns>The mean square error of backward and forward prediction.</returns>
-    public static double Execution(IReadOnlyList<double> x, IVector<double> coefficients, IVector<double> errors, IVector<double> reflectionCoefficients)
+    public static double Execution(System.Collections.Generic.IReadOnlyList<double> x, IVector<double> coefficients, IVector<double> errors, IVector<double> reflectionCoefficients)
     {
       return Execution(x, coefficients, errors, reflectionCoefficients, null);
     }
@@ -375,10 +376,10 @@ namespace Altaxo.Calc.Regression
     /// <param name="reflectionCoefficients">Vector to be filled with the reflection coefficients.</param>
     /// <param name="tempStorage">Instance of this class used to hold the temporary arrays.</param>
     /// <returns>The mean square error of backward and forward prediction.</returns>
-    private static double Execution(IReadOnlyList<double> x, IVector<double> coefficients, IVector<double>? errors, IVector<double>? reflectionCoefficients, BurgAlgorithm? tempStorage)
+    private static double Execution(System.Collections.Generic.IReadOnlyList<double> x, IVector<double> coefficients, IVector<double>? errors, IVector<double>? reflectionCoefficients, BurgAlgorithm? tempStorage)
     {
       int N = x.Count - 1;
-      int m = coefficients.Length;
+      int m = coefficients.Count;
 
       double[] Ak; // Prediction coefficients, Ak[0] is always 1
       double[] b; // backward prediction errors
@@ -386,16 +387,16 @@ namespace Altaxo.Calc.Regression
 
       if (tempStorage is not null)
       {
-        tempStorage.EnsureAllocation(x.Count, coefficients.Length);
+        tempStorage.EnsureAllocation(x.Count, coefficients.Count);
         Ak = tempStorage._Ak;
         b = tempStorage._b;
         f = tempStorage._f;
-        for (int i = 1; i <= coefficients.Length; i++)
+        for (int i = 1; i <= coefficients.Count; i++)
           Ak[i] = 0;
       }
       else
       {
-        Ak = new double[coefficients.Length + 1];
+        Ak = new double[coefficients.Count + 1];
         b = new double[x.Count];
         f = new double[x.Count];
       }

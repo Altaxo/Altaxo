@@ -29,6 +29,7 @@ using System.Threading;
 using Altaxo.Calc;
 using Altaxo.Calc.FitFunctions.Peaks;
 using Altaxo.Calc.FitFunctions.Probability;
+using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Calc.Regression.Nonlinear;
 
 namespace Altaxo.Science.Spectroscopy.PeakFitting
@@ -183,7 +184,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
         else
         {
           var fitCov = fit.Covariances;
-          var localCov = new Altaxo.Calc.LinearAlgebra.DoubleMatrix(numberOfParametersPerPeak, numberOfParametersPerPeak);
+          var localCov = CreateMatrix.Dense<double>(numberOfParametersPerPeak, numberOfParametersPerPeak);
           for(int i= 0; i < numberOfParametersPerPeak; i++)
             for(int j=0;j<numberOfParametersPerPeak;++j)
               localCov[i,j] = fitCov[i + idx * numberOfParametersPerPeak, j+ idx * numberOfParametersPerPeak];

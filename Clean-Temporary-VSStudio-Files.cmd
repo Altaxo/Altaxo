@@ -55,6 +55,9 @@ rmdir /S /Q .\Altaxo\HelpViewer\bin
 rmdir /S /Q .\Altaxo\MarkdownEditing\obj
 rmdir /S /Q .\Altaxo\MarkdownEditing\bin
 
+rmdir /S /Q .\Altaxo\Providers.MKL\obj
+rmdir /S /Q .\Altaxo\Providers.MKL\bin
+
 rmdir /S /Q .\Altaxo\Startup\obj
 rmdir /S /Q .\Altaxo\Startup\bin
 

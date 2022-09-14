@@ -42,9 +42,9 @@ namespace Altaxo.Calc.Optimization
       endCriteria_ = new EndCriteria();
     }
 
-    public override LinearAlgebra.DoubleVector Search(LinearAlgebra.DoubleVector x, LinearAlgebra.DoubleVector direction, double step)
+    public override Vector<double> Search(Vector<double> x, Vector<double> direction, double step)
     {
-      var retx = new DoubleVector(x);
+      var retx = x.Clone();
       double oldVal = FunctionEvaluation(retx);
       double newVal = oldVal;
 

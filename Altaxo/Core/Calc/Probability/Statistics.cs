@@ -32,7 +32,7 @@ namespace Altaxo.Calc.Probability
 {
   public static class Statistics
   {
-    public static double Mean(this IReadOnlyList<double> x)
+    public static double Mean(this System.Collections.Generic.IReadOnlyList<double> x)
     {
       double result = 0;
       for (int i = x.Count - 1; i >= 0; i--)
@@ -41,7 +41,7 @@ namespace Altaxo.Calc.Probability
       return result / x.Count;
     }
 
-    public static double Mean(this IReadOnlyList<double> x, bool ignoreNaN)
+    public static double Mean(this System.Collections.Generic.IReadOnlyList<double> x, bool ignoreNaN)
     {
       double result = 0;
       int n = 0;
@@ -72,7 +72,7 @@ namespace Altaxo.Calc.Probability
       return result / n;
     }
 
-    public static double StandardDeviation(this IReadOnlyList<double> x)
+    public static double StandardDeviation(this System.Collections.Generic.IReadOnlyList<double> x)
     {
       double mean = Mean(x);
       double sum = 0;
@@ -82,7 +82,7 @@ namespace Altaxo.Calc.Probability
       return Math.Sqrt(sum / (x.Count - 1));
     }
 
-    public static double InterQuartileRange(this IReadOnlyList<double> x)
+    public static double InterQuartileRange(this System.Collections.Generic.IReadOnlyList<double> x)
     {
       return Math.Abs(Quantile(x, 0.75) - Quantile(x, 0.25));
     }
@@ -93,7 +93,7 @@ namespace Altaxo.Calc.Probability
     /// <param name="x">Sorted array (in ascending order) of data. No check is made whether the array is sorted or contains missing data (NaNs).</param>
     /// <param name="f">The quantile [0,1].</param>
     /// <returns>The quantile value of the array of data.</returns>
-    public static double Quantile(this IReadOnlyList<double> x, double f)
+    public static double Quantile(this System.Collections.Generic.IReadOnlyList<double> x, double f)
     {
       return Quantile(x, f, x.Count, 1, false);
     }
@@ -107,7 +107,7 @@ namespace Altaxo.Calc.Probability
     /// <param name="stride">Stride. Normally set to 1.</param>
     /// <param name="checkArray">If true, checks the array for missing values and whether the array is sorted. An exception is thrown if the array contains missing values or is not sorted.</param>
     /// <returns>The quantile value of the array of data.</returns>
-    public static double Quantile(this IReadOnlyList<double> x, double f, int n, int stride, bool checkArray)
+    public static double Quantile(this System.Collections.Generic.IReadOnlyList<double> x, double f, int n, int stride, bool checkArray)
     {
       if (checkArray)
       {
@@ -159,9 +159,9 @@ namespace Altaxo.Calc.Probability
 
     public struct ProbabilityDensityResult
     {
-      public IROVector<double> X { get; set; }
+      public IReadOnlyList<double> X { get; set; }
 
-      public IROVector<double> Y { get; set; }
+      public IReadOnlyList<double> Y { get; set; }
 
       public double Bandwidth { get; set; }
     }
@@ -183,12 +183,12 @@ namespace Altaxo.Calc.Probability
     /// <param name="cut"></param>
     /// <remarks>Adapted from the R-project (www.r-project.org), Version 2.72, file density.R</remarks>
     public static ProbabilityDensityResult ProbabilityDensity(
-      this IReadOnlyList<double> x,
+      this System.Collections.Generic.IReadOnlyList<double> x,
       double bw,
       string bwSel,
       double adjust,
       ConvolutionKernel kernel,
-      IReadOnlyList<double> weights,
+      System.Collections.Generic.IReadOnlyList<double> weights,
       double width,
       string widthSel,
       int n,
@@ -299,7 +299,7 @@ namespace Altaxo.Calc.Probability
         }
       }
 
-      if (!RMath.IsFinite(bw))
+      if (!bw.IsFinite())
         throw new ArithmeticException("Bandwidth is not finite");
 
       bw = adjust * bw;
@@ -312,18 +312,18 @@ namespace Altaxo.Calc.Probability
       if (to.IsNaN())
         to = x.Max() + cut * bw;
 
-      if (!RMath.IsFinite(from))
+      if (!from.IsFinite())
         throw new ArithmeticException("non-finite 'from'");
       if (!to.IsFinite())
         throw new ArithmeticException("non-finite 'to'");
       double lo = from - 4 * bw;
       double up = to + 4 * bw;
 
-      var y = new DoubleVector(2 * n);
+      var y = CreateVector.Dense<double>(2 * n);
       MassDistribution(x, weights, lo, up, y, n);
-      y.Multiply(totMass);
+      y.Multiply(totMass, y);
 
-      var kords = new DoubleVector(2 * n);
+      var kords = CreateVector.Dense<double>(2 * n);
       kords.FillWithLinearSequenceGivenByStartAndEnd(0, 2 * (up - lo));
 
       for (int i = n + 1, j = n - 1; j >= 0; i++, j--)
@@ -375,16 +375,16 @@ namespace Altaxo.Calc.Probability
           throw new ArgumentException("Unknown convolution kernel");
       }
 
-      var result = new DoubleVector(2 * n);
+      var result = new double[2 * n];
       double[]? scratch = null;
-      Fourier.FastHartleyTransform.CyclicRealConvolution(y.GetInternalData(), kords.GetInternalData(), result.GetInternalData(), 2 * n, ref scratch);
+      Fourier.FastHartleyTransform.CyclicRealConvolution(y, kords, result, 2 * n, ref scratch);
       y.Multiply(1.0 / (2 * n));
       VectorMath.MaxOf(y, 0, y);
       var xords = VectorMath.CreateEquidistantSequenceByStartEndLength(lo, up, n);
       var xu = VectorMath.CreateEquidistantSequenceByStartEndLength(from, to, n_user);
 
-      double[] res2 = new double[xu.Length];
-      Interpolation.LinearInterpolation.Interpolate(xords, result, n, xu, xu.Length, 0, out res2);
+      double[] res2 = new double[xu.Count];
+      Interpolation.LinearInterpolation.Interpolate(xords, result, n, xu, xu.Count, 0, out res2);
 
       return new ProbabilityDensityResult() { X = xu, Y = VectorMath.ToROVector(res2), Bandwidth = bw };
     }
@@ -400,8 +400,8 @@ namespace Altaxo.Calc.Probability
     /// <param name="ny"></param>
     /// <remarks>Adapted from the R-project (www.r-project.org), Version 2.72, file massdist.c</remarks>
     public static void MassDistribution(
-        this IReadOnlyList<double> x,
-        IReadOnlyList<double> xmass,
+        this System.Collections.Generic.IReadOnlyList<double> x,
+        System.Collections.Generic.IReadOnlyList<double> xmass,
         double xlow, double xhigh,
         IVector<double> y,
         int ny

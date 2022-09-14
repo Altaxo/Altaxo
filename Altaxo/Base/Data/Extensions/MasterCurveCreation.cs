@@ -33,6 +33,7 @@ using Altaxo.Calc.Optimization;
 namespace Altaxo.Data
 {
   using System.Collections;
+  using Altaxo.Calc.LinearAlgebra;
   using Altaxo.Calc.RootFinding;
 
   public static class MasterCurveCreation
@@ -274,7 +275,7 @@ namespace Altaxo.Data
       /// <summary>
       /// Wraps an IList of double values to an IROVector
       /// </summary>
-      private class WrapperIListToIRoVectorK : Altaxo.Calc.LinearAlgebra.IROVector<double>
+      private class WrapperIListToIRoVectorK : IReadOnlyList<double>
       {
         private IList<double> _list;
 
@@ -284,11 +285,6 @@ namespace Altaxo.Data
         }
 
         #region IROVector Members
-
-        public int Length
-        {
-          get { return _list.Count; }
-        }
 
         public int Count
         {
@@ -306,14 +302,14 @@ namespace Altaxo.Data
 
         public IEnumerator<double> GetEnumerator()
         {
-          var len = Length;
+          var len = Count;
           for (int i = 0; i < len; ++i)
             yield return this[i];
         }
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-          var len = Length;
+          var len = Count;
           for (int i = 0; i < len; ++i)
             yield return this[i];
         }
@@ -324,7 +320,7 @@ namespace Altaxo.Data
       /// <summary>
       /// Wraps an IList of double values to an IROVector
       /// </summary>
-      private class WrapperIListToIRoVectorV : Altaxo.Calc.LinearAlgebra.IROVector<double>
+      private class WrapperIListToIRoVectorV : IReadOnlyList<double>
       {
         private IList<(double, int)> _list;
 
@@ -334,11 +330,6 @@ namespace Altaxo.Data
         }
 
         #region IROVector Members
-
-        public int Length
-        {
-          get { return _list.Count; }
-        }
 
         public int Count
         {
@@ -356,14 +347,14 @@ namespace Altaxo.Data
 
         public IEnumerator<double> GetEnumerator()
         {
-          var len = Length;
+          var len = Count;
           for (int i = 0; i < len; ++i)
             yield return this[i];
         }
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-          var len = Length;
+          var len = Count;
           for (int i = 0; i < len; ++i)
             yield return this[i];
         }
@@ -493,14 +484,12 @@ namespace Altaxo.Data
                   };
 
                   var optimizationMethod = new StupidLineSearch(new Simple1DCostFunction(optFunc));
-                  var vec = new Calc.LinearAlgebra.DoubleVector(1)
-                  {
-                    [0] = initialShift
-                  };
-                  var dir = new Calc.LinearAlgebra.DoubleVector(1)
-                  {
-                    [0] = 1
-                  };
+                  var vec = CreateVector.Dense<double>(1);
+                  vec[0] = initialShift;
+
+                  var dir = CreateVector.Dense<double>(1);
+                  dir[0] = 1;
+
                   double initialStep = 0.05;
                   var result = optimizationMethod.Search(vec, dir, initialStep);
                   currentShift = result[0];
@@ -517,14 +506,11 @@ namespace Altaxo.Data
                     return res;
                   };
                   var optimizationMethod = new BruteForceLineSearch(new Simple1DCostFunction(optFunc));
-                  var vec = new Calc.LinearAlgebra.DoubleVector(1)
-                  {
-                    [0] = globalMinShift
-                  };
-                  var dir = new Calc.LinearAlgebra.DoubleVector(1)
-                  {
-                    [0] = globalMaxShift - globalMinShift
-                  };
+                  var vec = CreateVector.Dense<double>(1);
+                  vec[0] = globalMinShift;
+
+                  var dir = CreateVector.Dense<double>(1);
+                  dir[0] = globalMaxShift - globalMinShift;
                   double initialStep = 1;
                   var result = optimizationMethod.Search(vec, dir, initialStep);
                   currentShift = result[0];

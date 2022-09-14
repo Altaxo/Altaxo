@@ -23,6 +23,7 @@
 #endregion Copyright
 
 using System;
+using ComplexT = System.Numerics.Complex;
 
 namespace Altaxo.Calc.LinearAlgebra
 {
@@ -32,7 +33,7 @@ namespace Altaxo.Calc.LinearAlgebra
   public interface IROComplexDoubleMatrix
   {
     /// <summary>Gets an element of the matrix at (row, col).</summary>
-    Complex this[int row, int col] { get; }
+    ComplexT this[int row, int col] { get; }
 
     /// <summary>The number of rows of the matrix.</summary>
     int Rows { get; }
@@ -47,7 +48,7 @@ namespace Altaxo.Calc.LinearAlgebra
   public interface IComplexDoubleMatrix : IROComplexDoubleMatrix
   {
     /// <summary>Get / sets an element of the matrix at (row, col).</summary>
-    new Complex this[int row, int col] { get; set; }
+    new ComplexT this[int row, int col] { get; set; }
   }
 
   /// <summary>

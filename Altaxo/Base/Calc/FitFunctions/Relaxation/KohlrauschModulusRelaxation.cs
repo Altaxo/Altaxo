@@ -26,6 +26,7 @@
 using System;
 using System.ComponentModel;
 using Altaxo.Calc.Regression.Nonlinear;
+using Complex64T = System.Numerics.Complex;
 
 namespace Altaxo.Calc.FitFunctions.Relaxation
 {
@@ -412,25 +413,25 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 
       double w_r = x * P[2]; // omega scaled with tau
 
-      Complex result = P[1] + (P[0] - P[1]) * Kohlrausch.ReIm(P[3], w_r);
+      Complex64T result = P[1] + (P[0] - P[1]) * Kohlrausch.ReIm(P[3], w_r);
 
       if (_useFlowTerm)
       {
         if (_invertViscosity)
-          result = 1 / ((1 / result) - Complex.I * P[4] / (x));
+          result = 1 / ((1 / result) - Complex64T.ImaginaryOne * P[4] / (x));
         else
-          result = 1 / ((1 / result) - Complex.I / (x * P[4]));
+          result = 1 / ((1 / result) - Complex64T.ImaginaryOne / (x * P[4]));
       }
 
       if (_logarithmizeResults)
       {
-        Y[0] = Math.Log10(result.Re);
-        Y[1] = Math.Log10(result.Im);
+        Y[0] = Math.Log10(result.Real);
+        Y[1] = Math.Log10(result.Imaginary);
       }
       else
       {
-        Y[0] = result.Re;
-        Y[1] = result.Im;
+        Y[0] = result.Real;
+        Y[1] = result.Imaginary;
       }
     }
 

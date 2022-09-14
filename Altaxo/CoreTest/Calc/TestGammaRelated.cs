@@ -25,6 +25,7 @@
 using System;
 using Altaxo.Calc;
 using Xunit;
+using Complex64T = System.Numerics.Complex;
 
 namespace AltaxoTest.Calc
 {
@@ -49,10 +50,10 @@ namespace AltaxoTest.Calc
     [Fact]
     public void TestComplexGamma()
     {
-      Complex result;
-      result = GammaRelated.Gamma(new Complex(0.5, 0.5));
-      AssertEx.Equal(0.8181639995417473940777489, result.Re, 1e-14);
-      AssertEx.Equal(-0.7633138287139826166702968, result.Im, 1e-14);
+      Complex64T result;
+      result = GammaRelated.Gamma(new Complex64T(0.5, 0.5));
+      AssertEx.Equal(0.8181639995417473940777489, result.Real, 1e-14);
+      AssertEx.Equal(-0.7633138287139826166702968, result.Imaginary, 1e-14);
     }
 
     [Fact]

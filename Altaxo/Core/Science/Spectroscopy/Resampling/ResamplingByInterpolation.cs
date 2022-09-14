@@ -82,8 +82,8 @@ namespace Altaxo.Science.Spectroscopy.Resampling
       {
         var spline = Interpolation.Interpolate(x, y);
 
-        var xx = new double[SamplingPoints.Length];
-        var yy = new double[SamplingPoints.Length];
+        var xx = new double[SamplingPoints.Count];
+        var yy = new double[SamplingPoints.Count];
 
         for (int i = 0; i < xx.Length; ++i)
         {

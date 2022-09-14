@@ -43,15 +43,15 @@ namespace Altaxo.Calc.Optimization
   public interface ICostFunction
   {
     ///<summary>Method to override to compute the cost function value of x</summary>
-    double Value(DoubleVector x);
+    double Value(Vector<double> x);
 
     ///<summary>Method to override to calculate the grad_f, the first derivative of
     /// the cost function with respect to x</summary>
-    DoubleVector Gradient(DoubleVector x);
+    Vector<double> Gradient(Vector<double> x);
 
     ///<summary>Method to override to calculate the hessian, the second derivative of
     /// the cost function with respect to x</summary>
-    DoubleMatrix Hessian(DoubleVector x);
+    Matrix<double> Hessian(Vector<double> x);
 
     ///<summary>Access the constraints for the given cost function </summary>
     ConstraintDefinition Constraint

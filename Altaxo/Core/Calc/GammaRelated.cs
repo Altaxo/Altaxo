@@ -46,6 +46,7 @@
 //                               c9lgmc.cc
 
 using System;
+using Complex64T = System.Numerics.Complex;
 
 namespace Altaxo.Calc
 {
@@ -252,7 +253,7 @@ L50:
 
         if (d9lgmc_first)
         {
-          nalgm = Series.initds(algmcs, 15, 0.5 * DBL_EPSILON);
+          nalgm = SeriesMP.initds(algmcs, 15, 0.5 * DBL_EPSILON);
           d9lgmc_first = false;
         }
 
@@ -264,7 +265,7 @@ L50:
 
         ret_val = 1.0 / (x * 12.0);
         if (x < xbig)
-          ret_val = Series.dcsevl(sqr(10.0 / x) * 2.0 - 1.0, algmcs, nalgm) / x;
+          ret_val = SeriesMP.dcsevl(sqr(10.0 / x) * 2.0 - 1.0, algmcs, nalgm) / x;
         return ret_val;
 
 L20:
@@ -449,7 +450,7 @@ result:
     {
       if (nlnrel_LogRel == 0)
       {
-        nlnrel_LogRel = Series.initds(alnrcs_LogRel, 43, 0.1 * 0.5 * DBL_EPSILON);
+        nlnrel_LogRel = SeriesMP.initds(alnrcs_LogRel, 43, 0.1 * 0.5 * DBL_EPSILON);
         xmin_LogRel = -1.0 + Math.Sqrt(DBL_EPSILON);
       }
 
@@ -462,7 +463,7 @@ result:
       }
 
       if (Math.Abs(x) <= 0.375)
-        return x * (1.0 - x * Series.dcsevl(x / 0.375, alnrcs_LogRel, nlnrel_LogRel));
+        return x * (1.0 - x * SeriesMP.dcsevl(x / 0.375, alnrcs_LogRel, nlnrel_LogRel));
       else
         return Math.Log(1.0 + x);
     }
@@ -903,7 +904,7 @@ L20:
 
         if (first_Gamma)
         {
-          n_Gamma = Series.initds(gamcs, 42, 0.5 * DBL_EPSILON * 0.1);
+          n_Gamma = SeriesMP.initds(gamcs, 42, 0.5 * DBL_EPSILON * 0.1);
           dgamlm.f(out xmin_Gamma, out xmax_Gamma);
           first_Gamma = false;
         }
@@ -923,7 +924,7 @@ L20:
         y = x - n;
         --n;
 
-        ret_val = Series.dcsevl(y * 2.0 - 1.0, gamcs, n_Gamma) + 0.9375;
+        ret_val = SeriesMP.dcsevl(y * 2.0 - 1.0, gamcs, n_Gamma) + 0.9375;
         if (n == 0)
           return ret_val;
 
@@ -2265,7 +2266,7 @@ L80:
     ///                = complex (0.5*log(r**2), arg(1+z))
     ///                = complex (0.5*LogRel(2*x+rho**2), arg(1+z))
     /// </remarks>
-    private static Complex LogRel(Complex z)
+    private static Complex64T LogRel(Complex64T z)
     {
       if (ComplexMath.Abs(1.0 + z) < Math.Sqrt(DBL_EPSILON))
         System.Diagnostics.Trace.WriteLine("Warning (LogRel): answer less than half precision because z too near -1");
@@ -2274,7 +2275,7 @@ L80:
       if (rho > 0.375)
         return ComplexMath.Log(1.0 + z);
 
-      return new Complex(0.5 * LogRel(2.0 * z.Re + rho * rho), ComplexMath.Arg(1.0 + z));
+      return new Complex64T(0.5 * LogRel(2.0 * z.Real + rho * rho), ComplexMath.Arg(1.0 + z));
     }
 
     #endregion LogRel (complex)
@@ -2312,9 +2313,9 @@ L80:
     /// We find c9lgmc so that
     /// clog(cgamma(z)) = 0.5*alog(2.*pi) + (z-0.5)*clog(z) - z + c9lgmc(z).
     /// </remarks>
-    private static Complex c9lgmc(Complex zin)
+    private static Complex64T c9lgmc(Complex64T zin)
     {
-      Complex z, z2inv, retval;
+      Complex64T z, z2inv, retval;
 
       if (_c9lgmc_nterm == 0)
       {
@@ -2325,8 +2326,8 @@ L80:
       }
 
       z = zin;
-      double x = z.Re,
-        y = z.Im,
+      double x = z.Real,
+        y = z.Imaginary,
         cabsz = ComplexMath.Abs(z);
 
       if (x < 0.0 && Math.Abs(y) < _c9lgmc_bound)
@@ -2338,7 +2339,7 @@ L80:
       if (cabsz >= _c9lgmc_xmax)
       {
         System.Diagnostics.Trace.WriteLine("Warning (c9lgm): z so big c9lgmc underflows");
-        return new Complex(0.0, 0.0);
+        return new Complex64T(0.0, 0.0);
       }
       else
       {
@@ -2346,7 +2347,7 @@ L80:
           return 1.0 / (12.0 * z);
 
         z2inv = 1.0 / (z * z);
-        retval = new Complex(0.0, 0.0);
+        retval = new Complex64T(0.0, 0.0);
         for (int i = 1; i <= _c9lgmc_nterm; i++)
           retval = _c9lgmc_bern[_c9lgmc_nterm - i] + retval * z2inv;
         return retval / z;
@@ -2358,7 +2359,7 @@ L80:
     #region Gamma(complex)
 
     /// <summary>
-    /// Complex Gamma function.
+    /// Complex64T Gamma function.
     /// </summary>
     /// <param name="z">The complex argument.</param>
     /// <returns>The Gamma function of the complex argument z.</returns>
@@ -2366,13 +2367,13 @@ L80:
     /// July 1977 edition.  w. fullerton, c3, los alamos scientific lab.
     /// A preliminary version that is portable, but not accurate enough.
     /// </remarks>
-    public static Complex Gamma(Complex z)
+    public static Complex64T Gamma(Complex64T z)
     {
       return ComplexMath.Exp(LnGamma(z, false));
     }
 
     /// <summary>
-    /// Complex Gamma function.
+    /// Complex64T Gamma function.
     /// </summary>
     /// <param name="z">The complex argument.</param>
     /// <param name="bDebug">If true, an exception is thrown if serious errors occur. If false, NaN is returned on errors.</param>
@@ -2381,7 +2382,7 @@ L80:
     /// July 1977 edition.  w. fullerton, c3, los alamos scientific lab.
     /// A preliminary version that is portable, but not accurate enough.
     /// </remarks>
-    public static Complex Gamma(Complex z, bool bDebug)
+    public static Complex64T Gamma(Complex64T z, bool bDebug)
     {
       return ComplexMath.Exp(LnGamma(z, bDebug));
     }
@@ -2391,7 +2392,7 @@ L80:
     #region LnGamma(complex)
 
     /// <summary>
-    /// Complex logarithm of the gamma function.
+    /// Complex64T logarithm of the gamma function.
     /// </summary>
     /// <param name="z">The complex argument.</param>
     /// <returns>The complex logarithm of the gamma function of the complex argument z.</returns>
@@ -2400,13 +2401,13 @@ L80:
     /// Eventually clngam should make use of c8lgmc for all z except for
     /// z in the vicinity of 1 and 2.
     /// </remarks>
-    public static Complex LnGamma(Complex z)
+    public static Complex64T LnGamma(Complex64T z)
     {
       return _LnGamma.LnGamma(z, false);
     }
 
     /// <summary>
-    /// Complex logarithm of the gamma function.
+    /// Complex64T logarithm of the gamma function.
     /// </summary>
     /// <param name="z">The complex argument.</param>
     /// <param name="bDebug">If true, an exception is thrown if serious errors occur. If false, NaN is returned on errors.</param>
@@ -2416,7 +2417,7 @@ L80:
     /// Eventually clngam should make use of c8lgmc for all z except for
     /// z in the vicinity of 1 and 2.
     /// </remarks>
-    public static Complex LnGamma(Complex z, bool bDebug)
+    public static Complex64T LnGamma(Complex64T z, bool bDebug)
     {
       return _LnGamma.LnGamma(z, bDebug);
     }
@@ -2433,11 +2434,11 @@ L80:
       // z in the vicinity of 1 and 2.
       //-----------------------------------------------------------------------------//
 
-      public static Complex LnGamma(Complex zin, bool bDebug)
+      public static Complex64T LnGamma(Complex64T zin, bool bDebug)
       {
         const double sq2pil = 0.91893853320467274;
 
-        Complex retval;
+        Complex64T retval;
 
         if (_LnGamma_bound == 0.0)
         {
@@ -2447,9 +2448,9 @@ L80:
           _LnGamma_rmax = DBL_MAX / Math.Log(DBL_MAX);
         }
 
-        Complex z = zin;
-        double x = zin.Re,
-          y = zin.Im;
+        Complex64T z = zin;
+        double x = zin.Real,
+          y = zin.Imaginary;
 
         double cabsz = ComplexMath.Abs(z);
 
@@ -2458,11 +2459,11 @@ L80:
           if (bDebug)
             throw new ArgumentException("z so big LnGamma(z) overflows");
           else
-            return Complex.NaN;
+            return new Complex64T(double.NaN, double.NaN);
         }
         int n;
         double argsum;
-        var corr = new Complex(0.0, 0.0);
+        var corr = new Complex64T(0.0, 0.0);
 
         if (x >= 0.0 && cabsz > _LnGamma_bound)
           goto L50;
@@ -2476,17 +2477,17 @@ L80:
         // abs(z) large, and abs(imag(y)) small.
         if (y > 0.0)
           z = z.GetConjugate();
-        corr = ComplexMath.Exp(-Complex.FromRealImaginary(0.0, 2.0 * Math.PI) * z);
+        corr = ComplexMath.Exp(new Complex64T(0.0, -2.0 * Math.PI) * z);
 
-        if (corr.Re == 1.0 && corr.Im == 0.0)
+        if (corr.Real == 1.0 && corr.Imaginary == 0.0)
         {
           if (bDebug)
             throw new ArgumentException("z is a negative integer");
           else
-            return Complex.NaN;
+            return new Complex64T(double.NaN, double.NaN);
         }
 
-        retval = sq2pil + 1.0 - Complex.FromRealImaginary(0.0, Math.PI) * (z - 0.5) - LogRel(-corr)
+        retval = sq2pil + 1.0 - new Complex64T(0.0, Math.PI) * (z - 0.5) - LogRel(-corr)
           + (z - 0.5) * ComplexMath.Log(1.0 - z) - z - c9lgmc(1.0 - z);
         if (y > 0.0)
           retval = retval.GetConjugate();
@@ -2512,22 +2513,22 @@ L20:
 L30:
         n = (int)(Math.Sqrt(_LnGamma_bound * _LnGamma_bound - y * y) - x + 1.0);
         argsum = 0.0;
-        corr = Complex.FromRealImaginary(1.0, 0.0);
+        corr = new Complex64T(1.0, 0.0);
         for (int i = 1; i <= n; i++)
         {
-          argsum += z.GetArgument();
+          argsum += z.Phase;
           corr *= z;
           z += 1.0;
         }
 
-        if (corr.Re == 0.0 && corr.Im == 0.0)
+        if (corr.Real == 0.0 && corr.Imaginary == 0.0)
         {
           if (bDebug)
             throw new ArgumentException("z is a negative integer");
           else
-            return Complex.NaN;
+            return new Complex64T(double.NaN, double.NaN);
         }
-        corr = -Complex.FromRealImaginary(Math.Log(ComplexMath.Abs(corr)), argsum);
+        corr = -new Complex64T(Math.Log(ComplexMath.Abs(corr)), argsum);
 
 // Use Stirling's approximation for large z
 

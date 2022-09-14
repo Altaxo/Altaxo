@@ -53,6 +53,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using Altaxo.Calc.LinearAlgebra;
+using Altaxo.Collections;
 
 namespace Altaxo.Calc.Interpolation
 {
@@ -442,8 +443,8 @@ namespace Altaxo.Calc.Interpolation
       IReadOnlyList<double> x,
       IReadOnlyList<double> y,
       IReadOnlyList<double> y1,
-      IVector<double> y2,
-      IVector<double> y3)
+      Vector<double> y2,
+      Vector<double> y3)
     {
       int hi = x.Count - 1;
 
@@ -681,8 +682,8 @@ namespace Altaxo.Calc.Interpolation
   {
     #region Members
 
-    private DoubleVector _x = new DoubleVector();
-    private DoubleVector _y = new DoubleVector();
+    private Vector<double> _x = CreateVector.Dense<double>(0);
+    private Vector<double> _y = CreateVector.Dense<double>(0);
 
     #endregion Members
 
@@ -693,10 +694,10 @@ namespace Altaxo.Calc.Interpolation
       int idx = CurveBase.FindInterval(xval, _x);
       if (idx < 0)
         throw new ArgumentOutOfRangeException("xval is smaller than the interpolation x range");
-      if (idx + 1 > _x.Length)
+      if (idx + 1 > _x.Count)
         throw new ArgumentOutOfRangeException("xval is greater than the interpolation x range");
 
-      if (idx + 1 == _x.Length)
+      if (idx + 1 == _x.Count)
         idx--;
 
       return Interpolate(xval, _x[idx], _x[idx + 1], _y[idx], _y[idx + 1]);
@@ -709,12 +710,12 @@ namespace Altaxo.Calc.Interpolation
     public void Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec)
     {
       if (_x is null)
-        _x = new DoubleVector();
+        _x = CreateVector.Dense<double>(0);
       if (_y is null)
-        _y = new DoubleVector();
+        _y = CreateVector.Dense<double>(0);
 
-      _x.CopyFrom(xvec);
-      _y.CopyFrom(yvec);
+      _x = CreateVector.DenseOfEnumerable(xvec);
+      _y = CreateVector.DenseOfEnumerable(yvec);
     }
 
     public double GetYOfU(double u)
@@ -1076,9 +1077,9 @@ tryinterpolation:
   /// </summary>
   public class FritschCarlsonCubicSpline : CurveBase, IInterpolationFunction
   {
-    protected DoubleVector y1 = new DoubleVector();
-    protected DoubleVector y2 = new DoubleVector();
-    protected DoubleVector y3 = new DoubleVector();
+    protected Vector<double> y1 = CreateVector.Dense<double>(0);
+    protected Vector<double> y2 = CreateVector.Dense<double>(0);
+    protected Vector<double> y3 = CreateVector.Dense<double>(0);
 
     //----------------------------------------------------------------------------//
     //
@@ -1131,9 +1132,12 @@ tryinterpolation:
 
       // Resize the auxilliary vectors. Note, that there is no reallocation if the
       // vector already has the appropriate dimension.
-      y1.Resize(len);
-      y2.Resize(len);
-      y3.Resize(len);
+      if(y1.Count<len)
+      {
+        y1 = CreateVector.Dense<double>(len);
+        y2 = CreateVector.Dense<double>(len);
+        y3 = CreateVector.Dense<double>(len);
+      }
 
       if (x.Count == 1)
       {
@@ -1245,7 +1249,7 @@ tryinterpolation:
     //
     //-----------------------------------------------------------------------------//
 
-    private static void fritsch(IReadOnlyList<double> x, IReadOnlyList<double> y, IVector<double> d)
+    private static void fritsch(IReadOnlyList<double> x, IReadOnlyList<double> y, Vector<double> d)
     {
       int i, i1;
       bool stop;
@@ -1338,9 +1342,9 @@ tryinterpolation:
   /// </summary>
   public class AkimaCubicSpline : CurveBase, IInterpolationFunction
   {
-    protected DoubleVector y1 = new DoubleVector();
-    protected DoubleVector y2 = new DoubleVector();
-    protected DoubleVector y3 = new DoubleVector();
+    protected Vector<double> y1 = CreateVector.Dense<double>(0);
+    protected Vector<double> y2 = CreateVector.Dense<double>(0);
+    protected Vector<double> y3 = CreateVector.Dense<double>(0);
 
     private double m(int i)
     {
@@ -1382,9 +1386,12 @@ tryinterpolation:
 
       // Resize the auxilliary vectors. Note, that there is no reallocation if the
       // vectors already have the appropriate dimensions.
-      y1.Resize(x.Count);
-      y2.Resize(x.Count);
-      y3.Resize(x.Count);
+      if (y1.Count != x.Count)
+      {
+        y1 = CreateVector.Dense<double>(x.Count);
+        y2 = CreateVector.Dense<double>(x.Count);
+        y3 = CreateVector.Dense<double>(x.Count);
+      }
 
       if (x.Count == 1)
       {
@@ -2171,12 +2178,12 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
   {
     protected BoundaryConditions boundary;
     protected double p, r1, r2;
-    protected DoubleVector dx = new DoubleVector();
-    protected DoubleVector dy = new DoubleVector();
-    protected DoubleVector a = new DoubleVector();
-    protected DoubleVector b = new DoubleVector();
-    protected DoubleVector c = new DoubleVector();
-    protected DoubleVector d = new DoubleVector();
+    protected Vector<double> dx = CreateVector.Dense<double>(0);
+    protected Vector<double> dy = CreateVector.Dense<double>(0);
+    protected Vector<double> a = CreateVector.Dense<double>(0);
+    protected Vector<double> b = CreateVector.Dense<double>(0);
+    protected Vector<double> c = CreateVector.Dense<double>(0);
+    protected Vector<double> d = CreateVector.Dense<double>(0);
 
     //-----------------------------------------------------------------------------//
     //
@@ -2298,7 +2305,7 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
     /// </summary>
     /// <param name="x">Input vector.</param>
     /// <param name="dx">Output vector.</param>
-    public static void Differences(IReadOnlyList<double> x, IVector<double> dx)
+    public static void Differences(IReadOnlyList<double> x, Vector<double> dx)
     {
       int sgn;
       double t;
@@ -2331,7 +2338,7 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
     /// </summary>
     /// <param name="x">Input vector.</param>
     /// <param name="dx">Output vector.</param>
-    public static void InverseDifferences(IReadOnlyList<double> x, IVector<double> dx)
+    public static void InverseDifferences(IReadOnlyList<double> x, Vector<double> dx)
     {
       int sgn;
       double t;
@@ -2362,7 +2369,7 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
     /// <param name="p">smoothing parameter</param>
     /// <param name="dx">inverse abscissa difference vector</param>
     /// <param name="z">output parameter: coefficient vector SplineB1 and SplineB2</param>
-    protected void SplineA(double p, IReadOnlyList<double> dx, IVector<double> z)
+    protected void SplineA(double p, IReadOnlyList<double> dx, Vector<double> z)
     {
       double h1, h2, p2;
 
@@ -2396,7 +2403,8 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
       double p,
       IReadOnlyList<double> dx,
       IReadOnlyList<double> y,
-      IVector<double> y1, IVector<double> f, IReadOnlyList<double> z)
+      Vector<double> y1, Vector<double> f,
+      IReadOnlyList<double> z)
     {
       int j = 0, k;
       double h, h1 = 0.0, h2, r1 = 0.0, r2;
@@ -2453,7 +2461,7 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
     protected void SplineC1(double p,
       IReadOnlyList<double> x, IReadOnlyList<double> dx,
       IReadOnlyList<double> y, IReadOnlyList<double> y1,
-      IVector<double> a, IVector<double> b, IVector<double> c, IVector<double> d)
+      Vector<double> a, Vector<double> b, Vector<double> c, Vector<double> d)
     {
       // get dimensions
       const int lo = 0;
@@ -2497,7 +2505,7 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
 
     protected void SplineB2(double p,
       IReadOnlyList<double> dx, IReadOnlyList<double> y,
-      IVector<double> y2, IVector<double> f, IReadOnlyList<double> z)
+      Vector<double> y2, Vector<double> f, IReadOnlyList<double> z)
     {
       int j = 0, k;
       double h, h1 = 0.0, h2, r1 = 0.0, r2;
@@ -2554,7 +2562,7 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
     private void SplineC2(double p,
       IReadOnlyList<double> x, IReadOnlyList<double> dx,
       IReadOnlyList<double> y, IReadOnlyList<double> y2,
-      IVector<double> a, IVector<double> b, IVector<double> c, IVector<double> d)
+      Vector<double> a, Vector<double> b, Vector<double> c, Vector<double> d)
     {
       // get dimensions
       const int lo = 0;
@@ -2702,12 +2710,15 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
       const int lo = 0;
       int hi = x.Count - 1;
 
-      dx.Resize(x.Count);  // abscissa difference vector
-      dy.Resize(x.Count);  // vector of derivatives
-      a.Resize(x.Count);   // spline coefficients
-      b.Resize(x.Count);   // spline coefficients
-      c.Resize(x.Count);   // spline coefficients
-      d.Resize(x.Count);   // spline coefficients
+      if (dx.Count != x.Count)
+      {
+        dx = CreateVector.Dense<double>(x.Count);  // abscissa difference vector
+        dy = CreateVector.Dense<double>(x.Count);  // vector of derivatives
+        a = CreateVector.Dense<double>(x.Count);   // spline coefficients
+        b = CreateVector.Dense<double>(x.Count);   // spline coefficients
+        c = CreateVector.Dense<double>(x.Count);   // spline coefficients
+        d = CreateVector.Dense<double>(x.Count);   // spline coefficients
+      }
 
       if (boundary == BoundaryConditions.FiniteDifferences || boundary == BoundaryConditions.Supply1stDerivative)
       {
@@ -2897,8 +2908,8 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
   {
     protected BoundaryConditions boundary;
     protected double sigma, r1, r2;
-    protected DoubleVector y1 = new DoubleVector();
-    protected DoubleVector tmp = new DoubleVector();
+    protected Vector<double> y1 = CreateVector.Dense<double>(0);
+    protected Vector<double> tmp = CreateVector.Dense<double>(0);
 
     public ExponentialSpline()
     {
@@ -2929,15 +2940,20 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
       int hi = x.Count - 1,
         n = x.Count;
 
-      y1.Resize(n);    // spline coefficients
+      if(y1.Count != n)
+      {
+        y1 = CreateVector.Dense<double>(n); // spline coefficients
+      }
 
       if (n == 1)
       {
         y1[lo] = 0.0;
         return; // ok
       }
-
-      tmp.Resize(n);   // temporary
+      if (tmp.Count != n)
+      {
+        tmp = CreateVector.Dense<double>(n);   // temporary
+      }
 
       double slp1 = 0.0, slpn = 0.0;
       double dels, delx1, delx2, delx12, deln, delnm1, delnn, c1, c2, c3,
@@ -3158,8 +3174,8 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
 
   public class PolynomialInterpolation : CurveBase, IInterpolationFunction
   {
-    protected DoubleVector C = new DoubleVector();
-    protected DoubleVector D = new DoubleVector();
+    protected Vector<double> C = CreateVector.Dense<double>(0);
+    protected Vector<double> D = CreateVector.Dense<double>(0);
 
     //----------------------------------------------------------------------------//
     //
@@ -3222,11 +3238,14 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
       // that no (de-)allocation is done, if the size of the vector is not changed.
       // Thus there is no overhead if GetYOfU() is called many times with the
       // same vectors, for instance, if a whole curve is drawn.
-      C.Resize(x.Count);
-      D.Resize(x.Count);
-
-      C.CopyFrom(y);        // initialize // TODO original was C = D = *y; check Vector if this is a copy operation
-      D.CopyFrom(y);
+      if (C.Count != x.Count)
+      {
+        C = CreateVector.Dense<double>(x.Count);
+        D = CreateVector.Dense<double>(x.Count);
+      }
+      
+      C.SetValues(y);        // initialize // TODO original was C = D = *y; check Vector if this is a copy operation
+      D.SetValues(y);
 
       int pos = lo;     // find position of closest abscissa value
       double delta = Math.Abs(u - x[lo]), delta2;
@@ -3337,9 +3356,9 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
 
   public class RationalInterpolation : CurveBase, IInterpolationFunction
   {
-    protected DoubleVector xr = new DoubleVector();
-    protected DoubleVector yr = new DoubleVector();
-    protected IntegerVector m = new IntegerVector();
+    protected Vector<double> xr = CreateVector.Dense<double>(0);
+    protected Vector<double> yr = CreateVector.Dense<double>(0);
+    protected Vector<int> m = CreateVector.Dense<int>(0);
     protected int num;
     protected double epsilon;
 
@@ -3431,9 +3450,12 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
       const int lo = 0;
       int hi = x.Count - 1;
 
-      xr.Resize(x.Count);
-      yr.Resize(x.Count);
-      m.Resize(x.Count);
+      if (xr.Count != x.Count)
+      {
+        xr = CreateVector.Dense<double>(x.Count);
+        yr = CreateVector.Dense<double>(x.Count);
+        m = CreateVector.Dense<int>(x.Count);
+      }
 
       int i, j, j1, denom, nend;
       double xj, yj, x2, y2;
@@ -3460,14 +3482,14 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
       epsilon = Math.Max(epsilon, 128.0 * DBL_EPSILON);
 
       // allocate auxilliary storage
-      var z = new DoubleVector(lo, hi);
+      var z = CreateVector.Dense<double>(hi);
 
       // copy original values
-      xr.CopyFrom(x);
-      yr.CopyFrom(y);
+      xr.SetValues(x);
+      yr.SetValues(y);
 
       // initialize M to 1
-      m.SetAllElementsTo(1);
+      m.FillWith(1);
 
       nend = hi;
       denom = n - num; // degree of denominator polynomial
@@ -3566,7 +3588,7 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
       const double SquareEps = DBL_EPSILON * DBL_EPSILON;
 
       const int lo = 0;
-      int hi = yr.Length - 1;
+      int hi = yr.Count - 1;
 
       double val = yr[lo];
       for (int i = lo + 1; i <= hi; i++)
@@ -3607,7 +3629,7 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
     //
     //----------------------------------------------------------------------------//
 
-    private static void ymin(int nend, out double xj, out double yj, IVector<double> x, IVector<double> y)
+    private static void ymin(int nend, out double xj, out double yj, Vector<double> x, Vector<double> y)
     {
       int j;
       yj = y[nend];

@@ -23,6 +23,7 @@
 #endregion Copyright
 
 using System;
+using System.Collections.Generic;
 
 namespace Altaxo.Calc.LinearAlgebra
 {
@@ -38,22 +39,10 @@ namespace Altaxo.Calc.LinearAlgebra
   }
 
   /// <summary>
-  /// Interface for a read-only vector of values. The first valid index of this vector is 0, the last one in (<see cref="Length"/>-1).
-  /// </summary>
-  /// <typeparam name="T">The type of the elements of this vector.</typeparam>
-  /// <seealso cref="System.Collections.Generic.IReadOnlyList{T}" />
-  public interface IROVector<T> : System.Collections.Generic.IReadOnlyList<T>
-  {
-    /// <summary>The number of elements of this vector. This property is for convenience only and should return the same value as <see cref="P:Count"/>.</summary>
-    int Length { get; }
-  }
-
-  /// <summary>
   /// Interface for a a readable and writeable vector vector of values.
   /// </summary>
   /// <typeparam name="T"></typeparam>
-  /// <seealso cref="Altaxo.Calc.LinearAlgebra.IROVector{T}" />
-  public interface IVector<T> : IROVector<T>
+  public interface IVector<T> : IReadOnlyList<T>
   {
     /// <summary>Read/write Accessor for the element at index i.</summary>
     /// <value>The element at index i.</value>
@@ -70,6 +59,6 @@ namespace Altaxo.Calc.LinearAlgebra
     /// Append vector a to the end of this vector.
     /// </summary>
     /// <param name="vector">The vector to append.</param>
-    void Append(IROVector<T> vector);
+    void Append(IReadOnlyList<T> vector);
   }
 }

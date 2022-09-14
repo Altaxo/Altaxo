@@ -561,7 +561,7 @@ new double[]{  0.99295634E+00,  -0.12715313E+01,  -0.71666212E+00,   0.28007023E
           AreEqual(data._testdata[i][1], f[i], 1E-7, 0, $"F[{i}]");
         }
 
-        spline.Interpolate(VectorMath.ToROVector(x), VectorMath.ToROVector(f), data._variance);
+        spline.Interpolate(VectorMath.ToROVector(x), VectorMath.ToROVector(f), data._variance < 0 ? -1 :  Math.Sqrt(data._variance));
 
         for (int i = 0; i < N; ++i)
         {
@@ -641,8 +641,7 @@ new double[]{  0.99295634E+00,  -0.12715313E+01,  -0.71666212E+00,   0.28007023E
             AreEqual(data._testdata[i][1] * yscaling, f[i], 1E-7, 0, $"F[{i}]");
           }
 
-
-          spline.Interpolate(VectorMath.ToROVector(x), VectorMath.ToROVector(f), data._variance * (yscaling * yscaling));
+          spline.Interpolate(VectorMath.ToROVector(x), VectorMath.ToROVector(f), (data._variance < 0 ? -1: Math.Sqrt(data._variance * (yscaling * yscaling))));
 
           for (int i = 0; i < N; ++i)
           {
@@ -725,7 +724,7 @@ new double[]{  0.99295634E+00,  -0.12715313E+01,  -0.71666212E+00,   0.28007023E
           }
 
 
-          spline.Interpolate(VectorMath.ToROVector(x), VectorMath.ToROVector(f), data._variance);
+          spline.Interpolate(VectorMath.ToROVector(x), VectorMath.ToROVector(f), data._variance<0 ? -1 : Math.Sqrt(data._variance));
 
           for (int i = 0; i < N; ++i)
           {

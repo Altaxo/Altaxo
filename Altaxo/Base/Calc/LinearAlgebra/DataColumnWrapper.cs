@@ -28,6 +28,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Altaxo.Collections;
 using Altaxo.Data;
+using Complex64T = System.Numerics.Complex;
 
 namespace Altaxo.Calc.LinearAlgebra
 {
@@ -40,7 +41,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Wraps a <see cref="DataColumn" />s into a read-only vector.
     /// </summary>
-    private class NumericColumnToROVectorWrapper : IROVector<double>
+    private class NumericColumnToROVectorWrapper : IReadOnlyList<double>
     {
       private Altaxo.Data.INumericColumn _column;
       private int _start;
@@ -62,8 +63,6 @@ namespace Altaxo.Calc.LinearAlgebra
       #region IROVector Members
 
       /// <summary>The number of elements of this vector.</summary>
-      public int Length { get {; return _rows; } }
-
       public int Count { get {; return _rows; } }
 
       /// <summary>
@@ -95,7 +94,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Wraps a <see cref="DataColumn" />s into a read-only vector for selected rows.
     /// </summary>
-    private class NumericColumnSelectedRowsToROVectorWrapper : IROVector<double>
+    private class NumericColumnSelectedRowsToROVectorWrapper : IReadOnlyList<double>
     {
       protected Altaxo.Data.INumericColumn _column;
       protected Altaxo.Collections.IAscendingIntegerCollection _rows;
@@ -114,8 +113,6 @@ namespace Altaxo.Calc.LinearAlgebra
       #region IROVector Members
 
       /// <summary>The number of elements of this vector.</summary>
-      public int Length { get {; return _rows is null ? 0 : _rows.Count; } }
-
       public int Count { get {; return _rows is null ? 0 : _rows.Count; } }
 
       /// <summary>
@@ -131,14 +128,14 @@ namespace Altaxo.Calc.LinearAlgebra
 
       public IEnumerator<double> GetEnumerator()
       {
-        var length = Length;
+        var length = Count;
         for (int i = 0; i < length; ++i)
           yield return this[i];
       }
 
       IEnumerator IEnumerable.GetEnumerator()
       {
-        var length = Length;
+        var length = Count;
         for (int i = 0; i < length; ++i)
           yield return this[i];
       }
@@ -175,8 +172,6 @@ namespace Altaxo.Calc.LinearAlgebra
       #region IROVector Members
 
       /// <summary>The number of elements of this vector.</summary>
-      public int Length { get {; return _rows; } }
-
       public int Count { get {; return _rows; } }
 
       /// <summary>
@@ -196,14 +191,14 @@ namespace Altaxo.Calc.LinearAlgebra
 
       public IEnumerator<double> GetEnumerator()
       {
-        var length = Length;
+        var length = Count;
         for (int i = 0; i < length; ++i)
           yield return this[i];
       }
 
       IEnumerator IEnumerable.GetEnumerator()
       {
-        var length = Length;
+        var length = Count;
         for (int i = 0; i < length; ++i)
           yield return this[i];
       }
@@ -233,8 +228,6 @@ namespace Altaxo.Calc.LinearAlgebra
       #region IROVector Members
 
       /// <summary>The number of elements of this vector.</summary>
-      public int Length { get {; return _rows is null ? 0 : _rows.Count; } }
-
       public int Count { get {; return _rows is null ? 0 : _rows.Count; } }
 
       /// <summary>
@@ -254,14 +247,14 @@ namespace Altaxo.Calc.LinearAlgebra
 
       public IEnumerator<double> GetEnumerator()
       {
-        var length = Length;
+        var length = Count;
         for (int i = 0; i < length; ++i)
           yield return this[i];
       }
 
       IEnumerator IEnumerable.GetEnumerator()
       {
-        var length = Length;
+        var length = Count;
         for (int i = 0; i < length; ++i)
           yield return this[i];
       }
@@ -302,16 +295,16 @@ namespace Altaxo.Calc.LinearAlgebra
       /// <summary>
       /// Element accessor.
       /// </summary>
-      public Complex this[int row]
+      public Complex64T this[int row]
       {
         get
         {
-          return new Complex(_columnRe[row + _start], _columnIm[row + _start]);
+          return new Complex64T(_columnRe[row + _start], _columnIm[row + _start]);
         }
         set
         {
-          _columnRe[row + _start] = value.Re;
-          _columnIm[row + _start] = value.Im;
+          _columnRe[row + _start] = value.Real;
+          _columnIm[row + _start] = value.Imaginary;
         }
       }
 
@@ -546,7 +539,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <param name="col">The column to wrap as a IVector.</param>
     /// <param name="nRows">The number of rows to use for the vector.</param>
     /// <returns>An IVector wrapping the <see cref="INumericColumn" />.</returns>
-    public static IROVector<double> ToROVector(this INumericColumn col, int nRows)
+    public static IReadOnlyList<double> ToROVector(this INumericColumn col, int nRows)
     {
       return new NumericColumnToROVectorWrapper(col, 0, nRows);
     }
@@ -558,7 +551,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <param name="nStart">The starting index of the wrapped column.</param>
     /// <param name="nRows">The number of rows to use for the vector.</param>
     /// <returns>An IVector wrapping the <see cref="INumericColumn" />.</returns>
-    public static IROVector<double> ToROVector(this INumericColumn col, int nStart, int nRows)
+    public static IReadOnlyList<double> ToROVector(this INumericColumn col, int nStart, int nRows)
     {
       return new NumericColumnToROVectorWrapper(col, nStart, nRows);
     }
@@ -602,7 +595,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <param name="nStart">The starting index of the wrapped column.</param>
     /// <param name="nRows">The number of rows to use for the vector.</param>
     /// <returns>An IVector wrapping the <see cref="INumericColumn" />.</returns>
-    public static IROVector<double> ToROVector(this DataColumn col, int nStart, int nRows)
+    public static IReadOnlyList<double> ToROVector(this DataColumn col, int nStart, int nRows)
     {
       if (!(col is INumericColumn))
         throw new ArgumentException("Argument col can not be wrapped to a vector because it is not a numeric column");
@@ -616,7 +609,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <param name="col">The column to wrap as a IVector.</param>
     /// <param name="nRows">The number of rows to use for the vector.</param>
     /// <returns>An IVector wrapping the <see cref="INumericColumn" />.</returns>
-    public static IROVector<double> ToROVector(this DataColumn col, int nRows)
+    public static IReadOnlyList<double> ToROVector(this DataColumn col, int nRows)
     {
       if (!(col is INumericColumn))
         throw new ArgumentException("Argument col can not be wrapped to a vector because it is not a numeric column");
@@ -629,7 +622,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// </summary>
     /// <param name="col">The column to wrap as a IVector.</param>
     /// <returns>An IVector wrapping the <see cref="INumericColumn" />.</returns>
-    public static IROVector<double> ToROVector(this DataColumn col)
+    public static IReadOnlyList<double> ToROVector(this DataColumn col)
     {
       if (!(col is INumericColumn))
         throw new ArgumentException(string.Format("Argument col (name: {0}) can not be wrapped to a vector because it is not a numeric column", col.Name));
@@ -643,7 +636,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <param name="col">The column to wrap as a IVector.</param>
     /// <param name="selectedRows">The rows of the source column that are part of the vector.</param>
     /// <returns>An IROVector wrapping the <see cref="INumericColumn" />.</returns>
-    public static IROVector<double> ToROVector(this INumericColumn col, IAscendingIntegerCollection selectedRows)
+    public static IReadOnlyList<double> ToROVector(this INumericColumn col, IAscendingIntegerCollection selectedRows)
     {
       return new NumericColumnSelectedRowsToROVectorWrapper(col, (IAscendingIntegerCollection)selectedRows.Clone());
     }
@@ -654,7 +647,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// </summary>
     /// <param name="col">The column to wrap.</param>
     /// <returns>A read-only vector which contains data copied from the numeric column.</returns>
-    public static IROVector<double> ToROVectorCopy(this DataColumn col)
+    public static IReadOnlyList<double> ToROVectorCopy(this DataColumn col)
     {
       if (!(col is INumericColumn ncol))
         throw new ArgumentException("Argument col can not be wrapped to a vector because it is not a numeric column");

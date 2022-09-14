@@ -41,7 +41,7 @@ namespace AltaxoTest.Calc.Optimization
       var optim = new ConjugateGradient(cf, ec);
       //  new SecantLineSearch(cf,ec));
 
-      var x0 = new DoubleVector(new double[5] { 1.3, 0.7, 0.8, 1.9, 1.2 });
+      var x0 = CreateVector.DenseOfArray(new double[5] { 1.3, 0.7, 0.8, 1.9, 1.2 });
 
       optim.Minimize(x0);
 

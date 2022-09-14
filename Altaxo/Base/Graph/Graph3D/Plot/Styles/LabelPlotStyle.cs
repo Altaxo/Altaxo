@@ -30,6 +30,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
 {
   using System.ComponentModel;
   using System.Diagnostics.CodeAnalysis;
+  using Altaxo.Calc;
   using Altaxo.Data;
   using Altaxo.Main;
   using Background;
@@ -528,7 +529,7 @@ namespace Altaxo.Graph.Graph3D.Plot.Styles
       get { return _symbolSize; }
       set
       {
-        if (!Calc.RMath.IsFinite(value))
+        if (!(value.IsFinite()))
           throw new ArgumentException(nameof(value), "Value must be a finite number");
 
         if (!(_symbolSize == value))

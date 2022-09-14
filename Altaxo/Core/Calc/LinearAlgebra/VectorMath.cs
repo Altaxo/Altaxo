@@ -34,6 +34,22 @@ namespace Altaxo.Calc.LinearAlgebra
   /// </summary>
   public static partial class VectorMath
   {
+    public static void FillWith<T>(this Vector<T> x, T value) where T : struct, System.IEquatable<T>, System.IFormattable
+    {
+      for (int i = 0; i < x.Count; ++i)
+        x[i] = value;
+    }
+    public static void SetValues<T>(this Vector<T> x, IReadOnlyList<T> values) where T : struct, System.IEquatable<T>, System.IFormattable
+    {
+      if (x.Count != values.Count)
+        throw new System.ArgumentException();
+
+      for (int i = 0; i < x.Count; ++i)
+        x[i] = values[i];
+    }
+
+
+
     #region Extensible Vector
 
     private class ExtensibleVector<T> : IExtensibleVector<T>
@@ -65,14 +81,6 @@ namespace Altaxo.Calc.LinearAlgebra
 
       #region IROVector Members
 
-      public int Length
-      {
-        get
-        {
-          return _length;
-        }
-      }
-
       public int Count
       {
         get
@@ -85,14 +93,14 @@ namespace Altaxo.Calc.LinearAlgebra
 
       #region IExtensibleVector Members
 
-      public void Append(IROVector<T> vector)
+      public void Append(IReadOnlyList<T> vector)
       {
-        if (_length + vector.Length >= _arr.Length)
-          Redim((int)(32 + 1.3 * (_length + vector.Length)));
+        if (_length + vector.Count >= _arr.Length)
+          Redim((int)(32 + 1.3 * (_length + vector.Count)));
 
-        for (int i = 0; i < vector.Length; i++)
+        for (int i = 0; i < vector.Count; i++)
           _arr[i + _length] = vector[i];
-        _length += vector.Length;
+        _length += vector.Count;
       }
 
       public IEnumerator<T> GetEnumerator()

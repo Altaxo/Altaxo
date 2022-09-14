@@ -148,7 +148,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			}
 		}
 
-
+        /*
 		/// <summary>
 		/// Reverses the order of elements in the provided vector.
 		/// </summary>
@@ -162,6 +162,7 @@ namespace Altaxo.Calc.LinearAlgebra
 				vector[j] = x_i;
 			}
 		}
+        */
 
 
 		/// <summary>
@@ -324,7 +325,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			}
 		}
 
-
+        /*
 		/// <summary>
 		/// Reverses the order of elements in the provided vector.
 		/// </summary>
@@ -338,6 +339,7 @@ namespace Altaxo.Calc.LinearAlgebra
 				vector[j] = x_i;
 			}
 		}
+        */
 
 
 		/// <summary>
@@ -500,7 +502,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			}
 		}
 
-
+        /*
 		/// <summary>
 		/// Reverses the order of elements in the provided vector.
 		/// </summary>
@@ -514,6 +516,7 @@ namespace Altaxo.Calc.LinearAlgebra
 				vector[j] = x_i;
 			}
 		}
+        */
 
 
 		/// <summary>
@@ -676,7 +679,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			}
 		}
 
-
+        /*
 		/// <summary>
 		/// Reverses the order of elements in the provided vector.
 		/// </summary>
@@ -690,6 +693,7 @@ namespace Altaxo.Calc.LinearAlgebra
 				vector[j] = x_i;
 			}
 		}
+        */
 
 
 		/// <summary>
@@ -852,7 +856,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			}
 		}
 
-
+        /*
 		/// <summary>
 		/// Reverses the order of elements in the provided vector.
 		/// </summary>
@@ -866,6 +870,7 @@ namespace Altaxo.Calc.LinearAlgebra
 				vector[j] = x_i;
 			}
 		}
+        */
 
 
 		/// <summary>

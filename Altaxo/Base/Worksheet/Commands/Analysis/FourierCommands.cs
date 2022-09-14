@@ -24,6 +24,7 @@
 
 #nullable enable
 using System;
+using System.Collections.Generic;
 using Altaxo.Calc.Fourier;
 using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Collections;
@@ -194,8 +195,8 @@ namespace Altaxo.Worksheet.Commands.Analysis
       fft.Execute();
 
       IMatrix<double> resultMatrix;
-      IROVector<double> rowFrequencies;
-      IROVector<double> columnFrequencies;
+      IReadOnlyList<double> rowFrequencies;
+      IReadOnlyList<double> columnFrequencies;
 
       if (options.CenterResult)
         fft.GetResultCentered(options.ResultingFractionOfRowsUsed, options.ResultingFractionOfColumnsUsed, options.OutputKind, out resultMatrix, out rowFrequencies, out columnFrequencies);

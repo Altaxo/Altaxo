@@ -23,6 +23,7 @@
 #endregion Copyright
 
 using System;
+using System.Collections.Generic;
 using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Regression.Multivariate
@@ -49,7 +50,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <summary>
     /// Get the cross PRESS vector.
     /// </summary>
-    IROVector<double> CrossPRESS { get; }
+    IReadOnlyList<double> CrossPRESS { get; }
 
     /// <summary>
     /// Returns the mean number of excluded spectra during cross validation.
@@ -123,12 +124,12 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <summary>
     /// Get the cross PRESS vector.
     /// </summary>
-    public IROVector<double> CrossPRESS { get { return _crossPRESS; } }
+    public IReadOnlyList<double> CrossPRESS { get { return _crossPRESS; } }
 
     /// <summary>
     /// Get the cross PRESS vector.
     /// </summary>
-    public IROVector<double> CrossPRESSW { get { return _crossPRESS; } }
+    public IReadOnlyList<double> CrossPRESSW { get { return _crossPRESS; } }
 
     /// <summary>
     /// Returns the mean number of excluded spectra during cross validation.

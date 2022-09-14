@@ -46,7 +46,7 @@ namespace Altaxo.Calc.Optimization
   {
 #nullable disable
     ///<summary> Iteration Solutions </summary>
-    protected DoubleVector[] iterationVectors_;
+    protected Vector<double>[] iterationVectors_;
 
     ///<summary> Iteration Values </summary>
     protected double[] iterationValues_;
@@ -57,19 +57,19 @@ namespace Altaxo.Calc.Optimization
 #nullable enable
 
     ///<summary> Get solution vectors for all iterations </summary>
-    public DoubleVector[] IterationVectors
+    public Vector<double>[] IterationVectors
     {
       get { return iterationVectors_; }
     }
 
     ///<summary> Get initial vector </summary>
-    public DoubleVector InitialVector
+    public Vector<double> InitialVector
     {
       get { return iterationVectors_[0]; }
     }
 
     ///<summary> Get minimum vector </summary>
-    public DoubleVector SolutionVector
+    public Vector<double> SolutionVector
     {
       get { return iterationVectors_[endCriteria_.iterationCounter]; }
     }
@@ -100,10 +100,10 @@ namespace Altaxo.Calc.Optimization
 
     ///<summary> Initialize the optimization method </summary>
     ///<remarks> The use of this function is intended for testing/debugging purposes only </remarks>
-    public virtual void InitializeMethod(DoubleVector initialvector)
+    public virtual void InitializeMethod(Vector<double> initialvector)
     {
       // Initialize optimization method
-      iterationVectors_ = new DoubleVector[endCriteria_.maxIteration + 1];
+      iterationVectors_ = new Vector<double>[endCriteria_.maxIteration + 1];
       iterationVectors_[0] = initialvector;
       iterationValues_ = new double[endCriteria_.maxIteration + 1];
       iterationValues_[0] = costFunction_.Value(iterationVectors_[0]);
@@ -114,7 +114,7 @@ namespace Altaxo.Calc.Optimization
     public abstract void IterateMethod();
 
     ///<summary> Minimize the given cost function </summary>
-    public virtual void Minimize(DoubleVector initialvector)
+    public virtual void Minimize(Vector<double> initialvector)
     {
       endCriteria_.Reset();
       // Method specific implementation

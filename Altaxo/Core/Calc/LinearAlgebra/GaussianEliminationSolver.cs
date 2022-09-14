@@ -39,17 +39,11 @@ namespace Altaxo.Calc.LinearAlgebra
 
       switch (A)
       {
-        case SparseDoubleMatrix sm:
-          SolveDestructive(sm, b, x);
-          break;
 
         case BandDoubleMatrix bm:
           SolveDestructiveBanded(bm.InternalData, bm.LowerBandwidth, bm.UpperBandwidth, b, x);
           break;
 
-        case DoubleMatrix dm:
-          SolveDestructive(dm.InternalData, b, x);
-          break;
 
         default:
           Solve(A, b, x.ToVector());
@@ -268,98 +262,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
     #region Sparse
 
-    /// <summary>Solves system of linear equations Ax = b using Gaussian elimination with partial pivoting</summary>
-    /// <param name="A">Sparse matrix, 'A'. This matrix is modified during solution!</param>
-    /// <param name="b">Right part, 'b', is modified during solution.</param>
-    /// <returns>Vector x with the result.</returns>
-    public double[] SolveDestructive(SparseDoubleMatrix A, double[] b)
-    {
-      var x = new double[b.Length];
-      SolveDestructive(A, b, x);
-      return x;
-    }
 
-    /// <summary>Solves system of linear equations Ax = b using Gaussian elimination with partial pivoting</summary>
-    /// <param name="A">Sparse matrix, 'A'. This matrix is modified during solution!</param>
-    /// <param name="b">Right part, 'b', is modified during solution.</param>
-    /// <param name="x">Vector to store the solution.</param>
-    public void SolveDestructive(SparseDoubleMatrix A, double[] b, double[] x)
-    {
-      if (A is null)
-        throw new ArgumentNullException(nameof(A));
-      if (b is null)
-        throw new ArgumentNullException(nameof(b));
-      if (x is null)
-        throw new ArgumentNullException(nameof(x));
-      int n = A.RowCount;
-      if (!(n == b.Length))
-        throw new RankException("Mismatch between number of rows of the matrix A and length of vector b");
-      if (!(A.ColumnCount == x.Length))
-        throw new RankException("Mismatch between number of columns of the matrix A and length of vector x");
-
-      for (int j = 0; j < n; j++)
-      {
-        // Find row with largest absolute value of j-st element
-        int maxIdx = 0;
-        double maxVal = A[maxIdx, j];
-        double Aij = 0.0;
-        for (int i = 0; i < n - j; i++)
-        {
-          Aij = A[i, j];
-          if (Math.Abs(Aij) > Math.Abs(maxVal))
-          {
-            maxIdx = i;
-            maxVal = Aij;
-          }
-        }
-
-        if (Math.Abs(maxVal) < 1e-12)
-          throw new InvalidOperationException("Cannot apply Gauss method");
-
-        // Divide this row by max value
-        A.ScaleRow(maxIdx, j + 1, n - 1, 1 / maxVal);
-        b[maxIdx] /= maxVal;
-        A[maxIdx, j] = 1.0;
-
-        // Move this row to bottom
-        if (maxIdx != n - j - 1)
-        {
-          A.SwitchRows(maxIdx, n - j - 1);
-
-          var temp3 = b[n - j - 1];
-          b[n - j - 1] = b[maxIdx];
-          b[maxIdx] = temp3;
-        }
-
-        // Process all other rows
-        for (int i = 0; i < n - j - 1; i++)
-        {
-          Aij = A[i, j];
-          if (Aij != 0)
-          {
-            var indices = A.GetIndicesOfRow(n - j - 1);
-            foreach (int k in indices)
-            {
-              if (k > j)
-                A[i, k] -= Aij * A[n - j - 1, k];
-            }
-            b[i] -= Aij * b[n - j - 1];
-            A[i, j] = 0;
-          }
-        }
-      }
-
-      // Build answer
-      for (int i = 0; i < n; i++)
-      {
-        double s = b[i];
-        var Ai = A.GetRow(i);
-        for (int k = 0; k < Ai.count; k++)
-          if (Ai.indices[k] >= n - i)
-            s -= x[Ai.indices[k]] * A.GetRow(i).items[k];
-        x[n - i - 1] = s;
-      }
-    }
 
     #endregion Sparse
 

@@ -57,13 +57,13 @@ namespace AltaxoTest.Calc.Fourier
         // now compare the results
         // first the realpart
         var realpart = wrapper.RealPart;
-        for (int i = 0; i < realpart.Length; i++)
+        for (int i = 0; i < realpart.Count; i++)
         {
           AssertEx.Equal(re[i], realpart[i], tol, string.Format("Testing realpart (len={0}, i={1})", arr.Length, i));
         }
         // now the imaginary part
         var imagpart = wrapper.ImaginaryPart;
-        for (int i = 0; i < imagpart.Length; i++)
+        for (int i = 0; i < imagpart.Count; i++)
         {
           AssertEx.Equal(im[i], imagpart[i], tol, string.Format("Testing imagpart (len={0}, i={1})", arr.Length, i));
         }
@@ -72,13 +72,13 @@ namespace AltaxoTest.Calc.Fourier
         IROComplexDoubleVector reimpart = wrapper.ComplexResult;
         for (int i = 0; i < reimpart.Length; i++)
         {
-          AssertEx.Equal(re[i], reimpart[i].Re, tol, string.Format("Testing ComplexResult.Re (len={0}, i={1})", arr.Length, i));
-          AssertEx.Equal(im[i], reimpart[i].Im, tol, string.Format("Testing ComplexResult.Im (len={0}, i={1})", arr.Length, i));
+          AssertEx.Equal(re[i], reimpart[i].Real, tol, string.Format("Testing ComplexResult.Re (len={0}, i={1})", arr.Length, i));
+          AssertEx.Equal(im[i], reimpart[i].Imaginary, tol, string.Format("Testing ComplexResult.Im (len={0}, i={1})", arr.Length, i));
         }
 
         // now the amplitude part
         var amppart = wrapper.Amplitude;
-        for (int i = 0; i < imagpart.Length; i++)
+        for (int i = 0; i < imagpart.Count; i++)
         {
           double expected = Altaxo.Calc.RMath.Hypot(re[i], im[i]);
           AssertEx.Equal(expected, amppart[i], tol, string.Format("Testing amplitude (len={0}, i={1})", arr.Length, i));
@@ -86,7 +86,7 @@ namespace AltaxoTest.Calc.Fourier
 
         // now the phase part
         var phasepart = wrapper.Phase;
-        for (int i = 0; i < imagpart.Length; i++)
+        for (int i = 0; i < imagpart.Count; i++)
         {
           double ampl = Altaxo.Calc.RMath.Hypot(re[i], im[i]);
           if (ampl < 1E-14 * arr.Length)

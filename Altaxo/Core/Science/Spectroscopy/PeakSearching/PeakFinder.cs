@@ -966,21 +966,21 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
 
     protected (double[]? pmin, double[]? pmax) _unpack_condition_args(object interval, double[] x, int[] peaks)
     {
-      IROVector<double> imin = null;
-      IROVector<double> imax = null;
+      IReadOnlyList<double> imin = null;
+      IReadOnlyList<double> imax = null;
       if (interval is ValueTuple<int[], int[]> tupleIA)
       {
         double[] d1 = new double[tupleIA.Item1.Length];
         Array.Copy(tupleIA.Item1, d1, d1.Length);
         double[] d2 = new double[tupleIA.Item2.Length];
         Array.Copy(tupleIA.Item2, d2, d2.Length);
-        imin = Vector<double>.AsWrapperFor(d1);
-        imax = Vector<double>.AsWrapperFor(d2);
+        imin = VectorMath.ToROVector(d1);
+        imax = VectorMath.ToROVector(d2);
       }
       if (interval is ValueTuple<double[], double[]> tupleDA)
       {
-        imin = Vector<double>.AsWrapperFor(tupleDA.Item1);
-        imax = Vector<double>.AsWrapperFor(tupleDA.Item2);
+        imin = VectorMath.ToROVector(tupleDA.Item1);
+        imax = VectorMath.ToROVector(tupleDA.Item2);
       }
       else if (interval is ValueTuple<int, int> tupleI)
       {
@@ -1009,9 +1009,9 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
         throw new NotImplementedException($"Interval is {interval}, Type: {interval.GetType()}");
       }
 
-      if (imin is not null && imin.Length != x.Length)
+      if (imin is not null && imin.Count != x.Length)
         throw new ArgumentException("array size of lower interval border must match x", nameof(interval));
-      if (imax is not null && imax.Length != x.Length)
+      if (imax is not null && imax.Count != x.Length)
         throw new ArgumentException("array size of upper interval border must match x", nameof(interval));
 
 
@@ -1019,7 +1019,7 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
       return (imin is null ? null : peaks.Select(idx => (double)imin[idx]).ToArray(), imax is null ? null : peaks.Select(idx => (double)imax[idx]).ToArray());
     }
 
-    protected bool[] _select_by_property(double[] x, IReadOnlyList<double>? pmin = null, IReadOnlyList<double>? pmax = null)
+    protected bool[] _select_by_property(double[] x, System.Collections.Generic.IReadOnlyList<double>? pmin = null, System.Collections.Generic.IReadOnlyList<double>? pmax = null)
     {
       var result = new bool[x.Length];
       for (int i = 0; i < result.Length; i++)
@@ -1029,7 +1029,7 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
       return result;
     }
 
-    protected bool[] _select_by_property(int[] x, IReadOnlyList<double>? pmin = null, IReadOnlyList<double>? pmax = null)
+    protected bool[] _select_by_property(int[] x, System.Collections.Generic.IReadOnlyList<double>? pmin = null, System.Collections.Generic.IReadOnlyList<double>? pmax = null)
     {
       var result = new bool[x.Length];
       for (int i = 0; i < result.Length; i++)

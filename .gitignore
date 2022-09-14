@@ -2,10 +2,10 @@ rt*/
 TestResults/
 .vs/
 
-[Oo]bj*/
-[Bb]in*/
-[Dd]ebug*/
-[Rr]elease*/
+[Oo]bj/
+[Bb]in/
+[Dd]ebug/
+[Rr]elease/
 
 *.[Cc]ache
 *.suo

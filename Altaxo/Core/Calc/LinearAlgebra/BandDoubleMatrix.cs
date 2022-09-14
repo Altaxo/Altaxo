@@ -97,7 +97,6 @@ namespace Altaxo.Calc.LinearAlgebra
       switch (zeros)
       {
         case Zeros.AllowSkip:
-        case Zeros.AllowSkipButIncludeDiagonal:
           {
             for (int i = 0; i < rowCount; ++i)
             {
@@ -145,7 +144,6 @@ namespace Altaxo.Calc.LinearAlgebra
       switch (zeros)
       {
         case Zeros.AllowSkip:
-        case Zeros.AllowSkipButIncludeDiagonal:
           {
             for (int i = 0; i < rowCount; ++i)
             {
@@ -192,7 +190,6 @@ namespace Altaxo.Calc.LinearAlgebra
       switch (zeros)
       {
         case Zeros.AllowSkip:
-        case Zeros.AllowSkipButIncludeDiagonal:
           {
             for (i = 0; i < rowCount; ++i)
             {

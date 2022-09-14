@@ -28,6 +28,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using Altaxo.Calc.LinearAlgebra;
+using Complex64T = System.Numerics.Complex;
 
 namespace Altaxo.Calc.Regression
 {
@@ -50,7 +51,7 @@ namespace Altaxo.Calc.Regression
     protected double[]? _Ak_previous;
 
     /// <summary>Wrapper for the coefficients that can be returned by <see cref="Coefficients"/>.</summary>
-    private IROVector<double>? _AkWrapper;
+    private IReadOnlyList<double>? _AkWrapper;
 
     /// <summary>Number of coefficients that were calculated.</summary>
     private int _numberOfCoefficients;
@@ -68,7 +69,7 @@ namespace Altaxo.Calc.Regression
     protected double[]? _k;
 
     /// <summary>Wrapper for the reflection coefficients that can be returned by <see cref="ReflectionCoefficients"/>.</summary>
-    private IROVector<double>? _kWrapper;
+    private IReadOnlyList<double>? _kWrapper;
 
     protected double[]? _r;
 
@@ -92,7 +93,7 @@ namespace Altaxo.Calc.Regression
     /// <summary>
     /// Returns the coefficients that were calculated during the last run of the algorithm.
     /// </summary>
-    public IROVector<double> Coefficients
+    public IReadOnlyList<double> Coefficients
     {
       get
       {
@@ -103,7 +104,7 @@ namespace Altaxo.Calc.Regression
     /// <summary>
     /// Returns the reflection coefficients that were calculated during the last run of the algorithm.
     /// </summary>
-    public IROVector<double> ReflectionCoefficients
+    public IReadOnlyList<double> ReflectionCoefficients
     {
       get
       {
@@ -135,7 +136,7 @@ namespace Altaxo.Calc.Regression
     /// <param name="x">Signal for building the model.</param>
     /// <param name="numberOfCoefficients">Number of coefficients of the model.</param>
     /// <param name="regularizationFactor">Default 1. Values greater than 1 leads to more and more regularization of the coefficients.</param>
-    public void Execute(IReadOnlyList<double> x, int numberOfCoefficients, double regularizationFactor = 1)
+    public void Execute(System.Collections.Generic.IReadOnlyList<double> x, int numberOfCoefficients, double regularizationFactor = 1)
     {
       EnsureAllocation(x.Count, numberOfCoefficients);
       var (_, sumXsqr) = Execution(x, numberOfCoefficients, regularizationFactor, this);
@@ -154,7 +155,7 @@ namespace Altaxo.Calc.Regression
     /// </remarks>
     public void PredictRecursivelyForward(IVector<double> x, int firstPoint)
     {
-      PredictRecursivelyForward(x, firstPoint, x.Length - firstPoint);
+      PredictRecursivelyForward(x, firstPoint, x.Count - firstPoint);
     }
 
     /// <summary>
@@ -197,7 +198,7 @@ namespace Altaxo.Calc.Regression
     /// is predicted. The return value is the square root of the sum of squared differences between predicted signal values and original values, divided by the number of predicted values.
     /// The number of predicted values is the length of the signal x minus the number of coefficents of the model.
     /// </remarks>
-    public double GetMeanPredictionErrorNonrecursivelyForward(IReadOnlyList<double> x)
+    public double GetMeanPredictionErrorNonrecursivelyForward(System.Collections.Generic.IReadOnlyList<double> x)
     {
       if (_Ak is null)
         throw new InvalidOperationException(ErrorNoExecution);
@@ -271,7 +272,7 @@ namespace Altaxo.Calc.Regression
     /// is predicted. The return value is the square root of the sum of squared differences between predicted signal values and original values, divided by the number of predicted values.
     /// The number of predicted values is the length of the signal x minus the number of coefficents of the model.
     /// </remarks>
-    public double GetMeanPredictionErrorNonrecursivelyBackward(IReadOnlyList<double> x)
+    public double GetMeanPredictionErrorNonrecursivelyBackward(System.Collections.Generic.IReadOnlyList<double> x)
     {
       if (_Ak is null)
         throw new InvalidOperationException(ErrorNoExecution);
@@ -300,10 +301,10 @@ namespace Altaxo.Calc.Regression
       var Ak = _Ak ?? throw new InvalidOperationException(ErrorNoExecution);
 
       double w = fdt * 2 * Math.PI;
-      Complex z = new Complex(Math.Cos(w), Math.Sin(w));
+      Complex64T z = new Complex64T(Math.Cos(w), Math.Sin(w));
       var zz = z;
 
-      Complex denom = Ak[1] * zz;
+      Complex64T denom = Ak[1] * zz;
       for (int i = 2; i < Ak.Length; ++i)
       {
         zz *= z;
@@ -311,7 +312,7 @@ namespace Altaxo.Calc.Regression
       }
 
       // for the overall amplitude, take into account the root mean square of the signal
-      return Math.Sqrt(_meanSquareSignal) / (1+denom).GetModulusSquared();
+      return Math.Sqrt(_meanSquareSignal) / (1+denom).MagnitudeSquared();
     }
 
 
@@ -331,7 +332,7 @@ namespace Altaxo.Calc.Regression
         _Ak_previous = new double[coeffLength + 1];
       }
 
-      if (_AkWrapper is null || _numberOfCoefficients != _AkWrapper.Length)
+      if (_AkWrapper is null || _numberOfCoefficients != _AkWrapper.Count)
       {
         _AkWrapper = VectorMath.ToROVector(_Ak, 1, _numberOfCoefficients);
       }
@@ -341,7 +342,7 @@ namespace Altaxo.Calc.Regression
         _k = new double[coeffLength + 1];
       }
 
-      if (_kWrapper is null || _numberOfCoefficients != _kWrapper.Length)
+      if (_kWrapper is null || _numberOfCoefficients != _kWrapper.Count)
       {
         _kWrapper = VectorMath.ToROVector(_k, 1, _numberOfCoefficients);
       }
@@ -376,7 +377,7 @@ namespace Altaxo.Calc.Regression
     /// <param name="regularizationFactor">Default 1. Values greater than 1 leads to more and more regularization of the coefficients.</param>
     /// <returns>The coefficient array, and the sum of squared signal values.</returns>
 
-    public static (IROVector<double> Ak, double SumXsqr) Execution(IReadOnlyList<double> x, int numberOfCoefficients, double regularizationFactor=1)
+    public static (IReadOnlyList<double> Ak, double SumXsqr) Execution(System.Collections.Generic.IReadOnlyList<double> x, int numberOfCoefficients, double regularizationFactor=1)
     {
       var (Ak, SumXsqr) = Execution(x, numberOfCoefficients, regularizationFactor, null);
       return (VectorMath.ToROVector(Ak, 1, numberOfCoefficients), SumXsqr);
@@ -389,10 +390,10 @@ namespace Altaxo.Calc.Regression
     /// <param name="coefficients">Vector of coefficients to be filled.</param>
     /// <param name="regularizationFactor">Default 1. Values greater than 1 leads to more and more regularization of the coefficients.</param>
     /// <returns>The sum of squared signal values.</returns>
-    public static double Execution(IReadOnlyList<double> x, IVector<double> coefficients, double regularizationFactor=1)
+    public static double Execution(System.Collections.Generic.IReadOnlyList<double> x, IVector<double> coefficients, double regularizationFactor=1)
     {
-      var (Ak, SumXsqr) = Execution(x, coefficients.Length, regularizationFactor, null);
-      for (int i = 0; i < coefficients.Length; ++i)
+      var (Ak, SumXsqr) = Execution(x, coefficients.Count, regularizationFactor, null);
+      for (int i = 0; i < coefficients.Count; ++i)
         coefficients[i] = Ak[i + 1];
       return SumXsqr;
     }
@@ -408,7 +409,7 @@ namespace Altaxo.Calc.Regression
     /// <param name="regularizationFactor">Default 1. Values greater than 1 leads to more and more regularization of the coefficients.</param>
     /// <param name="tempStorage">Instance of this class used to hold the temporary arrays.</param>
     /// <returns>The coefficient array. Attention: this is 1 longer than number of coefficients, because the coefficients start at index 1. Furthermofe, the sum of squared signal is included.</returns>
-    private static (double[] Ak, double SumXsqr) Execution(IReadOnlyList<double> x, int numberOfCoefficients, double regularizationFactor, BurgAlgorithmVos? tempStorage)
+    private static (double[] Ak, double SumXsqr) Execution(System.Collections.Generic.IReadOnlyList<double> x, int numberOfCoefficients, double regularizationFactor, BurgAlgorithmVos? tempStorage)
     {
       int N = x.Count - 1; // index of the last valid point of the signal 
       int m = numberOfCoefficients; // number of coefficients

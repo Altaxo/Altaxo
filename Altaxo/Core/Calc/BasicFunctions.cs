@@ -30,6 +30,7 @@
 //          MatPack-1.7.3\Source\dcbrt.cc
 
 using System;
+using Complex64T = System.Numerics.Complex;
 
 namespace Altaxo.Calc
 {
@@ -296,7 +297,7 @@ namespace Altaxo.Calc
     0.63533936180236187354180266666666e-31
   };
 
-      private static readonly int nlnrel_LogRel = Series.initds(alnrcs_LogRel, 43, 0.1 * 0.5 * DBL_EPSILON);
+      private static readonly int nlnrel_LogRel = SeriesMP.initds(alnrcs_LogRel, 43, 0.1 * 0.5 * DBL_EPSILON);
       private static readonly double xmin_LogRel = -1.0 + Math.Sqrt(DBL_EPSILON);
 
       /// <summary>
@@ -330,7 +331,7 @@ namespace Altaxo.Calc
         }
 
         if (Math.Abs(x) <= 0.375)
-          return x * (1.0 - x * Series.dcsevl(x / 0.375, alnrcs_LogRel, nlnrel_LogRel));
+          return x * (1.0 - x * SeriesMP.dcsevl(x / 0.375, alnrcs_LogRel, nlnrel_LogRel));
         else
           return Math.Log(1.0 + x);
       }
@@ -355,7 +356,7 @@ namespace Altaxo.Calc
     ///                = complex (0.5*log(r**2), arg(1+z))
     ///                = complex (0.5*LogRel(2*x+rho**2), arg(1+z))
     /// </code></remarks>
-    public static Complex LogRel(Complex z)
+    public static Complex64T LogRel(Complex64T z)
     {
       return LogRel(z, false);
     }
@@ -376,7 +377,7 @@ namespace Altaxo.Calc
     ///                = complex (0.5*log(r**2), arg(1+z))
     ///                = complex (0.5*LogRel(2*x+rho**2), arg(1+z))
     /// </code></remarks>
-    public static Complex LogRel(Complex z, bool bDebug)
+    public static Complex64T LogRel(Complex64T z, bool bDebug)
     {
       if (bDebug && ComplexMath.Abs(1.0 + z) < Math.Sqrt(DBL_EPSILON))
         System.Diagnostics.Trace.WriteLine("Warning (LogRel): answer less than half precision because z too near -1");
@@ -385,7 +386,7 @@ namespace Altaxo.Calc
       if (rho > 0.375)
         return ComplexMath.Log(1.0 + z);
 
-      return new Complex(0.5 * LogRel(2.0 * z.Re + rho * rho, bDebug), ComplexMath.Arg(1.0 + z));
+      return new Complex64T(0.5 * LogRel(2.0 * z.Real + rho * rho, bDebug), ComplexMath.Arg(1.0 + z));
     }
 
     #endregion LogRel (complex)

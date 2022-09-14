@@ -27,6 +27,7 @@ using System.Collections.Generic;
 using Altaxo.Calc;
 using Altaxo.Calc.RootFinding;
 using Xunit;
+using Complex64T = System.Numerics.Complex;
 
 namespace Calc.RootFinding
 {
@@ -39,7 +40,7 @@ namespace Calc.RootFinding
     /// <summary>
     /// Coefficients of the complex polynomial (x-4-4i)*(x-3-3i)*... *(x+3+3i)*(x+4+4i)
     /// </summary>
-    private static readonly Complex[] complexCoefficients1 = { new Complex(0, 0), new Complex(9216, 0), new Complex(0, 0), new Complex(0, 6560), new Complex(0, 0), new Complex(-1092, 0), new Complex(0, 0), new Complex(0, -60), new Complex(0, 0), new Complex(1, 0) };
+    private static readonly Complex64T[] complexCoefficients1 = { new Complex64T(0, 0), new Complex64T(9216, 0), new Complex64T(0, 0), new Complex64T(0, 6560), new Complex64T(0, 0), new Complex64T(-1092, 0), new Complex64T(0, 0), new Complex64T(0, -60), new Complex64T(0, 0), new Complex64T(1, 0) };
 
     /// <summary>
     /// Polynomial (x-0)*(x-1)*(x-2)*... *(x-9) should return the real roots 0, 1, 2, ... 9.
@@ -51,12 +52,12 @@ namespace Calc.RootFinding
 
       Assert.Equal(10, roots.Count);
       for (int i = 0; i < roots.Count; ++i)
-        Assert.Equal(0, roots[i].Im);
+        Assert.Equal(0, roots[i].Imaginary);
 
-      roots.Sort((x, y) => Comparer<double>.Default.Compare(x.Re, y.Re));
+      roots.Sort((x, y) => Comparer<double>.Default.Compare(x.Real, y.Real));
 
       for (int i = 0; i < roots.Count; ++i)
-        AssertEx.Equal(i, roots[i].Re, 1E-7);
+        AssertEx.Equal(i, roots[i].Real, 1E-7);
     }
 
     /// <summary>
@@ -65,7 +66,7 @@ namespace Calc.RootFinding
     [Fact]
     public void Test10DegreeComplexPolynomial()
     {
-      var ccoeffs = new Complex[realCoefficients1.Length];
+      var ccoeffs = new Complex64T[realCoefficients1.Length];
       for (int i = 0; i < realCoefficients1.Length; ++i)
         ccoeffs[i] = realCoefficients1[i];
 
@@ -73,12 +74,12 @@ namespace Calc.RootFinding
 
       Assert.Equal(10, roots.Count);
       for (int i = 0; i < roots.Count; ++i)
-        AssertEx.Equal(0, roots[i].Im, 1E-11);
+        AssertEx.Equal(0, roots[i].Imaginary, 1E-11);
 
-      roots.Sort((x, y) => Comparer<double>.Default.Compare(x.Re, y.Re));
+      roots.Sort((x, y) => Comparer<double>.Default.Compare(x.Real, y.Real));
 
       for (int i = 0; i < roots.Count; ++i)
-        AssertEx.Equal(i, roots[i].Re, 1E-7);
+        AssertEx.Equal(i, roots[i].Real, 1E-7);
     }
 
     /// <summary>
@@ -90,12 +91,12 @@ namespace Calc.RootFinding
       var roots = ComplexPolynomialRootFinder_JenkinsTraub.FindRoots(complexCoefficients1);
       Assert.Equal(9, roots.Count);
 
-      roots.Sort((x, y) => Comparer<double>.Default.Compare(x.Re, y.Re));
+      roots.Sort((x, y) => Comparer<double>.Default.Compare(x.Real, y.Real));
 
       for (int i = 0; i < roots.Count; ++i)
       {
-        AssertEx.Equal(i - 4, roots[i].Im, 1E-12);
-        AssertEx.Equal(i - 4, roots[i].Re, 1E-12);
+        AssertEx.Equal(i - 4, roots[i].Imaginary, 1E-12);
+        AssertEx.Equal(i - 4, roots[i].Real, 1E-12);
       }
     }
 
@@ -115,16 +116,16 @@ namespace Calc.RootFinding
     [Fact]
     public void TestRootsToCoefficientsComplex()
     {
-      var r = new Complex[9];
+      var r = new Complex64T[9];
       for (int i = 0; i < r.Length; ++i)
-        r[i] = new Complex(i - 4, i - 4);
+        r[i] = new Complex64T(i - 4, i - 4);
 
       var c = CoefficientsFromRoots(r);
       Assert.Equal(complexCoefficients1.Length, c.Length);
       for (int i = 0; i < c.Length; ++i)
       {
-        Assert.Equal(complexCoefficients1[i].Re, c[i].Re);
-        Assert.Equal(complexCoefficients1[i].Im, c[i].Im);
+        Assert.Equal(complexCoefficients1[i].Real, c[i].Real);
+        Assert.Equal(complexCoefficients1[i].Imaginary, c[i].Imaginary);
       }
     }
 
@@ -156,9 +157,9 @@ namespace Calc.RootFinding
     /// </summary>
     /// <param name="roots">The roots.</param>
     /// <returns>The coefficients of the polynom, with the lowest order coefficient at index 0. The highest order coefficient is at index [number of roots] and is always 1.</returns>
-    private static Complex[] CoefficientsFromRoots(Complex[] roots)
+    private static Complex64T[] CoefficientsFromRoots(Complex64T[] roots)
     {
-      var coeff = new Complex[roots.Length + 1];
+      var coeff = new Complex64T[roots.Length + 1];
       coeff[0] = 1;
 
       for (int i = 0; i < roots.Length; ++i)

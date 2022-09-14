@@ -54,7 +54,7 @@ namespace Altaxo.Calc.Ode.Obsolete
       for (int i = 0; i < N; i++)
         a[i, i] = 1;
       // Apply random rotations around each pair of axes. This will keep det(A) ~ 1
-      var rand = new Random();
+      var rand = new System.Random();
       for (int i = 0; i < N; i++)
         for (int j = i + 1; j < N; j++)
         {
@@ -104,7 +104,7 @@ namespace Altaxo.Calc.Ode.Obsolete
       for (int i = 0; i < N; i++)
         a[i, i] = 1;
       // Apply random rotations around each pair of axes. This will keep det(A) ~ 1
-      var rand = new Random();
+      var rand = new System.Random();
       for (int i = 0; i < N; i++)
         for (int j = i + 1; j < N; j++)
         {

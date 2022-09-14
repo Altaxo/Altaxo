@@ -36,6 +36,7 @@ using Altaxo.Serialization;
 namespace Altaxo.Graph.Graph3D.Plot
 {
   using System.Diagnostics.CodeAnalysis;
+  using Altaxo.Calc;
   using Graph;
   using Graph.Plot.Data;
   using Graph.Plot.Groups;
@@ -327,9 +328,9 @@ namespace Altaxo.Graph.Graph3D.Plot
     {
       _plotData.DataTableMatrix.GetWrappers(
         x => x, // transformation function for row header values
-        Altaxo.Calc.RMath.IsFinite,       // selection functiton for row header values
+        Precision.IsFinite,       // selection functiton for row header values
         x => x, // transformation function for column header values
-        Altaxo.Calc.RMath.IsFinite,       // selection functiton for column header values
+        Precision.IsFinite,       // selection functiton for column header values
         out var matrix,
         out var rowVec,
         out var colVec

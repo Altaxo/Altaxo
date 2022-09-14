@@ -22,13 +22,12 @@
 
 #endregion Copyright
 
-#region Using directives
 
 using System;
 using Altaxo.Calc;
 using Altaxo.Calc.LinearAlgebra;
-
-#endregion Using directives
+using Complex64T = System.Numerics.Complex;
+using Complex32T = Altaxo.Calc.Complex32;
 
 namespace AltaxoTest.Calc.LinearAlgebra
 {
@@ -38,53 +37,53 @@ namespace AltaxoTest.Calc.LinearAlgebra
     {
     }
 
-    public static bool AreEqual(ComplexFloat f1, ComplexFloat f2)
+    public static bool AreEqual(Complex32T f1, Complex32T f2)
     {
       return f1 == f2;
     }
 
-    public static bool AreEqual(Complex f1, Complex f2)
+    public static bool AreEqual(Complex64T f1, Complex64T f2)
     {
       return f1 == f2;
     }
 
-    public static bool AreEqual(ComplexFloat f1, ComplexFloat f2, float delta)
+    public static bool AreEqual(Complex32T f1, Complex32T f2, float delta)
     {
-      if (System.Math.Abs(f1.Imag - f2.Imag) > delta)
+      if (System.Math.Abs(f1.Imaginary - f2.Imaginary) > delta)
         return false;
       if (System.Math.Abs(f1.Real - f2.Real) > delta)
         return false;
       return true;
     }
 
-    public static bool AreEqual(Complex f1, Complex f2, double delta)
+    public static bool AreEqual(Complex64T f1, Complex64T f2, double delta)
     {
-      if (System.Math.Abs(f1.Imag - f2.Imag) > delta)
+      if (System.Math.Abs(f1.Imaginary - f2.Imaginary) > delta)
         return false;
       if (System.Math.Abs(f1.Real - f2.Real) > delta)
         return false;
       return true;
     }
 
-    public static bool AreEqual(ComplexFloatMatrix f1, ComplexFloatMatrix f2)
+    public static bool AreEqual(Matrix<Complex32T> f1, Matrix<Complex32T> f2)
     {
       return f1 == f2;
     }
 
-    public static bool AreEqual(ComplexDoubleMatrix f1, ComplexDoubleMatrix f2)
+    public static bool AreEqual(Matrix<Complex64T> f1, Matrix<Complex64T> f2)
     {
       return f1 == f2;
     }
 
-    public static bool AreEqual(ComplexFloatMatrix f1, ComplexFloatMatrix f2, float delta)
+    public static bool AreEqual(Matrix<Complex32T> f1, Matrix<Complex32T> f2, float delta)
     {
-      if (f1.RowLength != f2.RowLength)
+      if (f1.RowCount != f2.RowCount)
         return false;
-      if (f1.ColumnLength != f2.ColumnLength)
+      if (f1.ColumnCount != f2.ColumnCount)
         return false;
-      for (int i = 0; i < f1.RowLength; i++)
+      for (int i = 0; i < f1.RowCount; i++)
       {
-        for (int j = 0; j < f1.ColumnLength; j++)
+        for (int j = 0; j < f1.ColumnCount; j++)
         {
           if (!AreEqual(f1[i, j], f2[i, j], delta))
             return false;
@@ -93,15 +92,15 @@ namespace AltaxoTest.Calc.LinearAlgebra
       return true;
     }
 
-    public static bool AreEqual(ComplexDoubleMatrix f1, ComplexDoubleMatrix f2, float delta)
+    public static bool AreEqual(Matrix<Complex64T> f1, Matrix<Complex64T> f2, float delta)
     {
-      if (f1.RowLength != f2.RowLength)
+      if (f1.RowCount != f2.RowCount)
         return false;
-      if (f1.ColumnLength != f2.ColumnLength)
+      if (f1.ColumnCount != f2.ColumnCount)
         return false;
-      for (int i = 0; i < f1.RowLength; i++)
+      for (int i = 0; i < f1.RowCount; i++)
       {
-        for (int j = 0; j < f1.ColumnLength; j++)
+        for (int j = 0; j < f1.ColumnCount; j++)
         {
           if (!AreEqual(f1[i, j], f2[i, j], delta))
             return false;

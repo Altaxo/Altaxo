@@ -155,14 +155,6 @@ namespace Altaxo.Calc.LinearAlgebra
 
       #region IROVector Members
 
-      public int Length
-      {
-        get
-        {
-          return 1;
-        }
-      }
-
       public int Count
       {
         get
@@ -276,15 +268,6 @@ namespace Altaxo.Calc.LinearAlgebra
       #endregion IVector Members
 
       #region IROVector Members
-
-      /// <inheritdoc/>
-      public int Length
-      {
-        get
-        {
-          return _array.Length;
-        }
-      }
 
       /// <inheritdoc/>
       public int Count
@@ -402,15 +385,6 @@ namespace Altaxo.Calc.LinearAlgebra
       #region IROVector Members
 
       /// <inheritdoc/>
-      public int Length
-      {
-        get
-        {
-          return _array.Length;
-        }
-      }
-
-      /// <inheritdoc/>
       public int Count
       {
         get
@@ -429,7 +403,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Wrapper for a row of an existing matrix to a read-only vector.
     /// </summary>
-    public class MatrixRowROVector<T> : IROVector<T> where T : struct
+    public class MatrixRowROVector<T> : IReadOnlyList<T> where T : struct
     {
       private IROMatrix<T> _matrix;
       private int _row;
@@ -480,15 +454,6 @@ namespace Altaxo.Calc.LinearAlgebra
       #region IROVector Members
 
       /// <summary>The number of elements of this vector.</summary>
-      public int Length
-      {
-        get
-        {
-          return _length;
-        }
-      }
-
-      /// <inheritdoc/>
       public int Count
       {
         get
@@ -577,15 +542,6 @@ namespace Altaxo.Calc.LinearAlgebra
       #region IROVector Members
 
       /// <summary>The number of elements of this vector.</summary>
-      public int Length
-      {
-        get
-        {
-          return _length;
-        }
-      }
-
-      /// <summary>The number of elements of this vector.</summary>
       public int Count
       {
         get
@@ -618,7 +574,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Wrapper for a matrix column to a read-only vector.
     /// </summary>
-    public class MatrixColumnROVector<T> : IROVector<T> where T : struct
+    public class MatrixColumnROVector<T> : IReadOnlyList<T> where T : struct
     {
       private IROMatrix<T> _matrix;
       private int _column;
@@ -652,15 +608,6 @@ namespace Altaxo.Calc.LinearAlgebra
       }
 
       /// <summary>The number of elements of this vector.</summary>
-      public int Length
-      {
-        get
-        {
-          return _matrix.RowCount;
-        }
-      }
-
-      /// <inheritdoc/>
       public int Count
       {
         get
@@ -735,15 +682,6 @@ namespace Altaxo.Calc.LinearAlgebra
       #region IROVector Members
 
       /// <summary>The number of elements of this vector.</summary>
-      public int Length
-      {
-        get
-        {
-          return _matrix.RowCount;
-        }
-      }
-
-      /// <inheritdoc/>
       public int Count
       {
         get

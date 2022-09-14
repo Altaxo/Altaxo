@@ -45,7 +45,7 @@ namespace Altaxo.Calc.Optimization
   public class NelderMead : FunctionMinimizeMethod
   {
 #nullable enable
-    private DoubleVector[] x; // Array of Simplexes
+    private Vector<double>[] x; // Array of Simplexes
     private double[] fx; //Array of simplex function values
 #nullable disable
 
@@ -122,21 +122,21 @@ namespace Altaxo.Calc.Optimization
     }
 
     ///<summary> Return the current iteration Simplex</summary>
-    public DoubleVector[] Simplex
+    public Vector<double>[] Simplex
     {
       get { return x; }
     }
 
     ///<summary> Create an initial simplex </summary>
-    private DoubleVector[] CreateSimplex(DoubleVector x)
+    private Vector<double>[] CreateSimplex(Vector<double> x)
     {
-      int n = x.Length;
-      var simplex = new DoubleVector[n + 1];
+      int n = x.Count;
+      var simplex = new Vector<double>[n + 1];
       //DoubleVector direction;
-      simplex[0] = new DoubleVector(x);
+      simplex[0] = x.Clone();
       for (int i = 1; i <= n; i++)
       {
-        simplex[i] = new DoubleVector(x);
+        simplex[i] = x.Clone();
         if (x[i - 1] != 0)
         {
           simplex[i][i - 1] = (1 + delta) * x[i - 1];
@@ -168,18 +168,18 @@ namespace Altaxo.Calc.Optimization
     }
 
     ///<summary> Minimize the given cost function </summary>
-    public override void Minimize(DoubleVector initialvector)
+    public override void Minimize(Vector<double> initialvector)
     {
       Minimize(CreateSimplex(initialvector));
     }
 
-    public void Minimize(DoubleVector initialvector, CancellationToken cancellationToken, Action<double> newMinimalValueFound)
+    public void Minimize(Vector<double> initialvector, CancellationToken cancellationToken, Action<double> newMinimalValueFound)
     {
       Minimize(CreateSimplex(initialvector), cancellationToken, newMinimalValueFound);
     }
 
     ///<summary> Minimize the given cost function </summary>
-    public void Minimize(DoubleVector[] initialsimplex, double rho, double chi, double psi, double sigma)
+    public void Minimize(Vector<double>[] initialsimplex, double rho, double chi, double psi, double sigma)
     {
       rho_ = rho;
       chi_ = chi;
@@ -189,13 +189,13 @@ namespace Altaxo.Calc.Optimization
     }
 
     ///<summary> Minimize the given cost function </summary>
-    public void Minimize(DoubleVector[] initialsimplex)
+    public void Minimize(Vector<double>[] initialsimplex)
     {
       Minimize(initialsimplex, CancellationToken.None, null);
     }
 
     ///<summary> Minimize the given cost function </summary>
-    public void Minimize(DoubleVector[] initialsimplex, CancellationToken cancellationToken, Action<double> newMinimalValueFound)
+    public void Minimize(Vector<double>[] initialsimplex, CancellationToken cancellationToken, Action<double> newMinimalValueFound)
     {
       endCriteria_.Reset();
       InitializeMethod(initialsimplex);
@@ -218,21 +218,21 @@ namespace Altaxo.Calc.Optimization
 
     ///<summary> Initialize the optimization method </summary>
     ///<remarks> The use of this function is intended for testing/debugging purposes only </remarks>
-    public override void InitializeMethod(DoubleVector initialvector)
+    public override void InitializeMethod(Vector<double> initialvector)
     {
       InitializeMethod(CreateSimplex(initialvector));
     }
 
     ///<summary> Initialize the optimization method </summary>
     ///<remarks> The use of this function is intended for testing/debugging purposes only </remarks>
-    public void InitializeMethod(DoubleVector[] initialsimplex)
+    public void InitializeMethod(Vector<double>[] initialsimplex)
     {
-      x = new DoubleVector[initialsimplex.Length];
+      x = new Vector<double>[initialsimplex.Length];
       initialsimplex.CopyTo(x, 0);
       fx = new double[x.Length];
       RankVertices();
       laststep_ = Step.Initialization;
-      iterationVectors_ = new DoubleVector[endCriteria_.maxIteration + 1];
+      iterationVectors_ = new Vector<double>[endCriteria_.maxIteration + 1];
       iterationVectors_[0] = initialsimplex[0];
       iterationValues_ = new double[endCriteria_.maxIteration + 1];
       iterationValues_[0] = FunctionEvaluation(iterationVectors_[0]);
@@ -245,11 +245,11 @@ namespace Altaxo.Calc.Optimization
     ///<remarks> The use of this function is intended for testing/debugging purposes only </remarks>
     public override void IterateMethod()
     {
-      DoubleVector xr, xe, xbar, xc, xcc;
+      Vector<double> xr, xe, xbar, xc, xcc;
       double fxr, fxe, fxc, fxcc;
 
       // Calculate centroid of n best points (ie excluding worst point)
-      xbar = new DoubleVector(x[0].Length, 0.0);
+      xbar = CreateVector.Dense<double>(x[0].Count);
       for (int i = 0; i < (x.Length - 1); i++)
         xbar = xbar + x[i];
       xbar = xbar / (x.Length - 1);

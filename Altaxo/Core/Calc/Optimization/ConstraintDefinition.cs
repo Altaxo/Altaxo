@@ -46,7 +46,7 @@ namespace Altaxo.Calc.Optimization
     ///<summary>Test whether constraint is satisfied</summary>
     ///<param name="solution"><c>DoubleVector</c> with solution to test against constraints</param>
     ///<returns>Returns true if solution satisfies constraints</returns>
-    bool Check(DoubleVector solution);
+    bool Check(Vector<double> solution);
 
     ///<summary>
     /// Find a beta so that a new solution = old solution + beta * direction satifies the constraint
@@ -54,7 +54,7 @@ namespace Altaxo.Calc.Optimization
     ///<param name="solution"><c>DoubleVector</c> with current solution vector</param>
     ///<param name="direction"><c>DoubleVector</c> with direction to add to current solution vector</param>
     ///<param name="beta">Scale factor representing the size of the step in the direction of 'direction' vector</param>
-    double Update(DoubleVector solution, DoubleVector direction, double beta);
+    double Update(Vector<double> solution, Vector<double> direction, double beta);
   }
 
   ///<summary>Base class for constraint definitions</summary>
@@ -64,11 +64,11 @@ namespace Altaxo.Calc.Optimization
   /// </remarks>
   public abstract class ConstraintDefinition : IConstraintDefinition
   {
-    public abstract bool Check(DoubleVector solution);
+    public abstract bool Check(Vector<double> solution);
 
-    public double Update(DoubleVector solution, DoubleVector direction, double beta)
+    public double Update(Vector<double> solution, Vector<double> direction, double beta)
     {
-      DoubleVector newSolution;
+      Vector<double> newSolution;
       double newbeta = beta;
       for (int i = 0; i < 200; i++)
       {
@@ -90,7 +90,7 @@ namespace Altaxo.Calc.Optimization
   /// </remarks>
   public class NoConstraint : ConstraintDefinition
   {
-    public override bool Check(DoubleVector solution)
+    public override bool Check(Vector<double> solution)
     {
       return true;
     }

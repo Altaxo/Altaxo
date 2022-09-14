@@ -633,7 +633,7 @@
 			return min;
 		}
 
-
+/*
     /// <summary>
     /// Returns the sum of the elements in <paramref name="vector"/>.
     /// </summary>
@@ -647,6 +647,7 @@
 
       return sum; 
     }
+    */
 
 
 		/// <summary>

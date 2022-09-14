@@ -78,7 +78,7 @@ namespace Altaxo.Data
       }
     }
 
-    protected class HeaderColumnWrapper : IROVector<double>, IReadableColumn
+    protected class HeaderColumnWrapper : IReadOnlyList<double>, IReadableColumn
     {
       private IReadableColumn _col;
       private IAscendingIntegerCollection _participatingDataRows;
@@ -89,11 +89,6 @@ namespace Altaxo.Data
         _participatingDataRows = participatingDataRows;
       }
 
-      public int Length
-      {
-        get { return _participatingDataRows.Count; }
-      }
-
       public int Count
       {
         get { return _participatingDataRows.Count; }
@@ -101,7 +96,7 @@ namespace Altaxo.Data
 
       int? IReadableColumn.Count
       {
-        get { return Length; }
+        get { return _participatingDataRows.Count; }
       }
 
       /// <summary>
@@ -145,14 +140,14 @@ namespace Altaxo.Data
 
       public IEnumerator<double> GetEnumerator()
       {
-        var length = Length;
+        var length = Count;
         for (int i = 0; i < length; ++i)
           yield return this[i];
       }
 
       IEnumerator IEnumerable.GetEnumerator()
       {
-        var length = Length;
+        var length = Count;
         for (int i = 0; i < length; ++i)
           yield return this[i];
       }
@@ -1053,7 +1048,7 @@ namespace Altaxo.Data
     /// Gets a wrapper vector around the row header data.
     /// </summary>
     /// <returns>Wrapper vector around the row header data. Each element of this vector corresponds to the row with the same index of the matrix.</returns>
-    public IROVector<double> GetRowHeaderWrapper()
+    public IReadOnlyList<double> GetRowHeaderWrapper()
     {
       if (!_rowHeaderColumn.IsEmpty && _rowHeaderColumn.Document() is { } rowHeaderColumn)
         return new HeaderColumnWrapper(rowHeaderColumn, _participatingDataRows);
@@ -1065,7 +1060,7 @@ namespace Altaxo.Data
     /// Gets a wrapper vector around the column header data.
     /// </summary>
     /// <returns>Wrapper vector around the column header data. Each element of this vector corresponds to the column with the same index of the matrix.</returns>
-    public IROVector<double> GetColumnHeaderWrapper()
+    public IReadOnlyList<double> GetColumnHeaderWrapper()
     {
       if (_columnHeaderColumns.Count > 0 && _columnHeaderColumns[0] is { } chcProxy && chcProxy.Document() is { } columnHeaderColumn)
         return new HeaderColumnWrapper(columnHeaderColumn, _participatingDataColumns);
@@ -1083,7 +1078,7 @@ namespace Altaxo.Data
     /// <param name="resultantMatrix">The resultant matrix.</param>
     /// <param name="resultantTransformedRowHeaderValues">The resultant transformed row header values.</param>
     /// <param name="resultantTransformedColumnHeaderValues">The resultant transformed column header values.</param>
-    public void GetWrappers(Func<AltaxoVariant, double> TransformRowHeaderValues, Func<double, bool> SelectTransformedRowHeaderValues, Func<AltaxoVariant, double> TransformColumnHeaderValues, Func<double, bool> SelectTransformedColumnHeaderValues, out IROMatrix<double> resultantMatrix, out IROVector<double> resultantTransformedRowHeaderValues, out IROVector<double> resultantTransformedColumnHeaderValues)
+    public void GetWrappers(Func<AltaxoVariant, double> TransformRowHeaderValues, Func<double, bool> SelectTransformedRowHeaderValues, Func<AltaxoVariant, double> TransformColumnHeaderValues, Func<double, bool> SelectTransformedColumnHeaderValues, out IROMatrix<double> resultantMatrix, out IReadOnlyList<double> resultantTransformedRowHeaderValues, out IReadOnlyList<double> resultantTransformedColumnHeaderValues)
     {
       if (_isDirty)
       {
@@ -1094,9 +1089,9 @@ namespace Altaxo.Data
 
       if (table is null)
       {
-        resultantMatrix = new Matrix(0, 0);
-        resultantTransformedColumnHeaderValues = new DoubleVector();
-        resultantTransformedRowHeaderValues = new DoubleVector();
+        resultantMatrix = CreateMatrix.Dense<double>(0, 0);
+        resultantTransformedColumnHeaderValues = CreateVector.Dense<double>(0);
+        resultantTransformedRowHeaderValues = CreateVector.Dense<double>(0);
         return;
       }
 

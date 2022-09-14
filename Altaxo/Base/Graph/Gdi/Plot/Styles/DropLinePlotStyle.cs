@@ -34,6 +34,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
   using System.ComponentModel;
   using System.Diagnostics.CodeAnalysis;
   using System.Drawing.Drawing2D;
+  using Altaxo.Calc;
   using Altaxo.Data;
   using Altaxo.Drawing;
   using Altaxo.Main;
@@ -422,7 +423,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       get { return _symbolSize; }
       set
       {
-        if (!Calc.RMath.IsFinite(value))
+        if (!(value.IsFinite()))
           throw new ArgumentException(nameof(value), "Value must be a finite number");
 
         if (!(_symbolSize == value))

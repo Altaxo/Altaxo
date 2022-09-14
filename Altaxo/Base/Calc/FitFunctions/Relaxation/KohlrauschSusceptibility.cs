@@ -26,6 +26,7 @@
 using System;
 using System.ComponentModel;
 using Altaxo.Calc.Regression.Nonlinear;
+using Complex64T = System.Numerics.Complex;
 
 namespace Altaxo.Calc.FitFunctions.Relaxation
 {
@@ -458,7 +459,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
       if (_useFrequencyInsteadOmega)
         x *= (2 * Math.PI);
 
-      Complex result = P[0];
+      Complex64T result = P[0];
 
       int iPar, i;
       for (i = 0, iPar = 1; i < _numberOfTerms; i++, iPar += 3)
@@ -473,16 +474,16 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
         if (_isDielectricData)
         {
           if (_invertViscosity)
-            result.Im -= P[iPar] / (x * 8.854187817e-12);
+            result = new Complex64T(result.Real, result.Imaginary - P[iPar] / (x * 8.854187817e-12));
           else
-            result.Im -= 1 / (P[iPar] * x * 8.854187817e-12);
+            result = new Complex64T(result.Real, result.Imaginary - 1 / (P[iPar] * x * 8.854187817e-12));
         }
         else
         {
           if (_invertViscosity)
-            result.Im -= P[iPar] / (x);
+            result = new Complex64T(result.Real, result.Imaginary - P[iPar] / (x));
           else
-            result.Im -= 1 / (P[iPar] * x);
+            result = new Complex64T(result.Real, result.Imaginary - 1 / (P[iPar] * x));
         }
       }
 
@@ -490,16 +491,15 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
       if (_invertResult)
         result = 1 / result; // if we invert, i.e. we calculate the modulus, the imaginary part is now positive
       else
-        result.Im = -result.Im; // else if we don't invert, i.e. we calculate susceptibility, we negate the imaginary part to make it positive
+        result = new Complex64T(result.Real, -result.Imaginary); // else if we don't invert, i.e. we calculate susceptibility, we negate the imaginary part to make it positive
 
       if (_logarithmizeResults)
-      {
-        result.Re = Math.Log10(result.Re);
-        result.Im = Math.Log10(result.Im);
+      { 
+        result = new Complex64T(Math.Log10(result.Real), Math.Log10(result.Imaginary));
       }
 
-      Y[0] = result.Re;
-      Y[1] = result.Im;
+      Y[0] = result.Real;
+      Y[1] = result.Imaginary;
     }
 
     /// <summary>

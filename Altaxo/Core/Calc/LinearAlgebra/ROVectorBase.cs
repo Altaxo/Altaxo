@@ -29,13 +29,11 @@ using System.Text;
 
 namespace Altaxo.Calc.LinearAlgebra
 {
-  public abstract class ROVectorBase<T> : IROVector<T>
+  public abstract class ROVectorBase<T> : IReadOnlyList<T>
   {
     public abstract T this[int index] { get; set; }
 
     public abstract int Count { get; }
-
-    public int Length { get { return Count; } }
 
     public int IndexOf(T item)
     {

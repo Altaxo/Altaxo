@@ -121,13 +121,13 @@ namespace Altaxo.Calc.Interpolation
     private bool _standardErrorEstimatesCalculated;
 
     // Vector wrappers. Attention: these wrappers may have less length than the underlying arrays!
-    protected IROVector<double>? _xVec;
-    protected IROVector<double>? _fVec;
-    protected IROVector<double>? _c0Vec;
-    protected IROVector<double>? _c1Vec;
-    protected IROVector<double>? _c2Vec;
-    protected IROVector<double>? _c3Vec;
-    protected IROVector<double>? _seVec;
+    protected IReadOnlyList<double>? _xVec;
+    protected IReadOnlyList<double>? _fVec;
+    protected IReadOnlyList<double>? _c0Vec;
+    protected IReadOnlyList<double>? _c1Vec;
+    protected IReadOnlyList<double>? _c2Vec;
+    protected IReadOnlyList<double>? _c3Vec;
+    protected IReadOnlyList<double>? _seVec;
 
 
     protected double[]? _x; // Abscissa values
@@ -419,7 +419,7 @@ namespace Altaxo.Calc.Interpolation
     /// <summary>
     /// Returns the spline coefficient of order 0. This are the splined y values at the positions given by x.
     /// </summary>
-    public IROVector<double> Coefficient0
+    public IReadOnlyList<double> Coefficient0
     {
       get
       {
@@ -433,7 +433,7 @@ namespace Altaxo.Calc.Interpolation
     /// <summary>
     /// Returns the spline coefficient of order 1 (linear term).
     /// </summary>
-    public IROVector<double> Coefficient1
+    public IReadOnlyList<double> Coefficient1
     {
       get
       {
@@ -448,7 +448,7 @@ namespace Altaxo.Calc.Interpolation
     /// <summary>
     /// Returns the spline coefficient of order 2 (quadratic term).
     /// </summary>
-    public IROVector<double> Coefficient2
+    public IReadOnlyList<double> Coefficient2
     {
       get
       {
@@ -463,7 +463,7 @@ namespace Altaxo.Calc.Interpolation
     /// <summary>
     /// Returns the spline coefficient of order 2 (cubic term).
     /// </summary>
-    public IROVector<double> Coefficient3
+    public IReadOnlyList<double> Coefficient3
     {
       get
       {
@@ -478,7 +478,7 @@ namespace Altaxo.Calc.Interpolation
     /// <summary>
     /// Returns the error estimates of the y points.
     /// </summary>
-    public IROVector<double> ErrorEstimate
+    public IReadOnlyList<double> ErrorEstimate
     {
       get
       {

@@ -30,6 +30,7 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using Altaxo.Calc;
 
 namespace Altaxo.Graph
 {
@@ -178,7 +179,7 @@ namespace Altaxo.Graph
 
       double factor = 1 / relSum;
 
-      if (!Altaxo.Calc.RMath.IsFinite(factor))
+      if (!(factor.IsFinite()))
         return;
 
       for (int i = 0; i < _innerList.Count; ++i)

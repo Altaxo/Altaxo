@@ -14,7 +14,7 @@ namespace Altaxo.Calc.Ode
     {
       if (m is null)
       {
-        m = new DoubleMatrix(1, 1);
+        m = CreateMatrix.Dense<double>(1, 1);
       }
       m[0, 0] = -1;
     }
@@ -89,7 +89,7 @@ namespace Altaxo.Calc.Ode
     {
       if (m is null)
       {
-        m = new DoubleMatrix(2, 2);
+        m = CreateMatrix.Dense<double>(2, 2);
       }
       m[0, 0] = 998;
       m[0, 1] = 1998;
@@ -412,7 +412,7 @@ namespace Altaxo.Calc.Ode
 
     private static void GetJacobianForAutocatalytic(double x, double[] y, ref IMatrix<double> m)
     {
-      m ??= new DoubleMatrix(1, 1);
+      m ??= CreateMatrix.Dense<double>(1, 1);
       m[0, 0] = -2 * y[0];
     }
 

@@ -413,7 +413,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       IMatrix<double> matrixY,
       DimensionReductionAndRegressionOptions options,
       DataTable table,
-      out IROVector<double> press
+      out IReadOnlyList<double> press
       )
     {
       int numFactors = Math.Min(matrixX.ColumnCount, options.MaximumNumberOfFactors);
@@ -467,7 +467,7 @@ namespace Altaxo.Calc.Regression.Multivariate
           CreateNewRegressionObject(),
           out var crossPRESSMatrix);
 
-        VectorMath.Copy(crossPRESSMatrix, DataColumnWrapper.ToVector(crosspresscol, crossPRESSMatrix.Length));
+        VectorMath.Copy(crossPRESSMatrix, DataColumnWrapper.ToVector(crosspresscol, crossPRESSMatrix.Count));
 
         destinationTable.DataColumns.Add(crosspresscol, GetCrossPRESSValue_ColumnName(), Altaxo.Data.ColumnKind.V, 4);
 
@@ -607,7 +607,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// or
     /// X-values of preprocessed data: x[{i}]={xOfXPredicition[i]} does not match that of the model: x[{i}]={xOfXModel[i]}
     /// </exception>
-    public void EnsureMatchingXOfX(IReadOnlyList<double> xOfXPredicition, IReadOnlyList<double> xOfXModel)
+    public void EnsureMatchingXOfX(System.Collections.Generic.IReadOnlyList<double> xOfXPredicition, System.Collections.Generic.IReadOnlyList<double> xOfXModel)
     {
       if (xOfXPredicition.Count != xOfXModel.Count)
         throw new InvalidOperationException($"Number of spectral points after preprocessing ({xOfXPredicition}) does not match number of spectal points of model ({xOfXModel.Count})");
@@ -843,8 +843,8 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <param name="failureMessage">In case of a mapping error, contains detailed information about the error.</param>
     /// <returns>The indices of the mapping column that matches those of the master column. Contains as many indices as items in xmaster. In case of mapping error, returns null.</returns>
     public static Altaxo.Collections.AscendingIntegerCollection? MapSpectralX(
-      IReadOnlyList<double> xmaster,
-      IReadOnlyList<double> xtomap, [MaybeNull] out string failureMessage)
+      System.Collections.Generic.IReadOnlyList<double> xmaster,
+      System.Collections.Generic.IReadOnlyList<double> xtomap, [MaybeNull] out string failureMessage)
     {
       failureMessage = null;
       int mastercount = xmaster.Count;
@@ -956,10 +956,10 @@ namespace Altaxo.Calc.Regression.Multivariate
     #region Storing results
 
     public virtual void StorePreprocessedData(
-      IReadOnlyList<double> meanX,
-      IReadOnlyList<double> scaleX,
-      IReadOnlyList<double> meanY,
-      IReadOnlyList<double> scaleY,
+      System.Collections.Generic.IReadOnlyList<double> meanX,
+      System.Collections.Generic.IReadOnlyList<double> scaleX,
+      System.Collections.Generic.IReadOnlyList<double> meanY,
+      System.Collections.Generic.IReadOnlyList<double> scaleY,
       DataTable table)
     {
       // Store X-Mean and X-Scale
@@ -989,7 +989,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       table.DataColumns.Add(colYScale, _YScale_ColumnName, Altaxo.Data.ColumnKind.V, 1);
     }
 
-    public virtual void StoreXOfX(IReadOnlyList<double> xOfX, DataTable table)
+    public virtual void StoreXOfX(System.Collections.Generic.IReadOnlyList<double> xOfX, DataTable table)
     {
       var xColOfX = table.DataColumns.EnsureExistence(_XOfX_ColumnName, typeof(DoubleColumn), ColumnKind.X, 0);
       VectorMath.Copy(xOfX, DataColumnWrapper.ToVector(xColOfX, xOfX.Count));
@@ -1022,7 +1022,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     }
 
     public virtual void StorePRESSData(
-      IReadOnlyList<double> PRESS,
+      System.Collections.Generic.IReadOnlyList<double> PRESS,
       DataTable table)
     {
       StoreNumberOfFactors(PRESS.Count, table);
@@ -1044,7 +1044,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       if (table.DataColumns.Contains(GetCrossPRESSValue_ColumnName()))
         crossPRESSColumn = table[GetCrossPRESSValue_ColumnName()] as DoubleColumn;
 
-      IROVector<double> press;
+      IReadOnlyList<double> press;
       double meanNumberOfIncludedSpectra = regressionResult.NumberOfMeasurements;
 
       if (crossPRESSColumn is not null && crossPRESSColumn.Count > 0)
@@ -1061,13 +1061,13 @@ namespace Altaxo.Calc.Regression.Multivariate
         return;
 
       // calculate the F-ratio and the F-Probability
-      int numberOfSignificantFactors = press.Length;
+      int numberOfSignificantFactors = press.Count;
       double pressMin = double.MaxValue;
-      for (int i = 0; i < press.Length; i++)
+      for (int i = 0; i < press.Count; i++)
         pressMin = Math.Min(pressMin, press[i]);
       var fratiocol = new DoubleColumn();
       var fprobcol = new DoubleColumn();
-      for (int i = 0; i < press.Length; i++)
+      for (int i = 0; i < press.Count; i++)
       {
         double fratio = press[i] / pressMin;
         double fprob = Calc.Probability.FDistribution.CDF(fratio, meanNumberOfIncludedSpectra, meanNumberOfIncludedSpectra);
@@ -1443,7 +1443,7 @@ namespace Altaxo.Calc.Regression.Multivariate
           xcol[i] = resultXOfX[i];
       }
 
-      var columnHeaderWrappers = new (IROVector<double> Wrapper, DataColumn dstPropCol)[dataSource.ProcessData.ColumnHeaderColumnsCount];
+      var columnHeaderWrappers = new (IReadOnlyList<double> Wrapper, DataColumn dstPropCol)[dataSource.ProcessData.ColumnHeaderColumnsCount];
       for (int i = 0; i < columnHeaderWrappers.Length; ++i)
       {
         var wrapper = dataSource.ProcessData.GetColumnHeaderWrapper(i);

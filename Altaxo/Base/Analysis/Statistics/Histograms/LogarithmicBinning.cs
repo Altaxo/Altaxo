@@ -109,7 +109,7 @@ namespace Altaxo.Analysis.Statistics.Histograms
       }
       set
       {
-        if (!RMath.IsFinite(value) || !(value > 0))
+        if (!(value.IsFinite()) || !(value > 0))
           throw new ArgumentException("BinOffset has to be a positive finite number");
         var oldValue = _lgBinOffset;
         _lgBinOffset = Math.Log10(value);
@@ -134,7 +134,7 @@ namespace Altaxo.Analysis.Statistics.Histograms
       }
       set
       {
-        if (!RMath.IsFinite(value) || !(value > 0))
+        if (!(value.IsFinite()) || !(value > 0))
           throw new ArgumentException("LgBinWidth has to be a finite number > 0");
         var oldValue = _lgBinWidth;
         _lgBinWidth = value;

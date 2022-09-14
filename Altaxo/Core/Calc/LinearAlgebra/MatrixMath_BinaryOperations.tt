@@ -14,7 +14,7 @@
     var types = new string[][]
     {      // scalar,   ROMatrixType         rwMatrixType    rwVectorType
 		       // ---------------------------------------------------------------------------------------------------------------------------
-      new[]{ "Double", "IROMatrix<double>", "IMatrix<double>"},
+      new[]{ "double", "IROMatrix<double>", "IMatrix<double>"},
     };
 
     foreach (var entry in types)

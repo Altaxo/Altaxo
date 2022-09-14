@@ -23,11 +23,14 @@
 #endregion Copyright
 
 using System;
+using System.Threading;
+using System.Numerics;
+using Altaxo.Calc.LinearAlgebra;
+
 
 namespace Altaxo.Calc
 {
-  using System.Threading;
-  using LinearAlgebra;
+ 
 
   /// <summary>
   /// The Kohlrausch function in the frequency domain.
@@ -572,7 +575,7 @@ namespace Altaxo.Calc
     /// </remarks>
     public static Complex ReIm(double beta, double w)
     {
-      return Complex.FromRealImaginary(Re(beta, w), Im(beta, w));
+      return new Complex(Re(beta, w), Im(beta, w));
     }
 
     #endregion Scheduler for real and imaginary part

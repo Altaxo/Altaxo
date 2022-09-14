@@ -5,6 +5,7 @@
 
 using System;
 using System.Collections.Generic;
+using Complex64T = System.Numerics.Complex;
 
 namespace Altaxo.Calc.RootFinding
 {
@@ -58,7 +59,7 @@ namespace Altaxo.Calc.RootFinding
     /// </summary>
     /// <param name="Input">The coefficients for the polynomial starting with the constant (zero degree) and ends with the highest degree. Missing coefficients must be provided as zeros.</param>
     /// <returns>All the real and complex roots that are found are returned in a list of complex numbers. The list is not neccessarily sorted.</returns>
-    public static List<Complex> FindRoots(params Complex[] Input)
+    public static List<Complex64T> FindRoots(params Complex64T[] Input)
     {
       var r = new ComplexPolynomialRootFinder_JenkinsTraub();
       return r.Execute(Input);
@@ -69,7 +70,7 @@ namespace Altaxo.Calc.RootFinding
     /// </summary>
     /// <param name="Input">The coefficients for the polynomial starting with the constant (zero degree) and ends with the highest degree. Missing coefficients must be provided as zeros.</param>
     /// <returns>All the real and complex roots that are found are returned in a list of complex numbers. The list is not neccessarily sorted.</returns>
-    public List<Complex> Execute(params Complex[] Input)
+    public List<Complex64T> Execute(params Complex64T[] Input)
     {
       if (Input is null)
         throw new ArgumentNullException("Input");
@@ -82,7 +83,7 @@ namespace Altaxo.Calc.RootFinding
       if (Degree <= 0)
         throw new ArgumentException("Provided polynomial has a degree of zero. Root finding is therefore not possible");
 
-      var result = new List<Complex>();
+      var result = new List<Complex64T>();
 
       const double cosr = -0.06975647374412530077596; // Math.Cos(-94 * Math.PI / 180);
       const double sinr = -0.9975640502598242476132; // Math.Sin(-94 * Math.PI / 180);
@@ -117,8 +118,8 @@ namespace Altaxo.Calc.RootFinding
 
       for (int i = 0, k = Degree; i <= Degree; ++i, --k)
       {
-        var coeffR = Input[k].Re;
-        var coeffI = Input[k].Im;
+        var coeffR = Input[k].Real;
+        var coeffI = Input[k].Imaginary;
 
         if ((!(coeffR >= double.MinValue && coeffR <= double.MaxValue)) ||
             (!(coeffI >= double.MinValue && coeffI <= double.MaxValue)))
@@ -170,7 +171,7 @@ search:
 
         for (int i = 0; i <= Degree - 1; i++)
         {
-          result.Add(new Complex(zeror[i], zeroi[i]));
+          result.Add(new Complex64T(zeror[i], zeroi[i]));
         }
         return result;
       }
@@ -228,7 +229,7 @@ search:
 
       for (int i = 0; i <= Degree - 1; i++)
       {
-        result.Add(new Complex(zeror[i], zeroi[i]));
+        result.Add(new Complex64T(zeror[i], zeroi[i]));
       }
 
       return result;

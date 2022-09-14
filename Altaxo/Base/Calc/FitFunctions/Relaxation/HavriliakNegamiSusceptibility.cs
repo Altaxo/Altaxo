@@ -26,6 +26,7 @@
 using System;
 using System.ComponentModel;
 using Altaxo.Calc.Regression.Nonlinear;
+using Complex64T = System.Numerics.Complex;
 
 namespace Altaxo.Calc.FitFunctions.Relaxation
 {
@@ -337,7 +338,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
       return result;
     }
 
-    [FitFunctionCreator("HavriliakNegami Complex (Omega)", "Retardation/General", 1, 2, 6)]
+    [FitFunctionCreator("HavriliakNegami Complex64T (Omega)", "Retardation/General", 1, 2, 6)]
     [Description("${res:Altaxo.Calc.FitFunctions.Retardation.General.HavriliakNegamiComplexOmega}")]
     public static IFitFunction CreateGeneralFunctionOfOmega()
     {
@@ -512,46 +513,50 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
         x *= (2 * Math.PI);
       }
 
-      Complex result = P[0];
+      Complex64T result = P[0];
       int i, j;
       for (i = 0, j = 1; i < _numberOfTerms; ++i, j += 4)
       {
-        result += P[j] / ComplexMath.Pow(1 + ComplexMath.Pow(Complex.I * x * P[1 + j], P[2 + j]), P[3 + j]);
+        result += P[j] / ComplexMath.Pow(1 + ComplexMath.Pow(Complex64T.ImaginaryOne * x * P[1 + j], P[2 + j]), P[3 + j]);
       }
 
       // note: because it is a susceptiblity, the imaginary part is still negative
+
 
       if (_useFlowTerm)
       {
         if (_isDielectricData)
         {
           if (_invertViscosity)
-            result.Im -= P[j] / (x * 8.854187817e-12);
+            result = new Complex64T(result.Real, result.Imaginary - P[j] / (x * 8.854187817e-12));
           else
-            result.Im -= 1 / (P[j] * x * 8.854187817e-12);
+            result = new Complex64T(result.Real, result.Imaginary - 1 / (P[j] * x * 8.854187817e-12));
         }
         else
         {
         if (_invertViscosity)
-            result.Im -= P[j] / (x);
+            result = new Complex64T(result.Real, result.Imaginary - P[j] / (x));
           else
-            result.Im -= 1 / (P[j] * x);
+            result = new Complex64T(result.Real, result.Imaginary - 1 / (P[j] * x));
         }
       }
 
       if (_invertResult)
-        result = 1 / result; // if we invert, i.e. we calculate the modulus, the imaginary part is now positive
+      {
+        var inv = 1 / result; // if we invert, i.e. we calculate the modulus, the imaginary part is now positive
+      }
       else
-        result.Im = -result.Im; // else if we don't invert, i.e. we calculate susceptibility, we negate the imaginary part to make it positive
+      {
+        result = new Complex64T(result.Real, -result.Imaginary); // else if we don't invert, i.e. we calculate susceptibility, we negate the imaginary part to make it positive
+      }
 
       if (_logarithmizeResults)
       {
-        result.Re = Math.Log10(result.Re);
-        result.Im = Math.Log10(result.Im);
+        result = new Complex64T(Math.Log10(result.Real), Math.Log10(result.Imaginary));
       }
 
-      Y[0] = result.Re;
-      Y[1] = result.Im;
+      Y[0] = result.Real;
+      Y[1] = result.Imaginary;
     }
 
     public void EvaluateGradient(double[] X, double[] P, double[][] DY)
@@ -565,18 +570,18 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
             DY[0][0] = 1;
             DY[1][0] = 0;
 
-            Complex OneByDenom = 1 / ComplexMath.Pow(1 + ComplexMath.Pow(Complex.I * x * P[2], P[3]), P[4]);
+            Complex64T OneByDenom = 1 / ComplexMath.Pow(1 + ComplexMath.Pow(Complex64T.I * x * P[2], P[3]), P[4]);
             DY[0][1] = OneByDenom.Re;
             DY[1][1] = -OneByDenom.Im;
-            Complex IXP2 = Complex.I * x * P[2];
-            Complex IXP2PowP3 = ComplexMath.Pow(IXP2, P[3]);
-            Complex der2 = OneByDenom * -P[1] * P[2] * P[4] * IXP2PowP3 / (P[2] * (1 + IXP2PowP3));
+            Complex64T IXP2 = Complex64T.I * x * P[2];
+            Complex64T IXP2PowP3 = ComplexMath.Pow(IXP2, P[3]);
+            Complex64T der2 = OneByDenom * -P[1] * P[2] * P[4] * IXP2PowP3 / (P[2] * (1 + IXP2PowP3));
             DY[0][2] = der2.Re;
             DY[1][2] = -der2.Im;
-            Complex der3 = OneByDenom * -P[1] * P[4] * IXP2PowP3 * ComplexMath.Log(IXP2) / (1 + IXP2PowP3);
+            Complex64T der3 = OneByDenom * -P[1] * P[4] * IXP2PowP3 * ComplexMath.Log(IXP2) / (1 + IXP2PowP3);
             DY[0][3] = der3.Re;
             DY[1][3] = -der3.Im;
-            Complex der4 = OneByDenom * -P[1] * ComplexMath.Log(1 + IXP2PowP3);
+            Complex64T der4 = OneByDenom * -P[1] * ComplexMath.Log(1 + IXP2PowP3);
             DY[0][4] = der4.Re;
             DY[1][4] = -der4.Im;
 

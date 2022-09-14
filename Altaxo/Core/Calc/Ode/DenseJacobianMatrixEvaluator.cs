@@ -68,13 +68,12 @@ namespace Altaxo.Calc.Ode
 
       if (jac is null)
       {
-        jac = new DoubleMatrix(y.Length, y.Length);
+        jac = CreateMatrix.Dense<double>(y.Length, y.Length);
       }
 
       _f(x, y, _derivatives_current); // evaluate rates at old point x
 
       double variation;
-      var jarray = ((DoubleMatrix)jac).data;
       for (int i = 0; i < N; ++i)
       {
         var yi_saved = y[i]; // save state
@@ -84,7 +83,7 @@ namespace Altaxo.Calc.Ode
 
         for (int c = 0; c < N; ++c)
         {
-          jarray[c][i] = (_derivatives_variated[c] - _derivatives_current[c]) / (variation);
+          jac[i,c] = (_derivatives_variated[c] - _derivatives_current[c]) / (variation);
         }
       }
     }

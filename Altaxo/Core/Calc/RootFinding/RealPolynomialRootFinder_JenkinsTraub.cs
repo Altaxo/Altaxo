@@ -5,6 +5,7 @@
 
 using System;
 using System.Collections.Generic;
+using Complex64T = System.Numerics.Complex;
 
 namespace Altaxo.Calc.RootFinding
 {
@@ -28,7 +29,7 @@ namespace Altaxo.Calc.RootFinding
     /// </summary>
     /// <param name="Input">The coefficients for the polynomial starting with the constant (zero degree) and ends with the highest degree. Missing coefficients must be provided as zeros.</param>
     /// <returns>All the real and complex roots that are found are returned in a list of complex numbers. The list is not neccessarily sorted.</returns>
-    public List<Complex> Execute(params double[] Input)
+    public List<Complex64T> Execute(params double[] Input)
     {
       return FindRoots(Input);
     }
@@ -38,7 +39,7 @@ namespace Altaxo.Calc.RootFinding
     /// </summary>
     /// <param name="Input">The coefficients for the polynomial starting with the constant (zero degree) and ends with the highest degree. Missing coefficients must be provided as zeros.</param>
     /// <returns>All the real and complex roots that are found are returned in a list of complex numbers. The list is not neccessarily sorted.</returns>
-    public static List<Complex> FindRoots(params double[] Input)
+    public static List<Complex64T> FindRoots(params double[] Input)
     {
       if (Input is null)
         throw new ArgumentNullException("Input");
@@ -51,7 +52,7 @@ namespace Altaxo.Calc.RootFinding
       if (Degree <= 0)
         throw new ArgumentException("Provided polynomial has a degree of zero. Root finding is therefore not possible");
 
-      var result = new List<Complex>();
+      var result = new List<Complex64T>();
 
       int j = 0;
       int l = 0;
@@ -367,7 +368,7 @@ namespace Altaxo.Calc.RootFinding
 
       for (int i = 0; i <= Degree - 1; i++)
       {
-        result.Add(new Complex(zeror[Degree - 1 - i], zeroi[Degree - 1 - i]));
+        result.Add(new Complex64T(zeror[Degree - 1 - i], zeroi[Degree - 1 - i]));
       }
 
       return result;
@@ -1112,7 +1113,7 @@ namespace Altaxo.Calc.RootFinding
       }
       else
       {
-        // Complex conjugate zeros
+        // Complex64T conjugate zeros
         lr = -(b / a);
         sr = -(b / a);
         si = Math.Abs(d / a);

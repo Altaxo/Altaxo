@@ -47,7 +47,7 @@
     <Preliminary>False</Preliminary>
     <FooterText>Altaxo is hosted on &amp;lt%3ba href=&amp;quot%3bhttps://sourceforge.net/projects/altaxo&amp;quot%3b target=&amp;quot%3b_blank&amp;quot%3b&amp;gt%3b&amp;lt%3bimg src=&amp;quot%3bhttps://sflogo.sourceforge.net/sflogo.php%3fgroup_id=73395&amp;amp%3bamp%3btype=10&amp;quot%3b width=&amp;quot%3b80&amp;quot%3b height=&amp;quot%3b15&amp;quot%3b alt=&amp;quot%3bGet Altaxo Data Processing/Plotting Program at SourceForge.net. Fast, secure and Free Open Source software downloads&amp;quot%3b /&amp;gt%3b&amp;lt%3b/a&amp;gt%3b</FooterText>
     <CopyrightHref>https://sourceforge.net/u/dlellinger/profile/</CopyrightHref>
-    <CopyrightText>%28C%29 Dr. Dirk Lellinger 2002 - 2022</CopyrightText>
+    <CopyrightText>%28C%29 Dr. Dirk Lellinger and all contributors to the source code 2002 - 2022</CopyrightText>
     <FeedbackEMailAddress>dlellinger%40users.sourceforge.net</FeedbackEMailAddress>
     <SdkLinkTarget>Blank</SdkLinkTarget>
     <WarnOnMissingSourceContext>False</WarnOnMissingSourceContext>

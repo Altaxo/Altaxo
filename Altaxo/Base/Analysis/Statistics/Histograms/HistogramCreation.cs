@@ -246,7 +246,7 @@ namespace Altaxo.Analysis.Statistics.Histograms
         {
           ++numberOfNaNValues;
         }
-        else if (!Altaxo.Calc.RMath.IsFinite(x))
+        else if (!(x.IsFinite()))
         {
           ++numberOfInfiniteValues;
         }

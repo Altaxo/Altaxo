@@ -90,10 +90,10 @@ namespace Altaxo.Data
     private IMatrix<double>? _resultingMatrix;
 
     /// <summary>Resulting row header vector. The members of this vector correspond to the row of the matrix with the same index.</summary>
-    private IROVector<double>? _rowHeaderVector;
+    private IReadOnlyList<double>? _rowHeaderVector;
 
     /// <summary>Resulting column header vector. The members of this vector correspond to the column of the matrix with the same index.</summary>
-    private List<IROVector<double>> _columnHeaderVectors;
+    private List<IReadOnlyList<double>> _columnHeaderVectors;
 
     #endregion Working / resulting members
 
@@ -373,7 +373,7 @@ namespace Altaxo.Data
     /// The row header vector.
     /// </value>
     /// <exception cref="System.InvalidOperationException">RowHeaderVector is not known yet. Please call Execute first.</exception>
-    public IROVector<double> RowHeaderVector
+    public IReadOnlyList<double> RowHeaderVector
     {
       get
       {
@@ -410,7 +410,7 @@ namespace Altaxo.Data
     /// <value>
     /// The column header columns.
     /// </value>
-    public IReadOnlyList<INumericColumn> ColumnHeaderColumns => _columnHeaderColumns;
+    public System.Collections.Generic.IReadOnlyList<INumericColumn> ColumnHeaderColumns => _columnHeaderColumns;
 
     /// <summary>
     /// Gets the resulting column header vector. Each member of this vector corresponds to the column of the matrix with the same index.
@@ -420,7 +420,7 @@ namespace Altaxo.Data
     /// The column header vector.
     /// </value>
     /// <exception cref="System.InvalidOperationException">ColumnHeaderVector is not known yet. Please call Execute first.</exception>
-    public IROVector<double> ColumnHeaderVector
+    public IReadOnlyList<double> ColumnHeaderVector
     {
       get
       {
@@ -523,7 +523,7 @@ namespace Altaxo.Data
     /// <param name="spacingValue">If the function is successful, contains the uniform spacing value.</param>
     /// <param name="errorMessage">If the function is not successful, contains a diagnostic error message.</param>
     /// <returns><c>True</c> if the function was successful, otherwise <c>False</c>.</returns>
-    public static bool TryGetRowOrColumnSpacing(IReadOnlyList<double> headerVector, string rowOrColumn, out double spacingValue, [MaybeNullWhen(true)] out string? errorMessage)
+    public static bool TryGetRowOrColumnSpacing(System.Collections.Generic.IReadOnlyList<double> headerVector, string rowOrColumn, out double spacingValue, [MaybeNullWhen(true)] out string? errorMessage)
     {
       var spacing = new Calc.LinearAlgebra.VectorSpacingEvaluator(headerVector);
 
@@ -585,7 +585,7 @@ namespace Altaxo.Data
         throw new InvalidProgramException();
 
       _columnHeaderColumns = new List<INumericColumn>();
-      _columnHeaderVectors = new List<IROVector<double>>();
+      _columnHeaderVectors = new List<IReadOnlyList<double>>();
 
       // find out if there is a y property column or not
       if (_selectedPropertyColumns is not null && _selectedPropertyColumns.Count > 0)

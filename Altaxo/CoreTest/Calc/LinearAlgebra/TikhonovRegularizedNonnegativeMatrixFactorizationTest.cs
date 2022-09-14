@@ -36,7 +36,12 @@ namespace Altaxo.Calc.LinearAlgebra
     [Fact]
     public static void Test01()
     {
-      var A = DoubleMatrix.Random(11, 7);
+      var rnd = new System.Random();
+      var A = CreateMatrix.Dense<double>(11, 7);
+      for(int r=0;r<A.RowCount; r++)
+        for(int c=0;c<A.ColumnCount;c++)
+          A[r,c] = rnd.NextDouble();
+
 
       TikhonovRegularizedNonnegativeMatrixFactorization.TikhonovNMF3(A, 3, null, null, null, null, null, null, 0, 0);
     }

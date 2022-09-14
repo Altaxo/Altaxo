@@ -338,7 +338,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
       if (cv is not null)
       {
         var deriv = new double[NumberOfParametersPerPeak];
-        var resVec = new DoubleVector(NumberOfParametersPerPeak);
+        var resVec = VectorMath.ToVector(new double[NumberOfParametersPerPeak]);
 
         var betaTerm = GammaRelated.Beta(m - 0.5, 0.5);
         var powTerm = Math.Sqrt(Math.Pow(2, 1 / m) - 1);

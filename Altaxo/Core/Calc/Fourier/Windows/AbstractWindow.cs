@@ -56,7 +56,7 @@ namespace Altaxo.Calc.Fourier.Windows
       return result;
     }
 
-    public IROVector<double> AsROVector()
+    public IReadOnlyList<double> AsROVector()
     {
       return VectorMath.ToROVector(AsDoubleArray());
     }
@@ -95,7 +95,7 @@ namespace Altaxo.Calc.Fourier.Windows
     {
       if (array is null)
         throw new ArgumentNullException("array is null");
-      if (array.Length == 0)
+      if (array.Count == 0)
         throw new ArgumentException("array length is null");
       InternalCompute(array, periodic);
     }
@@ -104,13 +104,13 @@ namespace Altaxo.Calc.Fourier.Windows
     {
       if (array is null)
         throw new ArgumentNullException("array is null");
-      if (array.Length == 0)
+      if (array.Count == 0)
         throw new ArgumentException("array length is null");
       if (startidx < 0)
         throw new ArgumentException("startidx is negative");
       if (count < 1)
         throw new ArgumentException("count is null or negative");
-      if ((startidx + count) > array.Length)
+      if ((startidx + count) > array.Count)
         throw new ArgumentException("startidx+count exceeds the length of the array");
 
       InternalCompute(VectorMath.ToVector(array, startidx, count), periodic);

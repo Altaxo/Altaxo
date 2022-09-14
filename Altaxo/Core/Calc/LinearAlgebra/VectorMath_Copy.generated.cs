@@ -118,7 +118,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <param name="destinationVector">The destination vector.</param>
 		public static void Copy(double[] sourceVector, IVector<double> destinationVector)
 		{
-			if (sourceVector.Length != destinationVector.Length)
+			if (sourceVector.Length != destinationVector.Count)
 				throw new ArgumentException("source and destination vector have unequal length!");
 
 			Copy(sourceVector, 0, destinationVector, 0, sourceVector.Length);
@@ -153,7 +153,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <param name="destinationVector">The destination vector.</param>
 		public static void Copy(IReadOnlyList<double> sourceVector, IVector<double> destinationVector)
 		{
-			if (sourceVector.Count != destinationVector.Length)
+			if (sourceVector.Count != destinationVector.Count)
 				throw new ArgumentException("source and destination vector have unequal length!");
 
 			Copy(sourceVector, 0, destinationVector, 0, sourceVector.Count);
@@ -258,7 +258,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <param name="destinationVector">The destination vector.</param>
 		public static void Copy(float[] sourceVector, IVector<double> destinationVector)
 		{
-			if (sourceVector.Length != destinationVector.Length)
+			if (sourceVector.Length != destinationVector.Count)
 				throw new ArgumentException("source and destination vector have unequal length!");
 
 			Copy(sourceVector, 0, destinationVector, 0, sourceVector.Length);
@@ -293,7 +293,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <param name="destinationVector">The destination vector.</param>
 		public static void Copy(IReadOnlyList<float> sourceVector, IVector<double> destinationVector)
 		{
-			if (sourceVector.Count != destinationVector.Length)
+			if (sourceVector.Count != destinationVector.Count)
 				throw new ArgumentException("source and destination vector have unequal length!");
 
 			Copy(sourceVector, 0, destinationVector, 0, sourceVector.Count);
@@ -398,7 +398,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <param name="destinationVector">The destination vector.</param>
 		public static void Copy(float[] sourceVector, IVector<float> destinationVector)
 		{
-			if (sourceVector.Length != destinationVector.Length)
+			if (sourceVector.Length != destinationVector.Count)
 				throw new ArgumentException("source and destination vector have unequal length!");
 
 			Copy(sourceVector, 0, destinationVector, 0, sourceVector.Length);
@@ -433,7 +433,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <param name="destinationVector">The destination vector.</param>
 		public static void Copy(IReadOnlyList<float> sourceVector, IVector<float> destinationVector)
 		{
-			if (sourceVector.Count != destinationVector.Length)
+			if (sourceVector.Count != destinationVector.Count)
 				throw new ArgumentException("source and destination vector have unequal length!");
 
 			Copy(sourceVector, 0, destinationVector, 0, sourceVector.Count);
@@ -538,7 +538,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <param name="destinationVector">The destination vector.</param>
 		public static void Copy(int[] sourceVector, IVector<double> destinationVector)
 		{
-			if (sourceVector.Length != destinationVector.Length)
+			if (sourceVector.Length != destinationVector.Count)
 				throw new ArgumentException("source and destination vector have unequal length!");
 
 			Copy(sourceVector, 0, destinationVector, 0, sourceVector.Length);
@@ -573,7 +573,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <param name="destinationVector">The destination vector.</param>
 		public static void Copy(IReadOnlyList<int> sourceVector, IVector<double> destinationVector)
 		{
-			if (sourceVector.Count != destinationVector.Length)
+			if (sourceVector.Count != destinationVector.Count)
 				throw new ArgumentException("source and destination vector have unequal length!");
 
 			Copy(sourceVector, 0, destinationVector, 0, sourceVector.Count);
@@ -678,7 +678,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <param name="destinationVector">The destination vector.</param>
 		public static void Copy(int[] sourceVector, IVector<float> destinationVector)
 		{
-			if (sourceVector.Length != destinationVector.Length)
+			if (sourceVector.Length != destinationVector.Count)
 				throw new ArgumentException("source and destination vector have unequal length!");
 
 			Copy(sourceVector, 0, destinationVector, 0, sourceVector.Length);
@@ -713,7 +713,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <param name="destinationVector">The destination vector.</param>
 		public static void Copy(IReadOnlyList<int> sourceVector, IVector<float> destinationVector)
 		{
-			if (sourceVector.Count != destinationVector.Length)
+			if (sourceVector.Count != destinationVector.Count)
 				throw new ArgumentException("source and destination vector have unequal length!");
 
 			Copy(sourceVector, 0, destinationVector, 0, sourceVector.Count);
@@ -818,7 +818,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <param name="destinationVector">The destination vector.</param>
 		public static void Copy(int[] sourceVector, IVector<int> destinationVector)
 		{
-			if (sourceVector.Length != destinationVector.Length)
+			if (sourceVector.Length != destinationVector.Count)
 				throw new ArgumentException("source and destination vector have unequal length!");
 
 			Copy(sourceVector, 0, destinationVector, 0, sourceVector.Length);
@@ -853,7 +853,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <param name="destinationVector">The destination vector.</param>
 		public static void Copy(IReadOnlyList<int> sourceVector, IVector<int> destinationVector)
 		{
-			if (sourceVector.Count != destinationVector.Length)
+			if (sourceVector.Count != destinationVector.Count)
 				throw new ArgumentException("source and destination vector have unequal length!");
 
 			Copy(sourceVector, 0, destinationVector, 0, sourceVector.Count);

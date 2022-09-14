@@ -25,7 +25,10 @@ The AltaxoCore library would not be possible without the contributions from the 
 AltaxoCore contains contributions from the following projects (in alphabetic order):
 
 - dnAnalytics (www.dnAnalytics.net):
-	most part of the linear algebra namespace (including blas and lapack support), optimization namespace
+	most part of the linear algebra namespace (including blas and lapack support), optimization namespace, now step-by-step replaced with its successor MathNet.Numerics
+
+- MathNet.Numerics (www.https://numerics.mathdotnet.com/)
+        most part of the linear algebra namespace (including MKL, Cuda, and Blas support), optimization namespace
 
 - Exocortex DSP (www.exocortex.org)
 	complex number classes (but now partially replaced by routines from the Gnu Scientific library), Fourier transformations
@@ -64,7 +67,7 @@ AltaxoCore contains contributions from the following projects (in alphabetic ord
 Please note also the license files from some of the contributors in the same directory where you found this file.
 If you feel I have forgotten you in the list above, please email me a short notice (see http://altaxo.sourceforge.net).
 
-Thanks again to all of the contributors,
+Thanks again to all the contributors,
 
 		D.Lellinger
 

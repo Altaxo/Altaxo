@@ -31,7 +31,7 @@ namespace AltaxoTest.Calc.Optimization
 {
   public sealed class Poly : CostFunction
   {
-    public override double Value(DoubleVector x)
+    public override double Value(Vector<double> x)
     {
       return System.Math.Pow(x[0], 2);
     }
@@ -46,7 +46,7 @@ namespace AltaxoTest.Calc.Optimization
     {
       var cf = new Rosenbrock();
       var optim = new NelderMead(cf);
-      var x0 = new DoubleVector(new double[4] { 0, 1, 2, 3 });
+      var x0 = CreateVector.DenseOfArray(new double[4] { 0, 1, 2, 3 });
 
       optim.SimplexDelta = 0.1;
       optim.SimplexZeroDelta = 0.0001;
@@ -74,16 +74,16 @@ namespace AltaxoTest.Calc.Optimization
       var cf = new Poly();
       var optim = new NelderMead(cf);
 
-      var simplex = new DoubleVector[3];
-      simplex[0] = new DoubleVector(new double[2] { 1, 1 });
-      simplex[1] = new DoubleVector(new double[2] { 1, -1 });
-      simplex[2] = new DoubleVector(new double[2] { 2, 0 });
+      var simplex = new Vector<double>[3];
+      simplex[0] = CreateVector.DenseOfArray(new double[2] { 1, 1 });
+      simplex[1] = CreateVector.DenseOfArray(new double[2] { 1, -1 });
+      simplex[2] = CreateVector.DenseOfArray(new double[2] { 2, 0 });
 
       optim.Rho = 1.5;
       optim.InitializeMethod(simplex);
       optim.IterateMethod();
 
-      DoubleVector xr = (1 + optim.Rho) * (new DoubleVector(new double[2] { 1, 0 })) - optim.Rho * simplex[2];
+      var xr = (1 + optim.Rho) * (CreateVector.DenseOfArray(new double[2] { 1, 0 })) - optim.Rho * simplex[2];
 
       Assert.True(optim.LastStep == NelderMead.Step.Reflection);
       Assert.Equal(optim.Simplex[0][0], xr[0]);
@@ -97,17 +97,17 @@ namespace AltaxoTest.Calc.Optimization
       var cf = new Poly();
       var optim = new NelderMead(cf);
 
-      var simplex = new DoubleVector[3];
-      simplex[0] = new DoubleVector(new double[2] { 1, 1 });
-      simplex[1] = new DoubleVector(new double[2] { 1, -1 });
-      simplex[2] = new DoubleVector(new double[2] { 2, 0 });
+      var simplex = new Vector<double>[3];
+      simplex[0] = CreateVector.DenseOfArray(new double[2] { 1, 1 });
+      simplex[1] = CreateVector.DenseOfArray(new double[2] { 1, -1 });
+      simplex[2] = CreateVector.DenseOfArray(new double[2] { 2, 0 });
 
       optim.InitializeMethod(simplex);
       optim.Rho = 1.5;
       optim.Chi = 1 / 1.5;
       optim.IterateMethod();
 
-      DoubleVector xr = (1 + optim.Rho * optim.Chi) * (new DoubleVector(new double[2] { 1, 0 })) - optim.Rho * optim.Chi * simplex[2];
+      var xr = (1 + optim.Rho * optim.Chi) * (CreateVector.DenseOfArray(new double[2] { 1, 0 })) - optim.Rho * optim.Chi * simplex[2];
 
       Assert.True(optim.LastStep == NelderMead.Step.Expansion);
       Assert.Equal(optim.Simplex[0][0], xr[0]);
@@ -121,17 +121,17 @@ namespace AltaxoTest.Calc.Optimization
       var cf = new Poly();
       var optim = new NelderMead(cf);
 
-      var simplex = new DoubleVector[3];
-      simplex[0] = new DoubleVector(new double[2] { 1, 1 });
-      simplex[1] = new DoubleVector(new double[2] { 1, -1 });
-      simplex[2] = new DoubleVector(new double[2] { 2, 0 });
+      var simplex = new Vector<double>[3];
+      simplex[0] = CreateVector.DenseOfArray(new double[2] { 1, 1 });
+      simplex[1] = CreateVector.DenseOfArray(new double[2] { 1, -1 });
+      simplex[2] = CreateVector.DenseOfArray(new double[2] { 2, 0 });
 
       optim.Rho = 2.25;
       optim.Psi = 1 / 2.25;
       optim.InitializeMethod(simplex);
       optim.IterateMethod();
 
-      DoubleVector xr = (1 + optim.Rho * optim.Psi) * (new DoubleVector(new double[2] { 1, 0 })) - optim.Rho * optim.Psi * simplex[2];
+      var xr = (1 + optim.Rho * optim.Psi) * (CreateVector.DenseOfArray(new double[2] { 1, 0 })) - optim.Rho * optim.Psi * simplex[2];
 
       Assert.True(optim.LastStep == NelderMead.Step.OutsideContraction);
       Assert.Equal(optim.Simplex[0][0], xr[0]);
@@ -145,17 +145,17 @@ namespace AltaxoTest.Calc.Optimization
       var cf = new Poly();
       var optim = new NelderMead(cf);
 
-      var simplex = new DoubleVector[3];
-      simplex[0] = new DoubleVector(new double[2] { 1, 1 });
-      simplex[1] = new DoubleVector(new double[2] { 1, -1 });
-      simplex[2] = new DoubleVector(new double[2] { 2, 0 });
+      var simplex = new Vector<double>[3];
+      simplex[0] = CreateVector.DenseOfArray(new double[2] { 1, 1 });
+      simplex[1] = CreateVector.DenseOfArray(new double[2] { 1, -1 });
+      simplex[2] = CreateVector.DenseOfArray(new double[2] { 2, 0 });
 
       optim.Rho = 10;
       optim.Psi = 0.5;
       optim.InitializeMethod(simplex);
       optim.IterateMethod();
 
-      DoubleVector xr = (1 - optim.Psi) * (new DoubleVector(new double[2] { 1, 0 })) + optim.Psi * simplex[2];
+      var xr = (1 - optim.Psi) * (CreateVector.DenseOfArray(new double[2] { 1, 0 })) + optim.Psi * simplex[2];
 
       Assert.True(optim.LastStep == NelderMead.Step.InsideContraction);
       Assert.Equal(optim.Simplex[2][0], xr[0]);
@@ -169,10 +169,10 @@ namespace AltaxoTest.Calc.Optimization
       var cf = new Poly();
       var optim = new NelderMead(cf);
 
-      var simplex = new DoubleVector[3];
-      simplex[0] = new DoubleVector(new double[2] { 1, 1 });
-      simplex[1] = new DoubleVector(new double[2] { 1, -1 });
-      simplex[2] = new DoubleVector(new double[2] { 2, 0 });
+      var simplex = new Vector<double>[3];
+      simplex[0] = CreateVector.DenseOfArray(new double[2] { 1, 1 });
+      simplex[1] = CreateVector.DenseOfArray(new double[2] { 1, -1 });
+      simplex[2] = CreateVector.DenseOfArray(new double[2] { 2, 0 });
 
       optim.Rho = 10;
       optim.Psi = 1.5;
@@ -189,7 +189,7 @@ namespace AltaxoTest.Calc.Optimization
       var cf = new Rosenbrock();
       var optim = new NelderMead(cf);
 
-      var x0 = new DoubleVector(new double[5] { 1.3, 0.7, 0.8, 1.9, 1.2 });
+      var x0 = CreateVector.DenseOfArray(new double[5] { 1.3, 0.7, 0.8, 1.9, 1.2 });
 
       optim.Minimize(x0);
 

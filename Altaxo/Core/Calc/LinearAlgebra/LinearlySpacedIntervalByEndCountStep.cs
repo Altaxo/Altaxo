@@ -29,7 +29,7 @@ using Altaxo.Main;
 
 namespace Altaxo.Calc.LinearAlgebra
 {
-  public interface ISpacedInterval : IROVector<double>, IImmutable
+  public interface ISpacedInterval : IReadOnlyList<double>, IImmutable
   {
     /// <summary>
     /// Start of the interval (inclusive).
@@ -76,9 +76,6 @@ namespace Altaxo.Calc.LinearAlgebra
 
     /// <summary>The number of elements.</summary>
     public int Count { get; }
-
-    /// <summary>The number of elements.</summary>
-    public int Length => Count;
 
     #region Serialization
 

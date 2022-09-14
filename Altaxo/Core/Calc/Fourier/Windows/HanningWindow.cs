@@ -38,7 +38,7 @@ namespace Altaxo.Calc.Fourier.Windows
 
     protected override void InternalCompute(IVector<double> array, bool periodic)
     {
-      int len = array.Length;
+      int len = array.Count;
       int N = periodic ? len : len - 1;
       double scale = 2 * Math.PI / N;
       double N2 = N / 2.0;
@@ -63,7 +63,7 @@ namespace Altaxo.Calc.Fourier.Windows
     /// <param name="count">Length of the window.</param>
     /// <param name="periodic">Periodic conditions, see remarks in the base class.</param>
     /// <returns>The window as read only vector.</returns>
-    public static IROVector<double> AsROVector(int count, bool periodic)
+    public static IReadOnlyList<double> AsROVector(int count, bool periodic)
     {
       return new HanningWindow(count, periodic).AsROVector();
     }

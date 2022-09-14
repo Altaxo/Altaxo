@@ -275,7 +275,7 @@ namespace Altaxo.Calc.Fourier
     /// <param name="rowFrequencies">Vector that accomodates the row frequencies.</param>
     /// <param name="columnFrequencies">Vector that accomodates the column frequencies.</param>
     /// <exception cref="System.InvalidOperationException">Before getting any result, you must execute the Fourier transformation first (by calling Execute).</exception>
-    public void GetResult(double rowFraction, double columnFraction, RealFourierTransformationOutputKind kind, out IMatrix<double> matrix, out IROVector<double> rowFrequencies, out IROVector<double> columnFrequencies)
+    public void GetResult(double rowFraction, double columnFraction, RealFourierTransformationOutputKind kind, out IMatrix<double> matrix, out IReadOnlyList<double> rowFrequencies, out IReadOnlyList<double> columnFrequencies)
     {
       GetResult(rowFraction, columnFraction, GetEvalFunction(kind), out matrix, out rowFrequencies, out columnFrequencies);
     }
@@ -290,7 +290,7 @@ namespace Altaxo.Calc.Fourier
     /// <param name="rowFrequencies">Vector that accomodates the row frequencies.</param>
     /// <param name="columnFrequencies">Vector that accomodates the column frequencies.</param>
     /// <exception cref="System.InvalidOperationException">Before getting any result, you must execute the Fourier transformation first (by calling Execute).</exception>
-    public void GetResult(double rowFraction, double columnFraction, Func<double, double, double> resultantEval, out IMatrix<double> matrix, out IROVector<double> rowFrequencies, out IROVector<double> columnFrequencies)
+    public void GetResult(double rowFraction, double columnFraction, Func<double, double, double> resultantEval, out IMatrix<double> matrix, out IReadOnlyList<double> rowFrequencies, out IReadOnlyList<double> columnFrequencies)
     {
       if (!_arraysContainTransformation)
         throw new InvalidOperationException("Before getting any result, you must execute the Fourier transformation first (by calling Execute).");
@@ -316,7 +316,7 @@ namespace Altaxo.Calc.Fourier
     /// <param name="rowFrequencies">Vector that accomodates the row frequencies.</param>
     /// <param name="columnFrequencies">Vector that accomodates the column frequencies.</param>
     /// <exception cref="System.InvalidOperationException">Before getting any result, you must execute the Fourier transformation first (by calling Execute).</exception>
-    public void GetResultCentered(double rowFraction, double columnFraction, RealFourierTransformationOutputKind kind, out IMatrix<double> matrix, out IROVector<double> rowFrequencies, out IROVector<double> columnFrequencies)
+    public void GetResultCentered(double rowFraction, double columnFraction, RealFourierTransformationOutputKind kind, out IMatrix<double> matrix, out IReadOnlyList<double> rowFrequencies, out IReadOnlyList<double> columnFrequencies)
     {
       GetResultCentered(rowFraction, columnFraction, GetEvalFunction(kind), out matrix, out rowFrequencies, out columnFrequencies);
     }
@@ -331,7 +331,7 @@ namespace Altaxo.Calc.Fourier
     /// <param name="rowFrequencies">Vector that accomodates the row frequencies.</param>
     /// <param name="columnFrequencies">Vector that accomodates the column frequencies.</param>
     /// <exception cref="System.InvalidOperationException">Before getting any result, you must execute the Fourier transformation first (by calling Execute).</exception>
-    public void GetResultCentered(double rowFraction, double columnFraction, Func<double, double, double> resultantEval, out IMatrix<double> matrix, out IROVector<double> rowFrequencies, out IROVector<double> columnFrequencies)
+    public void GetResultCentered(double rowFraction, double columnFraction, Func<double, double, double> resultantEval, out IMatrix<double> matrix, out IReadOnlyList<double> rowFrequencies, out IReadOnlyList<double> columnFrequencies)
     {
       if (!_arraysContainTransformation)
         throw new InvalidOperationException("Before getting any result, you must execute the Fourier transformation first (by calling Execute).");
@@ -461,7 +461,7 @@ namespace Altaxo.Calc.Fourier
     /// <param name="numberOfResultRowFrequencies">The number of resulting rows. Use the value <see cref="NumberOfRows"/> to get all frequencies, or a value less than that to get only a fraction of frequencies.</param>
     /// <returns>Vector that accomodates the row frequencies.</returns>
     /// <exception cref="System.ArgumentOutOfRangeException">NumberOfResultRows has to be less than or equal to the existing number of rows.</exception>
-    public IROVector<double> GetRowFrequencies(int numberOfResultRowFrequencies)
+    public IReadOnlyList<double> GetRowFrequencies(int numberOfResultRowFrequencies)
     {
       if (numberOfResultRowFrequencies > NumberOfRows)
         throw new ArgumentOutOfRangeException(string.Format("numberOfResultRows has to be less than or equal to the existing number of rows"));
@@ -476,7 +476,7 @@ namespace Altaxo.Calc.Fourier
     /// <param name="numberOfResultRowFrequencies">The number of resulting rows. Use the value <see cref="NumberOfRows"/> to get all frequencies, or a value less than that to get only a fraction of frequencies.</param>
     /// <returns>Vector that accomodates the row frequencies.</returns>
     /// <exception cref="System.ArgumentOutOfRangeException">NumberOfResultRows has to be less than or equal to the existing number of rows.</exception>
-    public IROVector<double> GetRowFrequenciesCentered(int numberOfResultRowFrequencies)
+    public IReadOnlyList<double> GetRowFrequenciesCentered(int numberOfResultRowFrequencies)
     {
       if (numberOfResultRowFrequencies > NumberOfRows)
         throw new ArgumentOutOfRangeException(string.Format("numberOfResultRows has to be less than or equal to the existing number of rows"));
@@ -494,7 +494,7 @@ namespace Altaxo.Calc.Fourier
     /// <param name="numberOfResultColumnFrequencies">The number of resulting column frequencies. Use the value <see cref="NumberOfColumns"/> to get all frequencies, or a value less than that to get only a part of the frequencies.</param>
     /// <returns>Vector that accomodates the column frequencies.</returns>
     /// <exception cref="System.ArgumentOutOfRangeException">NumberOfResultRows has to be less than or equal to the existing number of rows.</exception>
-    public IROVector<double> GetColumnFrequencies(int numberOfResultColumnFrequencies)
+    public IReadOnlyList<double> GetColumnFrequencies(int numberOfResultColumnFrequencies)
     {
       if (numberOfResultColumnFrequencies > NumberOfColumns)
         throw new ArgumentOutOfRangeException(string.Format("numberOfResultRows has to be less than or equal to the existing number of rows"));
@@ -509,7 +509,7 @@ namespace Altaxo.Calc.Fourier
     /// <param name="numberOfResultColumnFrequencies">The number of resulting column frequencies. Use the value <see cref="NumberOfColumns"/> to get all frequencies, or a value less than that to get only a part of the frequencies.</param>
     /// <returns>Vector that accomodates the column frequencies.</returns>
     /// <exception cref="System.ArgumentOutOfRangeException">NumberOfResultRows has to be less than or equal to the existing number of rows.</exception>
-    public IROVector<double> GetColumnFrequenciesCentered(int numberOfResultColumnFrequencies)
+    public IReadOnlyList<double> GetColumnFrequenciesCentered(int numberOfResultColumnFrequencies)
     {
       if (numberOfResultColumnFrequencies > NumberOfColumns)
         throw new ArgumentOutOfRangeException(string.Format("numberOfResultRows has to be less than or equal to the existing number of rows"));
@@ -540,7 +540,7 @@ namespace Altaxo.Calc.Fourier
         for (int c = 0; c < cols; ++c)
         {
           double x = m[r, c];
-          if (RMath.IsFinite(x))
+          if (x.IsFinite())
           {
             sum += x;
             ++n;
@@ -583,7 +583,7 @@ namespace Altaxo.Calc.Fourier
         for (int c = 0; c < cols; ++c)
         {
           var z = m[r, c];
-          if (RMath.IsFinite(z))
+          if (z.IsFinite())
           {
             long x = c - colsBy2;
             long y = r - rowsBy2;
@@ -603,7 +603,7 @@ namespace Altaxo.Calc.Fourier
         for (int c = 0; c < cols; ++c)
         {
           var z = m[r, c];
-          if (RMath.IsFinite(z))
+          if (z.IsFinite())
           {
             long x = c - colsBy2;
             long y = r - rowsBy2;
@@ -639,7 +639,7 @@ namespace Altaxo.Calc.Fourier
         for (int c = 0; c < cols; ++c)
         {
           var z = m[r, c];
-          if (RMath.IsFinite(z))
+          if (z.IsFinite())
           {
             long x = c - colsBy2;
             long y = r - rowsBy2;
@@ -662,7 +662,7 @@ namespace Altaxo.Calc.Fourier
         for (int c = 0; c < cols; ++c)
         {
           var z = m[r, c];
-          if (RMath.IsFinite(z))
+          if (z.IsFinite())
           {
             long x = c - colsBy2;
             long y = r - rowsBy2;
@@ -698,7 +698,7 @@ namespace Altaxo.Calc.Fourier
         for (int c = 0; c < cols; ++c)
         {
           var z = m[r, c];
-          if (RMath.IsFinite(z))
+          if (z.IsFinite())
           {
             long x = c - colsBy2;
             long y = r - rowsBy2;
@@ -725,7 +725,7 @@ namespace Altaxo.Calc.Fourier
         for (int c = 0; c < cols; ++c)
         {
           var z = m[r, c];
-          if (RMath.IsFinite(z))
+          if (z.IsFinite())
           {
             long x = c - colsBy2;
             long y = r - rowsBy2;

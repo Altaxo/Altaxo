@@ -1388,12 +1388,12 @@ if(!(k%100)){
 
     private static int LEVMAR_PSEUDOINVERSE(double[] A, double[] B, int m)
     {
-      var Amat = MatrixMath.ToROMatrixFromColumnMajorLinearArray(A, m);
-      var decomp = new DoubleSVDDecomp(Amat);
+      var Amat = CreateMatrix.DenseOfColumnMajor<double>(m, A.Length/m, A); //  MatrixMath.ToROMatrixFromColumnMajorLinearArray(A, m);
+      var decomp = Amat.Svd();
 
-      DoubleVector s = decomp.S;
-      DoubleMatrix u = decomp.U;
-      DoubleMatrix v = decomp.V;
+      var s = decomp.S;
+      var u = decomp.U;
+      var v = decomp.VT;
 
       /* compute the pseudoinverse in B */
       for (int i = 0; i < B.Length; i++)

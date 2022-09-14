@@ -79,33 +79,33 @@ namespace Altaxo.Calc.LinearAlgebra
 
       if (B0 is null)
       {
-        B0 = DoubleMatrix.Random(m, r);
+        B0 = Matrix<double>.Build.Random(m, r);
       }
 
       if (C0 is null)
       {
-        C0 = DoubleMatrix.Random(r, n);
+        C0 = Matrix<double>.Build.Random(r, n);
       }
 
       if (oldalpha is null)
       {
-        oldalpha = new DoubleVector(n);
+        oldalpha = CreateVector.Dense<double>(n);
       }
 
       if (oldbeta is null)
       {
-        oldbeta = new DoubleVector(m);
+        oldbeta = CreateVector.Dense<double>(m);
       }
 
       if (gammaB is null)
       {
-        gammaB = new DoubleMatrix(m, 1);
+        gammaB = CreateMatrix.Dense<double>(m, 1);
         gammaB.SetMatrixElements(0.1);    // small values lead to better convergence property
       }
 
       if (gammaC is null)
       {
-        gammaC = new DoubleMatrix(n, 1);
+        gammaC = CreateMatrix.Dense<double>(n, 1);
         gammaC.SetMatrixElements(0.1); // small values lead	to better convergence property
       }
 
@@ -122,34 +122,34 @@ namespace Altaxo.Calc.LinearAlgebra
       var newalpha = oldalpha;
       var newbeta = oldbeta;
 
-      var AtA = new DoubleMatrix(n, n);
+      var AtA = CreateMatrix.Dense<double>(n, n);
       MatrixMath.MultiplyFirstTransposed(A, A, AtA);
       double trAtA = MatrixMath.Trace(AtA);
 
-      var olderror = new DoubleVector(maxiter + 1);
+      var olderror = CreateVector.Dense<double>(maxiter + 1);
 
-      var BtA = new DoubleMatrix(r, n);
+      var BtA = CreateMatrix.Dense<double>(r, n);
       MatrixMath.MultiplyFirstTransposed(B, A, BtA);
 
-      var CtBtA = new DoubleMatrix(n, n);
+      var CtBtA = CreateMatrix.Dense<double>(n, n);
       MatrixMath.MultiplyFirstTransposed(C, BtA, CtBtA);
 
-      var BtB = new DoubleMatrix(r, r);
+      var BtB = CreateMatrix.Dense<double>(r, r);
       MatrixMath.MultiplyFirstTransposed(B, B, BtB);
 
-      var BtBC = new DoubleMatrix(r, n);
+      var BtBC = CreateMatrix.Dense<double>(r, n);
       MatrixMath.Multiply(BtB, C, BtBC);
-      var CtBtBC = new DoubleMatrix(n, n);
+      var CtBtBC = CreateMatrix.Dense<double>(n, n);
       MatrixMath.MultiplyFirstTransposed(C, BtBC, CtBtBC);
 
-      var BtDgNewbeta = new DoubleMatrix(r, m);
-      MatrixMath.MultiplyFirstTransposed(B, DoubleMatrix.Diag(newbeta), BtDgNewbeta);
-      var BtDgNewbetaB = new DoubleMatrix(r, r); // really rxr ?
+      var BtDgNewbeta = CreateMatrix.Dense<double>(r, m);
+      MatrixMath.MultiplyFirstTransposed(B, CreateMatrix.DenseDiagonal(newbeta.Count, newbeta.Count, (i) => newbeta[i]), BtDgNewbeta);
+      var BtDgNewbetaB = CreateMatrix.Dense<double>(r, r); // really rxr ?
       MatrixMath.Multiply(BtDgNewbeta, B, BtDgNewbetaB);
 
-      var CDgNewalpha = new DoubleMatrix(r, n);
-      MatrixMath.Multiply(C, DoubleMatrix.Diag(newalpha), CDgNewalpha);
-      var CtCDgNewalpha = new DoubleMatrix(n, n);
+      var CDgNewalpha = CreateMatrix.Dense<double>(r, n);
+      MatrixMath.Multiply(C, CreateMatrix.DenseDiagonal(newalpha.Count, newalpha.Count, (i) => newalpha[i]), CDgNewalpha);
+      var CtCDgNewalpha = CreateMatrix.Dense<double>(n, n);
       MatrixMath.MultiplyFirstTransposed(C, CDgNewalpha, CtCDgNewalpha);
 
       olderror[0] =
@@ -164,22 +164,22 @@ namespace Altaxo.Calc.LinearAlgebra
 
       for (int iteration = 1; iteration <= maxiter; ++iteration)
       {
-        var CCt = new DoubleMatrix(r, r);
+        var CCt = CreateMatrix.Dense<double>(r, r);
         MatrixMath.MultiplySecondTransposed(C, C, CCt);
 
-        var gradB = new DoubleMatrix(m, r);
-        var tempMR = new DoubleMatrix(m, r);
+        var gradB = CreateMatrix.Dense<double>(m, r);
+        var tempMR = CreateMatrix.Dense<double>(m, r);
         //gradB = B*CCt - A*C’ +diag(newbeta)*B;
         MatrixMath.Multiply(B, CCt, gradB);
         MatrixMath.MultiplySecondTransposed(A, C, tempMR);
         MatrixMath.Add(gradB, tempMR, gradB);
-        MatrixMath.Multiply(DoubleMatrix.Diag(newbeta), B, tempMR);
+        MatrixMath.Multiply(CreateMatrix.DenseDiagonal(newbeta.Count, newbeta.Count, (i) => newbeta[i]), B, tempMR);
         MatrixMath.Add(gradB, tempMR, gradB);
 
         // Bm = max(B, (gradB < 0)	*	sigma);
-        var sigMR = new DoubleMatrix(m, r);
+        var sigMR = CreateMatrix.Dense<double>(m, r);
         sigMR.SetMatrixElements((i, j) => gradB[i, j] < 0 ? sigma : 0);
-        var Bm = new DoubleMatrix(m, r);
+        var Bm = CreateMatrix.Dense<double>(m, r);
         Bm.SetMatrixElements((i, j) => Math.Max(B[i, j], sigMR[i, j]));
       }
     }

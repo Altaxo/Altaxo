@@ -27,6 +27,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Altaxo.Calc.LinearAlgebra;
+using Altaxo.Calc.LinearAlgebra.Complex.Factorization;
 
 namespace Altaxo.Calc.Interpolation
 {
@@ -96,12 +97,12 @@ namespace Altaxo.Calc.Interpolation
     /// <summary>Default value of the <see cref="DerivativeOrder"/>.</summary>
     public const int DefaultDerivativeOrder = 2;
 
-    private DoubleVector? _mtx_v;
+    private Vector<double>? _mtx_v;
 
     /// <summary>
     /// This matrix is only neccessary for calculating the bending energy.
     /// </summary>
-    private DoubleMatrix? _mtx_orig_k;
+    private Matrix<double>? _mtx_orig_k;
 
     private int _derivativeOrder;
 
@@ -317,7 +318,7 @@ namespace Altaxo.Calc.Interpolation
       if (_mtx_v is null || _mtx_orig_k is null)
         throw new InvalidOperationException("No results available yet - please execute a spline first");
 
-      return MatrixMath.MultiplyVectorFromLeftAndRight(_mtx_orig_k, _mtx_v);
+      return _mtx_v.DotProduct(_mtx_orig_k.Multiply(_mtx_v));
     }
 
     private double tps_base_even_pos(double r)
@@ -412,10 +413,10 @@ namespace Altaxo.Calc.Interpolation
       var N = _numberOfControlPoints;
 
       // Allocate the matrix and vector
-      var mtx_l = new DoubleMatrix(N + 1 + _coordDim, N + 1 + _coordDim);
+      var mtx_l = CreateMatrix.Dense<double>(N + 1 + _coordDim, N + 1 + _coordDim);
 
       // there is no need for this matrix if we don't need to calculate the bending energy
-      _mtx_orig_k = new DoubleMatrix(N, N);
+      _mtx_orig_k = CreateMatrix.Dense<double>(N, N);
 
       // Fill K (p x p, upper left of L)
       // K is symmetrical so we really have to calculate only about half of the coefficients.
@@ -453,12 +454,12 @@ namespace Altaxo.Calc.Interpolation
           mtx_l[i, j] = 0;
 
       // Solve the linear system
-      var solver = new DoubleLUDecomp(mtx_l);
-      if (solver.IsSingular)
+      var solver = mtx_l.LU();
+      if (solver.Determinant==0) // if the solver is Singular
         throw new ArgumentException("The provided points lead to a singular matrix");
 
       // Fill the right hand vector V with the values to spline; the last nCoordDim+1 elements are zero
-      _mtx_v = new DoubleVector(N + 1 + _coordDim);
+      _mtx_v = CreateVector.Dense<double>(N + 1 + _coordDim);
       for (int i = 0; i < N; ++i)
         _mtx_v[i] = _values[i];
       for (int d = 0; d <= _coordDim; ++d) // comparison '<=' is ok here because of additional intercept

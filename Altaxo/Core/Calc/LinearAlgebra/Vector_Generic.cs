@@ -35,7 +35,7 @@ namespace Altaxo.Calc.LinearAlgebra
   /// Base class of the vector classes. Implements non-arithmetic stuff common to all vectors.
   /// </summary>
   /// <typeparam name="T"></typeparam>
-  public class Vector<T> : ICloneable, IFormattable, IVector<T> where T : IEquatable<T>
+  public class GenericVector<T> : ICloneable, IFormattable, IVector<T> where T : IEquatable<T>
   {
     private static readonly T[] _emptyArray = new T[0];
     protected T[] _array;
@@ -45,7 +45,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>
     /// Constructor for an empty vector, i.e. a vector with zero elements
     /// </summary>
-    public Vector()
+    public GenericVector()
     {
       _array = _emptyArray;
     }
@@ -53,7 +53,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<summary>Constructor with components set to the default value.</summary>
     ///<param name="length">Length of vector.</param>
     ///<exception cref="ArgumentException">Exception thrown if length parameter isn't positive</exception>
-    public Vector(int length)
+    public GenericVector(int length)
     {
       if (length < 0)
       {
@@ -66,7 +66,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<param name="length">Length of vector.</param>
     ///<param name="value">Value to set all elements with.</param>
     ///<exception cref="ArgumentException">Exception thrown if length parameter isn't positive</exception>
-    public Vector(int length, T value)
+    public GenericVector(int length, T value)
     {
       if (length < 0)
       {
@@ -82,7 +82,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<summary>Constructor for <c>FloatVector</c> to deep copy another <c>FloatVector</c></summary>
     ///<param name="src"><c>FloatVector</c> to deep copy into <c>FloatVector</c>.</param>
     ///<exception cref="ArgumentNullException">Exception thrown if null passed as 'src' parameter.</exception>
-    public Vector(Vector<T> src)
+    public GenericVector(GenericVector<T> src)
     {
       if (src is null)
       {
@@ -95,7 +95,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<summary>Constructor from an array</summary>
     ///<param name="values">Array of values. The array is not used directly. Instead the elements of the array are copied to the vector.</param>
     ///<exception cref="ArgumentNullException">Exception thrown if null passed as 'value' parameter.</exception>
-    public Vector(T[] values)
+    public GenericVector(T[] values)
     {
       if (values is null)
       {
@@ -108,7 +108,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<summary>Constructor from an array</summary>
     ///<param name="values">Array of values. The array is not used directly. Instead the elements of the array are copied to the vector.</param>
     ///<exception cref="ArgumentNullException">Exception thrown if null passed as 'value' parameter.</exception>
-    public Vector(IReadOnlyList<T> values)
+    public GenericVector(IReadOnlyList<T> values)
     {
       if (values is null)
       {
@@ -116,7 +116,7 @@ namespace Altaxo.Calc.LinearAlgebra
       }
       _array = new T[values.Count];
 
-      if (values is Vector<T> vector)
+      if (values is GenericVector<T> vector)
       {
         Array.Copy(vector._array, _array, _array.Length);
       }
@@ -130,7 +130,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<summary>Constructor from an <see cref="IList"/></summary>
     ///<param name="values"><c>IList</c> use as source for the elements of the vector.</param>
     ///<exception cref="ArgumentNullException">Exception thrown if null passed as 'values' parameter.</exception>
-    public Vector(IList values)
+    public GenericVector(IList values)
     {
       if (values is null)
       {
@@ -149,9 +149,9 @@ namespace Altaxo.Calc.LinearAlgebra
     /// </summary>
     /// <param name="values">Array of values. This array is used directly in the returned vector!</param>
     /// <returns>Vector that is a wrapper for the provided array.</returns>
-    public static Vector<T> AsWrapperFor(T[] values)
+    public static GenericVector<T> AsWrapperFor(T[] values)
     {
-      return new Vector<T>() { _array = values ?? throw new ArgumentNullException(nameof(values)) };
+      return new GenericVector<T>() { _array = values ?? throw new ArgumentNullException(nameof(values)) };
     }
 
     #endregion Constructors
@@ -203,8 +203,6 @@ namespace Altaxo.Calc.LinearAlgebra
 #pragma warning restore CS8601 // Possible null reference assignment.
     }
 
-    public int Length { get { return _array.Length; } }
-
     public int Count { get { return _array.Length; } }
 
     /// <summary>
@@ -224,14 +222,14 @@ namespace Altaxo.Calc.LinearAlgebra
 
     public IEnumerator<T> GetEnumerator()
     {
-      var len = Length;
+      var len = Count;
       for (int i = 0; i < len; ++i)
         yield return this[i];
     }
 
     IEnumerator IEnumerable.GetEnumerator()
     {
-      var len = Length;
+      var len = Count;
       for (int i = 0; i < len; ++i)
         yield return this[i];
     }
@@ -242,7 +240,7 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<remarks>The <c>obj</c> parameter is converted into a <c>FloatVector</c> variable before comparing with the current <c>DoubleVector</c>.</remarks>
     public override bool Equals(object? obj)
     {
-      if (!(obj is Vector<T> vector))
+      if (!(obj is GenericVector<T> vector))
       {
         return false;
       }
@@ -300,20 +298,20 @@ namespace Altaxo.Calc.LinearAlgebra
     ///<returns>A subvector of this vector.</returns>
     ///<exception cref="ArgumentException">Exception thrown if <paramref>endElement</paramref> is greater than <paramref>startElement</paramref></exception>
     ///<exception cref="ArgumentOutOfRangeException">Exception thrown if input dimensions are out of the range of <c>FloatVector</c> dimensions</exception>
-    public Vector<T> GetSubVector(int startElement, int endElement)
+    public GenericVector<T> GetSubVector(int startElement, int endElement)
     {
       if (startElement > endElement)
       {
         throw new ArgumentException("The starting element must be less that the ending element.");
       }
 
-      if (startElement < 0 || endElement < 0 || startElement >= Length || endElement >= Length)
+      if (startElement < 0 || endElement < 0 || startElement >= Count || endElement >= Count)
       {
         throw new ArgumentException("startElement and startElement must be greater than or equal to zero, endElement must be less than Length, and endElement must be less than Length.");
       }
 
       int n = endElement - startElement + 1;
-      var result = new Vector<T>(n);
+      var result = new GenericVector<T>(n);
       for (int i = 0; i < n; i++)
       {
         result[i] = this[i + startElement];
@@ -323,11 +321,11 @@ namespace Altaxo.Calc.LinearAlgebra
 
     ///<summary>Copies the data from another vector into this instance.</summary>
     ///<param name="src">Vector to copy from..</param>
-    public void CopyFrom(Vector<T> src)
+    public void CopyFrom(GenericVector<T> src)
     {
       if (src is null)
         throw new System.ArgumentNullException(nameof(src));
-      if (src.Length != Length)
+      if (src.Count != Count)
         throw new ArgumentException("Source length must be equal to length of this vector", nameof(src));
 
       if (!(_array.Length == src.Count))
@@ -345,7 +343,7 @@ namespace Altaxo.Calc.LinearAlgebra
         throw new System.ArgumentNullException(nameof(src));
       }
 
-      if (src is Vector<T> vector)
+      if (src is GenericVector<T> vector)
       {
         if (!(_array.Length == src.Count))
           _array = (T[])vector._array.Clone();
@@ -363,11 +361,11 @@ namespace Altaxo.Calc.LinearAlgebra
 
     ///<summary>Swap data in this vector with another vector.</summary>
     ///<param name="src">Vector to swap data with.</param>
-    public void Swap(Vector<T> src)
+    public void Swap(GenericVector<T> src)
     {
       if (src is null)
         throw new System.ArgumentNullException(nameof(src));
-      if (src.Length != Length)
+      if (src.Count != Count)
         throw new ArgumentException("Length of source vector must be equal to length of this vector", nameof(src));
 
       var h = _array;
@@ -376,9 +374,9 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
     ///<summary>Clone (deep copy) a <c>FloatVector</c> variable</summary>
-    public Vector<T> Clone()
+    public GenericVector<T> Clone()
     {
-      return new Vector<T>(this);
+      return new GenericVector<T>(this);
     }
 
     // --- ICloneable Interface ---

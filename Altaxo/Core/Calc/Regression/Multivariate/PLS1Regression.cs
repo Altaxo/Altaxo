@@ -23,6 +23,7 @@
 #endregion Copyright
 
 using System;
+using System.Collections.Generic;
 using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Regression.Multivariate
@@ -37,9 +38,9 @@ namespace Altaxo.Calc.Regression.Multivariate
     protected IExtensibleVector<double> _PRESS;
 #nullable enable
 
-    public IROVector<double> PRESS { get { return _PRESS; } }
+    public IReadOnlyList<double> PRESS { get { return _PRESS; } }
 
-    public override IROVector<double> GetPRESSFromPreprocessed(IROMatrix<double> matrixX)
+    public override IReadOnlyList<double> GetPRESSFromPreprocessed(IROMatrix<double> matrixX)
     {
       return _PRESS;
     }
@@ -104,7 +105,7 @@ namespace Altaxo.Calc.Regression.Multivariate
         _calib.CrossProduct[i] = cal.CrossProduct;
 
         if (_PRESS is null)
-          _PRESS = VectorMath.CreateExtensibleVector<double>(r.PRESS.Length);
+          _PRESS = VectorMath.CreateExtensibleVector<double>(r.PRESS.Count);
         VectorMath.Add(_PRESS, r.PRESS, _PRESS);
       }
     }

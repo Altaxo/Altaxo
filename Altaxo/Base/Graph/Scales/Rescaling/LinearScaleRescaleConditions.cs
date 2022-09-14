@@ -30,6 +30,7 @@ using System.Text;
 
 namespace Altaxo.Graph.Scales.Rescaling
 {
+  using Altaxo.Calc;
   using Altaxo.Graph.Scales.Boundaries;
 
   public class LinearScaleRescaleConditions : NumericScaleRescaleConditions
@@ -82,7 +83,7 @@ namespace Altaxo.Graph.Scales.Rescaling
 
     public override void SetUserParameters(BoundaryRescaling orgRescaling, BoundariesRelativeTo orgRelativeTo, double orgValue, BoundaryRescaling endRescaling, BoundariesRelativeTo endRelativeTo, double endValue)
     {
-      if (double.IsNaN(orgValue) || !Altaxo.Calc.RMath.IsFinite(orgValue))
+      if (double.IsNaN(orgValue) || !(orgValue.IsFinite()))
       {
         if (orgRescaling == BoundaryRescaling.Auto)
           orgValue = DefaultOrgValue;  // ignore this error and set org to 0
@@ -90,7 +91,7 @@ namespace Altaxo.Graph.Scales.Rescaling
           throw new ArgumentOutOfRangeException("orgValue should be a finite number but is " + orgValue.ToString());
       }
 
-      if (double.IsNaN(endValue) || !Altaxo.Calc.RMath.IsFinite(endValue))
+      if (double.IsNaN(endValue) || !(endValue.IsFinite()))
       {
         if (endRescaling == BoundaryRescaling.Auto)
           endValue = DefaultEndValue;  // ignore this error and set end to 1

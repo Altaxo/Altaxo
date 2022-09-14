@@ -55,7 +55,9 @@ namespace Altaxo.Science.Spectroscopy.EnsembleMeanScale
       // The reason for this deviation is that we don't want to store two separate xMean vectors: one used
       // for MSC (the x in linear regression) and another to center the MSC corrected spectra
 
-      var xMatrixOrg = new DoubleMatrix(xMatrix);
+      var xMatrixOrg = MatrixMath.DenseOfMatrix(xMatrix);
+
+
       VectorMath.FillWith(xMean, 0);
 
       IVector<double>? xMeanBefore = null;
@@ -86,7 +88,7 @@ namespace Altaxo.Science.Spectroscopy.EnsembleMeanScale
         // 3. Compare the xMean with the xMean_before
         if (xMeanBefore is null)
         {
-          xMeanBefore = VectorMath.CreateExtensibleVector<double>(xMean.Length);
+          xMeanBefore = VectorMath.CreateExtensibleVector<double>(xMean.Count);
           VectorMath.Copy(xMean, xMeanBefore);
         }
         else

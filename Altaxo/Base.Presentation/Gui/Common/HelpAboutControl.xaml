@@ -55,7 +55,10 @@
 						<ListItem>
 							<Paragraph>dnAnalytics (www.dnAnalytics.net) for part of the linear algebra and optimization functions.</Paragraph>
 						</ListItem>
-						<ListItem>
+                        <ListItem>
+                            <Paragraph>The MathNet.Numerics team (https://numerics.mathdotnet.com/) for many linear algebra, optimization and special functions.</Paragraph>
+                        </ListItem>
+                        <ListItem>
 							<Paragraph>Gongsolutions (https://github.com/punker76/gong-wpf-dragdrop) for the WPF drag-drop library.</Paragraph>
 						</ListItem>
 						<ListItem>

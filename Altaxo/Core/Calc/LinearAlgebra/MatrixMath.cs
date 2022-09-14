@@ -35,6 +35,16 @@ namespace Altaxo.Calc.LinearAlgebra
   /// </summary>
   public static partial class MatrixMath
   {
+    public static Matrix<T> DenseOfMatrix<T>(IROMatrix<T> x) where T: struct, IEquatable<T>, IFormattable
+    {
+      var result = CreateMatrix.Dense<T>(x.RowCount, x.ColumnCount);
+      for (int r = 0; r < x.RowCount; ++r)
+        for (int c = 0; c < x.ColumnCount; ++c)
+          result[r, c] = x[r, c];
+      return result;
+    }
+
+
     #region Helper functions
 
     /// <summary>
@@ -293,7 +303,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// </summary>
     /// <param name="x">The matrix.</param>
     /// <param name="row">The row number of the matrix that is wrapped to a vector.</param>
-    public static IROVector<T> RowToROVector<T>(IROMatrix<T> x, int row) where T : struct
+    public static IReadOnlyList<T> RowToROVector<T>(IROMatrix<T> x, int row) where T : struct
     {
       return new MatrixRowROVector<T>(x, row);
     }
@@ -305,7 +315,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <param name="row">The row number of the matrix that is wrapped to a vector.</param>
     /// <param name="columnoffset">The column of the matrix that corresponds to the first element of the vector.</param>
     /// <param name="length">The length of the resulting vector.</param>
-    public static IROVector<T> RowToROVector<T>(IROMatrix<T> x, int row, int columnoffset, int length) where T : struct
+    public static IReadOnlyList<T> RowToROVector<T>(IROMatrix<T> x, int row, int columnoffset, int length) where T : struct
     {
       return new MatrixRowROVector<T>(x, row, columnoffset, length);
     }
@@ -337,7 +347,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// </summary>
     /// <param name="x">The matrix.</param>
     /// <param name="column">The column number of the matrix that is wrapped to a vector.</param>
-    public static IROVector<T> ColumnToROVector<T>(IROMatrix<T> x, int column) where T : struct
+    public static IReadOnlyList<T> ColumnToROVector<T>(IROMatrix<T> x, int column) where T : struct
     {
       return new MatrixColumnROVector<T>(x, column);
     }
@@ -470,8 +480,8 @@ namespace Altaxo.Calc.LinearAlgebra
       // a.Cols == b.Rows;
       if (a.ColumnCount != numil)
         throw new ArithmeticException(string.Format("Try to multiplicate a matrix of dim({0},{1}) with vector of dim({2}) is not possible!", a.RowCount, a.ColumnCount, b.Count));
-      if (c.Length != crows)
-        throw new ArithmeticException(string.Format("The provided resultant vector (actual dim({0}))has not the expected dimension ({1})", c.Length, crows));
+      if (c.Count != crows)
+        throw new ArithmeticException(string.Format("The provided resultant vector (actual dim({0}))has not the expected dimension ({1})", c.Count, crows));
 
       for (int i = 0; i < crows; i++)
       {
@@ -557,8 +567,8 @@ namespace Altaxo.Calc.LinearAlgebra
       // Presumtion:
       if (a.RowCount != b.Count)
         throw new ArithmeticException(string.Format("Try to multiplicate a transposed matrix of dim({0},{1}) with vector of dim({2}) is not possible!", a.RowCount, a.ColumnCount, b.Count));
-      if (crows != c.Length)
-        throw new ArithmeticException(string.Format("The provided resultant vector (actual dim({0}))has not the expected dimension ({1})", c.Length, crows));
+      if (crows != c.Count)
+        throw new ArithmeticException(string.Format("The provided resultant vector (actual dim({0}))has not the expected dimension ({1})", c.Count, crows));
 
       for (int i = 0; i < crows; i++)
       {
@@ -1041,7 +1051,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
     #region Submatrix
 
-    private static Func<int, int, DoubleMatrix> _defaultMatrixGenerator = (r, c) => new DoubleMatrix(r, c);
+    private static Func<int, int, Matrix<double>> _defaultMatrixGenerator =  (r, c) => CreateMatrix.Dense<double>(r, c);
 
     /// <summary>
     /// Gets a new submatrix, i.e. a matrix containing selected elements of the original matrix <paramref name="a"/>.
@@ -1313,8 +1323,8 @@ namespace Altaxo.Calc.LinearAlgebra
     /// centered matrix. The original matrix data are lost.</remarks>
     public static void ColumnsToZeroMean(IMatrix<double> a, IVector<double> mean)
     {
-      if (mean is not null && mean.Length != a.ColumnCount)
-        throw new ArithmeticException(string.Format("The provided resultant vector (actual length({0}) has not the expected dimension ({1})", mean.Length, a.ColumnCount));
+      if (mean is not null && mean.Count != a.ColumnCount)
+        throw new ArithmeticException(string.Format("The provided resultant vector (actual length({0}) has not the expected dimension ({1})", mean.Count, a.ColumnCount));
 
       for (int col = 0; col < a.ColumnCount; col++)
       {
@@ -1340,10 +1350,10 @@ namespace Altaxo.Calc.LinearAlgebra
     /// centered matrix. The original matrix data are lost.</remarks>
     public static void ColumnsToZeroMeanAndUnitVariance(IMatrix<double> a, IVector<double>? meanvec, IVector<double>? scalevec)
     {
-      if (meanvec is not null && (meanvec.Length != a.ColumnCount))
-        throw new ArithmeticException(string.Format("The provided resultant mean vector (actual dim({0})has not the expected length ({1})", meanvec.Length, a.ColumnCount));
-      if (scalevec is not null && (scalevec.Length != a.ColumnCount))
-        throw new ArithmeticException(string.Format("The provided resultant scale vector (actual dim({0})has not the expected length ({1})", scalevec.Length, a.ColumnCount));
+      if (meanvec is not null && (meanvec.Count != a.ColumnCount))
+        throw new ArithmeticException(string.Format("The provided resultant mean vector (actual dim({0})has not the expected length ({1})", meanvec.Count, a.ColumnCount));
+      if (scalevec is not null && (scalevec.Count != a.ColumnCount))
+        throw new ArithmeticException(string.Format("The provided resultant scale vector (actual dim({0})has not the expected length ({1})", scalevec.Count, a.ColumnCount));
 
       for (int col = 0; col < a.ColumnCount; col++)
       {

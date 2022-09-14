@@ -275,7 +275,7 @@ namespace Altaxo.Calc.Clustering
     /// </summary>
     protected virtual void InitializeCentroidsAtRandom()
     {
-      Random random = new Random();
+      var random = new System.Random();
       Array.Clear(_clusterCounts, 0, _clusterCounts.Length);
       for (int i = 0; i < _clusterCounts.Length; ++i)
       {
@@ -299,7 +299,7 @@ namespace Altaxo.Calc.Clustering
       // http://en.wikipedia.org/wiki/K-means%2B%2B
 
       // 1. Choose one center uniformly at random from among the data points.
-      Random random = new Random();
+      var random = new System.Random();
       int idx = random.Next(0, _pointsData.Length);
       _clusterMeans[0] = _divideFunction(_sumUpFunction(_createDefault(), _pointsData[idx]), 1); // we use divideFunction here to signal that sumUp is finished
 

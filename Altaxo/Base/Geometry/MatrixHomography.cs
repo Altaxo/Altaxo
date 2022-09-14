@@ -19,7 +19,7 @@ namespace Altaxo.Geometry
     public static Matrix2x2 EvaluateHomography(IEnumerable<(double x, double y)> pointPairs, bool setM22ToOne = true)
     {
       var count = pointPairs.Count();
-      var mx = new DoubleMatrix(count * 2, 9);
+      var mx = CreateMatrix.Dense<double>(count * 2, 9);
 
       int j = 0;
       foreach(var pair in pointPairs)
@@ -74,7 +74,7 @@ namespace Altaxo.Geometry
     public static Matrix3x3 EvaluateHomography(IEnumerable<(PointD2D x, PointD2D y)> pointPairs, bool setM33ToOne = true)
     {
       var count = pointPairs.Count();
-      var mx = new DoubleMatrix(count * 2, 9);
+      var mx = CreateMatrix.Dense<double>(count * 2, 9);
 
       int j = 0;
       foreach(var pair in pointPairs)
@@ -142,7 +142,7 @@ namespace Altaxo.Geometry
     public static Matrix4x4 EvaluateHomography(IEnumerable<(PointD3D x, PointD3D y)> pointPairs, bool setM44ToOne = true)
     {
       var count = pointPairs.Count();
-      var mx = new DoubleMatrix(count * 3, 16);
+      var mx = CreateMatrix.Dense<double>(count * 3, 16);
 
       int j = 0;
       foreach(var pair in pointPairs)

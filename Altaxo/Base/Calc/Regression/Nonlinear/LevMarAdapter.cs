@@ -28,6 +28,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using Altaxo.Collections;
+using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Regression.Nonlinear
 {
@@ -584,7 +585,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
         _adapter = adapter;
       }
 
-      public override double Value(Altaxo.Calc.LinearAlgebra.DoubleVector x)
+      public override double Value(Vector<double> x)
       {
         for (int i = 0; i < _adapter._cachedVaryingParameters.Length; ++i)
           _adapter._cachedVaryingParameters[i] = x[i];
@@ -596,7 +597,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
     public void DoSimplexMinimization(System.Threading.CancellationToken cancellationToken, Action<double> newMinimalCostValueFound)
     {
       var nm = new Altaxo.Calc.Optimization.NelderMead(new NelderMeadCostFunction(this));
-      nm.Minimize(new LinearAlgebra.DoubleVector(_cachedVaryingParameters), cancellationToken, newMinimalCostValueFound);
+      nm.Minimize(CreateVector.DenseOfArray(_cachedVaryingParameters), cancellationToken, newMinimalCostValueFound);
       for (int i = 0; i < _cachedVaryingParameters.Length; ++i)
         _cachedVaryingParameters[i] = nm.SolutionVector[i];
       _resultingSumChiSquare = nm.SolutionValue;

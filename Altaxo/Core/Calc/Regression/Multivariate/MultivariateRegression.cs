@@ -103,7 +103,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// </summary>
     /// <param name="matrixXPre">The preprocessed spectra.</param>
     /// <returns>The PRESS vector.</returns>
-    public abstract IROVector<double> GetPRESSFromPreprocessed(IROMatrix<double> matrixXPre);
+    public abstract IReadOnlyList<double> GetPRESSFromPreprocessed(IROMatrix<double> matrixXPre);
 
     #endregion Abstract members
 
@@ -175,7 +175,7 @@ namespace Altaxo.Calc.Regression.Multivariate
 
         if (r == 0) // after the first spectrum is processed, allocate the new result matrices with the appropriate dimensions
         {
-          matrixXPre = new DoubleMatrix(matrixXRaw.RowCount, xOfXPre.Length);
+          matrixXPre = CreateMatrix.Dense<double>(matrixXRaw.RowCount, xOfXPre.Length);
         }
         else
         {
@@ -209,8 +209,8 @@ namespace Altaxo.Calc.Regression.Multivariate
       PreprocessSpectraFirstPart(preprocessSingleSpectrum, preprocessEnsembleOfSpectra, xOfXRaw, matrixXRaw,
         out regionsPre, out xOfXPre, out matrixXPre);
 
-      meanX = new DoubleVector(xOfXPre.Length);
-      scaleX = new DoubleVector(xOfXPre.Length);
+      meanX = CreateVector.Dense<double>(xOfXPre.Length);
+      scaleX = CreateVector.Dense<double>(xOfXPre.Length);
 
       // Preprocess spectra, now preprocess them as ensemble, and calculate the mean spectrum and (optionally) a scaling vector
       preprocessEnsembleOfSpectra.Process(matrixXPre, regionsPre, meanX, scaleX);
@@ -231,7 +231,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       ISingleSpectrumPreprocessor preprocessSingleSpectrum,
       IEnsembleMeanScalePreprocessor preprocessEnsembleOfSpectra,
       double[] xOfXRaw, IROMatrix<double> matrixXRaw,
-      IROVector<double> meanX, IROVector<double> scaleX,
+      IReadOnlyList<double> meanX, IReadOnlyList<double> scaleX,
       out double[] xOfXPre, out IMatrix<double> matrixXPre)
     {
       PreprocessSpectraFirstPart(preprocessSingleSpectrum, preprocessEnsembleOfSpectra, xOfXRaw, matrixXRaw,
@@ -276,7 +276,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       out IVector<double> meanY, out IVector<double> scaleY)
     {
       // Preprocess the target variables
-      matrixYPre = new DoubleMatrix(matrixYRaw.RowCount, matrixYRaw.ColumnCount);
+      matrixYPre = CreateMatrix.Dense<double>(matrixYRaw.RowCount, matrixYRaw.ColumnCount);
       MatrixMath.Copy(matrixYRaw, matrixYPre);
       PreprocessTargetVariablesForAnalysisInline(matrixYPre, out meanY, out scaleY);
     }
@@ -345,8 +345,8 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// <param name="scaleY">Vector of y scale value(s).</param>
     public static void PostprocessTargetVariablesInline(
       IMatrix<double> matrixYPre_Raw,
-      IReadOnlyList<double> meanY,
-      IReadOnlyList<double> scaleY)
+      System.Collections.Generic.IReadOnlyList<double> meanY,
+      System.Collections.Generic.IReadOnlyList<double> scaleY)
     {
       for (int j = 0; j < matrixYPre_Raw.ColumnCount; j++)
       {
@@ -615,7 +615,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       ISingleSpectrumPreprocessor preprocessSingleSpectrum,
       IEnsembleMeanScalePreprocessor preprocessEnsembleOfSpectra,
       MultivariateRegression regressionMethod,
-      out IROVector<double> crossPRESS // vertical value of PRESS values for the cross validation
+      out IReadOnlyList<double> crossPRESS // vertical value of PRESS values for the cross validation
       )
     {
       var worker = new CrossPRESSEvaluator(xOfXRaw, maximalNumberOfFactors, groupingStrategy, preprocessSingleSpectrum, preprocessEnsembleOfSpectra, regressionMethod);

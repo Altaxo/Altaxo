@@ -23,6 +23,7 @@
 #endregion Copyright
 
 using System;
+using Complex64T = System.Numerics.Complex;
 
 namespace Altaxo.Calc.Fourier
 {
@@ -245,16 +246,16 @@ namespace Altaxo.Calc.Fourier
     /// <param name="resultarr">Used to store the result of the transformation.</param>
     /// <param name="count">Number of points to transform.</param>
     /// <param name="direction">Direction of the Fourier transform.</param>
-    public static void FourierTransformation(double[] arr, Complex[] resultarr, int count, FourierDirection direction)
+    public static void FourierTransformation(double[] arr, Complex64T[] resultarr, int count, FourierDirection direction)
     {
       int iss = direction == FourierDirection.Forward ? 1 : -1;
       for (int k = 0; k < count; k++)
       {
-        resultarr[k] = new Complex(0, 0);
+        resultarr[k] = new Complex64T(0, 0);
         for (int i = 0; i < count; i++)
         {
           double phi = iss * 2 * Math.PI * ((i * k) % count) / count;
-          resultarr[k] += new Complex(arr[i] * Math.Cos(phi), arr[i] * Math.Sin(phi));
+          resultarr[k] += new Complex64T(arr[i] * Math.Cos(phi), arr[i] * Math.Sin(phi));
         }
       }
     }

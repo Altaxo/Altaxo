@@ -47,7 +47,7 @@ namespace Altaxo.Calc.Regression
       var burg = new BurgAlgorithmVos();
       burg.Execute(x, 2);
       Assert.Equal(2, burg.NumberOfCoefficients);
-      Assert.Equal(2, burg.Coefficients.Length);
+      Assert.Equal(2, burg.Coefficients.Count);
       AssertEx.AreEqual(-Math.Sin(2 * Math.PI * 2 * fdt) / Math.Sin(2 * Math.PI * fdt), burg.Coefficients[0], 1E-3, 1E-3);
       AssertEx.AreEqual(1.0, burg.Coefficients[1], 1E-3, 1E-3);
       AssertEx.AreEqual(ampl * ampl / 2, burg.MeanSquareSignal, 1E-3, 1E-3);
@@ -78,7 +78,7 @@ namespace Altaxo.Calc.Regression
       var burg = new BurgAlgorithmVos();
       burg.Execute(x, 3);
       Assert.Equal(3, burg.NumberOfCoefficients);
-      Assert.Equal(3, burg.Coefficients.Length);
+      Assert.Equal(3, burg.Coefficients.Count);
       AssertEx.AreEqual(-2.4732382663812893, burg.Coefficients[0], 1E-3, 1E-3);
       AssertEx.AreEqual(2.3850036460605875, burg.Coefficients[1], 1E-3, 1E-3);
       AssertEx.AreEqual(-0.90057116638002777, burg.Coefficients[2], 1E-3, 1E-3);
@@ -103,7 +103,7 @@ namespace Altaxo.Calc.Regression
       var burg = new BurgAlgorithmVos();
       burg.Execute(x, 3);
       Assert.Equal(3, burg.NumberOfCoefficients);
-      Assert.Equal(3, burg.Coefficients.Length);
+      Assert.Equal(3, burg.Coefficients.Count);
 
 
       for (int i = 0; i < x.Length; ++i)
@@ -114,7 +114,7 @@ namespace Altaxo.Calc.Regression
       // now reuse burg, it should result the same parameter as in TestSinus3Coefficients
       burg.Execute(x, 3);
       Assert.Equal(3, burg.NumberOfCoefficients);
-      Assert.Equal(3, burg.Coefficients.Length);
+      Assert.Equal(3, burg.Coefficients.Count);
       AssertEx.AreEqual(-2.4732382663812893, burg.Coefficients[0], 1E-3, 1E-3);
       AssertEx.AreEqual(2.3850036460605875, burg.Coefficients[1], 1E-3, 1E-3);
       AssertEx.AreEqual(-0.90057116638002777, burg.Coefficients[2], 1E-3, 1E-3);

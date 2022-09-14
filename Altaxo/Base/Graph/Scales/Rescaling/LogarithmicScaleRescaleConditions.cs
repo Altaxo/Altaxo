@@ -24,6 +24,7 @@
 
 #nullable enable
 using System;
+using Altaxo.Calc;
 
 namespace Altaxo.Graph.Scales.Rescaling
 {
@@ -108,7 +109,7 @@ namespace Altaxo.Graph.Scales.Rescaling
 
     public override void SetUserParameters(BoundaryRescaling orgRescaling, BoundariesRelativeTo orgRelativeTo, double orgValue, BoundaryRescaling endRescaling, BoundariesRelativeTo endRelativeTo, double endValue)
     {
-      if (double.IsNaN(orgValue) || !Altaxo.Calc.RMath.IsFinite(orgValue) || orgValue <= 0)
+      if (double.IsNaN(orgValue) || !(orgValue.IsFinite()) || orgValue <= 0)
       {
         if (orgRescaling == BoundaryRescaling.Auto)
           orgValue = DefaultOrgValue; // ignore this error and set org to 1
@@ -116,7 +117,7 @@ namespace Altaxo.Graph.Scales.Rescaling
           throw new ArgumentOutOfRangeException("orgValue should be a finite and positive number but is " + orgValue.ToString());
       }
 
-      if (double.IsNaN(endValue) || !Altaxo.Calc.RMath.IsFinite(endValue) || endValue <= 0)
+      if (double.IsNaN(endValue) || !(endValue.IsFinite()) || endValue <= 0)
       {
         if (endRescaling == BoundaryRescaling.Auto)
           endValue = DefaultEndValue; // ignore this error and set org to 10

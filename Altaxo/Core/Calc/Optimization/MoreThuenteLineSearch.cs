@@ -67,13 +67,13 @@ namespace Altaxo.Calc.Optimization
     public int maxiter_ = 20; // positive
 
     ///<summary> Minimize the given cost function </summary>
-    public override DoubleVector Search(DoubleVector x, DoubleVector s, double stp)
+    public override Vector<double> Search(Vector<double> x, Vector<double> s, double stp)
     {
-      DoubleVector grad = GradientEvaluation(x);
-      double dginit = grad.GetDotProduct(s);
+      var grad = GradientEvaluation(x);
+      double dginit = grad.DotProduct(s);
 
       // this is a port of CVSMOD in CG++
-      var retx = new DoubleVector(x);
+      var retx = x.Clone();
       bool brackt;
       bool stage1;
       int nfev;
@@ -84,7 +84,7 @@ namespace Altaxo.Calc.Optimization
       double width;
       double width1;
       double f;
-      DoubleVector g;
+      Vector<double> g;
       double dg;
       double fm;
       double fxm;
@@ -103,10 +103,10 @@ namespace Altaxo.Calc.Optimization
       //double p66 = 0.66;
       double xtrapf = 4.0;
       //double zero = 0.0;
-      var wa = new DoubleVector(x);
+      var wa = x.Clone();
 
       // CHECK THE INPUT PARAMETERS FOR ERRORS.
-      if (x.Length <= 0)
+      if (x.Count <= 0)
         throw new OptimizationException("Incorrect Input parameters for Linesearch");
 
       // COMPUTE THE INITIAL GRADIENT IN THE SEARCH DIRECTION
@@ -172,7 +172,7 @@ namespace Altaxo.Calc.Optimization
         // Compute function value;
         f = FunctionEvaluation(retx);
         nfev = nfev + 1;
-        dg = g.GetDotProduct(s);
+        dg = g.DotProduct(s);
         ftest1 = finit + stp * dgtest;
 
         info = 0;

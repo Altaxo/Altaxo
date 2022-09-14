@@ -26,6 +26,7 @@
 using System;
 using System.ComponentModel;
 using Altaxo.Calc.Regression.Nonlinear;
+using Complex64T = System.Numerics.Complex;
 
 namespace Altaxo.Calc.FitFunctions.Relaxation
 {
@@ -329,28 +330,28 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
         x *= (2 * Math.PI);
 
       // Model this first as compliance
-      Complex result = 1 / ComplexMath.Pow(1 + ComplexMath.Pow(Complex.I * x * P[2], P[3]), P[4]);
+      var result = 1 / ComplexMath.Pow(1 + ComplexMath.Pow(Complex64T.ImaginaryOne * x * P[2], P[3]), P[4]);
       result = (1 / P[1]) + ((1 / P[0]) - (1 / P[1])) * result;
 
       if (_useFlowTerm)
       {
         if(_invertViscosity)
-          result -= Complex.I * P[5] / x;
+          result -= Complex64T.ImaginaryOne * P[5] / x;
         else
-          result -= Complex.I  / (x * P[5]);
+          result -= Complex64T.ImaginaryOne  / (x * P[5]);
       }
 
       result = 1 / result; // but now convert to modulus
 
       if (_logarithmizeResults)
       {
-        Y[0] = Math.Log10(result.Re);
-        Y[1] = Math.Log10(result.Im);
+        Y[0] = Math.Log10(result.Real);
+        Y[1] = Math.Log10(result.Imaginary);
       }
       else
       {
-        Y[0] = result.Re;
-        Y[1] = result.Im;
+        Y[0] = result.Real;
+        Y[1] = result.Imaginary;
       }
     }
 

@@ -144,7 +144,7 @@
 			}
 		}
 
-
+        /*
 		/// <summary>
 		/// Reverses the order of elements in the provided vector.
 		/// </summary>
@@ -158,6 +158,7 @@
 				vector[j] = x_i;
 			}
 		}
+        */
 
 
 		/// <summary>

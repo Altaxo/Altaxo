@@ -23,6 +23,7 @@
 #endregion Copyright
 
 using System;
+using Complex64T = System.Numerics.Complex;
 
 namespace Altaxo.Calc.Fourier
 {
@@ -32,34 +33,34 @@ namespace Altaxo.Calc.Fourier
   public class ArrayMath
   {
     /// <summary>
-    /// Copies an array of <see cref="Complex" /> elements into an array of the real part values and an array of the imaginary part values.
+    /// Copies an array of <see cref="Complex64T" /> elements into an array of the real part values and an array of the imaginary part values.
     /// </summary>
     /// <param name="src">The source array.</param>
     /// <param name="destreal">The array where the real part values are stored into.</param>
     /// <param name="destimag">The destination array where the imaginary part values are stored into.</param>
     /// <param name="n">The number of elements to copy. The copying is done from index 0 to n-1.</param>
-    public static void CopyFromComplexToSplittedArrays(Complex[] src, double[] destreal, double[] destimag, int n)
+    public static void CopyFromComplexToSplittedArrays(Complex64T[] src, double[] destreal, double[] destimag, int n)
     {
       for (int i = 0; i < n; i++)
       {
-        destreal[i] = src[i].Re;
-        destimag[i] = src[i].Im;
+        destreal[i] = src[i].Real;
+        destimag[i] = src[i].Imaginary;
       }
     }
 
     /// <summary>
-    /// Copies two arrays with real and imaginary part values into an array of <see cref="Complex" /> values.
+    /// Copies two arrays with real and imaginary part values into an array of <see cref="Complex64T" /> values.
     /// </summary>
     /// <param name="srcreal">The source array containing the real part values.</param>
     /// <param name="srcimag">The source array containing the imaginary part values.</param>
     /// <param name="dest">The destination array.</param>
     /// <param name="n">The number of elements to copy. The copying is done from index 0 to n-1.</param>
-    public static void CopyFromSplittedArraysToComplex(double[] srcreal, double[] srcimag, Complex[] dest, int n)
+    public static void CopyFromSplittedArraysToComplex(double[] srcreal, double[] srcimag, Complex64T[] dest, int n)
     {
       for (int i = 0; i < n; i++)
       {
-        dest[i].Re = srcreal[i];
-        dest[i].Im = srcimag[i];
+
+        dest[i] = new Complex64T(srcreal[i],srcimag[i]);
       }
     }
 

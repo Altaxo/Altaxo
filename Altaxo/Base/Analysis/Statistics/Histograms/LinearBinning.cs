@@ -96,7 +96,7 @@ namespace Altaxo.Analysis.Statistics.Histograms
       }
       set
       {
-        if (!RMath.IsFinite(value))
+        if (!(value.IsFinite()))
           throw new ArgumentException("Value has to be a finite number");
 
         var oldValue = _binOffset;
@@ -130,7 +130,7 @@ namespace Altaxo.Analysis.Statistics.Histograms
       }
       set
       {
-        if (!RMath.IsFinite(value) || !(value > 0))
+        if (!(value.IsFinite()) || !(value > 0))
           throw new ArgumentException("BinWidth has to be a finite number > 0");
 
         var oldValue = _binWidth;

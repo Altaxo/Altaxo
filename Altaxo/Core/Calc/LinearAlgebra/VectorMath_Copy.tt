@@ -14,35 +14,35 @@
     var types = new string[][]
     {      // src                     srcLength  dest											destLength
 		       // ---------------------------------------------------------------------------------------------------------------------------
-      new[]{ "double[]",							"Length", "double[]",               "Length"},
-      new[]{ "IReadOnlyList<double>", "Count",  "double[]",	              "Length"},
-      new[]{ "double[]",							"Length", "IVector<double>",        "Length"},
-      new[]{ "IReadOnlyList<double>", "Count",  "IVector<double>",        "Length"},
-     
-			new[]{ "float[]",							   "Length", "double[]",               "Length"},
-      new[]{ "IReadOnlyList<float>",   "Count",  "double[]",	             "Length"},
-      new[]{ "float[]",							   "Length", "IVector<double>",        "Length"},
-      new[]{ "IReadOnlyList<float>",   "Count",  "IVector<double>",        "Length"},
-
-			new[]{ "float[]",							   "Length", "float[]",                "Length"},
-      new[]{ "IReadOnlyList<float>",   "Count",  "float[]",	               "Length"},
-      new[]{ "float[]",							   "Length", "IVector<float>",         "Length"},
-      new[]{ "IReadOnlyList<float>",   "Count",  "IVector<float>",         "Length"},
-
-      new[]{ "int[]",										"Length", "double[]",               "Length"},
-      new[]{ "IReadOnlyList<int>",			"Count",  "double[]",	              "Length"},
-      new[]{ "int[]",										"Length", "IVector<double>",        "Length"},
-      new[]{ "IReadOnlyList<int>",      "Count",  "IVector<double>",        "Length"},
-
-			new[]{ "int[]",							     "Length", "float[]",                "Length"},
-      new[]{ "IReadOnlyList<int>",     "Count",  "float[]",	               "Length"},
-      new[]{ "int[]",							     "Length", "IVector<float>",         "Length"},
-      new[]{ "IReadOnlyList<int>",     "Count",  "IVector<float>",         "Length"},
-
-			new[]{ "int[]",							     "Length", "int[]",                "Length"},
-      new[]{ "IReadOnlyList<int>",     "Count",  "int[]",	               "Length"},
-      new[]{ "int[]",							     "Length", "IVector<int>",         "Length"},
-      new[]{ "IReadOnlyList<int>",     "Count",  "IVector<int>",         "Length"},
+        new[]{ "double[]",				"Length",   "double[]",         "Length"},
+        new[]{ "IReadOnlyList<double>", "Count",    "double[]",	        "Length"},
+        new[]{ "double[]",				"Length",   "IVector<double>",  "Count"},
+        new[]{ "IReadOnlyList<double>", "Count",    "IVector<double>",  "Count"},
+        
+        new[]{ "float[]",		    	"Length",   "double[]",         "Length"},
+        new[]{ "IReadOnlyList<float>",  "Count",    "double[]",	        "Length"},
+        new[]{ "float[]",				"Length",   "IVector<double>",  "Count"},
+        new[]{ "IReadOnlyList<float>",  "Count",    "IVector<double>",  "Count"},
+        
+        new[]{ "float[]",				"Length",   "float[]",          "Length"},
+        new[]{ "IReadOnlyList<float>",  "Count",    "float[]",	        "Length"},
+        new[]{ "float[]",			    "Length",   "IVector<float>",   "Count"},
+        new[]{ "IReadOnlyList<float>",  "Count",    "IVector<float>",   "Count"},
+        
+        new[]{ "int[]",				    "Length",   "double[]",         "Length"},
+        new[]{ "IReadOnlyList<int>",    "Count",    "double[]",	        "Length"},
+        new[]{ "int[]",				    "Length",   "IVector<double>",  "Count"},
+        new[]{ "IReadOnlyList<int>",    "Count",    "IVector<double>",  "Count"},
+        
+        new[]{ "int[]",				    "Length",   "float[]",          "Length"},
+        new[]{ "IReadOnlyList<int>",    "Count",    "float[]",	        "Length"},
+        new[]{ "int[]",					"Length",   "IVector<float>",   "Count"},
+        new[]{ "IReadOnlyList<int>",    "Count",    "IVector<float>",   "Count"},
+        
+        new[]{ "int[]",				    "Length",   "int[]",            "Length"},
+        new[]{ "IReadOnlyList<int>",    "Count",    "int[]",	        "Length"},
+        new[]{ "int[]",				    "Length",   "IVector<int>",     "Count"},
+        new[]{ "IReadOnlyList<int>",    "Count",    "IVector<int>",     "Count"},
 
     };
 

@@ -31,7 +31,7 @@ namespace Altaxo.Calc
   /// <summary>
   /// Contains series calculations.
   /// </summary>
-  public class Series
+  public class SeriesMP
   {
     /// <summary>
     /// Represents the smallest number where 1+DBL_EPSILON is not equal to 1.

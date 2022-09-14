@@ -76,18 +76,18 @@ namespace Altaxo.Calc.Optimization
     }
 
     ///<summary> Minimize the given cost function </summary>
-    public override DoubleVector Search(DoubleVector x, DoubleVector d, double step)
+    public override Vector<double> Search(Vector<double> x, Vector<double> d, double step)
     {
-      var ret = new DoubleVector(x);
+      var ret = x.Clone();
       double j = 0;
       double eta;
 
-      double delta_d = d.GetDotProduct(d);
+      double delta_d = d.DotProduct(d);
       double alpha = -sigma_0;
-      double eta_prev = d.GetDotProduct(GradientEvaluation(ret + sigma_0 * d));
+      double eta_prev = d.DotProduct(GradientEvaluation(ret + sigma_0 * d));
       do
       {
-        eta = d.GetDotProduct(GradientEvaluation(ret));
+        eta = d.DotProduct(GradientEvaluation(ret));
         alpha = alpha * (eta / (eta_prev - eta));
         ret = ret + alpha * d;
         eta_prev = eta;

@@ -610,7 +610,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			return min;
 		}
 
-
+/*
     /// <summary>
     /// Returns the sum of the elements in <paramref name="vector"/>.
     /// </summary>
@@ -624,6 +624,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
       return sum; 
     }
+    */
 
 
 		/// <summary>
@@ -1296,7 +1297,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			return min;
 		}
 
-
+/*
     /// <summary>
     /// Returns the sum of the elements in <paramref name="vector"/>.
     /// </summary>
@@ -1310,6 +1311,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
       return sum; 
     }
+    */
 
 
 		/// <summary>
@@ -1978,7 +1980,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			return min;
 		}
 
-
+/*
     /// <summary>
     /// Returns the sum of the elements in <paramref name="vector"/>.
     /// </summary>
@@ -1992,6 +1994,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
       return sum; 
     }
+    */
 
 
 		/// <summary>
@@ -2664,7 +2667,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			return min;
 		}
 
-
+/*
     /// <summary>
     /// Returns the sum of the elements in <paramref name="vector"/>.
     /// </summary>
@@ -2678,6 +2681,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
       return sum; 
     }
+    */
 
 
 		/// <summary>
@@ -3350,7 +3354,7 @@ namespace Altaxo.Calc.LinearAlgebra
 			return min;
 		}
 
-
+/*
     /// <summary>
     /// Returns the sum of the elements in <paramref name="vector"/>.
     /// </summary>
@@ -3364,6 +3368,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
       return sum; 
     }
+    */
 
 
 		/// <summary>

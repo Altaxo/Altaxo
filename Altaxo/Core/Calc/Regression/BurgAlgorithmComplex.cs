@@ -28,6 +28,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using Altaxo.Calc.LinearAlgebra;
+using Complex64T = System.Numerics.Complex;
 
 namespace Altaxo.Calc.Regression
 {
@@ -39,13 +40,13 @@ namespace Altaxo.Calc.Regression
     private const string ErrorNoExecution = "No results yet - call Execute first!";
 
     /// <summary>Forward prediction errors.</summary>
-    private Complex[]? _f;
+    private Complex64T[]? _f;
 
     /// <summary>Backward prediction errors.</summary>
-    private Complex[]? _b;
+    private Complex64T[]? _b;
 
     /// <summary>Prediction coefficients. Note that for technical reasons _Ak[0] is always 1 and the calculated coefficients start with _Ak[1].</summary>
-    private Complex[]? _Ak;
+    private Complex64T[]? _Ak;
 
     /// <summary>Wrapper for the coefficients that can be returned by <see cref="Coefficients"/>.</summary>
     private ComplexVectorWrapper? _AkWrapper;
@@ -177,7 +178,7 @@ namespace Altaxo.Calc.Regression
       int last = firstPoint + count;
       for (int i = firstPoint; i < last; i++)
       {
-        Complex sum = 0;
+        Complex64T sum = 0;
         for (int k = 1; k <= _numberOfCoefficients; k++) // note that Ak[0] is always 1 for technical reasons, thus we start here with index 1
         {
           sum -= _Ak[k] * x[i - k];
@@ -208,12 +209,12 @@ namespace Altaxo.Calc.Regression
       double sumsqr = 0;
       for (int i = first; i < last; i++)
       {
-        Complex sum = 0;
+        Complex64T sum = 0;
         for (int k = 1; k <= _numberOfCoefficients; k++) // note that Ak[0] is always 1 for technical reasons, thus we start here with index 1
         {
           sum -= _Ak[k] * x[i - k];
         }
-        sumsqr += (x[i] - sum).GetModulusSquared();
+        sumsqr += (x[i] - sum).MagnitudeSquared();
       }
       return Math.Sqrt(sumsqr / (last - first));
     }
@@ -250,7 +251,7 @@ namespace Altaxo.Calc.Regression
       int first = lastPoint - count;
       for (int i = lastPoint; i > first; i--)
       {
-        Complex sum = 0;
+        Complex64T sum = 0;
         for (int k = 1; k <= _numberOfCoefficients; k++) // note that Ak[0] is always 1 for technical reasons, thus we start here with index 1
         {
           sum -= _Ak[k].GetConjugate() * x[i + k];
@@ -280,12 +281,12 @@ namespace Altaxo.Calc.Regression
       double sumsqr = 0;
       for (int i = last - 1; i >= 0; i--)
       {
-        Complex sum = 0;
+        Complex64T sum = 0;
         for (int k = 1; k <= _numberOfCoefficients; k++) // note that Ak[0] is always 1 for technical reasons, thus we start here with index 1
         {
           sum -= _Ak[k].GetConjugate() * x[i + k];
         }
-        sumsqr += (x[i] - sum).GetModulusSquared();
+        sumsqr += (x[i] - sum).MagnitudeSquared();
       }
       return Math.Sqrt(sumsqr / (last));
     }
@@ -305,7 +306,7 @@ namespace Altaxo.Calc.Regression
 
       if (_Ak is null || _Ak.Length < coeffLength + 1)
       {
-        _Ak = new Complex[coeffLength + 1];
+        _Ak = new Complex64T[coeffLength + 1];
         _AkWrapper = new ComplexVectorWrapper(_Ak, 1, _numberOfCoefficients);
       }
 
@@ -313,10 +314,10 @@ namespace Altaxo.Calc.Regression
         _AkWrapper = new ComplexVectorWrapper(_Ak, 1, _numberOfCoefficients);
 
       if (_b is null || _b.Length < xLength)
-        _b = new Complex[xLength];
+        _b = new Complex64T[xLength];
 
       if (_f is null || _f.Length < xLength)
-        _f = new Complex[xLength];
+        _f = new Complex64T[xLength];
     }
 
     /// <summary>
@@ -381,9 +382,9 @@ namespace Altaxo.Calc.Regression
       int N = x.Length - 1;
       int m = coefficients.Length;
 
-      Complex[] Ak; // Prediction coefficients, Ak[0] is always 1
-      Complex[] b; // backward prediction errors
-      Complex[] f; // forward prediction errors
+      Complex64T[] Ak; // Prediction coefficients, Ak[0] is always 1
+      Complex64T[] b; // backward prediction errors
+      Complex64T[] f; // forward prediction errors
 
       if (tempStorage is not null)
       {
@@ -396,9 +397,9 @@ namespace Altaxo.Calc.Regression
       }
       else
       {
-        Ak = new Complex[coefficients.Length + 1];
-        b = new Complex[x.Length];
-        f = new Complex[x.Length];
+        Ak = new Complex64T[coefficients.Length + 1];
+        b = new Complex64T[x.Length];
+        f = new Complex64T[x.Length];
       }
 
       Ak[0] = 1;
@@ -410,9 +411,9 @@ namespace Altaxo.Calc.Regression
       double Dk = 0;
 
       for (int i = 0; i <= N; i++)
-        Dk += 2 * f[i].GetModulusSquared();
+        Dk += 2 * f[i].MagnitudeSquared();
 
-      Dk -= f[0].GetModulusSquared() + b[N].GetModulusSquared();
+      Dk -= f[0].MagnitudeSquared() + b[N].MagnitudeSquared();
 
       // Burg recursion
       int k;
@@ -420,7 +421,7 @@ namespace Altaxo.Calc.Regression
       for (k = 0; (k < m) && (Dk > 0); k++)
       {
         // Compute mu
-        Complex mu = 0;
+        Complex64T mu = 0;
         for (int n = 0; n < N - k; n++)
           mu += f[n + k + 1] * b[n].GetConjugate();
 
@@ -429,8 +430,8 @@ namespace Altaxo.Calc.Regression
         // Update Ak
         for (int n = 0; n <= (k + 1) / 2; n++)
         {
-          Complex t1 = Ak[n] + mu * Ak[k + 1 - n].GetConjugate();
-          Complex t2 = Ak[k + 1 - n] + mu * Ak[n].GetConjugate();
+          Complex64T t1 = Ak[n] + mu * Ak[k + 1 - n].GetConjugate();
+          Complex64T t2 = Ak[k + 1 - n] + mu * Ak[n].GetConjugate();
           Ak[n] = t1;
           Ak[k + 1 - n] = t2;
         }
@@ -441,18 +442,18 @@ namespace Altaxo.Calc.Regression
         sumE = 0;
         for (int n = 0; n < N - k; n++)
         {
-          Complex t1 = f[n + k + 1] + mu * b[n];
-          Complex t2 = b[n] + mu.GetConjugate() * f[n + k + 1];
+          Complex64T t1 = f[n + k + 1] + mu * b[n];
+          Complex64T t2 = b[n] + mu.GetConjugate() * f[n + k + 1];
           f[n + k + 1] = t1;
           b[n] = t2;
-          sumE += t1.GetModulusSquared() + t2.GetModulusSquared();
+          sumE += t1.MagnitudeSquared() + t2.MagnitudeSquared();
         }
         if (errors is not null)
           errors[k] = sumE / (2 * (N - k));
         // Update Dk
         // Note that it is possible to update Dk without total error calculation because sumE = Dk*(1-mu.GetModulusSquared())
         // but this will render the algorithm numerically unstable especially for higher orders and low noise
-        Dk = sumE - (f[k + 1].GetModulusSquared() + b[N - k - 1].GetModulusSquared());
+        Dk = sumE - (f[k + 1].MagnitudeSquared() + b[N - k - 1].MagnitudeSquared());
       }
 
       // Assign coefficients
@@ -576,17 +577,17 @@ namespace Altaxo.Calc.Regression
 
     private class ComplexVectorWrapper : IComplexDoubleVector
     {
-      private Complex[] _arr;
+      private Complex64T[] _arr;
       private int _start, _count;
 
-      public ComplexVectorWrapper(Complex[] arr, int start, int count)
+      public ComplexVectorWrapper(Complex64T[] arr, int start, int count)
       {
         _arr = arr;
         _start = start;
         _count = count;
       }
 
-      public Complex this[int i]
+      public Complex64T this[int i]
       {
         get
         {

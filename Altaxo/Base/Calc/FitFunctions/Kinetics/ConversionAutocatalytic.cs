@@ -313,7 +313,7 @@ namespace Altaxo.Calc.FitFunctions.Kinetics
 
       public void EvaluateJacobian(double x, double[] yy, [AllowNull][NotNull] ref IMatrix<double> jac)
       {
-        jac ??= new DoubleMatrix(1, 1);
+        jac ??= CreateMatrix.Dense<double>(1, 1);
 
         double y = yy[0];
 

@@ -103,7 +103,7 @@ namespace Altaxo.Calc.Interpolation
     public static void Interpolate(IReadOnlyList<double> x, IReadOnlyList<double> y, IROMatrix<double> z, IReadOnlyList<double> u, IReadOnlyList<double> v, IVector<double> w)
     {
       var spline = new BivariateAkimaSpline(x, y, z, true);
-      spline.itplbv_(x.Count, y.Count, x, y, z, w.Length, u, v, w);
+      spline.itplbv_(x.Count, y.Count, x, y, z, w.Count, u, v, w);
     }
 
     /// <summary>

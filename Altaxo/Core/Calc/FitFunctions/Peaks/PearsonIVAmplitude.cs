@@ -27,6 +27,7 @@ using System;
 using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Calc.Regression.Nonlinear;
 using Altaxo.Main;
+using Complex64T = System.Numerics.Complex;
 
 namespace Altaxo.Calc.FitFunctions.Peaks
 {
@@ -330,7 +331,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
       if (cv is not null)
       {
         var deriv = new double[5];
-        var resVec = new DoubleVector(5);
+        var resVec = VectorMath.ToVector(new double[5]);
 
         // PositionVariance
         posStdDev = SafeSqrt(cv[1, 1]);
@@ -379,7 +380,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
       var lnprefactor = (
                         GammaRelated.LnBeta(m-0.5, 0.5) +
                         2 * GammaRelated.LnGamma(m) -
-                        2 * GammaRelated.LnGamma(new Altaxo.Calc.Complex(m, v / 2)).Re
+                        2 * GammaRelated.LnGamma(new Complex64T(m, v / 2)).Real
                       );
 
       var z0 = -v / (2 * m);

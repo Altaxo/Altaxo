@@ -39,11 +39,11 @@ namespace Altaxo.Calc.LinearAlgebra
     [Fact]
     public static void Test01a()
     {
-      var X = new DoubleMatrix(new double[,] { { 73, 71, 52 }, { 87, 74, 46 }, { 72, 2, 7 }, { 80, 89, 71 } });
-      var y = new DoubleMatrix(new double[,] { { 49 }, { 67 }, { 68 }, { 20 } });
+      var X = CreateMatrix.DenseOfArray(new double[,] { { 73, 71, 52 }, { 87, 74, 46 }, { 72, 2, 7 }, { 80, 89, 71 } });
+      var y = CreateMatrix.DenseOfArray(new double[,] { { 49 }, { 67 }, { 68 }, { 20 } });
 
-      var XtX = X.GetTranspose() * X;
-      var Xty = X.GetTranspose() * y;
+      var XtX = X.Transpose() * X;
+      var Xty = X.Transpose() * y;
       FastNonnegativeLeastSquares.Execution(XtX, Xty, null, out var x, out var w);
 
       AssertEx.Equal(0.65, x[0, 0], 0.01);
@@ -61,11 +61,11 @@ namespace Altaxo.Calc.LinearAlgebra
     [Fact]
     public static void Test01b()
     {
-      var X = new DoubleMatrix(new double[,] { { 771, 307, 765, 280 }, { 404, 802, 29, 703 }, { 166, 446, 8, 236 }, { 985, 225, 510, 731 }, { 109, 12, 382, 89 } });
-      var y = new DoubleMatrix(new double[,] { { 83 }, { 339 }, { 330 }, { 731 }, { 896 } });
+      var X = CreateMatrix.DenseOfArray(new double[,] { { 771, 307, 765, 280 }, { 404, 802, 29, 703 }, { 166, 446, 8, 236 }, { 985, 225, 510, 731 }, { 109, 12, 382, 89 } });
+      var y = CreateMatrix.DenseOfArray(new double[,] { { 83 }, { 339 }, { 330 }, { 731 }, { 896 } });
 
-      var XtX = X.GetTranspose() * X;
-      var Xty = X.GetTranspose() * y;
+      var XtX = X.Transpose() * X;
+      var Xty = X.Transpose() * y;
       FastNonnegativeLeastSquares.Execution(XtX, Xty, null, out var x, out var w);
 
       AssertEx.Equal(0, x[0, 0], 1e-4);
@@ -85,11 +85,11 @@ namespace Altaxo.Calc.LinearAlgebra
     [Fact]
     public static void Test01c()
     {
-      var X = new DoubleMatrix(new double[,] { { 106, 743, 746, 73 }, { 579, 420, 531, 584 }, { 693, 234, 562, 255 }, { 484, 381, 474, 360 }, { 313, 68, 78, 301 } });
-      var y = new DoubleMatrix(new double[,] { { 803 }, { 292 }, { 230 }, { 469 }, { 655 } });
+      var X = CreateMatrix.DenseOfArray(new double[,] { { 106, 743, 746, 73 }, { 579, 420, 531, 584 }, { 693, 234, 562, 255 }, { 484, 381, 474, 360 }, { 313, 68, 78, 301 } });
+      var y = CreateMatrix.DenseOfArray(new double[,] { { 803 }, { 292 }, { 230 }, { 469 }, { 655 } });
 
-      var XtX = X.GetTranspose() * X;
-      var Xty = X.GetTranspose() * y;
+      var XtX = X.Transpose() * X;
+      var Xty = X.Transpose() * y;
       FastNonnegativeLeastSquares.Execution(XtX, Xty, null, out var x, out var w);
 
       AssertEx.Equal(0, x[0, 0], 1e-4);
@@ -109,11 +109,11 @@ namespace Altaxo.Calc.LinearAlgebra
     [Fact]
     public static void Test01d1()
     {
-      var X = new DoubleMatrix(new double[,] { { 106, 743, 746, 73 }, { 579, 420, 531, 584 }, { 693, 234, 562, 255 }, { 484, 381, 474, 360 }, { 313, 68, 78, 301 } });
-      var y = new DoubleMatrix(new double[,] { { 803 }, { 292 }, { 230 }, { 469 }, { 655 } });
+      var X = CreateMatrix.DenseOfArray(new double[,] { { 106, 743, 746, 73 }, { 579, 420, 531, 584 }, { 693, 234, 562, 255 }, { 484, 381, 474, 360 }, { 313, 68, 78, 301 } });
+      var y = CreateMatrix.DenseOfArray(new double[,] { { 803 }, { 292 }, { 230 }, { 469 }, { 655 } });
 
-      var XtX = X.GetTranspose() * X;
-      var Xty = X.GetTranspose() * y;
+      var XtX = X.Transpose() * X;
+      var Xty = X.Transpose() * y;
       FastNonnegativeLeastSquares.Execution(XtX, Xty, (i) => i != 0, null, out var x, out var w);
 
       AssertEx.Equal(-0.07097, x[0, 0], 1e-4);
@@ -133,11 +133,11 @@ namespace Altaxo.Calc.LinearAlgebra
     [Fact]
     public static void Test01d2()
     {
-      var X = new DoubleMatrix(new double[,] { { 73, 746, 743, 106 }, { 584, 531, 420, 579 }, { 255, 562, 234, 693 }, { 360, 474, 381, 484 }, { 301, 78, 68, 313 } });
-      var y = new DoubleMatrix(new double[,] { { 803 }, { 292 }, { 230 }, { 469 }, { 655 } });
+      var X = CreateMatrix.DenseOfArray(new double[,] { { 73, 746, 743, 106 }, { 584, 531, 420, 579 }, { 255, 562, 234, 693 }, { 360, 474, 381, 484 }, { 301, 78, 68, 313 } });
+      var y = CreateMatrix.DenseOfArray(new double[,] { { 803 }, { 292 }, { 230 }, { 469 }, { 655 } });
 
-      var XtX = X.GetTranspose() * X;
-      var Xty = X.GetTranspose() * y;
+      var XtX = X.Transpose() * X;
+      var Xty = X.Transpose() * y;
       FastNonnegativeLeastSquares.Execution(XtX, Xty, (i) => i != 3, null, out var x, out var w);
 
       AssertEx.Equal(0.37911, x[0, 0], 1e-4);
@@ -157,13 +157,13 @@ namespace Altaxo.Calc.LinearAlgebra
     [Fact]
     public static void Test01e_2()
     {
-      var X = new DoubleMatrix(new double[,] { { 73, 746, 743, 106 }, { 584, 531, 420, 579 }, { 255, 562, 234, 693 }, { 360, 474, 381, 484 }, { 301, 78, 68, 313 } });
-      var y = new DoubleMatrix(new double[,] { { 803 }, { 292 }, { 230 }, { 469 }, { 655 } });
+      var X = CreateMatrix.DenseOfArray(new double[,] { { 73, 746, 743, 106 }, { 584, 531, 420, 579 }, { 255, 562, 234, 693 }, { 360, 474, 381, 484 }, { 301, 78, 68, 313 } });
+      var y = CreateMatrix.DenseOfArray(new double[,] { { 803 }, { 292 }, { 230 }, { 469 }, { 655 } });
 
-      var XtX = X.GetTranspose() * X;
-      var Xty = X.GetTranspose() * y;
+      var XtX = X.Transpose() * X;
+      var Xty = X.Transpose() * y;
 
-      var solver = new DoubleLUDecomp(XtX);
+      var solver = XtX.LU();
       var expected = solver.Solve(Xty);
       FastNonnegativeLeastSquares.Execution(XtX, Xty, (i) => false, null, out var x, out var w);
 
@@ -188,7 +188,7 @@ namespace Altaxo.Calc.LinearAlgebra
       int NC = 5;
 
       // erzeuge Basisfunktionen
-      var X = new DoubleMatrix(NR, NC);
+      var X = CreateMatrix.Dense<double>(NR, NC);
       for (int c = 0; c < 5; ++c)
       {
         double rt = (c + 1) * 4;
@@ -196,7 +196,7 @@ namespace Altaxo.Calc.LinearAlgebra
           X[r, c] = Math.Exp(-r / rt);
       }
 
-      var y = new DoubleMatrix(NR, 1);
+      var y = CreateMatrix.Dense<double>(NR, 1);
       for (int r = 0; r < NR; ++r)
       {
         double sum = 0;
@@ -208,10 +208,10 @@ namespace Altaxo.Calc.LinearAlgebra
         y[r, 0] = sum;
       }
 
-      var XtX = new DoubleMatrix(5, 5);
+      var XtX = CreateMatrix.Dense<double>(5, 5);
       MatrixMath.MultiplyFirstTransposed(X, X, XtX);
 
-      var Xty = new DoubleMatrix(5, 1);
+      var Xty = CreateMatrix.Dense<double>(5, 1);
       MatrixMath.MultiplyFirstTransposed(X, y, Xty);
       FastNonnegativeLeastSquares.Execution(XtX, Xty, null, out var x, out var w);
 

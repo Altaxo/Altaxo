@@ -51,10 +51,6 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <summary>The number of elements.</summary>
     public int Count { get; }
 
-    /// <summary>The number of elements.</summary>
-    public int Length => Count;
-
-
     #region Serialization
 
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(LinearlySpacedIntervalByStartEndStep), 0)]

@@ -14,7 +14,7 @@ using System.Collections.Generic;
 
 namespace Altaxo.Calc.LinearAlgebra
 {
-  public class SparseDoubleVector : IROVector<double>
+  public class SparseDoubleVector : IReadOnlyList<double>
   {
     private const int IncrementSize = 16; // Size of chunk for array increments
 
@@ -56,12 +56,6 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
     /// <summary>Length of the sparse vector</summary>
-    public int Length
-    {
-      get { return n; }
-    }
-
-    /// <summary>Length of the sparse vector</summary>
     public int Count
     {
       get { return n; }
@@ -74,13 +68,13 @@ namespace Altaxo.Calc.LinearAlgebra
 
     public IEnumerator<double> GetEnumerator()
     {
-      for (int i = 0; i < Length; ++i)
+      for (int i = 0; i < Count; ++i)
         yield return this[i];
     }
 
     IEnumerator IEnumerable.GetEnumerator()
     {
-      for (int i = 0; i < Length; ++i)
+      for (int i = 0; i < Count; ++i)
         yield return this[i];
     }
 

@@ -37,7 +37,7 @@ namespace Altaxo.Data
     :
     Altaxo.Data.DataColumn,
     INumericColumn,
-    Altaxo.Calc.LinearAlgebra.IROVector<double>
+    IReadOnlyList<double>
   {
     static readonly double[] _emptyDoubleArray = new double[0];
     private double[] _data = _emptyDoubleArray;
@@ -54,11 +54,6 @@ namespace Altaxo.Data
     }
 
     public override int Count
-    {
-      get { return _count; }
-    }
-
-    int Calc.LinearAlgebra.IROVector<double>.Length
     {
       get { return _count; }
     }
@@ -403,7 +398,7 @@ namespace Altaxo.Data
     /// Provides a setter property to which a readonly vector can be assigned to. Copies all elements of the readonly vector to this column.
     /// The getter property creates a wrapper for this data column that implements IROVector. For short time use only, since it reflects changes in the data, but not in the length of the DoubleColumn.
     /// </summary>
-    public override Altaxo.Calc.LinearAlgebra.IROVector<double> ToROVector(int start, int count)
+    public override IReadOnlyList<double> ToROVector(int start, int count)
     {
       return new ROVector(this, start, count);
     }
@@ -557,7 +552,7 @@ namespace Altaxo.Data
 
     #region Vector decorators
 
-    private class ROVector : Altaxo.Calc.LinearAlgebra.IROVector<double>
+    private class ROVector : IReadOnlyList<double>
     {
       private DoubleColumn _col;
       private int _start;
@@ -571,11 +566,6 @@ namespace Altaxo.Data
       }
 
       #region IROVector Members
-
-      public int Length
-      {
-        get { return _count; }
-      }
 
       public int Count
       {
@@ -636,11 +626,6 @@ namespace Altaxo.Data
       #endregion IVector Members
 
       #region IROVector Members
-
-      public int Length
-      {
-        get { return _count; }
-      }
 
       public int Count
       {

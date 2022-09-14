@@ -88,12 +88,12 @@ namespace Altaxo.Calc.Optimization
       }
     }
 
-    public override LinearAlgebra.DoubleVector Search(LinearAlgebra.DoubleVector x, LinearAlgebra.DoubleVector direction, double step)
+    public override Vector<double> Search(Vector<double> x, Vector<double> direction, double step)
     {
       return Search(x, x + direction * step, _numberOfInitialDivisions, _numberOfSubsequentDivisions, _divisionDepth);
     }
 
-    public LinearAlgebra.DoubleVector Search(LinearAlgebra.DoubleVector bound0, LinearAlgebra.DoubleVector bound1, int numberOfInitialDivisions, int numberOfSubsequentDivisions, int divisionDepth)
+    public Vector<double> Search(Vector<double> bound0, Vector<double> bound1, int numberOfInitialDivisions, int numberOfSubsequentDivisions, int divisionDepth)
     {
       if (numberOfInitialDivisions < 2)
         throw new ArgumentOutOfRangeException("Number of initial divisions must not smaller than 2");
@@ -112,8 +112,8 @@ namespace Altaxo.Calc.Optimization
       double rmin = Math.Max(0, r - rstep);
       double rmax = Math.Min(1, r + rstep);
 
-      DoubleVector xLeft = bound0 * (1 - rmin) + bound1 * rmin;
-      DoubleVector xRight = bound0 * (1 - rmax) + bound1 * rmax;
+      Vector<double> xLeft = bound0 * (1 - rmin) + bound1 * rmin;
+      Vector<double> xRight = bound0 * (1 - rmax) + bound1 * rmax;
 
       if (divisionDepth <= 0)
       {
@@ -121,7 +121,7 @@ namespace Altaxo.Calc.Optimization
       }
       else if (numberOfSubsequentDivisions == 2)
       {
-        DoubleVector xMiddle = bound0 * (1 - r) + bound1 * r;
+        Vector<double> xMiddle = bound0 * (1 - r) + bound1 * r;
         return BinaryMinimumSearch(xLeft, FunctionEvaluation(xLeft), xMiddle, FunctionEvaluation(xMiddle), xRight, FunctionEvaluation(xRight), divisionDepth);
       }
       else
@@ -130,7 +130,7 @@ namespace Altaxo.Calc.Optimization
       }
     }
 
-    private DoubleVector SearchMinimumByRecursiveDivisions(DoubleVector xLeft, DoubleVector xRight, int numberOfDivisions, int recursionDepth)
+    private Vector<double> SearchMinimumByRecursiveDivisions(Vector<double> xLeft, Vector<double> xRight, int numberOfDivisions, int recursionDepth)
     {
       int ifound = SearchMinimumByDivision(xLeft, xRight, numberOfDivisions);
 
@@ -147,7 +147,7 @@ namespace Altaxo.Calc.Optimization
         return xLeft * (1 - r) + xRight * r;
     }
 
-    private int SearchMinimumByDivision(LinearAlgebra.DoubleVector bound0, LinearAlgebra.DoubleVector bound1, int numberOfInitialDivisions)
+    private int SearchMinimumByDivision(Vector<double> bound0, Vector<double> bound1, int numberOfInitialDivisions)
     {
       double minValue = double.PositiveInfinity;
       int imin = -1;
@@ -165,15 +165,15 @@ namespace Altaxo.Calc.Optimization
       return imin;
     }
 
-    private DoubleVector BinaryMinimumSearch(DoubleVector xLeft, double valLeft, DoubleVector xMiddle, double valMiddle, DoubleVector xRight, double valRight, int recursionDepth)
+    private Vector<double> BinaryMinimumSearch(Vector<double> xLeft, double valLeft, Vector<double> xMiddle, double valMiddle, Vector<double> xRight, double valRight, int recursionDepth)
     {
       if (recursionDepth <= 0)
         return xMiddle;
 
-      DoubleVector xLeftMiddle = (xLeft + xMiddle) * 0.5;
+      var xLeftMiddle = (xLeft + xMiddle) * 0.5;
       double valLeftMiddle = FunctionEvaluation(xLeftMiddle);
 
-      DoubleVector xRightMiddle = (xRight + xMiddle) * 0.5;
+      var xRightMiddle = (xRight + xMiddle) * 0.5;
       double valRightMiddle = FunctionEvaluation(xRightMiddle);
 
       if (valLeftMiddle < valMiddle && valRightMiddle < valMiddle && valRightMiddle < valLeftMiddle) // special case: saddle point and right is smaller than left

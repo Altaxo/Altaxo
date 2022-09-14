@@ -656,14 +656,14 @@ namespace Altaxo.Science.Spectroscopy.Raman
       // spline difference Nist wavelength - Measured wavelength versus the Nist wavelength
       // why x is Nist wavelength (and not measured wavelength)? Because it has per definition no error, whereas measured wavelength has
       IInterpolationFunction spline;
-      if (!options.InterpolationIgnoreStdDev && dy.Max() > 0 && dy.Select(v => RMath.IsFinite(v)).Count() >= 1)
+      if (!options.InterpolationIgnoreStdDev && dy.Max() > 0 && dy.Select(v => v.IsFinite()).Count() >= 1)
       {
         // first, sanitize the standard deviations:
         // if for some values it is Infinity, we replace those with the mean of the finite standard deviations
-        var meanStdDev = dy.Where(v => RMath.IsFinite(v)).Average();
+        var meanStdDev = dy.Where(v => v.IsFinite()).Average();
         for (int i = 0; i < dy.Length; i++)
         {
-          if (!RMath.IsFinite(dy[i]))
+          if (!dy[i].IsFinite())
             dy[i] = meanStdDev;
         }
         spline = options.InterpolationMethod.Interpolate(x, y, dy);

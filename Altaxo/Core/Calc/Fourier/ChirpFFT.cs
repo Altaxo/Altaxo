@@ -28,6 +28,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Altaxo.Calc.LinearAlgebra;
+using Complex64T = System.Numerics.Complex;
 
 namespace Altaxo.Calc.Fourier
 {
@@ -149,21 +150,20 @@ namespace Altaxo.Calc.Fourier
 
     #endregion Inner class
 
-    private static void CopyFromComplexToSplittedArrays(double[] destreal, double[] destimag, Complex[] src, int count)
+    private static void CopyFromComplexToSplittedArrays(double[] destreal, double[] destimag, Complex64T[] src, int count)
     {
       for (int i = 0; i < count; i++)
       {
-        destreal[i] = src[i].Re;
-        destimag[i] = src[i].Im;
+        destreal[i] = src[i].Real;
+        destimag[i] = src[i].Imaginary;
       }
     }
 
-    private static void CopyFromSplittedArraysToComplex(Complex[] dest, double[] srcreal, double[] srcimag, int count)
+    private static void CopyFromSplittedArraysToComplex(Complex64T[] dest, double[] srcreal, double[] srcimag, int count)
     {
       for (int i = 0; i < count; i++)
       {
-        dest[i].Re = srcreal[i];
-        dest[i].Im = srcimag[i];
+        dest[i] = new  Complex64T(srcreal[i],srcimag[i]);
       }
     }
 
@@ -188,8 +188,8 @@ namespace Altaxo.Calc.Fourier
       }
     }
 
-    private static void fhtconvolution(Complex[] resarray,
-      Complex[] arr1, Complex[] arr2, int arrsize)
+    private static void fhtconvolution(Complex64T[] resarray,
+      Complex64T[] arr1, Complex64T[] arr2, int arrsize)
     {
       double[] fht1real = new double[arrsize];
       double[] fht1imag = new double[arrsize];
@@ -264,7 +264,7 @@ namespace Altaxo.Calc.Fourier
 
     // der Chirpalgorithmus funktioniert auch noch bei arrsize=1+2^n mit der nächstgelegenen Potenz 2^(n+1) !!!
 
-    private static void chirpnativefft(Complex[] result, Complex[] arr, int arrsize, FourierDirection direction)
+    private static void chirpnativefft(Complex64T[] result, Complex64T[] arr, int arrsize, FourierDirection direction)
     {
       int phasesign = direction == FourierDirection.Forward ? 1 : -1;
       int arrsize2 = arrsize + arrsize;
@@ -274,10 +274,10 @@ namespace Altaxo.Calc.Fourier
 
       int msize = GetNecessaryTransformationSize(arrsize);
 
-      var xjfj = new Complex[msize];
-      var fserp = new Complex[msize];
-      var resarray = new Complex[msize];
-      //Complex[] cmparray = new Complex[arrsize];
+      var xjfj = new Complex64T[msize];
+      var fserp = new Complex64T[msize];
+      var resarray = new Complex64T[msize];
+      //Complex64T[] cmparray = new Complex64T[arrsize];
 
       // bilde xj*fj
       double prefactor = phasesign * Math.PI / arrsize;
@@ -285,7 +285,7 @@ namespace Altaxo.Calc.Fourier
       for (int i = 0; i < arrsize; i++)
       {
         double phi = prefactor * np; // np should be equal to (i*i)%arrsize2
-        var val = new Complex(Math.Cos(phi), Math.Sin(phi));
+        var val = new Complex64T(Math.Cos(phi), Math.Sin(phi));
         xjfj[i] = arr[i] * val;
 
         np += i + i + 1;  // np == (k*k)%n2
@@ -294,14 +294,14 @@ namespace Altaxo.Calc.Fourier
       }
 
       // fill positive and negative part of fserp
-      fserp[0] = new Complex(1, 0);
+      fserp[0] = new Complex64T(1, 0);
       prefactor = -phasesign * Math.PI / arrsize;
       np = 1; // since we start the loop with 1
       for (int i = 1; i < arrsize; i++)
       {
         double phi = prefactor * np; // np should be equal to (i*i)%arrsize2
-        fserp[i].Re = fserp[msize - i].Re = Math.Cos(phi);
-        fserp[i].Im = fserp[msize - i].Im = Math.Sin(phi);
+
+        fserp[i] = fserp[msize - i] = new Complex64T(Math.Cos(phi), Math.Sin(phi));
 
         np += i + i + 1;  // np == (k*k)%n2
         if (np >= arrsize2)
@@ -319,7 +319,7 @@ namespace Altaxo.Calc.Fourier
       for (int i = 0; i < arrsize; i++)
       {
         double phi = prefactor * np; // np should be equal to (i*i)%arrsize2
-        result[i] = resarray[i] * new Complex(Math.Cos(phi), Math.Sin(phi));
+        result[i] = resarray[i] * new Complex64T(Math.Cos(phi), Math.Sin(phi));
 
         np += i + i + 1;  // np == (i*i)%n2
         if (np >= arrsize2)
@@ -655,9 +655,9 @@ namespace Altaxo.Calc.Fourier
         public static void
             FFT(double[] x, double[] y, uint n, bool backward)
         {
-            Complex[] arr = new Complex[n];
+            Complex64T[] arr = new Complex64T[n];
             CopyFromSplittedArraysToComplex(arr,x,y,(int)n);
-            Complex[] result = new Complex[n];
+            Complex64T[] result = new Complex64T[n];
             chirpnativefft(result,arr,(int)n, backward);
             CopyFromComplexToSplittedArrays(x,y,result,(int)n);
         }
@@ -730,7 +730,7 @@ namespace Altaxo.Calc.Fourier
     }
 
     // complex multiply array g[] by f[]:
-    //  Complex(gr[],gi[]) *= Complex(fr[],fi[])
+    //  Complex64T(gr[],gi[]) *= Complex64T(fr[],fi[])
     private static void ri_multiply(double[] fr, double[] fi, double[] gr, double[] gi, uint n)
     {
       while ((n--) != 0)

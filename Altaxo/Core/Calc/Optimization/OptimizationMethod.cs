@@ -59,21 +59,21 @@ namespace Altaxo.Calc.Optimization
     }
 
     ///<summary> Perform an evaluation of Cost Function value </summary>
-    protected double FunctionEvaluation(DoubleVector x)
+    protected double FunctionEvaluation(Vector<double> x)
     {
       endCriteria_.functionEvaluationCounter++;
       return costFunction_.Value(x);
     }
 
     ///<summary> Perform an evaluation of Cost Function gradient </summary>
-    protected DoubleVector GradientEvaluation(DoubleVector x)
+    protected Vector<double> GradientEvaluation(Vector<double> x)
     {
       endCriteria_.gradientEvaluationCounter++;
       return costFunction_.Gradient(x);
     }
 
     ///<summary> Perform an evaluation of Cost Function hessian </summary>
-    protected DoubleMatrix HessianEvaluation(DoubleVector x)
+    protected Matrix<double> HessianEvaluation(Vector<double> x)
     {
       endCriteria_.hessianEvaluationCounter++;
       return costFunction_.Hessian(x);

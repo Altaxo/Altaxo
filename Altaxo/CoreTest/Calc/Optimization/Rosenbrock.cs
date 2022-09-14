@@ -39,43 +39,44 @@ namespace AltaxoTest.Calc.Optimization
   /// global minimum of 0 at point (1,1). </remarks>
   public sealed class Rosenbrock : CostFunction
   {
-    public override double Value(DoubleVector x)
+    public override double Value(Vector<double> x)
     {
       double retvalue = 0;
-      for (int i = 1; i < x.Length; i++)
+      for (int i = 1; i < x.Count; i++)
       {
         retvalue = retvalue + 100 * System.Math.Pow((x[i] - System.Math.Pow(x[i - 1], 2)), 2) + System.Math.Pow((1 - x[i - 1]), 2);
       }
       return retvalue;
     }
 
-    public override DoubleVector Gradient(DoubleVector x)
+    public override Vector<double> Gradient(Vector<double> x)
     {
-      var retvalue = new DoubleVector(x.Length, 0.0)
+      var retvalue = CreateVector.Dense<double>(x.Count);
       {
-        [0] = -400 * x[0] * (x[1] - System.Math.Pow(x[0], 2)) - 2 * (1 - x[0]),
-        [x.Length - 1] = 200 * (x[x.Length - 1] - System.Math.Pow(x[x.Length - 2], 2))
+        retvalue[0] = -400 * x[0] * (x[1] - System.Math.Pow(x[0], 2)) - 2 * (1 - x[0]);
+        retvalue[x.Count - 1] = 200 * (x[x.Count - 1] - System.Math.Pow(x[x.Count - 2], 2));
       };
-      if (x.Length > 2)
+
+      if (x.Count > 2)
       {
-        for (int i = 1; i < x.Length - 1; i++)
+        for (int i = 1; i < x.Count - 1; i++)
           retvalue[i] = 200 * (x[i] - System.Math.Pow(x[i - 1], 2)) - 400 * x[i] * (x[i + 1] - System.Math.Pow(x[i], 2)) - 2 * (1 - x[i]);
       }
       return retvalue;
     }
 
-    public override DoubleMatrix Hessian(DoubleVector x)
+    public override Matrix<double> Hessian(Vector<double> x)
     {
-      var ret = new DoubleMatrix(x.Length, x.Length, 0.0);
+      var ret = CreateMatrix.Dense<double>(x.Count, x.Count, 0.0);
 
-      for (int i = 0; i < x.Length - 1; i++)
+      for (int i = 0; i < x.Count - 1; i++)
       {
         ret[i, i + 1] = -400 * x[i];
         ret[i + 1, i] = -400 * x[i];
       }
       ret[0, 0] = System.Math.Pow(1200 * x[0], 2) - 400 * x[1] + 2;
-      ret[x.Length - 1, x.Length - 1] = 200;
-      for (int i = 1; i < x.Length - 1; i++)
+      ret[x.Count - 1, x.Count - 1] = 200;
+      for (int i = 1; i < x.Count - 1; i++)
         ret[i, i] = 202 + System.Math.Pow(1200 * x[i], 2) - 400 * x[i + 1];
       return ret;
     }

@@ -27,6 +27,9 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using Altaxo.Calc.LinearAlgebra;
+using Altaxo.Calc.LinearAlgebra.Double.Factorization;
+using Altaxo.Calc.LinearAlgebra.Factorization;
+using Complex64T = System.Numerics.Complex;
 
 namespace Altaxo.Calc.Regression
 {
@@ -38,7 +41,7 @@ namespace Altaxo.Calc.Regression
     /// <param name="a">Matrix a.</param>
     /// <param name="b">Vector b.</param>
     /// <param name="result">Vector result, so that Norm(a*result-b) is minimized.</param>
-    void Solve(JaggedArrayMatrix a, IReadOnlyList<double> b, IVector<double> result);
+    void Solve(Matrix<double> a, Vector<double> b, Vector<double> result);
   }
 
   /// <summary>
@@ -64,10 +67,10 @@ namespace Altaxo.Calc.Regression
     /// Then the y parameters, having indices of (_numX.._numX+_numY-1). Lastly, the background parameters are stored in the array
     /// (indices _numX+_numY ... end_of_array)
     /// </summary>
-    protected double[] _parameter;
+    protected Vector<double> _parameter;
 
     /// <summary>Holds the input matrix.</summary>
-    protected JaggedArrayMatrix _inputMatrix;
+    protected Matrix<double> _inputMatrix;
 #nullable enable
 
     /// <summary>Total number of parameter, i.e. _numX+_numY + _backgroundOrderPlus1</summary>
@@ -78,7 +81,7 @@ namespace Altaxo.Calc.Regression
 
     /// <summary>Array of y-values neccessary for backsubstitution. Is a copy of the input y vector, but
     /// only for the elements _startingPoint...end_of_y_vector.</summary>
-    protected double[]? _scaledY;
+    protected Vector<double>? _scaledY;
 
     /// <summary>Stores an instance of a solver used to solve the linear equation. The solver
     /// should keep and recycle the memory neccessary for solving the equation.</summary>
@@ -266,11 +269,11 @@ namespace Altaxo.Calc.Regression
     /// <param name="y">Vector of y data.</param>
     /// <param name="M">Matrix to fill. If the dimensions are not appropriate, a new matrix is allocated and stored in the member _inputMatrix.</param>
     /// <returns></returns>
-    protected virtual JaggedArrayMatrix FillInputMatrix(IReadOnlyList<double>? x, IReadOnlyList<double> y, JaggedArrayMatrix? M)
+    protected virtual Matrix<double> FillInputMatrix(IReadOnlyList<double>? x, IReadOnlyList<double> y, Matrix<double>? M)
     {
       int numberOfData = CalculateNumberOfData(x, y);
       if (M is null || M.RowCount != numberOfData || M.ColumnCount != _numberOfParameter)
-        M = new JaggedArrayMatrix(numberOfData, _numberOfParameter);
+        M = CreateMatrix.Dense<double>(numberOfData, _numberOfParameter);
 
       // Fill the matrix
       for (int i = 0; i < numberOfData; i++)
@@ -308,8 +311,8 @@ namespace Altaxo.Calc.Regression
     {
       // Fill the y - neccessary later for backsubstitution
       int numberOfData = _inputMatrix.RowCount;
-      if (_scaledY is null || _scaledY.Length != numberOfData)
-        _scaledY = new double[numberOfData];
+      if (_scaledY is null || _scaledY.Count != numberOfData)
+        _scaledY = CreateVector.Dense<double>(numberOfData);
       for (int i = 0; i < numberOfData; i++)
         _scaledY[i] = y[i + _startingPoint];
     }
@@ -321,10 +324,10 @@ namespace Altaxo.Calc.Regression
     protected virtual void CalculateResultingParameter()
     {
       // allocate parameter array
-      if (_parameter is null || _parameter.Length != _numberOfParameter)
-        _parameter = new double[_numberOfParameter];
+      if (_parameter is null || _parameter.Count != _numberOfParameter)
+        _parameter = CreateVector.Dense<double>(_numberOfParameter);
 
-      _solver.Solve(_inputMatrix, VectorMath.ToROVector(_scaledY), VectorMath.ToVector(_parameter));
+      _solver.Solve(_inputMatrix, _scaledY, _parameter);
     }
 
     /// <summary>
@@ -341,14 +344,13 @@ namespace Altaxo.Calc.Regression
     /// </summary>
     /// <param name="predictedOutput">The resultant predicted output. If null, a temporary vector is allocated for calculation.</param>
     /// <returns>The mean prediction error.i.e. Sqrt(Sum((y-yprediced)²)/N).</returns>
-    public virtual double CalculatePredictionError(IVector<double>? predictedOutput)
+    public virtual double CalculatePredictionError(Vector<double>? predictedOutput)
     {
       if (predictedOutput is null)
-        predictedOutput = new DoubleVector(_inputMatrix.RowCount);
+        predictedOutput = CreateVector.Dense<double>(_inputMatrix.RowCount);
 
-      MatrixMath.Multiply(_inputMatrix, VectorMath.ToROVector(_parameter), predictedOutput);
-
-      double sumsquareddifferences = VectorMath.SumOfSquaredDifferences(VectorMath.ToROVector(_scaledY), predictedOutput);
+      _inputMatrix.Multiply(_parameter, predictedOutput);
+      double sumsquareddifferences = VectorMath.SumOfSquaredDifferences(_scaledY, predictedOutput);
       return Math.Sqrt(sumsquareddifferences / _inputMatrix.RowCount);
     }
 
@@ -363,10 +365,10 @@ namespace Altaxo.Calc.Regression
 
     public virtual double CalculateSelfPredictionError(IVector<double>? predictedOutput)
     {
-      return CalculateSelfPredictionError(_inputMatrix, VectorMath.ToROVector(_scaledY), predictedOutput);
+      return CalculateSelfPredictionError(_inputMatrix, _scaledY, predictedOutput);
     }
 
-    protected virtual double CalculateSelfPredictionError(IMatrix<double> inputMatrix, IReadOnlyList<double> yCompare, IVector<double>? predictedOutput)
+    protected virtual double CalculateSelfPredictionError(Matrix<double> inputMatrix, IReadOnlyList<double> yCompare, IVector<double>? predictedOutput)
     {
       double[] inputVector = new double[_numY];
       for (int i = 0; i < inputVector.Length; i++)
@@ -420,7 +422,7 @@ namespace Altaxo.Calc.Regression
     /// <returns>The mean error between y prediction values and actual y values.</returns>
     public virtual double CalculateCrossPredictionError(IReadOnlyList<double> x, IReadOnlyList<double> y, IVector<double>? predictedOutput)
     {
-      JaggedArrayMatrix m = FillInputMatrix(x, y, null);
+      var m = FillInputMatrix(x, y, null);
       return CalculateSelfPredictionError(m, VectorMath.ToROVector(y, _startingPoint, y.Count - _startingPoint), predictedOutput);
     }
 
@@ -429,19 +431,19 @@ namespace Altaxo.Calc.Regression
     /// </summary>
     /// <param name="fdt">Frequency. Must be given as f*dt, meaning the product of frequency and sample interval.</param>
     /// <returns>The complex frequency response at the given frequency.</returns>
-    public virtual Complex GetFrequencyResponse(double fdt)
+    public virtual Complex64T GetFrequencyResponse(double fdt)
     {
       double w = fdt * 2 * Math.PI;
-      var nom = new Complex();
+      var nom = new Complex64T();
       for (int i = 0; i < _numX; i++)
       {
-        nom += Complex.FromModulusArgument(_parameter[i], -i * w);
+        nom += Complex64T.FromPolarCoordinates(_parameter[i], -i * w);
       }
 
-      var denom = new Complex();
+      var denom = new Complex64T();
       for (int i = 0; i < _numY; i++)
       {
-        denom += Complex.FromModulusArgument(_parameter[_numX + i], -(i + 1) * w);
+        denom += Complex64T.FromPolarCoordinates(_parameter[_numX + i], -(i + 1) * w);
       }
 
       return nom / (1 - denom);
@@ -451,7 +453,7 @@ namespace Altaxo.Calc.Regression
     /// Resulting parameters of the estimation. Index 0..numX-1 are the parameters for x history. Following from numX
     /// to numX+numY-1 are the parameters for y, and at least there are the parameters for the background fit.
     /// </summary>
-    public double[] Parameter
+    public IReadOnlyList<double> Parameter
     {
       get
       {
@@ -472,7 +474,7 @@ namespace Altaxo.Calc.Regression
       for (int i = 0; i < _numY; i++)
         y[i] = yValueBeforePulse;
 
-      for (int i = 0; i < output.Length; i++)
+      for (int i = 0; i < output.Count; i++)
       {
         int ioffs = i - _offsetX;
         double sum = 0;
@@ -566,7 +568,7 @@ namespace Altaxo.Calc.Regression
       var est = new DynamicParameterEstimation(null, yTraining, 0, yOrder, 0);
       // now calculate the extrapolation data
 
-      for (int i = len; i < yPredValues.Length; i++)
+      for (int i = len; i < yPredValues.Count; i++)
       {
         double sum = 0;
         for (int j = 0; j < yOrder; j++)
@@ -590,11 +592,9 @@ namespace Altaxo.Calc.Regression
       #region IDynamicParameterEstimationSolver Members
 
       [MemberNotNull(nameof(_decomposition))]
-      public void Solve(JaggedArrayMatrix a, IReadOnlyList<double> b, IVector<double> result)
+      public void Solve(Matrix<double> a, Vector<double> b, Vector<double> result)
       {
-        IMatrix<double> work = new JaggedArrayMatrix(a.RowCount, a.ColumnCount);
-        _decomposition = MatrixMath.GetSingularValueDecomposition(a, work);
-        _decomposition.Backsubstitution(b, result);
+        a.Svd().Solve(b,result);
       }
 
       #endregion IDynamicParameterEstimationSolver Members
@@ -604,30 +604,22 @@ namespace Altaxo.Calc.Regression
     {
       #region IDynamicParameterEstimationSolver Members
 
-      public void Solve(JaggedArrayMatrix a, IReadOnlyList<double> b, IVector<double> result)
+      public void Solve(Matrix<double> a, Vector<double> b, Vector<double> result)
       {
-        var outputMatrix = new JaggedArrayMatrix(a.ColumnCount, a.ColumnCount);
-        JaggedArrayMath.MultiplyFirstTransposedWithItself(a.Array, a.RowCount, a.ColumnCount, outputMatrix.Array, outputMatrix.RowCount, outputMatrix.ColumnCount);
-
-        var decomp = new DoubleLUDecomp(outputMatrix);
-        decomp.Compute();
-
-        double[] ycov = new double[a.ColumnCount];
-        MatrixMath.MultiplyFirstTransposed(a, b, VectorMath.ToVector(ycov));
-
-        DoubleVector dresult = decomp.Solve(VectorMath.ToROVector(ycov));
-        for (int i = 0; i < result.Length; i++)
-          result[i] = dresult[i];
+        var outputMatrix = a.TransposeThisAndMultiply(a);
+        var ycov = a.TransposeThisAndMultiply(b);
+        var decomp = outputMatrix.LU();
+        decomp.Solve(ycov, result);
       }
 
       #endregion IDynamicParameterEstimationSolver Members
     }
 
-    private class DpeQRSolver : QRDecomposition, IDynamicParameterEstimationSolver
+    private class DpeQRSolver : IDynamicParameterEstimationSolver
     {
-      public void Solve(JaggedArrayMatrix a, IReadOnlyList<double> b, IVector<double> result)
+      public void Solve(Matrix<double> a, Vector<double> b, Vector<double> result)
       {
-        base.Solve(a, b, result);
+        a.QR().Solve(b, result);
       }
     }
 
@@ -721,11 +713,11 @@ namespace Altaxo.Calc.Regression
       }
     }
 
-    protected override JaggedArrayMatrix FillInputMatrix(IReadOnlyList<double>? x, IReadOnlyList<double> y, JaggedArrayMatrix? M)
+    protected override Matrix<double> FillInputMatrix(IReadOnlyList<double>? x, IReadOnlyList<double> y, Matrix<double>? M)
     {
       int numberOfData = CalculateNumberOfData(x, y);
       if (M is null || M.RowCount != numberOfData || M.ColumnCount != _numberOfParameter)
-        M = new JaggedArrayMatrix(numberOfData, _numberOfParameter);
+        M = CreateMatrix.Dense<double>(numberOfData, _numberOfParameter);
 
       // Fill the matrix
       for (int i = 0; i < numberOfData; i++)
@@ -800,7 +792,7 @@ namespace Altaxo.Calc.Regression
 
       int currXcountIdx = -1;
       int sumXcount = 0;
-      for (int i = 0; i < output.Length; i++)
+      for (int i = 0; i < output.Count; i++)
       {
         double sum = 0;
         int ioffs = i - _offsetX;
@@ -830,21 +822,21 @@ namespace Altaxo.Calc.Regression
       }
     }
 
-    public override Complex GetFrequencyResponse(double fdt)
+    public override Complex64T GetFrequencyResponse(double fdt)
     {
       double w = fdt * 2 * Math.PI;
-      var nom = new Complex();
+      var nom = new Complex64T();
       for (int i = 0, j = 0; i < _numX; i++)
       {
         for (int k = _xcount[i]; k > 0; --k, ++j)
-          nom += Complex.FromModulusArgument(_parameter[i], -j * w);
+          nom += Complex64T.FromPolarCoordinates(_parameter[i], -j * w);
       }
 
-      var denom = new Complex();
+      var denom = new Complex64T();
       for (int i = 0, j = 0; i < _numY; i++)
       {
         for (int k = _ycount[i]; k > 0; --k, ++j)
-          denom += Complex.FromModulusArgument(_parameter[_numX + i], -(j + 1) * w);
+          denom += Complex64T.FromPolarCoordinates(_parameter[_numX + i], -(j + 1) * w);
       }
 
       return nom / (1 - denom);
@@ -1119,11 +1111,11 @@ namespace Altaxo.Calc.Regression
         _startingPoint = Math.Max(_startingPoint, 1 + (_numY - 1) * _ySpacing);
     }
 
-    protected override JaggedArrayMatrix FillInputMatrix(IReadOnlyList<double>? x, IReadOnlyList<double> y, JaggedArrayMatrix? M)
+    protected override Matrix<double> FillInputMatrix(IReadOnlyList<double>? x, IReadOnlyList<double> y, Matrix<double>? M)
     {
       int numberOfData = CalculateNumberOfData(x, y);
       if (M is null || M.RowCount != numberOfData || M.ColumnCount != _numberOfParameter)
-        M = new JaggedArrayMatrix(numberOfData, _numberOfParameter);
+        M = CreateMatrix.Dense<double>(numberOfData, _numberOfParameter);
 
       // Fill the matrix
       for (int i = 0; i < numberOfData; i++)
@@ -1166,7 +1158,7 @@ namespace Altaxo.Calc.Regression
       for (int i = 0; i < y.Length; i++)
         y[i] = yValueBeforePulse;
 
-      for (int i = 0; i < output.Length; i++)
+      for (int i = 0; i < output.Count; i++)
       {
         double sum = 0;
 
@@ -1188,19 +1180,19 @@ namespace Altaxo.Calc.Regression
       }
     }
 
-    public override Complex GetFrequencyResponse(double fdt)
+    public override Complex64T GetFrequencyResponse(double fdt)
     {
       double w = fdt * 2 * Math.PI;
-      var nom = new Complex();
+      var nom = new Complex64T();
       for (int i = 0; i < _numX; i++)
       {
-        nom += Complex.FromModulusArgument(_parameter[i], -i * _xSpacing * w);
+        nom += Complex64T.FromPolarCoordinates(_parameter[i], -i * _xSpacing * w);
       }
 
-      var denom = new Complex();
+      var denom = new Complex64T();
       for (int i = 0; i < _numY; i++)
       {
-        denom += Complex.FromModulusArgument(_parameter[_numX + i], -(1 + i * _ySpacing) * w);
+        denom += Complex64T.FromPolarCoordinates(_parameter[_numX + i], -(1 + i * _ySpacing) * w);
       }
 
       return nom / (1 - denom);
@@ -1269,11 +1261,11 @@ namespace Altaxo.Calc.Regression
         _startingPoint = Math.Max(_startingPoint, _maxYBin);
     }
 
-    protected override JaggedArrayMatrix FillInputMatrix(IReadOnlyList<double>? x, IReadOnlyList<double> y, JaggedArrayMatrix? M)
+    protected override Matrix<double> FillInputMatrix(IReadOnlyList<double>? x, IReadOnlyList<double> y, Matrix<double>? M)
     {
       int numberOfData = CalculateNumberOfData(x, y);
       if (M is null || M.RowCount != numberOfData || M.ColumnCount != _numberOfParameter)
-        M = new JaggedArrayMatrix(numberOfData, _numberOfParameter);
+        M = CreateMatrix.Dense<double>(numberOfData, _numberOfParameter);
 
       // Fill the matrix
       for (int i = 0; i < numberOfData; ++i)
@@ -1313,19 +1305,19 @@ namespace Altaxo.Calc.Regression
       throw new NotImplementedException("Getting the transfer function doesn't make much sense here, since the bins can be non-continuous. The purpose of this class is mainly to get the frequency response.");
     }
 
-    public override Complex GetFrequencyResponse(double fdt)
+    public override Complex64T GetFrequencyResponse(double fdt)
     {
       double w = fdt * 2 * Math.PI;
-      var nom = new Complex();
+      var nom = new Complex64T();
       for (int i = 0; i < _numX; i++)
       {
-        nom += Complex.FromModulusArgument(_parameter[i], -w * _xBins[i]);
+        nom += Complex64T.FromPolarCoordinates(_parameter[i], -w * _xBins[i]);
       }
 
-      var denom = new Complex();
+      var denom = new Complex64T();
       for (int i = 0; i < _numY; i++)
       {
-        denom += Complex.FromModulusArgument(_parameter[_numX + i], -w * _yBins[i]);
+        denom += Complex64T.FromPolarCoordinates(_parameter[_numX + i], -w * _yBins[i]);
       }
 
       return nom / (1 - denom);

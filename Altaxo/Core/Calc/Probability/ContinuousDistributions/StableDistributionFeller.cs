@@ -25,6 +25,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Complex64T = System.Numerics.Complex;
 
 namespace Altaxo.Calc.Probability
 {
@@ -1330,23 +1331,23 @@ namespace Altaxo.Calc.Probability
 
     public static double PDFAlphaEqualOne(double x, double alpha, double gamma, double aga)
     {
-      Complex expIgPi2;
+      Complex64T expIgPi2;
 
       if (aga < 0.5)
       {
         double agaPi2 = aga * 0.5 * Math.PI; // Note: we can use aga here because alpha==1
         if (gamma < 0)
-          expIgPi2 = Complex.FromRealImaginary(Math.Sin(agaPi2), -Math.Cos(agaPi2));
+          expIgPi2 = new Complex64T(Math.Sin(agaPi2), -Math.Cos(agaPi2));
         else
-          expIgPi2 = Complex.FromRealImaginary(Math.Sin(agaPi2), Math.Cos(agaPi2));
+          expIgPi2 = new Complex64T(Math.Sin(agaPi2), Math.Cos(agaPi2));
       }
       else
       {
         double gammaPi2 = gamma * 0.5 * Math.PI;
-        expIgPi2 = Complex.FromRealImaginary(Math.Cos(gammaPi2), Math.Sin(gammaPi2));
+        expIgPi2 = new Complex64T(Math.Cos(gammaPi2), Math.Sin(gammaPi2));
       }
-      Complex term0 = 1 / (expIgPi2 + Complex.FromRealImaginary(0, x));
-      return term0.Re / Math.PI;
+      Complex64T term0 = 1 / (expIgPi2 + new Complex64T(0, x));
+      return term0.Real / Math.PI;
     }
 
     public static double PDFTaylorExpansionAroundAlphaOne(double x, double alpha, double gamma, double aga)
@@ -1357,37 +1358,37 @@ namespace Altaxo.Calc.Probability
       const double Zeta3 = 1.202056903159594285399738; // Zeta[3]
       const double SQR_PI = Math.PI * Math.PI;
 
-      // Note: it is much much easier to calculate with Complex numbers than to try to take only the real part
-      Complex expIgPi2 = ComplexMath.Exp(Complex.I * (Math.PI * gamma * 0.5));
-      Complex log_expix = ComplexMath.Log(expIgPi2 + Complex.I * x);
+      // Note: it is much much easier to calculate with Complex64T numbers than to try to take only the real part
+      Complex64T expIgPi2 = Complex64T.Exp(Complex64T.ImaginaryOne * (Math.PI * gamma * 0.5));
+      Complex64T log_expix = Complex64T.Log(expIgPi2 + Complex64T.ImaginaryOne * x);
 
-      Complex term0, term1, term2, term3;
+      Complex64T term0, term1, term2, term3;
 
       // Note: the termp exp_i_pi_g/2 is common to all terms, we use it later on
 
-      term0 = 1 / (expIgPi2 + Complex.I * x);
+      term0 = 1 / (expIgPi2 + Complex64T.ImaginaryOne * x);
 
-      term1 = (expIgPi2 * (-1 + EulerGamma + log_expix)) / ComplexMath.Pow(expIgPi2 + Complex.I * x, 2);
+      term1 = (expIgPi2 * (-1 + EulerGamma + log_expix)) / Complex64T.Pow(expIgPi2 + Complex64T.ImaginaryOne * x, 2);
 
-      term2 = (expIgPi2 * (expIgPi2 * (12 + 6 * (-4 + EulerGamma) * EulerGamma + SQR_PI) - Complex.I * (6 * (-2 + EulerGamma) * EulerGamma + SQR_PI) * x +
-       6 * log_expix * (2 * (-2 + EulerGamma) * expIgPi2 - Complex.FromRealImaginary(0, 2) * (-1 + EulerGamma) * x +
-          (expIgPi2 - Complex.I * x) * log_expix))) / (12 * ComplexMath.Pow(expIgPi2 + Complex.I * x, 3));
+      term2 = (expIgPi2 * (expIgPi2 * (12 + 6 * (-4 + EulerGamma) * EulerGamma + SQR_PI) - Complex64T.ImaginaryOne * (6 * (-2 + EulerGamma) * EulerGamma + SQR_PI) * x +
+       6 * log_expix * (2 * (-2 + EulerGamma) * expIgPi2 - new Complex64T(0, 2) * (-1 + EulerGamma) * x +
+          (expIgPi2 - Complex64T.ImaginaryOne * x) * log_expix))) / (12 * Complex64T.Pow(expIgPi2 + Complex64T.ImaginaryOne * x, 3));
 
       term3 = (expIgPi2 * (((expIgPi2 * expIgPi2) * (36 + 6 * (-6 + EulerGamma) * EulerGamma + SQR_PI) -
-          Complex.FromRealImaginary(0, 4) * expIgPi2 * (9 + 3 * EulerGamma * (-7 + 2 * EulerGamma) + SQR_PI) * x - (6 * (-2 + EulerGamma) * EulerGamma + SQR_PI) * RMath.Pow2(x)) *
-        log_expix + 6 * ((-3 + EulerGamma) * ComplexMath.Pow2(expIgPi2) - Complex.I * (-7 + 4 * EulerGamma) * expIgPi2 * x -
-          (-1 + EulerGamma) * RMath.Pow2(x)) * ComplexMath.Pow2(log_expix) +
-       2 * (ComplexMath.Pow2(expIgPi2) - Complex.FromRealImaginary(0, 4) * expIgPi2 * x - RMath.Pow2(x)) * ComplexMath.Pow3(log_expix) +
+          new Complex64T(0, 4) * expIgPi2 * (9 + 3 * EulerGamma * (-7 + 2 * EulerGamma) + SQR_PI) * x - (6 * (-2 + EulerGamma) * EulerGamma + SQR_PI) * RMath.Pow2(x)) *
+        log_expix + 6 * ((-3 + EulerGamma) * (expIgPi2).Pow2() - Complex64T.ImaginaryOne * (-7 + 4 * EulerGamma) * expIgPi2 * x -
+          (-1 + EulerGamma) * RMath.Pow2(x)) * (log_expix).Pow2() +
+       2 * ((expIgPi2).Pow2() - new Complex64T(0, 4) * expIgPi2 * x - RMath.Pow2(x)) * (log_expix).Pow3() +
        RMath.Pow2(x) * (SQR_PI - EulerGamma * (2 * (-3 + EulerGamma) * EulerGamma + SQR_PI) - 4 * Zeta3) +
-       ComplexMath.Pow2(expIgPi2) * (-3 * (4 + SQR_PI) + EulerGamma * (36 + 2 * (-9 + EulerGamma) * EulerGamma + SQR_PI) + 4 * Zeta3) -
-       Complex.I * expIgPi2 * x * (-7 * SQR_PI + 2 * EulerGamma * (EulerGamma * (-21 + 4 * EulerGamma) + 2 * (9 + SQR_PI)) + 16 * Zeta3))) /
-        (12 * ComplexMath.Pow(expIgPi2 + Complex.I * x, 4));
+       (expIgPi2).Pow2() * (-3 * (4 + SQR_PI) + EulerGamma * (36 + 2 * (-9 + EulerGamma) * EulerGamma + SQR_PI) + 4 * Zeta3) -
+       Complex64T.ImaginaryOne * expIgPi2 * x * (-7 * SQR_PI + 2 * EulerGamma * (EulerGamma * (-21 + 4 * EulerGamma) + 2 * (9 + SQR_PI)) + 16 * Zeta3))) /
+        (12 * Complex64T.Pow(expIgPi2 + Complex64T.ImaginaryOne * x, 4));
 
       double am1 = alpha - 1;
-      Complex result = ((term3 * am1 + term2) * am1 + term1) * am1 + term0;
+      Complex64T result = ((term3 * am1 + term2) * am1 + term1) * am1 + term0;
       result /= Math.PI;
 
-      return result.Re;
+      return result.Real;
     }
 
     #endregion Taylor series around alpha=1

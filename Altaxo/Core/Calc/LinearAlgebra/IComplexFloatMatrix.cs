@@ -23,16 +23,18 @@
 #endregion Copyright
 
 using System;
+using Complex32T = Altaxo.Calc.Complex32;
+
 
 namespace Altaxo.Calc.LinearAlgebra
 {
   /// <summary>
-  /// IROMatrix represents a read-only matrix of <see cref="ComplexFloat" /> values.
+  /// IROMatrix represents a read-only matrix of <see cref="Complex32T" /> values.
   /// </summary>
   public interface IROComplexFloatMatrix
   {
     /// <summary>Gets an element of the matrix at (row, col).</summary>
-    ComplexFloat this[int row, int col] { get; }
+    Complex32T this[int row, int col] { get; }
 
     /// <summary>The number of rows of the matrix.</summary>
     int Rows { get; }
@@ -42,12 +44,12 @@ namespace Altaxo.Calc.LinearAlgebra
   }
 
   /// <summary>
-  /// Represents the simplest form of a 2D matrix of <see cref="ComplexFloat" /> values, which is readable and writeable.
+  /// Represents the simplest form of a 2D matrix of <see cref="Complex32T" /> values, which is readable and writeable.
   /// </summary>
   public interface IComplexFloatMatrix : IROComplexFloatMatrix
   {
     /// <summary>Get / sets an element of the matrix at (row, col).</summary>
-    new ComplexFloat this[int row, int col] { get; set; }
+    new Complex32T this[int row, int col] { get; set; }
   }
 
   /// <summary>
