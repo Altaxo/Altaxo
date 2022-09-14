@@ -227,15 +227,6 @@ namespace Altaxo.Calc.Regression.Nonlinear
       {
         return _parameter;
       }
-      set
-      {
-        if (value is null)
-          throw new ArgumentNullException(nameof(Parameter));
-        if (_parameter is not null && value.Length != _parameter.Length)
-          throw new ArgumentException($"New parameter array length of {value.Length} does not match old length {_parameter.Length}", nameof(Parameter));
-
-        _parameter = value;
-      }
     }
 
     public double[] X

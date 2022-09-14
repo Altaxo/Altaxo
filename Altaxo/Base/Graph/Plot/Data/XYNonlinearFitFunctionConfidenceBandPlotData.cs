@@ -31,7 +31,6 @@ using System.Linq;
 namespace Altaxo.Graph.Plot.Data
 {
   using System.Diagnostics.CodeAnalysis;
-  using Altaxo.Calc.LinearAlgebra;
   using Altaxo.Calc.Regression.Nonlinear;
   using Altaxo.Data;
   using Altaxo.Graph.Gdi;
@@ -333,30 +332,6 @@ namespace Altaxo.Graph.Plot.Data
       CreateCachedMembers();
       // covariance matrix must be cloned after CreateCachedMembers, because it's allocated there
       _covarianceMatrix = (double[,])from._covarianceMatrix.Clone();
-    }
-
-    public void SetNewParameter(IReadOnlyList<double> parameters, IReadOnlyList<double> variances, IROMatrix<double> covarianceMatrix)
-    {
-      if (parameters is null)
-        throw new ArgumentNullException(nameof(parameters));
-      if (parameters.Count != _fitDocument.CurrentParameters.Count)
-        throw new ArgumentException($"Length of parameters {parameters.Count} does not match current count of fit parameters {_fitDocument.CurrentParameters.Count}", nameof(parameters));
-
-      for (int i = 0; i < parameters.Count; i++)
-      {
-        _fitDocument.CurrentParameters[i].Parameter = parameters[i];
-        _cachedParameters[i] = parameters[i];
-
-        if (variances is not null)
-          _fitDocument.CurrentParameters[i].Variance = variances[i];
-      }
-
-      if(covarianceMatrix is { } cv)
-      {
-        for(int r=0;r<cv.RowCount;++r)
-          for(int c=0;c<cv.RowCount;++c)
-            _covarianceMatrix[r,c] = cv[r,c];
-      }
     }
 
     public override bool CopyFrom(object obj)

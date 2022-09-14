@@ -28,9 +28,7 @@ using System.Drawing;
 
 namespace Altaxo.Graph.Plot.Data
 {
-  using System.Collections.Generic;
   using System.Diagnostics.CodeAnalysis;
-  using System.Linq;
   using Altaxo.Calc.Regression.Nonlinear;
   using Altaxo.Data;
   using Altaxo.Main;
@@ -195,27 +193,6 @@ namespace Altaxo.Graph.Plot.Data
       get
       {
         return (NonlinearFitDocument)_fitDocument.Clone();
-      }
-    }
-
-    public void SetNewParameter(IReadOnlyList<double> parameters, IReadOnlyList<double> variances)
-    {
-      if (parameters is null)
-        throw new ArgumentNullException(nameof(parameters));
-      if (parameters.Count != _fitDocument.CurrentParameters.Count)
-        throw new ArgumentException($"Length of parameters {parameters.Count} does not match current count of fit parameters {_fitDocument.CurrentParameters.Count}", nameof(parameters));
-
-      for (int i = 0; i < parameters.Count; i++)
-      {
-        _fitDocument.CurrentParameters[i].Parameter = parameters[i];
-
-        if (variances is not null)
-          _fitDocument.CurrentParameters[i].Variance = variances[i];
-      }
-
-      if(Function is FitFunctionToScalarFunctionDDWrapper ff)
-      {
-        ff.Parameter = parameters.ToArray();
       }
     }
 
