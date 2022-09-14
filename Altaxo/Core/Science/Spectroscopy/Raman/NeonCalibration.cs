@@ -839,14 +839,11 @@ namespace Altaxo.Science.Spectroscopy.Raman
     public void CreateSpectrumWithNanometerXAxis(NeonCalibrationOptions options, double[] x, double[] y, CancellationToken cancellationToken)
     {
       var tolWL = options.Wavelength_Tolerance_nm;
-      var x_nm_full = _xOriginal_nm = new double[x.Length];
+      _xOriginal_nm = new double[x.Length];
       _assumedLaserWavelength_nm = options.LaserWavelength_Nanometer;
-      ConvertXAxisToNanometer(options, x, x_nm_full);
-      Array.Sort(x_nm_full, y); // Sort x-axis ascending
-      CheckXAxisReasonability(x_nm_full, "unpreprocessed");
-
-      var peakOptions = options.PeakFindingOptions;
-
+      ConvertXAxisToNanometer(options, x, _xOriginal_nm);
+      Array.Sort(_xOriginal_nm); // Sort x-axis ascending
+      CheckXAxisReasonability(_xOriginal_nm, "unpreprocessed");
 
       // Attention, speciality! The preprocessing step is done with the original x-axis
       // otherwise, it would be hard, for instance, to chose cropping options etc. because the user does not know about the nanometer axis
@@ -855,6 +852,7 @@ namespace Altaxo.Science.Spectroscopy.Raman
       (x_preprocessed, y_preprocessed, regions) = options.PeakFindingOptions.Preprocessing.Execute(x, y, null);
       var x_nm_preprocessed = new double[x_preprocessed.Length];
       ConvertXAxisToNanometer(options, x_preprocessed, x_nm_preprocessed);
+      Array.Sort(x_nm_preprocessed, y_preprocessed); // TODO regions should be included in the sort!!!
       _xPreprocessed_nm = x_nm_preprocessed;
       _yPreprocessed = y_preprocessed;
       _regionsPreprocessed = regions;
