@@ -85,7 +85,7 @@ namespace Altaxo.Calc.Interpolation
     /// <inheritdoc/>
     public IInterpolationFunction Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec, IReadOnlyList<double>? yStdDev = null)
     {
-      var spline = new SmoothingCubicSpline() { Smoothness = Smoothness, ErrorStandardDeviation =  _errorStandardDeviation };
+      var spline = new SmoothingCubicSpline() { Smoothness = Smoothness, ErrorStandardDeviation =  _errorStandardDeviation, CombineNeighbouringPoints=true, };
       if (yStdDev is null)
         spline.Interpolate(xvec, yvec);
       else

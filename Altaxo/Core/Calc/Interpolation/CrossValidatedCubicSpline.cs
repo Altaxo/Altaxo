@@ -86,14 +86,19 @@ namespace Altaxo.Calc.Interpolation
         var stddevScaleFactor = ErrorStandardDeviation > 0 ? ErrorStandardDeviation : 1;
         var spline = new CrossValidatedCubicSpline()
         {
-          ErrorStandardDeviation =1 // has no effect, because this parameter is given below
+          ErrorStandardDeviation =1, // has no effect, because this parameter is given below
+          CombineNeighbouringPoints = true,
         };
         spline.Interpolate(xvec, yvec, stddevScaleFactor, yStdDev);
         return spline;
       }
       else
       {
-        var spline = new CrossValidatedCubicSpline() { ErrorStandardDeviation = ErrorStandardDeviation };
+        var spline = new CrossValidatedCubicSpline()
+        {
+          ErrorStandardDeviation = ErrorStandardDeviation,
+          CombineNeighbouringPoints=true
+        };
         spline.Interpolate(xvec, yvec);
         return spline;
       }
