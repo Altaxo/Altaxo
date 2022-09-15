@@ -62,6 +62,6 @@ Control.Describe now includes CPU architecture and family identifier if know</Pa
       <PackageReference Include="MathNet.Numerics.MKL.Win" Version="3.0.0" />
     </ItemGroup>
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="IF NOT EXIST $(SolutionDir)rt$(TargetFrameworkSubdir)\bin mkdir $(SolutionDir)rt$(TargetFrameworkSubdir)\bin&#xD;&#xA;copy $(TargetDir)AltaxoCore.Providers.MKL.* $(SolutionDir)rt$(TargetFrameworkSubdir)\bin\&#xD;&#xA;xcopy $(TargetDir)runtimes $(SolutionDir)rt$(TargetFrameworkSubdir)\bin\runtimes /S /I&#xD;&#xA;" />
+    <Exec Command="IF NOT EXIST $(SolutionDir)rt$(TargetFrameworkSubdir)\bin mkdir $(SolutionDir)rt$(TargetFrameworkSubdir)\bin&#xD;&#xA;copy $(TargetDir)AltaxoCore.Providers.MKL.* $(SolutionDir)rt$(TargetFrameworkSubdir)\bin\&#xD;&#xA;xcopy $(TargetDir)runtimes $(SolutionDir)rt$(TargetFrameworkSubdir)\bin\runtimes /S /I /Y&#xD;&#xA;" />
   </Target>
 </Project>
