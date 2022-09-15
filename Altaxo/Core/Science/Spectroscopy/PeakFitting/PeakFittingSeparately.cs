@@ -141,9 +141,33 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
         Array.Copy(yArray, first, yCut, 0, len);
 
         var xPosition = RMath.InterpolateLinear(description.PositionIndex, xArray);
-        var xWidth = Math.Abs(RMath.InterpolateLinear(description.PositionIndex + 0.5 * description.Width, xArray) -
-                              RMath.InterpolateLinear(description.PositionIndex - 0.5 * description.Width, xArray)
-                             );
+
+        double xWidth;
+        var rightIdx = description.PositionIndex + 0.5 * description.Width;
+        var leftIdx = description.PositionIndex - 0.5 * description.Width;
+        if (0 <= rightIdx && rightIdx < xArray.Length &&
+           0 <= leftIdx && leftIdx < xArray.Length)
+        {
+          xWidth = Math.Abs(RMath.InterpolateLinear(rightIdx, xArray) -
+                                RMath.InterpolateLinear(leftIdx, xArray)
+                               );
+        }
+        else if (0 <= rightIdx && rightIdx < xArray.Length)
+        {
+          xWidth = 2 * Math.Abs(RMath.InterpolateLinear(rightIdx, xArray) -
+                                RMath.InterpolateLinear(description.PositionIndex, xArray)
+                               );
+        }
+        else if (0 <= leftIdx && leftIdx < xArray.Length)
+        {
+          xWidth = 2 * Math.Abs(RMath.InterpolateLinear(description.PositionIndex, xArray) -
+                                RMath.InterpolateLinear(leftIdx, xArray)
+                               );
+        }
+        else
+        {
+          continue;
+        }
 
 
 
