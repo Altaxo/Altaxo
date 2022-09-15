@@ -183,7 +183,12 @@ namespace Altaxo.Science.Spectroscopy
 
     public (double[] x, double[] y, int[]? regions) Execute(double[] x, double[] y, int[]? regions)
     {
-      foreach(var processor in GetProcessorElements())
+      if (regions is null || regions.Length == 0)
+      {
+        System.Array.Sort(x, y);
+      }
+
+      foreach (var processor in GetProcessorElements())
       {
         (x, y, regions) = processor.Execute(x, y, regions);
       }
