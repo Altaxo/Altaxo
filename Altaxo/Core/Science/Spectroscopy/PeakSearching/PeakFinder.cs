@@ -190,7 +190,7 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
       _distance = value;
       return this;
     }
-   
+
     object? _prominence;
 
     /// <summary>
@@ -576,7 +576,7 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
     {
       get
       {
-        CheckExecuted(); return _warnings; 
+        CheckExecuted(); return _warnings;
       }
     }
 
@@ -809,7 +809,7 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
         {
           _warnings = string.IsNullOrEmpty(_warnings) ? warnings : _warnings + "\r\n" + warnings;
         }
-        
+
 
         // Evaluate width condition
         var (wmin, wmax) = _unpack_condition_args(width, x, peaks);
@@ -1000,7 +1000,7 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
       {
         imin = VectorMath.GetConstantVector(dV, x.Length);
       }
-      else if(interval is null)
+      else if (interval is null)
       {
 
       }
@@ -1108,7 +1108,7 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
           rightedges.Add(i_ahead - 1);
           midpoints.Add((i + i_ahead - 1) / 2);
           // Skip samples that can't be maximum
-          i = i_ahead;
+          i = Math.Max(i, i_ahead);
         }
         ++i;
       }
