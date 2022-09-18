@@ -31,7 +31,6 @@ using Altaxo.Calc.Regression.Multivariate;
 using Altaxo.Collections;
 using Altaxo.Data;
 using Altaxo.Drawing;
-using Altaxo.Graph;
 using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Gdi.Background;
 using Altaxo.Graph.Gdi.Plot;
@@ -385,8 +384,65 @@ namespace Altaxo.Worksheet.Commands.Analysis
     }
     */
 
+    /// <summary>
+    /// Checks the selected columns for use with multivariate analysis.
+    /// </summary>
+    /// <param name="ctrl">The worksheet controller.</param>
+    /// <returns>True if the selected columns seem appropriate for multivariate analysis; otherwise, false.</returns>
+    public static bool CheckSelectedColumnsShowErrorMessageBox(IWorksheetController ctrl)
+    {
+      // Check that a target variable is chosen
+      if (ctrl.SelectedPropertyColumns.Count == 0)
+      {
+        Current.Gui.ErrorMessageBox("Please select at least one property column with the target variables (e.g. concentration).");
+        return false;
+      }
+      // Check that all selected target variables are numeric
+      foreach (var idx in ctrl.SelectedPropertyColumns)
+      {
+        var pc = ctrl.DataTable.PropertyColumns[idx];
+        if (pc is not INumericColumn)
+        {
+          Current.Gui.ErrorMessageBox($"All target variables need to be numeric, but property column '{ctrl.DataTable.PropertyColumns.GetColumnName(idx)} is not numeric.");
+        }
+      }
+
+      // Check that there are at least 2 spectral columns
+      if (ctrl.SelectedDataColumns.Count < 2)
+      {
+        Current.Gui.ErrorMessageBox("Please select at least 2 data columns as spectral columns.");
+        return false;
+      }
+      // Check that all columns belong to the same group, that all are numeric, and not of kind x-column
+      int groupNumber = ctrl.DataTable.DataColumns.GetColumnGroup(ctrl.SelectedDataColumns[0]);
+      foreach (var idx in ctrl.SelectedDataColumns)
+      {
+        var dc = ctrl.DataTable.DataColumns[idx];
+        if (dc is not INumericColumn)
+        {
+          Current.Gui.ErrorMessageBox($"All spectral columns need to be numeric, but data column '{ctrl.DataTable.DataColumns.GetColumnName(idx)}' is not numeric.");
+          return false;
+        }
+        if (ctrl.DataTable.DataColumns.GetColumnKind(idx) == ColumnKind.X)
+        {
+          Current.Gui.ErrorMessageBox($"The data column '{ctrl.DataTable.DataColumns.GetColumnName(idx)}' is an x-column. Please unselect the x-column.");
+          return false;
+        }
+        if (ctrl.DataTable.DataColumns.GetColumnGroup(idx) != groupNumber)
+        {
+          Current.Gui.ErrorMessageBox($"All data columns need to belong to the same group, but data column '{ctrl.DataTable.DataColumns.GetColumnName(idx)}' has a different group number than the first selected column.");
+          return false;
+        }
+      }
+
+      return true;
+    }
+
     public static void PLSOnColumns(IWorksheetController ctrl)
     {
+      if (false == CheckSelectedColumnsShowErrorMessageBox(ctrl))
+        return;
+
       if (!QuestPLSAnalysisOptions(out var options))
         return;
 
@@ -404,7 +460,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
     /// <param name="ctrl">The worksheet controller containing the selected data.</param>
     public static void PredictOnColumns(IWorksheetController ctrl)
     {
-      
+
       if (false == QuestCalibrationModelAndDestinationTable(out var modelName, out var destName) || modelName is null)
         return; // Cancelled by user
 
@@ -416,7 +472,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
       if (destTable is null)
         throw new ArgumentNullException(nameof(destTable));
 
-      var (preferredNumberOfFactors, _) =  GetPreferredNumberOfFactorsAndNumberOfConcentrations(modelTable);
+      var (preferredNumberOfFactors, _) = GetPreferredNumberOfFactorsAndNumberOfConcentrations(modelTable);
       if (preferredNumberOfFactors < 0)
         return;
 
@@ -498,7 +554,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
     public static WorksheetAnalysis GetAnalysis(DataTable table)
     {
-      if(!IsDimensionReductionAndRegressionModel(table, out var dataSource))
+      if (!IsDimensionReductionAndRegressionModel(table, out var dataSource))
         throw new ArgumentException("Table does not contain an multivariate analysis");
 
       return dataSource.ProcessOptions.WorksheetAnalysis;
@@ -508,9 +564,9 @@ namespace Altaxo.Worksheet.Commands.Analysis
     {
       var o = new DimensionReductionAndRegressionOptions();
       var controller = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { o }, typeof(IMVCANController));
-      if(true == Current.Gui.ShowDialog(controller,"Start analysis"))
+      if (true == Current.Gui.ShowDialog(controller, "Start analysis"))
       {
-        options =(DimensionReductionAndRegressionOptions)controller.ModelObject;
+        options = (DimensionReductionAndRegressionOptions)controller.ModelObject;
         return true;
       }
       else
@@ -534,7 +590,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
       if (Current.Gui.ShowDialog(ctrl, "Select model and calibration table"))
       {
         var (calibrationTable, destinationTable) = (CalibrationAndDestinationTable)ctrl.ModelObject;
-        if(calibrationTable is null)
+        if (calibrationTable is null)
         {
           modelTableName = null;
           destinationTableName = null;
@@ -765,7 +821,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
       layer.DefaultYAxisTitleString = string.Format("Y cross predicted{0} (#factors:{1})", whichY, numberOfFactors);
     }
 
-    private static bool  IsDimensionReductionAndRegressionModel(Altaxo.Data.DataTable table, out DimensionReductionAndRegressionDataSource dataSource)
+    private static bool IsDimensionReductionAndRegressionModel(Altaxo.Data.DataTable table, out DimensionReductionAndRegressionDataSource dataSource)
     {
       dataSource = table.DataSource as DimensionReductionAndRegressionDataSource;
       return dataSource is not null;
@@ -900,7 +956,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
     {
       if (!IsDimensionReductionAndRegressionModel(table, out var dsource))
         return;
-        PlotCrossPredictedVersusActualY(table, dsource, allowGuiForMessages);
+      PlotCrossPredictedVersusActualY(table, dsource, allowGuiForMessages);
     }
 
     /// <summary>
@@ -924,7 +980,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
     }
 
 
-   
+
 
     /// <summary>
     /// Plots the x (spectral) residuals of all spectra invidually in a graph.
