@@ -22,14 +22,13 @@
 
 #endregion Copyright
 
-
 namespace Altaxo.Science.Spectroscopy.Normalization
 {
   /// <summary>
   /// Executes area normalization : y' = (y-min)/(mean), in which min and mean are the minimal and the mean values of the array.
   /// </summary>
   /// <seealso cref="Altaxo.Science.Spectroscopy.Normalization.INormalization" />
-  public class NormalizationArea : INormalization
+  public record NormalizationArea : INormalization
   {
     #region Serialization
 

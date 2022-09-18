@@ -22,10 +22,9 @@
 
 #endregion Copyright
 
-
 namespace Altaxo.Science.Spectroscopy.Normalization
 {
-  public class NormalizationNone : INormalization
+  public record NormalizationNone : INormalization
   {
     #region Serialization
 

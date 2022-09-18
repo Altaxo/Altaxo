@@ -22,14 +22,13 @@
 
 #endregion Copyright
 
-
 namespace Altaxo.Science.Spectroscopy.Normalization
 {
   /// <summary>
   /// Executes SNV (standard  normal variate) normalization : y' = (y-mean)/(std), in which meam and std are the mean value and the standard deviation of the array values.
   /// </summary>
   /// <seealso cref="Altaxo.Science.Spectroscopy.Normalization.INormalization" />
-  public class NormalizationStandardNormalVariate : INormalization
+  public record NormalizationStandardNormalVariate : INormalization
   {
     #region Serialization
 

@@ -30,7 +30,7 @@ namespace Altaxo.Science.Spectroscopy.Normalization
   /// Executes min-max normalization : y' = (y-min)/(max-min), in which min and max are the minimal and maximal values of the array.
   /// </summary>
   /// <seealso cref="Altaxo.Science.Spectroscopy.Normalization.INormalization" />
-  public class NormalizationMinMax : INormalization
+  public record NormalizationMinMax : INormalization
   {
     #region Serialization
 

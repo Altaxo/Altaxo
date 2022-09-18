@@ -23,8 +23,6 @@
 #endregion Copyright
 
 using System;
-using System.Linq;
-using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Science.Spectroscopy.Normalization
 {
@@ -32,7 +30,7 @@ namespace Altaxo.Science.Spectroscopy.Normalization
   /// Executes vector normalization : y' = (y)/(norm), in which norm is the L2 norm of the array.
   /// </summary>
   /// <seealso cref="Altaxo.Science.Spectroscopy.Normalization.INormalization" />
-  public class NormalizationVector : INormalization
+  public record NormalizationVector : INormalization
   {
     #region Serialization
 
@@ -61,7 +59,7 @@ namespace Altaxo.Science.Spectroscopy.Normalization
         {
           sums += y[i] * y[i];
         }
-        var delta = Math.Sqrt(sums/(end - start));
+        var delta = Math.Sqrt(sums / (end - start));
 
         for (int i = start; i < end; ++i)
         {
