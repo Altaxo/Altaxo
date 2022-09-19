@@ -1,25 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Regression.Nonlinear
 {
   public class QuickNonlinearRegression
   {
-    IFitFunction _fitFunction;
+    protected IFitFunction _fitFunction;
 
-    double _sumChiSquare;
-    double _sigmaSquare;
+    protected double _sumChiSquare;
+    protected double _sigmaSquare;
 
-    double[] _parameters = new double[0];
-    double[] _parameterVariances = new double[0];
-    IROMatrix<double>? _covariances;
+    protected double[] _parameters = new double[0];
+    protected double[] _parameterVariances = new double[0];
+    protected IROMatrix<double>? _covariances;
 
-    bool _isExecuted;
+    protected bool _isExecuted;
 
     void CheckExecuted()
     {
@@ -89,7 +87,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
       return Fit(xValues, yValues, initialGuess, new bool[initialGuess.Length], cancellationToken);
     }
 
-      public double[] Fit(double[] xValues, double[] yValues, double[] initialGuess, bool[] isFixed, CancellationToken cancellationToken)
+    public virtual double[] Fit(double[] xValues, double[] yValues, double[] initialGuess, bool[] isFixed, CancellationToken cancellationToken)
     {
       _isExecuted = false;
       if (xValues.Length != yValues.Length)
@@ -113,14 +111,14 @@ namespace Altaxo.Calc.Regression.Nonlinear
       for (int i = 0; i < param.Length; ++i)
       {
         _parameters[adapter.ParameterMapping[i]] = param[i];
-        _parameterVariances[adapter.ParameterMapping[i]] = resultingCovariances[i + i*param.Length];
+        _parameterVariances[adapter.ParameterMapping[i]] = resultingCovariances[i + i * param.Length];
       }
 
       _isExecuted = true;
       return _parameters;
     }
 
-   private class Adapter
+    private class Adapter
     {
       double[] _xValues;
       double[] _yValues;
@@ -132,7 +130,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
       public int FreeParameterCount => _parameterMapping.Length;
 
-      public int[] ParameterMapping => _parameterMapping; 
+      public int[] ParameterMapping => _parameterMapping;
 
       public Adapter(double[] x, double[] y, double[] initialGuess, IFitFunction fitFunc, bool[] isFixed)
       {
@@ -142,9 +140,9 @@ namespace Altaxo.Calc.Regression.Nonlinear
         _parameters = (double[])initialGuess.Clone();
 
         var l = new List<int>();
-        for(int i=0;i<initialGuess.Length;i++)
+        for (int i = 0; i < initialGuess.Length; i++)
         {
-          if(!isFixed[i])
+          if (!isFixed[i])
           {
             l.Add(i);
           }
@@ -154,7 +152,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
       public void EvaluateFunctionDifferences(int numberOfYs, int numberOfParameter, double[] param, double[] ys, ref int info)
       {
-        for(int i=0; i < param.Length; ++i)
+        for (int i = 0; i < param.Length; ++i)
         {
           _parameters[_parameterMapping[i]] = param[i];
         }
