@@ -25,9 +25,7 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Calc.Regression.Nonlinear;
 
 namespace Altaxo.Calc.FitFunctions.General
@@ -145,7 +143,7 @@ namespace Altaxo.Calc.FitFunctions.General
     {
       get
       {
-        return NumberOfTerms*2 + 2;
+        return NumberOfTerms * 2 + 2;
       }
     }
 
@@ -171,7 +169,7 @@ namespace Altaxo.Calc.FitFunctions.General
 
     public double DefaultParameterValue(int i)
     {
-      if (i == 0 || i==1)
+      if (i == 0 || i == 1)
         return 0;
       else if ((i - 2) % 2 == 0)
         return 0;
@@ -198,33 +196,58 @@ namespace Altaxo.Calc.FitFunctions.General
       Y[0] = sum;
     }
 
-    
+    public void EvaluateMultiple(IROMatrix<double> independent, IReadOnlyList<double> P, IReadOnlyList<bool>? independentVariableChoice, IVector<double> FV)
+    {
+      var rowCount = independent.RowCount;
+      for (int r = 0; r < rowCount; ++r)
+      {
+        var xx = independent[r, 0];
+
+        double x = xx - P[0]; // P[1] is x0
+        double sum = P[1]; // P[0] is offset
+        if (x > 0)
+        {
+          for (int i = 2; i < P.Count; i += 2)
+          {
+            sum += P[i] * (1 - Math.Exp(-x / P[i + 1]));
+          }
+        }
+        FV[r] = sum;
+      }
+    }
+
 
     #endregion IFitFunction Members
 
-    public void EvaluateGradient(double[] X, double[] P, double[][] DY)
+    public void EvaluateGradient(IROMatrix<double> X, IReadOnlyList<double> P, IReadOnlyList<bool>? independentVariableChoice, IMatrix<double> DY)
     {
-      double x = X[0] - P[0]; // P[1] is x0
+      var rowCount = X.RowCount;
+      for (int r = 0; r < rowCount; ++r)
+      {
+        var xx = X[r, 0];
 
-      DY[0][1] = 1; // offset
-      if (x > 0)
-      {
-        double sum = 0;
-        for (int i = 2; i < P.Length; i += 2)
+        double x = xx - P[0]; // P[1] is x0
+
+        DY[r, 1] = 1; // offset
+        if (x > 0)
         {
-          DY[0][i] = 1 - Math.Exp(-x / P[i + 1]);
-          DY[0][i + 1] = -P[i] * Math.Exp(-x / P[i + 1]) * x / RMath.Pow2(P[i + 1]);
-          sum += -P[i] * Math.Exp(-x / P[i + 1]) / P[i + 1];
+          double sum = 0;
+          for (int i = 2; i < P.Count; i += 2)
+          {
+            DY[r, i] = 1 - Math.Exp(-x / P[i + 1]);
+            DY[r, i + 1] = -P[i] * Math.Exp(-x / P[i + 1]) * x / RMath.Pow2(P[i + 1]);
+            sum += -P[i] * Math.Exp(-x / P[i + 1]) / P[i + 1];
+          }
+          DY[r, 0] = sum; // derivative w.r.t. to x0
         }
-        DY[0][0] = sum; // derivative w.r.t. to x0
-      }
-      else // x < 0
-      {
-        DY[0][0] = 0; // derivative w.r.t.to x0 is 0 for x<0
-        for (int i = 2; i < P.Length; i += 2)
+        else // x < 0
         {
-          DY[0][i] = 0;
-          DY[0][i + 1] = 0;
+          DY[r, 0] = 0; // derivative w.r.t.to x0 is 0 for x<0
+          for (int i = 2; i < P.Count; i += 2)
+          {
+            DY[r, i] = 0;
+            DY[r, i + 1] = 0;
+          }
         }
       }
     }

@@ -25,9 +25,7 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Calc.Regression.Nonlinear;
 using Altaxo.Main;
 
@@ -143,7 +141,7 @@ namespace Altaxo.Calc.FitFunctions.General
     {
       get
       {
-        return NumberOfTerms*2 + 1;
+        return NumberOfTerms * 2 + 1;
       }
     }
 
@@ -162,7 +160,7 @@ namespace Altaxo.Calc.FitFunctions.General
       if (i == 0)
         return "y0";
       else
-      return (i - 1) % 2 == 0 ? FormattableString.Invariant($"a{(i - 1) / 2}") : FormattableString.Invariant($"Tau{(i - 1) / 2}");
+        return (i - 1) % 2 == 0 ? FormattableString.Invariant($"a{(i - 1) / 2}") : FormattableString.Invariant($"Tau{(i - 1) / 2}");
     }
 
     public double DefaultParameterValue(int i)
@@ -183,24 +181,45 @@ namespace Altaxo.Calc.FitFunctions.General
     public void Evaluate(double[] X, double[] P, double[] Y)
     {
       double sum = P[0];
-      for (int i = 1; i < P.Length; i+=2)
+      for (int i = 1; i < P.Length; i += 2)
       {
         sum += P[i] * Math.Exp(-X[0] / P[i + 1]);
       }
       Y[0] = sum;
     }
 
-    
+    public void EvaluateMultiple(IROMatrix<double> independent, IReadOnlyList<double> P, IReadOnlyList<bool>? independentVariableChoice, IVector<double> FV)
+    {
+      var rowCount = independent.RowCount;
+      for (int r = 0; r < rowCount; ++r)
+      {
+        var x = independent[r, 0];
+
+        double sum = P[0];
+        for (int i = 1; i < P.Count; i += 2)
+        {
+          sum += P[i] * Math.Exp(-x / P[i + 1]);
+        }
+        FV[r] = sum;
+      }
+    }
+
 
     #endregion IFitFunction Members
 
-    public void EvaluateGradient(double[] X, double[] P, double[][] DY)
+    public void EvaluateGradient(IROMatrix<double> X, IReadOnlyList<double> P, IReadOnlyList<bool>? independentVariableChoice, IMatrix<double> DY)
     {
-      DY[0][0] = 1;
-      for (int i = 1; i < P.Length; i += 2)
+      var rowCount = X.RowCount;
+      for (int r = 0; r < rowCount; ++r)
       {
-        DY[0][i] = Math.Exp(-X[0] / P[i + 1]);
-        DY[0][i + 1] = P[i] * Math.Exp(-X[0] / P[i + 1]) * X[0] / RMath.Pow2(P[i + 1]);
+        var x = X[r, 0];
+
+        DY[r, 0] = 1;
+        for (int i = 1; i < P.Count; i += 2)
+        {
+          DY[r, i] = Math.Exp(-x / P[i + 1]);
+          DY[r, i + 1] = P[i] * Math.Exp(-x / P[i + 1]) * x / RMath.Pow2(P[i + 1]);
+        }
       }
     }
   }
