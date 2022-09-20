@@ -25,9 +25,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Text;
 
 namespace Altaxo.Calc.LinearAlgebra
 {
@@ -167,6 +164,37 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
     #endregion Scalar
+
+    #region VectorToMatrixWithOneColumn
+
+    class VectorToROMatrixWithOneColumnWrapper<T> : IROMatrix<T> where T : struct
+    {
+      IReadOnlyList<T> _wrapped;
+
+      public VectorToROMatrixWithOneColumnWrapper(IReadOnlyList<T> wrapped)
+      {
+        _wrapped = wrapped;
+      }
+
+      public T this[int row, int col] => _wrapped[row];
+
+      public int RowCount => _wrapped.Count;
+
+      public int ColumnCount => 1;
+    }
+
+    /// <summary>
+    /// Wraps a read-only vector, so that it becomes a matrix with one column, and as many rows as the vector.
+    /// </summary>
+    /// <typeparam name="T">Type of elements</typeparam>
+    /// <param name="vector">The vector to wrap.</param>
+    /// <returns>A wrapper that appears as a matrix with one column, and as many rows as the wrapped vector.</returns>
+    public static IROMatrix<T> ToROMatrixWithOneColumn<T>(IReadOnlyList<T> vector) where T : struct
+    {
+      return new VectorToROMatrixWithOneColumnWrapper<T>(vector);
+    }
+
+    #endregion
 
     #region MatrixWithOneRow
 
@@ -1235,7 +1263,7 @@ namespace Altaxo.Calc.LinearAlgebra
       #endregion IROMatrix Members
     }
 
-    public static IROMatrix<T> ToROMatrix<T>(this T[,] array) where T: struct
+    public static IROMatrix<T> ToROMatrix<T>(this T[,] array) where T : struct
     {
       return new ROMatrixFrom2DArray<T>(array);
     }

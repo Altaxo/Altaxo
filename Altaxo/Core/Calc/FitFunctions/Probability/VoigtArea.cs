@@ -24,6 +24,7 @@
 
 #nullable enable
 using System;
+using System.Collections.Generic;
 using Altaxo.Calc.FitFunctions.Peaks;
 using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Calc.Regression.Nonlinear;
@@ -263,6 +264,34 @@ namespace Altaxo.Calc.FitFunctions.Probability
       Y[0] = sumTerms + sumPolynomial;
     }
 
+    public void EvaluateMultiple(IROMatrix<double> independent, IReadOnlyList<double> P, IReadOnlyList<bool>? independentVariableChoice, IVector<double> FV)
+    {
+      var rowCount = independent.RowCount;
+      for (int r = 0; r < rowCount; ++r)
+      {
+        var x = independent[r, 0];
+        // evaluation of gaussian terms
+        double sumTerms = 0, sumPolynomial = 0;
+        for (int i = 0, j = 0; i < _numberOfTerms; ++i, j += 4)
+        {
+          sumTerms += P[j] * Altaxo.Calc.ComplexErrorFunctionRelated.Voigt(x - P[j + 1], P[j + 2], P[j + 3]);
+        }
+
+        if (_orderOfBackgroundPolynomial >= 0)
+        {
+          int offset = 4 * _numberOfTerms;
+          // evaluation of terms x^0 .. x^n
+          sumPolynomial = P[_orderOfBackgroundPolynomial + offset];
+          for (int i = _orderOfBackgroundPolynomial - 1; i >= 0; i--)
+          {
+            sumPolynomial *= x;
+            sumPolynomial += P[i + offset];
+          }
+        }
+        FV[r] = sumTerms + sumPolynomial;
+      }
+    }
+
     /// <summary>
     /// Not functional because instance is immutable.
     /// </summary>
@@ -372,12 +401,12 @@ namespace Altaxo.Calc.FitFunctions.Probability
       {
         // expErfcTerm is normally: Math.Exp(0.5 * RMath.Pow2(gamma / sigma)) * Erfc(gamma / (Math.Sqrt(2) * sigma))
         // but for large gamma/sigma, we need a approximation, because the exp term becomes too large
-        double expErfcTerm; 
+        double expErfcTerm;
 
         // for gamma > 20*sigma we need an approximation of the expErfcTerm, since the expTerm will get too large and the Erfc term too small
         // we use a series expansion
 
-        if (gamma >= 20*sigma) // approximation by series expansion is needed
+        if (gamma >= 20 * sigma) // approximation by series expansion is needed
         {
           var x = sigma / gamma;
           var xx = x * x;
@@ -400,7 +429,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
         if (cv is not null)
         {
           var dHeightByDArea = expErfcTerm / (sigma * Sqrt2Pi);
-          var dHeightByDSigma = area * (2 * gamma * sigma - expErfcTerm * Sqrt2Pi * (RMath.Pow2(gamma) + RMath.Pow2(sigma)) ) / RMath.Pow2(Sqrt2Pi * sigma * sigma);
+          var dHeightByDSigma = area * (2 * gamma * sigma - expErfcTerm * Sqrt2Pi * (RMath.Pow2(gamma) + RMath.Pow2(sigma))) / RMath.Pow2(Sqrt2Pi * sigma * sigma);
           var dHeightByDGamma = area * (gamma * expErfcTerm / (Sqrt2Pi * RMath.Pow3(sigma)) - 1 / (Math.PI * RMath.Pow2(sigma)));
 
           heightStdDev = Math.Sqrt(

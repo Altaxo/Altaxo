@@ -24,6 +24,9 @@
 
 #nullable enable
 
+using System.Collections.Generic;
+using Altaxo.Calc.LinearAlgebra;
+
 namespace Altaxo.Calc.Regression.Nonlinear
 {
   public interface IFitFunctionWithGradient : IFitFunction
@@ -48,6 +51,6 @@ namespace Altaxo.Calc.Regression.Nonlinear
     /// DF[1][2] : df1/dp2
     /// </code>
     /// </remarks>
-    void EvaluateGradient(double[] independent, double[] parameters, double[][] DF);
+    void EvaluateGradient(IROMatrix<double> independent, IReadOnlyList<double> parameters, IReadOnlyList<bool>? independentVariableChoice, IMatrix<double> DF);
   }
 }

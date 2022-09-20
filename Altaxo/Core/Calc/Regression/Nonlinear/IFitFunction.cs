@@ -24,6 +24,8 @@
 
 #nullable enable
 using System;
+using System.Collections.Generic;
+using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Regression.Nonlinear
 {
@@ -101,6 +103,17 @@ namespace Altaxo.Calc.Regression.Nonlinear
     /// <param name="FV">On return, this array contains the one (or more) evaluated
     /// function values at the point (independent).</param>
     void Evaluate(double[] independent, double[] parameters, double[] FV);
+
+    /// <summary>
+    /// Evaluates the function values at multiple x-points.
+    /// </summary>
+    /// <param name="independent">The independent variables. Every row of that matrix corresponds to one observation. The columns of the matrix
+    /// represent the different independent variables. Thus, for a usual function of one variable, the number of columns is 1.</param>
+    /// <param name="parameters">The parameters.</param>
+    /// <param name="independentVariableChoice">Determines which output variables are written to the output vector.</param>
+    /// <param name="FV">On return, contains the function values. Note that if the fit function has multiple dependent variables,
+    /// those variables will be written in subsequent order to the output vector.</param>
+    void EvaluateMultiple(IROMatrix<double> independent, IReadOnlyList<double> parameters, IReadOnlyList<bool>? independentVariableChoice, IVector<double> FV);
 
     /// <summary>
     /// Occurs when the fit function changed, including number or name of parameters, independent variables, dependent variables, or the scaling.

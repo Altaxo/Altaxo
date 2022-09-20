@@ -24,6 +24,7 @@
 
 #nullable enable
 using System;
+using System.Collections.Generic;
 using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Calc.Regression.Nonlinear;
 using Altaxo.Main;
@@ -268,6 +269,35 @@ namespace Altaxo.Calc.FitFunctions.Peaks
       Y[0] = sumTerms + sumPolynomial;
     }
 
+    public void EvaluateMultiple(IROMatrix<double> independent, IReadOnlyList<double> P, IReadOnlyList<bool>? independentVariableChoice, IVector<double> FV)
+    {
+      for (int r = 0; r < independent.RowCount; ++r)
+      {
+        var x = independent[r, 0];
+        // evaluation of gaussian terms
+        double sumTerms = 0, sumPolynomial = 0;
+        for (int i = 0, j = 0; i < _numberOfTerms; ++i, j += NumberOfParametersPerPeak)
+        {
+          double arg = (x - P[j + 1]) / P[j + 2];
+          sumTerms += P[j] * Math.Pow(1 + (Math.Pow(2, 1 / P[j + 3]) - 1) * RMath.Pow2(arg), -P[j + 3]);
+        }
+
+        if (_orderOfBackgroundPolynomial >= 0)
+        {
+          int offset = NumberOfParametersPerPeak * _numberOfTerms;
+          // evaluation of terms x^0 .. x^n
+          sumPolynomial = P[_orderOfBackgroundPolynomial + offset];
+          for (int i = _orderOfBackgroundPolynomial - 1; i >= 0; i--)
+          {
+            sumPolynomial *= x;
+            sumPolynomial += P[i + offset];
+          }
+        }
+
+        FV[r] = sumTerms + sumPolynomial;
+      }
+    }
+
     /// <summary>
     /// Not functional because instance is immutable.
     /// </summary>
@@ -369,6 +399,8 @@ namespace Altaxo.Calc.FitFunctions.Peaks
 
       return (pos, posStdDev, area, areaStdDev, height, heightStdDev, fwhm, fwhmStdDev);
     }
+
+
   }
 }
 

@@ -543,6 +543,22 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
     /// <summary>
+    /// Returns the elements of the diagonal in a Vector.
+    /// </summary>
+    /// <param name="resultingDiagonal">After return, contains the elements of the diagonal.</param>
+    /// <remarks>For non-square matrices, the method returns Min(Rows, Columns) elements where
+    /// i == j (i is the row index, and j is the column index).</remarks>
+    public virtual void Diagonal(Vector<T> resultingDiagonal)
+    {
+      var min = Math.Min(RowCount, ColumnCount);
+
+      for (var i = 0; i < min; i++)
+      {
+        resultingDiagonal.At(i, At(i, i));
+      }
+    }
+
+    /// <summary>
     /// Returns a new matrix containing the lower triangle of this matrix. The new matrix
     /// does not contain the diagonal elements of this matrix.
     /// </summary>

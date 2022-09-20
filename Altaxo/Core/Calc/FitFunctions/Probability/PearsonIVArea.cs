@@ -24,6 +24,7 @@
 
 #nullable enable
 using System;
+using System.Collections.Generic;
 using Altaxo.Calc.FitFunctions.Peaks;
 using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Calc.Regression.Nonlinear;
@@ -265,6 +266,35 @@ namespace Altaxo.Calc.FitFunctions.Probability
       Y[0] = sumTerms + sumPolynomial;
     }
 
+    public void EvaluateMultiple(IROMatrix<double> independent, IReadOnlyList<double> P, IReadOnlyList<bool>? independentVariableChoice, IVector<double> FV)
+    {
+      var rowCount = independent.RowCount;
+      for (int r = 0; r < rowCount; ++r)
+      {
+        var x = independent[r, 0];
+
+        // evaluation of gaussian terms
+        double sumTerms = 0, sumPolynomial = 0;
+        for (int i = 0, j = 0; i < _numberOfTerms; ++i, j += NumberOfParametersPerPeak)
+        {
+          sumTerms += GetYOfOneTerm(x, P[j], P[j + 1], P[j + 2], P[j + 3], P[j + 4]);
+        }
+
+        if (_orderOfBackgroundPolynomial >= 0)
+        {
+          int offset = NumberOfParametersPerPeak * _numberOfTerms;
+          // evaluation of terms x^0 .. x^n
+          sumPolynomial = P[_orderOfBackgroundPolynomial + offset];
+          for (int i = _orderOfBackgroundPolynomial - 1; i >= 0; i--)
+          {
+            sumPolynomial *= x;
+            sumPolynomial += P[i + offset];
+          }
+        }
+        FV[r] = sumTerms + sumPolynomial;
+      }
+    }
+
     /// <summary>
     /// Not functional because instance is immutable.
     /// </summary>
@@ -280,7 +310,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
       if (!(relativeHeight > 0 && relativeHeight < 1))
         throw new ArgumentException("RelativeHeight should be in the open interval (0,1)", nameof(relativeHeight));
 
-      
+
       // we assume a Lorentzian: m=1 and v=0
       var w = Math.Abs(0.5 * width * Math.Sqrt(relativeHeight / (1 - relativeHeight)));
       var area = height * w * Math.PI;
@@ -326,7 +356,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
 
     static double SafeSqrt(double x) => Math.Sqrt(Math.Max(0, x));
 
-    
+
 
     public (double Position, double PositionStdDev, double Area, double AreaStdDev, double Height, double HeightStdDev, double FWHM, double FWHMStdDev)
       GetPositionAreaHeightFWHMFromSinglePeakParameters(double[] parameters, IROMatrix<double> cv)
@@ -340,8 +370,8 @@ namespace Altaxo.Calc.FitFunctions.Probability
       var m = parameters[3];
       var v = parameters[4];
 
-      
-      var pos = loc - w*v/(2*m);
+
+      var pos = loc - w * v / (2 * m);
       var height = GetHeight(area, w, m, v);
       var fwhm = GetHWHM(w, m, v, true) + GetHWHM(w, m, v, false);
 
@@ -352,10 +382,10 @@ namespace Altaxo.Calc.FitFunctions.Probability
         var deriv = new double[5];
         var resVec = VectorMath.ToVector(new double[5]);
 
-       
+
 
         // Area variance
-        areaStdDev = SafeSqrt(cv[0,0]);
+        areaStdDev = SafeSqrt(cv[0, 0]);
 
         // PositionVariance
         deriv[0] = 0;
@@ -459,14 +489,14 @@ namespace Altaxo.Calc.FitFunctions.Probability
 
       double dervsimp(double z, double m, double v)
       {
-        return Math.Abs(z) < 1E100 ?  (-v - 2 * m * z) / (1 + z * z) : (-v / z - 2 * m) / z;
+        return Math.Abs(z) < 1E100 ? (-v - 2 * m * z) / (1 + z * z) : (-v / z - 2 * m) / z;
       }
 
 
       // go forward in exponentially increasing steps, until the amplitude falls below ymaxHalf, in order to bracked the solution
       double zNear = z0;
       double zFar = z0;
-      for (double d = 1; d<=double.MaxValue ; d *= 2)
+      for (double d = 1; d <= double.MaxValue; d *= 2)
       {
         zFar = z0 + d * sign;
         var y = funcsimp(zFar, m, v);
@@ -518,7 +548,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
         if (Math.Abs(dz) < 5E-15 * Math.Abs(z))
           break;
       }
-      return Math.Abs((z-z0) * w);
+      return Math.Abs((z - z0) * w);
     }
 
     /// <summary>
@@ -532,7 +562,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
     public static double GetFWHMApproximation(double w, double m, double v)
     {
       return w * Math.Sqrt(Math.Pow(2, 1 / m) - 1) *
-             (Math.PI  / Math.Atan2(Math.Exp(1) * m, Math.Abs(v)));
+             (Math.PI / Math.Atan2(Math.Exp(1) * m, Math.Abs(v)));
     }
 
   }
