@@ -25,7 +25,7 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
-using System.Text;
+using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Calc.Regression.Nonlinear;
 
 namespace Altaxo.Calc.FitFunctions.Transitions
@@ -158,6 +158,8 @@ namespace Altaxo.Calc.FitFunctions.Transitions
 
     public abstract void Evaluate(double[] independent, double[] parameters, double[] FV);
 
+    public abstract void EvaluateMultiple(IROMatrix<double> independent, IReadOnlyList<double> P, IReadOnlyList<bool>? independentVariableChoice, IVector<double> FV);
+
     /// <summary>
     /// Unused because this instance is immutable.
     /// </summary>
@@ -204,6 +206,15 @@ namespace Altaxo.Calc.FitFunctions.Transitions
       FV[0] = LinearScaledTransition(independent[0], parameters[0], parameters[1], parameters[2], parameters[3]);
     }
 
+    public override void EvaluateMultiple(IROMatrix<double> independent, IReadOnlyList<double> P, IReadOnlyList<bool>? independentVariableChoice, IVector<double> FV)
+    {
+      var rowCount = independent.RowCount;
+      for (int r = 0; r < rowCount; ++r)
+      {
+        var x = independent[r, 0];
+      }
+    }
+
     public override IVarianceScaling DefaultVarianceScaling(int i)
     {
       return new ConstantVarianceScaling();
@@ -246,6 +257,18 @@ namespace Altaxo.Calc.FitFunctions.Transitions
     public override void Evaluate(double[] independent, double[] parameters, double[] FV)
     {
       FV[0] = LogarithmicScaledTransition(independent[0], parameters[0], parameters[1], parameters[2], parameters[3]);
+    }
+
+    public override void EvaluateMultiple(IROMatrix<double> independent, IReadOnlyList<double> P, IReadOnlyList<bool>? independentVariableChoice, IVector<double> FV)
+    {
+      var rowCount = independent.RowCount;
+      for (int r = 0; r < rowCount; ++r)
+      {
+        var x = independent[r, 0];
+
+        FV[r] = LogarithmicScaledTransition(x, P[0], P[1], P[2], P[3]);
+
+      }
     }
 
     public override IVarianceScaling DefaultVarianceScaling(int i)

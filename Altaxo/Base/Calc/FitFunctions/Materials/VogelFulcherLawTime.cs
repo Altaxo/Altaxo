@@ -24,7 +24,9 @@
 
 #nullable enable
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Calc.Regression.Nonlinear;
 using Altaxo.Science;
 
@@ -59,7 +61,7 @@ namespace Altaxo.Calc.FitFunctions.Materials
       _temperatureUnitOfB = temperatureUnitOfB;
     }
 
-    
+
 
     [Category("OptionsForIndependentVariables")]
     public TemperatureRepresentation IndependentVariableRepresentation
@@ -90,7 +92,7 @@ namespace Altaxo.Calc.FitFunctions.Materials
 
     public VogelFulcherLawTime WithParameterT0Representation(TemperatureRepresentation value)
     {
-      if(value == _temperatureUnitOfT0)
+      if (value == _temperatureUnitOfT0)
       {
         return this;
       }
@@ -246,12 +248,31 @@ namespace Altaxo.Calc.FitFunctions.Materials
       return null;
     }
 
-    public virtual void Evaluate(double[] X, double[] P, double[] Y)
+    public virtual double Evaluate(double x, IReadOnlyList<double> P)
     {
-      double temperature = Temperature.ToKelvin(X[0], _temperatureUnitOfX);
+      double temperature = Temperature.ToKelvin(x, _temperatureUnitOfX);
       double B = Temperature.ToKelvin(P[1], _temperatureUnitOfB);
       double T0 = Temperature.ToKelvin(P[2], _temperatureUnitOfT0);
-      Y[0] = P[0] * Math.Exp(B / (temperature - T0));
+      return P[0] * Math.Exp(B / (temperature - T0));
+    }
+
+    public virtual void Evaluate(double[] X, double[] P, double[] Y)
+    {
+      Y[0] = Evaluate(X[0], P);
+    }
+
+    public virtual void EvaluateMultiple(IROMatrix<double> independent, IReadOnlyList<double> P, IReadOnlyList<bool>? independentVariableChoice, IVector<double> FV)
+    {
+      var rowCount = independent.RowCount;
+      for (int r = 0; r < rowCount; ++r)
+      {
+        var x = independent[r, 0];
+
+        double temperature = Temperature.ToKelvin(x, _temperatureUnitOfX);
+        double B = Temperature.ToKelvin(P[1], _temperatureUnitOfB);
+        double T0 = Temperature.ToKelvin(P[2], _temperatureUnitOfT0);
+        FV[r] = P[0] * Math.Exp(B / (temperature - T0));
+      }
     }
 
     /// <summary>
@@ -259,7 +280,7 @@ namespace Altaxo.Calc.FitFunctions.Materials
     /// </summary>
     public event EventHandler? Changed { add { } remove { } }
 
-   
+
 
     #endregion IFitFunction Members
   }

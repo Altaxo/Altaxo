@@ -26,7 +26,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Text;
 using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Calc.Regression.Nonlinear;
 using Altaxo.Main;
@@ -161,8 +160,8 @@ namespace Altaxo.Calc.FitFunctions.Kinetics
 
     private Altaxo.Calc.Ode.DOP853? _ode = null;
     private double _x_previous_step = double.NaN;
-    private double[] _y0 = new double[1];
-    private Evaluator _evaluator = new Evaluator();
+    protected double[] _y0 = new double[1];
+    protected Evaluator _evaluator = new Evaluator();
     private IEnumerator<(double x, double[] y)> _solution;
 
 
@@ -173,6 +172,55 @@ namespace Altaxo.Calc.FitFunctions.Kinetics
       Y[0] *= P[1];
     }
 
+    public void EvaluateMultiple(IROMatrix<double> independent, IReadOnlyList<double> P, IReadOnlyList<bool>? independentVariableChoice, IVector<double> FV)
+    {
+      IEnumerable<double> GetXPoints()
+      {
+        for (int r = 0; r < independent.RowCount; ++r)
+        {
+          var x = independent[r, 0] - P[0];
+          if (x > 0)
+            yield return x;
+        }
+      }
+
+      int rd = 0;
+
+      for (int r = 0; r < independent.RowCount; ++r)
+      {
+        var x = independent[r, 0] - P[0];
+        if (!(x > 0))
+        {
+          for (int s = 0; s < _y0.Length; ++s)
+          {
+            if (independentVariableChoice is null || independentVariableChoice[s] == true)
+              FV[rd++] = _y0[s];
+          }
+        }
+      }
+
+      var ode = new Ode.DOP853();
+      ode.Initialize(0, _y0, _evaluator.EvaluateRate);
+
+      var solution = _ode.GetSolutionPointsVolatile(new Ode.OdeMethodOptions()
+      {
+        AutomaticStepSizeControl = true,
+        AbsoluteTolerance = 1E-4,
+        RelativeTolerance = 1E-4,
+        OptionalSolutionPoints = GetXPoints(),
+        IncludeAutomaticStepsInOutput = false,
+        IncludeInitialValueInOutput = false,
+      }).GetEnumerator();
+
+      while (solution.MoveNext())
+      {
+        for (int s = 0; s < _y0.Length; ++s)
+        {
+          if (independentVariableChoice is null || independentVariableChoice[s] == true)
+            FV[rd++] = solution.Current.Y_volatile[s];
+        }
+      }
+    }
     /// <summary>
     /// Evaluates the conversion rate (without any prefactor). Thus, the resulting value
     /// is the time derivative of the conversion (also without prefactor).
@@ -234,7 +282,8 @@ namespace Altaxo.Calc.FitFunctions.Kinetics
           {
             AutomaticStepSizeControl = true,
             AbsoluteTolerance = 1E-4,
-            RelativeTolerance = 1E-4
+            RelativeTolerance = 1E-4,
+
           }).GetEnumerator();
 
           _x_previous_step = 0;
@@ -268,7 +317,7 @@ namespace Altaxo.Calc.FitFunctions.Kinetics
       }
     }
 
-    
+
     public class Evaluator
     {
       private double t0, A0, k1, k2, m, n;
@@ -301,7 +350,7 @@ namespace Altaxo.Calc.FitFunctions.Kinetics
         {
           dy[0] = 0;
         }
-        else if(yy==0 && m<0)
+        else if (yy == 0 && m < 0)
         {
           dy[0] = float.MaxValue; // limit the slope
         }
@@ -311,6 +360,25 @@ namespace Altaxo.Calc.FitFunctions.Kinetics
         }
       }
 
+      public double EvaluateRate(double x, double yy)
+      {
+        double dy;
+        if (!(0 <= yy && yy < 1))
+        {
+          dy = 0;
+        }
+        else if (yy == 0 && m < 0)
+        {
+          dy = float.MaxValue; // limit the slope
+        }
+        else
+        {
+          dy = (k1 + k2 * Math.Pow(yy, m)) * Math.Pow(1 - yy, n);
+        }
+        return dy;
+      }
+
+
       public void EvaluateJacobian(double x, double[] yy, [AllowNull][NotNull] ref IMatrix<double> jac)
       {
         jac ??= CreateMatrix.Dense<double>(1, 1);
@@ -318,13 +386,13 @@ namespace Altaxo.Calc.FitFunctions.Kinetics
         double y = yy[0];
 
         if (!(0 <= y && y < 1))
-          jac[0,0] = -1;
+          jac[0, 0] = -1;
         else
-          jac[0,0] = Math.Pow(1 - y, n) * (k2 * m * Math.Pow(y, m - 1) + n * (k1 + k2 * Math.Pow(y, m)) / (y - 1));
+          jac[0, 0] = Math.Pow(1 - y, n) * (k2 * m * Math.Pow(y, m - 1) + n * (k1 + k2 * Math.Pow(y, m)) / (y - 1));
       }
     }
-    
 
-    
+
+
   }
 }

@@ -27,8 +27,8 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
-using Altaxo.Collections;
 using Altaxo.Calc.LinearAlgebra;
+using Altaxo.Collections;
 
 namespace Altaxo.Calc.Regression.Nonlinear
 {
@@ -53,7 +53,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
       public double[] Xs;
 
       /// <summary>Array of jacobians (derivatives of the function value with respect to the parameters) for temporary purpose.</summary>
-      public double[][]? DYs;
+      public IMatrix<double>? DYs;
 
       /// <summary>Parameter mapping from the local parameter list to the global parameter list. Positive entries
       /// give the position in the global variable parameter list, negative entries gives the position -entry-1 in the
@@ -73,7 +73,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
         double[] parameters,
         double[] xs,
         double[] ys,
-        double[][]? dYs,
+        IMatrix<double>? dYs,
         int[] parameterMapping,
         int[] dependentVariablesInUse,
         IAscendingIntegerCollection validRows
@@ -521,8 +521,8 @@ namespace Altaxo.Calc.Regression.Nonlinear
           throw new InvalidOperationException($"FitFunction of FitElement[{ele}] must be implementing {nameof(IFitFunctionWithGradient)}");
 
         // make sure, that the dimension of the DYs is ok
-        if (info.DYs is null || info.DYs.Length != fitEle.NumberOfDependentVariables || info.DYs[0].Length != fitEle.NumberOfParameters)
-          info.DYs = LinearAlgebra.JaggedArrayMath.GetMatrixArray(fitEle.NumberOfDependentVariables, fitEle.NumberOfParameters);
+        if (info.DYs is null || info.DYs.RowCount != fitEle.NumberOfDependentVariables || info.DYs.ColumnCount != fitEle.NumberOfParameters)
+          info.DYs = Matrix<double>.Build.Dense(fitEle.NumberOfDependentVariables, fitEle.NumberOfParameters);
 
         // copy of the parameter to the temporary array
         for (int i = 0; i < info.Parameters.Length; i++)
@@ -539,7 +539,8 @@ namespace Altaxo.Calc.Regression.Nonlinear
           for (int k = info.Xs.Length - 1; k >= 0; k--)
             info.Xs[k] = fitEle.IndependentVariables(k)?[validRows[i]] ?? throw new ObjectDisposedException($"Independent variables column k={k} not available or disposed."); ;
 
-          ((IFitFunctionWithGradient)fitEle.FitFunction).EvaluateGradient(info.Xs, info.Parameters, info.DYs);
+
+          ((IFitFunctionWithGradient)fitEle.FitFunction).EvaluateGradient(MatrixMath.ToROMatrixWithOneRow(info.Xs), info.Parameters, null, info.DYs);
 
           // copy the evaluation result to the output array (interleaved)
           for (int k = 0; k < info.DependentVariablesInUse.Length; ++k)
@@ -548,7 +549,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
             {
               int idx = info.ParameterMapping[l];
               if (idx >= 0)
-                outputValues[outputValuesPointer + idx] += info.DYs[info.DependentVariablesInUse[k]][l];
+                outputValues[outputValuesPointer + idx] += info.DYs[info.DependentVariablesInUse[k], l];
             }
             outputValuesPointer += parameter.Length; // increase output pointer only by the varying (!) number of parameters
           }

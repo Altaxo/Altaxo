@@ -24,7 +24,9 @@
 
 #nullable enable
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Calc.Regression.Nonlinear;
 using Complex64T = System.Numerics.Complex;
 
@@ -67,33 +69,33 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
       }
     }
 
-      /// <summary>
-      /// 2021-07-13 added property InvertViscosity
-      /// </summary>
-      /// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
-      [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(HavriliakNegamiModulusRetardation), 1)]
-      private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    /// <summary>
+    /// 2021-07-13 added property InvertViscosity
+    /// </summary>
+    /// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(HavriliakNegamiModulusRetardation), 1)]
+    private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-        {
-          var s = (HavriliakNegamiModulusRetardation)obj;
-          info.AddValue("UseFrequency", s._useFrequencyInsteadOfOmega);
-          info.AddValue("FlowTerm", s._useFlowTerm);
-          info.AddValue("LogarithmizeResults", s._logarithmizeResults);
-          info.AddValue("InvertViscosity", s._invertViscosity);
-        }
-
-        public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
-        {
-          var s = (HavriliakNegamiModulusRetardation?)o ?? new HavriliakNegamiModulusRetardation();
-          s._useFrequencyInsteadOfOmega = info.GetBoolean("UseFrequency");
-          s._useFlowTerm = info.GetBoolean("FlowTerm");
-          s._logarithmizeResults = info.GetBoolean("LogarithmizeResults");
-          s._invertViscosity = info.GetBoolean("InvertViscosity");
-
-          return s;
-        }
+        var s = (HavriliakNegamiModulusRetardation)obj;
+        info.AddValue("UseFrequency", s._useFrequencyInsteadOfOmega);
+        info.AddValue("FlowTerm", s._useFlowTerm);
+        info.AddValue("LogarithmizeResults", s._logarithmizeResults);
+        info.AddValue("InvertViscosity", s._invertViscosity);
       }
+
+      public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      {
+        var s = (HavriliakNegamiModulusRetardation?)o ?? new HavriliakNegamiModulusRetardation();
+        s._useFrequencyInsteadOfOmega = info.GetBoolean("UseFrequency");
+        s._useFlowTerm = info.GetBoolean("FlowTerm");
+        s._logarithmizeResults = info.GetBoolean("LogarithmizeResults");
+        s._invertViscosity = info.GetBoolean("InvertViscosity");
+
+        return s;
+      }
+    }
 
     #endregion Serialization
 
@@ -131,7 +133,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
       }
     }
 
-   
+
 
     public bool InvertViscosity => _invertViscosity;
     public HavriliakNegamiModulusRetardation WithInvertViscosity(bool value)
@@ -335,10 +337,10 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 
       if (_useFlowTerm)
       {
-        if(_invertViscosity)
+        if (_invertViscosity)
           result -= Complex64T.ImaginaryOne * P[5] / x;
         else
-          result -= Complex64T.ImaginaryOne  / (x * P[5]);
+          result -= Complex64T.ImaginaryOne / (x * P[5]);
       }
 
       result = 1 / result; // but now convert to modulus
@@ -352,6 +354,63 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
       {
         Y[0] = result.Real;
         Y[1] = result.Imaginary;
+      }
+    }
+
+    public void EvaluateMultiple(IROMatrix<double> independent, IReadOnlyList<double> P, IReadOnlyList<bool>? independentVariableChoice, IVector<double> FV)
+    {
+      var rowCount = independent.RowCount;
+      int rd = 0;
+      for (int r = 0; r < rowCount; ++r)
+      {
+        var x = independent[r, 0];
+
+        if (_useFrequencyInsteadOfOmega)
+          x *= (2 * Math.PI);
+
+        // Model this first as compliance
+        var result = 1 / ComplexMath.Pow(1 + ComplexMath.Pow(Complex64T.ImaginaryOne * x * P[2], P[3]), P[4]);
+        result = (1 / P[1]) + ((1 / P[0]) - (1 / P[1])) * result;
+
+        if (_useFlowTerm)
+        {
+          if (_invertViscosity)
+            result -= Complex64T.ImaginaryOne * P[5] / x;
+          else
+            result -= Complex64T.ImaginaryOne / (x * P[5]);
+        }
+
+        result = 1 / result; // but now convert to modulus
+
+        double yre, yim;
+        if (_logarithmizeResults)
+        {
+          yre = Math.Log10(result.Real);
+          yim = Math.Log10(result.Imaginary);
+        }
+        else
+        {
+          yre = result.Real;
+          yim = result.Imaginary;
+        }
+
+        if (independentVariableChoice is null)
+        {
+          FV[rd++] = yre;
+          FV[rd++] = yim;
+        }
+        else
+        {
+          if (independentVariableChoice[0] == true)
+          {
+            FV[rd++] = yre;
+          }
+
+          if (independentVariableChoice[1] == true)
+          {
+            FV[rd++] = yim;
+          }
+        }
       }
     }
 

@@ -24,7 +24,9 @@
 
 #nullable enable
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Calc.Regression.Nonlinear;
 using Complex64T = System.Numerics.Complex;
 
@@ -434,7 +436,60 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
         Y[1] = result.Imaginary;
       }
     }
+    public void EvaluateMultiple(IROMatrix<double> independent, IReadOnlyList<double> P, IReadOnlyList<bool>? independentVariableChoice, IVector<double> FV)
+    {
+      var rowCount = independent.RowCount;
+      int rd = 0;
+      for (int r = 0; r < rowCount; ++r)
+      {
+        var x = independent[r, 0];
 
+        if (_useFrequencyInsteadOmega)
+          x *= (2 * Math.PI);
+
+        double w_r = x * P[2]; // omega scaled with tau
+
+        Complex64T result = P[1] + (P[0] - P[1]) * Kohlrausch.ReIm(P[3], w_r);
+
+        if (_useFlowTerm)
+        {
+          if (_invertViscosity)
+            result = 1 / ((1 / result) - Complex64T.ImaginaryOne * P[4] / (x));
+          else
+            result = 1 / ((1 / result) - Complex64T.ImaginaryOne / (x * P[4]));
+        }
+
+        double yre, yim;
+        if (_logarithmizeResults)
+        {
+          yre = Math.Log10(result.Real);
+          yim = Math.Log10(result.Imaginary);
+        }
+        else
+        {
+          yre = result.Real;
+          yim = result.Imaginary;
+        }
+
+        if (independentVariableChoice is null)
+        {
+          FV[rd++] = yre;
+          FV[rd++] = yim;
+        }
+        else
+        {
+          if (independentVariableChoice[0] == true)
+          {
+            FV[rd++] = yre;
+          }
+
+          if (independentVariableChoice[1] == true)
+          {
+            FV[rd++] = yim;
+          }
+        }
+      }
+    }
     /// <summary>
     /// Not functional because instance is immutable.
     /// </summary>

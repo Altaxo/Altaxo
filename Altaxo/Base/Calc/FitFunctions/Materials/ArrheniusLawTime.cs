@@ -24,7 +24,9 @@
 
 #nullable enable
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Calc.Regression.Nonlinear;
 using Altaxo.Science;
 
@@ -54,7 +56,7 @@ namespace Altaxo.Calc.FitFunctions.Materials
     }
 
 
-    
+
 
 
     [Category("OptionsForParameters")]
@@ -63,7 +65,7 @@ namespace Altaxo.Calc.FitFunctions.Materials
     [Category("OptionsForParameters")]
     public ArrheniusLawTime WithParameterEnergyRepresentation(EnergyRepresentation value)
     {
-      if(_paramEnergyUnit == value)
+      if (_paramEnergyUnit == value)
       {
         return this;
       }
@@ -80,10 +82,10 @@ namespace Altaxo.Calc.FitFunctions.Materials
     public TemperatureRepresentation IndependentVariableRepresentation => _temperatureUnitOfX;
 
 
-[Category("OptionsForIndependentVariables")]
+    [Category("OptionsForIndependentVariables")]
     public ArrheniusLawTime WithIndependentVariableRepresentation(TemperatureRepresentation value)
     {
-      if(_temperatureUnitOfX == value)
+      if (_temperatureUnitOfX == value)
       {
         return this;
       }
@@ -207,7 +209,7 @@ namespace Altaxo.Calc.FitFunctions.Materials
       return null;
     }
 
-   
+
 
     /// <summary>
     /// Not used (instance is immutable).
@@ -216,11 +218,27 @@ namespace Altaxo.Calc.FitFunctions.Materials
 
     #endregion Change event
 
+    public virtual double Evaluate(double X, IReadOnlyList<double> P)
+    {
+      double temperature = Temperature.ToKelvin(X, _temperatureUnitOfX);
+      double energyAsTemperature = Energy.ToTemperatureSI(P[1], _paramEnergyUnit);
+      return P[0] * Math.Exp(energyAsTemperature / temperature);
+    }
+
     public virtual void Evaluate(double[] X, double[] P, double[] Y)
     {
-      double temperature = Temperature.ToKelvin(X[0], _temperatureUnitOfX);
-      double energyAsTemperature = Energy.ToTemperatureSI(P[1], _paramEnergyUnit);
-      Y[0] = P[0] * Math.Exp(energyAsTemperature / temperature);
+      Y[0] = Evaluate(X[0], P);
+    }
+
+    public void EvaluateMultiple(IROMatrix<double> independent, IReadOnlyList<double> P, IReadOnlyList<bool>? independentVariableChoice, IVector<double> FV)
+    {
+      var rowCount = independent.RowCount;
+      for (int r = 0; r < rowCount; ++r)
+      {
+        var x = independent[r, 0];
+
+        FV[r] = Evaluate(x, P);
+      }
     }
   }
 }

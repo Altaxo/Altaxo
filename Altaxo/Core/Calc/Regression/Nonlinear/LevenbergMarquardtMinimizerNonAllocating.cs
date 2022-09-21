@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Optimization
@@ -19,20 +20,20 @@ namespace Altaxo.Calc.Optimization
     }
 
     public NonlinearMinimizationResult FindMinimum(IObjectiveModelNonAllocating objective, IReadOnlyList<double> initialGuess,
-        IReadOnlyList<double?> lowerBound = null, IReadOnlyList<double?> upperBound = null, IReadOnlyList<double> scales = null, IReadOnlyList<bool> isFixed = null)
+        IReadOnlyList<double?> lowerBound = null, IReadOnlyList<double?> upperBound = null, IReadOnlyList<double> scales = null, IReadOnlyList<bool> isFixed = null, CancellationToken cancellationToken = default)
     {
-      return Minimum(objective, initialGuess, lowerBound, upperBound, scales, isFixed, InitialMu, GradientTolerance, StepTolerance, FunctionTolerance, MaximumIterations);
+      return Minimum(objective, initialGuess, lowerBound, upperBound, scales, isFixed, cancellationToken, InitialMu, GradientTolerance, StepTolerance, FunctionTolerance, MaximumIterations);
     }
 
     public NonlinearMinimizationResult FindMinimum(IObjectiveModelNonAllocating objective, double[] initialGuess,
-        double?[] lowerBound = null, double?[] upperBound = null, double[] scales = null, bool[] isFixed = null)
+        double?[] lowerBound = null, double?[] upperBound = null, double[] scales = null, bool[] isFixed = null, CancellationToken cancellationToken = default)
     {
       if (objective is null)
         throw new ArgumentNullException(nameof(objective));
       if (initialGuess is null)
         throw new ArgumentNullException(nameof(initialGuess));
 
-      return Minimum(objective, CreateVector.DenseOfArray(initialGuess), lowerBound, upperBound, scales, isFixed, InitialMu, GradientTolerance, StepTolerance, FunctionTolerance, MaximumIterations);
+      return Minimum(objective, CreateVector.DenseOfArray(initialGuess), lowerBound, upperBound, scales, isFixed, cancellationToken, InitialMu, GradientTolerance, StepTolerance, FunctionTolerance, MaximumIterations);
     }
 
     /// <summary>
@@ -47,7 +48,7 @@ namespace Altaxo.Calc.Optimization
     /// <param name="maximumIterations">The max iterations.</param>
     /// <returns>The result of the Levenberg-Marquardt minimization</returns>
     public NonlinearMinimizationResult Minimum(IObjectiveModelNonAllocating objective, IReadOnlyList<double> initialGuess,
-        IReadOnlyList<double?> lowerBound = null, IReadOnlyList<double?> upperBound = null, IReadOnlyList<double> scales = null, IReadOnlyList<bool> isFixed = null,
+        IReadOnlyList<double?> lowerBound = null, IReadOnlyList<double?> upperBound = null, IReadOnlyList<double> scales = null, IReadOnlyList<bool> isFixed = null, CancellationToken cancellationToken = default,
         double initialMu = 1E-3, double gradientTolerance = 1E-15, double stepTolerance = 1E-15, double functionTolerance = 1E-15, int maximumIterations = -1)
     {
       // Non-linear least square fitting by the Levenberg-Marduardt algorithm.
@@ -90,22 +91,21 @@ namespace Altaxo.Calc.Optimization
 
       ValidateBounds(initialGuess, lowerBound, upperBound, scales);
 
-      _pInt = Vector<double>.Build.Dense(initialGuess.Count);
-      _pExt = Vector<double>.Build.Dense(initialGuess.Count);
+      _scaleFactors = Vector<double>.Build.Dense(initialGuess.Count);
+      var pInt = Vector<double>.Build.Dense(initialGuess.Count);
+      var pExt = Vector<double>.Build.DenseOfEnumerable(initialGuess);
       var Pstep = Vector<double>.Build.Dense(initialGuess.Count);
       var Pnew = Vector<double>.Build.Dense(initialGuess.Count);
 
-      _diagonalOfHessian = Vector<double>.Build.Dense(initialGuess.Count);
-      _diagonalOfHessianPlusMu = Vector<double>.Build.Dense(initialGuess.Count);
+      var diagonalOfHessian = Vector<double>.Build.Dense(initialGuess.Count);
+      var diagonalOfHessianPlusMu = Vector<double>.Build.Dense(initialGuess.Count);
 
       objective.SetParameters(initialGuess, isFixed);
       ExitCondition exitCondition = ExitCondition.None;
 
       // First, calculate function values and setup variables
-      var PInt = _pInt;
-      var PExt = initialGuess;
-      ProjectToInternalParameters(initialGuess, _pInt); // current internal parameters
-      var RSS = EvaluateFunction(objective, PInt);  // Residual Sum of Squares = R'R
+      ProjectToInternalParameters(pExt, pInt); // current internal parameters
+      var RSS = EvaluateFunction(objective, pInt, pExt);  // Residual Sum of Squares = R'R
 
       if (maximumIterations < 0)
       {
@@ -132,8 +132,8 @@ namespace Altaxo.Calc.Optimization
       }
 
       // Evaluate gradient (already negated!) and Hessian
-      var (NegativeGradient, Hessian) = EvaluateJacobian(objective, PInt, PExt);
-      Hessian.Diagonal(_diagonalOfHessian); // diag(H)
+      var (NegativeGradient, Hessian) = EvaluateJacobian(objective, pInt);
+      Hessian.Diagonal(diagonalOfHessian); // diag(H)
 
       // if ||g||oo <= gtol, found and stop
       if (NegativeGradient.InfinityNorm() <= gradientTolerance)
@@ -146,7 +146,7 @@ namespace Altaxo.Calc.Optimization
         return new NonlinearMinimizationResult(objective, -1, exitCondition);
       }
 
-      double mu = initialMu * _diagonalOfHessian.Max(); // μ
+      double mu = initialMu * diagonalOfHessian.Max(); // μ
       double nu = 2; //  ν
       int iterations = 0;
       var MuTimesPStepMinusGradient = Vector<double>.Build.Dense(initialGuess.Count);
@@ -156,21 +156,23 @@ namespace Altaxo.Calc.Optimization
 
         while (true)
         {
-          _diagonalOfHessian.Add(mu, _diagonalOfHessianPlusMu);
-          Hessian.SetDiagonal(_diagonalOfHessianPlusMu); // hessian[i, i] = hessian[i, i] + mu;
+          cancellationToken.ThrowIfCancellationRequested();
+
+          diagonalOfHessian.Add(mu, diagonalOfHessianPlusMu);
+          Hessian.SetDiagonal(diagonalOfHessianPlusMu); // hessian[i, i] = hessian[i, i] + mu;
 
           // solve normal equations
           Hessian.Solve(NegativeGradient, Pstep);
 
           // if ||ΔP|| <= xTol * (||P|| + xTol), found and stop
-          if (Pstep.L2Norm() <= stepTolerance * (stepTolerance + PInt.DotProduct(PInt)))
+          if (Pstep.L2Norm() <= stepTolerance * (stepTolerance + pInt.DotProduct(pInt)))
           {
             exitCondition = ExitCondition.RelativePoints;
             break;
           }
 
-          PInt.Add(Pstep, Pnew); // Pnew = PInt + Pstep; new parameters to test
-          var RSSnew = EvaluateFunction(objective, Pnew); // evaluate function at Pnew
+          pInt.Add(Pstep, Pnew); // Pnew = PInt + Pstep; new parameters to test
+          var RSSnew = EvaluateFunction(objective, Pnew, pExt); // evaluate function at Pnew
 
           if (double.IsNaN(RSSnew))
           {
@@ -189,12 +191,12 @@ namespace Altaxo.Calc.Optimization
           if (rho > 0.0)
           {
             // accepted
-            Pnew.CopyTo(PInt);
+            Pnew.CopyTo(pInt);
             RSS = RSSnew;
 
-            // update gradient and Hessian (note: PExt is already updated before)
-            (NegativeGradient, Hessian) = EvaluateJacobian(objective, PInt, PExt);
-            Hessian.Diagonal(_diagonalOfHessian);
+            // update gradient and Hessian 
+            (NegativeGradient, Hessian) = EvaluateJacobian(objective, pInt);
+            Hessian.Diagonal(diagonalOfHessian);
 
             // if ||g||_oo <= gtol, found and stop
             if (NegativeGradient.InfinityNorm() <= gradientTolerance)

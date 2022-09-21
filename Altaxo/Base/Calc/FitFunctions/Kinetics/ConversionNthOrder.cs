@@ -25,7 +25,7 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
-using System.Text;
+using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Calc.Regression.Nonlinear;
 using Altaxo.Main;
 
@@ -158,49 +158,62 @@ namespace Altaxo.Calc.FitFunctions.Kinetics
     {
       Y[0] = P[1] * EvaluateConversion(X[0], P[0], P[2], P[3]);
     }
-
-    /// <inheritdoc/>
-    public void EvaluateGradient(double[] X, double[] P, double[][] DY)
+    public void EvaluateMultiple(IROMatrix<double> independent, IReadOnlyList<double> P, IReadOnlyList<bool>? independentVariableChoice, IVector<double> FV)
     {
-      double x = X[0];
-      double t0 = P[0];
-      double A0 = P[1];
-      double k = P[2];
-      double n = P[3];
+      var rowCount = independent.RowCount;
+      for (int r = 0; r < rowCount; ++r)
+      {
+        var x = independent[r, 0];
 
-      if (!(x >= t0))
-      {
-        DY[0][0] = 0;
-        DY[0][1] = 0;
-        DY[0][2] = 0;
-        DY[0][3] = 0;
+        FV[r] = P[1] * EvaluateConversion(x, P[0], P[2], P[3]);
       }
-      else if (n < 1 && x >= t0 + 1 / (k * (1 - n)))
+    }
+    /// <inheritdoc/>
+    public void EvaluateGradient(IROMatrix<double> X, IReadOnlyList<double> P, IReadOnlyList<bool>? independentVariableChoice, IMatrix<double> DY)
+    {
+      var rowCount = X.RowCount;
+      for (int r = 0; r < rowCount; ++r)
       {
-        DY[0][0] = 0;
-        DY[0][1] = 0;
-        DY[0][2] = 0;
-        DY[0][3] = 0;
-      }
-      else
-      {
-        if (n == 1)
+        var x = X[r, 0];
+        double t0 = P[0];
+        double A0 = P[1];
+        double k = P[2];
+        double n = P[3];
+
+        if (!(x >= t0))
         {
-          var term = Math.Exp(k * (t0-x));
-          DY[0][0] = -A0*term*k;
-          DY[0][1] = 1 - term;
-          DY[0][2] = A0*term * (x - t0);
-          DY[0][3] = -A0*term * 0.5 * RMath.Pow2(k * (x - t0));
+          DY[r, 0] = 0;
+          DY[r, 1] = 0;
+          DY[r, 2] = 0;
+          DY[r, 3] = 0;
+        }
+        else if (n < 1 && x >= t0 + 1 / (k * (1 - n)))
+        {
+          DY[r, 0] = 0;
+          DY[r, 1] = 0;
+          DY[r, 2] = 0;
+          DY[r, 3] = 0;
         }
         else
         {
-          var term = 1 - k * (n - 1) * (t0 - x);
-          var termE = Math.Pow(term, 1 / (1 - n));
+          if (n == 1)
+          {
+            var term = Math.Exp(k * (t0 - x));
+            DY[r, 0] = -A0 * term * k;
+            DY[r, 1] = 1 - term;
+            DY[r, 2] = A0 * term * (x - t0);
+            DY[r, 3] = -A0 * term * 0.5 * RMath.Pow2(k * (x - t0));
+          }
+          else
+          {
+            var term = 1 - k * (n - 1) * (t0 - x);
+            var termE = Math.Pow(term, 1 / (1 - n));
 
-          DY[0][0] = -A0*termE * k / term;
-          DY[0][1] = 1 - termE;
-          DY[0][2] = A0*termE * (x-t0) / term;
-          DY[0][3] = -A0*termE * (Math.Log(term) / RMath.Pow2(1 - n) - k * (t0-x)/(term*(1-n)));
+            DY[r, 0] = -A0 * termE * k / term;
+            DY[r, 1] = 1 - termE;
+            DY[r, 2] = A0 * termE * (x - t0) / term;
+            DY[r, 3] = -A0 * termE * (Math.Log(term) / RMath.Pow2(1 - n) - k * (t0 - x) / (term * (1 - n)));
+          }
         }
       }
     }
@@ -225,7 +238,7 @@ namespace Altaxo.Calc.FitFunctions.Kinetics
       {
         return 0;
       }
-      else if(n<1 && x>=t0+1/(k*(1-n)))
+      else if (n < 1 && x >= t0 + 1 / (k * (1 - n)))
       {
         return 1;
       }
@@ -234,11 +247,11 @@ namespace Altaxo.Calc.FitFunctions.Kinetics
         if (n == 1)
           return 1 - Math.Exp(-k * (x - t0));
         else
-          return 1-Math.Pow(1-k*(n-1)*(t0-x), 1 / (1 - n));
+          return 1 - Math.Pow(1 - k * (n - 1) * (t0 - x), 1 / (1 - n));
       }
     }
 
-   
+
 
     #endregion
   }

@@ -24,6 +24,8 @@
 
 #nullable enable
 using System;
+using System.Collections.Generic;
+using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Calc.Regression.Nonlinear;
 using Altaxo.Main;
 
@@ -267,6 +269,36 @@ namespace Altaxo.Calc.FitFunctions.Transitions
       Y[0] = sumTerms + sumPolynomial;
     }
 
+    public void EvaluateMultiple(IROMatrix<double> independent, IReadOnlyList<double> P, IReadOnlyList<bool>? independentVariableChoice, IVector<double> FV)
+    {
+      var rowCount = independent.RowCount;
+      for (int r = 0; r < rowCount; ++r)
+      {
+        var x = independent[r, 0];
+
+        // evaluation of terms
+        double sumTerms = 0, sumPolynomial = 0;
+        for (int i = 0, j = 0; i < _numberOfTerms; ++i, j += 3)
+        {
+          double arg = (x - P[j + 1]) / P[j + 2];
+          sumTerms += P[j] / (1 + Math.Exp(arg));
+        }
+
+        if (_orderOfBackgroundPolynomial >= 0)
+        {
+          int offset = 3 * _numberOfTerms;
+          // evaluation of terms x^0 .. x^n
+          sumPolynomial = P[_orderOfBackgroundPolynomial + offset];
+          for (int i = _orderOfBackgroundPolynomial - 1; i >= 0; i--)
+          {
+            sumPolynomial *= x;
+            sumPolynomial += P[i + offset];
+          }
+        }
+        FV[r] = sumTerms + sumPolynomial;
+      }
+    }
+
     /// <summary>
     /// Not functional because instance is immutable.
     /// </summary>
@@ -275,28 +307,33 @@ namespace Altaxo.Calc.FitFunctions.Transitions
     #endregion IFitFunction Members
 
     /// <inheritdoc/>
-    public void EvaluateGradient(double[] X, double[] P, double[][] DY)
+    public void EvaluateGradient(IROMatrix<double> X, IReadOnlyList<double> P, IReadOnlyList<bool>? independentVariableChoice, IMatrix<double> DY)
     {
-      // at first, the terms
-      for (int i = 0, j = 0; i < _numberOfTerms; ++i, j += 3)
+      var rowCount = X.RowCount;
+      for (int r = 0; r < rowCount; ++r)
       {
-        var x = (X[0] - P[j + 1]) / P[j + 2];
-        var eterm = Math.Exp(x);
-        var term = 1 / (1 + eterm);
-        double dydxc;
-        DY[0][j + 0] = term;
-        DY[0][j + 1] = dydxc = term * term * eterm * P[j] / P[j + 2];
-        DY[0][j + 2] = dydxc * x;
-      }
-
-      // now, the background
-      if (_orderOfBackgroundPolynomial >= 0)
-      {
-        double xn = 1;
-        for (int i = 0, j = 3 * _numberOfTerms; i <= _orderOfBackgroundPolynomial; ++i, ++j)
+        var x = X[r, 0];
+        // at first, the terms
+        for (int i = 0, j = 0; i < _numberOfTerms; ++i, j += 3)
         {
-          DY[0][j] = xn;
-          xn *= X[0];
+          var arg = (x - P[j + 1]) / P[j + 2];
+          var eterm = Math.Exp(arg);
+          var term = 1 / (1 + eterm);
+          double dydxc;
+          DY[r, j + 0] = term;
+          DY[r, j + 1] = dydxc = term * term * eterm * P[j] / P[j + 2];
+          DY[r, j + 2] = dydxc * arg;
+        }
+
+        // now, the background
+        if (_orderOfBackgroundPolynomial >= 0)
+        {
+          double xn = 1;
+          for (int i = 0, j = 3 * _numberOfTerms; i <= _orderOfBackgroundPolynomial; ++i, ++j)
+          {
+            DY[r, j] = xn;
+            xn *= x;
+          }
         }
       }
     }

@@ -24,6 +24,8 @@
 
 #nullable enable
 using System;
+using System.Collections.Generic;
+using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Calc.Regression.Nonlinear;
 
 namespace Altaxo.Calc.FitFunctions.Transitions
@@ -140,6 +142,17 @@ namespace Altaxo.Calc.FitFunctions.Transitions
     public virtual void Evaluate(double[] X, double[] P, double[] Y)
     {
       Y[0] = Evaluate(X[0], P[0], P[1], P[2], P[3], P[4]);
+    }
+
+    public void EvaluateMultiple(IROMatrix<double> independent, IReadOnlyList<double> P, IReadOnlyList<bool>? independentVariableChoice, IVector<double> FV)
+    {
+      var rowCount = independent.RowCount;
+      for (int r = 0; r < rowCount; ++r)
+      {
+        var x = independent[r, 0];
+
+        FV[r] = Evaluate(x, P[0], P[1], P[2], P[3], P[4]);
+      }
     }
 
     public static double EvaluateOld(double phi, double y0, double y1, double phi_c, double s, double t)
@@ -270,6 +283,8 @@ namespace Altaxo.Calc.FitFunctions.Transitions
 
       return Math.Exp(ly);
     }
+
+
 
     /// <summary>
     /// Finds the x where func(x)==0 between x0&lt;x&lt;x1 for a monoton decreasing function func.

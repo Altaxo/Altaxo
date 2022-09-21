@@ -24,7 +24,10 @@
 
 #nullable enable
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
+using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Regression.Nonlinear
 {
@@ -91,6 +94,21 @@ namespace Altaxo.Calc.Regression.Nonlinear
       public void Evaluate(double[] independent, double[] parameters, double[] FV)
       {
         _func(independent, parameters, FV);
+      }
+
+      public void EvaluateMultiple(IROMatrix<double> independent, IReadOnlyList<double> P, IReadOnlyList<bool>? independentVariableChoice, IVector<double> FV)
+      {
+        var XX = new double[1];
+        var YY = new double[1];
+        var PP = P.ToArray();
+        var rowCount = independent.RowCount;
+        for (int r = 0; r < rowCount; ++r)
+        {
+          XX[0] = independent[r, 0];
+
+          _func(XX, PP, YY);
+          FV[r] = YY[0];
+        }
       }
 
       /// <summary>

@@ -24,6 +24,8 @@
 
 #nullable enable
 using System;
+using System.Collections.Generic;
+using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Calc.Regression.Nonlinear;
 using Altaxo.Main;
 
@@ -109,7 +111,7 @@ namespace Altaxo.Calc.FitFunctions.General
     [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.General.Polynomial}")]
     public static IFitFunction CreatePolynomial_2_0()
     {
-      return new Polynomial(2,0);
+      return new Polynomial(2, 0);
     }
 
     public int PolynomialOrder_PositiveExponents => _order_n;
@@ -194,7 +196,7 @@ namespace Altaxo.Calc.FitFunctions.General
 
     public string ParameterName(int i)
     {
-      return i <= _order_n ? FormattableString.Invariant($"a{i}") : FormattableString.Invariant($"b{i-_order_n}");
+      return i <= _order_n ? FormattableString.Invariant($"a{i}") : FormattableString.Invariant($"b{i - _order_n}");
     }
 
     public double DefaultParameterValue(int i)
@@ -237,7 +239,43 @@ namespace Altaxo.Calc.FitFunctions.General
       }
     }
 
-    
+
+    public void EvaluateMultiple(IROMatrix<double> independent, IReadOnlyList<double> P, IReadOnlyList<bool>? independentVariableChoice, IVector<double> FV)
+    {
+      var rowCount = independent.RowCount;
+      for (int r = 0; r < rowCount; ++r)
+      {
+        var x = independent[r, 0];
+
+        // evaluation of terms x^0 .. x^n
+        double sum = P[_order_n];
+        for (int i = _order_n - 1; i >= 0; i--)
+        {
+          sum *= x;
+          sum += P[i];
+        }
+
+        if (_order_m > 0)
+        {
+          // evaluation of terms x^-1 .. x^-m
+          double isum = 0;
+          for (int i = _order_n + _order_m; i > _order_n; i--)
+          {
+            isum += P[i];
+            if (!(isum == 0)) // avoid NaN if x=0 and coefficients are fixed to zero
+            {
+              isum /= x;
+            }
+          }
+          FV[r] = sum + isum;
+        }
+        else
+        {
+          FV[r] = sum;
+        }
+      }
+    }
+
 
     /// <summary>
     /// Not functional because instance is immutable.
@@ -246,23 +284,28 @@ namespace Altaxo.Calc.FitFunctions.General
 
     #endregion IFitFunction Members
 
-    public void EvaluateGradient(double[] X, double[] P, double[][] DY)
+    public void EvaluateGradient(IROMatrix<double> X, IReadOnlyList<double> P, IReadOnlyList<bool>? independentVariableChoice, IMatrix<double> DY)
     {
-      DY[0][0] = 1;
-      double xn = 1;
-      for (int i = 1; i <= _order_n; i++)
+      var rowCount = X.RowCount;
+      for (int r = 0; r < rowCount; ++r)
       {
-        xn *= X[0];
-        DY[0][i] = xn;
-      }
-
-      if(_order_m>0)
-      {
-        double xm = 1;
-        for(int i=1;i<=_order_m;++i)
+        var x = X[r, 0];
+        DY[r, 0] = 1;
+        double xn = 1;
+        for (int i = 1; i <= _order_n; i++)
         {
-          xm /= X[0];
-          DY[0][i + _order_n] = xm;
+          xn *= x;
+          DY[r, i] = xn;
+        }
+
+        if (_order_m > 0)
+        {
+          double xm = 1;
+          for (int i = 1; i <= _order_m; ++i)
+          {
+            xm /= x;
+            DY[r, i + _order_n] = xm;
+          }
         }
       }
     }

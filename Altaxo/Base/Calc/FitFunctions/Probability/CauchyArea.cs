@@ -24,6 +24,8 @@
 
 #nullable enable
 using System;
+using System.Collections.Generic;
+using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Calc.Regression.Nonlinear;
 using Altaxo.Main;
 
@@ -249,6 +251,36 @@ namespace Altaxo.Calc.FitFunctions.Probability
       Y[0] = sumTerms + sumPolynomial;
     }
 
+    public void EvaluateMultiple(IROMatrix<double> independent, IReadOnlyList<double> P, IReadOnlyList<bool>? independentVariableChoice, IVector<double> FV)
+    {
+      var rowCount = independent.RowCount;
+      for (int r = 0; r < rowCount; ++r)
+      {
+        var x = independent[r, 0];
+
+        // evaluation of gaussian terms
+        double sumTerms = 0, sumPolynomial = 0;
+        for (int i = 0, j = 0; i < _numberOfTerms; ++i, j += 3)
+        {
+          double arg = (x - P[j + 1]) / P[j + 2];
+          sumTerms += P[j] / (Math.PI * P[j + 2] * (1 + arg * arg));
+        }
+
+        if (_orderOfBackgroundPolynomial >= 0)
+        {
+          int offset = 3 * _numberOfTerms;
+          // evaluation of terms x^0 .. x^n
+          sumPolynomial = P[_orderOfBackgroundPolynomial + offset];
+          for (int i = _orderOfBackgroundPolynomial - 1; i >= 0; i--)
+          {
+            sumPolynomial *= x;
+            sumPolynomial += P[i + offset];
+          }
+        }
+        FV[r] = sumTerms + sumPolynomial;
+      }
+    }
+
     /// <summary>
     /// Not functional because instance is immutable.
     /// </summary>
@@ -256,26 +288,31 @@ namespace Altaxo.Calc.FitFunctions.Probability
 
     #endregion IFitFunction Members
 
-    public void EvaluateGradient(double[] X, double[] P, double[][] DY)
+    public void EvaluateGradient(IROMatrix<double> X, IReadOnlyList<double> P, IReadOnlyList<bool>? independentVariableChoice, IMatrix<double> DY)
     {
-      // at first, the gaussian terms
-      for (int i = 0, j = 0; i < _numberOfTerms; ++i, j += 3)
+      var rowCount = X.RowCount;
+      for (int r = 0; r < rowCount; ++r)
       {
-        var x = (X[0] - P[j + 1]) / P[j + 2];
-        var t1 = 1 / (1 + x * x);
-        var term = 1 / (Math.PI * P[j + 2] * (1 + x * x));
-        DY[0][j + 0] = term;
-        DY[0][j + 1] = term * t1 * 2 * x * P[j] / P[j + 2];
-        DY[0][j + 2] = term * P[j] / P[j + 2] * (2 * x * x * t1 - 1);
-      }
-
-      if (_orderOfBackgroundPolynomial >= 0)
-      {
-        double xn = 1;
-        for (int i = 0, j = 3 * _numberOfTerms; i <= _orderOfBackgroundPolynomial; ++i, ++j)
+        var x = X[r, 0];
+        // at first, the gaussian terms
+        for (int i = 0, j = 0; i < _numberOfTerms; ++i, j += 3)
         {
-          DY[0][j] = xn;
-          xn *= X[0];
+          var arg = (x - P[j + 1]) / P[j + 2];
+          var t1 = 1 / (1 + arg * arg);
+          var term = 1 / (Math.PI * P[j + 2] * (1 + arg * arg));
+          DY[r, j + 0] = term;
+          DY[r, j + 1] = term * t1 * 2 * arg * P[j] / P[j + 2];
+          DY[r, j + 2] = term * P[j] / P[j + 2] * (2 * arg * arg * t1 - 1);
+        }
+
+        if (_orderOfBackgroundPolynomial >= 0)
+        {
+          double xn = 1;
+          for (int i = 0, j = 3 * _numberOfTerms; i <= _orderOfBackgroundPolynomial; ++i, ++j)
+          {
+            DY[r, j] = xn;
+            xn *= x;
+          }
         }
       }
     }

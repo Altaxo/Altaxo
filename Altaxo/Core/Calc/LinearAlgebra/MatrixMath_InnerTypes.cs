@@ -167,9 +167,9 @@ namespace Altaxo.Calc.LinearAlgebra
 
     #region VectorToMatrixWithOneColumn
 
-    class VectorToROMatrixWithOneColumnWrapper<T> : IROMatrix<T> where T : struct
+    private class VectorToROMatrixWithOneColumnWrapper<T> : IROMatrix<T> where T : struct
     {
-      IReadOnlyList<T> _wrapped;
+      private IReadOnlyList<T> _wrapped;
 
       public VectorToROMatrixWithOneColumnWrapper(IReadOnlyList<T> wrapped)
       {
@@ -189,6 +189,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <typeparam name="T">Type of elements</typeparam>
     /// <param name="vector">The vector to wrap.</param>
     /// <returns>A wrapper that appears as a matrix with one column, and as many rows as the wrapped vector.</returns>
+    /// <remarks>Only a wrapper is returned, thus if the data of the vector change, the changes are reflected in the returned matrix.</remarks>
     public static IROMatrix<T> ToROMatrixWithOneColumn<T>(IReadOnlyList<T> vector) where T : struct
     {
       return new VectorToROMatrixWithOneColumnWrapper<T>(vector);
@@ -196,6 +197,37 @@ namespace Altaxo.Calc.LinearAlgebra
 
     #endregion
 
+    #region VectorToMatrixWithOneRow
+
+    private class VectorToROMatrixWithOneRowWrapper<T> : IROMatrix<T> where T : struct
+    {
+      private IReadOnlyList<T> _wrapped;
+
+      public VectorToROMatrixWithOneRowWrapper(IReadOnlyList<T> wrapped)
+      {
+        _wrapped = wrapped;
+      }
+
+      public T this[int row, int col] => _wrapped[col];
+
+      public int RowCount => 1;
+
+      public int ColumnCount => _wrapped.Count;
+    }
+
+    /// <summary>
+    /// Wraps a read-only vector, so that it becomes a matrix with one row, and as many columns as elements in the vector.
+    /// </summary>
+    /// <typeparam name="T">Type of elements</typeparam>
+    /// <param name="vector">The vector to wrap.</param>
+    /// <returns>A wrapper that appears as a matrix with one row, and as many columns as elements in the wrapped vector.</returns>
+    /// <remarks>Only a wrapper is returned, thus if the data of the vector change, the changes are reflected in the returned matrix.</remarks>
+    public static IROMatrix<T> ToROMatrixWithOneRow<T>(IReadOnlyList<T> vector) where T : struct
+    {
+      return new VectorToROMatrixWithOneRowWrapper<T>(vector);
+    }
+
+    #endregion
     #region MatrixWithOneRow
 
     /// <summary>
@@ -1168,8 +1200,8 @@ namespace Altaxo.Calc.LinearAlgebra
     public class ROMatrixFrom2DArray<T> : IROMatrix<T> where T : struct
     {
       protected T[,] _array;
-      int _rows;
-      int _columns;
+      private int _rows;
+      private int _columns;
 
       #region IROMatrix Members
 
@@ -1217,8 +1249,8 @@ namespace Altaxo.Calc.LinearAlgebra
     public class RWMatrixFrom2DArray<T> : IMatrix<T> where T : struct
     {
       protected T[,] _array;
-      int _rows;
-      int _columns;
+      private int _rows;
+      private int _columns;
 
       #region IROMatrix Members
 

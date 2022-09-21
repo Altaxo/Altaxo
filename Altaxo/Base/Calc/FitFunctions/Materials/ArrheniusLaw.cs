@@ -24,6 +24,7 @@
 
 #nullable enable
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using Altaxo.Science;
 
@@ -53,10 +54,10 @@ namespace Altaxo.Calc.FitFunctions.Materials
       return TransformedValue.GetFormula("y", _dependentVariableTransform);
     }
 
-    public override void Evaluate(double[] X, double[] P, double[] Y)
+    public override double Evaluate(double X, IReadOnlyList<double> P)
     {
-      base.Evaluate(X, P, Y);
-      Y[0] = TransformedValue.BaseValueToTransformedValue(Y[0], _dependentVariableTransform);
+      var y = base.Evaluate(X, P);
+      return TransformedValue.BaseValueToTransformedValue(y, _dependentVariableTransform);
     }
 
 

@@ -25,9 +25,7 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Calc.Regression.Nonlinear;
 using Altaxo.Main;
 
@@ -157,7 +155,7 @@ namespace Altaxo.Calc.FitFunctions.General
     {
       get
       {
-        return NumberOfTerms*3 + 2;
+        return NumberOfTerms * 3 + 2;
       }
     }
 
@@ -212,9 +210,9 @@ namespace Altaxo.Calc.FitFunctions.General
       double sum = P[1]; // P[1] is offset 
       if (x > 0)
       {
-        for (int i = 2, j = 0; j < NumberOfTerms; i += 3, ++j) 
+        for (int i = 2, j = 0; j < NumberOfTerms; i += 3, ++j)
         {
-          sum += P[i] * (Math.Exp(-Math.Pow(x / P[i + 1], P[i+2])));
+          sum += P[i] * (Math.Exp(-Math.Pow(x / P[i + 1], P[i + 2])));
         }
       }
       else
@@ -227,40 +225,71 @@ namespace Altaxo.Calc.FitFunctions.General
       Y[0] = sum;
     }
 
-    
+    public void EvaluateMultiple(IROMatrix<double> independent, IReadOnlyList<double> P, IReadOnlyList<bool>? independentVariableChoice, IVector<double> FV)
+    {
+      var rowCount = independent.RowCount;
+      for (int r = 0; r < rowCount; ++r)
+      {
+        var x = independent[r, 0];
+
+        double arg = x - P[0]; // P[1] is x0
+        double sum = P[1]; // P[1] is offset 
+        if (arg > 0)
+        {
+          for (int i = 2, j = 0; j < NumberOfTerms; i += 3, ++j)
+          {
+            sum += P[i] * (Math.Exp(-Math.Pow(arg / P[i + 1], P[i + 2])));
+          }
+        }
+        else
+        {
+          for (int i = 2, j = 0; j < NumberOfTerms; i += 3, ++j)
+          {
+            sum += P[i];
+          }
+        }
+        FV[r] = sum;
+      }
+    }
 
     #endregion IFitFunction Members
 
-    public void EvaluateGradient(double[] X, double[] P, double[][] DY)
+    public void EvaluateGradient(IROMatrix<double> X, IReadOnlyList<double> P, IReadOnlyList<bool>? independentVariableChoice, IMatrix<double> DY)
     {
-      double x = X[0] - P[0]; // P[1] is x0
-
-      DY[0][1] = 1; // offset
-      if (x > 0)
+      var rowCount = X.RowCount;
+      for (int r = 0; r < rowCount; ++r)
       {
-        double sum = 0;
-        for (int i = 2; i < P.Length; i += 3)
-        {
-          var tau = P[i + 1];
-          var beta = P[i + 2];
-          var arg = Math.Pow(x / tau, beta);
-          var earg = Math.Exp(-arg);
+        var xx = X[r, 0];
 
-          DY[0][i] = earg; // dy/da
-          DY[0][i + 1] = P[i] * earg * arg *  beta / tau; // dy/dtau
-          DY[0][i + 2] = -P[i] * earg * arg * Math.Log(x / tau); // dy/dbeta
-          sum += P[i] * earg * arg * beta / x;
+        double x = xx - P[0]; // P[1] is x0
+
+        DY[r, 1] = 1; // offset
+        if (x > 0)
+        {
+          double sum = 0;
+          for (int i = 2; i < P.Count; i += 3)
+          {
+            var tau = P[i + 1];
+            var beta = P[i + 2];
+            var arg = Math.Pow(x / tau, beta);
+            var earg = Math.Exp(-arg);
+
+            DY[r, i] = earg; // dy/da
+            DY[r, i + 1] = P[i] * earg * arg * beta / tau; // dy/dtau
+            DY[r, i + 2] = -P[i] * earg * arg * Math.Log(x / tau); // dy/dbeta
+            sum += P[i] * earg * arg * beta / x;
+          }
+          DY[r, 0] = sum; // derivative w.r.t. to x0
         }
-        DY[0][0] = sum; // derivative w.r.t. to x0
-      }
-      else // x < 0
-      {
-        DY[0][0] = 0; // derivative w.r.t.to x0 is 0 for x<0
-        for (int i = 2; i < P.Length; i += 3)
+        else // x < 0
         {
-          DY[0][i] = 1; // dy/da is 1
-          DY[0][i + 1] = 0;
-          DY[0][i + 2] = 0;
+          DY[r, 0] = 0; // derivative w.r.t.to x0 is 0 for x<0
+          for (int i = 2; i < P.Count; i += 3)
+          {
+            DY[r, i] = 1; // dy/da is 1
+            DY[r, i + 1] = 0;
+            DY[r, i + 2] = 0;
+          }
         }
       }
     }

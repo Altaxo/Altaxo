@@ -24,6 +24,7 @@
 
 #nullable enable
 using System;
+using System.Collections.Generic;
 using Altaxo.Calc.FitFunctions.Peaks;
 using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Calc.Regression.Nonlinear;
@@ -248,6 +249,36 @@ namespace Altaxo.Calc.FitFunctions.Probability
       Y[0] = sumTerms + sumPolynomial;
     }
 
+    public void EvaluateMultiple(IROMatrix<double> independent, IReadOnlyList<double> P, IReadOnlyList<bool>? independentVariableChoice, IVector<double> FV)
+    {
+      var rowCount = independent.RowCount;
+      for (int r = 0; r < rowCount; ++r)
+      {
+        var x = independent[r, 0];
+
+        // evaluation of terms
+        double sumTerms = 0, sumPolynomial = 0;
+        for (int i = 0, j = 0; i < _numberOfTerms; ++i, j += NumberOfParametersPerPeak)
+        {
+          double arg = (x - P[j + 1]) / P[j + 2];
+          sumTerms += P[j] / (1 + arg * arg);
+        }
+
+        if (_orderOfBackgroundPolynomial >= 0)
+        {
+          int offset = NumberOfParametersPerPeak * _numberOfTerms;
+          // evaluation of terms x^0 .. x^n
+          sumPolynomial = P[_orderOfBackgroundPolynomial + offset];
+          for (int i = _orderOfBackgroundPolynomial - 1; i >= 0; i--)
+          {
+            sumPolynomial *= x;
+            sumPolynomial += P[i + offset];
+          }
+        }
+        FV[r] = sumTerms + sumPolynomial;
+      }
+    }
+
     /// <summary>
     /// Not functional because instance is immutable.
     /// </summary>
@@ -255,31 +286,37 @@ namespace Altaxo.Calc.FitFunctions.Probability
 
     #endregion IFitFunction Members
 
-    public void EvaluateGradient(double[] X, double[] P, double[][] DY)
+    public void EvaluateGradient(IROMatrix<double> X, IReadOnlyList<double> P, IReadOnlyList<bool>? independentVariableChoice, IMatrix<double> DY)
     {
-      // at first, the gaussian terms
-      for (int i = 0, j = 0; i < _numberOfTerms; ++i, j += NumberOfParametersPerPeak)
+      var rowCount = X.RowCount;
+      for (int r = 0; r < rowCount; ++r)
       {
-        var x = (X[0] - P[j + 1]) / P[j + 2];
-        var term = 1 / (1 + x * x);
-        DY[0][j + 0] = term;
-        DY[0][j + 1] = term * term * 2 * x * P[j] / P[j + 2];
-        DY[0][j + 2] = term * term * 2 * x * x * P[j] / P[j + 2];
-      }
-
-      if (_orderOfBackgroundPolynomial >= 0)
-      {
-        double xn = 1;
-        for (int i = 0, j = NumberOfParametersPerPeak * _numberOfTerms; i <= _orderOfBackgroundPolynomial; ++i, ++j)
+        var x = X[r, 0];
+        // at first, the gaussian terms
+        for (int i = 0, j = 0; i < _numberOfTerms; ++i, j += NumberOfParametersPerPeak)
         {
-          DY[0][j] = xn;
-          xn *= X[0];
+          var arg = (x - P[j + 1]) / P[j + 2];
+          var term = 1 / (1 + arg * arg);
+          DY[r, j + 0] = term;
+          DY[r, j + 1] = term * term * 2 * arg * P[j] / P[j + 2];
+          DY[r, j + 2] = term * term * 2 * arg * arg * P[j] / P[j + 2];
+        }
+
+        if (_orderOfBackgroundPolynomial >= 0)
+        {
+          double xn = 1;
+          for (int i = 0, j = NumberOfParametersPerPeak * _numberOfTerms; i <= _orderOfBackgroundPolynomial; ++i, ++j)
+          {
+            DY[r, j] = xn;
+            xn *= x;
+          }
         }
       }
     }
 
+
     /// <inheritdoc/>
-    public string[] ParameterNamesForOnePeak => new string[] { ParameterBaseName0, ParameterBaseName1, ParameterBaseName2};
+    public string[] ParameterNamesForOnePeak => new string[] { ParameterBaseName0, ParameterBaseName1, ParameterBaseName2 };
 
 
     /// <inheritdoc/>
@@ -294,7 +331,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
       var result = new double[NumberOfParametersPerPeak];
       result[0] = height;
       result[1] = position;
-      result[2] = 0.5*width * Math.Sqrt(relativeHeight / (1 - relativeHeight));
+      result[2] = 0.5 * width * Math.Sqrt(relativeHeight / (1 - relativeHeight));
       return result;
     }
 
@@ -318,15 +355,15 @@ namespace Altaxo.Calc.FitFunctions.Probability
       var fwhm = 2 * parameters[2];
 
       double posStdDev = 0, areaStdDev = 0, heightStdDev = 0, fwhmStdDev = 0;
-      if(cv is not null)
+      if (cv is not null)
       {
-        heightStdDev  = Math.Sqrt(cv[0, 0]);
-        posStdDev  = Math.Sqrt(cv[1, 1]);
-        fwhmStdDev  = 2*Math.Sqrt(cv[2, 2]);
-        areaStdDev  = Math.PI*Math.Sqrt(height*height*cv[2,2] + height*w*(cv[2,0]+cv[0,2]) + w*w*cv[0,0]);
+        heightStdDev = Math.Sqrt(cv[0, 0]);
+        posStdDev = Math.Sqrt(cv[1, 1]);
+        fwhmStdDev = 2 * Math.Sqrt(cv[2, 2]);
+        areaStdDev = Math.PI * Math.Sqrt(height * height * cv[2, 2] + height * w * (cv[2, 0] + cv[0, 2]) + w * w * cv[0, 0]);
       }
 
-      return (pos, posStdDev , area, areaStdDev , height, heightStdDev , fwhm, fwhmStdDev );
+      return (pos, posStdDev, area, areaStdDev, height, heightStdDev, fwhm, fwhmStdDev);
     }
   }
 }

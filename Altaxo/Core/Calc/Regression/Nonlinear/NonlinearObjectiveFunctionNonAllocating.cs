@@ -371,21 +371,35 @@ namespace Altaxo.Calc.Optimization.ObjectiveFunctions
       }
 
       // weighted jacobian
-      for (int i = 0; i < NumberOfObservations; i++)
+      if (IsFixed is not null)
       {
         for (int j = 0; j < NumberOfParameters; j++)
         {
-          if (IsFixed is not null && IsFixed[j])
+          if (IsFixed[j])
           {
-            // if j-th parameter is fixed, set J[i, j] = 0
-            _jacobianValue[i, j] = 0.0;
+            _jacobianValue.ClearColumn(j);
           }
           else if (Weights is not null)
           {
-            _jacobianValue[i, j] = _jacobianValue[i, j] * L[i];
+            for (int i = 0; i < NumberOfObservations; i++)
+            {
+              _jacobianValue[i, j] *= L[i];
+            }
           }
         }
       }
+      else if (Weights is not null)
+      {
+        for (int i = 0; i < NumberOfObservations; i++)
+        {
+          var li = L[i];
+          for (int j = 0; j < NumberOfParameters; j++)
+          {
+            _jacobianValue[i, j] *= li;
+          }
+        }
+      }
+
 
       // Gradient, g = -J'W(y − f(x; p)) = -J'L(L'E) = -J'LR
       // _gradientValue = -_jacobianValue.Transpose() * _residuals;

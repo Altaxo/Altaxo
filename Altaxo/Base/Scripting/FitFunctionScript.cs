@@ -24,8 +24,10 @@
 
 #nullable enable
 using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
+using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Calc.Regression.Nonlinear;
 using Altaxo.Main.Services.ScriptCompilation;
 
@@ -1072,6 +1074,8 @@ namespace Altaxo.Scripting
       }
     }
 
+
+
     #region IFitFunction Members
 
     public int NumberOfIndependentVariables
@@ -1201,6 +1205,28 @@ namespace Altaxo.Scripting
         return;
       }
     }
+
+    public void EvaluateMultiple(IROMatrix<double> independent, IReadOnlyList<double> P, IReadOnlyList<bool>? independentVariableChoice, IVector<double> FV)
+    {
+      MakeSureWasTriedToCompile();
+
+      if (_scriptObject is null)
+      {
+        _errors = ImmutableArray.Create(new CompilerDiagnostic(null, null, DiagnosticSeverity.Error, "Script Object is null"));
+        return;
+      }
+
+      try
+      {
+        ((IFitFunction)_scriptObject).EvaluateMultiple(independent, P, independentVariableChoice, FV);
+        return;
+      }
+      catch (Exception)
+      {
+        return;
+      }
+    }
+
 
     #endregion IFitFunction Members
   } // end of class

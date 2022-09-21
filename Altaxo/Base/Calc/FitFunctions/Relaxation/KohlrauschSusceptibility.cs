@@ -24,7 +24,9 @@
 
 #nullable enable
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Calc.Regression.Nonlinear;
 using Complex64T = System.Numerics.Complex;
 
@@ -494,14 +496,82 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
         result = new Complex64T(result.Real, -result.Imaginary); // else if we don't invert, i.e. we calculate susceptibility, we negate the imaginary part to make it positive
 
       if (_logarithmizeResults)
-      { 
+      {
         result = new Complex64T(Math.Log10(result.Real), Math.Log10(result.Imaginary));
       }
 
       Y[0] = result.Real;
       Y[1] = result.Imaginary;
     }
+    public void EvaluateMultiple(IROMatrix<double> independent, IReadOnlyList<double> P, IReadOnlyList<bool>? independentVariableChoice, IVector<double> FV)
+    {
+      var rowCount = independent.RowCount;
+      int rd = 0;
+      for (int r = 0; r < rowCount; ++r)
+      {
+        var x = independent[r, 0];
 
+        if (_useFrequencyInsteadOmega)
+          x *= (2 * Math.PI);
+
+        Complex64T result = P[0];
+
+        int iPar, i;
+        for (i = 0, iPar = 1; i < _numberOfTerms; i++, iPar += 3)
+        {
+          result += P[0 + iPar] * Kohlrausch.ReIm(P[2 + iPar], P[1 + iPar] * x);
+        }
+
+        // note: because it is a susceptiblity, the imaginary part is still negative
+
+        if (_useFlowTerm)
+        {
+          if (_isDielectricData)
+          {
+            if (_invertViscosity)
+              result = new Complex64T(result.Real, result.Imaginary - P[iPar] / (x * 8.854187817e-12));
+            else
+              result = new Complex64T(result.Real, result.Imaginary - 1 / (P[iPar] * x * 8.854187817e-12));
+          }
+          else
+          {
+            if (_invertViscosity)
+              result = new Complex64T(result.Real, result.Imaginary - P[iPar] / (x));
+            else
+              result = new Complex64T(result.Real, result.Imaginary - 1 / (P[iPar] * x));
+          }
+        }
+
+
+        if (_invertResult)
+          result = 1 / result; // if we invert, i.e. we calculate the modulus, the imaginary part is now positive
+        else
+          result = new Complex64T(result.Real, -result.Imaginary); // else if we don't invert, i.e. we calculate susceptibility, we negate the imaginary part to make it positive
+
+        if (_logarithmizeResults)
+        {
+          result = new Complex64T(Math.Log10(result.Real), Math.Log10(result.Imaginary));
+        }
+
+        if (independentVariableChoice is null)
+        {
+          FV[rd++] = result.Real;
+          FV[rd++] = result.Imaginary;
+        }
+        else
+        {
+          if (independentVariableChoice[0] == true)
+          {
+            FV[rd++] = result.Real;
+          }
+
+          if (independentVariableChoice[1] == true)
+          {
+            FV[rd++] = result.Imaginary;
+          }
+        }
+      }
+    }
     /// <summary>
     /// Not functional because instance is immutable.
     /// </summary>

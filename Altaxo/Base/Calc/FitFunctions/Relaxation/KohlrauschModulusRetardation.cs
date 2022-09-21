@@ -24,7 +24,9 @@
 
 #nullable enable
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Calc.Regression.Nonlinear;
 using Complex64T = System.Numerics.Complex;
 
@@ -40,7 +42,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     private bool _useFrequencyInsteadOmega;
     private bool _useFlowTerm;
     private bool _logarithmizeResults;
-    private bool _invertViscosity=true;
+    private bool _invertViscosity = true;
 
     #region Serialization
 
@@ -258,7 +260,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
         _useFrequencyInsteadOmega = false,
         _useFlowTerm = true,
         _invertViscosity = false,
-        _logarithmizeResults = true, 
+        _logarithmizeResults = true,
       };
 
       return result;
@@ -404,7 +406,63 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
         Y[1] = result.Imaginary;
       }
     }
+    public void EvaluateMultiple(IROMatrix<double> independent, IReadOnlyList<double> P, IReadOnlyList<bool>? independentVariableChoice, IVector<double> FV)
+    {
+      var rowCount = independent.RowCount;
+      int rd = 0;
+      for (int r = 0; r < rowCount; ++r)
+      {
+        var x = independent[r, 0];
 
+        if (_useFrequencyInsteadOmega)
+          x *= (2 * Math.PI);
+
+        double w_r = x * P[2]; // omega scaled with tau
+
+        Complex64T result = 1 / P[1] + (1 / P[0] - 1 / P[1]) * Kohlrausch.ReIm(P[3], w_r);
+
+        if (_useFlowTerm)
+        {
+          if (_invertViscosity)
+            result = new Complex64T(result.Real, result.Imaginary - P[4] / (x));
+          else
+            result = new Complex64T(result.Real, result.Imaginary - 1 / (x * P[4]));
+        }
+
+        result = 1 / result;
+
+        double yre, yim;
+        if (_logarithmizeResults)
+        {
+          yre = Math.Log10(result.Real);
+          yim = Math.Log10(result.Imaginary);
+        }
+        else
+        {
+          yre = result.Real;
+          yim = result.Imaginary;
+        }
+
+        if (independentVariableChoice is null)
+        {
+          FV[rd++] = yre;
+          FV[rd++] = yim;
+        }
+        else
+        {
+          if (independentVariableChoice[0] == true)
+          {
+            FV[rd++] = yre;
+          }
+
+          if (independentVariableChoice[1] == true)
+          {
+            FV[rd++] = yim;
+          }
+        }
+
+      }
+    }
     /// <summary>
     /// Called when anything in this fit function has changed.
     /// </summary>

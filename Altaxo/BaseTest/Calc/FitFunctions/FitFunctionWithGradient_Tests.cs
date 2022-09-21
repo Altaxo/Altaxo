@@ -24,10 +24,11 @@
 
 using System;
 using System.Collections.Generic;
-using Altaxo.Calc.FitFunctions;
+using System.Linq;
 using Altaxo.Calc.FitFunctions.General;
 using Altaxo.Calc.FitFunctions.Probability;
 using Altaxo.Calc.FitFunctions.Transitions;
+using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Calc.Regression.Nonlinear;
 using Xunit;
 
@@ -125,25 +126,40 @@ namespace Altaxo.Calc.FitFunctions
       }
     }
 
+    [Fact]
+    public void TestCoverage()
+    {
+      var typeHash = _fitData.Select(x => x.Creation().GetType()).ToHashSet();
+      var allTypes = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(IFitFunctionWithGradient)).ToHashSet();
+      allTypes.ExceptWith(typeHash);
+
+      Assert.True(0 == allTypes.Count);
+    }
+
 
 
     private static void TestGradients(IFitFunctionWithGradient ff, double x0, double[] parameters)
     {
       const double delta = 1 / 131072d;
       double[] paraVariation = new double[parameters.Length];
-      double[][] actualDerivative = new double[1][];
-      actualDerivative[0] = new double[parameters.Length];
-      double[] x = new double[1];
-      double[] y = new double[1];
-      x[0] = x0;
-      y[0] = double.NaN;
-      for (int i = 0; i < actualDerivative[0].Length; ++i)
-        actualDerivative[0][i] = double.NaN;
+      var actualDerivative = Matrix<double>.Build.Dense(5, parameters.Length);
+      double[] x = new double[5];
+      double[] y = new double[5];
+      var xx = MatrixMath.ToROMatrixWithOneColumn(x);
+      var yy = VectorMath.ToVector(y);
 
-      ff.Evaluate(x, parameters, y);
-      var y0 = y[0];
+      for (int i = 0; i < 5; ++i)
+      {
+        x[i] = x0;
+        y[i] = double.NaN;
+        for (int k = 0; k < parameters.Length; ++k)
+          actualDerivative[i, k] = double.NaN;
+      }
 
-      ff.EvaluateGradient(x, parameters, actualDerivative);
+      ff.EvaluateMultiple(xx, parameters, null, yy);
+      var y0 = y[4];
+
+      ff.EvaluateGradient(xx, parameters, null, actualDerivative);
 
       for (int i = 0; i < paraVariation.Length; ++i)
       {
@@ -155,11 +171,11 @@ namespace Altaxo.Calc.FitFunctions
           d = Math.Abs(paraVariation[i]) * delta;
         }
         paraVariation[i] += d; ;
-        ff.Evaluate(x, paraVariation, y);
-        var y1 = y[0];
+        ff.EvaluateMultiple(xx, paraVariation, null, yy);
+        var y1 = y[4];
 
         var approximatedDerivative = (y1 - y0) / d;
-        Assert.Equal(approximatedDerivative, actualDerivative[0][i], CompareDerivatives);
+        Assert.Equal(approximatedDerivative, actualDerivative[4, i], CompareDerivatives);
       }
     }
   }

@@ -25,6 +25,8 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Collections;
 using Altaxo.Data;
 
@@ -1233,7 +1235,7 @@ namespace Altaxo.Calc
 
   public abstract class FitFunctionExeBase : ScriptExecutionBase, Altaxo.Calc.Regression.Nonlinear.IFitFunction
   {
-    static readonly string[] _emptyStringArray = new string[0];
+    private static readonly string[] _emptyStringArray = new string[0];
     protected string[] _independentVariableNames = _emptyStringArray;
     protected string[] _dependentVariableNames = _emptyStringArray;
     protected string[] _parameterNames = _emptyStringArray;
@@ -1331,6 +1333,45 @@ namespace Altaxo.Calc
     /// <param name="result">On return, this array contains the one (or more) evaluated
     /// function values at the point (independent).</param>
     public abstract void Evaluate(double[] independent, double[] parameters, double[] result);
+
+    public virtual void EvaluateMultiple(IROMatrix<double> independent, IReadOnlyList<double> P, IReadOnlyList<bool>? independentVariableChoice, IVector<double> FV)
+    {
+      var xx = new double[NumberOfIndependentVariables];
+      var yy = new double[NumberOfDependentVariables];
+      var pp = P.ToArray();
+
+      var rowCount = independent.RowCount;
+      var colCount = independent.ColumnCount;
+      int rd = 0;
+      for (int r = 0; r < rowCount; ++r)
+      {
+        for (int c = 0; c < colCount; ++c)
+        {
+          xx[c] = independent[r, c];
+        }
+
+        Evaluate(xx, pp, yy);
+
+        if (independentVariableChoice is null)
+        {
+          for (int c = 0; c < yy.Length; ++c)
+          {
+            FV[rd++] = yy[c];
+          }
+        }
+        else
+        {
+          for (int c = 0; c < yy.Length; ++c)
+          {
+            if (independentVariableChoice[c] == true)
+            {
+              FV[rd++] = yy[c];
+            }
+          }
+        }
+      }
+    }
+
 
     #region Change event
 

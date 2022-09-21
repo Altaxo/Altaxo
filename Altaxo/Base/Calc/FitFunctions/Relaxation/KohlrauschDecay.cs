@@ -24,6 +24,8 @@
 
 #nullable enable
 using System;
+using System.Collections.Generic;
+using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Calc.Regression.Nonlinear;
 using Altaxo.Main;
 
@@ -205,10 +207,26 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
       Y[0] = _logarithmizeResult ? Math.Log10(sum) : sum;
     }
 
+    public void EvaluateMultiple(IROMatrix<double> independent, IReadOnlyList<double> P, IReadOnlyList<bool>? independentVariableChoice, IVector<double> FV)
+    {
+      var rowCount = independent.RowCount;
+      for (int r = 0; r < rowCount; ++r)
+      {
+        var x = independent[r, 0];
+
+        double sum = P[0];
+
+        for (int i = 0, j = 1; i < _numberOfRelaxations; ++i, j += 3)
+          sum += P[j] * Math.Exp(-Math.Pow(x / P[j + 1], P[j + 2]));
+
+        FV[r] = _logarithmizeResult ? Math.Log10(sum) : sum;
+      }
+    }
+
     /// <summary>
     /// Called when anything in this fit function has changed.
     /// </summary>
-   
+
 
     /// <summary>
     /// Unused because this instance is immutable.

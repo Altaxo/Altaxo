@@ -24,7 +24,9 @@
 
 #nullable enable
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Calc.Regression.Nonlinear;
 using Altaxo.Science;
 
@@ -66,7 +68,7 @@ namespace Altaxo.Calc.FitFunctions.Materials
     [Category("OptionsForParameters")]
     public ArrheniusLawRate WithParameterEnergyRepresentation(EnergyRepresentation value)
     {
-      if(!(_paramEnergyUnit == value))
+      if (!(_paramEnergyUnit == value))
       {
         return new ArrheniusLawRate(_temperatureUnitOfX, value);
       }
@@ -83,7 +85,7 @@ namespace Altaxo.Calc.FitFunctions.Materials
     [Category("OptionsForIndependentVariables")]
     public ArrheniusLawRate WithIndependentVariableRepresentation(TemperatureRepresentation value)
     {
-      if(!(_temperatureUnitOfX == value))
+      if (!(_temperatureUnitOfX == value))
       {
         return new ArrheniusLawRate(value, _paramEnergyUnit);
       }
@@ -208,7 +210,7 @@ namespace Altaxo.Calc.FitFunctions.Materials
       return null;
     }
 
-   
+
 
     /// <summary>
     /// Not used (instance is immutable).
@@ -223,6 +225,17 @@ namespace Altaxo.Calc.FitFunctions.Materials
       double energyAsTemperature = Energy.ToTemperatureSI(P[1], _paramEnergyUnit);
       Y[0] = P[0] * Math.Exp(-energyAsTemperature / temperature);
     }
+    public void EvaluateMultiple(IROMatrix<double> independent, IReadOnlyList<double> P, IReadOnlyList<bool>? independentVariableChoice, IVector<double> FV)
+    {
+      var rowCount = independent.RowCount;
+      for (int r = 0; r < rowCount; ++r)
+      {
+        var x = independent[r, 0];
 
+        double temperature = Temperature.ToKelvin(x, _temperatureUnitOfX);
+        double energyAsTemperature = Energy.ToTemperatureSI(P[1], _paramEnergyUnit);
+        FV[r] = P[0] * Math.Exp(-energyAsTemperature / temperature);
+      }
+    }
   }
 }

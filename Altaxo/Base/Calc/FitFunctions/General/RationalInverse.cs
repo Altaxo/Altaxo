@@ -24,6 +24,8 @@
 
 #nullable enable
 using System;
+using System.Collections.Generic;
+using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Calc.Regression.Nonlinear;
 using Altaxo.Main;
 
@@ -92,7 +94,7 @@ namespace Altaxo.Calc.FitFunctions.General
     [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.General.RationalInverse}")]
     public static IFitFunction CreateRationalInverse_1_1()
     {
-      return new RationalInverse(1,1);
+      return new RationalInverse(1, 1);
     }
 
     public int PolynomialOrder_Nominator => _order_n;
@@ -176,7 +178,7 @@ namespace Altaxo.Calc.FitFunctions.General
 
     public string ParameterName(int i)
     {
-      return i < _order_n ? FormattableString.Invariant($"a{i+1}") : FormattableString.Invariant($"b{i-_order_n}");
+      return i < _order_n ? FormattableString.Invariant($"a{i + 1}") : FormattableString.Invariant($"b{i - _order_n}");
     }
 
     public double DefaultParameterValue(int i)
@@ -190,46 +192,6 @@ namespace Altaxo.Calc.FitFunctions.General
     }
 
     public void Evaluate(double[] X, double[] P, double[] Y)
-    {
-      // evaluation of nominator terms a0*x^0 .. an*x^n
-      double nominator;
-      if (_order_n == 0)
-      {
-        nominator = 1;
-      }
-      else
-      {
-        nominator = P[_order_n-1];
-        for (int i = _order_n - 2; i >= 0; i--)
-        {
-          nominator *= X[0];
-          nominator += P[i];
-        }
-        nominator *= X[0];
-        nominator += 1;
-      }
-
-      // evaluation of denominator terms 1 + .. + bm*x^m
-      double denominator = P[_order_n + _order_m];
-      for (int i = _order_n + _order_m - 1; i >= _order_n; i--)
-      {
-        denominator *= X[0];
-        denominator += P[i];
-      }
-
-      Y[0] = nominator / denominator;
-    }
-
-    
-
-    /// <summary>
-    /// Not functional because instance is immutable.
-    /// </summary>
-    public event EventHandler? Changed { add { } remove { } }
-
-    #endregion IFitFunction Members
-
-    public void EvaluateGradient(double[] X, double[] P, double[][] DY)
     {
       // evaluation of nominator terms a0*x^0 .. an*x^n
       double nominator;
@@ -257,21 +219,101 @@ namespace Altaxo.Calc.FitFunctions.General
         denominator += P[i];
       }
 
-
-    var nomByDenomSqr = nominator / (denominator * denominator);
-      
-      double xn = 1;
-      for (int i = 0; i < _order_n; ++i)
+      Y[0] = nominator / denominator;
+    }
+    public void EvaluateMultiple(IROMatrix<double> independent, IReadOnlyList<double> P, IReadOnlyList<bool>? independentVariableChoice, IVector<double> FV)
+    {
+      var rowCount = independent.RowCount;
+      for (int r = 0; r < rowCount; ++r)
       {
-        xn *= X[0];
-        DY[0][i] = xn/denominator;
+        var x = independent[r, 0];
+
+        // evaluation of nominator terms a0*x^0 .. an*x^n
+        double nominator;
+        if (_order_n == 0)
+        {
+          nominator = 1;
+        }
+        else
+        {
+          nominator = P[_order_n - 1];
+          for (int i = _order_n - 2; i >= 0; i--)
+          {
+            nominator *= x;
+            nominator += P[i];
+          }
+          nominator *= x;
+          nominator += 1;
+        }
+
+        // evaluation of denominator terms 1 + .. + bm*x^m
+        double denominator = P[_order_n + _order_m];
+        for (int i = _order_n + _order_m - 1; i >= _order_n; i--)
+        {
+          denominator *= x;
+          denominator += P[i];
+        }
+
+        FV[r] = nominator / denominator;
       }
+    }
 
-      xn = 1;
-      for (int i = 0; i <= _order_m; ++i)
+
+    /// <summary>
+    /// Not functional because instance is immutable.
+    /// </summary>
+    public event EventHandler? Changed { add { } remove { } }
+
+    #endregion IFitFunction Members
+
+    public void EvaluateGradient(IROMatrix<double> X, IReadOnlyList<double> P, IReadOnlyList<bool>? independentVariableChoice, IMatrix<double> DY)
+    {
+      var rowCount = X.RowCount;
+      for (int r = 0; r < rowCount; ++r)
       {
-        DY[0][i+_order_n] = -xn * nomByDenomSqr;
-        xn *= X[0];
+        var x = X[r, 0];
+        // evaluation of nominator terms a0*x^0 .. an*x^n
+        double nominator;
+        if (_order_n == 0)
+        {
+          nominator = 1;
+        }
+        else
+        {
+          nominator = P[_order_n - 1];
+          for (int i = _order_n - 2; i >= 0; i--)
+          {
+            nominator *= x;
+            nominator += P[i];
+          }
+          nominator *= x;
+          nominator += 1;
+        }
+
+        // evaluation of denominator terms 1 + .. + bm*x^m
+        double denominator = P[_order_n + _order_m];
+        for (int i = _order_n + _order_m - 1; i >= _order_n; i--)
+        {
+          denominator *= x;
+          denominator += P[i];
+        }
+
+
+        var nomByDenomSqr = nominator / (denominator * denominator);
+
+        double xn = 1;
+        for (int i = 0; i < _order_n; ++i)
+        {
+          xn *= x;
+          DY[r, i] = xn / denominator;
+        }
+
+        xn = 1;
+        for (int i = 0; i <= _order_m; ++i)
+        {
+          DY[r, i + _order_n] = -xn * nomByDenomSqr;
+          xn *= x;
+        }
       }
     }
   }

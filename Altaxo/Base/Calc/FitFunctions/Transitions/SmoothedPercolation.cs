@@ -24,6 +24,8 @@
 
 #nullable enable
 using System;
+using System.Collections.Generic;
+using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Calc.Regression.Nonlinear;
 
 namespace Altaxo.Calc.FitFunctions.Transitions
@@ -135,6 +137,17 @@ namespace Altaxo.Calc.FitFunctions.Transitions
     public void Evaluate(double[] X, double[] P, double[] Y)
     {
       Y[0] = Evaluate(X[0], P[0], P[1], P[2], P[3], P[4]);
+    }
+
+    public void EvaluateMultiple(IROMatrix<double> independent, IReadOnlyList<double> P, IReadOnlyList<bool>? independentVariableChoice, IVector<double> FV)
+    {
+      var rowCount = independent.RowCount;
+      for (int r = 0; r < rowCount; ++r)
+      {
+        var x = independent[r, 0];
+
+        FV[r] = Evaluate(x, P[0], P[1], P[2], P[3], P[4]);
+      }
     }
 
     public double Evaluate(double phi, double y0, double y1, double phi_c, double s, double t)

@@ -62,6 +62,7 @@ namespace Altaxo.Calc.Optimization
 
     protected bool IsBounded => LowerBound is not null || UpperBound is not null || Scales is not null;
 
+    /*
     /// <summary>
     /// The external parameters (i.e. the parameters seen by the model; maybe bounded).
     /// </summary>
@@ -74,6 +75,8 @@ namespace Altaxo.Calc.Optimization
 
     protected Vector<double> _diagonalOfHessian;
     protected Vector<double> _diagonalOfHessianPlusMu;
+
+    */
 
     /// <summary>
     /// The scale factors
@@ -148,11 +151,11 @@ namespace Altaxo.Calc.Optimization
 
     }
 
-    protected double EvaluateFunction(IObjectiveModelNonAllocating objective, IReadOnlyList<double> Pint)
+    protected double EvaluateFunction(IObjectiveModelNonAllocating objective, IReadOnlyList<double> Pint, IVector<double> pExt)
     {
 
-      ProjectToExternalParameters(Pint, _pExt);
-      objective.EvaluateAt(_pExt);
+      ProjectToExternalParameters(Pint, pExt);
+      objective.EvaluateAt(pExt);
       return objective.Value;
     }
 
@@ -160,9 +163,9 @@ namespace Altaxo.Calc.Optimization
     /// Evaluates the jacobian, and the hessian of the objective function.
     /// </summary>
     /// <param name="objective">The objective.</param>
-    /// <param name="Pint">The parameters (internal representation).</param>
-    /// <returns></returns>
-    protected (Vector<double> NegativeGradient, Matrix<double> Hessian) EvaluateJacobian(IObjectiveModelNonAllocating objective, IReadOnlyList<double> pInt, IReadOnlyList<double> pExt)
+    /// <param name="pInt">The parameters (internal representation).</param>
+    /// <returns>The negative gradient and the hessian.</returns>
+    protected (Vector<double> NegativeGradient, Matrix<double> Hessian) EvaluateJacobian(IObjectiveModelNonAllocating objective, IReadOnlyList<double> pInt)
     {
       var negativeGradient = objective.NegativeGradient;
       var hessian = objective.Hessian;
@@ -173,14 +176,15 @@ namespace Altaxo.Calc.Optimization
 
         for (int i = 0; i < negativeGradient.Count; i++)
         {
-          negativeGradient[i] = negativeGradient[i] * _scaleFactors[i];
+          negativeGradient[i] *= _scaleFactors[i];
         }
 
         for (int i = 0; i < hessian.RowCount; i++)
         {
+          var scaleFactorSquared = _scaleFactors[i] * _scaleFactors[i];
           for (int j = 0; j < hessian.ColumnCount; j++)
           {
-            hessian[i, j] = hessian[i, j] * _scaleFactors[i] * _scaleFactors[j];
+            hessian[i, j] *= scaleFactorSquared;
           }
         }
       }
@@ -315,9 +319,6 @@ namespace Altaxo.Calc.Optimization
     /// <param name="result">On return, contains the scale factors. The provided vector needs to have the same length as <paramref name="Pint"/></param>
     protected void ScaleFactorsOfJacobian(IReadOnlyList<double> Pint, IVector<double> result)
     {
-      var scale = Vector<double>.Build.Dense(Pint.Count, 1.0);
-
-
       if (LowerBound is not null || UpperBound is not null)
       {
         for (int i = 0; i < Pint.Count; i++)
@@ -327,17 +328,17 @@ namespace Altaxo.Calc.Optimization
 
           if (lowerBnd.HasValue && upperBnd.HasValue)
           {
-            scale[i] = (upperBnd.Value - lowerBnd.Value) / 2.0 * Math.Cos(Pint[i]);
+            result[i] = (upperBnd.Value - lowerBnd.Value) / 2.0 * Math.Cos(Pint[i]);
           }
           else if (upperBnd.HasValue)
           {
-            scale[i] = (Scales is null)
+            result[i] = (Scales is null)
               ? -Pint[i] / Math.Sqrt(Pint[i] * Pint[i] + 1.0)
               : -Scales[i] * Pint[i] / Math.Sqrt(Pint[i] * Pint[i] + 1.0);
           }
           else if (lowerBnd.HasValue)
           {
-            scale[i] = (Scales is null)
+            result[i] = (Scales is null)
               ? Pint[i] / Math.Sqrt(Pint[i] * Pint[i] + 1.0)
               : Scales[i] * Pint[i] / Math.Sqrt(Pint[i] * Pint[i] + 1.0);
           }
@@ -347,7 +348,6 @@ namespace Altaxo.Calc.Optimization
           }
 
         }
-        return;
       }
       else
       {

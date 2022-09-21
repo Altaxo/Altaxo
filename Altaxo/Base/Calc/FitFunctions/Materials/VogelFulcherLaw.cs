@@ -24,7 +24,9 @@
 
 #nullable enable
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Science;
 
 namespace Altaxo.Calc.FitFunctions.Materials
@@ -62,8 +64,20 @@ namespace Altaxo.Calc.FitFunctions.Materials
 
     public override void Evaluate(double[] X, double[] P, double[] Y)
     {
-      base.Evaluate(X, P, Y);
-      Y[0] = TransformedValue.BaseValueToTransformedValue(Y[0], _dependentVariableTransform);
+      var y = base.Evaluate(X[0], P);
+      Y[0] = TransformedValue.BaseValueToTransformedValue(y, _dependentVariableTransform);
+    }
+
+    public void EvaluateMultiple(IROMatrix<double> independent, IReadOnlyList<double> P, IReadOnlyList<bool>? independentVariableChoice, IVector<double> FV)
+    {
+      var rowCount = independent.RowCount;
+      for (int r = 0; r < rowCount; ++r)
+      {
+        var x = independent[r, 0];
+
+        var y = base.Evaluate(x, P);
+        FV[r] = TransformedValue.BaseValueToTransformedValue(y, _dependentVariableTransform);
+      }
     }
 
     /// <summary>
@@ -87,7 +101,7 @@ namespace Altaxo.Calc.FitFunctions.Materials
       {
 
         var unitOfX = (TemperatureRepresentation)info.GetEnum("IndependentVariableUnit", typeof(TemperatureRepresentation));
-         var dependentVariableTransform = (TransformedValueRepresentation)info.GetEnum("DependentVariableTransform", typeof(TransformedValueRepresentation));
+        var dependentVariableTransform = (TransformedValueRepresentation)info.GetEnum("DependentVariableTransform", typeof(TransformedValueRepresentation));
         var temperatureUnitOfB = (TemperatureRepresentation)info.GetEnum("ParamBUnit", typeof(TemperatureRepresentation));
         var temperatureUnitOfT0 = (TemperatureRepresentation)info.GetEnum("ParamT0Unit", typeof(TemperatureRepresentation));
 

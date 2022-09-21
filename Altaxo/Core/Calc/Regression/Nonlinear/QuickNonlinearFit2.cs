@@ -12,7 +12,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
     public QuickNonlinearRegression2(IFitFunction fitFunction) : base(fitFunction)
     {
-      _wrapperToFitFunction = new WrapperToFitFunction(fitFunction.Evaluate);
+      _wrapperToFitFunction = new WrapperToFitFunction(fitFunction);
     }
 
     public double[] Fit(double[] xValues, double[] yValues, double[] initialGuess, CancellationToken cancellationToken)
@@ -32,8 +32,11 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
       var xVect = CreateVector.DenseOfArray(xValues);
       var yVect = CreateVector.DenseOfArray(yValues);
-
-      var obj = ObjectiveFunction.NonlinearModel(_wrapperToFitFunction.Evaluate, xVect, yVect);
+      IObjectiveModel obj;
+      if (_wrapperToFitFunction.FitFunction is IFitFunctionWithGradient)
+        obj = ObjectiveFunction.NonlinearModel(_wrapperToFitFunction.Evaluate, _wrapperToFitFunction.EvaluateDerivative, xVect, yVect);
+      else
+        obj = ObjectiveFunction.NonlinearModel(_wrapperToFitFunction.Evaluate, xVect, yVect);
 
       var levmar = new LevenbergMarquardtMinimizer();
       var result = levmar.FindMinimum(obj, initialGuess, null, null, null, isFixed);

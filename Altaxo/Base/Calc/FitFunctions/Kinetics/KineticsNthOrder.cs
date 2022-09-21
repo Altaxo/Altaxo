@@ -25,7 +25,7 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
-using System.Text;
+using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Calc.Regression.Nonlinear;
 using Altaxo.Main;
 
@@ -156,38 +156,50 @@ namespace Altaxo.Calc.FitFunctions.Kinetics
     {
       Y[0] = CoreSolution(X[0], P[0], P[1], P[2]);
     }
-
-    /// <inheritdoc/>
-    public void EvaluateGradient(double[] X, double[] P, double[][] DY)
+    public void EvaluateMultiple(IROMatrix<double> independent, IReadOnlyList<double> P, IReadOnlyList<bool>? independentVariableChoice, IVector<double> FV)
     {
-      double x = X[0];
-      double y0 = P[0];
-      double k = P[1];
-      double n = P[2];
-
-      if (!(y0 >= 0))
+      var rowCount = independent.RowCount;
+      for (int r = 0; r < rowCount; ++r)
       {
-        DY[0][0] = double.NaN;
-        DY[0][1] = double.NaN;
-        DY[0][2] = double.NaN;
+        var x = independent[r, 0];
+        FV[r] = CoreSolution(x, P[0], P[1], P[2]);
       }
-      else
+    }
+    /// <inheritdoc/>
+    public void EvaluateGradient(IROMatrix<double> X, IReadOnlyList<double> P, IReadOnlyList<bool>? independentVariableChoice, IMatrix<double> DY)
+    {
+      var rowCount = X.RowCount;
+      for (int r = 0; r < rowCount; ++r)
       {
-        if (n == 1)
+        var x = X[r, 0];
+        double y0 = P[0];
+        double k = P[1];
+        double n = P[2];
+
+        if (!(y0 >= 0))
         {
-          var term = Math.Exp(-k * x);
-          DY[0][0] = term;
-          DY[0][1] = -term * y0 * x;
-          DY[0][2] = term * 0.5 * k * x * y0 * (k * x - 2 * Math.Log(y0));
+          DY[r, 0] = double.NaN;
+          DY[r, 1] = double.NaN;
+          DY[r, 2] = double.NaN;
         }
         else
         {
-          var term = k * (n - 1) * x + Math.Pow(y0, 1 - n);
-          var termE = Math.Pow(term, 1 / (1 - n));
+          if (n == 1)
+          {
+            var term = Math.Exp(-k * x);
+            DY[r, 0] = term;
+            DY[r, 1] = -term * y0 * x;
+            DY[r, 2] = term * 0.5 * k * x * y0 * (k * x - 2 * Math.Log(y0));
+          }
+          else
+          {
+            var term = k * (n - 1) * x + Math.Pow(y0, 1 - n);
+            var termE = Math.Pow(term, 1 / (1 - n));
 
-          DY[0][0] = termE / (term * Math.Pow(y0, n));
-          DY[0][1] = -termE * x / term;
-          DY[0][2] = termE * ( (k * x - Math.Pow(y0, 1-n)* Math.Log(y0)) / ((1 - n) * term) + Math.Log(term) / ((1 - n) * (1 - n)));
+            DY[r, 0] = termE / (term * Math.Pow(y0, n));
+            DY[r, 1] = -termE * x / term;
+            DY[r, 2] = termE * ((k * x - Math.Pow(y0, 1 - n) * Math.Log(y0)) / ((1 - n) * term) + Math.Log(term) / ((1 - n) * (1 - n)));
+          }
         }
       }
     }
@@ -207,14 +219,14 @@ namespace Altaxo.Calc.FitFunctions.Kinetics
       if (!(y0 >= 0))
         return double.NaN; // throw new ArgumentOutOfRangeException("y0 has to be nonnegative");
 
-     
-        if(order==0)
-          return y0 - k * t;
-        else if (order == 1)
-          return y0 * Math.Exp(-k * t);
-        else
-          return Math.Pow(Math.Pow(y0, 1 - order) + (order - 1) * k * t, 1 / (1 - order));
-      
+
+      if (order == 0)
+        return y0 - k * t;
+      else if (order == 1)
+        return y0 * Math.Exp(-k * t);
+      else
+        return Math.Pow(Math.Pow(y0, 1 - order) + (order - 1) * k * t, 1 / (1 - order));
+
     }
 
     /// <summary>
