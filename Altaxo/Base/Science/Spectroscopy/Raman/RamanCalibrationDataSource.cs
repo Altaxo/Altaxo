@@ -400,7 +400,7 @@ namespace Altaxo.Science.Spectroscopy.Raman
 
     protected void ExecuteFullCalibration(DataTable destinationTable, Func<double, double> MeasuredWavelengthToWavelengthDifference, SiliconCalibration siliconCalibration)
     {
-      
+
       var splineFunction = MeasuredWavelengthToWavelengthDifference;
 
       var assumedLaserWavelength = _neonCalibrationOptions1.LaserWavelength_Nanometer;
@@ -521,7 +521,7 @@ namespace Altaxo.Science.Spectroscopy.Raman
 
         for (var i = 0; i < xArr.Length; ++i)
         {
-          colCorrWL[i] = converter.ConvertWavelengthMeasToNist(xArr[i]);
+          colCorrWL[i] = xArr[i] + calibration.MeasuredWavelengthToWavelengthDifference(xArr[i]);
           colCorrY[i] = yArr[i];
         }
       }

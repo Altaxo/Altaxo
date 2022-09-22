@@ -595,7 +595,7 @@ namespace Altaxo.Science.Spectroscopy.Raman
       FindPeaks(options, cancellationToken);
 
       CoarseMatch = FindCoarseMatchFast(options, cancellationToken);
-      if(CoarseMatch is null)
+      if (CoarseMatch is null || Math.Abs(CoarseMatch.Value.NistWL_Left - CoarseMatch.Value.MeasWL_Left) > 2 || Math.Abs(CoarseMatch.Value.NistWL_Right - CoarseMatch.Value.MeasWL_Right) > 2)
       {
         CoarseMatch = FindCoarseMatchBruteForce(options, cancellationToken);
       }
@@ -798,7 +798,7 @@ namespace Altaxo.Science.Spectroscopy.Raman
       var x_min = x_nm.Min();
       var x_max = x_nm.Max();
 
-      if(x_min < NeonCalibration.NistNeonPeaks[0].Wavelength_Nanometer)
+      if (x_min < NeonCalibration.NistNeonPeaks[0].Wavelength_Nanometer)
         throw new InvalidOperationException(
           $"The (converted) wavelength range of the {nameOfSpectrum} spectrum is [{x_min} nm, {x_max} nm].\r\n" +
           $"The lower boundary seems unreasonable, because it is lower than the lowest Nist peak wavelength\r\n" +
@@ -871,9 +871,9 @@ namespace Altaxo.Science.Spectroscopy.Raman
     /// peak fitting results. Additionally, the <see cref="MeasuredPeaks"/> contains the array of peak positions and heights.
     /// </remarks>
     [MemberNotNull(nameof(PeakSearchingDescriptions), nameof(MeasuredPeaks))]
-      public void FindPeaks(NeonCalibrationOptions options, CancellationToken cancellationToken)
+    public void FindPeaks(NeonCalibrationOptions options, CancellationToken cancellationToken)
     {
-      if(_xPreprocessed_nm is null || _yPreprocessed is null)
+      if (_xPreprocessed_nm is null || _yPreprocessed is null)
         throw new InvalidOperationException($"Before calling {nameof(FindPeaks)}, please call {nameof(CreateSpectrumWithNanometerXAxis)} to create the converted spectrum.");
 
 
@@ -910,21 +910,21 @@ namespace Altaxo.Science.Spectroscopy.Raman
     }
 
 
-      /// <summary>
-      /// Finds a coarse match between the peaks in the measured Neon spectrum and the Nist table.
-      /// </summary>
-      /// <param name="options">The options used for calculation.</param>
-      /// <returns>A tuple of wavelength (in nm): Nist wavelength and Meas wavelength at the left of the range, Nist wavelength and meas wavelength at the right of the range.</returns>
-      /// The returned value is null if no peaks could be matched.
-      public (double NistWL_Left, double MeasWL_Left, double NistWL_Right, double MeasWL_Right)?
-    FindCoarseMatchFast(NeonCalibrationOptions options, CancellationToken cancellationToken)
+    /// <summary>
+    /// Finds a coarse match between the peaks in the measured Neon spectrum and the Nist table.
+    /// </summary>
+    /// <param name="options">The options used for calculation.</param>
+    /// <returns>A tuple of wavelength (in nm): Nist wavelength and Meas wavelength at the left of the range, Nist wavelength and meas wavelength at the right of the range.</returns>
+    /// The returned value is null if no peaks could be matched.
+    public (double NistWL_Left, double MeasWL_Left, double NistWL_Right, double MeasWL_Right)?
+  FindCoarseMatchFast(NeonCalibrationOptions options, CancellationToken cancellationToken)
     {
       if (PeakSearchingDescriptions is null || _xPreprocessed_nm is null || MeasuredPeaks is null)
         throw new InvalidOperationException($"Before calling {nameof(FindCoarseMatchFast)}, please call {nameof(FindPeaks)} to search for peaks.");
 
       var tolWL = options.Wavelength_Tolerance_nm;
 
-      
+
 
       // The boundaries for the search in the NIST table
       double boundaryWLSearchLeft;
@@ -1011,7 +1011,7 @@ namespace Altaxo.Science.Spectroscopy.Raman
       listOfCandidates.Sort((a, b) => Comparer<double>.Default.Compare(b.Sum, a.Sum));
 
 
-      return listOfCandidates.Count>0 ?
+      return listOfCandidates.Count > 0 ?
         (listOfCandidates[0].NistLeft, listOfCandidates[0].MeasLeft, listOfCandidates[0].NistRight, listOfCandidates[0].MeasRight) : null;
     }
 
@@ -1027,7 +1027,7 @@ namespace Altaxo.Science.Spectroscopy.Raman
       boundaryWLSearchRight += tolWL;
 
       var peaks = NeonCalibration.NistNeonPeaks
-                .Where(pair =>  pair.Wavelength_Nanometer >= boundaryWLSearchLeft &&
+                .Where(pair => pair.Wavelength_Nanometer >= boundaryWLSearchLeft &&
                                 pair.Wavelength_Nanometer <= boundaryWLSearchRight);
 
       // Maximum intensity of selected Nist peaks
@@ -1040,7 +1040,7 @@ namespace Altaxo.Science.Spectroscopy.Raman
       var nistWLsLeft = NISTPeaks.Where(
         (x) =>
           x.WL >= boundaryWLSearchLeft &&
-          x.WL <= (boundaryWLSearchRight-minimumWLDistance));
+          x.WL <= (boundaryWLSearchRight - minimumWLDistance));
 
       // combine the left Nist wavelength candidates with the right Nist wavelength candidates...
       var candidatePairs = nistWLsLeft.JoinConditional(
@@ -1067,7 +1067,7 @@ namespace Altaxo.Science.Spectroscopy.Raman
               RMath.IsInIntervalCC((measRight.WL - ele.MeasLeft.WL) / (ele.NistRight.WL - ele.NistLeft.WL), 0.9, 1 / 0.9), // use only those quads that stretch the x-axis within the interval [0.9, 1.1].
         (ele, measRight) => ((NistLeft: ele.NistLeft, NistRight: ele.NistRight, MeasLeft: ele.MeasLeft, MeasRight: measRight))
         );
-    
+
 
       var sumMax = double.MinValue;
       ((double WL, double Its) NistLeft, (double WL, double Its) NistRight, (double WL, double Its) MeasLeft, (double WL, double Its) MeasRight)? maxElement = null;
@@ -1081,7 +1081,7 @@ namespace Altaxo.Science.Spectroscopy.Raman
         }
       }
 
-      return maxElement.HasValue ? (maxElement.Value.NistLeft.WL, maxElement.Value.MeasLeft.WL, maxElement.Value.NistRight.WL,  maxElement.Value.MeasRight.WL) : null;
+      return maxElement.HasValue ? (maxElement.Value.NistLeft.WL, maxElement.Value.MeasLeft.WL, maxElement.Value.NistRight.WL, maxElement.Value.MeasRight.WL) : null;
     }
 
     // Function that calculates the fitness function. The higher the value, the better it is
@@ -1157,7 +1157,7 @@ namespace Altaxo.Science.Spectroscopy.Raman
       return (double.NaN, double.NaN);
     }
 
-   
+
 
     private static void ConvertXAxisToNanometer(NeonCalibrationOptions options, double[] x, double[] x_nm)
     {
