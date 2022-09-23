@@ -62,22 +62,6 @@ namespace Altaxo.Calc.Optimization
 
     protected bool IsBounded => LowerBound is not null || UpperBound is not null || Scales is not null;
 
-    /*
-    /// <summary>
-    /// The external parameters (i.e. the parameters seen by the model; maybe bounded).
-    /// </summary>
-    protected Vector<double> _pExt;
-
-    /// <summary>
-    /// The internal parameters (i.e. the parameters used by the algorithm; unbounded).
-    /// </summary>
-    protected Vector<double> _pInt;
-
-    protected Vector<double> _diagonalOfHessian;
-    protected Vector<double> _diagonalOfHessianPlusMu;
-
-    */
-
     /// <summary>
     /// The scale factors
     /// </summary>
@@ -99,6 +83,15 @@ namespace Altaxo.Calc.Optimization
         throw new ArgumentNullException(nameof(parameters));
       }
 
+      // test if parameters are numbers
+      for (int i = 0; i < parameters.Count; i++)
+      {
+        if (double.IsNaN(parameters[i]))
+        {
+          throw new ArgumentException($"Initial parameter[{i}] is not a number (is NaN).");
+        }
+      }
+
       if (lowerBound is not null && lowerBound.Count(x => x.HasValue && (double.IsInfinity(x.Value) || double.IsNaN(x.Value))) > 0)
       {
         throw new ArgumentException("The lower bounds must be finite.");
@@ -116,6 +109,18 @@ namespace Altaxo.Calc.Optimization
         LowerBound = null;
       }
 
+      // test if parameters >= lowerBound
+      if (LowerBound is not null)
+      {
+        for (int i = 0; i < LowerBound.Count; i++)
+        {
+          if (LowerBound[i].HasValue && !(parameters[i] >= LowerBound[i].Value))
+          {
+            throw new ArgumentException($"Initial value of parameter[{i}]={parameters[i]} violates the lower bound criterion LowerBound={LowerBound[i].Value}");
+          }
+        }
+      }
+
       if (upperBound is not null && upperBound.Count(x => x.HasValue && (double.IsInfinity(x.Value) || double.IsNaN(x.Value))) > 0)
       {
         throw new ArgumentException("The upper bounds must be finite.");
@@ -131,6 +136,18 @@ namespace Altaxo.Calc.Optimization
       else
       {
         UpperBound = null;
+      }
+
+      // test if parameters >= lowerBound
+      if (UpperBound is not null)
+      {
+        for (int i = 0; i < UpperBound.Count; i++)
+        {
+          if (UpperBound[i].HasValue && !(parameters[i] <= UpperBound[i].Value))
+          {
+            throw new ArgumentException($"Initial value of parameter[{i}]={parameters[i]} violates the upper bound criterion UpperBound={UpperBound[i].Value}");
+          }
+        }
       }
 
       if (scales is not null && scales.Count(x => double.IsInfinity(x) || double.IsNaN(x) || x == 0) > 0)

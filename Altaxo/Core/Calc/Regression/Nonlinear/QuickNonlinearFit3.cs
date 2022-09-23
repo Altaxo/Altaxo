@@ -4,7 +4,7 @@ using System.Threading;
 using Altaxo.Calc.Optimization;
 using Altaxo.Calc.Optimization.ObjectiveFunctions;
 
-namespace Altaxo.Calc.Regression.Nonlinear.Foo
+namespace Altaxo.Calc.Regression.Nonlinear
 {
   /// <summary>
   /// Allows a quick regression of one dependent variable in dependence on one independent variable, i.e. with a function R=>R.

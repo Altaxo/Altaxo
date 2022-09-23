@@ -6,6 +6,26 @@ using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Optimization
 {
+  /// <summary>
+  /// LevenbergMarquardtMinimizer, that doesnt allocate memory during the iterations.
+  /// </summary>
+  /// <seealso cref="Altaxo.Calc.Optimization.NonlinearMinimizerBaseNonAllocating" />
+  /// <remarks>
+  /// <para>
+  /// References:
+  /// </para>
+  /// <para>
+  /// [1]. Madsen, K., H. B. Nielsen, and O. Tingleff,
+  ///      "Methods for Non-Linear Least Squares Problems. Technical University of Denmark, 2004. Lecture notes." (2004),
+  ///      Available Online from: <see href="http://orbit.dtu.dk/files/2721358/imm3215.pdf"/> 
+  /// </para>
+  /// <para>
+  /// [2]. Gavin, Henri,
+  ///      "The Levenberg-Marquardt method for nonlinear least squares curve-fitting problems."
+  ///      Department of Civil and Environmental Engineering, Duke University (2017): 1-19,
+  ///      Availble Online from: <see href="http://people.duke.edu/~hpgavin/ce281/lm.pdf"/> 
+  /// </para>
+  ///</remarks>
   public class LevenbergMarquardtMinimizerNonAllocating : NonlinearMinimizerBaseNonAllocating
   {
     /// <summary>
@@ -133,7 +153,7 @@ namespace Altaxo.Calc.Optimization
 
       // Evaluate gradient (already negated!) and Hessian
       var (NegativeGradient, Hessian) = EvaluateJacobian(objective, pInt);
-      Hessian.Diagonal(diagonalOfHessian); // diag(H)
+      Hessian.Diagonal(diagonalOfHessian); // save the diagonal of the Hession diag(H) into the vector diagonalOfHessian
 
       // if ||g||oo <= gtol, found and stop
       if (NegativeGradient.InfinityNorm() <= gradientTolerance)
@@ -159,13 +179,15 @@ namespace Altaxo.Calc.Optimization
           cancellationToken.ThrowIfCancellationRequested();
 
           diagonalOfHessian.Add(mu, diagonalOfHessianPlusMu);
-          Hessian.SetDiagonal(diagonalOfHessianPlusMu); // hessian[i, i] = hessian[i, i] + mu;
+          Hessian.SetDiagonal(diagonalOfHessianPlusMu); // hessian[i, i] = hessian[i, i] + mu; see [2] eq. (12), page 3
 
           // solve normal equations
           Hessian.Solve(NegativeGradient, Pstep);
 
-          // if ||ΔP|| <= xTol * (||P|| + xTol), found and stop
-          if (Pstep.L2Norm() <= stepTolerance * (stepTolerance + pInt.DotProduct(pInt)))
+          // Test if there is convergence in the parameters
+          // if max|hi/pi| < xTol, stop (see [2], Section 4.1.3 (page 5), second criterion
+          var maxHiByPi = Pstep.Zip(pInt, (hi, pi) => hi == 0 ? 0 : pi == 0 ? double.PositiveInfinity : Math.Abs(hi / pi)).Max();
+          if (maxHiByPi < stepTolerance)
           {
             exitCondition = ExitCondition.RelativePoints;
             break;
@@ -180,10 +202,11 @@ namespace Altaxo.Calc.Optimization
             break;
           }
 
-          // calculate the ratio of the actual to the predicted reduction.
+          // calculate the ratio of the actual to the predicted reduction, see [2], eq. 15, page 3 
           // ρ = (RSS - RSSnew) / (Δp'(μΔp - g))
-          Pstep.Multiply(mu, MuTimesPStepMinusGradient); MuTimesPStepMinusGradient.Add(NegativeGradient, MuTimesPStepMinusGradient); // mu * Pstep + NegativeGradient
-          var predictedReduction = Pstep.DotProduct(MuTimesPStepMinusGradient);
+          Pstep.Multiply(mu, MuTimesPStepMinusGradient); // calculate μΔp
+          MuTimesPStepMinusGradient.Add(NegativeGradient, MuTimesPStepMinusGradient); // calculate (μΔp - g)
+          var predictedReduction = Pstep.DotProduct(MuTimesPStepMinusGradient); // calculate (Δp'(μΔp - g))
           var rho = (predictedReduction != 0)
                   ? (RSS - RSSnew) / predictedReduction
                   : 0;
@@ -198,19 +221,21 @@ namespace Altaxo.Calc.Optimization
             (NegativeGradient, Hessian) = EvaluateJacobian(objective, pInt);
             Hessian.Diagonal(diagonalOfHessian);
 
+            // Test if convergence of gradient is achieved, see [2], section 4.1.3 (page 5), first criterion
             // if ||g||_oo <= gtol, found and stop
             if (NegativeGradient.InfinityNorm() <= gradientTolerance)
             {
               exitCondition = ExitCondition.RelativeGradient;
             }
 
+            // Test if convergence of χ² is achieved, see [2], section 4.1.3 (page 5), 3rd criterion
             // if ||R||^2 < fTol, found and stop
             if (RSS <= functionTolerance)
             {
               exitCondition = ExitCondition.Converged; // SmallRSS
             }
 
-            mu = mu * Math.Max(1.0 / 3.0, 1.0 - Math.Pow(2.0 * rho - 1.0, 3));
+            mu *= Math.Max(1.0 / 3.0, 1.0 - Pow3(2.0 * rho - 1.0)); // see [2], section 4.1.1, point 3
             nu = 2;
 
             break;
@@ -218,12 +243,13 @@ namespace Altaxo.Calc.Optimization
           else
           {
             // rejected, increased μ
-            mu = mu * nu;
-            nu = 2 * nu;
+            mu *= nu;
+            nu *= 2;
           }
         }
       }
 
+      // Test if the maximum number of iterations is reached, see [2], section 4.1.3 (page 5), last paragraph
       if (iterations >= maximumIterations)
       {
         exitCondition = ExitCondition.ExceedIterations;
@@ -231,5 +257,7 @@ namespace Altaxo.Calc.Optimization
 
       return new NonlinearMinimizationResult(objective, iterations, exitCondition);
     }
+
+    private static double Pow3(double x) => x * x * x;
   }
 }
