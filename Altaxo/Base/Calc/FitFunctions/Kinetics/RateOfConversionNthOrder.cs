@@ -202,17 +202,18 @@ namespace Altaxo.Calc.FitFunctions.Kinetics
             DY[r, 0] = A0 * term * k * k;
             DY[r, 1] = term * k;
             DY[r, 2] = A0 * term * (1 + k * (t0 - x));
-            DY[r, 3] = A0 * term * 0.5 * RMath.Pow2(k) * (2 * (t0 - x)) * (t0 - x);
+            DY[r, 3] = A0 * term * 0.5 * RMath.Pow2(k) * (2 + k * (t0 - x)) * (t0 - x);
           }
           else
           {
             var term = 1 - k * (n - 1) * (t0 - x);
             var termE = Math.Pow(term, 1 / (1 - n));
+            var termEN = Math.Pow(term, n / (1 - n));
 
             DY[r, 0] = A0 * k * k * n * termE / RMath.Pow2(term);
-            DY[r, 1] = k * termE;
-            DY[r, 1] = A0 * (1 + k * (t0 - x)) * termE / RMath.Pow2(term);
-            DY[r, 2] = A0 * k * termE * (n * (1 / term - 1) + Math.Log(term)) / RMath.Pow2(n - 1);
+            DY[r, 1] = k * termEN;
+            DY[r, 2] = A0 * termEN * (1 + (k * n * (t0 - x)) / term);
+            DY[r, 3] = A0 * k * termEN * (n * (1 / term - 1) + Math.Log(term)) / RMath.Pow2(n - 1);
           }
         }
       }
@@ -246,7 +247,7 @@ namespace Altaxo.Calc.FitFunctions.Kinetics
         if (n == 1)
           return k * Math.Exp(-k * (x - t0));
         else
-          return k * Math.Pow(1 - k * (n - 1) * (t0 - x), 1 / (1 - n));
+          return k * Math.Pow(1 - k * (n - 1) * (t0 - x), n / (1 - n));
       }
     }
 
