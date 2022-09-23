@@ -70,6 +70,7 @@ namespace Altaxo.Calc.FitFunctions
         (() => new FitFunctions.General.Polynomial(2,0), 0.25, new double[]{1,3,5}, 1+3*0.25 + 5*0.25*0.25),
         (() => new FitFunctions.General.Polynomial(2,1), 0.25, new double[]{1,3,5,7}, 1+3*0.25 + 5*0.25*0.25 + 7/0.25),
         (() => new FitFunctions.General.Polynomial(0,2), 0.25, new double[]{1,3,5}, 1+3/0.25 + 5/(0.25*0.25)),
+        (() => new Peaks.PseudoVoigtAmplitude(1, 1), 0.5, new double[]{2,3,5, 0.75, 1, 3 }, 4.1204482076268572715),
         (() => new PowerLawPrefactor(2), 0.5, new double[]{1,3,5,7,11}, 1+3*Math.Pow(0.5,5) + 7*Math.Pow(0.5,11)),
         (() => new PowerLawRatio(2), 1.25, new double[]{1,3,5,7,11}, 1+Math.Pow(1.25/3,5) + Math.Pow(1.25/7,11)),
         (() => new Rational(2,0), 0.25, new double[]{2,3,5}, 2+3*0.25 + 5*0.25*0.25),
@@ -97,7 +98,9 @@ namespace Altaxo.Calc.FitFunctions
         (() => new Kinetics.KineticsNthOrder(), 0.5, new double[]{2,3,1}, 2*Math.Exp(-3*0.5)),
         (() => new Kinetics.KineticsNthOrder(), 0.5, new double[]{2,3,1.5}, Math.Pow(3*(1.5-1)*0.5 + Math.Pow(2, 1-1.5), 1/(1-1.5))),
         (() => new Kinetics.ConversionNthOrder(), 3.5, new double[]{2,1,3,1}, 1-Math.Exp(3*(2-3.5))),
+        (() => new Kinetics.RateOfConversionNthOrder(), 3.5, new double[]{2,1,3,1}, 0.033326989614726919488),
         (() => new Kinetics.ConversionNthOrder(), 3.5, new double[]{2,1,3,1.5}, 153/169d),
+        (() => new Kinetics.RateOfConversionNthOrder(), 3.5, new double[]{2,1,3,1.5}, 192/2197d),
       };
     private static DoubleEqualityComparer CompareD = new DoubleEqualityComparer(1E-100, 1E-12);
     private static DoubleEqualityComparer CompareDerivatives = new DoubleEqualityComparer(1E-5, 1E-5);
