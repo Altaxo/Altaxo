@@ -1,115 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Optimization.ObjectiveFunctions
 {
-  public class NonlinearObjectiveFunctionNonAllocating : IObjectiveModel, IObjectiveModelNonAllocating
+  public class NonlinearObjectiveFunctionNonAllocating : NonlinearObjectiveFunctionNonAllocatingBase
   {
     #region Private Variables
 
     private readonly Action<IROMatrix<double>, IReadOnlyList<double>, IReadOnlyList<bool>?, IVector<double>> _userFunction; // (x, p) => f(x; p)
     private readonly Action<IROMatrix<double>, IReadOnlyList<double>, IReadOnlyList<bool>?, IMatrix<double>> _userDerivative; // (x, p) => df(x; p)/dp
-    private readonly int _accuracyOrder; // the desired accuracy order to evaluate the jacobian by numerical approximaiton.
-
-    private Vector<double> _coefficients;
-    private bool _hasFunctionValue;
-    private double _functionValue; // the residual sum of squares, residuals * residuals.
-    private Vector<double> _residuals; // the weighted error values
-
-    private bool _hasJacobianValue;
-    private Matrix<double> _jacobianValue; // the Jacobian matrix.
-    private Matrix<double> _jacobianValueTransposed; // the Jacobian matrix, transposed.
-    private Vector<double> _negativeGradientValue; // the Gradient vector.
-    private Matrix<double> _hessianValue; // the Hessian matrix.
-
-    private Vector<double> _f1, _f2, _f3, _f4, _f5, _f6;
 
     #endregion Private Variables
 
-    #region Public Variables
-
-    private IROMatrix<double> _observedXAsMatrix;
-    private IReadOnlyList<double> _observedXAsVector;
-
-    /// <summary>
-    /// Set or get the values of the independent variable.
-    /// </summary>
-    public IReadOnlyList<double> ObservedX
-    {
-      get => _observedXAsVector;
-      private set
-      {
-        _observedXAsVector = value;
-        _observedXAsMatrix = MatrixMath.ToROMatrixWithOneColumn(value);
-      }
-    }
-
-    /// <summary>
-    /// Set or get the values of the observations.
-    /// </summary>
-    public Vector<double> ObservedY { get; private set; }
-
-    /// <summary>
-    /// Set or get the values of the weights for the observations.
-    /// </summary>
-    public Matrix<double> Weights { get; private set; }
-
-    private Vector<double> L; // Weights = LL'
-
-    /// <summary>
-    /// Get whether parameters are fixed or free.
-    /// </summary>
-    public IReadOnlyList<bool> IsFixed { get; private set; }
-
-    /// <summary>
-    /// Get the number of observations.
-    /// </summary>
-    public int NumberOfObservations => ObservedY?.Count ?? 0;
-
-    /// <summary>
-    /// Get the number of unknown parameters.
-    /// </summary>
-    public int NumberOfParameters => Point?.Count ?? 0;
-
-    /// <summary>
-    /// Get the degree of freedom
-    /// </summary>
-    public int DegreeOfFreedom
-    {
-      get
-      {
-        var df = NumberOfObservations - NumberOfParameters;
-        if (IsFixed is not null)
-        {
-          df += IsFixed.Count(p => p);
-        }
-        return df;
-      }
-    }
-
-    /// <summary>
-    /// Get the number of calls to function.
-    /// </summary>
-    public int FunctionEvaluations { get; set; }
-
-    /// <summary>
-    /// Get the number of calls to jacobian.
-    /// </summary>
-    public int JacobianEvaluations { get; set; }
-
-    #endregion Public Variables
-
     public NonlinearObjectiveFunctionNonAllocating(Action<IROMatrix<double>, IReadOnlyList<double>, IReadOnlyList<bool>?, IVector<double>> function,
         Action<IROMatrix<double>, IReadOnlyList<double>, IReadOnlyList<bool>?, IMatrix<double>> derivative = null, int accuracyOrder = 2)
+      : base(accuracyOrder)
     {
       _userFunction = function;
       _userDerivative = derivative;
-      _accuracyOrder = Math.Min(6, Math.Max(1, accuracyOrder));
     }
 
-    public IObjectiveModel Fork()
+    public override IObjectiveModel Fork()
     {
       return new NonlinearObjectiveFunctionNonAllocating(_userFunction, _userDerivative, _accuracyOrder)
       {
@@ -129,212 +41,14 @@ namespace Altaxo.Calc.Optimization.ObjectiveFunctions
       };
     }
 
-    public IObjectiveModel CreateNew()
+    public override IObjectiveModel CreateNew()
     {
       return new NonlinearObjectiveFunctionNonAllocating(_userFunction, _userDerivative, _accuracyOrder);
     }
 
-    /// <summary>
-    /// Set or get the values of the parameters.
-    /// </summary>
-    public Vector<double> Point => _coefficients;
-
-    /// <summary>
-    /// Get the y-values of the fitted model that correspond to the independent values.
-    /// </summary>
-    public Vector<double> ModelValues { get; private set; }
-
-    /// <summary>
-    /// Get the residual sum of squares.
-    /// </summary>
-    public double Value
-    {
-      get
-      {
-        if (!_hasFunctionValue)
-        {
-          EvaluateFunction();
-          _hasFunctionValue = true;
-        }
-        return _functionValue;
-      }
-    }
-
-    /// <summary>
-    /// Get the Gradient vector of x and p.
-    /// </summary>
-    public Vector<double> Gradient
-    {
-      get
-      {
-        if (!_hasJacobianValue)
-        {
-          EvaluateJacobian();
-          _hasJacobianValue = true;
-        }
-        return -_negativeGradientValue;
-      }
-    }
-
-    /// <summary>
-    /// Get the negative gradient vector of x and p.
-    /// </summary>
-    public Vector<double> NegativeGradient
-    {
-      get
-      {
-        if (!_hasJacobianValue)
-        {
-          EvaluateJacobian();
-          _hasJacobianValue = true;
-        }
-        return _negativeGradientValue;
-      }
-    }
-
-    /// <summary>
-    /// Get the Hessian matrix of x and p, J'WJ
-    /// </summary>
-    public Matrix<double> Hessian
-    {
-      get
-      {
-        if (!_hasJacobianValue)
-        {
-          EvaluateJacobian();
-          _hasJacobianValue = true;
-        }
-        return _hessianValue;
-      }
-    }
-
-    public bool IsGradientSupported => true;
-    public bool IsHessianSupported => true;
-
-    /// <summary>
-    /// Set observed data to fit.
-    /// </summary>
-    public void SetObserved(IReadOnlyList<double> observedX, IReadOnlyList<double> observedY, IReadOnlyList<double> weights = null)
-    {
-      if (observedX is null || observedY is null)
-      {
-        throw new ArgumentNullException("The data set can't be null.");
-      }
-      if (observedX.Count != observedY.Count)
-      {
-        throw new ArgumentException("The observed x data can't have different from observed y data.");
-      }
-
-      ObservedX = observedX;
-      ObservedY = Vector<double>.Build.DenseOfEnumerable(observedY);
-
-
-      if (weights is not null && weights.Count != observedY.Count)
-      {
-        throw new ArgumentException("The weightings can't have different from observations.");
-      }
-      if (weights is not null && weights.Count(x => double.IsInfinity(x) || double.IsNaN(x)) > 0)
-      {
-        throw new ArgumentException("The weightings are not well-defined.");
-      }
-      if (weights is not null && weights.Count(x => x == 0) == weights.Count)
-      {
-        throw new ArgumentException("All the weightings can't be zero.");
-      }
-      if (weights is not null)
-      {
-        var weightsV = Vector<double>.Build.DenseOfEnumerable(weights);
-        if (weights.Count(x => x < 0) > 0)
-        {
-          weightsV = weightsV.PointwiseAbs();
-        }
-
-        Weights = Matrix<double>.Build.DenseOfDiagonalVector(weightsV);
-        L = Weights.Diagonal().PointwiseSqrt();
-      }
-      else
-      {
-        Weights = null;
-        L = null;
-      }
-    }
-
-    /// <summary>
-    /// Set parameters and bounds.
-    /// </summary>
-    /// <param name="initialGuess">The initial values of parameters.</param>
-    /// <param name="isFixed">The list to the parameters fix or free.</param>
-    public void SetParameters(Vector<double> initialGuess, List<bool> isFixed = null)
-    {
-      SetParameters((IReadOnlyList<double>)initialGuess, isFixed);
-    }
-
-    /// <summary>
-    /// Set parameters and bounds.
-    /// </summary>
-    /// <param name="initialGuess">The initial values of parameters.</param>
-    /// <param name="isFixed">The list to the parameters fix or free.</param>
-    public void SetParameters(IReadOnlyList<double> initialGuess, IReadOnlyList<bool> isFixed = null)
-    {
-      _coefficients ??= Vector<double>.Build.Dense(initialGuess.Count);
-      for (int i = 0; i < initialGuess.Count; ++i)
-        _coefficients[i] = initialGuess[i];
-
-      if (isFixed is not null && isFixed.Count != initialGuess.Count)
-      {
-        throw new ArgumentException("The isFixed can't have different size from the initial guess.");
-      }
-      if (isFixed is not null && isFixed.Count(p => p) == isFixed.Count)
-      {
-        throw new ArgumentException("All the parameters can't be fixed.");
-      }
-      IsFixed = isFixed;
-
-      // allocate already some
-      _negativeGradientValue = Vector<double>.Build.Dense(initialGuess.Count);
-      _hessianValue = Matrix<double>.Build.Dense(initialGuess.Count, initialGuess.Count);
-      _jacobianValue = Matrix<double>.Build.Dense(NumberOfObservations, NumberOfParameters);
-      _jacobianValueTransposed = Matrix<double>.Build.Dense(NumberOfParameters, NumberOfObservations);
-    }
-
-    public void EvaluateAt(Vector<double> parameters)
-    {
-      EvaluateAt((IReadOnlyList<double>)parameters);
-    }
-
-    public void EvaluateAt(IReadOnlyList<double> parameters)
-    {
-      if (parameters is null)
-      {
-        throw new ArgumentNullException(nameof(parameters));
-      }
-      if (parameters.Count(p => double.IsNaN(p) || double.IsInfinity(p)) > 0)
-      {
-        throw new ArgumentException("The parameters must be finite.");
-      }
-
-      for (int i = 0; i < parameters.Count; i++)
-        _coefficients[i] = parameters[i];
-
-      _hasFunctionValue = false;
-      _hasJacobianValue = false;
-    }
-
-    public IObjectiveFunction ToObjectiveFunction()
-    {
-      (double, Vector<double>, Matrix<double>) Function(Vector<double> point)
-      {
-        EvaluateAt(point);
-        return (Value, Gradient, Hessian);
-      }
-
-      var objective = new GradientHessianObjectiveFunction(Function);
-      return objective;
-    }
-
     #region Private Methods
 
-    private void EvaluateFunction()
+    protected override void EvaluateFunction()
     {
       // Calculates the residuals, (y[i] - f(x[i]; p)) * L[i]
       if (ModelValues is null)
@@ -354,7 +68,7 @@ namespace Altaxo.Calc.Optimization.ObjectiveFunctions
       _functionValue = _residuals.DotProduct(_residuals);
     }
 
-    private void EvaluateJacobian()
+    protected override void EvaluateJacobian()
     {
       // Calculates the jacobian of x and p.
       if (_userDerivative is not null)
@@ -411,7 +125,7 @@ namespace Altaxo.Calc.Optimization.ObjectiveFunctions
       _jacobianValueTransposed.Multiply(_jacobianValue, _hessianValue);
     }
 
-    private Matrix<double> NumericalJacobian(Vector<double> parameters, Vector<double> currentValues, int accuracyOrder = 2)
+    protected override Matrix<double> NumericalJacobian(Vector<double> parameters, Vector<double> currentValues, int accuracyOrder = 2)
     {
       const double sqrtEpsilon = 1.4901161193847656250E-8; // sqrt(machineEpsilon)
 

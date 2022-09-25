@@ -35,7 +35,7 @@ namespace Altaxo.Calc.LinearAlgebra
   /// </summary>
   public static partial class MatrixMath
   {
-    public static Matrix<T> DenseOfMatrix<T>(IROMatrix<T> x) where T: struct, IEquatable<T>, IFormattable
+    public static Matrix<T> DenseOfMatrix<T>(IROMatrix<T> x) where T : struct, IEquatable<T>, IFormattable
     {
       var result = CreateMatrix.Dense<T>(x.RowCount, x.ColumnCount);
       for (int r = 0; r < x.RowCount; ++r)
@@ -1051,7 +1051,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
     #region Submatrix
 
-    private static Func<int, int, Matrix<double>> _defaultMatrixGenerator =  (r, c) => CreateMatrix.Dense<double>(r, c);
+    private static Func<int, int, Matrix<double>> _defaultMatrixGenerator = (r, c) => CreateMatrix.Dense<double>(r, c);
 
     /// <summary>
     /// Gets a new submatrix, i.e. a matrix containing selected elements of the original matrix <paramref name="a"/>.
@@ -1533,6 +1533,23 @@ namespace Altaxo.Calc.LinearAlgebra
       for (int i = 0; i < rows; i++)
         for (int j = 0; j < cols; j++)
           dest[i + destrow, j + destcol] = src[i, j];
+    }
+
+    /// <summary>
+    /// Copies one column of a source matrix into a destination matrix to a given row and column offset.
+    /// </summary>
+    /// <param name="sourceMatrix">The source matrix.</param>
+    /// <param name="sourceColumnNumber">The source column number.</param>
+    /// <param name="destinationMatrix">The destination matrix.</param>
+    /// <param name="destinationRowNumber">The destination row number offset.</param>
+    /// <param name="destinationColumnNumber">The destination column number offset.</param>
+    public static void CopyColumn<T>(this IROMatrix<T> sourceMatrix, int sourceColumnNumber, IMatrix<T> destinationMatrix, int destinationRowNumber, int destinationColumnNumber) where T : struct
+    {
+      int sourceRowCount = sourceMatrix.RowCount;
+      for (int sr = 0, dr = destinationRowNumber; sr < sourceRowCount; ++sr, ++destinationRowNumber)
+      {
+        destinationMatrix[dr, destinationColumnNumber] = sourceMatrix[sr, sourceColumnNumber];
+      }
     }
 
     /// <summary>

@@ -27,7 +27,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using Altaxo.Calc.FitFunctions.General;
+using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Collections;
 using Altaxo.Data;
 using Altaxo.Data.Selections;
@@ -132,7 +132,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
     [MemberNotNull(nameof(_rangeOfRows), nameof(_independentVariables), nameof(_dependentVariables), nameof(_dependentVariableTransformations), nameof(_fitFunction))]
     private void DeserializeSurrogate0(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
     {
-      ChildSetMemberAlt(ref _fitFunction, (IFitFunction?)info.GetValueOrNull("FitFunction", this) ?? new FitFunctions.General.Polynomial(1,0));
+      ChildSetMemberAlt(ref _fitFunction, (IFitFunction?)info.GetValueOrNull("FitFunction", this) ?? new FitFunctions.General.Polynomial(1, 0));
 
       int numRows = info.GetInt32("NumberOfRows");
       int firstRow = info.GetInt32("FirstRow");
@@ -211,7 +211,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
     [MemberNotNull(nameof(_rangeOfRows), nameof(_independentVariables), nameof(_dependentVariables), nameof(_dependentVariableTransformations), nameof(_fitFunction))]
     private void DeserializeSurrogate1(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
     {
-      ChildSetMemberAlt<IFitFunction>(ref _fitFunction, (IFitFunction?)info.GetValueOrNull("FitFunction", this) ?? new FitFunctions.General.Polynomial(1,0));
+      ChildSetMemberAlt<IFitFunction>(ref _fitFunction, (IFitFunction?)info.GetValueOrNull("FitFunction", this) ?? new FitFunctions.General.Polynomial(1, 0));
 
       ChildSetMember(ref _dataTable, (DataTableProxy?)info.GetValueOrNull("DataTable", this));
 
@@ -706,7 +706,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
       if (string.IsNullOrEmpty(result))
         return string.Empty;
 
-      if(_dependentVariableTransformations[i] is { } transformation)
+      if (_dependentVariableTransformations[i] is { } transformation)
       {
         result = transformation.GetRepresentationAsFunction(result);
       }
@@ -776,11 +776,32 @@ namespace Altaxo.Calc.Regression.Nonlinear
     public void FitFunctionEvaluate(double[] independent, double[] parameters, double[] FV)
     {
       FitFunction!.Evaluate(independent, parameters, FV);
-      for(int i=0;i<_dependentVariableTransformations.Length;++i)
+      for (int i = 0; i < _dependentVariableTransformations.Length; ++i)
       {
         if (_dependentVariableTransformations[i] is { } t)
           FV[i] = t.Transform(FV[i]);
-       }
+      }
+    }
+
+    public void FitFunctionEvaluate(IROMatrix<double> independent, IReadOnlyList<double> parameters, IReadOnlyList<bool>? dependentVariableChoice, IVector<double> FV)
+    {
+      FitFunction!.EvaluateMultiple(independent, parameters, dependentVariableChoice, FV);
+      int numberOfDependentVariablesInUse = dependentVariableChoice is null ? FitFunction!.NumberOfDependentVariables : dependentVariableChoice.Count(x => x);
+      int idxDependentVariable = -1;
+      for (int i = 0; i < _dependentVariableTransformations.Length; ++i)
+      {
+        if (dependentVariableChoice is null || dependentVariableChoice[i] == true)
+        {
+          ++idxDependentVariable;
+          if (_dependentVariableTransformations[i] is { } t)
+          {
+            for (int j = 0, k = idxDependentVariable; j < independent.RowCount; ++j, k += numberOfDependentVariablesInUse)
+            {
+              FV[k] = t.Transform(FV[k]);
+            }
+          }
+        }
+      }
     }
 
     private void EhFitFunctionChanged(object? sender, EventArgs e)
