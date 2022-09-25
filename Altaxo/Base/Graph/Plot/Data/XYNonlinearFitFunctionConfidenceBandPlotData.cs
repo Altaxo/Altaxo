@@ -25,16 +25,14 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 
 namespace Altaxo.Graph.Plot.Data
 {
   using System.Diagnostics.CodeAnalysis;
+  using Altaxo.Calc.LinearAlgebra;
   using Altaxo.Calc.Regression.Nonlinear;
   using Altaxo.Data;
-  using Altaxo.Graph.Gdi;
-  using Gdi.Plot.Data;
 
   /// <summary>
   /// Summary description for XYFunctionPlotData.
@@ -259,7 +257,7 @@ namespace Altaxo.Graph.Plot.Data
         IVariantToVariantTransformation independentVariableTransformation,
         int numberOfFittedPoints,
         double sigmaSquare,
-        double[] covarianceMatrixTimesSigmaSquare)
+        Matrix<double> covarianceMatrixTimesSigmaSquare)
     {
       if (fitDocumentIdentifier is null)
         throw new ArgumentNullException(nameof(fitDocumentIdentifier));
@@ -284,7 +282,7 @@ namespace Altaxo.Graph.Plot.Data
       var (allVaryingParameterNames, indicesOfThisFitElementsVaryingParametersInAllVaryingParameters) = CreateCachedMembers();
 
       // the covariance matrix should have the dimensions of allVaryingParameters.Count x allVaryingParameters.Count
-      if (!(covarianceMatrixTimesSigmaSquare.Length == allVaryingParameterNames.Count * allVaryingParameterNames.Count))
+      if (!(covarianceMatrixTimesSigmaSquare.RowCount == allVaryingParameterNames.Count && covarianceMatrixTimesSigmaSquare.ColumnCount == allVaryingParameterNames.Count))
         throw new InvalidProgramException("Covariance matrix dimension does not match with number of varying parameters");
 
       for (int i = 0; i < _cachedIndicesOfVaryingParametersOfThisFitElement.Length; ++i)
@@ -297,8 +295,7 @@ namespace Altaxo.Graph.Plot.Data
           int jColOriginalCovMat = indicesOfThisFitElementsVaryingParametersInAllVaryingParameters[j];
           int jColThisCovMat = _cachedIndicesOfVaryingParametersOfThisFitElement[j];
 
-          _covarianceMatrix[iRowThisCovMat, jColThisCovMat] =
-              covarianceMatrixTimesSigmaSquare[iRowOriginalCovMat * allVaryingParameterNames.Count + jColOriginalCovMat]; // TODO is covariance matrix column major or row major
+          _covarianceMatrix[iRowThisCovMat, jColThisCovMat] = covarianceMatrixTimesSigmaSquare[iRowOriginalCovMat, jColOriginalCovMat];
         }
       }
     }

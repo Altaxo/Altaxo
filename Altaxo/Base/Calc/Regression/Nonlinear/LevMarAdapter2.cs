@@ -115,10 +115,6 @@ namespace Altaxo.Calc.Regression.Nonlinear
     /// <summary>If this array is set, the weights are used to scale the fit differences (yreal-yfit).</summary>
     private double[]? _cachedWeights;
 
-    /// <summary>Holds (after the fit) the resulting covariances of the parameters.</summary>
-    private double[]? _resultingCovariances;
-
-
 
     /// <summary>
     /// Constructor of the adapter.
@@ -270,9 +266,32 @@ namespace Altaxo.Calc.Regression.Nonlinear
         }
       }
       ObservedY = observedY;
+
+      if (_accuracyOrder <= 2)
+      {
+        _f1 = Vector<double>.Build.Dense(totalNumberOfData);
+        _f2 = Vector<double>.Build.Dense(totalNumberOfData);
+      }
+      else if (_accuracyOrder <= 4)
+      {
+        _f1 = Vector<double>.Build.Dense(totalNumberOfData);
+        _f2 = Vector<double>.Build.Dense(totalNumberOfData);
+        _f3 = Vector<double>.Build.Dense(totalNumberOfData);
+        _f4 = Vector<double>.Build.Dense(totalNumberOfData);
+      }
+      else
+      {
+        _f1 = Vector<double>.Build.Dense(totalNumberOfData);
+        _f2 = Vector<double>.Build.Dense(totalNumberOfData);
+        _f3 = Vector<double>.Build.Dense(totalNumberOfData);
+        _f4 = Vector<double>.Build.Dense(totalNumberOfData);
+        _f5 = Vector<double>.Build.Dense(totalNumberOfData);
+        _f6 = Vector<double>.Build.Dense(totalNumberOfData);
+      }
+
     }
 
-    public void CopyParametersBackTo(ParameterSet pset)
+    public void CopyParametersBackTo(ParameterSet pset, IROMatrix<double> covarianceMatrix)
     {
       if (pset.Count != _constantParameters.Length)
         throw new ArgumentException("Length of parameter set pset does not match with cached length of parameter set");
@@ -292,7 +311,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
         if (pset[i].Vary)
         {
           pset[i].Parameter = _coefficients[varyingPara];
-          pset[i].Variance = _resultingCovariances is null ? 0 : Math.Sqrt(_resultingCovariances[varyingPara + varyingPara * _coefficients.Count]);
+          pset[i].Variance = covarianceMatrix is null ? 0 : Math.Sqrt(covarianceMatrix[varyingPara, varyingPara]);
           varyingPara++;
         }
         else
@@ -332,22 +351,6 @@ namespace Altaxo.Calc.Regression.Nonlinear
     }
 
     /// <summary>
-    /// Gets the covariance matrix. The covariance matrix has always a dimension of n x n, with n the number of varying parameters.
-    /// </summary>
-    /// <value>
-    /// The covariance matrix.
-    /// </value>
-    public double[] CovarianceMatrix
-    {
-      get
-      {
-        if (_resultingCovariances is null)
-          throw new InvalidOperationException("Please call one of the Fit functions first before accessing the result.");
-        return _resultingCovariances;
-      }
-    }
-
-    /// <summary>
     /// Returns the collection of valid numeric rows for the given fit element.
     /// </summary>
     /// <param name="idxFitElement">Index number of the fit element.</param>
@@ -366,9 +369,6 @@ namespace Altaxo.Calc.Regression.Nonlinear
     {
       return (int[])_cachedFitElementInfo[idxFitElement].DependentVariablesInUse.Clone();
     }
-
-
-
 
     /// <summary>
     /// Stores the weights for the fit differences  in an array. The data
@@ -416,13 +416,9 @@ namespace Altaxo.Calc.Regression.Nonlinear
     }
 
 
-
-
-
     /// <summary>
     /// Calculates the fitting values.
     /// </summary>
-    /// <param name="parameter">The parameter used to calculate the values.</param>
     /// <param name="outputValues">You must provide an array to hold the calculated values. Size of the array must be
     /// at least <see cref="NumberOfObservations" />.</param>
     /// <param name="calculateUnusedDependentVariablesAlso">If <c>true</c>, the unused dependent variables are also calculated (and plotted).</param>
@@ -430,6 +426,22 @@ namespace Altaxo.Calc.Regression.Nonlinear
     /// than one used dependent variable per fit element, the output values are stored in interleaved order.
     /// </remarks>
     public void EvaluateModelValues(Vector<double> outputValues, bool calculateUnusedDependentVariablesAlso = false)
+    {
+      EvaluateModelValues(_coefficients, outputValues, calculateUnusedDependentVariablesAlso);
+    }
+
+
+    /// <summary>
+    /// Calculates the fitting values.
+    /// </summary>
+    /// <param name="parameters">The parameter used to calculate the values.</param>
+    /// <param name="outputValues">You must provide an array to hold the calculated values. Size of the array must be
+    /// at least <see cref="NumberOfObservations" />.</param>
+    /// <param name="calculateUnusedDependentVariablesAlso">If <c>true</c>, the unused dependent variables are also calculated (and plotted).</param>
+    /// <remarks>The values of the fit elements are stored in the order from element_0 to element_n. If there is more
+    /// than one used dependent variable per fit element, the output values are stored in interleaved order.
+    /// </remarks>
+    public void EvaluateModelValues(IReadOnlyList<double> parameters, Vector<double> outputValues, bool calculateUnusedDependentVariablesAlso = false)
     {
 
       int outputValuesPointer = 0;
@@ -447,7 +459,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
         for (int i = 0; i < info.Parameters.Length; i++)
         {
           int idx = info.ParameterMapping[i];
-          info.Parameters[i] = idx >= 0 ? _coefficients[idx] : _constantParameters[-1 - idx];
+          info.Parameters[i] = idx >= 0 ? parameters[idx] : _constantParameters[-1 - idx];
         }
 
         IAscendingIntegerCollection validRows = info.ValidRows;
@@ -466,22 +478,6 @@ namespace Altaxo.Calc.Regression.Nonlinear
           fitEle.FitFunctionEvaluate(info.Xs, info.Parameters, info.DependentVariablesInUse, VectorMath.ToVector(outputValues, outputValuesPointer, outputValues.Count - outputValuesPointer));
           outputValuesPointer += info.Xs.RowCount * info.NumberOfDependentVariablesInUse;
         }
-
-        /*
-        if (calculateUnusedDependentVariablesAlso)
-        {
-          // copy the evaluation result to the output array (interleaved)
-          for (int k = 0; k < fitEle.NumberOfDependentVariables; ++k)
-            outputValues[outputValuesPointer++] = info.Ys[k];
-        }
-        else
-        {
-          // copy the evaluation result to the output array (interleaved)
-          for (int k = 0; k < info.DependentVariablesInUse.Length; ++k)
-            outputValues[outputValuesPointer++] = info.Ys[info.DependentVariablesInUse[k]];
-        }
-        */
-
       }
     }
 
@@ -540,7 +536,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
         }
         else
         {
-          throw new NotImplementedException();
+          NumericalJacobian(_coefficients, ModelValues, _accuracyOrder);
           FunctionEvaluations += _accuracyOrder;
         }
       }
@@ -588,8 +584,90 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
     protected override Matrix<double> NumericalJacobian(Vector<double> parameters, Vector<double> currentValues, int accuracyOrder = 2)
     {
-      throw new NotImplementedException();
+      const double sqrtEpsilon = 1.4901161193847656250E-8; // sqrt(machineEpsilon)
+
+      Matrix<double> derivatives = Matrix<double>.Build.Dense(NumberOfObservations, NumberOfParameters);
+
+      var d = 0.000003 * parameters.PointwiseAbs().PointwiseMaximum(sqrtEpsilon);
+
+      var h = Vector<double>.Build.Dense(NumberOfParameters);
+      for (int j = 0; j < NumberOfParameters; j++)
+      {
+        h[j] = d[j];
+
+        if (accuracyOrder >= 6)
+        {
+          // f'(x) = {- f(x - 3h) + 9f(x - 2h) - 45f(x - h) + 45f(x + h) - 9f(x + 2h) + f(x + 3h)} / 60h + O(h^6)
+          EvaluateModelValues(parameters - 3 * h, _f1, false);
+          EvaluateModelValues(parameters - 2 * h, _f2, false);
+          EvaluateModelValues(parameters - h, _f3, false);
+          EvaluateModelValues(parameters + h, _f4, false);
+          EvaluateModelValues(parameters + 2 * h, _f5, false);
+          EvaluateModelValues(parameters + 3 * h, _f6, false);
+
+          var prime = (-_f1 + 9 * _f2 - 45 * _f3 + 45 * _f4 - 9 * _f5 + _f6) / (60 * h[j]);
+          derivatives.SetColumn(j, prime);
+        }
+        else if (accuracyOrder == 5)
+        {
+          // f'(x) = {-137f(x) + 300f(x + h) - 300f(x + 2h) + 200f(x + 3h) - 75f(x + 4h) + 12f(x + 5h)} / 60h + O(h^5)
+          var f1 = currentValues;
+          EvaluateModelValues(parameters + h, _f2, false);
+          EvaluateModelValues(parameters + 2 * h, _f3, false);
+          EvaluateModelValues(parameters + 3 * h, _f4, false);
+          EvaluateModelValues(parameters + 4 * h, _f5, false);
+          EvaluateModelValues(parameters + 5 * h, _f6, false);
+
+          var prime = (-137 * f1 + 300 * _f2 - 300 * _f3 + 200 * _f4 - 75 * _f5 + 12 * _f6) / (60 * h[j]);
+          derivatives.SetColumn(j, prime);
+        }
+        else if (accuracyOrder == 4)
+        {
+          // f'(x) = {f(x - 2h) - 8f(x - h) + 8f(x + h) - f(x + 2h)} / 12h + O(h^4)
+          EvaluateModelValues(parameters - 2 * h, _f1, false);
+          EvaluateModelValues(parameters - h, _f2, false);
+          EvaluateModelValues(parameters + h, _f3, false);
+          EvaluateModelValues(parameters + 2 * h, _f4, false);
+
+          var prime = (_f1 - 8 * _f2 + 8 * _f3 - _f4) / (12 * h[j]);
+          derivatives.SetColumn(j, prime);
+        }
+        else if (accuracyOrder == 3)
+        {
+          // f'(x) = {-11f(x) + 18f(x + h) - 9f(x + 2h) + 2f(x + 3h)} / 6h + O(h^3)
+          var f1 = currentValues;
+          EvaluateModelValues(parameters + h, _f2, false);
+          EvaluateModelValues(parameters + 2 * h, _f3, false);
+          EvaluateModelValues(parameters + 3 * h, _f4, false);
+
+          var prime = (-11 * f1 + 18 * _f2 - 9 * _f3 + 2 * _f4) / (6 * h[j]);
+          derivatives.SetColumn(j, prime);
+        }
+        else if (accuracyOrder == 2)
+        {
+          // f'(x) = {f(x + h) - f(x - h)} / 2h + O(h^2)
+          EvaluateModelValues(parameters + h, _f1, false);
+          EvaluateModelValues(parameters - h, _f2, false);
+
+          var prime = (_f1 - _f2) / (2 * h[j]);
+          derivatives.SetColumn(j, prime);
+        }
+        else
+        {
+          // f'(x) = {- f(x) + f(x + h)} / h + O(h)
+          var f1 = currentValues;
+          EvaluateModelValues(parameters + h, _f2, false);
+
+          var prime = (-f1 + _f2) / h[j];
+          derivatives.SetColumn(j, prime);
+        }
+
+        h[j] = 0;
+      }
+
+      return derivatives;
     }
+
 
 
   }

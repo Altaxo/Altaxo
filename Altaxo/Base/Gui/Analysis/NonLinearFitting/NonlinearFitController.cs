@@ -60,7 +60,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
     private ISpacedInterval _generationInterval;
     private double _sigmaSquare;
     private int _numberOfFitPoints;
-    private double[] _covarianceMatrix; // length of covariance matrix is always a square number
+    private Matrix<double> _covarianceMatrix; // length of covariance matrix is always a square number
 
     /// <summary>
     /// If a fit was made, new function plot items with a new Guid identifier are created. This is the identifier of the old function plot items.
@@ -452,17 +452,19 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
         var backgroundMonitor = new ExternalDrivenBackgroundMonitor();
         var initialGuess = _doc.CurrentParameters.Where(e => e.Vary == true).Select(e => e.Parameter).ToList();
-        var fitThread = new System.Threading.Thread(new System.Threading.ThreadStart(() => fit.FindMinimum(fitAdapter, initialGuess, null, null, null, null, backgroundMonitor.CancellationTokenHard)));
+        NonlinearMinimizationResult minimizationResult = null;
+        var fitThread = new System.Threading.Thread(new System.Threading.ThreadStart(() => minimizationResult = fit.FindMinimum(fitAdapter, initialGuess, null, null, null, null, backgroundMonitor.CancellationTokenHard)));
         fitThread.Start();
         Current.Gui.ShowBackgroundCancelDialog(10000, fitThread, backgroundMonitor);
         if (!(fitThread.ThreadState.HasFlag(System.Threading.ThreadState.Aborted)))
         {
+
           ChiSquareValue = fitAdapter.Value;
           _sigmaSquare = fitAdapter.SigmaSquare;
           _numberOfFitPoints = fitAdapter.NumberOfObservations;
-          _covarianceMatrix = (double[])fitAdapter.CovarianceMatrix.Clone();
+          _covarianceMatrix = minimizationResult.Covariance.Clone();
 
-          fitAdapter.CopyParametersBackTo(_doc.CurrentParameters);
+          fitAdapter.CopyParametersBackTo(_doc.CurrentParameters, _covarianceMatrix);
 
           //_doc.FitEnsemble.InitializeParametersFromParameterSet(_doc.CurrentParameters);
           //_doc.FitEnsemble.DistributeParameters();
@@ -552,7 +554,8 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
         var initialGuess = Vector<double>.Build.DenseOfEnumerable(_doc.CurrentParameters.Where(e => e.Vary == true).Select(e => e.Parameter));
 
         var reportMonitor = new ReportCostMonitor();
-        var threadStart = new System.Threading.ThreadStart(() => fit.FindMinimum(fitAdapter.ToObjectiveFunction(), initialGuess)); //(reportMonitor.GetCancellationToken(), reportMonitor.NewMinimumCostValueAvailable))
+        MinimizationResult minimizationResult = null;
+        var threadStart = new System.Threading.ThreadStart(() => minimizationResult = fit.FindMinimum(fitAdapter.ToObjectiveFunction(), initialGuess)); //(reportMonitor.GetCancellationToken(), reportMonitor.NewMinimumCostValueAvailable))
         var fitThread = new System.Threading.Thread(threadStart);
         fitThread.Start();
         Current.Gui.ShowBackgroundCancelDialog(10000, fitThread, reportMonitor);
@@ -560,7 +563,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
         {
           ChiSquareValue = fitAdapter.Value;
 
-          fitAdapter.CopyParametersBackTo(_doc.CurrentParameters);
+          fitAdapter.CopyParametersBackTo(_doc.CurrentParameters, null);
 
           // remove covariance matrix because we don't have covariances now
           _covarianceMatrix = null;
@@ -770,7 +773,7 @@ Label_EditScript:
     /// </summary>
     /// <param name="xylayer">The XY-Plot Layer for which to replace the plot items.</param>
     /// <param name="doc">The fit document.</param>
-    /// <param name="fitAdapter">The Levenberg-Marquardt fit adapter.</param>
+    /// <param name="fitResult">The Levenberg-Marquardt fit adapter.</param>
     /// <param name="previousFitDocumentIdentifier">The fit document identifier of the previous fit.</param>
     /// <param name="showUnusedDependentVariables">If set to <c>true</c>, shows the unused dependent variables of the fit, too.</param>
     /// <param name="showConfidenceBands">If set to <c>true</c>, shows the confidence bands of the fit (next parameter is the confidence level).</param>
@@ -779,7 +782,7 @@ Label_EditScript:
     public static string CreateOrReplaceFunctionPlotItems(
         XYPlotLayer xylayer,
         NonlinearFitDocument doc,
-        LevMarAdapter2 fitAdapter,
+        NonlinearMinimizationResult fitResult,
         string previousFitDocumentIdentifier,
         bool showUnusedDependentVariables,
         bool showConfidenceBands = false,
@@ -793,11 +796,10 @@ Label_EditScript:
         showUnusedDependentVariables,
         showConfidenceBands,
         confidenceLevel,
-        fitAdapter.Value,
-        fitAdapter.NumberOfObservations,
-        (double[])fitAdapter.CovarianceMatrix.Clone()
+        fitResult.ModelInfoAtMinimum.Value,
+        fitResult.ModelInfoAtMinimum.ObservedY.Count,
+        fitResult.Covariance.Clone()
         );
-
     }
 
     /// <summary>
@@ -822,7 +824,7 @@ Label_EditScript:
       double confidenceLevel,
       double sigmaSquare,
       int numberOfFitPoints,
-      double[] covarianceMatrix
+      Matrix<double> covarianceMatrix
       )
     {
       // collect the old plot items and put them into a dictionary whose key is a combination of fit element index and dependentVariableIndex and
@@ -1337,7 +1339,7 @@ Label_EditScript:
           txt[i] = _doc.CurrentParameters[i].Name;
           col[i] = _doc.CurrentParameters[i].Parameter;
           for (int j = 0; j < _doc.CurrentParameters.Count; j++)
-            var[j][i] = _covarianceMatrix[i * _doc.CurrentParameters.Count + j];
+            var[j][i] = _covarianceMatrix[i, j];
         }
 
         var tb = new Altaxo.Data.DataTable();
@@ -1388,7 +1390,7 @@ Label_EditScript:
         {
           col[nRow++] = _doc.CurrentParameters[i].Parameter;
           for (int j = 0; j < _doc.CurrentParameters.Count; j++)
-            col[nRow++] = _covarianceMatrix[i * _doc.CurrentParameters.Count + j];
+            col[nRow++] = _covarianceMatrix[i, j];
         }
 
         var tb = new Altaxo.Data.DataTable();
