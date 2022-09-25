@@ -25,26 +25,7 @@ namespace Altaxo.Calc.Optimization.ObjectiveFunctions
 
     #region Public Variables
 
-    protected IROMatrix<double> _observedXAsMatrix;
-    protected IReadOnlyList<double> _observedXAsVector;
 
-    /// <summary>
-    /// Set or get the values of the independent variable.
-    /// </summary>
-    public IReadOnlyList<double> ObservedX
-    {
-      get => _observedXAsVector;
-      protected set
-      {
-        _observedXAsVector = value;
-        _observedXAsMatrix = MatrixMath.ToROMatrixWithOneColumn(value);
-      }
-    }
-
-    /// <summary>
-    /// Set or get the values of the observations.
-    /// </summary>
-    public Vector<double> ObservedY { get; protected set; }
 
     /// <summary>
     /// Set or get the values of the weights for the observations.
@@ -67,6 +48,11 @@ namespace Altaxo.Calc.Optimization.ObjectiveFunctions
     /// Get the number of unknown parameters.
     /// </summary>
     public int NumberOfParameters => Point?.Count ?? 0;
+
+    /// <summary>
+    /// Set or get the values of the observations.
+    /// </summary>
+    public Vector<double> ObservedY { get; protected set; }
 
     /// <summary>
     /// Get the degree of freedom
@@ -132,6 +118,22 @@ namespace Altaxo.Calc.Optimization.ObjectiveFunctions
     }
 
     /// <summary>
+    /// Gets Chi²/(N-F+1)
+    /// </summary>
+    public double SigmaSquare
+    {
+      get
+      {
+        if (!_hasFunctionValue)
+        {
+          EvaluateFunction();
+          _hasFunctionValue = true;
+        }
+        return _functionValue / (ModelValues.Count - Point.Count + 1);
+      }
+    }
+
+    /// <summary>
     /// Get the Gradient vector of x and p.
     /// </summary>
     public Vector<double> Gradient
@@ -182,53 +184,6 @@ namespace Altaxo.Calc.Optimization.ObjectiveFunctions
     public bool IsGradientSupported => true;
     public bool IsHessianSupported => true;
 
-    /// <summary>
-    /// Set observed data to fit.
-    /// </summary>
-    public void SetObserved(IReadOnlyList<double> observedX, IReadOnlyList<double> observedY, IReadOnlyList<double> weights = null)
-    {
-      if (observedX is null || observedY is null)
-      {
-        throw new ArgumentNullException("The data set can't be null.");
-      }
-      if (observedX.Count != observedY.Count)
-      {
-        throw new ArgumentException("The observed x data can't have different from observed y data.");
-      }
-
-      ObservedX = observedX;
-      ObservedY = Vector<double>.Build.DenseOfEnumerable(observedY);
-
-
-      if (weights is not null && weights.Count != observedY.Count)
-      {
-        throw new ArgumentException("The weightings can't have different from observations.");
-      }
-      if (weights is not null && weights.Count(x => double.IsInfinity(x) || double.IsNaN(x)) > 0)
-      {
-        throw new ArgumentException("The weightings are not well-defined.");
-      }
-      if (weights is not null && weights.Count(x => x == 0) == weights.Count)
-      {
-        throw new ArgumentException("All the weightings can't be zero.");
-      }
-      if (weights is not null)
-      {
-        var weightsV = Vector<double>.Build.DenseOfEnumerable(weights);
-        if (weights.Count(x => x < 0) > 0)
-        {
-          weightsV = weightsV.PointwiseAbs();
-        }
-
-        Weights = Matrix<double>.Build.DenseOfDiagonalVector(weightsV);
-        L = Weights.Diagonal().PointwiseSqrt();
-      }
-      else
-      {
-        Weights = null;
-        L = null;
-      }
-    }
 
     /// <summary>
     /// Set parameters and bounds.

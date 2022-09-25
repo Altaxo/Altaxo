@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Optimization.ObjectiveFunctions
@@ -214,5 +215,74 @@ namespace Altaxo.Calc.Optimization.ObjectiveFunctions
 
 
     #endregion Private Methods
+
+    protected IROMatrix<double> _observedXAsMatrix;
+    protected IReadOnlyList<double> _observedXAsVector;
+
+    /// <summary>
+    /// Set or get the values of the independent variable.
+    /// </summary>
+    public IReadOnlyList<double> ObservedX
+    {
+      get => _observedXAsVector;
+      protected set
+      {
+        _observedXAsVector = value;
+        _observedXAsMatrix = MatrixMath.ToROMatrixWithOneColumn(value);
+      }
+    }
+
+
+
+
+
+    /// <summary>
+    /// Set observed data to fit.
+    /// </summary>
+    public void SetObserved(IReadOnlyList<double> observedX, IReadOnlyList<double> observedY, IReadOnlyList<double> weights = null)
+    {
+      if (observedX is null || observedY is null)
+      {
+        throw new ArgumentNullException("The data set can't be null.");
+      }
+      if (observedX.Count != observedY.Count)
+      {
+        throw new ArgumentException("The observed x data can't have different from observed y data.");
+      }
+
+      ObservedX = observedX;
+      ObservedY = Vector<double>.Build.DenseOfEnumerable(observedY);
+
+
+      if (weights is not null && weights.Count != observedY.Count)
+      {
+        throw new ArgumentException("The weightings can't have different from observations.");
+      }
+      if (weights is not null && weights.Count(x => double.IsInfinity(x) || double.IsNaN(x)) > 0)
+      {
+        throw new ArgumentException("The weightings are not well-defined.");
+      }
+      if (weights is not null && weights.Count(x => x == 0) == weights.Count)
+      {
+        throw new ArgumentException("All the weightings can't be zero.");
+      }
+      if (weights is not null)
+      {
+        var weightsV = Vector<double>.Build.DenseOfEnumerable(weights);
+        if (weights.Count(x => x < 0) > 0)
+        {
+          weightsV = weightsV.PointwiseAbs();
+        }
+
+        Weights = Matrix<double>.Build.DenseOfDiagonalVector(weightsV);
+        L = Weights.Diagonal().PointwiseSqrt();
+      }
+      else
+      {
+        Weights = null;
+        L = null;
+      }
+    }
+
   }
 }

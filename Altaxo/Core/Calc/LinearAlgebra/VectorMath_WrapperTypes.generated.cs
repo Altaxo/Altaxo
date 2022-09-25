@@ -1138,7 +1138,7 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         if (start >= x.Count)
           throw new ArgumentException("Start of the section is beyond length of the vector");
-        if (start + len >= x.Count)
+        if (start + len > x.Count)
           throw new ArgumentException("End of the section is beyond length of the vector");
 
         _x = x;
@@ -2302,7 +2302,7 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         if (start >= x.Count)
           throw new ArgumentException("Start of the section is beyond length of the vector");
-        if (start + len >= x.Count)
+        if (start + len > x.Count)
           throw new ArgumentException("End of the section is beyond length of the vector");
 
         _x = x;
@@ -3466,7 +3466,7 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         if (start >= x.Count)
           throw new ArgumentException("Start of the section is beyond length of the vector");
-        if (start + len >= x.Count)
+        if (start + len > x.Count)
           throw new ArgumentException("End of the section is beyond length of the vector");
 
         _x = x;
@@ -4630,7 +4630,7 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         if (start >= x.Count)
           throw new ArgumentException("Start of the section is beyond length of the vector");
-        if (start + len >= x.Count)
+        if (start + len > x.Count)
           throw new ArgumentException("End of the section is beyond length of the vector");
 
         _x = x;
@@ -5794,7 +5794,7 @@ namespace Altaxo.Calc.LinearAlgebra
       {
         if (start >= x.Count)
           throw new ArgumentException("Start of the section is beyond length of the vector");
-        if (start + len >= x.Count)
+        if (start + len > x.Count)
           throw new ArgumentException("End of the section is beyond length of the vector");
 
         _x = x;

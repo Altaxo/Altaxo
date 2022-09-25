@@ -29,6 +29,7 @@ using System.Linq;
 using System.Threading;
 using System.Windows.Input;
 using Altaxo.Calc.LinearAlgebra;
+using Altaxo.Calc.Optimization;
 using Altaxo.Calc.Regression.Nonlinear;
 using Altaxo.Collections;
 using Altaxo.Data;
@@ -75,7 +76,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
         return false;
 
       if (args[0] is NonlinearFitDocument fitdoc)
-       _originalDoc = _doc = fitdoc;
+        _originalDoc = _doc = fitdoc;
       else
         return false;
 
@@ -126,10 +127,10 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
     #endregion
 
     #region FitFunctionSelection
-    ICommand _cmdSelectFitFunction;
+    private ICommand _cmdSelectFitFunction;
     public ICommand CmdSelectFitFunction => _cmdSelectFitFunction ??= new RelayCommand(EhView_SelectFitFunction);
 
-    ICommand _cmdCreateNewFitFunction;
+    private ICommand _cmdCreateNewFitFunction;
     public ICommand CmdCreateNewFitFunction => _cmdCreateNewFitFunction ??= new RelayCommand(EhView_NewFitFunction);
 
     private FitFunctionSelectionController _fitFunctionSelectionController;
@@ -375,7 +376,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
           fitEnsemble.Changed += new WeakEventHandler(EhFitEnsemble_Changed, fitEnsemble, nameof(fitEnsemble.Changed));
         }
 
-        _generationInterval = new LinearlySpacedIntervalByStartCountStep(0,1000,1);
+        _generationInterval = new LinearlySpacedIntervalByStartCountStep(0, 1000, 1);
         var generationIntervalController = new Common.EquallySpacedIntervalController();
         generationIntervalController.InitializeDocument(_generationInterval);
         GenerationIntervalController = generationIntervalController;
@@ -405,15 +406,15 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
     {
       if (true == _parameterController.Apply(false))
       {
-        var fitAdapter = new LevMarAdapter(_doc.FitEnsemble, _doc.CurrentParameters);
+        var fitAdapter = new LevMarAdapter2(_doc.FitEnsemble, _doc.CurrentParameters);
 
-        var fitThread = new System.Threading.Thread(new System.Threading.ThreadStart(() => ChiSquareValue = fitAdapter.EvaluateChiSquare()));
+        var fitThread = new System.Threading.Thread(new System.Threading.ThreadStart(() => ChiSquareValue = fitAdapter.Value));
         fitThread.Start();
         Current.Gui.ShowBackgroundCancelDialog(10000, fitThread, null);
         if (!(fitThread.ThreadState.HasFlag(System.Threading.ThreadState.Aborted)))
         {
           _covarianceMatrix = null;
-          _numberOfFitPoints = fitAdapter.NumberOfData;
+          _numberOfFitPoints = fitAdapter.NumberOfObservations;
           OnAfterFittingStep();
         }
       }
@@ -445,18 +446,20 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
           return;
         }
 
-        var fitAdapter = new LevMarAdapter(_doc.FitEnsemble, _doc.CurrentParameters);
+        var fitAdapter = new LevMarAdapter2(_doc.FitEnsemble, _doc.CurrentParameters);
+        var fit = new LevenbergMarquardtMinimizerNonAllocating();
 
 
         var backgroundMonitor = new ExternalDrivenBackgroundMonitor();
-        var fitThread = new System.Threading.Thread(new System.Threading.ThreadStart(() => fitAdapter.Fit(backgroundMonitor.CancellationTokenHard)));
+        var initialGuess = _doc.CurrentParameters.Where(e => e.Vary == true).Select(e => e.Parameter).ToList();
+        var fitThread = new System.Threading.Thread(new System.Threading.ThreadStart(() => fit.FindMinimum(fitAdapter, initialGuess, null, null, null, null, backgroundMonitor.CancellationTokenHard)));
         fitThread.Start();
         Current.Gui.ShowBackgroundCancelDialog(10000, fitThread, backgroundMonitor);
         if (!(fitThread.ThreadState.HasFlag(System.Threading.ThreadState.Aborted)))
         {
-          ChiSquareValue = fitAdapter.ResultingChiSquare;
-          _sigmaSquare = fitAdapter.ResultingSigmaSquare;
-          _numberOfFitPoints = fitAdapter.NumberOfData;
+          ChiSquareValue = fitAdapter.Value;
+          _sigmaSquare = fitAdapter.SigmaSquare;
+          _numberOfFitPoints = fitAdapter.NumberOfObservations;
           _covarianceMatrix = (double[])fitAdapter.CovarianceMatrix.Clone();
 
           fitAdapter.CopyParametersBackTo(_doc.CurrentParameters);
@@ -544,16 +547,18 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
         //        _doc.FitEnsemble.InitializeParametersFromParameterSet(_doc.CurrentParameters);
 
-        var fitAdapter = new LevMarAdapter(_doc.FitEnsemble, _doc.CurrentParameters);
+        var fitAdapter = new LevMarAdapter2(_doc.FitEnsemble, _doc.CurrentParameters);
+        var fit = new Altaxo.Calc.Optimization.NelderMeadSimplex(1E-7, 200);
+        var initialGuess = Vector<double>.Build.DenseOfEnumerable(_doc.CurrentParameters.Where(e => e.Vary == true).Select(e => e.Parameter));
 
         var reportMonitor = new ReportCostMonitor();
-        var threadStart = new System.Threading.ThreadStart(() => fitAdapter.DoSimplexMinimization(reportMonitor.GetCancellationToken(), reportMonitor.NewMinimumCostValueAvailable));
+        var threadStart = new System.Threading.ThreadStart(() => fit.FindMinimum(fitAdapter.ToObjectiveFunction(), initialGuess)); //(reportMonitor.GetCancellationToken(), reportMonitor.NewMinimumCostValueAvailable))
         var fitThread = new System.Threading.Thread(threadStart);
         fitThread.Start();
         Current.Gui.ShowBackgroundCancelDialog(10000, fitThread, reportMonitor);
         if (!(fitThread.ThreadState.HasFlag(System.Threading.ThreadState.Aborted)))
         {
-          ChiSquareValue = fitAdapter.ResultingChiSquare;
+          ChiSquareValue = fitAdapter.Value;
 
           fitAdapter.CopyParametersBackTo(_doc.CurrentParameters);
 
@@ -774,7 +779,7 @@ Label_EditScript:
     public static string CreateOrReplaceFunctionPlotItems(
         XYPlotLayer xylayer,
         NonlinearFitDocument doc,
-        LevMarAdapter fitAdapter,
+        LevMarAdapter2 fitAdapter,
         string previousFitDocumentIdentifier,
         bool showUnusedDependentVariables,
         bool showConfidenceBands = false,
@@ -788,8 +793,8 @@ Label_EditScript:
         showUnusedDependentVariables,
         showConfidenceBands,
         confidenceLevel,
-        fitAdapter.ResultingSigmaSquare,
-        fitAdapter.NumberOfData,
+        fitAdapter.Value,
+        fitAdapter.NumberOfObservations,
         (double[])fitAdapter.CovarianceMatrix.Clone()
         );
 
@@ -1043,7 +1048,7 @@ Label_EditScript:
     public void OnSimulation(bool calculateUnusedDependentVariablesAlso)
     {
       // we investigate for every fit element the corresponding table, and add columns to that table
-      var fitAdapter = new LevMarAdapter(_doc.FitEnsemble, _doc.CurrentParameters);
+      var fitAdapter = new LevMarAdapter2(_doc.FitEnsemble, _doc.CurrentParameters);
 
       int numberOfData;
 
@@ -1055,12 +1060,12 @@ Label_EditScript:
       }
       else
       {
-        numberOfData = fitAdapter.NumberOfData;
+        numberOfData = fitAdapter.NumberOfObservations;
       }
 
       // calculate the resulting values
-      double[] resultingValues = new double[numberOfData];
-      fitAdapter.EvaluateFitValues(resultingValues, calculateUnusedDependentVariablesAlso);
+      var resultingValues = Vector<double>.Build.Dense(numberOfData);
+      fitAdapter.EvaluateModelValues(resultingValues, calculateUnusedDependentVariablesAlso);
 
       int nextStartOfDependentValues = 0;
       for (int i = 0; i < _doc.FitEnsemble.Count; i++)
@@ -1121,7 +1126,7 @@ Label_EditScript:
     public void OnSimulationWithInterval(bool calculateUnusedDependentVariablesAlso, ISpacedInterval interval)
     {
       // we investigate for every fit element the corresponding table, and add columns to that table
-      var fitAdapter = new LevMarAdapter(_doc.FitEnsemble, _doc.CurrentParameters);
+      var fitAdapter = new LevMarAdapter2(_doc.FitEnsemble, _doc.CurrentParameters);
 
       int intervalCount = (int)interval.Count;
       for (int i = 0; i < _doc.FitEnsemble.Count; i++)
@@ -1143,7 +1148,7 @@ Label_EditScript:
         for (int k = 0; k < yCols.Length; k++)
           yCols[k] = new DoubleColumn();
 
-        fitAdapter.GetParameters(i, P);
+        fitAdapter.CopyParametersForFitElement(i, P);
         for (int k = 0; k < intervalCount; k++)
         {
           double xx = interval[k];
