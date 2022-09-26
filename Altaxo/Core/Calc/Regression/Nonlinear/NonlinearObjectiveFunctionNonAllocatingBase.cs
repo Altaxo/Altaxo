@@ -219,10 +219,10 @@ namespace Altaxo.Calc.Optimization.ObjectiveFunctions
       IsFixed = isFixed;
 
       // allocate already some
-      _negativeGradientValue = Vector<double>.Build.Dense(initialGuess.Count);
-      _hessianValue = Matrix<double>.Build.Dense(initialGuess.Count, initialGuess.Count);
-      _jacobianValue = Matrix<double>.Build.Dense(NumberOfObservations, NumberOfParameters);
-      _jacobianValueTransposed = Matrix<double>.Build.Dense(NumberOfParameters, NumberOfObservations);
+      _negativeGradientValue ??= Vector<double>.Build.Dense(initialGuess.Count);
+      _hessianValue ??= Matrix<double>.Build.Dense(initialGuess.Count, initialGuess.Count);
+      _jacobianValue ??= Matrix<double>.Build.Dense(NumberOfObservations, NumberOfParameters);
+      _jacobianValueTransposed ??= Matrix<double>.Build.Dense(NumberOfParameters, NumberOfObservations);
     }
 
     public void EvaluateAt(Vector<double> parameters)

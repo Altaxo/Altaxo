@@ -464,7 +464,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
           _numberOfFitPoints = fitAdapter.NumberOfObservations;
           _covarianceMatrix = minimizationResult.Covariance.Clone();
 
-          fitAdapter.CopyParametersBackTo(_doc.CurrentParameters, _covarianceMatrix);
+          fitAdapter.CopyParametersBackTo(_doc.CurrentParameters, minimizationResult.StandardErrors);
 
           //_doc.FitEnsemble.InitializeParametersFromParameterSet(_doc.CurrentParameters);
           //_doc.FitEnsemble.DistributeParameters();
@@ -550,7 +550,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
         //        _doc.FitEnsemble.InitializeParametersFromParameterSet(_doc.CurrentParameters);
 
         var fitAdapter = new LevMarAdapter2(_doc.FitEnsemble, _doc.CurrentParameters);
-        var fit = new Altaxo.Calc.Optimization.NelderMeadSimplex(1E-7, 200);
+        var fit = new Altaxo.Calc.Optimization.NelderMeadSimplex(1E-7, 20000);
         var initialGuess = Vector<double>.Build.DenseOfEnumerable(_doc.CurrentParameters.Where(e => e.Vary == true).Select(e => e.Parameter));
 
         var reportMonitor = new ReportCostMonitor();

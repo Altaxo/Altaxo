@@ -61,7 +61,7 @@ namespace Altaxo.Calc.Optimization
 
       if (Covariance != null)
       {
-        StandardErrors = Covariance.Diagonal().PointwiseSqrt();
+        StandardErrors = Covariance.Diagonal().PointwiseMaximum(0).PointwiseSqrt();
 
         var correlation = Covariance.Clone();
         var d = correlation.Diagonal().PointwiseSqrt();

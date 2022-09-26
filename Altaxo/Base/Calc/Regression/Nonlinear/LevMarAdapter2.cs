@@ -48,15 +48,9 @@ namespace Altaxo.Calc.Regression.Nonlinear
       /// <summary>Parameter array for temporary purpose.</summary>
       public double[] Parameters;
 
-      /// <summary>Value result array for temporary purpose.</summary>
-      public double[] Ys;
-
       /// <summary>Independent variable array for temporary purpose. If the fit function has one independent variable (as is the case for
       /// the majority of fit functions, the matrix has only one column, and as many rows as there are independent data points.</summary>
       public IROMatrix<double> Xs;
-
-      /// <summary>Array of jacobians (derivatives of the function value with respect to the parameters) for temporary purpose.</summary>
-      public IMatrix<double>? DYs;
 
       /// <summary>Parameter mapping from the local parameter list to the global parameter list. Positive entries
       /// give the position in the global variable parameter list, negative entries gives the position -entry-1 in the
@@ -80,8 +74,6 @@ namespace Altaxo.Calc.Regression.Nonlinear
       public CachedFitElementInfo(
         double[] parameters,
         IROMatrix<double> xs,
-        double[] ys,
-        IMatrix<double>? dYs,
         int[] parameterMapping,
         bool[] dependentVariablesInUse,
         IAscendingIntegerCollection validRows
@@ -89,13 +81,55 @@ namespace Altaxo.Calc.Regression.Nonlinear
       {
         Parameters = parameters;
         Xs = xs;
-        Ys = ys;
-        DYs = dYs;
         ParameterMapping = parameterMapping;
         DependentVariablesInUse = dependentVariablesInUse;
         NumberOfDependentVariablesInUse = DependentVariablesInUse.Count(x => x);
         ValidRows = validRows;
       }
+    }
+
+    /// <summary>
+    /// Wraps the full jacobian matrix in a way, that a single fit element can write their derivatives into it.
+    /// </summary>
+    /// <seealso cref="Altaxo.Calc.LinearAlgebra.IMatrix&lt;System.Double&gt;" />
+    class JacobianMapper : IMatrix<double>
+    {
+      Matrix<double> _matrix;
+      int _rowOffset;
+      int[] _parameterMapping;
+
+      /// <summary>
+      /// Initializes a new instance of the <see cref="JacobianMapper"/> class.
+      /// </summary>
+      /// <param name="mappedMatrix">The mapped jacobian matrix.</param>
+      /// <param name="rowOffset">The row offset into the jacobian matrix.</param>
+      /// parameter list of the fit element. Parameters fixed correspond to a value of -1 in the column mapping, the varying
+      /// parameters correspond to values of 0, 1, 2, and so on.</param>
+      public JacobianMapper(Matrix<double> mappedMatrix, int rowOffset, int[] parameterMapping)
+      {
+        _matrix = mappedMatrix;
+        _rowOffset = rowOffset;
+        _parameterMapping = parameterMapping;
+      }
+
+      public double this[int row, int col]
+      {
+        get => throw new NotImplementedException();
+        set
+        {
+          int c = _parameterMapping[col]; // get the column number that correspond to the varying parameter
+          if (c >= 0)                   // c is >=0 if it is a varying parameter, otherwise, it is a constant parameter
+          {
+            _matrix[_rowOffset + row, c] = value;
+          }
+        }
+      }
+
+      double IROMatrix<double>.this[int row, int col] => throw new NotImplementedException();
+
+      public int RowCount => _matrix.RowCount - _rowOffset;
+
+      public int ColumnCount => _matrix.ColumnCount;
     }
 
     #endregion inner classes
@@ -169,11 +203,12 @@ namespace Altaxo.Calc.Regression.Nonlinear
         var validRows = fitElement.CalculateValidNumericRows();
         var numberOfValidRows = validRows.Count;
         var xs = Matrix<double>.Build.Dense(numberOfValidRows, fitElement.NumberOfIndependentVariables);
-        for (int r = 0; r < numberOfValidRows; ++r)
+        for (int c = 0; c < xs.ColumnCount; ++c)
         {
-          for (int c = 0; c < xs.ColumnCount; ++c)
+          var col = fitElement.IndependentVariables(c) ?? throw new ObjectDisposedException($"Independent variables column k={c} not available or disposed.");
+          for (int r = 0; r < numberOfValidRows; ++r)
           {
-            xs[r, c] = fitElement.IndependentVariables(c)?[validRows[idxFitElement]] ?? throw new ObjectDisposedException($"Independent variables column k={c} not available or disposed.");
+            xs[r, c] = col[validRows[r]];
           }
         }
 
@@ -225,8 +260,6 @@ namespace Altaxo.Calc.Regression.Nonlinear
         _cachedFitElementInfo[idxFitElement] = new CachedFitElementInfo(
           parameters: parameters,
           xs: xs,
-          ys: ys,
-          dYs: null,
           parameterMapping: parameterMapping,
           dependentVariablesInUse: dependentVariablesInUse,
           validRows: validRows
@@ -267,6 +300,11 @@ namespace Altaxo.Calc.Regression.Nonlinear
       }
       ObservedY = observedY;
 
+      _negativeGradientValue ??= Vector<double>.Build.Dense(_coefficients.Count);
+      _hessianValue ??= Matrix<double>.Build.Dense(_coefficients.Count, _coefficients.Count);
+      _jacobianValue ??= Matrix<double>.Build.Dense(totalNumberOfData, _coefficients.Count);
+      _jacobianValueTransposed ??= Matrix<double>.Build.Dense(_coefficients.Count, totalNumberOfData);
+
       if (_accuracyOrder <= 2)
       {
         _f1 = Vector<double>.Build.Dense(totalNumberOfData);
@@ -291,7 +329,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
     }
 
-    public void CopyParametersBackTo(ParameterSet pset, IROMatrix<double> covarianceMatrix)
+    public void CopyParametersBackTo(ParameterSet pset, IReadOnlyList<double>? standardErrors)
     {
       if (pset.Count != _constantParameters.Length)
         throw new ArgumentException("Length of parameter set pset does not match with cached length of parameter set");
@@ -311,7 +349,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
         if (pset[i].Vary)
         {
           pset[i].Parameter = _coefficients[varyingPara];
-          pset[i].Variance = covarianceMatrix is null ? 0 : Math.Sqrt(covarianceMatrix[varyingPara, varyingPara]);
+          pset[i].Variance = standardErrors is null ? 0 : standardErrors[varyingPara];
           varyingPara++;
         }
         else
@@ -505,6 +543,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
     {
       int columnOffset = 0; // offset into the jacobian columns (by every fit element the increase is by the number of free parameters)
       int rowOffset = 0; // offset into the jacobian rows (by every fit element the increase is by (NumberOfX*NumberOfDependentVariablesInUse))
+      _jacobianValue.Clear();
 
       for (int ele = 0; ele < _cachedFitElementInfo.Length; ele++)
       {
@@ -520,17 +559,8 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
         if (fitEle.FitFunction is IFitFunctionWithGradient fitFunctionWithDerivative)
         {
-          fitFunctionWithDerivative.EvaluateGradient(info.Xs, info.Parameters, info.DependentVariablesInUse, info.DYs);
-          // Copy the derivatives to there right places
-          for (int i = 0; i < info.Parameters.Length; i++)
-          {
-            int idx = info.ParameterMapping[i];
-            if (idx >= 0) // this parameter is in use
-            {
-              MatrixMath.CopyColumn(info.DYs, i, _jacobianValue, rowOffset, columnOffset);
-              ++columnOffset;
-            }
-          }
+          var jacWrapper = new JacobianMapper(_jacobianValue, rowOffset, info.ParameterMapping);
+          fitFunctionWithDerivative.EvaluateGradient(info.Xs, info.Parameters, info.DependentVariablesInUse, jacWrapper);
           rowOffset += info.Xs.RowCount * info.NumberOfDependentVariablesInUse;
           ++JacobianEvaluations;
         }
@@ -586,7 +616,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
     {
       const double sqrtEpsilon = 1.4901161193847656250E-8; // sqrt(machineEpsilon)
 
-      Matrix<double> derivatives = Matrix<double>.Build.Dense(NumberOfObservations, NumberOfParameters);
+      Matrix<double> derivatives = _jacobianValue;
 
       var d = 0.000003 * parameters.PointwiseAbs().PointwiseMaximum(sqrtEpsilon);
 
@@ -665,7 +695,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
         h[j] = 0;
       }
 
-      return derivatives;
+      return _jacobianValue;
     }
 
 
