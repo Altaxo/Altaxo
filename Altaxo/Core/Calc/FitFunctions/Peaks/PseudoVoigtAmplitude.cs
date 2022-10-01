@@ -417,6 +417,26 @@ namespace Altaxo.Calc.FitFunctions.Peaks
     }
 
 
+    /// <summary>
+    /// Converts the parameters of a pseudo Voigt term to the approximate values of a term of the Voigt (area) function.
+    /// </summary>
+    /// <param name="height">The height.</param>
+    /// <param name="position">The position.</param>
+    /// <param name="width">The width.</param>
+    /// <param name="nu">The nu.</param>
+    (double area, double position, double width, double gamma) ConvertParametersToVoigtArea(double height, double position, double width, double nu)
+    {
+      double area = height * width * (nu * Math.PI + (1 - nu) * SqrtPiByLog2);
+
+      double A = 0.161473943436452;
+      double B = -0.215628128638965;
+      double C = 0.105595155767278;
+      double D = -(A + B + C);
+      double gamma = (((D * nu + C) * nu + B) * nu + A) * nu + nu;
+
+      return (area, position, width, gamma);
+    }
+
   }
 }
 

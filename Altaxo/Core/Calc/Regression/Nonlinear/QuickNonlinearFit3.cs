@@ -20,6 +20,8 @@ namespace Altaxo.Calc.Regression.Nonlinear
     public double StepTolerance { get; set; } = 1E-15;
     public double FunctionTolerance { get; set; } = 1E-15;
 
+    public double MinimalRSSImprovement { get; set; } = 1E-14;
+
     public int? MaximumNumberOfIterations { get; set; } = null;
 
 
@@ -62,7 +64,14 @@ namespace Altaxo.Calc.Regression.Nonlinear
         _function is IFitFunctionWithGradient fwg ? fwg.EvaluateGradient : null,
          1);
       model.SetObserved(xValues, yValues, null);
-      var fit = new LevenbergMarquardtMinimizerNonAllocating(InitialMu, GradientTolerance, StepTolerance, FunctionTolerance, MaximumNumberOfIterations.HasValue ? MaximumNumberOfIterations.Value : -1);
+
+      var fit = new LevenbergMarquardtMinimizerNonAllocating2(
+        initialMu: InitialMu,
+        gradientTolerance: GradientTolerance,
+        stepTolerance: StepTolerance,
+        functionTolerance: FunctionTolerance,
+        minimalRSSImprovement: MinimalRSSImprovement,
+        maximumIterations: MaximumNumberOfIterations.HasValue ? MaximumNumberOfIterations.Value : -1);
 
       var result = fit.FindMinimum(model, initialGuess, lowerBounds, upperBounds, scales, isFixed, cancellationToken);
 

@@ -406,7 +406,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
     {
       if (true == _parameterController.Apply(false))
       {
-        var fitAdapter = new LevMarAdapter2(_doc.FitEnsemble, _doc.CurrentParameters);
+        var fitAdapter = new NonlinearModelOfFitEnsemble(_doc.FitEnsemble, _doc.CurrentParameters);
 
         var fitThread = new System.Threading.Thread(new System.Threading.ThreadStart(() => ChiSquareValue = fitAdapter.Value));
         fitThread.Start();
@@ -446,7 +446,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
           return;
         }
 
-        var fitAdapter = new LevMarAdapter2(_doc.FitEnsemble, _doc.CurrentParameters);
+        var fitAdapter = new NonlinearModelOfFitEnsemble(_doc.FitEnsemble, _doc.CurrentParameters);
         var fit = new LevenbergMarquardtMinimizerNonAllocating();
 
 
@@ -549,7 +549,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
         //        _doc.FitEnsemble.InitializeParametersFromParameterSet(_doc.CurrentParameters);
 
-        var fitAdapter = new LevMarAdapter2(_doc.FitEnsemble, _doc.CurrentParameters);
+        var fitAdapter = new NonlinearModelOfFitEnsemble(_doc.FitEnsemble, _doc.CurrentParameters);
         var fit = new Altaxo.Calc.Optimization.NelderMeadSimplex(1E-7, 20000);
         var initialGuess = Vector<double>.Build.DenseOfEnumerable(_doc.CurrentParameters.Where(e => e.Vary == true).Select(e => e.Parameter));
 
@@ -1050,7 +1050,7 @@ Label_EditScript:
     public void OnSimulation(bool calculateUnusedDependentVariablesAlso)
     {
       // we investigate for every fit element the corresponding table, and add columns to that table
-      var fitAdapter = new LevMarAdapter2(_doc.FitEnsemble, _doc.CurrentParameters);
+      var fitAdapter = new NonlinearModelOfFitEnsemble(_doc.FitEnsemble, _doc.CurrentParameters);
 
       int numberOfData;
 
@@ -1128,7 +1128,7 @@ Label_EditScript:
     public void OnSimulationWithInterval(bool calculateUnusedDependentVariablesAlso, ISpacedInterval interval)
     {
       // we investigate for every fit element the corresponding table, and add columns to that table
-      var fitAdapter = new LevMarAdapter2(_doc.FitEnsemble, _doc.CurrentParameters);
+      var fitAdapter = new NonlinearModelOfFitEnsemble(_doc.FitEnsemble, _doc.CurrentParameters);
 
       int intervalCount = (int)interval.Count;
       for (int i = 0; i < _doc.FitEnsemble.Count; i++)

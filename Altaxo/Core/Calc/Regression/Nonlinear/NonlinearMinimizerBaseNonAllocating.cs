@@ -46,6 +46,14 @@ namespace Altaxo.Calc.Optimization
     public int MaximumIterations { get; set; }
 
     /// <summary>
+    /// Gets or sets the minimal RSS improvement.
+    /// </summary>
+    /// <value>
+    /// The minimal RSS improvement.
+    /// </value>
+    public double MinimalRSSImprovement { get; set; }
+
+    /// <summary>
     /// The lower bound of the parameters.
     /// </summary>
     public IReadOnlyList<double?> LowerBound { get; private set; }
@@ -68,12 +76,17 @@ namespace Altaxo.Calc.Optimization
     protected Vector<double> _scaleFactors;
 
 
-    protected NonlinearMinimizerBaseNonAllocating(double gradientTolerance = 1E-18, double stepTolerance = 1E-18, double functionTolerance = 1E-18, int maximumIterations = -1)
+    protected NonlinearMinimizerBaseNonAllocating(double gradientTolerance = 1E-18, double stepTolerance = 1E-18, double functionTolerance = 1E-18, double minimalRSSImprovement = 1E-15, int maximumIterations = -1)
     {
       GradientTolerance = gradientTolerance;
       StepTolerance = stepTolerance;
       FunctionTolerance = functionTolerance;
       MaximumIterations = maximumIterations;
+
+      if (!(minimalRSSImprovement >= 0 && minimalRSSImprovement < 1))
+        throw new ArgumentOutOfRangeException($"{nameof(minimalRSSImprovement)} must be a number in the interval [0, 1), but is {minimalRSSImprovement}");
+
+      MinimalRSSImprovement = minimalRSSImprovement;
     }
 
     protected void ValidateBounds(IReadOnlyList<double> parameters, IReadOnlyList<double?> lowerBound = null, IReadOnlyList<double?> upperBound = null, IReadOnlyList<double> scales = null)
@@ -198,10 +211,9 @@ namespace Altaxo.Calc.Optimization
 
         for (int i = 0; i < hessian.RowCount; i++)
         {
-          var scaleFactorSquared = _scaleFactors[i] * _scaleFactors[i];
           for (int j = 0; j < hessian.ColumnCount; j++)
           {
-            hessian[i, j] *= scaleFactorSquared;
+            hessian[i, j] *= _scaleFactors[i] * _scaleFactors[j];
           }
         }
       }

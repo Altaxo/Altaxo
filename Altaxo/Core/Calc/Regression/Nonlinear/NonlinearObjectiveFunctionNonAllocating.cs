@@ -49,6 +49,42 @@ namespace Altaxo.Calc.Optimization.ObjectiveFunctions
 
     #region Private Methods
 
+    /// <summary>
+    /// Set parameters and bounds.
+    /// </summary>
+    /// <param name="initialGuess">The initial values of parameters.</param>
+    /// <param name="isFixed">The list to the parameters fix or free.</param>
+    public override void SetParameters(IReadOnlyList<double> initialGuess, IReadOnlyList<bool> isFixed = null)
+    {
+      base.SetParameters(initialGuess, isFixed);
+
+      // set the vectors neccessary to calculate the numerical jacobian
+      if (_userDerivative is null)
+      {
+        if (_accuracyOrder <= 2)
+        {
+          _f1 ??= Vector<double>.Build.Dense(NumberOfObservations);
+          _f2 ??= Vector<double>.Build.Dense(NumberOfObservations);
+        }
+        else if (_accuracyOrder <= 4)
+        {
+          _f1 ??= Vector<double>.Build.Dense(NumberOfObservations);
+          _f2 ??= Vector<double>.Build.Dense(NumberOfObservations);
+          _f3 ??= Vector<double>.Build.Dense(NumberOfObservations);
+          _f4 ??= Vector<double>.Build.Dense(NumberOfObservations);
+        }
+        else
+        {
+          _f1 ??= Vector<double>.Build.Dense(NumberOfObservations);
+          _f2 ??= Vector<double>.Build.Dense(NumberOfObservations);
+          _f3 ??= Vector<double>.Build.Dense(NumberOfObservations);
+          _f4 ??= Vector<double>.Build.Dense(NumberOfObservations);
+          _f5 ??= Vector<double>.Build.Dense(NumberOfObservations);
+          _f6 ??= Vector<double>.Build.Dense(NumberOfObservations);
+        }
+      }
+    }
+
     protected override void EvaluateFunction()
     {
       // Calculates the residuals, (y[i] - f(x[i]; p)) * L[i]

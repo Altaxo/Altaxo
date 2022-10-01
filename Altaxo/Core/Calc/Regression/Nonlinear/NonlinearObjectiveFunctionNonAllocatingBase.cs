@@ -25,8 +25,6 @@ namespace Altaxo.Calc.Optimization.ObjectiveFunctions
 
     #region Public Variables
 
-
-
     /// <summary>
     /// Set or get the values of the weights for the observations.
     /// </summary>
@@ -200,7 +198,7 @@ namespace Altaxo.Calc.Optimization.ObjectiveFunctions
     /// </summary>
     /// <param name="initialGuess">The initial values of parameters.</param>
     /// <param name="isFixed">The list to the parameters fix or free.</param>
-    public void SetParameters(IReadOnlyList<double> initialGuess, IReadOnlyList<bool> isFixed = null)
+    public virtual void SetParameters(IReadOnlyList<double> initialGuess, IReadOnlyList<bool> isFixed = null)
     {
       _coefficients ??= Vector<double>.Build.Dense(initialGuess.Count);
       for (int i = 0; i < initialGuess.Count; ++i)
@@ -269,5 +267,6 @@ namespace Altaxo.Calc.Optimization.ObjectiveFunctions
     protected abstract Matrix<double> NumericalJacobian(Vector<double> parameters, Vector<double> currentValues, int accuracyOrder = 2);
 
     #endregion Private Methods
+
   }
 }

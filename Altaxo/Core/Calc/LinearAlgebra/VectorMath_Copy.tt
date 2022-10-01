@@ -44,6 +44,11 @@
         new[]{ "int[]",				    "Length",   "IVector<int>",     "Count"},
         new[]{ "IReadOnlyList<int>",    "Count",    "IVector<int>",     "Count"},
 
+        new[]{ "bool[]",			    "Length",   "bool[]",           "Length"},
+        new[]{ "IReadOnlyList<bool>",   "Count",    "bool[]",	        "Length"},
+        new[]{ "bool[]",			    "Length",   "IVector<bool>",    "Count"},
+        new[]{ "IReadOnlyList<bool>",   "Count",    "IVector<bool>",    "Count"},
+
     };
 
     foreach (var entry in types)

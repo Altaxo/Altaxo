@@ -38,7 +38,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
   /// Adapts a <see cref="FitEnsemble" /> to the requirements of a Levenberg-Marquardt fitting procedure.
   /// This means, the adapter makes the <see cref="FitEnsemble" /> compatible with the Levenberg-Marquardt algorithm.
   /// </summary>
-  public class LevMarAdapter2 : NonlinearObjectiveFunctionNonAllocatingBase
+  public class NonlinearModelOfFitEnsemble : NonlinearObjectiveFunctionNonAllocatingBase
   {
     #region CachedFitElementInfo
 
@@ -156,7 +156,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
     /// <param name="ensemble">The fit ensemble, i.e. the functions and data you intend to fit.</param>
     /// <param name="paraSet">The set of initial parameter. Must contain a initial estimation of the parameters. Contains also information which
     /// parameters can vary and which are fixed during the fitting procedure.</param>
-    public LevMarAdapter2(FitEnsemble ensemble, ParameterSet paraSet) : base(1)
+    public NonlinearModelOfFitEnsemble(FitEnsemble ensemble, ParameterSet paraSet) : base(1)
     {
       _fitEnsemble = ensemble;
       CalculateCachedData(paraSet);
@@ -541,9 +541,12 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
     protected override void EvaluateJacobian()
     {
-      int columnOffset = 0; // offset into the jacobian columns (by every fit element the increase is by the number of free parameters)
       int rowOffset = 0; // offset into the jacobian rows (by every fit element the increase is by (NumberOfX*NumberOfDependentVariablesInUse))
       _jacobianValue.Clear();
+
+      // up to now, we can use built-in derivatives only then, when
+      // all fit functions support this
+      bool allElementsHaveDerivative = _fitEnsemble.Count == _fitEnsemble.Count(x => x.FitFunction is IFitFunctionWithGradient);
 
       for (int ele = 0; ele < _cachedFitElementInfo.Length; ele++)
       {
@@ -557,7 +560,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
           info.Parameters[i] = idx >= 0 ? _coefficients[idx] : _constantParameters[-1 - idx];
         }
 
-        if (fitEle.FitFunction is IFitFunctionWithGradient fitFunctionWithDerivative)
+        if (allElementsHaveDerivative && fitEle.FitFunction is IFitFunctionWithGradient fitFunctionWithDerivative)
         {
           var jacWrapper = new JacobianMapper(_jacobianValue, rowOffset, info.ParameterMapping);
           fitFunctionWithDerivative.EvaluateGradient(info.Xs, info.Parameters, info.DependentVariablesInUse, jacWrapper);
@@ -600,7 +603,6 @@ namespace Altaxo.Calc.Regression.Nonlinear
           }
         }
       }
-
 
       // Gradient, g = -J'W(y − f(x; p)) = -J'L(L'E) = -J'LR
       // _gradientValue = -_jacobianValue.Transpose() * _residuals;

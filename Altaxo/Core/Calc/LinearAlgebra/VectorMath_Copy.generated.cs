@@ -878,5 +878,145 @@ namespace Altaxo.Calc.LinearAlgebra
 		
 
 
+// ********************** Definitions for bool[] to bool[] *************************************
+
+
+		/// <summary>
+		/// Copies the source vector to the destination vector. Both vectors must have the same length.
+		/// </summary>
+		/// <param name="sourceVector">The source vector.</param>
+		/// <param name="destinationVector">The destination vector.</param>
+		public static void Copy(bool[] sourceVector, bool[] destinationVector)
+		{
+			if (sourceVector.Length != destinationVector.Length)
+				throw new ArgumentException("source and destination vector have unequal length!");
+
+			Copy(sourceVector, 0, destinationVector, 0, sourceVector.Length);
+		}
+	
+
+		/// <summary>
+		/// Copies elements of a source vector to a destination vector.
+		/// </summary>
+		/// <param name="sourceVector">The source vector.</param>
+		/// <param name="sourceStartIndex">First element of the source vector to copy.</param>
+		/// <param name="destinationVector">The destination vector.</param>
+		/// <param name="destinationStartIndex">First element of the destination vector to copy to.</param>
+		/// <param name="count">Number of elements to copy.</param>
+		public static void Copy(bool[] sourceVector, int sourceStartIndex, bool[] destinationVector, int destinationStartIndex, int count)
+		{
+			for (int i = 0; i < count; ++i)
+				destinationVector[i + destinationStartIndex] = sourceVector[i + sourceStartIndex];
+		}
+
+
+		
+
+
+// ********************** Definitions for IReadOnlyList<bool> to bool[] *************************************
+
+
+		/// <summary>
+		/// Copies the source vector to the destination vector. Both vectors must have the same length.
+		/// </summary>
+		/// <param name="sourceVector">The source vector.</param>
+		/// <param name="destinationVector">The destination vector.</param>
+		public static void Copy(IReadOnlyList<bool> sourceVector, bool[] destinationVector)
+		{
+			if (sourceVector.Count != destinationVector.Length)
+				throw new ArgumentException("source and destination vector have unequal length!");
+
+			Copy(sourceVector, 0, destinationVector, 0, sourceVector.Count);
+		}
+	
+
+		/// <summary>
+		/// Copies elements of a source vector to a destination vector.
+		/// </summary>
+		/// <param name="sourceVector">The source vector.</param>
+		/// <param name="sourceStartIndex">First element of the source vector to copy.</param>
+		/// <param name="destinationVector">The destination vector.</param>
+		/// <param name="destinationStartIndex">First element of the destination vector to copy to.</param>
+		/// <param name="count">Number of elements to copy.</param>
+		public static void Copy(IReadOnlyList<bool> sourceVector, int sourceStartIndex, bool[] destinationVector, int destinationStartIndex, int count)
+		{
+			for (int i = 0; i < count; ++i)
+				destinationVector[i + destinationStartIndex] = sourceVector[i + sourceStartIndex];
+		}
+
+
+		
+
+
+// ********************** Definitions for bool[] to IVector<bool> *************************************
+
+
+		/// <summary>
+		/// Copies the source vector to the destination vector. Both vectors must have the same length.
+		/// </summary>
+		/// <param name="sourceVector">The source vector.</param>
+		/// <param name="destinationVector">The destination vector.</param>
+		public static void Copy(bool[] sourceVector, IVector<bool> destinationVector)
+		{
+			if (sourceVector.Length != destinationVector.Count)
+				throw new ArgumentException("source and destination vector have unequal length!");
+
+			Copy(sourceVector, 0, destinationVector, 0, sourceVector.Length);
+		}
+	
+
+		/// <summary>
+		/// Copies elements of a source vector to a destination vector.
+		/// </summary>
+		/// <param name="sourceVector">The source vector.</param>
+		/// <param name="sourceStartIndex">First element of the source vector to copy.</param>
+		/// <param name="destinationVector">The destination vector.</param>
+		/// <param name="destinationStartIndex">First element of the destination vector to copy to.</param>
+		/// <param name="count">Number of elements to copy.</param>
+		public static void Copy(bool[] sourceVector, int sourceStartIndex, IVector<bool> destinationVector, int destinationStartIndex, int count)
+		{
+			for (int i = 0; i < count; ++i)
+				destinationVector[i + destinationStartIndex] = sourceVector[i + sourceStartIndex];
+		}
+
+
+		
+
+
+// ********************** Definitions for IReadOnlyList<bool> to IVector<bool> *************************************
+
+
+		/// <summary>
+		/// Copies the source vector to the destination vector. Both vectors must have the same length.
+		/// </summary>
+		/// <param name="sourceVector">The source vector.</param>
+		/// <param name="destinationVector">The destination vector.</param>
+		public static void Copy(IReadOnlyList<bool> sourceVector, IVector<bool> destinationVector)
+		{
+			if (sourceVector.Count != destinationVector.Count)
+				throw new ArgumentException("source and destination vector have unequal length!");
+
+			Copy(sourceVector, 0, destinationVector, 0, sourceVector.Count);
+		}
+	
+
+		/// <summary>
+		/// Copies elements of a source vector to a destination vector.
+		/// </summary>
+		/// <param name="sourceVector">The source vector.</param>
+		/// <param name="sourceStartIndex">First element of the source vector to copy.</param>
+		/// <param name="destinationVector">The destination vector.</param>
+		/// <param name="destinationStartIndex">First element of the destination vector to copy to.</param>
+		/// <param name="count">Number of elements to copy.</param>
+		public static void Copy(IReadOnlyList<bool> sourceVector, int sourceStartIndex, IVector<bool> destinationVector, int destinationStartIndex, int count)
+		{
+			for (int i = 0; i < count; ++i)
+				destinationVector[i + destinationStartIndex] = sourceVector[i + sourceStartIndex];
+		}
+
+
+		
+
+
 	} // class
 } // namespace
