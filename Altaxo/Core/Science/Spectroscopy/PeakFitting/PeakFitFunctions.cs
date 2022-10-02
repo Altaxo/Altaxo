@@ -22,6 +22,8 @@
 
 #endregion Copyright
 
+using System.Collections.Generic;
+using System.Linq;
 using Altaxo.Calc;
 using Altaxo.Calc.Regression.Nonlinear;
 
@@ -31,15 +33,15 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
   {
     public class FunctionWrapper : IScalarFunctionDD
     {
-      IFitFunction _f;
-      double[] _param;
-      double[] _x;
-      double[] _y;
+      private IFitFunction _f;
+      private double[] _param;
+      private double[] _x;
+      private double[] _y;
 
-      public FunctionWrapper(IFitFunction f, double[] param)
+      public FunctionWrapper(IFitFunction f, IReadOnlyList<double> param)
       {
         _f = f;
-        _param = (double[])param.Clone();
+        _param = param.ToArray();
         _x = new double[1];
         _y = new double[1];
       }

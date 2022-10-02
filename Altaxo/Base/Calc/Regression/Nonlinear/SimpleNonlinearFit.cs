@@ -96,7 +96,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
         _func(independent, parameters, FV);
       }
 
-      public void EvaluateMultiple(IROMatrix<double> independent, IReadOnlyList<double> P, IReadOnlyList<bool>? independentVariableChoice, IVector<double> FV)
+      public void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> P, IReadOnlyList<bool>? independentVariableChoice, IVector<double> FV)
       {
         var XX = new double[1];
         var YY = new double[1];

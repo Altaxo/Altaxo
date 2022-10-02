@@ -113,7 +113,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
     /// <param name="independentVariableChoice">Determines which output variables are written to the output vector.</param>
     /// <param name="FV">On return, contains the function values. Note that if the fit function has multiple dependent variables,
     /// those variables will be written in subsequent order to the output vector.</param>
-    void EvaluateMultiple(IROMatrix<double> independent, IReadOnlyList<double> parameters, IReadOnlyList<bool>? independentVariableChoice, IVector<double> FV);
+    void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> parameters, IReadOnlyList<bool>? independentVariableChoice, IVector<double> FV);
 
     /// <summary>
     /// Occurs when the fit function changed, including number or name of parameters, independent variables, dependent variables, or the scaling.

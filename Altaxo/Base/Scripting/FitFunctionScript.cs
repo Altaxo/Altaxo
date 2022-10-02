@@ -1206,7 +1206,7 @@ namespace Altaxo.Scripting
       }
     }
 
-    public void EvaluateMultiple(IROMatrix<double> independent, IReadOnlyList<double> P, IReadOnlyList<bool>? independentVariableChoice, IVector<double> FV)
+    public void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> P, IReadOnlyList<bool>? independentVariableChoice, IVector<double> FV)
     {
       MakeSureWasTriedToCompile();
 
@@ -1218,7 +1218,7 @@ namespace Altaxo.Scripting
 
       try
       {
-        ((IFitFunction)_scriptObject).EvaluateMultiple(independent, P, independentVariableChoice, FV);
+        ((IFitFunction)_scriptObject).Evaluate(independent, P, independentVariableChoice, FV);
         return;
       }
       catch (Exception)

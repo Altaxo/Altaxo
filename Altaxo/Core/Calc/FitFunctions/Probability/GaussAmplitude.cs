@@ -38,7 +38,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
   /// </summary>
   [FitFunctionClass]
   public class GaussAmplitude
-        : IFitFunctionWithGradient, IImmutable, IFitFunctionPeak
+        : IFitFunctionWithDerivative, IImmutable, IFitFunctionPeak
   {
     /// <summary>The order of the background polynomial.</summary>
     private readonly int _orderOfBackgroundPolynomial;
@@ -276,7 +276,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
       Y[0] = sumGauss + sumPolynomial;
     }
 
-    public void EvaluateMultiple(IROMatrix<double> independent, IReadOnlyList<double> P, IReadOnlyList<bool>? independentVariableChoice, IVector<double> FV)
+    public void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> P, IReadOnlyList<bool>? independentVariableChoice, IVector<double> FV)
     {
       var rowCount = independent.RowCount;
       for (int r = 0; r < rowCount; ++r)
@@ -312,7 +312,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
 
     #endregion IFitFunction Members
 
-    public void EvaluateGradient(IROMatrix<double> X, IReadOnlyList<double> P, IReadOnlyList<bool>? independentVariableChoice, IMatrix<double> DY)
+    public void EvaluateDerivative(IROMatrix<double> X, IReadOnlyList<double> P, IReadOnlyList<bool>? independentVariableChoice, IMatrix<double> DY)
     {
       var rowCount = X.RowCount;
       for (int r = 0; r < rowCount; ++r)

@@ -1,4 +1,36 @@
-﻿using System;
+﻿#region Copyright
+
+/////////////////////////////////////////////////////////////////////////////
+// Altaxo:  a data processing and data plotting program
+// Copyright (c) 2009-2010 Math.NET
+// Copyright (C) 2022-2022 Dr. Dirk Lellinger
+//
+// Permission is hereby granted, free of charge, to any person
+// obtaining a copy of this software and associated documentation
+// files (the "Software"), to deal in the Software without
+// restriction, including without limitation the rights to use,
+// copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the
+// Software is furnished to do so, subject to the following
+// conditions:
+//
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+// OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+// HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+// WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+// FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+// OTHER DEALINGS IN THE SOFTWARE.
+//
+/////////////////////////////////////////////////////////////////////////////
+
+#endregion Copyright
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -8,7 +40,7 @@ using Altaxo.Collections;
 namespace Altaxo.Calc.Optimization
 {
   /// <summary>
-  /// LevenbergMarquardtMinimizer, that doesnt allocate memory during the iterations.
+  /// LevenbergMarquardtMinimizer, that doesn't allocate memory during the iterations.
   /// </summary>
   /// <seealso cref="Altaxo.Calc.Optimization.NonlinearMinimizerBaseNonAllocating" />
   /// <remarks>
@@ -34,7 +66,10 @@ namespace Altaxo.Calc.Optimization
     /// </summary>
     public double InitialMu { get; set; }
 
-    private RingBufferEnqueueableOnly<double> _valueHistory = new(8);
+    /// <summary>
+    /// Stores the last 8 values of Chi².
+    /// </summary>
+    private RingBufferEnqueueableOnly<double> _rssValueHistory = new(8);
 
     public LevenbergMarquardtMinimizerNonAllocating(double initialMu = 1E-3, double gradientTolerance = 1E-15, double stepTolerance = 1E-15, double functionTolerance = 1E-15, double minimalRSSImprovement = 1E-14, int maximumIterations = -1)
         : base(gradientTolerance, stepTolerance, functionTolerance, minimalRSSImprovement, maximumIterations)
@@ -42,8 +77,25 @@ namespace Altaxo.Calc.Optimization
       InitialMu = initialMu;
     }
 
-    public NonlinearMinimizationResult FindMinimum(IObjectiveModelNonAllocating objective, IReadOnlyList<double> initialGuess,
-        IReadOnlyList<double?> lowerBound = null, IReadOnlyList<double?> upperBound = null, IReadOnlyList<double> scales = null, IReadOnlyList<bool> isFixed = null, CancellationToken cancellationToken = default)
+    /// <summary>
+    /// Non-linear least square fitting by the Levenberg-Marquardt algorithm.
+    /// </summary>
+    /// <param name="objective">The objective function, including model, observations, and parameter bounds.</param>
+    /// <param name="initialGuess">The initial guess values.</param>
+    /// <param name="lowerBound">The lower bounds of the parameters. The array must have the same length as the parameter array. Provide null if not needed.</param>
+    /// <param name="upperBound">The upper bounds of the parameters. The array must have the same length as the parameter array. Provide null if not needed.</param>
+    /// <param name="scales">The scales of the parameters. The array must have the same length as the parameter array. Provide null if not needed.</param>
+    /// <param name="isFixed">Array of booleans, which provide which parameters are fixed. Must have the same length as the parameter array. Provide null if not needed.</param>
+    /// <param name="cancellationToken">Token to cancel the evaluation</param>
+    /// <returns>The result of the Levenberg-Marquardt minimization</returns>
+    public NonlinearMinimizationResult FindMinimum(
+      IObjectiveModelNonAllocating objective,
+      IReadOnlyList<double> initialGuess,
+      IReadOnlyList<double?> lowerBound = null,
+      IReadOnlyList<double?> upperBound = null,
+      IReadOnlyList<double> scales = null,
+      IReadOnlyList<bool> isFixed = null,
+      CancellationToken cancellationToken = default)
     {
       return Minimum(objective, initialGuess, lowerBound, upperBound, scales, isFixed, cancellationToken, InitialMu, GradientTolerance, StepTolerance,
         functionTolerance: FunctionTolerance,
@@ -51,8 +103,25 @@ namespace Altaxo.Calc.Optimization
         maximumIterations: MaximumIterations);
     }
 
-    public NonlinearMinimizationResult FindMinimum(IObjectiveModelNonAllocating objective, double[] initialGuess,
-        double?[] lowerBound = null, double?[] upperBound = null, double[] scales = null, bool[] isFixed = null, CancellationToken cancellationToken = default)
+    /// <summary>
+    /// Non-linear least square fitting by the Levenberg-Marquardt algorithm.
+    /// </summary>
+    /// <param name="objective">The objective function, including model, observations, and parameter bounds.</param>
+    /// <param name="initialGuess">The initial guess values.</param>
+    /// <param name="lowerBound">The lower bounds of the parameters. The array must have the same length as the parameter array. Provide null if not needed.</param>
+    /// <param name="upperBound">The upper bounds of the parameters. The array must have the same length as the parameter array. Provide null if not needed.</param>
+    /// <param name="scales">The scales of the parameters. The array must have the same length as the parameter array. Provide null if not needed.</param>
+    /// <param name="isFixed">Array of booleans, which provide which parameters are fixed. Must have the same length as the parameter array. Provide null if not needed.</param>
+    /// <param name="cancellationToken">Token to cancel the evaluation</param>
+    /// <returns>The result of the Levenberg-Marquardt minimization</returns>
+    public NonlinearMinimizationResult FindMinimum(
+      IObjectiveModelNonAllocating objective,
+      double[] initialGuess,
+      double?[] lowerBound = null,
+      double?[] upperBound = null,
+      double[] scales = null,
+      bool[] isFixed = null,
+      CancellationToken cancellationToken = default)
     {
       if (objective is null)
         throw new ArgumentNullException(nameof(objective));
@@ -63,19 +132,36 @@ namespace Altaxo.Calc.Optimization
     }
 
     /// <summary>
-    /// Non-linear least square fitting by the Levenberg-Marduardt algorithm.
+    /// Non-linear least square fitting by the Levenberg-Marquardt algorithm.
     /// </summary>
     /// <param name="objective">The objective function, including model, observations, and parameter bounds.</param>
     /// <param name="initialGuess">The initial guess values.</param>
+    /// <param name="lowerBound">The lower bounds of the parameters. The array must have the same length as the parameter array. Provide null if not needed.</param>
+    /// <param name="upperBound">The upper bounds of the parameters. The array must have the same length as the parameter array. Provide null if not needed.</param>
+    /// <param name="scales">The scales of the parameters. The array must have the same length as the parameter array. Provide null if not needed.</param>
+    /// <param name="isFixed">Array of booleans, which provide which parameters are fixed. Must have the same length as the parameter array. Provide null if not needed.</param>
+    /// <param name="cancellationToken">Token to cancel the evaluation</param>
     /// <param name="initialMu">The initial damping parameter of mu.</param>
     /// <param name="gradientTolerance">The stopping threshold for infinity norm of the gradient vector.</param>
     /// <param name="stepTolerance">The stopping threshold for L2 norm of the change of parameters.</param>
     /// <param name="functionTolerance">The stopping threshold for L2 norm of the residuals.</param>
-    /// <param name="maximumIterations">The max iterations.</param>
+    /// <param name="minimalRSSImprovement">The minimal improvement of the Chi² value in 8 iterations. Must be in the range [0,1).</param>
+    /// <param name="maximumIterations">The maximal number of iterations. Provide -1 if the number of iterations should be set automatically. Provide 0 if only a function evaluation should be done.</param>
     /// <returns>The result of the Levenberg-Marquardt minimization</returns>
-    public NonlinearMinimizationResult Minimum(IObjectiveModelNonAllocating objective, IReadOnlyList<double> initialGuess,
-        IReadOnlyList<double?> lowerBound = null, IReadOnlyList<double?> upperBound = null, IReadOnlyList<double> scales = null, IReadOnlyList<bool> isFixed = null, CancellationToken cancellationToken = default,
-        double initialMu = 1E-3, double gradientTolerance = 1E-15, double stepTolerance = 1E-15, double functionTolerance = 1E-15, double minimalRSSImprovement = 1E-15, int maximumIterations = -1)
+    public NonlinearMinimizationResult Minimum(
+      IObjectiveModelNonAllocating objective,
+      IReadOnlyList<double> initialGuess,
+        IReadOnlyList<double?> lowerBound = null,
+        IReadOnlyList<double?> upperBound = null,
+        IReadOnlyList<double> scales = null,
+        IReadOnlyList<bool> isFixed = null,
+        CancellationToken cancellationToken = default,
+        double initialMu = 1E-3,
+        double gradientTolerance = 1E-15,
+        double stepTolerance = 1E-15,
+        double functionTolerance = 1E-15,
+        double minimalRSSImprovement = 1E-15,
+        int maximumIterations = -1)
     {
       // Non-linear least square fitting by the Levenberg-Marduardt algorithm.
       //
@@ -118,10 +204,9 @@ namespace Altaxo.Calc.Optimization
       ValidateBounds(initialGuess, lowerBound, upperBound, scales);
 
       _scaleFactors = Vector<double>.Build.Dense(initialGuess.Count);
-      var pInt = Vector<double>.Build.Dense(initialGuess.Count);
-      var pExt = Vector<double>.Build.DenseOfEnumerable(initialGuess);
-      var Pstep = Vector<double>.Build.Dense(initialGuess.Count);
-      var Pnew = Vector<double>.Build.Dense(initialGuess.Count);
+      var parameterValues = Vector<double>.Build.DenseOfEnumerable(initialGuess);
+      var parameterStep = Vector<double>.Build.Dense(initialGuess.Count);
+      var newParameterValues = Vector<double>.Build.Dense(initialGuess.Count);
 
       var diagonalOfHessian = Vector<double>.Build.Dense(initialGuess.Count);
       var diagonalOfHessianPlusMu = Vector<double>.Build.Dense(initialGuess.Count);
@@ -130,8 +215,8 @@ namespace Altaxo.Calc.Optimization
       ExitCondition exitCondition = ExitCondition.None;
 
       // First, calculate function values and setup variables
-      ProjectToInternalParameters(pExt, pInt); // current internal parameters
-      var RSS = EvaluateFunction(objective, pInt, pExt);  // Residual Sum of Squares = R'R
+      objective.EvaluateAt(parameterValues);
+      var RSS = objective.Value;  // Residual Sum of Squares = R'R
 
       if (maximumIterations < 0)
       {
@@ -158,7 +243,7 @@ namespace Altaxo.Calc.Optimization
       }
 
       // Evaluate gradient (already negated!) and Hessian
-      var (NegativeGradient, Hessian) = EvaluateJacobian(objective, pInt);
+      var (NegativeGradient, Hessian) = EvaluateJacobian(objective, parameterValues);
       Hessian.Diagonal(diagonalOfHessian); // save the diagonal of the Hession diag(H) into the vector diagonalOfHessian
 
       // if ||g||oo <= gtol, found and stop
@@ -175,7 +260,9 @@ namespace Altaxo.Calc.Optimization
       double mu = initialMu * diagonalOfHessian.Max(); // μ
       double nu = 2; //  ν
       int iterations = 0;
+      int numberOfSolves = 0;
       var MuTimesPStepMinusGradient = Vector<double>.Build.Dense(initialGuess.Count);
+      var isTemporarilyFixed = new bool[initialGuess.Count];
       while (iterations < maximumIterations && exitCondition == ExitCondition.None)
       {
         iterations++;
@@ -183,24 +270,61 @@ namespace Altaxo.Calc.Optimization
         while (true)
         {
           cancellationToken.ThrowIfCancellationRequested();
-
           diagonalOfHessian.Add(mu, diagonalOfHessianPlusMu);
-          Hessian.SetDiagonal(diagonalOfHessianPlusMu); // hessian[i, i] = hessian[i, i] + mu; see [2] eq. (12), page 3
 
-          // solve normal equations
-          Hessian.Solve(NegativeGradient, Pstep);
+
+
+          // Modification of the Levenberg-Marquardt algorithm described in [2]:
+          // in order to take the boundary conditions into account, we first solve the Hessian with only the fixed parameters considered
+          // Then we evaluate which parameters are at their bounds, and the step is directed outwards of the feasible region
+          // Those parameters are set to temporarily fixed, and the Hessian is modified accordingly, and solved again
+          // This is repeated until no more parameters are temporarily fixed.
+          // Advantage of this method in comparison to the method of wrapped parameters is that the gradient is kept, even if the parameter is at a bound
+          // Whereas with the method of wrapped parameters, if a parameter is at a bound, it can not be modified anymore, because its gradient value is zero.
+
+          bool wasHessianModified = false;
+          int numberOfFreeParameters;
+          if (isFixed is null)
+          {
+            Array.Clear(isTemporarilyFixed, 0, isTemporarilyFixed.Length);
+          }
+          else
+          {
+            VectorMath.Copy(isFixed, isTemporarilyFixed); // Start with a Hessian in which only the fixed parameters are considered, so that the other parameters, even those at a bound, have a chance to be varied
+          }
+          do
+          {
+            Hessian.SetDiagonal(diagonalOfHessianPlusMu); // hessian[i, i] = hessian[i, i] + mu; see [2] eq. (12), page 3
+
+            // solve normal equations
+            Hessian.Solve(NegativeGradient, parameterStep);
+            ++numberOfSolves;
+
+            // if the step would violate the boundary conditions, we modify the Hessian and the gradient accordingly
+            (wasHessianModified, numberOfFreeParameters) = ModifyHessianAndGradient(parameterValues, parameterStep, mu, Hessian, NegativeGradient, diagonalOfHessianPlusMu, isTemporarilyFixed);
+
+          } while (wasHessianModified && numberOfFreeParameters > 0); // repeat, until no more parameters are temporarily fixed
+
+          if (numberOfFreeParameters == 0)
+          {
+            // all parameters are either fixed or at their bounds, thus no more parameters can be varied.
+            exitCondition = ExitCondition.BoundTolerance;
+            break;
+          }
+
+          ClampStepToBoundaryConditions(parameterValues, parameterStep, parameterStep, newParameterValues); // newParameterValues: new parameters to test
 
           // Test if there is convergence in the parameters
           // if max|hi/pi| < xTol, stop (see [2], Section 4.1.3 (page 5), second criterion
-          var maxHiByPi = Pstep.Zip(pInt, (hi, pi) => hi == 0 ? 0 : pi == 0 ? double.PositiveInfinity : Math.Abs(hi / pi)).Max();
+          var maxHiByPi = parameterStep.Zip(parameterValues, (hi, pi) => hi == 0 ? 0 : pi == 0 ? double.PositiveInfinity : Math.Abs(hi / pi)).Max();
           if (maxHiByPi < stepTolerance)
           {
             exitCondition = ExitCondition.RelativePoints;
             break;
           }
 
-          pInt.Add(Pstep, Pnew); // Pnew = PInt + Pstep; new parameters to test
-          var RSSnew = EvaluateFunction(objective, Pnew, pExt); // evaluate function at Pnew
+          objective.EvaluateAt(newParameterValues);
+          var RSSnew = objective.Value; // evaluate function at Pnew
 
           if (double.IsNaN(RSSnew))
           {
@@ -210,9 +334,9 @@ namespace Altaxo.Calc.Optimization
 
           // calculate the ratio of the actual to the predicted reduction, see [2], eq. 15, page 3 
           // ρ = (RSS - RSSnew) / (Δp'(μΔp - g))
-          Pstep.Multiply(mu, MuTimesPStepMinusGradient); // calculate μΔp
+          parameterStep.Multiply(mu, MuTimesPStepMinusGradient); // calculate μΔp
           MuTimesPStepMinusGradient.Add(NegativeGradient, MuTimesPStepMinusGradient); // calculate (μΔp - g)
-          var predictedReduction = Pstep.DotProduct(MuTimesPStepMinusGradient); // calculate (Δp'(μΔp - g))
+          var predictedReduction = parameterStep.DotProduct(MuTimesPStepMinusGradient); // calculate (Δp'(μΔp - g))
           var rho = (predictedReduction != 0)
                   ? (RSS - RSSnew) / predictedReduction
                   : 0;
@@ -220,12 +344,12 @@ namespace Altaxo.Calc.Optimization
           if (rho > 0.0 && predictedReduction >= 0)
           {
             // accepted
-            Pnew.CopyTo(pInt);
+            newParameterValues.CopyTo(parameterValues);
             RSS = RSSnew;
-            _valueHistory.Enqueue(RSS);
+            _rssValueHistory.Enqueue(RSS);
 
             // update gradient and Hessian 
-            (NegativeGradient, Hessian) = EvaluateJacobian(objective, pInt);
+            (NegativeGradient, Hessian) = EvaluateJacobian(objective, parameterValues);
             Hessian.Diagonal(diagonalOfHessian);
 
             // Test if convergence of gradient is achieved, see [2], section 4.1.3 (page 5), first criterion
@@ -243,9 +367,9 @@ namespace Altaxo.Calc.Optimization
             }
 
             // Test if improvement in RSS is so low, that exit condition is reached
-            if (_valueHistory.Count == _valueHistory.Capacity)
+            if (_rssValueHistory.Count == _rssValueHistory.Capacity)
             {
-              var RSSImprovement = (_valueHistory.OldestValue - _valueHistory.NewestValue) / _valueHistory.OldestValue;
+              var RSSImprovement = (_rssValueHistory.OldestValue - _rssValueHistory.NewestValue) / _rssValueHistory.OldestValue;
               if (RSSImprovement < minimalRSSImprovement)
               {
                 exitCondition = ExitCondition.Converged; // low RSS improvement
@@ -275,6 +399,151 @@ namespace Altaxo.Calc.Optimization
       return new NonlinearMinimizationResult(objective, iterations, exitCondition);
     }
 
+
+
+    /// <summary>
+    /// Returns x³.
+    /// </summary>
+    /// <param name="x">The argument x.</param>
+    /// <returns>x³</returns>
     private static double Pow3(double x) => x * x * x;
+
+    /// <summary>
+    /// Makes a proposed step smaller if neccessary, so that the resulting parameters don't violate the parameter boundaries.
+    /// </summary>
+    /// <param name="parameterValues">The given parameters.</param>
+    /// <param name="parameterStep">The proposed step.</param>
+    /// <param name="clampedParameterStep">On return, contains the clamped step.</param>
+    /// <param name="nextParameterValues">On return, contains the new parameters, i.e. <paramref name="parameterValues"/>+<paramref name="clampedParameterStep"/>.</param>
+    /// <returns>True if the step was scaled smaller; otherwise, false.</returns>
+    private bool ClampStepToBoundaryConditions(IReadOnlyList<double> parameterValues, IReadOnlyList<double> parameterStep, IVector<double> clampedParameterStep, IVector<double> nextParameterValues)
+    {
+      double scaleFactor = 1; // Scale factor for step
+      int idxLowestScale = -1;
+      double valueParameterAtLowestScale = double.NaN;
+
+      if (LowerBound is not null || UpperBound is not null)
+      {
+        for (int i = 0; i < parameterValues.Count; i++)
+        {
+          var lowerBnd = LowerBound?.ElementAt(i);
+          var upperBnd = UpperBound?.ElementAt(i);
+
+          if (lowerBnd.HasValue && parameterValues[i] > lowerBnd.Value)
+          {
+            if (parameterStep[i] < 0 && !(parameterValues[i] + scaleFactor * parameterStep[i] > lowerBnd.Value))
+            {
+              idxLowestScale = i;
+              scaleFactor = (lowerBnd.Value - parameterValues[i]) / parameterStep[i];
+              valueParameterAtLowestScale = lowerBnd.Value;
+            }
+          }
+          if (upperBnd.HasValue && parameterValues[i] < upperBnd.Value)
+          {
+            if (parameterStep[i] > 0 && !(parameterValues[i] + scaleFactor * parameterStep[i] < upperBnd.Value))
+            {
+              idxLowestScale = i;
+              scaleFactor = (upperBnd.Value - parameterValues[i]) / parameterStep[i];
+              valueParameterAtLowestScale = upperBnd.Value;
+            }
+          }
+        }
+      }
+
+      // calculate the clamped step, and the new parameters
+      for (int i = 0; i < parameterValues.Count; i++)
+      {
+        clampedParameterStep[i] = scaleFactor * parameterStep[i];
+        nextParameterValues[i] = parameterValues[i] + clampedParameterStep[i];
+      }
+
+      // in order to avoid small inaccuracies caused by scaleFactor, we set the nextParameter that caused the scaleFactor to its bound
+      if (idxLowestScale >= 0)
+      {
+        nextParameterValues[idxLowestScale] = valueParameterAtLowestScale;
+      }
+
+      return idxLowestScale >= 0;
+    }
+
+
+
+    /// <summary>
+    /// Evaluates the jacobian, and the hessian of the objective function.
+    /// </summary>
+    /// <param name="objective">The objective.</param>
+    /// <param name="parameterValues">The parameters.</param>
+    /// <returns>The negative gradient and the Hessian matrix.</returns>
+    protected new (Vector<double> NegativeGradient, Matrix<double> Hessian) EvaluateJacobian(IObjectiveModelNonAllocating objective, IReadOnlyList<double> parameterValues)
+    {
+      var negativeGradient = objective.NegativeGradient;
+      var hessian = objective.Hessian;
+
+      if (Scales is not null)
+      {
+        for (int i = 0; i < negativeGradient.Count; i++)
+        {
+          var scale_i = Scales.ElementAt(i);
+          negativeGradient[i] *= scale_i;
+
+          for (int j = 0; j < hessian.ColumnCount; j++)
+          {
+            hessian[i, j] *= scale_i * Scales.ElementAt(j);
+          }
+        }
+      }
+
+      return (negativeGradient, hessian);
+    }
+
+    /// <summary>
+    /// Modifies the Hessian and gradient according to the boundary conditions of the parameters.
+    /// </summary>
+    /// <param name="Pint">The parameters.</param>
+    /// <param name="pstep">The parameter step planned.</param>
+    /// <param name="mu">The value of mu.</param>
+    /// <param name="hessian">The Hessian matrix. If the return value is true, this matrix was modified during the call.</param>
+    /// <param name="gradient">The negative gradient.  If the return value is true, this vector was modified during the call.</param>
+    /// <param name="diagonalOfHessianPlusMu">The diagonal of the Hessian matrix plus mu.  If the return value is true, this vector was modified during the call.</param>
+    /// <param name="isTemporaryFixed">The array of fixed parameters (parameters fixed from the beginning plus parameters that have reached the boundary). If the return value is true, this vector was modified during the call.</param>
+    /// <returns>True if the Hessian and gradient were modified; otherwise, false. Additionally, the number of free parameters is returned.</returns>
+    private (bool wasModified, int numberOfFreeParameters) ModifyHessianAndGradient(IReadOnlyList<double> Pint, IReadOnlyList<double> pstep, double mu, Matrix<double> hessian, Vector<double> gradient, Vector<double> diagonalOfHessianPlusMu, bool[] isTemporaryFixed)
+    {
+      bool wasModified = false;
+      int numberOfFreeParameters = Pint.Count;
+      if (LowerBound is not null || UpperBound is not null)
+      {
+        for (int i = 0; i < Pint.Count; i++)
+        {
+          if (isTemporaryFixed[i]) // if parameter i is already fixed, it doesn't need further consideration here.
+          {
+            --numberOfFreeParameters;
+            continue;
+          }
+
+          var lowerBnd = LowerBound?.ElementAt(i);
+          var upperBnd = UpperBound?.ElementAt(i);
+
+          // if the parameter is beyond a bound and the step direction is in the direction of the outside of the feasible range,
+          // then we have to make this parameter temporarily fixed, by setting the gradient value and the column and row of the Hessian to zero
+          if (
+                (upperBnd.HasValue && (!(Pint[i] < upperBnd.Value) && pstep[i] > 0)) ||
+                (lowerBnd.HasValue && (!(Pint[i] > lowerBnd.Value) && pstep[i] < 0))
+            )
+          {
+            gradient[i] = 0;
+            hessian.ClearColumn(i);
+            hessian.ClearRow(i);
+            diagonalOfHessianPlusMu[i] = mu;
+            isTemporaryFixed[i] = true;
+            wasModified = true;
+            --numberOfFreeParameters;
+          }
+        }
+      }
+
+      return (wasModified, numberOfFreeParameters);
+    }
+
   }
 }

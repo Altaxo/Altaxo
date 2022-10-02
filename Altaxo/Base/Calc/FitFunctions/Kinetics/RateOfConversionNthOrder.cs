@@ -35,7 +35,7 @@ namespace Altaxo.Calc.FitFunctions.Kinetics
   /// Represents solutions related to the differential equation y'=k*(1-y)^n with the initial condition y(t0)=0. For the direct solution of this equation, see <see cref="EvaluateConversionRate"/>.
   /// </summary>
   [FitFunctionClass]
-  public class RateOfConversionNthOrder : IFitFunctionWithGradient, IImmutable
+  public class RateOfConversionNthOrder : IFitFunctionWithDerivative, IImmutable
   {
     #region Serialization
 
@@ -158,7 +158,7 @@ namespace Altaxo.Calc.FitFunctions.Kinetics
     {
       Y[0] = P[1] * EvaluateConversionRate(X[0], P[0], P[2], P[3]);
     }
-    public void EvaluateMultiple(IROMatrix<double> independent, IReadOnlyList<double> P, IReadOnlyList<bool>? independentVariableChoice, IVector<double> FV)
+    public void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> P, IReadOnlyList<bool>? independentVariableChoice, IVector<double> FV)
     {
       var rowCount = independent.RowCount;
       for (int r = 0; r < rowCount; ++r)
@@ -169,7 +169,7 @@ namespace Altaxo.Calc.FitFunctions.Kinetics
       }
     }
     /// <inheritdoc/>
-    public void EvaluateGradient(IROMatrix<double> X, IReadOnlyList<double> P, IReadOnlyList<bool>? independentVariableChoice, IMatrix<double> DY)
+    public void EvaluateDerivative(IROMatrix<double> X, IReadOnlyList<double> P, IReadOnlyList<bool>? independentVariableChoice, IMatrix<double> DY)
     {
       var rowCount = X.RowCount;
       for (int r = 0; r < rowCount; ++r)

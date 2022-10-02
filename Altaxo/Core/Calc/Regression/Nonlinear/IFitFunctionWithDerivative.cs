@@ -29,7 +29,7 @@ using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Regression.Nonlinear
 {
-  public interface IFitFunctionWithGradient : IFitFunction
+  public interface IFitFunctionWithDerivative : IFitFunction
   {
     /// <summary>
     /// This evaluates the gradient of the function with respect to the parameters.
@@ -51,6 +51,6 @@ namespace Altaxo.Calc.Regression.Nonlinear
     /// DF[1][2] : df1/dp2
     /// </code>
     /// </remarks>
-    void EvaluateGradient(IROMatrix<double> independent, IReadOnlyList<double> parameters, IReadOnlyList<bool>? independentVariableChoice, IMatrix<double> DF);
+    void EvaluateDerivative(IROMatrix<double> independent, IReadOnlyList<double> parameters, IReadOnlyList<bool>? independentVariableChoice, IMatrix<double> DF);
   }
 }

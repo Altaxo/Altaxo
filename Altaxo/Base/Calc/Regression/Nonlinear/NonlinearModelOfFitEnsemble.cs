@@ -546,7 +546,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
       // up to now, we can use built-in derivatives only then, when
       // all fit functions support this
-      bool allElementsHaveDerivative = _fitEnsemble.Count == _fitEnsemble.Count(x => x.FitFunction is IFitFunctionWithGradient);
+      bool allElementsHaveDerivative = _fitEnsemble.Count == _fitEnsemble.Count(x => x.FitFunction is IFitFunctionWithDerivative);
 
       for (int ele = 0; ele < _cachedFitElementInfo.Length; ele++)
       {
@@ -560,10 +560,10 @@ namespace Altaxo.Calc.Regression.Nonlinear
           info.Parameters[i] = idx >= 0 ? _coefficients[idx] : _constantParameters[-1 - idx];
         }
 
-        if (allElementsHaveDerivative && fitEle.FitFunction is IFitFunctionWithGradient fitFunctionWithDerivative)
+        if (allElementsHaveDerivative && fitEle.FitFunction is IFitFunctionWithDerivative fitFunctionWithDerivative)
         {
           var jacWrapper = new JacobianMapper(_jacobianValue, rowOffset, info.ParameterMapping);
-          fitFunctionWithDerivative.EvaluateGradient(info.Xs, info.Parameters, info.DependentVariablesInUse, jacWrapper);
+          fitFunctionWithDerivative.EvaluateDerivative(info.Xs, info.Parameters, info.DependentVariablesInUse, jacWrapper);
           rowOffset += info.Xs.RowCount * info.NumberOfDependentVariablesInUse;
           ++JacobianEvaluations;
         }

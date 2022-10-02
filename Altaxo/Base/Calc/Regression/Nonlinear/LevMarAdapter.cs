@@ -517,8 +517,8 @@ namespace Altaxo.Calc.Regression.Nonlinear
         CachedFitElementInfo info = _cachedFitElementInfo[ele];
         FitElement fitEle = _fitEnsemble[ele];
 
-        if (!(fitEle.FitFunction is IFitFunctionWithGradient fitFunctionWithGradient))
-          throw new InvalidOperationException($"FitFunction of FitElement[{ele}] must be implementing {nameof(IFitFunctionWithGradient)}");
+        if (!(fitEle.FitFunction is IFitFunctionWithDerivative fitFunctionWithGradient))
+          throw new InvalidOperationException($"FitFunction of FitElement[{ele}] must be implementing {nameof(IFitFunctionWithDerivative)}");
 
         // make sure, that the dimension of the DYs is ok
         if (info.DYs is null || info.DYs.RowCount != fitEle.NumberOfDependentVariables || info.DYs.ColumnCount != fitEle.NumberOfParameters)
@@ -540,7 +540,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
             info.Xs[k] = fitEle.IndependentVariables(k)?[validRows[i]] ?? throw new ObjectDisposedException($"Independent variables column k={k} not available or disposed."); ;
 
 
-          ((IFitFunctionWithGradient)fitEle.FitFunction).EvaluateGradient(MatrixMath.ToROMatrixWithOneRow(info.Xs), info.Parameters, null, info.DYs);
+          ((IFitFunctionWithDerivative)fitEle.FitFunction).EvaluateDerivative(MatrixMath.ToROMatrixWithOneRow(info.Xs), info.Parameters, null, info.DYs);
 
           // copy the evaluation result to the output array (interleaved)
           for (int k = 0; k < info.DependentVariablesInUse.Length; ++k)
@@ -613,7 +613,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
     {
       for (int i = 0; i < _fitEnsemble.Count; i++)
       {
-        if (_fitEnsemble[i].FitFunction is not null && !(_fitEnsemble[i].FitFunction is IFitFunctionWithGradient))
+        if (_fitEnsemble[i].FitFunction is not null && !(_fitEnsemble[i].FitFunction is IFitFunctionWithDerivative))
           return false;
       }
       return true;

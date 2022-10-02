@@ -1,28 +1,42 @@
-﻿using System;
+﻿#region Copyright
+
+/////////////////////////////////////////////////////////////////////////////
+// Altaxo:  a data processing and data plotting program
+// Copyright (c) 2009-2010 Math.NET
+// Copyright (C) 2022-2022 Dr. Dirk Lellinger
+//
+// Permission is hereby granted, free of charge, to any person
+// obtaining a copy of this software and associated documentation
+// files (the "Software"), to deal in the Software without
+// restriction, including without limitation the rights to use,
+// copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the
+// Software is furnished to do so, subject to the following
+// conditions:
+//
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+// OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+// HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+// WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+// FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+// OTHER DEALINGS IN THE SOFTWARE.
+//
+/////////////////////////////////////////////////////////////////////////////
+
+#endregion Copyright
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Optimization
 {
-  public interface IObjectiveModelNonAllocating : IObjectiveModel
-  {
-    void SetParameters(IReadOnlyList<double> parameters, IReadOnlyList<bool> isFixed);
-
-    /// <summary>
-    /// Evaluates the ChiSquare value (i.e. the sum of squares of deviations between data and fitmodel).
-    /// </summary>
-    /// <param name="parameter">The parameter.</param>
-    /// <returns>The ChiSquare value.</returns>
-    void EvaluateAt(IReadOnlyList<double> parameter);
-
-    /// <summary>
-    /// Get the negative gradient vector. -G = -J'(y - f(x; p))
-    /// </summary>
-    Vector<double> NegativeGradient { get; }
-  }
-
-
   public abstract class NonlinearMinimizerBaseNonAllocating
   {
     /// <summary>
@@ -49,7 +63,7 @@ namespace Altaxo.Calc.Optimization
     /// Gets or sets the minimal RSS improvement.
     /// </summary>
     /// <value>
-    /// The minimal RSS improvement.
+    /// The minimal RSS (Chi²) improvement. If after 8 iterations the improvement is smaller than this value, the evaluation is stopped.
     /// </value>
     public double MinimalRSSImprovement { get; set; }
 

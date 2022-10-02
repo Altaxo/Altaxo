@@ -1,4 +1,36 @@
-﻿using System;
+﻿#region Copyright
+
+/////////////////////////////////////////////////////////////////////////////
+// Altaxo:  a data processing and data plotting program
+// Copyright (c) 2009-2010 Math.NET
+// Copyright (C) 2022-2022 Dr. Dirk Lellinger
+//
+// Permission is hereby granted, free of charge, to any person
+// obtaining a copy of this software and associated documentation
+// files (the "Software"), to deal in the Software without
+// restriction, including without limitation the rights to use,
+// copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the
+// Software is furnished to do so, subject to the following
+// conditions:
+//
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+// OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+// HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+// WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+// FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+// OTHER DEALINGS IN THE SOFTWARE.
+//
+/////////////////////////////////////////////////////////////////////////////
+
+#endregion Copyright
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -27,7 +59,7 @@ namespace Altaxo.Calc.Optimization
   ///      Availble Online from: <see href="http://people.duke.edu/~hpgavin/ce281/lm.pdf"/> 
   /// </para>
   ///</remarks>
-  public class LevenbergMarquardtMinimizerNonAllocating2 : NonlinearMinimizerBaseNonAllocating
+  public class LevenbergMarquardtMinimizerNonAllocatingWrappedParameters : NonlinearMinimizerBaseNonAllocating
   {
     /// <summary>
     /// The scale factor for initial mu
@@ -36,7 +68,7 @@ namespace Altaxo.Calc.Optimization
 
     private RingBufferEnqueueableOnly<double> _valueHistory = new(8);
 
-    public LevenbergMarquardtMinimizerNonAllocating2(double initialMu = 1E-3, double gradientTolerance = 1E-15, double stepTolerance = 1E-15, double functionTolerance = 1E-15, double minimalRSSImprovement = 1E-14, int maximumIterations = -1)
+    public LevenbergMarquardtMinimizerNonAllocatingWrappedParameters(double initialMu = 1E-3, double gradientTolerance = 1E-15, double stepTolerance = 1E-15, double functionTolerance = 1E-15, double minimalRSSImprovement = 1E-14, int maximumIterations = -1)
         : base(gradientTolerance, stepTolerance, functionTolerance, minimalRSSImprovement, maximumIterations)
     {
       InitialMu = initialMu;
@@ -118,6 +150,7 @@ namespace Altaxo.Calc.Optimization
       ValidateBounds(initialGuess, lowerBound, upperBound, scales);
 
       _scaleFactors = Vector<double>.Build.Dense(initialGuess.Count);
+      var pInt = Vector<double>.Build.Dense(initialGuess.Count);
       var pExt = Vector<double>.Build.DenseOfEnumerable(initialGuess);
       var Pstep = Vector<double>.Build.Dense(initialGuess.Count);
       var Pnew = Vector<double>.Build.Dense(initialGuess.Count);
@@ -129,8 +162,8 @@ namespace Altaxo.Calc.Optimization
       ExitCondition exitCondition = ExitCondition.None;
 
       // First, calculate function values and setup variables
-      objective.EvaluateAt(pExt);
-      var RSS = objective.Value;  // Residual Sum of Squares = R'R
+      ProjectToInternalParameters(pExt, pInt); // current internal parameters
+      var RSS = EvaluateFunction(objective, pInt, pExt);  // Residual Sum of Squares = R'R
 
       if (maximumIterations < 0)
       {
@@ -157,7 +190,7 @@ namespace Altaxo.Calc.Optimization
       }
 
       // Evaluate gradient (already negated!) and Hessian
-      var (NegativeGradient, Hessian) = EvaluateJacobian(objective, pExt);
+      var (NegativeGradient, Hessian) = EvaluateJacobian(objective, pInt);
       Hessian.Diagonal(diagonalOfHessian); // save the diagonal of the Hession diag(H) into the vector diagonalOfHessian
 
       // if ||g||oo <= gtol, found and stop
@@ -174,9 +207,7 @@ namespace Altaxo.Calc.Optimization
       double mu = initialMu * diagonalOfHessian.Max(); // μ
       double nu = 2; //  ν
       int iterations = 0;
-      int numberOfSolves = 0;
       var MuTimesPStepMinusGradient = Vector<double>.Build.Dense(initialGuess.Count);
-      var isTemporarilyFixed = new bool[initialGuess.Count];
       while (iterations < maximumIterations && exitCondition == ExitCondition.None)
       {
         iterations++;
@@ -184,43 +215,24 @@ namespace Altaxo.Calc.Optimization
         while (true)
         {
           cancellationToken.ThrowIfCancellationRequested();
+
           diagonalOfHessian.Add(mu, diagonalOfHessianPlusMu);
+          Hessian.SetDiagonal(diagonalOfHessianPlusMu); // hessian[i, i] = hessian[i, i] + mu; see [2] eq. (12), page 3
 
-          bool wasHessianModified = false;
-
-          VectorMath.Copy(isFixed, isTemporarilyFixed); // Start with a Hessian in which only the fixed parameters are considered
-
-          do
-          {
-            Hessian.SetDiagonal(diagonalOfHessianPlusMu); // hessian[i, i] = hessian[i, i] + mu; see [2] eq. (12), page 3
-
-            // solve normal equations
-            Hessian.Solve(NegativeGradient, Pstep);
-            ++numberOfSolves;
-
-            // if the step would violate the boundary conditions, we modify the Hessian and the gradient accordingly
-            wasHessianModified = ModifyHessianAndGradient(pExt, Pstep, mu, Hessian, NegativeGradient, diagonalOfHessianPlusMu, isTemporarilyFixed);
-
-          } while (wasHessianModified);
-
-
-
-
-          //ThrowIfGradientAndStepHaveDifferentSign(NegativeGradient, Pstep);
-
-          ClampStepToBoundaryConditions(pExt, Pstep, Pstep, Pnew); // Pnew: new parameters to test
+          // solve normal equations
+          Hessian.Solve(NegativeGradient, Pstep);
 
           // Test if there is convergence in the parameters
           // if max|hi/pi| < xTol, stop (see [2], Section 4.1.3 (page 5), second criterion
-          var maxHiByPi = Pstep.Zip(pExt, (hi, pi) => hi == 0 ? 0 : pi == 0 ? double.PositiveInfinity : Math.Abs(hi / pi)).Max();
+          var maxHiByPi = Pstep.Zip(pInt, (hi, pi) => hi == 0 ? 0 : pi == 0 ? double.PositiveInfinity : Math.Abs(hi / pi)).Max();
           if (maxHiByPi < stepTolerance)
           {
             exitCondition = ExitCondition.RelativePoints;
             break;
           }
 
-          objective.EvaluateAt(Pnew);
-          var RSSnew = objective.Value; // evaluate function at Pnew
+          pInt.Add(Pstep, Pnew); // Pnew = PInt + Pstep; new parameters to test
+          var RSSnew = EvaluateFunction(objective, Pnew, pExt); // evaluate function at Pnew
 
           if (double.IsNaN(RSSnew))
           {
@@ -240,12 +252,12 @@ namespace Altaxo.Calc.Optimization
           if (rho > 0.0 && predictedReduction >= 0)
           {
             // accepted
-            Pnew.CopyTo(pExt);
+            Pnew.CopyTo(pInt);
             RSS = RSSnew;
             _valueHistory.Enqueue(RSS);
 
             // update gradient and Hessian 
-            (NegativeGradient, Hessian) = EvaluateJacobian(objective, pExt);
+            (NegativeGradient, Hessian) = EvaluateJacobian(objective, pInt);
             Hessian.Diagonal(diagonalOfHessian);
 
             // Test if convergence of gradient is achieved, see [2], section 4.1.3 (page 5), first criterion
@@ -295,232 +307,6 @@ namespace Altaxo.Calc.Optimization
       return new NonlinearMinimizationResult(objective, iterations, exitCondition);
     }
 
-
-
     private static double Pow3(double x) => x * x * x;
-
-    private bool ThrowIfGradientAndStepHaveDifferentSign(IReadOnlyList<double> gradient, IReadOnlyList<double> step)
-    {
-      for (int i = 0; i < gradient.Count; ++i)
-      {
-        if (Math.Sign(gradient[i]) != Math.Sign(step[i]))
-        {
-          return true;
-        }
-      }
-      return false;
-    }
-
-    /// <summary>
-    /// Makes a proposed step smaller (if neccessary), so that the resulting parameters don't violate the parameter boundaries.
-    /// </summary>
-    /// <param name="pExt">The given parameters.</param>
-    /// <param name="pStep">The proposed step.</param>
-    /// <param name="clampedStep">On return, contains the clamped step.</param>
-    /// <param name="nextPExt">On return, contains the new parameters, i.e. <paramref name="pExt"/>+<paramref name="clampedStep"/>.</param>
-    private bool ClampStepToBoundaryConditions(IReadOnlyList<double> pExt, IReadOnlyList<double> pStep, IVector<double> clampedStep, IVector<double> nextPExt)
-    {
-      double scaleFactor = 1; // Scale factor for step
-      int idxLowestScale = -1;
-      double valueParameterAtLowestScale = double.NaN;
-
-      if (LowerBound is not null || UpperBound is not null)
-      {
-        for (int i = 0; i < pExt.Count; i++)
-        {
-          var lowerBnd = LowerBound?.ElementAt(i);
-          var upperBnd = UpperBound?.ElementAt(i);
-
-          if (lowerBnd.HasValue && pExt[i] > lowerBnd.Value)
-          {
-            if (pStep[i] < 0 && !(pExt[i] + scaleFactor * pStep[i] > lowerBnd.Value))
-            {
-              idxLowestScale = i;
-              scaleFactor = (lowerBnd.Value - pExt[i]) / pStep[i];
-              valueParameterAtLowestScale = lowerBnd.Value;
-            }
-          }
-          if (upperBnd.HasValue && pExt[i] < upperBnd.Value)
-          {
-            if (pStep[i] > 0 && !(pExt[i] + scaleFactor * pStep[i] < upperBnd.Value))
-            {
-              idxLowestScale = i;
-              scaleFactor = (upperBnd.Value - pExt[i]) / pStep[i];
-              valueParameterAtLowestScale = upperBnd.Value;
-            }
-          }
-        }
-      }
-
-      // calculate the clamped step, and the new parameters
-      for (int i = 0; i < pExt.Count; i++)
-      {
-        clampedStep[i] = scaleFactor * pStep[i];
-        nextPExt[i] = pExt[i] + clampedStep[i];
-      }
-
-      // in order to avoid small inaccuracies caused by scaleFactor, we set the nextParameter that caused the scaleFactor to its bound
-      if (idxLowestScale >= 0)
-      {
-        nextPExt[idxLowestScale] = valueParameterAtLowestScale;
-      }
-
-      return idxLowestScale >= 0;
-    }
-
-
-
-    /// <summary>
-    /// Evaluates the jacobian, and the hessian of the objective function.
-    /// </summary>
-    /// <param name="objective">The objective.</param>
-    /// <param name="pInt">The parameters (internal representation).</param>
-    /// <returns>The negative gradient and the hessian.</returns>
-    protected new (Vector<double> NegativeGradient, Matrix<double> Hessian) EvaluateJacobian(IObjectiveModelNonAllocating objective, IReadOnlyList<double> pInt)
-    {
-      var negativeGradient = objective.NegativeGradient;
-      var hessian = objective.Hessian;
-
-      if (IsBounded)
-      {
-        ScaleFactorsOfJacobian(pInt, negativeGradient, _scaleFactors); // the parameters argument is always internal.
-
-        for (int i = 0; i < negativeGradient.Count; i++)
-        {
-          negativeGradient[i] *= _scaleFactors[i];
-        }
-
-        for (int i = 0; i < hessian.RowCount; i++)
-        {
-          for (int j = 0; j < hessian.ColumnCount; j++)
-          {
-            hessian[i, j] *= _scaleFactors[i] * _scaleFactors[j];
-          }
-        }
-      }
-
-      return (negativeGradient, hessian);
-    }
-
-    /// <summary>
-    /// Calculates the scale factor of the jacobian, taking into account the parameter transformations , and the parameter scales.
-    /// </summary>
-    /// <param name="Pint">The pint.</param>
-    /// <param name="result">On return, contains the scale factors. The provided vector needs to have the same length as <paramref name="Pint"/></param>
-    protected void ScaleFactorsOfJacobian(IReadOnlyList<double> Pint, IReadOnlyList<double> gradient, IVector<double> result)
-    {
-      if (false)
-      {
-        for (int i = 0; i < Pint.Count; i++)
-        {
-          var lowerBnd = LowerBound?.ElementAt(i);
-          var upperBnd = UpperBound?.ElementAt(i);
-
-          if (lowerBnd.HasValue && upperBnd.HasValue)
-          {
-            if (Pint[i] > lowerBnd.Value && Pint[i] < upperBnd.Value)
-              result[i] = (Scales?.ElementAt(i) ?? 1);
-            else if (!(Pint[i] > lowerBnd.Value))
-              result[i] = gradient[i] > 0 ? (Scales?.ElementAt(i) ?? 1) : 0;
-            else if (!(Pint[i] < upperBnd.Value))
-              result[i] = gradient[i] < 0 ? (Scales?.ElementAt(i) ?? 1) : 0;
-            else
-              result[i] = 0;
-          }
-          else if (upperBnd.HasValue)
-          {
-            result[i] = Pint[i] < upperBnd.Value || gradient[i] < 0 ? (Scales?.ElementAt(i) ?? 1) : 0;
-          }
-          else if (lowerBnd.HasValue)
-          {
-            result[i] = Pint[i] > lowerBnd.Value || gradient[i] > 0 ? (Scales?.ElementAt(i) ?? 1) : 0;
-          }
-          else
-          {
-            result[i] = 1;
-          }
-
-        }
-      }
-      else
-      {
-        for (int i = 0; i < Pint.Count; i++)
-        {
-          result[i] = Scales?.ElementAt(i) ?? 1;
-        }
-      }
-    }
-
-    /// <summary>
-    /// Modifies the hessian and gradient according to the boundary conditions of the parameters.
-    /// </summary>
-    /// <param name="Pint">The parameters.</param>
-    /// <param name="pstep">The parameter step planned.</param>
-    /// <param name="mu">The value of mu.</param>
-    /// <param name="hessian">The Hessian matrix. If the return value is true, this matrix was modified during the call.</param>
-    /// <param name="gradient">The negative gradient.  If the return value is true, this vector was modified during the call.</param>
-    /// <param name="diagonalOfHessianPlusMu">The diagonal of the Hessian matrix plus mu.  If the return value is true, this vector was modified during the call.</param>
-    /// <param name="isTemporaryFixed">The array of fixed parameters (parameters fixed from the beginning plus parameters that have reached the boundary). If the return value is true, this vector was modified during the call.</param>
-    /// <returns>True if the Hessian and gradient were modified; otherwise, false.</returns>
-    private bool ModifyHessianAndGradient(IReadOnlyList<double> Pint, IReadOnlyList<double> pstep, double mu, Matrix<double> hessian, Vector<double> gradient, Vector<double> diagonalOfHessianPlusMu, bool[] isTemporaryFixed)
-    {
-      bool wasModified = false;
-      int numberOfFixedParameters = 0;
-      if (LowerBound is not null || UpperBound is not null)
-      {
-        for (int i = 0; i < Pint.Count; i++)
-        {
-          if (isTemporaryFixed[i])
-          {
-            ++numberOfFixedParameters;
-            continue;
-          }
-
-          var lowerBnd = LowerBound?.ElementAt(i);
-          var upperBnd = UpperBound?.ElementAt(i);
-
-          bool isAtBound;
-
-          if (lowerBnd.HasValue && upperBnd.HasValue)
-          {
-            if (Pint[i] > lowerBnd.Value && Pint[i] < upperBnd.Value)
-              isAtBound = false;
-            else if (!(Pint[i] > lowerBnd.Value))
-              isAtBound = pstep[i] < 0;
-            else if (!(Pint[i] < upperBnd.Value))
-              isAtBound = pstep[i] > 0;
-            else
-              isAtBound = true;
-          }
-          else if (upperBnd.HasValue)
-          {
-            isAtBound = !(Pint[i] < upperBnd.Value) && pstep[i] > 0;
-          }
-          else if (lowerBnd.HasValue)
-          {
-            isAtBound = !(Pint[i] > lowerBnd.Value) && pstep[i] < 0;
-          }
-          else
-          {
-            isAtBound = false;
-          }
-
-
-          if (isAtBound)
-          {
-            gradient[i] = 0;
-            hessian.ClearColumn(i);
-            hessian.ClearRow(i);
-            diagonalOfHessianPlusMu[i] = mu;
-            isTemporaryFixed[i] = true;
-            wasModified = true;
-            ++numberOfFixedParameters;
-          }
-        }
-      }
-
-      return wasModified;
-    }
-
   }
 }

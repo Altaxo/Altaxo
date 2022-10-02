@@ -57,12 +57,12 @@ namespace Altaxo.Calc.FitFunctions
   }
 
   /// <summary>
-  /// Test for fit functions, especially those which implement <see cref="IFitFunctionWithGradient"/>.
+  /// Test for fit functions, especially those which implement <see cref="IFitFunctionWithDerivative"/>.
   /// </summary>
-  public class FitFunctionWithGradient_Tests
+  public class FitFunctionWithDerivative_Tests
   {
-    private static readonly (Func<IFitFunctionWithGradient> Creation, double x, double[] parameters, double expectedY)[]
-      _fitData = new (Func<IFitFunctionWithGradient> Creation, double x, double[] parameters, double expectedY)[]
+    private static readonly (Func<IFitFunctionWithDerivative> Creation, double x, double[] parameters, double expectedY)[]
+      _fitData = new (Func<IFitFunctionWithDerivative> Creation, double x, double[] parameters, double expectedY)[]
       {
         (() => new ExponentialDecay(2), 0.25, new double[]{1,3,5,7,11}, 1+3*Math.Exp(-0.25/5)+7*Math.Exp(-0.25/11)),
         (() => new ExponentialEquilibration(2), 0.5, new double[]{0.125,1,3,5,7,11}, 1+3*(1-Math.Exp(-(0.5-0.125)/5))+7*(1-Math.Exp(-(0.5-0.125)/11)) ),
@@ -106,7 +106,7 @@ namespace Altaxo.Calc.FitFunctions
     private static DoubleEqualityComparer CompareDerivatives = new DoubleEqualityComparer(1E-5, 1E-5);
 
     /// <summary>
-    /// Tests the function values, and for fit functions implementing <see cref="IFitFunctionWithGradient"/>,
+    /// Tests the function values, and for fit functions implementing <see cref="IFitFunctionWithDerivative"/>,
     /// test the gradient values.
     /// </summary>
     [Fact]
@@ -122,7 +122,7 @@ namespace Altaxo.Calc.FitFunctions
         fitFunction.Evaluate(x, entry.parameters, y);
         Assert.Equal(entry.expectedY, y[0], CompareD);
 
-        if (fitFunction is IFitFunctionWithGradient fg)
+        if (fitFunction is IFitFunctionWithDerivative fg)
         {
           TestGradients(fg, entry.x, entry.parameters);
         }
@@ -133,7 +133,7 @@ namespace Altaxo.Calc.FitFunctions
     public void TestCoverage()
     {
       var typeHash = _fitData.Select(x => x.Creation().GetType()).ToHashSet();
-      var allTypes = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(IFitFunctionWithGradient)).ToHashSet();
+      var allTypes = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(IFitFunctionWithDerivative)).ToHashSet();
       allTypes.ExceptWith(typeHash);
 
       Assert.True(0 == allTypes.Count);
@@ -141,7 +141,7 @@ namespace Altaxo.Calc.FitFunctions
 
 
 
-    private static void TestGradients(IFitFunctionWithGradient ff, double x0, double[] parameters)
+    private static void TestGradients(IFitFunctionWithDerivative ff, double x0, double[] parameters)
     {
       const double delta = 1 / 131072d;
       double[] paraVariation = new double[parameters.Length];
@@ -159,10 +159,10 @@ namespace Altaxo.Calc.FitFunctions
           actualDerivative[i, k] = double.NaN;
       }
 
-      ff.EvaluateMultiple(xx, parameters, null, yy);
+      ff.Evaluate(xx, parameters, null, yy);
       var y0 = y[4];
 
-      ff.EvaluateGradient(xx, parameters, null, actualDerivative);
+      ff.EvaluateDerivative(xx, parameters, null, actualDerivative);
 
       for (int i = 0; i < paraVariation.Length; ++i)
       {
@@ -174,7 +174,7 @@ namespace Altaxo.Calc.FitFunctions
           d = Math.Abs(paraVariation[i]) * delta;
         }
         paraVariation[i] += d; ;
-        ff.EvaluateMultiple(xx, paraVariation, null, yy);
+        ff.Evaluate(xx, paraVariation, null, yy);
         var y1 = y[4];
 
         var approximatedDerivative = (y1 - y0) / d;

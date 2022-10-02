@@ -28,8 +28,6 @@ using System.Linq;
 using System.Threading;
 using Altaxo.Calc;
 using Altaxo.Calc.FitFunctions.Peaks;
-using Altaxo.Calc.FitFunctions.Probability;
-using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Calc.Regression.Nonlinear;
 
 namespace Altaxo.Science.Spectroscopy.PeakFitting
@@ -121,7 +119,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
 
 
       var xyValues = new HashSet<(double X, double Y)>();
-      var paramList  = new List<double>();
+      var paramList = new List<double>();
 
       var peakParam = new List<(int FirstPoint, int LastPoint)>();
 
@@ -138,7 +136,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
           continue;
         }
 
-        for (int i = first; i<= last; ++i)
+        for (int i = first; i <= last; ++i)
           xyValues.Add((xArray[i], yArray[i]));
 
         var xPosition = RMath.InterpolateLinear(description.PositionIndex, xArray);
@@ -158,7 +156,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
       var xCut = new double[xyValues.Count];
       var yCut = new double[xyValues.Count];
       int idx = 0;
-      foreach(var xy in xyValues)
+      foreach (var xy in xyValues)
       {
         xCut[idx] = xy.X;
         yCut[idx] = xy.Y;
@@ -166,12 +164,10 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
       }
 
       var param = paramList.ToArray();
-      fitFunc =  FitFunction.WithNumberOfTerms(param.Length/ numberOfParametersPerPeak);
+      fitFunc = FitFunction.WithNumberOfTerms(param.Length / numberOfParametersPerPeak);
       var fit = new QuickNonlinearRegression(fitFunc);
-      param = fit.Fit(xCut, yCut, param, cancellationToken);
-
-      var fitFunctionWrapper = new PeakFitFunctions.FunctionWrapper(fitFunc, param);
-
+      var fitResult = fit.Fit(xCut, yCut, param, cancellationToken);
+      // var fitFunctionWrapper = new PeakFitFunctions.FunctionWrapper(fitFunc, fitResult.MinimizingPoint.ToArray());
       var list = new List<PeakFitting.PeakDescription>();
 
       idx = 0;
@@ -183,11 +179,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
         }
         else
         {
-          var fitCov = fit.Covariances;
-          var localCov = CreateMatrix.Dense<double>(numberOfParametersPerPeak, numberOfParametersPerPeak);
-          for(int i= 0; i < numberOfParametersPerPeak; i++)
-            for(int j=0;j<numberOfParametersPerPeak;++j)
-              localCov[i,j] = fitCov[i + idx * numberOfParametersPerPeak, j+ idx * numberOfParametersPerPeak];
+          var localCov = fitResult.Covariance.SubMatrix(idx * numberOfParametersPerPeak, numberOfParametersPerPeak, idx * numberOfParametersPerPeak, numberOfParametersPerPeak);
 
           list.Add(new PeakDescription
           {
@@ -196,11 +188,11 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
             LastFitPoint = peakParam[idx].LastPoint,
             FirstFitPosition = xArray[peakParam[idx].FirstPoint],
             LastFitPosition = xArray[peakParam[idx].LastPoint],
-            PeakParameter = param.Skip(idx* numberOfParametersPerPeak).Take(numberOfParametersPerPeak).ToArray(),
+            PeakParameter = fitResult.MinimizingPoint.Skip(idx * numberOfParametersPerPeak).Take(numberOfParametersPerPeak).ToArray(),
             PeakParameterCovariances = localCov,
             FitFunction = fitFunc,
-            FitFunctionParameter = (double[])param.Clone(),
-            SumChiSquare = fit.SumChiSquare,
+            FitFunctionParameter = fitResult.MinimizingPoint.ToArray(),
+            SumChiSquare = fitResult.ModelInfoAtMinimum.Value,
           });
           ++idx;
         }

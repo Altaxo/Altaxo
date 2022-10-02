@@ -1,4 +1,35 @@
-﻿using System;
+﻿#region Copyright
+
+/////////////////////////////////////////////////////////////////////////////
+// Altaxo:  a data processing and data plotting program
+// Copyright (C) 2002-2022 Dr. Dirk Lellinger
+//
+// Permission is hereby granted, free of charge, to any person
+// obtaining a copy of this software and associated documentation
+// files (the "Software"), to deal in the Software without
+// restriction, including without limitation the rights to use,
+// copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the
+// Software is furnished to do so, subject to the following
+// conditions:
+//
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+// OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+// HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+// WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+// FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+// OTHER DEALINGS IN THE SOFTWARE.
+//
+/////////////////////////////////////////////////////////////////////////////
+
+#endregion Copyright
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -6,7 +37,8 @@ using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Regression.Nonlinear
 {
-  public class QuickNonlinearRegression
+  [Obsolete("Please use QuickNonlinearRegression instead.")]
+  public class QuickNonlinearRegressionOld
   {
     protected IFitFunction _fitFunction;
 
@@ -19,7 +51,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
     protected bool _isExecuted;
 
-    void CheckExecuted()
+    private void CheckExecuted()
     {
       if (!_isExecuted)
         throw new InvalidOperationException("Please execute the fit before accessing the results");
@@ -77,7 +109,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
     }
 
 
-    public QuickNonlinearRegression(IFitFunction fitFunction)
+    public QuickNonlinearRegressionOld(IFitFunction fitFunction)
     {
       _fitFunction = fitFunction ?? throw new ArgumentNullException(nameof(fitFunction));
     }
@@ -120,13 +152,13 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
     private class Adapter
     {
-      double[] _xValues;
-      double[] _yValues;
-      IFitFunction _fitFunction;
-      double[] _parameters;
-      int[] _parameterMapping;
-      double[] _xx = new double[1];
-      double[] _yy = new double[1];
+      private double[] _xValues;
+      private double[] _yValues;
+      private IFitFunction _fitFunction;
+      private double[] _parameters;
+      private int[] _parameterMapping;
+      private double[] _xx = new double[1];
+      private double[] _yy = new double[1];
 
       public int FreeParameterCount => _parameterMapping.Length;
 

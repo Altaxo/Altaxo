@@ -785,7 +785,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
     public void FitFunctionEvaluate(IROMatrix<double> independent, IReadOnlyList<double> parameters, IReadOnlyList<bool>? dependentVariableChoice, IVector<double> FV)
     {
-      FitFunction!.EvaluateMultiple(independent, parameters, dependentVariableChoice, FV);
+      FitFunction!.Evaluate(independent, parameters, dependentVariableChoice, FV);
       int numberOfDependentVariablesInUse = dependentVariableChoice is null ? FitFunction!.NumberOfDependentVariables : dependentVariableChoice.Count(x => x);
       int idxDependentVariable = -1;
       for (int i = 0; i < _dependentVariableTransformations.Length; ++i)

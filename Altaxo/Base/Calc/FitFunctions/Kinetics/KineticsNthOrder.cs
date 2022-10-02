@@ -35,7 +35,7 @@ namespace Altaxo.Calc.FitFunctions.Kinetics
   /// Represents solutions related to the differential equation y'=-k*y^n. For the direct solution of this equation, see <see cref="CoreSolution"/>.
   /// </summary>
   [FitFunctionClass]
-  public class KineticsNthOrder : IFitFunctionWithGradient, IImmutable
+  public class KineticsNthOrder : IFitFunctionWithDerivative, IImmutable
   {
     #region Serialization
 
@@ -156,7 +156,7 @@ namespace Altaxo.Calc.FitFunctions.Kinetics
     {
       Y[0] = CoreSolution(X[0], P[0], P[1], P[2]);
     }
-    public void EvaluateMultiple(IROMatrix<double> independent, IReadOnlyList<double> P, IReadOnlyList<bool>? independentVariableChoice, IVector<double> FV)
+    public void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> P, IReadOnlyList<bool>? independentVariableChoice, IVector<double> FV)
     {
       var rowCount = independent.RowCount;
       for (int r = 0; r < rowCount; ++r)
@@ -166,7 +166,7 @@ namespace Altaxo.Calc.FitFunctions.Kinetics
       }
     }
     /// <inheritdoc/>
-    public void EvaluateGradient(IROMatrix<double> X, IReadOnlyList<double> P, IReadOnlyList<bool>? independentVariableChoice, IMatrix<double> DY)
+    public void EvaluateDerivative(IROMatrix<double> X, IReadOnlyList<double> P, IReadOnlyList<bool>? independentVariableChoice, IMatrix<double> DY)
     {
       var rowCount = X.RowCount;
       for (int r = 0; r < rowCount; ++r)

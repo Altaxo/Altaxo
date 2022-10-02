@@ -37,7 +37,7 @@ namespace Altaxo.Calc.FitFunctions.General
   /// </summary>
   [FitFunctionClass]
   public class Polynomial
-        : IFitFunctionWithGradient, IImmutable
+        : IFitFunctionWithDerivative, IImmutable
   {
     /// <summary>The order of the polynomial with positive exponents.</summary>
     private readonly int _order_n;
@@ -240,7 +240,7 @@ namespace Altaxo.Calc.FitFunctions.General
     }
 
 
-    public void EvaluateMultiple(IROMatrix<double> independent, IReadOnlyList<double> P, IReadOnlyList<bool>? independentVariableChoice, IVector<double> FV)
+    public void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> P, IReadOnlyList<bool>? independentVariableChoice, IVector<double> FV)
     {
       var rowCount = independent.RowCount;
       for (int r = 0; r < rowCount; ++r)
@@ -284,7 +284,7 @@ namespace Altaxo.Calc.FitFunctions.General
 
     #endregion IFitFunction Members
 
-    public void EvaluateGradient(IROMatrix<double> X, IReadOnlyList<double> P, IReadOnlyList<bool>? independentVariableChoice, IMatrix<double> DY)
+    public void EvaluateDerivative(IROMatrix<double> X, IReadOnlyList<double> P, IReadOnlyList<bool>? independentVariableChoice, IMatrix<double> DY)
     {
       var rowCount = X.RowCount;
       for (int r = 0; r < rowCount; ++r)

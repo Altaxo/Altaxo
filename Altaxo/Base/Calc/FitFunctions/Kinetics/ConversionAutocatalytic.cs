@@ -172,7 +172,7 @@ namespace Altaxo.Calc.FitFunctions.Kinetics
       Y[0] *= P[1];
     }
 
-    public void EvaluateMultiple(IROMatrix<double> independent, IReadOnlyList<double> P, IReadOnlyList<bool>? independentVariableChoice, IVector<double> FV)
+    public void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> P, IReadOnlyList<bool>? independentVariableChoice, IVector<double> FV)
     {
       IEnumerable<double> GetXPoints()
       {
