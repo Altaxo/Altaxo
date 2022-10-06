@@ -62,19 +62,33 @@ namespace Altaxo.Calc.Optimization
   public class LevenbergMarquardtMinimizerNonAllocating : NonlinearMinimizerBaseNonAllocating
   {
     /// <summary>
+    /// The default scale factor for initial mu.
+    /// </summary>
+    public const double DefaultInitialMu = 1E-3;
+
+    /// <summary>
     /// The scale factor for initial mu
     /// </summary>
-    public double InitialMu { get; set; }
+    public double InitialMu { get; set; } = DefaultInitialMu;
 
     /// <summary>
     /// Stores the last 8 values of Chi².
     /// </summary>
     private RingBufferEnqueueableOnly<double> _rssValueHistory = new(8);
 
-    public LevenbergMarquardtMinimizerNonAllocating(double initialMu = 1E-3, double gradientTolerance = 1E-15, double stepTolerance = 1E-15, double functionTolerance = 1E-15, double minimalRSSImprovement = 1E-14, int maximumIterations = -1)
-        : base(gradientTolerance, stepTolerance, functionTolerance, minimalRSSImprovement, maximumIterations)
+    /// <summary>
+    /// Non-linear least square fitting by the Levenberg-Marquardt algorithm.
+    /// </summary>
+    /// <param name="objective">The objective function, including model, observations, and parameter bounds.</param>
+    /// <param name="initialGuess">The initial guess values.</param>
+    /// <param name="cancellationToken">Token to cancel the evaluation</param>
+    /// <returns>The result of the Levenberg-Marquardt minimization</returns>
+    public NonlinearMinimizationResult FindMinimum(
+     IObjectiveModelNonAllocating objective,
+     IReadOnlyList<double> initialGuess,
+     CancellationToken cancellationToken)
     {
-      InitialMu = initialMu;
+      return FindMinimum(objective, initialGuess, null, null, null, null, cancellationToken);
     }
 
     /// <summary>
@@ -91,13 +105,22 @@ namespace Altaxo.Calc.Optimization
     public NonlinearMinimizationResult FindMinimum(
       IObjectiveModelNonAllocating objective,
       IReadOnlyList<double> initialGuess,
-      IReadOnlyList<double?> lowerBound = null,
-      IReadOnlyList<double?> upperBound = null,
-      IReadOnlyList<double> scales = null,
-      IReadOnlyList<bool> isFixed = null,
-      CancellationToken cancellationToken = default)
+      IReadOnlyList<double?>? lowerBound,
+      IReadOnlyList<double?>? upperBound,
+      IReadOnlyList<double>? scales,
+      IReadOnlyList<bool>? isFixed,
+      CancellationToken cancellationToken)
     {
-      return Minimum(objective, initialGuess, lowerBound, upperBound, scales, isFixed, cancellationToken, InitialMu, GradientTolerance, StepTolerance,
+      return Minimum(objective,
+        initialGuess,
+        lowerBound,
+        upperBound,
+        scales,
+        isFixed,
+        cancellationToken,
+        initialMu: InitialMu,
+        gradientTolerance: GradientTolerance,
+        stepTolerance: StepTolerance,
         functionTolerance: FunctionTolerance,
         minimalRSSImprovement: MinimalRSSImprovement,
         maximumIterations: MaximumIterations);
@@ -117,18 +140,30 @@ namespace Altaxo.Calc.Optimization
     public NonlinearMinimizationResult FindMinimum(
       IObjectiveModelNonAllocating objective,
       double[] initialGuess,
-      double?[] lowerBound = null,
-      double?[] upperBound = null,
-      double[] scales = null,
-      bool[] isFixed = null,
-      CancellationToken cancellationToken = default)
+      double?[]? lowerBound,
+      double?[]? upperBound,
+      double[]? scales,
+      bool[]? isFixed,
+      CancellationToken cancellationToken)
     {
       if (objective is null)
         throw new ArgumentNullException(nameof(objective));
       if (initialGuess is null)
         throw new ArgumentNullException(nameof(initialGuess));
 
-      return Minimum(objective, CreateVector.DenseOfArray(initialGuess), lowerBound, upperBound, scales, isFixed, cancellationToken, InitialMu, GradientTolerance, StepTolerance, FunctionTolerance, MaximumIterations);
+      return Minimum(objective,
+        initialGuess,
+        lowerBound,
+        upperBound,
+        scales,
+        isFixed,
+        cancellationToken,
+        InitialMu,
+        GradientTolerance,
+        StepTolerance,
+        FunctionTolerance,
+        MinimalRSSImprovement,
+        MaximumIterations);
     }
 
     /// <summary>
@@ -151,17 +186,17 @@ namespace Altaxo.Calc.Optimization
     public NonlinearMinimizationResult Minimum(
       IObjectiveModelNonAllocating objective,
       IReadOnlyList<double> initialGuess,
-        IReadOnlyList<double?> lowerBound = null,
-        IReadOnlyList<double?> upperBound = null,
-        IReadOnlyList<double> scales = null,
-        IReadOnlyList<bool> isFixed = null,
-        CancellationToken cancellationToken = default,
-        double initialMu = 1E-3,
-        double gradientTolerance = 1E-15,
-        double stepTolerance = 1E-15,
-        double functionTolerance = 1E-15,
-        double minimalRSSImprovement = 1E-15,
-        int maximumIterations = -1)
+        IReadOnlyList<double?>? lowerBound,
+        IReadOnlyList<double?>? upperBound,
+        IReadOnlyList<double>? scales,
+        IReadOnlyList<bool>? isFixed,
+        CancellationToken cancellationToken,
+        double initialMu,
+        double gradientTolerance,
+        double stepTolerance,
+        double functionTolerance,
+        double minimalRSSImprovement,
+        int? maximumIterations)
     {
       // Non-linear least square fitting by the Levenberg-Marduardt algorithm.
       //
@@ -198,14 +233,16 @@ namespace Altaxo.Calc.Optimization
       //    Department of Civil and Environmental Engineering, Duke University (2017): 1-19.
       //    Availble Online from: http://people.duke.edu/~hpgavin/ce281/lm.pdf
 
+      double factor = 100;
+
       if (objective is null)
         throw new ArgumentNullException(nameof(objective));
 
       ValidateBounds(initialGuess, lowerBound, upperBound, scales);
 
-      _scaleFactors = Vector<double>.Build.Dense(initialGuess.Count);
       var parameterValues = Vector<double>.Build.DenseOfEnumerable(initialGuess);
       var parameterStep = Vector<double>.Build.Dense(initialGuess.Count);
+      var scaledParameterStep = Vector<double>.Build.Dense(initialGuess.Count);
       var newParameterValues = Vector<double>.Build.Dense(initialGuess.Count);
 
       var diagonalOfHessian = Vector<double>.Build.Dense(initialGuess.Count);
@@ -218,7 +255,7 @@ namespace Altaxo.Calc.Optimization
       objective.EvaluateAt(parameterValues);
       var RSS = objective.Value;  // Residual Sum of Squares = R'R
 
-      if (maximumIterations < 0)
+      if (!maximumIterations.HasValue)
       {
         maximumIterations = 200 * (initialGuess.Count + 1);
       }
@@ -242,8 +279,24 @@ namespace Altaxo.Calc.Optimization
         exitCondition = ExitCondition.Converged; // SmallRSS
       }
 
-      // Evaluate gradient (already negated!) and Hessian
+
+
+      // Evaluate at first the gradient (already negated!) and the Hessian
       var (NegativeGradient, Hessian) = EvaluateJacobian(objective, parameterValues);
+
+      if (Scales is null)
+      {
+        // if no scale for the parameters was given, calculate scale parameters in a way, that the resulting
+        // gradient has equal elements (absolute value).
+        // here, we scale the parameters so that the gradient contains either 1 or -1 elements
+        // alternatively, we could use the diagonal of the Hessian to calculate the parameter scale, but this results in slightly more iterations
+        Scales = NegativeGradient.Map(x => x != 0 ? 1 / Math.Abs(x) : 1, Zeros.Include);
+
+        // after the parameter scale was evaluated, we have to repeat the Jacobian and Hessian evaluation, this time with the parameter scale in operation
+        (NegativeGradient, Hessian) = EvaluateJacobian(objective, parameterValues); // repeat Jacobian evaluation, now with scale
+      }
+
+
       Hessian.Diagonal(diagonalOfHessian); // save the diagonal of the Hession diag(H) into the vector diagonalOfHessian
 
       // if ||g||oo <= gtol, found and stop
@@ -297,7 +350,9 @@ namespace Altaxo.Calc.Optimization
             Hessian.SetDiagonal(diagonalOfHessianPlusMu); // hessian[i, i] = hessian[i, i] + mu; see [2] eq. (12), page 3
 
             // solve normal equations
-            Hessian.Solve(NegativeGradient, parameterStep);
+            Hessian.Solve(NegativeGradient, scaledParameterStep);
+            scaledParameterStep.PointwiseMultiply(Scales, parameterStep);
+
             ++numberOfSolves;
 
             // if the step would violate the boundary conditions, we modify the Hessian and the gradient accordingly

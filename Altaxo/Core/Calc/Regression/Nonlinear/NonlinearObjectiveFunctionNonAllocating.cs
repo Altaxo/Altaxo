@@ -268,10 +268,6 @@ namespace Altaxo.Calc.Optimization.ObjectiveFunctions
       }
     }
 
-
-
-
-
     /// <summary>
     /// Set observed data to fit.
     /// </summary>

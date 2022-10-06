@@ -39,25 +39,31 @@ namespace Altaxo.Calc.Optimization
 {
   public abstract class NonlinearMinimizerBaseNonAllocating
   {
+    public const double DefaultFunctionTolerance = 1E-15;
+    public const double DefaultStepTolerance = 1E-7;
+    public const double DefaultGradientTolerance = 1E-15;
+    public const double DefaultMinimalRSSImprovement = 1E-6;
+
+
     /// <summary>
     /// The stopping threshold for the function value or L2 norm of the residuals.
     /// </summary>
-    public double FunctionTolerance { get; set; }
+    public double FunctionTolerance { get; set; } = DefaultFunctionTolerance;
 
     /// <summary>
     /// The stopping threshold for L2 norm of the change of the parameters.
     /// </summary>
-    public double StepTolerance { get; set; }
+    public double StepTolerance { get; set; } = DefaultStepTolerance;
 
     /// <summary>
     /// The stopping threshold for infinity norm of the gradient.
     /// </summary>
-    public double GradientTolerance { get; set; }
+    public double GradientTolerance { get; set; } = DefaultGradientTolerance;
 
     /// <summary>
-    /// The maximum number of iterations.
+    /// The maximum number of iterations. If null, the maximal number of iterations is determined automatically.
     /// </summary>
-    public int MaximumIterations { get; set; }
+    public int? MaximumIterations { get; set; }
 
     /// <summary>
     /// Gets or sets the minimal RSS improvement.
@@ -65,43 +71,26 @@ namespace Altaxo.Calc.Optimization
     /// <value>
     /// The minimal RSS (Chi²) improvement. If after 8 iterations the improvement is smaller than this value, the evaluation is stopped.
     /// </value>
-    public double MinimalRSSImprovement { get; set; }
+    public double MinimalRSSImprovement { get; set; } = DefaultMinimalRSSImprovement;
 
     /// <summary>
     /// The lower bound of the parameters.
     /// </summary>
-    public IReadOnlyList<double?> LowerBound { get; private set; }
+    public IReadOnlyList<double?>? LowerBound { get; private set; }
 
     /// <summary>
     /// The upper bound of the parameters.
     /// </summary>
-    public IReadOnlyList<double?> UpperBound { get; private set; }
+    public IReadOnlyList<double?>? UpperBound { get; private set; }
 
     /// <summary>
     /// The scale factors for the parameters.
     /// </summary>
-    public IReadOnlyList<double> Scales { get; private set; }
+    public Vector<double>? Scales { get; protected set; }
 
     protected bool IsBounded => LowerBound is not null || UpperBound is not null || Scales is not null;
 
-    /// <summary>
-    /// The scale factors
-    /// </summary>
-    protected Vector<double> _scaleFactors;
 
-
-    protected NonlinearMinimizerBaseNonAllocating(double gradientTolerance = 1E-18, double stepTolerance = 1E-18, double functionTolerance = 1E-18, double minimalRSSImprovement = 1E-15, int maximumIterations = -1)
-    {
-      GradientTolerance = gradientTolerance;
-      StepTolerance = stepTolerance;
-      FunctionTolerance = functionTolerance;
-      MaximumIterations = maximumIterations;
-
-      if (!(minimalRSSImprovement >= 0 && minimalRSSImprovement < 1))
-        throw new ArgumentOutOfRangeException($"{nameof(minimalRSSImprovement)} must be a number in the interval [0, 1), but is {minimalRSSImprovement}");
-
-      MinimalRSSImprovement = minimalRSSImprovement;
-    }
 
     protected void ValidateBounds(IReadOnlyList<double> parameters, IReadOnlyList<double?> lowerBound = null, IReadOnlyList<double?> upperBound = null, IReadOnlyList<double> scales = null)
     {
@@ -189,10 +178,12 @@ namespace Altaxo.Calc.Optimization
       {
         var newScales = Vector<double>.Build.DenseOfEnumerable(scales);
         newScales.PointwiseAbs();
-        scales = newScales;
+        Scales = newScales;
       }
-      Scales = scales;
-
+      else if (scales is not null)
+      {
+        Scales = Vector<double>.Build.DenseOfEnumerable(scales);
+      }
     }
 
     protected double EvaluateFunction(IObjectiveModelNonAllocating objective, IReadOnlyList<double> Pint, IVector<double> pExt)
@@ -209,25 +200,25 @@ namespace Altaxo.Calc.Optimization
     /// <param name="objective">The objective.</param>
     /// <param name="pInt">The parameters (internal representation).</param>
     /// <returns>The negative gradient and the hessian.</returns>
-    protected (Vector<double> NegativeGradient, Matrix<double> Hessian) EvaluateJacobian(IObjectiveModelNonAllocating objective, IReadOnlyList<double> pInt)
+    protected (Vector<double> NegativeGradient, Matrix<double> Hessian) EvaluateJacobian(IObjectiveModelNonAllocating objective, IReadOnlyList<double> pInt, Vector<double> scaleFactors)
     {
       var negativeGradient = objective.NegativeGradient;
       var hessian = objective.Hessian;
 
       if (IsBounded)
       {
-        ScaleFactorsOfJacobian(pInt, _scaleFactors); // the parameters argument is always internal.
+        ScaleFactorsOfJacobian(pInt, scaleFactors); // the parameters argument is always internal.
 
         for (int i = 0; i < negativeGradient.Count; i++)
         {
-          negativeGradient[i] *= _scaleFactors[i];
+          negativeGradient[i] *= scaleFactors[i];
         }
 
         for (int i = 0; i < hessian.RowCount; i++)
         {
           for (int j = 0; j < hessian.ColumnCount; j++)
           {
-            hessian[i, j] *= _scaleFactors[i] * _scaleFactors[j];
+            hessian[i, j] *= scaleFactors[i] * scaleFactors[j];
           }
         }
       }

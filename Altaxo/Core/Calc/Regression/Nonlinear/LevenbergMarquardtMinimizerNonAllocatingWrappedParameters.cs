@@ -62,52 +62,141 @@ namespace Altaxo.Calc.Optimization
   public class LevenbergMarquardtMinimizerNonAllocatingWrappedParameters : NonlinearMinimizerBaseNonAllocating
   {
     /// <summary>
+    /// The default scale factor for initial mu.
+    /// </summary>
+    public const double DefaultInitialMu = 1E-3;
+
+
+    /// <summary>
     /// The scale factor for initial mu
     /// </summary>
-    public double InitialMu { get; set; }
+    public double InitialMu { get; set; } = DefaultInitialMu;
 
     private RingBufferEnqueueableOnly<double> _valueHistory = new(8);
 
-    public LevenbergMarquardtMinimizerNonAllocatingWrappedParameters(double initialMu = 1E-3, double gradientTolerance = 1E-15, double stepTolerance = 1E-15, double functionTolerance = 1E-15, double minimalRSSImprovement = 1E-14, int maximumIterations = -1)
-        : base(gradientTolerance, stepTolerance, functionTolerance, minimalRSSImprovement, maximumIterations)
+    /// <summary>
+    /// Non-linear least square fitting by the Levenberg-Marquardt algorithm.
+    /// </summary>
+    /// <param name="objective">The objective function, including model, observations, and parameter bounds.</param>
+    /// <param name="initialGuess">The initial guess values.</param>
+    /// <param name="cancellationToken">Token to cancel the evaluation</param>
+    /// <returns>The result of the Levenberg-Marquardt minimization</returns>
+    public NonlinearMinimizationResult FindMinimum(
+     IObjectiveModelNonAllocating objective,
+     IReadOnlyList<double> initialGuess,
+     CancellationToken cancellationToken)
     {
-      InitialMu = initialMu;
+      return FindMinimum(objective, initialGuess, null, null, null, null, cancellationToken);
     }
 
-    public NonlinearMinimizationResult FindMinimum(IObjectiveModelNonAllocating objective, IReadOnlyList<double> initialGuess,
-        IReadOnlyList<double?> lowerBound = null, IReadOnlyList<double?> upperBound = null, IReadOnlyList<double> scales = null, IReadOnlyList<bool> isFixed = null, CancellationToken cancellationToken = default)
+    /// <summary>
+    /// Non-linear least square fitting by the Levenberg-Marquardt algorithm.
+    /// </summary>
+    /// <param name="objective">The objective function, including model, observations, and parameter bounds.</param>
+    /// <param name="initialGuess">The initial guess values.</param>
+    /// <param name="lowerBound">The lower bounds of the parameters. The array must have the same length as the parameter array. Provide null if not needed.</param>
+    /// <param name="upperBound">The upper bounds of the parameters. The array must have the same length as the parameter array. Provide null if not needed.</param>
+    /// <param name="scales">The scales of the parameters. The array must have the same length as the parameter array. Provide null if not needed.</param>
+    /// <param name="isFixed">Array of booleans, which provide which parameters are fixed. Must have the same length as the parameter array. Provide null if not needed.</param>
+    /// <param name="cancellationToken">Token to cancel the evaluation</param>
+    /// <returns>The result of the Levenberg-Marquardt minimization</returns>
+    public NonlinearMinimizationResult FindMinimum(
+      IObjectiveModelNonAllocating objective,
+      IReadOnlyList<double> initialGuess,
+      IReadOnlyList<double?>? lowerBound,
+      IReadOnlyList<double?>? upperBound,
+      IReadOnlyList<double>? scales,
+      IReadOnlyList<bool>? isFixed,
+      CancellationToken cancellationToken)
     {
-      return Minimum(objective, initialGuess, lowerBound, upperBound, scales, isFixed, cancellationToken, InitialMu, GradientTolerance, StepTolerance,
+      return Minimum(
+        objective,
+        initialGuess,
+        lowerBound,
+        upperBound,
+        scales,
+        isFixed,
+        cancellationToken,
+        InitialMu,
+        GradientTolerance,
+        StepTolerance,
         functionTolerance: FunctionTolerance,
         minimalRSSImprovement: MinimalRSSImprovement,
         maximumIterations: MaximumIterations);
     }
 
-    public NonlinearMinimizationResult FindMinimum(IObjectiveModelNonAllocating objective, double[] initialGuess,
-        double?[] lowerBound = null, double?[] upperBound = null, double[] scales = null, bool[] isFixed = null, CancellationToken cancellationToken = default)
+    /// <summary>
+    /// Non-linear least square fitting by the Levenberg-Marquardt algorithm.
+    /// </summary>
+    /// <param name="objective">The objective function, including model, observations, and parameter bounds.</param>
+    /// <param name="initialGuess">The initial guess values.</param>
+    /// <param name="lowerBound">The lower bounds of the parameters. The array must have the same length as the parameter array. Provide null if not needed.</param>
+    /// <param name="upperBound">The upper bounds of the parameters. The array must have the same length as the parameter array. Provide null if not needed.</param>
+    /// <param name="scales">The scales of the parameters. The array must have the same length as the parameter array. Provide null if not needed.</param>
+    /// <param name="isFixed">Array of booleans, which provide which parameters are fixed. Must have the same length as the parameter array. Provide null if not needed.</param>
+    /// <param name="cancellationToken">Token to cancel the evaluation</param>
+    /// <returns>The result of the Levenberg-Marquardt minimization</returns>
+    public NonlinearMinimizationResult FindMinimum(
+      IObjectiveModelNonAllocating objective,
+      double[] initialGuess,
+      double?[]? lowerBound,
+      double?[]? upperBound,
+      double[]? scales,
+      bool[]? isFixed,
+      CancellationToken cancellationToken)
     {
       if (objective is null)
         throw new ArgumentNullException(nameof(objective));
       if (initialGuess is null)
         throw new ArgumentNullException(nameof(initialGuess));
 
-      return Minimum(objective, CreateVector.DenseOfArray(initialGuess), lowerBound, upperBound, scales, isFixed, cancellationToken, InitialMu, GradientTolerance, StepTolerance, FunctionTolerance, MaximumIterations);
+      return Minimum(
+        objective,
+        CreateVector.DenseOfArray(initialGuess),
+        lowerBound,
+        upperBound,
+        scales,
+        isFixed,
+        cancellationToken,
+        InitialMu,
+        GradientTolerance,
+        StepTolerance,
+        FunctionTolerance,
+        MinimalRSSImprovement,
+        MaximumIterations);
     }
 
     /// <summary>
-    /// Non-linear least square fitting by the Levenberg-Marduardt algorithm.
+    /// Non-linear least square fitting by the Levenberg-Marquardt algorithm.
     /// </summary>
     /// <param name="objective">The objective function, including model, observations, and parameter bounds.</param>
     /// <param name="initialGuess">The initial guess values.</param>
+    /// <param name="lowerBound">The lower bounds of the parameters. The array must have the same length as the parameter array. Provide null if not needed.</param>
+    /// <param name="upperBound">The upper bounds of the parameters. The array must have the same length as the parameter array. Provide null if not needed.</param>
+    /// <param name="scales">The scales of the parameters. The array must have the same length as the parameter array. Provide null if not needed.</param>
+    /// <param name="isFixed">Array of booleans, which provide which parameters are fixed. Must have the same length as the parameter array. Provide null if not needed.</param>
+    /// <param name="cancellationToken">Token to cancel the evaluation</param>
     /// <param name="initialMu">The initial damping parameter of mu.</param>
     /// <param name="gradientTolerance">The stopping threshold for infinity norm of the gradient vector.</param>
     /// <param name="stepTolerance">The stopping threshold for L2 norm of the change of parameters.</param>
     /// <param name="functionTolerance">The stopping threshold for L2 norm of the residuals.</param>
-    /// <param name="maximumIterations">The max iterations.</param>
+    /// <param name="minimalRSSImprovement">The minimal improvement of the Chi² value in 8 iterations. Must be in the range [0,1).</param>
+    /// <param name="maximumIterations">The maximal number of iterations. Provide -1 if the number of iterations should be set automatically. Provide 0 if only a function evaluation should be done.</param>
     /// <returns>The result of the Levenberg-Marquardt minimization</returns>
-    public NonlinearMinimizationResult Minimum(IObjectiveModelNonAllocating objective, IReadOnlyList<double> initialGuess,
-        IReadOnlyList<double?> lowerBound = null, IReadOnlyList<double?> upperBound = null, IReadOnlyList<double> scales = null, IReadOnlyList<bool> isFixed = null, CancellationToken cancellationToken = default,
-        double initialMu = 1E-3, double gradientTolerance = 1E-15, double stepTolerance = 1E-15, double functionTolerance = 1E-15, double minimalRSSImprovement = 1E-15, int maximumIterations = -1)
+    public NonlinearMinimizationResult Minimum(
+      IObjectiveModelNonAllocating objective,
+      IReadOnlyList<double> initialGuess,
+      IReadOnlyList<double?> lowerBound,
+      IReadOnlyList<double?> upperBound,
+      IReadOnlyList<double> scales,
+      IReadOnlyList<bool> isFixed,
+      CancellationToken cancellationToken,
+      double initialMu,
+      double gradientTolerance,
+      double stepTolerance,
+      double functionTolerance,
+      double minimalRSSImprovement,
+      int? maximumIterations)
     {
       // Non-linear least square fitting by the Levenberg-Marduardt algorithm.
       //
@@ -149,7 +238,7 @@ namespace Altaxo.Calc.Optimization
 
       ValidateBounds(initialGuess, lowerBound, upperBound, scales);
 
-      _scaleFactors = Vector<double>.Build.Dense(initialGuess.Count);
+      var scaleFactors = Vector<double>.Build.Dense(initialGuess.Count);
       var pInt = Vector<double>.Build.Dense(initialGuess.Count);
       var pExt = Vector<double>.Build.DenseOfEnumerable(initialGuess);
       var Pstep = Vector<double>.Build.Dense(initialGuess.Count);
@@ -165,7 +254,7 @@ namespace Altaxo.Calc.Optimization
       ProjectToInternalParameters(pExt, pInt); // current internal parameters
       var RSS = EvaluateFunction(objective, pInt, pExt);  // Residual Sum of Squares = R'R
 
-      if (maximumIterations < 0)
+      if (!maximumIterations.HasValue)
       {
         maximumIterations = 200 * (initialGuess.Count + 1);
       }
@@ -190,7 +279,7 @@ namespace Altaxo.Calc.Optimization
       }
 
       // Evaluate gradient (already negated!) and Hessian
-      var (NegativeGradient, Hessian) = EvaluateJacobian(objective, pInt);
+      var (NegativeGradient, Hessian) = EvaluateJacobian(objective, pInt, scaleFactors);
       Hessian.Diagonal(diagonalOfHessian); // save the diagonal of the Hession diag(H) into the vector diagonalOfHessian
 
       // if ||g||oo <= gtol, found and stop
@@ -257,7 +346,7 @@ namespace Altaxo.Calc.Optimization
             _valueHistory.Enqueue(RSS);
 
             // update gradient and Hessian 
-            (NegativeGradient, Hessian) = EvaluateJacobian(objective, pInt);
+            (NegativeGradient, Hessian) = EvaluateJacobian(objective, pInt, scaleFactors);
             Hessian.Diagonal(diagonalOfHessian);
 
             // Test if convergence of gradient is achieved, see [2], section 4.1.3 (page 5), first criterion

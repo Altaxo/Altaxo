@@ -40,7 +40,6 @@ namespace Altaxo.Calc.Regression.Nonlinear
   /// <summary>
   /// Allows a quick regression of one dependent variable in dependence on one independent variable, i.e. with a function R=>R.
   /// </summary>
-  /// <seealso cref="Altaxo.Calc.Regression.Nonlinear.QuickNonlinearRegressionOld" />
   public class QuickNonlinearRegression
   {
     private IFitFunction _fitFunction;
@@ -48,29 +47,29 @@ namespace Altaxo.Calc.Regression.Nonlinear
     /// <summary>
     /// Gets or sets the initial mu value (sometimes also named lambda).
     /// </summary>
-    public double InitialMu { get; set; } = 0.001;
+    public double InitialMu { get; set; } = LevenbergMarquardtMinimizerNonAllocating.DefaultInitialMu;
 
     /// <summary>
     /// The stopping threshold for infinity norm of the relative gradient value.
     /// The relative gradient is the gradient divided by the parameter value.
     /// </summary>
-    public double GradientTolerance { get; set; } = 1E-15;
+    public double GradientTolerance { get; set; } = LevenbergMarquardtMinimizerNonAllocating.DefaultGradientTolerance;
 
     /// <summary>
     /// The stopping threshold for L2 norm of the change of the parameters.
     /// </summary>
-    public double StepTolerance { get; set; } = 1E-15;
+    public double StepTolerance { get; set; } = LevenbergMarquardtMinimizerNonAllocating.DefaultStepTolerance;
 
     /// <summary>
     /// The stopping threshold for the function value or L2 norm of the residuals.
     /// </summary>
-    public double FunctionTolerance { get; set; } = 1E-15;
+    public double FunctionTolerance { get; set; } = LevenbergMarquardtMinimizerNonAllocating.DefaultFunctionTolerance;
 
     /// <summary>
     /// Gets or sets the minimal RSS (Chi²) improvement [0, 1).
     /// If after 8 iterations the Chi² improvement is smaller than this value, the evaluation is stopped.
     /// </summary>
-    public double MinimalRSSImprovement { get; set; } = 1E-14;
+    public double MinimalRSSImprovement { get; set; } = LevenbergMarquardtMinimizerNonAllocating.DefaultMinimalRSSImprovement;
 
     /// <summary>
     /// The maximum number of iterations.
@@ -114,7 +113,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
       IReadOnlyList<double> initialGuess,
       CancellationToken cancellationToken)
     {
-      return Fit(xValues, yValues, initialGuess, new bool[initialGuess.Count], cancellationToken);
+      return Fit(xValues, yValues, initialGuess, null, cancellationToken);
     }
 
     /// <summary>
@@ -130,7 +129,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
       IReadOnlyList<double> xValues,
       IReadOnlyList<double> yValues,
       IReadOnlyList<double> initialGuess,
-      IReadOnlyList<bool> isFixed,
+      IReadOnlyList<bool>? isFixed,
       CancellationToken cancellationToken)
     {
       return Fit(xValues, yValues, initialGuess, null, null, null, isFixed, cancellationToken);
@@ -155,7 +154,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
       IReadOnlyList<double?>? lowerBounds,
       IReadOnlyList<double?>? upperBounds,
       IReadOnlyList<double>? scales,
-      IReadOnlyList<bool> isFixed,
+      IReadOnlyList<bool>? isFixed,
       CancellationToken cancellationToken)
     {
       if (xValues.Count != yValues.Count)
@@ -171,13 +170,15 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
       model.SetObserved(xValues, yValues, null);
 
-      var fit = new LevenbergMarquardtMinimizerNonAllocating(
-        initialMu: InitialMu,
-        gradientTolerance: GradientTolerance,
-        stepTolerance: StepTolerance,
-        functionTolerance: FunctionTolerance,
-        minimalRSSImprovement: MinimalRSSImprovement,
-        maximumIterations: MaximumNumberOfIterations.HasValue ? MaximumNumberOfIterations.Value : -1);
+      var fit = new LevenbergMarquardtMinimizerNonAllocating()
+      {
+        InitialMu = InitialMu,
+        GradientTolerance = GradientTolerance,
+        StepTolerance = StepTolerance,
+        FunctionTolerance = FunctionTolerance,
+        MinimalRSSImprovement = MinimalRSSImprovement,
+        MaximumIterations = MaximumNumberOfIterations,
+      };
 
       return fit.FindMinimum(model, initialGuess, lowerBounds, upperBounds, scales, isFixed, cancellationToken);
     }

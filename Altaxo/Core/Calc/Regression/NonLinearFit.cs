@@ -304,7 +304,7 @@ namespace Altaxo.Calc.Regression
         return;
 
       factor = 100;
-      maxfev = (n + 1) * 200;
+      maxfev = (n + 1) * 200; // maximum function evaluations = maximal number of iterations
       ftol = tol;
       xtol = tol;
       gtol = 0;
@@ -527,14 +527,14 @@ namespace Altaxo.Calc.Regression
       // check the input parameters for errors
       if (n <= 0 || m < n || ldfjac < m || ftol < 0.0 || xtol < 0.0 ||
           gtol < 0.0 || maxfev <= 0 || factor <= 0.0)
-        goto L300;
+        goto L300; // L300: error in the input parameters
 
       if (mode != 2)
-        goto L20;
+        goto L20; // Scale parameters internally, thus skip the check of the diag array
 
-      for (j = 0; j < n; j++) // LELLID!!
+      for (j = 0; j < n; j++) // diag contains the parameter scales. Ensure that all scales are positive.
         if (diag[j] <= 0.0)
-          goto L300;
+          goto L300; // error in the input parameters
 
 L20:
 
@@ -627,13 +627,13 @@ L80:
           for (i = j; i < m; ++i) // LELLID!!
             wa4[i] += fjac[i + j * fjac_dim1] * temp;
         }
-        fjac[j + j * fjac_dim1] = wa1[j];
+        fjac[j + j * fjac_dim1] = wa1[j]; // wa1 is the diagonal of R from the QR factorization
         qtf[j] = wa4[j];
       }
 
       // compute the norm of the scaled gradient
       gnorm = 0.0;
-      if (fnorm != 0.0)
+      if (fnorm != 0.0) // (fnorm is sum_chi²)
         for (j = 0; j < n; ++j)
         { // LELLID!!
           l = ipvt[j];
@@ -664,7 +664,7 @@ L200:
 
       cancellationToken.ThrowIfCancellationRequested();
 
-// determine the levenberg-marquardt parameter
+      // determine the levenberg-marquardt parameter
       lmpar(n, fjac, ldfjac, ipvt, diag, qtf, delta,
           ref par, wa1, wa2, wa3, wa4);
 
@@ -673,8 +673,8 @@ L200:
       for (j = 0; j < n; ++j)
       { // LELLID!!
         wa1[j] = -wa1[j];
-        wa2[j] = x[j] + wa1[j];
-        wa3[j] = diag[j] * wa1[j];
+        wa2[j] = x[j] + wa1[j]; // wa2 contains the new parameter set x+p
+        wa3[j] = diag[j] * wa1[j]; // wa3 contains the scaled step p
       }
       pnorm = enorm(n, wa3);
 
@@ -805,7 +805,7 @@ L290:
       // end of the outer loop
       goto L30;
 
-L300:
+L300: // L300: error in the input parameters
 
 // termination, either normal or user imposed
       if (iflag < 0)
