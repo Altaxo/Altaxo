@@ -137,7 +137,7 @@ namespace Altaxo.Science.Spectroscopy
         inputData.EnsureExistenceOfIdentifier(ColumnX, 1);
         inputData.SetDataColumn(ColumnX, srcXCol);
       }
-      else if(srcXCols.Count == 1)
+      else if (srcXCols.Count == 1)
       {
         srcXCol = srcXCols[0];
       }
@@ -255,7 +255,7 @@ namespace Altaxo.Science.Spectroscopy
       DataColumn xPreprocessedCol,
       DataColumn yPreprocessedCol,
       IReadOnlyList<(IReadOnlyList<PeakFitting.PeakDescription> PeakDescriptions, int StartOfRegion, int EndOfRegion)> fittingResult)>
-      ExecutePeakFindingAndFitting( DataTableMultipleColumnProxy inputData,
+      ExecutePeakFindingAndFitting(DataTableMultipleColumnProxy inputData,
                                     PeakSearchingAndFittingOptions doc,
                                     DataTable peakTable,
                                     DataTable? preprocessedSpectraTable,
@@ -287,7 +287,7 @@ namespace Altaxo.Science.Spectroscopy
         {
           break;
         }
-        if(progressReporter is { }  pr)
+        if (progressReporter is { } pr)
         {
           pr.Report($"Peak search+fit column {inputData.DataTable.DataColumns.GetColumnName(entry.yOrgCol)}");
         }
@@ -369,7 +369,7 @@ namespace Altaxo.Science.Spectroscopy
                   cFirstPoint[idxRow] = r.FirstFitPoint;
                   cLastPoint[idxRow] = r.LastFitPoint;
                   int numberOfFitPoints = 1 + Math.Abs(r.LastFitPoint - r.FirstFitPoint);
-                  cNumberOfPoints[idxRow] = Math.Abs(r.LastFitPoint - r.FirstFitPoint);
+                  cNumberOfPoints[idxRow] = numberOfFitPoints;
                   cFirstXValue[idxRow] = r.FirstFitPosition;
                   cLastXValue[idxRow] = r.LastFitPosition;
 
@@ -414,7 +414,7 @@ namespace Altaxo.Science.Spectroscopy
       var srcTable = ctrl.DataTable;
       var preprocessingTable = new DataTable();
       var peakTable = new DataTable();
-     
+
 
       List<(
       DataColumn xOrgCol,
@@ -431,18 +431,18 @@ namespace Altaxo.Science.Spectroscopy
         {
           result = ExecutePeakFindingAndFitting(dataProxy, doc, peakTable, preprocessingTable, progressMonitor, progressMonitor.CancellationToken, progressMonitor.CancellationTokenHard);
         }
-        catch(OperationCanceledException)
+        catch (OperationCanceledException)
         {
         }
       }
       );
       Current.Gui.ShowTaskCancelDialog(10000, fitTask, progressMonitor);
 
-      if(result is null)
+      if (result is null)
       {
         return;
       }
-      
+
 
       {
         var dstName = srcTable.Name + "_Preprocessed";
@@ -542,7 +542,7 @@ namespace Altaxo.Science.Spectroscopy
       if (ctrl.SelectedDataColumns.Count == 0)
       {
         Current.Gui.ErrorMessageBox("Please select one or more data columns from one group!");
-        proxy= null;
+        proxy = null;
         return false;
       }
 
@@ -554,7 +554,7 @@ namespace Altaxo.Science.Spectroscopy
       if (xColumn is null)
       {
         Current.Gui.ErrorMessageBox($"Please designate one column of group {groupNumber} to be the x-column!");
-        proxy= null;
+        proxy = null;
         return false;
       }
 
@@ -708,9 +708,9 @@ namespace Altaxo.Science.Spectroscopy
 
 
       var backgroundMonitor = new ExternalDrivenBackgroundMonitor();
-      var task = System.Threading.Tasks.Task.Run(()=>dataSource.FillData(dstTable, backgroundMonitor.CancellationTokenHard));
+      var task = System.Threading.Tasks.Task.Run(() => dataSource.FillData(dstTable, backgroundMonitor.CancellationTokenHard));
       Current.Gui.ShowTaskCancelDialog(5000, task, backgroundMonitor);
-      if(task.IsFaulted || task.IsCanceled)
+      if (task.IsFaulted || task.IsCanceled)
       {
         Current.Gui.ErrorMessageBox("The Silicon calibration task has not completed successfully, thus the calibration table may be corrupted!");
       }

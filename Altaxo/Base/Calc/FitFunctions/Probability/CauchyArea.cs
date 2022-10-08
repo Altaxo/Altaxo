@@ -43,6 +43,11 @@ namespace Altaxo.Calc.FitFunctions.Probability
   public class CauchyArea
         : IFitFunctionWithDerivative, IImmutable
   {
+    const string ParameterBaseName0 = "A";
+    const string ParameterBaseName1 = "xc";
+    const string ParameterBaseName2 = "w";
+    const int NumberOfParametersPerPeak = 3;
+
     /// <summary>The number of peak terms.</summary>
     private readonly int _numberOfTerms;
 
@@ -157,6 +162,21 @@ namespace Altaxo.Calc.FitFunctions.Probability
       }
     }
 
+    /// <inheritdoc/>
+    public (IReadOnlyList<double?>? LowerBounds, IReadOnlyList<double?>? upperBounds) GetParameterBoundariesForPositivePeaks()
+    {
+      var lowerBounds = new double?[NumberOfParameters];
+      var upperBounds = new double?[NumberOfParameters];
+
+      for (int i = 0, j = 0; i < NumberOfTerms; ++i, j += NumberOfParametersPerPeak)
+      {
+        lowerBounds[j] = 0; // minimal amplitude is 0
+        lowerBounds[j + 2] = double.Epsilon; // minimal width is 0
+      }
+
+      return (lowerBounds, upperBounds);
+    }
+
     #region IFitFunction Members
 
     public int NumberOfIndependentVariables
@@ -195,15 +215,15 @@ namespace Altaxo.Calc.FitFunctions.Probability
 
     public string ParameterName(int i)
     {
-      int k = i - 3 * _numberOfTerms;
+      int k = i - NumberOfParametersPerPeak * _numberOfTerms;
       if (k < 0)
       {
-        int j = i / 3;
-        return (i % 3) switch
+        int j = i / NumberOfParametersPerPeak;
+        return (i % NumberOfParametersPerPeak) switch
         {
-          0 => FormattableString.Invariant($"A{j}"),
-          1 => FormattableString.Invariant($"xc{j}"),
-          2 => FormattableString.Invariant($"w{j}"),
+          0 => FormattableString.Invariant($"{ParameterBaseName0}{j}"),
+          1 => FormattableString.Invariant($"{ParameterBaseName1}{j}"),
+          2 => FormattableString.Invariant($"{ParameterBaseName2}{j}"),
           _ => throw new InvalidProgramException()
         };
       }

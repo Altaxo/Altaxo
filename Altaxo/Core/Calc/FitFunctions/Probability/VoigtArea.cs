@@ -319,6 +319,24 @@ namespace Altaxo.Calc.FitFunctions.Probability
       return new VoigtArea(numberOfTerms, this.OrderOfBackgroundPolynomial);
     }
 
+    /// <summary>
+    /// Gets the parameter boundaries in order to have positive peaks only.
+    /// </summary>
+    /// <returns></returns>
+    public (IReadOnlyList<double?>? LowerBounds, IReadOnlyList<double?>? upperBounds) GetParameterBoundariesForPositivePeaks()
+    {
+      var lowerBounds = new double?[NumberOfParameters];
+
+      for (int i = 0, j = 0; i < NumberOfTerms; ++i, j += 4)
+      {
+        lowerBounds[j] = 0; // minimal area is 0
+        lowerBounds[j + 2] = 0; // minimal Gaussian width is 0
+        lowerBounds[j + 3] = 0; // minimal Lorentzian width
+      }
+
+      return (lowerBounds, null);
+    }
+
     /// <inheritdoc/>
     public string[] ParameterNamesForOnePeak => new string[] { ParameterBaseName0, ParameterBaseName1, ParameterBaseName2, ParameterBaseName3 };
 

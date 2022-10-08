@@ -155,6 +155,21 @@ namespace Altaxo.Calc.FitFunctions.Probability
       }
     }
 
+    /// <inheritdoc/>
+    public (IReadOnlyList<double?>? LowerBounds, IReadOnlyList<double?>? upperBounds) GetParameterBoundariesForPositivePeaks()
+    {
+      var lowerBounds = new double?[NumberOfParameters];
+      var upperBounds = new double?[NumberOfParameters];
+
+      for (int i = 0, j = 0; i < NumberOfTerms; ++i, j += NumberOfParametersPerPeak)
+      {
+        lowerBounds[j] = 0; // minimal amplitude is 0
+        lowerBounds[j + 2] = double.Epsilon; // minimal width is 0
+      }
+
+      return (lowerBounds, upperBounds);
+    }
+
     #region IFitFunction Members
 
     public int NumberOfIndependentVariables

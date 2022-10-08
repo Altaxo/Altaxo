@@ -360,6 +360,23 @@ namespace Altaxo.Calc.FitFunctions.Peaks
     }
 
     /// <inheritdoc/>
+    public (IReadOnlyList<double?>? LowerBounds, IReadOnlyList<double?>? upperBounds) GetParameterBoundariesForPositivePeaks()
+    {
+      var lowerBounds = new double?[NumberOfParameters];
+      var upperBounds = new double?[NumberOfParameters];
+
+      for (int i = 0, j = 0; i < NumberOfTerms; ++i, j += NumberOfParametersPerPeak)
+      {
+        lowerBounds[j] = 0; // minimal amplitude is 0
+        lowerBounds[j + 2] = double.Epsilon; // minimal width is 0
+        lowerBounds[j + 3] = 0;
+        upperBounds[j + 3] = 1;
+      }
+
+      return (lowerBounds, upperBounds);
+    }
+
+    /// <inheritdoc/>
     public string[] ParameterNamesForOnePeak => new string[] { ParameterBaseName0, ParameterBaseName1, ParameterBaseName2, ParameterBaseName3 };
 
     /// <inheritdoc/>

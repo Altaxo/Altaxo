@@ -121,13 +121,13 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
       var xyValues = new HashSet<(double X, double Y)>();
       var paramList = new List<double>();
       var dictionaryOfNotFittedPeaks = new Dictionary<PeakSearching.PeakDescription, PeakFitting.PeakDescription>();
-      var peakParam = new List<(int FirstPoint, int LastPoint)>();
+      var peakParam = new List<(int FirstPoint, int LastPoint, PeakSearching.PeakDescription Description)>();
 
 
       foreach (var description in peakDescriptions)
       {
-        int first = (int)Math.Max(0, description.PositionIndex - FitWidthScalingFactor * description.Width / 2);
-        int last = (int)Math.Min(xArray.Length - 1, description.PositionIndex + FitWidthScalingFactor * description.Width / 2);
+        int first = (int)Math.Max(0, Math.Floor(description.PositionIndex - FitWidthScalingFactor * description.Width / 2));
+        int last = (int)Math.Min(xArray.Length - 1, Math.Ceiling(description.PositionIndex + FitWidthScalingFactor * description.Width / 2));
         int len = last - first + 1;
         if (len < numberOfParametersPerPeak)
         {
@@ -148,7 +148,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
           throw new InvalidProgramException();
         foreach (var p in paras)
           paramList.Add(p);
-        peakParam.Add((first, last));
+        peakParam.Add((first, last, description));
 
       }
 
@@ -164,8 +164,10 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
 
       var param = paramList.ToArray();
       fitFunc = FitFunction.WithNumberOfTerms(param.Length / numberOfParametersPerPeak);
+      var (lowerBounds, upperBounds) = fitFunc.GetParameterBoundariesForPositivePeaks();
+
       var fit = new QuickNonlinearRegression(fitFunc);
-      var fitResult = fit.Fit(xCut, yCut, param, cancellationToken);
+      var fitResult = fit.Fit(xCut, yCut, param, lowerBounds, upperBounds, null, null, cancellationToken);
       param = fitResult.MinimizingPoint.ToArray();
       var fitFunctionWrapper = new PeakFitFunctions.FunctionWrapper(fitFunc, param);
 
@@ -180,13 +182,11 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
       var standardErrorsSeparate = new double[param.Length]; // Array to accomodate the parameter variances evaluated for each peak separately
       var covariancesSeparate = new Matrix<double>[param.Length]; // Array of matrices that holds the covariances of each peak separately
       var sumChiSquareSeparate = new double[param.Length];
-      foreach (var description in peakDescriptions)
+      foreach (var (first, last, description) in peakParam)
       {
         if (dictionaryOfNotFittedPeaks.ContainsKey(description))
           continue;
 
-        int first = (int)Math.Max(0, Math.Floor(description.PositionIndex - FitWidthScalingFactor * description.Width / 2));
-        int last = (int)Math.Min(xArray.Length - 1, Math.Ceiling(description.PositionIndex + FitWidthScalingFactor * description.Width / 2));
         int len = last - first + 1;
         xCut = new double[len];
         yCut = new double[len];
@@ -198,7 +198,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
         // unfix our set of parameters
         for (int i = 0; i < numberOfParametersPerPeak; i++)
           isFixed[idx + i] = false;
-        fitResult = fit.Fit(xCut, yCut, param, isFixed, cancellationToken);
+        fitResult = fit.Fit(xCut, yCut, param, lowerBounds, upperBounds, null, isFixed, cancellationToken);
         // fix again our set of parameters
         for (int i = 0; i < numberOfParametersPerPeak; i++)
           isFixed[idx + i] = true;
@@ -212,14 +212,12 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
         var covMatrix = CreateMatrix.Dense<double>(numberOfParametersPerPeak, numberOfParametersPerPeak);
         for (int i = 0; i < numberOfParametersPerPeak; i++)
           for (int j = 0; j < numberOfParametersPerPeak; ++j)
-            covMatrix[i, j] = fitResult.Covariance[i, j];
+            covMatrix[i, j] = fitResult.Covariance[idx + i, idx + j];
         covariancesSeparate[idx / numberOfParametersPerPeak] = covMatrix;
         sumChiSquareSeparate[idx / numberOfParametersPerPeak] = fitResult.ModelInfoAtMinimum.Value;
 
         idx += numberOfParametersPerPeak;
       }
-
-
 
       var list = new List<PeakFitting.PeakDescription>();
 

@@ -22,11 +22,7 @@
 
 #endregion Copyright
 
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Calc.Regression.Nonlinear;
 
@@ -74,5 +70,12 @@ namespace Altaxo.Calc.FitFunctions.Peaks
     /// <returns>The position, the area under the peak, the height, and the Full Width Half Maximum (FWHM), together with their standard devivations.</returns>
     public (double Position, double PositionStdDev, double Area, double AreaStdDev, double Height, double HeightStdDev, double FWHM, double FWHMStdDev)
         GetPositionAreaHeightFWHMFromSinglePeakParameters(double[] parameters, IROMatrix<double>? cv);
+
+    /// <summary>
+    /// Gets the parameter boundaries in order to have positive peaks only.
+    /// </summary>
+    /// <returns>The lower and the upper bounds. Both arrays (if not null) have the same length as the number of parameters.
+    /// Only those elements are not null, which really bound a parameter.</returns>
+    public (IReadOnlyList<double?>? LowerBounds, IReadOnlyList<double?>? upperBounds) GetParameterBoundariesForPositivePeaks();
   }
 }

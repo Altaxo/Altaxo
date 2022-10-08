@@ -121,6 +121,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
     {
       var fitFunc = FitFunction.WithNumberOfTerms(1);
       int numberOfParametersPerPeak = fitFunc.NumberOfParameters;
+      var (lowerBounds, upperBounds) = fitFunc.GetParameterBoundariesForPositivePeaks();
 
       var list = new List<PeakFitting.PeakDescription>();
 
@@ -176,7 +177,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
         var param = fitFunc.GetInitialParametersFromHeightPositionAndWidthAtRelativeHeight(initialHeight, xPosition, xWidth, initialRelativeHeight);
 
         var fit = new QuickNonlinearRegression(fitFunc);
-        var fitResult = fit.Fit(xCut, yCut, param, cancellationToken);
+        var fitResult = fit.Fit(xCut, yCut, param, lowerBounds, upperBounds, null, null, cancellationToken);
 
         list.Add(new PeakDescription
         {
