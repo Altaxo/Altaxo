@@ -23,16 +23,13 @@
 #endregion Copyright
 
 #nullable disable warnings
-using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
-using System.Collections.Immutable;
-using Altaxo;
 using Altaxo.Data;
 using Altaxo.Gui.Common;
 using Altaxo.Main;
-using Markdig.Extensions.Tables;
 
 namespace Altaxo.Gui.Pads.ProjectBrowser
 {
@@ -278,12 +275,12 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
         new DataSourceImportOptions()
         );
 
-      if(Current.Gui.ShowDialog(ref dataSource, "Extract common columns", false))
+      if (Current.Gui.ShowDialog(ref dataSource, "Extract common columns", false))
       {
         var commonFolderName = Altaxo.Main.ProjectFolder.GetCommonFolderOfNames(dataTables.Select(table => table.Name));
         DataTable destinationTable = new DataTable();
         var tableName = commonFolderName + "WExtractedData";
-        if(Current.Project.DataTableCollection.Contains(tableName))
+        if (Current.Project.DataTableCollection.Contains(tableName))
           tableName = Current.Project.DataTableCollection.FindNewItemName(tableName);
         destinationTable.Name = tableName;
         Current.Project.DataTableCollection.Add(destinationTable);
@@ -323,14 +320,48 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
           dict[table].Add(dt1);
       }
 
-      // now sort them according to their dependencies
-      foreach (var t in dataTables)
+      DataTable[]? AddIndirectDependencies(DataTable masterTable)
       {
-        dict.Add(t, new HashSet<DataTable>());
-        t.DataSource.VisitDocumentReferences((p, o, n) => MyReport(p, o, n, t));
+        var dependentChain = new List<DataTable>();
+        var indirectDependencies = new HashSet<DataTable>();
+
+        foreach (var subTable in dict[masterTable])
+        {
+          dependentChain.Add(subTable);
+          var circular = AddIndirectDependencies3(masterTable, dependentChain, indirectDependencies);
+          dependentChain.RemoveAt(dependentChain.Count - 1);
+          if (circular is not null)
+          {
+            return circular;
+          }
+        }
+        dict[masterTable] = indirectDependencies;
+        return null;
       }
 
-      dataTables.Sort((t1, t2) =>
+      DataTable[]? AddIndirectDependencies3(DataTable masterTable, List<DataTable> dependentChain, HashSet<DataTable> indirectDependencies)
+      {
+        var dependentTable = dependentChain[^1];
+        if (object.ReferenceEquals(masterTable, dependentChain[^1]))
+          return dependentChain.ToArray(); // circular reference
+
+        indirectDependencies.Add(dependentTable);
+        if (dict.TryGetValue(dependentTable, out var subDependencies))
+        {
+          foreach (var subDependend in subDependencies)
+          {
+            dependentChain.Add(subDependend);
+            var circular = AddIndirectDependencies3(masterTable, dependentChain, indirectDependencies);
+            dependentChain.RemoveAt(dependentChain.Count - 1);
+            if (circular is not null)
+              return circular;
+          }
+        }
+        return null;
+      }
+
+
+      int TableSorting(DataTable t1, DataTable t2)
       {
         if (dict[t1].Contains(t2) && dict[t2].Contains(t1))
         {
@@ -346,9 +377,64 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
         }
         else
         {
-          return 0; // not dependent on each other, thus neutral
+          return Comparer<int>.Default.Compare(dict[t1].Count, dict[t2].Count); // not dependent on each other, thus neutral
         }
-      });
+      }
+
+      // now sort them according to their dependencies
+      foreach (var t in dataTables)
+      {
+        dict.Add(t, new HashSet<DataTable>());
+        t.DataSource.VisitDocumentReferences((p, o, n) => MyReport(p, o, n, t));
+      }
+
+      // The dictionary of every table now contains the direct dependencies
+      // but now add the indirect dependencies
+      foreach (var masterT in dataTables)
+      {
+        var circular = AddIndirectDependencies(masterT);
+        if (circular is not null)
+        {
+          var dependencyChain = new StringBuilder();
+          dependencyChain.Append(masterT.Name);
+          for (int i = 0; i < circular.Length; ++i)
+          {
+            dependencyChain.Append(" <-- ");
+            dependencyChain.Append(circular[i]);
+          }
+
+          Current.Gui.ErrorMessageBox("Some of the data sources of the tables are circular dependent on each other.\r\n" +
+                          $"The dependency chain is: {dependencyChain}\r\n" +
+                          "Thus, the command can not be executed");
+
+          return;
+        }
+      }
+
+      // Sort the table
+      dataTables.Sort((t1, t2) => TableSorting(t1, t2));
+
+      // if the sorting above is not working properly, then uncomment this
+
+      /*
+      // Sorting safe, but maybe slower
+      for (int i = 0; i < dataTables.Count; i++)
+      {
+        var t = dataTables[0];
+        var dict_t = dict[t];
+
+        for (int j = dataTables.Count; j > 1; --j)
+        {
+          if (dict_t.Contains(dataTables[j - 1]))
+          {
+            dataTables.Insert(j, t); // put this table after the last table it is dependent on
+            dataTables.RemoveAt(0); // remove this table from the first element
+            break;
+          }
+        }
+      }
+      */
+
 
       // Test for circular dependencies
       // if there is one, the sorting would not be perfect
@@ -358,26 +444,39 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
       var testSetOfTables = new HashSet<DataTable>(dataTables);
 
       // the first table should not depend on any of the tables in the test set
-      foreach(var t in dataTables)
+      foreach (var t in dataTables)
       {
         testSetOfTables.Remove(t); // we remove our own table from the test set, of course
-        if (dict[t].Intersect(testSetOfTables).FirstOrDefault() is { }  dependentTable)
+        if (dict[t].Intersect(testSetOfTables).FirstOrDefault() is { } dependentTable)
         {
-          Current.Gui.ErrorMessageBox("Some of the data sources of the tables are circular dependent on each other.\r\n"+
+          Current.Gui.ErrorMessageBox("Some of the data sources of the tables are circular dependent on each other.\r\n" +
                                       $"For instance, table {t.Name} is dependent on {dependentTable.Name} and vice versa\r\n" +
                                       "Thus the command can not be executed");
           return;
         }
       }
 
-      // now we can execute the data sources
-      foreach(var t in dataTables)
+
+      var reporter = new Altaxo.Main.Services.ExternalDrivenBackgroundMonitor();
+      var thread = new System.Threading.Thread(() =>
       {
-        t.DataSource.FillData(t);
-      }
+        // now we can execute the data sources
+        double idx = -1;
+        foreach (var t in dataTables)
+        {
+          idx += 1;
+          if (reporter.CancellationPending)
+            break;
+          reporter.ReportProgress($"Execute data source of table {t.Name}", idx / dataTables.Count);
+
+          t.DataSource.FillData(t);
+        }
+      });
+      thread.Start();
+      Current.Gui.ShowBackgroundCancelDialog(1000, thread, reporter);
     }
 
-    
+
 
     #region Clipboard commands
 
