@@ -39,9 +39,9 @@ namespace Altaxo.Calc.Optimization
 {
   public abstract class NonlinearMinimizerBaseNonAllocating
   {
-    public const double DefaultFunctionTolerance = 1E-15;
-    public const double DefaultStepTolerance = 1E-7;
-    public const double DefaultGradientTolerance = 1E-15;
+    public const double DefaultFunctionTolerance = 1E-16;
+    public const double DefaultStepTolerance = 1E-16;
+    public const double DefaultGradientTolerance = 1E-16;
     public const double DefaultMinimalRSSImprovement = 1E-6;
 
 

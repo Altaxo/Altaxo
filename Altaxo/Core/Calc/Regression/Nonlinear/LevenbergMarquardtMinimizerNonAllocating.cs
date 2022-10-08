@@ -290,7 +290,8 @@ namespace Altaxo.Calc.Optimization
         // gradient has equal elements (absolute value).
         // here, we scale the parameters so that the gradient contains either 1 or -1 elements
         // alternatively, we could use the diagonal of the Hessian to calculate the parameter scale, but this results in slightly more iterations
-        Scales = NegativeGradient.Map(x => x != 0 ? 1 / Math.Abs(x) : 1, Zeros.Include);
+        //Scales = NegativeGradient.Map(x => x != 0 ? 1 / Math.Abs(x) : 1, Zeros.Include);
+        Scales = Hessian.Diagonal().Map(x => x != 0 ? 1 / Math.Sqrt(Math.Abs(x)) : 1, Zeros.Include);
 
         // after the parameter scale was evaluated, we have to repeat the Jacobian and Hessian evaluation, this time with the parameter scale in operation
         (NegativeGradient, Hessian) = EvaluateJacobian(objective, parameterValues); // repeat Jacobian evaluation, now with scale
