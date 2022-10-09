@@ -167,18 +167,19 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
       var (lowerBounds, upperBounds) = fitFunc.GetParameterBoundariesForPositivePeaks();
 
       var fit = new QuickNonlinearRegression(fitFunc);
-      var fitResult = fit.Fit(xCut, yCut, param, lowerBounds, upperBounds, null, null, cancellationToken);
-      param = fitResult.MinimizingPoint.ToArray();
+      var globalFitResult = fit.Fit(xCut, yCut, param, lowerBounds, upperBounds, null, null, cancellationToken);
+      param = globalFitResult.MinimizingPoint.ToArray();
       var fitFunctionWrapper = new PeakFitFunctions.FunctionWrapper(fitFunc, param);
 
       // in order to get the variances for each single peak separately:
-      // 1.  fit again, but
-      // 1.1 for each peak, only vary the parameters of that peak; fix all other parameters
-      // 1.2 do not use all x-values, but only the x-values around that peak
+      // 1.0 cut x and y to the area around that peak
+      // 1.1 make the parameters fixed, which were fixed in the global fit (because they had reached a boundary).
+      // 1.2 call fit with maximumNumberOfIterations=0, this will not fit, but only evaluate the result
 
       idx = 0;
       var isFixed = Enumerable.Repeat(true, param.Length).ToArray();
       var parameterTemp = new double[param.Length];
+      var parametersSeparate = new double[param.Length]; // Array to accomodate the parameter variances evaluated for each peak separately
       var standardErrorsSeparate = new double[param.Length]; // Array to accomodate the parameter variances evaluated for each peak separately
       var covariancesSeparate = new Matrix<double>[param.Length]; // Array of matrices that holds the covariances of each peak separately
       var sumChiSquareSeparate = new double[param.Length];
@@ -197,8 +198,11 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
         Array.Copy(param, 0, parameterTemp, 0, param.Length);
         // unfix our set of parameters
         for (int i = 0; i < numberOfParametersPerPeak; i++)
-          isFixed[idx + i] = false;
-        fitResult = fit.Fit(xCut, yCut, param, lowerBounds, upperBounds, null, isFixed, cancellationToken);
+        {
+          isFixed[idx + i] = globalFitResult.IsFixedByUserOrBoundaries[idx + i];
+        }
+        fit.MaximumNumberOfIterations = 0; // set maximum number of iterations to 0. This causes only to evaluate the results. The parameters will be not changed.
+        var localFitResult = fit.Fit(xCut, yCut, param, lowerBounds, upperBounds, null, isFixed, cancellationToken);
         // fix again our set of parameters
         for (int i = 0; i < numberOfParametersPerPeak; i++)
           isFixed[idx + i] = true;
@@ -206,15 +210,18 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
         Array.Copy(parameterTemp, 0, param, 0, param.Length);
 
         for (int i = 0; i < numberOfParametersPerPeak; i++)
-          standardErrorsSeparate[idx + i] = fitResult.StandardErrors[idx + i];
+        {
+          parametersSeparate[idx + i] = localFitResult.MinimizingPoint[idx + i];
+          standardErrorsSeparate[idx + i] = localFitResult.StandardErrors[idx + i];
+        }
 
         // extract the covariance matrix
         var covMatrix = CreateMatrix.Dense<double>(numberOfParametersPerPeak, numberOfParametersPerPeak);
         for (int i = 0; i < numberOfParametersPerPeak; i++)
           for (int j = 0; j < numberOfParametersPerPeak; ++j)
-            covMatrix[i, j] = fitResult.Covariance[idx + i, idx + j];
+            covMatrix[i, j] = localFitResult.Covariance[idx + i, idx + j];
         covariancesSeparate[idx / numberOfParametersPerPeak] = covMatrix;
-        sumChiSquareSeparate[idx / numberOfParametersPerPeak] = fitResult.ModelInfoAtMinimum.Value;
+        sumChiSquareSeparate[idx / numberOfParametersPerPeak] = localFitResult.ModelInfoAtMinimum.Value;
 
         idx += numberOfParametersPerPeak;
       }
@@ -237,7 +244,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
             LastFitPoint = peakParam[idx].LastPoint,
             FirstFitPosition = xArray[peakParam[idx].FirstPoint],
             LastFitPosition = xArray[peakParam[idx].LastPoint],
-            PeakParameter = param.Skip(idx * numberOfParametersPerPeak).Take(numberOfParametersPerPeak).ToArray(),
+            PeakParameter = parametersSeparate.Skip(idx * numberOfParametersPerPeak).Take(numberOfParametersPerPeak).ToArray(),
             PeakParameterCovariances = covariancesSeparate[idx],
             FitFunction = fitFunc,
             FitFunctionParameter = (double[])param.Clone(),

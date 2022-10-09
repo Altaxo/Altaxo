@@ -33,9 +33,16 @@ namespace Altaxo.Calc.Optimization.ObjectiveFunctions
     protected Vector<double> L; // Weights = LL'
 
     /// <summary>
-    /// Get whether parameters are fixed or free.
+    /// Get whether parameters are fixed or free (by the user).
     /// </summary>
-    public IReadOnlyList<bool> IsFixed { get; protected set; }
+    public IReadOnlyList<bool> IsFixedByUser { get; protected set; }
+
+    /// <summary>
+    /// Array of the length <see cref="NumberOfParameters"/>. If an element is true, that parameter is either fixed by the user (see <see cref="IsFixed"/>), or
+    /// is fixed because it has reached a boundary.
+    /// This array will be updated only at the end of the minimization process.
+    /// </summary>
+    public IReadOnlyList<bool> IsFixedByUserOrBoundary { get; set; }
 
     /// <summary>
     /// Get the number of observations.
@@ -60,9 +67,9 @@ namespace Altaxo.Calc.Optimization.ObjectiveFunctions
       get
       {
         var df = NumberOfObservations - NumberOfParameters;
-        if (IsFixed is not null)
+        if (IsFixedByUserOrBoundary is not null)
         {
-          df += IsFixed.Count(p => p);
+          df += IsFixedByUserOrBoundary.Count(p => p);
         }
         return df;
       }
@@ -127,7 +134,7 @@ namespace Altaxo.Calc.Optimization.ObjectiveFunctions
           EvaluateFunction();
           _hasFunctionValue = true;
         }
-        return _functionValue / (ModelValues.Count - Point.Count + 1);
+        return _functionValue / (DegreeOfFreedom + 1);
       }
     }
 
@@ -214,7 +221,8 @@ namespace Altaxo.Calc.Optimization.ObjectiveFunctions
       {
         throw new ArgumentException("All the parameters can't be fixed.");
       }
-      IsFixed = isFixed;
+      IsFixedByUser = isFixed;
+      IsFixedByUserOrBoundary = isFixed;
 
       // allocate already some
       _negativeGradientValue ??= Vector<double>.Build.Dense(initialGuess.Count);

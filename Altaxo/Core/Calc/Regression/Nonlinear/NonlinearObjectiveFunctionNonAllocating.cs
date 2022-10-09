@@ -122,11 +122,11 @@ namespace Altaxo.Calc.Optimization.ObjectiveFunctions
       }
 
       // weighted jacobian
-      if (IsFixed is not null)
+      if (IsFixedByUserOrBoundary is not null)
       {
         for (int j = 0; j < NumberOfParameters; j++)
         {
-          if (IsFixed[j])
+          if (IsFixedByUserOrBoundary[j])
           {
             _jacobianValue.ClearColumn(j);
           }

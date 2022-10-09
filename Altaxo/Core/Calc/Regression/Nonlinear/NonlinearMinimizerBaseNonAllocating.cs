@@ -90,8 +90,6 @@ namespace Altaxo.Calc.Optimization
 
     protected bool IsBounded => LowerBound is not null || UpperBound is not null || Scales is not null;
 
-
-
     protected void ValidateBounds(IReadOnlyList<double> parameters, IReadOnlyList<double?> lowerBound = null, IReadOnlyList<double?> upperBound = null, IReadOnlyList<double> scales = null)
     {
       if (parameters is null)

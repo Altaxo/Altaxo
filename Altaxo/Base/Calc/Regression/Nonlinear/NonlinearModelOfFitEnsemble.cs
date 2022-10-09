@@ -92,11 +92,11 @@ namespace Altaxo.Calc.Regression.Nonlinear
     /// Wraps the full jacobian matrix in a way, that a single fit element can write their derivatives into it.
     /// </summary>
     /// <seealso cref="Altaxo.Calc.LinearAlgebra.IMatrix&lt;System.Double&gt;" />
-    class JacobianMapper : IMatrix<double>
+    private class JacobianMapper : IMatrix<double>
     {
-      Matrix<double> _matrix;
-      int _rowOffset;
-      int[] _parameterMapping;
+      private Matrix<double> _matrix;
+      private int _rowOffset;
+      private int[] _parameterMapping;
 
       /// <summary>
       /// Initializes a new instance of the <see cref="JacobianMapper"/> class.
@@ -575,11 +575,11 @@ namespace Altaxo.Calc.Regression.Nonlinear
       }
 
       // weighted jacobian
-      if (IsFixed is not null)
+      if (IsFixedByUserOrBoundary is not null)
       {
         for (int j = 0; j < NumberOfParameters; j++)
         {
-          if (IsFixed[j])
+          if (IsFixedByUserOrBoundary[j])
           {
             _jacobianValue.ClearColumn(j);
           }

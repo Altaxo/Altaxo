@@ -59,5 +59,13 @@ namespace Altaxo.Calc.Optimization
     /// Get the negative gradient vector. -G = -J'(y - f(x; p))
     /// </summary>
     Vector<double> NegativeGradient { get; }
+
+    /// <summary>
+    /// Array of the same length as the parameter array. If an element in this vector is true,
+    /// that parameter is either fixed by the user,
+    /// or it is fixed because the corresponding parameter has reached a boundary.
+    /// This array will be updated only at the end of the minimization process.
+    /// </summary>
+    IReadOnlyList<bool> IsFixedByUserOrBoundary { get; set; }
   }
 }

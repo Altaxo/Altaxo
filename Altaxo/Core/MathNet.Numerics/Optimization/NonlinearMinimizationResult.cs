@@ -1,4 +1,7 @@
-﻿using Altaxo.Calc.LinearAlgebra;
+﻿using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Linq;
+using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Optimization
 {
@@ -35,16 +38,22 @@ namespace Altaxo.Calc.Optimization
 
     public ExitCondition ReasonForExit { get; }
 
-    public NonlinearMinimizationResult(IObjectiveModel modelInfo, int iterations, ExitCondition reasonForExit)
+    /// <summary>
+    /// Gets for each parameter, whether it is fixed either because it was fixed by the user, or because it is stuck at a boundary.
+    /// </summary>
+    public IReadOnlyList<bool> IsFixedByUserOrBoundaries { get; }
+
+    public NonlinearMinimizationResult(IObjectiveModel modelInfo, int iterations, ExitCondition reasonForExit, IReadOnlyList<bool> isFixed = null)
     {
       ModelInfoAtMinimum = modelInfo;
       Iterations = iterations;
       ReasonForExit = reasonForExit;
+      IsFixedByUserOrBoundaries = isFixed == null ? Enumerable.Repeat(false, modelInfo.Point.Count).ToImmutableArray() : isFixed.ToImmutableArray();
 
-      EvaluateCovariance(modelInfo);
+      EvaluateCovariance(modelInfo, isFixed);
     }
 
-    private void EvaluateCovariance(IObjectiveModel objective)
+    private void EvaluateCovariance(IObjectiveModel objective, IReadOnlyList<bool> isFixed)
     {
       objective.EvaluateAt(objective.Point); // Hessian may be not yet updated.
 
@@ -61,11 +70,25 @@ namespace Altaxo.Calc.Optimization
 
       if (Covariance != null)
       {
+        if (isFixed != null)
+        {
+          for (int i = 0; i < Covariance.RowCount; ++i)
+          {
+            if (isFixed[i])
+            {
+              Covariance.ClearRow(i);
+              Covariance.ClearColumn(i);
+            }
+          }
+        }
+
+
         StandardErrors = Covariance.Diagonal().PointwiseMaximum(0).PointwiseSqrt();
 
         var correlation = Covariance.Clone();
-        var d = correlation.Diagonal().PointwiseSqrt();
+        var d = correlation.Diagonal().PointwiseMaximum(0).PointwiseSqrt();
         var dd = d.OuterProduct(d);
+        dd.PointwiseMaximum(double.Epsilon, dd); // avoid division by 0, when the parameter is fixed so that dd element is zero
         Correlation = correlation.PointwiseDivide(dd);
       }
       else
