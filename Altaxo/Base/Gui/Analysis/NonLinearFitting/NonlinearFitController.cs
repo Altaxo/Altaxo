@@ -453,7 +453,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
         var backgroundMonitor = new ExternalDrivenBackgroundMonitor();
         var initialGuess = _doc.CurrentParameters.Where(e => e.Vary == true).Select(e => e.Parameter).ToList();
         NonlinearMinimizationResult minimizationResult = null;
-        var fitThread = new System.Threading.Thread(new System.Threading.ThreadStart(() => minimizationResult = fit.FindMinimum(fitAdapter, initialGuess, null, null, null, null, backgroundMonitor.CancellationTokenHard, (sender, chi2) => backgroundMonitor.ReportProgress($"Chi² = {chi2}"))));
+        var fitThread = new System.Threading.Thread(new System.Threading.ThreadStart(() => minimizationResult = fit.FindMinimum(fitAdapter, initialGuess, null, null, null, null, backgroundMonitor.CancellationTokenHard, (iterations, chi2) => backgroundMonitor.ReportProgress($"#Iteration {iterations}: Chi² = {chi2}"))));
         fitThread.Start();
         Current.Gui.ShowBackgroundCancelDialog(10000, fitThread, backgroundMonitor);
         if (!(fitThread.ThreadState.HasFlag(System.Threading.ThreadState.Aborted)))
@@ -555,7 +555,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
         var reportMonitor = new ReportCostMonitor();
         MinimizationResult minimizationResult = null;
-        var threadStart = new System.Threading.ThreadStart(() => minimizationResult = fit.FindMinimum(fitAdapter.ToObjectiveFunction(), initialGuess)); //(reportMonitor.GetCancellationToken(), reportMonitor.NewMinimumCostValueAvailable))
+        var threadStart = new System.Threading.ThreadStart(() => minimizationResult = fit.FindMinimum(fitAdapter.ToObjectiveFunction(), initialGuess, reportMonitor.GetCancellationToken(), (iterations, chi2) => reportMonitor.NewMinimumCostValueAvailable(chi2)));
         var fitThread = new System.Threading.Thread(threadStart);
         fitThread.Start();
         Current.Gui.ShowBackgroundCancelDialog(10000, fitThread, reportMonitor);

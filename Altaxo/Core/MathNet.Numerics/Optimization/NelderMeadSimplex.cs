@@ -30,6 +30,7 @@
 // Converted from code released with a MIT license available at https://code.google.com/p/nelder-mead-simplex/
 
 using System;
+using System.Threading;
 using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Calc.Optimization
@@ -64,7 +65,23 @@ namespace Altaxo.Calc.Optimization
     /// <returns>The minimum point</returns>
     public MinimizationResult FindMinimum(IObjectiveFunction objectiveFunction, Vector<double> initialGuess)
     {
-      return Minimum(objectiveFunction, initialGuess, ConvergenceTolerance, MaximumIterations);
+      return Minimum(objectiveFunction, initialGuess, default, default, ConvergenceTolerance, MaximumIterations);
+    }
+
+
+    /// <summary>
+    /// Finds the minimum of the objective function without an initial perturbation, the default values used
+    /// by fminsearch() in Matlab are used instead
+    /// http://se.mathworks.com/help/matlab/math/optimizing-nonlinear-functions.html#bsgpq6p-11
+    /// </summary>
+    /// <param name="objectiveFunction">The objective function, no gradient or hessian needed</param>
+    /// <param name="initialGuess">The initial guess</param>
+    /// <param name="cancellationToken">Token to cancel the evaluation</param>
+    /// <param name="reportChi2Progress">Event handler that can be used to report the NumberOfIterations and Chi² value achived so far. Can be null</param>
+    /// <returns>The minimum point</returns>
+    public MinimizationResult FindMinimum(IObjectiveFunction objectiveFunction, Vector<double> initialGuess, CancellationToken cancellationToken, Action<int, double>? reportChi2Progress)
+    {
+      return Minimum(objectiveFunction, initialGuess, cancellationToken, reportChi2Progress, ConvergenceTolerance, MaximumIterations);
     }
 
     /// <summary>
@@ -73,10 +90,12 @@ namespace Altaxo.Calc.Optimization
     /// <param name="objectiveFunction">The objective function, no gradient or hessian needed</param>
     /// <param name="initialGuess">The initial guess</param>
     /// <param name="initalPertubation">The initial perturbation</param>
+    /// <param name="cancellationToken">Token to cancel the evaluation</param>
+    /// <param name="reportChi2Progress">Event handler that can be used to report the NumberOfIterations and Chi² value achived so far. Can be null</param>
     /// <returns>The minimum point</returns>
-    public MinimizationResult FindMinimum(IObjectiveFunction objectiveFunction, Vector<double> initialGuess, Vector<double> initalPertubation)
+    public MinimizationResult FindMinimum(IObjectiveFunction objectiveFunction, Vector<double> initialGuess, Vector<double> initalPertubation, CancellationToken cancellationToken, Action<int, double>? reportChi2Progress)
     {
-      return Minimum(objectiveFunction, initialGuess, initalPertubation, ConvergenceTolerance, MaximumIterations);
+      return Minimum(objectiveFunction, initialGuess, initalPertubation, cancellationToken, reportChi2Progress, ConvergenceTolerance, MaximumIterations);
     }
 
     /// <summary>
@@ -89,12 +108,27 @@ namespace Altaxo.Calc.Optimization
     /// <returns>The minimum point</returns>
     public static MinimizationResult Minimum(IObjectiveFunction objectiveFunction, Vector<double> initialGuess, double convergenceTolerance = 1e-8, int maximumIterations = 1000)
     {
+      return Minimum(objectiveFunction, initialGuess, default, default, convergenceTolerance, maximumIterations);
+    }
+
+    /// <summary>
+    /// Finds the minimum of the objective function without an initial perturbation, the default values used
+    /// by fminsearch() in Matlab are used instead
+    /// http://se.mathworks.com/help/matlab/math/optimizing-nonlinear-functions.html#bsgpq6p-11
+    /// </summary>
+    /// <param name="objectiveFunction">The objective function, no gradient or hessian needed</param>
+    /// <param name="initialGuess">The initial guess</param>
+    /// <param name="cancellationToken">Token to cancel the evaluation</param>
+    /// <param name="reportChi2Progress">Event handler that can be used to report the NumberOfIterations and Chi² value achived so far. Can be null</param>
+    /// <returns>The minimum point</returns>
+    public static MinimizationResult Minimum(IObjectiveFunction objectiveFunction, Vector<double> initialGuess, CancellationToken cancellationToken, Action<int, double>? reportChi2Progress, double convergenceTolerance = 1e-8, int maximumIterations = 1000)
+    {
       var initalPertubation = new LinearAlgebra.Double.DenseVector(initialGuess.Count);
       for (int i = 0; i < initialGuess.Count; i++)
       {
         initalPertubation[i] = initialGuess[i] == 0.0 ? 0.00025 : initialGuess[i] * 0.05;
       }
-      return Minimum(objectiveFunction, initialGuess, initalPertubation, convergenceTolerance, maximumIterations);
+      return Minimum(objectiveFunction, initialGuess, initalPertubation, cancellationToken, reportChi2Progress, convergenceTolerance, maximumIterations);
     }
 
     /// <summary>
@@ -103,8 +137,10 @@ namespace Altaxo.Calc.Optimization
     /// <param name="objectiveFunction">The objective function, no gradient or hessian needed</param>
     /// <param name="initialGuess">The initial guess</param>
     /// <param name="initalPertubation">The initial perturbation</param>
+    /// <param name="cancellationToken">Token to cancel the evaluation</param>
+    /// <param name="reportChi2Progress">Event handler that can be used to report the NumberOfIterations and Chi² value achived so far. Can be null</param>
     /// <returns>The minimum point</returns>
-    public static MinimizationResult Minimum(IObjectiveFunction objectiveFunction, Vector<double> initialGuess, Vector<double> initalPertubation, double convergenceTolerance = 1e-8, int maximumIterations = 1000)
+    public static MinimizationResult Minimum(IObjectiveFunction objectiveFunction, Vector<double> initialGuess, Vector<double> initalPertubation, CancellationToken cancellationToken, Action<int, double>? reportChi2Progress, double convergenceTolerance = 1e-8, int maximumIterations = 1000)
     {
       // confirm that we are in a position to commence
       if (objectiveFunction == null)
@@ -181,6 +217,14 @@ namespace Altaxo.Calc.Optimization
         {
           throw new MaximumIterationsException(FormattableString.Invariant($"Maximum iterations ({maximumIterations}) reached."));
         }
+
+        if (cancellationToken.IsCancellationRequested)
+        {
+          exitCondition = ExitCondition.ManuallyStopped;
+          break;
+        }
+
+        reportChi2Progress?.Invoke(evaluationCount, errorValues[errorProfile.LowestIndex]);
       }
       objectiveFunction.EvaluateAt(vertices[errorProfile.LowestIndex]);
       var regressionResult = new MinimizationResult(objectiveFunction, evaluationCount, exitCondition);

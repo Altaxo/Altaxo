@@ -86,13 +86,13 @@ namespace Altaxo.Calc.Optimization
     /// <param name="objective">The objective function, including model, observations, and parameter bounds.</param>
     /// <param name="initialGuess">The initial guess values.</param>
     /// <param name="cancellationToken">Token to cancel the evaluation</param>
-    /// <param name="reportChi2Progress">Event handler that can be used to report the Chi² value achived so far. Can be null</param>
+    /// <param name="reportChi2Progress">Event handler that can be used to report the NumberOfIterations and Chi² value achived so far. Can be null</param>
     /// <returns>The result of the Levenberg-Marquardt minimization</returns>
     public NonlinearMinimizationResult FindMinimum(
      IObjectiveModelNonAllocating objective,
      IReadOnlyList<double> initialGuess,
      CancellationToken cancellationToken,
-     EventHandler<double>? reportChi2Progress
+     Action<int, double>? reportChi2Progress
      )
     {
       return FindMinimum(objective, initialGuess, null, null, null, null, cancellationToken, reportChi2Progress);
@@ -108,7 +108,7 @@ namespace Altaxo.Calc.Optimization
     /// <param name="scales">The scales of the parameters. The array must have the same length as the parameter array. Provide null if not needed.</param>
     /// <param name="isFixed">Array of booleans, which provide which parameters are fixed. Must have the same length as the parameter array. Provide null if not needed.</param>
     /// <param name="cancellationToken">Token to cancel the evaluation</param>
-    /// <param name="reportChi2Progress">Event handler that can be used to report the Chi² value achived so far. Can be null</param>
+    /// <param name="reportChi2Progress">Event handler that can be used to report the NumberOfIterations and Chi² value achived so far. Can be null</param>
     /// <returns>The result of the Levenberg-Marquardt minimization</returns>
     public NonlinearMinimizationResult FindMinimum(
       IObjectiveModelNonAllocating objective,
@@ -118,7 +118,7 @@ namespace Altaxo.Calc.Optimization
       IReadOnlyList<double>? scales,
       IReadOnlyList<bool>? isFixed,
       CancellationToken cancellationToken,
-      EventHandler<double>? reportChi2Progress
+      Action<int, double>? reportChi2Progress
       )
     {
       return Minimum(objective,
@@ -147,7 +147,7 @@ namespace Altaxo.Calc.Optimization
     /// <param name="scales">The scales of the parameters. The array must have the same length as the parameter array. Provide null if not needed.</param>
     /// <param name="isFixed">Array of booleans, which provide which parameters are fixed. Must have the same length as the parameter array. Provide null if not needed.</param>
     /// <param name="cancellationToken">Token to cancel the evaluation</param>
-    /// <param name="reportChi2Progress">Event handler that can be used to report the Chi² value achived so far. Can be null</param>
+    /// <param name="reportChi2Progress">Event handler that can be used to report the NumberOfIterations and Chi² value achived so far. Can be null</param>
     /// <returns>The result of the Levenberg-Marquardt minimization</returns>
     public NonlinearMinimizationResult FindMinimum(
       IObjectiveModelNonAllocating objective,
@@ -157,7 +157,7 @@ namespace Altaxo.Calc.Optimization
       double[]? scales,
       bool[]? isFixed,
       CancellationToken cancellationToken,
-      EventHandler<double>? reportChi2Progress
+      Action<int, double>? reportChi2Progress
       )
     {
       if (objective is null)
@@ -191,7 +191,7 @@ namespace Altaxo.Calc.Optimization
     /// <param name="scales">The scales of the parameters. The array must have the same length as the parameter array. Provide null if not needed.</param>
     /// <param name="isFixedByUser">Array of booleans, which provide which parameters are fixed. Must have the same length as the parameter array. Provide null if not needed.</param>
     /// <param name="cancellationToken">Token to cancel the evaluation</param>
-    /// <param name="reportChi2Progress">Event handler that can be used to report the Chi² value achived so far. Can be null</param>
+    /// <param name="reportChi2Progress">Event handler that can be used to report the NumberOfIterations and Chi² value achived so far. Can be null</param>
     /// <param name="initialMu">The initial damping parameter of mu.</param>
     /// <param name="gradientTolerance">The stopping threshold for infinity norm of the gradient vector.</param>
     /// <param name="stepTolerance">The stopping threshold for L2 norm of the change of parameters.</param>
@@ -207,7 +207,7 @@ namespace Altaxo.Calc.Optimization
         IReadOnlyList<double>? scales,
         IReadOnlyList<bool>? isFixedByUser,
         CancellationToken cancellationToken,
-        EventHandler<double>? reportChi2Progress,
+        Action<int, double>? reportChi2Progress,
         double initialMu,
         double gradientTolerance,
         double stepTolerance,
@@ -287,7 +287,7 @@ namespace Altaxo.Calc.Optimization
       // First, calculate function values and setup variables
       objective.EvaluateAt(parameterValues);
       var RSS = objective.Value;  // Residual Sum of Squares = R'R
-      reportChi2Progress?.Invoke(this, RSS);
+      reportChi2Progress?.Invoke(0, RSS);
 
       if (!maximumIterations.HasValue)
       {
@@ -441,7 +441,7 @@ namespace Altaxo.Calc.Optimization
             newParameterValues.CopyTo(parameterValues);
             RSS = RSSnew;
             rssValueHistory.Enqueue(RSS);
-            reportChi2Progress?.Invoke(this, RSS);
+            reportChi2Progress?.Invoke(iterations, RSS);
 
             // update the parameter scales, if automatic scales was used (but only every 'ParameterScaleUpdatePeriod' iterations)
             if (useAutomaticParameterScale && iterations >= (ParameterScaleUpdatePeriod + iterationOfLastAutomaticParameterScaleEvaluation))
