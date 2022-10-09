@@ -180,7 +180,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
         MaximumIterations = MaximumNumberOfIterations,
       };
 
-      return fit.FindMinimum(model, initialGuess, lowerBounds, upperBounds, scales, isFixed, cancellationToken);
+      return fit.FindMinimum(model, initialGuess, lowerBounds, upperBounds, scales, isFixed, cancellationToken, null);
     }
   }
 }

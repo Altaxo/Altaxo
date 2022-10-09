@@ -58,7 +58,7 @@ namespace Altaxo.Calc.Regression
       var model = new NonlinearObjectiveFunctionNonAllocating(ff.Evaluate, ff.EvaluateDerivative, 1);
       model.SetObserved(xx, yy, null);
       var fit = new LevenbergMarquardtMinimizerNonAllocating();
-      var result = fit.FindMinimum(model, initialGuess, null, null, null, null, CancellationToken.None);
+      var result = fit.FindMinimum(model, initialGuess, null, null, null, null, CancellationToken.None, null);
 
       AssertEx.GreaterOrEqual(2E-16, result.ModelInfoAtMinimum.Value);
       AssertEx.AreEqual(17, result.MinimizingPoint[0], 1E-16, 1E-8);
@@ -88,7 +88,7 @@ namespace Altaxo.Calc.Regression
       var model = new NonlinearObjectiveFunctionNonAllocating(ff.Evaluate, ff.EvaluateDerivative, 1);
       model.SetObserved(xx, yy, null);
       var fit = new LevenbergMarquardtMinimizerNonAllocating();
-      var result = fit.FindMinimum(model, initialGuess, lowerBound, null, null, null, CancellationToken.None);
+      var result = fit.FindMinimum(model, initialGuess, lowerBound, null, null, null, CancellationToken.None, null);
 
       AssertEx.AreEqual(2, result.MinimizingPoint[2], 1E-16, 1E-16);
       AssertEx.GreaterOrEqual(32, result.ModelInfoAtMinimum.Value);
@@ -116,7 +116,7 @@ namespace Altaxo.Calc.Regression
       var model = new NonlinearObjectiveFunctionNonAllocating(ff.Evaluate, ff.EvaluateDerivative, 1);
       model.SetObserved(xx, yy, null);
       var fit = new LevenbergMarquardtMinimizerNonAllocating();
-      var result = fit.FindMinimum(model, initialGuess, null, upperBound, null, null, CancellationToken.None);
+      var result = fit.FindMinimum(model, initialGuess, null, upperBound, null, null, CancellationToken.None, null);
 
       AssertEx.AreEqual(16, result.MinimizingPoint[0], 1E-16, 1E-16);
       AssertEx.GreaterOrEqual(1.9, result.ModelInfoAtMinimum.Value);
@@ -145,7 +145,7 @@ namespace Altaxo.Calc.Regression
       var model = new NonlinearObjectiveFunctionNonAllocating(ff.Evaluate, ff.EvaluateDerivative, 1);
       model.SetObserved(xx, yy, null);
       var fit = new LevenbergMarquardtMinimizerNonAllocating();
-      var result = fit.FindMinimum(model, initialGuess, lowerBound, upperBound, null, null, CancellationToken.None);
+      var result = fit.FindMinimum(model, initialGuess, lowerBound, upperBound, null, null, CancellationToken.None, null);
 
       AssertEx.AreEqual(12, result.MinimizingPoint[0], 1E-16, 1E-16);
       AssertEx.AreEqual(2, result.MinimizingPoint[2], 1E-16, 1E-16);
@@ -175,7 +175,7 @@ namespace Altaxo.Calc.Regression
       var model = new NonlinearObjectiveFunctionNonAllocating(ff.Evaluate, ff.EvaluateDerivative, 1);
       model.SetObserved(xx, yy, null);
       var fit = new LevenbergMarquardtMinimizerNonAllocating();
-      var result = fit.FindMinimum(model, initialGuess, lowerBound, upperBound, null, null, CancellationToken.None);
+      var result = fit.FindMinimum(model, initialGuess, lowerBound, upperBound, null, null, CancellationToken.None, null);
 
       AssertEx.AreEqual(12, result.MinimizingPoint[0], 1E-16, 1E-16);
       AssertEx.AreEqual(5.125, result.MinimizingPoint[1], 1E-16, 1E-16);
