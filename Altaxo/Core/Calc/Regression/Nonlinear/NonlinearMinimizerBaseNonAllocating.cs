@@ -308,30 +308,29 @@ namespace Altaxo.Calc.Optimization
     {
       if (LowerBound is not null || UpperBound is not null)
       {
+
         for (int i = 0; i < Pint.Count; i++)
         {
+          double scale_i = Scales?.ElementAt(i) ?? 1;
+          double Pint_i = Pint[i];
           var lowerBnd = LowerBound?.ElementAt(i);
           var upperBnd = UpperBound?.ElementAt(i);
 
           if (lowerBnd.HasValue && upperBnd.HasValue)
           {
-            Pext[i] = lowerBnd.Value + (upperBnd.Value / 2.0 - lowerBnd.Value / 2.0) * (Math.Sin(Pint[i]) + 1.0);
+            Pext[i] = lowerBnd.Value + (upperBnd.Value / 2.0 - lowerBnd.Value / 2.0) * (Math.Sin(Pint_i) + 1.0);
           }
           else if (lowerBnd.HasValue)
           {
-            Pext[i] = (Scales is null)
-              ? lowerBnd.Value + Math.Sqrt(Pint[i] * Pint[i] + 1.0) - 1.0
-              : lowerBnd.Value + Scales[i] * (Math.Sqrt(Pint[i] * Pint[i] + 1.0) - 1.0);
+            Pext[i] = lowerBnd.Value + scale_i * (Math.Sqrt(Pint_i * Pint_i + 1.0) - 1.0);
           }
           else if (upperBnd.HasValue)
           {
-            Pext[i] = (Scales is null)
-             ? upperBnd.Value - Math.Sqrt(Pint[i] * Pint[i] + 1.0) + 1.0
-             : upperBnd.Value - Scales[i] * (Math.Sqrt(Pint[i] * Pint[i] + 1.0) - 1.0);
+            Pext[i] = upperBnd.Value - scale_i * (Math.Sqrt(Pint_i * Pint_i + 1.0) - 1.0);
           }
           else
           {
-            Pext[i] = Pint[i] * (Scales?.ElementAt(i) ?? 1);
+            Pext[i] = Pint_i * scale_i;
           }
         }
       }
@@ -357,28 +356,24 @@ namespace Altaxo.Calc.Optimization
         {
           var lowerBnd = LowerBound?.ElementAt(i);
           var upperBnd = UpperBound?.ElementAt(i);
-
+          double result_i;
           if (lowerBnd.HasValue && upperBnd.HasValue)
           {
-            result[i] = (upperBnd.Value - lowerBnd.Value) / 2.0 * Math.Cos(Pint[i]);
+            result_i = (upperBnd.Value - lowerBnd.Value) / 2.0 * Math.Cos(Pint[i]);
           }
           else if (upperBnd.HasValue)
           {
-            result[i] = (Scales is null)
-              ? -Pint[i] / Math.Sqrt(Pint[i] * Pint[i] + 1.0)
-              : -Scales[i] * Pint[i] / Math.Sqrt(Pint[i] * Pint[i] + 1.0);
+            result_i = -Pint[i] / Math.Sqrt(Pint[i] * Pint[i] + 1.0);
           }
           else if (lowerBnd.HasValue)
           {
-            result[i] = (Scales is null)
-              ? Pint[i] / Math.Sqrt(Pint[i] * Pint[i] + 1.0)
-              : Scales[i] * Pint[i] / Math.Sqrt(Pint[i] * Pint[i] + 1.0);
+            result_i = Pint[i] / Math.Sqrt(Pint[i] * Pint[i] + 1.0);
           }
           else
           {
-            result[i] = 1;
+            result_i = 1;
           }
-
+          result[i] = Scales is null ? result_i : result_i * Scales.ElementAt(i);
         }
       }
       else
