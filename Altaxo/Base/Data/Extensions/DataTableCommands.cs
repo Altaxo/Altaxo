@@ -24,6 +24,11 @@
 
 #nullable enable
 
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using Altaxo.Main;
+
 namespace Altaxo.Data
 {
   public static class DataTableCommands
@@ -33,5 +38,216 @@ namespace Altaxo.Data
       table.DataColumns.Add(new DoubleColumn(), "A", ColumnKind.X, 0);
       table.DataColumns.Add(new DoubleColumn(), "B", ColumnKind.V, 0);
     }
+
+    /// <summary>
+    /// This command will sort provided tables containing data sources in a way, that tables dependent on
+    /// data of other tables come after the tables they are dependent on.
+    /// </summary>
+    /// <param name="dataTables">The data tables for which to execute the data sources.</param>
+    /// <param name="sortedTables">If the return value is true, contains the list of sorted tables. Only tables containing data sources are member of the list. </param>
+    /// <param name="errorMessage">If the return value is false, contains an error message indicating why the tables could not be sorted. This is the case if circular dependencies were detected.</param>
+    /// <returns>True if the sorting was successful; otherwise, false (circular dependencies detected).</returns>
+    public static bool TrySortTablesForExecuteAllDataSources(IEnumerable<DataTable> dataTables, out List<DataTable> sortedTables, out string errorMessage)
+    {
+      // find all selected tables with data sources in it
+      var dataTableList = dataTables
+        .Where(t => t.DataSource is not null)
+        .ToList();
+
+      if (dataTableList.Count == 0)
+      {
+        sortedTables = dataTableList;
+        errorMessage = string.Empty;
+        return true;
+      }
+
+      // dictionary with a table as key, and table(s) it depend on as values
+      var dict = new Dictionary<DataTable, HashSet<DataTable>>();
+
+      void MyReport(IProxy proxy, object owner, string propertyName, DataTable table)
+      {
+        var doc = proxy?.DocumentObject();
+        if (doc is DataTable dt0)
+          dict[table].Add(dt0);
+        else if (doc is DataColumn dc && DataTable.GetParentDataTableOf(dc) is DataTable dt1)
+          dict[table].Add(dt1);
+      }
+
+      DataTable[]? AddIndirectDependencies(DataTable masterTable)
+      {
+        var dependentChain = new List<DataTable>();
+        var indirectDependencies = new HashSet<DataTable>();
+
+        foreach (var subTable in dict[masterTable])
+        {
+          dependentChain.Add(subTable);
+          var circular = AddIndirectDependencies3(masterTable, dependentChain, indirectDependencies);
+          dependentChain.RemoveAt(dependentChain.Count - 1);
+          if (circular is not null)
+          {
+            return circular;
+          }
+        }
+        dict[masterTable] = indirectDependencies;
+        return null;
+      }
+
+      DataTable[]? AddIndirectDependencies3(DataTable masterTable, List<DataTable> dependentChain, HashSet<DataTable> indirectDependencies)
+      {
+        var dependentTable = dependentChain[^1];
+        if (object.ReferenceEquals(masterTable, dependentChain[^1]))
+          return dependentChain.ToArray(); // circular reference
+
+        indirectDependencies.Add(dependentTable);
+        if (dict.TryGetValue(dependentTable, out var subDependencies))
+        {
+          foreach (var subDependend in subDependencies)
+          {
+            dependentChain.Add(subDependend);
+            var circular = AddIndirectDependencies3(masterTable, dependentChain, indirectDependencies);
+            dependentChain.RemoveAt(dependentChain.Count - 1);
+            if (circular is not null)
+              return circular;
+          }
+        }
+        return null;
+      }
+
+
+      int TableSorting(DataTable t1, DataTable t2)
+      {
+        if (dict[t1].Contains(t2) && dict[t2].Contains(t1))
+        {
+          return 0; // this is a direct circular dependency, but we test for it later anyway
+        }
+        else if (dict[t1].Contains(t2))
+        {
+          return +1; // t1 should be shifted to a place after t2
+        }
+        else if (dict[t2].Contains(t1))
+        {
+          return -1; // t1 should be shifted to a place before t2
+        }
+        else
+        {
+          return Comparer<int>.Default.Compare(dict[t1].Count, dict[t2].Count); // not dependent on each other, thus neutral
+        }
+      }
+
+      // now sort them according to their dependencies
+      foreach (var t in dataTableList)
+      {
+        dict.Add(t, new HashSet<DataTable>());
+        t.DataSource.VisitDocumentReferences((p, o, n) => MyReport(p, o, n, t));
+      }
+
+      // The dictionary of every table now contains the direct dependencies
+      // but now add the indirect dependencies
+      foreach (var masterT in dataTableList)
+      {
+        var circular = AddIndirectDependencies(masterT);
+        if (circular is not null)
+        {
+          var dependencyChain = new StringBuilder();
+          dependencyChain.Append(masterT.Name);
+          for (int i = 0; i < circular.Length; ++i)
+          {
+            dependencyChain.Append(" <-- ");
+            dependencyChain.Append(circular[i]);
+          }
+
+
+          errorMessage = "Some of the data sources of the tables are circular dependent on each other.\r\n" +
+                          $"The dependency chain is: {dependencyChain}\r\n" +
+                          "Thus, the command can not be executed";
+
+          sortedTables = new List<DataTable>();
+          return false;
+        }
+      }
+
+      // Sort the table
+      dataTableList.Sort((t1, t2) => TableSorting(t1, t2));
+
+      // if the sorting above is not working properly, then uncomment this
+
+      /*
+      // Sorting safe, but maybe slower
+      for (int i = 0; i < dataTables.Count; i++)
+      {
+        var t = dataTables[0];
+        var dict_t = dict[t];
+
+        for (int j = dataTables.Count; j > 1; --j)
+        {
+          if (dict_t.Contains(dataTables[j - 1]))
+          {
+            dataTables.Insert(j, t); // put this table after the last table it is dependent on
+            dataTables.RemoveAt(0); // remove this table from the first element
+            break;
+          }
+        }
+      }
+      */
+
+
+      // Test for circular dependencies
+      // if there is one, the sorting would not be perfect
+      // so we test if the sorting is perfect
+
+      // make an initial test set of all tables 
+      var testSetOfTables = new HashSet<DataTable>(dataTableList);
+
+      // the first table should not depend on any of the tables in the test set
+      foreach (var t in dataTableList)
+      {
+        testSetOfTables.Remove(t); // we remove our own table from the test set, of course
+        if (dict[t].Intersect(testSetOfTables).FirstOrDefault() is { } dependentTable)
+        {
+          errorMessage = "Some of the data sources of the tables are circular dependent on each other.\r\n" +
+                                      $"For instance, table {t.Name} is dependent on {dependentTable.Name} and vice versa\r\n" +
+                                      "Thus the command can not be executed";
+
+          sortedTables = new List<DataTable>();
+          return false;
+        }
+      }
+
+
+      errorMessage = string.Empty;
+      sortedTables = dataTableList;
+      return true;
+    }
+
+    /// <summary>
+    /// This command will executes all data sources in all provided tables, using the background execution dialog.
+    /// For that, it takes into account the dependencies of each data source to other tables,
+    /// and execute those sources first, which do not have dependencies to tables for which the data source
+    /// is executed later.
+    /// </summary>
+    /// <param name="sortedTables">The data tables for which to execute the data sources. They must be sorted by dependence on the other tables (less dependent tables coming first, see <see cref="TrySortTablesForExecuteAllDataSources"/>).</param>  
+    public static void ExecuteDataSourcesOfTables(IEnumerable<DataTable> sortedTables)
+    {
+      var reporter = new Altaxo.Main.Services.ExternalDrivenBackgroundMonitor();
+
+      int count = sortedTables.Count();
+      var thread = new System.Threading.Thread(() =>
+      {
+        // now we can execute the data sources
+        double idx = -1;
+        foreach (var t in sortedTables)
+        {
+          idx += 1;
+          if (reporter.CancellationPending)
+            break;
+          reporter.ReportProgress($"Execute data source of table {t.Name}", idx / (double)count);
+
+          t.DataSource.FillData(t);
+        }
+      });
+      thread.Start();
+      Current.Gui.ShowBackgroundCancelDialog(1000, thread, reporter);
+    }
+
   }
 }
