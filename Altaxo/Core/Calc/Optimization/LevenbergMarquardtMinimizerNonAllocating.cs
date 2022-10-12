@@ -406,7 +406,7 @@ namespace Altaxo.Calc.Optimization
           }
 
           // clamp the new step to the boundary conditions, and calculate the new parameter values
-          ClampStepToBoundaryConditions(parameterValues, parameterStep, parameterStep, newParameterValues); // newParameterValues: new parameters to test
+          ClampStepToBoundaryConditions(parameterValues, parameterStep, parameterStep, scaledParameterStep, newParameterValues); // newParameterValues: new parameters to test
 
           // Test if there is convergence in the parameters
           // if max|hi/pi| < xTol, stop (see [2], Section 4.1.3 (page 5), second criterion
@@ -428,9 +428,9 @@ namespace Altaxo.Calc.Optimization
 
           // calculate the ratio of the actual to the predicted reduction, see [2], eq. 15, page 3 
           // ρ = (RSS - RSSnew) / (Δp'(μΔp - g))
-          parameterStep.Multiply(mu, MuTimesPStepMinusGradient); // calculate μΔp
+          scaledParameterStep.Multiply(mu, MuTimesPStepMinusGradient); // calculate μΔp
           MuTimesPStepMinusGradient.Add(NegativeGradient, MuTimesPStepMinusGradient); // calculate (μΔp - g)
-          var predictedReduction = parameterStep.DotProduct(MuTimesPStepMinusGradient); // calculate (Δp'(μΔp - g))
+          var predictedReduction = scaledParameterStep.DotProduct(MuTimesPStepMinusGradient); // calculate (Δp'(μΔp - g))
           var rho = (predictedReduction != 0)
                   ? (RSS - RSSnew) / predictedReduction
                   : 0;
@@ -523,7 +523,7 @@ namespace Altaxo.Calc.Optimization
     /// <param name="clampedParameterStep">On return, contains the clamped step.</param>
     /// <param name="nextParameterValues">On return, contains the new parameters, i.e. <paramref name="parameterValues"/>+<paramref name="clampedParameterStep"/>.</param>
     /// <returns>True if the step was scaled smaller; otherwise, false.</returns>
-    private bool ClampStepToBoundaryConditions(IReadOnlyList<double> parameterValues, IReadOnlyList<double> parameterStep, IVector<double> clampedParameterStep, IVector<double> nextParameterValues)
+    private bool ClampStepToBoundaryConditions(IReadOnlyList<double> parameterValues, IReadOnlyList<double> parameterStep, IVector<double> clampedParameterStep, IVector<double> clampedScaledParameterStep, IVector<double> nextParameterValues)
     {
       double scaleFactor = 1; // Scale factor for step
       int idxLowestScale = -1;
@@ -562,6 +562,8 @@ namespace Altaxo.Calc.Optimization
       {
         clampedParameterStep[i] = scaleFactor * parameterStep[i];
         nextParameterValues[i] = parameterValues[i] + clampedParameterStep[i];
+
+        clampedScaledParameterStep[i] = clampedParameterStep[i] / Scales[i];
       }
 
       // in order to avoid small inaccuracies caused by scaleFactor, we set the nextParameter that caused the scaleFactor to its bound
