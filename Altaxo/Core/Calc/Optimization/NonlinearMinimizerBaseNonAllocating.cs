@@ -267,27 +267,27 @@ namespace Altaxo.Calc.Optimization
         {
           var lowerBnd = LowerBound?.ElementAt(i);
           var upperBnd = UpperBound?.ElementAt(i);
+          double pint;
 
           if (lowerBnd.HasValue && upperBnd.HasValue)
           {
-            Pint[i] = Math.Asin((2.0 * (Pext[i] - lowerBnd.Value) / (upperBnd.Value - lowerBnd.Value)) - 1.0);
+            pint = Math.Asin((2 * Pext[i] - lowerBnd.Value - upperBnd.Value) / (upperBnd.Value - lowerBnd.Value));
           }
           else if (lowerBnd.HasValue)
           {
-            Pint[i] = (Scales is null)
-              ? Math.Sqrt(RMath.Pow2(Pext[i] - lowerBnd.Value + 1.0) - 1.0)
-              : Math.Sqrt(RMath.Pow2((Pext[i] - lowerBnd.Value) / Scales[i] + 1.0) - 1.0);
+            pint = Math.Sqrt(RMath.Pow2((Pext[i] - lowerBnd.Value) + 1.0) - 1.0);
           }
           else if (upperBnd.HasValue)
           {
-            Pint[i] = (Scales is null)
-              ? Math.Sqrt(RMath.Pow2(upperBnd.Value - Pext[i] + 1.0) - 1.0)
-              : Math.Sqrt(RMath.Pow2((upperBnd.Value - Pext[i]) / Scales[i] + 1.0) - 1.0);
+            pint = Math.Sqrt(RMath.Pow2((upperBnd.Value - Pext[i]) + 1.0) - 1.0);
+
           }
           else
           {
-            Pint[i] = Pext[i] / (Scales?.ElementAt(i) ?? 1);
+            pint = Pext[i];
           }
+
+          Pint[i] = pint / (Scales?.ElementAt(i) ?? 1);
         }
       }
       else
@@ -311,26 +311,25 @@ namespace Altaxo.Calc.Optimization
 
         for (int i = 0; i < Pint.Count; i++)
         {
-          double scale_i = Scales?.ElementAt(i) ?? 1;
-          double Pint_i = Pint[i];
+          double scale_pint = (Scales?.ElementAt(i) ?? 1) * Pint[i];
           var lowerBnd = LowerBound?.ElementAt(i);
           var upperBnd = UpperBound?.ElementAt(i);
 
           if (lowerBnd.HasValue && upperBnd.HasValue)
           {
-            Pext[i] = lowerBnd.Value + (upperBnd.Value / 2.0 - lowerBnd.Value / 2.0) * (Math.Sin(Pint_i) + 1.0);
+            Pext[i] = lowerBnd.Value + (upperBnd.Value / 2.0 - lowerBnd.Value / 2.0) * (Math.Sin(scale_pint) + 1.0);
           }
           else if (lowerBnd.HasValue)
           {
-            Pext[i] = lowerBnd.Value + scale_i * (Math.Sqrt(Pint_i * Pint_i + 1.0) - 1.0);
+            Pext[i] = lowerBnd.Value + (Math.Sqrt(scale_pint * scale_pint + 1.0) - 1.0);
           }
           else if (upperBnd.HasValue)
           {
-            Pext[i] = upperBnd.Value - scale_i * (Math.Sqrt(Pint_i * Pint_i + 1.0) - 1.0);
+            Pext[i] = upperBnd.Value - (Math.Sqrt(scale_pint * scale_pint + 1.0) - 1.0);
           }
           else
           {
-            Pext[i] = Pint_i * scale_i;
+            Pext[i] = scale_pint;
           }
         }
       }
@@ -356,24 +355,27 @@ namespace Altaxo.Calc.Optimization
         {
           var lowerBnd = LowerBound?.ElementAt(i);
           var upperBnd = UpperBound?.ElementAt(i);
+          var scale_i = Scales?.ElementAt(i) ?? 1;
+          var pint_scale = Pint[i] * scale_i;
           double result_i;
+
           if (lowerBnd.HasValue && upperBnd.HasValue)
           {
-            result_i = (upperBnd.Value - lowerBnd.Value) / 2.0 * Math.Cos(Pint[i]);
+            result_i = 0.5 * (upperBnd.Value - lowerBnd.Value) * Math.Cos(pint_scale);
           }
           else if (upperBnd.HasValue)
           {
-            result_i = -Pint[i] / Math.Sqrt(Pint[i] * Pint[i] + 1.0);
+            result_i = -pint_scale / Math.Sqrt(pint_scale * pint_scale + 1.0);
           }
           else if (lowerBnd.HasValue)
           {
-            result_i = Pint[i] / Math.Sqrt(Pint[i] * Pint[i] + 1.0);
+            result_i = pint_scale / Math.Sqrt(pint_scale * pint_scale + 1.0);
           }
           else
           {
             result_i = 1;
           }
-          result[i] = Scales is null ? result_i : result_i * Scales.ElementAt(i);
+          result[i] = scale_i * result_i;
         }
       }
       else

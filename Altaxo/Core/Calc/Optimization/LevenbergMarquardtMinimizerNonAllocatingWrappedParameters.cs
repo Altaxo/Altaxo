@@ -310,9 +310,10 @@ namespace Altaxo.Calc.Optimization
         // alternatively, we could scale the parameters so that the gradient contains either 1 or -1 elements
         // Scales = NegativeGradient.Map(x => x != 0 ? 1 / Math.Abs(x) : 1, Zeros.Include); // autoscale using the gradient
         Scales = Hessian.Diagonal().Map(x => x != 0 ? 1 / Math.Sqrt(Math.Abs(x)) : 1, Zeros.Include); // autoscale using the diagonal of the Hessian
-        ProjectToInternalParameters(pExt, pInt); // we need to calculate current internal parameters anew
+        ProjectToInternalParameters(pExt, pInt); // we need to calculate current internal parameters anew, because they are dependent on Scales
 
         // after the parameter scale was evaluated, we have to repeat the Jacobian and Hessian evaluation, this time with the parameter scale in operation
+        EvaluateFunction(objective, pInt, pExt); // we have to evaluate Hessian and Gradient anew, because the Hessian and Gradient was already modified by the first wrapping
         (NegativeGradient, Hessian) = EvaluateJacobian(objective, pInt, scaleFactors); // repeat Jacobian evaluation, now with scale
       }
 
@@ -381,6 +382,17 @@ namespace Altaxo.Calc.Optimization
             Pnew.CopyTo(pInt);
             RSS = RSSnew;
             rssValueHistory.Enqueue(RSS);
+
+            // update the parameter scales, if automatic scales was used (but only every 'ParameterScaleUpdatePeriod' iterations)
+            if (useAutomaticParameterScale && iterations >= (ParameterScaleUpdatePeriod + iterationOfLastAutomaticParameterScaleEvaluation))
+            {
+              objective.Hessian.Diagonal(diagonalOfHessian); // we can use the unscaled diagonalOfHessian here for temporary purpose, because it is overwritten immediately below
+              ScaleFactorsOfJacobian(pInt, scaleFactors); // Calculate the scaleFactors for Hessian and Gradient with the current Scales values
+              diagonalOfHessian.Map2((x, y) => x != 0 ? 1 / Math.Sqrt(Math.Abs(x * (y * y))) : 1, scaleFactors, scaleFactors, Zeros.Include); // in scaleFactors now are only the correction factors for Scales (should be not far from 1)
+              Scales.PointwiseMultiply(scaleFactors, Scales); // multipliy Scales with the correction factors
+              ProjectToInternalParameters(pExt, pInt); // we need to calculate current internal parameters anew, because Scales has changed
+              iterationOfLastAutomaticParameterScaleEvaluation = iterations;
+            }
 
             // update gradient and Hessian 
             (NegativeGradient, Hessian) = EvaluateJacobian(objective, pInt, scaleFactors);
