@@ -67,7 +67,7 @@ namespace Altaxo.Calc.Regression
     }
 
     /// <summary>
-    /// Create a Gaussian with width=1.5, but limit the fit width to 3.
+    /// Create a Gaussian with width=1.5, but limit the fit width to 2.
     /// </summary>
     [Fact]
     public void TestGaussLowerBound()
@@ -90,7 +90,7 @@ namespace Altaxo.Calc.Regression
       var fit = new LevenbergMarquardtMinimizerNonAllocatingWrappedParameters();
       var result = fit.FindMinimum(model, initialGuess, lowerBound, null, null, null, CancellationToken.None, null);
 
-      AssertEx.AreEqual(2, result.MinimizingPoint[2], 1E-16, 1E-16);
+      AssertEx.AreEqual(2, result.MinimizingPoint[2], 1E-16, 1E-8);
       AssertEx.GreaterOrEqual(32, result.ModelInfoAtMinimum.Value);
     }
 
@@ -118,8 +118,8 @@ namespace Altaxo.Calc.Regression
       var fit = new LevenbergMarquardtMinimizerNonAllocatingWrappedParameters();
       var result = fit.FindMinimum(model, initialGuess, null, upperBound, null, null, CancellationToken.None, null);
 
-      AssertEx.AreEqual(16, result.MinimizingPoint[0], 1E-16, 1E-16);
-      AssertEx.GreaterOrEqual(1.9, result.ModelInfoAtMinimum.Value);
+      AssertEx.AreEqual(16, result.MinimizingPoint[0], 1E-16, 1E-8);
+      AssertEx.GreaterOrEqual(2.1, result.ModelInfoAtMinimum.Value);
     }
 
     /// <summary>
@@ -147,8 +147,8 @@ namespace Altaxo.Calc.Regression
       var fit = new LevenbergMarquardtMinimizerNonAllocatingWrappedParameters();
       var result = fit.FindMinimum(model, initialGuess, lowerBound, upperBound, null, null, CancellationToken.None, null);
 
-      AssertEx.AreEqual(12, result.MinimizingPoint[0], 1E-16, 1E-16);
-      AssertEx.AreEqual(2, result.MinimizingPoint[2], 1E-16, 1E-16);
+      AssertEx.AreEqual(12, result.MinimizingPoint[0], 1E-16, 1E-8);
+      AssertEx.AreEqual(2, result.MinimizingPoint[2], 1E-16, 1E-3);
       AssertEx.GreaterOrEqual(52, result.ModelInfoAtMinimum.Value);
     }
 
@@ -178,9 +178,8 @@ namespace Altaxo.Calc.Regression
       var result = fit.FindMinimum(model, initialGuess, lowerBound, upperBound, null, null, CancellationToken.None, null);
 
       AssertEx.AreEqual(12, result.MinimizingPoint[0], 1E-16, 1E-16);
-      AssertEx.AreEqual(5.125, result.MinimizingPoint[1], 1E-16, 1E-16);
-      AssertEx.AreEqual(2, result.MinimizingPoint[2], 1E-16, 1E-16);
-      Assert.True(result.ReasonForExit == ExitCondition.BoundTolerance);
+      AssertEx.AreEqual(5.125, result.MinimizingPoint[1], 1E-16, 1E-2);
+      AssertEx.AreEqual(2, result.MinimizingPoint[2], 1E-16, 1E-2);
       AssertEx.GreaterOrEqual(53, result.ModelInfoAtMinimum.Value);
     }
   }

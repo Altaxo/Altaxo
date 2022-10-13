@@ -109,6 +109,7 @@ namespace Altaxo.Calc.Optimization
     /// <param name="scales">The scales of the parameters. The array must have the same length as the parameter array. Provide null if not needed.</param>
     /// <param name="isFixed">Array of booleans, which provide which parameters are fixed. Must have the same length as the parameter array. Provide null if not needed.</param>
     /// <param name="cancellationToken">Token to cancel the evaluation</param>
+    /// <param name="reportChi2Progress">Event handler that can be used to report the NumberOfIterations and Chi² value achived so far. Can be null</param>
     /// <returns>The result of the Levenberg-Marquardt minimization</returns>
     public NonlinearMinimizationResult FindMinimum(
       IObjectiveModelNonAllocating objective,
@@ -148,6 +149,7 @@ namespace Altaxo.Calc.Optimization
     /// <param name="scales">The scales of the parameters. The array must have the same length as the parameter array. Provide null if not needed.</param>
     /// <param name="isFixed">Array of booleans, which provide which parameters are fixed. Must have the same length as the parameter array. Provide null if not needed.</param>
     /// <param name="cancellationToken">Token to cancel the evaluation</param>
+    /// <param name="reportChi2Progress">Event handler that can be used to report the NumberOfIterations and Chi² value achived so far. Can be null</param>
     /// <returns>The result of the Levenberg-Marquardt minimization</returns>
     public NonlinearMinimizationResult FindMinimum(
       IObjectiveModelNonAllocating objective,
@@ -298,26 +300,20 @@ namespace Altaxo.Calc.Optimization
         exitCondition = ExitCondition.Converged; // SmallRSS
       }
 
-      // Evaluate gradient (already negated!) and Hessian
-      var (NegativeGradient, Hessian) = EvaluateJacobian(objective, pInt, scaleFactors);
+
       var useAutomaticParameterScale = Scales is null;
       var iterationOfLastAutomaticParameterScaleEvaluation = 0;
       if (useAutomaticParameterScale)
       {
-        // if no scale for the parameters was given, calculate scale parameters in a way, that the resulting
-        // gradient has equal elements (absolute value).
-        // here, we use the diagonal of the Hessian to calculate the parameter scale, so that the Hessian would have values of 1 in the diagonal
-        // alternatively, we could scale the parameters so that the gradient contains either 1 or -1 elements
-        // Scales = NegativeGradient.Map(x => x != 0 ? 1 / Math.Abs(x) : 1, Zeros.Include); // autoscale using the gradient
-        Scales = Hessian.Diagonal().Map(x => x != 0 ? 1 / Math.Sqrt(Math.Abs(x)) : 1, Zeros.Include); // autoscale using the diagonal of the Hessian
-        ProjectToInternalParameters(pExt, pInt); // we need to calculate current internal parameters anew, because they are dependent on Scales
-
-        // after the parameter scale was evaluated, we have to repeat the Jacobian and Hessian evaluation, this time with the parameter scale in operation
-        EvaluateFunction(objective, pInt, pExt); // we have to evaluate Hessian and Gradient anew, because the Hessian and Gradient was already modified by the first wrapping
-        (NegativeGradient, Hessian) = EvaluateJacobian(objective, pInt, scaleFactors); // repeat Jacobian evaluation, now with scale
+        objective.Hessian.Diagonal(diagonalOfHessian); // we can use the unscaled diagonalOfHessian here for temporary purpose, because it is overwritten immediately below
+        ScaleFactorsOfJacobian(pInt, scaleFactors); // Calculate the scaleFactors for Hessian and Gradient with Scales==null (i.e., the Scales coming from the boundary conditions only))
+        Scales = Vector<double>.Build.Dense(diagonalOfHessian.Count);
+        diagonalOfHessian.Map2((x, y) => (x != 0 && y != 0) ? 1 / Math.Sqrt(Math.Abs(x * (y * y))) : 1, scaleFactors, Scales, Zeros.Include); // Scales now contain the scales that will bring the Hessian diagonal to 1
+        ProjectToInternalParameters(pExt, pInt); // we need to calculate current internal parameters anew, because Scales has changed
       }
 
-
+      // Evaluate gradient (already negated!) and Hessian
+      var (NegativeGradient, Hessian) = EvaluateJacobian(objective, pInt, scaleFactors);
       Hessian.Diagonal(diagonalOfHessian); // save the diagonal of the Hession diag(H) into the vector diagonalOfHessian
 
       // if ||g||oo <= gtol, found and stop
@@ -382,13 +378,14 @@ namespace Altaxo.Calc.Optimization
             Pnew.CopyTo(pInt);
             RSS = RSSnew;
             rssValueHistory.Enqueue(RSS);
+            reportChi2Progress?.Invoke(iterations, RSS);
 
             // update the parameter scales, if automatic scales was used (but only every 'ParameterScaleUpdatePeriod' iterations)
             if (useAutomaticParameterScale && iterations >= (ParameterScaleUpdatePeriod + iterationOfLastAutomaticParameterScaleEvaluation))
             {
               objective.Hessian.Diagonal(diagonalOfHessian); // we can use the unscaled diagonalOfHessian here for temporary purpose, because it is overwritten immediately below
               ScaleFactorsOfJacobian(pInt, scaleFactors); // Calculate the scaleFactors for Hessian and Gradient with the current Scales values
-              diagonalOfHessian.Map2((x, y) => x != 0 ? 1 / Math.Sqrt(Math.Abs(x * (y * y))) : 1, scaleFactors, scaleFactors, Zeros.Include); // in scaleFactors now are only the correction factors for Scales (should be not far from 1)
+              diagonalOfHessian.Map2((x, y) => (x != 0 && y != 0) ? 1 / Math.Sqrt(Math.Abs(x * (y * y))) : 1, scaleFactors, scaleFactors, Zeros.Include); // in scaleFactors now are only the correction factors for Scales (should be not far from 1)
               Scales.PointwiseMultiply(scaleFactors, Scales); // multipliy Scales with the correction factors
               ProjectToInternalParameters(pExt, pInt); // we need to calculate current internal parameters anew, because Scales has changed
               iterationOfLastAutomaticParameterScaleEvaluation = iterations;

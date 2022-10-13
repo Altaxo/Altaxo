@@ -39,9 +39,26 @@ namespace Altaxo.Calc.Optimization
 {
   public abstract class NonlinearMinimizerBaseNonAllocating
   {
-    public const double DefaultFunctionTolerance = 1E-16;
+    /// <summary>
+    /// The default function tolerance. Since function tolerance is an absolute value and thus dependends on the scale of the y-values,
+    /// the default value for it is zero.
+    /// </summary>
+    public const double DefaultFunctionTolerance = 0;
+
+    /// <summary>
+    /// The default gradient tolerance. Since the gradient tolerance is an absolute value and thus depends on the scale of the y-values, and the
+    /// scale of the parameters, its default value is zero.
+    /// </summary>
+    public const double DefaultGradientTolerance = 0;
+
+    /// <summary>
+    /// The default step tolerance. This is a relative value (ratio of current step and value of the parameter).
+    /// </summary>
     public const double DefaultStepTolerance = 1E-16;
-    public const double DefaultGradientTolerance = 1E-16;
+
+    /// <summary>
+    /// The default value for the minimal RSS (Chi²) improvement achieved during 8 iterations.
+    /// </summary>
     public const double DefaultMinimalRSSImprovement = 1E-6;
 
 
