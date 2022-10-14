@@ -476,5 +476,79 @@ namespace Altaxo.Calc.Regression
     }
 
     #endregion
+
+    #region Covariance matrix
+
+    /// <summary>
+    /// Calculation of covariance matrix is tested on a fit model y=a+bx with 3 data points, for which the covariance matrix can be calculated analytically.
+    /// The x-axis is scaled then by 1E-40 and 1E40, and it is expected, that the covariance matrix scales accordingly, without loosing accuracy.
+    /// 
+    /// </summary>
+    [Fact]
+    public void TestCovariance_DifferentScales()
+    {
+      var xx = new double[3];
+      var yy = new double[3];
+
+      const double A0 = -0.0332225913621262458471761;
+      const double A1 = 0.996677740863787375415282;
+
+      const double Cov00 = 0.002218518559397799141289831238;
+      const double Cov01 = -0.0001103740576814825443427776735;
+      const double Cov10 = -0.0001103740576814825443427776735;
+      const double Cov11 = 0.003311221730444476330283330206;
+
+      xx[0] = -1;
+      xx[1] = 0.1;
+      xx[2] = 1;
+
+      yy[0] = -1;
+      yy[1] = 0;
+      yy[2] = 1;
+
+      var initialGuess = new double[2] { A0, A1 };
+      var ff = new Altaxo.Calc.FitFunctions.General.Polynomial(1, 0);
+      var fit = new QuickNonlinearRegression(ff) { MaximumNumberOfIterations = 0 }; // only calculating the result
+      var fitResult = fit.Fit(xx, yy, initialGuess, CancellationToken.None);
+
+      var cov = fitResult.Covariance;
+      AssertEx.AreEqual(Cov00, cov[0, 0], 0, 1E-14);
+      AssertEx.AreEqual(Cov01, cov[0, 1], 0, 1E-14);
+      AssertEx.AreEqual(Cov10, cov[1, 0], 0, 1E-14);
+      AssertEx.AreEqual(Cov11, cov[1, 1], 0, 1E-14);
+
+      // Scale the x-axis by 1E-40, and calculate anew
+      xx[0] = -1E-40;
+      xx[1] = 0.1E-40;
+      xx[2] = 1E-40;
+      initialGuess = new double[2] { A0, A1 * 1E40 };
+      ff = new Altaxo.Calc.FitFunctions.General.Polynomial(1, 0);
+      fit = new QuickNonlinearRegression(ff) { MaximumNumberOfIterations = 0 }; // only calculating the result
+      fitResult = fit.Fit(xx, yy, initialGuess, CancellationToken.None);
+
+      cov = fitResult.Covariance;
+      AssertEx.AreEqual(Cov00, cov[0, 0], 0, 1E-14);
+      AssertEx.AreEqual(Cov01 * 1E40, cov[0, 1], 0, 1E-14);
+      AssertEx.AreEqual(Cov10 * 1E40, cov[1, 0], 0, 1E-14);
+      AssertEx.AreEqual(Cov11 * 1E80, cov[1, 1], 0, 1E-14);
+
+      // Scale the x-axis by 1E+40, and calculate anew
+      xx[0] = -1E40;
+      xx[1] = 0.1E40;
+      xx[2] = 1E40;
+
+      initialGuess = new double[2] { A0, A1 * 1E-40 };
+      ff = new Altaxo.Calc.FitFunctions.General.Polynomial(1, 0);
+      fit = new QuickNonlinearRegression(ff) { MaximumNumberOfIterations = 0 }; // only calculating the result
+      fitResult = fit.Fit(xx, yy, initialGuess, CancellationToken.None);
+
+      cov = fitResult.Covariance;
+      AssertEx.AreEqual(Cov00, cov[0, 0], 0, 1E-14);
+      AssertEx.AreEqual(Cov01 * 1E-40, cov[0, 1], 0, 1E-14);
+      AssertEx.AreEqual(Cov10 * 1E-40, cov[1, 0], 0, 1E-14);
+      AssertEx.AreEqual(Cov11 * 1E-80, cov[1, 1], 0, 1E-14);
+    }
+
+    #endregion
   }
 }
