@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using Altaxo.Calc.LinearAlgebra;
@@ -66,36 +67,53 @@ namespace Altaxo.Calc.Optimization
         return;
       }
 
-      Covariance = Hessian.PseudoInverse() * objective.Value / objective.DegreeOfFreedom;
+      Covariance = PseudoInverseWithScaling(Hessian) * objective.Value / objective.DegreeOfFreedom;
 
-      if (Covariance != null)
+
+      if (isFixed != null)
       {
-        if (isFixed != null)
+        for (int i = 0; i < Covariance.RowCount; ++i)
         {
-          for (int i = 0; i < Covariance.RowCount; ++i)
+          if (isFixed[i])
           {
-            if (isFixed[i])
-            {
-              Covariance.ClearRow(i);
-              Covariance.ClearColumn(i);
-            }
+            Covariance.ClearRow(i);
+            Covariance.ClearColumn(i);
           }
         }
-
-
-        StandardErrors = Covariance.Diagonal().PointwiseMaximum(0).PointwiseSqrt();
-
-        var correlation = Covariance.Clone();
-        var d = correlation.Diagonal().PointwiseMaximum(0).PointwiseSqrt();
-        var dd = d.OuterProduct(d);
-        dd.PointwiseMaximum(double.Epsilon, dd); // avoid division by 0, when the parameter is fixed so that dd element is zero
-        Correlation = correlation.PointwiseDivide(dd);
       }
-      else
-      {
-        StandardErrors = null;
-        Correlation = null;
-      }
+
+      StandardErrors = Covariance.Diagonal().PointwiseMaximum(0).PointwiseSqrt();
+      var correlation = Covariance.Clone();
+      var d = correlation.Diagonal().PointwiseMaximum(0).PointwiseSqrt();
+      var dd = d.OuterProduct(d);
+      dd.PointwiseMaximum(double.Epsilon, dd); // avoid division by 0, when the parameter is fixed so that dd element is zero
+      Correlation = correlation.PointwiseDivide(dd);
+    }
+
+    /// <summary>
+    /// Computes the Moore-Penrose Pseudo-Inverse of this matrix.
+    /// Here we take care that the pseudo-inverse is
+    /// calculated correctly, even if the provided matrix has diagonal elements which differ by orders of magnitude.
+    /// This is often the case when the parameters of the fit have very different orders of magnitude.
+    /// </summary>
+    public static Matrix<double> PseudoInverseWithScaling(Matrix<double> m)
+    {
+      // 1st scale the matrix m : scaledM = S*m*S
+      // where S is a diagonal matrix, consisting of 1/Sqrt of the diagonal elements of m
+      var S = CreateMatrix.Diagonal<double>(m.RowCount, m.ColumnCount, (i) => m[i, i] != 0 ? 1 / Math.Sqrt(Math.Abs(m[i, i])) : 1);
+      var scaledTemp = S * m; // TODO: if there is a BLAS function to multiply a diagonal from left and right, then use that instead
+      var scaledM = scaledTemp * S;
+
+      // scaledM now contains only 1 or -1 or 0 in the diagonal elements
+      // thus we can safely calculate the PseudoInverse
+      var ps = scaledM.PseudoInverse();
+
+      // after doing the PseudoInverse, we have to rescale again, using the same scaling matrix
+      // result = S*PseudoInverse*S
+      S.Multiply(ps, scaledTemp);
+      scaledTemp.Multiply(S, scaledM);
+
+      return scaledM;
     }
   }
 }
