@@ -67,7 +67,10 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
 
 
     /// <summary>The peak width.</summary>
-    public double Width { get; init; }
+    public double WidthPixels { get; init; }
+
+    /// <summary>The peak width in x-units.</summary>
+    public double WidthValue { get; init; }
 
     /// <summary>The relative heigth of the peak that was used to measure
     /// the width.</summary>

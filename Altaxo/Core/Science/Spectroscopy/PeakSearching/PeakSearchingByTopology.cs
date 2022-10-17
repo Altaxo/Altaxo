@@ -74,7 +74,7 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
     public IReadOnlyList<(IReadOnlyList<PeakDescription> PeakDescriptions, int StartOfRegion, int EndOfRegion)> Execute(double[]? x, double[] y, int[]? regions)
     {
       var peakDescriptions = new List<(IReadOnlyList<PeakDescription> PeakDescriptions, int StartOfRegion, int EndOfRegion)>();
-      foreach(var (start, end) in RegionHelper.GetRegionRanges(regions, y.Length))
+      foreach (var (start, end) in RegionHelper.GetRegionRanges(regions, y.Length))
       {
         var subX = x is null ? null : new double[end - start];
         if (subX is not null)
@@ -95,7 +95,7 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
     {
       var pf = new PeakFinder();
 
-      var workingMinimalProminence = (_minimalProminence ?? 0.0) * (y.Max()-y.Min());
+      var workingMinimalProminence = (_minimalProminence ?? 0.0) * (y.Max() - y.Min());
 
       pf.SetProminence(workingMinimalProminence);
       pf.SetRelativeHeight(0.5);
@@ -105,15 +105,21 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
 
       var arr = new PeakDescription[pf.PeakPositions.Length];
 
+
       for (int i = 0; i < pf.PeakPositions.Length; i++)
       {
+        var leftSideIndex = pf.PeakPositions[i] - 0.5 * pf.Widths![i];
+        var rightSideIndex = pf.PeakPositions[i] + 0.5 * pf.Widths![i];
+        var widthValue = x is null ? pf.Widths![i] : Math.Abs(PeakSearchingNone.GetWidthValue(x, leftSideIndex, pf.PeakPositions[i], rightSideIndex));
+
         arr[i] = new PeakDescription()
         {
           PositionIndex = pf.PeakPositions[i],
           PositionValue = x is null ? pf.PeakPositions[i] : x[pf.PeakPositions[i]],
           Prominence = pf.Prominences![i],
           Height = pf.PeakHeights![i],
-          Width = pf.Widths![i],
+          WidthPixels = pf.Widths![i],
+          WidthValue = widthValue,
           RelativeHeightOfWidthDetermination = 0.5,
           AbsoluteHeightOfWidthDetermination = pf.WidthHeights![i],
         };
@@ -121,5 +127,9 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
 
       return arr;
     }
+
+
+
+
   }
 }

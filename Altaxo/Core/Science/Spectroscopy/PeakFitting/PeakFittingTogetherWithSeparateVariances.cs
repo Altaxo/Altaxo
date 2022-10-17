@@ -26,7 +26,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using Altaxo.Calc;
 using Altaxo.Calc.FitFunctions.Peaks;
 using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Calc.Regression.Nonlinear;
@@ -126,8 +125,8 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
 
       foreach (var description in peakDescriptions)
       {
-        int first = (int)Math.Max(0, Math.Floor(description.PositionIndex - FitWidthScalingFactor * description.Width / 2));
-        int last = (int)Math.Min(xArray.Length - 1, Math.Ceiling(description.PositionIndex + FitWidthScalingFactor * description.Width / 2));
+        int first = (int)Math.Max(0, Math.Floor(description.PositionIndex - FitWidthScalingFactor * description.WidthPixels / 2));
+        int last = (int)Math.Min(xArray.Length - 1, Math.Ceiling(description.PositionIndex + FitWidthScalingFactor * description.WidthPixels / 2));
         int len = last - first + 1;
         if (len < numberOfParametersPerPeak)
         {
@@ -138,10 +137,8 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
         for (int i = first; i <= last; ++i)
           xyValues.Add((xArray[i], yArray[i]));
 
-        var xPosition = RMath.InterpolateLinear(description.PositionIndex, xArray);
-        var xWidth = Math.Abs(RMath.InterpolateLinear(description.PositionIndex + 0.5 * description.Width, xArray) -
-                              RMath.InterpolateLinear(description.PositionIndex - 0.5 * description.Width, xArray)
-                             );
+        var xPosition = description.PositionValue;
+        var xWidth = description.WidthValue;
 
         var paras = fitFunc.GetInitialParametersFromHeightPositionAndWidthAtRelativeHeight(description.Prominence, xPosition, xWidth, description.RelativeHeightOfWidthDetermination);
         if (paras.Length != numberOfParametersPerPeak)
@@ -183,6 +180,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
       var standardErrorsSeparate = new double[param.Length]; // Array to accomodate the parameter variances evaluated for each peak separately
       var covariancesSeparate = new Matrix<double>[param.Length]; // Array of matrices that holds the covariances of each peak separately
       var sumChiSquareSeparate = new double[param.Length];
+      var sigmaSquareSeparate = new double[param.Length];
       foreach (var (first, last, description) in peakParam)
       {
         if (dictionaryOfNotFittedPeaks.ContainsKey(description))
@@ -222,6 +220,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
             covMatrix[i, j] = localFitResult.Covariance[idx + i, idx + j];
         covariancesSeparate[idx / numberOfParametersPerPeak] = covMatrix;
         sumChiSquareSeparate[idx / numberOfParametersPerPeak] = localFitResult.ModelInfoAtMinimum.Value;
+        sigmaSquareSeparate[idx / numberOfParametersPerPeak] = localFitResult.ModelInfoAtMinimum.Value / (localFitResult.ModelInfoAtMinimum.DegreeOfFreedom + 1);
 
         idx += numberOfParametersPerPeak;
       }
@@ -249,6 +248,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
             FitFunction = fitFunc,
             FitFunctionParameter = (double[])param.Clone(),
             SumChiSquare = sumChiSquareSeparate[idx],
+            SigmaSquare = sigmaSquareSeparate[idx],
           });
           ++idx;
         }

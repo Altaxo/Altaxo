@@ -26,7 +26,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using Altaxo.Calc;
 using Altaxo.Calc.Regression.Nonlinear;
 using Altaxo.Collections;
 using Altaxo.Data;
@@ -316,11 +315,10 @@ namespace Altaxo.Science.Spectroscopy
             var descriptions = peakResults[ri].PeakDescriptions;
             for (var pi = 0; pi < descriptions.Count; pi++)
             {
-              cPos[idxRow] = RMath.InterpolateLinear(descriptions[pi].PositionIndex, xArr);
+              cPos[idxRow] = descriptions[pi].PositionValue;
               cPro[idxRow] = descriptions[pi].Prominence;
               cHei[idxRow] = descriptions[pi].Height;
-              cWid[idxRow] = Math.Abs(RMath.InterpolateLinear(descriptions[pi].PositionIndex - 0.5 * descriptions[pi].Width, xArr) -
-                        RMath.InterpolateLinear(descriptions[pi].PositionIndex + 0.5 * descriptions[pi].Width, xArr));
+              cWid[idxRow] = descriptions[pi].WidthValue;
 
               ++idxRow;
             }
@@ -342,9 +340,8 @@ namespace Altaxo.Science.Spectroscopy
             var cNumberOfPoints = peakTable.DataColumns.EnsureExistence($"FitNumberOfPoints{runningColumnNumber}", typeof(DoubleColumn), ColumnKind.V, runningColumnNumber);
             var cFirstXValue = peakTable.DataColumns.EnsureExistence($"FitFirstXValue{runningColumnNumber}", typeof(DoubleColumn), ColumnKind.V, runningColumnNumber);
             var cLastXValue = peakTable.DataColumns.EnsureExistence($"FitLastXValue{runningColumnNumber}", typeof(DoubleColumn), ColumnKind.V, runningColumnNumber);
-            var cSumChiSquareByNMF = peakTable.DataColumns.EnsureExistence($"SumChiSquareByN-F{runningColumnNumber}", typeof(DoubleColumn), ColumnKind.V, runningColumnNumber);
-
-
+            var cSumChiSquare = peakTable.DataColumns.EnsureExistence($"SumChiSquare{runningColumnNumber}", typeof(DoubleColumn), ColumnKind.V, runningColumnNumber);
+            var cSigmaSquare = peakTable.DataColumns.EnsureExistence($"SigmaSquare{runningColumnNumber}", typeof(DoubleColumn), ColumnKind.V, runningColumnNumber);
 
             idxRow = 0;
             for (var ri = 0; ri < peakResults.Count; ri++)
@@ -372,9 +369,8 @@ namespace Altaxo.Science.Spectroscopy
                   cNumberOfPoints[idxRow] = numberOfFitPoints;
                   cFirstXValue[idxRow] = r.FirstFitPosition;
                   cLastXValue[idxRow] = r.LastFitPosition;
-
-                  int NMinusF = numberOfFitPoints - r.PeakParameter.Length;
-                  cSumChiSquareByNMF[idxRow] = r.SumChiSquare / NMinusF;
+                  cSumChiSquare[idxRow] = r.SumChiSquare;
+                  cSigmaSquare[idxRow] = r.SigmaSquare;
 
                   var parameterNames = fitFunction.ParameterNamesForOnePeak;
                   for (var j = 0; j < parameterNames.Length; j++)

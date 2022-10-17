@@ -504,10 +504,6 @@ namespace Altaxo.Calc.Optimization
       return new NonlinearMinimizationResult(objective, iterations, exitCondition, isFixedByUserOrBoundary);
     }
 
-
-
-
-
     /// <summary>
     /// Returns x³.
     /// </summary>

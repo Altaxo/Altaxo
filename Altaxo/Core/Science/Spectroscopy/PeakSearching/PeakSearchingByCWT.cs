@@ -38,7 +38,7 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
   /// </remarks>
   public record PeakSearchingByCwt : IPeakSearching
   {
-    IWaveletForPeakSearching _wavelet = new WaveletRicker();
+    private IWaveletForPeakSearching _wavelet = new WaveletRicker();
 
     /// <summary>
     /// Gets the wavelet function used for transformation. Default is <see cref="WaveletRicker"/>.
@@ -53,7 +53,7 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
       init => _wavelet = value ?? throw new ArgumentNullException(nameof(Wavelet));
     }
 
-    int _pointsPerOctave = 8;
+    private int _pointsPerOctave = 8;
 
     /// <summary>
     /// The width of the wavelets is varied logarithmically. The value gives the number of points per octave of width variation (octave = factor of two).
@@ -73,11 +73,11 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
       {
         if (!(value >= 4))
           throw new ArgumentOutOfRangeException("Points per octave must be >= 4", nameof(NumberOfPointsPerOctave));
-        _pointsPerOctave = value; 
+        _pointsPerOctave = value;
       }
     }
 
-    private double _minimalRidgeLengthInOctaves=2;
+    private double _minimalRidgeLengthInOctaves = 2;
 
     /// <summary>
     /// Gets the minimal ridge length in octaves a ridge must have, in order to be considered as an indication of a peak.
@@ -90,7 +90,7 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
       get => _minimalRidgeLengthInOctaves;
       init
       {
-          _minimalRidgeLengthInOctaves = value;
+        _minimalRidgeLengthInOctaves = value;
       }
     }
 
@@ -108,7 +108,7 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
       get => _minimalWidthOfRidgeMaximumInOctaves;
       init
       {
-          _minimalWidthOfRidgeMaximumInOctaves = value;
+        _minimalWidthOfRidgeMaximumInOctaves = value;
       }
     }
 
@@ -138,12 +138,12 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
     /// <value>
     /// The minimal relative gaussian amplitude.
     /// </value>
-    public double MinimalRelativeGaussianAmplitude 
+    public double MinimalRelativeGaussianAmplitude
     {
-      get => _minimalRelativeGaussianAmplitude ;
+      get => _minimalRelativeGaussianAmplitude;
       init
       {
-          _minimalRelativeGaussianAmplitude  = value;
+        _minimalRelativeGaussianAmplitude = value;
       }
     }
 
@@ -242,10 +242,15 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
         var (gaussAmplitude, gaussSigma) = _wavelet.GetParametersForGaussianPeak(maxPoint.CwtCoefficient, widths[maxPoint.Row]);
         if (gaussAmplitude > (maximalGaussAmplitude * _minimalRelativeGaussianAmplitude))
         {
+          var leftSideIndex = maxPoint.Column - gaussSigma;
+          var rightSideIndex = maxPoint.Column + gaussSigma;
+          var widthValue = x is null ? 2 * gaussSigma : Math.Abs(PeakSearchingNone.GetWidthValue(x, leftSideIndex, maxPoint.Column, rightSideIndex));
+
           var peakDescription = new PeakDescription()
           {
             Prominence = gaussAmplitude,
-            Width = gaussSigma * 2,
+            WidthPixels = gaussSigma * 2,
+            WidthValue = widthValue,
             RelativeHeightOfWidthDetermination = Math.Exp(-0.5),
             PositionIndex = maxPoint.Column,
             PositionValue = x is null ? maxPoint.Column : x[maxPoint.Column],

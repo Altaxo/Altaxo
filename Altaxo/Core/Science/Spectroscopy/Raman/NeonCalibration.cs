@@ -735,10 +735,10 @@ namespace Altaxo.Science.Spectroscopy.Raman
 
       foreach (var peakDesc in foundPeaks)
       {
-        var measPeakCenterWL = RMath.InterpolateLinear(peakDesc.PositionIndex, x_nm);
+        var measPeakCenterWL = peakDesc.PositionValue;
         // Note that for left and right we use full width = 2 x half width
-        var measPeakLeftWL = RMath.InterpolateLinear(peakDesc.PositionIndex - peakDesc.Width, x_nm);
-        var measPeakRightWL = RMath.InterpolateLinear(peakDesc.PositionIndex + peakDesc.Width, x_nm);
+        var measPeakLeftWL = peakDesc.PositionValue - peakDesc.WidthValue;
+        var measPeakRightWL = peakDesc.PositionValue + peakDesc.WidthValue;
 
         // convert the wavelength to calibrated wavelength
         var measPeakLeftWLToNist = converter.ConvertWavelengthMeasToNist(measPeakLeftWL);
@@ -792,7 +792,7 @@ namespace Altaxo.Science.Spectroscopy.Raman
       return result;
     }
 
-    void CheckXAxisReasonability(double[] x_nm, string nameOfSpectrum)
+    private void CheckXAxisReasonability(double[] x_nm, string nameOfSpectrum)
     {
       // Check the x-axis, it is reasonable or has the user used the wrong unit?
       var x_min = x_nm.Min();

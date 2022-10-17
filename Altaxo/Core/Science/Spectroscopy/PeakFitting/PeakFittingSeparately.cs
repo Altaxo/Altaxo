@@ -25,7 +25,6 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
-using Altaxo.Calc;
 using Altaxo.Calc.FitFunctions.Peaks;
 using Altaxo.Calc.Regression.Nonlinear;
 
@@ -127,8 +126,8 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
 
       foreach (var description in peakDescriptions)
       {
-        int first = (int)Math.Max(0, Math.Floor(description.PositionIndex - FitWidthScalingFactor * description.Width / 2));
-        int last = (int)Math.Min(xArray.Length - 1, Math.Ceiling(description.PositionIndex + FitWidthScalingFactor * description.Width / 2));
+        int first = (int)Math.Max(0, Math.Floor(description.PositionIndex - FitWidthScalingFactor * description.WidthPixels / 2));
+        int last = (int)Math.Min(xArray.Length - 1, Math.Ceiling(description.PositionIndex + FitWidthScalingFactor * description.WidthPixels / 2));
         int len = last - first + 1;
         if (len < numberOfParametersPerPeak)
         {
@@ -141,36 +140,8 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
         Array.Copy(xArray, first, xCut, 0, len);
         Array.Copy(yArray, first, yCut, 0, len);
 
-        var xPosition = RMath.InterpolateLinear(description.PositionIndex, xArray);
-
-        double xWidth;
-        var rightIdx = description.PositionIndex + 0.5 * description.Width;
-        var leftIdx = description.PositionIndex - 0.5 * description.Width;
-        if (0 <= rightIdx && rightIdx < xArray.Length &&
-           0 <= leftIdx && leftIdx < xArray.Length)
-        {
-          xWidth = Math.Abs(RMath.InterpolateLinear(rightIdx, xArray) -
-                                RMath.InterpolateLinear(leftIdx, xArray)
-                               );
-        }
-        else if (0 <= rightIdx && rightIdx < xArray.Length)
-        {
-          xWidth = 2 * Math.Abs(RMath.InterpolateLinear(rightIdx, xArray) -
-                                RMath.InterpolateLinear(description.PositionIndex, xArray)
-                               );
-        }
-        else if (0 <= leftIdx && leftIdx < xArray.Length)
-        {
-          xWidth = 2 * Math.Abs(RMath.InterpolateLinear(description.PositionIndex, xArray) -
-                                RMath.InterpolateLinear(leftIdx, xArray)
-                               );
-        }
-        else
-        {
-          continue;
-        }
-
-
+        var xPosition = description.PositionValue;
+        double xWidth = description.WidthValue;
 
         var initialHeight = Math.Max(description.Height, description.Prominence);
         var initialRelativeHeight = (description.Prominence / initialHeight) * description.RelativeHeightOfWidthDetermination;
@@ -191,7 +162,8 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
           FitFunction = fitFunc,
           FitFunctionParameter = fitResult.MinimizingPoint.ToArray(),
           SumChiSquare = fitResult.ModelInfoAtMinimum.Value,
-        });
+          SigmaSquare = fitResult.ModelInfoAtMinimum.Value / (fitResult.ModelInfoAtMinimum.DegreeOfFreedom + 1),
+        }); ;
       }
 
       return list;

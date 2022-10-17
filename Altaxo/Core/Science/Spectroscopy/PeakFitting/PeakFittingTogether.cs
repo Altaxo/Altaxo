@@ -26,7 +26,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using Altaxo.Calc;
 using Altaxo.Calc.FitFunctions.Peaks;
 using Altaxo.Calc.Regression.Nonlinear;
 
@@ -127,8 +126,8 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
 
       foreach (var description in peakDescriptions)
       {
-        int first = (int)Math.Max(0, Math.Floor(description.PositionIndex - FitWidthScalingFactor * description.Width / 2));
-        int last = (int)Math.Min(xArray.Length - 1, Math.Ceiling(description.PositionIndex + FitWidthScalingFactor * description.Width / 2));
+        int first = (int)Math.Max(0, Math.Floor(description.PositionIndex - FitWidthScalingFactor * description.WidthPixels / 2));
+        int last = (int)Math.Min(xArray.Length - 1, Math.Ceiling(description.PositionIndex + FitWidthScalingFactor * description.WidthPixels / 2));
         int len = last - first + 1;
         if (len < numberOfParametersPerPeak)
         {
@@ -139,10 +138,8 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
         for (int i = first; i <= last; ++i)
           xyValues.Add((xArray[i], yArray[i]));
 
-        var xPosition = RMath.InterpolateLinear(description.PositionIndex, xArray);
-        var xWidth = Math.Abs(RMath.InterpolateLinear(description.PositionIndex + 0.5 * description.Width, xArray) -
-                              RMath.InterpolateLinear(description.PositionIndex - 0.5 * description.Width, xArray)
-                             );
+        var xPosition = description.PositionValue;
+        var xWidth = description.WidthValue;
 
         var paras = fitFunc.GetInitialParametersFromHeightPositionAndWidthAtRelativeHeight(description.Prominence, xPosition, xWidth, description.RelativeHeightOfWidthDetermination);
         if (paras.Length != numberOfParametersPerPeak)
@@ -195,6 +192,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
             FitFunction = fitFunc,
             FitFunctionParameter = fitResult.MinimizingPoint.ToArray(),
             SumChiSquare = fitResult.ModelInfoAtMinimum.Value,
+            SigmaSquare = fitResult.ModelInfoAtMinimum.Value / (fitResult.ModelInfoAtMinimum.DegreeOfFreedom + 1),
           });
           ++idx;
         }

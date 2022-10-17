@@ -25,7 +25,6 @@
 
 using Altaxo.Calc.FitFunctions.Peaks;
 using Altaxo.Calc.LinearAlgebra;
-using Altaxo.Calc.Regression.Nonlinear;
 
 namespace Altaxo.Science.Spectroscopy.PeakFitting
 {
@@ -86,6 +85,14 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
     /// Gets the chi square value of the fit.
     /// </summary>
     public double SumChiSquare { get; init; }
+
+    /// <summary>
+    /// Gets the sum of chi square, divided by (number of data points - number of degrees of freedom + 1)
+    /// </summary>
+    /// <value>
+    /// The delta.
+    /// </value>
+    public double SigmaSquare { get; init; }
 
     /// <summary>
     /// Gets the position, the area, the height and the Full Width Half Maximum of the fitted peak.
