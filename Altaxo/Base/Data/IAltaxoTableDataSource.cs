@@ -36,7 +36,8 @@ namespace Altaxo.Data
     /// Fills (or refills) the data. The data source is represented by this instance, the destination table is provided in the argument <paramref name="destinationTable"/>.
     /// </summary>
     /// <param name="destinationTable">The destination table.</param>
-    void FillData(Altaxo.Data.DataTable destinationTable);
+    /// <param name="reporter"></param>
+    void FillData(Altaxo.Data.DataTable destinationTable, IProgressReporter reporter = null);
 
     IDataSourceImportOptions ImportOptions { get; set; }
 

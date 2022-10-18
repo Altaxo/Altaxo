@@ -239,12 +239,13 @@ namespace Altaxo.Science.Spectroscopy
     /// Fills (or refills) the data table with the processed data. The data source is represented by this instance, the destination table is provided in the argument <paramref name="destinationTable" />.
     /// </summary>
     /// <param name="destinationTable">The destination table.</param>
-    public void FillData(DataTable destinationTable)
+    /// <param name="reporter"></param>
+    public void FillData(DataTable destinationTable, IProgressReporter reporter = null)
     {
       try
       {
         var peakFindingAndFittingOptions = _processOptions.GetPeakSearchingAndFittingOptions();
-        SpectroscopyCommands.ExecutePeakFindingAndFitting(_processData, peakFindingAndFittingOptions, destinationTable, null, null, CancellationToken.None, CancellationToken.None);
+        SpectroscopyCommands.ExecutePeakFindingAndFitting(_processData, peakFindingAndFittingOptions, destinationTable, null, reporter, reporter?.CancellationToken ?? CancellationToken.None, reporter?.CancellationTokenHard ?? CancellationToken.None);
       }
       catch (Exception ex)
       {

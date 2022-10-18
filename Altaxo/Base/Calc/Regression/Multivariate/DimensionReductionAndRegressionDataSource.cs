@@ -78,7 +78,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     }
 
     [MemberNotNull(nameof(_importOptions), nameof(_processOptions), nameof(_processData))]
-    void DeserializeSurrogate0(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+    private void DeserializeSurrogate0(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
     {
       ChildSetMember(ref _processData, (DataTableMatrixProxyWithMultipleColumnHeaderColumns)info.GetValue("ProcessData", this));
       _processOptions = (DimensionReductionAndRegressionOptions)info.GetValue("ProcessOptions", this);
@@ -148,7 +148,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     }
 
     [MemberNotNull(nameof(_importOptions), nameof(_processOptions), nameof(_processData))]
-    void CopyFrom(DimensionReductionAndRegressionDataSource from)
+    private void CopyFrom(DimensionReductionAndRegressionDataSource from)
     {
       using (var token = SuspendGetToken())
       {
@@ -203,7 +203,8 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// Fills (or refills) the data table with the processed data. The data source is represented by this instance, the destination table is provided in the argument <paramref name="destinationTable" />.
     /// </summary>
     /// <param name="destinationTable">The destination table.</param>
-    public void FillData(DataTable destinationTable)
+    /// <param name="reporter"></param>
+    public void FillData(DataTable destinationTable, IProgressReporter reporter = null)
     {
       try
       {
@@ -376,7 +377,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     {
       if (_processData is not null)
         yield return new Main.DocumentNodeAndName(_processData, "ProcessData");
-      
+
       if (_importOptions is not null)
         yield return new Main.DocumentNodeAndName(_importOptions, "ImportOptions");
 

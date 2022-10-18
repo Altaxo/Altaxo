@@ -223,7 +223,8 @@ namespace Altaxo.DataConnection
     /// Fills (or refills) the data. The data source is represented by this instance, the destination table is provided in the argument <paramref name="destinationTable" />.
     /// </summary>
     /// <param name="destinationTable">The destination table.</param>
-    public void FillData(Data.DataTable destinationTable)
+    /// <param name="reporter"></param>
+    public void FillData(Data.DataTable destinationTable, IProgressReporter reporter = null)
     {
       if (destinationTable is null)
         throw new ArgumentNullException("destinationTable");

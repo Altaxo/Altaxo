@@ -193,7 +193,7 @@ namespace Altaxo.Serialization.Ascii
         UpdateWatching(); // Compromise - we update only if the watch is off
     }
 
-    public void FillData(DataTable destinationTable)
+    public void FillData(DataTable destinationTable, IProgressReporter reporter = null)
     {
       var validFileNames = _asciiFiles.Select(x => x.GetResolvedFileNameOrNull()).OfType<string>().Where(x => !string.IsNullOrEmpty(x)).ToArray();
 

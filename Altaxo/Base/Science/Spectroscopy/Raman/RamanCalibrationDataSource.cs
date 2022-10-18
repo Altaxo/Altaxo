@@ -250,7 +250,8 @@ namespace Altaxo.Science.Spectroscopy.Raman
     /// Fills (or refills) the data table with the processed data. The data source is represented by this instance, the destination table is provided in the argument <paramref name="destinationTable" />.
     /// </summary>
     /// <param name="destinationTable">The destination table.</param>
-    public void FillData(DataTable destinationTable)
+    /// <param name="reporter"></param>
+    public void FillData(DataTable destinationTable, IProgressReporter reporter = null)
     {
       FillData(destinationTable, CancellationToken.None);
     }

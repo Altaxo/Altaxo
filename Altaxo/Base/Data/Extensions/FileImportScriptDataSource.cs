@@ -189,7 +189,7 @@ namespace Altaxo.Data
         UpdateWatching(); // Compromise - we update only if the watch is off
     }
 
-    public void FillData(DataTable destinationTable)
+    public void FillData(DataTable destinationTable, IProgressReporter reporter = null)
     {
       var validFileNames = _files.Select(x => x.GetResolvedFileNameOrNull()).OfType<string>().Where(x => !string.IsNullOrEmpty(x)).ToArray();
 

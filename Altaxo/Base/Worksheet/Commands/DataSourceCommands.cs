@@ -24,11 +24,9 @@
 
 #nullable enable
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Altaxo.Data;
 using Altaxo.Gui.Worksheet.Viewing;
+using Altaxo.Main.Services;
 
 namespace Altaxo.Worksheet.Commands
 {
@@ -88,14 +86,30 @@ namespace Altaxo.Worksheet.Commands
     /// <param name="ctrl">The controller that controls the data table.</param>
     public static void RequeryTableDataSource(WorksheetController ctrl)
     {
-      RequeryTableDataSource(ctrl.DataTable);
+      var progressMonitor = new ExternalDrivenBackgroundMonitor();
+
+      var fitTask = System.Threading.Tasks.Task.Run(() =>
+      {
+        try
+        {
+          RequeryTableDataSource(ctrl.DataTable, progressMonitor);
+        }
+        catch (OperationCanceledException)
+        {
+        }
+      }
+      );
+
+      Current.Gui.ShowTaskCancelDialog(1000, fitTask, progressMonitor);
     }
+
 
     /// <summary>
     /// Requeries the table data source.
     /// </summary>
     /// <param name="table">The table that holds the data source.</param>
-    public static void RequeryTableDataSource(DataTable table)
+    /// <param name="reporter">A reporter object that can be used to cancel, or to report the progress.</param>
+    public static void RequeryTableDataSource(DataTable table, IProgressReporter? reporter)
     {
       if (table is null || table.DataSource is null)
         return;
@@ -104,7 +118,7 @@ namespace Altaxo.Worksheet.Commands
       {
         try
         {
-          table.DataSource.FillData(table);
+          table.DataSource.FillData(table, reporter);
         }
         catch (Exception ex)
         {

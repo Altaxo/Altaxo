@@ -199,7 +199,8 @@ namespace Altaxo.Worksheet.Commands.Analysis
     /// Fills (or refills) the data table with the 2D-Fourier transformation of the original data.. The data source is represented by this instance, the destination table is provided in the argument <paramref name="destinationTable" />.
     /// </summary>
     /// <param name="destinationTable">The destination table.</param>
-    public void FillData(DataTable destinationTable)
+    /// <param name="reporter"></param>
+    public void FillData(DataTable destinationTable, IProgressReporter reporter = null)
     {
       try
       {
