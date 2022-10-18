@@ -162,9 +162,21 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
       var param = paramList.ToArray();
       fitFunc = FitFunction.WithNumberOfTerms(param.Length / numberOfParametersPerPeak);
       var (lowerBounds, upperBounds) = fitFunc.GetParameterBoundariesForPositivePeaks();
-
       var fit = new QuickNonlinearRegression(fitFunc);
-      var globalFitResult = fit.Fit(xCut, yCut, param, lowerBounds, upperBounds, null, null, cancellationToken);
+
+      // In the first stage of the global fitting, we
+      // fix the positions (peak positions are always 2nd parameter)
+      // this is because the positions tend to run away as long as the other parameters
+      // are far from their fitted values
+      var isFixed = new bool[param.Length];
+      for (int i = 1; i < isFixed.Length; i += numberOfParametersPerPeak)
+        isFixed[i] = true;
+      var globalFitResult = fit.Fit(xCut, yCut, param, lowerBounds, upperBounds, null, isFixed, cancellationToken);
+      param = globalFitResult.MinimizingPoint.ToArray();
+
+      // In the second stage of the global fitting, we
+      // now leave all parameters free
+      globalFitResult = fit.Fit(xCut, yCut, param, lowerBounds, upperBounds, null, null, cancellationToken);
       param = globalFitResult.MinimizingPoint.ToArray();
       var fitFunctionWrapper = new PeakFitFunctions.FunctionWrapper(fitFunc, param);
 
@@ -174,7 +186,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
       // 1.2 call fit with maximumNumberOfIterations=0, this will not fit, but only evaluate the result
 
       idx = 0;
-      var isFixed = Enumerable.Repeat(true, param.Length).ToArray();
+      isFixed = Enumerable.Repeat(true, param.Length).ToArray();
       var parameterTemp = new double[param.Length];
       var parametersSeparate = new double[param.Length]; // Array to accomodate the parameter variances evaluated for each peak separately
       var standardErrorsSeparate = new double[param.Length]; // Array to accomodate the parameter variances evaluated for each peak separately

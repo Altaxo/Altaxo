@@ -165,7 +165,20 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
       var (lowerBounds, upperBounds) = fitFunc.GetParameterBoundariesForPositivePeaks();
 
       var fit = new QuickNonlinearRegression(fitFunc);
-      var fitResult = fit.Fit(xCut, yCut, param, lowerBounds, upperBounds, null, null, cancellationToken);
+
+      // In the first stage of the global fitting, we
+      // fix the positions (peak positions are always 2nd parameter)
+      // this is because the positions tend to run away as long as the other parameters
+      // are far from their fitted values
+      var isFixed = new bool[param.Length];
+      for (int i = 1; i < isFixed.Length; i += numberOfParametersPerPeak)
+        isFixed[i] = true;
+      var fitResult = fit.Fit(xCut, yCut, param, lowerBounds, upperBounds, null, isFixed, cancellationToken);
+      param = fitResult.MinimizingPoint.ToArray();
+
+      // In the second stage of the global fitting, we
+      // now leave all parameters free
+      fitResult = fit.Fit(xCut, yCut, param, lowerBounds, upperBounds, null, null, cancellationToken);
       // var fitFunctionWrapper = new PeakFitFunctions.FunctionWrapper(fitFunc, fitResult.MinimizingPoint.ToArray());
       var list = new List<PeakFitting.PeakDescription>();
 
