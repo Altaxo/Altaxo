@@ -376,10 +376,10 @@ namespace Altaxo.Science.Spectroscopy
                   for (var j = 0; j < parameterNames.Length; j++)
                   {
                     var cParaValue = peakTable.DataColumns.EnsureExistence($"{parameterNames[j]}{runningColumnNumber}", typeof(DoubleColumn), ColumnKind.V, runningColumnNumber);
-                    var cParaVariance = peakTable.DataColumns.EnsureExistence($"{parameterNames[j]}{runningColumnNumber}.Err", typeof(DoubleColumn), ColumnKind.Err, runningColumnNumber);
+                    var cParaStdError = peakTable.DataColumns.EnsureExistence($"{parameterNames[j]}{runningColumnNumber}.Err", typeof(DoubleColumn), ColumnKind.Err, runningColumnNumber);
 
                     cParaValue[idxRow] = r.PeakParameter[j];
-                    cParaVariance[idxRow] = Math.Sqrt(r.PeakParameterCovariances[j, j]);
+                    cParaStdError[idxRow] = r.PeakParameterCovariances is null ? 0 : Math.Sqrt(r.PeakParameterCovariances[j, j]);
                   }
 
 
