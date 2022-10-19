@@ -8,7 +8,7 @@
              xmlns:axogc="clr-namespace:Altaxo.Gui.Common" 
              d:DataContext="{d:DesignInstance Type=localModel:PeakSearchingByTopologyController}"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+             >
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -30,5 +30,14 @@
                                        SelectedQuantity="{Binding MinimalProminence}" 
                                        UnitEnvironment="{Binding ProminenceEnvironment}"
                                        IsEnabled="{Binding UseMinimalProminence}"/>
+
+        <Label Grid.Row="2" Grid.Column="0"
+               Content="Maximal number of peaks:" />
+
+        <axogc:NullableInt32TextBox Grid.Row="2" Grid.Column="2"
+                                    SelectedValue="{Binding MaximalNumberOfPeaks}"
+                                    MinWidth="100"
+                                    ToolTip="Limit the number of peaks included in the result by selecting only the #maximalNumberOfPeaks highest peaks" />
+
     </Grid>
 </UserControl>

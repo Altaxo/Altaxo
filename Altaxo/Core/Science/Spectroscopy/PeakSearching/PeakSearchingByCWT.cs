@@ -147,6 +147,28 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
       }
     }
 
+    private int? _maximalNumberOfPeaks = 50;
+
+    /// <summary>
+    /// If a value is set, this limits the number of peaks included in the result to this number of peaks with the highest amplitude.
+    /// </summary>
+    /// <value>
+    /// The maximal number of peaks.
+    /// </value>
+    /// <exception cref="System.ArgumentException">Value must either be null or >0</exception>
+    public int? MaximalNumberOfPeaks
+    {
+      get => _maximalNumberOfPeaks;
+      set
+      {
+        if (value.HasValue && value.Value <= 0)
+          throw new ArgumentException("Value must either be null or >0");
+        _maximalNumberOfPeaks = value;
+      }
+    }
+
+
+
     #region Serialization
 
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PeakSearchingByCwt), 0)]
@@ -174,6 +196,41 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
           MinimalWidthOfRidgeMaximumInOctaves = info.GetDouble("MinimalWidthOfRidgeMaximumInOctaves"),
           MinimalSignalToNoiseRatio = info.GetDouble("MinimalSignalToNoiseRatio"),
           MinimalRelativeGaussianAmplitude = info.GetDouble("MinimalRelativeGaussianAmplitude")
+        };
+      }
+    }
+
+    /// <summary>
+    /// 2022-10-19 Add property 'MaximalNumberOfPeaks'
+    /// </summary>
+    /// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PeakSearchingByCwt), 1)]
+    public class SerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        var s = (PeakSearchingByCwt)obj;
+
+        info.AddValue("Wavelet", s.Wavelet);
+        info.AddValue("NumberOfPointsPerOctave", s.NumberOfPointsPerOctave);
+        info.AddValue("MinimalRidgeLengthInOctaves", s.MinimalRidgeLengthInOctaves);
+        info.AddValue("MinimalWidthOfRidgeMaximumInOctaves", s.MinimalWidthOfRidgeMaximumInOctaves);
+        info.AddValue("MinimalSignalToNoiseRatio", s.MinimalSignalToNoiseRatio);
+        info.AddValue("MinimalRelativeGaussianAmplitude", s.MinimalRelativeGaussianAmplitude);
+        info.AddValue("MaximalNumberOfPeaks", s.MaximalNumberOfPeaks);
+      }
+
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      {
+        return new PeakSearchingByCwt()
+        {
+          Wavelet = info.GetValue<IWaveletForPeakSearching>("Wavelet", null),
+          NumberOfPointsPerOctave = info.GetInt32("NumberOfPointsPerOctave"),
+          MinimalRidgeLengthInOctaves = info.GetDouble("MinimalRidgeLengthInOctaves"),
+          MinimalWidthOfRidgeMaximumInOctaves = info.GetDouble("MinimalWidthOfRidgeMaximumInOctaves"),
+          MinimalSignalToNoiseRatio = info.GetDouble("MinimalSignalToNoiseRatio"),
+          MinimalRelativeGaussianAmplitude = info.GetDouble("MinimalRelativeGaussianAmplitude"),
+          MaximalNumberOfPeaks = info.GetNullableInt32("MaximalNumberOfPeaks"),
         };
       }
     }
@@ -260,6 +317,16 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
 
           peakDescriptions.Add(peakDescription);
         }
+      }
+
+      // if there are too many peaks, we prune the peaks with the lowest amplitude
+      if (_maximalNumberOfPeaks.HasValue && peakDescriptions.Count > _maximalNumberOfPeaks.Value)
+      {
+        // Sort so that the hightest peaks are at the beginning of the list
+        peakDescriptions.Sort((p1, p2) => Comparer<double>.Default.Compare(p2.Prominence, p1.Prominence));
+        // cut the end of the list to the maximal allowed number of peaks
+        for (int i = peakDescriptions.Count - 1; i >= _maximalNumberOfPeaks.Value; i--)
+          peakDescriptions.RemoveAt(i);
       }
 
       peakDescriptions.Sort((p1, p2) => Comparer<double>.Default.Compare(p1.PositionIndex, p2.PositionIndex));

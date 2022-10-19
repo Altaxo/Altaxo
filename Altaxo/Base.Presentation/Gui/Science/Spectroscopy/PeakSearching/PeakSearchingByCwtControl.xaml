@@ -23,6 +23,8 @@
             <RowDefinition Height="4"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="4"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="4"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
@@ -79,6 +81,14 @@
                                        SelectedQuantity="{Binding MinimalRelativeGaussianAmplitude}" 
                                        UnitEnvironment="{Binding RatioEnvironment}"
                                        ToolTip="Minimal ratio between the Gaussian amplitude of this peak and of the highest peak in order for the peak to be included." />
+
+        <Label Grid.Row="12" Grid.Column="0"
+               Content="Maximal number of peaks:" />
+
+        <axogc:NullableInt32TextBox Grid.Row="12" Grid.Column="2"
+                                    SelectedValue="{Binding MaximalNumberOfPeaks}"
+                                    ToolTip="Limit the number of peaks included in the result by selecting only the #maximalNumberOfPeaks highest peaks" />
+
 
     </Grid>
 </UserControl>

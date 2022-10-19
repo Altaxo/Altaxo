@@ -25,8 +25,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Altaxo.Collections;
 using Altaxo.Gui.Common;
 using Altaxo.Science.Spectroscopy.PeakSearching;
@@ -146,23 +144,40 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakSearching
       }
     }
 
+    private int? _maximalNumberOfPeaks;
+
+    public int? MaximalNumberOfPeaks
+    {
+      get => _maximalNumberOfPeaks;
+      set
+      {
+        if (!(_maximalNumberOfPeaks == value))
+        {
+          _maximalNumberOfPeaks = value;
+          OnPropertyChanged(nameof(MaximalNumberOfPeaks));
+        }
+      }
+    }
+
+
     #endregion
 
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
 
-      if(initData)
+      if (initData)
       {
         Wavelet = new ItemsController<Type>(new SelectableListNodeList(
                     Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(IWaveletForPeakSearching))
-                    .Select(t => new SelectableListNode(t.Name, t, t==_doc.Wavelet.GetType()))));
+                    .Select(t => new SelectableListNode(t.Name, t, t == _doc.Wavelet.GetType()))));
 
         NumberOfPointsPerOctave = _doc.NumberOfPointsPerOctave;
         MinimalRidgeLengthInOctaves = new DimensionfulQuantity(_doc.MinimalRidgeLengthInOctaves, Altaxo.Units.Dimensionless.Unity.Instance).AsQuantityIn(NumberOfOctavesEnvironment.DefaultUnit);
         MinimalWidthOfRidgeMaximumInOctaves = new DimensionfulQuantity(_doc.MinimalWidthOfRidgeMaximumInOctaves, Altaxo.Units.Dimensionless.Unity.Instance).AsQuantityIn(NumberOfOctavesEnvironment.DefaultUnit);
         MinimalSignalToNoiseRatio = new DimensionfulQuantity(_doc.MinimalSignalToNoiseRatio, Altaxo.Units.Dimensionless.Unity.Instance).AsQuantityIn(RatioEnvironment.DefaultUnit);
         MinimalRelativeGaussianAmplitude = new DimensionfulQuantity(_doc.MinimalRelativeGaussianAmplitude, Altaxo.Units.Dimensionless.Unity.Instance).AsQuantityIn(RatioEnvironment.DefaultUnit);
+        MaximalNumberOfPeaks = _doc.MaximalNumberOfPeaks;
       }
     }
 
@@ -180,9 +195,10 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakSearching
           MinimalWidthOfRidgeMaximumInOctaves = MinimalWidthOfRidgeMaximumInOctaves.AsValueInSIUnits,
           MinimalSignalToNoiseRatio = MinimalSignalToNoiseRatio.AsValueInSIUnits,
           MinimalRelativeGaussianAmplitude = MinimalRelativeGaussianAmplitude.AsValueInSIUnits,
+          MaximalNumberOfPeaks = MaximalNumberOfPeaks,
         };
       }
-      catch(Exception ex)
+      catch (Exception ex)
       {
         Current.Gui.ErrorMessageBox(ex.Message, "Exception applying dialog");
         return ApplyEnd(false, disposeController);

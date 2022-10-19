@@ -22,11 +22,7 @@
 
 #endregion Copyright
 
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Altaxo.Science.Spectroscopy.PeakSearching;
 using Altaxo.Units;
 
@@ -79,16 +75,32 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakSearching
       }
     }
 
+    private int? _maximalNumberOfPeaks;
+
+    public int? MaximalNumberOfPeaks
+    {
+      get => _maximalNumberOfPeaks;
+      set
+      {
+        if (!(_maximalNumberOfPeaks == value))
+        {
+          _maximalNumberOfPeaks = value;
+          OnPropertyChanged(nameof(MaximalNumberOfPeaks));
+        }
+      }
+    }
+
     #endregion
 
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
 
-      if(initData)
+      if (initData)
       {
         UseMinimalProminence = _doc.MinimalProminence.HasValue;
         MinimalProminence = new DimensionfulQuantity(_doc.MinimalProminence ?? 0.02, Altaxo.Units.Dimensionless.Unity.Instance).AsQuantityIn(ProminenceEnvironment.DefaultUnit);
+        MaximalNumberOfPeaks = _doc.MaximalNumberOfPeaks;
       }
     }
 
@@ -96,12 +108,13 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakSearching
     {
       _doc = _doc with
       {
-        MinimalProminence = UseMinimalProminence ? MinimalProminence.AsValueInSIUnits : null
+        MinimalProminence = UseMinimalProminence ? MinimalProminence.AsValueInSIUnits : null,
+        MaximalNumberOfPeaks = MaximalNumberOfPeaks,
       };
 
       return ApplyEnd(true, disposeController);
     }
 
-   
+
   }
 }
