@@ -420,22 +420,28 @@ namespace Altaxo.Calc.Optimization
           objective.EvaluateAt(newParameterValues);
           var RSSnew = objective.Value; // evaluate function at the new parameter values
 
+          double rho;
           if (double.IsNaN(RSSnew))
           {
-            exitCondition = ExitCondition.InvalidValues;
-            break;
+            // if the new RSS value is NaN, this might be a sign that the step was chosen too wide,
+            // causing some parameters out of the feasible range
+            // that's why we do not exit here, but set rho to 0 in order to increase mu afterwards
+            rho = 0;
+          }
+          else
+          {
+
+            // calculate the ratio of the actual to the predicted reduction, see [2], eq. 15, page 3 
+            // ρ = (RSS - RSSnew) / (Δp'(μΔp - g))
+            scaledParameterStep.Multiply(mu, MuTimesPStepMinusGradient); // calculate μΔp
+            MuTimesPStepMinusGradient.Add(NegativeGradient, MuTimesPStepMinusGradient); // calculate (μΔp - g)
+            var predictedReduction = scaledParameterStep.DotProduct(MuTimesPStepMinusGradient); // calculate (Δp'(μΔp - g))
+            rho = (predictedReduction > 0)
+                    ? (RSS - RSSnew) / predictedReduction
+                    : 0;
           }
 
-          // calculate the ratio of the actual to the predicted reduction, see [2], eq. 15, page 3 
-          // ρ = (RSS - RSSnew) / (Δp'(μΔp - g))
-          scaledParameterStep.Multiply(mu, MuTimesPStepMinusGradient); // calculate μΔp
-          MuTimesPStepMinusGradient.Add(NegativeGradient, MuTimesPStepMinusGradient); // calculate (μΔp - g)
-          var predictedReduction = scaledParameterStep.DotProduct(MuTimesPStepMinusGradient); // calculate (Δp'(μΔp - g))
-          var rho = (predictedReduction != 0)
-                  ? (RSS - RSSnew) / predictedReduction
-                  : 0;
-
-          if (rho > 0.0 && predictedReduction >= 0)
+          if (rho > 0)
           {
             // this step was accepted
             newParameterValues.CopyTo(parameterValues);
@@ -490,6 +496,14 @@ namespace Altaxo.Calc.Optimization
             // this step was rejected, thus increase mu by multiplying with nu, and double nu, resulting in an exponential increase when consecutive steps are rejected
             mu *= nu;
             nu *= 2;
+
+            if (!(mu < double.MaxValue && nu < double.MaxValue))
+            {
+              // if mu becomes too large, this is maybe because our function always delivers
+              // an RSS value which is NaN 
+              exitCondition = double.IsNaN(RSSnew) ? ExitCondition.InvalidValues : ExitCondition.RelativeGradient;
+              break;
+            }
           }
         }
       }
