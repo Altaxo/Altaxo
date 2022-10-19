@@ -57,9 +57,9 @@ namespace Altaxo.Calc.Optimization
     private void EvaluateCovariance(IObjectiveModel objective, IReadOnlyList<bool> isFixed)
     {
       objective.EvaluateAt(objective.Point); // Hessian may be not yet updated.
-
+      var RSS = objective.Value;
       var Hessian = objective.Hessian;
-      if (Hessian == null || objective.DegreeOfFreedom < 1)
+      if (!(RSS >= 0) || Hessian == null || objective.DegreeOfFreedom < 1)
       {
         Covariance = null;
         Correlation = null;
