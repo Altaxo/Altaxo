@@ -195,7 +195,8 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
           MinimalRidgeLengthInOctaves = info.GetDouble("MinimalRidgeLengthInOctaves"),
           MinimalWidthOfRidgeMaximumInOctaves = info.GetDouble("MinimalWidthOfRidgeMaximumInOctaves"),
           MinimalSignalToNoiseRatio = info.GetDouble("MinimalSignalToNoiseRatio"),
-          MinimalRelativeGaussianAmplitude = info.GetDouble("MinimalRelativeGaussianAmplitude")
+          MinimalRelativeGaussianAmplitude = info.GetDouble("MinimalRelativeGaussianAmplitude"),
+          MaximalNumberOfPeaks = null,
         };
       }
     }

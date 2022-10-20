@@ -85,6 +85,7 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
         return new PeakSearchingByTopology()
         {
           MinimalProminence = minimalProminence,
+          MaximalNumberOfPeaks = null,
         };
       }
     }
