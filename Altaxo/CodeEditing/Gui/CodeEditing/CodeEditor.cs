@@ -20,13 +20,9 @@
 
 // Modifications (C) Dr. D. Lellinger
 
-extern alias MCW;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -36,7 +32,6 @@ using Altaxo.CodeEditing;
 using ICSharpCode.AvalonEdit;
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Editing;
-using MCW::Microsoft.CodeAnalysis;
 
 namespace Altaxo.Gui.CodeEditing
 {
@@ -306,7 +301,7 @@ namespace Altaxo.Gui.CodeEditing
       primaryTextEditor.TextArea.Selection = Selection.Create(primaryTextEditor.TextArea, pos1, pos2);
     }
 
-    private void EhSyntaxTreeChanged(MCW::Microsoft.CodeAnalysis.Document document, Microsoft.CodeAnalysis.SyntaxTree syntaxTree)
+    private void EhSyntaxTreeChanged(Microsoft.CodeAnalysis.Document document, Microsoft.CodeAnalysis.SyntaxTree syntaxTree)
     {
       Action action = () => quickClassBrowser.Update(syntaxTree.GetRoot());
 

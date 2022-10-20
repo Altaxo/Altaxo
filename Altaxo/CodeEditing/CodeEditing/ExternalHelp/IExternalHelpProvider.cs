@@ -23,14 +23,9 @@
 #endregion Copyright
 
 #if !NoExternalHelp
-extern alias MCW;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using MCW::Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis;
 
 namespace Altaxo.CodeEditing.ExternalHelp
 {

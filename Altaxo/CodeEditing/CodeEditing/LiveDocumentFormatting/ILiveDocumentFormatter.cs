@@ -23,13 +23,9 @@
 #endregion Copyright
 
 #if !NoLiveDocumentFormatting
-extern alias MCW;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+//extern alias MCW;
 using System.Threading.Tasks;
-using MCW::Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis;
 
 namespace Altaxo.CodeEditing.LiveDocumentFormatting
 {

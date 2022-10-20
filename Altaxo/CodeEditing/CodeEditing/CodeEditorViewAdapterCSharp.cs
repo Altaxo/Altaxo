@@ -22,24 +22,18 @@
 
 #endregion Copyright
 
-extern alias MCW;
+//extern alias MCW;
 using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using ICSharpCode.AvalonEdit;
 using ICSharpCode.AvalonEdit.Folding;
 using ICSharpCode.AvalonEdit.Indentation;
-using MCW::Microsoft.CodeAnalysis;
-using MCW::Microsoft.CodeAnalysis.Formatting;
+//using MCW::Microsoft.CodeAnalysis;
+//using MCW::Microsoft.CodeAnalysis.Formatting;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.CodeAnalysis.Editor;
 using Microsoft.CodeAnalysis.Text;
+using Microsoft.CodeAnalysis.Formatting;
 
 #if !NoBraceMatching
 using Altaxo.CodeEditing.BraceMatching;
@@ -206,12 +200,12 @@ namespace Altaxo.CodeEditing
     /// The external help provider.
     /// </value>
     public ExternalHelp.IExternalHelpProvider ExternalHelpProvider { get; set; }
+#endif
 
     /// <summary>
     /// Event that is fired when external help is required.
     /// </summary>
     public event Action<ExternalHelp.ExternalHelpItem> ExternalHelpRequired;
-#endif
 
 #if !NoDiagnostics
     private Action<DiagnosticsUpdatedArgs> _diagnosticsUpdated;

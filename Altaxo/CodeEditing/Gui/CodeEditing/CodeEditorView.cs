@@ -20,7 +20,6 @@
 
 // Modifications (C) Dr. D. Lellinger
 
-extern alias MCW;
 using System;
 using System.Collections.Immutable;
 using System.IO;
@@ -40,7 +39,6 @@ using ICSharpCode.AvalonEdit.CodeCompletion;
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Editing;
 using ICSharpCode.AvalonEdit.Folding;
-using MCW::Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis;
 
 #if !NoBraceMatching

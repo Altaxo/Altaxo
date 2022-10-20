@@ -2,12 +2,11 @@
 
 // Originated from: RoslynPad, RoslynPad.Roslyn, Snippets/SnippetInfoService.cs
 
-extern alias MCW;
 using System.Collections.Generic;
 using System.Composition;
 using System.Linq;
-using MCW::Microsoft.CodeAnalysis.Host.Mef;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Host.Mef;
 
 namespace Altaxo.CodeEditing.SnippetHandling
 {

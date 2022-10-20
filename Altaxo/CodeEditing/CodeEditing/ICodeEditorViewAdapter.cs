@@ -22,17 +22,11 @@
 
 #endregion Copyright
 
-extern alias MCW;
 using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Linq;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using ICSharpCode.AvalonEdit.Folding;
 using ICSharpCode.AvalonEdit.Indentation;
-using MCW::Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis;
 
 #if !NoBraceMatching
@@ -172,20 +166,18 @@ namespace Altaxo.CodeEditing
     Task FormatDocumentAfterEnteringTriggerChar(int caretPosition, char triggerChar);
 #endif
 
-
-
 #if !NoExternalHelp
     /// <summary>
     /// Gets the external help item for the symbol under the caret position, and then fires the <see cref="ExternalHelpRequired"/> event.
     /// </summary>
     /// <param name="caretPosition">The caret position.</param>
     Task GetExternalHelpItemAndFireHelpEvent(int caretPosition);
+#endif
 
     /// <summary>
     /// Event that is fired when external help is required.
     /// </summary>
     event Action<ExternalHelp.ExternalHelpItem> ExternalHelpRequired;
-#endif
 
 #if !NoRenaming
     /// <summary>

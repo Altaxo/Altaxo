@@ -3,26 +3,14 @@
 // Originated from: RoslynPad, RoslynPad.Roslyn, RoslynHost.cs
 
 // Strongly revised for the Altaxo project, Copyright Dr. D. Lellinger, 2017
-extern alias MCW;
 using System;
-using System.Collections;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Composition.Convention;
 using System.Composition.Hosting;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading;
-using System.Threading.Tasks;
-using MCW::Microsoft.CodeAnalysis.Host;
-using MCW::Microsoft.CodeAnalysis.Host.Mef;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.Text;
+using Microsoft.CodeAnalysis.Host.Mef;
 
 namespace Altaxo.CodeEditing
 {

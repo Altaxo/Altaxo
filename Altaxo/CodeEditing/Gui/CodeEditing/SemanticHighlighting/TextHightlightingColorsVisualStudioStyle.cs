@@ -2,12 +2,11 @@
 
 // Originated from: RoslynPad, RoslynPad.Editor.Windows, ClassificationHighlightColors.cs
 
-extern alias MCW;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Windows.Media;
 using ICSharpCode.AvalonEdit.Highlighting;
-using MCW::Microsoft.CodeAnalysis.Classification;
+using Microsoft.CodeAnalysis.Classification;
 
 namespace Altaxo.Gui.CodeEditing.SemanticHighlighting
 {

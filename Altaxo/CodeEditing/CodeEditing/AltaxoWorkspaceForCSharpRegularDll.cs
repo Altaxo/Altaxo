@@ -22,22 +22,14 @@
 
 #endregion Copyright
 
-extern alias MCW;
+//extern alias MCW;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Threading.Tasks;
-using MCW::Microsoft.CodeAnalysis;
+//using MCW::Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.CodeAnalysis.Host;
-using Microsoft.CodeAnalysis.Text;
-using Roslyn.Utilities;
 
 namespace Altaxo.CodeEditing
 {
