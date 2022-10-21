@@ -9,13 +9,15 @@ namespace Altaxo.Calc.Optimization.ObjectiveFunctions
   {
     #region Private Variables
 
-    private readonly Action<IROMatrix<double>, IReadOnlyList<double>, IReadOnlyList<bool>?, IVector<double>> _userFunction; // (x, p) => f(x; p)
-    private readonly Action<IROMatrix<double>, IReadOnlyList<double>, IReadOnlyList<bool>?, IMatrix<double>> _userDerivative; // (x, p) => df(x; p)/dp
+    private readonly Action<IROMatrix<double>, IReadOnlyList<double>, IVector<double>, IReadOnlyList<bool>?> _userFunction; // (x, p) => f(x; p)
+    private readonly Action<IROMatrix<double>, IReadOnlyList<double>, IReadOnlyList<bool>?, IMatrix<double>, IReadOnlyList<bool>?> _userDerivative; // (x, p) => df(x; p)/dp
 
     #endregion Private Variables
 
-    public NonlinearObjectiveFunctionNonAllocating(Action<IROMatrix<double>, IReadOnlyList<double>, IReadOnlyList<bool>?, IVector<double>> function,
-        Action<IROMatrix<double>, IReadOnlyList<double>, IReadOnlyList<bool>?, IMatrix<double>> derivative = null, int accuracyOrder = 2)
+    public NonlinearObjectiveFunctionNonAllocating(
+      Action<IROMatrix<double>, IReadOnlyList<double>, IVector<double>, IReadOnlyList<bool>?> function,
+      Action<IROMatrix<double>, IReadOnlyList<double>, IReadOnlyList<bool>?, IMatrix<double>, IReadOnlyList<bool>?> derivative = null,
+      int accuracyOrder = 2)
       : base(accuracyOrder)
     {
       _userFunction = function;
@@ -93,7 +95,7 @@ namespace Altaxo.Calc.Optimization.ObjectiveFunctions
         ModelValues = Vector<double>.Build.Dense(NumberOfObservations);
       }
 
-      _userFunction(_observedXAsMatrix, Point, null, ModelValues);
+      _userFunction(_observedXAsMatrix, Point, ModelValues, null);
       FunctionEvaluations++;
 
       // calculate the weighted residuals
@@ -111,7 +113,7 @@ namespace Altaxo.Calc.Optimization.ObjectiveFunctions
       if (_userDerivative is not null)
       {
         // analytical jacobian
-        _userDerivative(_observedXAsMatrix, Point, null, _jacobianValue);
+        _userDerivative(_observedXAsMatrix, Point, IsFixedByUserOrBoundary, _jacobianValue, null);
         JacobianEvaluations++;
       }
       else
@@ -178,12 +180,12 @@ namespace Altaxo.Calc.Optimization.ObjectiveFunctions
         if (accuracyOrder >= 6)
         {
           // f'(x) = {- f(x - 3h) + 9f(x - 2h) - 45f(x - h) + 45f(x + h) - 9f(x + 2h) + f(x + 3h)} / 60h + O(h^6)
-          _userFunction(_observedXAsMatrix, parameters - 3 * h, null, _f1);
-          _userFunction(_observedXAsMatrix, parameters - 2 * h, null, _f2);
-          _userFunction(_observedXAsMatrix, parameters - h, null, _f3);
-          _userFunction(_observedXAsMatrix, parameters + h, null, _f4);
-          _userFunction(_observedXAsMatrix, parameters + 2 * h, null, _f5);
-          _userFunction(_observedXAsMatrix, parameters + 3 * h, null, _f6);
+          _userFunction(_observedXAsMatrix, parameters - 3 * h, _f1, null);
+          _userFunction(_observedXAsMatrix, parameters - 2 * h, _f2, null);
+          _userFunction(_observedXAsMatrix, parameters - h, _f3, null);
+          _userFunction(_observedXAsMatrix, parameters + h, _f4, null);
+          _userFunction(_observedXAsMatrix, parameters + 2 * h, _f5, null);
+          _userFunction(_observedXAsMatrix, parameters + 3 * h, _f6, null);
 
           var prime = (-_f1 + 9 * _f2 - 45 * _f3 + 45 * _f4 - 9 * _f5 + _f6) / (60 * h[j]);
           derivatives.SetColumn(j, prime);
@@ -192,11 +194,11 @@ namespace Altaxo.Calc.Optimization.ObjectiveFunctions
         {
           // f'(x) = {-137f(x) + 300f(x + h) - 300f(x + 2h) + 200f(x + 3h) - 75f(x + 4h) + 12f(x + 5h)} / 60h + O(h^5)
           var f1 = currentValues;
-          _userFunction(_observedXAsMatrix, parameters + h, null, _f2);
-          _userFunction(_observedXAsMatrix, parameters + 2 * h, null, _f3);
-          _userFunction(_observedXAsMatrix, parameters + 3 * h, null, _f4);
-          _userFunction(_observedXAsMatrix, parameters + 4 * h, null, _f5);
-          _userFunction(_observedXAsMatrix, parameters + 5 * h, null, _f6);
+          _userFunction(_observedXAsMatrix, parameters + h, _f2, null);
+          _userFunction(_observedXAsMatrix, parameters + 2 * h, _f3, null);
+          _userFunction(_observedXAsMatrix, parameters + 3 * h, _f4, null);
+          _userFunction(_observedXAsMatrix, parameters + 4 * h, _f5, null);
+          _userFunction(_observedXAsMatrix, parameters + 5 * h, _f6, null);
 
           var prime = (-137 * f1 + 300 * _f2 - 300 * _f3 + 200 * _f4 - 75 * _f5 + 12 * _f6) / (60 * h[j]);
           derivatives.SetColumn(j, prime);
@@ -204,10 +206,10 @@ namespace Altaxo.Calc.Optimization.ObjectiveFunctions
         else if (accuracyOrder == 4)
         {
           // f'(x) = {f(x - 2h) - 8f(x - h) + 8f(x + h) - f(x + 2h)} / 12h + O(h^4)
-          _userFunction(_observedXAsMatrix, parameters - 2 * h, null, _f1);
-          _userFunction(_observedXAsMatrix, parameters - h, null, _f2);
-          _userFunction(_observedXAsMatrix, parameters + h, null, _f3);
-          _userFunction(_observedXAsMatrix, parameters + 2 * h, null, _f4);
+          _userFunction(_observedXAsMatrix, parameters - 2 * h, _f1, null);
+          _userFunction(_observedXAsMatrix, parameters - h, _f2, null);
+          _userFunction(_observedXAsMatrix, parameters + h, _f3, null);
+          _userFunction(_observedXAsMatrix, parameters + 2 * h, _f4, null);
 
           var prime = (_f1 - 8 * _f2 + 8 * _f3 - _f4) / (12 * h[j]);
           derivatives.SetColumn(j, prime);
@@ -216,9 +218,9 @@ namespace Altaxo.Calc.Optimization.ObjectiveFunctions
         {
           // f'(x) = {-11f(x) + 18f(x + h) - 9f(x + 2h) + 2f(x + 3h)} / 6h + O(h^3)
           var f1 = currentValues;
-          _userFunction(_observedXAsMatrix, parameters + h, null, _f2);
-          _userFunction(_observedXAsMatrix, parameters + 2 * h, null, _f3);
-          _userFunction(_observedXAsMatrix, parameters + 3 * h, null, _f4);
+          _userFunction(_observedXAsMatrix, parameters + h, _f2, null);
+          _userFunction(_observedXAsMatrix, parameters + 2 * h, _f3, null);
+          _userFunction(_observedXAsMatrix, parameters + 3 * h, _f4, null);
 
           var prime = (-11 * f1 + 18 * _f2 - 9 * _f3 + 2 * _f4) / (6 * h[j]);
           derivatives.SetColumn(j, prime);
@@ -226,8 +228,8 @@ namespace Altaxo.Calc.Optimization.ObjectiveFunctions
         else if (accuracyOrder == 2)
         {
           // f'(x) = {f(x + h) - f(x - h)} / 2h + O(h^2)
-          _userFunction(_observedXAsMatrix, parameters + h, null, _f1);
-          _userFunction(_observedXAsMatrix, parameters - h, null, _f2);
+          _userFunction(_observedXAsMatrix, parameters + h, _f1, null);
+          _userFunction(_observedXAsMatrix, parameters - h, _f2, null);
 
           var prime = (_f1 - _f2) / (2 * h[j]);
           derivatives.SetColumn(j, prime);
@@ -236,7 +238,7 @@ namespace Altaxo.Calc.Optimization.ObjectiveFunctions
         {
           // f'(x) = {- f(x) + f(x + h)} / h + O(h)
           var f1 = currentValues;
-          _userFunction(_observedXAsMatrix, parameters + h, null, _f2);
+          _userFunction(_observedXAsMatrix, parameters + h, _f2, null);
 
           var prime = (-f1 + _f2) / h[j];
           derivatives.SetColumn(j, prime);

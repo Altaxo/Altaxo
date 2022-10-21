@@ -34,19 +34,19 @@ using Complex64T = System.Numerics.Complex;
 namespace Altaxo.Calc.FitFunctions.Probability
 {
   /// <summary>
-  /// Fit fuction with one or more PearsonIV shaped peaks, with a background polynomial
+  /// Fit function with one or more PearsonIV shaped peaks, with a background polynomial
   /// of variable order. This is the original version from Wikipedia, with area as the scaling parameter.
   /// </summary>
   /// <remarks>See <see href="https://en.wikipedia.org/wiki/Pearson_distribution#The_Pearson_type_IV_distribution"/>.</remarks>
   [FitFunctionClass]
   public class PearsonIVArea : IFitFunction, IFitFunctionPeak, IImmutable
   {
-    const string ParameterBaseName0 = "A";
-    const string ParameterBaseName1 = "xc";
-    const string ParameterBaseName2 = "w";
-    const string ParameterBaseName3 = "m";
-    const string ParameterBaseName4 = "ν";
-    const int NumberOfParametersPerPeak = 5;
+    private const string ParameterBaseName0 = "A";
+    private const string ParameterBaseName1 = "xc";
+    private const string ParameterBaseName2 = "w";
+    private const string ParameterBaseName3 = "m";
+    private const string ParameterBaseName4 = "ν";
+    private const int NumberOfParametersPerPeak = 5;
 
 
     /// <summary>The order of the background polynomial.</summary>
@@ -266,7 +266,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
       Y[0] = sumTerms + sumPolynomial;
     }
 
-    public void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> P, IReadOnlyList<bool>? independentVariableChoice, IVector<double> FV)
+    public void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> P, IVector<double> FV, IReadOnlyList<bool>? dependentVariableChoice)
     {
       var rowCount = independent.RowCount;
       for (int r = 0; r < rowCount; ++r)
@@ -373,7 +373,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
       return (result.Position, result.Area, result.Height, result.FWHM);
     }
 
-    static double SafeSqrt(double x) => Math.Sqrt(Math.Max(0, x));
+    private static double SafeSqrt(double x) => Math.Sqrt(Math.Max(0, x));
 
 
 

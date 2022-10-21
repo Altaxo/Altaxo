@@ -1334,7 +1334,7 @@ namespace Altaxo.Calc
     /// function values at the point (independent).</param>
     public abstract void Evaluate(double[] independent, double[] parameters, double[] result);
 
-    public virtual void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> P, IReadOnlyList<bool>? independentVariableChoice, IVector<double> FV)
+    public virtual void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> P, IVector<double> FV, IReadOnlyList<bool>? dependentVariableChoice)
     {
       var xx = new double[NumberOfIndependentVariables];
       var yy = new double[NumberOfDependentVariables];
@@ -1352,7 +1352,7 @@ namespace Altaxo.Calc
 
         Evaluate(xx, pp, yy);
 
-        if (independentVariableChoice is null)
+        if (dependentVariableChoice is null)
         {
           for (int c = 0; c < yy.Length; ++c)
           {
@@ -1363,7 +1363,7 @@ namespace Altaxo.Calc
         {
           for (int c = 0; c < yy.Length; ++c)
           {
-            if (independentVariableChoice[c] == true)
+            if (dependentVariableChoice[c] == true)
             {
               FV[rd++] = yy[c];
             }

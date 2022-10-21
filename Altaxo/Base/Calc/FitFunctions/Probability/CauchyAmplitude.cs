@@ -44,10 +44,10 @@ namespace Altaxo.Calc.FitFunctions.Probability
   public class CauchyAmplitude
         : IFitFunctionWithDerivative, IFitFunctionPeak, IImmutable
   {
-    const string ParameterBaseName0 = "a";
-    const string ParameterBaseName1 = "xc";
-    const string ParameterBaseName2 = "w";
-    const int NumberOfParametersPerPeak = 3;
+    private const string ParameterBaseName0 = "a";
+    private const string ParameterBaseName1 = "xc";
+    private const string ParameterBaseName2 = "w";
+    private const int NumberOfParametersPerPeak = 3;
 
     /// <summary>The number of Lorentzian (Cauchy) terms.</summary>
     private readonly int _numberOfTerms;
@@ -264,7 +264,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
       Y[0] = sumTerms + sumPolynomial;
     }
 
-    public void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> P, IReadOnlyList<bool>? independentVariableChoice, IVector<double> FV)
+    public void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> P, IVector<double> FV, IReadOnlyList<bool>? independentVariableChoice)
     {
       var rowCount = independent.RowCount;
       for (int r = 0; r < rowCount; ++r)
@@ -301,7 +301,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
 
     #endregion IFitFunction Members
 
-    public void EvaluateDerivative(IROMatrix<double> X, IReadOnlyList<double> P, IReadOnlyList<bool>? independentVariableChoice, IMatrix<double> DY)
+    public void EvaluateDerivative(IROMatrix<double> X, IReadOnlyList<double> P, IReadOnlyList<bool>? isParameterFixed, IMatrix<double> DY, IReadOnlyList<bool> dependentVariableChoice)
     {
       var rowCount = X.RowCount;
       for (int r = 0; r < rowCount; ++r)

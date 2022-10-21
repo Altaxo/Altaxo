@@ -91,6 +91,7 @@ namespace Altaxo.Calc.FitFunctions
         (() => new GaussArea(1,1), 0.5, new double[]{2,3,5,1,3}, 1+3*0.5+(2/(5*Math.Sqrt(2*Math.PI)))*Math.Exp(-0.5*RMath.Pow2((0.5-3)/5))),
         (() => new CauchyAmplitude(1,1), 0.5, new double[]{2,3,5,1,3}, 1+3*0.5+2/(1+RMath.Pow2((0.5-3)/5))),
         (() => new CauchyArea(1,1), 0.5, new double[]{2,3,5,1,3}, 1+3*0.5+(2/(5*Math.PI*(1+RMath.Pow2((0.5-3)/5))))),
+        (() => new VoigtArea(1,1), 4, new double[]{17,2,3,5,1,3 }, 13.809882936322777226),
         (() => new LogisticDecreasing(1,1), 0.5, new double[]{2,3,5,1,3}, 1+3*0.5+2/(1+Math.Exp((0.5-3)/5))),
         (() => new LogisticIncreasing(1,1), 0.5, new double[]{2,3,5,1,3}, 1+3*0.5+2/(1+Math.Exp(-(0.5-3)/5))),
         (() => new GeneralizedLogisticDecreasing(1,1), 0.5, new double[]{2,3,5,0.4, 0.3, 1,3}, 1+3*0.5+2/Math.Pow(1+Math.Pow(Math.Exp((0.5-3)/5),0.4),0.3/0.4)),
@@ -159,10 +160,10 @@ namespace Altaxo.Calc.FitFunctions
           actualDerivative[i, k] = double.NaN;
       }
 
-      ff.Evaluate(xx, parameters, null, yy);
+      ff.Evaluate(xx, parameters, yy, null);
       var y0 = y[4];
 
-      ff.EvaluateDerivative(xx, parameters, null, actualDerivative);
+      ff.EvaluateDerivative(xx, parameters, null, actualDerivative, null);
 
       for (int i = 0; i < paraVariation.Length; ++i)
       {
@@ -174,7 +175,7 @@ namespace Altaxo.Calc.FitFunctions
           d = Math.Abs(paraVariation[i]) * delta;
         }
         paraVariation[i] += d; ;
-        ff.Evaluate(xx, paraVariation, null, yy);
+        ff.Evaluate(xx, paraVariation, yy, null);
         var y1 = y[4];
 
         var approximatedDerivative = (y1 - y0) / d;

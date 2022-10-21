@@ -33,19 +33,19 @@ using Complex64T = System.Numerics.Complex;
 namespace Altaxo.Calc.FitFunctions.Peaks
 {
   /// <summary>
-  /// Fit fuction with one or more PearsonIV shaped peaks, with a background polynomial
+  /// Fit function with one or more PearsonIV shaped peaks, with a background polynomial
   /// of variable order. The PearsonIV is relocated and scaled, so that the amplitude parameter is the maximum height of the peak, and the position parameter is the x-value of the maximum.
   /// </summary>
   /// <remarks>See <see href="https://en.wikipedia.org/wiki/Pearson_distribution#The_Pearson_type_IV_distribution"/>.</remarks>
   [FitFunctionClass]
   public class PearsonIVAmplitude : IFitFunction, IFitFunctionPeak, IImmutable
   {
-    const string ParameterBaseName0 = "a";
-    const string ParameterBaseName1 = "xc";
-    const string ParameterBaseName2 = "w";
-    const string ParameterBaseName3 = "m";
-    const string ParameterBaseName4 = "ν";
-    const int NumberOfParametersPerPeak = 5;
+    private const string ParameterBaseName0 = "a";
+    private const string ParameterBaseName1 = "xc";
+    private const string ParameterBaseName2 = "w";
+    private const string ParameterBaseName3 = "m";
+    private const string ParameterBaseName4 = "ν";
+    private const int NumberOfParametersPerPeak = 5;
 
 
     /// <summary>The order of the background polynomial.</summary>
@@ -265,7 +265,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
       Y[0] = sumTerms + sumPolynomial;
     }
 
-    public void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> P, IReadOnlyList<bool>? independentVariableChoice, IVector<double> FV)
+    public void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> P, IVector<double> FV, IReadOnlyList<bool>? dependentVariableChoice)
     {
       var rowCount = independent.RowCount;
       for (int r = 0; r < rowCount; ++r)
@@ -356,7 +356,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
       return (result.Position, result.Area, result.Height, result.FWHM);
     }
 
-    static double SafeSqrt(double x) => Math.Sqrt(Math.Max(0, x));
+    private static double SafeSqrt(double x) => Math.Sqrt(Math.Max(0, x));
 
     public (double Position, double PositionStdDev, double Area, double AreaStdDev, double Height, double HeightStdDev, double FWHM, double FWHMStdDev)
       GetPositionAreaHeightFWHMFromSinglePeakParameters(double[] parameters, IROMatrix<double> cv)

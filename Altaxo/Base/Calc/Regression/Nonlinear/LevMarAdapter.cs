@@ -540,7 +540,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
             info.Xs[k] = fitEle.IndependentVariables(k)?[validRows[i]] ?? throw new ObjectDisposedException($"Independent variables column k={k} not available or disposed."); ;
 
 
-          ((IFitFunctionWithDerivative)fitEle.FitFunction).EvaluateDerivative(MatrixMath.ToROMatrixWithOneRow(info.Xs), info.Parameters, null, info.DYs);
+          ((IFitFunctionWithDerivative)fitEle.FitFunction).EvaluateDerivative(MatrixMath.ToROMatrixWithOneRow(info.Xs), info.Parameters, null, info.DYs, null);
 
           // copy the evaluation result to the output array (interleaved)
           for (int k = 0; k < info.DependentVariablesInUse.Length; ++k)

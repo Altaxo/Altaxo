@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+using Altaxo.Calc.LinearAlgebra;
 using Xunit;
 
 namespace Altaxo.Calc.FitFunctions.Probability
@@ -78,6 +79,96 @@ namespace Altaxo.Calc.FitFunctions.Probability
         AssertEx.AreEqual(fwhmExpected, fwhm, 0, Altaxo.Calc.ComplexErrorFunctionRelated.VoigtHalfWidthHalfMaximumApproximationMaximalRelativeError);
       }
 
+    }
+
+
+    [Fact]
+    public void TestDerivatives()
+    {
+      var v = new VoigtArea();
+
+      // General case
+      double area = 17;
+      double position = 7;
+      double sigma = 3;
+      double gamma = 5;
+
+      double expectedFunctionValue = 0.80988293632277722571;
+      double expectedDerivativeWrtArea = 0.047640172724869248571;
+      double expectedDerivativeWrtPosition = 0.054020556058543443380;
+      double expectedDerivativeWrtSigma = -0.065721156908731982756;
+      double expectedDerivativeWrtGamma = -0.100935670695898878136;
+
+
+      var parameters = new double[] { area, position, sigma, gamma };
+
+      var X = Matrix<double>.Build.Dense(1, 1);
+      X[0, 0] = 9;
+
+      var FV = Vector<double>.Build.Dense(1);
+      var DY = Matrix<double>.Build.Dense(1, 4);
+
+      v.Evaluate(X, parameters, FV, null);
+      v.EvaluateDerivative(X, parameters, null, DY, null);
+
+      AssertEx.AreEqual(expectedFunctionValue, FV[0], 0, 1E-12);
+      AssertEx.AreEqual(expectedDerivativeWrtArea, DY[0, 0], 0, 1E-12);
+      AssertEx.AreEqual(expectedDerivativeWrtPosition, DY[0, 1], 0, 1E-12);
+      AssertEx.AreEqual(expectedDerivativeWrtSigma, DY[0, 2], 0, 1E-12);
+      AssertEx.AreEqual(expectedDerivativeWrtGamma, DY[0, 3], 0, 1E-12);
+
+
+      // Case gamma == 0
+
+      area = 17;
+      position = 7;
+      sigma = 3;
+      gamma = 0;
+
+      expectedFunctionValue = 1.8102053646266625238;
+      expectedDerivativeWrtArea = 0.106482668507450736697;
+      expectedDerivativeWrtPosition = 0.40226785880592500530;
+      expectedDerivativeWrtSigma = -0.33522321567160417108;
+      expectedDerivativeWrtGamma = -0.37031134022911140635;
+
+      parameters = new double[] { area, position, sigma, gamma };
+
+      X[0, 0] = 9;
+
+      v.Evaluate(X, parameters, FV, null);
+      v.EvaluateDerivative(X, parameters, null, DY, null);
+
+      AssertEx.AreEqual(expectedFunctionValue, FV[0], 0, 1E-12);
+      AssertEx.AreEqual(expectedDerivativeWrtArea, DY[0, 0], 0, 1E-12);
+      AssertEx.AreEqual(expectedDerivativeWrtPosition, DY[0, 1], 0, 1E-12);
+      AssertEx.AreEqual(expectedDerivativeWrtSigma, DY[0, 2], 0, 1E-12);
+      AssertEx.AreEqual(expectedDerivativeWrtGamma, DY[0, 3], 0, 1E-12);
+
+      // Case sigma == 0
+
+      area = 17;
+      position = 7;
+      sigma = 0;
+      gamma = 5;
+
+      expectedFunctionValue = 0.93297725260766231313;
+      expectedDerivativeWrtArea = 0.054881014859274253713;
+      expectedDerivativeWrtPosition = 0.12868651760105687078;
+      expectedDerivativeWrtSigma = 0;
+      expectedDerivativeWrtGamma = -0.13512084348110971432;
+
+      parameters = new double[] { area, position, sigma, gamma };
+
+      X[0, 0] = 9;
+
+      v.Evaluate(X, parameters, FV, null);
+      v.EvaluateDerivative(X, parameters, null, DY, null);
+
+      AssertEx.AreEqual(expectedFunctionValue, FV[0], 0, 1E-12);
+      AssertEx.AreEqual(expectedDerivativeWrtArea, DY[0, 0], 0, 1E-12);
+      AssertEx.AreEqual(expectedDerivativeWrtPosition, DY[0, 1], 0, 1E-12);
+      AssertEx.AreEqual(expectedDerivativeWrtSigma, DY[0, 2], 0, 1E-12);
+      AssertEx.AreEqual(expectedDerivativeWrtGamma, DY[0, 3], 0, 1E-12);
     }
   }
 }

@@ -90,14 +90,14 @@ namespace Altaxo.Calc.Regression.Nonlinear
       public Vector<double> Evaluate(Vector<double> parameter, Vector<double> x)
       {
         var yR = Vector<double>.Build.Dense(x.Count);
-        FitFunction.Evaluate(MatrixMath.ToROMatrixWithOneColumn(x), parameter, null, yR);
+        FitFunction.Evaluate(MatrixMath.ToROMatrixWithOneColumn(x), parameter, yR, null);
         return yR;
       }
 
       public Matrix<double> EvaluateDerivative(Vector<double> parameter, Vector<double> x)
       {
         var yR = Matrix<double>.Build.Dense(x.Count, parameter.Count);
-        ((IFitFunctionWithDerivative)FitFunction).EvaluateDerivative(MatrixMath.ToROMatrixWithOneColumn(x), parameter, null, yR);
+        ((IFitFunctionWithDerivative)FitFunction).EvaluateDerivative(MatrixMath.ToROMatrixWithOneColumn(x), parameter, null, yR, null);
         return yR;
       }
     }

@@ -29,6 +29,7 @@ using Altaxo.Calc.FitFunctions.Peaks;
 using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Calc.Regression.Nonlinear;
 using Altaxo.Main;
+using Complex64 = System.Numerics.Complex;
 
 namespace Altaxo.Calc.FitFunctions.Probability
 {
@@ -37,12 +38,14 @@ namespace Altaxo.Calc.FitFunctions.Probability
   /// of variable order.
   /// </summary>
   [FitFunctionClass]
-  public class VoigtArea : IFitFunction, IFitFunctionPeak, IImmutable
+  public class VoigtArea : IFitFunction, IFitFunctionPeak, IFitFunctionWithDerivative, IImmutable
   {
-    const string ParameterBaseName0 = "A";
-    const string ParameterBaseName1 = "xc";
-    const string ParameterBaseName2 = "w";
-    const string ParameterBaseName3 = "gamma";
+    private const string ParameterBaseName0 = "A";
+    private const string ParameterBaseName1 = "xc";
+    private const string ParameterBaseName2 = "w";
+    private const string ParameterBaseName3 = "gamma";
+    private const int NumberOfParametersPerPeak = 4;
+
 
 
     /// <summary>The order of the background polynomial.</summary>
@@ -93,15 +96,15 @@ namespace Altaxo.Calc.FitFunctions.Probability
 
     }
 
-    [FitFunctionCreator("VoigtArea", "General", 1, 1, 4)]
+    [FitFunctionCreator("VoigtArea", "General", 1, 1, NumberOfParametersPerPeak)]
     [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Probability.VoigtArea}")]
     public static IFitFunction Create_1_0()
     {
       return new VoigtArea(1, 0);
     }
 
-    [FitFunctionCreator("VoigtArea", "Peaks", 1, 1, 4)]
-    [FitFunctionCreator("VoigtArea", "Probability", 1, 1, 4)]
+    [FitFunctionCreator("VoigtArea", "Peaks", 1, 1, NumberOfParametersPerPeak)]
+    [FitFunctionCreator("VoigtArea", "Probability", 1, 1, NumberOfParametersPerPeak)]
     [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Probability.VoigtArea}")]
     public static IFitFunction Create_1_M1()
     {
@@ -192,7 +195,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
     {
       get
       {
-        return _numberOfTerms * 4 + _orderOfBackgroundPolynomial + 1;
+        return _numberOfTerms * NumberOfParametersPerPeak + _orderOfBackgroundPolynomial + 1;
       }
     }
 
@@ -208,11 +211,11 @@ namespace Altaxo.Calc.FitFunctions.Probability
 
     public string ParameterName(int i)
     {
-      int k = i - 4 * _numberOfTerms;
+      int k = i - NumberOfParametersPerPeak * _numberOfTerms;
       if (k < 0)
       {
-        int j = i / 4;
-        return (i % 4) switch
+        int j = i / NumberOfParametersPerPeak;
+        return (i % NumberOfParametersPerPeak) switch
         {
           0 => FormattableString.Invariant($"{ParameterBaseName0}{j}"),
           1 => FormattableString.Invariant($"{ParameterBaseName1}{j}"),
@@ -229,8 +232,8 @@ namespace Altaxo.Calc.FitFunctions.Probability
 
     public double DefaultParameterValue(int i)
     {
-      int k = i - 4 * _numberOfTerms;
-      if (k < 0 && i % 4 == 2)
+      int k = i - NumberOfParametersPerPeak * _numberOfTerms;
+      if (k < 0 && i % NumberOfParametersPerPeak == 2)
         return 1;
       else
         return 0;
@@ -245,14 +248,14 @@ namespace Altaxo.Calc.FitFunctions.Probability
     {
       // evaluation of gaussian terms
       double sumTerms = 0, sumPolynomial = 0;
-      for (int i = 0, j = 0; i < _numberOfTerms; ++i, j += 4)
+      for (int i = 0, j = 0; i < _numberOfTerms; ++i, j += NumberOfParametersPerPeak)
       {
         sumTerms += P[j] * Altaxo.Calc.ComplexErrorFunctionRelated.Voigt(X[0] - P[j + 1], P[j + 2], P[j + 3]);
       }
 
       if (_orderOfBackgroundPolynomial >= 0)
       {
-        int offset = 4 * _numberOfTerms;
+        int offset = NumberOfParametersPerPeak * _numberOfTerms;
         // evaluation of terms x^0 .. x^n
         sumPolynomial = P[_orderOfBackgroundPolynomial + offset];
         for (int i = _orderOfBackgroundPolynomial - 1; i >= 0; i--)
@@ -264,7 +267,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
       Y[0] = sumTerms + sumPolynomial;
     }
 
-    public void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> P, IReadOnlyList<bool>? independentVariableChoice, IVector<double> FV)
+    public void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> P, IVector<double> FV, IReadOnlyList<bool>? dependentVariableChoice)
     {
       var rowCount = independent.RowCount;
       for (int r = 0; r < rowCount; ++r)
@@ -272,14 +275,14 @@ namespace Altaxo.Calc.FitFunctions.Probability
         var x = independent[r, 0];
         // evaluation of gaussian terms
         double sumTerms = 0, sumPolynomial = 0;
-        for (int i = 0, j = 0; i < _numberOfTerms; ++i, j += 4)
+        for (int i = 0, j = 0; i < _numberOfTerms; ++i, j += NumberOfParametersPerPeak)
         {
           sumTerms += P[j] * Altaxo.Calc.ComplexErrorFunctionRelated.Voigt(x - P[j + 1], P[j + 2], P[j + 3]);
         }
 
         if (_orderOfBackgroundPolynomial >= 0)
         {
-          int offset = 4 * _numberOfTerms;
+          int offset = NumberOfParametersPerPeak * _numberOfTerms;
           // evaluation of terms x^0 .. x^n
           sumPolynomial = P[_orderOfBackgroundPolynomial + offset];
           for (int i = _orderOfBackgroundPolynomial - 1; i >= 0; i--)
@@ -310,7 +313,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
       var w = 0.5 * width / Math.Sqrt(-2 * Math.Log(relativeHeight));
       var amp = height * w * Math.Sqrt(2 * Math.PI);
 
-      return new double[4] { amp, position, w, 0 };
+      return new double[NumberOfParametersPerPeak] { amp, position, w, 0 };
     }
 
     /// <inheritdoc/>
@@ -327,7 +330,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
     {
       var lowerBounds = new double?[NumberOfParameters];
 
-      for (int i = 0, j = 0; i < NumberOfTerms; ++i, j += 4)
+      for (int i = 0, j = 0; i < NumberOfTerms; ++i, j += NumberOfParametersPerPeak)
       {
         lowerBounds[j] = 0; // minimal area is 0
         lowerBounds[j + 2] = 0; // minimal Gaussian width is 0
@@ -343,7 +346,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
     /// <inheritdoc/>
     public (double Position, double Area, double Height, double FWHM) GetPositionAreaHeightFWHMFromSinglePeakParameters(double[] parameters)
     {
-      if (parameters is null || parameters.Length != 4)
+      if (parameters is null || parameters.Length != NumberOfParametersPerPeak)
         throw new ArgumentException(nameof(parameters));
 
       var area = parameters[0];
@@ -354,7 +357,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
       return (pos, area, height, fwhm);
     }
 
-    static double SafeSqrt(double x) => Math.Sqrt(Math.Max(0, x));
+    private static double SafeSqrt(double x) => Math.Sqrt(Math.Max(0, x));
 
     public (double Position, double PositionStdDev, double Area, double AreaStdDev, double Height, double HeightStdDev, double FWHM, double FWHMStdDev)
       GetPositionAreaHeightFWHMFromSinglePeakParameters(double[] parameters, IROMatrix<double>? cv)
@@ -362,7 +365,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
       const double Sqrt2Pi = 2.5066282746310005024;
       const double SqrtLog4 = 1.1774100225154746910;
 
-      if (parameters is null || parameters.Length != 4)
+      if (parameters is null || parameters.Length != NumberOfParametersPerPeak)
         throw new ArgumentException(nameof(parameters));
 
 
@@ -471,6 +474,74 @@ namespace Altaxo.Calc.FitFunctions.Probability
 
       }
       return (pos, posStdDev, area, areaStdDev, height, heightStdDev, fwhm, fwhmStdDev);
+    }
+
+    private static double Pow2(double x) => x * x;
+
+    public void EvaluateDerivative(IROMatrix<double> X, IReadOnlyList<double> parameters, IReadOnlyList<bool>? isParameterFixed, IMatrix<double> DF, IReadOnlyList<bool> dependentVariableChoice)
+    {
+      const double Sqrt2 = 1.4142135623730950488016887242097;  // Math.Sqrt(2)
+      const double Sqrt2Pi = 2.5066282746310005024157652848110; // Math.Sqrt(2*Math.Pi)
+
+      var rows = X.RowCount;
+      for (int r = 0; r < rows; ++r)
+      {
+        var x = X[r, 0];
+        for (int i = 0, j = 0; i < _numberOfTerms; ++i, j += NumberOfParametersPerPeak)
+        {
+          if (isParameterFixed is not null && isParameterFixed[j] && isParameterFixed[j + 1] && isParameterFixed[j + 2] && isParameterFixed[j + 3])
+          {
+            // avoid calculation of the derivatives, if all parameters of that peak are fixed
+            continue;
+          }
+
+          var amp = parameters[j + 0];
+          var arg = x - parameters[j + 1];
+          var sigma = parameters[j + 2];
+          var gamma = parameters[j + 3];
+
+          if (!(sigma >= 0 && gamma >= 0 && (sigma + gamma) > 0))
+          {
+            DF[r, j + 0] = double.NaN;
+            DF[r, j + 1] = double.NaN;
+            DF[r, j + 2] = double.NaN;
+            DF[r, j + 3] = double.NaN;
+          }
+          else if (sigma == 0) // Pure Lorentzian
+          {
+            arg /= gamma;
+            DF[r, j + 0] = 1 / (Math.PI * gamma * (1 + arg * arg));
+            DF[r, j + 1] = amp * (2 * arg / (Math.PI * gamma * gamma * Pow2(1 + arg * arg)));
+            DF[r, j + 2] = 0;
+            DF[r, j + 3] = amp * ((arg * arg - 1) / (Math.PI * gamma * gamma * Pow2(1 + arg * arg)));
+          }
+          else // general case including gamma==0
+          {
+            var z = new Complex64(arg, gamma) / (Sqrt2 * sigma);
+            var wOfZ = ComplexErrorFunctionRelated.W_of_z(z);
+            var wOfZBySqrt2PiSigma = wOfZ / (Sqrt2Pi * sigma);
+            var term1 = (Sqrt2 * Complex64.ImaginaryOne - z * wOfZ * Sqrt2Pi) / (Math.PI * sigma); // Derivative of wOfZBySqrt2PiSigma w.r.t. z
+
+            DF[r, j + 0] = wOfZBySqrt2PiSigma.Real; // Derivative w.r.t. amplitude
+
+            DF[r, j + 1] = -amp * term1.Real / (Sqrt2 * sigma); // Derivative w.r.t. position
+
+            DF[r, j + 2] = -amp * (term1 * z + wOfZBySqrt2PiSigma).Real / sigma; // Derivative w.r.t. sigma
+
+            DF[r, j + 3] = -amp * term1.Imaginary / (Sqrt2 * sigma); // Derivative w.r.t. gamma
+          }
+        }
+
+        if (_orderOfBackgroundPolynomial >= 0)
+        {
+          double xn = 1;
+          for (int i = 0, j = NumberOfParametersPerPeak * _numberOfTerms; i <= _orderOfBackgroundPolynomial; ++i, ++j)
+          {
+            DF[r, j] = xn;
+            xn *= x;
+          }
+        }
+      }
     }
   }
 }

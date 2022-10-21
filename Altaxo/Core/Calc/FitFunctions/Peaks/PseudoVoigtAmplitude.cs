@@ -42,9 +42,9 @@ namespace Altaxo.Calc.FitFunctions.Peaks
     private const string ParameterBaseName1 = "xc";
     private const string ParameterBaseName2 = "w";
     private const string ParameterBaseName3 = "nu";
-    const int NumberOfParametersPerPeak = 4;
-    const double Log2 = 0.69314718055994530941723212145818;
-    const double SqrtPiByLog2 = 2.1289340388624523586305351924692;
+    private const int NumberOfParametersPerPeak = 4;
+    private const double Log2 = 0.69314718055994530941723212145818;
+    private const double SqrtPiByLog2 = 2.1289340388624523586305351924692;
 
     /// <summary>The order of the background polynomial.</summary>
     private readonly int _orderOfBackgroundPolynomial;
@@ -268,7 +268,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
       Y[0] = sumTerms + sumPolynomial;
     }
 
-    public void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> P, IReadOnlyList<bool>? independentVariableChoice, IVector<double> FV)
+    public void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> P, IVector<double> FV, IReadOnlyList<bool>? dependentVariableChoice)
     {
       for (int r = 0; r < independent.RowCount; ++r)
       {
@@ -297,7 +297,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
       }
     }
 
-    public void EvaluateDerivative(IROMatrix<double> X, IReadOnlyList<double> P, IReadOnlyList<bool>? independentVariableChoice, IMatrix<double> DY)
+    public void EvaluateDerivative(IROMatrix<double> X, IReadOnlyList<double> P, IReadOnlyList<bool>? isParameterFixed, IMatrix<double> DY, IReadOnlyList<bool> dependentVariableChoice)
     {
       var rowCount = X.RowCount;
       for (int r = 0; r < rowCount; ++r)
@@ -441,7 +441,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
     /// <param name="position">The position.</param>
     /// <param name="width">The width.</param>
     /// <param name="nu">The nu.</param>
-    (double area, double position, double width, double gamma) ConvertParametersToVoigtArea(double height, double position, double width, double nu)
+    private (double area, double position, double width, double gamma) ConvertParametersToVoigtArea(double height, double position, double width, double nu)
     {
       double area = height * width * (nu * Math.PI + (1 - nu) * SqrtPiByLog2);
 

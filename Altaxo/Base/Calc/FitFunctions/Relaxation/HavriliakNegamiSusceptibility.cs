@@ -561,7 +561,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
       Y[1] = result.Imaginary;
     }
 
-    public void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> P, IReadOnlyList<bool>? independentVariableChoice, IVector<double> FV)
+    public void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> P, IVector<double> FV, IReadOnlyList<bool>? dependentVariableChoice)
     {
       var rowCount = independent.RowCount;
       int rd = 0;
@@ -617,19 +617,19 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
           result = new Complex64T(Math.Log10(result.Real), Math.Log10(result.Imaginary));
         }
 
-        if (independentVariableChoice is null)
+        if (dependentVariableChoice is null)
         {
           FV[rd++] = result.Real;
           FV[rd++] = result.Imaginary;
         }
         else
         {
-          if (independentVariableChoice[0] == true)
+          if (dependentVariableChoice[0] == true)
           {
             FV[rd++] = result.Real;
           }
 
-          if (independentVariableChoice[1] == true)
+          if (dependentVariableChoice[1] == true)
           {
             FV[rd++] = result.Imaginary;
           }

@@ -110,10 +110,14 @@ namespace Altaxo.Calc.Regression.Nonlinear
     /// <param name="independent">The independent variables. Every row of that matrix corresponds to one observation. The columns of the matrix
     /// represent the different independent variables. Thus, for a usual function of one variable, the number of columns is 1.</param>
     /// <param name="parameters">The parameters.</param>
-    /// <param name="independentVariableChoice">Determines which output variables are written to the output vector.</param>
     /// <param name="FV">On return, contains the function values. Note that if the fit function has multiple dependent variables,
     /// those variables will be written in subsequent order to the output vector.</param>
-    void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> parameters, IReadOnlyList<bool>? independentVariableChoice, IVector<double> FV);
+    /// <param name="dependentVariableChoice">Determines which output variables are written to the output vector. See remarks.</param>
+    /// <remarks>
+    /// Concerning <paramref name="dependentVariableChoice"/>: if this parameter is null, all dependent variables the fit function provides, will be included in the output vector <paramref name="FV"/>.
+    /// If this parameter is not null, only those dependent variables, for which the value is true, are included in the output vector (at least one element of this array must be true).
+    /// </remarks>
+    void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> parameters, IVector<double> FV, IReadOnlyList<bool>? dependentVariableChoice);
 
     /// <summary>
     /// Occurs when the fit function changed, including number or name of parameters, independent variables, dependent variables, or the scaling.

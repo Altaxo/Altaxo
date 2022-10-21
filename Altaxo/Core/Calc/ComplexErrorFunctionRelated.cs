@@ -54,7 +54,7 @@
 
 
 using System;
-using SNComplex = System.Numerics.Complex;
+using Complex64 = System.Numerics.Complex;
 
 namespace Altaxo.Calc
 {
@@ -687,13 +687,13 @@ namespace Altaxo.Calc
     /// </summary>
     /// <param name="z">The complex argument z.</param>
     /// <returns>Value of the underflow-compensating function cerfcx(z) = exp(z^2)*cerfc(z).</returns>
-    public static SNComplex Cerfcx(SNComplex z)
+    public static Complex64 Cerfcx(Complex64 z)
     {
       // Compute erfcx(z) = exp(z^2) erfc(z),
       // the complex underflow-compensated complementary error function,
       // trivially related to Faddeeva's w_of_z.
 
-      return W_of_z(new SNComplex(-z.Imaginary, z.Real));
+      return W_of_z(new Complex64(-z.Imaginary, z.Real));
     }
 
     /// <summary>
@@ -701,13 +701,13 @@ namespace Altaxo.Calc
     /// </summary>
     /// <param name="z">The complex argument z.</param>
     /// <returns>Value of the imaginary error function cerfi(z) = -i cerf(iz).</returns>
-    public static SNComplex Cerfi(SNComplex z)
+    public static Complex64 Cerfi(Complex64 z)
     {
       // Compute erfi(z) = -i erf(iz),
       // the rotated complex error function.
 
-      SNComplex e = Cerf(new SNComplex(-z.Imaginary, z.Real));
-      return new SNComplex(e.Imaginary, -e.Real);
+      Complex64 e = Cerf(new Complex64(-z.Imaginary, z.Real));
+      return new Complex64(e.Imaginary, -e.Real);
     }
 
     /// <summary>
@@ -745,7 +745,7 @@ namespace Altaxo.Calc
     /// <returns>Real part of Faddeeva's scaled complex error function w(z) = exp(-z^2) erfc(-iz).</returns>
     public static double Re_w_of_z(double x, double y)
     {
-      return W_of_z(new SNComplex(x, y)).Real;
+      return W_of_z(new Complex64(x, y)).Real;
     }
 
     /// <summary>
@@ -756,7 +756,7 @@ namespace Altaxo.Calc
     /// <returns>Imaginary part of Faddeeva's scaled complex error function w(z) = exp(-z^2) erfc(-iz).</returns>
     public static double Im_w_of_z(double x, double y)
     {
-      return W_of_z(new SNComplex(x, y)).Imaginary;
+      return W_of_z(new Complex64(x, y)).Imaginary;
     }
 
     /******************************************************************************/
@@ -788,41 +788,33 @@ namespace Altaxo.Calc
 
       // Reference: Abramowitz&Stegun (1964), formula (7.4.13).
 
-      double gam = gamma < 0 ? -gamma : gamma;
-      double sig = sigma < 0 ? -sigma : sigma;
+      const double Sqrt2 = 1.4142135623730950488016887242097;  // Math.Sqrt(2)
+      const double Sqrt2Pi = 2.5066282746310005024157652848110; // Math.Sqrt(2*Math.Pi)
 
-      if (gam == 0)
+      if (!(gamma >= 0 && sigma >= 0 && (gamma + sigma) > 0))
       {
-        if (sig == 0)
-        {
-          // It's kind of a delta function
-          return x != 0 ? 0 : double.PositiveInfinity;
-        }
-        else
-        {
-          // It's a pure Gaussian
-          return Math.Exp(-x * x / 2 / (sig * sig)) / s2pi / sig;
-        }
+        return double.NaN;
+      }
+      else if (gamma == 0)
+      {
+        // It's a pure Gaussian
+        var arg = x / sigma;
+        return Math.Exp(-0.5 * arg * arg) / (s2pi * sigma);
+      }
+      else if (sigma == 0)
+      {
+        // It's a pure Lorentzian
+        var arg = x / gamma;
+        return 1 / (gamma * Math.PI * (1 + arg * arg));
       }
       else
       {
-        if (sig == 0)
-        {
-          // It's a pure Lorentzian
-          return gam / pi / (x * x + gam * gam);
-        }
-        else
-        {
-          // Regular case, both parameters are nonzero
-          SNComplex z = new SNComplex(x, gam) / Math.Sqrt(2) / sig;
-          return (W_of_z(z)).Real / s2pi / sig;
-          // TODO: correct and activate the following:
-          //            double w = sqrt(gam*gam+sig*sig); // to work in reduced units
-          //            SNComplex z = C(x/w,gam/w) / sqrt(2) / (sig/w);
-          //            return creal( w_of_z(z) ) / s2pi / (sig/w);
-        }
+        // Regular case, both parameters are nonzero
+        var z = new Complex64(x, gamma) / (Sqrt2 * sigma);
+        return W_of_z(z).Real / (Sqrt2Pi * sigma);
       }
     }
+
 
     /******************************************************************************/
     /*  cerf                                                                      */
@@ -833,7 +825,7 @@ namespace Altaxo.Calc
     /// </summary>
     /// <param name="z">The complex argument.</param>
     /// <returns>Value of the complex error function of z.</returns>
-    public static SNComplex Cerf(SNComplex z)
+    public static Complex64 Cerf(Complex64 z)
     {
 
       // Steven G. Johnson, October 2012.
@@ -844,9 +836,9 @@ namespace Altaxo.Calc
       double x = z.Real, y = z.Imaginary;
 
       if (y == 0)
-        return new SNComplex(ErrorFunction.Erf(x), y); // preserve sign of 0
+        return new Complex64(ErrorFunction.Erf(x), y); // preserve sign of 0
       if (x == 0) // handle separately for speed & handling of y = Inf or NaN
-        return new SNComplex(x, // preserve sign of 0
+        return new Complex64(x, // preserve sign of 0
                  /* handle y -> Inf limit manually, since
                     exp(y^2) -> Inf but Im[w(y)] -> 0, so
                     IEEE will give us a NaN when it should be Inf */
@@ -873,8 +865,8 @@ namespace Altaxo.Calc
         /* don't use complex exp function, since that will produce spurious NaN
            values when multiplying w in an overflow situation. */
         return 1.0 - Math.Exp(mRe_z2) *
-            (new SNComplex(Math.Cos(mIm_z2), Math.Sin(mIm_z2))
-             * W_of_z(new SNComplex(-y, x)));
+            (new Complex64(Math.Cos(mIm_z2), Math.Sin(mIm_z2))
+             * W_of_z(new Complex64(-y, x)));
       }
       else
       { // x < 0
@@ -886,19 +878,19 @@ namespace Altaxo.Calc
             goto taylor_erfi;
         }
         else if (double.IsNaN(x))
-          return new SNComplex(double.NaN, y == 0 ? 0 : double.NaN);
+          return new Complex64(double.NaN, y == 0 ? 0 : double.NaN);
         /* don't use complex exp function, since that will produce spurious NaN
            values when multiplying w in an overflow situation. */
         return Math.Exp(mRe_z2) *
-            (new SNComplex(Math.Cos(mIm_z2), Math.Sin(mIm_z2))
-             * W_of_z(new SNComplex(y, -x))) - 1.0;
+            (new Complex64(Math.Cos(mIm_z2), Math.Sin(mIm_z2))
+             * W_of_z(new Complex64(y, -x))) - 1.0;
       }
 
 // Use Taylor series for small |z|, to avoid cancellation inaccuracy
 //   erf(z) = 2/sqrt(pi) * z * (1 - z^2/3 + z^4/10 - z^6/42 + z^8/216 + ...)
 taylor:
       {
-        SNComplex mz2 = new SNComplex(mRe_z2, mIm_z2); // -z^2
+        Complex64 mz2 = new Complex64(mRe_z2, mIm_z2); // -z^2
         return z * (1.1283791670955125739
                     + mz2 * (0.37612638903183752464
                              + mz2 * (0.11283791670955125739
@@ -919,7 +911,7 @@ taylor_erfi:
       {
         double x2 = x * x, y2 = y * y;
         double expy2 = Math.Exp(y2);
-        return new SNComplex
+        return new Complex64
             (expy2 * x * (1.1283791670955125739
                           - x2 * (0.37612638903183752464
                                   + 0.75225277806367504925 * y2)
@@ -942,7 +934,7 @@ taylor_erfi:
     /// </summary>
     /// <param name="z">The complex argument z.</param>
     /// <returns>Value of the complex complementary error function cerfc(z) = 1 - cerf(z).</returns>
-    public static SNComplex Cerfc(SNComplex z)
+    public static Complex64 Cerfc(Complex64 z)
     {
       // Steven G. Johnson, October 2012.
 
@@ -952,7 +944,7 @@ taylor_erfi:
       double x = z.Real, y = z.Imaginary;
 
       if (x == 0)
-        return new SNComplex(1,
+        return new Complex64(1,
                  /* handle y -> Inf limit manually, since
                     exp(y^2) -> Inf but Im[w(y)] -> 0, so
                     IEEE will give us a NaN when it should be Inf */
@@ -961,9 +953,9 @@ taylor_erfi:
       if (y == 0)
       {
         if (x * x > 750) // underflow
-          return new SNComplex(x >= 0 ? 0.0 : 2.0,
+          return new Complex64(x >= 0 ? 0.0 : 2.0,
                    -y); // preserve sign of 0
-        return new SNComplex(x >= 0 ? Math.Exp(-x * x) * Erfcx(x)
+        return new Complex64(x >= 0 ? Math.Exp(-x * x) * Erfcx(x)
                  : 2 - Math.Exp(-x * x) * Erfcx(-x),
                  -y); // preserve sign of zero
       }
@@ -974,11 +966,11 @@ taylor_erfi:
         return (x >= 0 ? 0.0 : 2.0);
 
       if (x >= 0)
-        return SNComplex.Exp(new SNComplex(mRe_z2, mIm_z2))
-            * W_of_z(new SNComplex(-y, x));
+        return Complex64.Exp(new Complex64(mRe_z2, mIm_z2))
+            * W_of_z(new Complex64(-y, x));
       else
-        return 2.0 - SNComplex.Exp(new SNComplex(mRe_z2, mIm_z2))
-            * W_of_z(new SNComplex(y, -x));
+        return 2.0 - Complex64.Exp(new Complex64(mRe_z2, mIm_z2))
+            * W_of_z(new Complex64(y, -x));
     } // cerfc
 
     /******************************************************************************/
@@ -990,7 +982,7 @@ taylor_erfi:
     /// </summary>
     /// <param name="z">The complex argument z.</param>
     /// <returns>Value of Dawson's integral D(z) = sqrt(pi)/2 * exp(-z^2) * erfi(z).</returns>
-    public static SNComplex CDawson(SNComplex z)
+    public static Complex64 CDawson(Complex64 z)
     {
 
       // Steven G. Johnson, October 2012.
@@ -1003,20 +995,20 @@ taylor_erfi:
 
       // handle axes separately for speed & proper handling of x or y = Inf or NaN
       if (y == 0)
-        return new SNComplex(spi2 * im_w_of_x(x),
+        return new Complex64(spi2 * im_w_of_x(x),
                  -y); // preserve sign of 0
       if (x == 0)
       {
         double y2 = y * y;
         if (y2 < 2.5e-5)
         { // Taylor expansion
-          return new SNComplex(x, // preserve sign of 0
+          return new Complex64(x, // preserve sign of 0
                    y * (1.0
 
                         + y2 * (0.6666666666666666666666666666666666666667
                                 + y2 * 0.26666666666666666666666666666666666667)));
         }
-        return new SNComplex(x, // preserve sign of 0
+        return new Complex64(x, // preserve sign of 0
                  spi2 * (y >= 0
                          ? Math.Exp(y2) - Erfcx(y)
                          : Erfcx(-y) - Math.Exp(y2)));
@@ -1024,7 +1016,7 @@ taylor_erfi:
 
       double mRe_z2 = (y - x) * (x + y); // Re(-z^2), being careful of overflow
       double mIm_z2 = -2 * x * y; // Im(-z^2)
-      SNComplex mz2 = new SNComplex(mRe_z2, mIm_z2); // -z^2
+      Complex64 mz2 = new Complex64(mRe_z2, mIm_z2); // -z^2
 
       /* Handle positive and negative x via different formulas,
          using the mirror symmetries of w, to avoid overflow/underflow
@@ -1038,8 +1030,8 @@ taylor_erfi:
           else if (Math.Abs(mIm_z2) < 5e-3)
             goto taylor_realaxis;
         }
-        SNComplex res = SNComplex.Exp(mz2) - W_of_z(z);
-        return spi2 * new SNComplex(-res.Imaginary, res.Real);
+        Complex64 res = Complex64.Exp(mz2) - W_of_z(z);
+        return spi2 * new Complex64(-res.Imaginary, res.Real);
       }
       else
       { // y < 0
@@ -1051,9 +1043,9 @@ taylor_erfi:
             goto taylor_realaxis;
         }
         else if (double.IsNaN(y))
-          return new SNComplex(x == 0 ? 0 : double.NaN, double.NaN);
-        SNComplex res = W_of_z(-z) - SNComplex.Exp(mz2);
-        return spi2 * new SNComplex(-res.Imaginary, res.Real);
+          return new Complex64(x == 0 ? 0 : double.NaN, double.NaN);
+        Complex64 res = W_of_z(-z) - Complex64.Exp(mz2);
+        return spi2 * new Complex64(-res.Imaginary, res.Real);
       }
 
 // Use Taylor series for small |z|, to avoid cancellation inaccuracy
@@ -1106,7 +1098,7 @@ taylor_realaxis:
           if (x2 > 25e14)
           {// |x| > 5e7
             double xy2 = (x * y) * (x * y);
-            return new SNComplex((0.5 + y2 * (0.5 + 0.25 * y2
+            return new Complex64((0.5 + y2 * (0.5 + 0.25 * y2
                                   - 0.16666666666666666667 * xy2)) / x,
                      y * (-1 + y2 * (-0.66666666666666666667
                                      + 0.13333333333333333333 * xy2
@@ -1114,7 +1106,7 @@ taylor_realaxis:
                      / (2 * x2 - 1));
           }
           return (1.0 / (-15 + x2 * (90 + x2 * (-60 + 8 * x2)))) *
-              new SNComplex(x * (33 + x2 * (-28 + 4 * x2)
+              new Complex64(x * (33 + x2 * (-28 + 4 * x2)
                      + y2 * (18 - 4 * x2 + 4 * y2)),
                 y * (-15 + x2 * (24 - 4 * x2)
                      + y2 * (4 * x2 - 10 - 4 * y2)));
@@ -1123,7 +1115,7 @@ taylor_realaxis:
         {
           double D = spi2 * im_w_of_x(x);
           double y2 = y * y;
-          return new SNComplex
+          return new Complex64
               (D + y2 * (D + x - 2 * D * x2)
                + y2 * y2 * (D * (0.5 - x2 * (2 - 0.66666666666666666667 * x2))
                           + x * (0.83333333333333333333
@@ -1803,7 +1795,7 @@ taylor_realaxis:
     /// </summary>
     /// <param name="z">The complex argument z.</param>
     /// <returns>Value of Faddeeva's scaled complex error function w(z) = exp(-z^2) erfc(-iz).</returns>
-    public static SNComplex W_of_z(SNComplex z)
+    public static Complex64 W_of_z(Complex64 z)
     {
       int faddeeva_algorithm;
       int faddeeva_nofterms;
@@ -1816,12 +1808,12 @@ taylor_realaxis:
       {
         // Purely imaginary input, purely real output.
         // However, use creal(z) to give correct sign of 0 in cimag(w).
-        return new SNComplex(Erfcx(z.Imaginary), z.Real);
+        return new Complex64(Erfcx(z.Imaginary), z.Real);
       }
       if (z.Imaginary == 0)
       {
         // Purely real input, complex output.
-        return new SNComplex(Math.Exp(-sqr(z.Real)), im_w_of_x(z.Real));
+        return new Complex64(Math.Exp(-sqr(z.Real)), im_w_of_x(z.Real));
       }
 
       const double relerr = DBL_EPSILON;
@@ -1833,7 +1825,7 @@ taylor_realaxis:
       double y = z.Imaginary;
       double ya = Math.Abs(y);
 
-      SNComplex ret = 0; // return value
+      Complex64 ret = 0; // return value
 
       double sum1 = 0, sum2 = 0, sum3 = 0, sum4 = 0, sum5 = 0;
 
@@ -1870,20 +1862,20 @@ taylor_realaxis:
               double yax = ya / xs;
               faddeeva_algorithm = 100;
               double denom = ispi / (xs + yax * ya);
-              ret = new SNComplex(denom * yax, denom);
+              ret = new Complex64(denom * yax, denom);
             }
             else if (double.IsInfinity(ya))
             {
               faddeeva_algorithm += 2;
               return ((double.IsNaN(x) || y < 0)
-                      ? new SNComplex(double.NaN, double.NaN) : new SNComplex(0, 0));
+                      ? new Complex64(double.NaN, double.NaN) : new Complex64(0, 0));
             }
             else
             {
               faddeeva_algorithm += 3;
               double xya = xs / ya;
               double denom = ispi / (xya * xs + ya);
-              ret = new SNComplex(denom, denom * xya);
+              ret = new Complex64(denom, denom * xya);
             }
           }
           else
@@ -1891,7 +1883,7 @@ taylor_realaxis:
             faddeeva_algorithm += 4;
             double dr = xs * xs - ya * ya - 0.5, di = 2 * xs * ya;
             double denom = ispi / (dr * dr + di * di);
-            ret = new SNComplex(denom * (xs * di - ya * dr), denom * (xs * dr + ya * di));
+            ret = new Complex64(denom * (xs * di - ya * dr), denom * (xs * dr + ya * di));
           }
         }
         else
@@ -1909,7 +1901,7 @@ taylor_realaxis:
           }
           { // w(z) = i/sqrt(pi) / w:
             double denom = ispi / (wr * wr + wi * wi);
-            ret = new SNComplex(denom * wi, denom * wr);
+            ret = new Complex64(denom * wi, denom * wr);
           }
         }
         if (y < 0)
@@ -1918,7 +1910,7 @@ taylor_realaxis:
           // use w(z) = 2.0*exp(-z*z) - w(-z),
           // but be careful of overflow in exp(-z*z)
           //                                = exp(-(xs*xs-ya*ya) -2*i*xs*ya)
-          return 2.0 * SNComplex.Exp(new SNComplex((ya - xs) * (xs + ya), 2 * xs * y)) - ret;
+          return 2.0 * Complex64.Exp(new Complex64((ya - xs) * (xs + ya), 2 * xs * y)) - ret;
         }
         else
           return ret;
@@ -1947,7 +1939,7 @@ taylor_realaxis:
         if (double.IsNaN(y))
         {
           faddeeva_algorithm += 99;
-          return new SNComplex(y, y);
+          return new Complex64(y, y);
         }
 
         if (x < 5e-4)
@@ -2017,7 +2009,7 @@ taylor_realaxis:
           double sin2xy = Math.Sin(2 * xs * y), cos2xy = Math.Cos(2 * xs * y);
           double coef1 = expx2erfcxy - c * y * sum1;
           double coef2 = c * xs * expx2;
-          ret = new SNComplex(coef1 * cos2xy + coef2 * sinxy * sinc(xs * y, sinxy),
+          ret = new Complex64(coef1 * cos2xy + coef2 * sinxy * sinc(xs * y, sinxy),
                   coef2 * sinc(2 * xs * y, sin2xy) - coef1 * sin2xy);
         }
       }
@@ -2027,9 +2019,9 @@ taylor_realaxis:
         faddeeva_algorithm = 300;
 
         if (double.IsNaN(x))
-          return new SNComplex(x, x);
+          return new Complex64(x, x);
         if (double.IsNaN(y))
-          return new SNComplex(y, y);
+          return new Complex64(y, y);
 
         ret = Math.Exp(-x * x); // |y| < 1e-10, so we only need exp(-x*x) term
                                 // (round instead of ceil as in original paper; note that x/a > 1 here)
@@ -2060,7 +2052,7 @@ taylor_realaxis:
         }
       }
 finish:
-      return ret + new SNComplex((0.5 * c) * y * (sum2 + sum3),
+      return ret + new Complex64((0.5 * c) * y * (sum2 + sum3),
                      (0.5 * c) * CopySign(sum5 - sum4, z.Real));
     } // w_of_z
 

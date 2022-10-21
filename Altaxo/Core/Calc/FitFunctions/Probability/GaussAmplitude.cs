@@ -46,9 +46,9 @@ namespace Altaxo.Calc.FitFunctions.Probability
     private readonly int _numberOfTerms;
 
     public const int NumberOfParametersPerPeak = 3;
-    const string ParameterBaseName0 = "a";
-    const string ParameterBaseName1 = "xc";
-    const string ParameterBaseName2 = "w";
+    private const string ParameterBaseName0 = "a";
+    private const string ParameterBaseName1 = "xc";
+    private const string ParameterBaseName2 = "w";
 
     #region Serialization
 
@@ -292,7 +292,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
       Y[0] = sumGauss + sumPolynomial;
     }
 
-    public void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> P, IReadOnlyList<bool>? independentVariableChoice, IVector<double> FV)
+    public void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> P, IVector<double> FV, IReadOnlyList<bool>? dependentVariableChoice)
     {
       var rowCount = independent.RowCount;
       for (int r = 0; r < rowCount; ++r)
@@ -328,7 +328,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
 
     #endregion IFitFunction Members
 
-    public void EvaluateDerivative(IROMatrix<double> X, IReadOnlyList<double> P, IReadOnlyList<bool>? independentVariableChoice, IMatrix<double> DY)
+    public void EvaluateDerivative(IROMatrix<double> X, IReadOnlyList<double> P, IReadOnlyList<bool>? isParameterFixed, IMatrix<double> DY, IReadOnlyList<bool> dependentVariableChoice)
     {
       var rowCount = X.RowCount;
       for (int r = 0; r < rowCount; ++r)
@@ -385,7 +385,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
       return (pos, area, height, fwhm);
     }
 
-    static double SafeSqrt(double x) => Math.Sqrt(Math.Max(0, x));
+    private static double SafeSqrt(double x) => Math.Sqrt(Math.Max(0, x));
 
     /// <inheritdoc/>
     public (double Position, double PositionStdDev, double Area, double AreaStdDev, double Height, double HeightStdDev, double FWHM, double FWHMStdDev)

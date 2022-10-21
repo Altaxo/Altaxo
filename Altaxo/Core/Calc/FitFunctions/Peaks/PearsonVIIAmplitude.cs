@@ -32,7 +32,7 @@ using Altaxo.Main;
 namespace Altaxo.Calc.FitFunctions.Peaks
 {
   /// <summary>
-  /// Fit fuction with one or more PearsonVII shaped peaks, with a background polynomial
+  /// Fit function with one or more PearsonVII shaped peaks, with a background polynomial
   /// of variable order.
   /// </summary>
   [FitFunctionClass]
@@ -42,7 +42,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
     private const string ParameterBaseName1 = "xc";
     private const string ParameterBaseName2 = "w";
     private const string ParameterBaseName3 = "m";
-    const int NumberOfParametersPerPeak = 4;
+    private const int NumberOfParametersPerPeak = 4;
 
 
     /// <summary>The order of the background polynomial.</summary>
@@ -269,7 +269,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
       Y[0] = sumTerms + sumPolynomial;
     }
 
-    public void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> P, IReadOnlyList<bool>? independentVariableChoice, IVector<double> FV)
+    public void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> P, IVector<double> FV, IReadOnlyList<bool>? dependentVariableChoice)
     {
       for (int r = 0; r < independent.RowCount; ++r)
       {

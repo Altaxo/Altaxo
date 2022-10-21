@@ -172,7 +172,7 @@ namespace Altaxo.Calc.FitFunctions.Kinetics
       Y[0] *= P[1];
     }
 
-    public void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> P, IReadOnlyList<bool>? independentVariableChoice, IVector<double> FV)
+    public void Evaluate(IROMatrix<double> independent, IReadOnlyList<double> P, IVector<double> FV, IReadOnlyList<bool>? dependentVariableChoice)
     {
       IEnumerable<double> GetXPoints()
       {
@@ -193,7 +193,7 @@ namespace Altaxo.Calc.FitFunctions.Kinetics
         {
           for (int s = 0; s < _y0.Length; ++s)
           {
-            if (independentVariableChoice is null || independentVariableChoice[s] == true)
+            if (dependentVariableChoice is null || dependentVariableChoice[s] == true)
               FV[rd++] = _y0[s];
           }
         }
@@ -216,7 +216,7 @@ namespace Altaxo.Calc.FitFunctions.Kinetics
       {
         for (int s = 0; s < _y0.Length; ++s)
         {
-          if (independentVariableChoice is null || independentVariableChoice[s] == true)
+          if (dependentVariableChoice is null || dependentVariableChoice[s] == true)
             FV[rd++] = solution.Current.Y_volatile[s];
         }
       }

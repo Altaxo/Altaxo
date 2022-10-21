@@ -507,13 +507,13 @@ namespace Altaxo.Calc.Regression.Nonlinear
         if (calculateUnusedDependentVariablesAlso)
         {
           // calculate all dependent variables
-          fitEle.FitFunctionEvaluate(info.Xs, info.Parameters, null, VectorMath.ToVector(outputValues, outputValuesPointer, outputValues.Count - outputValuesPointer));
+          fitEle.FitFunctionEvaluate(info.Xs, info.Parameters, VectorMath.ToVector(outputValues, outputValuesPointer, outputValues.Count - outputValuesPointer), null);
           outputValuesPointer += info.Xs.RowCount * info.DependentVariablesInUse.Length;
         }
         else
         {
           // usual case: do not calculate the unused dependent variables
-          fitEle.FitFunctionEvaluate(info.Xs, info.Parameters, info.DependentVariablesInUse, VectorMath.ToVector(outputValues, outputValuesPointer, outputValues.Count - outputValuesPointer));
+          fitEle.FitFunctionEvaluate(info.Xs, info.Parameters, VectorMath.ToVector(outputValues, outputValuesPointer, outputValues.Count - outputValuesPointer), info.DependentVariablesInUse);
           outputValuesPointer += info.Xs.RowCount * info.NumberOfDependentVariablesInUse;
         }
       }
@@ -563,7 +563,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
         if (allElementsHaveDerivative && fitEle.FitFunction is IFitFunctionWithDerivative fitFunctionWithDerivative)
         {
           var jacWrapper = new JacobianMapper(_jacobianValue, rowOffset, info.ParameterMapping);
-          fitFunctionWithDerivative.EvaluateDerivative(info.Xs, info.Parameters, info.DependentVariablesInUse, jacWrapper);
+          fitFunctionWithDerivative.EvaluateDerivative(info.Xs, info.Parameters, info.DependentVariablesInUse, jacWrapper, null);
           rowOffset += info.Xs.RowCount * info.NumberOfDependentVariablesInUse;
           ++JacobianEvaluations;
         }
