@@ -40,8 +40,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
   /// Reference: <see href="https://en.wikipedia.org/wiki/Cauchy_distribution"/>
   /// </remarks>
   [FitFunctionClass]
-  public class CauchyArea
-        : IFitFunctionWithDerivative, IImmutable
+  public class CauchyArea : IFitFunctionWithDerivative, IImmutable
   {
     private const string ParameterBaseName0 = "A";
     private const string ParameterBaseName1 = "xc";
@@ -199,7 +198,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
     {
       get
       {
-        return _numberOfTerms * 3 + _orderOfBackgroundPolynomial + 1;
+        return _numberOfTerms * NumberOfParametersPerPeak + _orderOfBackgroundPolynomial + 1;
       }
     }
 
@@ -235,8 +234,8 @@ namespace Altaxo.Calc.FitFunctions.Probability
 
     public double DefaultParameterValue(int i)
     {
-      int k = i - 3 * _numberOfTerms;
-      if (k < 0 && i % 3 == 2)
+      int k = i - NumberOfParametersPerPeak * _numberOfTerms;
+      if (k < 0 && i % NumberOfParametersPerPeak == 2)
         return 1;
       else
         return 0;
@@ -251,7 +250,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
     {
       // evaluation of gaussian terms
       double sumTerms = 0, sumPolynomial = 0;
-      for (int i = 0, j = 0; i < _numberOfTerms; ++i, j += 3)
+      for (int i = 0, j = 0; i < _numberOfTerms; ++i, j += NumberOfParametersPerPeak)
       {
         double x = (X[0] - P[j + 1]) / P[j + 2];
         sumTerms += P[j] / (Math.PI * P[j + 2] * (1 + x * x));
@@ -259,7 +258,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
 
       if (_orderOfBackgroundPolynomial >= 0)
       {
-        int offset = 3 * _numberOfTerms;
+        int offset = NumberOfParametersPerPeak * _numberOfTerms;
         // evaluation of terms x^0 .. x^n
         sumPolynomial = P[_orderOfBackgroundPolynomial + offset];
         for (int i = _orderOfBackgroundPolynomial - 1; i >= 0; i--)
@@ -280,7 +279,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
 
         // evaluation of gaussian terms
         double sumTerms = 0, sumPolynomial = 0;
-        for (int i = 0, j = 0; i < _numberOfTerms; ++i, j += 3)
+        for (int i = 0, j = 0; i < _numberOfTerms; ++i, j += NumberOfParametersPerPeak)
         {
           double arg = (x - P[j + 1]) / P[j + 2];
           sumTerms += P[j] / (Math.PI * P[j + 2] * (1 + arg * arg));
@@ -288,7 +287,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
 
         if (_orderOfBackgroundPolynomial >= 0)
         {
-          int offset = 3 * _numberOfTerms;
+          int offset = NumberOfParametersPerPeak * _numberOfTerms;
           // evaluation of terms x^0 .. x^n
           sumPolynomial = P[_orderOfBackgroundPolynomial + offset];
           for (int i = _orderOfBackgroundPolynomial - 1; i >= 0; i--)
@@ -315,8 +314,13 @@ namespace Altaxo.Calc.FitFunctions.Probability
       {
         var x = X[r, 0];
         // at first, the gaussian terms
-        for (int i = 0, j = 0; i < _numberOfTerms; ++i, j += 3)
+        for (int i = 0, j = 0; i < _numberOfTerms; ++i, j += NumberOfParametersPerPeak)
         {
+          if (isParameterFixed is not null && isParameterFixed[j] && isParameterFixed[j + 1] && isParameterFixed[j + 2])
+          {
+            continue;
+          }
+
           var arg = (x - P[j + 1]) / P[j + 2];
           var t1 = 1 / (1 + arg * arg);
           var term = 1 / (Math.PI * P[j + 2] * (1 + arg * arg));
@@ -328,7 +332,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
         if (_orderOfBackgroundPolynomial >= 0)
         {
           double xn = 1;
-          for (int i = 0, j = 3 * _numberOfTerms; i <= _orderOfBackgroundPolynomial; ++i, ++j)
+          for (int i = 0, j = NumberOfParametersPerPeak * _numberOfTerms; i <= _orderOfBackgroundPolynomial; ++i, ++j)
           {
             DY[r, j] = xn;
             xn *= x;

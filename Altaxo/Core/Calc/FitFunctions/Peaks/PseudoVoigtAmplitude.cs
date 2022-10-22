@@ -36,7 +36,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
   /// The blend factor nu has a range of [0, 1].
   /// </summary>
   [FitFunctionClass]
-  public class PseudoVoigtAmplitude : IFitFunction, IFitFunctionWithDerivative, IFitFunctionPeak, IImmutable
+  public class PseudoVoigtAmplitude : IFitFunctionWithDerivative, IFitFunctionPeak, IImmutable
   {
     private const string ParameterBaseName0 = "a";
     private const string ParameterBaseName1 = "xc";
@@ -304,9 +304,14 @@ namespace Altaxo.Calc.FitFunctions.Peaks
       {
         var x = X[r, 0];
 
-        // at first, the gaussian terms
+        // at first, the peak terms
         for (int i = 0, j = 0; i < _numberOfTerms; ++i, j += NumberOfParametersPerPeak)
         {
+          if (isParameterFixed is not null && isParameterFixed[j] && isParameterFixed[j + 1] && isParameterFixed[j + 2] && isParameterFixed[j + 3])
+          {
+            continue;
+          }
+
           var height = P[j];
           var w = P[j + 2];
           var arg = (x - P[j + 1]) / w;
@@ -321,6 +326,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
           DY[r, j + 3] = height * (lorentzTerm - expTerm);
         }
 
+        // then, the baseline
         if (_orderOfBackgroundPolynomial >= 0)
         {
           double xn = 1;

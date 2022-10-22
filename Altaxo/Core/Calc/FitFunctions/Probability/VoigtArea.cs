@@ -38,7 +38,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
   /// of variable order.
   /// </summary>
   [FitFunctionClass]
-  public class VoigtArea : IFitFunction, IFitFunctionPeak, IFitFunctionWithDerivative, IImmutable
+  public class VoigtArea : IFitFunctionWithDerivative, IFitFunctionPeak, IImmutable
   {
     private const string ParameterBaseName0 = "A";
     private const string ParameterBaseName1 = "xc";

@@ -25,24 +25,22 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
-using Altaxo.Calc.FitFunctions.Peaks;
 using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Calc.Regression.Nonlinear;
 using Altaxo.Main;
 
-namespace Altaxo.Calc.FitFunctions.Probability
+namespace Altaxo.Calc.FitFunctions.Peaks
 {
   /// <summary>
-  /// Fit fuction with one or more Lorentzian shaped peaks (bell shape), with a background polynomial
+  /// Fit function with one or more Lorentzian shaped peaks (bell shape), with a background polynomial
   /// of variable order. In case you need the probability density function of the Cauchy distribution,
-  /// the <see cref="CauchyArea"/> fit function is better suited.
+  /// the equivalent fit function in the Probability namespace is better suited.
   /// </summary>
   /// <remarks>
   /// Reference: <see href="https://en.wikipedia.org/wiki/Cauchy_distribution"/>
   /// </remarks>
   [FitFunctionClass]
-  public class CauchyAmplitude
-        : IFitFunctionWithDerivative, IFitFunctionPeak, IImmutable
+  public class CauchyAmplitude : IFitFunctionWithDerivative, IFitFunctionPeak, IImmutable
   {
     private const string ParameterBaseName0 = "a";
     private const string ParameterBaseName1 = "xc";
@@ -59,8 +57,10 @@ namespace Altaxo.Calc.FitFunctions.Probability
 
     /// <summary>
     /// 2021-06-13 Initial version
+    /// 2022-10-21 Moved from assembly AltaxoBase to AltaxoCore; moved from namespace Probability to Peaks
     /// </summary>
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(CauchyAmplitude), 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Calc.FitFunctions.Probability.CauchyAmplitude", 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(CauchyAmplitude), 1)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
@@ -310,6 +310,11 @@ namespace Altaxo.Calc.FitFunctions.Probability
         // at first, the gaussian terms
         for (int i = 0, j = 0; i < _numberOfTerms; ++i, j += NumberOfParametersPerPeak)
         {
+          if (isParameterFixed is not null && isParameterFixed[j] && isParameterFixed[j + 1] && isParameterFixed[j + 2])
+          {
+            continue;
+          }
+
           var arg = (x - P[j + 1]) / P[j + 2];
           var term = 1 / (1 + arg * arg);
           DY[r, j + 0] = term;

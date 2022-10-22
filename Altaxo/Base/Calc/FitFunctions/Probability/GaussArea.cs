@@ -37,8 +37,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
   /// of variable order.
   /// </summary>
   [FitFunctionClass]
-  public class GaussArea
-        : IFitFunctionWithDerivative, IImmutable, IFitFunctionPeak
+  public class GaussArea : IFitFunctionWithDerivative, IImmutable, IFitFunctionPeak
   {
     /// <summary>The order of the background polynomial.</summary>
     private readonly int _orderOfBackgroundPolynomial;

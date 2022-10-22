@@ -31,7 +31,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
   public class PearsonVIIAmplitudeTests
   {
     [Fact]
-    public void TestDerivatives()
+    public void TestDerivedQuantities()
     {
       double amp = 3;
       double pos = 7;
@@ -54,5 +54,43 @@ namespace Altaxo.Calc.FitFunctions.Peaks
         AssertEx.AreEqual(Math.Abs(areaDerivs[i]), result.AreaStdDev, 1E-13, 1E-7);
       }
     }
+
+    [Fact]
+    public void TestDerivatives()
+    {
+      var v = new PearsonVIIAmplitude();
+
+      // General case
+      double amplitude = 17;
+      double position = 7;
+      double w = 3;
+      double m = 5;
+
+      double expectedFunctionValue = 12.344779169979760569647872188548;
+      double expectedDerivativeWrtAmplitude = 0.72616348058704473939105130520869;
+      double expectedDerivativeWrtPosition = 3.8263426319394849663517294157831;
+      double expectedDerivativeWrtW = 2.5508950879596566442344862771887;
+      double expectedDerivativeWrtM = 0.029521332942012426374627381351118;
+
+
+      var parameters = new double[] { amplitude, position, w, m };
+
+      var X = Matrix<double>.Build.Dense(1, 1);
+      X[0, 0] = 9;
+
+      var FV = Vector<double>.Build.Dense(1);
+      var DY = Matrix<double>.Build.Dense(1, 4);
+
+      v.Evaluate(X, parameters, FV, null);
+      v.EvaluateDerivative(X, parameters, null, DY, null);
+
+      AssertEx.AreEqual(expectedFunctionValue, FV[0], 0, 1E-12);
+      AssertEx.AreEqual(expectedDerivativeWrtAmplitude, DY[0, 0], 0, 1E-12);
+      AssertEx.AreEqual(expectedDerivativeWrtPosition, DY[0, 1], 0, 1E-12);
+      AssertEx.AreEqual(expectedDerivativeWrtW, DY[0, 2], 0, 1E-12);
+      AssertEx.AreEqual(expectedDerivativeWrtM, DY[0, 3], 0, 1E-12);
+    }
+
+
   }
 }

@@ -25,20 +25,18 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
-using Altaxo.Calc.FitFunctions.Peaks;
 using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Calc.Regression.Nonlinear;
 using Altaxo.Main;
 
-namespace Altaxo.Calc.FitFunctions.Probability
+namespace Altaxo.Calc.FitFunctions.Peaks
 {
   /// <summary>
   /// Fit fuction with one or more gaussian shaped peaks (bell shape), with a background polynomial
   /// of variable order.
   /// </summary>
   [FitFunctionClass]
-  public class GaussAmplitude
-        : IFitFunctionWithDerivative, IImmutable, IFitFunctionPeak
+  public class GaussAmplitude : IFitFunctionWithDerivative, IImmutable, IFitFunctionPeak
   {
     /// <summary>The order of the background polynomial.</summary>
     private readonly int _orderOfBackgroundPolynomial;
@@ -55,9 +53,11 @@ namespace Altaxo.Calc.FitFunctions.Probability
     /// <summary>
     /// 2021-06-07 Initial version 0
     /// 2022-07-18 Moved from AltaxoBase to AltaxoCore
+    /// 2022-10-21 Moved from namespace Probability to namespace Peaks
     /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Calc.FitFunctions.Probability.GaussAmplitude", 0)]
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(GaussAmplitude), 1)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoCore", "Altaxo.Calc.FitFunctions.Probability.GaussAmplitude", 1)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(GaussAmplitude), 2)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
@@ -96,14 +96,14 @@ namespace Altaxo.Calc.FitFunctions.Probability
     }
 
     [FitFunctionCreator("GaussAmplitude", "General", 1, 1, 4)]
-    [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Probability.GaussAmplitude}")]
+    [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Peaks.GaussAmplitude}")]
     public static IFitFunction Create_1_0()
     {
       return new GaussAmplitude(1, 0);
     }
 
     [FitFunctionCreator("GaussAmplitude", "Probability", 1, 1, 4)]
-    [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Probability.GaussAmplitude}")]
+    [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Peaks.GaussAmplitude}")]
     public static IFitFunction Create_1_M1()
     {
       return new GaussAmplitude(1, -1);
@@ -220,7 +220,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
     {
       get
       {
-        return _numberOfTerms * 3 + _orderOfBackgroundPolynomial + 1;
+        return _numberOfTerms * NumberOfParametersPerPeak + _orderOfBackgroundPolynomial + 1;
       }
     }
 
@@ -236,11 +236,11 @@ namespace Altaxo.Calc.FitFunctions.Probability
 
     public string ParameterName(int i)
     {
-      int k = i - 3 * _numberOfTerms;
+      int k = i - NumberOfParametersPerPeak * _numberOfTerms;
       if (k < 0)
       {
-        int j = i / 3;
-        return (i % 3) switch
+        int j = i / NumberOfParametersPerPeak;
+        return (i % NumberOfParametersPerPeak) switch
         {
           0 => FormattableString.Invariant($"a{j}"),
           1 => FormattableString.Invariant($"xc{j}"),
@@ -256,8 +256,8 @@ namespace Altaxo.Calc.FitFunctions.Probability
 
     public double DefaultParameterValue(int i)
     {
-      int k = i - 3 * _numberOfTerms;
-      if (k < 0 && i % 3 == 2)
+      int k = i - NumberOfParametersPerPeak * _numberOfTerms;
+      if (k < 0 && i % NumberOfParametersPerPeak == 2)
         return 1;
       else
         return 0;
@@ -272,7 +272,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
     {
       // evaluation of gaussian terms
       double sumGauss = 0, sumPolynomial = 0;
-      for (int i = 0, j = 0; i < _numberOfTerms; ++i, j += 3)
+      for (int i = 0, j = 0; i < _numberOfTerms; ++i, j += NumberOfParametersPerPeak)
       {
         double x = (X[0] - P[j + 1]) / P[j + 2];
         sumGauss += P[j] * Math.Exp(-0.5 * x * x);
@@ -280,7 +280,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
 
       if (_orderOfBackgroundPolynomial >= 0)
       {
-        int offset = 3 * _numberOfTerms;
+        int offset = NumberOfParametersPerPeak * _numberOfTerms;
         // evaluation of terms x^0 .. x^n
         sumPolynomial = P[_orderOfBackgroundPolynomial + offset];
         for (int i = _orderOfBackgroundPolynomial - 1; i >= 0; i--)
@@ -300,7 +300,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
         var x = independent[r, 0];
         // evaluation of gaussian terms
         double sumGauss = 0, sumPolynomial = 0;
-        for (int i = 0, j = 0; i < _numberOfTerms; ++i, j += 3)
+        for (int i = 0, j = 0; i < _numberOfTerms; ++i, j += NumberOfParametersPerPeak)
         {
           double arg = (x - P[j + 1]) / P[j + 2];
           sumGauss += P[j] * Math.Exp(-0.5 * arg * arg);
@@ -308,7 +308,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
 
         if (_orderOfBackgroundPolynomial >= 0)
         {
-          int offset = 3 * _numberOfTerms;
+          int offset = NumberOfParametersPerPeak * _numberOfTerms;
           // evaluation of terms x^0 .. x^n
           sumPolynomial = P[_orderOfBackgroundPolynomial + offset];
           for (int i = _orderOfBackgroundPolynomial - 1; i >= 0; i--)
@@ -336,8 +336,13 @@ namespace Altaxo.Calc.FitFunctions.Probability
         var x = X[r, 0];
 
         // at first, the gaussian terms
-        for (int i = 0, j = 0; i < _numberOfTerms; ++i, j += 3)
+        for (int i = 0, j = 0; i < _numberOfTerms; ++i, j += NumberOfParametersPerPeak)
         {
+          if (isParameterFixed is not null && isParameterFixed[j] && isParameterFixed[j + 1] && isParameterFixed[j + 2])
+          {
+            continue;
+          }
+
           var arg = (x - P[j + 1]) / P[j + 2];
           var expTerm = Math.Exp(-0.5 * arg * arg);
           DY[r, j + 0] = expTerm;
@@ -348,7 +353,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
         if (_orderOfBackgroundPolynomial >= 0)
         {
           double xn = 1;
-          for (int i = 0, j = 3 * _numberOfTerms; i <= _orderOfBackgroundPolynomial; ++i, ++j)
+          for (int i = 0, j = NumberOfParametersPerPeak * _numberOfTerms; i <= _orderOfBackgroundPolynomial; ++i, ++j)
           {
             DY[r, j] = xn;
             xn *= x;
@@ -394,7 +399,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
       const double Sqrt2Pi = 2.5066282746310005024;
       const double SqrtLog4 = 1.1774100225154746910;
 
-      if (parameters == null || parameters.Length != 3)
+      if (parameters is null || parameters.Length != NumberOfParametersPerPeak)
         throw new ArgumentException(nameof(parameters));
 
       var height = parameters[0];

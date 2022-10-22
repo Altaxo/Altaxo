@@ -865,6 +865,41 @@ In order to get a good fit nevertheless, it is necessary  that you logarithmize 
 
 ---</value>
   </data>
+  <data name="Peaks.GaussAmplitude" xml:space="preserve">
+    <value># GaussAmplitude
+
+This function evaluates a sum of Gaussian terms, plus a background polynomial with one or multiple terms, according to
+
+$$
+y(x) = a_0 \exp \left ( -\frac{(x-x_{c0})^2}{2 w_0^2} \right ) + ... + a_{n-1} \exp \left ( -\frac{(x-x_{cn-1})^2}{2 w_{n-1}^2} \right ) + b_0 + b_1 x^1 + ... + b_m x^m 
+$$
+
+in which:
+
+- $a_0 ... a_{n-1}$ are the amplitudes (heights) of the Gaussian terms
+
+- $x_{c0} ... x_{cn-1}$ are the locations of the Gaussians
+
+- $w_0 ... w_{n-1}$ are the widths of the Gaussians
+
+- $b_0 ... b_m$ are the coefficients of the background polynomial of order  $m$
+
+- $n$ is the number of Gaussian terms ($n \geq 1$)
+- $m$ is the order of the background polynomial (set $m=-1$ to disable the background polynomial)
+
+The number of Gaussian terms $n$ and the order of the background polynomial $m$ can be changed by double-clicking on the fit function. The default values are $n=1$ and $m=0$. 
+
+The domain of the function is $-\infty \leq x \leq \infty$. 
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.Peaks.GaussAmplitude.Fig1.png)
+^^^ Fig. 1: GaussAmplitude ($n=1$, $m=0$) with $a_0=5$, $x_{c0}=7$, $w_0=3$ and $b_0=1$.
+---
+
+
+
+</value>
+  </data>
   <data name="Peaks.PearsonIVAmplitude" xml:space="preserve">
     <value># PearsonIVAmplitude
 
@@ -1039,41 +1074,6 @@ The domain of the function is $-\infty \leq x \leq \infty$.
 ---
 References:
 [Cauchy distribution at Wikipedia](https://en.wikipedia.org/wiki/Cauchy_distribution)
-
-</value>
-  </data>
-  <data name="Probability.GaussAmplitude" xml:space="preserve">
-    <value># GaussAmplitude
-
-This function evaluates a sum of Gaussian terms, plus a background polynomial with one or multiple terms, according to
-
-$$
-y(x) = a_0 \exp \left ( -\frac{(x-x_{c0})^2}{2 w_0^2} \right ) + ... + a_{n-1} \exp \left ( -\frac{(x-x_{cn-1})^2}{2 w_{n-1}^2} \right ) + b_0 + b_1 x^1 + ... + b_m x^m 
-$$
-
-in which:
-
-- $a_0 ... a_{n-1}$ are the amplitudes (heights) of the Gaussian terms
-
-- $x_{c0} ... x_{cn-1}$ are the locations of the Gaussians
-
-- $w_0 ... w_{n-1}$ are the widths of the Gaussians
-
-- $b_0 ... b_m$ are the coefficients of the background polynomial of order  $m$
-
-- $n$ is the number of Gaussian terms ($n \geq 1$)
-- $m$ is the order of the background polynomial (set $m=-1$ to disable the background polynomial)
-
-The number of Gaussian terms $n$ and the order of the background polynomial $m$ can be changed by double-clicking on the fit function. The default values are $n=1$ and $m=0$. 
-
-The domain of the function is $-\infty \leq x \leq \infty$. 
-
-^^^
-![](res:Altaxo.Calc.FitFunctions.Probability.GaussAmplitude.Fig1.png)
-^^^ Fig. 1: GaussAmplitude ($n=1$, $m=0$) with $a_0=5$, $x_{c0}=7$, $w_0=3$ and $b_0=1$.
----
-
-
 
 </value>
   </data>

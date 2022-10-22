@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Threading;
-using Altaxo.Calc.FitFunctions.Probability;
+using Altaxo.Calc.FitFunctions.Peaks;
 using Altaxo.Calc.Regression.Nonlinear;
 using Xunit;
 

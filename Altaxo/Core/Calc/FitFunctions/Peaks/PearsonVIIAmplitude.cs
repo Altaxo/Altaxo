@@ -36,7 +36,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
   /// of variable order.
   /// </summary>
   [FitFunctionClass]
-  public class PearsonVIIAmplitude : IFitFunction, IFitFunctionPeak, IImmutable
+  public class PearsonVIIAmplitude : IFitFunctionWithDerivative, IFitFunctionPeak, IImmutable
   {
     private const string ParameterBaseName0 = "a";
     private const string ParameterBaseName1 = "xc";
@@ -295,6 +295,53 @@ namespace Altaxo.Calc.FitFunctions.Peaks
         }
 
         FV[r] = sumTerms + sumPolynomial;
+      }
+    }
+
+    public void EvaluateDerivative(IROMatrix<double> X, IReadOnlyList<double> P, IReadOnlyList<bool>? isParameterFixed, IMatrix<double> DY, IReadOnlyList<bool> dependentVariableChoice)
+    {
+      const double Log2 = 0.69314718055994530941723212145818; // Math.Log(2)
+
+      var rowCount = X.RowCount;
+      for (int r = 0; r < rowCount; ++r)
+      {
+        var x = X[r, 0];
+
+        // at first, the peak terms
+        for (int i = 0, j = 0; i < _numberOfTerms; ++i, j += NumberOfParametersPerPeak)
+        {
+          if (isParameterFixed is not null && isParameterFixed[j] && isParameterFixed[j + 1] && isParameterFixed[j + 2] && isParameterFixed[j + 3])
+          {
+            continue;
+          }
+
+          var height = P[j];
+          var w = P[j + 2];
+          var arg = (x - P[j + 1]) / w;
+          var m = P[j + 3];
+
+          var twoTo1ByM = Math.Pow(2, 1 / m);
+          var twoTo1ByM_Minus1 = twoTo1ByM - 1;
+          var termInner = 1 + twoTo1ByM_Minus1 * arg * arg;
+          var body = Math.Pow(termInner, -m);
+          var dbodydarg = -2 * twoTo1ByM_Minus1 * arg * m * body / termInner;
+
+          DY[r, j + 0] = body;
+          DY[r, j + 1] = -height * dbodydarg / w;
+          DY[r, j + 2] = -height * dbodydarg * arg / w;
+          DY[r, j + 3] = height * body * (arg * arg * Log2 * twoTo1ByM / (termInner * m) - Math.Log(termInner));
+        }
+
+        // then, the baseline
+        if (_orderOfBackgroundPolynomial >= 0)
+        {
+          double xn = 1;
+          for (int i = 0, j = NumberOfParametersPerPeak * _numberOfTerms; i <= _orderOfBackgroundPolynomial; ++i, ++j)
+          {
+            DY[r, j] = xn;
+            xn *= x;
+          }
+        }
       }
     }
 

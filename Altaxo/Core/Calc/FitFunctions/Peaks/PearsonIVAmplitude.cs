@@ -38,7 +38,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
   /// </summary>
   /// <remarks>See <see href="https://en.wikipedia.org/wiki/Pearson_distribution#The_Pearson_type_IV_distribution"/>.</remarks>
   [FitFunctionClass]
-  public class PearsonIVAmplitude : IFitFunction, IFitFunctionPeak, IImmutable
+  public class PearsonIVAmplitude : IFitFunctionWithDerivative, IFitFunctionPeak, IImmutable
   {
     private const string ParameterBaseName0 = "a";
     private const string ParameterBaseName1 = "xc";
@@ -292,6 +292,58 @@ namespace Altaxo.Calc.FitFunctions.Peaks
         FV[r] = sumTerms + sumPolynomial;
       }
     }
+
+    public void EvaluateDerivative(IROMatrix<double> X, IReadOnlyList<double> P, IReadOnlyList<bool>? isParameterFixed, IMatrix<double> DY, IReadOnlyList<bool> dependentVariableChoice)
+    {
+      const double Log2 = 0.69314718055994530941723212145818; // Math.Log(2)
+
+      var rowCount = X.RowCount;
+      for (int r = 0; r < rowCount; ++r)
+      {
+        var x = X[r, 0];
+
+        // at first, the peak terms
+        for (int i = 0, j = 0; i < _numberOfTerms; ++i, j += NumberOfParametersPerPeak)
+        {
+          if (isParameterFixed is not null && isParameterFixed[j] && isParameterFixed[j + 1] && isParameterFixed[j + 2] && isParameterFixed[j + 3] && isParameterFixed[j + 4])
+          {
+            continue;
+          }
+
+          var height = P[j];
+          var pos = P[j + 1];
+          var w = P[j + 2];
+          var m = P[j + 3];
+          var v = P[j + 4];
+
+          double z0 = -v / (2 * m);
+          double z = (x - pos) / w + z0;
+
+          var log1z2_1z02 = Math.Log((1 + z * z) / (1 + z0 * z0));
+          var atanZ_M_atanZ0 = Math.Atan(z) - Math.Atan(z0);
+          var body = Math.Exp(-m * log1z2_1z02 - v * atanZ_M_atanZ0);
+          var dbodydz = -body * (2 * z * m + v) / (1 + z * z);
+
+          DY[r, j + 0] = body;
+          DY[r, j + 1] = -height * dbodydz / w;
+          DY[r, j + 2] = -height * dbodydz * (x - pos) / (w * w);
+          DY[r, j + 3] = height * dbodydz * ((1 + z * z) * log1z2_1z02 / (2 * z * m + v) - z0 / m);
+          DY[r, j + 4] = height * dbodydz * ((1 + z * z) * atanZ_M_atanZ0 / (2 * z * m + v) - 0.5 / m);
+        }
+
+        // then, the baseline
+        if (_orderOfBackgroundPolynomial >= 0)
+        {
+          double xn = 1;
+          for (int i = 0, j = NumberOfParametersPerPeak * _numberOfTerms; i <= _orderOfBackgroundPolynomial; ++i, ++j)
+          {
+            DY[r, j] = xn;
+            xn *= x;
+          }
+        }
+      }
+    }
+
 
     /// <summary>
     /// Not functional because instance is immutable.

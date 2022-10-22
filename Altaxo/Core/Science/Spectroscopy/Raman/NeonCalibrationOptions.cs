@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Altaxo.Calc;
-using Altaxo.Calc.Interpolation;
+﻿using Altaxo.Calc.Interpolation;
 
 namespace Altaxo.Science.Spectroscopy.Raman
 {
@@ -50,11 +44,11 @@ namespace Altaxo.Science.Spectroscopy.Raman
       },
       PeakSearching = new PeakSearching.PeakSearchingByCwt
       {
-         MinimalRelativeGaussianAmplitude = 0.0005,
+        MinimalRelativeGaussianAmplitude = 0.0005,
       },
       PeakFitting = new PeakFitting.PeakFittingSeparately()
       {
-        FitFunction = new Altaxo.Calc.FitFunctions.Probability.GaussAmplitude(),
+        FitFunction = new Altaxo.Calc.FitFunctions.Peaks.GaussAmplitude(),
         FitWidthScalingFactor = 2,
       }
     };
@@ -63,7 +57,7 @@ namespace Altaxo.Science.Spectroscopy.Raman
     /// Gets the interpolation method used for interpolating the differences of Nist wavelength and measured wavelength
     /// in dependence on the measured wavelength.
     /// </summary>
-    public IInterpolationFunctionOptions InterpolationMethod { get; init; } = new PolyharmonicSpline1DOptions { RegularizationParameter = 10, DerivativeOrder=2 };
+    public IInterpolationFunctionOptions InterpolationMethod { get; init; } = new PolyharmonicSpline1DOptions { RegularizationParameter = 10, DerivativeOrder = 2 };
 
     /// <summary>
     /// Gets a value indicating whether the position error obtained from the peak fit should be ignored
@@ -142,7 +136,7 @@ namespace Altaxo.Science.Spectroscopy.Raman
           Wavelength_Tolerance_nm = wavelengthTol,
           FilterOutPeaksCorrespondingToMultipleNistPeaks = filterOut,
           PeakFindingOptions = peakOptions,
-          InterpolationMethod  = interpolationMethod,
+          InterpolationMethod = interpolationMethod,
           InterpolationIgnoreStdDev = interpolationIgnore,
         };
       }

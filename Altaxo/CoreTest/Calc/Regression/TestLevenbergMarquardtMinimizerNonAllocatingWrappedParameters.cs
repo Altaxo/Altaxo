@@ -31,7 +31,7 @@
 
 using System;
 using System.Threading;
-using Altaxo.Calc.FitFunctions.Probability;
+using Altaxo.Calc.FitFunctions.Peaks;
 using Altaxo.Calc.Optimization;
 using Altaxo.Calc.Optimization.ObjectiveFunctions;
 using Xunit;
