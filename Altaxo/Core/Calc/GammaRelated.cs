@@ -3328,5 +3328,6 @@ done:
     }
 
     #endregion igami
+
   } // end of class GammaRelated
 } // end of namespace
