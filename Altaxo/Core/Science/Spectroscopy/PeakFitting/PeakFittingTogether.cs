@@ -109,6 +109,29 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
       return peakFitDescriptions;
     }
 
+    static (double minimalDistance, double maximalDistance, double minimalValue, double maximalValue) GetMinimalAndMaximalProperties(IEnumerable<double> array)
+    {
+      double min = double.PositiveInfinity;
+      double max = double.NegativeInfinity;
+      double minDist = double.PositiveInfinity;
+      double previousX = double.NaN;
+      foreach (var x in array)
+      {
+        var dist = Math.Abs(x - previousX);
+
+        if (dist > 0 && dist < minDist)
+        {
+          minDist = dist;
+        }
+
+        min = Math.Min(min, x);
+        max = Math.Max(max, x);
+        previousX = x;
+      }
+
+      return (minDist, max - min, min, max);
+    }
+
 
     /// <inheritdoc/>
     public List<PeakDescription> Execute(double[] xArray, double[] yArray, IEnumerable<PeakSearching.PeakDescription> peakDescriptions, CancellationToken cancellationToken)
@@ -160,9 +183,16 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
         idx++;
       }
 
+      var (minimalXDistance, maximalXDistance, minimalXValue, maximalXValue) = GetMinimalAndMaximalProperties(xCut);
+
       var param = paramList.ToArray();
       fitFunc = FitFunction.WithNumberOfTerms(param.Length / numberOfParametersPerPeak);
-      var (lowerBounds, upperBounds) = fitFunc.GetParameterBoundariesForPositivePeaks();
+      var (lowerBounds, upperBounds) = fitFunc.GetParameterBoundariesForPositivePeaks(
+        minimalPosition: minimalXValue - 32 * maximalXDistance,
+        maximalPosition: maximalXValue + 32 * maximalXDistance,
+        minimalFWHM: minimalXDistance / 2d,
+        maximalFWHM: maximalXDistance * 32d
+        );
 
       var fit = new QuickNonlinearRegression(fitFunc);
 
