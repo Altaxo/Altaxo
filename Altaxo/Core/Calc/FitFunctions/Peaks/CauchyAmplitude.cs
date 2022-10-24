@@ -156,7 +156,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
     }
 
     /// <inheritdoc/>
-    public (IReadOnlyList<double?>? LowerBounds, IReadOnlyList<double?>? upperBounds) GetParameterBoundariesForPositivePeaks()
+    public (IReadOnlyList<double?>? LowerBounds, IReadOnlyList<double?>? upperBounds) GetParameterBoundariesForPositivePeaks(double? minimalPosition = null, double? maximalPosition = null, double? minimalFWHM = null, double? maximalFWHM = null)
     {
       var lowerBounds = new double?[NumberOfParameters];
       var upperBounds = new double?[NumberOfParameters];

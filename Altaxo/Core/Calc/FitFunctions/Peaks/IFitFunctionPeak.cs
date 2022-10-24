@@ -74,8 +74,12 @@ namespace Altaxo.Calc.FitFunctions.Peaks
     /// <summary>
     /// Gets the parameter boundaries in order to have positive peaks only.
     /// </summary>
+    /// <param name="minimalPosition">The minimal position that should be set in the boundaries.</param>
+    /// <param name="maximalPosition">The maximal position that should be set in the boundaries.</param>
+    /// <param name="minimalFWHM">The minimal FWHM (Full-Width-Half-Maximum) that should be set in the boundary conditions.</param>
+    /// <param name="maximalFWHM">The maximal FWHM (Full-Width-Half-Maximum) that should be set in the boundary conditions.</param>
     /// <returns>The lower and the upper bounds. Both arrays (if not null) have the same length as the number of parameters.
     /// Only those elements are not null, which really bound a parameter.</returns>
-    public (IReadOnlyList<double?>? LowerBounds, IReadOnlyList<double?>? upperBounds) GetParameterBoundariesForPositivePeaks();
+    public (IReadOnlyList<double?>? LowerBounds, IReadOnlyList<double?>? upperBounds) GetParameterBoundariesForPositivePeaks(double? minimalPosition = null, double? maximalPosition = null, double? minimalFWHM = null, double? maximalFWHM = null);
   }
 }

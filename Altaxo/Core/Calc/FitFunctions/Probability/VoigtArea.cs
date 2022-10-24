@@ -326,7 +326,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
     /// Gets the parameter boundaries in order to have positive peaks only.
     /// </summary>
     /// <returns></returns>
-    public (IReadOnlyList<double?>? LowerBounds, IReadOnlyList<double?>? upperBounds) GetParameterBoundariesForPositivePeaks()
+    public (IReadOnlyList<double?>? LowerBounds, IReadOnlyList<double?>? upperBounds) GetParameterBoundariesForPositivePeaks(double? minimalPosition = null, double? maximalPosition = null, double? minimalFWHM = null, double? maximalFWHM = null)
     {
       var lowerBounds = new double?[NumberOfParameters];
 
