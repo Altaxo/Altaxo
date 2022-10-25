@@ -34,16 +34,16 @@ using Complex64 = System.Numerics.Complex;
 namespace Altaxo.Calc.FitFunctions.Probability
 {
   /// <summary>
-  /// Fit function with one or more Voigt shaped peaks, with a background polynomial
-  /// of variable order.
+  /// Fit fuction with one or more Voigt shaped peaks, with a background polynomial of variable order.
+  /// Sigma and gamma of the usual Voigt function are calculated here as sigma=w*Sqrt(nu), gamma = w*(1-nu), with nu in the range of [0,1].
   /// </summary>
   [FitFunctionClass]
-  public class VoigtArea : IFitFunctionWithDerivative, IFitFunctionPeak, IImmutable
+  public class VoigtAreaParametrizationSqrtNu : IFitFunctionWithDerivative, IFitFunctionPeak, IImmutable
   {
     private const string ParameterBaseName0 = "A";
     private const string ParameterBaseName1 = "xc";
     private const string ParameterBaseName2 = "w";
-    private const string ParameterBaseName3 = "gamma";
+    private const string ParameterBaseName3 = "nu";
     private const int NumberOfParametersPerPeak = 4;
 
 
@@ -58,12 +58,12 @@ namespace Altaxo.Calc.FitFunctions.Probability
     /// <summary>
     /// 2021-06-12 Initial version
     /// </summary>
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(VoigtArea), 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(VoigtAreaParametrizationSqrtNu), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (VoigtArea)obj;
+        var s = (VoigtAreaParametrizationSqrtNu)obj;
         info.AddValue("NumberOfTerms", s._numberOfTerms);
         info.AddValue("OrderOfBackgroundPolynomial", s._orderOfBackgroundPolynomial);
       }
@@ -72,19 +72,19 @@ namespace Altaxo.Calc.FitFunctions.Probability
       {
         var numberOfTerms = info.GetInt32("NumberOfTerms");
         var orderOfBackgroundPolynomial = info.GetInt32("OrderOfBackgroundPolynomial");
-        return new VoigtArea(numberOfTerms, orderOfBackgroundPolynomial);
+        return new VoigtAreaParametrizationSqrtNu(numberOfTerms, orderOfBackgroundPolynomial);
       }
     }
 
     #endregion Serialization
 
-    public VoigtArea()
+    public VoigtAreaParametrizationSqrtNu()
     {
       _numberOfTerms = 1;
       _orderOfBackgroundPolynomial = -1;
     }
 
-    public VoigtArea(int numberOfGaussianTerms, int orderOfBackgroundPolynomial)
+    public VoigtAreaParametrizationSqrtNu(int numberOfGaussianTerms, int orderOfBackgroundPolynomial)
     {
       _numberOfTerms = numberOfGaussianTerms;
       _orderOfBackgroundPolynomial = orderOfBackgroundPolynomial;
@@ -96,19 +96,19 @@ namespace Altaxo.Calc.FitFunctions.Probability
 
     }
 
-    [FitFunctionCreator("VoigtArea", "General", 1, 1, NumberOfParametersPerPeak)]
-    [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Probability.VoigtArea}")]
+    [FitFunctionCreator("VoigtArea (Parametrization Nu)", "General", 1, 1, NumberOfParametersPerPeak)]
+    [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Probability.VoigtAreaParametrizationNu}")]
     public static IFitFunction Create_1_0()
     {
-      return new VoigtArea(1, 0);
+      return new VoigtAreaParametrizationSqrtNu(1, 0);
     }
 
-    [FitFunctionCreator("VoigtArea", "Peaks", 1, 1, NumberOfParametersPerPeak)]
-    [FitFunctionCreator("VoigtArea", "Probability", 1, 1, NumberOfParametersPerPeak)]
-    [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Probability.VoigtArea}")]
+    [FitFunctionCreator("VoigtArea (Parametrization Nu)", "Peaks", 1, 1, NumberOfParametersPerPeak)]
+    [FitFunctionCreator("VoigtArea (Parametrization Nu)", "Probability", 1, 1, NumberOfParametersPerPeak)]
+    [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Probability.VoigtAreaParametrizationNu}")]
     public static IFitFunction Create_1_M1()
     {
-      return new VoigtArea(1, -1);
+      return new VoigtAreaParametrizationSqrtNu(1, -1);
     }
 
     /// <summary>
@@ -133,14 +133,14 @@ namespace Altaxo.Calc.FitFunctions.Probability
     /// </summary>
     /// <param name="orderOfBackgroundPolynomial">The order of the background polynomial. If set to -1, the background polynomial will be disabled.</param>
     /// <returns>New instance with the background polynomial of the provided order.</returns>
-    public VoigtArea WithOrderOfBackgroundPolynomial(int orderOfBackgroundPolynomial)
+    public VoigtAreaParametrizationSqrtNu WithOrderOfBackgroundPolynomial(int orderOfBackgroundPolynomial)
     {
       if (!(orderOfBackgroundPolynomial >= -1))
         throw new ArgumentOutOfRangeException($"{nameof(orderOfBackgroundPolynomial)} must be greater than or equal to 0, or -1 in order to deactivate it.");
 
       if (!(_orderOfBackgroundPolynomial == orderOfBackgroundPolynomial))
       {
-        return new VoigtArea(_numberOfTerms, orderOfBackgroundPolynomial);
+        return new VoigtAreaParametrizationSqrtNu(_numberOfTerms, orderOfBackgroundPolynomial);
       }
       else
       {
@@ -158,14 +158,14 @@ namespace Altaxo.Calc.FitFunctions.Probability
     /// </summary>
     /// <param name="numberOfTerms">The number of Lorentzian (Cauchy) terms (should be greater than or equal to 1).</param>
     /// <returns>New instance with the provided number of Lorentzian (Cauchy) terms.</returns>
-    public VoigtArea WithNumberOfTerms(int numberOfTerms)
+    public VoigtAreaParametrizationSqrtNu WithNumberOfTerms(int numberOfTerms)
     {
       if (!(numberOfTerms >= 1))
         throw new ArgumentOutOfRangeException($"{nameof(numberOfTerms)} must be greater than or equal to 1");
 
       if (!(_numberOfTerms == numberOfTerms))
       {
-        return new VoigtArea(numberOfTerms, _orderOfBackgroundPolynomial);
+        return new VoigtAreaParametrizationSqrtNu(numberOfTerms, _orderOfBackgroundPolynomial);
       }
       else
       {
@@ -250,7 +250,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
       double sumTerms = 0, sumPolynomial = 0;
       for (int i = 0, j = 0; i < _numberOfTerms; ++i, j += NumberOfParametersPerPeak)
       {
-        sumTerms += P[j] * Altaxo.Calc.ComplexErrorFunctionRelated.Voigt(X[0] - P[j + 1], P[j + 2], P[j + 3]);
+        sumTerms += P[j] * Altaxo.Calc.ComplexErrorFunctionRelated.Voigt(X[0] - P[j + 1], P[j + 2] * Math.Sqrt(P[j + 3]), P[j + 2] * (1 - P[j + 3]));
       }
 
       if (_orderOfBackgroundPolynomial >= 0)
@@ -277,7 +277,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
         double sumTerms = 0, sumPolynomial = 0;
         for (int i = 0, j = 0; i < _numberOfTerms; ++i, j += NumberOfParametersPerPeak)
         {
-          sumTerms += P[j] * Altaxo.Calc.ComplexErrorFunctionRelated.Voigt(x - P[j + 1], P[j + 2], P[j + 3]);
+          sumTerms += P[j] * Altaxo.Calc.ComplexErrorFunctionRelated.Voigt(x - P[j + 1], P[j + 2] * Math.Sqrt(P[j + 3]), P[j + 2] * (1 - P[j + 3]));
         }
 
         if (_orderOfBackgroundPolynomial >= 0)
@@ -319,7 +319,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
     /// <inheritdoc/>
     IFitFunctionPeak IFitFunctionPeak.WithNumberOfTerms(int numberOfTerms)
     {
-      return new VoigtArea(numberOfTerms, this.OrderOfBackgroundPolynomial);
+      return new VoigtAreaParametrizationSqrtNu(numberOfTerms, this.OrderOfBackgroundPolynomial);
     }
 
     /// <summary>
@@ -329,12 +329,14 @@ namespace Altaxo.Calc.FitFunctions.Probability
     public (IReadOnlyList<double?>? LowerBounds, IReadOnlyList<double?>? upperBounds) GetParameterBoundariesForPositivePeaks(double? minimalPosition = null, double? maximalPosition = null, double? minimalFWHM = null, double? maximalFWHM = null)
     {
       var lowerBounds = new double?[NumberOfParameters];
+      var upperBounds = new double?[NumberOfParameters];
 
       for (int i = 0, j = 0; i < NumberOfTerms; ++i, j += NumberOfParametersPerPeak)
       {
         lowerBounds[j] = 0; // minimal area is 0
-        lowerBounds[j + 2] = 0; // minimal Gaussian width is 0
-        lowerBounds[j + 3] = 0; // minimal Lorentzian width
+        lowerBounds[j + 2] = Math.Sqrt(double.Epsilon); // minimal Gaussian width is 0
+        lowerBounds[j + 3] = 0; // minimal nu
+        upperBounds[j + 3] = 1; // maximal nu
       }
 
       return (lowerBounds, null);
@@ -351,8 +353,10 @@ namespace Altaxo.Calc.FitFunctions.Probability
 
       var area = parameters[0];
       var pos = parameters[1];
-      var height = parameters[0] * Altaxo.Calc.ComplexErrorFunctionRelated.Voigt(0, parameters[2], parameters[3]);
-      var fwhm = 2 * Altaxo.Calc.ComplexErrorFunctionRelated.VoigtHalfWidthHalfMaximum(parameters[2], parameters[3]);
+      var sigma = parameters[2] * parameters[3];
+      var gamma = parameters[2] * (1 - parameters[3]);
+      var height = parameters[0] * Altaxo.Calc.ComplexErrorFunctionRelated.Voigt(0, sigma, gamma);
+      var fwhm = 2 * Altaxo.Calc.ComplexErrorFunctionRelated.VoigtHalfWidthHalfMaximum(sigma, gamma);
 
       return (pos, area, height, fwhm);
     }
@@ -371,8 +375,8 @@ namespace Altaxo.Calc.FitFunctions.Probability
 
       var area = parameters[0];
       var pos = parameters[1];
-      var sigma = Math.Abs(parameters[2]);
-      var gamma = Math.Abs(parameters[3]);
+      var sigma = Math.Abs(parameters[2] * parameters[3]);
+      var gamma = Math.Abs(parameters[2] * (1 - parameters[3]));
 
       var areaStdDev = cv is null ? 0 : Math.Sqrt(cv[0, 0]);
       var posStdDev = cv is null ? 0 : Math.Sqrt(cv[1, 1]);
@@ -495,10 +499,12 @@ namespace Altaxo.Calc.FitFunctions.Probability
             continue;
           }
 
-          var amp = parameters[j + 0];
+          var area = parameters[j + 0];
           var arg = x - parameters[j + 1];
-          var sigma = parameters[j + 2];
-          var gamma = parameters[j + 3];
+          var w = parameters[j + 2];
+          var nu = parameters[j + 3];
+          var sigma = w * Math.Sqrt(nu);
+          var gamma = w * (1 - nu);
 
           if (!(sigma >= 0 && gamma >= 0 && (sigma + gamma) > 0))
           {
@@ -507,28 +513,30 @@ namespace Altaxo.Calc.FitFunctions.Probability
             DF[r, j + 2] = double.NaN;
             DF[r, j + 3] = double.NaN;
           }
-          else if (sigma == 0) // Pure Lorentzian
+          else if (nu < 1E-4) // approximately this is a Lorentzian
           {
-            arg /= gamma;
-            DF[r, j + 0] = 1 / (Math.PI * gamma * (1 + arg * arg));
-            DF[r, j + 1] = amp * (2 * arg / (Math.PI * gamma * gamma * Pow2(1 + arg * arg)));
-            DF[r, j + 2] = 0;
-            DF[r, j + 3] = amp * ((arg * arg - 1) / (Math.PI * gamma * gamma * Pow2(1 + arg * arg)));
+            arg /= w;
+            var onePlusArg2 = 1 + arg * arg;
+            var body = 1 / (Math.PI * w * onePlusArg2);
+            DF[r, j + 0] = body;
+            DF[r, j + 1] = area * body * 2 * arg / (w * onePlusArg2);
+            DF[r, j + 2] = -area * body * (1 - arg * arg) / (w * onePlusArg2);
+            DF[r, j + 3] = area * body * arg * arg * (3 - arg * arg) / (onePlusArg2 * onePlusArg2);
           }
-          else // general case including gamma==0
+          else // general case including nu==1 (which means gamma==0, i.e. pure Gaussian).
           {
             var z = new Complex64(arg, gamma) / (Sqrt2 * sigma);
             var wOfZ = ComplexErrorFunctionRelated.W_of_z(z);
-            var wOfZBySqrt2PiSigma = wOfZ / (Sqrt2Pi * sigma);
-            var term1 = (Sqrt2 * Complex64.ImaginaryOne - z * wOfZ * Sqrt2Pi) / (Math.PI * sigma); // Derivative of wOfZBySqrt2PiSigma w.r.t. z
+            var body = wOfZ / (Sqrt2Pi * sigma);
+            var dbodydz = (Sqrt2 * Complex64.ImaginaryOne - z * wOfZ * Sqrt2Pi) / (Math.PI * sigma); // Derivative of wOfZBySqrt2PiSigma w.r.t. z
 
-            DF[r, j + 0] = wOfZBySqrt2PiSigma.Real; // Derivative w.r.t. amplitude
+            DF[r, j + 0] = body.Real; // Derivative w.r.t. amplitude
 
-            DF[r, j + 1] = -amp * term1.Real / (Sqrt2 * sigma); // Derivative w.r.t. position
+            DF[r, j + 1] = -area * dbodydz.Real / (Sqrt2 * sigma); // Derivative w.r.t. position
 
-            DF[r, j + 2] = -amp * (term1 * z + wOfZBySqrt2PiSigma).Real / sigma; // Derivative w.r.t. sigma
+            DF[r, j + 2] = -area / w * (dbodydz * arg / (Sqrt2 * sigma) + body).Real; // Derivative w.r.t. w
 
-            DF[r, j + 3] = -amp * term1.Imaginary / (Sqrt2 * sigma); // Derivative w.r.t. gamma
+            DF[r, j + 3] = -area / (2 * nu) * ((dbodydz * new Complex64(arg, w * (1 + nu)) / (Sqrt2 * sigma) + body)).Real; // Derivative w.r.t. nu
           }
         }
 
