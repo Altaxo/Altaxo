@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+using System;
 using Altaxo.Calc.LinearAlgebra;
 using Xunit;
 
@@ -30,55 +31,199 @@ namespace Altaxo.Calc.FitFunctions.Probability
   public class VoigtAreaParametrizationSqrtNu2Test
   {
     [Fact]
-    public void TestHeight()
+    public void TestDerivativesSecondaryParameters_GeneralCase()
     {
-      var v = new VoigtArea();
+      // see VoigtArea-Derivatives-ParametrizationSqrtNuLog4.nb
+      double area = 17;
+      double pos = 7;
+      double w = 3;
+      double nu = 5 / 7d;
 
-      const double areaG = 13;
-      const double positionG = 77;
-      var parameters = new double[] { areaG, positionG, 0, 0 };
+      var pahf = new double[] { pos, area, 2.35429674800053710973966, 6.04835222264692750740263 };
+      // derivatives
+      var ymaxDerivs = new double[] { 0.138488044000031594690569, 0, -0.784765582666845703246555, 0.986294916351210818615044 };
+      var xmaxDerivs = new double[] { 0, 1, 0, 0 };
+      var areaDerivs = new double[] { 1, 0, 0, 0 };
+      var fwhmDerivs = new double[] { 0, 0, 2.01653911742859190892489, -0.134690859032882012668096 };
 
-      double sigma = 1;
-      double gamma;
-      parameters[2] = sigma;
-      int i;
-      double d;
-      for (i = 0, d = -1; d < 1; ++i, d += 1 / 64.0)
+      double[] pars = new double[] { area, pos, w, nu };
+      double[] X = new double[1];
+      double[] Y = new double[1];
+
+      var func = new VoigtAreaParametrizationSqrtNu2();
+
+      for (int i = 0; i < pars.Length; i++)
       {
-        gamma = (1 + d) / (1 - d);
-        parameters[3] = gamma;
+        var cov = CreateMatrix.Dense<double>(pars.Length, pars.Length);
+        cov[i, i] = 1;
+        var result = func.GetPositionAreaHeightFWHMFromSinglePeakParameters(pars, cov);
+        AssertEx.AreEqual(Math.Abs(areaDerivs[i]), result.AreaStdDev, 1E-13, 1E-7);
+        AssertEx.AreEqual(Math.Abs(xmaxDerivs[i]), result.PositionStdDev, 1E-13, 1E-7);
+        AssertEx.AreEqual(Math.Abs(ymaxDerivs[i]), result.HeightStdDev, 1E-13, 1E-7);
+        AssertEx.AreEqual(Math.Abs(fwhmDerivs[i]), result.FWHMStdDev, 1E-13, 1E-7);
 
-        var (pos, _, area, _, height, _, fwhm, _) = v.GetPositionAreaHeightFWHMFromSinglePeakParameters(parameters, null);
-
-        AssertEx.AreEqual(areaG, area, 0, 1E-14);
-        AssertEx.AreEqual(positionG, pos, 0, 1E-14);
-
-        var heightExpected = Altaxo.Calc.ComplexErrorFunctionRelated.Voigt(0, sigma, gamma) * areaG;
-        AssertEx.AreEqual(heightExpected, height, 0, 1E-7);
-
-        var fwhmExpected = 2 * Altaxo.Calc.ComplexErrorFunctionRelated.VoigtHalfWidthHalfMaximum(sigma, gamma);
-        AssertEx.AreEqual(fwhmExpected, fwhm, 0, Altaxo.Calc.ComplexErrorFunctionRelated.VoigtHalfWidthHalfMaximumApproximationMaximalRelativeError);
+        AssertEx.AreEqual(pahf[0], result.Position, 1E-13, 1E-10);
+        AssertEx.AreEqual(pahf[1], result.Area, 1E-13, 1E-10);
+        AssertEx.AreEqual(pahf[2], result.Height, 1E-13, 1E-10);
+        AssertEx.AreEqual(pahf[3], result.FWHM, 1E-13, 1E-10);
       }
+    }
 
-      gamma = 1;
-      parameters[3] = gamma;
-      for (i = 0, d = -1; d < 1; ++i, d += 1 / 64.0)
+
+    [Fact]
+    public void TestDerivativesSecondaryParameters_NearlyLorentzianLimit()
+    {
+      // see VoigtArea-Derivatives-ParametrizationSqrtNuLog4.nb
+      double area = 17;
+      double pos = 7;
+      double w = 3;
+      double nu = 1 / 32767d;
+
+      var pahf = new double[] { pos, area, 1.80377136162144979963231, 6.00001501741722156713951 };
+      // derivatives
+      var ymaxDerivs = new double[] { 0.106104197742438223507783, 0, -0.601257120540483266544103, 0.502664788477749705785319 };
+      var xmaxDerivs = new double[] { 0, 1, 0, 0 };
+      var areaDerivs = new double[] { 1, 0, 0, 0 };
+      var fwhmDerivs = new double[] { 0, 0, 2.00000452341909985950189, 0.444626388979414132950005 };
+
+      double[] pars = new double[] { area, pos, w, nu };
+      double[] X = new double[1];
+      double[] Y = new double[1];
+
+      var func = new VoigtAreaParametrizationSqrtNu2();
+
+      for (int i = 0; i < pars.Length; i++)
       {
-        sigma = (1 + d) / (1 - d);
-        parameters[2] = sigma;
+        var cov = CreateMatrix.Dense<double>(pars.Length, pars.Length);
+        cov[i, i] = 1;
+        var result = func.GetPositionAreaHeightFWHMFromSinglePeakParameters(pars, cov);
+        AssertEx.AreEqual(Math.Abs(areaDerivs[i]), result.AreaStdDev, 1E-13, 1E-7);
+        AssertEx.AreEqual(Math.Abs(xmaxDerivs[i]), result.PositionStdDev, 1E-13, 1E-7);
+        AssertEx.AreEqual(Math.Abs(ymaxDerivs[i]), result.HeightStdDev, 1E-13, 1E-7);
+        AssertEx.AreEqual(Math.Abs(fwhmDerivs[i]), result.FWHMStdDev, 1E-13, 1E-7);
 
-        var (pos, _, area, _, height, _, fwhm, _) = v.GetPositionAreaHeightFWHMFromSinglePeakParameters(parameters, null);
-
-        AssertEx.AreEqual(areaG, area, 0, 1E-14);
-        AssertEx.AreEqual(positionG, pos, 0, 1E-14);
-
-        var heightExpected = Altaxo.Calc.ComplexErrorFunctionRelated.Voigt(0, sigma, gamma) * areaG;
-        AssertEx.AreEqual(heightExpected, height, 0, 1E-7);
-
-        var fwhmExpected = 2 * Altaxo.Calc.ComplexErrorFunctionRelated.VoigtHalfWidthHalfMaximum(sigma, gamma);
-        AssertEx.AreEqual(fwhmExpected, fwhm, 0, Altaxo.Calc.ComplexErrorFunctionRelated.VoigtHalfWidthHalfMaximumApproximationMaximalRelativeError);
+        AssertEx.AreEqual(pahf[0], result.Position, 1E-13, 1E-10);
+        AssertEx.AreEqual(pahf[1], result.Area, 1E-13, 1E-10);
+        AssertEx.AreEqual(pahf[2], result.Height, 1E-13, 1E-10);
+        AssertEx.AreEqual(pahf[3], result.FWHM, 1E-13, 1E-10);
       }
+    }
 
+    [Fact]
+    public void TestDerivativesSecondaryParameters_ExactlyLorentzianLimit()
+    {
+      // see VoigtArea-Derivatives-ParametrizationSqrtNuLog4.nb
+      double area = 17;
+      double pos = 7;
+      double w = 3;
+      double nu = 0;
+
+      var pahf = new double[] { pos, area, 1.80375602170814713871402, 6 };
+      // derivatives
+      var ymaxDerivs = new double[] { 0.106103295394596890512589, 0, -0.601252007236049046238005, 0.502621087962172486855736 };
+      var xmaxDerivs = new double[] { 0, 1, 0, 0 };
+      var areaDerivs = new double[] { 1, 0, 0, 0 };
+      var fwhmDerivs = new double[] { 0, 0, 2, 0.444686854097446089796046 };
+
+      double[] pars = new double[] { area, pos, w, nu };
+      double[] X = new double[1];
+      double[] Y = new double[1];
+
+      var func = new VoigtAreaParametrizationSqrtNu2();
+
+      for (int i = 0; i < pars.Length; i++)
+      {
+        var cov = CreateMatrix.Dense<double>(pars.Length, pars.Length);
+        cov[i, i] = 1;
+        var result = func.GetPositionAreaHeightFWHMFromSinglePeakParameters(pars, cov);
+        AssertEx.AreEqual(Math.Abs(areaDerivs[i]), result.AreaStdDev, 1E-13, 1E-7);
+        AssertEx.AreEqual(Math.Abs(xmaxDerivs[i]), result.PositionStdDev, 1E-13, 1E-7);
+        AssertEx.AreEqual(Math.Abs(ymaxDerivs[i]), result.HeightStdDev, 1E-13, 1E-7);
+        AssertEx.AreEqual(Math.Abs(fwhmDerivs[i]), result.FWHMStdDev, 1E-13, 1E-7);
+
+        AssertEx.AreEqual(pahf[0], result.Position, 1E-13, 1E-10);
+        AssertEx.AreEqual(pahf[1], result.Area, 1E-13, 1E-10);
+        AssertEx.AreEqual(pahf[2], result.Height, 1E-13, 1E-10);
+        AssertEx.AreEqual(pahf[3], result.FWHM, 1E-13, 1E-10);
+      }
+    }
+
+    [Fact]
+    public void TestDerivativesSecondaryParameters_NearlyGaussianLimit()
+    {
+      // see VoigtArea-Derivatives-ParametrizationSqrtNuLog4.nb
+      double area = 17;
+      double pos = 7;
+      double w = 3;
+      double nu = 1 - 1 / 32767d;
+
+      var pahf = new double[] { pos, area, 2.66170326013146224987024, 6.00000595967162241141443 };
+      // derivatives
+      var ymaxDerivs = new double[] { 0.156570780007733073521779, 0, -0.887234420043820749956747, 1.16964641292668431368984 };
+      var xmaxDerivs = new double[] { 0, 1, 0, 0 };
+      var areaDerivs = new double[] { 1, 0, 0, 0 };
+      var fwhmDerivs = new double[] { 0, 0, 2.00000210576251930356528, -0.206995511602332887432860 };
+
+      double[] pars = new double[] { area, pos, w, nu };
+      double[] X = new double[1];
+      double[] Y = new double[1];
+
+      var func = new VoigtAreaParametrizationSqrtNu2();
+
+      for (int i = 0; i < pars.Length; i++)
+      {
+        var cov = CreateMatrix.Dense<double>(pars.Length, pars.Length);
+        cov[i, i] = 1;
+        var result = func.GetPositionAreaHeightFWHMFromSinglePeakParameters(pars, cov);
+        AssertEx.AreEqual(Math.Abs(areaDerivs[i]), result.AreaStdDev, 1E-13, 1E-7);
+        AssertEx.AreEqual(Math.Abs(xmaxDerivs[i]), result.PositionStdDev, 1E-13, 1E-7);
+        AssertEx.AreEqual(Math.Abs(ymaxDerivs[i]), result.HeightStdDev, 1E-13, 1E-7);
+        AssertEx.AreEqual(Math.Abs(fwhmDerivs[i]), result.FWHMStdDev, 1E-13, 1E-7);
+
+        AssertEx.AreEqual(pahf[0], result.Position, 1E-13, 1E-10);
+        AssertEx.AreEqual(pahf[1], result.Area, 1E-13, 1E-10);
+        AssertEx.AreEqual(pahf[2], result.Height, 1E-13, 1E-10);
+        AssertEx.AreEqual(pahf[3], result.FWHM, 1E-13, 1E-10);
+      }
+    }
+
+    [Fact]
+    public void TestDerivativesSecondaryParameters_ExactlyGaussianLimit()
+    {
+      // see VoigtArea-Derivatives-ParametrizationSqrtNuLog4.nb
+      double area = 17;
+      double pos = 7;
+      double w = 3;
+      double nu = 1;
+
+      var pahf = new double[] { pos, area, 2.66173895631567877902163, 6 };
+      // derivatives
+      var ymaxDerivs = new double[] { 0.156572879783275222295390, 0, -0.887246318771892926340544, 1.16966732357221200231569 };
+      var xmaxDerivs = new double[] { 0, 1, 0, 0 };
+      var areaDerivs = new double[] { 1, 0, 0, 0 };
+      var fwhmDerivs = new double[] { 0, 0, 2, -0.207001611171248813604190 };
+
+      double[] pars = new double[] { area, pos, w, nu };
+      double[] X = new double[1];
+      double[] Y = new double[1];
+
+      var func = new VoigtAreaParametrizationSqrtNu2();
+
+      for (int i = 0; i < pars.Length; i++)
+      {
+        var cov = CreateMatrix.Dense<double>(pars.Length, pars.Length);
+        cov[i, i] = 1;
+        var result = func.GetPositionAreaHeightFWHMFromSinglePeakParameters(pars, cov);
+        AssertEx.AreEqual(Math.Abs(areaDerivs[i]), result.AreaStdDev, 1E-13, 1E-7);
+        AssertEx.AreEqual(Math.Abs(xmaxDerivs[i]), result.PositionStdDev, 1E-13, 1E-7);
+        AssertEx.AreEqual(Math.Abs(ymaxDerivs[i]), result.HeightStdDev, 1E-13, 1E-7);
+        AssertEx.AreEqual(Math.Abs(fwhmDerivs[i]), result.FWHMStdDev, 1E-13, 1E-7);
+
+        AssertEx.AreEqual(pahf[0], result.Position, 1E-13, 1E-10);
+        AssertEx.AreEqual(pahf[1], result.Area, 1E-13, 1E-10);
+        AssertEx.AreEqual(pahf[2], result.Height, 1E-13, 1E-10);
+        AssertEx.AreEqual(pahf[3], result.FWHM, 1E-13, 1E-10);
+      }
     }
 
 
