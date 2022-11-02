@@ -381,15 +381,29 @@ namespace Altaxo.Calc.FitFunctions.Probability
     #endregion IFitFunction Members
 
     /// <inheritdoc/>
-    public double[] GetInitialParametersFromHeightPositionAndWidthAtRelativeHeight(double height, double position, double width, double relativeHeight)
+    public double[] GetInitialParametersFromHeightPositionAndWidthAtRelativeHeight(double height, double position, double fullWidth, double relativeHeight)
     {
+      bool useLorenzLimit = false;
+
       if (!(relativeHeight > 0 && relativeHeight < 1))
         throw new ArgumentException("RelativeHeight should be in the open interval (0,1)", nameof(relativeHeight));
 
-      // we calculate at the Lorentz limit (nu==0)
-      var w = width * Math.Sqrt(1 / relativeHeight - 1);
-      var area = height * w * Math.PI;
-      return new double[NumberOfParametersPerPeak] { area, position, w, 0 };
+      if (useLorenzLimit)
+      {
+        // we calculate at the Lorentz limit (nu==0)
+        var w = 0.5 * fullWidth * Math.Sqrt(relativeHeight / (1 - relativeHeight));
+        var area = height * w * Math.PI;
+        return new double[NumberOfParametersPerPeak] { area, position, w, 0 };
+      }
+      else // use Gaussian limit
+      {
+        const double SqrtLog2 = 0.832554611157697756353165; // Math.Sqrt(Math.Log(2))
+        const double Sqrt2PiByLog4 = 2.12893403886245235863054; // Math.Sqrt(2*Math.Pi/Math.Log(4))
+
+        var w = 0.5 * fullWidth * SqrtLog2 / Math.Sqrt(-Math.Log(relativeHeight));
+        var area = height * w * Sqrt2PiByLog4;
+        return new double[] { area, position, w, 1 };
+      }
     }
 
     /// <inheritdoc/>
@@ -409,13 +423,19 @@ namespace Altaxo.Calc.FitFunctions.Probability
 
       for (int i = 0, j = 0; i < NumberOfTerms; ++i, j += NumberOfParametersPerPeak)
       {
-        lowerBounds[j] = 0; // minimal area is 0
-        lowerBounds[j + 2] = Math.Sqrt(double.Epsilon); // minimal Gaussian width is 0
+        lowerBounds[j + 0] = 0; // minimal area is 0
+
+        lowerBounds[j + 1] = minimalPosition;
+        upperBounds[j + 1] = maximalPosition;
+
+        lowerBounds[j + 2] = minimalFWHM.HasValue ? minimalFWHM / 2 : Math.Sqrt(Math.Sqrt(double.Epsilon)); // minimal Gaussian width is 0
+        upperBounds[j + 2] = maximalFWHM.HasValue ? maximalFWHM / 2 : null;
+
         lowerBounds[j + 3] = 0; // minimal nu
         upperBounds[j + 3] = 1; // maximal nu
       }
 
-      return (lowerBounds, null);
+      return (lowerBounds, upperBounds);
     }
 
     /// <inheritdoc/>
