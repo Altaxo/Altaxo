@@ -109,28 +109,6 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
       return peakFitDescriptions;
     }
 
-    static (double minimalDistance, double maximalDistance, double minimalValue, double maximalValue) GetMinimalAndMaximalProperties(IEnumerable<double> array)
-    {
-      double min = double.PositiveInfinity;
-      double max = double.NegativeInfinity;
-      double minDist = double.PositiveInfinity;
-      double previousX = double.NaN;
-      foreach (var x in array)
-      {
-        var dist = Math.Abs(x - previousX);
-
-        if (dist > 0 && dist < minDist)
-        {
-          minDist = dist;
-        }
-
-        min = Math.Min(min, x);
-        max = Math.Max(max, x);
-        previousX = x;
-      }
-
-      return (minDist, max - min, min, max);
-    }
 
 
     /// <inheritdoc/>

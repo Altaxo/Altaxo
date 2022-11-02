@@ -159,9 +159,16 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
         idx++;
       }
 
+      var (minimalXDistance, maximalXDistance, minimalXValue, maximalXValue) = GetMinimalAndMaximalProperties(xCut);
       var param = paramList.ToArray();
       fitFunc = FitFunction.WithNumberOfTerms(param.Length / numberOfParametersPerPeak);
-      var (lowerBounds, upperBounds) = fitFunc.GetParameterBoundariesForPositivePeaks();
+      var (lowerBounds, upperBounds) = fitFunc.GetParameterBoundariesForPositivePeaks(
+        minimalPosition: minimalXValue - 32 * maximalXDistance,
+        maximalPosition: maximalXValue + 32 * maximalXDistance,
+        minimalFWHM: minimalXDistance / 2d,
+        maximalFWHM: maximalXDistance * 32d
+        );
+
       var fit = new QuickNonlinearRegression(fitFunc);
 
       // In the first stage of the global fitting, we

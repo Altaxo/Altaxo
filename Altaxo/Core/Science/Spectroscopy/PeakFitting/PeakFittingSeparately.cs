@@ -120,7 +120,14 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
     {
       var fitFunc = FitFunction.WithNumberOfTerms(1);
       int numberOfParametersPerPeak = fitFunc.NumberOfParameters;
-      var (lowerBounds, upperBounds) = fitFunc.GetParameterBoundariesForPositivePeaks();
+
+      var (minimalXDistance, maximalXDistance, minimalXValue, maximalXValue) = GetMinimalAndMaximalProperties(xArray);
+      var (lowerBounds, upperBounds) = fitFunc.GetParameterBoundariesForPositivePeaks(
+       minimalPosition: minimalXValue - 32 * maximalXDistance,
+       maximalPosition: maximalXValue + 32 * maximalXDistance,
+       minimalFWHM: minimalXDistance / 2d,
+       maximalFWHM: maximalXDistance * 32d
+       );
 
       var list = new List<PeakFitting.PeakDescription>();
 

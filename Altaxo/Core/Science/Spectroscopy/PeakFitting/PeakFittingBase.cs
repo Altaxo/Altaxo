@@ -24,11 +24,8 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using Altaxo.Calc;
 using Altaxo.Calc.FitFunctions.Peaks;
 using Altaxo.Calc.FitFunctions.Probability;
-using Altaxo.Calc.Regression.Nonlinear;
 
 namespace Altaxo.Science.Spectroscopy.PeakFitting
 {
@@ -55,19 +52,48 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
     /// multiplied by the FullWidthHalfMaximum of the peak.
     /// </summary>
     public double FitWidthScalingFactor
-      {
+    {
       get
       {
         return _fitWidthScalingFactor;
       }
       init
       {
-        if(!(value > 0))
+        if (!(value > 0))
           throw new ArgumentOutOfRangeException("Factor has to be > 0", nameof(FitWidthScalingFactor));
 
         _fitWidthScalingFactor = value;
       }
     }
+
+    /// <summary>
+    /// Gets the minimal and maximal properties of an array of x-values.
+    /// </summary>
+    /// <param name="array">The array of x values.</param>
+    /// <returns>The (absolute value) of the minimal distance between two consecutive data points, the maximal distance, the minimal value and the maximal value of the array.</returns>
+    protected static (double minimalDistance, double maximalDistance, double minimalValue, double maximalValue) GetMinimalAndMaximalProperties(IEnumerable<double> array)
+    {
+      double min = double.PositiveInfinity;
+      double max = double.NegativeInfinity;
+      double minDist = double.PositiveInfinity;
+      double previousX = double.NaN;
+      foreach (var x in array)
+      {
+        var dist = Math.Abs(x - previousX);
+
+        if (dist > 0 && dist < minDist)
+        {
+          minDist = dist;
+        }
+
+        min = Math.Min(min, x);
+        max = Math.Max(max, x);
+        previousX = x;
+      }
+
+      return (minDist, max - min, min, max);
+    }
+
 
 
   }
