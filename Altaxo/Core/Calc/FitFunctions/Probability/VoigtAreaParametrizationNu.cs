@@ -35,7 +35,9 @@ namespace Altaxo.Calc.FitFunctions.Probability
 {
   /// <summary>
   /// Fit fuction with one or more Voigt shaped peaks, with a background polynomial of variable order.
-  /// Sigma and gamma of the usual Voigt function are calculated here as sigma=nu*w, gamma = (1-nu)*w, with nu in the range of [0,1].
+  /// One term of this function has the parameters area, position, w, and nu.
+  /// Sigma and gamma of the usual Voigt function are calculated here as sigma=w*Sqrt(nu/Log(4)), gamma = w*(1-nu), with nu in the range of [0,1].
+  /// The FWHM of the function is within 3% equal to 2*w, and the derivatives at nu=0 and nu=1 w.r.t parameter are independent of each other.
   /// </summary>
   [FitFunctionClass]
   public class VoigtAreaParametrizationNu : IFitFunctionWithDerivative, IFitFunctionPeak, IImmutable
@@ -46,6 +48,11 @@ namespace Altaxo.Calc.FitFunctions.Probability
     private const string ParameterBaseName3 = "nu";
     private const int NumberOfParametersPerPeak = 4;
 
+    private const double SqrtLog4 = 1.1774100225154746910115693264597;
+    private const double OneBySqrtLog4 = 0.84932180028801904272150283410289;
+
+    public const double C2_FWHM = 0.21669; // Approximation constant for FWHM of Voigt
+    private static readonly double C1_FWHM = 1 - Math.Sqrt(C2_FWHM);
 
 
     /// <summary>The order of the background polynomial.</summary>
@@ -56,7 +63,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
     #region Serialization
 
     /// <summary>
-    /// 2021-06-12 Initial version
+    /// 2022-11-02 Initial version
     /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(VoigtAreaParametrizationNu), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
@@ -250,7 +257,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
       double sumTerms = 0, sumPolynomial = 0;
       for (int i = 0, j = 0; i < _numberOfTerms; ++i, j += NumberOfParametersPerPeak)
       {
-        sumTerms += P[j] * Altaxo.Calc.ComplexErrorFunctionRelated.Voigt(X[0] - P[j + 1], P[j + 2] * P[j + 3], P[j + 2] * (1 - P[j + 3]));
+        sumTerms += P[j] * Altaxo.Calc.ComplexErrorFunctionRelated.Voigt(X[0] - P[j + 1], P[j + 2] * Math.Sqrt(P[j + 3]) * OneBySqrtLog4, P[j + 2] * (1 - P[j + 3]));
       }
 
       if (_orderOfBackgroundPolynomial >= 0)
@@ -277,7 +284,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
         double sumTerms = 0, sumPolynomial = 0;
         for (int i = 0, j = 0; i < _numberOfTerms; ++i, j += NumberOfParametersPerPeak)
         {
-          sumTerms += P[j] * Altaxo.Calc.ComplexErrorFunctionRelated.Voigt(x - P[j + 1], P[j + 2] * P[j + 3], P[j + 2] * (1 - P[j + 3]));
+          sumTerms += P[j] * Altaxo.Calc.ComplexErrorFunctionRelated.Voigt(x - P[j + 1], P[j + 2] * Math.Sqrt(P[j + 3]) * OneBySqrtLog4, P[j + 2] * (1 - P[j + 3]));
         }
 
         if (_orderOfBackgroundPolynomial >= 0)
@@ -294,193 +301,6 @@ namespace Altaxo.Calc.FitFunctions.Probability
         FV[r] = sumTerms + sumPolynomial;
       }
     }
-
-    /// <summary>
-    /// Not functional because instance is immutable.
-    /// </summary>
-    public event EventHandler? Changed { add { } remove { } }
-
-    #endregion IFitFunction Members
-
-
-
-    /// <inheritdoc/>
-    public double[] GetInitialParametersFromHeightPositionAndWidthAtRelativeHeight(double height, double position, double width, double relativeHeight)
-    {
-      if (!(relativeHeight > 0 && relativeHeight < 1))
-        throw new ArgumentException("RelativeHeight should be in the open interval (0,1)", nameof(relativeHeight));
-
-      var w = 0.5 * width / Math.Sqrt(-2 * Math.Log(relativeHeight));
-      var amp = height * w * Math.Sqrt(2 * Math.PI);
-
-      return new double[NumberOfParametersPerPeak] { amp, position, w, 0 };
-    }
-
-    /// <inheritdoc/>
-    IFitFunctionPeak IFitFunctionPeak.WithNumberOfTerms(int numberOfTerms)
-    {
-      return new VoigtAreaParametrizationNu(numberOfTerms, this.OrderOfBackgroundPolynomial);
-    }
-
-    /// <summary>
-    /// Gets the parameter boundaries in order to have positive peaks only.
-    /// </summary>
-    /// <returns></returns>
-    public (IReadOnlyList<double?>? LowerBounds, IReadOnlyList<double?>? upperBounds) GetParameterBoundariesForPositivePeaks(double? minimalPosition = null, double? maximalPosition = null, double? minimalFWHM = null, double? maximalFWHM = null)
-    {
-      var lowerBounds = new double?[NumberOfParameters];
-      var upperBounds = new double?[NumberOfParameters];
-
-      for (int i = 0, j = 0; i < NumberOfTerms; ++i, j += NumberOfParametersPerPeak)
-      {
-        lowerBounds[j] = 0; // minimal area is 0
-        lowerBounds[j + 2] = Math.Sqrt(double.Epsilon); // minimal Gaussian width is 0
-        lowerBounds[j + 3] = 0; // minimal nu
-        upperBounds[j + 3] = 1; // maximal nu
-      }
-
-      return (lowerBounds, null);
-    }
-
-    /// <inheritdoc/>
-    public string[] ParameterNamesForOnePeak => new string[] { ParameterBaseName0, ParameterBaseName1, ParameterBaseName2, ParameterBaseName3 };
-
-    /// <inheritdoc/>
-    public (double Position, double Area, double Height, double FWHM) GetPositionAreaHeightFWHMFromSinglePeakParameters(double[] parameters)
-    {
-      if (parameters is null || parameters.Length != NumberOfParametersPerPeak)
-        throw new ArgumentException(nameof(parameters));
-
-      var area = parameters[0];
-      var pos = parameters[1];
-      var sigma = parameters[2] * parameters[3];
-      var gamma = parameters[2] * (1 - parameters[3]);
-      var height = parameters[0] * Altaxo.Calc.ComplexErrorFunctionRelated.Voigt(0, sigma, gamma);
-      var fwhm = 2 * Altaxo.Calc.ComplexErrorFunctionRelated.VoigtHalfWidthHalfMaximum(sigma, gamma);
-
-      return (pos, area, height, fwhm);
-    }
-
-    private static double SafeSqrt(double x) => Math.Sqrt(Math.Max(0, x));
-
-    public (double Position, double PositionStdDev, double Area, double AreaStdDev, double Height, double HeightStdDev, double FWHM, double FWHMStdDev)
-      GetPositionAreaHeightFWHMFromSinglePeakParameters(double[] parameters, IROMatrix<double>? cv)
-    {
-      const double Sqrt2Pi = 2.5066282746310005024;
-      const double SqrtLog4 = 1.1774100225154746910;
-
-      if (parameters is null || parameters.Length != NumberOfParametersPerPeak)
-        throw new ArgumentException(nameof(parameters));
-
-
-      var area = parameters[0];
-      var pos = parameters[1];
-      var sigma = Math.Abs(parameters[2] * parameters[3]);
-      var gamma = Math.Abs(parameters[2] * (1 - parameters[3]));
-
-      var areaStdDev = cv is null ? 0 : Math.Sqrt(cv[0, 0]);
-      var posStdDev = cv is null ? 0 : Math.Sqrt(cv[1, 1]);
-
-      double height;
-      double fwhm;
-      double heightStdDev = 0;
-      double fwhmStdDev = 0;
-
-      double C2 = 0.86676; // Approximation constant for FWHM of Voigt
-      double C1 = 2 - Math.Sqrt(C2);
-
-      if (sigma == 0) // limiting case sigma -> 0
-      {
-        // we have a pure Lorenzian
-        height = area / (gamma * Math.PI);
-        fwhm = 2 * gamma;
-
-        if (cv is not null)
-        {
-          heightStdDev = Math.Sqrt(area * area * cv[3, 3] - area * gamma * (cv[0, 3] + cv[3, 0]) + gamma * gamma * cv[0, 0]) / (gamma * gamma * Math.PI);
-          fwhmStdDev = 2 * Math.Sqrt(cv[3, 3]);
-        }
-      }
-      else if (gamma == 0)
-      {
-        // we have a pure Gaussian
-        height = area / (Sqrt2Pi * sigma);
-        fwhm = 2 * sigma * SqrtLog4;
-
-        if (cv is not null)
-        {
-          heightStdDev = Math.Sqrt(
-                                      RMath.Pow2(area) * (2 * cv[3, 3] + cv[2, 2] * Math.PI + (cv[2, 3] + cv[3, 2]) * Sqrt2Pi) -
-                                      area * ((cv[0, 2] + cv[2, 0]) * Math.PI + (cv[0, 3] + cv[3, 0]) * Sqrt2Pi) * sigma +
-                                      cv[0, 0] * Math.PI * RMath.Pow2(sigma)
-                                    ) / (Math.Sqrt(2) * Math.PI * RMath.Pow2(sigma));
-
-          fwhmStdDev = Math.Sqrt(
-                                    RMath.Pow2(C1) * cv[3, 3] +
-                                    8 * Math.Log(2) * cv[2, 2] +
-                                    2 * C1 * SqrtLog4 * (cv[2, 3] + cv[3, 2])
-                                  );
-        }
-      }
-      else
-      {
-        // expErfcTerm is normally: Math.Exp(0.5 * RMath.Pow2(gamma / sigma)) * Erfc(gamma / (Math.Sqrt(2) * sigma))
-        // but for large gamma/sigma, we need a approximation, because the exp term becomes too large
-        double expErfcTerm;
-
-        // for gamma > 20*sigma we need an approximation of the expErfcTerm, since the expTerm will get too large and the Erfc term too small
-        // we use a series expansion
-
-        if (gamma >= 20 * sigma) // approximation by series expansion is needed
-        {
-          var x = sigma / gamma;
-          var xx = x * x;
-          expErfcTerm = Math.Sqrt(2 / Math.PI) * ((((((((2027025 * xx - 135135) * xx + 10395) * xx - 945) * xx + 105) * xx - 15) * xx + 3) * xx - 1) * xx + 1) * x;
-        }
-        else // normal case
-        {
-          var expTerm = Math.Exp(0.5 * RMath.Pow2(gamma / sigma));
-          var erfcTerm = Altaxo.Calc.ErrorFunction.Erfc(gamma / (Math.Sqrt(2) * sigma));
-          expErfcTerm = expTerm * erfcTerm;
-        }
-
-        height = area * expErfcTerm / (sigma * Sqrt2Pi);
-
-
-        double fwhmSqrtTerm = Math.Sqrt(C2 * gamma * gamma + 8 * sigma * sigma * Math.Log(2));
-        fwhm = C1 * gamma + fwhmSqrtTerm;
-
-
-        if (cv is not null)
-        {
-          var dHeightByDArea = expErfcTerm / (sigma * Sqrt2Pi);
-          var dHeightByDSigma = area * (2 * gamma * sigma - expErfcTerm * Sqrt2Pi * (RMath.Pow2(gamma) + RMath.Pow2(sigma))) / RMath.Pow2(Sqrt2Pi * sigma * sigma);
-          var dHeightByDGamma = area * (gamma * expErfcTerm / (Sqrt2Pi * RMath.Pow3(sigma)) - 1 / (Math.PI * RMath.Pow2(sigma)));
-
-          heightStdDev = Math.Sqrt(
-            cv[0, 0] * RMath.Pow2(dHeightByDArea) +
-            dHeightByDGamma * ((cv[0, 3] + cv[3, 0]) * dHeightByDArea +
-            cv[3, 3] * dHeightByDGamma) +
-            ((cv[0, 2] + cv[2, 0]) * dHeightByDArea +
-            (cv[2, 3] + cv[3, 2]) * dHeightByDGamma) * dHeightByDSigma +
-            cv[2, 2] * RMath.Pow2(dHeightByDSigma));
-
-
-          var dFwhmByDSigma = 8 * sigma * Math.Log(2) / fwhmSqrtTerm;
-          var dFwhmByDGamma = (2 - Math.Sqrt(C2)) + C2 * gamma / fwhmSqrtTerm;
-
-          fwhmStdDev = Math.Sqrt(
-                                cv[3, 3] * RMath.Pow2(dFwhmByDGamma) +
-                                dFwhmByDSigma * ((cv[2, 3] + cv[3, 2]) * dFwhmByDGamma +
-                                cv[2, 2] * dFwhmByDSigma));
-
-        }
-
-      }
-      return (pos, posStdDev, area, areaStdDev, height, heightStdDev, fwhm, fwhmStdDev);
-    }
-
-    private static double Pow2(double x) => x * x;
 
     public void EvaluateDerivative(IROMatrix<double> X, IReadOnlyList<double> parameters, IReadOnlyList<bool>? isParameterFixed, IMatrix<double> DF, IReadOnlyList<bool> dependentVariableChoice)
     {
@@ -503,7 +323,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
           var arg = x - parameters[j + 1];
           var w = parameters[j + 2];
           var nu = parameters[j + 3];
-          var sigma = w * nu;
+          var sigma = w * Math.Sqrt(nu) * OneBySqrtLog4;
           var gamma = w * (1 - nu);
 
           if (!(sigma >= 0 && gamma >= 0 && (sigma + gamma) > 0))
@@ -515,13 +335,14 @@ namespace Altaxo.Calc.FitFunctions.Probability
           }
           else if (nu < 1E-4) // approximately this is a Lorentzian
           {
-            arg /= gamma;
+            const double Log4 = 1.3862943611198906188344642429164;
+            arg /= w;
             var onePlusArg2 = 1 + arg * arg;
-            var body = 1 / (Math.PI * gamma * onePlusArg2);
+            var body = 1 / (Math.PI * w * onePlusArg2);
             DF[r, j + 0] = body;
-            DF[r, j + 1] = area * body * 2 * arg / (gamma * onePlusArg2);
+            DF[r, j + 1] = area * body * 2 * arg / (w * onePlusArg2);
             DF[r, j + 2] = -area * body * (1 - arg * arg) / (w * onePlusArg2);
-            DF[r, j + 3] = area * body * (1 - arg * arg) / ((1 - nu) * onePlusArg2);
+            DF[r, j + 3] = area * body * (arg * arg * (3 - arg * arg * Log4) + Log4 - 1) / (onePlusArg2 * onePlusArg2 * Log4);
           }
           else // general case including nu==1 (which means gamma==0, i.e. pure Gaussian).
           {
@@ -534,9 +355,9 @@ namespace Altaxo.Calc.FitFunctions.Probability
 
             DF[r, j + 1] = -area * dbodydz.Real / (Sqrt2 * sigma); // Derivative w.r.t. position
 
-            DF[r, j + 2] = -area * (dbodydz * arg / (Sqrt2 * w * sigma) + body / w).Real; // Derivative w.r.t. w
+            DF[r, j + 2] = -area / w * (dbodydz * arg / (Sqrt2 * sigma) + body).Real; // Derivative w.r.t. w
 
-            DF[r, j + 3] = -area / nu * ((dbodydz * new Complex64(arg, w) / (Sqrt2 * sigma) + body)).Real; // Derivative w.r.t. nu
+            DF[r, j + 3] = -area / (2 * nu) * ((dbodydz * new Complex64(arg, w * (1 + nu)) / (Sqrt2 * sigma) + body)).Real; // Derivative w.r.t. nu
           }
         }
 
@@ -551,6 +372,196 @@ namespace Altaxo.Calc.FitFunctions.Probability
         }
       }
     }
+
+
+    /// <summary>
+    /// Not functional because instance is immutable.
+    /// </summary>
+    public event EventHandler? Changed { add { } remove { } }
+
+    #endregion IFitFunction Members
+
+    /// <inheritdoc/>
+    public double[] GetInitialParametersFromHeightPositionAndWidthAtRelativeHeight(double height, double position, double fullWidth, double relativeHeight)
+    {
+      bool useLorenzLimit = false;
+
+      if (!(relativeHeight > 0 && relativeHeight < 1))
+        throw new ArgumentException("RelativeHeight should be in the open interval (0,1)", nameof(relativeHeight));
+
+      if (useLorenzLimit)
+      {
+        // we calculate at the Lorentz limit (nu==0)
+        var w = 0.5 * fullWidth * Math.Sqrt(relativeHeight / (1 - relativeHeight));
+        var area = height * w * Math.PI;
+        return new double[NumberOfParametersPerPeak] { area, position, w, 0 };
+      }
+      else // use Gaussian limit
+      {
+        const double SqrtLog2 = 0.832554611157697756353165; // Math.Sqrt(Math.Log(2))
+        const double Sqrt2PiByLog4 = 2.12893403886245235863054; // Math.Sqrt(2*Math.Pi/Math.Log(4))
+
+        var w = 0.5 * fullWidth * SqrtLog2 / Math.Sqrt(-Math.Log(relativeHeight));
+        var area = height * w * Sqrt2PiByLog4;
+        return new double[] { area, position, w, 1 };
+      }
+    }
+
+    /// <inheritdoc/>
+    IFitFunctionPeak IFitFunctionPeak.WithNumberOfTerms(int numberOfTerms)
+    {
+      return new VoigtAreaParametrizationNu(numberOfTerms, this.OrderOfBackgroundPolynomial);
+    }
+
+    /// <summary>
+    /// Gets the parameter boundaries in order to have positive peaks only.
+    /// </summary>
+    /// <returns></returns>
+    public (IReadOnlyList<double?>? LowerBounds, IReadOnlyList<double?>? upperBounds) GetParameterBoundariesForPositivePeaks(double? minimalPosition = null, double? maximalPosition = null, double? minimalFWHM = null, double? maximalFWHM = null)
+    {
+      var lowerBounds = new double?[NumberOfParameters];
+      var upperBounds = new double?[NumberOfParameters];
+
+      for (int i = 0, j = 0; i < NumberOfTerms; ++i, j += NumberOfParametersPerPeak)
+      {
+        lowerBounds[j + 0] = 0; // minimal area is 0
+
+        lowerBounds[j + 1] = minimalPosition;
+        upperBounds[j + 1] = maximalPosition;
+
+        lowerBounds[j + 2] = minimalFWHM.HasValue ? minimalFWHM / 2 : Math.Sqrt(Math.Sqrt(double.Epsilon)); // minimal Gaussian width is 0
+        upperBounds[j + 2] = maximalFWHM.HasValue ? maximalFWHM / 2 : null;
+
+        lowerBounds[j + 3] = 0; // minimal nu
+        upperBounds[j + 3] = 1; // maximal nu
+      }
+
+      return (lowerBounds, upperBounds);
+    }
+
+    /// <inheritdoc/>
+    public string[] ParameterNamesForOnePeak => new string[] { ParameterBaseName0, ParameterBaseName1, ParameterBaseName2, ParameterBaseName3 };
+
+    /// <inheritdoc/>
+    public (double Position, double Area, double Height, double FWHM) GetPositionAreaHeightFWHMFromSinglePeakParameters(double[] parameters)
+    {
+      if (parameters is null || parameters.Length != NumberOfParametersPerPeak)
+        throw new ArgumentException(nameof(parameters));
+
+      var (pos, _, area, _, height, _, fwhm, _) = GetPositionAreaHeightFWHMFromSinglePeakParameters(parameters, null);
+      return (pos, area, height, fwhm);
+    }
+
+    public (double Position, double PositionStdDev, double Area, double AreaStdDev, double Height, double HeightStdDev, double FWHM, double FWHMStdDev)
+      GetPositionAreaHeightFWHMFromSinglePeakParameters(double[] parameters, IROMatrix<double>? cv)
+    {
+      const double Sqrt2Pi = 2.5066282746310005024;
+      const double SqrtLog4 = 1.1774100225154746910;
+
+      if (parameters is null || parameters.Length != NumberOfParametersPerPeak)
+        throw new ArgumentException(nameof(parameters));
+
+
+      var area = parameters[0];
+      var pos = parameters[1];
+      var w = parameters[2];
+      var nu = parameters[3];
+      var sigma = w * Math.Sqrt(nu) * OneBySqrtLog4;
+      var gamma = w * (1 - nu);
+
+      var areaStdDev = cv is null ? 0 : SafeSqrt(cv[0, 0]);
+      var posStdDev = cv is null ? 0 : SafeSqrt(cv[1, 1]);
+
+      double height;
+      double fwhm;
+      double heightStdDev = 0;
+      double fwhmStdDev = 0;
+
+
+      // expErfcTerm is normally: Math.Exp(0.5 * RMath.Pow2(gamma / sigma)) * Erfc(gamma / (Math.Sqrt(2) * sigma))
+      // but for large gamma/sigma, we need a approximation, because the exp term becomes too large
+      double expErfcTermBySqrtNu;
+
+      // for gamma > 20*sigma we need an approximation of the expErfcTerm, since the expTerm will get too large and the Erfc term too small
+      // we use a series expansion
+
+      if (nu < (1 / 20d)) // approximation by series expansion is needed in the Lorentz limit
+      {
+        expErfcTermBySqrtNu = ((((((4.21492418972454262863068) * nu + 0.781454843465470036843478) * nu + 0.269020594012510850443784) * nu + 0.188831848731661377618477) * nu) + 0.677660751603104996618259);
+      }
+      else // normal case
+      {
+        var expTerm = Math.Exp(0.5 * RMath.Pow2(gamma / sigma));
+        var erfcTerm = Altaxo.Calc.ErrorFunction.Erfc(-gamma / (Math.Sqrt(2) * sigma));
+        expErfcTermBySqrtNu = expTerm * (2 - erfcTerm) / Math.Sqrt(nu);
+      }
+
+      var bodyheight = expErfcTermBySqrtNu / (w * OneBySqrtLog4 * Sqrt2Pi);
+      height = area * bodyheight;
+
+
+      double fwhmSqrtTerm = Math.Sqrt(C2_FWHM * gamma * gamma + 8 * sigma * sigma * Math.Log(2));
+      // fwhm = C1_FWHM * gamma + fwhmSqrtTerm; // this is the approximation formula
+      fwhm = 2 * Altaxo.Calc.ComplexErrorFunctionRelated.VoigtHalfWidthHalfMaximum(sigma, gamma); // we use the exact formula for fwhm
+
+
+      if (cv is not null)
+      {
+        const double SqrtPi = 1.77245385090551602729817; // Math.Sqrt(Math.PI)
+        const double Log2 = 0.693147180559945309417232; // Math.Log(2)
+        const double Log2P32 = 0.577082881386139784459964; // Math.Pow(Log2, 1.5)
+        const double SqrtPiLog2 = 1.47566462663560588938882; // Math.Sqrt(Math.PI*Math.Log(2))
+
+        var dHeightByDArea = bodyheight;
+        var dHeightByDW = -bodyheight * area / w;
+        double dHeightByDNu;
+
+        if (nu < (1 / 20d))
+        {
+          // Series expansion for Lorentzian limit
+          dHeightByDNu = ((((((88758.4100339208444038841 * nu - 7108.49617246574864439307) * nu + 641.286392761620402559762) * nu - 66.1018151520036002556775) * nu + 7.91931382144031445585169) * nu - 1.10119171735779477287440) * nu + 0.252727974753276908699454) * nu + 0.0886978390521480859157182;
+        }
+        else
+        {
+          // General case
+          dHeightByDNu = ((1 + nu) * Log2 -
+                                (expErfcTermBySqrtNu) *
+                                ((1 - nu * nu) * SqrtPi * Log2P32 + 0.5 * nu * SqrtPiLog2)
+                             ) /
+                             (nu * nu * Math.PI);
+        }
+
+        dHeightByDNu *= (area / w);
+
+        heightStdDev = SafeSqrt(
+          cv[0, 0] * RMath.Pow2(dHeightByDArea) +
+          cv[2, 2] * RMath.Pow2(dHeightByDW) +
+          cv[3, 3] * RMath.Pow2(dHeightByDNu) +
+          dHeightByDNu * (cv[0, 3] + cv[3, 0]) * dHeightByDArea +
+          dHeightByDW * (cv[0, 2] + cv[2, 0]) * dHeightByDArea +
+          dHeightByDNu * (cv[2, 3] + cv[3, 2]) * dHeightByDW
+          );
+
+
+        var dFwhmByDW = 2 * (1 + Math.Sqrt(C2_FWHM) * (-1 + nu) - nu + Math.Sqrt(C2_FWHM * Pow2(1 - nu) + nu));
+
+        var dFwhmByDNu = 2 * w * (-1 + Math.Sqrt(C2_FWHM) + (1 + 2 * C2_FWHM * (-1 + nu)) / (2 * Math.Sqrt(C2_FWHM * Pow2(1 - nu) + nu)));
+
+        fwhmStdDev = SafeSqrt(
+                              cv[3, 3] * RMath.Pow2(dFwhmByDNu) +
+                              dFwhmByDW * ((cv[2, 3] + cv[3, 2]) * dFwhmByDNu +
+                              cv[2, 2] * dFwhmByDW));
+
+      }
+
+
+      return (pos, posStdDev, area, areaStdDev, height, heightStdDev, fwhm, fwhmStdDev);
+    }
+
+    private static double Pow2(double x) => x * x;
+
+    private static double SafeSqrt(double x) => Math.Sqrt(Math.Max(0, x));
+
   }
 }
 

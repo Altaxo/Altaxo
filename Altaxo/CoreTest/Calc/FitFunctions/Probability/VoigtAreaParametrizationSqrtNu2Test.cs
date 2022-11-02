@@ -50,7 +50,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
       double[] X = new double[1];
       double[] Y = new double[1];
 
-      var func = new VoigtAreaParametrizationSqrtNu2();
+      var func = new VoigtAreaParametrizationNu();
 
       for (int i = 0; i < pars.Length; i++)
       {
@@ -90,7 +90,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
       double[] X = new double[1];
       double[] Y = new double[1];
 
-      var func = new VoigtAreaParametrizationSqrtNu2();
+      var func = new VoigtAreaParametrizationNu();
 
       for (int i = 0; i < pars.Length; i++)
       {
@@ -129,7 +129,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
       double[] X = new double[1];
       double[] Y = new double[1];
 
-      var func = new VoigtAreaParametrizationSqrtNu2();
+      var func = new VoigtAreaParametrizationNu();
 
       for (int i = 0; i < pars.Length; i++)
       {
@@ -168,7 +168,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
       double[] X = new double[1];
       double[] Y = new double[1];
 
-      var func = new VoigtAreaParametrizationSqrtNu2();
+      var func = new VoigtAreaParametrizationNu();
 
       for (int i = 0; i < pars.Length; i++)
       {
@@ -207,7 +207,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
       double[] X = new double[1];
       double[] Y = new double[1];
 
-      var func = new VoigtAreaParametrizationSqrtNu2();
+      var func = new VoigtAreaParametrizationNu();
 
       for (int i = 0; i < pars.Length; i++)
       {
@@ -230,7 +230,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
     [Fact]
     public void TestDerivatives()
     {
-      var v = new VoigtAreaParametrizationSqrtNu2();
+      var v = new VoigtAreaParametrizationNu();
 
       // General case
       double area = 17;
