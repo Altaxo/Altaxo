@@ -408,7 +408,7 @@ namespace Altaxo.Science.Spectroscopy.Raman
 
       var siliconWL_Uncalibrated = 1 / (1 / assumedLaserWavelength - 1E-7 * siliconCalibration.SiliconPeakPosition);
 
-      // transform no Nist wavelength
+      // transform to Nist wavelength
       var siliconWL_Nist = siliconWL_Uncalibrated + splineFunction(siliconWL_Uncalibrated);
 
       var laserWL_Calibrated = 1 / (1 / siliconWL_Nist + 1E-7 * _siliconCalibrationOptions.GetOfficialShiftValue_Silicon_invcm());
