@@ -27,7 +27,6 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using Altaxo.Serialization;
 
 namespace Altaxo.Graph.Gdi.Plot.Styles
 {
@@ -37,7 +36,6 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
   using Altaxo.Drawing;
   using Altaxo.Main;
   using Drawing.ColorManagement;
-  using Geometry;
   using Graph.Plot.Data;
   using Graph.Plot.Groups;
   using Plot.Data;
@@ -188,6 +186,13 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
 
     /// <summary>Logical y shift between the location of the real data point and the point where the item is finally drawn.</summary>
     private double _cachedLogicalShiftY;
+
+    /// <summary>If this function is set, the color of the line is determined by calling this function on the index into the data.
+    /// Since color can not vary on one line segment, the color of the index at the beginning of the line determines the entire line segment color.
+    /// </summary>
+    [field: NonSerialized]
+    protected Func<int, Color>? _cachedColorForIndexFunction;
+
 
     #region Serialization
 
@@ -861,10 +866,12 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
     public void Paint(Graphics g, IPlotArea layer, Processed2DPlotData pdata, Processed2DPlotData? prevItemData, Processed2DPlotData? nextItemData)
     {
       if (_connectionStyle is LineConnectionStyles.NoConnection)
-        return;
+      {
+        return; // No line is shown
+      }
 
       if (!(pdata.RangeList is { } rangeList) || !(pdata.PlotPointsInAbsoluteLayerCoordinates is { } plotPositions))
-        return;
+        return; // wrong data
 
       if (_independentOnShiftingGroupStyles)
       {
@@ -877,7 +884,9 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
 
       if (plotPositions is null)
-        return;
+      {
+        return; // no plot positions could be calculated
+      }
 
 
       Func<int, double>? symbolGapFunction = null;
@@ -906,13 +915,38 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         // as one range, i.e. continuously
         // for this, we create the totalRange, which contains all ranges
         var totalRange = new PlotRangeCompound(rangeList);
-        _connectionStyle.PaintOneRange(g, plotPositions, totalRange, layer, linePenGdi, symbolGapFunction, _skipFrequency, _connectCircular, this);
+
+        if (_cachedColorForIndexFunction is { } colorFunction)
+        {
+          var customColor = colorFunction(totalRange.OriginalFirstPoint);
+          var customPen = _linePen.WithColor(NamedColor.FromArgb(customColor.A, customColor.R, customColor.G, customColor.B));
+          using (var customPenGdi = PenCacheGdi.Instance.BorrowPen(customPen))
+          {
+            _connectionStyle.PaintOneRange(g, plotPositions, totalRange, layer, customPenGdi, symbolGapFunction, _skipFrequency, _connectCircular, this);
+          }
+        }
+        else // no color provider, so use constant color
+        {
+          _connectionStyle.PaintOneRange(g, plotPositions, totalRange, layer, linePenGdi, symbolGapFunction, _skipFrequency, _connectCircular, this);
+        }
       }
       else // we not ignore missing points, so plot all ranges separately
       {
         for (int i = 0; i < rangeList.Count; i++)
         {
-          _connectionStyle.PaintOneRange(g, plotPositions, rangeList[i], layer, linePenGdi, symbolGapFunction, _skipFrequency, _connectCircular, this);
+          if (_cachedColorForIndexFunction is { } colorFunction) // is there a separate color for each line segment?
+          {
+            var customColor = colorFunction(rangeList[i].OriginalFirstPoint);
+            var customPen = _linePen.WithColor(NamedColor.FromArgb(customColor.A, customColor.R, customColor.G, customColor.B));
+            using (var customPenGdi = PenCacheGdi.Instance.BorrowPen(customPen))
+            {
+              _connectionStyle.PaintOneRange(g, plotPositions, rangeList[i], layer, customPenGdi, symbolGapFunction, _skipFrequency, _connectCircular, this);
+            }
+          }
+          else // no color provider, so use the constant color
+          {
+            _connectionStyle.PaintOneRange(g, plotPositions, rangeList[i], layer, linePenGdi, symbolGapFunction, _skipFrequency, _connectCircular, this);
+          }
         }
       }
     }
@@ -1030,8 +1064,14 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       }
 
       if (IsColorReceiver)
+      {
         ColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (NamedColor c)
         { Color = c; });
+        // but if there is a color evaluation function, then use that function with higher priority
+        if (!VariableColorGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (Func<int, Color> evalFunc)
+        { _cachedColorForIndexFunction = evalFunc; }))
+          _cachedColorForIndexFunction = null;
+      }
 
       if (!_independentDashStyle)
         DashPatternGroupStyle.ApplyStyle(externalGroups, localGroups, delegate (IDashPattern c)
