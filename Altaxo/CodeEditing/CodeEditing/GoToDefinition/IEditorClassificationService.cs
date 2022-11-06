@@ -3,15 +3,13 @@
 // Originated from: Roslyn, EditorFeatures, Core/Implementation/Classification/IEditorClassificationService.cs
 
 #if !NoGotoDefinition
-extern alias MCW;
 using System;
 
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using MCW::Microsoft.CodeAnalysis;
-using MCW::Microsoft.CodeAnalysis.Classification;
-using MCW::Microsoft.CodeAnalysis.Host;
+using Microsoft.CodeAnalysis.Classification;
+using Microsoft.CodeAnalysis.Host;
 using Microsoft.CodeAnalysis.Text;
 
 namespace Microsoft.CodeAnalysis.Editor

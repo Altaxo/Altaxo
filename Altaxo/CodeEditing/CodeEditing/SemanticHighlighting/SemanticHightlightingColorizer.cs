@@ -4,16 +4,11 @@
 
 #if !NoSemanticHighlighting
 
-extern alias MCW;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Altaxo.Gui.CodeEditing.SemanticHighlighting;
 using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.AvalonEdit.Rendering;
-using MCW::Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis;
 
 namespace Altaxo.CodeEditing.SemanticHighlighting
 {

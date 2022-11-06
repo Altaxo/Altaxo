@@ -1,7 +1,6 @@
 ﻿
 
 #if !NoRenaming
-extern alias MCW;
 using System;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;

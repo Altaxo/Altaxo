@@ -31,6 +31,7 @@ using System.Threading.Tasks;
 //using MCW::Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
+using System.Collections.Concurrent;
 
 #if !NoDiagnostics
 using Microsoft.CodeAnalysis.Diagnostics;
@@ -120,6 +121,11 @@ namespace Altaxo.CodeEditing
       WorkingDirectory = workingDirectory;
       StaticReferences = staticReferences.ToImmutableArray();
       PreprocessorSymbols = DefaultPreprocessorSymbols;
+
+      // next two lines are neccessary to have diagnostics in the solution
+      var solution = CurrentSolution.AddAnalyzerReferences(roslynHost.GetSolutionAnalyzerReferences());
+      SetCurrentSolution(solution);
+
       ProjectId = CreateInitialProject();
     }
 
@@ -252,7 +258,7 @@ namespace Altaxo.CodeEditing
       }
 
       // enable diagnostics now, if not already enabled
-      DiagnosticProvider.Enable(this, DiagnosticProvider.Options.Semantic);
+      DiagnosticProvider.Enable(this, DiagnosticProvider.Options.Semantic | DiagnosticProvider.Options.Syntax);
     }
 
 

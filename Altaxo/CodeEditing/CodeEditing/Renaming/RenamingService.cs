@@ -1,6 +1,5 @@
 ﻿
 #if !NoRenaming
-extern alias MCW;
 using System;
 using System.Linq;
 using System.Threading;
@@ -28,7 +27,12 @@ namespace Altaxo.CodeEditing.Renaming
       {
         var newSymbolName = dialog.SymbolName;
 
-        var renameLocations = await Renamer.FindRenameLocationsAsync(document.Project.Solution, new Microsoft.CodeAnalysis.FindSymbols.SymbolAndProjectId(symbol, document.Project.Id), null, CancellationToken.None).ConfigureAwait(true); // we need Gui context afterwards
+        var renameLocations = await Renamer.FindRenameLocationsAsync(
+          document.Project.Solution,
+          symbol,
+          default,
+          CancellationToken.None)
+          .ConfigureAwait(true); // we need Gui context afterwards
         var textChanges = renameLocations.Locations.Select(loc => new TextChange(loc.Location.SourceSpan, newSymbolName));
         sourceText.ApplyTextChangesToAvalonEdit(textChanges);
 

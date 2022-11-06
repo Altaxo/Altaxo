@@ -22,18 +22,15 @@
 
 #endregion Copyright
 
-//extern alias MCW;
 using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using ICSharpCode.AvalonEdit.Folding;
 using ICSharpCode.AvalonEdit.Indentation;
-//using MCW::Microsoft.CodeAnalysis;
-//using MCW::Microsoft.CodeAnalysis.Formatting;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Text;
 using Microsoft.CodeAnalysis.Formatting;
+using Microsoft.CodeAnalysis.Text;
 
 #if !NoBraceMatching
 using Altaxo.CodeEditing.BraceMatching;
@@ -60,7 +57,9 @@ using Altaxo.CodeEditing.LiveDocumentFormatting;
 #endif
 
 #if !NoQuickInfo
-using Altaxo.CodeEditing.QuickInfo;
+using System.Collections.Immutable;
+using Microsoft.CodeAnalysis.Editor;
+using System.Linq;
 #endif
 
 #if !NoReferenceHighlighting

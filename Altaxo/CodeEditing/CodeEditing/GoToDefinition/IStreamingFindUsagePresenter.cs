@@ -2,11 +2,9 @@
 // Originated from: Roslyn, EditorFeatures, Core/Host/IStreamingFindReferencesPresenter.cs
 
 #if !NoGotoDefinition
-extern alias MCW;
 using System.Collections.Immutable;
 using System.Threading;
 using System.Threading.Tasks;
-using MCW::Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.FindUsages;
 
 namespace Microsoft.CodeAnalysis.Editor.Host
@@ -50,14 +48,14 @@ namespace Microsoft.CodeAnalysis.Editor.Host
         Workspace workspace, string title, ImmutableArray<DefinitionItem> items)
     {
       // Ignore any definitions that we can't navigate to.
-      var definitions = items.WhereAsArray(d => d.CanNavigateTo(workspace));
+      var definitions = items.WhereAsArray(d => d.CanNavigateTo(workspace, CancellationToken.None));
 
       // See if there's a third party external item we can navigate to.  If so, defer 
       // to that item and finish.
       var externalItems = definitions.WhereAsArray(d => d.IsExternal);
       foreach (var item in externalItems)
       {
-        if (item.TryNavigateTo(workspace, isPreview: true))
+        if (item.TryNavigateTo(workspace, showInPreviewTab: true, true, CancellationToken.None))
         {
           return true;
         }
@@ -73,7 +71,7 @@ namespace Microsoft.CodeAnalysis.Editor.Host
           nonExternalItems[0].SourceSpans.Length <= 1)
       {
         // There was only one location to navigate to.  Just directly go to that location.
-        return nonExternalItems[0].TryNavigateTo(workspace, isPreview: true);
+        return nonExternalItems[0].TryNavigateTo(workspace, showInPreviewTab: true, true, CancellationToken.None);
       }
 
       if (presenter != null)

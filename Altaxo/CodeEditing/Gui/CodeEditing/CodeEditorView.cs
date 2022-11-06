@@ -21,7 +21,6 @@
 // Modifications (C) Dr. D. Lellinger
 
 using System;
-using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -51,6 +50,7 @@ using Altaxo.CodeEditing.Completion;
 
 #if !NoDiagnostics
 using Microsoft.CodeAnalysis.Diagnostics;
+using System.Collections.Immutable;
 #endif
 
 #if !NoReferenceHighlighting
@@ -296,25 +296,36 @@ namespace Altaxo.Gui.CodeEditing
 
     private void ProcessDiagnostics(DiagnosticsUpdatedArgs args)
     {
-      _textMarkerService.RemoveAll(x => true);
+      // Note: I have never seen here args with Kind == DiagnosticsRemoved
+      _textMarkerService.RemoveAll(marker => Equals(args.Id, marker.Tag));
 
-      foreach (var diagnosticData in args.Diagnostics)
+      if (args.Kind == DiagnosticsUpdatedKind.DiagnosticsCreated)
       {
-        if (diagnosticData.Severity == DiagnosticSeverity.Hidden || diagnosticData.IsSuppressed)
+        foreach (var diagnosticData in args.GetAllDiagnosticsRegardlessOfPushPullSetting())
         {
-          continue;
-        }
+          if (diagnosticData.Severity == DiagnosticSeverity.Hidden || diagnosticData.IsSuppressed)
+          {
+            continue;
+          }
 
-        var marker = _textMarkerService.TryCreate(diagnosticData.DataLocation.SourceSpan.Value.Start, diagnosticData.DataLocation.SourceSpan.Value.Length);
-        if (marker != null)
-        {
-          marker.MarkerColor = GetDiagnosticsColor(diagnosticData);
-          marker.ToolTip = diagnosticData.Message;
+          var textSpan = diagnosticData.DataLocation.SourceSpan;
+          if (!textSpan.HasValue)
+          {
+            continue;
+          }
+
+          var marker = _textMarkerService.TryCreate(textSpan.Value.Start, textSpan.Value.Length);
+          if (marker is not null)
+          {
+            marker.Tag = args.Id;
+            marker.MarkerColor = GetDiagnosticsColor(diagnosticData);
+            marker.ToolTip = diagnosticData.Message;
+          }
         }
       }
     }
 
-    private static Color GetDiagnosticsColor(MCW::Microsoft.CodeAnalysis.Diagnostics.DiagnosticData diagnosticData)
+    private static Color GetDiagnosticsColor(Microsoft.CodeAnalysis.Diagnostics.DiagnosticData diagnosticData)
     {
       switch (diagnosticData.Severity)
       {

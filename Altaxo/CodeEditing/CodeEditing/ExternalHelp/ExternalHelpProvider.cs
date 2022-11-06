@@ -30,6 +30,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.ExternalAccess.Pythia.Api;
 using Microsoft.CodeAnalysis.LanguageServices;
 using Microsoft.CodeAnalysis.Shared.Extensions;
 using Microsoft.CodeAnalysis.Shared.Utilities;
@@ -128,7 +129,7 @@ namespace Altaxo.CodeEditing.ExternalHelp
       var semanticInfo = semanticModel.GetSemanticInfo(token, document.Project.Solution.Workspace, cancellationToken: cancellationToken);
       IEnumerable<ISymbol> symbols = semanticInfo.GetSymbols(includeType: true);
 
-      var bindableParent = document.GetLanguageService<ISyntaxFactsService>().GetBindableParent(token);
+      var bindableParent = document.GetLanguageService<ISyntaxFactsService>().TryGetBindableParent(token);
       var overloads = semanticModel.GetMemberGroup(bindableParent, cancellationToken);
 
       symbols = symbols.Where(IsOk)

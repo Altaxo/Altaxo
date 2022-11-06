@@ -1,9 +1,10 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
 
 // Originated from: Roslyn, EditorFeatures, CSharp/BraceMatching/CSharpDirectiveTriviaBraceMatcher.cs
 
 #if !NoBraceMatching
-using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
@@ -21,10 +22,10 @@ namespace Altaxo.CodeEditing.BraceMatching.CSharp
         ElseDirectiveTriviaSyntax, EndIfDirectiveTriviaSyntax,
         RegionDirectiveTriviaSyntax, EndRegionDirectiveTriviaSyntax>
   {
-        [ImportingConstructor]
-        public CSharpDirectiveTriviaBraceMatcher()
-        {
-        }
+    [ImportingConstructor]
+    public CSharpDirectiveTriviaBraceMatcher()
+    {
+    }
 
     internal override List<DirectiveTriviaSyntax> GetMatchingConditionalDirectives(DirectiveTriviaSyntax directive, CancellationToken cancellationToken)
             => directive.GetMatchingConditionalDirectives(cancellationToken)?.ToList();

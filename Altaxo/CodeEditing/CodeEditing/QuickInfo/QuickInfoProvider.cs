@@ -3,23 +3,17 @@
 // Originated from: RoslynPad, RoslynPad.Roslyn, QuickInfo/QuickInfoProvider.cs
 
 #if !NoQuickInfo
-extern alias MCW;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Composition;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using MCW::Microsoft.CodeAnalysis;
-using MCW::Microsoft.CodeAnalysis.FindSymbols;
-using MCW::Microsoft.CodeAnalysis.LanguageServices;
-using MCW::Microsoft.CodeAnalysis.Shared.Extensions;
-using MCW::Microsoft.CodeAnalysis.Shared.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.DocumentationComments;
+using Microsoft.CodeAnalysis.ExternalAccess.Pythia.Api;
 using Microsoft.CodeAnalysis.LanguageServices;
 using Microsoft.CodeAnalysis.Shared.Extensions;
 using Microsoft.CodeAnalysis.Shared.Utilities;
@@ -38,12 +32,17 @@ namespace Altaxo.CodeEditing.QuickInfo
       _contentProvider = contentProvider;
     }
 
-    public async Task<QuickInfoItem> GetItemAsync(
-        Document document,
-        int position,
-        CancellationToken cancellationToken)
+    public async Task<QuickInfoItem?> GetItemAsync(
+    Document document,
+    int position,
+    CancellationToken cancellationToken)
     {
       var tree = await document.GetSyntaxTreeAsync(cancellationToken).ConfigureAwait(false);
+      if (tree == null)
+      {
+        return null;
+      }
+
       var token = await tree.GetTouchingTokenAsync(position, cancellationToken, findInsideTrivia: true).ConfigureAwait(false);
 
       var state = await GetQuickInfoItemAsync(document, token, position, cancellationToken).ConfigureAwait(false);
@@ -70,14 +69,14 @@ namespace Altaxo.CodeEditing.QuickInfo
       return !token.Parent.IsKind(SyntaxKind.XmlCrefAttribute);
     }
 
-    private async Task<QuickInfoItem> GetQuickInfoItemAsync(
-        Document document,
-        SyntaxToken token,
-        int position,
-        CancellationToken cancellationToken)
+    private async Task<QuickInfoItem?> GetQuickInfoItemAsync(
+    Document document,
+    SyntaxToken token,
+    int position,
+    CancellationToken cancellationToken)
     {
-      if (token != default(SyntaxToken) &&
-          token.Span.IntersectsWith(position))
+      if (token != default &&
+    token.Span.IntersectsWith(position))
       {
         var deferredContent = await BuildContentAsync(document, token, cancellationToken).ConfigureAwait(false);
         if (deferredContent != null)
@@ -89,15 +88,15 @@ namespace Altaxo.CodeEditing.QuickInfo
       return null;
     }
 
-    private async Task<IDeferredQuickInfoContent> BuildContentAsync(
-        Document document,
-        SyntaxToken token,
-        CancellationToken cancellationToken)
+    private async Task<IDeferredQuickInfoContent?> BuildContentAsync(
+    Document document,
+    SyntaxToken token,
+    CancellationToken cancellationToken)
     {
       var linkedDocumentIds = document.GetLinkedDocumentIds();
 
       var modelAndSymbols = await BindTokenAsync(document, token, cancellationToken).ConfigureAwait(false);
-      if (modelAndSymbols.Item2.Length == 0 && !linkedDocumentIds.Any())
+      if ((modelAndSymbols.Item2 == null || modelAndSymbols.Item2.Count == 0) && !linkedDocumentIds.Any())
       {
         return null;
       }
@@ -107,7 +106,7 @@ namespace Altaxo.CodeEditing.QuickInfo
         return await CreateContentAsync(document.Project.Solution.Workspace,
             token,
             modelAndSymbols.Item1,
-            modelAndSymbols.Item2,
+                    modelAndSymbols.Item2!,
             supportedPlatforms: null,
             cancellationToken: cancellationToken).ConfigureAwait(false);
       }
@@ -125,28 +124,27 @@ namespace Altaxo.CodeEditing.QuickInfo
       var candidateProjects = new List<ProjectId> { document.Project.Id };
       var invalidProjects = new List<ProjectId>();
 
-      var candidateResults = new List<Tuple<DocumentId, SemanticModel, ImmutableArray<ISymbol>>>
-      {
-        Tuple.Create(document.Id, modelAndSymbols.Item1, modelAndSymbols.Item2)
-      };
+      var candidateResults = new List<Tuple<DocumentId, SemanticModel, IList<ISymbol>>>
+            {
+                Tuple.Create(document.Id, modelAndSymbols.Item1, modelAndSymbols.Item2!)
+            };
 
       foreach (var link in linkedDocumentIds)
       {
         var linkedDocument = document.Project.Solution.GetDocument(link);
-        var linkedToken = await FindTokenInLinkedDocument(token, document, linkedDocument, cancellationToken).ConfigureAwait(false);
+        var linkedToken = await FindTokenInLinkedDocument(token, linkedDocument!, cancellationToken).ConfigureAwait(false);
 
-        if (linkedToken != default(SyntaxToken))
+        if (linkedToken != default)
         {
           // Not in an inactive region, so this file is a candidate.
           candidateProjects.Add(link.ProjectId);
-          var linkedModelAndSymbols = await BindTokenAsync(linkedDocument, linkedToken, cancellationToken).ConfigureAwait(false);
+          var linkedModelAndSymbols = await BindTokenAsync(linkedDocument!, linkedToken, cancellationToken).ConfigureAwait(false);
           candidateResults.Add(Tuple.Create(link, linkedModelAndSymbols.Item1, linkedModelAndSymbols.Item2));
         }
       }
 
       // Take the first result with no errors.
-      var bestBinding = candidateResults.FirstOrDefault(
-          c => c.Item3.Length > 0 && !ErrorVisitor.ContainsError(c.Item3.FirstOrDefault()));
+      var bestBinding = candidateResults.FirstOrDefault(c => c.Item3.Count > 0 && !ErrorVisitor.ContainsError(c.Item3.First()));
 
       // Every file binds with errors. Take the first candidate, which is from the current file.
       if (bestBinding == null)
@@ -164,46 +162,35 @@ namespace Altaxo.CodeEditing.QuickInfo
       foreach (var candidate in candidateResults)
       {
         // Does the candidate have anything remotely equivalent?
-        if (!candidate.Item3.Intersect(bestBinding.Item3, LinkedFilesSymbolEquivalenceComparer.Instance).Any())
+        if (!candidate.Item3.Intersect(bestBinding.Item3, SymbolEqualityComparer.Default).Any())
         {
           invalidProjects.Add(candidate.Item1.ProjectId);
         }
       }
 
-      var supportedPlatforms = new SupportedPlatformData(invalidProjects, candidateProjects, document.Project.Solution.Workspace);
+      var supportedPlatforms = new SupportedPlatformData(document.Project.Solution, invalidProjects, candidateProjects);
       return await CreateContentAsync(document.Project.Solution.Workspace, token, bestBinding.Item2, bestBinding.Item3, supportedPlatforms, cancellationToken).ConfigureAwait(false);
     }
 
-    private async Task<SyntaxToken> FindTokenInLinkedDocument(SyntaxToken token, Document originalDocument, Document linkedDocument, CancellationToken cancellationToken)
+    private static async Task<SyntaxToken> FindTokenInLinkedDocument(SyntaxToken token, Document linkedDocument, CancellationToken cancellationToken)
     {
       if (!linkedDocument.SupportsSyntaxTree)
       {
-        return default(SyntaxToken);
+        return default;
       }
 
       var root = await linkedDocument.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
 
-      try
-      {
-        // Don't search trivia because we want to ignore inactive regions
-        var linkedToken = root.FindToken(token.SpanStart);
+      // Don't search trivia because we want to ignore inactive regions
+      var linkedToken = root!.FindToken(token.SpanStart);
 
-        // The new and old tokens should have the same span?
-        if (token.Span == linkedToken.Span)
-        {
-          return linkedToken;
-        }
-      }
-      catch (Exception)
+      // The new and old tokens should have the same span?
+      if (token.Span == linkedToken.Span)
       {
-        // We are seeing linked files with different spans cause FindToken to crash.
-        // Capturing more information for https://devdiv.visualstudio.com/DevDiv/_workitems?id=209299
-        var originalText = await originalDocument.GetTextAsync().ConfigureAwait(false);
-        var linkedText = await linkedDocument.GetTextAsync().ConfigureAwait(false);
-        //FatalError.Report(e);
+        return linkedToken;
       }
 
-      return default(SyntaxToken);
+      return default;
     }
 
     private async Task<IDeferredQuickInfoContent> CreateContentAsync(
@@ -211,12 +198,12 @@ namespace Altaxo.CodeEditing.QuickInfo
         SyntaxToken token,
         SemanticModel semanticModel,
         IEnumerable<ISymbol> symbols,
-        SupportedPlatformData supportedPlatforms,
+            SupportedPlatformData? supportedPlatforms,
         CancellationToken cancellationToken)
     {
-      var descriptionService = workspace.Services.GetLanguageServices(token.Language).GetService<ISymbolDisplayService>();
+      var descriptionService = workspace.Services.GetLanguageServices(token.Language).GetRequiredService<ISymbolDisplayService>();
 
-      var sections = await descriptionService.ToDescriptionGroupsAsync(workspace, semanticModel, token.SpanStart, Microsoft.CodeAnalysis.ImmutableArrayExtensions.AsImmutable(symbols), cancellationToken).ConfigureAwait(false);
+      var sections = await descriptionService.ToDescriptionGroupsAsync(workspace, semanticModel, token.SpanStart, symbols.AsImmutable(), cancellationToken).ConfigureAwait(false);
 
       var mainDescriptionBuilder = new List<TaggedText>();
       if (sections.ContainsKey(SymbolDescriptionGroups.MainDescription))
@@ -271,14 +258,14 @@ namespace Altaxo.CodeEditing.QuickInfo
         }
       }
 
-      var formatter = workspace.Services.GetLanguageServices(semanticModel.Language).GetService<IDocumentationCommentFormattingService>();
-      var syntaxFactsService = workspace.Services.GetLanguageServices(semanticModel.Language).GetService<ISyntaxFactsService>();
+      var formatter = workspace.Services.GetLanguageServices(semanticModel.Language).GetRequiredService<IDocumentationCommentFormattingService>();
+      var syntaxFactsService = workspace.Services.GetLanguageServices(semanticModel.Language).GetRequiredService<ISyntaxFactsService>();
       var documentationContent = GetDocumentationContent(symbols, sections, semanticModel, token, formatter, syntaxFactsService, cancellationToken);
       var showWarningGlyph = supportedPlatforms != null && supportedPlatforms.HasValidAndInvalidProjects();
       var showSymbolGlyph = true;
 
-      if (workspace.Services.GetLanguageServices(semanticModel.Language).GetService<ISyntaxFactsService>().IsAwaitKeyword(token) &&
-          (symbols.First() as INamedTypeSymbol)?.SpecialType == SpecialType.System_Void)
+      if (workspace.Services.GetLanguageServices(semanticModel.Language).GetRequiredService<ISyntaxFactsService>().IsAwaitKeyword(token) &&
+    (symbols.First() as INamedTypeSymbol)?.SpecialType == SpecialType.System_Void)
       {
         documentationContent = _contentProvider.CreateDocumentationCommentDeferredContent(null);
         showSymbolGlyph = false;
@@ -311,13 +298,14 @@ namespace Altaxo.CodeEditing.QuickInfo
         documentationBuilder.AddRange(sections[SymbolDescriptionGroups.Documentation]);
         return _contentProvider.CreateClassifiableDeferredContent(documentationBuilder);
       }
-      else if (symbols.Any())
+      if (symbols.Any())
       {
         var symbol = symbols.First().OriginalDefinition;
 
         // if generating quick info for an attribute, bind to the class instead of the constructor
-        if (syntaxFactsService.IsAttributeName(token.Parent) &&
-            symbol.ContainingType?.IsAttribute() == true)
+        if (token.Parent != null &&
+            syntaxFactsService.IsAttributeName(token.Parent) &&
+    symbol.ContainingType?.IsAttribute() == true)
         {
           symbol = symbol.ContainingType;
         }
@@ -333,50 +321,51 @@ namespace Altaxo.CodeEditing.QuickInfo
       return _contentProvider.CreateDocumentationCommentDeferredContent(null);
     }
 
-    private async Task<ValueTuple<SemanticModel, ImmutableArray<ISymbol>>> BindTokenAsync(
-         Document document,
-         SyntaxToken token,
-         CancellationToken cancellationToken)
+    private async Task<ValueTuple<SemanticModel, IList<ISymbol>>> BindTokenAsync(
+        Document document,
+        SyntaxToken token,
+        CancellationToken cancellationToken)
     {
       var semanticModel = await document.GetSemanticModelForNodeAsync(token.Parent, cancellationToken).ConfigureAwait(false);
       var enclosingType = semanticModel.GetEnclosingNamedType(token.SpanStart, cancellationToken);
 
-      var symbols = semanticModel.GetSemanticInfo(token, document.Project.Solution.Workspace, cancellationToken)
-                                 .GetSymbols(includeType: true);
+      var symbols = semanticModel.GetSemanticInfo(token, document.Project.Solution.Workspace, cancellationToken).GetSymbols(includeType: true);
 
-      var bindableParent = document.GetLanguageService<ISyntaxFactsService>().GetBindableParent(token);
-      var overloads = semanticModel.GetMemberGroup(bindableParent, cancellationToken);
-
-      symbols = symbols.Where(IsOk)
-                       .Where(s => IsAccessible(s, enclosingType))
-                       .Concat(overloads)
-                       .Distinct(SymbolEquivalenceComparer.Instance)
-                       .ToImmutableArray();
-
-      if (symbols.Any())
+      var bindableParent = document.GetLanguageService<ISyntaxFactsService>().TryGetBindableParent(token);
+      if (bindableParent != null)
       {
-        var typeParameter = symbols.First() as ITypeParameterSymbol;
-        return ValueTuple.Create(
-            semanticModel,
-            typeParameter != null && typeParameter.TypeParameterKind == TypeParameterKind.Cref
-                ? ImmutableArray<ISymbol>.Empty
-                : symbols);
-      }
+        var overloads = semanticModel.GetMemberGroup(bindableParent, cancellationToken);
 
-      // Couldn't bind the token to specific symbols.  If it's an operator, see if we can at
-      // least bind it to a type.
-      var syntaxFacts = document.Project.LanguageServices.GetService<ISyntaxFactsService>();
-      if (syntaxFacts.IsOperator(token))
-      {
-        var typeInfo = semanticModel.GetTypeInfo(token.Parent, cancellationToken);
-        if (IsOk(typeInfo.Type))
+        symbols = symbols.Where(IsOk)
+            .Where(s => IsAccessible(s, enclosingType!))
+            .Concat(overloads)
+            .Distinct(SymbolEqualityComparer.Default)
+            .ToImmutableArray();
+
+        if (symbols.Any())
         {
-          return ValueTuple.Create(semanticModel,
-              ImmutableArray.Create<ISymbol>(typeInfo.Type));
+          var typeParameter = symbols.First() as ITypeParameterSymbol;
+          return new ValueTuple<SemanticModel, IList<ISymbol>>(
+              semanticModel,
+              typeParameter != null && typeParameter.TypeParameterKind == TypeParameterKind.Cref
+                  ? SpecializedCollections.EmptyList<ISymbol>()
+                  : symbols.ToList());
+        }
+
+        // Couldn't bind the token to specific symbols.  If it's an operator, see if we can at
+        // least bind it to a type.
+        var syntaxFacts = document.Project.LanguageServices.GetRequiredService<ISyntaxFactsService>();
+        if (syntaxFacts.IsOperator(token) && token.Parent != null)
+        {
+          var typeInfo = semanticModel.GetTypeInfo(token.Parent, cancellationToken);
+          if (IsOk(typeInfo.Type!))
+          {
+            return new ValueTuple<SemanticModel, IList<ISymbol>>(semanticModel, new List<ISymbol>(1) { typeInfo.Type! });
+          }
         }
       }
 
-      return ValueTuple.Create(semanticModel, ImmutableArray<ISymbol>.Empty);
+      return ValueTuple.Create(semanticModel, SpecializedCollections.EmptyList<ISymbol>());
     }
 
     private static bool IsOk(ISymbol symbol)
@@ -391,7 +380,7 @@ namespace Altaxo.CodeEditing.QuickInfo
 
     private class ErrorVisitor : SymbolVisitor<bool>
     {
-      private static readonly ErrorVisitor _instance = new ErrorVisitor();
+      private static readonly ErrorVisitor _instance = new();
 
       public static bool ContainsError(ISymbol symbol)
       {
@@ -492,7 +481,7 @@ namespace Altaxo.CodeEditing.QuickInfo
         IList<TaggedText> usageText,
         IList<TaggedText> exceptionText);
 
-    IDeferredQuickInfoContent CreateDocumentationCommentDeferredContent(string documentationComment);
+    IDeferredQuickInfoContent CreateDocumentationCommentDeferredContent(string? documentationComment);
 
     IDeferredQuickInfoContent CreateClassifiableDeferredContent(IList<TaggedText> content);
   }

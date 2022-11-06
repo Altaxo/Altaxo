@@ -1,29 +1,29 @@
-﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
 
 // Originated from: Roslyn, EditorFeatures, Core/Extensibility/BraceMatching/AbstractDirectiveTriviaBraceMatcher.cs
 
 #if !NoBraceMatching
-extern alias MCW;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using MCW::Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
 
 namespace Altaxo.CodeEditing.BraceMatching
 {
   internal abstract class AbstractDirectiveTriviaBraceMatcher<TDirectiveTriviaSyntax,
-         TIfDirectiveTriviaSyntax, TElseIfDirectiveTriviaSyntax,
-         TElseDirectiveTriviaSyntax, TEndIfDirectiveTriviaSyntax,
-         TRegionDirectiveTriviaSyntax, TEndRegionDirectiveTriviaSyntax> : IBraceMatcher
-             where TDirectiveTriviaSyntax : SyntaxNode
-             where TIfDirectiveTriviaSyntax : TDirectiveTriviaSyntax
-             where TElseIfDirectiveTriviaSyntax : TDirectiveTriviaSyntax
-             where TElseDirectiveTriviaSyntax : TDirectiveTriviaSyntax
-             where TEndIfDirectiveTriviaSyntax : TDirectiveTriviaSyntax
-             where TRegionDirectiveTriviaSyntax : TDirectiveTriviaSyntax
-             where TEndRegionDirectiveTriviaSyntax : TDirectiveTriviaSyntax
+       TIfDirectiveTriviaSyntax, TElseIfDirectiveTriviaSyntax,
+       TElseDirectiveTriviaSyntax, TEndIfDirectiveTriviaSyntax,
+       TRegionDirectiveTriviaSyntax, TEndRegionDirectiveTriviaSyntax> : IBraceMatcher
+           where TDirectiveTriviaSyntax : SyntaxNode
+           where TIfDirectiveTriviaSyntax : TDirectiveTriviaSyntax
+           where TElseIfDirectiveTriviaSyntax : TDirectiveTriviaSyntax
+           where TElseDirectiveTriviaSyntax : TDirectiveTriviaSyntax
+           where TEndIfDirectiveTriviaSyntax : TDirectiveTriviaSyntax
+           where TRegionDirectiveTriviaSyntax : TDirectiveTriviaSyntax
+           where TEndRegionDirectiveTriviaSyntax : TDirectiveTriviaSyntax
   {
     internal abstract List<TDirectiveTriviaSyntax> GetMatchingConditionalDirectives(TDirectiveTriviaSyntax directive, CancellationToken cancellationToken);
     internal abstract TDirectiveTriviaSyntax GetMatchingDirective(TDirectiveTriviaSyntax directive, CancellationToken cancellationToken);
@@ -34,8 +34,7 @@ namespace Altaxo.CodeEditing.BraceMatching
       var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
       var token = root.FindToken(position, findInsideTrivia: true);
 
-      var directive = token.Parent as TDirectiveTriviaSyntax;
-      if (directive == null)
+      if (token.Parent is not TDirectiveTriviaSyntax directive)
       {
         return null;
       }
@@ -67,13 +66,12 @@ namespace Altaxo.CodeEditing.BraceMatching
           rightSpan: GetSpanForTagging(matchingDirective));
     }
 
-
-    private bool IsConditionalDirective(TDirectiveTriviaSyntax directive)
+    private static bool IsConditionalDirective(TDirectiveTriviaSyntax directive)
     {
-      return directive is TIfDirectiveTriviaSyntax ||
-             directive is TElseIfDirectiveTriviaSyntax ||
-             directive is TElseDirectiveTriviaSyntax ||
-             directive is TEndIfDirectiveTriviaSyntax;
+      return directive is TIfDirectiveTriviaSyntax or
+             TElseIfDirectiveTriviaSyntax or
+             TElseDirectiveTriviaSyntax or
+             TEndIfDirectiveTriviaSyntax;
     }
   }
 }

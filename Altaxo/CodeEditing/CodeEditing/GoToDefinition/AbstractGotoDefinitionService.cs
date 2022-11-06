@@ -3,18 +3,15 @@
 // Originated from: Roslyn, EditorFeatures, Core/GoToDefinition/AbstractGoToDefinitionService.cs
 
 #if !NoGotoDefinition
-extern alias MCW;
-using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using MCW::Microsoft.CodeAnalysis;
-using MCW::Microsoft.CodeAnalysis.LanguageServices;
-using MCW::Microsoft.CodeAnalysis.Shared.Extensions;
-using MCW::Roslyn.Utilities;
-using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.LanguageServices;
 using Microsoft.CodeAnalysis.Navigation;
+using Microsoft.CodeAnalysis.Shared.Extensions;
+using Roslyn.Utilities;
 
 namespace Microsoft.CodeAnalysis.Editor.GoToDefinition
 {
@@ -40,11 +37,11 @@ namespace Microsoft.CodeAnalysis.Editor.GoToDefinition
       // Try to compute source definitions from symbol.
       var items = symbol != null
           ? NavigableItemFactory.GetItemsFromPreferredSourceLocations(document.Project.Solution, symbol, displayTaggedParts: null, cancellationToken: cancellationToken)
-          : null;
+          : ImmutableArray<INavigableItem>.Empty;
 
       // realize the list here so that the consumer await'ing the result doesn't lazily cause
       // them to be created on an inappropriate thread.
-      return items?.ToList();
+      return items.ToList();
     }
 
     public bool TryGoToDefinition(Document document, int position, CancellationToken cancellationToken)
@@ -91,7 +88,7 @@ namespace Microsoft.CodeAnalysis.Editor.GoToDefinition
               ? symbolToNavigateTo
               : symbolToNavigateTo.ContainingType;
 
-                    if (Equals(containingTypeSymbol, candidateTypeSymbol))
+          if (Equals(containingTypeSymbol, candidateTypeSymbol))
           {
             // We are navigating from the same type, so don't allow third parties to perform the navigation.
             // This ensures that if we navigate to a class from within that class, we'll stay in the same file

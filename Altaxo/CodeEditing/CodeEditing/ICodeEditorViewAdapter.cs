@@ -28,6 +28,7 @@ using System.Threading.Tasks;
 using ICSharpCode.AvalonEdit.Folding;
 using ICSharpCode.AvalonEdit.Indentation;
 using Microsoft.CodeAnalysis;
+using System.Threading;
 
 #if !NoBraceMatching
 using Altaxo.CodeEditing.BraceMatching;
@@ -36,6 +37,7 @@ using Altaxo.CodeEditing.BraceMatching;
 
 #if !NoDiagnostics
 using Microsoft.CodeAnalysis.Diagnostics;
+using System.Collections.Immutable;
 #endif
 
 #if !NoReferenceHighlighting

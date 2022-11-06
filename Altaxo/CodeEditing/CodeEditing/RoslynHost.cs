@@ -5,11 +5,15 @@
 // Strongly revised for the Altaxo project, Copyright Dr. D. Lellinger, 2017
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Composition.Hosting;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.Host;
 using Microsoft.CodeAnalysis.Host.Mef;
 
 namespace Altaxo.CodeEditing
@@ -17,6 +21,21 @@ namespace Altaxo.CodeEditing
   public class RoslynHost
   {
     public static RoslynHost Instance { get; private set; }
+
+    internal static readonly ImmutableArray<Assembly> DefaultCompositionAssemblies =
+            ImmutableArray.Create(
+                // Microsoft.CodeAnalysis.Workspaces
+                typeof(WorkspacesResources).Assembly,
+                // Microsoft.CodeAnalysis.CSharp.Workspaces
+                typeof(CSharpWorkspaceResources).Assembly,
+                // Microsoft.CodeAnalysis.Features
+                typeof(FeaturesResources).Assembly,
+                // Microsoft.CodeAnalysis.CSharp.Features
+                typeof(CSharpFeaturesResources).Assembly,
+                // RoslynPad.Roslyn
+                typeof(RoslynHost).Assembly);
+
+
 
 #if !NoDocumentation
     /// <summary>
@@ -32,8 +51,7 @@ namespace Altaxo.CodeEditing
     private readonly CompositionHost _compositionContext;
 
 #if !NoDiagnostics
-    private
-      Microsoft.CodeAnalysis.Diagnostics.IDiagnosticService _diagnosticsService;
+    private Microsoft.CodeAnalysis.Diagnostics.IDiagnosticService _diagnosticsService;
 #endif
 
     public MefHostServices MefHost { get; }
@@ -52,17 +70,11 @@ namespace Altaxo.CodeEditing
     /// </param>
     public RoslynHost(IEnumerable<Assembly> additionalAssembliesToIncludeInComposition = null)
     {
-      var assemblies = new[]
-      {
-                Assembly.Load("Microsoft.CodeAnalysis"),
-                Assembly.Load("Microsoft.CodeAnalysis.CSharp"),
-                Assembly.Load("Microsoft.CodeAnalysis.Features"),
-                Assembly.Load("Microsoft.CodeAnalysis.CSharp.Features"),
-                typeof(RoslynHost).Assembly,
-      };
+      var assemblies = GetDefaultCompositionAssemblies();
+
       if (additionalAssembliesToIncludeInComposition != null)
       {
-        assemblies = assemblies.Concat(additionalAssembliesToIncludeInComposition).ToArray();
+        assemblies = assemblies.Concat(additionalAssembliesToIncludeInComposition);
       }
 
       // the following code is usefull if the composition fails
@@ -77,10 +89,9 @@ namespace Altaxo.CodeEditing
       }
       */
 
-      var partTypes = MefHostServices.DefaultAssemblies.Concat(assemblies)
-              .Distinct()
-              .SelectMany(x => x.GetTypes())
-              .ToArray();
+      var partTypes = assemblies
+                .SelectMany(x => x.DefinedTypes)
+                .Select(x => x.AsType());
 
       _compositionContext = new ContainerConfiguration()
           .WithParts(partTypes)
@@ -95,6 +106,7 @@ namespace Altaxo.CodeEditing
 #if !NoDiagnostics
 
       _diagnosticsService = GetService<Microsoft.CodeAnalysis.Diagnostics.IDiagnosticService>(); // instantiate diagnostics service to get it working
+      // Note that diagnosticsService must be enabled for the workspace by using DiagnosticProvider.Enable(..)
 
       _diagnosticsService.DiagnosticsUpdated += (s, e) =>
       {
@@ -102,6 +114,18 @@ namespace Altaxo.CodeEditing
       };
 #endif
     }
+
+    public virtual IEnumerable<AnalyzerReference> GetSolutionAnalyzerReferences()
+    {
+      var loader = GetService<IAnalyzerAssemblyLoader>();
+      yield return new AnalyzerFileReference(typeof(Compilation).Assembly.Location, loader);
+      yield return new AnalyzerFileReference(typeof(CSharpResources).Assembly.Location, loader);
+      yield return new AnalyzerFileReference(typeof(FeaturesResources).Assembly.Location, loader);
+      yield return new AnalyzerFileReference(typeof(CSharpFeaturesResources).Assembly.Location, loader);
+    }
+
+    protected virtual IEnumerable<Assembly> GetDefaultCompositionAssemblies() =>
+            DefaultCompositionAssemblies;
 
     private static string GetReferenceAssembliesPath()
     {

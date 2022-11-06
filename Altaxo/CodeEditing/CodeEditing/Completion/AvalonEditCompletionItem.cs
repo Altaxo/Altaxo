@@ -3,20 +3,14 @@
 // Originated from: RoslynPad, RoslynPad.Roslyn.Windows, RoslynCompletionData.cs
 
 #if !NoCompletion
-extern alias MCW;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Windows.Media;
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Editing;
-using MCW::Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Completion;
 

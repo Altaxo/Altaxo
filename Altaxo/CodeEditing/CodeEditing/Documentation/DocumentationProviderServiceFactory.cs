@@ -2,25 +2,23 @@
 // Originated from: Roslyn, Workspaces, Core/Portable/Workspace/Host/Documentation/DocumentationProviderServiceFactory.cs
 
 #if !NoDocumentation
-extern alias MCW;
 using System;
 using System.Collections.Concurrent;
 using System.Composition;
 using System.IO;
-using MCW::Microsoft.CodeAnalysis;
-using MCW::Microsoft.CodeAnalysis.Host;
-using MCW::Microsoft.CodeAnalysis.Host.Mef;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Host;
+using Microsoft.CodeAnalysis.Host.Mef;
 
 namespace Altaxo.CodeEditing.Documentation
 {
   [ExportWorkspaceServiceFactory(typeof(IDocumentationProviderService), ServiceLayer.Host), Shared]
   internal sealed class DocumentationProviderServiceFactory : IWorkspaceServiceFactory
   {
-        [ImportingConstructor]
-        public DocumentationProviderServiceFactory()
-        {
-        }
+    [ImportingConstructor]
+    public DocumentationProviderServiceFactory()
+    {
+    }
 
     public IWorkspaceService CreateService(HostWorkspaceServices workspaceServices)
     {

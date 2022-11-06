@@ -3,12 +3,10 @@
 // Originated from: Roslyn, EditorFeatures, Core/GoToDefinition/IGoToDefinitionService.cs
 
 #if !NoGotoDefinition
-extern alias MCW;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using MCW::Microsoft.CodeAnalysis;
-using MCW::Microsoft.CodeAnalysis.Host;
+using Microsoft.CodeAnalysis.Host;
 using Microsoft.CodeAnalysis.Navigation;
 
 namespace Microsoft.CodeAnalysis.Editor

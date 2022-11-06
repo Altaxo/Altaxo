@@ -3,7 +3,6 @@
 // Originated from: RoslynPad, RoslynPad.Roslyn, SignatureHelp/AggregateSignatureHelpProvider.cs
 
 #if !NoCompletion && !NoSignatureHelp
-extern alias MCW;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -11,10 +10,9 @@ using System.Composition;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using MCW::Microsoft.CodeAnalysis;
-using MCW::Microsoft.CodeAnalysis.Host.Mef;
-using MCW::Microsoft.CodeAnalysis.Shared.Utilities;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Host.Mef;
+using Microsoft.CodeAnalysis.Shared.Utilities;
 using Microsoft.CodeAnalysis.SignatureHelp;
 using Microsoft.CodeAnalysis.Text;
 

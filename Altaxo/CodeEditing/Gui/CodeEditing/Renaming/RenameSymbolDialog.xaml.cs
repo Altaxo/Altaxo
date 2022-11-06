@@ -1,4 +1,8 @@
-﻿using System.Windows;
+﻿using System.ComponentModel;
+using System.ComponentModel.Composition;
+using System.Runtime.CompilerServices;
+using System.Text.RegularExpressions;
+using System.Windows;
 using System.Windows.Input;
 
 
@@ -6,7 +10,7 @@ namespace Altaxo.Gui.CodeEditing.Renaming
 {
 #if !NoRenaming
 
-using Altaxo.CodeEditing.Renaming;
+  using Altaxo.CodeEditing.Renaming;
   /// <summary>
   /// Interaction logic for RenameSymbolDialog.xaml
   /// </summary>

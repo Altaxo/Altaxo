@@ -3,10 +3,8 @@
 // Originated from: RoslynPad, RoslynPad.Roslyn, SignatureHelp/SignatureHelpProviderExtensions.cs
 
 #if !NoCompletion && !NoSignatureHelp
-extern alias MCW;
 using System;
 using System.Threading.Tasks;
-using MCW::Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.SignatureHelp;
 using Microsoft.CodeAnalysis.Text;

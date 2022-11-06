@@ -3,17 +3,14 @@
 // Originated from: RoslynPad, RoslynPad.Roslyn, Rename/RenameHelper.cs
 
 #if !NoRenaming
-extern alias MCW;
-using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using MCW::Microsoft.CodeAnalysis;
-using MCW::Microsoft.CodeAnalysis.FindSymbols;
-using MCW::Microsoft.CodeAnalysis.LanguageServices;
-using MCW::Microsoft.CodeAnalysis.Rename;
-using MCW::Microsoft.CodeAnalysis.Shared.Extensions;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp.Extensions.ContextQuery;
+using Microsoft.CodeAnalysis.LanguageServices;
+using Microsoft.CodeAnalysis.Rename;
+using Microsoft.CodeAnalysis.Shared.Extensions;
 
 namespace Altaxo.CodeEditing.Renaming
 {
@@ -28,15 +25,8 @@ namespace Altaxo.CodeEditing.Renaming
               : null;
     }
 
-    public static async Task<SyntaxToken> GetTouchingWordAsync(this Document document, int position, CancellationToken cancellationToken, bool findInsideTrivia = false)
-    {
-      var syntaxTree = await document.GetSyntaxTreeAsync(cancellationToken).ConfigureAwait(false);
-      var syntaxFacts = document.GetLanguageService<ISyntaxFactsService>();
-      return await syntaxTree.GetTouchingTokenAsync(position, syntaxFacts.IsWord, cancellationToken, findInsideTrivia);
-    }
-
     public static async Task<ISymbol> GetRenameSymbol(
-        Document document, SyntaxToken triggerToken, CancellationToken cancellationToken)
+    Document document, SyntaxToken triggerToken, CancellationToken cancellationToken)
     {
       var syntaxFactsService = document.Project.LanguageServices.GetService<ISyntaxFactsService>();
       if (syntaxFactsService.IsReservedKeyword(triggerToken))
@@ -45,6 +35,11 @@ namespace Altaxo.CodeEditing.Renaming
       }
 
       var semanticModel = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
+      if (semanticModel == null)
+      {
+        return null;
+      }
+
       var semanticFacts = document.GetLanguageService<ISemanticFactsService>();
 
       var tokenRenameInfo = RenameUtilities.GetTokenRenameInfo(semanticFacts, semanticModel, triggerToken, cancellationToken);
@@ -71,55 +66,16 @@ namespace Altaxo.CodeEditing.Renaming
       // RenameOverloads option should be forced on.
       var forceRenameOverloads = tokenRenameInfo.IsMemberGroup;
 
-      if (syntaxFactsService.IsTypeNamedVarInVariableOrFieldDeclaration(triggerToken, triggerToken.Parent))
-      {
-        // To check if var in this context is a real type, or the keyword, we need to
-        // speculatively bind the identifier "var". If it returns a symbol, it's a real type,
-        // if not, it's the keyword.
-        // see bugs 659683 (compiler API) and 659705 (rename/workspace api) for examples
-        var symbolForVar = semanticModel.GetSpeculativeSymbolInfo(
-            triggerToken.SpanStart,
-            triggerToken.Parent,
-            SpeculativeBindingOption.BindAsTypeOrNamespace).Symbol;
-
-        if (symbolForVar == null)
-        {
-          return null;
-        }
-      }
-
-      var symbolAndProjectId = await RenameLocations.ReferenceProcessing.GetRenamableSymbolAsync(document, triggerToken.SpanStart, cancellationToken: cancellationToken).ConfigureAwait(false);
-      var symbol = symbolAndProjectId.Symbol;
+      var symbol = await RenameLocations.ReferenceProcessing.TryGetRenamableSymbolAsync(document, triggerToken.SpanStart, cancellationToken: cancellationToken).ConfigureAwait(false);
       if (symbol == null)
       {
         return null;
       }
 
-      if (symbol.Kind == SymbolKind.Alias && symbol.IsExtern)
+      if (symbol.Kind == SymbolKind.Alias && symbol.IsExtern ||
+          triggerToken.IsTypeNamedDynamic() && symbol.Kind == SymbolKind.DynamicType)
       {
         return null;
-      }
-
-      // Cannot rename constructors in VB.  TODO: this logic should be in the VB subclass of this type.
-      var workspace = document.Project.Solution.Workspace;
-      if (symbol.Kind == SymbolKind.NamedType &&
-          symbol.Language == LanguageNames.VisualBasic &&
-          triggerToken.ToString().Equals("New", StringComparison.OrdinalIgnoreCase))
-      {
-        var originalSymbol = await SymbolFinder.FindSymbolAtPositionAsync(semanticModel, triggerToken.SpanStart, workspace, cancellationToken: cancellationToken);
-
-        if (originalSymbol != null && originalSymbol.IsConstructor())
-        {
-          return null;
-        }
-      }
-
-      if (syntaxFactsService.IsTypeNamedDynamic(triggerToken, triggerToken.Parent))
-      {
-        if (symbol.Kind == SymbolKind.DynamicType)
-        {
-          return null;
-        }
       }
 
       // we allow implicit locals and parameters of Event handlers
@@ -131,7 +87,7 @@ namespace Altaxo.CodeEditing.Renaming
             symbol.ContainingType.IsDelegateType() &&
             symbol.ContainingType.AssociatedSymbol != null))
       {
-        // We enable the parameter in RaiseEvent, if the Event is declared with a signature. If the Event is declared as a
+        // We enable the parameter in RaiseEvent, if the Event is declared with a signature. If the Event is declared as a 
         // delegate type, we do not have a connection between the delegate type and the event.
         // this prevents a rename in this case :(.
         return null;
@@ -166,7 +122,7 @@ namespace Altaxo.CodeEditing.Renaming
           if (document.Project.IsSubmission)
           {
             var solution = document.Project.Solution;
-            var projectIdOfLocation = solution.GetDocument(location.SourceTree).Project.Id;
+            var projectIdOfLocation = solution.GetDocument(location.SourceTree)?.Project.Id;
 
             if (solution.Projects.Any(p => p.IsSubmission && p.ProjectReferences.Any(r => r.ProjectId == projectIdOfLocation)))
             {
@@ -182,6 +138,19 @@ namespace Altaxo.CodeEditing.Renaming
 
       return symbol;
     }
+
+
+    public static async Task<SyntaxToken> GetTouchingWordAsync(this Document document, int position, CancellationToken cancellationToken, bool findInsideTrivia = false)
+    {
+      var syntaxTree = await document.GetSyntaxTreeAsync(cancellationToken).ConfigureAwait(false);
+      if (syntaxTree == null)
+      {
+        return default;
+      }
+      var syntaxFacts = document.GetLanguageService<ISyntaxFactsService>();
+      return await syntaxTree.GetTouchingTokenAsync(position, syntaxFacts.IsWord, cancellationToken, findInsideTrivia);
+    }
+
   }
 }
 #endif

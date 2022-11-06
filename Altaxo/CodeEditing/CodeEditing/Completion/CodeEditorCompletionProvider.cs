@@ -23,20 +23,18 @@
 #endregion Copyright
 
 #if !NoCompletion
-extern alias MCW;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using MCW::Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Completion;
-using Microsoft.CodeAnalysis.SignatureHelp;
 using Microsoft.CodeAnalysis.Text;
 
 namespace Altaxo.CodeEditing.Completion
 {
   using System.Threading;
+  using Microsoft.CodeAnalysis.SignatureHelp;
   using SignatureHelp;
   using SnippetHandling;
 

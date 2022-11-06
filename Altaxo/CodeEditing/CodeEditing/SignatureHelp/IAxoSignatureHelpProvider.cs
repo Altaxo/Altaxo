@@ -3,14 +3,9 @@
 // Originated from: Roslyn, Features, Core/Portable/SignatureHelp/ISignatureHelpProvider.cs
 
 #if !NoCompletion && !NoSignatureHelp
-extern alias MCW;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using MCW::Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.SignatureHelp;
 
 
