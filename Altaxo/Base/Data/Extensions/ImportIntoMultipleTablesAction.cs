@@ -169,12 +169,12 @@ namespace Altaxo.Data
       if (doc.DataSource is Serialization.Ascii.AsciiImportDataSource aids)
       {
         aids.SourceFileName = fileName;
-        DataSourceCommands.RequeryTableDataSource(doc, null);
+        DataSourceCommands.ExecuteDataSourceOfTable(doc, null);
       }
       else if (doc.DataSource is FileImportScriptDataSource fisds)
       {
         fisds.SourceFileName = fileName;
-        DataSourceCommands.RequeryTableDataSource(doc, null);
+        DataSourceCommands.ExecuteDataSourceOfTable(doc, null);
       }
       else
       {

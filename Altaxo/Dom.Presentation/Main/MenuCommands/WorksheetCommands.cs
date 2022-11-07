@@ -864,7 +864,7 @@ namespace Altaxo.Worksheet.Commands
   {
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
-      Altaxo.Worksheet.Commands.DataSourceCommands.RequeryTableDataSource(ctrl);
+      Altaxo.Worksheet.Commands.DataSourceCommands.ExecuteDataSourceOfTable(ctrl);
     }
   }
 

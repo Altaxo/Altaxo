@@ -29,6 +29,7 @@ using System.Linq;
 using Altaxo.Data;
 using Altaxo.Gui.Common;
 using Altaxo.Main;
+using Altaxo.Worksheet.Commands;
 
 namespace Altaxo.Gui.Pads.ProjectBrowser
 {
@@ -304,9 +305,9 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
         .OfType<DataTable>()
         .Where(t => t.DataSource is not null);
 
-      if (DataTableCommands.TrySortTablesForExecuteAllDataSources(dataTables, out var sortedTables, out var errorMessage))
+      if (DataSourceCommands.TrySortTablesForExecutionOfAllDataSources(dataTables, out var sortedTables, out var errorMessage))
       {
-        DataTableCommands.ExecuteDataSourcesOfTables(sortedTables);
+        DataSourceCommands.ExecuteDataSourcesOfTables(sortedTables);
       }
       else
       {
