@@ -229,14 +229,14 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
         for (int i = 0; i < numberOfParametersPerPeak; i++)
         {
           parametersSeparate[idx + i] = localFitResult.MinimizingPoint[idx + i];
-          standardErrorsSeparate[idx + i] = localFitResult.StandardErrors[idx + i];
+          standardErrorsSeparate[idx + i] = localFitResult.StandardErrors is null ? 0 : localFitResult.StandardErrors[idx + i];
         }
 
         // extract the covariance matrix
         var covMatrix = CreateMatrix.Dense<double>(numberOfParametersPerPeak, numberOfParametersPerPeak);
         for (int i = 0; i < numberOfParametersPerPeak; i++)
           for (int j = 0; j < numberOfParametersPerPeak; ++j)
-            covMatrix[i, j] = localFitResult.Covariance[idx + i, idx + j];
+            covMatrix[i, j] = localFitResult.Covariance is null ? 0 : localFitResult.Covariance[idx + i, idx + j];
         covariancesSeparate[idx / numberOfParametersPerPeak] = covMatrix;
         sumChiSquareSeparate[idx / numberOfParametersPerPeak] = localFitResult.ModelInfoAtMinimum.Value;
         sigmaSquareSeparate[idx / numberOfParametersPerPeak] = localFitResult.ModelInfoAtMinimum.Value / (localFitResult.ModelInfoAtMinimum.DegreeOfFreedom + 1);
