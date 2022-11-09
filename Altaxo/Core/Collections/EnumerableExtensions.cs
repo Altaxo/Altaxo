@@ -462,6 +462,85 @@ namespace Altaxo.Collections
       }
     }
 
+    /// <summary>Return the index of the element with the minimum value in an enumerable.
+    /// If multiple elements with the same minimal value exist, the index of the first element in the sequence is returned.</summary>
+		/// <param name="elements">The input elements.</param>
+    /// <param name="transformer">The function that transforms the elements to a numerical value.</param>
+		/// <returns>The index of the last element with the minimum value.
+    /// Returns -1 if the element enumeration is empty or contains only nonvalid elements (NaN).</returns>
+		public static int IndexOfMin<T>(this IEnumerable<T> elements, Func<T, double> transformer)
+    {
+      int index = -1;
+      int i = -1;
+      double min = double.PositiveInfinity;
+      foreach (var element in elements)
+      {
+        ++i;
+        var test = transformer(element);
+        if (test < min) // less than ensures that only the first element with that minimum is tagged
+        {
+          index = i;
+          min = test;
+        }
+      }
+      return index;
+    }
+
+    /// <summary>Return the index of the element with the maximum value in an enumerable.
+    /// If multiple elements with the same minimal value exist, the index of the first element in the sequence is returned.</summary>
+		/// <param name="elements">The input elements.</param>
+    /// <param name="transformer">The function that transforms the elements to a numerical value.</param>
+		/// <returns>The index of the last element with the minimum value.
+    /// Returns -1 if the element enumeration is empty or contains only nonvalid elements (NaN).</returns>
+		public static int IndexOfMax<T>(this IEnumerable<T> elements, Func<T, double> transformer)
+    {
+      int index = -1;
+      int i = -1;
+      double min = double.NegativeInfinity;
+      foreach (var element in elements)
+      {
+        ++i;
+        var test = transformer(element);
+        if (test > min) // greater than ensures that only the first element with that maximum is tagged
+        {
+          index = i;
+          min = test;
+        }
+      }
+      return index;
+    }
+
+    /// <summary>Return the index of the element with the minimum value in an enumerable.
+    /// If multiple elements with the same minimal value exist, the index of the first element in the sequence is returned.</summary>
+    /// <param name="elements">The input elements.</param>
+    /// <param name="transformer">The function that transforms the elements to a numerical value.</param>
+    /// <returns>The index of the last element with the minimum value.
+    /// Returns the indeces of the minimal value and the maximal value, and -1 if the enumeration is empty or the elements are transformed to only nonvalid numbers (NaN).</returns>
+    public static (int IndexOfMin, int IndexOfMax) IndicesOfMinMax<T>(this IEnumerable<T> elements, Func<T, double> transformer)
+    {
+      int indexMin = -1;
+      int indexMax = -1;
+      int i = -1;
+      double min = double.PositiveInfinity;
+      double max = double.NegativeInfinity;
+      foreach (var element in elements)
+      {
+        ++i;
+        var test = transformer(element);
+        if (test < min) // less than ensures that only the first element with that minimum is tagged
+        {
+          indexMin = i;
+          min = test;
+        }
+        if (test > max)
+        {
+          indexMax = i;
+          max = test;
+        }
+      }
+      return (indexMin, indexMax);
+    }
+
     /// <summary>
     /// Evaluates the maximum of a enumeration of elements, or returns a default value if the series is empty.
     /// </summary>
