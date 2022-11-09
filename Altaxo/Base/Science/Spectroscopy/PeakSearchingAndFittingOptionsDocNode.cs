@@ -35,13 +35,15 @@ namespace Altaxo.Science.Spectroscopy
 
     public IPeakFitting PeakFitting { get; }
 
+    private PeakSearchingAndFittingOutputOptions OutputOptions { get; }
+
 
     #region Serialization
 
     /// <summary>
     /// 2022-08-06 Initial version
     /// </summary>
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PeakSearchingAndFittingOptionsDocNode), 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Science.Spectroscopy.PeakSearchingAndFittingOptionsDocNode", 0)]
     public new class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
@@ -59,17 +61,45 @@ namespace Altaxo.Science.Spectroscopy
         var calibrationTableProxy = info.GetValueOrNull<DataTableProxy>("CalibrationTableProxy", parent);
         var peakSearching = info.GetValue<IPeakSearching>("PeakSearching", null);
         var peakFitting = info.GetValue<IPeakFitting>("PeakFitting", null);
-        return new PeakSearchingAndFittingOptionsDocNode(options, calibrationTableProxy, peakSearching, peakFitting);
+        return new PeakSearchingAndFittingOptionsDocNode(options, calibrationTableProxy, peakSearching, peakFitting, new PeakSearchingAndFittingOutputOptions());
+      }
+    }
+
+    /// <summary>
+    /// 2022-08-06 Initial version
+    /// </summary>
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PeakSearchingAndFittingOptionsDocNode), 1)]
+    public class SerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        var s = (PeakSearchingAndFittingOptionsDocNode)obj;
+        info.AddValue("SpectralPreprocessingOptions", s.GetSpectralPreprocessingOptions());
+        info.AddValueOrNull("CalibrationTableProxy", s._calibrationTableProxy);
+        info.AddValue("PeakSearching", s.PeakSearching);
+        info.AddValue("PeakFitting", s.PeakFitting);
+        info.AddValue("OutputOptions", s.OutputOptions);
+      }
+
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      {
+        var options = info.GetValue<SpectralPreprocessingOptions>("SpectralPreprocessingOptions", null);
+        var calibrationTableProxy = info.GetValueOrNull<DataTableProxy>("CalibrationTableProxy", parent);
+        var peakSearching = info.GetValue<IPeakSearching>("PeakSearching", null);
+        var peakFitting = info.GetValue<IPeakFitting>("PeakFitting", null);
+        var outputOptions = info.GetValue<PeakSearchingAndFittingOutputOptions>("OutputOptions", null);
+        return new PeakSearchingAndFittingOptionsDocNode(options, calibrationTableProxy, peakSearching, peakFitting, outputOptions);
       }
     }
 
     #endregion
 
-    protected PeakSearchingAndFittingOptionsDocNode(SpectralPreprocessingOptions options, DataTableProxy calibrationTableProxy, IPeakSearching peakSearching, IPeakFitting peakFitting)
+    protected PeakSearchingAndFittingOptionsDocNode(SpectralPreprocessingOptions options, DataTableProxy? calibrationTableProxy, IPeakSearching peakSearching, IPeakFitting peakFitting, PeakSearchingAndFittingOutputOptions outputOptions)
       : base(options, calibrationTableProxy)
     {
       PeakSearching = peakSearching;
       PeakFitting = peakFitting;
+      OutputOptions = outputOptions;
     }
 
 
@@ -77,6 +107,7 @@ namespace Altaxo.Science.Spectroscopy
     {
       PeakSearching = options.PeakSearching;
       PeakFitting = options.PeakFitting;
+      OutputOptions = options.OutputOptions;
     }
 
     /// <summary>
@@ -91,7 +122,8 @@ namespace Altaxo.Science.Spectroscopy
       {
         Preprocessing = preprocessing,
         PeakSearching = PeakSearching,
-        PeakFitting = PeakFitting
+        PeakFitting = PeakFitting,
+        OutputOptions = OutputOptions,
       };
     }
   }

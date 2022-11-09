@@ -25,13 +25,13 @@
 using System.Collections.Generic;
 using Altaxo.Main;
 using Altaxo.Science.Spectroscopy.BaselineEstimation;
+using Altaxo.Science.Spectroscopy.Calibration;
 using Altaxo.Science.Spectroscopy.Cropping;
 using Altaxo.Science.Spectroscopy.Normalization;
 using Altaxo.Science.Spectroscopy.Resampling;
 using Altaxo.Science.Spectroscopy.Sanitizing;
 using Altaxo.Science.Spectroscopy.Smoothing;
 using Altaxo.Science.Spectroscopy.SpikeRemoval;
-using Altaxo.Science.Spectroscopy.Calibration;
 
 namespace Altaxo.Science.Spectroscopy
 {
@@ -70,7 +70,7 @@ namespace Altaxo.Science.Spectroscopy
         var cropping = info.GetValue<ICropping>("Cropping", parent);
         var normalization = info.GetValue<INormalization>("Normalization", parent);
 
-        return ((SpectralPreprocessingOptions)o ?? new SpectralPreprocessingOptions()) with
+        return ((SpectralPreprocessingOptions?)o ?? new SpectralPreprocessingOptions()) with
         {
           Sanitizer = sanitizer,
           SpikeRemoval = spikeRemoval,
@@ -118,7 +118,7 @@ namespace Altaxo.Science.Spectroscopy
         var cropping = info.GetValue<ICropping>("Cropping", parent);
         var normalization = info.GetValue<INormalization>("Normalization", parent);
 
-        return ((SpectralPreprocessingOptions)o ?? new SpectralPreprocessingOptions()) with
+        return ((SpectralPreprocessingOptions?)o ?? new SpectralPreprocessingOptions()) with
         {
           Sanitizer = sanitizer,
           SpikeRemoval = spikeRemoval,
@@ -134,23 +134,6 @@ namespace Altaxo.Science.Spectroscopy
     #endregion
 
     #endregion
-
-    public SpectralPreprocessingOptions()
-    {
-
-    }
-
-    public SpectralPreprocessingOptions(SpectralPreprocessingOptions from)
-    {
-      Sanitizer = from.Sanitizer;
-      SpikeRemoval = from.SpikeRemoval;
-      Calibration = from.Calibration;
-      Resampling = from.Resampling;
-      Smoothing = from.Smoothing;
-      BaselineEstimation = from.BaselineEstimation;
-      Cropping = from.Cropping;
-      Normalization = from.Normalization;
-    }
 
     public ISanitizer Sanitizer { get; init; } = new SanitizerNone();
 
@@ -178,7 +161,7 @@ namespace Altaxo.Science.Spectroscopy
       yield return Cropping;
       yield return BaselineEstimation;
       yield return Normalization;
-        
+
     }
 
     public (double[] x, double[] y, int[]? regions) Execute(double[] x, double[] y, int[]? regions)

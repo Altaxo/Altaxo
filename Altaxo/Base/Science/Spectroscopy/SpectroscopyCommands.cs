@@ -26,6 +26,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using Altaxo.Calc.FitFunctions.Peaks;
+using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Calc.Regression.Nonlinear;
 using Altaxo.Collections;
 using Altaxo.Data;
@@ -161,6 +163,18 @@ namespace Altaxo.Science.Spectroscopy
       return resultList;
     }
 
+    /// <summary>
+    /// Executes the spectral preprocessing for one or more than one spectrum
+    /// </summary>
+    /// <param name="inputData">The input data. Usually consists of one x-axis and one or more y-arrays (the spectra).</param>
+    /// <param name="doc">Spectral preprocessing options. document.</param>
+    /// <param name="dstTable">The data table were to write the results to.</param>
+    /// <returns>A list.
+    /// Each entry consists of:
+    /// - the original x-column and original y-column of the spectrum,
+    /// - the columns with the preprocessed spectrum (x and y),
+    /// - the array with the preprocessed spectrum (x, y, and regions).
+    /// </returns>
     public static List<(
       DataColumn xOrgCol,
       DataColumn yOrgCol,
@@ -190,6 +204,8 @@ namespace Altaxo.Science.Spectroscopy
       foreach (var entry in GetColumnsAndArrays(inputData, out var srcTable))
       {
         ++runningColumnNumber;
+        var groupNumberBase = runningColumnNumber * 10;
+
         var xCol = entry.xCol;
         var yCol = entry.yCol;
         var xArr = entry.xArray;
@@ -281,6 +297,7 @@ namespace Altaxo.Science.Spectroscopy
       foreach (var entry in spectralPreprocessingResult)
       {
         ++runningColumnNumber;
+        var groupNumberBase = runningColumnNumber * 10;
 
         if (cancellationTokenSoft.IsCancellationRequested)
         {
@@ -389,6 +406,129 @@ namespace Altaxo.Science.Spectroscopy
               }
             }
           }
+
+          // Store the preprocessed spectra, if activated in the options
+          if (doc.OutputOptions.OutputPreprocessedCurve)
+          {
+            var cXPre = (DoubleColumn)peakTable.DataColumns.EnsureExistence($"XPreprocessed{runningColumnNumber}", typeof(DoubleColumn), ColumnKind.X, groupNumberBase + 1);
+            var cYPre = (DoubleColumn)peakTable.DataColumns.EnsureExistence($"YPreprocessed{runningColumnNumber}", typeof(DoubleColumn), ColumnKind.V, groupNumberBase + 1);
+            cXPre.Data = entry.xArray;
+            cYPre.Data = entry.yArray;
+          }
+          if (doc.OutputOptions.OutputFitCurve && fitResults is not null)
+          {
+            var xUsedForFit = new HashSet<double>(); // x-values that were used for the fit
+            // Create a fit curve
+            // Note that we process each region individually
+            var yFitValues = new double[entry.xArray.Length];
+            idxRow = 0;
+            for (var idxRegion = 0; idxRegion < peakResults.Count; idxRegion++)
+            {
+              var descriptionsOfRegion = fitResults[idxRegion].PeakDescriptions;
+              var regionStart = fitResults[idxRegion].StartOfRegion;
+              var regionEnd = fitResults[idxRegion].EndOfRegion;
+              var regionLength = regionEnd - regionStart;
+
+              var ySumValues = new double[regionEnd - regionStart];
+              var yScratch = new double[regionEnd - regionStart];
+              for (var pi = 0; pi < descriptionsOfRegion.Count; pi++)
+              {
+                var peakDescription = descriptionsOfRegion[pi];
+                if (peakDescription.FitFunction is IFitFunctionPeak fitFunction)
+                {
+                  fitFunction = fitFunction.WithNumberOfTerms(1);
+                  var para = peakDescription.PeakParameter;
+                  fitFunction.Evaluate(MatrixMath.ToROMatrixWithOneColumn(entry.xArray), para, VectorMath.ToVector(yScratch), null);
+                  VectorMath.Add(ySumValues, yScratch, ySumValues);
+
+                  for (int j = peakDescription.FirstFitPoint; j <= peakDescription.LastFitPoint; ++j)
+                  {
+                    xUsedForFit.Add(entry.xArray[j]);
+                  }
+                }
+              }
+
+              // copy the yArray of the region into the final y-array
+              Array.Copy(ySumValues, 0, yFitValues, regionStart, regionLength);
+            }
+            // if the array of fitted y values is finalized, we put it to another column in the table
+            var cYFit = (DoubleColumn)peakTable.DataColumns.EnsureExistence($"YFitted{runningColumnNumber}", typeof(DoubleColumn), ColumnKind.V, groupNumberBase + 1);
+            cYFit.Data = yFitValues;
+
+            // output also a column, which designates, whether a point was used for the fit or was not used.
+            var cYUsedForFit = (DoubleColumn)peakTable.DataColumns.EnsureExistence($"UsedForFit{runningColumnNumber}", typeof(DoubleColumn), ColumnKind.V, groupNumberBase + 1);
+            for (int i = 0; i < xArr.Length; ++i)
+            {
+              cYUsedForFit[i] = xUsedForFit.Contains(xArr[i]) ? 1 : 0;
+            }
+
+          }
+
+          if (doc.OutputOptions.OutputFitCurveAsSeparatePeaks && fitResults is not null)
+          {
+            // output each peak separately
+            // because we don't want extra columns for every peak, we put all peaks into 3 columns
+            // i.e. x-column, y-column, and identifier colum
+            // the values of each peak are separated by a blank row, thus a line will not connect
+            // the identifier column can be used to color each fit line separately
+
+            var cXFit = (DoubleColumn)peakTable.DataColumns.EnsureExistence($"X_PeakCurve{runningColumnNumber}", typeof(DoubleColumn), ColumnKind.X, groupNumberBase + 2);
+            var cYFit = (DoubleColumn)peakTable.DataColumns.EnsureExistence($"Y_PeakCurve{runningColumnNumber}", typeof(DoubleColumn), ColumnKind.V, groupNumberBase + 2);
+            var cIDFit = (DoubleColumn)peakTable.DataColumns.EnsureExistence($"ID_PeakCurve{runningColumnNumber}", typeof(DoubleColumn), ColumnKind.V, groupNumberBase + 2);
+
+            idxRow = 0;
+            var idxPeak = 0;
+            for (var idxRegion = 0; idxRegion < peakResults.Count; idxRegion++)
+            {
+              var descriptionsOfRegion = fitResults[idxRegion].PeakDescriptions;
+              var regionStart = fitResults[idxRegion].StartOfRegion;
+              var regionEnd = fitResults[idxRegion].EndOfRegion;
+              var regionLength = regionEnd - regionStart;
+
+              var xArrOfRegion = new double[regionLength];
+              Array.Copy(xArr, regionStart, xArrOfRegion, 0, regionLength);
+              var xMinimumOfRegion = xArrOfRegion.Min();
+              var xMaximumOfRegion = xArrOfRegion.Max();
+
+              var ySumValues = new double[regionLength];
+              var yScratch = new double[regionLength];
+              for (var pi = 0; pi < descriptionsOfRegion.Count; pi++)
+              {
+                var peakDescription = descriptionsOfRegion[pi];
+                if (peakDescription.FitFunction is IFitFunctionPeak fitFunction)
+                {
+                  fitFunction = fitFunction.WithNumberOfTerms(1);
+
+                  var peakProperties = fitFunction.GetPositionAreaHeightFWHMFromSinglePeakParameters(peakDescription.PeakParameter);
+
+                  if (peakProperties.Height == 0)
+                    continue;
+
+                  double widthScale = Math.Abs((peakDescription.LastFitPosition - peakDescription.FirstFitPosition) / peakDescription.SearchDescription.WidthValue);
+                  var centerPos = peakProperties.Position;
+                  var leftPos = Math.Min(centerPos - peakProperties.FWHM * widthScale * 0.5, peakDescription.FirstFitPosition);
+                  var rightPos = Math.Max(centerPos + peakProperties.FWHM * widthScale * 0.5, peakDescription.LastFitPosition);
+
+                  var xValues = GetXValuesForPeak(xArrOfRegion, xMinimumOfRegion, xMaximumOfRegion, leftPos, centerPos, rightPos, doc.OutputOptions.OutputFitCurveSamplingFactor);
+                  yScratch = new double[xValues.Length];
+                  fitFunction.Evaluate(MatrixMath.ToROMatrixWithOneColumn(xValues), peakDescription.FitFunctionParameter, VectorMath.ToVector(yScratch), null);
+
+                  // output the values
+                  for (int j = 0; j < xValues.Length; j++)
+                  {
+                    cXFit[idxRow] = xValues[j];
+                    cYFit[idxRow] = yScratch[j];
+                    cIDFit[idxRow] = idxPeak;
+                    ++idxRow;
+                  }
+                  ++idxRow; // leave one row empty after output of a single peak
+                  ++idxPeak;
+                }
+              }
+            }
+            // finally, divide the identifier column by the number of peaks
+            cIDFit.Data = cIDFit / idxPeak;
+          }
         }
 
         resultList.Add((entry.xOrgCol, entry.yOrgCol, entry.xPreprocessedCol, entry.yPreprocessedCol, fitResults));
@@ -396,6 +536,84 @@ namespace Altaxo.Science.Spectroscopy
 
 
       return resultList;
+    }
+
+    /// <summary>
+    /// Gets the x values for a single peak.
+    /// </summary>
+    /// <param name="originalXValues">The original x values.</param>
+    /// <param name="minimalX">The minimal x.</param>
+    /// <param name="maximalX">The maximal x.</param>
+    /// <param name="left">The left.</param>
+    /// <param name="center">The center.</param>
+    /// <param name="right">The right.</param>
+    /// <param name="sampling">The sampling.</param>
+    /// <returns></returns>
+    static double[] GetXValuesForPeak(double[] originalXValues, double minimalX, double maximalX, double left, double center, double right, int sampling)
+    {
+      var xList = new HashSet<double>();
+      if (left >= maximalX || right <= minimalX)
+        return new double[0];
+
+      // use the sampling of the original x-axis when the peak width is less than the range of the spectrum
+      if (Math.Abs(right - left) <= Math.Abs(maximalX - minimalX))
+      {
+        // Add center and endpoints
+        xList.Add(Math.Max(left, minimalX));
+        xList.Add(center);
+        xList.Add(Math.Min(right, maximalX));
+        int centerIdx = originalXValues.IndexOfMin(x => Math.Abs(x - center));
+        if (centerIdx < 0)
+          return new double[0];
+
+
+        for (int i = centerIdx; i > 0; --i)
+        {
+          var x0 = originalXValues[i];
+          var x1 = originalXValues[i - 1];
+          for (int j = 0; j < sampling; ++j)
+          {
+            double r = j / (double)(sampling);
+            var x = (1 - r) * x0 + (r) * x1;
+            if (x >= left)
+              xList.Add(x);
+            else
+              break;
+          }
+        }
+        for (int i = centerIdx; i < originalXValues.Length - 1; ++i)
+        {
+          var x0 = originalXValues[i];
+          var x1 = originalXValues[i + 1];
+          for (int j = 0; j < sampling; ++j)
+          {
+            double r = j / (double)(sampling);
+            var x = (1 - r) * x0 + (r) * x1;
+            if (x <= right)
+              xList.Add(x);
+            else
+              break;
+          }
+        }
+      }
+      else
+      {
+        // if the peak is broader than the range of the spectrum, we use not more than
+        // 40 points per FWHM to sample its behavior
+        var leftBound = Math.Max(left, minimalX);
+        var rightBound = Math.Min(right, maximalX);
+        int length = 40;
+        for (int i = 0; i <= length; ++i)
+        {
+          double r = i / (double)length;
+          var x = (1 - r) * leftBound + (r) * rightBound;
+          xList.Add(x);
+        }
+      }
+
+      var result = xList.ToArray();
+      Array.Sort(result);
+      return result;
     }
 
     public static void SpectralPeakFindingFittingShowDialog(WorksheetController ctrl)
@@ -451,7 +669,7 @@ namespace Altaxo.Science.Spectroscopy
 
         preprocessingTable.DataSource = new SpectralPreprocessingDataSource(
           (DataTableMultipleColumnProxy)dataProxy.Clone(),
-          new SpectralPreprocessingOptions(doc.Preprocessing), // downcast to SpectralPreprocessingOptions
+          doc.Preprocessing,
           new DataSourceImportOptions());
       }
 
@@ -466,7 +684,7 @@ namespace Altaxo.Science.Spectroscopy
 
         peakTable.DataSource = new PeakSearchingAndFittingDataSource(
           (DataTableMultipleColumnProxy)dataProxy.Clone(),
-          new PeakSearchingAndFittingOptions(doc), // downcast to PeakFindingAndFittingOptions
+          doc,
           new DataSourceImportOptions());
       }
 
@@ -586,7 +804,7 @@ namespace Altaxo.Science.Spectroscopy
 
         preprocessingTable.DataSource = new SpectralPreprocessingDataSource(
           dataProxy,
-          new SpectralPreprocessingOptions(doc), // downcast to SpectralPreprocessingOptions
+          doc,
           new DataSourceImportOptions());
       }
     }

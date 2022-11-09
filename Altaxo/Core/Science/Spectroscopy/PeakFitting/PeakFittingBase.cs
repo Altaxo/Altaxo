@@ -45,7 +45,16 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
       init { _fitFunction = value ?? throw new ArgumentNullException(nameof(FitFunction)); }
     }
 
+    /// <summary>
+    /// Gets / sets the scaling factor of the fit width. To calculate the fit width, the scaling factor is
+    /// multiplied by the FullWidthHalfMaximum of the peak.
+    /// </summary>
     double _fitWidthScalingFactor = 1;
+
+
+
+
+
 
     /// <summary>
     /// Gets / sets the scaling factor of the fit width. To calculate the fit width, the scaling factor is
@@ -65,6 +74,8 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
         _fitWidthScalingFactor = value;
       }
     }
+
+
 
     /// <summary>
     /// Gets the minimal and maximal properties of an array of x-values.
