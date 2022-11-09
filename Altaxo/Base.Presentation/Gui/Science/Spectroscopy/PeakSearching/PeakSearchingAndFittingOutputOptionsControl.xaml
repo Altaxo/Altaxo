@@ -15,6 +15,10 @@
             <ColumnDefinition Width="4"/>
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="4"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="4"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="4"/>
         </Grid.ColumnDefinitions>
 
         <Grid.RowDefinitions>
@@ -34,19 +38,32 @@
 
         <CheckBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3"
                   IsChecked="{Binding OutputFitCurve, Mode=TwoWay}"
-                  Content="Output fit curve"/>
-        
+                  Content="Output fit curve"
+                  VerticalAlignment="Center"/>
+
+        <Label Grid.Row="2" Grid.Column="4" 
+               Content="Sampling factor:"/>
+        <axogc:Int32UpDown Grid.Row="2" Grid.Column="6"
+                           Value="{Binding OutputFitCurveSamplingFactor}"
+                           IsEnabled="{Binding OutputFitCurve}"
+                           Minimum="1"
+                           Maximum="100"/>
+
         <CheckBox Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="3"
                   IsChecked="{Binding OutputFitCurveAsSeparatePeaks, Mode=TwoWay}"
                   Content="Output separate peak curves"
+                  VerticalAlignment="Center"
                   />
 
-        <Label Grid.Row="6" Grid.Column="0" 
+        <Label Grid.Row="4" Grid.Column="4" 
                Content="Sampling factor:"/>
-        <axogc:Int32UpDown Grid.Row="6" Grid.Column="2"
-                           Value="{Binding OutputFitCurveSamplingFactor}"
+        <axogc:Int32UpDown Grid.Row="4" Grid.Column="6"
+                           Value="{Binding OutputFitCurveAsSeparatePeaksSamplingFactor}"
+                           IsEnabled="{Binding OutputFitCurveAsSeparatePeaks}"
                            Minimum="1"
                            Maximum="100"/>
+
+
 
     </Grid>
 </UserControl>

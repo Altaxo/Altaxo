@@ -187,7 +187,8 @@ namespace Altaxo.Science.Spectroscopy
 
     public bool OutputFitCurveAsSeparatePeaks { get; init; }
 
-    private int _outputFitCurveSamplingFactor = 10;
+    private int _outputFitCurveSamplingFactor = 3;
+    private int _outputFitCurveAsSeparatePeaksSamplingFactor = 10;
 
     /// <summary>
     /// Gets/sets the sampling factor of the fit curve. A sampling factor of 1 samples the fit curve at
@@ -209,6 +210,26 @@ namespace Altaxo.Science.Spectroscopy
       }
     }
 
+    /// <summary>
+    /// Gets/sets the sampling factor of the separate peak curves. A sampling factor of 1 samples the fit curve at
+    /// the same positions at the fitted curve, a factor of 2 takes one additional point inbetween to original points, etc.
+    /// </summary>
+    /// <value>
+    /// The output separate peaks fit curves sampling factor.
+    /// </value>
+    /// <exception cref="ArgumentOutOfRangeException">Value must be >=1, nameof(OutputFitCurveAsSeparatePeaksSamplingFactor)</exception>
+    public int OutputFitCurveAsSeparatePeaksSamplingFactor
+    {
+      get => _outputFitCurveSamplingFactor;
+      init
+      {
+        if (!(_outputFitCurveSamplingFactor >= 1))
+          throw new ArgumentOutOfRangeException("Value must be >=1", nameof(OutputFitCurveAsSeparatePeaksSamplingFactor));
+
+        _outputFitCurveSamplingFactor = value;
+      }
+    }
+
     #region Serialization
 
 
@@ -224,25 +245,28 @@ namespace Altaxo.Science.Spectroscopy
       {
         var s = (PeakSearchingAndFittingOutputOptions)obj;
         info.AddValue("OutputPreprocessed", s.OutputPreprocessedCurve);
-        info.AddValue("OutputFit", s.OutputFitCurve);
+        info.AddValue("OutputFitCurve", s.OutputFitCurve);
+        info.AddValue("FitCurveSamplingFactor", s.OutputFitCurveSamplingFactor);
         info.AddValue("OutputSeparatePeaks", s.OutputFitCurveAsSeparatePeaks);
-        info.AddValue("SamplingFactor", s.OutputFitCurveSamplingFactor);
+        info.AddValue("SeparatePeaksSamplingFactor", s.OutputFitCurveAsSeparatePeaksSamplingFactor);
       }
 
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var s = (PeakSearchingAndFittingOutputOptions?)o ?? new PeakSearchingAndFittingOutputOptions();
         var preprocessed = info.GetBoolean("OutputPreprocessed");
-        var fit = info.GetBoolean("OutputFit");
+        var fit = info.GetBoolean("OutputFitCurve");
+        var fitSampling = info.GetInt32("FitCurveSamplingFactor");
         var separate = info.GetBoolean("OutputSeparatePeaks");
-        var sampling = info.GetInt32("SamplingFactor");
+        var separateSampling = info.GetInt32("SeparatePeaksSamplingFactor");
 
         return s with
         {
           OutputPreprocessedCurve = preprocessed,
           OutputFitCurve = fit,
+          OutputFitCurveSamplingFactor = fitSampling,
           OutputFitCurveAsSeparatePeaks = separate,
-          OutputFitCurveSamplingFactor = sampling,
+          OutputFitCurveAsSeparatePeaksSamplingFactor = separateSampling,
         };
       }
     }

@@ -245,7 +245,7 @@ namespace Altaxo.Science.Spectroscopy
       try
       {
         var peakFindingAndFittingOptions = _processOptions.GetPeakSearchingAndFittingOptions();
-        SpectroscopyCommands.ExecutePeakFindingAndFitting(_processData, peakFindingAndFittingOptions, destinationTable, null, reporter, reporter?.CancellationToken ?? CancellationToken.None, reporter?.CancellationTokenHard ?? CancellationToken.None);
+        SpectroscopyCommands.ExecutePeakFindingAndFitting(_processData, peakFindingAndFittingOptions, destinationTable, reporter, reporter?.CancellationToken ?? CancellationToken.None, reporter?.CancellationTokenHard ?? CancellationToken.None);
       }
       catch (Exception ex)
       {

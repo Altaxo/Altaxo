@@ -102,6 +102,22 @@ namespace Altaxo.Gui.Science.Spectroscopy
       }
     }
 
+    private int _outputFitCurveAsSeparatePeaksSamplingFactor;
+
+    public int OutputFitCurveAsSeparatePeaksSamplingFactor
+    {
+      get => _outputFitCurveAsSeparatePeaksSamplingFactor;
+      set
+      {
+        if (!(_outputFitCurveAsSeparatePeaksSamplingFactor == value))
+        {
+          _outputFitCurveAsSeparatePeaksSamplingFactor = value;
+          OnPropertyChanged(nameof(OutputFitCurveAsSeparatePeaksSamplingFactor));
+        }
+      }
+    }
+
+
     #endregion
 
     protected override void Initialize(bool initData)
@@ -112,8 +128,9 @@ namespace Altaxo.Gui.Science.Spectroscopy
       {
         OutputPreprocessedCurve = _doc.OutputPreprocessedCurve;
         OutputFitCurve = _doc.OutputFitCurve;
-        OutputFitCurveAsSeparatePeaks = _doc.OutputFitCurveAsSeparatePeaks;
         OutputFitCurveSamplingFactor = _doc.OutputFitCurveSamplingFactor;
+        OutputFitCurveAsSeparatePeaks = _doc.OutputFitCurveAsSeparatePeaks;
+        OutputFitCurveAsSeparatePeaksSamplingFactor = _doc.OutputFitCurveAsSeparatePeaksSamplingFactor;
       }
     }
 
@@ -123,8 +140,9 @@ namespace Altaxo.Gui.Science.Spectroscopy
       {
         OutputPreprocessedCurve = OutputPreprocessedCurve,
         OutputFitCurve = OutputFitCurve,
-        OutputFitCurveAsSeparatePeaks = OutputFitCurveAsSeparatePeaks,
         OutputFitCurveSamplingFactor = _doc.OutputFitCurveSamplingFactor,
+        OutputFitCurveAsSeparatePeaks = OutputFitCurveAsSeparatePeaks,
+        OutputFitCurveAsSeparatePeaksSamplingFactor = OutputFitCurveAsSeparatePeaksSamplingFactor,
       };
 
       return ApplyEnd(true, disposeController);
