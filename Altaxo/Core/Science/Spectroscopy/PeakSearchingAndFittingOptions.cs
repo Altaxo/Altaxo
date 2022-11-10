@@ -188,7 +188,7 @@ namespace Altaxo.Science.Spectroscopy
     public bool OutputFitCurveAsSeparatePeaks { get; init; }
 
     private int _outputFitCurveSamplingFactor = 3;
-    private int _outputFitCurveAsSeparatePeaksSamplingFactor = 10;
+    private int _outputFitCurveAsSeparatePeaksSamplingFactor = 5;
 
     /// <summary>
     /// Gets/sets the sampling factor of the fit curve. A sampling factor of 1 samples the fit curve at
@@ -220,13 +220,13 @@ namespace Altaxo.Science.Spectroscopy
     /// <exception cref="ArgumentOutOfRangeException">Value must be >=1, nameof(OutputFitCurveAsSeparatePeaksSamplingFactor)</exception>
     public int OutputFitCurveAsSeparatePeaksSamplingFactor
     {
-      get => _outputFitCurveSamplingFactor;
+      get => _outputFitCurveAsSeparatePeaksSamplingFactor;
       init
       {
-        if (!(_outputFitCurveSamplingFactor >= 1))
+        if (!(_outputFitCurveAsSeparatePeaksSamplingFactor >= 1))
           throw new ArgumentOutOfRangeException("Value must be >=1", nameof(OutputFitCurveAsSeparatePeaksSamplingFactor));
 
-        _outputFitCurveSamplingFactor = value;
+        _outputFitCurveAsSeparatePeaksSamplingFactor = value;
       }
     }
 
