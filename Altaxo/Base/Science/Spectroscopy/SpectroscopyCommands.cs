@@ -436,7 +436,7 @@ namespace Altaxo.Science.Spectroscopy
             // Create a fit curve
             // Note that we process each region individually
             var yFitValues = new double[entry.xArray.Length];
-            idxRow = 0;
+            var idxOutputRow = 0;
             for (var idxRegion = 0; idxRegion < peakResults.Count; idxRegion++)
             {
               var descriptionsOfRegion = fitResults[idxRegion].PeakDescriptions;
@@ -466,10 +466,10 @@ namespace Altaxo.Science.Spectroscopy
               }
 
               // put the data directly into the column
-              for (int i = 0; i < localXValues.Length; ++i, ++idxRow)
+              for (int i = 0; i < localXValues.Length; ++i, ++idxOutputRow)
               {
-                cXFit[idxRow] = localXValues[i];
-                cYFit[idxRow] = ySumValues[i];
+                cXFit[idxOutputRow] = localXValues[i];
+                cYFit[idxOutputRow] = ySumValues[i];
               }
             }
 
@@ -542,7 +542,10 @@ namespace Altaxo.Science.Spectroscopy
               }
             }
             // finally, divide the identifier column by the number of peaks
-            cIDFit.Data = cIDFit / idxPeak;
+            for (int i = 0; i < cIDFit.Count; i++)
+            {
+              cIDFit[i] = ((((int)cIDFit[i] * (idxPeak + 1)) / 4) % idxPeak) / ((double)idxPeak - 1);
+            }
           }
         }
 
@@ -772,7 +775,7 @@ namespace Altaxo.Science.Spectroscopy
             var lineStyle = plotStyle.OfType<LinePlotStyle>().FirstOrDefault();
             if (lineStyle is not null && lineStyle.Color.ParentColorSet is { } parentCSet)
             {
-              var xColumn = peakTable.DataColumns[PeakTable_PreprocessedColumnNameX(numberOfSpectrum)];
+              var xColumn = peakTable.DataColumns[PeakTable_FitCurveColumnNameX(numberOfSpectrum)];
               var yColumn = peakTable.DataColumns[PeakTable_FitCurveColumnNameY(numberOfSpectrum)];
               var groupNumber = peakTable.DataColumns.GetColumnGroup(yColumn);
               var plotData = new XYColumnPlotData(peakTable, groupNumber, xColumn, yColumn);
