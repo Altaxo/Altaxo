@@ -327,8 +327,8 @@ namespace Altaxo.Calc.FitFunctions.Peaks
           DY[r, j + 0] = body;
           DY[r, j + 1] = -height * dbodydz / w;
           DY[r, j + 2] = -height * dbodydz * (x - pos) / (w * w);
-          DY[r, j + 3] = height * dbodydz * ((1 + z * z) * log1z2_1z02 / (2 * z * m + v) - z0 / m);
-          DY[r, j + 4] = height * dbodydz * ((1 + z * z) * atanZ_M_atanZ0 / (2 * z * m + v) - 0.5 / m);
+          DY[r, j + 3] = -height * (body * log1z2_1z02 + dbodydz * z0 / m);
+          DY[r, j + 4] = -height * (body * atanZ_M_atanZ0 + dbodydz * 0.5 / m);
         }
 
         // then, the baseline
