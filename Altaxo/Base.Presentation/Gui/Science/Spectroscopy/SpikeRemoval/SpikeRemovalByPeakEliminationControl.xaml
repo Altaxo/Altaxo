@@ -27,5 +27,9 @@
                Content="Maximum width (points):"/>
         <axogc:Int32UpDown Grid.Row="0" Grid.Column="2"
                            Value="{Binding MaximalWidth}" />
+
+        <CheckBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3"
+                  IsChecked="{Binding EliminateNegativeSpikes}"
+                  Content="Eliminate negative spikes, too"/>
     </Grid>
 </UserControl>

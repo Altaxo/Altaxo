@@ -22,11 +22,7 @@
 
 #endregion Copyright
 
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Altaxo.Science.Spectroscopy.SpikeRemoval;
 
 namespace Altaxo.Gui.Science.Spectroscopy.SpikeRemoval
@@ -62,6 +58,22 @@ namespace Altaxo.Gui.Science.Spectroscopy.SpikeRemoval
     }
 
 
+    private bool _eliminateNegativeSpikes;
+
+    public bool EliminateNegativeSpikes
+    {
+      get => _eliminateNegativeSpikes;
+      set
+      {
+        if (!(_eliminateNegativeSpikes == value))
+        {
+          _eliminateNegativeSpikes = value;
+          OnPropertyChanged(nameof(EliminateNegativeSpikes));
+        }
+      }
+    }
+
+
 
     #endregion
 
@@ -69,19 +81,24 @@ namespace Altaxo.Gui.Science.Spectroscopy.SpikeRemoval
     {
       base.Initialize(initData);
 
-      if(initData)
+      if (initData)
       {
         MaximalWidth = _doc.MaximalWidth;
+        EliminateNegativeSpikes = _doc.EliminateNegativeSpikes;
       }
     }
 
     public override bool Apply(bool disposeController)
     {
-      _doc = _doc with { MaximalWidth = MaximalWidth };
+      _doc = _doc with
+      {
+        MaximalWidth = MaximalWidth,
+        EliminateNegativeSpikes = EliminateNegativeSpikes,
+      };
 
       return ApplyEnd(true, disposeController);
     }
 
-   
+
   }
 }
