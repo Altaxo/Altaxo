@@ -184,7 +184,7 @@ namespace Altaxo.Science.Spectroscopy.SpikeRemoval
 
 
     /// <summary>
-    /// Finds spikes of width = 1 point, using a wavelet transformation (wavelet: -0.5, 1, 0.5), and then eliminates those spikes.
+    /// Finds spikes of width = 1 point, using a wavelet transformation (wavelet: -0.5, 1, -0.5), and then eliminates those spikes.
     /// </summary>
     /// <param name="x">The x values.</param>
     /// <param name="y">The y values.</param>
@@ -271,5 +271,96 @@ namespace Altaxo.Science.Spectroscopy.SpikeRemoval
 
       return (x, yResult ?? y, regions);
     }
+
+    /// <summary>
+    /// Finds spikes of width = 2 points, using a wavelet transformation (wavelet: -0.5, 0.5, 0.5, -0.5), and then eliminates those spikes.
+    /// </summary>
+    /// <param name="x">The x values.</param>
+    /// <param name="y">The y values.</param>
+    /// <param name="regions">The regions.</param>
+    /// <param name="forPositiveSpikes">If set to <c>true</c>, positive spikes will be eliminated.</param>
+    /// <param name="forNegativeSpikes">If set to <c>true</c>, negative spikes will be eliminated.</param>
+    /// <returns>The x, y and regions array, where y contains the spectrum with eliminated spikes.</returns>
+    public static (double[] x, double[] y, int[]? regions) EliminateSpikesOfWidthTwoByWavelet(double[] x, double[] y, int[]? regions, bool forPositiveSpikes, bool forNegativeSpikes)
+    {
+      double[]? yResult = null;
+
+      foreach (var (start, end) in RegionHelper.GetRegionRanges(regions, x.Length))
+      {
+        if ((end - start) < 5)
+          continue;
+
+        var data = new double[end - start];
+
+
+        int lenM1 = data.Length - 1, lenM2 = data.Length - 2, lenM3 = data.Length - 3;
+        double noiseLevel = 0;
+        for (int i = 0, j = start; i < lenM1; ++i, ++j)
+        {
+          double v;
+
+          // the wavelet used here is -0.5, 0.5, 0.5, -0.5
+          // but at both sides, we have special cases
+          if (i == 0)
+            v = 0.5 * (y[j] + y[j + 1] - 2 * y[j + 2]);
+          else if (i == lenM2)
+            v = 0.5 * (-2 * y[j - 1] + y[j] + y[j + 1]);
+          else
+            v = 0.5 * (-y[j - 1] + y[j] + y[j + 1] - y[j + 2]);
+
+          data[i] = v;
+          noiseLevel += Math.Abs(v);
+        }
+        noiseLevel /= lenM1;
+
+        double minAmplitude = Math.Abs(5 * noiseLevel);
+        for (int i = 2; i < lenM2; ++i)
+        {
+          bool isPositiveSpike =
+                data[i] > minAmplitude &&
+                (data[i - 1] < -0.35 * data[i] || data[i - 2] < -0.35 * data[i]) &&
+                (data[i + 1] < -0.35 * data[i] || data[i + 2] < -0.35 * data[i]) &&
+                (i < 3 || Math.Abs(data[i - 3]) < 0.25 * data[i]) &&
+                (i >= lenM3 || Math.Abs(data[i + 3]) < 0.25 * data[i]);
+
+          bool isNegativeSpike =
+                data[i] < -minAmplitude &&
+                (data[i - 1] > -0.35 * data[i] || data[i - 2] > -0.35 * data[i]) &&
+                (data[i + 1] > -0.35 * data[i] || data[i + 2] > -0.35 * data[i]) &&
+                (i < 3 || Math.Abs(data[i - 3]) < -0.25 * data[i]) &&
+                (i >= lenM3 || Math.Abs(data[i + 3]) < -0.25 * data[i]);
+
+          if ((isPositiveSpike && forPositiveSpikes) || (isNegativeSpike && forNegativeSpikes))
+          {
+            yResult ??= (double[])y.Clone();
+
+            // Note that the main spike would be at positions i and i+1, thus the interpolation bases would be i-1 and i+2
+            var leftPos = start + i - 1;
+            var rightPos = start + i + 2;
+
+            // if the wavelet at the sides is higher than the noise level,
+            // then there is maybe a small influence of the peak to that side, too
+            // in this case we use rather one point further away from the peak as base for the interpolation line
+            if (i >= 3 && Math.Abs(data[i - 3]) > 1.5 * noiseLevel)
+              leftPos = start - i - 2;
+            if (i < lenM3 && Math.Abs(data[i + 3]) > 1.5 * noiseLevel)
+              rightPos = start + i + 3;
+
+
+            // now interpolate the data by a straight line from leftPos to rightPos
+            for (int k = leftPos + 1; k < rightPos; ++k)
+            {
+              var r = (k - leftPos) / (double)(rightPos - leftPos);
+              var newValue = r * y[rightPos] + (1 - r) * y[leftPos]; // interpolate the base line from left to right
+              yResult[k] = newValue; // replace the values in yArray with the baseline
+            }
+          }
+        }
+
+      } // Foreach region
+
+      return (x, yResult ?? y, regions);
+    }
+
   }
 }
