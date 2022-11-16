@@ -10,9 +10,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Altaxo.Calc.LinearAlgebra
 {
@@ -299,7 +296,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// </remarks>
     public static void SolveTriDiagonal(IMatrix<double> A, double[] a, double[] x, ref object? tempStorage)
     {
-      if(A is null)
+      if (A is null)
         throw new ArgumentNullException(nameof(A));
       if (A.RowCount != A.ColumnCount)
         throw new ArgumentException("Matrix A must be a square matrix", nameof(A));
@@ -383,7 +380,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <para>References:</para>
     /// <para>[1] Engeln-Müllges, Numerik-Algorithmen, 10th ed., page 177</para>
     /// </remarks>
-    public static void SolvePentaDiagonal(IMatrix<double> A, double[] a, double[] x, ref object tempStorage)
+    public static void SolvePentaDiagonal(IMatrix<double> A, double[] a, double[] x, ref object? tempStorage)
     {
       // Start of algorithm 4.77, page 178, book of Engeln-Müllges, Numerik-Algorithmen, 10th ed.
 
@@ -439,7 +436,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
       for (int i = 2; i < n; ++i) // 1.14
       {
-        epsilon[i] = A[i, i-2];
+        epsilon[i] = A[i, i - 2];
       }
 
       // forward elimination

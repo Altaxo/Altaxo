@@ -23,8 +23,6 @@
 #endregion Copyright
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Science.Spectroscopy.BaselineEstimation
@@ -207,7 +205,7 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
       }
 
 
-      object tempStorage = null;
+      object? tempStorage = null;
 
       for (int iteration = 1; iteration <= _maximumNumberOfIterations; ++iteration)
       {
