@@ -30,6 +30,7 @@ using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using System.Threading;
 using Altaxo.Gui;
 
@@ -237,7 +238,27 @@ namespace Altaxo.Main.Services
           if (!IsDependentAssembly(baseassembly, assembly))
             continue;
 
-          Type[] definedtypes = assembly.GetTypes();
+          Type[] definedtypes;
+          try
+          {
+            definedtypes = assembly.GetTypes();
+          }
+          catch (System.Reflection.ReflectionTypeLoadException lex)
+          {
+            var hashSet = new HashSet<string>();
+            foreach (var inner in lex.LoaderExceptions)
+              hashSet.Add(inner?.Message ?? string.Empty);
+            var stb = new StringBuilder();
+            stb.AppendLine($"Error loading types from assembly {assembly.FullName}. The following issues must be solved:");
+            foreach (var s in hashSet)
+            {
+              stb.AppendLine(s);
+            }
+
+            throw new Exception(stb.ToString());
+          }
+
+
           foreach (Type definedtype in definedtypes)
           {
             if (IsSubClassOfOrImplements(definedtype, _baseType))
@@ -1073,7 +1094,7 @@ namespace Altaxo.Main.Services
       {
         var loadedAssemblies = Volatile.Read(ref _loadedAssemblies);
         var loadedAssemblyCount = loadedAssemblies.Count;
-        
+
         Assembly baseassembly = typeof(Altaxo.Main.Properties.PropertyKeyBase).Assembly;
         for (int i = _currentAssemblyCount; i < loadedAssemblyCount; i++)
         {
