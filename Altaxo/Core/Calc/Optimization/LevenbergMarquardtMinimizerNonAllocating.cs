@@ -92,7 +92,7 @@ namespace Altaxo.Calc.Optimization
      IObjectiveModelNonAllocating objective,
      IReadOnlyList<double> initialGuess,
      CancellationToken cancellationToken,
-     Action<int, double>? reportChi2Progress
+     Action<int, double, IReadOnlyList<double>>? reportChi2Progress
      )
     {
       return FindMinimum(objective, initialGuess, null, null, null, null, cancellationToken, reportChi2Progress);
@@ -108,7 +108,7 @@ namespace Altaxo.Calc.Optimization
     /// <param name="scales">The scales of the parameters. The array must have the same length as the parameter array. Provide null if not needed.</param>
     /// <param name="isFixed">Array of booleans, which provide which parameters are fixed. Must have the same length as the parameter array. Provide null if not needed.</param>
     /// <param name="cancellationToken">Token to cancel the evaluation</param>
-    /// <param name="reportChi2Progress">Event handler that can be used to report the NumberOfIterations and Chi² value achived so far. Can be null</param>
+    /// <param name="reportChi2Progress">Event handler that can be used to report the NumberOfIterations, Chi² value and current parameter set achived so far. Can be null</param>
     /// <returns>The result of the Levenberg-Marquardt minimization</returns>
     public NonlinearMinimizationResult FindMinimum(
       IObjectiveModelNonAllocating objective,
@@ -118,7 +118,7 @@ namespace Altaxo.Calc.Optimization
       IReadOnlyList<double>? scales,
       IReadOnlyList<bool>? isFixed,
       CancellationToken cancellationToken,
-      Action<int, double>? reportChi2Progress
+      Action<int, double, IReadOnlyList<double>>? reportChi2Progress
       )
     {
       return Minimum(objective,
@@ -157,7 +157,7 @@ namespace Altaxo.Calc.Optimization
       double[]? scales,
       bool[]? isFixed,
       CancellationToken cancellationToken,
-      Action<int, double>? reportChi2Progress
+      Action<int, double, IReadOnlyList<double>>? reportChi2Progress
       )
     {
       if (objective is null)
@@ -207,7 +207,7 @@ namespace Altaxo.Calc.Optimization
         IReadOnlyList<double>? scales,
         IReadOnlyList<bool>? isFixedByUser,
         CancellationToken cancellationToken,
-        Action<int, double>? reportChi2Progress,
+        Action<int, double, IReadOnlyList<double>>? reportChi2Progress,
         double initialMu,
         double gradientTolerance,
         double stepTolerance,
@@ -287,7 +287,7 @@ namespace Altaxo.Calc.Optimization
       // First, calculate function values and setup variables
       objective.EvaluateAt(parameterValues);
       var RSS = objective.Value;  // Residual Sum of Squares = R'R
-      reportChi2Progress?.Invoke(0, RSS);
+      reportChi2Progress?.Invoke(0, RSS, parameterValues);
 
       if (!maximumIterations.HasValue)
       {
@@ -447,7 +447,7 @@ namespace Altaxo.Calc.Optimization
             newParameterValues.CopyTo(parameterValues);
             RSS = RSSnew;
             rssValueHistory.Enqueue(RSS);
-            reportChi2Progress?.Invoke(iterations, RSS);
+            reportChi2Progress?.Invoke(iterations, RSS, parameterValues);
 
             // update the parameter scales, if automatic scales was used (but only every 'ParameterScaleUpdatePeriod' iterations)
             if (useAutomaticParameterScale && iterations >= (ParameterScaleUpdatePeriod + iterationOfLastAutomaticParameterScaleEvaluation))

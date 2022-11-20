@@ -132,7 +132,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
       IReadOnlyList<bool>? isFixed,
       CancellationToken cancellationToken)
     {
-      return Fit(xValues, yValues, initialGuess, null, null, null, isFixed, cancellationToken);
+      return Fit(xValues, yValues, initialGuess, null, null, null, isFixed, cancellationToken, null);
     }
 
     /// <summary>
@@ -146,6 +146,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
     /// <param name="scales">The scales of the parameters. The array must have the same length as the parameter array. Provide null if not needed.</param>
     /// <param name="isFixed">Array of booleans, which provide which parameters are fixed. Must have the same length as the parameter array. Provide null if not needed.</param>
     /// <param name="cancellationToken">Token to cancel the evaluation</param>
+    /// <param name="reportChi2Progress">Event handler that can be used to report the NumberOfIterations, Chi² value and current parameter set achived so far. Can be null</param>
     /// <returns>The result of the Levenberg-Marquardt minimization</returns>
     public NonlinearMinimizationResult Fit(
       IReadOnlyList<double> xValues,
@@ -155,7 +156,8 @@ namespace Altaxo.Calc.Regression.Nonlinear
       IReadOnlyList<double?>? upperBounds,
       IReadOnlyList<double>? scales,
       IReadOnlyList<bool>? isFixed,
-      CancellationToken cancellationToken)
+      CancellationToken cancellationToken,
+      Action<int, double, IReadOnlyList<double>>? reportChi2Progress = null)
     {
       if (xValues.Count != yValues.Count)
         throw new ArgumentException("Length of x array is unequal length of y array");
@@ -180,7 +182,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
         MaximumIterations = MaximumNumberOfIterations,
       };
 
-      return fit.FindMinimum(model, initialGuess, lowerBounds, upperBounds, scales, isFixed, cancellationToken, null);
+      return fit.FindMinimum(model, initialGuess, lowerBounds, upperBounds, scales, isFixed, cancellationToken, reportChi2Progress);
     }
   }
 }
