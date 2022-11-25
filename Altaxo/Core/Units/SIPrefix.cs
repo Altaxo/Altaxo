@@ -25,8 +25,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Text;
 
 #nullable enable
 
@@ -58,6 +56,8 @@ namespace Altaxo.Units
     /// <summary>Dictionary of known prefixes, where the key is the exponent and the value is the known prefix.</summary>
     private static Dictionary<int, SIPrefix> _prefixByExponent;
 
+    private static SIPrefix _prefix_quecto;
+    private static SIPrefix _prefix_ronto;
     private static SIPrefix _prefix_yocto;
     private static SIPrefix _prefix_zepto;
     private static SIPrefix _prefix_atto;
@@ -79,6 +79,8 @@ namespace Altaxo.Units
     private static SIPrefix _prefix_exa;
     private static SIPrefix _prefix_zetta;
     private static SIPrefix _prefix_yotta;
+    private static SIPrefix _prefix_ronna;
+    private static SIPrefix _prefix_quetta;
 
     #region Serialization
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(SIPrefix), 0)]
@@ -107,6 +109,10 @@ namespace Altaxo.Units
     }
 
     #endregion
+
+    public static SIPrefix Quecto { get { return _prefix_quecto; } }
+
+    public static SIPrefix Ronto { get { return _prefix_ronto; } }
 
     public static SIPrefix Yocto { get { return _prefix_yocto; } }
 
@@ -150,6 +156,10 @@ namespace Altaxo.Units
 
     public static SIPrefix Yotta { get { return _prefix_yotta; } }
 
+    public static SIPrefix Ronna { get { return _prefix_ronna; } }
+
+    public static SIPrefix Quetta { get { return _prefix_quetta; } }
+
     /// <summary>
     /// Gets the maximum length of the shortcuts of any of the known prefixes.
     /// </summary>
@@ -166,14 +176,16 @@ namespace Altaxo.Units
     /// </value>
     public static int MinShortCutLength { get { return 1; } }
 
-    public static SIPrefix SmallestPrefix { get { return _prefix_yocto; } }
+    public static SIPrefix SmallestPrefix { get { return _prefix_quecto; } }
 
-    public static SIPrefix LargestPrefix { get { return _prefix_yotta; } }
+    public static SIPrefix LargestPrefix { get { return _prefix_quetta; } }
 
     static SIPrefix()
     {
       _instances = new List<SIPrefix>
       {
+        (_prefix_quecto = new SIPrefix("quecto", "q", -30)),
+        (_prefix_ronto = new SIPrefix("ronto", "r", -27)),
         (_prefix_yocto = new SIPrefix("yocto", "y", -24)),
         (_prefix_zepto = new SIPrefix("zepto", "z", -21)),
         (_prefix_atto = new SIPrefix("atto", "a", -18)),
@@ -194,12 +206,16 @@ namespace Altaxo.Units
         (_prefix_peta = new SIPrefix("peta", "P", 15)),
         (_prefix_exa = new SIPrefix("exa", "E", 18)),
         (_prefix_zetta = new SIPrefix("zetta", "Z", 21)),
-        (_prefix_yotta = new SIPrefix("yotta", "Y", 24))
+        (_prefix_yotta = new SIPrefix("yotta", "Y", 24)),
+        (_prefix_ronna = new SIPrefix("ronna", "R", 27)),
+        (_prefix_quetta = new SIPrefix("quetta", "Q", 30)),
       };
 
       _nonePrefixList = new SIPrefixList(new SIPrefix[] { _prefix_none });
       _allPrefixes = new SIPrefixList(_instances);
       _multipleOf3Prefixes = new SIPrefixList(new SIPrefix[] {
+                _prefix_quecto,
+                _prefix_ronto,
                 _prefix_yocto,
                 _prefix_zepto,
                 _prefix_atto,
@@ -216,7 +232,9 @@ namespace Altaxo.Units
                 _prefix_peta,
                 _prefix_exa,
                 _prefix_zetta,
-                _prefix_yotta
+                _prefix_yotta,
+                _prefix_ronna,
+                _prefix_quetta,
             });
 
       _prefixByExponent = new Dictionary<int, SIPrefix>();
