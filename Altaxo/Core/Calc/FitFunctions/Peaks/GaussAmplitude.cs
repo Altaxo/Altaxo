@@ -32,14 +32,14 @@ using Altaxo.Main;
 namespace Altaxo.Calc.FitFunctions.Peaks
 {
   /// <summary>
-  /// Fit fuction with one or more gaussian shaped peaks (bell shape), with a background polynomial
+  /// Fit fuction with one or more gaussian shaped peaks (bell shape), with a baseline polynomial
   /// of variable order.
   /// </summary>
   [FitFunctionClass]
   public class GaussAmplitude : IFitFunctionWithDerivative, IImmutable, IFitFunctionPeak
   {
-    /// <summary>The order of the background polynomial.</summary>
-    private readonly int _orderOfBackgroundPolynomial;
+    /// <summary>The order of the baseline polynomial.</summary>
+    private readonly int _orderOfBaselinePolynomial;
     /// <summary>The order of the polynomial with negative exponents.</summary>
     private readonly int _numberOfTerms;
 
@@ -64,7 +64,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
       {
         var s = (GaussAmplitude)obj;
         info.AddValue("NumberOfTerms", s._numberOfTerms);
-        info.AddValue("OrderOfBackgroundPolynomial", s._orderOfBackgroundPolynomial);
+        info.AddValue("OrderOfBackgroundPolynomial", s._orderOfBaselinePolynomial);
       }
 
       public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
@@ -80,16 +80,16 @@ namespace Altaxo.Calc.FitFunctions.Peaks
     public GaussAmplitude()
     {
       _numberOfTerms = 1;
-      _orderOfBackgroundPolynomial = -1;
+      _orderOfBaselinePolynomial = -1;
     }
 
     public GaussAmplitude(int numberOfGaussianTerms, int orderOfBackgroundPolynomial)
     {
       _numberOfTerms = numberOfGaussianTerms;
-      _orderOfBackgroundPolynomial = orderOfBackgroundPolynomial;
+      _orderOfBaselinePolynomial = orderOfBackgroundPolynomial;
 
-      if (!(_orderOfBackgroundPolynomial >= -1))
-        throw new ArgumentOutOfRangeException("Order of background polynomial has to be greater than or equal to zero, or -1 in order to deactivate it.");
+      if (!(_orderOfBaselinePolynomial >= -1))
+        throw new ArgumentOutOfRangeException("Order of baseline polynomial has to be greater than or equal to zero, or -1 in order to deactivate it.");
       if (!(_numberOfTerms >= 1))
         throw new ArgumentOutOfRangeException("Number of gaussian terms has to be greater than or equal to 1");
 
@@ -110,35 +110,35 @@ namespace Altaxo.Calc.FitFunctions.Peaks
     }
 
     /// <summary>
-    /// Gets the order of the background polynomial.
+    /// Gets the order of the baseline polynomial.
     /// </summary>
-    public int OrderOfBackgroundPolynomial
+    public int OrderOfBaselinePolynomial
     {
       get
       {
-        return _orderOfBackgroundPolynomial;
+        return _orderOfBaselinePolynomial;
       }
       init
       {
-        if (!(_orderOfBackgroundPolynomial >= -1))
-          throw new ArgumentOutOfRangeException("Order of background polynomial must either be -1 (to disable it) or >=0", nameof(OrderOfBackgroundPolynomial));
-        _orderOfBackgroundPolynomial = value;
+        if (!(_orderOfBaselinePolynomial >= -1))
+          throw new ArgumentOutOfRangeException("Order of baseline polynomial must either be -1 (to disable it) or >=0", nameof(OrderOfBaselinePolynomial));
+        _orderOfBaselinePolynomial = value;
       }
     }
 
     /// <summary>
-    /// Creates a new instance with the provided order of the background polynomial.
+    /// Creates a new instance with the provided order of the baseline polynomial.
     /// </summary>
-    /// <param name="orderOfBackgroundPolynomial">The order of the background polynomial. If set to -1, the background polynomial will be disabled.</param>
-    /// <returns>New instance with the background polynomial of the provided order.</returns>
-    public GaussAmplitude WithOrderOfBackgroundPolynomial(int orderOfBackgroundPolynomial)
+    /// <param name="orderOfBaselinePolynomial">The order of the baseline polynomial. If set to -1, the baseline polynomial will be disabled.</param>
+    /// <returns>New instance with the baseline polynomial of the provided order.</returns>
+    public IFitFunctionPeak WithOrderOfBaselinePolynomial(int orderOfBaselinePolynomial)
     {
-      if (!(orderOfBackgroundPolynomial >= -1))
-        throw new ArgumentOutOfRangeException($"{nameof(orderOfBackgroundPolynomial)} must be greater than or equal to 0, or -1 in order to deactivate it.");
+      if (!(orderOfBaselinePolynomial >= -1))
+        throw new ArgumentOutOfRangeException($"{nameof(orderOfBaselinePolynomial)} must be greater than or equal to 0, or -1 in order to deactivate it.");
 
-      if (!(_orderOfBackgroundPolynomial == orderOfBackgroundPolynomial))
+      if (!(_orderOfBaselinePolynomial == orderOfBaselinePolynomial))
       {
-        return new GaussAmplitude(_numberOfTerms, orderOfBackgroundPolynomial);
+        return new GaussAmplitude(_numberOfTerms, orderOfBaselinePolynomial);
       }
       else
       {
@@ -175,7 +175,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
 
       if (!(_numberOfTerms == numberOfGaussianTerms))
       {
-        return new GaussAmplitude(numberOfGaussianTerms, _orderOfBackgroundPolynomial);
+        return new GaussAmplitude(numberOfGaussianTerms, _orderOfBaselinePolynomial);
       }
       else
       {
@@ -184,7 +184,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
     }
 
     /// <inheritdoc/>
-    public (IReadOnlyList<double?>? LowerBounds, IReadOnlyList<double?>? upperBounds) GetParameterBoundariesForPositivePeaks(double? minimalPosition = null, double? maximalPosition = null, double? minimalFWHM = null, double? maximalFWHM = null)
+    public (IReadOnlyList<double?>? LowerBounds, IReadOnlyList<double?>? UpperBounds) GetParameterBoundariesForPositivePeaks(double? minimalPosition = null, double? maximalPosition = null, double? minimalFWHM = null, double? maximalFWHM = null)
     {
       var lowerBounds = new double?[NumberOfParameters];
       var upperBounds = new double?[NumberOfParameters];
@@ -220,7 +220,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
     {
       get
       {
-        return _numberOfTerms * NumberOfParametersPerPeak + _orderOfBackgroundPolynomial + 1;
+        return _numberOfTerms * NumberOfParametersPerPeak + _orderOfBaselinePolynomial + 1;
       }
     }
 
@@ -278,12 +278,12 @@ namespace Altaxo.Calc.FitFunctions.Peaks
         sumGauss += P[j] * Math.Exp(-0.5 * x * x);
       }
 
-      if (_orderOfBackgroundPolynomial >= 0)
+      if (_orderOfBaselinePolynomial >= 0)
       {
         int offset = NumberOfParametersPerPeak * _numberOfTerms;
         // evaluation of terms x^0 .. x^n
-        sumPolynomial = P[_orderOfBackgroundPolynomial + offset];
-        for (int i = _orderOfBackgroundPolynomial - 1; i >= 0; i--)
+        sumPolynomial = P[_orderOfBaselinePolynomial + offset];
+        for (int i = _orderOfBaselinePolynomial - 1; i >= 0; i--)
         {
           sumPolynomial *= X[0];
           sumPolynomial += P[i + offset];
@@ -306,12 +306,12 @@ namespace Altaxo.Calc.FitFunctions.Peaks
           sumGauss += P[j] * Math.Exp(-0.5 * arg * arg);
         }
 
-        if (_orderOfBackgroundPolynomial >= 0)
+        if (_orderOfBaselinePolynomial >= 0)
         {
           int offset = NumberOfParametersPerPeak * _numberOfTerms;
           // evaluation of terms x^0 .. x^n
-          sumPolynomial = P[_orderOfBackgroundPolynomial + offset];
-          for (int i = _orderOfBackgroundPolynomial - 1; i >= 0; i--)
+          sumPolynomial = P[_orderOfBaselinePolynomial + offset];
+          for (int i = _orderOfBaselinePolynomial - 1; i >= 0; i--)
           {
             sumPolynomial *= x;
             sumPolynomial += P[i + offset];
@@ -350,10 +350,10 @@ namespace Altaxo.Calc.FitFunctions.Peaks
           DY[r, j + 2] = expTerm * arg * arg * P[j] / P[j + 2];
         }
 
-        if (_orderOfBackgroundPolynomial >= 0)
+        if (_orderOfBaselinePolynomial >= 0)
         {
           double xn = 1;
-          for (int i = 0, j = NumberOfParametersPerPeak * _numberOfTerms; i <= _orderOfBackgroundPolynomial; ++i, ++j)
+          for (int i = 0, j = NumberOfParametersPerPeak * _numberOfTerms; i <= _orderOfBaselinePolynomial; ++i, ++j)
           {
             DY[r, j] = xn;
             xn *= x;
@@ -377,14 +377,14 @@ namespace Altaxo.Calc.FitFunctions.Peaks
     /// <inheritdoc/>
     IFitFunctionPeak IFitFunctionPeak.WithNumberOfTerms(int numberOfTerms)
     {
-      return new GaussAmplitude { NumberOfTerms = numberOfTerms, OrderOfBackgroundPolynomial = this.OrderOfBackgroundPolynomial };
+      return new GaussAmplitude { NumberOfTerms = numberOfTerms, OrderOfBaselinePolynomial = this.OrderOfBaselinePolynomial };
     }
 
     /// <inheritdoc/>
     public string[] ParameterNamesForOnePeak => new string[] { ParameterBaseName0, ParameterBaseName1, ParameterBaseName2 };
 
     /// <inheritdoc/>
-    public (double Position, double Area, double Height, double FWHM) GetPositionAreaHeightFWHMFromSinglePeakParameters(double[] parameters)
+    public (double Position, double Area, double Height, double FWHM) GetPositionAreaHeightFWHMFromSinglePeakParameters(IReadOnlyList<double> parameters)
     {
       var (pos, _, area, _, height, _, fwhm, _) = GetPositionAreaHeightFWHMFromSinglePeakParameters(parameters, null);
       return (pos, area, height, fwhm);
@@ -394,12 +394,12 @@ namespace Altaxo.Calc.FitFunctions.Peaks
 
     /// <inheritdoc/>
     public (double Position, double PositionStdDev, double Area, double AreaStdDev, double Height, double HeightStdDev, double FWHM, double FWHMStdDev)
-      GetPositionAreaHeightFWHMFromSinglePeakParameters(double[] parameters, IROMatrix<double>? cv)
+      GetPositionAreaHeightFWHMFromSinglePeakParameters(IReadOnlyList<double> parameters, IROMatrix<double>? cv)
     {
       const double Sqrt2Pi = 2.5066282746310005024;
       const double SqrtLog4 = 1.1774100225154746910;
 
-      if (parameters is null || parameters.Length != NumberOfParametersPerPeak)
+      if (parameters is null || parameters.Count != NumberOfParametersPerPeak)
         throw new ArgumentException(nameof(parameters));
 
       var height = parameters[0];

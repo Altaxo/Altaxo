@@ -38,6 +38,23 @@ namespace Altaxo.Calc.FitFunctions.Peaks
     IFitFunctionPeak WithNumberOfTerms(int numberOfTerms);
 
     /// <summary>
+    /// Gets the number of terms.
+    /// </summary>
+    int NumberOfTerms { get; }
+
+    /// <summary>
+    /// Creates a new fit function with the provided order of the baseline polynomial. A value of -1 disables the baseline.
+    /// </summary>
+    /// <param name="baselinePolynomialOrder">The order of the baseline polynomial.</param>
+    /// <returns>New fit function with the provided order of the baseline polynomial.</returns>
+    IFitFunctionPeak WithOrderOfBaselinePolynomial(int baselinePolynomialOrder);
+
+    /// <summary>
+    /// Gets the order of the polynomial that is used for the baseline. A value of -1 disables the baseline.
+    /// </summary>
+    int OrderOfBaselinePolynomial { get; }
+
+    /// <summary>
     /// Gets the initial parameters for one term (peak) by providing the height of the peak,
     /// the position of the peak, the width of the peak, and the relative height at which the width was measured.
     /// </summary>
@@ -59,7 +76,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
     /// </summary>
     /// <param name="parameters">The parameters.</param>
     /// <returns>The position, the area under the peak, the height, and the Full Width Half Maximum (FWHM).</returns>
-    (double Position, double Area, double Height, double FWHM) GetPositionAreaHeightFWHMFromSinglePeakParameters(double[] parameters);
+    (double Position, double Area, double Height, double FWHM) GetPositionAreaHeightFWHMFromSinglePeakParameters(IReadOnlyList<double> parameters);
 
     /// <summary>
     /// Gets the position, the area under the peak, the height, and the Full Width Half Maximum (FWHM) from the parameters of a single peak.
@@ -69,7 +86,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
     /// <param name="cv">The covariance matrix. Can be null (in this case the returned variance values are zero).</param>
     /// <returns>The position, the area under the peak, the height, and the Full Width Half Maximum (FWHM), together with their standard devivations.</returns>
     public (double Position, double PositionStdDev, double Area, double AreaStdDev, double Height, double HeightStdDev, double FWHM, double FWHMStdDev)
-        GetPositionAreaHeightFWHMFromSinglePeakParameters(double[] parameters, IROMatrix<double>? cv);
+        GetPositionAreaHeightFWHMFromSinglePeakParameters(IReadOnlyList<double> parameters, IROMatrix<double>? cv);
 
     /// <summary>
     /// Gets the parameter boundaries in order to have positive peaks only.
@@ -80,6 +97,6 @@ namespace Altaxo.Calc.FitFunctions.Peaks
     /// <param name="maximalFWHM">The maximal FWHM (Full-Width-Half-Maximum) that should be set in the boundary conditions.</param>
     /// <returns>The lower and the upper bounds. Both arrays (if not null) have the same length as the number of parameters.
     /// Only those elements are not null, which really bound a parameter.</returns>
-    public (IReadOnlyList<double?>? LowerBounds, IReadOnlyList<double?>? upperBounds) GetParameterBoundariesForPositivePeaks(double? minimalPosition = null, double? maximalPosition = null, double? minimalFWHM = null, double? maximalFWHM = null);
+    public (IReadOnlyList<double?>? LowerBounds, IReadOnlyList<double?>? UpperBounds) GetParameterBoundariesForPositivePeaks(double? minimalPosition = null, double? maximalPosition = null, double? minimalFWHM = null, double? maximalFWHM = null);
   }
 }

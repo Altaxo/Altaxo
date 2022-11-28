@@ -32,7 +32,7 @@ using Altaxo.Main;
 namespace Altaxo.Calc.FitFunctions.Peaks
 {
   /// <summary>
-  /// Fit function with one or more Lorentzian shaped peaks (bell shape), with a background polynomial
+  /// Fit function with one or more Lorentzian shaped peaks (bell shape), with a baseline polynomial
   /// of variable order. In case you need the probability density function of the Cauchy distribution,
   /// the equivalent fit function in the Probability namespace is better suited.
   /// </summary>
@@ -50,8 +50,8 @@ namespace Altaxo.Calc.FitFunctions.Peaks
     /// <summary>The number of Lorentzian (Cauchy) terms.</summary>
     private readonly int _numberOfTerms;
 
-    /// <summary>The order of the background polynomial.</summary>
-    private readonly int _orderOfBackgroundPolynomial;
+    /// <summary>The order of the baseline polynomial.</summary>
+    private readonly int _orderOfBaselinePolynomial;
 
     #region Serialization
 
@@ -67,7 +67,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
       {
         var s = (CauchyAmplitude)obj;
         info.AddValue("NumberOfTerms", s._numberOfTerms);
-        info.AddValue("OrderOfBackgroundPolynomial", s._orderOfBackgroundPolynomial);
+        info.AddValue("OrderOfBackgroundPolynomial", s._orderOfBaselinePolynomial);
       }
 
       public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
@@ -83,16 +83,16 @@ namespace Altaxo.Calc.FitFunctions.Peaks
     public CauchyAmplitude()
     {
       _numberOfTerms = 1;
-      _orderOfBackgroundPolynomial = -1;
+      _orderOfBaselinePolynomial = -1;
     }
 
     public CauchyAmplitude(int numberOfTerms, int orderOfBackgroundPolynomial)
     {
       _numberOfTerms = numberOfTerms;
-      _orderOfBackgroundPolynomial = orderOfBackgroundPolynomial;
+      _orderOfBaselinePolynomial = orderOfBackgroundPolynomial;
 
-      if (!(_orderOfBackgroundPolynomial >= -1))
-        throw new ArgumentOutOfRangeException("Order of background polynomial has to be greater than or equal to zero, or -1 in order to deactivate it.");
+      if (!(_orderOfBaselinePolynomial >= -1))
+        throw new ArgumentOutOfRangeException("Order of baseline polynomial has to be greater than or equal to zero, or -1 in order to deactivate it.");
       if (!(_numberOfTerms >= 1))
         throw new ArgumentOutOfRangeException("Number of peak terms has to be greater than or equal to 1");
 
@@ -106,23 +106,23 @@ namespace Altaxo.Calc.FitFunctions.Peaks
     }
 
     /// <summary>
-    /// Gets the order of the background polynomial.
+    /// Gets the order of the baseline polynomial.
     /// </summary>
-    public int OrderOfBackgroundPolynomial => _orderOfBackgroundPolynomial;
+    public int OrderOfBaselinePolynomial => _orderOfBaselinePolynomial;
 
     /// <summary>
-    /// Creates a new instance with the provided order of the background polynomial.
+    /// Creates a new instance with the provided order of the baseline polynomial.
     /// </summary>
-    /// <param name="orderOfBackgroundPolynomial">The order of the background polynomial. If set to -1, the background polynomial will be disabled.</param>
-    /// <returns>New instance with the background polynomial of the provided order.</returns>
-    public CauchyAmplitude WithOrderOfBackgroundPolynomial(int orderOfBackgroundPolynomial)
+    /// <param name="orderOfBaselinePolynomial">The order of the baseline polynomial. If set to -1, the baseline polynomial will be disabled.</param>
+    /// <returns>New instance with the baseline polynomial of the provided order.</returns>
+    public IFitFunctionPeak WithOrderOfBaselinePolynomial(int orderOfBaselinePolynomial)
     {
-      if (!(orderOfBackgroundPolynomial >= -1))
-        throw new ArgumentOutOfRangeException($"{nameof(orderOfBackgroundPolynomial)} must be greater than or equal to 0, or -1 in order to deactivate it.");
+      if (!(orderOfBaselinePolynomial >= -1))
+        throw new ArgumentOutOfRangeException($"{nameof(orderOfBaselinePolynomial)} must be greater than or equal to 0, or -1 in order to deactivate it.");
 
-      if (!(_orderOfBackgroundPolynomial == orderOfBackgroundPolynomial))
+      if (!(_orderOfBaselinePolynomial == orderOfBaselinePolynomial))
       {
-        return new CauchyAmplitude(_numberOfTerms, orderOfBackgroundPolynomial);
+        return new CauchyAmplitude(_numberOfTerms, orderOfBaselinePolynomial);
       }
       else
       {
@@ -147,7 +147,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
 
       if (!(_numberOfTerms == numberOfTerms))
       {
-        return new CauchyAmplitude(numberOfTerms, _orderOfBackgroundPolynomial);
+        return new CauchyAmplitude(numberOfTerms, _orderOfBaselinePolynomial);
       }
       else
       {
@@ -156,7 +156,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
     }
 
     /// <inheritdoc/>
-    public (IReadOnlyList<double?>? LowerBounds, IReadOnlyList<double?>? upperBounds) GetParameterBoundariesForPositivePeaks(double? minimalPosition = null, double? maximalPosition = null, double? minimalFWHM = null, double? maximalFWHM = null)
+    public (IReadOnlyList<double?>? LowerBounds, IReadOnlyList<double?>? UpperBounds) GetParameterBoundariesForPositivePeaks(double? minimalPosition = null, double? maximalPosition = null, double? minimalFWHM = null, double? maximalFWHM = null)
     {
       var lowerBounds = new double?[NumberOfParameters];
       var upperBounds = new double?[NumberOfParameters];
@@ -192,7 +192,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
     {
       get
       {
-        return _numberOfTerms * NumberOfParametersPerPeak + _orderOfBackgroundPolynomial + 1;
+        return _numberOfTerms * NumberOfParametersPerPeak + _orderOfBaselinePolynomial + 1;
       }
     }
 
@@ -250,12 +250,12 @@ namespace Altaxo.Calc.FitFunctions.Peaks
         sumTerms += P[j] / (1 + x * x);
       }
 
-      if (_orderOfBackgroundPolynomial >= 0)
+      if (_orderOfBaselinePolynomial >= 0)
       {
         int offset = NumberOfParametersPerPeak * _numberOfTerms;
         // evaluation of terms x^0 .. x^n
-        sumPolynomial = P[_orderOfBackgroundPolynomial + offset];
-        for (int i = _orderOfBackgroundPolynomial - 1; i >= 0; i--)
+        sumPolynomial = P[_orderOfBaselinePolynomial + offset];
+        for (int i = _orderOfBaselinePolynomial - 1; i >= 0; i--)
         {
           sumPolynomial *= X[0];
           sumPolynomial += P[i + offset];
@@ -279,12 +279,12 @@ namespace Altaxo.Calc.FitFunctions.Peaks
           sumTerms += P[j] / (1 + arg * arg);
         }
 
-        if (_orderOfBackgroundPolynomial >= 0)
+        if (_orderOfBaselinePolynomial >= 0)
         {
           int offset = NumberOfParametersPerPeak * _numberOfTerms;
           // evaluation of terms x^0 .. x^n
-          sumPolynomial = P[_orderOfBackgroundPolynomial + offset];
-          for (int i = _orderOfBackgroundPolynomial - 1; i >= 0; i--)
+          sumPolynomial = P[_orderOfBaselinePolynomial + offset];
+          for (int i = _orderOfBaselinePolynomial - 1; i >= 0; i--)
           {
             sumPolynomial *= x;
             sumPolynomial += P[i + offset];
@@ -322,10 +322,10 @@ namespace Altaxo.Calc.FitFunctions.Peaks
           DY[r, j + 2] = term * term * 2 * arg * arg * P[j] / P[j + 2];
         }
 
-        if (_orderOfBackgroundPolynomial >= 0)
+        if (_orderOfBaselinePolynomial >= 0)
         {
           double xn = 1;
-          for (int i = 0, j = NumberOfParametersPerPeak * _numberOfTerms; i <= _orderOfBackgroundPolynomial; ++i, ++j)
+          for (int i = 0, j = NumberOfParametersPerPeak * _numberOfTerms; i <= _orderOfBaselinePolynomial; ++i, ++j)
           {
             DY[r, j] = xn;
             xn *= x;
@@ -342,7 +342,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
     /// <inheritdoc/>
     IFitFunctionPeak IFitFunctionPeak.WithNumberOfTerms(int numberOfTerms)
     {
-      return new CauchyAmplitude(numberOfTerms, this.OrderOfBackgroundPolynomial);
+      return new CauchyAmplitude(numberOfTerms, this.OrderOfBaselinePolynomial);
     }
 
     /// <inheritdoc/>
@@ -356,7 +356,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
     }
 
     /// <inheritdoc/>
-    public (double Position, double Area, double Height, double FWHM) GetPositionAreaHeightFWHMFromSinglePeakParameters(double[] parameters)
+    public (double Position, double Area, double Height, double FWHM) GetPositionAreaHeightFWHMFromSinglePeakParameters(IReadOnlyList<double> parameters)
     {
       var height = parameters[0];
       var pos = parameters[1];
@@ -366,7 +366,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
     }
 
     /// <inheritdoc/>
-    public (double Position, double PositionStdDev, double Area, double AreaStdDev, double Height, double HeightStdDev, double FWHM, double FWHMStdDev) GetPositionAreaHeightFWHMFromSinglePeakParameters(double[] parameters, IROMatrix<double>? cv)
+    public (double Position, double PositionStdDev, double Area, double AreaStdDev, double Height, double HeightStdDev, double FWHM, double FWHMStdDev) GetPositionAreaHeightFWHMFromSinglePeakParameters(IReadOnlyList<double> parameters, IROMatrix<double>? cv)
     {
       var height = parameters[0];
       var pos = parameters[1];
