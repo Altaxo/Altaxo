@@ -38,7 +38,7 @@
         <axogc:DoubleUpDown Grid.Row="2" Grid.Column="2"
                             Value="{Binding HalfWidth}"
                             Visibility="{Binding IsHalfWidthInXUnits, Converter={x:Static axogcc:TrueToVisibilityHiddenConverter.Instance}}"
-                            Minimum="1" />
+                            Minimum="1" Maximum="1000000000"/>
 
         <Label Grid.Row="2" Grid.Column="0"
                Visibility="{Binding IsHalfWidthInXUnits, Converter={x:Static axogcc:FalseToVisibilityHiddenConverter.Instance}}"
