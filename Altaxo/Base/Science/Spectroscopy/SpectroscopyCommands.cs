@@ -38,8 +38,6 @@ using Altaxo.Gui;
 using Altaxo.Gui.Science.Spectroscopy.Raman;
 using Altaxo.Gui.Worksheet.Viewing;
 using Altaxo.Main.Services;
-using Altaxo.Science.Spectroscopy.PeakFitting;
-using Altaxo.Science.Spectroscopy.PeakSearching;
 using Altaxo.Science.Spectroscopy.Raman;
 using Altaxo.Worksheet.Commands;
 
@@ -316,14 +314,98 @@ namespace Altaxo.Science.Spectroscopy
 
         var xArr = entry.xArray;
         var yArr = entry.yArray;
+        var regions = entry.regions;
 
         // now apply the steps
-        var peakResults = doc.PeakSearching.Execute(xArr, yArr, entry.regions);
-        var fitResults = doc.PeakFitting.Execute(xArr, yArr, peakResults, cancellationTokenHard);
+        (xArr, yArr, regions, var peakResults) = doc.PeakSearching.Execute(xArr, yArr, regions);
+        (xArr, yArr, regions, var fitResults) = doc.PeakFitting.Execute(xArr, yArr, regions, peakResults, cancellationTokenHard);
 
         // Store the results
 
-        if (doc.PeakSearching is not PeakSearchingNone)
+        int idxRow;
+        if (fitResults.Count > 0) // if we have fit results then we have executed a fit
+        {
+          // First, the columns for the peak search results
+          var cPos = peakTable.DataColumns.EnsureExistence($"Position{runningColumnNumber}", typeof(DoubleColumn), ColumnKind.X, runningColumnNumber);
+          var cPro = peakTable.DataColumns.EnsureExistence($"Prominence{runningColumnNumber}", typeof(DoubleColumn), ColumnKind.V, runningColumnNumber);
+          var cHei = peakTable.DataColumns.EnsureExistence($"Height{runningColumnNumber}", typeof(DoubleColumn), ColumnKind.V, runningColumnNumber);
+          var cWid = peakTable.DataColumns.EnsureExistence($"Width{runningColumnNumber}", typeof(DoubleColumn), ColumnKind.V, runningColumnNumber);
+
+          // and second, the columns for the peak fit results
+          var cFNot = peakTable.DataColumns.EnsureExistence($"FitNotes{runningColumnNumber}", typeof(TextColumn), ColumnKind.V, runningColumnNumber);
+          var cFPos = peakTable.DataColumns.EnsureExistence($"FitPosition{runningColumnNumber}", typeof(DoubleColumn), ColumnKind.X, runningColumnNumber);
+          var cFPosVar = peakTable.DataColumns.EnsureExistence($"FitPosition{runningColumnNumber}.Err", typeof(DoubleColumn), ColumnKind.Err, runningColumnNumber);
+          var cFArea = peakTable.DataColumns.EnsureExistence($"FitArea{runningColumnNumber}", typeof(DoubleColumn), ColumnKind.V, runningColumnNumber);
+          var cFAreaVar = peakTable.DataColumns.EnsureExistence($"FitArea{runningColumnNumber}.Err", typeof(DoubleColumn), ColumnKind.Err, runningColumnNumber);
+          var cFHei = peakTable.DataColumns.EnsureExistence($"FitHeight{runningColumnNumber}", typeof(DoubleColumn), ColumnKind.V, runningColumnNumber);
+          var cFHeiVar = peakTable.DataColumns.EnsureExistence($"FitHeight{runningColumnNumber}.Err", typeof(DoubleColumn), ColumnKind.Err, runningColumnNumber);
+          var cFWid = peakTable.DataColumns.EnsureExistence($"FitFwhm{runningColumnNumber}", typeof(DoubleColumn), ColumnKind.V, runningColumnNumber);
+          var cFWidVar = peakTable.DataColumns.EnsureExistence($"FitFwhm{runningColumnNumber}.Err", typeof(DoubleColumn), ColumnKind.Err, runningColumnNumber);
+          var cFirstPoint = peakTable.DataColumns.EnsureExistence($"FitFirstPoint{runningColumnNumber}", typeof(DoubleColumn), ColumnKind.V, runningColumnNumber);
+          var cLastPoint = peakTable.DataColumns.EnsureExistence($"FitLastPoint{runningColumnNumber}", typeof(DoubleColumn), ColumnKind.V, runningColumnNumber);
+          var cNumberOfPoints = peakTable.DataColumns.EnsureExistence($"FitNumberOfPoints{runningColumnNumber}", typeof(DoubleColumn), ColumnKind.V, runningColumnNumber);
+          var cFirstXValue = peakTable.DataColumns.EnsureExistence($"FitFirstXValue{runningColumnNumber}", typeof(DoubleColumn), ColumnKind.V, runningColumnNumber);
+          var cLastXValue = peakTable.DataColumns.EnsureExistence($"FitLastXValue{runningColumnNumber}", typeof(DoubleColumn), ColumnKind.V, runningColumnNumber);
+          var cSumChiSquare = peakTable.DataColumns.EnsureExistence($"SumChiSquare{runningColumnNumber}", typeof(DoubleColumn), ColumnKind.V, runningColumnNumber);
+          var cSigmaSquare = peakTable.DataColumns.EnsureExistence($"SigmaSquare{runningColumnNumber}", typeof(DoubleColumn), ColumnKind.V, runningColumnNumber);
+
+          idxRow = 0;
+          for (var ri = 0; ri < fitResults.Count; ri++)
+          {
+            var descriptions = fitResults[ri].PeakDescriptions;
+            for (var pi = 0; pi < descriptions.Count; pi++)
+            {
+              var r = descriptions[pi];
+
+              if (r.SearchDescription is { } searchDesc)
+              {
+                cPos[idxRow] = searchDesc.PositionValue;
+                cPro[idxRow] = searchDesc.Prominence;
+                cHei[idxRow] = searchDesc.Height;
+                cWid[idxRow] = searchDesc.WidthValue;
+              }
+
+              if (r.FitFunction is { } fitFunction)
+              {
+                var (pos, posVar, area, areaVar, height, heightVar, fwhm, fwhmVar) = fitFunction.GetPositionAreaHeightFWHMFromSinglePeakParameters(r.PeakParameter, r.PeakParameterCovariances);
+
+                cFPos[idxRow] = pos;
+                cFPosVar[idxRow] = posVar;
+                cFArea[idxRow] = area;
+                cFAreaVar[idxRow] = areaVar;
+                cFHei[idxRow] = height;
+                cFHeiVar[idxRow] = heightVar;
+                cFWid[idxRow] = fwhm;
+                cFWidVar[idxRow] = fwhmVar;
+                cFirstPoint[idxRow] = r.FirstFitPoint;
+                cLastPoint[idxRow] = r.LastFitPoint;
+                int numberOfFitPoints = 1 + Math.Abs(r.LastFitPoint - r.FirstFitPoint);
+                cNumberOfPoints[idxRow] = numberOfFitPoints;
+                cFirstXValue[idxRow] = r.FirstFitPosition;
+                cLastXValue[idxRow] = r.LastFitPosition;
+                cSumChiSquare[idxRow] = r.SumChiSquare;
+                cSigmaSquare[idxRow] = r.SigmaSquare;
+
+                var parameterNames = fitFunction.ParameterNamesForOnePeak;
+                for (var j = 0; j < parameterNames.Length; j++)
+                {
+                  var cParaValue = peakTable.DataColumns.EnsureExistence($"{parameterNames[j]}{runningColumnNumber}", typeof(DoubleColumn), ColumnKind.V, runningColumnNumber);
+                  var cParaStdError = peakTable.DataColumns.EnsureExistence($"{parameterNames[j]}{runningColumnNumber}.Err", typeof(DoubleColumn), ColumnKind.Err, runningColumnNumber);
+
+                  cParaValue[idxRow] = r.PeakParameter[j];
+                  cParaStdError[idxRow] = r.PeakParameterCovariances is null ? 0 : Math.Sqrt(r.PeakParameterCovariances[j, j]);
+                }
+
+
+              }
+              cFNot[idxRow] = r.Notes;
+              ++idxRow;
+            }
+          }
+        }
+
+
+        else if (peakResults.Count > 0) // else if we have peak results, then we have executed a peak search
         {
 
           var cPos = peakTable.DataColumns.EnsureExistence($"Position{runningColumnNumber}", typeof(DoubleColumn), ColumnKind.X, runningColumnNumber);
@@ -331,7 +413,7 @@ namespace Altaxo.Science.Spectroscopy
           var cHei = peakTable.DataColumns.EnsureExistence($"Height{runningColumnNumber}", typeof(DoubleColumn), ColumnKind.V, runningColumnNumber);
           var cWid = peakTable.DataColumns.EnsureExistence($"Width{runningColumnNumber}", typeof(DoubleColumn), ColumnKind.V, runningColumnNumber);
 
-          var idxRow = 0;
+          idxRow = 0;
           for (var ri = 0; ri < peakResults.Count; ri++)
           {
             var descriptions = peakResults[ri].PeakDescriptions;
@@ -345,209 +427,168 @@ namespace Altaxo.Science.Spectroscopy
               ++idxRow;
             }
           }
+        }
 
-          if (doc.PeakFitting is not PeakFittingNone)
+        // Store the preprocessed spectra, if activated in the options
+        if (doc.OutputOptions.OutputPreprocessedCurve)
+        {
+          var cXPre = (DoubleColumn)peakTable.DataColumns.EnsureExistence(PeakTable_PreprocessedColumnNameX(runningColumnNumber), typeof(DoubleColumn), ColumnKind.X, groupNumberBase + 1);
+          var cYPre = (DoubleColumn)peakTable.DataColumns.EnsureExistence(PeakTable_PreprocessedColumnNameY(runningColumnNumber), typeof(DoubleColumn), ColumnKind.V, groupNumberBase + 1);
+          cXPre.Data = xArr;
+          cYPre.Data = yArr;
+        }
+
+        if (doc.OutputOptions.OutputFitCurve && fitResults.Count > 0)
+        {
+          // output also a column, which designates, whether a point was used for the fit or was not used.
+          // the column group belongs to the preprocessed spectrum
+          var cYUsedForFit = (DoubleColumn)peakTable.DataColumns.EnsureExistence(PeakTable_UsedForFitColumnName(runningColumnNumber), typeof(DoubleColumn), ColumnKind.V, groupNumberBase + 1);
+
+          // two other columns which accomodate the fit curve
+          var cXFit = (DoubleColumn)peakTable.DataColumns.EnsureExistence(PeakTable_FitCurveColumnNameX(runningColumnNumber), typeof(DoubleColumn), ColumnKind.X, groupNumberBase + 2);
+          var cYFit = (DoubleColumn)peakTable.DataColumns.EnsureExistence(PeakTable_FitCurveColumnNameY(runningColumnNumber), typeof(DoubleColumn), ColumnKind.V, groupNumberBase + 2);
+
+
+          var xUsedForFit = new HashSet<double>(); // x-values that were used for the fit
+                                                   // Create a fit curve
+                                                   // Note that we process each region individually
+          var yFitValues = new double[entry.xArray.Length];
+          var idxOutputRow = 0;
+          for (var idxRegion = 0; idxRegion < fitResults.Count; idxRegion++)
           {
-            var cFNot = peakTable.DataColumns.EnsureExistence($"FitNotes{runningColumnNumber}", typeof(TextColumn), ColumnKind.V, runningColumnNumber);
-            var cFPos = peakTable.DataColumns.EnsureExistence($"FitPosition{runningColumnNumber}", typeof(DoubleColumn), ColumnKind.X, runningColumnNumber);
-            var cFPosVar = peakTable.DataColumns.EnsureExistence($"FitPosition{runningColumnNumber}.Err", typeof(DoubleColumn), ColumnKind.Err, runningColumnNumber);
-            var cFArea = peakTable.DataColumns.EnsureExistence($"FitArea{runningColumnNumber}", typeof(DoubleColumn), ColumnKind.V, runningColumnNumber);
-            var cFAreaVar = peakTable.DataColumns.EnsureExistence($"FitArea{runningColumnNumber}.Err", typeof(DoubleColumn), ColumnKind.Err, runningColumnNumber);
-            var cFHei = peakTable.DataColumns.EnsureExistence($"FitHeight{runningColumnNumber}", typeof(DoubleColumn), ColumnKind.V, runningColumnNumber);
-            var cFHeiVar = peakTable.DataColumns.EnsureExistence($"FitHeight{runningColumnNumber}.Err", typeof(DoubleColumn), ColumnKind.Err, runningColumnNumber);
-            var cFWid = peakTable.DataColumns.EnsureExistence($"FitFwhm{runningColumnNumber}", typeof(DoubleColumn), ColumnKind.V, runningColumnNumber);
-            var cFWidVar = peakTable.DataColumns.EnsureExistence($"FitFwhm{runningColumnNumber}.Err", typeof(DoubleColumn), ColumnKind.Err, runningColumnNumber);
-            var cFirstPoint = peakTable.DataColumns.EnsureExistence($"FitFirstPoint{runningColumnNumber}", typeof(DoubleColumn), ColumnKind.V, runningColumnNumber);
-            var cLastPoint = peakTable.DataColumns.EnsureExistence($"FitLastPoint{runningColumnNumber}", typeof(DoubleColumn), ColumnKind.V, runningColumnNumber);
-            var cNumberOfPoints = peakTable.DataColumns.EnsureExistence($"FitNumberOfPoints{runningColumnNumber}", typeof(DoubleColumn), ColumnKind.V, runningColumnNumber);
-            var cFirstXValue = peakTable.DataColumns.EnsureExistence($"FitFirstXValue{runningColumnNumber}", typeof(DoubleColumn), ColumnKind.V, runningColumnNumber);
-            var cLastXValue = peakTable.DataColumns.EnsureExistence($"FitLastXValue{runningColumnNumber}", typeof(DoubleColumn), ColumnKind.V, runningColumnNumber);
-            var cSumChiSquare = peakTable.DataColumns.EnsureExistence($"SumChiSquare{runningColumnNumber}", typeof(DoubleColumn), ColumnKind.V, runningColumnNumber);
-            var cSigmaSquare = peakTable.DataColumns.EnsureExistence($"SigmaSquare{runningColumnNumber}", typeof(DoubleColumn), ColumnKind.V, runningColumnNumber);
+            var descriptionsOfRegion = fitResults[idxRegion].PeakDescriptions;
+            var regionStart = fitResults[idxRegion].StartOfRegion;
+            var regionEnd = fitResults[idxRegion].EndOfRegion;
+            var regionLength = regionEnd - regionStart;
 
-            idxRow = 0;
-            for (var ri = 0; ri < peakResults.Count; ri++)
+            double[] localXValues = GetXArrayWithResolution(entry.xArray, regionStart, regionEnd, doc.OutputOptions.OutputFitCurveSamplingFactor);
+
+            var ySumValues = new double[localXValues.Length];
+            var yScratch = new double[localXValues.Length];
+            for (var pi = 0; pi < descriptionsOfRegion.Count; pi++)
             {
-              var descriptions = fitResults[ri].PeakDescriptions;
-              for (var pi = 0; pi < descriptions.Count; pi++)
+              var peakDescription = descriptionsOfRegion[pi];
+              if (peakDescription.FitFunction is IFitFunctionPeak fitFunction)
               {
-                var r = descriptions[pi];
+                fitFunction = fitFunction.WithNumberOfTerms(1).WithOrderOfBaselinePolynomial(-1);
+                var para = peakDescription.PeakParameter;
+                fitFunction.Evaluate(MatrixMath.ToROMatrixWithOneColumn(localXValues), para, VectorMath.ToVector(yScratch), null);
+                VectorMath.Add(ySumValues, yScratch, ySumValues);
 
-                if (r.FitFunction is { } fitFunction)
+                for (int j = peakDescription.FirstFitPoint; j <= peakDescription.LastFitPoint; ++j)
                 {
-                  var (pos, posVar, area, areaVar, height, heightVar, fwhm, fwhmVar) = fitFunction.GetPositionAreaHeightFWHMFromSinglePeakParameters(r.PeakParameter, r.PeakParameterCovariances);
-
-                  cFPos[idxRow] = pos;
-                  cFPosVar[idxRow] = posVar;
-                  cFArea[idxRow] = area;
-                  cFAreaVar[idxRow] = areaVar;
-                  cFHei[idxRow] = height;
-                  cFHeiVar[idxRow] = heightVar;
-                  cFWid[idxRow] = fwhm;
-                  cFWidVar[idxRow] = fwhmVar;
-                  cFirstPoint[idxRow] = r.FirstFitPoint;
-                  cLastPoint[idxRow] = r.LastFitPoint;
-                  int numberOfFitPoints = 1 + Math.Abs(r.LastFitPoint - r.FirstFitPoint);
-                  cNumberOfPoints[idxRow] = numberOfFitPoints;
-                  cFirstXValue[idxRow] = r.FirstFitPosition;
-                  cLastXValue[idxRow] = r.LastFitPosition;
-                  cSumChiSquare[idxRow] = r.SumChiSquare;
-                  cSigmaSquare[idxRow] = r.SigmaSquare;
-
-                  var parameterNames = fitFunction.ParameterNamesForOnePeak;
-                  for (var j = 0; j < parameterNames.Length; j++)
-                  {
-                    var cParaValue = peakTable.DataColumns.EnsureExistence($"{parameterNames[j]}{runningColumnNumber}", typeof(DoubleColumn), ColumnKind.V, runningColumnNumber);
-                    var cParaStdError = peakTable.DataColumns.EnsureExistence($"{parameterNames[j]}{runningColumnNumber}.Err", typeof(DoubleColumn), ColumnKind.Err, runningColumnNumber);
-
-                    cParaValue[idxRow] = r.PeakParameter[j];
-                    cParaStdError[idxRow] = r.PeakParameterCovariances is null ? 0 : Math.Sqrt(r.PeakParameterCovariances[j, j]);
-                  }
-
-
-                }
-                cFNot[idxRow] = r.Notes;
-                ++idxRow;
-              }
-            }
-          }
-
-          // Store the preprocessed spectra, if activated in the options
-          if (doc.OutputOptions.OutputPreprocessedCurve)
-          {
-            var cXPre = (DoubleColumn)peakTable.DataColumns.EnsureExistence(PeakTable_PreprocessedColumnNameX(runningColumnNumber), typeof(DoubleColumn), ColumnKind.X, groupNumberBase + 1);
-            var cYPre = (DoubleColumn)peakTable.DataColumns.EnsureExistence(PeakTable_PreprocessedColumnNameY(runningColumnNumber), typeof(DoubleColumn), ColumnKind.V, groupNumberBase + 1);
-            cXPre.Data = entry.xArray;
-            cYPre.Data = entry.yArray;
-          }
-
-          if (doc.OutputOptions.OutputFitCurve && fitResults is not null)
-          {
-            // output also a column, which designates, whether a point was used for the fit or was not used.
-            // the column group belongs to the preprocessed spectrum
-            var cYUsedForFit = (DoubleColumn)peakTable.DataColumns.EnsureExistence(PeakTable_UsedForFitColumnName(runningColumnNumber), typeof(DoubleColumn), ColumnKind.V, groupNumberBase + 1);
-
-            // two other columns which accomodate the fit curve
-            var cXFit = (DoubleColumn)peakTable.DataColumns.EnsureExistence(PeakTable_FitCurveColumnNameX(runningColumnNumber), typeof(DoubleColumn), ColumnKind.X, groupNumberBase + 2);
-            var cYFit = (DoubleColumn)peakTable.DataColumns.EnsureExistence(PeakTable_FitCurveColumnNameY(runningColumnNumber), typeof(DoubleColumn), ColumnKind.V, groupNumberBase + 2);
-
-
-            var xUsedForFit = new HashSet<double>(); // x-values that were used for the fit
-            // Create a fit curve
-            // Note that we process each region individually
-            var yFitValues = new double[entry.xArray.Length];
-            var idxOutputRow = 0;
-            for (var idxRegion = 0; idxRegion < peakResults.Count; idxRegion++)
-            {
-              var descriptionsOfRegion = fitResults[idxRegion].PeakDescriptions;
-              var regionStart = fitResults[idxRegion].StartOfRegion;
-              var regionEnd = fitResults[idxRegion].EndOfRegion;
-              var regionLength = regionEnd - regionStart;
-
-              double[] localXValues = GetXArrayWithResolution(entry.xArray, regionStart, regionEnd, doc.OutputOptions.OutputFitCurveSamplingFactor);
-
-              var ySumValues = new double[localXValues.Length];
-              var yScratch = new double[localXValues.Length];
-              for (var pi = 0; pi < descriptionsOfRegion.Count; pi++)
-              {
-                var peakDescription = descriptionsOfRegion[pi];
-                if (peakDescription.FitFunction is IFitFunctionPeak fitFunction)
-                {
-                  fitFunction = fitFunction.WithNumberOfTerms(1);
-                  var para = peakDescription.PeakParameter;
-                  fitFunction.Evaluate(MatrixMath.ToROMatrixWithOneColumn(localXValues), para, VectorMath.ToVector(yScratch), null);
-                  VectorMath.Add(ySumValues, yScratch, ySumValues);
-
-                  for (int j = peakDescription.FirstFitPoint; j <= peakDescription.LastFitPoint; ++j)
-                  {
-                    xUsedForFit.Add(entry.xArray[j]);
-                  }
-                }
-              }
-
-              // put the data directly into the column
-              for (int i = 0; i < localXValues.Length; ++i, ++idxOutputRow)
-              {
-                cXFit[idxOutputRow] = localXValues[i];
-                cYFit[idxOutputRow] = ySumValues[i];
-              }
-            }
-
-            for (int i = 0; i < xArr.Length; ++i)
-            {
-              cYUsedForFit[i] = xUsedForFit.Contains(xArr[i]) ? 1 : 0;
-            }
-          }
-
-          if (doc.OutputOptions.OutputFitCurveAsSeparatePeaks && fitResults is not null)
-          {
-            // output each peak separately
-            // because we don't want extra columns for every peak, we put all peaks into 3 columns
-            // i.e. x-column, y-column, and identifier colum
-            // the values of each peak are separated by a blank row, thus a line will not connect
-            // the identifier column can be used to color each fit line separately
-
-            var cXFit = (DoubleColumn)peakTable.DataColumns.EnsureExistence(PeakTable_SeparatePeaksColumnNameX(runningColumnNumber), typeof(DoubleColumn), ColumnKind.X, groupNumberBase + 3);
-            var cYFit = (DoubleColumn)peakTable.DataColumns.EnsureExistence(PeakTable_SeparatePeaksColumnNameY(runningColumnNumber), typeof(DoubleColumn), ColumnKind.V, groupNumberBase + 3);
-            var cIDFit = (DoubleColumn)peakTable.DataColumns.EnsureExistence(PeakTable_SeparatePeaksColumnNameID(runningColumnNumber), typeof(DoubleColumn), ColumnKind.V, groupNumberBase + 3);
-
-            idxRow = 0;
-            var idxPeak = 0;
-            for (var idxRegion = 0; idxRegion < peakResults.Count; idxRegion++)
-            {
-              var descriptionsOfRegion = fitResults[idxRegion].PeakDescriptions;
-              var regionStart = fitResults[idxRegion].StartOfRegion;
-              var regionEnd = fitResults[idxRegion].EndOfRegion;
-              var regionLength = regionEnd - regionStart;
-
-              var xArrOfRegion = new double[regionLength];
-              Array.Copy(xArr, regionStart, xArrOfRegion, 0, regionLength);
-              var xMinimumOfRegion = xArrOfRegion.Min();
-              var xMaximumOfRegion = xArrOfRegion.Max();
-
-              var ySumValues = new double[regionLength];
-              var yScratch = new double[regionLength];
-              for (var pi = 0; pi < descriptionsOfRegion.Count; pi++)
-              {
-                var peakDescription = descriptionsOfRegion[pi];
-                if (peakDescription.FitFunction is IFitFunctionPeak fitFunction)
-                {
-                  fitFunction = fitFunction.WithNumberOfTerms(1);
-
-                  var peakProperties = fitFunction.GetPositionAreaHeightFWHMFromSinglePeakParameters(peakDescription.PeakParameter);
-
-                  if (peakProperties.Height == 0)
-                    continue;
-
-                  double widthScale = Math.Abs((peakDescription.LastFitPosition - peakDescription.FirstFitPosition) / peakDescription.SearchDescription.WidthValue);
-                  var centerPos = peakProperties.Position;
-                  var leftPos = Math.Min(centerPos - peakProperties.FWHM * widthScale * 0.5, peakDescription.FirstFitPosition);
-                  var rightPos = Math.Max(centerPos + peakProperties.FWHM * widthScale * 0.5, peakDescription.LastFitPosition);
-
-                  var xValues = GetXValuesForPeak(xArrOfRegion, xMinimumOfRegion, xMaximumOfRegion, leftPos, centerPos, rightPos, doc.OutputOptions.OutputFitCurveAsSeparatePeaksSamplingFactor);
-                  yScratch = new double[xValues.Length];
-                  fitFunction.Evaluate(MatrixMath.ToROMatrixWithOneColumn(xValues), peakDescription.FitFunctionParameter, VectorMath.ToVector(yScratch), null);
-
-                  // output the values
-                  for (int j = 0; j < xValues.Length; j++)
-                  {
-                    cXFit[idxRow] = xValues[j];
-                    cYFit[idxRow] = yScratch[j];
-                    cIDFit[idxRow] = idxPeak;
-                    ++idxRow;
-                  }
-                  ++idxRow; // leave one row empty after output of a single peak
-                  ++idxPeak;
+                  xUsedForFit.Add(entry.xArray[j]);
                 }
               }
             }
-            // finally, divide the identifier column by the number of peaks
-            for (int i = 0; i < cIDFit.Count; i++)
+
+            // put the data directly into the column
+            for (int i = 0; i < localXValues.Length; ++i, ++idxOutputRow)
+            {
+              cXFit[idxOutputRow] = localXValues[i];
+              cYFit[idxOutputRow] = ySumValues[i];
+            }
+          }
+
+          for (int i = 0; i < xArr.Length; ++i)
+          {
+            cYUsedForFit[i] = xUsedForFit.Contains(xArr[i]) ? 1 : 0;
+          }
+        }
+
+        if (doc.OutputOptions.OutputFitCurveAsSeparatePeaks && fitResults.Count > 0)
+        {
+          // output each peak separately
+          // since we don't want extra columns for every peak, we put all peaks into 3 columns
+          // i.e. x-column, y-column, and identifier colum
+          // the values of each peak are separated by a blank row, thus a line will not connect
+          // the identifier column can be used to color each fit line separately
+
+          var cXFit = (DoubleColumn)peakTable.DataColumns.EnsureExistence(PeakTable_SeparatePeaksColumnNameX(runningColumnNumber), typeof(DoubleColumn), ColumnKind.X, groupNumberBase + 3);
+          var cYFit = (DoubleColumn)peakTable.DataColumns.EnsureExistence(PeakTable_SeparatePeaksColumnNameY(runningColumnNumber), typeof(DoubleColumn), ColumnKind.V, groupNumberBase + 3);
+          var cIDFit = (DoubleColumn)peakTable.DataColumns.EnsureExistence(PeakTable_SeparatePeaksColumnNameID(runningColumnNumber), typeof(DoubleColumn), ColumnKind.V, groupNumberBase + 3);
+
+          idxRow = 0;
+          var idxPeak = 0;
+          for (var idxRegion = 0; idxRegion < fitResults.Count; idxRegion++)
+          {
+            var descriptionsOfRegion = fitResults[idxRegion].PeakDescriptions;
+            var regionStart = fitResults[idxRegion].StartOfRegion;
+            var regionEnd = fitResults[idxRegion].EndOfRegion;
+            var regionLength = regionEnd - regionStart;
+
+            var xArrOfRegion = new double[regionLength];
+            Array.Copy(xArr, regionStart, xArrOfRegion, 0, regionLength);
+            var xMinimumOfRegion = xArrOfRegion.Min();
+            var xMaximumOfRegion = xArrOfRegion.Max();
+
+            var ySumValues = new double[regionLength];
+            var yScratch = new double[regionLength];
+            for (var pi = 0; pi < descriptionsOfRegion.Count; pi++)
+            {
+              var peakDescription = descriptionsOfRegion[pi];
+              if (peakDescription.FitFunction is IFitFunctionPeak fitFunction)
+              {
+                fitFunction = fitFunction.WithNumberOfTerms(1).WithOrderOfBaselinePolynomial(-1);
+
+                var peakProperties = fitFunction.GetPositionAreaHeightFWHMFromSinglePeakParameters(peakDescription.PeakParameter);
+
+                if (peakProperties.Height == 0)
+                  continue;
+
+                double widthScale, leftPos, rightPos;
+                var centerPos = peakProperties.Position;
+                if (peakDescription.FirstFitPosition == xMinimumOfRegion && peakDescription.LastFitPosition == xMaximumOfRegion)
+                {
+                  // we have a method that uses the entire region for the fit
+                  widthScale = 5;
+                  leftPos = centerPos - peakProperties.FWHM * widthScale * 0.5;
+                  rightPos = centerPos + peakProperties.FWHM * widthScale * 0.5;
+                }
+                else
+                {
+                  // we have a method that uses only some points around the center position for the fit
+                  widthScale = Math.Abs((peakDescription.LastFitPosition - peakDescription.FirstFitPosition) / peakDescription.SearchDescription.WidthValue);
+                  leftPos = Math.Min(centerPos - peakProperties.FWHM * widthScale * 0.5, peakDescription.FirstFitPosition);
+                  rightPos = Math.Max(centerPos + peakProperties.FWHM * widthScale * 0.5, peakDescription.LastFitPosition);
+                }
+
+
+                var xValues = GetXValuesForPeak(xArrOfRegion, xMinimumOfRegion, xMaximumOfRegion, leftPos, centerPos, rightPos, doc.OutputOptions.OutputFitCurveAsSeparatePeaksSamplingFactor);
+                yScratch = new double[xValues.Length];
+                fitFunction.Evaluate(MatrixMath.ToROMatrixWithOneColumn(xValues), peakDescription.PeakParameter, VectorMath.ToVector(yScratch), null);
+
+                // output the values of a single peak
+                for (int j = 0; j < xValues.Length; j++)
+                {
+                  cXFit[idxRow] = xValues[j];
+                  cYFit[idxRow] = yScratch[j];
+                  cIDFit[idxRow] = idxPeak;
+                  ++idxRow;
+                }
+
+                {
+                  // leave one row empty after output of a single peak
+                  cXFit[idxRow] = double.NaN;
+                  cYFit[idxRow] = double.NaN;
+                  cIDFit[idxRow] = double.NaN;
+                  ++idxRow;
+                }
+
+                ++idxPeak;
+              }
+            }
+          }
+          // finally, divide the identifier column by the number of peaks
+          for (int i = 0; i < cIDFit.Count; i++)
+          {
+            if (!cIDFit.IsElementEmpty(i))
             {
               cIDFit[i] = ((((int)cIDFit[i] * (idxPeak + 1)) / 4) % idxPeak) / ((double)idxPeak - 1);
             }
           }
         }
+
 
         resultList.Add((entry.xOrgCol, entry.yOrgCol, entry.xPreprocessedCol, entry.yPreprocessedCol, fitResults));
       }
@@ -734,7 +775,7 @@ namespace Altaxo.Science.Spectroscopy
             var scatter = pi.Style.OfType<ScatterPlotStyle>().FirstOrDefault();
             if (scatter is not null)
             {
-              scatter.SymbolSize /= 2; // use only half the symbol size of a usual scatter plot
+              scatter.SymbolSize /= 4; // use only a quarter of the symbol size of a usual scatter plot
             }
           }
 

@@ -237,7 +237,13 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
     }
     #endregion
 
-    public IReadOnlyList<(IReadOnlyList<PeakDescription> PeakDescriptions, int StartOfRegion, int EndOfRegion)> Execute(double[]? x, double[] y, int[]? regions)
+    public
+      (
+      double[] x,
+      double[] y,
+      int[]? regions,
+      IReadOnlyList<(IReadOnlyList<PeakDescription> PeakDescriptions, int StartOfRegion, int EndOfRegion)> peakSearchResults
+      ) Execute(double[] x, double[] y, int[]? regions)
     {
       var peakDescriptions = new List<(IReadOnlyList<PeakDescription> PeakDescriptions, int StartOfRegion, int EndOfRegion)>();
       foreach (var (start, end) in RegionHelper.GetRegionRanges(regions, y.Length))
@@ -253,7 +259,7 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
         peakDescriptions.Add((result, start, end));
       }
 
-      return peakDescriptions;
+      return (x, y, regions, peakDescriptions);
     }
 
     public List<PeakDescription> Execute(double[]? x, double[] y)

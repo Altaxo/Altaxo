@@ -25,14 +25,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Altaxo.Calc.FitFunctions.Peaks;
 using Altaxo.Collections;
 using Altaxo.Gui.Common;
-using Altaxo.Main.Properties;
 using Altaxo.Science.Spectroscopy.PeakFitting;
-using Altaxo.Science.Spectroscopy.PeakSearching;
 using Altaxo.Units;
 
 namespace Altaxo.Gui.Science.Spectroscopy.PeakFitting
@@ -96,6 +92,22 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakFitting
     }
 
 
+    public QuantityWithUnitGuiEnvironment MinimalRelativeHeightEnvironment => RelationEnvironment.Instance;
+
+    private DimensionfulQuantity _minimalRelativeHeight;
+
+    public DimensionfulQuantity MinimalRelativeHeight
+    {
+      get => _minimalRelativeHeight;
+      set
+      {
+        if (!(_minimalRelativeHeight == value))
+        {
+          _minimalRelativeHeight = value;
+          OnPropertyChanged(nameof(MinimalRelativeHeight));
+        }
+      }
+    }
 
 
     #endregion
@@ -104,7 +116,7 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakFitting
     {
       base.Initialize(initData);
 
-      if(initData)
+      if (initData)
       {
         var ftypeList = new SelectableListNodeList(
           Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(IFitFunctionPeak))
@@ -116,21 +128,32 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakFitting
         OrderOfBaselinePolynomial = _doc.OrderOfBaselinePolynomial;
 
         MaximumNumberOfPeaks = _doc.MaximumNumberOfPeaks;
+
+        MinimalRelativeHeight = new DimensionfulQuantity(_doc.MinimalRelativeHeight, Altaxo.Units.Dimensionless.Unity.Instance).AsQuantityIn(MinimalRelativeHeightEnvironment.DefaultUnit);
       }
     }
 
     public override bool Apply(bool disposeController)
     {
-      _doc = _doc with
+      try
       {
-        FitFunction = (IFitFunctionPeak)Activator.CreateInstance(FitFunctions.SelectedValue),
-        OrderOfBaselinePolynomial = OrderOfBaselinePolynomial,
-        MaximumNumberOfPeaks = MaximumNumberOfPeaks,
-      };
+        _doc = _doc with
+        {
+          FitFunction = (IFitFunctionPeak)Activator.CreateInstance(FitFunctions.SelectedValue),
+          OrderOfBaselinePolynomial = OrderOfBaselinePolynomial,
+          MaximumNumberOfPeaks = MaximumNumberOfPeaks,
+          MinimalRelativeHeight = MinimalRelativeHeight.AsValueInSIUnits,
+        };
+      }
+      catch (Exception ex)
+      {
+        Current.Gui.ErrorMessageBox(ex.Message);
+        return ApplyEnd(false, disposeController);
+      }
 
       return ApplyEnd(true, disposeController);
     }
 
-   
+
   }
 }

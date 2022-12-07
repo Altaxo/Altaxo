@@ -42,7 +42,12 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
     /// <returns>The results of the peak searching. For each spectral regions, a tuple of the peak descriptions in that range, together
     /// with the start and end index (exclusive) of that range is returned. Please note that the peak descriptions
     /// contain position indices that are relative to the corresponding range (thus not to the underlying spectral array).</returns>
-    IReadOnlyList<(IReadOnlyList<PeakDescription> PeakDescriptions, int StartOfRegion, int EndOfRegion)> Execute(double[]? x, double[] y, int[]? regions);
+    (
+    double[] x,
+    double[] y,
+    int[]? regions,
+    IReadOnlyList<(IReadOnlyList<PeakDescription> PeakDescriptions, int StartOfRegion, int EndOfRegion)> peakSearchResults
+    ) Execute(double[] x, double[] y, int[]? regions);
   }
 
   /// <summary>

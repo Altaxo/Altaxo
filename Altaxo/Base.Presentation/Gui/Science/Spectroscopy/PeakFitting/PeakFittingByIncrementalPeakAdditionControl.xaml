@@ -17,6 +17,8 @@
             <RowDefinition Height="4"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="4"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="4"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
@@ -50,6 +52,13 @@
                            Minimum="1"
                            ToolTip="The time needed for evaluation grows with a higher number of peaks to fit."
                            />
+        <Label Grid.Row="6" Grid.Column="0"
+               Content="Min. relative height::"/>
+
+        <axogc:QuantityWithUnitTextBox Grid.Row="6" Grid.Column="2"
+                                       DisallowNegativeValues="True"
+                                       SelectedQuantity="{Binding MinimalRelativeHeight}"
+                                       UnitEnvironment="{Binding MinimalRelativeHeightEnvironment}"/>
 
     </Grid>
 </UserControl>

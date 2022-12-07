@@ -78,16 +78,16 @@ namespace Altaxo.Science.Spectroscopy.Raman
 
       Array.Sort(x, y); // Sort x-axis ascending
       var peakOptions = options.PeakFindingOptions;
-      (x, y, _) = peakOptions.Preprocessing.Execute(x, y, null);
+      (x, y, var regions) = peakOptions.Preprocessing.Execute(x, y, null);
       _xPreprocessed = x;
       _yPreprocessed = y;
 
-      var peakSearchingResults = peakOptions.PeakSearching.Execute(x, y, null);
+      (x, y, regions, var peakSearchingResults) = peakOptions.PeakSearching.Execute(x, y, regions);
       _peakSearchingDescriptions = peakSearchingResults[0].PeakDescriptions.ToList();
       _peakSearchingDescriptions.Sort((a, b) => Comparer<double>.Default.Compare(a.PositionIndex, b.PositionIndex));
 
       var peakFitting = peakOptions.PeakFitting;
-      var peakFittingDescriptions = peakFitting.Execute(x, y, peakSearchingResults, cancellationToken);
+      (x, y, regions, var peakFittingDescriptions) = peakFitting.Execute(x, y, regions, peakSearchingResults, cancellationToken);
       _peakFittingDescriptions = peakFittingDescriptions[0].PeakDescriptions;
 
       // now look for the peak around 425 nm

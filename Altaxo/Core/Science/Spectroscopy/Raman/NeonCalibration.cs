@@ -880,7 +880,7 @@ namespace Altaxo.Science.Spectroscopy.Raman
       var peakOptions = options.PeakFindingOptions;
 
       // For the peak searching we now use the x-axis in nanometer!!!
-      var peakSearchingResults = peakOptions.PeakSearching.Execute(_xPreprocessed_nm, _yPreprocessed, _regionsPreprocessed);
+      (_xPreprocessed_nm, _yPreprocessed, _regionsPreprocessed, var peakSearchingResults) = peakOptions.PeakSearching.Execute(_xPreprocessed_nm, _yPreprocessed, _regionsPreprocessed);
 
       // Flatten the list, the regions are of no interest here
       PeakSearchingDescriptions = peakSearchingResults
@@ -891,7 +891,7 @@ namespace Altaxo.Science.Spectroscopy.Raman
 
       if (peakOptions.PeakFitting is { } peakFitting && peakOptions.PeakFitting is not PeakFitting.PeakFittingNone)
       {
-        var peakFittingDescriptions = peakFitting.Execute(_xPreprocessed_nm, _yPreprocessed, peakSearchingResults, cancellationToken);
+        (_xPreprocessed_nm, _yPreprocessed, _regionsPreprocessed, var peakFittingDescriptions) = peakFitting.Execute(_xPreprocessed_nm, _yPreprocessed, _regionsPreprocessed, peakSearchingResults, cancellationToken);
         PeakFittingDescriptions = peakFittingDescriptions
                                    .SelectMany(resultForOneRegion => resultForOneRegion.PeakDescriptions, (resultForOneRegion, peakDescription) => peakDescription)
                                    .Where(description => description.FitFunction is not null) // exclude elements where the fit width was too small

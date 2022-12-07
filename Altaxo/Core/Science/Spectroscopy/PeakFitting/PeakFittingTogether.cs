@@ -93,7 +93,12 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
     #endregion
 
 
-    public IReadOnlyList<(IReadOnlyList<PeakDescription> PeakDescriptions, int StartOfRegion, int EndOfRegion)> Execute(double[] xArray, double[] yArray, IReadOnlyList<(IReadOnlyList<PeakSearching.PeakDescription> PeakDescriptions, int StartOfRegion, int EndOfRegion)> peakDescriptions, CancellationToken cancellationToken)
+    public (
+      double[] x,
+      double[] y,
+      int[]? regions,
+      IReadOnlyList<(IReadOnlyList<PeakDescription> PeakDescriptions, int StartOfRegion, int EndOfRegion)> peakFittingResults
+    ) Execute(double[] xArray, double[] yArray, int[]? regions, IReadOnlyList<(IReadOnlyList<PeakSearching.PeakDescription> PeakDescriptions, int StartOfRegion, int EndOfRegion)> peakDescriptions, CancellationToken cancellationToken)
     {
       var peakFitDescriptions = new List<(IReadOnlyList<PeakDescription> PeakDescriptions, int StartOfRegion, int EndOfRegion)>();
       foreach (var (peakDesc, start, end) in peakDescriptions)
@@ -106,7 +111,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
         peakFitDescriptions.Add((result, start, end));
       }
 
-      return peakFitDescriptions;
+      return (xArray, yArray, regions, peakFitDescriptions);
     }
 
 

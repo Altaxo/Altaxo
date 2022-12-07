@@ -45,9 +45,14 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
     }
     #endregion
 
-    IReadOnlyList<(IReadOnlyList<PeakDescription> PeakDescriptions, int StartOfRegion, int EndOfRegion)> IPeakSearching.Execute(double[]? x, double[] y, int[]? regions)
+    (
+      double[] x,
+      double[] y,
+      int[]? regions,
+      IReadOnlyList<(IReadOnlyList<PeakDescription> PeakDescriptions, int StartOfRegion, int EndOfRegion)> peakSearchResults
+    ) IPeakSearching.Execute(double[] x, double[] y, int[]? regions)
     {
-      return new List<(IReadOnlyList<PeakDescription> PeakDescriptions, int StartOfRegion, int EndOfRegion)>();
+      return (x, y, regions, new List<(IReadOnlyList<PeakDescription> PeakDescriptions, int StartOfRegion, int EndOfRegion)>());
     }
 
     /// <summary>

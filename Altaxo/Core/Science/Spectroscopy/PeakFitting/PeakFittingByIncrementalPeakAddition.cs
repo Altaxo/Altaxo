@@ -1,4 +1,28 @@
-﻿using System;
+﻿#region Copyright
+
+/////////////////////////////////////////////////////////////////////////////
+//    Altaxo:  a data processing and data plotting program
+//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
+//    This program is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with this program; if not, write to the Free Software
+//    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+//
+/////////////////////////////////////////////////////////////////////////////
+
+#endregion Copyright
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -12,7 +36,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
 {
   public record PeakFittingByIncrementalPeakAddition : IPeakFitting
   {
-    IFitFunctionPeak _fitFunction = new VoigtAreaParametrizationNu();
+    private IFitFunctionPeak _fitFunction = new VoigtAreaParametrizationNu();
 
     /// <summary>
     /// Gets /sets the fit function to use.
@@ -26,7 +50,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
       init { _fitFunction = value ?? throw new ArgumentNullException(nameof(FitFunction)); }
     }
 
-    int _orderOfBaselinePolynomial = 1;
+    private int _orderOfBaselinePolynomial = 1;
     /// <summary>
     /// Gets or sets the order of the polynomial that is used for the baseline.
     /// </summary>
@@ -42,21 +66,53 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
       }
     }
 
-    int _maximumNumberOfPeaks = 40;
+    private int _maximumNumberOfPeaks = 40;
 
     public int MaximumNumberOfPeaks
     {
       get { return _maximumNumberOfPeaks; }
       init
       {
-          _maximumNumberOfPeaks= Math.Max(1, value);
+        _maximumNumberOfPeaks = Math.Max(1, value);
+      }
+    }
+
+    private double _minimalRelativeHeight = 1E-3;
+
+    /// <summary>
+    /// Gets/sets the minimal relative height. The addition of new peaks is stopped
+    /// if the fitting residual falls below this value.
+    /// </summary>
+    /// <value>
+    /// Minimal relative height of peaks to be added.
+    /// </value>
+    /// <exception cref="ArgumentOutOfRangeException">Must be &gt;=0, nameof(MinimalRelativeHeight)</exception>
+    public double MinimalRelativeHeight
+    {
+      get => _minimalRelativeHeight;
+      init
+      {
+        if (!(_minimalRelativeHeight >= 0))
+        {
+          throw new ArgumentOutOfRangeException("Must be >=0", nameof(MinimalRelativeHeight));
+        }
+
+        _minimalRelativeHeight = value;
+
       }
     }
 
     /// <inheritdoc/>
-    public IReadOnlyList<(IReadOnlyList<PeakDescription> PeakDescriptions, int StartOfRegion, int EndOfRegion)> Execute(double[] xArray, double[] yArray, IReadOnlyList<(IReadOnlyList<PeakSearching.PeakDescription> PeakDescriptions, int StartOfRegion, int EndOfRegion)> peakDescriptions, CancellationToken cancellationToken)
+    public
+      (
+      double[] x,
+      double[] y,
+      int[]? regions,
+      IReadOnlyList<(IReadOnlyList<PeakDescription> PeakDescriptions, int StartOfRegion, int EndOfRegion)> peakFittingResults
+      ) Execute(double[] xArray, double[] yArray, int[]? regions, IReadOnlyList<(IReadOnlyList<PeakSearching.PeakDescription> PeakDescriptions, int StartOfRegion, int EndOfRegion)> peakDescriptions, CancellationToken cancellationToken)
     {
       var peakFitDescriptions = new List<(IReadOnlyList<PeakDescription> PeakDescriptions, int StartOfRegion, int EndOfRegion)>();
+      var yResult = (double[])yArray.Clone();
       foreach (var (peakDesc, start, end) in peakDescriptions)
       {
         cancellationToken.ThrowIfCancellationRequested();
@@ -65,9 +121,10 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
         Array.Copy(xArray, start, subX, 0, end - start);
         Array.Copy(yArray, start, subY, 0, end - start);
         var result = Execute(subX, subY, peakDesc, cancellationToken);
+        Array.Copy(subY, 0, yResult, start, end - start); // copy yArray back, the baseline now subtracted
         peakFitDescriptions.Add((result, start, end));
       }
-      return peakFitDescriptions;
+      return (xArray, yResult, regions, peakFitDescriptions);
     }
 
     public List<PeakDescription> Execute(double[] xArray, double[] yArray, IEnumerable<PeakSearching.PeakDescription> peakDescriptions, CancellationToken cancellationToken)
@@ -75,6 +132,8 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
       // First, deduce some characteristics from the x-values
       double minimalX = double.PositiveInfinity;
       double maximalX = double.NegativeInfinity;
+      double minimalY = double.PositiveInfinity;
+      double maximalY = double.NegativeInfinity;
       double minIncrement = double.PositiveInfinity;
 
       for (int i = 0; i < xArray.Length; ++i)
@@ -86,8 +145,13 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
         {
           minIncrement = Math.Min(minIncrement, Math.Abs(x - xArray[i - 1]));
         }
+
+        var y = yArray[i];
+        minimalY = Math.Min(minimalY, y);
+        maximalY = Math.Max(maximalY, y);
       }
       var spanX = maximalX - minimalX;
+      var spanY = maximalY - minimalY;
 
 
       var fitFunctionWithOneTerm = FitFunction.WithNumberOfTerms(1).WithOrderOfBaselinePolynomial(-1);
@@ -100,7 +164,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
          maximalFWHM: spanX);
 
       var fitFunction = fitFunctionWithOneTerm.WithOrderOfBaselinePolynomial(OrderOfBaselinePolynomial);
- 
+
 
       double[] yRest = (double[])yArray.Clone();
 
@@ -110,7 +174,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
 
       for (int numberOfTerms = 1; numberOfTerms <= MaximumNumberOfPeaks; ++numberOfTerms)
       {
-        
+
 
         var idxMax = yRest.IndexOfMaxValue();
         var yMax = yRest[idxMax];
@@ -119,6 +183,11 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
         {
           // Break because yMax is below 0
           break;
+        }
+
+        if (yMax < Math.Abs(MinimalRelativeHeight * spanY))
+        {
+          break; // maximum value of residual is below minimal relative height
         }
 
         int? idxHalf = null;
@@ -160,7 +229,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
 
 
         // Insert the boundaries for the next peak to fit (note that we have to insert them in inverse order)
-        for (int i = numberOfParametersPerPeak-1; i>=0; --i)
+        for (int i = numberOfParametersPerPeak - 1; i >= 0; --i)
         {
           lowerBounds.Insert(0, boundariesForOnePeak.LowerBounds?[i]);
           upperBounds.Insert(0, boundariesForOnePeak.UpperBounds?[i]);
@@ -206,11 +275,34 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
 
         if (cancellationToken.IsCancellationRequested)
           break;
+      } // end of loop of adding more and more peaks
+
+
+      // finally, first, subtract the baseline
+      for (int i = 0; i < yArray.Length; ++i)
+      {
+        double x = xArray[i];
+        double sum = 0;
+        for (int j = previousGuess.Length - 1, k = 0; k <= OrderOfBaselinePolynomial; --j, ++k)
+        {
+          sum *= x;
+          sum += previousGuess[j];
+        }
+        yArray[i] -= sum;
       }
 
+      {
+        // By definition, the baseline subtraction is part of the preprocessing,
+        // even if it is done here as part of the fitting process
+        // this means, that the final fit function (and the corresponding data) must not contain the baseline
+        fitFunction = fitFunction.WithOrderOfBaselinePolynomial(-1); // get rid of the baseline
+        var tempArray = new double[previousGuess.Length - (OrderOfBaselinePolynomial + 1)];
+        Array.Copy(previousGuess, 0, tempArray, 0, tempArray.Length); // shrink the parameter array to not include the baseline parameters
+        previousGuess = tempArray;
+      }
+
+      // and then, summarize the peak descriptions in a list
       var result = new List<PeakDescription>();
-
-
       for (int i = 0; i < fitFunction.NumberOfTerms; ++i)
       {
         var peakParameters = VectorMath.ToROVector(previousGuess, i * numberOfParametersPerPeak, numberOfParametersPerPeak);
@@ -246,6 +338,8 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
         result.Add(desc);
       }
 
+      // Sort the result by ascending position
+      result.Sort((x, y) => Comparer<double>.Default.Compare(x.SearchDescription.PositionValue, y.SearchDescription.PositionValue));
 
       return result;
 

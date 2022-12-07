@@ -36,13 +36,20 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
     /// <summary>
     /// Executes the normalization algorithm.
     /// </summary>
-    /// <param name="xArray">The array of x-values.</param>
-    /// <param name="yArray">The array of y-values.</param>
+    /// <param name="x">The array of x-values.</param>
+    /// <param name="y">The array of y-values.</param>
+    /// <param name="regions">The spectral regions. Can be null (if the array is one region). Each element in this array
+    /// is the start index of a new spectral region.</param>
     /// <param name="peakDescriptions">Description of the peaks (output of peak searching algorithms, see <see cref="PeakSearching.IPeakSearching"/>).</param>
     /// <param name="cancellationToken">Token used to cancel this task.</param>
     /// <returns>The results of the peak fitting. For each spectral regions, a tuple of the peak descriptions in that range, together
     /// with the start and end index (exclusive) of that range is returned. Please note that the peak descriptions
     /// contain position indices that are relative to the corresponding range (thus not to the underlying spectral array).</returns>
-    IReadOnlyList<(IReadOnlyList<PeakDescription> PeakDescriptions, int StartOfRegion, int EndOfRegion)> Execute(double[] xArray, double[] yArray, IReadOnlyList<(IReadOnlyList<PeakSearching.PeakDescription> PeakDescriptions, int StartOfRegion, int EndOfRegion)> peakDescriptions, CancellationToken cancellationToken);
+    (
+      double[] x,
+      double[] y,
+      int[]? regions,
+      IReadOnlyList<(IReadOnlyList<PeakDescription> PeakDescriptions, int StartOfRegion, int EndOfRegion)> peakFittingResults
+    ) Execute(double[] x, double[] y, int[]? regions, IReadOnlyList<(IReadOnlyList<PeakSearching.PeakDescription> PeakDescriptions, int StartOfRegion, int EndOfRegion)> peakDescriptions, CancellationToken cancellationToken);
   }
 }
