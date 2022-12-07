@@ -162,15 +162,21 @@ namespace Altaxo.Calc.FitFunctions.Probability
     }
 
     /// <inheritdoc/>
-    public (IReadOnlyList<double?>? LowerBounds, IReadOnlyList<double?>? upperBounds) GetParameterBoundariesForPositivePeaks()
+    public (IReadOnlyList<double?>? LowerBounds, IReadOnlyList<double?>? UpperBounds) GetParameterBoundariesForPositivePeaks(double? minimalPosition = null, double? maximalPosition = null, double? minimalFWHM = null, double? maximalFWHM = null)
     {
       var lowerBounds = new double?[NumberOfParameters];
       var upperBounds = new double?[NumberOfParameters];
 
       for (int i = 0, j = 0; i < NumberOfTerms; ++i, j += NumberOfParametersPerPeak)
       {
-        lowerBounds[j] = 0; // minimal amplitude is 0
-        lowerBounds[j + 2] = double.Epsilon; // minimal width is 0
+        lowerBounds[j + 0] = 0; // minimal amplitude is 0
+        upperBounds[j + 0] = null; // maximal amplitude is not limited
+
+        lowerBounds[j + 1] = minimalPosition;
+        upperBounds[j + 1] = maximalPosition;
+
+        lowerBounds[j + 2] = minimalFWHM.HasValue ? minimalFWHM.Value / 2 : Math.Sqrt(double.Epsilon); // minimal width is 0
+        upperBounds[j + 2] = maximalFWHM.HasValue ? maximalFWHM.Value / 2 : null;
       }
 
       return (lowerBounds, upperBounds);

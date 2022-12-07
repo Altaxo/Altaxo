@@ -38,6 +38,9 @@ namespace Altaxo.Calc.FitFunctions.Peaks
   [FitFunctionClass]
   public class GaussAmplitude : IFitFunctionWithDerivative, IImmutable, IFitFunctionPeak
   {
+    private const double SqrtLog4 = 1.1774100225154746910;
+
+
     /// <summary>The order of the baseline polynomial.</summary>
     private readonly int _orderOfBaselinePolynomial;
     /// <summary>The order of the polynomial with negative exponents.</summary>
@@ -186,13 +189,22 @@ namespace Altaxo.Calc.FitFunctions.Peaks
     /// <inheritdoc/>
     public (IReadOnlyList<double?>? LowerBounds, IReadOnlyList<double?>? UpperBounds) GetParameterBoundariesForPositivePeaks(double? minimalPosition = null, double? maximalPosition = null, double? minimalFWHM = null, double? maximalFWHM = null)
     {
+      const double DefaultMinWidth = 1.4908919308538355E-81; // Math.Pow(double.Epsilon, 0.25);
+      const double DefaultMaxWidth = 1.157920892373162E+77; // Math.Pow(double.MaxValue, 0.25);
+
       var lowerBounds = new double?[NumberOfParameters];
       var upperBounds = new double?[NumberOfParameters];
 
       for (int i = 0, j = 0; i < NumberOfTerms; ++i, j += NumberOfParametersPerPeak)
       {
-        lowerBounds[j] = 0; // minimal amplitude is 0
-        lowerBounds[j + 2] = double.Epsilon; // minimal width is 0
+        lowerBounds[j + 0] = 0; // minimal amplitude is 0
+        upperBounds[j + 0] = null; // maximal amplitude is not limited
+
+        lowerBounds[j + 1] = minimalPosition;
+        upperBounds[j + 1] = maximalPosition;
+
+        lowerBounds[j + 2] = minimalFWHM.HasValue ? minimalFWHM.Value / (2 * SqrtLog4) : DefaultMinWidth; // minimal width is 0
+        upperBounds[j + 2] = maximalFWHM.HasValue ? maximalFWHM.Value / (2 * SqrtLog4) : DefaultMaxWidth;
       }
 
       return (lowerBounds, upperBounds);
@@ -397,7 +409,6 @@ namespace Altaxo.Calc.FitFunctions.Peaks
       GetPositionAreaHeightFWHMFromSinglePeakParameters(IReadOnlyList<double> parameters, IROMatrix<double>? cv)
     {
       const double Sqrt2Pi = 2.5066282746310005024;
-      const double SqrtLog4 = 1.1774100225154746910;
 
       if (parameters is null || parameters.Count != NumberOfParametersPerPeak)
         throw new ArgumentException(nameof(parameters));

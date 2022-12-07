@@ -373,13 +373,23 @@ namespace Altaxo.Calc.FitFunctions.Peaks
     /// <inheritdoc/>
     public (IReadOnlyList<double?>? LowerBounds, IReadOnlyList<double?>? UpperBounds) GetParameterBoundariesForPositivePeaks(double? minimalPosition = null, double? maximalPosition = null, double? minimalFWHM = null, double? maximalFWHM = null)
     {
+      const double DefaultMinWidth = 1.4908919308538355E-81; // Math.Pow(double.Epsilon, 0.25);
+      const double DefaultMaxWidth = 1.157920892373162E+77; // Math.Pow(double.MaxValue, 0.25);
+
       var lowerBounds = new double?[NumberOfParameters];
       var upperBounds = new double?[NumberOfParameters];
 
       for (int i = 0, j = 0; i < NumberOfTerms; ++i, j += NumberOfParametersPerPeak)
       {
-        lowerBounds[j] = 0; // minimal amplitude is 0
-        lowerBounds[j + 2] = double.Epsilon; // minimal width is 0
+        lowerBounds[j + 0] = 0; // minimal amplitude is 0
+        upperBounds[j + 0] = null; // maximal amplitude is unlimited
+
+        lowerBounds[j + 1] = minimalPosition;
+        upperBounds[j + 1] = maximalPosition;
+
+        lowerBounds[j + 2] = minimalFWHM.HasValue ? minimalFWHM.Value / 2 : DefaultMinWidth;
+        upperBounds[j + 2] = maximalFWHM.HasValue ? maximalFWHM.Value / 2 : DefaultMaxWidth;
+
         lowerBounds[j + 3] = 1 / 1024.0;
         upperBounds[j + 3] = 1024;
       }
