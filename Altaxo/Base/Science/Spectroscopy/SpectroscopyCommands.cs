@@ -700,7 +700,7 @@ namespace Altaxo.Science.Spectroscopy
       if (!TryGetDataProxyForSpectralPreprocessing(ctrl, out var dataProxy))
         return;
 
-      if (!ShowDialogGetPeakFindingFittingOptions(ctrl, out var doc))
+      if (!ShowDialogGetPeakFindingFittingOptions(ctrl, out var peakSearchingFittingOptions))
         return;
 
       // now process the data
@@ -721,21 +721,23 @@ namespace Altaxo.Science.Spectroscopy
       {
         try
         {
-          result = ExecutePeakFindingAndFitting(dataProxy, doc, peakTable, progressMonitor, progressMonitor.CancellationToken, progressMonitor.CancellationTokenHard);
+          result = ExecutePeakFindingAndFitting(dataProxy, peakSearchingFittingOptions, peakTable, progressMonitor, progressMonitor.CancellationToken, progressMonitor.CancellationTokenHard);
         }
         catch (OperationCanceledException)
         {
         }
       }
       );
-      Current.Gui.ShowTaskCancelDialog(10000, fitTask, progressMonitor);
 
+      // Execute peak searching & fitting
+      Current.Gui.ShowTaskCancelDialog(10000, fitTask, progressMonitor);
       if (result is null)
       {
         return;
       }
 
       {
+        // name the peak table, and add it to the project
         var dstName = srcTable.Name + "_Peaks";
         if (Current.Project.DataTableCollection.Contains(dstName))
           dstName = Current.Project.DataTableCollection.FindNewItemName(dstName);
@@ -746,7 +748,7 @@ namespace Altaxo.Science.Spectroscopy
 
         peakTable.DataSource = new PeakSearchingAndFittingDataSource(
           (DataTableMultipleColumnProxy)dataProxy.Clone(),
-          doc,
+          peakSearchingFittingOptions,
           new DataSourceImportOptions());
       }
 
@@ -759,7 +761,7 @@ namespace Altaxo.Science.Spectroscopy
       {
         ++numberOfSpectrum;
 
-        if (doc.OutputOptions.OutputPreprocessedCurve && (doc.OutputOptions.OutputFitCurve || doc.OutputOptions.OutputFitCurveAsSeparatePeaks))
+        if (peakSearchingFittingOptions.OutputOptions.OutputPreprocessedCurve && (peakSearchingFittingOptions.OutputOptions.OutputFitCurve || peakSearchingFittingOptions.OutputOptions.OutputFitCurveAsSeparatePeaks))
         {
           var selColumnsForPeakGraph = new AscendingIntegerCollection
           {
@@ -790,38 +792,41 @@ namespace Altaxo.Science.Spectroscopy
             layer.PlotItems.Add(group);
           }
 
-          if (doc.OutputOptions.OutputFitCurveAsSeparatePeaks)
+          if (peakSearchingFittingOptions.PeakFitting is not PeakFitting.PeakFittingNone)
           {
-            // plot the separate peaks
-            var plotStyle = PlotCommands.PlotStyle_Line(graph.GetPropertyContext());
-            var lineStyle = plotStyle.OfType<LinePlotStyle>().FirstOrDefault();
-            if (lineStyle is not null)
+            if (peakSearchingFittingOptions.OutputOptions.OutputFitCurveAsSeparatePeaks)
             {
-              var varColorStyle = new ColumnDrivenColorPlotStyle();
-              varColorStyle.DataColumn = peakTable[PeakTable_SeparatePeaksColumnNameID(numberOfSpectrum)];
-              plotStyle.Insert(0, varColorStyle);
+              // plot the separate peaks
+              var plotStyle = PlotCommands.PlotStyle_Line(graph.GetPropertyContext());
+              var lineStyle = plotStyle.OfType<LinePlotStyle>().FirstOrDefault();
+              if (lineStyle is not null)
+              {
+                var varColorStyle = new ColumnDrivenColorPlotStyle();
+                varColorStyle.DataColumn = peakTable[PeakTable_SeparatePeaksColumnNameID(numberOfSpectrum)];
+                plotStyle.Insert(0, varColorStyle);
 
-              var xColumn = peakTable.DataColumns[PeakTable_SeparatePeaksColumnNameX(numberOfSpectrum)];
-              var yColumn = peakTable.DataColumns[PeakTable_SeparatePeaksColumnNameY(numberOfSpectrum)];
-              var groupNumber = peakTable.DataColumns.GetColumnGroup(yColumn);
-              var plotData = new XYColumnPlotData(peakTable, groupNumber, xColumn, yColumn);
-              var plotItem = new XYColumnPlotItem(plotData, plotStyle);
-              group.Add(plotItem);
+                var xColumn = peakTable.DataColumns[PeakTable_SeparatePeaksColumnNameX(numberOfSpectrum)];
+                var yColumn = peakTable.DataColumns[PeakTable_SeparatePeaksColumnNameY(numberOfSpectrum)];
+                var groupNumber = peakTable.DataColumns.GetColumnGroup(yColumn);
+                var plotData = new XYColumnPlotData(peakTable, groupNumber, xColumn, yColumn);
+                var plotItem = new XYColumnPlotItem(plotData, plotStyle);
+                group.Add(plotItem);
+              }
             }
-          }
-          else if (doc.OutputOptions.OutputFitCurve)
-          {
-            // plot the fit curve
-            var plotStyle = PlotCommands.PlotStyle_Line(graph.GetPropertyContext());
-            var lineStyle = plotStyle.OfType<LinePlotStyle>().FirstOrDefault();
-            if (lineStyle is not null && lineStyle.Color.ParentColorSet is { } parentCSet)
+            else if (peakSearchingFittingOptions.OutputOptions.OutputFitCurve)
             {
-              var xColumn = peakTable.DataColumns[PeakTable_FitCurveColumnNameX(numberOfSpectrum)];
-              var yColumn = peakTable.DataColumns[PeakTable_FitCurveColumnNameY(numberOfSpectrum)];
-              var groupNumber = peakTable.DataColumns.GetColumnGroup(yColumn);
-              var plotData = new XYColumnPlotData(peakTable, groupNumber, xColumn, yColumn);
-              var plotItem = new XYColumnPlotItem(plotData, plotStyle);
-              group.Add(plotItem);
+              // plot the fit curve
+              var plotStyle = PlotCommands.PlotStyle_Line(graph.GetPropertyContext());
+              var lineStyle = plotStyle.OfType<LinePlotStyle>().FirstOrDefault();
+              if (lineStyle is not null && lineStyle.Color.ParentColorSet is { } parentCSet)
+              {
+                var xColumn = peakTable.DataColumns[PeakTable_FitCurveColumnNameX(numberOfSpectrum)];
+                var yColumn = peakTable.DataColumns[PeakTable_FitCurveColumnNameY(numberOfSpectrum)];
+                var groupNumber = peakTable.DataColumns.GetColumnGroup(yColumn);
+                var plotData = new XYColumnPlotData(peakTable, groupNumber, xColumn, yColumn);
+                var plotItem = new XYColumnPlotItem(plotData, plotStyle);
+                group.Add(plotItem);
+              }
             }
           }
         }

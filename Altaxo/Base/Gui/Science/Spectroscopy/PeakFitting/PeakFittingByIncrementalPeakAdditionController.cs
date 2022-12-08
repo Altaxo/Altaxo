@@ -109,6 +109,21 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakFitting
       }
     }
 
+    private DimensionfulQuantity _minimalSignalToNoiseRatio;
+
+    public DimensionfulQuantity MinimalSignalToNoiseRatio
+    {
+      get => _minimalSignalToNoiseRatio;
+      set
+      {
+        if (!(_minimalSignalToNoiseRatio == value))
+        {
+          _minimalSignalToNoiseRatio = value;
+          OnPropertyChanged(nameof(MinimalSignalToNoiseRatio));
+        }
+      }
+    }
+
 
     #endregion
 
@@ -130,6 +145,8 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakFitting
         MaximumNumberOfPeaks = _doc.MaximumNumberOfPeaks;
 
         MinimalRelativeHeight = new DimensionfulQuantity(_doc.MinimalRelativeHeight, Altaxo.Units.Dimensionless.Unity.Instance).AsQuantityIn(MinimalRelativeHeightEnvironment.DefaultUnit);
+
+        MinimalSignalToNoiseRatio = new DimensionfulQuantity(_doc.MinimalSignalToNoiseRatio, Altaxo.Units.Dimensionless.Unity.Instance).AsQuantityIn(MinimalRelativeHeightEnvironment.DefaultUnit);
       }
     }
 
@@ -143,6 +160,7 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakFitting
           OrderOfBaselinePolynomial = OrderOfBaselinePolynomial,
           MaximumNumberOfPeaks = MaximumNumberOfPeaks,
           MinimalRelativeHeight = MinimalRelativeHeight.AsValueInSIUnits,
+          MinimalSignalToNoiseRatio = MinimalSignalToNoiseRatio.AsValueInSIUnits,
         };
       }
       catch (Exception ex)

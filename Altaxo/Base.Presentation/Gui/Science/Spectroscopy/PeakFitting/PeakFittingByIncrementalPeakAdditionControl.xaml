@@ -19,6 +19,8 @@
             <RowDefinition Height="4"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="4"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="4"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
@@ -53,11 +55,19 @@
                            ToolTip="The time needed for evaluation grows with a higher number of peaks to fit."
                            />
         <Label Grid.Row="6" Grid.Column="0"
-               Content="Min. relative height::"/>
+               Content="Minimal relative height:"/>
 
         <axogc:QuantityWithUnitTextBox Grid.Row="6" Grid.Column="2"
                                        DisallowNegativeValues="True"
                                        SelectedQuantity="{Binding MinimalRelativeHeight}"
+                                       UnitEnvironment="{Binding MinimalRelativeHeightEnvironment}"/>
+
+        <Label Grid.Row="8" Grid.Column="0"
+               Content="Minimal signal-to-noise:"/>
+
+        <axogc:QuantityWithUnitTextBox Grid.Row="8" Grid.Column="2"
+                                       DisallowNegativeValues="True"
+                                       SelectedQuantity="{Binding MinimalSignalToNoiseRatio}"
                                        UnitEnvironment="{Binding MinimalRelativeHeightEnvironment}"/>
 
     </Grid>

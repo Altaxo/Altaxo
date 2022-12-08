@@ -102,6 +102,105 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
       }
     }
 
+    private double _minimalSignalToNoiseRatio = 5;
+
+    /// <summary>
+    /// Gets/sets the minimal signal-to-noise ratio. The addition of new peaks is stopped
+    /// if the ratio of the highest remaining peak with respect to the noise level falls below this value.
+    /// </summary>
+    /// <value>
+    /// Minimal signal-to-noise ratio of peaks to be added.
+    /// </value>
+    /// <exception cref="ArgumentOutOfRangeException">Must be &gt;=0, nameof(MinimalRelativeHeight)</exception>
+    public double MinimalSignalToNoiseRatio
+    {
+      get => _minimalSignalToNoiseRatio;
+      init
+      {
+        if (!(_minimalSignalToNoiseRatio >= 0))
+        {
+          throw new ArgumentOutOfRangeException("Must be >=0", nameof(MinimalSignalToNoiseRatio));
+        }
+
+        _minimalSignalToNoiseRatio = value;
+
+      }
+    }
+
+    /// <summary>
+    /// Gets / sets the scaling factor of the fit width. This value, when set to a finite value, determines the width around a peak,
+    /// that is used to calculate the parameter errors of that peak (the width around the peak is calculated using this number times the FWHM value of the peak).
+    /// </summary>
+    private double _fitWidthScalingFactor = double.PositiveInfinity;
+
+    /// <summary>
+    /// Gets / sets the scaling factor of the fit width. This value, when set to a finite value, determines the width around a peak,
+    /// that is used to calculate the parameter errors of that peak (the width around the peak is calculated using this number times the FWHM value of the peak).
+    /// </summary>
+    public double FitWidthScalingFactor
+    {
+      get
+      {
+        return _fitWidthScalingFactor;
+      }
+      init
+      {
+        if (!(value > 0))
+          throw new ArgumentOutOfRangeException("Factor has to be > 0", nameof(FitWidthScalingFactor));
+
+        _fitWidthScalingFactor = value;
+      }
+    }
+
+    #region Serialization
+
+    #region Version 0
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PeakFittingByIncrementalPeakAddition), 0)]
+    public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        var s = (PeakFittingByIncrementalPeakAddition)obj;
+        info.AddValue("FitFunction", s.FitFunction);
+        info.AddValue("OrderOfBaselinePolynomial", s.OrderOfBaselinePolynomial);
+        info.AddValue("MaximumNumberOfPeaks", s.MaximumNumberOfPeaks);
+        info.AddValue("MinimalRelativeHeight", s.MinimalRelativeHeight);
+        info.AddValue("MinimalSignalToNoiseRatio", s.MinimalSignalToNoiseRatio);
+        info.AddValue("FitWidthScalingFactor", s.FitWidthScalingFactor);
+      }
+
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      {
+        var fitFunction = info.GetValue<IFitFunctionPeak>("FitFunction", null);
+        var orderOfBaselinePolynomial = info.GetInt32("OrderOfBaselinePolynomial");
+        var maximumNumberOfPeaks = info.GetInt32("MaximumNumberOfPeaks");
+        var minimalRelativeHeight = info.GetDouble("MinimalRelativeHeight");
+        var minimalSignalToNoiseRatio = info.GetDouble("MinimalSignalToNoiseRatio");
+        var fitWidthScalingFactor = info.GetDouble("FitWidthScalingFactor");
+
+
+        return new PeakFittingByIncrementalPeakAddition()
+        {
+          FitFunction = fitFunction,
+          OrderOfBaselinePolynomial = orderOfBaselinePolynomial,
+          MaximumNumberOfPeaks = maximumNumberOfPeaks,
+          MinimalRelativeHeight = minimalRelativeHeight,
+          MinimalSignalToNoiseRatio = minimalSignalToNoiseRatio,
+          FitWidthScalingFactor = fitWidthScalingFactor,
+        };
+      }
+    }
+
+    #endregion
+
+    #endregion
+
+
     /// <inheritdoc/>
     public
       (
@@ -136,6 +235,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
       double maximalY = double.NegativeInfinity;
       double minIncrement = double.PositiveInfinity;
 
+      // estimate properties of x and y arrays
       for (int i = 0; i < xArray.Length; ++i)
       {
         var x = xArray[i];
@@ -153,6 +253,14 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
       var spanX = maximalX - minimalX;
       var spanY = maximalY - minimalY;
 
+      // estimate the noise level
+      double[] noiseArray = new double[yArray.Length - 2];
+      for (int i = 2; i < yArray.Length; ++i)
+      {
+        noiseArray[i - 2] = Math.Abs(yArray[i - 1] - 0.5 * (yArray[i] + yArray[i - 2]));
+      }
+      Array.Sort(noiseArray);
+      var noiseLevel = noiseArray[noiseArray.Length / 2] * 1.22; // take the 50% percentile as noise level
 
       var fitFunctionWithOneTerm = FitFunction.WithNumberOfTerms(1).WithOrderOfBaselinePolynomial(-1);
       int numberOfParametersPerPeak = fitFunctionWithOneTerm.NumberOfParameters;
@@ -179,15 +287,14 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
         var idxMax = yRest.IndexOfMaxValue();
         var yMax = yRest[idxMax];
 
-        if (yMax <= 0)
-        {
-          // Break because yMax is below 0
-          break;
-        }
-
         if (yMax < Math.Abs(MinimalRelativeHeight * spanY))
         {
           break; // maximum value of residual is below minimal relative height
+        }
+
+        if (yMax < Math.Abs(noiseLevel * MinimalSignalToNoiseRatio))
+        {
+          break; // maximum value of residual is below required signal-to-noise level
         }
 
         int? idxHalf = null;
