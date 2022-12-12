@@ -59,6 +59,38 @@ namespace Altaxo.Gui.MenuCommands
     }
   }
 
+  public class OpenApplicationSettingsDirectory : SimpleCommand
+  {
+    public override void Execute(object? parameter)
+    {
+      var appName = StringParser.Parse("${AppName}");
+
+      var commonApp = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData);
+      string dir = Path.Combine(commonApp, appName);
+
+      if (!Directory.Exists(dir))
+      {
+        dir = commonApp;
+      }
+
+      string args = "/e," + dir;
+
+      var processInfo = new System.Diagnostics.ProcessStartInfo("explorer.exe", args)
+      {
+        CreateNoWindow = false,
+        WindowStyle = System.Diagnostics.ProcessWindowStyle.Normal
+      };
+
+      try
+      {
+        var proc = System.Diagnostics.Process.Start(processInfo);
+      }
+      catch (Exception)
+      {
+      }
+    }
+  }
+
   public class OpenProgramDirectory : SimpleCommand
   {
     public override void Execute(object? parameter)
