@@ -128,16 +128,16 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
     }
 
     /// <summary>
-    /// Gets / sets the scaling factor of the fit width. This value, when set to a finite value, determines the width around a peak,
+    /// Gets / sets the scaling factor of the fit width. This value, when set, determines the width around a peak,
     /// that is used to calculate the parameter errors of that peak (the width around the peak is calculated using this number times the FWHM value of the peak).
     /// </summary>
-    private double _fitWidthScalingFactor = double.PositiveInfinity;
+    private double? _fitWidthScalingFactor;
 
     /// <summary>
-    /// Gets / sets the scaling factor of the fit width. This value, when set to a finite value, determines the width around a peak,
+    /// Gets / sets the scaling factor of the fit width. This value, when set, determines the width around a peak,
     /// that is used to calculate the parameter errors of that peak (the width around the peak is calculated using this number times the FWHM value of the peak).
     /// </summary>
-    public double FitWidthScalingFactor
+    public double? FitWidthScalingFactor
     {
       get
       {
@@ -145,12 +145,42 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
       }
       init
       {
-        if (!(value > 0))
+        if (value.HasValue && !(value > 0))
           throw new ArgumentOutOfRangeException("Factor has to be > 0", nameof(FitWidthScalingFactor));
 
         _fitWidthScalingFactor = value;
       }
     }
+
+    private double _prunePeaksSumChiSquareFactor;
+    /// <summary>
+    /// Gets/inits a factor that will prune peaks based on their contribution
+    /// to the sum of chi square.
+    /// </summary>
+    /// <value>
+    /// Factor that will prune peaks based on their contribution
+    /// to the sum of chi square
+    /// </value>
+    /// <exception cref="System.ArgumentOutOfRangeException">Factor has to be >= 0 - FitWidthScalingFactor</exception>
+    /// <remarks>After the fitting of multiple peaks has been done, every one of the peaks will be left out
+    /// of the fit, and it will be calculated, how much this will increase the sum of Chi². If
+    /// the new SumChi² is less than final SumChi² x (1+<see cref="PrunePeaksSumChiSquareFactor"/>), that
+    /// peak will not be included in the final result.</remarks>
+    public double PrunePeaksSumChiSquareFactor
+    {
+      get
+      {
+        return _prunePeaksSumChiSquareFactor;
+      }
+      init
+      {
+        if (!(value >= 0))
+          throw new ArgumentOutOfRangeException("Factor has to be >= 0", nameof(FitWidthScalingFactor));
+
+        _prunePeaksSumChiSquareFactor = value;
+      }
+    }
+
 
     #region Serialization
 
@@ -171,6 +201,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
         info.AddValue("MaximumNumberOfPeaks", s.MaximumNumberOfPeaks);
         info.AddValue("MinimalRelativeHeight", s.MinimalRelativeHeight);
         info.AddValue("MinimalSignalToNoiseRatio", s.MinimalSignalToNoiseRatio);
+        info.AddValue("PrunePeaksSumChiSquareFactor", s.PrunePeaksSumChiSquareFactor);
         info.AddValue("FitWidthScalingFactor", s.FitWidthScalingFactor);
       }
 
@@ -181,7 +212,8 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
         var maximumNumberOfPeaks = info.GetInt32("MaximumNumberOfPeaks");
         var minimalRelativeHeight = info.GetDouble("MinimalRelativeHeight");
         var minimalSignalToNoiseRatio = info.GetDouble("MinimalSignalToNoiseRatio");
-        var fitWidthScalingFactor = info.GetDouble("FitWidthScalingFactor");
+        var prunePeaksSumChiSquareFactor = info.GetDouble("PrunePeaksSumChiSquareFactor");
+        var fitWidthScalingFactor = info.GetNullableDouble("FitWidthScalingFactor");
 
 
         return new PeakFittingByIncrementalPeakAddition()
@@ -191,6 +223,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
           MaximumNumberOfPeaks = maximumNumberOfPeaks,
           MinimalRelativeHeight = minimalRelativeHeight,
           MinimalSignalToNoiseRatio = minimalSignalToNoiseRatio,
+          PrunePeaksSumChiSquareFactor = prunePeaksSumChiSquareFactor,
           FitWidthScalingFactor = fitWidthScalingFactor,
         };
       }
@@ -384,6 +417,13 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
           break;
       } // end of loop of adding more and more peaks
 
+      (bool wasPruned, fitFunction, previousGuess) = PrunePeaksBasedOnSumChiSquare(PrunePeaksSumChiSquareFactor, xArray, yArray, fitFunction, previousGuess, numberOfParametersPerPeak);
+      // if it was pruned, we need to evaluate the covariances again
+      if (wasPruned)
+      {
+        var fit = new QuickNonlinearRegression(fitFunction) { MaximumNumberOfIterations = 0 }; // only evaluate the results
+        // fitResult2 = fit.Fit(xArray, yArray, previousGuess, lowerBounds, upperBounds, null, null, cancellationToken);
+      }
 
       // finally, first, subtract the baseline
       for (int i = 0; i < yArray.Length; ++i)
@@ -450,6 +490,63 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
 
       return result;
 
+    }
+
+    public static (bool wasPruned, IFitFunctionPeak fitFunction, double[] previousGuess) PrunePeaksBasedOnSumChiSquare(double prunePeaksSumChiSquareFactor, double[] xArray, double[] yArray, IFitFunctionPeak fitFunction, double[] previousGuess, int numberOfParametersPerTerm)
+    {
+      bool wasPruned = false;
+
+      if (prunePeaksSumChiSquareFactor > 0)
+      {
+        var numberOfTerms = fitFunction.NumberOfTerms;
+        var yFit = new double[yArray.Length];
+        fitFunction.Evaluate(MatrixMath.ToROMatrixWithOneColumn(xArray), previousGuess, VectorMath.ToVector(yFit), null);
+        var sumChi2 = VectorMath.SumOfSquaredDifferences(yArray, yFit);
+        var maximalAcceptedSumChi2 = sumChi2 * (1 + prunePeaksSumChiSquareFactor);
+
+        var newGuess = (double[])previousGuess.Clone();
+        var arrayOfChiSquare = new List<(int idx, double sumChiSquare)>(numberOfTerms);
+
+        for (int i = 0; i < numberOfTerms; ++i)
+        {
+          newGuess[i * numberOfParametersPerTerm] = 0; // set first parameter (amplitude or area) to zero
+          fitFunction.Evaluate(MatrixMath.ToROMatrixWithOneColumn(xArray), newGuess, VectorMath.ToVector(yFit), null);
+          arrayOfChiSquare.Add((i, VectorMath.SumOfSquaredDifferences(yArray, yFit)));
+          newGuess[i * numberOfParametersPerTerm] = previousGuess[i * numberOfParametersPerTerm]; // set the amplitude back to its old value
+        }
+
+        // Sort the list ascending according to sumChiSquare
+        arrayOfChiSquare.Sort((x, y) => Comparer<double>.Default.Compare(x.sumChiSquare, y.sumChiSquare));
+
+        int lenLeftOut;
+        for (lenLeftOut = 0; lenLeftOut < numberOfTerms; ++lenLeftOut)
+        {
+          var i = arrayOfChiSquare[lenLeftOut].idx;
+          newGuess[i * numberOfParametersPerTerm] = 0; // set first parameter (amplitude or area) to zero
+          fitFunction.Evaluate(MatrixMath.ToROMatrixWithOneColumn(xArray), newGuess, VectorMath.ToVector(yFit), null);
+          var newChi2 = VectorMath.SumOfSquaredDifferences(yArray, yFit);
+          if (newChi2 > maximalAcceptedSumChi2)
+          {
+            break;
+          }
+        }
+
+        if (lenLeftOut > 0)
+        {
+          fitFunction = fitFunction.WithNumberOfTerms(fitFunction.NumberOfTerms - lenLeftOut);
+          var prunedGuess = new double[fitFunction.NumberOfParameters]; // 
+          Array.Copy(previousGuess, lenLeftOut * numberOfParametersPerTerm, prunedGuess, 0, prunedGuess.Length); // copy the parameters at the end of the array- this are the baseline polynomial parameters
+          for (int j = 0; j < numberOfTerms - lenLeftOut; ++j)
+          {
+            var i = arrayOfChiSquare[j + lenLeftOut].idx;
+            Array.Copy(previousGuess, i * numberOfParametersPerTerm, prunedGuess, j * numberOfParametersPerTerm, numberOfParametersPerTerm); // copy parameter for each non-left-out peak separately
+          }
+          previousGuess = prunedGuess;
+          wasPruned = true;
+        }
+      }
+
+      return (wasPruned, fitFunction, previousGuess);
     }
   }
 }
