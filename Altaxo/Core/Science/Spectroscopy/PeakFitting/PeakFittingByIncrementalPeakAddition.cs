@@ -30,6 +30,7 @@ using Altaxo.Calc;
 using Altaxo.Calc.FitFunctions.Peaks;
 using Altaxo.Calc.FitFunctions.Probability;
 using Altaxo.Calc.LinearAlgebra;
+using Altaxo.Calc.Optimization;
 using Altaxo.Calc.Regression.Nonlinear;
 
 namespace Altaxo.Science.Spectroscopy.PeakFitting
@@ -66,7 +67,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
       }
     }
 
-    private int _maximumNumberOfPeaks = 40;
+    private int _maximumNumberOfPeaks = 50;
 
     public int MaximumNumberOfPeaks
     {
@@ -77,7 +78,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
       }
     }
 
-    private double _minimalRelativeHeight = 1E-3;
+    private double _minimalRelativeHeight = 2.5E-3;
 
     /// <summary>
     /// Gets/sets the minimal relative height. The addition of new peaks is stopped
@@ -102,7 +103,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
       }
     }
 
-    private double _minimalSignalToNoiseRatio = 5;
+    private double _minimalSignalToNoiseRatio = 8;
 
     /// <summary>
     /// Gets/sets the minimal signal-to-noise ratio. The addition of new peaks is stopped
@@ -152,7 +153,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
       }
     }
 
-    private double _prunePeaksSumChiSquareFactor;
+    private double _prunePeaksSumChiSquareFactor = 0.1;
     /// <summary>
     /// Gets/inits a factor that will prune peaks based on their contribution
     /// to the sum of chi square.
@@ -313,6 +314,8 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
       var upperBounds = new List<double?>(Enumerable.Repeat<double?>(null, OrderOfBaselinePolynomial + 1));
       double[] previousGuess = new double[OrderOfBaselinePolynomial + 1];
 
+      NonlinearMinimizationResult fitResult2 = null;
+
       for (int numberOfTerms = 1; numberOfTerms <= MaximumNumberOfPeaks; ++numberOfTerms)
       {
 
@@ -397,7 +400,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
         }
 
         // now perform the second fit, now with all parameters free to vary
-        var fitResult2 = fit.Fit(xArray, yArray, initialGuess, lowerBounds, upperBounds, null, paramsFixed, cancellationToken);
+        fitResult2 = fit.Fit(xArray, yArray, initialGuess, lowerBounds, upperBounds, null, paramsFixed, cancellationToken);
         double sumChiSquareSecond = fitResult2.ModelInfoAtMinimum.Value;
         // Current.Console.WriteLine($"SumChiSquare First={sumChiSquareFirst}, second={sumChiSquareSecond}");
 
@@ -417,12 +420,12 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
           break;
       } // end of loop of adding more and more peaks
 
-      (bool wasPruned, fitFunction, previousGuess) = PrunePeaksBasedOnSumChiSquare(PrunePeaksSumChiSquareFactor, xArray, yArray, fitFunction, previousGuess, numberOfParametersPerPeak);
+      (bool wasPruned, fitFunction, previousGuess, var isFixedByUsersOrBoundaries) = PrunePeaksBasedOnSumChiSquare(PrunePeaksSumChiSquareFactor, xArray, yArray, fitFunction, previousGuess, fitResult2.IsFixedByUserOrBoundaries.ToArray(), numberOfParametersPerPeak);
       // if it was pruned, we need to evaluate the covariances again
       if (wasPruned)
       {
         var fit = new QuickNonlinearRegression(fitFunction) { MaximumNumberOfIterations = 0 }; // only evaluate the results
-        // fitResult2 = fit.Fit(xArray, yArray, previousGuess, lowerBounds, upperBounds, null, null, cancellationToken);
+        fitResult2 = fit.Fit(xArray, yArray, previousGuess, null, null, null, isFixedByUsersOrBoundaries, cancellationToken);
       }
 
       // finally, first, subtract the baseline
@@ -435,7 +438,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
           sum *= x;
           sum += previousGuess[j];
         }
-        yArray[i] -= sum;
+        yArray[i] -= sum; // Note: it is OK here to modify the yArray, because the calling routine has cloned it before
       }
 
       {
@@ -448,51 +451,161 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
         previousGuess = tempArray;
       }
 
-      // and then, summarize the peak descriptions in a list
       var result = new List<PeakDescription>();
-      for (int i = 0; i < fitFunction.NumberOfTerms; ++i)
+
+      if (FitWidthScalingFactor.HasValue && fitResult2 is not null)
       {
-        var peakParameters = VectorMath.ToROVector(previousGuess, i * numberOfParametersPerPeak, numberOfParametersPerPeak);
-        var (position, area, height, fwhm) = fitFunction.GetPositionAreaHeightFWHMFromSinglePeakParameters(peakParameters);
-
-        var desc = new PeakDescription()
+        var fit = new QuickNonlinearRegression(fitFunction)
         {
-          SearchDescription = new PeakSearching.PeakDescription
-          {
-            AbsoluteHeightOfWidthDetermination = double.NaN,
-            RelativeHeightOfWidthDetermination = double.NaN,
-            Prominence = double.NaN,
-            Height = height,
-            PositionValue = position,
-            WidthValue = fwhm,
-            WidthPixels = 0,
-            PositionIndex = 0,
-          },
-          FitFunction = fitFunction,
-          FirstFitPoint = 0,
-          LastFitPoint = xArray.Length - 1,
-          FirstFitPosition = xArray[0],
-          LastFitPosition = xArray[^1],
-          FitFunctionParameter = previousGuess,
-          PeakParameter = peakParameters.ToArray(),
-          Notes = string.Empty,
-          PeakParameterCovariances = null,
-          SigmaSquare = double.NaN,
-          SumChiSquare = double.NaN,
-
+          MaximumNumberOfIterations = 0, // set maximum number of iterations to 0. This causes only to evaluate the results. The parameters will be not changed.
         };
 
-        result.Add(desc);
+        var isFixed = Enumerable.Repeat(true, previousGuess.Length).ToArray();
+        var parameterTemp = new double[previousGuess.Length];
+        var parametersSeparate = new double[previousGuess.Length]; // Array to accomodate the parameter variances evaluated for each peak separately
+
+        for (int i = 0, j = 0; i < fitFunction.NumberOfTerms; ++i, j += numberOfParametersPerPeak)
+        {
+          var parametersForThisPeak = new double[numberOfParametersPerPeak]; // fresh array, because it becomes part of the result!
+          Array.Copy(previousGuess, j, parametersForThisPeak, 0, numberOfParametersPerPeak);
+
+          var (position, area, height, fwhm) = fitFunction.GetPositionAreaHeightFWHMFromSinglePeakParameters(parametersForThisPeak);
+
+          var firstX = position - FitWidthScalingFactor.Value * fwhm / 2;
+          var lastX = position + FitWidthScalingFactor.Value * fwhm / 2;
+          int first = GetIndexOfXInAscendingArray(xArray, firstX, roundUp: false);
+          int last = GetIndexOfXInAscendingArray(xArray, lastX, roundUp: true);
+          int len = last - first + 1;
+          var xCut = new double[len];
+          var yCut = new double[len];
+          Array.Copy(xArray, first, xCut, 0, len);
+          Array.Copy(yArray, first, yCut, 0, len);
+
+          // Save parameter
+          Array.Copy(previousGuess, 0, parameterTemp, 0, previousGuess.Length);
+
+          // unfix our set of parameters
+          for (int k = 0; k < numberOfParametersPerPeak; k++)
+          {
+            isFixed[j + k] = isFixedByUsersOrBoundaries[j + k];
+          }
+
+          var localFitResult = fit.Fit(xCut, yCut, previousGuess, null, null, null, isFixed, cancellationToken);
+
+          // fix again our set of parameters
+          for (int k = 0; k < numberOfParametersPerPeak; k++)
+          {
+            isFixed[j + k] = true;
+          }
+
+          // Restore parameter
+          Array.Copy(parameterTemp, 0, previousGuess, 0, previousGuess.Length);
+
+          // extract the covariance matrix
+          var covMatrix = CreateMatrix.Dense<double>(numberOfParametersPerPeak, numberOfParametersPerPeak);
+          for (int k = 0; k < numberOfParametersPerPeak; k++)
+          {
+            for (int l = 0; l < numberOfParametersPerPeak; ++l)
+            {
+              covMatrix[k, l] = localFitResult.Covariance is null ? 0 : localFitResult.Covariance[j + k, j + l];
+            }
+          }
+
+          var desc = new PeakDescription()
+          {
+            SearchDescription = new PeakSearching.PeakDescription
+            {
+              AbsoluteHeightOfWidthDetermination = 0.5 * height,
+              RelativeHeightOfWidthDetermination = 0.5,
+              Prominence = height,
+              Height = height,
+              PositionValue = position,
+              WidthValue = fwhm,
+              WidthPixels = GetIndexOfXInAscendingArray(xArray, position + 0.5 * fwhm, roundUp: null) - GetIndexOfXInAscendingArray(xArray, position - 0.5 * fwhm, roundUp: null),
+              PositionIndex = GetIndexOfXInAscendingArray(xArray, position, roundUp: null),
+            },
+            FitFunction = fitFunction,
+            FirstFitPoint = first,
+            LastFitPoint = last,
+            FirstFitPosition = xCut[0],
+            LastFitPosition = xCut[^1],
+            FitFunctionParameter = previousGuess,
+            PeakParameter = parametersForThisPeak, // save because it was freshly allocated in this loop
+            Notes = string.Empty,
+            PeakParameterCovariances = covMatrix,
+            SumChiSquare = localFitResult.ModelInfoAtMinimum.Value,
+            SigmaSquare = localFitResult.ModelInfoAtMinimum.Value / (localFitResult.ModelInfoAtMinimum.DegreeOfFreedom + 1),
+          };
+          result.Add(desc);
+        }
+      }
+      else if (fitResult2 is not null) // do not use the separate peaks to calculate fit errors etc.
+      {
+        // and then, summarize the peak descriptions in a list
+        for (int i = 0, j = 0; i < fitFunction.NumberOfTerms; ++i, j += numberOfParametersPerPeak)
+        {
+          var peakParameters = VectorMath.ToROVector(previousGuess, i * numberOfParametersPerPeak, numberOfParametersPerPeak);
+          var (position, area, height, fwhm) = fitFunction.GetPositionAreaHeightFWHMFromSinglePeakParameters(peakParameters);
+
+          // extract the covariance matrix
+          var covMatrix = CreateMatrix.Dense<double>(numberOfParametersPerPeak, numberOfParametersPerPeak);
+          for (int k = 0; k < numberOfParametersPerPeak; k++)
+          {
+            for (int l = 0; l < numberOfParametersPerPeak; ++l)
+            {
+              covMatrix[k, l] = fitResult2.Covariance is null ? 0 : fitResult2.Covariance[j + k, j + l];
+            }
+          }
+
+          var desc = new PeakDescription()
+          {
+            SearchDescription = new PeakSearching.PeakDescription
+            {
+              AbsoluteHeightOfWidthDetermination = 0.5 * height,
+              RelativeHeightOfWidthDetermination = 0.5,
+              Prominence = height,
+              Height = height,
+              PositionValue = position,
+              WidthValue = fwhm,
+              WidthPixels = GetIndexOfXInAscendingArray(xArray, position + 0.5 * fwhm, roundUp: null) - GetIndexOfXInAscendingArray(xArray, position - 0.5 * fwhm, roundUp: null),
+              PositionIndex = GetIndexOfXInAscendingArray(xArray, position, roundUp: null),
+            },
+            FitFunction = fitFunction,
+            FirstFitPoint = 0,
+            LastFitPoint = xArray.Length - 1,
+            FirstFitPosition = xArray[0],
+            LastFitPosition = xArray[^1],
+            FitFunctionParameter = previousGuess,
+            PeakParameter = peakParameters.ToArray(),
+            Notes = string.Empty,
+            PeakParameterCovariances = covMatrix,
+            SumChiSquare = fitResult2.ModelInfoAtMinimum.Value,
+            SigmaSquare = fitResult2.ModelInfoAtMinimum.Value / (fitResult2.ModelInfoAtMinimum.DegreeOfFreedom + 1),
+          };
+
+          result.Add(desc);
+        }
       }
 
       // Sort the result by ascending position
       result.Sort((x, y) => Comparer<double>.Default.Compare(x.SearchDescription.PositionValue, y.SearchDescription.PositionValue));
 
       return result;
-
     }
 
-    public static (bool wasPruned, IFitFunctionPeak fitFunction, double[] previousGuess) PrunePeaksBasedOnSumChiSquare(double prunePeaksSumChiSquareFactor, double[] xArray, double[] yArray, IFitFunctionPeak fitFunction, double[] previousGuess, int numberOfParametersPerTerm)
+    /// <summary>
+    /// Prunes the peaks based on the Sum of Chi².
+    /// </summary>
+    /// <param name="prunePeaksSumChiSquareFactor">The factor that determines how many peaks are pruned.
+    /// Peaks are pruned as long as newChi²&lt;oldChi² x (1+<paramref name="prunePeaksSumChiSquareFactor"/>).</param>
+    /// <param name="xArray">The x array.</param>
+    /// <param name="yArray">The y array.</param>
+    /// <param name="fitFunction">The fit function.</param>
+    /// <param name="previousGuess">The fit function's parameter.</param>
+    /// <param name="isFixedByUserOrBoundaries">Outcome of the fit that designates which parameters are fixed by the user or by boundary conditions.</param>
+    /// <param name="numberOfParametersPerTerm">The number of parameters per peak.</param>
+    /// <returns>A value that is true if peaks were pruned, the new fit function, the new parameter set, and the new array of fixed parameters.</returns>
+    public static (bool wasPruned, IFitFunctionPeak fitFunction, double[] previousGuess, bool[] isFixedByUserOrBoundaries) PrunePeaksBasedOnSumChiSquare(double prunePeaksSumChiSquareFactor, double[] xArray, double[] yArray, IFitFunctionPeak fitFunction, double[] previousGuess, bool[] isFixedByUserOrBoundaries, int numberOfParametersPerTerm)
     {
       bool wasPruned = false;
 
@@ -517,7 +630,6 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
 
         // Sort the list ascending according to sumChiSquare
         arrayOfChiSquare.Sort((x, y) => Comparer<double>.Default.Compare(x.sumChiSquare, y.sumChiSquare));
-
         int lenLeftOut;
         for (lenLeftOut = 0; lenLeftOut < numberOfTerms; ++lenLeftOut)
         {
@@ -535,18 +647,57 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
         {
           fitFunction = fitFunction.WithNumberOfTerms(fitFunction.NumberOfTerms - lenLeftOut);
           var prunedGuess = new double[fitFunction.NumberOfParameters]; // 
+          var prunedIsFixed = new bool[fitFunction.NumberOfParameters];
           Array.Copy(previousGuess, lenLeftOut * numberOfParametersPerTerm, prunedGuess, 0, prunedGuess.Length); // copy the parameters at the end of the array- this are the baseline polynomial parameters
+          Array.Copy(isFixedByUserOrBoundaries, lenLeftOut * numberOfParametersPerTerm, prunedIsFixed, 0, prunedGuess.Length); // copy the parameters at the end of the array- this are the baseline polynomial parameters
+
           for (int j = 0; j < numberOfTerms - lenLeftOut; ++j)
           {
             var i = arrayOfChiSquare[j + lenLeftOut].idx;
             Array.Copy(previousGuess, i * numberOfParametersPerTerm, prunedGuess, j * numberOfParametersPerTerm, numberOfParametersPerTerm); // copy parameter for each non-left-out peak separately
+            Array.Copy(isFixedByUserOrBoundaries, i * numberOfParametersPerTerm, prunedIsFixed, j * numberOfParametersPerTerm, numberOfParametersPerTerm); // copy isFixed for each non-left-out peak separately)
           }
+
           previousGuess = prunedGuess;
+          isFixedByUserOrBoundaries = prunedIsFixed;
           wasPruned = true;
         }
       }
 
-      return (wasPruned, fitFunction, previousGuess);
+      return (wasPruned, fitFunction, previousGuess, isFixedByUserOrBoundaries);
     }
+
+    /// <summary>
+    /// Gets the index of the provided value in an array of ascending elements.
+    /// </summary>
+    /// <param name="xArray">The x array.</param>
+    /// <param name="x">The x value that is searched.</param>
+    /// <param name="roundUp">If there is no exact match, and the parameter is false, the next lower index will be returned, else if true, the index with the higher value will be returned. If null, the index for which x is closest to the element will be returned..</param>
+    /// <returns>For an exact match with x, the index of x in the array. Otherwise, either the index of a value lower than x (roundUp=false), higher than x (roundUp=true), or closest to x (roundUp=null).
+    /// The return value is always a valid index into the provided array.
+    /// </returns>
+    public static int GetIndexOfXInAscendingArray(double[] xArray, double x, bool? roundUp)
+    {
+      int r = Array.BinarySearch(xArray, x);
+
+      if (r >= 0) // found!
+      {
+        return r;
+      }
+      else // not found - result depends on the rounding parameter
+      {
+        r = ~r;
+        var rm1 = Math.Max(0, r - 1);
+        r = Math.Min(xArray.Length - 1, r);
+
+        return roundUp switch
+        {
+          false => rm1,
+          true => r,
+          null => Math.Abs(x - xArray[rm1]) < Math.Abs(x - xArray[r]) ? rm1 : rm1,
+        };
+      }
+    }
+
   }
 }

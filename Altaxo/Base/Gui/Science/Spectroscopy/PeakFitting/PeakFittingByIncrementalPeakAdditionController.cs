@@ -37,7 +37,7 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakFitting
 
   [UserControllerForObject(typeof(PeakFittingByIncrementalPeakAddition))]
   [ExpectedTypeOfView(typeof(IPeakFittingByIncrementalPeakAdditionView))]
-  public class PeakFittingByIncrementalPeakAdditionController : PeakFittingBaseController<PeakFittingByIncrementalPeakAddition, IPeakFittingByIncrementalPeakAdditionView>
+  public class PeakFittingByIncrementalPeakAdditionController : MVCANControllerEditImmutableDocBase<PeakFittingByIncrementalPeakAddition, IPeakFittingByIncrementalPeakAdditionView>
   {
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
@@ -125,6 +125,53 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakFitting
     }
 
 
+    private bool _useSeparatePeaksForErrorEvaluation;
+
+    public bool UseSeparatePeaksForErrorEvaluation
+    {
+      get => _useSeparatePeaksForErrorEvaluation;
+      set
+      {
+        if (!(_useSeparatePeaksForErrorEvaluation == value))
+        {
+          _useSeparatePeaksForErrorEvaluation = value;
+          OnPropertyChanged(nameof(UseSeparatePeaksForErrorEvaluation));
+        }
+      }
+    }
+
+
+    private DimensionfulQuantity _fitWidthScalingFactor;
+
+    public DimensionfulQuantity FitWidthScalingFactor
+    {
+      get => _fitWidthScalingFactor;
+      set
+      {
+        if (!(_fitWidthScalingFactor == value))
+        {
+          _fitWidthScalingFactor = value;
+          OnPropertyChanged(nameof(FitWidthScalingFactor));
+        }
+      }
+    }
+
+    private DimensionfulQuantity _prunePeaksSumChiSquareFactor;
+
+    public DimensionfulQuantity PrunePeaksSumChiSquareFactor
+    {
+      get => _prunePeaksSumChiSquareFactor;
+      set
+      {
+        if (!(_prunePeaksSumChiSquareFactor == value))
+        {
+          _prunePeaksSumChiSquareFactor = value;
+          OnPropertyChanged(nameof(PrunePeaksSumChiSquareFactor));
+        }
+      }
+    }
+
+
     #endregion
 
     protected override void Initialize(bool initData)
@@ -147,6 +194,12 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakFitting
         MinimalRelativeHeight = new DimensionfulQuantity(_doc.MinimalRelativeHeight, Altaxo.Units.Dimensionless.Unity.Instance).AsQuantityIn(MinimalRelativeHeightEnvironment.DefaultUnit);
 
         MinimalSignalToNoiseRatio = new DimensionfulQuantity(_doc.MinimalSignalToNoiseRatio, Altaxo.Units.Dimensionless.Unity.Instance).AsQuantityIn(MinimalRelativeHeightEnvironment.DefaultUnit);
+
+        UseSeparatePeaksForErrorEvaluation = _doc.FitWidthScalingFactor.HasValue;
+
+        FitWidthScalingFactor = new DimensionfulQuantity(_doc.FitWidthScalingFactor ?? 2, Altaxo.Units.Dimensionless.Unity.Instance).AsQuantityIn(MinimalRelativeHeightEnvironment.DefaultUnit);
+
+        PrunePeaksSumChiSquareFactor = new DimensionfulQuantity(_doc.PrunePeaksSumChiSquareFactor, Altaxo.Units.Dimensionless.Unity.Instance).AsQuantityIn(MinimalRelativeHeightEnvironment.DefaultUnit);
       }
     }
 
@@ -161,6 +214,8 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakFitting
           MaximumNumberOfPeaks = MaximumNumberOfPeaks,
           MinimalRelativeHeight = MinimalRelativeHeight.AsValueInSIUnits,
           MinimalSignalToNoiseRatio = MinimalSignalToNoiseRatio.AsValueInSIUnits,
+          FitWidthScalingFactor = UseSeparatePeaksForErrorEvaluation ? (FitWidthScalingFactor.AsValueInSIUnits == 0 ? null : FitWidthScalingFactor.AsValueInSIUnits) : null,
+          PrunePeaksSumChiSquareFactor = PrunePeaksSumChiSquareFactor.AsValueInSIUnits,
         };
       }
       catch (Exception ex)
