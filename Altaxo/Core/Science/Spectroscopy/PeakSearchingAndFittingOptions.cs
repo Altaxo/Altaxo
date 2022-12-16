@@ -175,7 +175,7 @@ namespace Altaxo.Science.Spectroscopy
     /// <value>
     ///   <c>true</c> if the preprocessed spectrum is included in the output; otherwise, <c>false</c>.
     /// </value>
-    public bool OutputPreprocessedCurve { get; init; }
+    public bool OutputPreprocessedCurve { get; init; } = true;
 
     /// <summary>
     /// Gets a value indicating whether the fit curve of the peak fitting(s) is included in the output.
@@ -183,9 +183,9 @@ namespace Altaxo.Science.Spectroscopy
     /// <value>
     ///   <c>true</c> if the fit curve of the peak fitting(s) is included in the output; otherwise, <c>false</c>.
     /// </value>
-    public bool OutputFitCurve { get; init; }
+    public bool OutputFitCurve { get; init; } = true;
 
-    public bool OutputFitCurveAsSeparatePeaks { get; init; }
+    public bool OutputFitCurveAsSeparatePeaks { get; init; } = true;
 
     private int _outputFitCurveSamplingFactor = 3;
     private int _outputFitCurveAsSeparatePeaksSamplingFactor = 5;
