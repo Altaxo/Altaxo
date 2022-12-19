@@ -25,8 +25,12 @@
             <RowDefinition Height="4"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="4"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="4"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="4"/>
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="4"/>
             <ColumnDefinition Width="Auto"/>
@@ -77,20 +81,31 @@
                                        ToolTip="The relative minimal height of a peak w.r.t. the noise level."/>
 
         <Label Grid.Row="10" Grid.Column="0"
+               Content="Minimal peak FWHM:"/>
+
+        <axogc:NumericDoubleTextBox Grid.Row="10" Grid.Column="2" 
+                                    SelectedValue="{Binding MinimalFWHMValue}"/>
+
+        <CheckBox Grid.Row="10" Grid.Column="4"
+                  IsChecked="{Binding IsMinimalFWHMValueInXUnits, Mode=TwoWay}"
+                  Content="in X-units" 
+                  VerticalAlignment="Center"/>
+
+        <Label Grid.Row="12" Grid.Column="0"
                Content="Prune peaks factor:"/>
 
-        <axogc:QuantityWithUnitTextBox Grid.Row="10" Grid.Column="2"
+        <axogc:QuantityWithUnitTextBox Grid.Row="12" Grid.Column="2"
                                        DisallowNegativeValues="True"
                                        SelectedQuantity="{Binding  PrunePeaksSumChiSquareFactor}"
                                        UnitEnvironment="{Binding MinimalRelativeHeightEnvironment}"
                                        ToolTip="After fitting, the weakest peaks can be removed, based on their contribution to the Chi² value. The default value of 10% means that the Chi² value is allowed to be 10% higher after pruning than the original Chi² value."/>
 
-        <CheckBox Grid.Row="12" Grid.Column="0"
+        <CheckBox Grid.Row="14" Grid.Column="0"
                   IsChecked="{Binding UseSeparatePeaksForErrorEvaluation, Mode=TwoWay}"
                   Content="Separate error eval. with relative fit width:"
                   ToolTip="If checked, the peak's parameter errors are evaluated separately for each peak."/>
 
-        <axogc:QuantityWithUnitTextBox Grid.Row="12" Grid.Column="2"
+        <axogc:QuantityWithUnitTextBox Grid.Row="14" Grid.Column="2"
                                        DisallowNegativeValues="True"
                                        SelectedQuantity="{Binding  FitWidthScalingFactor}"
                                        UnitEnvironment="{Binding FitWidthScalingFactorEnvironment}"

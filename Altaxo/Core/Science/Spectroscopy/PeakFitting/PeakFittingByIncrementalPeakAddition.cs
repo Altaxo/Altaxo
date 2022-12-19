@@ -26,12 +26,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using Altaxo.Calc;
 using Altaxo.Calc.FitFunctions.Peaks;
 using Altaxo.Calc.FitFunctions.Probability;
 using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Calc.Optimization;
 using Altaxo.Calc.Regression.Nonlinear;
+using Altaxo.Science.Spectroscopy.PeakSearching;
 
 namespace Altaxo.Science.Spectroscopy.PeakFitting
 {
@@ -182,6 +182,25 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
       }
     }
 
+    private double _minimalFWHMValue;
+    public double MinimalFWHMValue
+    {
+      get
+      {
+        return _minimalFWHMValue;
+      }
+      init
+      {
+        if (!(value >= 0))
+          throw new ArgumentOutOfRangeException("Value has to be >= 0", nameof(MinimalFWHMValue));
+
+        _minimalFWHMValue = value;
+      }
+    }
+
+    public bool IsMinimalFWHMValueInXUnits { get; init; } = true;
+
+
 
     #region Serialization
 
@@ -202,6 +221,8 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
         info.AddValue("MaximumNumberOfPeaks", s.MaximumNumberOfPeaks);
         info.AddValue("MinimalRelativeHeight", s.MinimalRelativeHeight);
         info.AddValue("MinimalSignalToNoiseRatio", s.MinimalSignalToNoiseRatio);
+        info.AddValue("IsMinimalFWHMValueInXUnits", s.IsMinimalFWHMValueInXUnits);
+        info.AddValue("MinimalFWHMValue", s.MinimalFWHMValue);
         info.AddValue("PrunePeaksSumChiSquareFactor", s.PrunePeaksSumChiSquareFactor);
         info.AddValue("FitWidthScalingFactor", s.FitWidthScalingFactor);
       }
@@ -213,6 +234,8 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
         var maximumNumberOfPeaks = info.GetInt32("MaximumNumberOfPeaks");
         var minimalRelativeHeight = info.GetDouble("MinimalRelativeHeight");
         var minimalSignalToNoiseRatio = info.GetDouble("MinimalSignalToNoiseRatio");
+        var isMinimalFWHMValueInXUnits = info.GetBoolean("IsMinimalFWHMValueInXUnits");
+        var minimalFWHMValue = info.GetDouble("MinimalFWHMValue");
         var prunePeaksSumChiSquareFactor = info.GetDouble("PrunePeaksSumChiSquareFactor");
         var fitWidthScalingFactor = info.GetNullableDouble("FitWidthScalingFactor");
 
@@ -224,6 +247,8 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
           MaximumNumberOfPeaks = maximumNumberOfPeaks,
           MinimalRelativeHeight = minimalRelativeHeight,
           MinimalSignalToNoiseRatio = minimalSignalToNoiseRatio,
+          IsMinimalFWHMValueInXUnits = isMinimalFWHMValueInXUnits,
+          MinimalFWHMValue = minimalFWHMValue,
           PrunePeaksSumChiSquareFactor = prunePeaksSumChiSquareFactor,
           FitWidthScalingFactor = fitWidthScalingFactor,
         };
@@ -302,7 +327,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
       var boundariesForOnePeak = fitFunctionWithOneTerm.GetParameterBoundariesForPositivePeaks(
          minimalPosition: minimalX,
          maximalPosition: maximalX,
-         minimalFWHM: minIncrement,
+         minimalFWHM: IsMinimalFWHMValueInXUnits && MinimalFWHMValue > 0 ? MinimalFWHMValue : Math.Max(1, MinimalFWHMValue) * minIncrement,
          maximalFWHM: spanX);
 
       var fitFunction = fitFunctionWithOneTerm.WithOrderOfBaselinePolynomial(OrderOfBaselinePolynomial);
@@ -313,12 +338,39 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
       var lowerBounds = new List<double?>(Enumerable.Repeat<double?>(null, OrderOfBaselinePolynomial + 1));
       var upperBounds = new List<double?>(Enumerable.Repeat<double?>(null, OrderOfBaselinePolynomial + 1));
       double[] previousGuess = new double[OrderOfBaselinePolynomial + 1];
-
       NonlinearMinimizationResult fitResult2 = null;
+
+
+      var prohibitedPeaks = new Dictionary<int, int>(); // Dictionary of prohibited peaks, key is the point index, value is the number of times this peak was evaluated as prohibited
+      double minimalPeakHeightForSearching = Math.Max(Math.Abs(MinimalRelativeHeight * spanY), Math.Abs(noiseLevel * MinimalSignalToNoiseRatio));
+
 
       for (int numberOfTerms = 1; numberOfTerms <= MaximumNumberOfPeaks; ++numberOfTerms)
       {
+        var pf = new PeakFinder();
+        pf.SetRelativeHeight(0.5);
+        pf.SetWidth(0.0);
+        pf.SetHeight(minimalPeakHeightForSearching);
+        pf.Execute(yRest);
+        var peakList = new List<(int Position, double Height, double Width)>();
+        for (int i = 0; i < pf.PeakPositions.Length; i++)
+        {
+          peakList.Add((pf.PeakPositions[i], pf.PeakHeights![i], pf.Widths![i]));
+        }
+        peakList.Sort((x, y) => Comparer<double>.Default.Compare(y.Height, x.Height)); // Sort peaks by height descending
 
+        var thispeak = peakList.FirstOrDefault(peak => !prohibitedPeaks.TryGetValue(peak.Position, out var prohibitionLevel) || prohibitionLevel == 0);
+
+        if (thispeak.Height == 0)
+        {
+          break; // no more peaks to fit
+        }
+
+        var idxMax = thispeak.Position;
+        var yMax = yRest[idxMax];
+        var fwhm = 0.5 * Math.Abs(PeakSearchingNone.GetWidthValue(xArray, thispeak.Position - 0.5 * thispeak.Width, thispeak.Position, thispeak.Position + 0.5 * thispeak.Width));
+
+        /*
 
         var idxMax = yRest.IndexOfMaxValue();
         var yMax = yRest[idxMax];
@@ -352,6 +404,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
           throw new InvalidOperationException("We found no half width ");
 
         double hwhm = Math.Abs(xArray[idxMax] - xArray[idxHalf.Value]);
+        */
         // Current.Console.WriteLine($"Stage[{numberOfTerms}]: idxMax={idxMax}, yMax={yMax}, X={srcX[idxMax]}, idxH={idxHalf}, yIdxH={yRest[idxHalf.Value]}, hwhm ={hwhm}");
 
         fitFunction = fitFunction.WithNumberOfTerms(numberOfTerms);
@@ -372,20 +425,42 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
 
 
         // Insert the boundaries for the next peak to fit (note that we have to insert them in inverse order)
-        for (int i = numberOfParametersPerPeak - 1; i >= 0; --i)
+        for (int i = fitFunction.NumberOfParameters - lowerBounds.Count - 1; i >= 0; --i)
         {
           lowerBounds.Insert(0, boundariesForOnePeak.LowerBounds?[i]);
           upperBounds.Insert(0, boundariesForOnePeak.UpperBounds?[i]);
         }
 
         // Copy the parameters from the previous fit to the end of the array
-        Array.Copy(previousGuess, 0, initialGuess, numberOfParametersPerPeak, previousGuess.Length);
+        Array.Copy(previousGuess, 0, initialGuess, initialGuess.Length - previousGuess.Length, previousGuess.Length);
 
         // Copy the parameters from the initial guess always to the start of the array
-        Array.Copy(fitFunction.GetInitialParametersFromHeightPositionAndWidthAtRelativeHeight(yMax, xArray[idxMax], 2 * hwhm, 0.5), initialGuess, numberOfParametersPerPeak);
+        var peakParam = fitFunction.GetInitialParametersFromHeightPositionAndWidthAtRelativeHeight(yMax, xArray[idxMax], fwhm, 0.5);
+        if (peakParam[2] < boundariesForOnePeak.LowerBounds[2])
+          peakParam[2] = boundariesForOnePeak.LowerBounds[2].Value;
+        else if (peakParam[2] > boundariesForOnePeak.UpperBounds[2])
+          peakParam[2] = boundariesForOnePeak.UpperBounds[2].Value;
+
+        Array.Copy(peakParam, initialGuess, numberOfParametersPerPeak);
         var fitResult1 = fit.Fit(xArray, yArray, initialGuess, lowerBounds, upperBounds, null, paramsFixed, cancellationToken);
         double sumChiSquareFirst = fitResult1.ModelInfoAtMinimum.Value;
 
+        // if the amplitude of the new peak is zero, then this peak has a peculiar shape,
+        // we set this peak on a list of prohibited peaks
+        if (fitResult1.MinimizingPoint[0] == 0)
+        {
+          if (prohibitedPeaks.TryGetValue(idxMax, out var numberOfHits))
+            prohibitedPeaks[idxMax] = 2 * (numberOfHits + 1);
+          else
+            prohibitedPeaks.Add(idxMax, 2);
+
+          --numberOfTerms;
+          continue;
+        }
+        foreach (var key in prohibitedPeaks.Keys.ToArray())
+        {
+          prohibitedPeaks[key] = Math.Max(0, prohibitedPeaks[key] - 1);
+        }
 
         // now all parameters are free to vary
         for (int i = 0; i < paramsFixed.Length; ++i)
@@ -643,6 +718,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
           }
         }
 
+        // if something was pruned (lenLeftOut>0), then we have to copy the remaining parameters (and the isFixedByUserBoundaries elements) into new arrays
         if (lenLeftOut > 0)
         {
           fitFunction = fitFunction.WithNumberOfTerms(fitFunction.NumberOfTerms - lenLeftOut);

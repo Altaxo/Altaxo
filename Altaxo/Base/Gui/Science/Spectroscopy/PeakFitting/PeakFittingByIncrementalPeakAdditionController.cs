@@ -140,6 +140,35 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakFitting
       }
     }
 
+    private bool _isMinimalFWHMValueInXUnits;
+
+    public bool IsMinimalFWHMValueInXUnits
+    {
+      get => _isMinimalFWHMValueInXUnits;
+      set
+      {
+        if (!(_isMinimalFWHMValueInXUnits == value))
+        {
+          _isMinimalFWHMValueInXUnits = value;
+          OnPropertyChanged(nameof(IsMinimalFWHMValueInXUnits));
+        }
+      }
+    }
+
+    private double _minimalFWHMValue;
+
+    public double MinimalFWHMValue
+    {
+      get => _minimalFWHMValue;
+      set
+      {
+        if (!(_minimalFWHMValue == value))
+        {
+          _minimalFWHMValue = value;
+          OnPropertyChanged(nameof(MinimalFWHMValue));
+        }
+      }
+    }
 
     private DimensionfulQuantity _fitWidthScalingFactor;
 
@@ -195,6 +224,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakFitting
 
         MinimalSignalToNoiseRatio = new DimensionfulQuantity(_doc.MinimalSignalToNoiseRatio, Altaxo.Units.Dimensionless.Unity.Instance).AsQuantityIn(MinimalRelativeHeightEnvironment.DefaultUnit);
 
+        IsMinimalFWHMValueInXUnits = _doc.IsMinimalFWHMValueInXUnits;
+        MinimalFWHMValue = _doc.MinimalFWHMValue;
+
         UseSeparatePeaksForErrorEvaluation = _doc.FitWidthScalingFactor.HasValue;
 
         FitWidthScalingFactor = new DimensionfulQuantity(_doc.FitWidthScalingFactor ?? 2, Altaxo.Units.Dimensionless.Unity.Instance).AsQuantityIn(MinimalRelativeHeightEnvironment.DefaultUnit);
@@ -214,6 +246,8 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakFitting
           MaximumNumberOfPeaks = MaximumNumberOfPeaks,
           MinimalRelativeHeight = MinimalRelativeHeight.AsValueInSIUnits,
           MinimalSignalToNoiseRatio = MinimalSignalToNoiseRatio.AsValueInSIUnits,
+          IsMinimalFWHMValueInXUnits = IsMinimalFWHMValueInXUnits,
+          MinimalFWHMValue = MinimalFWHMValue,
           FitWidthScalingFactor = UseSeparatePeaksForErrorEvaluation ? (FitWidthScalingFactor.AsValueInSIUnits == 0 ? null : FitWidthScalingFactor.AsValueInSIUnits) : null,
           PrunePeaksSumChiSquareFactor = PrunePeaksSumChiSquareFactor.AsValueInSIUnits,
         };
