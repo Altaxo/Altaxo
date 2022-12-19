@@ -29,7 +29,7 @@ namespace Altaxo.Geometry
 {
   public class MatrixHomography_Tests
   {
-    static PointD3D[] _base = new PointD3D[]
+    private static PointD3D[] _base = new PointD3D[]
     {
       new PointD3D(0, 0, 0),
       new PointD3D(1, 0, 0),
@@ -149,7 +149,7 @@ namespace Altaxo.Geometry
     [Fact]
     public void TestRandom2()
     {
-      var rnd = new System.Random();
+      var rnd = new System.Random(nameof(TestRandom2).GetHashCode());
 
       double N() => 20 * (rnd.NextDouble() - 0.5);
 
@@ -208,7 +208,7 @@ namespace Altaxo.Geometry
         var n = new Matrix3x2(N(), N(), N(), N(), N(), N());
 
         var pairs = new (PointD2D x, PointD2D y)[100];
-        for(int j=0;j< pairs.Length; ++j)
+        for (int j = 0; j < pairs.Length; ++j)
         {
           var x = new PointD2D(N(), N());
           var y = n.Transform(x);
