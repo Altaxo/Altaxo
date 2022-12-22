@@ -24,8 +24,6 @@
 
 #nullable enable
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Altaxo.Geometry
 {
@@ -164,7 +162,17 @@ namespace Altaxo.Geometry
       return new PointD2D(p1.X - p2.X, p1.Y - p2.Y);
     }
 
+    public static PointD2D operator -(PointD2D p1, VectorD2D p2)
+    {
+      return new PointD2D(p1.X - p2.X, p1.Y - p2.Y);
+    }
+
     public static PointD2D operator +(PointD2D p1, PointD2D p2)
+    {
+      return new PointD2D(p1.X + p2.X, p1.Y + p2.Y);
+    }
+
+    public static PointD2D operator +(PointD2D p1, VectorD2D p2)
     {
       return new PointD2D(p1.X + p2.X, p1.Y + p2.Y);
     }

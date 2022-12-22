@@ -25,8 +25,6 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Altaxo.Geometry
 {
@@ -136,6 +134,90 @@ namespace Altaxo.Geometry
         (1 - relValue) * _p0.X + (relValue) * _p1.X,
         (1 - relValue) * _p0.Y + (relValue) * _p1.Y);
       }
+    }
+
+    /// <summary>
+    /// Calculates the intersection point of two lines.
+    /// </summary>
+    /// <param name="l0">First line.</param>
+    /// <param name="l1">Second line.</param>
+    /// <returns>The intersection point of the two lines, or null if no intersection point exists (lines are parallel).</returns>
+    public static PointD2D? Intersection(LineD2D l0, LineD2D l1)
+    {
+      var determinant = (l0.P0.Y - l0.P1.Y) * (l1.P0.X - l1.P1.X) - (l0.P0.X - l0.P1.X) * (l1.P0.Y - l1.P1.Y);
+
+      if (determinant == 0 || double.IsNaN(determinant))
+        return null; // lines are parallel
+
+      var t = l0.P0.X * (l1.P1.Y - l1.P0.Y) + l0.P0.Y * (l1.P0.X - l1.P1.X) - l1.P0.X * l1.P1.Y + l1.P0.Y * l1.P1.X;
+      t /= determinant;
+
+      return l0.GetPointAtLineFromRelativeValue(t);
+    }
+
+    /// <summary>
+    /// Creates a new line, which is a rotated version of this line (rotation around a given center point).
+    /// </summary>
+    /// <param name="center">The center point of the rotation.</param>
+    /// <param name="angleInRadian">The angle in radian.</param>
+    /// <returns>Rotated version of this line (rotated by angle around the center point).</returns>
+    public LineD2D WithRotationRadian(PointD2D center, double angleInRadian)
+    {
+      var m = Matrix3x2.NewRotationRadian(center, angleInRadian);
+      return new LineD2D(m.Transform(P0), m.Transform(P1));
+    }
+
+    /// <summary>
+    /// Returns a line with opposite direction compared to this line.
+    /// </summary>
+    /// <returns>Line with the opposite direction.</returns>
+    public LineD2D Reversed()
+    {
+      return new LineD2D(P1, P0);
+    }
+
+    /// <summary>
+    /// Translate a line by adding a vector to both start and end point.
+    /// </summary>
+    /// <param name="line">The line.</param>
+    /// <param name="translation">The vector to add.</param>
+    /// <returns>
+    /// The translated line.
+    /// </returns>
+    public static LineD2D operator +(LineD2D line, VectorD2D translation)
+    {
+      return new LineD2D(line.P0 + translation, line.P1 + translation);
+    }
+
+
+    /// <summary>
+    /// Translate a line by subtracting a vector from both start and end point.
+    /// </summary>
+    /// <param name="line">The line.</param>
+    /// <param name="translation">The vector to add.</param>
+    /// <returns>
+    /// The translated line.
+    /// </returns>
+    public static LineD2D operator -(LineD2D line, VectorD2D translation)
+    {
+      return new LineD2D(line.P0 - translation, line.P1 - translation);
+    }
+
+    /// <summary>
+    /// Transforms a line with the matrix m.
+    /// </summary>
+    /// <param name="m">The transformation matrix.</param>
+    /// <param name="l">The line to transform.</param>
+    /// <returns>The transformed line.</returns>
+    public static LineD2D Transform(Matrix3x2 m, LineD2D l)
+    {
+      return new LineD2D(m.Transform(l.P0), m.Transform(l.P1));
+    }
+
+    /// <inheritdoc/>
+    public override string ToString()
+    {
+      return FormattableString.Invariant($"{nameof(LineD2D)}(({P0.X}, {P0.Y}); ({P1.X}, {P1.Y}))");
     }
   }
 }

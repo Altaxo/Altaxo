@@ -24,10 +24,7 @@
 
 #nullable enable
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Altaxo.Geometry
 {
@@ -223,6 +220,37 @@ namespace Altaxo.Geometry
     public static Matrix3x2 NewRotation(double angleInDegrees)
     {
       return NewScalingShearingRotationDegreesTranslation(1, 1, 0, 0, angleInDegrees, 0, 0);
+    }
+
+
+    /// <summary>
+    /// Creates a new rotation matrix that rotates a point around a given center point.
+    /// </summary>
+    /// <param name="center">The center point of the rotation.</param>
+    /// <param name="angle">The angle (in radian).</param>
+    /// <returns>A rotation matrix that rotates a point around a given center point.</returns>
+    public static Matrix3x2 NewRotationRadian(PointD2D center, double angle)
+    {
+      double cos = Math.Cos(angle);
+      double sin = Math.Sin(angle);
+
+      return new Matrix3x2(
+        cos, sin,
+        -sin, cos,
+        center.X * (1 - cos) + center.Y * sin, center.X * (-sin) + center.Y * (1 - cos),
+        determinant: 1 // Determinant
+        );
+    }
+
+    /// <summary>
+    /// Creates a new rotation matrix that rotates a point around a given center point.
+    /// </summary>
+    /// <param name="center">The center point of the rotation.</param>
+    /// <param name="angle">The angle (in degrees).</param>
+    /// <returns>A rotation matrix that rotates a point around a given center point.</returns>
+    public static Matrix3x2 NewRotationDegrees(PointD2D center, double angle)
+    {
+      return NewRotationRadian(center, Math.PI * (angle / 180d));
     }
 
 
