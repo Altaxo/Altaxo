@@ -25,7 +25,7 @@
 #nullable disable
 using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
 using Altaxo.Collections;
 using Altaxo.Graph.Scales.Rescaling;
 using Altaxo.Gui.Common;
@@ -44,6 +44,8 @@ namespace Altaxo.Gui.Graph.Scales.Rescaling
     {
       yield break;
     }
+
+    private static readonly int[] DefaultScaleOrigins = new int[] { -135, -90, -45, 0, 45, 90, 135, 180, 225, 270 };
 
     #region Bindings
 
@@ -76,7 +78,8 @@ namespace Altaxo.Gui.Graph.Scales.Rescaling
 
       if (initData)
       {
-        _origin = new ItemsController<int>( BuildOriginList());
+        _origin = new ItemsController<int>(BuildOriginList());
+        _origin.SelectedValue = _doc.ScaleOrigin;
       }
 
     }
@@ -89,14 +92,14 @@ namespace Altaxo.Gui.Graph.Scales.Rescaling
 
     private SelectableListNodeList BuildOriginList()
     {
-      return new SelectableListNodeList
+      var result = new SelectableListNodeList(DefaultScaleOrigins.Select(sc => new SelectableListNode($"{sc}°", sc, false)));
+
+      if (!DefaultScaleOrigins.Contains(_doc.ScaleOrigin))
       {
-        new SelectableListNode("-90°", -1, -1 == _doc.ScaleOrigin),
-        new SelectableListNode("0°", 0, 0 == _doc.ScaleOrigin),
-        new SelectableListNode("90°", 1, 1 == _doc.ScaleOrigin),
-        new SelectableListNode("180°", 2, 2 == _doc.ScaleOrigin),
-        new SelectableListNode("270°", 3, 3 == _doc.ScaleOrigin)
-      };
+        result.Insert(0, new SelectableListNode($"{_doc.ScaleOrigin}°", _doc.ScaleOrigin, false));
+      }
+
+      return result;
     }
   }
 }
