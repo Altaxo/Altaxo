@@ -129,7 +129,7 @@ namespace Altaxo.CodeEditing.Completion
       var filterText = GetFilterText(item, text, textSpanToText);
       if (string.IsNullOrEmpty(filterText))
         return true;
-      return helper.MatchesPattern(item.FilterText, filterText, System.Globalization.CultureInfo.InvariantCulture);
+      return helper.MatchesPattern(item, filterText, System.Globalization.CultureInfo.InvariantCulture);
     }
 
     private static string GetFilterText(CompletionItem item, SourceText text, Dictionary<TextSpan, string> textSpanToText)

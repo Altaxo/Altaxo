@@ -22,6 +22,7 @@ namespace Altaxo.CodeEditing.SignatureHelp
   internal sealed class AggregateSignatureHelpProvider : IAxoSignatureHelpProvider
   {
     private ImmutableArray<Microsoft.CodeAnalysis.SignatureHelp.ISignatureHelpProvider> _providers;
+    private SignatureHelpOptions _signatureHelpOptions = new SignatureHelpOptions() { HideAdvancedMembers = false };
 
     [ImportingConstructor]
     public AggregateSignatureHelpProvider([ImportMany] IEnumerable<Lazy<Microsoft.CodeAnalysis.SignatureHelp.ISignatureHelpProvider, OrderableLanguageMetadata>> providers)
@@ -51,7 +52,7 @@ namespace Altaxo.CodeEditing.SignatureHelp
       {
         cancellationToken.ThrowIfCancellationRequested();
 
-        var currentItems = await provider.GetItemsAsync(document, position, trigger, cancellationToken).ConfigureAwait(false);
+        var currentItems = await provider.GetItemsAsync(document, position, trigger, _signatureHelpOptions, cancellationToken).ConfigureAwait(false);
         if (currentItems != null && currentItems.ApplicableSpan.IntersectsWith(position))
         {
           // If another provider provides sig help items, then only take them if they

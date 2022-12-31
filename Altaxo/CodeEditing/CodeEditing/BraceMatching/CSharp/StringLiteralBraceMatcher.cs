@@ -49,7 +49,7 @@ namespace Altaxo.CodeEditing.BraceMatching.CSharp
                 new TextSpan(token.Span.End - 1, 1));
           }
         }
-        else if (token.IsKind(SyntaxKind.InterpolatedStringStartToken, SyntaxKind.InterpolatedVerbatimStringStartToken))
+        else if (token.IsKind(SyntaxKind.InterpolatedStringStartToken) || token.IsKind(SyntaxKind.InterpolatedVerbatimStringStartToken))
         {
           if (token.Parent is InterpolatedStringExpressionSyntax interpolatedString)
           {

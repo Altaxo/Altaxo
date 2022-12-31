@@ -39,6 +39,7 @@ using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Editing;
 using ICSharpCode.AvalonEdit.Folding;
 using Microsoft.CodeAnalysis;
+using System.Collections.Immutable;
 
 #if !NoBraceMatching
 using Altaxo.Gui.CodeEditing.BraceMatching;
@@ -50,7 +51,7 @@ using Altaxo.CodeEditing.Completion;
 
 #if !NoDiagnostics
 using Microsoft.CodeAnalysis.Diagnostics;
-using System.Collections.Immutable;
+using Microsoft.CodeAnalysis.Shared.Extensions;
 #endif
 
 #if !NoReferenceHighlighting
@@ -299,28 +300,36 @@ namespace Altaxo.Gui.CodeEditing
       // Note: I have never seen here args with Kind == DiagnosticsRemoved
       _textMarkerService.RemoveAll(marker => Equals(args.Id, marker.Tag));
 
-      if (args.Kind == DiagnosticsUpdatedKind.DiagnosticsCreated)
+      if (args.DocumentId is null || args.Kind != DiagnosticsUpdatedKind.DiagnosticsCreated)
       {
-        foreach (var diagnosticData in args.GetAllDiagnosticsRegardlessOfPushPullSetting())
+        return;
+      }
+
+      var document = Adapter.Workspace.CurrentSolution.GetDocument(args.DocumentId);
+      if (document is null || !document.TryGetText(out var sourceText))
+      {
+        return;
+      }
+
+      foreach (var diagnosticData in args.GetAllDiagnosticsRegardlessOfPushPullSetting())
+      {
+        if (diagnosticData.Severity == DiagnosticSeverity.Hidden || diagnosticData.IsSuppressed)
         {
-          if (diagnosticData.Severity == DiagnosticSeverity.Hidden || diagnosticData.IsSuppressed)
-          {
-            continue;
-          }
+          continue;
+        }
 
-          var textSpan = diagnosticData.DataLocation.SourceSpan;
-          if (!textSpan.HasValue)
-          {
-            continue;
-          }
+        var textSpan = diagnosticData.DataLocation.MappedFileSpan.GetClampedTextSpan(sourceText);
+        if (textSpan.IsEmpty)
+        {
+          continue;
+        }
 
-          var marker = _textMarkerService.TryCreate(textSpan.Value.Start, textSpan.Value.Length);
-          if (marker is not null)
-          {
-            marker.Tag = args.Id;
-            marker.MarkerColor = GetDiagnosticsColor(diagnosticData);
-            marker.ToolTip = diagnosticData.Message;
-          }
+        var marker = _textMarkerService.TryCreate(textSpan.Start, textSpan.Length);
+        if (marker is not null)
+        {
+          marker.Tag = args.Id;
+          marker.MarkerColor = GetDiagnosticsColor(diagnosticData);
+          marker.ToolTip = diagnosticData.Message;
         }
       }
     }

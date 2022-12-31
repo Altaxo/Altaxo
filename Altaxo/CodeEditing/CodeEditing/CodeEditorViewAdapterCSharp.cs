@@ -31,6 +31,8 @@ using ICSharpCode.AvalonEdit.Indentation;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Formatting;
 using Microsoft.CodeAnalysis.Text;
+using System.Collections.Immutable;
+
 
 #if !NoBraceMatching
 using Altaxo.CodeEditing.BraceMatching;
@@ -54,12 +56,11 @@ using Microsoft.CodeAnalysis.Editor.CSharp.GoToDefinition;
 
 #if !NoLiveDocumentFormatting
 using Altaxo.CodeEditing.LiveDocumentFormatting;
+using Microsoft.CodeAnalysis.Editor;
+using System.Linq;
 #endif
 
 #if !NoQuickInfo
-using System.Collections.Immutable;
-using Microsoft.CodeAnalysis.Editor;
-using System.Linq;
 #endif
 
 #if !NoReferenceHighlighting
@@ -490,7 +491,9 @@ namespace Altaxo.CodeEditing
       var builder = ImmutableHashSet<Document>.Empty.ToBuilder();
       builder.Add(document);
 
-      return await service.GetDocumentHighlightsAsync(document, cursorPosition, builder.ToImmutable(), CancellationToken.None);
+      var options = new HighlightingOptions() { HighlightRelatedJsonComponentsUnderCursor = false, HighlightRelatedRegexComponentsUnderCursor = false };
+
+      return await service.GetDocumentHighlightsAsync(document, cursorPosition, builder.ToImmutable(), options, CancellationToken.None);
     }
 
 #endif

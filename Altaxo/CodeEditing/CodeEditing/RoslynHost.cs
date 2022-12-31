@@ -10,11 +10,14 @@ using System.Composition.Hosting;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.Editor.CSharp;
 using Microsoft.CodeAnalysis.Host;
 using Microsoft.CodeAnalysis.Host.Mef;
+using Roslyn.Utilities;
 
 namespace Altaxo.CodeEditing
 {
@@ -35,6 +38,20 @@ namespace Altaxo.CodeEditing
                 // RoslynPad.Roslyn
                 typeof(RoslynHost).Assembly);
 
+    internal static readonly ImmutableArray<Type> DefaultCompositionTypes =
+       DefaultCompositionAssemblies.SelectMany(t => t.DefinedTypes).Select(t => t.AsType())
+       .Concat(GetDiagnosticCompositionTypes())
+       .Concat(GetEditorFeaturesTypes())
+       .ToImmutableArray();
+
+    private static IEnumerable<Type> GetDiagnosticCompositionTypes() => MetadataUtil.LoadTypesByNamespaces(
+        typeof(Microsoft.CodeAnalysis.Diagnostics.IDiagnosticService).Assembly,
+        "Microsoft.CodeAnalysis.Diagnostics",
+        "Microsoft.CodeAnalysis.CodeFixes");
+
+    private static IEnumerable<Type> GetEditorFeaturesTypes() => MetadataUtil.LoadTypesBy(
+        typeof(CSharpEditorResources).Assembly, t => t.Name.EndsWith("OptionsStorage", StringComparison.Ordinal))
+        .SelectMany(t => t.GetNestedTypes(BindingFlags.Public | BindingFlags.NonPublic).Where(t => t.IsDefined(typeof(ExportLanguageServiceAttribute))));
 
 
 #if !NoDocumentation
@@ -68,13 +85,18 @@ namespace Altaxo.CodeEditing
     /// By default the following assemblies are included: Microsoft.CodeAnalysis, Microsoft.CodeAnalysis.CSharp,
     /// Microsoft.CodeAnalysis.Features and Microsoft.CodeAnalysis.CSharp.Features.
     /// </param>
-    public RoslynHost(IEnumerable<Assembly> additionalAssembliesToIncludeInComposition = null)
+    public RoslynHost(IEnumerable<Assembly> additionalAssemblies = null)
     {
+
+      var partTypes = GetDefaultCompositionTypes();
+
+
+
       var assemblies = GetDefaultCompositionAssemblies();
 
-      if (additionalAssembliesToIncludeInComposition != null)
+      if (additionalAssemblies is not null)
       {
-        assemblies = assemblies.Concat(additionalAssembliesToIncludeInComposition);
+        partTypes = partTypes.Concat(additionalAssemblies.SelectMany(a => a.DefinedTypes).Select(t => t.AsType()));
       }
 
       // the following code is usefull if the composition fails
@@ -88,10 +110,6 @@ namespace Altaxo.CodeEditing
         ass.GetTypes();
       }
       */
-
-      var partTypes = assemblies
-                .SelectMany(x => x.DefinedTypes)
-                .Select(x => x.AsType());
 
       _compositionContext = new ContainerConfiguration()
           .WithParts(partTypes)
@@ -126,6 +144,9 @@ namespace Altaxo.CodeEditing
 
     protected virtual IEnumerable<Assembly> GetDefaultCompositionAssemblies() =>
             DefaultCompositionAssemblies;
+
+    protected virtual IEnumerable<Type> GetDefaultCompositionTypes() => DefaultCompositionTypes;
+
 
     private static string GetReferenceAssembliesPath()
     {
@@ -210,4 +231,18 @@ namespace Altaxo.CodeEditing
       return _compositionContext.GetExport<TService>();
     }
   }
+
+  internal class MetadataUtil
+  {
+    public static IReadOnlyList<Type> LoadTypesByNamespaces(Assembly assembly, params string[] namespaces) =>
+        LoadTypesBy(assembly, t => namespaces.Contains(t.Namespace));
+
+    public static IReadOnlyList<Type> LoadTypesBy(Assembly assembly, Func<Type, bool> predicate)
+    {
+      using var context = new MetadataLoadContext(new PathAssemblyResolver(Directory.GetFiles(RuntimeEnvironment.GetRuntimeDirectory(), "*.dll")));
+      var types = context.LoadFromAssemblyPath(assembly.Location).DefinedTypes;
+      return types.Where(predicate).Select(t => assembly.GetType(t.FullName!)).WhereNotNull().ToReadOnlyCollection();
+    }
+  }
+
 }

@@ -2,7 +2,6 @@
 
 // Originated from: RoslynPad, RoslynPad.Roslyn, AnalyzerAssemblyLoader.cs
 
-#if !NoDiagnostics
 
 using System.Composition;
 using System.Reflection;
@@ -19,4 +18,3 @@ namespace Altaxo.CodeEditing.Diagnostics
     public Assembly LoadFromPath(string fullPath) => _inner.LoadFromPath(fullPath);
   }
 }
-#endif

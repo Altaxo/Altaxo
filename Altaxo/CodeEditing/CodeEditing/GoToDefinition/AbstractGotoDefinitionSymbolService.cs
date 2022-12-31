@@ -17,10 +17,8 @@ namespace Microsoft.CodeAnalysis.Editor.GoToDefinition
 
     public async Task<(ISymbol, TextSpan)> GetSymbolAndBoundSpanAsync(Document document, int position, bool includeType, CancellationToken cancellationToken)
     {
-      var workspace = document.Project.Solution.Workspace;
-
       var semanticModel = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
-      var semanticInfo = await SymbolFinder.GetSemanticInfoAtPositionAsync(semanticModel, position, workspace, cancellationToken).ConfigureAwait(false);
+      var semanticInfo = await SymbolFinder.GetSemanticInfoAtPositionAsync(semanticModel, position, document.Project.Solution.Services, cancellationToken).ConfigureAwait(false);
       var symbol = GetSymbol(semanticInfo, includeType);
 
       if (symbol is null)

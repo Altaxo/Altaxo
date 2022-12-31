@@ -14,7 +14,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.DocumentationComments;
 using Microsoft.CodeAnalysis.ExternalAccess.Pythia.Api;
-using Microsoft.CodeAnalysis.LanguageServices;
+using Microsoft.CodeAnalysis.LanguageService;
 using Microsoft.CodeAnalysis.Shared.Extensions;
 using Microsoft.CodeAnalysis.Shared.Utilities;
 using Roslyn.Utilities;
@@ -25,6 +25,7 @@ namespace Altaxo.CodeEditing.QuickInfo
   internal sealed class QuickInfoProvider : IQuickInfoProvider
   {
     private readonly IDeferredQuickInfoContentProvider _contentProvider;
+
 
     [ImportingConstructor]
     public QuickInfoProvider(IDeferredQuickInfoContentProvider contentProvider)
@@ -203,7 +204,7 @@ namespace Altaxo.CodeEditing.QuickInfo
     {
       var descriptionService = workspace.Services.GetLanguageServices(token.Language).GetRequiredService<ISymbolDisplayService>();
 
-      var sections = await descriptionService.ToDescriptionGroupsAsync(workspace, semanticModel, token.SpanStart, symbols.AsImmutable(), cancellationToken).ConfigureAwait(false);
+      var sections = await descriptionService.ToDescriptionGroupsAsync(semanticModel, token.SpanStart, symbols.AsImmutable(), SymbolDescriptionOptions.Default, cancellationToken).ConfigureAwait(false);
 
       var mainDescriptionBuilder = new List<TaggedText>();
       if (sections.ContainsKey(SymbolDescriptionGroups.MainDescription))
@@ -223,6 +224,7 @@ namespace Altaxo.CodeEditing.QuickInfo
       }
 
       var anonymousTypesBuilder = new List<TaggedText>();
+      /*
       if (sections.ContainsKey(SymbolDescriptionGroups.AnonymousTypes))
       {
         var parts = sections[SymbolDescriptionGroups.AnonymousTypes];
@@ -232,6 +234,7 @@ namespace Altaxo.CodeEditing.QuickInfo
           anonymousTypesBuilder.AddRange(parts);
         }
       }
+      */
 
       var usageTextBuilder = new List<TaggedText>();
       if (sections.ContainsKey(SymbolDescriptionGroups.AwaitableUsageText))
@@ -329,7 +332,7 @@ namespace Altaxo.CodeEditing.QuickInfo
       var semanticModel = await document.GetSemanticModelForNodeAsync(token.Parent, cancellationToken).ConfigureAwait(false);
       var enclosingType = semanticModel.GetEnclosingNamedType(token.SpanStart, cancellationToken);
 
-      var symbols = semanticModel.GetSemanticInfo(token, document.Project.Solution.Workspace, cancellationToken).GetSymbols(includeType: true);
+      var symbols = semanticModel.GetSemanticInfo(token, document.Project.Solution.Services, cancellationToken).GetSymbols(includeType: true);
 
       var bindableParent = document.GetLanguageService<ISyntaxFactsService>().TryGetBindableParent(token);
       if (bindableParent != null)

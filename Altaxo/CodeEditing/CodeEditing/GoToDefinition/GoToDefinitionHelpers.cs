@@ -88,7 +88,7 @@ namespace Microsoft.CodeAnalysis.Editor.GoToDefinition
       if (thirdPartyNavigationAllowed)
       {
         var factory = solution.Workspace.Services.GetService<IDefinitionsAndReferencesFactory>();
-        var thirdPartyItem = factory?.GetThirdPartyDefinitionItem(solution, definitionItem, cancellationToken);
+        var thirdPartyItem = factory?.GetThirdPartyDefinitionItemAsync(solution, definitionItem, cancellationToken).Result;
         definitions.AddIfNotNull(thirdPartyItem);
       }
 
@@ -108,7 +108,7 @@ namespace Microsoft.CodeAnalysis.Editor.GoToDefinition
 
       var presenter = streamingPresenters.FirstOrDefault()?.Value;
       var title = string.Format("_0_declarations",
-          FindUsagesHelpers.GetDisplayName(symbol));
+          Microsoft.CodeAnalysis.FindUsages.FindUsagesHelpers.GetDisplayName(symbol));
 
       return presenter.TryNavigateToOrPresentItemsAsync(
           project.Solution.Workspace, title, definitions).WaitAndGetResult(cancellationToken);
