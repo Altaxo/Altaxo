@@ -22,16 +22,11 @@
 
 #endregion Copyright
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Altaxo.Gui.Graph.Graph3D.Common
 {
   using System;
   using Altaxo.Shaders;
-  using Vortice.D3DCompiler;
   using Vortice.Direct3D11;
   using Buffer = Vortice.Direct3D11.ID3D11Buffer;
   using Device = Vortice.Direct3D11.ID3D11Device;
@@ -92,7 +87,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
                    vertexShaderBytes);
 
       this._vertices = device.CreateBuffer(
-
+        new ReadOnlySpan<float>(
         new[]
           {
            // 3D coordinates              UV Texture coordinates
@@ -102,17 +97,17 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
            -1.0f,  1.0f, 0.5f, 1.0f,      0.0f, 0.0f,
             1.0f,  1.0f, 0.5f, 1.0f,      1.0f, 0.0f,
             1.0f, -1.0f, 0.5f, 1.0f,      1.0f, 1.0f,
-           },
+           }),
 
         new BufferDescription()
         {
           BindFlags = BindFlags.VertexBuffer,
-          CpuAccessFlags = CpuAccessFlags.None,
-          OptionFlags = ResourceOptionFlags.None,
-          SizeInBytes = 8 * 6 * 4,
+          CPUAccessFlags = CpuAccessFlags.None,
+          MiscFlags = ResourceOptionFlags.None,
+          ByteWidth = 8 * 6 * 4,
           Usage = ResourceUsage.Default
-        });
-
+        }
+        );
     }
 
     public void Detach(Device device)
@@ -160,7 +155,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
         context.PSSetShader(_pixelShader);
         context.IASetInputLayout(this._vertexLayout);
         context.IASetPrimitiveTopology(Vortice.Direct3D.PrimitiveTopology.TriangleList);
-        context.IASetVertexBuffers(0, new VertexBufferView(this._vertices, 24, 0));
+        context.IASetVertexBuffer(0, this._vertices, 24, 0);
         context.PSSetShaderResource(GammaCorrectorHlsl.ShaderTexture_RegisterNumber, textureView); // use register 7 for the texture
         context.Draw(6, 0);
         context.Flush();

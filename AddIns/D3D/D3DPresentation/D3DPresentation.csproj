@@ -58,14 +58,14 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Vortice.Mathematics" Version="1.4.25" />
-    <PackageReference Include="Vortice.D3DCompiler" Version="1.9.143" />
-    <PackageReference Include="Vortice.Direct2D1" Version="1.9.143" />
-    <PackageReference Include="Vortice.Direct3D11" Version="1.9.143" />
-    <PackageReference Include="Vortice.Direct3D9" Version="1.9.143" />
-    <PackageReference Include="Vortice.DirectX" Version="1.9.143" />
-    <PackageReference Include="Vortice.DXGI" Version="1.9.143" />
-    <PackageReference Include="SharpGen.Runtime" Version="2.0.0-beta.9" />
-    <PackageReference Include="SharpGen.Runtime.COM" Version="2.0.0-beta.9" />
+    <PackageReference Include="Vortice.D3DCompiler" Version="2.2.0" />
+    <PackageReference Include="Vortice.Direct2D1" Version="2.2.0" />
+    <PackageReference Include="Vortice.Direct3D11" Version="2.2.0" />
+    <PackageReference Include="Vortice.Direct3D9" Version="2.2.0" />
+    <PackageReference Include="Vortice.DirectX" Version="2.2.0" />
+    <PackageReference Include="Vortice.DXGI" Version="2.2.0" />
+    <PackageReference Include="SharpGen.Runtime" Version="2.0.0-beta.11" />
+    <PackageReference Include="SharpGen.Runtime.COM" Version="2.0.0-beta.11" />
 
   </ItemGroup>
   <UsingTask TaskName="Shader" AssemblyFile="ShaderCompilerBuildTask.dll" />

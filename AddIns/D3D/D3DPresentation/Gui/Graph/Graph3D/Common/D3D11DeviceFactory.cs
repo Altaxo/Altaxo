@@ -24,10 +24,6 @@
 
 using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Vortice.Direct3D;
 using Vortice.Direct3D11;
 using Device = Vortice.Direct3D11.ID3D11Device;
@@ -62,7 +58,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
     public Device BorrowDevice()
     {
       Device? dev;
-      while (_devices.TryTake(out dev) && dev.IsDisposed)
+      while (_devices.TryTake(out dev) && dev.NativePointer == IntPtr.Zero)
       {
       }
 
@@ -118,7 +114,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
       // but it still has Unmanaged memory allocated
 
 
-      if (!device.IsDisposed)
+      if (!(device.NativePointer == IntPtr.Zero))
       {
         device.ImmediateContext.ClearState();
         _devices.Add(device);

@@ -161,7 +161,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
       if (_numberOfActiveClients != 0)
         return;
 
-      D3D9.Create9Ex(out _d3DContext);
+      D3D9.Direct3DCreate9Ex(out _d3DContext);
 
       var presentparams = new PresentParameters
       {
@@ -235,7 +235,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
     /// </returns>
     private static bool IsShareable(Vortice.Direct3D11.ID3D11Texture2D Texture)
     {
-      return (Texture.Description.OptionFlags & Vortice.Direct3D11.ResourceOptionFlags.Shared) != 0;
+      return (Texture.Description.MiscFlags & Vortice.Direct3D11.ResourceOptionFlags.Shared) != 0;
     }
   }
 }

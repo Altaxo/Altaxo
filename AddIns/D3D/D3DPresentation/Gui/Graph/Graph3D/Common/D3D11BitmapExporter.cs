@@ -30,7 +30,6 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
   using Altaxo.Geometry;
   using Altaxo.Graph.Graph3D.Camera;
   using Altaxo.Graph.Graph3D.GraphicsContext.D3D;
-  using Vortice.Direct3D;
   using Vortice.Direct3D11;
   using Vortice.DXGI;
   using Vortice.Mathematics;
@@ -160,8 +159,8 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
           MipLevels = 1,
           SampleDescription = new SampleDescription(sampleCount, qlevel_sampleCount - 1),
           Usage = ResourceUsage.Default,
-          OptionFlags = ResourceOptionFlags.Shared,
-          CpuAccessFlags = CpuAccessFlags.None,
+          MiscFlags = ResourceOptionFlags.Shared,
+          CPUAccessFlags = CpuAccessFlags.None,
           ArraySize = 1
         };
 
@@ -174,8 +173,8 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
           MipLevels = 1,
           SampleDescription = new SampleDescription(sampleCount, qlevel_sampleCount - 1),
           Usage = ResourceUsage.Default,
-          OptionFlags = ResourceOptionFlags.None,
-          CpuAccessFlags = CpuAccessFlags.None,
+          MiscFlags = ResourceOptionFlags.None,
+          CPUAccessFlags = CpuAccessFlags.None,
           ArraySize = 1,
         };
 
@@ -186,7 +185,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
 
         // Rendering
 
-        device.ImmediateContext.OMSetRenderTargets( renderTargetView, depthStencilView);
+        device.ImmediateContext.OMSetRenderTargets(renderTargetView, depthStencilView);
         device.ImmediateContext.RSSetViewports(new Viewport[] { new Viewport(0, 0, sizeX, sizeY, 0.0f, 1.0f) });
         var clearColor = new Color4(1, 1, 1, 0); // Transparent
         if (options.BackgroundBrush is not null)
@@ -214,8 +213,8 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
             MipLevels = 1,
             SampleDescription = new SampleDescription(1, 0), // non MSAA
             Usage = ResourceUsage.Default,
-            OptionFlags = ResourceOptionFlags.Shared,
-            CpuAccessFlags = CpuAccessFlags.None,
+            MiscFlags = ResourceOptionFlags.Shared,
+            CPUAccessFlags = CpuAccessFlags.None,
             ArraySize = 1
           };
 

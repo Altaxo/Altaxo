@@ -182,8 +182,8 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
           MipLevels = 1,
           SampleDescription = new SampleDescription(1, 0),
           Usage = ResourceUsage.Default,
-          OptionFlags = ResourceOptionFlags.Shared,
-          CpuAccessFlags = CpuAccessFlags.None,
+          MiscFlags = ResourceOptionFlags.Shared,
+          CPUAccessFlags = CpuAccessFlags.None,
           ArraySize = 1
         };
 
@@ -196,8 +196,8 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
           MipLevels = 1,
           SampleDescription = new SampleDescription(1, 0),
           Usage = ResourceUsage.Staging,
-          OptionFlags = ResourceOptionFlags.Shared,
-          CpuAccessFlags = CpuAccessFlags.Read,
+          MiscFlags = ResourceOptionFlags.Shared,
+          CPUAccessFlags = CpuAccessFlags.Read,
           ArraySize = 1
         };
 
@@ -210,8 +210,8 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
           MipLevels = 1,
           SampleDescription = new SampleDescription(1, 0),
           Usage = ResourceUsage.Default,
-          OptionFlags = ResourceOptionFlags.None,
-          CpuAccessFlags = CpuAccessFlags.None,
+          MiscFlags = ResourceOptionFlags.None,
+          CPUAccessFlags = CpuAccessFlags.None,
           ArraySize = 1,
         };
 

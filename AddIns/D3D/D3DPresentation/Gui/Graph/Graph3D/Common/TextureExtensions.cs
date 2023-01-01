@@ -22,11 +22,6 @@
 
 #endregion Copyright
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Vortice.Direct3D11;
 using Vortice.DXGI;
 using Vortice.WIC;
@@ -79,20 +74,20 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
           Usage = ResourceUsage.Staging,
           SampleDescription = new SampleDescription(1, 0),
           BindFlags = BindFlags.None,
-          CpuAccessFlags = CpuAccessFlags.Read,
-          OptionFlags = ResourceOptionFlags.None
+          CPUAccessFlags = CpuAccessFlags.Read,
+          MiscFlags = ResourceOptionFlags.None
         });
 
         texture.Device.ImmediateContext.CopyResource(textureCopy, texture);
 
         var dataRectangle = texture.Device.ImmediateContext.Map(textureCopy, 0, MapMode.Read, Vortice.Direct3D11.MapFlags.None);
 
-        imagingFactory = new IWICImagingFactory(); 
+        imagingFactory = new IWICImagingFactory();
         bitmap = imagingFactory.CreateBitmapFromMemory(
             textureCopy.Description.Width,
             textureCopy.Description.Height,
             PixelFormat.Format32bppBGRA,
-            dataRectangle.AsSpan<int>(dataRectangle.DepthPitch), dataRectangle.RowPitch);
+            dataRectangle.DataPointer, dataRectangle.RowPitch, dataRectangle.DepthPitch);
 
         toStream.Position = 0;
 
@@ -109,7 +104,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
         else
           bitmapEncoder = imagingFactory.CreateEncoder(ContainerFormat.Png, toStream);
 
-        using (var bitmapFrameEncode = bitmapEncoder.CreateNewFrame(null))
+        using (var bitmapFrameEncode = bitmapEncoder.CreateNewFrame(out var encoderOptions))
         {
           bitmapFrameEncode.Initialize();
           bitmapFrameEncode.SetSize(bitmap.Size.Width, bitmap.Size.Height);
