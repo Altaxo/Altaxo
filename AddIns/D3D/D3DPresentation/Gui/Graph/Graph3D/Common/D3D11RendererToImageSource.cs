@@ -22,21 +22,12 @@
 
 #endregion Copyright
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Altaxo.Gui.Graph.Graph3D.Common
 {
   using System;
-  using System.ComponentModel;
   using System.Windows;
-  using System.Windows.Controls;
-  using System.Windows.Input;
-  using System.Windows.Media;
   using Altaxo.Geometry;
-  using Altaxo.Graph;
   using Vortice.Direct3D11;
   using Vortice.DXGI;
   using Vortice.Mathematics;
@@ -66,7 +57,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
     private bool _isRenderSceneAttached;
     private D3D11GammaCorrector? _gammaCorrector;
 
-    public Color4 _renderTargetClearColor = Color4.White;
+    public Color4 _renderTargetClearColor = Vortice.Mathematics.Colors.White;
 
     private bool _isDisposed;
 
@@ -298,7 +289,7 @@ namespace Altaxo.Gui.Graph.Graph3D.Common
         // we use the RenderTextureIntermediate that was the target in the first stage now as a ShaderResource in this 2nd stage
         device.ImmediateContext.OMSetRenderTargets(_renderTargetView);
         device.ImmediateContext.RSSetViewports(new Viewport[] { new Viewport(0, 0, targetWidth, targetHeight, 0.0f, 1.0f) });
-        device.ImmediateContext.ClearRenderTargetView(_renderTargetView, Color4.Black);
+        device.ImmediateContext.ClearRenderTargetView(_renderTargetView, Vortice.Mathematics.Colors.Black);
         _gammaCorrector!.Render(device, _renderTargetIntermediateShaderResourceView!);
         device.ImmediateContext.Flush(); // make final render target valid
       }
