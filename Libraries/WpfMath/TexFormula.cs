@@ -74,7 +74,7 @@ namespace WpfMath
         {
             if (this.RootAtom is StyledAtom sa)
             {
-                this.RootAtom = sa.Clone(foreground: brush);
+                this.RootAtom = sa with { Foreground = brush };
             }
             else
             {
@@ -86,7 +86,7 @@ namespace WpfMath
         {
             if (this.RootAtom is StyledAtom sa)
             {
-                this.RootAtom = sa.Clone(background: brush);
+                this.RootAtom = sa with { Background = brush };
             }
             else
             {
@@ -104,7 +104,8 @@ namespace WpfMath
 
         internal static SystemFont GetSystemFont(string fontName, double size)
         {
-            var fontFamily = Fonts.SystemFontFamilies.First(ff => ff.ToString() == fontName);
+            var fontFamily = Fonts.SystemFontFamilies.First(
+                ff => ff.ToString() == fontName || ff.FamilyNames.Values?.Contains(fontName) == true);
             return new SystemFont(size, fontFamily);
         }
     }
