@@ -1,6 +1,7 @@
 // Copyright (c) Alexandre Mutel. All rights reserved.
 // This file is licensed under the BSD-Clause 2 license. 
 // See the license.txt file in the project root for more information.
+
 namespace Markdig.Syntax
 {
     /// <summary>
@@ -30,7 +31,7 @@ namespace Markdig.Syntax
         /// <param name="key">The key.</param>
         /// <returns>The associated data or null if none</returns>
         /// <exception cref="System.ArgumentNullException">if key is null</exception>
-        object GetData(object key);
+        object? GetData(object key);
 
         /// <summary>
         /// Removes the associated data for the specified key.

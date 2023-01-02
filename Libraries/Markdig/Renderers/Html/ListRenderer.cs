@@ -1,7 +1,7 @@
 // Copyright (c) Alexandre Mutel. All rights reserved.
 // This file is licensed under the BSD-Clause 2 license. 
 // See the license.txt file in the project root for more information.
-using System.Globalization;
+
 using Markdig.Syntax;
 
 namespace Markdig.Renderers.Html
@@ -9,7 +9,7 @@ namespace Markdig.Renderers.Html
     /// <summary>
     /// A HTML renderer for a <see cref="ListBlock"/>.
     /// </summary>
-    /// <seealso cref="Markdig.Renderers.Html.HtmlObjectRenderer{Markdig.Syntax.ListBlock}" />
+    /// <seealso cref="HtmlObjectRenderer{ListBlock}" />
     public class ListRenderer : HtmlObjectRenderer<ListBlock>
     {
         protected override void Write(HtmlRenderer renderer, ListBlock listBlock)
@@ -22,21 +22,25 @@ namespace Markdig.Renderers.Html
                     renderer.Write("<ol");
                     if (listBlock.BulletType != '1')
                     {
-                        renderer.Write(" type=\"").Write(listBlock.BulletType).Write("\"");
+                        renderer.WriteRaw(" type=\"");
+                        renderer.WriteRaw(listBlock.BulletType);
+                        renderer.WriteRaw('"');
                     }
 
-                    if (listBlock.OrderedStart != null && (listBlock.OrderedStart != "1"))
+                    if (listBlock.OrderedStart is not null && listBlock.OrderedStart != "1")
                     {
-                        renderer.Write(" start=\"").Write(listBlock.OrderedStart).Write("\"");
+                        renderer.Write(" start=\"");
+                        renderer.WriteRaw(listBlock.OrderedStart);
+                        renderer.WriteRaw('"');
                     }
                     renderer.WriteAttributes(listBlock);
-                    renderer.WriteLine(">");
+                    renderer.WriteLine('>');
                 }
                 else
                 {
                     renderer.Write("<ul");
                     renderer.WriteAttributes(listBlock);
-                    renderer.WriteLine(">");
+                    renderer.WriteLine('>');
                 }
             }
 
@@ -49,7 +53,9 @@ namespace Markdig.Renderers.Html
                 renderer.EnsureLine();
                 if (renderer.EnableHtmlForBlock)
                 {
-                    renderer.Write("<li").WriteAttributes(listItem).Write(">");
+                    renderer.Write("<li");
+                    renderer.WriteAttributes(listItem);
+                    renderer.WriteRaw('>');
                 }
 
                 renderer.WriteChildren(listItem);

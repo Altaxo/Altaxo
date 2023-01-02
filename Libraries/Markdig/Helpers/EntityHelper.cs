@@ -33,7 +33,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Markdig.Helpers
 {
@@ -47,7 +46,7 @@ namespace Markdig.Helpers
         /// </summary>
         /// <param name="entity">The entity without <c>&amp;</c> and <c>;</c> symbols, for example, <c>copy</c>.</param>
         /// <returns>The unicode character set or <c>null</c> if the entity was not recognized.</returns>
-        public static string DecodeEntity(ReadOnlySpan<char> entity)
+        public static string? DecodeEntity(ReadOnlySpan<char> entity)
         {
             if (EntityMap.TryMatchExact(entity, out KeyValuePair<string, string> result))
                 return result.Value;
@@ -69,7 +68,7 @@ namespace Markdig.Helpers
 
             utf32 -= 65536;
             return new string(
-#if NETCORE
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
                 stackalloc
 #else
                 new
@@ -81,7 +80,7 @@ namespace Markdig.Helpers
             });
         }
 
-        public static void DecodeEntity(int utf32, StringBuilder sb)
+        internal static void DecodeEntity(int utf32, ref ValueStringBuilder sb)
         {
             if (!CharHelper.IsInInclusiveRange(utf32, 1, 1114111) || CharHelper.IsInInclusiveRange(utf32, 55296, 57343))
             {
@@ -99,7 +98,7 @@ namespace Markdig.Helpers
             }
         }
 
-#region [ EntityMap ]
+        #region [ EntityMap ]
         /// <summary>
         /// Source: http://www.w3.org/html/wg/drafts/html/master/syntax.html#named-character-references
         /// </summary>

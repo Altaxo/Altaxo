@@ -8,13 +8,13 @@ namespace Markdig.Parsers
     /// Base class for a <see cref="BlockParser"/> or <see cref="InlineParser"/>.
     /// </summary>
     /// <typeparam name="TProcessor">Type of the parser processor</typeparam>
-    /// <seealso cref="Markdig.Parsers.IMarkdownParser{TParserState}" />
+    /// <seealso cref="IMarkdownParser{TParserState}" />
     public abstract class ParserBase<TProcessor> : IMarkdownParser<TProcessor>
     {
         /// <summary>
         /// Gets the opening characters this parser will be triggered if the character is found.
         /// </summary>
-        public char[] OpeningCharacters { get; set; }
+        public char[]? OpeningCharacters { get; set; }
 
         /// <summary>
         /// Initializes this parser with the specified parser processor.

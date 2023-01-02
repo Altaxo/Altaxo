@@ -1,8 +1,8 @@
 // Copyright (c) Alexandre Mutel. All rights reserved.
 // This file is licensed under the BSD-Clause 2 license. 
 // See the license.txt file in the project root for more information.
+
 using System;
-using System.Text;
 using Markdig.Helpers;
 using Markdig.Parsers;
 using Markdig.Renderers.Html;
@@ -40,8 +40,14 @@ namespace Markdig.Extensions.JiraLinks
             var startKey = slice.Start;
             var endKey = slice.Start;
 
-            //read as many uppercase characters as required - project key
-            while (current.IsAlphaUpper())
+            // the first character of the key can not be a digit.
+            if (current.IsDigit())
+            {
+                return false;
+            }
+
+            // read as many uppercase characters or digits as required - project key
+            while (current.IsAlphaUpper() || current.IsDigit())
             {
                 endKey = slice.Start;
                 current = slice.NextChar();
@@ -75,14 +81,11 @@ namespace Markdig.Extensions.JiraLinks
                 return false;
             }
 
-            int line;
-            int column;
-
             var jiraLink = new JiraLink() //create the link at the relevant position
             {
                 Span =
                 {
-                    Start = processor.GetSourcePosition(slice.Start, out line, out column)
+                    Start = processor.GetSourcePosition(slice.Start, out int line, out int column)
                 },
                 Line = line,
                 Column = column,
@@ -92,18 +95,24 @@ namespace Markdig.Extensions.JiraLinks
             jiraLink.Span.End = jiraLink.Span.Start + (endIssue - startKey);
 
             // Builds the Url
-            var builder = StringBuilderCache.Local();
-            builder.Append(_baseUrl).Append('/').Append(jiraLink.ProjectKey).Append('-').Append(jiraLink.Issue);
-            jiraLink.Url = builder.ToString();
+            var builder = new ValueStringBuilder(stackalloc char[ValueStringBuilder.StackallocThreshold]);
+            builder.Append(_baseUrl);
+            builder.Append('/');
+            builder.Append(jiraLink.ProjectKey.AsSpan());
+            builder.Append('-');
+            builder.Append(jiraLink.Issue.AsSpan());
+            jiraLink.Url = builder.AsSpan().ToString();
 
             // Builds the Label
             builder.Length = 0;
-            builder.Append(jiraLink.ProjectKey).Append('-').Append(jiraLink.Issue);
+            builder.Append(jiraLink.ProjectKey.AsSpan());
+            builder.Append('-');
+            builder.Append(jiraLink.Issue.AsSpan());
             jiraLink.AppendChild(new LiteralInline(builder.ToString()));
 
             if (_options.OpenInNewWindow)
             {
-                jiraLink.GetAttributes().AddProperty("target", "blank");
+                jiraLink.GetAttributes().AddProperty("target", "_blank");
             }
 
             processor.Inline = jiraLink;

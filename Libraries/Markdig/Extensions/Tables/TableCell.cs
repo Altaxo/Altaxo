@@ -10,7 +10,7 @@ namespace Markdig.Extensions.Tables
     /// <summary>
     /// Defines a cell in a <see cref="TableRow"/>
     /// </summary>
-    /// <seealso cref="Markdig.Syntax.LeafBlock" />
+    /// <seealso cref="LeafBlock" />
     public class TableCell : ContainerBlock
     {
         /// <summary>
@@ -24,7 +24,7 @@ namespace Markdig.Extensions.Tables
         /// Initializes a new instance of the <see cref="TableCell"/> class.
         /// </summary>
         /// <param name="parser">The parser used to create this block.</param>
-        public TableCell(BlockParser parser) : base(parser)
+        public TableCell(BlockParser? parser) : base(parser)
         {
             AllowClose = true;
             ColumnSpan = 1;

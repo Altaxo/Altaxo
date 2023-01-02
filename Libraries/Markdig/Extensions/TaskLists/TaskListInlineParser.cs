@@ -1,6 +1,7 @@
 // Copyright (c) Alexandre Mutel. All rights reserved.
 // This file is licensed under the BSD-Clause 2 license. 
 // See the license.txt file in the project root for more information.
+
 using Markdig.Helpers;
 using Markdig.Parsers;
 using Markdig.Renderers.Html;
@@ -39,9 +40,7 @@ namespace Markdig.Extensions.TaskLists
             // [ ]
             // or [x] or [X]
 
-            var listItemBlock = processor.Block.Parent as ListItemBlock;
-
-            if (listItemBlock == null)
+            if (!(processor.Block!.Parent is ListItemBlock listItemBlock))
             {
                 return false;
             }
@@ -57,14 +56,12 @@ namespace Markdig.Extensions.TaskLists
                 return false;
             }
             // Skip last ]
-            slice.NextChar();
+            slice.SkipChar();
 
             // Create the TaskList
-            int line;
-            int column;
             var taskItem = new TaskList()
             {
-                Span = { Start = processor.GetSourcePosition(startingPosition, out line, out column)},
+                Span = { Start = processor.GetSourcePosition(startingPosition, out int line, out int column) },
                 Line = line,
                 Column = column,
                 Checked = !c.IsSpace()
@@ -78,7 +75,7 @@ namespace Markdig.Extensions.TaskLists
                 listItemBlock.GetAttributes().AddClass(ListItemClass);
             }
 
-            var listBlock = (ListBlock) listItemBlock.Parent;
+            var listBlock = (ListBlock) listItemBlock.Parent!;
             if (!string.IsNullOrEmpty(ListClass))
             {
                 listBlock.GetAttributes().AddClass(ListClass);

@@ -1,6 +1,7 @@
-﻿// Copyright (c) Alexandre Mutel. All rights reserved.
+// Copyright (c) Alexandre Mutel. All rights reserved.
 // This file is licensed under the BSD-Clause 2 license. 
 // See the license.txt file in the project root for more information.
+
 using Markdig.Helpers;
 using Markdig.Syntax;
 
@@ -9,7 +10,7 @@ namespace Markdig.Parsers
     /// <summary>
     /// A block parser for a <see cref="ThematicBreakBlock"/>.
     /// </summary>
-    /// <seealso cref="Markdig.Parsers.BlockParser" />
+    /// <seealso cref="BlockParser" />
     public class ThematicBreakParser : BlockParser
     {
         /// <summary>
@@ -33,7 +34,6 @@ namespace Markdig.Parsers
             }
 
             var startPosition = processor.Start;
-
             var line = processor.Line;
 
             // 4.1 Thematic breaks 
@@ -72,8 +72,8 @@ namespace Markdig.Parsers
             var isSetexHeading = previousParagraph != null && breakChar == '-' && !hasInnerSpaces;
             if (isSetexHeading)
             {
-                var parent = previousParagraph.Parent;
-                if (parent is QuoteBlock || (parent is ListItemBlock && previousParagraph.Column != processor.Column))
+                var parent = previousParagraph!.Parent!;
+                if (previousParagraph.Column != processor.Column && (parent is QuoteBlock or ListItemBlock))
                 {
                     isSetexHeading = false;
                 }
@@ -85,13 +85,25 @@ namespace Markdig.Parsers
             }
 
             // Push a new block
-            processor.NewBlocks.Push(new ThematicBreakBlock(this)
+            var thematicBreak = new ThematicBreakBlock(this)
             {
                 Column = processor.Column,
                 Span = new SourceSpan(startPosition, line.End),
                 ThematicChar = breakChar,
-                ThematicCharCount = breakCharCount
-            });
+                ThematicCharCount = breakCharCount,
+                // TODO: should we separate whitespace before/after?
+                //BeforeWhitespace = beforeWhitespace,
+                //AfterWhitespace = processor.PopBeforeWhitespace(processor.CurrentLineStartPosition),
+                Content = new StringSlice(line.Text, processor.TriviaStart, line.End, line.NewLine), //include whitespace for now
+            };
+
+            if (processor.TrackTrivia)
+            {
+                thematicBreak.LinesBefore = processor.UseLinesBefore();
+                thematicBreak.NewLine = processor.Line.NewLine;
+            }
+
+            processor.NewBlocks.Push(thematicBreak);
             return BlockState.BreakDiscard;
         }
     }

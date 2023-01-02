@@ -1,6 +1,7 @@
 // Copyright (c) Alexandre Mutel. All rights reserved.
-// This file is licensed under the BSD-Clause 2 license. 
+// This file is licensed under the BSD-Clause 2 license.
 // See the license.txt file in the project root for more information.
+
 using Markdig.Helpers;
 using Markdig.Syntax.Inlines;
 
@@ -9,7 +10,7 @@ namespace Markdig.Parsers.Inlines
     /// <summary>
     /// An inline parser for escape characters.
     /// </summary>
-    /// <seealso cref="Markdig.Parsers.InlineParser" />
+    /// <seealso cref="InlineParser" />
     public class EscapeInlineParser : InlineParser
     {
         public EscapeInlineParser()
@@ -35,25 +36,42 @@ namespace Markdig.Parsers.Inlines
                     IsFirstCharacterEscaped = true,
                 };
                 processor.Inline.Span.End = processor.Inline.Span.Start + 1;
-                slice.NextChar();
+                slice.SkipChar();
                 return true;
             }
 
             // A backslash at the end of the line is a [hard line break]:
-            if (c == '\n')
+            if (c == '\n' || c == '\r')
             {
-                processor.Inline = new LineBreakInline()
+                var newLine = c == '\n' ? NewLine.LineFeed : NewLine.CarriageReturn;
+                if (c == '\r' && slice.PeekChar() == '\n')
+                {
+                    newLine = NewLine.CarriageReturnLineFeed;
+                }
+                var inline = new LineBreakInline()
                 {
                     IsHard = true,
                     IsBackslash = true,
                     Span = { Start = processor.GetSourcePosition(startPosition, out line, out column) },
                     Line = line,
-                    Column = column
+                    Column = column,
                 };
-                processor.Inline.Span.End = processor.Inline.Span.Start + 1;
-                slice.NextChar();
+                processor.Inline = inline;
+
+                if (processor.TrackTrivia)
+                {
+                    inline.NewLine = newLine;
+                }
+                
+                inline.Span.End = inline.Span.Start + 1;
+                slice.SkipChar(); // Skip \n or \r alone
+                if (newLine == NewLine.CarriageReturnLineFeed)
+                {
+                    slice.SkipChar(); // Skip \r\n
+                }
                 return true;
             }
+
             return false;
         }
     }

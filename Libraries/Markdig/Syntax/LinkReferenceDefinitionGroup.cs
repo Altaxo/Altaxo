@@ -2,24 +2,32 @@
 // This file is licensed under the BSD-Clause 2 license. 
 // See the license.txt file in the project root for more information.
 
-using Markdig.Helpers;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
+using Markdig.Helpers;
 
 namespace Markdig.Syntax
 {
     /// <summary>
     /// Contains all the <see cref="LinkReferenceDefinition"/> found in a document.
     /// </summary>
-    /// <seealso cref="Markdig.Syntax.ContainerBlock" />
+    /// <seealso cref="ContainerBlock" />
     public class LinkReferenceDefinitionGroup : ContainerBlock
     {
+#if NET452
+        private static readonly StringComparer _unicodeIgnoreCaseComparer = StringComparer.InvariantCultureIgnoreCase;
+#else
+        private static readonly StringComparer _unicodeIgnoreCaseComparer = CultureInfo.InvariantCulture.CompareInfo.GetStringComparer(CompareOptions.IgnoreCase | CompareOptions.IgnoreNonSpace);
+#endif
+
         /// <summary>
         /// Initializes a new instance of the <see cref="LinkReferenceDefinitionGroup"/> class.
         /// </summary>
         public LinkReferenceDefinitionGroup() : base(null)
         {
-            Links = new Dictionary<string, LinkReferenceDefinition>(StringComparer.OrdinalIgnoreCase);
+            Links = new Dictionary<string, LinkReferenceDefinition>(_unicodeIgnoreCaseComparer);
         }
 
         /// <summary>
@@ -29,7 +37,7 @@ namespace Markdig.Syntax
 
         public void Set(string label, LinkReferenceDefinition link)
         {
-            if (link == null) ThrowHelper.ArgumentNullException(nameof(link));
+            if (link is null) ThrowHelper.ArgumentNullException(nameof(link));
             if (!Contains(link))
             {
                 Add(link);
@@ -40,7 +48,7 @@ namespace Markdig.Syntax
             }
         }
 
-        public bool TryGet(string label, out LinkReferenceDefinition link)
+        public bool TryGet(string label, [NotNullWhen(true)] out LinkReferenceDefinition? link)
         {
             return Links.TryGetValue(label, out link);
         }

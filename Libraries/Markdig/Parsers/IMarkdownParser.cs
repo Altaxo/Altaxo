@@ -1,6 +1,7 @@
-﻿// Copyright (c) Alexandre Mutel. All rights reserved.
+// Copyright (c) Alexandre Mutel. All rights reserved.
 // This file is licensed under the BSD-Clause 2 license. 
 // See the license.txt file in the project root for more information.
+
 namespace Markdig.Parsers
 {
     /// <summary>
@@ -12,7 +13,7 @@ namespace Markdig.Parsers
         /// <summary>
         /// Gets the opening characters this parser will be triggered if the character is found.
         /// </summary>
-        char[] OpeningCharacters { get; }
+        char[]? OpeningCharacters { get; }
 
         /// <summary>
         /// Initializes this parser with the specified parser processor.

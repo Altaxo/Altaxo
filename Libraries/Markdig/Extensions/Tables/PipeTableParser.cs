@@ -17,7 +17,7 @@ namespace Markdig.Extensions.Tables
     /// <summary>
     /// The inline parser used to transform a <see cref="ParagraphBlock"/> into a <see cref="Table"/> at inline parsing time.
     /// </summary>
-    /// <seealso cref="Markdig.Parsers.InlineParser" />
+    /// <seealso cref="InlineParser" />
     /// <seealso cref="IPostInlineProcessor" />
     public class PipeTableParser : InlineParser, IPostInlineProcessor
     {
@@ -28,10 +28,10 @@ namespace Markdig.Extensions.Tables
         /// </summary>
         /// <param name="lineBreakParser">The linebreak parser to use</param>
         /// <param name="options">The options.</param>
-        public PipeTableParser(LineBreakInlineParser lineBreakParser, PipeTableOptions options = null)
+        public PipeTableParser(LineBreakInlineParser lineBreakParser, PipeTableOptions? options = null)
         {
             this.lineBreakParser = lineBreakParser ?? throw new ArgumentNullException(nameof(lineBreakParser));
-            OpeningCharacters = new[] { '|', '\n' };
+            OpeningCharacters = new[] { '|', '\n', '\r' };
             Options = options ?? new PipeTableOptions();
         }
 
@@ -43,7 +43,7 @@ namespace Markdig.Extensions.Tables
         public override bool Match(InlineProcessor processor, ref StringSlice slice)
         {
             // Only working on Paragraph block
-            if (!(processor.Block is ParagraphBlock))
+            if (!processor.Block!.IsParagraphBlock)
             {
                 return false;
             }
@@ -56,12 +56,10 @@ namespace Markdig.Extensions.Tables
             bool isFirstLineEmpty = false;
 
 
-            int globalLineIndex;
-            int column;
-            var position = processor.GetSourcePosition(slice.Start, out globalLineIndex, out column);
+            var position = processor.GetSourcePosition(slice.Start, out int globalLineIndex, out int column);
             var localLineIndex = globalLineIndex - processor.LineIndex;
 
-            if (tableState == null)
+            if (tableState is null)
             {
 
                 // A table could be preceded by an empty line or a line containing an inline
@@ -69,12 +67,12 @@ namespace Markdig.Extensions.Tables
                 // start for a table. Typically, with this, we can have an attributes {...}
                 // starting on the first line of a pipe table, even if the first line
                 // doesn't have a pipe
-                if (processor.Inline != null && (localLineIndex > 0 || c == '\n'))
+                if (processor.Inline != null && (localLineIndex > 0 || c == '\n' || c == '\r'))
                 {
                     return false;
                 }
 
-                if (processor.Inline == null)
+                if (processor.Inline is null)
                 {
                     isFirstLineEmpty = true;
                 }
@@ -83,7 +81,7 @@ namespace Markdig.Extensions.Tables
                 processor.ParserStates[Index] = tableState;
             }
 
-            if (c == '\n')
+            if (c == '\n' || c == '\r')
             {
                 if (!isFirstLineEmpty && !tableState.LineHasPipe)
                 {
@@ -94,8 +92,8 @@ namespace Markdig.Extensions.Tables
                 tableState.LineIndex++;
                 if (!isFirstLineEmpty)
                 {
-                    tableState.ColumnAndLineDelimiters.Add(processor.Inline);
-                    tableState.EndOfLines.Add(processor.Inline);
+                    tableState.ColumnAndLineDelimiters.Add(processor.Inline!);
+                    tableState.EndOfLines.Add(processor.Inline!);
                 }
             }
             else
@@ -114,16 +112,15 @@ namespace Markdig.Extensions.Tables
                 }
                 tableState.LineHasPipe = true;
                 tableState.LineIndex = localLineIndex;
-                slice.NextChar(); // Skip the `|` character
+                slice.SkipChar(); // Skip the `|` character
 
                 tableState.ColumnAndLineDelimiters.Add(processor.Inline);
             }
 
-
             return true;
         }
 
-        public bool PostProcess(InlineProcessor state, Inline root, Inline lastChild, int postInlineProcessorIndex, bool isFinalProcessing)
+        public bool PostProcess(InlineProcessor state, Inline? root, Inline? lastChild, int postInlineProcessorIndex, bool isFinalProcessing)
         {
             var container = root as ContainerInline;
             var tableState = state.ParserStates[Index] as TableState;
@@ -131,23 +128,20 @@ namespace Markdig.Extensions.Tables
             // If the delimiters are being processed by an image link, we need to transform them back to literals
             if (!isFinalProcessing)
             {
-                if (container == null || tableState == null)
+                if (container is null || tableState is null)
                 {
                     return true;
                 }
 
                 var child = container.LastChild;
-                List<PipeTableDelimiterInline> delimitersToRemove = null;
+                List<PipeTableDelimiterInline>? delimitersToRemove = null;
 
                 while (child != null)
                 {
-                    var pipeDelimiter = child as PipeTableDelimiterInline;
-                    if (pipeDelimiter != null)
+                    if (child is PipeTableDelimiterInline pipeDelimiter)
                     {
-                        if (delimitersToRemove == null)
-                        {
-                            delimitersToRemove = new List<PipeTableDelimiterInline>();
-                        }
+                        delimitersToRemove ??= new List<PipeTableDelimiterInline>();
+
                         delimitersToRemove.Add(pipeDelimiter);
                     }
 
@@ -198,10 +192,10 @@ namespace Markdig.Extensions.Tables
             }
 
             // Remove previous state
-            state.ParserStates[Index] = null;
+            state.ParserStates[Index] = null!;
 
             // Continue
-            if (tableState == null || container == null || tableState.IsInvalidTable || !tableState.LineHasPipe ) //|| tableState.LineIndex != state.LocalLineIndex)
+            if (tableState is null || container is null || tableState.IsInvalidTable || !tableState.LineHasPipe ) //|| tableState.LineIndex != state.LocalLineIndex)
             {
                 return true;
             }
@@ -211,7 +205,7 @@ namespace Markdig.Extensions.Tables
             // TODO: we could optimize this by merging FindHeaderRow and the cell loop
             var aligns = FindHeaderRow(delimiters);
 
-            if (Options.RequireHeaderSeparator && aligns == null)
+            if (Options.RequireHeaderSeparator && aligns is null)
             {
                 return true;
             }
@@ -219,7 +213,7 @@ namespace Markdig.Extensions.Tables
             var table = new Table();
 
             // If the current paragraph block has any attributes attached, we can copy them
-            var attributes = state.Block.TryGetAttributes();
+            var attributes = state.Block!.TryGetAttributes();
             if (attributes != null)
             {
                 attributes.CopyTo(table.GetAttributes());
@@ -260,9 +254,9 @@ namespace Markdig.Extensions.Tables
             {
                 while (true)
                 {
-                    if (lastElement is ContainerInline)
+                    if (lastElement is ContainerInline lastElementContainer)
                     {
-                        var nextElement = ((ContainerInline) lastElement).LastChild;
+                        var nextElement = lastElementContainer.LastChild;
                         if (nextElement != null)
                         {
                             lastElement = nextElement;
@@ -289,26 +283,24 @@ namespace Markdig.Extensions.Tables
 
             // Cell loop
             // Reconstruct the table from the delimiters
-            TableRow row = null;
-            TableRow firstRow = null;
+            TableRow? row = null;
+            TableRow? firstRow = null;
             for (int i = 0; i < delimiters.Count; i++)
             {
                 var delimiter = delimiters[i];
                 var pipeSeparator = delimiter as PipeTableDelimiterInline;
                 var isLine = delimiter is LineBreakInline;
 
-                if (row == null)
+                if (row is null)
                 {
                     row = new TableRow();
-                    if (firstRow == null)
-                    {
-                        firstRow = row;
-                    }
+
+                    firstRow ??= row;
 
                     // If the first delimiter is a pipe and doesn't have any parent or previous sibling, for cases like:
                     // 0)  | a | b | \n
                     // 1)  | a | b \n
-                    if (pipeSeparator != null && (delimiter.PreviousSibling == null || delimiter.PreviousSibling is LineBreakInline))
+                    if (pipeSeparator != null && (delimiter.PreviousSibling is null || delimiter.PreviousSibling is LineBreakInline))
                     {
                         delimiter.Remove();
                         continue;
@@ -320,23 +312,23 @@ namespace Markdig.Extensions.Tables
                 //         x
                 // 1)  | a | b \n
                 // 2)    a | b \n
-                Inline endOfCell = null;
-                Inline beginOfCell = null;
+                Inline? endOfCell = null;
+                Inline? beginOfCell = null;
                 var cellContentIt = delimiter;
                 while (true)
                 {
                     cellContentIt = cellContentIt.PreviousSibling ?? cellContentIt.Parent;
 
-                    if (cellContentIt == null || cellContentIt is LineBreakInline)
+                    if (cellContentIt is null || cellContentIt is LineBreakInline)
                     {
                         break;
                     }
 
                     // The cell begins at the first effective child after a | or the top ContainerInline (which is not necessary to bring into the tree + it contains an invalid span calculation)
-                    if (cellContentIt is PipeTableDelimiterInline || (cellContentIt.GetType() == typeof(ContainerInline) && cellContentIt.Parent == null ))
+                    if (cellContentIt is PipeTableDelimiterInline || (cellContentIt.GetType() == typeof(ContainerInline) && cellContentIt.Parent is null ))
                     {
                         beginOfCell = ((ContainerInline)cellContentIt).FirstChild;
-                        if (endOfCell == null)
+                        if (endOfCell is null)
                         {
                             endOfCell = beginOfCell;
                         }
@@ -344,12 +336,11 @@ namespace Markdig.Extensions.Tables
                     }
 
                     beginOfCell = cellContentIt;
-                    if (endOfCell == null)
+                    if (endOfCell is null)
                     {
                         endOfCell = beginOfCell;
                     }
                 }
-
 
                 // If the current deilimiter is a pipe `|` OR
                 // the beginOfCell/endOfCell are not null and
@@ -357,7 +348,7 @@ namespace Markdig.Extensions.Tables
                 // - different
                 // - they contain a single element, but it is not a line break (\n) or an empty/whitespace Literal.
                 // Then we can add a cell to the current row
-                if (!isLine || (beginOfCell != null && endOfCell != null && ( beginOfCell != endOfCell || !(beginOfCell is LineBreakInline || (beginOfCell is LiteralInline && ((LiteralInline)beginOfCell).Content.IsEmptyOrWhitespace())))))
+                if (!isLine || (beginOfCell != null && endOfCell != null && ( beginOfCell != endOfCell || !(beginOfCell is LineBreakInline || (beginOfCell is LiteralInline beingOfCellLiteral && beingOfCellLiteral.Content.IsEmptyOrWhitespace())))))
                 {
                     if (!isLine)
                     {
@@ -422,11 +413,11 @@ namespace Markdig.Extensions.Tables
                     Debug.Assert(row != null);
                     if (table.Span.IsEmpty)
                     {
-                        table.Span = row.Span;
+                        table.Span = row!.Span;
                         table.Line = row.Line;
                         table.Column = row.Column;
                     }
-                    table.Add(row);
+                    table.Add(row!);
                     row = null;
                 }
             }
@@ -459,17 +450,24 @@ namespace Markdig.Extensions.Tables
             cells.Clear();
 
             // Normalize the table
-            table.Normalize();
+            if (Options.UseHeaderForColumnCount)
+            {
+                table.NormalizeUsingHeaderRow();
+            }
+            else
+            {
+                table.NormalizeUsingMaxWidth();
+            }
 
             // We don't want to continue procesing delimiters, as we are already processing them here
             return false;
         }
 
-        private static bool ParseHeaderString(Inline inline, out TableColumnAlign? align)
+        private static bool ParseHeaderString(Inline? inline, out TableColumnAlign? align)
         {
             align = 0;
             var literal = inline as LiteralInline;
-            if (literal == null)
+            if (literal is null)
             {
                 return false;
             }
@@ -488,10 +486,10 @@ namespace Markdig.Extensions.Tables
             return false;
         }
 
-        private List<TableColumnDefinition> FindHeaderRow(List<Inline> delimiters)
+        private List<TableColumnDefinition>? FindHeaderRow(List<Inline> delimiters)
         {
             bool isValidRow = false;
-            List<TableColumnDefinition> aligns = null;
+            List<TableColumnDefinition>? aligns = null;
             for (int i = 0; i < delimiters.Count; i++)
             {
                 if (!IsLine(delimiters[i]))
@@ -513,20 +511,21 @@ namespace Markdig.Extensions.Tables
 
                     // Check the left side of a `|` delimiter
                     TableColumnAlign? align = null;
-                    if (delimiter.PreviousSibling != null && !ParseHeaderString(delimiter.PreviousSibling, out align))
+                    if (delimiter.PreviousSibling != null &&
+                        !(delimiter.PreviousSibling is LiteralInline li && li.Content.IsEmptyOrWhitespace()) && // ignore parsed whitespace
+                        !ParseHeaderString(delimiter.PreviousSibling, out align))
                     {
                         break;
                     }
 
                     // Create aligns until we may have a header row
-                    if (aligns == null)
-                    {
-                        aligns = new List<TableColumnDefinition>();
-                    }
+
+                    aligns ??= new List<TableColumnDefinition>();
+                    
                     aligns.Add(new TableColumnDefinition() { Alignment =  align });
 
                     // If this is the last delimiter, we need to check the right side of the `|` delimiter
-                    if (nextDelimiter == null)
+                    if (nextDelimiter is null)
                     {
                         var nextSibling = columnDelimiter != null
                             ? columnDelimiter.FirstChild
@@ -567,20 +566,20 @@ namespace Markdig.Extensions.Tables
             return inline is LineBreakInline;
         }
 
-        private static bool IsStartOfLineColumnDelimiter(Inline inline)
+        private static bool IsStartOfLineColumnDelimiter(Inline? inline)
         {
-            if (inline == null)
+            if (inline is null)
             {
                 return false;
             }
 
             var previous = inline.PreviousSibling;
-            if (previous == null)
+            if (previous is null)
             {
                 return true;
             }
-            var literal = previous as LiteralInline;
-            if (literal != null)
+
+            if (previous is LiteralInline literal)
             {
                 if (!literal.Content.IsEmptyOrWhitespace())
                 {
@@ -588,65 +587,57 @@ namespace Markdig.Extensions.Tables
                 }
                 previous = previous.PreviousSibling;
             }
-            return previous == null || IsLine(previous);
+            return previous is null || IsLine(previous);
         }
 
-        private static void TrimStart(Inline inline)
+        private static void TrimStart(Inline? inline)
         {
             while (inline is ContainerInline && !(inline is DelimiterInline))
             {
                 inline = ((ContainerInline)inline).FirstChild;
             }
-            var literal = inline as LiteralInline;
-            if (literal != null)
+
+            if (inline is LiteralInline literal)
             {
                 literal.Content.TrimStart();
             }
         }
 
-        private static void TrimEnd(Inline inline)
+        private static void TrimEnd(Inline? inline)
         {
-            var literal = inline as LiteralInline;
-            if (literal != null)
+            if (inline is LiteralInline literal)
             {
                 literal.Content.TrimEnd();
             }
         }
 
-        private static bool IsNullOrSpace(Inline inline)
+        private static bool IsNullOrSpace(Inline? inline)
         {
-            if (inline == null)
+            if (inline is null)
             {
                 return true;
             }
-            var literal = inline as LiteralInline;
-            if (literal != null)
+
+            if (inline is LiteralInline literal)
             {
                 return literal.Content.IsEmptyOrWhitespace();
             }
             return false;
         }
 
-        private class TableState
+        private sealed class TableState
         {
-            public TableState()
-            {
-                ColumnAndLineDelimiters = new List<Inline>();
-                Cells = new List<TableCell>();
-                EndOfLines = new List<Inline>();
-            }
-
             public bool IsInvalidTable { get; set; }
 
             public bool LineHasPipe { get; set; }
 
             public int LineIndex { get; set; }
 
-            public List<Inline> ColumnAndLineDelimiters { get; }
+            public List<Inline> ColumnAndLineDelimiters { get; } = new();
 
-            public List<TableCell> Cells { get; }
+            public List<TableCell> Cells { get; } = new();
 
-            public List<Inline> EndOfLines { get; }
+            public List<Inline> EndOfLines { get; } = new();
         }
     }
 }

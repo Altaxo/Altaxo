@@ -10,6 +10,7 @@ using Markdig.Renderers.Html;
 using Markdig.Syntax;
 using Markdig.Syntax.Inlines;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Markdig.Extensions.Globalization
 {
@@ -51,7 +52,7 @@ namespace Markdig.Extensions.Globalization
 
         }
 
-        private bool ShouldBeRightToLeft(MarkdownObject item)
+        private static bool ShouldBeRightToLeft(MarkdownObject item)
         {
             if (item is IEnumerable<MarkdownObject> container)
             {
@@ -67,7 +68,7 @@ namespace Markdig.Extensions.Globalization
             }
             else if (item is LeafBlock leaf)
             {
-                return ShouldBeRightToLeft(leaf.Inline);
+                return ShouldBeRightToLeft(leaf.Inline!);
             }
             else if (item is LiteralInline literal)
             {
@@ -76,7 +77,7 @@ namespace Markdig.Extensions.Globalization
 
             foreach (var paragraph in item.Descendants<ParagraphBlock>())
             {
-                foreach (var inline in paragraph.Inline)
+                foreach (var inline in paragraph.Inline!)
                 {
                     if (inline is LiteralInline literal)
                     {
@@ -88,14 +89,33 @@ namespace Markdig.Extensions.Globalization
             return false;
         }
 
-        private bool StartsWithRtlCharacter(StringSlice slice)
+        private static bool StartsWithRtlCharacter(StringSlice slice)
         {
-            foreach (var c in CharHelper.ToUtf32(slice))
+            for (int i = slice.Start; i <= slice.End; i++)
             {
-                if (CharHelper.IsRightToLeft(c))
+                char c = slice[i];
+                if (c < 128)
+                {
+                    if (CharHelper.IsAlpha(c))
+                    {
+                        return false;
+                    }
+
+                    continue;
+                }
+
+                int rune = c;
+                if (CharHelper.IsHighSurrogate(c) && i < slice.End && CharHelper.IsLowSurrogate(slice[i + 1]))
+                {
+                    Debug.Assert(char.IsSurrogatePair(c, slice[i + 1]));
+                    rune = char.ConvertToUtf32(c, slice[i + 1]);
+                    i++;
+                }
+
+                if (CharHelper.IsRightToLeft(rune))
                     return true;
 
-                else if (CharHelper.IsLeftToRight(c))
+                if (CharHelper.IsLeftToRight(rune))
                     return false;
             }
 

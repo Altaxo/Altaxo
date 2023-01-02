@@ -1,6 +1,7 @@
 // Copyright (c) Alexandre Mutel. All rights reserved.
 // This file is licensed under the BSD-Clause 2 license. 
 // See the license.txt file in the project root for more information.
+
 using Markdig.Syntax.Inlines;
 using System.Diagnostics;
 
@@ -9,7 +10,7 @@ namespace Markdig.Renderers.Html.Inlines
     /// <summary>
     /// A HTML renderer for an <see cref="EmphasisInline"/>.
     /// </summary>
-    /// <seealso cref="Html.HtmlObjectRenderer{EmphasisInline}" />
+    /// <seealso cref="HtmlObjectRenderer{EmphasisInline}" />
     public class EmphasisInlineRenderer : HtmlObjectRenderer<EmphasisInline>
     {
         /// <summary>
@@ -17,7 +18,7 @@ namespace Markdig.Renderers.Html.Inlines
         /// </summary>
         /// <param name="obj">The object.</param>
         /// <returns>The HTML tag associated to this <see cref="EmphasisInline"/> object</returns>
-        public delegate string GetTagDelegate(EmphasisInline obj);
+        public delegate string? GetTagDelegate(EmphasisInline obj);
 
         /// <summary>
         /// Initializes a new instance of the <see cref="EmphasisInlineRenderer"/> class.
@@ -34,16 +35,21 @@ namespace Markdig.Renderers.Html.Inlines
 
         protected override void Write(HtmlRenderer renderer, EmphasisInline obj)
         {
-            string tag = null;
+            string? tag = null;
             if (renderer.EnableHtmlForInline)
             {
                 tag = GetTag(obj);
-                renderer.Write("<").Write(tag).WriteAttributes(obj).Write(">");
+                renderer.Write('<');
+                renderer.WriteRaw(tag);
+                renderer.WriteAttributes(obj);
+                renderer.WriteRaw('>');
             }
             renderer.WriteChildren(obj);
             if (renderer.EnableHtmlForInline)
             {
-                renderer.Write("</").Write(tag).Write(">");
+                renderer.Write("</");
+                renderer.WriteRaw(tag);
+                renderer.WriteRaw('>');
             }
         }
 
@@ -52,9 +58,9 @@ namespace Markdig.Renderers.Html.Inlines
         /// </summary>
         /// <param name="obj">The object.</param>
         /// <returns></returns>
-        public string GetDefaultTag(EmphasisInline obj)
+        public static string? GetDefaultTag(EmphasisInline obj)
         {
-            if (obj.DelimiterChar == '*' || obj.DelimiterChar == '_')
+            if (obj.DelimiterChar is '*' or '_')
             {
                 Debug.Assert(obj.DelimiterCount <= 2);
                 return obj.DelimiterCount == 2 ? "strong" : "em";

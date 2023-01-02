@@ -53,7 +53,7 @@ namespace Markdig.Syntax
             return Start == other.Start && End == other.End;
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             return obj is SourceSpan sourceSpan && Equals(sourceSpan);
         }

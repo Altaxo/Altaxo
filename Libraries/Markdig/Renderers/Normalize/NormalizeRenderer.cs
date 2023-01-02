@@ -2,7 +2,6 @@
 // This file is licensed under the BSD-Clause 2 license. 
 // See the license.txt file in the project root for more information.
 
-using System;
 using System.IO;
 using Markdig.Syntax;
 using Markdig.Renderers.Normalize.Inlines;
@@ -13,7 +12,7 @@ namespace Markdig.Renderers.Normalize
     /// <summary>
     /// Default HTML renderer for a Markdown <see cref="MarkdownDocument"/> object.
     /// </summary>
-    /// <seealso cref="Markdig.Renderers.TextRendererBase{Markdig.Renderers.Normalize.NormalizeRenderer}" />
+    /// <seealso cref="TextRendererBase{NormalizeRenderer}" />
     public class NormalizeRenderer : TextRendererBase<NormalizeRenderer>
     {
         /// <summary>
@@ -21,7 +20,7 @@ namespace Markdig.Renderers.Normalize
         /// </summary>
         /// <param name="writer">The writer.</param>
         /// <param name="options">The normalize options</param>
-        public NormalizeRenderer(TextWriter writer, NormalizeOptions options = null) : base(writer)
+        public NormalizeRenderer(TextWriter writer, NormalizeOptions? options = null) : base(writer)
         {
             Options = options ?? new NormalizeOptions();
             // Default block renderers
@@ -70,7 +69,7 @@ namespace Markdig.Renderers.Normalize
         ///// <returns></returns>
         //public NormalizeRenderer WriteAttributes(MarkdownObject obj)
         //{
-        //    if (obj == null) throw new ArgumentNullException(nameof(obj));
+        //    if (obj is null) throw new ArgumentNullException(nameof(obj));
         //    return WriteAttributes(obj.TryGetAttributes());
         //}
 
@@ -81,14 +80,14 @@ namespace Markdig.Renderers.Normalize
         ///// <returns>This instance</returns>
         //public NormalizeRenderer WriteAttributes(HtmlAttributes attributes)
         //{
-        //    if (attributes == null)
+        //    if (attributes is null)
         //    {
         //        return this;
         //    }
 
         //    if (attributes.Id != null)
         //    {
-        //        Write(" id=\"").WriteEscape(attributes.Id).Write("\"");
+        //        Write(" id=\"").WriteEscape(attributes.Id).Write('"');
         //    }
 
         //    if (attributes.Classes != null && attributes.Classes.Count > 0)
@@ -103,19 +102,19 @@ namespace Markdig.Renderers.Normalize
         //            }
         //            WriteEscape(cssClass);
         //        }
-        //        Write("\"");
+        //        Write('"');
         //    }
 
         //    if (attributes.Properties != null && attributes.Properties.Count > 0)
         //    {
         //        foreach (var property in attributes.Properties)
         //        {
-        //            Write(" ").Write(property.Key);
+        //            Write(' ').Write(property.Key);
         //            if (property.Value != null)
         //            {
-        //                Write("=").Write("\"");
+        //                Write('=').Write('"');
         //                WriteEscape(property.Value);
-        //                Write("\"");
+        //                Write('"');
         //            }
         //        }
         //    }
@@ -128,10 +127,11 @@ namespace Markdig.Renderers.Normalize
         /// </summary>
         /// <param name="leafBlock">The leaf block.</param>
         /// <param name="writeEndOfLines">if set to <c>true</c> write end of lines.</param>
+        /// <param name="indent">Whether to write indents.</param>
         /// <returns>This instance</returns>
         public NormalizeRenderer WriteLeafRawLines(LeafBlock leafBlock, bool writeEndOfLines, bool indent = false)
         {
-            if (leafBlock == null) ThrowHelper.ArgumentNullException_leafBlock();
+            if (leafBlock is null) ThrowHelper.ArgumentNullException_leafBlock();
             if (leafBlock.Lines.Lines != null)
             {
                 var lines = leafBlock.Lines;

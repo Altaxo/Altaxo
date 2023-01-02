@@ -16,7 +16,7 @@ namespace Markdig.Extensions.SmartyPants
         /// Initializes a new instance of the <see cref="SmartyPantsExtension"/> class.
         /// </summary>
         /// <param name="options">The options.</param>
-        public SmartyPantsExtension(SmartyPantOptions options)
+        public SmartyPantsExtension(SmartyPantOptions? options)
         {
             Options = options ?? new SmartyPantOptions();
         }

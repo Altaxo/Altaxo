@@ -1,6 +1,7 @@
-﻿// Copyright (c) Alexandre Mutel. All rights reserved.
+// Copyright (c) Alexandre Mutel. All rights reserved.
 // This file is licensed under the BSD-Clause 2 license. 
 // See the license.txt file in the project root for more information.
+
 namespace Markdig.Syntax
 {
     /// <summary>
@@ -10,11 +11,10 @@ namespace Markdig.Syntax
     {
         // TODO: Add test for this code
 
-        public static Block FindBlockAtPosition(this Block rootBlock, int position)
+        public static Block? FindBlockAtPosition(this Block rootBlock, int position)
         {
             var contains = rootBlock.CompareToPosition(position) == 0;
-            var blocks = rootBlock as ContainerBlock;
-            if (blocks == null || blocks.Count == 0 || !contains)
+            if (!(rootBlock is ContainerBlock blocks) || blocks.Count == 0 || !contains)
             {
                 return contains ? rootBlock : null;
             }
@@ -23,7 +23,7 @@ namespace Markdig.Syntax
             var upperIndex = blocks.Count - 1;
 
             // binary search on lines
-            Block block = null;
+            Block? block = null;
             while (lowerIndex <= upperIndex)
             {
                 int midIndex = (upperIndex - lowerIndex) / 2 + lowerIndex;
@@ -41,7 +41,7 @@ namespace Markdig.Syntax
                     upperIndex = midIndex - 1;
             }
 
-            if (block == null)
+            if (block is null)
             {
                 return rootBlock;
             }
@@ -50,17 +50,15 @@ namespace Markdig.Syntax
             return FindBlockAtPosition(block, position);
         }
 
-
         public static int FindClosestLine(this MarkdownDocument root, int line)
         {
             var closestBlock = root.FindClosestBlock(line);
             return closestBlock?.Line ?? 0;
         }
 
-        public static Block FindClosestBlock(this Block rootBlock, int line)
+        public static Block? FindClosestBlock(this Block rootBlock, int line)
         {
-            var blocks = rootBlock as ContainerBlock;
-            if (blocks == null || blocks.Count == 0)
+            if (!(rootBlock is ContainerBlock blocks) || blocks.Count == 0)
             {
                 return rootBlock.Line == line ? rootBlock : null;
             }

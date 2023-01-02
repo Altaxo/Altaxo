@@ -10,7 +10,7 @@ namespace Markdig.Extensions.Emoji
     /// <summary>
     /// An emoji inline.
     /// </summary>
-    /// <seealso cref="Markdig.Syntax.Inlines.Inline" />
+    /// <seealso cref="Inline" />
     public class EmojiInline : LiteralInline
     {
         // Inherit from LiteralInline so that rendering is already handled by default
@@ -34,6 +34,6 @@ namespace Markdig.Extensions.Emoji
         /// <summary>
         /// Gets or sets the original match string (either an emoji shortcode or a text smiley)
         /// </summary>
-        public string Match { get; set; }
+        public string? Match { get; set; }
     }
 }

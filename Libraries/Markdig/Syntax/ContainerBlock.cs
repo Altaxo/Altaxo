@@ -8,6 +8,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace Markdig.Syntax
@@ -15,25 +16,42 @@ namespace Markdig.Syntax
     /// <summary>
     /// A base class for container blocks.
     /// </summary>
-    /// <seealso cref="Markdig.Syntax.Block" />
+    /// <seealso cref="Block" />
     [DebuggerDisplay("{GetType().Name} Count = {Count}")]
     public abstract class ContainerBlock : Block, IList<Block>, IReadOnlyList<Block>
     {
-        private Block[] children;
+        private BlockWrapper[] _children;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ContainerBlock"/> class.
         /// </summary>
         /// <param name="parser">The parser used to create this block.</param>
-        protected ContainerBlock(BlockParser parser) : base(parser)
+        protected ContainerBlock(BlockParser? parser) : base(parser)
         {
-            children = Array.Empty<Block>();
+            _children = ArrayHelper.Empty<BlockWrapper>();
+            SetTypeKind(isInline: false, isContainer: true);
         }
 
         /// <summary>
         /// Gets the last child.
         /// </summary>
-        public Block LastChild => Count > 0 ? children[Count - 1] : null;
+        public Block? LastChild
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get
+            {
+                BlockWrapper[] children = _children;
+                int index = Count - 1;
+                if ((uint)index < (uint)children.Length)
+                {
+                    return children[index].Block;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+        }
 
         /// <summary>
         /// Specialize enumerator.
@@ -56,7 +74,7 @@ namespace Markdig.Syntax
 
         public void Add(Block item)
         {
-            if (item == null)
+            if (item is null)
                 ThrowHelper.ArgumentNullException_item();
 
             if (item.Parent != null)
@@ -64,78 +82,65 @@ namespace Markdig.Syntax
                 ThrowHelper.ArgumentException("Cannot add this block as it as already attached to another container (block.Parent != null)");
             }
 
-            if (Count == children.Length)
+            if (Count == _children.Length)
             {
-                EnsureCapacity(Count + 1);
+                Grow();
             }
-            children[Count++] = item;
+            _children[Count] = new BlockWrapper(item);
+            Count++;
             item.Parent = this;
 
             UpdateSpanEnd(item.Span.End);
         }
 
-        private void EnsureCapacity(int min)
+        private void Grow()
         {
-            if (children.Length < min)
+            if (_children.Length == 0)
             {
-                int num = (children.Length == 0) ? 4 : (children.Length * 2);
-                if (num < min)
-                {
-                    num = min;
-                }
+                _children = new BlockWrapper[4];
+            }
+            else
+            {
+                Debug.Assert(_children[_children.Length - 1].Block is not null);
 
-                var destinationArray = new Block[num];
-                if (Count > 0)
-                {
-                    Array.Copy(children, 0, destinationArray, 0, Count);
-                }
-                children = destinationArray;
+                var newArray = new BlockWrapper[_children.Length * 2];
+                Array.Copy(_children, 0, newArray, 0, Count);
+                _children = newArray;
             }
         }
 
         public void Clear()
         {
-            for (int i = 0; i < Count; i++)
+            BlockWrapper[] children = _children;
+            for (int i = 0; i < Count && i < children.Length; i++)
             {
-                children[i].Parent = null;
-                children[i] = null;
+                children[i].Block.Parent = null;
+                children[i] = default;
             }
-
             Count = 0;
         }
 
         public bool Contains(Block item)
         {
-            if (item == null)
-                ThrowHelper.ArgumentNullException_item();
-
-            for (int i = 0; i < Count; i++)
-            {
-                if (children[i] == item)
-                {
-                    return true;
-                }
-            }
-            return false;
+            return IndexOf(item) >= 0;
         }
 
         public void CopyTo(Block[] array, int arrayIndex)
         {
-            Array.Copy(children, 0, array, arrayIndex, Count);
+            BlockWrapper[] children = _children;
+            for (int i = 0; i < Count && i < children.Length; i++)
+            {
+                array[arrayIndex + i] = children[i].Block;
+            }
         }
 
         public bool Remove(Block item)
         {
-            if (item == null)
-                ThrowHelper.ArgumentNullException_item();
-
-            for (int i = Count - 1; i >= 0; i--)
+            int index = IndexOf(item);
+            if (index >= 0)
             {
-                if (children[i] == item)
-                {
-                    RemoveAt(i);
-                    return true;
-                }
+                RemoveAt(index);
+                return true;
             }
             return false;
         }
@@ -146,12 +151,13 @@ namespace Markdig.Syntax
 
         public int IndexOf(Block item)
         {
-            if (item == null)
+            if (item is null)
                 ThrowHelper.ArgumentNullException_item();
 
-            for (int i = 0; i < Count; i++)
+            BlockWrapper[] children = _children;
+            for (int i = 0; i < Count && i < children.Length; i++)
             {
-                if (children[i] == item)
+                if (ReferenceEquals(children[i].Block, item))
                 {
                     return i;
                 }
@@ -161,7 +167,7 @@ namespace Markdig.Syntax
 
         public void Insert(int index, Block item)
         {
-            if (item == null)
+            if (item is null)
                 ThrowHelper.ArgumentNullException_item();
 
             if (item.Parent != null)
@@ -172,64 +178,77 @@ namespace Markdig.Syntax
             {
                 ThrowHelper.ArgumentOutOfRangeException_index();
             }
-            if (Count == children.Length)
+            if (Count == _children.Length)
             {
-                EnsureCapacity(Count + 1);
+                Grow();
             }
             if (index < Count)
             {
-                Array.Copy(children, index, children, index + 1, Count - index);
+                Array.Copy(_children, index, _children, index + 1, Count - index);
             }
-            children[index] = item;
+            _children[index] = new BlockWrapper(item);
             Count++;
             item.Parent = this;
         }
 
         public void RemoveAt(int index)
         {
-            if ((uint)index > (uint)Count)
+            if ((uint)index >= (uint)Count)
                 ThrowHelper.ArgumentOutOfRangeException_index();
 
             Count--;
             // previous children
-            var item = children[index];
+            var item = _children[index].Block;
             item.Parent = null;
             if (index < Count)
             {
-                Array.Copy(children, index + 1, children, index, Count - index);
+                Array.Copy(_children, index + 1, _children, index, Count - index);
             }
-            children[Count] = null;
+            _children[Count] = default;
         }
 
         public Block this[int index]
         {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get
             {
-                var array = children;
+                var array = _children;
                 if ((uint)index >= (uint)array.Length || index >= Count)
                 {
                     ThrowHelper.ThrowIndexOutOfRangeException();
                     return null;
                 }
-                return array[index];
+                return array[index].Block;
             }
             set
             {
                 if ((uint)index >= (uint)Count) ThrowHelper.ThrowIndexOutOfRangeException();
-                children[index] = value;
+
+                if (value is null)
+                    ThrowHelper.ArgumentNullException_item();
+
+                if (value.Parent != null)
+                    ThrowHelper.ArgumentException("Cannot add this block as it as already attached to another container (block.Parent != null)");
+
+                var existingChild = _children[index].Block;
+                if (existingChild != null)
+                    existingChild.Parent = null;
+
+                value.Parent = this;
+                _children[index] = new BlockWrapper(value);
             }
         }
 
         public void Sort(IComparer<Block> comparer)
         {
-            if (comparer == null) ThrowHelper.ArgumentNullException(nameof(comparer));
-            Array.Sort(children, 0, Count, comparer);
+            if (comparer is null) ThrowHelper.ArgumentNullException(nameof(comparer));
+            Array.Sort(_children, 0, Count, new BlockComparerWrapper(comparer));
         }
 
         public void Sort(Comparison<Block> comparison)
         {
-            if (comparison == null) ThrowHelper.ArgumentNullException(nameof(comparison));
-            Array.Sort(children, 0, Count, new BlockComparer(comparison));
+            if (comparison is null) ThrowHelper.ArgumentNullException(nameof(comparison));
+            Array.Sort(_children, 0, Count, new BlockComparisonWrapper(comparison));
         }
 
         #region Nested type: Enumerator
@@ -239,7 +258,7 @@ namespace Markdig.Syntax
         {
             private readonly ContainerBlock block;
             private int index;
-            private Block current;
+            private Block? current;
 
             internal Enumerator(ContainerBlock block)
             {
@@ -248,10 +267,9 @@ namespace Markdig.Syntax
                 current = null;
             }
 
-            public Block Current => current;
+            public Block Current => current!;
 
             object IEnumerator.Current => Current;
-
 
             public void Dispose()
             {
@@ -284,18 +302,33 @@ namespace Markdig.Syntax
 
         #endregion
 
-        private sealed class BlockComparer : IComparer<Block>
+        private sealed class BlockComparisonWrapper : IComparer<BlockWrapper>
         {
-            private readonly Comparison<Block> comparison;
+            private readonly Comparison<Block> _comparison;
 
-            public BlockComparer(Comparison<Block> comparison)
+            public BlockComparisonWrapper(Comparison<Block> comparison)
             {
-                this.comparison = comparison;
+                _comparison = comparison;
             }
 
-            public int Compare(Block x, Block y)
+            public int Compare(BlockWrapper x, BlockWrapper y)
             {
-                return comparison(x, y);
+                return _comparison(x.Block, y.Block);
+            }
+        }
+
+        private sealed class BlockComparerWrapper : IComparer<BlockWrapper>
+        {
+            private readonly IComparer<Block> _comparer;
+
+            public BlockComparerWrapper(IComparer<Block> comparer)
+            {
+                _comparer = comparer;
+            }
+
+            public int Compare(BlockWrapper x, BlockWrapper y)
+            {
+                return _comparer.Compare(x.Block, y.Block);
             }
         }
     }

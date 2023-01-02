@@ -1,16 +1,19 @@
 // Copyright (c) Alexandre Mutel. All rights reserved.
-// This file is licensed under the BSD-Clause 2 license. 
+// This file is licensed under the BSD-Clause 2 license.
 // See the license.txt file in the project root for more information.
+
 using Markdig.Helpers;
 using Markdig.Syntax;
 using Markdig.Syntax.Inlines;
+using System;
+using System.Diagnostics;
 
 namespace Markdig.Parsers.Inlines
 {
     /// <summary>
     /// An inline parser for a <see cref="CodeInline"/>.
     /// </summary>
-    /// <seealso cref="Markdig.Parsers.InlineParser" />
+    /// <seealso cref="InlineParser" />
     public class CodeInlineParser : InlineParser
     {
         /// <summary>
@@ -31,18 +34,14 @@ namespace Markdig.Parsers.Inlines
 
             var startPosition = slice.Start;
 
-            int openSticks = 0;
+            // Match the opened sticks
+            int openSticks = slice.CountAndSkipChar(match);
+            int contentStart = slice.Start;
             int closeSticks = 0;
 
-            // Match the opened sticks
             char c = slice.CurrentChar;
-            while (c == match)
-            {
-                openSticks++;
-                c = slice.NextChar();
-            }
 
-            var builder = StringBuilderCache.Local();
+            var builder = new ValueStringBuilder(stackalloc char[ValueStringBuilder.StackallocThreshold]);
 
             // A backtick string is a string of one or more backtick characters (`) that is neither preceded nor followed by a backtick.
             // A code span begins with a backtick string and ends with a backtick string of equal length.
@@ -56,23 +55,29 @@ namespace Markdig.Parsers.Inlines
             // whitespace from the opening or closing backtick strings.
 
             bool allSpace = true;
+            bool containsNewLine = false;
+            var contentEnd = -1;
 
             while (c != '\0')
             {
                 // Transform '\n' into a single space
                 if (c == '\n')
                 {
+                    containsNewLine = true;
                     c = ' ';
+                }
+                else if (c == '\r')
+                {
+                    containsNewLine = true;
+                    slice.SkipChar();
+                    c = slice.CurrentChar;
+                    continue;
                 }
 
                 if (c == match)
                 {
-                    do
-                    {
-                        closeSticks++;
-                        c = slice.NextChar();
-                    }
-                    while (c == match);
+                    contentEnd = slice.Start;
+                    closeSticks = slice.CountAndSkipChar(match);
 
                     if (openSticks == closeSticks)
                     {
@@ -81,7 +86,7 @@ namespace Markdig.Parsers.Inlines
 
                     allSpace = false;
                     builder.Append(match, closeSticks);
-                    closeSticks = 0;
+                    c = slice.CurrentChar;
                 }
                 else
                 {
@@ -97,29 +102,43 @@ namespace Markdig.Parsers.Inlines
             bool isMatching = false;
             if (closeSticks == openSticks)
             {
-                string content;
+                ReadOnlySpan<char> contentSpan = builder.AsSpan();
+
+                var content = containsNewLine
+                    ? new LazySubstring(contentSpan.ToString())
+                    : new LazySubstring(slice.Text, contentStart, contentSpan.Length);
+
+                Debug.Assert(contentSpan.SequenceEqual(content.AsSpan()));
 
                 // Remove one space from front and back if the string is not all spaces
-                if (!allSpace && builder.Length > 2 && builder[0] == ' ' && builder[builder.Length - 1] == ' ')
+                if (!allSpace && contentSpan.Length > 2 && contentSpan[0] == ' ' && contentSpan[contentSpan.Length - 1] == ' ')
                 {
-                    content = builder.ToString(1, builder.Length - 2);
-                }
-                else
-                {
-                    content = builder.ToString();
+                    content.Offset++;
+                    content.Length -= 2;
                 }
 
-                processor.Inline = new CodeInline()
+                int delimiterCount = Math.Min(openSticks, closeSticks);
+                var spanStart = processor.GetSourcePosition(startPosition, out int line, out int column);
+                var spanEnd = processor.GetSourcePosition(slice.Start - 1);
+                var codeInline = new CodeInline(content)
                 {
                     Delimiter = match,
-                    Content = content,
-                    Span = new SourceSpan(processor.GetSourcePosition(startPosition, out int line, out int column), processor.GetSourcePosition(slice.Start - 1)),
+                    Span = new SourceSpan(spanStart, spanEnd),
                     Line = line,
-                    Column = column
+                    Column = column,
+                    DelimiterCount = delimiterCount,
                 };
+
+                if (processor.TrackTrivia)
+                {
+                    codeInline.ContentWithTrivia = new StringSlice(slice.Text, contentStart, contentEnd - 1);
+                }
+
+                processor.Inline = codeInline;
                 isMatching = true;
             }
 
+            builder.Dispose();
             return isMatching;
         }
     }

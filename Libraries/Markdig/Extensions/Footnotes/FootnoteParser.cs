@@ -12,7 +12,7 @@ namespace Markdig.Extensions.Footnotes
     /// <summary>
     /// The block parser for a <see cref="Footnote"/>.
     /// </summary>
-    /// <seealso cref="Markdig.Parsers.BlockParser" />
+    /// <seealso cref="BlockParser" />
     public class FootnoteParser : BlockParser
     {
         /// <summary>
@@ -40,10 +40,8 @@ namespace Markdig.Extensions.Footnotes
             }
 
             var saved = processor.Column;
-            string label;
             int start = processor.Start;
-            SourceSpan labelSpan;
-            if (!LinkHelper.TryParseLabel(ref processor.Line, false, out label, out labelSpan) || !label.StartsWith("^") || processor.CurrentChar != ':')
+            if (!LinkHelper.TryParseLabel(ref processor.Line, false, out string? label, out SourceSpan labelSpan) || !label.StartsWith("^") || processor.CurrentChar != ':')
             {
                 processor.GoToColumn(saved);
                 return BlockState.None;
@@ -72,16 +70,15 @@ namespace Markdig.Extensions.Footnotes
             }
             footnotes.Add(footnote);
 
-            var linkRef = new FootnoteLinkReferenceDefinition()
+            var linkRef = new FootnoteLinkReferenceDefinition(footnote)
             {
-                Footnote = footnote,
                 CreateLinkInline = CreateLinkToFootnote,
                 Line = processor.LineIndex,
                 Span = new SourceSpan(start, processor.Start - 2), // account for ]:
                 LabelSpan = labelSpan,
                 Label = label
             };
-            processor.Document.SetLinkReferenceDefinition(footnote.Label, linkRef);
+            processor.Document.SetLinkReferenceDefinition(footnote.Label, linkRef, true);
             processor.NewBlocks.Push(footnote);
             return BlockState.Continue;
         }
@@ -132,12 +129,12 @@ namespace Markdig.Extensions.Footnotes
         /// </summary>
         /// <param name="state">The processor.</param>
         /// <param name="inline">The inline.</param>
-        private void Document_ProcessInlinesEnd(InlineProcessor state, Inline inline)
+        private void Document_ProcessInlinesEnd(InlineProcessor state, Inline? inline)
         {
             // Unregister
             state.Document.ProcessInlinesEnd -= Document_ProcessInlinesEnd;
 
-            var footnotes = ((FootnoteGroup)state.Document.GetData(DocumentKey));
+            var footnotes = (FootnoteGroup)state.Document.GetData(DocumentKey)!;
             // Remove the footnotes from the document and readd them at the end
             state.Document.Remove(footnotes);
             state.Document.Add(footnotes);
@@ -168,7 +165,7 @@ namespace Markdig.Extensions.Footnotes
 
                 // Insert all footnote backlinks
                 var paragraphBlock = footnote.LastChild as ParagraphBlock;
-                if (paragraphBlock == null)
+                if (paragraphBlock is null)
                 {
                     paragraphBlock = new ParagraphBlock();
                     footnote.Add(paragraphBlock);
@@ -182,28 +179,27 @@ namespace Markdig.Extensions.Footnotes
                 {
                     linkIndex++;
                     link.Index = linkIndex;
-                    var backLink = new FootnoteLink()
+                    var backLink = new FootnoteLink(footnote)
                     {
                         Index = linkIndex,
-                        IsBackLink = true,
-                        Footnote = footnote
+                        IsBackLink = true
                     };
                     paragraphBlock.Inline.AppendChild(backLink);
                 }
             }
         }
 
-        private static Inline CreateLinkToFootnote(InlineProcessor state, LinkReferenceDefinition linkRef, Inline child)
+        private static Inline CreateLinkToFootnote(InlineProcessor state, LinkReferenceDefinition linkRef, Inline? child)
         {
             var footnote = ((FootnoteLinkReferenceDefinition)linkRef).Footnote;
             if (footnote.Order < 0)
             {
-                var footnotes = (FootnoteGroup)state.Document.GetData(DocumentKey);
+                var footnotes = (FootnoteGroup)state.Document.GetData(DocumentKey)!;
                 footnotes.CurrentOrder++;
                 footnote.Order = footnotes.CurrentOrder;
             }
 
-            var link = new FootnoteLink() {Footnote = footnote};
+            var link = new FootnoteLink(footnote);
             footnote.Links.Add(link);
 
             return link;

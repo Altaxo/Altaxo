@@ -24,7 +24,14 @@ namespace Markdig.Helpers
         /// Initializes a new instance of the <see cref="StringLineGroup"/> class.
         /// </summary>
         /// <param name="capacity"></param>
-        public StringLineGroup(int capacity, bool willRelease = false)
+        public StringLineGroup(int capacity)
+        {
+            if (capacity <= 0) ThrowHelper.ArgumentOutOfRangeException(nameof(capacity));
+            Lines = _pool.Rent(capacity);
+            Count = 0;
+        }
+
+        internal StringLineGroup(int capacity, bool willRelease)
         {
             if (capacity <= 0) ThrowHelper.ArgumentOutOfRangeException(nameof(capacity));
             Lines = _pool.Rent(willRelease ? Math.Max(8, capacity) : capacity);
@@ -35,10 +42,10 @@ namespace Markdig.Helpers
         /// Initializes a new instance of the <see cref="StringLineGroup"/> class.
         /// </summary>
         /// <param name="text">The text.</param>
-        /// <exception cref="System.ArgumentNullException"></exception>
+        /// <exception cref="ArgumentNullException"></exception>
         public StringLineGroup(string text)
         {
-            if (text == null) ThrowHelper.ArgumentNullException_text();
+            if (text is null) ThrowHelper.ArgumentNullException_text();
             Lines = new StringLine[1];
             Count = 0;
             Add(new StringSlice(text));
@@ -78,6 +85,14 @@ namespace Markdig.Helpers
             Count--;
         }
 
+        internal void RemoveStartRange(int toRemove)
+        {
+            int remaining = Count - toRemove;
+            Count = remaining;
+            Array.Copy(Lines, toRemove, Lines, 0, remaining);
+            Array.Clear(Lines, remaining, toRemove);
+        }
+
         /// <summary>
         /// Adds the specified line to this instance.
         /// </summary>
@@ -110,19 +125,20 @@ namespace Markdig.Helpers
         /// </summary>
         /// <param name="lineOffsets">The position of the `\n` line offsets from the beginning of the returned slice.</param>
         /// <returns>A single slice concatenating the lines of this instance</returns>
-        public readonly StringSlice ToSlice(List<LineOffset> lineOffsets = null)
+        public readonly StringSlice ToSlice(List<LineOffset>? lineOffsets = null)
         {
             // Optimization case for a single line.
             if (Count == 1)
             {
-                lineOffsets?.Add(new LineOffset(Lines[0].Position, Lines[0].Column, Lines[0].Slice.Start - Lines[0].Position, Lines[0].Slice.Start, Lines[0].Slice.End + 1));
+                ref StringLine line = ref Lines[0];
+                lineOffsets?.Add(new LineOffset(line.Position, line.Column, line.Slice.Start - line.Position, line.Slice.Start, line.Slice.End + 1));
                 return Lines[0];
             }
 
             // Optimization case when no lines
             if (Count == 0)
             {
-                return new StringSlice(string.Empty);
+                return StringSlice.Empty;
             }
 
             if (lineOffsets != null && lineOffsets.Capacity < lineOffsets.Count + Count)
@@ -131,24 +147,26 @@ namespace Markdig.Helpers
             }
 
             // Else use a builder
-            var builder = StringBuilderCache.Local();
+            var builder = new ValueStringBuilder(stackalloc char[ValueStringBuilder.StackallocThreshold]);
             int previousStartOfLine = 0;
+            var newLine = NewLine.None;
             for (int i = 0; i < Count; i++)
             {
                 if (i > 0)
                 {
-                    builder.Append('\n');
+                    builder.Append(newLine.AsString());
                     previousStartOfLine = builder.Length;
                 }
-                ref var line = ref Lines[i];
+                ref StringLine line = ref Lines[i];
                 if (!line.Slice.IsEmpty)
                 {
-                    builder.Append(line.Slice.Text, line.Slice.Start, line.Slice.Length);
+                    builder.Append(line.Slice.AsSpan());
                 }
+                newLine = line.NewLine;
 
                 lineOffsets?.Add(new LineOffset(line.Position, line.Column, line.Slice.Start - line.Position, previousStartOfLine, builder.Length));
             }
-            return new StringSlice(builder.GetStringAndReset());
+            return new StringSlice(builder.ToString());
         }
 
         /// <summary>
@@ -192,7 +210,7 @@ namespace Markdig.Helpers
         {
             Array.Clear(Lines, 0, Count);
             _pool.Return(Lines);
-            Lines = null;
+            Lines = null!;
             Count = -1;
         }
 
@@ -203,21 +221,25 @@ namespace Markdig.Helpers
         public struct Iterator : ICharIterator
         {
             private readonly StringLineGroup _lines;
+            private StringSlice _currentSlice;
             private int _offset;
 
-            public Iterator(StringLineGroup lines)
+            public Iterator(StringLineGroup stringLineGroup)
             {
-                this._lines = lines;
+                _lines = stringLineGroup;
                 Start = -1;
                 _offset = -1;
                 SliceIndex = 0;
                 CurrentChar = '\0';
-                End = -2;
-                for (int i = 0; i < lines.Count; i++)
+                End = -1;
+                StringLine[] lines = stringLineGroup.Lines;
+                for (int i = 0; i < stringLineGroup.Count && i < lines.Length; i++)
                 {
-                    End += lines.Lines[i].Slice.Length + 1; // Add chars
+                    ref StringSlice slice = ref lines[i].Slice;
+                    End += slice.Length + slice.NewLine.Length(); // Add chars
                 }
-                NextChar();
+                _currentSlice = _lines.Lines[0].Slice;
+                SkipChar();
             }
 
             public int Start { get; private set; }
@@ -232,56 +254,110 @@ namespace Markdig.Helpers
 
             public StringLineGroup Remaining()
             {
-                var lines = _lines;
-                if (CurrentChar == '\0')
+                StringLineGroup lines = _lines;
+                if (IsEmpty)
                 {
                     lines.Clear();
                 }
                 else
                 {
-                    for (int i = SliceIndex - 1; i >= 0; i--)
-                    {
-                        lines.RemoveAt(i);
-                    }
+                    lines.RemoveStartRange(SliceIndex);
 
                     if (lines.Count > 0 && _offset > 0)
                     {
-                        lines.Lines[0].Column += _offset;
-                        lines.Lines[0].Slice.Start += _offset;
+                        ref StringLine line = ref lines.Lines[0];
+                        line.Column += _offset;
+                        line.Slice.Start += _offset;
                     }
                 }
 
                 return lines;
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public char NextChar()
             {
                 Start++;
                 if (Start <= End)
                 {
-                    var slice = _lines.Lines[SliceIndex].Slice;
+                    ref StringSlice slice = ref _currentSlice;
                     _offset++;
-                    if (_offset < slice.Length)
+
+                    int index = slice.Start + _offset;
+                    string text = slice.Text;
+                    if (index <= slice.End && (uint)index < (uint)text.Length)
                     {
-                        CurrentChar = slice[slice.Start + _offset];
+                        char c = text[index];
+                        CurrentChar = c;
+                        return c;
                     }
                     else
                     {
-                        CurrentChar = '\n';
-                        SliceIndex++;
-                        _offset = -1;
+                        return NextCharNewLine();
                     }
                 }
                 else
                 {
-                    CurrentChar = '\0';
-                    Start = End + 1;
-                    SliceIndex = _lines.Count;
+                    return NextCharEndOfEnumerator();
                 }
+            }
+
+            private char NextCharNewLine()
+            {
+                int sliceLength = _currentSlice.Length;
+                NewLine newLine = _currentSlice.NewLine;
+
+                if (_offset == sliceLength)
+                {
+                    if (newLine == NewLine.LineFeed)
+                    {
+                        CurrentChar = '\n';
+                        goto MoveToNewLine;
+                    }
+                    else if (newLine == NewLine.CarriageReturn)
+                    {
+                        CurrentChar = '\r';
+                        goto MoveToNewLine;
+                    }
+                    else if (newLine == NewLine.CarriageReturnLineFeed)
+                    {
+                        CurrentChar = '\r';
+                    }
+                }
+                else if (_offset - 1 == sliceLength)
+                {
+                    if (newLine == NewLine.CarriageReturnLineFeed)
+                    {
+                        CurrentChar = '\n';
+                        goto MoveToNewLine;
+                    }
+                }
+
+                goto Return;
+
+            MoveToNewLine:
+                SliceIndex++;
+                _offset = -1;
+                _currentSlice = _lines.Lines[SliceIndex];
+
+            Return:
                 return CurrentChar;
             }
 
-            public readonly char PeekChar(int offset = 1)
+            private char NextCharEndOfEnumerator()
+            {
+                CurrentChar = '\0';
+                Start = End + 1;
+                SliceIndex = _lines.Count;
+                return '\0';
+            }
+
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            public void SkipChar() => NextChar();
+
+            public readonly char PeekChar() => PeekChar(1);
+
+            public readonly char PeekChar(int offset)
             {
                 if (offset < 0) ThrowHelper.ArgumentOutOfRangeException("Negative offset are not supported for StringLineGroup", nameof(offset));
 
@@ -293,20 +369,42 @@ namespace Markdig.Helpers
                 offset += _offset;
 
                 int sliceIndex = SliceIndex;
-                var slice = _lines.Lines[sliceIndex].Slice;
+                ref StringSlice slice = ref _lines.Lines[sliceIndex].Slice;
+                NewLine newLine = slice.NewLine;
 
-                while (offset > slice.Length)
+                if (!(newLine == NewLine.CarriageReturnLineFeed && offset == slice.Length + 1))
                 {
-                    // We are not peeking at the same line
-                    offset -= slice.Length + 1; // + 1 for new line
+                    while (offset > slice.Length)
+                    {
+                        // We are not peeking at the same line
+                        offset -= slice.Length + 1; // + 1 for new line
 
-                    Debug.Assert(sliceIndex + 1 < _lines.Lines.Length, "'Start + offset > End' check above should prevent us from indexing out of range");
-                    slice = _lines.Lines[++sliceIndex].Slice;
+                        Debug.Assert(sliceIndex + 1 < _lines.Count, "'Start + offset > End' check above should prevent us from indexing out of range");
+                        slice = ref _lines.Lines[++sliceIndex].Slice;
+                    }
+                }
+                else
+                {
+                    if (slice.NewLine == NewLine.CarriageReturnLineFeed)
+                    {
+                        return '\n'; // /n of /r/n (second character)
+                    }
                 }
 
                 if (offset == slice.Length)
                 {
-                    return '\n';
+                    if (newLine == NewLine.LineFeed)
+                    {
+                        return '\n';
+                    }
+                    if (newLine == NewLine.CarriageReturn)
+                    {
+                        return '\r';
+                    }
+                    if (newLine == NewLine.CarriageReturnLineFeed)
+                    {
+                        return '\r'; // /r of /r/n (first character)
+                    }
                 }
 
                 Debug.Assert(offset < slice.Length);

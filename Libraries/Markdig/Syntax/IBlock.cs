@@ -1,7 +1,8 @@
-﻿// Copyright (c) Alexandre Mutel. All rights reserved.
+// Copyright (c) Alexandre Mutel. All rights reserved.
 // This file is licensed under the BSD-Clause 2 license. 
 // See the license.txt file in the project root for more information.
-using System;
+
+using Markdig.Helpers;
 using Markdig.Parsers;
 
 namespace Markdig.Syntax
@@ -9,7 +10,7 @@ namespace Markdig.Syntax
     /// <summary>
     /// Base interface for a block structure. Either a <see cref="LeafBlock"/> or a <see cref="ContainerBlock"/>.
     /// </summary>
-    /// <seealso cref="Markdig.Syntax.IMarkdownObject" />
+    /// <seealso cref="IMarkdownObject" />
     public interface IBlock : IMarkdownObject
     {
         /// <summary>
@@ -25,12 +26,12 @@ namespace Markdig.Syntax
         /// <summary>
         /// Gets the parent of this container. May be null.
         /// </summary>
-        ContainerBlock Parent { get; }
+        ContainerBlock? Parent { get; }
 
         /// <summary>
         /// Gets the parser associated to this instance.
         /// </summary>
-        BlockParser Parser { get; }
+        BlockParser? Parser { get; }
 
         /// <summary>
         /// Gets or sets a value indicating whether this instance is still open.
@@ -50,11 +51,23 @@ namespace Markdig.Syntax
         /// <summary>
         /// Occurs when the process of inlines begin.
         /// </summary>
-        event ProcessInlineDelegate ProcessInlinesBegin;
+        event ProcessInlineDelegate? ProcessInlinesBegin;
 
         /// <summary>
         /// Occurs when the process of inlines ends for this instance.
         /// </summary>
-        event ProcessInlineDelegate ProcessInlinesEnd;
+        event ProcessInlineDelegate? ProcessInlinesEnd;
+
+        /// <summary>
+        /// Trivia occurring before this block
+        /// </summary>
+        /// Trivia: only parsed when <see cref="MarkdownPipeline.TrackTrivia"/> is enabled, otherwise <see cref="StringSlice.Empty"/>.
+        StringSlice TriviaBefore { get; set; }
+
+        /// <summary>
+        /// Trivia occurring after this block
+        /// </summary>
+        /// Trivia: only parsed when <see cref="MarkdownPipeline.TrackTrivia"/> is enabled, otherwise <see cref="StringSlice.Empty"/>.
+        StringSlice TriviaAfter { get; set; }
     }
 }

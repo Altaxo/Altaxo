@@ -1,6 +1,7 @@
 // Copyright (c) Alexandre Mutel. All rights reserved.
 // This file is licensed under the BSD-Clause 2 license. 
 // See the license.txt file in the project root for more information.
+
 using System;
 using Markdig.Helpers;
 using Markdig.Syntax;
@@ -10,7 +11,7 @@ namespace Markdig.Parsers
     /// <summary>
     /// Block parser for a <see cref="HtmlBlock"/>.
     /// </summary>
-    /// <seealso cref="Markdig.Parsers.BlockParser" />
+    /// <seealso cref="BlockParser" />
     public class HtmlBlockParser : BlockParser
     {
         /// <summary>
@@ -48,7 +49,7 @@ namespace Markdig.Parsers
 
             var line = state.Line;
             var startPosition = line.Start;
-            line.NextChar();
+            line.SkipChar();
             var result = TryParseTagType16(state, line, state.ColumnBeforeIndent, startPosition);
 
             // HTML blocks of type 7 cannot interrupt a paragraph:
@@ -61,10 +62,10 @@ namespace Markdig.Parsers
 
         private BlockState TryParseTagType7(BlockProcessor state, StringSlice line, int startColumn, int startPosition)
         {
-            var builder = StringBuilderCache.Local();
+            var builder = new ValueStringBuilder(stackalloc char[ValueStringBuilder.StackallocThreshold]);
             var c = line.CurrentChar;
             var result = BlockState.None;
-            if ((c == '/' && HtmlHelper.TryParseHtmlCloseTag(ref line, builder)) || HtmlHelper.TryParseHtmlTagOpenTag(ref line, builder))
+            if ((c == '/' && HtmlHelper.TryParseHtmlCloseTag(ref line, ref builder)) || HtmlHelper.TryParseHtmlTagOpenTag(ref line, ref builder))
             {
                 // Must be followed by whitespace only
                 bool hasOnlySpaces = true;
@@ -89,7 +90,7 @@ namespace Markdig.Parsers
                 }
             }
 
-            builder.Length = 0;
+            builder.Dispose();
             return result;
         }
 
@@ -127,7 +128,7 @@ namespace Markdig.Parsers
                 c = line.NextChar();
             }
 
-            var tag = new char[10];
+            Span<char> tag = stackalloc char[10];
             var count = 0;
             for (; count < tag.Length; count++)
             {
@@ -135,7 +136,7 @@ namespace Markdig.Parsers
                 {
                     break;
                 }
-                tag[count] = Char.ToLowerInvariant(c);
+                tag[count] = char.ToLowerInvariant(c);
                 c = line.NextChar();
             }
 
@@ -151,15 +152,15 @@ namespace Markdig.Parsers
                 return BlockState.None;
             }
 
-            var tagName = new string(tag, 0, count);
-            var tagIndex = Array.BinarySearch(HtmlTags, tagName, StringComparer.Ordinal);
-            if (tagIndex < 0)
+            if (!HtmlTags.TryMatchExact(tag.Slice(0, count), out var match))
             {
                 return BlockState.None;
             }
 
-            // Cannot start with </script </pre or </style
-            if ((tagIndex == 49 || tagIndex == 50 || tagIndex == 53))
+            int tagIndex = match.Value;
+
+            // Cannot start with </script </pre or </style or </textArea
+            if ((tagIndex == 49 || tagIndex == 50 || tagIndex == 53 || tagIndex == 56))
             {
                 if (c == '/' || hasLeadingClose)
                 {
@@ -174,7 +175,6 @@ namespace Markdig.Parsers
         private const string EndOfComment = "-->";
         private const string EndOfCDATA = "]]>";
         private const string EndOfProcessingInstruction = "?>";
-
 
         private BlockState MatchEnd(BlockProcessor state, HtmlBlock htmlBlock)
         {
@@ -241,6 +241,15 @@ namespace Markdig.Parsers
                                 htmlBlock.UpdateSpanEnd(index + "</style>".Length);
                                 result = BlockState.Break;
                             }
+                            else
+                            {
+                                index = line.IndexOf("</textarea>", 0, true);
+                                if (index >= 0)
+                                {
+                                    htmlBlock.UpdateSpanEnd(index + "</textarea>".Length);
+                                    result = BlockState.Break;
+                                }
+                            }
                         }
                     }
                     break;
@@ -262,6 +271,7 @@ namespace Markdig.Parsers
             if (result != BlockState.BreakDiscard)
             {
                 htmlBlock.Span.End = line.End;
+                htmlBlock.NewLine = state.Line.NewLine;
             }
 
             return result;
@@ -269,83 +279,93 @@ namespace Markdig.Parsers
 
         private BlockState CreateHtmlBlock(BlockProcessor state, HtmlBlockType type, int startColumn, int startPosition)
         {
-            state.NewBlocks.Push(new HtmlBlock(this)
+            var htmlBlock = new HtmlBlock(this)
             {
                 Column = startColumn,
                 Type = type,
                 // By default, setup to the end of line
-                Span = new SourceSpan(startPosition, startPosition + state.Line.End)
-            });
+                Span = new SourceSpan(startPosition, startPosition + state.Line.End),
+                //BeforeWhitespace = state.PopBeforeWhitespace(startPosition - 1),
+            };
+
+            if (state.TrackTrivia)
+            {
+                htmlBlock.LinesBefore = state.UseLinesBefore();
+                htmlBlock.NewLine = state.Line.NewLine;
+            }
+
+            state.NewBlocks.Push(htmlBlock);
             return BlockState.Continue;
         }
 
-        private static readonly string[] HtmlTags =
+        private static readonly CompactPrefixTree<int> HtmlTags = new(66, 94, 83)
         {
-            "address", // 0
-            "article", // 1
-            "aside", // 2
-            "base", // 3
-            "basefont", // 4
-            "blockquote", // 5
-            "body", // 6
-            "caption", // 7
-            "center", // 8
-            "col", // 9
-            "colgroup", // 10
-            "dd", // 11
-            "details", // 12
-            "dialog", // 13
-            "dir", // 14
-            "div", // 15
-            "dl", // 16
-            "dt", // 17
-            "fieldset", // 18
-            "figcaption", // 19
-            "figure", // 20
-            "footer", // 21
-            "form", // 22
-            "frame", // 23
-            "frameset", // 24
-            "h1", // 25
-            "h2", // 26
-            "h3", // 27
-            "h4", // 28
-            "h5", // 29
-            "h6", // 30
-            "head", // 31
-            "header", // 32
-            "hr", // 33
-            "html", // 34
-            "iframe", // 35
-            "legend", // 36
-            "li", // 37
-            "link", // 38
-            "main", // 39
-            "menu", // 40
-            "menuitem", // 41
-            "nav", // 42
-            "noframes", // 43
-            "ol", // 44
-            "optgroup", // 45
-            "option", // 46
-            "p", // 47
-            "param", // 48
-            "pre", // 49       <=== special group 1
-            "script", // 50    <=== special group 1
-            "section", // 51
-            "source", // 52
-            "style", // 53     <=== special group 1
-            "summary", // 54
-            "table", // 55
-            "tbody", // 56
-            "td", // 57
-            "tfoot", // 58
-            "th", // 59
-            "thead", // 60
-            "title", // 61
-            "tr", // 62
-            "track", // 63
-            "ul", // 64
+            { "address", 0 },
+            { "article", 1 },
+            { "aside", 2 },
+            { "base", 3 },
+            { "basefont", 4 },
+            { "blockquote", 5 },
+            { "body", 6 },
+            { "caption", 7 },
+            { "center", 8 },
+            { "col", 9 },
+            { "colgroup", 10 },
+            { "dd", 11 },
+            { "details", 12 },
+            { "dialog", 13 },
+            { "dir", 14 },
+            { "div", 15 },
+            { "dl", 16 },
+            { "dt", 17 },
+            { "fieldset", 18 },
+            { "figcaption", 19 },
+            { "figure", 20 },
+            { "footer", 21 },
+            { "form", 22 },
+            { "frame", 23 },
+            { "frameset", 24 },
+            { "h1", 25 },
+            { "h2", 26 },
+            { "h3", 27 },
+            { "h4", 28 },
+            { "h5", 29 },
+            { "h6", 30 },
+            { "head", 31 },
+            { "header", 32 },
+            { "hr", 33 },
+            { "html", 34 },
+            { "iframe", 35 },
+            { "legend", 36 },
+            { "li", 37 },
+            { "link", 38 },
+            { "main", 39 },
+            { "menu", 40 },
+            { "menuitem", 41 },
+            { "nav", 42 },
+            { "noframes", 43 },
+            { "ol", 44 },
+            { "optgroup", 45 },
+            { "option", 46 },
+            { "p", 47 },
+            { "param", 48 },
+            { "pre", 49 },      // <=== special group 1
+            { "script", 50 },   // <=== special group 1
+            { "section", 51 },
+            { "source", 52 },
+            { "style", 53 },    // <=== special group 1
+            { "summary", 54 },
+            { "table", 55 },
+            { "textarea", 56 }, // <=== special group 1
+            { "tbody", 57 },
+            { "td", 58 },
+            { "tfoot", 59 },
+            { "th", 60 },
+            { "thead", 61 },
+            { "title", 62 },
+            { "tr", 63 },
+            { "track", 64 },
+            { "ul", 65 }
         };
     }
 }

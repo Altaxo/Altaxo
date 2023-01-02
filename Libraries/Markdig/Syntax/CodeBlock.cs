@@ -1,7 +1,10 @@
 // Copyright (c) Alexandre Mutel. All rights reserved.
 // This file is licensed under the BSD-Clause 2 license.
 // See the license.txt file in the project root for more information.
+
+using Markdig.Helpers;
 using Markdig.Parsers;
+using System.Collections.Generic;
 
 namespace Markdig.Syntax
 {
@@ -13,6 +16,14 @@ namespace Markdig.Syntax
     /// </remarks>
     public class CodeBlock : LeafBlock
     {
+        public class CodeBlockLine
+        {
+            public StringSlice TriviaBefore { get; set; }
+        }
+
+        private List<CodeBlockLine>? _codeBlockLines;
+        public List<CodeBlockLine> CodeBlockLines => _codeBlockLines ??= new();
+
         /// <summary>
         /// Initializes a new instance of the <see cref="CodeBlock"/> class.
         /// </summary>

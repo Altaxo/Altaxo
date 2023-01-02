@@ -1,8 +1,11 @@
 // Copyright (c) Alexandre Mutel. All rights reserved.
 // This file is licensed under the BSD-Clause 2 license. 
 // See the license.txt file in the project root for more information.
+
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
+using Markdig.Helpers;
 using Markdig.Syntax;
 using Markdig.Syntax.Inlines;
 
@@ -11,23 +14,37 @@ namespace Markdig.Renderers
     /// <summary>
     /// Base class for a <see cref="IMarkdownRenderer"/>.
     /// </summary>
-    /// <seealso cref="Markdig.Renderers.IMarkdownRenderer" />
+    /// <seealso cref="IMarkdownRenderer" />
     public abstract class RendererBase : IMarkdownRenderer
     {
-        private readonly Dictionary<Type, IMarkdownObjectRenderer> renderersPerType;
-        private IMarkdownObjectRenderer previousRenderer;
-        private Type previousObjectType;
+        private readonly Dictionary<KeyWrapper, IMarkdownObjectRenderer?> _renderersPerType = new();
+        internal int _childrenDepth = 0;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="RendererBase"/> class.
         /// </summary>
-        protected RendererBase()
+        protected RendererBase() { }
+
+        private IMarkdownObjectRenderer? GetRendererInstance(MarkdownObject obj)
         {
-            ObjectRenderers = new ObjectRendererCollection();
-            renderersPerType = new Dictionary<Type, IMarkdownObjectRenderer>();
+            KeyWrapper key = GetKeyForType(obj);
+            Type objectType = obj.GetType();
+
+            for (int i = 0; i < ObjectRenderers.Count; i++)
+            {
+                var renderer = ObjectRenderers[i];
+                if (renderer.Accept(this, objectType))
+                {
+                    _renderersPerType[key] = renderer;
+                    return renderer;
+                }
+            }
+
+            _renderersPerType[key] = null;
+            return null;
         }
 
-        public ObjectRendererCollection ObjectRenderers { get; }
+        public ObjectRendererCollection ObjectRenderers { get; } = new();
 
         public abstract object Render(MarkdownObject markdownObject);
 
@@ -38,12 +55,12 @@ namespace Markdig.Renderers
         /// <summary>
         /// Occurs when before writing an object.
         /// </summary>
-        public event Action<IMarkdownRenderer, MarkdownObject> ObjectWriteBefore;
+        public event Action<IMarkdownRenderer, MarkdownObject>? ObjectWriteBefore;
 
         /// <summary>
         /// Occurs when after writing an object.
         /// </summary>
-        public event Action<IMarkdownRenderer, MarkdownObject> ObjectWriteAfter;
+        public event Action<IMarkdownRenderer, MarkdownObject>? ObjectWriteAfter;
 
         /// <summary>
         /// Writes the children of the specified <see cref="ContainerBlock"/>.
@@ -51,10 +68,12 @@ namespace Markdig.Renderers
         /// <param name="containerBlock">The container block.</param>
         public void WriteChildren(ContainerBlock containerBlock)
         {
-            if (containerBlock == null)
+            if (containerBlock is null)
             {
                 return;
             }
+
+            ThrowHelper.CheckDepthLimit(_childrenDepth++);
 
             bool saveIsFirstInContainer = IsFirstInContainer;
             bool saveIsLastInContainer = IsLastInContainer;
@@ -69,6 +88,8 @@ namespace Markdig.Renderers
 
             IsFirstInContainer = saveIsFirstInContainer;
             IsLastInContainer = saveIsLastInContainer;
+
+            _childrenDepth--;
         }
 
         /// <summary>
@@ -77,10 +98,12 @@ namespace Markdig.Renderers
         /// <param name="containerInline">The container inline.</param>
         public void WriteChildren(ContainerInline containerInline)
         {
-            if (containerInline == null)
+            if (containerInline is null)
             {
                 return;
             }
+
+            ThrowHelper.CheckDepthLimit(_childrenDepth++);
 
             bool saveIsFirstInContainer = IsFirstInContainer;
             bool saveIsLastInContainer = IsLastInContainer;
@@ -90,7 +113,7 @@ namespace Markdig.Renderers
             while (inline != null)
             {
                 IsFirstInContainer = isFirst;
-                IsLastInContainer = inline.NextSibling == null;
+                IsLastInContainer = inline.NextSibling is null;
 
                 Write(inline);
                 inline = inline.NextSibling;
@@ -100,6 +123,8 @@ namespace Markdig.Renderers
 
             IsFirstInContainer = saveIsFirstInContainer;
             IsLastInContainer = saveIsLastInContainer;
+
+            _childrenDepth--;
         }
 
         /// <summary>
@@ -108,7 +133,7 @@ namespace Markdig.Renderers
         /// <param name="obj">The Markdown object to write to this renderer.</param>
         public void Write(MarkdownObject obj)
         {
-            if (obj == null)
+            if (obj is null)
             {
                 return;
             }
@@ -116,46 +141,46 @@ namespace Markdig.Renderers
             // Calls before writing an object
             ObjectWriteBefore?.Invoke(this, obj);
 
-            var objectType = obj.GetType();
-
-            IMarkdownObjectRenderer renderer;
-
-            // Handle regular renderers
-            if (objectType == previousObjectType)
+            if (!_renderersPerType.TryGetValue(GetKeyForType(obj), out IMarkdownObjectRenderer? renderer))
             {
-                renderer = previousRenderer;
-            }
-            else if (!renderersPerType.TryGetValue(objectType, out renderer))
-            {
-                for (int i = 0; i < ObjectRenderers.Count; i++)
-                {
-                    var testRenderer = ObjectRenderers[i];
-                    if (testRenderer.Accept(this, obj))
-                    {
-                        renderersPerType[objectType] = renderer = testRenderer;
-                        break;
-                    }
-                }
+                renderer = GetRendererInstance(obj);
             }
 
-            if (renderer != null)
+            if (renderer is not null)
             {
                 renderer.Write(this, obj);
-
-                previousObjectType = objectType;
-                previousRenderer = renderer;
             }
-            else if (obj is ContainerBlock containerBlock)
+            else if (obj.IsContainerInline)
             {
-                WriteChildren(containerBlock);
+                WriteChildren(Unsafe.As<ContainerInline>(obj));
             }
-            else if (obj is ContainerInline containerInline)
+            else if (obj.IsContainerBlock)
             {
-                WriteChildren(containerInline);
+                WriteChildren(Unsafe.As<ContainerBlock>(obj));
             }
 
             // Calls after writing an object
             ObjectWriteAfter?.Invoke(this, obj);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static KeyWrapper GetKeyForType(MarkdownObject obj)
+        {
+            IntPtr typeHandle = Type.GetTypeHandle(obj).Value;
+            return new KeyWrapper(typeHandle);
+        }
+
+        private readonly struct KeyWrapper : IEquatable<KeyWrapper>
+        {
+            public readonly IntPtr Key;
+
+            public KeyWrapper(IntPtr key) => Key = key;
+
+            public bool Equals(KeyWrapper other) => Key == other.Key;
+
+            public override int GetHashCode() => Key.GetHashCode();
+
+            public override bool Equals(object? obj) => throw new NotImplementedException();
         }
     }
 }

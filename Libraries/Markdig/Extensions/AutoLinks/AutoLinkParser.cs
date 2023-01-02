@@ -29,6 +29,7 @@ namespace Markdig.Extensions.AutoLinks
                 'h', // for http:// and https://
                 'f', // for ftp://
                 'm', // for mailto:
+                't', // for tel:
                 'w', // for www.
             };
 
@@ -48,6 +49,53 @@ namespace Markdig.Extensions.AutoLinks
                 return false;
             }
 
+            var startPosition = slice.Start;
+            int domainOffset = 0;
+
+            var c = slice.CurrentChar;
+            // Precheck URL
+            switch (c)
+            {
+                case 'h':
+                    if (slice.MatchLowercase("ttp://", 1))
+                    {
+                        domainOffset = 7; // http://
+                    }
+                    else if (slice.MatchLowercase("ttps://", 1))
+                    {
+                        domainOffset = 8; // https://
+                    }
+                    else return false;
+                    break;
+                case 'f':
+                    if (!slice.MatchLowercase("tp://", 1))
+                    {
+                        return false;
+                    }
+                    domainOffset = 6; // ftp://
+                    break;
+                case 'm':
+                    if (!slice.MatchLowercase("ailto:", 1))
+                    {
+                        return false;
+                    }
+                    break;
+                case 't':
+                    if (!slice.MatchLowercase("el:", 1))
+                    {
+                        return false;
+                    }
+                    domainOffset = 4;
+                    break;
+                case 'w':
+                    if (!slice.MatchLowercase("ww.", 1)) // We won't match http:/www. or /www.xxx
+                    {
+                        return false;
+                    }
+                    domainOffset = 4; // www.
+                    break;
+            }
+
             List<char> pendingEmphasis = _listOfCharCache.Get();
             try
             {
@@ -57,49 +105,8 @@ namespace Markdig.Extensions.AutoLinks
                     return false;
                 }
 
-                var startPosition = slice.Start;
-                int domainOffset = 0;
-
-                var c = slice.CurrentChar;
-                // Precheck URL
-                switch (c)
-                {
-                    case 'h':
-                        if (slice.MatchLowercase("ttp://", 1))
-                        {
-                            domainOffset = 7; // http://
-                        }
-                        else if (slice.MatchLowercase("ttps://", 1))
-                        {
-                            domainOffset = 8; // https://
-                        }
-                        else return false;
-                        break;
-                    case 'f':
-                        if (!slice.MatchLowercase("tp://", 1))
-                        {
-                            return false;
-                        }
-                        domainOffset = 6; // ftp://
-                        break;
-                    case 'm':
-                        if (!slice.MatchLowercase("ailto:", 1))
-                        {
-                            return false;
-                        }
-                        break;
-
-                    case 'w':
-                        if (!slice.MatchLowercase("ww.", 1)) // We won't match http:/www. or /www.xxx
-                        {
-                            return false;
-                        }
-                        domainOffset = 4; // www.
-                        break;
-                }
-
                 // Parse URL
-                if (!LinkHelper.TryParseUrl(ref slice, out string link, true))
+                if (!LinkHelper.TryParseUrl(ref slice, out string? link, out _, true))
                 {
                     return false;
                 }
@@ -141,6 +148,12 @@ namespace Markdig.Extensions.AutoLinks
                             return false;
                         }
                         break;
+                    case 't':
+                        if (string.Equals(link, "tel", StringComparison.OrdinalIgnoreCase))
+                        {
+                            return false;
+                        }
+                        break;
                     case 'm':
                         int atIndex = link.IndexOf('@');
                         if (atIndex == -1 ||
@@ -152,7 +165,8 @@ namespace Markdig.Extensions.AutoLinks
                         break;
                 }
 
-                if (!LinkHelper.IsValidDomain(link, domainOffset))
+                // Do not need to check if a telephone number is a valid domain
+                if (c != 't' && !LinkHelper.IsValidDomain(link, domainOffset))
                 {
                     return false;
                 }
@@ -171,6 +185,7 @@ namespace Markdig.Extensions.AutoLinks
                 };
 
                 var skipFromBeginning = c == 'm' ? 7 : 0; // For mailto: skip "mailto:" for content
+                skipFromBeginning = c == 't' ? 4 : skipFromBeginning; // See above but for tel:
 
                 inline.Span.End = inline.Span.Start + link.Length - 1;
                 inline.UrlSpan = inline.Span;
@@ -186,7 +201,7 @@ namespace Markdig.Extensions.AutoLinks
 
                 if (Options.OpenInNewWindow)
                 {
-                    inline.GetAttributes().AddPropertyIfNotExist("target", "blank");
+                    inline.GetAttributes().AddPropertyIfNotExist("target", "_blank");
                 }
 
                 return true;

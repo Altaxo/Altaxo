@@ -11,7 +11,7 @@ namespace Markdig.Extensions.DefinitionLists
     /// <summary>
     /// The block parser for a <see cref="DefinitionList"/>.
     /// </summary>
-    /// <seealso cref="Markdig.Parsers.BlockParser" />
+    /// <seealso cref="BlockParser" />
     public class DefinitionListParser : BlockParser
     {
         /// <summary>
@@ -25,7 +25,7 @@ namespace Markdig.Extensions.DefinitionLists
         public override BlockState TryOpen(BlockProcessor processor)
         {
             var paragraphBlock = processor.LastBlock as ParagraphBlock;
-            if (processor.IsCodeIndent || paragraphBlock == null || paragraphBlock.LastLine - processor.LineIndex > 1)
+            if (processor.IsCodeIndent || paragraphBlock is null || paragraphBlock.LastLine - processor.LineIndex > 1)
             {
                 return BlockState.None;
             }
@@ -50,7 +50,7 @@ namespace Markdig.Extensions.DefinitionLists
                 processor.GoToColumn(column + 4);
             }
 
-            var previousParent = paragraphBlock.Parent;
+            var previousParent = paragraphBlock.Parent!;
             var currentDefinitionList = GetCurrentDefinitionList(paragraphBlock, previousParent);
 
             processor.Discard(paragraphBlock);
@@ -61,7 +61,7 @@ namespace Markdig.Extensions.DefinitionLists
                 paragraphBlock.Parent.Remove(paragraphBlock);
             }
 
-            if (currentDefinitionList == null)
+            if (currentDefinitionList is null)
             {
                 currentDefinitionList = new DefinitionList(this)
                 {
@@ -90,7 +90,7 @@ namespace Markdig.Extensions.DefinitionLists
                     Span = new SourceSpan(paragraphBlock.Span.Start, paragraphBlock.Span.End),
                     IsOpen = false
                 };
-                term.AppendLine(ref line.Slice, line.Column, line.Line, line.Position);
+                term.AppendLine(ref line.Slice, line.Column, line.Line, line.Position, processor.TrackTrivia);
                 definitionItem.Add(term);
             }
             currentDefinitionList.Add(definitionItem);
@@ -102,7 +102,7 @@ namespace Markdig.Extensions.DefinitionLists
             return BlockState.Continue;
         }
 
-        private static DefinitionList GetCurrentDefinitionList(ParagraphBlock paragraphBlock, ContainerBlock previousParent)
+        private static DefinitionList? GetCurrentDefinitionList(ParagraphBlock paragraphBlock, ContainerBlock previousParent)
         {
             var index = previousParent.IndexOf(paragraphBlock) - 1;
             if (index < 0) return null;
@@ -124,11 +124,11 @@ namespace Markdig.Extensions.DefinitionLists
                 return BlockState.Continue;
             }
 
-            var list = (DefinitionList)definitionItem.Parent;
+            var list = (DefinitionList)definitionItem.Parent!;
             var lastBlankLine = definitionItem.LastChild as BlankLineBlock;
 
             // Check if we have another definition list
-            if (Array.IndexOf(OpeningCharacters, processor.CurrentChar) >= 0)
+            if (Array.IndexOf(OpeningCharacters!, processor.CurrentChar) >= 0)
             {
                 var startPosition = processor.Start;
                 var column = processor.ColumnBeforeIndent;
@@ -145,7 +145,7 @@ namespace Markdig.Extensions.DefinitionLists
                         definitionItem.RemoveAt(definitionItem.Count - 1);
                     }
 
-                    list.Span.End = list.LastChild.Span.End;
+                    list.Span.End = list.LastChild!.Span.End;
                     return BlockState.None;
                 }
 
@@ -171,7 +171,7 @@ namespace Markdig.Extensions.DefinitionLists
             var isBreakable = definitionItem.LastChild?.IsBreakable ?? true;
             if (processor.IsBlankLine)
             {
-                if (lastBlankLine == null && isBreakable)
+                if (lastBlankLine is null && isBreakable)
                 {
                     definitionItem.Add(new BlankLineBlock());
                 }
@@ -179,7 +179,7 @@ namespace Markdig.Extensions.DefinitionLists
             }
 
             var paragraphBlock = definitionItem.LastChild as ParagraphBlock;
-            if (lastBlankLine == null && paragraphBlock != null)
+            if (lastBlankLine is null && paragraphBlock != null)
             {
                 return BlockState.Continue;
             }
@@ -190,7 +190,7 @@ namespace Markdig.Extensions.DefinitionLists
                 definitionItem.RemoveAt(definitionItem.Count - 1);
             }
 
-            list.Span.End = list.LastChild.Span.End;
+            list.Span.End = list.LastChild!.Span.End;
             return BlockState.Break;
         }
     }

@@ -3,8 +3,7 @@
 // See the license.txt file in the project root for more information.
 
 using Markdig.Renderers;
-using Markdig.Renderers.Normalize;
-using Markdig.Renderers.Normalize.Inlines;
+using Markdig.Syntax.Inlines;
 
 namespace Markdig.Extensions.AutoLinks
 {
@@ -16,7 +15,7 @@ namespace Markdig.Extensions.AutoLinks
     {
         public readonly AutoLinkOptions Options;
 
-        public AutoLinkExtension(AutoLinkOptions options)
+        public AutoLinkExtension(AutoLinkOptions? options)
         {
             Options = options ?? new AutoLinkOptions();
         }
@@ -32,10 +31,6 @@ namespace Markdig.Extensions.AutoLinks
 
         public void Setup(MarkdownPipeline pipeline, IMarkdownRenderer renderer)
         {
-            if (renderer is NormalizeRenderer normalizeRenderer && !normalizeRenderer.ObjectRenderers.Contains<NormalizeAutoLinkRenderer>())
-            {
-                normalizeRenderer.ObjectRenderers.InsertBefore<LinkInlineRenderer>(new NormalizeAutoLinkRenderer());
-            }
         }
     }
 }

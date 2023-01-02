@@ -2,7 +2,6 @@
 // This file is licensed under the BSD-Clause 2 license. 
 // See the license.txt file in the project root for more information.
 
-using System;
 using Markdig.Helpers;
 using Markdig.Parsers;
 using Markdig.Renderers;
@@ -52,7 +51,7 @@ namespace Markdig.Extensions.GenericAttributes
                     var copy = line;
                     copy.Start = indexOfAttributes;
                     var startOfAttributes = copy.Start;
-                    if (GenericAttributesParser.TryParse(ref copy, out HtmlAttributes attributes))
+                    if (GenericAttributesParser.TryParse(ref copy, out HtmlAttributes? attributes))
                     {
                         var htmlAttributes = block.GetAttributes();
                         attributes.CopyTo(htmlAttributes);

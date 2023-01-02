@@ -1,8 +1,7 @@
-﻿// Copyright (c) Alexandre Mutel. All rights reserved.
+// Copyright (c) Alexandre Mutel. All rights reserved.
 // This file is licensed under the BSD-Clause 2 license. 
 // See the license.txt file in the project root for more information.
 
-using System;
 using Markdig.Helpers;
 using Markdig.Renderers;
 using Markdig.Renderers.Html;
@@ -14,7 +13,7 @@ namespace Markdig.Extensions.PragmaLines
     /// <summary>
     /// Extension to a span for each line containing the original line id (using id = pragma-line#line_number_zero_based)
     /// </summary>
-    /// <seealso cref="Markdig.IMarkdownExtension" />
+    /// <seealso cref="IMarkdownExtension" />
     public class PragmaLineExtension : IMarkdownExtension
     {
         public void Setup(MarkdownPipelineBuilder pipeline)
@@ -37,7 +36,7 @@ namespace Markdig.Extensions.PragmaLines
         {
             var attribute = block.GetAttributes();
             var pragmaId = GetPragmaId(block);
-            if ( attribute.Id == null)
+            if ( attribute.Id is null)
             {
                 attribute.Id = pragmaId;
             }
@@ -50,8 +49,7 @@ namespace Markdig.Extensions.PragmaLines
                 var tag = $"<a id=\"{pragmaId}\"></a>";
                 if (heading?.Inline?.FirstChild != null)
                 {
-                    heading.Inline.FirstChild.InsertBefore(new HtmlInline() { Tag = tag });
-
+                    heading.Inline.FirstChild.InsertBefore(new HtmlInline(tag));
                 }
                 else
                 {

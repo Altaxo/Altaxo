@@ -9,10 +9,15 @@ namespace Markdig.Syntax.Inlines
     /// <summary>
     /// An autolink (Section 6.7 CommonMark specs)
     /// </summary>
-    /// <seealso cref="Markdig.Syntax.Inlines.LeafInline" />
+    /// <seealso cref="LeafInline" />
     [DebuggerDisplay("<{Url}>")]
-    public class AutolinkInline : LeafInline
+    public sealed class AutolinkInline : LeafInline
     {
+        public AutolinkInline(string url)
+        {
+            Url = url;
+        }
+
         /// <summary>
         /// Gets or sets a value indicating whether this instance is an email link.
         /// </summary>

@@ -1,8 +1,9 @@
-﻿// Copyright (c) Alexandre Mutel. All rights reserved.
+// Copyright (c) Alexandre Mutel. All rights reserved.
 // This file is licensed under the BSD-Clause 2 license. 
 // See the license.txt file in the project root for more information.
 
 using Markdig.Syntax;
+using System;
 
 namespace Markdig.Renderers
 {
@@ -15,12 +16,12 @@ namespace Markdig.Renderers
         /// Accepts the specified <see cref="MarkdownObject"/>.
         /// </summary>
         /// <param name="renderer">The renderer.</param>
-        /// <param name="obj">The Markdown object.</param>
+        /// <param name="objectType">The <see cref="Type"/> of the Markdown object.</param>
         /// <returns><c>true</c> If this renderer is accepting to render the specified Markdown object</returns>
-        bool Accept(RendererBase renderer, MarkdownObject obj);
+        bool Accept(RendererBase renderer, Type objectType);
 
         /// <summary>
-        /// Writes the specified <see cref="MarkdownObject"/> to the <see cref="renderer"/>.
+        /// Writes the specified <see cref="MarkdownObject"/> to the <paramref name="renderer"/>.
         /// </summary>
         /// <param name="renderer">The renderer.</param>
         /// <param name="objectToRender">The object to render.</param>

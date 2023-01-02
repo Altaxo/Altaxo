@@ -2,8 +2,11 @@
 // This file is licensed under the BSD-Clause 2 license. 
 // See the license.txt file in the project root for more information.
 
+#nullable disable
+
 using System;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace Markdig.Helpers
 {
@@ -27,6 +30,20 @@ namespace Markdig.Helpers
             Text = text;
             Start = 0;
             End = (Text?.Length ?? 0) - 1;
+            NewLine = NewLine.None;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="StringSlice"/> struct.
+        /// </summary>
+        /// <param name="text">The text.</param>
+        /// <param name="newLine">The line separation.</param>
+        public StringSlice(string text, NewLine newLine)
+        {
+            Text = text;
+            Start = 0;
+            End = (Text?.Length ?? 0) - 1;
+            NewLine = newLine;
         }
 
         /// <summary>
@@ -35,7 +52,7 @@ namespace Markdig.Helpers
         /// <param name="text">The text.</param>
         /// <param name="start">The start.</param>
         /// <param name="end">The end.</param>
-        /// <exception cref="System.ArgumentNullException"></exception>
+        /// <exception cref="ArgumentNullException"></exception>
         public StringSlice(string text, int start, int end)
         {
             if (text is null)
@@ -44,6 +61,35 @@ namespace Markdig.Helpers
             Text = text;
             Start = start;
             End = end;
+            NewLine = NewLine.None;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="StringSlice"/> struct.
+        /// </summary>
+        /// <param name="text">The text.</param>
+        /// <param name="start">The start.</param>
+        /// <param name="end">The end.</param>
+        /// <param name="newLine">The line separation.</param>
+        /// <exception cref="ArgumentNullException"></exception>
+        public StringSlice(string text, int start, int end, NewLine newLine)
+        {
+            if (text is null)
+                ThrowHelper.ArgumentNullException_text();
+
+            Text = text;
+            Start = start;
+            End = end;
+            NewLine = newLine;
+        }
+
+        // Internal ctor to skip the null check
+        internal StringSlice(string text, int start, int end, NewLine newLine, bool dummy)
+        {
+            Text = text;
+            Start = start;
+            End = end;
+            NewLine = newLine;
         }
 
         /// <summary>
@@ -65,6 +111,8 @@ namespace Markdig.Helpers
         /// Gets the length.
         /// </summary>
         public readonly int Length => End - Start + 1;
+
+        public NewLine NewLine;
 
         /// <summary>
         /// Gets the current character.
@@ -88,7 +136,7 @@ namespace Markdig.Helpers
         }
 
         /// <summary>
-        /// Gets the <see cref="System.Char"/> at the specified index.
+        /// Gets the <see cref="char"/> at the specified index.
         /// </summary>
         /// <param name="index">The index.</param>
         /// <returns>A character in the slice at the specified index (not from <see cref="Start"/> but from the begining of the slice)</returns>
@@ -117,6 +165,34 @@ namespace Markdig.Helpers
             start++;
             Start = start;
             return Text[start];
+        }
+
+        /// <summary>
+        /// Goes to the next character, incrementing the <see cref="Start" /> position.
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void SkipChar()
+        {
+            int start = Start;
+            if (start <= End)
+                Start = start + 1;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal int CountAndSkipChar(char matchChar)
+        {
+            string text = Text;
+            int end = End;
+            int current = Start;
+
+            while (current <= end && (uint)current < (uint)text.Length && text[current] == matchChar)
+            {
+                current++;
+            }
+
+            int count = current - Start;
+            Start = current;
+            return count;
         }
 
         /// <summary>
@@ -387,6 +463,25 @@ namespace Markdig.Helpers
             return text.Substring(start, length);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public readonly ReadOnlySpan<char> AsSpan()
+        {
+            string text = Text;
+            int start = Start;
+            int length = End - start + 1;
+
+            if (text is null || (ulong)(uint)start + (ulong)(uint)length > (ulong)(uint)text.Length)
+            {
+                return default;
+            }
+
+#if NETCOREAPP3_1_OR_GREATER
+            return MemoryMarshal.CreateReadOnlySpan(ref Unsafe.Add(ref Unsafe.AsRef(text.GetPinnableReference()), start), length);
+#else
+            return text.AsSpan(start, length);
+#endif
+        }
+
         /// <summary>
         /// Determines whether this slice is empty or made only of whitespaces.
         /// </summary>
@@ -404,6 +499,16 @@ namespace Markdig.Helpers
                 }
             }
             return true;
+        }
+
+        public bool Overlaps(StringSlice other)
+        {
+            if (IsEmpty || other.IsEmpty)
+            {
+                return false;
+            }
+
+            return Start <= other.End && End >= other.Start;
         }
     }
 }

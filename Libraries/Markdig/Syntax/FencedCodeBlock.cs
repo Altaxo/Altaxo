@@ -1,6 +1,8 @@
-﻿// Copyright (c) Alexandre Mutel. All rights reserved.
+// Copyright (c) Alexandre Mutel. All rights reserved.
 // This file is licensed under the BSD-Clause 2 license.
 // See the license.txt file in the project root for more information.
+
+using Markdig.Helpers;
 using Markdig.Parsers;
 
 namespace Markdig.Syntax
@@ -13,6 +15,9 @@ namespace Markdig.Syntax
     /// </remarks>
     public class FencedCodeBlock : CodeBlock, IFencedBlock
     {
+        private TriviaProperties? _trivia => TryGetDerivedTrivia<TriviaProperties>();
+        private TriviaProperties Trivia => GetOrSetDerivedTrivia<TriviaProperties>();
+
         /// <summary>
         /// Initializes a new instance of the <see cref="FencedCodeBlock"/> class.
         /// </summary>
@@ -27,31 +32,56 @@ namespace Markdig.Syntax
         }
 
         /// <summary>
-        /// Gets or sets the language parsed after the first line of
-        /// the fenced code block. May be null.
-        /// </summary>
-        public string Info { get; set; }
-
-        /// <summary>
-        /// Gets or sets the arguments after the <see cref="Info"/>.
-        /// May be null.
-        /// </summary>
-        public string Arguments { get; set; }
-
-        /// <summary>
-        /// Gets or sets the fenced character count used to open this fenced code block.
-        /// </summary>
-        public int FencedCharCount { get; set; }
-
-        /// <summary>
-        /// Gets or sets the fenced character used to open and close this fenced code block.
-        /// </summary>
-        public char FencedChar { get; set; }
-
-        /// <summary>
         /// Gets or sets the indent count when the fenced code block was indented
         /// and we need to remove up to indent count chars spaces from the begining of a line.
         /// </summary>
-        internal int IndentCount { get; set; }
+        public int IndentCount { get; set; }
+
+        /// <inheritdoc />
+        public char FencedChar { get; set; }
+
+        /// <inheritdoc />
+        public int OpeningFencedCharCount { get; set; }
+
+        /// <inheritdoc />
+        public StringSlice TriviaAfterFencedChar { get => _trivia?.TriviaAfterFencedChar ?? StringSlice.Empty; set => Trivia.TriviaAfterFencedChar = value; }
+
+        /// <inheritdoc />
+        public string? Info { get; set; }
+
+        /// <inheritdoc />
+        public StringSlice UnescapedInfo { get => _trivia?.UnescapedInfo ?? StringSlice.Empty; set => Trivia.UnescapedInfo = value; }
+
+        /// <inheritdoc />
+        public StringSlice TriviaAfterInfo { get => _trivia?.TriviaAfterInfo ?? StringSlice.Empty; set => Trivia.TriviaAfterInfo = value; }
+
+        /// <inheritdoc />
+        public string? Arguments { get; set; }
+
+        /// <inheritdoc />
+        public StringSlice UnescapedArguments { get => _trivia?.UnescapedArguments ?? StringSlice.Empty; set => Trivia.UnescapedArguments = value; }
+
+        /// <inheritdoc />
+        public StringSlice TriviaAfterArguments { get => _trivia?.TriviaAfterArguments ?? StringSlice.Empty; set => Trivia.TriviaAfterArguments = value; }
+
+        /// <inheritdoc />
+        public NewLine InfoNewLine { get => _trivia?.InfoNewLine ?? NewLine.None; set => Trivia.InfoNewLine = value; }
+
+        /// <inheritdoc />
+        public StringSlice TriviaBeforeClosingFence { get => _trivia?.TriviaBeforeClosingFence ?? StringSlice.Empty; set => Trivia.TriviaBeforeClosingFence = value; }
+
+        /// <inheritdoc />
+        public int ClosingFencedCharCount { get; set; }
+
+        private sealed class TriviaProperties
+        {
+            public StringSlice TriviaAfterFencedChar;
+            public StringSlice UnescapedInfo;
+            public StringSlice TriviaAfterInfo;
+            public StringSlice UnescapedArguments;
+            public StringSlice TriviaAfterArguments;
+            public NewLine InfoNewLine;
+            public StringSlice TriviaBeforeClosingFence;
+        }
     }
 }

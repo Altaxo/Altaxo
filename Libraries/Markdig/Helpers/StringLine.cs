@@ -1,6 +1,7 @@
 // Copyright (c) Alexandre Mutel. All rights reserved.
 // This file is licensed under the BSD-Clause 2 license. 
 // See the license.txt file in the project root for more information.
+
 namespace Markdig.Helpers
 {
     /// <summary>
@@ -15,6 +16,7 @@ namespace Markdig.Helpers
         public StringLine(ref StringSlice slice) : this()
         {
             Slice = slice;
+            NewLine = slice.NewLine;
         }
 
         /// <summary>
@@ -23,12 +25,15 @@ namespace Markdig.Helpers
         /// <param name="slice">The slice.</param>
         /// <param name="line">The line.</param>
         /// <param name="column">The column.</param>
-        public StringLine(StringSlice slice, int line, int column, int position)
+        /// <param name="position">The position.</param>
+        /// <param name="newLine">The line separation.</param>
+        public StringLine(StringSlice slice, int line, int column, int position, NewLine newLine)
         {
             Slice = slice;
             Line = line;
             Column = column;
             Position = position;
+            NewLine = newLine;
         }
 
         /// <summary>
@@ -37,12 +42,15 @@ namespace Markdig.Helpers
         /// <param name="slice">The slice.</param>
         /// <param name="line">The line.</param>
         /// <param name="column">The column.</param>
-        public StringLine(ref StringSlice slice, int line, int column, int position)
+        /// <param name="position">The position.</param>
+        /// <param name="newLine">The line separation.</param>
+        public StringLine(ref StringSlice slice, int line, int column, int position, NewLine newLine)
         {
             Slice = slice;
             Line = line;
             Column = column;
             Position = position;
+            NewLine = newLine;
         }
 
         /// <summary>
@@ -64,6 +72,11 @@ namespace Markdig.Helpers
         /// The column position.
         /// </summary>
         public int Column;
+
+        /// <summary>
+        /// The newline.
+        /// </summary>
+        public NewLine NewLine;
 
         /// <summary>
         /// Performs an implicit conversion from <see cref="StringLine"/> to <see cref="StringSlice"/>.

@@ -1,4 +1,4 @@
-﻿// Copyright (c) Alexandre Mutel. All rights reserved.
+// Copyright (c) Alexandre Mutel. All rights reserved.
 // This file is licensed under the BSD-Clause 2 license. 
 // See the license.txt file in the project root for more information.
 
@@ -14,7 +14,7 @@ namespace Markdig.Extensions.Tables
     /// that starts by a '-' and have at least a '|' (and have optional spaces) and is a continuation of a
     /// paragraph.
     /// </summary>
-    /// <seealso cref="Markdig.Parsers.BlockParser" />
+    /// <seealso cref="BlockParser" />
     public class PipeTableBlockParser : BlockParser
     {
         /// <summary>
@@ -29,7 +29,7 @@ namespace Markdig.Extensions.Tables
         {
             // Only if we have already a paragraph
             var paragraph = processor.CurrentBlock as ParagraphBlock;
-            if (processor.IsCodeIndent || paragraph  == null)
+            if (processor.IsCodeIndent || paragraph  is null)
             {
                 return BlockState.None;
             }
@@ -45,7 +45,7 @@ namespace Markdig.Extensions.Tables
                     if (countPipe > 0)
                     {
                         // Mark the paragraph as open (important, otherwise we would have an infinite loop)
-                        paragraph.AppendLine(ref processor.Line, processor.Column, processor.LineIndex, processor.Line.Start);
+                        paragraph.AppendLine(ref processor.Line, processor.Column, processor.LineIndex, processor.Line.Start, processor.TrackTrivia);
                         paragraph.IsOpen = true;
                         return BlockState.BreakDiscard;
                     }

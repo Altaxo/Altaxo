@@ -1,4 +1,4 @@
-﻿// Copyright (c) Alexandre Mutel. All rights reserved.
+// Copyright (c) Alexandre Mutel. All rights reserved.
 // This file is licensed under the BSD-Clause 2 license. 
 // See the license.txt file in the project root for more information.
 
@@ -12,7 +12,7 @@ namespace Markdig.Extensions.Abbreviations
     /// <summary>
     /// An abbreviation object stored at the document level. See extension methods in <see cref="AbbreviationHelper"/>.
     /// </summary>
-    /// <seealso cref="Markdig.Syntax.LeafBlock" />
+    /// <seealso cref="LeafBlock" />
     [DebuggerDisplay("Abbr {Label} => {Text}")]
     public class Abbreviation : LeafBlock
     {
@@ -27,7 +27,7 @@ namespace Markdig.Extensions.Abbreviations
         /// <summary>
         /// Gets or sets the label.
         /// </summary>
-        public string Label { get; set; }
+        public string? Label { get; set; }
 
         /// <summary>
         /// The text associated to this label.
