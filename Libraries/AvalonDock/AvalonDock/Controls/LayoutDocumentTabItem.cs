@@ -1,4 +1,4 @@
-﻿/************************************************************************
+/************************************************************************
    AvalonDock
 
    Copyright (C) 2007-2013 Xceed Software Inc.
@@ -7,19 +7,27 @@
    License (Ms-PL) as published at https://opensource.org/licenses/MS-PL
  ************************************************************************/
 
+using AvalonDock.Layout;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using AvalonDock.Layout;
 
 namespace AvalonDock.Controls
 {
-	public class LayoutDocumentTabItem : Control
+	/// <inheritdoc />
+	/// <summary>
+	/// Implements the control for the TabItem Header of a <see cref="LayoutDocumentPaneControl"/>.
+	/// The Document's TabItem Header displays the title of a document and can be used to drag a
+	/// document from its docking position.
+	/// </summary>
+	/// <seealso cref="Control"/>
+	public class LayoutDocumentTabItem : ContentControl
 	{
-		#region Members
+		#region fields
 
 		private List<Rect> _otherTabsScreenArea = null;
 		private List<TabItem> _otherTabs = null;
@@ -29,208 +37,161 @@ namespace AvalonDock.Controls
 		private Point _mouseDownPoint;
 		private bool _allowDrag = false;
 
-		#endregion
+		#endregion fields
 
 		#region Contructors
 
+		/// <summary>Static class constructor to register WPF style keys.</summary>
 		static LayoutDocumentTabItem()
 		{
 			DefaultStyleKeyProperty.OverrideMetadata(typeof(LayoutDocumentTabItem), new FrameworkPropertyMetadata(typeof(LayoutDocumentTabItem)));
 		}
 
-		public LayoutDocumentTabItem()
-		{
-		}
-
-		#endregion
+		#endregion Contructors
 
 		#region Properties
 
 		#region Model
 
-		/// <summary>
-		/// Model Dependency Property
-		/// </summary>
-		public static readonly DependencyProperty ModelProperty = DependencyProperty.Register("Model", typeof(LayoutContent), typeof(LayoutDocumentTabItem),
-				new FrameworkPropertyMetadata((LayoutContent)null, new PropertyChangedCallback(OnModelChanged)));
+		/// <summary><see cref="Model"/> dependency property.</summary>
+		public static readonly DependencyProperty ModelProperty = DependencyProperty.Register(nameof(Model), typeof(LayoutContent), typeof(LayoutDocumentTabItem),
+				new FrameworkPropertyMetadata(null, OnModelChanged));
 
-		/// <summary>
-		/// Gets or sets the Model property.  This dependency property 
-		/// indicates the layout content model attached to the tab item.
-		/// </summary>
+		/// <summary>Gets/sets the layout content model attached to the tab item.</summary>
+		[Bindable(true), Description("Gets wether this floating window is being dragged."), Category("Other")]
 		public LayoutContent Model
 		{
-			get
-			{
-				return (LayoutContent)GetValue(ModelProperty);
-			}
-			set
-			{
-				SetValue(ModelProperty, value);
-			}
+			get => (LayoutContent)GetValue(ModelProperty);
+			set => SetValue(ModelProperty, value);
 		}
 
-		/// <summary>
-		/// Handles changes to the Model property.
-		/// </summary>
-		private static void OnModelChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-		{
-			((LayoutDocumentTabItem)d).OnModelChanged(e);
-		}
+		/// <summary>Handles changes to the <see cref="Model"/> property.</summary>
+		private static void OnModelChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) => ((LayoutDocumentTabItem)d).OnModelChanged(e);
 
-
-		/// <summary>
-		/// Provides derived classes an opportunity to handle changes to the Model property.
-		/// </summary>
+		/// <summary>Provides derived classes an opportunity to handle changes to the <see cref="Model"/> property.</summary>
 		protected virtual void OnModelChanged(DependencyPropertyChangedEventArgs e)
 		{
-			if (Model != null)
-				SetLayoutItem(Model.Root.Manager.GetLayoutItemFromModel(Model));
-			else
-				SetLayoutItem(null);
+			var layoutItem = (Model?.Root?.Manager)?.GetLayoutItemFromModel(Model);
+			SetLayoutItem(layoutItem);
+			if (layoutItem != null)
+				Model.TabItem = this;
 			//UpdateLogicalParent();
 		}
 
-		#endregion
+		#endregion Model
 
 		#region LayoutItem
 
-		/// <summary>
-		/// LayoutItem Read-Only Dependency Property
-		/// </summary>
-		private static readonly DependencyPropertyKey LayoutItemPropertyKey = DependencyProperty.RegisterReadOnly("LayoutItem", typeof(LayoutItem), typeof(LayoutDocumentTabItem),
-				new FrameworkPropertyMetadata((LayoutItem)null));
+		/// <summary><see cref="LayoutItem"/> Read-Only dependency property.</summary>
+		private static readonly DependencyPropertyKey LayoutItemPropertyKey = DependencyProperty.RegisterReadOnly(nameof(LayoutItem), typeof(LayoutItem), typeof(LayoutDocumentTabItem),
+				new FrameworkPropertyMetadata(null));
 
 		public static readonly DependencyProperty LayoutItemProperty = LayoutItemPropertyKey.DependencyProperty;
 
-		/// <summary>
-		/// Gets the LayoutItem property.  This dependency property 
-		/// indicates the LayoutItem attached to this tag item.
-		/// </summary>
-		public LayoutItem LayoutItem
-		{
-			get
-			{
-				return (LayoutItem)GetValue(LayoutItemProperty);
-			}
-		}
+		/// <summary>Gets the LayoutItem attached to this tag item.</summary>
+		[Bindable(true), Description("Gets the LayoutItem attached to this tag item."), Category("Other")]
+		public LayoutItem LayoutItem => (LayoutItem)GetValue(LayoutItemProperty);
 
-		/// <summary>
-		/// Provides a secure method for setting the LayoutItem property.  
-		/// This dependency property indicates the LayoutItem attached to this tag item.
-		/// </summary>
-		/// <param name="value">The new value for the property.</param>
-		protected void SetLayoutItem(LayoutItem value)
-		{
-			SetValue(LayoutItemPropertyKey, value);
-		}
+		#endregion LayoutItem
 
-		#endregion
-
-		#endregion
+		#endregion Properties
 
 		#region Overrides
 
-		protected override void OnMouseLeftButtonDown(System.Windows.Input.MouseButtonEventArgs e)
+		/// <summary>
+		/// Provides a secure method for setting the <see cref="LayoutItem"/> property.
+		/// This dependency property indicates the LayoutItem attached to this tag item.
+		/// </summary>
+		/// <param name="value">The new value for the property.</param>
+		protected void SetLayoutItem(LayoutItem value) => SetValue(LayoutItemPropertyKey, value);
+
+		/// <inheritdoc />
+		protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
 		{
 			base.OnMouseLeftButtonDown(e);
-
+			CaptureMouse();
 			_allowDrag = false;
 			Model.IsActive = true;
-
-			var layoutDocument = Model as LayoutDocument;
-			if ((layoutDocument != null) && !layoutDocument.CanMove)
-				return;
-
-			if (e.ClickCount == 1)
-			{
-				_mouseDownPoint = e.GetPosition(this);
-				_isMouseDown = true;
-			}
+			if (Model is LayoutDocument layoutDocument && !layoutDocument.CanMove) return;
+			if (e.ClickCount != 1) return;
+			_mouseDownPoint = e.GetPosition(this);
+			_isMouseDown = true;
 		}
 
-		protected override void OnMouseMove(System.Windows.Input.MouseEventArgs e)
+		/// <inheritdoc />
+		protected override void OnMouseMove(MouseEventArgs e)
 		{
 			base.OnMouseMove(e);
-
+			_isMouseDown = Mouse.LeftButton == MouseButtonState.Pressed && _isMouseDown;
 			if (_isMouseDown)
 			{
-				Point ptMouseMove = e.GetPosition(this);
-				this.CaptureMouse();
-				if (Math.Abs(ptMouseMove.X - _mouseDownPoint.X) > SystemParameters.MinimumHorizontalDragDistance ||
-					Math.Abs(ptMouseMove.Y - _mouseDownPoint.Y) > SystemParameters.MinimumVerticalDragDistance)
+				var ptMouseMove = e.GetPosition(this);
+				CaptureMouse();
+				if (Math.Abs(ptMouseMove.X - _mouseDownPoint.X) > SystemParameters.MinimumHorizontalDragDistance || Math.Abs(ptMouseMove.Y - _mouseDownPoint.Y) > SystemParameters.MinimumVerticalDragDistance)
 				{
-					this.UpdateDragDetails();
-
+					UpdateDragDetails();
 					_isMouseDown = false;
 					_allowDrag = true;
 				}
 			}
-
-			if (this.IsMouseCaptured && _allowDrag)
+			if (!IsMouseCaptured || !_allowDrag) return;
+			var mousePosInScreenCoord = this.PointToScreenDPI(e.GetPosition(this));
+			if (!_parentDocumentTabPanelScreenArea.Contains(mousePosInScreenCoord))
+				StartDraggingFloatingWindowForContent();
+			else
 			{
-				var mousePosInScreenCoord = this.PointToScreenDPI(e.GetPosition(this));
-				if (!_parentDocumentTabPanelScreenArea.Contains(mousePosInScreenCoord))
-				{
-					this.StartDraggingFloatingWindowForContent();
-				}
-				else
-				{
-					int indexOfTabItemWithMouseOver = _otherTabsScreenArea.FindIndex(r => r.Contains(mousePosInScreenCoord));
-					if (indexOfTabItemWithMouseOver >= 0)
-					{
-						var targetModel = _otherTabs[indexOfTabItemWithMouseOver].Content as LayoutContent;
-						var container = this.Model.Parent as ILayoutContainer;
-						var containerPane = this.Model.Parent as ILayoutPane;
+				var indexOfTabItemWithMouseOver = _otherTabsScreenArea.FindIndex(r => r.Contains(mousePosInScreenCoord));
+				if (indexOfTabItemWithMouseOver < 0) return;
+				var targetModel = _otherTabs[indexOfTabItemWithMouseOver].Content as LayoutContent;
+				var container = Model.Parent as ILayoutContainer;
+				var containerPane = Model.Parent as ILayoutPane;
 
-						if ((containerPane is LayoutDocumentPane) && !((LayoutDocumentPane)containerPane).CanRepositionItems)
-							return;
-						if ((containerPane.Parent != null) && (containerPane.Parent is LayoutDocumentPaneGroup) && !((LayoutDocumentPaneGroup)containerPane.Parent).CanRepositionItems)
-							return;
+				if (containerPane is LayoutDocumentPane layoutDocumentPane && !layoutDocumentPane.CanRepositionItems) return;
+				if (containerPane.Parent is LayoutDocumentPaneGroup layoutDocumentPaneGroup && !layoutDocumentPaneGroup.CanRepositionItems) return;
 
-						var childrenList = container.Children.ToList();
-						containerPane.MoveChild(childrenList.IndexOf(Model), childrenList.IndexOf(targetModel));
-						this.Model.IsActive = true;
-						_parentDocumentTabPanel.UpdateLayout();
-						this.UpdateDragDetails();
-					}
-				}
+				var childrenList = container.Children.ToList();
+				containerPane.MoveChild(childrenList.IndexOf(Model), childrenList.IndexOf(targetModel));
+				Model.IsActive = true;
+				_parentDocumentTabPanel.UpdateLayout();
+				UpdateDragDetails();
 			}
 		}
 
-		protected override void OnMouseLeftButtonUp(System.Windows.Input.MouseButtonEventArgs e)
+		/// <inheritdoc />
+		protected override void OnMouseLeftButtonUp(MouseButtonEventArgs e)
 		{
 			_isMouseDown = false;
 			_allowDrag = false;
-			if (IsMouseCaptured)
-				ReleaseMouseCapture();
+			if (IsMouseCaptured) ReleaseMouseCapture();
 			base.OnMouseLeftButtonUp(e);
 		}
 
-		protected override void OnMouseLeave(System.Windows.Input.MouseEventArgs e)
+		/// <inheritdoc />
+		protected override void OnMouseLeave(MouseEventArgs e)
 		{
 			base.OnMouseLeave(e);
 			_isMouseDown = false;
 		}
 
+		/// <inheritdoc />
 		protected override void OnMouseEnter(MouseEventArgs e)
 		{
 			base.OnMouseEnter(e);
 			_isMouseDown = false;
 		}
 
+		/// <inheritdoc />
 		protected override void OnMouseDown(MouseButtonEventArgs e)
 		{
-			if (e.ChangedButton == MouseButton.Middle)
+			if (LayoutItem != null && e.ChangedButton == MouseButton.Middle && LayoutItem.CloseCommand.CanExecute(null))
 			{
-				if (LayoutItem.CloseCommand.CanExecute(null))
-					LayoutItem.CloseCommand.Execute(null);
+				LayoutItem.CloseCommand.Execute(null);
 			}
-
+			
 			base.OnMouseDown(e);
 		}
 
-		#endregion
+		#endregion Overrides
 
 		#region Private Methods
 
@@ -238,28 +199,29 @@ namespace AvalonDock.Controls
 		{
 			_parentDocumentTabPanel = this.FindLogicalAncestor<DocumentPaneTabPanel>();
 			_parentDocumentTabPanelScreenArea = _parentDocumentTabPanel.GetScreenArea();
-			_otherTabs = _parentDocumentTabPanel.Children.Cast<TabItem>().Where(ch =>
-				ch.Visibility != System.Windows.Visibility.Collapsed).ToList();
-			Rect currentTabScreenArea = this.FindLogicalAncestor<TabItem>().GetScreenArea();
+			_otherTabs = _parentDocumentTabPanel.Children.Cast<TabItem>().Where(ch => ch.Visibility != Visibility.Collapsed).ToList();
+			var currentTabScreenArea = this.FindLogicalAncestor<TabItem>().GetScreenArea();
 			_otherTabsScreenArea = _otherTabs.Select(ti =>
-		   {
-			   var screenArea = ti.GetScreenArea();
-			   return new Rect(screenArea.Left, screenArea.Top, currentTabScreenArea.Width, screenArea.Height);
-		   }).ToList();
+			{
+				var screenArea = ti.GetScreenArea();
+				return new Rect(screenArea.Left, screenArea.Top, currentTabScreenArea.Width, screenArea.Height);
+			}).ToList();
 		}
 
+		/// <summary>
+		/// Is invoked when the user started to drag this control and its content
+		/// should be contained in a <see cref="LayoutFloatingWindowControl"/> to allow
+		/// dragging out of the currently docked position.
+		/// </summary>
 		private void StartDraggingFloatingWindowForContent()
 		{
-			this.ReleaseMouseCapture();
-
-			if (this.Model is LayoutAnchorable)
-			{
-				((LayoutAnchorable)this.Model).ResetCanCloseInternal();
-			}
-			var manager = this.Model.Root.Manager;
-			manager.StartDraggingFloatingWindowForContent(this.Model);
+			ReleaseMouseCapture();
+			// BD: 17.08.2020 Remove that bodge and handle CanClose=false && CanHide=true in XAML
+			//if (Model is LayoutAnchorable layoutAnchorable) layoutAnchorable.ResetCanCloseInternal();
+			var manager = Model.Root.Manager;
+			manager.StartDraggingFloatingWindowForContent(Model);
 		}
 
-		#endregion
+		#endregion Private Methods
 	}
 }

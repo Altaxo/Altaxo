@@ -7,19 +7,25 @@
    License (Ms-PL) as published at https://opensource.org/licenses/MS-PL
  ************************************************************************/
 
-using System.Windows.Controls;
-using System.Windows;
 using AvalonDock.Layout;
+using System.Windows;
+using System.Windows.Controls;
 
 namespace AvalonDock.Controls
 {
+	/// <summary>
+	/// Implements a group control that hosts a <see cref="LayoutDocumentPaneGroup"/> model.
+	///
+	/// This Grid based control can host multiple other controls in its Children collection
+	/// (<see cref="LayoutAnchorableControl"/>, <see cref="LayoutDocumentControl"/> etc).
+	/// </summary>
 	public class LayoutDocumentPaneGroupControl : LayoutGridControl<ILayoutDocumentPane>, ILayoutControl
 	{
-		#region Members
+		#region fields
 
-		private LayoutDocumentPaneGroup _model;
+		private readonly LayoutDocumentPaneGroup _model;
 
-		#endregion
+		#endregion fields
 
 		#region Constructors
 
@@ -29,13 +35,14 @@ namespace AvalonDock.Controls
 			_model = model;
 		}
 
-		#endregion
+		#endregion Constructors
 
 		#region Overrides
 
 		protected override void OnFixChildrenDockLengths()
 		{
 			#region Setup DockWidth/Height for children
+
 			if (_model.Orientation == Orientation.Horizontal)
 			{
 				for (int i = 0; i < _model.Children.Count; i++)
@@ -58,9 +65,10 @@ namespace AvalonDock.Controls
 					}
 				}
 			}
-			#endregion
+
+			#endregion Setup DockWidth/Height for children
 		}
 
-		#endregion
+		#endregion Overrides
 	}
 }

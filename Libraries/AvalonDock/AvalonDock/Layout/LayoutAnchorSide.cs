@@ -12,75 +12,61 @@ using System.Windows.Markup;
 
 namespace AvalonDock.Layout
 {
-	[ContentProperty("Children")]
+	/// <summary>
+	/// Implements the viewmodel for a a side element (left, right, top, bottom) in AvalonDock's
+	/// visual root of the <see cref="DockingManager"/>.
+	/// </summary>
+	[ContentProperty(nameof(Children))]
 	[Serializable]
 	public class LayoutAnchorSide : LayoutGroup<LayoutAnchorGroup>
 	{
-		#region Constructors
+		#region fields
 
-		public LayoutAnchorSide()
-		{
-		}
+		private AnchorSide _side;
 
-		#endregion
+		#endregion fields
 
 		#region Properties
 
-		#region Side
-
-		private AnchorSide _side;
+		/// <summary>Gets the side (top, bottom, left, right) that this layout is anchored in the layout.</summary>
 		public AnchorSide Side
 		{
-			get
-			{
-				return _side;
-			}
+			get => _side;
 			private set
 			{
-				if (_side != value)
-				{
-					RaisePropertyChanging("Side");
-					_side = value;
-					RaisePropertyChanged("Side");
-				}
+				if (value == _side) return;
+				RaisePropertyChanging(nameof(Side));
+				_side = value;
+				RaisePropertyChanged(nameof(Side));
 			}
 		}
 
-		#endregion
-
-		#endregion
+		#endregion Properties
 
 		#region Overrides
 
-		protected override bool GetVisibility()
-		{
-			return Children.Count > 0;
-		}
+		/// <inheritdoc />
+		protected override bool GetVisibility() => Children.Count > 0;
 
-
+		/// <inheritdoc />
 		protected override void OnParentChanged(ILayoutContainer oldValue, ILayoutContainer newValue)
 		{
 			base.OnParentChanged(oldValue, newValue);
-
 			UpdateSide();
 		}
 
-		#endregion
+		#endregion Overrides
 
 		#region Private Methods
 
 		private void UpdateSide()
 		{
-			if (Root.LeftSide == this)
-				Side = AnchorSide.Left;
-			else if (Root.TopSide == this)
-				Side = AnchorSide.Top;
-			else if (Root.RightSide == this)
-				Side = AnchorSide.Right;
-			else if (Root.BottomSide == this)
-				Side = AnchorSide.Bottom;
+			if (this == Root.LeftSide) Side = AnchorSide.Left;
+			else if (this == Root.TopSide) Side = AnchorSide.Top;
+			else if (this == Root.RightSide) Side = AnchorSide.Right;
+			else if (this == Root.BottomSide) Side = AnchorSide.Bottom;
 		}
 
-		#endregion
+		#endregion Private Methods
 	}
 }

@@ -8,17 +8,17 @@
  ************************************************************************/
 
 using System;
-using System.Windows.Media;
 using System.Windows;
 using System.Windows.Interop;
+using System.Windows.Media;
 
 namespace AvalonDock
 {
-	static class WindowHelper
+	internal static class WindowHelper
 	{
 		public static bool IsAttachedToPresentationSource(this Visual element)
 		{
-			return PresentationSource.FromVisual(element as Visual) != null;
+			return PresentationSource.FromVisual(element) != null;
 		}
 
 		public static void SetParentToMainWindowOf(this Window window, Visual element)
@@ -28,8 +28,7 @@ namespace AvalonDock
 				window.Owner = wndParent;
 			else
 			{
-				IntPtr parentHwnd;
-				if (GetParentWindowHandle(element, out parentHwnd))
+				if (GetParentWindowHandle(element, out IntPtr parentHwnd))
 					Win32Helper.SetOwner(new WindowInteropHelper(window).Handle, parentHwnd);
 			}
 		}
@@ -42,13 +41,11 @@ namespace AvalonDock
 				return Win32Helper.GetOwner(new WindowInteropHelper(window).Handle);
 		}
 
-
 		public static bool GetParentWindowHandle(this Visual element, out IntPtr hwnd)
 		{
 			hwnd = IntPtr.Zero;
-			HwndSource wpfHandle = PresentationSource.FromVisual(element) as HwndSource;
 
-			if (wpfHandle == null)
+			if (!(PresentationSource.FromVisual(element) is HwndSource wpfHandle))
 				return false;
 
 			hwnd = Win32Helper.GetParent(wpfHandle.Handle);

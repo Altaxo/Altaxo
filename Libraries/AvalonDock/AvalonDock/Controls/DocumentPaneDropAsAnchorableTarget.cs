@@ -7,42 +7,70 @@
    License (Ms-PL) as published at https://opensource.org/licenses/MS-PL
  ************************************************************************/
 
+using AvalonDock.Layout;
 using System;
 using System.Linq;
 using System.Windows;
 using System.Windows.Media;
-using AvalonDock.Layout;
 
 namespace AvalonDock.Controls
 {
+	/// <summary>
+	/// Implements a <see cref="LayoutDocumentPaneControl"/> drop target on which other items
+	/// on which other items (<see cref="LayoutDocument"/> or <see cref="LayoutAnchorable"/>) can be dropped.
+	/// </summary>
 	internal class DocumentPaneDropAsAnchorableTarget : DropTarget<LayoutDocumentPaneControl>
 	{
-		#region Members
+		#region fields
 
 		private LayoutDocumentPaneControl _targetPane;
-		int _tabIndex = -1;
+		private int _tabIndex = -1;
 
-		#endregion
+		#endregion fields
 
 		#region Constructors
 
-		internal DocumentPaneDropAsAnchorableTarget(LayoutDocumentPaneControl paneControl, Rect detectionRect, DropTargetType type)
+		/// <summary>
+		/// Class constructor from parameters without a specific tabindex as dock position.
+		/// </summary>
+		/// <param name="paneControl"></param>
+		/// <param name="detectionRect"></param>
+		/// <param name="type"></param>
+		internal DocumentPaneDropAsAnchorableTarget(LayoutDocumentPaneControl paneControl,
+													Rect detectionRect,
+													DropTargetType type)
 			: base(paneControl, detectionRect, type)
 		{
 			_targetPane = paneControl;
 		}
 
-		internal DocumentPaneDropAsAnchorableTarget(LayoutDocumentPaneControl paneControl, Rect detectionRect, DropTargetType type, int tabIndex)
+		/// <summary>
+		/// Class constructor from parameters with a specific tabindex as dock position.
+		/// This constructor can be used to drop a document at a specific tab index.
+		/// </summary>
+		/// <param name="paneControl"></param>
+		/// <param name="detectionRect"></param>
+		/// <param name="type"></param>
+		/// <param name="tabIndex"></param>
+		internal DocumentPaneDropAsAnchorableTarget(LayoutDocumentPaneControl paneControl,
+													Rect detectionRect,
+													DropTargetType type,
+													int tabIndex)
 			: base(paneControl, detectionRect, type)
 		{
 			_targetPane = paneControl;
 			_tabIndex = tabIndex;
 		}
 
-		#endregion
+		#endregion Constructors
 
 		#region Overrides
 
+		/// <summary>
+		/// Method is invoked to complete a drag & drop operation with a (new) docking position
+		/// by docking of the LayoutAnchorable <paramref name="floatingWindow"/> into this drop target.
+		/// </summary>
+		/// <param name="floatingWindow"></param>
 		protected override void Drop(LayoutAnchorableFloatingWindow floatingWindow)
 		{
 			ILayoutDocumentPane targetModel = _targetPane.Model as ILayoutDocumentPane;
@@ -53,7 +81,9 @@ namespace AvalonDock.Controls
 			switch (Type)
 			{
 				case DropTargetType.DocumentPaneDockAsAnchorableBottom:
+
 					#region DropTargetType.DocumentPaneDockAsAnchorableBottom
+
 					{
 						if (parentGroupPanel != null &&
 							parentGroupPanel.ChildrenCount == 1)
@@ -77,13 +107,15 @@ namespace AvalonDock.Controls
 						{
 							throw new NotImplementedException();
 						}
-
-
 					}
 					break;
-				#endregion
+
+				#endregion DropTargetType.DocumentPaneDockAsAnchorableBottom
+
 				case DropTargetType.DocumentPaneDockAsAnchorableTop:
+
 					#region DropTargetType.DocumentPaneDockAsAnchorableTop
+
 					{
 						if (parentGroupPanel != null &&
 							parentGroupPanel.ChildrenCount == 1)
@@ -107,12 +139,15 @@ namespace AvalonDock.Controls
 						{
 							throw new NotImplementedException();
 						}
-
 					}
 					break;
-				#endregion
+
+				#endregion DropTargetType.DocumentPaneDockAsAnchorableTop
+
 				case DropTargetType.DocumentPaneDockAsAnchorableLeft:
+
 					#region DropTargetType.DocumentPaneDockAsAnchorableLeft
+
 					{
 						if (parentGroupPanel != null &&
 							parentGroupPanel.ChildrenCount == 1)
@@ -138,9 +173,13 @@ namespace AvalonDock.Controls
 						}
 					}
 					break;
-				#endregion
+
+				#endregion DropTargetType.DocumentPaneDockAsAnchorableLeft
+
 				case DropTargetType.DocumentPaneDockAsAnchorableRight:
+
 					#region DropTargetType.DocumentPaneDockAsAnchorableRight
+
 					{
 						if (parentGroupPanel != null &&
 							parentGroupPanel.ChildrenCount == 1)
@@ -166,13 +205,22 @@ namespace AvalonDock.Controls
 						}
 					}
 					break;
-					#endregion
+
+					#endregion DropTargetType.DocumentPaneDockAsAnchorableRight
 			}
 
 			base.Drop(floatingWindow);
 		}
 
-		public override System.Windows.Media.Geometry GetPreviewPath(OverlayWindow overlayWindow, LayoutFloatingWindow floatingWindowModel)
+		/// <summary>
+		/// Gets a <see cref="Geometry"/> that is used to highlight/preview the docking position
+		/// of this drop target for a <paramref name="floatingWindowModel"/> being docked inside an
+		/// <paramref name="overlayWindow"/>.
+		/// </summary>
+		/// <param name="overlayWindow"></param>
+		/// <param name="floatingWindowModel"></param>
+		/// <returns>The geometry of the preview/highlighting WPF figure path.</returns>
+		public override Geometry GetPreviewPath(OverlayWindow overlayWindow, LayoutFloatingWindow floatingWindowModel)
 		{
 			Rect targetScreenRect;
 			ILayoutDocumentPane targetModel = _targetPane.Model as ILayoutDocumentPane;
@@ -209,12 +257,14 @@ namespace AvalonDock.Controls
 						targetScreenRect.Height /= 3.0;
 						return new RectangleGeometry(targetScreenRect);
 					}
+
 				case DropTargetType.DocumentPaneDockAsAnchorableTop:
 					{
 						targetScreenRect.Offset(-overlayWindow.Left, -overlayWindow.Top);
 						targetScreenRect.Height /= 3.0;
 						return new RectangleGeometry(targetScreenRect);
 					}
+
 				case DropTargetType.DocumentPaneDockAsAnchorableRight:
 					{
 						targetScreenRect.Offset(-overlayWindow.Left, -overlayWindow.Top);
@@ -222,6 +272,7 @@ namespace AvalonDock.Controls
 						targetScreenRect.Width /= 3.0;
 						return new RectangleGeometry(targetScreenRect);
 					}
+
 				case DropTargetType.DocumentPaneDockAsAnchorableLeft:
 					{
 						targetScreenRect.Offset(-overlayWindow.Left, -overlayWindow.Top);
@@ -233,7 +284,7 @@ namespace AvalonDock.Controls
 			return null;
 		}
 
-		#endregion
+		#endregion Overrides
 
 		#region Private Methods
 
@@ -268,11 +319,8 @@ namespace AvalonDock.Controls
 			}
 
 			return false;
-
-
-
 		}
 
-		#endregion
+		#endregion Private Methods
 	}
 }

@@ -8,154 +8,142 @@
  ************************************************************************/
 
 using System;
-using System.Collections.Generic;
-using System.Windows;
 using System.Globalization;
 using System.Linq;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace AvalonDock.Layout
 {
+	/// <summary>Provides a base class for other layout panel models that support a specific class of panel.</summary>
+	/// <typeparam name="T"></typeparam>
 	[Serializable]
 	public abstract class LayoutPositionableGroup<T> : LayoutGroup<T>, ILayoutPositionableElementWithActualSize where T : class, ILayoutElement
 	{
-		#region Members
+		#region fields
 
 		private static GridLengthConverter _gridLengthConverter = new GridLengthConverter();
 
-		#endregion
+		// DockWidth fields
+		private GridLength _dockWidth = new GridLength(1.0, GridUnitType.Star);
 
-		#region Constructors
+		private double? _resizableAbsoluteDockWidth;
 
-		public LayoutPositionableGroup()
-		{
-		}
+		// DockHeight fields
+		private GridLength _dockHeight = new GridLength(1.0, GridUnitType.Star);
 
-		#endregion
+		private double? _resizableAbsoluteDockHeight;
+
+		private bool _allowDuplicateContent = true;
+		private bool _canRepositionItems = true;
+
+		private double _dockMinWidth = 25.0;
+		private double _dockMinHeight = 25.0;
+		private double _floatingWidth = 0.0;
+		private double _floatingHeight = 0.0;
+		private double _floatingLeft = 0.0;
+		private double _floatingTop = 0.0;
+
+		private bool _isMaximized = false;
+
+		[NonSerialized]
+		private double _actualWidth;
+
+		[NonSerialized]
+		private double _actualHeight;
+
+		#endregion fields
+
+		#region Events
+
+		/// <summary>
+		/// Event fired when floating properties were updated.
+		/// </summary>
+		public event EventHandler FloatingPropertiesUpdated;
+
+		#endregion Events
 
 		#region Properties
 
 		#region DockWidth
 
-		GridLength _dockWidth = new GridLength(1.0, GridUnitType.Star);
 		public GridLength DockWidth
 		{
-			get
-			{
-				return _dockWidth.IsAbsolute && _resizableAbsoluteDockWidth < _dockWidth.Value && _resizableAbsoluteDockWidth.HasValue
-				  ? new GridLength(_resizableAbsoluteDockWidth.Value)
-				  : _dockWidth;
-			}
+			get => _dockWidth.IsAbsolute && _resizableAbsoluteDockWidth < _dockWidth.Value && _resizableAbsoluteDockWidth.HasValue ?
+						new GridLength(_resizableAbsoluteDockWidth.Value) : _dockWidth;
 			set
 			{
-				if (_dockWidth != value && value.Value > 0)
-				{
-					if (value.IsAbsolute)
-					{
-						_resizableAbsoluteDockWidth = value.Value;
-					}
-
-					RaisePropertyChanging("DockWidth");
-					_dockWidth = value;
-					RaisePropertyChanged("DockWidth");
-
-					OnDockWidthChanged();
-				}
+				if (value == _dockWidth || !(value.Value > 0)) return;
+				if (value.IsAbsolute) _resizableAbsoluteDockWidth = value.Value;
+				RaisePropertyChanging(nameof(DockWidth));
+				_dockWidth = value;
+				RaisePropertyChanged(nameof(DockWidth));
+				OnDockWidthChanged();
 			}
 		}
 
 		public double FixedDockWidth => _dockWidth.IsAbsolute && _dockWidth.Value >= _dockMinWidth ? _dockWidth.Value : _dockMinWidth;
 
-		private double? _resizableAbsoluteDockWidth;
-
 		public double ResizableAbsoluteDockWidth
 		{
-			get { return _resizableAbsoluteDockWidth ?? 0; }
+			get => _resizableAbsoluteDockWidth ?? 0;
 			set
 			{
-				if (_dockWidth.IsAbsolute)
+				if (!_dockWidth.IsAbsolute) return;
+				if (value <= _dockWidth.Value && value > 0)
 				{
-					if (value <= _dockWidth.Value && value > 0)
-					{
-						RaisePropertyChanging("DockWidth");
-						_resizableAbsoluteDockWidth = value;
-						RaisePropertyChanged("DockWidth");
-						OnDockWidthChanged();
-					}
-					else if (value > _dockWidth.Value && _resizableAbsoluteDockWidth < _dockWidth.Value)
-					{
-						_resizableAbsoluteDockWidth = _dockWidth.Value;
-					}
+					RaisePropertyChanging(nameof(DockWidth));
+					_resizableAbsoluteDockWidth = value;
+					RaisePropertyChanged(nameof(DockWidth));
+					OnDockWidthChanged();
 				}
+				else if (value > _dockWidth.Value && _resizableAbsoluteDockWidth < _dockWidth.Value)
+					_resizableAbsoluteDockWidth = _dockWidth.Value;
 			}
 		}
 
-		#endregion
+		#endregion DockWidth
 
 		#region DockHeight
 
-		GridLength _dockHeight = new GridLength(1.0, GridUnitType.Star);
 		public GridLength DockHeight
 		{
-			get
-			{
-				return _dockHeight.IsAbsolute && _resizableAbsoluteDockHeight < _dockHeight.Value && _resizableAbsoluteDockHeight.HasValue
-				  ? new GridLength(_resizableAbsoluteDockHeight.Value)
-				  : _dockHeight;
-			}
+			get => _dockHeight.IsAbsolute && _resizableAbsoluteDockHeight < _dockHeight.Value && _resizableAbsoluteDockHeight.HasValue ?
+						new GridLength(_resizableAbsoluteDockHeight.Value) : _dockHeight;
 			set
 			{
-				if (_dockHeight != value && value.Value > 0)
-				{
-					if (value.IsAbsolute)
-					{
-						_resizableAbsoluteDockHeight = value.Value;
-					}
-
-					RaisePropertyChanging("DockHeight");
-					_dockHeight = value;
-					RaisePropertyChanged("DockHeight");
-
-					OnDockHeightChanged();
-				}
+				if (_dockHeight == value || !(value.Value > 0)) return;
+				if (value.IsAbsolute) _resizableAbsoluteDockHeight = value.Value;
+				RaisePropertyChanging(nameof(DockHeight));
+				_dockHeight = value;
+				RaisePropertyChanged(nameof(DockHeight));
+				OnDockHeightChanged();
 			}
 		}
 
 		public double FixedDockHeight => _dockHeight.IsAbsolute && _dockHeight.Value >= _dockMinHeight ? _dockHeight.Value : _dockMinHeight;
 
-		private double? _resizableAbsoluteDockHeight;
-
 		public double ResizableAbsoluteDockHeight
 		{
-			get { return _resizableAbsoluteDockHeight ?? 0; }
+			get => _resizableAbsoluteDockHeight ?? 0;
 			set
 			{
-				if (_dockHeight.IsAbsolute)
+				if (!_dockHeight.IsAbsolute) return;
+				if (value < _dockHeight.Value && value > 0)
 				{
-					if (value < _dockHeight.Value && value > 0)
-					{
-						RaisePropertyChanging("DockHeight");
-						_resizableAbsoluteDockHeight = value;
-						RaisePropertyChanged("DockHeight");
-						OnDockHeightChanged();
-					}
-					else if (value > _dockHeight.Value && _resizableAbsoluteDockHeight < _dockHeight.Value)
-					{
-						_resizableAbsoluteDockHeight = _dockHeight.Value;
-					}
-					else if (value == 0)
-					{
-						_resizableAbsoluteDockHeight = DockMinHeight;
-					}
+					RaisePropertyChanging(nameof(DockHeight));
+					_resizableAbsoluteDockHeight = value;
+					RaisePropertyChanged(nameof(DockHeight));
+					OnDockHeightChanged();
 				}
+				else if (value > _dockHeight.Value && _resizableAbsoluteDockHeight < _dockHeight.Value)
+					_resizableAbsoluteDockHeight = _dockHeight.Value;
+				else if (value == 0) _resizableAbsoluteDockHeight = DockMinHeight;
 			}
 		}
 
-		#endregion
+		#endregion DockHeight
 
-		#region AllowDuplicateContent
-
-		private bool _allowDuplicateContent = true;
 		/// <summary>
 		/// Gets or sets the AllowDuplicateContent property.
 		/// When this property is true, then the LayoutDocumentPane or LayoutAnchorablePane allows dropping
@@ -164,346 +152,203 @@ namespace AvalonDock.Layout
 		/// </summary>
 		public bool AllowDuplicateContent
 		{
-			get
-			{
-				return _allowDuplicateContent;
-			}
+			get => _allowDuplicateContent;
 			set
 			{
-				if (_allowDuplicateContent != value)
-				{
-					RaisePropertyChanging("AllowDuplicateContent");
-					_allowDuplicateContent = value;
-					RaisePropertyChanged("AllowDuplicateContent");
-				}
+				if (value == _allowDuplicateContent) return;
+				RaisePropertyChanging(nameof(AllowDuplicateContent));
+				_allowDuplicateContent = value;
+				RaisePropertyChanged(nameof(AllowDuplicateContent));
 			}
 		}
 
-		#endregion
-
-		#region CanRepositionItems
-
-		private bool _canRepositionItems = true;
 		public bool CanRepositionItems
 		{
-			get
-			{
-				return _canRepositionItems;
-			}
+			get => _canRepositionItems;
 			set
 			{
-				if (_canRepositionItems != value)
-				{
-					RaisePropertyChanging("CanRepositionItems");
-					_canRepositionItems = value;
-					RaisePropertyChanged("CanRepositionItems");
-				}
+				if (value == _canRepositionItems) return;
+				RaisePropertyChanging(nameof(CanRepositionItems));
+				_canRepositionItems = value;
+				RaisePropertyChanged(nameof(CanRepositionItems));
 			}
 		}
-
-		#endregion
-
-		#region CalculatedDockMinWidth
 
 		public double CalculatedDockMinWidth()
 		{
-			double childrenDockMinWidth = 0.0;
-			List<ILayoutPositionableElement> visibleChildren = Children.OfType<ILayoutPositionableElement>().Where(child => child.IsVisible).ToList();
-			ILayoutOrientableGroup orientableGroup = this as ILayoutOrientableGroup;
-			if (orientableGroup != null && visibleChildren.Any())
+			var childrenDockMinWidth = 0.0;
+			var visibleChildren = Children.OfType<ILayoutPositionableElement>().Where(child => child.IsVisible).ToList();
+			if (this is ILayoutOrientableGroup orientableGroup && visibleChildren.Any())
 			{
-				childrenDockMinWidth = orientableGroup.Orientation == Orientation.Vertical
-				  ? visibleChildren.Max(child => child.CalculatedDockMinWidth())
-				  : visibleChildren.Sum(child => child.CalculatedDockMinWidth() + ((Root?.Manager?.GridSplitterWidth ?? 0) * (visibleChildren.Count - 1)));
+				childrenDockMinWidth = orientableGroup.Orientation == Orientation.Vertical ?
+					visibleChildren.Max(child => child.CalculatedDockMinWidth())
+				  : visibleChildren.Sum(child => child.CalculatedDockMinWidth() + (Root?.Manager?.GridSplitterWidth ?? 0) * (visibleChildren.Count - 1));
 			}
-
 			return Math.Max(this._dockMinWidth, childrenDockMinWidth);
 		}
 
-		#endregion
-
-		#region DockMinWidth
-
-		private double _dockMinWidth = 25.0;
 		/// <summary>
 		/// Defines the smallest available width that can be applied to a deriving element.
-		/// 
+		///
 		/// The system ensures the minimum width by blocking/limiting <see cref="GridSplitter"/>
 		/// movement when the user resizes a deriving element or resizes the main window.
 		/// </summary>
 		public double DockMinWidth
 		{
-			get
-			{
-				return _dockMinWidth;
-			}
+			get => _dockMinWidth;
 			set
 			{
-				if (_dockMinWidth != value)
-				{
-					MathHelper.AssertIsPositiveOrZero(value);
-					RaisePropertyChanging("DockMinWidth");
-					_dockMinWidth = value;
-					RaisePropertyChanged("DockMinWidth");
-				}
+				if (value == _dockMinWidth) return;
+				MathHelper.AssertIsPositiveOrZero(value);
+				RaisePropertyChanging(nameof(DockMinWidth));
+				_dockMinWidth = value;
+				RaisePropertyChanged(nameof(DockMinWidth));
 			}
 		}
 
-		#endregion
-
-		#region CalculatedDockMinHeight
-
 		public double CalculatedDockMinHeight()
 		{
-			double childrenDockMinHeight = 0.0;
-			List<ILayoutPositionableElement> visibleChildren = Children.OfType<ILayoutPositionableElement>().Where(child => child.IsVisible).ToList();
-			ILayoutOrientableGroup orientableGroup = this as ILayoutOrientableGroup;
-			if (orientableGroup != null && visibleChildren.Any())
+			var childrenDockMinHeight = 0.0;
+			var visibleChildren = Children.OfType<ILayoutPositionableElement>().Where(child => child.IsVisible).ToList();
+			if (this is ILayoutOrientableGroup orientableGroup && visibleChildren.Any())
 			{
-				childrenDockMinHeight = orientableGroup.Orientation == Orientation.Vertical
-				  ? visibleChildren.Sum(child => child.CalculatedDockMinHeight() + ((Root?.Manager?.GridSplitterHeight ?? 0) * (visibleChildren.Count - 1)))
+				childrenDockMinHeight = orientableGroup.Orientation == Orientation.Vertical ?
+					visibleChildren.Sum(child => child.CalculatedDockMinHeight() + (Root?.Manager?.GridSplitterHeight ?? 0) * (visibleChildren.Count - 1))
 				  : visibleChildren.Max(child => child.CalculatedDockMinHeight());
 			}
 
 			return Math.Max(this._dockMinHeight, childrenDockMinHeight);
 		}
 
-		#endregion
-
-		#region DockMinHeight
-
-		private double _dockMinHeight = 25.0;
 		/// <summary>
 		/// Defines the smallest available height that can be applied to a deriving element.
-		/// 
+		///
 		/// The system ensures the minimum height by blocking/limiting <see cref="GridSplitter"/>
 		/// movement when the user resizes a deriving element or resizes the main window.
 		/// </summary>
 		public double DockMinHeight
 		{
-			get
-			{
-				return _dockMinHeight;
-			}
+			get => _dockMinHeight;
 			set
 			{
-				if (_dockMinHeight != value)
-				{
-					MathHelper.AssertIsPositiveOrZero(value);
-					RaisePropertyChanging("DockMinHeight");
-					_dockMinHeight = value;
-					RaisePropertyChanged("DockMinHeight");
-				}
+				if (value == _dockMinHeight) return;
+				MathHelper.AssertIsPositiveOrZero(value);
+				RaisePropertyChanging(nameof(DockMinHeight));
+				_dockMinHeight = value;
+				RaisePropertyChanged(nameof(DockMinHeight));
 			}
 		}
 
-		#endregion
-
-		#region FloatingWidth
-
-		private double _floatingWidth = 0.0;
 		public double FloatingWidth
 		{
-			get
-			{
-				return _floatingWidth;
-			}
+			get => _floatingWidth;
 			set
 			{
-				if (_floatingWidth != value)
-				{
-					RaisePropertyChanging("FloatingWidth");
-					_floatingWidth = value;
-					RaisePropertyChanged("FloatingWidth");
-				}
+				if (value == _floatingWidth) return;
+				RaisePropertyChanging(nameof(FloatingWidth));
+				_floatingWidth = value;
+				RaisePropertyChanged(nameof(FloatingWidth));
 			}
 		}
 
-		#endregion
-
-		#region FloatingHeight
-
-		private double _floatingHeight = 0.0;
 		public double FloatingHeight
 		{
-			get
-			{
-				return _floatingHeight;
-			}
+			get => _floatingHeight;
 			set
 			{
-				if (_floatingHeight != value)
-				{
-					RaisePropertyChanging("FloatingHeight");
-					_floatingHeight = value;
-					RaisePropertyChanged("FloatingHeight");
-				}
+				if (_floatingHeight == value) return;
+				RaisePropertyChanging(nameof(FloatingHeight));
+				_floatingHeight = value;
+				RaisePropertyChanged(nameof(FloatingHeight));
 			}
 		}
 
-		#endregion
-
-		#region FloatingLeft
-
-		private double _floatingLeft = 0.0;
 		public double FloatingLeft
 		{
-			get
-			{
-				return _floatingLeft;
-			}
+			get => _floatingLeft;
 			set
 			{
-				if (_floatingLeft != value)
-				{
-					RaisePropertyChanging("FloatingLeft");
-					_floatingLeft = value;
-					RaisePropertyChanged("FloatingLeft");
-				}
+				if (value == _floatingLeft) return;
+				RaisePropertyChanging(nameof(FloatingLeft));
+				_floatingLeft = value;
+				RaisePropertyChanged(nameof(FloatingLeft));
 			}
 		}
 
-		#endregion
-
-		#region FloatingTop
-
-		private double _floatingTop = 0.0;
 		public double FloatingTop
 		{
-			get
-			{
-				return _floatingTop;
-			}
+			get => _floatingTop;
 			set
 			{
-				if (_floatingTop != value)
-				{
-					RaisePropertyChanging("FloatingTop");
-					_floatingTop = value;
-					RaisePropertyChanged("FloatingTop");
-				}
+				if (value == _floatingTop) return;
+				RaisePropertyChanging(nameof(FloatingTop));
+				_floatingTop = value;
+				RaisePropertyChanged(nameof(FloatingTop));
 			}
 		}
 
-		#endregion
-
-		#region IsMaximized
-
-		private bool _isMaximized = false;
 		public bool IsMaximized
 		{
-			get
-			{
-				return _isMaximized;
-			}
+			get => _isMaximized;
 			set
 			{
-				if (_isMaximized != value)
-				{
-					_isMaximized = value;
-					RaisePropertyChanged("IsMaximized");
-				}
+				if (value == _isMaximized) return;
+				_isMaximized = value;
+				RaisePropertyChanged(nameof(IsMaximized));
 			}
 		}
 
-		#endregion
-
-		#region ActualWidth
-
-		[NonSerialized]
-		double _actualWidth;
 		double ILayoutPositionableElementWithActualSize.ActualWidth
 		{
-			get
-			{
-				return _actualWidth;
-			}
-			set
-			{
-				_actualWidth = value;
-			}
+			get => _actualWidth;
+			set => _actualWidth = value;
 		}
 
-		#endregion
-
-		#region ActualHeight
-
-		[NonSerialized]
-		double _actualHeight;
 		double ILayoutPositionableElementWithActualSize.ActualHeight
 		{
-			get
-			{
-				return _actualHeight;
-			}
-			set
-			{
-				_actualHeight = value;
-			}
+			get => _actualHeight;
+			set => _actualHeight = value;
 		}
 
-		#endregion
+		#endregion Properties
 
-		#endregion
+		#region Internal Methods
+
+		void ILayoutElementForFloatingWindow.RaiseFloatingPropertiesUpdated() => FloatingPropertiesUpdated?.Invoke(this, EventArgs.Empty);
+
+		#endregion Internal Methods
 
 		#region Overrides
 
 		public override void WriteXml(System.Xml.XmlWriter writer)
 		{
 			if (DockWidth.Value != 1.0 || !DockWidth.IsStar)
-				writer.WriteAttributeString("DockWidth", _gridLengthConverter.ConvertToInvariantString(DockWidth.IsAbsolute ? new GridLength(FixedDockWidth) : DockWidth));
+				writer.WriteAttributeString(nameof(DockWidth), _gridLengthConverter.ConvertToInvariantString(DockWidth.IsAbsolute ? new GridLength(FixedDockWidth) : DockWidth));
 			if (DockHeight.Value != 1.0 || !DockHeight.IsStar)
-				writer.WriteAttributeString("DockHeight", _gridLengthConverter.ConvertToInvariantString(DockHeight.IsAbsolute ? new GridLength(FixedDockHeight) : DockHeight));
-
-			if (DockMinWidth != 25.0)
-				writer.WriteAttributeString("DockMinWidth", DockMinWidth.ToString(CultureInfo.InvariantCulture));
-			if (DockMinHeight != 25.0)
-				writer.WriteAttributeString("DockMinHeight", DockMinHeight.ToString(CultureInfo.InvariantCulture));
-
-			if (FloatingWidth != 0.0)
-				writer.WriteAttributeString("FloatingWidth", FloatingWidth.ToString(CultureInfo.InvariantCulture));
-			if (FloatingHeight != 0.0)
-				writer.WriteAttributeString("FloatingHeight", FloatingHeight.ToString(CultureInfo.InvariantCulture));
-			if (FloatingLeft != 0.0)
-				writer.WriteAttributeString("FloatingLeft", FloatingLeft.ToString(CultureInfo.InvariantCulture));
-			if (FloatingTop != 0.0)
-				writer.WriteAttributeString("FloatingTop", FloatingTop.ToString(CultureInfo.InvariantCulture));
-			if (IsMaximized)
-				writer.WriteAttributeString("IsMaximized", IsMaximized.ToString());
-
+				writer.WriteAttributeString(nameof(DockHeight), _gridLengthConverter.ConvertToInvariantString(DockHeight.IsAbsolute ? new GridLength(FixedDockHeight) : DockHeight));
+			if (DockMinWidth != 25.0) writer.WriteAttributeString(nameof(DockMinWidth), DockMinWidth.ToString(CultureInfo.InvariantCulture));
+			if (DockMinHeight != 25.0) writer.WriteAttributeString(nameof(DockMinHeight), DockMinHeight.ToString(CultureInfo.InvariantCulture));
+			if (FloatingWidth != 0.0) writer.WriteAttributeString(nameof(FloatingWidth), FloatingWidth.ToString(CultureInfo.InvariantCulture));
+			if (FloatingHeight != 0.0) writer.WriteAttributeString(nameof(FloatingHeight), FloatingHeight.ToString(CultureInfo.InvariantCulture));
+			if (FloatingLeft != 0.0) writer.WriteAttributeString(nameof(FloatingLeft), FloatingLeft.ToString(CultureInfo.InvariantCulture));
+			if (FloatingTop != 0.0) writer.WriteAttributeString(nameof(FloatingTop), FloatingTop.ToString(CultureInfo.InvariantCulture));
+			if (IsMaximized) writer.WriteAttributeString(nameof(IsMaximized), IsMaximized.ToString());
 			base.WriteXml(writer);
 		}
 
-
 		public override void ReadXml(System.Xml.XmlReader reader)
 		{
-			if (reader.MoveToAttribute("DockWidth"))
-				_dockWidth = (GridLength)_gridLengthConverter.ConvertFromInvariantString(reader.Value);
-			if (reader.MoveToAttribute("DockHeight"))
-				_dockHeight = (GridLength)_gridLengthConverter.ConvertFromInvariantString(reader.Value);
-
-			if (reader.MoveToAttribute("DockMinWidth"))
-				_dockMinWidth = double.Parse(reader.Value, CultureInfo.InvariantCulture);
-			if (reader.MoveToAttribute("DockMinHeight"))
-				_dockMinHeight = double.Parse(reader.Value, CultureInfo.InvariantCulture);
-
-			if (reader.MoveToAttribute("FloatingWidth"))
-				_floatingWidth = double.Parse(reader.Value, CultureInfo.InvariantCulture);
-			if (reader.MoveToAttribute("FloatingHeight"))
-				_floatingHeight = double.Parse(reader.Value, CultureInfo.InvariantCulture);
-			if (reader.MoveToAttribute("FloatingLeft"))
-				_floatingLeft = double.Parse(reader.Value, CultureInfo.InvariantCulture);
-			if (reader.MoveToAttribute("FloatingTop"))
-				_floatingTop = double.Parse(reader.Value, CultureInfo.InvariantCulture);
-			if (reader.MoveToAttribute("IsMaximized"))
-				_isMaximized = bool.Parse(reader.Value);
-
+			if (reader.MoveToAttribute(nameof(DockWidth))) _dockWidth = (GridLength)_gridLengthConverter.ConvertFromInvariantString(reader.Value);
+			if (reader.MoveToAttribute(nameof(DockHeight))) _dockHeight = (GridLength)_gridLengthConverter.ConvertFromInvariantString(reader.Value);
+			if (reader.MoveToAttribute(nameof(DockMinWidth))) _dockMinWidth = double.Parse(reader.Value, CultureInfo.InvariantCulture);
+			if (reader.MoveToAttribute(nameof(DockMinHeight))) _dockMinHeight = double.Parse(reader.Value, CultureInfo.InvariantCulture);
+			if (reader.MoveToAttribute(nameof(FloatingWidth))) _floatingWidth = double.Parse(reader.Value, CultureInfo.InvariantCulture);
+			if (reader.MoveToAttribute(nameof(FloatingHeight))) _floatingHeight = double.Parse(reader.Value, CultureInfo.InvariantCulture);
+			if (reader.MoveToAttribute(nameof(FloatingLeft))) _floatingLeft = double.Parse(reader.Value, CultureInfo.InvariantCulture);
+			if (reader.MoveToAttribute(nameof(FloatingTop))) _floatingTop = double.Parse(reader.Value, CultureInfo.InvariantCulture);
+			if (reader.MoveToAttribute(nameof(IsMaximized))) _isMaximized = bool.Parse(reader.Value);
 			base.ReadXml(reader);
 		}
-
-		#endregion
-
-		#region Internal Methods
 
 		protected virtual void OnDockWidthChanged()
 		{
@@ -513,20 +358,6 @@ namespace AvalonDock.Layout
 		{
 		}
 
-		void ILayoutElementForFloatingWindow.RaiseFloatingPropertiesUpdated()
-		{
-			FloatingPropertiesUpdated?.Invoke(this, EventArgs.Empty);
-		}
-
-		#endregion
-
-		#region Events.
-
-		/// <summary>
-		/// Event fired when floating properties were updated.
-		/// </summary>
-		public event EventHandler FloatingPropertiesUpdated;
-
-		#endregion
+		#endregion Overrides
 	}
 }

@@ -6,18 +6,19 @@
     <AssemblyOriginatorKeyFile>sn.snk</AssemblyOriginatorKeyFile>
     <SignAssembly>true</SignAssembly>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>4.00</Version>
-    <AssemblyVersion>4.00</AssemblyVersion>
-    <FileVersion>4.00</FileVersion>
+    <Version>4.71.1</Version>
+    <AssemblyVersion>4.71.1</AssemblyVersion>
+    <FileVersion>4.71.1</FileVersion>
+    <PackageVersion>4.71.1</PackageVersion>
     <Company>Open Source</Company>
     <Product>Dirkster.AvalonDock</Product>
-    <Copyright>2017-2019</Copyright>
+    <Copyright>2017-2022</Copyright>
     <Description>This assembly implements a docking layout system for WPF.</Description>
     <PackageProjectUrl>https://github.com/Dirkster99/AvalonDock</PackageProjectUrl>
     <RepositoryUrl>https://github.com/Dirkster99/AvalonDock</RepositoryUrl>
     <PackageId>Dirkster.AvalonDock.Themes.VS2010</PackageId>
     <Authors>https://github.com/Dirkster99/AvalonDock</Authors>
-    <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
   </PropertyGroup>
 
   <ItemGroup>
@@ -26,7 +27,7 @@
 
   <!-- NuGet Packaging -->
   <ItemGroup>
-    <None Include="LICENSE.txt" Pack="true" PackagePath="" />
+    <None Include="LICENSE" Pack="true" PackagePath="" />
   </ItemGroup>
 
   <ItemGroup>

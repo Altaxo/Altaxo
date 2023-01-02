@@ -7,40 +7,63 @@
    License (Ms-PL) as published at https://opensource.org/licenses/MS-PL
  ************************************************************************/
 
+using AvalonDock.Layout;
 using System;
 using System.Linq;
 using System.Windows;
 using System.Windows.Media;
-using AvalonDock.Layout;
 
 namespace AvalonDock.Controls
 {
+	/// <summary>
+	/// Implements a <see cref="DockingManager"/> drop target
+	/// on which other items (<see cref="LayoutDocument"/> or <see cref="LayoutAnchorable"/>) can be dropped.
+	///
+	/// The resulting drop targets are usually the 4 outer drop target buttons
+	/// re-presenting a <see cref="LayoutAnchorSideControl"/> shown as overlay
+	/// on the <see cref="DockingManager"/> when the user drags an item over it.
+	/// </summary>
 	internal class DockingManagerDropTarget : DropTarget<DockingManager>
 	{
-		#region Members
+		#region fields
 
 		private DockingManager _manager;
 
-		#endregion
+		#endregion fields
 
 		#region Constructors
 
-		internal DockingManagerDropTarget(DockingManager manager, Rect detectionRect, DropTargetType type)
+		/// <summary>
+		/// Class constructor
+		/// </summary>
+		/// <param name="manager"></param>
+		/// <param name="detectionRect"></param>
+		/// <param name="type"></param>
+		internal DockingManagerDropTarget(DockingManager manager,
+										  Rect detectionRect,
+										  DropTargetType type)
 			: base(manager, detectionRect, type)
 		{
 			_manager = manager;
 		}
 
-		#endregion
+		#endregion Constructors
 
 		#region Overrides
 
+		/// <summary>
+		/// Method is invoked to complete a drag & drop operation with a (new) docking position
+		/// by docking of the LayoutAnchorable <paramref name="floatingWindow"/> into this drop target.
+		/// </summary>
+		/// <param name="floatingWindow"></param>
 		protected override void Drop(LayoutAnchorableFloatingWindow floatingWindow)
 		{
 			switch (Type)
 			{
 				case DropTargetType.DockingManagerDockLeft:
+
 					#region DropTargetType.DockingManagerDockLeft
+
 					{
 						if (_manager.Layout.RootPanel.Orientation != System.Windows.Controls.Orientation.Horizontal &&
 							_manager.Layout.RootPanel.Children.Count == 1)
@@ -73,9 +96,13 @@ namespace AvalonDock.Controls
 						}
 					}
 					break;
-				#endregion
+
+				#endregion DropTargetType.DockingManagerDockLeft
+
 				case DropTargetType.DockingManagerDockRight:
+
 					#region DropTargetType.DockingManagerDockRight
+
 					{
 						if (_manager.Layout.RootPanel.Orientation != System.Windows.Controls.Orientation.Horizontal &&
 							_manager.Layout.RootPanel.Children.Count == 1)
@@ -104,14 +131,17 @@ namespace AvalonDock.Controls
 							newOrientedPanel.Children.Add(floatingWindow.RootPanel);
 							newOrientedPanel.Children.Insert(0, _manager.Layout.RootPanel);
 
-
 							_manager.Layout.RootPanel = newOrientedPanel;
 						}
 					}
 					break;
-				#endregion
+
+				#endregion DropTargetType.DockingManagerDockRight
+
 				case DropTargetType.DockingManagerDockTop:
+
 					#region DropTargetType.DockingManagerDockTop
+
 					{
 						if (_manager.Layout.RootPanel.Orientation != System.Windows.Controls.Orientation.Vertical &&
 							_manager.Layout.RootPanel.Children.Count == 1)
@@ -144,9 +174,13 @@ namespace AvalonDock.Controls
 						}
 					}
 					break;
-				#endregion
+
+				#endregion DropTargetType.DockingManagerDockTop
+
 				case DropTargetType.DockingManagerDockBottom:
+
 					#region DropTargetType.DockingManagerDockBottom
+
 					{
 						if (_manager.Layout.RootPanel.Orientation != System.Windows.Controls.Orientation.Vertical &&
 							_manager.Layout.RootPanel.Children.Count == 1)
@@ -161,7 +195,6 @@ namespace AvalonDock.Controls
 								var childrenToTransfer = layoutAnchorablePaneGroup.Children.ToArray();
 								for (int i = 0; i < childrenToTransfer.Length; i++)
 									_manager.Layout.RootPanel.Children.Add(childrenToTransfer[i]);
-
 							}
 							else
 								_manager.Layout.RootPanel.Children.Add(floatingWindow.RootPanel);
@@ -180,14 +213,23 @@ namespace AvalonDock.Controls
 						}
 					}
 					break;
-					#endregion
-			}
 
+					#endregion DropTargetType.DockingManagerDockBottom
+			}
 
 			base.Drop(floatingWindow);
 		}
 
-		public override System.Windows.Media.Geometry GetPreviewPath(OverlayWindow overlayWindow, LayoutFloatingWindow floatingWindowModel)
+		/// <summary>
+		/// Gets a <see cref="Geometry"/> that is used to highlight/preview the docking position
+		/// of this drop target for a <paramref name="floatingWindowModel"/> being docked inside an
+		/// <paramref name="overlayWindow"/>.
+		/// </summary>
+		/// <param name="overlayWindow"></param>
+		/// <param name="floatingWindowModel"></param>
+		/// <returns>The geometry of the preview/highlighting WPF figure path.</returns>
+		public override Geometry GetPreviewPath(OverlayWindow overlayWindow,
+												LayoutFloatingWindow floatingWindowModel)
 		{
 			var anchorableFloatingWindowModel = floatingWindowModel as LayoutAnchorableFloatingWindow;
 			var layoutAnchorablePane = anchorableFloatingWindowModel.RootPanel as ILayoutPositionableElement;
@@ -208,6 +250,7 @@ namespace AvalonDock.Controls
 
 						return new RectangleGeometry(previewBoxRect);
 					}
+
 				case DropTargetType.DockingManagerDockTop:
 					{
 						var desideredHeight = layoutAnchorablePane.DockHeight.IsAbsolute ? layoutAnchorablePane.DockHeight.Value : layoutAnchorablePaneWithActualSize.ActualHeight;
@@ -219,6 +262,7 @@ namespace AvalonDock.Controls
 
 						return new RectangleGeometry(previewBoxRect);
 					}
+
 				case DropTargetType.DockingManagerDockRight:
 					{
 						var desideredWidth = layoutAnchorablePane.DockWidth.IsAbsolute ? layoutAnchorablePane.DockWidth.Value : layoutAnchorablePaneWithActualSize.ActualWidth;
@@ -230,6 +274,7 @@ namespace AvalonDock.Controls
 
 						return new RectangleGeometry(previewBoxRect);
 					}
+
 				case DropTargetType.DockingManagerDockBottom:
 					{
 						var desideredHeight = layoutAnchorablePane.DockHeight.IsAbsolute ? layoutAnchorablePane.DockHeight.Value : layoutAnchorablePaneWithActualSize.ActualHeight;
@@ -243,10 +288,9 @@ namespace AvalonDock.Controls
 					}
 			}
 
-
 			throw new InvalidOperationException();
 		}
 
-		#endregion
+		#endregion Overrides
 	}
 }

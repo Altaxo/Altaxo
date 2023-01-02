@@ -1,4 +1,4 @@
-﻿/************************************************************************
+/************************************************************************
    AvalonDock
 
    Copyright (C) 2007-2013 Xceed Software Inc.
@@ -7,31 +7,35 @@
    License (Ms-PL) as published at https://opensource.org/licenses/MS-PL
  ************************************************************************/
 
+using AvalonDock.Layout;
 using System;
 using System.Linq;
-using System.Windows.Controls;
 using System.Windows;
-using AvalonDock.Layout;
+using System.Windows.Controls;
 
 namespace AvalonDock.Controls
 {
+	/// <summary>
+	/// Provides a panel that contains the TabItem Headers of the <see cref="LayoutDocumentPaneControl"/>.
+	/// </summary>
 	public class DocumentPaneTabPanel : Panel
 	{
 		#region Constructors
 
+		/// <summary>
+		/// Static constructor
+		/// </summary>
 		public DocumentPaneTabPanel()
 		{
 			this.FlowDirection = System.Windows.FlowDirection.LeftToRight;
 		}
 
-		#endregion
+		#endregion Constructors
 
 		#region Overrides
 
 		protected override Size MeasureOverride(Size availableSize)
 		{
-			var visibleChildren = Children.Cast<UIElement>().Where(ch => ch.Visibility != System.Windows.Visibility.Collapsed);
-
 			Size desideredSize = new Size();
 			foreach (FrameworkElement child in Children)
 			{
@@ -84,7 +88,6 @@ namespace AvalonDock.Controls
 				}
 			}
 			return finalSize;
-
 		}
 
 		protected override void OnMouseLeave(System.Windows.Input.MouseEventArgs e)
@@ -97,13 +100,12 @@ namespace AvalonDock.Controls
 			//    LayoutDocumentTabItem.ResetDraggingItem();
 			//    System.Diagnostics.Trace.WriteLine("OnMouseLeave()");
 
-
 			//    manager.StartDraggingFloatingWindowForContent(contentModel);
 			//}
 
 			base.OnMouseLeave(e);
 		}
 
-		#endregion
+		#endregion Overrides
 	}
 }

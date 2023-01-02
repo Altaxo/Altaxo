@@ -7,23 +7,27 @@
    License (Ms-PL) as published at https://opensource.org/licenses/MS-PL
  ************************************************************************/
 
-using System.Linq;
-using System.Windows.Controls;
-using System.Collections.ObjectModel;
 using AvalonDock.Layout;
+using System.Collections.ObjectModel;
+using System.Linq;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Data;
 
 namespace AvalonDock.Controls
 {
+	/// <summary>
+	/// This control displays multiple <see cref="LayoutAnchorControl"/>s along the
+	/// top, bottom, left, or right side of the <see cref="DockingManager"/>.
+	/// </summary>
 	public class LayoutAnchorGroupControl : Control, ILayoutControl
 	{
-		#region Members
+		#region fields
 
 		private ObservableCollection<LayoutAnchorControl> _childViews = new ObservableCollection<LayoutAnchorControl>();
 		private LayoutAnchorGroup _model;
 
-		#endregion
+		#endregion fields
 
 		#region Constructors
 
@@ -40,7 +44,7 @@ namespace AvalonDock.Controls
 			_model.Children.CollectionChanged += (s, e) => OnModelChildrenCollectionChanged(e);
 		}
 
-		#endregion
+		#endregion Constructors
 
 		#region Properties
 
@@ -60,7 +64,7 @@ namespace AvalonDock.Controls
 			}
 		}
 
-		#endregion
+		#endregion Properties
 
 		#region Private Methods
 
@@ -109,6 +113,6 @@ namespace AvalonDock.Controls
 			}
 		}
 
-		#endregion
+		#endregion Private Methods
 	}
 }

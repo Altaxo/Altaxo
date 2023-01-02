@@ -9,26 +9,26 @@
 
 namespace AvalonDock.Layout
 {
+	/// <summary>Defines an API for interacting with (selected) content in a pane.</summary>
 	public interface ILayoutContentSelector
 	{
 		#region Properties
 
-		int SelectedContentIndex
-		{
-			get; set;
-		}
+		/// <summary>Gets or sets the index of the selected content in the pane.</summary>
+		int SelectedContentIndex { get; set; }
 
-		LayoutContent SelectedContent
-		{
-			get;
-		}
+		/// <summary>Gets the selected content in the pane.</summary>
+		LayoutContent SelectedContent { get; }
 
-		#endregion
+		#endregion Properties
 
 		#region Methods
 
+		/// <summary>Gets the index or -1 of the specified child content.</summary>
+		/// <param name="content"></param>
+		/// <returns></returns>
 		int IndexOf(LayoutContent content);
 
-		#endregion
+		#endregion Methods
 	}
 }

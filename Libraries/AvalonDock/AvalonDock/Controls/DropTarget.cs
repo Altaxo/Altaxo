@@ -1,4 +1,4 @@
-﻿/************************************************************************
+/************************************************************************
    AvalonDock
 
    Copyright (C) 2007-2013 Xceed Software Inc.
@@ -7,25 +7,30 @@
    License (Ms-PL) as published at https://opensource.org/licenses/MS-PL
  ************************************************************************/
 
+using AvalonDock.Layout;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Media;
-using AvalonDock.Layout;
 using System.Windows.Threading;
 
 namespace AvalonDock.Controls
 {
+	/// <summary>
+	/// Abstract class to implement base for various drop target implementations on <see cref="DockingManager"/>,
+	/// <see cref="LayoutAnchorablePaneControl"/>, <see cref="LayoutDocumentPaneControl"/> etc.
+	/// </summary>
+	/// <typeparam name="T"></typeparam>
 	internal abstract class DropTarget<T> : DropTargetBase, IDropTarget where T : FrameworkElement
 	{
-		#region Members
+		#region fields
 
 		private Rect[] _detectionRect;
 		private T _targetElement;
 		private DropTargetType _type;
 
-		#endregion
+		#endregion fields
 
 		#region Constructors
 
@@ -43,7 +48,7 @@ namespace AvalonDock.Controls
 			_type = type;
 		}
 
-		#endregion
+		#endregion Constructors
 
 		#region Properties
 
@@ -71,21 +76,40 @@ namespace AvalonDock.Controls
 			}
 		}
 
-		#endregion
+		#endregion Properties
 
 		#region Overrides
 
+		/// <summary>
+		/// Method is invoked to complete a drag & drop operation with a (new) docking position
+		/// by docking of the LayoutAnchorable <paramref name="floatingWindow"/> into this drop target.
+		///
+		/// Inheriting classes should override this method to implement their own custom logic.
+		/// </summary>
+		/// <param name="floatingWindow"></param>
 		protected virtual void Drop(LayoutAnchorableFloatingWindow floatingWindow)
 		{
 		}
 
+		/// <summary>
+		/// Method is invoked to complete a drag & drop operation with a (new) docking position
+		/// by docking of the LayoutDocument <paramref name="floatingWindow"/> into this drop target.
+		///
+		/// Inheriting classes should override this method to implement their own custom logic.
+		/// </summary>
+		/// <param name="floatingWindow"></param>
 		protected virtual void Drop(LayoutDocumentFloatingWindow floatingWindow)
 		{
 		}
 
-		#endregion
+		#endregion Overrides
 
 		#region Public Methods
+
+		public bool HitTestScreen(Point dragPoint)
+		{
+			return HitTest(_targetElement.TransformToDeviceDPI(dragPoint));
+		}
 
 		public void Drop(LayoutFloatingWindow floatingWindow)
 		{
@@ -102,7 +126,8 @@ namespace AvalonDock.Controls
 				var fwAsDocument = floatingWindow as LayoutDocumentFloatingWindow;
 				this.Drop(fwAsDocument);
 			}
-
+			if (currentActiveContent == null)
+				return;
 			Dispatcher.BeginInvoke(new Action(() =>
 				{
 					currentActiveContent.IsSelected = false;
@@ -128,6 +153,6 @@ namespace AvalonDock.Controls
 			SetIsDraggingOver(TargetElement, false);
 		}
 
-		#endregion
+		#endregion Public Methods
 	}
 }

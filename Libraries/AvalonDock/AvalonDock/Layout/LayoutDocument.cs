@@ -12,106 +12,101 @@ using System.Linq;
 
 namespace AvalonDock.Layout
 {
+	/// <summary>
+	/// Implements the layout model for the <see cref="Controls.LayoutDocumentControl"/>.
+	/// </summary>
 	[Serializable]
 	public class LayoutDocument : LayoutContent
 	{
+		#region fields
+
+		private bool _canMove = true;
+		private bool _isVisible = true;
+		private string _description = null;
+
+		#endregion fields
+
 		#region Properties
 
-		#region CanMove
-
-		internal bool _canMove = true;
+		/// <summary>Gets/sets whether a document can be dragged (to be dropped in a different location) or not.
+		/// Use this property in conjunction with <see cref="CanMove"/> and <see cref="CanClose"/> and <see cref="LayoutPanel.CanDock"/>
+		/// to lock a document in its layout position.</summary>
 		public bool CanMove
 		{
-			get
-			{
-				return _canMove;
-			}
+			get => _canMove;
 			set
 			{
-				if (_canMove != value)
-				{
-					_canMove = value;
-					RaisePropertyChanged("CanMove");
-				}
+				if (value == _canMove) return;
+				_canMove = value;
+				RaisePropertyChanged(nameof(CanMove));
 			}
 		}
 
-		#endregion
+		/// <summary>Documents can't be just hidden so always return false.</summary>
+		public bool CanHide => false;
 
-		#region IsVisible
-
+		/// <summary>Gets whether a document is visible or not.</summary>
 		public bool IsVisible
 		{
-			get
-			{
-				return _isVisible;
-			}
-			internal set
-			{
-				_isVisible = value;
-			}
+			get => _isVisible;
+			internal set => _isVisible = value;
 		}
 
-		private bool _isVisible = true;
-
-		#endregion
-
-		#region Description
-
-		private string _description = null;
+		/// <summary>Gets/sets the document's description.
+		/// Indicates the description to display (in the <see cref="NavigatorWindow"/>) for the document item.
+		/// </summary>
 		public string Description
 		{
-			get
-			{
-				return _description;
-			}
+			get => _description;
 			set
 			{
-				if (_description != value)
-				{
-					_description = value;
-					RaisePropertyChanged("Description");
-				}
+				if (_description == value) return;
+				_description = value;
+				RaisePropertyChanged(nameof(Description));
 			}
 		}
 
-		#endregion
+		#endregion Properties
 
-		#endregion
+		#region Internal Methods
+
+		internal bool CloseDocument()
+		{
+			if (!TestCanClose()) return false;
+			CloseInternal();
+			return true;
+		}
+
+		#endregion Internal Methods
 
 		#region Overrides
 
+		/// <inheritdoc />
 		public override void WriteXml(System.Xml.XmlWriter writer)
 		{
 			base.WriteXml(writer);
-
-			if (!string.IsNullOrWhiteSpace(this.Description))
-				writer.WriteAttributeString("Description", this.Description);
-			if (!CanMove)
-				writer.WriteAttributeString("CanMove", CanMove.ToString());
+			if (!string.IsNullOrWhiteSpace(Description)) writer.WriteAttributeString(nameof(Description), Description);
+			if (!CanMove) writer.WriteAttributeString(nameof(CanMove), CanMove.ToString());
 		}
 
+		/// <inheritdoc />
 		public override void ReadXml(System.Xml.XmlReader reader)
 		{
-			if (reader.MoveToAttribute("Description"))
-				this.Description = reader.Value;
-			if (reader.MoveToAttribute("CanMove"))
-				CanMove = bool.Parse(reader.Value);
-
+			if (reader.MoveToAttribute(nameof(Description))) Description = reader.Value;
+			if (reader.MoveToAttribute(nameof(CanMove))) CanMove = bool.Parse(reader.Value);
 			base.ReadXml(reader);
 		}
 
+		/// <inheritdoc />
 		public override void Close()
 		{
-			if ((this.Root != null) && (this.Root.Manager != null))
+			if (Root?.Manager != null)
 			{
-				var dockingManager = this.Root.Manager;
-				dockingManager._ExecuteCloseCommand(this);
+				var dockingManager = Root.Manager;
+				dockingManager.ExecuteCloseCommand(this);
 			}
 			else
-			{
-				this.CloseDocument();
-			}
+				CloseDocument();
 		}
 
 #if TRACE
@@ -126,57 +121,19 @@ namespace AvalonDock.Layout
 		{
 			var root = Root as LayoutRoot;
 			LayoutDocumentPane documentPane = null;
-			if (root.LastFocusedDocument != null &&
-				root.LastFocusedDocument != this)
-			{
-				documentPane = root.LastFocusedDocument.Parent as LayoutDocumentPane;
-			}
-
-			if (documentPane == null)
-			{
-				documentPane = root.Descendents().OfType<LayoutDocumentPane>().FirstOrDefault();
-			}
-
-
-			bool added = false;
-			if (root.Manager.LayoutUpdateStrategy != null)
-			{
-				added = root.Manager.LayoutUpdateStrategy.BeforeInsertDocument(root, this, documentPane);
-			}
-
+			if (root?.LastFocusedDocument != null && root.LastFocusedDocument != this) documentPane = root.LastFocusedDocument.Parent as LayoutDocumentPane;
+			if (documentPane == null) documentPane = root.Descendents().OfType<LayoutDocumentPane>().FirstOrDefault();
+			var added = false;
+			if (root?.Manager.LayoutUpdateStrategy != null) added = root.Manager.LayoutUpdateStrategy.BeforeInsertDocument(root, this, documentPane);
 			if (!added)
 			{
-				if (documentPane == null)
-					throw new InvalidOperationException("Layout must contains at least one LayoutDocumentPane in order to host documents");
-
+				if (documentPane == null) throw new InvalidOperationException("Layout must contains at least one LayoutDocumentPane in order to host documents");
 				documentPane.Children.Add(this);
-				added = true;
 			}
-
-			if (root.Manager.LayoutUpdateStrategy != null)
-			{
-				root.Manager.LayoutUpdateStrategy.AfterInsertDocument(root, this);
-			}
-
-
+			root?.Manager.LayoutUpdateStrategy?.AfterInsertDocument(root, this);
 			base.InternalDock();
 		}
 
-		#endregion
-
-		#region Internal Methods
-
-		internal bool CloseDocument()
-		{
-			if (this.TestCanClose())
-			{
-				this.CloseInternal();
-				return true;
-			}
-
-			return false;
-		}
-
-		#endregion
+		#endregion Overrides
 	}
 }

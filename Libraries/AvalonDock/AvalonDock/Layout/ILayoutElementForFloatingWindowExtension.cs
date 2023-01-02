@@ -5,12 +5,14 @@
 
 	/// <summary>
 	/// SetWindowPlacement won't correct placement for WPF tool windows
-	/// 
+	///
 	/// https://stackoverflow.com/questions/19203031/setwindowplacement-wont-correct-placement-for-wpf-tool-windows
 	/// </summary>
 	public static class ILayoutElementForFloatingWindowExtension
 	{
-		// RECT structure required by WINDOWPLACEMENT structure
+		/// <summary>
+		/// RECT structure required by WINDOWPLACEMENT structure
+		/// </summary>
 		[StructLayout(LayoutKind.Sequential)]
 		internal struct RECT
 		{
@@ -40,7 +42,8 @@
 			if (SystemParameters.PrimaryScreenWidth == SystemParameters.VirtualScreenWidth &&
 				SystemParameters.PrimaryScreenHeight == SystemParameters.VirtualScreenHeight)
 			{
-				RECT primaryscreen = new RECT(0, 0, (int)SystemParameters.PrimaryScreenWidth, (int)SystemParameters.PrimaryScreenHeight);
+				RECT primaryscreen = new RECT((int)SystemParameters.VirtualScreenLeft, (int)SystemParameters.VirtualScreenTop,
+											  (int)SystemParameters.PrimaryScreenWidth, (int)SystemParameters.PrimaryScreenHeight);
 
 				if (!RectanglesIntersect(normalPosition, primaryscreen))
 				{
@@ -58,7 +61,8 @@
 			}
 			else
 			{
-				RECT primaryscreen = new RECT(0, 0, (int)SystemParameters.VirtualScreenWidth, (int)SystemParameters.VirtualScreenHeight);
+				RECT primaryscreen = new RECT((int)SystemParameters.VirtualScreenLeft, (int)SystemParameters.VirtualScreenTop,
+											  (int)SystemParameters.VirtualScreenWidth, (int)SystemParameters.VirtualScreenHeight);
 
 				if (!RectanglesIntersect(normalPosition, primaryscreen))
 				{

@@ -13,11 +13,11 @@ namespace AvalonDock.Controls
 {
 	internal class ReentrantFlag
 	{
-		#region Members
+		#region fields
 
 		private bool _flag = false;
 
-		#endregion
+		#endregion fields
 
 		#region Properties
 
@@ -29,7 +29,7 @@ namespace AvalonDock.Controls
 			}
 		}
 
-		#endregion
+		#endregion Properties
 
 		#region Public Methods
 
@@ -40,13 +40,14 @@ namespace AvalonDock.Controls
 			return new _ReentrantFlagHandler(this);
 		}
 
-		#endregion
+		#endregion Public Methods
 
 		#region Internal Classes
 
 		public class _ReentrantFlagHandler : IDisposable
 		{
 			private ReentrantFlag _owner;
+
 			public _ReentrantFlagHandler(ReentrantFlag owner)
 			{
 				_owner = owner;
@@ -59,6 +60,6 @@ namespace AvalonDock.Controls
 			}
 		}
 
-		#endregion
+		#endregion Internal Classes
 	}
 }

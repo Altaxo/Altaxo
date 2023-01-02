@@ -12,6 +12,9 @@ using System.Windows.Data;
 
 namespace AvalonDock.Controls
 {
+	/// <summary>
+	/// Implements an extended <see cref="ContextMenu"/> for the <see cref="LayoutDocumentPaneControl"/>.
+	/// </summary>
 	public class ContextMenuEx : ContextMenu
 	{
 		#region Constructors
@@ -24,7 +27,7 @@ namespace AvalonDock.Controls
 		{
 		}
 
-		#endregion
+		#endregion Constructors
 
 		#region Overrides
 
@@ -40,6 +43,6 @@ namespace AvalonDock.Controls
 			base.OnOpened(e);
 		}
 
-		#endregion
+		#endregion Overrides
 	}
 }
