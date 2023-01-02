@@ -128,7 +128,7 @@ namespace Altaxo.CodeEditing
 
       _diagnosticsService.DiagnosticsUpdated += (s, e) =>
       {
-        (e.Solution.Workspace as Altaxo.CodeEditing.Diagnostics.IDiagnosticsEventSink)?.OnDiagnosticsUpdated(s, e);
+        (e.Solution?.Workspace as Altaxo.CodeEditing.Diagnostics.IDiagnosticsEventSink)?.OnDiagnosticsUpdated(s, e);
       };
 #endif
     }
