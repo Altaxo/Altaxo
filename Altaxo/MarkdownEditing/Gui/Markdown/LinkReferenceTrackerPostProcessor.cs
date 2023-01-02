@@ -9,12 +9,6 @@
 
 #endregion Copyright
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Markdig;
 using Markdig.Renderers;
 using Markdig.Syntax;
 using Markdig.Syntax.Inlines;
@@ -43,9 +37,9 @@ namespace Altaxo.Gui.Markdown
         {
           if (element is LinkInline linkInline)
           {
-            if (linkInline.UrlSpan.HasValue)
+            if (!linkInline.UrlSpan.IsEmpty)
             {
-              urlCollector.AddUrl(linkInline.IsImage, linkInline.Url, linkInline.UrlSpan.Value.Start, linkInline.UrlSpan.Value.End);
+              urlCollector.AddUrl(linkInline.IsImage, linkInline.Url, linkInline.UrlSpan.Start, linkInline.UrlSpan.End);
             }
           }
         }

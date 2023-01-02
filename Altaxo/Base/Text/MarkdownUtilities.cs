@@ -26,8 +26,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Markdig;
 using Markdig.Syntax;
 using Markdig.Syntax.Inlines;
@@ -124,9 +122,9 @@ namespace Altaxo.Text
       {
         if (mdo is LinkInline link)
         {
-          if (link.IsImage && link.UrlSpan.HasValue)
+          if (link.IsImage && !link.UrlSpan.IsEmpty)
           {
-            list.Add((link.Url, link.UrlSpan.Value.Start, link.UrlSpan.Value.End));
+            list.Add((link.Url, link.UrlSpan.Start, link.UrlSpan.End));
           }
         }
       }

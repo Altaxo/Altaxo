@@ -28,7 +28,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using Altaxo.Drawing;
 using Altaxo.Gui;
 using Markdig;
@@ -133,10 +132,10 @@ namespace Altaxo.Text
       {
         var (link, proxy) = images[i];
 
-        if (link.UrlSpan is not null)
+        if (link.Url is not null && !link.UrlSpan.IsEmpty)
         {
-          text.Remove(link.UrlSpan.Value.Start, link.UrlSpan.Value.End + 1 - link.UrlSpan.Value.Start);
-          text.Insert(link.UrlSpan.Value.Start, ImagePretext.LocalImagePretext + proxy.ContentHash);
+          text.Remove(link.UrlSpan.Start, link.UrlSpan.End + 1 - link.UrlSpan.Start);
+          text.Insert(link.UrlSpan.Start, ImagePretext.LocalImagePretext + proxy.ContentHash);
         }
       }
 

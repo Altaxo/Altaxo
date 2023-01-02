@@ -25,10 +25,7 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using Altaxo.Drawing;
 using Altaxo.Main;
 using Markdig;
@@ -142,10 +139,10 @@ namespace Altaxo.Text
                 stream.Seek(0, System.IO.SeekOrigin.Begin);
                 var proxy = MemoryStreamImageProxy.FromStream(stream, streamResult.Extension);
                 resultDocument.AddImage(proxy);
-                if (link.UrlSpan is not null)
+                if (link.Url is not null && !link.UrlSpan.IsEmpty)
                 {
-                  documentAsStringBuilder.Remove(link.UrlSpan.Value.Start, link.UrlSpan.Value.Length);
-                  documentAsStringBuilder.Insert(link.UrlSpan.Value.Start, "local:" + proxy.ContentHash);
+                  documentAsStringBuilder.Remove(link.UrlSpan.Start, link.UrlSpan.Length);
+                  documentAsStringBuilder.Insert(link.UrlSpan.Start, "local:" + proxy.ContentHash);
                 }
               }
             }
@@ -153,10 +150,10 @@ namespace Altaxo.Text
           else // keep link to graphs, but change their path
           {
             var newUrl = ConvertGraphUrl(link.Url, textDocument.Name, newPath);
-            if (newUrl != link.Url && link.UrlSpan is not null)
+            if (newUrl != link.Url && !link.UrlSpan.IsEmpty)
             {
-              documentAsStringBuilder.Remove(link.UrlSpan.Value.Start, link.UrlSpan.Value.Length);
-              documentAsStringBuilder.Insert(link.UrlSpan.Value.Start, newUrl);
+              documentAsStringBuilder.Remove(link.UrlSpan.Start, link.UrlSpan.Length);
+              documentAsStringBuilder.Insert(link.UrlSpan.Start, newUrl);
             }
           }
         }
