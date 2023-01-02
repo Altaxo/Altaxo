@@ -21,6 +21,7 @@
 			<Word>function</Word>
 			<Word>if</Word>
 			<Word>in</Word>
+			<Word>let</Word>
 			<Word>new</Word>
 			<Word>return</Word>
 			<Word>this</Word>
@@ -105,13 +106,9 @@
 			<Begin>/\*</Begin>
 			<End>\*/</End>
 		</Span>
-		<!--<Rule color="Regex">/.*/</Rule>-->
 		<Span color="Regex">
-			<Begin>/</Begin>
+			<Begin>(?&lt;!([})\]\w]+\s*))/</Begin>
 			<End>/</End>
-			<RuleSet>
-				<Span begin="\\/" end="." />
-			</RuleSet>
 		</Span>
 		<Span color="String" multiline="true">
 			<Begin>"</Begin>

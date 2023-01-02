@@ -79,7 +79,7 @@ namespace ICSharpCode.AvalonEdit.Utils
 				foreground,
 				null,
 				TextOptions.GetTextFormattingMode(element),
-        1.0
+				VisualTreeHelper.GetDpi(element).PixelsPerDip
 			);
 		}
 	}
