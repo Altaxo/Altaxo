@@ -1,10 +1,8 @@
-﻿// Copyright (c) 2016-2017 Nicolas Musset. All rights reserved.
+﻿// Copyright (c) Nicolas Musset. All rights reserved.
 // This file is licensed under the MIT license.
 // See the LICENSE.md file in the project root for more information.
 
-using System;
 using System.Windows;
-using System.Windows.Documents;
 
 namespace Markdig.Wpf
 {
@@ -60,7 +58,7 @@ namespace Markdig.Wpf
         public static ComponentResourceKey Heading6StyleKey { get; } = new ComponentResourceKey(typeof(Styles), nameof(Heading6StyleKey));
 
         /// <summary>
-        /// Resource Key for the Heading6Style.
+        /// Resource Key for the HyperlinkStyle.
         /// </summary>
         public static ComponentResourceKey HyperlinkStyleKey { get; } = new ComponentResourceKey(typeof(Styles), nameof(HyperlinkStyleKey));
 
@@ -85,7 +83,7 @@ namespace Markdig.Wpf
         public static ComponentResourceKey MarkedStyleKey { get; } = new ComponentResourceKey(typeof(Styles), nameof(MarkedStyleKey));
 
         /// <summary>
-        /// Resource Key for the ListStyle.
+        /// Resource Key for the ParagraphStyleKey.
         /// </summary>
         public static ComponentResourceKey ParagraphStyleKey { get; } = new ComponentResourceKey(typeof(Styles), nameof(ParagraphStyleKey));
 

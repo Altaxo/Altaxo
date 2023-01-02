@@ -1,15 +1,13 @@
-// Copyright (c) 2016-2017 Nicolas Musset, 2018 Dr. Dirk Lellinger. All rights reserved.
+// Copyright (c) Nicolas Musset. All rights reserved.
 // This file is licensed under the MIT license.
 // See the LICENSE.md file in the project root for more information.
 
+using Markdig.Syntax.Inlines;
+using Markdig.Wpf;
 using System;
-using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Media.Imaging;
-using Markdig.Annotations;
-using Markdig.Syntax.Inlines;
-using Markdig.Wpf;
 
 namespace Markdig.Renderers.Wpf.Inlines
 {
@@ -20,8 +18,18 @@ namespace Markdig.Renderers.Wpf.Inlines
     public class LinkInlineRenderer : WpfObjectRenderer<LinkInline>
     {
         /// <inheritdoc/>
-        protected override void Write([NotNull] WpfRenderer renderer, [NotNull] LinkInline link)
+        protected override void Write(WpfRenderer renderer, LinkInline link)
         {
+            if (renderer == null)
+            {
+                throw new ArgumentNullException(nameof(renderer));
+            }
+
+            if (link == null)
+            {
+                throw new ArgumentNullException(nameof(link));
+            }
+
             var url = link.GetDynamicUrl != null ? link.GetDynamicUrl() ?? link.Url : link.Url;
 
             if (link.IsImage)
@@ -166,7 +174,9 @@ namespace Markdig.Renderers.Wpf.Inlines
         private double? GetLength(string lenString)
         {
             if (string.IsNullOrEmpty(lenString))
+            {
                 return null;
+            }
 
             lenString = lenString.ToLowerInvariant().Trim();
 

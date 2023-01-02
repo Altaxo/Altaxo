@@ -1,8 +1,9 @@
-// Copyright (c) 2016-2017 Nicolas Musset. All rights reserved.
+// Copyright (c) Nicolas Musset. All rights reserved.
 // This file is licensed under the MIT license.
 // See the LICENSE.md file in the project root for more information.
 
-using Markdig.Annotations;
+using System;
+
 using Markdig.Syntax.Inlines;
 
 namespace Markdig.Renderers.Xaml.Inlines
@@ -13,8 +14,11 @@ namespace Markdig.Renderers.Xaml.Inlines
     /// <seealso cref="Xaml.XamlObjectRenderer{T}" />
     public class LiteralInlineRenderer : XamlObjectRenderer<LiteralInline>
     {
-        protected override void Write([NotNull] XamlRenderer renderer, [NotNull] LiteralInline obj)
+        protected override void Write(XamlRenderer renderer, LiteralInline obj)
         {
+            if (renderer == null) throw new ArgumentNullException(nameof(renderer));
+            if (obj == null) throw new ArgumentNullException(nameof(obj));
+
             if (obj.Content.IsEmpty)
                 return;
 

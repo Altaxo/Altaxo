@@ -1,8 +1,9 @@
-// Copyright (c) 2016-2017 Nicolas Musset. All rights reserved.
+// Copyright (c) Nicolas Musset. All rights reserved.
 // This file is licensed under the MIT license.
 // See the LICENSE.md file in the project root for more information.
 
-using Markdig.Annotations;
+using System;
+
 using Markdig.Syntax;
 
 namespace Markdig.Renderers.Xaml
@@ -13,8 +14,11 @@ namespace Markdig.Renderers.Xaml
     /// <seealso cref="Xaml.XamlObjectRenderer{T}" />
     public class ThematicBreakRenderer : XamlObjectRenderer<ThematicBreakBlock>
     {
-        protected override void Write([NotNull] XamlRenderer renderer, ThematicBreakBlock obj)
+        protected override void Write(XamlRenderer renderer, ThematicBreakBlock obj)
         {
+            if (renderer == null) throw new ArgumentNullException(nameof(renderer));
+            if (obj == null) throw new ArgumentNullException(nameof(obj));
+
             renderer.EnsureLine();
 
             renderer.WriteLine("<Paragraph>");

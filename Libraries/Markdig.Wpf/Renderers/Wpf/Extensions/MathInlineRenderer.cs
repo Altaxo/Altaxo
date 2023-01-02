@@ -1,12 +1,5 @@
-﻿using Markdig.Annotations;
-using Markdig.Extensions.Mathematics;
-using Markdig.Renderers;
-using Markdig.Renderers.Wpf;
+﻿using Markdig.Extensions.Mathematics;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Documents;
 using System.Windows.Media;
 using WpfMath;
@@ -18,7 +11,7 @@ namespace Markdig.Renderers.Wpf.Extensions
         private static TexFormulaParser formulaParser = new TexFormulaParser();
         private static Pen pen = new Pen(Brushes.Black, 1);
 
-        protected override void Write([NotNull] WpfRenderer renderer, [NotNull] MathInline obj)
+        protected override void Write(WpfRenderer renderer, MathInline obj)
         {
             var text = obj.Content.Text.Substring(obj.Content.Start, obj.Content.Length);
 

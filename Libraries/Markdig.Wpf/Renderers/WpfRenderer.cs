@@ -1,8 +1,7 @@
-// Copyright (c) 2016-2017 Nicolas Musset. All rights reserved.
+// Copyright (c) Nicolas Musset. All rights reserved.
 // This file is licensed under the MIT license.
 // See the LICENSE.md file in the project root for more information.
 
-using Markdig.Annotations;
 using Markdig.Helpers;
 using Markdig.Renderers.Wpf;
 using Markdig.Renderers.Wpf.Extensions;
@@ -44,12 +43,12 @@ namespace Markdig.Renderers
             set => _imageProvider = value ?? WpfImageProviderBase.Instance;
         }
 
-        public WpfRenderer([NotNull] IAddChild document)
+        public WpfRenderer(IAddChild document)
             : this(document, null)
         {
         }
 
-        public WpfRenderer([NotNull] IAddChild document, IStyles styles)
+        public WpfRenderer(IAddChild document, IStyles styles)
         {
             buffer = new char[1024];
             Styles = styles ?? Markdig.Wpf.DynamicStyles.Instance;
@@ -93,7 +92,7 @@ namespace Markdig.Renderers
         public IAddChild Document { get; }
 
         /// <inheritdoc/>
-        public override object Render([NotNull] MarkdownObject markdownObject)
+        public override object? Render(MarkdownObject markdownObject)
         {
             Write(markdownObject);
             return Document;
@@ -115,7 +114,7 @@ namespace Markdig.Renderers
         /// <param name="leafBlock">The leaf block.</param>
         /// <returns>This instance</returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void WriteLeafInline([NotNull] LeafBlock leafBlock)
+        public void WriteLeafInline(LeafBlock leafBlock)
         {
             if (leafBlock == null)
             {
@@ -134,7 +133,7 @@ namespace Markdig.Renderers
         /// Writes the lines of a <see cref="LeafBlock"/>
         /// </summary>
         /// <param name="leafBlock">The leaf block.</param>
-        public void WriteLeafRawLines([NotNull] LeafBlock leafBlock)
+        public void WriteLeafRawLines(LeafBlock leafBlock)
         {
             if (leafBlock == null)
             {
@@ -147,20 +146,24 @@ namespace Markdig.Renderers
                 StringLine[] slices = lines.Lines;
                 for (int i = 0; i < lines.Count; i++)
                 {
+                    if (i != 0)
+                    {
+                        WriteInline(new LineBreak());
+                    }
+
                     WriteText(ref slices[i].Slice);
-                    WriteInline(new LineBreak());
                 }
             }
         }
 
-        internal void Push([NotNull] IAddChild o)
+        public void Push(IAddChild o)
         {
             IAddChild pred = stack.Peek();
             stack.Push(o);
             pred.AddChild(o);
         }
 
-        internal void Pop()
+        public void Pop()
         {
             IAddChild popped = stack.Pop();
         }
@@ -194,18 +197,18 @@ namespace Markdig.Renderers
             return 0;
         }
 
-        internal void WriteBlock([NotNull] Block block)
+        internal void WriteBlock(Block block)
         {
             stack.Peek().AddChild(block);
         }
 
-        internal void WriteInline([NotNull] Inline inline)
+        public void WriteInline(Inline inline)
         {
             AddInline(stack.Peek(), inline);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal void WriteText(ref StringSlice slice)
+        public void WriteText(ref StringSlice slice)
         {
             if (slice.Start > slice.End)
             {
@@ -216,12 +219,12 @@ namespace Markdig.Renderers
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal void WriteText([CanBeNull] string text)
+        public void WriteText(string? text)
         {
             WriteInline(new Run(text));
         }
 
-        internal void WriteText([CanBeNull] string text, int offset, int length)
+        public void WriteText(string? text, int offset, int length)
         {
             if (text == null)
             {
@@ -247,7 +250,7 @@ namespace Markdig.Renderers
             }
         }
 
-        private static void AddInline([NotNull] IAddChild parent, [NotNull] Inline inline)
+        private static void AddInline(IAddChild parent, Inline inline)
         {
             if (!EndsWithSpace(parent) && !StartsWithSpace(inline))
             {
@@ -257,7 +260,7 @@ namespace Markdig.Renderers
             parent.AddChild(inline);
         }
 
-        private static bool StartsWithSpace([NotNull] Inline inline)
+        private static bool StartsWithSpace(Inline inline)
         {
             while (true)
             {
@@ -275,7 +278,7 @@ namespace Markdig.Renderers
             }
         }
 
-        private static bool EndsWithSpace([NotNull] IAddChild element)
+        private static bool EndsWithSpace(IAddChild element)
         {
             while (true)
             {

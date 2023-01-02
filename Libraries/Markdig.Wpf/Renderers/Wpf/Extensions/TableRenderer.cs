@@ -1,14 +1,12 @@
-// Copyright (c) 2016-2017 Nicolas Musset. All rights reserved.
-// This file is licensed under the MIT license.
+// Copyright (c) Nicolas Musset. All rights reserved.
+// This file is licensed under the MIT license. 
 // See the LICENSE.md file in the project root for more information.
 
+using Markdig.Extensions.Tables;
 using System;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Media;
-using Markdig.Annotations;
-using Markdig.Extensions.Tables;
-using Markdig.Wpf;
 using WpfTable = System.Windows.Documents.Table;
 using WpfTableCell = System.Windows.Documents.TableCell;
 using WpfTableColumn = System.Windows.Documents.TableColumn;
@@ -27,8 +25,18 @@ namespace Markdig.Renderers.Wpf.Extensions
     /// </remarks>
     public class TableRenderer : WpfObjectRenderer<Table>
     {
-        protected override void Write([NotNull] WpfRenderer renderer, [NotNull] Table table)
+        protected override void Write(WpfRenderer renderer, Table table)
         {
+            if (renderer == null)
+            {
+                throw new ArgumentNullException(nameof(renderer));
+            }
+
+            if (table == null)
+            {
+                throw new ArgumentNullException(nameof(table));
+            }
+
             var wpfTable = new WpfTable() { Tag = table };
             renderer.Styles.ApplyTableStyle(wpfTable);
 
@@ -37,7 +45,7 @@ namespace Markdig.Renderers.Wpf.Extensions
                 wpfTable.Columns.Add(new WpfTableColumn
                 {
                     Width = (tableColumnDefinition?.Width ?? 0) != 0 ?
-                        new GridLength(tableColumnDefinition.Width, GridUnitType.Star) :
+                        new GridLength(tableColumnDefinition!.Width, GridUnitType.Star) :
                         GridLength.Auto,
                     Tag = tableColumnDefinition,
                 });
@@ -77,7 +85,7 @@ namespace Markdig.Renderers.Wpf.Extensions
                     renderer.Write(cell);
                     renderer.Pop();
 
-                    if (table.ColumnDefinitions != null)
+                    if (table.ColumnDefinitions.Count > 0)
                     {
                         var columnIndex = cell.ColumnIndex < 0 || cell.ColumnIndex >= table.ColumnDefinitions.Count
                             ? i
@@ -121,7 +129,9 @@ namespace Markdig.Renderers.Wpf.Extensions
             var numRowGroups = table.RowGroups.Count;
 
             if (1 != numRowGroups)
+            {
                 return;
+            }
 
             var rows = table.RowGroups[0].Rows;
             var numRows = rows.Count;
@@ -139,14 +149,20 @@ namespace Markdig.Renderers.Wpf.Extensions
                 foreach (var row in rows)
                 {
                     if (colIdx >= row.Cells.Count) // it seems that table has one more columns defined than there are 'real' columns, thus we have to check it
+                    {
                         continue;
+                    }
 
                     var cell = row.Cells[colIdx];
                     if (cell.RowSpan != 1)
+                    {
                         continue;
+                    }
 
                     if (cell.Blocks.Count != 1)
+                    {
                         continue;
+                    }
 
                     double? width = null;
                     if (cell.Blocks.FirstBlock is System.Windows.Documents.Paragraph block)
@@ -172,7 +188,9 @@ namespace Markdig.Renderers.Wpf.Extensions
 
             // it seems that there is one column more defined in the table than that is really there
             if (0 == columnWidths[columnWidths.Length - 1])
+            {
                 numColumns -= 1;
+            }
 
             totalWidthOfAllColumns += numColumns * (maxPaddingLeft + maxPaddingRight + lineWidthOfTableFrame);
 

@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2017 Nicolas Musset. All rights reserved.
+// Copyright (c) Nicolas Musset. All rights reserved.
 // This file is licensed under the MIT license.
 // See the LICENSE.md file in the project root for more information.
 
@@ -13,7 +13,7 @@ namespace Markdig.Wpf
     /// </summary>
     public class MarkdownViewer : Control
     {
-        private static readonly MarkdownPipeline DefaultPipeline = new MarkdownPipelineBuilder().UseSupportedExtensions().Build();
+        protected static readonly MarkdownPipeline DefaultPipeline = new MarkdownPipelineBuilder().UseSupportedExtensions().Build();
 
         private static readonly DependencyPropertyKey DocumentPropertyKey =
             DependencyProperty.RegisterReadOnly(nameof(Document), typeof(FlowDocument), typeof(MarkdownViewer), new FrameworkPropertyMetadata());
@@ -43,18 +43,18 @@ namespace Markdig.Wpf
         /// <summary>
         /// Gets the flow document to display.
         /// </summary>
-        public FlowDocument Document
+        public FlowDocument? Document
         {
-            get { return (FlowDocument) GetValue(DocumentProperty); }
-            private set { SetValue(DocumentPropertyKey, value); }
+            get { return (FlowDocument)GetValue(DocumentProperty); }
+            protected set { SetValue(DocumentPropertyKey, value); }
         }
 
         /// <summary>
         /// Gets or sets the markdown to display.
         /// </summary>
-        public string Markdown
+        public string? Markdown
         {
-            get { return (string) GetValue(MarkdownProperty); }
+            get { return (string)GetValue(MarkdownProperty); }
             set { SetValue(MarkdownProperty, value); }
         }
 
@@ -63,7 +63,7 @@ namespace Markdig.Wpf
         /// </summary>
         public MarkdownPipeline Pipeline
         {
-            get { return (MarkdownPipeline) GetValue(PipelineProperty); }
+            get { return (MarkdownPipeline)GetValue(PipelineProperty); }
             set { SetValue(PipelineProperty, value); }
         }
 
@@ -75,11 +75,11 @@ namespace Markdig.Wpf
 
         private static void PipelineChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
-            var control = (MarkdownViewer) sender;
+            var control = (MarkdownViewer)sender;
             control.RefreshDocument();
         }
 
-        private void RefreshDocument()
+        protected virtual void RefreshDocument()
         {
             Document = Markdown != null ? Wpf.Markdown.ToFlowDocument(Markdown, Pipeline ?? DefaultPipeline) : null;
         }

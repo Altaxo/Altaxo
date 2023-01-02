@@ -1,11 +1,11 @@
-﻿// Copyright (c) 2016-2017 Nicolas Musset. All rights reserved.
+﻿// Copyright (c) Nicolas Musset. All rights reserved.
 // This file is licensed under the MIT license.
 // See the LICENSE.md file in the project root for more information.
 
-using Markdig.Annotations;
-using System;
 
 // ReSharper disable once CheckNamespace
+using System;
+
 namespace Markdig.Wpf
 {
     /// <summary>
@@ -18,7 +18,7 @@ namespace Markdig.Wpf
         /// </summary>
         /// <param name="pipeline">The pipeline.</param>
         /// <returns>The modified pipeline</returns>
-        public static MarkdownPipelineBuilder UseSupportedExtensions([NotNull] this MarkdownPipelineBuilder pipeline)
+        public static MarkdownPipelineBuilder UseSupportedExtensions(this MarkdownPipelineBuilder pipeline)
         {
             if (pipeline == null)
             {

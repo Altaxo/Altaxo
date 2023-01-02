@@ -1,13 +1,12 @@
-// Copyright (c) 2016-2017 Nicolas Musset. All rights reserved.
+// Copyright (c) Nicolas Musset. All rights reserved.
 // This file is licensed under the MIT license.
 // See the LICENSE.md file in the project root for more information.
 
+using Markdig.Renderers;
+using Markdig.Syntax;
 using System;
 using System.IO;
 using System.Windows.Documents;
-using Markdig.Annotations;
-using Markdig.Renderers;
-using Markdig.Syntax;
 
 namespace Markdig.Wpf
 {
@@ -23,15 +22,20 @@ namespace Markdig.Wpf
         /// <param name="pipeline">The pipeline used for the conversion.</param>
         /// <returns>The result of the conversion</returns>
         /// <exception cref="System.ArgumentNullException">if markdown variable is null</exception>
-        [NotNull]
-        public static FlowDocument ToFlowDocument([NotNull] string markdown, MarkdownPipeline pipeline = null)
+        public static FlowDocument ToFlowDocument(string markdown, MarkdownPipeline? pipeline = null, WpfRenderer? renderer = null)
         {
-            if (markdown == null) throw new ArgumentNullException(nameof(markdown));
+            if (markdown == null)
+            {
+                throw new ArgumentNullException(nameof(markdown));
+            }
+
             pipeline = pipeline ?? new MarkdownPipelineBuilder().Build();
 
             // We override the renderer with our own writer
             var result = new FlowDocument();
-            var renderer = new WpfRenderer(result);
+
+            renderer ??= new WpfRenderer(result);
+
             pipeline.Setup(renderer);
 
             var document = Markdig.Markdown.Parse(markdown, pipeline);
@@ -47,13 +51,18 @@ namespace Markdig.Wpf
         /// <param name="pipeline">The pipeline used for the conversion.</param>
         /// <returns>The result of the conversion</returns>
         /// <exception cref="ArgumentNullException">if markdown variable is null</exception>
-        [NotNull]
-        public static string ToXaml([NotNull] string markdown, [CanBeNull] MarkdownPipeline pipeline = null)
+        public static string ToXaml(string markdown, MarkdownPipeline? pipeline = null)
         {
-            if (markdown == null) throw new ArgumentNullException(nameof(markdown));
-            var writer = new StringWriter();
-            ToXaml(markdown, writer, pipeline);
-            return writer.ToString();
+            if (markdown == null)
+            {
+                throw new ArgumentNullException(nameof(markdown));
+            }
+
+            using (var writer = new StringWriter())
+            {
+                ToXaml(markdown, writer, pipeline);
+                return writer.ToString();
+            }
         }
 
         /// <summary>
@@ -64,11 +73,18 @@ namespace Markdig.Wpf
         /// <param name="pipeline">The pipeline used for the conversion.</param>
         /// <returns>The Markdown document that has been parsed</returns>
         /// <exception cref="ArgumentNullException">if reader or writer variable are null</exception>
-        public static MarkdownDocument ToXaml([NotNull] string markdown, [NotNull] TextWriter writer,
-            [CanBeNull] MarkdownPipeline pipeline = null)
+        public static MarkdownDocument ToXaml(string markdown, TextWriter writer, MarkdownPipeline? pipeline = null)
         {
-            if (markdown == null) throw new ArgumentNullException(nameof(markdown));
-            if (writer == null) throw new ArgumentNullException(nameof(writer));
+            if (markdown == null)
+            {
+                throw new ArgumentNullException(nameof(markdown));
+            }
+
+            if (writer == null)
+            {
+                throw new ArgumentNullException(nameof(writer));
+            }
+
             pipeline = pipeline ?? new MarkdownPipelineBuilder().Build();
 
             // We override the renderer with our own writer

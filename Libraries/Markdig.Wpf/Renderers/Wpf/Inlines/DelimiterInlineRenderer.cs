@@ -1,8 +1,9 @@
-// Copyright (c) 2016-2017 Nicolas Musset. All rights reserved.
+// Copyright (c) Nicolas Musset. All rights reserved.
 // This file is licensed under the MIT license.
 // See the LICENSE.md file in the project root for more information.
 
-using Markdig.Annotations;
+using System;
+
 using Markdig.Syntax.Inlines;
 
 namespace Markdig.Renderers.Wpf.Inlines
@@ -14,8 +15,11 @@ namespace Markdig.Renderers.Wpf.Inlines
     public class DelimiterInlineRenderer : WpfObjectRenderer<DelimiterInline>
     {
         /// <inheritdoc/>
-        protected override void Write([NotNull] WpfRenderer renderer, [NotNull] DelimiterInline obj)
+        protected override void Write(WpfRenderer renderer, DelimiterInline obj)
         {
+            if (renderer == null) throw new ArgumentNullException(nameof(renderer));
+            if (obj == null) throw new ArgumentNullException(nameof(obj));
+
             renderer.WriteText(obj.ToLiteral());
             renderer.WriteChildren(obj);
         }

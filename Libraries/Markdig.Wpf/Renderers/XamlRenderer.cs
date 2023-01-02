@@ -1,19 +1,20 @@
-// Copyright (c) 2016-2017 Nicolas Musset. All rights reserved.
+// Copyright (c) Nicolas Musset. All rights reserved.
 // This file is licensed under the MIT license.
 // See the LICENSE.md file in the project root for more information.
 
 // Some parts taken from https://github.com/lunet-io/markdig
-// Copyright (c) 2016 Alexandre Mutel. All rights reserved.
+// Copyright (c) Alexandre Mutel. All rights reserved.
 
 using System;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Text;
-using Markdig.Annotations;
+
 using Markdig.Helpers;
 using Markdig.Renderers.Xaml;
 using Markdig.Renderers.Xaml.Inlines;
 using Markdig.Syntax;
+
 
 namespace Markdig.Renderers
 {
@@ -82,9 +83,8 @@ namespace Markdig.Renderers
         /// </summary>
         /// <param name="content">The content.</param>
         /// <returns>This instance</returns>
-        [NotNull]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public XamlRenderer WriteEscape([CanBeNull] string content)
+        public XamlRenderer WriteEscape(string? content)
         {
             if (string.IsNullOrEmpty(content))
                 return this;
@@ -99,7 +99,6 @@ namespace Markdig.Renderers
         /// <param name="slice">The slice.</param>
         /// <param name="softEscape">Only escape &lt; and &amp;</param>
         /// <returns>This instance</returns>
-        [NotNull]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public XamlRenderer WriteEscape(ref StringSlice slice, bool softEscape = false)
         {
@@ -116,7 +115,6 @@ namespace Markdig.Renderers
         /// <param name="slice">The slice.</param>
         /// <param name="softEscape">Only escape &lt; and &amp;</param>
         /// <returns>This instance</returns>
-        [NotNull]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public XamlRenderer WriteEscape(StringSlice slice, bool softEscape = false)
         {
@@ -131,8 +129,7 @@ namespace Markdig.Renderers
         /// <param name="length">The length.</param>
         /// <param name="softEscape">Only escape &lt; and &amp;</param>
         /// <returns>This instance</returns>
-        [NotNull]
-        public XamlRenderer WriteEscape([CanBeNull] string content, int offset, int length, bool softEscape = false)
+        public XamlRenderer WriteEscape(string? content, int offset, int length, bool softEscape = false)
         {
             if (string.IsNullOrEmpty(content) || length == 0)
                 return this;
@@ -196,8 +193,7 @@ namespace Markdig.Renderers
         /// </summary>
         /// <param name="content">The content.</param>
         /// <returns>This instance</returns>
-        [NotNull]
-        public XamlRenderer WriteEscapeUrl([CanBeNull] string content)
+        public XamlRenderer WriteEscapeUrl(string? content)
         {
             if (content == null)
                 return this;
@@ -256,8 +252,7 @@ namespace Markdig.Renderers
         /// <param name="escape">if set to <c>true</c> escape the content for XAML</param>
         /// <param name="softEscape">Only escape &lt; and &amp;</param>
         /// <returns>This instance</returns>
-        [NotNull]
-        public XamlRenderer WriteLeafRawLines([NotNull] LeafBlock leafBlock, bool writeEndOfLines, bool escape, bool softEscape = false)
+        public XamlRenderer WriteLeafRawLines(LeafBlock leafBlock, bool writeEndOfLines, bool escape, bool softEscape = false)
         {
             if (leafBlock == null) throw new ArgumentNullException(nameof(leafBlock));
             if (leafBlock.Lines.Lines != null)

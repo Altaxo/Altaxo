@@ -1,19 +1,29 @@
-// Copyright (c) 2016-2017 Nicolas Musset. All rights reserved.
-// This file is licensed under the MIT license.
+// Copyright (c) Nicolas Musset. All rights reserved.
+// This file is licensed under the MIT license. 
 // See the LICENSE.md file in the project root for more information.
 
+using Markdig.Syntax;
+using System;
+using System.Globalization;
 using System.Windows;
 using System.Windows.Documents;
-using Markdig.Annotations;
-using Markdig.Syntax;
-using Markdig.Wpf;
 
 namespace Markdig.Renderers.Wpf
 {
     public class ListRenderer : WpfObjectRenderer<ListBlock>
     {
-        protected override void Write([NotNull] WpfRenderer renderer, [NotNull] ListBlock listBlock)
+        protected override void Write(WpfRenderer renderer, ListBlock listBlock)
         {
+            if (renderer == null)
+            {
+                throw new ArgumentNullException(nameof(renderer));
+            }
+
+            if (listBlock == null)
+            {
+                throw new ArgumentNullException(nameof(listBlock));
+            }
+
             var list = new List() { Tag = listBlock };
             renderer.Styles.ApplyListStyle(list);
 
@@ -23,7 +33,7 @@ namespace Markdig.Renderers.Wpf
 
                 if (listBlock.OrderedStart != null && (listBlock.DefaultOrderedStart != listBlock.OrderedStart))
                 {
-                    list.StartIndex = int.Parse(listBlock.OrderedStart);
+                    list.StartIndex = int.Parse(listBlock.OrderedStart, NumberFormatInfo.InvariantInfo);
                 }
             }
             else

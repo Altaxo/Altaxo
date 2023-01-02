@@ -1,8 +1,9 @@
-// Copyright (c) 2016-2017 Nicolas Musset. All rights reserved.
+// Copyright (c) Nicolas Musset. All rights reserved.
 // This file is licensed under the MIT license.
 // See the LICENSE.md file in the project root for more information.
 
-using Markdig.Annotations;
+using System;
+
 using Markdig.Syntax.Inlines;
 
 namespace Markdig.Renderers.Xaml.Inlines
@@ -13,8 +14,11 @@ namespace Markdig.Renderers.Xaml.Inlines
     /// <seealso cref="Xaml.XamlObjectRenderer{T}" />
     public class CodeInlineRenderer : XamlObjectRenderer<CodeInline>
     {
-        protected override void Write([NotNull] XamlRenderer renderer, [NotNull] CodeInline obj)
+        protected override void Write(XamlRenderer renderer, CodeInline obj)
         {
+            if (renderer == null) throw new ArgumentNullException(nameof(renderer));
+            if (obj == null) throw new ArgumentNullException(nameof(obj));
+
             renderer.Write("<Run");
             // Apply code styling (see also CodeBlockRenderer)
             renderer.Write(" Style=\"{StaticResource {x:Static markdig:Styles.CodeStyleKey}}\"");

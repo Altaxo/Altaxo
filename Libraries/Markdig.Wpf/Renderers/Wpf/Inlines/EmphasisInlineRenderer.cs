@@ -1,12 +1,10 @@
-// Copyright (c) 2016-2017 Nicolas Musset. All rights reserved.
+// Copyright (c) Nicolas Musset. All rights reserved.
 // This file is licensed under the MIT license.
 // See the LICENSE.md file in the project root for more information.
 
-using System.Windows;
-using System.Windows.Documents;
-using Markdig.Annotations;
 using Markdig.Syntax.Inlines;
-using Markdig.Wpf;
+using System;
+using System.Windows.Documents;
 
 namespace Markdig.Renderers.Wpf.Inlines
 {
@@ -16,15 +14,25 @@ namespace Markdig.Renderers.Wpf.Inlines
     /// <seealso cref="EmphasisInline" />
     public class EmphasisInlineRenderer : WpfObjectRenderer<EmphasisInline>
     {
-        protected override void Write([NotNull] WpfRenderer renderer, [NotNull] EmphasisInline obj)
+        protected override void Write(WpfRenderer renderer, EmphasisInline obj)
         {
-            Span span = null;
+            if (renderer == null)
+            {
+                throw new ArgumentNullException(nameof(renderer));
+            }
+
+            if (obj == null)
+            {
+                throw new ArgumentNullException(nameof(obj));
+            }
+
+            Span? span = null;
 
             switch (obj.DelimiterChar)
             {
                 case '*':
                 case '_':
-                    span = obj.DelimiterCount==2 ? (Span)new Bold() : new Italic();
+                    span = obj.DelimiterCount == 2 ? (Span)new Bold() : new Italic();
                     break;
 
                 case '~':
@@ -36,14 +44,21 @@ namespace Markdig.Renderers.Wpf.Inlines
                     else
                     {
                         renderer.Styles.ApplySubscriptStyle(span);
-                        if (span.FontSize < 1) span.FontSize = renderer.CurrentFontSize() * span.FontSize;
+                        if (span.FontSize < 1)
+                        {
+                            span.FontSize = renderer.CurrentFontSize() * span.FontSize;
+                        }
                     }
                     break;
 
                 case '^':
                     span = new Span();
                     renderer.Styles.ApplySuperscriptStyle(span);
-                    if (span.FontSize < 1) span.FontSize = renderer.CurrentFontSize() * span.FontSize;
+                    if (span.FontSize < 1)
+                    {
+                        span.FontSize = renderer.CurrentFontSize() * span.FontSize;
+                    }
+
                     break;
 
                 case '+':

@@ -1,19 +1,27 @@
-// Copyright (c) 2016-2017 Nicolas Musset. All rights reserved.
-// This file is licensed under the MIT license.
+// Copyright (c) Nicolas Musset. All rights reserved.
+// This file is licensed under the MIT license. 
 // See the LICENSE.md file in the project root for more information.
 
-using System.Windows;
-using System.Windows.Documents;
-using Markdig.Annotations;
 using Markdig.Syntax;
-using Markdig.Wpf;
+using System;
+using System.Windows.Documents;
 
 namespace Markdig.Renderers.Wpf
 {
     public class ThematicBreakRenderer : WpfObjectRenderer<ThematicBreakBlock>
     {
-        protected override void Write([NotNull] WpfRenderer renderer, [NotNull] ThematicBreakBlock obj)
+        protected override void Write(WpfRenderer renderer, ThematicBreakBlock obj)
         {
+            if (renderer == null)
+            {
+                throw new ArgumentNullException(nameof(renderer));
+            }
+
+            if (obj == null)
+            {
+                throw new ArgumentNullException(nameof(obj));
+            }
+
             var line = new System.Windows.Shapes.Line { X2 = 1 };
             renderer.Styles.ApplyThematicBreakStyle(line);
 
