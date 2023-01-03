@@ -12,6 +12,8 @@ Math.NET Numerics was adopted for the needs of Altaxo. The following changes wer
 
 - to Matrix<T> the interface `IMatrix<T>` was added (defined in Altaxo)
 
+- in Correlation.cs the Fourier class must be explicitely specified with IntegralTransforms.Fourier
+
 
 
 License
