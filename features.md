@@ -50,6 +50,9 @@ permalink: /features.html
 * Matrix operations (some are from Lutz Roeder's mapack library)
 * Statistics (column statistics, row statistics)
 * Non-linear fitting. Multiple fit functions can be simultaneously fitted. Parameters can be shared between multiple fitting functions.
+* Routines for spectrum processing, including spectral preprocessing (cosmic ray removal, baseline subtraction, cropping, normalization etc.) and 
+  automatic peak finding and peak fitting
+* specialized routines for calibration of Raman spectra 
 
 ### Scripting / programming
 * Column scripts, worksheet scripts, function scripts, fit function scripts and more.

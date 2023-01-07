@@ -38,3 +38,7 @@ A short 'CV' of Altaxo:
 * 2016: Refine the 3D graphs
 * 2017: Update to .NET framework 4.6 and use Roslyn as C# compiler
 * 2018: Markdown text, complete reorganization of the underlying architecture, separate from SharpDevelop
+* 2019: Add export of Markdown to OpenXML (.docx files)
+* 2020: Add nullability awareness to the source code
+* 2021: Switch to Vortice library and DirectX11 for 3D plotting, add many new fitting functions
+* 2022: Integration of MathNet.Numerics into Altaxo's core library, spectral processing

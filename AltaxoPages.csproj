@@ -6,6 +6,8 @@
     </UpgradeBackupLocation>
     <OldToolsVersion>2.0</OldToolsVersion>
     <ProjectGuid>{214609A0-4794-4DDC-BD78-F6EA95F8D6C9}</ProjectGuid>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <ItemGroup>
     <Content Include="404.html" />
@@ -21,6 +23,7 @@
   <ItemGroup>
     <None Include=".gitignore" />
     <None Include="about.md" />
+    <None Include="app.config" />
     <None Include="assets\css\style.scss" />
     <None Include="developer.md" />
     <None Include="screenshots.md" />
@@ -38,6 +41,7 @@
     <None Include="_posts\2015-07-01-altaxo-on-github.md" />
     <None Include="_posts\2017-01-01-altaxo-on-linux.md" />
     <None Include="_posts\2018-05-21-markdown.md" />
+    <None Include="_posts\2023-01-07-integrate-mathnet-numerics.md" />
     <None Include="_posts\2018-10-17-altaxoclassref-on-github.md" />
     <None Include="_posts\2018-09-26-use-latest-csharp-version.md" />
     <None Include="_posts\2017-03-01-goodby-windowsxp.md" />

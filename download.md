@@ -8,8 +8,8 @@ permalink: /download.html
 The current officially released version of Altaxo can be found
 in the stable folder, which is
 [here at SourceForge](https://sourceforge.net/projects/altaxo/files/Altaxo/Altaxo-Latest-Stable/).
-You will need the .NET-Framework 4.7.1 on your computer prior to 
-the installation.
+You will need .NET-Framework 4.8 on your computer prior to 
+the installation. On most systems, it is already installed.
 Double-click on the .msi file in order to install Altaxo.
 Alternatively, you can download the .zip file with the binaries - 
 see the text below how to handle this.
@@ -19,12 +19,12 @@ Since the new functions to embed Altaxo Graphs into COM-Containers (e.g. WORD-do
 ### If you always want to use the newest release
 
 Important note: the newest release of Altaxo is using
-the .NET-Framework 4.7.1. 
+the .NET-Framework 4.8. 
 If your computer meets this requirement,
 then go to the file release page of the Altaxo project,
 and navigate to the folder
 [ Altaxo-Latest-Unstable](https://sourceforge.net/projects/altaxo/files/Altaxo/Altaxo-Latest-Unstable/).
-Download the file named 'AltaxoBinaries-4.7.x.x.zip'.
+Download the file named 'AltaxoBinaries-4.8.x.x.zip'.
 **Important: before unzipping the downloaded file**,
 make sure that you right-click on the zip-file in Explorer, 
 choose Properties, and then click Unblock.
