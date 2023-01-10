@@ -23,25 +23,43 @@
 #endregion Copyright
 
 #nullable disable warnings
+
 using Altaxo.Gui;
 
 namespace Altaxo.Main.Commands
 {
-  public class FileExit : SimpleCommand
+  public class AddTemporaryUserAssembly : SimpleCommand
   {
     public override void Execute(object parameter)
     {
-      ((System.Windows.Window)Current.Workbench.ViewObject).Close();
+      Settings.Scripting.ReferencedAssembliesCommands.ShowAddTemporaryAssemblyDialog();
     }
   }
 
-  public class HelpAboutAltaxo : SimpleCommand
+  public class TestProjectLoading : SimpleCommand
   {
     public override void Execute(object parameter)
     {
-      var ctrl = new Altaxo.Gui.Common.HelpAboutControl();
-
-      ctrl.ShowDialog();
+      Altaxo.Main.Commands.TestAllProjectsInFolder.ShowDialogToVerifyOpeningOfDocumentsWithoutException();
     }
   }
+
+  public class ShowOptions : SimpleCommand
+  {
+    public override void Execute(object parameter)
+    {
+      var ctrl = new Altaxo.Gui.Settings.SettingsController();
+      Current.Gui.ShowDialog(ctrl, "Altaxo settings", false);
+    }
+  }
+
+  public class ShowUserSettings : SimpleCommand
+  {
+    public override void Execute(object parameter)
+    {
+      var ph = new Altaxo.Main.Properties.PropertyHierarchy(PropertyExtensions.GetPropertyBagsStartingFromUserSettings());
+      Current.Gui.ShowDialog(new object[] { ph }, "Edit user settings", false);
+    }
+  }
+
 }

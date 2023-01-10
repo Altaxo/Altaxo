@@ -24,9 +24,6 @@
 
 #nullable disable warnings
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Altaxo.AddInItems;
 
 namespace Altaxo.Gui.Pads.ProjectBrowser
@@ -216,4 +213,5 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
         Current.IProjectService.CloseDocumentViews(item);
     }
   }
+
 }

@@ -25,26 +25,7 @@
 #nullable disable warnings
 using System;
 using System.ComponentModel;
-using System.Drawing.Imaging;
-using System.Linq;
-using System.Windows.Input;
-using Altaxo.Collections;
-using Altaxo.Drawing;
-using Altaxo.Geometry;
-using Altaxo.Graph.Gdi;
-using Altaxo.Graph.Gdi.Plot;
-using Altaxo.Graph.Gdi.Plot.Styles;
-using Altaxo.Graph.Plot.Data;
-using Altaxo.Gui;
-using Altaxo.Gui.AddInItems;
-using Altaxo.Gui.Graph;
-using Altaxo.Gui.Graph.Gdi;
 using Altaxo.Gui.Graph.Gdi.Viewing;
-using Altaxo.Gui.Scripting;
-using Altaxo.Gui.Workbench;
-using Altaxo.Main;
-using Altaxo.Main.Services;
-using Altaxo.Scripting;
 
 namespace Altaxo.Graph.Commands
 {

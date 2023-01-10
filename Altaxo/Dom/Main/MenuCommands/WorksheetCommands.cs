@@ -23,12 +23,9 @@
 #endregion Copyright
 
 #nullable disable warnings
-using System;
 using Altaxo.Data;
 using Altaxo.Gui;
-using Altaxo.Gui.AddInItems;
 using Altaxo.Gui.Scripting;
-using Altaxo.Gui.Workbench;
 using Altaxo.Scripting;
 
 namespace Altaxo.Worksheet.Commands
@@ -578,11 +575,11 @@ namespace Altaxo.Worksheet.Commands
       Current.Project.DataTableCollection.Add(table);
 
       var script = new ProcessSourceTablesScript();
-      var data = new ProcessSourceTablesScriptData(new[] { ("SourceTable", new DataTableProxy(ctrl.DataTable))});
+      var data = new ProcessSourceTablesScriptData(new[] { ("SourceTable", new DataTableProxy(ctrl.DataTable)) });
       var dataSource = new ProcessSourceTablesScriptDataSource(data, script, new DataSourceImportOptions());
 
 
-      object[] args = new object[] { dataSource } ;
+      object[] args = new object[] { dataSource };
 
       if (Current.Gui.ShowDialog(args, "Process source tables script of " + table.Name))
       {
@@ -1026,12 +1023,12 @@ namespace Altaxo.Worksheet.Commands
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
 
-/* Unmerged change from project 'AltaxoDom.Presentation (net6.0-windows)'
-Before:
-      Altaxo.Data.SpectroscopyCommands.SpectralPeakFindingFittingShowDialog(ctrl);
-After:
-      SpectroscopyCommands.SpectralPeakFindingFittingShowDialog(ctrl);
-*/
+      /* Unmerged change from project 'AltaxoDom.Presentation (net6.0-windows)'
+      Before:
+            Altaxo.Data.SpectroscopyCommands.SpectralPeakFindingFittingShowDialog(ctrl);
+      After:
+            SpectroscopyCommands.SpectralPeakFindingFittingShowDialog(ctrl);
+      */
       Science.Spectroscopy.SpectroscopyCommands.SpectralPeakFindingFittingShowDialog(ctrl);
     }
   }
@@ -1041,12 +1038,12 @@ After:
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
 
-/* Unmerged change from project 'AltaxoDom.Presentation (net6.0-windows)'
-Before:
-      Altaxo.Data.SpectroscopyCommands.Raman_CalibrateWithNeonSpectrum(ctrl);
-After:
-      SpectroscopyCommands.Raman_CalibrateWithNeonSpectrum(ctrl);
-*/
+      /* Unmerged change from project 'AltaxoDom.Presentation (net6.0-windows)'
+      Before:
+            Altaxo.Data.SpectroscopyCommands.Raman_CalibrateWithNeonSpectrum(ctrl);
+      After:
+            SpectroscopyCommands.Raman_CalibrateWithNeonSpectrum(ctrl);
+      */
       Science.Spectroscopy.SpectroscopyCommands.Raman_CalibrateWithNeonSpectrum(ctrl);
     }
   }
@@ -1056,12 +1053,12 @@ After:
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
 
-/* Unmerged change from project 'AltaxoDom.Presentation (net6.0-windows)'
-Before:
-      Altaxo.Data.SpectroscopyCommands.Raman_CalibrateWithSiliconSpectrum(ctrl);
-After:
-      SpectroscopyCommands.Raman_CalibrateWithSiliconSpectrum(ctrl);
-*/
+      /* Unmerged change from project 'AltaxoDom.Presentation (net6.0-windows)'
+      Before:
+            Altaxo.Data.SpectroscopyCommands.Raman_CalibrateWithSiliconSpectrum(ctrl);
+      After:
+            SpectroscopyCommands.Raman_CalibrateWithSiliconSpectrum(ctrl);
+      */
       Science.Spectroscopy.SpectroscopyCommands.Raman_CalibrateWithSiliconSpectrum(ctrl);
     }
   }

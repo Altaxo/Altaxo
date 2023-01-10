@@ -25,10 +25,7 @@
 #nullable disable warnings
 using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Text;
 using Altaxo.Gui;
-using Altaxo.Gui.AddInItems;
 
 namespace Altaxo.Main.Commands
 {

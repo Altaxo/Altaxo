@@ -23,12 +23,9 @@
 #endregion Copyright
 
 #nullable disable warnings
-using System;
-using Altaxo.AddInItems;
 
 namespace Altaxo.Worksheet.Commands
 {
-
   public class PLSQuestPreferredNumberOfFactors : AbstractWorksheetControllerCommand
   {
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)

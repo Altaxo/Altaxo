@@ -23,48 +23,10 @@
 #endregion Copyright
 
 #nullable disable warnings
-using System;
-using System.Collections.Generic;
-using System.Text;
 using Altaxo.Gui;
-using Altaxo.Gui.AddInItems;
-using Altaxo.Gui.Graph.Gdi.Viewing;
 
 namespace Altaxo.Main.Commands
 {
-  public class AddTemporaryUserAssembly : SimpleCommand
-  {
-    public override void Execute(object parameter)
-    {
-      Settings.Scripting.ReferencedAssembliesCommands.ShowAddTemporaryAssemblyDialog();
-    }
-  }
-
-  public class TestProjectLoading : SimpleCommand
-  {
-    public override void Execute(object parameter)
-    {
-      Altaxo.Main.Commands.TestAllProjectsInFolder.ShowDialogToVerifyOpeningOfDocumentsWithoutException();
-    }
-  }
-
-  public class ShowOptions : SimpleCommand
-  {
-    public override void Execute(object parameter)
-    {
-      var ctrl = new Altaxo.Gui.Settings.SettingsController();
-      Current.Gui.ShowDialog(ctrl, "Altaxo settings", false);
-    }
-  }
-
-  public class ShowUserSettings : SimpleCommand
-  {
-    public override void Execute(object parameter)
-    {
-      var ph = new Altaxo.Main.Properties.PropertyHierarchy(PropertyExtensions.GetPropertyBagsStartingFromUserSettings());
-      Current.Gui.ShowDialog(new object[] { ph }, "Edit user settings", false);
-    }
-  }
 
   public class RegisterApplicationForCom : SimpleCommand
   {

@@ -24,12 +24,9 @@
 
 #nullable disable warnings
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Altaxo.AddInItems;
 using Altaxo.Collections;
-using Altaxo.Gui.AddInItems;
 
 namespace Altaxo.Gui.Pads.ProjectBrowser
 {
@@ -279,7 +276,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 
       if (count == 0)
         return;
-      else if(count == 1)
+      else if (count == 1)
         Altaxo.Graph.Commands.SaveAsMiniProjectBase.Run(list.First());
       else
         Altaxo.Graph.GraphDocumentBaseExportActions.ShowExportMultipleGraphsAsMiniProjectDialog(list);
