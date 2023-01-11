@@ -53,7 +53,8 @@ namespace Altaxo.Calc.FitFunctions.Transitions
     /// <summary>
     /// 2021-06-18 Initial version
     /// </summary>
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(GeneralizedLogisticIncreasing), 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Calc.FitFunctions.Transitions.GeneralizedLogisticIncreasing", 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(GeneralizedLogisticIncreasing), 1)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)

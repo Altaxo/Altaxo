@@ -31,16 +31,15 @@ using Altaxo.Main;
 
 namespace Altaxo.Calc.FitFunctions.Transitions
 {
-
   /// <summary>
-  /// Fit fuction with one or more increasing steps (generalized logistic function), with a background polynomial
+  /// Fit fuction with one or more increasing steps (Logistic function), with a background polynomial
   /// of variable order. 
   /// </summary>
   /// <remarks>
   /// Reference: <see href="https://en.wikipedia.org/wiki/Sigmoid_function"/>
   /// </remarks>
   [FitFunctionClass]
-  public class GeneralizedLogisticDecreasing
+  public class LogisticIncreasing
         : IFitFunctionWithDerivative, IImmutable
   {
     /// <summary>The number of logistic step terms.</summary>
@@ -52,14 +51,15 @@ namespace Altaxo.Calc.FitFunctions.Transitions
     #region Serialization
 
     /// <summary>
-    /// 2021-06-18 Initial version
+    /// 2021-06-15 Initial version
     /// </summary>
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(GeneralizedLogisticDecreasing), 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Calc.FitFunctions.Transitions.LogisticIncreasing", 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(LogisticIncreasing), 1)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (GeneralizedLogisticDecreasing)obj;
+        var s = (LogisticIncreasing)obj;
         info.AddValue("NumberOfTerms", s._numberOfTerms);
         info.AddValue("OrderOfBackgroundPolynomial", s._orderOfBackgroundPolynomial);
       }
@@ -68,24 +68,24 @@ namespace Altaxo.Calc.FitFunctions.Transitions
       {
         var numberOfTerms = info.GetInt32("NumberOfTerms");
         var orderOfBackgroundPolynomial = info.GetInt32("OrderOfBackgroundPolynomial");
-        return new GeneralizedLogisticDecreasing(numberOfTerms, orderOfBackgroundPolynomial);
+        return new LogisticIncreasing(numberOfTerms, orderOfBackgroundPolynomial);
       }
     }
 
     #endregion Serialization
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="GeneralizedLogisticDecreasing"/> class with
+    /// Initializes a new instance of the <see cref="LogisticIncreasing"/> class with
     /// <see cref="NumberOfTerms"/>=1, and <see cref="OrderOfBackgroundPolynomial"/>=0.
     /// </summary>
-    public GeneralizedLogisticDecreasing()
+    public LogisticIncreasing()
     {
       _numberOfTerms = 1;
       _orderOfBackgroundPolynomial = 0;
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="GeneralizedLogisticDecreasing"/> class.
+    /// Initializes a new instance of the <see cref="LogisticIncreasing"/> class.
     /// </summary>
     /// <param name="numberOfTerms">The number of terms.</param>
     /// <param name="orderOfBackgroundPolynomial">The order of background polynomial.</param>
@@ -94,7 +94,7 @@ namespace Altaxo.Calc.FitFunctions.Transitions
     /// or
     /// Number of step terms has to be greater than or equal to 1
     /// </exception>
-    public GeneralizedLogisticDecreasing(int numberOfTerms, int orderOfBackgroundPolynomial)
+    public LogisticIncreasing(int numberOfTerms, int orderOfBackgroundPolynomial)
     {
       _numberOfTerms = numberOfTerms;
       _orderOfBackgroundPolynomial = orderOfBackgroundPolynomial;
@@ -107,15 +107,15 @@ namespace Altaxo.Calc.FitFunctions.Transitions
     }
 
     /// <summary>
-    /// Creates a new instance of the <see cref="GeneralizedLogisticDecreasing"/> class,
+    /// Creates a new instance of the <see cref="LogisticIncreasing"/> class,
     /// with <see cref="NumberOfTerms"/>=1 and <see cref="OrderOfBackgroundPolynomial"/>=0.
     /// </summary>
-    /// <returns>New instance of the <see cref="GeneralizedLogisticDecreasing"/> class.</returns>
-    [FitFunctionCreator("GeneralizedLogisticDecreasing", "Transitions", 1, 1, 6)]
-    [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Transitions.GeneralizedLogisticDecreasing}")]
+    /// <returns>New instance of the <see cref="LogisticIncreasing"/> class.</returns>
+    [FitFunctionCreator("LogisticIncreasing", "Transitions", 1, 1, 4)]
+    [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Transitions.LogisticIncreasing}")]
     public static IFitFunction Create_1_0()
     {
-      return new GeneralizedLogisticDecreasing(1, 0);
+      return new LogisticIncreasing(1, 0);
     }
 
     /// <summary>
@@ -128,14 +128,14 @@ namespace Altaxo.Calc.FitFunctions.Transitions
     /// </summary>
     /// <param name="orderOfBackgroundPolynomial">The order of the background polynomial. If set to -1, the background polynomial will be disabled.</param>
     /// <returns>New instance with the background polynomial of the provided order.</returns>
-    public GeneralizedLogisticDecreasing WithOrderOfBackgroundPolynomial(int orderOfBackgroundPolynomial)
+    public LogisticIncreasing WithOrderOfBackgroundPolynomial(int orderOfBackgroundPolynomial)
     {
       if (!(orderOfBackgroundPolynomial >= -1))
         throw new ArgumentOutOfRangeException($"{nameof(orderOfBackgroundPolynomial)} must be greater than or equal to 0, or -1 in order to deactivate it.");
 
       if (!(_orderOfBackgroundPolynomial == orderOfBackgroundPolynomial))
       {
-        return new GeneralizedLogisticDecreasing(_numberOfTerms, orderOfBackgroundPolynomial);
+        return new LogisticIncreasing(_numberOfTerms, orderOfBackgroundPolynomial);
       }
       else
       {
@@ -153,14 +153,14 @@ namespace Altaxo.Calc.FitFunctions.Transitions
     /// </summary>
     /// <param name="numberOfTerms">The number of Llogistic step terms (should be greater than or equal to 1).</param>
     /// <returns>New instance with the provided number of logistic step terms.</returns>
-    public GeneralizedLogisticDecreasing WithNumberOfTerms(int numberOfTerms)
+    public LogisticIncreasing WithNumberOfTerms(int numberOfTerms)
     {
       if (!(numberOfTerms >= 1))
         throw new ArgumentOutOfRangeException($"{nameof(numberOfTerms)} must be greater than or equal to 1");
 
       if (!(_numberOfTerms == numberOfTerms))
       {
-        return new GeneralizedLogisticDecreasing(numberOfTerms, _orderOfBackgroundPolynomial);
+        return new LogisticIncreasing(numberOfTerms, _orderOfBackgroundPolynomial);
       }
       else
       {
@@ -193,7 +193,7 @@ namespace Altaxo.Calc.FitFunctions.Transitions
     {
       get
       {
-        return _numberOfTerms * 5 + _orderOfBackgroundPolynomial + 1;
+        return _numberOfTerms * 3 + _orderOfBackgroundPolynomial + 1;
       }
     }
 
@@ -212,17 +212,15 @@ namespace Altaxo.Calc.FitFunctions.Transitions
     /// <inheritdoc/>
     public string ParameterName(int i)
     {
-      int k = i - 5 * _numberOfTerms;
+      int k = i - 3 * _numberOfTerms;
       if (k < 0)
       {
-        int j = i / 5;
-        return (i % 5) switch
+        int j = i / 3;
+        return (i % 3) switch
         {
           0 => FormattableString.Invariant($"a{j}"),
           1 => FormattableString.Invariant($"xc{j}"),
           2 => FormattableString.Invariant($"w{j}"),
-          3 => FormattableString.Invariant($"gamma{j}"),
-          4 => FormattableString.Invariant($"delta{j}"),
           _ => throw new InvalidProgramException()
         };
       }
@@ -235,23 +233,11 @@ namespace Altaxo.Calc.FitFunctions.Transitions
     /// <inheritdoc/>
     public double DefaultParameterValue(int i)
     {
-      int k = i - 5 * _numberOfTerms;
-      if (k < 0)
-      {
-        return (i % 5) switch
-        {
-          0 => 0,
-          1 => 0,
-          2 => 1,
-          3 => 1,
-          4 => 1,
-          _ => throw new InvalidProgramException()
-        };
-      }
+      int k = i - 3 * _numberOfTerms;
+      if (k < 0 && i % 3 == 2)
+        return 1;
       else
-      {
         return 0;
-      }
     }
 
     public IVarianceScaling? DefaultVarianceScaling(int i)
@@ -264,15 +250,15 @@ namespace Altaxo.Calc.FitFunctions.Transitions
     {
       // evaluation of terms
       double sumTerms = 0, sumPolynomial = 0;
-      for (int i = 0, j = 0; i < _numberOfTerms; ++i, j += 5)
+      for (int i = 0, j = 0; i < _numberOfTerms; ++i, j += 3)
       {
         double x = (X[0] - P[j + 1]) / P[j + 2];
-        sumTerms += P[j] / Math.Pow(1 + Math.Pow(Math.Exp(x), P[j + 3]), P[j + 4] / P[j + 3]);
+        sumTerms += P[j] / (1 + Math.Exp(-x));
       }
 
       if (_orderOfBackgroundPolynomial >= 0)
       {
-        int offset = 5 * _numberOfTerms;
+        int offset = 3 * _numberOfTerms;
         // evaluation of terms x^0 .. x^n
         sumPolynomial = P[_orderOfBackgroundPolynomial + offset];
         for (int i = _orderOfBackgroundPolynomial - 1; i >= 0; i--)
@@ -293,15 +279,15 @@ namespace Altaxo.Calc.FitFunctions.Transitions
 
         // evaluation of terms
         double sumTerms = 0, sumPolynomial = 0;
-        for (int i = 0, j = 0; i < _numberOfTerms; ++i, j += 5)
+        for (int i = 0, j = 0; i < _numberOfTerms; ++i, j += 3)
         {
           double arg = (x - P[j + 1]) / P[j + 2];
-          sumTerms += P[j] / Math.Pow(1 + Math.Pow(Math.Exp(arg), P[j + 3]), P[j + 4] / P[j + 3]);
+          sumTerms += P[j] / (1 + Math.Exp(-arg));
         }
 
         if (_orderOfBackgroundPolynomial >= 0)
         {
-          int offset = 5 * _numberOfTerms;
+          int offset = 3 * _numberOfTerms;
           // evaluation of terms x^0 .. x^n
           sumPolynomial = P[_orderOfBackgroundPolynomial + offset];
           for (int i = _orderOfBackgroundPolynomial - 1; i >= 0; i--)
@@ -331,28 +317,20 @@ namespace Altaxo.Calc.FitFunctions.Transitions
         // at first, the terms
         for (int i = 0, j = 0; i < _numberOfTerms; ++i, j += 3)
         {
-          var a = P[j];
-          var w = P[j + 2];
-          var g = P[j + 3];
-          var d = P[j + 4];
-          var arg = (x - P[j + 1]) / w;
-          var adw = a * d / w;
-          var eterm = Math.Pow(Math.Exp(arg), g);
-          var dterm = 1 / (1 + eterm);
-          var term = 1 / Math.Pow(1 + eterm, d / g);
-
+          var arg = (x - P[j + 1]) / P[j + 2];
+          var eterm = Math.Exp(-arg);
+          var term = 1 / (1 + eterm);
+          double dydxc;
           DY[r, j + 0] = term;
-          DY[r, j + 1] = adw * eterm * term * dterm;
-          DY[r, j + 2] = adw * eterm * term * dterm * arg;
-          DY[r, j + 3] = (-a * d * term / g) * (arg * eterm * dterm + Math.Log(dterm) / g);
-          DY[r, j + 4] = a * term * Math.Log(dterm) / g;
+          DY[r, j + 1] = dydxc = -term * term * eterm * P[j] / P[j + 2];
+          DY[r, j + 2] = dydxc * arg;
         }
 
         // now, the background
         if (_orderOfBackgroundPolynomial >= 0)
         {
           double xn = 1;
-          for (int i = 0, j = 5 * _numberOfTerms; i <= _orderOfBackgroundPolynomial; ++i, ++j)
+          for (int i = 0, j = 3 * _numberOfTerms; i <= _orderOfBackgroundPolynomial; ++i, ++j)
           {
             DY[r, j] = xn;
             xn *= x;

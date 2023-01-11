@@ -57,8 +57,10 @@ namespace Altaxo.Calc.FitFunctions.Probability
 
     /// <summary>
     /// 2021-06-13 Initial version
+    /// 2023-01-11 Move from AltaxoBase to AltaxoCore
     /// </summary>
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(CauchyArea), 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Calc.FitFunctions.Probability.CauchyArea", 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(CauchyArea), 1)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)

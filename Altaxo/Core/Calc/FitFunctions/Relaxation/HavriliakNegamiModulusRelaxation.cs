@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2021 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -33,35 +33,33 @@ using Complex64T = System.Numerics.Complex;
 namespace Altaxo.Calc.FitFunctions.Relaxation
 {
   /// <summary>
-  /// Havriliak-Negami retardation function to fit modulus values. This function essentially implements the same as <see cref="HavriliakNegamiSusceptibility"/>,
-  /// but the parametrization is different (modulus values instead of susceptibilities).
+  /// Havriliak-Negami function to fit dielectric spectra.
   /// </summary>
   [FitFunctionClass]
-  public class HavriliakNegamiModulusRetardation : IFitFunction, Main.IImmutable
+  public class HavriliakNegamiModulusRelaxation : IFitFunction
   {
-    private bool _useFrequencyInsteadOfOmega;
+    private bool _useFrequencyInsteadOmega;
     private bool _useFlowTerm;
     private bool _logarithmizeResults;
     private bool _invertViscosity = true;
 
-
     #region Serialization
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Calc.FitFunctions.Relaxation.HavriliakNegamiModulusRetardation", 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Calc.FitFunctions.Relaxation.HavriliakNegamiModulusRelaxation", 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (HavriliakNegamiModulusRetardation)obj;
-        info.AddValue("UseFrequency", s._useFrequencyInsteadOfOmega);
+        var s = (HavriliakNegamiModulusRelaxation)obj;
+        info.AddValue("UseFrequency", s._useFrequencyInsteadOmega);
         info.AddValue("FlowTerm", s._useFlowTerm);
         info.AddValue("LogarithmizeResults", s._logarithmizeResults);
       }
 
       public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (HavriliakNegamiModulusRetardation?)o ?? new HavriliakNegamiModulusRetardation();
-        s._useFrequencyInsteadOfOmega = info.GetBoolean("UseFrequency");
+        var s = (HavriliakNegamiModulusRelaxation?)o ?? new HavriliakNegamiModulusRelaxation();
+        s._useFrequencyInsteadOmega = info.GetBoolean("UseFrequency");
         s._useFlowTerm = info.GetBoolean("FlowTerm");
         s._logarithmizeResults = info.GetBoolean("LogarithmizeResults");
 
@@ -70,28 +68,29 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     }
 
     /// <summary>
-    /// 2021-07-13 added property InvertViscosity
+    /// 2021-07-15 InvertViscosity added
+    /// 2023-01-11 Move from AltaxoBase to AltaxoCore
     /// </summary>
-    /// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(HavriliakNegamiModulusRetardation), 1)]
-    private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Calc.FitFunctions.Relaxation.HavriliakNegamiModulusRelaxation", 1)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(HavriliakNegamiModulusRelaxation), 2)]
+    private class XmlSerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (HavriliakNegamiModulusRetardation)obj;
-        info.AddValue("UseFrequency", s._useFrequencyInsteadOfOmega);
+        var s = (HavriliakNegamiModulusRelaxation)obj;
+        info.AddValue("UseFrequency", s._useFrequencyInsteadOmega);
         info.AddValue("FlowTerm", s._useFlowTerm);
-        info.AddValue("LogarithmizeResults", s._logarithmizeResults);
         info.AddValue("InvertViscosity", s._invertViscosity);
+        info.AddValue("LogarithmizeResults", s._logarithmizeResults);
       }
 
       public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s = (HavriliakNegamiModulusRetardation?)o ?? new HavriliakNegamiModulusRetardation();
-        s._useFrequencyInsteadOfOmega = info.GetBoolean("UseFrequency");
+        var s = (HavriliakNegamiModulusRelaxation?)o ?? new HavriliakNegamiModulusRelaxation();
+        s._useFrequencyInsteadOmega = info.GetBoolean("UseFrequency");
         s._useFlowTerm = info.GetBoolean("FlowTerm");
-        s._logarithmizeResults = info.GetBoolean("LogarithmizeResults");
         s._invertViscosity = info.GetBoolean("InvertViscosity");
+        s._logarithmizeResults = info.GetBoolean("LogarithmizeResults");
 
         return s;
       }
@@ -99,17 +98,34 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 
     #endregion Serialization
 
-    public HavriliakNegamiModulusRetardation()
+    public HavriliakNegamiModulusRelaxation()
     {
     }
 
-    public bool UseFrequencyInsteadOfOmega => _useFrequencyInsteadOfOmega;
-    public HavriliakNegamiModulusRetardation WithUseFrequencyInsteadOfOmega(bool value)
+    #region Properties
+
+    public HavriliakNegamiModulusRelaxation(bool useFrequencyInsteadOfOmega, bool useFlowTerm, bool invertViscosity, bool logarithmizeResult)
     {
-      if (!(_useFrequencyInsteadOfOmega == value))
+      _useFrequencyInsteadOmega = useFrequencyInsteadOfOmega;
+      _useFlowTerm = useFlowTerm;
+      _invertViscosity = invertViscosity;
+      _logarithmizeResults = logarithmizeResult;
+    }
+
+
+    /// <summary>
+    /// Gets a value indicating whether to use the frequency instead of omega.
+    /// </summary>
+    /// <value>
+    ///   <c>true</c> if the independent variable is the frequency; false if the independent variable is the circular frequency.
+    /// </value>
+    public bool UseFrequencyInsteadOfOmega => _useFrequencyInsteadOmega;
+    public HavriliakNegamiModulusRelaxation WithUseFrequencyInsteadOfOmega(bool value)
+    {
+      if (!(_useFrequencyInsteadOmega == value))
       {
-        var result = (HavriliakNegamiModulusRetardation)this.MemberwiseClone();
-        result._useFrequencyInsteadOfOmega = value;
+        var result = (HavriliakNegamiModulusRelaxation)this.MemberwiseClone();
+        result._useFrequencyInsteadOmega = value;
         return result;
       }
       else
@@ -118,12 +134,24 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
       }
     }
 
+    /// <summary>
+    /// Gets a value indicating whether to use a flow term.
+    /// </summary>
+    /// <value>
+    ///   <c>true</c> if a flow term is included; otherwise, <c>false</c>.
+    /// </value>
     public bool UseFlowTerm => _useFlowTerm;
-    public HavriliakNegamiModulusRetardation WithUseFlowTerm(bool value)
+
+    /// <summary>
+    /// Sets a value indicating whether to use a flow term.
+    /// </summary>
+    /// <param name="value"><c>true</c> if a flow term is included; otherwise, <c>false</c>.</param>
+    /// <returns>New instance with the parameter set accordingly.</returns>
+    public HavriliakNegamiModulusRelaxation WithUseFlowTerm(bool value)
     {
       if (!(_useFlowTerm == value))
       {
-        var result = (HavriliakNegamiModulusRetardation)this.MemberwiseClone();
+        var result = (HavriliakNegamiModulusRelaxation)this.MemberwiseClone();
         result._useFlowTerm = value;
         return result;
       }
@@ -133,14 +161,24 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
       }
     }
 
-
-
+    /// <summary>
+    /// Gets a value indicating whether to invert the viscosity (then a general fluidity is used as parameter).
+    /// </summary>
+    /// <value>
+    ///   <c>true</c> if a fluidity is used instead of viscosity; otherwise, <c>false</c>.
+    /// </value>
     public bool InvertViscosity => _invertViscosity;
-    public HavriliakNegamiModulusRetardation WithInvertViscosity(bool value)
+
+    /// <summary>
+    /// Sets a value indicating whether to invert the viscosity (then a general fluidity is used as parameter).
+    /// </summary>
+    /// <param name="value"><c>true</c> if a fluidity is used instead of viscosity; otherwise, <c>false</c>.</param>
+    /// <returns>New instance with the parameter set accordingly.</returns>
+    public HavriliakNegamiModulusRelaxation WithInvertViscosity(bool value)
     {
       if (!(InvertViscosity == value))
       {
-        var result = (HavriliakNegamiModulusRetardation)this.MemberwiseClone();
+        var result = (HavriliakNegamiModulusRelaxation)this.MemberwiseClone();
         result._invertViscosity = value;
         return result;
       }
@@ -157,11 +195,17 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     ///   <c>true</c> if the result is logarithmized; otherwise, <c>false</c>.
     /// </value>
     public bool LogarithmizeResults => _logarithmizeResults;
-    public HavriliakNegamiModulusRetardation WithLogarithmizeResults(bool value)
+
+    /// <summary>
+    /// Sets a value indicating whether the real and imaginary part of the dependent variable should be logarithmized (decadic logarithm).
+    /// </summary>
+    /// <param name="value"><c>true</c> if the real and imaginary part of the dependent variable should be logarithmized; otherwise, <c>false</c>.</param>
+    /// <returns>New instance with the parameter set accordingly.</returns>
+    public HavriliakNegamiModulusRelaxation WithLogarithmizeResults(bool value)
     {
       if (!(LogarithmizeResults == value))
       {
-        var result = (HavriliakNegamiModulusRetardation)this.MemberwiseClone();
+        var result = (HavriliakNegamiModulusRelaxation)this.MemberwiseClone();
         result._logarithmizeResults = value;
         return result;
       }
@@ -171,65 +215,72 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
       }
     }
 
+    #endregion
+
+
     public override string ToString()
     {
-      return "HavriliakNegami Modulus Complex " + (_useFrequencyInsteadOfOmega ? "(Frequency)" : "(Omega)");
+      if (_logarithmizeResults)
+        return "Lg10 HavriliakNegami Complex " + (_useFrequencyInsteadOmega ? "(Frequency)" : "(Omega)");
+      else
+        return "HavriliakNegami Complex " + (_useFrequencyInsteadOmega ? "(Frequency)" : "(Omega)");
     }
 
-    [FitFunctionCreator("HavriliakNegami Complex (Omega)", "Retardation/Modulus", 1, 2, 6)]
-    [Description("${res:Altaxo.Calc.FitFunctions.Retardation.Modulus.HavriliakNegamiComplexOmega}")]
+    [FitFunctionCreator("HavriliakNegami Complex (Omega)", "Relaxation/Modulus", 1, 2, 5)]
+    [Description("${res:Altaxo.Calc.FitFunctions.Relaxation.Modulus.HavriliakNegamiModulusRelaxationOmega}")]
     public static IFitFunction CreateModulusOfOmega()
     {
-      var result = new HavriliakNegamiModulusRetardation
+      var result = new HavriliakNegamiModulusRelaxation
       {
-        _useFrequencyInsteadOfOmega = false,
+        _useFrequencyInsteadOmega = false,
         _useFlowTerm = true,
-        _invertViscosity = false
+        _invertViscosity = false,
+        _logarithmizeResults = false,
       };
 
       return result;
     }
 
-    [FitFunctionCreator("Lg10 HavriliakNegami Complex (Omega)", "Retardation/Modulus", 1, 2, 6)]
-    [Description("${res:Altaxo.Calc.FitFunctions.Retardation.Modulus.Lg10HavriliakNegamiComplexOmega}")]
+    [FitFunctionCreator("Lg10 HavriliakNegami Complex (Omega)", "Relaxation/Modulus", 1, 2, 5)]
+    [Description("${res:Altaxo.Calc.FitFunctions.Relaxation.Modulus.Lg10HavriliakNegamiModulusRelaxationOmega}")]
     public static IFitFunction CreateLg10ModulusOfOmega()
     {
-      var result = new HavriliakNegamiModulusRetardation
+      var result = new HavriliakNegamiModulusRelaxation
       {
-        _useFrequencyInsteadOfOmega = false,
+        _useFrequencyInsteadOmega = false,
         _useFlowTerm = true,
-        _logarithmizeResults = true,
-        _invertViscosity = false
+        _invertViscosity = false,
+        _logarithmizeResults = true
       };
 
       return result;
     }
 
-    [FitFunctionCreator("HavriliakNegami Complex (Frequency)", "Retardation/Modulus", 1, 2, 6)]
-    [Description("${res:Altaxo.Calc.FitFunctions.Retardation.Modulus.HavriliakNegamiComplexFrequency}")]
+    [FitFunctionCreator("HavriliakNegami Complex (Frequency)", "Relaxation/Modulus", 1, 2, 5)]
+    [Description("${res:Altaxo.Calc.FitFunctions.Relaxation.Modulus.HavriliakNegamiModulusRelaxationFrequency}")]
     public static IFitFunction CreateModulusOfFrequency()
     {
-      var result = new HavriliakNegamiModulusRetardation
+      var result = new HavriliakNegamiModulusRelaxation
       {
-        _useFrequencyInsteadOfOmega = true,
+        _useFrequencyInsteadOmega = true,
         _useFlowTerm = true,
-        _invertViscosity = false
-
+        _invertViscosity = false,
+        _logarithmizeResults = false,
       };
 
       return result;
     }
 
-    [FitFunctionCreator("Lg10 HavriliakNegami Complex (Frequency)", "Retardation/Modulus", 1, 2, 6)]
-    [Description("${res:Altaxo.Calc.FitFunctions.Retardation.Modulus.Lg10HavriliakNegamiComplexFrequency}")]
+    [FitFunctionCreator("Lg10 HavriliakNegami Complex (Frequency)", "Relaxation/Modulus", 1, 2, 5)]
+    [Description("${res:Altaxo.Calc.FitFunctions.Relaxation.Modulus.Lg10HavriliakNegamiModulusRelaxationFrequency}")]
     public static IFitFunction CreateLg10ModulusOfFrequency()
     {
-      var result = new HavriliakNegamiModulusRetardation
+      var result = new HavriliakNegamiModulusRelaxation
       {
-        _useFrequencyInsteadOfOmega = true,
+        _useFrequencyInsteadOmega = true,
         _useFlowTerm = true,
-        _logarithmizeResults = true,
-        _invertViscosity = false
+        _invertViscosity = false,
+        _logarithmizeResults = true
       };
 
       return result;
@@ -249,26 +300,27 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 
     public string IndependentVariableName(int i)
     {
-      return _useFrequencyInsteadOfOmega ? "Frequency" : "Omega";
+      return _useFrequencyInsteadOmega ? "Frequency" : "Omega";
     }
 
     #endregion independent variable definition
 
     #region dependent variable definition
 
-    private string[] _dependentVariableNameS = new string[] { "M'", "M''" };
-
     public int NumberOfDependentVariables
     {
       get
       {
-        return _dependentVariableNameS.Length;
+        return 2;
       }
     }
 
     public string DependentVariableName(int i)
     {
-      return _dependentVariableNameS[i];
+      if (_logarithmizeResults)
+        return i == 0 ? "lg10 M'" : "lg10 M''";
+      else
+        return i == 0 ? "M'" : "M''";
     }
 
     #endregion dependent variable definition
@@ -285,12 +337,11 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
 
     public string ParameterName(int i)
     {
-
       return i switch
       {
         0 => "M_0",
         1 => "M_inf",
-        2 => "tau_retard",
+        2 => "tau_relax",
         3 => "alpha",
         4 => "gamma",
         5 => _invertViscosity ? "sigma" : "eta",
@@ -310,7 +361,6 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
         5 => _invertViscosity ? 0 : 1E33,
         _ => throw new NotImplementedException()
       };
-
     }
 
     public IVarianceScaling? DefaultVarianceScaling(int i)
@@ -328,22 +378,19 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     public void Evaluate(double[] X, double[] P, double[] Y)
     {
       double x = X[0];
-      if (_useFrequencyInsteadOfOmega)
+      if (_useFrequencyInsteadOmega)
         x *= (2 * Math.PI);
 
-      // Model this first as compliance
       var result = 1 / ComplexMath.Pow(1 + ComplexMath.Pow(Complex64T.ImaginaryOne * x * P[2], P[3]), P[4]);
-      result = (1 / P[1]) + ((1 / P[0]) - (1 / P[1])) * result;
+      result = P[1] + (P[0] - P[1]) * result;
 
       if (_useFlowTerm)
       {
         if (_invertViscosity)
-          result -= Complex64T.ImaginaryOne * P[5] / x;
+          result = 1 / ((1 / result) - Complex64T.ImaginaryOne * P[5] / x);
         else
-          result -= Complex64T.ImaginaryOne / (x * P[5]);
+          result = 1 / ((1 / result) - Complex64T.ImaginaryOne / (x * P[5]));
       }
-
-      result = 1 / result; // but now convert to modulus
 
       if (_logarithmizeResults)
       {
@@ -365,22 +412,19 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
       {
         var x = independent[r, 0];
 
-        if (_useFrequencyInsteadOfOmega)
+        if (_useFrequencyInsteadOmega)
           x *= (2 * Math.PI);
 
-        // Model this first as compliance
         var result = 1 / ComplexMath.Pow(1 + ComplexMath.Pow(Complex64T.ImaginaryOne * x * P[2], P[3]), P[4]);
-        result = (1 / P[1]) + ((1 / P[0]) - (1 / P[1])) * result;
+        result = P[1] + (P[0] - P[1]) * result;
 
         if (_useFlowTerm)
         {
           if (_invertViscosity)
-            result -= Complex64T.ImaginaryOne * P[5] / x;
+            result = 1 / ((1 / result) - Complex64T.ImaginaryOne * P[5] / x);
           else
-            result -= Complex64T.ImaginaryOne / (x * P[5]);
+            result = 1 / ((1 / result) - Complex64T.ImaginaryOne / (x * P[5]));
         }
-
-        result = 1 / result; // but now convert to modulus
 
         double yre, yim;
         if (_logarithmizeResults)
