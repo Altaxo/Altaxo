@@ -24,10 +24,6 @@
 
 #nullable enable
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Altaxo.Serialization.Xml;
 
 namespace Altaxo.Geometry
@@ -47,8 +43,13 @@ namespace Altaxo.Geometry
 
     #region Serialization
 
-    [Serialization.Xml.XmlSerializationSurrogateFor(typeof(Matrix3x2Class), 0)]
-    private class XmlSerializationSurrogate4 : Serialization.Xml.IXmlSerializationSurrogate
+    /// <summary>
+    /// V1: 2023-01-14 Move from assembly AltaxoBase to AltaxoCore
+    /// </summary>
+    /// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
+    [Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Geometry.Matrix3x2Class", 0)]
+    [Serialization.Xml.XmlSerializationSurrogateFor(typeof(Matrix3x2Class), 1)]
+    private class XmlSerializationSurrogate0 : Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object o, IXmlSerializationInfo info)
       {

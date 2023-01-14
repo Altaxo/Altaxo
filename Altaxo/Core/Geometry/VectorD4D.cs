@@ -24,10 +24,6 @@
 
 #nullable enable
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Altaxo.Geometry
 {
@@ -41,9 +37,11 @@ namespace Altaxo.Geometry
     #region Serialization
 
     /// <summary>
-    /// 2015-11-16 initial version 0.
+    /// V0: 2015-11-16 initial version 0.
+    /// V1: 2023-01-14 Move from assembly AltaxoBase to AltaxoCore
     /// </summary>
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(VectorD4D), 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Geometry.VectorD4D", 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(VectorD4D), 1)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
@@ -161,7 +159,7 @@ namespace Altaxo.Geometry
 
     public override int GetHashCode()
     {
-      return X.GetHashCode() + 7 * Y.GetHashCode() + 13 * Z.GetHashCode() + 19*W.GetHashCode();
+      return X.GetHashCode() + 7 * Y.GetHashCode() + 13 * Z.GetHashCode() + 19 * W.GetHashCode();
     }
 
     public override string ToString()

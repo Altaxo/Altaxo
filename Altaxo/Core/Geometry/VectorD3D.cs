@@ -24,10 +24,6 @@
 
 #nullable enable
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Altaxo.Geometry
 {
@@ -41,8 +37,10 @@ namespace Altaxo.Geometry
 
     /// <summary>
     /// 2015-11-16 initial version 0.
+    /// V1: 2023-01-14 Move from assembly AltaxoBase to AltaxoCore
     /// </summary>
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(VectorD3D), 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Geometry.VectorD3D", 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(VectorD3D), 1)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)

@@ -63,10 +63,12 @@ namespace Altaxo.Geometry
     #region Serialization
 
     /// <summary>
-    /// 2015-11-15 Version 1 - Move to Altaxo.Geometry namespace and renaming to RectangleD2D
+    /// V1: 2015-11-15 Version 1 - Move to Altaxo.Geometry namespace and renaming to RectangleD2D
+    /// V2: 2023-01-14 Move from assembly AltaxoBase to AltaxoCore
     /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.RectangleD", 0)]
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(RectangleD2D), 1)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Geometry.RectangleD2D", 1)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(RectangleD2D), 2)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)

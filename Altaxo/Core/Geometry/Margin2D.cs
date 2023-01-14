@@ -24,9 +24,6 @@
 
 #nullable enable
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Altaxo.Geometry
 {
@@ -52,10 +49,12 @@ namespace Altaxo.Geometry
     #region Serialization
 
     /// <summary>
-    /// 2015-11-15 Move to Altaxo.Geometry namespace.
+    /// V1: 2015-11-15 Move to Altaxo.Geometry namespace.
+    /// V2: 2023-01-14 Move from assembly AltaxoBase to AltaxoCore
     /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Margin2D", 0)]
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Margin2D), 1)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Geometry.Margin2D", 1)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Margin2D), 2)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)

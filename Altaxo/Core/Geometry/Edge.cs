@@ -34,10 +34,12 @@ namespace Altaxo.Geometry
   public enum EdgeType { Left = 0, Bottom = 1, Right = 2, Top = 3 }
 
   /// <summary>
-  /// 2015-11-15 Move to Altaxo.Geometry namespace.
+  /// V1: 2015-11-15 Move to Altaxo.Geometry namespace.
+  /// V2: 2023-01-14 Move from assembly AltaxoBase to AltaxoCore
   /// </summary>
   [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.EdgeType", 0)]
-  [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(EdgeType), 1)]
+  [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Geometry.EdgeType", 1)]
+  [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(EdgeType), 2)]
   public class EdgeTypeXmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
   {
     public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
@@ -68,9 +70,11 @@ namespace Altaxo.Geometry
 
     /// <summary>
     /// 2015-11-15 Move to Altaxo.Geometry namespace.
+    /// V2: 2023-01-14 Move from assembly AltaxoBase to AltaxoCore
     /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Edge", 0)]
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Edge), 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Geometry.Edge", 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(Edge), 2)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)

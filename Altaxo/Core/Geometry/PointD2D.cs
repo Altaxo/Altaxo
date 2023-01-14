@@ -53,9 +53,11 @@ namespace Altaxo.Geometry
 
     /// <summary>
     /// 2015-11-15 Version 1 - Move to Altaxo.Geometry namespace.
+    /// V2: 2023-01-14 Move from assembly AltaxoBase to AltaxoCore
     /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.PointD2D", 0)]
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PointD2D), 1)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Geometry.PointD2D", 1)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PointD2D), 2)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)

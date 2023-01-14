@@ -36,6 +36,10 @@ namespace Altaxo.Collections
 
     #region Serialization
 
+    /// <summary>
+    /// V1: 2023-01-14 move from assembly AltaxoBase to AltaxoCore
+    /// </summary>
+    /// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Collections.AscendingIntegerCollection", 0)]
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AscendingIntegerCollection), 1)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate

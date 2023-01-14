@@ -24,10 +24,6 @@
 
 #nullable enable
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Altaxo.Geometry
 {
@@ -63,9 +59,11 @@ namespace Altaxo.Geometry
     #region Serialization
 
     /// <summary>
-    /// 2015-11-16 initial version 0.
+    /// V1: 2015-11-16 initial version.
+    /// V2: 2023-01-14 Move from assembly AltaxoBase to AltaxoCore
     /// </summary>
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PointD3D), 1)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Geometry.PointD3D", 1)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PointD3D), 2)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
@@ -282,7 +280,7 @@ namespace Altaxo.Geometry
       var x = p1.X - p2.X;
       var y = p1.Y - p2.Y;
       var z = p1.Z - p2.Z;
-      return Math.Sqrt(x * x + y * y + z*z);
+      return Math.Sqrt(x * x + y * y + z * z);
     }
 
     /// <summary>
@@ -296,7 +294,7 @@ namespace Altaxo.Geometry
       var x = p1.X - p2.X;
       var y = p1.Y - p2.Y;
       var z = p1.Z - p2.Z;
-      return (x * x + y * y + z*z);
+      return (x * x + y * y + z * z);
     }
 
     /// <summary>
@@ -323,7 +321,7 @@ namespace Altaxo.Geometry
     {
       get
       {
-        return Math.Sqrt(X * X + Y * Y + Z*Z);
+        return Math.Sqrt(X * X + Y * Y + Z * Z);
       }
     }
 
@@ -331,7 +329,7 @@ namespace Altaxo.Geometry
     {
       get
       {
-        return (X * X + Y * Y + Z*Z);
+        return (X * X + Y * Y + Z * Z);
       }
     }
 
