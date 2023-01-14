@@ -24,7 +24,6 @@
 
 #nullable enable
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using Altaxo.Geometry;
@@ -111,7 +110,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
       public bool IsGripHitted(PointD2D point)
       {
-        return _gripPath.IsVisible((PointF)point);
+        return _gripPath.IsVisible(point.ToGdi());
       }
 
       #endregion IGripManipulationHandle Members

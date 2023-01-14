@@ -24,7 +24,6 @@
 
 #nullable enable
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using Altaxo.Geometry;
@@ -94,7 +93,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       public void Show(Graphics g, double pageScale)
       {
         var shape = (GraphicsPath)_rotationGripShape.Clone();
-        shape.Transform(_spanningHalfYRhombus);
+        shape.Transform(_spanningHalfYRhombus.ToGdi());
         g.FillPath(Brushes.Blue, shape);
       }
 

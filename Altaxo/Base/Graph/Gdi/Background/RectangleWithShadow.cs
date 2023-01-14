@@ -27,7 +27,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
-using System.Runtime.Serialization;
 using Altaxo.Drawing;
 using Altaxo.Geometry;
 
@@ -199,7 +198,7 @@ namespace Altaxo.Graph.Gdi.Background
       // please note: m_Bounds is already extended to the shadow
 
       // first the shadow
-      var iArea = (RectangleF)innerArea;
+      var iArea = innerArea.ToGdi();
       using (var gdiShadowBrush = BrushCacheGdi.Instance.BorrowBrush(shadowBrush, innerArea, g, 1))
       {
         // shortCuts to floats

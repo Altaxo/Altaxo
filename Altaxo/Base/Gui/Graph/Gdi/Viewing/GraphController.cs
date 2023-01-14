@@ -28,7 +28,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Text;
 
 namespace Altaxo.Gui.Graph.Gdi.Viewing
 {
@@ -1714,7 +1713,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
         {
           var outline = o.ObjectOutlineForArrangements;
           layer4allBackTransform?.TransformPath(outline);
-          RectangleD2D r = outline.GetBounds();
+          RectangleD2D r = outline.GetBounds().ToAxo();
           if (boundsInitialized)
           {
             bounds.ExpandToInclude(r);

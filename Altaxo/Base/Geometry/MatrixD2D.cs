@@ -24,11 +24,6 @@
 
 #nullable enable
 using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using Altaxo.Geometry;
 
 namespace Altaxo.Geometry
 {
@@ -293,12 +288,6 @@ namespace Altaxo.Geometry
       AppendTransform(t.sy / t.determinant, -t.ry / t.determinant, -t.rx / t.determinant, t.sx / t.determinant, (t.dy * t.rx - t.dx * t.sy) / t.determinant, (t.dx * t.ry - t.dy * t.sx) / t.determinant);
     }
 
-    public void PrependTransform(System.Drawing.Drawing2D.Matrix t)
-    {
-      var e = t.Elements;
-      PrependTransform(e[0], e[1], e[2], e[3], e[4], e[5]);
-    }
-
     public void PrependTransform(double sxf, double ryf, double rxf, double syf, double dxf, double dyf)
     {
       double h1, h2;
@@ -338,6 +327,8 @@ namespace Altaxo.Geometry
     public double DX { get { return dx; } }
 
     public double DY { get { return dy; } }
+
+    public double Determinant => determinant;
 
     public double ScaleX
     {
@@ -400,19 +391,6 @@ namespace Altaxo.Geometry
       return new PointD2D(pt.X * sx + pt.Y * rx + dx, pt.X * ry + pt.Y * sy + dy);
     }
 
-    public PointF TransformPoint(PointF pt)
-    {
-      return new PointF((float)(pt.X * sx + pt.Y * rx + dx), (float)(pt.X * ry + pt.Y * sy + dy));
-    }
-
-    public void TransformPoints(PointF[] pts)
-    {
-      for (int i = 0; i < pts.Length; i++)
-      {
-        pts[i] = new PointF((float)(pts[i].X * sx + pts[i].Y * rx + dx), (float)(pts[i].X * ry + pts[i].Y * sy + dy));
-      }
-    }
-
     public void TransformVector(ref double x, ref double y)
     {
       double xh = x * sx + y * rx;
@@ -426,15 +404,7 @@ namespace Altaxo.Geometry
       return new PointD2D(pt.X * sx + pt.Y * rx, pt.X * ry + pt.Y * sy);
     }
 
-    public PointF TransformVector(PointF pt)
-    {
-      return new PointF((float)(pt.X * sx + pt.Y * rx), (float)(pt.X * ry + pt.Y * sy));
-    }
 
-    public void TransformPath(System.Drawing.Drawing2D.GraphicsPath path)
-    {
-      path.Transform(this);
-    }
 
     public void InverseTransformPoint(ref double x, ref double y)
     {
@@ -455,11 +425,6 @@ namespace Altaxo.Geometry
     public PointD2D InverseTransformPoint(PointD2D pt)
     {
       return new PointD2D(((pt.X - dx) * sy + (dy - pt.Y) * rx) / determinant, ((dx - pt.X) * ry + (pt.Y - dy) * sx) / determinant);
-    }
-
-    public PointF InverseTransformPoint(PointF pt)
-    {
-      return new PointF((float)(((pt.X - dx) * sy + (dy - pt.Y) * rx) / determinant), (float)(((dx - pt.X) * ry + (pt.Y - dy) * sx) / determinant));
     }
 
     /// <summary>
@@ -484,14 +449,6 @@ namespace Altaxo.Geometry
       return new PointD2D(((pt.X) * sy + (-pt.Y) * rx) / determinant, ((-pt.X) * ry + (pt.Y) * sx) / determinant);
     }
 
-    public PointF InverseTransformVector(PointF pt)
-    {
-      return new PointF((float)(((pt.X) * sy + (-pt.Y) * rx) / determinant), (float)(((-pt.X) * ry + (pt.Y) * sx) / determinant));
-    }
 
-    public static implicit operator System.Drawing.Drawing2D.Matrix(MatrixD2D m)
-    {
-      return new System.Drawing.Drawing2D.Matrix((float)m.sx, (float)m.ry, (float)m.rx, (float)m.sy, (float)m.dx, (float)m.dy);
-    }
   }
 }

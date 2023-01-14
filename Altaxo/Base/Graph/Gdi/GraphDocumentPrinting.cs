@@ -24,11 +24,9 @@
 
 #nullable enable
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Printing;
-using System.Linq;
-using System.Text;
+using Altaxo.Geometry;
 
 namespace Altaxo.Graph.Gdi
 {
@@ -170,7 +168,7 @@ namespace Altaxo.Graph.Gdi
       var savedGraphics = g.Save();
       float hx = e.PageSettings.HardMarginX; // in hundreths of inch
       float hy = e.PageSettings.HardMarginY; // in hundreths of inch
-      var graphSize = (SizeF)_layers.Size;
+      var graphSize = _layers.Size.ToGdiSize();
       _printOptions.GetZoomAndStartLocation(e.PageBounds, e.MarginBounds, graphSize, out var zoom, out var startLocationOnPage, true);
       graphSize = graphSize.Scale(zoom);
 

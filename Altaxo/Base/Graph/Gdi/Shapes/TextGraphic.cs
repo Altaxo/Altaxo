@@ -605,10 +605,10 @@ namespace Altaxo.Graph.Gdi.Shapes
     {
       // Here, for the linked object we not only use HostLayer from 2D, but also
       // from 3D, because in order to show text preview an intermediate 3D TextGraphic object is created out of a 3D TextGraphic object
-     return
-        Altaxo.Main.AbsoluteDocumentPath.GetRootNodeImplementing<HostLayer>(this) ??
-        Altaxo.Main.AbsoluteDocumentPath.GetRootNodeImplementing<Altaxo.Graph.Graph3D.HostLayer>(this) ??
-        new object();
+      return
+         Altaxo.Main.AbsoluteDocumentPath.GetRootNodeImplementing<HostLayer>(this) ??
+         Altaxo.Main.AbsoluteDocumentPath.GetRootNodeImplementing<Altaxo.Graph.Graph3D.HostLayer>(this) ??
+         new object();
     }
 
     private void DrawGlyphs(Graphics g, DrawContext dc, double x, double y)
@@ -707,7 +707,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
       foreach (GraphicsPath gp in _cachedSymbolPositions.Keys)
       {
-        if (gp.IsVisible((PointF)pt))
+        if (gp.IsVisible(pt.ToGdi()))
         {
           result = new HitTestObject(gp, _cachedSymbolPositions[gp])
           {

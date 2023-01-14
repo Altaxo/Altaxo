@@ -122,7 +122,7 @@ namespace Altaxo.Graph.Gdi
             if (brushBoundingRectangle.IsEmpty)
               brushBoundingRectangle = new RectangleD2D(0, 0, 1000, 1000);
             LinearGradientBrush lgb;
-            gdiBrush = lgb = new LinearGradientBrush((RectangleF)brushBoundingRectangle, GetColor1(brush), GetColor2(brush), (float)-brush.GradientAngle);
+            gdiBrush = lgb = new LinearGradientBrush(brushBoundingRectangle.ToGdi(), GetColor1(brush), GetColor2(brush), (float)-brush.GradientAngle);
             if (brush.WrapMode != WrapMode.Clamp)
               lgb.WrapMode = brush.WrapMode;
             if (brush.BrushType == BrushType.TriangularShapeLinearGradientBrush)
@@ -139,7 +139,7 @@ namespace Altaxo.Graph.Gdi
               if (brushBoundingRectangle.IsEmpty)
                 brushBoundingRectangle = new RectangleD2D(0, 0, 1000, 1000);
               var outerRectangle = brushBoundingRectangle.OuterCircleBoundingBox;
-              p.AddEllipse((RectangleF)outerRectangle);
+              p.AddEllipse(outerRectangle.ToGdi());
               var pgb = new PathGradientBrush(p);
               if (brush.ExchangeColors)
               {
@@ -156,7 +156,7 @@ namespace Altaxo.Graph.Gdi
                 pgb.SetBlendTriangularShape(1, (float)brush.GradientColorScale);
               if (brush.BrushType == BrushType.SigmaBellShapePathGradientBrush)
                 pgb.SetSigmaBellShape(1, (float)brush.GradientColorScale);
-              pgb.CenterPoint = (PointF)(outerRectangle.Location + new PointD2D(outerRectangle.Width * brush.TextureOffsetX, outerRectangle.Height * brush.TextureOffsetY));
+              pgb.CenterPoint = (outerRectangle.Location + new PointD2D(outerRectangle.Width * brush.TextureOffsetX, outerRectangle.Height * brush.TextureOffsetY)).ToGdi();
               gdiBrush = pgb;
             }
             break;

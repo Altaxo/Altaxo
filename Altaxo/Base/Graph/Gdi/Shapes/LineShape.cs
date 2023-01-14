@@ -231,14 +231,14 @@ namespace Altaxo.Graph.Gdi.Shapes
       GraphicsPath gp = GetPath();
       using (var linePenGdi = PenCacheGdi.Instance.BorrowPen(_linePen))
       {
-        if (gp.IsOutlineVisible((PointF)htd.GetHittedPointInWorldCoord(_transformation), linePenGdi))
+        if (gp.IsOutlineVisible(htd.GetHittedPointInWorldCoord(_transformation).ToGdi(), linePenGdi))
         {
           result = new LineShapeHitTestObject(this);
         }
         else
         {
-          gp.Transform(htd.GetTransformation(_transformation)); // Transform to page coord
-          if (gp.IsOutlineVisible((PointF)htd.HittedPointInPageCoord, new Pen(Color.Black, 6)))
+          gp.Transform(htd.GetTransformation(_transformation).ToGdi()); // Transform to page coord
+          if (gp.IsOutlineVisible(htd.HittedPointInPageCoord.ToGdi(), new Pen(Color.Black, 6)))
           {
             result = new LineShapeHitTestObject(this);
           }
@@ -318,8 +318,8 @@ namespace Altaxo.Graph.Gdi.Shapes
           {
             grips[2] = grips[0]; // put the movement grip to the background, the two NodeGrips need more priority
             float gripRadius = (float)(3 / pageScale);
-            grips[0] = new PathNodeGripHandle(this, new PointF(0, 0), pts[0], gripRadius);
-            grips[1] = new PathNodeGripHandle(this, new PointF(1, 1), pts[1], gripRadius);
+            grips[0] = new PathNodeGripHandle(this, new PointF(0, 0).ToPointD2D(), pts[0].ToPointD2D(), gripRadius);
+            grips[1] = new PathNodeGripHandle(this, new PointF(1, 1).ToPointD2D(), pts[1].ToPointD2D(), gripRadius);
           }
           return grips;
         }

@@ -209,12 +209,12 @@ namespace Altaxo.Graph.Gdi.Shapes
       var path = InternalGetPath(PointD2D.Empty);
       var bounds = path.GetBounds();
       for (int i = 0; i < _curvePoints.Count; i++)
-        _curvePoints[i] -= bounds.Location;
+        _curvePoints[i] -= bounds.Location.ToPointD2D();
 
       using (var token = SuspendGetToken())
       {
-        ShiftPosition(bounds.Location);
-        ((ItemLocationDirectAutoSize)_location).SetSizeInAutoSizeMode(bounds.Size);
+        ShiftPosition(bounds.Location.ToPointD2D());
+        ((ItemLocationDirectAutoSize)_location).SetSizeInAutoSizeMode(bounds.Size.ToPointD2D());
 
         token.Resume();
       }
@@ -268,14 +268,14 @@ namespace Altaxo.Graph.Gdi.Shapes
       HitTestObjectBase? result = null;
       GraphicsPath gp = GetPath();
       using var linePenGdi = PenCacheGdi.Instance.BorrowPen(_linePen);
-      if (gp.IsOutlineVisible((PointF)htd.GetHittedPointInWorldCoord(_transformation), linePenGdi))
+      if (gp.IsOutlineVisible(htd.GetHittedPointInWorldCoord(_transformation).ToGdi(), linePenGdi))
       {
         result = new OpenBSplineHitTestObject(this);
       }
       else
       {
-        gp.Transform(htd.GetTransformation(_transformation)); // Transform to page coord
-        if (gp.IsOutlineVisible((PointF)htd.HittedPointInPageCoord, new Pen(Color.Black, 6)))
+        gp.Transform(htd.GetTransformation(_transformation).ToGdi()); // Transform to page coord
+        if (gp.IsOutlineVisible(htd.HittedPointInPageCoord.ToGdi(), new Pen(Color.Black, 6)))
         {
           result = new OpenBSplineHitTestObject(this);
         }
@@ -330,7 +330,7 @@ namespace Altaxo.Graph.Gdi.Shapes
           var offset = ls.Location.AbsoluteVectorPivotToLeftUpper;
           for (int i = 0; i < pts.Length; i++)
           {
-            pts[i] = (PointF)(ls._curvePoints[i] + offset);
+            pts[i] = (ls._curvePoints[i] + offset).ToGdi();
             var pt = ls._transformation.TransformPoint(pts[i]);
             pt = Transformation.TransformPoint(pt);
             pts[i] = pt;
@@ -350,7 +350,7 @@ namespace Altaxo.Graph.Gdi.Shapes
             float gripRadius = (float)(3 / pageScale);
             for (int i = 0; i < ls._curvePoints.Count; i++)
             {
-              grips[i] = new BSplinePathNodeGripHandle(this, i, pts[i], gripRadius);
+              grips[i] = new BSplinePathNodeGripHandle(this, i, pts[i].ToPointD2D(), gripRadius);
             }
           }
           return grips;

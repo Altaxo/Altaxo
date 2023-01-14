@@ -30,7 +30,6 @@ using System.Runtime.InteropServices;
 using System.Windows.Input;
 using Altaxo.Data;
 using Altaxo.Geometry;
-using Altaxo.Graph;
 using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Gdi.Plot;
 using Altaxo.Graph.Plot.Data;
@@ -114,7 +113,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
           _PlotIndex = scatterPoint.PlotIndex;
           _RowIndex = scatterPoint.RowIndex;
           // convert this layer coordinates first to PrintableAreaCoordinates
-          var rootLayerCoord = clickedObject.ParentLayer.TransformCoordinatesFromHereToRoot(scatterPoint.LayerCoordinates);
+          var rootLayerCoord = clickedObject.ParentLayer.TransformCoordinatesFromHereToRoot(scatterPoint.LayerCoordinates.ToPointD2D());
           _positionOfCrossInRootLayerCoordinates = rootLayerCoord;
           // m_Cross.X -= _grac.GraphViewOffset.X;
           // m_Cross.Y -= _grac.GraphViewOffset.Y;
@@ -141,7 +140,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
       _PlotIndex = scatterPoint.PlotIndex;
       _RowIndex = scatterPoint.RowIndex;
       // convert this layer coordinates first to PrintableAreaCoordinates
-      var rootLayerCoord = _layer.TransformCoordinatesFromHereToRoot(scatterPoint.LayerCoordinates);
+      var rootLayerCoord = _layer.TransformCoordinatesFromHereToRoot(scatterPoint.LayerCoordinates.ToPointD2D());
       _positionOfCrossInRootLayerCoordinates = rootLayerCoord;
       // m_Cross.X -= _grac.GraphViewOffset.X;
       // m_Cross.Y -= _grac.GraphViewOffset.Y;

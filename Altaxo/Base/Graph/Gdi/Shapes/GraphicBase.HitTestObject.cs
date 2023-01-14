@@ -23,8 +23,6 @@
 #endregion Copyright
 
 #nullable enable
-using System;
-using System.Collections.Generic;
 using System.Drawing.Drawing2D;
 using Altaxo.Geometry;
 
@@ -62,7 +60,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       {
         var hit = _hitobject as GraphicBase;
 
-        PointD2D currentSizeRootCoord = ObjectOutlineForArrangements.GetBounds().Size;
+        PointD2D currentSizeRootCoord = ObjectOutlineForArrangements.GetBounds().Size.ToPointD2D();
         PointD2D destinationSizeRootCoord = currentSizeRootCoord;
         if (x.HasValue)
           destinationSizeRootCoord = destinationSizeRootCoord.WithX(x.Value);
@@ -87,8 +85,8 @@ namespace Altaxo.Graph.Gdi.Shapes
         get
         {
           var objPath = ((GraphicBase)_hitobject).GetObjectOutlineForArrangements();
-          objPath.Transform(((GraphicBase)_hitobject)._transformation);
-          objPath.Transform(Transformation);
+          objPath.Transform(((GraphicBase)_hitobject)._transformation.ToGdi());
+          objPath.Transform(Transformation.ToGdi());
           return objPath;
         }
       }

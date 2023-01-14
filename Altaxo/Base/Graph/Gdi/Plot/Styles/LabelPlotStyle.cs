@@ -1416,16 +1416,16 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
         }
         if (variableBackBrush is null)
         {
-          _backgroundStyle.Draw(g, new RectangleF((float)x, (float)y, stringsize.Width, stringsize.Height));
+          _backgroundStyle.Draw(g, new RectangleD2D(x, y, stringsize.Width, stringsize.Height));
         }
         else
         {
-          _backgroundStyle.Draw(g, variableBackBrush, new RectangleF((float)x, (float)y, stringsize.Width, stringsize.Height));
+          _backgroundStyle.Draw(g, variableBackBrush, new RectangleD2D(x, y, stringsize.Width, stringsize.Height));
         }
       }
 
       var brush = variableTextBrush ?? _brush;
-      using (var brushGdi = BrushCacheGdi.Instance.BorrowBrush(brush, new RectangleD2D(new PointD2D(xpos, ypos), stringsize), g, 1))
+      using (var brushGdi = BrushCacheGdi.Instance.BorrowBrush(brush, new RectangleD2D(new PointD2D(xpos, ypos), stringsize.ToPointD2D()), g, 1))
       {
         g.DrawString(label, gdiFont, brushGdi, (float)xpos, (float)ypos, _cachedStringFormat);
       }

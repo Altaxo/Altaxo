@@ -36,7 +36,6 @@ namespace Altaxo.Graph.Gdi.Axis
 {
   using System.Diagnostics.CodeAnalysis;
   using Altaxo.Drawing;
-  using Altaxo.Main;
   using Gdi.LabelFormatting;
   using Geometry;
 
@@ -810,7 +809,7 @@ namespace Altaxo.Graph.Gdi.Axis
     public virtual IHitTestObject? HitTest(IPlotArea layer, PointD2D pt)
     {
       GraphicsPath gp = GetSelectionPath();
-      if (gp.IsVisible((PointF)pt))
+      if (gp.IsVisible(pt.ToGdi()))
         return new HitTestObject(gp, this);
       else
         return null;
@@ -960,7 +959,7 @@ namespace Altaxo.Graph.Gdi.Axis
         PointD2D tickorg = coordSyst.GetNormalizedDirection(r0, r1, r, outer, out var outVector);
         PointD2D tickend = tickorg + outVector * outerDistance;
 
-        PointD2D msize = labels[i].Size;
+        PointD2D msize = labels[i].Size.ToPointD2D();
         PointD2D morg = tickend;
 
         if (_automaticRotationShift)
@@ -999,7 +998,7 @@ namespace Altaxo.Graph.Gdi.Axis
         g.Restore(gs); // Restore the graphics state
 
         helperPath.Reset();
-        helperPath.AddRectangle(new RectangleF(PointF.Empty, (SizeF)msize));
+        helperPath.AddRectangle(new RectangleF(PointF.Empty, msize.ToGdiSize()));
         helperPath.Transform(math);
 
         _enclosingPath.AddPath(helperPath, true);

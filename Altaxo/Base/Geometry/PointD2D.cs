@@ -216,26 +216,6 @@ namespace Altaxo.Geometry
       return new PointD2D(v.X, v.Y);
     }
 
-    public static explicit operator System.Drawing.PointF(PointD2D p)
-    {
-      return new System.Drawing.PointF((float)p.X, (float)p.Y);
-    }
-
-    public static implicit operator PointD2D(System.Drawing.PointF p)
-    {
-      return new PointD2D(p.X, p.Y);
-    }
-
-    public static explicit operator System.Drawing.SizeF(PointD2D p)
-    {
-      return new System.Drawing.SizeF((float)p.X, (float)p.Y);
-    }
-
-    public static implicit operator PointD2D(System.Drawing.SizeF p)
-    {
-      return new PointD2D(p.Width, p.Height);
-    }
-
     #endregion Conversion operators
 
     public override int GetHashCode()

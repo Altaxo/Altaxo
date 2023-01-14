@@ -26,7 +26,6 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
 using Altaxo.Graph.Gdi.Background;
 using Altaxo.Graph.Scales;
 using Altaxo.Graph.Scales.Rescaling;
@@ -34,6 +33,7 @@ using Altaxo.Graph.Scales.Rescaling;
 namespace Altaxo.Graph.Gdi
 {
   using Altaxo.Drawing;
+  using Altaxo.Geometry;
   using Axis;
   using Plot;
   using Shapes;
@@ -194,14 +194,14 @@ namespace Altaxo.Graph.Gdi
         var heightType = (XYPlotLayerSizeType)info.GetValue("HeightType", s);
         var width = info.GetDouble("Width");
         var height = info.GetDouble("Height");
-        s._cachedLayerSize = (SizeF)info.GetValue("CachedSize", s);
+        s._cachedLayerSize = ((SizeF)info.GetValue("CachedSize", s)).ToPointD2D();
         s._coordinateSystem.UpdateAreaSize(s._cachedLayerSize);
 
         var xPositionType = (XYPlotLayerPositionType)info.GetValue("XPositionType", s);
         var yPositionType = (XYPlotLayerPositionType)info.GetValue("YPositionType", s);
         var xPosition = info.GetDouble("XPosition");
         var yPosition = info.GetDouble("YPosition");
-        s._cachedLayerPosition = (PointF)info.GetValue("CachedPosition", s);
+        s._cachedLayerPosition = ((PointF)info.GetValue("CachedPosition", s)).ToPointD2D();
         var rotation = info.GetSingle("Rotation");
         var scale = info.GetSingle("Scale");
         s.Location = new XYPlotLayerPositionAndSize_V0(widthType, width, heightType, height, xPositionType, xPosition, yPositionType, yPosition, rotation, scale).ConvertToCurrentLocationVersion(s._cachedLayerSize, s._cachedLayerPosition);
@@ -381,8 +381,8 @@ namespace Altaxo.Graph.Gdi
 
         // size, position, rotation and scale
         var location = (XYPlotLayerPositionAndSize_V0)info.GetValue("LocationAndSize", s);
-        s._cachedLayerSize = (SizeF)info.GetValue("CachedSize", s);
-        s._cachedLayerPosition = (PointF)info.GetValue("CachedPosition", s);
+        s._cachedLayerSize = ((SizeF)info.GetValue("CachedSize", s)).ToPointD2D();
+        s._cachedLayerPosition = ((PointF)info.GetValue("CachedPosition", s)).ToPointD2D();
         s._coordinateSystem.UpdateAreaSize(s._cachedLayerSize);
         s.Location = location.ConvertToCurrentLocationVersion(s._cachedLayerSize, s._cachedLayerPosition);
 
@@ -482,8 +482,8 @@ namespace Altaxo.Graph.Gdi
 
         // size, position, rotation and scale
         var location = (XYPlotLayerPositionAndSize_V0)info.GetValue("LocationAndSize", s);
-        s._cachedLayerSize = (SizeF)info.GetValue("CachedSize", s);
-        s._cachedLayerPosition = (PointF)info.GetValue("CachedPosition", s);
+        s._cachedLayerSize = ((SizeF)info.GetValue("CachedSize", s)).ToPointD2D();
+        s._cachedLayerPosition = ((PointF)info.GetValue("CachedPosition", s)).ToPointD2D();
         s.Location = location.ConvertToCurrentLocationVersion(s._cachedLayerSize, s._cachedLayerPosition);
 
         // CoordinateSystem
@@ -598,8 +598,8 @@ namespace Altaxo.Graph.Gdi
 
         // size, position, rotation and scale
         var location = (XYPlotLayerPositionAndSize_V0)info.GetValue("LocationAndSize", s);
-        s._cachedLayerSize = (SizeF)info.GetValue("CachedSize", s);
-        s._cachedLayerPosition = (PointF)info.GetValue("CachedPosition", s);
+        s._cachedLayerSize = ((SizeF)info.GetValue("CachedSize", s)).ToPointD2D();
+        s._cachedLayerPosition = ((PointF)info.GetValue("CachedPosition", s)).ToPointD2D();
         s.Location = location.ConvertToCurrentLocationVersion(s._cachedLayerSize, s._cachedLayerPosition);
 
         // CoordinateSystem

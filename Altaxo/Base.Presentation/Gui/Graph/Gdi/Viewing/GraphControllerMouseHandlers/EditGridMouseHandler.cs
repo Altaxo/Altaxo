@@ -25,13 +25,9 @@
 #nullable disable warnings
 using System;
 using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.Linq;
 using System.Windows.Input;
 using Altaxo.Geometry;
-using Altaxo.Graph;
 using Altaxo.Graph.Gdi;
-using Altaxo.Graph.Gdi.Shapes;
 
 namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
 {
@@ -213,12 +209,12 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
       {
         for (int i = 0; i < _xGridLines.Length; ++i)
         {
-          g.DrawLine(pen, (PointF)_xGridLines[i].Org.RootLayerCoordinates, (PointF)_xGridLines[i].End.RootLayerCoordinates);
+          g.DrawLine(pen, _xGridLines[i].Org.RootLayerCoordinates.ToGdi(), _xGridLines[i].End.RootLayerCoordinates.ToGdi());
         }
 
         for (int i = 0; i < _yGridLines.Length; ++i)
         {
-          g.DrawLine(pen, (PointF)_yGridLines[i].Org.RootLayerCoordinates, (PointF)_yGridLines[i].End.RootLayerCoordinates);
+          g.DrawLine(pen, _yGridLines[i].Org.RootLayerCoordinates.ToGdi(), _yGridLines[i].End.RootLayerCoordinates.ToGdi());
         }
       }
     }

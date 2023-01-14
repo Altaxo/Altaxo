@@ -61,7 +61,7 @@ namespace Altaxo.Graph.Gdi.Background
 
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var s =  (DarkMarbel?)o ?? new DarkMarbel();
+        var s = (DarkMarbel?)o ?? new DarkMarbel();
         s.Brush = new BrushX((NamedColor)info.GetValue("Color", s));
         s._shadowLength = info.GetDouble();
 
@@ -99,7 +99,7 @@ namespace Altaxo.Graph.Gdi.Background
 
     public DarkMarbel(NamedColor c)
     {
-     _brush = new BrushX(c);
+      _brush = new BrushX(c);
     }
 
     public DarkMarbel(DarkMarbel from)
@@ -150,12 +150,12 @@ namespace Altaxo.Graph.Gdi.Background
 
       using (var gdibrush = BrushCacheGdi.Instance.BorrowBrush(brush, outerArea, g, 1))
       {
-        g.FillRectangle(gdibrush, (RectangleF)outerArea);
+        g.FillRectangle(gdibrush, outerArea.ToGdi());
       }
 
       var twhite = new SolidBrush(Color.FromArgb(128, 255, 255, 255));
-      var oA = (RectangleF)outerArea;
-      var iA = (RectangleF)innerArea;
+      var oA = outerArea.ToGdi();
+      var iA = innerArea.ToGdi();
       g.FillPolygon(twhite, new PointF[] {
                                                       new PointF(oA.Left,oA.Top), // upper left point
                                                       new PointF(oA.Right,oA.Top), // go to the right

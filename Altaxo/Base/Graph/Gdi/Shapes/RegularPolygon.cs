@@ -325,18 +325,18 @@ namespace Altaxo.Graph.Gdi.Shapes
 
       using var linePenGdi = PenCacheGdi.Instance.BorrowPen(_linePen);
 
-      if (_fillBrush.IsVisible && gp.IsVisible((PointF)htd.GetHittedPointInWorldCoord(_transformation)))
+      if (_fillBrush.IsVisible && gp.IsVisible(htd.GetHittedPointInWorldCoord(_transformation).ToGdi()))
       {
         result = new GraphicBaseHitTestObject(this);
       }
-      else if (_linePen.IsVisible && gp.IsOutlineVisible((PointF)htd.GetHittedPointInWorldCoord(_transformation), linePenGdi))
+      else if (_linePen.IsVisible && gp.IsOutlineVisible(htd.GetHittedPointInWorldCoord(_transformation).ToGdi(), linePenGdi))
       {
         result = new GraphicBaseHitTestObject(this);
       }
       else
       {
-        gp.Transform(htd.GetTransformation(_transformation)); // Transform to page coord
-        if (gp.IsOutlineVisible((PointF)htd.HittedPointInPageCoord, new Pen(Color.Black, 6)))
+        gp.Transform(htd.GetTransformation(_transformation).ToGdi()); // Transform to page coord
+        if (gp.IsOutlineVisible(htd.HittedPointInPageCoord.ToGdi(), new Pen(Color.Black, 6)))
         {
           result = new GraphicBaseHitTestObject(this);
         }
@@ -355,7 +355,7 @@ namespace Altaxo.Graph.Gdi.Shapes
 
       GraphicsState gs = g.Save();
       TransformGraphics(g);
-      var boundsF = (RectangleF)bounds;
+      var boundsF = bounds.ToGdi();
       if (Brush.IsVisible)
       {
         using (var brushGdi = BrushCacheGdi.Instance.BorrowBrush(Brush, bounds, g, Math.Max(ScaleX, ScaleY)))

@@ -81,7 +81,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
       {
         _cachedActiveLayer = _grac.ActiveLayer;
         _cachedActiveLayerTransformation = _cachedActiveLayer.TransformationFromRootToHere();
-        _cachedActiveLayerTransformationGdi = _cachedActiveLayerTransformation;
+        _cachedActiveLayerTransformationGdi = _cachedActiveLayerTransformation.ToGdi();
       }
 
       // get the page coordinates (in Point (1/72") units)
@@ -182,8 +182,8 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
 
       var pts = new PointF[_Points.Count + 1];
       for (int i = 0; i < _Points.Count; i++)
-        pts[i] = (PointF)_Points[i].RootLayerCoordinates;
-      pts[_Points.Count] = (PointF)_positionCurrentMouseInRootLayerCoordinates;
+        pts[i] = _Points[i].RootLayerCoordinates.ToGdi();
+      pts[_Points.Count] = _positionCurrentMouseInRootLayerCoordinates.ToGdi();
 
       if (pts.Length >= 3)
         g.DrawClosedCurve(Pens.Blue, pts, (float)_tension, FillMode.Alternate);

@@ -26,12 +26,10 @@
 using System;
 using System.Drawing;
 using Altaxo.Graph.Gdi;
-using Altaxo.Serialization;
 
 namespace Altaxo.Worksheet
 {
   using Altaxo.Drawing;
-  using Altaxo.Graph;
   using Geometry;
 
   [Serializable]
@@ -444,14 +442,14 @@ namespace Altaxo.Worksheet
     {
       if (bSelected)
       {
-        using (var defaultSelectedBackgroundBrushGdi = BrushCacheGdi.Instance.BorrowBrush(_defaultSelectedBackgroundBrush, cellRectangle, dc, 1))
+        using (var defaultSelectedBackgroundBrushGdi = BrushCacheGdi.Instance.BorrowBrush(_defaultSelectedBackgroundBrush, cellRectangle.ToAxo(), dc, 1))
         {
           dc.FillRectangle(defaultSelectedBackgroundBrushGdi, cellRectangle);
         }
       }
       else
       {
-        using (var backgroundBrushGdi = BrushCacheGdi.Instance.BorrowBrush(_backgroundBrush, cellRectangle, dc, 1))
+        using (var backgroundBrushGdi = BrushCacheGdi.Instance.BorrowBrush(_backgroundBrush, cellRectangle.ToAxo(), dc, 1))
         {
           dc.FillRectangle(backgroundBrushGdi, cellRectangle);
         }

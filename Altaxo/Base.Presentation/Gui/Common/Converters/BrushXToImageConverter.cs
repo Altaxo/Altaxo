@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-#region Copyright
+﻿#region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
@@ -28,9 +22,11 @@ using System.Threading.Tasks;
 
 #endregion Copyright
 
+using System;
+using System.Globalization;
 using System.Windows.Data;
-using System.Windows;
 using Altaxo.Drawing;
+using Altaxo.Geometry;
 using Altaxo.Graph.Gdi;
 
 namespace Altaxo.Gui.Common.Converters
@@ -56,9 +52,9 @@ namespace Altaxo.Gui.Common.Converters
     /// </returns>
     public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
     {
-      if(values is not null && values.Length>=3 && values[0] is BrushX brush && values[1] is double dwidth && values[2] is double dheight)
+      if (values is not null && values.Length >= 3 && values[0] is BrushX brush && values[1] is double dwidth && values[2] is double dheight)
       {
-        
+
         int height = (int)dheight;
         int width = (int)dwidth;
         if (height <= 0)
@@ -85,7 +81,7 @@ namespace Altaxo.Gui.Common.Converters
           r2.Inflate(-r2.Width / 4, -r2.Height / 4);
           //grfx.FillRectangle(System.Drawing.Brushes.Black, r2);
 
-          using (var brushGdi = BrushCacheGdi.Instance.BorrowBrush(brush, fullRect, grfx, 1))
+          using (var brushGdi = BrushCacheGdi.Instance.BorrowBrush(brush, fullRect.ToAxo(), grfx, 1))
           {
             grfx.FillRectangle(brushGdi, fullRect);
           }

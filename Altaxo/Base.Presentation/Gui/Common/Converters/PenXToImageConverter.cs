@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 #region Copyright
 
 /////////////////////////////////////////////////////////////////////////////
@@ -29,9 +25,9 @@ using System.Threading.Tasks;
 #endregion Copyright
 
 using System.Windows.Data;
-using System.Windows;
 using Altaxo.Drawing;
 using Altaxo.Graph.Gdi;
+using Altaxo.Geometry;
 
 namespace Altaxo.Gui.Common.Converters
 {
@@ -56,9 +52,9 @@ namespace Altaxo.Gui.Common.Converters
     /// </returns>
     public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
     {
-      if(values is not null && values.Length>=3 && values[0] is PenX pen && values[1] is double dwidth && values[2] is double dheight)
+      if (values is not null && values.Length >= 3 && values[0] is PenX pen && values[1] is double dwidth && values[2] is double dheight)
       {
-        
+
         int height = (int)dheight;
         int width = (int)dwidth;
         if (height <= 0)
@@ -78,7 +74,7 @@ namespace Altaxo.Gui.Common.Converters
           var fullRect = _previewBitmap.GdiRectangle;
           grfx.FillRectangle(System.Drawing.Brushes.White, fullRect);
 
-          using (var penGdi = PenCacheGdi.Instance.BorrowPen(pen, fullRect, grfx, 1))
+          using (var penGdi = PenCacheGdi.Instance.BorrowPen(pen, fullRect.ToAxo(), grfx, 1))
           {
             grfx.DrawLine(penGdi, fullRect.Width / 6, fullRect.Height / 2, (fullRect.Width * 5) / 6, fullRect.Height / 2);
           }

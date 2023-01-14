@@ -26,6 +26,7 @@
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using Altaxo.Geometry;
 
 namespace Altaxo.Graph.Gdi.Shapes
 {
@@ -161,16 +162,16 @@ namespace Altaxo.Graph.Gdi.Shapes
       TransformGraphics(g);
 
       var bounds = Bounds;
-      var boundsF = (RectangleF)bounds;
+      var boundsF = bounds.ToGdi();
 
-      using var penGdi = PenCacheGdi.Instance.BorrowPen(Pen, boundsF, g, Math.Max(ScaleX, ScaleY));
+      using var penGdi = PenCacheGdi.Instance.BorrowPen(Pen, boundsF.ToAxo(), g, Math.Max(ScaleX, ScaleY));
       var path = GetPath();
       g.DrawPath(penGdi, path);
 
       if (_outlinePen is not null && _outlinePen.IsVisible)
       {
         path.Widen(penGdi);
-        using var outlinePenGdi = PenCacheGdi.Instance.BorrowPen(_outlinePen, boundsF, g, Math.Max(ScaleX, ScaleY));
+        using var outlinePenGdi = PenCacheGdi.Instance.BorrowPen(_outlinePen, boundsF.ToAxo(), g, Math.Max(ScaleX, ScaleY));
         g.DrawPath(outlinePenGdi, path);
       }
 
@@ -183,14 +184,14 @@ namespace Altaxo.Graph.Gdi.Shapes
       GraphicsPath gp = GetPath();
 
       using var linePenGdi = PenCacheGdi.Instance.BorrowPen(_linePen);
-      if (gp.IsOutlineVisible((PointF)htd.GetHittedPointInWorldCoord(_transformation), linePenGdi))
+      if (gp.IsOutlineVisible(htd.GetHittedPointInWorldCoord(_transformation).ToGdi(), linePenGdi))
       {
         result = new GraphicBaseHitTestObject(this);
       }
       else
       {
-        gp.Transform(htd.GetTransformation(_transformation)); // Transform to page coord
-        if (gp.IsOutlineVisible((PointF)htd.HittedPointInPageCoord, new Pen(Color.Black, 6)))
+        gp.Transform(htd.GetTransformation(_transformation).ToGdi()); // Transform to page coord
+        if (gp.IsOutlineVisible(htd.HittedPointInPageCoord.ToGdi(), new Pen(Color.Black, 6)))
         {
           result = new GraphicBaseHitTestObject(this);
         }

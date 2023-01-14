@@ -25,10 +25,8 @@
 #nullable disable warnings
 using System;
 using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.Windows.Input;
 using Altaxo.Geometry;
-using Altaxo.Graph;
 
 namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
 {
@@ -64,7 +62,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
       {
         _cachedActiveLayer = _grac.ActiveLayer;
         _cachedActiveLayerTransformation = _cachedActiveLayer.TransformationFromRootToHere();
-        _cachedActiveLayerTransformationGdi = _cachedActiveLayerTransformation;
+        _cachedActiveLayerTransformationGdi = _cachedActiveLayerTransformation.ToGdi();
 
         _currentPoint = 0;
         // get the page coordinates (in Point (1/72") units)

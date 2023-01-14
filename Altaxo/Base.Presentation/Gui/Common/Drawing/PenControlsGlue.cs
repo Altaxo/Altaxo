@@ -24,15 +24,12 @@
 
 #nullable disable warnings
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using Altaxo.Drawing;
 using Altaxo.Drawing.ColorManagement;
+using Altaxo.Geometry;
 using Altaxo.Graph.Gdi;
-using Altaxo.Gui.Drawing;
 using Altaxo.Gui.Drawing.DashPatternManagement;
 
 namespace Altaxo.Gui.Common.Drawing
@@ -712,7 +709,7 @@ namespace Altaxo.Gui.Common.Drawing
         var fullRect = _previewBitmap.GdiRectangle;
         grfx.FillRectangle(System.Drawing.Brushes.White, fullRect);
 
-        using (var penGdi = PenCacheGdi.Instance.BorrowPen(_pen, fullRect, grfx, 1))
+        using (var penGdi = PenCacheGdi.Instance.BorrowPen(_pen, fullRect.ToAxo(), grfx, 1))
         {
           grfx.DrawLine(penGdi, fullRect.Width / 6, fullRect.Height / 2, (fullRect.Width * 5) / 6, fullRect.Height / 2);
         }

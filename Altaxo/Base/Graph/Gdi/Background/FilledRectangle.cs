@@ -26,7 +26,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Drawing;
 using Altaxo.Drawing;
 using Altaxo.Geometry;
 
@@ -124,7 +123,7 @@ namespace Altaxo.Graph.Gdi.Background
       {
         using (var gdibrush = BrushCacheGdi.Instance.BorrowBrush(brush, innerArea, g, 1))
         {
-          g.FillRectangle(gdibrush, (RectangleF)innerArea);
+          g.FillRectangle(gdibrush, innerArea.ToGdi());
         }
       }
     }

@@ -175,12 +175,12 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
         _textBlockAligment = textBlockAligment;
         _strfmt = strfmt;
         _lineSpacing = lineSpacing;
-        _size = SizeF.Empty;
+        _size = PointD2D.Empty;
         var bounds = RectangleD2D.Empty;
         var position = new PointD2D();
         for (int i = 0; i < _text.Length; ++i)
         {
-          _stringSize[i] = g.MeasureString(_text[i], GdiFontManager.ToGdi(_font), new PointF(0, 0), strfmt);
+          _stringSize[i] = g.MeasureString(_text[i], GdiFontManager.ToGdi(_font), new PointF(0, 0), strfmt).ToPointD2D();
           bounds.ExpandToInclude(new RectangleD2D(position, _stringSize[i]));
           position = position.WithYPlus(_stringSize[i].Y * _lineSpacing);
         }
@@ -191,7 +191,7 @@ namespace Altaxo.Graph.Gdi.LabelFormatting
       {
         get
         {
-          return (SizeF)_size;
+          return _size.ToGdiSize();
         }
       }
 

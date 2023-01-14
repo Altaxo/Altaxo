@@ -23,12 +23,8 @@
 #endregion Copyright
 
 #nullable enable
-using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using System.Linq;
-using System.Text;
 using Altaxo.Geometry;
 
 namespace Altaxo.Graph.Gdi
@@ -242,7 +238,7 @@ namespace Altaxo.Graph.Gdi
       : base(hitobject)
     {
       _objectPath = objectPath;
-      _objectPath.Transform(transformation);
+      _objectPath.Transform(transformation.ToGdi());
     }
 
     /// <summary>
@@ -252,7 +248,7 @@ namespace Altaxo.Graph.Gdi
     public override void Transform(MatrixD2D x)
     {
       base.Transform(x);
-      _objectPath.Transform(x);
+      _objectPath.Transform(x.ToGdi());
     }
 
     /// <summary>

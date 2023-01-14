@@ -638,7 +638,7 @@ namespace Altaxo.Graph.Gdi
     /// <param name="g">The graphics state to change.</param>
     public void TransformCoordinatesFromParentToHere(Graphics g)
     {
-      g.MultiplyTransform(_transformation);
+      g.MultiplyTransform(_transformation.ToGdi());
     }
 
     /// <summary>
@@ -658,7 +658,7 @@ namespace Altaxo.Graph.Gdi
     /// <returns>graphics path now in graph coordinates</returns>
     public GraphicsPath TransformCoordinatesFromHereToParent(GraphicsPath gp)
     {
-      gp.Transform(_transformation);
+      gp.Transform(_transformation.ToGdi());
       return gp;
     }
 
@@ -1142,7 +1142,7 @@ namespace Altaxo.Graph.Gdi
     {
       GraphicsState savedgstate = g.Save();
 
-      g.MultiplyTransform(_transformation);
+      g.MultiplyTransform(_transformation.ToGdi());
 
       PaintInternal(g, context);
 
@@ -1208,7 +1208,7 @@ namespace Altaxo.Graph.Gdi
         layercorners.CloseAllFigures();
 
         var layerC = localCoord.GetHittedPointInWorldCoord();
-        if (layercorners.IsVisible((PointF)layerC))
+        if (layercorners.IsVisible(layerC.ToGdi()))
         {
           hit = new HitTestObject(layercorners, this)
           {

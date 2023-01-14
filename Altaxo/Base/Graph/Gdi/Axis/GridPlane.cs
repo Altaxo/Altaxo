@@ -27,8 +27,8 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
-using System.Text;
 using Altaxo.Drawing;
+using Altaxo.Geometry;
 
 namespace Altaxo.Graph.Gdi.Axis
 {
@@ -208,7 +208,7 @@ namespace Altaxo.Graph.Gdi.Axis
       if (_background is not null)
       {
         RectangleF innerArea = region.GetBounds(g);
-        using (var gdiBackgroundBrush = BrushCacheGdi.Instance.BorrowBrush(_background, innerArea, g, 1))
+        using (var gdiBackgroundBrush = BrushCacheGdi.Instance.BorrowBrush(_background, innerArea.ToAxo(), g, 1))
         {
           g.FillRegion(gdiBackgroundBrush, region);
         }

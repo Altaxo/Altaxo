@@ -25,7 +25,6 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 
 namespace Altaxo.Geometry
 {
@@ -178,26 +177,6 @@ namespace Altaxo.Geometry
       ;
     }
 
-    public static explicit operator System.Drawing.RectangleF(RectangleD2D r)
-    {
-      return new System.Drawing.RectangleF((float)r._x, (float)r._y, (float)r._w, (float)r._h);
-    }
-
-    public static explicit operator System.Drawing.Rectangle(RectangleD2D r)
-    {
-      return new System.Drawing.Rectangle((int)r._x, (int)r._y, (int)r._w, (int)r._h);
-    }
-
-    public static implicit operator RectangleD2D(System.Drawing.RectangleF r)
-    {
-      return new RectangleD2D(r.X, r.Y, r.Width, r.Height);
-    }
-
-    public static implicit operator RectangleD2D(System.Drawing.Rectangle r)
-    {
-      return new RectangleD2D(r.X, r.Y, r.Width, r.Height);
-    }
-
     public PointD2D Location
     {
       get
@@ -259,7 +238,7 @@ namespace Altaxo.Geometry
     /// <returns>True if this rectangle and the provided rectangle have a non-empty intersection area; otherwise <c>false</c>.</returns>
     public bool IntersectsWith(RectangleD2D r)
     {
-      return  (r._x < _x + _w) && (_x < (r._x + r._w)) &&
+      return (r._x < _x + _w) && (_x < (r._x + r._w)) &&
               (r._y < _y + _h) && (_y < r._y + r._h);
     }
 

@@ -25,7 +25,6 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -780,7 +779,7 @@ namespace Altaxo.Graph.Gdi.Shapes
     public GraphicsPath GetRectangularObjectOutline()
     {
       var result = new GraphicsPath();
-      result.AddRectangle((RectangleF)Bounds);
+      result.AddRectangle(Bounds.ToGdi());
       return result;
     }
 
@@ -1390,7 +1389,7 @@ namespace Altaxo.Graph.Gdi.Shapes
           var pt = RelativeLocalToAbsoluteLocalCoordinates(pts[i]);
           pt = _transformation.TransformPoint(pt);
           pt = hitTest.Transformation.TransformPoint(pt);
-          pathPts[i] = (PointF)pt;
+          pathPts[i] = pt.ToGdi();
         }
         var path = new GraphicsPath();
         path.AddPolygon(pathPts);

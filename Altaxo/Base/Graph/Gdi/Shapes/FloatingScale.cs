@@ -465,7 +465,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       var pt = htd.GetHittedPointInWorldCoord();
       HitTestObjectBase? result = null;
       GraphicsPath gp = GetSelectionPath();
-      if (gp.IsVisible((PointF)pt))
+      if (gp.IsVisible(pt.ToGdi()))
       {
         result = new MyHitTestObject(this);
       }
@@ -520,7 +520,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       _cachedPath = _axisStyle.AxisLineStyle?.GetObjectPath(_cachedLayerSegment, true) ?? new GraphicsPath();
 
       // calculate size information
-      RectangleD2D? bounds1 = _cachedPath.PointCount > 0 ? _cachedPath.GetBounds() : (RectangleD2D?)null;
+      RectangleD2D? bounds1 = _cachedPath.PointCount > 0 ? _cachedPath.GetBounds().ToAxo() : (RectangleD2D?)null;
 
       if (_axisStyle.AreMinorLabelsEnabled)
       {
@@ -528,7 +528,7 @@ namespace Altaxo.Graph.Gdi.Shapes
         if (path is not null && path.PointCount > 0)
         {
           _cachedPath.AddPath(path, false);
-          RectangleD2D bounds2 = path.GetBounds();
+          RectangleD2D bounds2 = path.GetBounds().ToAxo();
           bounds1 = RectangleD2D.ExpandToInclude(bounds1, bounds2);
         }
       }
@@ -538,7 +538,7 @@ namespace Altaxo.Graph.Gdi.Shapes
         if (path is not null && path.PointCount > 0)
         {
           _cachedPath.AddPath(path, false);
-          RectangleD2D bounds2 = path.GetBounds();
+          RectangleD2D bounds2 = path.GetBounds().ToAxo();
           bounds1 = RectangleD2D.ExpandToInclude(bounds1, bounds2);
         }
       }
@@ -568,13 +568,13 @@ namespace Altaxo.Graph.Gdi.Shapes
         font = GdiFontManager.ToGdi(GdiFontManager.GetFontXGenericSansSerif(font.Size * factor, FontXStyle.Regular));
       }
 
-      g.DrawString(errorMsg, font, Brushes.Red, (PointF)Position);
+      g.DrawString(errorMsg, font, Brushes.Red, Position.ToGdi());
       size = g.MeasureString(errorMsg, font);
 
       _cachedPath = new GraphicsPath();
-      _cachedPath.AddRectangle(new RectangleF((PointF)Position, size));
+      _cachedPath.AddRectangle(new RectangleF(Position.ToGdi(), size));
 
-      ((ItemLocationDirectAutoSize)_location).SetSizeInAutoSizeMode(size);
+      ((ItemLocationDirectAutoSize)_location).SetSizeInAutoSizeMode(size.ToPointD2D());
     }
 
     #region Inner classes

@@ -178,7 +178,7 @@ namespace Altaxo.Graph.Gdi.Shapes
     /// <param name="g">Graphics context (should be saved beforehand).</param>
     protected override void TransformGraphics(Graphics g)
     {
-      g.MultiplyTransform(_transformation);
+      g.MultiplyTransform(_transformation.ToGdi());
     }
 
     /// <summary>
@@ -235,7 +235,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       gp.AddRectangle(new RectangleF((float)(X + bounds.X), (float)(Y + bounds.Y), (float)bounds.Width, (float)bounds.Height));
       if (Rotation != 0)
       {
-        myMatrix.RotateAt((float)(-Rotation), (PointF)Position, MatrixOrder.Append);
+        myMatrix.RotateAt((float)(-Rotation), Position.ToGdi(), MatrixOrder.Append);
       }
 
       gp.Transform(myMatrix);

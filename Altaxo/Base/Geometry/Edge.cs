@@ -24,7 +24,6 @@
 
 #nullable enable
 using System;
-using System.Drawing;
 
 namespace Altaxo.Geometry
 {
@@ -102,139 +101,139 @@ namespace Altaxo.Geometry
       set { _styleType = value; }
     }
 
-    public PointF GetOrg(SizeF layerSize)
+    public PointD2D GetOrg(VectorD2D layerSize)
     {
       switch (_styleType)
       {
         case EdgeType.Left:
-          return new PointF(0, layerSize.Height);
+          return new PointD2D(0, layerSize.Y);
 
         case EdgeType.Right:
-          return new PointF(layerSize.Width, layerSize.Height);
+          return new PointD2D(layerSize.X, layerSize.Y);
 
         case EdgeType.Bottom:
-          return new PointF(0, layerSize.Height);
+          return new PointD2D(0, layerSize.Y);
 
         case EdgeType.Top:
-          return new PointF(0, 0);
+          return new PointD2D(0, 0);
       } // end of switch
-      return new PointF(0, 0);
+      return new PointD2D(0, 0);
     }
 
-    public PointF GetEnd(SizeF layerSize)
+    public PointD2D GetEnd(VectorD2D layerSize)
     {
       switch (_styleType)
       {
         case EdgeType.Left:
-          return new PointF(0, 0);
+          return new PointD2D(0, 0);
 
         case EdgeType.Right:
-          return new PointF(layerSize.Width, 0);
+          return new PointD2D(layerSize.X, 0);
 
         case EdgeType.Bottom:
-          return new PointF(layerSize.Width, layerSize.Height);
+          return new PointD2D(layerSize.X, layerSize.Y);
 
         case EdgeType.Top:
-          return new PointF(layerSize.Width, 0);
+          return new PointD2D(layerSize.X, 0);
       } // end of switch
-      return new PointF(0, 0);
+      return new PointD2D(0, 0);
     }
 
-    public static PointF GetPointBetween(PointF p1, PointF p2, double rel)
+    public static PointD2D GetPointBetween(PointD2D p1, PointD2D p2, double rel)
     {
-      return new PointF((float)(p1.X + rel * (p2.X - p1.X)), (float)(p1.Y + rel * (p2.Y - p1.Y)));
+      return new PointD2D((float)(p1.X + rel * (p2.X - p1.X)), (float)(p1.Y + rel * (p2.Y - p1.Y)));
     }
 
-    public PointF GetEdgePoint(SizeF layerSize, double rel)
+    public PointD2D GetEdgePoint(VectorD2D layerSize, double rel)
     {
       switch (_styleType)
       {
         case EdgeType.Left:
-          return new PointF(0, (float)((1 - rel) * layerSize.Height));
+          return new PointD2D(0, (float)((1 - rel) * layerSize.Y));
 
         case EdgeType.Right:
-          return new PointF(layerSize.Width, (float)((1 - rel) * layerSize.Height));
+          return new PointD2D(layerSize.X, (float)((1 - rel) * layerSize.Y));
 
         case EdgeType.Bottom:
-          return new PointF((float)(rel * layerSize.Width), layerSize.Height);
+          return new PointD2D((float)(rel * layerSize.X), layerSize.Y);
 
         case EdgeType.Top:
-          return new PointF((float)(rel * layerSize.Width), 0);
+          return new PointD2D((float)(rel * layerSize.X), 0);
       } // end of switch
-      return new PointF(0, 0);
+      return new PointD2D(0, 0);
     }
 
-    public float GetEdgeLength(SizeF layerSize)
+    public double GetEdgeLength(VectorD2D layerSize)
     {
       switch (_styleType)
       {
         case EdgeType.Left:
         case EdgeType.Right:
-          return layerSize.Height;
+          return layerSize.Y;
 
         case EdgeType.Bottom:
         case EdgeType.Top:
-          return layerSize.Width;
-      } // end of switch
-      return 0;
-    }
-
-    public float GetOppositeEdgeLength(SizeF layerSize)
-    {
-      switch (_styleType)
-      {
-        case EdgeType.Left:
-        case EdgeType.Right:
-          return layerSize.Width;
-
-        case EdgeType.Bottom:
-        case EdgeType.Top:
-          return layerSize.Height;
+          return layerSize.X;
       } // end of switch
       return 0;
     }
 
-    public PointF OuterVector
+    public double GetOppositeEdgeLength(VectorD2D layerSize)
+    {
+      switch (_styleType)
+      {
+        case EdgeType.Left:
+        case EdgeType.Right:
+          return layerSize.X;
+
+        case EdgeType.Bottom:
+        case EdgeType.Top:
+          return layerSize.Y;
+      } // end of switch
+      return 0;
+    }
+
+    public VectorD2D OuterVector
     {
       get
       {
         switch (_styleType)
         {
           case EdgeType.Left:
-            return new PointF(-1, 0);
+            return new VectorD2D(-1, 0);
 
           case EdgeType.Right:
-            return new PointF(1, 0);
+            return new VectorD2D(1, 0);
 
           case EdgeType.Bottom:
-            return new PointF(0, 1);
+            return new VectorD2D(0, 1);
 
           case EdgeType.Top:
-            return new PointF(0, -1);
+            return new VectorD2D(0, -1);
         } // end of switch
-        return new PointF(0, 0);
+        return new VectorD2D(0, 0);
       }
     }
 
-    public PointF InnerVector
+    public VectorD2D InnerVector
     {
       get
       {
         switch (_styleType)
         {
           case EdgeType.Left:
-            return new PointF(1, 0);
+            return new VectorD2D(1, 0);
 
           case EdgeType.Right:
-            return new PointF(-1, 0);
+            return new VectorD2D(-1, 0);
 
           case EdgeType.Bottom:
-            return new PointF(0, -1);
+            return new VectorD2D(0, -1);
 
           case EdgeType.Top:
-            return new PointF(0, 1);
+            return new VectorD2D(0, 1);
         } // end of switch
-        return new PointF(0, 0);
+        return new VectorD2D(0, 0);
       }
     }
   } // end of struct Edge

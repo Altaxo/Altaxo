@@ -22,8 +22,8 @@
 
 #endregion Copyright
 
-using System;
 using System.Drawing;
+using Altaxo.Geometry;
 using Altaxo.Graph.Gdi.Shapes;
 
 namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
@@ -64,7 +64,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
       if (_currentPoint >= 1)
       {
         var rect = GetNormalRectangle(_Points[0].RootLayerCoordinates, _positionCurrentMouseInRootLayerCoordinates);
-        g.DrawEllipse(Pens.Blue, (RectangleF)rect);
+        g.DrawEllipse(Pens.Blue, rect.ToGdi());
       }
     }
   }

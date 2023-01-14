@@ -28,7 +28,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
-using System.Text;
 
 namespace Altaxo.Graph.Gdi.Shapes
 {
@@ -330,7 +329,7 @@ namespace Altaxo.Graph.Gdi.Shapes
     /// <param name="g">Graphics context (should be saved beforehand).</param>
     protected override void TransformGraphics(Graphics g)
     {
-      g.MultiplyTransform(_transformation);
+      g.MultiplyTransform(_transformation.ToGdi());
     }
 
     /// <summary>
@@ -355,7 +354,7 @@ namespace Altaxo.Graph.Gdi.Shapes
     public override GraphicsPath GetObjectOutlineForArrangements()
     {
       var result = new GraphicsPath();
-      result.AddRectangle((RectangleF)Bounds);
+      result.AddRectangle(Bounds.ToGdi());
       return result;
     }
 

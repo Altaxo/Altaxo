@@ -30,7 +30,6 @@ using System.Windows.Input;
 using Altaxo.Calc;
 using Altaxo.Data;
 using Altaxo.Geometry;
-using Altaxo.Graph;
 using Altaxo.Graph.Gdi;
 
 namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
@@ -88,7 +87,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
       {
         _cachedActiveLayer = _grac.ActiveLayer;
         _cachedActiveLayerTransformation = _cachedActiveLayer.TransformationFromRootToHere();
-        _cachedActiveLayerTransformationGdi = _cachedActiveLayerTransformation;
+        _cachedActiveLayerTransformationGdi = _cachedActiveLayerTransformation.ToGdi();
 
         _positionOfCrossInRootLayerCoordinates = _grac.ConvertMouseToRootLayerCoordinates(position);
         DisplayCrossCoordinates();

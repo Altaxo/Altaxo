@@ -28,7 +28,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using Altaxo.Geometry;
 using Altaxo.Graph.Gdi;
-using Altaxo.Serialization;
 
 namespace Altaxo.Worksheet
 {
@@ -113,7 +112,7 @@ namespace Altaxo.Worksheet
 
       var brush = bSelected ? _defaultSelectedTextBrush : TextBrush;
 
-      using (var brushGdi = BrushCacheGdi.Instance.BorrowBrush(brush, cellRectangle, dc, 1))
+      using (var brushGdi = BrushCacheGdi.Instance.BorrowBrush(brush, cellRectangle.ToAxo(), dc, 1))
       {
         dc.DrawString(myString, GdiFontManager.ToGdi(_textFont), brushGdi, cellRectangle, _textFormat);
       }

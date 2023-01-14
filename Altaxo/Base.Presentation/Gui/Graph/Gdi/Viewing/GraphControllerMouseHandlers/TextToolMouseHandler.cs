@@ -23,11 +23,8 @@
 #endregion Copyright
 
 #nullable disable warnings
-using System;
-using System.Drawing.Drawing2D;
 using System.Windows.Input;
 using Altaxo.Geometry;
-using Altaxo.Graph;
 using Altaxo.Graph.Gdi.Shapes;
 
 namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
@@ -63,7 +60,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
 
       _cachedActiveLayer = _grac.ActiveLayer;
       _cachedActiveLayerTransformation = _cachedActiveLayer.TransformationFromRootToHere();
-      _cachedActiveLayerTransformationGdi = _cachedActiveLayerTransformation;
+      _cachedActiveLayerTransformationGdi = _cachedActiveLayerTransformation.ToGdi();
 
       // get the page coordinates (in Point (1/72") units)
       var rootLayerCoord = _grac.ConvertMouseToRootLayerCoordinates(_positionLastMouseDownInMouseCoordinates);

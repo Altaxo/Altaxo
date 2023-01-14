@@ -32,7 +32,6 @@ using Altaxo.Drawing;
 using Altaxo.Geometry;
 using Altaxo.Graph.Scales;
 using Altaxo.Graph.Scales.Ticks;
-using Altaxo.Serialization;
 
 namespace Altaxo.Graph.Gdi.Axis
 {
@@ -219,9 +218,9 @@ namespace Altaxo.Graph.Gdi.Axis
 
 
     [MemberNotNull(nameof(_axisPen), nameof(_majorTickPen), nameof(_minorTickPen))]
-    void CopyFrom(AxisLineStyle from)
+    private void CopyFrom(AxisLineStyle from)
     {
-      
+
       using (var suspendToken = SuspendGetToken())
       {
         _axisPen = from._axisPen;
@@ -243,11 +242,11 @@ namespace Altaxo.Graph.Gdi.Axis
       }
     }
 
-      /// <summary>
-      /// Copy operation.
-      /// </summary>
-      /// <param name="obj">The AxisStyle to copy from</param>
-      public bool CopyFrom(object obj)
+    /// <summary>
+    /// Copy operation.
+    /// </summary>
+    /// <param name="obj">The AxisStyle to copy from</param>
+    public bool CopyFrom(object obj)
     {
       if (ReferenceEquals(this, obj))
         return true;
@@ -298,7 +297,7 @@ namespace Altaxo.Graph.Gdi.Axis
     public virtual IHitTestObject? HitTest(IPlotArea layer, PointD2D pt, bool withTicks)
     {
       GraphicsPath selectionPath = GetSelectionPath(layer, withTicks);
-      return selectionPath.IsVisible((PointF)pt) ? new HitTestObject(GetObjectPath(layer, withTicks), this) : null;
+      return selectionPath.IsVisible(pt.ToGdi()) ? new HitTestObject(GetObjectPath(layer, withTicks), this) : null;
     }
 
     public virtual IHitTestObject? HitTest(IPlotArea layer, HitTestRectangularData hitData, bool withTicks)
@@ -633,14 +632,14 @@ namespace Altaxo.Graph.Gdi.Axis
           outer = layer.CoordinateSystem.GetLogicalDirection(styleID.ParallelAxisNumber, CSAxisSide.FirstUp);
           var tickorg = layer.CoordinateSystem.GetNormalizedDirection(r0, r1, r, outer, out outVector);
           var tickend = tickorg + outVector * _majorTickLength;
-          g.DrawLine(majorTickPenGdi, (PointF)tickorg, (PointF)tickend);
+          g.DrawLine(majorTickPenGdi, tickorg.ToGdi(), tickend.ToGdi());
         }
         if (_showFirstDownMajorTicks)
         {
           outer = layer.CoordinateSystem.GetLogicalDirection(styleID.ParallelAxisNumber, CSAxisSide.FirstDown);
           var tickorg = layer.CoordinateSystem.GetNormalizedDirection(r0, r1, r, outer, out outVector);
           var tickend = tickorg + outVector * _majorTickLength;
-          g.DrawLine(majorTickPenGdi, (PointF)tickorg, (PointF)tickend);
+          g.DrawLine(majorTickPenGdi, tickorg.ToGdi(), tickend.ToGdi());
         }
       }
       // now the major ticks
@@ -654,14 +653,14 @@ namespace Altaxo.Graph.Gdi.Axis
           outer = layer.CoordinateSystem.GetLogicalDirection(styleID.ParallelAxisNumber, CSAxisSide.FirstUp);
           var tickorg = layer.CoordinateSystem.GetNormalizedDirection(r0, r1, r, outer, out outVector);
           var tickend = tickorg + outVector * _minorTickLength;
-          g.DrawLine(minorTickPenGdi, (PointF)tickorg, (PointF)tickend);
+          g.DrawLine(minorTickPenGdi, tickorg.ToGdi(), tickend.ToGdi());
         }
         if (_showFirstDownMinorTicks)
         {
           outer = layer.CoordinateSystem.GetLogicalDirection(styleID.ParallelAxisNumber, CSAxisSide.FirstDown);
           var tickorg = layer.CoordinateSystem.GetNormalizedDirection(r0, r1, r, outer, out outVector);
           var tickend = tickorg + outVector * _minorTickLength;
-          g.DrawLine(minorTickPenGdi, (PointF)tickorg, (PointF)tickend);
+          g.DrawLine(minorTickPenGdi, tickorg.ToGdi(), tickend.ToGdi());
         }
       }
     }

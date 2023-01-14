@@ -26,6 +26,7 @@
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using Altaxo.Geometry;
 
 namespace Altaxo.Graph.Gdi.Shapes
 {
@@ -119,7 +120,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       TransformGraphics(g);
 
       var bounds = Bounds;
-      var boundsF = (RectangleF)bounds;
+      var boundsF = bounds.ToGdi();
       if (Brush.IsVisible)
       {
         using (var brushGdi = BrushCacheGdi.Instance.BorrowBrush(Brush, Bounds, g, Math.Max(ScaleX, ScaleY)))

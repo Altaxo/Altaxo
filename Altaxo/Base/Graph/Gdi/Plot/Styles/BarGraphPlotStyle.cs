@@ -27,15 +27,14 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using System.Text;
 
 namespace Altaxo.Graph.Gdi.Plot.Styles
 {
   using System.ComponentModel;
   using Altaxo.Data;
   using Altaxo.Drawing;
+  using Altaxo.Geometry;
   using Altaxo.Main;
-  using Graph.Plot.Data;
   using Graph.Plot.Groups;
   using Plot.Data;
   using Plot.Groups;
@@ -258,7 +257,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       if (ReferenceEquals(this, obj))
         return true;
 
-        return CopyFrom(obj, true);
+      return CopyFrom(obj, true);
     }
 
     /// <inheritdoc/>
@@ -566,7 +565,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
             fillBrush = fillBrush.WithColor(GdiColorHelper.ToNamedColor(_cachedColorForIndexFunction!(originalRowIndex), "VariableColor"));
           }
 
-          using (var fillBrushGdi = BrushCacheGdi.Instance.BorrowBrush(fillBrush, path.GetBounds(), g, 1))
+          using (var fillBrushGdi = BrushCacheGdi.Instance.BorrowBrush(fillBrush, path.GetBounds().ToAxo(), g, 1))
           {
             g.FillPath(fillBrushGdi, path);
           }
@@ -577,7 +576,7 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
           if (useVariableFrameColor)
             framePen = framePen.WithColor(GdiColorHelper.ToNamedColor(_cachedColorForIndexFunction!(originalRowIndex), "VariableColor"));
 
-          using (var framePenGdi = PenCacheGdi.Instance.BorrowPen(framePen, path.GetBounds(), g, 1))
+          using (var framePenGdi = PenCacheGdi.Instance.BorrowPen(framePen, path.GetBounds().ToAxo(), g, 1))
           {
             g.DrawPath(framePenGdi, path);
           }
@@ -590,14 +589,14 @@ namespace Altaxo.Graph.Gdi.Plot.Styles
       bounds.Inflate(0, -bounds.Height / 4);
       if (_fillBrush is not null)
       {
-        using (var fillBrushGdi = BrushCacheGdi.Instance.BorrowBrush(_fillBrush, bounds, g, 1))
+        using (var fillBrushGdi = BrushCacheGdi.Instance.BorrowBrush(_fillBrush, bounds.ToAxo(), g, 1))
         {
           g.FillRectangle(fillBrushGdi, bounds);
         }
       }
       if (_framePen is not null)
       {
-        using (var framePenGdi = PenCacheGdi.Instance.BorrowPen(_framePen, bounds, g, 1))
+        using (var framePenGdi = PenCacheGdi.Instance.BorrowPen(_framePen, bounds.ToAxo(), g, 1))
         {
           g.DrawRectangle(framePenGdi, bounds.X, bounds.Y, bounds.Width, bounds.Height);
         }
