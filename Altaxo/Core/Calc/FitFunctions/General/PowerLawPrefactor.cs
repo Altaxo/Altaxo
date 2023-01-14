@@ -32,38 +32,43 @@ using Altaxo.Main;
 namespace Altaxo.Calc.FitFunctions.General
 {
   /// <summary>
-  /// Represents an exponential decay with offset (multiple exponential terms possible).
+  /// Represents a power law, but with an offset, and with multiple terms possible.
   /// </summary>
   /// <seealso cref="Altaxo.Calc.Regression.Nonlinear.IFitFunction" />
   [FitFunctionClass]
-  public class ExponentialDecay : IFitFunctionWithDerivative, IImmutable
+  public class PowerLawPrefactor : IFitFunctionWithDerivative, IImmutable
   {
     #region Serialization
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ExponentialDecay), 0)]
+    /// <summary>
+    /// V1: 2023-01-11 Move from AltaxoBase to AltaxoCore
+    /// </summary>
+    /// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Calc.FitFunctions.General.PowerLawPrefactor", 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PowerLawPrefactor), 1)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (ExponentialDecay)obj;
+        var s = (PowerLawPrefactor)obj;
         info.AddValue("NumberOfTerms", s.NumberOfTerms);
       }
 
       public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var numberOfTerms = info.GetInt32("NumberOfTerms");
-        return new ExponentialDecay(numberOfTerms);
+        return new PowerLawPrefactor(numberOfTerms);
       }
     }
 
     #endregion Serialization
 
-    public ExponentialDecay()
+    public PowerLawPrefactor()
     {
       NumberOfTerms = 1;
     }
 
-    public ExponentialDecay(int numberOfTerms)
+    public PowerLawPrefactor(int numberOfTerms)
     {
       if (!(numberOfTerms >= 1))
         throw new ArgumentOutOfRangeException($"{nameof(NumberOfTerms)} must be greater than or equal to 1");
@@ -71,17 +76,15 @@ namespace Altaxo.Calc.FitFunctions.General
       NumberOfTerms = numberOfTerms;
     }
 
-
-
     /// <summary>
-    /// Creates an exponential decrease fit function with one exponential term (3 parameters).
+    /// Creates an power law function
     /// </summary>
     /// <returns></returns>
-    [FitFunctionCreator("ExponentialDecay", "General", 1, 1, 3)]
-    [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.General.ExponentialDecay}")]
-    public static IFitFunction CreateExponentialDecrease()
+    [FitFunctionCreator("PowerLaw (Prefactor)", "General", 1, 1, 3)]
+    [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.General.PowerLawPrefactor}")]
+    public static IFitFunction CreatePowerLawPrefactor_1()
     {
-      return new ExponentialDecay();
+      return new PowerLawPrefactor(1);
     }
 
     /// <summary>
@@ -104,14 +107,14 @@ namespace Altaxo.Calc.FitFunctions.General
     /// <param name="value">The number of exponential terms.</param>
     /// <returns>New instance with the provided number of terms.</returns>
     /// <exception cref="ArgumentOutOfRangeException">$"{nameof(NumberOfTerms)} must be greater than or equal to 1</exception>
-    public ExponentialDecay WithNumberOfTerms(int value)
+    public PowerLawPrefactor WithNumberOfTerms(int value)
     {
       if (!(value >= 1))
         throw new ArgumentOutOfRangeException($"{nameof(NumberOfTerms)} must be greater than or equal to 1");
 
       if (!(NumberOfTerms == value))
       {
-        return new ExponentialDecay(value);
+        return new PowerLawPrefactor(value);
       }
       else
       {
@@ -160,7 +163,7 @@ namespace Altaxo.Calc.FitFunctions.General
       if (i == 0)
         return "y0";
       else
-        return (i - 1) % 2 == 0 ? FormattableString.Invariant($"a{(i - 1) / 2}") : FormattableString.Invariant($"Tau{(i - 1) / 2}");
+        return (i - 1) % 2 == 0 ? FormattableString.Invariant($"a{(i - 1) / 2}") : FormattableString.Invariant($"k{(i - 1) / 2}");
     }
 
     public double DefaultParameterValue(int i)
@@ -170,7 +173,7 @@ namespace Altaxo.Calc.FitFunctions.General
       else if ((i - 1) % 2 == 0)
         return 0;
       else
-        return RMath.Pow(10, (i - 1) / 2);
+        return 1;
     }
 
     public IVarianceScaling? DefaultVarianceScaling(int i)
@@ -183,7 +186,7 @@ namespace Altaxo.Calc.FitFunctions.General
       double sum = P[0];
       for (int i = 1; i < P.Length; i += 2)
       {
-        sum += P[i] * Math.Exp(-X[0] / P[i + 1]);
+        sum += P[i] * Math.Pow(X[0], P[i + 1]);
       }
       Y[0] = sum;
     }
@@ -198,7 +201,7 @@ namespace Altaxo.Calc.FitFunctions.General
         double sum = P[0];
         for (int i = 1; i < P.Count; i += 2)
         {
-          sum += P[i] * Math.Exp(-x / P[i + 1]);
+          sum += P[i] * Math.Pow(x, P[i + 1]);
         }
         FV[r] = sum;
       }
@@ -213,12 +216,11 @@ namespace Altaxo.Calc.FitFunctions.General
       for (int r = 0; r < rowCount; ++r)
       {
         var x = X[r, 0];
-
         DY[r, 0] = 1;
         for (int i = 1; i < P.Count; i += 2)
         {
-          DY[r, i] = Math.Exp(-x / P[i + 1]);
-          DY[r, i + 1] = P[i] * Math.Exp(-x / P[i + 1]) * x / RMath.Pow2(P[i + 1]);
+          DY[r, i] = Math.Pow(x, P[i + 1]);
+          DY[r, i + 1] = P[i] * Math.Pow(x, P[i + 1]) * Math.Log(x);
         }
       }
     }

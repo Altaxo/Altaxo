@@ -27,47 +27,47 @@ using System;
 using System.Collections.Generic;
 using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Calc.Regression.Nonlinear;
-using Altaxo.Main;
 
 namespace Altaxo.Calc.FitFunctions.General
 {
   /// <summary>
-  /// Represents an stretched exponential equilibration function (multiple exponential terms possible).
+  /// Represents an exponential equilibration (multiple exponential terms possible).
   /// </summary>
   /// <seealso cref="Altaxo.Calc.Regression.Nonlinear.IFitFunction" />
   [FitFunctionClass]
-  public class StretchedExponentialEquilibration : IFitFunctionWithDerivative, IImmutable
+  public class ExponentialEquilibration : IFitFunctionWithDerivative
   {
     #region Serialization
 
     /// <summary>
-    /// Initial version 2021-05-11.
+    /// V1: 2023-01-11 Move from AltaxoBase to AltaxoCore
     /// </summary>
     /// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(StretchedExponentialEquilibration), 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Calc.FitFunctions.General.ExponentialEquilibration", 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ExponentialEquilibration), 1)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (StretchedExponentialEquilibration)obj;
+        var s = (ExponentialEquilibration)obj;
         info.AddValue("NumberOfTerms", s.NumberOfTerms);
       }
 
       public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var numberOfTerms = info.GetInt32("NumberOfTerms");
-        return new StretchedExponentialEquilibration(numberOfTerms);
+        return new ExponentialEquilibration(numberOfTerms);
       }
     }
 
     #endregion Serialization
 
-    public StretchedExponentialEquilibration()
+    public ExponentialEquilibration()
     {
       NumberOfTerms = 1;
     }
 
-    public StretchedExponentialEquilibration(int numberOfTerms)
+    public ExponentialEquilibration(int numberOfTerms)
     {
       if (!(numberOfTerms >= 1))
         throw new ArgumentOutOfRangeException($"{nameof(NumberOfTerms)} must be greater than or equal to 1");
@@ -81,11 +81,11 @@ namespace Altaxo.Calc.FitFunctions.General
     /// Creates an exponential decrease fit function with one exponential term (3 parameters).
     /// </summary>
     /// <returns></returns>
-    [FitFunctionCreator("StretchedExponentialEquilibration", "General", 1, 1, 5)]
-    [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.General.StretchedExponentialEquilibration}")]
-    public static IFitFunction CreateFitFunction()
+    [FitFunctionCreator("ExponentialEquilibration", "General", 1, 1, 4)]
+    [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.General.ExponentialEquilibration}")]
+    public static IFitFunction CreateExponentialDecrease()
     {
-      return new StretchedExponentialEquilibration(1);
+      return new ExponentialEquilibration();
     }
 
 
@@ -110,14 +110,14 @@ namespace Altaxo.Calc.FitFunctions.General
     /// <param name="value">The number of exponential terms.</param>
     /// <returns>New instance with the provided number of terms.</returns>
     /// <exception cref="ArgumentOutOfRangeException">$"{nameof(NumberOfTerms)} must be greater than or equal to 1</exception>
-    public StretchedExponentialEquilibration WithNumberOfTerms(int value)
+    public ExponentialEquilibration WithNumberOfTerms(int value)
     {
       if (!(value >= 1))
         throw new ArgumentOutOfRangeException($"{nameof(NumberOfTerms)} must be greater than or equal to 1");
 
       if (!(NumberOfTerms == value))
       {
-        return new StretchedExponentialEquilibration(value);
+        return new ExponentialEquilibration(value);
       }
       else
       {
@@ -148,7 +148,7 @@ namespace Altaxo.Calc.FitFunctions.General
     {
       get
       {
-        return NumberOfTerms * 3 + 2;
+        return NumberOfTerms * 2 + 2;
       }
     }
 
@@ -169,27 +169,17 @@ namespace Altaxo.Calc.FitFunctions.General
       if (i == 1)
         return "y0";
       else
-        return ((i - 2) % 3) switch
-        {
-          0 => FormattableString.Invariant($"a{(i - 2) / 3}"),
-          1 => FormattableString.Invariant($"τ{(i - 2) / 3}"),
-          2 => FormattableString.Invariant($"β{(i - 2) / 3}"),
-          _ => throw new InvalidProgramException()
-        };
+        return (i - 2) % 2 == 0 ? FormattableString.Invariant($"a{(i - 2) / 2}") : FormattableString.Invariant($"Tau{(i - 2) / 2}");
     }
 
     public double DefaultParameterValue(int i)
     {
       if (i == 0 || i == 1)
         return 0;
+      else if ((i - 2) % 2 == 0)
+        return 0;
       else
-        return ((i - 2) % 3) switch
-        {
-          0 => 0,
-          1 => 1,
-          2 => 1,
-          _ => throw new InvalidProgramException()
-        };
+        return RMath.Pow(10, (i - 2) / 2);
     }
 
     public IVarianceScaling? DefaultVarianceScaling(int i)
@@ -203,9 +193,9 @@ namespace Altaxo.Calc.FitFunctions.General
       double sum = P[1]; // P[0] is offset
       if (x > 0)
       {
-        for (int i = 2, j = 0; j < NumberOfTerms; i += 3, ++j)
+        for (int i = 2; i < P.Length; i += 2)
         {
-          sum += P[i] * (1 - Math.Exp(-Math.Pow(x / P[i + 1], P[i + 2])));
+          sum += P[i] * (1 - Math.Exp(-x / P[i + 1]));
         }
       }
       Y[0] = sum;
@@ -216,15 +206,15 @@ namespace Altaxo.Calc.FitFunctions.General
       var rowCount = independent.RowCount;
       for (int r = 0; r < rowCount; ++r)
       {
-        var x = independent[r, 0];
+        var xx = independent[r, 0];
 
-        double arg = x - P[0]; // P[1] is x0
+        double x = xx - P[0]; // P[1] is x0
         double sum = P[1]; // P[0] is offset
-        if (arg > 0)
+        if (x > 0)
         {
-          for (int i = 2, j = 0; j < NumberOfTerms; i += 3, ++j)
+          for (int i = 2; i < P.Count; i += 2)
           {
-            sum += P[i] * (1 - Math.Exp(-Math.Pow(arg / P[i + 1], P[i + 2])));
+            sum += P[i] * (1 - Math.Exp(-x / P[i + 1]));
           }
         }
         FV[r] = sum;
@@ -240,34 +230,28 @@ namespace Altaxo.Calc.FitFunctions.General
       for (int r = 0; r < rowCount; ++r)
       {
         var xx = X[r, 0];
+
         double x = xx - P[0]; // P[1] is x0
 
         DY[r, 1] = 1; // offset
         if (x > 0)
         {
           double sum = 0;
-          for (int i = 2; i < P.Count; i += 3)
+          for (int i = 2; i < P.Count; i += 2)
           {
-            var tau = P[i + 1];
-            var beta = P[i + 2];
-            var arg = Math.Pow(x / tau, beta);
-            var earg = Math.Exp(-arg);
-
-            DY[r, i] = 1 - earg;
-            DY[r, i + 1] = -P[i] * earg * arg * beta / tau;
-            DY[r, i + 2] = P[i] * earg * arg * Math.Log(x / tau);
-            sum += -P[i] * earg * arg * beta / x;
+            DY[r, i] = 1 - Math.Exp(-x / P[i + 1]);
+            DY[r, i + 1] = -P[i] * Math.Exp(-x / P[i + 1]) * x / RMath.Pow2(P[i + 1]);
+            sum += -P[i] * Math.Exp(-x / P[i + 1]) / P[i + 1];
           }
           DY[r, 0] = sum; // derivative w.r.t. to x0
         }
         else // x < 0
         {
           DY[r, 0] = 0; // derivative w.r.t.to x0 is 0 for x<0
-          for (int i = 2; i < P.Count; i += 3)
+          for (int i = 2; i < P.Count; i += 2)
           {
             DY[r, i] = 0;
             DY[r, i + 1] = 0;
-            DY[r, i + 2] = 0;
           }
         }
       }

@@ -32,42 +32,44 @@ using Altaxo.Main;
 namespace Altaxo.Calc.FitFunctions.General
 {
   /// <summary>
-  /// Represents an stretched exponential equilibration function (multiple exponential terms possible).
+  /// Represents a power law, but with an offset, and with multiple terms possible.
   /// </summary>
   /// <seealso cref="Altaxo.Calc.Regression.Nonlinear.IFitFunction" />
   [FitFunctionClass]
-  public class StretchedExponentialDecay : IFitFunctionWithDerivative, IImmutable
+  public class PowerLawRatio : IFitFunctionWithDerivative, IImmutable
   {
     #region Serialization
 
     /// <summary>
-    /// Initial version 2021-05-19.
+    /// Initial version 2021-05-08.
+    /// V1: 2023-01-11 Move from AltaxoBase to AltaxoCore
     /// </summary>
     /// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(StretchedExponentialDecay), 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Calc.FitFunctions.General.PowerLawRatio", 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PowerLawRatio), 1)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (StretchedExponentialDecay)obj;
+        var s = (PowerLawRatio)obj;
         info.AddValue("NumberOfTerms", s.NumberOfTerms);
       }
 
       public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var numberOfTerms = info.GetInt32("NumberOfTerms");
-        return new StretchedExponentialDecay(numberOfTerms);
+        return new PowerLawRatio(numberOfTerms);
       }
     }
 
     #endregion Serialization
 
-    public StretchedExponentialDecay()
+    public PowerLawRatio()
     {
       NumberOfTerms = 1;
     }
 
-    public StretchedExponentialDecay(int numberOfTerms)
+    public PowerLawRatio(int numberOfTerms)
     {
       if (!(numberOfTerms >= 1))
         throw new ArgumentOutOfRangeException($"{nameof(NumberOfTerms)} must be greater than or equal to 1");
@@ -75,27 +77,16 @@ namespace Altaxo.Calc.FitFunctions.General
       NumberOfTerms = numberOfTerms;
     }
 
-
-
     /// <summary>
-    /// Creates an exponential decrease fit function with one exponential term (3 parameters).
+    /// Creates an power law function
     /// </summary>
     /// <returns></returns>
-    [FitFunctionCreator("StretchedExponentialDecay", "General", 1, 1, 5)]
-    [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.General.StretchedExponentialDecay}")]
-    public static IFitFunction CreateFitFunction()
+    [FitFunctionCreator("PowerLaw (Ratio)", "General", 1, 1, 3)]
+    [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.General.PowerLawRatio}")]
+    public static IFitFunction CreatePowerLawRatio_1()
     {
-      return new StretchedExponentialDecay(1);
+      return new PowerLawRatio(1);
     }
-
-    [FitFunctionCreator("KohlrauschDecay", "Relaxation", 1, 1, 5)]
-    [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.General.StretchedExponentialDecay}")]
-    public static IFitFunction CreateKohlrauschDecay()
-    {
-      return new StretchedExponentialDecay(1);
-    }
-
-
 
     /// <summary>
     /// Not functional since this instance is immutable.
@@ -117,21 +108,20 @@ namespace Altaxo.Calc.FitFunctions.General
     /// <param name="value">The number of exponential terms.</param>
     /// <returns>New instance with the provided number of terms.</returns>
     /// <exception cref="ArgumentOutOfRangeException">$"{nameof(NumberOfTerms)} must be greater than or equal to 1</exception>
-    public StretchedExponentialDecay WithNumberOfTerms(int value)
+    public PowerLawRatio WithNumberOfTerms(int value)
     {
       if (!(value >= 1))
         throw new ArgumentOutOfRangeException($"{nameof(NumberOfTerms)} must be greater than or equal to 1");
 
       if (!(NumberOfTerms == value))
       {
-        return new StretchedExponentialDecay(value);
+        return new PowerLawRatio(value);
       }
       else
       {
         return this;
       }
     }
-
 
     #region IFitFunction Members
 
@@ -155,7 +145,7 @@ namespace Altaxo.Calc.FitFunctions.General
     {
       get
       {
-        return NumberOfTerms * 3 + 2;
+        return NumberOfTerms * 2 + 1;
       }
     }
 
@@ -172,31 +162,19 @@ namespace Altaxo.Calc.FitFunctions.General
     public string ParameterName(int i)
     {
       if (i == 0)
-        return "x0";
-      if (i == 1)
         return "y0";
       else
-        return ((i - 2) % 3) switch
-        {
-          0 => FormattableString.Invariant($"a{(i - 2) / 3}"),
-          1 => FormattableString.Invariant($"τ{(i - 2) / 3}"),
-          2 => FormattableString.Invariant($"β{(i - 2) / 3}"),
-          _ => throw new InvalidProgramException()
-        };
+        return (i - 1) % 2 == 0 ? FormattableString.Invariant($"a{(i - 1) / 2}") : FormattableString.Invariant($"k{(i - 1) / 2}");
     }
 
     public double DefaultParameterValue(int i)
     {
-      if (i == 0 || i == 1)
+      if (i == 0)
         return 0;
+      else if ((i - 1) % 2 == 0)
+        return 1;
       else
-        return ((i - 2) % 3) switch
-        {
-          0 => 0,
-          1 => 1,
-          2 => 1,
-          _ => throw new InvalidProgramException()
-        };
+        return 1;
     }
 
     public IVarianceScaling? DefaultVarianceScaling(int i)
@@ -206,21 +184,10 @@ namespace Altaxo.Calc.FitFunctions.General
 
     public void Evaluate(double[] X, double[] P, double[] Y)
     {
-      double x = X[0] - P[0]; // P[1] is x0
-      double sum = P[1]; // P[1] is offset 
-      if (x > 0)
+      double sum = P[0];
+      for (int i = 1; i < P.Length; i += 2)
       {
-        for (int i = 2, j = 0; j < NumberOfTerms; i += 3, ++j)
-        {
-          sum += P[i] * (Math.Exp(-Math.Pow(x / P[i + 1], P[i + 2])));
-        }
-      }
-      else
-      {
-        for (int i = 2, j = 0; j < NumberOfTerms; i += 3, ++j)
-        {
-          sum += P[i];
-        }
+        sum += Math.Pow(X[0] / P[i], P[i + 1]);
       }
       Y[0] = sum;
     }
@@ -232,21 +199,10 @@ namespace Altaxo.Calc.FitFunctions.General
       {
         var x = independent[r, 0];
 
-        double arg = x - P[0]; // P[1] is x0
-        double sum = P[1]; // P[1] is offset 
-        if (arg > 0)
+        double sum = P[0];
+        for (int i = 1; i < P.Count; i += 2)
         {
-          for (int i = 2, j = 0; j < NumberOfTerms; i += 3, ++j)
-          {
-            sum += P[i] * (Math.Exp(-Math.Pow(arg / P[i + 1], P[i + 2])));
-          }
-        }
-        else
-        {
-          for (int i = 2, j = 0; j < NumberOfTerms; i += 3, ++j)
-          {
-            sum += P[i];
-          }
+          sum += Math.Pow(x / P[i], P[i + 1]);
         }
         FV[r] = sum;
       }
@@ -259,37 +215,13 @@ namespace Altaxo.Calc.FitFunctions.General
       var rowCount = X.RowCount;
       for (int r = 0; r < rowCount; ++r)
       {
-        var xx = X[r, 0];
-
-        double x = xx - P[0]; // P[1] is x0
-
-        DY[r, 1] = 1; // offset
-        if (x > 0)
+        var x = X[r, 0];
+        DY[r, 0] = 1;
+        for (int i = 1; i < P.Count; i += 2)
         {
-          double sum = 0;
-          for (int i = 2; i < P.Count; i += 3)
-          {
-            var tau = P[i + 1];
-            var beta = P[i + 2];
-            var arg = Math.Pow(x / tau, beta);
-            var earg = Math.Exp(-arg);
-
-            DY[r, i] = earg; // dy/da
-            DY[r, i + 1] = P[i] * earg * arg * beta / tau; // dy/dtau
-            DY[r, i + 2] = -P[i] * earg * arg * Math.Log(x / tau); // dy/dbeta
-            sum += P[i] * earg * arg * beta / x;
-          }
-          DY[r, 0] = sum; // derivative w.r.t. to x0
-        }
-        else // x < 0
-        {
-          DY[r, 0] = 0; // derivative w.r.t.to x0 is 0 for x<0
-          for (int i = 2; i < P.Count; i += 3)
-          {
-            DY[r, i] = 1; // dy/da is 1
-            DY[r, i + 1] = 0;
-            DY[r, i + 2] = 0;
-          }
+          var y = Math.Pow(x / P[i], P[i + 1]);
+          DY[r, i] = -P[i + 1] * y / P[i];
+          DY[r, i + 1] = y * Math.Log(x / P[i]);
         }
       }
     }

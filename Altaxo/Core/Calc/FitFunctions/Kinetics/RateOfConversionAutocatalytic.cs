@@ -40,9 +40,11 @@ namespace Altaxo.Calc.FitFunctions.Kinetics
 
     /// <summary>
     /// Initial version 2021-07-20.
+    /// V1: 2023-01-11 Move from AltaxoBase to AltaxoCore
     /// </summary>
     /// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(RateOfConversionAutocatalytic), 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Calc.FitFunctions.Kinetics.RateOfConversionAutocatalytic", 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(RateOfConversionAutocatalytic), 1)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
