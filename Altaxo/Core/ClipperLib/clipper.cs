@@ -211,7 +211,7 @@ namespace ClipperLib
   //    val3.ToString => "85070591730234615847396907784232501249" (8.5e+37)
   //------------------------------------------------------------------------------
 
-  internal struct Int128
+  public struct Int128
   {
     private Int64 hi;
     private ulong lo;
