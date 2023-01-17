@@ -23,12 +23,10 @@
 #endregion Copyright
 
 #nullable enable
-using System;
 
 namespace System.Drawing
 {
   [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("System.Drawing", "System.Drawing.Color", 0)]
-  [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(System.Drawing.Color), 0)]
   public class ColorXmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
   {
     private static System.Drawing.ColorConverter sm_Converter = new System.Drawing.ColorConverter();
