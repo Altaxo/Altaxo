@@ -41,7 +41,7 @@ namespace Altaxo.Calc.LinearAlgebra.Factorization
         }
       }
 
-      var nmf = new NonnegativeMatrixFactorization();
+      var nmf = new NonnegativeMatrixFactorizationACLS();
 
       nmf.Evaluate(a, 2, 20);
 
