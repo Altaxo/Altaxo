@@ -98,8 +98,8 @@ namespace Altaxo.Calc.FitFunctions.Peaks
 
     }
 
-    [FitFunctionCreator("PearsonIVAmplitudeParametrizationV", "Peaks", 1, 1, NumberOfParametersPerPeak)]
-    [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Peaks.PearsonIVAmplitudeParametrizationV}")]
+    [FitFunctionCreator("PearsonIVAmplitude (Parametrization HPW)", "Peaks", 1, 1, NumberOfParametersPerPeak)]
+    [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Peaks.PearsonIVAmplitudeParametrizationHPW}")]
     public static IFitFunction Create_1_M1()
     {
       return new PearsonIVAmplitudeParametrizationHPW(1, -1);

@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="General.ExponentialDecay" xml:space="preserve">
-    <value># ExponentialDecay
+    <value>##### ExponentialDecay
 
 This function evaluates an exponential decay with one or multiple terms according to
 
@@ -138,7 +138,7 @@ The number of terms $n$ can be changed by double-clicking on the fit function. T
 The domain of the function is $-\infty \leq x \leq \infty$.
 
 ^^^
-![](res:Altaxo.Calc.FitFunctions.General.ExponentialDecay.Fig1.png)
+![](res:Altaxo.Calc.FitFunctions.General.ExponentialDecay.Fig1.png){width=15cm}  
 ^^^ Fig. 1: Exponential decay with $y_0=1$, $a_0=3$, and $\tau_0=4$.
 
 
@@ -146,7 +146,7 @@ The domain of the function is $-\infty \leq x \leq \infty$.
 </value>
   </data>
   <data name="General.ExponentialEquilibration" xml:space="preserve">
-    <value># ExponentialEquilibration
+    <value>##### ExponentialEquilibration
 
 This function evaluates an exponential equilibration process with one or multiple terms according to
 
@@ -170,12 +170,12 @@ The number of terms $n$ can be changed by double-clicking on the fit function. T
 The domain of the function is $-\infty \leq x \leq \infty$.
 
 ^^^
-![](res:Altaxo.Calc.FitFunctions.General.ExponentialEquilibration.Fig1.png)
+![](res:Altaxo.Calc.FitFunctions.General.ExponentialEquilibration.Fig1.png){width=15cm}  
 ^^^ Fig. 1: Exponential equilibration with $y_0=1$, $a_0=3$, $x_0=2$ and $\tau_0=4$.
 </value>
   </data>
   <data name="General.ExponentialGrowth" xml:space="preserve">
-    <value># Exponential growth
+    <value>##### Exponential growth
 
 This function evaluates an exponential growth with one or multiple terms according to
 
@@ -195,12 +195,12 @@ The number of terms $n$ can be changed by double-clicking on the fit function. T
 The domain of the function is $-\infty \leq x \leq \infty$.
 
 ^^^
-![](res:Altaxo.Calc.FitFunctions.General.ExponentialGrowth.Fig1.png)
+![](res:Altaxo.Calc.FitFunctions.General.ExponentialGrowth.Fig1.png){width=15cm}  
 ^^^ Fig. 1: Exponential growth with $y_0=100$, $a_0=3$ and $\tau_0=4$.
 </value>
   </data>
   <data name="General.Polynomial" xml:space="preserve">
-    <value># Polynomial
+    <value>##### Polynomial
 
 This function evaluates an polynomial with one or multiple terms, and both positive and negative exponents, according to
 
@@ -220,7 +220,7 @@ The polynomial orders $n$ and $m$ can be changed by double-clicking on the fit f
 The domain of the function is $-\infty \leq x \leq \infty$. If $m \neq 0$, $x=0$ is excluded.
 
 ^^^
-![](res:Altaxo.Calc.FitFunctions.General.Polynomial.Fig1.png)
+![](res:Altaxo.Calc.FitFunctions.General.Polynomial.Fig1.png){width=15cm}  
 ^^^ Fig. 1: Polynomial ($n=3$, $m=0$) with $a_0=1$, $a_1=0$, $a_2=2$ and $a_3=-0.125$.
 
 
@@ -228,7 +228,7 @@ The domain of the function is $-\infty \leq x \leq \infty$. If $m \neq 0$, $x=0$
 </value>
   </data>
   <data name="General.PowerLawPrefactor" xml:space="preserve">
-    <value># Power law (with pre-factors)
+    <value>##### Power law (with pre-factors)
 
 This function evaluates a power law with one or multiple terms according to
 
@@ -251,16 +251,16 @@ The domain of the function is $ 0 \leq x &lt; \infty $ if all $k_0..k_{n-1}$ are
 Even if you set the exponents fixed to integer values, the domain of the function is not extended to the full range! If the full range is neccessary, try to use `Polynomial` instead.
 
 ^^^
-![](res:Altaxo.Calc.FitFunctions.General.PowerLawPrefactor.Fig2.png)
+![](res:Altaxo.Calc.FitFunctions.General.PowerLawPrefactor.Fig2.png){width=15cm}  
 ^^^ Fig. 1: Power law with $y_0=0$, $a_0=3$ and $k_0=2.5$ with linear x- and y-axes.
 
 ^^^
-![](res:Altaxo.Calc.FitFunctions.General.PowerLawPrefactor.Fig1.png)
+![](res:Altaxo.Calc.FitFunctions.General.PowerLawPrefactor.Fig1.png){width=15cm}  
 ^^^ Fig. 2: Power law with the same parameters $y_0=0$, $a_0=3$ and $k_0=2.5$ in a double-logarithmic plot.
 </value>
   </data>
   <data name="General.PowerLawRatio" xml:space="preserve">
-    <value># Power law (with ratios)
+    <value>##### Power law (with ratios)
 
 This function evaluates a power law with one or multiple terms according to
 
@@ -280,16 +280,16 @@ The number of terms $n$ can be changed by double-clicking on the fit function. T
 The domain of the function is $ 0 \leq x &lt; \infty $ if all $k_0..k_{n-1}$ and all $a_0..a_{n-1}$ are positive, $-\infty &lt; x \leq 0$ if all $k_0..k_{n-1}$ are positive and all $a_0..a_{n-1}$ are negative, and, if some of the exponents are negative, the  value $x=0$ is not included.
 
 ^^^
-![](res:Altaxo.Calc.FitFunctions.General.PowerLawRatio.Fig2.png)
+![](res:Altaxo.Calc.FitFunctions.General.PowerLawRatio.Fig2.png){width=15cm}  
 ^^^ Fig. 1: Power law (ratio) with $y_0=0$, $a_0=3$ and $k_0=-0.5$ with linear x- and y-axes.
 
 ^^^
-![](res:Altaxo.Calc.FitFunctions.General.PowerLawRatio.Fig1.png)
+![](res:Altaxo.Calc.FitFunctions.General.PowerLawRatio.Fig1.png){width=15cm}  
 ^^^ Fig. 2: Power law (ratio) with the same parameters $y_0=0$, $a_0=3$ and $k_0=-0.5$ in a double-logarithmic plot.
 </value>
   </data>
   <data name="General.Rational" xml:space="preserve">
-    <value># Rational
+    <value>###### Rational
 
 This function evaluates a rational polynom with one or multiple terms in the nominator and in the denominator according to
 
@@ -311,13 +311,13 @@ The polynomial orders $n$ and $m$ can be changed by double-clicking on the fit f
 The domain of the function is $ -\infty &lt; x &lt; \infty $, with some points (poles) excluded, at which the denominator becomes zero.
 
 ^^^
-![](res:Altaxo.Calc.FitFunctions.General.Rational.Fig1.png)
+![](res:Altaxo.Calc.FitFunctions.General.Rational.Fig1.png){width=15cm}  
 ^^^ Fig. 1: Rational $\frac{2+x}{1+2x}$, i.e. with $n=m=1$, $a_0=2$, $a_1=1$ and $b_1=2$.
 
 ---</value>
   </data>
   <data name="General.RationalInverse" xml:space="preserve">
-    <value># RationalInverse
+    <value>##### RationalInverse
 
 This function evaluates a rational polynom with one or multiple terms in the nominator and in the denominator according to
 
@@ -339,13 +339,13 @@ The polynomial orders $n$ and $m$ can be changed by double-clicking on the fit f
 The domain of the function is $ -\infty &lt; x &lt; \infty $, with some points (poles) excluded, at which the denominator becomes zero.
 
 ^^^
-![](res:Altaxo.Calc.FitFunctions.General.RationalInverse.Fig1.png)
+![](res:Altaxo.Calc.FitFunctions.General.RationalInverse.Fig1.png){width=15cm}  
 ^^^ Fig. 1: RationalInverse $\frac{1+3x}{-2+x}$, i.e. with $n=m=1$, $a_1=3$, $b_0=-2$ and $b_1=1$.
 
 ---</value>
   </data>
   <data name="General.StretchedExponentialDecay" xml:space="preserve">
-    <value># Stretched exponential decay
+    <value>##### Stretched exponential decay
 (also known as **Kohlrausch decay**)
 
 This function evaluates a stretched exponential decay process starting at $x=x_0$ with one or multiple terms according to
@@ -369,13 +369,13 @@ The number of terms $n$ can be changed by double-clicking on the fit function. T
 The domain of the function is $-\infty &lt; x &lt; \infty$. The function values are set to constant for $x&lt;x_0$.
 
 ^^^
-![](res:Altaxo.Calc.FitFunctions.General.StretchedExponentialDecay.Fig1.png)
+![](res:Altaxo.Calc.FitFunctions.General.StretchedExponentialDecay.Fig1.png){width=15cm}  
 ^^^ Fig. 1: Stretched exponential decay with $x_0=0$, $y_0=1$, $a_0=3$, $\tau_0=4$, and $\beta=0.5$ (green) in comparison to a 'normal' exponential decay function with the same parameters (grey). Note that the 'normal' exponential decay has varying function values both for $x&lt;0$ and $x&gt;0$, whereas the stretched exponential decay is constant for $x&lt;x_0$.
 ---
 </value>
   </data>
   <data name="General.StretchedExponentialEquilibration" xml:space="preserve">
-    <value># Stretched exponential equilibration
+    <value>##### Stretched exponential equilibration
 
 This function evaluates a stretched exponential equilibration process with one or multiple terms according to
 
@@ -397,13 +397,13 @@ The number of terms $n$ can be changed by double-clicking on the fit function. T
 The domain of the function is $-\infty &lt; x &lt; \infty$.
 
 ^^^
-![](res:Altaxo.Calc.FitFunctions.General.StretchedExponentialEquilibration.Fig1.png)
+![](res:Altaxo.Calc.FitFunctions.General.StretchedExponentialEquilibration.Fig1.png){width=15cm}  
 ^^^ Fig. 1: Stretched exponential equilibration with  $x_0=2$, $y_0=1$, $a_0=3$, $\tau_0=4$, and $\beta=0.5$ (green) in comparison to a 'normal' exponential equilibration function with the same parameters (grey).
 ---
 </value>
   </data>
   <data name="General.StretchedExponentialGrowth" xml:space="preserve">
-    <value># Stretched exponential growth
+    <value>##### Stretched exponential growth
 
 This function evaluates a stretched exponential growth process starting at $x=x_0$ with one or multiple terms according to
 
@@ -426,13 +426,13 @@ The number of terms $n$ can be changed by double-clicking on the fit function. T
 The domain of the function is $-\infty &lt; x &lt; \infty$. The function values are set to constant for $x&lt;x_0$.
 
 ^^^
-![](res:Altaxo.Calc.FitFunctions.General.StretchedExponentialGrowth.Fig1.png)
+![](res:Altaxo.Calc.FitFunctions.General.StretchedExponentialGrowth.Fig1.png){width=15cm}  
 ^^^ Fig. 1: Stretched exponential growth with $x_0=0$, $y_0=-2$, $a_0=3$, $\tau_0=4$, and $\beta=0.5$ (green) in comparison to a 'normal' exponential growth function with the same parameters (grey). Note that the 'normal' exponential growth has varying function values both for $x&lt;0$ and $x&gt;0$, whereas the stretched exponential growth is constant for $x&lt;x_0$.
 ---
 </value>
   </data>
   <data name="Kinetics.ConversionAutocatalytic" xml:space="preserve">
-    <value># Conversion of an autocatalytic reaction
+    <value>##### Conversion of an autocatalytic reaction
 
 This fit function represents the solution of the differential equation for the conversion of an autocatalytic reaction (e.g. epoxy curing), namely:
 
@@ -467,7 +467,7 @@ The domain of the function is $-\infty \leq x \leq \infty$.
 
 
 ^^^
-![](res:Altaxo.Calc.FitFunctions.Kinetics.ConversionAutocatalytic.Fig1.png)
+![](res:Altaxo.Calc.FitFunctions.Kinetics.ConversionAutocatalytic.Fig1.png){width=15cm}  
 ^^^ Fig. 1: ConversionAutocatalytic (with $t_0=1$, $A_0=1$, $k_1=1$ and $k_2$=1). The values for $m$ and $n$ are indicated in the legend.
 ---
 References:  
@@ -478,7 +478,7 @@ References:
 </value>
   </data>
   <data name="Kinetics.ConversionNthOrder" xml:space="preserve">
-    <value># Conversion of a reaction of n^th^ order
+    <value>##### Conversion of a reaction of n^th^ order
 
 This fit function represents the solution of the differential equation of a conversion kinetics of n^th^ order, namely:
 
@@ -520,7 +520,7 @@ The domain of the function is $-\infty \leq x \leq \infty$.
 
 
 ^^^
-![](res:Altaxo.Calc.FitFunctions.Kinetics.ConversionNthOrder.Fig1.png)
+![](res:Altaxo.Calc.FitFunctions.Kinetics.ConversionNthOrder.Fig1.png){width=15cm}  
 ^^^ Fig. 1: ConversionNthOrder fit functions (with $t_0=1$, $A_0=1$, $k=1$). The values for $n$ are indicated in the legend.
 ---
 
@@ -530,7 +530,7 @@ The domain of the function is $-\infty \leq x \leq \infty$.
 </value>
   </data>
   <data name="Kinetics.KineticsNthOrder" xml:space="preserve">
-    <value># Kinetics of n^th^ order
+    <value>##### Kinetics of n^th^ order
 
 This fit function represents the solution of the differential equation for a kinetics of n^th^ order, namely:
 
@@ -568,7 +568,7 @@ $$
 
 
 ^^^
-![](res:Altaxo.Calc.FitFunctions.Kinetics.KineticsNthOrder.Fig1.png)
+![](res:Altaxo.Calc.FitFunctions.Kinetics.KineticsNthOrder.Fig1.png){width=15cm}  
 ^^^ Fig. 1: KineticsNthOrder (with $y_0=1$, $k=1$). The values for $n$ are indicated in the legend.
 ---
 
@@ -578,7 +578,7 @@ $$
 </value>
   </data>
   <data name="Kinetics.RateOfConversionAutocatalytic" xml:space="preserve">
-    <value># Rate of conversion of an autocatalytic reaction
+    <value>##### Rate of conversion of an autocatalytic reaction
 
 This fit function represents the solution of the differential equation for the conversion of an autocatalytic reaction (e.g. epoxy curing), namely:
 
@@ -606,7 +606,7 @@ The domain of the function is $-\infty \leq x \leq \infty$.
 &gt; This kinetic equation assumes that the conversion finally reaches 1 (100%). This assumption may be wrong if the glass temperature of the finally cured material exceeds the curing temperature.
 
 ^^^
-![](res:Altaxo.Calc.FitFunctions.Kinetics.RateOfConversionAutocatalytic.Fig1.png)
+![](res:Altaxo.Calc.FitFunctions.Kinetics.RateOfConversionAutocatalytic.Fig1.png){width=15cm}  
 ^^^ Fig. 1: RateOfConversionAutocatalytic (with $t_0=1$, $A_0=1$, $k_1=1$ and $k_2$=1). The values for $m$ and $n$ are indicated in the legend.
 ---
 References:  
@@ -617,7 +617,7 @@ References:
 </value>
   </data>
   <data name="Kinetics.RateOfConversionNthOrder" xml:space="preserve">
-    <value># Conversion of a reaction of n^th^ order
+    <value>##### Conversion of a reaction of n^th^ order
 
 This fit function represents the solution of the differential equation of a conversion kinetics of n^th^ order, namely:
 
@@ -653,7 +653,7 @@ The domain of the function is $-\infty \leq x \leq \infty$.
 
 
 ^^^
-![](res:Altaxo.Calc.FitFunctions.Kinetics.RateOfConversionNthOrder.Fig1.png)
+![](res:Altaxo.Calc.FitFunctions.Kinetics.RateOfConversionNthOrder.Fig1.png){width=15cm}  
 ^^^ Fig. 1: RateOfConversionNthOrder fit functions (with $t_0=1$, $A_0=1$, $k=1$). The values for $n$ are indicated in the legend.
 ---
 
@@ -663,7 +663,7 @@ The domain of the function is $-\infty \leq x \leq \infty$.
 </value>
   </data>
   <data name="Materials.ArrheniusLawRate" xml:space="preserve">
-    <value># Arrhenius law (rate)
+    <value>##### Arrhenius law (rate)
 
 This Arrhenius law describes the temperature dependence of e.g. reaction rates, typical frequencies, e.g. quantities that increase with increasing temperature.  
 The function is defined as:
@@ -707,11 +707,11 @@ In order to get a good fit nevertheless, it is neccessary  that you logarithmize
   - kWh, calorie, calorie per mole and more..
   
 ^^^
-![](res:Altaxo.Calc.FitFunctions.Materials.ArrheniusLawRate.Fig1.png)
+![](res:Altaxo.Calc.FitFunctions.Materials.ArrheniusLawRate.Fig1.png){width=15cm}  
 ^^^ Fig. 1: Typical plot of an Arrhenius diagram (reaction rate by the inverse temperature). Here the parameters are $y_0=10^{12} s^{-1}$ and $E_a=80$ kJ/mol. Please note that if you choose the x-axis to be $ 1/T $ instead of T and the y-axis to be logarithmic, as in this example, the curve becomes a straight line. You can even include the "right" temperatures in °C by adding a second axis at the bottom, with inverse tick spacing and the transformation $x'=-273.15+x$.</value>
   </data>
   <data name="Materials.ArrheniusLawTime" xml:space="preserve">
-    <value># Arrhenius law (time)
+    <value>##### Arrhenius law (time)
 
 This Arrhenius law describes the temperature dependence of e.g. relaxation or retardation times, or viscosities, e.g. quantities that decrease with increasing temperature.  
 The function is defined as:
@@ -755,12 +755,12 @@ In order to get a good fit nevertheless, it is neccessary  that you logarithmize
   - kWh, calorie, calorie per mole and more..
   
 ^^^
-![](res:Altaxo.Calc.FitFunctions.Materials.ArrheniusLawTime.Fig1.png)
+![](res:Altaxo.Calc.FitFunctions.Materials.ArrheniusLawTime.Fig1.png){width=15cm}  
 ^^^ Fig. 1: Typical plot of an Arrhenius diagram (viscosity by the inverse temperature). Here the parameters are $y_0=10^{-10}$ and $E_a=80$ kJ/mol. Please note that if you choose the x-axis to be $ 1/T $ instead of T and the y-axis to be logarithmic, as in this example, the curve becomes a straight line. You can even include the "right" temperatures in °C by adding a second axis at the bottom, with inverse tick spacing and the transformation $x'=-273.15+x$.
 ---</value>
   </data>
   <data name="Materials.VogelFulcherLawRate" xml:space="preserve">
-    <value># Vogel-Fulcher law (rate, mobility)
+    <value>##### Vogel-Fulcher law (rate, mobility)
 
 The Vogel-Fulcher law describes the dependence of reaction rates, mobilities, viscosities and relaxation times on the temperature for materials like glasses and polymers for temperatures in the vicinity of the glass transition temperature and in any case above the so-called Vogel temperature $T_0$.
 
@@ -801,19 +801,19 @@ In order to get a good fit nevertheless, it is necessary  that you logarithmize 
   - kWh, calorie, calorie per mole and more..
   
 ^^^
-![](res:Altaxo.Calc.FitFunctions.Materials.VogelFulcherLawRate.Fig2.png)
+![](res:Altaxo.Calc.FitFunctions.Materials.VogelFulcherLawRate.Fig2.png){width=15cm}  
 ^^^ Fig. 1: Vogel-Fulcher law (e.g. reaction rate by temperature). Here the parameters are $y_0=10^{10}$, $T_0$=120°C and $B$=1000 K.
 
   
   
 ^^^
-![](res:Altaxo.Calc.FitFunctions.Materials.VogelFulcherLawRate.Fig1.png)
+![](res:Altaxo.Calc.FitFunctions.Materials.VogelFulcherLawRate.Fig1.png){width=15cm}  
 ^^^ Fig. 2: Vogel-Fulcher law plotted in an Arrhenius diagram (e.g. reaction rate versus inverse temperature). The parameters are $y_0=10^{10}$, $T_0$=120°C and $B$=1000 K.
 
 ---</value>
   </data>
   <data name="Materials.VogelFulcherLawTime" xml:space="preserve">
-    <value># Vogel-Fulcher law (relaxation times, viscosities)
+    <value>##### Vogel-Fulcher law (relaxation times, viscosities)
 
 The Vogel-Fulcher law describes the dependence of reaction rates, mobilities, viscosities and relaxation times on the temperature for materials like glasses and polymers for temperatures in the vicinity of the glass transition temperature and in any case above the so-called Vogel temperature $T_0$.
 
@@ -854,19 +854,57 @@ In order to get a good fit nevertheless, it is necessary  that you logarithmize 
   - kWh, calorie, calorie per mole and more..
   
 ^^^
-![](res:Altaxo.Calc.FitFunctions.Materials.VogelFulcherLawTime.Fig2.png)
+![](res:Altaxo.Calc.FitFunctions.Materials.VogelFulcherLawTime.Fig2.png){width=15cm}  
 ^^^ Fig. 1: Vogel-Fulcher law (e.g. relaxation time by temperature). Here the parameters are $y_0=10^{-10}$, $T_0$=120°C and $B$=1000 K.
 
   
   
 ^^^
-![](res:Altaxo.Calc.FitFunctions.Materials.VogelFulcherLawTime.Fig1.png)
+![](res:Altaxo.Calc.FitFunctions.Materials.VogelFulcherLawTime.Fig1.png){width=15cm}  
 ^^^ Fig. 2: Vogel-Fulcher law plotted in an Arrhenius diagram (e.g. relaxation time versus inverse temperature). The parameters are $y_0=10^{-10}$, $T_0$=120°C and $B$=1000 K.
 
 ---</value>
   </data>
+  <data name="Peaks.CauchyAmplitude" xml:space="preserve">
+    <value>##### CauchyAmplitude
+
+This function evaluates a sum of Cauchy (Lorentzian) terms, plus a background polynomial with one or multiple terms, according to
+
+$$
+y(x) = \frac{a_0}{1+ \left ( \frac{x-x_{c0}}{w_0} \right )^2 } + ... + \frac{a_{n-1}}{1+ \left ( \frac{x-x_{cn-1}}{w_{n-1}} \right )^2 } + b_0 + b_1 x^1 + ... + b_m x^m 
+$$
+
+in which:
+
+- $a_0 ... a_{n-1}$ are the amplitudes (heights) of the Cauchy terms
+
+- $x_{c0} ... x_{cn-1}$ are the locations of the Cauchy terms
+
+- $w_0 ... w_{n-1}$ are the half widths of half maximum (HWHM) of the Cauchy terms
+
+- $b_0 ... b_m$ are the coefficients of the background polynomial of order  $m$
+
+- $n$ is the number of Cauchy terms ($n \geq 1$)
+- $m$ is the order of the background polynomial (set $m=-1$ to disable the background polynomial)
+
+The number of Cauchy terms $n$ and the order of the background polynomial $m$ can be changed by double-clicking on the fit function. The default values are $n=1$ and $m=0$. 
+
+The domain of the function is $-\infty \leq x \leq \infty$. 
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.Peaks.CauchyAmplitude.Fig1.png){width=15cm}  
+^^^ Fig. 1: CauchyAmplitude ($n=1$, $m=0$) with $a_0=5$, $x_{c0}=7$, $w_0=3$ and $b_0=1$.
+---
+References:
+[Cauchy distribution at Wikipedia](https://en.wikipedia.org/wiki/Cauchy_distribution)
+
+
+
+
+</value>
+  </data>
   <data name="Peaks.GaussAmplitude" xml:space="preserve">
-    <value># GaussAmplitude
+    <value>##### GaussAmplitude
 
 This function evaluates a sum of Gaussian terms, plus a background polynomial with one or multiple terms, according to
 
@@ -892,7 +930,7 @@ The number of Gaussian terms $n$ and the order of the background polynomial $m$ 
 The domain of the function is $-\infty \leq x \leq \infty$. 
 
 ^^^
-![](res:Altaxo.Calc.FitFunctions.Peaks.GaussAmplitude.Fig1.png)
+![](res:Altaxo.Calc.FitFunctions.Peaks.GaussAmplitude.Fig1.png){width=15cm}  
 ^^^ Fig. 1: GaussAmplitude ($n=1$, $m=0$) with $a_0=5$, $x_{c0}=7$, $w_0=3$ and $b_0=1$.
 ---
 
@@ -901,7 +939,7 @@ The domain of the function is $-\infty \leq x \leq \infty$.
 </value>
   </data>
   <data name="Peaks.PearsonIVAmplitude" xml:space="preserve">
-    <value># PearsonIVAmplitude
+    <value>##### PearsonIVAmplitude
 
 This function evaluates a sum of PearsonIV terms, plus a background polynomial with one or multiple terms, according to
 
@@ -945,7 +983,7 @@ The number of PearsonIV terms $n$ and the order of the background polynomial $q$
 The domain of the function is $-\infty \leq x \leq \infty$. 
 
 ^^^
-![](res:Altaxo.Calc.FitFunctions.Peaks.PearsonIVAmplitude.Fig1.png)
+![](res:Altaxo.Calc.FitFunctions.Peaks.PearsonIVAmplitude.Fig1.png){width=15cm}  
 ^^^ Fig. 1: PearsonIV ($n=1$, $q=0$) with $a=4$, $x_c=7$, $w=3$, $m=2$, $b_0=1$, and $\nu=0$ (green) or  $\nu=5$ (orange), respectively. Note that in the limit $\nu=0$ the PearsonVII function is returned.
 ---
 
@@ -956,8 +994,64 @@ Literature:
 
 </value>
   </data>
+  <data name="Peaks.PearsonIVAmplitudeParametrizationHPW" xml:space="preserve">
+    <value>##### PearsonIVAmplitude (Parametrization HPW)
+
+This function evaluates a sum of PearsonIV terms, plus a background polynomial with one or multiple terms, according to
+
+$$
+y(x) = a_0 \times PearsonIV \left ( x-x_{c0}, w_0, m_0, \nu_0 \right ) + ... + a_{n-1} \times PearsonIV \left ( x-x_{c{n-1}}, w_{n-1}, m_{n-1}, \nu_{n-1} \right ) + b_0 + b_1 x^1 + ... + b_q x^q 
+$$
+
+in which:
+
+- $a_0 ... a_{n-1}$ are the amplitudes (height of the maxima) of the PearsonIV terms
+
+- $x_{c0} ... x_{cn-1}$ are the locations of the PearsonIV terms
+
+- $w_0 ... w_{n-1}$ are the widths of the PearsonIV terms
+
+- $m_0 ... m_{n-1}$ are the exponents of the PearsonIV terms ($m&gt;0$)
+
+- $\nu_0 ... \nu_{n-1}$ are the skewness parameters of the PearsonIV terms
+
+- $b_0 ... b_q$ are the coefficients of the background polynomial of order  $q$
+
+- $n$ is the number of PearsonIV terms ($n \geq 1$)
+- $q$ is the order of the background polynomial (set $q=-1$ to disable the background polynomial)
+
+
+The original PearsonIV function was modified, such as that the location parameter $x_c$ describe the location of the maximal value of the function, the amplitude parameter is the maximum y-value of the function, and the width parameter $w$ is the approximate HWHM of the peak:
+
+[Original PearsonIV function](https://en.wikipedia.org/wiki/Pearson_distribution):
+$$
+PearsonIV_{Original}(x, x_c, w, m, n) = (1+z^2)^{-m} \exp (- n \arctan(z)) ; z = \frac{x-x_c}{w}
+$$
+
+Modified version used in Altaxo:
+
+$$
+PearsonIV(x, x_c, w, m, \nu) = \left ( \frac{1+z^2}{1+\nu^2} \right )^{-m} \exp (- 2 m \nu [\arctan(z)+\arctan(\nu)]) ; z = \sqrt{(2^{1/m}-1)(1+\nu^2)} \left ( \frac{x-x_c}{w} \right ) - v 
+$$
+
+The number of PearsonIV terms $n$ and the order of the background polynomial $q$ can be changed by double-clicking on the fit function. The default values are $n=1$ and $q=-1$. 
+
+The domain of the function is $-\infty \leq x \leq \infty$. 
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.Peaks.PearsonIVAmplitudeParametrizationHPW.Fig1.png){width=15cm}  
+^^^ Fig. 1: PearsonIVParametrizationHPW ($n=1$, $q=0$) with $a=4$, $x_c=7$, $w=3$, $m=2$, $b_0=1$, and $\nu=0$ (green) or  $\nu=5$ (orange), respectively. Note that in the limit $\nu=0$ the PearsonVII function (but in another parametrization) is returned.
+---
+
+Literature:
+
+[1] Description of the Pearson distribution family in [Wikipedia](https://en.wikipedia.org/wiki/Pearson_distribution)
+
+
+</value>
+  </data>
   <data name="Peaks.PearsonVIIAmplitude" xml:space="preserve">
-    <value># PearsonVIIAmplitude
+    <value>##### PearsonVIIAmplitude
 
 This function evaluates a sum of PearsonVII terms, plus a background polynomial with one or multiple terms, according to
 
@@ -992,7 +1086,7 @@ The number of PearsonVII terms $n$ and the order of the background polynomial $q
 The domain of the function is $-\infty \leq x \leq \infty$. 
 
 ^^^
-![](res:Altaxo.Calc.FitFunctions.Peaks.PearsonVIIAmplitude.Fig1.png)
+![](res:Altaxo.Calc.FitFunctions.Peaks.PearsonVIIAmplitude.Fig1.png){width=15cm}  
 ^^^ Fig. 1: PearsonVII ($n=1$, $q=0$) with $a=4$, $x_c=7$, $w=3$, and $m=2$ (green) or  $m=5$ (orange), respectively. Note that in the limit $m=1$ this is the Cauchy function, and in the limit $m \rightarrow \infty$ a Gaussian.
 ---
 
@@ -1003,46 +1097,62 @@ Literature:
 
 </value>
   </data>
-  <data name="Probability.CauchyAmplitude" xml:space="preserve">
-    <value># CauchyAmplitude
+  <data name="Peaks.PseudoVoigtAmplitude" xml:space="preserve">
+    <value>##### PseudoVoigt (Amplitude)
 
-This function evaluates a sum of Cauchy (Lorentzian) terms, plus a background polynomial with one or multiple terms, according to
+This function evaluates a sum of pseudo Voigt terms, plus a background polynomial with one or multiple terms, according to
 
 $$
-y(x) = \frac{a_0}{1+ \left ( \frac{x-x_{c0}}{w_0} \right )^2 } + ... + \frac{a_{n-1}}{1+ \left ( \frac{x-x_{cn-1}}{w_{n-1}} \right )^2 } + b_0 + b_1 x^1 + ... + b_m x^m 
+y(x) = a_0 \times PSVoigt \left ( x-x_{c0}, w_0, \nu_0 \right ) + ... + a_{n-1} \times PSVoigt \left ( x-x_{c{n-1}}, w_{n-1}, \nu_{n-1} \right ) + b_0 + b_1 x^1 + ... + b_m x^m 
 $$
 
 in which:
 
-- $a_0 ... a_{n-1}$ are the amplitudes (heights) of the Cauchy terms
+- $a_0 ... A_{n-1}$ are the heights of the pseudo Voigt terms
 
-- $x_{c0} ... x_{cn-1}$ are the locations of the Cauchy terms
+- $x_{c0} ... x_{cn-1}$ are the locations of the pseudo Voigt terms
 
-- $w_0 ... w_{n-1}$ are the half widths of half maximum (HWHM) of the Cauchy terms
+- $w_0 ... w_{n-1}$ are the half-width-half-maximum values (HWHM) of the pseudo Voigt terms
+
+- $\nu_0 ... \nu_{n-1}$ are the mixing parameters between the Lorentzian part and the Gaussian part
 
 - $b_0 ... b_m$ are the coefficients of the background polynomial of order  $m$
 
-- $n$ is the number of Cauchy terms ($n \geq 1$)
+- $n$ is the number of Voigt terms ($n \geq 1$)
 - $m$ is the order of the background polynomial (set $m=-1$ to disable the background polynomial)
 
-The number of Cauchy terms $n$ and the order of the background polynomial $m$ can be changed by double-clicking on the fit function. The default values are $n=1$ and $m=0$. 
+The pseudo Voigt function is an additive combination of a Gaussian function and a Lorentzian function:
+
+Voigt:
+$$
+PSVoigt(x, x_c, w, \nu) = \nu L(x, x_c, w) + (1-\nu) G(x, x_c, w)
+$$
+
+Gauss:
+
+$$
+G(x, x_c, w) = \exp \left ( - \ln(2) \frac{(x-x_c)^2}{w^2} \right ) 
+$$
+
+Lorentzian:
+$$
+L(x, x_c, w) = \frac{1}{1+(\frac{x-x_c}{w})^2}
+$$
+
+The number of pseudo Voigt terms $n$ and the order of the background polynomial $m$ can be changed by double-clicking on the fit function. The default values are $n=1$ and $m=-1$. 
 
 The domain of the function is $-\infty \leq x \leq \infty$. 
 
 ^^^
-![](res:Altaxo.Calc.FitFunctions.Probability.CauchyAmplitude.Fig1.png)
-^^^ Fig. 1: CauchyAmplitude ($n=1$, $m=0$) with $a_0=5$, $x_{c0}=7$, $w_0=3$ and $b_0=1$.
+![](res:Altaxo.Calc.FitFunctions.Peaks.PseudoVoigtAmplitude.Fig1.png){width=15cm}  
+^^^ Fig. 1: PseudoVoigtAmplitude ($n=1$, $m=0$) with $a_0=5$, $x_{c0}=7$, $w_0=3$, $b_0=1$, and $\nu_0=2$ (green) or  $\nu_0=1$ (orange), respectively. Note that in the limit $\nu_0=0$ the Gauss function is returned, in the limit $\nu_0=1$ the Lorentzian function.
 ---
-References:
-[Cauchy distribution at Wikipedia](https://en.wikipedia.org/wiki/Cauchy_distribution)
-
-
 
 
 </value>
   </data>
   <data name="Probability.CauchyArea" xml:space="preserve">
-    <value># CauchyArea
+    <value>##### CauchyArea
 
 This function evaluates a sum of Cauchy (Lorentzian) terms, plus a background polynomial with one or multiple terms, according to
 
@@ -1069,7 +1179,7 @@ The number of Cauchy terms $n$ and the order of the background polynomial $m$ ca
 The domain of the function is $-\infty \leq x \leq \infty$. 
 
 ^^^
-![](res:Altaxo.Calc.FitFunctions.Probability.CauchyArea.Fig1.png)
+![](res:Altaxo.Calc.FitFunctions.Probability.CauchyArea.Fig1.png){width=15cm}  
 ^^^ Fig. 1: CauchyArea ($n=1$, $m=0$) with $A_0=40$, $x_{c0}=7$, $w_0=3$ and $b_0=1$.
 ---
 References:
@@ -1078,7 +1188,7 @@ References:
 </value>
   </data>
   <data name="Probability.GaussArea" xml:space="preserve">
-    <value># GaussArea
+    <value>##### GaussArea
 
 This function evaluates a sum of Gaussian terms, plus a background polynomial with one or multiple terms, according to
 
@@ -1104,7 +1214,7 @@ The number of Gaussian terms $n$ and the order of the background polynomial $m$ 
 The domain of the function is $-\infty \leq x \leq \infty$. 
 
 ^^^
-![](res:Altaxo.Calc.FitFunctions.Probability.GaussArea.Fig1.png)
+![](res:Altaxo.Calc.FitFunctions.Probability.GaussArea.Fig1.png){width=15cm}  
 ^^^ Fig. 1: GaussArea ($n=1$, $m=0$) with $A_0=40$, $x_{c0}=7$, $w_0=3$ and $b_0=1$.
 ---
 
@@ -1112,7 +1222,7 @@ The domain of the function is $-\infty \leq x \leq \infty$.
 </value>
   </data>
   <data name="Probability.PearsonIVArea" xml:space="preserve">
-    <value># PearsonIVArea
+    <value>##### PearsonIVArea
 
 This function evaluates a sum of PearsonIV terms, plus a background polynomial with one or multiple terms, according to
 
@@ -1159,7 +1269,7 @@ The number of PearsonIV terms $n$ and the order of the background polynomial $q$
 The domain of the function is $-\infty \leq x \leq \infty$. 
 
 ^^^
-![](res:Altaxo.Calc.FitFunctions.Probability.PearsonIVArea.Fig1.png)
+![](res:Altaxo.Calc.FitFunctions.Probability.PearsonIVArea.Fig1.png){width=15cm}  
 ^^^ Fig. 1: PearsonIVArea ($n=1$, $q=0$) with $A=20$, $x_c=7$, $w=3$, $m=2$, $b_0=1$, and $\nu=0$ (green) or  $\nu=5$ (orange), respectively. Note that despite the fact that $x_c=7$ is equal for both functions, the locations of the maxima are quite different. Only if $\nu=0$, the location of the maximum function value is  $x_c$.
 ---
 
@@ -1171,7 +1281,7 @@ Literature:
 </value>
   </data>
   <data name="Probability.VoigtArea" xml:space="preserve">
-    <value># VoigtArea
+    <value>##### VoigtArea
 
 This function evaluates a sum of Voigt terms, plus a background polynomial with one or multiple terms, according to
 
@@ -1217,15 +1327,78 @@ The number of Voigt terms $n$ and the order of the background polynomial $m$ can
 The domain of the function is $-\infty \leq x \leq \infty$. 
 
 ^^^
-![](res:Altaxo.Calc.FitFunctions.Probability.VoigtArea.Fig1.png)
+![](res:Altaxo.Calc.FitFunctions.Probability.VoigtArea.Fig1.png){width=15cm}  
 ^^^ Fig. 1: VoigtArea ($n=1$, $m=0$) with $A_0=40$, $x_{c0}=7$, $w_0=3$, $b_0=1$, and $\gamma_0=2$ (green) or  $\gamma_0=0$ (orange), respectively. Note that in the limit $\gamma_0=0$ the Gauss function is returned.
 ---
 
 
 </value>
   </data>
+  <data name="Probability.VoigtAreaParametrizationNu" xml:space="preserve">
+    <value>##### VoigtArea (Parametrization Nu)
+
+This function evaluates a sum of Voigt terms, plus a background polynomial with one or multiple terms, according to
+
+$$
+y(x) = A_0 \times Voigt \left ( x-x_{c0}, w_0, \nu_0 \right ) + ... + A_{n-1} \times Voigt \left ( x-x_{c{n-1}}, w_{n-1}, \nu_{n-1} \right ) + b_0 + b_1 x^1 + ... + b_m x^m 
+$$
+
+in which:
+
+- $A_0 ... A_{n-1}$ are the areas under the Voigt terms
+
+- $x_{c0} ... x_{cn-1}$ are the locations of the Voigt terms
+
+- $w_0 ... w_{n-1}$ are the approximate half-width-half-maximum (HWHM) values of the peaks
+
+- $\nu_0 ... \nu_{n-1}$ are the mixing parameters (range: 0..1) that determine the Lorentzian'ness or Gauss'ness of the terms
+
+- $b_0 ... b_m$ are the coefficients of the background polynomial of order  $m$
+
+- $n$ is the number of Voigt terms ($n \geq 1$)
+- $m$ is the order of the background polynomial (set $m=-1$ to disable the background polynomial)
+
+The original definition of the Voigt function is a convolution of a Gaussian function and a Lorentzian function:
+
+Voigt:
+$$
+Voigt(x, \sigma, \gamma) = \int G(\tau)L(x-\tau) d\tau
+$$
+
+Gauss:
+
+$$
+G(x,w) = \frac{1}{w \sqrt{2 \pi}} \exp \left ( -\frac{x^2}{2 \sigma^2} \right ) 
+$$
+
+Lorentzian:
+$$
+L(x, \gamma) = \frac{\gamma}{\pi(x^2 + \gamma^2)}
+$$
+
+Here, another parametrization with the two parameters $w$ and $\nu$ is used. The new parameters are related to the original parameters $\sigma, \gamma$ by:
+
+$$
+\sigma = w \sqrt{\frac{\nu}{\ln(4)}}; \gamma = w(1-\nu)
+$$
+
+Parameter $w$ is the approximate HWHM of the peak, and parameter $\nu$ ($\nu=[0..1]$) determines the ratio between $\sigma$ and $\gamma$, i.e. whether the peak is more Lorentzian like ($\nu=0$) or more Gauss like ($\nu=1$).
+This parametrization is preferred over the original Voigt function if fitting with parameter constraints is performed.
+
+The number of Voigt terms $n$ and the order of the background polynomial $m$ can be changed by double-clicking on the fit function. The default values are $n=1$ and $m=-1$. 
+
+The domain of the function is $-\infty \leq x \leq \infty$. 
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.Probability.VoigtAreaParametrizationNu.Fig1.png){width=15cm}  
+^^^ Fig. 1: VoigtAreaParametrizationNu ($n=1$, $m=0$) with $A_0=40$, $x_{c0}=7$, $w_0=3$, $b_0=1$, and $\nu_0=0$ (green) or  $\nu_0=1$ (orange), respectively. Note that in the limit $\nu_0=0$ the peak is a Lorentzian, in the limit of $\nu_0=1$ the peak is a Gaussian.
+---
+
+
+</value>
+  </data>
   <data name="Relaxation.Modulus.HavriliakNegamiModulusRelaxationFrequency" xml:space="preserve">
-    <value># Havriliak-Negami modulus relaxation (circular frequency)
+    <value>###### Havriliak-Negami modulus relaxation (circular frequency)
 
 This function models the complex dynamic modulus in dependence on the frequency as:
 
@@ -1254,11 +1427,11 @@ The parameters are:
 &gt; Since in most cases $M_0$ and $M_{\infty}$ differ by several orders of magnitude, your fit function will also cover several orders of magnitude. This will result in a poor fit of the low modulus data. To avoid this behavior, you should use a NaturalLogarithmTransformation for both your data and for the fit function's dependent variables.
 
 ^^^
-![](res:Altaxo.Calc.FitFunctions.Relaxation.Modulus.HavriliakNegamiModulusRelaxationFrequency.Fig2.png)
+![](res:Altaxo.Calc.FitFunctions.Relaxation.Modulus.HavriliakNegamiModulusRelaxationFrequency.Fig2.png){width=15cm}  
 ^^^ Fig. 1: Havriliak-Negami (with $M_0=10^6$, $M_{\infty}=10^9$, $\tau=1$ and $\eta=10^{33}$). The values for $\alpha$ and $\gamma$ are indicated in the legend.
 
 ^^^
-![](res:Altaxo.Calc.FitFunctions.Relaxation.Modulus.HavriliakNegamiModulusRelaxationFrequency.Fig1.png)
+![](res:Altaxo.Calc.FitFunctions.Relaxation.Modulus.HavriliakNegamiModulusRelaxationFrequency.Fig1.png){width=15cm}  
 ^^^ Fig. 2: Comparison of Havriliak-Negami (with $M_0=10^6$, $M_{\infty}=10^9$, $\tau=1$, $\alpha=1$ and $\gamma=1$) without and with flow term. The values for $\eta$ are indicated in the legend.
 
 ---
@@ -1267,7 +1440,7 @@ References:
 </value>
   </data>
   <data name="Relaxation.Modulus.HavriliakNegamiModulusRelaxationOmega" xml:space="preserve">
-    <value># Havriliak-Negami modulus relaxation (circular frequency)
+    <value>###### Havriliak-Negami modulus relaxation (circular frequency)
 
 This function models the complex dynamic modulus in dependence on the circular frequency as:
 
@@ -1296,11 +1469,11 @@ The parameters are:
 &gt; Since in most cases $M_0$ and $M_{\infty}$ differ by several orders of magnitude, your fit function will also cover several orders of magnitude. This will result in a poor fit of the low modulus data. To avoid this behavior, you should use a NaturalLogarithmTransformation for both your data and for the fit function's dependent variables.
 
 ^^^
-![](res:Altaxo.Calc.FitFunctions.Relaxation.Modulus.HavriliakNegamiModulusRelaxationOmega.Fig2.png)
+![](res:Altaxo.Calc.FitFunctions.Relaxation.Modulus.HavriliakNegamiModulusRelaxationOmega.Fig2.png){width=15cm}  
 ^^^ Fig. 1: Havriliak-Negami (with $M_0=10^6$, $M_{\infty}=10^9$, $\tau=1$ and $\eta=10^{33}$). The values for $\alpha$ and $\gamma$ are indicated in the legend.
 
 ^^^
-![](res:Altaxo.Calc.FitFunctions.Relaxation.Modulus.HavriliakNegamiModulusRelaxationOmega.Fig1.png)
+![](res:Altaxo.Calc.FitFunctions.Relaxation.Modulus.HavriliakNegamiModulusRelaxationOmega.Fig1.png){width=15cm}  
 ^^^ Fig. 2: Comparison of Havriliak-Negami (with $M_0=10^6$, $M_{\infty}=10^9$, $\tau=1$, $\alpha=1$ and $\gamma=1$) without and with flow term. The values for $\eta$ are indicated in the legend.
 
 ---
@@ -1309,7 +1482,7 @@ References:
 </value>
   </data>
   <data name="Relaxation.Modulus.KohlrauschModulusRelaxationFrequency" xml:space="preserve">
-    <value># Kohlrausch modulus relaxation (frequency)
+    <value>###### Kohlrausch modulus relaxation (frequency)
 
 This function models the complex dynamic modulus in dependence on the  frequency as:
 
@@ -1374,11 +1547,11 @@ If false, the original values are used.
 
 
 ^^^
-![](res:Altaxo.Calc.FitFunctions.Relaxation.Modulus.KohlrauschModulusRelaxationFrequency.Fig2.png)
+![](res:Altaxo.Calc.FitFunctions.Relaxation.Modulus.KohlrauschModulusRelaxationFrequency.Fig2.png){width=15cm}  
 ^^^ Fig. 1: Kohlrausch fit functions (with $M_0=10^6$, $M_{\infty}=10^9$, $\tau=1$ and $\eta=10^{33}$). The values for $\beta$ are indicated in the legend.
 
 ^^^
-![](res:Altaxo.Calc.FitFunctions.Relaxation.Modulus.KohlrauschModulusRelaxationFrequency.Fig1.png)
+![](res:Altaxo.Calc.FitFunctions.Relaxation.Modulus.KohlrauschModulusRelaxationFrequency.Fig1.png){width=15cm}  
 ^^^ Fig. 2: Comparison of Kohlrausch fit functions (with $M_0=10^6$, $M_{\infty}=10^9$, $\tau=1$ and $\beta=1$) without and with flow term. The values for $\eta$ are indicated in the legend.
 
 ---
@@ -1389,7 +1562,7 @@ References:
 </value>
   </data>
   <data name="Relaxation.Modulus.KohlrauschModulusRelaxationOmega" xml:space="preserve">
-    <value># Kohlrausch modulus relaxation (circular frequency)
+    <value>###### Kohlrausch modulus relaxation (circular frequency)
 
 This function models the complex dynamic modulus in dependence on the circular frequency as:
 
@@ -1454,11 +1627,11 @@ If false, the original values are used.
 
 
 ^^^
-![](res:Altaxo.Calc.FitFunctions.Relaxation.Modulus.KohlrauschModulusRelaxationOmega.Fig2.png)
+![](res:Altaxo.Calc.FitFunctions.Relaxation.Modulus.KohlrauschModulusRelaxationOmega.Fig2.png){width=15cm}  
 ^^^ Fig. 1: Kohlrausch fit functions (with $M_0=10^6$, $M_{\infty}=10^9$, $\tau=1$ and $\eta=10^{33}$). The values for $\beta$ are indicated in the legend.
 
 ^^^
-![](res:Altaxo.Calc.FitFunctions.Relaxation.Modulus.KohlrauschModulusRelaxationOmega.Fig1.png)
+![](res:Altaxo.Calc.FitFunctions.Relaxation.Modulus.KohlrauschModulusRelaxationOmega.Fig1.png){width=15cm}  
 ^^^ Fig. 2: Comparison of Kohlrausch fit functions (with $M_0=10^6$, $M_{\infty}=10^9$, $\tau=1$ and $\beta=1$) without and with flow term. The values for $\eta$ are indicated in the legend.
 
 ---
@@ -1469,7 +1642,7 @@ References:
 </value>
   </data>
   <data name="Relaxation.Modulus.Lg10HavriliakNegamiModulusRelaxationFrequency" xml:space="preserve">
-    <value># Havriliak-Negami modulus relaxation (frequency)
+    <value>###### Havriliak-Negami modulus relaxation (frequency)
 
 This function models the complex dynamic modulus in dependence on the frequency as:
 
@@ -1498,11 +1671,11 @@ The parameters are:
 &gt; If your data are not logarithmized already, please use a DecadicLogarithmTransformation for your data.
 
 ^^^
-![](res:Altaxo.Calc.FitFunctions.Relaxation.Modulus.Lg10HavriliakNegamiModulusRelaxationFrequency.Fig2.png)
+![](res:Altaxo.Calc.FitFunctions.Relaxation.Modulus.Lg10HavriliakNegamiModulusRelaxationFrequency.Fig2.png){width=15cm}  
 ^^^ Fig. 1: Havriliak-Negami (with $M_0=10^6$, $M_{\infty}=10^9$, $\tau=1$ and $\eta=10^{33}$). The values for $\alpha$ and $\gamma$ are indicated in the legend.
 
 ^^^
-![](res:Altaxo.Calc.FitFunctions.Relaxation.Modulus.Lg10HavriliakNegamiModulusRelaxationFrequency.Fig1.png)
+![](res:Altaxo.Calc.FitFunctions.Relaxation.Modulus.Lg10HavriliakNegamiModulusRelaxationFrequency.Fig1.png){width=15cm}  
 ^^^ Fig. 2: Comparison of Havriliak-Negami (with $M_0=10^6$, $M_{\infty}=10^9$, $\tau=1$, $\alpha=1$ and $\gamma=1$) without and with flow term. The values for $\eta$ are indicated in the legend.
 
 ---
@@ -1511,7 +1684,7 @@ References:
 </value>
   </data>
   <data name="Relaxation.Modulus.Lg10HavriliakNegamiModulusRelaxationOmega" xml:space="preserve">
-    <value># Havriliak-Negami modulus relaxation (circular frequency)
+    <value>###### Havriliak-Negami modulus relaxation (circular frequency)
 
 This function models the complex dynamic modulus in dependence on the circular frequency as:
 
@@ -1540,11 +1713,11 @@ The parameters are:
 &gt; If your data are not logarithmized already, please use a DecadicLogarithmTransformation for your data.
 
 ^^^
-![](res:Altaxo.Calc.FitFunctions.Relaxation.Modulus.Lg10HavriliakNegamiModulusRelaxationOmega.Fig2.png)
+![](res:Altaxo.Calc.FitFunctions.Relaxation.Modulus.Lg10HavriliakNegamiModulusRelaxationOmega.Fig2.png){width=15cm}  
 ^^^ Fig. 1: Havriliak-Negami (with $M_0=10^6$, $M_{\infty}=10^9$, $\tau=1$ and $\eta=10^{33}$). The values for $\alpha$ and $\gamma$ are indicated in the legend.
 
 ^^^
-![](res:Altaxo.Calc.FitFunctions.Relaxation.Modulus.Lg10HavriliakNegamiModulusRelaxationOmega.Fig1.png)
+![](res:Altaxo.Calc.FitFunctions.Relaxation.Modulus.Lg10HavriliakNegamiModulusRelaxationOmega.Fig1.png){width=15cm}  
 ^^^ Fig. 2: Comparison of Havriliak-Negami (with $M_0=10^6$, $M_{\infty}=10^9$, $\tau=1$, $\alpha=1$ and $\gamma=1$) without and with flow term. The values for $\eta$ are indicated in the legend.
 
 ---
@@ -1553,7 +1726,7 @@ References:
 </value>
   </data>
   <data name="Relaxation.Modulus.Lg10KohlrauschModulusRelaxationFrequency" xml:space="preserve">
-    <value># Kohlrausch modulus relaxation (frequency)
+    <value>###### Kohlrausch modulus relaxation (frequency)
 
 This function models the complex dynamic modulus in dependence on the  frequency as:
 
@@ -1627,11 +1800,11 @@ If false, the original values are used.
 
 
 ^^^
-![](res:Altaxo.Calc.FitFunctions.Relaxation.Modulus.Lg10KohlrauschModulusRelaxationFrequency.Fig2.png)
+![](res:Altaxo.Calc.FitFunctions.Relaxation.Modulus.Lg10KohlrauschModulusRelaxationFrequency.Fig2.png){width=15cm}  
 ^^^ Fig. 1: Kohlrausch fit functions (with $M_0=10^6$, $M_{\infty}=10^9$, $\tau=1$ and $\eta=10^{33}$). The values for $\beta$ are indicated in the legend.
 
 ^^^
-![](res:Altaxo.Calc.FitFunctions.Relaxation.Modulus.Lg10KohlrauschModulusRelaxationFrequency.Fig1.png)
+![](res:Altaxo.Calc.FitFunctions.Relaxation.Modulus.Lg10KohlrauschModulusRelaxationFrequency.Fig1.png){width=15cm}  
 ^^^ Fig. 2: Comparison of Kohlrausch fit functions (with $M_0=10^6$, $M_{\infty}=10^9$, $\tau=1$ and $\beta=1$) without and with flow term. The values for $\eta$ are indicated in the legend.
 
 ---
@@ -1642,7 +1815,7 @@ References:
 </value>
   </data>
   <data name="Relaxation.Modulus.Lg10KohlrauschModulusRelaxationOmega" xml:space="preserve">
-    <value># Kohlrausch modulus relaxation (circular frequency)
+    <value>###### Kohlrausch modulus relaxation (circular frequency)
 
 This function models the complex dynamic modulus in dependence on the circular frequency as:
 
@@ -1716,11 +1889,11 @@ If false, the original values are used.
 
 
 ^^^
-![](res:Altaxo.Calc.FitFunctions.Relaxation.Modulus.Lg10KohlrauschModulusRelaxationOmega.Fig2.png)
+![](res:Altaxo.Calc.FitFunctions.Relaxation.Modulus.Lg10KohlrauschModulusRelaxationOmega.Fig2.png){width=15cm}  
 ^^^ Fig. 1: Kohlrausch fit functions (with $M_0=10^6$, $M_{\infty}=10^9$, $\tau=1$ and $\eta=10^{33}$). The values for $\beta$ are indicated in the legend.
 
 ^^^
-![](res:Altaxo.Calc.FitFunctions.Relaxation.Modulus.Lg10KohlrauschModulusRelaxationOmega.Fig1.png)
+![](res:Altaxo.Calc.FitFunctions.Relaxation.Modulus.Lg10KohlrauschModulusRelaxationOmega.Fig1.png){width=15cm}  
 ^^^ Fig. 2: Comparison of Kohlrausch fit functions (with $M_0=10^6$, $M_{\infty}=10^9$, $\tau=1$ and $\beta=1$) without and with flow term. The values for $\eta$ are indicated in the legend.
 
 ---
@@ -1731,7 +1904,7 @@ References:
 </value>
   </data>
   <data name="Retardation.Dielectrics.HavriliakNegamiComplexFrequency" xml:space="preserve">
-    <value># Havriliak-Negami retardation of the relative dielectric permittivity (frequency)
+    <value>###### Havriliak-Negami retardation of the relative dielectric permittivity (frequency)
 
 This function models the retardation of the relative dielectric permittivity in dependence on the frequency $f$, including a term for the DC electric conductivity:
 
@@ -1795,11 +1968,11 @@ If false, the original values are used.
 
 
 ^^^
-![](res:Altaxo.Calc.FitFunctions.Retardation.Dielectrics.HavriliakNegamiComplexFrequency.Fig2.png)
+![](res:Altaxo.Calc.FitFunctions.Retardation.Dielectrics.HavriliakNegamiComplexFrequency.Fig2.png){width=15cm}  
 ^^^ Fig. 1: Havriliak-Negami (with $\varepsilon_{\infty}=2$, $\Delta \varepsilon=10$, $\tau=1$ and $\sigma=0$). The values for $\alpha$ and $\gamma$ are indicated in the legend.
 
 ^^^
-![](res:Altaxo.Calc.FitFunctions.Retardation.Dielectrics.HavriliakNegamiComplexFrequency.Fig1.png)
+![](res:Altaxo.Calc.FitFunctions.Retardation.Dielectrics.HavriliakNegamiComplexFrequency.Fig1.png){width=15cm}  
 ^^^ Fig. 2: Comparison of Havriliak-Negami (with $\varepsilon_{\infty}=2$, $\Delta \varepsilon=10$, $\tau=1$, $\alpha=1$ and $\gamma=1$) without and with DC conductivity. The values for $\sigma_{DC}$ are indicated in the legend.
 
 ---
@@ -1808,7 +1981,7 @@ References:
 </value>
   </data>
   <data name="Retardation.Dielectrics.HavriliakNegamiComplexOmega" xml:space="preserve">
-    <value># Havriliak-Negami retardation of the relative dielectric permittivity (circular frequency)
+    <value>###### Havriliak-Negami retardation of the relative dielectric permittivity (circular frequency)
 
 This function models the retardation of the relative dielectric permittivity in dependence on the circular frequency $\omega$, including a term for the DC electric conductivity:
 
@@ -1872,11 +2045,11 @@ If false, the original values are used.
 
 
 ^^^
-![](res:Altaxo.Calc.FitFunctions.Retardation.Dielectrics.HavriliakNegamiComplexOmega.Fig2.png)
+![](res:Altaxo.Calc.FitFunctions.Retardation.Dielectrics.HavriliakNegamiComplexOmega.Fig2.png){width=15cm}  
 ^^^ Fig. 1: Havriliak-Negami (with $\varepsilon_{\infty}=2$, $\Delta \varepsilon=10$, $\tau=1$ and $\sigma=0$). The values for $\alpha$ and $\gamma$ are indicated in the legend.
 
 ^^^
-![](res:Altaxo.Calc.FitFunctions.Retardation.Dielectrics.HavriliakNegamiComplexOmega.Fig1.png)
+![](res:Altaxo.Calc.FitFunctions.Retardation.Dielectrics.HavriliakNegamiComplexOmega.Fig1.png){width=15cm}  
 ^^^ Fig. 2: Comparison of Havriliak-Negami (with $\varepsilon_{\infty}=2$, $\Delta \varepsilon=10$, $\tau=1$, $\alpha=1$ and $\gamma=1$) without and with DC conductivity. The values for $\sigma_{DC}$ are indicated in the legend.
 
 ---
@@ -1885,7 +2058,7 @@ References:
 </value>
   </data>
   <data name="Retardation.Dielectrics.KohlrauschComplexFrequency" xml:space="preserve">
-    <value># Kohlrausch retardation of the relative dielectric permittivity (frequency)
+    <value>###### Kohlrausch retardation of the relative dielectric permittivity (frequency)
 
 This function models the retardation of the relative dielectric permittivity in dependence on the frequency $f$, including a term for the DC electric conductivity:
 
@@ -1955,11 +2128,11 @@ If false, the original values are used.
 
 
 ^^^
-![](res:Altaxo.Calc.FitFunctions.Retardation.Dielectrics.KohlrauschComplexFrequency.Fig2.png)
+![](res:Altaxo.Calc.FitFunctions.Retardation.Dielectrics.KohlrauschComplexFrequency.Fig2.png){width=15cm}  
 ^^^ Fig. 1: Kohlrausch susceptibility fit functions (with $\varepsilon_{\infty}=2$, $\Delta \varepsilon=10$, $\tau=1$ and $\sigma_{DC}=0$). The values for $\beta$ are indicated in the legend.
 
 ^^^
-![](res:Altaxo.Calc.FitFunctions.Retardation.Dielectrics.KohlrauschComplexFrequency.Fig1.png)
+![](res:Altaxo.Calc.FitFunctions.Retardation.Dielectrics.KohlrauschComplexFrequency.Fig1.png){width=15cm}  
 ^^^ Fig. 2: Comparison of Kohlrausch susceptibility fit functions (with $\varepsilon_{\infty}=2$, $\Delta \varepsilon=10$, $\tau=1$ and $\beta=1$) without and with DC conductivity. The values for $\sigma_{DC}$ are indicated in the legend.
 
 ---
@@ -1969,7 +2142,7 @@ References:
 </value>
   </data>
   <data name="Retardation.Dielectrics.KohlrauschComplexOmega" xml:space="preserve">
-    <value># Kohlrausch retardation of the relative dielectric permittivity (circular frequency)
+    <value>###### Kohlrausch retardation of the relative dielectric permittivity (circular frequency)
 
 This function models the retardation of the relative dielectric permittivity in dependence on the circular frequency $\omega$, including a term for the DC electric conductivity:
 
@@ -2039,11 +2212,11 @@ If false, the original values are used.
 
 
 ^^^
-![](res:Altaxo.Calc.FitFunctions.Retardation.Dielectrics.KohlrauschComplexOmega.Fig2.png)
+![](res:Altaxo.Calc.FitFunctions.Retardation.Dielectrics.KohlrauschComplexOmega.Fig2.png){width=15cm}  
 ^^^ Fig. 1: Kohlrausch susceptibility fit functions (with $\varepsilon_{\infty}=2$, $\Delta \varepsilon=10$, $\tau=1$ and $\sigma_{DC}=0$). The values for $\beta$ are indicated in the legend.
 
 ^^^
-![](res:Altaxo.Calc.FitFunctions.Retardation.Dielectrics.KohlrauschComplexOmega.Fig1.png)
+![](res:Altaxo.Calc.FitFunctions.Retardation.Dielectrics.KohlrauschComplexOmega.Fig1.png){width=15cm}  
 ^^^ Fig. 2: Comparison of Kohlrausch susceptibility fit functions (with $\varepsilon_{\infty}=2$, $\Delta \varepsilon=10$, $\tau=1$ and $\beta=1$) without and with DC conductivity. The values for $\sigma_{DC}$ are indicated in the legend.
 
 ---
@@ -2053,7 +2226,7 @@ References:
 </value>
   </data>
   <data name="Retardation.General.HavriliakNegamiComplexFrequency" xml:space="preserve">
-    <value># Havriliak-Negami retardation of a general susceptibility (frequency)
+    <value>###### Havriliak-Negami retardation of a general susceptibility (frequency)
 
 This function models the retardation of a general susceptibility (e.g. mechanical complicance) in dependence on the frequency $f$, including a term for the flow:
 
@@ -2117,11 +2290,11 @@ If false, the original values are used.
 
 
 ^^^
-![](res:Altaxo.Calc.FitFunctions.Retardation.General.HavriliakNegamiComplexFrequency.Fig2.png)
+![](res:Altaxo.Calc.FitFunctions.Retardation.General.HavriliakNegamiComplexFrequency.Fig2.png){width=15cm}  
 ^^^ Fig. 1: Havriliak-Negami (with $\chi_{\infty}=10^{-9}$, $\Delta \chi=0.999 \times 10^{-6}$, $\tau=1$ and $\eta=10^{33}$). The values for $\alpha$ and $\gamma$ are indicated in the legend.
 
 ^^^
-![](res:Altaxo.Calc.FitFunctions.Retardation.General.HavriliakNegamiComplexFrequency.Fig1.png)
+![](res:Altaxo.Calc.FitFunctions.Retardation.General.HavriliakNegamiComplexFrequency.Fig1.png){width=15cm}  
 ^^^ Fig. 2: Comparison of Havriliak-Negami (with $\chi_{\infty}=10^{-9}$, $\Delta \chi=0.999 \times 10^{-6}$, $\tau=1$, $\alpha=1$ and $\gamma=1$) with different viscosities $\eta$. The values for $\eta$ are indicated in the legend.
 
 ---
@@ -2130,7 +2303,7 @@ References:
 </value>
   </data>
   <data name="Retardation.General.HavriliakNegamiComplexOmega" xml:space="preserve">
-    <value># Havriliak-Negami retardation of a general susceptibility (circular frequency)
+    <value>###### Havriliak-Negami retardation of a general susceptibility (circular frequency)
 
 This function models the retardation of a general susceptibility (e.g. mechanical complicance) in dependence on the circular frequency $\omega$, including a term for the flow:
 
@@ -2194,11 +2367,11 @@ If false, the original values are used.
 
 
 ^^^
-![](res:Altaxo.Calc.FitFunctions.Retardation.General.HavriliakNegamiComplexOmega.Fig2.png)
+![](res:Altaxo.Calc.FitFunctions.Retardation.General.HavriliakNegamiComplexOmega.Fig2.png){width=15cm}  
 ^^^ Fig. 1: Havriliak-Negami (with $\chi_{\infty}=10^{-9}$, $\Delta \chi=0.999 \times 10^{-6}$, $\tau=1$ and $\eta=10^{33}$). The values for $\alpha$ and $\gamma$ are indicated in the legend.
 
 ^^^
-![](res:Altaxo.Calc.FitFunctions.Retardation.General.HavriliakNegamiComplexOmega.Fig1.png)
+![](res:Altaxo.Calc.FitFunctions.Retardation.General.HavriliakNegamiComplexOmega.Fig1.png){width=15cm}  
 ^^^ Fig. 2: Comparison of Havriliak-Negami (with $\chi_{\infty}=10^{-9}$, $\Delta \chi=0.999 \times 10^{-6}$, $\tau=1$, $\alpha=1$ and $\gamma=1$) with different viscosities $\eta$. The values for $\eta$ are indicated in the legend.
 
 ---
@@ -2207,7 +2380,7 @@ References:
 </value>
   </data>
   <data name="Retardation.General.KohlrauschComplexFrequency" xml:space="preserve">
-    <value># Kohlrausch retardation of a general susceptibility (frequency)
+    <value>###### Kohlrausch retardation of a general susceptibility (frequency)
 
 This function models the retardation of a general susceptibility (e.g. mechanical complicance) in dependence on the frequency $f$, including a term for the flow:
 
@@ -2278,11 +2451,11 @@ If false, the original values are used.
 
 
 ^^^
-![](res:Altaxo.Calc.FitFunctions.Retardation.General.KohlrauschComplexFrequency.Fig2.png)
+![](res:Altaxo.Calc.FitFunctions.Retardation.General.KohlrauschComplexFrequency.Fig2.png){width=15cm}  
 ^^^ Fig. 1: Kohlrausch susceptibility fit functions (with $\chi_{\infty}=10^{-9}$, $\Delta \chi=0.999 \times 10^{-6}$, $\tau=1$ and $\eta=10^{33}$). The values for $\beta$ are indicated in the legend.
 
 ^^^
-![](res:Altaxo.Calc.FitFunctions.Retardation.General.KohlrauschComplexFrequency.Fig1.png)
+![](res:Altaxo.Calc.FitFunctions.Retardation.General.KohlrauschComplexFrequency.Fig1.png){width=15cm}  
 ^^^ Fig. 2: Comparison of Kohlrausch susceptibility fit functions (with $\chi_{\infty}=10^{-9}$, $\Delta \chi=0.999 \times 10^{-6}$, $\tau=1$ and $\beta=1$) with different viscosities $\eta$. The values for $\eta$ are indicated in the legend.
 
 ---
@@ -2292,7 +2465,7 @@ References:
 </value>
   </data>
   <data name="Retardation.General.KohlrauschComplexOmega" xml:space="preserve">
-    <value># Kohlrausch retardation of a general susceptibility (circular frequency)
+    <value>###### Kohlrausch retardation of a general susceptibility (circular frequency)
 
 This function models the retardation of a general susceptibility (e.g. mechanical complicance) in dependence on the circular frequency $\omega$, including a term for the flow:
 
@@ -2363,11 +2536,11 @@ If false, the original values are used.
 
 
 ^^^
-![](res:Altaxo.Calc.FitFunctions.Retardation.General.KohlrauschComplexOmega.Fig2.png)
+![](res:Altaxo.Calc.FitFunctions.Retardation.General.KohlrauschComplexOmega.Fig2.png){width=15cm}  
 ^^^ Fig. 1: Kohlrausch susceptibility fit functions (with $\chi_{\infty}=10^{-9}$, $\Delta \chi=0.999 \times 10^{-6}$, $\tau=1$ and $\eta=10^{33}$). The values for $beta$ are indicated in the legend.
 
 ^^^
-![](res:Altaxo.Calc.FitFunctions.Retardation.General.KohlrauschComplexOmega.Fig1.png)
+![](res:Altaxo.Calc.FitFunctions.Retardation.General.KohlrauschComplexOmega.Fig1.png){width=15cm}  
 ^^^ Fig. 2: Comparison of Kohlrausch susceptibility fit functions (with $\chi_{\infty}=10^{-9}$, $\Delta \chi=0.999 \times 10^{-6}$, $\tau=1$ and $\beta=1$) with different viscosities $\eta$. The values for $\eta$ are indicated in the legend.
 
 ---
@@ -2377,7 +2550,7 @@ References:
 </value>
   </data>
   <data name="Retardation.Modulus.HavriliakNegamiComplexFrequency" xml:space="preserve">
-    <value># Havriliak-Negami retardation of a general modulus (frequency)
+    <value>###### Havriliak-Negami retardation of a general modulus (frequency)
 
 This function models the retardation of a general modulus (e.g. mechanical modulus) in dependence on the frequency $f$ with a retardation and a flow term:
 
@@ -2434,11 +2607,11 @@ If false, the original values are used.
 
 
 ^^^
-![](res:Altaxo.Calc.FitFunctions.Retardation.Modulus.HavriliakNegamiComplexFrequency.Fig2.png)
+![](res:Altaxo.Calc.FitFunctions.Retardation.Modulus.HavriliakNegamiComplexFrequency.Fig2.png){width=15cm}  
 ^^^ Fig. 1: Havriliak-Negami fit functions (with $M_0=10^{6}$, $M_{\infty}=10^{9}$, $\tau=1$ and $\eta=10^{33}$). The values for $\alpha$ and $\gamma$ are indicated in the legend. 
 
 ^^^
-![](res:Altaxo.Calc.FitFunctions.Retardation.Modulus.HavriliakNegamiComplexFrequency.Fig1.png)
+![](res:Altaxo.Calc.FitFunctions.Retardation.Modulus.HavriliakNegamiComplexFrequency.Fig1.png){width=15cm}  
 ^^^ Fig. 2: Comparison of Havriliak-Negami fit functions (with $M_0=10^{6}$, $M_{\infty}=10^{9}$, $\tau=1$, $\alpha=1$ and $\gamma=1$) with different viscosities $\eta$. The values for $\eta$ are indicated in the legend.
 
 ---
@@ -2447,7 +2620,7 @@ References:
 </value>
   </data>
   <data name="Retardation.Modulus.HavriliakNegamiComplexOmega" xml:space="preserve">
-    <value># Havriliak-Negami retardation of a general modulus (circular frequency)
+    <value>###### Havriliak-Negami retardation of a general modulus (circular frequency)
 
 This function models the retardation of a general modulus (e.g. mechanical modulus) in dependence on the circular frequency $\omega$ with a retardation and a flow term:
 
@@ -2504,11 +2677,11 @@ If false, the original values are used.
 
 
 ^^^
-![](res:Altaxo.Calc.FitFunctions.Retardation.Modulus.HavriliakNegamiComplexOmega.Fig2.png)
+![](res:Altaxo.Calc.FitFunctions.Retardation.Modulus.HavriliakNegamiComplexOmega.Fig2.png){width=15cm}  
 ^^^ Fig. 1: Havriliak-Negami fit functions (with $M_0=10^{6}$, $M_{\infty}=10^{9}$, $\tau=1$ and $\eta=10^{33}$). The values for $\alpha$ and $\gamma$ are indicated in the legend. 
 
 ^^^
-![](res:Altaxo.Calc.FitFunctions.Retardation.Modulus.HavriliakNegamiComplexOmega.Fig1.png)
+![](res:Altaxo.Calc.FitFunctions.Retardation.Modulus.HavriliakNegamiComplexOmega.Fig1.png){width=15cm}  
 ^^^ Fig. 2: Comparison of Havriliak-Negami fit functions (with $M_0=10^{6}$, $M_{\infty}=10^{9}$, $\tau=1$, $\alpha=1$ and $\gamma=1$) with different viscosities $\eta$. The values for $\eta$ are indicated in the legend.
 
 ---
@@ -2517,7 +2690,7 @@ References:
 </value>
   </data>
   <data name="Retardation.Modulus.HavriliakNegamiMultiComplexFrequency" xml:space="preserve">
-    <value># Havriliak-Negami retardation of a general modulus (frequency)
+    <value>###### Havriliak-Negami retardation of a general modulus (frequency)
 
 This function models the retardation of a general modulus (e.g. mechanical modulus) in dependence on the frequency $f$ with two retardation terms and a term for the flow:
 
@@ -2581,11 +2754,11 @@ If false, the original values are used.
 
 
 ^^^
-![](res:Altaxo.Calc.FitFunctions.Retardation.Modulus.HavriliakNegamiMultiComplexFrequency.Fig2.png)
+![](res:Altaxo.Calc.FitFunctions.Retardation.Modulus.HavriliakNegamiMultiComplexFrequency.Fig2.png){width=15cm}  
 ^^^ Fig. 1: Havriliak-Negami fit functions (with $\chi_{\infty}=0.5 \times 10^{-9}$, $\Delta \chi=0.999 \times 10^{-6}$, $\tau=1000$, $\Delta \chi_1=0.5 \times 10^{-9}$, $\tau_1=0.1$, $\alpha_1=1$, $\gamma_1=1$   and $\eta=10^{33}$). The values for $\alpha$ and $\gamma$ are indicated in the legend. Note that here the $\chi$ values are mechanical compliances (in Pa^-1^).
 
 ^^^
-![](res:Altaxo.Calc.FitFunctions.Retardation.Modulus.HavriliakNegamiMultiComplexFrequency.Fig1.png)
+![](res:Altaxo.Calc.FitFunctions.Retardation.Modulus.HavriliakNegamiMultiComplexFrequency.Fig1.png){width=15cm}  
 ^^^ Fig. 2: Comparison of Havriliak-Negami fit functions (with $\chi_{\infty}=0.5 \times 10^{-9}$, $\Delta \chi=0.999 \times 10^{-6}$, $\tau=1000$, $\alpha=1$, $\gamma=1$, $\Delta \chi_1=0.5 \times 10^{-9}$, $\tau_1=0.1$, $\alpha_1=1$ and $\gamma_1=1$) with different viscosities $\eta$. The values for $\eta$ are indicated in the legend. Note that here the $\chi$ values are mechanical compliances (in Pa^-1^).
 
 ---
@@ -2594,7 +2767,7 @@ References:
 </value>
   </data>
   <data name="Retardation.Modulus.HavriliakNegamiMultiComplexOmega" xml:space="preserve">
-    <value># Havriliak-Negami retardation of a general modulus (circular frequency)
+    <value>###### Havriliak-Negami retardation of a general modulus (circular frequency)
 
 This function models the retardation of a general modulus (e.g. mechanical modulus) in dependence on the circular frequency $\omega$ with two retardation terms and a term for the flow:
 
@@ -2658,11 +2831,11 @@ If false, the original values are used.
 
 
 ^^^
-![](res:Altaxo.Calc.FitFunctions.Retardation.Modulus.HavriliakNegamiMultiComplexOmega.Fig2.png)
+![](res:Altaxo.Calc.FitFunctions.Retardation.Modulus.HavriliakNegamiMultiComplexOmega.Fig2.png){width=15cm}  
 ^^^ Fig. 1: Havriliak-Negami fit functions (with $\chi_{\infty}=0.5 \times 10^{-9}$, $\Delta \chi=0.999 \times 10^{-6}$, $\tau=1000$, $\Delta \chi_1=0.5 \times 10^{-9}$, $\tau_1=0.1$, $\alpha_1=1$, $\gamma_1=1$   and $\eta=10^{33}$). The values for $\alpha$ and $\gamma$ are indicated in the legend. Note that here the $\chi$ values are mechanical compliances (in Pa^-1^).
 
 ^^^
-![](res:Altaxo.Calc.FitFunctions.Retardation.Modulus.HavriliakNegamiMultiComplexOmega.Fig1.png)
+![](res:Altaxo.Calc.FitFunctions.Retardation.Modulus.HavriliakNegamiMultiComplexOmega.Fig1.png){width=15cm}  
 ^^^ Fig. 2: Comparison of Havriliak-Negami fit functions (with $\chi_{\infty}=0.5 \times 10^{-9}$, $\Delta \chi=0.999 \times 10^{-6}$, $\tau=1000$, $\alpha=1$, $\gamma=1$, $\Delta \chi_1=0.5 \times 10^{-9}$, $\tau_1=0.1$, $\alpha_1=1$ and $\gamma_1=1$) with different viscosities $\eta$. The values for $\eta$ are indicated in the legend. Note that here the $\chi$ values are mechanical compliances (in Pa^-1^).
 
 ---
@@ -2671,7 +2844,7 @@ References:
 </value>
   </data>
   <data name="Retardation.Modulus.KohlrauschComplexFrequency" xml:space="preserve">
-    <value># Kohlrausch retardation of a general modulus (frequency)
+    <value>###### Kohlrausch retardation of a general modulus (frequency)
 
 This function models the retardation of a general modulus (e.g. mechanical modulus) in dependence on the frequency $f$ with a retardation and a flow term:
 
@@ -2730,11 +2903,11 @@ If false, the original values are used.
 
 
 ^^^
-![](res:Altaxo.Calc.FitFunctions.Retardation.Modulus.KohlrauschComplexFrequency.Fig2.png)
+![](res:Altaxo.Calc.FitFunctions.Retardation.Modulus.KohlrauschComplexFrequency.Fig2.png){width=15cm}  
 ^^^ Fig. 1: Kohlrausch fit functions (with $M_0=10^{6}$, $M_{\infty}=10^{9}$, $\tau=1$ and $\eta=10^{33}$). The values for $\beta$ are indicated in the legend. 
 
 ^^^
-![](res:Altaxo.Calc.FitFunctions.Retardation.Modulus.KohlrauschComplexFrequency.Fig1.png)
+![](res:Altaxo.Calc.FitFunctions.Retardation.Modulus.KohlrauschComplexFrequency.Fig1.png){width=15cm}  
 ^^^ Fig. 2: Comparison of Kohlrausch fit functions (with $M_0=10^{6}$, $M_{\infty}=10^{9}$, $\tau=1$, and $\beta=1$) with different viscosities $\eta$. The values for $\eta$ are indicated in the legend.
 
 ---
@@ -2744,7 +2917,7 @@ References:
 </value>
   </data>
   <data name="Retardation.Modulus.KohlrauschComplexOmega" xml:space="preserve">
-    <value># Kohlrausch retardation of a general modulus (circular frequency)
+    <value>###### Kohlrausch retardation of a general modulus (circular frequency)
 
 This function models the retardation of a general modulus (e.g. mechanical modulus) in dependence on the circular frequency $\omega$ with a retardation and a flow term:
 
@@ -2803,11 +2976,11 @@ If false, the original values are used.
 
 
 ^^^
-![](res:Altaxo.Calc.FitFunctions.Retardation.Modulus.KohlrauschComplexOmega.Fig2.png)
+![](res:Altaxo.Calc.FitFunctions.Retardation.Modulus.KohlrauschComplexOmega.Fig2.png){width=15cm}  
 ^^^ Fig. 1: Kohlrausch fit functions (with $M_0=10^{6}$, $M_{\infty}=10^{9}$, $\tau=1$ and $\eta=10^{33}$). The values for $\beta$ are indicated in the legend. 
 
 ^^^
-![](res:Altaxo.Calc.FitFunctions.Retardation.Modulus.KohlrauschComplexOmega.Fig1.png)
+![](res:Altaxo.Calc.FitFunctions.Retardation.Modulus.KohlrauschComplexOmega.Fig1.png){width=15cm}  
 ^^^ Fig. 2: Comparison of Kohlrausch fit functions (with $M_0=10^{6}$, $M_{\infty}=10^{9}$, $\tau=1$, and $\beta=1$) with different viscosities $\eta$. The values for $\eta$ are indicated in the legend.
 
 ---
@@ -2817,7 +2990,7 @@ References:
 </value>
   </data>
   <data name="Retardation.Modulus.Lg10HavriliakNegamiComplexFrequency" xml:space="preserve">
-    <value># Havriliak-Negami retardation of a general modulus (frequency)
+    <value>###### Havriliak-Negami retardation of a general modulus (frequency)
 
 This function models the retardation of a general modulus (e.g. mechanical modulus) in dependence on the frequency $f$ with a retardation and a flow term:
 
@@ -2883,11 +3056,11 @@ If false, the original values are used.
 
 
 ^^^
-![](res:Altaxo.Calc.FitFunctions.Retardation.Modulus.Lg10HavriliakNegamiComplexFrequency.Fig2.png)
+![](res:Altaxo.Calc.FitFunctions.Retardation.Modulus.Lg10HavriliakNegamiComplexFrequency.Fig2.png){width=15cm}  
 ^^^ Fig. 1: Havriliak-Negami fit functions (with $M_0=10^{6}$, $M_{\infty}=10^{9}$, $\tau=1$ and $\eta=10^{33}$). The values for $\alpha$ and $\gamma$ are indicated in the legend. 
 
 ^^^
-![](res:Altaxo.Calc.FitFunctions.Retardation.Modulus.Lg10HavriliakNegamiComplexFrequency.Fig1.png)
+![](res:Altaxo.Calc.FitFunctions.Retardation.Modulus.Lg10HavriliakNegamiComplexFrequency.Fig1.png){width=15cm}  
 ^^^ Fig. 2: Comparison of Havriliak-Negami fit functions (with $M_0=10^{6}$, $M_{\infty}=10^{9}$, $\tau=1$, $\alpha=1$ and $\gamma=1$) with different viscosities $\eta$. The values for $\eta$ are indicated in the legend.
 
 ---
@@ -2896,7 +3069,7 @@ References:
 </value>
   </data>
   <data name="Retardation.Modulus.Lg10HavriliakNegamiComplexOmega" xml:space="preserve">
-    <value># Havriliak-Negami retardation of a general modulus (circular frequency)
+    <value>###### Havriliak-Negami retardation of a general modulus (circular frequency)
 
 This function models the retardation of a general modulus (e.g. mechanical modulus) in dependence on the circular frequency $\omega$ with a retardation and a flow term:
 
@@ -2962,11 +3135,11 @@ If false, the original values are used.
 
 
 ^^^
-![](res:Altaxo.Calc.FitFunctions.Retardation.Modulus.Lg10HavriliakNegamiComplexOmega.Fig2.png)
+![](res:Altaxo.Calc.FitFunctions.Retardation.Modulus.Lg10HavriliakNegamiComplexOmega.Fig2.png){width=15cm}  
 ^^^ Fig. 1: Havriliak-Negami fit functions (with $M_0=10^{6}$, $M_{\infty}=10^{9}$, $\tau=1$ and $\eta=10^{33}$). The values for $\alpha$ and $\gamma$ are indicated in the legend. 
 
 ^^^
-![](res:Altaxo.Calc.FitFunctions.Retardation.Modulus.Lg10HavriliakNegamiComplexOmega.Fig1.png)
+![](res:Altaxo.Calc.FitFunctions.Retardation.Modulus.Lg10HavriliakNegamiComplexOmega.Fig1.png){width=15cm}  
 ^^^ Fig. 2: Comparison of Havriliak-Negami fit functions (with $M_0=10^{6}$, $M_{\infty}=10^{9}$, $\tau=1$, $\alpha=1$ and $\gamma=1$) with different viscosities $\eta$. The values for $\eta$ are indicated in the legend.
 
 ---
@@ -2975,7 +3148,7 @@ References:
 </value>
   </data>
   <data name="Retardation.Modulus.Lg10KohlrauschComplexFrequency" xml:space="preserve">
-    <value># Kohlrausch retardation of a general modulus (frequency)
+    <value>###### Kohlrausch retardation of a general modulus (frequency)
 
 This function models the retardation of a general modulus (e.g. mechanical modulus) in dependence on the frequency $f$ with a retardation and a flow term:
 
@@ -3043,11 +3216,11 @@ If false, the original values are used.
 
 
 ^^^
-![](res:Altaxo.Calc.FitFunctions.Retardation.Modulus.Lg10KohlrauschComplexFrequency.Fig2.png)
+![](res:Altaxo.Calc.FitFunctions.Retardation.Modulus.Lg10KohlrauschComplexFrequency.Fig2.png){width=15cm}  
 ^^^ Fig. 1: Kohlrausch fit functions (with $M_0=10^{6}$, $M_{\infty}=10^{9}$, $\tau=1$ and $\eta=10^{33}$). The values for $\beta$ are indicated in the legend. 
 
 ^^^
-![](res:Altaxo.Calc.FitFunctions.Retardation.Modulus.Lg10KohlrauschComplexFrequency.Fig1.png)
+![](res:Altaxo.Calc.FitFunctions.Retardation.Modulus.Lg10KohlrauschComplexFrequency.Fig1.png){width=15cm}  
 ^^^ Fig. 2: Comparison of Kohlrausch fit functions (with $M_0=10^{6}$, $M_{\infty}=10^{9}$, $\tau=1$, and $\beta=1$) with different viscosities $\eta$. The values for $\eta$ are indicated in the legend.
 
 ---
@@ -3057,7 +3230,7 @@ References:
 </value>
   </data>
   <data name="Retardation.Modulus.Lg10KohlrauschComplexOmega" xml:space="preserve">
-    <value># Kohlrausch retardation of a general modulus (circular frequency)
+    <value>###### Kohlrausch retardation of a general modulus (circular frequency)
 
 This function models the retardation of a general modulus (e.g. mechanical modulus) in dependence on the circular frequency $\omega$ with a retardation and a flow term:
 
@@ -3124,11 +3297,11 @@ If false, the original values are used.
 
 
 ^^^
-![](res:Altaxo.Calc.FitFunctions.Retardation.Modulus.Lg10KohlrauschComplexOmega.Fig2.png)
+![](res:Altaxo.Calc.FitFunctions.Retardation.Modulus.Lg10KohlrauschComplexOmega.Fig2.png){width=15cm}  
 ^^^ Fig. 1: Kohlrausch fit functions (with $M_0=10^{6}$, $M_{\infty}=10^{9}$, $\tau=1$ and $\eta=10^{33}$). The values for $\beta$ are indicated in the legend. 
 
 ^^^
-![](res:Altaxo.Calc.FitFunctions.Retardation.Modulus.Lg10KohlrauschComplexOmega.Fig1.png)
+![](res:Altaxo.Calc.FitFunctions.Retardation.Modulus.Lg10KohlrauschComplexOmega.Fig1.png){width=15cm}  
 ^^^ Fig. 2: Comparison of Kohlrausch fit functions (with $M_0=10^{6}$, $M_{\infty}=10^{9}$, $\tau=1$, and $\beta=1$) with different viscosities $\eta$. The values for $\eta$ are indicated in the legend.
 
 ---
@@ -3138,7 +3311,7 @@ References:
 </value>
   </data>
   <data name="Transitions.GeneralEffectiveMedium" xml:space="preserve">
-    <value># General effective medium transition
+    <value>##### General effective medium transition
 
 This transition models e.g. the DC electrical conductivity of conductive particles embedded in a matrix, but is also suitable for other percolation problems.
 
@@ -3168,7 +3341,7 @@ The equation has the following properties, which match the percolation theory fo
 In contrast to the separate percolation equations below and above the percolation threshold, the general effective medium transition avoids the divergence near the percolation threshold, and provides a smooth transition between the two equations.
 
 ^^^
-![](res:Altaxo.Calc.FitFunctions.Transitions.GeneralEffectiveMedium.Fig1.png)
+![](res:Altaxo.Calc.FitFunctions.Transitions.GeneralEffectiveMedium.Fig1.png){width=15cm}  
 ^^^ Fig. 1: GeneralEffectiveMedium transition with $y_0=10^{-14}$, $y_1=10^{-2}$, $p_c=0.2$, $s=0.87$ and $t=2$.
 ---
 References:
@@ -3176,7 +3349,7 @@ References:
 </value>
   </data>
   <data name="Transitions.GeneralizedLogisticDecreasing" xml:space="preserve">
-    <value># GeneralizedLogisticDecreasing
+    <value>#### GeneralizedLogisticDecreasing
 
 This function evaluates a sum of generalized logistic terms (decreasing steps), plus a background polynomial with one or multiple terms, according to
 
@@ -3206,7 +3379,7 @@ The number of logistic step terms $n$ and the order of the background polynomial
 The domain of the function is $-\infty \leq x \leq \infty$. 
 
 ^^^
-![](res:Altaxo.Calc.FitFunctions.Transitions.GeneralizedLogisticDecreasing.Fig1.png)
+![](res:Altaxo.Calc.FitFunctions.Transitions.GeneralizedLogisticDecreasing.Fig1.png){width=15cm}  
 ^^^ Fig. 1: GeneralizedLogisticDecreasing ($n=1$, $m=0$) with $a_0=5$, $x_{c0}=7$, $w_0=3$ and $b_0=1$. The values of $\gamma_0$ and $\delta_0$ are indicated in the legend.
 ---
 References:
@@ -3218,7 +3391,7 @@ References:
 </value>
   </data>
   <data name="Transitions.GeneralizedLogisticIncreasing" xml:space="preserve">
-    <value># GeneralizedLogisticIncreasing
+    <value>##### GeneralizedLogisticIncreasing
 
 This function evaluates a sum of generalized logistic terms (increasing steps), plus a background polynomial with one or multiple terms, according to
 
@@ -3248,7 +3421,7 @@ The number of logistic step terms $n$ and the order of the background polynomial
 The domain of the function is $-\infty \leq x \leq \infty$. 
 
 ^^^
-![](res:Altaxo.Calc.FitFunctions.Transitions.GeneralizedLogisticIncreasing.Fig1.png)
+![](res:Altaxo.Calc.FitFunctions.Transitions.GeneralizedLogisticIncreasing.Fig1.png){width=15cm}  
 ^^^ Fig. 1: GeneralizedLogisticIncreasing ($n=1$, $m=0$) with $a_0=5$, $x_{c0}=7$, $w_0=3$ and $b_0=1$. The values of $\gamma_0$ and $\delta_0$ are indicated in the legend.
 ---
 References:
@@ -3260,7 +3433,7 @@ References:
 </value>
   </data>
   <data name="Transitions.Lg10GeneralEffectiveMedium" xml:space="preserve">
-    <value># General effective medium transition (logarithmized)
+    <value>##### General effective medium transition (logarithmized)
 
 This transition models e.g. the DC electrical conductivity of conductive particles embedded in a matrix, but is also suitable for other percolation problems.
 
@@ -3293,7 +3466,7 @@ In contrast to the separate percolation equations below and above the percolatio
 
 
 ^^^
-![](res:Altaxo.Calc.FitFunctions.Transitions.Lg10GeneralEffectiveMedium.Fig1.png)
+![](res:Altaxo.Calc.FitFunctions.Transitions.Lg10GeneralEffectiveMedium.Fig1.png){width=15cm}  
 ^^^ Fig. 1: Lg10GeneralEffectiveMedium transition with the parameters $lg_{10}(y_0)=-14$, $lg_{10}(y_1)=-2$, $p_c=0.2$, $s=0.87$ and $t=2$.
 ---
 References:
@@ -3301,7 +3474,7 @@ References:
 </value>
   </data>
   <data name="Transitions.LinearFermiDiracTransition" xml:space="preserve">
-    <value># Linear Fermi-Dirac transition
+    <value>##### Linear Fermi-Dirac transition
 
 This fit function implements the linearly scaled Fermi-Dirac transition:
 
@@ -3327,7 +3500,7 @@ in which:
 The domain of the function is $ 0 \leq x \leq 1 $. 
 
 ^^^
-![](res:Altaxo.Calc.FitFunctions.Transitions.LinearFermiDiracTransition.Fig1.png)
+![](res:Altaxo.Calc.FitFunctions.Transitions.LinearFermiDiracTransition.Fig1.png){width=15cm}  
 ^^^ Fig. 1: LinearFermiDiracTransition with $y_0=2$, $y_1=10$, $p_c=0.3$ and $w=0.01$.
 ---
 References:
@@ -3338,7 +3511,7 @@ References:
 </value>
   </data>
   <data name="Transitions.LogarithmicFermiDiracTransition" xml:space="preserve">
-    <value># Logarithmic Fermi-Dirac transition
+    <value>##### Logarithmic Fermi-Dirac transition
 
 This fit function implements the linearly scaled Fermi-Dirac transition:
 
@@ -3365,7 +3538,7 @@ in which:
 The domain of the function is $ 0 \leq p \leq 1 $. 
 
 ^^^
-![](res:Altaxo.Calc.FitFunctions.Transitions.LogarithmicFermiDiracTransition.Fig1.png)
+![](res:Altaxo.Calc.FitFunctions.Transitions.LogarithmicFermiDiracTransition.Fig1.png){width=15cm}  
 ^^^ Fig. 1: LogarithmicFermiDiracTransition with $y_0=10^{-14}$, $y_1=10^{-2}$, $p_c=0.2$ and $w=0.02$. This could e.g. be a typical curve for the electrical conductivity of a carbon black filled composite in dependence on the carbon black volume concentration.
 ---
 References:
@@ -3376,7 +3549,7 @@ References:
 </value>
   </data>
   <data name="Transitions.LogisticDecreasing" xml:space="preserve">
-    <value># LogisticDecreasing
+    <value>##### LogisticDecreasing
 
 This function evaluates a sum of logistic terms (decreasing steps), plus a background polynomial with one or multiple terms, according to
 
@@ -3402,7 +3575,7 @@ The number of logistic step terms $n$ and the order of the background polynomial
 The domain of the function is $-\infty \leq x \leq \infty$. 
 
 ^^^
-![](res:Altaxo.Calc.FitFunctions.Transitions.LogisticDecreasing.Fig1.png)
+![](res:Altaxo.Calc.FitFunctions.Transitions.LogisticDecreasing.Fig1.png){width=15cm}  
 ^^^ Fig. 1: LogisticDecreasing ($n=1$, $m=0$) with $a_0=5$, $x_{c0}=7$, $w_0=3$ and $b_0=1$.
 ---
 References:
@@ -3414,7 +3587,7 @@ References:
 </value>
   </data>
   <data name="Transitions.LogisticIncreasing" xml:space="preserve">
-    <value># LogisticIncreasing
+    <value>##### LogisticIncreasing
 
 This function evaluates a sum of logistic terms (increasing steps), plus a background polynomial with one or multiple terms, according to
 
@@ -3440,7 +3613,7 @@ The number of logistic step terms $n$ and the order of the background polynomial
 The domain of the function is $-\infty \leq x \leq \infty$. 
 
 ^^^
-![](res:Altaxo.Calc.FitFunctions.Transitions.LogisticIncreasing.Fig1.png)
+![](res:Altaxo.Calc.FitFunctions.Transitions.LogisticIncreasing.Fig1.png){width=15cm}  
 ^^^ Fig. 1: LogisticIncreasing ($n=1$, $m=0$) with $a_0=5$, $x_{c0}=7$, $w_0=3$ and $b_0=1$.
 ---
 References:
@@ -3452,7 +3625,7 @@ References:
 </value>
   </data>
   <data name="Transitions.SmoothedPercolation" xml:space="preserve">
-    <value># Smoothed percolation
+    <value>##### Smoothed percolation
 
 The base of this function are the two percolation equations valid below and above the percolation threshold $p_c$ :
 
@@ -3505,7 +3678,7 @@ in which
 - $y_2$ value of $y$ as evaluated by the right side equation at $p=p_2$
 
 ^^^
-![](res:Altaxo.Calc.FitFunctions.Transitions.SmoothedPercolation.Fig1.png)
+![](res:Altaxo.Calc.FitFunctions.Transitions.SmoothedPercolation.Fig1.png){width=15cm}  
 ^^^ Fig. 1: SmoothedPercolation transition with $y_0=10^{-14}$, $y_1=10^{-2}$, $p_c=0.2$, $s=0.87$ and $t=2$.
 ---
 </value>

@@ -99,7 +99,8 @@ namespace Altaxo.Calc.FitFunctions.Peaks
     }
 
     [FitFunctionCreator("LorentzianAmplitude", "General", 1, 1, 4)]
-    [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Probability.CauchyAmplitude}")]
+    [FitFunctionCreator("LorentzianAmplitude", "Peaks", 1, 1, 4)]
+    [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Peaks.CauchyAmplitude}")]
     public static IFitFunction Create_1_0()
     {
       return new CauchyAmplitude(1, 0);

@@ -105,7 +105,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
       return new GaussAmplitude(1, 0);
     }
 
-    [FitFunctionCreator("GaussAmplitude", "Probability", 1, 1, 4)]
+    [FitFunctionCreator("GaussAmplitude", "Peaks", 1, 1, 4)]
     [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Peaks.GaussAmplitude}")]
     public static IFitFunction Create_1_M1()
     {
