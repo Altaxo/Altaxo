@@ -1,0 +1,22 @@
+﻿
+<topic id="390BA780CE85D2B9F182FEFBDBF1BFA6" revisionNumber="1">
+
+<developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+<introduction>
+
+<para>
+Previous section: <link xlink:href="BBA68C4AB08CC2456DA37CDDC22BD16C">Modifying the default font size</link></para>
+<autoOutline />
+<markup><hr/></markup>
+
+<para>
+To every graph belongs notes text. You can view and edit the notes text.
+To do this, make the graph the current document. Then make sure, that the Notes tool window is shown. If it is not shown, make it visible by choosing View→Notes from the main menu or pressing CTRL+ALT+N at the keyboard. You can then visit, add or edit the text in the notes window.
+</para>
+<markup><hr/></markup>
+<para>
+Next section: <link xlink:href="B304562CD5175896950785146ED1076A">3D-Graphs</link></para>
+</introduction>
+</developerConceptualDocument>
+</topic>

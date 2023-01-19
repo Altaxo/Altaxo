@@ -1,0 +1,65 @@
+﻿
+<topic id="0972867E70F2ABC0FA0D744AA58109AA" revisionNumber="1">
+
+<developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+<introduction>
+
+<para>
+Previous section: <link xlink:href="6C9636B5ECE4C7B0B1D9874523682BF8">Including 2D and 3D graphs from Altaxo</link></para>
+<autoOutline />
+<markup><hr/></markup>
+
+<para>
+You can include images either from the file system or from the clipboard. To include images from the file system, select the image in Explorer, select <codeInline>Copy</codeInline> or press <codeInline>Ctrl-C</codeInline>. Then click in the source text of your markdown document, and choose <codeInline>Paste</codeInline> from the edit menu or press <codeInline>Ctrl-V</codeInline>. The image is then stored in the local image store in Altaxo, and is referenced with a long Url, which starts with <codeInline>local:</codeInline>.
+</para>
+
+<para>
+To include an image from the clipboard, click in the source text of your markdown document, and choose <codeInline>Paste</codeInline> from the edit menu or press <codeInline>Ctrl-V</codeInline>. The image is then stored in the local image store in Altaxo, and is referenced with a long Url, which starts with <codeInline>local:</codeInline>.
+</para>
+</introduction>
+
+<section address="69C803D858203A91253299E9ED1BDB9C">
+<title>Resizing graphs and images
+</title>
+<content>
+
+<para>
+You can give an image the size you want by appending an attribute to the image.
+</para>
+
+<quote>
+
+<para>
+<legacyBold>Example:</legacyBold>
+</para>
+
+<para>
+<codeInline>![](graph://Foo\Bar\GRAPH0){width=5cm}</codeInline>
+</para>
+
+<para>
+will resize your graph to a width of 5 cm. Please note that there must be no spaces in the attribute=value assignment, e.g. neither <codeInline>width=5 cm</codeInline> will work, nor <codeInline>width= 5cm</codeInline>.
+</para>
+</quote>
+
+<para>
+To specify a height instead, use <codeInline>height=value</codeInline> likewise. You can even specify <codeInline>width</codeInline> and <codeInline>height</codeInline>, but then the aspect ratio of your image is not preserved.
+</para>
+
+<para>
+Currently, the following units will be recognized: <codeInline>mm</codeInline>, <codeInline>cm</codeInline>, <codeInline>in</codeInline>, <codeInline>pt</codeInline> (1/72<superscript>nd</superscript> inch), and <codeInline>px</codeInline> (1/96<superscript>th</superscript> inch).
+</para>
+</content>
+</section>
+<markup><hr/></markup>
+<section>
+
+<content>
+
+<para>
+Next section: <link xlink:href="DBB590EF85CF1397F2E4BDD3D91658A1">Including formulas</link></para>
+</content>
+</section>
+</developerConceptualDocument>
+</topic>

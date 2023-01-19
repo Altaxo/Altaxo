@@ -1,0 +1,59 @@
+﻿
+<topic id="9DD6D62833B5D9F3A624403C1C2E15A7" revisionNumber="1">
+
+<developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+<introduction>
+
+<para>
+Previous section: <link xlink:href="ED10763B8F12B633CB66F272890672E3">Shortcut keys</link></para>
+<autoOutline />
+<markup><hr/></markup>
+
+<para>
+You can choose another view configuration using the main menu, <codeInline>Text, View configuration</codeInline>. You can decide whether you want your:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+editor window at the left, preview window to the right (default)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+editor window at the top, preview window at the bottom (might be useful for tablets in portrait mode)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+editor window at the right, preview window at the left
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+editor window at the bottom, preview window at the top (again useful for tablets in portrait mode)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+editor window and preview window in a tab control, i.e. only one of them is displayed at once; you can switch with <codeInline>F12</codeInline>.
+</para>
+</listItem>
+</list>
+<markup><hr/></markup>
+<para>
+Next section: <link xlink:href="2DB657F3A16531760AA14E645AB8A9BF">Outline window</link></para>
+</introduction>
+</developerConceptualDocument>
+</topic>

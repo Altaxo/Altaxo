@@ -1,0 +1,37 @@
+﻿
+<topic id="5CB0F9E613C98A49D8051EBA3247B77A" revisionNumber="1">
+
+<developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+<introduction>
+
+<para>
+Previous section: <link xlink:href="D81BAB079B701CE4975A6890157D3C46">Usage (of the editor and preview window)</link></para>
+<autoOutline />
+<markup><hr/></markup>
+
+<para>
+You will see two windows: the editor window (per default at the left side), and the previewer window (per default at the right side).
+</para>
+
+<para>
+The editor window is the window in which you write your markdown text. The text is then displayed ('rendered') in the preview window. When you scroll your editor window, the preview window is scrolled too, to be as close as possible to the source text.
+</para>
+
+<para>
+If you click into the editor window, the preview window is scrolled so that the corresponding line in the preview window matches horizontally with the line in the editor window (note that sometimes scrolling is not possible because the scroll bar has reached either the top or the bottom).
+</para>
+
+<para>
+Likewise, if you click into the preview window, the editor window is scrolled to match the corresponding line in the source text.
+</para>
+
+<para>
+You can even click in the preview window and start writing. When you start writing, the corresponding location in your source text is searched, and the text you write is then included in the source text at that position. Also, small edits are possible directly in the preview window. For instance, you can mark some text in the preview window, and then press <codeInline>Del</codeInline> to delete this text.
+</para>
+<markup><hr/></markup>
+<para>
+Next section: <link xlink:href="ED10763B8F12B633CB66F272890672E3">Shortcut keys</link></para>
+</introduction>
+</developerConceptualDocument>
+</topic>

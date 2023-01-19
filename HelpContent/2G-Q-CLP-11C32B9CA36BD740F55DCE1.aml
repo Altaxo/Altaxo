@@ -1,0 +1,81 @@
+﻿
+<topic id="11C32B9CA36BD740F55DCE1F9C3EB223" revisionNumber="1">
+
+<developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+<introduction>
+
+<para>
+Previous section: <link xlink:href="56A384C0B93B52A2D781F5F98DE90A52">Quickstart</link></para>
+<autoOutline />
+<markup><hr/></markup>
+
+<para>
+The most commonly used graph is a line, scatter, or line-scatter graph. You typically have multiple data points, consisting of an x-value and an y-value (attention: in Altaxo the y-values are called v-values, because y is reserved as second independent variable for 3D-plots). Both x and v values are numerical values. Assume, for instance, that you have watched a car during acceleration and measured the distance (in meter) the car has travelled so far at different times (in seconds). You may have then the following <link xlink:href="345E05B54F4611736070E46B38DD4CB5#Worksheets">worksheet</link>:
+</para>
+
+<para>
+<mediaLinkInline><image xlink:href="01004619A02F8B1489A15C66A0B16B00"></image></mediaLinkInline>
+</para>
+
+<para>
+Here, I already have selected the column <codeInline>Distance [m]</codeInline>. This column is tagged as v-column, as can be seen in the lower right corner of the <link xlink:href="AA57528103751EB21A179BF18C6C5F58#ColumnHeaders">column header</link> (you see a <codeInline>(V0)</codeInline> there, because <codeInline>0</codeInline> is the group number of the column). <legacyBold>Important: Do not select the x-column</legacyBold> <codeInline>Time [s]</codeInline>. Since this column is already tagged as x-column <codeInline>(X0)</codeInline> in the lower right corner of the <link xlink:href="AA57528103751EB21A179BF18C6C5F58#ColumnHeaders">column header</link>), it is automatically used when the line/scatter/line-scatter plot is created.
+</para>
+
+<para>
+You can then click one of the following icons from the toolbar:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+<mediaLinkInline><image xlink:href="Icons.16x16"></image></mediaLinkInline> creates a line plot
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<mediaLinkInline><image xlink:href="Icons.16x16"></image></mediaLinkInline> creates a scatter plot
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<mediaLinkInline><image xlink:href="Icons.16x16"></image></mediaLinkInline> creates a line-scatter plot.
+</para>
+</listItem>
+</list>
+
+<para>
+Alternatively, you can choose from the main menu <codeInline>Plot</codeInline>, and then one of the menu items <codeInline>Line</codeInline>, <codeInline>Scatter</codeInline>, or <codeInline>Line_Scatter</codeInline>.
+</para>
+
+<para>
+That's all! The look of the graph that is created depends on the template you have set.
+</para>
+
+<para>
+If no template has been set, the result, for instance for a line-scatter plot, may look like this:
+</para>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#85FE3EBBB9483A31FE1C30B76A8F58F1"><img src="../media/85FE3EBBB9483A31FE1C30B76A8F58F1.png" width="567"></img></a></markup>
+</para>
+
+<para>
+If you have a template set, the result depends on your template. For me, it looks like this:
+</para>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#043CF069B617EBD6F24FF7F227256E33"><img src="../media/043CF069B617EBD6F24FF7F227256E33.png" width="567"></img></a></markup>
+</para>
+<markup><hr/></markup>
+<para>
+Next section: <link xlink:href="99E27F5DA0A5611AA26D632399925C2D">Create a density plot</link></para>
+</introduction>
+</developerConceptualDocument>
+</topic>

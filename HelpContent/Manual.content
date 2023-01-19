@@ -7,12 +7,26 @@
 <Topic id="577B485E0653126B7C72BCA3C63D6692" visible="True" title="Installation by using a Microsoft installer file (.msi) on Windows 7, 8.1 and 10">
 </Topic>
 <Topic id="2FD7A20CC4874B8AC0167F6E62AF3C00" visible="True" title="Installation on Linux (using Wine)">
+<Topic id="065FC596CC034F1B98FCEBFB3AD1498B" visible="True" title="Installation of Wine on Ubuntu">
+</Topic>
+<Topic id="2CBFFD1E0F61544C65A6AED1A6F82290" visible="True" title="Copy-and-Paste installation of Altaxo">
+</Topic>
 </Topic>
 </Topic>
 <Topic id="92AA4F47B878880DFACC86FE4F58D22B" visible="True" title="User interface">
 <Topic id="CA7B1E22CC877DA7601F34CE0479FD2B" visible="True" title="Tool windows">
+<Topic id="C2350A704FE1E4599837EF0CBF5DB744" visible="True" title="Making a tool window visible">
+</Topic>
+<Topic id="256CA8442B03C754AB12479F0CBAD7C3" visible="True" title="Changing the place of a tool window">
+</Topic>
+<Topic id="70459A2A033EB9324D5DFCAF05E86883" visible="True" title="Hiding a tool window">
+</Topic>
 </Topic>
 <Topic id="FED2A6345DDC8A2F7D0680F93492B3CD" visible="True" title="Document windows">
+<Topic id="47008054B8F7B6F68B3ABC02AC82A3F7" visible="True" title="Showing multiple documents side-by-side">
+</Topic>
+<Topic id="0D1AFC98EABF1DA76DAB3749EFB93038" visible="True" title="Using floating windows">
+</Topic>
 </Topic>
 </Topic>
 <Topic id="345E05B54F4611736070E46B38DD4CB5" visible="True" title="Tables and Worksheets">
@@ -25,30 +39,74 @@
 <Topic id="0F56118543F36CC6A6EB223F48A5B2C2" visible="True" title="Creating additional data columns or property columns">
 </Topic>
 <Topic id="9EC02FDB23AEF02047503483B7079F28" visible="True" title="Selection of columns and/or rows in a worksheet">
+<Topic id="86BB2E2798FB4203DC002C47F2C86FC9" visible="True" title="To select data columns:">
+</Topic>
+<Topic id="A508EE85C601347F8D41A4F7BC174E95" visible="True" title="To select specific data rows:">
+</Topic>
+<Topic id="6ED85BE6DBAD7774A4EF3CC6B3B9192C" visible="True" title="To select specific property columns:">
+</Topic>
+<Topic id="009360DD1C44007C345033FD1D5C953D" visible="True" title="Example of a selection">
+</Topic>
 </Topic>
 <Topic id="F71D3901373F20479F4C3575F2838494" visible="True" title="Copy/paste of worksheet data">
 </Topic>
 <Topic id="CCE945B2EC2C578D8C49120D55FACEE3" visible="True" title="Importing ASCII data">
+<Topic id="FFF4C2F612B2BAB9CF689F557A184E3A" visible="True" title="Importing ASCII data from a single file into a single worksheet">
+</Topic>
+<Topic id="9BC603C8A9C16E1CE5AC496DA8097D99" visible="True" title="Importing ASCII data from multiple files into a single worksheet">
+</Topic>
+<Topic id="E5EFC13BB357BF4A1093885F345139B9" visible="True" title="Importing ASCII data from multiple files into separate worksheets">
+</Topic>
+<Topic id="048F6F0FD3BDC7133EB4130BF53BF21D" visible="True" title="Importing multiple ASCII files into a single worksheet vertically">
+</Topic>
 </Topic>
 <Topic id="B09D5D470B8DCF524A698117E51D308B" visible="True" title="Changing the structure of a worksheet">
+<Topic id="F30A8388D1325EC508BCF6A76CC69D49" visible="True" title="Transposing a worksheet">
+</Topic>
+<Topic id="BDC77858E7B184C7E5436C5CFB9673E7" visible="True" title="Decompose a table with a cycling independent variable">
+</Topic>
+<Topic id="CB52FC32CFE755AF5F63685529828624" visible="True" title="Convert X-Y-V columns to a matrix">
+</Topic>
 </Topic>
 <Topic id="742EC350D96B6D65DA918DE77373E534" visible="True" title="Worksheet Notes">
 </Topic>
 <Topic id="51AB2CB3ECBAFD1DD0F029C0B45B8046" visible="True" title="Worksheet Scripts and Column Scripts">
+<Topic id="A922639CFDCBCB105FEDED63C79330AA" visible="True" title="The script dialog box">
+</Topic>
+<Topic id="9FC35E359A7716A00086ED0EDC2BFB10" visible="True" title="Worksheet scripts">
+</Topic>
 </Topic>
 </Topic>
 <Topic id="942E3813AA2CE7361340941CE02C3EAE" visible="True" title="2D-Graphs">
 <Topic id="56A384C0B93B52A2D781F5F98DE90A52" visible="True" title="Quickstart">
+<Topic id="11C32B9CA36BD740F55DCE1F9C3EB223" visible="True" title="Create a line plot, a scatter plot, or a line-scatter plot">
+</Topic>
+<Topic id="99E27F5DA0A5611AA26D632399925C2D" visible="True" title="Create a density plot">
+</Topic>
 </Topic>
 <Topic id="F3F39DE287E6F866C4CE91FCB7269D42" visible="True" title="Concepts">
+<Topic id="4DE2EC33F10A92975E8A0F64E6464221" visible="True" title="Layer structure">
+</Topic>
+<Topic id="0E8E79D9E16037A94F75B6ACA6866097" visible="True" title="Concept of scale and axis">
+</Topic>
 </Topic>
 <Topic id="682F12AAF3087ADE24CCF36B3632B5EF" visible="True" title="Creating a graph">
 </Topic>
 <Topic id="AE99705CE5CA5220BF3FC52F74759A97" visible="True" title="Modifying a graph">
+<Topic id="AB6B45517B9F60A7369912EB1DC461F7" visible="True" title="Modifying the graph size">
+</Topic>
+<Topic id="BBA68C4AB08CC2456DA37CDDC22BD16C" visible="True" title="Modifying the default font size">
+</Topic>
+<Topic id="390BA780CE85D2B9F182FEFBDBF1BFA6" visible="True" title="Graph notes">
+</Topic>
 </Topic>
 </Topic>
 <Topic id="B304562CD5175896950785146ED1076A" visible="True" title="3D-Graphs">
 <Topic id="1F16AF0BE101FBF63C832CFF75112708" visible="True" title="Quickstart">
+<Topic id="ACDF493F583131AAA215E511C0353C67" visible="True" title="Create a surface plot">
+</Topic>
+<Topic id="52A7F0997D6D78C50F721A19A47761A1" visible="True" title="Create a line plot">
+</Topic>
 </Topic>
 </Topic>
 <Topic id="5B0DC6C5A311694B99B22BE8194FBB1A" visible="True" title="Text documents - Markdown in Altaxo">
@@ -63,14 +121,38 @@
 <Topic id="48C59E28BE6B00A86532E9BAF2E3867B" visible="True" title="Rename a text document">
 </Topic>
 <Topic id="92B7CA00A4DC93F8BF66AEF350E77316" visible="True" title="Markdown syntax">
+<Topic id="6C9636B5ECE4C7B0B1D9874523682BF8" visible="True" title="Including 2D and 3D graphs from Altaxo">
+</Topic>
+<Topic id="0972867E70F2ABC0FA0D744AA58109AA" visible="True" title="Including images from the file system or the clipboard">
+</Topic>
+<Topic id="DBB590EF85CF1397F2E4BDD3D91658A1" visible="True" title="Including formulas">
+</Topic>
+<Topic id="3D916BB3FE58D60ADF15B281D55E5852" visible="True" title="Special characters">
+</Topic>
+<Topic id="6A6E755B84FEE2C567A1C4DCB7D11532" visible="True" title="Markdown extensions">
+</Topic>
 </Topic>
 <Topic id="D81BAB079B701CE4975A6890157D3C46" visible="True" title="Usage (of the editor and preview window)">
+<Topic id="5CB0F9E613C98A49D8051EBA3247B77A" visible="True" title="Editor and Preview window">
+</Topic>
+<Topic id="ED10763B8F12B633CB66F272890672E3" visible="True" title="Shortcut keys">
+</Topic>
+<Topic id="9DD6D62833B5D9F3A624403C1C2E15A7" visible="True" title="View configuration">
+</Topic>
+<Topic id="2DB657F3A16531760AA14E645AB8A9BF" visible="True" title="Outline window">
+</Topic>
 </Topic>
 <Topic id="847834D0535C024B5119381901BD4B65" visible="True" title="Concatenate two text documents">
 </Topic>
 <Topic id="FDC514482A6F579D9BCA039C57ADBCCF" visible="True" title="Import of existing Markdown files">
 </Topic>
 <Topic id="7029CC1C058EA6FCB5510AA6650B7407" visible="True" title="Export of a text document">
+<Topic id="64C97B6EC5C4FFD769B6654B5EA4525E" visible="True" title="Export to an external markdown file">
+</Topic>
+<Topic id="8E18955817C6F7DA1EB77C40E94B1C81" visible="True" title="Export to one or multiple Maml files">
+</Topic>
+<Topic id="FC87B53658657D5F2BF4E635528354A6" visible="True" title="Export to OpenXml (Microsoft Word .docx) files">
+</Topic>
 </Topic>
 </Topic>
 <Topic id="CBDD41AAA1B05A4B2362BE258C1A1A9D" visible="True" title="Altaxo's code editor">
@@ -79,16 +161,56 @@
 <Topic id="A801476992A9D8BE7D8039466EFC262F" visible="True" title="The code editor window in detail">
 </Topic>
 <Topic id="01A8CFA2EB8AF7B1F2DDA0AC01F0FED7" visible="True" title="Long running code">
+<Topic id="DEF95C9E1EF58CB82E6E71C1742C1880" visible="True" title="Allow cancellation of code execution at defined points">
+</Topic>
+<Topic id="331A4511FC4CFA928435F4BC88304F59" visible="True" title="Report the progress to the user">
+</Topic>
 </Topic>
 </Topic>
 <Topic id="2F5E6BE1D416EEF88458DAC931E96092" visible="True" title="Project organization">
 <Topic id="2783FED4411F72EE01B8906649201D84" visible="True" title="Project items">
+<Topic id="DFA0653AB6372A939A0FB377F7F10BE3" visible="True" title="Item types">
+</Topic>
+<Topic id="11BFAFA49AD18CD5422A06AAEC9EF6D7" visible="True" title="Item names">
+</Topic>
+</Topic>
+</Topic>
+<Topic id="6A78480867332D5D0A91A47BC4F120D0" visible="True" title="Scientific applications">
+<Topic id="C05A56A60B14F185E807BF8B9E97276F" visible="True" title="Spectroscopy">
+<Topic id="3A0137E53CEEEFFC3A49CDCA2CC5B88D" visible="True" title="Spectral preprocessing">
+</Topic>
+<Topic id="FCC125D44CCD76A52BBA4BE955537F85" visible="True" title="Raman spectroscopy">
+</Topic>
 </Topic>
 </Topic>
 <Topic id="D7216AC7DC127824F9628052A8B61BF1" visible="True" title="Appendix">
+<Topic id="C217D5E95E222A9979E190190DB7F706" visible="True" title="Built-in fit functions">
+<Topic id="DF83DC7D40FD2649BAB5FCA82077D8B5" visible="True" title="General fit functions">
+</Topic>
+<Topic id="246D512A44D62475C6A9B7333AE94450" visible="True" title="Kinetics related fit functions">
+</Topic>
+<Topic id="A13E5A342CE8CF1DEFF57D808534FEAC" visible="True" title="Materials related fit functions">
+</Topic>
+<Topic id="FDA2C14CC9564D6357135DA2850F79AE" visible="True" title="Fit functions for peaks (height parameter)">
+</Topic>
+<Topic id="052F8E33410F287DB9D621D604778F69" visible="True" title="Fit functions for probability density and peaks (area parameter)">
+</Topic>
+<Topic id="C62216214FCA2CC32A62F9DA42E5A9E1" visible="True" title="Relaxation fit functions">
+</Topic>
+<Topic id="E771D4FEB3C4838C0A284850BEEFBF46" visible="True" title="Retardation fit functions">
+</Topic>
+<Topic id="CC0F38133338898C0E8F0A706D55FDAA" visible="True" title="Fit functions for transitions">
+</Topic>
+<Topic id="982BEB47AE26FF08B670766893FD90C6" visible="True" title="GeneralizedLogisticDecreasing">
+</Topic>
+</Topic>
 <Topic id="8A73F813C2BA5A0BB70B3262B294B137" visible="True" title="Altaxo's command line arguments">
 </Topic>
 <Topic id="F7DF9C0A0AECE7B19609774AC70B147B" visible="True" title="Save / restore Altaxo's user settings">
+<Topic id="0F1AE84ECC5B64EF7B0247DDC7B13975" visible="True" title="Save your settings">
+</Topic>
+<Topic id="8E4F74F9C40C692B28A56859D2FAAFA5" visible="True" title="Restore your settings">
+</Topic>
 </Topic>
 </Topic>
 <Topic id="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027" visible="True" title="Appendix: Images">

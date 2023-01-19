@@ -1,0 +1,25 @@
+﻿
+<topic id="3D916BB3FE58D60ADF15B281D55E5852" revisionNumber="1">
+
+<developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+<introduction>
+
+<para>
+Previous section: <link xlink:href="DBB590EF85CF1397F2E4BDD3D91658A1">Including formulas</link></para>
+<autoOutline />
+<markup><hr/></markup>
+
+<para>
+You can include special characters using HTML symbol entities. For instance, <codeInline>&amp;pound;</codeInline> renders to £, <codeInline>&amp;forall;</codeInline> renders to ∀, <codeInline>&amp;frac78;</codeInline> renders to ⅞. A table with such characters can be found in the internet, for instance <externalLink><linkText>here</linkText><linkUri>https://www.w3schools.com/html/html_symbols.asp</linkUri></externalLink>.
+</para>
+
+<para>
+If you don't found here what you want, you can also include any Unicode character. Use the Windows character map to include such a character. Please note that the font that is used to display the preview of your markdown document may not support all Unicode characters.
+</para>
+<markup><hr/></markup>
+<para>
+Next section: <link xlink:href="6A6E755B84FEE2C567A1C4DCB7D11532">Markdown extensions</link></para>
+</introduction>
+</developerConceptualDocument>
+</topic>

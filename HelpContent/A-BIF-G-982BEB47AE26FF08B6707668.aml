@@ -1,0 +1,786 @@
+﻿
+<topic id="982BEB47AE26FF08B670766893FD90C6" revisionNumber="1">
+
+<developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+<introduction>
+
+<para>
+Previous section: <link xlink:href="CC0F38133338898C0E8F0A706D55FDAA">Fit functions for transitions</link></para>
+<autoOutline />
+<markup><hr/></markup>
+
+<para>
+This function evaluates a sum of generalized logistic terms (decreasing steps), plus a background polynomial with one or multiple terms, according to
+</para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4AB10B2CC33F0C80302357F795519021"><img src="../media/4AB10B2CC33F0C80302357F795519021.png" width="584" height="59"></img></a></markup>
+
+<para>
+in which:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#7CEF4BECD2BDC84CB1211EAF75688D08"><img src="../media/7CEF4BECD2BDC84CB1211EAF75688D08.png" width="55" height="11" align="bottom"></img></a></markup> are the amplitudes (step heights) of the logistic step terms
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#007E8DE9C5E6E1717DE61FA200FA4869"><img src="../media/007E8DE9C5E6E1717DE61FA200FA4869.png" width="65" height="11" align="bottom"></img></a></markup> are the locations of the logistic step terms
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#F6144D1044FF2E087F00FFB306B59C10"><img src="../media/F6144D1044FF2E087F00FFB306B59C10.png" width="61" height="11" align="bottom"></img></a></markup> are the widths of the logistic step terms
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5F9A4C30257364407B38CB5955D3BB84"><img src="../media/5F9A4C30257364407B38CB5955D3BB84.png" width="55" height="11" align="bottom"></img></a></markup> are exponents that control the slope (steepness) on the left sides of the steps
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#102FA95CEEFD0D4EBC51989FF4575BFC"><img src="../media/102FA95CEEFD0D4EBC51989FF4575BFC.png" width="53" height="15" align="bottom"></img></a></markup> are exponents that control the slope (steepness) on the right sides of the steps
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#EA408D4FFBE691FB61A157029F1CDB87"><img src="../media/EA408D4FFBE691FB61A157029F1CDB87.png" width="41" height="15" align="bottom"></img></a></markup> are the coefficients of the background polynomial of order  <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1524114A576378DC1D43A85F23D2A753"><img src="../media/1524114A576378DC1D43A85F23D2A753.png" width="14" height="7" align="baseline"></img></a></markup>
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4EF835FC99A8EA2F77EC0547660B4997"><img src="../media/4EF835FC99A8EA2F77EC0547660B4997.png" width="10" height="7" align="baseline"></img></a></markup> is the number of logistic step terms (<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#82F0E41C75F4684DF9D917F18AB1BCF7"><img src="../media/82F0E41C75F4684DF9D917F18AB1BCF7.png" width="37" height="14" align="bottom"></img></a></markup>)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1524114A576378DC1D43A85F23D2A753"><img src="../media/1524114A576378DC1D43A85F23D2A753.png" width="14" height="7" align="baseline"></img></a></markup> is the order of the background polynomial (set <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#542521E9C0C5C7B36CA39A384A75C928"><img src="../media/542521E9C0C5C7B36CA39A384A75C928.png" width="53" height="14" align="bottom"></img></a></markup> to disable the background polynomial)
+</para>
+</listItem>
+</list>
+
+<para>
+The number of logistic step terms <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4EF835FC99A8EA2F77EC0547660B4997"><img src="../media/4EF835FC99A8EA2F77EC0547660B4997.png" width="10" height="7" align="baseline"></img></a></markup> and the order of the background polynomial <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1524114A576378DC1D43A85F23D2A753"><img src="../media/1524114A576378DC1D43A85F23D2A753.png" width="14" height="7" align="baseline"></img></a></markup> can be changed by double-clicking on the fit function. The default values are <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AB6102027499324E523E96136FF3C0DD"><img src="../media/AB6102027499324E523E96136FF3C0DD.png" width="37" height="10" align="baseline"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#27F4FE01705E8CE801E4F68D69F87349"><img src="../media/27F4FE01705E8CE801E4F68D69F87349.png" width="41" height="10" align="baseline"></img></a></markup>.
+</para>
+
+<para>
+The domain of the function is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FB4DE268FCBAFA43EB96F2668F852D86"><img src="../media/FB4DE268FCBAFA43EB96F2668F852D86.png" width="91" height="14" align="bottom"></img></a></markup>.
+</para>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9444153DF56B74FC888853155FFB22EE"><img src="../media/9444153DF56B74FC888853155FFB22EE.png" width="567"></img></a></markup>
+</para>
+
+<para>
+Fig. 1: GeneralizedLogisticDecreasing (<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AB6102027499324E523E96136FF3C0DD"><img src="../media/AB6102027499324E523E96136FF3C0DD.png" width="37" height="10" align="baseline"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#27F4FE01705E8CE801E4F68D69F87349"><img src="../media/27F4FE01705E8CE801E4F68D69F87349.png" width="41" height="10" align="baseline"></img></a></markup>) with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B53DA112EC7BBAE5E59A35D54EAAA9B1"><img src="../media/B53DA112EC7BBAE5E59A35D54EAAA9B1.png" width="42" height="14" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5DA65FA4BEEFA0F4ED08A242C1B6AC0F"><img src="../media/5DA65FA4BEEFA0F4ED08A242C1B6AC0F.png" width="47" height="14" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D9D71CB4FB43E2F78FE039E2DEB04087"><img src="../media/D9D71CB4FB43E2F78FE039E2DEB04087.png" width="45" height="14" align="bottom"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#8CAEBF1F88CA1B47EB4390643CF1A06F"><img src="../media/8CAEBF1F88CA1B47EB4390643CF1A06F.png" width="40" height="15" align="bottom"></img></a></markup>. The values of <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1D1D17ED22953BF8BB8836913CC41B16"><img src="../media/1D1D17ED22953BF8BB8836913CC41B16.png" width="15" height="11" align="bottom"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#02A7801B952370A719F4C3ACB21D59CE"><img src="../media/02A7801B952370A719F4C3ACB21D59CE.png" width="13" height="15" align="bottom"></img></a></markup> are indicated in the legend.
+</para>
+<markup><hr/></markup>
+
+<para>
+References:
+<externalLink><linkText>Sigmoid function at Wikipedia</linkText><linkUri>https://en.wikipedia.org/wiki/Sigmoid_function</linkUri></externalLink>
+</para>
+</introduction>
+
+<section address="C5015D0C2F4E892261DB2C5A01857DBB">
+<title>GeneralizedLogisticIncreasing
+</title>
+<content>
+
+<para>
+This function evaluates a sum of generalized logistic terms (increasing steps), plus a background polynomial with one or multiple terms, according to
+</para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#04503D089B1CC5BB2EF8263896963084"><img src="../media/04503D089B1CC5BB2EF8263896963084.png" width="613" height="59"></img></a></markup>
+
+<para>
+in which:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#7CEF4BECD2BDC84CB1211EAF75688D08"><img src="../media/7CEF4BECD2BDC84CB1211EAF75688D08.png" width="55" height="11" align="bottom"></img></a></markup> are the amplitudes (step heights) of the logistic step terms
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#007E8DE9C5E6E1717DE61FA200FA4869"><img src="../media/007E8DE9C5E6E1717DE61FA200FA4869.png" width="65" height="11" align="bottom"></img></a></markup> are the locations of the logistic step terms
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#F6144D1044FF2E087F00FFB306B59C10"><img src="../media/F6144D1044FF2E087F00FFB306B59C10.png" width="61" height="11" align="bottom"></img></a></markup> are the widths of the logistic step terms
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5F9A4C30257364407B38CB5955D3BB84"><img src="../media/5F9A4C30257364407B38CB5955D3BB84.png" width="55" height="11" align="bottom"></img></a></markup> are exponents that control the slope (steepness) on the right sides of the steps
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#102FA95CEEFD0D4EBC51989FF4575BFC"><img src="../media/102FA95CEEFD0D4EBC51989FF4575BFC.png" width="53" height="15" align="bottom"></img></a></markup> are exponents that control the slope (steepness) on the left sides of the steps
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#EA408D4FFBE691FB61A157029F1CDB87"><img src="../media/EA408D4FFBE691FB61A157029F1CDB87.png" width="41" height="15" align="bottom"></img></a></markup> are the coefficients of the background polynomial of order  <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1524114A576378DC1D43A85F23D2A753"><img src="../media/1524114A576378DC1D43A85F23D2A753.png" width="14" height="7" align="baseline"></img></a></markup>
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4EF835FC99A8EA2F77EC0547660B4997"><img src="../media/4EF835FC99A8EA2F77EC0547660B4997.png" width="10" height="7" align="baseline"></img></a></markup> is the number of logistic step terms (<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#82F0E41C75F4684DF9D917F18AB1BCF7"><img src="../media/82F0E41C75F4684DF9D917F18AB1BCF7.png" width="37" height="14" align="bottom"></img></a></markup>)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1524114A576378DC1D43A85F23D2A753"><img src="../media/1524114A576378DC1D43A85F23D2A753.png" width="14" height="7" align="baseline"></img></a></markup> is the order of the background polynomial (set <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#542521E9C0C5C7B36CA39A384A75C928"><img src="../media/542521E9C0C5C7B36CA39A384A75C928.png" width="53" height="14" align="bottom"></img></a></markup> to disable the background polynomial)
+</para>
+</listItem>
+</list>
+
+<para>
+The number of logistic step terms <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4EF835FC99A8EA2F77EC0547660B4997"><img src="../media/4EF835FC99A8EA2F77EC0547660B4997.png" width="10" height="7" align="baseline"></img></a></markup> and the order of the background polynomial <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1524114A576378DC1D43A85F23D2A753"><img src="../media/1524114A576378DC1D43A85F23D2A753.png" width="14" height="7" align="baseline"></img></a></markup> can be changed by double-clicking on the fit function. The default values are <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AB6102027499324E523E96136FF3C0DD"><img src="../media/AB6102027499324E523E96136FF3C0DD.png" width="37" height="10" align="baseline"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#27F4FE01705E8CE801E4F68D69F87349"><img src="../media/27F4FE01705E8CE801E4F68D69F87349.png" width="41" height="10" align="baseline"></img></a></markup>.
+</para>
+
+<para>
+The domain of the function is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FB4DE268FCBAFA43EB96F2668F852D86"><img src="../media/FB4DE268FCBAFA43EB96F2668F852D86.png" width="91" height="14" align="bottom"></img></a></markup>.
+</para>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#C4D01E6733554F787FE673F2070F752F"><img src="../media/C4D01E6733554F787FE673F2070F752F.png" width="567"></img></a></markup>
+</para>
+
+<para>
+Fig. 1: GeneralizedLogisticIncreasing (<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AB6102027499324E523E96136FF3C0DD"><img src="../media/AB6102027499324E523E96136FF3C0DD.png" width="37" height="10" align="baseline"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#27F4FE01705E8CE801E4F68D69F87349"><img src="../media/27F4FE01705E8CE801E4F68D69F87349.png" width="41" height="10" align="baseline"></img></a></markup>) with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B53DA112EC7BBAE5E59A35D54EAAA9B1"><img src="../media/B53DA112EC7BBAE5E59A35D54EAAA9B1.png" width="42" height="14" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5DA65FA4BEEFA0F4ED08A242C1B6AC0F"><img src="../media/5DA65FA4BEEFA0F4ED08A242C1B6AC0F.png" width="47" height="14" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D9D71CB4FB43E2F78FE039E2DEB04087"><img src="../media/D9D71CB4FB43E2F78FE039E2DEB04087.png" width="45" height="14" align="bottom"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#8CAEBF1F88CA1B47EB4390643CF1A06F"><img src="../media/8CAEBF1F88CA1B47EB4390643CF1A06F.png" width="40" height="15" align="bottom"></img></a></markup>. The values of <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1D1D17ED22953BF8BB8836913CC41B16"><img src="../media/1D1D17ED22953BF8BB8836913CC41B16.png" width="15" height="11" align="bottom"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#02A7801B952370A719F4C3ACB21D59CE"><img src="../media/02A7801B952370A719F4C3ACB21D59CE.png" width="13" height="15" align="bottom"></img></a></markup> are indicated in the legend.
+</para>
+<markup><hr/></markup>
+
+<para>
+References:
+<externalLink><linkText>Sigmoid function at Wikipedia</linkText><linkUri>https://en.wikipedia.org/wiki/Sigmoid_function</linkUri></externalLink>
+</para>
+</content>
+</section>
+
+<section address="2D05C1A46494F1271F05F96403B8B405">
+<title>General effective medium transition (logarithmized)
+</title>
+<content>
+
+<para>
+This transition models e.g. the DC electrical conductivity of conductive particles embedded in a matrix, but is also suitable for other percolation problems.
+</para>
+
+<para>
+The function, which evaluates the property <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#6BE482414527C9B3DFFA9CAEF82E16C8"><img src="../media/6BE482414527C9B3DFFA9CAEF82E16C8.png" width="8" height="11" align="bottom"></img></a></markup> of a compound in dependence of a filler concentration <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#C6EE38D3C6845DA5AB9112DC505E1FE0"><img src="../media/C6EE38D3C6845DA5AB9112DC505E1FE0.png" width="8" height="11" align="bottom"></img></a></markup> (<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#44F2CDCE1CFF57C582ADB6E8D71C75C4"><img src="../media/44F2CDCE1CFF57C582ADB6E8D71C75C4.png" width="63" height="14" align="bottom"></img></a></markup>) is implicitly given by the following equation:
+</para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D14CA5C82336F047307D2BD44D2FCF2E"><img src="../media/D14CA5C82336F047307D2BD44D2FCF2E.png" width="264" height="83"></img></a></markup>
+
+<para>
+in which:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#C6EE38D3C6845DA5AB9112DC505E1FE0"><img src="../media/C6EE38D3C6845DA5AB9112DC505E1FE0.png" width="8" height="11" align="bottom"></img></a></markup> : volume concentration of the filler particles (<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#44F2CDCE1CFF57C582ADB6E8D71C75C4"><img src="../media/44F2CDCE1CFF57C582ADB6E8D71C75C4.png" width="63" height="14" align="bottom"></img></a></markup>)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#DD1322D2780024E4F8BCDB27883D0A62"><img src="../media/DD1322D2780024E4F8BCDB27883D0A62.png" width="13" height="11" align="bottom"></img></a></markup> : critical percolation threshold (location of the transition (<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#C901FDF5592F4673F99AE48FA05EFD26"><img src="../media/C901FDF5592F4673F99AE48FA05EFD26.png" width="68" height="14" align="bottom"></img></a></markup>))
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#8A0BC1C537152E979C7A4F6C26C1594F"><img src="../media/8A0BC1C537152E979C7A4F6C26C1594F.png" width="20" height="14" align="bottom"></img></a></markup> : exponents (<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#E92659DB1FC0B088839FA209E84808A0"><img src="../media/E92659DB1FC0B088839FA209E84808A0.png" width="35" height="11" align="baseline"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#C3993A7AD3EEA334DE811E9627B07350"><img src="../media/C3993A7AD3EEA334DE811E9627B07350.png" width="33" height="11" align="baseline"></img></a></markup>)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#249E2EEDC43B206EDF3ABFF70C3BFA4A"><img src="../media/249E2EEDC43B206EDF3ABFF70C3BFA4A.png" width="14" height="11" align="bottom"></img></a></markup> : property of the matrix material (e.g. electrical conductivity of the matrix)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1EA9C205AD27427CE6E98F0D0B8C4E50"><img src="../media/1EA9C205AD27427CE6E98F0D0B8C4E50.png" width="14" height="11" align="bottom"></img></a></markup> : property of the filler particles (e.g. electrical conductivity of the filler)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#6BE482414527C9B3DFFA9CAEF82E16C8"><img src="../media/6BE482414527C9B3DFFA9CAEF82E16C8.png" width="8" height="11" align="bottom"></img></a></markup> : resulting property of the compound (e.g. electrical conductivity of the matrix with filler particles)
+</para>
+</listItem>
+</list>
+
+<para>
+<legacyBold>Instead of returning <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#6BE482414527C9B3DFFA9CAEF82E16C8"><img src="../media/6BE482414527C9B3DFFA9CAEF82E16C8.png" width="8" height="11" align="bottom"></img></a></markup> as described above, the function will return the decadic logarithm <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#CCC04F939C77C8FF99C58E49D40420FB"><img src="../media/CCC04F939C77C8FF99C58E49D40420FB.png" width="50" height="17" align="bottom"></img></a></markup>. Furthermore, instead of <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#249E2EEDC43B206EDF3ABFF70C3BFA4A"><img src="../media/249E2EEDC43B206EDF3ABFF70C3BFA4A.png" width="14" height="11" align="bottom"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1EA9C205AD27427CE6E98F0D0B8C4E50"><img src="../media/1EA9C205AD27427CE6E98F0D0B8C4E50.png" width="14" height="11" align="bottom"></img></a></markup>, the logarithmized parameters <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#3053C10EC5B37DD6E7A345BCD2347BAD"><img src="../media/3053C10EC5B37DD6E7A345BCD2347BAD.png" width="48" height="17" align="bottom"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D29347BBEF9DAD1AD18F640EF704CFD2"><img src="../media/D29347BBEF9DAD1AD18F640EF704CFD2.png" width="48" height="17" align="bottom"></img></a></markup> are used!</legacyBold>
+</para>
+
+<para>
+The equation has the following properties, which match the percolation theory for concentrations below and above the percolation threshold:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#95D76BC1F4A1F1773FAA72F6F053DF2A"><img src="../media/95D76BC1F4A1F1773FAA72F6F053DF2A.png" width="41" height="11" align="bottom"></img></a></markup> for <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#E3A6C3A4D72BCFC672C2157921DE13F0"><img src="../media/E3A6C3A4D72BCFC672C2157921DE13F0.png" width="36" height="14" align="bottom"></img></a></markup>
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#73406F58D0C618CC00F215D4B2C4735C"><img src="../media/73406F58D0C618CC00F215D4B2C4735C.png" width="116" height="49" align="middle"></img></a></markup> for <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#103CD7C3298660292CF3F6252F86ECCB"><img src="../media/103CD7C3298660292CF3F6252F86ECCB.png" width="41" height="13" align="bottom"></img></a></markup>
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B5CD22F6E4FF29977E87821613D75CC1"><img src="../media/B5CD22F6E4FF29977E87821613D75CC1.png" width="106" height="49" align="middle"></img></a></markup> for <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#E93A5F794EC9DCC4D5CC143B574D3320"><img src="../media/E93A5F794EC9DCC4D5CC143B574D3320.png" width="41" height="13" align="bottom"></img></a></markup>
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#BFC06BD669729F329C9F636A96A4947D"><img src="../media/BFC06BD669729F329C9F636A96A4947D.png" width="41" height="11" align="bottom"></img></a></markup> for <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#E576CBB3C2FFB2EBB7D5C0F3D811697E"><img src="../media/E576CBB3C2FFB2EBB7D5C0F3D811697E.png" width="36" height="14" align="bottom"></img></a></markup>
+</para>
+</listItem>
+</list>
+
+<para>
+In contrast to the separate percolation equations below and above the percolation threshold, the general effective medium transition avoids the divergence near the percolation threshold, and provides a smooth transition between the two equations.
+</para>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#273250B7F054D5A0F9658B982761C766"><img src="../media/273250B7F054D5A0F9658B982761C766.png" width="567"></img></a></markup>
+</para>
+
+<para>
+Fig. 1: Lg10GeneralEffectiveMedium transition with the parameters <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#E0194388F3FFD044E775504399955E71"><img src="../media/E0194388F3FFD044E775504399955E71.png" width="95" height="17" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#59D2AF942BCF2DB0744205BDF84327E9"><img src="../media/59D2AF942BCF2DB0744205BDF84327E9.png" width="88" height="17" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1D8DCCFB40136DE766E169D68C939CC1"><img src="../media/1D8DCCFB40136DE766E169D68C939CC1.png" width="52" height="14" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4AC12A48B06958344B4B6313F8198175"><img src="../media/4AC12A48B06958344B4B6313F8198175.png" width="54" height="10" align="baseline"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#19573C7BF31733289BD26E2A9AF2A12D"><img src="../media/19573C7BF31733289BD26E2A9AF2A12D.png" width="33" height="10" align="baseline"></img></a></markup>.
+</para>
+<markup><hr/></markup>
+
+<para>
+References:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+McLachlan, D. and G. Sauti. “The AC and DC conductivity of nanocomposites.” Journal of Nanomaterials 2007 (2007): 15, <externalLink><linkText>doi:10.1155/2007/30389</linkText><linkUri>https://doi.org/10.1155/2007/30389</linkUri></externalLink>
+</para>
+</listItem>
+</list>
+</content>
+</section>
+
+<section address="C2ECEF712B6A8A0848D33C9BD6F987D8">
+<title>Linear Fermi-Dirac transition
+</title>
+<content>
+
+<para>
+This fit function implements the linearly scaled Fermi-Dirac transition:
+</para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D02D7A81D93DCDCCD5D1BC257A9AAA0D"><img src="../media/D02D7A81D93DCDCCD5D1BC257A9AAA0D.png" width="181" height="17"></img></a></markup>
+
+<para>
+which assumes a value of <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#249E2EEDC43B206EDF3ABFF70C3BFA4A"><img src="../media/249E2EEDC43B206EDF3ABFF70C3BFA4A.png" width="14" height="11" align="bottom"></img></a></markup> for <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#E3A6C3A4D72BCFC672C2157921DE13F0"><img src="../media/E3A6C3A4D72BCFC672C2157921DE13F0.png" width="36" height="14" align="bottom"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1EA9C205AD27427CE6E98F0D0B8C4E50"><img src="../media/1EA9C205AD27427CE6E98F0D0B8C4E50.png" width="14" height="11" align="bottom"></img></a></markup> for <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#E576CBB3C2FFB2EBB7D5C0F3D811697E"><img src="../media/E576CBB3C2FFB2EBB7D5C0F3D811697E.png" width="36" height="14" align="bottom"></img></a></markup>.
+</para>
+
+<para>
+The core <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#6F0ED761E254A7640FBF74A472B1B492"><img src="../media/6F0ED761E254A7640FBF74A472B1B492.png" width="29" height="17" align="bottom"></img></a></markup> of the Fermi-Dirac transition is the following function, defined in the interval <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#E16E2C30456C7408BCD55F77AAFFA9AB"><img src="../media/E16E2C30456C7408BCD55F77AAFFA9AB.png" width="31" height="17" align="bottom"></img></a></markup>, which assumes the values <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D2C491C3CD7651917C14A19539957543"><img src="../media/D2C491C3CD7651917C14A19539957543.png" width="84" height="17" align="bottom"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B7C5A090A8CC80BFDD0E9E1EC6AD0155"><img src="../media/B7C5A090A8CC80BFDD0E9E1EC6AD0155.png" width="84" height="17" align="bottom"></img></a></markup>:
+</para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4C9047D8617400683590D3FAC5436F73"><img src="../media/4C9047D8617400683590D3FAC5436F73.png" width="426" height="44"></img></a></markup>
+
+<para>
+in which:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#DD1322D2780024E4F8BCDB27883D0A62"><img src="../media/DD1322D2780024E4F8BCDB27883D0A62.png" width="13" height="11" align="bottom"></img></a></markup> : location of the transition (0..1)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#A1FB3A57192E62767C43FB78860E748F"><img src="../media/A1FB3A57192E62767C43FB78860E748F.png" width="12" height="7" align="baseline"></img></a></markup> : width parameter
+</para>
+</listItem>
+</list>
+
+<para>
+The domain of the function is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#07C43AB1A2D06F32AF20B87BA893068C"><img src="../media/07C43AB1A2D06F32AF20B87BA893068C.png" width="64" height="14" align="bottom"></img></a></markup>.
+</para>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#3DE9BDFAC056F0F70826B5F7E5C21381"><img src="../media/3DE9BDFAC056F0F70826B5F7E5C21381.png" width="567"></img></a></markup>
+</para>
+
+<para>
+Fig. 1: LinearFermiDiracTransition with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#7232F0C09718797107995B3421E2B71F"><img src="../media/7232F0C09718797107995B3421E2B71F.png" width="42" height="14" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#F731F2F70F1A7BBFF44634F438FC5579"><img src="../media/F731F2F70F1A7BBFF44634F438FC5579.png" width="49" height="14" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#595D9397F7347B8D32972C8F298B94C6"><img src="../media/595D9397F7347B8D32972C8F298B94C6.png" width="52" height="14" align="bottom"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#C98B22D1CF63BBF3C2089DCAF307ED5C"><img src="../media/C98B22D1CF63BBF3C2089DCAF307ED5C.png" width="58" height="10" align="baseline"></img></a></markup>.
+</para>
+<markup><hr/></markup>
+
+<para>
+References:
+</para>
+</content>
+</section>
+
+<section address="9B1BF4DEA42EC3351E25D7D19803B041">
+<title>Logarithmic Fermi-Dirac transition
+</title>
+<content>
+
+<para>
+This fit function implements the linearly scaled Fermi-Dirac transition:
+</para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#7CDF525DBFA7D70A29549C8D7A6855FA"><img src="../media/7CDF525DBFA7D70A29549C8D7A6855FA.png" width="133" height="21"></img></a></markup>
+
+<para>
+which assumes a value of <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#249E2EEDC43B206EDF3ABFF70C3BFA4A"><img src="../media/249E2EEDC43B206EDF3ABFF70C3BFA4A.png" width="14" height="11" align="bottom"></img></a></markup> for <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#E3A6C3A4D72BCFC672C2157921DE13F0"><img src="../media/E3A6C3A4D72BCFC672C2157921DE13F0.png" width="36" height="14" align="bottom"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1EA9C205AD27427CE6E98F0D0B8C4E50"><img src="../media/1EA9C205AD27427CE6E98F0D0B8C4E50.png" width="14" height="11" align="bottom"></img></a></markup> for <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#E576CBB3C2FFB2EBB7D5C0F3D811697E"><img src="../media/E576CBB3C2FFB2EBB7D5C0F3D811697E.png" width="36" height="14" align="bottom"></img></a></markup>. It is used e.g. to model the  behavior of electrical conductivity in dependence on the concentration <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#C6EE38D3C6845DA5AB9112DC505E1FE0"><img src="../media/C6EE38D3C6845DA5AB9112DC505E1FE0.png" width="8" height="11" align="bottom"></img></a></markup> and the critical concentration <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#DD1322D2780024E4F8BCDB27883D0A62"><img src="../media/DD1322D2780024E4F8BCDB27883D0A62.png" width="13" height="11" align="bottom"></img></a></markup> (percolation behavior).
+</para>
+
+<para>
+The core <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#6F0ED761E254A7640FBF74A472B1B492"><img src="../media/6F0ED761E254A7640FBF74A472B1B492.png" width="29" height="17" align="bottom"></img></a></markup> of the Fermi-Dirac transition is the following function, defined in the interval <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#E16E2C30456C7408BCD55F77AAFFA9AB"><img src="../media/E16E2C30456C7408BCD55F77AAFFA9AB.png" width="31" height="17" align="bottom"></img></a></markup>, which assumes the values <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D2C491C3CD7651917C14A19539957543"><img src="../media/D2C491C3CD7651917C14A19539957543.png" width="84" height="17" align="bottom"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B7C5A090A8CC80BFDD0E9E1EC6AD0155"><img src="../media/B7C5A090A8CC80BFDD0E9E1EC6AD0155.png" width="84" height="17" align="bottom"></img></a></markup>:
+</para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4C9047D8617400683590D3FAC5436F73"><img src="../media/4C9047D8617400683590D3FAC5436F73.png" width="426" height="44"></img></a></markup>
+
+<para>
+in which:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#DD1322D2780024E4F8BCDB27883D0A62"><img src="../media/DD1322D2780024E4F8BCDB27883D0A62.png" width="13" height="11" align="bottom"></img></a></markup> : location of the transition (0..1)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#A1FB3A57192E62767C43FB78860E748F"><img src="../media/A1FB3A57192E62767C43FB78860E748F.png" width="12" height="7" align="baseline"></img></a></markup> : width parameter
+</para>
+</listItem>
+</list>
+
+<para>
+The domain of the function is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#44F2CDCE1CFF57C582ADB6E8D71C75C4"><img src="../media/44F2CDCE1CFF57C582ADB6E8D71C75C4.png" width="63" height="14" align="bottom"></img></a></markup>.
+</para>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D28B8A0B284583F2F9B35E94A6331C53"><img src="../media/D28B8A0B284583F2F9B35E94A6331C53.png" width="567"></img></a></markup>
+</para>
+
+<para>
+Fig. 1: LogarithmicFermiDiracTransition with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#CC9D2DA4D5D12B9985F2270FBC7D064F"><img src="../media/CC9D2DA4D5D12B9985F2270FBC7D064F.png" width="68" height="17" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#20B71FA15C4E16F70190169EE5BC8B1A"><img src="../media/20B71FA15C4E16F70190169EE5BC8B1A.png" width="63" height="17" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1D8DCCFB40136DE766E169D68C939CC1"><img src="../media/1D8DCCFB40136DE766E169D68C939CC1.png" width="52" height="14" align="bottom"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#A2EE77C06E27F6480AD1FF38A0EDFCC5"><img src="../media/A2EE77C06E27F6480AD1FF38A0EDFCC5.png" width="58" height="10" align="baseline"></img></a></markup>. This could e.g. be a typical curve for the electrical conductivity of a carbon black filled composite in dependence on the carbon black volume concentration.
+</para>
+<markup><hr/></markup>
+
+<para>
+References:
+</para>
+</content>
+</section>
+
+<section address="E62CA047971D47F11F1E785A342668A9">
+<title>LogisticDecreasing
+</title>
+<content>
+
+<para>
+This function evaluates a sum of logistic terms (decreasing steps), plus a background polynomial with one or multiple terms, according to
+</para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#CBF5C3347D45D12611C15E6B3D16BA59"><img src="../media/CBF5C3347D45D12611C15E6B3D16BA59.png" width="456" height="51"></img></a></markup>
+
+<para>
+in which:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#7CEF4BECD2BDC84CB1211EAF75688D08"><img src="../media/7CEF4BECD2BDC84CB1211EAF75688D08.png" width="55" height="11" align="bottom"></img></a></markup> are the amplitudes (step heights) of the logistic step terms
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#007E8DE9C5E6E1717DE61FA200FA4869"><img src="../media/007E8DE9C5E6E1717DE61FA200FA4869.png" width="65" height="11" align="bottom"></img></a></markup> are the locations of the logistic step terms
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#F6144D1044FF2E087F00FFB306B59C10"><img src="../media/F6144D1044FF2E087F00FFB306B59C10.png" width="61" height="11" align="bottom"></img></a></markup> are the widths of the logistic step terms
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#EA408D4FFBE691FB61A157029F1CDB87"><img src="../media/EA408D4FFBE691FB61A157029F1CDB87.png" width="41" height="15" align="bottom"></img></a></markup> are the coefficients of the background polynomial of order  <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1524114A576378DC1D43A85F23D2A753"><img src="../media/1524114A576378DC1D43A85F23D2A753.png" width="14" height="7" align="baseline"></img></a></markup>
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4EF835FC99A8EA2F77EC0547660B4997"><img src="../media/4EF835FC99A8EA2F77EC0547660B4997.png" width="10" height="7" align="baseline"></img></a></markup> is the number of logistic step terms (<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#82F0E41C75F4684DF9D917F18AB1BCF7"><img src="../media/82F0E41C75F4684DF9D917F18AB1BCF7.png" width="37" height="14" align="bottom"></img></a></markup>)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1524114A576378DC1D43A85F23D2A753"><img src="../media/1524114A576378DC1D43A85F23D2A753.png" width="14" height="7" align="baseline"></img></a></markup> is the order of the background polynomial (set <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#542521E9C0C5C7B36CA39A384A75C928"><img src="../media/542521E9C0C5C7B36CA39A384A75C928.png" width="53" height="14" align="bottom"></img></a></markup> to disable the background polynomial)
+</para>
+</listItem>
+</list>
+
+<para>
+The number of logistic step terms <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4EF835FC99A8EA2F77EC0547660B4997"><img src="../media/4EF835FC99A8EA2F77EC0547660B4997.png" width="10" height="7" align="baseline"></img></a></markup> and the order of the background polynomial <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1524114A576378DC1D43A85F23D2A753"><img src="../media/1524114A576378DC1D43A85F23D2A753.png" width="14" height="7" align="baseline"></img></a></markup> can be changed by double-clicking on the fit function. The default values are <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AB6102027499324E523E96136FF3C0DD"><img src="../media/AB6102027499324E523E96136FF3C0DD.png" width="37" height="10" align="baseline"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#27F4FE01705E8CE801E4F68D69F87349"><img src="../media/27F4FE01705E8CE801E4F68D69F87349.png" width="41" height="10" align="baseline"></img></a></markup>.
+</para>
+
+<para>
+The domain of the function is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FB4DE268FCBAFA43EB96F2668F852D86"><img src="../media/FB4DE268FCBAFA43EB96F2668F852D86.png" width="91" height="14" align="bottom"></img></a></markup>.
+</para>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4F4C4FEF8EFAB453A03031FFC9971F45"><img src="../media/4F4C4FEF8EFAB453A03031FFC9971F45.png" width="567"></img></a></markup>
+</para>
+
+<para>
+Fig. 1: LogisticDecreasing (<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AB6102027499324E523E96136FF3C0DD"><img src="../media/AB6102027499324E523E96136FF3C0DD.png" width="37" height="10" align="baseline"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#27F4FE01705E8CE801E4F68D69F87349"><img src="../media/27F4FE01705E8CE801E4F68D69F87349.png" width="41" height="10" align="baseline"></img></a></markup>) with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B53DA112EC7BBAE5E59A35D54EAAA9B1"><img src="../media/B53DA112EC7BBAE5E59A35D54EAAA9B1.png" width="42" height="14" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5DA65FA4BEEFA0F4ED08A242C1B6AC0F"><img src="../media/5DA65FA4BEEFA0F4ED08A242C1B6AC0F.png" width="47" height="14" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D9D71CB4FB43E2F78FE039E2DEB04087"><img src="../media/D9D71CB4FB43E2F78FE039E2DEB04087.png" width="45" height="14" align="bottom"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#8CAEBF1F88CA1B47EB4390643CF1A06F"><img src="../media/8CAEBF1F88CA1B47EB4390643CF1A06F.png" width="40" height="15" align="bottom"></img></a></markup>.
+</para>
+<markup><hr/></markup>
+
+<para>
+References:
+<externalLink><linkText>Sigmoid function at Wikipedia</linkText><linkUri>https://en.wikipedia.org/wiki/Sigmoid_function</linkUri></externalLink>
+</para>
+</content>
+</section>
+
+<section address="11541B58354945BC9E8C711C0E5A4F3B">
+<title>LogisticIncreasing
+</title>
+<content>
+
+<para>
+This function evaluates a sum of logistic terms (increasing steps), plus a background polynomial with one or multiple terms, according to
+</para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#E6F6E3F1B8FC1C4F71031E6445C05A66"><img src="../media/E6F6E3F1B8FC1C4F71031E6445C05A66.png" width="484" height="51"></img></a></markup>
+
+<para>
+in which:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#7CEF4BECD2BDC84CB1211EAF75688D08"><img src="../media/7CEF4BECD2BDC84CB1211EAF75688D08.png" width="55" height="11" align="bottom"></img></a></markup> are the amplitudes (step heights) of the logistic step terms
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#007E8DE9C5E6E1717DE61FA200FA4869"><img src="../media/007E8DE9C5E6E1717DE61FA200FA4869.png" width="65" height="11" align="bottom"></img></a></markup> are the locations of the logistic step terms
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#F6144D1044FF2E087F00FFB306B59C10"><img src="../media/F6144D1044FF2E087F00FFB306B59C10.png" width="61" height="11" align="bottom"></img></a></markup> are the widths of the logistic step terms
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#EA408D4FFBE691FB61A157029F1CDB87"><img src="../media/EA408D4FFBE691FB61A157029F1CDB87.png" width="41" height="15" align="bottom"></img></a></markup> are the coefficients of the background polynomial of order  <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1524114A576378DC1D43A85F23D2A753"><img src="../media/1524114A576378DC1D43A85F23D2A753.png" width="14" height="7" align="baseline"></img></a></markup>
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4EF835FC99A8EA2F77EC0547660B4997"><img src="../media/4EF835FC99A8EA2F77EC0547660B4997.png" width="10" height="7" align="baseline"></img></a></markup> is the number of logistic step terms (<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#82F0E41C75F4684DF9D917F18AB1BCF7"><img src="../media/82F0E41C75F4684DF9D917F18AB1BCF7.png" width="37" height="14" align="bottom"></img></a></markup>)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1524114A576378DC1D43A85F23D2A753"><img src="../media/1524114A576378DC1D43A85F23D2A753.png" width="14" height="7" align="baseline"></img></a></markup> is the order of the background polynomial (set <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#542521E9C0C5C7B36CA39A384A75C928"><img src="../media/542521E9C0C5C7B36CA39A384A75C928.png" width="53" height="14" align="bottom"></img></a></markup> to disable the background polynomial)
+</para>
+</listItem>
+</list>
+
+<para>
+The number of logistic step terms <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4EF835FC99A8EA2F77EC0547660B4997"><img src="../media/4EF835FC99A8EA2F77EC0547660B4997.png" width="10" height="7" align="baseline"></img></a></markup> and the order of the background polynomial <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1524114A576378DC1D43A85F23D2A753"><img src="../media/1524114A576378DC1D43A85F23D2A753.png" width="14" height="7" align="baseline"></img></a></markup> can be changed by double-clicking on the fit function. The default values are <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AB6102027499324E523E96136FF3C0DD"><img src="../media/AB6102027499324E523E96136FF3C0DD.png" width="37" height="10" align="baseline"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#27F4FE01705E8CE801E4F68D69F87349"><img src="../media/27F4FE01705E8CE801E4F68D69F87349.png" width="41" height="10" align="baseline"></img></a></markup>.
+</para>
+
+<para>
+The domain of the function is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FB4DE268FCBAFA43EB96F2668F852D86"><img src="../media/FB4DE268FCBAFA43EB96F2668F852D86.png" width="91" height="14" align="bottom"></img></a></markup>.
+</para>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#22782814921D64503D4B43B6BAA54BB8"><img src="../media/22782814921D64503D4B43B6BAA54BB8.png" width="567"></img></a></markup>
+</para>
+
+<para>
+Fig. 1: LogisticIncreasing (<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AB6102027499324E523E96136FF3C0DD"><img src="../media/AB6102027499324E523E96136FF3C0DD.png" width="37" height="10" align="baseline"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#27F4FE01705E8CE801E4F68D69F87349"><img src="../media/27F4FE01705E8CE801E4F68D69F87349.png" width="41" height="10" align="baseline"></img></a></markup>) with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B53DA112EC7BBAE5E59A35D54EAAA9B1"><img src="../media/B53DA112EC7BBAE5E59A35D54EAAA9B1.png" width="42" height="14" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5DA65FA4BEEFA0F4ED08A242C1B6AC0F"><img src="../media/5DA65FA4BEEFA0F4ED08A242C1B6AC0F.png" width="47" height="14" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D9D71CB4FB43E2F78FE039E2DEB04087"><img src="../media/D9D71CB4FB43E2F78FE039E2DEB04087.png" width="45" height="14" align="bottom"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#8CAEBF1F88CA1B47EB4390643CF1A06F"><img src="../media/8CAEBF1F88CA1B47EB4390643CF1A06F.png" width="40" height="15" align="bottom"></img></a></markup>.
+</para>
+<markup><hr/></markup>
+
+<para>
+References:
+<externalLink><linkText>Sigmoid function at Wikipedia</linkText><linkUri>https://en.wikipedia.org/wiki/Sigmoid_function</linkUri></externalLink>
+</para>
+</content>
+</section>
+
+<section address="ACB00F041915D34724C531716A70DC72">
+<title>Smoothed percolation
+</title>
+<content>
+
+<para>
+The base of this function are the two percolation equations valid below and above the percolation threshold <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#DD1322D2780024E4F8BCDB27883D0A62"><img src="../media/DD1322D2780024E4F8BCDB27883D0A62.png" width="13" height="11" align="bottom"></img></a></markup> :
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#73406F58D0C618CC00F215D4B2C4735C"><img src="../media/73406F58D0C618CC00F215D4B2C4735C.png" width="116" height="49" align="middle"></img></a></markup> for <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#103CD7C3298660292CF3F6252F86ECCB"><img src="../media/103CD7C3298660292CF3F6252F86ECCB.png" width="41" height="13" align="bottom"></img></a></markup> (left side equation)}
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B5CD22F6E4FF29977E87821613D75CC1"><img src="../media/B5CD22F6E4FF29977E87821613D75CC1.png" width="106" height="49" align="middle"></img></a></markup> for <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#E93A5F794EC9DCC4D5CC143B574D3320"><img src="../media/E93A5F794EC9DCC4D5CC143B574D3320.png" width="41" height="13" align="bottom"></img></a></markup> (right side equation)
+</para>
+</listItem>
+</list>
+
+<para>
+in which:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#DD1322D2780024E4F8BCDB27883D0A62"><img src="../media/DD1322D2780024E4F8BCDB27883D0A62.png" width="13" height="11" align="bottom"></img></a></markup> : critical percolation threshold (location of the transition (0..1))
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#C6EE38D3C6845DA5AB9112DC505E1FE0"><img src="../media/C6EE38D3C6845DA5AB9112DC505E1FE0.png" width="8" height="11" align="bottom"></img></a></markup> : volume concentration of the filler particles (0..1)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#8A0BC1C537152E979C7A4F6C26C1594F"><img src="../media/8A0BC1C537152E979C7A4F6C26C1594F.png" width="20" height="14" align="bottom"></img></a></markup> : exponents (<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#E92659DB1FC0B088839FA209E84808A0"><img src="../media/E92659DB1FC0B088839FA209E84808A0.png" width="35" height="11" align="baseline"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#C3993A7AD3EEA334DE811E9627B07350"><img src="../media/C3993A7AD3EEA334DE811E9627B07350.png" width="33" height="11" align="baseline"></img></a></markup>)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#249E2EEDC43B206EDF3ABFF70C3BFA4A"><img src="../media/249E2EEDC43B206EDF3ABFF70C3BFA4A.png" width="14" height="11" align="bottom"></img></a></markup> : property of the matrix (e.g. electrical conductivity of the matrix, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#60FE2B69625BBDF86C0B920D8139DB33"><img src="../media/60FE2B69625BBDF86C0B920D8139DB33.png" width="47" height="17" align="bottom"></img></a></markup>)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1EA9C205AD27427CE6E98F0D0B8C4E50"><img src="../media/1EA9C205AD27427CE6E98F0D0B8C4E50.png" width="14" height="11" align="bottom"></img></a></markup> : property of the filler particles (e.g. electrical conductivity of the filler, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B269FD5C653E10CF535475B001342ACC"><img src="../media/B269FD5C653E10CF535475B001342ACC.png" width="42" height="14" align="bottom"></img></a></markup>)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#6BE482414527C9B3DFFA9CAEF82E16C8"><img src="../media/6BE482414527C9B3DFFA9CAEF82E16C8.png" width="8" height="11" align="bottom"></img></a></markup> : resulting property of the compound (e.g. electrical conductivity of the matrix with filler particles)
+</para>
+</listItem>
+</list>
+
+<para>
+Because both equations diverge at <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#CED66837E6EB8215949B689CAC28CAB1"><img src="../media/CED66837E6EB8215949B689CAC28CAB1.png" width="41" height="11" align="bottom"></img></a></markup>, we need to smooth that location.
+For this we use somewhat stricter boundaries:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+Calculate the approximate logarithmic step height of the transition by
+</para>
+</listItem>
+</list>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B46CE9F16FF2D3FA3C440731581FE8D1"><img src="../media/B46CE9F16FF2D3FA3C440731581FE8D1.png" width="185" height="17"></img></a></markup>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+Find a <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FE367B6DA5B87A9CA4AE4EA7644772DD"><img src="../media/FE367B6DA5B87A9CA4AE4EA7644772DD.png" width="46" height="13" align="bottom"></img></a></markup> such that the quotient of the function values of right side and left side approximately match this step height:
+</para>
+</listItem>
+</list>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#66CE863977929C128D92FB3EE0DAF763"><img src="../media/66CE863977929C128D92FB3EE0DAF763.png" width="188" height="72"></img></a></markup>
+
+<para>
+in which <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#60382514B06CFA0AE4A061A6E49B031F"><img src="../media/60382514B06CFA0AE4A061A6E49B031F.png" width="130" height="40" align="middle"></img></a></markup> (obviously: <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#3E1A19C10D8502A4BE482D7D7DF136CA"><img src="../media/3E1A19C10D8502A4BE482D7D7DF136CA.png" width="46" height="13" align="bottom"></img></a></markup>).
+</para>
+
+<para>
+The value of <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#7B5CBA0EF514CD3B8595EC6B9C57170B"><img src="../media/7B5CBA0EF514CD3B8595EC6B9C57170B.png" width="14" height="11" align="bottom"></img></a></markup> is then used as the upper boundary of the left side percolation equation:
+</para>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#73406F58D0C618CC00F215D4B2C4735C"><img src="../media/73406F58D0C618CC00F215D4B2C4735C.png" width="116" height="49" align="middle"></img></a></markup> for <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#6E85A46838A7CC3E155EC50C04827627"><img src="../media/6E85A46838A7CC3E155EC50C04827627.png" width="41" height="13" align="bottom"></img></a></markup>
+</para>
+
+<para>
+and the value of <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FE59F951E9C51C108278C4BE95DFEFA4"><img src="../media/FE59F951E9C51C108278C4BE95DFEFA4.png" width="14" height="11" align="bottom"></img></a></markup> is used as the lower boundary of the right side percolation equation:
+</para>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B5CD22F6E4FF29977E87821613D75CC1"><img src="../media/B5CD22F6E4FF29977E87821613D75CC1.png" width="106" height="49" align="middle"></img></a></markup> for <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#3588E97FCE1DD1526B0B56A532443692"><img src="../media/3588E97FCE1DD1526B0B56A532443692.png" width="41" height="13" align="bottom"></img></a></markup>
+</para>
+
+<para>
+In the interval between <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#7B5CBA0EF514CD3B8595EC6B9C57170B"><img src="../media/7B5CBA0EF514CD3B8595EC6B9C57170B.png" width="14" height="11" align="bottom"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FE59F951E9C51C108278C4BE95DFEFA4"><img src="../media/FE59F951E9C51C108278C4BE95DFEFA4.png" width="14" height="11" align="bottom"></img></a></markup>, the function values are approximated by a logarithmic function:
+</para>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#E27406FA87DB520743CC5FDE77D8B0EE"><img src="../media/E27406FA87DB520743CC5FDE77D8B0EE.png" width="260" height="39" align="middle"></img></a></markup>
+</para>
+
+<para>
+in which
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1EA9C205AD27427CE6E98F0D0B8C4E50"><img src="../media/1EA9C205AD27427CE6E98F0D0B8C4E50.png" width="14" height="11" align="bottom"></img></a></markup> value of <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#6BE482414527C9B3DFFA9CAEF82E16C8"><img src="../media/6BE482414527C9B3DFFA9CAEF82E16C8.png" width="8" height="11" align="bottom"></img></a></markup> as evaluated by the left side equation at <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AA7AA2D70A21DD584CA651A324776598"><img src="../media/AA7AA2D70A21DD584CA651A324776598.png" width="41" height="11" align="bottom"></img></a></markup>
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#CA68AF09453E2207426AA9CC792E17A6"><img src="../media/CA68AF09453E2207426AA9CC792E17A6.png" width="14" height="11" align="bottom"></img></a></markup> value of <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#6BE482414527C9B3DFFA9CAEF82E16C8"><img src="../media/6BE482414527C9B3DFFA9CAEF82E16C8.png" width="8" height="11" align="bottom"></img></a></markup> as evaluated by the right side equation at <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B1464095BD4BE24162438FC73A597434"><img src="../media/B1464095BD4BE24162438FC73A597434.png" width="41" height="11" align="bottom"></img></a></markup>
+</para>
+</listItem>
+</list>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#6E95D7C4FA390B9EA55000F7F80124D7"><img src="../media/6E95D7C4FA390B9EA55000F7F80124D7.png" width="567"></img></a></markup>
+</para>
+
+<para>
+Fig. 1: SmoothedPercolation transition with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#CC9D2DA4D5D12B9985F2270FBC7D064F"><img src="../media/CC9D2DA4D5D12B9985F2270FBC7D064F.png" width="68" height="17" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#20B71FA15C4E16F70190169EE5BC8B1A"><img src="../media/20B71FA15C4E16F70190169EE5BC8B1A.png" width="63" height="17" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1D8DCCFB40136DE766E169D68C939CC1"><img src="../media/1D8DCCFB40136DE766E169D68C939CC1.png" width="52" height="14" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4AC12A48B06958344B4B6313F8198175"><img src="../media/4AC12A48B06958344B4B6313F8198175.png" width="54" height="10" align="baseline"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#19573C7BF31733289BD26E2A9AF2A12D"><img src="../media/19573C7BF31733289BD26E2A9AF2A12D.png" width="33" height="10" align="baseline"></img></a></markup>.
+</para>
+<markup><hr/></markup></content>
+</section>
+<markup><hr/></markup>
+<section>
+
+<content>
+
+<para>
+Next section: <link xlink:href="8A73F813C2BA5A0BB70B3262B294B137">Altaxo's command line arguments</link></para>
+</content>
+</section>
+</developerConceptualDocument>
+</topic>

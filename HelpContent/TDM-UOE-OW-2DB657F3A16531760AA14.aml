@@ -1,0 +1,29 @@
+﻿
+<topic id="2DB657F3A16531760AA14E645AB8A9BF" revisionNumber="1">
+
+<developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+<introduction>
+
+<para>
+Previous section: <link xlink:href="9DD6D62833B5D9F3A624403C1C2E15A7">View configuration</link></para>
+<autoOutline />
+<markup><hr/></markup>
+
+<para>
+You can show or hide a window containing the outline of your document by using <codeInline>Text -&gt; Show outline window</codeInline> from the main menu. If the outline window is shown, as in <link xlink:href="2DB657F3A16531760AA14E645AB8A9BF#TextDocuments_OutlineWindow">Fig. 1</link>, you can double-click onto an item in the outline window to scroll the text in the source text window to the corresponding location.
+</para>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#BFEE1860E4110A85CA97A71742514CBD"><img src="../media/BFEE1860E4110A85CA97A71742514CBD.png" width="567"></img></a></markup>  
+</para>
+
+<para>
+Figure 1:	The outline window is always shown to the left of the source text and preview windows.
+</para>
+<markup><hr/></markup>
+<para>
+Next section: <link xlink:href="847834D0535C024B5119381901BD4B65">Concatenate two text documents</link></para>
+</introduction>
+</developerConceptualDocument>
+</topic>

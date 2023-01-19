@@ -1,0 +1,117 @@
+﻿
+<topic id="ACDF493F583131AAA215E511C0353C67" revisionNumber="1">
+
+<developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+<introduction>
+
+<para>
+Previous section: <link xlink:href="1F16AF0BE101FBF63C832CFF75112708">Quickstart</link></para>
+<autoOutline />
+<markup><hr/></markup>
+
+<para>
+A surface plot is a 3D-plot, which uses a 2D matrix of values. The values designate the height of the surface above ground level. This is similar to a <link xlink:href="99E27F5DA0A5611AA26D632399925C2D#2DGraph_Quickstart_DensityPlot">2D-density plot</link>, in which the z-values are coded as different colors of the plot.
+</para>
+</introduction>
+
+<section address="991E611FA5179232541B26ECA3A57408">
+<title>Create some data (or use your own)
+</title>
+<content>
+
+<para>
+Since it is difficult to get data for a nice surface plot, we create them by a
+worksheet script.
+</para>
+
+<para>
+The classical example for this is to show the function
+</para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#E83DBABFB6DA25A06B5CB477EC8389AD"><img src="../media/E83DBABFB6DA25A06B5CB477EC8389AD.png" width="155" height="50"></img></a></markup>
+
+<para>
+Create an empty worksheet, and then open the worksheet script dialog by choosing from the main menu  <codeInline>Worksheet → Worksheet script</codeInline>.
+</para>
+
+<para>
+We use here the same script as already shown in the advanced example in the <link xlink:href="99E27F5DA0A5611AA26D632399925C2D#2DGraph_Quickstart_DensityPlot">quickstart section of the 2D-density plot</link>.
+</para>
+
+<para>
+Enter the following script text (you can copy it from here):
+</para>
+
+<code>
+            col.RemoveColumnsAll();
+            pcol.RemoveColumnsAll();
+            var yCol = pcol.EnsureExistence(&quot;Y-values&quot;, typeof(DoubleColumn), ColumnKind.Y, 0);
+            var xCol = col.EnsureExistence(&quot;X-values&quot;, typeof(DoubleColumn), ColumnKind.X, 0);
+            for (int i = 0; i &lt; 64; ++i) // index of columns
+            {
+                var currentColumn = col.EnsureExistence(&quot;F&quot; + i.ToString(), typeof(DoubleColumn), ColumnKind.V, 0);
+                double y = (i - 32) / 2.0;
+                yCol[col.GetColumnNumber(currentColumn)] = y;
+                for (int j = 0; j &lt; 64; ++j) // index of rows
+                {
+                    double x = (j - 32) / 2.0;
+                    double radius = Sqrt(x * x + y * y);
+                    double f = radius == 0 ? 1 : Sin(radius) / radius;
+                    xCol[j] = x;
+                    currentColumn[j] = f;
+                }
+            }
+</code>
+
+<para>
+Press the <codeInline>OK</codeInline> button of the script dialog to get the script executed.
+It creates one x-column <codeInline>X-values</codeInline>, plus 64 data columns, named F0 .. F63, and fills the table cells with values according to the function above, using 64 rows. Essentially, the result is a matrix of 64 columns x 64 rows. Additionally, one property column, <codeInline>Y-values</codeInline>, is created to hold the y-values.
+</para>
+</content>
+</section>
+
+<section address="FF879AD42FA121F37DA4E52F84275315">
+<title>Plot the data
+</title>
+<content>
+
+<para>
+The resulting worksheet should look like this:
+</para>
+
+<para>
+<mediaLinkInline><image xlink:href="6B74DE9C4450D027BDFA52CF6A27BC45"></image></mediaLinkInline>
+</para>
+
+<para>
+In the worksheet above, I have already selected all data columns, including the column <codeInline>X-values</codeInline>, using <codeInline>CTRL-A</codeInline>, and then, while still holding the <codeInline>CTRL</codeInline> key, I clicked onto the property column header of the <codeInline>Y-values</codeInline> property column (that is the cell with the <codeInline>Y-values</codeInline> text in it) in order to select it, too.
+</para>
+
+<para>
+Now use from the main menu <codeInline>Plot → 3D-Plots → Plot3DSurface</codeInline> to get the surface plot, show in the following graph:
+</para>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B8ADEAAF106438E31102C360D1E88B11"><img src="../media/B8ADEAAF106438E31102C360D1E88B11.png" width="567"></img></a></markup>
+</para>
+
+<para>
+Start enjoying the scene by pressing the middle mouse button while in the graph and then moving the mouse in order to rotate the graph. You can also zoom in and out by scrolling the mouse wheel. The additional red lines that appear in your graph, but does not appear in the figure above, are intended for your orientation and for showing the final boundaries of the graph.
+</para>
+
+<para>
+You can also use the lighting panel to modify the lighting of the scene. Play around!
+</para>
+</content>
+</section>
+<markup><hr/></markup>
+<section>
+
+<content>
+
+<para>
+Next section: <link xlink:href="52A7F0997D6D78C50F721A19A47761A1">Create a line plot</link></para>
+</content>
+</section>
+</developerConceptualDocument>
+</topic>

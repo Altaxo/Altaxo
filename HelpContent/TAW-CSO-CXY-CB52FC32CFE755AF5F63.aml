@@ -1,0 +1,49 @@
+﻿
+<topic id="CB52FC32CFE755AF5F63685529828624" revisionNumber="1">
+
+<developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+<introduction>
+
+<para>
+Previous section: <link xlink:href="BDC77858E7B184C7E5436C5CFB9673E7">Decompose a table with a cycling independent variable</link></para>
+<autoOutline />
+<markup><hr/></markup>
+
+<para>
+Consider the following worksheet from the previous chapter:
+</para>
+
+<para>
+<mediaLinkInline><image xlink:href="1DB3D9952DE94BA0ADB0B490ACD63510"></image></mediaLinkInline>
+</para>
+
+<para>
+Note that I here marked column 1 (‘Temperature’) as y-column (by using
+Column→Set column as Y from the main menu). Then I selected column
+‘Frequency’ (x-column), column ‘Temperature’ (y-column) and column
+‘Modulus.Re’ (V-column).
+</para>
+
+<para>
+After using Worksheet→Restructure Worksheet data→Convert X-Y-V
+to matrix the following worksheet results:
+</para>
+
+<para>
+<mediaLinkInline><image xlink:href="F4DEB8301D15683A266AEBF66057DF8D"></image></mediaLinkInline>
+</para>
+
+<para>
+As you can see, the Modulus.Re values are arranged ‘matrix-like’ in
+columns 1, 2 and 3. The x-column is still column 0 (‘Frequency’). And
+the former y-column ‘Temperature’ has become a property column with the
+same name. You can use such a ‘matrix-like’ worksheet for instance to
+make a density plot.
+</para>
+<markup><hr/></markup>
+<para>
+Next section: <link xlink:href="742EC350D96B6D65DA918DE77373E534">Worksheet Notes</link></para>
+</introduction>
+</developerConceptualDocument>
+</topic>

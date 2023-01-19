@@ -1,0 +1,149 @@
+﻿
+<topic id="CC0F38133338898C0E8F0A706D55FDAA" revisionNumber="1">
+
+<developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+<introduction>
+
+<para>
+Previous section: <link xlink:href="E771D4FEB3C4838C0A284850BEEFBF46">Retardation fit functions</link></para>
+<autoOutline />
+<markup><hr/></markup></introduction>
+
+<section address="07D8B0F96D3F989AC4BF19CC49A1923D">
+<title>General effective medium transition
+</title>
+<content>
+
+<para>
+This transition models e.g. the DC electrical conductivity of conductive particles embedded in a matrix, but is also suitable for other percolation problems.
+</para>
+
+<para>
+The function, which evaluates the property <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#6BE482414527C9B3DFFA9CAEF82E16C8"><img src="../media/6BE482414527C9B3DFFA9CAEF82E16C8.png" width="8" height="11" align="bottom"></img></a></markup> of a compound in dependence of a filler concentration <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#C6EE38D3C6845DA5AB9112DC505E1FE0"><img src="../media/C6EE38D3C6845DA5AB9112DC505E1FE0.png" width="8" height="11" align="bottom"></img></a></markup> (<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#44F2CDCE1CFF57C582ADB6E8D71C75C4"><img src="../media/44F2CDCE1CFF57C582ADB6E8D71C75C4.png" width="63" height="14" align="bottom"></img></a></markup>) is implicitly given by the following equation:
+</para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D14CA5C82336F047307D2BD44D2FCF2E"><img src="../media/D14CA5C82336F047307D2BD44D2FCF2E.png" width="264" height="83"></img></a></markup>
+
+<para>
+in which:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#C6EE38D3C6845DA5AB9112DC505E1FE0"><img src="../media/C6EE38D3C6845DA5AB9112DC505E1FE0.png" width="8" height="11" align="bottom"></img></a></markup> : volume concentration of the filler particles (<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#44F2CDCE1CFF57C582ADB6E8D71C75C4"><img src="../media/44F2CDCE1CFF57C582ADB6E8D71C75C4.png" width="63" height="14" align="bottom"></img></a></markup>)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#DD1322D2780024E4F8BCDB27883D0A62"><img src="../media/DD1322D2780024E4F8BCDB27883D0A62.png" width="13" height="11" align="bottom"></img></a></markup> : critical percolation threshold (location of the transition (<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#C901FDF5592F4673F99AE48FA05EFD26"><img src="../media/C901FDF5592F4673F99AE48FA05EFD26.png" width="68" height="14" align="bottom"></img></a></markup>))
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#8A0BC1C537152E979C7A4F6C26C1594F"><img src="../media/8A0BC1C537152E979C7A4F6C26C1594F.png" width="20" height="14" align="bottom"></img></a></markup> : exponents (<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#E92659DB1FC0B088839FA209E84808A0"><img src="../media/E92659DB1FC0B088839FA209E84808A0.png" width="35" height="11" align="baseline"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#C3993A7AD3EEA334DE811E9627B07350"><img src="../media/C3993A7AD3EEA334DE811E9627B07350.png" width="33" height="11" align="baseline"></img></a></markup>)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#249E2EEDC43B206EDF3ABFF70C3BFA4A"><img src="../media/249E2EEDC43B206EDF3ABFF70C3BFA4A.png" width="14" height="11" align="bottom"></img></a></markup> : property of the matrix material (e.g. electrical conductivity of the matrix)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1EA9C205AD27427CE6E98F0D0B8C4E50"><img src="../media/1EA9C205AD27427CE6E98F0D0B8C4E50.png" width="14" height="11" align="bottom"></img></a></markup> : property of the filler particles (e.g. electrical conductivity of the filler)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#6BE482414527C9B3DFFA9CAEF82E16C8"><img src="../media/6BE482414527C9B3DFFA9CAEF82E16C8.png" width="8" height="11" align="bottom"></img></a></markup> : resulting property of the compound (e.g. electrical conductivity of the matrix with filler particles)
+</para>
+</listItem>
+</list>
+
+<para>
+The equation has the following properties, which match the percolation theory for concentrations below and above the percolation threshold:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#95D76BC1F4A1F1773FAA72F6F053DF2A"><img src="../media/95D76BC1F4A1F1773FAA72F6F053DF2A.png" width="41" height="11" align="bottom"></img></a></markup> for <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#E3A6C3A4D72BCFC672C2157921DE13F0"><img src="../media/E3A6C3A4D72BCFC672C2157921DE13F0.png" width="36" height="14" align="bottom"></img></a></markup>
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#73406F58D0C618CC00F215D4B2C4735C"><img src="../media/73406F58D0C618CC00F215D4B2C4735C.png" width="116" height="49" align="middle"></img></a></markup> for <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#103CD7C3298660292CF3F6252F86ECCB"><img src="../media/103CD7C3298660292CF3F6252F86ECCB.png" width="41" height="13" align="bottom"></img></a></markup>
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B5CD22F6E4FF29977E87821613D75CC1"><img src="../media/B5CD22F6E4FF29977E87821613D75CC1.png" width="106" height="49" align="middle"></img></a></markup> for <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#E93A5F794EC9DCC4D5CC143B574D3320"><img src="../media/E93A5F794EC9DCC4D5CC143B574D3320.png" width="41" height="13" align="bottom"></img></a></markup>
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#BFC06BD669729F329C9F636A96A4947D"><img src="../media/BFC06BD669729F329C9F636A96A4947D.png" width="41" height="11" align="bottom"></img></a></markup> for <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#E576CBB3C2FFB2EBB7D5C0F3D811697E"><img src="../media/E576CBB3C2FFB2EBB7D5C0F3D811697E.png" width="36" height="14" align="bottom"></img></a></markup>
+</para>
+</listItem>
+</list>
+
+<para>
+In contrast to the separate percolation equations below and above the percolation threshold, the general effective medium transition avoids the divergence near the percolation threshold, and provides a smooth transition between the two equations.
+</para>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#65EEDF05D04F0060A810FAD879D5FDEB"><img src="../media/65EEDF05D04F0060A810FAD879D5FDEB.png" width="567"></img></a></markup>
+</para>
+
+<para>
+Fig. 1: GeneralEffectiveMedium transition with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#CC9D2DA4D5D12B9985F2270FBC7D064F"><img src="../media/CC9D2DA4D5D12B9985F2270FBC7D064F.png" width="68" height="17" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#20B71FA15C4E16F70190169EE5BC8B1A"><img src="../media/20B71FA15C4E16F70190169EE5BC8B1A.png" width="63" height="17" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1D8DCCFB40136DE766E169D68C939CC1"><img src="../media/1D8DCCFB40136DE766E169D68C939CC1.png" width="52" height="14" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4AC12A48B06958344B4B6313F8198175"><img src="../media/4AC12A48B06958344B4B6313F8198175.png" width="54" height="10" align="baseline"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#19573C7BF31733289BD26E2A9AF2A12D"><img src="../media/19573C7BF31733289BD26E2A9AF2A12D.png" width="33" height="10" align="baseline"></img></a></markup>.
+</para>
+<markup><hr/></markup>
+
+<para>
+References:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+McLachlan, D. and G. Sauti. “The AC and DC conductivity of nanocomposites.” Journal of Nanomaterials 2007 (2007): 15, <externalLink><linkText>doi:10.1155/2007/30389</linkText><linkUri>https://doi.org/10.1155/2007/30389</linkUri></externalLink>
+</para>
+</listItem>
+</list>
+</content>
+</section>
+<markup><hr/></markup>
+<section>
+
+<content>
+
+<para>
+Next section: <link xlink:href="982BEB47AE26FF08B670766893FD90C6">GeneralizedLogisticDecreasing</link></para>
+</content>
+</section>
+</developerConceptualDocument>
+</topic>

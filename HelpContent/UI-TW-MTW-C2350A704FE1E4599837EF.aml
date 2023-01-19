@@ -1,0 +1,28 @@
+﻿
+<topic id="C2350A704FE1E4599837EF0CBF5DB744" revisionNumber="1">
+
+<developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+<introduction>
+
+<para>
+Previous section: <link xlink:href="CA7B1E22CC877DA7601F34CE0479FD2B">Tool windows</link></para>
+<autoOutline />
+<markup><hr/></markup>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#7F8CB456F5D14ECD378ED8D6A925461E"><img src="../media/7F8CB456F5D14ECD378ED8D6A925461E.png" width="567"></img></a></markup>
+</para>
+
+<para>
+If no or not all of the tool windows are visible at all, as is the case
+in the figure above, you can make them visible by clicking on the view
+menu, and then choosing the tool window of your choice, or use the
+designated keyboard shortcuts.
+</para>
+<markup><hr/></markup>
+<para>
+Next section: <link xlink:href="256CA8442B03C754AB12479F0CBAD7C3">Changing the place of a tool window</link></para>
+</introduction>
+</developerConceptualDocument>
+</topic>

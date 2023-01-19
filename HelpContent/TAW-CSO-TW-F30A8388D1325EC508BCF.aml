@@ -1,0 +1,60 @@
+﻿
+<topic id="F30A8388D1325EC508BCF6A76CC69D49" revisionNumber="1">
+
+<developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+<introduction>
+
+<para>
+Previous section: <link xlink:href="B09D5D470B8DCF524A698117E51D308B">Changing the structure of a worksheet</link></para>
+<autoOutline />
+<markup><hr/></markup>
+
+<para>
+Sometimes it is necessary to exchange data rows and data columns. This
+operation is called transposing a table. To do it, make the worksheet
+you want to transpose the active document and then choose
+Worksheet→Restructure Worksheet data→Transpose from the main
+menu. A dialog opens (see figure below).
+</para>
+
+<para>
+<mediaLinkInline><image xlink:href="FDADB0208290E6CBA531212161BD248C"></image></mediaLinkInline>
+</para>
+
+<para>
+You can specify the number of data columns to convert to property
+columns, and you can specify the number of property columns that will be
+converted to data columns. If you want to do only a simple transpose of
+all data columns, set both numbers to zero.
+</para>
+
+<para>
+The figure below shows a worksheet before (left side) and after
+transposing (right side), choosing one data column to convert into a
+property column and two property columns to convert into data columns.
+Note that in this worksheet all data columns and property columns of
+type TextColumn.
+</para>
+
+<para>
+<mediaLinkInline><image xlink:href="287BFF7B6229CFF1E16BBCACF21B6118"></image></mediaLinkInline>
+</para>
+
+<para>
+The one data column that is converted to a property column is marked
+green. The two property columns which become data columns are marked
+with blue and purple. The other data rows (I have marked only column 1
+and 2 become data rows in the transposed worksheet.
+</para>
+
+<para>
+Please note that transposing a worksheet works best if all columns are
+of the same type. Otherwise some loss of data can not be avoided.
+</para>
+<markup><hr/></markup>
+<para>
+Next section: <link xlink:href="BDC77858E7B184C7E5436C5CFB9673E7">Decompose a table with a cycling independent variable</link></para>
+</introduction>
+</developerConceptualDocument>
+</topic>

@@ -1,0 +1,99 @@
+﻿
+<topic id="A922639CFDCBCB105FEDED63C79330AA" revisionNumber="1">
+
+<developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+<introduction>
+
+<para>
+Previous section: <link xlink:href="51AB2CB3ECBAFD1DD0F029C0B45B8046">Worksheet Scripts and Column Scripts</link></para>
+<autoOutline />
+<markup><hr/></markup>
+
+<para>
+As an example we will have a look at the dialog box for a worksheet
+script. To create a worksheet script for the currently active worksheet,
+select Worksheet→Worksheet script from the main menu. A dialog opens
+(see figure below):
+</para>
+
+<para>
+<mediaLinkInline><image xlink:href="C7EE85F52EF7ACA57E05F9359406F186"></image></mediaLinkInline>
+</para>
+
+<para>
+As you can see, there is already some text typed into the script window.
+Usually, you change the script text between the two comment lines
+(green). But sometimes it is also necessary to change the code above the
+first comment line. In the figure above, this text is collapsed. To show
+the text, click on the ‘+’ button in the first line. After this, the
+text looks like this:
+</para>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9DBC4443FE85CC10055F2B6D9338D965"><img src="../media/9DBC4443FE85CC10055F2B6D9338D965.png" width="567"></img></a></markup>
+</para>
+
+<para>
+Please change this text only when you already have some experience with
+C#. To collapse the script header again, click on the ‘-’ button in the
+first line.
+</para>
+
+<para>
+Assume you have written something (I’ll come to some examples later),
+you will have four choices:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+Pressing the ‘<legacyBold>OK</legacyBold>’ button gets the script compiled and
+then executed. The dialog box will be closed before execution of
+the script. If your script runs longer than approx. 10 sec, another
+dialog box will pop open, in which you should be able to cancel the
+execution of the script.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+Pressing the ‘<legacyBold>Compile</legacyBold>’ button will compile the script (the
+script is not executed). The dialog box remains open. This is useful
+if you just want to see if your script can be compiled. A success
+message is then shown in the lower part of the dialog. If
+compilation was not successful, you can click on the
+error message(s) in the message window, which brings the cursor to
+the position where the error was detected.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+Pressing the ‘<legacyBold>Update</legacyBold>’ button closes the dialog box without
+compiling and execution the script, but the script is updated (saved
+as part of the worksheet). You can use this button if your script
+currently doesn’t compile, but you want to save the changed you made
+so far.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+Pressing the ‘<legacyBold>Cancel</legacyBold>’ button closes the dialog without compiling
+and execution. The changes will not be saved, thus all changes you
+have made so far will be lost.
+</para>
+</listItem>
+</list>
+<markup><hr/></markup>
+<para>
+Next section: <link xlink:href="9FC35E359A7716A00086ED0EDC2BFB10">Worksheet scripts</link></para>
+</introduction>
+</developerConceptualDocument>
+</topic>

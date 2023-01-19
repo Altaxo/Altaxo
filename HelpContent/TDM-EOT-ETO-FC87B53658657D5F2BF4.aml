@@ -1,0 +1,338 @@
+﻿
+<topic id="FC87B53658657D5F2BF4E635528354A6" revisionNumber="1">
+
+<developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+<introduction>
+
+<para>
+Previous section: <link xlink:href="8E18955817C6F7DA1EB77C40E94B1C81">Export to one or multiple Maml files</link></para>
+<autoOutline />
+<markup><hr/></markup>
+
+<para>
+The text document can be exported to a single Microsoft Word .docx file. Microsoft Word needs not to be installed on the computer in order to export to .docx.  The styles in the Markdown document are converted to formatting styles in the Word file. LaTeX <legacyBold>formulas in the Markdown</legacyBold> document are converted to <legacyBold>editable formulas</legacyBold> in the Word file!
+</para>
+</introduction>
+
+<section address="7D513990F470D1ECF6F3B675CDC7FA8C">
+<title>Style mapping
+</title>
+<content>
+
+<para>
+The following style mapping is used in the conversion process:
+</para>
+
+<para>
+<legacyBold>Paragraph styles</legacyBold>
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+<codeInline>Heading1</codeInline> .. <codeInline>Heading6</codeInline> are mapped to Word's built-in <codeInline>Heading 1</codeInline> .. <codeInline>Heading 6</codeInline> style
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<codeInline>Quoted</codeInline> text is mapped to Word's built-in <codeInline>BlockText</codeInline> style
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+Lists (bullet lists and numbered lists) are mapped to Word's built-in <codeInline>List</codeInline> style
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+Code blocks are mapped to <codeInline>CodeBlock</codeInline> style. This style is not built in Word and will be created if it is not already present (see the topic templating below).
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+Figure captions are mapped to the <codeInline>Caption</codeInline> style.
+</para>
+</listItem>
+</list>
+
+<para>
+<legacyBold>Inline (character) styles</legacyBold>
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+Links in Markdown are mapped to Word's built-in <codeInline>Hyperlink</codeInline> style.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+Markdown code inlines are mapped to <codeInline>CodeInline</codeInline> style. This style is not built in in Word and will be created if it is not already present (see the topic templating below).
+</para>
+</listItem>
+</list>
+
+<para>
+<legacyBold>Nested styles</legacyBold>
+</para>
+
+<para>
+In Markdown it is possible to create nested paragraph styles. For instance, you can easily create a CodeBlock inside a quote like in this Markdown:
+</para>
+
+<code>
+&gt; Block quote line 1
+&gt; ```
+&gt; First line of code
+&gt; Second line and end of code
+&gt; ```
+&gt; Last line of block quote
+</code>
+
+<para>
+Nested styles are not supported by Word, at least not directly. After all, you can base a paragraph style on another paragraph style. This is what would happen in the example above: for the code block inside the quote a new paragraph style is created, which is based on the <codeInline>BlockText</codeInline> style (see style mapping above). The name of the newly created paragraph style is the concatenation of the two style names  <codeInline>BlockText</codeInline> and <codeInline>CodeBlock</codeInline>, so the new paragraph style name is <codeInline>BlockText CodeBlock</codeInline>. In this way, even if there is no predefined style <codeInline>BlockText CodeBlock</codeInline>, after the conversion process you can change the appearance of that style for the entire document at once.
+</para>
+
+<para>
+<legacyBold>Known limitations</legacyBold>
+</para>
+
+<para>
+There are a couple of limitations when exporting to OpenXml:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+Inline Html is not exported
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+Horizontal rules inside BlockQuotes will most probable break the styling. This is because a horizontal rule in Word is realized by using an own paragraph style with a bottom line.
+</para>
+</listItem>
+</list>
+</content>
+</section>
+
+<section address="A3E1AF298D44CB1A04016CFDFA887A36">
+<title>Templating
+</title>
+<content>
+
+<para>
+The appearance of the finally exported Word file depend on how the styles described above are defined. There is a set of style definitions built-in into Altaxo, with which the Word document's appearance is close to the GitHub style used for rendering the Markdown document inside Altaxo.
+</para>
+
+<para>
+If you want to use another style set, the easiest way is to create a Word document in which all of the above mentioned styles are defined and set according to your wishes. During the export process you can then use this document as style template file, so that your styles are transferred to and used in the the final Word document. There is another advantage to use a .docx file as style template: you are able to embed your own fonts in it.
+</para>
+
+<para>
+If you are unsure how which styles you need to modify, then copy the Markdown (see below) into an Altaxo text document, and then <link xlink:href="FC87B53658657D5F2BF4E635528354A6#ExportMarkdownToOpenXml">export it with the GitHub style</link> to a .docx file. Then open the exported .docx file with Word, and style all the paragraphs. <legacyBold>Attention!</legacyBold> Do not style the paragraphs directly. Instead,
+click on the Start tab, then click on the very small arrow <legacyBold>below</legacyBold> <codeInline>Change formatting templates</codeInline> (not on the button itself). A list of formatting templates should appear, that remains open until you close it explicitly. When you then click into your document, you will see that the formatting template selected in the list will change depending on where you have clicked into the document. To change for instance the formatting template for <codeInline>Heading 1</codeInline>, click into the text <codeInline>Heading 1</codeInline>. The formatting template <codeInline>Heading 1</codeInline> should then be selected in the list of formatting templates. Now, right-click on the selected formatting template and choose <codeInline>Change..</codeInline>. Now change the styles as you like. Repeat this for all paragraphs with different formatting templates. Store the document. This document now can be used as style template for exporting.
+</para>
+
+<para>
+Here is the markdown text to copy into Altaxo and then export:
+</para>
+
+<code>
+Standard text. Standard text. Standard text.
+Standard text. Standard text. Standard text.
+Standard text. Standard text. Standard text.
+Standard text. Standard text. Standard text.
+Standard text. Standard text. Standard text.
+
+# Heading 1
+
+## Heading 2
+
+### Heading 3
+
+#### Heading 4
+
+##### Heading 5
+
+###### Heading 6
+
+&gt;BlockQuote text (style: 'BlockText')  
+&gt;BlockQuote text (style: 'BlockText')  
+&gt;BlockQuote text (style: 'BlockText')  
+&gt;BlockQuote text (style: 'BlockText')  
+
+```
+Code Code Code (style: 'CodeBlock')
+Code Code Code (style: 'CodeBlock')
+Code Code Code (style: 'CodeBlock')
+```
+^^^
+![](res:Icons.16x16.ArrangeBottom){width=5cm}
+^^^ Figure 1: (style: 'Caption')
+
+&gt; Note: the next paragraph is a CodeBlock inside a BlockQuote.
+&gt;```
+&gt;Code (style: 'BlockText CodeBlock')
+&gt;Code (style: 'BlockText CodeBlock')
+&gt;Code (style: 'BlockText CodeBlock')
+&gt;```
+&gt; The previous paragraph was a CodeBlock inside a BlockQuote.
+
+
+Bullet list paragraph (style: 'List'):
+
+- Item1
+- Item2
+- Item3
+
+Numbered list paragraph:
+
+1. Item1
+1. Item2
+1. Item3
+
+---
+
+Now look at some inline formatting styles:
+
+---
+
+This word is `codeinline` formatted (formatting style: 'CodeInline').
+
+This word is [hyperlink](https://altaxo.github.io/Altaxo/) formatted (formatting style: 'Hyperlink') .
+</code>
+</content>
+</section>
+
+<section address="ExportMarkdownToOpenXml">
+<title>Exporting to OpenXml (.docx) file
+</title>
+<content>
+
+<para>
+Make the text document you want to export your current window. Then choose <codeInline>File → Export to OpenXMl (.docx)</codeInline> from the main menu. The following dialog opens up:
+</para>
+
+<para>
+<mediaLinkInline><image xlink:href="A035D44B6CBB32B281DAA09667B60402"></image></mediaLinkInline>
+</para>
+
+<para>
+Here, you have the following options:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+Apply maximum image width and height:<lineBreak/>
+If you have images included, often the problem is that they are too large. By checking the checkbox and entering a value, e.g. <codeInline>15 cm</codeInline> for the maximum width, you can limit the size of the images in which they appear in the Word document.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+Graph rendering resolution:<lineBreak/>
+The graphs that are included in your Markdown will be rendered with that resolution. In most cases 600 dpi is sufficient. Word can run into problems if you set this value too high.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+Expand child documents: If your Markdown document contains child documents (see <link xlink:href="6A6E755B84FEE2C567A1C4DCB7D11532#ExtensionToIncludeChildMarkdownDocuments">here</link>), they will be expanded prior to the export.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+Renumerate figures: if this option is checked, all figures will be renumerated (after the document is expanded). See the figure renumeration feature <link xlink:href="6A6E755B84FEE2C567A1C4DCB7D11532#Feature_FigureRenumeration">above</link>.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+Use automatic figure numbering: if this option is checked, the built-in capability of OpenXml documents for figure numeration is used. The figure numbers are exported to text fields that do the numbering automatically. The number in the links to the figures are replaced by text references to those automatic numbers.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+Do not use hyperlink style for figure references: if checked, the links to figures are not formatted in the hyperlink style. Instead, they are formatted as plain text.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+Name of the file used as style template<lineBreak/>
+If you leave GitHub as style template (as seen in the figure above), the built-in GitHub style template is used for the final word file. If you press the <codeInline>Select</codeInline> button, you can choose one of your own Word documents as a style template. The contents of this file will not be changed.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+Remove old contents of the style template file<lineBreak/>
+If this checkbox is unchecked, text content that is in your own style template file will be copied to the exported file, and the contents of your Markdown document appended at the end of the old contents. If the checkbox is checked, the text contents of your style template file will not be copied to your exported file.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+Output file name<lineBreak/>
+Select here the full file name of the .docx file to export.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+Open the application associated with .docx file<lineBreak/>
+If checked, the application that is associated with the .docx extension will be opened with the exported file after the export has finished. Usually, this will be the Word application (if installed on your computer)
+</para>
+</listItem>
+</list>
+
+<para>
+Press <codeInline>OK</codeInline> to export your file. After export, have a look at your document, especially at the tables. You may need to adjust the column widths.
+</para>
+</content>
+</section>
+<markup><hr/></markup>
+<section>
+
+<content>
+
+<para>
+Next section: <link xlink:href="CBDD41AAA1B05A4B2362BE258C1A1A9D">Altaxo's code editor</link></para>
+</content>
+</section>
+</developerConceptualDocument>
+</topic>

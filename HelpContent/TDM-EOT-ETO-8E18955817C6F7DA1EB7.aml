@@ -1,0 +1,170 @@
+﻿
+<topic id="8E18955817C6F7DA1EB77C40E94B1C81" revisionNumber="1">
+
+<developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+<introduction>
+
+<para>
+Previous section: <link xlink:href="64C97B6EC5C4FFD769B6654B5EA4525E">Export to an external markdown file</link></para>
+<autoOutline />
+<markup><hr/></markup>
+
+<para>
+The text document can be exported to one or multiple Maml files. MAML (= <externalLink><linkText>Microsoft Assisted Markup Language</linkText><linkUri>https://de.wikipedia.org/wiki/MAML</linkUri></externalLink>) is a XML dialect used to build help files. A good tool to convert Maml files to a help file or to web site content is the <externalLink><linkText>Sandcastle Help File Builder</linkText><linkUri>https://github.com/EWSoftware/SHFB</linkUri></externalLink>. There you also find a good tutorial concerning the Maml language.
+</para>
+
+<para>
+To export to Maml, choose from the main menu <codeInline>File → Export to Maml..</codeInline>. The Maml file export dialog opens. There are different options to influence the final export result:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+<legacyItalic>Header split level</legacyItalic>: a value of 0 ensures that the entire document is exported into a single Maml file. A value of 1 splits the document at each first level header, resulting in a Maml file per every first level section. A value of 2 splits the document at each first level and second level header, and so on...
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<legacyItalic>Folder name for content</legacyItalic>: folder name relative to the base directory (see below), in which the exported .aml files with the help contents are stored.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<legacyItalic>Remove all old contents of content folder</legacyItalic>: By checking this, all .aml and .content files in the content folder will be deleted before the export. Use this option with care!&quot;
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<legacyItalic>Base file name of content files</legacyItalic>: A text string that is set as start for every content (.aml) file name. Can be left empty, because the exporter will generate meaningful file names for the content files.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<legacyItalic>Folder name for images</legacyItalic>: folder name relative to the base directory (see below), in which the exported figures and formulas are stored.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<legacyItalic>Remove all old contents of image folder</legacyItalic>: By checking this, all .png, .jpg, .jpeg, .tif files in the image folder will be deleted prior to export. Use this option with care!
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<legacyItalic>Enable auto outline</legacyItalic>: by enabling this option, an auto outline (small table of contents) is included at the beginning of each Maml file.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<legacyItalic>Link to previous section</legacyItalic>: by enabling this option, a link to the previous section is included at the beginning of each Maml file.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<legacyItalic>Link to previous section label text</legacyItalic>: here you can give a text fragment that precedes the link to the previous section. Note that you probably want to include a space at the end of the text in order to separate the label from the link.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<legacyItalic>Link to next section</legacyItalic>: by enabling this option, a link to the next section is included at the end of each Maml file, to make it easier to consecutively read the document.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<legacyItalic>Link to next section label text</legacyItalic>: here you can give a text fragment that precedes the link to the next section. Note that you probably want to include a space at the end of the text in order to separate the label from the link.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<legacyItalic>Expand child documents</legacyItalic>: by enabling this option, child documents included with the <link xlink:href="6A6E755B84FEE2C567A1C4DCB7D11532#ExtensionToIncludeChildMarkdownDocuments">extension to include child Markdown documents</link> are expanded before export.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<legacyItalic>Renumerate figures</legacyItalic>: if this option is checked, all figures will be renumerated (after the document is expanded). See the figure renumeration feature <link xlink:href="6A6E755B84FEE2C567A1C4DCB7D11532#Feature_FigureRenumeration">above</link>.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<legacyItalic>Font family of body text</legacyItalic>: concerns export of formulas only - since formulas are exported as images, it is important to know the properties of the text they are embedded in. Therefore, font family and font size have to be known in advance. For use with the Sandcastle Help file builder, at the time of writing the font family was &quot;Segoe UI&quot;, and the font size 15.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<legacyItalic>Font size of body text</legacyItalic>: see above explanations concerning Font family.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<legacyItalic>The Maml file(s) are intended to be used to build a HTML Help 1 (chm) file</legacyItalic>: For formulas to be shown nicely, it is important that the alignment of the formula image with the surrounding text is perfect. Unfortunately, HTML Help 1 files have a different handling of vertical image alignment than e.g. HTML files. Therefore, it is necessary to know if you want to build a HTML Help 1 file from the exported Maml files, or other content (e.g. a HTML web site).
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<legacyItalic>Output file name</legacyItalic>: please provide here the name of the Sandcastle help file builder project file. If you don't want the use the Maml files with Sandcastle help file builder, you can specify any other file name. The file name is then used as base to derive the file name of the content layout file. Additionally, the directory where the file is located in, is used as base directory for other subdirectories, for instance the Image subdirectory.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<legacyItalic>Open Sandcastle help file builder after export</legacyItalic>: by enabling this option, if you have specified a Sandcastle help file builder project file as output file, after export the Sandcastle help file builder application is launched.
+</para>
+</listItem>
+</list>
+
+<quote>
+
+<para>
+<legacyBold>Note:</legacyBold><lineBreak/>
+The generation of the file names of the help content files (.aml) is done as following:
+</para>
+
+<para>
+Use the hierarchy of the first (maximal three) title levels. If there is only one first level header, ignore it. From each title use from the first three words the first alphanumerical letter of each word. To the generated string, a guid string is appended that is generated from the full hierarchy of titles.
+</para>
+
+<para>
+In this way, as long as the title (and the parent titles) do not change, the file name and the Guid of the file will stay the same, which is very important when you use these files with a version control system!
+</para>
+</quote>
+<markup><hr/></markup>
+<para>
+Next section: <link xlink:href="FC87B53658657D5F2BF4E635528354A6">Export to OpenXml (Microsoft Word .docx) files</link></para>
+</introduction>
+</developerConceptualDocument>
+</topic>

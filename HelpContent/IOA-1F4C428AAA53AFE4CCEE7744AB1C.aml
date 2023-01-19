@@ -15,7 +15,7 @@ Installation of Altaxo can be a matter of Copy-and-Paste. If you want to use som
 </para>
 
 <para>
-Altaxo requires the .Net framework version 4.7.1 being installed on your computer. Since it is not possible to install .Net framework 4.7.1 on Windows XP, it is no longer possible to install a current version of Altaxo on Windows XP.
+Altaxo requires the .Net framework version 4.8 being installed on your computer. If  the AutoUpdate feature is switched on, this should already be the case. Since it is not possible to install .Net framework 4.8 on Windows XP, it is no longer possible to install a current version of Altaxo on Windows XP.
 </para>
 <markup><hr/></markup>
 <para>

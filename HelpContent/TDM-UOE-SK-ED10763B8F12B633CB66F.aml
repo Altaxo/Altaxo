@@ -1,0 +1,38 @@
+﻿
+<topic id="ED10763B8F12B633CB66F272890672E3" revisionNumber="1">
+
+<developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+<introduction>
+
+<para>
+Previous section: <link xlink:href="5CB0F9E613C98A49D8051EBA3247B77A">Editor and Preview window</link></para>
+<autoOutline />
+<markup><hr/></markup>
+
+<para>
+When working with Markdown documents, you can use the following shortcut keys:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+<codeInline>F5</codeInline> to refresh your preview window, and update all graphs. Additionally, if you have change any property of the document or the editor (spell checking, hyphenation etc.), press <codeInline>F5</codeInline> to apply the new properties.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<codeInline>F12</codeInline> to switch between the editor window and the preview window. If possible, the position of the caret will also be switched to the corresponding location, or the closest possible location nearby.
+</para>
+</listItem>
+</list>
+<markup><hr/></markup>
+<para>
+Next section: <link xlink:href="9DD6D62833B5D9F3A624403C1C2E15A7">View configuration</link></para>
+</introduction>
+</developerConceptualDocument>
+</topic>

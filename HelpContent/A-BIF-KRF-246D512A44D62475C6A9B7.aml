@@ -1,0 +1,509 @@
+﻿
+<topic id="246D512A44D62475C6A9B7333AE94450" revisionNumber="1">
+
+<developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+<introduction>
+
+<para>
+Previous section: <link xlink:href="DF83DC7D40FD2649BAB5FCA82077D8B5">General fit functions</link></para>
+<autoOutline />
+<markup><hr/></markup></introduction>
+
+<section address="D311C8F7B1476A8E65FC6F2558D7CA57">
+<title>Conversion of an autocatalytic reaction
+</title>
+<content>
+
+<para>
+This fit function represents the solution of the differential equation for the conversion of an autocatalytic reaction (e.g. epoxy curing), namely:
+</para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#E621672CEDA0AF2C6390C04B723AB887"><img src="../media/E621672CEDA0AF2C6390C04B723AB887.png" width="169" height="70"></img></a></markup>
+
+<para>
+in which
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1D34090294C569C327D6082F2A930682"><img src="../media/1D34090294C569C327D6082F2A930682.png" width="7" height="7" align="baseline"></img></a></markup> is a value in the range [0, 1], e.g. the chemical conversion,
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#13384E13E06EC4B313CE93285B13CAA1"><img src="../media/13384E13E06EC4B313CE93285B13CAA1.png" width="9" height="7" align="baseline"></img></a></markup> is the independent variable (for a reaction, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#13384E13E06EC4B313CE93285B13CAA1"><img src="../media/13384E13E06EC4B313CE93285B13CAA1.png" width="9" height="7" align="baseline"></img></a></markup> represents the time),
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#F81F4EB371B601C3838AB43C3C6A8B82"><img src="../media/F81F4EB371B601C3838AB43C3C6A8B82.png" width="15" height="15" align="bottom"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9C87F8F3A6B8F5CABDDDE8659693B53E"><img src="../media/9C87F8F3A6B8F5CABDDDE8659693B53E.png" width="15" height="15" align="bottom"></img></a></markup> are a rate parameter,
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1524114A576378DC1D43A85F23D2A753"><img src="../media/1524114A576378DC1D43A85F23D2A753.png" width="14" height="7" align="baseline"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4EF835FC99A8EA2F77EC0547660B4997"><img src="../media/4EF835FC99A8EA2F77EC0547660B4997.png" width="10" height="7" align="baseline"></img></a></markup> are exponents,
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#522C34E25DF4412A686BF57B999190B4"><img src="../media/522C34E25DF4412A686BF57B999190B4.png" width="12" height="14" align="bottom"></img></a></markup> is the point (time) of the start of the reaction, i.e. <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#188FF9F29F501F5C845CB70523FA7B4A"><img src="../media/188FF9F29F501F5C845CB70523FA7B4A.png" width="57" height="17" align="bottom"></img></a></markup>.
+</para>
+</listItem>
+</list>
+
+<quote>
+
+<para>
+<legacyBold>Important</legacyBold>: In this fit function, the <legacyBold>dependent variable <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#6BE482414527C9B3DFFA9CAEF82E16C8"><img src="../media/6BE482414527C9B3DFFA9CAEF82E16C8.png" width="8" height="11" align="bottom"></img></a></markup> is not the conversion</legacyBold> <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#ADF607055F949FBD01A68AF87AC16B1C"><img src="../media/ADF607055F949FBD01A68AF87AC16B1C.png" width="27" height="17" align="bottom"></img></a></markup>, but a scaled value of the conversion <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#63C5D06E2DAE876DA54AD1F12E791A02"><img src="../media/63C5D06E2DAE876DA54AD1F12E791A02.png" width="92" height="17" align="bottom"></img></a></markup>, in which <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D71AF3B9818CE0BC34A7502C35C25B31"><img src="../media/D71AF3B9818CE0BC34A7502C35C25B31.png" width="18" height="15" align="bottom"></img></a></markup> is an additional parameter!
+</para>
+</quote>
+
+<para>
+The values of <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#6BE482414527C9B3DFFA9CAEF82E16C8"><img src="../media/6BE482414527C9B3DFFA9CAEF82E16C8.png" width="8" height="11" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#F81F4EB371B601C3838AB43C3C6A8B82"><img src="../media/F81F4EB371B601C3838AB43C3C6A8B82.png" width="15" height="15" align="bottom"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9C87F8F3A6B8F5CABDDDE8659693B53E"><img src="../media/9C87F8F3A6B8F5CABDDDE8659693B53E.png" width="15" height="15" align="bottom"></img></a></markup> are assumed to be positive. The value of <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#6BE482414527C9B3DFFA9CAEF82E16C8"><img src="../media/6BE482414527C9B3DFFA9CAEF82E16C8.png" width="8" height="11" align="bottom"></img></a></markup> before the start of reaction (<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FC3CD7E651B2C987DCF1F3A042BC173E"><img src="../media/FC3CD7E651B2C987DCF1F3A042BC173E.png" width="40" height="14" align="bottom"></img></a></markup>) is assumed to be 0.
+</para>
+
+<para>
+Since there is no general analytical solution of this differential equation, the solution must be calculated using an ordinary differential equation solver. This could make fits to a large data set somewhat slow.
+</para>
+
+<para>
+The domain of the function is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FB4DE268FCBAFA43EB96F2668F852D86"><img src="../media/FB4DE268FCBAFA43EB96F2668F852D86.png" width="91" height="14" align="bottom"></img></a></markup>.
+</para>
+
+<quote>
+
+<para>
+Tip #1:<lineBreak/>
+To fit conversion data that are in the range [0,1], set the parameter <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D71AF3B9818CE0BC34A7502C35C25B31"><img src="../media/D71AF3B9818CE0BC34A7502C35C25B31.png" width="18" height="15" align="bottom"></img></a></markup> fixed to a value of 1.
+</para>
+</quote>
+
+<quote>
+
+<para>
+Tip #2:<lineBreak/>
+To fit conversion data that are in percent, i.e. in a range of [0, 100], set the parameter <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D71AF3B9818CE0BC34A7502C35C25B31"><img src="../media/D71AF3B9818CE0BC34A7502C35C25B31.png" width="18" height="15" align="bottom"></img></a></markup> fixed to a value of 100.
+</para>
+</quote>
+
+<quote>
+
+<para>
+Note:<lineBreak/>
+This kinetic equation assumes that the conversion finally reaches 1 (100%). This assumption may be wrong if the glass temperature of the finally cured material exceeds the curing temperature.
+</para>
+</quote>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B5B394BAD379BA145D845DD37CD42A80"><img src="../media/B5B394BAD379BA145D845DD37CD42A80.png" width="567"></img></a></markup>
+</para>
+
+<para>
+Fig. 1: ConversionAutocatalytic (with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9C4C5324E2CF892C6DA27D3107B0D776"><img src="../media/9C4C5324E2CF892C6DA27D3107B0D776.png" width="39" height="14" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#CA3555FD03D00CAA539EA83501957738"><img src="../media/CA3555FD03D00CAA539EA83501957738.png" width="45" height="15" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#83C230761985BF1E03578160F0EB445E"><img src="../media/83C230761985BF1E03578160F0EB445E.png" width="42" height="15" align="bottom"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9C87F8F3A6B8F5CABDDDE8659693B53E"><img src="../media/9C87F8F3A6B8F5CABDDDE8659693B53E.png" width="15" height="15" align="bottom"></img></a></markup>=1). The values for <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1524114A576378DC1D43A85F23D2A753"><img src="../media/1524114A576378DC1D43A85F23D2A753.png" width="14" height="7" align="baseline"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4EF835FC99A8EA2F77EC0547660B4997"><img src="../media/4EF835FC99A8EA2F77EC0547660B4997.png" width="10" height="7" align="baseline"></img></a></markup> are indicated in the legend.
+</para>
+<markup><hr/></markup>
+
+<para>
+References:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+J. M. Kenny, Determination of Autocatalytic Kinetic Model Parameters Describing Thermoset Cure, Journal of Applied Polymer Science, Vol. 51, 761-764 (1994)
+</para>
+</listItem>
+</list>
+</content>
+</section>
+
+<section address="5258B13FE3D210771F58DC6E3B9B034C">
+<title>Conversion of a reaction of n<superscript>th</superscript> order
+</title>
+<content>
+
+<para>
+This fit function represents the solution of the differential equation of a conversion kinetics of n<superscript>th</superscript> order, namely:
+</para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#10ECAFB882D5AB17C0DE1324457D13BC"><img src="../media/10ECAFB882D5AB17C0DE1324457D13BC.png" width="104" height="70"></img></a></markup>
+
+<para>
+in which
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1D34090294C569C327D6082F2A930682"><img src="../media/1D34090294C569C327D6082F2A930682.png" width="7" height="7" align="baseline"></img></a></markup> is a value in the range [0, 1], e.g. the chemical conversion,
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#13384E13E06EC4B313CE93285B13CAA1"><img src="../media/13384E13E06EC4B313CE93285B13CAA1.png" width="9" height="7" align="baseline"></img></a></markup> is the independent variable (for a kinetics, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#13384E13E06EC4B313CE93285B13CAA1"><img src="../media/13384E13E06EC4B313CE93285B13CAA1.png" width="9" height="7" align="baseline"></img></a></markup> represents the time),
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#CE7E4D4C1E234E423869F51F4CA86321"><img src="../media/CE7E4D4C1E234E423869F51F4CA86321.png" width="9" height="11" align="baseline"></img></a></markup> is a rate parameter,
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4EF835FC99A8EA2F77EC0547660B4997"><img src="../media/4EF835FC99A8EA2F77EC0547660B4997.png" width="10" height="7" align="baseline"></img></a></markup> is the order of the kinetic conversion process,
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#522C34E25DF4412A686BF57B999190B4"><img src="../media/522C34E25DF4412A686BF57B999190B4.png" width="12" height="14" align="bottom"></img></a></markup> is the point (time) of the start of the reaction, i.e. <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#188FF9F29F501F5C845CB70523FA7B4A"><img src="../media/188FF9F29F501F5C845CB70523FA7B4A.png" width="57" height="17" align="bottom"></img></a></markup>.
+</para>
+</listItem>
+</list>
+
+<quote>
+
+<para>
+<legacyBold>Important</legacyBold>: In this fit function, the <legacyBold>dependent variable <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#6BE482414527C9B3DFFA9CAEF82E16C8"><img src="../media/6BE482414527C9B3DFFA9CAEF82E16C8.png" width="8" height="11" align="bottom"></img></a></markup> is not the conversion</legacyBold> <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#ADF607055F949FBD01A68AF87AC16B1C"><img src="../media/ADF607055F949FBD01A68AF87AC16B1C.png" width="27" height="17" align="bottom"></img></a></markup>, but a scaled value of the conversion <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#63C5D06E2DAE876DA54AD1F12E791A02"><img src="../media/63C5D06E2DAE876DA54AD1F12E791A02.png" width="92" height="17" align="bottom"></img></a></markup>, in which <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D71AF3B9818CE0BC34A7502C35C25B31"><img src="../media/D71AF3B9818CE0BC34A7502C35C25B31.png" width="18" height="15" align="bottom"></img></a></markup> is an additional parameter!
+</para>
+</quote>
+
+<para>
+The value of <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#CE7E4D4C1E234E423869F51F4CA86321"><img src="../media/CE7E4D4C1E234E423869F51F4CA86321.png" width="9" height="11" align="baseline"></img></a></markup> is assumed to be positive.
+</para>
+
+<para>
+The solution for <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FECDD071CA2EE95CC02CAF914A2B4383"><img src="../media/FECDD071CA2EE95CC02CAF914A2B4383.png" width="40" height="14" align="bottom"></img></a></markup> of the differential equation is:
+</para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#958EB06BE1C4CA1D9C54990911981089"><img src="../media/958EB06BE1C4CA1D9C54990911981089.png" width="294" height="54"></img></a></markup>
+
+<para>
+For <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FC3CD7E651B2C987DCF1F3A042BC173E"><img src="../media/FC3CD7E651B2C987DCF1F3A042BC173E.png" width="40" height="14" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1D34090294C569C327D6082F2A930682"><img src="../media/1D34090294C569C327D6082F2A930682.png" width="7" height="7" align="baseline"></img></a></markup> is set to 0. Additionally, in order to be consistent among different <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4EF835FC99A8EA2F77EC0547660B4997"><img src="../media/4EF835FC99A8EA2F77EC0547660B4997.png" width="10" height="7" align="baseline"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1D34090294C569C327D6082F2A930682"><img src="../media/1D34090294C569C327D6082F2A930682.png" width="7" height="7" align="baseline"></img></a></markup> is set to 1 if <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#8E80843589F0DDE8B216CCFA52ED81FE"><img src="../media/8E80843589F0DDE8B216CCFA52ED81FE.png" width="37" height="11" align="baseline"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#3E679877D2ECA5CA4B428C44006E17DD"><img src="../media/3E679877D2ECA5CA4B428C44006E17DD.png" width="113" height="40" align="middle"></img></a></markup>.
+</para>
+
+<para>
+The domain of the function is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FB4DE268FCBAFA43EB96F2668F852D86"><img src="../media/FB4DE268FCBAFA43EB96F2668F852D86.png" width="91" height="14" align="bottom"></img></a></markup>.
+</para>
+
+<quote>
+
+<para>
+Tip #1:<lineBreak/>
+To fit conversion data that are in the range [0,1], set the parameter <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D71AF3B9818CE0BC34A7502C35C25B31"><img src="../media/D71AF3B9818CE0BC34A7502C35C25B31.png" width="18" height="15" align="bottom"></img></a></markup> fixed to a value of 1.
+</para>
+</quote>
+
+<quote>
+
+<para>
+Tip #2:<lineBreak/>
+To fit conversion data that are in percent, i.e. in a range of [0, 100], set the parameter <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D71AF3B9818CE0BC34A7502C35C25B31"><img src="../media/D71AF3B9818CE0BC34A7502C35C25B31.png" width="18" height="15" align="bottom"></img></a></markup> fixed to a value of 100.
+</para>
+</quote>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1EF95F70FE8CF319C06EDB08871C81C0"><img src="../media/1EF95F70FE8CF319C06EDB08871C81C0.png" width="567"></img></a></markup>
+</para>
+
+<para>
+Fig. 1: ConversionNthOrder fit functions (with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9C4C5324E2CF892C6DA27D3107B0D776"><img src="../media/9C4C5324E2CF892C6DA27D3107B0D776.png" width="39" height="14" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#CA3555FD03D00CAA539EA83501957738"><img src="../media/CA3555FD03D00CAA539EA83501957738.png" width="45" height="15" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#7D721951C2968C0570A428EB05355C98"><img src="../media/7D721951C2968C0570A428EB05355C98.png" width="36" height="11" align="baseline"></img></a></markup>). The values for <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4EF835FC99A8EA2F77EC0547660B4997"><img src="../media/4EF835FC99A8EA2F77EC0547660B4997.png" width="10" height="7" align="baseline"></img></a></markup> are indicated in the legend.
+</para>
+<markup><hr/></markup></content>
+</section>
+
+<section address="7B3F9E95B6526777279284E7EA3DB5A0">
+<title>Kinetics of n<superscript>th</superscript> order
+</title>
+<content>
+
+<para>
+This fit function represents the solution of the differential equation for a kinetics of n<superscript>th</superscript> order, namely:
+</para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#BD2C469B316DD2F80FF8BBFB2A310D0F"><img src="../media/BD2C469B316DD2F80FF8BBFB2A310D0F.png" width="79" height="70"></img></a></markup>
+
+<para>
+in which
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#6BE482414527C9B3DFFA9CAEF82E16C8"><img src="../media/6BE482414527C9B3DFFA9CAEF82E16C8.png" width="8" height="11" align="bottom"></img></a></markup> is the dependent variable,
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#13384E13E06EC4B313CE93285B13CAA1"><img src="../media/13384E13E06EC4B313CE93285B13CAA1.png" width="9" height="7" align="baseline"></img></a></markup> is the independent variable (for a kinetics, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#13384E13E06EC4B313CE93285B13CAA1"><img src="../media/13384E13E06EC4B313CE93285B13CAA1.png" width="9" height="7" align="baseline"></img></a></markup> represents the time),
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#CE7E4D4C1E234E423869F51F4CA86321"><img src="../media/CE7E4D4C1E234E423869F51F4CA86321.png" width="9" height="11" align="baseline"></img></a></markup> is a rate parameter,
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4EF835FC99A8EA2F77EC0547660B4997"><img src="../media/4EF835FC99A8EA2F77EC0547660B4997.png" width="10" height="7" align="baseline"></img></a></markup> is the order of the kinetic process,
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#249E2EEDC43B206EDF3ABFF70C3BFA4A"><img src="../media/249E2EEDC43B206EDF3ABFF70C3BFA4A.png" width="14" height="11" align="bottom"></img></a></markup> is the value of <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#6BE482414527C9B3DFFA9CAEF82E16C8"><img src="../media/6BE482414527C9B3DFFA9CAEF82E16C8.png" width="8" height="11" align="bottom"></img></a></markup> at <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#ABAC714516AE0C6E81469C4B146DE454"><img src="../media/ABAC714516AE0C6E81469C4B146DE454.png" width="37" height="10" align="baseline"></img></a></markup>.
+</para>
+</listItem>
+</list>
+
+<para>
+The values of <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#6BE482414527C9B3DFFA9CAEF82E16C8"><img src="../media/6BE482414527C9B3DFFA9CAEF82E16C8.png" width="8" height="11" align="bottom"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#249E2EEDC43B206EDF3ABFF70C3BFA4A"><img src="../media/249E2EEDC43B206EDF3ABFF70C3BFA4A.png" width="14" height="11" align="bottom"></img></a></markup> is assumed to be positive.
+</para>
+
+<para>
+The solution of this differential equation is:
+</para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#CBCF37B62346C99911A87827874A22F3"><img src="../media/CBCF37B62346C99911A87827874A22F3.png" width="253" height="57"></img></a></markup>
+
+<para>
+The domain of the function is:
+</para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#E0053453CC9DD1519DA3FD0CCD694263"><img src="../media/E0053453CC9DD1519DA3FD0CCD694263.png" width="271" height="111"></img></a></markup>
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#7FF0E5EBA46C589FD8FC5768ABFEAA10"><img src="../media/7FF0E5EBA46C589FD8FC5768ABFEAA10.png" width="567"></img></a></markup>
+</para>
+
+<para>
+Fig. 1: KineticsNthOrder (with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#553A350DA62FB0433EBF17EF18C10BBD"><img src="../media/553A350DA62FB0433EBF17EF18C10BBD.png" width="42" height="14" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#7D721951C2968C0570A428EB05355C98"><img src="../media/7D721951C2968C0570A428EB05355C98.png" width="36" height="11" align="baseline"></img></a></markup>). The values for <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4EF835FC99A8EA2F77EC0547660B4997"><img src="../media/4EF835FC99A8EA2F77EC0547660B4997.png" width="10" height="7" align="baseline"></img></a></markup> are indicated in the legend.
+</para>
+<markup><hr/></markup></content>
+</section>
+
+<section address="FD2A57C849B4D9C8A777710E77958510">
+<title>Rate of conversion of an autocatalytic reaction
+</title>
+<content>
+
+<para>
+This fit function represents the solution of the differential equation for the conversion of an autocatalytic reaction (e.g. epoxy curing), namely:
+</para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#E621672CEDA0AF2C6390C04B723AB887"><img src="../media/E621672CEDA0AF2C6390C04B723AB887.png" width="169" height="70"></img></a></markup>
+
+<para>
+in which
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1D34090294C569C327D6082F2A930682"><img src="../media/1D34090294C569C327D6082F2A930682.png" width="7" height="7" align="baseline"></img></a></markup> is a value in the range [0, 1], e.g. the chemical conversion,
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#13384E13E06EC4B313CE93285B13CAA1"><img src="../media/13384E13E06EC4B313CE93285B13CAA1.png" width="9" height="7" align="baseline"></img></a></markup> is the independent variable (for a reaction, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#13384E13E06EC4B313CE93285B13CAA1"><img src="../media/13384E13E06EC4B313CE93285B13CAA1.png" width="9" height="7" align="baseline"></img></a></markup> represents the time),
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#F81F4EB371B601C3838AB43C3C6A8B82"><img src="../media/F81F4EB371B601C3838AB43C3C6A8B82.png" width="15" height="15" align="bottom"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9C87F8F3A6B8F5CABDDDE8659693B53E"><img src="../media/9C87F8F3A6B8F5CABDDDE8659693B53E.png" width="15" height="15" align="bottom"></img></a></markup> are a rate parameter,
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1524114A576378DC1D43A85F23D2A753"><img src="../media/1524114A576378DC1D43A85F23D2A753.png" width="14" height="7" align="baseline"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4EF835FC99A8EA2F77EC0547660B4997"><img src="../media/4EF835FC99A8EA2F77EC0547660B4997.png" width="10" height="7" align="baseline"></img></a></markup> are exponents,
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#522C34E25DF4412A686BF57B999190B4"><img src="../media/522C34E25DF4412A686BF57B999190B4.png" width="12" height="14" align="bottom"></img></a></markup> is the point (time) of the start of the reaction, i.e. <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#188FF9F29F501F5C845CB70523FA7B4A"><img src="../media/188FF9F29F501F5C845CB70523FA7B4A.png" width="57" height="17" align="bottom"></img></a></markup>.
+</para>
+</listItem>
+</list>
+
+<quote>
+
+<para>
+<legacyBold>Important</legacyBold>: In this fit function, the <legacyBold>dependent variable is not the conversion</legacyBold> <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#ADF607055F949FBD01A68AF87AC16B1C"><img src="../media/ADF607055F949FBD01A68AF87AC16B1C.png" width="27" height="17" align="bottom"></img></a></markup>, <legacyBold>but a scaled value of the conversion rate</legacyBold> <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#E691CA095EEFFADEAB16E41AF528DF48"><img src="../media/E691CA095EEFFADEAB16E41AF528DF48.png" width="103" height="44" align="middle"></img></a></markup>, in which <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D71AF3B9818CE0BC34A7502C35C25B31"><img src="../media/D71AF3B9818CE0BC34A7502C35C25B31.png" width="18" height="15" align="bottom"></img></a></markup> is an additional parameter!
+</para>
+</quote>
+
+<para>
+The values of <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#6BE482414527C9B3DFFA9CAEF82E16C8"><img src="../media/6BE482414527C9B3DFFA9CAEF82E16C8.png" width="8" height="11" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#F81F4EB371B601C3838AB43C3C6A8B82"><img src="../media/F81F4EB371B601C3838AB43C3C6A8B82.png" width="15" height="15" align="bottom"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9C87F8F3A6B8F5CABDDDE8659693B53E"><img src="../media/9C87F8F3A6B8F5CABDDDE8659693B53E.png" width="15" height="15" align="bottom"></img></a></markup> are assumed to be positive. The value of <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1D34090294C569C327D6082F2A930682"><img src="../media/1D34090294C569C327D6082F2A930682.png" width="7" height="7" align="baseline"></img></a></markup> before the start of reaction (<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FC3CD7E651B2C987DCF1F3A042BC173E"><img src="../media/FC3CD7E651B2C987DCF1F3A042BC173E.png" width="40" height="14" align="bottom"></img></a></markup>) is assumed to be 0.
+</para>
+
+<para>
+Since there is no general analytical solution of this differential equation, the solution must be calculated using an ordinary differential equation solver. This could make fits to a large data set somewhat slow.
+</para>
+
+<para>
+The domain of the function is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FB4DE268FCBAFA43EB96F2668F852D86"><img src="../media/FB4DE268FCBAFA43EB96F2668F852D86.png" width="91" height="14" align="bottom"></img></a></markup>.
+</para>
+
+<quote>
+
+<para>
+Note:<lineBreak/>
+This kinetic equation assumes that the conversion finally reaches 1 (100%). This assumption may be wrong if the glass temperature of the finally cured material exceeds the curing temperature.
+</para>
+</quote>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#504038529D11A7A765938D4EE80CA2D1"><img src="../media/504038529D11A7A765938D4EE80CA2D1.png" width="567"></img></a></markup>
+</para>
+
+<para>
+Fig. 1: RateOfConversionAutocatalytic (with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9C4C5324E2CF892C6DA27D3107B0D776"><img src="../media/9C4C5324E2CF892C6DA27D3107B0D776.png" width="39" height="14" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#CA3555FD03D00CAA539EA83501957738"><img src="../media/CA3555FD03D00CAA539EA83501957738.png" width="45" height="15" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#83C230761985BF1E03578160F0EB445E"><img src="../media/83C230761985BF1E03578160F0EB445E.png" width="42" height="15" align="bottom"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9C87F8F3A6B8F5CABDDDE8659693B53E"><img src="../media/9C87F8F3A6B8F5CABDDDE8659693B53E.png" width="15" height="15" align="bottom"></img></a></markup>=1). The values for <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1524114A576378DC1D43A85F23D2A753"><img src="../media/1524114A576378DC1D43A85F23D2A753.png" width="14" height="7" align="baseline"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4EF835FC99A8EA2F77EC0547660B4997"><img src="../media/4EF835FC99A8EA2F77EC0547660B4997.png" width="10" height="7" align="baseline"></img></a></markup> are indicated in the legend.
+</para>
+<markup><hr/></markup>
+
+<para>
+References:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+J. M. Kenny, Determination of Autocatalytic Kinetic Model Parameters Describing Thermoset Cure, Journal of Applied Polymer Science, Vol. 51, 761-764 (1994)
+</para>
+</listItem>
+</list>
+</content>
+</section>
+
+<section address="5258B13FE3D210771F58DC6E3B9B034C">
+<title>Conversion of a reaction of n<superscript>th</superscript> order
+</title>
+<content>
+
+<para>
+This fit function represents the solution of the differential equation of a conversion kinetics of n<superscript>th</superscript> order, namely:
+</para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#10ECAFB882D5AB17C0DE1324457D13BC"><img src="../media/10ECAFB882D5AB17C0DE1324457D13BC.png" width="104" height="70"></img></a></markup>
+
+<para>
+in which
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1D34090294C569C327D6082F2A930682"><img src="../media/1D34090294C569C327D6082F2A930682.png" width="7" height="7" align="baseline"></img></a></markup> is a value in the range [0, 1], e.g. the chemical conversion,
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#13384E13E06EC4B313CE93285B13CAA1"><img src="../media/13384E13E06EC4B313CE93285B13CAA1.png" width="9" height="7" align="baseline"></img></a></markup> is the independent variable (for a kinetics, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#13384E13E06EC4B313CE93285B13CAA1"><img src="../media/13384E13E06EC4B313CE93285B13CAA1.png" width="9" height="7" align="baseline"></img></a></markup> represents the time),
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#CE7E4D4C1E234E423869F51F4CA86321"><img src="../media/CE7E4D4C1E234E423869F51F4CA86321.png" width="9" height="11" align="baseline"></img></a></markup> is a rate parameter,
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4EF835FC99A8EA2F77EC0547660B4997"><img src="../media/4EF835FC99A8EA2F77EC0547660B4997.png" width="10" height="7" align="baseline"></img></a></markup> is the order of the kinetic conversion process,
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#522C34E25DF4412A686BF57B999190B4"><img src="../media/522C34E25DF4412A686BF57B999190B4.png" width="12" height="14" align="bottom"></img></a></markup> is the point (time) of the start of the reaction, i.e. <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#188FF9F29F501F5C845CB70523FA7B4A"><img src="../media/188FF9F29F501F5C845CB70523FA7B4A.png" width="57" height="17" align="bottom"></img></a></markup>.
+</para>
+</listItem>
+</list>
+
+<quote>
+
+<para>
+<legacyBold>Important</legacyBold>: In this fit function, the <legacyBold>dependent variable is not the conversion</legacyBold> <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#ADF607055F949FBD01A68AF87AC16B1C"><img src="../media/ADF607055F949FBD01A68AF87AC16B1C.png" width="27" height="17" align="bottom"></img></a></markup>, <legacyBold>but a scaled value of the conversion rate</legacyBold> <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#E691CA095EEFFADEAB16E41AF528DF48"><img src="../media/E691CA095EEFFADEAB16E41AF528DF48.png" width="103" height="44" align="middle"></img></a></markup>, in which <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D71AF3B9818CE0BC34A7502C35C25B31"><img src="../media/D71AF3B9818CE0BC34A7502C35C25B31.png" width="18" height="15" align="bottom"></img></a></markup> is an additional parameter!
+</para>
+</quote>
+
+<para>
+The value of <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#CE7E4D4C1E234E423869F51F4CA86321"><img src="../media/CE7E4D4C1E234E423869F51F4CA86321.png" width="9" height="11" align="baseline"></img></a></markup> is assumed to be positive.
+</para>
+
+<para>
+The solution for <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FECDD071CA2EE95CC02CAF914A2B4383"><img src="../media/FECDD071CA2EE95CC02CAF914A2B4383.png" width="40" height="14" align="bottom"></img></a></markup> of the differential equation is:
+</para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#958EB06BE1C4CA1D9C54990911981089"><img src="../media/958EB06BE1C4CA1D9C54990911981089.png" width="294" height="54"></img></a></markup>
+
+<para>
+For <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FC3CD7E651B2C987DCF1F3A042BC173E"><img src="../media/FC3CD7E651B2C987DCF1F3A042BC173E.png" width="40" height="14" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1D34090294C569C327D6082F2A930682"><img src="../media/1D34090294C569C327D6082F2A930682.png" width="7" height="7" align="baseline"></img></a></markup> is set to 0. Additionally, in order to be consistent among different <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4EF835FC99A8EA2F77EC0547660B4997"><img src="../media/4EF835FC99A8EA2F77EC0547660B4997.png" width="10" height="7" align="baseline"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1D34090294C569C327D6082F2A930682"><img src="../media/1D34090294C569C327D6082F2A930682.png" width="7" height="7" align="baseline"></img></a></markup> is set to 1 if <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#8E80843589F0DDE8B216CCFA52ED81FE"><img src="../media/8E80843589F0DDE8B216CCFA52ED81FE.png" width="37" height="11" align="baseline"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#3E679877D2ECA5CA4B428C44006E17DD"><img src="../media/3E679877D2ECA5CA4B428C44006E17DD.png" width="113" height="40" align="middle"></img></a></markup>.
+</para>
+
+<para>
+The domain of the function is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FB4DE268FCBAFA43EB96F2668F852D86"><img src="../media/FB4DE268FCBAFA43EB96F2668F852D86.png" width="91" height="14" align="bottom"></img></a></markup>.
+</para>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#2DEB5DBBFB269E18CEA96C0EAF1FDFD0"><img src="../media/2DEB5DBBFB269E18CEA96C0EAF1FDFD0.png" width="567"></img></a></markup>
+</para>
+
+<para>
+Fig. 1: RateOfConversionNthOrder fit functions (with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9C4C5324E2CF892C6DA27D3107B0D776"><img src="../media/9C4C5324E2CF892C6DA27D3107B0D776.png" width="39" height="14" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#CA3555FD03D00CAA539EA83501957738"><img src="../media/CA3555FD03D00CAA539EA83501957738.png" width="45" height="15" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#7D721951C2968C0570A428EB05355C98"><img src="../media/7D721951C2968C0570A428EB05355C98.png" width="36" height="11" align="baseline"></img></a></markup>). The values for <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4EF835FC99A8EA2F77EC0547660B4997"><img src="../media/4EF835FC99A8EA2F77EC0547660B4997.png" width="10" height="7" align="baseline"></img></a></markup> are indicated in the legend.
+</para>
+<markup><hr/></markup></content>
+</section>
+<markup><hr/></markup>
+<section>
+
+<content>
+
+<para>
+Next section: <link xlink:href="A13E5A342CE8CF1DEFF57D808534FEAC">Materials related fit functions</link></para>
+</content>
+</section>
+</developerConceptualDocument>
+</topic>

@@ -1,0 +1,45 @@
+﻿
+<topic id="86BB2E2798FB4203DC002C47F2C86FC9" revisionNumber="1">
+
+<developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+<introduction>
+
+<para>
+Previous section: <link xlink:href="9EC02FDB23AEF02047503483B7079F28">Selection of columns and/or rows in a worksheet</link></para>
+<autoOutline />
+<markup><hr/></markup>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+Click in the column header of the first data column you want to select, without pressing any key on the keyboard. The background color of the selected column changes to blue.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+SHIFT-click in the column header of the last data column you want to select. All columns between the first selected column and the column selected now are selected now, indicated by the blue background color. (SHIFT-click means holding the SHIFT key on the keyboard pressed while clicking the left mouse button).
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+Additional columns can be selected by CTRL-click in the column header of data columns that are not already selected yet. CTRL-click in the column header of an already selected column to deselect it. (CTRL-click means holding the CTRL key on the keyboard pressed while clicking the left mouse button).
+</para>
+</listItem>
+</list>
+
+<para>
+If you now have only data columns selected, as described above, all data rows and all property column cells are affected by the operation.
+</para>
+<markup><hr/></markup>
+<para>
+Next section: <link xlink:href="A508EE85C601347F8D41A4F7BC174E95">To select specific data rows:</link></para>
+</introduction>
+</developerConceptualDocument>
+</topic>

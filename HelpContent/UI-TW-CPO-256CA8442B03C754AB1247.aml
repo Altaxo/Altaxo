@@ -1,0 +1,68 @@
+﻿
+<topic id="256CA8442B03C754AB12479F0CBAD7C3" revisionNumber="1">
+
+<developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+<introduction>
+
+<para>
+Previous section: <link xlink:href="C2350A704FE1E4599837EF0CBF5DB744">Making a tool window visible</link></para>
+<autoOutline />
+<markup><hr/></markup>
+
+<para>
+You can drag the tool windows around and dock them to new places. There
+are two methods to do that:
+</para>
+
+<list class="ordered">
+
+<listItem>
+
+<para>
+Dragging on the title bar will drag the whole tool window group (in
+the following figure this is the project explorer and the
+file explorer) around.
+</para>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#DB6BCD133FE0B03BBA3CE8C703C08FF7"><img src="../media/DB6BCD133FE0B03BBA3CE8C703C08FF7.png" width="567"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#71EE6ED245E6194A4901619BB3A94E89"><img src="../media/71EE6ED245E6194A4901619BB3A94E89.png" width="567"></img></a></markup>
+</para>
+
+<para>
+In the figure above, you can see that I'm dragging both the project
+explorer and the file explorer.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+On the other hand, if you drag the tab of the project explorer, as
+it is shown in the next figure, you will only drag the project
+explorer, but leave the file explorer in place.
+</para>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#F129D47DCF40373C8A5E0D0FAF5891B9"><img src="../media/F129D47DCF40373C8A5E0D0FAF5891B9.png" width="567"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#DC4743B98869667A18E0D04BA2F1D909"><img src="../media/DC4743B98869667A18E0D04BA2F1D909.png" width="567"></img></a></markup>
+</para>
+</listItem>
+</list>
+
+<para>
+Feel free to play around to get acquainted with the concept. You can
+even use the special tool window menu (see next figure) to make the
+window float, or to dock the tool window in the document area.
+</para>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#641DC9D26820D6726787695E78F45DF9"><img src="../media/641DC9D26820D6726787695E78F45DF9.png" width="567"></img></a></markup>
+</para>
+<markup><hr/></markup>
+<para>
+Next section: <link xlink:href="70459A2A033EB9324D5DFCAF05E86883">Hiding a tool window</link></para>
+</introduction>
+</developerConceptualDocument>
+</topic>

@@ -1,0 +1,216 @@
+﻿
+<topic id="FCC125D44CCD76A52BBA4BE955537F85" revisionNumber="1">
+
+<developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+<introduction>
+
+<para>
+Previous section: <link xlink:href="3A0137E53CEEEFFC3A49CDCA2CC5B88D">Spectral preprocessing</link></para>
+<autoOutline />
+<markup><hr/></markup></introduction>
+
+<section address="Section_RamanSpectroscopy_CalibrationWithNeonAndSi">
+<title>Calibration of a Raman device with Neon light and a Silicon wafer
+</title>
+<content>
+
+<sections>
+
+<section address="304D7A24335AFE382AABCBDA75D782E1">
+<title>Objective
+</title>
+<content>
+
+<para>
+A Raman device consists of two, at first uncalibrated, parts:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+The spectrometer. The spectrometer pixels need to be attributed to their corresponding absolute wavelengths.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+The laser. The wavelength of the laser is approximately known, but it is neccessary to determine the exact wavelength.
+</para>
+</listItem>
+</list>
+
+<para>
+The <legacyBold>objective</legacyBold> of the calibration is to calibrate both the spectrometer and determine the absolute laser wavelength. With that information, the x-axis of all spectra measured subsequently could be adjusted to calibrated values.
+</para>
+
+<section address="13339967A18C7F4C981F260BEB20D795">
+<title>What is needed
+</title>
+<content>
+
+<para>
+For that, two measurements are needed:
+</para>
+
+<list class="ordered">
+
+<listItem>
+
+<para>
+A measurement without laser (to exclude the influence of the laser wavelength). This measurement calibrates the spectrometer. Usually, the light of a small Neon lamp is directed into the Raman instrument, and a spectrum of the Neon light is taken. The position of the Neon bands is known, and with that information the wavelength of the spectrometer pixels can be calibrated.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+A measurement with laser. In this measurement, a sample with a well defined peak, for which the Raman shift is known, is measured. Usually, a polished Silicon wafer is used for this measurement. In combination with the absolute wavelength calibration of the spectromenter with Neon light, the exact wavelength of the Laser light can be calculated.
+</para>
+</listItem>
+</list>
+
+<quote>
+
+<para>
+<legacyBold>Tips for measuring the Neon spectrum</legacyBold><lineBreak/>
+Use exactly the same optical path that is used afterwards for measuring the Silicon. Block the laser light. Shine the light of a Neon lamp in your instrument and adjust exposure time to avoid both overexposure and underexposure. Then set the number of accumulations as high as possible to get a low noise level. A low noise level is important to get also the very small peaks close to the left and right sides of the spectrum, because everything outside the range of detected peaks needs to be extrapolated.
+</para>
+</quote>
+
+<quote>
+
+<para>
+<legacyBold>Tips for measuring the Silicon spectrum</legacyBold><lineBreak/>
+Make sure the laser is switched on already for some time and now is stable. Adjust the exposure time to avoid both overexposure and underexposure. Set the number of accumulations as high as possible, but avoid too long measurement times because the Silicon is heating up (especially for 785 nm systems). Write down the room temperature (or ideally the temperature of the Silicon wafer). Measure the Silicon and the Neon spectra at the same day.
+</para>
+</quote>
+
+<section address="7CF66A31262C302A86DC9ADBDAEA45CB">
+<title>Data evaluation
+</title>
+<content>
+
+<para>
+Load both the Neon spectrum and the Silicon spectrum into an empty worksheet. For that, create an empty worksheet, and then use <codeInline>File → Import → Ascii</codeInline>, or <codeInline>File → Import → SPC </codeInline>or some of the other file import menu points, according to the file format of the spectra.
+</para>
+
+<para>
+Make sure that the x-axis of both spectra is marked as type &quot;X&quot;. Take a look of the Neon spectrum by plotting it.
+</para>
+
+<para>
+<legacyBold>Neon calibration</legacyBold>
+</para>
+
+<para>
+Go back to the worksheet which contains both spectra, select the column with the Neon spectrum, and use the menu <codeInline>Analysis → Spectroscopy → Raman → Neon calibration</codeInline>. A dialog with many options opens, but for a first try, only two things are important:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+Chose the <legacyBold>unit of the x-axis</legacyBold> of the Neon spectrum you have loaded. In most cases, this would be the Raman shift in cm<superscript>-1</superscript>.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+If the unit is indeed the Raman shift, the <legacyBold>approximate wavelength of the laser is needed</legacyBold>. Please enter it in the appropriate field (in nanometer). Typical wavelengths are 532 nm, 633 nm and 785 nm, but other systems exist as well.
+</para>
+</listItem>
+</list>
+
+<para>
+Everything else could be left to default. Press OK to run the Neon calibration. A new worksheet is created, which should contain the calibration. Take a look at the Notes of this worksheet to check for errors during the execution of the calibration.
+</para>
+
+<para>
+Typical errors are:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+The wrong column is selected as x-axis in the worksheet. For instance, many spectra (especially in .txt or .csv format) not only contain a column for the <codeInline>Raman shift</codeInline>, but also a column named <codeInline>Pixel number</codeInline> etc. Thus, maybe column <codeInline>Pixel number</codeInline> is selected as x-axis, but you think the x-axis is 'Raman shift'. You could check which column was used by opening the DataSource of the calibration table, and then check in <codeInline>Neon calibration data 1</codeInline> (or <codeInline>Neon calibration data 2</codeInline> if you are using the second Neon calibration), which x-column is currently used. The mistake of confusing <codeInline>Pixel number</codeInline> with <codeInline>Raman shift</codeInline> is really hard to detect, because on many systems both values are nearly in the same range!
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+You have entered the wrong unit of the x-axis of the Neon spectrum. Some reasonability checks are made by the software, and if they fail, an error is reported.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+You have entered the wrong (approximate) wavelength of the laser. For instance, if you have a 785 nm system, but have forgotten to change the laser wavelength (which is by default 532 nm), the calibration will fail. This kind of error could not be detected by the software.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+The Neon spectrum is too noisy, so that too few peaks or too many peaks are detected. Try to adjust some options in the peak finding algorithm. You can use peak detection and finding (menu Analysis-&gt;Spectroscopy-&gt;PeakDetection&amp;Finding) to search for appropriate settings, and then use those settings for calibration.
+</para>
+</listItem>
+</list>
+
+<para>
+<legacyBold>Silicon calibration</legacyBold>
+</para>
+
+<para>
+Next, do the silicon calibration. For this, go back to the worksheet containing the Silicon spectrum, select the column which contains the signal of the Silicon spectrum, and choose the menu point <codeInline>Analysis → Spectroscopy → Raman → Silicon calibration</codeInline>. The options can be left to their defaults, with two exceptions:
+</para>
+
+<list class="ordered">
+
+<listItem>
+
+<para>
+Enter the <legacyBold>temperature</legacyBold> of the room (or of the silicon wafer if it was measured)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+Make sure that in the combobox <legacyBold>&quot;Calibration table&quot;</legacyBold> that calibration table is selected, which already contains the Neon calibration made before. If you only have one calibration in the entire Altaxo document, the combobox is already showing it, but if you have multiple calibrations, make sure that the right calibration table is selected.
+</para>
+</listItem>
+</list>
+
+<para>
+Press OK. Now your calibration table should contain a full x-axis calibration. From now on you can use that calibration table in the preprocessing of spectra to adjust the x-axis to a calibrated x-axis.
+</para>
+</content>
+</section>
+</content>
+</section>
+</content>
+</section>
+</sections>
+</content>
+</section>
+<markup><hr/></markup>
+<section>
+
+<content>
+
+<para>
+Next section: <link xlink:href="D7216AC7DC127824F9628052A8B61BF1">Appendix</link></para>
+</content>
+</section>
+</developerConceptualDocument>
+</topic>

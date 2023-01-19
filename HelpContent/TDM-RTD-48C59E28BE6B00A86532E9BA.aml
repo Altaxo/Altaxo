@@ -15,11 +15,11 @@ A text document can be renamed in the same way as any other <link xlink:href="27
 </para>
 
 <para>
-If you like to edit the <link xlink:href="2783FED4411F72EE01B8906649201D84#NamesOfProjectItems">full name</link> of the item, right-click on the document tab, and choose <codeInline>Rename ..</codeInline>. The dialog that opens allows to edit the full name of the text document. The same dialog opens if you use the <codeInline>Rename ..</codeInline> command from the context menu of the text document item listed in the Project Explorer.
+If you like to edit the <link xlink:href="11BFAFA49AD18CD5422A06AAEC9EF6D7#NamesOfProjectItems">full name</link> of the item, right-click on the document tab, and choose <codeInline>Rename ..</codeInline>. The dialog that opens allows to edit the full name of the text document. The same dialog opens if you use the <codeInline>Rename ..</codeInline> command from the context menu of the text document item listed in the Project Explorer.
 </para>
 
 <para>
-If you like to edit the <link xlink:href="2783FED4411F72EE01B8906649201D84#NamesOfProjectItems">short name part</link> of the text document, simply click on the already selected item in the Project Explorer (no double click). Then you can edit the short name directly there.
+If you like to edit the <link xlink:href="11BFAFA49AD18CD5422A06AAEC9EF6D7#NamesOfProjectItems">short name part</link> of the text document, simply click on the already selected item in the Project Explorer (no double click). Then you can edit the short name directly there.
 </para>
 <markup><hr/></markup>
 <para>

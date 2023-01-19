@@ -1,0 +1,296 @@
+﻿
+<topic id="6A6E755B84FEE2C567A1C4DCB7D11532" revisionNumber="1">
+
+<developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+<introduction>
+
+<para>
+Previous section: <link xlink:href="3D916BB3FE58D60ADF15B281D55E5852">Special characters</link></para>
+<autoOutline />
+<markup><hr/></markup>
+
+<para>
+Some extensions to the standard markdown syntax can be used in Altaxo (in fact, the formulas from the previous section are already such an extension).
+</para>
+</introduction>
+
+<section address="13FE656586E264228A72683CCB8654E1">
+<title>Piped table extension
+</title>
+<content>
+
+<para>
+You can write tables using the following syntax (borrowed from  <externalLink><linkText>readme.md of markdig</linkText><linkUri>https://github.com/lunet-io/markdig/blob/master/readme.md</linkUri></externalLink>):
+</para>
+
+<code>
+| Tables        | Are           | Cool  |
+| ------------- |:-------------:| -----:|
+| col 3 is      | right-aligned | $1600 |
+| col 2 is      | centered      |   $12 |
+| zebra stripes | are neat      |    $1 |
+</code>
+
+<para>
+renders to:
+</para>
+
+<table>
+
+<tableHeader>
+
+<row>
+<entry>
+<para>
+Tables
+</para>
+</entry><entry>
+<para>
+Are
+</para>
+</entry><entry>
+<para>
+Cool
+</para>
+</entry></row>
+</tableHeader>
+
+<row>
+<entry>
+<para>
+col 3 is
+</para>
+</entry><entry>
+<para>
+right-aligned
+</para>
+</entry><entry>
+<para>
+$1600
+</para>
+</entry></row>
+
+<row>
+<entry>
+<para>
+col 2 is
+</para>
+</entry><entry>
+<para>
+centered
+</para>
+</entry><entry>
+<para>
+$12
+</para>
+</entry></row>
+
+<row>
+<entry>
+<para>
+zebra stripes
+</para>
+</entry><entry>
+<para>
+are neat
+</para>
+</entry><entry>
+<para>
+$1
+</para>
+</entry></row>
+</table>
+
+<para>
+Note that the actual appearance of the table depends on the rendering device. For instance, in Altaxo's Wpf rendering, and in help files build with the <link xlink:href="8E18955817C6F7DA1EB77C40E94B1C81#MamlExportOfMarkdownDocuments">Maml export feature</link>, tables will always take the full width of the document. Additionally, <link xlink:href="8E18955817C6F7DA1EB77C40E94B1C81#MamlExportOfMarkdownDocuments">Maml export</link> does not support alignment of table columns.
+</para>
+</content>
+</section>
+
+<section address="FBD8E8331B88E771D2453257CA69F523">
+<title>Task list extension
+</title>
+<content>
+
+<para>
+Write task lists using the following syntax:
+</para>
+
+<code>
+- [ ] Item1
+- [x] Item2
+	- [x] SubItem21
+- [ ] Item3
+- Item4
+</code>
+
+<para>
+renders to:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+ Item1
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+ Item2
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+ SubItem21
+</para>
+</listItem>
+</list>
+</listItem>
+
+<listItem>
+
+<para>
+ Item3
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+Item4
+</para>
+</listItem>
+</list>
+</content>
+</section>
+
+<section address="E79398901F3F14C38BAD2E1CB32A2C22">
+<title>Figure extension
+</title>
+<content>
+
+<para>
+This extension is useful if you want to include figures and tables on separate lines, and want to provide them with a figure caption or table caption, respectively. Special commands are built into Altaxo to renumerate figures, and to allow to reference them from the text by number.
+</para>
+
+<para>
+To include a figure, surround the figure by a block of <codeInline>^^^</codeInline>, like so:
+</para>
+
+<code>
+^^^
+![](graph://Foo\GRAPH0){width=5cm}  {#An_important_graph}
+^^^ Figure 1: This is a graph 
+</code>
+
+<para>
+In line 2 of the code block above, a graph from the Altaxo project is included. This is not new and was shown already before. The graph has a text mark <codeInline>#An_important_graph</codeInline> attached. New is that the graph is now framed with <codeInline>^^^</codeInline> blocks above and below. Moreover, in the last line, there is a figure caption. You can write figure captions either above (in the first line containing <codeInline>^^^</codeInline>, which is e.g. common for tables), or as in the example above, in the line below the figure or table.
+</para>
+
+<quote>
+
+<para>
+<legacyBold>Note:</legacyBold>
+</para>
+
+<para>
+Only one of the two possible figure captions (above, below) may contain text. However, you can place a text marker in the other caption.
+</para>
+</quote>
+
+<para>
+Even more useful is the figure extension, if used in conjunction with Altaxo's built in <legacyBold>figure renumeration feature</legacyBold>.  
+</para>
+
+<para>
+If you have more than one figure, for instance:
+</para>
+
+<code>
+^^^
+![](graph://Foo\GRAPH0){width=5cm}  {#An_important_graph}
+^^^ Figure 1: This is a graph 
+..
+..
+..
+^^^
+![](graph://Foo\GRAPH1){width=5cm}  {#Another_graph}
+^^^ Figure 3: This is another graph
+</code>
+
+<para>
+you most probably have the problem to keep the figure numbers up-to-date. After Figure 1, Figure 2 should follow, but in the example above, it is Figure 3 instead.
+</para>
+
+<para>
+<legacyBold>Invoke Altaxo's figure renumeration command</legacyBold> by using <codeInline>Text → Renumerate figures</codeInline> from the main menu. This command looks for all figure captions in the document, and then tries to find a category and a number in each figure caption. The category is considered the first word in the figure caption. In the example above, the category for both figures is <codeInline>Figure</codeInline>. Both figure captions have a number, too. Altaxo then replaces the numbers in the figure captions by new numbers. Each category gets its own numbering.
+</para>
+
+<para>
+Even more useful is that Altaxo also cares about the links to the figures. Assume you have referenced the figure in the text like this:
+</para>
+
+<code>
+As can be seen in [Fig. 3](#Another_graph) .....
+</code>
+
+<para>
+During the figure renumeration command, Altaxo parses all links. If a link points to inside a figure block, then the link text (here: <codeInline>Fig. 3</codeInline>) is parsed. If a number is found in the link text, then this number is replaced by the actual number that the figure has got now. In the example above, <codeInline>Figure 3</codeInline> would be renumerated to <codeInline>Figure 2</codeInline>, and the link text would then be changed to <codeInline>Fig. 2</codeInline>, accordingly.
+</para>
+
+<quote>
+
+<para>
+<legacyBold>Note:</legacyBold>
+</para>
+
+<para>
+The figure renumeration feature is also available as a preprocessor option when exporting a document to Maml, Html, or an OpenXml document.
+</para>
+</quote>
+</content>
+</section>
+
+<section address="ExtensionToIncludeChildMarkdownDocuments">
+<title>Extension to include child markdown documents
+</title>
+<content>
+
+<para>
+You can include child markdown documents using syntax similar to a code block. The following code will include a child document named <codeInline>Chapter1\Text</codeInline> into the master document:
+</para>
+
+<code>
+```{Altaxo child=&quot;Chapter1\Text&quot;}
+Chapter1 - Title
+```
+</code>
+
+<para>
+The text <codeInline>Chapter1 - Title</codeInline> inside of the code block is optional and is only for the user to visualize what he is including.
+</para>
+
+<para>
+The master document can be expanded later, for instance during export to <link xlink:href="8E18955817C6F7DA1EB77C40E94B1C81#MamlExportOfMarkdownDocuments">Maml</link> or to an <link xlink:href="64C97B6EC5C4FFD769B6654B5EA4525E#MarkdownExportOfMarkdownDocuments">external Markdown document</link>.
+</para>
+</content>
+</section>
+<markup><hr/></markup>
+<section>
+
+<content>
+
+<para>
+Next section: <link xlink:href="D81BAB079B701CE4975A6890157D3C46">Usage (of the editor and preview window)</link></para>
+</content>
+</section>
+</developerConceptualDocument>
+</topic>

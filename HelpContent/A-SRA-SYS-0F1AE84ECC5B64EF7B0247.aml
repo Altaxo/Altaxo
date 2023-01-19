@@ -1,0 +1,25 @@
+﻿
+<topic id="0F1AE84ECC5B64EF7B0247DDC7B13975" revisionNumber="1">
+
+<developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+<introduction>
+
+<para>
+Previous section: <link xlink:href="F7DF9C0A0AECE7B19609774AC70B147B">Save / restore Altaxo's user settings</link></para>
+<autoOutline />
+<markup><hr/></markup>
+
+<para>
+Your user settings are stored in a special subfolder of your user account. The easiest way to get there is to open Altaxo, and then choose from the main menu <codeInline>Help → Open settings directory</codeInline>. This will open an explorer window which shows Altaxo's settings directory.
+</para>
+
+<para>
+At the time of writing, in this directory resides one folder, named <codeInline>Altaxo4</codeInline>. It is this folder that you must save if you want to restore your settings later or if you want to transfer them to another computer or to another user account.
+</para>
+<markup><hr/></markup>
+<para>
+Next section: <link xlink:href="8E4F74F9C40C692B28A56859D2FAAFA5">Restore your settings</link></para>
+</introduction>
+</developerConceptualDocument>
+</topic>

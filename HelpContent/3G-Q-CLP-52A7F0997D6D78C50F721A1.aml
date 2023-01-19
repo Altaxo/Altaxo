@@ -1,0 +1,112 @@
+﻿
+<topic id="52A7F0997D6D78C50F721A19A47761A1" revisionNumber="1">
+
+<developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+<introduction>
+
+<para>
+Previous section: <link xlink:href="ACDF493F583131AAA215E511C0353C67">Create a surface plot</link></para>
+<autoOutline />
+<markup><hr/></markup>
+
+<para>
+A 3D line plot is, as is already suggested by the name, a plot of a line in 3D space. As such, in order to plot a line, we need a sequence of points in 3D space, that becomes connected then by a line. Each point consists of 3 values: x, y, and z.
+</para>
+</introduction>
+
+<section address="73C317019BF315D2ABFBC53A01160307">
+<title>Create some data (or use your own)
+</title>
+<content>
+
+<para>
+Knots are nice examples of lines in 3D space. We visit the <externalLink><linkText>web site of Paul Bourke</linkText><linkUri>http://paulbourke.net/geometry/knots/</linkUri></externalLink> to find out the formulas that are necessary to model knots in 3D space. In particular, we use the Knot2 from this web site for our example.
+</para>
+
+<para>
+The x, y, and z values in this example are varied according to the following equations:
+</para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#44219DEFE82DD67D0E22DA491C6CE648"><img src="../media/44219DEFE82DD67D0E22DA491C6CE648.png" width="160" height="44"></img></a></markup><markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#57FF354C4A2DBF1FCBD735990DEAB361"><img src="../media/57FF354C4A2DBF1FCBD735990DEAB361.png" width="157" height="44"></img></a></markup><markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#2F3D96BFAF017454E0E0533233574F25"><img src="../media/2F3D96BFAF017454E0E0533233574F25.png" width="189" height="44"></img></a></markup>
+
+<para>
+with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#6251E9836783C6C235501CC6408AB9A3"><img src="../media/6251E9836783C6C235501CC6408AB9A3.png" width="10" height="11" align="bottom"></img></a></markup> ranging from 0 to <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#F27B4102B9803118BF57674D9DA0DC1D"><img src="../media/F27B4102B9803118BF57674D9DA0DC1D.png" width="17" height="10" align="baseline"></img></a></markup>.
+</para>
+
+<para>
+Create an empty worksheet, and then open the worksheet script dialog by choosing from the main menu  <codeInline>Worksheet → Worksheet script</codeInline>.
+</para>
+
+<para>
+We use here the same script as already shown in the advanced example in the <link xlink:href="99E27F5DA0A5611AA26D632399925C2D#2DGraph_Quickstart_DensityPlot">quickstart section of the 2D-density plot</link>.
+</para>
+
+<para>
+Enter the following script text (you can copy it from here):
+</para>
+
+<code>
+            col.RemoveColumnsAll();
+            var xCol = col.EnsureExistence(&quot;X values&quot;, typeof(DoubleColumn), ColumnKind.X, 0);
+            var yCol = col.EnsureExistence(&quot;Y values&quot;, typeof(DoubleColumn), ColumnKind.Y, 0);
+            var zCol = col.EnsureExistence(&quot;Z values&quot;, typeof(DoubleColumn), ColumnKind.V, 0);
+            for (int i = 0; i &lt;= 1024; ++i) // index of columns
+            {
+                var mu = (2 * PI * i) / 1024; // range of mu: [0, 2π]
+                xCol[i] = (4 * Cos(mu + PI)) / 3 + 2 * Cos(3 * mu);
+                yCol[i] = 4 * Sin(mu) / 3 + 2 * Sin(3 * mu);
+                zCol[i] = Sin(4 * mu) + Sin(2 * mu) / 2;
+            }
+</code>
+
+<para>
+The first line of the script removes all existing columns from the table. The next 3 lines create the x, y and z column. Then a loop from i=0 to 1024 is started, in which the variable mu varies from 0 to 2π. The values for x, y and z are then set according to the formulas given on <externalLink><linkText>Paul Bourke's web site</linkText><linkUri>http://paulbourke.net/geometry/knots/</linkUri></externalLink> for Knot2.
+</para>
+</content>
+</section>
+
+<section address="58BB206A04E151DFC9E83CC01777838D">
+<title>Plot the data
+</title>
+<content>
+
+<para>
+The resulting worksheet should look like this:
+</para>
+
+<para>
+<mediaLinkInline><image xlink:href="4D0DF8284423095FCA32789ACBFED9E5"></image></mediaLinkInline>
+</para>
+
+<para>
+In the worksheet above, I have selected the column containing the z values. <legacyBold>Do not select the other columns</legacyBold>, since they are already tagged as x column and y column (see the <codeInline>X0</codeInline> or <codeInline>Y0</codeInline> in the lower right corner of the column header).
+</para>
+
+<para>
+Now use from the main menu <codeInline>Plot → 3D-Plots → Line</codeInline> to get the line plot, shown in the following graph:
+</para>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#66E0A16BEA77BC0772436853206AB13B"><img src="../media/66E0A16BEA77BC0772436853206AB13B.png" width="567"></img></a></markup>
+</para>
+
+<para>
+This could look even better when modifiying the line widths to 10 and 2, and playing a little with the light:
+</para>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#78768AAED9FCA5659DE54BD09B20C5D1"><img src="../media/78768AAED9FCA5659DE54BD09B20C5D1.png" width="567"></img></a></markup>
+</para>
+</content>
+</section>
+<markup><hr/></markup>
+<section>
+
+<content>
+
+<para>
+Next section: <link xlink:href="5B0DC6C5A311694B99B22BE8194FBB1A">Text documents - Markdown in Altaxo</link></para>
+</content>
+</section>
+</developerConceptualDocument>
+</topic>

@@ -1,0 +1,21 @@
+﻿
+<topic id="64C97B6EC5C4FFD769B6654B5EA4525E" revisionNumber="1">
+
+<developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+<introduction>
+
+<para>
+Previous section: <link xlink:href="7029CC1C058EA6FCB5510AA6650B7407">Export of a text document</link></para>
+<autoOutline />
+<markup><hr/></markup>
+
+<para>
+To export your text document to a external markdown file, choose <codeInline>File → Export Markdown..</codeInline> from the main menu. Choose a file name for the markdown file in the file save dialog. The markdown text is saved into this file. In order to save the local images, a subfolder named <codeInline>Images</codeInline> is created in the same folder as the markdown document. The local images are stored in this folder. The Urls that link to the images in the markdown text are changed accordingly in order to point to the new location.
+</para>
+<markup><hr/></markup>
+<para>
+Next section: <link xlink:href="8E18955817C6F7DA1EB77C40E94B1C81">Export to one or multiple Maml files</link></para>
+</introduction>
+</developerConceptualDocument>
+</topic>

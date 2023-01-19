@@ -1,0 +1,58 @@
+﻿
+<topic id="DBB590EF85CF1397F2E4BDD3D91658A1" revisionNumber="1">
+
+<developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+<introduction>
+
+<para>
+Previous section: <link xlink:href="0972867E70F2ABC0FA0D744AA58109AA">Including images from the file system or the clipboard</link></para>
+<autoOutline />
+<markup><hr/></markup>
+
+<para>
+You can include formulas, using <externalLink><linkText>LaTeX</linkText><linkUri>https://en.wikibooks.org/wiki/LaTeX/Mathematics</linkUri></externalLink> notation. Formulas can either be included inline, i.e. in a line with other text, or in an extra line.
+</para>
+
+<para>
+To include a formula inline, use a single dollar sign at the start and the end of the formula.
+</para>
+
+<quote>
+
+<para>
+<legacyBold>Example:</legacyBold><lineBreak/>
+<codeInline>$f(x) = \frac{\sin(x)}{x}$</codeInline> renders to: <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9E8DB12A3B096ABC72F9C0F5C0B0CDBA"><img src="../media/9E8DB12A3B096ABC72F9C0F5C0B0CDBA.png" width="88" height="44" align="middle"></img></a></markup>
+</para>
+</quote>
+
+<para>
+Note that here we have no space between the dollar sign and the start of the formula text, nor a dollar sign between the end of the formula and the right dollar sign. You can also include spaces on both sides, but you can not mix, i.e. use a space at the start and no space at the end or vice versa. Furthermore, the markdown then might be incompatible with other renderers, e.g. <externalLink><linkText>Pandoc</linkText><linkUri>https://pandoc.org</linkUri></externalLink>.
+</para>
+
+<para>
+Formulas on an extra line start and end with two dollar signs. The dollar signs have to be on separate lines. The formula is then horizontally centered on the page.
+</para>
+
+<quote>
+
+<para>
+<legacyBold>Example:</legacyBold>
+</para>
+
+<code>
+$$ 
+f(x) = \sqrt[n]{x+x^2+x^5}
+$$
+</code>
+
+<para>
+renders to:
+</para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D7E5A001B597507A7A92B895852C7B76"><img src="../media/D7E5A001B597507A7A92B895852C7B76.png" width="139" height="21"></img></a></markup></quote>
+<markup><hr/></markup>
+<para>
+Next section: <link xlink:href="3D916BB3FE58D60ADF15B281D55E5852">Special characters</link></para>
+</introduction>
+</developerConceptualDocument>
+</topic>

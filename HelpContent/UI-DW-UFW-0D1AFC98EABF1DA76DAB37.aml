@@ -1,0 +1,29 @@
+﻿
+<topic id="0D1AFC98EABF1DA76DAB3749EFB93038" revisionNumber="1">
+
+<developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+<introduction>
+
+<para>
+Previous section: <link xlink:href="47008054B8F7B6F68B3ABC02AC82A3F7">Showing multiple documents side-by-side</link></para>
+<autoOutline />
+<markup><hr/></markup>
+
+<para>
+By left-clicking on a document tab, and dragging while holding the left
+mouse button pressed, you can drag the document window to other
+positions on the desktop, even to another screen. In the next figure, I
+have dragged the graph document GColeAll to the right of the main
+application window.
+</para>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1E1F3846C4A71126F71E355F9C694EF1"><img src="../media/1E1F3846C4A71126F71E355F9C694EF1.png" width="567"></img></a></markup>
+</para>
+<markup><hr/></markup>
+<para>
+Next section: <link xlink:href="345E05B54F4611736070E46B38DD4CB5">Tables and Worksheets</link></para>
+</introduction>
+</developerConceptualDocument>
+</topic>

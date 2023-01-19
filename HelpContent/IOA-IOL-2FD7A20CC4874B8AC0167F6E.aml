@@ -25,7 +25,7 @@ The main tasks that are needed for installation are:
 <listItem>
 
 <para>
-install Wine and the .Net framework 4.6
+install Wine and the .Net framework 4.8
 </para>
 </listItem>
 
@@ -36,101 +36,9 @@ Copy-and-Paste installation of Altaxo
 </para>
 </listItem>
 </list>
-</introduction>
-
-<section address="065FC596CC034F1B98FCEBFB3AD1498B">
-<title>Installation of Wine on Ubuntu
-</title>
-<content>
-
-<para>
-A manual for installing Wine on Ubuntu can be found <externalLink><linkText>here</linkText><linkUri>https://wiki.winehq.org/Ubuntu</linkUri></externalLink>. Please look at this source for fresh information about the installation process. At the time of writing, it was not necessary to follow the steps described there. Instead, Wine could be installed on a fresh installation of Ubuntu 18.04 LTS using the following steps:
-</para>
-
-<para>
-Install wine-development (wine-stable did not work with Altaxo):
-</para>
-
-<code>
-sudo apt-get install wine-development
-</code>
-
-<para>
-Furthermore, you will need cabextract to extract the .cab files of the .Net framework:
-</para>
-
-<code>
-sudo apt-get install cabextract
-</code>
-
-<para>
-Now (<legacyBold>important!</legacyBold>) open a <legacyBold>fresh</legacyBold> terminal window (which was not used before with sudo), and use:
-</para>
-
-<code>
-rm -fr ~/.wine
-export WINEARCH=win32  
-export WINEPREFIX=&quot;$HOME/.wine&quot;  
-winecfg	
-</code>
-
-<para>
-The last command takes a bit and finally opens a configuration dialog window. Make sure that for 'Windows Version:' <codeInline>Windows 7</codeInline> is chosen, and close the dialog with <codeInline>OK</codeInline>.
-</para>
-
-<para>
-Now download winetricks, and use it to install the Windows fonts, the Gdi+ subsystem, and the .Net framework 4.6:
-</para>
-
-<code>
-mkdir Winetricks
-cd Winetricks
-wget https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks
-chmod +x winetricks
-bash winetricks -q corefonts gdiplus dotnet46
-</code>
-
-<para>
-This again will take a bit, and a lot of error messages will appear, which can be ignored.
-</para>
-</content>
-</section>
-
-<section address="2CBFFD1E0F61544C65A6AED1A6F82290">
-<title>Copy-and-Paste installation of Altaxo
-</title>
-<content>
-
-<para>
-Finally or in the meantime, download AltaxoBinaries-x.x.xxxx.x.zip from <externalLink><linkText>here (unstable)</linkText><linkUri>https://sourceforge.net/projects/altaxo/files/Altaxo/Altaxo-Latest-Unstable/</linkUri></externalLink> or <externalLink><linkText>here (stable)</linkText><linkUri>https://sourceforge.net/projects/altaxo/files/Altaxo/Altaxo-Latest-Stable/</linkUri></externalLink>, unzip the content of the file in a newly created folder <codeInline>Altaxo</codeInline> in your home directory.
-</para>
-
-<para>
-Then open a terminal (make sure that the installation of .Net framework is finished), go to the bin subfolder of Altaxo, and start Altaxo with wine:
-</para>
-
-<code>
-cd Altaxo/bin
-wine AltaxoStartup.exe
-</code>
-
-<para>
-The Gui looks a little bit outdated on Linux, but at least it works:
-</para>
-
-<para>
-<mediaLinkInline><image xlink:href="C7A8E60C99AC87B1EE9B91F945A0291A"></image></mediaLinkInline>
-</para>
-</content>
-</section>
 <markup><hr/></markup>
-<section>
-
-<content>
-
 <para>
-Next section: <link xlink:href="92AA4F47B878880DFACC86FE4F58D22B">User interface</link></para>
-</content>
-</section>
+Next section: <link xlink:href="065FC596CC034F1B98FCEBFB3AD1498B">Installation of Wine on Ubuntu</link></para>
+</introduction>
 </developerConceptualDocument>
 </topic>

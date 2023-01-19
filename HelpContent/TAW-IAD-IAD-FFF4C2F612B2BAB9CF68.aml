@@ -1,0 +1,107 @@
+﻿
+<topic id="FFF4C2F612B2BAB9CF689F557A184E3A" revisionNumber="1">
+
+<developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+<introduction>
+
+<para>
+Previous section: <link xlink:href="CCE945B2EC2C578D8C49120D55FACEE3">Importing ASCII data</link></para>
+<autoOutline />
+<markup><hr/></markup>
+
+<para>
+To import ASCII data from a single file into a (single) worksheet, first
+make the worksheet to import to the active document, or create a new
+(preferably empty) worksheet.
+</para>
+
+<para>
+Then choose File→Import→Ascii from the main menu, or use the
+toolbar button (see Figure below).
+</para>
+
+<para>
+<mediaLinkInline><image xlink:href="175BA38271F9EFD451538A761150E354"></image></mediaLinkInline>
+</para>
+
+<para>
+A file dialog opens. After selecting the Ascii file and pressing OK the
+Ascii data are imported into your active worksheet. The import process
+is a two-step process:
+</para>
+
+<list class="ordered">
+
+<listItem>
+
+<para>
+The Ascii file is analyzed first. The first 30 lines of the Ascii
+files are read, and the lines are analyzed for their structure. The
+structure that is most frequently repeated in the other lines wins
+the game and determines the number of columns and their type. The
+recognized columns are created in the worksheet.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+The data are then imported in the thus prepared worksheet.
+</para>
+</listItem>
+</list>
+
+<para>
+If the result of the import is not satisfactory, you can control the
+import options by choosing File→Import→Ascii with options from
+the main menu instead. Here too, at first a dialog opens in which you
+can choose the file to import. The Ascii file is then analyzed, and the
+result of the analysis is shown in another dialog.
+</para>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#711CB8B1917D15389B22470E2D11C2D9"><img src="../media/711CB8B1917D15389B22470E2D11C2D9.png" width="567"></img></a></markup>
+</para>
+
+<para>
+The dialog is divided into three parts: in the upper part, the analysis
+options are shown. In the middle part, the result of the analysis is
+shown. The lower part contains some user options.
+</para>
+
+<para>
+When you press the button “Analyze!”, the options in the upper part of
+the dialog are used to analyze the Ascii file. Already known information
+is used from the middle part. In the figure above, there is nothing left
+to analyze, because on all results the checkbox is checked, meaning that
+this result is already known.
+</para>
+
+<para>
+Suppose that Altaxo’s automatic analysis has incorrectly recognized the
+number of main header lines, and as a consequence, has also incorrectly
+determined the number and the type of columns. You can then correct the
+number of main header lines manually (if known to you). Leave the
+checkbox “Known number of main header lines” checked in order to
+indicate that the number of main header lines is already known. But
+uncheck the checkbox “Known column types”. If you now press the button
+“Analyze”, Altaxo runs the analysis again, but takes into account the
+correct number of main header lines. Hopefully, this will now lead to
+the correct recognition of the number and types of columns.
+</para>
+
+<para>
+Likewise, you can correct any analysis result that you know better of,
+and uncheck those results that you want to be analyzed again.
+</para>
+
+<para>
+Finally, press OK to import the Ascii file into your worksheet.
+</para>
+<markup><hr/></markup>
+<para>
+Next section: <link xlink:href="9BC603C8A9C16E1CE5AC496DA8097D99">Importing ASCII data from multiple files into a single worksheet</link></para>
+</introduction>
+</developerConceptualDocument>
+</topic>

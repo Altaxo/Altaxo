@@ -6,7 +6,7 @@
 <introduction>
 
 <para>
-Previous section: <link xlink:href="CA7B1E22CC877DA7601F34CE0479FD2B">Tool windows</link></para>
+Previous section: <link xlink:href="70459A2A033EB9324D5DFCAF05E86883">Hiding a tool window</link></para>
 <autoOutline />
 <markup><hr/></markup>
 
@@ -73,53 +73,9 @@ will see context menu items for the graph (see figure below).
 <para>
 <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4053AE5A10111F0B1A07EC08C9063325"><img src="../media/4053AE5A10111F0B1A07EC08C9063325.png" width="567"></img></a></markup>
 </para>
-</introduction>
-
-<section address="47008054B8F7B6F68B3ABC02AC82A3F7">
-<title>Showing multiple documents side-by-side
-</title>
-<content>
-
-<para>
-You can drag document windows around and dock them to other positions.
-</para>
-
-<para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#6CFEA66E129F6767BD82C470CB9B4619"><img src="../media/6CFEA66E129F6767BD82C470CB9B4619.png" width="567"></img></a></markup>
-</para>
-
-<para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#69B06E46B1D008FC69A6459E28195C37"><img src="../media/69B06E46B1D008FC69A6459E28195C37.png" width="567"></img></a></markup>
-</para>
-</content>
-</section>
-
-<section address="0D1AFC98EABF1DA76DAB3749EFB93038">
-<title>Using floating windows
-</title>
-<content>
-
-<para>
-By left-clicking on a document tab, and dragging while holding the left
-mouse button pressed, you can drag the document window to other
-positions on the desktop, even to another screen. In the next figure, I
-have dragged the graph document GColeAll to the right of the main
-application window.
-</para>
-
-<para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1E1F3846C4A71126F71E355F9C694EF1"><img src="../media/1E1F3846C4A71126F71E355F9C694EF1.png" width="567"></img></a></markup>
-</para>
-</content>
-</section>
 <markup><hr/></markup>
-<section>
-
-<content>
-
 <para>
-Next section: <link xlink:href="345E05B54F4611736070E46B38DD4CB5">Tables and Worksheets</link></para>
-</content>
-</section>
+Next section: <link xlink:href="47008054B8F7B6F68B3ABC02AC82A3F7">Showing multiple documents side-by-side</link></para>
+</introduction>
 </developerConceptualDocument>
 </topic>

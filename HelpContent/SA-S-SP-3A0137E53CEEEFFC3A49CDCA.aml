@@ -1,0 +1,214 @@
+﻿
+<topic id="3A0137E53CEEEFFC3A49CDCA2CC5B88D" revisionNumber="1">
+
+<developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+<introduction>
+
+<para>
+Previous section: <link xlink:href="C05A56A60B14F185E807BF8B9E97276F">Spectroscopy</link></para>
+<autoOutline />
+<markup><hr/></markup>
+
+<para>
+For many spectra that are output by a spectrometer, spectral preprocessing might be necessary prior to the further evaluation of the spectra, for instance by chemometric methods.
+</para>
+
+<para>
+Spectral preprocessing includes:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+removal of cosmic spikes (excitation of single spectrometer pixels by cosmic radiation)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+x-axis calibration (wavelength correction by a calibration)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+y-axis calibration (intensity correction by a calibration)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+baseline removal
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+smoothing
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+cropping (in order to drop uninteresting areas of the spectrum)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+resampling (changing the x-axis resolution)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+normalization
+</para>
+</listItem>
+</list>
+
+<para>
+Altaxo features a spectral preprocessing pipeline, implementing the steps described above.
+</para>
+</introduction>
+
+<section address="A2E8B94B1967BE06A19ABF377DF49913">
+<title>Usage
+</title>
+<content>
+
+<para>
+Import one or multiple spectra. If the spectra should be treated with the same preprocessing steps, it is preferable to import them into a single worksheet.
+</para>
+
+<para>
+Select all columns in that worksheet which contains the intensities. Do not select the x-columns containing the wavelengths.
+</para>
+
+<para>
+Use the menu <codeInline>Analysis</codeInline> → <codeInline>Spectroscopy</codeInline> → <codeInline>Preprocess</codeInline> to open the <link xlink:href="3A0137E53CEEEFFC3A49CDCA2CC5B88D#Screenshot_Dialog_SpectralPreprocessing">preprocessing dialog</link>. The preprocessing dialog contains multiple tabs for the preprocessing steps described above. Each tab allows the selection of different preprocessing methods for its topic. Each tab contains a 'None' method, which essentially means, that when selected, nothing is being done in that step.
+</para>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#DA7025B97C912381099AADEDBE063E94"><img src="../media/DA7025B97C912381099AADEDBE063E94.png" width="378"></img></a></markup>   
+</para>
+
+<para>
+Fig.1: Spectral preprocessing dialog with tabs for various steps
+</para>
+
+<para>
+After selection of the required methods and pressing <codeInline>OK</codeInline>, a new worksheet is created, which contains the preprocessed spectra. The name of the new worksheet is the name of the original worksheet with the string <codeInline>_preprocessed</codeInline> appended to it.
+</para>
+
+<para>
+The newly created table contains a data source for the preprocessing. The data source remembers where the data of the preprocessing came from, and which preprocessing steps have been performed. If the result of the preprocessing is not satisfactory, the data source can be opened by clicking on the question mark <mediaLinkInline><image xlink:href="Icons.16x16"></image></mediaLinkInline> in the toolbar. Using this <link xlink:href="3A0137E53CEEEFFC3A49CDCA2CC5B88D#Screenshot_Dialog_SpectralPreprocessingDataSource">dialog</link>, the preprocessing steps can be changed, or data can be added or removed.
+</para>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#59174AE6FA8C8A4E3A404AA8CE24D641"><img src="../media/59174AE6FA8C8A4E3A404AA8CE24D641.png" width="378"></img></a></markup>  
+</para>
+
+<para>
+Fig.2: Data source of the worksheet containing the preprocessed spectra. The expander in the center contains the preprocessing options; the expander at the bottom contains the information about the origin of the data to process.
+</para>
+
+<para>
+Additionally, when the original data have changed, you can re-apply the preprocessing by clicking on the <codeInline>Requery table data source</codeInline> button <mediaLinkInline><image xlink:href="Icons.16x16"></image></mediaLinkInline> in the toolbar.
+</para>
+
+<para>
+In the following sections, the various preprocessing steps are described in more detail.
+</para>
+</content>
+</section>
+
+<section address="71ADF13B2C31A085ACA5242A5D7F66A3">
+<title>Spike removal
+</title>
+<content>
+
+<para>
+Some spectrometers, for instance Raman spectrometers, need to detect very low intensities. On those spectrometers, radiation coming from cosmic particles and from other sources can hit a pixel of the detector. This will increase the counts of this pixel, often much more than the wanted signal. The excitation is limited to this pixel, or to this and very few neighboring pixels, and thus cause a sharp peak in the spectrum.
+</para>
+
+<para>
+Those peaks spoil the further preprocessing of the spectrum, e.g. smoothing, base line correction, and normalization, and needs to be eliminated.
+</para>
+
+<para>
+Currently, there is only one method in the Spike removal tab. It is
+</para>
+
+<sections>
+
+<section address="EFF1B46F6F36286A7CEB9E7B2C20267D">
+<title>SpikeRemovalByPeakElimination
+</title>
+<content>
+
+<para>
+This method has only two parameters (see <link xlink:href="3A0137E53CEEEFFC3A49CDCA2CC5B88D#Screenshot_Dialog_SpikeRemovalByPeakElimination">Fig.1</link>):
+</para>
+
+<list class="ordered">
+
+<listItem>
+
+<para>
+Maximum width in points. The maximum width of the spikes (in pixel) that should be eliminated. Often, a width of 1 is sufficient to remove cosmic spikes. If neighboring pixels are also affected, the width parameter can be increased. Please be aware that this increases the risk that wanted peaks are eliminated, too.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+Eliminate negative spikes: For background removal, often a dark spectrum is subtracted from the measured spectrum. If the dark spectrum contains cosmic spikes, then these will appear in the resulting spectrum as negative spikes. If negative spikes occur in the spectrum, the checkbox should be checked. If not removed, negative spikes will spoil mainly the baseline correction step, and the normalization step.
+</para>
+</listItem>
+</list>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#F7A2C57AA0C565C9725FA4C71BAF574E"><img src="../media/F7A2C57AA0C565C9725FA4C71BAF574E.png" width="454"></img></a></markup>  
+</para>
+
+<para>
+Fig. 1: Dialog for the SpikeRemovalByPeakElimination step
+</para>
+</content>
+</section>
+</sections>
+</content>
+</section>
+
+<section address="4A3CCEBD57EEE2A0A37F4439C7C9235F">
+<title>Calibration
+</title>
+<content>
+
+<para>
+The calibration step will change the spectrum's x-axis. Presumed that a calibration was made (see <link xlink:href="FCC125D44CCD76A52BBA4BE955537F85#Section_RamanSpectroscopy_CalibrationWithNeonAndSi">here</link>), the x-axis can be changed from an uncalibrated x-axis to a calibrated x-axis.
+</para>
+</content>
+</section>
+<markup><hr/></markup>
+<section>
+
+<content>
+
+<para>
+Next section: <link xlink:href="FCC125D44CCD76A52BBA4BE955537F85">Raman spectroscopy</link></para>
+</content>
+</section>
+</developerConceptualDocument>
+</topic>

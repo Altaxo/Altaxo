@@ -1,0 +1,43 @@
+﻿
+<topic id="331A4511FC4CFA928435F4BC88304F59" revisionNumber="1">
+
+<developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+<introduction>
+
+<para>
+Previous section: <link xlink:href="DEF95C9E1EF58CB82E6E71C1742C1880">Allow cancellation of code execution at defined points</link></para>
+<autoOutline />
+<markup><hr/></markup>
+
+<para>
+The example above can be extended to show progress to the user.
+</para>
+
+<code>
+int len = 100000;
+for (int i = 0; i &lt; len; i++)
+{
+    Foo(); // method foo runs moderately long (&lt; 1 s)
+
+    if (reporter.CancellationPending)
+        break; // or: return
+
+    if (reporter.ShouldReportNow)
+        reporter.ReportProgress(string.Format(&quot;{0} of {1}&quot;, i, len), i / (double)len);
+}
+</code>
+
+<para>
+Here, the statement <codeInline>if (reporter.ShouldReportNow)</codeInline> first asks if it is necessary to report now (this property is set every second or so). If so, the method <codeInline>ReportProgress</codeInline> is called, which reports the progress both as text (<codeInline>string.Format...</codeInline>) as well as as a numerical value in the range from 0 to 1. This value is calculated using the loop variable <codeInline>i</codeInline> and dividing it to the total number of loops <codeInline>len</codeInline>.
+</para>
+
+<para>
+Of course, you can omit the <codeInline>if (reporter.ShouldReportNow)</codeInline> statement and directly call the <codeInline>ReportProgress</codeInline> method. For smaller loops this is OK, but for a loop as shown here, this would call the <codeInline>string.Format</codeInline> method and <codeInline>ReportProgress</codeInline> method a hundred thousand times. Not very effective!
+</para>
+<markup><hr/></markup>
+<para>
+Next section: <link xlink:href="2F5E6BE1D416EEF88458DAC931E96092">Project organization</link></para>
+</introduction>
+</developerConceptualDocument>
+</topic>

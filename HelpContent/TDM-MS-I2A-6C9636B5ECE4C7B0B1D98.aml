@@ -1,0 +1,125 @@
+﻿
+<topic id="6C9636B5ECE4C7B0B1D9874523682BF8" revisionNumber="1">
+
+<developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+<introduction>
+
+<para>
+Previous section: <link xlink:href="92B7CA00A4DC93F8BF66AEF350E77316">Markdown syntax</link></para>
+<autoOutline />
+<markup><hr/></markup>
+
+<para>
+You can include graphs (2D and 3D) from your current Altaxo project. The graph is referenced by name, either with the absolute path name, or relative to your markdown document. The Url of an absolute graph name starts with <codeInline>graph://</codeInline>, the Url of a relative path name starts with <codeInline>graph:</codeInline>.
+</para>
+
+<quote>
+
+<para>
+<legacyBold>Example:</legacyBold><lineBreak/>
+Assuming your graph is named <codeInline>Foo\Bar\GRAPH0</codeInline> and your Markdown document is named <codeInline>Foo\Note0</codeInline>:<lineBreak/>
+To include the graph with absolute name in your document, use:<lineBreak/>
+<codeInline>![](graph://Foo\Bar\GRAPH0)</codeInline><lineBreak/>
+To include the graph with the relative name (relative to the folder 'Foo', in which your Markdown document is located), use:<lineBreak/>
+<codeInline>![](graph:Bar\GRAPH0)</codeInline>
+</para>
+</quote>
+
+<para>
+At the time of writing, when you change a graph in Altaxo, the included graph in the Markdown document is <legacyBold>not</legacyBold> automatically updated. Press <codeInline>F5</codeInline> to update your document and all included graphs. Also, if you rename a graph, the Urls in the markdown document are not updated automatically.
+</para>
+</introduction>
+
+<section address="SpecifyAltaxoGraphNames">
+<title>Specifying names of Altaxo graphs
+</title>
+<content>
+
+<para>
+Sometimes, you have to specify graph names that contain special characters. For instance, a graph name may contain a space or a slash. You can specify those names by replacing space with <codeInline>%20</codeInline> and slash with <codeInline>%2F</codeInline>.
+</para>
+
+<para>
+Graphs will be searched in the following order, using the originally specified name and some modifications:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+first of all, the originally specified graph name will be tried
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+the original name is modified by replacing slashes by backslashes, and the modified name is tried then
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+the original specified graph name is modified by decoding sequences such as <codeInline>%20</codeInline> to their corresponding character, and the modified name is tried then
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+the original specified graph name is modified by decoding sequences such as <codeInline>%20</codeInline> to their corresponding character, and then slashes are replaced by backslashes, and the modified name is tried then
+</para>
+</listItem>
+</list>
+
+<quote>
+
+<para>
+<legacyBold>Example 1:</legacyBold>
+</para>
+
+<para>
+You have a graph named <codeInline>Weather yesterday</codeInline> in the Altaxo root folder.  Then you can specify it using:
+</para>
+
+<para>
+<codeInline>![](graph://Weather%20yesterday)</codeInline>
+</para>
+</quote>
+
+<quote>
+
+<para>
+<legacyBold>Example 2:</legacyBold>
+</para>
+
+<para>
+You have a graph named <codeInline>//SomeGraph</codeInline> in the folder <codeInline>Foo</codeInline>, and your text document is located in this folder, too.  Then you can specify the graph using the relative path:
+</para>
+
+<para>
+<codeInline>![](graph:%2F%2FSomeGraph)</codeInline>
+</para>
+
+<para>
+Please note that if you would have used instead:
+<codeInline>![](graph://SomeGraph)</codeInline>
+the graph name would be interpreted as absolute name, and the graph would be searched in the document's root folder instead.
+</para>
+</quote>
+</content>
+</section>
+<markup><hr/></markup>
+<section>
+
+<content>
+
+<para>
+Next section: <link xlink:href="0972867E70F2ABC0FA0D744AA58109AA">Including images from the file system or the clipboard</link></para>
+</content>
+</section>
+</developerConceptualDocument>
+</topic>

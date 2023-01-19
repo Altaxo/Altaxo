@@ -1,0 +1,161 @@
+﻿
+<topic id="BDC77858E7B184C7E5436C5CFB9673E7" revisionNumber="1">
+
+<developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+<introduction>
+
+<para>
+Previous section: <link xlink:href="F30A8388D1325EC508BCF6A76CC69D49">Transposing a worksheet</link></para>
+<autoOutline />
+<markup><hr/></markup>
+
+<para>
+Consider the following worksheet:
+</para>
+
+<para>
+<mediaLinkInline><image xlink:href="51E626A668CD6DC280E60F4EA92E09CA"></image></mediaLinkInline>
+</para>
+
+<para>
+This data could have been produced by a measurement device, varying the
+measurement frequency (data column 0), and the temperature (column 1).
+The measured values are the real and imaginary part of the modulus in columns
+2 and 3.
+</para>
+
+<para>
+Obviously, in the given form, if you try to plot the data (Modulus.Re)
+versus frequency, you will get a scrambled result:
+</para>
+
+<para>
+<mediaLinkInline><image xlink:href="D4FB4691D1D2EACDE7FA5778D881480F"></image></mediaLinkInline>
+</para>
+
+<para>
+This is because the frequency is repeated three times: (1, 10, 100, 1,
+100, 100 and so on). I call the frequency here ‘cycling independent variable’
+because it cycles between a set of values (1, 10, 100).
+</para>
+
+<para>
+What you really need are separate columns for the modulus, one for each
+temperature (if you want to plot modulus versus frequency), or one for
+each frequency (if you want to plot modulus versus temperature).
+</para>
+
+<para>
+If you have separate columns of the modulus for each temperature, you
+can plot them much more nicely that in the example above. Furthermore,
+you can show the temperatures that belong to each column in the legend:
+</para>
+
+<para>
+<mediaLinkInline><image xlink:href="61BD6B063E0DE43CCCA7FA4ECE5A855D"></image></mediaLinkInline>
+</para>
+
+<para>
+This kind of restructuring can be achieved with the command:
+</para>
+
+<para>
+Worksheet→<legacyBold>Restructure Worksheet data</legacyBold>→Decompose table with
+cycling indep. Var'''
+</para>
+
+<para>
+from the main menu.
+</para>
+
+<para>
+Before you issue this command, select all columns that you want to have
+in the new worksheet, including the cycling variable (here: Frequency)
+and the second independent variable (here: Temperature).
+</para>
+
+<para>
+For the next examples, I had always selected all four datacolumns in the
+original worksheet.
+</para>
+
+<para>
+A dialog appears:
+</para>
+
+<para>
+<mediaLinkInline><image xlink:href="CF5BFABEFB0D24A7E3967B7B76E8144E"></image></mediaLinkInline>
+</para>
+
+<para>
+Make sure that the column with the cycling variable is selected in the
+first combo box. In the list box labeled ‘Columns to average over one
+repeat period’ you should select the second independent variable, which
+here is the column ‘Temperature’. The next choice (‘Destination output’)
+is about how to group the remaining columns in the destination
+worksheet. ‘Destination X’ let you choose the cycling variable as the
+new x-column (here: if you want to plot modulus versus frequency), or
+the first averaged column (here: if you want to plot modulus versus
+temperature). The remaining options concern the sorting of the columns
+and rows in the destination worksheet and should be self-explanatory.
+</para>
+
+<para>
+With the data above, I chose ‘GroupOneColumn’ for destination output and
+‘CyclingVariable’ for Destination X (see figure below).
+</para>
+
+<para>
+<mediaLinkInline><image xlink:href="C9532F1588D0F4B1A675340B957C421F"></image></mediaLinkInline>
+</para>
+
+<para>
+The resulting worksheet look like this:
+</para>
+
+<para>
+<mediaLinkInline><image xlink:href="3DF2573DD8057A3011F1273F1899EFE4"></image></mediaLinkInline>
+</para>
+
+<para>
+As you can see, ‘Frequency’ is the X-column of the resulting worksheet,
+and this column no longer contains repeated values. The temperature has
+become a property of the other columns; it is now a property
+column. By the option ‘GroupOneColumn’ first the three ‘Modulus.Re’
+columns appear in the new worksheet, and then the three ‘Modulus.Im’
+columns, one column for each temperature (to be exactly: for each
+cycle of the frequency).
+</para>
+
+<para>
+In contrast to that, consider the following options:
+</para>
+
+<para>
+<mediaLinkInline><image xlink:href="695431ED3087DE3959FB49B4C12800AC"></image></mediaLinkInline>
+</para>
+
+<para>
+Here I have chosen ‘GroupAllColumns’ for destination output and
+‘FirstAveragedColumn’ for Destination X. The outcome of this options is:
+</para>
+
+<para>
+<mediaLinkInline><image xlink:href="0E4901DD95532E8B52A44F4E2456E5FC"></image></mediaLinkInline>
+</para>
+
+<para>
+As you can see, now ‘Temperature’ is the x-column of the resulting
+worksheet. The frequency has become a property of the other columns,
+since it is now a property column. By the option ‘GroupAllColumn’ all
+other columns (Modulus.Re and Modulus.Im) are repeated for the first
+frequency (1), then for the next frequency (10), and finally for the
+last frequency (100).
+</para>
+<markup><hr/></markup>
+<para>
+Next section: <link xlink:href="CB52FC32CFE755AF5F63685529828624">Convert X-Y-V columns to a matrix</link></para>
+</introduction>
+</developerConceptualDocument>
+</topic>

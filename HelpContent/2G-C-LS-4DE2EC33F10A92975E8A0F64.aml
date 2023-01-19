@@ -1,0 +1,41 @@
+﻿
+<topic id="4DE2EC33F10A92975E8A0F64E6464221" revisionNumber="1">
+
+<developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+<introduction>
+
+<para>
+Previous section: <link xlink:href="F3F39DE287E6F866C4CE91FCB7269D42">Concepts</link></para>
+<autoOutline />
+<markup><hr/></markup>
+
+<para>
+In Altaxo a 2D graph consists of at least one layer, the root layer (RL). The root layer represents the outer boundaries of the graph. By changing the size of the root layer, you change the size of the graph. The root layer usually contains child items. In most cases there is only one child item, an additional layer, namely the plot layer L0.
+</para>
+
+<para>
+<mediaLinkInline><image xlink:href="E7C1337EFF0253E9B19B768CEA40DE1A"></image></mediaLinkInline>
+</para>
+
+<para>
+The figure above shows the screenshot of a graph window in Altaxo. All red items are for illustration only and do not belong to the graph. The area inside the red frame designates the root layer. You can change the properties of the root layer by clicking the root layer button (the button labeled 'RL' in the upper left corner of the graph window).
+</para>
+
+<para>
+The root layer shown here has exactly one child layer, namely the layer 'L0'. In the figure above, the area of layer 'L0' is indicated by the black frame. You can change the properties of layer L0 by clicking the button labeled 'L0' (below the root layer button in the upper left corner of the graph window). The frame of layer L0 is the inner rectangle.
+</para>
+
+<para>
+Layer 0 has multiple child items: some graphical items (text, ellipse, arrow), a line plot, the x-axis title, the y-axis title, and axis lines, axis ticks and axis labels. Please note that some of the child items of layer 0 (e.g. the axis titles) are located outside the frame of layer 0. Nevertheless they belong to layer 0.
+</para>
+
+<para>
+When you add graphical items to the graph, it is essential to care about to which layer you add the new items. There is always exactly one active layer, the layer to which new items will be added. In the figure above, layer 0 (L0) is the active layer, indicated by the blue background of the layer 0 button.
+</para>
+<markup><hr/></markup>
+<para>
+Next section: <link xlink:href="0E8E79D9E16037A94F75B6ACA6866097">Concept of scale and axis</link></para>
+</introduction>
+</developerConceptualDocument>
+</topic>

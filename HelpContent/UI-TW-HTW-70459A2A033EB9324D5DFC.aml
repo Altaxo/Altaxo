@@ -1,0 +1,28 @@
+﻿
+<topic id="70459A2A033EB9324D5DFCAF05E86883" revisionNumber="1">
+
+<developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+<introduction>
+
+<para>
+Previous section: <link xlink:href="256CA8442B03C754AB12479F0CBAD7C3">Changing the place of a tool window</link></para>
+<autoOutline />
+<markup><hr/></markup>
+
+<para>
+If you want to permanently hide a tool window, click on the close button
+in the upper right corner of the tool window. To hide the tool window only
+temporarily, click on the pin symbol just aside. This will shrink the
+tool window group as shown in the next figure.
+</para>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#57248FB77E066FF19F91CE0C9EC10BC2"><img src="../media/57248FB77E066FF19F91CE0C9EC10BC2.png" width="567"></img></a></markup>
+</para>
+<markup><hr/></markup>
+<para>
+Next section: <link xlink:href="FED2A6345DDC8A2F7D0680F93492B3CD">Document windows</link></para>
+</introduction>
+</developerConceptualDocument>
+</topic>

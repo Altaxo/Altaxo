@@ -1,0 +1,66 @@
+﻿
+<topic id="E5EFC13BB357BF4A1093885F345139B9" revisionNumber="1">
+
+<developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+<introduction>
+
+<para>
+Previous section: <link xlink:href="9BC603C8A9C16E1CE5AC496DA8097D99">Importing ASCII data from multiple files into a single worksheet</link></para>
+<autoOutline />
+<markup><hr/></markup>
+
+<para>
+If you want to import Ascii data from multiple files into separate
+worksheets, the most preferable way is to start when your current
+document is either a graph, or there is no current document at all.
+</para>
+
+<para>
+Background: if your current document is a worksheet, the first Ascii
+file is imported into this worksheet, and the other files are imported
+into newly created worksheets. The newly created worksheets get the name
+of the corresponding Ascii file, but the first worksheet is not renamed.
+</para>
+
+<para>
+Thus, either select a graph, or close all documents (main menu:
+Window→Close all documents) before importing into separate
+worksheets.
+</para>
+
+<para>
+Choose File→Import→Ascii (or File→Import→Ascii with
+Options), and select multiple Ascii files in the file dialog.
+</para>
+
+<para>
+If you press OK, the selected files will be sorted by their file name,
+and then imported into newly created worksheets. The new worksheets are
+located in the root folder of the project.
+</para>
+
+<para>
+The figure below shows the result after importing the three spectrum
+files from the example of the previous chapter into separate worksheets.
+</para>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#3D7DD208F7ACE3197B8A626FD9BCF93F"><img src="../media/3D7DD208F7ACE3197B8A626FD9BCF93F.png" width="567"></img></a></markup>
+</para>
+
+<para>
+Please note that the new worksheets get the names of their corresponding
+Ascii files (see Project explorer at the right side). Furthermore, the
+“Notes” tool window of each worksheet (at the bottom) contains a note
+with information about the original file name and the date/time of the
+import. In contrast to the example in chapter “Importing ASCII data from
+multiple files into a single worksheet”, each worksheet now contains a
+separate x-column with the wavelength values.
+</para>
+<markup><hr/></markup>
+<para>
+Next section: <link xlink:href="048F6F0FD3BDC7133EB4130BF53BF21D">Importing multiple ASCII files into a single worksheet vertically</link></para>
+</introduction>
+</developerConceptualDocument>
+</topic>
