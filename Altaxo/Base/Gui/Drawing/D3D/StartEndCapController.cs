@@ -38,7 +38,7 @@ namespace Altaxo.Gui.Drawing.D3D
   {
     #region Bindings
 
-    bool _isForEndCap;
+    private bool _isForEndCap;
     public bool IsForEndCap
     {
       get => _isForEndCap;

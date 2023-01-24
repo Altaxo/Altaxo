@@ -25,15 +25,15 @@
 #nullable disable
 using System;
 using System.Collections.Generic;
+using System.Windows.Input;
+using Altaxo.Collections;
+using Altaxo.Drawing.D3D;
+using Altaxo.Drawing.D3D.LineCaps;
+using Altaxo.Gui.Common;
+using Altaxo.Units;
 
 namespace Altaxo.Gui.Drawing.D3D
 {
-  using System.Windows.Input;
-  using Altaxo.Collections;
-  using Altaxo.Drawing.D3D;
-  using Altaxo.Gui.Common;
-  using Altaxo.Units;
-
   public interface IPenAllPropertiesView : IDataContextAwareView
   {
   }
@@ -156,9 +156,7 @@ namespace Altaxo.Gui.Drawing.D3D
       }
     }
 
-
-
-    StartEndCapController _dashStartCap;
+    private StartEndCapController _dashStartCap;
 
     public StartEndCapController DashStartCap
     {
@@ -180,8 +178,7 @@ namespace Altaxo.Gui.Drawing.D3D
       }
     }
 
-
-    StartEndCapController _dashEndCap;
+    private StartEndCapController _dashEndCap;
 
     public StartEndCapController DashEndCap
     {
@@ -204,8 +201,7 @@ namespace Altaxo.Gui.Drawing.D3D
       }
     }
 
-
-    StartEndCapController _startCap;
+    private StartEndCapController _startCap;
 
     public StartEndCapController StartCap
     {
@@ -228,8 +224,7 @@ namespace Altaxo.Gui.Drawing.D3D
       }
     }
 
-
-    StartEndCapController _endCap;
+    private StartEndCapController _endCap;
 
     public StartEndCapController EndCap
     {
@@ -317,17 +312,17 @@ namespace Altaxo.Gui.Drawing.D3D
       if (initData)
       {
         DashStartCap = new StartEndCapController() { IsForEndCap = false };
-        DashStartCap.InitializeDocument(_doc.DashStartCap);
+        DashStartCap.InitializeDocument(_doc.DashStartCap ?? new Flat());
 
         DashEndCap = new StartEndCapController() { IsForEndCap = true };
-        DashEndCap.InitializeDocument(_doc.DashEndCap);
+        DashEndCap.InitializeDocument(_doc.DashEndCap ?? new Flat());
 
 
         StartCap = new StartEndCapController() { IsForEndCap = false };
-        StartCap.InitializeDocument(_doc.LineStartCap);
+        StartCap.InitializeDocument(_doc.LineStartCap ?? new Flat());
 
         EndCap = new StartEndCapController() { IsForEndCap = true };
-        EndCap.InitializeDocument(_doc.LineEndCap);
+        EndCap.InitializeDocument(_doc.LineEndCap ?? new Flat());
 
         InitializeCrossSection();
       }
