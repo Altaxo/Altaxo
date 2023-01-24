@@ -31,7 +31,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
 {
   public record class PeakFittingBase
   {
-    IFitFunctionPeak _fitFunction = new VoigtArea();
+    private IFitFunctionPeak _fitFunction = new VoigtArea();
 
     /// <summary>
     /// Gets /sets the fit function to use.
@@ -49,12 +49,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
     /// Gets / sets the scaling factor of the fit width. To calculate the fit width, the scaling factor is
     /// multiplied by the FullWidthHalfMaximum of the peak.
     /// </summary>
-    double _fitWidthScalingFactor = 1;
-
-
-
-
-
+    private double _fitWidthScalingFactor = 2;
 
     /// <summary>
     /// Gets / sets the scaling factor of the fit width. To calculate the fit width, the scaling factor is
