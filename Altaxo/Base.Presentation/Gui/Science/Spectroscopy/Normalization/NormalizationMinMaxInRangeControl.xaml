@@ -24,11 +24,11 @@
         </Grid.ColumnDefinitions>
 
         <Label Grid.Row="0" Grid.Column="0"
-               Content="Minimal value:"/>
+               Content="Minimal x-value:"/>
         <axogc:NumericDoubleTextBox Grid.Row="0" Grid.Column="2"
                            SelectedValue="{Binding MinimalValue}" />
         <Label Grid.Row="2" Grid.Column="0"
-               Content="Maximal value:"/>
+               Content="Maximal x-value:"/>
         <axogc:NumericDoubleTextBox Grid.Row="2" Grid.Column="2"
                            SelectedValue="{Binding MaximalValue}" />
     </Grid>
