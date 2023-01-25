@@ -177,7 +177,11 @@
 </Topic>
 <Topic id="6A78480867332D5D0A91A47BC4F120D0" visible="True" title="Scientific applications">
 <Topic id="C05A56A60B14F185E807BF8B9E97276F" visible="True" title="Spectroscopy">
+<Topic id="57BC83FC0E3407AD2601F88D5E928326" visible="True" title="Import of spectra">
+</Topic>
 <Topic id="3A0137E53CEEEFFC3A49CDCA2CC5B88D" visible="True" title="Spectral preprocessing">
+</Topic>
+<Topic id="F959DB02135664130E2754194C296F8C" visible="True" title="Peak searching and fitting">
 </Topic>
 <Topic id="FCC125D44CCD76A52BBA4BE955537F85" visible="True" title="Raman spectroscopy">
 </Topic>

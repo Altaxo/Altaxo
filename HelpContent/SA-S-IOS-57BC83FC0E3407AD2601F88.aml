@@ -1,0 +1,101 @@
+﻿
+<topic id="57BC83FC0E3407AD2601F88D5E928326" revisionNumber="1">
+
+<developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+<introduction>
+
+<para>
+Previous section: <link xlink:href="C05A56A60B14F185E807BF8B9E97276F">Spectroscopy</link></para>
+<autoOutline />
+<markup><hr/></markup>
+
+<para>
+Spectra can be imported into Altaxo in various formats:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+Ascii (.txt; .dat; .csv)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+Galactic SPC (.spc)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+Jcamp-DX (.dx; .jdx)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+Renishaw (.wdf)
+</para>
+</listItem>
+</list>
+
+<para>
+Some of these formats, e.g. Galactic SPC files, can contain more than one spectrum per file. In this case, all contained spectra are imported from the file.
+</para>
+
+<para>
+In order to import one or multiple spectra, first create an empty worksheet. Either use the menu <codeInline>File</codeInline> → <codeInline>New</codeInline> → <codeInline>Worksheet</codeInline>, or use the toolbar button <mediaLinkInline><image xlink:href="Icons.16x16"></image></mediaLinkInline>.
+</para>
+
+<para>
+The next action depends on the file format to import:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+For Ascii files, you can use the toolbar button <mediaLinkInline><image xlink:href="Icons.16x16"></image></mediaLinkInline> for import, or the menu <codeInline>File</codeInline> → <codeInline>Import</codeInline> → <codeInline>Ascii</codeInline>. If multiple spectra needs to be imported into one worksheet (for instance for chemometric analysis), use <codeInline>File</codeInline> → <codeInline>Import</codeInline> → <codeInline>Ascii (all into a single worksheet)</codeInline>. Select all files that should be imported.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+For all other files, use the menus <codeInline>File</codeInline> → <codeInline>Import</codeInline> → <codeInline>Galactic SPC files</codeInline>, <codeInline>File</codeInline> → <codeInline>Import</codeInline> → <codeInline>JCamp-DX files</codeInline>, or <codeInline>File</codeInline> → <codeInline>Import</codeInline> → <codeInline>Renishaw .wdf files</codeInline>. Here too, you can select multiple files.
+</para>
+</listItem>
+</list>
+
+<para>
+<mediaLinkInline><image xlink:href="A09570BF5D0F36251993D8D16D7681AE"></image></mediaLinkInline>
+</para>
+
+<para>
+Fig. 1: Example of a worksheet after import of three .spc files. Note that the first &quot;row&quot; is a property, designating the original file name of the column. Furthermore, all three spectra have a common x-column named &quot;X&quot;.
+</para>
+
+<para>
+After successfull import of the data, the worksheet contains a data source that holds all information of the import: which file(s) were imported, and which options were used for import. You can open the dialog to edit these data by clicking on the question mark <mediaLinkInline><image xlink:href="Icons.16x16"></image></mediaLinkInline> in the toolbar. If you simple want to reimport the data without changing the file names or the options (e.g. when you have accidentally deleted your data), you can click on the <codeInline>Requery table data source</codeInline> button <mediaLinkInline><image xlink:href="Icons.16x16"></image></mediaLinkInline> in the toolbar.
+</para>
+
+<para>
+<mediaLinkInline><image xlink:href="E7DF7242FE17E74F053E0BF066033F2C"></image></mediaLinkInline>
+</para>
+
+<para>
+Fig. 2: Data source dialog of the example worksheet used above. In the options, the name of the columns (which starts now with &quot;Y&quot;) can be changed. The data source contains the three file names of the imported spectra.
+</para>
+<markup><hr/></markup>
+<para>
+Next section: <link xlink:href="3A0137E53CEEEFFC3A49CDCA2CC5B88D">Spectral preprocessing</link></para>
+</introduction>
+</developerConceptualDocument>
+</topic>

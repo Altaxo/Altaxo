@@ -6,7 +6,7 @@
 <introduction>
 
 <para>
-Previous section: <link xlink:href="C05A56A60B14F185E807BF8B9E97276F">Spectroscopy</link></para>
+Previous section: <link xlink:href="57BC83FC0E3407AD2601F88D5E928326">Import of spectra</link></para>
 <autoOutline />
 <markup><hr/></markup>
 
@@ -143,7 +143,7 @@ Some spectrometers, for instance Raman spectrometers, need to detect very low in
 </para>
 
 <para>
-Those peaks spoil the further preprocessing of the spectrum, e.g. smoothing, base line correction, and normalization, and needs to be eliminated.
+Those peaks spoil the further preprocessing of the spectrum, e.g. smoothing, base line correction, and normalization, and therefore needs to be eliminated.
 </para>
 
 <para>
@@ -197,8 +197,313 @@ Fig. 1: Dialog for the SpikeRemovalByPeakElimination step
 <content>
 
 <para>
-The calibration step will change the spectrum's x-axis. Presumed that a calibration was made (see <link xlink:href="FCC125D44CCD76A52BBA4BE955537F85#Section_RamanSpectroscopy_CalibrationWithNeonAndSi">here</link>), the x-axis can be changed from an uncalibrated x-axis to a calibrated x-axis.
+This tab allows you to change the x-axis of your spectrum from an uncalibrated x-axis to a calibrated x-axis.
 </para>
+
+<para>
+The prerequisite for this is the presence of a table which contains a valid x-calibration. Such a table can be created for instance for Raman instruments using a spectrum of a Neon lamp and a Raman spectrum of silicon (see <link xlink:href="FCC125D44CCD76A52BBA4BE955537F85#Section_RamanSpectroscopy_CalibrationWithNeonAndSi">Raman calibration with Neon and Silicon</link>).
+</para>
+
+<para>
+Using this calibration table to change the x-axis of the spectrum is straightforward (see <link xlink:href="3A0137E53CEEEFFC3A49CDCA2CC5B88D#Screenshot_SpectralPreprocessing_CalibrationTab">Fig. 1</link>): In the combobox all tables that contain a valid x-calibration are listed, and the most recent calibration is preselected. Simply choose the table that contains the calibration you want to apply.
+</para>
+
+<para>
+<mediaLinkInline><image xlink:href="62FBA46291980305A138D8898E0A40E8"></image></mediaLinkInline>  
+</para>
+
+<para>
+Fig. 1: Calibration tab. The combobox lists all tables containing calibrations, and the most recent calibration is preselected.
+</para>
+</content>
+</section>
+
+<section address="A2B6C76E0EF48B1F92A3F359742A2E70">
+<title>Smoothing
+</title>
+<content>
+
+<para>
+The smoothing step will apply some smoothing algorithm to the spectral data in order to reduce the noise level.
+</para>
+
+<para>
+Currently, only one smoothing method is implemented:
+</para>
+
+<sections>
+
+<section address="6F76AE7AC9866B046CEA1AC5914C28A8">
+<title>Smoothing by Savitzky-Golay
+</title>
+<content>
+
+<para>
+The method uses the Savitzky-Golay method to smooth a signal. Basically, it is a local polynomial fit, of which the center fit value is used as replacement for the original point. As an additional option, not only the center fit value, but also the derivative at that point can be used (but note that the x-values are not used to calculate the derivative value).
+</para>
+
+<para>
+Savitzky-Golay has the following options:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+Number of points: The number of points for the local fit. The more points, the smoother the result, but the more the original shape of the spectrum is changed.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+Polynomail order: The polynomial order of the fit. The default value of 2 means that a quadratic fit is applied.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+Derivative order: The default value of 0 means the central fit function value is used to replace the original point. A value of 1 means the first derivative is used, etc. Note that the result is not the true derivative, since the x-values are not used for evaluation of the derivative (the space between the points is assumed to be 1).
+</para>
+</listItem>
+</list>
+</content>
+</section>
+</sections>
+</content>
+</section>
+
+<section address="514EA5091C8DCC6FA4E17689BB967993">
+<title>Baseline
+</title>
+<content>
+
+<para>
+Baseline correction is essential, because some of the subsequent methods, for instance some of the peak fitting methods, assume that the baseline was corrected before, so that the base of the peaks can be assumed to be zero.
+</para>
+
+<para>
+Different baseline correction methods exist, but non of them is waterproof. The reason is simply, that there is information missing. Assume your entire spectrum consists of massive overlapping peaks, there is no way to determine a baseline, because each spectral point has intensity from at least one peak.
+</para>
+
+<para>
+The methods described below therefore assime that at least in some regions of the spectrum there are no neighboring peaks, and the intensity in those regions is at its base level.
+</para>
+
+<sections>
+
+<section address="ED173FC9BAAD3CAF403EE4041F4438A4">
+<title>AirPLS, ALS, ArPLS
+</title>
+<content>
+
+<para>
+These are methods based on diffusion equations. Thus all methods exhibit a diffusion constant lamda. The higher lambda is, the more flat is the resulting baseline. This group of methods is especially well suited if the spectrum exhibits a high noise level, but require some manual adjustment of the parameters by trial-and-error.
+</para>
+
+<para>
+References:<lineBreak/>
+[1] Zhang ZM, Chen S, Liang YZ. &quot;Baseline correction using adaptive iteratively reweighted penalized least squares&quot;, Analyst. 2010 May; 135(5):1138-46, Epub 2010 Feb 19. PMID: 20419267, <externalLink><linkText>https://doi.org/10.1039/b922045c</linkText><linkUri>https://doi.org/10.1039/b922045c</linkUri></externalLink>
+</para>
+
+<para>
+[2] Sung-June Baek, Aaron Park, Young-Jin Ahn and Jaebum Choo, &quot;Baseline correction using asymmetrically reweighted penalized least squares smoothing&quot;, Analyst, 2015, 140, 250-257, <externalLink><linkText>https://doi.org/10.1039/C4AN01061B</linkText><linkUri>https://doi.org/10.1039/C4AN01061B</linkUri></externalLink>
+</para>
+
+<para>
+[3] Paul H.C. Eilers, Hans F.M. Boelens, &quot;Baseline Correction with Asymmetric Least Squares Smoothing&quot;, October 21, 2005
+</para>
+
+<section address="05C10DC19DB545D039C95E45548CBA99">
+<title>PolynomialDetrending
+</title>
+<content>
+
+<para>
+Strictly speaking, this is not a method to guess the baseline, since the entire  spectrum is used for evaluation. The method evaluates a polynomial fit of user-defined order of the entire spectrum. The resulting polynomial is then used as the baseline. The method may perform good if only very few and narrow peaks exist in the spectrum.
+</para>
+
+<section address="48C937B811E414CCBD9F2925520948FF">
+<title>SNIP (linear and loglog)
+</title>
+<content>
+
+<para>
+This implements the SNIP algorithm. Basically, the method spans a line between two spectral points. The width of the line is defined by the user, but must be an odd number of spectral points. The resulting baseline point is then either used from the spectrum (if the center of the line lies above the spectrum), or from the center of the line (if the center of the line lies below the spectrum). This is repeated for a fixed number of iterations.
+</para>
+
+<para>
+<legacyItalic>SNIPLinear</legacyItalic> is using the original spectral y-values, whereas <legacyItalic>SNIPLogLog</legacyItalic> first takes twice the logarithm of the y-values, which presumes that the y-values are all positive.
+</para>
+
+<para>
+The following options are available:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+Half width: the half of the (width of the line described above minus 1). Thus, a value of 1 means the width of the line is 3 points; a value of 10 means a line width of 21 points. The half width can also be entered in units of the x-axis of the spectrum. The value of the half width should be at least that of the full (!) width of the broadest peak in the spectrum.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+Number of iterations: The default value of 40 is appropriate for most applications.
+</para>
+</listItem>
+</list>
+
+<para>
+References:
+</para>
+
+<para>
+[1] C.G. Ryan, E. Clayton, W.L. Griffin, S.H. Sie, D.R. Cousens,
+&quot;SNIP, a statistics-sensitive background treatment for the quantitative analysis of PIXE spectra in geoscience applications&quot;,
+Nuclear Instruments and Methods in Physics Research Section B: Beam Interactions with Materials and Atoms, Volume 34, Issue 3, 1988, pp. 396-402, ISSN 0168-583X,
+<externalLink><linkText>https://doi.org/10.1016/0168-583X(88)90063-8</linkText><linkUri>https://doi.org/10.1016/0168-583X(88)90063-8</linkUri></externalLink>
+</para>
+</content>
+</section>
+</content>
+</section>
+</content>
+</section>
+</sections>
+</content>
+</section>
+
+<section address="49CC97E04C09226C13D568F0BE3E83BD">
+<title>Cropping
+</title>
+<content>
+
+<para>
+Cropping selects only the interesting part of the spectrum.
+</para>
+
+<para>
+The different methods are:
+</para>
+
+<sections>
+
+<section address="0B521A5A75031347F8903D8DDD630937">
+<title>Cropping by indices
+</title>
+<content>
+
+<para>
+Here, the minimal index and the maximal index of the points that should be includes in the spectrum are given. Note that indexing is zero based: If the first point should be included, the minimal index has to be set to 0. Negative indices are allowed too, designating then the offset from the point after the last point. Thus a value of -1 represents the last point, -2 the point before the last point etc.
+</para>
+
+<para>
+<mediaLinkInline><image xlink:href="A5544AC0E3871B42108293DBE68E48D7"></image></mediaLinkInline>
+</para>
+
+<para>
+Fig. 1: Dialog for cropping by indices. Because here the minimal index is 0, meaning the first point, and the maximal index is -1, meaning the last point, the entire spectrum is included (which is the same as choosing <codeInline>CroppingNone</codeInline>)
+</para>
+
+<section address="CD760D0CCB5120EBE6821ECBB619CDBF">
+<title>Cropping by x-values
+</title>
+<content>
+
+<para>
+The range of the spectrum that should be included is given in units of the x-axis of the spectrum. By default, the minimal value is -∞ and the maximal value ∞, meaning that the entire spectrum is included, but minimal value and maximal value can be adjusted.
+</para>
+
+<para>
+<mediaLinkInline><image xlink:href="D06BD2F4DC5536928827C382815E33F3"></image></mediaLinkInline>
+</para>
+
+<para>
+Fig. 2: Dialog for cropping a spectrum by providing the minimum and maximum x-value. Here, the minimum x-value is given as 300, whereas the maximum value is left at infinity.
+</para>
+
+<section address="15378655FFBECB8F543714896C24AC0E">
+<title>Resampling by interpolation
+</title>
+<content>
+
+<para>
+This method combines cropping with a resampling of the x-axis. Resampling means changing the x-axis points to new values, thereby enhancing the x-value spacing or decreasing it. It is often used to make the x-axis values equidistant again (for instance after applying x-calibration). In order to get the y-values at new x-values, the values needs to be interpolated between to existing points.
+</para>
+
+<para>
+This method has a bunch of different options:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+Interpolation method: Choose a interpolation method. Different types of splines are available, even smoothing splines, which require additional parameters to be entered.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+Sampling: Basically, the start value, the end value and the number of points are needed. But the dialog allows to choose between different options here:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+specifying the x-values by start, end and count (number of points)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+specifying the x-values by start, end and step value
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+specifying the x-values by start, step value and count
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+specifying the x-values by end, count and step value
+There is a preview box that shows the first three and the last three x-values that would be generated by your choice.
+</para>
+</listItem>
+</list>
+</listItem>
+</list>
+
+<para>
+<mediaLinkInline><image xlink:href="F3DA522D5FDBB7B50EBC337E675410B1"></image></mediaLinkInline>
+</para>
+
+<para>
+Fig. 3: Dialog for resampling by interpolation.
+</para>
+</content>
+</section>
+</content>
+</section>
+</content>
+</section>
+</sections>
 </content>
 </section>
 <markup><hr/></markup>
@@ -207,7 +512,7 @@ The calibration step will change the spectrum's x-axis. Presumed that a calibrat
 <content>
 
 <para>
-Next section: <link xlink:href="FCC125D44CCD76A52BBA4BE955537F85">Raman spectroscopy</link></para>
+Next section: <link xlink:href="F959DB02135664130E2754194C296F8C">Peak searching and fitting</link></para>
 </content>
 </section>
 </developerConceptualDocument>

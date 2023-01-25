@@ -1,0 +1,585 @@
+﻿
+<topic id="F959DB02135664130E2754194C296F8C" revisionNumber="1">
+
+<developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+<introduction>
+
+<para>
+Previous section: <link xlink:href="3A0137E53CEEEFFC3A49CDCA2CC5B88D">Spectral preprocessing</link></para>
+<autoOutline />
+<markup><hr/></markup>
+
+<para>
+It may be interesting to know the positions, widths, and heights (or areas) of the peaks of a spectrum.
+</para>
+
+<para>
+Peak searching and fitting usually consist of three steps (there is one exception, which will be described later):
+</para>
+
+<list class="ordered">
+
+<listItem>
+
+<para>
+a peak searching algorithm searches for peaks and outputs the approximate positions, widths and heights of the found peaks
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+the approximate positions, widths and heights that are the result of the peak searching step are used as initial values for peak fitting. Then a peak fitting algorithm evaluates these values with a higher accuracy. Other quantities, like the area under the peak, can be output, too.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+Output the results in a new worksheet, and (optionally) plot the fit curve together with the original spectral data.
+</para>
+</listItem>
+</list>
+
+<para>
+Altaxo features a peak searching and fitting pipeline, implementing the two steps described above.
+</para>
+</introduction>
+
+<section address="07AA43B8A6B502F03DCBADA754FAFAB3">
+<title>Usage
+</title>
+<content>
+
+<para>
+Import one or multiple spectra. If the spectra should be treated with the same steps, it is preferable to import them into a single worksheet.
+</para>
+
+<para>
+Select all columns in that worksheet which contains the spectral intensities. Do not select the x-columns containing the wavelengths.
+</para>
+
+<para>
+Use the menu <codeInline>Analysis</codeInline> → <codeInline>Spectroscopy</codeInline> → <codeInline>PeakFinding+Fitting</codeInline> to open the <link xlink:href="F959DB02135664130E2754194C296F8C#Screenshot_Dialog_SpectralPeakSearchingAndFitting">peak finding+fitting dialog</link>. The dialog contains multiple tabs. The first tabs are for the preprocessing steps described in section <link xlink:href="3A0137E53CEEEFFC3A49CDCA2CC5B88D#Section_SpectralPreprocessing">Spectral Preprocessing</link>. The last three tabs contain options for the search step, the fit step, and the output step described above.
+</para>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#2B612A7929B25F51C02AE1916524AAC0"><img src="../media/2B612A7929B25F51C02AE1916524AAC0.png" width="567"></img></a></markup>   
+</para>
+
+<para>
+Fig.1: Spectral preprocessing dialog with three additional steps for peak searching, fitting and output of the results.
+</para>
+
+<para>
+After selection of the required methods and pressing <codeInline>OK</codeInline>, a new worksheet is created, which contains the result of the peak searching and peak fitting. The name of the new worksheet is the name of the original worksheet with the string <codeInline>_peaks</codeInline> appended to it.
+</para>
+
+<para>
+The newly created table contains a data source for the peak searching+fitting. The data source remembers where the data for peak searching + fitting came from, and which options have been used. If the result of the peak searching + fitting is not satisfactory, the data source can be opened by clicking on the question mark <mediaLinkInline><image xlink:href="Icons.16x16"></image></mediaLinkInline> in the toolbar. Using this <link xlink:href="3A0137E53CEEEFFC3A49CDCA2CC5B88D#Screenshot_Dialog_SpectralPreprocessingDataSource">dialog</link>, the steps can be changed, or data can be added or removed.
+</para>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#F83158184139B75F2B52FFEB0D11AFA6"><img src="../media/F83158184139B75F2B52FFEB0D11AFA6.png" width="567"></img></a></markup>  
+</para>
+
+<para>
+Fig.2: Data source of the worksheet containing the peak data. The expander in the center contains the preprocessing and peak searching+fitting options; the expander at the bottom contains the information about the origin of the data to process.
+</para>
+
+<para>
+Additionally, when the original data have changed, you can re-apply the preprocessing by clicking on the <codeInline>Requery table data source</codeInline> button <mediaLinkInline><image xlink:href="Icons.16x16"></image></mediaLinkInline> in the toolbar.
+</para>
+
+<para>
+In the following sections, the options for the peak searching, peak fitting, and output steps are described in more detail.
+</para>
+</content>
+</section>
+
+<section address="9EA2614F8D1BA205B900FD8512335A12">
+<title>Peak searching
+</title>
+<content>
+
+<para>
+Currently, two methods for peak searching are implemented:
+</para>
+
+<list class="ordered">
+
+<listItem>
+
+<para>
+Peak searching by topology search
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+Peak searching by continuous wavelet transformation
+</para>
+</listItem>
+</list>
+
+<para>
+Peak searching by topology is faster than peak searching by continuous wavelet transformation. But it has problems when peaks are overlapping, for instance a peak is located in the shoulder of another peak.
+Essentially, you can use peak searching by topology for spectra with well separated peaks and a low noise level.
+For all other cases, peak searching by continuous wavelet transformation is the better choice.
+</para>
+
+<sections>
+
+<section address="7844A07423CFE174A70AEBD57F2F962E">
+<title>Peak searching by topology
+</title>
+<content>
+
+<para>
+In this method, all local maxima of the spectral signal are searching. Basically, each local maximum is a peak, but usually these candidates are filtered out further; otherwise each local maxima caused by noise would appear in the result.
+Filter criteria are e.g. the height of the peak (peaks under a threshold height are dropped), the prominence of a peak (peaks under a certain prominence level are dropped), or the width (peaks below a certain width or above a certain width) are dropped.
+</para>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#F1E19FD3C6733E59714DE3AFB7DC454E"><img src="../media/F1E19FD3C6733E59714DE3AFB7DC454E.png" width="378"></img></a></markup>
+</para>
+
+<para>
+Fig. 1: Explanation of height and prominence value of the peak at x = 1500.
+</para>
+
+<para>
+In Altaxo, only two options can be chosen:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+Minimal prominence: Designates the minimal prominence value of the peak. This is a relative value related to the y-span of the spectrum. The y-span of the spectrum is the difference of the highest intensity value and the lowest intensity value.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+Maximum number of peaks: Designates the maximum number of resulting peaks. If more peaks than this number are found, the peaks with the lowest prominence values are dropped, and only this number of peaks is included in the output.
+</para>
+</listItem>
+</list>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#352D67BEF89DB05D7BA8281FF5216B2E"><img src="../media/352D67BEF89DB05D7BA8281FF5216B2E.png" width="567"></img></a></markup>
+</para>
+
+<para>
+Fig. 1: Options for 'Peak searching by topology'.
+</para>
+
+<section address="04B77A95095FFC30ED499B6EE3F25D61">
+<title>Peak searching by continuous wavelet transformation
+</title>
+<content>
+
+<para>
+Peak searching by continuous wavelet transformation uses <externalLink><linkText>continuous wavelet transformation</linkText><linkUri>https://en.wikipedia.org/wiki/Continuous_wavelet_transform</linkUri></externalLink> (CWT) to convolve the spectrum with a wavelet. In this case, the wavelet is a Ricker wavelet (also known as Mexican hat). Since the width of the peaks is not known at the beginning, the convolution has to be performed with the Ricker wavelet of different x-scales. The basic idea is, that the result of the convolution is maximal, if the width of the Ricker wavelet approximately corresponds with the width of the peak, and the center location of the wavelet and of the peak fall together. Around this maximum value, there is a mountain with very steep slopes in the &quot;location&quot; direction, but a ridge line in the &quot;broadness of the wavelet&quot; direction (<link xlink:href="F959DB02135664130E2754194C296F8C#Graph_PeakSearchingByCwt_RidgeLine3D">Fig. 2</link>).
+</para>
+
+<para>
+The algorithm starts with a very narrow Ricker wavelet (which has a width of 1 point), and convolutes this with the signal. In each of the subsequent steps, the Ricker wavelet is made broader, and convoluted again with the signal. When the broadness of the wavelet exceeds the range of the entire spectrum, the algorithms stops. After this, ridge lines are detected. Each ridge line can correspond to a peak in the spectrum, but there are also some ridge lines that do not correspond to a peak. Therefore the ridge lines are filtered out using some criteria shown <link xlink:href="F959DB02135664130E2754194C296F8C#Screenshot_PeakSearchingByCwt">below</link>.
+</para>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#76FC4ED14FE4B228BE7AF24DEC1C0FAE"><img src="../media/76FC4ED14FE4B228BE7AF24DEC1C0FAE.png" width="378"></img></a></markup>
+</para>
+
+<para>
+Fig. 2: Example of a spectrum that is used for CWT transformation, see below.
+</para>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B0CC2B678D2C3D6372A1FBB804B18B4C"><img src="../media/B0CC2B678D2C3D6372A1FBB804B18B4C.png" width="567"></img></a></markup>  
+</para>
+
+<para>
+Fig. 2: CWT transformation of the spectrum shown above. The ridge line and its maximum of the largest peak (at x = 2000) is labelled. To the left (at x = 1000) there is a second, much smaller ridge corresponding to the peak at x = 1000.
+</para>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#8F1F1377757AB229329C78A23FA4D534"><img src="../media/8F1F1377757AB229329C78A23FA4D534.png" width="605"></img></a></markup>  
+</para>
+
+<para>
+Fig. 3: Options for 'peaks searching by continuous wavelet transformation'.
+</para>
+
+<para>
+The <link xlink:href="F959DB02135664130E2754194C296F8C#Screenshot_PeakSearchingByCwt">dialog</link> contains various options, but most of them can be left at their default values:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+Wavelet: Choose between a Ricker wavelet, and a wavelet which is the 2nd derivative of the Ricker wavelet. The latter will enhance peaks located in shoulders of other peaks somewhat more.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+Points per octave: The default value 8 means the Ricker wavelet is made broader in steps of <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#14D6625A4838B2B3100E065DA520CF7A"><img src="../media/14D6625A4838B2B3100E065DA520CF7A.png" width="24" height="15" align="baseline"></img></a></markup>, i.e. after 8 steps the wavelet is twice as broad as before. The more points, the finer is the resolution of the determination of the peak width, but more steps require more evaluation time.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+Minimal length of ridge line. The minimal length of a ridge line that is required for the detection of a peak. The default value of 200% means that the ridge line must at least be 2 octaves long in order to be considered as a peak candidate.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+Minimal width of ridge peak (octaves). When following a ridge line, there is a maximum value, which is when the width of the wavelet is (roughly) equal to the width of the peak. The default value of 200% means that around that peak there should be no local maxima one octave higher and one octave lower. This will e.g. suppress local maxima on the ridge line caused by noise.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+Minimal signal-to-noise ratio: The value of the maximum on a ridge line must be considerably higher than the noise level in order to be the ridge line considered as a peak candidate. The default value of 300% means that the peak maximum must be 3 times higher than the noise level. Increasing this value will decrease the number of detected peaks, decreasing it will increase the number of detected peaks, but can cause to detect peaks, which are essentially noise.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+Minimal relative Gaussian amplitude: After a peak is detected and located, the amplitude of it (back in the signal domain) can be determined. The default value of 0.5% means that only those peaks are included in the result, that have a height which is at least 0.5% the y-span of the signal (difference of the signal maximum and the signal minimum values).
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+Maximal number of peaks: Designates the maximum number of resulting peaks. If more peaks than this number are found, the peaks with the lowest height values are dropped, and only this number of peaks is included in the output.
+</para>
+</listItem>
+</list>
+
+<para>
+References:
+</para>
+
+<para>
+[1] Pan Du, Warren A. Kibbe, Simon M. Lin, &quot;Improved peak detection in mass spectrum by incorporating continuous wavelet transform-based pattern matching&quot;, Bioinformatics Volume 22, Issue 17, August 2006 pp 2059–2065, <externalLink><linkText>https://doi.org/10.1093/bioinformatics/btl355</linkText><linkUri>https://doi.org/10.1093/bioinformatics/btl355</linkUri></externalLink>
+</para>
+
+<para>
+[2] Chao Yang, Zengyou He, Weichuan Yu, &quot;Comparison of public peak detection algorithms for MALDI mass spectrometry data analysis&quot;,  BMC Bioinformatics 10, 4 (2009), <externalLink><linkText>https://doi.org/10.1186/1471-2105-10-4</linkText><linkUri>https://doi.org/10.1186/1471-2105-10-4</linkUri></externalLink>
+</para>
+</content>
+</section>
+</content>
+</section>
+</sections>
+</content>
+</section>
+
+<section address="C1488F91AC57FD6CDF6410EACF08A882">
+<title>Peak fitting
+</title>
+<content>
+
+<para>
+After the peak searching step, the resulting approximate positions, widths, and heights of the peaks can be used as initial values for a subsequent peak fitting step.
+</para>
+
+<para>
+Different fitting methods exists, which are described in the following.
+</para>
+
+<sections>
+
+<section address="459C55078FB0F0682ECC84C844E9FE4E">
+<title>Peak fitting by incremental peak addition
+</title>
+<content>
+
+<para>
+The method starts by searching the spectrum for the highest peak. Approximate position, width, and height of this peak is used as initial values for a fit function that contains only this peak and a baseline of user-defined polynomial order. The fit is executed. After fitting this peak, the fit function values are subtracted from the original spectrum (calculating the residual of the fit). In this residual, the highest peak is searched again. The position, width and height of the previous fit plus the approximate position, width, and height of the new peak is used as initial values for a fit function which has one more peak than the previous one. The fit is executed again. The process is repeated, adding more and more peaks, until a certain number of peaks are reached, or another stop criterion is fulfilled.
+</para>
+
+<quote>
+
+<para>
+<legacyBold>Note:</legacyBold><lineBreak/>
+For the fitting method <codeInline>PeakFittingByIncrementalPeakAddition</codeInline> the peak searching step is not required. Please leave peak searching at the default value of topology search. Furthermore, baseline correction is also not required, since the fit function itself contains a polynomial baseline.
+</para>
+</quote>
+
+<para>
+The options for this method are:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+Fit function: Choose the appropriate fit function.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+Order of baseline polynomial. Use a value of -1 for no baseline, a value of 0 for a constant baseline, 1 for a linear baseline. Values greater than 1 are possible too, but not recommended.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+Max. number of peaks: The maximum number of peaks that the fit function uses. The addition of peaks stops when this number is reached. Note that the final number of peaks can be less than this number, because after the fitting step, a pruning step follows, dropping the most insignificant peaks.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+Minimal relative height: The addition of peaks stops, if the highest peak in the residual has a height that is less the given factor times the original y-span of the spectrum (which is the difference of maximum y-value and minimum y-value of the spectrum).
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+Minimal signal to noise: The addition of peaks stops, if the highest peak in the residual has a height that is less the given factor times the noise level.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+Minimal peak FWHM: If you know the resolution properties of your spectrometer, you can give here the minimal Full-Width-Half-Maximum value that a peak could reach. You can enter this value in points (checkbox cleared), or in the x-units of the spectrum (checkbox checked).
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+Prune peaks factor: After the fitting, the most insignificant peaks can be dropped (i.e. not included in the result). This is done based on the Chi² value of the fit. The default value of 10% means, that peaks are dropped, as long as the new Chi² value of the fit remains below (100% + 10%) = 110% of the original Chi² value. Simply speaking, by dropping some peaks, the fit can go worse by 10%.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+Separate error evaluation with relative fit width: This choice only affects how the parameter errors (but not the parameter values itself) are calculated. For details see section <link xlink:href="F959DB02135664130E2754194C296F8C#Section_PeakFitting_SeparateErrorEvaluation">&quot;separate error evaluation for each peak&quot;</link>.
+</para>
+</listItem>
+</list>
+
+<para>
+Depending on the maximum number of peaks, and the complexity of the fit function, the evaluation can take considerable time, so please be patient! The advantage is, that by increasing the maximum number of peaks, you can model more and more details of your spectrum, leading to very precise fits.
+</para>
+
+<para>
+Reference:
+</para>
+
+<para>
+[1] Frank Alsmeyer, Wolfgang Marquardt, &quot;Automatic generation of peak shaped models&quot;, Appl. Spectroscopy 58, 986-994 (2004), <externalLink><linkText>https://doi.org/10.1366/0003702041655421</linkText><linkUri>https://doi.org/10.1366/0003702041655421</linkUri></externalLink>
+</para>
+
+<section address="8935E615A2F40B9F83D6A3EF83EA1D3E">
+<title>Peak fitting separately
+</title>
+<content>
+
+<para>
+This method uses the result of the previous peak searching step. It assumed that each peak is well separated from the neighboring peaks, so that the peak reaches to the left and to the right (nearly) a value of zero.
+</para>
+
+<quote>
+
+<para>
+<legacyBold>Note:</legacyBold><lineBreak/>
+The method assumes that the spectrum is baseline corrected, i.e. that the peak falls down to the left and to the right to a value of zero! Please use an appropriate baseline correction method.
+</para>
+</quote>
+
+<para>
+The method fits each peak separately. If say the peak searching step results in 80 peaks, then 80 different fits are made, each with a fit function which contains only one peak.
+</para>
+
+<para>
+This method has the following options:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+Fit function: Choose the appropriate fit function.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+Scale fit width by: Only the points in the spectrum in the vicinity of each peak are used for the fit. The default value of 200% means, that the approximate FWHM of the peak (as the result of the peak searching step) is multiplied with a factor of 2. The resulting width is then used for the fit range (i.e. 100% FWHM to the left and 100% FWHM to the right).
+</para>
+</listItem>
+</list>
+
+<section address="D1CA92779AF48BB9427B2454D83E477C">
+<title>Peak fitting together (without or with separate variances)
+</title>
+<content>
+
+<para>
+In contrast to the method <codeInline>PeakFittingSeparately</codeInline>, this methods are better suited for peaks that can overlap.
+</para>
+
+<quote>
+
+<para>
+<legacyBold>Note:</legacyBold><lineBreak/>
+The methods assume that the spectrum is baseline corrected, i.e. that if the peaks would not overlap, the peak would falls down to the left and to the right to a value of zero. Thus, the base of the peaks is assumed to be at zero. Please use an appropriate baseline correction method.
+</para>
+</quote>
+
+<para>
+The method uses the resulting number of peaks from the peak searching step, and the approximate values for position, width, and height of the peaks, to create a fit function with that number of peaks and the initial values for position, width, and height. Then the fit is executed.
+</para>
+
+<para>
+This methods have the following options:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+Fit function: Choose the appropriate fit function.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+Scale fit width by: Only the points in the spectrum in the vicinity of each peak are used for the fit. The default value of 200% means, that the approximate FWHM of the peak (as the result of the peak searching step) is multiplied with a factor of 2. The resulting width is then used for the fit range (i.e. 100% FWHM to the left and 100% FWHM to the right) around a peak. The fit ranges of all peaks are then combined into the final fit range.
+</para>
+</listItem>
+</list>
+
+<para>
+The differences of the two methods are described in the <link xlink:href="F959DB02135664130E2754194C296F8C#Section_PeakFitting_SeparateErrorEvaluation">next section</link>.
+</para>
+
+<section address="Section_PeakFitting_SeparateErrorEvaluation">
+<title>Separate evaluation of parameter errors for each peak
+</title>
+<content>
+
+<para>
+If you are not interested in the resulting errors of the fit parameters, i.e. errors for position, width, height etc. of the peaks, you can skip this section.
+</para>
+
+<para>
+The error of the fit parameters of a nonlinear fit is calculated from the Chi² value of the fit. Basically, it is defined as how much the parameter must be varied, so that the Chi² value becomes twice at high as before.
+</para>
+
+<para>
+The problem here: when you make a fit that fits all peaks simultaneously (PeakFittingTogether and PeakFittingByIncrementalPeakAddition), then small peaks will not much contribute to the Chi² value. Which means, that the parameter of those small peaks must be varied unrealistically high in order to double the Chi² value of the fit.
+</para>
+
+<para>
+In order to get more realistic error values for the parameters, not the global Chi² value of the fit is used, but the local Chi² value. To calculate the local Chi² value of a peak, only the points in the vicinity of that peak are used for summing up the squared differences between original spectrum and fit function. How many points are included depends on the value of the <codeInline>Scale fit width by</codeInline> value: the default value of 200% means that 200% of the FWHM of the peak (from the peak searching step) is used for calculating the local Chi² value of the peak. When the parameters of that peak are now varied, this local Chi² value is much more influenced (relative to the value before), than the global Chi² value, leading to more realistic results for the parameter errors.
+</para>
+
+<para>
+These local Chi² values to calculate the parameter errors are utilized by <codeInline>PeakFittingTogetherWithSeparateVariances</codeInline> (otherwise equal to <codeInline>PeakFittingTogether</codeInline>), and for <codeInline>PeakFittingByIncrementalPeakAddition</codeInline>, if the checkbox <codeInline>Separate error eval. with relative fit width</codeInline> is checked.
+</para>
+</content>
+</section>
+</content>
+</section>
+</content>
+</section>
+</content>
+</section>
+</sections>
+</content>
+</section>
+
+<section address="A08A72142E11F3B42448A53A8D8FA62C">
+<title>Output
+</title>
+<content>
+
+<para>
+The output of the peak searching and peak fitting steps can be influenced by some options (see <link xlink:href="F959DB02135664130E2754194C296F8C#Screenshot_PeakSearchingAndFitting_OutputOptions">Fig. 1</link>):
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+Output preprocessed curve: if checked, the result of the preprocessing steps (everything except peak searching + fitting) is included in the resulting table.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+Output fit curve: The resulting fit curve is included in the resulting table. Since the fit curve looks better, if it has a higher resolution than the original spectrum, you can choose a sampling factor. A sampling factor of 1 means to include only the original x-values of the spectrum, a sampling factor of 3 adds to additional points between each pair of points of the original spectrum.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+Output separate peak curves: The resulting fit curve is included in the resulting table, but in contrast to the option described above, as separate peaks. In this way, it is easily to see from which peaks the fit curve is composed of. Here too, a sampling factor can be provided to enhance the resolution.
+</para>
+</listItem>
+</list>
+
+<quote>
+
+<para>
+Note:<lineBreak/>
+Checking <codeInline>Output fit curve</codeInline>, and <codeInline>Output separate peak curves</codeInline> not only include the data in the resulting table, but will also create a graph showing those curves together with the original spectrum. Later, when using this options in the data source of the resulting worksheet again, only the data are included, but the graph(s) will not be created again (of course they will show the changed data if they already exist).
+</para>
+</quote>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#CA5804C463B5CE04491523EAE54905A9"><img src="../media/CA5804C463B5CE04491523EAE54905A9.png" width="567"></img></a></markup>  
+</para>
+
+<para>
+Fig. 1: Dialog for the output options of the preprocessing / peak fitting pipeline.
+</para>
+</content>
+</section>
+<markup><hr/></markup>
+<section>
+
+<content>
+
+<para>
+Next section: <link xlink:href="FCC125D44CCD76A52BBA4BE955537F85">Raman spectroscopy</link></para>
+</content>
+</section>
+</developerConceptualDocument>
+</topic>
