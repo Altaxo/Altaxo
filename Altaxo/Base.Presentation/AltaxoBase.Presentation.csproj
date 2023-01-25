@@ -54,6 +54,9 @@
     <Compile Update="Gui\Science\Spectroscopy\BaselineEstimation\AirPLSControl.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Gui\Science\Spectroscopy\BaselineEstimation\PolynomialDetrendingControl.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Gui\Science\Spectroscopy\BaselineEstimation\SNIP_BaseControl.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -142,6 +145,9 @@
     <Page Update="Gui\Science\Spectroscopy\BaselineEstimation\AirPLSControl.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Gui\Science\Spectroscopy\BaselineEstimation\PolynomialDetrendingControl.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
     </Page>
     <Page Update="Gui\Science\Spectroscopy\BaselineEstimation\SNIP_BaseControl.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>

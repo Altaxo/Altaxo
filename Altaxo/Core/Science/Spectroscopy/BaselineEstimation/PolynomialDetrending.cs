@@ -23,12 +23,8 @@
 #endregion Copyright
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Altaxo.Calc.Regression;
 using System.Xml;
+using Altaxo.Calc.Regression;
 
 namespace Altaxo.Science.Spectroscopy.BaselineEstimation
 {
@@ -37,7 +33,7 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
   /// subtracting the fit curve from the spectrum.
   /// The degree of the polynomial can be choosen between 0 (the mean is subtracted), 1 (a fitted straight line is subtracted).
   /// </summary>
-  public class PolynomialDetrending :  IBaselineEstimation, Main.IImmutable
+  public record PolynomialDetrending : IBaselineEstimation, Main.IImmutable
   {
     private int _order = 0;
 
@@ -111,7 +107,7 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
         case 0: // Detrending of order 0 - subtract mean
           {               // 1.) Get the mean response of a spectrum
             double mean = 0;
-            for (int i =0; i < regionlength; i++)
+            for (int i = 0; i < regionlength; i++)
               mean += yArray[i];
             mean /= regionlength;
 
@@ -156,11 +152,11 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
 
 
     public void Export(XmlWriter writer)
-      {
-        writer.WriteStartElement("DetrendingCorrection");
-        writer.WriteElementString("Order", XmlConvert.ToString(_order));
-        writer.WriteEndElement();
-      }
+    {
+      writer.WriteStartElement("DetrendingCorrection");
+      writer.WriteElementString("Order", XmlConvert.ToString(_order));
+      writer.WriteEndElement();
     }
   }
+}
 
