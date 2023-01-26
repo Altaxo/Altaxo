@@ -6,7 +6,7 @@
 <introduction>
 
 <para>
-Previous section: <link xlink:href="982BEB47AE26FF08B670766893FD90C6">GeneralizedLogisticDecreasing</link></para>
+Previous section: <link xlink:href="CC0F38133338898C0E8F0A706D55FDAA">Fit functions for transitions</link></para>
 <autoOutline />
 <markup><hr/></markup>
 
@@ -25,7 +25,7 @@ The following command line arguments can be used to start up Altaxo (both with <
 
 <para>
 <codeInline>xyz.axoprj</codeInline> :<lineBreak/>
-loads the Altaxo project named <codeInline>xyz.axoprj</codeInline>.
+loads the Altaxo project named <codeInline>xyz.axoprj</codeInline>. This argument works both with Altaxo project files, and with Altaxo project folders.
 </para>
 </listItem>
 
@@ -49,7 +49,7 @@ suppresses the show up of the exception box should an exception occur during sta
 
 <para>
 <codeInline>-embedding</codeInline> :<lineBreak/>
-runs Altaxo in COM local server mode (do not use this unless you know exactly what you do, currently working properly only when used with <codeInline>AltaxoStartup32.exe</codeInline>, i.e. in 32 bit mode).
+runs Altaxo in COM local server mode (do not use this unless you know exactly what you do). This command is used internally when you embed a graph object in another application, for instance in Microsoft Word or Powerpoint.
 </para>
 </listItem>
 
@@ -58,6 +58,14 @@ runs Altaxo in COM local server mode (do not use this unless you know exactly wh
 <para>
 <codeInline>-executetablescript nameOfTheTable</codeInline> :<lineBreak/>
 executes the table script of the table <codeInline>nameOfTheTable</codeInline>. This argument can be used multiple times. The scripts are executed in the order they are given at the command line.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<codeInline>-noAutoUpdate</codeInline>  :<lineBreak/>
+Altaxo will not perform an auto update. Use this argument if you have more than one instance of Altaxo on your computer, and you want to keep that instance at a certain version, whereas the other instances should get updates.
 </para>
 </listItem>
 

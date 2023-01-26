@@ -289,7 +289,7 @@ The domain of the function is $ 0 \leq x &lt; \infty $ if all $k_0..k_{n-1}$ and
 </value>
   </data>
   <data name="General.Rational" xml:space="preserve">
-    <value>###### Rational
+    <value>##### Rational
 
 This function evaluates a rational polynom with one or multiple terms in the nominator and in the denominator according to
 
@@ -3349,7 +3349,7 @@ References:
 </value>
   </data>
   <data name="Transitions.GeneralizedLogisticDecreasing" xml:space="preserve">
-    <value>#### GeneralizedLogisticDecreasing
+    <value>##### GeneralizedLogisticDecreasing
 
 This function evaluates a sum of generalized logistic terms (decreasing steps), plus a background polynomial with one or multiple terms, according to
 

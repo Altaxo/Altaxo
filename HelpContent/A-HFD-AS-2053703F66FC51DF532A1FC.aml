@@ -1,0 +1,99 @@
+﻿
+<topic id="2053703F66FC51DF532A1FCD459B32D9" revisionNumber="1">
+
+<developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+<introduction>
+
+<para>
+Previous section: <link xlink:href="CB89AE6EFF7DA6DF94E80DC4E4EBDAF3">Altaxo's AutoUpdateInstaller</link></para>
+<autoOutline />
+<markup><hr/></markup></introduction>
+
+<section address="AddinSystem_Node_Level1_AddIn">
+<title>The <codeInline>AddIn</codeInline> node (Level 1)
+</title>
+<content>
+
+<para>
+The AddIn node is the root node of the addin.
+</para>
+
+<sections>
+
+<section address="D392542A27EDD9E1B66C0017CF513516">
+<title>The <codeInline>StringResources</codeInline> node (Level 2, parent <link xlink:href="2053703F66FC51DF532A1FCD459B32D9#AddinSystem_Node_Level1_AddIn">AddIn</link>)
+</title>
+<content>
+
+<para>
+The <codeInline>StringResources</codeInline> node contains an attribute only: <codeInline>file</codeInline>, which designates the location of a .resources file (relative to the location of the .addin file) which contains common string resources for the addin.
+</para>
+
+<section address="D392542A27EDD9E1B66C0017CF513516">
+<title>The <codeInline>BitmapResources</codeInline> node (Level 2, parent <link xlink:href="2053703F66FC51DF532A1FCD459B32D9#AddinSystem_Node_Level1_AddIn">AddIn</link>)
+</title>
+<content>
+
+<para>
+The <codeInline>BitmapResources</codeInline> node contains an attribute only: <codeInline>file</codeInline>, which designates the location of a .resources file (relative to the location of the .addin file) which contains common bitmap resources for the addin.
+</para>
+
+<section address="AddinSystem_Node_Level2_Runtime">
+<title>The <codeInline>Runtime</codeInline> node (Level 2, parent <link xlink:href="2053703F66FC51DF532A1FCD459B32D9#AddinSystem_Node_Level1_AddIn">AddIn</link>)
+</title>
+<content>
+
+<para>
+The runtime node contains one or more import nodes.
+</para>
+
+<section address="0CE80B9D0C3CFB18CB35221D7AEF50D9">
+<title>The <codeInline>Import</codeInline>node (Level 3, parent <link xlink:href="2053703F66FC51DF532A1FCD459B32D9#AddinSystem_Node_Level2_Runtime">Runtime</link>)
+</title>
+<content>
+
+<para>
+The <codeInline>Import</codeInline> node has an attribute <codeInline>assembly</codeInline>.
+</para>
+
+<para>
+The assembly attribute can have one of the following formats (see <codeInline>Altaxo.AddinItems.Runtime.Load()</codeInline>):
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+an assembly name starting with <codeInline>:</codeInline> means that the assembly is searched in the GAC and in the directory where the startup assembly is located.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+an assembly name starting with <codeInline>$</codeInline> should have the following format: <codeInline>$AddinName/AssemblyName</codeInline>. The assembly is searched in the directory where the specified addin file is located (and in subdirectories of it).
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+all other assembly names are treated as they are. The assembly is searched beginning in the path where the addin file is located.
+</para>
+</listItem>
+</list>
+</content>
+</section>
+</content>
+</section>
+</content>
+</section>
+</content>
+</section>
+</sections>
+</content>
+</section>
+</developerConceptualDocument>
+</topic>

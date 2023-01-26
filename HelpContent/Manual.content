@@ -205,8 +205,6 @@
 </Topic>
 <Topic id="CC0F38133338898C0E8F0A706D55FDAA" visible="True" title="Fit functions for transitions">
 </Topic>
-<Topic id="982BEB47AE26FF08B670766893FD90C6" visible="True" title="GeneralizedLogisticDecreasing">
-</Topic>
 </Topic>
 <Topic id="8A73F813C2BA5A0BB70B3262B294B137" visible="True" title="Altaxo's command line arguments">
 </Topic>
@@ -214,6 +212,12 @@
 <Topic id="0F1AE84ECC5B64EF7B0247DDC7B13975" visible="True" title="Save your settings">
 </Topic>
 <Topic id="8E4F74F9C40C692B28A56859D2FAAFA5" visible="True" title="Restore your settings">
+</Topic>
+</Topic>
+<Topic id="BCDD6E930B3A19784BD26B68AABE04D6" visible="True" title="Hints for developers">
+<Topic id="CB89AE6EFF7DA6DF94E80DC4E4EBDAF3" visible="True" title="Altaxo's AutoUpdateInstaller">
+</Topic>
+<Topic id="2053703F66FC51DF532A1FCD459B32D9" visible="True" title="The addin system">
 </Topic>
 </Topic>
 </Topic>

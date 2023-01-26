@@ -1,0 +1,21 @@
+﻿
+<topic id="BCDD6E930B3A19784BD26B68AABE04D6" revisionNumber="1">
+
+<developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+<introduction>
+
+<para>
+Previous section: <link xlink:href="8E4F74F9C40C692B28A56859D2FAAFA5">Restore your settings</link></para>
+<autoOutline />
+<markup><hr/></markup>
+
+<para>
+The following sections are not intended for the users of Altaxo, but rather for developers wanting to contribute to Altaxo.
+</para>
+<markup><hr/></markup>
+<para>
+Next section: <link xlink:href="CB89AE6EFF7DA6DF94E80DC4E4EBDAF3">Altaxo's AutoUpdateInstaller</link></para>
+</introduction>
+</developerConceptualDocument>
+</topic>

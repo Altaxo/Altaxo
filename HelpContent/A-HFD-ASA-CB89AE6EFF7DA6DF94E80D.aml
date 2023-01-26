@@ -1,0 +1,210 @@
+﻿
+<topic id="CB89AE6EFF7DA6DF94E80DC4E4EBDAF3" revisionNumber="1">
+
+<developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+<introduction>
+
+<para>
+Previous section: <link xlink:href="BCDD6E930B3A19784BD26B68AABE04D6">Hints for developers</link></para>
+<autoOutline />
+<markup><hr/></markup></introduction>
+
+<section address="A29685DDE10C85F58695CDA00B74BF80">
+<title>Requirements
+</title>
+<content>
+
+<list class="ordered">
+
+<listItem>
+
+<para>
+Take into account that instances of Altaxo may be running on the same computer from the same user or from different users, and may be running on different computers (via network).
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+Take into account that instances of the Updater may be running on the same computer from the same user or from different users, and even on different computers
+</para>
+</listItem>
+</list>
+
+<para>
+This results in:
+</para>
+
+<list class="ordered">
+
+<listItem>
+
+<para>
+no Altaxo instance must be executing from the directory, which should be updated
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+instances of Altaxo from other directories may be running on this computer or on other computers
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+it must be possible to detect if instances of Altaxo are running on other computers (via network) from the directory to update
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+Lock mechanism: only one instance of the updater should be running for one Altaxo directory. The updater instances may be running on the same computer or on other computers.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+Elevated privileges: the request for elevated privileges should be issued only when an Altaxo update is possible (see below).
+</para>
+</listItem>
+</list>
+</content>
+</section>
+
+<section address="3A5EFB0C0EE42E4C7FD8FFDA61A223EB">
+<title>Detection of the moment when it is possible to update Altaxo
+</title>
+<content>
+
+<list class="ordered">
+
+<listItem>
+
+<para>
+Try to open all .exe files and all .chm files in exclusive write mode
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+If this succeeds, try to open and close all other files in write mode
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+If this succeeds, it is possible to update Altaxo. Elevated privileges may be necessary to update Altaxo.
+</para>
+</listItem>
+</list>
+</content>
+</section>
+
+<section address="9DFD93E184F2BD9D1D5734095C39D9AF">
+<title>Locking of updater instances
+</title>
+<content>
+
+<list class="ordered">
+
+<listItem>
+
+<para>
+if possible (no elevated privileges required), create a lock file in the installation directory. This prevents instances on the same computer or on other computers to run simultaneously.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+If using a lock file is not possible, create a semaphore. This prevents at least instances of the updater on the same computer from running simultaneously.
+</para>
+</listItem>
+</list>
+</content>
+</section>
+
+<section address="942069759677841D5ED57BF41EFF8C44">
+<title>Updating process
+</title>
+<content>
+
+<list class="ordered">
+
+<listItem>
+
+<para>
+The updater starts with normal privileges and ensures that no other instance of the updater is running for the directory-to-update. If it detects that another instance is running, it immediately ends itself.
+It then locks the directory-to-update.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+The updater creates a temporary directory, and makes a safety copy of the directory-to-update
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+The updater creates a 2nd temporary directory, and unpacks the new installation files in this directory. It then copies the files from the existing installation that are not on the packing list, or are modified with respect to the packing list.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+The updater detects (in a loop) the moment when it is possible to update (see above).
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+The updater detects if elevated privileges are required, and requests those.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+The updater moves files from the directory-to-update to the temporary directory. If any error occurs, it immediately copies the already moved files back to the directory-to-update, and then ends itself.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+The updater moves the new files to the directory-to-update. If any error occurs, the user must be informed that the old installation directory still exists, and where it is to find.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+The updater removes the temporary directories.
+</para>
+</listItem>
+</list>
+</content>
+</section>
+<markup><hr/></markup>
+<section>
+
+<content>
+
+<para>
+Next section: <link xlink:href="2053703F66FC51DF532A1FCD459B32D9">The addin system</link></para>
+</content>
+</section>
+</developerConceptualDocument>
+</topic>

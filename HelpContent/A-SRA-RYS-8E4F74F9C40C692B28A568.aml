@@ -55,6 +55,9 @@ Copy your saved settings into the settings directory
 <para>
 Why it is important to close all instances of Altaxo before you can restore your settings? That is because in the very moment you close Altaxo, Altaxo writes its current settings into the settings directory. If you first restore your settings and then close Altaxo, Altaxo would overwrite your restored settings again.
 </para>
+<markup><hr/></markup>
+<para>
+Next section: <link xlink:href="BCDD6E930B3A19784BD26B68AABE04D6">Hints for developers</link></para>
 </introduction>
 </developerConceptualDocument>
 </topic>
