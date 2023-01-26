@@ -298,11 +298,14 @@ namespace Altaxo.Gui.Startup
           }
         }
 
-        updateInstaller = Altaxo.Current.GetService<Altaxo.Main.Services.IAutoUpdateInstallationService>();
-        if (updateInstaller is not null)
+        if (!startupSettings.ParameterList.Any(p => "noautoupdate".Equals(p, StringComparison.OrdinalIgnoreCase)))
         {
-          if (updateInstaller.Run(true, startupArguments.StartupArgs))
-            return;
+          updateInstaller = Altaxo.Current.GetService<Altaxo.Main.Services.IAutoUpdateInstallationService>();
+          if (updateInstaller is not null)
+          {
+            if (updateInstaller.Run(true, startupArguments.StartupArgs))
+              return;
+          }
         }
 
         // Start Com
