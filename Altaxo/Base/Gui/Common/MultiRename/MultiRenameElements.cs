@@ -85,7 +85,9 @@ namespace Altaxo.Gui.Common.MultiRename
     {
       var stb = new StringBuilder();
       foreach (var ele in _elements)
+      {
         stb.Append(ele.GetContent(originalListIndex, currentSortIndex));
+      }
 
       return stb.ToString();
     }
@@ -163,7 +165,7 @@ namespace Altaxo.Gui.Common.MultiRename
 
   public class MultiRenameDateTimeElement : MultiRenameBaseElement
   {
-    private const string DefaultDateTimeFormat = "yyyy-dd-MM HH:mm:ss";
+    private const string DefaultDateTimeFormat = "yyyy-dd-MM HH-mm-ss";
     private string _dateTimeFormat;
     private bool _useUtcTime;
 

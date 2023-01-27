@@ -24,7 +24,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using Altaxo.Gui.Common.MultiRename;
 
@@ -121,15 +120,15 @@ namespace Altaxo.Main.Commands
     /// <param name="renameData">Rename data structure in which the shortcuts have to be registered.</param>
     public static void RegisterCommonDocumentShortcutsForFileOperations(MultiRenameData renameData)
     {
-      renameData.RegisterStringShortcut("N", GetFullNameWithAugmentingProjectFolderItems, "Name of the object (full name, with path)");
-      renameData.RegisterStringShortcut("SN", GetShortNameWithAugmentingProjectFolderItems, "Short name of the object (without path");
-      renameData.RegisterStringShortcut("PN", GetFolderName, "Path name of the object");
+      renameData.RegisterStringShortcut("N", GetFullNameWithAugmentingProjectFolderItemsForFileOperations, "Name of the object (full name, with path)");
+      renameData.RegisterStringShortcut("SN", GetShortNameWithAugmentingProjectFolderItemsForFileOperations, "Short name of the object (without path");
+      renameData.RegisterStringShortcut("PN", GetFolderNameForFileOperations, "Path name of the object");
       renameData.RegisterIntegerShortcut("C", GetCounter, "Index of the object in the list");
 
       renameData.RegisterDateTimeShortcut("CD", GetCreationDate, "Creation date of the object");
 
-      renameData.RegisterStringArrayShortcut("NA", GetNamePartArrayWithAugmentingProjectFolderItems, "Name array, i.e. full name split into individual path pieces");
-      renameData.RegisterStringArrayShortcut("PA", GetFolderPartArray, "Path array, i.e. path name of the object split into individual path pieces");
+      renameData.RegisterStringArrayShortcut("NA", GetNamePartArrayWithAugmentingProjectFolderItemsForFileOperations, "Name array, i.e. full name split into individual path pieces");
+      renameData.RegisterStringArrayShortcut("PA", GetFolderPartArrayForFileOperations, "Path array, i.e. path name of the object split into individual path pieces");
     }
 
 
@@ -159,10 +158,12 @@ namespace Altaxo.Main.Commands
     /// <param name="o">Document object.</param>
     /// <param name="i">This parameter is ignored.</param>
     /// <returns>Short name of the document.</returns>
-    public static string GetShortNameWithAugmentingProjectFolderItems(object o, int i)
+    public static string GetShortNameWithAugmentingProjectFolderItemsForFileOperations(object o, int i)
     {
       var name = GetFullNameWithAugmentingProjectFolderItems(o, i);
-      return Altaxo.Main.ProjectFolder.GetNamePart(name);
+      var result = Altaxo.Main.ProjectFolder.GetNamePart(name);
+
+      return result;
     }
 
     /// <summary>
@@ -177,6 +178,18 @@ namespace Altaxo.Main.Commands
       return Altaxo.Main.ProjectFolder.GetFolderPart(name);
     }
 
+    /// <summary>
+    /// Gets the folder name of a document (with trailing DirectorySeparatorChar). See the class documentation for which type of documents can be used as argument.
+    /// </summary>
+    /// <param name="o">Document object.</param>
+    /// <param name="i">This parameter is ignored.</param>
+    /// <returns>Folder name of the document.</returns>
+    public static string GetFolderNameForFileOperations(object o, int i)
+    {
+      var name = GetFullName(o, i);
+      return MakeNameFileSystemCompatible(Altaxo.Main.ProjectFolder.GetFolderPart(name));
+    }
+
     private static string[] GetNamePartArray(object o, int i)
     {
       var name = GetFullName(o, i);
@@ -188,13 +201,32 @@ namespace Altaxo.Main.Commands
       var name = GetFullNameWithAugmentingProjectFolderItems(o, i);
       return name.Split(new char[] { Altaxo.Main.ProjectFolder.DirectorySeparatorChar });
     }
+    private static string[] GetNamePartArrayWithAugmentingProjectFolderItemsForFileOperations(object o, int i)
+    {
+      var name = GetFullNameWithAugmentingProjectFolderItems(o, i);
+      name = MakeNameFileSystemCompatible(name);
+      return name.Split(new char[] { Altaxo.Main.ProjectFolder.DirectorySeparatorChar });
+    }
 
 
     private static string[] GetFolderPartArray(object o, int i)
     {
       var name = GetFolderName(o, i);
       if (name.EndsWith("" + Altaxo.Main.ProjectFolder.DirectorySeparatorChar))
+      {
         name = name.Substring(0, name.Length - 1);
+      }
+      return name.Split(new char[] { Altaxo.Main.ProjectFolder.DirectorySeparatorChar });
+    }
+
+    private static string[] GetFolderPartArrayForFileOperations(object o, int i)
+    {
+      var name = GetFolderName(o, i);
+      if (name.EndsWith("" + Altaxo.Main.ProjectFolder.DirectorySeparatorChar))
+      {
+        name = name.Substring(0, name.Length - 1);
+      }
+      name = MakeNameFileSystemCompatible(name);
       return name.Split(new char[] { Altaxo.Main.ProjectFolder.DirectorySeparatorChar });
     }
 
@@ -236,6 +268,18 @@ namespace Altaxo.Main.Commands
     public static string GetFullNameWithAugmentingProjectFolderItems(object o, int i)
     {
       return GetFullNameWithAugmentingProjectFolderItems(o);
+    }
+
+    /// <summary>
+    /// Gets the full name of a document. Here, some special items are augmented with a name, e.g. a folder text document is augmented with 'FolderNotes'.
+    /// See the class documentation for which type of documents can be used as argument.
+    /// </summary>
+    /// <param name="o">Document object.</param>
+    /// <param name="i">Index of the document in the list</param>
+    /// <returns>Full name of the document.</returns>
+    public static string GetFullNameWithAugmentingProjectFolderItemsForFileOperations(object o, int i)
+    {
+      return MakeNameFileSystemCompatible(GetFullNameWithAugmentingProjectFolderItems(o));
     }
 
 
@@ -307,5 +351,29 @@ namespace Altaxo.Main.Commands
     }
 
     #endregion Sub-functions for shortcuts
+
+    private static Dictionary<char, char> FileSystemReplacementDict = new Dictionary<char, char>()
+    {
+      [':'] = '፥',
+      ['*'] = '✶',
+      ['?'] = '¿',
+      ['\"'] = '”',
+      ['<'] = '⋖',
+      ['>'] = '⋗',
+      ['|'] = '∣',
+    };
+
+    public static string MakeNameFileSystemCompatible(string newName)
+    {
+      var dict = FileSystemReplacementDict;
+      var stb = new StringBuilder(newName);
+
+      for (int i = 2; i < stb.Length; i++) // start with index 2 because we don't want the colon in a path like C:\temp\ to be replaced
+      {
+        if (dict.TryGetValue(stb[i], out var newChar))
+          stb[i] = newChar;
+      }
+      return stb.ToString();
+    }
   }
 }
