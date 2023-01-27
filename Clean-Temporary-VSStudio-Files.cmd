@@ -49,6 +49,9 @@ rmdir /S /Q .\Altaxo\Dom\bin
 rmdir /S /Q .\Altaxo\Dom.Presentation\obj
 rmdir /S /Q .\Altaxo\Dom.Presentation\bin
 
+rmdir /S /Q .\Altaxo\DomTest\obj
+rmdir /S /Q .\Altaxo\DomTest\bin
+
 rmdir /S /Q .\Altaxo\HelpViewer\obj
 rmdir /S /Q .\Altaxo\HelpViewer\bin
 
