@@ -161,9 +161,7 @@ namespace Altaxo.Main.Commands
     public static string GetShortNameWithAugmentingProjectFolderItemsForFileOperations(object o, int i)
     {
       var name = GetFullNameWithAugmentingProjectFolderItems(o, i);
-      var result = Altaxo.Main.ProjectFolder.GetNamePart(name);
-
-      return result;
+      return MakeNameFileSystemCompatible(Altaxo.Main.ProjectFolder.GetNamePart(name));
     }
 
     /// <summary>
