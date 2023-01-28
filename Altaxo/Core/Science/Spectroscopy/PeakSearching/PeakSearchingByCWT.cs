@@ -26,6 +26,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Altaxo.Calc.LinearAlgebra;
+using Altaxo.Science.Spectroscopy.PeakEnhancement;
 
 namespace Altaxo.Science.Spectroscopy.PeakSearching
 {
@@ -159,7 +160,7 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
     public int? MaximalNumberOfPeaks
     {
       get => _maximalNumberOfPeaks;
-      set
+      init
       {
         if (value.HasValue && value.Value <= 0)
           throw new ArgumentException("Value must either be null or >0");
@@ -167,7 +168,17 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
       }
     }
 
+    private IPeakEnhancement _peakEnhancement = new PeakEnhancementNone();
 
+    /// <summary>
+    /// Gets/sets the peak enhancement method (default is <see cref="PeakEnhancementNone"/>, i.e. no peak enhancement).
+    /// </summary>
+    /// <exception cref="System.ArgumentNullException">PeakEnhancement</exception>
+    public IPeakEnhancement PeakEnhancement
+    {
+      get => _peakEnhancement;
+      init => _peakEnhancement = value ?? throw new ArgumentNullException(nameof(PeakEnhancement));
+    }
 
     #region Serialization
 
@@ -202,7 +213,7 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
     }
 
     /// <summary>
-    /// 2022-10-19 Add property 'MaximalNumberOfPeaks'
+    /// 2022-10-19 V1: Add property 'MaximalNumberOfPeaks'
     /// </summary>
     /// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PeakSearchingByCwt), 1)]
@@ -235,6 +246,45 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
         };
       }
     }
+
+    /// <summary>
+    /// 2023-01-27 V2: Add property 'PeakEnhancement'
+    /// </summary>
+    /// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PeakSearchingByCwt), 2)]
+    public class SerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        var s = (PeakSearchingByCwt)obj;
+
+        info.AddValue("Wavelet", s.Wavelet);
+        info.AddValue("NumberOfPointsPerOctave", s.NumberOfPointsPerOctave);
+        info.AddValue("MinimalRidgeLengthInOctaves", s.MinimalRidgeLengthInOctaves);
+        info.AddValue("MinimalWidthOfRidgeMaximumInOctaves", s.MinimalWidthOfRidgeMaximumInOctaves);
+        info.AddValue("MinimalSignalToNoiseRatio", s.MinimalSignalToNoiseRatio);
+        info.AddValue("MinimalRelativeGaussianAmplitude", s.MinimalRelativeGaussianAmplitude);
+        info.AddValue("MaximalNumberOfPeaks", s.MaximalNumberOfPeaks);
+        info.AddValue("PeakEnhancement", s.PeakEnhancement);
+      }
+
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      {
+        return new PeakSearchingByCwt()
+        {
+          Wavelet = info.GetValue<IWaveletForPeakSearching>("Wavelet", null),
+          NumberOfPointsPerOctave = info.GetInt32("NumberOfPointsPerOctave"),
+          MinimalRidgeLengthInOctaves = info.GetDouble("MinimalRidgeLengthInOctaves"),
+          MinimalWidthOfRidgeMaximumInOctaves = info.GetDouble("MinimalWidthOfRidgeMaximumInOctaves"),
+          MinimalSignalToNoiseRatio = info.GetDouble("MinimalSignalToNoiseRatio"),
+          MinimalRelativeGaussianAmplitude = info.GetDouble("MinimalRelativeGaussianAmplitude"),
+          MaximalNumberOfPeaks = info.GetNullableInt32("MaximalNumberOfPeaks"),
+          PeakEnhancement = info.GetValue<IPeakEnhancement>("PeakEnhancement", null),
+        };
+      }
+    }
+
+
     #endregion
 
     public
@@ -245,15 +295,17 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
       IReadOnlyList<(IReadOnlyList<PeakDescription> PeakDescriptions, int StartOfRegion, int EndOfRegion)> peakSearchResults
       ) Execute(double[] x, double[] y, int[]? regions)
     {
+      var (xE, yE, regionsE) = PeakEnhancement.Execute(x, y, regions);
+
       var peakDescriptions = new List<(IReadOnlyList<PeakDescription> PeakDescriptions, int StartOfRegion, int EndOfRegion)>();
-      foreach (var (start, end) in RegionHelper.GetRegionRanges(regions, y.Length))
+      foreach (var (start, end) in RegionHelper.GetRegionRanges(regionsE, yE.Length))
       {
-        var subX = x is null ? null : new double[end - start];
+        var subX = xE is null ? null : new double[end - start];
         if (subX is not null)
-          Array.Copy(x, start, subX, 0, end - start);
+          Array.Copy(xE, start, subX, 0, end - start);
 
         var subY = new double[end - start];
-        Array.Copy(y, start, subY, 0, end - start);
+        Array.Copy(yE, start, subY, 0, end - start);
 
         var result = Execute(subX, subY);
         peakDescriptions.Add((result, start, end));

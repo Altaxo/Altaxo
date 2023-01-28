@@ -78,6 +78,9 @@
     <Compile Update="Gui\Science\Spectroscopy\Normalization\NormalizationControl.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Gui\Science\Spectroscopy\PeakEnhancement\SNIP_BaseControl.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Gui\Science\Spectroscopy\PeakFitting\PeakFittingControl.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -172,6 +175,9 @@
     <Page Update="Gui\Science\Spectroscopy\Normalization\NormalizationMinMaxInRangeControl.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Gui\Science\Spectroscopy\PeakEnhancement\SNIP_BaseControl.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
     </Page>
     <Page Update="Gui\Science\Spectroscopy\PeakFitting\PeakFittingByIncrementalPeakAdditionControl.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>

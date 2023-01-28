@@ -15,6 +15,10 @@
             <RowDefinition Height="4"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="4"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="4"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="4"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
@@ -38,6 +42,15 @@
                                     SelectedValue="{Binding MaximalNumberOfPeaks}"
                                     MinWidth="100"
                                     ToolTip="Limit the number of peaks included in the result by selecting only the #maximalNumberOfPeaks highest peaks" />
+
+        <Label Grid.Row="4" Grid.Column="0"
+               Content="Peak enhancement:"/>
+        <ComboBox Grid.Row="4" Grid.Column="2"
+                  ItemsSource="{Binding AvailablePeakEnhancementMethods.Items}"
+                  SelectedItem="{Binding AvailablePeakEnhancementMethods.SelectedItem, Mode=TwoWay}" />
+        
+        <ContentControl Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="4"
+                        Content="{Binding SubControllerPeakEnhancement.ViewObject}"/>
 
     </Grid>
 </UserControl>

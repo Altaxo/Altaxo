@@ -27,6 +27,8 @@ using System.Collections.Generic;
 using System.Linq;
 using Altaxo.Collections;
 using Altaxo.Gui.Common;
+using Altaxo.Main.Services;
+using Altaxo.Science.Spectroscopy.PeakEnhancement;
 using Altaxo.Science.Spectroscopy.PeakSearching;
 using Altaxo.Units;
 
@@ -42,7 +44,7 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakSearching
   {
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
-      yield break;
+      yield return new ControllerAndSetNullMethod(_subControllerPeakEnhancement, () => SubControllerPeakEnhancement = null);
     }
 
     #region Bindings
@@ -159,6 +161,39 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakSearching
       }
     }
 
+    private ItemsController<Type> _availablePeakEnhancementMethods;
+
+    public ItemsController<Type> AvailablePeakEnhancementMethods
+    {
+      get => _availablePeakEnhancementMethods;
+      set
+      {
+        if (!(_availablePeakEnhancementMethods == value))
+        {
+          _availablePeakEnhancementMethods = value;
+          OnPropertyChanged(nameof(AvailablePeakEnhancementMethods));
+        }
+      }
+    }
+
+
+    private IMVCANController? _subControllerPeakEnhancement;
+
+    public IMVCANController? SubControllerPeakEnhancement
+    {
+      get => _subControllerPeakEnhancement;
+      set
+      {
+        if (!(_subControllerPeakEnhancement == value))
+        {
+          _subControllerPeakEnhancement?.Dispose();
+          _subControllerPeakEnhancement = value;
+          OnPropertyChanged(nameof(SubControllerPeakEnhancement));
+        }
+      }
+    }
+
+
 
     #endregion
 
@@ -178,6 +213,58 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakSearching
         MinimalSignalToNoiseRatio = new DimensionfulQuantity(_doc.MinimalSignalToNoiseRatio, Altaxo.Units.Dimensionless.Unity.Instance).AsQuantityIn(RatioEnvironment.DefaultUnit);
         MinimalRelativeGaussianAmplitude = new DimensionfulQuantity(_doc.MinimalRelativeGaussianAmplitude, Altaxo.Units.Dimensionless.Unity.Instance).AsQuantityIn(RatioEnvironment.DefaultUnit);
         MaximalNumberOfPeaks = _doc.MaximalNumberOfPeaks;
+
+        // PeakEnhancement
+        CreateSubControllerPeakEnhancement();
+
+        var methodTypes = new List<Type>(ReflectionService.GetNonAbstractSubclassesOf(typeof(IPeakEnhancement)));
+        methodTypes.Remove(typeof(Altaxo.Science.Spectroscopy.PeakSearching.PeakSearchingNone));
+        methodTypes.Sort(new TypeSorter());
+
+        var methods = new SelectableListNodeList();
+        foreach (var methodType in methodTypes)
+        {
+          methods.Add(new SelectableListNode(methodType.Name, methodType, methodType == _doc.GetType()));
+        }
+        AvailablePeakEnhancementMethods = new ItemsController<Type>(methods, EhPeakEnhancementMethodTypeChanged);
+      }
+    }
+
+    private void CreateSubControllerPeakEnhancement()
+    {
+      var subController = (IMVCANController)Current.Gui.GetController(new object[] { _doc.PeakEnhancement }, typeof(IMVCANController));
+      if (subController?.GetType() == GetType())
+      {
+        subController = null;
+      }
+      if (subController is not null)
+      {
+        Current.Gui.FindAndAttachControlTo(subController);
+      }
+      SubControllerPeakEnhancement = subController;
+    }
+
+    private void EhPeakEnhancementMethodTypeChanged(Type newMethodType)
+    {
+      _doc = _doc with { PeakEnhancement = (IPeakEnhancement)Activator.CreateInstance(newMethodType) };
+      CreateSubControllerPeakEnhancement();
+    }
+
+    private class TypeSorter : IComparer<Type>
+    {
+      public int Compare(Type x, Type y)
+      {
+        var xn = x.Name.EndsWith("None");
+        var yn = y.Name.EndsWith("None");
+
+        if (xn != yn)
+        {
+          return xn ? -1 : 1;
+        }
+        else
+        {
+          return string.Compare(x.Name, y.Name);
+        }
       }
     }
 
