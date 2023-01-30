@@ -359,6 +359,7 @@ namespace Altaxo.Main.Commands
       ['<'] = '⋖',
       ['>'] = '⋗',
       ['|'] = '∣',
+      ['/'] = '⁄',
     };
 
     public static string MakeNameFileSystemCompatible(string newName)
