@@ -803,6 +803,10 @@
         <MenuItem id="OpenAllWorksheetsAndGraphs" label="${res:XML.MainMenu.WindowMenu.OpenAllWorksheetsAndGraphs}"
 					description="${res:XML.MainMenu.WindowMenu.OpenAllWorksheetsAndGraphs.Description}" class="Altaxo.Main.Commands.OpenAllWorksheetsAndGraphs" />
       </MenuItem>
+        <MenuItem id="ResizeMainWindow" label="Resize main window" type="Menu">
+            <MenuItem id="ResizeTo1920x1080" label="Resize to 1920x1080"
+                        description="" class="Altaxo.Main.Commands.ResizeMainWindowTo1920x1080" />
+        </MenuItem>
       <MenuItem id = "ContentBuilder"  type="Builder" class="Altaxo.Gui.Workbench.Commands.OpenContentsMenuBuilder" />
     </MenuItem>
     <!-- Help menu -->
