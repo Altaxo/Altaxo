@@ -84,7 +84,7 @@ namespace Altaxo.Gui.Graph.Plot.Data
       stb.AppendFormat(culture, "Independent variable: {0}, fed with: {1} {2}", thisFitFunction?.IndependentVariableName(0), thisIndepTransformation?.RepresentationAsOperator ?? string.Empty, "x_axis_value");
       stb.AppendLine();
       stb.AppendFormat(culture, "Displayed dependent variable[{0}]: {1} {2}", _doc.DependentVariableIndex, thisTransformation?.RepresentationAsOperator ?? string.Empty, thisFitFunction?.DependentVariableName(_doc.DependentVariableIndex));
-      stb.AppendFormat(culture, " ({0} was fitted to : {1})", fitEle.GetDependentVariableNameWithTransformation(_doc.FitElementIndex), fitEle.DependentVariables(_doc.DependentVariableIndex)?.FullName);
+      stb.AppendFormat(culture, " ({0} was fitted to : {1})", fitEle.GetDependentVariableNameWithTransformation(_doc.DependentVariableIndex), fitEle.DependentVariables(_doc.DependentVariableIndex)?.FullName);
       stb.AppendLine();
       stb.AppendLine();
 
