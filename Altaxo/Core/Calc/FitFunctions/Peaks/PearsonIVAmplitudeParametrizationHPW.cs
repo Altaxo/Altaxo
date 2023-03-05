@@ -108,19 +108,14 @@ namespace Altaxo.Calc.FitFunctions.Peaks
     /// <summary>
     /// Gets the order of the baseline polynomial.
     /// </summary>
-    public int OrderOfBaselinePolynomial
-    {
-      get { return _orderOfBaselinePolynomial; }
-    }
-
-
+    public int OrderOfBaselinePolynomial => _orderOfBaselinePolynomial;
 
     /// <summary>
     /// Creates a new instance with the provided order of the baseline polynomial.
     /// </summary>
     /// <param name="orderOfBaselinePolynomial">The order of the baseline polynomial. If set to -1, the baseline polynomial will be disabled.</param>
     /// <returns>New instance with the baseline polynomial of the provided order.</returns>
-    public IFitFunctionPeak WithOrderOfBaselinePolynomial(int orderOfBaselinePolynomial)
+    public PearsonIVAmplitudeParametrizationHPW WithOrderOfBaselinePolynomial(int orderOfBaselinePolynomial)
     {
       if (!(orderOfBaselinePolynomial >= -1))
         throw new ArgumentOutOfRangeException($"{nameof(orderOfBaselinePolynomial)} must be greater than or equal to 0, or -1 in order to deactivate it.");
@@ -133,6 +128,12 @@ namespace Altaxo.Calc.FitFunctions.Peaks
       {
         return this;
       }
+    }
+
+    /// <inheritdoc/>
+    IFitFunctionPeak IFitFunctionPeak.WithOrderOfBaselinePolynomial(int orderOfBaselinePolynomial)
+    {
+      return WithOrderOfBaselinePolynomial(orderOfBaselinePolynomial);
     }
 
     /// <summary>
@@ -158,6 +159,12 @@ namespace Altaxo.Calc.FitFunctions.Peaks
       {
         return this;
       }
+    }
+
+    /// <inheritdoc/>
+    IFitFunctionPeak IFitFunctionPeak.WithNumberOfTerms(int numberOfTerms)
+    {
+      return WithNumberOfTerms(numberOfTerms);
     }
 
     #region IFitFunction Members
@@ -366,12 +373,6 @@ namespace Altaxo.Calc.FitFunctions.Peaks
       // we evaluate the parameters here for a pure Lorentzian (m=1, v=0)
       var w = Math.Abs(0.5 * width * Math.Sqrt(relativeHeight / (1 - relativeHeight)));
       return new double[NumberOfParametersPerPeak] { height, position, w, 1, 0 }; // Parameters for the Lorentz limit
-    }
-
-    /// <inheritdoc/>
-    IFitFunctionPeak IFitFunctionPeak.WithNumberOfTerms(int numberOfTerms)
-    {
-      return new PearsonIVAmplitudeParametrizationHPW(numberOfTerms, this.OrderOfBaselinePolynomial);
     }
 
     /// <inheritdoc/>

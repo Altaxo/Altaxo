@@ -115,26 +115,14 @@ namespace Altaxo.Calc.FitFunctions.Peaks
     /// <summary>
     /// Gets the order of the baseline polynomial.
     /// </summary>
-    public int OrderOfBaselinePolynomial
-    {
-      get
-      {
-        return _orderOfBaselinePolynomial;
-      }
-      init
-      {
-        if (!(_orderOfBaselinePolynomial >= -1))
-          throw new ArgumentOutOfRangeException("Order of baseline polynomial must either be -1 (to disable it) or >=0", nameof(OrderOfBaselinePolynomial));
-        _orderOfBaselinePolynomial = value;
-      }
-    }
+    public int OrderOfBaselinePolynomial => _orderOfBaselinePolynomial;
 
     /// <summary>
     /// Creates a new instance with the provided order of the baseline polynomial.
     /// </summary>
     /// <param name="orderOfBaselinePolynomial">The order of the baseline polynomial. If set to -1, the baseline polynomial will be disabled.</param>
     /// <returns>New instance with the baseline polynomial of the provided order.</returns>
-    public IFitFunctionPeak WithOrderOfBaselinePolynomial(int orderOfBaselinePolynomial)
+    public GaussAmplitude WithOrderOfBaselinePolynomial(int orderOfBaselinePolynomial)
     {
       if (!(orderOfBaselinePolynomial >= -1))
         throw new ArgumentOutOfRangeException($"{nameof(orderOfBaselinePolynomial)} must be greater than or equal to 0, or -1 in order to deactivate it.");
@@ -149,22 +137,16 @@ namespace Altaxo.Calc.FitFunctions.Peaks
       }
     }
 
+    /// <inheritdoc/>
+    IFitFunctionPeak IFitFunctionPeak.WithOrderOfBaselinePolynomial(int orderOfBaselinePolynomial)
+    {
+      return WithOrderOfBaselinePolynomial(orderOfBaselinePolynomial);
+    }
+
     /// <summary>
     /// Gets the number of Gaussian terms.
     /// </summary>
-    public int NumberOfTerms
-    {
-      get
-      {
-        return _numberOfTerms;
-      }
-      init
-      {
-        if (!(value >= 1))
-          throw new ArgumentOutOfRangeException("Number of terms must be >=1", nameof(NumberOfTerms));
-        _numberOfTerms = value;
-      }
-    }
+    public int NumberOfTerms => _numberOfTerms;
 
     /// <summary>
     /// Creates a new instance with the provided number of Gaussian terms.
@@ -184,6 +166,12 @@ namespace Altaxo.Calc.FitFunctions.Peaks
       {
         return this;
       }
+    }
+
+    /// <inheritdoc/>
+    IFitFunctionPeak IFitFunctionPeak.WithNumberOfTerms(int numberOfTerms)
+    {
+      return WithNumberOfTerms(numberOfTerms);
     }
 
     /// <inheritdoc/>
@@ -384,12 +372,6 @@ namespace Altaxo.Calc.FitFunctions.Peaks
 
       double w = 0.5 * width / Math.Sqrt(-2 * Math.Log(relativeHeight));
       return new double[] { height, position, w };
-    }
-
-    /// <inheritdoc/>
-    IFitFunctionPeak IFitFunctionPeak.WithNumberOfTerms(int numberOfTerms)
-    {
-      return new GaussAmplitude { NumberOfTerms = numberOfTerms, OrderOfBaselinePolynomial = this.OrderOfBaselinePolynomial };
     }
 
     /// <inheritdoc/>

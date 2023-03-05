@@ -45,9 +45,9 @@ namespace Altaxo.Calc.FitFunctions.Peaks
     /// <summary>
     /// Creates a new fit function with the provided order of the baseline polynomial. A value of -1 disables the baseline.
     /// </summary>
-    /// <param name="baselinePolynomialOrder">The order of the baseline polynomial.</param>
+    /// <param name="orderOfBaselinePolynomial">The order of the baseline polynomial.</param>
     /// <returns>New fit function with the provided order of the baseline polynomial.</returns>
-    IFitFunctionPeak WithOrderOfBaselinePolynomial(int baselinePolynomialOrder);
+    IFitFunctionPeak WithOrderOfBaselinePolynomial(int orderOfBaselinePolynomial);
 
     /// <summary>
     /// Gets the order of the polynomial that is used for the baseline. A value of -1 disables the baseline.

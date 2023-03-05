@@ -113,16 +113,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
     /// <summary>
     /// Gets the order of the baseline polynomial.
     /// </summary>
-    public int OrderOfBaselinePolynomial
-    {
-      get { return _orderOfBaselinePolynomial; }
-      init
-      {
-        if (!(_orderOfBaselinePolynomial >= -1))
-          throw new ArgumentOutOfRangeException("Order of baseline polynomial must either be -1 (to disable it) or >=0", nameof(OrderOfBaselinePolynomial));
-        _orderOfBaselinePolynomial = value;
-      }
-    }
+    public int OrderOfBaselinePolynomial => _orderOfBaselinePolynomial;
 
 
     /// <summary>
@@ -130,7 +121,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
     /// </summary>
     /// <param name="orderOfBaselinePolynomial">The order of the baseline polynomial. If set to -1, the baseline polynomial will be disabled.</param>
     /// <returns>New instance with the baseline polynomial of the provided order.</returns>
-    public IFitFunctionPeak WithOrderOfBaselinePolynomial(int orderOfBaselinePolynomial)
+    public GaussArea WithOrderOfBaselinePolynomial(int orderOfBaselinePolynomial)
     {
       if (!(orderOfBaselinePolynomial >= -1))
         throw new ArgumentOutOfRangeException($"{nameof(orderOfBaselinePolynomial)} must be greater than or equal to 0, or -1 in order to deactivate it.");
@@ -145,21 +136,41 @@ namespace Altaxo.Calc.FitFunctions.Probability
       }
     }
 
+    /// <inheritdoc/>
+    IFitFunctionPeak IFitFunctionPeak.WithOrderOfBaselinePolynomial(int orderOfBaselinePolynomial)
+    {
+      return WithOrderOfBaselinePolynomial(orderOfBaselinePolynomial);
+    }
+
     /// <summary>
     /// Gets the number of Gaussian terms.
     /// </summary>
-    public int NumberOfTerms
+    public int NumberOfTerms => _numberOfTerms;
+
+    /// <summary>
+    /// Creates a new instance with the provided number of Gauss terms.
+    /// </summary>
+    /// <param name="numberOfTerms">The number of Gauss terms (should be greater than or equal to 1).</param>
+    /// <returns>New instance with the provided number of terms.</returns>
+    public GaussArea WithNumberOfTerms(int numberOfTerms)
     {
-      get
+      if (!(numberOfTerms >= 1))
+        throw new ArgumentOutOfRangeException($"{nameof(numberOfTerms)} must be greater than or equal to 1");
+
+      if (!(_numberOfTerms == numberOfTerms))
       {
-        return _numberOfTerms;
+        return new GaussArea(numberOfTerms, _orderOfBaselinePolynomial);
       }
-      init
+      else
       {
-        if (!(value >= 1))
-          throw new ArgumentOutOfRangeException("Number of terms must be >=1", nameof(NumberOfTerms));
-        _numberOfTerms = value;
+        return this;
       }
+    }
+
+    /// <inheritdoc/>
+    IFitFunctionPeak IFitFunctionPeak.WithNumberOfTerms(int numberOfTerms)
+    {
+      return WithNumberOfTerms(numberOfTerms);
     }
 
     /// <inheritdoc/>
@@ -352,13 +363,6 @@ namespace Altaxo.Calc.FitFunctions.Probability
       double w = 0.5 * width / Math.Sqrt(-2 * Math.Log(relativeHeight));
       return new double[] { height * w * Math.Sqrt(2 * Math.PI), position, w };
     }
-
-    /// <inheritdoc/>
-    IFitFunctionPeak IFitFunctionPeak.WithNumberOfTerms(int numberOfTerms)
-    {
-      return new GaussArea { NumberOfTerms = numberOfTerms, OrderOfBaselinePolynomial = this.OrderOfBaselinePolynomial };
-    }
-
 
     /// <inheritdoc/>
     public string[] ParameterNamesForOnePeak => new string[] { ParameterBaseName0, ParameterBaseName1, ParameterBaseName2 };

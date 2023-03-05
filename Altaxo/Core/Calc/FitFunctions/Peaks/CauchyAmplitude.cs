@@ -116,7 +116,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
     /// </summary>
     /// <param name="orderOfBaselinePolynomial">The order of the baseline polynomial. If set to -1, the baseline polynomial will be disabled.</param>
     /// <returns>New instance with the baseline polynomial of the provided order.</returns>
-    public IFitFunctionPeak WithOrderOfBaselinePolynomial(int orderOfBaselinePolynomial)
+    public CauchyAmplitude WithOrderOfBaselinePolynomial(int orderOfBaselinePolynomial)
     {
       if (!(orderOfBaselinePolynomial >= -1))
         throw new ArgumentOutOfRangeException($"{nameof(orderOfBaselinePolynomial)} must be greater than or equal to 0, or -1 in order to deactivate it.");
@@ -130,6 +130,13 @@ namespace Altaxo.Calc.FitFunctions.Peaks
         return this;
       }
     }
+
+    /// <inheritdoc/>
+    IFitFunctionPeak IFitFunctionPeak.WithOrderOfBaselinePolynomial(int orderOfBaselinePolynomial)
+    {
+      return WithOrderOfBaselinePolynomial(orderOfBaselinePolynomial);
+    }
+
 
     /// <summary>
     /// Gets the number of Cauchy (Lorentzian) terms.
@@ -154,6 +161,12 @@ namespace Altaxo.Calc.FitFunctions.Peaks
       {
         return this;
       }
+    }
+
+    /// <inheritdoc/>
+    IFitFunctionPeak IFitFunctionPeak.WithNumberOfTerms(int numberOfTerms)
+    {
+      return WithNumberOfTerms(numberOfTerms);
     }
 
     /// <inheritdoc/>
@@ -347,13 +360,6 @@ namespace Altaxo.Calc.FitFunctions.Peaks
 
     /// <inheritdoc/>
     public string[] ParameterNamesForOnePeak => new string[] { ParameterBaseName0, ParameterBaseName1, ParameterBaseName2 };
-
-
-    /// <inheritdoc/>
-    IFitFunctionPeak IFitFunctionPeak.WithNumberOfTerms(int numberOfTerms)
-    {
-      return new CauchyAmplitude(numberOfTerms, this.OrderOfBaselinePolynomial);
-    }
 
     /// <inheritdoc/>
     public double[] GetInitialParametersFromHeightPositionAndWidthAtRelativeHeight(double height, double position, double width, double relativeHeight)

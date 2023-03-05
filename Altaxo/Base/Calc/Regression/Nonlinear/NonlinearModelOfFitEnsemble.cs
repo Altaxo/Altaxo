@@ -213,6 +213,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
         }
 
         var parameters = new double[fitElement.NumberOfParameters];
+        var isParameterFixedByUser = new bool[fitElement.NumberOfParameters];
         var ys = new double[fitElement.NumberOfDependentVariables];
 
         // Calculate the number of used variables
@@ -563,7 +564,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
         if (allElementsHaveDerivative && fitEle.FitFunction is IFitFunctionWithDerivative fitFunctionWithDerivative)
         {
           var jacWrapper = new JacobianMapper(_jacobianValue, rowOffset, info.ParameterMapping);
-          fitFunctionWithDerivative.EvaluateDerivative(info.Xs, info.Parameters, info.DependentVariablesInUse, jacWrapper, null);
+          fitFunctionWithDerivative.EvaluateDerivative(info.Xs, info.Parameters, new bool[info.Parameters.Length], jacWrapper, info.DependentVariablesInUse);
           rowOffset += info.Xs.RowCount * info.NumberOfDependentVariablesInUse;
           ++JacobianEvaluations;
         }

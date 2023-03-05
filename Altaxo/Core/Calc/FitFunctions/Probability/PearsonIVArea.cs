@@ -107,19 +107,14 @@ namespace Altaxo.Calc.FitFunctions.Probability
     /// <summary>
     /// Gets the order of the baseline polynomial.
     /// </summary>
-    public int OrderOfBaselinePolynomial
-    {
-      get { return _orderOfBaselinePolynomial; }
-    }
-
-
+    public int OrderOfBaselinePolynomial => _orderOfBaselinePolynomial;
 
     /// <summary>
     /// Creates a new instance with the provided order of the baseline polynomial.
     /// </summary>
     /// <param name="orderOfBaselinePolynomial">The order of the baseline polynomial. If set to -1, the baseline polynomial will be disabled.</param>
     /// <returns>New instance with the baseline polynomial of the provided order.</returns>
-    public IFitFunctionPeak WithOrderOfBaselinePolynomial(int orderOfBaselinePolynomial)
+    public PearsonIVArea WithOrderOfBaselinePolynomial(int orderOfBaselinePolynomial)
     {
       if (!(orderOfBaselinePolynomial >= -1))
         throw new ArgumentOutOfRangeException($"{nameof(orderOfBaselinePolynomial)} must be greater than or equal to 0, or -1 in order to deactivate it.");
@@ -132,6 +127,12 @@ namespace Altaxo.Calc.FitFunctions.Probability
       {
         return this;
       }
+    }
+
+    /// <inheritdoc/>
+    IFitFunctionPeak IFitFunctionPeak.WithOrderOfBaselinePolynomial(int orderOfBaselinePolynomial)
+    {
+      return WithOrderOfBaselinePolynomial(orderOfBaselinePolynomial);
     }
 
     /// <summary>
@@ -157,6 +158,12 @@ namespace Altaxo.Calc.FitFunctions.Probability
       {
         return this;
       }
+    }
+
+    /// <inheritdoc/>
+    IFitFunctionPeak IFitFunctionPeak.WithNumberOfTerms(int numberOfTerms)
+    {
+      return WithNumberOfTerms(numberOfTerms);
     }
 
     #region IFitFunction Members
@@ -364,12 +371,6 @@ namespace Altaxo.Calc.FitFunctions.Probability
       var area = height * w * Math.PI;
 
       return new double[NumberOfParametersPerPeak] { area, position, w, 1, 0 }; // Parameters for the Lorentz limit
-    }
-
-    /// <inheritdoc/>
-    IFitFunctionPeak IFitFunctionPeak.WithNumberOfTerms(int numberOfTerms)
-    {
-      return new PearsonIVArea(numberOfTerms, this.OrderOfBaselinePolynomial);
     }
 
     /// <inheritdoc/>

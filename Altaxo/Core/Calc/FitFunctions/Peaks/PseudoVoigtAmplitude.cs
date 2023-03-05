@@ -104,26 +104,14 @@ namespace Altaxo.Calc.FitFunctions.Peaks
     /// <summary>
     /// Gets the order of the baseline polynomial.
     /// </summary>
-    public int OrderOfBaselinePolynomial
-    {
-      get { return _orderOfBaselinePolynomial; }
-      /*
-      init {
-        if (!(_orderOfBackgroundPolynomial >= -1))
-          throw new ArgumentOutOfRangeException("Order of baseline polynomial must either be -1 (to disable it) or >=0", nameof(OrderOfBackgroundPolynomial));
-        _orderOfBackgroundPolynomial = value;
-      }
-      */
-    }
-
-
+    public int OrderOfBaselinePolynomial => _orderOfBaselinePolynomial;
 
     /// <summary>
     /// Creates a new instance with the provided order of the baseline polynomial.
     /// </summary>
     /// <param name="orderOfBaselinePolynomial">The order of the baseline polynomial. If set to -1, the baseline polynomial will be disabled.</param>
     /// <returns>New instance with the baseline polynomial of the provided order.</returns>
-    public IFitFunctionPeak WithOrderOfBaselinePolynomial(int orderOfBaselinePolynomial)
+    public PseudoVoigtAmplitude WithOrderOfBaselinePolynomial(int orderOfBaselinePolynomial)
     {
       if (!(orderOfBaselinePolynomial >= -1))
         throw new ArgumentOutOfRangeException($"{nameof(orderOfBaselinePolynomial)} must be greater than or equal to 0, or -1 in order to deactivate it.");
@@ -137,6 +125,13 @@ namespace Altaxo.Calc.FitFunctions.Peaks
         return this;
       }
     }
+
+    /// <inheritdoc/>
+    IFitFunctionPeak IFitFunctionPeak.WithOrderOfBaselinePolynomial(int orderOfBaselinePolynomial)
+    {
+      return WithOrderOfBaselinePolynomial(orderOfBaselinePolynomial);
+    }
+
 
     /// <summary>
     /// Gets the number of Voigt terms.
@@ -162,6 +157,13 @@ namespace Altaxo.Calc.FitFunctions.Peaks
         return this;
       }
     }
+
+    /// <inheritdoc/>
+    IFitFunctionPeak IFitFunctionPeak.WithNumberOfTerms(int numberOfTerms)
+    {
+      return WithNumberOfTerms(numberOfTerms);
+    }
+
 
     #region IFitFunction Members
 
@@ -359,11 +361,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
       return new double[NumberOfParametersPerPeak] { height, position, w, 0 }; // Parameters for the Gaussian limit
     }
 
-    /// <inheritdoc/>
-    IFitFunctionPeak IFitFunctionPeak.WithNumberOfTerms(int numberOfTerms)
-    {
-      return new PseudoVoigtAmplitude(numberOfTerms, this.OrderOfBaselinePolynomial);
-    }
+
 
     /// <inheritdoc/>
     public (IReadOnlyList<double?>? LowerBounds, IReadOnlyList<double?>? UpperBounds) GetParameterBoundariesForPositivePeaks(double? minimalPosition = null, double? maximalPosition = null, double? minimalFWHM = null, double? maximalFWHM = null)
