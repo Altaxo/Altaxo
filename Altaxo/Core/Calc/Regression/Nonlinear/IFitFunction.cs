@@ -123,5 +123,25 @@ namespace Altaxo.Calc.Regression.Nonlinear
     /// Occurs when the fit function changed, including number or name of parameters, independent variables, dependent variables, or the scaling.
     /// </summary>
     event EventHandler? Changed;
+
+    /// <summary>
+    /// Gets the parameter boundaries that are really a hard limit, i.e. outside those limits,
+    /// the function would probably evaluate NaN values, or makes no sense.
+    /// </summary>
+    /// <returns>The lower and upper hard limits for the parameter. If no parameter has a lower limit or an upper
+    /// limit, the returned list will be null. Of only some of the parameters have no limit, than
+    /// that element will be null.</returns>
+    (IReadOnlyList<double?>? LowerBounds, IReadOnlyList<double?>? UpperBounds) GetParameterBoundariesHardLimit();
+
+    /// <summary>
+    /// Gets the intended parameter boundaries. This are soft limits, boundaries
+    /// so that the intended purpose of the fit function is fullfilled.
+    /// Example: in the exponential decay Exp(-a*t) a is intended to be positive. This is a soft limit,
+    /// and not a hard limit, because a could be also negative, and the fit nevertheless would succeed.
+    /// </summary>
+    /// <returns>The lower and upper soft limits for the parameter. If no parameter has a lower limit or an upper
+    /// limit, the returned list will be null. Of only some of the parameters have no limit, than
+    /// that element will be null.</returns>
+    (IReadOnlyList<double?>? LowerBounds, IReadOnlyList<double?>? UpperBounds) GetParameterBoundariesSoftLimit();
   }
 }

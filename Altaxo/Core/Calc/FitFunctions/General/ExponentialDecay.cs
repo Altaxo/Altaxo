@@ -227,5 +227,28 @@ namespace Altaxo.Calc.FitFunctions.General
         }
       }
     }
+
+    /// <inheritdoc/>
+    public (IReadOnlyList<double?>? LowerBounds, IReadOnlyList<double?>? UpperBounds) GetParameterBoundariesHardLimit()
+    {
+      return (null, null);
+    }
+
+    /// <inheritdoc/>
+    public (IReadOnlyList<double?>? LowerBounds, IReadOnlyList<double?>? UpperBounds) GetParameterBoundariesSoftLimit()
+    {
+      var lowerBounds = new double?[NumberOfParameters];
+      var upperBounds = new double?[NumberOfParameters];
+
+      for (int i = 0, j = 1; i < NumberOfTerms; ++i, j += 2)
+      {
+        lowerBounds[j + 0] = 0; // Step amplitude
+        upperBounds[j + 0] = null;
+
+        lowerBounds[j + 1] = double.Epsilon; // characteristic time
+        upperBounds[j + 1] = null;
+      }
+      return (lowerBounds, upperBounds);
+    }
   }
 }

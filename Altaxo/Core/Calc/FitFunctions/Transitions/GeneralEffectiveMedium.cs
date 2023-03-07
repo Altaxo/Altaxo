@@ -315,6 +315,18 @@ namespace Altaxo.Calc.FitFunctions.Transitions
     }
 
     #endregion IFitFunction Members
+
+    /// <inheritdoc/>
+    public virtual (IReadOnlyList<double?>? LowerBounds, IReadOnlyList<double?>? UpperBounds) GetParameterBoundariesHardLimit()
+    {
+      return (null, null);
+    }
+
+    /// <inheritdoc/>
+    public virtual (IReadOnlyList<double?>? LowerBounds, IReadOnlyList<double?>? UpperBounds) GetParameterBoundariesSoftLimit()
+    {
+      return (null, null);
+    }
   }
 
   /// <summary>

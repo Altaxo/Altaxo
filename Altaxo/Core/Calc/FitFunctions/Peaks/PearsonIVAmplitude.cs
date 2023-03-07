@@ -38,7 +38,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
   /// </summary>
   /// <remarks>See <see href="https://en.wikipedia.org/wiki/Pearson_distribution#The_Pearson_type_IV_distribution"/>.</remarks>
   [FitFunctionClass]
-  public class PearsonIVAmplitude : IFitFunctionWithDerivative, IFitFunctionPeak, IImmutable
+  public record PearsonIVAmplitude : IFitFunctionWithDerivative, IFitFunctionPeak, IImmutable
   {
     private const string ParameterBaseName0 = "a";
     private const string ParameterBaseName1 = "xc";
@@ -93,7 +93,12 @@ namespace Altaxo.Calc.FitFunctions.Peaks
         throw new ArgumentOutOfRangeException("Order of baseline polynomial has to be greater than or equal to zero, or -1 in order to deactivate it.");
       if (!(_numberOfTerms >= 1))
         throw new ArgumentOutOfRangeException("Number of terms has to be greater than or equal to 1");
+    }
 
+    /// <inheritdoc/>
+    public override string ToString()
+    {
+      return $"{this.GetType().Name}\r\nNumberOfTerms={NumberOfTerms}\r\nOrderOfBaseline={OrderOfBaselinePolynomial}";
     }
 
     [FitFunctionCreator("PearsonIVAmplitude", "Peaks", 1, 1, NumberOfParametersPerPeak)]
@@ -104,66 +109,43 @@ namespace Altaxo.Calc.FitFunctions.Peaks
     }
 
     /// <summary>
-    /// Gets the order of the baseline polynomial.
+    /// Gets/sets the order of the baseline polynomial.
     /// </summary>
-    public int OrderOfBaselinePolynomial => _orderOfBaselinePolynomial;
-
-    /// <summary>
-    /// Creates a new instance with the provided order of the baseline polynomial.
-    /// </summary>
-    /// <param name="orderOfBaselinePolynomial">The order of the baseline polynomial. If set to -1, the baseline polynomial will be disabled.</param>
-    /// <returns>New instance with the baseline polynomial of the provided order.</returns>
-    public PearsonIVAmplitude WithOrderOfBaselinePolynomial(int orderOfBaselinePolynomial)
+    public int OrderOfBaselinePolynomial
     {
-      if (!(orderOfBaselinePolynomial >= -1))
-        throw new ArgumentOutOfRangeException($"{nameof(orderOfBaselinePolynomial)} must be greater than or equal to 0, or -1 in order to deactivate it.");
-
-      if (!(_orderOfBaselinePolynomial == orderOfBaselinePolynomial))
+      get => _orderOfBaselinePolynomial;
+      init
       {
-        return new PearsonIVAmplitude(_numberOfTerms, orderOfBaselinePolynomial);
-      }
-      else
-      {
-        return this;
+        if (!(value >= -1))
+          throw new ArgumentOutOfRangeException(nameof(OrderOfBaselinePolynomial), $"{nameof(OrderOfBaselinePolynomial)} must be greater than or equal to 0, or -1 in order to deactivate it.");
+        _orderOfBaselinePolynomial = value;
       }
     }
 
     /// <inheritdoc/>
     IFitFunctionPeak IFitFunctionPeak.WithOrderOfBaselinePolynomial(int orderOfBaselinePolynomial)
     {
-      return WithOrderOfBaselinePolynomial(orderOfBaselinePolynomial);
+      return this with { OrderOfBaselinePolynomial = orderOfBaselinePolynomial };
     }
 
-
     /// <summary>
-    /// Gets the number of Voigt terms.
+    /// Gets/sets the number of peak terms.
     /// </summary>
-    public int NumberOfTerms => _numberOfTerms;
-
-    /// <summary>
-    /// Creates a new instance with the provided number of Lorentzian (Cauchy) terms.
-    /// </summary>
-    /// <param name="numberOfTerms">The number of Lorentzian (Cauchy) terms (should be greater than or equal to 1).</param>
-    /// <returns>New instance with the provided number of Lorentzian (Cauchy) terms.</returns>
-    public PearsonIVAmplitude WithNumberOfTerms(int numberOfTerms)
+    public int NumberOfTerms
     {
-      if (!(numberOfTerms >= 1))
-        throw new ArgumentOutOfRangeException($"{nameof(numberOfTerms)} must be greater than or equal to 1");
-
-      if (!(_numberOfTerms == numberOfTerms))
+      get => _numberOfTerms;
+      init
       {
-        return new PearsonIVAmplitude(numberOfTerms, _orderOfBaselinePolynomial);
-      }
-      else
-      {
-        return this;
+        if (!(value >= 1))
+          throw new ArgumentOutOfRangeException(nameof(NumberOfTerms), $"{nameof(NumberOfTerms)} must be greater than or equal to 1");
+        _numberOfTerms = value;
       }
     }
 
     /// <inheritdoc/>
     IFitFunctionPeak IFitFunctionPeak.WithNumberOfTerms(int numberOfTerms)
     {
-      return WithNumberOfTerms(numberOfTerms);
+      return this with { NumberOfTerms = numberOfTerms };
     }
 
     #region IFitFunction Members
@@ -372,11 +354,12 @@ namespace Altaxo.Calc.FitFunctions.Peaks
       return new double[NumberOfParametersPerPeak] { height, position, w, 1, 0 }; // Parameters for the Lorentz limit
     }
 
+    const double DefaultMinWidth = 1E-81; // Math.Pow(double.Epsilon, 0.25);
+    const double DefaultMaxWidth = 1E+77; // Math.Pow(double.MaxValue, 0.25);
+
     /// <inheritdoc/>
     public (IReadOnlyList<double?>? LowerBounds, IReadOnlyList<double?>? UpperBounds) GetParameterBoundariesForPositivePeaks(double? minimalPosition = null, double? maximalPosition = null, double? minimalFWHM = null, double? maximalFWHM = null)
     {
-      const double DefaultMinWidth = 1.4908919308538355E-81; // Math.Pow(double.Epsilon, 0.25);
-      const double DefaultMaxWidth = 1.157920892373162E+77; // Math.Pow(double.MaxValue, 0.25);
 
       var lowerBounds = new double?[NumberOfParameters];
       var upperBounds = new double?[NumberOfParameters];
@@ -400,6 +383,32 @@ namespace Altaxo.Calc.FitFunctions.Peaks
       }
 
       return (lowerBounds, upperBounds);
+    }
+
+    /// <inheritdoc/>
+    public (IReadOnlyList<double?>? LowerBounds, IReadOnlyList<double?>? UpperBounds) GetParameterBoundariesHardLimit()
+    {
+      var lowerBounds = new double?[NumberOfParameters];
+      var upperBounds = new double?[NumberOfParameters];
+
+      for (int i = 0, j = 0; i < NumberOfTerms; ++i, j += NumberOfParametersPerPeak)
+      {
+        lowerBounds[j + 2] = DefaultMinWidth;
+        upperBounds[j + 2] = DefaultMaxWidth;
+
+        lowerBounds[j + 3] = 1 / 1024.0;
+        upperBounds[j + 3] = 1024;
+
+        lowerBounds[j + 4] = -1024;
+        upperBounds[j + 4] = 1024;
+      }
+      return (lowerBounds, upperBounds);
+    }
+
+    /// <inheritdoc/>
+    public (IReadOnlyList<double?>? LowerBounds, IReadOnlyList<double?>? UpperBounds) GetParameterBoundariesSoftLimit()
+    {
+      return (null, null);
     }
 
 

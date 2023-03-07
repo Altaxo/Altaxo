@@ -361,5 +361,18 @@ namespace Altaxo.Calc.FitFunctions.Transitions
         }
       }
     }
+
+    /// <inheritdoc/>
+    public (IReadOnlyList<double?>? LowerBounds, IReadOnlyList<double?>? UpperBounds) GetParameterBoundariesHardLimit()
+    {
+      return (null, null);
+    }
+
+    /// <inheritdoc/>
+    public (IReadOnlyList<double?>? LowerBounds, IReadOnlyList<double?>? UpperBounds) GetParameterBoundariesSoftLimit()
+    {
+      return (null, null);
+    }
+
   }
 }

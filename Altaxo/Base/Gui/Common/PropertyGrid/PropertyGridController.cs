@@ -29,8 +29,6 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Numerics;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using Altaxo.Gui.Common.BasicTypes;
 
 namespace Altaxo.Gui.Common.PropertyGrid
@@ -40,7 +38,7 @@ namespace Altaxo.Gui.Common.PropertyGrid
   }
 
   [ExpectedTypeOfView(typeof(IPropertyGridView))]
-  public class PropertyGridController : MVCANControllerEditImmutableDocBase<object, IPropertyGridView> 
+  public class PropertyGridController : MVCANControllerEditImmutableDocBase<object, IPropertyGridView>
   {
     private Type TypeOfDocument { get; set; }
 
@@ -127,7 +125,7 @@ namespace Altaxo.Gui.Common.PropertyGrid
 
       base.Initialize(initData);
 
-      if(initData)
+      if (initData)
       {
         TypeOfDocument = _doc.GetType();
         InitializeValueInfos();
@@ -139,7 +137,7 @@ namespace Altaxo.Gui.Common.PropertyGrid
       var doctype = _doc.GetType();
 
       // Special treatment is neccessary if our document itself is a basic type.
-      if(IsBasicType(doctype)) // if our document is a basic type, then we can add a controller directly
+      if (IsBasicType(doctype)) // if our document is a basic type, then we can add a controller directly
       {
         if (TryGetControllerAndControl(_doc, doctype) is { } controller)
         {
@@ -148,6 +146,7 @@ namespace Altaxo.Gui.Common.PropertyGrid
         }
       }
 
+      var namesOfWriteableProperties = new HashSet<string>();
       var propertyInfos = doctype.GetProperties();
       foreach (var propertyInfo in propertyInfos.Where(x => x.CanWrite && x.CanRead)) // First, we are interested in the writable properties
       {
@@ -161,6 +160,7 @@ namespace Altaxo.Gui.Common.PropertyGrid
             valueInfo.Category = attr.Category;
           }
           ValueInfos.Add(valueInfo);
+          namesOfWriteableProperties.Add(propertyInfo.Name);
         }
       }
 
@@ -178,7 +178,9 @@ namespace Altaxo.Gui.Common.PropertyGrid
 
         var parameterName = methodInfo.Name.Substring("With".Length);
         if (string.IsNullOrEmpty(parameterName))
-          continue;
+          continue; // no name of the method
+        if (namesOfWriteableProperties.Contains(parameterName))
+          continue; // no need for the With.. method, we already have a writeable property
 
         var parameterType = methodParameters[0].ParameterType;
 
@@ -207,11 +209,11 @@ namespace Altaxo.Gui.Common.PropertyGrid
     /// </summary>
     protected virtual void GroupValueInfosByCategory()
     {
-      for(int i=0;i<ValueInfos.Count;++i)
+      for (int i = 0; i < ValueInfos.Count; ++i)
       {
         var currentCategory = ValueInfos[i].Category;
         var currentInsertPosition = i + 1;
-        for (int j = i + 1; j < ValueInfos.Count; ++j) 
+        for (int j = i + 1; j < ValueInfos.Count; ++j)
         {
           if (ValueInfos[j].Category == currentCategory)
           {
@@ -268,7 +270,7 @@ namespace Altaxo.Gui.Common.PropertyGrid
         controller = new BasicTypes.TimeSpanValueController((TimeSpan)(value ?? Activator.CreateInstance(valueType)!));
       else if (valueType == typeof(string))
         controller = new StringValueController((string)(value ?? string.Empty));
-      
+
       if (controller is not null)
       {
         Current.Gui.FindAndAttachControlTo(controller);
@@ -331,6 +333,13 @@ namespace Altaxo.Gui.Common.PropertyGrid
       }
       else // not a basic type
       {
+        // if the type is a record, it has a special clone method
+        var cloneMethodOfRecordTypes = _doc.GetType().GetMethod("<Clone>$");
+        if (cloneMethodOfRecordTypes is not null)
+        {
+          _doc = cloneMethodOfRecordTypes.Invoke(_doc, null);
+        }
+
         for (int i = 0; i < ValueInfos.Count; ++i)
         {
           var valueInfo = ValueInfos[i];
@@ -354,18 +363,18 @@ namespace Altaxo.Gui.Common.PropertyGrid
               _doc = newdoc;
             }
           }
-          catch(TargetInvocationException ex1)
+          catch (TargetInvocationException ex1)
           {
             Current.Gui.ErrorMessageBox(ex1.InnerException.Message, "Error applying values");
             return ApplyEnd(false, disposeController);
           }
-          catch(Exception ex)
+          catch (Exception ex)
           {
             Current.Gui.ErrorMessageBox(ex.Message, "Error applying values");
             return ApplyEnd(false, disposeController);
           }
         }
-        
+
         return ApplyEnd(true, disposeController);
       }
     }

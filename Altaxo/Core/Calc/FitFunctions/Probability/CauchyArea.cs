@@ -40,7 +40,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
   /// Reference: <see href="https://en.wikipedia.org/wiki/Cauchy_distribution"/>
   /// </remarks>
   [FitFunctionClass]
-  public class CauchyArea : IFitFunctionWithDerivative, IImmutable
+  public record CauchyArea : IFitFunctionWithDerivative, IImmutable
   {
     private const string ParameterBaseName0 = "A";
     private const string ParameterBaseName1 = "xc";
@@ -51,7 +51,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
     private readonly int _numberOfTerms;
 
     /// <summary>The order of the background polynomial.</summary>
-    private readonly int _orderOfBackgroundPolynomial;
+    private readonly int _orderOfBaselinePolynomial;
 
     #region Serialization
 
@@ -67,7 +67,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
       {
         var s = (CauchyArea)obj;
         info.AddValue("NumberOfTerms", s._numberOfTerms);
-        info.AddValue("OrderOfBackgroundPolynomial", s._orderOfBackgroundPolynomial);
+        info.AddValue("OrderOfBackgroundPolynomial", s._orderOfBaselinePolynomial);
       }
 
       public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
@@ -83,20 +83,26 @@ namespace Altaxo.Calc.FitFunctions.Probability
     public CauchyArea()
     {
       _numberOfTerms = 1;
-      _orderOfBackgroundPolynomial = 0;
+      _orderOfBaselinePolynomial = 0;
     }
 
     public CauchyArea(int numberOfTerms, int orderOfBackgroundPolynomial)
     {
       _numberOfTerms = numberOfTerms;
-      _orderOfBackgroundPolynomial = orderOfBackgroundPolynomial;
+      _orderOfBaselinePolynomial = orderOfBackgroundPolynomial;
 
-      if (!(_orderOfBackgroundPolynomial >= -1))
+      if (!(_orderOfBaselinePolynomial >= -1))
         throw new ArgumentOutOfRangeException("Order of background polynomial has to be greater than or equal to zero, or -1 in order to deactivate it.");
       if (!(_numberOfTerms >= 1))
         throw new ArgumentOutOfRangeException("Number of peak terms has to be greater than or equal to 1");
-
     }
+
+    /// <inheritdoc/>
+    public override string ToString()
+    {
+      return $"{this.GetType().Name}\r\nNumberOfTerms={NumberOfTerms}\r\nOrderOfBaseline={OrderOfBaselinePolynomial}";
+    }
+
 
     [FitFunctionCreator("LorentzianArea", "Peaks", 1, 1, 4)]
     [FitFunctionCreator("LorentzianArea", "General", 1, 1, 4)]
@@ -114,54 +120,47 @@ namespace Altaxo.Calc.FitFunctions.Probability
     }
 
     /// <summary>
-    /// Gets the order of the background polynomial.
+    /// Gets/sets the order of the baseline polynomial.
     /// </summary>
-    public int OrderOfBackgroundPolynomial => _orderOfBackgroundPolynomial;
-
-    /// <summary>
-    /// Creates a new instance with the provided order of the background polynomial.
-    /// </summary>
-    /// <param name="orderOfBackgroundPolynomial">The order of the background polynomial. If set to -1, the background polynomial will be disabled.</param>
-    /// <returns>New instance with the background polynomial of the provided order.</returns>
-    public CauchyArea WithOrderOfBackgroundPolynomial(int orderOfBackgroundPolynomial)
+    public int OrderOfBaselinePolynomial
     {
-      if (!(orderOfBackgroundPolynomial >= -1))
-        throw new ArgumentOutOfRangeException($"{nameof(orderOfBackgroundPolynomial)} must be greater than or equal to 0, or -1 in order to deactivate it.");
-
-      if (!(_orderOfBackgroundPolynomial == orderOfBackgroundPolynomial))
+      get => _orderOfBaselinePolynomial;
+      init
       {
-        return new CauchyArea(_numberOfTerms, orderOfBackgroundPolynomial);
-      }
-      else
-      {
-        return this;
+        if (!(value >= -1))
+          throw new ArgumentOutOfRangeException(nameof(OrderOfBaselinePolynomial), $"{nameof(OrderOfBaselinePolynomial)} must be greater than or equal to 0, or -1 in order to deactivate it.");
+        _orderOfBaselinePolynomial = value;
       }
     }
 
-    /// <summary>
-    /// Gets the number of Cauchy (Lorentzian) terms.
-    /// </summary>
-    public int NumberOfTerms => _numberOfTerms;
-
-    /// <summary>
-    /// Creates a new instance with the provided number of Lorentzian (Cauchy) terms.
-    /// </summary>
-    /// <param name="numberOfTerms">The number of Lorentzian (Cauchy) terms (should be greater than or equal to 1).</param>
-    /// <returns>New instance with the provided number of Lorentzian (Cauchy) terms.</returns>
-    public CauchyArea WithNumberOfTerms(int numberOfTerms)
+    /// <inheritdoc/>
+    CauchyArea WithOrderOfBaselinePolynomial(int orderOfBaselinePolynomial)
     {
-      if (!(numberOfTerms >= 1))
-        throw new ArgumentOutOfRangeException($"{nameof(numberOfTerms)} must be greater than or equal to 1");
+      return this with { OrderOfBaselinePolynomial = orderOfBaselinePolynomial };
+    }
 
-      if (!(_numberOfTerms == numberOfTerms))
+    /// <summary>
+    /// Gets/sets the number of peak terms.
+    /// </summary>
+    public int NumberOfTerms
+    {
+      get => _numberOfTerms;
+      init
       {
-        return new CauchyArea(numberOfTerms, _orderOfBackgroundPolynomial);
-      }
-      else
-      {
-        return this;
+        if (!(value >= 1))
+          throw new ArgumentOutOfRangeException(nameof(NumberOfTerms), $"{nameof(NumberOfTerms)} must be greater than or equal to 1");
+        _numberOfTerms = value;
       }
     }
+
+    /// <inheritdoc/>
+    CauchyArea WithNumberOfTerms(int numberOfTerms)
+    {
+      return this with { NumberOfTerms = numberOfTerms };
+    }
+
+    const double DefaultMinWidth = 1E-81; // Math.Pow(double.Epsilon, 0.25);
+    const double DefaultMaxWidth = 1E+77; // Math.Pow(double.MaxValue, 0.25);
 
     /// <inheritdoc/>
     public (IReadOnlyList<double?>? LowerBounds, IReadOnlyList<double?>? UpperBounds) GetParameterBoundariesForPositivePeaks(double? minimalPosition = null, double? maximalPosition = null, double? minimalFWHM = null, double? maximalFWHM = null)
@@ -177,11 +176,31 @@ namespace Altaxo.Calc.FitFunctions.Probability
         lowerBounds[j + 1] = minimalPosition;
         upperBounds[j + 1] = maximalPosition;
 
-        lowerBounds[j + 2] = minimalFWHM.HasValue ? minimalFWHM.Value / 2 : Math.Sqrt(double.Epsilon); // minimal width is 0
-        upperBounds[j + 2] = maximalFWHM.HasValue ? maximalFWHM.Value / 2 : null;
+        lowerBounds[j + 2] = minimalFWHM.HasValue ? minimalFWHM.Value / 2 : DefaultMinWidth; // minimal width is 0
+        upperBounds[j + 2] = maximalFWHM.HasValue ? maximalFWHM.Value / 2 : DefaultMaxWidth;
       }
 
       return (lowerBounds, upperBounds);
+    }
+
+    /// <inheritdoc/>
+    public (IReadOnlyList<double?>? LowerBounds, IReadOnlyList<double?>? UpperBounds) GetParameterBoundariesHardLimit()
+    {
+      var lowerBounds = new double?[NumberOfParameters];
+      var upperBounds = new double?[NumberOfParameters];
+
+      for (int i = 0, j = 0; i < NumberOfTerms; ++i, j += NumberOfParametersPerPeak)
+      {
+        lowerBounds[j + 2] = DefaultMinWidth;
+        upperBounds[j + 2] = DefaultMaxWidth;
+      }
+      return (lowerBounds, upperBounds);
+    }
+
+    /// <inheritdoc/>
+    public (IReadOnlyList<double?>? LowerBounds, IReadOnlyList<double?>? UpperBounds) GetParameterBoundariesSoftLimit()
+    {
+      return (null, null);
     }
 
     #region IFitFunction Members
@@ -206,7 +225,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
     {
       get
       {
-        return _numberOfTerms * NumberOfParametersPerPeak + _orderOfBackgroundPolynomial + 1;
+        return _numberOfTerms * NumberOfParametersPerPeak + _orderOfBaselinePolynomial + 1;
       }
     }
 
@@ -264,12 +283,12 @@ namespace Altaxo.Calc.FitFunctions.Probability
         sumTerms += P[j] / (Math.PI * P[j + 2] * (1 + x * x));
       }
 
-      if (_orderOfBackgroundPolynomial >= 0)
+      if (_orderOfBaselinePolynomial >= 0)
       {
         int offset = NumberOfParametersPerPeak * _numberOfTerms;
         // evaluation of terms x^0 .. x^n
-        sumPolynomial = P[_orderOfBackgroundPolynomial + offset];
-        for (int i = _orderOfBackgroundPolynomial - 1; i >= 0; i--)
+        sumPolynomial = P[_orderOfBaselinePolynomial + offset];
+        for (int i = _orderOfBaselinePolynomial - 1; i >= 0; i--)
         {
           sumPolynomial *= X[0];
           sumPolynomial += P[i + offset];
@@ -293,12 +312,12 @@ namespace Altaxo.Calc.FitFunctions.Probability
           sumTerms += P[j] / (Math.PI * P[j + 2] * (1 + arg * arg));
         }
 
-        if (_orderOfBackgroundPolynomial >= 0)
+        if (_orderOfBaselinePolynomial >= 0)
         {
           int offset = NumberOfParametersPerPeak * _numberOfTerms;
           // evaluation of terms x^0 .. x^n
-          sumPolynomial = P[_orderOfBackgroundPolynomial + offset];
-          for (int i = _orderOfBackgroundPolynomial - 1; i >= 0; i--)
+          sumPolynomial = P[_orderOfBaselinePolynomial + offset];
+          for (int i = _orderOfBaselinePolynomial - 1; i >= 0; i--)
           {
             sumPolynomial *= x;
             sumPolynomial += P[i + offset];
@@ -337,10 +356,10 @@ namespace Altaxo.Calc.FitFunctions.Probability
           DY[r, j + 2] = term * P[j] / P[j + 2] * (2 * arg * arg * t1 - 1);
         }
 
-        if (_orderOfBackgroundPolynomial >= 0)
+        if (_orderOfBaselinePolynomial >= 0)
         {
           double xn = 1;
-          for (int i = 0, j = NumberOfParametersPerPeak * _numberOfTerms; i <= _orderOfBackgroundPolynomial; ++i, ++j)
+          for (int i = 0, j = NumberOfParametersPerPeak * _numberOfTerms; i <= _orderOfBaselinePolynomial; ++i, ++j)
           {
             DY[r, j] = xn;
             xn *= x;

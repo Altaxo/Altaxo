@@ -121,7 +121,19 @@ namespace Altaxo.Calc.Regression.Nonlinear
         Changed?.Invoke(this, EventArgs.Empty);
       }
 
+      (IReadOnlyList<double?>? LowerBounds, IReadOnlyList<double?>? UpperBounds) IFitFunction.GetParameterBoundariesHardLimit()
+      {
+        return (null, null);
+      }
+
+      (IReadOnlyList<double?>? LowerBounds, IReadOnlyList<double?>? UpperBounds) IFitFunction.GetParameterBoundariesSoftLimit()
+      {
+        return (null, null);
+      }
+
       #endregion IFitFunction Members
+
+
     }
 
     #endregion Inner classes

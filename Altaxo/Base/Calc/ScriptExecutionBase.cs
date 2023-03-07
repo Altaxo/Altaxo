@@ -1389,6 +1389,16 @@ namespace Altaxo.Calc
     public event EventHandler? Changed;
 
     #endregion Change event
+
+    public (IReadOnlyList<double?>? LowerBounds, IReadOnlyList<double?>? UpperBounds) GetParameterBoundariesHardLimit()
+    {
+      return (null, null);
+    }
+
+    public (IReadOnlyList<double?>? LowerBounds, IReadOnlyList<double?>? UpperBounds) GetParameterBoundariesSoftLimit()
+    {
+      return (null, null);
+    }
   }
 
   /// <summary>

@@ -122,5 +122,18 @@ namespace Altaxo.Calc.FitFunctions.Kinetics
         FV[rd++] = rate * P[1];
       }
     }
+
+    /// <inheritdoc/>
+    public (IReadOnlyList<double?>? LowerBounds, IReadOnlyList<double?>? UpperBounds) GetParameterBoundariesHardLimit()
+    {
+      return (null, null);
+    }
+
+    /// <inheritdoc/>
+    public (IReadOnlyList<double?>? LowerBounds, IReadOnlyList<double?>? UpperBounds) GetParameterBoundariesSoftLimit()
+    {
+      return (null, null);
+    }
+
   }
 }

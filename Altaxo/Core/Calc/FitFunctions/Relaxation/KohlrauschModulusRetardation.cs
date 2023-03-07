@@ -479,5 +479,18 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
     public event EventHandler? Changed;
 
     #endregion IFitFunction Members
+
+    /// <inheritdoc/>
+    public (IReadOnlyList<double?>? LowerBounds, IReadOnlyList<double?>? UpperBounds) GetParameterBoundariesHardLimit()
+    {
+      return (null, null);
+    }
+
+    /// <inheritdoc/>
+    public (IReadOnlyList<double?>? LowerBounds, IReadOnlyList<double?>? UpperBounds) GetParameterBoundariesSoftLimit()
+    {
+      return (null, null);
+    }
+
   }
 }

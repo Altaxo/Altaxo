@@ -239,5 +239,18 @@ namespace Altaxo.Calc.FitFunctions.Materials
         FV[r] = P[0] * Math.Exp(-energyAsTemperature / temperature);
       }
     }
+
+    /// <inheritdoc/>
+    public (IReadOnlyList<double?>? LowerBounds, IReadOnlyList<double?>? UpperBounds) GetParameterBoundariesHardLimit()
+    {
+      return (null, null);
+    }
+
+    /// <inheritdoc/>
+    public (IReadOnlyList<double?>? LowerBounds, IReadOnlyList<double?>? UpperBounds) GetParameterBoundariesSoftLimit()
+    {
+      return (null, null);
+    }
+
   }
 }

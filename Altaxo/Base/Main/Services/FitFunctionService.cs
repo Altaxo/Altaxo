@@ -377,7 +377,7 @@ namespace Altaxo.Main.Services
           return false;
         }
 
-        string filename = Altaxo.Serialization.FileIOHelper.GetValidFileName(doc.FitFunctionCategory + "-" + doc.FitFunctionName + ".xml");
+        string filename = Altaxo.Serialization.FileIOHelper.GetValidPathNameFragment(doc.FitFunctionCategory + "-" + doc.FitFunctionName + ".xml");
         string fullfilename = System.IO.Path.Combine(_fitFunctionDirectory, filename);
 
         if (System.IO.File.Exists(fullfilename))
