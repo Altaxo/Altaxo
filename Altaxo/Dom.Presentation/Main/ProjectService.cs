@@ -140,7 +140,7 @@ namespace Altaxo.Main
         if (info.IsSerializable(ctrl.ModelObject))
         {
           i++;
-          var entryName = "Workbench/Views/View" + i.ToString() + ".xml";
+          var entryName = $"Workbench/Views/View{i}.xml";
           if (ctrl.IsSelected)
             selectedViewsMemento.SelectedView_EntryName = entryName;
           var zipEntry = zippedStream.CreateEntry(entryName);

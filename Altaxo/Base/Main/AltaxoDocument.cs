@@ -28,6 +28,7 @@ using System.Collections.Generic;
 using Altaxo.Main;
 using Altaxo.Main.Services;
 using Altaxo.Main.Services.Files;
+using Altaxo.Serialization;
 
 namespace Altaxo
 {
@@ -123,7 +124,7 @@ namespace Altaxo
       {
         try
         {
-          var zipEntry = archiveToSaveTo.CreateEntry("FolderProperties/" + folderProperty.Name + ".xml");
+          var zipEntry = archiveToSaveTo.CreateEntry("FolderProperties/" + FileIOHelper.GetValidPathNameFragment(folderProperty.Name) + ".xml");
           //ZipEntry ZipEntry = new ZipEntry("TableLayouts/"+layout.Name+".xml");
           //zippedStream.PutNextEntry(ZipEntry);
           //zippedStream.SetLevel(0);
@@ -157,7 +158,7 @@ namespace Altaxo
       {
         try
         {
-          string entryName = string.Concat("Tables/", table.Name, ".xml");
+          string entryName = string.Concat("Tables/", FileIOHelper.GetValidPathNameFragment(table.Name), ".xml");
           var zipEntry = archiveToSaveTo.CreateEntry(entryName);
           using (var zs = zipEntry.OpenForWriting())
           {
@@ -179,7 +180,7 @@ namespace Altaxo
         // first, we save all tables into the tables subdirectory
         foreach (Altaxo.Data.DataTable table in _dataTables)
         {
-          var entryName = string.Concat("TableData/", table.Name, ".xml");
+          var entryName = string.Concat("TableData/", FileIOHelper.GetValidPathNameFragment(table.Name), ".xml");
           dictionary.Add(entryName, table);
           try
           {
@@ -222,7 +223,7 @@ namespace Altaxo
       {
         try
         {
-          var zipEntry = archiveToSaveTo.CreateEntry("Graphs/" + graph.Name + ".xml");
+          var zipEntry = archiveToSaveTo.CreateEntry("Graphs/" + FileIOHelper.GetValidPathNameFragment(graph.Name) + ".xml");
           using (var zs = zipEntry.OpenForWriting())
           {
             //ZipEntry ZipEntry = new ZipEntry("Graphs/"+graph.Name+".xml");
@@ -246,7 +247,7 @@ namespace Altaxo
       {
         try
         {
-          var zipEntry = archiveToSaveTo.CreateEntry("Graphs3D/" + graph.Name + ".xml");
+          var zipEntry = archiveToSaveTo.CreateEntry("Graphs3D/" + FileIOHelper.GetValidPathNameFragment(graph.Name) + ".xml");
           using (var zs = zipEntry.OpenForWriting())
           {
             //ZipEntry ZipEntry = new ZipEntry("Graphs/"+graph.Name+".xml");
@@ -270,7 +271,7 @@ namespace Altaxo
       {
         try
         {
-          var zipEntry = archiveToSaveTo.CreateEntry("Texts/" + item.Name + ".xml");
+          var zipEntry = archiveToSaveTo.CreateEntry("Texts/" + FileIOHelper.GetValidPathNameFragment(item.Name) + ".xml");
           using (var zs = zipEntry.OpenForWriting())
           {
             info.BeginWriting(zs);
@@ -294,7 +295,7 @@ namespace Altaxo
 
         try
         {
-          var zipEntry = archiveToSaveTo.CreateEntry("TableLayouts/" + layout.Name + ".xml");
+          var zipEntry = archiveToSaveTo.CreateEntry("TableLayouts/" + FileIOHelper.GetValidPathNameFragment(layout.Name) + ".xml");
           using (var zs = zipEntry.OpenForWriting())
           {
             //ZipEntry ZipEntry = new ZipEntry("TableLayouts/"+layout.Name+".xml");
@@ -350,7 +351,7 @@ namespace Altaxo
       {
         try
         {
-          if (zipEntry.FullName.StartsWith("Tables/"))
+          if (zipEntry.FullName.StartsWith("Tables/", StringComparison.Ordinal)) // Note: comparison by ordinal is required for Net48 (if FullName contains Unicode, it would fail sometimes, e.g. if slash is followed by some unicode character). In Net7.0 or above, this is fixed.
           {
             using (var zipinpstream = zipEntry.OpenForReading())
             {
@@ -369,7 +370,7 @@ namespace Altaxo
               info.PropertyDictionary.Remove(Altaxo.Data.DataColumnCollection.DeserialiationInfoProperty_DeferredDataDeserialization);
             }
           }
-          else if (zipEntry.FullName.StartsWith("Graphs/"))
+          else if (zipEntry.FullName.StartsWith("Graphs/", StringComparison.Ordinal))
           {
             using (var zipinpstream = zipEntry.OpenForReading())
             {
@@ -380,7 +381,7 @@ namespace Altaxo
               info.EndReading();
             }
           }
-          else if (zipEntry.FullName.StartsWith("Graphs3D/"))
+          else if (zipEntry.FullName.StartsWith("Graphs3D/", StringComparison.Ordinal))
           {
             using (var zipinpstream = zipEntry.OpenForReading())
             {
@@ -391,7 +392,7 @@ namespace Altaxo
               info.EndReading();
             }
           }
-          else if (zipEntry.FullName.StartsWith("Texts/"))
+          else if (zipEntry.FullName.StartsWith("Texts/", StringComparison.Ordinal))
           {
             using (var zipinpstream = zipEntry.OpenForReading())
             {
@@ -402,7 +403,7 @@ namespace Altaxo
               info.EndReading();
             }
           }
-          else if (zipEntry.FullName.StartsWith("TableLayouts/"))
+          else if (zipEntry.FullName.StartsWith("TableLayouts/", StringComparison.Ordinal))
           {
             using (var zipinpstream = zipEntry.OpenForReading())
             {
@@ -413,7 +414,7 @@ namespace Altaxo
               info.EndReading();
             }
           }
-          else if (zipEntry.FullName.StartsWith("FitFunctionScripts/"))
+          else if (zipEntry.FullName.StartsWith("FitFunctionScripts/", StringComparison.Ordinal))
           {
             using (var zipinpstream = zipEntry.OpenForReading())
             {
@@ -424,7 +425,7 @@ namespace Altaxo
               info.EndReading();
             }
           }
-          else if (zipEntry.FullName.StartsWith("FolderProperties/"))
+          else if (zipEntry.FullName.StartsWith("FolderProperties/", StringComparison.Ordinal))
           {
             using (var zipinpstream = zipEntry.OpenForReading())
             {
@@ -537,7 +538,7 @@ namespace Altaxo
       {
         foreach (var entry in entryNameToItemDictionary)
         {
-          if (entry.Value is Altaxo.Data.DataTable table && entry.Key.StartsWith("TableData"))
+          if (entry.Value is Altaxo.Data.DataTable table && entry.Key.StartsWith("TableData", StringComparison.Ordinal))
           {
             table.DataColumns.DeferredDataMemento = new ProjectArchiveEntryMemento(entry.Key, archiveManager, archiveManager.FileOrFolderName);
           }

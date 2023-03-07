@@ -24,51 +24,117 @@
 
 #nullable enable
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Text;
 
 namespace Altaxo.Serialization
 {
+  /// <summary>
+  /// Contains helpers for making names safe for use in the file system.
+  /// </summary>
   public class FileIOHelper
   {
-    private static Dictionary<char, char> _invalidChars;
-
-    static FileIOHelper()
+    public static ImmutableDictionary<char, char> InvalidFileNameChars = new Dictionary<char, char>()
     {
-      _invalidChars = new Dictionary<char, char>();
+      [(char)0x00] = (char)0xF001,
+      [(char)0x01] = (char)0xF002,
+      [(char)0x02] = (char)0xF003,
+      [(char)0x03] = (char)0xF004,
+      [(char)0x04] = (char)0xF005,
+      [(char)0x05] = (char)0xF006,
+      [(char)0x06] = (char)0xF007,
+      [(char)0x07] = (char)0xF008,
+      [(char)0x08] = (char)0xF009,
+      [(char)0x09] = (char)0xF00A,
+      [(char)0x0A] = (char)0xF00B,
+      [(char)0x0B] = (char)0xF00C,
+      [(char)0x0C] = (char)0xF00D,
+      [(char)0x0D] = (char)0xF00E,
+      [(char)0x0E] = (char)0xF00F,
+      [(char)0x0F] = (char)0xF010,
+      [(char)0x10] = (char)0xF011,
+      [(char)0x11] = (char)0xF012,
+      [(char)0x12] = (char)0xF013,
+      [(char)0x13] = (char)0xF014,
+      [(char)0x14] = (char)0xF015,
+      [(char)0x15] = (char)0xF016,
+      [(char)0x16] = (char)0xF017,
+      [(char)0x17] = (char)0xF018,
+      [(char)0x18] = (char)0xF019,
+      [(char)0x19] = (char)0xF01A,
+      [(char)0x1A] = (char)0xF01B,
+      [(char)0x1B] = (char)0xF01C,
+      [(char)0x1C] = (char)0xF01D,
+      [(char)0x1D] = (char)0xF01E,
+      [(char)0x1E] = (char)0xF01F,
+      [(char)0x1F] = (char)0xF020,
+      [':'] = '፥',
+      ['*'] = '✶',
+      ['?'] = '¿',
+      ['\"'] = '”',
+      ['<'] = '⋖',
+      ['>'] = '⋗',
+      ['|'] = '∣',
+      ['/'] = '⁄',
+    }.ToImmutableDictionary();
 
-      char[] invalidChars = System.IO.Path.GetInvalidFileNameChars();
-      int boxchar = 0;
-      for (int i = 0; i < invalidChars.Length; ++i)
+    /// <summary>
+    /// Get a valid full file name out of a raw file name that can contain invalid characters. Those characters are
+    /// replaced by unicode chars. Here, special measures are taken to not accidentally replace the question mark and colon in absolute file names,
+    /// starting with e.g. C:\... or \\?\C:\....
+    /// </summary>
+    /// <param name="name">The full path name of a file or folder</param>
+    /// <returns>A path name that can be used for storing a file or creating a folder in the file system.</returns>
+    public static string GetValidFullPathName(string name)
+    {
+      StringBuilder? stb = null;
+      int start = 0;
+      if (name.Length >= 2 && char.IsLetter(name[0]) && name[1] == ':') // if the name start with drive letter and colon, we ignore the colon
       {
-        char c = invalidChars[i];
-        char repl;
-
-        if (c < 32)
-          repl = (char)(0xF001 + c); // from a private range
-        else
-          repl = (char)(0x2550 + boxchar++); // from the box char range
-
-        _invalidChars.Add(c, repl);
+        start = 2;
       }
+      else if (name.StartsWith(@"\\?\")) // in UNC path names, we ignore the question mark
+      {
+        start = 4;
+        if (name.Length >= 6 && char.IsLetter(name[4]) && name[5] == ':') // and possibly the colon also
+        {
+          start = 6;
+        }
+      }
+
+      for (int i = start; i < name.Length; ++i)
+      {
+        var c = name[i];
+        if (InvalidFileNameChars.ContainsKey(c))
+        {
+          stb ??= new StringBuilder(name);
+          stb[i] = InvalidFileNameChars[c]; // we replace this character with a box character
+        }
+      }
+      return stb is null ? name : stb.ToString();
     }
 
     /// <summary>
-    /// Get a valid file name out of a raw file name that can contain invalid characters. Those characters are
-    /// replaced by unicode box characters (range from 0x2550 upwards).
+    /// Get a valid file name part out of a raw file name that can contain invalid characters. Those characters are
+    /// replaced by unicode characters. Attention: the provided name should not be an absolute file name. This is because
+    /// here, in a file name like C:\Temp.txt, the colon would be replaced by a unicode character. If an absolute name needs
+    /// to be processed, use the function <see cref="GetValidFullPathName(string)"/>. Backslash chars are sustained.
     /// </summary>
-    /// <param name="name"></param>
-    /// <returns></returns>
-    public static string GetValidFileName(string name)
+    /// <param name="name">The name. Should not be an absolute file name.</param>
+    /// <returns>The name without invalid characters, so that it can be used for a name part in the file system.</returns>
+    public static string GetValidPathNameFragment(string name)
     {
-      var stb = new StringBuilder(name);
+      StringBuilder? stb = null;
       for (int i = 0; i < name.Length; ++i)
       {
-        char c = stb[i];
-        if (_invalidChars.ContainsKey(c))
-          stb[i] = _invalidChars[c]; // we replace this character with a box character
+        var c = name[i];
+        if (InvalidFileNameChars.ContainsKey(c))
+        {
+          stb ??= new StringBuilder(name);
+          stb[i] = InvalidFileNameChars[c]; // we replace this character with a box character
+        }
       }
-
-      return stb.ToString();
+      return stb is null ? name : stb.ToString();
     }
   }
 }

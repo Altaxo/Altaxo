@@ -24,8 +24,8 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using Altaxo.Gui.Common.MultiRename;
+using Altaxo.Serialization;
 
 namespace Altaxo.Main.Commands
 {
@@ -161,7 +161,8 @@ namespace Altaxo.Main.Commands
     public static string GetShortNameWithAugmentingProjectFolderItemsForFileOperations(object o, int i)
     {
       var name = GetFullNameWithAugmentingProjectFolderItems(o, i);
-      return MakeNameFileSystemCompatible(Altaxo.Main.ProjectFolder.GetNamePart(name));
+      name = Altaxo.Main.ProjectFolder.GetNamePart(name); // the short name
+      return FileIOHelper.GetValidPathNameFragment(name); // make file system compatible
     }
 
     /// <summary>
@@ -185,7 +186,7 @@ namespace Altaxo.Main.Commands
     public static string GetFolderNameForFileOperations(object o, int i)
     {
       var name = GetFullName(o, i);
-      return MakeNameFileSystemCompatible(Altaxo.Main.ProjectFolder.GetFolderPart(name));
+      return FileIOHelper.GetValidPathNameFragment(Altaxo.Main.ProjectFolder.GetFolderPart(name));
     }
 
     private static string[] GetNamePartArray(object o, int i)
@@ -202,7 +203,7 @@ namespace Altaxo.Main.Commands
     private static string[] GetNamePartArrayWithAugmentingProjectFolderItemsForFileOperations(object o, int i)
     {
       var name = GetFullNameWithAugmentingProjectFolderItems(o, i);
-      name = MakeNameFileSystemCompatible(name);
+      name = FileIOHelper.GetValidPathNameFragment(name);
       return name.Split(new char[] { Altaxo.Main.ProjectFolder.DirectorySeparatorChar });
     }
 
@@ -224,7 +225,7 @@ namespace Altaxo.Main.Commands
       {
         name = name.Substring(0, name.Length - 1);
       }
-      name = MakeNameFileSystemCompatible(name);
+      name = FileIOHelper.GetValidPathNameFragment(name);
       return name.Split(new char[] { Altaxo.Main.ProjectFolder.DirectorySeparatorChar });
     }
 
@@ -277,7 +278,7 @@ namespace Altaxo.Main.Commands
     /// <returns>Full name of the document.</returns>
     public static string GetFullNameWithAugmentingProjectFolderItemsForFileOperations(object o, int i)
     {
-      return MakeNameFileSystemCompatible(GetFullNameWithAugmentingProjectFolderItems(o));
+      return FileIOHelper.GetValidPathNameFragment(GetFullNameWithAugmentingProjectFolderItems(o));
     }
 
 
@@ -349,30 +350,5 @@ namespace Altaxo.Main.Commands
     }
 
     #endregion Sub-functions for shortcuts
-
-    private static Dictionary<char, char> FileSystemReplacementDict = new Dictionary<char, char>()
-    {
-      [':'] = '፥',
-      ['*'] = '✶',
-      ['?'] = '¿',
-      ['\"'] = '”',
-      ['<'] = '⋖',
-      ['>'] = '⋗',
-      ['|'] = '∣',
-      ['/'] = '⁄',
-    };
-
-    public static string MakeNameFileSystemCompatible(string newName)
-    {
-      var dict = FileSystemReplacementDict;
-      var stb = new StringBuilder(newName);
-
-      for (int i = 2; i < stb.Length; i++) // start with index 2 because we don't want the colon in a path like C:\temp\ to be replaced
-      {
-        if (dict.TryGetValue(stb[i], out var newChar))
-          stb[i] = newChar;
-      }
-      return stb.ToString();
-    }
   }
 }
