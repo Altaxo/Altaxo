@@ -131,8 +131,11 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
 
       foreach (var description in peakDescriptions)
       {
-        int first = (int)Math.Max(0, Math.Floor(description.PositionIndex - FitWidthScalingFactor * description.WidthPixels / 2));
-        int last = (int)Math.Min(xArray.Length - 1, Math.Ceiling(description.PositionIndex + FitWidthScalingFactor * description.WidthPixels / 2));
+        int first = PeakFittingByIncrementalPeakAddition.GetIndexOfXInAscendingArray(xArray, description.PositionValue - FitWidthScalingFactor * description.WidthValue / 2, false);
+        int last = PeakFittingByIncrementalPeakAddition.GetIndexOfXInAscendingArray(xArray, description.PositionValue + FitWidthScalingFactor * description.WidthValue / 2, true);
+
+        //int first = (int)Math.Max(0, Math.Floor(description.PositionIndex - FitWidthScalingFactor * description.WidthPixels / 2));
+        //int last = (int)Math.Min(xArray.Length - 1, Math.Ceiling(description.PositionIndex + FitWidthScalingFactor * description.WidthPixels / 2));
         int len = last - first + 1;
         if (len < numberOfParametersPerPeak)
         {

@@ -298,6 +298,7 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
       var (xE, yE, regionsE) = PeakEnhancement.Execute(x, y, regions);
 
       var peakDescriptions = new List<(IReadOnlyList<PeakDescription> PeakDescriptions, int StartOfRegion, int EndOfRegion)>();
+      var originalRangeIterator = RegionHelper.GetRegionRanges(regions, y.Length).GetEnumerator();
       foreach (var (start, end) in RegionHelper.GetRegionRanges(regionsE, yE.Length))
       {
         var subX = xE is null ? null : new double[end - start];
@@ -306,9 +307,10 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
 
         var subY = new double[end - start];
         Array.Copy(yE, start, subY, 0, end - start);
-
         var result = Execute(subX, subY);
-        peakDescriptions.Add((result, start, end));
+
+        originalRangeIterator.MoveNext();
+        peakDescriptions.Add((result, originalRangeIterator.Current.Start, originalRangeIterator.Current.End));
       }
 
       return (x, y, regions, peakDescriptions);

@@ -774,6 +774,5 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
         };
       }
     }
-
   }
 }
