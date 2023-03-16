@@ -1,4 +1,7 @@
 <Project>
+ <PropertyGroup>
+  <AccelerateBuildsInVisualStudio>true</AccelerateBuildsInVisualStudio>
+ </PropertyGroup>
  <PropertyGroup Condition=" '$(TargetFramework)' == 'net48' ">
    <TargetFrameworkSubdir>net48</TargetFrameworkSubdir>
  </PropertyGroup>
