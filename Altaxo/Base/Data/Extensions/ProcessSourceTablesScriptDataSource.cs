@@ -25,14 +25,9 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using Altaxo.Collections;
-using Altaxo.Main;
 using Altaxo.Main.Services;
 using Altaxo.Scripting;
-using Altaxo.Serialization;
 
 namespace Altaxo.Data
 {
@@ -76,7 +71,7 @@ namespace Altaxo.Data
     }
 
     [MemberNotNull(nameof(_importOptions), nameof(_processOptions), nameof(_processData))]
-    void DeserializeSurrogate0(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+    private void DeserializeSurrogate0(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
     {
       ChildSetMember(ref _processData, (ProcessSourceTablesScriptData)info.GetValue("ProcessData", this));
       ChildSetMember(ref _processOptions, info.GetValue<ProcessSourceTablesScript>("ProcessOptions", this));
@@ -140,7 +135,7 @@ namespace Altaxo.Data
     }
 
     [MemberNotNull(nameof(_importOptions), nameof(_processOptions), nameof(_processData))]
-    void CopyFrom(ProcessSourceTablesScriptDataSource from)
+    private void CopyFrom(ProcessSourceTablesScriptDataSource from)
     {
       using (var token = SuspendGetToken())
       {

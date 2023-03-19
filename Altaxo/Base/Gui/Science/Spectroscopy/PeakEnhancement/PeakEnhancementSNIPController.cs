@@ -41,6 +41,22 @@ public class PeakEnhancementSNIPController : MVCANControllerEditImmutableDocBase
 
   #region Bindings
 
+  private bool _isHalfWidthManual;
+
+  public bool IsHalfWidthManual
+  {
+    get => _isHalfWidthManual;
+    set
+    {
+      if (!(_isHalfWidthManual == value))
+      {
+        _isHalfWidthManual = value;
+        OnPropertyChanged(nameof(IsHalfWidthManual));
+      }
+    }
+  }
+
+
   private double _halfWidth;
 
   public double HalfWidth
@@ -98,7 +114,8 @@ public class PeakEnhancementSNIPController : MVCANControllerEditImmutableDocBase
 
     if (initData)
     {
-      HalfWidth = _doc.HalfWidth;
+      IsHalfWidthManual = _doc.HalfWidth is not null;
+      HalfWidth = _doc.HalfWidth ?? PeakEnhancementSNIP.DefaultHalfWidthInPoints;
       IsHalfWidthInXUnits = _doc.IsHalfWidthInXUnits;
       NumberOfApplications = _doc.NumberOfApplications;
     }
@@ -108,7 +125,7 @@ public class PeakEnhancementSNIPController : MVCANControllerEditImmutableDocBase
   {
     _doc = _doc with
     {
-      HalfWidth = HalfWidth,
+      HalfWidth = IsHalfWidthManual ? HalfWidth : null,
       IsHalfWidthInXUnits = IsHalfWidthInXUnits,
       NumberOfApplications = NumberOfApplications
     };

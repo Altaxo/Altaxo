@@ -26,6 +26,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Altaxo.Calc.LinearAlgebra;
+using Altaxo.Collections;
 using Altaxo.Science.Spectroscopy.PeakEnhancement;
 
 namespace Altaxo.Science.Spectroscopy.PeakSearching
@@ -295,22 +296,27 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
       IReadOnlyList<(IReadOnlyList<PeakDescription> PeakDescriptions, int StartOfRegion, int EndOfRegion)> peakSearchResults
       ) Execute(double[] x, double[] y, int[]? regions)
     {
-      var (xE, yE, regionsE) = PeakEnhancement.Execute(x, y, regions);
-
       var peakDescriptions = new List<(IReadOnlyList<PeakDescription> PeakDescriptions, int StartOfRegion, int EndOfRegion)>();
-      var originalRangeIterator = RegionHelper.GetRegionRanges(regions, y.Length).GetEnumerator();
-      foreach (var (start, end) in RegionHelper.GetRegionRanges(regionsE, yE.Length))
+      foreach (var (start, end) in RegionHelper.GetRegionRanges(regions, y.Length))
       {
-        var subX = xE is null ? null : new double[end - start];
+        var subX = x is null ? null : new double[end - start];
         if (subX is not null)
-          Array.Copy(xE, start, subX, 0, end - start);
+          Array.Copy(x, start, subX, 0, end - start);
+        else
+          subX = EnumerableExtensions.RangeDouble(start, end - start).ToArray();
 
         var subY = new double[end - start];
-        Array.Copy(yE, start, subY, 0, end - start);
-        var result = Execute(subX, subY);
+        Array.Copy(y, start, subY, 0, end - start);
+        var resultRegular = Execute(subX, subY);
 
-        originalRangeIterator.MoveNext();
-        peakDescriptions.Add((result, originalRangeIterator.Current.Start, originalRangeIterator.Current.End));
+        if (PeakEnhancement is not PeakEnhancementNone)
+        {
+          var (xEnh, yEnh, _) = PeakEnhancement.Execute(subX, subY, null); // Execute peak enhancement
+          var resultEnhanced = Execute(xEnh, yEnh);
+
+          resultRegular = PeakSearchingNone.CombineResults(resultRegular, resultEnhanced, subX, subY);
+        }
+        peakDescriptions.Add((resultRegular, start, end));
       }
 
       return (x, y, regions, peakDescriptions);

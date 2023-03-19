@@ -227,6 +227,7 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakSearching
           methods.Add(new SelectableListNode(methodType.Name, methodType, methodType == _doc.GetType()));
         }
         AvailablePeakEnhancementMethods = new ItemsController<Type>(methods, EhPeakEnhancementMethodTypeChanged);
+        AvailablePeakEnhancementMethods.SelectedValue = _doc.PeakEnhancement.GetType();
       }
     }
 

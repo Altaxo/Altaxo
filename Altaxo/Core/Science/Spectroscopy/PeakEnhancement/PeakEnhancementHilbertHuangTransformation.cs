@@ -4,7 +4,7 @@ using Altaxo.Science.Signals;
 
 namespace Altaxo.Science.Spectroscopy.PeakEnhancement
 {
-  public class PeakEnhancementHilbertHuang : IPeakEnhancement
+  public class PeakEnhancementHilbertHuang // : IPeakEnhancement
   {
     /// <inheritdoc/>
     public (double[] x, double[] y, int[]? regions) Execute(double[] x, double[] y, int[]? regions)

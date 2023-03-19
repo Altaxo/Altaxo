@@ -23,7 +23,9 @@
 #endregion Copyright
 
 using System.Collections.Generic;
+using System.Linq;
 using Altaxo.Calc;
+using Altaxo.Science.Signals;
 
 namespace Altaxo.Science.Spectroscopy.PeakSearching
 {
@@ -80,7 +82,7 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
       else
       {
         // Try to interpolate over the full range of x
-        return (x[x.Length - 1] - x[0]) * (rightIdx - leftIdx) / (double)(x.Length - 1);
+        return (x[^1] - x[0]) * (rightIdx - leftIdx) / (double)(x.Length - 1);
       }
     }
 
@@ -96,5 +98,112 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
     {
       return idx >= 0 && idx <= x.Length - 1;
     }
+
+    /// <summary>
+    /// Combines the results of two list of PeakDescriptions into one list. Note that both lists must be already sorted by position!
+    /// </summary>
+    /// <param name="peaksRegular">The result of the regular peak search.</param>
+    /// <param name="peaksEnhanced">The result of the peak search in the enhanced spectrum.</param>
+    /// <returns>A list with the combined results.</returns>
+    /// <exception cref="System.NotImplementedException"></exception>
+    public static List<PeakDescription> CombineResults(List<PeakDescription> peaksRegular, List<PeakDescription> peaksEnhanced, double[] xRegular, double[] yRegular)
+    {
+      // the rules for combination are as follows:
+      // if a peak from peaksRegular coincide with 2 or more peaks from peaksEnhanced, the peakRegular is replaced by the peaks from peakEnhanced
+      // if a peak from peaksRegular coincide with only one peak from peaksEnhanced, the peak from peaksEnhanced is dropped, and the peak from peaksRegular is kept
+      // non-coinciding peaks are both included in the resulting list
+
+      var results = new List<PeakDescription>();
+
+      for (int i = 0; i < peaksRegular.Count; ++i)
+      {
+        var peakDescription = peaksRegular[i];
+        var coincidingPeaks = GetCoincidingPeaksEnhanced(peakDescription, peaksEnhanced);
+
+        if (coincidingPeaks.Count >= 2)
+        {
+          for (int j = coincidingPeaks.Count - 1; j >= 0; --j)
+          {
+            results.Add(ConvertToRegularPeakDescription(coincidingPeaks[j].Desc, xRegular, yRegular));
+            peaksEnhanced.RemoveAt(coincidingPeaks[j].Index);
+          }
+        }
+        else if (coincidingPeaks.Count >= 1)
+        {
+          results.Add(peakDescription);
+          peaksEnhanced.RemoveAt(coincidingPeaks[0].Index);
+        }
+        else // no coincidence - include the regular peak, maintain the enhanced peak for later inclusion
+        {
+          results.Add(peakDescription);
+        }
+      }
+      // now add all remaining peaks from peaksEnhanced
+      results.AddRange(peaksEnhanced.Select(pEh => ConvertToRegularPeakDescription(pEh, xRegular, yRegular)));
+
+      // now sort by position
+      results.Sort((p1, p2) => Comparer<double>.Default.Compare(p1.PositionValue, p2.PositionValue));
+      return results;
+    }
+
+
+
+
+    /// <summary>
+    /// Give a peak from the regular spectrum, this function finds the coinciding peaks of the peak search in the enhanced spectrum.
+    /// </summary>
+    /// <param name="peakRegular">The peak description of the regular peak.</param>
+    /// <param name="peaksEnhanced">The peak descriptions of all peaks found in the enhanced spectrum.</param>
+    /// <returns>A list of peaks from the enhanced spectrum, which may coincide with the peak from the regular spectrum.</returns>
+    public static List<(PeakDescription Desc, int Index)> GetCoincidingPeaksEnhanced(PeakDescription peakRegular, IReadOnlyList<PeakDescription> peaksEnhanced)
+    {
+      var results = new List<(PeakDescription Desc, int Index)>();
+
+      for (int i = 0; i < peaksEnhanced.Count; ++i)
+      {
+        var peakEnh = peaksEnhanced[i];
+        if (DoPeaksCoincide(peakRegular, peakEnh))
+        {
+          results.Add((peakEnh, i));
+        }
+      }
+      return results;
+    }
+
+
+    /// <summary>
+    /// Determine if two peaks do coincide.
+    /// </summary>
+    /// <param name="peakRegular">The peak (from regular peak search).</param>
+    /// <param name="peakEnhanced">Another peak (from enhanced peak search).</param>
+    /// <returns>True if the two peaks do coincide; otherwise, false.</returns>
+    public static bool DoPeaksCoincide(PeakDescription peakRegular, PeakDescription peakEnhanced)
+    {
+      return Altaxo.Calc.RMath.IsInIntervalCC(peakEnhanced.PositionValue, peakRegular.PositionValue - peakRegular.WidthValue / 2, peakRegular.PositionValue + peakRegular.WidthValue / 2);
+    }
+
+    /// <summary>
+    /// Converts a peak description that was retrieved from an enhanced spectrum to a regular peak description.
+    /// </summary>
+    /// <param name="peakEnhanced">The peak description that was retrieved from the enhanced spectrum.</param>
+    /// <param name="xRegular">The x-values of the regular spectrum.</param>
+    /// <param name="yRegular">The y-values of the regular spectrum.</param>
+    /// <returns>The peak description, converted to the regular spectrum domain (concerns position index, with in pixels, height, and prominence).</returns>
+    public static PeakDescription ConvertToRegularPeakDescription(PeakDescription peakEnhanced, double[] xRegular, double[] yRegular)
+    {
+      var positionIndex = SignalMath.GetIndexOfXInAscendingArray(xRegular, peakEnhanced.PositionValue, null);
+      var widthPixels = SignalMath.GetIndexOfXInAscendingArray(xRegular, peakEnhanced.PositionValue + peakEnhanced.WidthValue * 0.5, null) - SignalMath.GetIndexOfXInAscendingArray(xRegular, peakEnhanced.PositionValue - peakEnhanced.WidthValue * 0.5, null);
+      var height = yRegular[positionIndex];
+      var prominence = height;
+
+      return peakEnhanced with
+      {
+        PositionIndex = positionIndex,
+        WidthPixels = widthPixels,
+        Height = height,
+        Prominence = prominence,
+      };
+    }
+
   }
 }

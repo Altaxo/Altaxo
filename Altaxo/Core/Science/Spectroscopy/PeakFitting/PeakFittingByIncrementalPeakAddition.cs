@@ -31,6 +31,7 @@ using Altaxo.Calc.FitFunctions.Probability;
 using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Calc.Optimization;
 using Altaxo.Calc.Regression.Nonlinear;
+using Altaxo.Science.Signals;
 using Altaxo.Science.Spectroscopy.PeakSearching;
 
 namespace Altaxo.Science.Spectroscopy.PeakFitting
@@ -548,8 +549,8 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
 
           var firstX = position - FitWidthScalingFactor.Value * fwhm / 2;
           var lastX = position + FitWidthScalingFactor.Value * fwhm / 2;
-          int first = GetIndexOfXInAscendingArray(xArray, firstX, roundUp: false);
-          int last = GetIndexOfXInAscendingArray(xArray, lastX, roundUp: true);
+          int first = SignalMath.GetIndexOfXInAscendingArray(xArray, firstX, roundUp: false);
+          int last = SignalMath.GetIndexOfXInAscendingArray(xArray, lastX, roundUp: true);
           int len = last - first + 1;
           var xCut = new double[len];
           var yCut = new double[len];
@@ -596,8 +597,8 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
               Height = height,
               PositionValue = position,
               WidthValue = fwhm,
-              WidthPixels = GetIndexOfXInAscendingArray(xArray, position + 0.5 * fwhm, roundUp: null) - GetIndexOfXInAscendingArray(xArray, position - 0.5 * fwhm, roundUp: null),
-              PositionIndex = GetIndexOfXInAscendingArray(xArray, position, roundUp: null),
+              WidthPixels = SignalMath.GetIndexOfXInAscendingArray(xArray, position + 0.5 * fwhm, roundUp: null) - SignalMath.GetIndexOfXInAscendingArray(xArray, position - 0.5 * fwhm, roundUp: null),
+              PositionIndex = SignalMath.GetIndexOfXInAscendingArray(xArray, position, roundUp: null),
             },
             FitFunction = fitFunction,
             FirstFitPoint = first,
@@ -642,8 +643,8 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
               Height = height,
               PositionValue = position,
               WidthValue = fwhm,
-              WidthPixels = GetIndexOfXInAscendingArray(xArray, position + 0.5 * fwhm, roundUp: null) - GetIndexOfXInAscendingArray(xArray, position - 0.5 * fwhm, roundUp: null),
-              PositionIndex = GetIndexOfXInAscendingArray(xArray, position, roundUp: null),
+              WidthPixels = SignalMath.GetIndexOfXInAscendingArray(xArray, position + 0.5 * fwhm, roundUp: null) - SignalMath.GetIndexOfXInAscendingArray(xArray, position - 0.5 * fwhm, roundUp: null),
+              PositionIndex = SignalMath.GetIndexOfXInAscendingArray(xArray, position, roundUp: null),
             },
             FitFunction = fitFunction,
             FirstFitPoint = 0,
@@ -743,36 +744,6 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
       return (wasPruned, fitFunction, previousGuess, isFixedByUserOrBoundaries);
     }
 
-    /// <summary>
-    /// Gets the index of the provided value in an array of ascending elements.
-    /// </summary>
-    /// <param name="xArray">The x array.</param>
-    /// <param name="x">The x value that is searched.</param>
-    /// <param name="roundUp">If there is no exact match, and the parameter is false, the next lower index will be returned, else if true, the index with the higher value will be returned. If null, the index for which x is closest to the element will be returned..</param>
-    /// <returns>For an exact match with x, the index of x in the array. Otherwise, either the index of a value lower than x (roundUp=false), higher than x (roundUp=true), or closest to x (roundUp=null).
-    /// The return value is always a valid index into the provided array.
-    /// </returns>
-    public static int GetIndexOfXInAscendingArray(double[] xArray, double x, bool? roundUp)
-    {
-      int r = Array.BinarySearch(xArray, x);
 
-      if (r >= 0) // found!
-      {
-        return r;
-      }
-      else // not found - result depends on the rounding parameter
-      {
-        r = ~r;
-        var rm1 = Math.Max(0, r - 1);
-        r = Math.Min(xArray.Length - 1, r);
-
-        return roundUp switch
-        {
-          false => rm1,
-          true => r,
-          null => Math.Abs(x - xArray[rm1]) < Math.Abs(x - xArray[r]) ? rm1 : rm1,
-        };
-      }
-    }
   }
 }

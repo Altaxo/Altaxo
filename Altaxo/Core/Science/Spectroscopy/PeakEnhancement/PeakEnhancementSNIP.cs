@@ -31,7 +31,12 @@ namespace Altaxo.Science.Spectroscopy.PeakEnhancement
   /// </summary>
   public record PeakEnhancementSNIP : IPeakEnhancement
   {
-    private double _halfWidth = 1;
+    /// <summary>
+    /// The default half width in points.
+    /// </summary>
+    public const double DefaultHalfWidthInPoints = 1;
+
+    private double? _halfWidth;
     private bool _isHalfWidthInXUnits;
     private int _numberOfApplications = 1;
 
@@ -40,12 +45,12 @@ namespace Altaxo.Science.Spectroscopy.PeakEnhancement
     /// a very small value here, less than a half of the half width of the peaks.
     /// A value of 1 point (which is the default) will do in most cases.
     /// </summary>
-    public double HalfWidth
+    public double? HalfWidth
     {
       get { return _halfWidth; }
       init
       {
-        if (value <= 0)
+        if (value is not null && !(value.Value >= 0))
           throw new ArgumentOutOfRangeException("Value must be >=0", nameof(HalfWidth));
         _halfWidth = value;
       }
@@ -88,7 +93,6 @@ namespace Altaxo.Science.Spectroscopy.PeakEnhancement
       }
     }
 
-
     #region Serialization
 
     /// <summary>
@@ -108,7 +112,7 @@ namespace Altaxo.Science.Spectroscopy.PeakEnhancement
 
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var halfWidth = info.GetDouble("HalfWidth");
+        var halfWidth = info.GetNullableDouble("HalfWidth");
         var isHalfWidthInXUnits = info.GetBoolean("IsHalfWidthInXUnits");
         var numberOfApplications = info.GetInt32("NumberOfApplications");
 
@@ -131,7 +135,11 @@ namespace Altaxo.Science.Spectroscopy.PeakEnhancement
     /// <inheritdoc/>
     public (double[] x, double[] y, int[]? regions) Execute(double[] x, double[] y, int[]? regions)
     {
-      var snip = new BaselineEstimation.SNIP_Linear { HalfWidth = HalfWidth, IsHalfWidthInXUnits = IsHalfWidthInXUnits };
+      var snip = new BaselineEstimation.SNIP_Linear
+      {
+        HalfWidth = HalfWidth ?? DefaultHalfWidthInPoints,
+        IsHalfWidthInXUnits = HalfWidth is not null && IsHalfWidthInXUnits,
+      };
 
       for (int i = 0; i < NumberOfApplications; ++i)
       {

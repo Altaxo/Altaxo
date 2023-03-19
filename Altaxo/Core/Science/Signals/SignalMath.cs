@@ -119,5 +119,42 @@ namespace Altaxo.Science.Signals
       }
       return (indicesOfMinima, indicesOfMaxima);
     }
+
+    /// <summary>
+    /// Gets the index of the provided value in an array of ascending elements.
+    /// </summary>
+    /// <param name="xArray">The x array.</param>
+    /// <param name="x">The x value that is searched.</param>
+    /// <param name="roundUp">If there is no exact match, and the parameter is false, the next lower index will be returned, else if true, the index with the higher value will be returned. If null, the index for which x is closest to the element will be returned..</param>
+    /// <returns>For an exact match with x, the index of x in the array. Otherwise, either the index of a value lower than x (roundUp=false), higher than x (roundUp=true), or closest to x (roundUp=null).
+    /// The return value is always a valid index into the provided array.
+    /// </returns>
+    public static int GetIndexOfXInAscendingArray(double[] xArray, double x, bool? roundUp)
+    {
+      if (xArray is null)
+        throw new ArgumentNullException(nameof(xArray));
+      else if (xArray.Length == 0)
+        throw new ArgumentException("Array is empty", nameof(xArray));
+
+      int r = Array.BinarySearch(xArray, x);
+
+      if (r >= 0) // found!
+      {
+        return r;
+      }
+      else // not found - result depends on the rounding parameter
+      {
+        r = ~r;
+        var rm1 = Math.Max(0, r - 1);
+        r = Math.Min(xArray.Length - 1, r);
+
+        return roundUp switch
+        {
+          false => rm1,
+          true => r,
+          null => Math.Abs(x - xArray[rm1]) < Math.Abs(x - xArray[r]) ? rm1 : rm1,
+        };
+      }
+    }
   }
 }

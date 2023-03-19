@@ -17,6 +17,8 @@
             <RowDefinition Height="4"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="4"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="4"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
@@ -25,33 +27,41 @@
             <ColumnDefinition Width="4"/>
         </Grid.ColumnDefinitions>
 
-        <RadioButton Grid.Row="0" Grid.Column="0" 
+        <CheckBox Grid.Row="0" Grid.Column="0"
+                  IsChecked="{Binding IsHalfWidthManual}"
+                  Content="Set half width manually"/>
+
+        <RadioButton Grid.Row="2" Grid.Column="0" 
                      IsChecked="{Binding IsHalfWidthInXUnits, Converter={x:Static axogcc:InverseBooleanConverter.Instance}}"
+                     IsEnabled="{Binding IsHalfWidthManual}"
                      Content="Half with in points"/>
-        <RadioButton Grid.Row="0" Grid.Column="2" 
+        <RadioButton Grid.Row="2" Grid.Column="2" 
                      IsChecked="{Binding IsHalfWidthInXUnits}"
+                     IsEnabled="{Binding IsHalfWidthManual}"
                      Content="Half with in x-units"/>
 
-        <Label Grid.Row="2" Grid.Column="0"
+        <Label Grid.Row="4" Grid.Column="0"
                Visibility="{Binding IsHalfWidthInXUnits, Converter={x:Static axogcc:TrueToVisibilityHiddenConverter.Instance}}"
                Content="Half width of peaks (points):"/>
-        <axogc:DoubleUpDown Grid.Row="2" Grid.Column="2"
+        <axogc:DoubleUpDown Grid.Row="4" Grid.Column="2"
                             Value="{Binding HalfWidth}"
                             Visibility="{Binding IsHalfWidthInXUnits, Converter={x:Static axogcc:TrueToVisibilityHiddenConverter.Instance}}"
+                            IsEnabled="{Binding IsHalfWidthManual}"
                             Minimum="1" Maximum="1000000000"/>
 
-        <Label Grid.Row="2" Grid.Column="0"
+        <Label Grid.Row="4" Grid.Column="0"
                Visibility="{Binding IsHalfWidthInXUnits, Converter={x:Static axogcc:FalseToVisibilityHiddenConverter.Instance}}"
                Content="Half width of peaks (x-units):"/>
-        <axogc:DoubleUpDown Grid.Row="2" Grid.Column="2"
+        <axogc:DoubleUpDown Grid.Row="4" Grid.Column="2"
                             Value="{Binding HalfWidth}" 
                             Visibility="{Binding IsHalfWidthInXUnits, Converter={x:Static axogcc:FalseToVisibilityHiddenConverter.Instance}}"
+                            IsEnabled="{Binding IsHalfWidthManual}"
                             Maximum="1E100"
                             Minimum="1E-100" />
 
-        <Label Grid.Row="4" Grid.Column="0"
+        <Label Grid.Row="6" Grid.Column="0"
                Content="Number of applications:"/>
-        <axogc:Int32UpDown Grid.Row="4" Grid.Column="2"
+        <axogc:Int32UpDown Grid.Row="6" Grid.Column="2"
                            Value="{Binding NumberOfApplications}" />
     </Grid>
 </UserControl>
