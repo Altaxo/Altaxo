@@ -761,5 +761,13 @@ namespace Altaxo.Collections
         }
       }
     }
+
+    public static IEnumerable<double> RangeDouble(double start, int count)
+    {
+      for (int i = 0; i < count; ++i)
+      {
+        yield return start + i;
+      }
+    }
   }
 }

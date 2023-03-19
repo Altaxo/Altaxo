@@ -25,6 +25,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Altaxo.Collections;
+using Altaxo.Science.Spectroscopy.PeakEnhancement;
 
 namespace Altaxo.Science.Spectroscopy.PeakSearching
 {
@@ -66,6 +68,18 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
           throw new ArgumentException("Value must either be null or >0");
         _maximalNumberOfPeaks = value;
       }
+    }
+
+    private IPeakEnhancement _peakEnhancement = new PeakEnhancementNone();
+
+    /// <summary>
+    /// Gets/sets the peak enhancement method (default is <see cref="PeakEnhancementNone"/>, i.e. no peak enhancement).
+    /// </summary>
+    /// <exception cref="System.ArgumentNullException">PeakEnhancement</exception>
+    public IPeakEnhancement PeakEnhancement
+    {
+      get => _peakEnhancement;
+      init => _peakEnhancement = value ?? throw new ArgumentNullException(nameof(PeakEnhancement));
     }
 
     #region Serialization
@@ -110,6 +124,32 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
       }
     }
 
+    /// <summary>
+    /// 2023-01-27 V2: Add property 'PeakEnhancement'
+    /// </summary>
+    /// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PeakSearchingByTopology), 2)]
+    public class SerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        var s = (PeakSearchingByTopology)obj;
+        info.AddValue("MinimalProminence", s._minimalProminence);
+        info.AddValue("MaximalNumberOfPeaks", s.MaximalNumberOfPeaks);
+        info.AddValue("PeakEnhancement", s.PeakEnhancement);
+      }
+
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      {
+        return new PeakSearchingByTopology()
+        {
+          MinimalProminence = info.GetNullableDouble("MinimalProminence"),
+          MaximalNumberOfPeaks = info.GetNullableInt32("MaximalNumberOfPeaks"),
+          PeakEnhancement = info.GetValue<IPeakEnhancement>("PeakEnhancement", null),
+        };
+      }
+    }
+
     #endregion
 
     public
@@ -126,16 +166,29 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
         var subX = x is null ? null : new double[end - start];
         if (subX is not null)
           Array.Copy(x, start, subX, 0, end - start);
+        else
+          subX = EnumerableExtensions.RangeDouble(start, end - start).ToArray();
+
 
         var subY = new double[end - start];
         Array.Copy(y, start, subY, 0, end - start);
 
-        var result = Execute(subX, subY);
-        peakDescriptions.Add((result, start, end));
+        var resultRegular = Execute(subX, subY);
+
+        if (PeakEnhancement is not PeakEnhancementNone)
+        {
+          var (xEnh, yEnh, _) = PeakEnhancement.Execute(subX, subY, null); // Execute peak enhancement
+          var resultEnhanced = Execute(xEnh, yEnh);
+
+          resultRegular = PeakSearchingNone.CombineResults(resultRegular, resultEnhanced, subX, subY);
+        }
+        peakDescriptions.Add((resultRegular, start, end));
       }
 
-      return (x, y, regions, peakDescriptions);
+      return (x, y, regions, peakDescriptions); // Attention, we return the original spectrum, not the peak enhanced (because we want to fit the original spectrum!)
     }
+
+
 
     /// <inheritdoc/>
     public List<PeakDescription> Execute(double[]? x, double[] y)
@@ -192,5 +245,7 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
 
       return peakDescriptions;
     }
+
+
   }
 }

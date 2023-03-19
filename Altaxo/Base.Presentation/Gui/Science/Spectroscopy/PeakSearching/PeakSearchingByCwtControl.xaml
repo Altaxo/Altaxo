@@ -25,6 +25,10 @@
             <RowDefinition Height="4"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="4"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="4"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="4"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
@@ -88,6 +92,15 @@
         <axogc:NullableInt32TextBox Grid.Row="12" Grid.Column="2"
                                     SelectedValue="{Binding MaximalNumberOfPeaks}"
                                     ToolTip="Limit the number of peaks included in the result by selecting only the #maximalNumberOfPeaks highest peaks" />
+
+        <Label Grid.Row="14" Grid.Column="0"
+               Content="Peak enhancement:"/>
+        <ComboBox Grid.Row="14" Grid.Column="2"
+                  ItemsSource="{Binding AvailablePeakEnhancementMethods.Items}"
+                  SelectedItem="{Binding AvailablePeakEnhancementMethods.SelectedItem, Mode=TwoWay}" />
+
+        <ContentControl Grid.Row="16" Grid.Column="0" Grid.ColumnSpan="4"
+                        Content="{Binding SubControllerPeakEnhancement.ViewObject}"/>
 
 
     </Grid>

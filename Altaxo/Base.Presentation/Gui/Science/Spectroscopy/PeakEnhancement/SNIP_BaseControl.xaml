@@ -1,0 +1,67 @@
+﻿<UserControl x:Class="Altaxo.Gui.Science.Spectroscopy.PeakEnhancement.PeakEnhancementSNIPControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:localModel="clr-namespace:Altaxo.Gui.Science.Spectroscopy.PeakEnhancement;assembly=AltaxoBase"
+             xmlns:axogc="clr-namespace:Altaxo.Gui.Common" 
+             xmlns:axogcc="clr-namespace:Altaxo.Gui.Common.Converters" 
+             d:DataContext="{d:DesignInstance Type=localModel:PeakEnhancementSNIPController}"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="4"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="4"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="4"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="4"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="4"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="4"/>
+        </Grid.ColumnDefinitions>
+
+        <CheckBox Grid.Row="0" Grid.Column="0"
+                  IsChecked="{Binding IsHalfWidthManual}"
+                  Content="Set half width manually"/>
+
+        <RadioButton Grid.Row="2" Grid.Column="0" 
+                     IsChecked="{Binding IsHalfWidthInXUnits, Converter={x:Static axogcc:InverseBooleanConverter.Instance}}"
+                     IsEnabled="{Binding IsHalfWidthManual}"
+                     Content="Half with in points"/>
+        <RadioButton Grid.Row="2" Grid.Column="2" 
+                     IsChecked="{Binding IsHalfWidthInXUnits}"
+                     IsEnabled="{Binding IsHalfWidthManual}"
+                     Content="Half with in x-units"/>
+
+        <Label Grid.Row="4" Grid.Column="0"
+               Visibility="{Binding IsHalfWidthInXUnits, Converter={x:Static axogcc:TrueToVisibilityHiddenConverter.Instance}}"
+               Content="Half width of peaks (points):"/>
+        <axogc:DoubleUpDown Grid.Row="4" Grid.Column="2"
+                            Value="{Binding HalfWidth}"
+                            Visibility="{Binding IsHalfWidthInXUnits, Converter={x:Static axogcc:TrueToVisibilityHiddenConverter.Instance}}"
+                            IsEnabled="{Binding IsHalfWidthManual}"
+                            Minimum="1" Maximum="1000000000"/>
+
+        <Label Grid.Row="4" Grid.Column="0"
+               Visibility="{Binding IsHalfWidthInXUnits, Converter={x:Static axogcc:FalseToVisibilityHiddenConverter.Instance}}"
+               Content="Half width of peaks (x-units):"/>
+        <axogc:DoubleUpDown Grid.Row="4" Grid.Column="2"
+                            Value="{Binding HalfWidth}" 
+                            Visibility="{Binding IsHalfWidthInXUnits, Converter={x:Static axogcc:FalseToVisibilityHiddenConverter.Instance}}"
+                            IsEnabled="{Binding IsHalfWidthManual}"
+                            Maximum="1E100"
+                            Minimum="1E-100" />
+
+        <Label Grid.Row="6" Grid.Column="0"
+               Content="Number of applications:"/>
+        <axogc:Int32UpDown Grid.Row="6" Grid.Column="2"
+                           Value="{Binding NumberOfApplications}" />
+    </Grid>
+</UserControl>
