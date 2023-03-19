@@ -31,7 +31,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
 {
   public record class PeakFittingBase
   {
-    private IFitFunctionPeak _fitFunction = new VoigtArea();
+    private IFitFunctionPeak _fitFunction = new VoigtAreaParametrizationNu();
 
     /// <summary>
     /// Gets /sets the fit function to use.
