@@ -24,6 +24,9 @@
 
 using System;
 using System.Collections.Generic;
+using Altaxo.Calc;
+using Altaxo.Calc.LinearAlgebra;
+using Altaxo.Calc.Regression;
 
 namespace Altaxo.Science.Signals
 {
@@ -155,6 +158,39 @@ namespace Altaxo.Science.Signals
           null => Math.Abs(x - xArray[rm1]) < Math.Abs(x - xArray[r]) ? rm1 : rm1,
         };
       }
+    }
+
+    /// <summary>
+    /// Estimates the noise level of a signal.
+    /// </summary>
+    /// <param name="signal">The signal.</param>
+    /// <param name="order">The order (should be odd). A order of 1 (linear) requires at least 3 points. Order of 3 requires at least 5 points. A order of 2k+1 requires at least 2k+3 points.</param>
+    /// <returns>The estimated noise level of the signal.</returns>
+    public static double GetNoiseLevelEstimate(double[] signal, int order)
+    {
+      // make the order odd
+      if (order % 2 == 0)
+        order += 1;
+      int numberOfPoints = order + 2;
+
+      var p = new SavitzkyGolayParameters() { NumberOfPoints = numberOfPoints, PolynomialOrder = order, DerivativeOrder = 0 };
+
+      var sv = new SavitzkyGolay(p);
+
+      var result = new double[signal.Length];
+      sv.Apply(signal, result);
+      double sum = 0;
+      for (int i = 0; i < signal.Length; i++)
+      {
+        sum += RMath.Pow2(signal[i] - result[i]);
+      }
+
+      // Now, correct the sum by the coefficients of the Savitzky-Golay
+      var coeff = SavitzkyGolay.GetCentralCoefficients(p);
+      coeff[(coeff.Length - 1) / 2] -= 1; // this represents the difference of the actual value to the Savitzky-Golay-Value
+      var scale = VectorMath.L2Norm(coeff);
+
+      return Math.Sqrt(sum / signal.Length) / scale;
     }
   }
 }

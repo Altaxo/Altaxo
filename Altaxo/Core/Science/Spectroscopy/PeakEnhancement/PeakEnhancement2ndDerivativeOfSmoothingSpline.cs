@@ -23,6 +23,10 @@
 #endregion Copyright
 
 using System;
+using System.Collections.Generic;
+using Altaxo.Calc.LinearAlgebra;
+using Altaxo.Science.Signals;
+using Altaxo.Science.Spectroscopy.PeakSearching;
 
 namespace Altaxo.Science.Spectroscopy.PeakEnhancement
 {
@@ -32,7 +36,7 @@ namespace Altaxo.Science.Spectroscopy.PeakEnhancement
   /// </summary>
   public record PeakEnhancement2ndDerivativeOfSmoothingSpline : IPeakEnhancement
   {
-    public double SmoothnessDefaultValue = 1;
+    public const double SmoothnessDefaultValue = 1;
 
     private double? _smoothness = null;
 
@@ -87,6 +91,32 @@ namespace Altaxo.Science.Spectroscopy.PeakEnhancement
       }
     }
     #endregion
+
+    /// <inheritdoc/>
+    public IPeakEnhancement WithAdjustedParameters(double[] subX, double[] subY, List<PeakDescription> resultRegular)
+    {
+      if (Smoothness.HasValue)
+        return this;
+      if (subY.Length < 3 || resultRegular.Count == 0)
+        return this;
+
+      var max = VectorMath.Max(subY);
+      var min = VectorMath.Min(subY);
+      if (max == min)
+        return this;
+
+      var noiseLevel = SignalMath.GetNoiseLevelEstimate(subY, 3);
+      var relativeNoiseLevel = noiseLevel / (max - min);
+
+      var resultCopy = new List<PeakDescription>(resultRegular);
+      resultCopy.Sort((x, y) => Comparer<double>.Default.Compare(x.WidthValue, y.WidthValue));
+      var referencePeak = resultCopy[resultCopy.Count / 4]; // use the 25% percentile to get the characteristic width of the peaks
+      var gauss = new Altaxo.Calc.FitFunctions.Peaks.GaussAmplitude(1, -1);
+      var paras = gauss.GetInitialParametersFromHeightPositionAndWidthAtRelativeHeight(1, 0, referencePeak.WidthValue, referencePeak.RelativeHeightOfWidthDetermination);
+      var sigma = paras[2];
+      var smoothness = relativeNoiseLevel == 0 ? 0 : Math.Exp(0.661363482359657 + 0.762530359444604 * sigma + 1.06655506150399 * Math.Log(relativeNoiseLevel * 10));
+      return this with { Smoothness = smoothness };
+    }
 
     /// <inheritdoc/>
     public (double[] x, double[] y, int[]? regions) Execute(double[] x, double[] y, int[]? regions)

@@ -58,13 +58,25 @@ namespace Altaxo.Calc.Regression
   public class SavitzkyGolay
   {
     /// <summary>
+    /// Gets the central coefficients of the Savitzky-Golay method.
+    /// </summary>
+    /// <param name="parameters">The parameters of the Savitzky-Golay method.</param>
+    /// <returns>The central coefficients.</returns>
+    public static double[] GetCentralCoefficients(SavitzkyGolayParameters parameters)
+    {
+      var result = new double[parameters.NumberOfPoints];
+      GetCoefficients(parameters.NumberOfPoints / 2, parameters.NumberOfPoints / 2, parameters.DerivativeOrder, parameters.PolynomialOrder, VectorMath.ToVector(result));
+      return result;
+    }
+
+    /// <summary>
     /// Calculate Savitzky-Golay coefficients.
     /// </summary>
     /// <param name="leftpoints">Points on the left side included in the regression.</param>
     /// <param name="rightpoints">Points to the right side included in the regression.</param>
     /// <param name="derivativeorder">Order of derivative for which the coefficients are calculated.</param>
     /// <param name="polynomialorder">Order of the regression polynomial.</param>
-    /// <param name="coefficients">Output: On return, contains the calculated coefficients.</param>
+    /// <param name="coefficients">Output: On return, contains the calculated coefficients. The length must be leftPoints + rightPoints +1-</param>
     public static void GetCoefficients(int leftpoints, int rightpoints, int derivativeorder, int polynomialorder, IVector<double> coefficients)
     {
       int totalpoints = leftpoints + rightpoints + 1;

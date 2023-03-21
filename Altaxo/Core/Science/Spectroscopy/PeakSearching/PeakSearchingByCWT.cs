@@ -311,7 +311,8 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
 
         if (PeakEnhancement is not PeakEnhancementNone)
         {
-          var (xEnh, yEnh, _) = PeakEnhancement.Execute(subX, subY, null); // Execute peak enhancement
+          var peakEnhancementAdjusted = PeakEnhancement.WithAdjustedParameters(subX, subY, resultRegular);
+          var (xEnh, yEnh, _) = peakEnhancementAdjusted.Execute(subX, subY, null); // Execute peak enhancement
           var resultEnhanced = Execute(xEnh, yEnh);
 
           resultRegular = PeakSearchingNone.CombineResults(resultRegular, resultEnhanced, subX, subY);

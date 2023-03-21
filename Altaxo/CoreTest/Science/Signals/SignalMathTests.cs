@@ -231,5 +231,30 @@ namespace Altaxo.Science.Signals
       Assert.True(min[0] == 1);
       Assert.True(max[0] == 3);
     }
+
+    [Fact]
+    public void TestGetNoiseLevelEstimate()
+    {
+      const double testSigma = 7;
+      var rnd = new Altaxo.Calc.Probability.NormalDistribution(0, testSigma);
+      var arr = new double[100000];
+
+      for (int i = 0; i < arr.Length; i++)
+      {
+        arr[i] = i * 0.01 + rnd.NextDouble();
+      }
+
+      // Order 1
+      var noiseEstimate = SignalMath.GetNoiseLevelEstimate(arr, 1);
+      AssertEx.AreEqual(testSigma, noiseEstimate, 0, 1E-1);
+
+      // Order 3
+      noiseEstimate = SignalMath.GetNoiseLevelEstimate(arr, 3);
+      AssertEx.AreEqual(testSigma, noiseEstimate, 0, 1E-1);
+
+      // Order 5
+      noiseEstimate = SignalMath.GetNoiseLevelEstimate(arr, 5);
+      AssertEx.AreEqual(testSigma, noiseEstimate, 0, 1E-1);
+    }
   }
 }

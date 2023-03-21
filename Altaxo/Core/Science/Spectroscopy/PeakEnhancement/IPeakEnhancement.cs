@@ -23,6 +23,9 @@
 #endregion Copyright
 
 
+using System.Collections.Generic;
+using Altaxo.Science.Spectroscopy.PeakSearching;
+
 namespace Altaxo.Science.Spectroscopy.PeakEnhancement
 {
   /// <summary>
@@ -32,5 +35,13 @@ namespace Altaxo.Science.Spectroscopy.PeakEnhancement
   /// </summary>
   public interface IPeakEnhancement : ISingleSpectrumPreprocessor
   {
+    /// <summary>
+    /// Adjusts the parameters of this peak enhancement method by using the spectrum, and the result of a regular peak search over the spectrum.
+    /// </summary>
+    /// <param name="subX">The x-values of the spectrum.</param>
+    /// <param name="subY">The y-values of the spectrum.</param>
+    /// <param name="resultRegular">The result of a peak search over the spectrum.</param>
+    /// <returns>An instance of the peak search with adjusted parameters. If nothing is changed, the same instance can be returned.</returns>
+    IPeakEnhancement WithAdjustedParameters(double[] subX, double[] subY, List<PeakDescription> resultRegular);
   }
 }

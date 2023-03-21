@@ -23,6 +23,8 @@
 #endregion Copyright
 
 using System;
+using System.Collections.Generic;
+using Altaxo.Science.Spectroscopy.PeakSearching;
 
 namespace Altaxo.Science.Spectroscopy.PeakEnhancement
 {
@@ -131,6 +133,12 @@ namespace Altaxo.Science.Spectroscopy.PeakEnhancement
       }
     }
     #endregion
+
+    /// <inheritdoc/>
+    public IPeakEnhancement WithAdjustedParameters(double[] subX, double[] subY, List<PeakDescription> resultRegular)
+    {
+      return this;
+    }
 
     /// <inheritdoc/>
     public (double[] x, double[] y, int[]? regions) Execute(double[] x, double[] y, int[]? regions)
