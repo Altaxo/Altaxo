@@ -56,7 +56,7 @@ namespace Altaxo.Science.Spectroscopy.PeakEnhancement
       init
       {
         if (value is not null && !(0 <= value.Value))
-          throw new ArgumentOutOfRangeException("Must be a value >=0", nameof(value));
+          throw new ArgumentOutOfRangeException(nameof(value), "Must be a value >=0");
         _smoothness = value;
       }
     }
@@ -114,6 +114,13 @@ namespace Altaxo.Science.Spectroscopy.PeakEnhancement
       var gauss = new Altaxo.Calc.FitFunctions.Peaks.GaussAmplitude(1, -1);
       var paras = gauss.GetInitialParametersFromHeightPositionAndWidthAtRelativeHeight(1, 0, referencePeak.WidthValue, referencePeak.RelativeHeightOfWidthDetermination);
       var sigma = paras[2];
+
+      // The factors in the following formula were evaluated from a notebook in which two overlapping Gaussians peaks (height=1) with sigma varying from 1 point to 10 points,
+      // separated in position by 2*sigma, plus additional normal distributed noise (sigma=0.0001, 0.0002, 0.0005, 0.001, .., 0.05), were created. The x-axis ranged from 0 to 100.
+      // This curve was then modelled by a smoothing spline with smoothness values ranging from 0.1, 0.2, 0.5, 1, ... , 200. The 2nd derivative of the smoothing spline was then compared with
+      // the analytical derivative of the two overlapping Gaussians. For each pair of sigma and noiselevel, the smoothness value which gave the lowest deviation from the analytical derivative
+      // was then picked out. The logarithm of this smoothness value was regressed using intercept, sigma, and the logarithm of the relative noise level.
+      // The factor 10 to the relativeNoiseLevel is a compromise between best modelling the highest peaks (factor=1) and the lowest peaks (approx. 1% of the highest peaks) (factor=100).
       var smoothness = relativeNoiseLevel == 0 ? 0 : Math.Exp(0.661363482359657 + 0.762530359444604 * sigma + 1.06655506150399 * Math.Log(relativeNoiseLevel * 10));
       return this with { Smoothness = smoothness };
     }
