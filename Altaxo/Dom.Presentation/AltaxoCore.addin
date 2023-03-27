@@ -673,6 +673,8 @@
                       class="Altaxo.Worksheet.Commands.SpectroscopyRamanNeonCalibration" />
               <MenuItem id="IdRamanSiCalibration" label="Silicon calibration" description="Uses a Silicon spectrum for calibration"
                     class="Altaxo.Worksheet.Commands.SpectroscopyRamanSiliconCalibration" />
+              <MenuItem id="IdYCalibration" label="Intensity calibration" description="Use a known spectrum for intensity calibration"
+                    class="Altaxo.Worksheet.Commands.SpectroscopyIntensityCalibration" />
             </MenuItem>
         </MenuItem>
           

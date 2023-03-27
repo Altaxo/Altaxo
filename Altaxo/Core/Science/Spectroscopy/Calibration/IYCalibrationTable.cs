@@ -22,31 +22,26 @@
 
 #endregion Copyright
 
-using Altaxo.Data;
+using System.Collections.Immutable;
 
 namespace Altaxo.Science.Spectroscopy.Calibration
 {
   /// <summary>
-  /// Interface to a data source that may contain a x-axis calibration.
+  /// Interface to a spectral preprocessor that contains an x-axis calibration table.
   /// </summary>
-  public interface IXCalibrationDataSource
+  public interface IYCalibrationTable
   {
     /// <summary>
-    /// Determines whether the table belonging to the data source is containing a valid x-axis calibration.
+    /// Gets the calibration table, consisting of an array of x-values and a corresponding scaling factor.
+    /// For processing an uncalibrated spectrum, the spectral y-values are multiplied with the scaling factor.
     /// </summary>
-    /// <param name="table">The table.</param>
-    /// <returns>
-    ///   <c>true</c> if the table belonging to the data source is containing a valid x-axis calibration; otherwise, <c>false</c>.
-    /// </returns>
-    bool IsContainingValidXAxisCalibration(DataTable table);
-
+    public ImmutableArray<(double x, double yScalingFactor)> CalibrationTable { get; }
 
     /// <summary>
-    /// Gets the x axis calibration. Please use <see cref="IsContainingValidXAxisCalibration(DataTable)"/> to test beforehand, if an x-axis calibration is
-    /// available.
+    /// Returns a new instance with the provided calibration table.
     /// </summary>
-    /// <param name="table">The table belonging to the data source.</param>
-    /// <returns>The x-axis calibration data.</returns>
-    (double x_uncalibrated, double x_calibrated)[] GetXAxisCalibration(DataTable table);
+    /// <param name="calibrationTable">The calibration table.</param>
+    /// <returns>A new instance with the provided calibration table.</returns>
+    public IYCalibrationTable WithCalibrationTable(ImmutableArray<(double x, double yScalingFactor)> calibrationTable);
   }
 }

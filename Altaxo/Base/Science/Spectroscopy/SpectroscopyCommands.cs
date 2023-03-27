@@ -35,6 +35,7 @@ using Altaxo.Graph.Gdi.Plot;
 using Altaxo.Graph.Gdi.Plot.Styles;
 using Altaxo.Graph.Plot.Data;
 using Altaxo.Gui;
+using Altaxo.Gui.Science.Spectroscopy.Calibration;
 using Altaxo.Gui.Science.Spectroscopy.Raman;
 using Altaxo.Gui.Worksheet.Viewing;
 using Altaxo.Main.Services;
@@ -847,7 +848,7 @@ namespace Altaxo.Science.Spectroscopy
     /// <param name="numberOfSpectrum">The number of the spectrum.</param>
     /// <param name="graphName">Name of the graph.</param>
     /// <returns>The graph, and the plot item collection of the plot of the preprocessed spectrum.</returns>
-    static (GraphDocument graph, PlotItemCollection group) CreateGraphWithPreprocessedSpectrum(DataTable peakTable, int numberOfSpectrum, string graphName)
+    private static (GraphDocument graph, PlotItemCollection group) CreateGraphWithPreprocessedSpectrum(DataTable peakTable, int numberOfSpectrum, string graphName)
     {
       var selColumnsForPeakGraph = new AscendingIntegerCollection
           {
@@ -1061,6 +1062,75 @@ namespace Altaxo.Science.Spectroscopy
 
 
       Current.ProjectService.OpenOrCreateWorksheetForTable(dstTable);
+    }
+
+    /// <summary>
+    /// Calibrate intensity with a known spectrum, and optionally, a dark spectrum.
+    /// </summary>
+    /// <param name="ctrl">The worksheet controller.</param>
+    public static void CalibrateWithIntensitySpectrum(WorksheetController ctrl)
+    {
+      if (ctrl.SelectedDataColumns.Count == 0)
+      {
+        Current.Gui.ErrorMessageBox("Please select either one column containing the intensity of the known spectrum, or two columns, containing the dark spectrum and the intensity of the known spectrum. Do not select the x-axis of the spectrum or spectra.");
+        return;
+      }
+
+      if (ctrl.SelectedDataColumns.Count > 2)
+      {
+        Current.Gui.ErrorMessageBox("Please select either one column containing the intensity of the known spectrum, or two columns, containing the dark spectrum and the intensity of the known spectrum. Do not select the x-axis of the spectrum or spectra.");
+        return;
+      }
+
+      var y_column1 = ctrl.DataTable.DataColumns[ctrl.SelectedDataColumns[0]];
+      var x_column1 = ctrl.DataTable.DataColumns.FindXColumnOf(y_column1);
+
+      var y_column2 = ctrl.SelectedDataColumns.Count > 1 ? ctrl.DataTable.DataColumns[ctrl.SelectedDataColumns[1]] : null;
+      var x_column2 = y_column2 is not null ? ctrl.DataTable.DataColumns.FindXColumnOf(y_column2) : null;
+
+      var len = Math.Min(x_column1.Count, y_column1.Count);
+
+      if (x_column1 is null)
+      {
+        Current.Gui.ErrorMessageBox($"Could not find x-column corresponding to spectrum column ({y_column1.Name}). Please find this x-column, then set the kind of this column to 'X'");
+        return;
+      }
+
+      if (y_column2 is not null && x_column2 is null)
+      {
+        Current.Gui.ErrorMessageBox($"Could not find x-column corresponding to y-column2 ({y_column2.Name}). Please find this x-column, then set the kind of this column to 'X'");
+        return;
+      }
+
+      if (x_column2 is not null && !object.ReferenceEquals(x_column1, x_column2))
+      {
+        Current.Gui.ErrorMessageBox($"There should be a common x-column for both the signal spectrum and the dark spectrum." +
+                                    $"But there are to separate x-columns for each of them: '{x_column1.Name}' and '{x_column2.Name}'." +
+                                    $"Please make sure that both columns share a common x-column, and that all columns have the same length."
+                                    );
+        return;
+      }
+
+      if (y_column2 is not null)
+      {
+        // try to guess which one is the dark column
+        if (y_column1.Name.ToLowerInvariant().Contains("dark"))
+        {
+          (y_column1, y_column2) = (y_column2, y_column1);
+        }
+      }
+
+
+      var doc = new IntensityCalibrationSetup()
+      {
+        XColumn = x_column1,
+        YSignal = y_column1,
+        YDark = y_column2,
+      };
+      var controller = new IntensityCalibrationSetupController();
+      controller.InitializeDocument(doc);
+      if (!Current.Gui.ShowDialog(controller, "Choose options for intensity calibration"))
+        return;
     }
   }
 }

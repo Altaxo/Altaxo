@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2023 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -67,13 +67,12 @@ namespace Altaxo.Science.Spectroscopy.Raman
     #endregion
 
     private IDataSourceImportOptions _importOptions;
-
-    NeonCalibrationOptions? _neonCalibrationOptions1;
-    DataTableXYColumnProxy? _neonCalibrationData1;
-    NeonCalibrationOptions? _neonCalibrationOptions2;
-    DataTableXYColumnProxy? _neonCalibrationData2;
-    SiliconCalibrationOptions? _siliconCalibrationOptions;
-    DataTableXYColumnProxy? _siliconCalibrationData;
+    private NeonCalibrationOptions? _neonCalibrationOptions1;
+    private DataTableXYColumnProxy? _neonCalibrationData1;
+    private NeonCalibrationOptions? _neonCalibrationOptions2;
+    private DataTableXYColumnProxy? _neonCalibrationData2;
+    private SiliconCalibrationOptions? _siliconCalibrationOptions;
+    private DataTableXYColumnProxy? _siliconCalibrationData;
 
     public Action<IAltaxoTableDataSource>? _dataSourceChanged;
 
@@ -114,7 +113,7 @@ namespace Altaxo.Science.Spectroscopy.Raman
     }
 
     [MemberNotNull(nameof(_importOptions))]
-    void DeserializeSurrogate0(Serialization.Xml.IXmlDeserializationInfo info)
+    private void DeserializeSurrogate0(Serialization.Xml.IXmlDeserializationInfo info)
     {
       ChildSetMember(ref _importOptions, (IDataSourceImportOptions)info.GetValue("ImportOptions", this));
 
@@ -187,7 +186,7 @@ namespace Altaxo.Science.Spectroscopy.Raman
     }
 
     [MemberNotNull(nameof(_importOptions))]
-    void CopyFrom(RamanCalibrationDataSource from)
+    private void CopyFrom(RamanCalibrationDataSource from)
     {
       using (var token = SuspendGetToken())
       {

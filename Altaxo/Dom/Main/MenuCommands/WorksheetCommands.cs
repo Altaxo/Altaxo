@@ -1022,13 +1022,6 @@ namespace Altaxo.Worksheet.Commands
   {
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
-
-      /* Unmerged change from project 'AltaxoDom.Presentation (net6.0-windows)'
-      Before:
-            Altaxo.Data.SpectroscopyCommands.SpectralPeakFindingFittingShowDialog(ctrl);
-      After:
-            SpectroscopyCommands.SpectralPeakFindingFittingShowDialog(ctrl);
-      */
       Science.Spectroscopy.SpectroscopyCommands.SpectralPeakFindingFittingShowDialog(ctrl);
     }
   }
@@ -1037,13 +1030,6 @@ namespace Altaxo.Worksheet.Commands
   {
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
-
-      /* Unmerged change from project 'AltaxoDom.Presentation (net6.0-windows)'
-      Before:
-            Altaxo.Data.SpectroscopyCommands.Raman_CalibrateWithNeonSpectrum(ctrl);
-      After:
-            SpectroscopyCommands.Raman_CalibrateWithNeonSpectrum(ctrl);
-      */
       Science.Spectroscopy.SpectroscopyCommands.Raman_CalibrateWithNeonSpectrum(ctrl);
     }
   }
@@ -1052,14 +1038,15 @@ namespace Altaxo.Worksheet.Commands
   {
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
-
-      /* Unmerged change from project 'AltaxoDom.Presentation (net6.0-windows)'
-      Before:
-            Altaxo.Data.SpectroscopyCommands.Raman_CalibrateWithSiliconSpectrum(ctrl);
-      After:
-            SpectroscopyCommands.Raman_CalibrateWithSiliconSpectrum(ctrl);
-      */
       Science.Spectroscopy.SpectroscopyCommands.Raman_CalibrateWithSiliconSpectrum(ctrl);
+    }
+  }
+
+  public class SpectroscopyIntensityCalibration : AbstractWorksheetControllerCommand
+  {
+    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
+    {
+      Science.Spectroscopy.SpectroscopyCommands.CalibrateWithIntensitySpectrum(ctrl);
     }
   }
 

@@ -29,7 +29,7 @@ namespace Altaxo.Science.Spectroscopy.Calibration
   /// <summary>
   /// Interface to a data source that may contain a x-axis calibration.
   /// </summary>
-  public interface IXCalibrationDataSource
+  public interface IYCalibrationDataSource
   {
     /// <summary>
     /// Determines whether the table belonging to the data source is containing a valid x-axis calibration.
@@ -38,15 +38,15 @@ namespace Altaxo.Science.Spectroscopy.Calibration
     /// <returns>
     ///   <c>true</c> if the table belonging to the data source is containing a valid x-axis calibration; otherwise, <c>false</c>.
     /// </returns>
-    bool IsContainingValidXAxisCalibration(DataTable table);
+    bool IsContainingValidYAxisCalibration(DataTable table);
 
 
     /// <summary>
-    /// Gets the x axis calibration. Please use <see cref="IsContainingValidXAxisCalibration(DataTable)"/> to test beforehand, if an x-axis calibration is
+    /// Gets the x axis calibration. Please use <see cref="IsContainingValidYAxisCalibration(DataTable)"/> to test beforehand, if an y-axis calibration is
     /// available.
     /// </summary>
     /// <param name="table">The table belonging to the data source.</param>
     /// <returns>The x-axis calibration data.</returns>
-    (double x_uncalibrated, double x_calibrated)[] GetXAxisCalibration(DataTable table);
+    (double x, double yScalingFactor)[] GetYAxisCalibration(DataTable table);
   }
 }
