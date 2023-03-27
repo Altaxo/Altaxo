@@ -12,7 +12,7 @@ namespace Altaxo.Calc.Interpolation
       double[] x = { 1, 2, 3, 4, 5, 6, 7 };
       double[] y = { 14, 12, 10, 8, 6, 4, 2 }; // y = 16 - 2*x
 
-      var spl = BSpline1D.createInterpBSpline(x, y, 3);
+      var spl = BSpline1D.InterpolateFunctionSorted(x, y, 3);
 
       for (int i = 2; i <= 14; i++)
       {
@@ -28,7 +28,7 @@ namespace Altaxo.Calc.Interpolation
       double[] x = { -3, -2, -1, 0, 1, 2, 3 };
       double[] y = x.Select(xx => xx * xx + xx).ToArray(); // y = x*x +x
 
-      var spl = BSpline1D.createInterpBSpline(x, y, 3);
+      var spl = BSpline1D.InterpolateFunctionSorted(x, y, 3);
 
       for (double xx = -4; xx <= 4; xx += 0.25)
       {
@@ -43,7 +43,7 @@ namespace Altaxo.Calc.Interpolation
       double[] x = { -3, -2, -1, 0, 1, 2, 3 };
       double[] y = x.Select(xx => xx * xx * xx + xx).ToArray(); // y = x*x*x +x
 
-      var spl = BSpline1D.createInterpBSpline(x, y, 3);
+      var spl = BSpline1D.InterpolateFunctionSorted(x, y, 3);
 
       for (double xx = -4; xx <= 4; xx += 0.25)
       {
@@ -59,7 +59,7 @@ namespace Altaxo.Calc.Interpolation
       double[] x = { -3, -1.5, -1, 0, 1, 2.5, 3 };
       double[] y = x.Select(xx => f(xx)).ToArray(); // y = x*x*x +x
 
-      var spl = BSpline1D.createInterpBSpline(x, y, 3);
+      var spl = BSpline1D.InterpolateFunctionSorted(x, y, 3);
 
       for (double xx = -3; xx <= 3; xx += 0.25)
       {
@@ -75,12 +75,29 @@ namespace Altaxo.Calc.Interpolation
       double[] x = { -3, -1.5, -1, 0, 1, 2.5, 3 };
       double[] y = x.Select(xx => f(xx)).ToArray(); // y = x*x*x +x
 
-      var spl = BSpline1D.createInterpBSpline(x, y, 3);
+      var spl = BSpline1D.InterpolateFunctionSorted(x, y, 3);
 
       for (double xx = -3; xx <= 3; xx += 0.25)
       {
         double yy = spl.GetYOfX(xx);
         AssertEx.AreEqual(f(xx), yy, 1e-4, 1e-4);
+      }
+    }
+
+    [Fact]
+    public void Test_NonuniformX_GetUFromXY()
+    {
+      var f = new Func<double, double>(x => x * x + x);
+      double[] x = { -3, -1.5, -1, 0, 1, 2.5, 3 };
+      double[] y = x.Select(xx => f(xx)).ToArray(); // y = x*x*x +x
+
+      var spl = BSpline1D.InterpolateFunctionSorted(x, y, 3);
+
+      for (double xx = -3; xx <= 3; xx += 0.25)
+      {
+        double uexpected = (xx + 3) / 6.0;
+        double uu = spl.GetUOfX(xx);
+        AssertEx.AreEqual(uexpected, uu, 1e-4, 1e-4);
       }
     }
 

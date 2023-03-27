@@ -362,7 +362,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <para>References:</para>
     /// <para>[1] Engeln-Müllges, Numerik-Algorithmen, 10th ed., page 177</para>
     /// </remarks>
-    public static void SolvePentaDiagonal(IMatrix<double> A, double[] a, double[] x)
+    public static void SolvePentaDiagonal(IROMatrix<double> A, IReadOnlyList<double> a, double[] x)
     {
       object? tempStorage = null;
       SolvePentaDiagonal(A, a, x, ref tempStorage);
@@ -380,7 +380,7 @@ namespace Altaxo.Calc.LinearAlgebra
     /// <para>References:</para>
     /// <para>[1] Engeln-Müllges, Numerik-Algorithmen, 10th ed., page 177</para>
     /// </remarks>
-    public static void SolvePentaDiagonal(IMatrix<double> A, double[] a, double[] x, ref object? tempStorage)
+    public static void SolvePentaDiagonal(IROMatrix<double> A, IReadOnlyList<double> a, double[] x, ref object? tempStorage)
     {
       // Start of algorithm 4.77, page 178, book of Engeln-Müllges, Numerik-Algorithmen, 10th ed.
 

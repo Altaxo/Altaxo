@@ -33,6 +33,48 @@ using Altaxo.Calc.LinearAlgebra;
 namespace Altaxo.Calc.Interpolation
 {
   /// <summary>
+  /// Options for a cross validated cubic spline (<see cref="CrossValidatedCubicSpline"/>).
+  /// </summary>
+  public record BSpline1DOptions : IInterpolationFunctionOptions
+  {
+    int _degree = 3;
+
+    #region Serialization
+
+    /// <summary>
+    /// 2023-03-07 initial version
+    /// </summary>
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(BSpline1DOptions), 0)]
+    public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        var s = (BSpline1DOptions)obj;
+        info.AddValue("Degree", s._degree);
+      }
+
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      {
+        var degree = info.GetInt32("Degree");
+        return new BSpline1DOptions() { _degree = degree };
+      }
+    }
+
+    #endregion
+
+
+    public IInterpolationFunction Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec, IReadOnlyList<double>? yStdDev = null)
+    {
+      return BSpline1D.InterpolateFunctionSorted(xvec, yvec, _degree);
+    }
+
+    IInterpolationCurve IInterpolationCurveOptions.Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec, IReadOnlyList<double>? yStdDev)
+    {
+      return BSpline1D.InterpolateFunctionSorted(xvec, yvec, _degree);
+    }
+  }
+
+  /// <summary>
   /// Implements a BSpline in one dimension.
   /// </summary>
   /// <remarks>
@@ -41,39 +83,34 @@ namespace Altaxo.Calc.Interpolation
   /// </remarks>
   public class BSpline1D : IInterpolationFunction
   {
-    private double[] _xOrg;     //x original
-    private double[] _yOrg;     //y original
+    //private double[] _xOrg;     //x original
+    //private double[] _yOrg;     //y original
 
     private int _degree;
 
     // working variables
-    private double[] _myX;
-    private double[] _myY;
+    private double[] _x;
+    private double[] _y;
     private double[] _knots;
+
+    /// <summary>
+    /// If interpolating functions (sorted x values), this can be used to
+    /// calculate u for a given x.
+    /// </summary>
+    private (double xstart, double xspan)? _xAxis;
 
     /// <summary>
     /// Temporary array for calculation of <see cref="GetXOfU(double)"/> and <see cref="GetYOfU(double)"/>.
     /// </summary>
     private ThreadLocal<double[,]> _temporaryV = new ThreadLocal<double[,]>();
 
-    /// <summary>
-    /// The parent spline (neccessary for getting the u of x when the actual spline is a derivative).
-    /// </summary>
-    public BSpline1D? ParentSpline { get; init; }
-
-    public BSpline1D(int degree = 3)
-    {
-      _degree = degree;
-    }
-
-
     public BSpline1D(double[] x, double[] y, int degree)
     {
       if (x.Length != y.Length)
         throw new ArgumentException("The arrays x and y must have the same length");
       _degree = degree;
-      _xOrg = (double[])x.Clone();
-      _yOrg = (double[])y.Clone();
+      //_xOrg = (double[])x.Clone();
+      //_yOrg = (double[])y.Clone();
       Initialize(x, y, null);
     }
 
@@ -84,8 +121,8 @@ namespace Altaxo.Calc.Interpolation
       if (!(knots.Length >= x.Length + 2))
         throw new ArgumentException("The number of knots must be at least n+2");
 
-      _xOrg = (double[])x.Clone();
-      _yOrg = (double[])y.Clone();
+      //_xOrg = (double[])x.Clone();
+      //_yOrg = (double[])y.Clone();
       _knots = (double[])knots.Clone();
       Initialize(x, y, knots);
     }
@@ -116,8 +153,8 @@ namespace Altaxo.Calc.Interpolation
 
         // create our internal vector of Control Points
         // here, no modifications need to be done on the original x/y values
-        _myX = x;
-        _myY = y;
+        _x = x;
+        _y = y;
       }
       else
       {
@@ -150,13 +187,13 @@ namespace Altaxo.Calc.Interpolation
 
         //add computed values
         _knots = new double[initialKnots.Length + nAddToStart + nAddToEnd];
-        _myX = new double[x.Length + nAddToStart + nAddToEnd];
-        _myY = new double[y.Length + nAddToStart + nAddToEnd];
+        _x = new double[x.Length + nAddToStart + nAddToEnd];
+        _y = new double[y.Length + nAddToStart + nAddToEnd];
         for (int i = 0; i < nAddToStart; i++)
         {
           _knots[i] = initialKnots[0];
-          _myX[i] = x[0];
-          _myY[i] = y[0];
+          _x[i] = x[0];
+          _y[i] = y[0];
         }
         for (int i = 0; i < initialKnots.Length; i++)
         {
@@ -164,14 +201,14 @@ namespace Altaxo.Calc.Interpolation
         }
         for (int i = 0; i < x.Length; i++)
         {
-          _myX[nAddToStart + i] = x[i];
-          _myY[nAddToStart + i] = y[i];
+          _x[nAddToStart + i] = x[i];
+          _y[nAddToStart + i] = y[i];
         }
         for (int i = 0; i < nAddToEnd; i++)
         {
           _knots[_knots.Length - 1 - i] = initialKnots[^1];
-          _myX[_myX.Length - 1 - i] = x[^1];
-          _myY[_myY.Length - 1 - i] = y[^1];
+          _x[_x.Length - 1 - i] = x[^1];
+          _y[_y.Length - 1 - i] = y[^1];
         }
       }
     }
@@ -179,12 +216,12 @@ namespace Altaxo.Calc.Interpolation
 
     public double[] getX()
     {
-      return (double[])_myX.Clone();
+      return (double[])_x.Clone();
     }
 
     public double[] getY()
     {
-      return (double[])_myY.Clone();
+      return (double[])_y.Clone();
     }
 
     public double getMaxKnot()
@@ -202,25 +239,35 @@ namespace Altaxo.Calc.Interpolation
       return (double[])_knots.Clone();
     }
 
-    public static BSpline1D createInterpBSpline(double[] x, double[] y,
-                                             int degree, bool createEquallySpacedKnots = false)
+    public static BSpline1D InterpolateFunctionSorted(IReadOnlyList<double> x, IReadOnlyList<double> y, int degree = 3)
     {
-      if (x.Length != y.Length)
+      return createInterpBSpline(x, y, degree, true, false);
+    }
+
+    public static BSpline1D InterpolateCurve(IReadOnlyList<double> x, IReadOnlyList<double> y, int degree = 3)
+    {
+      return createInterpBSpline(x, y, degree, false, true);
+    }
+
+    protected static BSpline1D createInterpBSpline(IReadOnlyList<double> x, IReadOnlyList<double> y,
+                                             int degree, bool areDataSortedByX = false, bool createEquallySpacedKnots = false)
+    {
+      if (x.Count != y.Count)
         throw new ArgumentException("The arrays x and y must share the same length");
-      if (x.Length <= degree)
+      if (x.Count <= degree)
         throw new ArgumentException("The arrays length must be greater than degree");
 
-      double[] t = new double[x.Length];
+      double[] t = new double[x.Count];
 
       //compute U : clamped knots vector uniformly from 0 to 1
-      double[] U = new double[x.Length + degree + 1];
+      double[] U = new double[x.Count + degree + 1];
       int m = U.Length - 1;
 
       if (createEquallySpacedKnots)
       {
-        double n1d = x.Length - 1;
+        double n1d = x.Count - 1;
         //compute t : parameters vector uniformly from 0 to 1
-        t = new double[x.Length];
+        t = new double[x.Count];
         for (int i = 0; i < t.Length; i++)
         {
           t[i] = i / n1d;
@@ -228,8 +275,8 @@ namespace Altaxo.Calc.Interpolation
 
         for (int i = 0; i <= degree; i++)
           U[i] = 0;
-        for (int i = 1; i < x.Length - degree; i++)
-          U[i + degree] = (double)i / (x.Length - degree);
+        for (int i = 1; i < x.Count - degree; i++)
+          U[i + degree] = (double)i / (x.Count - degree);
         for (int i = U.Length - 1 - degree; i < U.Length; i++)
           U[i] = 1;
       }
@@ -246,55 +293,54 @@ namespace Altaxo.Calc.Interpolation
 
         for (int i = 0; i <= degree; i++)
           U[i] = 0;
-        for (int i = 1; i < x.Length - degree; i++)
+        for (int i = 1; i < x.Count - degree; i++)
           U[i + degree] = (x[i + 1] - xmin) / xspan;
         for (int i = U.Length - 1 - degree; i < U.Length; i++)
           U[i] = 1;
       }
 
       //compute matrix N : made of BSpline coefficients
-      double[][] N = new double[x.Length][];
-      for (int i = 0; i < x.Length; i++)
+      double[][] N = new double[x.Count][];
+      for (int i = 0; i < x.Count; i++)
       {
-        N[i] = computeN(U, degree, t[i], x.Length);
+        N[i] = computeN(U, degree, t[i], x.Count);
       }
 
-      //initialize D : initial points matrix
-      var D = new double[x.Length, 2];
-      for (int i = 0; i < x.Length; i++)
+      var xx = new double[x.Count];
+      var yy = new double[y.Count];
+      object tempStorage = null;
+      var MN = MatrixMath.ToROMatrixFromLeftSpineJaggedArray<double>(N);
+      GaussianEliminationSolver.SolvePentaDiagonal(MN, x, xx, ref tempStorage);
+      GaussianEliminationSolver.SolvePentaDiagonal(MN, y, yy, ref tempStorage);
+
+      var spline = new BSpline1D(xx, yy, U);
+      if (areDataSortedByX && !createEquallySpacedKnots)
       {
-        D[i, 0] = x[i];
-        D[i, 1] = y[i];
+        spline._xAxis = (x[0], x[^1] - x[0]);
       }
 
-      //solve the linear equation system using colt library
-      var coltN = Matrix<double>.Build.Dense(x.Length, x.Length, (i, j) => N[i][j]);
-      var coltD = Matrix<double>.Build.Dense(x.Length, 2, (i, j) => D[i, j]);
-      var coltP = Matrix<double>.Build.Dense(x.Length, 2);
-      coltN.Solve(coltD, coltP);
-
-      return new BSpline1D(coltP.Column(0).ToArray(), coltP.Column(1).ToArray(), U);
+      return spline;
     }
 
-    public static BSpline1D createApproxBSpline(double[] x, double[] y,
+    public static BSpline1D createApproxBSpline(IReadOnlyList<double> x, IReadOnlyList<double> y,
                                             int degree, int hp1, bool createEquallySpacedKnots = false)
     {
-      if (x.Length != y.Length)
+      if (x.Count != y.Count)
         throw new ArgumentException("The arrays x and y must share the same length");
-      if (x.Length <= degree)
+      if (x.Count <= degree)
         throw new ArgumentException("The arrays length must be greater than degree");
       if (!(hp1 > degree))
         throw new ArgumentOutOfRangeException(nameof(hp1), "Must be > degree");
 
       int h = hp1 - 1;
-      int n = x.Length - 1;
+      int n = x.Count - 1;
 
-      double[] t = new double[x.Length];
+      double[] t = new double[x.Count];
       if (createEquallySpacedKnots)
       {
-        double n1d = x.Length - 1;
+        double n1d = x.Count - 1;
         //compute t : parameters vector uniformly from 0 to 1
-        t = new double[x.Length];
+        t = new double[x.Count];
         for (int i = 0; i < t.Length; i++)
         {
           t[i] = i / n1d;
@@ -331,19 +377,19 @@ namespace Altaxo.Calc.Interpolation
       }
 
       //initialize D : initial points matrix
-      var D = new double[x.Length, 2];
-      for (int i = 0; i < x.Length; i++)
+      var D = new double[x.Count, 2];
+      for (int i = 0; i < x.Count; i++)
       {
         D[i, 0] = x[i];
         D[i, 1] = y[i];
       }
 
       //compute Q :
-      var tempQ = new double[x.Length, 2];
+      var tempQ = new double[x.Count, 2];
       for (int k = 1; k < n; k++)
       {
-        tempQ[k, 0] = D[k, 0] - N[k][0] * D[0, 0] - N[k][h] * D[x.Length - 1, 0];
-        tempQ[k, 1] = D[k, 1] - N[k][0] * D[0, 1] - N[k][h] * D[x.Length - 1, 1];
+        tempQ[k, 0] = D[k, 0] - N[k][0] * D[0, 0] - N[k][h] * D[x.Count - 1, 0];
+        tempQ[k, 1] = D[k, 1] - N[k][0] * D[0, 1] - N[k][h] * D[x.Count - 1, 1];
       }
       var Q = new double[h - 1, 2];
       for (int i = 1; i < h; i++)
@@ -363,7 +409,7 @@ namespace Altaxo.Calc.Interpolation
           N2[i, j] = N[i + 1][j + 1];
       }
 
-      //solve the linear equation system using colt library
+      //solve the linear equation system 
       var coltQ = Matrix<double>.Build.Dense(h - 1, 2, (i, j) => Q[i, j]);
       var coltN = Matrix<double>.Build.Dense(n - 1, h - 1, (i, j) => N2[i, j]);
       var coltM = Matrix<double>.Build.Dense(h - 1, h - 1);
@@ -376,8 +422,8 @@ namespace Altaxo.Calc.Interpolation
       double[] py = new double[hp1];
       px[0] = D[0, 0];
       py[0] = D[0, 1];
-      px[h] = D[x.Length - 1, 0];
-      py[h] = D[x.Length - 1, 1];
+      px[h] = D[x.Count - 1, 0];
+      py[h] = D[x.Count - 1, 1];
       for (int i = 0; i < pxTemp.Count; i++)
       {
         px[i + 1] = pxTemp[i];
@@ -388,7 +434,8 @@ namespace Altaxo.Calc.Interpolation
       // return new BSpline(px, py, degree);
     }
 
-
+    /* This is uncommented because we have to distinguish between derivative with respect to u (maybe the code below is implementing that)
+     * and the derivative w.r.t. x (the code below is definitely not implementing that
 
     /// <summary>
     /// Returns the derivative B-spline object of the current variable.
@@ -449,6 +496,8 @@ namespace Altaxo.Calc.Interpolation
       return bs;
     }
 
+    */
+
     /// <summary>
     /// Gets the y value, for a given x-value. This function can only be used when the spline was
     /// constructed with points that were sorted by x (ascending or descending).
@@ -458,16 +507,7 @@ namespace Altaxo.Calc.Interpolation
     public double GetYOfX(double x)
     {
       var u = GetUOfX(x);
-      if (ParentSpline is { } ps)
-      {
-        var dx = GetXOfU(u);
-        var dy = GetYOfU(u);
-        return dy / dx;
-      }
-      else
-      {
-        return GetYOfU(u);
-      }
+      return GetYOfU(u);
     }
 
     /// <summary>
@@ -476,17 +516,16 @@ namespace Altaxo.Calc.Interpolation
     /// </summary>
     /// <param name="x">The x value.</param>
     /// <returns>The u value of the given x-value.</returns>
-    private double GetUOfX(double x)
+    public double GetUOfX(double x)
     {
-      if (ParentSpline is { } ps)
+      if (_xAxis.HasValue)
       {
-        return ps.GetUOfX(x);
+        return (x - _xAxis.Value.xstart) / _xAxis.Value.xspan;
       }
       else
       {
-
         double u;
-        if (Math.Min(_myX[0], _myX[^1]) <= x && x <= Math.Max(_myX[0], _myX[^1]))
+        if (Math.Min(_x[0], _x[^1]) <= x && x <= Math.Max(_x[0], _x[^1]))
         {
           u = Altaxo.Calc.RootFinding.Bisection.FindRoot((t) => GetXOfU(t) - x, 0, 1);
         }
@@ -499,15 +538,16 @@ namespace Altaxo.Calc.Interpolation
       }
     }
 
+
     public double GetXOfU(double u)
     {
       int k = GetTimeInterval(_knots, 0, _knots.Length - 1, u);
-      k = Math.Max(_degree, Math.Min(k, _myX.Length - 1)); // clamp k to valid indices
+      k = Math.Max(_degree, Math.Min(k, _x.Length - 1)); // clamp k to valid indices
 
-      var X = _temporaryV.IsValueCreated ? _temporaryV.Value : (_temporaryV.Value = new double[_degree + 1, _myX.Length]);
+      var X = _temporaryV.IsValueCreated ? _temporaryV.Value : (_temporaryV.Value = new double[_degree + 1, _x.Length]);
 
       for (int i = k - _degree; i <= k; i++)
-        X[0, i] = _myX[i];
+        X[0, i] = _x[i];
 
       for (int j = 1; j <= _degree; j++)
       {
@@ -523,12 +563,12 @@ namespace Altaxo.Calc.Interpolation
     public double GetYOfU(double u)
     {
       int k = GetTimeInterval(_knots, 0, _knots.Length - 1, u);
-      k = Math.Max(_degree, Math.Min(k, _myX.Length - 1)); // clamp k to valid indices
+      k = Math.Max(_degree, Math.Min(k, _x.Length - 1)); // clamp k to valid indices
 
-      var Y = _temporaryV.IsValueCreated ? _temporaryV.Value : (_temporaryV.Value = new double[_degree + 1, _myX.Length]);
+      var Y = _temporaryV.IsValueCreated ? _temporaryV.Value : (_temporaryV.Value = new double[_degree + 1, _x.Length]);
 
       for (int i = k - _degree; i <= k; i++)
-        Y[0, i] = _myY[i];
+        Y[0, i] = _y[i];
       for (int j = 1; j <= _degree; j++)
       {
         for (int i = k - _degree + j; i <= k; i++)
