@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk" InitialTargets="GenAssInfo">
   <PropertyGroup>
-    <TargetFrameworks>net48;net6.0</TargetFrameworks>
+    <TargetFrameworks>net48;net7.0</TargetFrameworks>
     <LangVersion>preview</LangVersion>
     <RootNamespace>Altaxo</RootNamespace>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
@@ -36,7 +36,7 @@
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="7.0.0" />
   </ItemGroup>
   
-   <ItemGroup Condition=" '$(TargetFramework)' == 'net6.0' ">
+   <ItemGroup Condition=" '$(TargetFramework)' == 'net7.0' ">
      <PackageReference Include="System.Resources.Extensions" Version="7.0.0" />
      <PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0" />
      <PackageReference Include="Microsoft.Win32.SystemEvents" Version="7.0.0" />

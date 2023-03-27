@@ -25,10 +25,8 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using ClipperLib;
+using Int128 = ClipperLib.Int128;
 
 namespace Altaxo.Geometry.Int64_2D
 {

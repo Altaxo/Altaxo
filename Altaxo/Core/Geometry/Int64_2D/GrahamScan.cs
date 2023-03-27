@@ -29,6 +29,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 using System;
 using System.Collections.Generic;
 using ClipperLib;
+using Int128 = ClipperLib.Int128;
 
 namespace Altaxo.Geometry.Int64_2D
 {
