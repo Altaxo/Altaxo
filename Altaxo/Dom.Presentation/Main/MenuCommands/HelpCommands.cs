@@ -44,7 +44,12 @@ namespace Altaxo.Main.Commands
       }
       else
       {
-        System.Diagnostics.Process.Start("https://altaxo.github.io/AltaxoClassReference/html/1B7FE024E7E614BFA13DAA1FD005CB2E.htm");
+        var startInfo = new System.Diagnostics.ProcessStartInfo("https://altaxo.github.io/AltaxoClassReference/html/1B7FE024E7E614BFA13DAA1FD005CB2E.htm")
+        {
+          UseShellExecute = true,
+        };
+
+        System.Diagnostics.Process.Start(startInfo);
       }
     }
   }

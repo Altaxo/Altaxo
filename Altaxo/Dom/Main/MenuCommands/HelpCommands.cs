@@ -106,7 +106,7 @@ namespace Altaxo.Main.Commands
       var processInfo = new System.Diagnostics.ProcessStartInfo("explorer.exe", args)
       {
         CreateNoWindow = false,
-        WindowStyle = System.Diagnostics.ProcessWindowStyle.Normal
+        WindowStyle = System.Diagnostics.ProcessWindowStyle.Normal,
       };
 
       try

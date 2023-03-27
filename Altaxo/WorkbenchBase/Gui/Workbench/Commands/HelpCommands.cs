@@ -19,8 +19,6 @@
 using System;
 using System.Diagnostics;
 using System.IO;
-using Altaxo.Gui.AddInItems;
-using Altaxo.Gui.Workbench;
 using Altaxo.Main.Services;
 
 namespace Altaxo.Gui.Workbench.Commands
@@ -45,7 +43,8 @@ namespace Altaxo.Gui.Workbench.Commands
         string file = Path.Combine(FileUtility.ApplicationRootPath, site.Substring(7).Replace('/', Path.DirectorySeparatorChar));
         try
         {
-          Process.Start(file);
+          var startInfo = new ProcessStartInfo(file) { UseShellExecute = true };
+          Process.Start(startInfo);
         }
         catch (Exception)
         {
@@ -54,7 +53,7 @@ namespace Altaxo.Gui.Workbench.Commands
       }
       else
       {
-        Process.Start(site);
+        Process.Start(new ProcessStartInfo(site) { UseShellExecute = true });
       }
     }
   }
