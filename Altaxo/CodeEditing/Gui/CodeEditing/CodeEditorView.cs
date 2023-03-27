@@ -311,7 +311,7 @@ namespace Altaxo.Gui.CodeEditing
         return;
       }
 
-      foreach (var diagnosticData in args.GetAllDiagnosticsRegardlessOfPushPullSetting())
+      foreach (var diagnosticData in args.Diagnostics)
       {
         if (diagnosticData.Severity == DiagnosticSeverity.Hidden || diagnosticData.IsSuppressed)
         {

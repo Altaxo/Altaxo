@@ -258,7 +258,7 @@ namespace Altaxo.CodeEditing
       }
 
       // enable diagnostics now, if not already enabled
-      DiagnosticProvider.Enable(this, DiagnosticProvider.Options.Semantic | DiagnosticProvider.Options.Syntax);
+      DiagnosticProvider.Enable(this);
     }
 
 
