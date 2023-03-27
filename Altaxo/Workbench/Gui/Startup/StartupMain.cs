@@ -227,6 +227,10 @@ namespace Altaxo.Gui.Startup
 
     private static void RunApplication(StartupArguments startupArguments)
     {
+      // Registering the encoding provider is neccessary when using .NET Core
+      // in order to be able to read Zip-Files
+      System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
+
 #if DEBUG
       // The output encoding differs based on whether the app is a console app (debug mode)
       // or Windows app (release mode). Because this flag also affects the default encoding
