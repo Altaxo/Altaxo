@@ -170,6 +170,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakFitting
       }
     }
 
+    public QuantityWithUnitGuiEnvironment FitWidthScalingFactorEnvironment => RelationEnvironment.Instance;
+
+
     private DimensionfulQuantity _fitWidthScalingFactor;
 
     public DimensionfulQuantity FitWidthScalingFactor
