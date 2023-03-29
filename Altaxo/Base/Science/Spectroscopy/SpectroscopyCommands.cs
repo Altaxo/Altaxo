@@ -24,6 +24,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Threading;
 using Altaxo.Calc.FitFunctions.Peaks;
@@ -39,6 +40,7 @@ using Altaxo.Gui.Science.Spectroscopy.Calibration;
 using Altaxo.Gui.Science.Spectroscopy.Raman;
 using Altaxo.Gui.Worksheet.Viewing;
 using Altaxo.Main.Services;
+using Altaxo.Science.Spectroscopy.Calibration;
 using Altaxo.Science.Spectroscopy.Raman;
 using Altaxo.Worksheet.Commands;
 
@@ -1131,6 +1133,43 @@ namespace Altaxo.Science.Spectroscopy
       controller.InitializeDocument(doc);
       if (!Current.Gui.ShowDialog(controller, "Choose options for intensity calibration"))
         return;
+
+      doc = (IntensityCalibrationSetup)controller.ModelObject;
+
+      // now, create a new table with an intensityCalibrationDataSource
+
+      var dstTable = new DataTable();
+      dstTable.Name = Current.Project.DataTableCollection.FindNewItemName(ctrl.DataTable.FolderName + "WIntensityCalibration");
+      Current.Project.DataTableCollection.Add(dstTable);
+
+      var proxy = new DataTableMultipleColumnProxy(ctrl.DataTable, ctrl.DataTable.DataColumns.GetColumnGroup(y_column1));
+      proxy.EnsureExistenceOfIdentifier(IntensityCalibrationDataSource.ProxyColumnGroupName_SignalSpectrum);
+      proxy.AddDataColumn(IntensityCalibrationDataSource.ProxyColumnGroupName_SignalSpectrum, doc.YSignal);
+      if (doc.YDark is not null)
+      {
+        proxy.EnsureExistenceOfIdentifier(IntensityCalibrationDataSource.ProxyColumnGroupName_DarkSpectrum);
+        proxy.AddDataColumn(IntensityCalibrationDataSource.ProxyColumnGroupName_DarkSpectrum, doc.YDark);
+      }
+
+
+      var options = new IntensityCalibrationOptions()
+      {
+        CurveShape = doc.CurveShape,
+        CurveParameters = doc.CurveParameter.ToImmutableArray(),
+      };
+
+      var dataSource = new IntensityCalibrationDataSource(proxy, options, new DataSourceImportOptions());
+      dstTable.DataSource = dataSource;
+      var backgroundMonitor = new ExternalDrivenBackgroundMonitor();
+      var task = System.Threading.Tasks.Task.Run(() => dataSource.FillData(dstTable, backgroundMonitor.CancellationTokenHard));
+      Current.Gui.ShowTaskCancelDialog(5000, task, backgroundMonitor);
+      if (task.IsFaulted || task.IsCanceled)
+      {
+        Current.Gui.ErrorMessageBox("The intensity calibration task has not completed successfully, thus the calibration table may be corrupted!");
+      }
+
+
+      Current.ProjectService.OpenOrCreateWorksheetForTable(dstTable);
     }
   }
 }

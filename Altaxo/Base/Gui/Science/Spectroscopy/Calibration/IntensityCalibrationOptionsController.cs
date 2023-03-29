@@ -24,106 +24,32 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
-using System.Windows.Input;
 using Altaxo.Calc.FitFunctions.Peaks;
 using Altaxo.Calc.Regression.Nonlinear;
 using Altaxo.Collections;
-using Altaxo.Data;
 using Altaxo.Gui.Common;
+using Altaxo.Science.Spectroscopy.Calibration;
 
 namespace Altaxo.Gui.Science.Spectroscopy.Calibration
 {
+  public interface IIntensityCalibrationOptionsView : IDataContextAwareView { }
 
-  public record IntensityCalibrationSetup
-  {
-    /// <summary>
-    /// Gets or sets the x column. The x-column is shared among both the YSignal column and the YDark column.
-    /// </summary>
-    public DataColumn XColumn { get; set; }
-
-    /// <summary>
-    /// Gets or sets the column containing the spectrum of the known source.
-    /// </summary>
-    public DataColumn YSignal { get; set; }
-
-    /// <summary>
-    /// Gets or sets the column containing the dark spectrum. This column is optional, as for some signals the dark signal is
-    /// already subtracted.
-    /// </summary>
-    public DataColumn? YDark { get; set; }
-
-    public IFitFunction CurveShape { get; set; } = new Altaxo.Calc.FitFunctions.Peaks.GaussAmplitude(1, -1);
-
-    public (string Name, double Value)[] CurveParameter { get; set; } = Array.Empty<(string Name, double Value)>();
-  }
-
-  public interface IIntensityCalibrationSetupView : IDataContextAwareView { }
-
-  [ExpectedTypeOfView(typeof(IIntensityCalibrationSetupView))]
-  [UserControllerForObject(typeof(IntensityCalibrationSetup))]
-  public class IntensityCalibrationSetupController : MVCANControllerEditImmutableDocBase<IntensityCalibrationSetup, IIntensityCalibrationSetupView>
+  [ExpectedTypeOfView(typeof(IIntensityCalibrationOptionsView))]
+  [UserControllerForObject(typeof(IntensityCalibrationOptions))]
+  public class IntensityCalibrationOptionsController : MVCANControllerEditImmutableDocBase<IntensityCalibrationOptions, IIntensityCalibrationOptionsView>
   {
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
     }
 
-    public IntensityCalibrationSetupController()
-    {
-      CmdSwapYColumns = new RelayCommand(EhSwapYColumns, EhCanSwapYColumns);
-    }
-
     #region Bindings
 
-    public ICommand CmdSwapYColumns { get; }
 
-    private string _xColumn;
-
-    public string XColumn
-    {
-      get => _xColumn;
-      set
-      {
-        if (!(_xColumn == value))
-        {
-          _xColumn = value;
-          OnPropertyChanged(nameof(XColumn));
-        }
-      }
-    }
-
-    private DataColumn _signalColumn;
-
-    public DataColumn SignalColumn
-    {
-      get => _signalColumn;
-      set
-      {
-        if (!(_signalColumn == value))
-        {
-          _signalColumn = value;
-          OnPropertyChanged(nameof(SignalColumn));
-        }
-      }
-    }
-
-    private DataColumn _darkColumn;
-
-    public DataColumn DarkColumn
-    {
-      get => _darkColumn;
-      set
-      {
-        if (!(_darkColumn == value))
-        {
-          _darkColumn = value;
-          OnPropertyChanged(nameof(DarkColumn));
-        }
-      }
-    }
 
     private int _numberOfTerms;
 
@@ -229,9 +155,6 @@ namespace Altaxo.Gui.Science.Spectroscopy.Calibration
 
       if (initData)
       {
-        XColumn = _doc.XColumn.Name;
-        SignalColumn = _doc.YSignal;
-        DarkColumn = _doc.YDark;
 
         NumberOfTerms = _doc.CurveShape is IFitFunctionPeak ffp ? ffp.NumberOfTerms : 1;
         OrderOfBaselinePolynomial = _doc.CurveShape is IFitFunctionPeak ffp1 ? ffp1.OrderOfBaselinePolynomial : -1;
@@ -269,27 +192,13 @@ namespace Altaxo.Gui.Science.Spectroscopy.Calibration
         curveInstance = ffp.WithNumberOfTerms(NumberOfTerms).WithOrderOfBaselinePolynomial(OrderOfBaselinePolynomial);
       }
 
-      _doc = new IntensityCalibrationSetup
+      _doc = new IntensityCalibrationOptions
       {
-        XColumn = _doc.XColumn,
-        YSignal = SignalColumn,
-        YDark = DarkColumn,
         CurveShape = curveInstance,
-        CurveParameter = ParametersOfCurve.Select(p => (p.Name, p.Value)).ToArray(),
+        CurveParameters = ParametersOfCurve.Select(p => (p.Name, p.Value)).ToImmutableArray(),
       };
 
       return ApplyEnd(true, disposeController);
     }
-
-    private void EhSwapYColumns()
-    {
-      (DarkColumn, SignalColumn) = (SignalColumn, DarkColumn);
-    }
-
-    private bool EhCanSwapYColumns()
-    {
-      return DarkColumn is not null;
-    }
-
   }
 }

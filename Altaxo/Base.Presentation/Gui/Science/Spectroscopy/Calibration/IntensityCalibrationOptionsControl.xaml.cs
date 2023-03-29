@@ -29,9 +29,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.Calibration
   /// <summary>
   /// Interaction logic for IntensityCalibrationSetupControl.xaml
   /// </summary>
-  public partial class IntensityCalibrationSetupControl : UserControl, IIntensityCalibrationSetupView
+  public partial class IntensityCalibrationOptionsControl : UserControl, IIntensityCalibrationOptionsView
   {
-    public IntensityCalibrationSetupControl()
+    public IntensityCalibrationOptionsControl()
     {
       InitializeComponent();
     }
