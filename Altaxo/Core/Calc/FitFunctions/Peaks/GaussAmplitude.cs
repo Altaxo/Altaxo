@@ -158,8 +158,8 @@ namespace Altaxo.Calc.FitFunctions.Peaks
       return this with { NumberOfTerms = numberOfTerms };
     }
 
-    const double DefaultMinWidth = 1E-81; // Math.Pow(double.Epsilon, 0.25);
-    const double DefaultMaxWidth = 1E+77; // Math.Pow(double.MaxValue, 0.25);
+    private const double DefaultMinWidth = 1E-81; // Math.Pow(double.Epsilon, 0.25);
+    private const double DefaultMaxWidth = 1E+77; // Math.Pow(double.MaxValue, 0.25);
 
     /// <inheritdoc/>
     public (IReadOnlyList<double?>? LowerBounds, IReadOnlyList<double?>? UpperBounds) GetParameterBoundariesForPositivePeaks(double? minimalPosition = null, double? maximalPosition = null, double? minimalFWHM = null, double? maximalFWHM = null)
@@ -272,6 +272,12 @@ namespace Altaxo.Calc.FitFunctions.Peaks
     public IVarianceScaling? DefaultVarianceScaling(int i)
     {
       return null;
+    }
+
+    public static double GetYOfOneTerm(double x, double a, double xc, double w)
+    {
+      double arg = (x - xc) / w;
+      return a * Math.Exp(-0.5 * arg * arg);
     }
 
     public void Evaluate(double[] X, double[] P, double[] Y)
