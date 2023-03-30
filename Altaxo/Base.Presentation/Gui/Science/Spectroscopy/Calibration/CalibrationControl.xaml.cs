@@ -29,7 +29,7 @@ namespace Altaxo.Gui.Science.Spectroscopy.Calibration
   /// <summary>
   /// Interaction logic for SpikeRemovalControl.xaml
   /// </summary>
-  public partial class CalibrationControl : UserControl, ICalibrationView
+  public partial class CalibrationControl : UserControl, IXCalibrationView
   {
     public CalibrationControl()
     {

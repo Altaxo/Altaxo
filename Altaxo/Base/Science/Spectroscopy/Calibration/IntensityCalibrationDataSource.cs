@@ -13,13 +13,11 @@ namespace Altaxo.Science.Spectroscopy.Calibration
   {
     public const string ColumnName_Group0_SpectrumX = "X";
     public const string ColumnName_Group0_ScalingFactor = "IntensityScaling";
-    public const string ProxyColumnGroupName_SignalSpectrum = "SignalSpectrum";
-    public const string ProxyColumnGroupName_DarkSpectrum = "DarkSpectrum";
 
 
     private IDataSourceImportOptions _importOptions;
     private IntensityCalibrationOptions _processOptions;
-    private DataTableMultipleColumnProxy? _processData;
+    private DataTableXYColumnProxy? _processData;
 
     public Action<IAltaxoTableDataSource>? _dataSourceChanged;
 
@@ -57,7 +55,7 @@ namespace Altaxo.Science.Spectroscopy.Calibration
     [MemberNotNull(nameof(_importOptions), nameof(_processOptions), nameof(_processData))]
     private void DeserializeSurrogate0(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
     {
-      ChildSetMember(ref _processData, (DataTableMultipleColumnProxy)info.GetValue("ProcessData", this));
+      ChildSetMember(ref _processData, (DataTableXYColumnProxy)info.GetValue("ProcessData", this));
       _processOptions = info.GetValue<IntensityCalibrationOptions>("ProcessOptions", this);
       ChildSetMember(ref _importOptions, (IDataSourceImportOptions)info.GetValue("ImportOptions", this));
     }
@@ -98,7 +96,7 @@ namespace Altaxo.Science.Spectroscopy.Calibration
       ChildSetMember(ref _importOptions, importOptions);
     }
 
-    public IntensityCalibrationDataSource(DataTableMultipleColumnProxy? dataSource, IntensityCalibrationOptions options, IDataSourceImportOptions importOptions)
+    public IntensityCalibrationDataSource(DataTableXYColumnProxy? dataSource, IntensityCalibrationOptions options, IDataSourceImportOptions importOptions)
     {
       if (importOptions is null)
         throw new ArgumentNullException(nameof(importOptions));
@@ -118,7 +116,7 @@ namespace Altaxo.Science.Spectroscopy.Calibration
       CopyHelper.Copy(ref importOptions, from._importOptions);
       ChildSetMember(ref _importOptions, importOptions);
 
-      DataTableMultipleColumnProxy data = null;
+      DataTableXYColumnProxy data = null;
       CopyHelper.Copy(ref data, from._processData);
       ChildSetMember(ref _processData, data);
 
@@ -130,7 +128,7 @@ namespace Altaxo.Science.Spectroscopy.Calibration
     {
       using (var token = SuspendGetToken())
       {
-        DataTableMultipleColumnProxy data = null;
+        DataTableXYColumnProxy data = null;
         IDataSourceImportOptions importOptions = null;
 
         CopyHelper.Copy(ref data, from._processData);
@@ -196,26 +194,29 @@ namespace Altaxo.Science.Spectroscopy.Calibration
       var colX = destinationTable.DataColumns.EnsureExistence(ColumnName_Group0_SpectrumX, typeof(DoubleColumn), ColumnKind.X, 0);
       var colY = destinationTable.DataColumns.EnsureExistence(ColumnName_Group0_ScalingFactor, typeof(DoubleColumn), ColumnKind.V, 0);
 
-      var signal = _processData.GetDataColumnOrNull(ProxyColumnGroupName_SignalSpectrum);
-      var dark = _processData.GetDataColumnOrNull(ProxyColumnGroupName_DarkSpectrum);
-      var xcol = _processData.DataTable.DataColumns.FindXColumnOf(signal);
+      var signalX = _processData.XColumn;
+      var signalY = _processData.YColumn;
+
+      if (signalX is null)
+        throw new InvalidOperationException($"Unable to find the x-column of the intensity calibration data");
+      if (signalY is null)
+        throw new InvalidOperationException($"Unable to find the y-column of the intensity calibration data");
+
       var resulting = new DoubleColumn();
 
       var function = _processOptions.CurveShape;
       var para = _processOptions.CurveParameters.Select(x => x.Value).ToArray();
       var X = new double[1];
       var Y = new double[1];
-      for (int i = 0; i < Math.Min(signal.Count, xcol.Count); i++)
+      var len = Math.Min(signalX.Count ?? 0, signalY.Count ?? 0);
+      for (int i = 0; i < len; i++)
       {
-        X[0] = xcol[i];
+        X[0] = signalX[i];
         function.Evaluate(X, para, Y);
-        if (dark is null)
-          resulting[i] = Y[0] / signal[i];
-        else
-          resulting[i] = Y[0] / (signal[i] - dark[i]);
+        resulting[i] = Y[0] / signalY[i];
       }
 
-      colX.Data = xcol;
+      colX.Data = signalX;
       colY.Data = resulting;
     }
 
@@ -274,7 +275,7 @@ namespace Altaxo.Science.Spectroscopy.Calibration
       get => _processData;
       set
       {
-        if (value is DataTableMultipleColumnProxy mcp)
+        if (value is DataTableXYColumnProxy mcp)
         {
           ChildSetMember(ref _processData, mcp);
         }

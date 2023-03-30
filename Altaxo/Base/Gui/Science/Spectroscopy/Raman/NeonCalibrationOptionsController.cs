@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Altaxo.Calc.Interpolation;
 using Altaxo.Gui.Calc.Interpolation;
 using Altaxo.Gui.Common;
@@ -20,7 +21,7 @@ namespace Altaxo.Gui.Science.Spectroscopy.Raman
   {
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
-      yield return new ControllerAndSetNullMethod(_peakFindingController, () =>PeakFindingController = null);
+      yield return new ControllerAndSetNullMethod(_peakFindingController, () => PeakFindingController = null);
     }
 
     #region Bindings
@@ -141,7 +142,7 @@ namespace Altaxo.Gui.Science.Spectroscopy.Raman
     {
       base.Initialize(initData);
 
-      if(initData)
+      if (initData)
       {
         XAxisUnit = new ItemsController<XAxisUnit>(new Collections.SelectableListNodeList(_doc.XAxisUnit));
 
@@ -173,15 +174,15 @@ namespace Altaxo.Gui.Science.Spectroscopy.Raman
       else
         findOptions = (PeakSearchingAndFittingOptions)PeakFindingController.ModelObject;
 
-      if(findOptions.Preprocessing.Calibration is not CalibrationNone)
+      if (findOptions.Preprocessing.OfType<IXCalibrationTable>().Any())
       {
-        Current.Gui.InfoMessageBox("This calibration needs the original x/y-values, thus calibration in the preprocessing steps is disabled here.", "Note");
-        findOptions = findOptions with { Preprocessing = findOptions.Preprocessing with { Calibration = new CalibrationNone() } };
+        Current.Gui.ErrorMessageBox("This calibration needs the original x/y-values, thus please disable x-calibration!", "X-Calibration found!");
+        return ApplyEnd(false, disposeController);
       }
-      if (findOptions.Preprocessing.Resampling is not ResamplingNone)
+      if (findOptions.Preprocessing.Where(p => p is IResampling && p is not ResamplingNone).Any())
       {
-        Current.Gui.InfoMessageBox("This calibration needs the original x-values, thus resampling in the preprocessing steps is disabled here.", "Note");
-        findOptions = findOptions with { Preprocessing = findOptions.Preprocessing with { Resampling = new ResamplingNone() } };
+        Current.Gui.ErrorMessageBox("This calibration needs the original x-values, thus please disable resampling here!", "Resampling step found!");
+        return ApplyEnd(false, disposeController);
       }
 
       if (!InterpolationMethod.Apply(disposeController))
@@ -204,6 +205,6 @@ namespace Altaxo.Gui.Science.Spectroscopy.Raman
       return ApplyEnd(true, disposeController);
     }
 
-    
+
   }
 }

@@ -22,11 +22,8 @@
 
 #endregion Copyright
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
+using System.Collections.Immutable;
 
 namespace Altaxo.Science.Spectroscopy
 {
@@ -64,5 +61,36 @@ namespace Altaxo.Science.Spectroscopy
     /// <param name="tableName">Name of the table.</param>
     /// <returns>New instance, in which the table name is set to the provided name.</returns>
     IReferencingTable WithTableName(string tableName);
+  }
+
+  /// <summary>
+  /// Additional interface that is used if the spectral preprocessor
+  /// is referencing an x and y column, for instance if another spectrum should be added or subtracted.
+  /// </summary>
+  public interface IReferencingXYColumns
+  {
+    /// <summary>
+    /// Gets the name of the table, the group number, and the names of the x and y columns.
+    /// </summary>
+    (string TableName, int GroupNumber, string XColumnName, string YColumnName)? XYDataOrigin { get; init; }
+
+    /// <summary>
+    /// Returns a new instance, in which the column information is set to the provided name of the table, the group number, and the names of the x and y columns.
+    /// </summary>
+    /// <param name="xyDataOrigin">The name of the table, the group number, and the names of the x and y columns..</param>
+    /// <returns>A new instance, in which the column information is set to the provided name of the table, the group number, and the names of the x and y columns.</returns>
+    IReferencingXYColumns WithXYDataOrigin((string TableName, int GroupNumber, string XColumnName, string YColumnName) xyDataOrigin);
+
+    /// <summary>
+    /// Stores the data of the curve (consisting of x-y pairs).
+    /// </summary>
+    ImmutableArray<(double x, double y)> XYCurve { get; init; }
+
+    /// <summary>
+    /// Returns a new instance, in which the XYCurve is set to a new instance.
+    /// </summary>
+    /// <param name="xyCurve">The x-y curve.</param>
+    /// <returns>New instance with the provided value set.</returns>
+    IReferencingXYColumns WithXYCurve(ImmutableArray<(double x, double y)> xyCurve);
   }
 }

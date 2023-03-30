@@ -29,7 +29,7 @@ namespace Altaxo.Gui.Science.Spectroscopy.Calibration
   /// <summary>
   /// Interaction logic for XCalibrationByDataSourceControl.xaml
   /// </summary>
-  public partial class XCalibrationByDataSourceControl : UserControl, IXCalibrationByDataSourceView
+  public partial class XCalibrationByDataSourceControl : UserControl, IXCalibrationByDataSourceView, IYCalibrationByDataSourceView
   {
     public XCalibrationByDataSourceControl()
     {

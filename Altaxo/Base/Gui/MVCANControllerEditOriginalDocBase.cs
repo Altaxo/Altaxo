@@ -120,8 +120,7 @@ namespace Altaxo.Gui
     {
       if (IsDisposed)
         throw new ObjectDisposedException("The controller was already disposed. Type: " + GetType().FullName);
-      if (_doc is null)
-        throw new InvalidOperationException("This controller was not initialized with a document.");
+      ThrowIfNotInitialized();
 
       if (initData)
       {

@@ -28,7 +28,7 @@ using System.Linq;
 namespace Altaxo.Science.Spectroscopy.Calibration
 {
 
-  public record YCalibrationByDataSource : ICalibration, Main.IImmutable, IYCalibrationTable, IReferencingTable
+  public record YCalibrationByDataSource : IYCalibration, Main.IImmutable, IYCalibrationTable, IReferencingTable
   {
     /// <inheritdoc/>
     public string? TableName { get; init; }

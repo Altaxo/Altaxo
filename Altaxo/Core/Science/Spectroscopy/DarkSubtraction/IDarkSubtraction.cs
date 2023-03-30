@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2023 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -22,21 +22,9 @@
 
 #endregion Copyright
 
-
-using Altaxo.Gui.Data;
-using Altaxo.Science.Spectroscopy.Calibration;
-
-namespace Altaxo.Gui.Science.Spectroscopy.Calibration
+namespace Altaxo.Science.Spectroscopy.DarkSubtraction
 {
-  [UserControllerForObject(typeof(IntensityCalibrationDataSource))]
-  public class IntensityCalibrationDataSourceController : DataSourceControllerBase<IntensityCalibrationDataSource>
+  public interface IDarkSubtraction : ISingleSpectrumPreprocessor
   {
-    protected override IMVCANController GetProcessDataController()
-    {
-      var ctrl = new DataTableXYColumnProxyController();
-      ctrl.InitializeDocument(_doc.ProcessDataObject);
-      Current.Gui.FindAndAttachControlTo(ctrl);
-      return ctrl;
-    }
   }
 }

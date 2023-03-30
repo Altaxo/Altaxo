@@ -24,9 +24,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Altaxo.Collections;
 using Altaxo.Gui.Common;
 using Altaxo.Main.Services;
@@ -34,12 +31,12 @@ using Altaxo.Science.Spectroscopy.Calibration;
 
 namespace Altaxo.Gui.Science.Spectroscopy.Calibration
 {
-  public interface ICalibrationView : IDataContextAwareView
+  public interface IXCalibrationView : IDataContextAwareView
   {
   }
 
-  [ExpectedTypeOfView(typeof(ICalibrationView))]
-  public class CalibrationController : MVCANControllerEditImmutableDocBase<ICalibration, ICalibrationView>
+  [ExpectedTypeOfView(typeof(IXCalibrationView))]
+  public class XCalibrationController : MVCANControllerEditImmutableDocBase<IXCalibration, IXCalibrationView>
   {
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
@@ -92,9 +89,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.Calibration
       {
         CreateSubController();
 
-        var methodTypes = new List<Type>(ReflectionService.GetNonAbstractSubclassesOf(typeof(ICalibration)));
+        var methodTypes = new List<Type>(ReflectionService.GetNonAbstractSubclassesOf(typeof(IXCalibration)));
         methodTypes.Sort(new TypeSorter());
-        
+
         var methods = new SelectableListNodeList();
         foreach (var methodType in methodTypes)
         {
@@ -120,18 +117,18 @@ namespace Altaxo.Gui.Science.Spectroscopy.Calibration
 
     private void EhMethodTypeChanged(Type newMethodType)
     {
-      _doc = (ICalibration)Activator.CreateInstance(newMethodType);
+      _doc = (IXCalibration)Activator.CreateInstance(newMethodType);
       CreateSubController();
     }
 
     public override bool Apply(bool disposeController)
     {
-      if(SubController is not null)
+      if (SubController is not null)
       {
         if (!SubController.Apply(disposeController))
           return ApplyEnd(false, disposeController);
         else
-          _doc = (ICalibration)SubController.ModelObject;
+          _doc = (IXCalibration)SubController.ModelObject;
       }
 
       return ApplyEnd(true, disposeController);

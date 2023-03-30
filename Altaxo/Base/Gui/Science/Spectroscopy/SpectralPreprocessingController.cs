@@ -24,35 +24,68 @@
 
 using System;
 using System.Collections.Generic;
-using Altaxo.Collections;
 using Altaxo.Science.Spectroscopy;
 using Altaxo.Science.Spectroscopy.BaselineEstimation;
 using Altaxo.Science.Spectroscopy.Calibration;
 using Altaxo.Science.Spectroscopy.Cropping;
+using Altaxo.Science.Spectroscopy.DarkSubtraction;
 using Altaxo.Science.Spectroscopy.Normalization;
+using Altaxo.Science.Spectroscopy.Resampling;
+using Altaxo.Science.Spectroscopy.Sanitizing;
 using Altaxo.Science.Spectroscopy.Smoothing;
 using Altaxo.Science.Spectroscopy.SpikeRemoval;
 
 namespace Altaxo.Gui.Science.Spectroscopy
 {
 
+  [UserControllerForObject(typeof(SpectralPreprocessingOptionsList))]
   [UserControllerForObject(typeof(SpectralPreprocessingOptions))]
   [ExpectedTypeOfView(typeof(ISpectralPreprocessingOptionsView))]
-  public class SpectralPreprocessingController : SpectralPreprocessingControllerBase<SpectralPreprocessingOptions>
+  public class SpectralPreprocessingController : SpectralPreprocessingControllerBase<SpectralPreprocessingOptionsBase>
   {
     protected override IEnumerable<(string Label, object Doc, Func<IMVCANController> GetController)> GetComponents()
     {
       return GetComponents(_doc);
     }
 
-    public static IEnumerable<(string Label, object Doc, Func<IMVCANController> GetController)> GetComponents(SpectralPreprocessingOptions _doc)
+    public static IEnumerable<(string Label, object Doc, Func<IMVCANController> GetController)> GetComponents(SpectralPreprocessingOptionsBase _doc)
     {
-      yield return ("Spike removal", _doc.SpikeRemoval, () => new SpikeRemoval.SpikeRemovalController());
-      yield return ("Calibration", _doc.Calibration, () => new Calibration.CalibrationController());
-      yield return ("Smoothing", _doc.Smoothing, () => new Smoothing.SmoothingController());
-      yield return ("Baseline", _doc.BaselineEstimation, () => new BaselineEstimation.BaselineEstimationController());
-      yield return ("Cropping", _doc.Cropping, () => new Cropping.CroppingController());
-      yield return ("Normalization", _doc.Normalization, () => new Normalization.NormalizationController());
+      foreach (var processor in _doc)
+      {
+        switch (processor)
+        {
+          case ISanitizer sanitizer:
+            break;
+          case ISpikeRemoval spikeRemoval:
+            yield return ("SpikeRemoval", spikeRemoval, () => new SpikeRemoval.SpikeRemovalController());
+            break;
+          case IDarkSubtraction darksubtraction:
+            yield return ("Dark", darksubtraction, () => new DarkSubtraction.DarkSubtractionController());
+            break;
+          case IYCalibration yCalibration:
+            yield return ("YCal", yCalibration, () => new Calibration.YCalibrationController());
+            break;
+          case IXCalibration xCalibration:
+            yield return ("XCal", xCalibration, () => new Calibration.XCalibrationController());
+            break;
+          case ISmoothing smoothing:
+            yield return ("Smoothing", smoothing, () => new Smoothing.SmoothingController());
+            break;
+          case IBaselineEstimation baselineEstimation:
+            yield return ("Baseline", baselineEstimation, () => new BaselineEstimation.BaselineEstimationController());
+            break;
+          case IResampling resampling and not ICropping:
+            break;
+          case ICropping cropping:
+            yield return ("Cropping", cropping, () => new Cropping.CroppingController());
+            break;
+          case INormalization normalization:
+            yield return ("Normalization", normalization, () => new Normalization.NormalizationController());
+            break;
+          default:
+            throw new NotImplementedException($"Processor type {processor?.GetType()} is not implemented");
+        }
+      }
     }
 
     protected override void UpdateDoc(object model)
@@ -60,30 +93,43 @@ namespace Altaxo.Gui.Science.Spectroscopy
       _doc = UpdateDoc(_doc, model);
     }
 
-    public static SpectralPreprocessingOptions UpdateDoc(SpectralPreprocessingOptions _doc, object model)
+    public static SpectralPreprocessingOptionsBase UpdateDoc(SpectralPreprocessingOptionsBase _doc, object model)
     {
-      switch (model)
+      if (_doc is SpectralPreprocessingOptions doc1)
       {
-        case null:
-          break;
-        case ISpikeRemoval sr:
-          _doc = _doc with { SpikeRemoval = sr };
-          break;
-        case ICalibration ca:
-          _doc = _doc with { Calibration = ca };
-          break;
-        case INormalization no:
-          _doc = _doc with { Normalization = no };
-          break;
-        case ICropping cr:
-          _doc = _doc with { Cropping = cr };
-          break;
-        case IBaselineEstimation be:
-          _doc = _doc with { BaselineEstimation = be };
-          break;
-        case ISmoothing sm:
-          _doc = _doc with { Smoothing = sm };
-          break;
+        switch (model)
+        {
+          case null:
+            break;
+          case IDarkSubtraction subtraction:
+            _doc = doc1 with { DarkSubtraction = subtraction };
+            break;
+          case ISpikeRemoval sr:
+            _doc = doc1 with { SpikeRemoval = sr };
+            break;
+          case IYCalibration yca:
+            _doc = doc1 with { YCalibration = yca };
+            break;
+          case IXCalibration xca:
+            _doc = doc1 with { XCalibration = xca };
+            break;
+          case INormalization no:
+            _doc = doc1 with { Normalization = no };
+            break;
+          case ICropping cr:
+            _doc = doc1 with { Cropping = cr };
+            break;
+          case IBaselineEstimation be:
+            _doc = doc1 with { BaselineEstimation = be };
+            break;
+          case ISmoothing sm:
+            _doc = doc1 with { Smoothing = sm };
+            break;
+        }
+      }
+      else
+      {
+        throw new NotImplementedException();
       }
 
       return _doc;

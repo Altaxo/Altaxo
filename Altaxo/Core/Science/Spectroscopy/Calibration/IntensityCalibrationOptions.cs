@@ -18,14 +18,21 @@ namespace Altaxo.Science.Spectroscopy.Calibration
     /// </summary>
     public ImmutableArray<(string Name, double Value)> CurveParameters { get; init; } = ImmutableArray<(string Name, double Value)>.Empty;
 
+    public SpectralPreprocessingOptionsBase SpectralPreprocessing { get; init; } = new SpectralPreprocessingOptions();
+
     #region Serialization
 
+    /// <summary>
+    /// 2023-03-30 Initial version.
+    /// </summary>
+    /// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(IntensityCalibrationOptions), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
         var s = (IntensityCalibrationOptions)obj;
+        info.AddValue("SpectralPreprocessing", s.SpectralPreprocessing);
         info.AddValue("CurveShape", s.CurveShape);
 
         info.CreateArray("CurveParameters", s.CurveParameters.Length);
@@ -45,6 +52,7 @@ namespace Altaxo.Science.Spectroscopy.Calibration
 
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
+        var spectralPreprocessing = info.GetValue<SpectralPreprocessingOptionsBase>("SpectralPreprocessing", parent);
         var intensityCurve = info.GetValue<IFitFunction>("CurveShape", null);
 
         var count = info.OpenArray("CurveParameters");
@@ -63,6 +71,7 @@ namespace Altaxo.Science.Spectroscopy.Calibration
 
         return new IntensityCalibrationOptions
         {
+          SpectralPreprocessing = spectralPreprocessing,
           CurveShape = intensityCurve,
           CurveParameters = arr.ToImmutableArray(),
         };

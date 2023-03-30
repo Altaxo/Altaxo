@@ -321,7 +321,7 @@ namespace Altaxo.Science.Spectroscopy
     /// <value>
     /// The options for this data source.
     /// </value>
-    public SpectralPreprocessingOptions ProcessOptions
+    public SpectralPreprocessingOptionsBase ProcessOptions
     {
       get
       {

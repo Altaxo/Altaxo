@@ -125,6 +125,26 @@ namespace Altaxo.Gui.Data
 
     #endregion
 
+    /// <summary>
+    /// Overriden because doc is allowed to be null at initialization
+    /// </summary>
+    protected override void ThrowIfNotInitialized()
+    {
+    }
+
+    public override bool InitializeDocument(params object[] args)
+    {
+      if (args.Length == 0 || args[0] == null)
+      {
+        Initialize(true);
+        return true;
+      }
+      else
+      {
+        return base.InitializeDocument(args);
+      }
+    }
+
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
@@ -133,23 +153,26 @@ namespace Altaxo.Gui.Data
       {
         // Initialize tables
         string[] tables = Current.Project.DataTableCollection.GetSortedTableNames();
-        string dataTableName = _doc.DataTable is null ? string.Empty : _doc.DataTable.Name;
+        string dataTableName = _doc?.DataTable is null ? string.Empty : _doc.DataTable.Name;
         var availableTables = new SelectableListNodeList();
         foreach (var tableName in tables)
         {
           availableTables.Add(new SelectableListNode(tableName, Current.Project.DataTableCollection[tableName], false));
         }
         DataTable = new ItemsController<DataTable>(availableTables, EhSelectedTableChanged);
-        DataTable.SelectedValue = _doc.DataTable;
+        if (_doc?.DataTable is not null)
+        {
+          DataTable.SelectedValue = _doc.DataTable;
+        }
       }
     }
 
     private void EhSelectedTableChanged(DataTable obj)
     {
-      var groupNumber = AvailableGroups is not null ? SelectedGroup : _doc.GroupNumber;
+      var groupNumber = AvailableGroups is not null ? SelectedGroup : _doc?.GroupNumber ?? 0;
 
       // Initialize group numbers
-      var availableGroups = _doc.DataTable.DataColumns.GetGroupNumbersAll();
+      var availableGroups = obj.DataColumns.GetGroupNumbersAll();
       AvailableGroups = new ObservableCollection<int>(availableGroups);
 
       if (availableGroups.Contains(groupNumber))
@@ -178,7 +201,7 @@ namespace Altaxo.Gui.Data
 
 
       // X-Column
-      var xCol = XColumn?.SelectedValue ?? _doc.XColumn;
+      var xCol = XColumn?.SelectedValue ?? _doc?.XColumn;
       string xColName = xCol is not DataColumn xdc ? null : DataColumnCollection.GetParentDataColumnCollectionOf(xdc).GetColumnName(xdc);
 
 
@@ -200,7 +223,7 @@ namespace Altaxo.Gui.Data
 
 
       // Y-Column
-      var yCol = YColumn?.SelectedValue ?? _doc.YColumn;
+      var yCol = YColumn?.SelectedValue ?? _doc?.YColumn;
       string yColName = yCol is not DataColumn ydc ? null : DataColumnCollection.GetParentDataColumnCollectionOf(ydc).GetColumnName(ydc);
 
 
@@ -221,12 +244,14 @@ namespace Altaxo.Gui.Data
 
     public override bool Apply(bool disposeController)
     {
-      var dataTable = DataTable.SelectedValue;
+      var dataTable = DataTable?.SelectedValue;
       if (dataTable is null)
       {
-        Current.Gui.ErrorMessageBox("Please select a data table");
+        Current.Gui.ErrorMessageBox("Please select a table and then the columns", "Error");
         return ApplyEnd(false, disposeController);
       }
+
+
       var groupNumber = SelectedGroup;
 
       var xCol = XColumn.SelectedValue;

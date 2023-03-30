@@ -194,7 +194,7 @@ namespace Altaxo.Science.Spectroscopy
       double[] xArray,
       double[] yArray,
       int[]? regions)>
-      ExecuteSpectralPreprocessing(DataTableMultipleColumnProxy inputData, SpectralPreprocessingOptions doc, DataTable dstTable)
+      ExecuteSpectralPreprocessing(DataTableMultipleColumnProxy inputData, SpectralPreprocessingOptionsBase doc, DataTable dstTable)
     {
       var resultList = new List<(
       DataColumn xOrgCol,
@@ -1084,8 +1084,9 @@ namespace Altaxo.Science.Spectroscopy
         return;
       }
 
-      var y_column1 = ctrl.DataTable.DataColumns[ctrl.SelectedDataColumns[0]];
-      var x_column1 = ctrl.DataTable.DataColumns.FindXColumnOf(y_column1);
+      var dataTable = ctrl.DataTable;
+      var y_column1 = dataTable.DataColumns[ctrl.SelectedDataColumns[0]];
+      var x_column1 = dataTable.DataColumns.FindXColumnOf(y_column1);
 
       var y_column2 = ctrl.SelectedDataColumns.Count > 1 ? ctrl.DataTable.DataColumns[ctrl.SelectedDataColumns[1]] : null;
       var x_column2 = y_column2 is not null ? ctrl.DataTable.DataColumns.FindXColumnOf(y_column2) : null;
@@ -1122,12 +1123,27 @@ namespace Altaxo.Science.Spectroscopy
         }
       }
 
+      var spectralPreprocessingOptions = new SpectralPreprocessingOptions();
+
+      if (y_column2 is not null)
+      {
+
+        int groupNumber = dataTable.DataColumns.GetColumnGroup(y_column2);
+
+        var specSubtraction = new DarkSubtraction.SpectrumSubtraction()
+        {
+          XYDataOrigin = (dataTable.Name, dataTable.DataColumns.GetColumnGroup(y_column2), dataTable.DataColumns.GetColumnName(x_column2), dataTable.DataColumns.GetColumnName(y_column2)),
+        };
+
+        spectralPreprocessingOptions = spectralPreprocessingOptions with { DarkSubtraction = specSubtraction };
+      }
+
 
       var doc = new IntensityCalibrationSetup()
       {
         XColumn = x_column1,
-        YSignal = y_column1,
-        YDark = y_column2,
+        YColumn = y_column1,
+        SpectralPreprocessing = spectralPreprocessingOptions,
       };
       var controller = new IntensityCalibrationSetupController();
       controller.InitializeDocument(doc);
@@ -1142,15 +1158,7 @@ namespace Altaxo.Science.Spectroscopy
       dstTable.Name = Current.Project.DataTableCollection.FindNewItemName(ctrl.DataTable.FolderName + "WIntensityCalibration");
       Current.Project.DataTableCollection.Add(dstTable);
 
-      var proxy = new DataTableMultipleColumnProxy(ctrl.DataTable, ctrl.DataTable.DataColumns.GetColumnGroup(y_column1));
-      proxy.EnsureExistenceOfIdentifier(IntensityCalibrationDataSource.ProxyColumnGroupName_SignalSpectrum);
-      proxy.AddDataColumn(IntensityCalibrationDataSource.ProxyColumnGroupName_SignalSpectrum, doc.YSignal);
-      if (doc.YDark is not null)
-      {
-        proxy.EnsureExistenceOfIdentifier(IntensityCalibrationDataSource.ProxyColumnGroupName_DarkSpectrum);
-        proxy.AddDataColumn(IntensityCalibrationDataSource.ProxyColumnGroupName_DarkSpectrum, doc.YDark);
-      }
-
+      var proxy = new DataTableXYColumnProxy(ctrl.DataTable, x_column1, y_column1);
 
       var options = new IntensityCalibrationOptions()
       {

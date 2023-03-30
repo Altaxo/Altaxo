@@ -36,7 +36,7 @@ namespace Altaxo.Science.Spectroscopy
     /// <summary>
     /// Gets/sets the methods for spectral preprocessing.
     /// </summary>
-    public SpectralPreprocessingOptions Preprocessing { get; init; } = new SpectralPreprocessingOptions();
+    public SpectralPreprocessingOptionsBase Preprocessing { get; init; } = new SpectralPreprocessingOptions();
 
     /// <summary>
     /// Gets/sets the peak searching method (method to find approximate peak positions).

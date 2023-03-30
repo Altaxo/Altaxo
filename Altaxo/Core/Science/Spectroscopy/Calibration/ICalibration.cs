@@ -25,7 +25,11 @@
 
 namespace Altaxo.Science.Spectroscopy.Calibration
 {
-  public interface ICalibration : ISingleSpectrumPreprocessor
+  public interface IXCalibration : ISingleSpectrumPreprocessor
+  {
+  }
+
+  public interface IYCalibration : ISingleSpectrumPreprocessor
   {
   }
 }

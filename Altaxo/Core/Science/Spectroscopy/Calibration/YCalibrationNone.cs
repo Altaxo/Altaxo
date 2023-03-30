@@ -29,12 +29,11 @@ namespace Altaxo.Science.Spectroscopy.Calibration
   /// <summary>
   /// Does nothing (null operation).
   /// </summary>
-  /// <seealso cref="Altaxo.Science.Spectroscopy.BaselineEstimation.IBaselineEstimation" />
-  public class CalibrationNone : ICalibration
+  public class YCalibrationNone : IYCalibration
   {
     #region Serialization
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(CalibrationNone), 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(YCalibrationNone), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
@@ -43,7 +42,7 @@ namespace Altaxo.Science.Spectroscopy.Calibration
 
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        return new CalibrationNone();
+        return new YCalibrationNone();
       }
     }
     #endregion

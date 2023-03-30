@@ -32,6 +32,7 @@ using Altaxo.Calc.FitFunctions.Peaks;
 using Altaxo.Calc.Regression.Nonlinear;
 using Altaxo.Collections;
 using Altaxo.Gui.Common;
+using Altaxo.Science.Spectroscopy;
 using Altaxo.Science.Spectroscopy.Calibration;
 
 namespace Altaxo.Gui.Science.Spectroscopy.Calibration
@@ -44,7 +45,7 @@ namespace Altaxo.Gui.Science.Spectroscopy.Calibration
   {
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
-      yield break;
+      yield return new ControllerAndSetNullMethod(PreprocessingController, () => PreprocessingController = null);
     }
 
     #region Bindings
@@ -144,8 +145,21 @@ namespace Altaxo.Gui.Science.Spectroscopy.Calibration
 
     public ObservableCollection<ParameterItem> ParametersOfCurve { get; } = new ObservableCollection<ParameterItem>();
 
+    private SpectralPreprocessingController _preprocessingController;
 
-
+    public SpectralPreprocessingController PreprocessingController
+    {
+      get => _preprocessingController;
+      set
+      {
+        if (!(_preprocessingController == value))
+        {
+          _preprocessingController?.Dispose();
+          _preprocessingController = value;
+          OnPropertyChanged(nameof(PreprocessingController));
+        }
+      }
+    }
 
     #endregion
 
@@ -155,10 +169,18 @@ namespace Altaxo.Gui.Science.Spectroscopy.Calibration
 
       if (initData)
       {
+        var preprocessingController = new SpectralPreprocessingController();
+        preprocessingController.InitializeDocument(_doc.SpectralPreprocessing);
+        Current.Gui.FindAndAttachControlTo(preprocessingController);
+        PreprocessingController = preprocessingController;
 
         NumberOfTerms = _doc.CurveShape is IFitFunctionPeak ffp ? ffp.NumberOfTerms : 1;
         OrderOfBaselinePolynomial = _doc.CurveShape is IFitFunctionPeak ffp1 ? ffp1.OrderOfBaselinePolynomial : -1;
         var fitFuncTypes = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(Altaxo.Calc.FitFunctions.Peaks.IFitFunctionPeak));
+
+        // Parameters
+
+
 
         AvailableShapes = new ItemsController<Type>(
           new Collections.SelectableListNodeList(fitFuncTypes.Select(ff => new Collections.SelectableListNode(ff.Name, ff, false))), EhCurveShapeChanged);
@@ -186,6 +208,11 @@ namespace Altaxo.Gui.Science.Spectroscopy.Calibration
 
     public override bool Apply(bool disposeController)
     {
+      if (!PreprocessingController.Apply(disposeController))
+      {
+        return ApplyEnd(false, disposeController);
+      }
+
       var curveInstance = (IFitFunction)Activator.CreateInstance(AvailableShapes.SelectedValue);
       if (curveInstance is IFitFunctionPeak ffp)
       {
@@ -194,6 +221,7 @@ namespace Altaxo.Gui.Science.Spectroscopy.Calibration
 
       _doc = new IntensityCalibrationOptions
       {
+        SpectralPreprocessing = (SpectralPreprocessingOptionsBase)PreprocessingController.ModelObject,
         CurveShape = curveInstance,
         CurveParameters = ParametersOfCurve.Select(p => (p.Name, p.Value)).ToImmutableArray(),
       };

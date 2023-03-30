@@ -33,20 +33,13 @@
                Content="{Binding XColumn}"/>
 
         <Label Grid.Row="2" Grid.Column="0"
-               Content="Signal column:"/>
+               Content="Y-column:"/>
         <Label Grid.Row="2" Grid.Column="2"
                Content="{Binding SignalColumn.Name}"/>
-
-        <Label Grid.Row="4" Grid.Column="0"
-               Content="Dark column:"/>
-        <Label Grid.Row="4" Grid.Column="2"
-               Content="{Binding DarkColumn.Name}"/>
-
-        <Button Grid.Row="2" Grid.Column="4"
-                Command="{Binding CmdSwapYColumns}"
-                Content="Swap signal - dark"
-                ToolTip="Swap the signal column with the dark column."
-                />
+        <GroupBox Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="3"
+                  Header="Spectral preprocessing:">
+        <ContentControl Content="{Binding PreprocessingController.ViewObject}"/>
+        </GroupBox>
 
         <GroupBox Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="6
                   " Header="Specification of calibration source intensity">

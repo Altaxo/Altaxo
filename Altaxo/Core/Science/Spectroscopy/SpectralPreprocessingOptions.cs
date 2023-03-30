@@ -22,11 +22,13 @@
 
 #endregion Copyright
 
+using System;
 using System.Collections.Generic;
-using Altaxo.Main;
+using System.Collections.Immutable;
 using Altaxo.Science.Spectroscopy.BaselineEstimation;
 using Altaxo.Science.Spectroscopy.Calibration;
 using Altaxo.Science.Spectroscopy.Cropping;
+using Altaxo.Science.Spectroscopy.DarkSubtraction;
 using Altaxo.Science.Spectroscopy.Normalization;
 using Altaxo.Science.Spectroscopy.Resampling;
 using Altaxo.Science.Spectroscopy.Sanitizing;
@@ -35,8 +37,20 @@ using Altaxo.Science.Spectroscopy.SpikeRemoval;
 
 namespace Altaxo.Science.Spectroscopy
 {
-  public record SpectralPreprocessingOptions : IImmutable, ISingleSpectrumPreprocessorCompound
+
+  public record SpectralPreprocessingOptions : SpectralPreprocessingOptionsBase
   {
+    const int IndexSanitzer = 0;
+    const int IndexDarkSubtraction = 1;
+    const int IndexSpikeRemoval = 2;
+    const int IndexYCalibration = 3;
+    const int IndexXCalibration = 4;
+    const int IndexResampling = 5;
+    const int IndexSmoothing = 6;
+    const int IndexBaselineEstimation = 7;
+    const int IndexCropping = 8;
+    const int IndexNormalization = 9;
+
     #region Serialization
 
     #region Version 0
@@ -70,16 +84,19 @@ namespace Altaxo.Science.Spectroscopy
         var cropping = info.GetValue<ICropping>("Cropping", parent);
         var normalization = info.GetValue<INormalization>("Normalization", parent);
 
-        return ((SpectralPreprocessingOptions?)o ?? new SpectralPreprocessingOptions()) with
+        return new SpectralPreprocessingOptions(new ISingleSpectrumPreprocessor[]
         {
-          Sanitizer = sanitizer,
-          SpikeRemoval = spikeRemoval,
-          Resampling = resampling,
-          Smoothing = smoothing,
-          BaselineEstimation = baselineEstimation,
-          Cropping = cropping,
-          Normalization = normalization,
-        };
+          sanitizer,
+          new DarkSubtractionNone(),
+          spikeRemoval,
+          new YCalibrationNone(),
+          new XCalibrationNone(),
+          resampling,
+          smoothing,
+          baselineEstimation,
+          cropping,
+          normalization,
+        });
       }
     }
     #endregion
@@ -99,7 +116,7 @@ namespace Altaxo.Science.Spectroscopy
         var s = (SpectralPreprocessingOptions)obj;
         info.AddValue("Sanitizer", s.Sanitizer);
         info.AddValue("SpikeRemoval", s.SpikeRemoval);
-        info.AddValue("Calibration", s.Calibration);
+        info.AddValue("Calibration", s.XCalibration);
         info.AddValue("Resampling", s.Resampling);
         info.AddValue("Smoothing", s.Smoothing);
         info.AddValue("BaselineEstimation", s.BaselineEstimation);
@@ -111,71 +128,261 @@ namespace Altaxo.Science.Spectroscopy
       {
         var sanitizer = info.GetValue<ISanitizer>("Sanitizer", parent);
         var spikeRemoval = info.GetValue<ISpikeRemoval>("SpikeRemoval", parent);
-        var calibration = info.GetValue<ICalibration>("Calibration", parent);
+        var xcalibration = info.GetValue<IXCalibration>("Calibration", parent);
         var resampling = info.GetValue<IResampling>("Resampling", parent);
         var smoothing = info.GetValue<ISmoothing>("Smoothing", parent);
         var baselineEstimation = info.GetValue<IBaselineEstimation>("BaselineEstimation", parent);
         var cropping = info.GetValue<ICropping>("Cropping", parent);
         var normalization = info.GetValue<INormalization>("Normalization", parent);
 
-        return ((SpectralPreprocessingOptions?)o ?? new SpectralPreprocessingOptions()) with
+        return new SpectralPreprocessingOptions(new ISingleSpectrumPreprocessor[]
         {
-          Sanitizer = sanitizer,
-          SpikeRemoval = spikeRemoval,
-          Calibration = calibration,
-          Resampling = resampling,
-          Smoothing = smoothing,
-          BaselineEstimation = baselineEstimation,
-          Cropping = cropping,
-          Normalization = normalization,
-        };
+          sanitizer,
+          new DarkSubtractionNone(),
+          spikeRemoval,
+          new YCalibrationNone(),
+          xcalibration,
+          resampling,
+          smoothing,
+          baselineEstimation,
+          cropping,
+          normalization,
+        });
+      }
+    }
+
+    /// <summary>
+    /// 2022-06-09 V0: Initial version
+    /// 2022-08-04 V1: Added Calibration element
+    /// 2023-03-30 V2: Added DarkSubtraction and YCalibration, rename Calibration to XCalibration
+    /// </summary>
+    /// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(SpectralPreprocessingOptions), 2)]
+    public class SerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        var s = (SpectralPreprocessingOptions)obj;
+        info.AddValue("Sanitizer", s.Sanitizer);
+        info.AddValue("DarkSubtraction", s.DarkSubtraction);
+        info.AddValue("SpikeRemoval", s.SpikeRemoval);
+        info.AddValue("YCalibration", s.YCalibration);
+        info.AddValue("XCalibration", s.XCalibration);
+        info.AddValue("Resampling", s.Resampling);
+        info.AddValue("Smoothing", s.Smoothing);
+        info.AddValue("BaselineEstimation", s.BaselineEstimation);
+        info.AddValue("Cropping", s.Cropping);
+        info.AddValue("Normalization", s.Normalization);
+      }
+
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      {
+        var sanitizer = info.GetValue<ISanitizer>("Sanitizer", parent);
+        var darkSubtraction = info.GetValue<IDarkSubtraction>("DarkSubtraction", parent);
+        var spikeRemoval = info.GetValue<ISpikeRemoval>("SpikeRemoval", parent);
+        var ycalibration = info.GetValue<IYCalibration>("YCalibration", parent);
+        var xcalibration = info.GetValue<IXCalibration>("XCalibration", parent);
+        var resampling = info.GetValue<IResampling>("Resampling", parent);
+        var smoothing = info.GetValue<ISmoothing>("Smoothing", parent);
+        var baselineEstimation = info.GetValue<IBaselineEstimation>("BaselineEstimation", parent);
+        var cropping = info.GetValue<ICropping>("Cropping", parent);
+        var normalization = info.GetValue<INormalization>("Normalization", parent);
+
+
+        return new SpectralPreprocessingOptions(new ISingleSpectrumPreprocessor[]
+        {
+          sanitizer,
+          darkSubtraction,
+          spikeRemoval,
+          ycalibration,
+          xcalibration,
+          resampling,
+          smoothing,
+          baselineEstimation,
+          cropping,
+          normalization,
+        });
       }
     }
     #endregion
 
     #endregion
 
-    public ISanitizer Sanitizer { get; init; } = new SanitizerNone();
-
-    public ISpikeRemoval SpikeRemoval { get; init; } = new SpikeRemovalNone();
-
-    public ICalibration Calibration { get; init; } = new CalibrationNone();
-
-    public IResampling Resampling { get; init; } = new ResamplingNone();
-
-    public ISmoothing Smoothing { get; init; } = new SmoothingNone();
-
-    public IBaselineEstimation BaselineEstimation { get; init; } = new BaselineEstimationNone();
-
-    public ICropping Cropping { get; init; } = new CroppingNone();
-
-    public INormalization Normalization { get; init; } = new NormalizationNone();
-
-    public IEnumerable<ISingleSpectrumPreprocessor> GetProcessorElements()
+    protected IEnumerable<Type> ExpectedOrderOfElements
     {
-      yield return Sanitizer;
-      yield return SpikeRemoval;
-      yield return Calibration;
-      yield return Resampling;
-      yield return Smoothing;
-      yield return Cropping;
-      yield return BaselineEstimation;
-      yield return Normalization;
-
+      get
+      {
+        yield return typeof(ISanitizer);
+        yield return typeof(IDarkSubtraction);
+        yield return typeof(ISpikeRemoval);
+        yield return typeof(IYCalibration);
+        yield return typeof(IXCalibration);
+        yield return typeof(IResampling);
+        yield return typeof(ISmoothing);
+        yield return typeof(IBaselineEstimation);
+        yield return typeof(ICropping);
+        yield return typeof(INormalization);
+      }
     }
 
-    public (double[] x, double[] y, int[]? regions) Execute(double[] x, double[] y, int[]? regions)
+    public SpectralPreprocessingOptions()
     {
-      if (regions is null || regions.Length == 0)
-      {
-        System.Array.Sort(x, y);
-      }
+      InnerList = ImmutableList.Create<ISingleSpectrumPreprocessor>(
+        new SanitizerNone(),
+        new DarkSubtractionNone(),
+        new SpikeRemovalNone(),
+        new YCalibrationNone(),
+        new XCalibrationNone(),
+        new ResamplingNone(),
+        new SmoothingNone(),
+        new BaselineEstimationNone(),
+        new CroppingNone(),
+        new NormalizationNone()
+        ); ;
+    }
 
-      foreach (var processor in GetProcessorElements())
+    public SpectralPreprocessingOptions(IEnumerable<ISingleSpectrumPreprocessor> list)
+    {
+      var ilist = list.ToImmutableList();
+      int idx = 0;
+      foreach (var expectedType in ExpectedOrderOfElements)
       {
-        (x, y, regions) = processor.Execute(x, y, regions);
+        if (idx >= ilist.Count)
+          throw new ArgumentException("List has too less elements", nameof(list));
+        if (ilist[idx] is null)
+          throw new ArgumentException($"List element [{idx}] is null", nameof(list));
+        if (!(expectedType.IsAssignableFrom(ilist[idx].GetType())))
+          throw new ArgumentException($"In list element[{idx}, the type {expectedType} is expected, but it is {ilist[idx].GetType()}");
+        ++idx;
       }
-      return (x, y, regions);
+      if (ilist.Count != idx)
+        throw new ArgumentException("List has too many elements", nameof(list));
+
+      InnerList = ilist;
+    }
+
+    public ISanitizer Sanitizer
+    {
+      get
+      {
+        return (ISanitizer)InnerList[IndexSanitzer];
+      }
+      init
+      {
+
+        InnerList = InnerList.SetItem(IndexSanitzer, value ?? throw new ArgumentNullException(nameof(Sanitizer)));
+      }
+    }
+
+    public IDarkSubtraction DarkSubtraction
+    {
+      get
+      {
+        return (IDarkSubtraction)InnerList[IndexDarkSubtraction];
+      }
+      init
+      {
+
+        InnerList = InnerList.SetItem(IndexDarkSubtraction, value ?? throw new ArgumentNullException(nameof(DarkSubtraction)));
+      }
+    }
+
+
+    public ISpikeRemoval SpikeRemoval
+    {
+      get
+      {
+        return (ISpikeRemoval)InnerList[IndexSpikeRemoval];
+      }
+      init
+      {
+        InnerList = InnerList.SetItem(IndexSpikeRemoval, value ?? throw new ArgumentNullException(nameof(SpikeRemoval)));
+      }
+    }
+
+    public IYCalibration YCalibration
+    {
+      get
+      {
+        return (IYCalibration)InnerList[IndexYCalibration];
+      }
+      init
+      {
+        InnerList = InnerList.SetItem(IndexYCalibration, value ?? throw new ArgumentNullException(nameof(YCalibration)));
+      }
+    }
+
+
+    public IXCalibration XCalibration
+    {
+      get
+      {
+        return (IXCalibration)InnerList[IndexXCalibration];
+      }
+      init
+      {
+        InnerList = InnerList.SetItem(IndexXCalibration, value ?? throw new ArgumentNullException(nameof(XCalibration)));
+      }
+    }
+
+    public IResampling Resampling
+    {
+      get
+      {
+        return (IResampling)InnerList[IndexResampling];
+      }
+      init
+      {
+        InnerList = InnerList.SetItem(IndexResampling, value ?? throw new ArgumentNullException(nameof(Resampling)));
+      }
+    }
+
+    public ISmoothing Smoothing
+    {
+      get
+      {
+        return (ISmoothing)InnerList[IndexSmoothing];
+      }
+      init
+      {
+        InnerList = InnerList.SetItem(IndexSmoothing, value ?? throw new ArgumentNullException(nameof(Smoothing)));
+      }
+    }
+
+    public IBaselineEstimation BaselineEstimation
+    {
+      get
+      {
+        return (IBaselineEstimation)InnerList[IndexBaselineEstimation];
+      }
+      init
+      {
+        InnerList = InnerList.SetItem(IndexBaselineEstimation, value ?? throw new ArgumentNullException(nameof(BaselineEstimation)));
+      }
+    }
+
+    public ICropping Cropping
+    {
+      get
+      {
+        return (ICropping)InnerList[IndexCropping];
+      }
+      init
+      {
+        InnerList = InnerList.SetItem(IndexCropping, value ?? throw new ArgumentNullException(nameof(Cropping)));
+      }
+    }
+
+    public INormalization Normalization
+    {
+      get
+      {
+        return (INormalization)InnerList[IndexNormalization];
+      }
+      init
+      {
+        InnerList = InnerList.SetItem(IndexNormalization, value ?? throw new ArgumentNullException(nameof(Normalization)));
+      }
     }
   }
 }

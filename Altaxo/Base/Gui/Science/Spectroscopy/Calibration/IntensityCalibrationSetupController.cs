@@ -33,6 +33,7 @@ using Altaxo.Calc.Regression.Nonlinear;
 using Altaxo.Collections;
 using Altaxo.Data;
 using Altaxo.Gui.Common;
+using Altaxo.Science.Spectroscopy;
 
 namespace Altaxo.Gui.Science.Spectroscopy.Calibration
 {
@@ -47,13 +48,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.Calibration
     /// <summary>
     /// Gets or sets the column containing the spectrum of the known source.
     /// </summary>
-    public DataColumn YSignal { get; set; }
+    public DataColumn YColumn { get; set; }
 
-    /// <summary>
-    /// Gets or sets the column containing the dark spectrum. This column is optional, as for some signals the dark signal is
-    /// already subtracted.
-    /// </summary>
-    public DataColumn? YDark { get; set; }
+    public SpectralPreprocessingOptionsBase SpectralPreprocessing { get; set; }
 
     public IFitFunction CurveShape { get; set; } = new Altaxo.Calc.FitFunctions.Peaks.GaussAmplitude(1, -1);
 
@@ -68,8 +65,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.Calibration
   {
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
-      yield break;
+      yield return new ControllerAndSetNullMethod(PreprocessingController, () => PreprocessingController = null);
     }
+
 
     public IntensityCalibrationSetupController()
     {
@@ -218,8 +216,21 @@ namespace Altaxo.Gui.Science.Spectroscopy.Calibration
 
     public ObservableCollection<ParameterItem> ParametersOfCurve { get; } = new ObservableCollection<ParameterItem>();
 
+    private SpectralPreprocessingController _preprocessingController;
 
-
+    public SpectralPreprocessingController PreprocessingController
+    {
+      get => _preprocessingController;
+      set
+      {
+        if (!(_preprocessingController == value))
+        {
+          _preprocessingController?.Dispose();
+          _preprocessingController = value;
+          OnPropertyChanged(nameof(PreprocessingController));
+        }
+      }
+    }
 
     #endregion
 
@@ -230,8 +241,12 @@ namespace Altaxo.Gui.Science.Spectroscopy.Calibration
       if (initData)
       {
         XColumn = _doc.XColumn.Name;
-        SignalColumn = _doc.YSignal;
-        DarkColumn = _doc.YDark;
+        SignalColumn = _doc.YColumn;
+
+        var preprocessingController = new SpectralPreprocessingController();
+        preprocessingController.InitializeDocument(_doc.SpectralPreprocessing);
+        Current.Gui.FindAndAttachControlTo(preprocessingController);
+        PreprocessingController = preprocessingController;
 
         NumberOfTerms = _doc.CurveShape is IFitFunctionPeak ffp ? ffp.NumberOfTerms : 1;
         OrderOfBaselinePolynomial = _doc.CurveShape is IFitFunctionPeak ffp1 ? ffp1.OrderOfBaselinePolynomial : -1;
@@ -263,6 +278,11 @@ namespace Altaxo.Gui.Science.Spectroscopy.Calibration
 
     public override bool Apply(bool disposeController)
     {
+      if (!PreprocessingController.Apply(disposeController))
+      {
+        return ApplyEnd(false, disposeController);
+      }
+
       var curveInstance = (IFitFunction)Activator.CreateInstance(AvailableShapes.SelectedValue);
       if (curveInstance is IFitFunctionPeak ffp)
       {
@@ -272,8 +292,8 @@ namespace Altaxo.Gui.Science.Spectroscopy.Calibration
       _doc = new IntensityCalibrationSetup
       {
         XColumn = _doc.XColumn,
-        YSignal = SignalColumn,
-        YDark = DarkColumn,
+        YColumn = SignalColumn,
+        SpectralPreprocessing = (SpectralPreprocessingOptionsBase)PreprocessingController.ModelObject,
         CurveShape = curveInstance,
         CurveParameter = ParametersOfCurve.Select(p => (p.Name, p.Value)).ToArray(),
       };
