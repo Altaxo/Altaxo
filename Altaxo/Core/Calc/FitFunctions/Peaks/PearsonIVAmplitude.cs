@@ -38,6 +38,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
   /// </summary>
   /// <remarks>See <see href="https://en.wikipedia.org/wiki/Pearson_distribution#The_Pearson_type_IV_distribution"/>.</remarks>
   [FitFunctionClass]
+  [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Peaks.PearsonIVAmplitude}")]
   public record PearsonIVAmplitude : IFitFunctionWithDerivative, IFitFunctionPeak, IImmutable
   {
     private const string ParameterBaseName0 = "a";

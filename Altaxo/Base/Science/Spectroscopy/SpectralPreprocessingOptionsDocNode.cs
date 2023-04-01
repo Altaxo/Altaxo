@@ -183,8 +183,9 @@ namespace Altaxo.Science.Spectroscopy
 
         if (listIndex < proxyList.Count && proxyList[listIndex].number == processorNumber)
         {
-          _proxyCache.Add(ele, proxyList[listIndex].proxy);
-          proxyList[listIndex].proxy.ParentObject = this;
+          var proxy = proxyList[listIndex].proxy;
+          proxy.ParentObject = this;
+          _proxyCache.Add(ele, proxy);
           ++listIndex;
         }
       }
@@ -218,7 +219,7 @@ namespace Altaxo.Science.Spectroscopy
 
           if (table is not null && xcol is not null && ycol is not null)
           {
-            var proxy = new DataTableXYColumnProxy(table, xcol, ycol);
+            var proxy = new DataTableXYColumnProxy(table, xcol, ycol) { ParentObject = this };
             _proxyCache.Add(element, proxy);
           }
         }
@@ -279,17 +280,19 @@ namespace Altaxo.Science.Spectroscopy
         switch (oldElement)
         {
           case XCalibrationByDataSource xcal:
-            newElement = HandleXCalibration(xcal, _proxyCache[oldElement]);
+            newElement = UpdateXCalibrationByDataSourceElement(xcal, _proxyCache[oldElement]);
             ReplaceProxyKey(oldElement, newElement, proxy);
             break;
           case YCalibrationByDataSource ycal:
-            newElement = HandleYCalibration(ycal, _proxyCache[oldElement]);
+            newElement = UpdateYCalibrationByDataSourceElement(ycal, _proxyCache[oldElement]);
             ReplaceProxyKey(oldElement, newElement, proxy);
             break;
           case IReferencingXYColumns refXYCol:
-            newElement = HandleIReferencingXYColumns(refXYCol, _proxyCache[oldElement]);
+            newElement = UpdateElementIReferencingXYColumns(refXYCol, _proxyCache[oldElement]);
             ReplaceProxyKey(oldElement, newElement, proxy);
             break;
+          case IReferencingTable rt:
+            throw new NotImplementedException($"Unhandled element referencing a table: {oldElement.GetType}");
         }
         if (!object.ReferenceEquals(oldElement, newElement))
         {
@@ -318,79 +321,123 @@ namespace Altaxo.Science.Spectroscopy
       _proxyCache[newKey] = proxy;
     }
 
-    private ISingleSpectrumPreprocessor HandleXCalibration(ISingleSpectrumPreprocessor cal, IDocumentLeafNode proxy)
+    public static XCalibrationByDataSource UpdateXCalibrationByDataSourceElement(XCalibrationByDataSource element, IDocumentLeafNode proxy)
     {
       if (proxy is not DataTableProxy calibrationTableProxy)
         throw new ArgumentException($"Expected: DataTableProxy for calibration, but it is: {proxy.GetType()}");
 
       if (calibrationTableProxy is not null && calibrationTableProxy.Document is { } table)
       {
-        if (cal is IXCalibrationTable xct)
+        // Update the data in this processor element
+        if (element is IXCalibrationTable xct)
         {
           // Update the calibration data
           if (table.DataSource is IXCalibrationDataSource xcds && xcds.IsContainingValidXAxisCalibration(table))
           {
             var xCalibrationData = xcds.GetXAxisCalibration(table);
-            return (IXCalibration)(xct.WithCalibrationTable(xCalibrationData.ToImmutableArray()));
+            element = (XCalibrationByDataSource)(xct.WithCalibrationTable(xCalibrationData.ToImmutableArray()));
           }
         }
+        // Update the data origin info of this processor element
+        if (element is IReferencingTable rt && rt.TableName != table.Name)
+        {
+          element = (XCalibrationByDataSource)rt.WithTableName(table.Name);
+        }
       }
-      return cal;
+      return element;
     }
 
-    private ISingleSpectrumPreprocessor HandleYCalibration(ISingleSpectrumPreprocessor cal, IDocumentLeafNode proxy)
+    private YCalibrationByDataSource UpdateYCalibrationByDataSourceElement(YCalibrationByDataSource element, IDocumentLeafNode proxy)
     {
       if (proxy is not DataTableProxy calibrationTableProxy)
         throw new ArgumentException($"Expected: DataTableProxy for calibration, but it is: {proxy.GetType()}");
 
       if (calibrationTableProxy is not null && calibrationTableProxy.Document is { } table)
       {
-        if (cal is IYCalibrationTable xct)
+        // Update the calibration data
+        if (element is IYCalibrationTable xct)
         {
           // Update the calibration data
           if (table.DataSource is IYCalibrationDataSource xcds && xcds.IsContainingValidYAxisCalibration(table))
           {
             var yCalibrationData = xcds.GetYAxisCalibration(table);
-            return (IXCalibration)(xct.WithCalibrationTable(yCalibrationData.ToImmutableArray()));
+            element = (YCalibrationByDataSource)(xct.WithCalibrationTable(yCalibrationData.ToImmutableArray()));
           }
         }
+        // Update the data origin info of this processor element
+        if (element is IReferencingTable rt && rt.TableName != table.Name)
+        {
+          element = (YCalibrationByDataSource)rt.WithTableName(table.Name);
+        }
       }
-      return cal;
+      return element;
     }
 
     /// <summary>
-    /// Handles processors that reference an x-y curve, for instance <see cref="DarkSubtraction.SpectrumSubtraction"/>.
+    /// Updates a <see cref="ISingleSpectrumPreprocessor"/> element that references x-y-columns, for instance <see cref="DarkSubtraction.SpectrumSubtraction"/>,
+    /// with the information in the proxy that references the x-y columns.
+    /// Both the x-y values in the processor element are updates, as well as the information about the names of the x and y columns.
     /// </summary>
-    /// <param name="cal">The <see cref="ISingleSpectrumPreprocessor"/> node that references an x-y curve.</param>
+    /// <param name="element">The <see cref="ISingleSpectrumPreprocessor"/> node that references an x-y curve.</param>
     /// <param name="proxyNode">The proxy node that stores the data of the x and y columns.</param>
     /// <returns>A new instance with data updated. In case that fails, the old instance is returned.</returns>
     /// <exception cref="Markdig.Helpers.ThrowHelper.ArgumentException(System.String)">Expected: {typeof(DataTableXYColumnProxy)}, but it is: {proxyNode.GetType()}</exception>
-    private ISingleSpectrumPreprocessor HandleIReferencingXYColumns(IReferencingXYColumns cal, IDocumentLeafNode proxyNode)
+    public static ISingleSpectrumPreprocessor UpdateElementIReferencingXYColumns(IReferencingXYColumns element, IDocumentLeafNode proxyNode)
     {
-      if (proxyNode is null || cal.XYDataOrigin is null)
-        return (ISingleSpectrumPreprocessor)cal;
+      if (proxyNode is null)
+        return (ISingleSpectrumPreprocessor)element;
 
       if (proxyNode is not DataTableXYColumnProxy proxy)
         throw new ArgumentException($"Expected: {typeof(DataTableXYColumnProxy)}, but it is: {proxyNode.GetType()}");
 
-      var info = cal.XYDataOrigin.Value;
-      if (Current.Project.DataTableCollection.TryGetValue(info.TableName, out var table))
-      {
-        var xcol = table.DataColumns.TryGetColumn(info.XColumnName);
-        var ycol = table.DataColumns.TryGetColumn(info.YColumnName);
+      var table = proxy.DataTable;
+      var xcol = (DataColumn?)proxy.XColumn;
+      var ycol = (DataColumn?)proxy.YColumn;
 
-        if (xcol is not null && ycol is not null)
+      if (table is not null && xcol is not null && ycol is not null)
+      {
+        // Update the data of the spectral preprocessor
+        int len = Math.Min(xcol.Count, ycol.Count);
+        if (!IsDataEqual(xcol, ycol, element.XYCurve)) // Chances are high that we do not need to update, so test first for new data
         {
-          int len = Math.Min(xcol.Count, ycol.Count);
           var arr = new (double x, double y)[len];
           for (int i = 0; i < len; ++i)
           {
             arr[i] = (xcol[i], ycol[i]);
           }
-          cal = cal.WithXYCurve(arr.ToImmutableArray());
+          element = element.WithXYCurve(arr.ToImmutableArray());
+        }
+
+        // Update the data origin info of the spectra preprocessor
+        var tname = table.Name;
+        var group = table.DataColumns.GetColumnGroup(ycol);
+        var xname = table.DataColumns.GetColumnName(xcol);
+        var yname = table.DataColumns.GetColumnName(ycol);
+        var info = element.XYDataOrigin;
+        if (!info.HasValue ||
+             info.Value.TableName != tname ||
+             info.Value.GroupNumber != group ||
+             info.Value.XColumnName != xname ||
+             info.Value.YColumnName != yname)
+        {
+          element = element.WithXYDataOrigin((tname, group, xname, yname));
         }
       }
-      return (ISingleSpectrumPreprocessor)cal;
+      return (ISingleSpectrumPreprocessor)element;
+    }
+
+    private static bool IsDataEqual(DataColumn xcol, DataColumn ycol, ImmutableArray<(double x, double y)> arr)
+    {
+      var len2 = Math.Min(xcol.Count, ycol.Count);
+      if (len2 != arr.Length)
+        return false;
+      for (int i = 0; i < len2; ++i)
+      {
+        var e = arr[i];
+        if (xcol[i] != e.x || ycol[i] != e.y)
+          return false;
+      }
+      return true;
     }
 
     /// <summary>
@@ -404,7 +451,12 @@ namespace Altaxo.Science.Spectroscopy
       {
         foreach (var childNode in GetDocumentNodeChildrenWithName())
         {
-          Report((IProxy)childNode.DocumentNode, this, childNode.Name);
+          if (childNode.DocumentNode is IProxy proxy)
+            Report(proxy, this, childNode.Name);
+          else if (childNode.DocumentNode is IHasDocumentReferences hasReferences)
+            hasReferences.VisitDocumentReferences(Report);
+          else
+            throw new NotImplementedException($"Don't know that to do with type {childNode.DocumentNode}");
         }
         suspendToken.Resume();
       }

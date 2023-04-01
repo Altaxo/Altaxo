@@ -36,6 +36,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
   /// The blend factor nu has a range of [0, 1].
   /// </summary>
   [FitFunctionClass]
+  [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Peaks.PseudoVoigtAmplitude}")]
   public record PseudoVoigtAmplitude : IFitFunctionWithDerivative, IFitFunctionPeak, IImmutable
   {
     private const string ParameterBaseName0 = "a";

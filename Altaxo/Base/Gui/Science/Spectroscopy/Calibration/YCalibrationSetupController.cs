@@ -33,35 +33,17 @@ using Altaxo.Calc.Regression.Nonlinear;
 using Altaxo.Collections;
 using Altaxo.Data;
 using Altaxo.Gui.Common;
+using Altaxo.Main.Services;
 using Altaxo.Science.Spectroscopy;
 
 namespace Altaxo.Gui.Science.Spectroscopy.Calibration
 {
 
-  public record IntensityCalibrationSetup
-  {
-    /// <summary>
-    /// Gets or sets the x column. The x-column is shared among both the YSignal column and the YDark column.
-    /// </summary>
-    public DataColumn XColumn { get; set; }
+  public interface IYCalibrationSetupView : IDataContextAwareView { }
 
-    /// <summary>
-    /// Gets or sets the column containing the spectrum of the known source.
-    /// </summary>
-    public DataColumn YColumn { get; set; }
-
-    public SpectralPreprocessingOptionsBase SpectralPreprocessing { get; set; }
-
-    public IFitFunction CurveShape { get; set; } = new Altaxo.Calc.FitFunctions.Peaks.GaussAmplitude(1, -1);
-
-    public (string Name, double Value)[] CurveParameter { get; set; } = Array.Empty<(string Name, double Value)>();
-  }
-
-  public interface IIntensityCalibrationSetupView : IDataContextAwareView { }
-
-  [ExpectedTypeOfView(typeof(IIntensityCalibrationSetupView))]
-  [UserControllerForObject(typeof(IntensityCalibrationSetup))]
-  public class IntensityCalibrationSetupController : MVCANControllerEditImmutableDocBase<IntensityCalibrationSetup, IIntensityCalibrationSetupView>
+  [ExpectedTypeOfView(typeof(IYCalibrationSetupView))]
+  [UserControllerForObject(typeof(YCalibrationSetup))]
+  public class YCalibrationSetupController : MVCANControllerEditImmutableDocBase<YCalibrationSetup, IYCalibrationSetupView>
   {
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
@@ -69,7 +51,7 @@ namespace Altaxo.Gui.Science.Spectroscopy.Calibration
     }
 
 
-    public IntensityCalibrationSetupController()
+    public YCalibrationSetupController()
     {
       CmdSwapYColumns = new RelayCommand(EhSwapYColumns, EhCanSwapYColumns);
     }
@@ -232,6 +214,21 @@ namespace Altaxo.Gui.Science.Spectroscopy.Calibration
       }
     }
 
+    private string _fitFunctionDescription = string.Empty;
+
+    public string FitFunctionDescription
+    {
+      get => _fitFunctionDescription;
+      set
+      {
+        if (!(_fitFunctionDescription == value))
+        {
+          _fitFunctionDescription = value;
+          OnPropertyChanged(nameof(FitFunctionDescription));
+        }
+      }
+    }
+
     #endregion
 
     protected override void Initialize(bool initData)
@@ -274,6 +271,10 @@ namespace Altaxo.Gui.Science.Spectroscopy.Calibration
           value = 0;
         ParametersOfCurve.Add(new ParameterItem { Name = name, Value = value });
       }
+
+      object[] attribs = newType.GetCustomAttributes(typeof(System.ComponentModel.DescriptionAttribute), false);
+      FitFunctionDescription = (attribs.Length == 0) ? string.Empty : StringParser.Parse(((System.ComponentModel.DescriptionAttribute)attribs[0]).Description);
+
     }
 
     public override bool Apply(bool disposeController)
@@ -289,7 +290,7 @@ namespace Altaxo.Gui.Science.Spectroscopy.Calibration
         curveInstance = ffp.WithNumberOfTerms(NumberOfTerms).WithOrderOfBaselinePolynomial(OrderOfBaselinePolynomial);
       }
 
-      _doc = new IntensityCalibrationSetup
+      _doc = new YCalibrationSetup
       {
         XColumn = _doc.XColumn,
         YColumn = SignalColumn,

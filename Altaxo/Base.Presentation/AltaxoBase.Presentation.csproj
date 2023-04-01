@@ -63,7 +63,7 @@
     <Compile Update="Gui\Science\Spectroscopy\Calibration\CalibrationControl.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Gui\Science\Spectroscopy\Calibration\IntensityCalibrationOptionsControl.xaml.cs">
+    <Compile Update="Gui\Science\Spectroscopy\Calibration\YCalibrationOptionsControl.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="Gui\Science\Spectroscopy\Cropping\CroppingByXValuesControl.xaml.cs">

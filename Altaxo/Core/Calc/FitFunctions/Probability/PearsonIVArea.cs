@@ -39,6 +39,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
   /// </summary>
   /// <remarks>See <see href="https://en.wikipedia.org/wiki/Pearson_distribution#The_Pearson_type_IV_distribution"/>.</remarks>
   [FitFunctionClass]
+  [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Probability.PearsonIVArea}")]
   public record PearsonIVArea : IFitFunctionWithDerivative, IFitFunctionPeak, IImmutable
   {
     private const string ParameterBaseName0 = "A";
@@ -357,8 +358,8 @@ namespace Altaxo.Calc.FitFunctions.Probability
       return new double[NumberOfParametersPerPeak] { area, position, w, 1, 0 }; // Parameters for the Lorentz limit
     }
 
-    const double DefaultMinWidth = 1E-81; // Math.Pow(double.Epsilon, 0.25);
-    const double DefaultMaxWidth = 1E+77; // Math.Pow(double.MaxValue, 0.25);
+    private const double DefaultMinWidth = 1E-81; // Math.Pow(double.Epsilon, 0.25);
+    private const double DefaultMaxWidth = 1E+77; // Math.Pow(double.MaxValue, 0.25);
 
 
     /// <inheritdoc/>

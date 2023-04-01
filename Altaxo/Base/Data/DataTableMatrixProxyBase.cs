@@ -30,6 +30,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Collections;
+using Altaxo.Main;
 
 namespace Altaxo.Data
 {
@@ -37,7 +38,7 @@ namespace Altaxo.Data
   /// Holds reference to a matrix-like arrangement of data from a <see cref="DataTable"/>. The matrix data consist of 2 or more <see cref="DataColumn"/>s and all or selected data rows.
   /// Furthermore, a row header column and a column header column can deliver corresponding physical values for each matrix row and column, respectively.
   /// </summary>
-  public abstract class DataTableMatrixProxyBase : Main.SuspendableDocumentNodeWithEventArgs, Main.ICopyFrom
+  public abstract class DataTableMatrixProxyBase : Main.SuspendableDocumentNodeWithEventArgs, Main.ICopyFrom, IHasDocumentReferences
   {
     #region Inner classes
 

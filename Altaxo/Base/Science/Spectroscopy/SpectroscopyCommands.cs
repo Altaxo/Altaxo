@@ -1139,18 +1139,18 @@ namespace Altaxo.Science.Spectroscopy
       }
 
 
-      var doc = new IntensityCalibrationSetup()
+      var doc = new YCalibrationSetup()
       {
         XColumn = x_column1,
         YColumn = y_column1,
         SpectralPreprocessing = spectralPreprocessingOptions,
       };
-      var controller = new IntensityCalibrationSetupController();
+      var controller = new YCalibrationSetupController();
       controller.InitializeDocument(doc);
       if (!Current.Gui.ShowDialog(controller, "Choose options for intensity calibration"))
         return;
 
-      doc = (IntensityCalibrationSetup)controller.ModelObject;
+      doc = (YCalibrationSetup)controller.ModelObject;
 
       // now, create a new table with an intensityCalibrationDataSource
 
@@ -1160,13 +1160,14 @@ namespace Altaxo.Science.Spectroscopy
 
       var proxy = new DataTableXYColumnProxy(ctrl.DataTable, x_column1, y_column1);
 
-      var options = new IntensityCalibrationOptions()
+      var options = new YCalibrationOptions()
       {
         CurveShape = doc.CurveShape,
         CurveParameters = doc.CurveParameter.ToImmutableArray(),
+        Preprocessing = doc.SpectralPreprocessing,
       };
 
-      var dataSource = new IntensityCalibrationDataSource(proxy, options, new DataSourceImportOptions());
+      var dataSource = new YCalibrationDataSource(proxy, options, new DataSourceImportOptions());
       dstTable.DataSource = dataSource;
       var backgroundMonitor = new ExternalDrivenBackgroundMonitor();
       var task = System.Threading.Tasks.Task.Run(() => dataSource.FillData(dstTable, backgroundMonitor.CancellationTokenHard));

@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2014 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2023 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -22,30 +22,29 @@
 
 #endregion Copyright
 
-#nullable enable
 using System;
+using Altaxo.Calc.Regression.Nonlinear;
+using Altaxo.Data;
+using Altaxo.Science.Spectroscopy;
 
-namespace Altaxo.Main
+namespace Altaxo.Gui.Science.Spectroscopy.Calibration
 {
-  /// <summary>
-  /// Interface that all Altaxo project items must support. Currently, project items are the base items of an Altaxo<see cref="T:Altaxo.Main.Document"/>,
-  /// i.e. <see cref="T:Altaxo.Data.DataTable"/>s, <see cref="T:Altaxo.Graph.Gdi.GraphDocument"/>s and <see cref="T:Altaxo.Main.Properties.ProjectFolderPropertyDocument"/>.
-  /// </summary>
-  public interface IProjectItem :
-    IDocumentLeafNode, // Project items are document nodes of the project tree
-    INameOwner, // Project items must have a name and could be renamed
-    IEventIndicatedDisposable, // project items must announce themselves when disposed
-    ICloneable, // project items could be cloned
-    ISuspendableByToken,
-    IHasDocumentReferences
+  public record YCalibrationSetup
   {
+    /// <summary>
+    /// Gets or sets the x column. The x-column is shared among both the YSignal column and the YDark column.
+    /// </summary>
+    public DataColumn XColumn { get; set; }
 
     /// <summary>
-    /// Gets the time this project item was created (in universal time UTC).
+    /// Gets or sets the column containing the spectrum of the known source.
     /// </summary>
-    /// <value>
-    /// The UTC creation time of the project item.
-    /// </value>
-    DateTime CreationTimeUtc { get; }
+    public DataColumn YColumn { get; set; }
+
+    public SpectralPreprocessingOptionsBase SpectralPreprocessing { get; set; }
+
+    public IFitFunction CurveShape { get; set; } = new Altaxo.Calc.FitFunctions.Peaks.GaussAmplitude(1, -1);
+
+    public (string Name, double Value)[] CurveParameter { get; set; } = Array.Empty<(string Name, double Value)>();
   }
 }

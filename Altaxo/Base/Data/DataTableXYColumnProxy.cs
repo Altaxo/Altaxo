@@ -26,8 +26,8 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using Altaxo.Collections;
+using Altaxo.Main;
 
 namespace Altaxo.Data
 {
@@ -37,7 +37,8 @@ namespace Altaxo.Data
   public class DataTableXYColumnProxy
     :
     Main.SuspendableDocumentNodeWithEventArgs,
-    Main.ICopyFrom
+    Main.ICopyFrom,
+    IHasDocumentReferences
   {
     /// <summary><c>True</c> if the data are inconsistent. To bring the data in a consistent state <see cref="Update"/> method must be called then.</summary>
     protected bool _isDirty;
@@ -178,7 +179,7 @@ namespace Altaxo.Data
       if (table is null)
         throw new ArgumentNullException(nameof(table));
       var yGroupNumber = table.DataColumns.GetColumnGroup(yColumn);
-      var xGroupNumber =table.DataColumns.GetColumnGroup(xColumn);
+      var xGroupNumber = table.DataColumns.GetColumnGroup(xColumn);
 
       if (xGroupNumber != yGroupNumber)
         throw new ArgumentException($"X-column belongs to another group ({xGroupNumber}) than y-column ({yGroupNumber})");
@@ -357,9 +358,9 @@ namespace Altaxo.Data
       int result = 0;
 
       if (_xColumn.Document() is IReadableColumn rcx)
-        result = Math.Max(result, rcx.Count??0);
+        result = Math.Max(result, rcx.Count ?? 0);
       if (_yColumn.Document() is IReadableColumn rcy)
-        result = Math.Max(result, rcy.Count??0);
+        result = Math.Max(result, rcy.Count ?? 0);
 
       return result;
     }
@@ -380,7 +381,7 @@ namespace Altaxo.Data
     {
       if (_dataTable is not null)
         yield return new Main.DocumentNodeAndName(_dataTable, "DataTable");
-      if(_xColumn is not null)
+      if (_xColumn is not null)
         yield return new Main.DocumentNodeAndName(_xColumn, "XColumn");
       if (_xColumn is not null)
         yield return new Main.DocumentNodeAndName(_yColumn, "YColumn");

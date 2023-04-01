@@ -1042,7 +1042,7 @@ namespace Altaxo.Worksheet.Commands
     }
   }
 
-  public class SpectroscopyIntensityCalibration : AbstractWorksheetControllerCommand
+  public class SpectroscopyYCalibration : AbstractWorksheetControllerCommand
   {
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {

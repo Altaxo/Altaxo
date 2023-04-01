@@ -37,11 +37,11 @@ using Altaxo.Science.Spectroscopy.Calibration;
 
 namespace Altaxo.Gui.Science.Spectroscopy.Calibration
 {
-  public interface IIntensityCalibrationOptionsView : IDataContextAwareView { }
+  public interface IYCalibrationOptionsView : IDataContextAwareView { }
 
-  [ExpectedTypeOfView(typeof(IIntensityCalibrationOptionsView))]
-  [UserControllerForObject(typeof(IntensityCalibrationOptions))]
-  public class IntensityCalibrationOptionsController : MVCANControllerEditImmutableDocBase<IntensityCalibrationOptions, IIntensityCalibrationOptionsView>
+  [ExpectedTypeOfView(typeof(IYCalibrationOptionsView))]
+  [UserControllerForObject(typeof(YCalibrationOptions))]
+  public class YCalibrationOptionsController : MVCANControllerEditImmutableDocBase<YCalibrationOptions, IYCalibrationOptionsView>
   {
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
@@ -170,7 +170,7 @@ namespace Altaxo.Gui.Science.Spectroscopy.Calibration
       if (initData)
       {
         var preprocessingController = new SpectralPreprocessingController();
-        preprocessingController.InitializeDocument(_doc.SpectralPreprocessing);
+        preprocessingController.InitializeDocument(_doc.Preprocessing);
         Current.Gui.FindAndAttachControlTo(preprocessingController);
         PreprocessingController = preprocessingController;
 
@@ -179,8 +179,7 @@ namespace Altaxo.Gui.Science.Spectroscopy.Calibration
         var fitFuncTypes = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(Altaxo.Calc.FitFunctions.Peaks.IFitFunctionPeak));
 
         // Parameters
-
-
+        ParametersOfCurve.AddRange(_doc.CurveParameters.Select(p => new ParameterItem { Name = p.Name, Value = p.Value }));
 
         AvailableShapes = new ItemsController<Type>(
           new Collections.SelectableListNodeList(fitFuncTypes.Select(ff => new Collections.SelectableListNode(ff.Name, ff, false))), EhCurveShapeChanged);
@@ -219,9 +218,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.Calibration
         curveInstance = ffp.WithNumberOfTerms(NumberOfTerms).WithOrderOfBaselinePolynomial(OrderOfBaselinePolynomial);
       }
 
-      _doc = new IntensityCalibrationOptions
+      _doc = new YCalibrationOptions
       {
-        SpectralPreprocessing = (SpectralPreprocessingOptionsBase)PreprocessingController.ModelObject,
+        Preprocessing = (SpectralPreprocessingOptionsBase)PreprocessingController.ModelObject,
         CurveShape = curveInstance,
         CurveParameters = ParametersOfCurve.Select(p => (p.Name, p.Value)).ToImmutableArray(),
       };

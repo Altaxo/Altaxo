@@ -668,13 +668,13 @@
                       class="Altaxo.Worksheet.Commands.SpectroscopyPreprocessing" />
             <MenuItem id="PeakFindingFitting" label="PeakFinding+Fitting" description="aa"
                       class="Altaxo.Worksheet.Commands.SpectroscopyPeakFindingFitting" />
+            <MenuItem id="IdYCalibration" label="Intensity calibration" description="Use a known spectrum for intensity calibration"
+                  class="Altaxo.Worksheet.Commands.SpectroscopyYCalibration" />
             <MenuItem id="IdSpectroscopyRaman" label="Raman.."  type="Menu">
                 <MenuItem id="IdRamanNeonCalibration" label="Neon calibration" description="Uses a Neon spectrum for calibration"
                       class="Altaxo.Worksheet.Commands.SpectroscopyRamanNeonCalibration" />
               <MenuItem id="IdRamanSiCalibration" label="Silicon calibration" description="Uses a Silicon spectrum for calibration"
                     class="Altaxo.Worksheet.Commands.SpectroscopyRamanSiliconCalibration" />
-              <MenuItem id="IdYCalibration" label="Intensity calibration" description="Use a known spectrum for intensity calibration"
-                    class="Altaxo.Worksheet.Commands.SpectroscopyIntensityCalibration" />
             </MenuItem>
         </MenuItem>
           

@@ -36,6 +36,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
   /// of variable order.
   /// </summary>
   [FitFunctionClass]
+  [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Peaks.GaussAmplitude}")]
   public record GaussAmplitude : IFitFunctionWithDerivative, IFitFunctionPeak, IImmutable
   {
     private const double SqrtLog4 = 1.1774100225154746910;

@@ -1,22 +1,45 @@
-﻿using System;
+﻿#region Copyright
+
+/////////////////////////////////////////////////////////////////////////////
+//    Altaxo:  a data processing and data plotting program
+//    Copyright (C) 2002-2023 Dr. Dirk Lellinger
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
+//    This program is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with this program; if not, write to the Free Software
+//    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+//
+/////////////////////////////////////////////////////////////////////////////
+
+#endregion Copyright
+
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using Altaxo.Data;
+using Altaxo.Main;
 
 namespace Altaxo.Science.Spectroscopy.Calibration
 {
-
-
-  public class IntensityCalibrationDataSource : TableDataSourceBase, IAltaxoTableDataSource, IYCalibrationDataSource
+  public class YCalibrationDataSource : TableDataSourceBase, IAltaxoTableDataSource, IYCalibrationDataSource, IHasDocumentReferences
   {
     public const string ColumnName_Group0_SpectrumX = "X";
     public const string ColumnName_Group0_ScalingFactor = "IntensityScaling";
 
 
     private IDataSourceImportOptions _importOptions;
-    private IntensityCalibrationOptions _processOptions;
+    private YCalibrationOptionsDocNode _processOptions;
     private DataTableXYColumnProxy? _processData;
 
     public Action<IAltaxoTableDataSource>? _dataSourceChanged;
@@ -30,12 +53,12 @@ namespace Altaxo.Science.Spectroscopy.Calibration
     /// 2022-06-08 initial version.
     /// 2022-08-05 change processOptions from PeakFindingAndFittingOptions to PeakFindingAndFittingOptionsDocNode, change namespace from Altaxo.Data to Altaxo.Science.Spectroscopy, change class name from PeakFindingAndFittingDataSource to PeakSearchingAndFittingDataSource
     /// </summary>
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(IntensityCalibrationDataSource), 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(YCalibrationDataSource), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (IntensityCalibrationDataSource)obj;
+        var s = (YCalibrationDataSource)obj;
 
         info.AddValue("ProcessData", s._processData);
         info.AddValue("ProcessOptions", s._processOptions);
@@ -44,10 +67,10 @@ namespace Altaxo.Science.Spectroscopy.Calibration
 
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        if (o is IntensityCalibrationDataSource s)
+        if (o is YCalibrationDataSource s)
           s.DeserializeSurrogate0(info);
         else
-          s = new IntensityCalibrationDataSource(info, 0);
+          s = new YCalibrationDataSource(info, 0);
         return s;
       }
     }
@@ -56,13 +79,13 @@ namespace Altaxo.Science.Spectroscopy.Calibration
     private void DeserializeSurrogate0(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
     {
       ChildSetMember(ref _processData, (DataTableXYColumnProxy)info.GetValue("ProcessData", this));
-      _processOptions = info.GetValue<IntensityCalibrationOptions>("ProcessOptions", this);
+      ChildSetMember(ref _processOptions, info.GetValue<YCalibrationOptionsDocNode>("ProcessOptions", this));
       ChildSetMember(ref _importOptions, (IDataSourceImportOptions)info.GetValue("ImportOptions", this));
     }
 
     #endregion Version 0
 
-    protected IntensityCalibrationDataSource(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, int version)
+    protected YCalibrationDataSource(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, int version)
     {
       switch (version)
       {
@@ -78,7 +101,7 @@ namespace Altaxo.Science.Spectroscopy.Calibration
 
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="IntensityCalibrationDataSource"/> class.
+    /// Initializes a new instance of the <see cref="YCalibrationDataSource"/> class.
     /// </summary>
     /// <param name="importOptions">The data source import options.</param>
     /// <exception cref="ArgumentNullException">
@@ -88,7 +111,7 @@ namespace Altaxo.Science.Spectroscopy.Calibration
     /// or
     /// importOptions
     /// </exception>
-    public IntensityCalibrationDataSource(IDataSourceImportOptions importOptions)
+    public YCalibrationDataSource(IDataSourceImportOptions importOptions)
     {
       if (importOptions is null)
         throw new ArgumentNullException(nameof(importOptions));
@@ -96,46 +119,48 @@ namespace Altaxo.Science.Spectroscopy.Calibration
       ChildSetMember(ref _importOptions, importOptions);
     }
 
-    public IntensityCalibrationDataSource(DataTableXYColumnProxy? dataSource, IntensityCalibrationOptions options, IDataSourceImportOptions importOptions)
+    public YCalibrationDataSource(DataTableXYColumnProxy? inputData, YCalibrationOptions dataSourceOptions, IDataSourceImportOptions importOptions)
     {
+      if (inputData is null)
+        throw new ArgumentNullException(nameof(inputData));
+      if (dataSourceOptions is null)
+        throw new ArgumentNullException(nameof(dataSourceOptions));
       if (importOptions is null)
         throw new ArgumentNullException(nameof(importOptions));
 
+      ChildSetMember(ref _processOptions, new YCalibrationOptionsDocNode(dataSourceOptions));
+      ChildSetMember(ref _processData, inputData);
       ChildSetMember(ref _importOptions, importOptions);
-      _processOptions = options;
-      ChildSetMember(ref _processData, dataSource);
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="IntensityCalibrationDataSource"/> class.
+    /// Initializes a new instance of the <see cref="YCalibrationDataSource"/> class.
     /// </summary>
     /// <param name="from">Another instance to copy from.</param>
-    public IntensityCalibrationDataSource(IntensityCalibrationDataSource from)
+    public YCalibrationDataSource(YCalibrationDataSource from)
     {
-      IDataSourceImportOptions importOptions = null;
-      CopyHelper.Copy(ref importOptions, from._importOptions);
-      ChildSetMember(ref _importOptions, importOptions);
-
-      DataTableXYColumnProxy data = null;
-      CopyHelper.Copy(ref data, from._processData);
-      ChildSetMember(ref _processData, data);
-
-      _processOptions = from._processOptions;
+      CopyFrom(from);
     }
 
-    [MemberNotNull(nameof(_importOptions))]
-    private void CopyFrom(IntensityCalibrationDataSource from)
+    [MemberNotNull(nameof(_importOptions), nameof(_processOptions), nameof(_processData))]
+    public void CopyFrom(YCalibrationDataSource from)
     {
+      if (ReferenceEquals(this, from))
+#pragma warning disable CS8774 // Member must have a non-null SpectralPreprocessingDataSource when exiting.
+        return;
+#pragma warning restore CS8774 // Member must have a non-null value when exiting.
+
       using (var token = SuspendGetToken())
       {
-        DataTableXYColumnProxy data = null;
-        IDataSourceImportOptions importOptions = null;
+        DataTableXYColumnProxy? processData = null;
+        IDataSourceImportOptions? importOptions = null;
 
-        CopyHelper.Copy(ref data, from._processData);
         CopyHelper.Copy(ref importOptions, from._importOptions);
-        _importOptions = importOptions;
-        ChildSetMember(ref _processData, data);
-        _processOptions = from._processOptions;
+        CopyHelper.Copy(ref processData, from._processData);
+
+        ProcessOptions = from.ProcessOptions;
+        ImportOptions = importOptions;
+        ProcessData = processData;
       }
     }
 
@@ -149,7 +174,7 @@ namespace Altaxo.Science.Spectroscopy.Calibration
       if (ReferenceEquals(this, obj))
         return true;
 
-      if (obj is IntensityCalibrationDataSource from)
+      if (obj is YCalibrationDataSource from)
       {
         CopyFrom(from);
         return true;
@@ -165,7 +190,7 @@ namespace Altaxo.Science.Spectroscopy.Calibration
     /// </returns>
     public object Clone()
     {
-      return new IntensityCalibrationDataSource(this);
+      return new YCalibrationDataSource(this);
     }
 
 
@@ -194,30 +219,40 @@ namespace Altaxo.Science.Spectroscopy.Calibration
       var colX = destinationTable.DataColumns.EnsureExistence(ColumnName_Group0_SpectrumX, typeof(DoubleColumn), ColumnKind.X, 0);
       var colY = destinationTable.DataColumns.EnsureExistence(ColumnName_Group0_ScalingFactor, typeof(DoubleColumn), ColumnKind.V, 0);
 
-      var signalX = _processData.XColumn;
-      var signalY = _processData.YColumn;
+      var srcXCol = _processData.XColumn;
+      var srcYCol = _processData.YColumn;
 
-      if (signalX is null)
+      if (srcXCol is null)
         throw new InvalidOperationException($"Unable to find the x-column of the intensity calibration data");
-      if (signalY is null)
+      if (srcYCol is null)
         throw new InvalidOperationException($"Unable to find the y-column of the intensity calibration data");
 
-      var resulting = new DoubleColumn();
+      var len = Math.Min(srcYCol.Count ?? 0, srcXCol.Count ?? 0);
+      var xArr = new double[len];
+      var yArr = new double[len];
+      for (var i = 0; i < len; i++)
+      {
+        xArr[i] = srcXCol[i];
+        yArr[i] = srcYCol[i];
+      }
+
+      var spectralPreprocessingOptions = _processOptions.GetSpectralPreprocessingOptions();
+      int[]? regions = null;
+      (xArr, yArr, regions) = spectralPreprocessingOptions.Execute(xArr, yArr, regions);
 
       var function = _processOptions.CurveShape;
       var para = _processOptions.CurveParameters.Select(x => x.Value).ToArray();
       var X = new double[1];
       var Y = new double[1];
-      var len = Math.Min(signalX.Count ?? 0, signalY.Count ?? 0);
-      for (int i = 0; i < len; i++)
+      for (int i = 0; i < xArr.Length; i++)
       {
-        X[0] = signalX[i];
+        X[0] = xArr[i];
         function.Evaluate(X, para, Y);
-        resulting[i] = Y[0] / signalY[i];
+        yArr[i] /= Y[0];
       }
 
-      colX.Data = signalX;
-      colY.Data = resulting;
+      colX.Data = xArr;
+      colY.Data = yArr;
     }
 
     public bool IsContainingValidYAxisCalibration(DataTable table)
@@ -247,6 +282,28 @@ namespace Altaxo.Science.Spectroscopy.Calibration
     #endregion
 
     /// <summary>
+    /// Gets or sets the input data.
+    /// </summary>
+    /// <value>
+    /// The input data.
+    /// </value>
+    public DataTableXYColumnProxy ProcessData
+    {
+      get
+      {
+        return _processData;
+      }
+      [MemberNotNull(nameof(_processData))]
+      set
+      {
+        if (ChildSetMember(ref _processData, value ?? throw new ArgumentNullException(nameof(value))))
+        {
+          EhChildChanged(_processData, EventArgs.Empty);
+        }
+      }
+    }
+
+    /// <summary>
     /// Gets or sets the data source import options.
     /// </summary>
     /// <value>
@@ -269,28 +326,49 @@ namespace Altaxo.Science.Spectroscopy.Calibration
       }
     }
 
-    public object ProcessOptionsObject { get => _processOptions; set => _processOptions = (value as IntensityCalibrationOptions) ?? throw new ArgumentNullException(nameof(ProcessOptionsObject)); }
-    public object ProcessDataObject
+    /// <summary>
+    /// Gets or sets the options for this data source.
+    /// </summary>
+    /// <value>
+    /// The options for this data source.
+    /// </value>
+    public YCalibrationOptions ProcessOptions
     {
-      get => _processData;
+      get
+      {
+        return _processOptions.GetYCalibrationOptions();
+      }
+      [MemberNotNull(nameof(_processOptions))]
       set
       {
-        if (value is DataTableXYColumnProxy mcp)
+        if (value is null)
+          throw new ArgumentNullException(nameof(ProcessOptions));
+
+        if (_processOptions is null || !object.Equals(_processOptions.GetSpectralPreprocessingOptions(), value))
         {
-          ChildSetMember(ref _processData, mcp);
-        }
-        else
-        {
-          throw new ArgumentNullException(nameof(ProcessDataObject));
+          ChildSetMember(ref _processOptions, new YCalibrationOptionsDocNode(value));
+          EhChildChanged(_processOptions, EventArgs.Empty);
         }
       }
+    }
+
+    object IAltaxoTableDataSource.ProcessOptionsObject
+    {
+      get => ProcessOptions;
+      set => ProcessOptions = (YCalibrationOptions)value;
+    }
+
+    object IAltaxoTableDataSource.ProcessDataObject
+    {
+      get => _processData;
+      set => ProcessData = (DataTableXYColumnProxy)value;
     }
 
     #region Change event handling
 
     protected override bool HandleHighPriorityChildChangeCases(object? sender, ref EventArgs e)
     {
-      if (ReferenceEquals(_processData, sender)) // incoming call from data proxy
+      if (sender is not null && object.ReferenceEquals(_processData, sender)) // incoming call from data proxy
       {
         if (_importOptions.ImportTriggerSource == ImportTriggerSource.DataSourceChanged)
         {
@@ -311,11 +389,14 @@ namespace Altaxo.Science.Spectroscopy.Calibration
 
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
+      if (_processOptions is not null)
+        yield return new Main.DocumentNodeAndName(_processOptions, "ProcessOptions");
+
       if (_processData is not null)
-        yield return new Main.DocumentNodeAndName(_processData, "IntensityCalibrationData1");
+        yield return new Main.DocumentNodeAndName(_processData, "ProcessData");
+
       if (_importOptions is not null)
         yield return new Main.DocumentNodeAndName(_importOptions, "ImportOptions");
-
     }
 
     #endregion Document Node functions
@@ -333,8 +414,8 @@ namespace Altaxo.Science.Spectroscopy.Calibration
     /// <param name="ReportProxies">The report proxies.</param>
     public void VisitDocumentReferences(Main.DocNodeProxyReporter ReportProxies)
     {
-      if (_processData is not null)
-        _processData.VisitDocumentReferences(ReportProxies);
+      _processData?.VisitDocumentReferences(ReportProxies);
+      _processOptions?.VisitDocumentReferences(ReportProxies);
     }
   }
 }

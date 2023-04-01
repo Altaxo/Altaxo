@@ -37,6 +37,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
   /// of variable order.
   /// </summary>
   [FitFunctionClass]
+  [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Probability.GaussArea}")]
   public record GaussArea : IFitFunctionWithDerivative, IImmutable, IFitFunctionPeak
   {
     private const double SqrtLog4 = 1.1774100225154746910;

@@ -29,10 +29,11 @@ using System.Linq;
 using System.Threading;
 using Altaxo.Collections;
 using Altaxo.Data;
+using Altaxo.Main;
 
 namespace Altaxo.Science.Spectroscopy.Raman
 {
-  public class RamanCalibrationDataSource : TableDataSourceBase, IAltaxoTableDataSource, Calibration.IXCalibrationDataSource
+  public class RamanCalibrationDataSource : TableDataSourceBase, IAltaxoTableDataSource, Calibration.IXCalibrationDataSource, IHasDocumentReferences
   {
     #region ColumnNames
 

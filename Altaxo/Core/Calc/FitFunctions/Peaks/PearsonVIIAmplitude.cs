@@ -36,6 +36,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
   /// of variable order.
   /// </summary>
   [FitFunctionClass]
+  [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Peaks.PearsonVIIAmplitude}")]
   public record PearsonVIIAmplitude : IFitFunctionWithDerivative, IFitFunctionPeak, IImmutable
   {
     private const string ParameterBaseName0 = "a";

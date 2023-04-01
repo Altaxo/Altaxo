@@ -28,6 +28,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Altaxo.Collections;
+using Altaxo.Main;
 
 namespace Altaxo.Data
 {
@@ -37,7 +38,8 @@ namespace Altaxo.Data
   public class DataTableMultipleColumnProxy
     :
     Main.SuspendableDocumentNodeWithEventArgs,
-    Main.ICopyFrom
+    Main.ICopyFrom,
+    IHasDocumentReferences
   {
     #region Inner classes
 

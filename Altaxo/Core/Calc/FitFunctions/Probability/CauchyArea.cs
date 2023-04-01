@@ -40,6 +40,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
   /// Reference: <see href="https://en.wikipedia.org/wiki/Cauchy_distribution"/>
   /// </remarks>
   [FitFunctionClass]
+  [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Probability.CauchyArea}")]
   public record CauchyArea : IFitFunctionWithDerivative, IImmutable
   {
     private const string ParameterBaseName0 = "A";
@@ -134,7 +135,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
     }
 
     /// <inheritdoc/>
-    CauchyArea WithOrderOfBaselinePolynomial(int orderOfBaselinePolynomial)
+    private CauchyArea WithOrderOfBaselinePolynomial(int orderOfBaselinePolynomial)
     {
       return this with { OrderOfBaselinePolynomial = orderOfBaselinePolynomial };
     }
@@ -154,13 +155,13 @@ namespace Altaxo.Calc.FitFunctions.Probability
     }
 
     /// <inheritdoc/>
-    CauchyArea WithNumberOfTerms(int numberOfTerms)
+    private CauchyArea WithNumberOfTerms(int numberOfTerms)
     {
       return this with { NumberOfTerms = numberOfTerms };
     }
 
-    const double DefaultMinWidth = 1E-81; // Math.Pow(double.Epsilon, 0.25);
-    const double DefaultMaxWidth = 1E+77; // Math.Pow(double.MaxValue, 0.25);
+    private const double DefaultMinWidth = 1E-81; // Math.Pow(double.Epsilon, 0.25);
+    private const double DefaultMaxWidth = 1E+77; // Math.Pow(double.MaxValue, 0.25);
 
     /// <inheritdoc/>
     public (IReadOnlyList<double?>? LowerBounds, IReadOnlyList<double?>? UpperBounds) GetParameterBoundariesForPositivePeaks(double? minimalPosition = null, double? maximalPosition = null, double? minimalFWHM = null, double? maximalFWHM = null)

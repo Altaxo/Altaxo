@@ -105,7 +105,7 @@ namespace Altaxo.Science.Spectroscopy.Calibration
 
       for (int i = 0; i < x.Length; ++i)
       {
-        yy[i] = y[i] * spline.GetYOfX(x[i]);
+        yy[i] = y[i] / spline.GetYOfX(x[i]);
       }
       return (x, yy, regions);
     }

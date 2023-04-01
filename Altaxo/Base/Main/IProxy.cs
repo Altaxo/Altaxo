@@ -28,6 +28,20 @@ using System;
 namespace Altaxo.Main
 {
   /// <summary>
+  /// Interface for all classes which are not proxies themselfs, but which contain references to other document nodes by using <see cref="IProxy"/>s.
+  /// </summary>
+  public interface IHasDocumentReferences
+  {
+    /// <summary>
+    /// Visits the document references of this instance. All proxies that
+    /// this instance contain should be reported by the <paramref name="ReportProxies"/> function.
+    /// This function is responsible for processing of the proxies, for instance to relocated the path.
+    /// </summary>
+    /// <param name="ReportProxies">The function which is used to report the <see cref="DocNodeProxy"/> instances that are contained in this class.</param>
+    void VisitDocumentReferences(Main.DocNodeProxyReporter ReportProxies);
+  }
+
+  /// <summary>
   /// Holds a reference to an object. If the object is part of the document, i.e. a document node (implements <see cref="IDocumentLeafNode" />),
   /// then only a weak reference is held to this node, and special measures are used to track the node by its path.
   /// The path to the node is stored, and if a new document node with that path exists, the reference to the object is restored.

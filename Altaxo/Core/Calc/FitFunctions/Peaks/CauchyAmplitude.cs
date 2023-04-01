@@ -40,6 +40,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
   /// Reference: <see href="https://en.wikipedia.org/wiki/Cauchy_distribution"/>
   /// </remarks>
   [FitFunctionClass]
+  [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Peaks.CauchyAmplitude}")]
   public record CauchyAmplitude : IFitFunctionWithDerivative, IFitFunctionPeak, IImmutable
   {
     private const string ParameterBaseName0 = "a";

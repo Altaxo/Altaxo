@@ -40,6 +40,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
   /// The FWHM of the function is within 3% equal to 2*w, and the derivatives at nu=0 and nu=1 w.r.t parameter are independent of each other.
   /// </summary>
   [FitFunctionClass]
+  [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Probability.VoigtAreaParametrizationNu}")]
   public record VoigtAreaParametrizationNu : IFitFunctionWithDerivative, IFitFunctionPeak, IImmutable
   {
     private const string ParameterBaseName0 = "A";
@@ -390,8 +391,8 @@ namespace Altaxo.Calc.FitFunctions.Probability
       }
     }
 
-    const double DefaultMinWidth = 1E-81; // Math.Pow(double.Epsilon, 0.25);
-    const double DefaultMaxWidth = 1E+77; // Math.Pow(double.MaxValue, 0.25);
+    private const double DefaultMinWidth = 1E-81; // Math.Pow(double.Epsilon, 0.25);
+    private const double DefaultMaxWidth = 1E+77; // Math.Pow(double.MaxValue, 0.25);
 
     /// <summary>
     /// Gets the parameter boundaries in order to have positive peaks only.
