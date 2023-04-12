@@ -15,8 +15,12 @@
             <RowDefinition Height="4"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="4"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="4"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="4"/>
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="4"/>
             <ColumnDefinition Width="Auto"/>
@@ -37,5 +41,17 @@
                                        UnitEnvironment="{Binding FitWidthScalingFactorEnvironment}"
                                        SelectedQuantity="{Binding FitWidthScalingFactor}"
                                        MinWidth="100"/>
+
+        <Label Grid.Row="4" Grid.Column="0"
+               Content="Minimal peak FWHM:"/>
+
+        <axogc:NumericDoubleTextBox Grid.Row="4" Grid.Column="2" 
+                                    SelectedValue="{Binding MinimalFWHMValue}"/>
+
+        <CheckBox Grid.Row="4" Grid.Column="4"
+                  IsChecked="{Binding IsMinimalFWHMValueInXUnits, Mode=TwoWay}"
+                  Content="in X-units" 
+                  VerticalAlignment="Center"/>
+
     </Grid>
 </UserControl>

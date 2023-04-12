@@ -92,6 +92,42 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
 
     #endregion
 
+    #region Version 2
+
+    /// <summary>
+    /// 2022-08-06 V1: Added FitWidthScalingFactor
+    /// 2023-04-11 V2: Added IsMinimalFWHMValueInXUnits and MinimalFWHMValue
+    /// </summary>
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PeakFittingTogetherWithSeparateVariances), 2)]
+    public class SerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        var s = (PeakFittingTogetherWithSeparateVariances)obj;
+        info.AddValue("FitFunction", s.FitFunction);
+        info.AddValue("FitWidthScalingFactor", s.FitWidthScalingFactor);
+        info.AddValue("IsMinimalFWHMValueInXUnits", s.IsMinimalFWHMValueInXUnits);
+        info.AddValue("MinimalFWHMValue", s.MinimalFWHMValue);
+      }
+
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      {
+        var fitFunction = info.GetValue<IFitFunctionPeak>("FitFunction", null);
+        var fitWidthScaling = info.GetDouble("FitWidthScalingFactor");
+        var isMinimalFWHMValueInXUnits = info.GetBoolean("IsMinimalFWHMValueInXUnits");
+        var minimalFWHMValue = info.GetDouble("MinimalFWHMValue");
+
+        return new PeakFittingTogetherWithSeparateVariances()
+        {
+          FitFunction = fitFunction,
+          FitWidthScalingFactor = fitWidthScaling,
+          IsMinimalFWHMValueInXUnits = isMinimalFWHMValueInXUnits,
+          MinimalFWHMValue = minimalFWHMValue,
+        };
+      }
+    }
+
+    #endregion
 
     #endregion
 
@@ -170,14 +206,39 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
       }
 
       var (minimalXDistance, maximalXDistance, minimalXValue, maximalXValue) = GetMinimalAndMaximalProperties(xCut);
+      var userMinimalFWHM = this.IsMinimalFWHMValueInXUnits ? MinimalFWHMValue : MinimalFWHMValue * minimalXDistance;
+
       var param = paramList.ToArray();
       fitFunc = FitFunction.WithNumberOfTerms(param.Length / numberOfParametersPerPeak);
       var (lowerBounds, upperBounds) = fitFunc.GetParameterBoundariesForPositivePeaks(
         minimalPosition: minimalXValue - 32 * maximalXDistance,
         maximalPosition: maximalXValue + 32 * maximalXDistance,
-        minimalFWHM: minimalXDistance / 2d,
+        minimalFWHM: Math.Max(userMinimalFWHM, minimalXDistance / 2d),
         maximalFWHM: maximalXDistance * 32d
         );
+
+      // clamp parameters in order to meet lowerBounds
+      if (lowerBounds is not null)
+      {
+        for (int i = 0; i < param.Length; ++i)
+        {
+          var lb = lowerBounds[i];
+          if (lb.HasValue && param[i] < lb.Value)
+            param[i] = lb.Value;
+        }
+      }
+
+      // clamp parameters in order to meet upperBounds
+      if (upperBounds is not null)
+      {
+        for (int i = 0; i < param.Length; ++i)
+        {
+          var ub = upperBounds[i];
+          if (ub.HasValue && param[i] > ub.Value)
+            param[i] = ub.Value;
+        }
+      }
+
 
       var fit = new QuickNonlinearRegression(fitFunc);
 

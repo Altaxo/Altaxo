@@ -25,18 +25,15 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Altaxo.Calc.FitFunctions.Peaks;
 using Altaxo.Collections;
 using Altaxo.Gui.Common;
 using Altaxo.Science.Spectroscopy.PeakFitting;
-using Altaxo.Science.Spectroscopy.PeakSearching;
 using Altaxo.Units;
 
 namespace Altaxo.Gui.Science.Spectroscopy.PeakFitting
 {
-  
+
 
   [UserControllerForObject(typeof(PeakFittingTogether))]
   [ExpectedTypeOfView(typeof(IPeakFittingSeparatelyView))]
@@ -49,7 +46,7 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakFitting
 
     #region Bindings
 
-    
+
 
 
     #endregion
@@ -58,7 +55,7 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakFitting
     {
       base.Initialize(initData);
 
-      if(initData)
+      if (initData)
       {
         var ftypeList = new SelectableListNodeList(
           Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(IFitFunctionPeak))
@@ -68,6 +65,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakFitting
         FitFunctions.SelectedValue = _doc.FitFunction.GetType();
 
         FitWidthScalingFactor = new DimensionfulQuantity(_doc.FitWidthScalingFactor, Altaxo.Units.Dimensionless.Unity.Instance).AsQuantityIn(FitWidthScalingFactorEnvironment.DefaultUnit);
+
+        IsMinimalFWHMValueInXUnits = _doc.IsMinimalFWHMValueInXUnits;
+        MinimalFWHMValue = _doc.MinimalFWHMValue;
       }
     }
 
@@ -77,11 +77,13 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakFitting
       {
         FitFunction = (IFitFunctionPeak)Activator.CreateInstance(FitFunctions.SelectedValue),
         FitWidthScalingFactor = FitWidthScalingFactor.AsValueInSIUnits,
+        IsMinimalFWHMValueInXUnits = IsMinimalFWHMValueInXUnits,
+        MinimalFWHMValue = MinimalFWHMValue,
       };
 
       return ApplyEnd(true, disposeController);
     }
 
-   
+
   }
 }

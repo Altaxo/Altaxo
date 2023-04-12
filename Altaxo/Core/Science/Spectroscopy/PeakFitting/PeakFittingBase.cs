@@ -70,6 +70,23 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
       }
     }
 
+    private double _minimalFWHMValue;
+    public double MinimalFWHMValue
+    {
+      get
+      {
+        return _minimalFWHMValue;
+      }
+      init
+      {
+        if (!(value >= 0))
+          throw new ArgumentOutOfRangeException("Value has to be >= 0", nameof(MinimalFWHMValue));
+
+        _minimalFWHMValue = value;
+      }
+    }
+
+    public bool IsMinimalFWHMValueInXUnits { get; init; } = true;
 
 
     /// <summary>

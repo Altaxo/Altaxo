@@ -68,7 +68,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
     #region Version 1
 
     /// <summary>
-    /// 2022-08-06 Added FitWidthScalingFactor
+    /// 2022-08-06 V1: Added FitWidthScalingFactor
     /// </summary>
     /// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PeakFittingSeparately), 1)]
@@ -95,6 +95,43 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
 
     #endregion
 
+    #region Version 2
+
+    /// <summary>
+    /// 2022-08-06 V1: Added FitWidthScalingFactor
+    /// 2023-04-11 V2: Added IsMinimalFWHMValueInXUnits and MinimalFWHMValue
+    /// </summary>
+    /// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PeakFittingSeparately), 2)]
+    public class SerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        var s = (PeakFittingSeparately)obj;
+        info.AddValue("FitFunction", s.FitFunction);
+        info.AddValue("FitWidthScalingFactor", s.FitWidthScalingFactor);
+        info.AddValue("IsMinimalFWHMValueInXUnits", s.IsMinimalFWHMValueInXUnits);
+        info.AddValue("MinimalFWHMValue", s.MinimalFWHMValue);
+      }
+
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      {
+        var fitFunction = info.GetValue<IFitFunctionPeak>("FitFunction", null);
+        var fitWidthScaling = info.GetDouble("FitWidthScalingFactor");
+        var isMinimalFWHMValueInXUnits = info.GetBoolean("IsMinimalFWHMValueInXUnits");
+        var minimalFWHMValue = info.GetDouble("MinimalFWHMValue");
+
+        return new PeakFittingSeparately()
+        {
+          FitFunction = fitFunction,
+          FitWidthScalingFactor = fitWidthScaling,
+          IsMinimalFWHMValueInXUnits = isMinimalFWHMValueInXUnits,
+          MinimalFWHMValue = minimalFWHMValue,
+        };
+      }
+    }
+
+    #endregion
 
     #endregion
 
@@ -128,12 +165,17 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
       int numberOfParametersPerPeak = fitFunc.NumberOfParameters;
 
       var (minimalXDistance, maximalXDistance, minimalXValue, maximalXValue) = GetMinimalAndMaximalProperties(xArray);
+
+      var userMinimalFWHM = this.IsMinimalFWHMValueInXUnits ? MinimalFWHMValue : MinimalFWHMValue * minimalXDistance;
+
       var (lowerBounds, upperBounds) = fitFunc.GetParameterBoundariesForPositivePeaks(
        minimalPosition: minimalXValue - 32 * maximalXDistance,
        maximalPosition: maximalXValue + 32 * maximalXDistance,
-       minimalFWHM: minimalXDistance / 2d,
+       minimalFWHM: Math.Max(userMinimalFWHM, minimalXDistance / 2d),
        maximalFWHM: maximalXDistance * 32d
        );
+
+
 
       var list = new List<PeakFitting.PeakDescription>();
 
@@ -159,6 +201,28 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
         var initialHeight = Math.Max(description.Height, description.Prominence);
         var initialRelativeHeight = (description.Prominence / initialHeight) * description.RelativeHeightOfWidthDetermination;
         var param = fitFunc.GetInitialParametersFromHeightPositionAndWidthAtRelativeHeight(initialHeight, xPosition, xWidth, initialRelativeHeight);
+
+        // clamp parameters in order to meet lowerBounds
+        if (lowerBounds is not null)
+        {
+          for (int i = 0; i < param.Length; ++i)
+          {
+            var lb = lowerBounds[i];
+            if (lb.HasValue && param[i] < lb.Value)
+              param[i] = lb.Value;
+          }
+        }
+
+        // clamp parameters in order to meet upperBounds
+        if (upperBounds is not null)
+        {
+          for (int i = 0; i < param.Length; ++i)
+          {
+            var ub = upperBounds[i];
+            if (ub.HasValue && param[i] > ub.Value)
+              param[i] = ub.Value;
+          }
+        }
 
         var fit = new QuickNonlinearRegression(fitFunc);
         var fitResult = fit.Fit(xCut, yCut, param, lowerBounds, upperBounds, null, null, cancellationToken);

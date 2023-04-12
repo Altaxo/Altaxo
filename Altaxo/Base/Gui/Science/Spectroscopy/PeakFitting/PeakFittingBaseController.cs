@@ -66,7 +66,35 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakFitting
       }
     }
 
+    private bool _isMinimalFWHMValueInXUnits;
 
+    public bool IsMinimalFWHMValueInXUnits
+    {
+      get => _isMinimalFWHMValueInXUnits;
+      set
+      {
+        if (!(_isMinimalFWHMValueInXUnits == value))
+        {
+          _isMinimalFWHMValueInXUnits = value;
+          OnPropertyChanged(nameof(IsMinimalFWHMValueInXUnits));
+        }
+      }
+    }
+
+    private double _minimalFWHMValue;
+
+    public double MinimalFWHMValue
+    {
+      get => _minimalFWHMValue;
+      set
+      {
+        if (!(_minimalFWHMValue == value))
+        {
+          _minimalFWHMValue = value;
+          OnPropertyChanged(nameof(MinimalFWHMValue));
+        }
+      }
+    }
 
     #endregion
 
