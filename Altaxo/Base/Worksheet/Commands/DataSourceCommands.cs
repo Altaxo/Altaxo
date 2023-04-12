@@ -337,16 +337,25 @@ namespace Altaxo.Worksheet.Commands
     /// and execute those sources first, which do not have dependencies to tables for which the data source
     /// is executed later.
     /// </summary>
-    /// <param name="sortedTables">The data tables for which to execute the data sources. They must be sorted by dependence on the other tables (less dependent tables coming first, see <see cref="TrySortTablesForExecutionOfAllDataSources"/>).</param>  
-    public static void ExecuteDataSourcesOfTables(IEnumerable<DataTable> sortedTables)
+    /// <param name="sortedTables">The data tables for which to execute the data sources. They must be sorted by dependence on the other tables (less dependent tables coming first, see <see cref="TrySortTablesForExecutionOfAllDataSources"/>).</param>
+    /// <param name="reporter">The progress reporter that is showing the progress. If a reporter is provided, it is assumed that
+    /// we run already on a background thread, thus, the data sources are executed in this thread.</param>
+    public static void ExecuteDataSourcesOfTables(IEnumerable<DataTable> sortedTables, IProgressReporter? reporter = null)
     {
-      var reporter = new Altaxo.Main.Services.ExternalDrivenBackgroundMonitor();
+      if (sortedTables is null)
+        throw new ArgumentNullException(nameof(sortedTables));
+      if (!sortedTables.Any())
+        return;
 
-      int count = sortedTables.Count();
-      var thread = new System.Threading.Thread(() =>
+      bool alreadyOnBackgroundThread = reporter is not null; // if the reporter is not null, we assume that we are already on a background thread
+      reporter ??= new Altaxo.Main.Services.ExternalDrivenBackgroundMonitor();
+
+
+      void ThreadAction()
       {
         // now we can execute the data sources
         double idx = -1;
+        int count = sortedTables.Count();
         foreach (var t in sortedTables)
         {
           idx += 1;
@@ -355,9 +364,20 @@ namespace Altaxo.Worksheet.Commands
           reporter.ReportProgress($"Execute data source of table {t.Name}", idx / (double)count);
           ExecuteDataSourceOfTable(t, reporter);
         }
-      });
-      thread.Start();
-      Current.Gui.ShowBackgroundCancelDialog(1000, thread, reporter);
+      }
+
+
+      if (alreadyOnBackgroundThread)
+      {
+        // if the reporter is not null, we assume that we are already on a background thread
+        ThreadAction();
+      }
+      else
+      {
+        var thread = new System.Threading.Thread(ThreadAction);
+        thread.Start();
+        Current.Gui.ShowBackgroundCancelDialog(1000, thread, (Altaxo.Main.Services.ExternalDrivenBackgroundMonitor)reporter);
+      }
     }
   }
 }
