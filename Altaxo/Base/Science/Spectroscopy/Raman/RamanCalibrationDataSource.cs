@@ -668,9 +668,19 @@ namespace Altaxo.Science.Spectroscopy.Raman
       }
     }
 
+    public void ClearNeonCalibration1()
+    {
+      SetNeonCalibration1(null!, null!);
+    }
+
     public void ClearNeonCalibration2()
     {
-      SetNeonCalibration2(null, null);
+      SetNeonCalibration2(null!, null!);
+    }
+
+    public void ClearSiliconCalibration()
+    {
+      SetSiliconCalibration(null!, null!);
     }
 
 
