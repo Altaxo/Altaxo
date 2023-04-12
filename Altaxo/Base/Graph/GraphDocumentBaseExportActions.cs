@@ -27,10 +27,10 @@ using System;
 using System.Collections.Generic;
 using System.Drawing.Imaging;
 using System.IO;
-using System.Linq;
 using System.Text;
 using Altaxo.Graph.Gdi;
 using Altaxo.Gui.Common.MultiRename;
+using Altaxo.Main;
 using Altaxo.Main.Commands;
 
 namespace Altaxo.Graph
@@ -125,24 +125,47 @@ namespace Altaxo.Graph
 
     private static List<object> DoExportGraphs(MultiRenameData mrData)
     {
+      var reporter = new Altaxo.Main.Services.ExternalDrivenBackgroundMonitor();
+      List<object> failedItems = null!;
+      StringBuilder errors = null!;
+      var thread = new System.Threading.Thread(() => (failedItems, errors) = DoExportGraphs(mrData, reporter));
+      thread.Start();
+      Current.Gui.ShowBackgroundCancelDialog(1000, thread, (Altaxo.Main.Services.ExternalDrivenBackgroundMonitor)reporter);
+
+      if (errors.Length != 0)
+        Current.Gui.ErrorMessageBox(errors.ToString(), "Export failed for some items");
+      else
+        Current.Gui.InfoMessageBox($"{mrData.ObjectsToRenameCount - failedItems.Count} graphs successfully exported.");
+      return failedItems!;
+    }
+
+    private static (List<object> FailedItems, StringBuilder Errors) DoExportGraphs(MultiRenameData mrData, IProgressReporter reporter)
+    {
       var failedItems = new List<object>();
       var errors = new StringBuilder();
 
-      bool allPathsRooted = true;
+      string? firstNotRootedFilePath = null;
+      object? firstNotRootedObject = null;
       for (int i = 0; i < mrData.ObjectsToRenameCount; ++i)
       {
         var fileName = mrData.GetNewNameForObject(i);
         if (!System.IO.Path.IsPathRooted(fileName))
         {
-          allPathsRooted = false;
+          firstNotRootedFilePath = fileName;
+          firstNotRootedObject = mrData.GetObjectToRename(i);
           break;
         }
       }
 
-      if (!allPathsRooted)
+      if (firstNotRootedFilePath is not null)
       {
-        //Current.Gui.ShowFolderDialog();
-        // http://wpfdialogs.codeplex.com/
+        errors.AppendLine($"Some of the items will be exported to a non-rooted file path.");
+        errors.AppendLine($"The first such item is {(firstNotRootedObject is INamedObject no ? no.Name : firstNotRootedObject)} resulting in file {firstNotRootedFilePath}.");
+        for (int i = 0; i < mrData.ObjectsToRenameCount; ++i)
+        {
+          failedItems.Add(mrData.GetObjectToRename(i)); // add remaining items to failed list
+        }
+        return (failedItems, errors);
       }
 
       for (int i = 0; i < mrData.ObjectsToRenameCount; ++i)
@@ -158,14 +181,22 @@ namespace Altaxo.Graph
           failedItems.Add(graph);
           errors.AppendFormat("Graph {0} -> file name {1}: export failed, {2}\n", graph.Name, fileName, ex.Message);
         }
+
+        if (reporter.CancellationPending)
+        {
+          for (i = i + 1; i < mrData.ObjectsToRenameCount; ++i)
+          {
+            failedItems.Add(mrData.GetObjectToRename(i)); // add remaining items to failed list
+          }
+          break;
+        }
+        if (reporter.ShouldReportNow)
+        {
+          reporter.ReportProgress($"Processed graph: {graph.Name}", (i + 1d) / mrData.ObjectsToRenameCount);
+        }
       }
 
-      if (errors.Length != 0)
-        Current.Gui.ErrorMessageBox(errors.ToString(), "Export failed for some items");
-      else
-        Current.Gui.InfoMessageBox(string.Format("{0} graphs successfully exported.", mrData.ObjectsToRenameCount));
-
-      return failedItems;
+      return (failedItems, errors);
     }
 
     public static void DoExportGraph(Graph.GraphDocumentBase doc, string fileName)
@@ -304,24 +335,49 @@ namespace Altaxo.Graph
 
     private static List<object> DoExportGraphsAsMiniProjects(MultiRenameData mrData)
     {
+      var reporter = new Altaxo.Main.Services.ExternalDrivenBackgroundMonitor();
+      List<object> failedItems = null!;
+      StringBuilder errors = null!;
+      var thread = new System.Threading.Thread(() => (failedItems, errors) = DoExportGraphsAsMiniProjects(mrData, reporter));
+      thread.Start();
+      Current.Gui.ShowBackgroundCancelDialog(1000, thread, (Altaxo.Main.Services.ExternalDrivenBackgroundMonitor)reporter);
+
+      if (errors.Length != 0)
+        Current.Gui.ErrorMessageBox(errors.ToString(), "Export failed for some items");
+      else
+        Current.Gui.InfoMessageBox($"{mrData.ObjectsToRenameCount - failedItems.Count} graphs successfully exported.");
+
+      return failedItems!;
+    }
+
+    private static (List<object> FailedItems, StringBuilder Errors) DoExportGraphsAsMiniProjects(MultiRenameData mrData, IProgressReporter reporter)
+    {
       var failedItems = new List<object>();
       var errors = new StringBuilder();
 
-      bool allPathsRooted = true;
+      string? firstNotRootedFilePath = null;
+      object? firstNotRootedObject = null;
       for (int i = 0; i < mrData.ObjectsToRenameCount; ++i)
       {
         var fileName = mrData.GetNewNameForObject(i);
         if (!System.IO.Path.IsPathRooted(fileName))
         {
-          allPathsRooted = false;
+
+          firstNotRootedFilePath = fileName;
+          firstNotRootedObject = mrData.GetObjectToRename(i);
           break;
         }
       }
 
-      if (!allPathsRooted)
+      if (firstNotRootedFilePath is not null)
       {
-        //Current.Gui.ShowFolderDialog();
-        // http://wpfdialogs.codeplex.com/
+        errors.AppendLine($"Some of the items will be exported to a non-rooted file path.");
+        errors.AppendLine($"The first such item is {(firstNotRootedObject is INamedObject no ? no.Name : firstNotRootedObject)} resulting in file {firstNotRootedFilePath}.");
+        for (int i = 0; i < mrData.ObjectsToRenameCount; ++i)
+        {
+          failedItems.Add(mrData.GetObjectToRename(i)); // add remaining items to failed list
+        }
+        return (failedItems, errors);
       }
 
       for (int i = 0; i < mrData.ObjectsToRenameCount; ++i)
@@ -338,14 +394,22 @@ namespace Altaxo.Graph
           failedItems.Add(graph);
           errors.AppendFormat("Graph {0} -> file name {1}: export failed, {2}\n", graph.Name, fileName, ex.Message);
         }
+
+        if (reporter.CancellationPending)
+        {
+          for (i = i + 1; i < mrData.ObjectsToRenameCount; ++i)
+          {
+            failedItems.Add(mrData.GetObjectToRename(i)); // add remaining items to failed list
+          }
+          break;
+        }
+        if (reporter.ShouldReportNow)
+        {
+          reporter.ReportProgress($"Processed graph: {graph.Name}", (i + 1d) / mrData.ObjectsToRenameCount);
+        }
       }
 
-      if (errors.Length != 0)
-        Current.Gui.ErrorMessageBox(errors.ToString(), "Export failed for some items");
-      else
-        Current.Gui.InfoMessageBox(string.Format("{0} graphs successfully exported.", mrData.ObjectsToRenameCount));
-
-      return failedItems;
+      return (failedItems, errors);
     }
 
     /// <summary>

@@ -152,18 +152,18 @@ namespace Altaxo.Gui.Common.MultiRename
       CmdChooseBaseDirectory = new RelayCommand(EhChooseBaseDirectory);
     }
 
-   
+
 
 
     #region Binding
 
-    string _renameStringTemplate;
+    private string _renameStringTemplate;
     public string RenameStringTemplate
     {
       get => _renameStringTemplate;
       set
       {
-        if(!(_renameStringTemplate == value))
+        if (!(_renameStringTemplate == value))
         {
           _renameStringTemplate = value;
           OnPropertyChanged(nameof(RenameStringTemplate));
@@ -202,7 +202,7 @@ namespace Altaxo.Gui.Common.MultiRename
       }
     }
 
-    bool _isBaseDirectoryButtonVisible;
+    private bool _isBaseDirectoryButtonVisible;
     /// <summary>
     /// Sets a value indicating whether the button to choose the base directory should be visible.
     /// </summary>
@@ -214,7 +214,7 @@ namespace Altaxo.Gui.Common.MultiRename
       get => _isBaseDirectoryButtonVisible;
       set
       {
-        if(!(_isBaseDirectoryButtonVisible==value))
+        if (!(_isBaseDirectoryButtonVisible == value))
         {
           _isBaseDirectoryButtonVisible = value;
           OnPropertyChanged(nameof(IsBaseDirectoryButtonVisible));
@@ -284,7 +284,15 @@ namespace Altaxo.Gui.Common.MultiRename
           _shortcutDescriptionList.Add(new DescriptionNode("Array", s, _doc.GetShortcutDescription(s)));
 
         IsBaseDirectoryButtonVisible = _doc.IsRenameOperationFileSystemBased;
+
+        var wasSetBefore = RenameStringTemplate == _doc.DefaultPatternString;
         RenameStringTemplate = _doc.DefaultPatternString;
+        if (wasSetBefore)
+        {
+          // if Initialize is called after a unsuccessful rename operation,
+          // we have to call EhRenameStringTemplate manually
+          EhRenameStringTemplateChanged(RenameStringTemplate);
+        }
       }
     }
 
@@ -312,13 +320,13 @@ namespace Altaxo.Gui.Common.MultiRename
       }
     }
 
-    void AttatchView()
+    private void AttatchView()
     {
       if (_view is IDataContextAwareView view)
         view.DataContext = this;
     }
 
-    void DetatchView()
+    private void DetatchView()
     {
       if (_view is IDataContextAwareView view)
         view.DataContext = null;
@@ -344,7 +352,7 @@ namespace Altaxo.Gui.Common.MultiRename
       }
     }
 
-    
+
 
     public object ModelObject
     {

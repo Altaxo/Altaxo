@@ -1350,7 +1350,7 @@
 							class="Altaxo.Gui.Pads.ProjectBrowser.CmdListItemRename" />
     </Condition>
     <Condition name="ProjbrowserListItemSelection" selcount=">1" selitems="Altaxo.Data.DataTable, AltaxoBase" action="Disable">
-        <MenuItem id="PlotCommonCols" label="Extract common columns" description="Extract common columns from multiple tables into one table."
+        <MenuItem id="ExtrCommonCols" label="Extract common columns" description="Extract common columns from multiple tables into one table."
                               class="Altaxo.Gui.Pads.ProjectBrowser.CmdExtractCommonColumns" />
         <MenuItem id="PlotCommonCols" label="${res:XML.ProjectBrowserMenu.PlotCommonColumns}" description="${res:XML.ProjectBrowserMenu.PlotCommonColumns.Description}"
 							class="Altaxo.Gui.Pads.ProjectBrowser.CmdPlotCommonColumns" />

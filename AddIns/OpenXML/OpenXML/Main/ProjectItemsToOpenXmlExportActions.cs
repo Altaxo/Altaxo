@@ -26,7 +26,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using Altaxo.Data;
 using Altaxo.Gui.Common.MultiRename;
 using Altaxo.Main.Commands;
@@ -99,24 +98,48 @@ namespace Altaxo.Main
 
     private static List<object> DoExportMicrosoftFiles(MultiRenameData mrData)
     {
+      var reporter = new Altaxo.Main.Services.ExternalDrivenBackgroundMonitor();
+      List<object> failedItems = null!;
+      StringBuilder errors = null!;
+      var thread = new System.Threading.Thread(() => (failedItems, errors) = DoExportMicrosoftFiles(mrData, reporter));
+      thread.Start();
+      Current.Gui.ShowBackgroundCancelDialog(1000, thread, (Altaxo.Main.Services.ExternalDrivenBackgroundMonitor)reporter);
+
+      if (errors.Length != 0)
+        Current.Gui.ErrorMessageBox(errors.ToString(), "Export failed for some items");
+      else
+        Current.Gui.InfoMessageBox($"{mrData.ObjectsToRenameCount - failedItems.Count} project items successfully exported.");
+
+      return failedItems!;
+    }
+
+    private static (List<object> FailedItems, StringBuilder Errors) DoExportMicrosoftFiles(MultiRenameData mrData, IProgressReporter reporter)
+    {
       var failedItems = new List<object>();
       var errors = new StringBuilder();
 
-      bool allPathsRooted = true;
+      string? firstNotRootedFilePath = null;
+      object? firstNotRootedObject = null;
       for (int i = 0; i < mrData.ObjectsToRenameCount; ++i)
       {
         var fileName = mrData.GetNewNameForObject(i);
         if (!System.IO.Path.IsPathRooted(fileName))
         {
-          allPathsRooted = false;
+          firstNotRootedFilePath = fileName;
+          firstNotRootedObject = mrData.GetObjectToRename(i);
           break;
         }
       }
 
-      if (!allPathsRooted)
+      if (firstNotRootedFilePath is not null)
       {
-        //Current.Gui.ShowFolderDialog();
-        // http://wpfdialogs.codeplex.com/
+        errors.AppendLine($"Some of the items will be exported to a non-rooted file path.");
+        errors.AppendLine($"The first such item is {(firstNotRootedObject is INamedObject no ? no.Name : firstNotRootedObject)} resulting in file {firstNotRootedFilePath}.");
+        for (int i = 0; i < mrData.ObjectsToRenameCount; ++i)
+        {
+          failedItems.Add(mrData.GetObjectToRename(i)); // add remaining items to failed list
+        }
+        return (failedItems, errors);
       }
 
       for (int i = 0; i < mrData.ObjectsToRenameCount; ++i)
@@ -151,14 +174,24 @@ namespace Altaxo.Main
           failedItems.Add(projectItem);
           errors.AppendFormat("Item {0} -> file name {1}: export failed, {2}\n", projectItem.Name, fileName, ex.Message);
         }
+
+        if (reporter.CancellationPending)
+        {
+          for (i = i + 1; i < mrData.ObjectsToRenameCount; ++i)
+          {
+            failedItems.Add(mrData.GetObjectToRename(i)); // add remaining items to failed list
+          }
+          break;
+        }
+        if (reporter.ShouldReportNow)
+        {
+          reporter.ReportProgress($"Processed item: {projectItem.Name}", (i + 1d) / mrData.ObjectsToRenameCount);
+        }
       }
 
-      if (errors.Length != 0)
-        Current.Gui.ErrorMessageBox(errors.ToString(), "Export failed for some items");
-      else
-        Current.Gui.InfoMessageBox(string.Format("{0} project items successfully exported.", mrData.ObjectsToRenameCount));
 
-      return failedItems;
+
+      return (failedItems, errors);
     }
   }
 }
