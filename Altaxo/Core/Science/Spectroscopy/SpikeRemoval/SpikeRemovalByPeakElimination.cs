@@ -252,7 +252,7 @@ namespace Altaxo.Science.Spectroscopy.SpikeRemoval
             // then there is maybe a small influence of the peak to that side, too
             // in this case we use rather one point further away from the peak as base for the interpolation line
             if (i >= 2 && Math.Abs(data[i - 2]) > 1.5 * noiseLevel)
-              leftPos = start - i - 2;
+              leftPos = start + i - 2;
             if (i < lenM2 && Math.Abs(data[i + 2]) > 1.5 * noiseLevel)
               rightPos = start + i + 2;
 
@@ -342,7 +342,7 @@ namespace Altaxo.Science.Spectroscopy.SpikeRemoval
             // then there is maybe a small influence of the peak to that side, too
             // in this case we use rather one point further away from the peak as base for the interpolation line
             if (i >= 3 && Math.Abs(data[i - 3]) > 1.5 * noiseLevel)
-              leftPos = start - i - 2;
+              leftPos = start + i - 2;
             if (i < lenM3 && Math.Abs(data[i + 3]) > 1.5 * noiseLevel)
               rightPos = start + i + 3;
 
