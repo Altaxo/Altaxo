@@ -1018,31 +1018,39 @@ namespace Altaxo.Science.Spectroscopy.Raman
     private (double NistWL_Left, double MeasWL_Left, double NistWL_Right, double MeasWL_Right)? FindCoarseMatchBruteForce(
       NeonCalibrationOptions options, CancellationToken cancellationToken)
     {
-      var tolWL = options.Wavelength_Tolerance_nm;
-      var boundaryWLSearchLeft = _xPreprocessed_nm.Min();
-      var boundaryWLSearchRight = _xPreprocessed_nm.Max();
-      var minimumWLDistance = (boundaryWLSearchRight - boundaryWLSearchLeft) / 3.0;
-      tolWL = Math.Min(tolWL, minimumWLDistance / 3.0);
-      boundaryWLSearchLeft -= tolWL;
-      boundaryWLSearchRight += tolWL;
+      var tolWL = options.Wavelength_Tolerance_nm; // maximal value in nm, by which the x-value of the spectrometer pixels can deviate
+      var boundaryWLSearchLeft = _xPreprocessed_nm.Min(); // per default, the left search boundary is the minimum x
+      var boundaryWLSearchRight = _xPreprocessed_nm.Max(); // per default, the right search boundary is the maximum x
+      var minimumWLDistance = (boundaryWLSearchRight - boundaryWLSearchLeft) / 3.0; // the minimal distance between left and right point should be at least 1/3rd of the range
+      tolWL = Math.Min(tolWL, minimumWLDistance / 3.0); // if the wavelength tolerance is greater than the minimalDistance/3, it is reduced to that value
+      boundaryWLSearchLeft -= tolWL; // the left search boundary is extended by wavelength tolerance to the left
+      boundaryWLSearchRight += tolWL; // the right search boundary is extended by wavelength tolerance to the right
 
+      // we only consider those peaks from the NIST database, which have a wavelength inbetween our left and right search boundaries
       var peaks = NeonCalibration.NistNeonPeaks
                 .Where(pair => pair.Wavelength_Nanometer >= boundaryWLSearchLeft &&
                                 pair.Wavelength_Nanometer <= boundaryWLSearchRight);
 
-      // Maximum intensity of selected Nist peaks
+      // Evaluate the maximum intensity of the considered Nist peaks
       var maxIntensity = peaks.Select(pair => pair.Intensity).Max();
 
-      // Normalize selected Nist peaks to max. intensity of 1
+      // Normalize selected Nist peaks to maximal intensity of 1
       var NISTPeaks = peaks.Select(pair => (WL: pair.Wavelength_Nanometer, Its: pair.Intensity / maxIntensity)).ToArray();
 
-      // Get the left Nist wavelength candidates
+      // overall algorithm:
+      // 1.) choose a peak candidate from the NIST database having a wavelength on the left side of the spectrum and
+      // 2.) chose a peak candidate from the NIST database having a wavelength on the right side of the spectrum
+      // 3.) chose a peak candidate from the measured spectrum that is within wavelength tolerance from the left NIST peak candidate
+      // 4.) chose a peak candidate from the measured spectrum that is within wavelength tolerance from the right NIST peak candidate
+
+
+      // 1.) Get the left NIST wavelength candidates
       var nistWLsLeft = NISTPeaks.Where(
         (x) =>
           x.WL >= boundaryWLSearchLeft &&
           x.WL <= (boundaryWLSearchRight - minimumWLDistance));
 
-      // combine the left Nist wavelength candidates with the right Nist wavelength candidates...
+      // 2.) combine the left Nist wavelength candidates with the right Nist wavelength candidates...
       var candidatePairs = nistWLsLeft.JoinConditional(
         NISTPeaks,
         (nistLeft, nistRight) =>
@@ -1050,7 +1058,7 @@ namespace Altaxo.Science.Spectroscopy.Raman
         (x, y) => (NistLeft: x, NistRight: y)
         );
 
-      // now combine this pairs with the peaks in measured table that are within the tolerance of the left Nist peak
+      // 3.) now combine this pairs with the peaks in measured table that are within the tolerance of the left Nist peak
       var candidateTriples = candidatePairs.JoinConditional(
         MeasuredPeaks,
         (ele, measLeft) =>
@@ -1058,7 +1066,7 @@ namespace Altaxo.Science.Spectroscopy.Raman
               measLeft.WL <= ele.NistRight.WL + tolWL,
         (ele, measLeft) => (NistLeft: ele.NistLeft, NistRight: ele.NistRight, MeasLeft: measLeft));
 
-      // now combine this triples with the peaks in measured table that are within the tolerance of the right Nist peak
+      // 4.) now combine this triples with the peaks in measured table that are within the tolerance of the right Nist peak
       var candidateQuads = candidateTriples.JoinConditional(
         MeasuredPeaks,
         (ele, measRight) =>
@@ -1069,6 +1077,13 @@ namespace Altaxo.Science.Spectroscopy.Raman
         );
 
 
+      // by using each quad of (Left NIST peak, left measured peak, right Nist peak, right measured peak) we create an
+      // x-axis transformation, which transforms the NIST (calibrated) wavelengths to our measured (uncalibrated) wavelength.
+      // Then we sample our spectrum at the positions of all peaks in the NIST database, at the transformed positions,
+      // and sum up the sampled values.
+      // The sum should have the highest value, if our left NIST peak corresponds to the left measured peak and the right NIST peak corresponds to the right measured peak,
+      // because then all other peaks in the NIST table should fall on a measured peak.
+      // Thus we select the quad which results in the highest sum value.
       var sumMax = double.MinValue;
       ((double WL, double Its) NistLeft, (double WL, double Its) NistRight, (double WL, double Its) MeasLeft, (double WL, double Its) MeasRight)? maxElement = null;
       foreach (var ele in candidateQuads)
@@ -1098,8 +1113,9 @@ namespace Altaxo.Science.Spectroscopy.Raman
       double[] x_nm, double[] y,
       IEnumerable<(double WL, double Intensity)> nistPeaks)
     {
-      // need a function that translates real wavelength to wavelength of the measurement system, i.e.
-      // left => candLeft.WL and right => candRight.WL
+      // function that translates real (calibrated) wavelength to wavelength of the measurement system (uncalibrated)
+      // this is done by a linear transformation using the left NIST and measured peak candidate and the right NIST and measured
+      // peak candidate
       double ConvertWavelengthNistToMeas(double x)
       {
         var r = (x - ele.NistLeft.WL) / (ele.NistRight.WL - ele.NistLeft.WL);
@@ -1114,6 +1130,15 @@ namespace Altaxo.Science.Spectroscopy.Raman
       return sum;
     }
 
+    /// <summary>
+    /// Gets the intensity at a given wavelength. Because almost all the sampling point is inbetween to spectral points,
+    /// the maximum of the left and right spectral point is used. If the wavelength is outside the spectral region, the
+    /// return value is zero.
+    /// </summary>
+    /// <param name="xarray">The xarray.</param>
+    /// <param name="yarray">The yarray.</param>
+    /// <param name="actualWavelength">The actual wavelength.</param>
+    /// <returns>The intensity value at the given wavelength (x-value).</returns>
     private static double GetIntensityAtWavelength(double[] xarray, double[] yarray, double actualWavelength)
     {
       for (int i = 1; i < xarray.Length; ++i)
