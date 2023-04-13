@@ -208,9 +208,19 @@ namespace Altaxo.Graph.Gdi.Axis
       if (_background is not null)
       {
         RectangleF innerArea = region.GetBounds(g);
+        innerArea.Inflate(innerArea.Width * 1e-5f, innerArea.Height * 1e-5f);
         using (var gdiBackgroundBrush = BrushCacheGdi.Instance.BorrowBrush(_background, innerArea.ToAxo(), g, 1))
         {
-          g.FillRegion(gdiBackgroundBrush, region);
+          try
+          {
+            g.FillRegion(gdiBackgroundBrush, region);
+          }
+          catch (System.OverflowException)
+          {
+            // 2023-04-13 Ignore an overflow exception (especially when exporting EMF files)
+            // it is not clear what is the cause of it
+            // but it seems that the rendering is still OK
+          }
         }
       }
     }
