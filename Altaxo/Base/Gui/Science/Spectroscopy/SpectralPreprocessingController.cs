@@ -24,6 +24,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Altaxo.Science.Spectroscopy;
 using Altaxo.Science.Spectroscopy.BaselineEstimation;
 using Altaxo.Science.Spectroscopy.Calibration;
@@ -88,13 +89,18 @@ namespace Altaxo.Gui.Science.Spectroscopy
       }
     }
 
-    protected override void UpdateDoc(object model)
+    protected override void UpdateDoc(object model, int index)
     {
-      _doc = UpdateDoc(_doc, model);
+      _doc = UpdateDoc(_doc, model, index);
     }
 
-    public static SpectralPreprocessingOptionsBase UpdateDoc(SpectralPreprocessingOptionsBase _doc, object model)
+    public static SpectralPreprocessingOptionsBase UpdateDoc(SpectralPreprocessingOptionsBase _doc, object model, int index)
     {
+      if (model is not ISingleSpectrumPreprocessor)
+      {
+        return _doc;
+      }
+
       if (_doc is SpectralPreprocessingOptions doc1)
       {
         switch (model)
@@ -127,6 +133,15 @@ namespace Altaxo.Gui.Science.Spectroscopy
             break;
         }
       }
+      else if (_doc is SpectralPreprocessingOptionsList doc2)
+      {
+        var ele = doc2.ToList();
+        if (index < doc2.Count)
+          ele[index] = (ISingleSpectrumPreprocessor)model;
+        else
+          ele.Add((ISingleSpectrumPreprocessor)model);
+        _doc = new SpectralPreprocessingOptionsList(ele);
+      }
       else
       {
         throw new NotImplementedException();
@@ -134,6 +149,13 @@ namespace Altaxo.Gui.Science.Spectroscopy
 
       return _doc;
     }
+
+    protected override SpectralPreprocessingOptionsBase InternalPreprocessingOptions
+    {
+      get => _doc;
+      set => _doc = value;
+    }
+
 
   }
 }

@@ -4,11 +4,69 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Altaxo.Gui.Science.Spectroscopy;assembly=AltaxoBase" 
+             xmlns:axogcc="clr-namespace:Altaxo.Gui.Common.Converters"
              d:DataContext="{d:DesignInstance Type=local:SpectralPreprocessingController}"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
-        <TabControl 
+        <Grid.Resources>
+            <ResourceDictionary Source="pack://application:,,,/AltaxoBase.Presentation;component/CommonStyles.xaml" />
+        </Grid.Resources>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="2"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <StackPanel Orientation="Horizontal" Grid.Row="0">
+            <CheckBox Content="Custom"
+                      IsChecked="{Binding IsCustomPipeline, Mode=TwoWay}"
+                      ToolTip="Check this if you need a custom preprocessing pipeline."
+                      VerticalContentAlignment="Center"
+                      />
+            <ComboBox 
+                ItemsSource="{Binding ContentInsertLeft.Items}"
+                SelectedItem="{Binding ContentInsertLeft.SelectedItem, Mode=TwoWay}"
+                Visibility="{Binding IsCustomPipeline, Converter={x:Static axogcc:FalseToVisibilityHiddenConverter.Instance}}"
+                Margin="4,0,4,0"
+                ToolTip="Insert a preprocessing item to the left of the currently selected tab."/>
+            <ComboBox
+                ItemsSource="{Binding ContentInsertRight.Items}"
+                SelectedItem="{Binding ContentInsertRight.SelectedItem, Mode=TwoWay}"
+                Visibility="{Binding IsCustomPipeline, Converter={x:Static axogcc:FalseToVisibilityHiddenConverter.Instance}}"
+                Margin="4,0,4,0"
+                ToolTip="Insert a preprocessing item to the right of the currently selected tab."/>
+            <Button 
+                Command="{Binding CmdRemoveTab}"
+                Margin="4,0,4,0"
+                Visibility="{Binding IsCustomPipeline, Converter={x:Static axogcc:FalseToVisibilityHiddenConverter.Instance}}"
+                ToolTip="Delete the currently selected preprocessing item."
+                >
+                <Viewbox Style="{StaticResource ArrowViewBoxStyle}">
+                    <Path Style="{StaticResource RemoveCrossPathStyle}" />
+                </Viewbox>
+            </Button>
+            <Button 
+                Command="{Binding CmdMoveTabLeft}"
+                Margin="4,0,4,0"
+                Visibility="{Binding IsCustomPipeline, Converter={x:Static axogcc:FalseToVisibilityHiddenConverter.Instance}}"
+                ToolTip="Delete the currently selected preprocessing item."
+                >
+                <Viewbox Style="{StaticResource ArrowViewBoxStyle}">
+                    <Path Style="{StaticResource RightArrowPathStyle}" />
+                </Viewbox>
+            </Button>
+            <Button 
+                Command="{Binding CmdMoveTabRight}"
+                Margin="4,0,4,0"
+                Visibility="{Binding IsCustomPipeline, Converter={x:Static axogcc:FalseToVisibilityHiddenConverter.Instance}}"
+                ToolTip="Delete the currently selected preprocessing item."
+                >
+                <Viewbox Style="{StaticResource ArrowViewBoxStyle}">
+                    <Path Style="{StaticResource LeftArrowPathStyle}" />
+                </Viewbox>
+            </Button>
+        </StackPanel>
+        <TabControl Grid.Row="2"
             ItemsSource="{Binding TabControllers.Items}"
             SelectedItem="{Binding TabControllers.SelectedItem, Mode=TwoWay}" 
             DisplayMemberPath="Text">

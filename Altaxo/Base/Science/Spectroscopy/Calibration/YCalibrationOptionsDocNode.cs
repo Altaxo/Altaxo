@@ -74,7 +74,7 @@ namespace Altaxo.Science.Spectroscopy.Calibration
 
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var options = info.GetValue<SpectralPreprocessingOptions>("SpectralPreprocessingOptions", null);
+        var options = info.GetValue<SpectralPreprocessingOptionsBase>("SpectralPreprocessingOptions", null);
         var proxyList = SpectralPreprocessingOptionsDocNode.SerializationSurrogate1.DeserializeProxiesVersion1(info);
 
         var intensityCurve = info.GetValue<IFitFunction>("CurveShape", null);
@@ -100,7 +100,7 @@ namespace Altaxo.Science.Spectroscopy.Calibration
 
     #endregion
 
-    protected YCalibrationOptionsDocNode(SpectralPreprocessingOptions options, List<(int number, IDocumentLeafNode proxy)> proxyList, IFitFunction curve, ImmutableArray<(string Name, double Value)> curveParameters)
+    protected YCalibrationOptionsDocNode(SpectralPreprocessingOptionsBase options, List<(int number, IDocumentLeafNode proxy)> proxyList, IFitFunction curve, ImmutableArray<(string Name, double Value)> curveParameters)
       : base(options, proxyList)
     {
       CurveShape = curve;

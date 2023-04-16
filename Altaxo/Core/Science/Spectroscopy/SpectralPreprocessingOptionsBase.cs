@@ -29,8 +29,12 @@ using Altaxo.Main;
 
 namespace Altaxo.Science.Spectroscopy
 {
-  public abstract record SpectralPreprocessingOptionsBase : IImmutable, ISingleSpectrumPreprocessorCompound, IEnumerable<ISingleSpectrumPreprocessor>
+  public abstract record SpectralPreprocessingOptionsBase : IImmutable, ISingleSpectrumPreprocessorCompound, IEnumerable<ISingleSpectrumPreprocessor>, IReadOnlyList<ISingleSpectrumPreprocessor>
   {
+    public ISingleSpectrumPreprocessor this[int index] => ((IReadOnlyList<ISingleSpectrumPreprocessor>)InnerList)[index];
+
+    public int Count => InnerList.Count;
+
     protected ImmutableList<ISingleSpectrumPreprocessor> InnerList { get; init; } = ImmutableList<ISingleSpectrumPreprocessor>.Empty;
 
     public (double[] x, double[] y, int[]? regions) Execute(double[] x, double[] y, int[]? regions)

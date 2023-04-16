@@ -25,11 +25,58 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Linq;
 
 namespace Altaxo.Science.Spectroscopy
 {
   public record SpectralPreprocessingOptionsList : SpectralPreprocessingOptionsBase
   {
+    #region Serialization
+
+    #region Version 0
+
+    /// <summary>
+    /// 2023-04-16 Initial version
+    /// </summary>
+    /// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(SpectralPreprocessingOptionsList), 0)]
+    public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        var s = (SpectralPreprocessingOptionsList)obj;
+
+        info.CreateArray("Elements", s.Count);
+        {
+          for (int i = 0; i < s.Count; i++)
+          {
+            info.AddValue("e", s[i]);
+          }
+        }
+        info.CommitArray();
+
+
+      }
+
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      {
+        var count = info.OpenArray("Elements");
+        var list = new ISingleSpectrumPreprocessor[count];
+        {
+          for (int i = 0; i < count; ++i)
+          {
+            list[i] = info.GetValue<ISingleSpectrumPreprocessor>("e", parent);
+          }
+          info.CloseArray(count);
+        }
+        return new SpectralPreprocessingOptionsList(list);
+      }
+    }
+    #endregion
+
+    #endregion
+
+
     public SpectralPreprocessingOptionsList()
     {
     }
@@ -60,6 +107,16 @@ namespace Altaxo.Science.Spectroscopy
     public SpectralPreprocessingOptionsList Insert(int index, ISingleSpectrumPreprocessor processor)
     {
       return this with { InnerList = InnerList.Insert(index, processor ?? throw new ArgumentNullException(nameof(processor))) };
+    }
+
+    public static SpectralPreprocessingOptionsList CreateWithoutNoneElements(IEnumerable<ISingleSpectrumPreprocessor> elements)
+    {
+      var result = new SpectralPreprocessingOptionsList
+      {
+        InnerList = elements.Where(e => e is not null && !e.GetType().Name.Contains("None")).ToImmutableList()
+      };
+
+      return result;
     }
   }
 }

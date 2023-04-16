@@ -61,7 +61,7 @@ namespace Altaxo.Science.Spectroscopy
 
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var options = info.GetValue<SpectralPreprocessingOptions>("SpectralPreprocessingOptions", null);
+        var options = info.GetValue<SpectralPreprocessingOptionsBase>("SpectralPreprocessingOptions", null);
         var proxyList = SpectralPreprocessingOptionsDocNode.SerializationSurrogate0.DeserializeProxiesVersion0(info, parent, options);
         var peakSearching = info.GetValue<IPeakSearching>("PeakSearching", null);
         var peakFitting = info.GetValue<IPeakFitting>("PeakFitting", null);
@@ -92,7 +92,7 @@ namespace Altaxo.Science.Spectroscopy
 
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var options = info.GetValue<SpectralPreprocessingOptions>("SpectralPreprocessingOptions", null);
+        var options = info.GetValue<SpectralPreprocessingOptionsBase>("SpectralPreprocessingOptions", null);
         var proxyList = SpectralPreprocessingOptionsDocNode.SerializationSurrogate0.DeserializeProxiesVersion0(info, parent, options);
         var peakSearching = info.GetValue<IPeakSearching>("PeakSearching", null);
         var peakFitting = info.GetValue<IPeakFitting>("PeakFitting", null);
@@ -120,7 +120,7 @@ namespace Altaxo.Science.Spectroscopy
 
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var options = info.GetValue<SpectralPreprocessingOptions>("SpectralPreprocessingOptions", null);
+        var options = info.GetValue<SpectralPreprocessingOptionsBase>("SpectralPreprocessingOptions", null);
         var proxyList = SpectralPreprocessingOptionsDocNode.SerializationSurrogate1.DeserializeProxiesVersion1(info);
         var peakSearching = info.GetValue<IPeakSearching>("PeakSearching", null);
         var peakFitting = info.GetValue<IPeakFitting>("PeakFitting", null);
@@ -132,7 +132,7 @@ namespace Altaxo.Science.Spectroscopy
 
     #endregion
 
-    protected PeakSearchingAndFittingOptionsDocNode(SpectralPreprocessingOptions options, List<(int number, IDocumentLeafNode proxy)> proxyList, IPeakSearching peakSearching, IPeakFitting peakFitting, PeakSearchingAndFittingOutputOptions outputOptions)
+    protected PeakSearchingAndFittingOptionsDocNode(SpectralPreprocessingOptionsBase options, List<(int number, IDocumentLeafNode proxy)> proxyList, IPeakSearching peakSearching, IPeakFitting peakFitting, PeakSearchingAndFittingOutputOptions outputOptions)
       : base(options, proxyList)
     {
       PeakSearching = peakSearching;

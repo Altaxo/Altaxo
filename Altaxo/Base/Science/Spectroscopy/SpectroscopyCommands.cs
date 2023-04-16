@@ -50,7 +50,7 @@ namespace Altaxo.Science.Spectroscopy
   {
     private static PeakSearchingAndFittingOptions? _lastPeakFindingFittingOptions = null;
 
-    private static SpectralPreprocessingOptions? _lastPreprocessOptions = null;
+    private static SpectralPreprocessingOptionsBase? _lastPreprocessOptions = null;
 
     public static string PeakTable_PreprocessedColumnNameX(int numberOfSpectrum) => $"X_Preprocessed{numberOfSpectrum}";
     public static string PeakTable_PreprocessedColumnNameY(int numberOfSpectrum) => $"Y_Preprocessed{numberOfSpectrum}";
@@ -69,7 +69,7 @@ namespace Altaxo.Science.Spectroscopy
     /// <param name="ctrl">The worksheet containing the spectra.</param>
     /// <param name="options">On successfull return, contains the preprocessing options.</param>
     /// <returns>True if successful; otherwise, false.</returns>
-    public static bool ShowDialogGetPreprocessingOptions(WorksheetController ctrl, out SpectralPreprocessingOptions? options)
+    public static bool ShowDialogGetPreprocessingOptions(WorksheetController ctrl, out SpectralPreprocessingOptionsBase? options)
     {
       options = null;
       var selectedColumns = ctrl.SelectedDataColumns;
@@ -86,7 +86,7 @@ namespace Altaxo.Science.Spectroscopy
       if (false == Current.Gui.ShowDialog(controller, "Spectral preprocessing"))
         return false;
 
-      options = (SpectralPreprocessingOptions)controller.ModelObject;
+      options = (SpectralPreprocessingOptionsBase)controller.ModelObject;
       _lastPreprocessOptions = options;
       return true;
     }

@@ -34,7 +34,7 @@ using Altaxo.Serialization.Xml;
 namespace Altaxo.Science.Spectroscopy
 {
   /// <summary>
-  /// Wrapper around <see cref="SpectralPreprocessingOptions"/>
+  /// Wrapper around <see cref="SpectralPreprocessingOptionsBase"/>
   /// that keeps track of nodes that have references to tables
   /// (currently only XCalibrationByDataSource).
   /// </summary>
@@ -69,12 +69,12 @@ namespace Altaxo.Science.Spectroscopy
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
 
-        var options = info.GetValue<SpectralPreprocessingOptions>("SpectralPreprocessingOptions", null);
+        var options = info.GetValue<SpectralPreprocessingOptionsBase>("SpectralPreprocessingOptions", null);
         var proxyList = DeserializeProxiesVersion0(info, parent, options);
         return new SpectralPreprocessingOptionsDocNode(options, proxyList);
       }
 
-      public static List<(int number, IDocumentLeafNode proxy)> DeserializeProxiesVersion0(IXmlDeserializationInfo info, object? parent, SpectralPreprocessingOptions options)
+      public static List<(int number, IDocumentLeafNode proxy)> DeserializeProxiesVersion0(IXmlDeserializationInfo info, object? parent, SpectralPreprocessingOptionsBase options)
       {
         var calibrationTableProxy = info.GetValueOrNull<DataTableProxy>("CalibrationTableProxy", parent);
         var proxyList = new List<(int number, IDocumentLeafNode proxy)>(1);
@@ -141,7 +141,7 @@ namespace Altaxo.Science.Spectroscopy
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
 
-        var options = info.GetValue<SpectralPreprocessingOptions>("SpectralPreprocessingOptions", null);
+        var options = info.GetValue<SpectralPreprocessingOptionsBase>("SpectralPreprocessingOptions", null);
         var proxyList = DeserializeProxiesVersion1(info);
 
         return new SpectralPreprocessingOptionsDocNode(options, proxyList);
@@ -170,7 +170,7 @@ namespace Altaxo.Science.Spectroscopy
 
     #endregion
 
-    protected SpectralPreprocessingOptionsDocNode(SpectralPreprocessingOptions options, List<(int number, IDocumentLeafNode proxy)> proxyList)
+    protected SpectralPreprocessingOptionsDocNode(SpectralPreprocessingOptionsBase options, List<(int number, IDocumentLeafNode proxy)> proxyList)
     {
       _spectralPreprocessingOptions = options;
       _proxyCache = new Dictionary<ISingleSpectrumPreprocessor, IDocumentLeafNode>();

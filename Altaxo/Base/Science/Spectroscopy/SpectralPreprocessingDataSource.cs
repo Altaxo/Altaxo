@@ -73,9 +73,9 @@ namespace Altaxo.Science.Spectroscopy
     [MemberNotNull(nameof(_importOptions), nameof(_processOptions), nameof(_processData))]
     private void DeserializeSurrogate0(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
     {
-      ChildSetMember(ref _processData, (DataTableMultipleColumnProxy)info.GetValue("ProcessData", this));
-      ProcessOptions = (SpectralPreprocessingOptions)info.GetValue("ProcessOptions", this);
-      ChildSetMember(ref _importOptions, (IDataSourceImportOptions)info.GetValue("ImportOptions", this));
+      ChildSetMember(ref _processData, info.GetValue<DataTableMultipleColumnProxy>("ProcessData", this));
+      ProcessOptions = info.GetValue<SpectralPreprocessingOptionsBase>("ProcessOptions", this);
+      ChildSetMember(ref _importOptions, info.GetValue<IDataSourceImportOptions>("ImportOptions", this));
     }
 
     #endregion Version 0
@@ -148,7 +148,7 @@ namespace Altaxo.Science.Spectroscopy
     /// or
     /// importOptions
     /// </exception>
-    public SpectralPreprocessingDataSource(DataTableMultipleColumnProxy inputData, SpectralPreprocessingOptions dataSourceOptions, IDataSourceImportOptions importOptions)
+    public SpectralPreprocessingDataSource(DataTableMultipleColumnProxy inputData, SpectralPreprocessingOptionsBase dataSourceOptions, IDataSourceImportOptions importOptions)
     {
       if (inputData is null)
         throw new ArgumentNullException(nameof(inputData));
@@ -344,7 +344,7 @@ namespace Altaxo.Science.Spectroscopy
     object IAltaxoTableDataSource.ProcessOptionsObject
     {
       get => ProcessOptions;
-      set => ProcessOptions = (SpectralPreprocessingOptions)value;
+      set => ProcessOptions = (SpectralPreprocessingOptionsBase)value;
     }
 
     object IAltaxoTableDataSource.ProcessDataObject

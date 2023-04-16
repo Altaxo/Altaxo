@@ -25,6 +25,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Linq;
 using Altaxo.Science.Spectroscopy.BaselineEstimation;
 using Altaxo.Science.Spectroscopy.Calibration;
 using Altaxo.Science.Spectroscopy.Cropping;
@@ -40,16 +41,16 @@ namespace Altaxo.Science.Spectroscopy
 
   public record SpectralPreprocessingOptions : SpectralPreprocessingOptionsBase
   {
-    const int IndexSanitzer = 0;
-    const int IndexDarkSubtraction = 1;
-    const int IndexSpikeRemoval = 2;
-    const int IndexYCalibration = 3;
-    const int IndexXCalibration = 4;
-    const int IndexResampling = 5;
-    const int IndexSmoothing = 6;
-    const int IndexBaselineEstimation = 7;
-    const int IndexCropping = 8;
-    const int IndexNormalization = 9;
+    private const int IndexSanitzer = 0;
+    private const int IndexDarkSubtraction = 1;
+    private const int IndexSpikeRemoval = 2;
+    private const int IndexYCalibration = 3;
+    private const int IndexXCalibration = 4;
+    private const int IndexResampling = 5;
+    private const int IndexSmoothing = 6;
+    private const int IndexBaselineEstimation = 7;
+    private const int IndexCropping = 8;
+    private const int IndexNormalization = 9;
 
     #region Serialization
 
@@ -382,6 +383,48 @@ namespace Altaxo.Science.Spectroscopy
       init
       {
         InnerList = InnerList.SetItem(IndexNormalization, value ?? throw new ArgumentNullException(nameof(Normalization)));
+      }
+    }
+
+    public static SpectralPreprocessingOptions? TryCreateFrom(SpectralPreprocessingOptionsBase options)
+    {
+      if (options is null)
+        throw new ArgumentNullException(nameof(options));
+
+      if (options is SpectralPreprocessingOptions s)
+      {
+        return s;
+      }
+      else if (options is SpectralPreprocessingOptionsList l)
+      {
+        var standardOptions = new SpectralPreprocessingOptions();
+        var dstElements = standardOptions.ToArray();
+        var dstTypes = standardOptions.ExpectedOrderOfElements.ToArray();
+        var sourceElements = options.Where(e => e is not null && !e.GetType().Name.Contains("None")).ToList();
+        int idxDst = 0;
+        for (int idxSrc = 0; idxSrc < sourceElements.Count; ++idxSrc)
+        {
+          bool wasAssigned = false;
+          for (; idxDst < dstElements.Length; ++idxDst)
+          {
+            if (dstTypes[idxDst].IsAssignableFrom(options[idxSrc].GetType()))
+            {
+              dstElements[idxDst] = options[idxSrc];
+              ++idxDst;
+              wasAssigned = true;
+              break;
+            }
+          }
+          if (!wasAssigned)
+          {
+            return null; // conversion failed
+          }
+        }
+        return new SpectralPreprocessingOptions(dstElements);
+      }
+      else
+      {
+        throw new NotImplementedException($"The type to convert ({options?.GetType()}) is not implemented here");
       }
     }
   }

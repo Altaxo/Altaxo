@@ -78,6 +78,24 @@ namespace Altaxo.Gui
     }
 
 
+    private object _controllerTag;
+
+    /// <summary>
+    /// Additional tag that identifies the controller (for instance index etc.).
+    /// </summary>
+    public object ControllerTag
+    {
+      get => _controllerTag;
+      set
+      {
+        if (!(_controllerTag == value))
+        {
+          _controllerTag = value;
+          OnPropertyChanged(nameof(ControllerTag));
+        }
+      }
+    }
+
 
   }
 }

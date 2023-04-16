@@ -46,9 +46,9 @@ namespace Altaxo.Gui.Science.Spectroscopy
       yield return ("Output", _doc.OutputOptions, () => new PeakSearchingAndFittingOutputOptionsController());
     }
 
-    protected override void UpdateDoc(object model)
+    protected override void UpdateDoc(object model, int index)
     {
-      var pre = SpectralPreprocessingController.UpdateDoc(_doc.Preprocessing, model);
+      var pre = SpectralPreprocessingController.UpdateDoc(_doc.Preprocessing, model, index);
       _doc = _doc with { Preprocessing = pre };
 
       switch (model)
@@ -64,6 +64,12 @@ namespace Altaxo.Gui.Science.Spectroscopy
           _doc = _doc with { OutputOptions = oo };
           break;
       }
+    }
+
+    protected override SpectralPreprocessingOptionsBase InternalPreprocessingOptions
+    {
+      get => _doc.Preprocessing;
+      set => _doc = _doc with { Preprocessing = value };
     }
   }
 }
