@@ -23,11 +23,8 @@
 #endregion Copyright
 
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Altaxo.Collections;
 
 namespace Altaxo.Gui.Common
@@ -56,7 +53,7 @@ namespace Altaxo.Gui.Common
     /// <param name="list">The list of choices. The <see cref="ListNode.Tag"/> property must contain values of type TItem.</param>
     /// <param name="selectedValue">The selected value.</param>
     /// <param name="OnSelectedValueChanged">An optional action, that is executed if the selected value changed</param>
-    public ItemsController(SelectableListNodeList list, TItem selectedValue, Action<TItem>? OnSelectedValueChanged=null)
+    public ItemsController(SelectableListNodeList list, TItem selectedValue, Action<TItem>? OnSelectedValueChanged = null)
     {
       Initialize(list, selectedValue, OnSelectedValueChanged);
     }
@@ -68,7 +65,7 @@ namespace Altaxo.Gui.Common
     /// <param name="list">The list. Must contain elements with tags of type TItem. On of the list items should have the IsSelected
     /// property set to true, in order to initialize the SelectedItem and SelectedValue property.</param>
     /// <param name="OnSelectedItemChanged">An optional action, that is executed if the selected value changed.</param>
-    public ItemsController(SelectableListNodeList list, Action<TItem>? OnSelectedItemChanged=null)
+    public ItemsController(SelectableListNodeList list, Action<TItem>? OnSelectedItemChanged = null)
     {
       Initialize(list, OnSelectedItemChanged);
     }
@@ -79,7 +76,7 @@ namespace Altaxo.Gui.Common
     /// <param name="list">The list of choices. The <see cref="ListNode.Tag"/> property must contain values of type TItem.</param>
     /// <param name="selectedValue">The selected value.</param>
     /// <param name="OnSelectedValueChanged">An optional action, that is executed if the selected value changed</param>
-    public void Initialize(SelectableListNodeList list, TItem selectedValue, Action<TItem>? OnSelectedValueChanged=null)
+    public void Initialize(SelectableListNodeList list, TItem selectedValue, Action<TItem>? OnSelectedValueChanged = null)
     {
       _items = list;
       _items.SetSelection(n => object.ReferenceEquals(n, selectedValue));
@@ -97,7 +94,7 @@ namespace Altaxo.Gui.Common
     /// <param name="list">The list. Must contain elements with tags of type TItem. On of the list items should have the IsSelected
     /// property set to true, in order to initialize the SelectedItem and SelectedValue property.</param>
     /// <param name="OnSelectedItemChanged">An optional action, that is executed if the selected value changed.</param>
-    public void Initialize(SelectableListNodeList list, Action<TItem>? OnSelectedItemChanged=null)
+    public void Initialize(SelectableListNodeList list, Action<TItem>? OnSelectedItemChanged = null)
     {
       _items = list;
       _selectedItem = _items.FirstSelectedNode;
@@ -155,6 +152,7 @@ namespace Altaxo.Gui.Common
           _items.SetSelection(n => object.ReferenceEquals(n, value));
           OnPropertyChanged(nameof(SelectedItem));
           OnPropertyChanged(nameof(SelectedValue));
+          OnPropertyChanged(nameof(SelectedIndex));
           _onSelectedValueChanged?.Invoke((TItem)(value?.Tag ?? default(TItem)));
         }
       }
@@ -173,6 +171,20 @@ namespace Altaxo.Gui.Common
       set
       {
         SelectedItem = _items.FirstOrDefault(element => object.Equals(element.Tag, value));
+      }
+    }
+
+    /// <summary>
+    /// Gets the index of the selected item, or -1 if nothing is selected.
+    /// </summary>
+    public int SelectedIndex
+    {
+      get
+      {
+        for (int i = 0; i < _items.Count; i++)
+          if (object.ReferenceEquals(_items[i], _selectedItem))
+            return i;
+        return -1;
       }
     }
 

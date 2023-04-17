@@ -22,27 +22,16 @@
 
 #endregion Copyright
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using Altaxo.Gui.Science.Spectroscopy.Resampling;
+using Altaxo.Gui.Science.Spectroscopy.Sanitizing;
 
 namespace Altaxo.Gui.Science.Spectroscopy.Cropping
 {
   /// <summary>
   /// Interaction logic for SpikeRemovalControl.xaml
   /// </summary>
-  public partial class CroppingControl : UserControl, ICroppingView
+  public partial class CroppingControl : UserControl, ICroppingView, IResamplingView, ISanitizingView
   {
     public CroppingControl()
     {

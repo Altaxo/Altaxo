@@ -56,6 +56,7 @@ namespace Altaxo.Gui.Science.Spectroscopy
         switch (processor)
         {
           case ISanitizer sanitizer:
+            yield return ("Sanitizing", sanitizer, () => new Sanitizing.SanitizingController());
             break;
           case ISpikeRemoval spikeRemoval:
             yield return ("SpikeRemoval", spikeRemoval, () => new SpikeRemoval.SpikeRemovalController());
@@ -76,6 +77,7 @@ namespace Altaxo.Gui.Science.Spectroscopy
             yield return ("Baseline", baselineEstimation, () => new BaselineEstimation.BaselineEstimationController());
             break;
           case IResampling resampling and not ICropping:
+            yield return ("Resample", resampling, () => new Resampling.ResamplingController());
             break;
           case ICropping cropping:
             yield return ("Cropping", cropping, () => new Cropping.CroppingController());

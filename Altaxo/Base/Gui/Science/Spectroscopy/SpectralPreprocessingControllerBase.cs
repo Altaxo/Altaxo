@@ -52,6 +52,8 @@ namespace Altaxo.Gui.Science.Spectroscopy
   {
     private IMVCANController _selectedController;
 
+    private Dictionary<Type, (string Caption, Type DefaultType, Func<IMVCANController> CreateController)> _controllerDict = new();
+
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       if (TabControllers?.Items is { } list)
@@ -169,30 +171,35 @@ namespace Altaxo.Gui.Science.Spectroscopy
         _selectedController = (IMVCANController)controllers[0].Tag;
         TabControllers.SelectedValue = _selectedController;
 
-
-        var types = new Type[]
+        var types = new (string Caption, Type DefaultType, Func<IMVCANController> CreateController)[]
         {
-        typeof(ISanitizer),
-        typeof(IDarkSubtraction),
-        typeof(ISpikeRemoval),
-        typeof(IYCalibration),
-        typeof(IXCalibration),
-        typeof(IResampling),
-        typeof(ISmoothing),
-        typeof(IBaselineEstimation),
-        typeof(ICropping),
-        typeof(INormalization),
-      };
+            ("Sanitizing", typeof(SanitizerNone), () => new Sanitizing.SanitizingController()),
+            ("SpikeRemoval", typeof(SpikeRemovalNone), () => new SpikeRemoval.SpikeRemovalController()),
+            ("Dark", typeof(DarkSubtractionNone), () => new DarkSubtraction.DarkSubtractionController()),
+            ("YCal", typeof(YCalibrationNone), () => new Calibration.YCalibrationController()),
+            ("XCal", typeof(XCalibrationNone), () => new Calibration.XCalibrationController()),
+            ("Smoothing", typeof(SmoothingNone), () => new Smoothing.SmoothingController()),
+            ("Baseline", typeof(BaselineEstimationNone), () => new BaselineEstimation.BaselineEstimationController()),
+            ("Resample", typeof(ResamplingNone), () => new Resampling.ResamplingController()),
+            ("Cropping", typeof(CroppingNone), () => new Cropping.CroppingController()),
+            ("Normalization", typeof(NormalizationNone), () => new Normalization.NormalizationController()),
+        };
+
+        _controllerDict.Clear();
+        foreach (var item in types)
+        {
+          _controllerDict[item.DefaultType] = item;
+        }
 
         var contLeft = new SelectableListNodeList();
         contLeft.Add(new SelectableListNode("↙↙", typeof(object), true));
-        contLeft.AddRange(types.Select(t => new SelectableListNode(t.Name, t, false)));
+        contLeft.AddRange(types.Select(t => new SelectableListNode(t.Caption, t.DefaultType, false)));
         ContentInsertLeft = new ItemsController<Type>(contLeft, EhInsertContentLeft);
         ContentInsertLeft.SelectedItem = contLeft[0];
 
         var contRight = new SelectableListNodeList();
         contRight.Add(new SelectableListNode("↘↘", typeof(object), true));
-        contRight.AddRange(types.Select(t => new SelectableListNode(t.Name, t, false)));
+        contRight.AddRange(types.Select(t => new SelectableListNode(t.Caption, t.DefaultType, false)));
         ContentInsertRight = new ItemsController<Type>(contRight, EhInsertContentRight);
         ContentInsertRight.SelectedItem = contRight[0];
 
@@ -229,51 +236,61 @@ namespace Altaxo.Gui.Science.Spectroscopy
       if (!typeof(ISingleSpectrumPreprocessor).IsAssignableFrom(newType))
         return;
 
-      var availableTypes = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(newType);
-
-      if (availableTypes.Length == 0)
+      if (!_controllerDict.TryGetValue(newType, out var dictentry))
         return;
 
-      var typeToCreate = availableTypes.FirstOrDefault(e => !e.Name.Contains("None"));
-      if (typeToCreate == null) return;
-
       // create an instance
-      var newInstance = (ISingleSpectrumPreprocessor)Activator.CreateInstance(typeToCreate);
+      var newInstance = (ISingleSpectrumPreprocessor)Activator.CreateInstance(newType);
+
+      // create the controller
+      var controller = dictentry.CreateController();
+      controller.InitializeDocument(newInstance);
+      Current.Gui.FindAndAttachControlTo(controller);
 
       // find out where to insert this
-      int idx = -1;
-      if (TabControllers.SelectedItem is SelectableListNodeWithController sv)
-      {
-        idx = (int)sv.ControllerTag;
-      }
+      int idx = TabControllers.SelectedIndex;
       if (idx >= 0 && toTheRight)
         ++idx;
 
-      if (idx == -1)
-      {
-        idx = InternalPreprocessingOptions.Count;
-      }
+      idx = Math.Max(0, Math.Min(idx, InternalPreprocessingOptions.Count));
 
+      InsertControllerAndElement(idx, controller, dictentry.Caption);
+      TabControllers.SelectedItem = TabControllers.Items[idx];
+      _selectedController = TabControllers.SelectedValue;
+    }
+
+    private void InsertControllerAndElement(int idx, IMVCANController controller, string caption)
+    {
       var list = InternalPreprocessingOptions.ToList();
-      list.Insert(idx, newInstance);
+
+      TabControllers.Items.Insert(idx, new SelectableListNodeWithController(caption, controller, false)
+      {
+        Controller = controller
+      }
+      );
+
+      // insert the new item in the list
+      list.Insert(idx, (ISingleSpectrumPreprocessor)controller.ModelObject);
       InternalPreprocessingOptions = new SpectralPreprocessingOptionsList(list);
-      UpdateControllers();
     }
 
     private void EhCmdRemoveTab()
     {
-      int idx = -1;
-      if (TabControllers.SelectedItem is SelectableListNodeWithController sv)
-      {
-        idx = (int)sv.ControllerTag;
-      }
+      int idx = TabControllers.SelectedIndex;
 
       if (idx >= 0 && idx < InternalPreprocessingOptions.Count && InternalPreprocessingOptions is SpectralPreprocessingOptionsList)
       {
+        _selectedController = null;
+        TabControllers.Items.RemoveAt(idx);
         var ele = InternalPreprocessingOptions.ToList();
         ele.RemoveAt(idx);
         InternalPreprocessingOptions = new SpectralPreprocessingOptionsList(ele);
-        UpdateControllers();
+        idx = Math.Max(0, Math.Min(idx, TabControllers.Items.Count - 1));
+        if (idx < TabControllers.Items.Count)
+        {
+          TabControllers.SelectedItem = TabControllers.Items[idx];
+          _selectedController = TabControllers.SelectedValue;
+        }
       }
     }
 
@@ -282,21 +299,20 @@ namespace Altaxo.Gui.Science.Spectroscopy
 
     private void EhMoveTab(bool toTheRight)
     {
-      int idx = -1;
-      if (TabControllers.SelectedItem is SelectableListNodeWithController sv)
-      {
-        idx = (int)sv.ControllerTag;
-      }
-
+      int idx = TabControllers.SelectedIndex;
       if (idx >= 0 && idx < InternalPreprocessingOptions.Count && InternalPreprocessingOptions is SpectralPreprocessingOptionsList)
       {
         if ((toTheRight && idx < InternalPreprocessingOptions.Count - 1) || (!toTheRight && idx >= 1))
         {
           ApplyCurrentController();
+          _selectedController = null;
+          var newidx = toTheRight ? idx + 1 : idx - 1;
+          TabControllers.Items.Move(idx, newidx);
           var ele = InternalPreprocessingOptions.ToList();
           ListExtensions.MoveSelectedItems(ele, i => i == idx, toTheRight ? 1 : -1);
           InternalPreprocessingOptions = new SpectralPreprocessingOptionsList(ele);
-          UpdateControllers();
+          TabControllers.SelectedItem = TabControllers.Items[newidx];
+          _selectedController = TabControllers.SelectedValue;
         }
       }
     }
@@ -322,7 +338,7 @@ namespace Altaxo.Gui.Science.Spectroscopy
       {
         _selectedController.Apply(false);
         var model = _selectedController.ModelObject;
-        UpdateDoc(model, GetIndexOfController(_selectedController));
+        UpdateDoc(model, TabControllers.SelectedIndex);
       }
     }
 
@@ -332,13 +348,6 @@ namespace Altaxo.Gui.Science.Spectroscopy
 
       _selectedController = controller;
     }
-
-    private int GetIndexOfController(IMVCANController controller)
-    {
-      var element = TabControllers.Items.First(c => object.ReferenceEquals(c.Tag, controller));
-      return (int)((SelectableListNodeWithController)element).ControllerTag;
-    }
-
 
     protected abstract void UpdateDoc(object model, int index);
 
@@ -350,7 +359,7 @@ namespace Altaxo.Gui.Science.Spectroscopy
       {
         _selectedController.Apply(false);
         var model = _selectedController.ModelObject;
-        UpdateDoc(model, GetIndexOfController(_selectedController));
+        UpdateDoc(model, TabControllers.SelectedIndex);
       }
 
       return ApplyEnd(true, disposeController);
