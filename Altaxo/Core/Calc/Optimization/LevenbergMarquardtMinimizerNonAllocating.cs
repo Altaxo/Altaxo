@@ -607,7 +607,7 @@ namespace Altaxo.Calc.Optimization
 
           for (int j = 0; j < hessian.ColumnCount; j++)
           {
-            hessian[i, j] *= scale_i * Scales.ElementAt(j);
+            hessian[i, j] = (hessian[i, j] * scale_i) * Scales.ElementAt(j); // the evaluation order forced by the braces will avoid overflow or underflow if scale_i*scale_j is too big or too small
           }
         }
       }

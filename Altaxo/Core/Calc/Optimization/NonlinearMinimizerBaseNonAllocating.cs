@@ -231,9 +231,10 @@ namespace Altaxo.Calc.Optimization
 
         for (int i = 0; i < hessian.RowCount; i++)
         {
+          var scaleFactor_i = scaleFactors[i];
           for (int j = 0; j < hessian.ColumnCount; j++)
           {
-            hessian[i, j] *= scaleFactors[i] * scaleFactors[j];
+            hessian[i, j] = (hessian[i, j] * scaleFactor_i) * scaleFactors[j]; // the evaluation order forced by the braces will avoid overflow or underflow if scaleFactors[i]*scaleFactors[j] is too big or too small
           }
         }
       }
