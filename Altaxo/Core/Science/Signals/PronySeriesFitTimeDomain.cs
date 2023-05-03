@@ -1,0 +1,287 @@
+﻿#region Copyright
+
+/////////////////////////////////////////////////////////////////////////////
+//    Altaxo:  a data processing and data plotting program
+//    Copyright (C) 2002-2023 Dr. Dirk Lellinger
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
+//    This program is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with this program; if not, write to the Free Software
+//    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+//
+/////////////////////////////////////////////////////////////////////////////
+
+#endregion Copyright
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using Altaxo.Calc;
+using Altaxo.Calc.LinearAlgebra;
+using Complex64 = System.Numerics.Complex;
+
+namespace Altaxo.Science.Signals
+{
+  /// <summary>
+  /// Performs a fit to a signal with a prony series in the time domain.
+  /// </summary>
+  public record PronySeriesFitTimeDomain
+  {
+    private double _timeMinimum = 1;
+
+    /// <summary>
+    /// Gets or sets smallest relaxation time (the tau_relax of the first Prony term).
+    /// </summary>
+    public double TimeMinimum
+    {
+      get => _timeMinimum;
+      init
+      {
+        if (!(value > 0))
+          throw new ArgumentOutOfRangeException(nameof(TimeMinimum), "Must be > 0");
+
+        _timeMinimum = value;
+      }
+    }
+
+    private double _timeMaximum = 1;
+
+    /// <summary>
+    /// Gets or sets largest relaxation time (the tau_relax of the last Prony term).
+    /// </summary>
+    public double TimeMaximum
+    {
+      get => _timeMaximum;
+      init
+      {
+        if (!(value > 0))
+          throw new ArgumentOutOfRangeException(nameof(TimeMaximum), "Must be > 0");
+        _timeMaximum = value;
+      }
+    }
+
+
+    private int _numberOfRelaxationTimes = 1;
+
+    /// <summary>
+    /// Gets the number of relaxation times, i.e. the number of Prony terms.
+    /// </summary>
+    public int NumberOfRelaxationTimes
+    {
+      get => _numberOfRelaxationTimes;
+      init
+      {
+        if (!(value >= 1))
+          throw new ArgumentOutOfRangeException(nameof(NumberOfRelaxationTimes), "Must be >= 1");
+
+        _numberOfRelaxationTimes = value;
+      }
+    }
+
+
+
+    private double _regularizationParameter;
+
+    /// <summary>
+    /// Gets/sets the regularization parameter. Usually zero. The higher the value, the more are the prony coefficients smoothed out.
+    /// </summary>
+    public double RegularizationParameter
+    {
+      get => _regularizationParameter;
+      init
+      {
+        if (!(value >= 0))
+          throw new ArgumentOutOfRangeException(nameof(RegularizationParameter), "Must be >= 0");
+
+        _regularizationParameter = value;
+      }
+    }
+
+    /// <summary>
+    /// Evaluates a prony series fit in the time domain, using the properties <see cref="TimeMinimum"/>, <see cref="TimeMaximum"/>, <see cref="NumberOfRelaxationTimes"/> and <see cref="RegularizationParameter"/>.
+    /// </summary>
+    /// <param name="xarr">The x-values of the signal (all elements must be positive).</param>
+    /// <param name="yarr">The y-values of the signal.</param>
+    /// <returns>The result of the evaluation, see <see cref="PronySeriesFitTimeDomainResult"/>.</returns>
+    public PronySeriesFitTimeDomainResult Evaluate(IReadOnlyList<double> xarr, IReadOnlyList<double> yarr)
+    {
+      return Evaluate(xarr, yarr, TimeMinimum, TimeMaximum, NumberOfRelaxationTimes, true, RegularizationParameter);
+    }
+
+    /// <summary>
+    /// Evaluates a prony series fit in the time domain.
+    /// </summary>
+    /// <param name="xarr">The x-values of the signal (all elements must be positive).</param>
+    /// <param name="yarr">The y-values of the signal.</param>
+    /// <param name="tmin">The smallest relaxation time (tau of the first Prony term).</param>
+    /// <param name="tmax">The largest relaxation time (tau of the last Prony term).</param>
+    /// <param name="numberOfRelaxationTimes">The number of relaxation times (number of Prony terms).</param>
+    /// <param name="withIntercept">If set to <c>true</c>, an offset term is added. This term can be considered to have a infinite relaxation time.</param>
+    /// <param name="regularizationLambda">A regularization parameter to smooth the resulting array of Prony terms.</param>
+    /// <returns>The result of the evaluation, see <see cref="PronySeriesFitTimeDomainResult"/>.</returns>
+    public static PronySeriesFitTimeDomainResult Evaluate(IReadOnlyList<double> xarr, IReadOnlyList<double> yarr, double tmin, double tmax, int numberOfRelaxationTimes, bool withIntercept, double regularizationLambda)
+    {
+      if (xarr is null)
+        throw new ArgumentNullException(nameof(xarr));
+      if (yarr is null)
+        throw new ArgumentNullException(nameof(yarr));
+      if (xarr.Count != yarr.Count)
+        throw new ArgumentOutOfRangeException(nameof(yarr), "yarr should have the same length than xarr");
+      if (!(tmin > 0))
+        throw new ArgumentOutOfRangeException(nameof(tmin), "Must be > 0");
+      if (!(tmax > tmin))
+        throw new ArgumentOutOfRangeException(nameof(tmax), "Must be > xmin");
+      if (!(numberOfRelaxationTimes >= 1))
+        throw new ArgumentOutOfRangeException(nameof(numberOfRelaxationTimes), "Must be >= 1");
+      if (!(tmax == tmin || numberOfRelaxationTimes >= 2))
+        throw new ArgumentOutOfRangeException(nameof(numberOfRelaxationTimes), "Must be >= 2");
+
+
+      Func<double, double, double> basisfunc_timedomain = (t, tau) => Math.Exp(-t / tau);
+      Func<double, double, double> basisfunc_freqdomain = (freq, tau) => RMath.Pow2(2 * Math.PI * freq * tau) / (1 + RMath.Pow2(2 * Math.PI * freq * tau));
+
+
+      // evaluate the relaxation times (logarithmically spaced)
+      double[] taus = new double[numberOfRelaxationTimes];
+      for (int c = 0; c < numberOfRelaxationTimes; ++c)
+      {
+        double r = c == 0 ? 0 : c / (double)(numberOfRelaxationTimes - 1);
+        double lntau = (1 - r) * Math.Log(tmin) + r * Math.Log(tmax);
+        taus[c] = Math.Exp(lntau);
+      }
+
+      int NR = xarr.Count;
+      int NC = numberOfRelaxationTimes + (withIntercept ? 1 : 0); // one more column for the intercept
+
+      // Basis functions		
+      var X = Matrix<double>.Build.Dense(NR + numberOfRelaxationTimes, NC);
+      for (int c = 0; c < numberOfRelaxationTimes; ++c)
+      {
+        for (int r = 0; r < NR; ++r)
+        {
+          X[r, c] = basisfunc_timedomain(xarr[r], taus[c]);
+        }
+      }
+
+      // Intercept
+      if (withIntercept)
+      {
+        for (int r = 0; r < NR; ++r)
+        {
+          X[r, NC - 1] = 1; // Basisfunktion für den Offset
+        }
+      }
+
+      // Regularization
+      for (int r = NR; r < NR + numberOfRelaxationTimes - 2; ++r)
+      {
+        X[r, r - NR] = regularizationLambda;
+        X[r, r - NR + 1] = -2 * regularizationLambda;
+        X[r, r - NR + 2] = regularizationLambda;
+      }
+
+      // read dependent variable to matrix y
+      var y = Matrix<double>.Build.Dense(NR + numberOfRelaxationTimes, 1);
+      for (int r = 0; r < NR; ++r)
+        y[r, 0] = yarr[r];
+
+
+      // calculate XtX and XtY
+      var XtX = X.TransposeThisAndMultiply(X);
+      var Xty = X.TransposeThisAndMultiply(y);
+
+      IMatrix<double> x, w;
+      FastNonnegativeLeastSquares.Execution(XtX, Xty, null, out x, out w);
+
+      // the result (the spectral amplitudes) are now in X
+
+      double spectralDensityFactor = Math.Log(tmax / tmin) / (numberOfRelaxationTimes - 1);
+      var resultTauCol = taus.Concat(new double[] { double.PositiveInfinity }).ToArray();
+      var resultPronyCol = new double[NC + 1];
+      var resultRelaxationDensityCol = new double[NC + 1];
+
+      for (int i = 0; i < NC; ++i)
+      {
+        resultPronyCol[i] = x[i, 0];
+        resultRelaxationDensityCol[i] = x[i, 0] / spectralDensityFactor;
+      }
+
+      var result = new PronySeriesFitTimeDomainResult
+      {
+        RelaxationTimes = resultTauCol,
+        PronyCoefficients = resultPronyCol,
+        RelaxationDensities = resultRelaxationDensityCol,
+      };
+
+      return result;
+    }
+
+    /// <summary>
+    /// Represents the result of a prony series fit in the time domain.
+    /// </summary>
+    public record PronySeriesFitTimeDomainResult
+    {
+      /// <summary>
+      /// Gets the relaxation times.
+      /// </summary>
+      public double[] RelaxationTimes { get; init; }
+
+
+      /// <summary>
+      /// Gets the prony coefficients, corresponding to the <see cref="RelaxationTimes"/>.
+      /// </summary>
+      public double[] PronyCoefficients { get; init; }
+
+      /// <summary>
+      /// Gets the relaxation densities, corresponding to the <see cref="RelaxationTimes"/>.
+      /// </summary>
+      public double[] RelaxationDensities { get; init; }
+
+
+      /// <summary>
+      /// Gets (in the time domain) the y-value in dependence on x.
+      /// </summary>
+      /// <param name="t">The x-value (time).</param>
+      /// <returns>The y-value in the time domain at time x.</returns>
+      public double GetTimeDomainYOfTime(double t)
+      {
+        double sum = 0;
+        for (int i = 0; i < PronyCoefficients.Length; ++i)
+          sum += PronyCoefficients[i] * Math.Exp(-t / RelaxationTimes[i]);
+        return sum;
+      }
+
+      /// <summary>
+      /// Gets (in the frequency domain) the y-value in dependence on the circular frequency.
+      /// </summary>
+      /// <param name="w">The circular frequency.</param>
+      /// <returns>The y-value in the frequency domain. Note that the imaginary part is negative.</returns>
+      public Complex64 GetFrequencyDomainYOfOmega(double w)
+      {
+        Complex64 sum = 0;
+        for (int i = 0; i < PronyCoefficients.Length; ++i)
+          sum += PronyCoefficients[i] * w / (1 + Complex64.ImaginaryOne * w * RelaxationTimes[i]);
+        return sum;
+      }
+
+      /// <summary>
+      /// Gets (in the frequency domain) the y-value in dependence on the frequency.
+      /// </summary>
+      /// <param name="f">The frequency.</param>
+      /// <returns>The y-value in the frequency domain. Note that the imaginary part is negative.</returns>
+      public Complex64 GetFrequencyDomainYOfFrequency(double f)
+      {
+        return GetFrequencyDomainYOfOmega(f * 2 * Math.PI);
+      }
+    }
+  }
+}
