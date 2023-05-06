@@ -27,6 +27,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
+using Altaxo.Calc;
 using Altaxo.Collections;
 using Altaxo.Data;
 using Altaxo.Main;
@@ -391,9 +392,38 @@ namespace Altaxo.Science.Spectroscopy.Raman
           result.Add((combinedNeonPeakMatchings[i].NistWL, vm, em));
           i = k;
         }
-        else // more than two points of the same Nist wavelength not supported in the moment
+        else // more than two points of the same Nist wavelength 
         {
-          throw new NotImplementedException();
+          // with more than 2 points, we will weight the points according to their standard deviation
+          double totalWeight = 0;
+          for (int m = i; m <= k; ++m)
+          {
+            totalWeight += 1 / combinedNeonPeakMatchings[m].MeasWLStdDev;
+          }
+
+          if (totalWeight > 0 && !double.IsInfinity(totalWeight))
+          {
+            double sum = 0, sum2 = 0;
+            for (int m = i; m <= k; ++m)
+            {
+              sum += combinedNeonPeakMatchings[m].MeasWL / combinedNeonPeakMatchings[m].MeasWLStdDev;
+              sum2 += RMath.Pow2(combinedNeonPeakMatchings[m].MeasWL) / combinedNeonPeakMatchings[m].MeasWLStdDev;
+            }
+            double mean = sum / (totalWeight);
+            double std = Math.Sqrt(totalWeight * sum2 - sum * sum) / (totalWeight);
+            result.Add((combinedNeonPeakMatchings[i].NistWL, mean, std));
+          }
+          else
+          {
+            // without weights, we can only use the average
+            var qs = new Altaxo.Calc.Regression.QuickStatistics();
+            for (int m = i + 1; m <= k; ++m)
+            {
+              qs.Add(combinedNeonPeakMatchings[m].MeasWL);
+            }
+            result.Add((combinedNeonPeakMatchings[i].NistWL, qs.Mean, qs.StandardDeviation));
+          }
+          i = k;
         }
       }
       return result;
