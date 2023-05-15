@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2023 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -26,8 +26,6 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Text;
 using Altaxo.Collections;
 using Altaxo.Settings;
 
@@ -99,6 +97,12 @@ namespace Altaxo.Gui.Settings
       }
     }
 
+    private int CompareCultures(CultureInfo x, CultureInfo y)
+    {
+      return string.Compare(x.DisplayName, y.DisplayName);
+    }
+
+
     public override bool Apply(bool disposeController)
     {
       var docCulture = (CultureInfo)_doc.Culture.Clone();
@@ -126,10 +130,7 @@ namespace Altaxo.Gui.Settings
       _availableCulturesList.Add(new SelectableListNode(cult.DisplayName, cult, cult.LCID == _doc.CultureID));
     }
 
-    private int CompareCultures(CultureInfo x, CultureInfo y)
-    {
-      return string.Compare(x.DisplayName, y.DisplayName);
-    }
+
 
     private void EhCultureChanged()
     {

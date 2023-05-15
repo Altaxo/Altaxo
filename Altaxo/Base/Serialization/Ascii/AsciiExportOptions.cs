@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2023 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -24,65 +24,88 @@
 
 #nullable enable
 using System;
-using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
+using Altaxo.Data;
+using Altaxo.Main.Properties;
 
 namespace Altaxo.Serialization.Ascii
 {
-  using System.Diagnostics.CodeAnalysis;
-  using Altaxo.Data;
-
   /// <summary>
   /// Options for export of ASCII files
   /// </summary>
-  public class AsciiExportOptions
+  public record AsciiExportOptions
   {
+    public static readonly PropertyKey<AsciiExportOptions> PropertyKeyAsciiExportOptions = new(
+      "12CFB92C-8D90-4A34-A481-7C30B15654AB",
+      "Table\\AsciiExportOptions",
+      PropertyLevel.All,
+      typeof(DataTable),
+      () => null // we use null here, to be able to detect if the options will be set for the first time
+      );
+
+
+    (char Separator, char Substitute) _separatorAndSubstituteChar;
+
     /// <summary>
     /// The separator char.
     /// </summary>
-    public char SeparatorChar { get; protected set; }
+    public char SeparatorChar => _separatorAndSubstituteChar.Separator;
 
     /// <summary>
     /// Substitute for separator char. Should the separator char be present in header or items, it is replaced by this char.
     /// </summary>
-    public char SubstituteForSeparatorChar { get; protected set; }
+    public char SubstituteForSeparatorChar => _separatorAndSubstituteChar.Substitute;
+
+    /// <summary>
+    /// Gets the separator and substitute character.
+    /// </summary>
+    /// <value>
+    /// The separator and substitute character.
+    /// </value>
+    /// <exception cref="Markdig.Helpers.ThrowHelper.InvalidOperationException(System.String)">Separator char and substitute char must be different</exception>
+    public (char Separator, char Substitute) SeparatorAndSubstituteChar
+    {
+      get => _separatorAndSubstituteChar;
+      init
+      {
+        if (value.Substitute == value.Separator)
+          throw new InvalidOperationException("Separator char and substitute char must be different");
+        _separatorAndSubstituteChar = value;
+      }
+    }
 
     /// <summary>
     /// If true, the first line of the exported Ascii file will contain the data column names, separated by the <see cref="SeparatorChar" />.
     /// </summary>
-    public bool ExportDataColumnNames { get; set; }
+    public bool ExportDataColumnNames { get; init; }
 
     /// <summary>
     /// If true, the property columns will be exported.
     /// </summary>
-    public bool ExportPropertyColumns { get; set; }
+    public bool ExportPropertyColumns { get; init; }
 
     /// <summary>
     /// If true, the property items will be exported with name. In order to do that, each property item will be headed by
     /// "PropColName=". SeparatorChar and Newlines will be removed both from the items text and from the PropertyColumnNames.
     /// </summary>
-    public bool ExportPropertiesWithName { get; set; }
+    public bool ExportPropertiesWithName { get; init; }
 
-    /// <summary>
-    /// Holds a dictionary of column types (keys) and functions (values), which convert a AltaxoVariant into a string.
-    /// Normally the ToString() function is used on AltaxoVariant to convert to string. By using this dictionary it is possible
-    /// to add custom converters.
-    /// </summary>
-    private Dictionary<System.Type, Func<Altaxo.Data.AltaxoVariant, string>> _typeConverters;
 
-    private IFormatProvider _formatProvider;
+    private CultureInfo _culture;
 
-    public IFormatProvider FormatProvider
+    public CultureInfo Culture
     {
       get
       {
-        return _formatProvider;
+        return _culture;
       }
-      [MemberNotNull(nameof(_formatProvider))]
-      set
+      [MemberNotNull(nameof(_culture))]
+      init
       {
         if (value is null)
-          throw new ArgumentNullException(nameof(IFormatProvider));
-        _formatProvider = value;
+          throw new ArgumentNullException(nameof(Culture));
+        _culture = value;
       }
     }
 
@@ -91,140 +114,78 @@ namespace Altaxo.Serialization.Ascii
     /// </summary>
     public AsciiExportOptions()
     {
-      SeparatorChar = '\t';
-      SubstituteForSeparatorChar = ' ';
+      _separatorAndSubstituteChar = ('\t', ' ');
       ExportDataColumnNames = true;
       ExportPropertyColumns = true;
-      FormatProvider = System.Globalization.CultureInfo.CurrentCulture;
-
-      _typeConverters = new Dictionary<Type, Func<Altaxo.Data.AltaxoVariant, string>>
-      {
-        { typeof(DoubleColumn), GetDefaultConverter(typeof(DoubleColumn)) },
-        { typeof(DateTimeColumn), GetDefaultConverter(typeof(DateTimeColumn)) },
-        { typeof(TextColumn), GetDefaultConverter(typeof(TextColumn)) }
-      };
+      Culture = Altaxo.Settings.GuiCulture.Instance;
     }
 
-    /// <summary>
-    /// Sets SeparatorChar and SubstituteChar. They must not be the same.
-    /// </summary>
-    /// <param name="separatorChar">Separator char.</param>
-    /// <param name="substituteChar">Substitute char.</param>
-    public void SetSeparator(char separatorChar, char substituteChar)
-    {
-      if (separatorChar == substituteChar)
-        throw new ArgumentException("separatorChar == substituteChar");
-      SeparatorChar = separatorChar;
-      SubstituteForSeparatorChar = substituteChar;
-    }
+
 
     /// <summary>
     /// Sets the separator char and chooses the substitute char automatically.
     /// </summary>
     /// <param name="separatorChar">The separator char.</param>
-    public void SetSeparator(char separatorChar)
+    public AsciiExportOptions WithSeparator(char separatorChar)
     {
-      SeparatorChar = separatorChar;
-      if ('\t' == SeparatorChar)
-        SubstituteForSeparatorChar = ' ';
-      else
-        SubstituteForSeparatorChar = '_';
+      return this with
+      {
+        SeparatorAndSubstituteChar = (separatorChar, separatorChar == '\t' ? ' ' : '_'),
+      };
     }
+
+    #region Serialization
+
+    #region Version 0
 
     /// <summary>
-    /// Sets the converter for the items of a specific column type.
+    /// 2023-05-15 initial version.
     /// </summary>
-    /// <param name="columnType">The column type for which to set the converter.</param>
-    /// <param name="stringConverter">The converter function, which converts an AltaxoVariant into a string.</param>
-    public void SetConverter(System.Type columnType, Func<Altaxo.Data.AltaxoVariant, string> stringConverter)
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AsciiExportOptions), 0)]
+    private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
-      if (columnType is null)
-        throw new ArgumentNullException("columnType");
+      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        var s = (AsciiExportOptions)obj;
 
-      if (stringConverter is not null)
-        _typeConverters[columnType] = stringConverter;
-      else // stringConverter is null, try to get the default converter
-        _typeConverters[columnType] = GetDefaultConverter(columnType);
+        info.AddValue("CultureLCID", s.Culture?.LCID ?? -1);
+        info.AddValue("SeparatorChar", s.SeparatorChar);
+        info.AddValue("SubstituteForSeparatorChar", s.SubstituteForSeparatorChar);
+        info.AddValue("ExportDataColumnNames", s.ExportDataColumnNames);
+        info.AddValue("ExportPropertyColumns", s.ExportPropertyColumns);
+        info.AddValue("ExportPropertiesWithName", s.ExportPropertiesWithName);
+      }
+
+      protected virtual AsciiExportOptions SDeserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      {
+        var s = (o is null ? new AsciiExportOptions() : (AsciiExportOptions)o);
+
+        var cultureLCID = info.GetInt32("CultureLCID");
+        var separatorChar = info.GetChar("SeparatorChar");
+        var substituteForSeparatorChar = info.GetChar("SubstituteForSeparatorChar");
+        var exportDataColumnNames = info.GetBoolean("ExportDataColumnNames");
+        var exportPropertyColumns = info.GetBoolean("ExportPropertyColumns");
+        var exportPropertiesWithName = info.GetBoolean("ExportPropertiesWithName");
+
+        return s with
+        {
+          Culture = CultureInfo.GetCultureInfo(cultureLCID),
+          SeparatorAndSubstituteChar = (separatorChar, substituteForSeparatorChar),
+          ExportDataColumnNames = exportDataColumnNames,
+          ExportPropertyColumns = exportPropertyColumns,
+          ExportPropertiesWithName = exportPropertiesWithName,
+        };
+      }
+
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      {
+        var s = SDeserialize(o, info, parent);
+        return s;
+      }
     }
 
-    public Func<Altaxo.Data.AltaxoVariant, string>? GetConverter(System.Type columnType)
-    {
-      if (_typeConverters.TryGetValue(columnType, out var result))
-        return result;
-      else
-        return null;
-    }
+    #endregion Version 0
 
-    #region Helper function
-
-    /// <summary>
-    /// Converts a data item to a string.
-    /// </summary>
-    /// <param name="col">The data column.</param>
-    /// <param name="index">Index of the item in the data column, which should be converted.</param>
-    /// <returns>The converted item as string.</returns>
-    public string DataItemToString(Altaxo.Data.DataColumn col, int index)
-    {
-      if (col.IsElementEmpty(index))
-        return string.Empty;
-
-      string result;
-      if (_typeConverters.TryGetValue(col.GetType(), out var func))
-        result = func(col[index]);
-      else
-        result = DefaultTextConverter(col[index]);
-
-      return result.Replace(SeparatorChar, SubstituteForSeparatorChar);
-    }
-
-    /// <summary>
-    /// Returns the default converter for a given column type.
-    /// </summary>
-    /// <param name="columnType">The column type.</param>
-    /// <returns>Default converter for the given column type.</returns>
-    public Func<AltaxoVariant, string> GetDefaultConverter(System.Type columnType)
-    {
-      if (columnType == typeof(DoubleColumn))
-        return DefaultDoubleConverter;
-      else if (columnType == typeof(DateTimeColumn))
-        return DefaultDateTimeConverter;
-      else
-        return DefaultTextConverter;
-    }
-
-    /// <summary>
-    /// Converts a given string to a string which will not contain the separator char nor contains newlines.
-    /// </summary>
-    /// <param name="s"></param>
-    /// <returns></returns>
-    public string ConvertToSaveString(string s)
-    {
-      s = s.Replace(SeparatorChar, SubstituteForSeparatorChar);
-      s = s.Replace('\r', ' ');
-      s = s.Replace('\n', ' ');
-      return s;
-    }
-
-    private string DefaultTextConverter(AltaxoVariant x)
-    {
-      string s = x.ToString();
-
-      s = s.Replace('\r', ' ');
-      s = s.Replace('\n', ' ');
-
-      return s;
-    }
-
-    private string DefaultDoubleConverter(AltaxoVariant x)
-    {
-      return ((double)x).ToString("r", _formatProvider);
-    }
-
-    private string DefaultDateTimeConverter(AltaxoVariant x)
-    {
-      return ((DateTime)x).ToString("o");
-    }
-
-    #endregion Helper function
+    #endregion Serialization
   }
 }

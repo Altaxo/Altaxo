@@ -10,7 +10,7 @@
 			<ColumnDefinition Width="Auto" />
 			<ColumnDefinition Width="*" />
 		</Grid.ColumnDefinitions>
-		<TextBox x:Name="_guiEditBox" Grid.Column="0" TextChanged="EhTextChanged" AcceptsTab="True" AcceptsReturn="False" />
+		<TextBox x:Name="_guiEditBox" Grid.Column="0" TextChanged="EhTextChanged" AcceptsTab="True" AcceptsReturn="False" MinWidth="80"/>
 		<Label x:Name="_guiAsciiValue" Grid.Column="1" />
 		<Rectangle x:Name="_guiEmptyIndicator" Grid.Column="1" Stroke="Red" StrokeThickness="2" Visibility="Hidden" />
 	</Grid>

@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2014 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2023 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -22,10 +22,7 @@
 
 #endregion Copyright
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 
@@ -39,6 +36,37 @@ namespace Altaxo.Gui.Serialization.Ascii
     public AsciiCharControl()
     {
       InitializeComponent();
+    }
+
+    public char Value
+    {
+      get { return (char)GetValue(ValueProperty); }
+      set { SetValue(ValueProperty, value); }
+    }
+
+    /// <summary>
+    /// Identifies the Value dependency property.
+    /// </summary>
+    public static readonly DependencyProperty ValueProperty =
+        DependencyProperty.Register(
+            "Value", typeof(char), typeof(AsciiCharControl),
+            new FrameworkPropertyMetadata('\0',
+                new PropertyChangedCallback(OnValueChanged)
+            )
+            { BindsTwoWayByDefault = true }
+        );
+
+    private static void OnValueChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
+    {
+      var control = (AsciiCharControl)obj;
+
+      var oldValue = (char)args.OldValue;
+      var newValue = (char)args.NewValue;
+
+      if (oldValue != newValue)
+      {
+        control._guiEditBox.Text = string.Empty + newValue;
+      }
     }
 
     public string Text
@@ -94,6 +122,7 @@ namespace Altaxo.Gui.Serialization.Ascii
       {
         _guiAsciiValue.Foreground = _guiEditBox.Foreground;
         _guiEmptyIndicator.Visibility = System.Windows.Visibility.Hidden;
+        Value = tb.Text[0];
       }
     }
   }

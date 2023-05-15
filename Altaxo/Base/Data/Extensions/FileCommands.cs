@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2023 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -237,6 +237,18 @@ namespace Altaxo.Data
     /// <param name="dataTable">DataTable to export.</param>
     public static void ShowExportAsciiDialog(this DataTable dataTable)
     {
+      var exportOptions = dataTable.GetPropertyValue(AsciiExportOptions.PropertyKeyAsciiExportOptions, () => null);
+
+      if (exportOptions is null)
+      {
+        exportOptions = new AsciiExportOptions();
+        object exportOptionsObj = exportOptions;
+        if (!Current.Gui.ShowDialog(ref exportOptionsObj, "Edit Ascii export options"))
+          return;
+        exportOptions = (AsciiExportOptions)exportOptionsObj;
+        Current.PropertyService.ApplicationSettings.SetValue(AsciiExportOptions.PropertyKeyAsciiExportOptions, exportOptions);
+      }
+
       var options = new Altaxo.Gui.SaveFileOptions();
       options.AddFilter("*.csv;*.dat;*.txt", "Text files (*.csv;*.dat;*.txt)");
       options.AddFilter("*.*", "All files (*.*)");
@@ -249,7 +261,8 @@ namespace Altaxo.Data
         {
           try
           {
-            Altaxo.Serialization.Ascii.AsciiExporter.ExportAscii(myStream, dataTable, '\t');
+            var exporter = new AsciiExporter(exportOptions);
+            exporter.ExportAscii(myStream, dataTable);
           }
           catch (Exception ex)
           {
