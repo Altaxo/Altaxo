@@ -30,14 +30,19 @@ namespace Altaxo.Data
   /// <summary>
   /// Interface that must be implemented by all data sources that can provide data for an Altaxo data table.
   /// </summary>
-  public interface IAltaxoTableDataSource : Main.ICopyFrom, IDisposable, Main.ISuspendableByToken, Main.IDocumentLeafNode
+  public interface IAltaxoTableDataSource :
+    Main.ICopyFrom,
+    IDisposable,
+    Main.ISuspendableByToken,
+    Main.IDocumentLeafNode,
+    Main.IHasDocumentReferences
   {
     /// <summary>
     /// Fills (or refills) the data. The data source is represented by this instance, the destination table is provided in the argument <paramref name="destinationTable"/>.
     /// </summary>
     /// <param name="destinationTable">The destination table.</param>
     /// <param name="reporter"></param>
-    void FillData(Altaxo.Data.DataTable destinationTable, IProgressReporter reporter = null);
+    void FillData(Altaxo.Data.DataTable destinationTable, IProgressReporter? reporter = null);
 
     IDataSourceImportOptions ImportOptions { get; set; }
 
@@ -48,8 +53,6 @@ namespace Altaxo.Data
     /// Called after deserization of a data source instance, when it is already associated with a data table.
     /// </summary>
     void OnAfterDeserialization();
-
-    void VisitDocumentReferences(Main.DocNodeProxyReporter ReportProxies);
   }
 
   /// <summary>

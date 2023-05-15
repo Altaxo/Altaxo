@@ -36,20 +36,20 @@ namespace Altaxo.Science.Signals
   /// If the signal is a time domain signal, it is assumed to be a relaxation signal, i.e. is decreasing with time.
   /// If the signal is in the frequency domain, it is assumed to be a modulus, i.e. the real part is increasing with frequency.
   /// </summary>
-  public record PronySeriesRelaxation
+  public record PronySeriesRelaxation : Main.IImmutable
   {
     private double _timeMinimum = 1;
 
     /// <summary>
     /// Gets or sets smallest relaxation time (the tau_relax of the first Prony term).
     /// </summary>
-    public double TimeMinimum
+    public double MinimalRelaxationTime
     {
       get => _timeMinimum;
       init
       {
         if (!(value > 0))
-          throw new ArgumentOutOfRangeException(nameof(TimeMinimum), "Must be > 0");
+          throw new ArgumentOutOfRangeException(nameof(MinimalRelaxationTime), "Must be > 0");
 
         _timeMinimum = value;
       }
@@ -60,13 +60,13 @@ namespace Altaxo.Science.Signals
     /// <summary>
     /// Gets or sets largest relaxation time (the tau_relax of the last Prony term).
     /// </summary>
-    public double TimeMaximum
+    public double MaximalRelaxationTime
     {
       get => _timeMaximum;
       init
       {
         if (!(value > 0))
-          throw new ArgumentOutOfRangeException(nameof(TimeMaximum), "Must be > 0");
+          throw new ArgumentOutOfRangeException(nameof(MaximalRelaxationTime), "Must be > 0");
         _timeMaximum = value;
       }
     }
@@ -114,19 +114,68 @@ namespace Altaxo.Science.Signals
     public bool UseIntercept { get; init; } = true;
 
 
+    #region Serialization
+
     /// <summary>
-    /// Evaluates a prony series fit in the time domain, using the properties <see cref="TimeMinimum"/>, <see cref="TimeMaximum"/>, <see cref="NumberOfRelaxationTimes"/> and <see cref="RegularizationParameter"/>.
+    /// 2023-05-15 initial version
+    /// </summary>
+    /// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PronySeriesRelaxation), 0)]
+    public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        var s = (PronySeriesRelaxation)obj;
+        info.AddValue("MinimalRelaxationTime", s.MinimalRelaxationTime);
+        info.AddValue("MaximalRelaxationTime", s.MaximalRelaxationTime);
+        info.AddValue("NumberOfRelaxationTimes", s.NumberOfRelaxationTimes);
+        info.AddValue("UseIntercept", s.UseIntercept);
+        info.AddValue("RegularizationParameter", s.RegularizationParameter);
+      }
+
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      {
+        var minimalValue = info.GetDouble("MinimalRelaxationTime");
+        var maximalValue = info.GetDouble("MMaximalRelaxationTime");
+        var numberRelax = info.GetInt32("NumberOfRelaxationTimes");
+        var intercept = info.GetBoolean("UseIntercept");
+        var regularization = info.GetDouble("RegularizationParameter");
+
+        return o is null ? new PronySeriesRelaxation
+        {
+          MinimalRelaxationTime = minimalValue,
+          MaximalRelaxationTime = maximalValue,
+          NumberOfRelaxationTimes = numberRelax,
+          UseIntercept = intercept,
+          RegularizationParameter = regularization
+        } :
+          ((PronySeriesRelaxation)o) with
+          {
+            MinimalRelaxationTime = minimalValue,
+            MaximalRelaxationTime = maximalValue,
+            NumberOfRelaxationTimes = numberRelax,
+            UseIntercept = intercept,
+            RegularizationParameter = regularization
+          };
+      }
+    }
+    #endregion
+
+
+
+    /// <summary>
+    /// Evaluates a prony series fit in the time domain, using the properties <see cref="MinimalRelaxationTime"/>, <see cref="MaximalRelaxationTime"/>, <see cref="NumberOfRelaxationTimes"/> and <see cref="RegularizationParameter"/>.
     /// </summary>
     /// <param name="xarr">The x-values of the signal (all elements must be positive).</param>
     /// <param name="yarr">The y-values of the signal.</param>
     /// <returns>The result of the evaluation, see <see cref="PronySeriesRelaxationResult"/>.</returns>
     public PronySeriesRelaxationResult EvaluateTimeDomain(IReadOnlyList<double> xarr, IReadOnlyList<double> yarr)
     {
-      return EvaluateTimeDomain(xarr, yarr, TimeMinimum, TimeMaximum, NumberOfRelaxationTimes, UseIntercept, RegularizationParameter);
+      return EvaluateTimeDomain(xarr, yarr, MinimalRelaxationTime, MaximalRelaxationTime, NumberOfRelaxationTimes, UseIntercept, RegularizationParameter);
     }
 
     /// <summary>
-    /// Evaluates a prony series fit in the time domain, using the properties <see cref="TimeMinimum"/>, <see cref="TimeMaximum"/>, <see cref="NumberOfRelaxationTimes"/> and <see cref="RegularizationParameter"/>.
+    /// Evaluates a prony series fit in the time domain, using the properties <see cref="MinimalRelaxationTime"/>, <see cref="MaximalRelaxationTime"/>, <see cref="NumberOfRelaxationTimes"/> and <see cref="RegularizationParameter"/>.
     /// </summary>
     /// <param name="xarr">The x-values of the signal (all elements must be positive).</param>
     /// <param name="isCircularFrequency">True if xarr contains circular frequencies; false if xarr contains normal frequencies.</param>
@@ -135,11 +184,11 @@ namespace Altaxo.Science.Signals
     /// <returns>The result of the evaluation, see <see cref="PronySeriesRelaxationResult"/>.</returns>
     public PronySeriesRelaxationResult EvaluateFrequencyDomain(IReadOnlyList<double> xarr, bool isCircularFrequency, IReadOnlyList<double>? yarrRe, IReadOnlyList<double>? yarrIm)
     {
-      return EvaluateFrequencyDomain(xarr, isCircularFrequency, yarrRe, yarrIm, TimeMinimum, TimeMaximum, NumberOfRelaxationTimes, UseIntercept, RegularizationParameter);
+      return EvaluateFrequencyDomain(xarr, isCircularFrequency, yarrRe, yarrIm, MinimalRelaxationTime, MaximalRelaxationTime, NumberOfRelaxationTimes, UseIntercept, RegularizationParameter);
     }
 
     /// <summary>
-    /// Evaluates a prony series fit in the time domain, using the properties <see cref="TimeMinimum"/>, <see cref="TimeMaximum"/>, <see cref="NumberOfRelaxationTimes"/> and <see cref="RegularizationParameter"/>.
+    /// Evaluates a prony series fit in the time domain, using the properties <see cref="MinimalRelaxationTime"/>, <see cref="MaximalRelaxationTime"/>, <see cref="NumberOfRelaxationTimes"/> and <see cref="RegularizationParameter"/>.
     /// </summary>
     /// <param name="xarr">The x-values of the signal (all elements must be positive).</param>
     /// <param name="isCircularFrequency">True if xarr contains circular frequencies; false if xarr contains normal frequencies.</param>
@@ -147,7 +196,7 @@ namespace Altaxo.Science.Signals
     /// <returns>The result of the evaluation, see <see cref="PronySeriesRelaxationResult"/>.</returns>
     public PronySeriesRelaxationResult EvaluateFrequencyDomain(IReadOnlyList<double> xarr, bool isCircularFrequency, IReadOnlyList<Complex64> yarr)
     {
-      return EvaluateFrequencyDomain(xarr, isCircularFrequency, yarr.Select(c => c.Real).ToArray(), yarr.Select(c => c.Imaginary).ToArray(), TimeMinimum, TimeMaximum, NumberOfRelaxationTimes, UseIntercept, RegularizationParameter);
+      return EvaluateFrequencyDomain(xarr, isCircularFrequency, yarr.Select(c => c.Real).ToArray(), yarr.Select(c => c.Imaginary).ToArray(), MinimalRelaxationTime, MaximalRelaxationTime, NumberOfRelaxationTimes, UseIntercept, RegularizationParameter);
     }
 
     /// <summary>

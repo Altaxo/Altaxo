@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2023 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -29,8 +29,8 @@ using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Calc.Regression;
 using Altaxo.Data;
 using Altaxo.Gui;
-using Altaxo.Gui.Worksheet;
 using Altaxo.Gui.Worksheet.Viewing;
+using Altaxo.Science.Signals;
 using Altaxo.Science.Spectroscopy.Resampling;
 
 namespace Altaxo.Worksheet.Commands.Analysis
@@ -204,5 +204,81 @@ namespace Altaxo.Worksheet.Commands.Analysis
     }
 
     #endregion Multivariate linear fit
+
+    #region Prony fits
+    public static void PronyRelaxationTimeDomain(IWorksheetController ctrl)
+    {
+      int groupNumber = 0;
+
+      DataColumn? x = null;
+      DataColumn? y = null;
+
+      if (ctrl.SelectedDataColumns.Count > 0)
+      {
+        y = ctrl.DataTable.DataColumns[ctrl.SelectedDataColumns[0]];
+        groupNumber = ctrl.DataTable.DataColumns.GetColumnGroup(y);
+        x = ctrl.DataTable.DataColumns.FindXColumnOf(y);
+      }
+
+      var inputOptions = new PronySeriesRelaxation();
+      var inputData = new XAndYColumn(ctrl.DataTable, groupNumber);
+      if (x is not null)
+        inputData.XColumn = x;
+      if (y is not null)
+        inputData.YColumn = y;
+
+
+      var (xArr, yArr, rowCount) = inputData.GetResolvedXYData();
+
+      if (rowCount > 0)
+      {
+        double xMin = double.MaxValue, xMax = 0;
+        for (int i = 0; i < xArr.Length; i++)
+        {
+          if (xArr[i] > 0 && xArr[i] < double.MaxValue)
+          {
+            xMin = Math.Min(xMin, xArr[i]);
+            xMax = Math.Max(xMax, xArr[i]);
+          }
+        }
+
+        xMin = Math.Pow(10, 0.5 * Math.Floor(Math.Log10(xMin) * 2));
+        xMax = Math.Pow(10, 0.5 * Math.Ceiling(Math.Log10(xMax) * 2));
+        int numPoints = (int)(Math.Ceiling(Math.Log10(xMax) * 2) - Math.Floor(Math.Log10(xMin) * 2) + 1);
+
+        inputOptions = inputOptions with
+        {
+          MinimalRelaxationTime = xMin,
+          MaximalRelaxationTime = xMax,
+          NumberOfRelaxationTimes = numPoints,
+        };
+      }
+
+      var dataSource = new PronySeriesRelaxationTimeDomainDataSource(inputData, inputOptions, new DataSourceImportOptions());
+
+      var controller = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { dataSource }, typeof(IMVCANController));
+
+      if (true == Current.Gui.ShowDialog(controller, "Prony relaxation"))
+      {
+        dataSource = (PronySeriesRelaxationTimeDomainDataSource)controller.ModelObject;
+        var table = new DataTable
+        {
+          Name = ctrl.DataTable.Folder + "WSpectrumFromPronySeries"
+        };
+        Current.Project.DataTableCollection.Add(table);
+        table.DataSource = dataSource;
+        try
+        {
+          table.DataSource.FillData(table);
+          Current.ProjectService.CreateNewWorksheet(table);
+        }
+        catch (Exception ex)
+        {
+          Current.Gui.ErrorMessageBox($"There was an error during analysis of the data\r\nDetails:\r\n{ex.ToString()}", "Error in Prony analysis");
+        }
+      }
+    }
+
+    #endregion
   }
 }

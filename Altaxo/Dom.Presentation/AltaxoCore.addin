@@ -633,8 +633,12 @@
 					class="Altaxo.Worksheet.Commands.AnalysisDifferentiateSmooth" />
         <MenuItem id="Interpolate" label="${res:XML.MainMenu.AnalysisMenu.Interpolate}" description="${res:XML.MainMenu.AnalysisMenu.Interpolate.Description}"
 					class="Altaxo.Worksheet.Commands.AnalysisInterpolation" />
-        <MenuItem id="MultiVarLinRegression" label="${res:XML.MainMenu.AnalysisMenu.MultivariateLinearRegression}" description="${res:XML.MainMenu.AnalysisMenu.MultivariateLinearRegression.Description}"
+          <MenuItem id="FitMenu" label="Fits"  type="Menu">
+              <MenuItem id="MultiVarLinRegression" label="${res:XML.MainMenu.AnalysisMenu.MultivariateLinearRegression}" description="${res:XML.MainMenu.AnalysisMenu.MultivariateLinearRegression.Description}"
 					class="Altaxo.Worksheet.Commands.AnalysisMultivariateLinearRegression" />
+              <MenuItem id="PronyRelaxTime" label="Prony relaxation (time domain).." description="Performs a prony fit to a relaxation signal in the time domain."
+					class="Altaxo.Worksheet.Commands.AnalysisPronyRelaxationTimeDomain" />
+          </MenuItem>
         <MenuItem id="1DFFT" label="${res:XML.MainMenu.AnalysisMenu.FFT}" description="${res:XML.MainMenu.AnalysisMenu.FFT.Description}"
 					class="Altaxo.Worksheet.Commands.AnalysisFFT" />
         <MenuItem id="2DFFT" label="${res:XML.MainMenu.AnalysisMenu.2DFFT}" description="${res:XML.MainMenu.AnalysisMenu.2DFFT.Description}"
