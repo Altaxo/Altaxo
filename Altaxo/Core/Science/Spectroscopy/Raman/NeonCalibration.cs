@@ -793,6 +793,11 @@ namespace Altaxo.Science.Spectroscopy.Raman
       foreach (var peakDesc in foundPeaks)
       {
         var (measPeakCenterWL, measPeakCenterWLStdDev, _, _, _, _, fwhm, _) = peakDesc.FitFunction.GetPositionAreaHeightFWHMFromSinglePeakParameters(peakDesc.PeakParameter, peakDesc.PeakParameterCovariances);
+        if (fwhm > 10)
+        {
+          continue; // if the FWHM is very broad (more than 10 nm) then we ignore this peak
+        }
+
         // Note that for left and right we use full width = 2 x half width
         var measPeakLeftWL = measPeakCenterWL - fwhm;
         var measPeakRightWL = measPeakCenterWL + fwhm;
