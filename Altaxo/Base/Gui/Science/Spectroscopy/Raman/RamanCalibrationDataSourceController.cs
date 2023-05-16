@@ -24,17 +24,18 @@
 
 using System;
 using System.Collections.Generic;
+using System.Windows.Input;
 using Altaxo.Data;
 using Altaxo.Science.Spectroscopy.Raman;
 
 namespace Altaxo.Gui.Science.Spectroscopy.Raman
 {
-  public interface IRamanCalibrationDataSourceView : IDataContextAwareView {}
+  public interface IRamanCalibrationDataSourceView : IDataContextAwareView { }
 
 
   [ExpectedTypeOfView(typeof(IRamanCalibrationDataSourceView))]
   [UserControllerForObject(typeof(RamanCalibrationDataSource))]
-  public class RamanCalibrationDataSourceController : MVCANControllerEditOriginalDocBase<RamanCalibrationDataSource, IRamanCalibrationDataSourceView>, IMVCSupportsApplyCallback 
+  public class RamanCalibrationDataSourceController : MVCANControllerEditOriginalDocBase<RamanCalibrationDataSource, IRamanCalibrationDataSourceView>, IMVCSupportsApplyCallback
   {
     private IMVCANController _inputOptionsController;
 
@@ -62,7 +63,16 @@ namespace Altaxo.Gui.Science.Spectroscopy.Raman
       yield return new ControllerAndSetNullMethod(_siliconCalibrationDataController, () => SiliconCalibrationDataController = null);
     }
 
+    public RamanCalibrationDataSourceController()
+    {
+      CmdRemoveNeonCalibration2 = new RelayCommand(EhRemoveNeonCalibration2, EhCanRemoveNeonCalibration2);
+    }
+
+
+
     #region Bindings
+
+    public ICommand CmdRemoveNeonCalibration2 { get; }
 
 
     public IMVCANController InputOptionsController
@@ -316,6 +326,21 @@ namespace Altaxo.Gui.Science.Spectroscopy.Raman
 
 
       return ApplyEnd(true, disposeController);
+    }
+
+    private bool EhCanRemoveNeonCalibration2()
+    {
+      return _doc is not null && (_doc.NeonCalibrationData2 is not null || _doc.NeonCalibrationOptions2 is not null);
+    }
+
+    private void EhRemoveNeonCalibration2()
+    {
+      if (_doc is not null)
+      {
+        _doc.ClearNeonCalibration2();
+        NeonCalibrationOptions2Controller = null;
+        NeonCalibrationData2Controller = null;
+      }
     }
   }
 }

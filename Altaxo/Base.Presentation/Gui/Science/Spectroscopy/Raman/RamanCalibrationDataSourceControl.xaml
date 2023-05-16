@@ -39,12 +39,22 @@
             <Expander.Header>
                 <TextBlock Text="Neon calibration options (2)" FontWeight="Bold" />
             </Expander.Header>
+            <Expander.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Remove Neon calibration (2)" Command="{Binding CmdRemoveNeonCalibration2}"/>
+                </ContextMenu>
+            </Expander.ContextMenu>
             <ContentControl Content="{Binding NeonCalibrationOptions2Controller.ViewObject}" />
         </Expander>
         <Expander Grid.Row="4" Background="BlanchedAlmond">
             <Expander.Header>
                 <TextBlock Text="Neon calibration data (2)" FontWeight="Bold" />
             </Expander.Header>
+            <Expander.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Remove Neon calibration (2)" Command="{Binding CmdRemoveNeonCalibration2}"/>
+                </ContextMenu>
+            </Expander.ContextMenu>
             <ContentControl Content="{Binding NeonCalibrationData2Controller.ViewObject}" />
         </Expander>
         <Expander Grid.Row="5" IsExpanded="True" Background="Lavender">

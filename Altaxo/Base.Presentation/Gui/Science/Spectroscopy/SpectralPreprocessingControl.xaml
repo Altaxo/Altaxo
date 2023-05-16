@@ -49,7 +49,7 @@
                 Command="{Binding CmdMoveTabLeft}"
                 Margin="4,0,4,0"
                 Visibility="{Binding IsCustomPipeline, Converter={x:Static axogcc:FalseToVisibilityHiddenConverter.Instance}}"
-                ToolTip="Delete the currently selected preprocessing item."
+                ToolTip="Moves the currently selected preprocessing item to the left."
                 >
                 <Viewbox Style="{StaticResource ArrowViewBoxStyle}">
                     <Path Style="{StaticResource RightArrowPathStyle}" />
@@ -59,7 +59,7 @@
                 Command="{Binding CmdMoveTabRight}"
                 Margin="4,0,4,0"
                 Visibility="{Binding IsCustomPipeline, Converter={x:Static axogcc:FalseToVisibilityHiddenConverter.Instance}}"
-                ToolTip="Delete the currently selected preprocessing item."
+                ToolTip="Moves the currently selected preprocessing item to the right."
                 >
                 <Viewbox Style="{StaticResource ArrowViewBoxStyle}">
                     <Path Style="{StaticResource LeftArrowPathStyle}" />
