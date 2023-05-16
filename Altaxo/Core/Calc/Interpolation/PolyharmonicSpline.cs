@@ -24,10 +24,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Altaxo.Calc.LinearAlgebra;
-using Altaxo.Calc.LinearAlgebra.Complex.Factorization;
 
 namespace Altaxo.Calc.Interpolation
 {
@@ -56,7 +53,7 @@ namespace Altaxo.Calc.Interpolation
       {
         var order = info.GetInt32("DerivativeOrder");
         var regularizationParameter = info.GetDouble("RegularizationParameter");
-        return new PolyharmonicSpline1DOptions() { DerivativeOrder=order, RegularizationParameter = regularizationParameter };
+        return new PolyharmonicSpline1DOptions() { DerivativeOrder = order, RegularizationParameter = regularizationParameter };
       }
     }
 
@@ -64,7 +61,7 @@ namespace Altaxo.Calc.Interpolation
 
     public IInterpolationFunction Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec, IReadOnlyList<double>? yVariance = null)
     {
-      var spline = new PolyharmonicSpline() { DerivativeOrder = DerivativeOrder, RegularizationParameter  = RegularizationParameter };
+      var spline = new PolyharmonicSpline() { DerivativeOrder = DerivativeOrder, RegularizationParameter = RegularizationParameter };
       spline.Construct(xvec, yvec);
       return spline;
     }
@@ -166,7 +163,7 @@ namespace Altaxo.Calc.Interpolation
       }
       set
       {
-        if (!(value > 0))
+        if (!(value >= 0))
           throw new ArgumentOutOfRangeException("Value have to be >=0");
 
         var oldValue = _regularizationParameter;
@@ -455,7 +452,7 @@ namespace Altaxo.Calc.Interpolation
 
       // Solve the linear system
       var solver = mtx_l.LU();
-      if (solver.Determinant==0) // if the solver is Singular
+      if (solver.Determinant == 0) // if the solver is Singular
         throw new ArgumentException("The provided points lead to a singular matrix");
 
       // Fill the right hand vector V with the values to spline; the last nCoordDim+1 elements are zero
