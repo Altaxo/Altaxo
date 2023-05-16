@@ -44,9 +44,11 @@ namespace Altaxo.Science.Spectroscopy.Raman
     public const string ColumnName_Group0_NeonCalibration_DifferenceOfPeakWavelengthsStdDev = "DifferenceOfPeakWavelengths.Err [nm]";
     public const string PColumnName_Group0_NeonCalibration_AssumedLaserWavelength = "AssumedLaserWavelength [nm]";
 
+    public const string ColumnName_Group1_NeonCalibration1_UnpreprocessedSpectrumWavelength = "Neon1_Unpreprocessed_Wavelength [nm]";
     public const string ColumnName_Group1_NeonCalibration1_PreprocessedSpectrumWavelength = "Neon1_Preprocessed_Wavelength [nm]";
     public const string ColumnName_Group1_NeonCalibration1_PreprocessedSignal = "Neon1_Preprocessed_Signal";
 
+    public const string ColumnName_Group2_NeonCalibration2_UnpreprocessedSpectrumWavelength = "Neon2_Unpreprocessed_Wavelength [nm]";
     public const string ColumnName_Group2_NeonCalibration2_PreprocessedSpectrumWavelength = "Neon2_Preprocessed_Wavelength [nm]";
     public const string ColumnName_Group2_NeonCalibration2_PreprocessedSignal = "Neon2_Preprocessed_Signal";
 
@@ -545,13 +547,16 @@ namespace Altaxo.Science.Spectroscopy.Raman
     {
       if (calibration.XPreprocessed_nm is { } xArr && calibration.YPreprocessed is { } yArr && calibration.Converter is { } converter)
       {
+        var colOrgWL = dstTable.DataColumns.EnsureExistence(isNeon2 ? ColumnName_Group2_NeonCalibration2_UnpreprocessedSpectrumWavelength : ColumnName_Group1_NeonCalibration1_UnpreprocessedSpectrumWavelength, typeof(DoubleColumn), ColumnKind.V, isNeon2 ? 2 : 1);
         var colCorrWL = dstTable.DataColumns.EnsureExistence(isNeon2 ? ColumnName_Group2_NeonCalibration2_PreprocessedSpectrumWavelength : ColumnName_Group1_NeonCalibration1_PreprocessedSpectrumWavelength, typeof(DoubleColumn), ColumnKind.X, isNeon2 ? 2 : 1);
         var colCorrY = dstTable.DataColumns.EnsureExistence(isNeon2 ? ColumnName_Group2_NeonCalibration2_PreprocessedSignal : ColumnName_Group1_NeonCalibration1_PreprocessedSignal, typeof(DoubleColumn), ColumnKind.V, isNeon2 ? 2 : 1);
+        colOrgWL.Clear();
         colCorrWL.Clear();
         colCorrY.Clear();
 
         for (var i = 0; i < xArr.Length; ++i)
         {
+          colOrgWL[i] = xArr[i];
           colCorrWL[i] = xArr[i] + calibration.MeasuredWavelengthToWavelengthDifference(xArr[i]);
           colCorrY[i] = yArr[i];
         }
