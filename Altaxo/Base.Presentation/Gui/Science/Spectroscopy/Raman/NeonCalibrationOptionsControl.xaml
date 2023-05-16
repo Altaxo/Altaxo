@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Altaxo.Gui.Science.Spectroscopy.Raman;assembly=AltaxoBase"
              xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
+             xmlns:axogcc="clr-namespace:Altaxo.Gui.Common.Converters"
              d:DataContext="{d:DesignInstance Type=local:NeonCalibrationOptionsController}"
              mc:Ignorable="d">
     <Grid>
@@ -43,6 +44,7 @@
                                      ToolTip="Enter approximate wavelength of laser excitation in nm. Ususal values are 532 and 785 nm."
                                      MinWidth="100"
                                      />
+        <Border Grid.Row="2" Grid.Column="2" BorderBrush="Red" BorderThickness="1" Visibility="{Binding IsLaserWavelengthValid, Converter={x:Static axogcc:TrueToVisibilityCollapsedConverter.Instance}}"/>
 
         <CheckBox Grid.Row="4" Grid.ColumnSpan="3"
                   Content="Filter out peaks corresponding to multiple Nist peaks"

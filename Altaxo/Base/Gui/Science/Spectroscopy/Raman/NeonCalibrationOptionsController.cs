@@ -40,6 +40,10 @@ namespace Altaxo.Gui.Science.Spectroscopy.Raman
         }
       }
     }
+    private void EhXAxisUnitChanged(XAxisUnit obj)
+    {
+      OnPropertyChanged(nameof(IsLaserWavelengthValid));
+    }
 
     private double _laserWavelength_Nanometer;
 
@@ -52,7 +56,17 @@ namespace Altaxo.Gui.Science.Spectroscopy.Raman
         {
           _laserWavelength_Nanometer = value;
           OnPropertyChanged(nameof(LaserWavelength_Nanometer));
+          OnPropertyChanged(nameof(IsLaserWavelengthValid));
         }
+      }
+    }
+
+    public bool IsLaserWavelengthValid
+    {
+      get
+      {
+        return XAxisUnit.SelectedValue != Altaxo.Science.Spectroscopy.Raman.XAxisUnit.RelativeShiftInverseCentimeter ||
+               LaserWavelength_Nanometer > 0;
       }
     }
 
@@ -144,13 +158,8 @@ namespace Altaxo.Gui.Science.Spectroscopy.Raman
 
       if (initData)
       {
-        XAxisUnit = new ItemsController<XAxisUnit>(new Collections.SelectableListNodeList(_doc.XAxisUnit));
-
-        if (_doc.LaserWavelength_Nanometer == 0)
-          LaserWavelength_Nanometer = 532;
-        else
-          LaserWavelength_Nanometer = _doc.LaserWavelength_Nanometer;
-
+        XAxisUnit = new ItemsController<XAxisUnit>(new Collections.SelectableListNodeList(_doc.XAxisUnit), EhXAxisUnitChanged);
+        LaserWavelength_Nanometer = _doc.LaserWavelength_Nanometer;
         FilterOutPeaksCorrespondingToMultipleNistPeaks = _doc.FilterOutPeaksCorrespondingToMultipleNistPeaks;
 
         var peakFindingController = new PeakSearchingAndFittingOptionsController();
@@ -165,8 +174,17 @@ namespace Altaxo.Gui.Science.Spectroscopy.Raman
       }
     }
 
+
+
     public override bool Apply(bool disposeController)
     {
+      if (XAxisUnit.SelectedValue == Altaxo.Science.Spectroscopy.Raman.XAxisUnit.RelativeShiftInverseCentimeter &&
+        !(LaserWavelength_Nanometer > 0))
+      {
+        Current.Gui.ErrorMessageBox("Please enter a valid laser wavelength!");
+        return ApplyEnd(false, disposeController);
+      }
+
       PeakSearchingAndFittingOptions findOptions;
       IInterpolationFunctionOptions interpolationMethod;
       if (!PeakFindingController.Apply(disposeController))
