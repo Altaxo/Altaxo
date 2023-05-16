@@ -42,6 +42,7 @@ namespace Altaxo.Gui.Common
     protected virtual void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
     Action<TItem>? _onSelectedValueChanged;
+    Action<(TItem OldSelection, int OldIndex, TItem NewSelection, int NewIndex)>? _onSelectedValueChangedEx;
 
     public ItemsController()
     {
@@ -68,6 +69,12 @@ namespace Altaxo.Gui.Common
     public ItemsController(SelectableListNodeList list, Action<TItem>? OnSelectedItemChanged = null)
     {
       Initialize(list, OnSelectedItemChanged);
+    }
+
+    public ItemsController(SelectableListNodeList list, Action<(TItem OldSelection, int OldIndex, TItem NewSelection, int NewIndex)> OnSelectedItemChanged)
+    {
+      _onSelectedValueChangedEx = OnSelectedItemChanged;
+      Initialize(list, null);
     }
 
     /// <summary>
@@ -148,12 +155,21 @@ namespace Altaxo.Gui.Common
       {
         if (!(object.Equals(_selectedItem, value)))
         {
+          var oldSelectedItem = _selectedItem;
           _selectedItem = value;
           _items.SetSelection(n => object.ReferenceEquals(n, value));
           OnPropertyChanged(nameof(SelectedItem));
           OnPropertyChanged(nameof(SelectedValue));
           OnPropertyChanged(nameof(SelectedIndex));
           _onSelectedValueChanged?.Invoke((TItem)(value?.Tag ?? default(TItem)));
+          if(_onSelectedValueChangedEx is not null)
+          {
+            var oldIndex = GetIndexOf(oldSelectedItem); // can be -1 if oldSelectedItem is null or is removed
+            var newIndex = GetIndexOf(_selectedItem);
+            var oldValue = oldIndex < 0 ? default(TItem) : (TItem)(oldSelectedItem?.Tag ?? default(TItem));
+            var newValue = newIndex < 0 ? default(TItem) : (TItem)(_selectedItem?.Tag ?? default(TItem));
+            _onSelectedValueChangedEx?.Invoke((oldValue, oldIndex, newValue, newIndex));
+          }
         }
       }
     }
@@ -181,11 +197,22 @@ namespace Altaxo.Gui.Common
     {
       get
       {
-        for (int i = 0; i < _items.Count; i++)
-          if (object.ReferenceEquals(_items[i], _selectedItem))
-            return i;
-        return -1;
+        return GetIndexOf(_selectedItem);
       }
+    }
+
+    protected int GetIndexOf(SelectableListNode item)
+    {
+      int result = -1;
+      for (int i = 0; i < _items.Count; i++)
+      {
+        if (object.ReferenceEquals(_items[i], item))
+        {
+          result = i;
+          break;
+        }
+      }
+      return result;
     }
 
     #endregion

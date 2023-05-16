@@ -334,19 +334,24 @@ namespace Altaxo.Gui.Science.Spectroscopy
 
     private void ApplyCurrentController()
     {
-      if (_selectedController is not null)
+      ApplyController(_selectedController, TabControllers.SelectedIndex);
+    }
+
+    private void ApplyController(IMVCANController selectedController, int selectedIndex)
+    {
+      if (selectedController is not null)
       {
-        _selectedController.Apply(false);
-        var model = _selectedController.ModelObject;
-        UpdateDoc(model, TabControllers.SelectedIndex);
+        selectedController.Apply(false);
+        var model = selectedController.ModelObject;
+        UpdateDoc(model, selectedIndex);
       }
     }
 
-    private void EhSelectedTabChanged(IMVCANController controller)
+    private void EhSelectedTabChanged((IMVCANController oldController, int oldIndex, IMVCANController newController, int newIndex) e)
     {
-      ApplyCurrentController();
+      ApplyController(e.oldController, e.oldIndex);
 
-      _selectedController = controller;
+      _selectedController = e.newController;
     }
 
     protected abstract void UpdateDoc(object model, int index);
