@@ -239,15 +239,21 @@ namespace Altaxo.Data
     {
       var exportOptions = dataTable.GetPropertyValue(AsciiExportOptions.PropertyKeyAsciiExportOptions, () => null);
 
-      if (exportOptions is null)
+      // we will show the export options in any case,
+      // but the modified options are stored only in the application settings
+
+      exportOptions ??= new AsciiExportOptions();
+
       {
-        exportOptions = new AsciiExportOptions();
         object exportOptionsObj = exportOptions;
         if (!Current.Gui.ShowDialog(ref exportOptionsObj, "Edit Ascii export options"))
+        {
           return;
+        }
         exportOptions = (AsciiExportOptions)exportOptionsObj;
-        Current.PropertyService.ApplicationSettings.SetValue(AsciiExportOptions.PropertyKeyAsciiExportOptions, exportOptions);
+        Current.PropertyService.UserSettings.SetValue(AsciiExportOptions.PropertyKeyAsciiExportOptions, exportOptions);
       }
+
 
       var options = new Altaxo.Gui.SaveFileOptions();
       options.AddFilter("*.csv;*.dat;*.txt", "Text files (*.csv;*.dat;*.txt)");

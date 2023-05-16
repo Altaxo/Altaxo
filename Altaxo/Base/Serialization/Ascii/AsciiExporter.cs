@@ -55,9 +55,9 @@ namespace Altaxo.Serialization.Ascii
 
       _typeConverters = new Dictionary<Type, Func<Altaxo.Data.AltaxoVariant, string>>
       {
-        { typeof(DoubleColumn), GetDefaultConverter(typeof(DoubleColumn)) },
-        { typeof(DateTimeColumn), GetDefaultConverter(typeof(DateTimeColumn)) },
-        { typeof(TextColumn), GetDefaultConverter(typeof(TextColumn)) }
+        { typeof(DoubleColumn), GetDefaultConverter(typeof(DoubleColumn), options) },
+        { typeof(DateTimeColumn), GetDefaultConverter(typeof(DateTimeColumn), options) },
+        { typeof(TextColumn), GetDefaultConverter(typeof(TextColumn), options) }
       };
     }
 
@@ -74,14 +74,27 @@ namespace Altaxo.Serialization.Ascii
     /// </summary>
     /// <param name="columnType">The column type.</param>
     /// <returns>Default converter for the given column type.</returns>
-    public Func<AltaxoVariant, string> GetDefaultConverter(System.Type columnType)
+    public Func<AltaxoVariant, string> GetDefaultConverter(System.Type columnType, AsciiExportOptions options)
     {
       if (columnType == typeof(DoubleColumn))
+      {
         return DefaultDoubleConverter;
+      }
       else if (columnType == typeof(DateTimeColumn))
-        return DefaultDateTimeConverter;
+      {
+        if (string.IsNullOrEmpty(options.DateTimeFormat))
+        {
+          return DefaultDateTimeConverter;
+        }
+        else
+        {
+          return x => FormattedDateTimeConverter(x, options.DateTimeFormat);
+        }
+      }
       else
+      {
         return DefaultTextConverter;
+      }
     }
 
     /// <summary>
@@ -97,7 +110,7 @@ namespace Altaxo.Serialization.Ascii
       if (stringConverter is not null)
         _typeConverters[columnType] = stringConverter;
       else // stringConverter is null, try to get the default converter
-        _typeConverters[columnType] = GetDefaultConverter(columnType);
+        _typeConverters[columnType] = GetDefaultConverter(columnType, _exportOptions);
     }
 
     /// <summary>
@@ -310,7 +323,12 @@ namespace Altaxo.Serialization.Ascii
 
     private string DefaultDateTimeConverter(AltaxoVariant x)
     {
-      return ((DateTime)x).ToString("o");
+      return ((DateTime)x).ToString("o", _exportOptions.Culture);
+    }
+
+    private string FormattedDateTimeConverter(AltaxoVariant x, string formatString)
+    {
+      return ((DateTime)x).ToString(formatString, _exportOptions.Culture);
     }
 
     #endregion

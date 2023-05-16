@@ -135,6 +135,91 @@ namespace Altaxo.Gui.Serialization.Ascii
         }
       }
     }
+    private void EhCultureChanged(CultureInfo obj)
+    {
+      OnPropertyChanged(nameof(IsDateTimeFormatValid));
+    }
+
+    private string _dateTimeFormat = string.Empty;
+
+    public string DateTimeFormat
+    {
+      get => _dateTimeFormat;
+      set
+      {
+        if (!(_dateTimeFormat == value))
+        {
+          _dateTimeFormat = value;
+          OnPropertyChanged(nameof(DateTimeFormat));
+          OnPropertyChanged(nameof(IsDateTimeFormatValid));
+        }
+      }
+    }
+
+    public bool IsDateTimeFormatValid
+    {
+      get
+      {
+        var dateTime = DateTime.Now;
+        var culture = Culture.SelectedValue ?? CultureInfo.InvariantCulture;
+
+        if (string.IsNullOrEmpty(DateTimeFormat))
+        {
+          DateTimeToolTip = string.Empty;
+          ResultingDateTime = dateTime.ToString("o", culture);
+          return true;
+        }
+
+        string convertedDateTime = string.Empty;
+
+        try
+        {
+          convertedDateTime = dateTime.ToString(DateTimeFormat, culture);
+        }
+        catch (Exception ex)
+        {
+          DateTimeToolTip = $"Conversion error: {ex.Message}";
+          ResultingDateTime = "????";
+          return false;
+        }
+
+        DateTimeToolTip = $"The date {dateTime} will result in: {convertedDateTime}";
+        ResultingDateTime = convertedDateTime;
+
+        return true;
+      }
+    }
+
+    private string _dateTimeToolTip = string.Empty;
+
+    public string DateTimeToolTip
+    {
+      get => _dateTimeToolTip;
+      set
+      {
+        if (!(_dateTimeToolTip == value))
+        {
+          _dateTimeToolTip = value;
+          OnPropertyChanged(nameof(DateTimeToolTip));
+        }
+      }
+    }
+
+    private string _resultingDateTime;
+
+    public string ResultingDateTime
+    {
+      get => _resultingDateTime;
+      set
+      {
+        if (!(_resultingDateTime == value))
+        {
+          _resultingDateTime = value;
+          OnPropertyChanged(nameof(ResultingDateTime));
+        }
+      }
+    }
+
 
     #endregion
 
@@ -149,6 +234,7 @@ namespace Altaxo.Gui.Serialization.Ascii
         ExportDataColumnNames = _doc.ExportDataColumnNames;
         ExportPropertyColumns = _doc.ExportPropertyColumns;
         ExportPropertiesWithName = _doc.ExportPropertiesWithName;
+        DateTimeFormat = _doc.DateTimeFormat;
 
         var _availableCulturesList = new SelectableListNodeList();
         var cultures = CultureInfo.GetCultures(CultureTypes.SpecificCultures);
@@ -157,10 +243,11 @@ namespace Altaxo.Gui.Serialization.Ascii
         foreach (var cult in cultures)
           _availableCulturesList.Add(new SelectableListNode(cult.DisplayName, cult, false));
 
-        Culture = new ItemsController<CultureInfo>(_availableCulturesList);
+        Culture = new ItemsController<CultureInfo>(_availableCulturesList, EhCultureChanged);
         Culture.SelectedValue = _doc.Culture;
       }
     }
+
 
 
     public override bool Apply(bool disposeController)
@@ -168,6 +255,12 @@ namespace Altaxo.Gui.Serialization.Ascii
       if (SeparatorChar == SubstituteChar)
       {
         Current.Gui.ErrorMessageBox("SeparatorChar must be different from SubstituteChar");
+        return ApplyEnd(false, disposeController);
+      }
+
+      if (!IsDateTimeFormatValid)
+      {
+        Current.Gui.ErrorMessageBox("Please enter a valid date/time format, or delete the date/time format string");
         return ApplyEnd(false, disposeController);
       }
 

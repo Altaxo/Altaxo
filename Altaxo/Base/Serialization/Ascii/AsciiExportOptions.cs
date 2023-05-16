@@ -91,6 +91,11 @@ namespace Altaxo.Serialization.Ascii
     /// </summary>
     public bool ExportPropertiesWithName { get; init; }
 
+    /// <summary>
+    /// If this string is not empty, it is a C# format string to convert date/times.
+    /// </summary>
+    public string DateTimeFormat { get; init; }
+
 
     private CultureInfo _culture;
 
@@ -117,6 +122,7 @@ namespace Altaxo.Serialization.Ascii
       _separatorAndSubstituteChar = ('\t', ' ');
       ExportDataColumnNames = true;
       ExportPropertyColumns = true;
+      DateTimeFormat = string.Empty;
       Culture = Altaxo.Settings.GuiCulture.Instance;
     }
 
@@ -154,6 +160,7 @@ namespace Altaxo.Serialization.Ascii
         info.AddValue("ExportDataColumnNames", s.ExportDataColumnNames);
         info.AddValue("ExportPropertyColumns", s.ExportPropertyColumns);
         info.AddValue("ExportPropertiesWithName", s.ExportPropertiesWithName);
+        info.AddValue("DateTimeFormat", s.DateTimeFormat);
       }
 
       protected virtual AsciiExportOptions SDeserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
@@ -166,6 +173,7 @@ namespace Altaxo.Serialization.Ascii
         var exportDataColumnNames = info.GetBoolean("ExportDataColumnNames");
         var exportPropertyColumns = info.GetBoolean("ExportPropertyColumns");
         var exportPropertiesWithName = info.GetBoolean("ExportPropertiesWithName");
+        var dateTimeFormat = info.GetString("DateTimeFormat");
 
         return s with
         {
@@ -174,6 +182,7 @@ namespace Altaxo.Serialization.Ascii
           ExportDataColumnNames = exportDataColumnNames,
           ExportPropertyColumns = exportPropertyColumns,
           ExportPropertiesWithName = exportPropertiesWithName,
+          DateTimeFormat = dateTimeFormat,
         };
       }
 

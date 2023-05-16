@@ -5,11 +5,16 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Altaxo.Gui.Serialization.Ascii;assembly=AltaxoBase" 
              xmlns:loc="clr-namespace:Altaxo.Gui.Serialization.Ascii"
+             xmlns:axogcc="clr-namespace:Altaxo.Gui.Common.Converters"
              d:DataContext="{d:DesignInstance Type=local:AsciiExportOptionsController}"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
         <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="4"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="4"/>
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="4"/>
             <ColumnDefinition Width="Auto"/>
@@ -41,24 +46,46 @@
         <Label Grid.Row="2" Grid.Column="0"
                Content="Separation char:"/>
         <loc:AsciiCharControl Grid.Row="2" Grid.Column="2"
-                              Value="{Binding SeparatorChar}"/>
+                              Value="{Binding SeparatorChar}"
+                              ToolTip="The character that is used to separate the columns."/>
 
         <Label Grid.Row="4" Grid.Column="0"
                Content="Substitute char:"/>
         <loc:AsciiCharControl Grid.Row="4" Grid.Column="2"
-                              Value="{Binding SubstituteChar}"/>
+                              Value="{Binding SubstituteChar}"
+                              ToolTip="The character that will substitute any instance of a separator char in the header lines."/>
 
-        <CheckBox Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="3"
-                  IsChecked="{Binding ExportDataColumnNames, Mode=TwoWay}"
-                  Content="Export data column names"/>
+        <Label Grid.Row="6" Grid.Column="0"
+               Content="Custom date/time format:"/>
+        <TextBox Grid.Row="6" Grid.Column="2"
+                 Text="{Binding DateTimeFormat, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                 ToolTip="{Binding DateTimeToolTip}"/>
+        <Border Grid.Row="6" Grid.Column="2" BorderBrush="Red" BorderThickness="1" Visibility="{Binding IsDateTimeFormatValid, Converter={x:Static axogcc:TrueToVisibilityCollapsedConverter.Instance}}"/>
+
+        <Label Grid.Row="6" Grid.Column="4"
+               Content="Result:"/>
+        <TextBox Grid.Row="6" Grid.Column="6"
+                 Text="{Binding ResultingDateTime, Mode=OneWay}"
+                 IsEnabled="False"
+                 ToolTip="{Binding DateTimeToolTip}"
+                 />
+
 
         <CheckBox Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="3"
-                  IsChecked="{Binding  ExportPropertyColumns, Mode=TwoWay}"
-                  Content="Export property columns"/>
+                  IsChecked="{Binding ExportDataColumnNames, Mode=TwoWay}"
+                  Content="Export data column names"
+                  ToolTip="If checked, the names of the columns will be exported to the first line."/>
 
         <CheckBox Grid.Row="10" Grid.Column="0" Grid.ColumnSpan="3"
+                  IsChecked="{Binding  ExportPropertyColumns, Mode=TwoWay}"
+                  Content="Export property columns"
+                  ToolTip="If true, the column properties will be exported."
+                  />
+
+        <CheckBox Grid.Row="12" Grid.Column="0" Grid.ColumnSpan="3"
                   IsChecked="{Binding ExportPropertiesWithName, Mode=TwoWay}"
-                  Content="Export table properties"/>
+                  Content="Export table properties"
+                  ToolTip="If true, the properties of the table will be exported."/>
 
     </Grid>
 </UserControl>
