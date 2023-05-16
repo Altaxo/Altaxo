@@ -34,6 +34,7 @@ using Altaxo.Data;
 using Altaxo.Graph.Gdi;
 using Altaxo.Graph.Gdi.Plot;
 using Altaxo.Graph.Gdi.Plot.Styles;
+using Altaxo.Graph.Graph2D.Plot.Styles.ScatterSymbols;
 using Altaxo.Graph.Plot.Data;
 using Altaxo.Gui;
 using Altaxo.Gui.Science.Spectroscopy.Calibration;
@@ -1000,7 +1001,61 @@ namespace Altaxo.Science.Spectroscopy
 
       Current.ProjectService.OpenOrCreateWorksheetForTable(dstTable);
 
+      if (doc.DestinationTable is null) // if this is the first calibration
+      {
+        PlotNeonCalibration(dstTable);
+      }
+
     }
+
+    public static void PlotNeonCalibration(DataTable dstTable)
+    {
+      var selColumnsForPeakGraph = new AscendingIntegerCollection
+          {
+            dstTable.DataColumns.GetColumnNumber(dstTable[RamanCalibrationDataSource.ColumnName_Group0_NeonCalibration_DifferenceOfPeakWavelengths])
+          };
+      var preferredGraphName = dstTable.FolderName + "GNeonCalibration";
+      var graphController = PlotCommands.PlotLine(dstTable, selColumnsForPeakGraph, bLine: false, bScatter: true, preferredGraphName);
+      var graph = graphController.Doc;
+      var layer = (XYPlotLayer)graph.RootLayer.Layers[0];
+      var pi = layer.PlotItems.TakeFromHereToFirstLeaves<IGPlotItem>().OfType<XYColumnPlotItem>().FirstOrDefault();
+      if (pi is not null)
+      {
+        var scatter = pi.Style.OfType<ScatterPlotStyle>().FirstOrDefault();
+        if (scatter is not null)
+        {
+          scatter.SymbolSize /= 2; // use only a quarter of the symbol size of a usual scatter plot
+          scatter.ScatterSymbol = new Circle(Drawing.NamedColors.White, false);
+        }
+      }
+
+      PlotItemCollection group;
+      if (pi?.ParentCollection is not null)
+      {
+        group = pi.ParentCollection;
+      }
+      else
+      {
+        group = new PlotItemCollection();
+        layer.PlotItems.Add(group);
+      }
+
+      {
+        // now add the Neon spline as a line to that group
+        var plotStyle = PlotCommands.PlotStyle_Line(graph.GetPropertyContext());
+        var xColumn = dstTable.DataColumns[RamanCalibrationDataSource.ColumnName_Group3_NeonCalibration_SplineX_MeasuredWavelength];
+        var yColumn = dstTable.DataColumns[RamanCalibrationDataSource.ColumnName_Group3_NeonCalibration_SplineY_DifferenceWavelength];
+        var groupNumber = dstTable.DataColumns.GetColumnGroup(yColumn);
+        var plotData = new XYColumnPlotData(dstTable, groupNumber, xColumn, yColumn);
+        var plotItem = new XYColumnPlotItem(plotData, plotStyle);
+        group.Add(plotItem);
+      }
+
+      layer.DefaultXAxisTitleString = "Wavelength (nm)";
+      layer.DefaultYAxisTitleString = "Wavelength deviation (nm)";
+    }
+
+
 
     /// <summary>
     /// Does the relative part of a Raman calibration by utilizing a silicon spectrum.
