@@ -695,21 +695,40 @@ namespace Altaxo.Science.Spectroscopy.Raman
 
     private List<(double NistWL, double MeasWL, double MeasWLStdDev)> FilterOutMatchesOfMeasuredPeaksCorrespondsToMultipleNistPeaks(List<(double NistWL, double MeasWL, double MeasWLStdDev)> list)
     {
-      var countDict = new Dictionary<double, int>();
+      // create a dictionary, which for each measured wavelength counts the number of corresponding Nist peaks
+      var countNistPeaksForMeasPeak = new Dictionary<double, int>();
       foreach (var pair in list)
       {
-        if (!countDict.TryGetValue(pair.MeasWL, out var cnt))
+        if (!countNistPeaksForMeasPeak.TryGetValue(pair.MeasWL, out var cnt))
         {
           cnt = 0;
         }
-        countDict[pair.MeasWL] = cnt + 1;
+        countNistPeaksForMeasPeak[pair.MeasWL] = cnt + 1;
       }
 
+      // create a dictionary, which for each Nist wavelength counts the number of corresponding measured peaks
+      var countMeasPeaksForNistPeak = new Dictionary<double, int>();
+      foreach (var pair in list)
+      {
+        if (!countMeasPeaksForNistPeak.TryGetValue(pair.NistWL, out var cnt))
+        {
+          cnt = 0;
+        }
+        countMeasPeaksForNistPeak[pair.NistWL] = cnt + 1;
+      }
+
+
+      // Include only those peaks, which have a 1:1 correspondence,
+      // i.e. the Nist wavelength corresponds only to one measured peak,
+      // and the measured wavelenght corresponds only to one Nist peak
       var result = new List<(double NistWL, double MeasWL, double MeasWLStdDev)>();
       foreach (var pair in list)
       {
-        if (countDict[pair.MeasWL] == 1)
+        if (countNistPeaksForMeasPeak[pair.MeasWL] == 1 &&
+            countMeasPeaksForNistPeak[pair.NistWL] == 1)
+        {
           result.Add(pair);
+        }
       }
 
       return result;
