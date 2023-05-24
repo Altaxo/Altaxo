@@ -45,6 +45,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Gui\Science\Signals\PronySeriesRetardationControl.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Gui\Science\Signals\PronySeriesRelaxationControl.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -148,6 +151,9 @@
     <Page Update="Gui\Data\ProcessSourceTablesScriptDataControl.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Gui\Science\Signals\PronySeriesRetardationControl.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
     </Page>
     <Page Update="Gui\Science\Signals\PronySeriesRelaxationControl.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>

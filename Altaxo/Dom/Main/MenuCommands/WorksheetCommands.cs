@@ -1025,6 +1025,22 @@ namespace Altaxo.Worksheet.Commands
     }
   }
 
+  public class AnalysisPronyRetardationTimeDomain : AbstractWorksheetControllerCommand
+  {
+    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
+    {
+      Altaxo.Worksheet.Commands.Analysis.CalculusCommands.PronyRetardationTimeDomain(ctrl);
+    }
+  }
+
+  public class AnalysisPronyRetardationFrequencyDomain : AbstractWorksheetControllerCommand
+  {
+    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
+    {
+      Altaxo.Worksheet.Commands.Analysis.CalculusCommands.PronyRetardationFrequencyDomain(ctrl);
+    }
+  }
+
   public class SpectroscopyPreprocessing : AbstractWorksheetControllerCommand
   {
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)

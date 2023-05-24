@@ -635,11 +635,15 @@
 					class="Altaxo.Worksheet.Commands.AnalysisInterpolation" />
           <MenuItem id="FitMenu" label="Fits"  type="Menu">
               <MenuItem id="MultiVarLinRegression" label="${res:XML.MainMenu.AnalysisMenu.MultivariateLinearRegression}" description="${res:XML.MainMenu.AnalysisMenu.MultivariateLinearRegression.Description}"
-					class="Altaxo.Worksheet.Commands.AnalysisMultivariateLinearRegression" />
+					              class="Altaxo.Worksheet.Commands.AnalysisMultivariateLinearRegression" />
               <MenuItem id="PronyRelaxTime" label="Prony relaxation (time domain).." description="Performs a prony fit to a relaxation signal in the time domain."
-					class="Altaxo.Worksheet.Commands.AnalysisPronyRelaxationTimeDomain" />
+					              class="Altaxo.Worksheet.Commands.AnalysisPronyRelaxationTimeDomain" />
               <MenuItem id="PronyRelaxFreq" label="Prony relaxation (frequency domain).." description="Performs a prony fit to a relaxation signal in the frequency domain."
-					class="Altaxo.Worksheet.Commands.AnalysisPronyRelaxationFrequencyDomain" />
+					              class="Altaxo.Worksheet.Commands.AnalysisPronyRelaxationFrequencyDomain" />
+            <MenuItem id="PronyRetardTime" label="Prony retardation (time domain).." description="Performs a prony fit to a retardation signal in the time domain."
+                      class="Altaxo.Worksheet.Commands.AnalysisPronyRetardationTimeDomain" />
+            <MenuItem id="PronyRetardFreq" label="Prony retardation (frequency domain).." description="Performs a prony fit to a retardation signal in the frequency domain."
+                      class="Altaxo.Worksheet.Commands.AnalysisPronyRetardationFrequencyDomain" />
           </MenuItem>
         <MenuItem id="1DFFT" label="${res:XML.MainMenu.AnalysisMenu.FFT}" description="${res:XML.MainMenu.AnalysisMenu.FFT.Description}"
 					class="Altaxo.Worksheet.Commands.AnalysisFFT" />

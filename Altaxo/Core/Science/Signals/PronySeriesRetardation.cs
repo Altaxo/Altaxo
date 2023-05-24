@@ -36,20 +36,20 @@ namespace Altaxo.Science.Signals
   /// If the signal is a time domain signal, it is assumed to be a retardation signal, i.e. is increasing with time (for instance strain at constant stress).
   /// If the signal is in the frequency domain, it is assumed to be a compliance, i.e. the real part is decreasing with frequency.
   /// </summary>
-  public record PronySeriesRetardation
+  public record PronySeriesRetardation : Main.IImmutable
   {
     private double _timeMinimum = 1;
 
     /// <summary>
     /// Gets or sets smallest retardation time (the tau_retard of the first Prony term).
     /// </summary>
-    public double TimeMinimum
+    public double MinimalRetardationTime
     {
       get => _timeMinimum;
       init
       {
         if (!(value > 0))
-          throw new ArgumentOutOfRangeException(nameof(TimeMinimum), "Must be > 0");
+          throw new ArgumentOutOfRangeException(nameof(MinimalRetardationTime), "Must be > 0");
 
         _timeMinimum = value;
       }
@@ -60,13 +60,13 @@ namespace Altaxo.Science.Signals
     /// <summary>
     /// Gets or sets largest retardation time (the tau_retard of the last Prony term).
     /// </summary>
-    public double TimeMaximum
+    public double MaximalRetardationTime
     {
       get => _timeMaximum;
       init
       {
         if (!(value > 0))
-          throw new ArgumentOutOfRangeException(nameof(TimeMaximum), "Must be > 0");
+          throw new ArgumentOutOfRangeException(nameof(MaximalRetardationTime), "Must be > 0");
         _timeMaximum = value;
       }
     }
@@ -118,21 +118,80 @@ namespace Altaxo.Science.Signals
     /// </summary>
     public bool UseFlowTerm { get; init; } = false;
 
+    /// <summary>
+    /// If true, the flow term is multiplied with the dielectric vacuum permittivity in order to the the electrical conductivity.
+    /// </summary>
+    public bool IsDielectricFlowTerm { get; init; } = false;
+
+    #region Serialization
+
+    /// <summary>
+    /// 2023-05-24 initial version
+    /// </summary>
+    /// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PronySeriesRetardation), 0)]
+    public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        var s = (PronySeriesRetardation)obj;
+        info.AddValue("MinimalRelaxationTime", s.MinimalRetardationTime);
+        info.AddValue("MaximalRelaxationTime", s.MaximalRetardationTime);
+        info.AddValue("NumberOfRelaxationTimes", s.NumberOfRetardationTimes);
+        info.AddValue("UseIntercept", s.UseIntercept);
+        info.AddValue("UseFlowTerm", s.UseFlowTerm);
+        info.AddValue("IsDielectricFlowTerm", s.IsDielectricFlowTerm);
+        info.AddValue("RegularizationParameter", s.RegularizationParameter);
+      }
+
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      {
+        var minimalValue = info.GetDouble("MinimalRelaxationTime");
+        var maximalValue = info.GetDouble("MMaximalRelaxationTime");
+        var numberRelax = info.GetInt32("NumberOfRelaxationTimes");
+        var intercept = info.GetBoolean("UseIntercept");
+        var useFlowTerm = info.GetBoolean("UseFlowTerm");
+        var isDielectricFlowTerm = info.GetBoolean("IsDielectricFlowTerm");
+        var regularization = info.GetDouble("RegularizationParameter");
+
+        return o is null ? new PronySeriesRetardation
+        {
+          MinimalRetardationTime = minimalValue,
+          MaximalRetardationTime = maximalValue,
+          NumberOfRetardationTimes = numberRelax,
+          UseIntercept = intercept,
+          UseFlowTerm = useFlowTerm,
+          IsDielectricFlowTerm=isDielectricFlowTerm,
+          RegularizationParameter = regularization
+        } :
+          ((PronySeriesRetardation)o) with
+          {
+            MinimalRetardationTime = minimalValue,
+            MaximalRetardationTime = maximalValue,
+            NumberOfRetardationTimes = numberRelax,
+            UseIntercept = intercept,
+            UseFlowTerm = useFlowTerm,
+            IsDielectricFlowTerm = isDielectricFlowTerm,
+            RegularizationParameter = regularization
+          };
+      }
+    }
+    #endregion
 
 
     /// <summary>
-    /// Evaluates a prony series fit in the time domain, using the properties <see cref="TimeMinimum"/>, <see cref="TimeMaximum"/>, <see cref="NumberOfRetardationTimes"/> and <see cref="RegularizationParameter"/>.
+    /// Evaluates a prony series fit in the time domain, using the properties <see cref="MinimalRetardationTime"/>, <see cref="MaximalRetardationTime"/>, <see cref="NumberOfRetardationTimes"/> and <see cref="RegularizationParameter"/>.
     /// </summary>
     /// <param name="xarr">The x-values of the signal (all elements must be positive).</param>
     /// <param name="yarr">The y-values of the signal.</param>
     /// <returns>The result of the evaluation, see <see cref="PronySeriesRetardationResult"/>.</returns>
     public PronySeriesRetardationResult EvaluateTimeDomain(IReadOnlyList<double> xarr, IReadOnlyList<double> yarr)
     {
-      return EvaluateTimeDomain(xarr, yarr, TimeMinimum, TimeMaximum, NumberOfRetardationTimes, UseIntercept, UseFlowTerm, RegularizationParameter);
+      return EvaluateTimeDomain(xarr, yarr, MinimalRetardationTime, MaximalRetardationTime, NumberOfRetardationTimes, UseIntercept, UseFlowTerm, RegularizationParameter);
     }
 
     /// <summary>
-    /// Evaluates a prony series fit in the time domain, using the properties <see cref="TimeMinimum"/>, <see cref="TimeMaximum"/>, <see cref="NumberOfRetardationTimes"/> and <see cref="RegularizationParameter"/>.
+    /// Evaluates a prony series fit in the time domain, using the properties <see cref="MinimalRetardationTime"/>, <see cref="MaximalRetardationTime"/>, <see cref="NumberOfRetardationTimes"/> and <see cref="RegularizationParameter"/>.
     /// </summary>
     /// <param name="xarr">The x-values of the signal (all elements must be positive).</param>
     /// <param name="isCircularFrequency">True if xarr contains circular frequencies; false if xarr contains normal frequencies.</param>
@@ -141,11 +200,11 @@ namespace Altaxo.Science.Signals
     /// <returns>The result of the evaluation, see <see cref="PronySeriesRetardationResult"/>.</returns>
     public PronySeriesRetardationResult EvaluateFrequencyDomain(IReadOnlyList<double> xarr, bool isCircularFrequency, IReadOnlyList<double>? yarrRe, IReadOnlyList<double>? yarrIm)
     {
-      return EvaluateFrequencyDomain(xarr, isCircularFrequency, yarrRe, yarrIm, TimeMinimum, TimeMaximum, NumberOfRetardationTimes, UseIntercept, UseFlowTerm, RegularizationParameter);
+      return EvaluateFrequencyDomain(xarr, isCircularFrequency, yarrRe, yarrIm, MinimalRetardationTime, MaximalRetardationTime, NumberOfRetardationTimes, UseIntercept, UseFlowTerm, RegularizationParameter);
     }
 
     /// <summary>
-    /// Evaluates a prony series fit in the time domain, using the properties <see cref="TimeMinimum"/>, <see cref="TimeMaximum"/>, <see cref="NumberOfRetardationTimes"/> and <see cref="RegularizationParameter"/>.
+    /// Evaluates a prony series fit in the time domain, using the properties <see cref="MinimalRetardationTime"/>, <see cref="MaximalRetardationTime"/>, <see cref="NumberOfRetardationTimes"/> and <see cref="RegularizationParameter"/>.
     /// </summary>
     /// <param name="xarr">The x-values of the signal (all elements must be positive).</param>
     /// <param name="isCircularFrequency">True if xarr contains circular frequencies; false if xarr contains normal frequencies.</param>
@@ -153,7 +212,7 @@ namespace Altaxo.Science.Signals
     /// <returns>The result of the evaluation, see <see cref="PronySeriesRetardationResult"/>.</returns>
     public PronySeriesRetardationResult EvaluateFrequencyDomain(IReadOnlyList<double> xarr, bool isCircularFrequency, IReadOnlyList<Complex64> yarr)
     {
-      return EvaluateFrequencyDomain(xarr, isCircularFrequency, yarr.Select(c => c.Real).ToArray(), yarr.Select(c => c.Imaginary).ToArray(), TimeMinimum, TimeMaximum, NumberOfRetardationTimes, UseIntercept, UseFlowTerm, RegularizationParameter);
+      return EvaluateFrequencyDomain(xarr, isCircularFrequency, yarr.Select(c => c.Real).ToArray(), yarr.Select(c => c.Imaginary).ToArray(), MinimalRetardationTime, MaximalRetardationTime, NumberOfRetardationTimes, UseIntercept, UseFlowTerm, RegularizationParameter);
     }
 
     /// <summary>
@@ -217,12 +276,13 @@ namespace Altaxo.Science.Signals
         }
       }
 
+      double flowTermScale = 1 / tmax;
       if (withFlowTerm)
       {
         int idx = NC - 1;
         for (int r = 0; r < NR; ++r)
         {
-          X[r, idx] = xarr[r]; // base function for flow term is x
+          X[r, idx] = xarr[r]*flowTermScale; // base function for flow term is x, scale it so that it is in the range [0,1]
         }
       }
 
@@ -239,7 +299,7 @@ namespace Altaxo.Science.Signals
       for (int r = 0; r < NR; ++r)
         y[r, 0] = yarr[r];
 
-      return Evaluate(tmin, tmax, numberOfRetardationTimes, withIntercept, withFlowTerm, taus, X, y);
+      return Evaluate(tmin, tmax, numberOfRetardationTimes, withIntercept, withFlowTerm, flowTermScale, taus, X, y);
     }
 
     /// <summary>
@@ -319,14 +379,14 @@ namespace Altaxo.Science.Signals
           X[r, idx] = 1; // base function for the intercept
         }
       }
-
+      double flowTermScale = 1 / tmax;
       if (withFlowTerm)
       {
         int offs = yarrRe is null ? 0 : xarr.Count;
         double fac = isCircularFrequency ? 1 : 2 * Math.PI;
         for (int r = 0; r < xCount; ++r) // set flow term only for the imaginary part -> either on the first half or the second half
         {
-          X[r + offs, NC - 1] = 1 / (xarr[r] * fac); // base function for the intercept
+          X[r + offs, NC - 1] = flowTermScale / (xarr[r] * fac); // base function for the intercept
         }
       }
 
@@ -363,10 +423,10 @@ namespace Altaxo.Science.Signals
         throw new InvalidOperationException();
       }
 
-      return Evaluate(tmin, tmax, numberOfRetardationTimes, withIntercept, withFlowTerm, taus, X, y);
+      return Evaluate(tmin, tmax, numberOfRetardationTimes, withIntercept, withFlowTerm, flowTermScale, taus, X, y);
     }
 
-    protected static PronySeriesRetardationResult Evaluate(double tmin, double tmax, int numberOfRetardationTimes, bool withIntercept, bool withFlowTerm, double[] taus, Matrix<double> X, Matrix<double> y)
+    protected static PronySeriesRetardationResult Evaluate(double tmin, double tmax, int numberOfRetardationTimes, bool withIntercept, bool withFlowTerm, double flowTermScale, double[] taus, Matrix<double> X, Matrix<double> y)
     {
       // calculate XtX and XtY
       var XtX = X.TransposeThisAndMultiply(X);
@@ -377,7 +437,7 @@ namespace Altaxo.Science.Signals
 
       // the result (the spectral amplitudes) are now in X
       double spectralDensityFactor = Math.Log(tmax / tmin) / (numberOfRetardationTimes - 1);
-      var resultTauCol = withIntercept ? new double[] { double.PositiveInfinity }.Concat(taus).ToArray() : taus.ToArray();
+      var resultTauCol = withIntercept ? new double[] { 0.0 }.Concat(taus).ToArray() : taus.ToArray();
       var resultPronyCol = new double[resultTauCol.Length];
       var resultRetardationDensityCol = new double[resultTauCol.Length];
 
@@ -397,7 +457,7 @@ namespace Altaxo.Science.Signals
       double? flowTerm = 0;
       if (withFlowTerm)
       {
-        flowTerm = x[x.RowCount - 1, 0];
+        flowTerm = x[x.RowCount - 1, 0]/flowTermScale;
       }
 
 

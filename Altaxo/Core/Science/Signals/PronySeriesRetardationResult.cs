@@ -117,7 +117,7 @@ namespace Altaxo.Science.Signals
       Complex64 sum = 0;
       for (int i = 0; i < PronyCoefficients.Count; ++i)
       {
-        if (double.IsPositiveInfinity(RetardationTimes[i]))
+        if (RetardationTimes[i]==0)
         {
           sum += PronyCoefficients[i];
         }

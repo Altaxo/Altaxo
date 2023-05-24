@@ -25,6 +25,7 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
+using System.Xml.Schema;
 using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Calc.Regression;
 using Altaxo.Data;
@@ -32,6 +33,7 @@ using Altaxo.Gui;
 using Altaxo.Gui.Worksheet.Viewing;
 using Altaxo.Science.Signals;
 using Altaxo.Science.Spectroscopy.Resampling;
+using Altaxo.Units.Angle;
 
 namespace Altaxo.Worksheet.Commands.Analysis
 {
@@ -209,6 +211,82 @@ namespace Altaxo.Worksheet.Commands.Analysis
 
     public static void PronyRelaxationTimeDomain(IWorksheetController ctrl)
     {
+      (double xMin, double xMax, int numPoints)? retrievedData;
+      XAndYColumn inputData;
+      TestTimeDomainInputAndExtractData(ctrl, out retrievedData, out inputData);
+
+      var inputOptions = new PronySeriesRelaxation();
+      if (retrievedData.HasValue)
+        inputOptions = inputOptions with
+        {
+          MinimalRelaxationTime = retrievedData.Value.xMin,
+          MaximalRelaxationTime = retrievedData.Value.xMax,
+          NumberOfRelaxationTimes = retrievedData.Value.numPoints,
+        };
+      var dataSource = new PronySeriesRelaxationTimeDomainDataSource(inputData, inputOptions, new DataSourceImportOptions());
+      var controller = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { dataSource }, typeof(IMVCANController));
+
+      if (true == Current.Gui.ShowDialog(controller, "Prony relaxation"))
+      {
+        dataSource = (PronySeriesRelaxationTimeDomainDataSource)controller.ModelObject;
+        var table = new DataTable
+        {
+          Name = ctrl.DataTable.Folder + "WRelaxationSpectrumFromPronySeries"
+        };
+        Current.Project.DataTableCollection.Add(table);
+        table.DataSource = dataSource;
+        try
+        {
+          table.DataSource.FillData(table);
+          Current.ProjectService.CreateNewWorksheet(table);
+        }
+        catch (Exception ex)
+        {
+          Current.Gui.ErrorMessageBox($"There was an error during analysis of the data\r\nDetails:\r\n{ex.ToString()}", "Error in Prony analysis");
+        }
+      }
+    }
+
+    public static void PronyRetardationTimeDomain(IWorksheetController ctrl)
+    {
+      (double xMin, double xMax, int numPoints)? retrievedData;
+      XAndYColumn inputData;
+      TestTimeDomainInputAndExtractData(ctrl, out retrievedData, out inputData);
+
+      var inputOptions = new PronySeriesRetardation();
+      if (retrievedData.HasValue)
+        inputOptions = inputOptions with
+        {
+          MinimalRetardationTime = retrievedData.Value.xMin,
+          MaximalRetardationTime = retrievedData.Value.xMax,
+          NumberOfRetardationTimes = retrievedData.Value.numPoints,
+        };
+      var dataSource = new PronySeriesRetardationTimeDomainDataSource(inputData, inputOptions, new DataSourceImportOptions());
+      var controller = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { dataSource }, typeof(IMVCANController));
+
+      if (true == Current.Gui.ShowDialog(controller, "Prony retardation"))
+      {
+        dataSource = (PronySeriesRetardationTimeDomainDataSource)controller.ModelObject;
+        var table = new DataTable
+        {
+          Name = ctrl.DataTable.Folder + "WRetardationSpectrumFromPronySeries"
+        };
+        Current.Project.DataTableCollection.Add(table);
+        table.DataSource = dataSource;
+        try
+        {
+          table.DataSource.FillData(table);
+          Current.ProjectService.CreateNewWorksheet(table);
+        }
+        catch (Exception ex)
+        {
+          Current.Gui.ErrorMessageBox($"There was an error during analysis of the data\r\nDetails:\r\n{ex.ToString()}", "Error in Prony analysis");
+        }
+      }
+    }
+
+    private static void TestTimeDomainInputAndExtractData(IWorksheetController ctrl, out (double xMin, double xMax, int numPoints)? retrievedData, out XAndYColumn inputData)
+    {
       int groupNumber = 0;
 
       DataColumn? x = null;
@@ -221,8 +299,8 @@ namespace Altaxo.Worksheet.Commands.Analysis
         x = ctrl.DataTable.DataColumns.FindXColumnOf(y);
       }
 
-      var inputOptions = new PronySeriesRelaxation();
-      var inputData = new XAndYColumn(ctrl.DataTable, groupNumber);
+      retrievedData = null;
+      inputData = new XAndYColumn(ctrl.DataTable, groupNumber);
       if (x is not null)
         inputData.XColumn = x;
       if (y is not null)
@@ -247,24 +325,38 @@ namespace Altaxo.Worksheet.Commands.Analysis
         xMax = Math.Pow(10, 0.5 * Math.Ceiling(Math.Log10(xMax) * 2));
         int numPoints = (int)(Math.Ceiling(Math.Log10(xMax) * 2) - Math.Floor(Math.Log10(xMin) * 2) + 1);
 
+
+        retrievedData = (xMin, xMax, numPoints);
+      }
+    }
+
+    public static void PronyRelaxationFrequencyDomain(IWorksheetController ctrl)
+    {
+      (double xMin, double xMax, int numPoints)? retrievedData;
+      XAndRealImaginaryColumns inputData;
+      ExtractFrequencyDomainData(ctrl, out retrievedData, out inputData);
+
+      var inputOptions = new PronySeriesRelaxation();
+      if (retrievedData.HasValue)
+      {
         inputOptions = inputOptions with
         {
-          MinimalRelaxationTime = xMin,
-          MaximalRelaxationTime = xMax,
-          NumberOfRelaxationTimes = numPoints,
+          MinimalRelaxationTime = retrievedData.Value.xMin,
+          MaximalRelaxationTime = retrievedData.Value.xMax,
+          NumberOfRelaxationTimes = retrievedData.Value.numPoints,
         };
       }
 
-      var dataSource = new PronySeriesRelaxationTimeDomainDataSource(inputData, inputOptions, new DataSourceImportOptions());
+      var dataSource = new PronySeriesRelaxationFrequencyDomainDataSource(inputData, inputOptions, new DataSourceImportOptions());
 
       var controller = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { dataSource }, typeof(IMVCANController));
 
       if (true == Current.Gui.ShowDialog(controller, "Prony relaxation"))
       {
-        dataSource = (PronySeriesRelaxationTimeDomainDataSource)controller.ModelObject;
+        dataSource = (PronySeriesRelaxationFrequencyDomainDataSource)controller.ModelObject;
         var table = new DataTable
         {
-          Name = ctrl.DataTable.Folder + "WSpectrumFromPronySeries"
+          Name = ctrl.DataTable.Folder + "WRelaxationSpectrumFromPronySeries"
         };
         Current.Project.DataTableCollection.Add(table);
         table.DataSource = dataSource;
@@ -280,8 +372,49 @@ namespace Altaxo.Worksheet.Commands.Analysis
       }
     }
 
+    public static void PronyRetardationFrequencyDomain(IWorksheetController ctrl)
+    {
+      (double xMin, double xMax, int numPoints)? retrievedData;
+      XAndRealImaginaryColumns inputData;
+      ExtractFrequencyDomainData(ctrl, out retrievedData, out inputData);
 
-    public static void PronyRelaxationFrequencyDomain(IWorksheetController ctrl)
+      var inputOptions = new PronySeriesRetardation();
+      if (retrievedData.HasValue)
+      {
+        inputOptions = inputOptions with
+        {
+          MinimalRetardationTime = retrievedData.Value.xMin,
+          MaximalRetardationTime = retrievedData.Value.xMax,
+          NumberOfRetardationTimes = retrievedData.Value.numPoints,
+        };
+      }
+
+      var dataSource = new PronySeriesRetardationFrequencyDomainDataSource(inputData, inputOptions, new DataSourceImportOptions());
+
+      var controller = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { dataSource }, typeof(IMVCANController));
+
+      if (true == Current.Gui.ShowDialog(controller, "Prony relaxation"))
+      {
+        dataSource = (PronySeriesRetardationFrequencyDomainDataSource)controller.ModelObject;
+        var table = new DataTable
+        {
+          Name = ctrl.DataTable.Folder + "WRetardationSpectrumFromPronySeries"
+        };
+        Current.Project.DataTableCollection.Add(table);
+        table.DataSource = dataSource;
+        try
+        {
+          table.DataSource.FillData(table);
+          Current.ProjectService.CreateNewWorksheet(table);
+        }
+        catch (Exception ex)
+        {
+          Current.Gui.ErrorMessageBox($"There was an error during analysis of the data\r\nDetails:\r\n{ex.ToString()}", "Error in Prony analysis");
+        }
+      }
+    }
+
+    private static void ExtractFrequencyDomainData(IWorksheetController ctrl, out (double xMin, double xMax, int numPoints)? retrievedData, out XAndRealImaginaryColumns inputData)
     {
       int groupNumber = 0;
 
@@ -300,8 +433,8 @@ namespace Altaxo.Worksheet.Commands.Analysis
         }
       }
 
-      var inputOptions = new PronySeriesRelaxation();
-      var inputData = new XAndRealImaginaryColumns(ctrl.DataTable, groupNumber, "Frequency");
+      retrievedData = null;
+      inputData = new XAndRealImaginaryColumns(ctrl.DataTable, groupNumber, "Frequency");
       if (x is not null)
         inputData.XColumn = x;
       if (re is not null)
@@ -324,40 +457,15 @@ namespace Altaxo.Worksheet.Commands.Analysis
           }
         }
 
+        // convert from frequencies to times
+        (xMin, xMax) = (1 / (2 * Math.PI * xMax), 1 / (2 * Math.PI * xMin));
+
+        // round the times
         xMin = Math.Pow(10, 0.5 * Math.Floor(Math.Log10(xMin) * 2));
         xMax = Math.Pow(10, 0.5 * Math.Ceiling(Math.Log10(xMax) * 2));
         int numPoints = (int)(Math.Ceiling(Math.Log10(xMax) * 2) - Math.Floor(Math.Log10(xMin) * 2) + 1);
 
-        inputOptions = inputOptions with
-        {
-          MinimalRelaxationTime = xMin,
-          MaximalRelaxationTime = xMax,
-          NumberOfRelaxationTimes = numPoints,
-        };
-      }
-
-      var dataSource = new PronySeriesRelaxationFrequencyDomainDataSource(inputData, inputOptions, new DataSourceImportOptions());
-
-      var controller = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { dataSource }, typeof(IMVCANController));
-
-      if (true == Current.Gui.ShowDialog(controller, "Prony relaxation"))
-      {
-        dataSource = (PronySeriesRelaxationFrequencyDomainDataSource)controller.ModelObject;
-        var table = new DataTable
-        {
-          Name = ctrl.DataTable.Folder + "WSpectrumFromPronySeries"
-        };
-        Current.Project.DataTableCollection.Add(table);
-        table.DataSource = dataSource;
-        try
-        {
-          table.DataSource.FillData(table);
-          Current.ProjectService.CreateNewWorksheet(table);
-        }
-        catch (Exception ex)
-        {
-          Current.Gui.ErrorMessageBox($"There was an error during analysis of the data\r\nDetails:\r\n{ex.ToString()}", "Error in Prony analysis");
-        }
+        retrievedData = (xMin, xMax, numPoints);
       }
     }
 
