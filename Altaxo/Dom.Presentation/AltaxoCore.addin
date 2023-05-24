@@ -638,6 +638,8 @@
 					class="Altaxo.Worksheet.Commands.AnalysisMultivariateLinearRegression" />
               <MenuItem id="PronyRelaxTime" label="Prony relaxation (time domain).." description="Performs a prony fit to a relaxation signal in the time domain."
 					class="Altaxo.Worksheet.Commands.AnalysisPronyRelaxationTimeDomain" />
+              <MenuItem id="PronyRelaxFreq" label="Prony relaxation (frequency domain).." description="Performs a prony fit to a relaxation signal in the frequency domain."
+					class="Altaxo.Worksheet.Commands.AnalysisPronyRelaxationFrequencyDomain" />
           </MenuItem>
         <MenuItem id="1DFFT" label="${res:XML.MainMenu.AnalysisMenu.FFT}" description="${res:XML.MainMenu.AnalysisMenu.FFT.Description}"
 					class="Altaxo.Worksheet.Commands.AnalysisFFT" />

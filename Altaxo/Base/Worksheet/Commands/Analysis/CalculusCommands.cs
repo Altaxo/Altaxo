@@ -206,6 +206,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
     #endregion Multivariate linear fit
 
     #region Prony fits
+
     public static void PronyRelaxationTimeDomain(IWorksheetController ctrl)
     {
       int groupNumber = 0;
@@ -261,6 +262,87 @@ namespace Altaxo.Worksheet.Commands.Analysis
       if (true == Current.Gui.ShowDialog(controller, "Prony relaxation"))
       {
         dataSource = (PronySeriesRelaxationTimeDomainDataSource)controller.ModelObject;
+        var table = new DataTable
+        {
+          Name = ctrl.DataTable.Folder + "WSpectrumFromPronySeries"
+        };
+        Current.Project.DataTableCollection.Add(table);
+        table.DataSource = dataSource;
+        try
+        {
+          table.DataSource.FillData(table);
+          Current.ProjectService.CreateNewWorksheet(table);
+        }
+        catch (Exception ex)
+        {
+          Current.Gui.ErrorMessageBox($"There was an error during analysis of the data\r\nDetails:\r\n{ex.ToString()}", "Error in Prony analysis");
+        }
+      }
+    }
+
+
+    public static void PronyRelaxationFrequencyDomain(IWorksheetController ctrl)
+    {
+      int groupNumber = 0;
+
+      DataColumn? x = null;
+      DataColumn? re = null;
+      DataColumn? im = null;
+
+      if (ctrl.SelectedDataColumns.Count > 0)
+      {
+        re = ctrl.DataTable.DataColumns[ctrl.SelectedDataColumns[0]];
+        groupNumber = ctrl.DataTable.DataColumns.GetColumnGroup(re);
+        x = ctrl.DataTable.DataColumns.FindXColumnOf(re);
+        if (ctrl.SelectedDataColumns.Count > 1)
+        {
+          im = ctrl.DataTable.DataColumns[ctrl.SelectedDataColumns[1]];
+        }
+      }
+
+      var inputOptions = new PronySeriesRelaxation();
+      var inputData = new XAndRealImaginaryColumns(ctrl.DataTable, groupNumber, "Frequency");
+      if (x is not null)
+        inputData.XColumn = x;
+      if (re is not null)
+        inputData.RealColumn = re;
+      if (im is not null)
+        inputData.ImaginaryColumn = im;
+
+
+      var (xArr, reArr, imArr, rowCount) = inputData.GetResolvedXRealImaginaryData();
+
+      if (rowCount > 0)
+      {
+        double xMin = double.MaxValue, xMax = 0;
+        for (int i = 0; i < xArr.Length; i++)
+        {
+          if (xArr[i] > 0 && xArr[i] < double.MaxValue)
+          {
+            xMin = Math.Min(xMin, xArr[i]);
+            xMax = Math.Max(xMax, xArr[i]);
+          }
+        }
+
+        xMin = Math.Pow(10, 0.5 * Math.Floor(Math.Log10(xMin) * 2));
+        xMax = Math.Pow(10, 0.5 * Math.Ceiling(Math.Log10(xMax) * 2));
+        int numPoints = (int)(Math.Ceiling(Math.Log10(xMax) * 2) - Math.Floor(Math.Log10(xMin) * 2) + 1);
+
+        inputOptions = inputOptions with
+        {
+          MinimalRelaxationTime = xMin,
+          MaximalRelaxationTime = xMax,
+          NumberOfRelaxationTimes = numPoints,
+        };
+      }
+
+      var dataSource = new PronySeriesRelaxationFrequencyDomainDataSource(inputData, inputOptions, new DataSourceImportOptions());
+
+      var controller = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { dataSource }, typeof(IMVCANController));
+
+      if (true == Current.Gui.ShowDialog(controller, "Prony relaxation"))
+      {
+        dataSource = (PronySeriesRelaxationFrequencyDomainDataSource)controller.ModelObject;
         var table = new DataTable
         {
           Name = ctrl.DataTable.Folder + "WSpectrumFromPronySeries"

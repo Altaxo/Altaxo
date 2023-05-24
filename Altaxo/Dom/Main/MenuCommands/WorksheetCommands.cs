@@ -1017,6 +1017,14 @@ namespace Altaxo.Worksheet.Commands
     }
   }
 
+  public class AnalysisPronyRelaxationFrequencyDomain : AbstractWorksheetControllerCommand
+  {
+    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
+    {
+      Altaxo.Worksheet.Commands.Analysis.CalculusCommands.PronyRelaxationFrequencyDomain(ctrl);
+    }
+  }
+
   public class SpectroscopyPreprocessing : AbstractWorksheetControllerCommand
   {
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
