@@ -366,7 +366,7 @@ namespace Altaxo.Science.Signals
         for (int r = 0; r < xCount; ++r)
           y[r, 0] = yarrRe[r]; // real part has to go first, because the intercept is only in the first half
         for (int r = xCount; r < NR; ++r)
-          y[r, 0] = yarrRe[r];
+          y[r, 0] = yarrIm[r - xCount];
       }
       else if (yarrRe is not null)
       {
