@@ -550,5 +550,60 @@ namespace Altaxo.Calc.Regression
     }
 
     #endregion
+
+    #region Low point count
+
+    /// <summary>
+    /// Create a signal with only 3 points, left and right point set to zero, and try to fit that.
+    /// </summary>
+    [Fact]
+    public void TestGauss_3Points()
+    {
+      var xx = new double[3];
+      var yy = new double[3];
+      for (int i = 0; i < xx.Length; ++i)
+      {
+        xx[i] = i + 9;
+        yy[i] = i == 1 ? 666 : 0;
+      }
+
+      var initialGuess = new double[3] { 665, 10.5, 1 };
+
+      var ff = new GaussAmplitude(1, -1);
+      var fit = new QuickNonlinearRegression(ff);
+      var lowerBounds = new double?[3];
+      lowerBounds[2] = 1e-2;
+      // because of the left and right y-value set to zero, the sigma of the
+      // Gaussian must approach our boundary
+      var fitResult = fit.Fit(xx, yy, initialGuess, lowerBounds, null, null, null, CancellationToken.None);
+      AssertEx.AreEqual(666, fitResult.MinimizingPoint[0], 0, 1E-10);
+      AssertEx.AreEqual(10, fitResult.MinimizingPoint[1], 0, 1E-10);
+      AssertEx.AreEqual(1E-2, fitResult.MinimizingPoint[2], 0, 1E-10);
+    }
+
+    /*
+    /// <summary>
+    /// This is a real-world signal, whose fit failed.
+    /// Failing is due to solving the Hessian in iteration 55, which fails due to gradients with very
+    /// different magnitude. Is this a case which can be handled?
+    /// </summary>
+    [Fact]
+    public void TestGauss_3Points_2()
+    {
+      var xx = new double[] { 145.73248120300929, 150.98248120300846, 156.2324812030098 };
+      var yy = new double[] { 0, 608.30000000000291, 0 };
+      var initialGuess = new double[3] { 608.30000000000291, 150.98248120300846, 2.2294697257561467 };
+      var lowerBounds = new double?[3] { 0, -146827.177518797, 0.21657705907315133 };
+      var upperBounds = new double?[3] { null, 151264.772481203, 62320.244092397821 };
+
+      var ff = new GaussAmplitude(1, -1);
+      var fit = new QuickNonlinearRegression(ff);
+      // because of the left and right y-value set to zero, the sigma of the
+      // Gaussian must approach our boundary
+      var fitResult = fit.Fit(xx, yy, initialGuess, lowerBounds, upperBounds, null, null, CancellationToken.None);
+    }
+    */
+
+    #endregion
   }
 }
