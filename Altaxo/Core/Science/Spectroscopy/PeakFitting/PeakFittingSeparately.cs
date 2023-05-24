@@ -225,22 +225,39 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
         }
 
         var fit = new QuickNonlinearRegression(fitFunc);
-        var fitResult = fit.Fit(xCut, yCut, param, lowerBounds, upperBounds, null, null, cancellationToken);
-
-        list.Add(new PeakDescription
+        try
         {
-          SearchDescription = description,
-          FirstFitPoint = first,
-          LastFitPoint = last,
-          FirstFitPosition = xArray[first],
-          LastFitPosition = xArray[last],
-          PeakParameter = fitResult.MinimizingPoint.ToArray(),
-          PeakParameterCovariances = fitResult.Covariance,
-          FitFunction = fitFunc,
-          FitFunctionParameter = fitResult.MinimizingPoint.ToArray(),
-          SumChiSquare = fitResult.ModelInfoAtMinimum.Value,
-          SigmaSquare = fitResult.ModelInfoAtMinimum.Value / (fitResult.ModelInfoAtMinimum.DegreeOfFreedom + 1),
-        }); ;
+          var fitResult = fit.Fit(xCut, yCut, param, lowerBounds, upperBounds, null, null, cancellationToken);
+
+          list.Add(new PeakDescription
+          {
+            SearchDescription = description,
+            FirstFitPoint = first,
+            LastFitPoint = last,
+            FirstFitPosition = xArray[first],
+            LastFitPosition = xArray[last],
+            PeakParameter = fitResult.MinimizingPoint.ToArray(),
+            PeakParameterCovariances = fitResult.Covariance,
+            FitFunction = fitFunc,
+            FitFunctionParameter = fitResult.MinimizingPoint.ToArray(),
+            SumChiSquare = fitResult.ModelInfoAtMinimum.Value,
+            SigmaSquare = fitResult.ModelInfoAtMinimum.Value / (fitResult.ModelInfoAtMinimum.DegreeOfFreedom + 1),
+          });
+        }
+        catch (Exception ex)
+        {
+          list.Add(new PeakDescription
+          {
+            SearchDescription = description,
+            Notes = ex.Message,
+            FirstFitPoint = -1,
+            LastFitPoint = -1,
+            FirstFitPosition = double.NaN,
+            LastFitPosition = double.NaN,
+            SumChiSquare = double.NaN,
+            SigmaSquare = double.NaN,
+          });
+        }
       }
 
       return list;
