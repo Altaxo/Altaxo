@@ -34,7 +34,6 @@ namespace Altaxo.Science.Signals
   /// in time or in frequency domain.
   /// </summary>
   public record PronySeriesRetardationResult
-
   {
     public PronySeriesRetardationResult(IReadOnlyList<double> relaxationTimes, IReadOnlyList<double> pronyCoefficients, IReadOnlyList<double> relaxationDensities, double? flowTerm)
     {
@@ -104,6 +103,7 @@ namespace Altaxo.Science.Signals
         var tau = RetardationTimes[i];
         sum += tau == 0 ? PronyCoefficients[i] : PronyCoefficients[i] * (1 - Math.Exp(-t / RetardationTimes[i]));
       }
+      sum += Fluidity * t;
       return sum;
     }
 
@@ -111,21 +111,19 @@ namespace Altaxo.Science.Signals
     /// Gets (in the frequency domain) the y-value in dependence on the circular frequency.
     /// </summary>
     /// <param name="w">The circular frequency.</param>
-    /// <returns>The y-value in the frequency domain. Note that because it is a compliance, the imaginary part is negative.</returns>
+    /// <returns>The y-value in the frequency domain.
+    /// Note that because it is a compliance, the imaginary part is negative.</returns>
     public Complex64 GetFrequencyDomainYOfOmega(double w)
     {
       Complex64 sum = 0;
       for (int i = 0; i < PronyCoefficients.Count; ++i)
       {
-        if (RetardationTimes[i]==0)
-        {
-          sum += PronyCoefficients[i];
-        }
-        else
-        {
-          var tauomega = w * RetardationTimes[i];
-          sum += PronyCoefficients[i] / (1 - tauomega * Complex64.ImaginaryOne);
-        }
+        var tauomega = w * RetardationTimes[i];
+        sum += PronyCoefficients[i] / (1 + tauomega * Complex64.ImaginaryOne);
+      }
+      if (Fluidity != 0)
+      {
+        sum -= Complex64.ImaginaryOne * (Fluidity / w);
       }
       return sum;
     }

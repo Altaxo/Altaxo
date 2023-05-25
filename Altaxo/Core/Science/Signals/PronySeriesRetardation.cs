@@ -161,7 +161,7 @@ namespace Altaxo.Science.Signals
           NumberOfRetardationTimes = numberRelax,
           UseIntercept = intercept,
           UseFlowTerm = useFlowTerm,
-          IsDielectricFlowTerm=isDielectricFlowTerm,
+          IsDielectricFlowTerm = isDielectricFlowTerm,
           RegularizationParameter = regularization
         } :
           ((PronySeriesRetardation)o) with
@@ -252,6 +252,7 @@ namespace Altaxo.Science.Signals
         double lntau = (1 - r) * Math.Log(tmin) + r * Math.Log(tmax);
         taus[c] = Math.Exp(lntau);
       }
+      var numberOfTausPerExpcade = (numberOfRetardationTimes - 1) / (Math.Log(tmax) - Math.Log(tmin));
 
       int NR = xarr.Count;
       int NC = numberOfRetardationTimes + (withIntercept ? 1 : 0) + (withFlowTerm ? 1 : 0); // one more column for the intercept
@@ -282,11 +283,16 @@ namespace Altaxo.Science.Signals
         int idx = NC - 1;
         for (int r = 0; r < NR; ++r)
         {
-          X[r, idx] = xarr[r]*flowTermScale; // base function for flow term is x, scale it so that it is in the range [0,1]
+          X[r, idx] = xarr[r] * flowTermScale; // base function for flow term is x, scale it so that it is in the range [0,1]
         }
       }
 
-      // Regularization
+      // Regularization by minimizing the sum of squares of the 2nd derivative of the parameters
+      // we scale the parameter with the square root of the measured points
+      // and with the number of retardation times per decade to the power of 5/2
+      regularizationLambda /= 100;
+      regularizationLambda *= Math.Sqrt(NR);
+      regularizationLambda *= numberOfTausPerExpcade * (numberOfTausPerExpcade * Math.Sqrt(numberOfTausPerExpcade));
       for (int r = NR; r < NR + numberOfRetardationTimes - 2; ++r)
       {
         X[r, r - NR] = regularizationLambda;
@@ -346,6 +352,8 @@ namespace Altaxo.Science.Signals
         double lntau = (1 - r) * Math.Log(tmin) + r * Math.Log(tmax);
         taus[c] = Math.Exp(lntau);
       }
+      var numberOfTausPerExpcade = (numberOfRetardationTimes - 1) / (Math.Log(tmax) - Math.Log(tmin));
+
 
       int xCount = xarr.Count;
       int NR = bothReAndIm ? 2 * xarr.Count : xarr.Count;
@@ -358,7 +366,7 @@ namespace Altaxo.Science.Signals
         for (int r = 0; r < NR; ++r)
         {
           var tauomega = taus[c] * xarr[r % xCount] * (isCircularFrequency ? 1 : 2 * Math.PI);
-          var g = 1 / (1 - tauomega * Complex64.ImaginaryOne);
+          var g = 1 / (1 + tauomega * Complex64.ImaginaryOne);
           if (bothReAndIm)
           {
             X[r, c] = r < xCount ? g.Real : -g.Imaginary;
@@ -390,7 +398,12 @@ namespace Altaxo.Science.Signals
         }
       }
 
-      // Regularization
+      // Regularization by minimizing the sum of squares of the 2nd derivative of the parameters
+      // we scale the parameter with the square root of the measured points
+      // and with the number of retardation times per decade to the power of 5/2
+      regularizationLambda /= 100;
+      regularizationLambda *= Math.Sqrt(NR) * Math.Sqrt(2);
+      regularizationLambda *= numberOfTausPerExpcade * (numberOfTausPerExpcade * Math.Sqrt(numberOfTausPerExpcade));
       for (int r = NR; r < NR + numberOfRetardationTimes - 2; ++r)
       {
         X[r, r - NR] = regularizationLambda;
@@ -406,7 +419,7 @@ namespace Altaxo.Science.Signals
         for (int r = 0; r < xCount; ++r)
           y[r, 0] = yarrRe[r]; // real part has to go first, because the intercept is only in the first half
         for (int r = xCount; r < NR; ++r)
-          y[r, 0] = yarrRe[r];
+          y[r, 0] = yarrIm[r - xCount];
       }
       else if (yarrRe is not null)
       {
@@ -457,7 +470,7 @@ namespace Altaxo.Science.Signals
       double? flowTerm = 0;
       if (withFlowTerm)
       {
-        flowTerm = x[x.RowCount - 1, 0]/flowTermScale;
+        flowTerm = x[x.RowCount - 1, 0] * flowTermScale;
       }
 
 

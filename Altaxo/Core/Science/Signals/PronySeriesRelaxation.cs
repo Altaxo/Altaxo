@@ -235,6 +235,7 @@ namespace Altaxo.Science.Signals
         double lntau = (1 - r) * Math.Log(tmin) + r * Math.Log(tmax);
         taus[c] = Math.Exp(lntau);
       }
+      var numberOfTausPerExpcade = (numberOfRelaxationTimes - 1) / (Math.Log(tmax) - Math.Log(tmin));
 
       int NR = xarr.Count;
       int NC = numberOfRelaxationTimes + (withIntercept ? 1 : 0); // one more column for the intercept
@@ -258,7 +259,12 @@ namespace Altaxo.Science.Signals
         }
       }
 
-      // Regularization
+      // Regularization by minimizing the sum of squares of the 2nd derivative of the parameters
+      // we scale the parameter with the square root of the measured points
+      // and with the number of relaxation times per decade to the power of 5/2
+      regularizationLambda /= 100;
+      regularizationLambda *= Math.Sqrt(NR);
+      regularizationLambda *= numberOfTausPerExpcade * (numberOfTausPerExpcade * Math.Sqrt(numberOfTausPerExpcade));
       for (int r = NR; r < NR + numberOfRelaxationTimes - 2; ++r)
       {
         X[r, r - NR] = regularizationLambda;
@@ -317,6 +323,8 @@ namespace Altaxo.Science.Signals
         double lntau = (1 - r) * Math.Log(tmin) + r * Math.Log(tmax);
         taus[c] = Math.Exp(lntau);
       }
+      var numberOfTausPerExpcade = (numberOfRelaxationTimes - 1) / (Math.Log(tmax) - Math.Log(tmin));
+
 
       int xCount = xarr.Count;
       int NR = bothReAndIm ? 2 * xarr.Count : xarr.Count;
@@ -350,7 +358,12 @@ namespace Altaxo.Science.Signals
         }
       }
 
-      // Regularization
+      // Regularization by minimizing the sum of squares of the 2nd derivative of the parameters
+      // we scale the parameter with the square root of the measured points
+      // and with the number of relaxation times per decade to the power of 5/2
+      regularizationLambda /= 100;
+      regularizationLambda *= Math.Sqrt(NR) * Math.Sqrt(2);
+      regularizationLambda *= numberOfTausPerExpcade * (numberOfTausPerExpcade * Math.Sqrt(numberOfTausPerExpcade));
       for (int r = NR; r < NR + numberOfRelaxationTimes - 2; ++r)
       {
         X[r, r - NR] = regularizationLambda;
