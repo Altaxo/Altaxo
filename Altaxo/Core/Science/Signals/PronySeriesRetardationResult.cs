@@ -30,28 +30,41 @@ using Complex64 = System.Numerics.Complex;
 namespace Altaxo.Science.Signals
 {
   /// <summary>
-  /// Represents the result of a prony series fit to a relaxation process, for instance a modulus, either
-  /// in time or in frequency domain.
+  /// Represents the result of a prony series fit to a retardation process (general susceptibility),
+  /// for instance a mechanical compliance, either in time or in frequency domain.
   /// </summary>
   public record PronySeriesRetardationResult
   {
-    public PronySeriesRetardationResult(IReadOnlyList<double> relaxationTimes, IReadOnlyList<double> pronyCoefficients, IReadOnlyList<double> relaxationDensities, double? flowTerm)
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PronySeriesRetardationResult"/> class.
+    /// </summary>
+    /// <param name="retardationTimes">The retardation times.</param>
+    /// <param name="pronyCoefficients">The prony coefficients.</param>
+    /// <param name="relaxationDensities">The relaxation densities.</param>
+    /// <param name="flowTerm">The flow term.</param>
+    /// <param name="isFlowTermFromDielectricSpectrum">if set to <c>true</c>, the Prony series is the result of a fit to
+    /// a dielectric spectrum. Then, the electric conductivity is calculated by using the vacuum permittivity as a factor.</param>
+    public PronySeriesRetardationResult(IReadOnlyList<double> retardationTimes, IReadOnlyList<double> pronyCoefficients, IReadOnlyList<double> relaxationDensities, double? flowTerm, bool isFlowTermFromDielectricSpectrum)
     {
-      RetardationTimes = relaxationTimes ?? throw new ArgumentNullException(nameof(relaxationTimes));
+      RetardationTimes = retardationTimes ?? throw new ArgumentNullException(nameof(retardationTimes));
       PronyCoefficients = pronyCoefficients ?? throw new ArgumentNullException(nameof(pronyCoefficients));
       RetardationDensities = relaxationDensities ?? throw new ArgumentNullException(nameof(relaxationDensities));
 
-      ComplianceLowFrequency = PronyCoefficients.Sum();
+      SusceptibilityLowFrequency = PronyCoefficients.Sum();
 
       if (flowTerm.HasValue)
       {
         Fluidity = flowTerm.Value;
         Viscosity = 1 / flowTerm.Value;
+        SpecificElectricalConductivity = isFlowTermFromDielectricSpectrum ? flowTerm.Value * SIConstants.VACUUM_PERMITTIVITY : double.NaN; ;
+        SpecificElectricalResistivity = isFlowTermFromDielectricSpectrum ? 1 / (flowTerm.Value * SIConstants.VACUUM_PERMITTIVITY) : double.NaN;
       }
       else
       {
         Fluidity = double.NaN;
         Viscosity = double.NaN;
+        SpecificElectricalConductivity = double.NaN;
+        SpecificElectricalResistivity = double.NaN;
       }
     }
 
@@ -71,14 +84,14 @@ namespace Altaxo.Science.Signals
     public IReadOnlyList<double> RetardationDensities { get; init; }
 
     /// <summary>
-    /// Gets the high frequency compliance.(the last element of the Prony coefficient array).
+    /// Gets the high frequency susceptibility.(the first element of the Prony coefficient array).
     /// </summary>
-    public double ComplianceHighFrequency { get => PronyCoefficients[0]; }
+    public double SusceptibilityHighFrequency { get => PronyCoefficients[0]; }
 
     /// <summary>
-    /// Gets the low frequency compliance.  This is the sum of all prony coefficients.
+    /// Gets the low frequency susceptibility.  This is the sum of all prony coefficients.
     /// </summary>
-    public double ComplianceLowFrequency { get; }
+    public double SusceptibilityLowFrequency { get; }
 
     /// <summary>
     /// Gets the flow term value, which is fluidity in case of strain retardation.
@@ -86,12 +99,25 @@ namespace Altaxo.Science.Signals
     public double Fluidity { get; }
 
     /// <summary>
+    /// Gets the specific electrical conductivity (if the fitted spectrum was a dielectric spectrum of relative permittivity).
+    /// The unit is S/m.
+    /// </summary>
+    public double SpecificElectricalConductivity { get; }
+
+
+    /// <summary>
     /// Gets the inverse of the flow term value, i.e. 1 / <see cref="Fluidity"/>.
     /// </summary>
     public double Viscosity { get; }
 
     /// <summary>
-    /// Gets (in the time domain) the y-value in dependence on x.
+    /// Gets the specific electrical resistivity (if the fitted spectrum was a dielectric spectrum of relative permittivity).
+    /// The unit is Ohm m.
+    /// </summary>
+    public double SpecificElectricalResistivity { get; }
+
+    /// <summary>
+    /// Gets (in the time domain) the y-value in dependence on time.
     /// </summary>
     /// <param name="t">The x-value (time).</param>
     /// <returns>The y-value in the time domain at time x.</returns>
@@ -112,7 +138,7 @@ namespace Altaxo.Science.Signals
     /// </summary>
     /// <param name="w">The circular frequency.</param>
     /// <returns>The y-value in the frequency domain.
-    /// Note that because it is a compliance, the imaginary part is negative.</returns>
+    /// Note that because it is a susceptibility, the imaginary part is negative.</returns>
     public Complex64 GetFrequencyDomainYOfOmega(double w)
     {
       Complex64 sum = 0;
@@ -132,7 +158,7 @@ namespace Altaxo.Science.Signals
     /// Gets (in the frequency domain) the y-value in dependence on the frequency.
     /// </summary>
     /// <param name="f">The frequency.</param>
-    /// <returns>The y-value in the frequency domain. Note that because it is a compliance, the imaginary part is negative.</returns>
+    /// <returns>The y-value in the frequency domain. Note that because it is a general susceptibility, the imaginary part is negative.</returns>
     public Complex64 GetFrequencyDomainYOfFrequency(double f)
     {
       return GetFrequencyDomainYOfOmega(f * 2 * Math.PI);

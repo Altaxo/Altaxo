@@ -117,13 +117,21 @@ namespace Altaxo.Science.Signals
       col0c.Data = fitResult.RetardationDensities;
 
       col1a[0] = "LowFrequencyCompliance";
-      col1b[0] = fitResult.ComplianceLowFrequency;
+      col1b[0] = fitResult.SusceptibilityLowFrequency;
       col1a[1] = "HighFrequencyCompliance";
-      col1b[1] = fitResult.ComplianceHighFrequency;
-      if (!double.IsNaN(fitResult.Fluidity))
+      col1b[1] = fitResult.SusceptibilityHighFrequency;
+      int idx = 2;
+      if (!double.IsNaN(fitResult.SpecificElectricalConductivity))
       {
-        col1a[2] = "Fluidity";
-        col1b[2] = fitResult.Fluidity;
+        col1a[idx] = "ElectricalConductivity";
+        col1b[idx] = fitResult.SpecificElectricalConductivity;
+        ++idx;
+      }
+      else if (!double.IsNaN(fitResult.Fluidity))
+      {
+        col1a[idx] = "Fluidity";
+        col1b[idx] = fitResult.Fluidity;
+        ++idx;
       }
 
       double tau = 0;

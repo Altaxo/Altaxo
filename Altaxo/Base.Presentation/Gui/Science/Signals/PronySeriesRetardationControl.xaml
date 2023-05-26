@@ -23,6 +23,8 @@
             <RowDefinition Height="4"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="4"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="4"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
@@ -69,8 +71,18 @@
                   />
 
         <Label Grid.Row="10" Grid.Column="0"
+               Content="Is dielectric spectrum:"/>
+        <CheckBox Grid.Row="10" Grid.Column="2"
+                  IsChecked="{Binding IsDielectricSpectrum}"
+                  IsEnabled="{Binding UseFlowTerm}"
+                  ToolTip="Check this box when the spectrum is a relative permittivity spectrum. In this case, the electrical conductivity is calculated as the flow term."
+                  VerticalAlignment="Center"
+                  Content="    "
+                  />
+
+        <Label Grid.Row="12" Grid.Column="0"
                Content="Regularization parameter:"/>
-        <axogc:NumericDoubleTextBox Grid.Row="10" Grid.Column="2"
+        <axogc:NumericDoubleTextBox Grid.Row="12" Grid.Column="2"
                            SelectedValue="{Binding RegularizationParameter}" 
                            DisallowNegativeValues="True" 
                            ToolTip="Default value is 0. The higher the value is set, the smoother the Prony coefficients are."         />

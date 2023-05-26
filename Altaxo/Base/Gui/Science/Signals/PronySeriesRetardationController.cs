@@ -135,6 +135,22 @@ namespace Altaxo.Gui.Science.Signals
     }
 
 
+    private bool _isDielectricSpectrum;
+
+    public bool IsDielectricSpectrum
+    {
+      get => _isDielectricSpectrum;
+      set
+      {
+        if (!(_isDielectricSpectrum == value))
+        {
+          _isDielectricSpectrum = value;
+          OnPropertyChanged(nameof(IsDielectricSpectrum));
+        }
+      }
+    }
+
+
 
     #endregion
 
@@ -150,6 +166,7 @@ namespace Altaxo.Gui.Science.Signals
         RegularizationParameter = _doc.RegularizationParameter;
         UseIntercept = _doc.UseIntercept;
         UseFlowTerm = _doc.UseFlowTerm;
+        IsDielectricSpectrum = _doc.IsDielectricSpectrum;
       }
     }
 
@@ -165,6 +182,7 @@ namespace Altaxo.Gui.Science.Signals
           RegularizationParameter = RegularizationParameter,
           UseIntercept = UseIntercept,
           UseFlowTerm = UseFlowTerm,
+          IsDielectricSpectrum = IsDielectricSpectrum,
         };
       }
       catch (Exception ex)

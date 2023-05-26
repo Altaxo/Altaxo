@@ -119,9 +119,9 @@ namespace Altaxo.Science.Signals
       col0c.Data = fitResult.RetardationDensities;
 
       col1a[0] = "LowFrequencyCompliance";
-      col1b[0] = fitResult.ComplianceLowFrequency;
+      col1b[0] = fitResult.SusceptibilityLowFrequency;
       col1a[1] = "HighFrequencyCompliance";
-      col1b[1] = fitResult.ComplianceHighFrequency;
+      col1b[1] = fitResult.SusceptibilityHighFrequency;
       if (!double.IsNaN(fitResult.Fluidity))
       {
         col1a[2] = "Fluidity";

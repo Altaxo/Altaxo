@@ -32,9 +32,10 @@ using Complex64 = System.Numerics.Complex;
 namespace Altaxo.Science.Signals
 {
   /// <summary>
-  /// Performs a fit with a Prony series to a retardation signal, either in the time domain or in the frequency domain.
+  /// Performs a fit with a Prony series to a retardation signal (general susceptibility),
+  /// either in the time domain or in the frequency domain.
   /// If the signal is a time domain signal, it is assumed to be a retardation signal, i.e. is increasing with time (for instance strain at constant stress).
-  /// If the signal is in the frequency domain, it is assumed to be a compliance, i.e. the real part is decreasing with frequency.
+  /// If the signal is in the frequency domain, it is assumed to be a susceptibility, i.e. the real part is decreasing with frequency.
   /// </summary>
   public record PronySeriesRetardation : Main.IImmutable
   {
@@ -121,7 +122,7 @@ namespace Altaxo.Science.Signals
     /// <summary>
     /// If true, the flow term is multiplied with the dielectric vacuum permittivity in order to the the electrical conductivity.
     /// </summary>
-    public bool IsDielectricFlowTerm { get; init; } = false;
+    public bool IsDielectricSpectrum { get; init; } = false;
 
     #region Serialization
 
@@ -140,7 +141,7 @@ namespace Altaxo.Science.Signals
         info.AddValue("NumberOfRelaxationTimes", s.NumberOfRetardationTimes);
         info.AddValue("UseIntercept", s.UseIntercept);
         info.AddValue("UseFlowTerm", s.UseFlowTerm);
-        info.AddValue("IsDielectricFlowTerm", s.IsDielectricFlowTerm);
+        info.AddValue("IsDielectricFlowTerm", s.IsDielectricSpectrum);
         info.AddValue("RegularizationParameter", s.RegularizationParameter);
       }
 
@@ -161,7 +162,7 @@ namespace Altaxo.Science.Signals
           NumberOfRetardationTimes = numberRelax,
           UseIntercept = intercept,
           UseFlowTerm = useFlowTerm,
-          IsDielectricFlowTerm = isDielectricFlowTerm,
+          IsDielectricSpectrum = isDielectricFlowTerm,
           RegularizationParameter = regularization
         } :
           ((PronySeriesRetardation)o) with
@@ -171,7 +172,7 @@ namespace Altaxo.Science.Signals
             NumberOfRetardationTimes = numberRelax,
             UseIntercept = intercept,
             UseFlowTerm = useFlowTerm,
-            IsDielectricFlowTerm = isDielectricFlowTerm,
+            IsDielectricSpectrum = isDielectricFlowTerm,
             RegularizationParameter = regularization
           };
       }
@@ -195,12 +196,13 @@ namespace Altaxo.Science.Signals
     /// </summary>
     /// <param name="xarr">The x-values of the signal (all elements must be positive).</param>
     /// <param name="isCircularFrequency">True if xarr contains circular frequencies; false if xarr contains normal frequencies.</param>
-    /// <param name="yarrRe">The real part of the modulus.</param>
-    /// <param name="yarrIm">The imaginary part of the modulus.</param>
+    /// <param name="yarrRe">The real part of the susceptibility.</param>
+    /// <param name="yarrIm">The imaginary part of the susceptibility. Note that although for a general susceptiblity the imaginary part is negative,
+    /// in science it is usual to change the sign, e.g. J*(w) = J'(w) - i J''(w). Thus, here it is expected that the imaginary part is positive.</param>
     /// <returns>The result of the evaluation, see <see cref="PronySeriesRetardationResult"/>.</returns>
     public PronySeriesRetardationResult EvaluateFrequencyDomain(IReadOnlyList<double> xarr, bool isCircularFrequency, IReadOnlyList<double>? yarrRe, IReadOnlyList<double>? yarrIm)
     {
-      return EvaluateFrequencyDomain(xarr, isCircularFrequency, yarrRe, yarrIm, MinimalRetardationTime, MaximalRetardationTime, NumberOfRetardationTimes, UseIntercept, UseFlowTerm, RegularizationParameter);
+      return EvaluateFrequencyDomain(xarr, isCircularFrequency, yarrRe, yarrIm, MinimalRetardationTime, MaximalRetardationTime, NumberOfRetardationTimes, UseIntercept, UseFlowTerm, IsDielectricSpectrum, RegularizationParameter);
     }
 
     /// <summary>
@@ -208,11 +210,12 @@ namespace Altaxo.Science.Signals
     /// </summary>
     /// <param name="xarr">The x-values of the signal (all elements must be positive).</param>
     /// <param name="isCircularFrequency">True if xarr contains circular frequencies; false if xarr contains normal frequencies.</param>
-    /// <param name="yarr">The complex modulus.</param>
+    /// <param name="yarr">The complex susceptibility.  Note that although for a general susceptiblity the imaginary part is negative,
+    /// in science it is usual to change the sign, e.g. J*(w) = J'(w) - i J''(w). Thus, here it is expected that the imaginary part is positive.</param>
     /// <returns>The result of the evaluation, see <see cref="PronySeriesRetardationResult"/>.</returns>
     public PronySeriesRetardationResult EvaluateFrequencyDomain(IReadOnlyList<double> xarr, bool isCircularFrequency, IReadOnlyList<Complex64> yarr)
     {
-      return EvaluateFrequencyDomain(xarr, isCircularFrequency, yarr.Select(c => c.Real).ToArray(), yarr.Select(c => c.Imaginary).ToArray(), MinimalRetardationTime, MaximalRetardationTime, NumberOfRetardationTimes, UseIntercept, UseFlowTerm, RegularizationParameter);
+      return EvaluateFrequencyDomain(xarr, isCircularFrequency, yarr.Select(c => c.Real).ToArray(), yarr.Select(c => c.Imaginary).ToArray(), MinimalRetardationTime, MaximalRetardationTime, NumberOfRetardationTimes, UseIntercept, UseFlowTerm, IsDielectricSpectrum, RegularizationParameter);
     }
 
     /// <summary>
@@ -305,7 +308,7 @@ namespace Altaxo.Science.Signals
       for (int r = 0; r < NR; ++r)
         y[r, 0] = yarr[r];
 
-      return Evaluate(tmin, tmax, numberOfRetardationTimes, withIntercept, withFlowTerm, flowTermScale, taus, X, y);
+      return Evaluate(tmin, tmax, numberOfRetardationTimes, withIntercept, withFlowTerm, isRelativePermittivitySpectrum: false, flowTermScale, taus, X, y);
     }
 
     /// <summary>
@@ -313,15 +316,18 @@ namespace Altaxo.Science.Signals
     /// </summary>
     /// <param name="xarr">The x-values of the signal (all elements must be positive).</param>
     /// <param name="isCircularFrequency">True if xarr contains circular frequencies; false if xarr contains normal frequencies.</param>
-    /// <param name="yarrRe">The real part of the compliance.</param>
-    /// <param name="yarrIm">The negated imaginary part of the compliance (the imaginary part of a compliance is negative, but in technique, always the negated imaginary part is used, which is then positive).</param>
+    /// <param name="yarrRe">The real part of the susceptibility.</param>
+    /// <param name="yarrIm">The imaginary part of the susceptibility. Note that although for a general susceptiblity the imaginary part is negative,
+    /// in science it is usual to change the sign, e.g. J*(w) = J'(w) - i J''(w). Thus, here it is expected that the imaginary part is positive.</param>
     /// <param name="tmin">The smallest Retardation time (tau of the first Prony term).</param>
     /// <param name="tmax">The largest Retardation time (tau of the last Prony term).</param>
     /// <param name="numberOfRetardationTimes">The number of Retardation times (number of Prony terms).</param>
     /// <param name="withIntercept">If set to <c>true</c>, an offset term is added. This term can be considered to have a infinite Retardation time.</param>
+    /// <param name="withFlowTerm">If set to true, the flow term is calculated, too.</param>
+    /// <param name="isRelativePermittivitySpectrum">If set to true, it is indicated that the spectrum to be fitted is a dielectric spectrum of relative permittivities.</param>
     /// <param name="regularizationLambda">A regularization parameter to smooth the resulting array of Prony terms.</param>
     /// <returns>The result of the evaluation, see <see cref="PronySeriesRetardationResult"/>.</returns>
-    public static PronySeriesRetardationResult EvaluateFrequencyDomain(IReadOnlyList<double> xarr, bool isCircularFrequency, IReadOnlyList<double>? yarrRe, IReadOnlyList<double>? yarrIm, double tmin, double tmax, int numberOfRetardationTimes, bool withIntercept, bool withFlowTerm, double regularizationLambda)
+    public static PronySeriesRetardationResult EvaluateFrequencyDomain(IReadOnlyList<double> xarr, bool isCircularFrequency, IReadOnlyList<double>? yarrRe, IReadOnlyList<double>? yarrIm, double tmin, double tmax, int numberOfRetardationTimes, bool withIntercept, bool withFlowTerm, bool isRelativePermittivitySpectrum, double regularizationLambda)
     {
       var bothReAndIm = yarrRe is not null && yarrIm is not null;
       if (xarr is null)
@@ -436,10 +442,10 @@ namespace Altaxo.Science.Signals
         throw new InvalidOperationException();
       }
 
-      return Evaluate(tmin, tmax, numberOfRetardationTimes, withIntercept, withFlowTerm, flowTermScale, taus, X, y);
+      return Evaluate(tmin, tmax, numberOfRetardationTimes, withIntercept, withFlowTerm, isRelativePermittivitySpectrum, flowTermScale, taus, X, y);
     }
 
-    protected static PronySeriesRetardationResult Evaluate(double tmin, double tmax, int numberOfRetardationTimes, bool withIntercept, bool withFlowTerm, double flowTermScale, double[] taus, Matrix<double> X, Matrix<double> y)
+    protected static PronySeriesRetardationResult Evaluate(double tmin, double tmax, int numberOfRetardationTimes, bool withIntercept, bool withFlowTerm, bool isRelativePermittivitySpectrum, double flowTermScale, double[] taus, Matrix<double> X, Matrix<double> y)
     {
       // calculate XtX and XtY
       var XtX = X.TransposeThisAndMultiply(X);
@@ -474,7 +480,7 @@ namespace Altaxo.Science.Signals
       }
 
 
-      var result = new PronySeriesRetardationResult(resultTauCol, resultPronyCol, resultRetardationDensityCol, flowTerm);
+      var result = new PronySeriesRetardationResult(resultTauCol, resultPronyCol, resultRetardationDensityCol, flowTerm, isRelativePermittivitySpectrum);
       return result;
     }
   }
