@@ -107,6 +107,14 @@ namespace Altaxo.Collections
         Add(from[i]);
     }
 
+    /// <summary>Creates the collection with some initial values.</summary>
+    /// <param name="initialEntries">The initial entries of this collection</param>
+    public AscendingIntegerCollection(IEnumerable<int> initialEntries)
+    {
+      foreach(var entry in initialEntries)
+        Add(entry);
+    }
+
     /// <summary>
     /// Number of integer values stored in this collection
     /// </summary>
