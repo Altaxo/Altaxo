@@ -570,16 +570,23 @@ namespace Altaxo.Calc.Optimization
       // calculate the clamped step, and the new parameters
       for (int i = 0; i < parameterValues.Count; i++)
       {
-        clampedParameterStep[i] = scaleFactor * parameterStep[i];
-        nextParameterValues[i] = parameterValues[i] + clampedParameterStep[i];
+        var clampedParameterStep_i = scaleFactor * parameterStep[i];
+        var nextValue = parameterValues[i] + clampedParameterStep_i;
+        if (clampedParameterStep_i < 0 && nextValue < LowerBound?.ElementAt(i))
+        {
+          nextValue = LowerBound.ElementAt(i).Value;
+          clampedParameterStep_i = nextValue - parameterValues[i];
+        }
+        else if (clampedParameterStep_i > 0 && nextValue > UpperBound?.ElementAt(i))
+        {
+          nextValue = UpperBound.ElementAt(i).Value;
+          clampedParameterStep_i = nextValue - parameterValues[i];
+        }
+
+        clampedParameterStep[i] = clampedParameterStep_i;
+        nextParameterValues[i] = nextValue;
 
         clampedScaledParameterStep[i] = clampedParameterStep[i] / Scales[i];
-      }
-
-      // in order to avoid small inaccuracies caused by scaleFactor, we set the nextParameter that caused the scaleFactor to its bound
-      if (idxLowestScale >= 0)
-      {
-        nextParameterValues[idxLowestScale] = valueParameterAtLowestScale;
       }
 
       return scaleFactor;
