@@ -536,10 +536,16 @@ namespace Altaxo.Calc.Optimization
     private double ClampStepToBoundaryConditions(IReadOnlyList<double> parameterValues, IReadOnlyList<double> parameterStep, IVector<double> clampedParameterStep, IVector<double> clampedScaledParameterStep, IVector<double> nextParameterValues)
     {
       double scaleFactor = 1; // Scale factor for step
-      int idxLowestScale = -1;
-      double valueParameterAtLowestScale = double.NaN;
-
-      if (LowerBound is not null || UpperBound is not null)
+      if (LowerBound is null && UpperBound is null)
+      {
+        for (int i = 0; i < parameterValues.Count; i++)
+        {
+          clampedParameterStep[i] = parameterStep[i];
+          clampedScaledParameterStep[i] = parameterStep[i] / Scales[i];
+          nextParameterValues[i] = parameterValues[i] + parameterStep[i];
+        }
+      }
+      else
       {
         for (int i = 0; i < parameterValues.Count; i++)
         {
@@ -548,47 +554,44 @@ namespace Altaxo.Calc.Optimization
 
           if (lowerBnd.HasValue && parameterValues[i] > lowerBnd.Value)
           {
-            if (parameterStep[i] < 0 && !(parameterValues[i] + scaleFactor * parameterStep[i] > lowerBnd.Value))
+            if (parameterStep[i] < 0 && !(parameterValues[i] + scaleFactor * parameterStep[i] >= lowerBnd.Value))
             {
-              idxLowestScale = i;
               scaleFactor = (lowerBnd.Value - parameterValues[i]) / parameterStep[i];
-              valueParameterAtLowestScale = lowerBnd.Value;
             }
           }
           if (upperBnd.HasValue && parameterValues[i] < upperBnd.Value)
           {
-            if (parameterStep[i] > 0 && !(parameterValues[i] + scaleFactor * parameterStep[i] < upperBnd.Value))
+            if (parameterStep[i] > 0 && !(parameterValues[i] + scaleFactor * parameterStep[i] <= upperBnd.Value))
             {
-              idxLowestScale = i;
               scaleFactor = (upperBnd.Value - parameterValues[i]) / parameterStep[i];
-              valueParameterAtLowestScale = upperBnd.Value;
             }
           }
         }
-      }
 
-      // calculate the clamped step, and the new parameters
-      for (int i = 0; i < parameterValues.Count; i++)
-      {
-        var clampedParameterStep_i = scaleFactor * parameterStep[i];
-        var nextValue = parameterValues[i] + clampedParameterStep_i;
-        if (clampedParameterStep_i < 0 && nextValue < LowerBound?.ElementAt(i))
+        // calculate the clamped step, and the new parameters
+        for (int i = 0; i < parameterValues.Count; i++)
         {
-          nextValue = LowerBound.ElementAt(i).Value;
-          clampedParameterStep_i = nextValue - parameterValues[i];
-        }
-        else if (clampedParameterStep_i > 0 && nextValue > UpperBound?.ElementAt(i))
-        {
-          nextValue = UpperBound.ElementAt(i).Value;
-          clampedParameterStep_i = nextValue - parameterValues[i];
-        }
+          var lowerBnd = LowerBound?.ElementAt(i);
+          var upperBnd = UpperBound?.ElementAt(i);
 
-        clampedParameterStep[i] = clampedParameterStep_i;
-        nextParameterValues[i] = nextValue;
+          var clampedParameterStep_i = scaleFactor * parameterStep[i];
+          var nextValue = parameterValues[i] + clampedParameterStep_i;
+          if (clampedParameterStep_i < 0 && nextValue < lowerBnd)
+          {
+            nextValue = lowerBnd.Value;
+            clampedParameterStep_i = nextValue - parameterValues[i];
+          }
+          else if (clampedParameterStep_i > 0 && nextValue > upperBnd)
+          {
+            nextValue = upperBnd.Value;
+            clampedParameterStep_i = nextValue - parameterValues[i];
+          }
 
-        clampedScaledParameterStep[i] = clampedParameterStep[i] / Scales[i];
+          clampedParameterStep[i] = clampedParameterStep_i;
+          clampedScaledParameterStep[i] = clampedParameterStep_i / Scales[i];
+          nextParameterValues[i] = nextValue;
+        }
       }
-
       return scaleFactor;
     }
 
