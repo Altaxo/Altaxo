@@ -239,11 +239,11 @@ namespace Altaxo.Main
       if (item is null)
         throw new ArgumentNullException(nameof(item));
 
-      if (item.Name is not null && _itemsByName.TryGetValue(item.Name, out var existingItem) && object.Equals(item, existingItem))
+      if (item.TryGetName(out var itemName) && _itemsByName.TryGetValue(itemName, out var existingItem) && object.Equals(item, existingItem))
         throw new InvalidOperationException($"The item {item.Name} is already contained in the collection!");
 
       item.ParentObject = null;
-      if (false == item.TryGetName(out var itemName)) // if no name provided (an empty string is a valid name)
+      if (false == item.TryGetName(out itemName)) // if no name provided (an empty string is a valid name)
         item.Name = FindNewItemName();                 // find a new one
       else if (_itemsByName.ContainsKey(itemName)) // else if this name is already in use
         item.Name = FindNewItemName(itemName); // find a new  name based on the original name
