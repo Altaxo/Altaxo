@@ -765,82 +765,80 @@ namespace Altaxo.Science.Spectroscopy
       {
         ++numberOfSpectrum;
 
-        if (peakSearchingFittingOptions.OutputOptions.OutputPreprocessedCurve && (peakSearchingFittingOptions.OutputOptions.OutputFitCurve || peakSearchingFittingOptions.OutputOptions.OutputFitCurveAsSeparatePeaks))
+        if (peakSearchingFittingOptions.OutputOptions.OutputPreprocessedCurve)
         {
-          /*
+          CreateGraphWithPreprocessedSpectrum(peakTable, 0, peakTable.FolderName + "GPreprocessedCurve", useLinePlot: true);
+        }
 
-          var selColumnsForPeakGraph = new AscendingIntegerCollection
+        if (peakSearchingFittingOptions.PeakFitting is not PeakFitting.PeakFittingNone)
+        {
+          if (peakSearchingFittingOptions.OutputOptions.OutputFitCurveAsSeparatePeaks)
           {
-            peakTable.DataColumns.GetColumnNumber(peakTable[PeakTable_PreprocessedColumnNameY(numberOfSpectrum)])
-          };
-          var preferredGraphName = peakTable.FolderName + "GPeaks";
-          var graphController = PlotCommands.PlotLine(peakTable, selColumnsForPeakGraph, bLine: false, bScatter: true, preferredGraphName);
-          var graph = graphController.Doc;
-          var layer = (XYPlotLayer)graph.RootLayer.Layers[0];
-          var pi = layer.PlotItems.TakeFromHereToFirstLeaves<IGPlotItem>().OfType<XYColumnPlotItem>().FirstOrDefault();
-          if (pi is not null)
-          {
-            var scatter = pi.Style.OfType<ScatterPlotStyle>().FirstOrDefault();
-            if (scatter is not null)
-            {
-              scatter.SymbolSize /= 4; // use only a quarter of the symbol size of a usual scatter plot
-            }
+            PlotFitCurveAsSeparatePeaks(peakTable, numberOfSpectrum);
           }
-
-          PlotItemCollection group;
-          if (pi?.ParentCollection is not null)
+          if (peakSearchingFittingOptions.OutputOptions.OutputFitCurve)
           {
-            group = pi.ParentCollection;
-          }
-          else
-          {
-            group = new PlotItemCollection();
-            layer.PlotItems.Add(group);
-          }
-
-          */
-
-          if (peakSearchingFittingOptions.PeakFitting is not PeakFitting.PeakFittingNone)
-          {
-
-            if (peakSearchingFittingOptions.OutputOptions.OutputFitCurveAsSeparatePeaks)
-            {
-              // plot the separate peaks
-              var (graph, group) = CreateGraphWithPreprocessedSpectrum(peakTable, numberOfSpectrum, "GPeaksSeparate");
-              var plotStyle = PlotCommands.PlotStyle_Line(graph.GetPropertyContext());
-              var lineStyle = plotStyle.OfType<LinePlotStyle>().FirstOrDefault();
-              if (lineStyle is not null)
-              {
-                var varColorStyle = new ColumnDrivenColorPlotStyle();
-                varColorStyle.DataColumn = peakTable[PeakTable_SeparatePeaksColumnNameID(numberOfSpectrum)];
-                plotStyle.Insert(0, varColorStyle);
-
-                var xColumn = peakTable.DataColumns[PeakTable_SeparatePeaksColumnNameX(numberOfSpectrum)];
-                var yColumn = peakTable.DataColumns[PeakTable_SeparatePeaksColumnNameY(numberOfSpectrum)];
-                var groupNumber = peakTable.DataColumns.GetColumnGroup(yColumn);
-                var plotData = new XYColumnPlotData(peakTable, groupNumber, xColumn, yColumn);
-                var plotItem = new XYColumnPlotItem(plotData, plotStyle);
-                group.Add(plotItem);
-              }
-            }
-            if (peakSearchingFittingOptions.OutputOptions.OutputFitCurve)
-            {
-              // plot the fit curve
-              var (graph, group) = CreateGraphWithPreprocessedSpectrum(peakTable, numberOfSpectrum, "GPeaksTogether");
-              var plotStyle = PlotCommands.PlotStyle_Line(graph.GetPropertyContext());
-              var lineStyle = plotStyle.OfType<LinePlotStyle>().FirstOrDefault();
-              if (lineStyle is not null && lineStyle.Color.ParentColorSet is { } parentCSet)
-              {
-                var xColumn = peakTable.DataColumns[PeakTable_FitCurveColumnNameX(numberOfSpectrum)];
-                var yColumn = peakTable.DataColumns[PeakTable_FitCurveColumnNameY(numberOfSpectrum)];
-                var groupNumber = peakTable.DataColumns.GetColumnGroup(yColumn);
-                var plotData = new XYColumnPlotData(peakTable, groupNumber, xColumn, yColumn);
-                var plotItem = new XYColumnPlotItem(plotData, plotStyle);
-                group.Add(plotItem);
-              }
-            }
+            PlotFitCurve(peakTable, numberOfSpectrum);
           }
         }
+      }
+    }
+
+    /// <summary>
+    /// Plots the fit curve (all together).
+    /// </summary>
+    /// <param name="peakTable">The peak table containing the fit results.</param>
+    /// <param name="numberOfSpectrum">The number of the spectrum.</param>
+    /// <param name="graphName">Name of the graph to create (full name). If null or empty, a graph with a default name is created in the same folder as the table.</param>
+    public static void PlotFitCurve(DataTable peakTable, int numberOfSpectrum = 0, string? graphName = null)
+    {
+      // plot the fit curve
+      if (string.IsNullOrEmpty(graphName))
+      {
+        graphName = peakTable.FolderName + "GPeaksTogether";
+      }
+      var (graph, group) = CreateGraphWithPreprocessedSpectrum(peakTable, numberOfSpectrum, graphName);
+      var plotStyle = PlotCommands.PlotStyle_Line(graph.GetPropertyContext());
+      var lineStyle = plotStyle.OfType<LinePlotStyle>().FirstOrDefault();
+      if (lineStyle is not null && lineStyle.Color.ParentColorSet is { } parentCSet)
+      {
+        var xColumn = peakTable.DataColumns[PeakTable_FitCurveColumnNameX(numberOfSpectrum)];
+        var yColumn = peakTable.DataColumns[PeakTable_FitCurveColumnNameY(numberOfSpectrum)];
+        var groupNumber = peakTable.DataColumns.GetColumnGroup(yColumn);
+        var plotData = new XYColumnPlotData(peakTable, groupNumber, xColumn, yColumn);
+        var plotItem = new XYColumnPlotItem(plotData, plotStyle);
+        group.Add(plotItem);
+      }
+    }
+
+    /// <summary>
+    /// Plots the fit curve as separate peaks.
+    /// </summary>
+    /// <param name="peakTable">The peak table containing the fit results.</param>
+    /// <param name="numberOfSpectrum">The number of spectrum (usually 0).</param>
+    /// <param name="graphName">Name of the graph to create (full name). If null or empty, a graph with a default name is created in the same folder as the table.</param>
+    public static void PlotFitCurveAsSeparatePeaks(DataTable peakTable, int numberOfSpectrum, string? graphName = null)
+    {
+      // plot the separate peaks
+      if (string.IsNullOrEmpty(graphName))
+      {
+        graphName = peakTable.FolderName + "GPeaksSeparate";
+      }
+      var (graph, group) = CreateGraphWithPreprocessedSpectrum(peakTable, numberOfSpectrum, graphName);
+      var plotStyle = PlotCommands.PlotStyle_Line(graph.GetPropertyContext());
+      var lineStyle = plotStyle.OfType<LinePlotStyle>().FirstOrDefault();
+      if (lineStyle is not null)
+      {
+        var varColorStyle = new ColumnDrivenColorPlotStyle();
+        varColorStyle.DataColumn = peakTable[PeakTable_SeparatePeaksColumnNameID(numberOfSpectrum)];
+        plotStyle.Insert(0, varColorStyle);
+
+        var xColumn = peakTable.DataColumns[PeakTable_SeparatePeaksColumnNameX(numberOfSpectrum)];
+        var yColumn = peakTable.DataColumns[PeakTable_SeparatePeaksColumnNameY(numberOfSpectrum)];
+        var groupNumber = peakTable.DataColumns.GetColumnGroup(yColumn);
+        var plotData = new XYColumnPlotData(peakTable, groupNumber, xColumn, yColumn);
+        var plotItem = new XYColumnPlotItem(plotData, plotStyle);
+        group.Add(plotItem);
       }
     }
 
@@ -849,16 +847,17 @@ namespace Altaxo.Science.Spectroscopy
     /// </summary>
     /// <param name="peakTable">The peak table.</param>
     /// <param name="numberOfSpectrum">The number of the spectrum.</param>
-    /// <param name="graphName">Name of the graph.</param>
+    /// <param name="graphName">Name of the graph (full name).</param>
+    /// <param name="useLinePlot">If true, the preprocessed curve is shown as a line plot instead of a scatter plot.</param>
     /// <returns>The graph, and the plot item collection of the plot of the preprocessed spectrum.</returns>
-    private static (GraphDocument graph, PlotItemCollection group) CreateGraphWithPreprocessedSpectrum(DataTable peakTable, int numberOfSpectrum, string graphName)
+    public static (GraphDocument graph, PlotItemCollection group) CreateGraphWithPreprocessedSpectrum(DataTable peakTable, int numberOfSpectrum, string graphName, bool useLinePlot = false)
     {
       var selColumnsForPeakGraph = new AscendingIntegerCollection
           {
             peakTable.DataColumns.GetColumnNumber(peakTable[PeakTable_PreprocessedColumnNameY(numberOfSpectrum)])
           };
-      var preferredGraphName = peakTable.FolderName + (graphName ?? "GPeaks");
-      var graphController = PlotCommands.PlotLine(peakTable, selColumnsForPeakGraph, bLine: false, bScatter: true, preferredGraphName);
+      var preferredGraphName = string.IsNullOrEmpty(graphName) ? peakTable.FolderName + "GPeaks" : graphName;
+      var graphController = PlotCommands.PlotLine(peakTable, selColumnsForPeakGraph, bLine: useLinePlot, bScatter: !useLinePlot, preferredGraphName);
       var graph = graphController.Doc;
       var layer = (XYPlotLayer)graph.RootLayer.Layers[0];
       var pi = layer.PlotItems.TakeFromHereToFirstLeaves<IGPlotItem>().OfType<XYColumnPlotItem>().FirstOrDefault();
