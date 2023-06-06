@@ -25,7 +25,9 @@
 #nullable disable
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Windows.Input;
 using Altaxo.Calc.LinearAlgebra;
@@ -355,6 +357,16 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
     #endregion
 
+    #region Bounds
+
+    private ICommand _cmdBoundsLoadAbsoluteLimits;
+    public ICommand CmdBoundsLoadAbsoluteLimits => _cmdBoundsLoadAbsoluteLimits ??= new RelayCommand(EhView_CmdBoundsLoadHardLimits);
+
+    private ICommand _cmdBoundsLoadSensibleLimits;
+    public ICommand CmdBoundsLoadSensibleLimits => _cmdBoundsLoadSensibleLimits ??= new RelayCommand(EhView_CmdBoundsLoadSoftLimits);
+
+    #endregion
+
     #endregion
 
     protected override void Initialize(bool initData)
@@ -446,14 +458,35 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
           return;
         }
 
+        var (msg, isFatal) = TestAndCorrectParametersAndBoundaries(_doc.CurrentParameters);
+        if(msg.Length > 0)
+        {
+          if(isFatal)
+          {
+            msg.AppendLine("Please make the neccessary corrections!");
+            Current.Gui.ErrorMessageBox(msg.ToString(), "Errors testing boundaries");
+            _parameterController.InitializeDocument(_doc.CurrentParameters);
+            return;
+          }
+          else
+          {
+            msg.AppendLine("Do you want to proceed with the fit?");
+            if(false == Current.Gui.YesNoMessageBox(msg.ToString(), "Warnings", true))
+            {
+              _parameterController.InitializeDocument(_doc.CurrentParameters);
+              return;
+            }
+          }
+        }
+
         var fitAdapter = new NonlinearModelOfFitEnsemble(_doc.FitEnsemble, _doc.CurrentParameters);
         var fit = new LevenbergMarquardtMinimizerNonAllocating();
 
 
         var backgroundMonitor = new ExternalDrivenBackgroundMonitor();
-        var initialGuess = _doc.CurrentParameters.Where(e => e.Vary == true).Select(e => e.Parameter).ToList();
+        var (initialGuess, lowerBounds, upperBounds) = CollectVaryingParametersAndBoundaries(_doc.CurrentParameters);
         NonlinearMinimizationResult minimizationResult = null;
-        var fitThread = new System.Threading.Thread(new System.Threading.ThreadStart(() => minimizationResult = fit.FindMinimum(fitAdapter, initialGuess, null, null, null, null, backgroundMonitor.CancellationTokenHard, (iterations, chi2, _) => backgroundMonitor.ReportProgress($"#Iteration {iterations}: Chi² = {chi2}"))));
+        var fitThread = new System.Threading.Thread(new System.Threading.ThreadStart(() => minimizationResult = fit.FindMinimum(fitAdapter, initialGuess, lowerBounds, upperBounds, null, null, backgroundMonitor.CancellationTokenHard, (iterations, chi2, _) => backgroundMonitor.ReportProgress($"#Iteration {iterations}: Chi² = {chi2}"))));
         fitThread.Start();
         Current.Gui.ShowBackgroundCancelDialog(10000, fitThread, backgroundMonitor);
         if (!(fitThread.ThreadState.HasFlag(System.Threading.ThreadState.Aborted)))
@@ -476,6 +509,76 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       {
         Current.Gui.ErrorMessageBox("Some of your parameter input is not valid!");
       }
+    }
+
+    /// <summary>
+    /// Tests the values of parameters and boundaries for inconsistencies, and corrects them.
+    /// </summary>
+    /// <param name="parameters">The parameters.</param>
+    /// <returns>A <see cref="StringBuilder"/> containing warnings and errors, and a flag indicating if any inconsistence could not be corrected automatically.</returns>
+    (StringBuilder Message, bool isFatal) TestAndCorrectParametersAndBoundaries(ParameterSet parameters)
+    {
+      var stb = new StringBuilder();
+      bool isFatal = false;
+
+      for (int i = 0; i < parameters.Count; i++)
+      {
+        var p = parameters[i];
+        if (p.LowerBound.HasValue && p.UpperBound.HasValue)
+        {
+          if (!(p.LowerBound <= p.UpperBound))
+          {
+            stb.AppendLine($"Parameter {p.Name}: lower bound is greater than upper bound, CORRECTION REQUIRED!");
+            isFatal = true;
+          }
+          else if (p.UpperBound == p.LowerBound && p.Vary)
+          {
+            p.Parameter = p.LowerBound.Value;
+            p.Vary = false;
+            stb.AppendLine($"Parameter {p.Name}: was set to fixed since lower bound is equal to upper bound!");
+          }
+        }
+        if (p.UpperBound.HasValue && !(p.Parameter <= p.UpperBound.Value))
+        {
+          p.Parameter = p.UpperBound.Value;
+          stb.AppendLine($"Parameter {p.Name}: was set to upper bound since it was greater than upper bound!");
+        }
+        if (p.LowerBound.HasValue && !(p.Parameter >= p.LowerBound.Value))
+        {
+          p.Parameter = p.LowerBound.Value;
+          stb.AppendLine($"Parameter {p.Name}: was set to lower bound since it was less than lower bound!");
+        }
+      }
+      return (stb, isFatal);
+    }
+
+    /// <summary>
+    /// Collects the list of varying parameters and their corresponding boundaries.
+    /// </summary>
+    /// <param name="parameters">The parameters.</param>
+    /// <returns>A tuple of three lists, one with the parameters, one with the lower bounds (can be null), and one with the upper bounds (can be null).</returns>
+    (List<double> varyingParameters, List<double?>? lowerBounds, List<double?>? upperBounds) CollectVaryingParametersAndBoundaries(ParameterSet parameters)
+    {
+      var varyingParameters = new List<double>();
+      var lowerBounds = new List<double?>();
+      var upperBounds = new List<double?>();
+
+      bool hasAnyLowerBound = false;
+      bool hasAnyUpperBound = false;
+
+      for(int i=0;i<parameters.Count; i++)
+      {
+        var p = parameters[i];
+        if(p.Vary)
+        {
+          varyingParameters.Add(p.Parameter);
+          lowerBounds.Add(p.LowerBound);
+          upperBounds.Add(p.UpperBound);
+          hasAnyLowerBound |= p.LowerBound.HasValue;
+          hasAnyUpperBound |= p.UpperBound.HasValue;
+        }
+      }
+      return (varyingParameters, hasAnyLowerBound ? lowerBounds : null, hasAnyUpperBound ? upperBounds : null);
     }
 
     private class ReportCostMonitor : ExternalDrivenBackgroundMonitor
@@ -1408,6 +1511,138 @@ Label_EditScript:
       }
     }
 
+    private void EhView_CmdBoundsLoadHardLimits()
+    {
+      var parameters = _doc.CurrentParameters;
+      var lowerBounds = new double?[parameters.Count];
+      var upperBounds = new double?[parameters.Count];
+
+      foreach (var fitEle in _doc.FitEnsemble)
+      {
+        var (lowerBoundsHere, upperBoundsHere) = fitEle.FitFunction.GetParameterBoundariesHardLimit();
+        for (int i = 0; i < parameters.Count; ++i)
+        {
+          var parameter = parameters[i];
+          for (int j = 0; j < fitEle.NumberOfParameters; ++j)
+          {
+            if (fitEle.ParameterName(j) == parameter.Name)
+            {
+              var lb = lowerBoundsHere?[j];
+              var ub = upperBoundsHere?[j];
+
+              if (lb.HasValue)
+              {
+                lowerBounds[i] = lowerBounds[i].HasValue ? Math.Min(lb.Value, lowerBounds[i].Value) : lb.Value;
+              }
+              if (ub.HasValue)
+              {
+                upperBounds[i] = upperBounds[i].HasValue ? Math.Max(ub.Value, upperBounds[i].Value) : ub.Value;
+              }
+            }
+          }
+        }
+      }
+
+      // Test if upperbounds always >= lowerbounds
+      var stb = TestIfUpperBoundIsGreaterThanOrEqualToLowerBound(parameters, lowerBounds, upperBounds);
+      if (stb.Length > 0)
+      {
+        if (_doc.FitEnsemble.Count > 1)
+          stb.Append("Please choose another combination of parameters from the fit functions. They seem incompatible");
+        else
+          stb.Append("It seems that this fit function delivers wrong lower and upper bounds. Please open an Github issue on this topic.");
+
+        Current.Gui.ErrorMessageBox(stb.ToString(), "Boundaries error");
+      }
+
+      ClampParameterValuesToLowerBoundAndUpperBound(lowerBounds, upperBounds);
+      _parameterController.InitializeDocument(_doc.CurrentParameters);
+    }
+
+    
+
+    private void EhView_CmdBoundsLoadSoftLimits()
+    {
+      var parameters = _doc.CurrentParameters;
+      var lowerBounds = new double?[parameters.Count];
+      var upperBounds = new double?[parameters.Count];
+
+      foreach (var fitEle in _doc.FitEnsemble)
+      {
+        // Note: we join hard and soft limits
+        var (lowerBoundsHereH, upperBoundsHereH) = fitEle.FitFunction.GetParameterBoundariesHardLimit();
+        var (lowerBoundsHereS, upperBoundsHereS) = fitEle.FitFunction.GetParameterBoundariesSoftLimit();
+        for (int i = 0; i < parameters.Count; ++i)
+        {
+          var parameter = parameters[i];
+          for (int j = 0; j < fitEle.NumberOfParameters; ++j)
+          {
+            if (fitEle.ParameterName(j) == parameter.Name)
+            {
+              var lbh = lowerBoundsHereH?[j];
+              var ubh = upperBoundsHereH?[j];
+              var lbs = lowerBoundsHereS?[j];
+              var ubs = upperBoundsHereS?[j];
+
+              if(lbh.HasValue)
+              {
+                lbs = lbs.HasValue ? Math.Min(lbh.Value, lbs.Value) : lbh.Value;
+              }
+              if (lbs.HasValue)
+              {
+                lowerBounds[i] = lowerBounds[i].HasValue ? Math.Min(lbs.Value, lowerBounds[i].Value) : lbs.Value;
+              }
+              if (ubh.HasValue)
+              {
+                ubs = ubs.HasValue ? Math.Max(ubh.Value, ubs.Value) : ubh.Value;
+              }
+              if (ubs.HasValue)
+              {
+                upperBounds[i] = upperBounds[i].HasValue ? Math.Max(ubs.Value, upperBounds[i].Value) : ubs.Value;
+              }
+            }
+          }
+        }
+      }
+
+      // Test if upperbounds always >= lowerbounds
+      var stb = TestIfUpperBoundIsGreaterThanOrEqualToLowerBound(parameters, lowerBounds, upperBounds);
+      if (stb.Length > 0)
+      {
+          stb.Append("Please either use the hard limits instead, or correct the bounds manually.");
+        Current.Gui.ErrorMessageBox(stb.ToString(), "Boundaries error");
+      }
+
+      ClampParameterValuesToLowerBoundAndUpperBound(lowerBounds, upperBounds);
+      _parameterController.InitializeDocument(_doc.CurrentParameters);
+    }
+
+    private void ClampParameterValuesToLowerBoundAndUpperBound(double?[] lowerBounds, double?[] upperBounds)
+    {
+      for (int i = 0; i < _doc.CurrentParameters.Count; i++)
+      {
+        _doc.CurrentParameters[i].LowerBound = lowerBounds[i];
+        _doc.CurrentParameters[i].UpperBound = upperBounds[i];
+        if (_doc.CurrentParameters[i].UpperBound.HasValue && _doc.CurrentParameters[i].Parameter > _doc.CurrentParameters[i].UpperBound.Value)
+          _doc.CurrentParameters[i].Parameter = _doc.CurrentParameters[i].UpperBound.Value;
+        if (_doc.CurrentParameters[i].LowerBound.HasValue && _doc.CurrentParameters[i].Parameter < _doc.CurrentParameters[i].LowerBound.Value)
+          _doc.CurrentParameters[i].Parameter = _doc.CurrentParameters[i].LowerBound.Value;
+      }
+    }
+
+    private static StringBuilder TestIfUpperBoundIsGreaterThanOrEqualToLowerBound(ParameterSet parameters, double?[] lowerBounds, double?[] upperBounds)
+    {
+      var stb = new System.Text.StringBuilder();
+      for (int i = 0; i < lowerBounds.Length; ++i)
+      {
+        if (lowerBounds[i].HasValue && upperBounds[i].HasValue && !(lowerBounds[i].Value <= upperBounds[i].Value))
+        {
+          stb.Append($"For parameter {parameters[i].Name}, the upper bound is less than the lower bound.\r\n");
+        }
+      }
+
+      return stb;
+    }
 
     public override bool Apply(bool disposeController)
     {

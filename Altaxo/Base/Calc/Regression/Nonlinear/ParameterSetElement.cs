@@ -41,7 +41,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
     /// <value>
     /// The parameter's name.
     /// </value>
-    public string Name { get => _name; [MemberNotNull(nameof(_name))]set => _name = value; }
+    public string Name { get => _name; [MemberNotNull(nameof(_name))] set => _name = value; }
     private string _name;
 
     /// <summary>
@@ -67,6 +67,26 @@ namespace Altaxo.Calc.Regression.Nonlinear
     ///   <c>true</c> if the parameter can vary; otherwise, <c>false</c>.
     /// </value>
     public bool Vary { get; set; }
+
+    /// <summary>
+    /// Gets or sets the lower bound for the parameter.
+    /// </summary>
+    public double? LowerBound { get; set; }
+
+    /// <summary>
+    /// Gets or sets a value indicating whether the lower bound value is exclusive.
+    /// </summary>
+    public bool IsLowerBoundExclusive { get; set; }
+
+    /// <summary>
+    /// Gets or sets the lower bound for the parameter.
+    /// </summary>
+    public double? UpperBound { get; set; }
+
+    /// <summary>
+    /// Gets or sets a value indicating whether the lower bound value is exclusive.
+    /// </summary>
+    public bool IsUpperBoundExclusive { get; set; }
 
     #region Serialization
 
@@ -124,6 +144,18 @@ namespace Altaxo.Calc.Regression.Nonlinear
       Vary = vary;
     }
 
+    public ParameterSetElement(string name, double value, double variance, bool vary, double? lowerBound, bool isLowerBoundExclusive, double? upperBound, bool isUpperBoundExclusive)
+    {
+      Name = name;
+      Parameter = value;
+      Variance = variance;
+      Vary = vary;
+      LowerBound = lowerBound;
+      UpperBound = upperBound;
+      IsLowerBoundExclusive = isLowerBoundExclusive;
+      IsUpperBoundExclusive = isUpperBoundExclusive;
+    }
+
     public ParameterSetElement(ParameterSetElement from)
     {
       CopyFrom(from);
@@ -142,6 +174,10 @@ namespace Altaxo.Calc.Regression.Nonlinear
       Parameter = from.Parameter;
       Variance = from.Variance;
       Vary = from.Vary;
+      LowerBound = from.LowerBound;
+      UpperBound = from.UpperBound;
+      IsLowerBoundExclusive = from.IsLowerBoundExclusive;
+      IsUpperBoundExclusive = from.IsUpperBoundExclusive;
     }
 
     #region ICloneable Members

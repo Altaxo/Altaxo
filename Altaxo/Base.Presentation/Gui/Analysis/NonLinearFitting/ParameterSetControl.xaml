@@ -4,7 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:nonlinearfitting="clr-namespace:Altaxo.Gui.Analysis.NonLinearFitting;assembly=AltaxoBase" d:DataContext="{d:DesignInstance Type=nonlinearfitting:ParameterSetViewItem}"
     MinHeight="60"
     mc:Ignorable="d">
     <DataGrid
@@ -27,6 +27,21 @@
             <DataTemplate x:Key="VarianceCellEditingTemplate" >
                 <axogc:NumericDoubleTextBox SelectedValue="{Binding Variance, Mode=TwoWay}" AllowInfiniteValues="False" AllowNaNValues="False" Background="{Binding Path=Background, RelativeSource={RelativeSource AncestorType=DataGridRow}}"/>
             </DataTemplate>
+            <DataTemplate x:Key="LowerBoundCellTemplate" >
+                <TextBlock Text="{Binding LowerBound}"/>
+            </DataTemplate>
+            <DataTemplate x:Key="LowerBoundEditingTemplate" >
+                <axogc:NullableDoubleTextBox SelectedValue="{Binding LowerBound, Mode=TwoWay}" AllowInfiniteValues="False" AllowNaNValues="False" Background="{Binding Path=Background, RelativeSource={RelativeSource AncestorType=DataGridRow}}"/>
+            </DataTemplate>
+            <DataTemplate x:Key="UpperBoundCellTemplate" >
+                <TextBlock Text="{Binding UpperBound}"/>
+            </DataTemplate>
+            <DataTemplate x:Key="UpperBoundEditingTemplate" >
+                <axogc:NullableDoubleTextBox SelectedValue="{Binding UpperBound, Mode=TwoWay}" AllowInfiniteValues="False" AllowNaNValues="False" Background="{Binding Path=Background, RelativeSource={RelativeSource AncestorType=DataGridRow}}"/>
+            </DataTemplate>
+            <CollectionViewSource x:Key="LowerBoundsSource" Source="{Binding LowerBoundConditions}" />
+            <CollectionViewSource x:Key="UpperBoundsSource" Source="{Binding UpperBoundConditions}" />
+
 
             <!--  style to apply to DataGridTextColumn in edit mode  -->
             <Style x:Key="CellEditStyle" TargetType="{x:Type TextBox}">
@@ -60,7 +75,17 @@
             <DataGridCheckBoxColumn Binding="{Binding Vary}" Header="Vary?" />
 
             <DataGridTemplateColumn Header="Variance" CellTemplate="{StaticResource VarianceCellTemplate}" CellEditingTemplate="{StaticResource VarianceCellEditingTemplate}" />
-<!--
+
+            <DataGridComboBoxColumn  ItemsSource="{Binding Source={StaticResource LowerBoundsSource}}"  SelectedValueBinding="{Binding IsLowerBoundExclusive}" SelectedValuePath="Tag" DisplayMemberPath="Text" Header="LCB" />
+
+            <DataGridTemplateColumn Header="LowerBound" CellTemplate="{StaticResource LowerBoundCellTemplate}" CellEditingTemplate="{StaticResource LowerBoundEditingTemplate}"/>
+
+            <DataGridComboBoxColumn  ItemsSource="{Binding Source={StaticResource UpperBoundsSource}}" SelectedValueBinding="{Binding IsUpperBoundExclusive}" SelectedValuePath="Tag" DisplayMemberPath="Text"  Header="UCB" />
+
+            <DataGridTemplateColumn Header="UpperBound" CellTemplate="{StaticResource UpperBoundCellTemplate}" CellEditingTemplate="{StaticResource UpperBoundEditingTemplate}"/>
+
+
+                    <!--
             <DataGridTextColumn EditingElementStyle="{StaticResource CellEditStyle}" Header="Variance">
                 <DataGridTextColumn.Binding>
                     <Binding Path="Variance">

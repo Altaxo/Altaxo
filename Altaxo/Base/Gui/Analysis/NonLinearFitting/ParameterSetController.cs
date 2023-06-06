@@ -27,6 +27,9 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using Altaxo.Calc.Regression.Nonlinear;
+using Altaxo.Collections;
+using Altaxo.Gui.Common;
+using Altaxo.Main.Properties;
 
 namespace Altaxo.Gui.Analysis.NonLinearFitting
 {
@@ -41,19 +44,108 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       get => _value;
       set
       {
-        if(!(_value==value))
+        if (!(_value == value))
         {
           _value = value;
-          PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Value)));
+          OnPropertyChanged(nameof(Value));
         }
       }
     }
 
-    public bool Vary { get; set; }
+    private bool _vary;
 
-    public double Variance { get; set; }
+    public bool Vary
+    {
+      get => _vary;
+      set
+      {
+        if (!(_vary == value))
+        {
+          _vary = value;
+          OnPropertyChanged(nameof(Vary));
+        }
+      }
+    }
+
+
+    private double _variance;
+
+    public double Variance
+    {
+      get => _variance;
+      set
+      {
+        if (!(_variance == value))
+        {
+          _variance = value;
+          OnPropertyChanged(nameof(Variance));
+        }
+      }
+    }
+
+
+    private double? _lowerBound;
+
+    public double? LowerBound
+    {
+      get => _lowerBound;
+      set
+      {
+        if (!(_lowerBound == value))
+        {
+          _lowerBound = value;
+          OnPropertyChanged(nameof(LowerBound));
+        }
+      }
+    }
+
+    private double? _upperBound;
+
+    public double? UpperBound
+    {
+      get => _upperBound;
+      set
+      {
+        if (!(_upperBound == value))
+        {
+          _upperBound = value;
+          OnPropertyChanged(nameof(UpperBound));
+        }
+      }
+    }
+
+    private bool _isLowerBoundExclusive;
+
+    public bool IsLowerBoundExclusive
+    {
+      get => _isLowerBoundExclusive;
+      set
+      {
+        if (!(_isLowerBoundExclusive == value))
+        {
+          _isLowerBoundExclusive = value;
+          OnPropertyChanged(nameof(IsLowerBoundExclusive));
+        }
+      }
+    }
+
+    private bool _isUpperBoundExclusive;
+
+    public bool IsUpperBoundExclusive
+    {
+      get => _isUpperBoundExclusive;
+      set
+      {
+        if (!(_isUpperBoundExclusive == value))
+        {
+          _isUpperBoundExclusive = value;
+          OnPropertyChanged(nameof(IsUpperBoundExclusive));
+        }
+      }
+    }
 
     public event PropertyChangedEventHandler PropertyChanged;
+    protected virtual void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
   }
 
   public interface IParameterSetView : IDataContextAwareView
@@ -71,6 +163,17 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
   {
     public ObservableCollection<ParameterSetViewItem> ParameterList { get; } = new ObservableCollection<ParameterSetViewItem>();
 
+    public SelectableListNodeList LowerBoundConditions { get; } = new SelectableListNodeList {
+      new SelectableListNode(">=", false, false),
+      new SelectableListNode(">", true, false),
+      };
+
+    public SelectableListNodeList UpperBoundConditions { get; } = new SelectableListNodeList {
+      new SelectableListNode("<=", false, false),
+      new SelectableListNode("<", true, false),
+      };
+
+
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
@@ -87,7 +190,11 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
           Name = _doc[i].Name,
           Value = _doc[i].Parameter,
           Vary = _doc[i].Vary,
-          Variance = _doc[i].Variance
+          Variance = _doc[i].Variance,
+          LowerBound = _doc[i].LowerBound,
+          UpperBound = _doc[i].UpperBound,
+          IsLowerBoundExclusive = _doc[i].IsLowerBoundExclusive,
+          IsUpperBoundExclusive = _doc[i].IsUpperBoundExclusive,
         };
 
         ParameterList.Add(item);
@@ -99,8 +206,6 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       base.Initialize(initData);
 
       OnParametersChanged();
-
-
     }
 
     protected override void AttachView()
@@ -124,17 +229,19 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       {
 
         // Parameter
-
         _doc[i].Parameter = list[i].Value;
-
 
         // Vary
         _doc[i].Vary = list[i].Vary;
 
         // Variance
-
         _doc[i].Variance = list[i].Variance;
 
+        // Bounds
+        _doc[i].LowerBound = list[i].LowerBound;
+        _doc[i].UpperBound = list[i].UpperBound;
+        _doc[i].IsLowerBoundExclusive = list[i].IsLowerBoundExclusive;
+        _doc[i].IsUpperBoundExclusive = list[i].IsUpperBoundExclusive;
       }
 
       return ApplyEnd(true, disposeController);

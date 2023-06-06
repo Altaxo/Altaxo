@@ -192,8 +192,8 @@ namespace Altaxo.Calc.FitFunctions.Peaks
 
       for (int i = 0, j = 0; i < NumberOfTerms; ++i, j += NumberOfParametersPerPeak)
       {
-        lowerBounds[j + 2] = DefaultMinWidth;
-        upperBounds[j + 2] = DefaultMaxWidth;
+        lowerBounds[j + 2] = DefaultMinWidth; // minimal width
+        upperBounds[j + 2] = DefaultMaxWidth; // maximal width
       }
       return (lowerBounds, upperBounds);
     }
@@ -201,7 +201,12 @@ namespace Altaxo.Calc.FitFunctions.Peaks
     /// <inheritdoc/>
     public (IReadOnlyList<double?>? LowerBounds, IReadOnlyList<double?>? UpperBounds) GetParameterBoundariesSoftLimit()
     {
-      return (null, null);
+      var lowerBounds = new double?[NumberOfParameters];
+      for (int i = 0, j = 0; i < NumberOfTerms; ++i, j += NumberOfParametersPerPeak)
+      {
+        lowerBounds[j] = 0; // use only nonnegative amplitudes
+      }
+      return (lowerBounds, null);
     }
 
 

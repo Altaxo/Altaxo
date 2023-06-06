@@ -60,7 +60,15 @@
 						<MenuItem Header="Copy NumberOfPoints, Sigma, Value, Covariances in one row"
                                   Command="{Binding CmdCopyParameterNSVCVInOneRow}"
                                   ToolTip="Copy NumberOfPoints, Sigma, value1, covariances1, value2, covariances2, ... in one row to the clipboard in order to paste it into another worksheet." />
-					</MenuItem>
+                        <MenuItem Header="Bounds..">
+                            <MenuItem Header="Load absolute limits"
+                                  Command="{Binding CmdBoundsLoadAbsoluteLimits}"
+                                  ToolTip="Loads the absolute limits of the fit function" />
+                            <MenuItem Header="Load sensible limits"
+                                  Command="{Binding CmdBoundsLoadSensibleLimits}"
+                                  ToolTip="Loads the sensible limits of the fit function" />
+                        </MenuItem>
+                    </MenuItem>
 				</Menu>
 				<ContentControl Grid.Row="1" Content="{Binding ParameterController.ViewObject}" />
 				<DockPanel Grid.Row="2">
