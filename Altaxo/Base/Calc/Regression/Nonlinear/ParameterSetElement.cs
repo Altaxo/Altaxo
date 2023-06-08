@@ -90,17 +90,20 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
     #region Serialization
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ParameterSetElement), 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Calc.Regression.Nonlinear.ParameterSetElement", 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
+        throw new InvalidOperationException();
+        /*
         var s = (ParameterSetElement)obj;
 
         info.AddValue("Name", s.Name);
         info.AddValue("Value", s.Parameter);
         info.AddValue("Variance", s.Variance);
         info.AddValue("Vary", s.Vary);
+        */
       }
 
       public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
@@ -110,6 +113,40 @@ namespace Altaxo.Calc.Regression.Nonlinear
         var variance = info.GetDouble("Variance");
         var vary = info.GetBoolean("Vary");
         return new ParameterSetElement(name, parameter, variance, vary);
+      }
+    }
+
+    /// <summary>
+    /// 2023-06-08 Extend by LowerBound, IsLowerBoundExclusive, UpperBound, IsUpperBoundExclusive
+    /// </summary>
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ParameterSetElement), 1)]
+    private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        var s = (ParameterSetElement)obj;
+
+        info.AddValue("Name", s.Name);
+        info.AddValue("Value", s.Parameter);
+        info.AddValue("Variance", s.Variance);
+        info.AddValue("Vary", s.Vary);
+        info.AddValue("LowerBound", s.LowerBound);
+        info.AddValue("IsLowerBoundExclusive", s.IsLowerBoundExclusive);
+        info.AddValue("UpperBound", s.UpperBound);
+        info.AddValue("IsUpperBoundExclusive", s.IsUpperBoundExclusive);
+      }
+
+      public virtual object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      {
+        var name = info.GetString("Name");
+        var parameter = info.GetDouble("Value");
+        var variance = info.GetDouble("Variance");
+        var vary = info.GetBoolean("Vary");
+        var lowerBound = info.GetNullableDouble("LowerBound");
+        var isLowerBoundExclusive = info.GetBoolean("IsLowerBoundExclusive");
+        var upperBound = info.GetNullableDouble("UpperBound");
+        var isUpperBoundExclusive = info.GetBoolean("IsUpperBoundExclusive");
+        return new ParameterSetElement(name, parameter, variance, vary, lowerBound, isLowerBoundExclusive, upperBound, isUpperBoundExclusive);
       }
     }
 

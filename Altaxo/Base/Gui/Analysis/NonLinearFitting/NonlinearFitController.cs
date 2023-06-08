@@ -365,6 +365,12 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
     private ICommand _cmdBoundsLoadSensibleLimits;
     public ICommand CmdBoundsLoadSensibleLimits => _cmdBoundsLoadSensibleLimits ??= new RelayCommand(EhView_CmdBoundsLoadSoftLimits);
 
+    private ICommand _cmdBoundsMergeAbsoluteLimits;
+    public ICommand CmdBoundsMergeAbsoluteLimits => _cmdBoundsMergeAbsoluteLimits ??= new RelayCommand(EhView_CmdBoundsMergeHardLimits);
+
+    private ICommand _cmdBoundsMergeSensibleLimits;
+    public ICommand CmdBoundsMergeSensibleLimits => _cmdBoundsMergeSensibleLimits ??= new RelayCommand(EhView_CmdBoundsMergeSoftLimits);
+
     #endregion
 
     #endregion
@@ -1511,7 +1517,52 @@ Label_EditScript:
       }
     }
 
+    /// <summary>
+    /// Loads the hard parameter constraints of the fit function into the user interface, ignoring the values that are already there.
+    /// </summary>
     private void EhView_CmdBoundsLoadHardLimits()
+    {
+      var parameters = _doc.CurrentParameters;
+      var lowerBounds = new double?[parameters.Count];
+      var upperBounds = new double?[parameters.Count];
+
+      foreach (var fitEle in _doc.FitEnsemble)
+      {
+        var (lowerBoundsHere, upperBoundsHere) = fitEle.FitFunction.GetParameterBoundariesHardLimit();
+        for (int i = 0; i < parameters.Count; ++i)
+        {
+          var parameter = parameters[i];
+          for (int j = 0; j < fitEle.NumberOfParameters; ++j)
+          {
+            if (fitEle.ParameterName(j) == parameter.Name)
+            {
+              lowerBounds[i] = lowerBoundsHere?[j];
+              upperBounds[i] = upperBoundsHere?[j];
+            }
+          }
+        }
+      }
+
+      // Test if upperbounds always >= lowerbounds
+      var stb = TestIfUpperBoundIsGreaterThanOrEqualToLowerBound(parameters, lowerBounds, upperBounds);
+      if (stb.Length > 0)
+      {
+        if (_doc.FitEnsemble.Count > 1)
+          stb.Append("Please choose another combination of parameters from the fit functions. They seem incompatible");
+        else
+          stb.Append("It seems that this fit function delivers wrong lower and upper bounds. Please open an Github issue on this topic.");
+
+        Current.Gui.ErrorMessageBox(stb.ToString(), "Boundaries error");
+      }
+
+      ClampParameterValuesToLowerBoundAndUpperBound(lowerBounds, upperBounds);
+      _parameterController.InitializeDocument(_doc.CurrentParameters);
+    }
+
+    /// <summary>
+    /// Merges the hard limits of the fit function with the bounds that are already present.
+    /// </summary>
+    private void EhView_CmdBoundsMergeHardLimits()
     {
       var parameters = _doc.CurrentParameters;
       var lowerBounds = new double?[parameters.Count];
@@ -1559,8 +1610,6 @@ Label_EditScript:
       _parameterController.InitializeDocument(_doc.CurrentParameters);
     }
 
-    
-
     private void EhView_CmdBoundsLoadSoftLimits()
     {
       var parameters = _doc.CurrentParameters;
@@ -1588,6 +1637,56 @@ Label_EditScript:
               {
                 lbs = lbs.HasValue ? Math.Min(lbh.Value, lbs.Value) : lbh.Value;
               }
+              lowerBounds[i] = lbs;
+              if (ubh.HasValue)
+              {
+                ubs = ubs.HasValue ? Math.Max(ubh.Value, ubs.Value) : ubh.Value;
+              }
+              upperBounds[i] = ubs;
+            }
+          }
+        }
+      }
+
+      // Test if upperbounds always >= lowerbounds
+      var stb = TestIfUpperBoundIsGreaterThanOrEqualToLowerBound(parameters, lowerBounds, upperBounds);
+      if (stb.Length > 0)
+      {
+          stb.Append("Please either use the hard limits instead, or correct the bounds manually.");
+        Current.Gui.ErrorMessageBox(stb.ToString(), "Boundaries error");
+      }
+
+      ClampParameterValuesToLowerBoundAndUpperBound(lowerBounds, upperBounds);
+      _parameterController.InitializeDocument(_doc.CurrentParameters);
+    }
+
+    private void EhView_CmdBoundsMergeSoftLimits()
+    {
+      var parameters = _doc.CurrentParameters;
+      var lowerBounds = new double?[parameters.Count];
+      var upperBounds = new double?[parameters.Count];
+
+      foreach (var fitEle in _doc.FitEnsemble)
+      {
+        // Note: we join hard and soft limits
+        var (lowerBoundsHereH, upperBoundsHereH) = fitEle.FitFunction.GetParameterBoundariesHardLimit();
+        var (lowerBoundsHereS, upperBoundsHereS) = fitEle.FitFunction.GetParameterBoundariesSoftLimit();
+        for (int i = 0; i < parameters.Count; ++i)
+        {
+          var parameter = parameters[i];
+          for (int j = 0; j < fitEle.NumberOfParameters; ++j)
+          {
+            if (fitEle.ParameterName(j) == parameter.Name)
+            {
+              var lbh = lowerBoundsHereH?[j];
+              var ubh = upperBoundsHereH?[j];
+              var lbs = lowerBoundsHereS?[j];
+              var ubs = upperBoundsHereS?[j];
+
+              if (lbh.HasValue)
+              {
+                lbs = lbs.HasValue ? Math.Min(lbh.Value, lbs.Value) : lbh.Value;
+              }
               if (lbs.HasValue)
               {
                 lowerBounds[i] = lowerBounds[i].HasValue ? Math.Min(lbs.Value, lowerBounds[i].Value) : lbs.Value;
@@ -1609,7 +1708,7 @@ Label_EditScript:
       var stb = TestIfUpperBoundIsGreaterThanOrEqualToLowerBound(parameters, lowerBounds, upperBounds);
       if (stb.Length > 0)
       {
-          stb.Append("Please either use the hard limits instead, or correct the bounds manually.");
+        stb.Append("Please either use the hard limits instead, or correct the bounds manually.");
         Current.Gui.ErrorMessageBox(stb.ToString(), "Boundaries error");
       }
 
