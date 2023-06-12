@@ -492,12 +492,15 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
         var backgroundMonitor = new ExternalDrivenBackgroundMonitor();
         var (initialGuess, lowerBounds, upperBounds) = CollectVaryingParametersAndBoundaries(_doc.CurrentParameters);
         NonlinearMinimizationResult minimizationResult = null;
-        var fitThread = new System.Threading.Thread(new System.Threading.ThreadStart(() => minimizationResult = fit.FindMinimum(fitAdapter, initialGuess, lowerBounds, upperBounds, null, null, backgroundMonitor.CancellationTokenHard, (iterations, chi2, _) => backgroundMonitor.ReportProgress($"#Iteration {iterations}: Chi² = {chi2}"))));
+        Exception exception=null;
+        var fitThread = new System.Threading.Thread(new System.Threading.ThreadStart(() =>
+          SafeExecuteThread(
+            () => minimizationResult = fit.FindMinimum(fitAdapter, initialGuess, lowerBounds, upperBounds, null, null, backgroundMonitor.CancellationTokenHard, (iterations, chi2, _) => backgroundMonitor.ReportProgress($"#Iteration {iterations}: Chi² = {chi2}")),
+            out exception)));
         fitThread.Start();
         Current.Gui.ShowBackgroundCancelDialog(10000, fitThread, backgroundMonitor);
-        if (!(fitThread.ThreadState.HasFlag(System.Threading.ThreadState.Aborted)))
+        if (!(fitThread.ThreadState.HasFlag(System.Threading.ThreadState.Aborted)) && exception is null)
         {
-
           ChiSquareValue = fitAdapter.Value;
           _sigmaSquare = fitAdapter.SigmaSquare;
           _numberOfFitPoints = fitAdapter.NumberOfObservations;
@@ -510,10 +513,28 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
           OnAfterFittingStep();
         }
+        else if(exception is not null)
+        {
+          Current.Gui.ErrorMessageBox($"An exception was thrown during fitting. Details:\r\n{exception}", "Fit exception");
+        }
       }
       else
       {
         Current.Gui.ErrorMessageBox("Some of your parameter input is not valid!");
+      }
+    }
+
+    private static void SafeExecuteThread(Action test, out Exception exception)
+    {
+      exception = null;
+
+      try
+      {
+        test.Invoke();
+      }
+      catch (Exception ex)
+      {
+        exception = ex;
       }
     }
 
