@@ -30,6 +30,7 @@
 
 #endregion Copyright
 
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -279,6 +280,9 @@ namespace Altaxo.Calc.Optimization
       var diagonalOfHessian = Vector<double>.Build.Dense(initialGuess.Count);
       var diagonalOfHessianPlusMu = Vector<double>.Build.Dense(initialGuess.Count);
       var rssValueHistory = new RingBufferEnqueueableOnly<double>(8); // Stores the last 8 values of Chi².
+      Matrix<double>? savedHessian = null; // if a parameter reaches its constrain, the Hessian is modified. In this case the original Hessian is stored here.
+      Vector<double>? savedNegativeGradient = null;// if a parameter reaches its constrain, the gradient is modified. In this case the original gradient is stored here.
+      bool wasHessianAndNegativeGradientSaved = false; // true if the current Hessian and gradient is saved to savedHessian and savedNegativeGradient
 
       objective.SetParameters(initialGuess, isFixedByUser);
       ExitCondition exitCondition = ExitCondition.None;
@@ -317,6 +321,7 @@ namespace Altaxo.Calc.Optimization
 
       // Evaluate at first the gradient (already negated!) and the Hessian
       var (NegativeGradient, Hessian) = EvaluateJacobian(objective, parameterValues);
+      wasHessianAndNegativeGradientSaved = false;
       var useAutomaticParameterScale = Scales is null;
       var iterationOfLastAutomaticParameterScaleEvaluation = 0;
       if (useAutomaticParameterScale)
@@ -330,6 +335,7 @@ namespace Altaxo.Calc.Optimization
 
         // after the parameter scale was evaluated, we have to repeat the Jacobian and Hessian evaluation, this time with the parameter scale in operation
         (NegativeGradient, Hessian) = EvaluateJacobian(objective, parameterValues); // repeat Jacobian evaluation, now with scale
+        wasHessianAndNegativeGradientSaved = false;
       }
 
 
@@ -361,8 +367,6 @@ namespace Altaxo.Calc.Optimization
           cancellationToken.ThrowIfCancellationRequested();
           diagonalOfHessian.Add(mu, diagonalOfHessianPlusMu);
 
-
-
           // Modification of the Levenberg-Marquardt algorithm described in [2]:
           // in order to take the boundary conditions into account, we first solve the Hessian with only the user-fixed parameters considered
           // Then we evaluate which parameters are both at their boundaries and the step is directed outwards of the feasible region
@@ -373,8 +377,6 @@ namespace Altaxo.Calc.Optimization
           //    (2) it is clear which parameter is at a bound and which is not. Those parameters at a bound increase the degree of freedom.
           // Whereas with the method of wrapped parameters, if a parameter is at a bound, it can not be modified anymore, because its gradient value is zero.
 
-          bool wasHessianModified = false;
-          int numberOfFreeParameters;
           if (isFixedByUser is null)
           {
             Array.Clear(isFixedByUserOrBoundary, 0, isFixedByUserOrBoundary.Length);
@@ -383,6 +385,9 @@ namespace Altaxo.Calc.Optimization
           {
             VectorMath.Copy(isFixedByUser, isFixedByUserOrBoundary); // Start with a Hessian in which only the user-fixed parameters are considered, so that the other parameters, even those at a bound, have a chance to be varied
           }
+
+          bool wasHessianModified = false;
+          int numberOfFreeParameters;
           do
           {
             Hessian.SetDiagonal(diagonalOfHessianPlusMu); // hessian[i, i] = hessian[i, i] + mu; see [2] eq. (12), page 3
@@ -394,7 +399,16 @@ namespace Altaxo.Calc.Optimization
             ++numberOfSolves;
 
             // if the step would violate the boundary conditions, we modify the Hessian and the gradient accordingly
-            (wasHessianModified, numberOfFreeParameters) = ModifyHessianAndGradient(parameterValues, parameterStep, mu, Hessian, NegativeGradient, diagonalOfHessianPlusMu, isFixedByUserOrBoundary);
+            (wasHessianModified, numberOfFreeParameters) =
+              ModifyHessianAndGradient(
+                parameterValues,
+                parameterStep,
+                mu,
+                Hessian,
+                NegativeGradient,
+                diagonalOfHessianPlusMu,
+                isFixedByUserOrBoundary,
+                ref savedHessian, ref savedNegativeGradient, ref wasHessianAndNegativeGradientSaved);
 
           } while (wasHessianModified && numberOfFreeParameters > 0); // repeat, until no more parameters are temporarily fixed and at least one parameter can be varied
 
@@ -466,6 +480,7 @@ namespace Altaxo.Calc.Optimization
             // update gradient and Hessian
             (NegativeGradient, Hessian) = EvaluateJacobian(objective, parameterValues);
             Hessian.Diagonal(diagonalOfHessian);
+            wasHessianAndNegativeGradientSaved = false;
 
             // Test if convergence of gradient is achieved, see [2], section 4.1.3 (page 5), first criterion
             // if ||g||_oo <= gtol, found and stop
@@ -505,6 +520,13 @@ namespace Altaxo.Calc.Optimization
             // this step was rejected, thus increase mu by multiplying with nu, and double nu, resulting in an exponential increase when consecutive steps are rejected
             mu *= nu;
             nu *= 2;
+
+            if (wasHessianAndNegativeGradientSaved)
+            {
+              savedHessian!.CopyTo(Hessian);
+              Hessian.Diagonal(diagonalOfHessian);
+              savedNegativeGradient!.CopyTo(NegativeGradient);
+            }
 
             if (!(mu < double.MaxValue && nu < double.MaxValue))
             {
@@ -658,7 +680,7 @@ namespace Altaxo.Calc.Optimization
     /// <param name="diagonalOfHessianPlusMu">The diagonal of the Hessian matrix plus mu.  If the return value is true, this vector was modified during the call.</param>
     /// <param name="isTemporaryFixed">The array of fixed parameters (parameters fixed from the beginning plus parameters that have reached the boundary). If the return value is true, this vector was modified during the call.</param>
     /// <returns>True if the Hessian and gradient were modified; otherwise, false. Additionally, the number of free parameters is returned.</returns>
-    private (bool wasModified, int numberOfFreeParameters) ModifyHessianAndGradient(IReadOnlyList<double> Pint, IReadOnlyList<double> pstep, double mu, Matrix<double> hessian, Vector<double> gradient, Vector<double> diagonalOfHessianPlusMu, bool[] isTemporaryFixed)
+    private (bool wasModified, int numberOfFreeParameters) ModifyHessianAndGradient(IReadOnlyList<double> Pint, IReadOnlyList<double> pstep, double mu, Matrix<double> hessian, Vector<double> gradient, Vector<double> diagonalOfHessianPlusMu, bool[] isTemporaryFixed, ref Matrix<double>? savedHessian, ref Vector<double>? savedGradient, ref bool wasHessianAndGradientSaved)
     {
       bool wasModified = false;
       int numberOfFreeParameters = Pint.Count;
@@ -682,6 +704,20 @@ namespace Altaxo.Calc.Optimization
                 (lowerBnd.HasValue && (!(Pint[i] > lowerBnd.Value) && pstep[i] < 0))
             )
           {
+            // Hessian and gradient needs to be modified.
+            // In order to have the original Hessian and gradient available
+            // when we change the mu, nu values, we need to save it.
+            if (!wasHessianAndGradientSaved)
+            {
+              savedHessian ??= Matrix<double>.Build.Dense(hessian.RowCount, hessian.ColumnCount);
+              hessian.CopyTo(savedHessian);
+
+              savedGradient ??= Vector<double>.Build.Dense(gradient.Count);
+              gradient.CopyTo(savedGradient);
+
+              wasHessianAndGradientSaved = true;
+            }
+
             gradient[i] = 0;
             hessian.ClearColumn(i);
             hessian.ClearRow(i);
