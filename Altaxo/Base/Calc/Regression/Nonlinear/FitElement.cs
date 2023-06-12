@@ -804,6 +804,80 @@ namespace Altaxo.Calc.Regression.Nonlinear
       }
     }
 
+    /// <summary>
+    /// Gets a value indicating whether the fit function supports derivatives w.r.t. the parameters.
+    /// This is the case if the fit function implements <see cref="IFitFunctionWithDerivative"/>.
+    /// </summary>
+    public bool FitFunctionSupportsDerivative => FitFunction is IFitFunctionWithDerivative;
+
+    /// <summary>
+    /// This evaluates the analytical gradient of the function with respect to the parameters. ATTENTION:
+    /// the fit function must implement <see cref="IFitFunctionWithDerivative"/>, otherwise an exception is thrown.
+    /// </summary>
+    /// <param name="independent">The independent variables (x-values).
+    /// Every row of that matrix corresponds to one observation.
+    /// The columns of the matrix represent the different independent variables of the fit function.
+    /// Thus, for a usual function of one variable, the number of columns is 1.</param>
+    /// <param name="parameters">Parameters for evaluation.</param>
+    /// <param name="isFixed">If not null, this list designates the parameters that are fixed. No derivative value
+    /// for those parameters need to be calculated.</param>
+    /// <param name="DF">On return, this array contains the one (or more) evaluated
+    /// derivatives of the function values with respect to there parameters. See remarks for the order in which they are stored.</param>
+    /// <param name="dependentVariableChoice">Determines which output variables are written to the output vector. See remarks.</param>
+    /// <param name="FV">Vector to store the function values (needed as a temporary storage place).</param>
+    /// <remarks>
+    /// The derivative values are stored in the array <c>DF</c>. For each dependent variable of the fit function that is included in the output
+    /// (see <paramref name="dependentVariableChoice"/>), the derivative to all given parameters must be calculated.
+    /// Presumed we have 3 parameters (p0, p1 and p2) and 2 dependent variables (f0 and f1), for one observation the array DF must contain:
+    /// <code>
+    /// DF[0,0] : df0/dp0
+    /// DF[0,1] : df0/dp1
+    /// DF[0,2] : df0/dp2
+    /// DF[1,0] : df1/dp0
+    /// DF[1,1] : df2/dp1
+    /// DF[1,2] : df1/dp2
+    /// </code>
+    ///
+    /// Concerning <paramref name="dependentVariableChoice"/>: if this parameter is null, the derivatives of all dependent variables the fit function provides will be included in the output matrix <paramref name="DF"/>.
+    /// If this parameter is not null, only the derivatives of those dependent variables, for which the element is true, are included in the output vector (at least one element of this array must be true).
+    /// </remarks>
+    public void FitFunctionEvaluateDerivative(IROMatrix<double> independent, IReadOnlyList<double> parameters, IReadOnlyList<bool>? isFixed, IMatrix<double> DF, IReadOnlyList<bool>? dependentVariableChoice, IVector<double> FV)
+    {
+      var ff = (FitFunction as IFitFunctionWithDerivative) ?? throw new InvalidOperationException($"This function can only be used if {nameof(FitFunction)} implements {nameof(IFitFunctionWithDerivative)}");
+      bool hasEvaluatedFunctionValues = false;
+      ff.EvaluateDerivative(independent, parameters, isFixed, DF, dependentVariableChoice);
+      int numberOfDependentVariablesInUse = dependentVariableChoice is null ? FitFunction!.NumberOfDependentVariables : dependentVariableChoice.Count(x => x);
+      int idxDependentVariable = -1;
+      for (int i = 0; i < _dependentVariableTransformations.Length; ++i)
+      {
+        if (dependentVariableChoice is null || dependentVariableChoice[i] == true)
+        {
+          ++idxDependentVariable;
+          if (_dependentVariableTransformations[i] is { } t)
+          {
+            // if we have a transformation on the dependent variable, we need not only the derivative,
+            // but also the (not transformed) function value itself
+            if (!hasEvaluatedFunctionValues)
+            {
+              hasEvaluatedFunctionValues = true;
+              ff.Evaluate(independent, parameters, FV, dependentVariableChoice);
+            }
+
+            for (int j = 0, k = idxDependentVariable; j < independent.RowCount; ++j, k += numberOfDependentVariablesInUse)
+            {
+              for (int c = 0; c < parameters.Count; ++c)
+              {
+                if (isFixed is null || isFixed[c] == false)
+                {
+                  (_, DF[k, c]) = t.Derivative(FV[k], DF[k, c]);
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+
     private void EhFitFunctionChanged(object? sender, EventArgs e)
     {
       InternalCheckAndCorrectArraySize(false, true);

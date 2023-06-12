@@ -52,6 +52,17 @@ namespace Altaxo.Calc.Regression.Nonlinear
       /// the majority of fit functions, the matrix has only one column, and as many rows as there are independent data points.</summary>
       public IROMatrix<double> Xs;
 
+      /// <summary>
+      /// Scratch array that accomodate the dependent variables when making the evaluation of the derivative and
+      /// the dependent variable has a transformation set on it.
+      /// </summary>
+      public IVector<double> Ys;
+
+      /// <summary>
+      /// Array in which for each parameter the value is true if this parameter is fixed.
+      /// </summary>
+      public bool[] IsParameterFixed;
+
       /// <summary>Parameter mapping from the local parameter list to the global parameter list. Positive entries
       /// give the position in the global variable parameter list, negative entries gives the position -entry-1 in the
       /// global constant parameter list.
@@ -75,6 +86,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
         double[] parameters,
         IROMatrix<double> xs,
         int[] parameterMapping,
+        bool[] isParameterFixed,
         bool[] dependentVariablesInUse,
         IAscendingIntegerCollection validRows
         )
@@ -82,16 +94,18 @@ namespace Altaxo.Calc.Regression.Nonlinear
         Parameters = parameters;
         Xs = xs;
         ParameterMapping = parameterMapping;
+        IsParameterFixed = isParameterFixed;
         DependentVariablesInUse = dependentVariablesInUse;
         NumberOfDependentVariablesInUse = DependentVariablesInUse.Count(x => x);
         ValidRows = validRows;
+        Ys = Vector<double>.Build.Dense(ValidRows.Count * NumberOfDependentVariablesInUse);
       }
     }
 
     /// <summary>
     /// Wraps the full jacobian matrix in a way, that a single fit element can write their derivatives into it.
     /// </summary>
-    /// <seealso cref="Altaxo.Calc.LinearAlgebra.IMatrix&lt;System.Double&gt;" />
+    /// <seealso cref="IMatrix{T}" />
     private class JacobianMapper : IMatrix<double>
     {
       private Matrix<double> _matrix;
@@ -114,7 +128,18 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
       public double this[int row, int col]
       {
-        get => throw new NotImplementedException();
+        get
+        {
+          int c = _parameterMapping[col]; // get the column number that correspond to the varying parameter
+          if (c >= 0)                   // c is >=0 if it is a varying parameter, otherwise, it is a constant parameter
+          {
+            return _matrix[_rowOffset + row, c];
+          }
+          else
+          {
+            throw new InvalidOperationException();
+          }
+        }
         set
         {
           int c = _parameterMapping[col]; // get the column number that correspond to the varying parameter
@@ -251,16 +276,19 @@ namespace Altaxo.Calc.Regression.Nonlinear
           if (paraSet[idx].Vary)
           {
             parameterMapping[j] = (int)varyingParameterNames[fitElement.ParameterName(j)];
+            isParameterFixedByUser[j] = false;
           }
           else
           {
             parameterMapping[j] = -idx - 1;
+            isParameterFixedByUser[j] = true;
           }
         }
 
         _cachedFitElementInfo[idxFitElement] = new CachedFitElementInfo(
           parameters: parameters,
           xs: xs,
+          isParameterFixed: isParameterFixedByUser,
           parameterMapping: parameterMapping,
           dependentVariablesInUse: dependentVariablesInUse,
           validRows: validRows
@@ -564,7 +592,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
         if (allElementsHaveDerivative && fitEle.FitFunction is IFitFunctionWithDerivative fitFunctionWithDerivative)
         {
           var jacWrapper = new JacobianMapper(_jacobianValue, rowOffset, info.ParameterMapping);
-          fitFunctionWithDerivative.EvaluateDerivative(info.Xs, info.Parameters, new bool[info.Parameters.Length], jacWrapper, info.DependentVariablesInUse);
+          fitEle.FitFunctionEvaluateDerivative(info.Xs, info.Parameters, info.IsParameterFixed, jacWrapper, info.DependentVariablesInUse, info.Ys);
           rowOffset += info.Xs.RowCount * info.NumberOfDependentVariablesInUse;
           ++JacobianEvaluations;
         }
