@@ -767,7 +767,7 @@ namespace Altaxo.Science.Spectroscopy
 
         if (peakSearchingFittingOptions.OutputOptions.OutputPreprocessedCurve)
         {
-          CreateGraphWithPreprocessedSpectrum(peakTable, 0, peakTable.FolderName + "GPreprocessedCurve", useLinePlot: true);
+          CreateGraphWithPreprocessedSpectrum(peakTable, 0, peakTable.FolderName + "GPreprocessedCurve", useLinePlot: true, doOpenGraph: true);
         }
 
         if (peakSearchingFittingOptions.PeakFitting is not PeakFitting.PeakFittingNone)
@@ -790,14 +790,15 @@ namespace Altaxo.Science.Spectroscopy
     /// <param name="peakTable">The peak table containing the fit results.</param>
     /// <param name="numberOfSpectrum">The number of the spectrum.</param>
     /// <param name="graphName">Name of the graph to create (full name). If null or empty, a graph with a default name is created in the same folder as the table.</param>
-    public static void PlotFitCurve(DataTable peakTable, int numberOfSpectrum = 0, string? graphName = null)
+    /// <param name="doOpenGraph">If true, the created graph is opened (the graph window is shown in Altaxo).</param>
+    public static void PlotFitCurve(DataTable peakTable, int numberOfSpectrum = 0, string? graphName = null, bool doOpenGraph = true)
     {
       // plot the fit curve
       if (string.IsNullOrEmpty(graphName))
       {
         graphName = peakTable.FolderName + "GPeaksTogether";
       }
-      var (graph, group) = CreateGraphWithPreprocessedSpectrum(peakTable, numberOfSpectrum, graphName);
+      var (graph, group) = CreateGraphWithPreprocessedSpectrum(peakTable, numberOfSpectrum, graphName, useLinePlot: false, doOpenGraph: doOpenGraph);
       var plotStyle = PlotCommands.PlotStyle_Line(graph.GetPropertyContext());
       var lineStyle = plotStyle.OfType<LinePlotStyle>().FirstOrDefault();
       if (lineStyle is not null && lineStyle.Color.ParentColorSet is { } parentCSet)
@@ -817,14 +818,15 @@ namespace Altaxo.Science.Spectroscopy
     /// <param name="peakTable">The peak table containing the fit results.</param>
     /// <param name="numberOfSpectrum">The number of spectrum (usually 0).</param>
     /// <param name="graphName">Name of the graph to create (full name). If null or empty, a graph with a default name is created in the same folder as the table.</param>
-    public static void PlotFitCurveAsSeparatePeaks(DataTable peakTable, int numberOfSpectrum, string? graphName = null)
+    /// <param name="doOpenGraph">If true, the created graph is opened (the graph window is shown in Altaxo).</param>
+    public static void PlotFitCurveAsSeparatePeaks(DataTable peakTable, int numberOfSpectrum, string? graphName = null, bool doOpenGraph = true)
     {
       // plot the separate peaks
       if (string.IsNullOrEmpty(graphName))
       {
         graphName = peakTable.FolderName + "GPeaksSeparate";
       }
-      var (graph, group) = CreateGraphWithPreprocessedSpectrum(peakTable, numberOfSpectrum, graphName);
+      var (graph, group) = CreateGraphWithPreprocessedSpectrum(peakTable, numberOfSpectrum, graphName, useLinePlot: false, doOpenGraph: doOpenGraph);
       var plotStyle = PlotCommands.PlotStyle_Line(graph.GetPropertyContext());
       var lineStyle = plotStyle.OfType<LinePlotStyle>().FirstOrDefault();
       if (lineStyle is not null)
@@ -849,16 +851,16 @@ namespace Altaxo.Science.Spectroscopy
     /// <param name="numberOfSpectrum">The number of the spectrum.</param>
     /// <param name="graphName">Name of the graph (full name).</param>
     /// <param name="useLinePlot">If true, the preprocessed curve is shown as a line plot instead of a scatter plot.</param>
+    /// <param name="doOpenGraph">If true, the created graph is opened (the graph window is shown in Altaxo).</param>
     /// <returns>The graph, and the plot item collection of the plot of the preprocessed spectrum.</returns>
-    public static (GraphDocument graph, PlotItemCollection group) CreateGraphWithPreprocessedSpectrum(DataTable peakTable, int numberOfSpectrum, string graphName, bool useLinePlot = false)
+    public static (GraphDocument graph, PlotItemCollection group) CreateGraphWithPreprocessedSpectrum(DataTable peakTable, int numberOfSpectrum, string graphName, bool useLinePlot, bool doOpenGraph)
     {
       var selColumnsForPeakGraph = new AscendingIntegerCollection
           {
             peakTable.DataColumns.GetColumnNumber(peakTable[PeakTable_PreprocessedColumnNameY(numberOfSpectrum)])
           };
       var preferredGraphName = string.IsNullOrEmpty(graphName) ? peakTable.FolderName + "GPeaks" : graphName;
-      var graphController = PlotCommands.PlotLine(peakTable, selColumnsForPeakGraph, bLine: useLinePlot, bScatter: !useLinePlot, preferredGraphName);
-      var graph = graphController.Doc;
+      var (graph, graphController) = PlotCommands.PlotLine(peakTable, selColumnsForPeakGraph, bLine: useLinePlot, bScatter: !useLinePlot, preferredGraphName, doOpenGraph);
       var layer = (XYPlotLayer)graph.RootLayer.Layers[0];
       var pi = layer.PlotItems.TakeFromHereToFirstLeaves<IGPlotItem>().OfType<XYColumnPlotItem>().FirstOrDefault();
       if (pi is not null)
@@ -1014,8 +1016,7 @@ namespace Altaxo.Science.Spectroscopy
             dstTable.DataColumns.GetColumnNumber(dstTable[RamanCalibrationDataSource.ColumnName_Group0_NeonCalibration_DifferenceOfPeakWavelengths])
           };
       var preferredGraphName = dstTable.FolderName + "GNeonCalibration";
-      var graphController = PlotCommands.PlotLine(dstTable, selColumnsForPeakGraph, bLine: false, bScatter: true, preferredGraphName);
-      var graph = graphController.Doc;
+      var (graph, graphController) = PlotCommands.PlotLine(dstTable, selColumnsForPeakGraph, bLine: false, bScatter: true, preferredGraphName);
       var layer = (XYPlotLayer)graph.RootLayer.Layers[0];
       var pi = layer.PlotItems.TakeFromHereToFirstLeaves<IGPlotItem>().OfType<XYColumnPlotItem>().FirstOrDefault();
       if (pi is not null)

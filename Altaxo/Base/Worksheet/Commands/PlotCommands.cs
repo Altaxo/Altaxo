@@ -358,24 +358,26 @@ namespace Altaxo.Worksheet.Commands
     #endregion Predefined group styles
 
     /// <summary>
-    /// Plots selected data columns of a table.
+    /// Plots selected data columns of a table.  The graph must already exist. The graph is then shown in the project (a graph window is opened for it).
     /// </summary>
     /// <param name="table">The source table.</param>
     /// <param name="selectedColumns">The data columns of the table that should be plotted.</param>
     /// <param name="graph">The graph document to plot into.</param>
     /// <param name="templatePlotStyle">The plot style which is the template for all plot items.</param>
     /// <param name="groupStyles">The group styles for the newly built plot item collection.</param>
-    public static Altaxo.Gui.Graph.Gdi.Viewing.IGraphController Plot(
+    /// <param name="doOpenGraph">If true (default), the created graph is opened (shown in a window).</param>
+    /// <returns>The graph controller that controls the graph window, if <paramref name="doOpenGraph"/> is true; null otherwise.</returns>
+    public static Altaxo.Gui.Graph.Gdi.Viewing.IGraphController? Plot(
       DataTable table,
       IAscendingIntegerCollection selectedColumns,
       Graph.Gdi.GraphDocument graph,
       G2DPlotStyleCollection templatePlotStyle,
-      PlotGroupStyleCollection groupStyles)
+      PlotGroupStyleCollection groupStyles,
+      bool doOpenGraph = true)
     {
       List<IGPlotItem> pilist = CreatePlotItems(table, selectedColumns, templatePlotStyle);
       // now create a new Graph with this plot associations
-      var gc = Current.ProjectService.CreateNewGraph(graph);
-      var xylayer = gc.Doc.RootLayer.Layers.OfType<Altaxo.Graph.Gdi.XYPlotLayer>().First();
+      var xylayer = graph.RootLayer.Layers.OfType<Altaxo.Graph.Gdi.XYPlotLayer>().First();
 
       // Set x and y axes according to the first plot item in the list
       if (pilist.Count > 0 && (pilist[0] is XYColumnPlotItem))
@@ -404,7 +406,8 @@ namespace Altaxo.Worksheet.Commands
 
       xylayer.PlotItems.Add(newPlotGroup);
 
-      return gc;
+
+      return doOpenGraph ? Current.ProjectService.CreateNewGraph(graph) : null;
     }
 
     /// <summary>
@@ -413,9 +416,11 @@ namespace Altaxo.Worksheet.Commands
     /// <param name="dg">The worksheet controller where the columns are selected in.</param>
     /// <param name="bLine">If true, a line is plotted.</param>
     /// <param name="bScatter">If true, scatter symbols are plotted.</param>
-    public static void PlotLine(IWorksheetController dg, bool bLine, bool bScatter)
+    /// <param name="doOpenGraph">If true (default), the created graph is opened (shown in a window).</param>
+
+    public static void PlotLine(IWorksheetController dg, bool bLine, bool bScatter, bool doOpenGraph = true)
     {
-      PlotLine(dg.DataTable, dg.SelectedDataColumns, bLine, bScatter, null);
+      PlotLine(dg.DataTable, dg.SelectedDataColumns, bLine, bScatter, null, doOpenGraph);
     }
 
     /// <summary>
@@ -426,20 +431,21 @@ namespace Altaxo.Worksheet.Commands
     /// <param name="bLine">If true, the line style is activated (the points are connected by lines).</param>
     /// <param name="bScatter">If true, the scatter style is activated (the points are plotted as symbols).</param>
     /// <param name="preferredGraphName">Preferred name of the graph. Can be null if you have no preference.</param>
-    public static Altaxo.Gui.Graph.Gdi.Viewing.IGraphController PlotLine(DataTable table, Altaxo.Collections.IAscendingIntegerCollection selectedColumns, bool bLine, bool bScatter, string? preferredGraphName)
+    /// <param name="doOpenGraph">If true (default), the created graph is opened (shown in a window).</param>
+    public static (GraphDocument Graph, Altaxo.Gui.Graph.Gdi.Viewing.IGraphController? Controller) PlotLine(DataTable table, Altaxo.Collections.IAscendingIntegerCollection selectedColumns, bool bLine, bool bScatter, string? preferredGraphName, bool doOpenGraph = true)
     {
       var graph = Altaxo.Graph.Gdi.GraphTemplates.TemplateWithXYPlotLayerWithG2DCartesicCoordinateSystem.CreateGraph(table.GetPropertyContext(), preferredGraphName, table.Name, true);
       var context = graph.GetPropertyContext();
 
-      Altaxo.Gui.Graph.Gdi.Viewing.IGraphController result;
+      Altaxo.Gui.Graph.Gdi.Viewing.IGraphController? controller;
       if (bLine && bScatter)
-        result = Plot(table, selectedColumns, graph, PlotStyle_Line_Symbol(context), GroupStyle_Color_Line_Symbol);
+        controller = Plot(table, selectedColumns, graph, PlotStyle_Line_Symbol(context), GroupStyle_Color_Line_Symbol, doOpenGraph: doOpenGraph);
       else if (bLine)
-        result = Plot(table, selectedColumns, graph, PlotStyle_Line(context), GroupStyle_Color_Line);
+        controller = Plot(table, selectedColumns, graph, PlotStyle_Line(context), GroupStyle_Color_Line, doOpenGraph: doOpenGraph);
       else
-        result = Plot(table, selectedColumns, graph, PlotStyle_Symbol(context), GroupStyle_Color_Symbol);
+        controller = Plot(table, selectedColumns, graph, PlotStyle_Symbol(context), GroupStyle_Color_Symbol, doOpenGraph: doOpenGraph);
 
-      return result;
+      return (graph, controller);
     }
 
     /// <summary>
