@@ -93,7 +93,7 @@ namespace Altaxo.Calc.Optimization
      IObjectiveModelNonAllocating objective,
      IReadOnlyList<double> initialGuess,
      CancellationToken cancellationToken,
-     Action<int, double>? reportChi2Progress
+     Action<int, double, IReadOnlyList<double>>? reportChi2Progress
      )
     {
       return FindMinimum(objective, initialGuess, null, null, null, null, cancellationToken, reportChi2Progress);
@@ -119,7 +119,7 @@ namespace Altaxo.Calc.Optimization
       IReadOnlyList<double>? scales,
       IReadOnlyList<bool>? isFixed,
       CancellationToken cancellationToken,
-      Action<int, double>? reportChi2Progress
+      Action<int, double, IReadOnlyList<double>>? reportChi2Progress
       )
     {
       return Minimum(
@@ -159,7 +159,7 @@ namespace Altaxo.Calc.Optimization
       double[]? scales,
       bool[]? isFixed,
       CancellationToken cancellationToken,
-      Action<int, double>? reportChi2Progress
+      Action<int, double, IReadOnlyList<double>>? reportChi2Progress
       )
     {
       if (objective is null)
@@ -210,7 +210,7 @@ namespace Altaxo.Calc.Optimization
       IReadOnlyList<double>? scales,
       IReadOnlyList<bool>? isFixedByUser,
       CancellationToken cancellationToken,
-      Action<int, double>? reportChi2Progress,
+      Action<int, double, IReadOnlyList<double>>? reportChi2Progress,
       double initialMu,
       double gradientTolerance,
       double stepTolerance,
@@ -274,7 +274,7 @@ namespace Altaxo.Calc.Optimization
       // First, calculate function values and setup variables
       ProjectToInternalParameters(pExt, pInt); // current internal parameters
       var RSS = EvaluateFunction(objective, pInt, pExt);  // Residual Sum of Squares = R'R
-      reportChi2Progress?.Invoke(0, RSS);
+      reportChi2Progress?.Invoke(0, RSS, pExt);
 
       if (!maximumIterations.HasValue)
       {
@@ -384,7 +384,7 @@ namespace Altaxo.Calc.Optimization
             Pnew.CopyTo(pInt);
             RSS = RSSnew;
             rssValueHistory.Enqueue(RSS);
-            reportChi2Progress?.Invoke(iterations, RSS);
+            reportChi2Progress?.Invoke(iterations, RSS, pExt);
 
             // update the parameter scales, if automatic scales was used (but only every 'ParameterScaleUpdatePeriod' iterations)
             if (useAutomaticParameterScale && iterations >= (ParameterScaleUpdatePeriod + iterationOfLastAutomaticParameterScaleEvaluation))

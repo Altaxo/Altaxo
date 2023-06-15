@@ -421,7 +421,6 @@ namespace Altaxo.Calc.Optimization
           var RSSnew = objective.Value; // evaluate function at the new parameter values
 
           double rho; // >0: accept this step, <0: reject this step, NaN: keep mu and nu as is
-          bool isTinyClampScale = false;
           if (double.IsNaN(RSSnew))
           {
             // if the new RSS value is NaN, this might be a sign that the step was chosen too wide,
@@ -429,12 +428,11 @@ namespace Altaxo.Calc.Optimization
             // that's why we do not exit here, but set rho to 0 in order to increase mu afterwards
             rho = -1;
           }
-          else if(clampScaleFactor < 1E-8 && RSSnew<=RSS)
+          else if (clampScaleFactor < 1E-4 && RSSnew <= RSS)
           {
             // The clampScale is very low. This means that at least one of the parameters is very close to its boundary.
             // We accept this (very tiny) step in order to set this parameter to its boundary and then procceed with this parameter being fixed
             rho = 1; // force accepting
-            isTinyClampScale= true;
           }
           else
           {
@@ -493,7 +491,7 @@ namespace Altaxo.Calc.Optimization
               }
             }
 
-            if (!isTinyClampScale)
+            if (clampScaleFactor == 1) // decrease mu only if it was a full (unclamped) step
             {
               // this step was accepted, thus decrease mu depending on the value of rho
               mu *= Math.Max(1.0 / 3.0, 1.0 - Pow3(2.0 * rho - 1.0)); // see [2], section 4.1.1, point 3
@@ -516,7 +514,7 @@ namespace Altaxo.Calc.Optimization
               break;
             }
           }
-          
+
         }
       }
 
@@ -567,13 +565,13 @@ namespace Altaxo.Calc.Optimization
 
           if (lowerBnd.HasValue && parameterValues[i] > lowerBnd.Value && parameterStep[i] < 0)
           {
-              var scaleFactor_i = (lowerBnd.Value - parameterValues[i]) / parameterStep[i];
-              if (scaleFactor_i < scaleFactor)
-              {
-                scaleFactor = scaleFactor_i;
-              }
+            var scaleFactor_i = (lowerBnd.Value - parameterValues[i]) / parameterStep[i];
+            if (scaleFactor_i < scaleFactor)
+            {
+              scaleFactor = scaleFactor_i;
+            }
           }
-          if (upperBnd.HasValue && parameterValues[i] < upperBnd.Value && parameterStep[i] > 0) 
+          if (upperBnd.HasValue && parameterValues[i] < upperBnd.Value && parameterStep[i] > 0)
           {
             var scaleFactor_i = (upperBnd.Value - parameterValues[i]) / parameterStep[i];
             if (scaleFactor_i < scaleFactor)
@@ -589,11 +587,11 @@ namespace Altaxo.Calc.Optimization
           var lowerBnd = LowerBound?.ElementAt(i);
           var upperBnd = UpperBound?.ElementAt(i);
 
-          double? nextValue=null;
+          double? nextValue = null;
           if (lowerBnd.HasValue && parameterValues[i] > lowerBnd.Value && parameterStep[i] < 0)
           {
             var scaleFactor_i = (lowerBnd.Value - parameterValues[i]) / parameterStep[i]; // calculate scaleFactor_i in exactly the same way as above is important to avoid numeric inaccuracies
-            if(Math.Abs(scaleFactor_i - scaleFactor) < 1E-14) // Comparison with absolute tolerance is OK here, because highest value of scaleFactor is 1
+            if (Math.Abs(scaleFactor_i - scaleFactor) < 1E-14) // Comparison with absolute tolerance is OK here, because highest value of scaleFactor is 1
             {
               // if scaleFactor[i] is close to scaleFactor, we set the next value of the parameter to its lower bound
               nextValue = lowerBnd.Value;

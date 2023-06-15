@@ -89,6 +89,13 @@ namespace Altaxo.Calc.Regression.Nonlinear
     /// </summary>
     public int AccuracyOrderOfNumericalDerivatives { get; set; } = 1;
 
+    /// <summary>
+    /// Gets or sets a value indicating which nonlinear optimization method with constrained parameters is used:
+    /// if false, the method with clamped steps is used; if true, the method with transformed parameters is used.
+    /// If no parameter constraints are given, both methods should perform equally well.
+    /// </summary>
+    public bool UseMethodOfTransformedParameters { get; set; }
+
 
     /// <summary>
     /// Initializes a new instance of the quick nonlinear regression class.
@@ -172,17 +179,36 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
       model.SetObserved(xValues, yValues, null);
 
-      var fit = new LevenbergMarquardtMinimizerNonAllocating()
-      {
-        InitialMu = InitialMu,
-        GradientTolerance = GradientTolerance,
-        StepTolerance = StepTolerance,
-        FunctionTolerance = FunctionTolerance,
-        MinimalRSSImprovement = MinimalRSSImprovement,
-        MaximumIterations = MaximumNumberOfIterations,
-      };
 
-      return fit.FindMinimum(model, initialGuess, lowerBounds, upperBounds, scales, isFixed, cancellationToken, reportChi2Progress);
+      if (UseMethodOfTransformedParameters)
+      {
+
+        var fit = new LevenbergMarquardtMinimizerNonAllocatingWrappedParameters()
+        {
+          InitialMu = InitialMu,
+          GradientTolerance = GradientTolerance,
+          StepTolerance = StepTolerance,
+          FunctionTolerance = FunctionTolerance,
+          MinimalRSSImprovement = MinimalRSSImprovement,
+          MaximumIterations = MaximumNumberOfIterations,
+        };
+
+        return fit.FindMinimum(model, initialGuess, lowerBounds, upperBounds, scales, isFixed, cancellationToken, reportChi2Progress);
+      }
+      else
+      {
+        var fit = new LevenbergMarquardtMinimizerNonAllocating()
+        {
+          InitialMu = InitialMu,
+          GradientTolerance = GradientTolerance,
+          StepTolerance = StepTolerance,
+          FunctionTolerance = FunctionTolerance,
+          MinimalRSSImprovement = MinimalRSSImprovement,
+          MaximumIterations = MaximumNumberOfIterations,
+        };
+
+        return fit.FindMinimum(model, initialGuess, lowerBounds, upperBounds, scales, isFixed, cancellationToken, reportChi2Progress);
+      }
     }
   }
 }

@@ -18,7 +18,7 @@ namespace Altaxo.Calc.Optimization
     /// <summary>
     /// Returns the standard errors of the corresponding parameters
     /// </summary>
-    public Vector<double> StandardErrors { get; private set; }
+    public Vector<double>? StandardErrors { get; private set; }
 
     /// <summary>
     /// Returns the y-values of the fitted model that correspond to the independent values.
@@ -28,12 +28,12 @@ namespace Altaxo.Calc.Optimization
     /// <summary>
     /// Returns the covariance matrix at minimizing point.
     /// </summary>
-    public Matrix<double> Covariance { get; private set; }
+    public Matrix<double>? Covariance { get; private set; }
 
     /// <summary>
     ///  Returns the correlation matrix at minimizing point.
     /// </summary>
-    public Matrix<double> Correlation { get; private set; }
+    public Matrix<double>? Correlation { get; private set; }
 
     public int Iterations { get; }
 
@@ -44,22 +44,22 @@ namespace Altaxo.Calc.Optimization
     /// </summary>
     public IReadOnlyList<bool> IsFixedByUserOrBoundaries { get; }
 
-    public NonlinearMinimizationResult(IObjectiveModel modelInfo, int iterations, ExitCondition reasonForExit, IReadOnlyList<bool> isFixed = null)
+    public NonlinearMinimizationResult(IObjectiveModel modelInfo, int iterations, ExitCondition reasonForExit, IReadOnlyList<bool>? isFixed = null)
     {
       ModelInfoAtMinimum = modelInfo;
       Iterations = iterations;
       ReasonForExit = reasonForExit;
-      IsFixedByUserOrBoundaries = isFixed == null ? Enumerable.Repeat(false, modelInfo.Point.Count).ToImmutableArray() : isFixed.ToImmutableArray();
+      IsFixedByUserOrBoundaries = isFixed is null ? Enumerable.Repeat(false, modelInfo.Point.Count).ToImmutableArray() : isFixed.ToImmutableArray();
 
       EvaluateCovariance(modelInfo, isFixed);
     }
 
-    private void EvaluateCovariance(IObjectiveModel objective, IReadOnlyList<bool> isFixed)
+    private void EvaluateCovariance(IObjectiveModel objective, IReadOnlyList<bool>? isFixed)
     {
       objective.EvaluateAt(objective.Point); // Hessian may be not yet updated.
       var RSS = objective.Value;
       var Hessian = objective.Hessian;
-      if (!(RSS >= 0) || Hessian == null || objective.DegreeOfFreedom < 1)
+      if (!(RSS >= 0) || Hessian is null || objective.DegreeOfFreedom < 1)
       {
         Covariance = null;
         Correlation = null;
@@ -70,7 +70,7 @@ namespace Altaxo.Calc.Optimization
       Covariance = PseudoInverseWithScaling(Hessian) * objective.Value / objective.DegreeOfFreedom;
 
 
-      if (isFixed != null)
+      if (isFixed is not null)
       {
         for (int i = 0; i < Covariance.RowCount; ++i)
         {
