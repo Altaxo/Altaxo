@@ -246,11 +246,12 @@ namespace Altaxo.Data
           if (doLogY)
             yv = Math.Log(yv);
 
-          maxX = Math.Max(maxX, xv);
-          minX = Math.Min(minX, xv);
 
           if (xv.IsFinite() && yv.IsFinite())
           {
+            maxX = Math.Max(maxX, xv);
+            minX = Math.Min(minX, xv);
+
             for (; InterpolationValues.Keys.Contains(xv);)
             {
               if (xv == 0)
