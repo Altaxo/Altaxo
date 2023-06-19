@@ -54,6 +54,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Collections;
+using Altaxo.Science.Signals;
 
 namespace Altaxo.Calc.Interpolation
 {
@@ -111,7 +112,7 @@ namespace Altaxo.Calc.Interpolation
     /// <param name="yvec">Vector of y (dependent) data.</param>
     /// <param name="yStdDev">Vector of the standard deviation of y (optional, only used for some functions).</param>
     /// <returns>A <see cref="IInterpolationCurve"/> object.</returns>
-    IInterpolationCurve Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec, IReadOnlyList<double>? yStdDev=null);
+    IInterpolationCurve Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec, IReadOnlyList<double>? yStdDev = null);
   }
 
   /// <summary>
@@ -126,7 +127,7 @@ namespace Altaxo.Calc.Interpolation
     /// <param name="yvec">Vector of y (dependent) data.</param>
     /// <param name="yStdDev">Vector of the standard deviations of y (optional, only used for some functions).</param>
     /// <returns>A <see cref="IInterpolationFunction"/> object.</returns>
-    new IInterpolationFunction Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec, IReadOnlyList<double>? yStdDev=null);
+    new IInterpolationFunction Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec, IReadOnlyList<double>? yStdDev = null);
   }
 
 
@@ -911,7 +912,7 @@ tryinterpolation:
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var order = info.GetInt32("Order");
-        return new PolynomialRegressionAsInterpolationOptions() {Order = order };
+        return new PolynomialRegressionAsInterpolationOptions() { Order = order };
       }
     }
 
@@ -928,12 +929,12 @@ tryinterpolation:
       }
     }
 
-    
+
 
     /// <inheritdoc/>
     public IInterpolationFunction Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec, IReadOnlyList<double>? yStdDev = null)
     {
-      var spline = new PolynomialRegressionAsInterpolation() { RegressionOrder = Order};
+      var spline = new PolynomialRegressionAsInterpolation() { RegressionOrder = Order };
       spline.Interpolate(xvec, yvec);
       return spline;
     }
@@ -969,7 +970,7 @@ tryinterpolation:
       var xmin = xvec.Min();
       var xmax = xvec.Max();
       _xMean = 0.5 * (xmin + xmax);
-      _xScale = 1/(0.5 * (xmax - xmin));
+      _xScale = 1 / (0.5 * (xmax - xmin));
 
       var err = VectorMath.GetConstantVector(1.0, yvec.Count);
       var xScaled = xvec.Select(x => (x - _xMean) * _xScale).ToArray();
@@ -991,6 +992,189 @@ tryinterpolation:
         result += paras[i];
       }
       return result;
+    }
+
+    public double GetYOfU(double u)
+    {
+      return GetYOfX(u);
+    }
+
+    public double GetXOfU(double u)
+    {
+      return u;
+    }
+  }
+
+  #endregion PolynomialRegressionAsInterpolation
+
+  #region PronySeriesRetardationAsInterpolation
+
+  /// <summary>
+  /// Options for a polynomial regression used as interpolation method (<see cref=PronySeriesRetardationAsInterpolationOptions"/>).
+  /// </summary>
+  public record PronySeriesRetardationAsInterpolationOptions : IInterpolationFunctionOptions
+  {
+    double _xmin, _xmax;
+    int _numberOfPoints;
+
+
+    #region Serialization
+
+    /// <summary>
+    /// 2023-06-16 initial version
+    /// </summary>
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PronySeriesRetardationAsInterpolationOptions), 0)]
+    public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        var s = (PronySeriesRetardationAsInterpolationOptions)obj;
+        info.AddValue("XMin", s._xmin);
+        info.AddValue("XMax", s._xmax);
+        info.AddValue("NumberOfPoints", s._numberOfPoints);
+      }
+
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      {
+        var xmin = info.GetDouble("XMin");
+        var xmax = info.GetDouble("XMax");
+        var numPts = info.GetInt32("NumberOfPoints");
+        return new PronySeriesRetardationAsInterpolationOptions() { XMinimum = xmin, XMaximum = xmax, NumberOfPoints = numPts };
+      }
+    }
+
+    #endregion
+
+    public double XMinimum
+    {
+      get => _xmin;
+      set
+      {
+        if (!(value > 0))
+          throw new ArgumentOutOfRangeException(nameof(XMinimum));
+        _xmin = value;
+      }
+    }
+
+    public double XMaximum
+    {
+      get => _xmax;
+      set
+      {
+        if (!(value > 0))
+          throw new ArgumentOutOfRangeException(nameof(XMaximum));
+        _xmax = value;
+      }
+    }
+
+    public int NumberOfPoints
+    {
+      get => _numberOfPoints;
+      init
+      {
+        if (!(value > 0))
+          throw new ArgumentOutOfRangeException(nameof(NumberOfPoints));
+        _numberOfPoints = value;
+      }
+    }
+
+    /// <inheritdoc/>
+    public IInterpolationFunction Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec, IReadOnlyList<double>? yStdDev = null)
+    {
+      var pr = new PronySeriesRetardationAsInterpolation(_xmin, _xmax, _numberOfPoints);
+      pr.Interpolate(xvec, yvec);
+      return pr;
+    }
+
+    IInterpolationCurve IInterpolationCurveOptions.Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec, IReadOnlyList<double>? yStdDev)
+    {
+      return Interpolate(xvec, yvec, yStdDev);
+    }
+  }
+
+  public class PronySeriesRetardationAsInterpolation : IInterpolationFunction
+  {
+    private PronySeriesRetardationResult? _fit;
+    double _xMinimum = 1E-1;
+    double _xMaximum = 1;
+    int _numberOfPoints = 2;
+
+    bool _automaticXMinimumMaximum;
+    double _pointsPerDecade = 1;
+
+    public bool AllowNegativeCoefficients { get; set; }
+
+    public PronySeriesRetardationAsInterpolation()
+    {
+    }
+
+    public PronySeriesRetardationAsInterpolation(double xmin, double xmax, int numberOfPoints)
+    {
+      if (!(xmin > 0))
+        throw new ArgumentOutOfRangeException("Must be >=0", nameof(xmin));
+
+      if (!(xmax >= xmin))
+        throw new ArgumentOutOfRangeException("Must be > xmin", nameof(xmin));
+
+      if (numberOfPoints == 1 && !(xmin == xmax))
+        throw new ArgumentOutOfRangeException("If the number of points is 1, xmin must be equal to xmax");
+
+      if (!(numberOfPoints > 0))
+        throw new ArgumentOutOfRangeException("Must be > 0", nameof(numberOfPoints));
+
+      _xMinimum = xmin;
+      _xMaximum = xmax;
+      _numberOfPoints = numberOfPoints;
+      _automaticXMinimumMaximum = false;
+    }
+
+    public PronySeriesRetardationAsInterpolation(double pointsPerDecade)
+    {
+      if (!(pointsPerDecade > 0))
+        throw new ArgumentOutOfRangeException("Must be >=0", nameof(pointsPerDecade));
+
+      _automaticXMinimumMaximum = true;
+      _pointsPerDecade = pointsPerDecade;
+    }
+
+    public void Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec)
+    {
+      var workingXMinimum = _xMinimum;
+      var workingXMaximum = _xMaximum;
+      var workingNumberOfPoints = _numberOfPoints;
+
+      if (_automaticXMinimumMaximum)
+      {
+        var xmin = xvec.Min(x => x > 0 ? x : null);
+        if (!xmin.HasValue)
+          throw new ArgumentException("The array does not contain positive elements", nameof(xvec));
+
+        var xmax = xvec.Max(x => x > 0 ? x : null);
+        if (!xmax.HasValue)
+          throw new ArgumentException("The array does not contain positive elements", nameof(xvec));
+
+        if (xmin.Value == xmax.Value)
+        {
+          workingXMinimum = workingXMaximum = xmin.Value;
+          workingNumberOfPoints = 1;
+        }
+        else
+        {
+          workingXMinimum = xmin.Value;
+          workingXMaximum = xmax.Value;
+          _numberOfPoints = (int)(Math.Ceiling(Math.Log10(xmax.Value / xmin.Value) / _pointsPerDecade) + 1);
+        }
+      }
+
+      _fit = PronySeriesRetardation.EvaluateTimeDomain(xvec, yvec, _xMinimum, _xMaximum, _numberOfPoints, withIntercept: false, withFlowTerm: false, regularizationLambda: 0, allowNegativeCoefficients: AllowNegativeCoefficients);
+    }
+
+    public double GetYOfX(double x)
+    {
+      if (_fit is null)
+        throw new InvalidOperationException($"Results not available yet - please execute an interpolation first");
+
+      return _fit.GetTimeDomainYOfTime(x);
     }
 
     public double GetYOfU(double u)
@@ -1132,7 +1316,7 @@ tryinterpolation:
 
       // Resize the auxilliary vectors. Note, that there is no reallocation if the
       // vector already has the appropriate dimension.
-      if(y1.Count<len)
+      if (y1.Count < len)
       {
         y1 = CreateVector.Dense<double>(len);
         y2 = CreateVector.Dense<double>(len);
@@ -2042,7 +2226,7 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
         if (!(value >= -1))
           throw new ArgumentOutOfRangeException("The value must be >= -1", nameof(Smoothing));
 
-          _smoothing = value;
+        _smoothing = value;
       }
     }
 
@@ -2940,7 +3124,7 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
       int hi = x.Count - 1,
         n = x.Count;
 
-      if(y1.Count != n)
+      if (y1.Count != n)
       {
         y1 = CreateVector.Dense<double>(n); // spline coefficients
       }
@@ -3243,7 +3427,7 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
         C = CreateVector.Dense<double>(x.Count);
         D = CreateVector.Dense<double>(x.Count);
       }
-      
+
       C.SetValues(y);        // initialize // TODO original was C = D = *y; check Vector if this is a copy operation
       D.SetValues(y);
 
@@ -3291,7 +3475,7 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
     int _numeratorDegree = 2;
 
     double _precision = CurveBase.DBL_EPSILON;
-   
+
 
     #region Serialization
 
@@ -3336,7 +3520,7 @@ void MpCardinalCubicSpline::DrawClosedCurve (Scene &scene)
       {
         if (!(value > 0))
           throw new ArgumentOutOfRangeException(nameof(Precision));
-       _precision = value;
+        _precision = value;
       }
     }
 

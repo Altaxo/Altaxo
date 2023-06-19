@@ -229,8 +229,9 @@ namespace Altaxo.Science.Signals
     /// <param name="withIntercept">If set to <c>true</c>, an offset term is added. This term can be considered to have a retardation time of zero.</param>
     /// <param name="withFlowTerm">If set to <c>true</c>, a flow term (fluidity, conductivity) is also fitted.</param>
     /// <param name="regularizationLambda">A regularization parameter to smooth the resulting array of Prony terms.</param>
+    /// <param name="allowNegativeCoefficients">Normally, in a Prony series only nonnegative coefficients are allowed. Set this parameter to true to allow also negative coefficients.</param>
     /// <returns>The result of the evaluation, see <see cref="PronySeriesRetardationResult"/>.</returns>
-    public static PronySeriesRetardationResult EvaluateTimeDomain(IReadOnlyList<double> xarr, IReadOnlyList<double> yarr, double tmin, double tmax, int numberOfRetardationTimes, bool withIntercept, bool withFlowTerm, double regularizationLambda)
+    public static PronySeriesRetardationResult EvaluateTimeDomain(IReadOnlyList<double> xarr, IReadOnlyList<double> yarr, double tmin, double tmax, int numberOfRetardationTimes, bool withIntercept, bool withFlowTerm, double regularizationLambda, bool allowNegativeCoefficients = false)
     {
       if (xarr is null)
         throw new ArgumentNullException(nameof(xarr));
@@ -308,7 +309,7 @@ namespace Altaxo.Science.Signals
       for (int r = 0; r < NR; ++r)
         y[r, 0] = yarr[r];
 
-      return Evaluate(tmin, tmax, numberOfRetardationTimes, withIntercept, withFlowTerm, isRelativePermittivitySpectrum: false, flowTermScale, taus, X, y);
+      return Evaluate(tmin, tmax, numberOfRetardationTimes, withIntercept, withFlowTerm, isRelativePermittivitySpectrum: false, flowTermScale, allowNegativeCoefficients: allowNegativeCoefficients, taus, X, y);
     }
 
     /// <summary>
@@ -442,17 +443,27 @@ namespace Altaxo.Science.Signals
         throw new InvalidOperationException();
       }
 
-      return Evaluate(tmin, tmax, numberOfRetardationTimes, withIntercept, withFlowTerm, isRelativePermittivitySpectrum, flowTermScale, taus, X, y);
+      return Evaluate(tmin, tmax, numberOfRetardationTimes, withIntercept, withFlowTerm, isRelativePermittivitySpectrum, flowTermScale, allowNegativeCoefficients: false, taus, X, y);
     }
 
-    protected static PronySeriesRetardationResult Evaluate(double tmin, double tmax, int numberOfRetardationTimes, bool withIntercept, bool withFlowTerm, bool isRelativePermittivitySpectrum, double flowTermScale, double[] taus, Matrix<double> X, Matrix<double> y)
+    protected static PronySeriesRetardationResult Evaluate(double tmin, double tmax, int numberOfRetardationTimes, bool withIntercept, bool withFlowTerm, bool isRelativePermittivitySpectrum, double flowTermScale, bool allowNegativeCoefficients, double[] taus, Matrix<double> X, Matrix<double> y)
     {
       // calculate XtX and XtY
       var XtX = X.TransposeThisAndMultiply(X);
       var Xty = X.TransposeThisAndMultiply(y);
 
-      // Solve the equation, but get nonnegative coefficients only
-      FastNonnegativeLeastSquares.Execution(XtX, Xty, null, out var x, out var _);
+      IMatrix<double> x;
+      if (allowNegativeCoefficients)
+      {
+        // Solve the equation, allow both positive and negative coefficients
+        x = XtX.Solve(Xty);
+      }
+      else
+      {
+        // Usual case : solve the equation, but get nonnegative coefficients only
+        FastNonnegativeLeastSquares.Execution(XtX, Xty, null, out x, out var _);
+      }
+
 
       // the result (the spectral amplitudes) are now in X
       double spectralDensityFactor = Math.Log(tmax / tmin) / (numberOfRetardationTimes - 1);
