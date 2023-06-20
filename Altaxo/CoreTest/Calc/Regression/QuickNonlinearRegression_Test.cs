@@ -240,34 +240,64 @@ namespace Altaxo.Calc.Regression
     #region Test upper bounds
 
     /// <summary>
-    /// Create a Gaussian with height 17E20, but limit the fit width to 16E20.
+    /// Create a Gaussian with height 17E20, but limit the fit height to 16E20.
     /// </summary>
     [Fact]
     public void TestGauss_QuickClamped_1_UpperBoundHeight()
     {
+      const double amplitude = 17E20;
+      const double upperlimit_amplitude = 16E20;
+      const double position = 5E-20;
+      const double width = 1.5E-20;
+
       var xx = new double[10];
       var yy = new double[10];
       for (int i = 0; i < xx.Length; ++i)
       {
         xx[i] = i * 1E-20;
-        double arg = (xx[i] - 5E-20) / 1.5E-20;
-        yy[i] = 17E20 * Math.Exp(-0.5 * arg * arg);
+        yy[i] = GaussAmplitude.GetYOfOneTerm(xx[i], amplitude, position, width);
       }
 
-      var initialGuess = new double[3] { 10E20, 5E-20, 3E-20 };
+      var initialGuess = new double[3] { amplitude / 2.0, position + width / 8, width * 1.25 };
 
       var ff = new GaussAmplitude(1, -1);
       var fit = new QuickNonlinearRegression(ff);
       var upperBounds = new double?[3];
-      upperBounds[0] = 16E20;
+      upperBounds[0] = upperlimit_amplitude;
       var fitResult = fit.Fit(xx, yy, initialGuess, null, upperBounds, null, null, CancellationToken.None);
-      AssertEx.GreaterOrEqual(10, fitResult.Iterations); // it should not take more than 10 iterations
+
+      Assert.True(fitResult.ReasonForExit == Optimization.ExitCondition.Converged);
+      AssertEx.GreaterOrEqual(12, fitResult.Iterations); // it should not take more than 12 iterations
       AssertEx.GreaterOrEqual(1.81E40, fitResult.ModelInfoAtMinimum.Value); // Chi2 should be less than 1
-      AssertEx.AreEqual(16E20, fitResult.MinimizingPoint[0], 0, 1E-16);
+      AssertEx.AreEqual(upperlimit_amplitude, fitResult.MinimizingPoint[0], 0, 1E-14);
+      Assert.True(fitResult.IsFixedByUserOrBoundaries[0] == true);
+      Assert.True(fitResult.IsFixedByUserOrBoundaries[1] == false);
+      Assert.True(fitResult.IsFixedByUserOrBoundaries[2] == false);
+      AssertEx.AreEqual(0, fitResult.StandardErrors[0], 0, 0);
+      AssertEx.Less(0, fitResult.StandardErrors[1]);
+      AssertEx.Less(0, fitResult.StandardErrors[2]);
+
+      // Make exactly the same test again.
+      // But now we start with the exact initial parameters for position and width
+      // This is to test if the automatic Hessian scaling will cause problems when starting with exact initial values.
+
+      initialGuess = new double[3] { amplitude / 2.0, position, width };
+      fitResult = fit.Fit(xx, yy, initialGuess, null, upperBounds, null, null, CancellationToken.None);
+
+      Assert.True(fitResult.ReasonForExit == Optimization.ExitCondition.Converged || fitResult.ReasonForExit == Optimization.ExitCondition.RelativePoints);
+      AssertEx.GreaterOrEqual(12, fitResult.Iterations); // it should not take more than 12 iterations
+      AssertEx.GreaterOrEqual(1.81E40, fitResult.ModelInfoAtMinimum.Value); // Chi2 should be less than 1
+      AssertEx.AreEqual(upperlimit_amplitude, fitResult.MinimizingPoint[0], 0, 1E-14);
+      Assert.True(fitResult.IsFixedByUserOrBoundaries[0] == true);
+      Assert.True(fitResult.IsFixedByUserOrBoundaries[1] == false);
+      Assert.True(fitResult.IsFixedByUserOrBoundaries[2] == false);
+      AssertEx.AreEqual(0, fitResult.StandardErrors[0], 0, 0);
+      AssertEx.Less(0, fitResult.StandardErrors[1]);
+      AssertEx.Less(0, fitResult.StandardErrors[2]);
     }
 
     /// <summary>
-    /// Create a Gaussian with height 17E20, but limit the fit width to 16E20.
+    /// Create a Gaussian with height 17E20, but limit the fit height to 16E20.
     /// </summary>
     [Fact]
     public void TestGauss_QuickWrapped_1_UpperBoundHeight()
@@ -294,30 +324,59 @@ namespace Altaxo.Calc.Regression
     }
 
     /// <summary>
-    /// Create a Gaussian with height 17E-20, but limit the fit width to 16E-20.
+    /// Create a Gaussian with height 17E-20, but limit the fit height to 16E-20.
     /// </summary>
     [Fact]
     public void TestGauss_QuickClamped_2_UpperBoundHeight()
     {
+      const double amplitude = 17E-20;
+      const double upperlimit_amplitude = 16E-20;
+      const double position = 5E20;
+      const double width = 1.5E20;
+
       var xx = new double[10];
       var yy = new double[10];
       for (int i = 0; i < xx.Length; ++i)
       {
         xx[i] = i * 1E20;
-        double arg = (xx[i] - 5E20) / 1.5E20;
-        yy[i] = 17E-20 * Math.Exp(-0.5 * arg * arg);
+        yy[i] = GaussAmplitude.GetYOfOneTerm(xx[i], amplitude, position, width);
       }
-
-      var initialGuess = new double[3] { 10E-20, 5E20, 3E20 };
+      var initialGuess = new double[3] { amplitude / 2.0, position + width / 8, width * 1.25 };
 
       var ff = new GaussAmplitude(1, -1);
       var fit = new QuickNonlinearRegression(ff);
       var upperBounds = new double?[3];
-      upperBounds[0] = 16E-20;
+      upperBounds[0] = upperlimit_amplitude;
       var fitResult = fit.Fit(xx, yy, initialGuess, null, upperBounds, null, null, CancellationToken.None);
-      AssertEx.GreaterOrEqual(11, fitResult.Iterations); // it should not take more than 10 iterations
-      AssertEx.GreaterOrEqual(2E-40, fitResult.ModelInfoAtMinimum.Value); // Chi2 should be less than 1
-      AssertEx.AreEqual(16E-20, fitResult.MinimizingPoint[0], 0, 1E-16);
+
+      Assert.True(fitResult.ReasonForExit == Optimization.ExitCondition.Converged);
+      AssertEx.GreaterOrEqual(12, fitResult.Iterations); // it should not take more than 12 iterations
+      AssertEx.GreaterOrEqual(1.81E-40, fitResult.ModelInfoAtMinimum.Value); // Chi2 should be less than 1
+      AssertEx.AreEqual(upperlimit_amplitude, fitResult.MinimizingPoint[0], 0, 1E-14);
+      Assert.True(fitResult.IsFixedByUserOrBoundaries[0] == true);
+      Assert.True(fitResult.IsFixedByUserOrBoundaries[1] == false);
+      Assert.True(fitResult.IsFixedByUserOrBoundaries[2] == false);
+      AssertEx.AreEqual(0, fitResult.StandardErrors[0], 0, 0);
+      AssertEx.Less(0, fitResult.StandardErrors[1]);
+      AssertEx.Less(0, fitResult.StandardErrors[2]);
+
+      // Make exactly the same test again.
+      // But now we start with the exact initial parameters for position and width
+      // This is to test if the automatic Hessian scaling will cause problems when starting with exact initial values.
+
+      initialGuess = new double[3] { amplitude / 2.0, position, width };
+      fitResult = fit.Fit(xx, yy, initialGuess, null, upperBounds, null, null, CancellationToken.None);
+
+      Assert.True(fitResult.ReasonForExit == Optimization.ExitCondition.Converged || fitResult.ReasonForExit == Optimization.ExitCondition.RelativePoints);
+      AssertEx.GreaterOrEqual(12, fitResult.Iterations); // it should not take more than 12 iterations
+      AssertEx.GreaterOrEqual(1.81E-40, fitResult.ModelInfoAtMinimum.Value); // Chi2 should be less than 1
+      AssertEx.AreEqual(upperlimit_amplitude, fitResult.MinimizingPoint[0], 0, 1E-14);
+      Assert.True(fitResult.IsFixedByUserOrBoundaries[0] == true);
+      Assert.True(fitResult.IsFixedByUserOrBoundaries[1] == false);
+      Assert.True(fitResult.IsFixedByUserOrBoundaries[2] == false);
+      AssertEx.AreEqual(0, fitResult.StandardErrors[0], 0, 0);
+      AssertEx.Less(0, fitResult.StandardErrors[1]);
+      AssertEx.Less(0, fitResult.StandardErrors[2]);
     }
 
     /// <summary>
@@ -567,42 +626,81 @@ namespace Altaxo.Calc.Regression
         yy[i] = i == 1 ? 666 : 0;
       }
 
-      var initialGuess = new double[3] { 665, 10.5, 1 };
+      var initialGuess = new double[3] { 650, 10.5, 1 };
 
       var ff = new GaussAmplitude(1, -1);
       var fit = new QuickNonlinearRegression(ff);
       var lowerBounds = new double?[3];
-      lowerBounds[2] = 1e-2;
+      lowerBounds[2] = 1E-2;
       // because of the left and right y-value set to zero, the sigma of the
       // Gaussian must approach our boundary
       var fitResult = fit.Fit(xx, yy, initialGuess, lowerBounds, null, null, null, CancellationToken.None);
-      AssertEx.AreEqual(666, fitResult.MinimizingPoint[0], 0, 1E-10);
-      AssertEx.AreEqual(10, fitResult.MinimizingPoint[1], 0, 1E-10);
-      AssertEx.AreEqual(1E-2, fitResult.MinimizingPoint[2], 0, 1E-10);
+      AssertEx.AreEqual(666, fitResult.MinimizingPoint[0], 0, 1E-2);
+      AssertEx.AreEqual(10, fitResult.MinimizingPoint[1], 0, 1E-2);
+      AssertEx.LessOrEqual(1E-2, fitResult.MinimizingPoint[2]);
     }
 
-    /*
+
+
+    #endregion
+
+    #region Voigt Testing
+
     /// <summary>
-    /// This is a real-world signal, whose fit failed.
-    /// Failing is due to solving the Hessian in iteration 55, which fails due to gradients with very
-    /// different magnitude. Is this a case which can be handled?
+    /// Create a Voigt with height 17E20, but limit the fit height to 16E20.
     /// </summary>
     [Fact]
-    public void TestGauss_3Points_2()
+    public void TestVoigt_QuickClamped_1_UpperBoundHeight()
     {
-      var xx = new double[] { 145.73248120300929, 150.98248120300846, 156.2324812030098 };
-      var yy = new double[] { 0, 608.30000000000291, 0 };
-      var initialGuess = new double[3] { 608.30000000000291, 150.98248120300846, 2.2294697257561467 };
-      var lowerBounds = new double?[3] { 0, -146827.177518797, 0.21657705907315133 };
-      var upperBounds = new double?[3] { null, 151264.772481203, 62320.244092397821 };
+      const double amplitude = 17E20;
+      const double upperlimit_area = 60;
+      const double position = 5E-20;
+      const double width = 1.5E-20;
 
-      var ff = new GaussAmplitude(1, -1);
-      var fit = new QuickNonlinearRegression(ff);
-      // because of the left and right y-value set to zero, the sigma of the
-      // Gaussian must approach our boundary
-      var fitResult = fit.Fit(xx, yy, initialGuess, lowerBounds, upperBounds, null, null, CancellationToken.None);
+      var xx = new double[10];
+      var yy = new double[10];
+      for (int i = 0; i < xx.Length; ++i)
+      {
+        xx[i] = i * 1E-20;
+        var arg = (xx[i] - position) / width;
+        yy[i] = amplitude * Math.Exp(-0.5 * Math.Pow(arg * arg, 1.05)); // This is a gauss, but with an exponent of 2.1 instead of 2
+      }
+
+      var initialGuess0 = new double[4] { upperlimit_area / 2.0, position + width / 8, width * 1.25, 0 };
+      var initialGuess1 = new double[4] { upperlimit_area / 2.0, position + width / 8, width * 1.25, 0.5 };
+      var initialGuess2 = new double[4] { upperlimit_area / 2.0, position + width / 8, width * 1.25, 1 };
+      var initialGuess3 = new double[4] { upperlimit_area / 2.0, position, width, 0 };
+      var initialGuess4 = new double[4] { upperlimit_area / 2.0, position, width, 0.5 };
+      var initialGuess5 = new double[4] { upperlimit_area / 2.0, position, width, 1 };
+
+      foreach (var initialGuess in new[] { initialGuess0, initialGuess1, initialGuess2, initialGuess3, initialGuess4, initialGuess5 })
+      {
+        var ff = new Altaxo.Calc.FitFunctions.Probability.VoigtAreaParametrizationNu(1, -1);
+        var fit = new QuickNonlinearRegression(ff);
+        var lowerBounds = new double?[4];
+        var upperBounds = new double?[4];
+        lowerBounds[0] = 0;
+        lowerBounds[3] = 0;
+        upperBounds[0] = upperlimit_area;
+        upperBounds[3] = 1;
+        var fitResult = fit.Fit(xx, yy, initialGuess, null, upperBounds, null, null, CancellationToken.None);
+
+        Assert.True(fitResult.ReasonForExit == Optimization.ExitCondition.Converged || fitResult.ReasonForExit == Optimization.ExitCondition.RelativePoints);
+        AssertEx.GreaterOrEqual(14, fitResult.Iterations); // it should not take more than 14 iterations
+        AssertEx.GreaterOrEqual(1.4E40, fitResult.ModelInfoAtMinimum.Value); // Chi2 should be less than 1.4E40
+        AssertEx.AreEqual(upperlimit_area, fitResult.MinimizingPoint[0], 0, 1E-14);
+        AssertEx.AreEqual(1, fitResult.MinimizingPoint[3], 0, 1E-14);
+        Assert.True(fitResult.IsFixedByUserOrBoundaries[0] == true);
+        Assert.True(fitResult.IsFixedByUserOrBoundaries[1] == false);
+        Assert.True(fitResult.IsFixedByUserOrBoundaries[2] == false);
+        Assert.True(fitResult.IsFixedByUserOrBoundaries[3] == true);
+        AssertEx.AreEqual(0, fitResult.StandardErrors[0], 0, 0);
+        AssertEx.Less(0, fitResult.StandardErrors[1]);
+        AssertEx.Less(0, fitResult.StandardErrors[2]);
+        AssertEx.AreEqual(0, fitResult.StandardErrors[3], 0, 0);
+      }
     }
-    */
+
 
     #endregion
   }

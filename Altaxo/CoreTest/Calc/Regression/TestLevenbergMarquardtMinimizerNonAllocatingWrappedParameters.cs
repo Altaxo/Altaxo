@@ -176,10 +176,10 @@ namespace Altaxo.Calc.Regression
       model.SetObserved(xx, yy, null);
       var fit = new LevenbergMarquardtMinimizerNonAllocatingWrappedParameters();
       var result = fit.FindMinimum(model, initialGuess, lowerBound, upperBound, null, null, CancellationToken.None, null);
-
-      AssertEx.AreEqual(12, result.MinimizingPoint[0], 1E-16, 1E-16);
-      AssertEx.AreEqual(5.125, result.MinimizingPoint[1], 1E-16, 1E-2);
-      AssertEx.AreEqual(2, result.MinimizingPoint[2], 1E-16, 1E-2);
+      Assert.True(result.ReasonForExit == ExitCondition.Converged);
+      AssertEx.AreEqual(12, result.MinimizingPoint[0], 0, 1E-14);
+      AssertEx.AreEqual(5.125, result.MinimizingPoint[1], 0, 1E-2);
+      AssertEx.AreEqual(2, result.MinimizingPoint[2], 0, 1E-2);
       AssertEx.GreaterOrEqual(53, result.ModelInfoAtMinimum.Value);
     }
   }
