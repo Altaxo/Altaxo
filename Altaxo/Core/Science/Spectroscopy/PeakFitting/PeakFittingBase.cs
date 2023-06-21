@@ -94,7 +94,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
     /// </summary>
     /// <param name="array">The array of x values.</param>
     /// <returns>The (absolute value) of the minimal distance between two consecutive data points, the maximal distance, the minimal value and the maximal value of the array.</returns>
-    protected static (double minimalDistance, double maximalDistance, double minimalValue, double maximalValue) GetMinimalAndMaximalProperties(IEnumerable<double> array)
+    public static (double minimalDistance, double maximalDistance, double minimalValue, double maximalValue) GetMinimalAndMaximalProperties(IEnumerable<double> array)
     {
       double min = double.PositiveInfinity;
       double max = double.NegativeInfinity;

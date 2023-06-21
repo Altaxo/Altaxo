@@ -247,8 +247,9 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
       // this is because the positions tend to run away as long as the other parameters
       // are far from their fitted values
       var isFixed = new bool[param.Length];
-      for (int i = 1; i < isFixed.Length; i += numberOfParametersPerPeak)
-        isFixed[i] = true;
+      for (int i = 0; i < isFixed.Length; ++i)
+        isFixed[i] = (0 != (i % numberOfParametersPerPeak)); // fix everything but the amplitude
+
       var globalFitResult = fit.Fit(xCut, yCut, param, lowerBounds, upperBounds, null, isFixed, cancellationToken);
       param = globalFitResult.MinimizingPoint.ToArray();
 
