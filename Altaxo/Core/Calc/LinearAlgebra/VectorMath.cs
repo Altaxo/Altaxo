@@ -199,5 +199,13 @@ namespace Altaxo.Calc.LinearAlgebra
       }
       return RFunc(array, condition).ToArray();
     }
+
+    public static void Copy<T>(IReadOnlyList<T> source, int sourceIndex, T[] destination, int destinationStartIndex, int count)
+    {
+      for (int i = 0, j = sourceIndex, k = destinationStartIndex; i < count; ++i, ++j, ++k)
+      {
+        destination[k] = source[j];
+      }
+    }
   }
 }

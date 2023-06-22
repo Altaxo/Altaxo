@@ -28,6 +28,7 @@ using System.Linq;
 using System.Threading;
 using Altaxo.Calc.FitFunctions.Peaks;
 using Altaxo.Calc.Regression.Nonlinear;
+using Altaxo.Science.Signals;
 
 namespace Altaxo.Science.Spectroscopy.PeakFitting
 {
@@ -202,16 +203,16 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
         idx++;
       }
 
-      var (minimalXDistance, maximalXDistance, minimalXValue, maximalXValue) = GetMinimalAndMaximalProperties(xCut);
+      var (minimalXDistance, maximalXDistance, minimalXValue, maximalXValue) = SignalMath.GetMinimalAndMaximalProperties(xCut);
       var userMinimalFWHM = this.IsMinimalFWHMValueInXUnits ? MinimalFWHMValue : MinimalFWHMValue * minimalXDistance;
 
       var param = paramList.ToArray();
       fitFunc = FitFunction.WithNumberOfTerms(param.Length / numberOfParametersPerPeak);
       var (lowerBounds, upperBounds) = fitFunc.GetParameterBoundariesForPositivePeaks(
-        minimalPosition: minimalXValue - 32 * maximalXDistance,
-        maximalPosition: maximalXValue + 32 * maximalXDistance,
+        minimalPosition: minimalXValue - 32 * (maximalXValue - minimalXValue),
+        maximalPosition: maximalXValue + 32 * (maximalXValue - minimalXValue),
         minimalFWHM: Math.Max(userMinimalFWHM, minimalXDistance / 2d),
-        maximalFWHM: maximalXDistance * 32d
+        maximalFWHM: (maximalXValue - minimalXValue) * 32d
         );
 
       // clamp parameters in order to meet lowerBounds

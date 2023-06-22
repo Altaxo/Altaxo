@@ -163,7 +163,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
       var xyValues = new HashSet<(double X, double Y)>();
       var paramList = new List<double>();
       var dictionaryOfNotFittedPeaks = new Dictionary<PeakSearching.PeakDescription, PeakFitting.PeakDescription>();
-      var peakParam = new List<(int FirstPoint, int LastPoint, PeakSearching.PeakDescription Description)>();
+      var peakParam = new List<(int FirstPoint, int LastPoint, double maximalXDistanceLocal, PeakSearching.PeakDescription Description)>();
 
 
       foreach (var description in peakDescriptions)
@@ -188,11 +188,15 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
 
         var paras = fitFunc.GetInitialParametersFromHeightPositionAndWidthAtRelativeHeight(description.Prominence, xPosition, xWidth, description.RelativeHeightOfWidthDetermination);
         if (paras.Length != numberOfParametersPerPeak)
+        {
           throw new InvalidProgramException();
+        }
         foreach (var p in paras)
+        {
           paramList.Add(p);
-        peakParam.Add((first, last, description));
-
+        }
+        var (_, maxXDistance, _, _) = SignalMath.GetMinimalAndMaximalProperties(new ReadOnlySpan<double>(xArray, first, last - first + 1));
+        peakParam.Add((first, last, maxXDistance, description));
       }
 
       var xCut = new double[xyValues.Count];
@@ -205,17 +209,51 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
         idx++;
       }
 
-      var (minimalXDistance, maximalXDistance, minimalXValue, maximalXValue) = GetMinimalAndMaximalProperties(xCut);
-      var userMinimalFWHM = this.IsMinimalFWHMValueInXUnits ? MinimalFWHMValue : MinimalFWHMValue * minimalXDistance;
+      var (minimalXDistanceGlobal, maximalXDistanceGlobal, minimalXValueGlobal, maximalXValueGlobal) =
+        SignalMath.GetMinimalAndMaximalProperties(xCut);
 
       var param = paramList.ToArray();
       fitFunc = FitFunction.WithNumberOfTerms(param.Length / numberOfParametersPerPeak);
-      var (lowerBounds, upperBounds) = fitFunc.GetParameterBoundariesForPositivePeaks(
-        minimalPosition: minimalXValue - 32 * maximalXDistance,
-        maximalPosition: maximalXValue + 32 * maximalXDistance,
-        minimalFWHM: Math.Max(userMinimalFWHM, minimalXDistance / 2d),
-        maximalFWHM: maximalXDistance * 32d
-        );
+
+      IReadOnlyList<double?>? lowerBounds, upperBounds;
+      if (IsMinimalFWHMValueInXUnits)
+      {
+        // if the minimal FWHM value is given in x-units, 
+        // then we can use it directly to specify the lower boundary
+        (lowerBounds, upperBounds) = fitFunc.GetParameterBoundariesForPositivePeaks(
+          minimalPosition: minimalXValueGlobal - 32 * (maximalXValueGlobal - minimalXValueGlobal),
+          maximalPosition: maximalXValueGlobal + 32 * (maximalXValueGlobal - minimalXValueGlobal),
+          minimalFWHM: Math.Max(MinimalFWHMValue, minimalXDistanceGlobal / 2d),
+          maximalFWHM: (maximalXValueGlobal - minimalXValueGlobal) * 32d
+          );
+      }
+      else
+      {
+        // if the minimal FWHM value is given in points, we use the maximalXDistance between the points
+        // in the range of the peak (thus the local maximalXDistance, not the global maximalXDistance)
+        var lowerBoundsArr = new double?[param.Length];
+        var upperBoundsArr = new double?[param.Length];
+        lowerBounds = lowerBoundsArr;
+        upperBounds = upperBoundsArr;
+
+        for (int i = 0; i < peakParam.Count; ++i)
+        {
+          var peakP = peakParam[i];
+          var (localLowerBounds, localUpperBounds) = FitFunction.GetParameterBoundariesForPositivePeaks(
+            minimalPosition: minimalXValueGlobal - 32 * (maximalXValueGlobal - minimalXValueGlobal),
+            maximalPosition: maximalXValueGlobal + 32 * (maximalXValueGlobal - minimalXValueGlobal),
+            minimalFWHM: Math.Max(MinimalFWHMValue * peakP.maximalXDistanceLocal, minimalXDistanceGlobal / 2d),
+            maximalFWHM: (maximalXValueGlobal - minimalXValueGlobal) * 32d);
+          if (localLowerBounds is not null)
+          {
+            VectorMath.Copy(localLowerBounds, 0, lowerBoundsArr, i * numberOfParametersPerPeak, numberOfParametersPerPeak);
+          }
+          if (localUpperBounds is not null)
+          {
+            VectorMath.Copy(localUpperBounds, 0, upperBoundsArr, i * numberOfParametersPerPeak, numberOfParametersPerPeak);
+          }
+        }
+      }
 
       // clamp parameters in order to meet lowerBounds
       if (lowerBounds is not null)
@@ -238,7 +276,6 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
             param[i] = ub.Value;
         }
       }
-
 
       var fit = new QuickNonlinearRegression(fitFunc);
 
@@ -272,7 +309,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
       var covariancesSeparate = new Matrix<double>[param.Length]; // Array of matrices that holds the covariances of each peak separately
       var sumChiSquareSeparate = new double[param.Length];
       var sigmaSquareSeparate = new double[param.Length];
-      foreach (var (first, last, description) in peakParam)
+      foreach (var (first, last, maxXDistance, description) in peakParam)
       {
         if (dictionaryOfNotFittedPeaks.ContainsKey(description))
           continue;

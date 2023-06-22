@@ -192,5 +192,40 @@ namespace Altaxo.Science.Signals
 
       return Math.Sqrt(sum / signal.Length) / scale;
     }
+
+
+
+    /// <summary>
+    /// Gets the minimal and maximal properties of an array of x-values.
+    /// </summary>
+    /// <param name="array">The array of x values.</param>
+    /// <returns>
+    /// The (absolute value) of the minimal distance between two consecutive data points,
+    /// the (absolute value) of the maximal distance between two consecutive data points,
+    /// the minimal value of all elements, and
+    /// the maximal value of all elements.</returns>
+    public static (double minimalDistance, double maximalDistance, double minimalValue, double maximalValue) GetMinimalAndMaximalProperties(ReadOnlySpan<double> array)
+    {
+      double min = double.PositiveInfinity;
+      double max = double.NegativeInfinity;
+      double minDist = double.PositiveInfinity;
+      double maxDist = double.NegativeInfinity;
+      double previousX = double.NaN;
+      foreach (var x in array)
+      {
+        var dist = Math.Abs(x - previousX);
+
+        if (dist > 0)
+        {
+          minDist = Math.Min(minDist, dist);
+          maxDist = Math.Max(maxDist, dist);
+        }
+
+        min = Math.Min(min, x);
+        max = Math.Max(max, x);
+        previousX = x;
+      }
+      return (minDist, maxDist, min, max);
+    }
   }
 }
