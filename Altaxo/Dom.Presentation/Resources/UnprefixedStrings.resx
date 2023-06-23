@@ -1876,4 +1876,16 @@
   <data name="XML.MainMenu.WorksheetMenu.AnalyzeTableData.Description" xml:space="preserve">
     <value>Analyze data in this worksheet using a script, writing the results in to a new table.</value>
   </data>
+  <data name="XML.MainMenu.WorksheetMenu.ClearDataTableShowDialog" xml:space="preserve">
+    <value>Clear (with dialog)...</value>
+  </data>
+  <data name="XML.MainMenu.WorksheetMenu.ClearDataTableShowDialog.Description" xml:space="preserve">
+    <value>Clears the data table, asking for different options.</value>
+  </data>
+  <data name="XML.ProjectBrowserMenu.ClearDataTablesShowDialog" xml:space="preserve">
+    <value>Clear data and other..</value>
+  </data>
+  <data name="XML.ProjectBrowserMenu.ClearDataTablesShowDialog.Description" xml:space="preserve">
+    <value>Clears data and other items in the selected data tables (using a dialog).</value>
+  </data>
 </root>

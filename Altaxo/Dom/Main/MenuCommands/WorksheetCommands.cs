@@ -457,6 +457,18 @@ namespace Altaxo.Worksheet.Commands
       }
     }
   }
+  public class WorksheetClearDataTableShowDialog : AbstractWorksheetControllerCommand
+  {
+    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
+    {
+      object optionsO = new DataTableCleaningOptions();
+      if (true == Current.Gui.ShowDialog(ref optionsO, "Cleaning options"))
+      {
+        var options = (DataTableCleaningOptions)optionsO;
+        options.ApplyTo(ctrl.DataTable);
+      }
+    }
+  }
 
   public class DecomposeCyclingIndependentVariable : AbstractWorksheetControllerCommand
   {

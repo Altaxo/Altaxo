@@ -1,0 +1,65 @@
+﻿<UserControl x:Class="Altaxo.Gui.Data.DataTableCleaningOptionsControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:locald="clr-namespace:Altaxo.Gui.Data;assembly=AltaxoBase" 
+             xmlns:axogcc="clr-namespace:Altaxo.Gui.Common.Converters"
+             d:DataContext="{d:DesignInstance Type=locald:DataTableCleaningOptionsController}"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="4"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="4"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="4"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="4"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="4"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="4"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="16"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="4"/>
+        </Grid.ColumnDefinitions>
+        <TextBlock Grid.Row="0" Grid.Column="0"
+                   Text="Data:" FontWeight="Bold" />
+        <CheckBox Grid.Row="2" Grid.Column="0"
+                  IsChecked="{Binding RemoveDataColumns}"
+                  Content="Remove all data columns"/>
+        <CheckBox Grid.Row="4" Grid.Column="0"
+                  IsChecked="{Binding ClearData}" 
+                  IsEnabled="{Binding RemoveDataColumns, Converter={x:Static axogcc:InverseBooleanConverter.Instance}}"
+                  Content="Clear data" />
+        <CheckBox Grid.Row="6" Grid.Column="0"
+                  IsChecked="{Binding RemoveColumnProperties}" 
+                  Content="Remove all column properties"/>
+        <CheckBox Grid.Row="8" Grid.Column="0"
+                  IsChecked="{Binding ClearColumnProperties}" 
+                  IsEnabled="{Binding RemoveColumnProperties, Converter={x:Static axogcc:InverseBooleanConverter.Instance}}"
+                  Content="Clear column properties"/>
+
+        <TextBlock Grid.Row="0" Grid.Column="2"
+                   Text="Other:" FontWeight="Bold"/>
+
+        <CheckBox Grid.Row="2" Grid.Column="2"
+                  IsChecked="{Binding ClearNotes}"
+                  Content="Clear table notes"/>
+        <CheckBox Grid.Row="4" Grid.Column="2"
+                  IsChecked="{Binding ClearTableProperties}"
+                  Content="Clear table properties"/>
+        <CheckBox Grid.Row="6" Grid.Column="2"
+                  IsChecked="{Binding ClearTableScript}"
+                  Content="Clear table script"/>
+        <CheckBox Grid.Row="8" Grid.Column="2"
+                  IsChecked="{Binding ClearDataSource}"
+                  Content="Clear table data source"/>
+    </Grid>
+</UserControl>

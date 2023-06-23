@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2023 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@ using System;
 using System.Linq;
 using Altaxo.AddInItems;
 using Altaxo.Collections;
+using Altaxo.Data;
 
 namespace Altaxo.Gui.Pads.ProjectBrowser
 {
@@ -239,6 +240,23 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
     protected override void Run(ProjectBrowseController ctrl)
     {
       ctrl.ExecuteAllDataSources();
+    }
+  }
+
+  public class CmdClearDataTablesShowDialog : ProjectBrowseControllerCommand
+  {
+    protected override void Run(ProjectBrowseController ctrl)
+    {
+      object optionsO = new DataTableCleaningOptions();
+      if (true == Current.Gui.ShowDialog(ref optionsO, "Cleaning options"))
+      {
+        var options = (DataTableCleaningOptions)optionsO;
+
+        // find all selected tables with data sources in it
+        var dataTables = ctrl.GetSelectedListItems().OfType<DataTable>();
+        options.ApplyTo(dataTables);
+      }
+
     }
   }
 
