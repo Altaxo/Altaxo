@@ -59,7 +59,7 @@ namespace Altaxo.Serialization.Ascii
 
     static AsciiColumnInfo()
     {
-      _instDBNull = new AsciiColumnInfo(AsciiColumnType.DBNull, 1, 'N');
+      _instDBNull = new AsciiColumnInfo(AsciiColumnType.DBNull, 1, 'O');
       _instText = new AsciiColumnInfo(AsciiColumnType.Text, 2, 'T');
       _instFloatWithDecimalSeparator = new AsciiColumnInfo(AsciiColumnType.Double, 8, 'F');
       _instFloatWithoutDecimalSeparator = new AsciiColumnInfo(AsciiColumnType.Double, 4, 'E');
