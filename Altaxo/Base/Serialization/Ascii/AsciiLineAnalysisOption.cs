@@ -27,9 +27,10 @@
 namespace Altaxo.Serialization.Ascii
 {
   /// <summary>
-  /// Immutable key for Ascii line analysis dictionary. Contains the separation strategy, the number format and the date/time format used to analyze a single line of Ascii data.
+  /// Immutable key for Ascii line analysis dictionary.
+  /// Contains the separation strategy, the number format and the date/time format used to analyze a single line of Ascii data.
   /// </summary>
-  public class AsciiLineAnalysisOption
+  public class AsciiLineAnalysisOption : Main.IImmutable
   {
     private IAsciiSeparationStrategy _separationStrategy;
     private System.Globalization.CultureInfo _numberFormat;
