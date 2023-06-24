@@ -151,7 +151,7 @@ namespace Altaxo.Gui.Serialization.Ascii
 
         if (_doc.RecognizedStructure is not null)
         {
-          _tableStructure = new System.Collections.ObjectModel.ObservableCollection<Boxed<AsciiColumnType>>(Boxed<AsciiColumnType>.ToBoxedItems(_doc.RecognizedStructure.RecognizedTypes.Select(x => x.ColumnType)));
+          _tableStructure = new System.Collections.ObjectModel.ObservableCollection<Boxed<AsciiColumnType>>(Boxed<AsciiColumnType>.ToBoxedItems(_doc.RecognizedStructure.Columns.Select(x => x.ColumnType)));
         }
         else
         {
@@ -232,7 +232,7 @@ namespace Altaxo.Gui.Serialization.Ascii
 
       if (_view.TableStructureIsKnown)
       {
-        _doc.RecognizedStructure = new AsciiLineStructure(_tableStructure.Select(x => x.Value), _tableStructure.Count);
+        _doc.RecognizedStructure = new AsciiLineComposition(_tableStructure.Select(x => x.Value), _tableStructure.Count);
         if (_doc.RecognizedStructure.Count == 0)
           _doc.RecognizedStructure = null;
       }

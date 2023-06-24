@@ -97,7 +97,7 @@ namespace Altaxo.Serialization.Ascii
     protected System.Globalization.CultureInfo? _dateTimeFormatCulture;
 
     /// <summary>Structur of the main part of the file (which data type is placed in which column).</summary>
-    protected AsciiLineStructure? _recognizedStructure;
+    protected AsciiLineComposition? _recognizedStructure;
 
     #region Serialization
 
@@ -139,7 +139,7 @@ namespace Altaxo.Serialization.Ascii
         s.NumberFormatCulture = -1 == numberLCID ? null : System.Globalization.CultureInfo.GetCultureInfo(numberLCID);
         var dateLCID = info.GetInt32("DateTimeFormatCultureLCID");
         s.DateTimeFormatCulture = -1 == dateLCID ? null : System.Globalization.CultureInfo.GetCultureInfo(dateLCID);
-        s.RecognizedStructure = (AsciiLineStructure?)info.GetValueOrNull("AsciiLineStructure", s);
+        s.RecognizedStructure = (AsciiLineComposition?)info.GetValueOrNull("AsciiLineStructure", s);
         s.ImportMultipleStreamsVertically = info.GetBoolean("ImportMultipleStreamsVertically");
         return s;
       }
@@ -197,7 +197,7 @@ namespace Altaxo.Serialization.Ascii
     public System.Globalization.CultureInfo? DateTimeFormatCulture { get { return _dateTimeFormatCulture; } set { if (!object.ReferenceEquals(_dateTimeFormatCulture, value)) { _dateTimeFormatCulture = value; EhSelfChanged(); } } }
 
     /// <summary>Structur of the main part of the file (which data type is placed in which column).</summary>
-    public AsciiLineStructure? RecognizedStructure { get { return _recognizedStructure; } set { if (!object.ReferenceEquals(_recognizedStructure, value)) { _recognizedStructure = value; EhSelfChanged(); } } }
+    public AsciiLineComposition? RecognizedStructure { get { return _recognizedStructure; } set { if (!object.ReferenceEquals(_recognizedStructure, value)) { _recognizedStructure = value; EhSelfChanged(); } } }
 
     #endregion Properties
 

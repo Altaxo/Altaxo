@@ -38,9 +38,9 @@ namespace Altaxo.Serialization.Ascii
     /// <summary>
     /// The dictionary containing entries for separation strategies and the corresponding resulting line structure.
     /// </summary>
-    private Dictionary<AsciiLineAnalysisOption, AsciiLineStructure> _structureForSeparation;
+    private Dictionary<AsciiLineAnalysisOption, AsciiLineComposition> _structureForSeparation;
 
-    public AsciiLineStructure this[AsciiLineAnalysisOption separationStrategy]
+    public AsciiLineComposition this[AsciiLineAnalysisOption separationStrategy]
     {
       get
       {
@@ -56,7 +56,7 @@ namespace Altaxo.Serialization.Ascii
     /// <param name="separationStrategies">List of separation stragegies to test with the provided text line.</param>
     public AsciiLineAnalysis(int nLine, string sLine, List<AsciiLineAnalysisOption> separationStrategies)
     {
-      _structureForSeparation = new Dictionary<AsciiLineAnalysisOption, AsciiLineStructure>();
+      _structureForSeparation = new Dictionary<AsciiLineAnalysisOption, AsciiLineComposition>();
 
       var tokenDictionary = new Dictionary<IAsciiSeparationStrategy, List<string>>();
 
@@ -80,7 +80,7 @@ namespace Altaxo.Serialization.Ascii
     /// <param name="numberFormat">The number culture to use.</param>
     /// <param name="dateTimeFormat">The DateTime format culture to use.</param>
     /// <returns>The resulting structure.</returns>
-    public static AsciiLineStructure GetStructure(int nLine, IEnumerable<string> tokens, System.Globalization.CultureInfo numberFormat, System.Globalization.CultureInfo dateTimeFormat)
+    public static AsciiLineComposition GetStructure(int nLine, IEnumerable<string> tokens, System.Globalization.CultureInfo numberFormat, System.Globalization.CultureInfo dateTimeFormat)
     {
       var tabStruc = ImmutableArray.CreateBuilder<AsciiColumnInfo>();
 
@@ -118,7 +118,7 @@ namespace Altaxo.Serialization.Ascii
         }
       } // end for
 
-      return new AsciiLineStructure(tabStruc.ToImmutable());
+      return new AsciiLineComposition(tabStruc.ToImmutable());
     }
 
     /// <summary>

@@ -55,7 +55,7 @@ namespace Altaxo.Serialization.Ascii
     private Dictionary<AsciiLineAnalysisOption, NumberAndStructure>? _lineAnalysisOptionsScoring;
 
     private AsciiLineAnalysisOption? _highestScoredLineAnalysisOption;
-    private AsciiLineStructure? _highestScoredLineStructure;
+    private AsciiLineComposition? _highestScoredLineStructure;
 
     private int _numberOfMainHeaderLines;
 
@@ -418,7 +418,7 @@ namespace Altaxo.Serialization.Ascii
     /// <param name="result"></param>
     /// <param name="maxNumberOfEqualLines"></param>
     /// <param name="bestLine"></param>
-    public static void CalculateScoreOfLineAnalysisOption(AsciiLineAnalysisOption analysisOption, IList<AsciiLineAnalysis> result, out int maxNumberOfEqualLines, out AsciiLineStructure? bestLine)
+    public static void CalculateScoreOfLineAnalysisOption(AsciiLineAnalysisOption analysisOption, IList<AsciiLineAnalysis> result, out int maxNumberOfEqualLines, out AsciiLineComposition? bestLine)
     {
       CalculateScoreOfLineAnalysisOption(analysisOption, result, null, out maxNumberOfEqualLines, out bestLine);
     }
@@ -431,7 +431,7 @@ namespace Altaxo.Serialization.Ascii
     /// <param name="excludeLineStructureHashes"></param>
     /// <param name="maxNumberOfEqualLines"></param>
     /// <param name="bestLine"></param>
-    public static void CalculateScoreOfLineAnalysisOption(AsciiLineAnalysisOption analysisOption, IList<AsciiLineAnalysis> result, HashSet<int>? excludeLineStructureHashes, out int maxNumberOfEqualLines, out AsciiLineStructure? bestLine)
+    public static void CalculateScoreOfLineAnalysisOption(AsciiLineAnalysisOption analysisOption, IList<AsciiLineAnalysis> result, HashSet<int>? excludeLineStructureHashes, out int maxNumberOfEqualLines, out AsciiLineComposition? bestLine)
     {
       // Dictionary, Key is the hash of the line structure hash, Value is the number of lines that have this hash
       var numberOfLinesForLineStructureHash = new Dictionary<int, int>();
