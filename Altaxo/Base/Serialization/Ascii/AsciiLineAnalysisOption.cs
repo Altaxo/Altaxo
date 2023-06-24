@@ -69,7 +69,7 @@ namespace Altaxo.Serialization.Ascii
 
     public override string ToString()
     {
-      return string.Format("{0} {1} {2}", _separationStrategy, _numberFormat, _dateTimeFormat);
+      return $"{_separationStrategy} [{_numberFormat}] [{_dateTimeFormat}]";
     }
   }
 }

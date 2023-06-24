@@ -91,6 +91,12 @@ namespace Altaxo.Serialization.Ascii
     {
       return new SingleLineSeparationStrategy();
     }
+
+    public override string ToString()
+    {
+      return $"{GetType().Name}";
+    }
+
   }
 
   /// <summary>
@@ -172,6 +178,21 @@ namespace Altaxo.Serialization.Ascii
     public object Clone()
     {
       return new SingleCharSeparationStrategy(_separatorChar);
+    }
+
+    public string GetSeparatorCharReadable()
+    {
+      return _separatorChar switch
+      {
+        '\t' => "TAB",
+        ' ' => "SPACE",
+        _ => "" + _separatorChar,
+      };
+    }
+
+    public override string ToString()
+    {
+      return $"{this.GetType().Name}[{GetSeparatorCharReadable()}]";
     }
   }
 
@@ -275,6 +296,12 @@ namespace Altaxo.Serialization.Ascii
     {
       return new FixedColumnWidthWithoutTabSeparationStrategy(_startPositions);
     }
+
+    public override string ToString()
+    {
+      return $"{GetType().Name}:StartPos={_startPositions}";
+    }
+
   }
 
   /// <summary>
@@ -404,6 +431,11 @@ namespace Altaxo.Serialization.Ascii
     {
       return new FixedColumnWidthWithTabSeparationStrategy(_startPositions, _tabSize);
     }
+
+    public override string ToString()
+    {
+      return $"{GetType().Name}:TabSize={_tabSize}:StartPos={_startPositions}";
+    }
   }
 
   /// <summary>
@@ -459,6 +491,11 @@ namespace Altaxo.Serialization.Ascii
     public object Clone()
     {
       return new SkipWhiteSpaceSeparationStrategy();
+    }
+
+    public override string ToString()
+    {
+      return $"{GetType().Name}";
     }
   }
 }

@@ -27,7 +27,6 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Text;
 using Altaxo.Collections;
 using Altaxo.Serialization.Ascii;
 
@@ -152,7 +151,7 @@ namespace Altaxo.Gui.Serialization.Ascii
 
         if (_doc.RecognizedStructure is not null)
         {
-          _tableStructure = new System.Collections.ObjectModel.ObservableCollection<Boxed<AsciiColumnType>>(Boxed<AsciiColumnType>.ToBoxedItems(_doc.RecognizedStructure.ColumnTypes));
+          _tableStructure = new System.Collections.ObjectModel.ObservableCollection<Boxed<AsciiColumnType>>(Boxed<AsciiColumnType>.ToBoxedItems(_doc.RecognizedStructure.RecognizedTypes.Select(x => x.ColumnType)));
         }
         else
         {
@@ -233,8 +232,7 @@ namespace Altaxo.Gui.Serialization.Ascii
 
       if (_view.TableStructureIsKnown)
       {
-        _doc.RecognizedStructure.Clear();
-        Boxed<AsciiColumnType>.AddRange(_doc.RecognizedStructure.ColumnTypes, _tableStructure);
+        _doc.RecognizedStructure = new AsciiLineStructure(_tableStructure.Select(x => x.Value), _tableStructure.Count);
         if (_doc.RecognizedStructure.Count == 0)
           _doc.RecognizedStructure = null;
       }

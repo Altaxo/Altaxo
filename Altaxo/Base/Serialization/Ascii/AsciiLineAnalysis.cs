@@ -25,6 +25,7 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 
 namespace Altaxo.Serialization.Ascii
 {
@@ -81,7 +82,7 @@ namespace Altaxo.Serialization.Ascii
     /// <returns>The resulting structure.</returns>
     public static AsciiLineStructure GetStructure(int nLine, IEnumerable<string> tokens, System.Globalization.CultureInfo numberFormat, System.Globalization.CultureInfo dateTimeFormat)
     {
-      var tabStruc = new AsciiLineStructure();
+      var tabStruc = ImmutableArray.CreateBuilder<AsciiColumnInfo>();
 
       foreach (string substring in tokens)
       {
@@ -116,7 +117,8 @@ namespace Altaxo.Serialization.Ascii
           tabStruc.Add(AsciiColumnInfo.Text);
         }
       } // end for
-      return tabStruc;
+
+      return new AsciiLineStructure(tabStruc.ToImmutable());
     }
 
     /// <summary>
