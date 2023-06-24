@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2023 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -23,27 +23,43 @@
 #endregion Copyright
 
 #nullable disable
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Altaxo.Serialization.Ascii;
 
 namespace Altaxo.Gui.Serialization.Ascii
 {
-  public interface ISingleCharSeparationStrategyView
+  public interface ISingleCharSeparationStrategyView : IDataContextAwareView
   {
-    char SeparatorChar { get; set; }
   }
 
   [ExpectedTypeOfView(typeof(ISingleCharSeparationStrategyView))]
   [UserControllerForObject(typeof(SingleCharSeparationStrategy))]
-  public class SingleCharSeparationStrategyController : MVCANControllerEditOriginalDocBase<SingleCharSeparationStrategy, ISingleCharSeparationStrategyView>
+  public class SingleCharSeparationStrategyController : MVCANControllerEditImmutableDocBase<SingleCharSeparationStrategy, ISingleCharSeparationStrategyView>
   {
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
     }
+
+    #region Bindings
+
+    private char _separatorChar;
+
+    public char SeparatorChar
+    {
+      get => _separatorChar;
+      set
+      {
+        if (!(_separatorChar == value))
+        {
+          _separatorChar = value;
+          OnPropertyChanged(nameof(SeparatorChar));
+        }
+      }
+    }
+
+
+    #endregion
 
     protected override void Initialize(bool initData)
     {
@@ -51,17 +67,16 @@ namespace Altaxo.Gui.Serialization.Ascii
 
       if (initData)
       {
-      }
-
-      if (_view is not null)
-      {
-        _view.SeparatorChar = _doc.SeparatorChar;
+        SeparatorChar = _doc.SeparatorChar;
       }
     }
 
     public override bool Apply(bool disposeController)
     {
-      _doc.SeparatorChar = _view.SeparatorChar;
+      _doc = _doc with
+      {
+        SeparatorChar = SeparatorChar,
+      };
 
       return ApplyEnd(true, disposeController);
     }

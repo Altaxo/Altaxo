@@ -237,7 +237,7 @@ namespace Altaxo.Serialization.Ascii
 
           IndexOfCaptionLine = from.IndexOfCaptionLine;
 
-          SeparationStrategy = from.SeparationStrategy is null ? null : (IAsciiSeparationStrategy)from.SeparationStrategy.Clone();
+          SeparationStrategy = from.SeparationStrategy;
 
           NumberFormatCulture = from.NumberFormatCulture is null ? null : (System.Globalization.CultureInfo)from.NumberFormatCulture.Clone();
 

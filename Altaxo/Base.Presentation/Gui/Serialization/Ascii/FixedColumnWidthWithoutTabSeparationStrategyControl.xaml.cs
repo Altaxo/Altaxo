@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2014 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2023 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -22,16 +22,10 @@
 
 #endregion Copyright
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Windows.Controls;
 
 namespace Altaxo.Gui.Serialization.Ascii
 {
-  using Altaxo.Collections;
-
   /// <summary>
   /// Interaction logic for FixedColumnWidthWithoutTabSeparationStrategyControl.xaml
   /// </summary>
@@ -40,15 +34,6 @@ namespace Altaxo.Gui.Serialization.Ascii
     public FixedColumnWidthWithoutTabSeparationStrategyControl()
     {
       InitializeComponent();
-    }
-
-    public System.Collections.ObjectModel.ObservableCollection<Boxed<int>> StartPositions
-    {
-      set
-      {
-        _guiStartPositions.ItemsSource = null;
-        _guiStartPositions.ItemsSource = value;
-      }
     }
   }
 }

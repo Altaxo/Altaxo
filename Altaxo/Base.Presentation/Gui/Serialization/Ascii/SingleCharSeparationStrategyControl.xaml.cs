@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2014 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2023 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -22,10 +22,6 @@
 
 #endregion Copyright
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Windows.Controls;
 
 namespace Altaxo.Gui.Serialization.Ascii
@@ -38,30 +34,6 @@ namespace Altaxo.Gui.Serialization.Ascii
     public SingleCharSeparationStrategyControl()
     {
       InitializeComponent();
-    }
-
-    public char SeparatorChar
-    {
-      get
-      {
-        var txt = _guiSeparationChar.Text;
-        if (txt.Length == 0)
-          return ' ';
-        else if (txt.Length == 1)
-          return txt[0];
-        else
-        {
-          var txtTrim = txt.Trim();
-          if (txtTrim.Length == 1)
-            return txtTrim[0];
-          else
-            return txt[0];
-        }
-      }
-      set
-      {
-        _guiSeparationChar.Text = string.Empty + value;
-      }
     }
   }
 }

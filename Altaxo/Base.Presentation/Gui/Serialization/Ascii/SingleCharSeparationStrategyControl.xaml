@@ -3,14 +3,16 @@
 						 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 						 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 						 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-						 xmlns:loc="clr-namespace:Altaxo.Gui.Serialization.Ascii"
-						 mc:Ignorable="d">
+						 xmlns:loc="clr-namespace:Altaxo.Gui.Serialization.Ascii" 
+						 xmlns:locModel="clr-namespace:Altaxo.Gui.Serialization.Ascii;assembly=AltaxoBase" 
+             d:DataContext="{d:DesignInstance Type=locModel:SingleCharSeparationStrategyController}"
+             mc:Ignorable="d">
 	<Grid>
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="Auto" />
 			<ColumnDefinition Width="*" />
 		</Grid.ColumnDefinitions>
 		<Label Content="Separation char:" Grid.Column="0" />
-		<loc:AsciiCharControl x:Name="_guiSeparationChar" Grid.Column="1" />
+		<loc:AsciiCharControl Grid.Column="1" Value="{Binding SeparatorChar}" />
 	</Grid>
 </UserControl>

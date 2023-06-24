@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2023 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -23,31 +23,47 @@
 #endregion Copyright
 
 #nullable disable
-using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
 using Altaxo.Collections;
 using Altaxo.Serialization.Ascii;
 
 namespace Altaxo.Gui.Serialization.Ascii
 {
-  public interface IFixedColumnWidthWithoutTabSeparationStrategyView
+  public interface IFixedColumnWidthWithoutTabSeparationStrategyView : IDataContextAwareView
   {
-    ObservableCollection<Boxed<int>> StartPositions { set; }
   }
 
   [ExpectedTypeOfView(typeof(IFixedColumnWidthWithoutTabSeparationStrategyView))]
   [UserControllerForObject(typeof(FixedColumnWidthWithoutTabSeparationStrategy))]
-  public class FixedColumnWidthWithoutTabSeparationStrategyController : MVCANControllerEditOriginalDocBase<FixedColumnWidthWithoutTabSeparationStrategy, IFixedColumnWidthWithoutTabSeparationStrategyView>
+  public class FixedColumnWidthWithoutTabSeparationStrategyController : MVCANControllerEditImmutableDocBase<FixedColumnWidthWithoutTabSeparationStrategy, IFixedColumnWidthWithoutTabSeparationStrategyView>
   {
-    private ObservableCollection<Boxed<int>> _positions;
 
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
     }
+
+    #region Bindings
+
+    private ObservableCollection<Boxed<int>> _positions;
+
+    public ObservableCollection<Boxed<int>> Positions
+    {
+      get => _positions;
+      set
+      {
+        if (!(_positions == value))
+        {
+          _positions = value;
+          OnPropertyChanged(nameof(Positions));
+        }
+      }
+    }
+
+
+    #endregion
 
     public override void Dispose(bool isDisposing)
     {
@@ -62,12 +78,7 @@ namespace Altaxo.Gui.Serialization.Ascii
 
       if (initData)
       {
-        _positions = new ObservableCollection<Boxed<int>>(Boxed<int>.ToBoxedItems(_doc.StartPositions));
-      }
-
-      if (_view is not null)
-      {
-        _view.StartPositions = _positions;
+        Positions = new ObservableCollection<Boxed<int>>(Boxed<int>.ToBoxedItems(_doc.StartPositions));
       }
     }
 
@@ -81,7 +92,10 @@ namespace Altaxo.Gui.Serialization.Ascii
         Current.Gui.InfoMessageBox("Start positions were adjusted. Please check the result.");
         return false;
       }
-      _doc.StartPositions = resList.ToArray();
+      _doc = _doc with
+      {
+        StartPositions = resList.ToImmutableArray(),
+      };
 
       return ApplyEnd(true, disposeController);
     }

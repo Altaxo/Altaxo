@@ -2,8 +2,10 @@
 						 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 						 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 						 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-						 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-						 mc:Ignorable="d"
+						 xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:ascii="clr-namespace:Altaxo.Gui.Serialization.Ascii;assembly=AltaxoBase"
+             d:DataContext="{d:DesignInstance Type=ascii:FixedColumnWidthWithoutTabSeparationStrategyController}"
+             mc:Ignorable="d"
 						 d:DesignHeight="30" d:DesignWidth="300">
 	<Grid>
 		<Grid.RowDefinitions>
@@ -12,7 +14,12 @@
 		</Grid.RowDefinitions>
 		<Expander Header="Column start positions:"  Grid.Row="0">
 
-			<DataGrid x:Name="_guiStartPositions" Grid.Row="1" AutoGenerateColumns="False" CanUserAddRows="True" CanUserDeleteRows="True" MinWidth="100" MinHeight="50" Margin="0,10,0,0">
+			<DataGrid Grid.Row="1" 
+                ItemsSource="{Binding Positions}"
+                AutoGenerateColumns="False"
+                CanUserAddRows="True"
+                CanUserDeleteRows="True"
+                MinWidth="100" MinHeight="50" Margin="0,10,0,0">
 				<DataGrid.Columns>
 					<DataGridTextColumn Header="Index" Binding="{Binding Path=Value}" MinWidth="100"></DataGridTextColumn>
 				</DataGrid.Columns>
