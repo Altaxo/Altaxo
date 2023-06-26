@@ -233,5 +233,10 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
       }
       return list;
     }
+
+    public override string ToString()
+    {
+      return base.ToString();
+    }
   }
 }

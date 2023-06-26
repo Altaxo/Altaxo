@@ -266,7 +266,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
 
     public override string ToString()
     {
-      return $"{this.GetType().Name} Func={FitFunction} FitWidth={FitWidthScalingFactor} MinFWHM={MinimalFWHMValue}{(IsMinimalFWHMValueInXUnits ? 'X' : 'P')}";
+      return $"{this.GetType().Name} Func={FitFunction?.GetType()?.Name} FitWidth={FitWidthScalingFactor} MinFWHM={MinimalFWHMValue}{(IsMinimalFWHMValueInXUnits ? 'X' : 'P')}";
     }
   }
 }

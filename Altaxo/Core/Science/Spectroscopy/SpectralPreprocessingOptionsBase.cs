@@ -76,7 +76,7 @@ namespace Altaxo.Science.Spectroscopy
         {
           stb.Append('[');
           stb.Append(ele.ToString());
-          stb.Append("'] ");
+          stb.Append("] ");
         }
       }
       return stb.ToString();

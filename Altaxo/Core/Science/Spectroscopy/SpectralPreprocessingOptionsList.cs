@@ -118,5 +118,10 @@ namespace Altaxo.Science.Spectroscopy
 
       return result;
     }
+
+    public override string ToString()
+    {
+      return base.ToString();
+    }
   }
 }

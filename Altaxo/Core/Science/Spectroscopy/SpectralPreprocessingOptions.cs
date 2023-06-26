@@ -427,5 +427,10 @@ namespace Altaxo.Science.Spectroscopy
         throw new NotImplementedException($"The type to convert ({options?.GetType()}) is not implemented here");
       }
     }
+
+    public override string ToString()
+    {
+      return base.ToString();
+    }
   }
 }

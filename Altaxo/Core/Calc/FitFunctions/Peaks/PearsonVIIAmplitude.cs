@@ -98,7 +98,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
     /// <inheritdoc/>
     public override string ToString()
     {
-      return $"{this.GetType().Name}\r\nNumberOfTerms={NumberOfTerms}\r\nOrderOfBaseline={OrderOfBaselinePolynomial}";
+      return $"{this.GetType().Name} NumberOfTerms={NumberOfTerms} OrderOfBaseline={OrderOfBaselinePolynomial}";
     }
 
     [FitFunctionCreator("PearsonVIIAmplitude", "Peaks", 1, 1, NumberOfParametersPerPeak)]

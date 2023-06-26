@@ -99,7 +99,7 @@ namespace Altaxo.Calc.FitFunctions.Probability
     /// <inheritdoc/>
     public override string ToString()
     {
-      return $"{this.GetType().Name}\r\nNumberOfTerms={NumberOfTerms}\r\nOrderOfBaseline={OrderOfBaselinePolynomial}";
+      return $"{this.GetType().Name} NumberOfTerms={NumberOfTerms} OrderOfBaseline={OrderOfBaselinePolynomial}";
     }
 
 
