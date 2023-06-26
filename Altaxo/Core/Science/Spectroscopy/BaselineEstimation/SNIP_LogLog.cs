@@ -23,8 +23,6 @@
 #endregion Copyright
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Altaxo.Science.Spectroscopy.BaselineEstimation
 {
@@ -133,6 +131,11 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
       }
 
       srcY.CopyTo(result);
+    }
+
+    public override string ToString()
+    {
+      return $"{this.GetType().Name} HW={HalfWidth}{(IsHalfWidthInXUnits ? 'X' : 'P')} Iterations={NumberOfRegularIterations}";
     }
   }
 }

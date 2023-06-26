@@ -121,5 +121,10 @@ namespace Altaxo.Science.Spectroscopy.Calibration
     {
       return this with { TableName = tableName };
     }
+
+    public override string ToString()
+    {
+      return $"{this.GetType().Name} Table={TableName}";
+    }
   }
 }

@@ -247,6 +247,9 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
       return peakDescriptions;
     }
 
-
+    public override string ToString()
+    {
+      return $"{this.GetType().Name} MinProm={MinimalProminence} MaxPeaks={this.MaximalNumberOfPeaks} Enh={(PeakEnhancement is PeakEnhancementNone ? "No" : PeakEnhancement.ToString())}";
+    }
   }
 }

@@ -145,5 +145,10 @@ namespace Altaxo.Science.Spectroscopy.DarkSubtraction
     {
       return this with { XYCurve = xyCurve };
     }
+
+    public override string ToString()
+    {
+      return $"{this.GetType().Name} Table={XYDataOrigin}";
+    }
   }
 }

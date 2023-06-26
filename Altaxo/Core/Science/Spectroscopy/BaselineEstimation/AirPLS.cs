@@ -24,7 +24,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Science.Spectroscopy.BaselineEstimation
@@ -154,7 +153,7 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
         {
           Lambda = lambda,
           ScaleLambdaWithXUnits = scaleLambdaWithXUnits,
-          TerminationRatio  = terminationRatio,
+          TerminationRatio = terminationRatio,
           Order = order,
           MaximumNumberOfIterations = maxNumberOfIterations,
         } :
@@ -170,7 +169,7 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
     }
     #endregion
 
-   
+
 
 
     /// <inheritdoc/>
@@ -275,6 +274,9 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
       z.CopyTo(resultingBaseline);
     }
 
-  
+    public override string ToString()
+    {
+      return $"{this.GetType().Name} Order={Order} TR={TerminationRatio} Lambda={Lambda}{(ScaleLambdaWithXUnits ? 'X' : 'P')} Iterations={MaximumNumberOfIterations}";
+    }
   }
 }

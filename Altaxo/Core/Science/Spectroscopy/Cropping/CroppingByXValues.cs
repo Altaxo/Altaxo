@@ -99,12 +99,17 @@ namespace Altaxo.Science.Spectroscopy.Cropping
       }
 
       // remove the last element of the range, because that is the end element
-      if(lr.Count >0) 
+      if (lr.Count > 0)
       {
         lr.RemoveAt(lr.Count - 1);
       }
 
       return (lx.ToArray(), ly.ToArray(), lr.Count > 0 ? lr.ToArray() : null);
+    }
+
+    public override string ToString()
+    {
+      return $"{this.GetType().Name} Min={MinimalValue} Max={MaximalValue}";
     }
   }
 }

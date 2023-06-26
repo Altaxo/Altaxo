@@ -242,5 +242,10 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
 
       z.CopyTo(resultingBaseline);
     }
+
+    public override string ToString()
+    {
+      return $"{this.GetType().Name} Order={Order} P={P} Lambda={Lambda}{(ScaleLambdaWithXUnits ? 'X' : 'P')} Iterations={MaximumNumberOfIterations}";
+    }
   }
 }

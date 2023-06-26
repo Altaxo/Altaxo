@@ -362,5 +362,9 @@ namespace Altaxo.Science.Spectroscopy.SpikeRemoval
       return (x, yResult ?? y, regions);
     }
 
+    public override string ToString()
+    {
+      return $"{this.GetType().Name} MaxW={MaximalWidth} NegToo={EliminateNegativeSpikes}";
+    }
   }
 }

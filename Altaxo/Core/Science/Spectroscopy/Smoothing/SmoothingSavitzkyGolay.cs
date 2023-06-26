@@ -86,5 +86,10 @@ namespace Altaxo.Science.Spectroscopy.Smoothing
       }
       return (x, yy, regions);
     }
+
+    public override string ToString()
+    {
+      return $"{this.GetType().Name} Pts={NumberOfPoints} PO={PolynomialOrder} DO={DerivativeOrder}";
+    }
   }
 }

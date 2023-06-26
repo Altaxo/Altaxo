@@ -157,6 +157,11 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
       writer.WriteElementString("Order", XmlConvert.ToString(_order));
       writer.WriteEndElement();
     }
+
+    public override string ToString()
+    {
+      return $"{this.GetType().Name} Order={DetrendingOrder}";
+    }
   }
 }
 

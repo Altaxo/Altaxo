@@ -145,5 +145,9 @@ namespace Altaxo.Science.Spectroscopy.Raman
     #endregion
 
 
+    public override string ToString()
+    {
+      return $"Unit={XAxisUnit}, LWL={LaserWavelength_Nanometer}nm, Tol={Wavelength_Tolerance_nm}nm FilterMult={FilterOutPeaksCorrespondingToMultipleNistPeaks} PeakFind={PeakFindingOptions} Interpol={InterpolationMethod} IgnoreStdDev={InterpolationIgnoreStdDev}";
+    }
   }
 }

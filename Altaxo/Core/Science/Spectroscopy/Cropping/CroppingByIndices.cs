@@ -127,5 +127,9 @@ namespace Altaxo.Science.Spectroscopy.Cropping
         }
       }
     }
+    public override string ToString()
+    {
+      return $"{this.GetType().Name} Min={MinimalIndex} Max={MaximalIndex}";
+    }
   }
 }

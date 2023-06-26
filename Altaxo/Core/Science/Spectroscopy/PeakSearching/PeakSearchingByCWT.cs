@@ -400,5 +400,10 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
       peakDescriptions.Sort((p1, p2) => Comparer<double>.Default.Compare(p1.PositionIndex, p2.PositionIndex));
       return peakDescriptions;
     }
+
+    public override string ToString()
+    {
+      return $"{this.GetType().Name} MinSNR={MinimalSignalToNoiseRatio} MinAmp={MinimalRelativeGaussianAmplitude} MaxPeaks={MaximalNumberOfPeaks} Pts/Oct={NumberOfPointsPerOctave} MinRidgeLen={MinimalRidgeLengthInOctaves} MinRidgeWidth={MinimalWidthOfRidgeMaximumInOctaves}";
+    }
   }
 }

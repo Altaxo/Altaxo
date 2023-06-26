@@ -23,8 +23,6 @@
 #endregion Copyright
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Altaxo.Science.Spectroscopy.BaselineEstimation
 {
@@ -79,7 +77,7 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
     }
     #endregion
 
-   
+
 
     /// <summary>
     /// Executes the algorithm with the provided spectrum.
@@ -91,7 +89,7 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
     public override void Execute(ReadOnlySpan<double> xArray, ReadOnlySpan<double> yArray, Span<double> result)
     {
       const double sqrt2 = 1.41421356237;
-      var srcY = new double[yArray.Length]; 
+      var srcY = new double[yArray.Length];
       var tmpY = new double[yArray.Length];
       yArray.CopyTo(srcY);
 
@@ -123,6 +121,11 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
       }
 
       srcY.CopyTo(result);
+    }
+
+    public override string ToString()
+    {
+      return $"{this.GetType().Name} HW={HalfWidth}{(IsHalfWidthInXUnits ? 'X' : 'P')} Iterations={NumberOfRegularIterations}";
     }
   }
 }

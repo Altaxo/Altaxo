@@ -23,6 +23,7 @@
 #endregion Copyright
 
 using System;
+using System.Text;
 using Altaxo.Science.Spectroscopy.PeakFitting;
 using Altaxo.Science.Spectroscopy.PeakSearching;
 
@@ -161,7 +162,21 @@ namespace Altaxo.Science.Spectroscopy
 
     #endregion
 
+    public override string ToString()
+    {
+      var stb = new StringBuilder();
+      stb.Append(Preprocessing.ToString());
 
+      stb.Append('[');
+      stb.Append(PeakSearching.ToString());
+      stb.Append("] ");
+
+      stb.Append('[');
+      stb.Append(PeakFitting.ToString());
+      stb.Append("] ");
+
+      return stb.ToString();
+    }
   }
 
   /// <summary>

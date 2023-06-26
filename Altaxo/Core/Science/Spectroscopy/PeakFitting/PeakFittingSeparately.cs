@@ -263,5 +263,10 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
 
       return list;
     }
+
+    public override string ToString()
+    {
+      return $"{this.GetType().Name} Func={FitFunction} FitWidth={FitWidthScalingFactor} MinFWHM={MinimalFWHMValue}{(IsMinimalFWHMValueInXUnits ? 'X' : 'P')}";
+    }
   }
 }

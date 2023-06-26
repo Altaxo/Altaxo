@@ -94,6 +94,9 @@ namespace Altaxo.Science.Spectroscopy.Raman
     #endregion
 
 
-
+    public override string ToString()
+    {
+      return $"Temperature={Temperature}, Tol={RelativeShift_Tolerance_invcm}  PeakFind={PeakFindingOptions}";
+    }
   }
 }

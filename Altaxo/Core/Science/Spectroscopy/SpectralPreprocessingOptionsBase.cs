@@ -25,6 +25,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Text;
 using Altaxo.Main;
 
 namespace Altaxo.Science.Spectroscopy
@@ -64,6 +65,21 @@ namespace Altaxo.Science.Spectroscopy
     IEnumerator IEnumerable.GetEnumerator()
     {
       return ((IEnumerable)InnerList).GetEnumerator();
+    }
+
+    public override string ToString()
+    {
+      var stb = new StringBuilder();
+      foreach (var ele in InnerList)
+      {
+        if (!(ele.GetType().Name.Contains("None")))
+        {
+          stb.Append('[');
+          stb.Append(ele.ToString());
+          stb.Append("'] ");
+        }
+      }
+      return stb.ToString();
     }
   }
 }
