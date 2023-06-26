@@ -22,11 +22,9 @@
 
 #endregion Copyright
 
-using System;
-using Altaxo.Data;
 using Xunit;
 
-namespace AltaxoTest.Data
+namespace Altaxo.Data
 {
   /// <summary>
   /// Summary description for DoubleColumn_Test.

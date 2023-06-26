@@ -22,17 +22,11 @@
 
 #endregion Copyright
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Altaxo.Geometry;
 using Xunit;
 
-namespace BaseTest.Geometry
+namespace Altaxo.Geometry
 {
-  
+
   public class TestMath2D
   {
     #region Polygon area

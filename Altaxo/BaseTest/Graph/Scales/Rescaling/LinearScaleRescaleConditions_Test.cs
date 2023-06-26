@@ -23,11 +23,9 @@
 #endregion Copyright
 
 using System;
-using Altaxo.Graph.Scales.Rescaling;
-using Altaxo.Main;
 using Xunit;
 
-namespace AltaxoTest.Graph.Scales.Rescaling
+namespace Altaxo.Graph.Scales.Rescaling
 {
   /// <summary>
   /// Summary description for DoubleColumn_Test.

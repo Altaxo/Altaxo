@@ -22,17 +22,12 @@
 
 #endregion Copyright
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Altaxo.Graph;
 using Altaxo.Graph.Gdi.CS;
 using Xunit;
 
-namespace AltaxoTest.Graph.CS
+namespace Altaxo.Graph.CS
 {
-  
+
   public class G2DCartesicCoordinateSystem_Test
   {
     [Fact]

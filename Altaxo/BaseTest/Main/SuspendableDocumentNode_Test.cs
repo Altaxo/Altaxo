@@ -24,16 +24,13 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace AltaxoTest.Main
+namespace Altaxo.Main
 {
-  using Altaxo.Main;
 
-  
+
   public class SuspendableDocumentNode_Test
   {
     private class SuspendTester

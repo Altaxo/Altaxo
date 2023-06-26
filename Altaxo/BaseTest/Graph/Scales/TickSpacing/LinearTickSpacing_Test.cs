@@ -22,18 +22,14 @@
 
 #endregion Copyright
 
-using System;
-using Altaxo.Graph.Scales;
-using Altaxo.Graph.Scales.Ticks;
-using Altaxo.Main;
 using Xunit;
 
-namespace AltaxoTest.Graph.Scales.Ticks
+namespace Altaxo.Graph.Scales.Ticks
 {
   /// <summary>
   /// Summary description for DoubleColumn_Test.
   /// </summary>
-  
+
   public class LinearTickSpacing_Test
   {
     [Fact]
