@@ -83,8 +83,12 @@ namespace Altaxo.Serialization.Ascii
 
     #region Serialization
 
-    /// <summary>2014-08-03 initial version.</summary>
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AsciiLineComposition), 0)]
+    /// <summary>
+    /// 2014-08-03 initial version.
+    /// 2023-06-26 Renane AsciiLineStructure to AsciiLineComposition
+    /// </summary>
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Serialization.Ascii.AsciiLineStructure", 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AsciiLineComposition), 1)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
