@@ -22,7 +22,7 @@ namespace Altaxo.Science.Spectroscopy.Raman
     /// <summary>
     /// Wavelength tolerance in nm (this is the value how much the spectrometer can be differ from calibration)
     /// </summary>
-    public double Wavelength_Tolerance_nm { get; init; } = 30;
+    public double Wavelength_Tolerance_nm { get; init; } = 15;
 
     /// <summary>
     /// If true, peaks in the measured spectrum, that corresponds to multiple Nist peaks, are filtered out.
@@ -45,6 +45,7 @@ namespace Altaxo.Science.Spectroscopy.Raman
       PeakSearching = new PeakSearching.PeakSearchingByCwt
       {
         MinimalRelativeGaussianAmplitude = 0.0005,
+        MinimalSignalToNoiseRatio = 5,
       },
       PeakFitting = new PeakFitting.PeakFittingSeparately()
       {
@@ -57,7 +58,7 @@ namespace Altaxo.Science.Spectroscopy.Raman
     /// Gets the interpolation method used for interpolating the differences of Nist wavelength and measured wavelength
     /// in dependence on the measured wavelength.
     /// </summary>
-    public IInterpolationFunctionOptions InterpolationMethod { get; init; } = new PolyharmonicSpline1DOptions { RegularizationParameter = 10, DerivativeOrder = 2 };
+    public IInterpolationFunctionOptions InterpolationMethod { get; init; } = new PolyharmonicSpline1DOptions { RegularizationParameter = 50, DerivativeOrder = 2 };
 
     /// <summary>
     /// Gets a value indicating whether the position error obtained from the peak fit should be ignored

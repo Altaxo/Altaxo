@@ -37,7 +37,7 @@ namespace Altaxo.Science.Spectroscopy.Raman
     /// <summary>
     /// Wavelength tolerance in nm (this is the value how much the spectrometer can be differ from calibration)
     /// </summary>
-    public double RelativeShift_Tolerance_invcm { get; init; } = 10;
+    public double RelativeShift_Tolerance_invcm { get; init; } = 15;
 
     public double GetOfficialShiftValue_Silicon_invcm()
     {
