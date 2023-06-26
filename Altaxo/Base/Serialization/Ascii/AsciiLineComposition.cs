@@ -24,7 +24,6 @@
 
 #nullable enable
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
@@ -40,16 +39,22 @@ namespace Altaxo.Serialization.Ascii
     /// <summary>
     /// The structure of the line. This list holds <see cref="System.Type" /> values that represent the recognized items in the line.
     /// </summary>
-    public ImmutableArray<AsciiColumnInfo> Columns = ImmutableArray<AsciiColumnInfo>.Empty;
+    public ImmutableArray<AsciiColumnInfo> Columns { get; } = ImmutableArray<AsciiColumnInfo>.Empty;
+    public string ShortCuts { get; }
 
     protected int _hashValue;
-
     protected int _priorityValue;
 
     public AsciiLineComposition(ImmutableArray<AsciiColumnInfo> columns)
     {
       Columns = columns;
-      _hashValue = ((IStructuralEquatable)Columns).GetHashCode(EqualityComparer<AsciiColumnInfo>.Default);
+      var stb = new StringBuilder(columns.Length);
+      for (int i = 0; i < columns.Length; ++i)
+      {
+        stb.Append(columns[i].ShortCut);
+      }
+      ShortCuts = stb.ToString();
+      _hashValue = ShortCuts.GetHashCode();
       _priorityValue = Columns.Sum(x => x.ScoreValue);
     }
 
@@ -64,8 +69,13 @@ namespace Altaxo.Serialization.Ascii
         priorityValue += columnInfo.ScoreValue;
       }
       Columns = b.ToImmutable();
-      _hashValue = ((IStructuralEquatable)Columns).GetHashCode(EqualityComparer<AsciiColumnInfo>.Default);
-      _priorityValue = priorityValue;
+      var stb = new StringBuilder(Columns.Length);
+      for (int i = 0; i < Columns.Length; ++i)
+      {
+        stb.Append(Columns[i].ShortCut);
+      }
+      ShortCuts = stb.ToString();
+      _hashValue = ShortCuts.GetHashCode(); _priorityValue = priorityValue;
     }
 
 
@@ -134,14 +144,16 @@ namespace Altaxo.Serialization.Ascii
 
     public bool Equals(AsciiLineComposition? other)
     {
-      return (other is { } o) &&
-              this._hashValue == o._hashValue &&
-             ((IStructuralEquatable)this.Columns).Equals(o.Columns);
+      return
+        (other is { } o) &&
+        (ShortCuts == o.ShortCuts);
     }
 
-    public override bool Equals(object? obj)
+    public override bool Equals(object? other)
     {
-      return Equals(obj as AsciiLineComposition);
+      return
+        (other is AsciiLineComposition o) &&
+        (ShortCuts == o.ShortCuts);
     }
 
     /// <summary>
@@ -202,21 +214,4 @@ namespace Altaxo.Serialization.Ascii
 
 
   } // end class AsciiLineStructure
-
-  /// <summary>
-  /// Helper structure to count how many lines have the same structure.
-  /// </summary>
-  public struct NumberAndStructure
-  {
-    /// <summary>Number of lines that have the same structure.</summary>
-    public int NumberOfLines;
-
-    /// <summary>The structure that these lines have.</summary>
-    public AsciiLineComposition LineStructure;
-
-    public override string ToString()
-    {
-      return $"NOL={NumberOfLines}, Structure={LineStructure}";
-    }
-  } // end class
 }

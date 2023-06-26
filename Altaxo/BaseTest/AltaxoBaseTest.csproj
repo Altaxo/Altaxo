@@ -35,6 +35,9 @@
 
 
   <ItemGroup>
+    <None Update="Serialization\Ascii\SampleData\SampleData1.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Serialization\Ascii\SampleData\SampleData2.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

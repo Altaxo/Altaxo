@@ -24,6 +24,7 @@
 
 using System;
 using System.Collections.Immutable;
+using System.Linq;
 
 namespace Altaxo.Serialization.Ascii
 {
@@ -80,24 +81,39 @@ namespace Altaxo.Serialization.Ascii
     /// </summary>
     public static ImmutableDictionary<AsciiColumnType, AsciiColumnInfo> ColumnTypeToColumnInfo { get; }
 
+    public static ImmutableDictionary<char, AsciiColumnInfo> ShortCutToColumnInfo { get; }
+
     static AsciiColumnInfo()
     {
-      var builder = ImmutableDictionary.CreateBuilder<AsciiColumnType, AsciiColumnInfo>();
-
-      foreach (AsciiColumnType key in Enum.GetValues(typeof(AsciiColumnType)))
       {
-        var val = key switch
+        var builder = ImmutableDictionary.CreateBuilder<AsciiColumnType, AsciiColumnInfo>();
+
+        foreach (AsciiColumnType key in Enum.GetValues(typeof(AsciiColumnType)))
         {
-          AsciiColumnType.DBNull => DBNull,
-          AsciiColumnType.Int64 => Integer,
-          AsciiColumnType.Double => FloatWithDecimalSeparator,
-          AsciiColumnType.DateTime => DateTime,
-          AsciiColumnType.Text => Text,
-          _ => throw new NotImplementedException(),
-        };
-        builder.Add(key, val);
+          var val = key switch
+          {
+            AsciiColumnType.DBNull => DBNull,
+            AsciiColumnType.Int64 => Integer,
+            AsciiColumnType.Double => FloatWithDecimalSeparator,
+            AsciiColumnType.DateTime => DateTime,
+            AsciiColumnType.Text => Text,
+            _ => throw new NotImplementedException(),
+          };
+          builder.Add(key, val);
+        }
+        ColumnTypeToColumnInfo = builder.ToImmutable();
       }
-      ColumnTypeToColumnInfo = builder.ToImmutable();
+
+      { // Build the shortCut - to - ColumnInfo dictionary
+        var builder = ImmutableDictionary.CreateBuilder<char, AsciiColumnInfo>();
+        var instanceProps = typeof(AsciiColumnInfo).GetProperties(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static);
+        foreach (var p in instanceProps.Where(x => x.PropertyType == typeof(AsciiColumnInfo)))
+        {
+          var instance = (AsciiColumnInfo)(p.GetValue(null) ?? throw new InvalidOperationException());
+          builder.Add(instance.ShortCut, instance);
+        }
+        ShortCutToColumnInfo = builder.ToImmutable();
+      }
     }
   }
 }

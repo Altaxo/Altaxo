@@ -52,7 +52,7 @@ namespace Altaxo.Serialization.Ascii
 
     private AsciiLineAnalysis[]? _lineAnalysisOfBodyLines;
 
-    private Dictionary<AsciiLineAnalysisOption, NumberAndStructure>? _lineAnalysisOptionsScoring;
+    private Dictionary<AsciiLineAnalysisOption, NumberOfLinesPerLineComposition>? _lineAnalysisOptionsScoring;
 
     private AsciiLineAnalysisOption? _highestScoredLineAnalysisOption;
     private AsciiLineComposition? _highestScoredLineStructure;
@@ -300,14 +300,14 @@ namespace Altaxo.Serialization.Ascii
       if (_lineAnalysisOptionsToTest is null || _lineAnalysisOfBodyLines is null)
         throw new InvalidProgramException();
 
-      _lineAnalysisOptionsScoring = new Dictionary<AsciiLineAnalysisOption, NumberAndStructure>();
+      _lineAnalysisOptionsScoring = new Dictionary<AsciiLineAnalysisOption, NumberOfLinesPerLineComposition>();
 
       // for each of the separation strategies, determine the maximum number of equal lines and the line with the highest score among the equal lines
       foreach (var analysisOption in _lineAnalysisOptionsToTest)
       {
         CalculateScoreOfLineAnalysisOption(analysisOption, _lineAnalysisOfBodyLines, out var maxNumberOfEqualLines, out var mostFrequentLineStructure);
         if (mostFrequentLineStructure is not null)
-          _lineAnalysisOptionsScoring.Add(analysisOption, new NumberAndStructure() { NumberOfLines = maxNumberOfEqualLines, LineStructure = mostFrequentLineStructure });
+          _lineAnalysisOptionsScoring.Add(analysisOption, new NumberOfLinesPerLineComposition() { NumberOfLines = maxNumberOfEqualLines, LineStructure = mostFrequentLineStructure });
       }
     }
 
@@ -427,50 +427,50 @@ namespace Altaxo.Serialization.Ascii
     /// Determines, which lines are the most fr
     /// </summary>
     /// <param name="analysisOption"></param>
-    /// <param name="result"></param>
+    /// <param name="lines"></param>
     /// <param name="excludeLineStructureHashes"></param>
     /// <param name="maxNumberOfEqualLines"></param>
     /// <param name="bestLine"></param>
-    public static void CalculateScoreOfLineAnalysisOption(AsciiLineAnalysisOption analysisOption, IReadOnlyList<AsciiLineAnalysis> result, HashSet<int>? excludeLineStructureHashes, out int maxNumberOfEqualLines, out AsciiLineComposition? bestLine)
+    public static void CalculateScoreOfLineAnalysisOption(AsciiLineAnalysisOption analysisOption, IReadOnlyList<AsciiLineAnalysis> lines, HashSet<AsciiLineComposition>? excludeLineStructureHashes, out int maxNumberOfEqualLines, out AsciiLineComposition? bestLine)
     {
-      // Dictionary, Key is the hash of the line structure hash, Value is the number of lines that have this hash
-      var numberOfLinesForLineStructureHash = new Dictionary<int, int>();
+      // Dictionary, Key is the line composition, Value is the number of lines that have this composition
+      var numberOfLinesForLineStructureHash = new Dictionary<AsciiLineComposition, int>();
 
       bestLine = null;
-      for (int i = 0; i < result.Count; i++)
+      for (int i = 0; i < lines.Count; i++)
       {
-        AsciiLineAnalysis lineResults = result[i];
-        int lineStructureHash = lineResults[analysisOption].GetHashCode(); // and hash code
-        if (numberOfLinesForLineStructureHash.ContainsKey(lineStructureHash))
-          numberOfLinesForLineStructureHash[lineStructureHash] = 1 + numberOfLinesForLineStructureHash[lineStructureHash];
+        AsciiLineAnalysis lineResults = lines[i];
+        var lineComposition = lineResults[analysisOption];
+        if (numberOfLinesForLineStructureHash.ContainsKey(lineComposition))
+          numberOfLinesForLineStructureHash[lineComposition] += 1;
         else
-          numberOfLinesForLineStructureHash.Add(lineStructureHash, 1);
+          numberOfLinesForLineStructureHash.Add(lineComposition, 1);
       }
 
       // determine, which of the line structures is the most frequent one
       maxNumberOfEqualLines = 0;
-      int hashOfMostFrequentStructure = 0;
+      AsciiLineComposition? compositionOfMostFrequentStructure = null;
       foreach (var dictEntry in numberOfLinesForLineStructureHash)
       {
-        int lineStructureHash = dictEntry.Key;
+        var lineComposition = dictEntry.Key;
 
-        if (excludeLineStructureHashes is not null && excludeLineStructureHashes.Contains(lineStructureHash))
+        if (excludeLineStructureHashes is not null && excludeLineStructureHashes.Contains(lineComposition))
           continue;
 
         int numberOfLines = dictEntry.Value;
         if (maxNumberOfEqualLines < numberOfLines)
         {
           maxNumberOfEqualLines = numberOfLines;
-          hashOfMostFrequentStructure = lineStructureHash;
+          compositionOfMostFrequentStructure = lineComposition;
         }
       } // for each
 
       // search for the maximum priority of those lines with the most frequent structure
       int maxPriorityOfMostFrequentLines = 0;
-      for (int i = 0; i < result.Count; i++)
+      for (int i = 0; i < lines.Count; i++)
       {
-        AsciiLineAnalysis lineResults = result[i];
-        if (hashOfMostFrequentStructure == lineResults[analysisOption].GetHashCode())
+        var lineResults = lines[i];
+        if (compositionOfMostFrequentStructure == lineResults[analysisOption])
         {
           int prty = lineResults[analysisOption].LineStructureScoring;
           if (prty >= maxPriorityOfMostFrequentLines)
@@ -485,16 +485,16 @@ namespace Altaxo.Serialization.Ascii
       // we achieve this by adding the best hash to a list of excluded hashes and call the function again
       if (bestLine is not null && bestLine.Count == 0)
       {
-        if (excludeLineStructureHashes is not null && !excludeLineStructureHashes.Contains(hashOfMostFrequentStructure))
+        if (excludeLineStructureHashes is not null && !excludeLineStructureHashes.Contains(compositionOfMostFrequentStructure))
         {
-          excludeLineStructureHashes.Add(hashOfMostFrequentStructure);
-          CalculateScoreOfLineAnalysisOption(analysisOption, result, excludeLineStructureHashes, out maxNumberOfEqualLines, out bestLine);
+          excludeLineStructureHashes.Add(compositionOfMostFrequentStructure);
+          CalculateScoreOfLineAnalysisOption(analysisOption, lines, excludeLineStructureHashes, out maxNumberOfEqualLines, out bestLine);
           return;
         }
         else if (excludeLineStructureHashes is null)
         {
-          excludeLineStructureHashes = new HashSet<int>() { hashOfMostFrequentStructure };
-          CalculateScoreOfLineAnalysisOption(analysisOption, result, excludeLineStructureHashes, out maxNumberOfEqualLines, out bestLine);
+          excludeLineStructureHashes = new HashSet<AsciiLineComposition>() { compositionOfMostFrequentStructure };
+          CalculateScoreOfLineAnalysisOption(analysisOption, lines, excludeLineStructureHashes, out maxNumberOfEqualLines, out bestLine);
           return;
         }
       }

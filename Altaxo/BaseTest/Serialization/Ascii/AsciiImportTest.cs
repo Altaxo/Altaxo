@@ -28,11 +28,8 @@ using System.Linq;
 using System.Text;
 using Xunit;
 
-namespace BaseTest.Serialization.Ascii
+namespace Altaxo.Serialization.Ascii
 {
-  using Altaxo.Serialization.Ascii;
-
-
   public class AsciiImportTest
   {
     public class AsciiTestInputBase
