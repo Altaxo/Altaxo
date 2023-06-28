@@ -1012,38 +1012,129 @@ tryinterpolation:
   /// <summary>
   /// Options for a polynomial regression used as interpolation method (<see cref=PronySeriesRetardationAsInterpolationOptions"/>).
   /// </summary>
-  public record PronySeriesRetardationAsInterpolationOptions : IInterpolationFunctionOptions
+  public record PronySeriesAsInterpolationOptions : IInterpolationFunctionOptions
   {
+    bool _isMinMaxAutomatic;
     double _xmin, _xmax;
     int _numberOfPoints;
+    double _pointsPerDecade = 1;
 
+    public bool IsRelaxation { get; init; }
+
+    public bool AllowNegativePronyCoefficients { get; init; }
+
+    public bool UseIntercept { get; init; }
+
+    public double RegularizationParameter { get; init; }
 
     #region Serialization
 
     /// <summary>
     /// 2023-06-16 initial version
     /// </summary>
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PronySeriesRetardationAsInterpolationOptions), 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PronySeriesAsInterpolationOptions), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (PronySeriesRetardationAsInterpolationOptions)obj;
-        info.AddValue("XMin", s._xmin);
-        info.AddValue("XMax", s._xmax);
+        var s = (PronySeriesAsInterpolationOptions)obj;
+
+        info.AddValue("IsRelaxation", s.IsRelaxation);
+        info.AddValue("UseIntercept", s.UseIntercept);
+        info.AddValue("AllowNegativePronyCoefficients", s.AllowNegativePronyCoefficients);
+        info.AddValue("RegularizationParameter", s.RegularizationParameter);
         info.AddValue("NumberOfPoints", s._numberOfPoints);
+        info.AddValue("PointsPerDecade", s._pointsPerDecade);
+        info.AddValue("IsMinMaxAutomatic", s._isMinMaxAutomatic);
+
+        if (!s._isMinMaxAutomatic)
+        {
+          info.AddValue("XMin", s._xmin);
+          info.AddValue("XMax", s._xmax);
+        }
       }
 
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var xmin = info.GetDouble("XMin");
-        var xmax = info.GetDouble("XMax");
-        var numPts = info.GetInt32("NumberOfPoints");
-        return new PronySeriesRetardationAsInterpolationOptions() { XMinimum = xmin, XMaximum = xmax, NumberOfPoints = numPts };
+        var isRelaxation = info.GetBoolean("IsRelaxation");
+        var useIntercept = info.GetBoolean("UseIntercept");
+        var allowNegCoef = info.GetBoolean("AllowNegativePronyCoefficients");
+        var regularization = info.GetDouble("RegularizationParameter");
+        var numberOfPoints = info.GetInt32("NumberOfPoints");
+        var pointsPerDecade = info.GetDouble("PointsPerDecade");
+        var isMinMaxAutomatic = info.GetBoolean("IsMinMaxAutomatic");
+        double xmin = double.NaN, xmax = double.NaN;
+
+        if (!isMinMaxAutomatic)
+        {
+          xmin = info.GetDouble("XMin");
+          xmax = info.GetDouble("XMax");
+        }
+
+        return new PronySeriesAsInterpolationOptions()
+        {
+          IsRelaxation = isRelaxation,
+          UseIntercept = useIntercept,
+          AllowNegativePronyCoefficients = allowNegCoef,
+          RegularizationParameter = regularization,
+          NumberOfPoints = numberOfPoints,
+          _pointsPerDecade = pointsPerDecade,
+          _isMinMaxAutomatic = isMinMaxAutomatic,
+          XMinimum = xmin,
+          XMaximum = xmax,
+        };
       }
     }
 
     #endregion
+
+
+    public PronySeriesAsInterpolationOptions WithSpecifiedMinMaxAndNumberOfPoints(double xmin, double xmax, int numberOfPoints)
+    {
+      return this with
+      {
+        _isMinMaxAutomatic = false,
+        _xmin = xmin,
+        _xmax = xmax,
+        _numberOfPoints = numberOfPoints,
+        _pointsPerDecade = 0,
+      };
+    }
+
+    public PronySeriesAsInterpolationOptions RetardationWithAutomaticMinMaxAndNumberPerDecade(double pointsPerDecade)
+    {
+      return this with
+      {
+        _isMinMaxAutomatic = true,
+        _pointsPerDecade = pointsPerDecade,
+        _xmin = _xmax = double.NaN,
+        _numberOfPoints = int.MaxValue,
+      };
+    }
+
+    public PronySeriesAsInterpolationOptions WithAutomaticMinMaxAndNumberOfPoints(int numberOfPoints)
+    {
+      return this with
+      {
+        _isMinMaxAutomatic = true,
+        _numberOfPoints = numberOfPoints,
+        _pointsPerDecade = 0,
+        _xmin = _xmax = double.NaN,
+      };
+    }
+
+    public PronySeriesAsInterpolationOptions WithAutomaticMinMaxAndPointsPerDecadeAndMaxNumberOfPoints(double pointsPerDecade, int numberOfPoints)
+    {
+      return this with
+      {
+        _isMinMaxAutomatic = true,
+        _numberOfPoints = numberOfPoints,
+        _pointsPerDecade = pointsPerDecade,
+        _xmin = _xmax = double.NaN,
+      };
+    }
+
+
 
     public double XMinimum
     {
@@ -1081,7 +1172,11 @@ tryinterpolation:
     /// <inheritdoc/>
     public IInterpolationFunction Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec, IReadOnlyList<double>? yStdDev = null)
     {
-      var pr = new PronySeriesRetardationAsInterpolation(_xmin, _xmax, _numberOfPoints);
+
+
+      var pr = _isMinMaxAutomatic ?
+                new PronySeriesAsInterpolation(_numberOfPoints, _pointsPerDecade, isRelaxation: IsRelaxation, allowNegativePronyCoefficients: AllowNegativePronyCoefficients, useIntercept: UseIntercept, regularizationParameter: RegularizationParameter) :
+                new PronySeriesAsInterpolation(_xmin, _xmax, _numberOfPoints, isRelaxation: IsRelaxation, allowNegativePronyCoefficients: AllowNegativePronyCoefficients, useIntercept: UseIntercept, regularizationParameter: RegularizationParameter);
       pr.Interpolate(xvec, yvec);
       return pr;
     }
@@ -1092,23 +1187,28 @@ tryinterpolation:
     }
   }
 
-  public class PronySeriesRetardationAsInterpolation : IInterpolationFunction
+  public class PronySeriesAsInterpolation : IInterpolationFunction
   {
-    private PronySeriesRetardationResult? _fit;
-    double _xMinimum = 1E-1;
-    double _xMaximum = 1;
-    int _numberOfPoints = 2;
-
-    bool _automaticXMinimumMaximum;
+    bool _isRelaxation;
+    bool _isMinMaxAutomatic;
+    double _xMinimum, _xMaximum;
+    int _numberOfPoints;
     double _pointsPerDecade = 1;
+    public bool IsRelaxation { get; }
+    public bool AllowNegativePronyCoefficients { get; }
 
-    public bool AllowNegativeCoefficients { get; set; }
+    public bool UseIntercept { get; }
 
-    public PronySeriesRetardationAsInterpolation()
+    public double RegularizationParameter { get; }
+
+    private object? _fit;
+
+
+    public PronySeriesAsInterpolation()
     {
     }
 
-    public PronySeriesRetardationAsInterpolation(double xmin, double xmax, int numberOfPoints)
+    public PronySeriesAsInterpolation(double xmin, double xmax, int numberOfPoints, bool isRelaxation, bool allowNegativePronyCoefficients, bool useIntercept, double regularizationParameter)
     {
       if (!(xmin > 0))
         throw new ArgumentOutOfRangeException("Must be >=0", nameof(xmin));
@@ -1122,18 +1222,28 @@ tryinterpolation:
       if (!(numberOfPoints > 0))
         throw new ArgumentOutOfRangeException("Must be > 0", nameof(numberOfPoints));
 
+      _isMinMaxAutomatic = false;
+      _isRelaxation = isRelaxation;
+      AllowNegativePronyCoefficients = allowNegativePronyCoefficients;
+      UseIntercept = useIntercept;
+      RegularizationParameter = regularizationParameter;
       _xMinimum = xmin;
       _xMaximum = xmax;
       _numberOfPoints = numberOfPoints;
-      _automaticXMinimumMaximum = false;
+
     }
 
-    public PronySeriesRetardationAsInterpolation(double pointsPerDecade)
+    public PronySeriesAsInterpolation(int numberOfPoints, double pointsPerDecade, bool isRelaxation, bool allowNegativePronyCoefficients, bool useIntercept, double regularizationParameter)
     {
       if (!(pointsPerDecade > 0))
         throw new ArgumentOutOfRangeException("Must be >=0", nameof(pointsPerDecade));
 
-      _automaticXMinimumMaximum = true;
+      _isMinMaxAutomatic = true;
+      _isRelaxation = isRelaxation;
+      AllowNegativePronyCoefficients = allowNegativePronyCoefficients;
+      UseIntercept = useIntercept;
+      RegularizationParameter = regularizationParameter;
+      _numberOfPoints = numberOfPoints;
       _pointsPerDecade = pointsPerDecade;
     }
 
@@ -1143,7 +1253,7 @@ tryinterpolation:
       var workingXMaximum = _xMaximum;
       var workingNumberOfPoints = _numberOfPoints;
 
-      if (_automaticXMinimumMaximum)
+      if (_isMinMaxAutomatic)
       {
         var xmin = xvec.Min(x => x > 0 ? x : null);
         if (!xmin.HasValue)
@@ -1162,11 +1272,22 @@ tryinterpolation:
         {
           workingXMinimum = xmin.Value;
           workingXMaximum = xmax.Value;
-          _numberOfPoints = (int)(Math.Ceiling(Math.Log10(xmax.Value / xmin.Value) / _pointsPerDecade) + 1);
+          if (_pointsPerDecade > 0)
+          {
+            workingNumberOfPoints = (int)(Math.Ceiling(Math.Log10(xmax.Value / xmin.Value) / _pointsPerDecade) + 1);
+            workingNumberOfPoints = Math.Min(workingNumberOfPoints, _numberOfPoints);
+          }
         }
       }
 
-      _fit = PronySeriesRetardation.EvaluateTimeDomain(xvec, yvec, _xMinimum, _xMaximum, _numberOfPoints, withIntercept: false, withFlowTerm: false, regularizationLambda: 0, allowNegativeCoefficients: AllowNegativeCoefficients);
+      if (_isRelaxation)
+      {
+        _fit = PronySeriesRelaxation.EvaluateTimeDomain(xvec, yvec, workingXMinimum, workingXMaximum, workingNumberOfPoints, withIntercept: UseIntercept, regularizationLambda: 0, allowNegativeCoefficients: AllowNegativePronyCoefficients);
+      }
+      else
+      {
+        _fit = PronySeriesRetardation.EvaluateTimeDomain(xvec, yvec, workingXMinimum, workingXMaximum, workingNumberOfPoints, withIntercept: UseIntercept, withFlowTerm: false, regularizationLambda: 0, allowNegativeCoefficients: AllowNegativePronyCoefficients);
+      }
     }
 
     public double GetYOfX(double x)
@@ -1174,7 +1295,7 @@ tryinterpolation:
       if (_fit is null)
         throw new InvalidOperationException($"Results not available yet - please execute an interpolation first");
 
-      return _fit.GetTimeDomainYOfTime(x);
+      return _isRelaxation ? ((PronySeriesRelaxationResult)_fit).GetTimeDomainYOfTime(x) : ((PronySeriesRetardationResult)_fit).GetTimeDomainYOfTime(x);
     }
 
     public double GetYOfU(double u)

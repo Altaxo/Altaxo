@@ -210,7 +210,7 @@ namespace Altaxo.Science.Signals
     /// <param name="withIntercept">If set to <c>true</c>, an offset term is added. This term can be considered to have a infinite relaxation time.</param>
     /// <param name="regularizationLambda">A regularization parameter to smooth the resulting array of Prony terms.</param>
     /// <returns>The result of the evaluation, see <see cref="PronySeriesRelaxationResult"/>.</returns>
-    public static PronySeriesRelaxationResult EvaluateTimeDomain(IReadOnlyList<double> xarr, IReadOnlyList<double> yarr, double tmin, double tmax, int numberOfRelaxationTimes, bool withIntercept, double regularizationLambda)
+    public static PronySeriesRelaxationResult EvaluateTimeDomain(IReadOnlyList<double> xarr, IReadOnlyList<double> yarr, double tmin, double tmax, int numberOfRelaxationTimes, bool withIntercept, double regularizationLambda, bool allowNegativeCoefficients = false)
     {
       if (xarr is null)
         throw new ArgumentNullException(nameof(xarr));
@@ -277,7 +277,7 @@ namespace Altaxo.Science.Signals
       for (int r = 0; r < NR; ++r)
         y[r, 0] = yarr[r];
 
-      return Evaluate(tmin, tmax, numberOfRelaxationTimes, withIntercept, taus, X, y);
+      return Evaluate(tmin, tmax, numberOfRelaxationTimes, withIntercept, allowNegativeCoefficients: allowNegativeCoefficients, taus, X, y);
     }
 
     /// <summary>
@@ -396,17 +396,27 @@ namespace Altaxo.Science.Signals
         throw new InvalidOperationException();
       }
 
-      return Evaluate(tmin, tmax, numberOfRelaxationTimes, withIntercept, taus, X, y);
+      return Evaluate(tmin, tmax, numberOfRelaxationTimes, withIntercept, allowNegativeCoefficients: false, taus, X, y);
     }
 
-    protected static PronySeriesRelaxationResult Evaluate(double tmin, double tmax, int numberOfRelaxationTimes, bool withIntercept, double[] taus, Matrix<double> X, Matrix<double> y)
+    protected static PronySeriesRelaxationResult Evaluate(double tmin, double tmax, int numberOfRelaxationTimes, bool withIntercept, bool allowNegativeCoefficients, double[] taus, Matrix<double> X, Matrix<double> y)
     {
       // calculate XtX and XtY
       var XtX = X.TransposeThisAndMultiply(X);
       var Xty = X.TransposeThisAndMultiply(y);
 
-      // Solve the equation, but get nonnegative coefficients only
-      FastNonnegativeLeastSquares.Execution(XtX, Xty, null, out var x, out var _);
+      IMatrix<double> x;
+      if (allowNegativeCoefficients)
+      {
+        // Unusual case: if negative coefficients are allowed,
+        // solve the equation, allow both positive and negative coefficients
+        x = XtX.Solve(Xty);
+      }
+      else
+      {
+        // Usual case: solve the equation, but get nonnegative coefficients only
+        FastNonnegativeLeastSquares.Execution(XtX, Xty, null, out x, out var _);
+      }
 
       // the result (the spectral amplitudes) are now in X
       double spectralDensityFactor = Math.Log(tmax / tmin) / (numberOfRelaxationTimes - 1);

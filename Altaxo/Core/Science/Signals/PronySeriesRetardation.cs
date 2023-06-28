@@ -455,7 +455,8 @@ namespace Altaxo.Science.Signals
       IMatrix<double> x;
       if (allowNegativeCoefficients)
       {
-        // Solve the equation, allow both positive and negative coefficients
+        // Unusual case: if negative coefficients are allowed,
+        // solve the equation, allow both positive and negative coefficients
         x = XtX.Solve(Xty);
       }
       else
