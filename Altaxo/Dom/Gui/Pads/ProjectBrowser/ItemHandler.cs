@@ -25,8 +25,6 @@
 #nullable disable warnings
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Altaxo.Collections;
 using Altaxo.Main;
 
@@ -114,7 +112,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
       if (!_projectItemTypesToImage.TryGetValue(t.GetType(), out var image))
         image = ProjectBrowseItemImage.OpenFolder;
 
-      return new BrowserListItem(name, showFullName, t, false) { Image = image, CreationDate = t.CreationTimeUtc };
+      return new BrowserListItem(name, showFullName, t, false) { Image = image, CreationDate = t.CreationTimeUtc, ChangeDate = t.LastChangeTimeUtc };
     }
 
     public static BrowserListItem GetBrowserListItem(string folder)
@@ -264,6 +262,46 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
     {
       Current.Project.GraphDocumentCollection.CollectionChanged -= EhCollectionChanged;
       Current.Project.Graph3DDocumentCollection.CollectionChanged -= EhCollectionChanged;
+    }
+
+    private void EhCollectionChanged(object sender, Altaxo.Main.NamedObjectCollectionChangedEventArgs e)
+    {
+      GetItemList();
+      OnListChange();
+    }
+  }
+
+  /// <summary>
+  /// Shows all text documents in the project.
+  /// </summary>
+  public class AllTextsHandler : AbstractItemHandler
+  {
+    public override SelectableListNodeList GetItemList()
+    {
+      _list = new SelectableListNodeList();
+      foreach (var t in Current.Project.TextDocumentCollection)
+      {
+        _list.Add(GetBrowserListItem(t, true));
+      }
+      return _list;
+    }
+
+    /// <summary>
+    /// Starts monitoring of the graph collection.
+    /// </summary>
+    public override void BeginTracking()
+    {
+      GetItemList();
+      Current.Project.TextDocumentCollection.CollectionChanged += EhCollectionChanged;
+      OnListChange();
+    }
+
+    /// <summary>
+    /// Ends monitoring of the graph collection.
+    /// </summary>
+    public override void EndTracking()
+    {
+      Current.Project.TextDocumentCollection.CollectionChanged -= EhCollectionChanged;
     }
 
     private void EhCollectionChanged(object sender, Altaxo.Main.NamedObjectCollectionChangedEventArgs e)

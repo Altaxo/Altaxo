@@ -24,10 +24,7 @@
 
 #nullable disable warnings
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
@@ -114,16 +111,38 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
       get { return _treeNodeContextMenu; }
     }
 
+
     public void InitializeList(Collections.SelectableListNodeList list)
     {
       _listView.ItemsSource = null;
       _listView.Items.Clear();
       _listView.ItemsSource = list;
+
+
     }
 
-    public void InitializeCurrentFolder(string currentFolder)
+    bool _isFullNameFolder = true;
+    double _columnNameRev_Width = 100;
+
+    public void InitializeCurrentFolder(string currentFolder, bool isFullNameFolder)
     {
       _guiCurrentFolderName.Text = currentFolder;
+
+      if (_isFullNameFolder != isFullNameFolder)
+      {
+        _isFullNameFolder = isFullNameFolder;
+
+        if (_isFullNameFolder)
+        {
+          _listViewCol3.Width = _columnNameRev_Width;
+        }
+        else
+        {
+          _columnNameRev_Width = _listViewCol3.ActualWidth;
+          _listViewCol3.Width = 0;
+        }
+
+      }
     }
 
     public void SynchronizeListSelection()
@@ -272,6 +291,21 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
       SetSortAdorner(_listViewColHeader_CreationDate, ref _creationDateColumnSortAdorner, isSorted, isDescendingSort, isSecondaryAdorner);
     }
 
+    private Adorner _changeDateColumnSortAdorner;
+
+    public void SetSortIndicator_ChangeDateColumn(bool isSorted, bool isDescendingSort, bool isSecondaryAdorner)
+    {
+      SetSortAdorner(_listViewColHeader_ChangeDate, ref _changeDateColumnSortAdorner, isSorted, isDescendingSort, isSecondaryAdorner);
+    }
+
+    private Adorner _nameRevColumnSortAdorner;
+
+    public void SetSortIndicator_NameRevColumn(bool isSorted, bool isDescendingSort, bool isSecondaryAdorner)
+    {
+      SetSortAdorner(_listViewColHeader_NameRev, ref _nameRevColumnSortAdorner, isSorted, isDescendingSort, isSecondaryAdorner);
+    }
+
+
     private void EhListView_ColumnHeaderClicked_Name(object sender, RoutedEventArgs e)
     {
       if (_controller is not null)
@@ -283,6 +317,19 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
       if (_controller is not null)
         _controller.EhToggleListSort_CreationDate();
     }
+
+    private void EhListView_ColumnHeaderClicked_ChangeDate(object sender, RoutedEventArgs e)
+    {
+      if (_controller is not null)
+        _controller.EhToggleListSort_ChangeDate();
+    }
+
+    private void EhListView_ColumnHeaderClicked_NameRev(object sender, RoutedEventArgs e)
+    {
+      if (_controller is not null)
+        _controller.EhToggleListSort_NameRev();
+    }
+
 
     /// <summary>Ehes the list view sort.</summary>
     /// <param name="sender">The sender.</param>

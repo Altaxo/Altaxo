@@ -25,8 +25,6 @@
 #nullable disable warnings
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Altaxo.Collections;
 
 namespace Altaxo.Gui.Pads.ProjectBrowser
@@ -153,6 +151,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
   {
     public new ProjectBrowseItemImage Image;
     private DateTime _creationDate;
+    private DateTime _changeDate;
 
     /// <summary>True when the text in the 'Text' property is the full name of the item. False if this text is only the short name (without the folder part).
     /// </summary>
@@ -189,6 +188,21 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
       }
     }
 
+    public DateTime ChangeDate
+    {
+      get { return _changeDate; }
+      set
+      {
+        var oldValue = _changeDate;
+        _changeDate = value;
+        if (oldValue != _changeDate)
+        {
+          OnPropertyChanged("ChangeDate");
+          OnPropertyChanged("Text2");
+        }
+      }
+    }
+
     public override string Text
     {
       get
@@ -213,7 +227,35 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
       }
     }
 
-    public enum SortKind { None, Name, CreationDate }
+    public override string Text2
+    {
+      get
+      {
+        if (_changeDate == default(DateTime))
+          return null;
+        else
+          return _changeDate.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss");
+      }
+    }
+
+    public override string Text3
+    {
+      get
+      {
+        if (_nameIsFullName)
+        {
+          var parts = base.Text.Split(new char[] { '\\' }, StringSplitOptions.None);
+          Array.Reverse(parts);
+          return string.Join("\\", parts);
+        }
+        else
+        {
+          return base.Text;
+        }
+      }
+    }
+
+    public enum SortKind { None, Name, CreationDate, ChangeDate, NameRev }
 
     public class Comparer : IComparer<SelectableListNode>
     {
@@ -252,6 +294,14 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 
             case SortKind.CreationDate:
               result = tuple.Item2 ? DateTime.Compare(yy._creationDate, xx._creationDate) : DateTime.Compare(xx._creationDate, yy._creationDate);
+              break;
+
+            case SortKind.ChangeDate:
+              result = tuple.Item2 ? DateTime.Compare(yy._changeDate, xx._changeDate) : DateTime.Compare(xx._changeDate, yy._changeDate);
+              break;
+
+            case SortKind.NameRev:
+              result = tuple.Item2 ? string.Compare(y.Text3, x.Text3) : string.Compare(x.Text3, y.Text3);
               break;
           }
           if (0 != result)

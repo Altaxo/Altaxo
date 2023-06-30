@@ -198,13 +198,19 @@
 			</ListView.Resources>
 			<ListView.View>
 				<GridView>
-					<GridViewColumn CellTemplate="{StaticResource ColumnWithIconTemplate}" x:Name="_listViewCol0" Width="200">
+					<GridViewColumn  CellTemplate="{StaticResource ColumnWithIconTemplate}" x:Name="_listViewCol0" Width="200">
 						<GridViewColumnHeader x:Name="_listViewColHeader_Name" Content="Name" Click="EhListView_ColumnHeaderClicked_Name" Tag="Text" />
 					</GridViewColumn>
 					<GridViewColumn x:Name="_listViewCol1" Width="50" DisplayMemberBinding="{Binding Path=Text1}">
 						<GridViewColumnHeader x:Name="_listViewColHeader_CreationDate" Content="Created" Click="EhListView_ColumnHeaderClicked_CreationDate" Tag="CreationDate" />
 					</GridViewColumn>
-				</GridView>
+                    <GridViewColumn x:Name="_listViewCol2" Width="50" DisplayMemberBinding="{Binding Path=Text2}">
+                        <GridViewColumnHeader x:Name="_listViewColHeader_ChangeDate" Content="Changed" Click="EhListView_ColumnHeaderClicked_ChangeDate" Tag="ChangeDate" />
+                    </GridViewColumn>
+                    <GridViewColumn x:Name="_listViewCol3" Width="200" DisplayMemberBinding="{Binding Path=Text3}">
+                        <GridViewColumnHeader x:Name="_listViewColHeader_NameRev" Content="Name (Reversed)" Click="EhListView_ColumnHeaderClicked_NameRev" Tag="NameRev" />
+                    </GridViewColumn>
+                </GridView>
 			</ListView.View>
 		</ListView>
 	</Grid>

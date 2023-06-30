@@ -23,9 +23,6 @@
 #endregion Copyright
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Altaxo.Gui.Pads.ProjectBrowser
 {
@@ -37,7 +34,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
     /// <summary>
     /// Enumerates the possible kinds of navigation points.
     /// </summary>
-    public enum KindOfNavigationPoint { AllProjectItems, AllTables, AllGraphs, ProjectFolder }
+    public enum KindOfNavigationPoint { AllProjectItems, AllTables, AllGraphs, AllTexts, ProjectFolder }
 
     /// <summary>Gets or sets the kind of navigation point.</summary>
     /// <value>The kind.</value>

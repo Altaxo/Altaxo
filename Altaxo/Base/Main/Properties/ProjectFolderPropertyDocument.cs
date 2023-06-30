@@ -43,7 +43,7 @@ namespace Altaxo.Main.Properties
     private string _name;
     private PropertyBag? _propertyBag;
     private DateTime _creationTimeUtc;
-    private DateTime _changeTimeUtc;
+    private DateTime _lastModifiedTimeUtc;
 
     #region Serialization
 
@@ -59,7 +59,7 @@ namespace Altaxo.Main.Properties
 
         info.AddValue("Name", s._name);
         info.AddValue("CreationTimeUtc", s._creationTimeUtc);
-        info.AddValue("ChangeTimeUtc", s._changeTimeUtc);
+        info.AddValue("ChangeTimeUtc", s._lastModifiedTimeUtc);
         info.AddValueOrNull("Properties", s._propertyBag);
       }
 
@@ -67,7 +67,7 @@ namespace Altaxo.Main.Properties
       {
         s._name = info.GetString("Name");
         s._creationTimeUtc = info.GetDateTime("CreationTimeUtc");
-        s._changeTimeUtc = info.GetDateTime("ChangeTimeUtc");
+        s._lastModifiedTimeUtc = info.GetDateTime("ChangeTimeUtc");
         s.PropertyBag = info.GetValueOrNull<Main.Properties.PropertyBag>("Properties", s);
       }
 
@@ -89,7 +89,7 @@ namespace Altaxo.Main.Properties
     {
       _name = string.Empty;
       Name = folderName;
-      _creationTimeUtc = _changeTimeUtc = DateTime.UtcNow;
+      _creationTimeUtc = _lastModifiedTimeUtc = DateTime.UtcNow;
       PropertyBag = new PropertyBag();
     }
 
@@ -100,7 +100,7 @@ namespace Altaxo.Main.Properties
     public ProjectFolderPropertyDocument(ProjectFolderPropertyDocument from)
     {
       _name = string.Empty;
-      _creationTimeUtc = _changeTimeUtc = DateTime.UtcNow;
+      _creationTimeUtc = _lastModifiedTimeUtc = DateTime.UtcNow;
       CopyFrom(from);
     }
 
@@ -118,7 +118,7 @@ namespace Altaxo.Main.Properties
       if (from is not null)
       {
         _name = from._name;
-        _changeTimeUtc = from._changeTimeUtc;
+        _lastModifiedTimeUtc = from._lastModifiedTimeUtc;
         _propertyBag = null;
         if (from._propertyBag is not null)
         {
@@ -236,11 +236,11 @@ namespace Altaxo.Main.Properties
     /// <value>
     /// The change time in UTC.
     /// </value>
-    public DateTime ChangeTimeUtc
+    public DateTime LastChangeTimeUtc
     {
       get
       {
-        return _creationTimeUtc;
+        return _lastModifiedTimeUtc;
       }
     }
 

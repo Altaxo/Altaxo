@@ -26,7 +26,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Altaxo.Collections;
 using Altaxo.Gui.Workbench;
 using Altaxo.Main;
@@ -56,11 +55,16 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 
     /// <summary>Sets the display in what folder we are currently in.</summary>
     /// <param name="currentFolder">Name of the current folder.</param>
-    void InitializeCurrentFolder(string currentFolder);
+    /// <param name="isFullNameFolder">True if the full name is shown, instead of only the short name</param>
+    void InitializeCurrentFolder(string currentFolder, bool isFullNameFolder);
 
     void SetSortIndicator_NameColumn(bool isSorted, bool isDescendingSort, bool isSecondaryAdorner);
 
     void SetSortIndicator_CreationDateColumn(bool isSorted, bool isDescendingSort, bool isSecondaryAdorner);
+
+    void SetSortIndicator_ChangeDateColumn(bool isSorted, bool isDescendingSort, bool isSecondaryAdorner);
+
+    void SetSortIndicator_NameRevColumn(bool isSorted, bool isDescendingSort, bool isSecondaryAdorner);
 
     void SynchronizeListSelection();
   }
@@ -90,6 +94,9 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 
     /// <summary>When selected, shows all tables in the project.</summary>
     private NGBrowserTreeNode _allTablesNode;
+
+    /// <summary>When selected, shows all graphs in the project.</summary>
+    private NGBrowserTreeNode _allTextsNode;
 
     /// <summary>Dictionary of project folders (keys) and the corresponing non-Gui nodes (values).</summary>
     private Dictionary<string, NGBrowserTreeNode> _directoryNodesByName;
@@ -126,6 +133,9 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
       _allTablesNode = new NGBrowserTreeNode("Tables") { Image = ProjectBrowseItemImage.OpenFolder };
       _allItemsNode.Nodes.Add(_allTablesNode);
 
+      _allTextsNode = new NGBrowserTreeNode("Texts") { Image = ProjectBrowseItemImage.OpenFolder };
+      _allItemsNode.Nodes.Add(_allTextsNode);
+
       _projectDirectoryRoot = new NGProjectFolderTreeNode("\\") { Image = ProjectBrowseItemImage.OpenFolder, Tag = ProjectFolder.RootFolderName, IsExpanded = true, IsSelected = true };
       _directoryNodesByName.Add((string)_projectDirectoryRoot.Tag, _projectDirectoryRoot);
       _allItemsNode.Nodes.Add(_projectDirectoryRoot);
@@ -146,10 +156,11 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
       {
         _allGraphsNode.ContextMenu = _view.TreeNodeContextMenu;
         _allTablesNode.ContextMenu = _view.TreeNodeContextMenu;
+        _allTextsNode.ContextMenu = _view.TreeNodeContextMenu;
         _projectDirectoryRoot.SetContextMenuRecursively(_view.TreeNodeContextMenu);
 
         _view.InitializeTree(_rootNode);
-        _view.InitializeCurrentFolder(GetLocationStringFromCurrentState());
+        _view.InitializeCurrentFolder(GetLocationStringFromCurrentState(), false);
 
         UpdateSortIndicatorsInView();
       }
@@ -189,7 +200,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
       }
 
       RecreateDirectoryNodes();
-      SetItemListHandler(new SpecificProjectFolderHandler(Altaxo.Main.ProjectFolder.RootFolderName));
+      SetItemListHandler(new SpecificProjectFolderHandler(Altaxo.Main.ProjectFolder.RootFolderName), false);
     }
 
     private void EhProjectClosing_Unsynchronized(object sender, ProjectEventArgs e)
@@ -198,7 +209,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
       {
         _doc.Folders.CollectionChanged -= EhProjectDirectoryItemChanged;
         _doc = null;
-        SetItemListHandler(null);
+        SetItemListHandler(null, false);
       }
     }
 
@@ -343,7 +354,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
     /// Internally sets the list item handler and wires the ListChange event.
     /// </summary>
     /// <param name="itemHandler"></param>
-    private void SetItemListHandler(AbstractItemHandler itemHandler)
+    private void SetItemListHandler(AbstractItemHandler itemHandler, bool isFullNameFolder)
     {
       if (_listItemHandler is not null)
       {
@@ -358,7 +369,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
         StoreNavigationPoint();
 
         if (_view is not null)
-          _view.InitializeCurrentFolder(GetLocationStringFromCurrentState());
+          _view.InitializeCurrentFolder(GetLocationStringFromCurrentState(), isFullNameFolder);
       }
     }
 
@@ -370,15 +381,17 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
       if (_currentSelectedTreeNode is not null)
       {
         if (object.ReferenceEquals(_currentSelectedTreeNode, _allItemsNode))
-          SetItemListHandler(new ProjectAllItemHandler());
+          SetItemListHandler(new ProjectAllItemHandler(), true);
         else if (object.ReferenceEquals(_currentSelectedTreeNode, _allTablesNode))
-          SetItemListHandler(new AllWorksheetHandler());
+          SetItemListHandler(new AllWorksheetHandler(), true);
         else if (object.ReferenceEquals(_currentSelectedTreeNode, _allGraphsNode))
-          SetItemListHandler(new AllGraphHandler());
+          SetItemListHandler(new AllGraphHandler(), true);
+        else if (object.ReferenceEquals(_currentSelectedTreeNode, _allTextsNode))
+          SetItemListHandler(new AllTextsHandler(), true);
         else if (object.ReferenceEquals(_currentSelectedTreeNode, _projectDirectoryRoot))
-          SetItemListHandler(new SpecificProjectFolderHandler(ProjectFolder.RootFolderName));
+          SetItemListHandler(new SpecificProjectFolderHandler(ProjectFolder.RootFolderName), false);
         else if (_currentSelectedTreeNode.Tag is string)
-          SetItemListHandler(new SpecificProjectFolderHandler((string)_currentSelectedTreeNode.Tag));
+          SetItemListHandler(new SpecificProjectFolderHandler((string)_currentSelectedTreeNode.Tag), false);
       }
     }
 
@@ -496,7 +509,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
         }
         else if (node.Tag is ProjectFolder projFolder)
         {
-          SetItemListHandler(new SpecificProjectFolderHandler(projFolder.Name));
+          SetItemListHandler(new SpecificProjectFolderHandler(projFolder.Name), false);
         }
         else if (node.Tag is IProjectItem projItem)
         {
@@ -514,7 +527,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
       if (spfh is not null && !string.IsNullOrEmpty(spfh.CurrentProjectFolder))
       {
         var parentFolder = ProjectFolder.GetFoldersParentFolder(spfh.CurrentProjectFolder);
-        SetItemListHandler(new SpecificProjectFolderHandler(parentFolder));
+        SetItemListHandler(new SpecificProjectFolderHandler(parentFolder), false);
       }
     }
 
@@ -551,19 +564,23 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
       switch (p.Kind)
       {
         case NavigationPoint.KindOfNavigationPoint.ProjectFolder:
-          SetItemListHandler(new SpecificProjectFolderHandler(p.Folder));
+          SetItemListHandler(new SpecificProjectFolderHandler(p.Folder), false);
           break;
 
         case NavigationPoint.KindOfNavigationPoint.AllTables:
-          SetItemListHandler(new AllWorksheetHandler());
+          SetItemListHandler(new AllWorksheetHandler(), true);
           break;
 
         case NavigationPoint.KindOfNavigationPoint.AllGraphs:
-          SetItemListHandler(new AllGraphHandler());
+          SetItemListHandler(new AllGraphHandler(), true);
+          break;
+
+        case NavigationPoint.KindOfNavigationPoint.AllTexts:
+          SetItemListHandler(new AllTextsHandler(), true);
           break;
 
         case NavigationPoint.KindOfNavigationPoint.AllProjectItems:
-          SetItemListHandler(new ProjectAllItemHandler());
+          SetItemListHandler(new ProjectAllItemHandler(), true);
           break;
       }
     }
@@ -587,6 +604,10 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
       else if (_listItemHandler is AllGraphHandler)
       {
         result = new NavigationPoint() { Kind = NavigationPoint.KindOfNavigationPoint.AllGraphs, Folder = null };
+      }
+      else if (_listItemHandler is AllTextsHandler)
+      {
+        result = new NavigationPoint() { Kind = NavigationPoint.KindOfNavigationPoint.AllTexts, Folder = null };
       }
       else if (_listItemHandler is SpecificProjectFolderHandler)
       {
@@ -613,6 +634,10 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
       else if (_listItemHandler is AllGraphHandler)
       {
         result = "<<< All graphs >>>";
+      }
+      else if (_listItemHandler is AllTextsHandler)
+      {
+        result = "<<< All texts >>>";
       }
       else if (_listItemHandler is SpecificProjectFolderHandler)
       {
@@ -647,6 +672,16 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
     public void EhToggleListSort_CreationDate()
     {
       EhToggleListSort(BrowserListItem.SortKind.CreationDate);
+    }
+
+    public void EhToggleListSort_ChangeDate()
+    {
+      EhToggleListSort(BrowserListItem.SortKind.ChangeDate);
+    }
+
+    public void EhToggleListSort_NameRev()
+    {
+      EhToggleListSort(BrowserListItem.SortKind.NameRev);
     }
 
     private void EhToggleListSort(BrowserListItem.SortKind clickedSort)
@@ -698,49 +733,90 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
     {
       if (_view is not null)
       {
-        bool isNameColSorted;
-        bool isNameColDescending;
+        bool isColSorted;
+        bool isColDescending;
         bool isColSecondary;
 
         if (BrowserListItem.SortKind.Name == _primaryListSortKind)
         {
-          isNameColSorted = true;
-          isNameColDescending = _primaryListSortDescending;
+          isColSorted = true;
+          isColDescending = _primaryListSortDescending;
           isColSecondary = false;
         }
         else if (BrowserListItem.SortKind.Name == _secondaryListSortKind)
         {
-          isNameColSorted = true;
-          isNameColDescending = _secondaryListSortDescending;
+          isColSorted = true;
+          isColDescending = _secondaryListSortDescending;
           isColSecondary = true;
         }
         else
         {
-          isNameColSorted = false;
-          isNameColDescending = false;
+          isColSorted = false;
+          isColDescending = false;
           isColSecondary = false;
         }
-        _view.SetSortIndicator_NameColumn(isNameColSorted, isNameColDescending, isColSecondary);
+        _view.SetSortIndicator_NameColumn(isColSorted, isColDescending, isColSecondary);
 
         if (BrowserListItem.SortKind.CreationDate == _primaryListSortKind)
         {
-          isNameColSorted = true;
-          isNameColDescending = _primaryListSortDescending;
+          isColSorted = true;
+          isColDescending = _primaryListSortDescending;
           isColSecondary = false;
         }
         else if (BrowserListItem.SortKind.CreationDate == _secondaryListSortKind)
         {
-          isNameColSorted = true;
-          isNameColDescending = _secondaryListSortDescending;
+          isColSorted = true;
+          isColDescending = _secondaryListSortDescending;
           isColSecondary = true;
         }
         else
         {
-          isNameColSorted = false;
-          isNameColDescending = false;
+          isColSorted = false;
+          isColDescending = false;
           isColSecondary = false;
         }
-        _view.SetSortIndicator_CreationDateColumn(isNameColSorted, isNameColDescending, isColSecondary);
+        _view.SetSortIndicator_CreationDateColumn(isColSorted, isColDescending, isColSecondary);
+
+        if (BrowserListItem.SortKind.ChangeDate == _primaryListSortKind)
+        {
+          isColSorted = true;
+          isColDescending = _primaryListSortDescending;
+          isColSecondary = false;
+        }
+        else if (BrowserListItem.SortKind.ChangeDate == _secondaryListSortKind)
+        {
+          isColSorted = true;
+          isColDescending = _secondaryListSortDescending;
+          isColSecondary = true;
+        }
+        else
+        {
+          isColSorted = false;
+          isColDescending = false;
+          isColSecondary = false;
+        }
+        _view.SetSortIndicator_ChangeDateColumn(isColSorted, isColDescending, isColSecondary);
+
+        if (BrowserListItem.SortKind.NameRev == _primaryListSortKind)
+        {
+          isColSorted = true;
+          isColDescending = _primaryListSortDescending;
+          isColSecondary = false;
+        }
+        else if (BrowserListItem.SortKind.NameRev == _secondaryListSortKind)
+        {
+          isColSorted = true;
+          isColDescending = _secondaryListSortDescending;
+          isColSecondary = true;
+        }
+        else
+        {
+          isColSorted = false;
+          isColDescending = false;
+          isColSecondary = false;
+        }
+        _view.SetSortIndicator_NameRevColumn(isColSorted, isColDescending, isColSecondary);
+
       }
     }
 

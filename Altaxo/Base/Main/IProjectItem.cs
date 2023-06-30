@@ -47,5 +47,13 @@ namespace Altaxo.Main
     /// The UTC creation time of the project item.
     /// </value>
     DateTime CreationTimeUtc { get; }
+
+    /// <summary>
+    /// Gets the time this project item was last modified (in universal time UTC).
+    /// </summary>
+    /// <value>
+    /// The UTC modified time of the project item.
+    /// </value>
+    DateTime LastChangeTimeUtc { get; }
   }
 }
