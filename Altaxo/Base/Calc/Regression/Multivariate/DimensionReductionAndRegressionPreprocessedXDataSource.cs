@@ -70,7 +70,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       }
     }
 
-    [MemberNotNull(nameof(_importOptions),  nameof(_processData))]
+    [MemberNotNull(nameof(_importOptions), nameof(_processData))]
     void DeserializeSurrogate0(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
     {
       ChildSetMember(ref _processData, (DataTableProxy)info.GetValue("ProcessData", this));
@@ -187,19 +187,12 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// </summary>
     /// <param name="destinationTable">The destination table.</param>
     /// <param name="reporter"></param>
-    public void FillData(DataTable destinationTable, IProgressReporter reporter = null)
+    public override void FillData_Unchecked(DataTable destinationTable, IProgressReporter reporter = null)
     {
-      try
-      {
-        destinationTable.DataColumns.RemoveColumnsAll();
-        var srctable = _processData.Document;
-        var dataSource = srctable.DataSource as DimensionReductionAndRegressionDataSource;
-        dataSource.ProcessOptions.WorksheetAnalysis.CalculatePreprocessedSpectra(srctable, destinationTable);
-      }
-      catch (Exception ex)
-      {
-        destinationTable.Notes.WriteLine("Error during execution of data source ({0}): {1}", GetType().Name, ex.Message);
-      }
+      destinationTable.DataColumns.RemoveColumnsAll();
+      var srctable = _processData.Document;
+      var dataSource = srctable.DataSource as DimensionReductionAndRegressionDataSource;
+      dataSource.ProcessOptions.WorksheetAnalysis.CalculatePreprocessedSpectra(srctable, destinationTable);
     }
 
     /// <summary>
@@ -255,7 +248,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// The import options.
     /// </value>
     /// <exception cref="System.ArgumentNullException">ImportOptions</exception>
-    public Data.IDataSourceImportOptions ImportOptions
+    public override Data.IDataSourceImportOptions ImportOptions
     {
       get
       {
@@ -288,7 +281,7 @@ namespace Altaxo.Calc.Regression.Multivariate
       }
     }
 
-   
+
 
     object IAltaxoTableDataSource.ProcessOptionsObject
     {
@@ -329,7 +322,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     {
       if (_processData is not null)
         yield return new Main.DocumentNodeAndName(_processData, "ProcessData");
-      
+
       if (_importOptions is not null)
         yield return new Main.DocumentNodeAndName(_importOptions, "ImportOptions");
 

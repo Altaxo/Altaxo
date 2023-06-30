@@ -25,12 +25,8 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
-using System.Drawing;
 using System.Linq;
-using System.Security.Policy;
-using Altaxo.Main;
 
 namespace Altaxo.Data
 {
@@ -191,16 +187,9 @@ namespace Altaxo.Data
     /// </summary>
     /// <param name="destinationTable">The destination table.</param>
     /// <param name="reporter"></param>
-    public void FillData(DataTable destinationTable, IProgressReporter reporter = null)
+    public override void FillData_Unchecked(DataTable destinationTable, IProgressReporter? reporter = null)
     {
-      try
-      {
-        Execute(destinationTable, _processData, _processOptions);
-      }
-      catch (Exception ex)
-      {
-        destinationTable.Notes.WriteLine("Error during execution of data source ({0}): {1}", GetType().Name, ex.Message);
-      }
+      Execute(destinationTable, _processData, _processOptions);
     }
 
     /// <summary>
@@ -304,7 +293,7 @@ namespace Altaxo.Data
       destinationTable.DataColumns.RemoveColumnsAll();
       destinationTable.PropertyColumns.RemoveColumnsAll();
 
-      
+
 
 
       // Dictionary that has the x-value as key, and its row index as value
@@ -397,7 +386,7 @@ namespace Altaxo.Data
         }
       }
 
-      
+
 
       var pcolOriginalTableName = options.CreatePropertyColumnWithSourceTableName ?
         destinationTable.PropertyColumns.EnsureExistence("OriginalTableName", typeof(TextColumn), ColumnKind.V, 0) :
@@ -425,7 +414,7 @@ namespace Altaxo.Data
               var yArr = ((DoubleColumn)t.YColumns[iy]).ToArray();
               Array.Sort(xArr, yArr);
               var interpolatingFunction = options.Interpolation.Interpolate(xArr, yArr);
-              for(int i = 0; i < xDstCol.Count;++i)
+              for (int i = 0; i < xDstCol.Count; ++i)
               {
                 yDstCol[i] = interpolatingFunction.GetYOfX(xDstCol[i]);
               }
@@ -562,7 +551,7 @@ namespace Altaxo.Data
     /// The import options.
     /// </value>
     /// <exception cref="System.ArgumentNullException">ImportOptions</exception>
-    public Data.IDataSourceImportOptions ImportOptions
+    public override Data.IDataSourceImportOptions ImportOptions
     {
       get
       {

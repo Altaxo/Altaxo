@@ -233,17 +233,10 @@ namespace Altaxo.Science.Spectroscopy
     /// </summary>
     /// <param name="destinationTable">The destination table.</param>
     /// <param name="reporter"></param>
-    public void FillData(DataTable destinationTable, IProgressReporter reporter = null)
+    public override void FillData_Unchecked(DataTable destinationTable, IProgressReporter? reporter = null)
     {
-      try
-      {
-        var spectralPreprocessingOptions = _processOptions.GetSpectralPreprocessingOptions();
-        SpectroscopyCommands.ExecuteSpectralPreprocessing(_processData, spectralPreprocessingOptions, destinationTable);
-      }
-      catch (Exception ex)
-      {
-        destinationTable.Notes.WriteLine("Error during execution of data source ({0}): {1}", GetType().Name, ex.Message);
-      }
+      var spectralPreprocessingOptions = _processOptions.GetSpectralPreprocessingOptions();
+      SpectroscopyCommands.ExecuteSpectralPreprocessing(_processData, spectralPreprocessingOptions, destinationTable);
     }
 
     /// <summary>
@@ -299,7 +292,7 @@ namespace Altaxo.Science.Spectroscopy
     /// The import options.
     /// </value>
     /// <exception cref="System.ArgumentNullException">ImportOptions</exception>
-    public Data.IDataSourceImportOptions ImportOptions
+    public override Data.IDataSourceImportOptions ImportOptions
     {
       get
       {

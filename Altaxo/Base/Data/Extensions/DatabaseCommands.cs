@@ -23,7 +23,6 @@
 #endregion Copyright
 
 #nullable enable
-using System;
 using Altaxo.DataConnection;
 
 namespace Altaxo.Data
@@ -49,14 +48,11 @@ namespace Altaxo.Data
 
       if (true == Current.Gui.ShowDialog(ref src, "Edit data base source", false))
       {
-        try
+        dataTable.DataSource = src;
+        var err = dataTable.UpdateTableFromTableDataSource();
+        if (!string.IsNullOrEmpty(err))
         {
-          src.FillData(dataTable);
-          dataTable.DataSource = src;
-        }
-        catch (Exception ex)
-        {
-          Current.Gui.ErrorMessageBox(ex.Message, "Import error");
+          Current.Gui.ErrorMessageBox(err, "Import error");
         }
       }
     }

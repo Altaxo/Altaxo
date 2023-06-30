@@ -170,13 +170,6 @@ namespace Altaxo.Data
     #region IAltaxoTableDataSource
 
     /// <summary>
-    /// Fills (or refills) the data table with the processed data. The data source is represented by this instance, the destination table is provided in the argument <paramref name="destinationTable" />.
-    /// </summary>
-    /// <param name="destinationTable">The destination table.</param>
-    /// <param name="reporter"></param>
-    public abstract void FillData(DataTable destinationTable, IProgressReporter? reporter = null);
-
-    /// <summary>
     /// Occurs when the data source has changed and the import trigger source is DataSourceChanged. The argument is the sender of this event.
     /// </summary>
     public event Action<Data.IAltaxoTableDataSource> DataSourceChanged
@@ -229,7 +222,7 @@ namespace Altaxo.Data
     /// The import options.
     /// </value>
     /// <exception cref="System.ArgumentNullException">ImportOptions</exception>
-    public Data.IDataSourceImportOptions ImportOptions
+    public override Data.IDataSourceImportOptions ImportOptions
     {
       get
       {

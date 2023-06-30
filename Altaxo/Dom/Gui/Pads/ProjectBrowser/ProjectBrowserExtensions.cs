@@ -285,7 +285,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
         destinationTable.Name = tableName;
         Current.Project.DataTableCollection.Add(destinationTable);
         destinationTable.DataSource = dataSource;
-        dataSource.FillData(destinationTable);
+        destinationTable.UpdateTableFromTableDataSource();
         Current.ProjectService.ShowDocumentView(destinationTable);
       }
     }

@@ -240,17 +240,10 @@ namespace Altaxo.Science.Spectroscopy
     /// </summary>
     /// <param name="destinationTable">The destination table.</param>
     /// <param name="reporter"></param>
-    public void FillData(DataTable destinationTable, IProgressReporter reporter = null)
+    public override void FillData_Unchecked(DataTable destinationTable, IProgressReporter? reporter = null)
     {
-      try
-      {
-        var peakFindingAndFittingOptions = _processOptions.GetPeakSearchingAndFittingOptions();
-        SpectroscopyCommands.ExecutePeakFindingAndFitting(_processData, peakFindingAndFittingOptions, destinationTable, reporter, reporter?.CancellationToken ?? CancellationToken.None, reporter?.CancellationTokenHard ?? CancellationToken.None);
-      }
-      catch (Exception ex)
-      {
-        destinationTable.Notes.WriteLine("Error during execution of data source ({0}): {1}", GetType().Name, ex.Message);
-      }
+      var peakFindingAndFittingOptions = _processOptions.GetPeakSearchingAndFittingOptions();
+      SpectroscopyCommands.ExecutePeakFindingAndFitting(_processData, peakFindingAndFittingOptions, destinationTable, reporter, reporter?.CancellationToken ?? CancellationToken.None, reporter?.CancellationTokenHard ?? CancellationToken.None);
     }
 
     /// <summary>
@@ -306,7 +299,7 @@ namespace Altaxo.Science.Spectroscopy
     /// The import options.
     /// </value>
     /// <exception cref="System.ArgumentNullException">ImportOptions</exception>
-    public Data.IDataSourceImportOptions ImportOptions
+    public override Data.IDataSourceImportOptions ImportOptions
     {
       get
       {

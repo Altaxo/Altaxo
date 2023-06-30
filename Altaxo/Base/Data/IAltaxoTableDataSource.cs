@@ -38,11 +38,27 @@ namespace Altaxo.Data
     Main.IHasDocumentReferences
   {
     /// <summary>
-    /// Fills (or refills) the data. The data source is represented by this instance, the destination table is provided in the argument <paramref name="destinationTable"/>.
+    /// Fills (or refills) the data, with exception catching and supsension of the destination table.
+    /// The table script is executed (if specified in the import options).
+    /// Use <see cref="DataTable.UpdateTableFromTableDataSource"/> if the table script should be executed.
+    /// The data source is represented by this instance, the destination table is provided in the argument <paramref name="destinationTable"/>.
+    /// Exceptions are catched, and will be written to the Notes of the destination data table.
+    /// </summary>
+    /// <param name="destinationTable">The destination table.</param>
+    /// <param name="reporter">The progress reporter (can be null).</param>
+    /// <returns>Null if no exception was catched during processing; otherwise an error message.</returns>
+    string? FillData(Altaxo.Data.DataTable destinationTable, IProgressReporter? reporter = null);
+
+
+    /// <summary>
+    /// Fills (or refills) the data, without exception catching.
+    /// The table script is <b>not executed</b>!
+    /// Use <see cref="FillData(DataTable, IProgressReporter?)"/> if the table script should be executed.
+    /// The data source is represented by this instance, the destination table is provided in the argument <paramref name="destinationTable"/>.
     /// </summary>
     /// <param name="destinationTable">The destination table.</param>
     /// <param name="reporter"></param>
-    void FillData(Altaxo.Data.DataTable destinationTable, IProgressReporter? reporter = null);
+    void FillData_Unchecked(Altaxo.Data.DataTable destinationTable, IProgressReporter? reporter = null);
 
     IDataSourceImportOptions ImportOptions { get; set; }
 

@@ -183,7 +183,7 @@ namespace Altaxo.DataConnection
       }
     }
 
-    public Data.IDataSourceImportOptions ImportOptions
+    public override Data.IDataSourceImportOptions ImportOptions
     {
       get
       {
@@ -224,10 +224,10 @@ namespace Altaxo.DataConnection
     /// </summary>
     /// <param name="destinationTable">The destination table.</param>
     /// <param name="reporter"></param>
-    public void FillData(Data.DataTable destinationTable, IProgressReporter reporter = null)
+    public override void FillData_Unchecked(Data.DataTable destinationTable, IProgressReporter? reporter = null)
     {
       if (destinationTable is null)
-        throw new ArgumentNullException("destinationTable");
+        throw new ArgumentNullException(nameof(destinationTable));
 
       int reentrancyCount = Interlocked.Increment(ref _updateReentrancyCount);
       if (1 == reentrancyCount)

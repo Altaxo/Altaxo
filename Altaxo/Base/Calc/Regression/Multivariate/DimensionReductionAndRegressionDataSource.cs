@@ -204,25 +204,18 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// </summary>
     /// <param name="destinationTable">The destination table.</param>
     /// <param name="reporter"></param>
-    public void FillData(DataTable destinationTable, IProgressReporter reporter = null)
+    public override void FillData_Unchecked(DataTable destinationTable, IProgressReporter reporter = null)
     {
-      try
-      {
-        destinationTable.DataColumns.RemoveColumnsAll();
+      destinationTable.DataColumns.RemoveColumnsAll();
 
-        _processOptions.WorksheetAnalysis.ExecuteAnalysis(
-          Current.Project,
-          _processData,
-          _processOptions,
-          destinationTable
-          );
+      _processOptions.WorksheetAnalysis.ExecuteAnalysis(
+        Current.Project,
+        _processData,
+        _processOptions,
+        destinationTable
+        );
 
-        _processOptions.WorksheetAnalysis.CalculateAdditionalColumns(destinationTable, _processOptions.ColumnsToCalculate);
-      }
-      catch (Exception ex)
-      {
-        destinationTable.Notes.WriteLine("Error during execution of data source ({0}): {1}", GetType().Name, ex.Message);
-      }
+      _processOptions.WorksheetAnalysis.CalculateAdditionalColumns(destinationTable, _processOptions.ColumnsToCalculate);
     }
 
     /// <summary>
@@ -278,7 +271,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// The import options.
     /// </value>
     /// <exception cref="System.ArgumentNullException">ImportOptions</exception>
-    public Data.IDataSourceImportOptions ImportOptions
+    public override Data.IDataSourceImportOptions ImportOptions
     {
       get
       {

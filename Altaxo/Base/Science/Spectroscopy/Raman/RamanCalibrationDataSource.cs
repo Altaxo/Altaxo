@@ -254,7 +254,7 @@ namespace Altaxo.Science.Spectroscopy.Raman
     /// </summary>
     /// <param name="destinationTable">The destination table.</param>
     /// <param name="reporter"></param>
-    public void FillData(DataTable destinationTable, IProgressReporter reporter = null)
+    public override void FillData_Unchecked(DataTable destinationTable, IProgressReporter? reporter = null)
     {
       FillData(destinationTable, CancellationToken.None);
     }
@@ -739,7 +739,7 @@ namespace Altaxo.Science.Spectroscopy.Raman
     /// The import options.
     /// </value>
     /// <exception cref="ArgumentNullException">ImportOptions</exception>
-    public IDataSourceImportOptions ImportOptions
+    public override IDataSourceImportOptions ImportOptions
     {
       get
       {

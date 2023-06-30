@@ -25,9 +25,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Altaxo.Data;
 using Altaxo.Worksheet.Commands.Analysis;
 
@@ -76,7 +73,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     [MemberNotNull(nameof(_importOptions), nameof(_processData))]
     void DeserializeSurrogate0(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
     {
-     ChildSetMember(ref _processData, (DimensionReductionAndRegressionPredictionProcessData)info.GetValue("ProcessData", this));
+      ChildSetMember(ref _processData, (DimensionReductionAndRegressionPredictionProcessData)info.GetValue("ProcessData", this));
       ChildSetMember(ref _importOptions, (IDataSourceImportOptions)info.GetValue("ImportOptions", this));
 
       ProcessData = _processData;
@@ -188,37 +185,30 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// </summary>
     /// <param name="destinationTable">The destination table.</param>
     /// <param name="reporter"></param>
-    public void FillData(DataTable destinationTable, IProgressReporter reporter = null)
+    public override void FillData_Unchecked(DataTable destinationTable, IProgressReporter reporter = null)
     {
-      try
+      var modelTable = _processData.TableWithModel.Document;
+      if (modelTable is null)
+        throw new InvalidOperationException("ProcessData link to model table is broken.");
+      if (modelTable.DataSource is not DimensionReductionAndRegressionDataSource dataSource)
+        throw new InvalidOperationException($"DataSource of table {modelTable.Name} is {modelTable.DataSource}, but type {typeof(DimensionReductionAndRegressionDataSource)} is expected.");
+
+      var (preferredNumberOfFactors, _) = ChemometricCommands.GetPreferredNumberOfFactorsAndNumberOfConcentrations(modelTable);
+      if (preferredNumberOfFactors < 0)
+        return;
+
+      var analysis = ChemometricCommands.GetAnalysis(modelTable);
+
+      if (analysis is not null)
       {
-        var modelTable = _processData.TableWithModel.Document;
-        if (modelTable is null)
-          throw new InvalidOperationException("ProcessData link to model table is broken.");
-        if (modelTable.DataSource is not DimensionReductionAndRegressionDataSource dataSource)
-          throw new InvalidOperationException($"DataSource of table {modelTable.Name} is {modelTable.DataSource}, but type {typeof(DimensionReductionAndRegressionDataSource)} is expected.");
+        var table = _processData.DataToPredict.DataTable;
+        var xColumn = _processData.DataToPredict.RowHeaderColumn;
 
-        var (preferredNumberOfFactors, _) = ChemometricCommands.GetPreferredNumberOfFactorsAndNumberOfConcentrations(modelTable);
-        if (preferredNumberOfFactors < 0)
-          return;
-
-        var analysis = ChemometricCommands.GetAnalysis(modelTable);
-
-        if (analysis is not null)
-        {
-          var table = _processData.DataToPredict.DataTable;
-          var xColumn = _processData.DataToPredict.RowHeaderColumn;
-
-          analysis.PredictValues(
-            _processData.DataToPredict,
-            preferredNumberOfFactors,
-            modelTable,
-            destinationTable);
-        }
-      }
-      catch (Exception ex)
-      {
-        destinationTable.Notes.WriteLine("Error during execution of data source ({0}): {1}", GetType().Name, ex.Message);
+        analysis.PredictValues(
+          _processData.DataToPredict,
+          preferredNumberOfFactors,
+          modelTable,
+          destinationTable);
       }
     }
 
@@ -275,7 +265,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// The import options.
     /// </value>
     /// <exception cref="System.ArgumentNullException">ImportOptions</exception>
-    public Data.IDataSourceImportOptions ImportOptions
+    public override Data.IDataSourceImportOptions ImportOptions
     {
       get
       {

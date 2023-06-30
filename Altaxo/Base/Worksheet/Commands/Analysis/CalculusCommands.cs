@@ -25,7 +25,6 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
-using System.Xml.Schema;
 using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Calc.Regression;
 using Altaxo.Data;
@@ -33,7 +32,6 @@ using Altaxo.Gui;
 using Altaxo.Gui.Worksheet.Viewing;
 using Altaxo.Science.Signals;
 using Altaxo.Science.Spectroscopy.Resampling;
-using Altaxo.Units.Angle;
 
 namespace Altaxo.Worksheet.Commands.Analysis
 {
@@ -235,14 +233,10 @@ namespace Altaxo.Worksheet.Commands.Analysis
         };
         Current.Project.DataTableCollection.Add(table);
         table.DataSource = dataSource;
-        try
+        var err = table.UpdateTableFromTableDataSource();
+        if (!string.IsNullOrEmpty(err))
         {
-          table.DataSource.FillData(table);
-          Current.ProjectService.CreateNewWorksheet(table);
-        }
-        catch (Exception ex)
-        {
-          Current.Gui.ErrorMessageBox($"There was an error during analysis of the data\r\nDetails:\r\n{ex.ToString()}", "Error in Prony analysis");
+          Current.Gui.ErrorMessageBox(err, "Error in Prony analysis");
         }
       }
     }
@@ -273,14 +267,11 @@ namespace Altaxo.Worksheet.Commands.Analysis
         };
         Current.Project.DataTableCollection.Add(table);
         table.DataSource = dataSource;
-        try
+        var err = table.UpdateTableFromTableDataSource();
+        Current.ProjectService.CreateNewWorksheet(table);
+        if (!string.IsNullOrEmpty(err))
         {
-          table.DataSource.FillData(table);
-          Current.ProjectService.CreateNewWorksheet(table);
-        }
-        catch (Exception ex)
-        {
-          Current.Gui.ErrorMessageBox($"There was an error during analysis of the data\r\nDetails:\r\n{ex.ToString()}", "Error in Prony analysis");
+          Current.Gui.ErrorMessageBox(err, "Error in Prony analysis");
         }
       }
     }
@@ -360,14 +351,11 @@ namespace Altaxo.Worksheet.Commands.Analysis
         };
         Current.Project.DataTableCollection.Add(table);
         table.DataSource = dataSource;
-        try
+        var err = table.UpdateTableFromTableDataSource();
+        Current.ProjectService.CreateNewWorksheet(table);
+        if (!string.IsNullOrEmpty(err))
         {
-          table.DataSource.FillData(table);
-          Current.ProjectService.CreateNewWorksheet(table);
-        }
-        catch (Exception ex)
-        {
-          Current.Gui.ErrorMessageBox($"There was an error during analysis of the data\r\nDetails:\r\n{ex.ToString()}", "Error in Prony analysis");
+          Current.Gui.ErrorMessageBox(err, "Error in Prony analysis");
         }
       }
     }
@@ -402,14 +390,11 @@ namespace Altaxo.Worksheet.Commands.Analysis
         };
         Current.Project.DataTableCollection.Add(table);
         table.DataSource = dataSource;
-        try
+        var err = table.UpdateTableFromTableDataSource();
+        Current.ProjectService.CreateNewWorksheet(table);
+        if (!string.IsNullOrEmpty(err))
         {
-          table.DataSource.FillData(table);
-          Current.ProjectService.CreateNewWorksheet(table);
-        }
-        catch (Exception ex)
-        {
-          Current.Gui.ErrorMessageBox($"There was an error during analysis of the data\r\nDetails:\r\n{ex.ToString()}", "Error in Prony analysis");
+          Current.Gui.ErrorMessageBox(err, "Error in Prony analysis");
         }
       }
     }

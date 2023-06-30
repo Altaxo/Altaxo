@@ -254,7 +254,7 @@ namespace Altaxo.Gui.Data
 
       var groupNumber = SelectedGroup;
 
-      var xCol = XColumn.SelectedValue;
+      var xCol = XColumn?.SelectedValue;
 
       if (xCol is null)
       {
@@ -262,16 +262,13 @@ namespace Altaxo.Gui.Data
         return ApplyEnd(false, disposeController);
       }
 
-      var yCol = YColumn.SelectedValue;
+      var yCol = YColumn?.SelectedValue;
 
       if (yCol is null)
       {
-        Current.Gui.ErrorMessageBox("Please select an y-column!");
+        Current.Gui.ErrorMessageBox("Please select a y-column!");
         return ApplyEnd(false, disposeController);
       }
-
-
-
 
       _doc = new DataTableXYColumnProxy(dataTable, xCol, yCol);
       return ApplyEnd(true, disposeController);

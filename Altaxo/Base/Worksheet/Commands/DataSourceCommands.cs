@@ -113,42 +113,9 @@ namespace Altaxo.Worksheet.Commands
     /// </summary>
     /// <param name="table">The table that holds the data source.</param>
     /// <param name="reporter">A reporter object that can be used to cancel, or to report the progress.</param>
-    public static void ExecuteDataSourceOfTable(DataTable table, IProgressReporter? reporter)
+    public static string? ExecuteDataSourceOfTable(DataTable table, IProgressReporter? reporter)
     {
-      if (table is null || table.DataSource is null)
-        return;
-
-      using (var suspendToken = table.SuspendGetToken())
-      {
-        try
-        {
-          table.DataSource.FillData(table, reporter);
-        }
-        catch (Exception ex)
-        {
-          table.Notes.WriteLine($"{DateTime.Now}: Exception during requerying the table data source: {ex.Message}");
-          table.Notes.WriteLine("Details of this exception:");
-          table.Notes.WriteLine(ex.ToString());
-          table.Notes.WriteLine("--------------------------");
-        }
-
-        if (table.DataSource is null)
-          throw new InvalidProgramException("table.DataSource.FillData should never set the data source to zero!");
-
-        if (table.DataSource.ImportOptions.ExecuteTableScriptAfterImport && table.TableScript is not null)
-        {
-          try
-          {
-            table.TableScript.Execute(table, new Altaxo.Main.Services.DummyBackgroundMonitor(), false);
-          }
-          catch (Exception ex)
-          {
-            table.Notes.WriteLine($"{DateTime.Now}: Exception during execution of the table script (after requerying the table data source: {ex.Message}");
-          }
-        }
-
-        suspendToken.Resume();
-      }
+      return table?.UpdateTableFromTableDataSource();
     }
 
     /// <summary>

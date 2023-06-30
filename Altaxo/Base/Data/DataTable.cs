@@ -854,36 +854,15 @@ namespace Altaxo.Data
     }
 
     /// <summary>
-    /// Updates the data in the table from the table data source.
+    /// Updates the data in the table from the table data source. If the options specify that
+    /// the worksheet script should be exectuted after this, it is executed then.
+    /// The table is locked during the operation, and the exceptions will be catched. Use the return result
+    /// to see if an error has occured.
     /// </summary>
-    public void UpdateTableFromTableDataSource()
+    /// <returns>Null if no error occurs; otherwise, the error.</returns>
+    public string? UpdateTableFromTableDataSource(IProgressReporter? reporter = null)
     {
-      if (_tableDataSource is null)
-        return;
-
-      using (var suspendToken = SuspendGetToken())
-      {
-        try
-        {
-          _tableDataSource.FillData(this);
-
-          try
-          {
-            if (_tableDataSource.ImportOptions.ExecuteTableScriptAfterImport && _tableScript is not null)
-              _tableScript.ExecuteWithoutExceptionCatching(this, new Main.Services.DummyBackgroundMonitor());
-          }
-          catch (Exception ex)
-          {
-            Notes.WriteLine("Exception during execution of the table script (after execution of the data source). Details follow:");
-            Notes.WriteLine(ex.ToString());
-          }
-        }
-        catch (Exception ex)
-        {
-          Notes.WriteLine("Exception during execution of the data source. Details follow:");
-          Notes.WriteLine(ex.ToString());
-        }
-      }
+      return _tableDataSource is null ? null : _tableDataSource.FillData(this, reporter);
     }
 
     /// <summary>

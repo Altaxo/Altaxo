@@ -46,5 +46,43 @@ namespace Altaxo.Data
     }
 
     #endregion Change event handling
+
+    public abstract void FillData_Unchecked(Altaxo.Data.DataTable destinationTable, IProgressReporter? reporter = null);
+    public abstract IDataSourceImportOptions ImportOptions { get; set; }
+
+    public string? FillData(DataTable destinationTable, IProgressReporter? reporter = null)
+    {
+      if (destinationTable is null)
+        throw new ArgumentNullException(nameof(destinationTable));
+
+      string? err = null;
+
+      using (var suspendToken = SuspendGetToken())
+      {
+        try
+        {
+          FillData_Unchecked(destinationTable, reporter);
+
+          try
+          {
+            if (ImportOptions.ExecuteTableScriptAfterImport && destinationTable.TableScript is not null)
+              destinationTable.TableScript.ExecuteWithoutExceptionCatching(destinationTable, reporter ?? new Main.Services.DummyBackgroundMonitor());
+          }
+          catch (Exception ex)
+          {
+            err = $"{DateTime.Now} - Exception during execution of the table script (after execution of the data source). Details follow:\r\n{ex}";
+            destinationTable.Notes.WriteLine(err);
+            Current.Console.WriteLine($"{DateTime.Now} - Exception during execution of the table script (after execution of the data source) ({GetType().Name} of table {this.Name}): {ex.Message}");
+          }
+        }
+        catch (Exception ex)
+        {
+          err = $"{DateTime.Now} - Error during execution of data source ({GetType().Name}), Details:\r\n{ex}";
+          destinationTable.Notes.WriteLine(err);
+          Current.Console.WriteLine($"{DateTime.Now} - Error during execution of data source ({GetType().Name} of table {this.Name}): {ex.Message}");
+        }
+      }
+      return err;
+    }
   }
 }

@@ -190,20 +190,13 @@ namespace Altaxo.Data
     /// </summary>
     /// <param name="destinationTable">The destination table.</param>
     /// <param name="reporter"></param>
-    public void FillData(DataTable destinationTable, IProgressReporter reporter = null)
+    public override void FillData_Unchecked(DataTable destinationTable, IProgressReporter? reporter = null)
     {
-      try
-      {
-        var srcTable = _processData.Document;
-        if (srcTable is null)
-          throw new InvalidOperationException(string.Format("Source table was not found: {0}", _processData));
+      var srcTable = _processData.Document;
+      if (srcTable is null)
+        throw new InvalidOperationException(string.Format("Source table was not found: {0}", _processData));
 
-        Transposing.Transpose(srcTable, _processOptions, destinationTable);
-      }
-      catch (Exception ex)
-      {
-        destinationTable.Notes.WriteLine("Error during execution of data source ({0}): {1}", GetType().Name, ex.Message);
-      }
+      Transposing.Transpose(srcTable, _processOptions, destinationTable);
     }
 
     /// <summary>
@@ -259,7 +252,7 @@ namespace Altaxo.Data
     /// The import options.
     /// </value>
     /// <exception cref="System.ArgumentNullException">ImportOptions</exception>
-    public Data.IDataSourceImportOptions ImportOptions
+    public override Data.IDataSourceImportOptions ImportOptions
     {
       get
       {

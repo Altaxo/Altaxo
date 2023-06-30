@@ -596,8 +596,9 @@ namespace Altaxo.Worksheet.Commands
       if (Current.Gui.ShowDialog(args, "Process source tables script of " + table.Name))
       {
         table.DataSource = dataSource;
-        table.DataSource.FillData(table);
+        table.UpdateTableFromTableDataSource();
       }
+
       Current.ProjectService.OpenOrCreateWorksheetForTable(table);
     }
   }

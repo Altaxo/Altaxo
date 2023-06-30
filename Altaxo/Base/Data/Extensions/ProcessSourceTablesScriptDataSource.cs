@@ -190,18 +190,11 @@ namespace Altaxo.Data
     /// </summary>
     /// <param name="destinationTable">The destination table.</param>
     /// <param name="reporter"></param>
-    public void FillData(DataTable destinationTable, IProgressReporter reporter = null)
+    public override void FillData_Unchecked(DataTable destinationTable, IProgressReporter? reporter = null)
     {
-      try
-      {
-        destinationTable.DataColumns.RemoveColumnsAll();
-        destinationTable.PropertyColumns.RemoveColumnsAll();
-        _processOptions.ExecuteWithoutExceptionCatching(destinationTable, _processData.Tables, new DummyBackgroundMonitor());
-      }
-      catch (Exception ex)
-      {
-        destinationTable.Notes.WriteLine("Error during execution of data source ({0}): {1}", GetType().Name, ex.Message);
-      }
+      destinationTable.DataColumns.RemoveColumnsAll();
+      destinationTable.PropertyColumns.RemoveColumnsAll();
+      _processOptions.ExecuteWithoutExceptionCatching(destinationTable, _processData.Tables, new DummyBackgroundMonitor());
     }
 
     /// <summary>
@@ -257,7 +250,7 @@ namespace Altaxo.Data
     /// The import options.
     /// </value>
     /// <exception cref="System.ArgumentNullException">ImportOptions</exception>
-    public Data.IDataSourceImportOptions ImportOptions
+    public override Data.IDataSourceImportOptions ImportOptions
     {
       get
       {
