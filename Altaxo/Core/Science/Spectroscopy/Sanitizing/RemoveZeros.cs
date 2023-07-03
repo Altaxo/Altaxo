@@ -17,12 +17,12 @@ namespace Altaxo.Science.Spectroscopy.Sanitizing
     /// <summary>
     /// If true, zeros at the start of the spectrum will be removed.
     /// </summary>
-    public bool RemoveZerosAtStartOfSpectrum { get; init; }
+    public bool RemoveZerosAtStartOfSpectrum { get; init; } = true;
 
     /// <summary>
     /// If true, zeros at the end of the spectrum will be removed.
     /// </summary>
-    public bool RemoveZerosAtEndOfSpectrum { get; init; }
+    public bool RemoveZerosAtEndOfSpectrum { get; init; } = true;
 
     /// <summary>
     /// If true, zeros in the middle of the spectrum will be removed.
