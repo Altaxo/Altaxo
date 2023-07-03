@@ -109,6 +109,9 @@ namespace Altaxo.Gui.Science.Spectroscopy
         {
           case null:
             break;
+          case ISanitizer sa:
+            _doc = doc1 with { Sanitizer = sa };
+            break;
           case IDarkSubtraction subtraction:
             _doc = doc1 with { DarkSubtraction = subtraction };
             break;

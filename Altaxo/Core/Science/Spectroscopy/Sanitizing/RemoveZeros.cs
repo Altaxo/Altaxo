@@ -87,7 +87,7 @@ namespace Altaxo.Science.Spectroscopy.Sanitizing
       var yy = new List<double>(y.Length);
       var rr = new List<int>();
 
-      void AddPoints(int start, int end)
+      void AddPoints(int start, int end, bool addRegion)
       {
         if (start < end)
         {
@@ -96,7 +96,10 @@ namespace Altaxo.Science.Spectroscopy.Sanitizing
             xx.Add(x[i]);
             yy.Add(y[i]);
           }
-          rr.Add(xx.Count);
+          if (addRegion)
+          {
+            rr.Add(xx.Count);
+          }
         }
       }
 
@@ -119,54 +122,45 @@ namespace Altaxo.Science.Spectroscopy.Sanitizing
         }
         if (RemoveZerosAtEndOfSpectrum || RemoveZerosInMiddleOfSpectrum)
         {
-          tend = tstart - 1;
+          tend = tstart;
           for (int i = end - 1; i >= start; --i)
           {
             if (y[i] > ThresholdValue)
             {
-              tend = i; break;
+              tend = i + 1;
+              break;
             }
           }
         }
 
         if (RemoveZerosInMiddleOfSpectrum)
         {
-          if (SplitIntoSeparateRegions)
+          bool inGap = false;
+          int segmentStart = tstart;
+          for (int i = tstart; i < tend; ++i)
           {
-            bool inGap = false;
-            int segmentStart = tstart;
-            for (int i = tstart; i < tend; ++i)
+            if (y[i] > ThresholdValue && inGap)
             {
-              if (y[i] > ThresholdValue && inGap)
-              {
-                inGap = false;
-                segmentStart = i;
-              }
-              else if (!(y[i] > ThresholdValue) && !inGap)
-              {
-                inGap = true;
-                AddPoints(segmentStart, i);
-              }
+              inGap = false;
+              segmentStart = i;
             }
-            if (!inGap)
+            else if (!(y[i] > ThresholdValue) && !inGap)
             {
-              AddPoints(segmentStart, tend);
+              inGap = true;
+              AddPoints(segmentStart, i, SplitIntoSeparateRegions);
             }
           }
-          else
+          if (!inGap)
           {
-            if (tend > tstart)
-            {
-              AddPoints(tstart, tend);
-            }
+            AddPoints(segmentStart, tend, true);
           }
         }
         else
         {
-          AddPoints(tstart, tend);
+          AddPoints(tstart, tend, true);
         }
       }
-      return (xx.ToArray(), yy.ToArray(), regions);
+      return (xx.ToArray(), yy.ToArray(), RegionHelper.NormalizeRegions(rr, yy.Count));
     }
   }
 }

@@ -24,9 +24,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Altaxo.Science.Spectroscopy
 {
@@ -55,9 +52,9 @@ namespace Altaxo.Science.Spectroscopy
         {
           yield return (0, regions[0]);
         }
-        for(int i=1;i<regions.Length;i++)
+        for (int i = 1; i < regions.Length; i++)
         {
-          yield return (regions[i-1], regions[i]);
+          yield return (regions[i - 1], regions[i]);
         }
         if (regions[regions.Length - 1] < arrayLength)
         {
@@ -94,6 +91,21 @@ namespace Altaxo.Science.Spectroscopy
       }
 
       return list.ToArray();
+    }
+
+    public static int[]? NormalizeRegions(List<int> regions, int length)
+    {
+      if (regions is null)
+        return null;
+      if (regions.Count == 0)
+        return null;
+      if (length < 2)
+        return null;
+      if (regions.Count == 1 && regions[0] == length)
+        return null;
+      if (regions[^1] == length)
+        regions.RemoveAt(regions.Count - 1);
+      return regions.ToArray();
     }
   }
 }
