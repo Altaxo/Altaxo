@@ -57,7 +57,7 @@ namespace Altaxo.Data
 
       string? err = null;
 
-      using (var suspendToken = SuspendGetToken())
+      using (var suspendToken = destinationTable.SuspendGetToken())
       {
         try
         {
