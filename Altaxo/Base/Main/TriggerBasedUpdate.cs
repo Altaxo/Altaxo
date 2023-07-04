@@ -24,58 +24,12 @@
 
 #nullable enable
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using Altaxo.Main.Services;
+using Altaxo.Threading;
 
 namespace Altaxo.Main
 {
-  internal class Interlockable<T>
-  {
-    private T _value;
-
-    public Interlockable(T t)
-    {
-      _value = t;
-    }
-
-    public T Value
-    {
-      get
-      {
-        lock (this)
-          return _value;
-      }
-      set
-      {
-        lock (this)
-          _value = value;
-      }
-    }
-
-    public T Exchange(T newValue)
-    {
-      lock (this)
-      {
-        var oldValue = _value;
-        _value = newValue;
-        return oldValue;
-      }
-    }
-
-    public static implicit operator T(Interlockable<T> t)
-    {
-      return t.Value;
-    }
-
-    public static explicit operator Interlockable<T>(T t) // Explicite because otherwise unintended assignment of a new instance of Interlockable can happen
-    {
-      return new Interlockable<T>(t);
-    }
-  }
-
   /// <summary>
   /// Manages trigger based update operations. See remarks for details.
   /// </summary>
@@ -101,11 +55,10 @@ namespace Altaxo.Main
     private TimeSpan _minimumWaitingTimeAfterUpdate = TimeSpan.Zero;
     private TimeSpan _maximumWaitingTimeAfterUpdate = TimeSpan.MaxValue;
 
-    private bool _isNotified;
-    private TimeSpan _timeOfLastUpdate = TimeSpan.MinValue;
-    private TimeSpan _timeOfFirstTrigger;
-    private TimeSpan _timeOfLastTrigger;
-    private TimeSpan _timeOfNextUpdate;
+    Interlockable<(TimeSpan TimeOfFirstTrigger, TimeSpan TimeOfLastTrigger)?> _triggerTimes = new(null);
+
+    private TimeSpan _timeOfLastDueTime = TimeSpan.MinValue;
+    private TimeSpan _timeOfNextDueTime;
 
     public Action? _updateAction;
 
@@ -115,11 +68,8 @@ namespace Altaxo.Main
     /// <summary>Token used to identify the items in the timer queue</summary>
     private readonly object _timerToken = new object();
 
-    /// <summary>Lock used to synchronize access to the trigger times <see cref="_isNotified"/>, <see cref="_timeOfFirstTrigger"/>, <see cref="_timeOfLastTrigger"/></summary>
-    private readonly object _triggerTimeChangeLock = new object();
-
     /// <summary>Lock used to synchronize access to the update function and to the recalculation of the next due time.</summary>
-    private readonly ReaderWriterLockSlim _updateLock = new ReaderWriterLockSlim();
+    private readonly ReaderWriterLockSlim _dueTimeAndQueueLock = new ReaderWriterLockSlim();
 
     private bool _isDisposed;
 
@@ -280,35 +230,33 @@ namespace Altaxo.Main
 
       var currTime = _timerQueue.CurrentTime;
 
-      lock (_triggerTimeChangeLock)
-      {
-        if (!_isNotified)
-        {
-          _isNotified = true;
-          _timeOfFirstTrigger = currTime;
-        }
-        _timeOfLastTrigger = currTime;
-      }
-
+      _triggerTimes.Modify(tt => tt.HasValue ? (tt.Value.TimeOfFirstTrigger, currTime) : (currTime, currTime));
       EnsureUpdatedDueTime();
     }
 
     private void EnsureUpdatedDueTime()
     {
-      if (_updateAction is null)
-        return;
-
-      if (_updateLock.TryEnterWriteLock(0)) // calculate a new due time only if no update is currently in progress. If update is in progress, the timer queue is updated at the end of the update anyway
+      if (_updateAction is not null)
       {
-        InternalCalculateDueTimeAndUpdateTimerQueueNoLock();
-        _updateLock.ExitWriteLock();
+        var triggerTimes = _triggerTimes.Value;
+        if (_dueTimeAndQueueLock.TryEnterWriteLock(0)) // calculate a new due time only if no update is currently in progress. If update is in progress, the timer queue is updated at the end of the update anyway
+        {
+          try
+          {
+            InternalCalculateDueTimeAndUpdateTimerQueueNoLock(triggerTimes);
+          }
+          finally
+          {
+            _dueTimeAndQueueLock.ExitWriteLock();
+          }
+        }
       }
     }
 
     /// <summary>
-    /// Executes the update operation.
+    /// Called by the timer queue if our timer has elapsed.
     /// </summary>
-    protected virtual void OnUpdate(object timerQueueToken, TimeSpan dueTime)
+    protected virtual void EhTimerElapsed(object timerQueueToken, TimeSpan dueTime)
     {
       var updateAction = _updateAction;
       if (updateAction is null)
@@ -316,31 +264,39 @@ namespace Altaxo.Main
 
       Exception? exception = null;
 
-      _updateLock.EnterWriteLock();
-
-      lock (_triggerTimeChangeLock)
-      {
-        _isNotified = false;
-      }
-      // ------ Notification events below this line must certainly trigger a due time update ----------------------------
-
+      // Set the write lock to:
+      // 1). Avoid execution of the action more than once at a time
+      // 2.) Triggers coming during execution can update the trigger time, but should not update the due times, since
+      // that is done at the end of this sequence
+      _dueTimeAndQueueLock.EnterWriteLock();
       try
       {
-        updateAction(); // Do the update
+        _triggerTimes.Value = null;
+        try
+        {
+          updateAction(); // Do the update
+        }
+        catch (Exception ex)
+        {
+          exception = ex;
+        }
+
+        // ------ Trigger events below this line must certainly trigger a due time update ----------------------------
+
+        _timeOfLastDueTime = _timerQueue.CurrentTime;
+        for (; ; )
+        {
+          var triggerTimes = _triggerTimes.Value;
+          // note: if a trigger comes exactly in this moment, it is lost, because it will not cause an update to the timer queue due to the lock
+          InternalCalculateDueTimeAndUpdateTimerQueueNoLock(triggerTimes);
+          if (triggerTimes == _triggerTimes.Value) // if the trigger times have changed meanwhile, then calculate again
+            break;
+        }
       }
-      catch (Exception ex)
+      finally
       {
-        exception = ex;
+        _dueTimeAndQueueLock.ExitWriteLock();
       }
-
-      _timeOfLastUpdate = _timerQueue.CurrentTime;
-
-      lock (_triggerTimeChangeLock) // ----- Notification time can not be changed below this line ---------------
-      {
-        InternalCalculateDueTimeAndUpdateTimerQueueNoLock();
-
-        _updateLock.ExitWriteLock(); // Note that the UpdateLock must be released __before__ the NotificationLock. If the other way around, a notification taking place inbetween the release of NotificationLock and UpdateLock could cause TryEnter(UpdateLock) in (see function Notification) to fail, and the TimerQueue is not updated in this case
-      } // ----- Notification time can be changed again -----------------
 
       if (exception is not null)
         throw new Exception("Exception during execution of the trigger based update action", exception);
@@ -350,36 +306,36 @@ namespace Altaxo.Main
     /// Calculates the due time of the next update operation.
     /// </summary>
     /// <returns>Due time of the next update operation. </returns>
-    protected TimeSpan InternalGetDueTimeNoLock()
+    protected TimeSpan InternalGetDueTimeNoLock((TimeSpan TimeOfFirstTrigger, TimeSpan TimeOfLastTrigger)? triggerTimes)
     {
       TimeSpan minDueTime = TimeSpan.MinValue;
       TimeSpan maxDueTime = TimeSpan.MaxValue;
       TimeSpan dueTime;
-      if (_isNotified)
+      if (triggerTimes.HasValue)
       {
-        dueTime = _timeOfLastTrigger + _minimumWaitingTimeAfterLastTrigger;
+        dueTime = triggerTimes.Value.TimeOfLastTrigger + _minimumWaitingTimeAfterLastTrigger;
         minDueTime = Max(minDueTime, dueTime);
 
-        dueTime = _timeOfFirstTrigger + _minimumWaitingTimeAfterFirstTrigger;
+        dueTime = triggerTimes.Value.TimeOfFirstTrigger + _minimumWaitingTimeAfterFirstTrigger;
         minDueTime = Max(minDueTime, dueTime);
 
         if (_maximumWaitingTimeAfterFirstTrigger < TimeSpan.MaxValue)
         {
-          dueTime = _timeOfFirstTrigger + _maximumWaitingTimeAfterFirstTrigger;
+          dueTime = triggerTimes.Value.TimeOfFirstTrigger + _maximumWaitingTimeAfterFirstTrigger;
           maxDueTime = Min(maxDueTime, dueTime);
         }
       }
 
-      dueTime = _timeOfLastUpdate + _minimumWaitingTimeAfterUpdate;
+      dueTime = _timeOfLastDueTime + _minimumWaitingTimeAfterUpdate;
       minDueTime = Max(minDueTime, dueTime);
 
       if (_maximumWaitingTimeAfterUpdate < TimeSpan.MaxValue)
       {
-        dueTime = _timeOfLastUpdate + _maximumWaitingTimeAfterUpdate;
+        dueTime = _timeOfLastDueTime + _maximumWaitingTimeAfterUpdate;
         maxDueTime = Min(maxDueTime, dueTime);
       }
 
-      if (_isNotified)
+      if (triggerTimes.HasValue)
       {
         // when notified, the maximum due time always wins over the minimum waiting time
         dueTime = Min(minDueTime, maxDueTime);
@@ -393,16 +349,17 @@ namespace Altaxo.Main
     }
 
     /// <summary>
-    /// Calculates the due time of the next update operation, and updates the timer queue with the new value of the due time.
+    /// Calculates the due time of the next update operation,
+    /// and updates the timer queue with the new value of the due time.
     /// </summary>
-    private void InternalCalculateDueTimeAndUpdateTimerQueueNoLock()
+    private void InternalCalculateDueTimeAndUpdateTimerQueueNoLock((TimeSpan TimeOfFirstTrigger, TimeSpan TimeOfLastTrigger)? triggerTimes)
     {
-      var oldDueTime = _timeOfNextUpdate;
-      _timeOfNextUpdate = InternalGetDueTimeNoLock();
+      var oldDueTime = _timeOfNextDueTime;
+      _timeOfNextDueTime = InternalGetDueTimeNoLock(triggerTimes);
 
-      if (oldDueTime != _timeOfNextUpdate && _timeOfNextUpdate != TimeSpan.MaxValue)
+      if (oldDueTime != _timeOfNextDueTime && _timeOfNextDueTime != TimeSpan.MaxValue)
       {
-        _timerQueue.AddOrUpdate(_timerToken, _timeOfNextUpdate, OnUpdate);
+        _timerQueue.AddOrUpdate(_timerToken, _timeOfNextDueTime, EhTimerElapsed);
       }
     }
 
@@ -421,14 +378,20 @@ namespace Altaxo.Main
       if (!_isDisposed)
       {
         _updateAction = null;
+        _isDisposed = true;
 
-        _updateLock.EnterWriteLock();
-        _timerQueue.TryRemove(_timerToken);
-        _updateLock.ExitWriteLock();
+        _dueTimeAndQueueLock.EnterWriteLock();
+        try
+        {
+          _timerQueue.TryRemove(_timerToken);
+        }
+        finally
+        {
+          _dueTimeAndQueueLock.ExitWriteLock();
+        }
 
-        _updateLock.Dispose();
+        _dueTimeAndQueueLock.Dispose();
       }
-      _isDisposed = true;
     }
   }
 }
