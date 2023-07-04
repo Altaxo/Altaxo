@@ -26,7 +26,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Threading;
 using Altaxo.Data;
 
 namespace Altaxo.DataConnection
@@ -37,8 +36,6 @@ namespace Altaxo.DataConnection
     private OleDbDataQuery _dataQuery = OleDbDataQuery.Empty;
 
     protected Altaxo.Main.TriggerBasedUpdate? _triggerBasedUpdate;
-
-    private int _updateReentrancyCount;
 
     /// <summary>Indicates that serialization of the whole AltaxoDocument (!) is still in progress. Data sources should not be updated during serialization.</summary>
     [NonSerialized]
@@ -227,25 +224,14 @@ namespace Altaxo.DataConnection
     public override void FillData_Unchecked(Data.DataTable destinationTable, IProgressReporter? reporter = null)
     {
       if (destinationTable is null)
-        throw new ArgumentNullException(nameof(destinationTable));
-
-      int reentrancyCount = Interlocked.Increment(ref _updateReentrancyCount);
-      if (1 == reentrancyCount)
       {
-        try
-        {
-          using (var token = destinationTable.SuspendGetToken())
-          {
-            var tableConnector = new AltaxoTableConnector(destinationTable);
-            _dataQuery.ReadDataFromOleDbConnection(tableConnector.ReadAction);
-          }
-        }
-        finally
-        {
-          Interlocked.Decrement(ref _updateReentrancyCount);
-        }
+        throw new ArgumentNullException(nameof(destinationTable));
       }
+
+      var tableConnector = new AltaxoTableConnector(destinationTable);
+      _dataQuery.ReadDataFromOleDbConnection(tableConnector.ReadAction);
     }
+
 
     public void OnAfterDeserialization()
     {

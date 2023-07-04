@@ -24,6 +24,7 @@
 
 #nullable enable
 using System;
+using System.Threading;
 
 namespace Altaxo.Data
 {
@@ -47,6 +48,8 @@ namespace Altaxo.Data
 
     #endregion Change event handling
 
+    private int _fillDataEntranceCounter;
+
     public abstract void FillData_Unchecked(Altaxo.Data.DataTable destinationTable, IProgressReporter? reporter = null);
     public abstract IDataSourceImportOptions ImportOptions { get; set; }
 
@@ -57,30 +60,41 @@ namespace Altaxo.Data
 
       string? err = null;
 
-      using (var suspendToken = destinationTable.SuspendGetToken())
+      var entries = Interlocked.Increment(ref _fillDataEntranceCounter);
+      try
       {
-        try
+        if (entries == 1)
         {
-          FillData_Unchecked(destinationTable, reporter);
+          using (var suspendToken = destinationTable.SuspendGetToken())
+          {
+            try
+            {
+              FillData_Unchecked(destinationTable, reporter);
 
-          try
-          {
-            if (ImportOptions.ExecuteTableScriptAfterImport && destinationTable.TableScript is not null)
-              destinationTable.TableScript.ExecuteWithoutExceptionCatching(destinationTable, reporter ?? new Main.Services.DummyBackgroundMonitor());
-          }
-          catch (Exception ex)
-          {
-            err = $"{DateTime.Now} - Exception during execution of the table script (after execution of the data source). Details follow:\r\n{ex}";
-            destinationTable.Notes.WriteLine(err);
-            Current.Console.WriteLine($"{DateTime.Now} - Exception during execution of the table script (after execution of the data source) ({GetType().Name} of table {this.Name}): {ex.Message}");
+              try
+              {
+                if (ImportOptions.ExecuteTableScriptAfterImport && destinationTable.TableScript is not null)
+                  destinationTable.TableScript.ExecuteWithoutExceptionCatching(destinationTable, reporter ?? new Main.Services.DummyBackgroundMonitor());
+              }
+              catch (Exception ex)
+              {
+                err = $"{DateTime.Now} - Exception during execution of the table script (after execution of the data source). Details follow:\r\n{ex}";
+                destinationTable.Notes.WriteLine(err);
+                Current.Console.WriteLine($"{DateTime.Now} - Exception during execution of the table script (after execution of the data source) {GetType().Name} of table '{destinationTable.Name}': {ex.Message}");
+              }
+            }
+            catch (Exception ex)
+            {
+              err = $"{DateTime.Now} - Error during execution of data source ({GetType().Name}), Details:\r\n{ex}";
+              destinationTable.Notes.WriteLine(err);
+              Current.Console.WriteLine($"{DateTime.Now} - Error during execution of data source {GetType().Name} of table '{destinationTable.Name}': {ex.Message}");
+            }
           }
         }
-        catch (Exception ex)
-        {
-          err = $"{DateTime.Now} - Error during execution of data source ({GetType().Name}), Details:\r\n{ex}";
-          destinationTable.Notes.WriteLine(err);
-          Current.Console.WriteLine($"{DateTime.Now} - Error during execution of data source ({GetType().Name} of table {this.Name}): {ex.Message}");
-        }
+      }
+      finally
+      {
+        Interlocked.Decrement(ref _fillDataEntranceCounter);
       }
       return err;
     }
