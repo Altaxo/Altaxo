@@ -258,6 +258,12 @@ namespace Altaxo.Main
     /// </summary>
     protected virtual void EhTimerElapsed(object timerQueueToken, TimeSpan dueTime)
     {
+      if (_isDisposed && _timerQueue is { } tq1)
+      {
+        tq1.TryRemove(_timerToken);
+        return;
+      }
+
       var updateAction = _updateAction;
       if (updateAction is null)
         return;
@@ -284,13 +290,18 @@ namespace Altaxo.Main
         // ------ Trigger events below this line must certainly trigger a due time update ----------------------------
 
         _timeOfLastDueTime = _timerQueue.CurrentTime;
-        for (; ; )
+        for (; !_isDisposed;)
         {
           var triggerTimes = _triggerTimes.Value;
           // note: if a trigger comes exactly in this moment, it is lost, because it will not cause an update to the timer queue due to the lock
           InternalCalculateDueTimeAndUpdateTimerQueueNoLock(triggerTimes);
           if (triggerTimes == _triggerTimes.Value) // if the trigger times have changed meanwhile, then calculate again
             break;
+        }
+
+        if (_isDisposed && _timerQueue is { } tq2)
+        {
+          tq2.TryRemove(_timerToken);
         }
       }
       finally
@@ -380,16 +391,10 @@ namespace Altaxo.Main
         _updateAction = null;
         _isDisposed = true;
 
-        _dueTimeAndQueueLock.EnterWriteLock();
-        try
-        {
-          _timerQueue.TryRemove(_timerToken);
-        }
-        finally
-        {
-          _dueTimeAndQueueLock.ExitWriteLock();
-        }
-
+        // In order to avoid dead locks when disposed is called from the Gui thread,
+        // we try to remove the token without lock
+        // should it be added again in the fill thread, it is removed again at the end of this thread
+        _timerQueue.TryRemove(_timerToken);
         _dueTimeAndQueueLock.Dispose();
       }
     }
