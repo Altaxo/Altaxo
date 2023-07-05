@@ -153,7 +153,10 @@ namespace Altaxo.Gui.Pads.Output
 
     public void Write(string text)
     {
-      Current.Dispatcher.InvokeIfRequired(Write_GuiThreadOnly, text);
+      if (Current.Dispatcher.InvokeRequired)
+        Current.Dispatcher.InvokeAndForget(Write_GuiThreadOnly, text);
+      else
+        Write_GuiThreadOnly(text);
     }
 
     public void WriteLine()
