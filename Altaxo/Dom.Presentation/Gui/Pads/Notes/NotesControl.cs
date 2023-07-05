@@ -23,21 +23,12 @@
 #endregion Copyright
 
 #nullable disable warnings
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
 
 namespace Altaxo.Gui.Pads.Notes
 {
   public class NotesControl : TextBox, INotesView
   {
-    private System.Windows.Data.BindingExpressionBase _textBinding;
-
     public NotesControl()
     {
       TextWrapping = System.Windows.TextWrapping.NoWrap;
@@ -47,26 +38,28 @@ namespace Altaxo.Gui.Pads.Notes
       HorizontalScrollBarVisibility = System.Windows.Controls.ScrollBarVisibility.Visible;
       FontFamily = new System.Windows.Media.FontFamily("Global Monospace");
       IsEnabled = false;
-    }
 
-    public void ClearBinding()
-    {
-      // Clears the old binding
-      _textBinding = null; // to avoid updates when the text changed in the next line, and then the TextChanged event of the TextBox is triggered
-      System.Windows.Data.BindingOperations.ClearBinding(this, System.Windows.Controls.TextBox.TextProperty);
-    }
-
-    public void SetTextFromNotesAndSetBinding(Altaxo.Main.ITextBackedConsole con)
-    {
-      Text = con.Text;
-      var binding = new System.Windows.Data.Binding
       {
-        Source = con,
-        Path = new System.Windows.PropertyPath(nameof(Text)),
-        Mode = System.Windows.Data.BindingMode.TwoWay, // binding the other way is handled by the event
-        UpdateSourceTrigger = System.Windows.Data.UpdateSourceTrigger.PropertyChanged
-      };
-      _textBinding = SetBinding(System.Windows.Controls.TextBox.TextProperty, binding);
+        // Set the Text binding
+        var binding = new System.Windows.Data.Binding
+        {
+          Path = new System.Windows.PropertyPath(nameof(Text)),
+          Mode = System.Windows.Data.BindingMode.TwoWay, // binding the other way is handled by the event
+          UpdateSourceTrigger = System.Windows.Data.UpdateSourceTrigger.PropertyChanged
+        };
+        SetBinding(System.Windows.Controls.TextBox.TextProperty, binding);
+      }
+
+      {
+        // Set the Enabled binding
+        var binding = new System.Windows.Data.Binding
+        {
+          Path = new System.Windows.PropertyPath(nameof(IsEnabled)),
+        };
+        SetBinding(System.Windows.Controls.TextBox.IsEnabledProperty, binding);
+      }
     }
+
+
   }
 }
