@@ -28,7 +28,6 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Reflection;
 using System.Text;
-using Altaxo.Main.Services;
 using Altaxo.Main.Services.ScriptCompilation;
 
 namespace Altaxo.Scripting
@@ -398,17 +397,16 @@ namespace Altaxo.Scripting
       }
       set
       {
-        if (IsReadOnly)
-          throw new ArgumentException("After successfull compilation, the script text can not be changed any more");
-        else
+        if (_scriptText != value)
         {
-          if (_scriptText != value)
+          if (IsReadOnly)
           {
-            _scriptText = value;
-            _isDirty = true;
-            _wasTriedToCompile = false;
-            EhSelfChanged(EventArgs.Empty);
+            throw new ArgumentException("After successfull compilation, the script text can not be changed any more");
           }
+          _scriptText = value;
+          _isDirty = true;
+          _wasTriedToCompile = false;
+          EhSelfChanged(EventArgs.Empty);
         }
       }
     }
