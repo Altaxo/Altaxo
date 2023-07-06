@@ -233,7 +233,7 @@ namespace Altaxo.Science.Spectroscopy
     /// </summary>
     /// <param name="destinationTable">The destination table.</param>
     /// <param name="reporter"></param>
-    public override void FillData_Unchecked(DataTable destinationTable, IProgressReporter? reporter = null)
+    public override void FillData_Unchecked(DataTable destinationTable, IProgressReporter reporter)
     {
       var spectralPreprocessingOptions = _processOptions.GetSpectralPreprocessingOptions();
       SpectroscopyCommands.ExecuteSpectralPreprocessing(_processData, spectralPreprocessingOptions, destinationTable);

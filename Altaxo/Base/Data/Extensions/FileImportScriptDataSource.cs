@@ -27,7 +27,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using Altaxo.Main.Services;
 using Altaxo.Scripting;
 using Altaxo.Serialization;
 
@@ -189,14 +188,14 @@ namespace Altaxo.Data
         UpdateWatching(); // Compromise - we update only if the watch is off
     }
 
-    public override void FillData_Unchecked(DataTable destinationTable, IProgressReporter? reporter = null)
+    public override void FillData_Unchecked(DataTable destinationTable, IProgressReporter reporter)
     {
       var validFileNames = _files.Select(x => x.GetResolvedFileNameOrNull()).OfType<string>().Where(x => !string.IsNullOrEmpty(x)).ToArray();
 
       if (validFileNames.Length == 0)
         return;
 
-      _importScript.ExecuteWithoutExceptionCatching(destinationTable, validFileNames, new DummyBackgroundMonitor());
+      _importScript.ExecuteWithoutExceptionCatching(destinationTable, validFileNames, reporter);
     }
 
     #region Properties

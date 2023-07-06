@@ -193,7 +193,7 @@ namespace Altaxo.Serialization.Ascii
         UpdateWatching(); // Compromise - we update only if the watch is off
     }
 
-    public override void FillData_Unchecked(DataTable destinationTable, IProgressReporter? reporter = null)
+    public override void FillData_Unchecked(DataTable destinationTable, IProgressReporter reporter)
     {
       var validFileNames = _asciiFiles.Select(x => x.GetResolvedFileNameOrNull()).OfType<string>().Where(x => !string.IsNullOrEmpty(x)).ToArray();
 

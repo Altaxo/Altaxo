@@ -8,17 +8,24 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="4" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="8" />
             <RowDefinition Height="*" />
             <RowDefinition Height="16" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="8" />
         </Grid.RowDefinitions>
-        <ProgressBar x:Name="_guiProgressFraction" Grid.Row="0" MinHeight="16" Margin="4" Minimum="0" Maximum="1"></ProgressBar>
-        <TextBlock x:Name="_guiProgressText" Grid.Row="2" Margin="5" MinHeight="80" TextWrapping="Wrap" >An operation has not yet finished. If you feel that the operation takes unusual long time, you can interrupt it.</TextBlock>
-        <Button x:Name="_btInterrupt" Grid.Row="4" HorizontalAlignment="Center" Click="EhInterruptClicked">Interrupt</Button>
-        <Button x:Name="_btCancelSoft" Grid.Row="4" HorizontalAlignment="Center" Click="EhCancelSoftClicked">Cancel</Button>
-        <Button x:Name="_btCancelHard" Grid.Row="4" HorizontalAlignment="Center" Click="EhCancelHardClicked">Cancel (Hard)</Button>
-        <Button x:Name="_btAbort" Grid.Row="4" HorizontalAlignment="Center"  Click="EhAbortClicked">Abort</Button>
+        <ProgressBar Grid.Row="0" Value="{Binding Progress}" MinHeight="16" Margin="4" Minimum="0" Maximum="1"/>
+        <TextBlock Grid.Row="2" Text="{Binding ProgressAndETA}" Margin="5"/>
+        <StackPanel Grid.Row="4" Orientation="Vertical" MinHeight="120">
+        <TextBlock Text="{Binding Text0}" Margin="5,0,0,0" TextWrapping="Wrap" />
+        <TextBlock Text="{Binding Text1}" Margin="21,0,0,0" TextWrapping="Wrap" />
+        <TextBlock Text="{Binding Text2}" Margin="37,0,0,0" TextWrapping="Wrap" />
+        </StackPanel>
+        <Button x:Name="_btInterrupt" Grid.Row="6" HorizontalAlignment="Center" Click="EhInterruptClicked">Interrupt</Button>
+        <Button x:Name="_btCancelSoft" Grid.Row="6" HorizontalAlignment="Center" Click="EhCancelSoftClicked">Cancel</Button>
+        <Button x:Name="_btCancelHard" Grid.Row="6" HorizontalAlignment="Center" Click="EhCancelHardClicked">Cancel (Hard)</Button>
+        <Button x:Name="_btAbort" Grid.Row="6" HorizontalAlignment="Center"  Click="EhAbortClicked">Abort</Button>
     </Grid>
 </UserControl>

@@ -24,9 +24,6 @@
 
 #nullable disable warnings
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using Altaxo.Main.Services;
@@ -70,11 +67,12 @@ namespace Altaxo.Gui.Common
       if (_timer is not null)
         throw new ApplicationException("Timer is still active");
 
-      _monitor = new ExternalDrivenBackgroundMonitor();
-      _thread = new System.Threading.Thread(() => action(_monitor));
+      (_monitor, var reporter) = ExternalDrivenBackgroundMonitor.NewMonitorAndReporter();
+      this.DataContext = _monitor;
+      _thread = new System.Threading.Thread(() => action(reporter));
 
       _btCancelSoft.Visibility = _monitor is not null ? Visibility.Visible : Visibility.Collapsed;
-      _btInterrupt.Visibility = _monitor is null ? Visibility.Visible :Visibility.Collapsed;
+      _btInterrupt.Visibility = _monitor is null ? Visibility.Visible : Visibility.Collapsed;
       _btCancelHard.Visibility = Visibility.Collapsed;
       _btAbort.Visibility = Visibility.Collapsed;
 
@@ -109,19 +107,7 @@ namespace Altaxo.Gui.Common
       }
       _showUpDownConter--;
 
-      if (_monitor is not null)
-      {
-        if (_monitor.HasReportUpdate)
-        {
-          var (text, progressFraction) = _monitor.GetReportUpdate();
-          _guiProgressText.Text = text;
-          if (!double.IsNaN(progressFraction))
-          {
-            _guiProgressFraction.Value = Math.Min(1, Math.Max(0, progressFraction));
-          }
-        }
-        _monitor.SetShouldReportNow();
-      }
+      _monitor?.SetShouldReportNow();
 
       if (!ExecutionInProgress)
       {
@@ -178,7 +164,7 @@ namespace Altaxo.Gui.Common
       _btAbort.Visibility = Visibility.Visible;
     }
 
-    
+
 
     private void EhAbortClicked(object sender, RoutedEventArgs e)
     {

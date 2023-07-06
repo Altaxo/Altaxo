@@ -198,7 +198,7 @@ namespace Altaxo.Data
     /// </summary>
     /// <param name="destinationTable">The destination table.</param>
     /// <param name="reporter"></param>
-    public override void FillData_Unchecked(DataTable destinationTable, IProgressReporter? reporter = null)
+    public override void FillData_Unchecked(DataTable destinationTable, IProgressReporter reporter)
     {
       ConvertXYVToMatrixActions.ConvertXYVToMatrix(_processData, _processOptions, destinationTable);
     }

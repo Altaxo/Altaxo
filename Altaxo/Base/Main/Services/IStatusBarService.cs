@@ -18,9 +18,7 @@
 
 #nullable enable
 using System;
-using System.Collections.Generic;
 using System.Threading;
-using Altaxo.Main.Services;
 
 namespace Altaxo.Main.Services
 {
@@ -58,6 +56,6 @@ namespace Altaxo.Main.Services
     /// <summary>
     /// Shows progress for the specified ProgressCollector in the status bar.
     /// </summary>
-    void AddProgress(ProgressCollector progress);
+    void AddProgress(IProgressMonitor progress);
   }
 }

@@ -25,7 +25,6 @@
 #nullable disable
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -465,9 +464,9 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
         }
 
         var (msg, isFatal) = TestAndCorrectParametersAndBoundaries(_doc.CurrentParameters);
-        if(msg.Length > 0)
+        if (msg.Length > 0)
         {
-          if(isFatal)
+          if (isFatal)
           {
             msg.AppendLine("Please make the neccessary corrections!");
             Current.Gui.ErrorMessageBox(msg.ToString(), "Errors testing boundaries");
@@ -477,7 +476,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
           else
           {
             msg.AppendLine("Do you want to proceed with the fit?");
-            if(false == Current.Gui.YesNoMessageBox(msg.ToString(), "Warnings", true))
+            if (false == Current.Gui.YesNoMessageBox(msg.ToString(), "Warnings", true))
             {
               _parameterController.InitializeDocument(_doc.CurrentParameters);
               return;
@@ -489,17 +488,21 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
         var fit = new LevenbergMarquardtMinimizerNonAllocating();
 
 
-        var backgroundMonitor = new ExternalDrivenBackgroundMonitor();
         var (initialGuess, lowerBounds, upperBounds) = CollectVaryingParametersAndBoundaries(_doc.CurrentParameters);
         NonlinearMinimizationResult minimizationResult = null;
-        Exception exception=null;
-        var fitThread = new System.Threading.Thread(new System.Threading.ThreadStart(() =>
-          SafeExecuteThread(
-            () => minimizationResult = fit.FindMinimum(fitAdapter, initialGuess, lowerBounds, upperBounds, null, null, backgroundMonitor.CancellationTokenHard, (iterations, chi2, _) => backgroundMonitor.ReportProgress($"#Iteration {iterations}: Chi² = {chi2}")),
-            out exception)));
-        fitThread.Start();
-        Current.Gui.ShowBackgroundCancelDialog(10000, fitThread, backgroundMonitor);
-        if (!(fitThread.ThreadState.HasFlag(System.Threading.ThreadState.Aborted)) && exception is null)
+
+        var exception = Current.Gui.ExecuteAsUserCancellable(1000, (reporter) =>
+            {
+              minimizationResult = fit.FindMinimum(
+                                      fitAdapter,
+                                      initialGuess,
+                                      lowerBounds,
+                                      upperBounds,
+                                      null, null,
+                                      reporter.CancellationTokenHard,
+                                      (iterations, chi2, _) => reporter.ReportProgress($"#Iteration {iterations}: Chi² = {chi2}"));
+            });
+        if (exception is null)
         {
           ChiSquareValue = fitAdapter.Value;
           _sigmaSquare = fitAdapter.SigmaSquare;
@@ -513,7 +516,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
           OnAfterFittingStep();
         }
-        else if(exception is not null)
+        else if (exception is not null)
         {
           Current.Gui.ErrorMessageBox($"An exception was thrown during fitting. Details:\r\n{exception}", "Fit exception");
         }
@@ -593,10 +596,10 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       bool hasAnyLowerBound = false;
       bool hasAnyUpperBound = false;
 
-      for(int i=0;i<parameters.Count; i++)
+      for (int i = 0; i < parameters.Count; i++)
       {
         var p = parameters[i];
-        if(p.Vary)
+        if (p.Vary)
         {
           varyingParameters.Add(p.Parameter);
           lowerBounds.Add(p.LowerBound);
@@ -1654,7 +1657,7 @@ Label_EditScript:
               var lbs = lowerBoundsHereS?[j];
               var ubs = upperBoundsHereS?[j];
 
-              if(lbh.HasValue)
+              if (lbh.HasValue)
               {
                 lbs = lbs.HasValue ? Math.Min(lbh.Value, lbs.Value) : lbh.Value;
               }
@@ -1673,7 +1676,7 @@ Label_EditScript:
       var stb = TestIfUpperBoundIsGreaterThanOrEqualToLowerBound(parameters, lowerBounds, upperBounds);
       if (stb.Length > 0)
       {
-          stb.Append("Please either use the hard limits instead, or correct the bounds manually.");
+        stb.Append("Please either use the hard limits instead, or correct the bounds manually.");
         Current.Gui.ErrorMessageBox(stb.ToString(), "Boundaries error");
       }
 

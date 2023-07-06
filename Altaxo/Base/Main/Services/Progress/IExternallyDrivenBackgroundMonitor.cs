@@ -24,6 +24,7 @@
 
 #nullable enable
 
+
 namespace Altaxo.Main.Services
 {
   /// <summary>
@@ -31,11 +32,13 @@ namespace Altaxo.Main.Services
   /// </summary>
   /// <seealso cref="Altaxo.IProgressReporter" />
   /// <seealso cref="Altaxo.Main.Services.IProgressMonitor" />
-  public interface IExternalDrivenBackgroundMonitor : IProgressReporter, IProgressMonitor
+  public interface IExternalDrivenBackgroundMonitor : IProgressMonitor
   {
     /// <summary>
     /// Sets the <see cref="IProgressReporter.ShouldReportNow"/> flag to <c>True</c> to indicate that the worker thread should report its progress.
     /// </summary>
     void SetShouldReportNow();
+
+
   }
 }

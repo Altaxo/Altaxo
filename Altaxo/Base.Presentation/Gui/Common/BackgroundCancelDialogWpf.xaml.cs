@@ -24,9 +24,6 @@
 
 #nullable disable warnings
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Windows;
 using Altaxo.Main.Services;
 
@@ -54,6 +51,7 @@ namespace Altaxo.Gui.Common
     {
       _thread = thread;
       _monitor = monitor;
+      DataContext = monitor;
       //
       // Required for Windows Form Designer support
       //
@@ -68,6 +66,7 @@ namespace Altaxo.Gui.Common
     public BackgroundCancelDialogWpf(System.Threading.ThreadStart threadstart, IExternalDrivenBackgroundMonitor monitor)
     {
       _monitor = monitor;
+      DataContext = monitor;
 
       _threadStart = threadstart;
       _threadException = null;
@@ -119,19 +118,7 @@ namespace Altaxo.Gui.Common
       if (_timerCounter == 50)
         Visibility = System.Windows.Visibility.Visible;
 
-      if (_monitor is not null)
-      {
-        if (_monitor.HasReportUpdate)
-        {
-          (string text, double fraction) = _monitor.GetReportUpdate();
-          _guiProgressText.Text = text;
-          if (!double.IsNaN(fraction))
-          {
-            _guiProgressFraction.Value = Math.Min(1, Math.Max(0, fraction));
-          }
-        }
-        _monitor.SetShouldReportNow();
-      }
+      _monitor?.SetShouldReportNow();
 
       if (!_thread.IsAlive)
       {

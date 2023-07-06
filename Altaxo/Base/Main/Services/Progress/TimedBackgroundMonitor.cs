@@ -169,12 +169,12 @@ namespace Altaxo.Main.Services
       Elapsed?.Invoke(sender, e);
     }
 
-    public IProgressReporter CreateSubTask(double workAmount)
+    public IProgressReporter GetSubTask(double workAmount)
     {
       throw new NotImplementedException();
     }
 
-    public IProgressReporter CreateSubTask(double workAmount, CancellationToken cancellationTokenSoft, CancellationToken cancellationTokenHard)
+    public IProgressReporter GetSubTask(double workAmount, CancellationToken cancellationTokenSoft, CancellationToken cancellationTokenHard)
     {
       throw new NotImplementedException();
     }
@@ -196,6 +196,10 @@ namespace Altaxo.Main.Services
     void IProgress<(string text, double progressFraction)>.Report((string text, double progressFraction) value)
     {
       Progress = value.progressFraction;
+    }
+
+    public void ReportStatus(OperationStatus status)
+    {
     }
   }
 }

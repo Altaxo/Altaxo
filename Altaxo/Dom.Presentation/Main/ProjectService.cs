@@ -397,7 +397,7 @@ namespace Altaxo.Main
       {
         if (table.TableScript is not null)
         {
-          table.TableScript.Execute(table, new DummyBackgroundMonitor());
+          table.TableScript.Execute(table, DummyProgressReporter.Instance);
         }
       }
     }

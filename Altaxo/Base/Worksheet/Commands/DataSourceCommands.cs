@@ -30,7 +30,6 @@ using System.Text;
 using Altaxo.Data;
 using Altaxo.Gui.Worksheet.Viewing;
 using Altaxo.Main;
-using Altaxo.Main.Services;
 
 namespace Altaxo.Worksheet.Commands
 {
@@ -62,7 +61,7 @@ namespace Altaxo.Worksheet.Commands
 
       if (controllerAsSupportApplyCallback is not null)
       {
-        controllerAsSupportApplyCallback.SuccessfullyApplied += () => { sourceIsChanged = true; table.DataSource = dataSource; ExecuteDataSourceOfTable(ctrl); };
+        controllerAsSupportApplyCallback.SuccessfullyApplied += () => { sourceIsChanged = true; table.DataSource = dataSource; ExecuteDataSourceOfTableUserCancellable(ctrl); };
       }
 
       var result = Current.Gui.ShowDialog(dataSourceController, "Edit data source " + dataSource.GetType().ToString(), true);
@@ -72,7 +71,7 @@ namespace Altaxo.Worksheet.Commands
         if (sourceIsChanged) // if source is changed, revert it
         {
           table.DataSource = originalDataSource;
-          ExecuteDataSourceOfTable(ctrl);
+          ExecuteDataSourceOfTableUserCancellable(ctrl);
         }
         return;
       }
@@ -80,7 +79,7 @@ namespace Altaxo.Worksheet.Commands
       if (!sourceIsChanged) // controller might have forgotten to implement the SuccessfullyApplied event - thus we have to apply here
       {
         table.DataSource = dataSource;
-        ExecuteDataSourceOfTable(ctrl);
+        ExecuteDataSourceOfTableUserCancellable(ctrl);
       }
     }
 
@@ -88,23 +87,9 @@ namespace Altaxo.Worksheet.Commands
     /// Requeries the table data source.
     /// </summary>
     /// <param name="ctrl">The controller that controls the data table.</param>
-    public static void ExecuteDataSourceOfTable(WorksheetController ctrl)
+    public static void ExecuteDataSourceOfTableUserCancellable(WorksheetController ctrl)
     {
-      var progressMonitor = new ExternalDrivenBackgroundMonitor();
-
-      var fitTask = System.Threading.Tasks.Task.Run(() =>
-      {
-        try
-        {
-          ExecuteDataSourceOfTable(ctrl.DataTable, progressMonitor);
-        }
-        catch (OperationCanceledException)
-        {
-        }
-      }
-      );
-
-      Current.Gui.ShowTaskCancelDialog(1000, fitTask, progressMonitor);
+      Current.Gui.ExecuteAsUserCancellable(1000, (reporter) => ExecuteDataSourceOfTable(ctrl.DataTable, reporter));
     }
 
 
@@ -113,9 +98,9 @@ namespace Altaxo.Worksheet.Commands
     /// </summary>
     /// <param name="table">The table that holds the data source.</param>
     /// <param name="reporter">A reporter object that can be used to cancel, or to report the progress.</param>
-    public static string? ExecuteDataSourceOfTable(DataTable table, IProgressReporter? reporter)
+    public static string? ExecuteDataSourceOfTable(DataTable table, IProgressReporter reporter)
     {
-      return table?.UpdateTableFromTableDataSource();
+      return table?.UpdateTableFromTableDataSource(reporter);
     }
 
     /// <summary>
@@ -307,15 +292,18 @@ namespace Altaxo.Worksheet.Commands
     /// <param name="sortedTables">The data tables for which to execute the data sources. They must be sorted by dependence on the other tables (less dependent tables coming first, see <see cref="TrySortTablesForExecutionOfAllDataSources"/>).</param>
     /// <param name="reporter">The progress reporter that is showing the progress. If a reporter is provided, it is assumed that
     /// we run already on a background thread, thus, the data sources are executed in this thread.</param>
-    public static void ExecuteDataSourcesOfTables(IEnumerable<DataTable> sortedTables, IProgressReporter? reporter = null)
+    public static void ExecuteDataSourcesOfTables(IEnumerable<DataTable> sortedTables, IProgressReporter reporter)
     {
       if (sortedTables is null)
         throw new ArgumentNullException(nameof(sortedTables));
       if (!sortedTables.Any())
         return;
 
-      bool alreadyOnBackgroundThread = reporter is not null; // if the reporter is not null, we assume that we are already on a background thread
-      reporter ??= new Altaxo.Main.Services.ExternalDrivenBackgroundMonitor();
+      Altaxo.Main.Services.ExternalDrivenBackgroundMonitor? monitor = null;
+      if (reporter is null)
+      {
+        (monitor, reporter) = Altaxo.Main.Services.ExternalDrivenBackgroundMonitor.NewMonitorAndReporter();
+      }
 
 
       void ThreadAction()
@@ -328,13 +316,13 @@ namespace Altaxo.Worksheet.Commands
           idx += 1;
           if (reporter.CancellationPending)
             break;
-          reporter.ReportProgress($"Execute data source of table {t.Name}", idx / (double)count);
-          ExecuteDataSourceOfTable(t, reporter);
+          reporter.ReportProgress($"Execute data source of table {t.Name}");
+          ExecuteDataSourceOfTable(t, reporter.GetSubTask(1.0 / count));
         }
       }
 
 
-      if (alreadyOnBackgroundThread)
+      if (monitor is null)
       {
         // if the reporter is not null, we assume that we are already on a background thread
         ThreadAction();
@@ -343,7 +331,7 @@ namespace Altaxo.Worksheet.Commands
       {
         var thread = new System.Threading.Thread(ThreadAction);
         thread.Start();
-        Current.Gui.ShowBackgroundCancelDialog(1000, thread, (Altaxo.Main.Services.ExternalDrivenBackgroundMonitor)reporter);
+        Current.Gui.ShowBackgroundCancelDialog(1000, thread, monitor);
       }
     }
   }

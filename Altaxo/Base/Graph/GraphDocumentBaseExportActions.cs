@@ -125,17 +125,15 @@ namespace Altaxo.Graph
 
     private static List<object> DoExportGraphs(MultiRenameData mrData)
     {
-      var reporter = new Altaxo.Main.Services.ExternalDrivenBackgroundMonitor();
       List<object> failedItems = null!;
       StringBuilder errors = null!;
-      var thread = new System.Threading.Thread(() => (failedItems, errors) = DoExportGraphs(mrData, reporter));
-      thread.Start();
-      Current.Gui.ShowBackgroundCancelDialog(1000, thread, (Altaxo.Main.Services.ExternalDrivenBackgroundMonitor)reporter);
+      Current.Gui.ExecuteAsUserCancellable(1000, (reporter) => (failedItems, errors) = DoExportGraphs(mrData, reporter));
 
       if (errors.Length != 0)
         Current.Gui.ErrorMessageBox(errors.ToString(), "Export failed for some items");
       else
         Current.Gui.InfoMessageBox($"{mrData.ObjectsToRenameCount - failedItems.Count} graphs successfully exported.");
+
       return failedItems!;
     }
 
@@ -335,12 +333,9 @@ namespace Altaxo.Graph
 
     private static List<object> DoExportGraphsAsMiniProjects(MultiRenameData mrData)
     {
-      var reporter = new Altaxo.Main.Services.ExternalDrivenBackgroundMonitor();
       List<object> failedItems = null!;
       StringBuilder errors = null!;
-      var thread = new System.Threading.Thread(() => (failedItems, errors) = DoExportGraphsAsMiniProjects(mrData, reporter));
-      thread.Start();
-      Current.Gui.ShowBackgroundCancelDialog(1000, thread, (Altaxo.Main.Services.ExternalDrivenBackgroundMonitor)reporter);
+      Current.Gui.ExecuteAsUserCancellable(1000, (reporter) => (failedItems, errors) = DoExportGraphsAsMiniProjects(mrData, reporter));
 
       if (errors.Length != 0)
         Current.Gui.ErrorMessageBox(errors.ToString(), "Export failed for some items");

@@ -40,7 +40,6 @@ using Altaxo.Gui;
 using Altaxo.Gui.Science.Spectroscopy.Calibration;
 using Altaxo.Gui.Science.Spectroscopy.Raman;
 using Altaxo.Gui.Worksheet.Viewing;
-using Altaxo.Main.Services;
 using Altaxo.Science.Spectroscopy.Calibration;
 using Altaxo.Science.Spectroscopy.Raman;
 using Altaxo.Worksheet.Commands;
@@ -719,23 +718,12 @@ namespace Altaxo.Science.Spectroscopy
       DataColumn yPreprocessedCol,
       IReadOnlyList<(IReadOnlyList<PeakFitting.PeakDescription> PeakDescriptions, int StartOfRegion, int EndOfRegion)> fittingResult)> result = null;
 
-      var progressMonitor = new ExternalDrivenBackgroundMonitor();
-
-      var fitTask = System.Threading.Tasks.Task.Run(() =>
-      {
-        try
-        {
-          result = ExecutePeakFindingAndFitting(dataProxy, peakSearchingFittingOptions, peakTable, progressMonitor, progressMonitor.CancellationToken, progressMonitor.CancellationTokenHard);
-        }
-        catch (OperationCanceledException)
-        {
-        }
-      }
-      );
-
       // Execute peak searching & fitting
-      Current.Gui.ShowTaskCancelDialog(10000, fitTask, progressMonitor);
-      if (result is null)
+      var exception = Current.Gui.ExecuteAsUserCancellable(1000, (reporter) =>
+        result = ExecutePeakFindingAndFitting(dataProxy, peakSearchingFittingOptions, peakTable, reporter, reporter.CancellationToken, reporter.CancellationTokenHard)
+        );
+
+      if (exception is not null || result is null)
       {
         return;
       }
@@ -992,10 +980,8 @@ namespace Altaxo.Science.Spectroscopy
       else
         dataSource.SetNeonCalibration2(doc.Options, proxy);
 
-      var backgroundMonitor = new ExternalDrivenBackgroundMonitor();
-      var task = System.Threading.Tasks.Task.Run(() => dataSource.FillData(dstTable, backgroundMonitor.CancellationTokenHard));
-      Current.Gui.ShowTaskCancelDialog(5000, task, backgroundMonitor);
-      if (task.IsFaulted || task.IsCanceled)
+      var errors = dstTable.UpdateTableFromTableDataSourceAsUserCancellable();
+      if (!string.IsNullOrEmpty(errors))
       {
         Current.Gui.ErrorMessageBox("The Neon calibration task has not completed successfully, thus the calibration table may be corrupted!");
       }
@@ -1107,12 +1093,8 @@ namespace Altaxo.Science.Spectroscopy
       var dataSource = (RamanCalibrationDataSource)dstTable.DataSource;
       var proxy = new DataTableXYColumnProxy(ctrl.DataTable, x_column, y_column, null);
       dataSource.SetSiliconCalibration(doc.Options, proxy);
-
-
-      var backgroundMonitor = new ExternalDrivenBackgroundMonitor();
-      var task = System.Threading.Tasks.Task.Run(() => dataSource.FillData(dstTable, backgroundMonitor.CancellationTokenHard));
-      Current.Gui.ShowTaskCancelDialog(5000, task, backgroundMonitor);
-      if (task.IsFaulted || task.IsCanceled)
+      var errors = dstTable.UpdateTableFromTableDataSourceAsUserCancellable();
+      if (!string.IsNullOrEmpty(errors))
       {
         Current.Gui.ErrorMessageBox("The Silicon calibration task has not completed successfully, thus the calibration table may be corrupted!");
       }
@@ -1224,10 +1206,8 @@ namespace Altaxo.Science.Spectroscopy
 
       var dataSource = new YCalibrationDataSource(proxy, options, new DataSourceImportOptions());
       dstTable.DataSource = dataSource;
-      var backgroundMonitor = new ExternalDrivenBackgroundMonitor();
-      var task = System.Threading.Tasks.Task.Run(() => dataSource.FillData(dstTable, backgroundMonitor.CancellationTokenHard));
-      Current.Gui.ShowTaskCancelDialog(5000, task, backgroundMonitor);
-      if (task.IsFaulted || task.IsCanceled)
+      var errors = dstTable.UpdateTableFromTableDataSourceAsUserCancellable();
+      if (!string.IsNullOrEmpty(errors))
       {
         Current.Gui.ErrorMessageBox("The intensity calibration task has not completed successfully, thus the calibration table may be corrupted!");
       }

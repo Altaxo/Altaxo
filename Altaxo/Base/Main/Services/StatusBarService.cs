@@ -19,6 +19,7 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Threading;
 using Altaxo.Gui;
@@ -131,8 +132,8 @@ namespace Altaxo.Main.Services
 
     #region Progress Monitor
 
-    private Stack<ProgressCollector?> _waitingProgresses = new Stack<ProgressCollector?>();
-    private ProgressCollector? _currentProgress;
+    private Stack<IProgressMonitor?> _waitingProgresses = new Stack<IProgressMonitor?>();
+    private IProgressMonitor? _currentProgress;
 
     private void ThrowIfDisposed()
     {
@@ -142,26 +143,25 @@ namespace Altaxo.Main.Services
 
     public IProgressReporter CreateProgressReporter(CancellationToken cancellationToken = default(CancellationToken))
     {
-      var progress = new ProgressCollector(Current.Dispatcher.SynchronizingObject, cancellationToken, cancellationToken);
+      var progress = new ExternalDrivenBackgroundMonitor() { ShouldSetShouldReportAutomatically = true };
       AddProgress(progress);
-      return progress.ProgressReporter;
+      return progress.GetProgressReporter();
     }
 
-    public void AddProgress(ProgressCollector progress)
+    public void AddProgress(IProgressMonitor progress)
     {
       if (progress is null)
         throw new ArgumentNullException(nameof(progress));
       Current.Dispatcher.VerifyAccess();
       if (_currentProgress is not null)
       {
-        _currentProgress.ProgressMonitorDisposed -= progress_ProgressMonitorDisposed;
         _currentProgress.PropertyChanged -= EhProgress_PropertyChanged;
       }
       _waitingProgresses.Push(_currentProgress); // push even if currentProgress==null
       SetActiveProgress(progress);
     }
 
-    private void SetActiveProgress(ProgressCollector? progress)
+    private void SetActiveProgress(IProgressMonitor? progress)
     {
       Current.Dispatcher.VerifyAccess();
       _currentProgress = progress;
@@ -171,29 +171,32 @@ namespace Altaxo.Main.Services
         return;
       }
 
-      progress.ProgressMonitorDisposed += progress_ProgressMonitorDisposed;
-      if (progress.ProgressMonitorIsDisposed)
+      progress.PropertyChanged += EhProgress_PropertyChanged;
+      if (progress.IsDisposed)
       {
-        progress_ProgressMonitorDisposed(progress, EventArgs.Empty);
+        EhProgress_PropertyChanged(progress, new PropertyChangedEventArgs(nameof(IProgressMonitor.IsDisposed)));
         return;
       }
       progress.PropertyChanged += EhProgress_PropertyChanged;
     }
 
-    private void EhProgress_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+    private void EhProgress_PropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
-      if (_currentProgress is null)
-        throw new InvalidProgramException();
-      if (!(_currentProgress == sender))
-        throw new InvalidProgramException();
+      if (e.PropertyName == nameof(IProgressMonitor.IsDisposed))
+      {
+        Debug.Assert(sender == _currentProgress);
+        SetActiveProgress(_waitingProgresses.Pop()); // stack is never empty: we push null as first element
+      }
+      else
+      {
 
-      _statusBarView?.DisplayProgress(_currentProgress.TaskName, _currentProgress.Progress, _currentProgress.Status);
-    }
+        if (_currentProgress is null)
+          throw new InvalidProgramException();
+        if (!(_currentProgress == sender))
+          throw new InvalidProgramException();
 
-    private void progress_ProgressMonitorDisposed(object? sender, EventArgs e)
-    {
-      Debug.Assert(sender == _currentProgress);
-      SetActiveProgress(_waitingProgresses.Pop()); // stack is never empty: we push null as first element
+        _statusBarView?.DisplayProgress(_currentProgress.TaskName, _currentProgress.Progress, _currentProgress.Status);
+      }
     }
 
     #endregion Progress Monitor

@@ -333,12 +333,9 @@ namespace Altaxo.Scripting
       return bSucceeded;
     }
 
-    public bool ExecuteWithBackgroundDialogAndSuspendNotifications(Altaxo.Data.DataTable myTable, IReadOnlyListDictionary<string, DataTable> sourceTables)
+    public Exception? ExecuteWithBackgroundDialogAndSuspendNotifications(Altaxo.Data.DataTable myTable, IReadOnlyListDictionary<string, DataTable> sourceTables)
     {
-      var reporter = new Altaxo.Main.Services.ExternalDrivenBackgroundMonitor();
-      var t = new System.Threading.Thread(() => ExecuteWithSuspendedNotifications(myTable, sourceTables, reporter));
-      t.Start();
-      return Current.Gui.ShowBackgroundCancelDialog(1000, t, reporter);
+      return Current.Gui.ExecuteAsUserCancellable(1000, (reporter) => ExecuteWithSuspendedNotifications(myTable, sourceTables, reporter));
     }
   } // end of class
 }

@@ -201,7 +201,7 @@ namespace Altaxo.Science.Spectroscopy.Calibration
     /// </summary>
     /// <param name="destinationTable">The destination table.</param>
     /// <param name="reporter"></param>
-    public override void FillData_Unchecked(DataTable destinationTable, IProgressReporter? reporter = null)
+    public override void FillData_Unchecked(DataTable destinationTable, IProgressReporter reporter)
     {
       FillData(destinationTable, CancellationToken.None);
     }

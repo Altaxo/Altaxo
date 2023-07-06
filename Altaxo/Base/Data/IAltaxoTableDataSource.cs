@@ -47,18 +47,18 @@ namespace Altaxo.Data
     /// <param name="destinationTable">The destination table.</param>
     /// <param name="reporter">The progress reporter (can be null).</param>
     /// <returns>Null if no exception was catched during processing; otherwise an error message.</returns>
-    string? FillData(Altaxo.Data.DataTable destinationTable, IProgressReporter? reporter = null);
+    string? FillData(Altaxo.Data.DataTable destinationTable, IProgressReporter reporter);
 
 
     /// <summary>
     /// Fills (or refills) the data, without exception catching.
     /// The table script is <b>not executed</b>!
-    /// Use <see cref="FillData(DataTable, IProgressReporter?)"/> if the table script should be executed.
+    /// Use <see cref="FillData(DataTable, IProgressReporter)"/> if the table script should be executed.
     /// The data source is represented by this instance, the destination table is provided in the argument <paramref name="destinationTable"/>.
     /// </summary>
     /// <param name="destinationTable">The destination table.</param>
     /// <param name="reporter"></param>
-    void FillData_Unchecked(Altaxo.Data.DataTable destinationTable, IProgressReporter? reporter = null);
+    void FillData_Unchecked(Altaxo.Data.DataTable destinationTable, IProgressReporter reporter);
 
     IDataSourceImportOptions ImportOptions { get; set; }
 

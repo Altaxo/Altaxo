@@ -26,7 +26,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using Altaxo.Main.Services;
 using Altaxo.Scripting;
 
 namespace Altaxo.Data
@@ -190,11 +189,11 @@ namespace Altaxo.Data
     /// </summary>
     /// <param name="destinationTable">The destination table.</param>
     /// <param name="reporter"></param>
-    public override void FillData_Unchecked(DataTable destinationTable, IProgressReporter? reporter = null)
+    public override void FillData_Unchecked(DataTable destinationTable, IProgressReporter reporter)
     {
       destinationTable.DataColumns.RemoveColumnsAll();
       destinationTable.PropertyColumns.RemoveColumnsAll();
-      _processOptions.ExecuteWithoutExceptionCatching(destinationTable, _processData.Tables, new DummyBackgroundMonitor());
+      _processOptions.ExecuteWithoutExceptionCatching(destinationTable, _processData.Tables, reporter);
     }
 
     /// <summary>

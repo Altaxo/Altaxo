@@ -27,6 +27,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using Altaxo.Collections;
+using Altaxo.Main.Services;
 using Altaxo.Scripting;
 
 namespace Altaxo.Data
@@ -651,7 +652,7 @@ namespace Altaxo.Data
         // the reason is that we first want to see whether the parent is suspending us
         // if OnChange is called, the parent has not suspended us, thus we can update from the table data source
         // Disadvantage: the parent sees two change events: (i) the event with TableDataSourceChangeEventArgs, and (ii) the change event that is caused by the updated table
-        UpdateTableFromTableDataSource();
+        UpdateTableFromTableDataSource(DummyProgressReporter.Instance);
       }
       else
       {
@@ -664,7 +665,7 @@ namespace Altaxo.Data
       if (_accumulatedEventData.Contains(TableDataSourceChangedEventArgs.Empty))
       {
         _accumulatedEventData.Remove(TableDataSourceChangedEventArgs.Empty);
-        UpdateTableFromTableDataSource();
+        UpdateTableFromTableDataSource(DummyProgressReporter.Instance);
       }
     }
 
@@ -860,7 +861,21 @@ namespace Altaxo.Data
     /// to see if an error has occured.
     /// </summary>
     /// <returns>Null if no error occurs; otherwise, the error.</returns>
-    public string? UpdateTableFromTableDataSource(IProgressReporter? reporter = null)
+    public string? UpdateTableFromTableDataSourceAsUserCancellable()
+    {
+      string? error = null;
+      Current.Gui.ExecuteAsUserCancellable(1000, (reporter) => error = UpdateTableFromTableDataSource(reporter));
+      return error;
+    }
+
+    /// <summary>
+    /// Updates the data in the table from the table data source. If the options specify that
+    /// the worksheet script should be exectuted after this, it is executed then.
+    /// The table is locked during the operation, and the exceptions will be catched. Use the return result
+    /// to see if an error has occured.
+    /// </summary>
+    /// <returns>Null if no error occurs; otherwise, the error.</returns>
+    public string? UpdateTableFromTableDataSource(IProgressReporter reporter)
     {
       return _tableDataSource is null ? null : _tableDataSource.FillData(this, reporter);
     }

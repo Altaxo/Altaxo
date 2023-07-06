@@ -49,7 +49,7 @@ namespace Altaxo.Data
       if (true == Current.Gui.ShowDialog(ref src, "Edit data base source", false))
       {
         dataTable.DataSource = src;
-        var err = dataTable.UpdateTableFromTableDataSource();
+        var err = dataTable.UpdateTableFromTableDataSourceAsUserCancellable();
         if (!string.IsNullOrEmpty(err))
         {
           Current.Gui.ErrorMessageBox(err, "Import error");

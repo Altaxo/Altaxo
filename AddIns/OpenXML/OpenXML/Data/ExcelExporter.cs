@@ -90,12 +90,9 @@ namespace Altaxo.Data
 
     private static List<object> DoExportExcelFiles(MultiRenameData mrData)
     {
-      var reporter = new Altaxo.Main.Services.ExternalDrivenBackgroundMonitor();
       List<object> failedItems = null!;
       StringBuilder errors = null!;
-      var thread = new System.Threading.Thread(() => (failedItems, errors) = DoExportExcelFiles(mrData, reporter));
-      thread.Start();
-      Current.Gui.ShowBackgroundCancelDialog(1000, thread, (Altaxo.Main.Services.ExternalDrivenBackgroundMonitor)reporter);
+      Current.Gui.ExecuteAsUserCancellable(1000, (reporter) => (failedItems, errors) = DoExportExcelFiles(mrData, reporter));
 
       if (errors.Length != 0)
         Current.Gui.ErrorMessageBox(errors.ToString(), "Export failed for some items");

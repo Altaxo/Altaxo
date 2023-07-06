@@ -29,24 +29,12 @@ using System.Threading;
 namespace Altaxo
 {
   /// <summary>
-  /// Allows a thread to report text to a receiver. Additionally, the thread can look to the property <see cref="CancellationPending" />, and
-  /// if it is <c>true</c>, return in a safe way.
+  /// Allows a thread to report text to a receiver. Additionally, the thread can use the properties
+  /// <see cref="CancellationPending" />, <see cref="CancellationToken"/>, and <see cref="CancellationTokenHard"/>
+  /// to end the task in a safe way.
   /// </summary>
   public interface IProgressReporter : IProgress<double>, IProgress<string>, IProgress<(string text, double progressFraction)>, IDisposable
   {
-    /// <summary>
-    /// Sets the amount of work already done within this task.
-    /// Always uses a scale from 0 to 1 local to this progress reporter.
-    /// </summary>
-    double Progress { get; set; }
-
-    /// <summary>
-    /// Sets the operation status.
-    ///
-    /// Note: the status of the whole operation is the most severe status of all nested monitors.
-    /// The more severe value persists even if the child monitor gets disposed.
-    /// </summary>
-    OperationStatus Status { get; set; }
 
     /// <summary>
     /// Creates a nested task.
@@ -55,7 +43,7 @@ namespace Altaxo
     /// That means, this parameter is used as a scaling factor for work performed within the subtask.</param>
     /// <returns>A new progress monitor representing the sub-task.
     /// Multiple child progress monitors can be used at once; even concurrently on multiple threads.</returns>
-    IProgressReporter CreateSubTask(double workAmount);
+    IProgressReporter GetSubTask(double workAmount);
 
     /// <summary>
     /// Creates a nested task.
@@ -72,12 +60,20 @@ namespace Altaxo
     /// </param>
     /// <returns>A new progress monitor representing the sub-task.
     /// Multiple child progress monitors can be used at once; even concurrently on multiple threads.</returns>
-    IProgressReporter CreateSubTask(double workAmount, CancellationToken cancellationTokenSoft, CancellationToken cancellationTokenHard);
+    IProgressReporter GetSubTask(double workAmount, CancellationToken cancellationTokenSoft, CancellationToken cancellationTokenHard);
+
+    /// <summary>
+    /// Sets the operation status.
+    ///
+    /// Note: the status of the whole operation is the most severe status of all nested monitors.
+    /// The more severe value persists even if the child monitor gets disposed.
+    /// </summary>
+    void ReportStatus(OperationStatus status);
 
     /// <summary>
     /// Gets/Sets the name to show while the task is active.
     /// </summary>
-    string TaskName { get; set; }
+    string TaskName { get; }
 
     /// <summary>
     /// Gets the cancellation token (soft).
@@ -95,7 +91,8 @@ namespace Altaxo
 
 
     /// <summary>
-    /// True if we should report the progress now.
+    /// True if we should report the progress now. The progress can be reported at any time,
+    /// but if the evaluation of the progress is costing, then this flag should be viewed first.
     /// </summary>
     bool ShouldReportNow { get; }
 
@@ -126,16 +123,16 @@ namespace Altaxo
     /// <summary>
     /// Everything is normal.
     /// </summary>
-    Normal,
+    Normal = 0,
 
     /// <summary>
     /// There was at least one warning.
     /// </summary>
-    Warning,
+    Warning = 1,
 
     /// <summary>
     /// There was at least one error.
     /// </summary>
-    Error
+    Error = 2
   }
 }

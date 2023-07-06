@@ -24,25 +24,16 @@
 
 #nullable enable
 
+using System;
+using System.ComponentModel;
+
 namespace Altaxo.Main.Services
 {
   /// <summary>
   /// Interface for the other site of a <see cref="IProgressReporter"/>, i.e. the site that reads the progress and bring it to display.
   /// </summary>
-  public interface IProgressMonitor
+  public interface IProgressMonitor : INotifyPropertyChanged, IDisposable
   {
-    /// <summary>
-    /// Indicates that new report text has arrived that was not displayed yet.
-    /// </summary>
-    bool HasReportUpdate { get; }
-
-    /// <summary>
-    /// Gets the report update. When called, the function has to reset the <see cref="HasReportUpdate"/> flag.
-    /// If you are not able to calculate the progress [0..1], this function should return <see cref="double.NaN"/>.
-    /// </summary>
-    (string text, double progressFraction) GetReportUpdate();
-
-
     /// <summary>
     /// Sets a flag that tries to interrupt the task softly. This will typically leave an incomplete, but not corrupted result.
     /// </summary>
@@ -53,5 +44,29 @@ namespace Altaxo.Main.Services
     /// </summary>
     void SetCancellationPendingHard();
 
+    /// <summary>
+    /// Gets the progress. If the value changes, it must be notified through the <see cref="INotifyPropertyChanged"/> interface.
+    /// </summary>
+    double Progress { get; }
+
+    /// <summary>
+    /// Gets the text at level 0. If the value changes, it must be notified through the <see cref="INotifyPropertyChanged"/> interface.
+    /// </summary>
+    string Text0 { get; }
+
+    /// <summary>
+    /// Gets a flag indicating whether this instance is disposed.
+    /// </summary>
+    bool IsDisposed { get; }
+
+    /// <summary>
+    /// Gets the name of the task.
+    /// </summary>
+    string TaskName { get; }
+
+    /// <summary>
+    /// Gets the overall status of the task.
+    /// </summary>
+    OperationStatus Status { get; }
   }
 }

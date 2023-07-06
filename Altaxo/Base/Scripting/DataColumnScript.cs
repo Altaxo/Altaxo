@@ -330,12 +330,9 @@ namespace Altaxo.Scripting
     /// <returns>True if executed without exceptions, otherwise false.</returns>
     /// <remarks>If exceptions were thrown during execution, the exception messages are stored
     /// inside the column script and can be recalled by the Errors property.</remarks>
-    public bool ExecuteWithBackgroundDialogAndSuspendNotifications(Altaxo.Data.DataColumn myColumn)
+    public Exception? ExecuteWithBackgroundDialogAndSuspendNotifications(Altaxo.Data.DataColumn myColumn)
     {
-      var reporter = new Altaxo.Main.Services.ExternalDrivenBackgroundMonitor();
-      var t = new System.Threading.Thread(() => ExecuteWithSuspendedNotifications(myColumn, reporter));
-      t.Start();
-      return Current.Gui.ShowBackgroundCancelDialog(1000, t, reporter);
+      return Current.Gui.ExecuteAsUserCancellable(1000, (reporter) => ExecuteWithSuspendedNotifications(myColumn, reporter));
     }
   } // end of class DataColumnScript
 }

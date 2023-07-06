@@ -26,7 +26,6 @@
 using System;
 using System.Collections.Immutable;
 using Altaxo.Main.Services.ScriptCompilation;
-using Altaxo.Serialization;
 
 namespace Altaxo.Scripting
 {
@@ -332,12 +331,9 @@ namespace Altaxo.Scripting
       return bSucceeded;
     }
 
-    public bool ExecuteWithBackgroundDialogAndSuspendNotifications(Altaxo.Data.DataTable myTable, string[] fileNames)
+    public Exception? ExecuteWithBackgroundDialogAndSuspendNotifications(Altaxo.Data.DataTable myTable, string[] fileNames)
     {
-      var reporter = new Altaxo.Main.Services.ExternalDrivenBackgroundMonitor();
-      var t = new System.Threading.Thread(() => ExecuteWithSuspendedNotifications(myTable, fileNames, reporter));
-      t.Start();
-      return Current.Gui.ShowBackgroundCancelDialog(1000, t, reporter);
+      return Current.Gui.ExecuteAsUserCancellable(1000, (reporter) => ExecuteWithSuspendedNotifications(myTable, fileNames, reporter));
     }
 
     /// <summary>

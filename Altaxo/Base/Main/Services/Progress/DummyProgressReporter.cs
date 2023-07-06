@@ -31,8 +31,13 @@ namespace Altaxo.Main.Services
   /// Dummy implementation of <see cref="IProgressReporter"/>. Does nothing.
   /// </summary>
   /// <seealso cref="Altaxo.IProgressReporter" />
-  public class DummyBackgroundMonitor : IProgressReporter
+  public class DummyProgressReporter
+    : IProgressReporter
   {
+    public static DummyProgressReporter Instance { get; } = new DummyProgressReporter();
+
+    private DummyProgressReporter() { }
+
     #region IBackgroundMonitor Members
 
     public bool ShouldReportNow
@@ -51,7 +56,7 @@ namespace Altaxo.Main.Services
     {
     }
 
-    public IProgressReporter CreateSubTask(double workAmount)
+    public IProgressReporter GetSubTask(double workAmount)
     {
       return this;
     }
@@ -69,19 +74,23 @@ namespace Altaxo.Main.Services
     {
     }
 
-    public IProgressReporter CreateSubTask(double workAmount, CancellationToken cancellationTokenSoft, CancellationToken cancellationTokenHard)
+    public IProgressReporter GetSubTask(double workAmount, CancellationToken cancellationTokenSoft, CancellationToken cancellationTokenHard)
     {
       return this;
     }
 
     public void Report(string value)
     {
-     
+
     }
 
     public void Report((string text, double progressFraction) value)
     {
-      
+
+    }
+
+    public void ReportStatus(OperationStatus status)
+    {
     }
 
     public string ReportText

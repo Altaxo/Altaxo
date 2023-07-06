@@ -239,7 +239,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
   {
     protected override void Run(ProjectBrowseController ctrl)
     {
-      ctrl.ExecuteAllDataSources();
+      Current.Gui.ExecuteAsUserCancellable(1000, ctrl.ExecuteAllDataSources);
     }
   }
 

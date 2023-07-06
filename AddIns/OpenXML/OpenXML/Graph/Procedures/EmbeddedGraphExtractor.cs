@@ -26,8 +26,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Altaxo.Com;
 using Altaxo.Graph.Gdi;
 using DocumentFormat.OpenXml.Packaging;
@@ -47,7 +45,7 @@ namespace Altaxo.Graph.Procedures
     /// This must be a full file name, including the full path, but without extension. To this base name, a number starting from 1 up to
     /// the number of embedded projects is appended, and then the extension (.axoprj) is appended, too.</param>
     /// <returns>List of tuples that contain file name, Altaxo version, and name of the main graph of the extracted mini projects.</returns>
-    public static List<(string ProjectFileName, Version AltaxoVersion, string GraphName)> FromWordExtractAllEmbeddedGraphsAsMiniprojects(string wordSourceFileName, string destinationFileNameBaseWOExtension, Altaxo.Main.Services.ExternalDrivenBackgroundMonitor? monitor)
+    public static List<(string ProjectFileName, Version AltaxoVersion, string GraphName)> FromWordExtractAllEmbeddedGraphsAsMiniprojects(string wordSourceFileName, string destinationFileNameBaseWOExtension, IProgressReporter? monitor)
     {
       var result = new List<(string ProjectFileName, Version AltaxoVersion, string GraphName)>();
       int documentNumber = 1;
@@ -100,7 +98,7 @@ namespace Altaxo.Graph.Procedures
     /// <param name="wordSourceFileName">File name of the existing MS Word file that contains the embedded graphs.</param>
     /// <param name="wordDestinationFileName">File name of the MS Word file, to which the modified document is stored.</param>
     /// <param name="graphExportOptions">Export options for all graphs.</param>
-    public static void WordReplaceAllEmbeddedGraphsWithImages(string wordSourceFileName, string wordDestinationFileName, GraphExportOptions graphExportOptions, Altaxo.Main.Services.ExternalDrivenBackgroundMonitor? monitor)
+    public static void WordReplaceAllEmbeddedGraphsWithImages(string wordSourceFileName, string wordDestinationFileName, GraphExportOptions graphExportOptions, IProgressReporter? monitor)
     {
       uint documentNumber = 1;
 

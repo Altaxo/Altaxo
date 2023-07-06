@@ -596,7 +596,7 @@ namespace Altaxo.Worksheet.Commands
       if (Current.Gui.ShowDialog(args, "Process source tables script of " + table.Name))
       {
         table.DataSource = dataSource;
-        table.UpdateTableFromTableDataSource();
+        table.UpdateTableFromTableDataSourceAsUserCancellable();
       }
 
       Current.ProjectService.OpenOrCreateWorksheetForTable(table);
@@ -874,7 +874,7 @@ namespace Altaxo.Worksheet.Commands
   {
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
-      Altaxo.Worksheet.Commands.DataSourceCommands.ExecuteDataSourceOfTable(ctrl);
+      Altaxo.Worksheet.Commands.DataSourceCommands.ExecuteDataSourceOfTableUserCancellable(ctrl);
     }
   }
 

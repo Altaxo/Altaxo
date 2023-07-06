@@ -1,6 +1,5 @@
 ﻿using System;
 using System.ComponentModel;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Altaxo.Main.Services;
@@ -10,7 +9,6 @@ namespace Altaxo.Gui.Common
   public class TaskCancelController : INotifyPropertyChanged, IDisposable
   {
     Task _task;
-    IProgressMonitor _monitor;
     System.Threading.Timer _timer;
     int _delayMilliseconds;
 
@@ -23,7 +21,7 @@ namespace Altaxo.Gui.Common
     public TaskCancelController(Task task, IProgressMonitor monitor, int delayMilliseconds)
     {
       _task = task;
-      _monitor = monitor;
+      Monitor = monitor;
       _delayMilliseconds = delayMilliseconds;
       CmdCancel = new RelayCommand(EhCancel);
       CmdInterrupt = new RelayCommand(EhInterrupt);
@@ -51,7 +49,7 @@ namespace Altaxo.Gui.Common
 
     private void EhInterrupt()
     {
-      _monitor.SetCancellationPendingHard();
+      Monitor.SetCancellationPendingHard();
       _interruptRequested = true;
       OnPropertyChanged(nameof(IsCancelVisible));
       OnPropertyChanged(nameof(IsInterruptVisible));
@@ -60,7 +58,7 @@ namespace Altaxo.Gui.Common
 
     private void EhCancel()
     {
-      _monitor.SetCancellationPendingSoft();
+      Monitor.SetCancellationPendingSoft();
       _cancellationRequested = true;
       OnPropertyChanged(nameof(IsCancelVisible));
       OnPropertyChanged(nameof(IsInterruptVisible));
@@ -68,6 +66,8 @@ namespace Altaxo.Gui.Common
     }
 
     #region Bindings
+
+    public IProgressMonitor Monitor { get; init; }
 
     public ICommand CmdCancel { get; }
 
@@ -133,7 +133,7 @@ namespace Altaxo.Gui.Common
     {
       get
       {
-        if (_monitor is IExternalDrivenBackgroundMonitor edbm)
+        if (Monitor is IExternalDrivenBackgroundMonitor edbm)
         {
           edbm.SetShouldReportNow();
         }
@@ -156,7 +156,7 @@ namespace Altaxo.Gui.Common
     {
       get
       {
-        if (_monitor is IExternalDrivenBackgroundMonitor edbm)
+        if (Monitor is IExternalDrivenBackgroundMonitor edbm)
         {
           edbm.SetShouldReportNow();
         }
@@ -190,10 +190,6 @@ namespace Altaxo.Gui.Common
       }
       else
       {
-        if (_monitor.HasReportUpdate)
-        {
-          (ProgressText, ProgressValue) = _monitor.GetReportUpdate();
-        }
       }
     }
 

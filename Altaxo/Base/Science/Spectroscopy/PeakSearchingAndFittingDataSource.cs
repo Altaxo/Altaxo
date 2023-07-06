@@ -240,7 +240,7 @@ namespace Altaxo.Science.Spectroscopy
     /// </summary>
     /// <param name="destinationTable">The destination table.</param>
     /// <param name="reporter"></param>
-    public override void FillData_Unchecked(DataTable destinationTable, IProgressReporter? reporter = null)
+    public override void FillData_Unchecked(DataTable destinationTable, IProgressReporter reporter)
     {
       var peakFindingAndFittingOptions = _processOptions.GetPeakSearchingAndFittingOptions();
       SpectroscopyCommands.ExecutePeakFindingAndFitting(_processData, peakFindingAndFittingOptions, destinationTable, reporter, reporter?.CancellationToken ?? CancellationToken.None, reporter?.CancellationTokenHard ?? CancellationToken.None);

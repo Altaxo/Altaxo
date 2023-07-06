@@ -410,7 +410,7 @@ return System.Windows.Forms.DialogResult.OK == dlgview.ShowDialog(MainWindow);
       if (!string.IsNullOrEmpty(options.SelectedPath))
         dlg.SelectedPath = options.SelectedPath;
 
-      if(dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+      if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
       {
         options.SelectedPath = dlg.SelectedPath;
         return true;
@@ -424,33 +424,33 @@ return System.Windows.Forms.DialogResult.OK == dlgview.ShowDialog(MainWindow);
 
     #region Clipboard
 
-      /* old WinForm Clipboard wrappers
+    /* old WinForm Clipboard wrappers
 
-  private class ClipDataWrapper : System.Windows.Forms.DataObject, IClipboardSetDataObject
-  {
-      public void SetCommaSeparatedValues(string text) { this.SetData(System.Windows.Forms.DataFormats.CommaSeparatedValue, text); }
-  }
+private class ClipDataWrapper : System.Windows.Forms.DataObject, IClipboardSetDataObject
+{
+    public void SetCommaSeparatedValues(string text) { this.SetData(System.Windows.Forms.DataFormats.CommaSeparatedValue, text); }
+}
 
-  private class ClipGetDataWrapper : IClipboardGetDataObject
-  {
-      System.Windows.Forms.DataObject _dao;
+private class ClipGetDataWrapper : IClipboardGetDataObject
+{
+    System.Windows.Forms.DataObject _dao;
 
-      public ClipGetDataWrapper(System.Windows.Forms.DataObject value)
-      {
-          _dao = value;
-      }
+    public ClipGetDataWrapper(System.Windows.Forms.DataObject value)
+    {
+        _dao = value;
+    }
 
-      public string[] GetFormats() { return _dao.GetFormats(); }
-      public bool GetDataPresent(string format) { return _dao.GetDataPresent(format); }
-      public bool GetDataPresent(System.Type type) { return _dao.GetDataPresent(type); }
-      public object GetData(string format) { return _dao.GetData(format); }
-      public object GetData(System.Type type) { return _dao.GetData(type); }
-      public bool ContainsFileDropList() { return _dao.ContainsFileDropList(); }
-      public System.Collections.Specialized.StringCollection GetFileDropList() { return _dao.GetFileDropList(); }
-      public bool ContainsImage() { return _dao.ContainsImage(); }
-      public System.Drawing.Image GetImage() { return _dao.GetImage(); }
-  }
-  */
+    public string[] GetFormats() { return _dao.GetFormats(); }
+    public bool GetDataPresent(string format) { return _dao.GetDataPresent(format); }
+    public bool GetDataPresent(System.Type type) { return _dao.GetDataPresent(type); }
+    public object GetData(string format) { return _dao.GetData(format); }
+    public object GetData(System.Type type) { return _dao.GetData(type); }
+    public bool ContainsFileDropList() { return _dao.ContainsFileDropList(); }
+    public System.Collections.Specialized.StringCollection GetFileDropList() { return _dao.GetFileDropList(); }
+    public bool ContainsImage() { return _dao.ContainsImage(); }
+    public System.Drawing.Image GetImage() { return _dao.GetImage(); }
+}
+*/
 
     private class WpfClipSetDataWrapper : IClipboardSetDataObject
     {
@@ -702,6 +702,35 @@ return System.Windows.Forms.DialogResult.OK == dlgview.ShowDialog(MainWindow);
       }
       return false;
     }
+
+    public override Exception? ExecuteAsUserCancellable(int millisecondsDelay, Action<IProgressReporter> action)
+    {
+      var (monitor, reporter) = ExternalDrivenBackgroundMonitor.NewMonitorAndReporter();
+      Exception? exception = null;
+      var threadStart = new ThreadStart(() =>
+        {
+          try
+          {
+            action(reporter);
+          }
+          catch (Exception ex)
+          {
+            exception = ex;
+          }
+        }
+        );
+      var thread = new Thread(threadStart);
+      thread.Start();
+      ShowBackgroundCancelDialog(millisecondsDelay, thread, monitor);
+
+      if (exception is not null && exception is not OperationCanceledException)
+      {
+        ErrorMessageBox(exception.ToString(), "An exception occured");
+      }
+
+      return exception;
+    }
+
 
     public override bool ShowTaskCancelDialog(int millisecondsDelay, System.Threading.Tasks.Task task, IExternalDrivenBackgroundMonitor monitor)
     {

@@ -185,7 +185,7 @@ namespace Altaxo.Calc.Regression.Multivariate
     /// </summary>
     /// <param name="destinationTable">The destination table.</param>
     /// <param name="reporter"></param>
-    public override void FillData_Unchecked(DataTable destinationTable, IProgressReporter reporter = null)
+    public override void FillData_Unchecked(DataTable destinationTable, IProgressReporter reporter)
     {
       var modelTable = _processData.TableWithModel.Document;
       if (modelTable is null)

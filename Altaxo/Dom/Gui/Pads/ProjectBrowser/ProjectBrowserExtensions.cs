@@ -285,7 +285,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
         destinationTable.Name = tableName;
         Current.Project.DataTableCollection.Add(destinationTable);
         destinationTable.DataSource = dataSource;
-        destinationTable.UpdateTableFromTableDataSource();
+        destinationTable.UpdateTableFromTableDataSourceAsUserCancellable();
         Current.ProjectService.ShowDocumentView(destinationTable);
       }
     }
@@ -297,7 +297,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
     /// is executed later.
     /// </summary>
     /// <param name="ctrl">The control.</param>
-    public static void ExecuteAllDataSources(this ProjectBrowseController ctrl)
+    public static void ExecuteAllDataSources(this ProjectBrowseController ctrl, IProgressReporter reporter)
     {
       // find all selected tables with data sources in it
       var dataTables = ctrl
@@ -307,7 +307,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 
       if (DataSourceCommands.TrySortTablesForExecutionOfAllDataSources(dataTables, out var sortedTables, out var errorMessage))
       {
-        DataSourceCommands.ExecuteDataSourcesOfTables(sortedTables);
+        DataSourceCommands.ExecuteDataSourcesOfTables(sortedTables, reporter);
       }
       else
       {

@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2023 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -24,268 +24,261 @@
 
 #nullable enable
 using System;
+using System.ComponentModel;
 using System.Threading;
 
 namespace Altaxo.Main.Services
 {
   /// <summary>
-  /// Monitor, which gives the request to report the progress by calling <see cref="SetShouldReportNow"/>.
+  /// Background monitor that can be externally driven (e.g. by a timer) to set <see cref="ShouldReportNow"/>.
+  /// 
   /// </summary>
   /// <seealso cref="Altaxo.Main.Services.IExternalDrivenBackgroundMonitor" />
-  public class ExternalDrivenBackgroundMonitor : IExternalDrivenBackgroundMonitor, IDisposable
+  public partial class ExternalDrivenBackgroundMonitor : IExternalDrivenBackgroundMonitor
   {
+    const int NumberOfSupportedTextLevels = 3;
+
+    // Predefined events in order to avoid too much of allocating
+    static readonly PropertyChangedEventArgs _progressChangedEventArg = new PropertyChangedEventArgs(nameof(Progress));
+    static readonly PropertyChangedEventArgs _progressAndETAChangedEventArg = new PropertyChangedEventArgs(nameof(ProgressAndETA));
+    static readonly PropertyChangedEventArgs _text0ChangedEventArg = new PropertyChangedEventArgs(nameof(Text0));
+    static readonly PropertyChangedEventArgs _text1ChangedEventArg = new PropertyChangedEventArgs(nameof(Text1));
+    static readonly PropertyChangedEventArgs _text2ChangedEventArg = new PropertyChangedEventArgs(nameof(Text2));
+    static readonly PropertyChangedEventArgs _disposedChangedEventArg = new PropertyChangedEventArgs(nameof(IsDisposed));
+    static readonly PropertyChangedEventArgs _statusChangedEventArg = new PropertyChangedEventArgs(nameof(Status));
+
+    private CancellationTokenSource _cancellationTokenSourceSoft;
+    private CancellationTokenSource _cancellationTokenSourceHard;
+    private DateTimeOffset _startTimeUtc = DateTimeOffset.UtcNow;
+    public event PropertyChangedEventHandler? PropertyChanged;
+
+
+    public string TaskName { get; init; } = nameof(ExternalDrivenBackgroundMonitor);
+
+    #region ShouldReport
+
+    /// <summary>
+    /// If true, <see cref="ShouldReportNow"/> is set automatically every time one of the properties
+    /// (<see cref="Progress"/>, <see cref="Text0"/>, <see cref="Text1"/>, ..) is read.
+    /// </summary>
+    public bool ShouldSetShouldReportAutomatically { get; init; }
+
     protected bool _shouldReport;
-    private string _reportText;
-    private bool _hasFreshReportText;
-    private double _progressFraction = double.NaN;
-    private OperationStatus _operationStatus;
-    private string _taskName;
-    private Lazy<CancellationTokenSource> _cancellationTokenSourceSoft;
-    private Lazy<CancellationTokenSource> _cancellationTokenSourceHard;
 
-    public ExternalDrivenBackgroundMonitor()
-    {
-      _reportText = string.Empty;
-      _taskName = nameof(ExternalDrivenBackgroundMonitor);
-      _cancellationTokenSourceSoft = new Lazy<CancellationTokenSource>(() => new CancellationTokenSource());
-      _cancellationTokenSourceHard = new Lazy<CancellationTokenSource>(() => new CancellationTokenSource());
-    }
+    public bool ShouldReportNow => _shouldReport;
 
-    #region IBackgroundMonitor Members
 
-    public virtual bool ShouldReportNow
-    {
-      get
-      {
-        return _shouldReport;
-      }
-    }
 
     public virtual void SetShouldReportNow()
     {
       _shouldReport = true;
     }
 
-    public void ReportProgress(string text)
+    #endregion
+
+    public ExternalDrivenBackgroundMonitor()
     {
-      _shouldReport = false;
-      _reportText = text;
-      _hasFreshReportText = true;
+      _cancellationTokenSourceSoft = new CancellationTokenSource();
+      _cancellationTokenSourceHard = new CancellationTokenSource();
     }
 
-    void System.IProgress<string>.Report(string text) => ReportProgress(text);
-    void System.IProgress<(string text, double progressFraction)>.Report((string text, double progressFraction) tuple) => ReportProgress(tuple.text, tuple.progressFraction);
-
-    
-
-
-    public void ReportProgress(string text, double progressFraction)
+    public static (ExternalDrivenBackgroundMonitor monitor, IProgressReporter reporter) NewMonitorAndReporter()
     {
-      _shouldReport = false;
-      _reportText = text;
-      _hasFreshReportText = true;
-      _progressFraction = progressFraction;
+      var monitor = new ExternalDrivenBackgroundMonitor();
+      var reporter = monitor.GetProgressReporter();
+      return (monitor, reporter);
     }
 
-    public bool HasReportUpdate
-    {
-      get { return _hasFreshReportText; }
-    }
+    #region Bindings
 
-    public (string text, double progressFraction) GetReportUpdate()
-    {
-      _hasFreshReportText = false;
-      return (_reportText, _progressFraction);
-    }
+    private bool _isDisposed;
 
-    public double GetProgressFraction()
+    public bool IsDisposed
     {
-      return _progressFraction;
-    }
-
-    public bool CancellationPending
-    {
-      get
+      get => _isDisposed;
+      protected set
       {
-        return (_cancellationTokenSourceSoft.IsValueCreated && _cancellationTokenSourceSoft.Value.IsCancellationRequested) ||
-                (_cancellationTokenSourceHard.IsValueCreated && _cancellationTokenSourceHard.Value.IsCancellationRequested);
+        if (!(_isDisposed == value))
+        {
+          _isDisposed = value;
+          PropertyChanged?.Invoke(this, _disposedChangedEventArg);
+        }
       }
     }
 
-    public double Progress
-    {
-      get { return _progressFraction; }
-      set { _progressFraction = value; }
-    }
+    private OperationStatus _status;
 
     public OperationStatus Status
     {
-      get { return _operationStatus; }
-      set { _operationStatus = value; }
-    }
-
-    public string TaskName
-    {
-      get { return _taskName; }
-      set { _taskName = value; }
-    }
-
-    public CancellationToken CancellationToken
-    {
-      get
+      get => _status;
+      protected set
       {
-        return _cancellationTokenSourceSoft.Value.Token;
-      }
-    }
-
-    public CancellationToken CancellationTokenHard
-    {
-      get
-      {
-        return _cancellationTokenSourceHard.Value.Token;
-      }
-    }
-
-    public void SetCancellationPending()
-    {
-      if(_cancellationTokenSourceHard.IsValueCreated)
-      {
-        // we do the hard cancellation only if either there is not soft token source created,
-        // or if the soft token source is already cancelled
-        if (!_cancellationTokenSourceSoft.IsValueCreated || _cancellationTokenSourceSoft.Value.IsCancellationRequested)
+        value = (OperationStatus)Math.Max((byte)_status, (byte)value);
+        if (!(_status == value))
         {
-          _cancellationTokenSourceHard.Value.Cancel();
+          _status = value;
+          PropertyChanged?.Invoke(this, _statusChangedEventArg);
         }
       }
-      if (_cancellationTokenSourceSoft.IsValueCreated)
+    }
+
+
+    private double _progress;
+
+    public double Progress
+    {
+      get
       {
-        _cancellationTokenSourceSoft.Value.Cancel();
+        if (ShouldSetShouldReportAutomatically)
+          _shouldReport = true;
+
+        return _progress;
+      }
+      set
+      {
+        if (!(_progress == value))
+        {
+          _progress = value;
+          PropertyChanged?.Invoke(this, _progressChangedEventArg);
+          PropertyChanged?.Invoke(this, _progressAndETAChangedEventArg);
+        }
       }
     }
 
-    void IProgressMonitor.SetCancellationPendingSoft()
+    public string ProgressAndETA
     {
-      _cancellationTokenSourceSoft.Value.Cancel();
+      get
+      {
+        var progress = _progress;
+        if (progress > 0)
+        {
+          var elapsed = DateTimeOffset.UtcNow - _startTimeUtc;
+          var endTime = (_startTimeUtc + TimeSpan.FromSeconds(elapsed.TotalSeconds / progress)).ToLocalTime();
+          return $"Progress: {(100 * _progress):F1}%  ETA: {endTime:F}";
+        }
+        else
+        {
+          return $"Progress: {(100 * _progress):F1}%";
+        }
+      }
     }
 
-    void IProgressMonitor.SetCancellationPendingHard()
+    private string _text0 = "An operation is not yet completed. If you feel that the operation takes unusual long time, you can interrupt it.";
+
+    public string Text0
     {
-      _cancellationTokenSourceHard.Value.Cancel();
+      get
+      {
+        if (ShouldSetShouldReportAutomatically)
+          _shouldReport = true;
+
+        return _text0;
+      }
+      set
+      {
+        if (!(_text0 == value))
+        {
+          _text0 = value;
+          PropertyChanged?.Invoke(this, _text0ChangedEventArg);
+        }
+      }
     }
 
-    public IProgressReporter CreateSubTask(double workAmount)
+    private string _text1 = string.Empty;
+
+    public string Text1
     {
-      throw new NotImplementedException();
+      get
+      {
+        if (ShouldSetShouldReportAutomatically)
+          _shouldReport = true;
+
+        return _text1;
+      }
+
+      set
+      {
+        if (!(_text1 == value))
+        {
+          _text1 = value;
+          PropertyChanged?.Invoke(this, _text1ChangedEventArg);
+        }
+      }
     }
 
-    public IProgressReporter CreateSubTask(double workAmount, CancellationToken cancellationTokenSoft, CancellationToken cancellationTokenHard)
-    {
-      throw new NotImplementedException();
-    }
+    private string _text2 = string.Empty;
 
-    public void Report(double value)
+    public string Text2
     {
-      throw new NotImplementedException();
-    }
+      get
+      {
+        if (ShouldSetShouldReportAutomatically)
+          _shouldReport = true;
 
-    public void Dispose()
-    {
-      throw new NotImplementedException();
+        return _text2;
+      }
+
+      set
+      {
+        if (!(_text2 == value))
+        {
+          _text2 = value;
+          PropertyChanged?.Invoke(this, _text2ChangedEventArg);
+        }
+      }
     }
 
     #endregion
 
-
-    private class SubTask : IProgressReporter
+    private void EhSubTaskReport(Reporter subTask2, int level, double progress, string? text, OperationStatus status)
     {
-      private IProgressReporter _parent;
-      private CancellationToken? _cancellationToken;
-      private CancellationToken? _cancellationTokenHard;
-      private double _progress;
-      private double _progressOffset;
-      private double _progressSpan;
-
-      public SubTask(IProgressReporter parent, double workSpan)
+      Progress = progress;
+      Status = status;
+      if (text is not null)
       {
-        _parent = parent;
-        _progressOffset = parent.Progress;
-        _progressSpan = workSpan;
-      }
-
-      public SubTask(IProgressReporter parent, double workSpan, CancellationToken cancellationTokenSoft, CancellationToken cancellationTokenHard)
-      {
-        _parent = parent;
-        _progressOffset = parent.Progress;
-        _progressSpan = workSpan;
-        _cancellationToken = cancellationTokenSoft;
-        _cancellationTokenHard = cancellationTokenHard;
-      }
-
-
-      public double Progress {
-        get => _progress;
-        set
+        switch (level)
         {
-          _progress = value;
-          _parent.Report(_progressOffset + _progressSpan * value);
+          case 0:
+            Text0 = text;
+            Text1 = string.Empty;
+            Text2 = string.Empty;
+            break;
+          case 1:
+            Text1 = text;
+            Text2 = string.Empty;
+            break;
+          case 2:
+            Text2 = text;
+            break;
         }
       }
-      public OperationStatus Status
-      {
-        get => _parent.Status;
-        set
-        {
-          if ((int)value > (int)(_parent.Status))
-            _parent.Status =value;
-        }
-      }
-      public string TaskName
-      {
-        get => _parent.TaskName;
-        set => _parent.TaskName = value; }
-
-      public CancellationToken CancellationToken => _cancellationToken ?? _parent.CancellationToken;
-      public CancellationToken CancellationTokenHard => _cancellationTokenHard ?? _parent.CancellationTokenHard;
-
-      public bool ShouldReportNow => _parent.ShouldReportNow;
-
-      public bool CancellationPending => _parent.CancellationPending;
-
-      public IProgressReporter CreateSubTask(double workAmount)
-      {
-        return new SubTask(this, workAmount);
-      }
-
-      public IProgressReporter CreateSubTask(double workAmount, CancellationToken cancellationTokenSoft, CancellationToken cancellationTokenHard)
-      {
-        return new SubTask(this, workAmount, cancellationTokenSoft, cancellationTokenHard);
-      }
-
-      public void Dispose()
-      {
-        _parent = null!;
-      }
-
-      public void Report(double value)
-      {
-        Progress = value;
-      }
-
-      public void ReportProgress(string text)
-      {
-        _parent.ReportProgress(text);
-      }
-
-      public void ReportProgress(string text, double progressValue)
-      {
-        Progress = progressValue;
-        _parent.ReportProgress(text);
-      }
-
-      void System.IProgress<string>.Report(string text) => ReportProgress(text);
-      void System.IProgress<(string text, double progressFraction)>.Report((string text, double progressFraction) tuple) => ReportProgress(tuple.text, tuple.progressFraction);
-
+      SetShouldReportNow();
     }
 
+    public void SetCancellationPendingHard()
+    {
+      _cancellationTokenSourceSoft.Cancel();
+      _cancellationTokenSourceHard.Cancel();
+    }
+
+    public void SetCancellationPendingSoft()
+    {
+      _cancellationTokenSourceSoft.Cancel();
+    }
+
+    public IProgressReporter GetProgressReporter()
+    {
+      _startTimeUtc = DateTime.UtcNow;
+      return new Reporter(this, null, 0, 1, this.GetType().Name, _cancellationTokenSourceSoft.Token, _cancellationTokenSourceHard.Token);
+    }
+
+    public void Dispose()
+    {
+      IsDisposed = true;
+      _cancellationTokenSourceSoft.Dispose();
+      _cancellationTokenSourceHard.Dispose();
+      GC.SuppressFinalize(this);
+    }
   }
+
 }

@@ -35,20 +35,10 @@ namespace Altaxo.Main.Services
   {
     private DateTime _timeBegin = DateTime.Now;
 
-    public override bool ShouldReportNow
-    {
-      get
-      {
-        return _shouldReport;
-      }
-    }
-
     public override void SetShouldReportNow()
     {
       _shouldReport = true;
-
-      if (_shouldReport)
-        ReportProgress("Busy ... " + (DateTime.Now - _timeBegin).ToString());
+      Text0 = "Busy ... " + (DateTime.Now - _timeBegin).ToString();
     }
   }
 }

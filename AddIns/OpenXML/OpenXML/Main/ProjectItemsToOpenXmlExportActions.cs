@@ -98,12 +98,9 @@ namespace Altaxo.Main
 
     private static List<object> DoExportMicrosoftFiles(MultiRenameData mrData)
     {
-      var reporter = new Altaxo.Main.Services.ExternalDrivenBackgroundMonitor();
       List<object> failedItems = null!;
       StringBuilder errors = null!;
-      var thread = new System.Threading.Thread(() => (failedItems, errors) = DoExportMicrosoftFiles(mrData, reporter));
-      thread.Start();
-      Current.Gui.ShowBackgroundCancelDialog(1000, thread, (Altaxo.Main.Services.ExternalDrivenBackgroundMonitor)reporter);
+      Current.Gui.ExecuteAsUserCancellable(1000, (reporter) => (failedItems, errors) = DoExportMicrosoftFiles(mrData, reporter));
 
       if (errors.Length != 0)
         Current.Gui.ErrorMessageBox(errors.ToString(), "Export failed for some items");

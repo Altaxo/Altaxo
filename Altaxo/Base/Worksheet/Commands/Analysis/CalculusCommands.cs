@@ -233,7 +233,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
         };
         Current.Project.DataTableCollection.Add(table);
         table.DataSource = dataSource;
-        var err = table.UpdateTableFromTableDataSource();
+        var err = table.UpdateTableFromTableDataSourceAsUserCancellable();
         if (!string.IsNullOrEmpty(err))
         {
           Current.Gui.ErrorMessageBox(err, "Error in Prony analysis");
@@ -267,7 +267,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
         };
         Current.Project.DataTableCollection.Add(table);
         table.DataSource = dataSource;
-        var err = table.UpdateTableFromTableDataSource();
+        var err = table.UpdateTableFromTableDataSourceAsUserCancellable();
         Current.ProjectService.CreateNewWorksheet(table);
         if (!string.IsNullOrEmpty(err))
         {
@@ -351,7 +351,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
         };
         Current.Project.DataTableCollection.Add(table);
         table.DataSource = dataSource;
-        var err = table.UpdateTableFromTableDataSource();
+        var err = table.UpdateTableFromTableDataSourceAsUserCancellable();
         Current.ProjectService.CreateNewWorksheet(table);
         if (!string.IsNullOrEmpty(err))
         {
@@ -390,7 +390,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
         };
         Current.Project.DataTableCollection.Add(table);
         table.DataSource = dataSource;
-        var err = table.UpdateTableFromTableDataSource();
+        var err = table.UpdateTableFromTableDataSourceAsUserCancellable();
         Current.ProjectService.CreateNewWorksheet(table);
         if (!string.IsNullOrEmpty(err))
         {

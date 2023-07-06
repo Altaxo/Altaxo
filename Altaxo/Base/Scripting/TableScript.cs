@@ -315,12 +315,9 @@ namespace Altaxo.Scripting
       return bSucceeded;
     }
 
-    public bool ExecuteWithBackgroundDialogAndSuspendNotifications(Altaxo.Data.DataTable myTable)
+    public Exception? ExecuteWithBackgroundDialogAndSuspendNotifications(Altaxo.Data.DataTable myTable)
     {
-      var reporter = new Altaxo.Main.Services.ExternalDrivenBackgroundMonitor();
-      var t = new System.Threading.Thread(() => ExecuteWithSuspendedNotifications(myTable, reporter));
-      t.Start();
-      return Current.Gui.ShowBackgroundCancelDialog(1000, t, reporter);
+      return Current.Gui.ExecuteAsUserCancellable(1000, (reporter) => ExecuteWithSuspendedNotifications(myTable, reporter));
     }
   } // end of class TableScript
 }

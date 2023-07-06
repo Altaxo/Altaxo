@@ -50,13 +50,16 @@ namespace Altaxo.Data
 
     private int _fillDataEntranceCounter;
 
-    public abstract void FillData_Unchecked(Altaxo.Data.DataTable destinationTable, IProgressReporter? reporter = null);
+    public abstract void FillData_Unchecked(Altaxo.Data.DataTable destinationTable, IProgressReporter reporter);
+
     public abstract IDataSourceImportOptions ImportOptions { get; set; }
 
-    public string? FillData(DataTable destinationTable, IProgressReporter? reporter = null)
+    public string? FillData(DataTable destinationTable, IProgressReporter reporter)
     {
       if (destinationTable is null)
         throw new ArgumentNullException(nameof(destinationTable));
+      if (reporter is null)
+        throw new ArgumentNullException(nameof(reporter));
 
       string? err = null;
 
@@ -69,12 +72,14 @@ namespace Altaxo.Data
           {
             try
             {
-              FillData_Unchecked(destinationTable, reporter);
+              bool useTableScript = ImportOptions.ExecuteTableScriptAfterImport && destinationTable.TableScript is not null;
+
+              FillData_Unchecked(destinationTable, useTableScript ? reporter.GetSubTask(0.5) : reporter);
 
               try
               {
-                if (ImportOptions.ExecuteTableScriptAfterImport && destinationTable.TableScript is not null)
-                  destinationTable.TableScript.ExecuteWithoutExceptionCatching(destinationTable, reporter ?? new Main.Services.DummyBackgroundMonitor());
+                if (ImportOptions.ExecuteTableScriptAfterImport && destinationTable.TableScript is { } tableScript)
+                  tableScript.ExecuteWithoutExceptionCatching(destinationTable, reporter.GetSubTask(0.5));
               }
               catch (Exception ex)
               {
@@ -82,6 +87,8 @@ namespace Altaxo.Data
                 destinationTable.Notes.WriteLine(err);
                 Current.Console.WriteLine($"{DateTime.Now} - Exception during execution of the table script (after execution of the data source) {GetType().Name} of table '{destinationTable.Name}': {ex.Message}");
               }
+
+              reporter?.Report(1); // report this task as finished
             }
             catch (Exception ex)
             {

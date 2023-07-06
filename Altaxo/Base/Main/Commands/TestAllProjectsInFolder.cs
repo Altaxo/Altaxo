@@ -24,7 +24,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Threading;
 using Altaxo.Main.Services;
@@ -224,11 +223,10 @@ namespace Altaxo.Main.Commands
       if (!Current.Gui.ShowDialog(ref testOptions, "Test Altaxo project files on your disk", false))
         return;
 
-      var monitor = new Altaxo.Main.Services.ExternalDrivenBackgroundMonitor();
-      Current.Gui.ShowBackgroundCancelDialog(10, () => InternalVerifyOpeningOfDocumentsWithoutExceptionStart(testOptions, monitor), monitor);
+      Current.Gui.ExecuteAsUserCancellable(10, (reporter) => InternalVerifyOpeningOfDocumentsWithoutExceptionStart(testOptions, reporter));
     }
 
-    private static void InternalVerifyOpeningOfDocumentsWithoutExceptionStart(TestAllProjectsInFolderOptions testOptions, Altaxo.Main.Services.ExternalDrivenBackgroundMonitor monitor)
+    private static void InternalVerifyOpeningOfDocumentsWithoutExceptionStart(TestAllProjectsInFolderOptions testOptions, IProgressReporter monitor)
     {
       var reporter = new Reporter(testOptions, Current.Console);
       var oldOutputService = Current.GetRequiredService<Services.ITextOutputService>();
@@ -273,7 +271,7 @@ namespace Altaxo.Main.Commands
         _reporter.WriteLine("Project changed: Type: {0}; fileName: {1}", e.ProjectEventKind, e.NewName);
     }
 
-    private void InternalVerifyOpeningOfDocumentsWithoutException(TestAllProjectsInFolderOptions testOptions, Altaxo.Main.Services.ExternalDrivenBackgroundMonitor monitor, UnhandledExceptionHandler unhandledExceptionHandler, Reporter reporter)
+    private void InternalVerifyOpeningOfDocumentsWithoutException(TestAllProjectsInFolderOptions testOptions, IProgressReporter monitor, UnhandledExceptionHandler unhandledExceptionHandler, Reporter reporter)
     {
       monitor.ReportProgress("Searching Altaxo project files ...", 0);
       var path = testOptions.FolderPaths;
