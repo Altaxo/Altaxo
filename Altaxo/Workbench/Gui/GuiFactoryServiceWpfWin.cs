@@ -693,7 +693,8 @@ private class ClipGetDataWrapper : IClipboardGetDataObject
 
       if (thread.IsAlive)
       {
-        var dlg = new BackgroundCancelDialogWpf(thread, monitor);
+        var controller = new TaskCancelController(thread, monitor, 0);
+        var dlg = new TaskCancelDialog() { DataContext = controller };
         if (thread.IsAlive)
         {
           dlg.Owner = MainWindowWpf;
@@ -732,6 +733,14 @@ private class ClipGetDataWrapper : IClipboardGetDataObject
     }
 
 
+    /// <summary>
+    /// Shows the task cancel dialog.
+    /// </summary>
+    /// <param name="millisecondsDelay">The milliseconds delay, before the dialog is shown.</param>
+    /// <param name="task">The task (must be already running).</param>
+    /// <param name="monitor">The background monitor.</param>
+    /// <returns></returns>
+    /// <exception cref="System.ApplicationException">Is thrown when is call does not come from the Gui thread.</exception>
     public override bool ShowTaskCancelDialog(int millisecondsDelay, System.Threading.Tasks.Task task, IExternalDrivenBackgroundMonitor monitor)
     {
       if (Current.Dispatcher.InvokeRequired)
@@ -742,7 +751,8 @@ private class ClipGetDataWrapper : IClipboardGetDataObject
 
       if (!task.IsCompleted)
       {
-        var dlg = new TaskCancelDialog() { DataContext = new TaskCancelController(task, monitor, 0) };
+        var controller = new TaskCancelController(task, monitor, 0);
+        var dlg = new TaskCancelDialog() { DataContext = controller };
         if (!task.IsCompleted)
         {
           dlg.Owner = MainWindowWpf;

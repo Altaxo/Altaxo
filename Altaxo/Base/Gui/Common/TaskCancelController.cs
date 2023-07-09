@@ -1,86 +1,137 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Altaxo.Main.Services;
 
 namespace Altaxo.Gui.Common
 {
+  /// <summary>
+  /// Controls the background execution of a thread or a task.
+  /// </summary>
+  /// <remarks>
+  /// There is a property <see cref="IsWindowVisible"/>, which is set to true after a given amount of time,
+  /// and then set to false when the window should close.
+  /// There is another property <see cref="IsExecutionInProgress"/> that indicates if currently a task/thread is executed.
+  /// The order a task or thread is stopped is this:
+  /// 1. Signal the CancellationTokenSoft
+  /// 2. Signal the CancellationTokenHard
+  /// 3. Interrupt the thread (only works for threads)
+  /// 4. Abort the thread (only works for threads)
+  /// </remarks>
   public class TaskCancelController : INotifyPropertyChanged, IDisposable
   {
-    Task _task;
-    System.Threading.Timer _timer;
-    int _delayMilliseconds;
-
-    bool _cancellationRequested;
-    bool _interruptRequested;
-
-    public event PropertyChangedEventHandler? PropertyChanged;
-    public void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-
-    public TaskCancelController(Task task, IProgressMonitor monitor, int delayMilliseconds)
+    protected enum State
     {
-      _task = task;
-      Monitor = monitor;
-      _delayMilliseconds = delayMilliseconds;
-      CmdCancel = new RelayCommand(EhCancel);
+      Running = 0,
+      CancellationSoftRequested = 1,
+      CancellationHardRequested = 2,
+      InterruptRequested = 3,
+      AbortRequested = 4,
+      AbandonRequested = 5,
+    };
+
+    protected Timer? _timer;
+    protected int _delayMilliseconds;
+    Task? _task;
+    Thread? _thread;
+    public event PropertyChangedEventHandler? PropertyChanged;
+
+    public TaskCancelController()
+    {
+      CmdCancellationSoft = new RelayCommand(EhCancellationSoft);
+      CmdCancellationHard = new RelayCommand(EhCancellationHard);
       CmdInterrupt = new RelayCommand(EhInterrupt);
       CmdAbort = new RelayCommand(EhAbort);
+      CmdAbandon = new RelayCommand(EhAbandon);
+    }
+
+    public TaskCancelController(Thread thread, IProgressMonitor monitor, int delayMilliseconds)
+      : this()
+    {
+      _thread = thread;
+      IsExecutionInProgress = true;
+
+      Monitor = monitor;
+      _delayMilliseconds = delayMilliseconds;
       _timer = new System.Threading.Timer(EhTimer, null, 100, 100);
       if (_delayMilliseconds <= 0)
         IsWindowVisible = true;
     }
 
-
-
-    private void EhAbort()
+    public TaskCancelController(Task task, IProgressMonitor monitor, int delayMilliseconds)
+      : this()
     {
-      // there is no way to abort a task
-      if (true == Current.Gui.YesNoMessageBox(
-          "A task can not be aborted!\r\n" +
-          "The only possibility is to abandon the task and let it run freely, without to wait for it to end.\r\n" +
-          "Of course, this can have unwanted side effects.\r\n" +
-          "Do you really want to abandon the task?",
-          "Abandon the task?", false))
-      {
-        IsCompleted = true;
-      }
-    }
+      _task = task;
+      IsExecutionInProgress = true;
 
-    private void EhInterrupt()
-    {
-      Monitor.SetCancellationPendingHard();
-      _interruptRequested = true;
-      OnPropertyChanged(nameof(IsCancelVisible));
-      OnPropertyChanged(nameof(IsInterruptVisible));
-      OnPropertyChanged(nameof(IsAbortVisible));
-    }
-
-    private void EhCancel()
-    {
-      Monitor.SetCancellationPendingSoft();
-      _cancellationRequested = true;
-      OnPropertyChanged(nameof(IsCancelVisible));
-      OnPropertyChanged(nameof(IsInterruptVisible));
-      OnPropertyChanged(nameof(IsAbortVisible));
+      Monitor = monitor;
+      _delayMilliseconds = delayMilliseconds;
+      _timer = new Timer(EhTimer, null, 100, 100);
+      if (_delayMilliseconds <= 0)
+        IsWindowVisible = true;
     }
 
     #region Bindings
 
-    public IProgressMonitor Monitor { get; init; }
+    public bool WasCancelledByUser => _stateOfCancelling != State.Running;
 
-    public ICommand CmdCancel { get; }
+    public ICommand CmdCancellationSoft { get; }
+
+    public ICommand CmdCancellationHard { get; }
 
     public ICommand CmdInterrupt { get; }
 
     public ICommand CmdAbort { get; }
 
-    public bool IsCancelVisible => !_cancellationRequested && !_interruptRequested;
-    public bool IsInterruptVisible => _cancellationRequested && !_interruptRequested;
-    public bool IsAbortVisible => _cancellationRequested && _interruptRequested;
+    public ICommand CmdAbandon { get; }
+
+    private State _stateOfCancelling;
+
+    protected State StateOfCancelling
+    {
+      get => _stateOfCancelling;
+      set
+      {
+        if (!(_stateOfCancelling == value))
+        {
+          _stateOfCancelling = value;
+          OnPropertyChanged(nameof(StateOfCancelling));
+
+          OnPropertyChanged(nameof(IsCancellationSoftVisible));
+          OnPropertyChanged(nameof(IsCancellationHardVisible));
+          OnPropertyChanged(nameof(IsInterruptVisible));
+          OnPropertyChanged(nameof(IsAbortVisible));
+          OnPropertyChanged(nameof(IsAbandonVisible));
+        }
+      }
+    }
+
+    public bool IsCancellationSoftVisible => _stateOfCancelling == State.Running;
+    public bool IsCancellationHardVisible => _stateOfCancelling == State.CancellationSoftRequested;
+    public bool IsInterruptVisible => IsThread ? _stateOfCancelling == State.CancellationHardRequested : false;
+    public bool IsAbortVisible => IsThread ? _stateOfCancelling == State.InterruptRequested : false;
+    public bool IsAbandonVisible => ((int)_stateOfCancelling) >= (IsThread ? (int)State.AbortRequested : (int)State.CancellationHardRequested);
 
 
-    private string _title = "Waiting for task completion ...";
+    private IProgressMonitor? _monitor;
+
+    public IProgressMonitor? Monitor
+    {
+      get => _monitor;
+      set
+      {
+        if (!(_monitor == value))
+        {
+          _monitor = value;
+          OnPropertyChanged(nameof(Monitor));
+        }
+      }
+    }
+
+
+    private string _title = "Waiting for completion ...";
 
     public string Title
     {
@@ -95,23 +146,6 @@ namespace Altaxo.Gui.Common
       }
     }
 
-
-    bool _isCompleted;
-
-    public bool IsCompleted
-    {
-      get => _isCompleted;
-      set
-      {
-        if (!(_isCompleted == value) && value is true)
-        {
-          _isCompleted = value;
-          _timer?.Dispose();
-          OnPropertyChanged(nameof(IsCompleted));
-        }
-      }
-    }
-
     bool _isWindowVisible;
 
     public bool IsWindowVisible
@@ -119,7 +153,7 @@ namespace Altaxo.Gui.Common
       get => _isWindowVisible;
       set
       {
-        if (!(_isWindowVisible == value) && value is true)
+        if (!(_isWindowVisible == value))
         {
           _isWindowVisible = value;
           OnPropertyChanged(nameof(IsWindowVisible));
@@ -173,29 +207,176 @@ namespace Altaxo.Gui.Common
       }
     }
 
+    private bool _isExecutionInProgress;
+
+    public bool IsExecutionInProgress
+    {
+      get => _isExecutionInProgress;
+      set
+      {
+        if (!(_isExecutionInProgress == value))
+        {
+          _isExecutionInProgress = value;
+          OnPropertyChanged(nameof(IsExecutionInProgress));
+        }
+      }
+    }
+
+
     #endregion
 
-    private void EhTimer(object? state)
+    protected bool IsThread => _thread is not null;
+
+    public void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+
+    protected void CreateTimer()
     {
-      _delayMilliseconds -= 100;
-
-      if (_delayMilliseconds <= 0)
+      if (_timer is null)
       {
-        IsWindowVisible = true;
+        _timer = new System.Threading.Timer(EhTimer, null, 100, 100);
       }
+    }
 
-      if (_task.IsCompleted)
+    private void EhCancellationSoft()
+    {
+      Monitor?.SetCancellationPendingSoft();
+      StateOfCancelling = State.CancellationSoftRequested;
+    }
+
+    private void EhCancellationHard()
+    {
+      Monitor?.SetCancellationPendingHard();
+      StateOfCancelling = State.CancellationHardRequested;
+    }
+
+    protected void EhInterrupt()
+    {
+      if (_thread is not null)
       {
-        IsCompleted = true;
+        StateOfCancelling = State.InterruptRequested;
+
+        if (_thread.IsAlive)
+        {
+          Monitor?.SetCancellationPendingHard();
+          _thread.Interrupt();
+        }
       }
       else
       {
+        StateOfCancelling = State.AbortRequested;
+      }
+    }
+
+    protected void EhAbort()
+    {
+      if (_thread is not null)
+      {
+        StateOfCancelling = State.AbortRequested;
+
+        if (_thread.IsAlive)
+        {
+          _thread.Abort();
+        }
+      }
+      else
+      {
+        StateOfCancelling = State.AbortRequested;
+      }
+    }
+
+    protected void EhAbandon()
+    {
+      // there is no way to abort a task
+      if (true == Current.Gui.YesNoMessageBox(
+          "There is no further way to stop this task!\r\n" +
+          "The only possibility is to abandon the task and let it run freely, without waiting for it to end.\r\n" +
+          "Of course, this can have unwanted side effects.\r\n" +
+          "Do you really want to abandon the task?",
+          "Abandon the task?", false))
+      {
+        _timer?.Dispose();
+        _timer = null;
+        _thread = null;
+        _task = null;
+        StateOfCancelling = State.AbandonRequested;
+        IsExecutionInProgress = false; // Order is critical here: first IsExecutionInProgress set to false, because on closing of the windows this is checked for false
+        IsWindowVisible = false;
+      }
+    }
+
+    private bool HasTaskOrThreadCompleted()
+    {
+
+      if (_thread is not null)
+        return !_thread.IsAlive;
+      else if (_task is not null)
+        return _task.IsCompleted;
+      else
+        return true;
+    }
+
+
+
+    private void EhTimer(object? state)
+    {
+      _delayMilliseconds = Math.Max(0, _delayMilliseconds - 100);
+      if (_delayMilliseconds <= 0)
+      {
+        IsWindowVisible = true;
+
+        // if the monitor is externally driven, we give it a trigger every 100 ms
+        if (Monitor is IExternalDrivenBackgroundMonitor m)
+        {
+          m.SetShouldReportNow();
+        }
+      }
+
+      if (HasTaskOrThreadCompleted())
+      {
+        _timer?.Dispose();
+        _timer = null;
+        IsExecutionInProgress = false; // Order is critical here: first IsExecutionInProgress set to false, because on closing of the windows this is checked for false
+        IsWindowVisible = false;
       }
     }
 
     public void Dispose()
     {
-      IsCompleted = true;
+      _timer?.Dispose();
+      _timer = null;
+      IsExecutionInProgress = false; // Order is critical here: first IsExecutionInProgress set to false, because on closing of the windows this is checked for false
+      IsWindowVisible = false;
+      Monitor?.Dispose();
+    }
+
+    public void StartExecution(Action<IProgressReporter> action, int delayInMilliseconds)
+    {
+      var (monitor, reporter) = ExternalDrivenBackgroundMonitor.NewMonitorAndReporter();
+      Exception? exception = null;
+      var thread = new Thread(() =>
+        {
+          try
+          {
+            action(reporter);
+          }
+          catch (Exception ex)
+          {
+            exception = ex;
+          }
+        }
+      );
+      thread.Start();
+      _thread = thread;
+      StateOfCancelling = State.Running;
+      IsExecutionInProgress = true;
+      Monitor = monitor;
+
+      _delayMilliseconds = delayInMilliseconds;
+      CreateTimer();
+      if (_delayMilliseconds <= 0)
+      {
+        IsWindowVisible = true;
+      }
     }
   }
 }

@@ -1,0 +1,55 @@
+﻿<UserControl x:Class="Altaxo.Gui.Common.TaskCancelControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Altaxo.Gui.Common;assembly=AltaxoBase" 
+             xmlns:axogcc="clr-namespace:Altaxo.Gui.Common.Converters" 
+             d:DataContext="{d:DesignInstance Type=local:TaskCancelController}"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="4" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="8" />
+      <RowDefinition Height="*" />
+      <RowDefinition Height="16" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="8" />
+    </Grid.RowDefinitions>
+    <ProgressBar Grid.Row="0" Value="{Binding Monitor.Progress}" MinHeight="16" Margin="4" Minimum="0" Maximum="1"/>
+    <TextBlock Grid.Row="2" Text="{Binding Monitor.ProgressAndETA}" Margin="5"/>
+    <StackPanel Grid.Row="4" Orientation="Vertical" MinHeight="120">
+      <TextBlock Text="{Binding Monitor.Text0}" Margin="5,0,0,0" TextWrapping="Wrap" />
+      <TextBlock Text="{Binding Monitor.Text1}" Margin="21,0,0,0" TextWrapping="Wrap" />
+      <TextBlock Text="{Binding Monitor.Text2}" Margin="37,0,0,0" TextWrapping="Wrap" />
+    </StackPanel>
+    <Button Grid.Row="6" 
+            Command="{Binding CmdAbandon}"
+            Visibility="{Binding IsAbandonVisible, Converter={x:Static axogcc:FalseToVisibilityHiddenConverter.Instance}}"
+            Content="Abandon task.." 
+            HorizontalAlignment="Center"  />
+    <Button Grid.Row="6" 
+            Command="{Binding CmdAbort}"
+            Visibility="{Binding IsAbortVisible, Converter={x:Static axogcc:FalseToVisibilityHiddenConverter.Instance}}"
+            Content="Abort" 
+            HorizontalAlignment="Center"  />
+    <Button Grid.Row="6" 
+            Command="{Binding CmdInterrupt}"
+            Visibility="{Binding IsInterruptVisible, Converter={x:Static axogcc:FalseToVisibilityHiddenConverter.Instance}}"
+            Content="Interrupt"
+            HorizontalAlignment="Center"   />
+    <Button Grid.Row="6" 
+            Command="{Binding CmdCancellationHard}"
+            Visibility="{Binding IsCancellationHardVisible, Converter={x:Static axogcc:FalseToVisibilityHiddenConverter.Instance}}"
+            Content="Cancel (hard)"
+            HorizontalAlignment="Center"/>
+    <Button Grid.Row="6" 
+            Command="{Binding CmdCancellationSoft}"
+            Visibility="{Binding IsCancellationSoftVisible, Converter={x:Static axogcc:FalseToVisibilityHiddenConverter.Instance}}"
+            Content="Cancel"
+            HorizontalAlignment="Center"/>
+  </Grid>
+</UserControl>

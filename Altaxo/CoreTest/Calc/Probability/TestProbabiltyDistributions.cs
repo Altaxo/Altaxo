@@ -76,16 +76,26 @@ namespace AltaxoTest.Calc.Probability
       AssertEx.Equal(_a[5], d2, Math.Abs(_a[5] * tolerance), "Unexpected result of PDF secondQuantile");
 
       int len = 1000000;
-      int suml = 0;
+      var arr = new double[len];
       for (int i = 0; i < len; i++)
       {
-        if (_dist.NextDouble() < _a[2])
-          suml++;
+        arr[i] = _dist.NextDouble();
       }
-      double p1_tested = suml / (double)len;
-      double confidence = BinomialDistribution.CDF(suml, firstProb, len);
-      AssertEx.Greater(confidence, 0.01, string.Format("Unexpected result of distribution of generated values : outside (left) the 1% confidence limits, expected p={0}, actual p={1}, confidence={2}", firstProb, p1_tested, confidence));
-      AssertEx.Less(confidence, 0.999, string.Format("Unexpected result of distribution of generated values : outside (right) the 1% confidence limits, expected p={0}, actual p={1}, confidence={2}", firstProb, p1_tested, confidence));
+      Array.Sort(arr);
+
+      // Perform a Kolmogorov-Smirnov Test
+      double f_prev = 0;
+      double d_kolmo = 0;
+      for (int i = 0; i < len; i++)
+      {
+        var f_curr = (i + 1) / (double)len;
+        var f_theo = _dist.CDF(arr[i]);
+        d_kolmo = Math.Max(d_kolmo, Math.Max(Math.Abs(f_theo - f_prev), Math.Abs(f_theo - f_curr)));
+        f_prev = f_curr;
+      }
+
+      var significance = DiscDistTester.Probability_KolmogorovSmirnov(d_kolmo * (Math.Sqrt(len) + 0.12 + 0.11 / Math.Sqrt(len)));
+      AssertEx.Less(0.05, significance);
     }
   }
 
@@ -666,16 +676,46 @@ new double[]{1.5, 1.75, 0.762628880480291575561159, 0.424377229596168368465272, 
       AssertEx.Equal(_a[4], d1, Math.Abs(_a[4] * tolerance), "Unexpected result of PDF");
 
       int len = 1000000;
-      int suml = 0;
+      var arr = new double[len];
       for (int i = 0; i < len; i++)
       {
-        if (_dist.NextDouble() <= _a[2])
-          suml++;
+        arr[i] = _dist.NextDouble();
       }
-      double p1_tested = suml / (double)len;
-      double confidence = BinomialDistribution.CDF(suml, _a[3], len);
-      AssertEx.Greater(confidence, 0.01, $"Unexpected result of distribution of generated values : outside (left) the 1% confidence limits, expected p={_a[3]}, actual p={p1_tested}, confidence={confidence}");
-      AssertEx.Less(confidence, 0.999, $"Unexpected result of distribution of generated values : outside (right) the 1% confidence limits, expected p={_a[3]}, actual p={p1_tested}, confidence={confidence}");
+      Array.Sort(arr);
+
+      // Perform a Kolmogorov-Smirnov Test
+      double f_prev = 0;
+      double d_kolmo = 0;
+      for (int i = 0; i < len; i++)
+      {
+        var f_curr = (i + 1) / (double)len;
+        var f_theo = _dist.CDF(arr[i]);
+        d_kolmo = Math.Max(d_kolmo, Math.Max(Math.Abs(f_theo - f_prev), Math.Abs(f_theo - f_curr)));
+      }
+
+      var significance = Probability_KolmogorovSmirnov(d_kolmo * (Math.Sqrt(len) + 0.12 + 0.11 / Math.Sqrt(len)));
+      AssertEx.Less(0.99, significance);
+    }
+
+    public static double Probability_KolmogorovSmirnov(double alam)
+    {
+      const double EPS1 = 0.01;
+      const double EPS2 = 1E-8;
+
+      double sum = 0;
+      double termbf = 0;
+      double fac = 2;
+      var a2 = -2 * alam * alam;
+      for (int i = 1; i <= 100; ++i)
+      {
+        var term = fac * Math.Exp(a2 * i * i);
+        sum += term;
+        if (Math.Abs(term) <= EPS1 * termbf || Math.Abs(term) <= EPS2 * sum)
+          return sum;
+        fac = -fac;
+        termbf = Math.Abs(term);
+      }
+      return 1; // if it has not converged
     }
   }
 

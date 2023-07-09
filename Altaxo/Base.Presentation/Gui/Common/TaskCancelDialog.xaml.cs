@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Windows;
 
 namespace Altaxo.Gui.Common
@@ -16,6 +17,21 @@ namespace Altaxo.Gui.Common
     public void EhCloseWindow(object? sender, EventArgs args)
     {
       this.Close();
+    }
+
+    protected override void OnClosing(CancelEventArgs e)
+    {
+      if (DataContext is TaskCancelController tc && tc.IsExecutionInProgress)
+      {
+        e.Cancel = true;
+      }
+      else
+      {
+        (DataContext as IDisposable)?.Dispose();
+        DataContext = null;
+      }
+
+      base.OnClosing(e);
     }
   }
 }

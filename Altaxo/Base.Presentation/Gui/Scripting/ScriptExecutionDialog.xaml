@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 						 xmlns:AltaxoCommon="clr-namespace:Altaxo.Gui.Common"
+						 xmlns:axogcc="clr-namespace:Altaxo.Gui.Common.Converters"
 							Closing="EhWindowClosing"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
@@ -25,6 +26,10 @@
 			<Button Grid.Row="2" Margin="10" Name="_btUpdate" Click="EhUpdate">Update</Button>
 			<Button Grid.Row="4" Margin="10" Name="_btCancel" Click="EhCancel">Cancel</Button>
 		</Grid>
-		<AltaxoCommon:BackgroundCancelControl x:Name="_backgroundCancelControl" Grid.ColumnSpan="2" Visibility="Hidden"  ExecutionFinished="EhScriptExecutionFinished" StartDelayExpired="EhScriptExecutionStartDelayExpired" />
+
+    <AltaxoCommon:TaskCancelControl x:Name="_backgroundCancelControl" 
+                                    Grid.ColumnSpan="2" 
+                                    Visibility="{Binding IsWindowVisible, Converter={x:Static axogcc:FalseToVisibilityHiddenConverter.Instance}}"
+                                    Background="White"/>
 	</Grid>
 </Window>

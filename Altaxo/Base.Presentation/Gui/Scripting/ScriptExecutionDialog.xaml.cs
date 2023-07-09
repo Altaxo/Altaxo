@@ -23,12 +23,10 @@
 #endregion Copyright
 
 #nullable disable warnings
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
+using Altaxo.Gui.Common;
 
 namespace Altaxo.Gui.Scripting
 {
@@ -39,6 +37,8 @@ namespace Altaxo.Gui.Scripting
   {
     private IScriptController _controller;
 
+    TaskCancelController _taskCancelController;
+
     public ScriptExecutionDialog()
     {
       InitializeComponent();
@@ -47,7 +47,12 @@ namespace Altaxo.Gui.Scripting
     public ScriptExecutionDialog(IScriptController controller)
     {
       _controller = controller;
+
       InitializeComponent();
+
+      _taskCancelController = new TaskCancelController();
+      _taskCancelController.PropertyChanged += EhTaskCancelController_PropertyChanged;
+      _backgroundCancelControl.DataContext = _taskCancelController;
 
       if (_controller is not null && _controller.ViewObject is not null)
       {
@@ -55,23 +60,25 @@ namespace Altaxo.Gui.Scripting
       }
     }
 
+
+
     private void EhOk(object sender, RoutedEventArgs e)
     {
-      if (_backgroundCancelControl.ExecutionInProgress)
+      if (_taskCancelController.IsExecutionInProgress)
         return;
 
       if (_controller is not null)
       {
         if (_controller.Apply(true))
         {
-          _backgroundCancelControl.StartExecution(_controller.Execute, 1000);
+          _taskCancelController.StartExecution(_controller.Execute, 1000);
         }
       }
     }
 
     private void EhCompile(object sender, RoutedEventArgs e)
     {
-      if (_backgroundCancelControl.ExecutionInProgress)
+      if (_taskCancelController.IsExecutionInProgress)
         return;
 
       if (_controller is not null)
@@ -80,7 +87,7 @@ namespace Altaxo.Gui.Scripting
 
     private void EhUpdate(object sender, RoutedEventArgs e)
     {
-      if (_backgroundCancelControl.ExecutionInProgress)
+      if (_taskCancelController.IsExecutionInProgress)
         return;
 
       if (_controller is not null)
@@ -91,7 +98,7 @@ namespace Altaxo.Gui.Scripting
 
     private void EhCancel(object sender, RoutedEventArgs e)
     {
-      if (_backgroundCancelControl.ExecutionInProgress)
+      if (_taskCancelController.IsExecutionInProgress)
         return;
 
       DialogResult = false;
@@ -99,32 +106,30 @@ namespace Altaxo.Gui.Scripting
 
     private void EhWindowClosing(object sender, System.ComponentModel.CancelEventArgs e)
     {
-      if (_backgroundCancelControl.ExecutionInProgress)
+      if (_taskCancelController.IsExecutionInProgress)
+      {
         e.Cancel = true;
-    }
-
-    private void EhScriptExecutionFinished(bool obj)
-    {
-      ShowBackgroundCancelControl(false);
-
-      if (!_controller.HasExecutionErrors())
-        DialogResult = true;
-    }
-
-    private void EhScriptExecutionStartDelayExpired()
-    {
-      ShowBackgroundCancelControl(true);
-    }
-
-    private void ShowBackgroundCancelControl(bool showIt)
-    {
-      if (showIt)
-      {
-        _backgroundCancelControl.Visibility = System.Windows.Visibility.Visible;
       }
-      else
+    }
+
+    private void EhTaskCancelController_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+      // if the script execution has finished
+      if (e.PropertyName == nameof(TaskCancelController.IsExecutionInProgress) &&
+          _taskCancelController.IsExecutionInProgress == false)
       {
-        _backgroundCancelControl.Visibility = System.Windows.Visibility.Hidden;
+        Current.Dispatcher.InvokeIfRequired(
+          () =>
+          {
+
+            if (!_controller.HasExecutionErrors())
+            {
+              if (this.CheckAccess())
+                DialogResult = true;
+              else
+                Dispatcher.BeginInvoke(() => DialogResult = true);
+            }
+          });
       }
     }
   }

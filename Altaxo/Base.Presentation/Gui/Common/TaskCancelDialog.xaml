@@ -3,35 +3,13 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Altaxo.Gui.Common;assembly=AltaxoBase"
-        xmlns:axogcc="clr-namespace:Altaxo.Gui.Common.Converters"
+        xmlns:local="clr-namespace:Altaxo.Gui.Common"
+        xmlns:localM="clr-namespace:Altaxo.Gui.Common;assembly=AltaxoBase"
         xmlns:axogb="clr-namespace:Altaxo.Gui.Behaviors"
-        d:DataContext="{d:DesignInstance Type=local:TaskCancelController}"
+        d:DataContext="{d:DesignInstance Type=localM:TaskCancelController}"
         mc:Ignorable="d"
         Title="{Binding Title}" Height="250" Width="800"
-        axogb:BoolTriggersAction.TriggerValue="{Binding IsCompleted}" axogb:BoolTriggersAction.WhenFalseToTrue="EhCloseWindow"
+        axogb:BoolTriggersAction.TriggerValue="{Binding IsWindowVisible}" axogb:BoolTriggersAction.WhenTrueToFalse="EhCloseWindow"
         >
-  <Grid>
-    <Grid.RowDefinitions>
-      <RowDefinition Height="Auto" />
-      <RowDefinition Height="4" />
-      <RowDefinition Height="Auto" />
-      <RowDefinition Height="8" />
-      <RowDefinition Height="*" />
-      <RowDefinition Height="16" />
-      <RowDefinition Height="Auto" />
-      <RowDefinition Height="8" />
-    </Grid.RowDefinitions>
-    <ProgressBar Grid.Row="0" Value="{Binding Monitor.Progress}" MinHeight="16" Margin="4" Minimum="0" Maximum="1"/>
-    <TextBlock Grid.Row="2" Text="{Binding Monitor.ProgressAndETA}" Margin="5"/>
-    <StackPanel Grid.Row="4" Orientation="Vertical" MinHeight="120">
-      <TextBlock Text="{Binding Monitor.Text0}" Margin="5,0,0,0" TextWrapping="Wrap" />
-      <TextBlock Text="{Binding Monitor.Text1}" Margin="21,0,0,0" TextWrapping="Wrap" />
-      <TextBlock Text="{Binding Monitor.Text2}" Margin="37,0,0,0" TextWrapping="Wrap" />
-    </StackPanel>
-    <Button Grid.Row="6" HorizontalAlignment="Center" Content="Abort" Command="{Binding CmdAbort}" Visibility="{Binding IsAbortVisible, Converter={x:Static axogcc:FalseToVisibilityHiddenConverter.Instance}}"/>
-    <Button Grid.Row="6" HorizontalAlignment="Center" Content="Interrupt" Command="{Binding CmdInterrupt}" Visibility="{Binding IsInterruptVisible, Converter={x:Static axogcc:FalseToVisibilityHiddenConverter.Instance}}"/>
-    <Button Grid.Row="6" HorizontalAlignment="Center" Content="Cancel" Command="{Binding CmdCancel}" Visibility="{Binding IsCancelVisible, Converter={x:Static axogcc:FalseToVisibilityHiddenConverter.Instance}}"/>
-  </Grid>
-
+  <local:TaskCancelControl/>
 </Window>
