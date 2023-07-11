@@ -24,8 +24,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Altaxo.Calc.Regression
 {
@@ -74,12 +72,28 @@ namespace Altaxo.Calc.Regression
     /// Adds data points to the statistics.
     /// </summary>
     /// <param name="values">The data points to add.</param>
-    public void AddRange(IEnumerable<double> values)
+    /// <returns>This instance.</returns>
+    public QuickStatistics AddRange(IEnumerable<double> values)
     {
       foreach (var value in values)
       {
         Add(value);
       }
+      return this;
+    }
+
+    /// <summary>
+    /// Adds data points to the statistics.
+    /// </summary>
+    /// <param name="values">The data points to add.</param>
+    /// <returns>This instance.</returns>
+    public QuickStatistics AddRange(ReadOnlySpan<double> values)
+    {
+      foreach (var value in values)
+      {
+        Add(value);
+      }
+      return this;
     }
 
     /// <summary>

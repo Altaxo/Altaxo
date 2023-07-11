@@ -36,13 +36,18 @@ namespace Altaxo.Data
     private int _rowIdx;
 
     /// <summary>
+    /// Gets a value indicating that is instance is not initialized.
+    /// </summary>
+    public bool IsEmpty => _col is null;
+
+    /// <summary>
     /// Constructor
     /// </summary>
     /// <param name="col">The underlying <see cref="DataColumnCollection"/>.</param>
     /// <param name="rowIndex">Index of the row of the data column collection.</param>
     public DataRow(DataColumnCollection col, int rowIndex)
     {
-      _col = col;
+      _col = col ?? throw new System.ArgumentNullException(nameof(col));
       _rowIdx = rowIndex;
     }
 

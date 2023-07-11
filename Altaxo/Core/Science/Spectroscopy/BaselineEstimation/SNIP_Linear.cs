@@ -22,7 +22,6 @@
 
 #endregion Copyright
 
-using System;
 
 namespace Altaxo.Science.Spectroscopy.BaselineEstimation
 {
@@ -79,49 +78,7 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
 
 
 
-    /// <summary>
-    /// Executes the algorithm with the provided spectrum.
-    /// </summary>
-    /// <param name="xArray">The x values of the spectral values.</param>
-    /// <param name="yArray">The array of spectral values.</param>
-    /// <param name="result">The location where the baseline corrected spectrum should be stored.</param>
-    /// <returns>The evaluated background of the provided spectrum.</returns>
-    public override void Execute(ReadOnlySpan<double> xArray, ReadOnlySpan<double> yArray, Span<double> result)
-    {
-      const double sqrt2 = 1.41421356237;
-      var srcY = new double[yArray.Length];
-      var tmpY = new double[yArray.Length];
-      yArray.CopyTo(srcY);
 
-      int last = srcY.Length - 1;
-      var w = _isHalfWidthInXUnits ? Math.Max(1, (int)(_halfWidth / (xArray[1] - xArray[0]))) : Math.Max(1, (int)_halfWidth);
-
-      for (int iStage = _numberOfRegularStages - 1; ; --iStage)
-      {
-        if (iStage < 0)
-        {
-          w = Math.Min(w - 1, (int)(w / sqrt2));
-          if (w < 1)
-          {
-            break;
-          }
-        }
-
-        for (int i = 0; i <= last; i++)
-        {
-          var iLeft = i - w;
-          var iRight = i + w;
-          var yLeft = iLeft >= 0 ? srcY[iLeft] : double.PositiveInfinity;
-          var yRight = iRight <= last ? srcY[iRight] : double.PositiveInfinity;
-          var yMid = 0.5 * (yLeft + yRight);
-          tmpY[i] = Math.Min(yMid, srcY[i]);
-        }
-
-        (tmpY, srcY) = (srcY, tmpY);
-      }
-
-      srcY.CopyTo(result);
-    }
 
     public override string ToString()
     {

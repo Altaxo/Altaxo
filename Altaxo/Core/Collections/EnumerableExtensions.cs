@@ -769,5 +769,52 @@ namespace Altaxo.Collections
         yield return start + i;
       }
     }
+
+    /// <summary>
+    /// Gets an enumeration where the elements are given by start + i * step, i=[0, count-1].
+    /// </summary>
+    /// <param name="start">The start value.</param>
+    /// <param name="step">The step value.</param>
+    /// <param name="count">The number of values in the enumeration.</param>
+    /// <returns></returns>
+    public static IEnumerable<double> EquallySpacedByStartStepCount(double start, double step, int count)
+    {
+      for (int i = 0; i < count; ++i)
+      {
+        yield return start + i * step;
+      }
+    }
+
+    /// <summary>
+    /// Gets the differences x[i+1] - x[i], for i = 0 .. x.Count-2.
+    /// </summary>
+    /// <param name="x">The x enumeration.</param>
+    /// <returns>The differences x[i+1] - x[i], for i = 0 .. x.Count-2.</returns>
+    public static IEnumerable<double> GetDifferences(this IEnumerable<double> x)
+    {
+      double? xprev = null;
+      foreach (var xnext in x)
+      {
+        if (xprev.HasValue)
+        {
+          yield return xnext - xprev.Value;
+        }
+        xprev = xnext;
+      }
+    }
+
+    /// <summary>
+    /// Gets the differences x[i+1] - x[i], for i = 0 .. x.Count-2.
+    /// </summary>
+    /// <param name="x">The x enumeration.</param>
+    /// <returns>The differences x[i+1] - x[i], for i = 0 .. x.Count-2.</returns>
+    public static IEnumerable<double> GetDifferences(this ReadOnlyMemory<double> x)
+    {
+      for (int i = 1; i < x.Length; ++i)
+      {
+        yield return x.Span[i] - x.Span[i - 1];
+      }
+    }
+
   }
 }

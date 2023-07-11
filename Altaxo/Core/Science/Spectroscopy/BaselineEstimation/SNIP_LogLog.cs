@@ -77,57 +77,44 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
     }
     #endregion
 
-
     /// <summary>
     /// Executes the algorithm with the provided spectrum.
     /// </summary>
     /// <param name="xArray">The x values of the spectral values.</param>
-    /// <param name="yArray">The array of spectral values. All values y[i] in the spectrum must be y[i] &gt; 0</param>
+    /// <param name="yArray">The array of spectral values.</param>
+    /// <param name="result">The location where the baseline corrected spectrum should be stored.</param>
     /// <returns>The evaluated background of the provided spectrum.</returns>
     public override void Execute(ReadOnlySpan<double> xArray, ReadOnlySpan<double> yArray, Span<double> result)
     {
-      const double sqrt2 = 1.41421356237;
-
-      // Log-Log the data
       var srcY = new double[yArray.Length];
       var tmpY = new double[yArray.Length];
+
+      // Forward transform the data
+      var yStatistics = new Altaxo.Calc.Regression.QuickStatistics();
+      double yOffset = yStatistics.Min - 1;
       for (int i = 0; i < yArray.Length; i++)
       {
-        srcY[i] = Math.Log(Math.Log(yArray[i] + 1) + 1);
+        srcY[i] = Math.Log(Math.Log(yArray[i] - yOffset) + 1);
       }
 
 
-      int last = srcY.Length - 1;
-      var w = _isHalfWidthInXUnits ? Math.Max(1, (int)(_halfWidth / (xArray[1] - xArray[0]))) : Math.Max(1, (int)_halfWidth);
-
-      for (int iStage = _numberOfRegularStages - 1; ; --iStage)
+      var stat = GetStatisticsOfInterPointDistance(xArray);
+      if (_isHalfWidthInXUnits && 0.5 * (stat.Max - stat.Min) / stat.Max > 1.0 / xArray.Length)
       {
-        if (iStage < 0)
-        {
-          w = Math.Min(w - 1, (int)(w / sqrt2));
-          if (w < 1)
-          {
-            break;
-          }
-        }
-
-        for (int i = 0; i <= last; i++)
-        {
-          var iLeft = i - w;
-          var iRight = i + w;
-          var yLeft = iLeft >= 0 ? srcY[iLeft] : double.PositiveInfinity;
-          var yRight = iRight <= last ? srcY[iRight] : double.PositiveInfinity;
-          var yMid = 0.5 * (yLeft + yRight);
-          tmpY[i] = Math.Min(yMid, srcY[i]);
-        }
-
-        (tmpY, srcY) = (srcY, tmpY);
+        // if the interpoint distant is not uniform, we need to use the algorithm with locally calculated half width
+        EvaluateBaselineWithLocalHalfWidth(xArray, srcY, tmpY, result);
+        return;
+      }
+      else
+      {
+        var w = _isHalfWidthInXUnits ? Math.Max(1, (int)Math.Abs(_halfWidth / stat.Mean)) : Math.Max(1, (int)_halfWidth);
+        EvaluateBaselineWithConstantHalfWidth(xArray, srcY, tmpY, w, result);
       }
 
       // Back transform
       for (int i = 0; i < srcY.Length; ++i)
       {
-        srcY[i] = Math.Exp(Math.Exp(srcY[i]) - 1) - 1;
+        result[i] = Math.Exp(Math.Exp(result[i]) - 1) + yOffset;
       }
 
       srcY.CopyTo(result);
