@@ -31,6 +31,8 @@ namespace Altaxo.Science.Spectroscopy
 {
   public record SpectralPreprocessingOptionsList : SpectralPreprocessingOptionsBase
   {
+    public static SpectralPreprocessingOptionsList Empty { get; } = new SpectralPreprocessingOptionsList();
+
     #region Serialization
 
     #region Version 0
@@ -76,8 +78,12 @@ namespace Altaxo.Science.Spectroscopy
 
     #endregion
 
+    private SpectralPreprocessingOptionsList()
+    {
+    }
 
-    public SpectralPreprocessingOptionsList()
+    public SpectralPreprocessingOptionsList(params ISingleSpectrumPreprocessor[] list)
+      : this((IEnumerable<ISingleSpectrumPreprocessor>)list)
     {
     }
 
@@ -94,17 +100,19 @@ namespace Altaxo.Science.Spectroscopy
       InnerList = ilist;
     }
 
-    public SpectralPreprocessingOptionsList Add(ISingleSpectrumPreprocessor processor)
+
+
+    public SpectralPreprocessingOptionsList WithAdded(ISingleSpectrumPreprocessor processor)
     {
       return this with { InnerList = InnerList.Add(processor ?? throw new ArgumentNullException(nameof(processor))) };
     }
 
-    public SpectralPreprocessingOptionsList RemoveAt(int index)
+    public SpectralPreprocessingOptionsList WithRemovedAt(int index)
     {
       return this with { InnerList = this.InnerList.RemoveAt(index) };
     }
 
-    public SpectralPreprocessingOptionsList Insert(int index, ISingleSpectrumPreprocessor processor)
+    public SpectralPreprocessingOptionsList WithInserted(int index, ISingleSpectrumPreprocessor processor)
     {
       return this with { InnerList = InnerList.Insert(index, processor ?? throw new ArgumentNullException(nameof(processor))) };
     }
