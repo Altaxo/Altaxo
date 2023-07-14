@@ -164,7 +164,7 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
     }
 
     [Fact]
-    public void Test_Symmetry_LocalHalfWidth()
+    public void Test_Symmetry_LocalHalfWidth_RoundUp()
     {
       const int len = 129;
       const double halfwidth = 20;
@@ -177,12 +177,12 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
       var w0 = new (int left, int right)[len];
       var w1 = new (int left, int right)[len];
 
-      SNIP_Base.CalculateHalfWidthInPointsLocally(x, halfwidth, w0);
-      TestW(halfwidth, x, w0);
+      SNIP_Base.CalculateHalfWidthInPointsLocallyRoundUp(x, halfwidth, w0);
+      TestW_RoundUp(halfwidth, x, w0);
 
       Array.Reverse(x);
-      SNIP_Base.CalculateHalfWidthInPointsLocally(x, 20, w1);
-      TestW(halfwidth, x, w1);
+      SNIP_Base.CalculateHalfWidthInPointsLocallyRoundUp(x, 20, w1);
+      TestW_RoundUp(halfwidth, x, w1);
 
       Array.Reverse(x);
       Array.Reverse(w1);
@@ -190,7 +190,7 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
       {
         w1[i] = (w1[i].right, w1[i].left);
       }
-      TestW(halfwidth, x, w1);
+      TestW_RoundUp(halfwidth, x, w1);
 
       NormalizeW(w0);
       NormalizeW(w1);
@@ -201,7 +201,46 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
       }
     }
 
-    private static void TestW(double halfwidth, double[] x, (int left, int right)[] w)
+    [Fact]
+    public void Test_Symmetry_LocalHalfWidth_RoundDown()
+    {
+      const int len = 129;
+      const double halfwidth = 20;
+      var x = new double[len];
+      for (int i = 0; i < len; ++i)
+      {
+        x[i] = i + i * i / 256d;
+      }
+
+      var w0 = new (int left, int right)[len];
+      var w1 = new (int left, int right)[len];
+
+      SNIP_Base.CalculateHalfWidthInPointsLocallyRoundDown(x, halfwidth, w0);
+      TestW_RoundDown(halfwidth, x, w0);
+
+      Array.Reverse(x);
+      SNIP_Base.CalculateHalfWidthInPointsLocallyRoundDown(x, halfwidth, w1);
+      TestW_RoundDown(halfwidth, x, w1);
+
+      Array.Reverse(x);
+      Array.Reverse(w1);
+      for (int i = 0; i < len; ++i)
+      {
+        w1[i] = (w1[i].right, w1[i].left);
+      }
+      TestW_RoundDown(halfwidth, x, w1);
+
+      NormalizeW(w0);
+      NormalizeW(w1);
+
+      for (int i = 0; i < len; ++i)
+      {
+        Assert.Equal(w1[i], w0[i]);
+      }
+    }
+
+
+    private static void TestW_RoundUp(double halfwidth, double[] x, (int left, int right)[] w)
     {
       int len = x.Length;
       for (int i = len - 1; i >= 0; --i)
@@ -228,6 +267,40 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
         {
           AssertEx.LessOrEqual(halfwidth, Math.Abs(x[i] - x[i + wi.right]));
           AssertEx.Greater(halfwidth, Math.Abs(x[i] - x[i + wi.right - 1]));
+
+        }
+      }
+    }
+
+    private static void TestW_RoundDown(double halfwidth, double[] x, (int left, int right)[] w)
+    {
+      int len = x.Length;
+      for (int i = len - 1; i >= 0; --i)
+      {
+        var wi = w[i];
+        AssertEx.LessOrEqual(1, wi.left);
+        AssertEx.LessOrEqual(1, wi.right);
+
+        if (wi.left > i)
+        {
+          AssertEx.Greater(halfwidth, Math.Abs(x[i] - x[0]));
+        }
+        else
+        {
+          AssertEx.GreaterOrEqual(halfwidth, Math.Abs(x[i] - x[i - wi.left]));
+          if (i - wi.left - 1 >= 0)
+            AssertEx.Less(halfwidth, Math.Abs(x[i] - x[i - wi.left - 1]));
+        }
+
+        if (wi.right >= x.Length - i)
+        {
+          AssertEx.Greater(halfwidth, Math.Abs(x[^1] - x[i]));
+        }
+        else
+        {
+          AssertEx.GreaterOrEqual(halfwidth, Math.Abs(x[i] - x[i + wi.right]));
+          if (i + wi.right + 1 < x.Length)
+            AssertEx.Less(halfwidth, Math.Abs(x[i] - x[i + wi.right + 1]));
 
         }
       }

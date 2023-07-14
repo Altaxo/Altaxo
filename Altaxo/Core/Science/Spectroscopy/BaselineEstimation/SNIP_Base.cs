@@ -30,6 +30,7 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
   public abstract record SNIP_Base : IBaselineEstimation
   {
     protected const double sqrt2 = 1.41421356237;
+    protected const bool _roundUp = false;
 
     protected double _halfWidth = 15;
     protected bool _isHalfWidthInXUnits;
@@ -129,7 +130,19 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
       }
       else
       {
-        var w = _isHalfWidthInXUnits ? Math.Max(1, (int)Math.Abs(_halfWidth / stat.Mean)) : Math.Max(1, (int)_halfWidth);
+        int w;
+
+        if (_isHalfWidthInXUnits)
+        {
+          w = _roundUp ? Math.Max(1, (int)Math.Ceiling(Math.Abs(_halfWidth / stat.Mean))) :
+                         Math.Max(1, (int)Math.Floor(Math.Abs(_halfWidth / stat.Mean)));
+        }
+        else
+        {
+          w = _roundUp ? Math.Max(1, (int)Math.Ceiling(_halfWidth)) :
+                         Math.Max(1, (int)Math.Floor(_halfWidth));
+        }
+
         EvaluateBaselineWithConstantHalfWidth(xArray, srcY, tmpY, w, result);
       }
     }
@@ -195,14 +208,16 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
       var w = new (int left, int right)[srcY.Length];
 
       var halfWidth = HalfWidth;
-      var wmax = CalculateHalfWidthInPointsLocally(x, HalfWidth, w);
+      var wmax = _roundUp ? CalculateHalfWidthInPointsLocallyRoundUp(x, HalfWidth, w) :
+                            CalculateHalfWidthInPointsLocallyRoundDown(x, HalfWidth, w);
 
       for (int iStage = _numberOfRegularStages - 1; ; --iStage)
       {
         if (iStage < 0)
         {
           halfWidth /= sqrt2;
-          wmax = CalculateHalfWidthInPointsLocally(x, halfWidth, w);
+          wmax = _roundUp ? CalculateHalfWidthInPointsLocallyRoundUp(x, halfWidth, w) :
+                            CalculateHalfWidthInPointsLocallyRoundDown(x, halfWidth, w);
         }
 
         for (int i = 0; i <= last; i++)
@@ -239,7 +254,7 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
     /// <param name="halfWidthInXUnits">The half width in x units.</param>
     /// <param name="w">On returns, contains the half width in points for every point in array x. The half width is given to the left and to the right of each point.</param>
     /// <returns>The maximal half width (left and right) of all points.</returns>
-    public static int CalculateHalfWidthInPointsLocally(ReadOnlySpan<double> x, double halfWidthInXUnits, (int left, int right)[] w)
+    public static int CalculateHalfWidthInPointsLocallyRoundUp(ReadOnlySpan<double> x, double halfWidthInXUnits, (int left, int right)[] w)
     {
       int hmax = 1;
       int hleft = 1, hright = 1;
@@ -250,6 +265,54 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
         hmax = Math.Max(hmax, Math.Max(hleft, hright));
         w[i] = (hleft, hright);
       }
+      return hmax;
+    }
+
+    /// <summary>
+    /// Given the half width in x-axis unit, the half width in points (to the left and right) is calculated for every point in array x.
+    /// </summary>
+    /// <param name="x">The array of x-values.</param>
+    /// <param name="halfWidthInXUnits">The half width in x units.</param>
+    /// <param name="w">On returns, contains the half width in points for every point in array x. The half width is given to the left and to the right of each point.</param>
+    /// <returns>The maximal half width (left and right) of all points.</returns>
+    public static int CalculateHalfWidthInPointsLocallyRoundDown(ReadOnlySpan<double> x, double halfWidthInXUnits, (int left, int right)[] w)
+    {
+      // Find a hypothetical point to the left and to the right
+      double leftNextX = double.NaN;
+      double rightNextX = double.NaN;
+      for (int i = 1; i < x.Length; i++)
+      {
+        if (Math.Abs(x[i] - x[0]) > 0)
+        {
+          leftNextX = x[0] - (x[i] - x[0]) / i;
+        }
+      }
+      for (int i = x.Length - 2; i >= 0; --i)
+      {
+        if (Math.Abs(x[i] - x[^1]) > 0)
+        {
+          rightNextX = x[^1] - (x[i] - x[^1]) / (x.Length - 1 - i);
+        }
+      }
+
+      if (double.IsNaN(leftNextX) || double.IsNaN(rightNextX))
+        throw new InvalidOperationException("The x-array does not contain varying values");
+
+
+
+      int hmax = 1;
+      int hleft = 1, hright = 1;
+      for (int i = x.Length - 1, j = 0; i >= 0; i--, j++, hleft--, hright++)
+      {
+        for (; hright > 0 && Math.Abs((hright > j ? rightNextX : x[i + hright]) - x[i]) > halfWidthInXUnits; --hright) ;
+        for (; hleft <= i && Math.Abs((hleft >= i ? leftNextX : x[i - hleft - 1]) - x[i]) <= halfWidthInXUnits; ++hleft) ;
+        hright = Math.Max(1, hright);
+        hleft = Math.Max(1, hleft);
+        hmax = Math.Max(hmax, Math.Max(hleft, hright));
+        w[i] = (hleft, hright);
+      }
+
+
       return hmax;
     }
 
