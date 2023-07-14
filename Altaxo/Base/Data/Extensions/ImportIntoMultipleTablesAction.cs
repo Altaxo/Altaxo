@@ -28,6 +28,7 @@ using System.Collections.Generic;
 using System.Text;
 using Altaxo.Gui.Common.MultiRename;
 using Altaxo.Main.Commands;
+using Altaxo.Main.Services;
 using Altaxo.Serialization.Ascii;
 using Altaxo.Worksheet.Commands;
 
@@ -169,12 +170,12 @@ namespace Altaxo.Data
       if (doc.DataSource is Serialization.Ascii.AsciiImportDataSource aids)
       {
         aids.SourceFileName = fileName;
-        DataSourceCommands.ExecuteDataSourceOfTable(doc, null);
+        DataSourceCommands.ExecuteDataSourceOfTable(doc, DummyProgressReporter.Instance);
       }
       else if (doc.DataSource is FileImportScriptDataSource fisds)
       {
         fisds.SourceFileName = fileName;
-        DataSourceCommands.ExecuteDataSourceOfTable(doc, null);
+        DataSourceCommands.ExecuteDataSourceOfTable(doc, DummyProgressReporter.Instance);
       }
       else
       {
