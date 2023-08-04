@@ -24,10 +24,8 @@
 
 #nullable enable
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Altaxo.Units;
 
 namespace Altaxo.Gui.Units
 {
@@ -63,6 +61,16 @@ namespace Altaxo.Gui.Units
     public void Dispose()
     {
       Current.PropertyService.SetValue(UserDefinedUnitEnvironments.PropertyKeyDefaultInstance, Environments);
+    }
+
+    public UserDefinedUnitEnvironment GetUserDefinedUnitEnvironment(IUnit unit)
+    {
+      var env = Environments.Where(x => unit.SIUnit == x.Value.Environment.DefaultUnit.Unit.SIUnit).FirstOrDefault().Value?.Environment;
+
+      env ??= new QuantityWithUnitGuiEnvironment(new[] { unit });
+
+      var deviceUnitEnvironment = new UserDefinedUnitEnvironment("Device units only", "Device unit", env);
+      return deviceUnitEnvironment;
     }
   }
 }
