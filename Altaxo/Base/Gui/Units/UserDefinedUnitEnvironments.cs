@@ -23,13 +23,10 @@
 #endregion Copyright
 
 #nullable enable
-using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Altaxo.Main.Properties;
 
 namespace Altaxo.Gui.Units
@@ -39,9 +36,11 @@ namespace Altaxo.Gui.Units
   /// Key is a quantity that is not neccessarily a unit quantity (for instance: unit quanity is 'Length' but quantities can be 'CapSize', 'LineThickness' etc).
   /// Value is the user defined unit environment for that quantity.
   /// </summary>
-  public class UserDefinedUnitEnvironments : IDictionary<string, UserDefinedUnitEnvironment>
+  public class UserDefinedUnitEnvironments : IDictionary<string, UserDefinedUnitEnvironment>, INotifyCollectionChanged
   {
     private IDictionary<string, UserDefinedUnitEnvironment> _dictionary;
+
+    public event NotifyCollectionChangedEventHandler? CollectionChanged;
 
     /// <summary>
     /// The property key used to store the default instance of this class in the property service.
@@ -52,6 +51,7 @@ namespace Altaxo.Gui.Units
      "Units\\UserDefinedUnitEnvironments",
      PropertyLevel.Application,
      () => new UserDefinedUnitEnvironments());
+
 
     #region Serialization
 
@@ -101,6 +101,7 @@ namespace Altaxo.Gui.Units
 
     private void OnContentsChanged()
     {
+      CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
     }
 
     public UserDefinedUnitEnvironment this[string key] { get => _dictionary[key]; set => _dictionary[key] = value; }

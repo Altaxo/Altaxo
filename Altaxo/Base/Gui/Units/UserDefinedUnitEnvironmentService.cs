@@ -65,12 +65,24 @@ namespace Altaxo.Gui.Units
 
     public UserDefinedUnitEnvironment GetUserDefinedUnitEnvironment(IUnit unit)
     {
-      var env = Environments.Where(x => unit.SIUnit == x.Value.Environment.DefaultUnit.Unit.SIUnit).FirstOrDefault().Value?.Environment;
+      var env = Environments.Values
+                .Where(x => unit.SIUnit == x.Environment.DefaultUnit.Unit.SIUnit)
+                .FirstOrDefault();
 
-      env ??= new QuantityWithUnitGuiEnvironment(new[] { unit });
-
-      var deviceUnitEnvironment = new UserDefinedUnitEnvironment("Device units only", "Device unit", env);
-      return deviceUnitEnvironment;
+      if (env is not null)
+      {
+        return env;
+      }
+      else if (Altaxo.Units.Dimensionless.Unity.Instance.Equals(unit))
+      {
+        env = new UserDefinedUnitEnvironment("Unity", "Dimensionless", new QuantityWithUnitGuiEnvironment(new[] { unit }));
+        return env;
+      }
+      else
+      {
+        env = new UserDefinedUnitEnvironment("DeviceUnit", unit.Name, new QuantityWithUnitGuiEnvironment(new[] { unit }));
+        return env;
+      }
     }
   }
 }
