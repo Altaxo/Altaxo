@@ -22,10 +22,6 @@
 
 #endregion Copyright
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Windows.Controls;
 
 namespace Altaxo.Gui.Serialization.Clipboard
@@ -38,30 +34,6 @@ namespace Altaxo.Gui.Serialization.Clipboard
     public ProjectItemsPasteOptionsControl()
     {
       InitializeComponent();
-    }
-
-    public bool RelocateReferences
-    {
-      get
-      {
-        return _guiRelocateReferences.IsChecked == true;
-      }
-      set
-      {
-        _guiRelocateReferences.IsChecked = value;
-      }
-    }
-
-    public bool TryToKeepInternalReferences
-    {
-      get
-      {
-        return _guiTryToKeepInternalReferences.IsChecked == true;
-      }
-      set
-      {
-        _guiTryToKeepInternalReferences.IsChecked = value;
-      }
     }
   }
 }

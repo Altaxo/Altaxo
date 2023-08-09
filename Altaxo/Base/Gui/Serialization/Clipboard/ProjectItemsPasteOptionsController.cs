@@ -23,26 +23,14 @@
 #endregion Copyright
 
 #nullable disable
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Altaxo.Gui.Serialization.Clipboard
 {
   using Altaxo.Serialization.Clipboard;
 
-  public interface IProjectItemsPasteOptionsView
+  public interface IProjectItemsPasteOptionsView : IDataContextAwareView
   {
-    /// <summary>If true, references will be relocated in the same way as the project items will be relocated.</summary>
-    /// <value><c>true</c> if references should be relocated, <c>false</c> otherwise</value>
-    bool RelocateReferences { get; set; }
-
-    /// <summary>
-    /// When true, at serialization the internal references are tried to keep internal, i.e. if for instance a table have to be renamed, the plot items in the deserialized graphs
-    /// will be relocated to the renamed table.
-    /// </summary>
-    bool TryToKeepInternalReferences { get; set; }
   }
 
   [ExpectedTypeOfView(typeof(IProjectItemsPasteOptionsView))]
@@ -54,21 +42,56 @@ namespace Altaxo.Gui.Serialization.Clipboard
       yield break;
     }
 
+    #region Bindings
+
+    private bool _relocateReferences;
+
+    public bool RelocateReferences
+    {
+      get => _relocateReferences;
+      set
+      {
+        if (!(_relocateReferences == value))
+        {
+          _relocateReferences = value;
+          OnPropertyChanged(nameof(RelocateReferences));
+        }
+      }
+    }
+
+    private bool _tryToKeepInternalReferences;
+
+    public bool TryToKeepInternalReferences
+    {
+      get => _tryToKeepInternalReferences;
+      set
+      {
+        if (!(_tryToKeepInternalReferences == value))
+        {
+          _tryToKeepInternalReferences = value;
+          OnPropertyChanged(nameof(TryToKeepInternalReferences));
+        }
+      }
+    }
+
+
+    #endregion
+
     protected override void Initialize(bool initData)
     {
       base.Initialize(initData);
 
-      if (_view is not null)
+      if (initData)
       {
-        _view.RelocateReferences = _doc.RelocateReferences.HasValue ? _doc.RelocateReferences.Value : true;
-        _view.TryToKeepInternalReferences = _doc.TryToKeepInternalReferences.HasValue ? _doc.TryToKeepInternalReferences.Value : true;
+        RelocateReferences = _doc.RelocateReferences.HasValue ? _doc.RelocateReferences.Value : true;
+        TryToKeepInternalReferences = _doc.TryToKeepInternalReferences.HasValue ? _doc.TryToKeepInternalReferences.Value : true;
       }
     }
 
     public override bool Apply(bool disposeController)
     {
-      _doc.RelocateReferences = _view.RelocateReferences;
-      _doc.TryToKeepInternalReferences = _view.TryToKeepInternalReferences;
+      _doc.RelocateReferences = RelocateReferences;
+      _doc.TryToKeepInternalReferences = TryToKeepInternalReferences;
 
       return ApplyEnd(true, disposeController);
     }
