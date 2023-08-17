@@ -42,7 +42,7 @@ namespace Altaxo.Calc
 
     #region Number tests
 
-   
+
 
     /// <summary>
     /// Tests if x is finite, i.e. is in the interval [float.MinValue, float.MaxValue].
@@ -120,6 +120,38 @@ namespace Altaxo.Calc
     public static bool IsInIntervalOC(this double x, double xmin, double xmax)
     {
       return xmin < x && x <= xmax;
+    }
+
+    /// <summary>
+    /// Tests if the interval [a0, a1] is overlapping with the interval [b0, b1]. The return value is true if
+    /// the intervals overlap, or only touching each other (for instance, if a1==b0).
+    /// </summary>
+    /// <param name="a0">The start of the first interval (inclusive).</param>
+    /// <param name="a1">The end of the first interval (inclusive).</param>
+    /// <param name="b0">The start of the second interval (inclusive).</param>
+    /// <param name="b1">The end of the second interval (inclusive).</param>
+    /// <returns>True if both intervals overlap or touch; otherwise, false.</returns>
+    public static bool AreIntervalsOverlappingCC(double a0, double a1, double b0, double b1)
+    {
+      if (!(a1 >= a0 && b1 >= b0))
+        throw new ArgumentOutOfRangeException();
+      return !(a0 > b1 || b0 > a1);
+    }
+
+    /// <summary>
+    /// Tests if the interval [a0, a1) is overlapping with the interval [b0, b1). The return value is true if
+    /// the intervals overlap. Because the end of the intervals are open, the return value is false if for instance a1==b0.
+    /// </summary>
+    /// <param name="a0">The start of the first interval (inclusive).</param>
+    /// <param name="a1">The end of the first interval (exclusive).</param>
+    /// <param name="b0">The start of the second interval (inclusive).</param>
+    /// <param name="b1">The end of the second interval (exclusive).</param>
+    /// <returns>True if both intervals overlap; otherwise, false.</returns>
+    public static bool AreIntervalsOverlappingCO(double a0, double a1, double b0, double b1)
+    {
+      if (!(a1 >= a0 && b1 >= b0))
+        throw new ArgumentOutOfRangeException();
+      return !(a0 >= b1 || b0 >= a1);
     }
 
     /// <summary>
@@ -206,25 +238,25 @@ namespace Altaxo.Calc
     /// <param name="extendToSides">If true and the value of index is out of range, the values of the array
     /// at the left side or the right side will be returned; otherwise, if the index is out of range, an exception will be thrown.</param>
     /// <returns>The interpolated value at the fractional index.</returns>
-    public static double InterpolateLinear(double index, double[] array, bool extendToSides=false)
+    public static double InterpolateLinear(double index, double[] array, bool extendToSides = false)
     {
       if (!(index >= 0))
-        {
+      {
         if (extendToSides)
           return array[0];
         else
           throw new ArgumentOutOfRangeException(nameof(index));
-        }
-      else if(!(index <= array.Length-1))
+      }
+      else if (!(index <= array.Length - 1))
       {
         if (extendToSides)
-          return array[array.Length-1];
+          return array[array.Length - 1];
         else
           throw new ArgumentOutOfRangeException(nameof(index));
       }
-      else if(index == array.Length-1)
+      else if (index == array.Length - 1)
       {
-        return array[array.Length-1];
+        return array[array.Length - 1];
       }
 
       int idx = (int)index;
