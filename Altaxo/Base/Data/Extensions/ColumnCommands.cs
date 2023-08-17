@@ -150,5 +150,28 @@ namespace Altaxo.Data
     }
 
     #endregion Set group number
+
+    #region Get all columns of a group
+
+    /// <summary>
+    /// Gets the indices of all columns that have the group number given by the argument.
+    /// </summary>
+    /// <param name="datacoll">The data column collection to which to apply this procedure.</param>
+    /// <param name="nGroup">The group number to search for.</param>
+    /// <returns>The indices of all columns that have the group number given by the argument.</returns>
+    public static IAscendingIntegerCollection GetColumnIndicesWithGroupNumber(this DataColumnCollection datacoll, int nGroup)
+    {
+      var result = new AscendingIntegerCollection();
+      for (int i = 0; i < datacoll.ColumnCount; ++i)
+      {
+        if (datacoll.GetColumnGroup(i) == nGroup)
+        {
+          result.Add(i);
+        }
+      }
+      return result;
+    }
+
+    #endregion
   }
 }
