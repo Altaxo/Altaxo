@@ -31,20 +31,20 @@
         </Grid.ColumnDefinitions>
         <TextBlock Grid.Row="0" Grid.Column="0"
                    Text="Data:" FontWeight="Bold" />
-        <CheckBox Grid.Row="2" Grid.Column="0"
-                  IsChecked="{Binding RemoveDataColumns}"
-                  Content="Remove all data columns"/>
-        <CheckBox Grid.Row="4" Grid.Column="0"
+    <CheckBox Grid.Row="2" Grid.Column="0"
                   IsChecked="{Binding ClearData}" 
                   IsEnabled="{Binding RemoveDataColumns, Converter={x:Static axogcc:InverseBooleanConverter.Instance}}"
                   Content="Clear data" />
-        <CheckBox Grid.Row="6" Grid.Column="0"
-                  IsChecked="{Binding RemoveColumnProperties}" 
-                  Content="Remove all column properties"/>
-        <CheckBox Grid.Row="8" Grid.Column="0"
+    <CheckBox Grid.Row="4" Grid.Column="0"
                   IsChecked="{Binding ClearColumnProperties}" 
                   IsEnabled="{Binding RemoveColumnProperties, Converter={x:Static axogcc:InverseBooleanConverter.Instance}}"
                   Content="Clear column properties"/>
+    <CheckBox Grid.Row="6" Grid.Column="0"
+                  IsChecked="{Binding RemoveDataColumns}"
+                  Content="Remove all data columns"/>
+        <CheckBox Grid.Row="8" Grid.Column="0"
+                  IsChecked="{Binding RemoveColumnProperties}" 
+                  Content="Remove all column properties"/>
 
         <TextBlock Grid.Row="0" Grid.Column="2"
                    Text="Other:" FontWeight="Bold"/>
