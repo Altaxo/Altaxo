@@ -23,6 +23,21 @@ using Altaxo.Main.Services;
 
 namespace Altaxo.Gui.Workbench.Commands
 {
+  public class DevelopmentTest : SimpleCommand
+  {
+    public override void Execute(object? parameter)
+    {
+      Run6();
+    }
+
+    public void Run6()
+    {
+      GC.Collect();
+      System.Threading.Thread.Sleep(1000);
+      var comMananger = Altaxo.Current.ComManager;
+    }
+  }
+
   /// <summary>
   /// Command to open web sites.
   /// </summary>

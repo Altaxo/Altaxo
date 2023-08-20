@@ -19,11 +19,9 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Windows.Input;
-using Altaxo.Gui.Workbench;
 using Altaxo.Main.Services;
 
-namespace Altaxo.Workbench
+namespace Altaxo.Gui.Workbench
 {
   /// <summary>
   /// Provides the infrastructure to handle generalized code navigation.
@@ -457,7 +455,7 @@ namespace Altaxo.Workbench
     private static void OnHistoryChanged()
     {
       HistoryChanged?.Invoke(NavigationService.CurrentPosition, EventArgs.Empty);
-      CommandManager.InvalidateRequerySuggested();
+      Current.Gui.InvalidateRequerySuggested();
     }
 
     #endregion Public Events

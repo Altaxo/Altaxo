@@ -88,6 +88,8 @@
                              class="Altaxo.Main.Services.HighResolutionClock" />
         <Service id="Altaxo.Main.Services.ITimerQueue"
                              class="Altaxo.Main.Services.TimerQueue" />
+        <Service id="Altaxo.Main.Services.IRecentOpen"
+                             class="Altaxo.Main.Services.RecentOpen" />
         <Service id="Altaxo.Main.IComManager"
                              class="Altaxo.Com.AltaxoComManager" />
         <Service id="Altaxo.Main.IPrintingService"
@@ -854,13 +856,13 @@
             <MenuItem id="ForceException" label="${res:XML.MainMenu.HelpMenu.ForceException}"
                       description="${res:XML.MainMenu.HelpMenu.ForceException.Description}" class="Altaxo.Worksheet.Commands.AltaxoProvokeException" />
             <MenuItem id="DevelopmentTest" label="DevelopmentTester"
-                   description="Development test" class="Altaxo.Main.Commands.DevelopmentTest" />
+                   description="Development test" class="Altaxo.Gui.Workbench.Commands.DevelopmentTest" />
             <MenuItem id="ReportParentChildProblems" label="Report parent-child problems in document"
                        description="Report parent-child problems in document" class="Altaxo.Main.Commands.ReportParentChildProblemsInDocument" />
             <MenuItem id="OpenDownloadDirectory" label="Open download directory"
                    description="Open Altaxo's download directory" class="Altaxo.Main.Commands.OpenDownloadDirectory" />
             <MenuItem id="OpenSettingsDirectory" label="Open settings directory"
-                   description="Open Altaxo's settings directory" class="Altaxo.Main.Commands.OpenSettingsDirectory" />
+                   description="Open Altaxo's settings directory" class="Altaxo.Gui.Workbench.Commands.OpenSettingsDirectory" />
             <MenuItem id="OpenProjectDirectory" label="Open project directory"
                    description="Open Altaxo's current project directory" class="Altaxo.Main.Commands.OpenProjectDirectory" />
             <MenuItem id="OpenInstallationDirectory" label="Open Altaxo's directory"

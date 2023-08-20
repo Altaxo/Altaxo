@@ -23,15 +23,11 @@
 #endregion Copyright
 
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using Altaxo.Main.Services;
 
-namespace Altaxo.Gui.MenuCommands
+namespace Altaxo.Gui.Workbench.Commands
 {
   public class OpenSettingsDirectory : SimpleCommand
   {
@@ -96,7 +92,7 @@ namespace Altaxo.Gui.MenuCommands
     public override void Execute(object? parameter)
     {
       var entryAssemblyPath = Assembly.GetEntryAssembly()?.Location;
-      if(entryAssemblyPath is null || !System.IO.Path.IsPathRooted(entryAssemblyPath))
+      if (entryAssemblyPath is null || !System.IO.Path.IsPathRooted(entryAssemblyPath))
       {
         Current.Gui.ErrorMessageBox("Unable to evaluate path of the entry assembly!", "Error");
         return;

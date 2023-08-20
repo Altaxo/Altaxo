@@ -778,6 +778,8 @@ namespace Altaxo.Main.Services
 
     public abstract bool ShowFolderDialog(FolderChoiceOptions options);
 
+    public abstract void InvalidateRequerySuggested();
+
     /// <summary>
     /// Get a new clipboard data object. You can use this to put data on the clipboard.
     /// </summary>

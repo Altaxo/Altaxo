@@ -22,29 +22,11 @@
 
 #endregion Copyright
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Altaxo.Gui.Workbench;
 
 namespace Altaxo.Gui.MenuCommands
 {
-  public class DevelopmentTest : SimpleCommand
-  {
-    public override void Execute(object? parameter)
-    {
-      Run6();
-    }
 
-    public void Run6()
-    {
-      GC.Collect();
-      System.Threading.Thread.Sleep(1000);
-      var comMananger = Altaxo.Current.ComManager;
-    }
-  }
 
   public class LoadAeroTheme : SimpleCommand
   {

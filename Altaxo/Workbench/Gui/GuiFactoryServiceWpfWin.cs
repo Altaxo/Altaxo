@@ -419,7 +419,6 @@ return System.Windows.Forms.DialogResult.OK == dlgview.ShowDialog(MainWindow);
       {
         return false;
       }
-
     }
 
     #region Clipboard
@@ -661,6 +660,11 @@ private class ClipGetDataWrapper : IClipboardGetDataObject
     #endregion Clipboard
 
     #region Context menu
+
+    public override void InvalidateRequerySuggested()
+    {
+      CommandManager.InvalidateRequerySuggested();
+    }
 
     /// <summary>
     /// Creates and shows a context menu.

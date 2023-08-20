@@ -27,7 +27,6 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
-using System.Text;
 using Altaxo.Collections;
 using Altaxo.Gui.Workbench;
 using Altaxo.Main.Services;
@@ -88,8 +87,8 @@ namespace Altaxo.Gui.Pads.FileBrowser
         catch (IOException)
         {
           // ignore IO errors
-          _text1??="<<Error>>";
-          _text2??="<<Error>>";
+          _text1 ??= "<<Error>>";
+          _text2 ??= "<<Error>>";
         }
         if (triggerEvents)
         {
@@ -145,7 +144,7 @@ namespace Altaxo.Gui.Pads.FileBrowser
       if (initData)
       {
         _columnNames.Clear();
-        _columnNames.AddRange(new []
+        _columnNames.AddRange(new[]
         {
           Current.ResourceService.GetString("CompilerResultView.FileText"),
           Current.ResourceService.GetString("MainWindow.Windows.FileScout.Size"),

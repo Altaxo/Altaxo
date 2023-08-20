@@ -211,6 +211,8 @@ namespace Altaxo.Main.Services
 
     #region Commands
 
+    void InvalidateRequerySuggested();
+
     /// <summary>
     /// Gets a command that executes an action and evaluates the <paramref name="canExecute"/> condition every time when
     /// something in the Gui has changed.

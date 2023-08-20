@@ -22,10 +22,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
-using System.Windows.Forms;
 using Altaxo.Main;
 using Altaxo.Main.Services;
-using Altaxo.Workbench;
 
 namespace Altaxo.Gui.Workbench
 {
@@ -54,7 +52,7 @@ namespace Altaxo.Gui.Workbench
     {
       get
       {
-        return LazyInitializer.EnsureInitialized(ref _recentOpen, () => new RecentOpen());
+        return LazyInitializer.EnsureInitialized(ref _recentOpen, () => Altaxo.Current.GetRequiredService<IRecentOpen>());
       }
     }
 
@@ -126,22 +124,24 @@ namespace Altaxo.Gui.Workbench
 
     public string? BrowseForFolder(string description, string? selectedPath)
     {
-      using (var dialog = new FolderBrowserDialog())
+      var dlg = new FolderChoiceOptions()
       {
-        dialog.Description = StringParser.Parse(description);
-        if (selectedPath is not null && selectedPath.Length > 0 && Directory.Exists(selectedPath))
-        {
-          dialog.RootFolder = Environment.SpecialFolder.MyComputer;
-          dialog.SelectedPath = selectedPath;
-        }
-        if (dialog.ShowDialog() == DialogResult.OK)
-        {
-          return dialog.SelectedPath;
-        }
-        else
-        {
-          return null;
-        }
+        Description = StringParser.Parse(description),
+      };
+
+      if (selectedPath is not null && selectedPath.Length > 0 && Directory.Exists(selectedPath))
+      {
+        dlg.RootFolder = Environment.SpecialFolder.MyComputer;
+        dlg.SelectedPath = selectedPath;
+      }
+
+      if (true == Current.Gui.ShowFolderDialog(dlg))
+      {
+        return dlg.SelectedPath;
+      }
+      else
+      {
+        return null;
       }
     }
 
