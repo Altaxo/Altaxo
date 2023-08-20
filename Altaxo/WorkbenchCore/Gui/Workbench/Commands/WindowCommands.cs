@@ -16,9 +16,6 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-using System;
-using Altaxo.Gui.AddInItems;
-using Altaxo.Gui.Workbench;
 using Altaxo.Main;
 
 namespace Altaxo.Gui.Workbench.Commands

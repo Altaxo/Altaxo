@@ -153,14 +153,4 @@ namespace Altaxo.Gui.Workbench
       }
     }
   }
-
-  public enum ScrollSyncOption
-  {
-    Vertical,
-    Horizontal,
-    VerticalToHorizontal,
-    HorizontalToVertical,
-    Both,
-    BothInterchanged
-  }
 }
