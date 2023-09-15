@@ -88,8 +88,6 @@
                              class="Altaxo.Main.Services.HighResolutionClock" />
         <Service id="Altaxo.Main.Services.ITimerQueue"
                              class="Altaxo.Main.Services.TimerQueue" />
-        <Service id="Altaxo.Main.Services.IRecentOpen"
-                             class="Altaxo.Main.Services.RecentOpen" />
         <Service id="Altaxo.Main.IComManager"
                              class="Altaxo.Com.AltaxoComManager" />
         <Service id="Altaxo.Main.IPrintingService"
