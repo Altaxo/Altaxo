@@ -23,11 +23,9 @@
 #endregion Copyright
 
 #nullable disable
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Altaxo.Data;
+using Altaxo.Science.Thermorheology.MasterCurves;
 
 namespace Altaxo.Gui.Worksheet
 {
@@ -38,11 +36,11 @@ namespace Altaxo.Gui.Worksheet
     void InitializeEditTab(object guiControl);
   }
 
-  [UserControllerForObject(typeof(MasterCurveCreation.Options))]
+  [UserControllerForObject(typeof(MasterCurveCreationOptions))]
   [ExpectedTypeOfView(typeof(IMasterCurveCreationMainView))]
   internal class MasterCurveCreationMainController : IMVCANController
   {
-    private MasterCurveCreation.Options _doc;
+    private MasterCurveCreationOptions _doc;
     private IMasterCurveCreationMainView _view;
 
     private IMVCANController _dataController;
@@ -52,7 +50,8 @@ namespace Altaxo.Gui.Worksheet
       if (initData)
       {
         _dataController = new MasterCurveCreationDataController();
-        _dataController.InitializeDocument(_doc.ColumnGroups);
+        var data = new List<List<DoubleColumn>>();
+        _dataController.InitializeDocument(data);
         Current.Gui.FindAndAttachControlTo(_dataController);
       }
 
@@ -64,10 +63,10 @@ namespace Altaxo.Gui.Worksheet
 
     public bool InitializeDocument(params object[] args)
     {
-      if (args is null || 0 == args.Length || !(args[0] is MasterCurveCreation.Options))
+      if (args is null || 0 == args.Length || !(args[0] is MasterCurveCreationOptions))
         return false;
 
-      _doc = args[0] as MasterCurveCreation.Options;
+      _doc = args[0] as MasterCurveCreationOptions;
       Initialize(true);
       return true;
     }

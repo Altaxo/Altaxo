@@ -23,12 +23,10 @@
 #endregion Copyright
 
 #nullable enable
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Altaxo.Data;
 using Altaxo.Graph.Gdi;
+using Altaxo.Science.Thermorheology.MasterCurves;
 
 namespace Altaxo.Graph.Procedures
 {
@@ -39,8 +37,9 @@ namespace Altaxo.Graph.Procedures
   {
     public static void ShowMasterCurveCreationDialog(GraphDocument doc)
     {
-      var opt = new Data.MasterCurveCreation.Options();
-      if (FillDataListFromGraphDocument(doc, opt.ColumnGroups) is { } error)
+      var opt = new MasterCurveCreationOptions();
+      var data = new List<List<DoubleColumn>>();
+      if (FillDataListFromGraphDocument(doc, data) is { } error)
       {
         Current.Gui.ErrorMessageBox(error);
         return;
