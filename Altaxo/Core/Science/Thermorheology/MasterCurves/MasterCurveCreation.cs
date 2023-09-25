@@ -114,7 +114,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
         {
           var shiftCurve = shiftCurveCollections[nColumnGroup][indexOfCurveInShiftGroup];
           oneShiftDataAcrossCurveGroups[nColumnGroup] = shiftCurve;
-          GetMinMaxOfFirstColumnForValidSecondColumn(shiftCurve.X, shiftCurve.Y, options.LogarithmizeXForInterpolation, options.LogarithmizeYForInterpolation, out var xmin, out var xmax);
+          GetMinMaxOfFirstColumnForValidSecondColumn(shiftCurve.X, shiftCurve.Y, options.XShiftBy, options.LogarithmizeXForInterpolation, options.LogarithmizeYForInterpolation, out var xmin, out var xmax);
 
           double localMaxShift;
           double localMinShift;
@@ -251,7 +251,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
       Iterate(options, shiftCurveCollections, result);
     }
 
-    public static bool GetMinMaxOfFirstColumnForValidSecondColumn(IReadOnlyList<double> x, IReadOnlyList<double> y, bool doLogX, bool doLogY, out double min, out double max)
+    public static bool GetMinMaxOfFirstColumnForValidSecondColumn(IReadOnlyList<double> x, IReadOnlyList<double> y, ShiftXBy shiftBy, bool doLogX, bool doLogY, out double min, out double max)
     {
       int len = Math.Min(x.Count, y.Count);
       min = double.PositiveInfinity;
@@ -259,9 +259,10 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
 
       for (int i = 0; i < len; i++)
       {
+        double x1 = shiftBy == ShiftXBy.Factor ? Math.Log(x[i]) : x[i];
         double xv = doLogX ? Math.Log(x[i]) : x[i];
         double yv = doLogY ? Math.Log(y[i]) : y[i];
-        if (xv.IsFinite() && yv.IsFinite())
+        if (x1.IsFinite() && xv.IsFinite() && yv.IsFinite())
         {
           min = Math.Min(min, xv);
           max = Math.Max(max, xv);

@@ -107,6 +107,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
 
       for (int i = 0, j = 0; i < count; i++)
       {
+        bool isXUsable = shiftXByOffset || x[i] > 0; // if shift by factor, x must be >0
         double xv;
         if (doLogX)
           xv = shiftXByOffset ? Math.Log(x[i] + shift) : Math.Log(x[i]) + shift;
@@ -118,7 +119,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
           yv = Math.Log(yv);
 
 
-        if (xv.IsFinite() && yv.IsFinite())
+        if (isXUsable && xv.IsFinite() && yv.IsFinite())
         {
           maxX = Math.Max(maxX, xv);
           minX = Math.Min(minX, xv);
