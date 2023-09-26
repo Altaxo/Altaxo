@@ -24,18 +24,17 @@
 
 #nullable enable
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Altaxo.Calc;
 using Altaxo.Calc.Interpolation;
+using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Calc.Optimization;
+using Altaxo.Calc.RootFinding;
 
-namespace Altaxo.Data
+namespace Altaxo.Data.Obsolete
 {
-  using System.Collections;
-  using Altaxo.Calc.LinearAlgebra;
-  using Altaxo.Calc.RootFinding;
-
   [Obsolete("Use Altaxo.Science.Thermorheology.MasterCurves.MasterCurveCreation instead")]
   public static class MasterCurveCreation
   {
