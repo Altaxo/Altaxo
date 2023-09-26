@@ -81,6 +81,27 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     }
 
     /// <summary>
+    /// Gets the minimum and maximum of the current x-values used for interpolation. Data points that belong
+    /// to the curve with the index given in the argument are not taken into account.
+    /// </summary>
+    /// <param name="indexOfCurve">The index of curve.</param>
+    /// <returns>The minimum and maximum of the x-values, except for those points that belong to the curve with index=<paramref name="indexOfCurve"/>.</returns>
+    public (double min, double max) GetMinimumMaximumOfXValuesExceptForCurveIndex(int indexOfCurve)
+    {
+      double min = double.PositiveInfinity;
+      double max = double.NegativeInfinity;
+      foreach (var entry in ValuesToInterpolate)
+      {
+        if (entry.Value.indexOfCurve != indexOfCurve)
+        {
+          min = Math.Min(min, entry.Key);
+          max = Math.Max(max, entry.Key);
+        }
+      }
+      return (min, max);
+    }
+
+    /// <summary>
     /// Adds values to the data that should be interpolated, but does not evaluate a new interpolation (call <see cref="Interpolate(MasterCurveCreationOptions)"/>
     /// after this call if a new interpolation should be evaluated).
     /// </summary>

@@ -139,6 +139,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
       {
         double globalMinShift = double.MaxValue;
         double globalMaxShift = double.MinValue;
+        double globalMinRange = double.MaxValue;
         for (int nColumnGroup = 0; nColumnGroup < interpolations.Length; nColumnGroup++)
         {
           var shiftCurve = shiftCurveCollections[nColumnGroup][indexOfCurveInShiftGroup];
@@ -147,25 +148,33 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
 
           double localMaxShift;
           double localMinShift;
+          double localRange;
+
+          var (xMinOfInterpolation, xMaxOfInterpolation) = interpolations[nColumnGroup].GetMinimumMaximumOfXValuesExceptForCurveIndex(indexOfCurveInShiftGroup);
 
           if (options.LogarithmizeXForInterpolation)
           {
-            localMaxShift = interpolations[nColumnGroup].InterpolationMaximumX - xmin;
-            localMinShift = interpolations[nColumnGroup].InterpolationMinimumX - xmax;
+            localMaxShift = xMaxOfInterpolation - xmin;
+            localMinShift = xMinOfInterpolation - xmax;
+            localRange = xmax - xmin;
           }
           else
           {
-            localMaxShift = Math.Log(interpolations[nColumnGroup].InterpolationMaximumX / xmin);
-            localMinShift = Math.Log(interpolations[nColumnGroup].InterpolationMinimumX / xmax);
+            localMaxShift = Math.Log(xMaxOfInterpolation / xmin);
+            localMinShift = Math.Log(xMinOfInterpolation / xmax);
+            localRange = Math.Log(xmax / xmin);
           }
           globalMinShift = Math.Min(globalMinShift, localMinShift);
           globalMaxShift = Math.Max(globalMaxShift, localMaxShift);
+          globalMinRange = Math.Min(globalMinRange, localRange);
         }
 
         // we reduce the maximum possible shifts a little in order to get at least one point overlapping
-        double diff = (globalMaxShift - globalMinShift) / 100;
-        globalMaxShift = globalMaxShift - diff;
-        globalMinShift = globalMinShift + diff;
+        double requiredShiftOverlap = globalMinRange * options.RequiredRelativeOverlap;
+        requiredShiftOverlap = Math.Min(requiredShiftOverlap, 0.5 * (globalMaxShift - globalMinShift));
+        // reduce the borders [globalMinShift, globalMaxShift] by the required shift overlap
+        globalMinShift += requiredShiftOverlap;
+        globalMaxShift -= requiredShiftOverlap;
 
         double currentShift = initialShift; // remember: this is either a offset or the natural logarithm of the shift factor
         switch (options.OptimizationMethod)
