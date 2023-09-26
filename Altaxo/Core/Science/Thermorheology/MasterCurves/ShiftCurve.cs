@@ -22,7 +22,6 @@
 
 #endregion Copyright
 
-#nullable enable
 using System.Collections.Generic;
 
 namespace Altaxo.Science.Thermorheology.MasterCurves
@@ -32,9 +31,21 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
   /// </summary>
   public record ShiftCurve
   {
+    /// <summary>
+    /// Gets the x-values of the curve to be shifted.
+    /// </summary>
     public IReadOnlyList<double> X { get; }
+
+    /// <summary>
+    /// Gets the y-values of the curve to be shifted.
+    /// </summary>
     public IReadOnlyList<double> Y { get; }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ShiftCurve"/> class.
+    /// </summary>
+    /// <param name="x">The x-values of the curve to be shifted.</param>
+    /// <param name="y">The y-values of the curve to be shifted.</param>
     public ShiftCurve(IReadOnlyList<double> x, IReadOnlyList<double> y)
     {
       X = x;

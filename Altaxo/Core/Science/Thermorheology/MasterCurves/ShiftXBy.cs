@@ -22,8 +22,6 @@
 
 #endregion Copyright
 
-#nullable enable
-
 namespace Altaxo.Science.Thermorheology.MasterCurves
 {
   /// <summary>

@@ -22,12 +22,13 @@
 
 #endregion Copyright
 
-#nullable enable
-
 using System.Collections.Generic;
 
 namespace Altaxo.Science.Thermorheology.MasterCurves
 {
+  /// <summary>
+  /// Contains the result of the master curve creation.
+  /// </summary>
   public class MasterCurveCreationResult
   {
     /// <summary>
@@ -52,6 +53,10 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     /// </summary>
     public InterpolationInformation[] ResultingInterpolation { get; set; }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MasterCurveCreationResult"/> class.
+    /// </summary>
+    /// <param name="numberOfShiftCurveCollections">The number of <see cref="ShiftCurveCollection"/>s.</param>
     public MasterCurveCreationResult(int numberOfShiftCurveCollections)
     {
       ResultingInterpolation = new InterpolationInformation[numberOfShiftCurveCollections];

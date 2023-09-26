@@ -38,7 +38,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     /// <summary>
     /// Gets the current interpolation function. The argument of the function is the x-value. The result is the interpolated y-value.
     /// </summary>
-    public Func<double, double> InterpolationFunction { get; private set; }
+    public Func<double, double> InterpolationFunction { get; set; }
 
     /// <summary>Minimum x value of the points used for interpolation.</summary>
     public double InterpolationMinimumX { get; private set; }
@@ -47,10 +47,10 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     public double InterpolationMaximumX { get; private set; }
 
     /// <summary>List of all x values of the points that are used for the interpolation.</summary>
-    public IList<double> XValues { get { return ValuesToInterpolate.Keys; } }
+    public IReadOnlyList<double> XValues { get { return new WrapperIListToIRoVectorK(ValuesToInterpolate.Keys); } }
 
     /// <summary>List of all y values of the points that are used for the interpolation.</summary>
-    public IList<(double, int)> YValues { get { return ValuesToInterpolate.Values; } }
+    public IReadOnlyList<double> YValues { get { return new WrapperIListToIRoVectorV(ValuesToInterpolate.Values); } }
 
     /// <summary>
     /// List of all points used for the interpolation, sorted by the x values.
@@ -69,6 +69,9 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
       ValuesToInterpolate = new SortedList<double, (double, int)>();
     }
 
+    /// <summary>
+    /// Clears this instance.
+    /// </summary>
     public void Clear()
     {
       InterpolationFunction = new Func<double, double>((x) => throw new InvalidOperationException("Interpolation was not yet done."));
@@ -140,21 +143,6 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
       InterpolationMaximumX = maxX;
       InterpolationMinimumX = minX;
     }
-
-
-    /// <summary>
-    /// Evaluates a new interpolation with the current data.
-    /// </summary>
-    /// <param name="options">The options.</param>
-    public void Interpolate(MasterCurveCreationOptions options)
-    {
-      InterpolationFunction = options.CreateInterpolationFunction(
-                                      new WrapperIListToIRoVectorK(ValuesToInterpolate.Keys),
-                                      new WrapperIListToIRoVectorV(ValuesToInterpolate.Values),
-                                      null);
-
-    }
-
 
     #region Wrapper classes
 

@@ -34,8 +34,17 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
   using Altaxo.Calc.LinearAlgebra;
   using Altaxo.Calc.RootFinding;
 
-  public static partial class MasterCurveCreation
+  /// <summary>
+  /// Methods for creating a master curve.
+  /// </summary>
+  public static class MasterCurveCreation
   {
+    /// <summary>
+    /// Creates one or multiple master curve(s).
+    /// </summary>
+    /// <param name="options">The options for creating a master curve.</param>
+    /// <param name="shiftCurveCollections">Raw data for master curve creation.</param>
+    /// <returns>The result of the master curve creation.</returns>
     public static MasterCurveCreationResult CreateMasterCurve(MasterCurveCreationOptions options, ShiftCurveCollections shiftCurveCollections)
     {
       // First we create the initial interpolation of the master column
@@ -52,10 +61,12 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
       {
         result.ResultingInterpolation[nColumnGroup] = new InterpolationInformation();
         var referenceShiftCurve = shiftCurveCollections[nColumnGroup][options.IndexOfReferenceColumnInColumnGroup];
-        // Make the initial interpolation for that column group, using only the column used as reference (shift 0)
+        // To each column group, add initially only the column used as reference (shift 0)
         result.ResultingInterpolation[nColumnGroup].AddXYColumn(0, indexOfReferenceColumnInColumnGroup, referenceShiftCurve.X, referenceShiftCurve.Y, options);
-        result.ResultingInterpolation[nColumnGroup].Interpolate(options);
       }
+
+      // Make the initial interpolation for all column groups, using only the column(s) used as reference (shift 0)
+      InterpolateAllColumnGroups(options, result);
 
       CreateShiftGroups(indexOfReferenceColumnInColumnGroup, maxColumns, result);
 
@@ -65,6 +76,17 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
       Iterate(options, shiftCurveCollections, result);
 
       return result;
+    }
+
+    private static void InterpolateAllColumnGroups(MasterCurveCreationOptions options, MasterCurveCreationResult result)
+    {
+      var setOfCurvesToInterpolate = result.ResultingInterpolation.Select(
+              ri => ((IReadOnlyList<double> X, IReadOnlyList<double> Y, IReadOnlyList<double>? YErr))(ri.XValues, ri.YValues, null)).ToArray();
+      var interpolations = options.CreateInterpolationFunction(setOfCurvesToInterpolate);
+      for (int nColumnGroup = 0; nColumnGroup < result.ResultingInterpolation.Length; nColumnGroup++)
+      {
+        result.ResultingInterpolation[nColumnGroup].InterpolationFunction = interpolations[nColumnGroup];
+      }
     }
 
     private static void CreateShiftGroups(int indexOfReferenceColumnInColumnGroup, int maxColumns, MasterCurveCreationResult result)
@@ -84,6 +106,13 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
       shiftGroups.Add(shiftGroup);
     }
 
+    /// <summary>
+    /// Performs iteration to create or refine the master curve. There must already exist an interpolation for each curve group
+    /// (which at the first iteration consist only of the interpolation of the reference curve(s)).
+    /// </summary>
+    /// <param name="options">The master curve creation options.</param>
+    /// <param name="shiftCurveCollections">The data to construct the master curve(s).</param>
+    /// <param name="result">The result of the master curve construction.</param>
     public static void Iterate(MasterCurveCreationOptions options, ShiftCurveCollections shiftCurveCollections, MasterCurveCreationResult result)
     {
       for (int iteration = 0; iteration < options.NumberOfIterations; ++iteration)
@@ -114,7 +143,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
         {
           var shiftCurve = shiftCurveCollections[nColumnGroup][indexOfCurveInShiftGroup];
           oneShiftDataAcrossCurveGroups[nColumnGroup] = shiftCurve;
-          GetMinMaxOfFirstColumnForValidSecondColumn(shiftCurve.X, shiftCurve.Y, options.XShiftBy, options.LogarithmizeXForInterpolation, options.LogarithmizeYForInterpolation, out var xmin, out var xmax);
+          var (xmin, xmax) = GetMinMaxOfFirstColumnForValidSecondColumn(shiftCurve.X, shiftCurve.Y, options.XShiftBy, options.LogarithmizeXForInterpolation, options.LogarithmizeYForInterpolation);
 
           double localMaxShift;
           double localMinShift;
@@ -202,10 +231,11 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
 
           for (int nColumnGroup = 0; nColumnGroup < interpolations.Length; nColumnGroup++)
           {
-            // now build up a new interpolation, where the shifted data is taken into account
+            // add the data for interpolation again, using the new shift
             interpolations[nColumnGroup].AddXYColumn(currentShift, indexOfCurveInShiftGroup, oneShiftDataAcrossCurveGroups[nColumnGroup].X, oneShiftDataAcrossCurveGroups[nColumnGroup].Y, options);
-            interpolations[nColumnGroup].Interpolate(options);
           }
+          // now build up a new interpolation, where the shifted data is taken into account
+          InterpolateAllColumnGroups(options, result);
 
           initialShift = currentShift;
         }
@@ -218,9 +248,9 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     /// Typically, after calling this, you can call <see cref="Iterate(MasterCurveCreationOptions, ShiftCurveCollections, List{List{int}}, MasterCurveCreationResult)"/> to iterate
     /// with the new interpolation function again.
     /// </summary>
-    /// <param name="options">The options.</param>
-    /// <param name="shiftCurveCollections">The shift curve collections.</param>
-    /// <param name="result">The result.</param>
+    /// <param name="options">The master curve creation options.</param>
+    /// <param name="shiftCurveCollections">The data to construct the master curve(s).</param>
+    /// <param name="result">The result of the master curve construction.</param>
     public static void ReInitializeResult(MasterCurveCreationOptions options, ShiftCurveCollections shiftCurveCollections, MasterCurveCreationResult result)
     {
       for (int idxCurveCollection = 0; idxCurveCollection < shiftCurveCollections.Count; idxCurveCollection++)
@@ -233,29 +263,37 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
         {
           interpolation.AddXYColumn(result.ResultingShifts[idxCurve], idxCurve, shiftCurves[idxCurve].X, shiftCurves[idxCurve].Y, options);
         }
-
-        interpolation.Interpolate(options);
       }
+      InterpolateAllColumnGroups(options, result);
     }
 
     /// <summary>
     /// Reinitializes the result (see <see cref="ReInitializeResult(MasterCurveCreationOptions, ShiftCurveCollections, MasterCurveCreationResult)"/>)
     /// and then iterate anew.
     /// </summary>
-    /// <param name="options">The options.</param>
-    /// <param name="shiftCurveCollections">The shift curve collections.</param>
-    /// <param name="result">The result.</param>
+    /// <param name="options">The master curve creation options.</param>
+    /// <param name="shiftCurveCollections">The data to construct the master curve(s).</param>
+    /// <param name="result">The result of the master curve construction.</param>
     public static void ReIterate(MasterCurveCreationOptions options, ShiftCurveCollections shiftCurveCollections, MasterCurveCreationResult result)
     {
       ReInitializeResult(options, shiftCurveCollections, result);
       Iterate(options, shiftCurveCollections, result);
     }
 
-    public static bool GetMinMaxOfFirstColumnForValidSecondColumn(IReadOnlyList<double> x, IReadOnlyList<double> y, ShiftXBy shiftBy, bool doLogX, bool doLogY, out double min, out double max)
+    /// <summary>
+    /// Gets the minimum and maximum of the x-values, taking into account different options and whether the y-values are valid.
+    /// </summary>
+    /// <param name="x">The x-values.</param>
+    /// <param name="y">The y-values.</param>
+    /// <param name="shiftBy">The method to shift the data.</param>
+    /// <param name="doLogX">True if the x-values are logarithmized for the interpolation.</param>
+    /// <param name="doLogY">True if the y-values are logarithmized for the interpolation.</param>
+    /// <returns>Minimum and maximum of the x-values, for x and y values appropriate for the conditions given by the parameter.</returns>
+    public static (double min, double max) GetMinMaxOfFirstColumnForValidSecondColumn(IReadOnlyList<double> x, IReadOnlyList<double> y, ShiftXBy shiftBy, bool doLogX, bool doLogY)
     {
-      int len = Math.Min(x.Count, y.Count);
-      min = double.PositiveInfinity;
-      max = double.NegativeInfinity;
+      var len = Math.Min(x.Count, y.Count);
+      var min = double.PositiveInfinity;
+      var max = double.NegativeInfinity;
 
       for (int i = 0; i < len; i++)
       {
@@ -268,7 +306,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
           max = Math.Max(max, xv);
         }
       }
-      return max >= min;
+      return (min, max);
     }
 
     /// <summary>

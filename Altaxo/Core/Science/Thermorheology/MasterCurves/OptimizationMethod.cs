@@ -22,8 +22,6 @@
 
 #endregion Copyright
 
-#nullable enable
-
 namespace Altaxo.Science.Thermorheology.MasterCurves
 {
   /// <summary>
@@ -41,6 +39,9 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     /// </summary>
     OptimizeSquaredDifference,
 
+    /// <summary>
+    /// Evaluates the mean squared difference (always positive) between master curve and new data and tries to minimize this value by brute force search.
+    /// </summary>
     OptimizeSquaredDifferenceByBruteForce
   }
 }

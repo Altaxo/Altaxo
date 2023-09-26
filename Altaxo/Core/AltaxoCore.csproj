@@ -8,11 +8,11 @@
     <DefineConstants>MANAGED</DefineConstants>
     <TransformOnBuild>true</TransformOnBuild>
     <nullable>enable</nullable>
-    <NoWarn>1701;1702;1573;1591</NoWarn>
+    <NoWarn>1701;1702;1573;1591;3001;3008;</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(TargetFramework)' == 'net48' ">
     <NoWarn>
-      1701;1702;1591;
+      1701;1702;1591;3001;3008;
       8600;8601;8603;8604;8625;8767
     </NoWarn>
   </PropertyGroup>

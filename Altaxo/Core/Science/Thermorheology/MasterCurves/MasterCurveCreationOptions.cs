@@ -25,7 +25,8 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
-using Altaxo.Calc.Interpolation;
+using System.Linq;
+using Complex64 = System.Numerics.Complex;
 
 namespace Altaxo.Science.Thermorheology.MasterCurves
 {
@@ -53,19 +54,80 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     /// </summary>
     public OptimizationMethod OptimizationMethod { get; init; }
 
-    protected Func<IReadOnlyList<double>, IReadOnlyList<double>, IReadOnlyList<double>?, Func<double, double>> _interpolationFunctionCreation = (x, y, dy) => new LinearInterpolationOptions().Interpolate(x, y, dy).GetYOfX;
+    protected Func<IReadOnlyList<(IReadOnlyList<double> X, IReadOnlyList<double> Y, IReadOnlyList<double>? YErr)>, IReadOnlyList<Func<double, double>>> _createInterpolationFunctionCreation = (ds) => throw new NotImplementedException();
 
     /// <summary>
-    /// Gets or sets a function that creates the interpolation function.
+    /// Gets or sets a function that creates the interpolation function. The input is a set of datapoint collections,
+    /// the output is one or multiple interpolation functions (for each datapoint collection, a separate interpolation function).
     /// </summary>
     /// <value>
-    /// The creation function for the interpolation function. Per default this is set to a function that creates a <see cref="LinearInterpolation"/>
+    /// A function, that inputs sets of curve data, each set consisting of arrays of x, y, and yerr data.
+    /// The return value of this function is a set of interpolation functions, one interpolation function for each set of curve data.
     /// </value>
-    public Func<IReadOnlyList<double>, IReadOnlyList<double>, IReadOnlyList<double>?, Func<double, double>> CreateInterpolationFunction
+    public Func<IReadOnlyList<(IReadOnlyList<double> X, IReadOnlyList<double> Y, IReadOnlyList<double>? YErr)>, IReadOnlyList<Func<double, double>>> CreateInterpolationFunction
     {
-      get { return _interpolationFunctionCreation; }
-      init { _interpolationFunctionCreation = value ?? throw new ArgumentNullException(nameof(value)); }
+      get { return _createInterpolationFunctionCreation; }
+      init { _createInterpolationFunctionCreation = value ?? throw new ArgumentNullException(nameof(value)); }
     }
+
+    /// <summary>
+    /// Sets a creator for interpolation functions that creates real values. For each set of curve data, an interpolation
+    /// function of the same type will be created.
+    /// </summary>
+    /// <value>
+    /// A function, that inputs the x, y, and yerr values, and creates with that values an interpolation function that interpolates these values.
+    /// </value>
+    public Func<IReadOnlyList<double>, IReadOnlyList<double>, IReadOnlyList<double>?, Func<double, double>> CreateInterpolationFunctionDDForAllGroups
+    {
+      init
+      {
+        if (value is null)
+          throw new ArgumentNullException(nameof(value));
+
+        _createInterpolationFunctionCreation = (setOfCurves) => setOfCurves.Select(curveData => value(curveData.X, curveData.Y, curveData.YErr)).ToArray();
+      }
+    }
+
+    /// <summary>
+    /// Sets a creator for an interpolation function that creates complex values.
+    /// It is assumed that the master curve is constructed
+    /// with exactly two sets of curves, the first set containing the real parts, and the second containing the imaginary parts. Both curve sets
+    /// must have exactly the same x-values (which of course is the case if the data originate from complex data).
+    /// </summary>
+    /// <value>
+    /// A function, that inputs the x, y, and yerr values, and creates with that values an interpolation function that interpolates these values. y and yerr are sets of complex values.
+    /// </value>
+    public Func<IReadOnlyList<double>, IReadOnlyList<Complex64>, IReadOnlyList<Complex64>?, Func<double, Complex64>> CreateInterpolationFunctionDComplex
+    {
+      init
+      {
+        if (value is null)
+          throw new ArgumentNullException(nameof(value));
+
+        _createInterpolationFunctionCreation = (setOfCurves) =>
+        {
+          if (setOfCurves.Count != 2)
+            throw new InvalidOperationException("Two sets of curve data expected (one for the real and one for the imaginary part).");
+          if (setOfCurves[0].X.Count != setOfCurves[1].X.Count)
+            throw new InvalidOperationException("In the two sets of curve data expected (one for the real and one for the imaginary part), the same number of points are expected.");
+
+          var YC = new Complex64[setOfCurves[0].X.Count];
+          var x0 = setOfCurves[0].X;
+          var yre = setOfCurves[0].Y;
+          var yim = setOfCurves[1].Y;
+          for (int i = 0; i < YC.Length; ++i)
+          {
+            YC[i] = new Complex64(yre[i], yim[i]);
+          }
+
+
+          var interp = value(x0, YC, null);
+
+          return new Func<double, double>[2] { x => interp(x).Real, x => interp(x).Imaginary };
+        };
+      }
+    }
+
 
     protected int _numberOfIterations = 1;
 

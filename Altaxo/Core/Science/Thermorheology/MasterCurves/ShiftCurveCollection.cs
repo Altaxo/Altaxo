@@ -22,36 +22,41 @@
 
 #endregion Copyright
 
-#nullable enable
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace Altaxo.Science.Thermorheology.MasterCurves
 {
-  using System.Collections;
-
-
   /// <summary>
-  /// The data to construct one shift curve consists of multiple x-y curves.
+  /// A collection of multiple x-y curves (see <see cref="ShiftCurve"/>) that will finally form one master curve.
   /// </summary>
   public class ShiftCurveCollection : IReadOnlyList<ShiftCurve>
   {
     ShiftCurve[] _inner;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ShiftCurveCollection"/> class.
+    /// </summary>
+    /// <param name="data">Collection of multiple x-y curves that will finally form one master curve.</param>
     public ShiftCurveCollection(IEnumerable<ShiftCurve> data)
     {
       _inner = data.ToArray();
     }
 
+    /// <inheritdoc/>
     public ShiftCurve this[int index] => ((IReadOnlyList<ShiftCurve>)_inner)[index];
 
+    /// <inheritdoc/>
     public int Count => ((IReadOnlyCollection<ShiftCurve>)_inner).Count;
 
+    /// <inheritdoc/>
     public IEnumerator<ShiftCurve> GetEnumerator()
     {
       return ((IEnumerable<ShiftCurve>)_inner).GetEnumerator();
     }
 
+    /// <inheritdoc/>
     IEnumerator IEnumerable.GetEnumerator()
     {
       return _inner.GetEnumerator();
