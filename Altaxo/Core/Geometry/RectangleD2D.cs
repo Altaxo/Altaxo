@@ -29,31 +29,43 @@ using System.Collections.Generic;
 namespace Altaxo.Geometry
 {
   /// <summary>
-  /// RectangleD describes a rectangle in 2D space.
+  /// A rectangle in 2D space.
   /// </summary>
   [Serializable]
   public struct RectangleD2D : IEquatable<RectangleD2D>
   {
     private double _x, _y, _w, _h;
 
+    /// <summary>
+    /// Gets or sets the x location (the x coordinate of the left side).
+    /// </summary>
     public double X
     {
       get { return _x; }
       set { _x = value; }
     }
 
+    /// <summary>
+    /// Gets or sets the y location (the y coordinate of the top side).
+    /// </summary>
     public double Y
     {
       get { return _y; }
       set { _y = value; }
     }
 
+    /// <summary>
+    /// Gets or sets the width of the rectangle.
+    /// </summary>
     public double Width
     {
       get { return _w; }
       set { _w = value; }
     }
 
+    /// <summary>
+    /// Gets or sets the height of the rectangle.
+    /// </summary>
     public double Height
     {
       get { return _h; }
@@ -94,6 +106,13 @@ namespace Altaxo.Geometry
 
     #endregion Serialization
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RectangleD2D"/> struct.
+    /// </summary>
+    /// <param name="x">The x location (left).</param>
+    /// <param name="y">The y location (top).</param>
+    /// <param name="width">The width.</param>
+    /// <param name="height">The height.</param>
     public RectangleD2D(double x, double y, double width, double height)
       : this()
     {
@@ -103,6 +122,11 @@ namespace Altaxo.Geometry
       _h = height;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RectangleD2D"/> struct.
+    /// </summary>
+    /// <param name="position">The position.</param>
+    /// <param name="size">The size.</param>
     public RectangleD2D(PointD2D position, PointD2D size)
     {
       _x = position.X;
@@ -111,6 +135,9 @@ namespace Altaxo.Geometry
       _h = size.Y;
     }
 
+    /// <summary>
+    /// Gets the empty rectangle with the location (0, 0).
+    /// </summary>
     public static RectangleD2D Empty
     {
       get
@@ -119,6 +146,13 @@ namespace Altaxo.Geometry
       }
     }
 
+    /// <summary>
+    /// Gets a value indicating whether the rectangle is empty. Per definition,
+    /// it is empty if both width and height are zero.
+    /// </summary>
+    /// <value>
+    ///   <c>true</c> if this rectangle is empty; otherwise, <c>false</c>.
+    /// </value>
     public bool IsEmpty
     {
       get
@@ -127,31 +161,49 @@ namespace Altaxo.Geometry
       }
     }
 
+    /// <summary>
+    /// Creates a rectangle from the left, top, right and bottom coordinate values.
+    /// </summary>
+    /// <param name="a">Left(x)-top(y) point.</param>
+    /// <param name="b">Right(x)-bottom(y) point.</param>
+    /// <returns>The created rectangle.</returns>
     public static RectangleD2D FromLTRB(PointD2D a, PointD2D b)
     {
       return new RectangleD2D(a.X, a.Y, b.X - a.X, b.Y - a.Y);
     }
 
+    /// <summary>
+    /// Creates a rectangle from the left, top, right and bottom coordinate values.
+    /// </summary>
+    /// <param name="ax">The left x.</param>
+    /// <param name="ay">The top y.</param>
+    /// <param name="bx">The right x.</param>
+    /// <param name="by">The bottom y.</param>
+    /// <returns>The created rectangle</returns>
     public static RectangleD2D FromLTRB(double ax, double ay, double bx, double by)
     {
       return new RectangleD2D(ax, ay, bx - ax, by - ay);
     }
 
+    /// <inheritdoc/>
     public bool Equals(RectangleD2D q)
     {
       return _x == q._x && _y == q._y && _w == q._w && _h == q._h;
     }
 
+    /// <inheritdoc/>
     public static bool operator ==(RectangleD2D p, RectangleD2D q)
     {
       return p.Equals(q);
     }
 
+    /// <inheritdoc/>
     public static bool operator !=(RectangleD2D p, RectangleD2D q)
     {
       return !(p.Equals(q));
     }
 
+    /// <inheritdoc/>
     public override int GetHashCode()
     {
       unchecked
@@ -160,6 +212,7 @@ namespace Altaxo.Geometry
       }
     }
 
+    /// <inheritdoc/>
     public override bool Equals(object? obj)
     {
       if (obj is RectangleD2D)
@@ -173,12 +226,19 @@ namespace Altaxo.Geometry
       }
     }
 
+    /// <inheritdoc/>
     public override string ToString()
     {
       return string.Format("X={0}; Y={1}; W={2}; H={3}", _x, _y, _w, _h);
       ;
     }
 
+    /// <summary>
+    /// Gets or sets the location (of the left-top corner of the rectangle).
+    /// </summary>
+    /// <value>
+    /// The location.
+    /// </value>
     public PointD2D Location
     {
       get
@@ -192,6 +252,9 @@ namespace Altaxo.Geometry
       }
     }
 
+    /// <summary>
+    /// Gets or sets the size of the rectangle.
+    /// </summary>
     public PointD2D Size
     {
       get
@@ -205,23 +268,94 @@ namespace Altaxo.Geometry
       }
     }
 
+    /// <summary>
+    /// Gets the y coordinate of the top.
+    /// </summary>
     public double Top { get { return _y; } }
 
+    /// <summary>
+    /// Gets the y coordinate of the bottom.
+    /// </summary>
     public double Bottom { get { return _y + _h; } }
 
+    /// <summary>
+    /// Gets the x coordinate of the left.
+    /// </summary>
     public double Left { get { return _x; } }
 
+    /// <summary>
+    /// Gets the x coordinate of the right.
+    /// </summary>
     public double Right { get { return _x + _w; } }
 
+    /// <summary>
+    /// Gets the left(x)-top(y) point of the rectangle.
+    /// </summary>
     public PointD2D LeftTop { get { return new PointD2D(_x, _y); } }
 
-    public PointD2D LeftBottom { get { return new PointD2D(_x, _y + _h); } }
+    /// <summary>
+    /// Gets the center(x)-top(y) point of the rectangle.
+    /// </summary>
+    public PointD2D CenterTop { get { return new PointD2D(_x + _w / 2, _y); } }
 
+    /// <summary>
+    /// Gets the right(x)-top(y) point of the rectangle.
+    /// </summary>
     public PointD2D RightTop { get { return new PointD2D(_x + _w, _y); } }
 
+    /// <summary>
+    /// Gets the left(x)-center(y) point of the rectangle.
+    /// </summary>
+    public PointD2D LeftCenter { get { return new PointD2D(_x, _y + _h / 2); } }
+
+    /// <summary>
+    /// Gets the center(x)-center(y) point of the rectangle.
+    /// </summary>
+    public PointD2D CenterCenter { get { return new PointD2D(_x + _w / 2, _y + _h / 2); } }
+
+    /// <summary>
+    /// Gets the right(x)-center(y) point of the rectangle.
+    /// </summary>
+    public PointD2D RightCenter { get { return new PointD2D(_x + _w, _y + _h / 2); } }
+
+    /// <summary>
+    /// Gets the left(x)-bottom(y) point of the rectangle.
+    /// </summary>
+    public PointD2D LeftBottom { get { return new PointD2D(_x, _y + _h); } }
+
+    /// <summary>
+    /// Gets the center(x)-bottom(y) point of the rectangle.
+    /// </summary>
+    public PointD2D CenterBottom { get { return new PointD2D(_x + _w / 2, _y + _h); } }
+
+    /// <summary>
+    /// Gets the right(x)-bottom(y) point of the rectangle.
+    /// </summary>
     public PointD2D RightBottom { get { return new PointD2D(_x + _w, _y + _h); } }
 
-    public PointD2D CenterCenter { get { return new PointD2D(_x + _w / 2, _y + _h / 2); } }
+    /// <summary>
+    /// Gets a new rectangle that is the left half of this rectangle.
+    /// </summary>
+    /// <summary>
+    /// Gets the left(x)-top(y) point of the rectangle.
+    /// </summary>
+    public RectangleD2D LeftHalf { get { return new RectangleD2D(_x, _y, _w / 2, _h); } }
+
+    /// <summary>
+    /// Gets a new rectangle that is the right half of this rectangle.
+    /// </summary>
+    public RectangleD2D RightHalf { get { return new RectangleD2D(_x + _w / 2, _y, _w / 2, _h); } }
+
+    /// <summary>
+    /// Gets a new rectangle that is the top half of this rectangle.
+    /// </summary>
+    public RectangleD2D TopHalf { get { return new RectangleD2D(_x, _y, _w, _h / 2); } }
+
+    /// <summary>
+    /// Gets a new rectangle that is the bottom half of this rectangle.
+    /// </summary>
+    public RectangleD2D BottomHalf { get { return new RectangleD2D(_x, _y + _h / 2, _w, _h / 2); } }
+
 
     public bool Contains(PointD2D p)
     {
@@ -335,6 +469,10 @@ namespace Altaxo.Geometry
       return result;
     }
 
+    /// <summary>
+    /// Expands this rectangle, so that it now includes its former shape, and the rectangle provided in the argument.
+    /// </summary>
+    /// <param name="rect">The rectangle to include.</param>
     public void ExpandToInclude(RectangleD2D rect)
     {
       ExpandToInclude(rect.LeftTop);
@@ -343,6 +481,16 @@ namespace Altaxo.Geometry
       ExpandToInclude(rect.RightBottom);
     }
 
+    /// <summary>
+    /// Gets the rectangular bounding box that includes both rectangles.
+    /// </summary>
+    /// <param name="first">The first rectangle.</param>
+    /// <param name="other">The other rectangle.</param>
+    /// <returns>The rectangular bounding box that includes both rectangles.
+    /// If only one rectangle is provided, that rectangle is returned.
+    /// If neither rectangle is provided, the return value is null.
+    /// </returns>
+    /// <exception cref="System.InvalidProgramException"></exception>
     public static RectangleD2D? ExpandToInclude(RectangleD2D? first, RectangleD2D? other)
     {
       if (first.HasValue && other.HasValue)
