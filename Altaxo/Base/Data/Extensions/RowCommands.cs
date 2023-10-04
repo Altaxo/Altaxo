@@ -162,6 +162,33 @@ namespace Altaxo.Data
     }
 
     /// <summary>
+    /// Copies one row of a <see cref="DataColumnCollection"/> to another row in the same or in another <see cref="DataColumnCollection"/>. The columns in the source collection are mapped to the columns in
+    /// the destination collection by name; if a column does not exist in the destination collection, this column is added to the destination collection.
+    /// </summary>
+    /// <param name="sourceTable">The source <see cref="DataColumnCollection"/>.</param>
+    /// <param name="sourceRowIndex">Index of the source row.</param>
+    /// <param name="selectedSourceDataColumns">The selected source data columns. If this parameter is null, all source columns are selected for copying.</param>
+    /// <param name="destinationTable">The destination <see cref="DataColumnCollection"/>.</param>
+    /// <param name="destinationRowIndex">Index of the destination row.</param>
+    public static void CopyRowToRow(this DataColumnCollection sourceTable, int sourceRowIndex, IAscendingIntegerCollection? selectedSourceDataColumns, DataColumnCollection destinationTable, int destinationRowIndex)
+    {
+      if (selectedSourceDataColumns is null || 0 == selectedSourceDataColumns.Count)
+        selectedSourceDataColumns = Altaxo.Collections.ContiguousIntegerRange.FromStartAndCount(0, sourceTable.ColumnCount);
+
+      foreach (var colIdx in selectedSourceDataColumns)
+      {
+        var srcColName = sourceTable.GetColumnName(colIdx);
+
+        if (!destinationTable.Contains(srcColName))
+        {
+          destinationTable.EnsureExistence(srcColName, sourceTable[colIdx].GetType(), sourceTable.GetColumnKind(colIdx), sourceTable.GetColumnGroup(colIdx));
+        }
+
+        destinationTable[srcColName][destinationRowIndex] = sourceTable[srcColName][sourceRowIndex];
+      }
+    }
+
+    /// <summary>
     /// Copies one row of a <see cref="DataColumnCollection"/> to another row in the same or in another <see cref="DataColumnCollection"/>.
     /// The columns in the source collection are mapped to the columns in the destination collection by index (plus an optional offset).
     /// </summary>
