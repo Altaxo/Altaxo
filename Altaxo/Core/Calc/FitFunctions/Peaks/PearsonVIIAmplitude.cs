@@ -372,7 +372,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
         lowerBounds[j + 2] = minimalFWHM.HasValue ? minimalFWHM.Value / 2 : DefaultMinWidth;
         upperBounds[j + 2] = maximalFWHM.HasValue ? maximalFWHM.Value / 2 : DefaultMaxWidth;
 
-        lowerBounds[j + 3] = 1 / 1024.0;
+        lowerBounds[j + 3] = 1 / 512.0;
         upperBounds[j + 3] = 1024;
       }
 
@@ -390,7 +390,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
         lowerBounds[j + 2] = DefaultMinWidth;
         upperBounds[j + 2] = DefaultMaxWidth;
 
-        lowerBounds[j + 3] = 1 / 1024.0;
+        lowerBounds[j + 3] = 1 / 512.0; // limited by Pow(2, 1 / m) with gets infinite when m = 1024
         upperBounds[j + 3] = 1024;
       }
       return (lowerBounds, upperBounds);
