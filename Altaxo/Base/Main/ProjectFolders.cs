@@ -177,11 +177,22 @@ namespace Altaxo.Main
     public List<IProjectItem> GetItemsInFolder(string folderName)
     {
       ProjectFolder.ThrowExceptionOnInvalidFullFolderPath(folderName);
-
       var result = new List<IProjectItem>();
-
       AddItemsInFolder(folderName, result);
+      return result;
+    }
 
+    /// <summary>
+    /// Get the items and the subfolders (as objects of type <see cref="ProjectFolder"/>) of the provided folder.
+    /// The items in the subfolders are not included.
+    /// </summary>
+    /// <param name="folderName">Folder for which to retrieve the items.</param>
+    /// <returns>List of project items and subfolder objects of the provided folder.</returns>
+    public List<INamedObject> GetItemsAndSubfoldersInFolder(string folderName)
+    {
+      ProjectFolder.ThrowExceptionOnInvalidFullFolderPath(folderName);
+      var result = new List<INamedObject>();
+      AddItemsAndSubFoldersInFolder(folderName, result);
       return result;
     }
 
@@ -200,6 +211,7 @@ namespace Altaxo.Main
       return result;
     }
 
+
     /// <summary>
     /// Add the items  of the provided folder (but not of the subfolders) to the list.
     /// </summary>
@@ -216,6 +228,30 @@ namespace Altaxo.Main
       foreach (var v in items.OfType<IProjectItem>())
       {
         list.Add(v);
+      }
+    }
+
+    /// <summary>
+    /// Add the project items and the subfolders (of type <see cref="ProjectFolder"/>) that are in the provided folder (but not the items of the subfolders) to the list.
+    /// </summary>
+    /// <param name="folderName">Folder for which to retrieve the items.</param>
+    /// <param name="list">List where to add the items to.</param>
+    public void AddItemsAndSubFoldersInFolder(string folderName, ICollection<INamedObject> list)
+    {
+      if (!_directories.TryGetValue(folderName, out var items))
+      {
+        ProjectFolder.ThrowExceptionOnInvalidFullFolderPath(folderName);
+        throw new ArgumentOutOfRangeException(string.Format("The folder {0} does not exist in this project", folderName));
+      }
+
+      foreach (var v in items.OfType<IProjectItem>())
+      {
+        list.Add(v);
+      }
+
+      foreach (var v in items.OfType<string>())
+      {
+        list.Add(new ProjectFolder(v));
       }
     }
 
