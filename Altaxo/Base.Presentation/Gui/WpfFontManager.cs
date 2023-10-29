@@ -27,15 +27,11 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 using Altaxo.Drawing;
 using Altaxo.Drawing.D3D;
 using Altaxo.Geometry;
-using Altaxo.Graph;
-using Altaxo.Graph.Graph3D;
 using Altaxo.Main.Services;
 
 namespace Altaxo.Gui
@@ -150,7 +146,7 @@ namespace Altaxo.Gui
     {
       _dictWin32FamilyNameToAltaxoFontFamily = new ConcurrentDictionary<string, Typeface[]>();
 
-      var fontList = new List<Typeface>(Fonts.SystemTypefaces);
+      var fontList = new List<Typeface>(Fonts.SystemTypefaces.Distinct());
       fontList.Sort(FontComparerForGroupingIntoAltaxoFontFamilies.Compare); // sort all typefaces first for name, then stretch, then weight, and then style (normal style first, then italic, then bold)
       AddToAltaxoFontFamilies(_dictWin32FamilyNameToAltaxoFontFamily, fontList);
 
