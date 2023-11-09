@@ -162,6 +162,9 @@ namespace Altaxo.Calc.FitFunctions.Peaks
     private const double DefaultMinWidth = 1E-81; // Math.Pow(double.Epsilon, 0.25);
     private const double DefaultMaxWidth = 1E+77; // Math.Pow(double.MaxValue, 0.25);
 
+    private const double DefaultMinRho = 1E-81;
+    private const double DefaultMaxRho = 1E+77;
+
     /// <inheritdoc/>
     public (IReadOnlyList<double?>? LowerBounds, IReadOnlyList<double?>? UpperBounds) GetParameterBoundariesForPositivePeaks(double? minimalPosition = null, double? maximalPosition = null, double? minimalFWHM = null, double? maximalFWHM = null)
     {
@@ -179,6 +182,9 @@ namespace Altaxo.Calc.FitFunctions.Peaks
 
         lowerBounds[j + 2] = minimalFWHM.HasValue ? minimalFWHM.Value : DefaultMinWidth; // minimal width is 0
         upperBounds[j + 2] = maximalFWHM.HasValue ? maximalFWHM.Value : DefaultMaxWidth;
+
+        lowerBounds[j + 3] = DefaultMinRho;
+        upperBounds[j + 3] = DefaultMaxRho;
       }
 
       return (lowerBounds, upperBounds);
@@ -194,6 +200,8 @@ namespace Altaxo.Calc.FitFunctions.Peaks
       {
         lowerBounds[j + 2] = DefaultMinWidth; // minimal width
         upperBounds[j + 2] = DefaultMaxWidth; // maximal width
+        lowerBounds[j + 3] = DefaultMinRho; // minimum rho
+        upperBounds[j + 3] = DefaultMaxRho; // minimum rho
       }
       return (lowerBounds, upperBounds);
     }
