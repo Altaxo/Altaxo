@@ -113,7 +113,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
 
 
     [FitFunctionCreator("Shifted Log-Normal (NIST)", "Peaks", 1, 1, 4)]
-    [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Peaks.GaussAmplitude}")]
+    [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Peaks.ShiftedLogNormalParametrizationNIST}")]
     public static IFitFunction Create_1_M1()
     {
       return new ShiftedLogNormal_ParametrizationNIST(1, -1);
@@ -147,8 +147,8 @@ namespace Altaxo.Calc.FitFunctions.Peaks
       get => _numberOfTerms;
       init
       {
-        if (!(value >= 1))
-          throw new ArgumentOutOfRangeException(nameof(NumberOfTerms), $"{nameof(NumberOfTerms)} must be greater than or equal to 1");
+        if (!(value >= 0))
+          throw new ArgumentOutOfRangeException(nameof(NumberOfTerms), $"{nameof(NumberOfTerms)} must be greater than or equal to 0");
         _numberOfTerms = value;
       }
     }
@@ -368,7 +368,8 @@ namespace Altaxo.Calc.FitFunctions.Peaks
 
     #endregion IFitFunction Members
 
-    public void EvaluateDerivative(IROMatrix<double> X, IReadOnlyList<double> P, IReadOnlyList<bool>? isParameterFixed, IMatrix<double> DY, IReadOnlyList<bool> dependentVariableChoice)
+    /// <inheritdoc/>
+    public void EvaluateDerivative(IROMatrix<double> X, IReadOnlyList<double> P, IReadOnlyList<bool>? isParameterFixed, IMatrix<double> DY, IReadOnlyList<bool>? dependentVariableChoice)
     {
       var rowCount = X.RowCount;
       for (int r = 0; r < rowCount; ++r)
