@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2023 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -51,7 +51,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
         (3,7,1/5d,1E-14),
       };
 
-      var func = new ShiftedLogNormal_ParametrizationNIST(1, -1);
+      var func = new ShiftedLogNormalParametrizationNIST(1, -1);
       foreach (var (amp, pos, w, rho) in testData)
       {
         double[] pars = new double[] { amp, pos, w, rho };
@@ -61,7 +61,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
 
         // Y at x=pos should be equal to amp
         X[0] = pos;
-        y = ShiftedLogNormal_ParametrizationNIST.GetYOfOneTerm(X[0], amp, pos, w, rho);
+        y = ShiftedLogNormalParametrizationNIST.GetYOfOneTerm(X[0], amp, pos, w, rho);
         AssertEx.AreEqual(amp, y, 1e-10, 1e-10);
         func.Evaluate(X, pars, Y);
         AssertEx.AreEqual(y, Y[0], 1e-15, 1e-15);
@@ -70,7 +70,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
 
         // Y at x= pos - w /1000 should be less than amp
         X[0] = pos - w / 1000;
-        y = ShiftedLogNormal_ParametrizationNIST.GetYOfOneTerm(X[0], amp, pos, w, rho);
+        y = ShiftedLogNormalParametrizationNIST.GetYOfOneTerm(X[0], amp, pos, w, rho);
         AssertEx.Greater(amp, y);
         func.Evaluate(X, pars, Y);
         AssertEx.AreEqual(y, Y[0], 1e-15, 1e-15);
@@ -79,7 +79,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
 
         // Y at x= pos + w /1000 should be less than amp
         X[0] = pos + w / 1000;
-        y = ShiftedLogNormal_ParametrizationNIST.GetYOfOneTerm(X[0], amp, pos, w, rho);
+        y = ShiftedLogNormalParametrizationNIST.GetYOfOneTerm(X[0], amp, pos, w, rho);
         AssertEx.Greater(amp, y);
         func.Evaluate(X, pars, Y);
         AssertEx.AreEqual(y, Y[0], 1e-15, 1e-15);
@@ -88,7 +88,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
 
         // Y at x= pos - 1.1 w should be less than amp/2
         X[0] = pos - 1.1 * w;
-        y = ShiftedLogNormal_ParametrizationNIST.GetYOfOneTerm(X[0], amp, pos, w, rho);
+        y = ShiftedLogNormalParametrizationNIST.GetYOfOneTerm(X[0], amp, pos, w, rho);
         AssertEx.Greater(amp / 2, y);
         func.Evaluate(X, pars, Y);
         AssertEx.AreEqual(y, Y[0], 1e-15, 1e-15);
@@ -97,7 +97,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
 
         // Y at x= pos + 1.1 w should be less than amp/2
         X[0] = pos + 1.1 * w;
-        y = ShiftedLogNormal_ParametrizationNIST.GetYOfOneTerm(X[0], amp, pos, w, rho);
+        y = ShiftedLogNormalParametrizationNIST.GetYOfOneTerm(X[0], amp, pos, w, rho);
         AssertEx.Greater(amp / 2, y);
         func.Evaluate(X, pars, Y);
         AssertEx.AreEqual(y, Y[0], 1e-15, 1e-15);
@@ -129,7 +129,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
         (11, 3, 5, 7, 2, 1.1192716455868243319),
       };
 
-      var func = new ShiftedLogNormal_ParametrizationNIST(1, -1);
+      var func = new ShiftedLogNormalParametrizationNIST(1, -1);
       foreach (var (x, amp, pos, w, rho, yexpected) in testData)
       {
         double[] pars = new double[] { amp, pos, w, rho };
@@ -138,7 +138,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
         double y;
 
         X[0] = x;
-        y = ShiftedLogNormal_ParametrizationNIST.GetYOfOneTerm(X[0], amp, pos, w, rho);
+        y = ShiftedLogNormalParametrizationNIST.GetYOfOneTerm(X[0], amp, pos, w, rho);
 
         double accuracy = 1e-13;
         if (rho != 1 && Math.Abs(rho - 1) < 1E-5)
@@ -157,7 +157,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
     [Fact]
     public void TestDerivativesWrtParameters()
     {
-      var ff = new ShiftedLogNormal_ParametrizationNIST(1, -1);
+      var ff = new ShiftedLogNormalParametrizationNIST(1, -1);
 
       var testData = new (double x, double amp, double pos, double w, double rho, double dydh, double dydx0, double dydw, double dydrho)[]
       {
@@ -220,7 +220,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
         (3, 5, 7, 1024, 1.0154471166033409828E7),
       };
 
-      var func = new ShiftedLogNormal_ParametrizationNIST(1, -1);
+      var func = new ShiftedLogNormalParametrizationNIST(1, -1);
 
       for (int i = 0; i < testData.Length; i++)
       {
@@ -297,7 +297,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
       double[] X = new double[1];
       double[] Y = new double[1];
 
-      var func = new ShiftedLogNormal_ParametrizationNIST();
+      var func = new ShiftedLogNormalParametrizationNIST();
 
 
 
@@ -331,7 +331,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
       double[] X = new double[1];
       double[] Y = new double[1];
 
-      var func = new ShiftedLogNormal_ParametrizationNIST();
+      var func = new ShiftedLogNormalParametrizationNIST();
 
 
 
@@ -365,7 +365,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
       double[] X = new double[1];
       double[] Y = new double[1];
 
-      var func = new ShiftedLogNormal_ParametrizationNIST();
+      var func = new ShiftedLogNormalParametrizationNIST();
 
 
 

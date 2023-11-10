@@ -868,7 +868,7 @@ In order to get a good fit nevertheless, it is necessary  that you logarithmize 
   <data name="Peaks.CauchyAmplitude" xml:space="preserve">
     <value>##### CauchyAmplitude
 
-This function evaluates a sum of Cauchy (Lorentzian) terms, plus a background polynomial with one or multiple terms, according to
+This function evaluates a sum of Cauchy (Lorentzian) terms, plus a baseline polynomial with one or multiple terms, according to
 
 $$
 y(x) = \frac{a_0}{1+ \left ( \frac{x-x_{c0}}{w_0} \right )^2 } + ... + \frac{a_{n-1}}{1+ \left ( \frac{x-x_{cn-1}}{w_{n-1}} \right )^2 } + b_0 + b_1 x^1 + ... + b_m x^m 
@@ -882,12 +882,12 @@ in which:
 
 - $w_0 ... w_{n-1}$ are the half widths of half maximum (HWHM) of the Cauchy terms
 
-- $b_0 ... b_m$ are the coefficients of the background polynomial of order  $m$
+- $b_0 ... b_m$ are the coefficients of the baseline polynomial of order  $m$
 
 - $n$ is the number of Cauchy terms ($n \geq 1$)
-- $m$ is the order of the background polynomial (set $m=-1$ to disable the background polynomial)
+- $m$ is the order of the baseline polynomial (set $m=-1$ to disable the baseline polynomial)
 
-The number of Cauchy terms $n$ and the order of the background polynomial $m$ can be changed by double-clicking on the fit function. The default values are $n=1$ and $m=0$. 
+The number of Cauchy terms $n$ and the order of the baseline polynomial $m$ can be changed by double-clicking on the fit function. The default values are $n=1$ and $m=0$. 
 
 The domain of the function is $-\infty \leq x \leq \infty$. 
 
@@ -906,7 +906,7 @@ References:
   <data name="Peaks.GaussAmplitude" xml:space="preserve">
     <value>##### GaussAmplitude
 
-This function evaluates a sum of Gaussian terms, plus a background polynomial with one or multiple terms, according to
+This function evaluates a sum of Gaussian terms, plus a baseline polynomial with one or multiple terms, according to
 
 $$
 y(x) = a_0 \exp \left ( -\frac{(x-x_{c0})^2}{2 w_0^2} \right ) + ... + a_{n-1} \exp \left ( -\frac{(x-x_{cn-1})^2}{2 w_{n-1}^2} \right ) + b_0 + b_1 x^1 + ... + b_m x^m 
@@ -920,12 +920,12 @@ in which:
 
 - $w_0 ... w_{n-1}$ are the widths of the Gaussians
 
-- $b_0 ... b_m$ are the coefficients of the background polynomial of order  $m$
+- $b_0 ... b_m$ are the coefficients of the baseline polynomial of order  $m$
 
 - $n$ is the number of Gaussian terms ($n \geq 1$)
-- $m$ is the order of the background polynomial (set $m=-1$ to disable the background polynomial)
+- $m$ is the order of the baseline polynomial (set $m=-1$ to disable the baseline polynomial)
 
-The number of Gaussian terms $n$ and the order of the background polynomial $m$ can be changed by double-clicking on the fit function. The default values are $n=1$ and $m=0$. 
+The number of Gaussian terms $n$ and the order of the baseline polynomial $m$ can be changed by double-clicking on the fit function. The default values are $n=1$ and $m=0$. 
 
 The domain of the function is $-\infty \leq x \leq \infty$. 
 
@@ -941,7 +941,7 @@ The domain of the function is $-\infty \leq x \leq \infty$.
   <data name="Peaks.PearsonIVAmplitude" xml:space="preserve">
     <value>##### PearsonIVAmplitude
 
-This function evaluates a sum of PearsonIV terms, plus a background polynomial with one or multiple terms, according to
+This function evaluates a sum of PearsonIV terms, plus a baseline polynomial with one or multiple terms, according to
 
 $$
 y(x) = a_0 \times PearsonIV \left ( x-x_{c0}, w_0, m_0, \nu_0 \right ) + ... + a_{n-1} \times PearsonIV \left ( x-x_{c{n-1}}, w_{n-1}, m_{n-1}, \nu_{n-1} \right ) + b_0 + b_1 x^1 + ... + b_q x^q 
@@ -959,10 +959,10 @@ in which:
 
 - $\nu_0 ... \nu_{n-1}$ are the skewness parameters of the PearsonIV terms
 
-- $b_0 ... b_q$ are the coefficients of the background polynomial of order  $q$
+- $b_0 ... b_q$ are the coefficients of the baseline polynomial of order  $q$
 
 - $n$ is the number of PearsonIV terms ($n \geq 1$)
-- $q$ is the order of the background polynomial (set $q=-1$ to disable the background polynomial)
+- $q$ is the order of the baseline polynomial (set $q=-1$ to disable the baseline polynomial)
 
 
 The original PearsonIV function was modified, such as that the location parameters describe the location of the maximal value of the function, and the amplitude parameter is the maximum y-value of the function:
@@ -978,7 +978,7 @@ $$
 PearsonIV(x) = \left ( \frac{1+z^2}{1+z_0^2} \right )^{-m} \exp (- \nu [\arctan(z)-\arctan(z_0)]) ; z_0 = -\frac{\nu}{2 m}, z = z_0 + \frac{x-x_c}{w} 
 $$
 
-The number of PearsonIV terms $n$ and the order of the background polynomial $q$ can be changed by double-clicking on the fit function. The default values are $n=1$ and $q=-1$. 
+The number of PearsonIV terms $n$ and the order of the baseline polynomial $q$ can be changed by double-clicking on the fit function. The default values are $n=1$ and $q=-1$. 
 
 The domain of the function is $-\infty \leq x \leq \infty$. 
 
@@ -997,7 +997,7 @@ Literature:
   <data name="Peaks.PearsonIVAmplitudeParametrizationHPW" xml:space="preserve">
     <value>##### PearsonIVAmplitude (Parametrization HPW)
 
-This function evaluates a sum of PearsonIV terms, plus a background polynomial with one or multiple terms, according to
+This function evaluates a sum of PearsonIV terms, plus a baseline polynomial with one or multiple terms, according to
 
 $$
 y(x) = a_0 \times PearsonIV \left ( x-x_{c0}, w_0, m_0, \nu_0 \right ) + ... + a_{n-1} \times PearsonIV \left ( x-x_{c{n-1}}, w_{n-1}, m_{n-1}, \nu_{n-1} \right ) + b_0 + b_1 x^1 + ... + b_q x^q 
@@ -1015,10 +1015,10 @@ in which:
 
 - $\nu_0 ... \nu_{n-1}$ are the skewness parameters of the PearsonIV terms
 
-- $b_0 ... b_q$ are the coefficients of the background polynomial of order  $q$
+- $b_0 ... b_q$ are the coefficients of the baseline polynomial of order  $q$
 
 - $n$ is the number of PearsonIV terms ($n \geq 1$)
-- $q$ is the order of the background polynomial (set $q=-1$ to disable the background polynomial)
+- $q$ is the order of the baseline polynomial (set $q=-1$ to disable the baselinepolynomial)
 
 
 The original PearsonIV function was modified, such as that the location parameter $x_c$ describe the location of the maximal value of the function, the amplitude parameter is the maximum y-value of the function, and the width parameter $w$ is the approximate HWHM of the peak:
@@ -1034,7 +1034,7 @@ $$
 PearsonIV(x, x_c, w, m, \nu) = \left ( \frac{1+z^2}{1+\nu^2} \right )^{-m} \exp (- 2 m \nu [\arctan(z)+\arctan(\nu)]) ; z = \sqrt{(2^{1/m}-1)(1+\nu^2)} \left ( \frac{x-x_c}{w} \right ) - v 
 $$
 
-The number of PearsonIV terms $n$ and the order of the background polynomial $q$ can be changed by double-clicking on the fit function. The default values are $n=1$ and $q=-1$. 
+The number of PearsonIV terms $n$ and the order of the baseline polynomial $q$ can be changed by double-clicking on the fit function. The default values are $n=1$ and $q=-1$. 
 
 The domain of the function is $-\infty \leq x \leq \infty$. 
 
@@ -1053,7 +1053,7 @@ Literature:
   <data name="Peaks.PearsonVIIAmplitude" xml:space="preserve">
     <value>##### PearsonVIIAmplitude
 
-This function evaluates a sum of PearsonVII terms, plus a background polynomial with one or multiple terms, according to
+This function evaluates a sum of PearsonVII terms, plus a baseline polynomial with one or multiple terms, according to
 
 $$
 y(x) = a_0 \times PearsonVII \left ( x-x_{c0}, w_0, m_0 \right ) + ... + a_{n-1} \times PearsonVII \left ( x-x_{c{n-1}}, w_{n-1}, m_{n-1} \right ) + b_0 + b_1 x^1 + ... + b_q x^q 
@@ -1069,10 +1069,10 @@ in which:
 
 - $m_0 ... m_{n-1}$ are the exponents of the PearsonVII terms ($m&gt;0$)
 
-- $b_0 ... b_q$ are the coefficients of the background polynomial of order  $q$
+- $b_0 ... b_q$ are the coefficients of the baseline polynomial of order  $q$
 
 - $n$ is the number of PearsonVII terms ($n \geq 1$)
-- $q$ is the order of the background polynomial (set $q=-1$ to disable the background polynomial)
+- $q$ is the order of the baseline polynomial (set $q=-1$ to disable the baseline polynomial)
 
 
 The PearsonVII function is (see [Wikipedia](https://en.wikipedia.org/wiki/Pearson_distribution):
@@ -1081,7 +1081,7 @@ PearsonVII(x) = (1+z^2)^{-m}  ; z = \frac{x-x_c}{w}
 $$
 
 
-The number of PearsonVII terms $n$ and the order of the background polynomial $q$ can be changed by double-clicking on the fit function. The default values are $n=1$ and $q=-1$. 
+The number of PearsonVII terms $n$ and the order of the baseline polynomial $q$ can be changed by double-clicking on the fit function. The default values are $n=1$ and $q=-1$. 
 
 The domain of the function is $-\infty \leq x \leq \infty$. 
 
@@ -1100,7 +1100,7 @@ Literature:
   <data name="Peaks.PseudoVoigtAmplitude" xml:space="preserve">
     <value>##### PseudoVoigt (Amplitude)
 
-This function evaluates a sum of pseudo Voigt terms, plus a background polynomial with one or multiple terms, according to
+This function evaluates a sum of pseudo Voigt terms, plus a baseline polynomial with one or multiple terms, according to
 
 $$
 y(x) = a_0 \times PSVoigt \left ( x-x_{c0}, w_0, \nu_0 \right ) + ... + a_{n-1} \times PSVoigt \left ( x-x_{c{n-1}}, w_{n-1}, \nu_{n-1} \right ) + b_0 + b_1 x^1 + ... + b_m x^m 
@@ -1116,10 +1116,10 @@ in which:
 
 - $\nu_0 ... \nu_{n-1}$ are the mixing parameters between the Lorentzian part and the Gaussian part
 
-- $b_0 ... b_m$ are the coefficients of the background polynomial of order  $m$
+- $b_0 ... b_m$ are the coefficients of the baseline polynomial of order  $m$
 
 - $n$ is the number of Voigt terms ($n \geq 1$)
-- $m$ is the order of the background polynomial (set $m=-1$ to disable the background polynomial)
+- $m$ is the order of the baseline polynomial (set $m=-1$ to disable the baseline polynomial)
 
 The pseudo Voigt function is an additive combination of a Gaussian function and a Lorentzian function:
 
@@ -1139,7 +1139,7 @@ $$
 L(x, x_c, w) = \frac{1}{1+(\frac{x-x_c}{w})^2}
 $$
 
-The number of pseudo Voigt terms $n$ and the order of the background polynomial $m$ can be changed by double-clicking on the fit function. The default values are $n=1$ and $m=-1$. 
+The number of pseudo Voigt terms $n$ and the order of the baseline polynomial $m$ can be changed by double-clicking on the fit function. The default values are $n=1$ and $m=-1$. 
 
 The domain of the function is $-\infty \leq x \leq \infty$. 
 
@@ -1151,10 +1151,55 @@ The domain of the function is $-\infty \leq x \leq \infty$.
 
 </value>
   </data>
+  <data name="Peaks.ShiftedLogNormalParametrizationNIST" xml:space="preserve">
+    <value>##### Shifted Log-Normal (parametrization: NIST)
+
+This function evaluates a sum of shifted log-normal distribution terms, plus a baseline polynomial with one or multiple terms, according to
+
+$$
+y(x) = a_0 \times SLN \left ( x, x_{c0}, w_0, \nu_0 \right ) + ... + a_{n-1} \times SLN \left ( x, x_{c{n-1}}, w_{n-1}, \nu_{n-1} \right ) + b_0 + b_1 x^1 + ... + b_m x^m 
+$$
+
+in which:
+
+$$
+SLN(x, x_c, w, \rho) = \exp \left ( \frac{-\ln 2}{(\ln \rho)^2} \left [ \ln \left ( \frac{(x-x_c)(\rho^2-1)}{w \rho} + 1 \right ) \right ]^{2} \right ) 
+$$
+
+is the shifted log-normal function and for which the parametrization is:
+
+- $a_0 ... a_{n-1}$ are the heights of the shifted log-normal terms
+
+- $x_{c0} ... x_{cn-1}$ are the locations of the maximum of the shifted log-normal terms
+
+- $w_0 ... w_{n-1}$ are the full-width-half-maximum values (FWHM) of the shifted log-normal terms
+
+- $\rho_0 ... \rho_{n-1}$ are skewness parameters of the shifted log-normal terms. The range is $0 &lt; \rho &lt; \infty$. For $\rho&lt;1$, the right slope is steeper than the left slope, for $\rho&gt;1$ the left slope is steeper than the right slope. For $\rho = 1$, the shape is Gaussian and therefore symmetric.
+
+- $b_0 ... b_m$ are the coefficients of the baseline polynomial of order $m$
+
+- $n$ is the number of shifted log-normal terms ($n \geq 1$)
+- $m$ is the order of the baseline polynomial (set $m=-1$ to disable the baseline polynomial)
+
+The number of shifted log-normal terms $n$ and the order of the baseline polynomial $m$ can be changed by double-clicking on the fit function. The default values are $n=1$ and $m=-1$. 
+
+For x-values for which the shifted log-normal function is undefined, the y-value of that term is set to zero, so that the resulting domain of the function is $-\infty \leq x \leq \infty$. 
+
+^^^
+![](res:Altaxo.Calc.FitFunctions.Peaks.ShiftedLogNormalParametrizationNIST.Fig1.png){width=15cm}  
+^^^ Fig. 1: Shifted log-normal function ($n=1$, $m=0$) with $a_0=5$, $x_{c0}=7$, $w_0=6$, and $\rho_0=2$ (green) or  $\rho_0=1$ (orange), respectively. Note that for $\rho=1$ a Gaussian shape is returned.
+---
+
+&gt; **Note:**  
+&gt; This function is used for instance to describe the intensity in dependence of the Raman shift of the Standard Reference Material 2242a from the National Institute of Standards and Technology NIST. In the formula given in the accompanying document, the number of terms is $n=1$, and the order of the baseline polynomial is $m=1$. The parameter $H$ corresponds to parameter $a_0$  here; the parameter m in the document is the linear slope of the background, which is parameter $b_1$ here; and the parameter $b$ in the document is the constant background, which is parameter $b_0$ here. 
+
+
+</value>
+  </data>
   <data name="Probability.CauchyArea" xml:space="preserve">
     <value>##### CauchyArea
 
-This function evaluates a sum of Cauchy (Lorentzian) terms, plus a background polynomial with one or multiple terms, according to
+This function evaluates a sum of Cauchy (Lorentzian) terms, plus a baseline polynomial with one or multiple terms, according to
 
 $$
 y(x) = \frac{A_0}{\pi w_0 \left[ 1 + \left ( \frac{x-x_{c0}}{w_0} \right ) ^2  \right ] } + ... + \frac{A_{n-1}}{\pi w_{n-1} \left [ 1 + \left ( \frac{x-x_{cn-1}}{w_{n-1}} \right ) ^2  \right ] } + b_0 + b_1 x^1 + ... + b_m x^m 
@@ -1168,12 +1213,12 @@ in which:
 
 - $w_0 ... w_{n-1}$ are the half widths of half maximum (HWHM) of the Cauchy terms
 
-- $b_0 ... b_m$ are the coefficients of the background polynomial of order  $m$
+- $b_0 ... b_m$ are the coefficients of the baseline polynomial of order  $m$
 
 - $n$ is the number of Cauchy terms ($n \geq 1$)
-- $m$ is the order of the background polynomial (set $m=-1$ to disable the background polynomial)
+- $m$ is the order of the baseline polynomial (set $m=-1$ to disable the baseline polynomial)
 
-The number of Cauchy terms $n$ and the order of the background polynomial $m$ can be changed by double-clicking on the fit function. The default values are $n=1$ and $m=0$. In order to get the probability density function of the Cauchy distribution, set $n=1$,  $m=-1$, and set the parameter $A_0$ fixed to $A_0=1$.
+The number of Cauchy terms $n$ and the order of the baseline polynomial $m$ can be changed by double-clicking on the fit function. The default values are $n=1$ and $m=0$. In order to get the probability density function of the Cauchy distribution, set $n=1$,  $m=-1$, and set the parameter $A_0$ fixed to $A_0=1$.
 
 
 The domain of the function is $-\infty \leq x \leq \infty$. 
@@ -1190,7 +1235,7 @@ References:
   <data name="Probability.GaussArea" xml:space="preserve">
     <value>##### GaussArea
 
-This function evaluates a sum of Gaussian terms, plus a background polynomial with one or multiple terms, according to
+This function evaluates a sum of Gaussian terms, plus a baseline polynomial with one or multiple terms, according to
 
 $$
 y(x) = \frac{A_0}{w_0 \sqrt{2 \pi}} \exp \left ( -\frac{(x-x_{c0})^2}{2 w_0^2} \right ) + ... + \frac{A_{n-1}}{w_{n-1} \sqrt{2 \pi}} \exp \left ( -\frac{(x-x_{cn-1})^2}{2 w_{n-1}^2} \right ) + b_0 + b_1 x^1 + ... + b_m x^m 
@@ -1204,12 +1249,12 @@ in which:
 
 - $w_0 ... w_{n-1}$ are the widths of the Gaussian terms
 
-- $b_0 ... b_m$ are the coefficients of the background polynomial of order  $m$
+- $b_0 ... b_m$ are the coefficients of the baseline polynomial of order  $m$
 
 - $n$ is the number of Gaussian terms ($n \geq 1$)
-- $m$ is the order of the background polynomial (set $m=-1$ to disable the background polynomial)
+- $m$ is the order of the baseline polynomial (set $m=-1$ to disable the baseline polynomial)
 
-The number of Gaussian terms $n$ and the order of the background polynomial $m$ can be changed by double-clicking on the fit function. The default values are $n=1$ and $m=0$. 
+The number of Gaussian terms $n$ and the order of the baseline polynomial $m$ can be changed by double-clicking on the fit function. The default values are $n=1$ and $m=0$. 
 
 The domain of the function is $-\infty \leq x \leq \infty$. 
 
@@ -1224,7 +1269,7 @@ The domain of the function is $-\infty \leq x \leq \infty$.
   <data name="Probability.PearsonIVArea" xml:space="preserve">
     <value>##### PearsonIVArea
 
-This function evaluates a sum of PearsonIV terms, plus a background polynomial with one or multiple terms, according to
+This function evaluates a sum of PearsonIV terms, plus a baseline polynomial with one or multiple terms, according to
 
 $$
 y(x) = A_0 \times PearsonIV \left ( x-x_{c0}, w_0, m_0, \nu_0 \right ) + ... + A_{n-1} \times PearsonIV \left ( x-x_{c{n-1}}, w_{n-1}, m_{n-1}, \nu_{n-1} \right ) + b_0 + b_1 x^1 + ... + b_q x^q 
@@ -1242,10 +1287,10 @@ in which:
 
 - $\nu_0 ... \nu_{n-1}$ are the skewness parameters of the PearsonIV terms
 
-- $b_0 ... b_q$ are the coefficients of the background polynomial of order  $q$
+- $b_0 ... b_q$ are the coefficients of the baseline polynomial of order  $q$
 
 - $n$ is the number of PearsonIV terms ($n \geq 1$)
-- $q$ is the order of the background polynomial (set $q=-1$ to disable the background polynomial)
+- $q$ is the order of the baseline polynomial (set $q=-1$ to disable the baseline polynomial)
 
 
 &gt; Please note that the location parameters $x_c$ are **not** the location of the maximum function values of the terms!
@@ -1264,7 +1309,7 @@ $$
 x_{max} = x_c - \frac{w v}{ 2 m}
 $$
 
-The number of PearsonIV terms $n$ and the order of the background polynomial $q$ can be changed by double-clicking on the fit function. The default values are $n=1$ and $q=-1$. 
+The number of PearsonIV terms $n$ and the order of the baseline polynomial $q$ can be changed by double-clicking on the fit function. The default values are $n=1$ and $q=-1$. 
 
 The domain of the function is $-\infty \leq x \leq \infty$. 
 
@@ -1283,7 +1328,7 @@ Literature:
   <data name="Probability.VoigtArea" xml:space="preserve">
     <value>##### VoigtArea
 
-This function evaluates a sum of Voigt terms, plus a background polynomial with one or multiple terms, according to
+This function evaluates a sum of Voigt terms, plus a baseline polynomial with one or multiple terms, according to
 
 $$
 y(x) = A_0 \times Voigt \left ( x-x_{c0}, w_0, \gamma_0 \right ) + ... + A_{n-1} \times Voigt \left ( x-x_{c{n-1}}, w_{n-1}, \gamma_{n-1} \right ) + b_0 + b_1 x^1 + ... + b_m x^m 
@@ -1299,10 +1344,10 @@ in which:
 
 - $\gamma_0 ... \gamma_{n-1}$ are the parameters of the Lorentzian part of the Voigt terms
 
-- $b_0 ... b_m$ are the coefficients of the background polynomial of order  $m$
+- $b_0 ... b_m$ are the coefficients of the baseline polynomial of order  $m$
 
 - $n$ is the number of Voigt terms ($n \geq 1$)
-- $m$ is the order of the background polynomial (set $m=-1$ to disable the background polynomial)
+- $m$ is the order of the baseline polynomial (set $m=-1$ to disable the baseline polynomial)
 
 The Voigt function is a convolution of a Gaussian function and a Lorentzian function:
 
@@ -1322,7 +1367,7 @@ $$
 L(x, \gamma) = \frac{\gamma}{\pi(x^2 + \gamma^2)}
 $$
 
-The number of Voigt terms $n$ and the order of the background polynomial $m$ can be changed by double-clicking on the fit function. The default values are $n=1$ and $m=-1$. 
+The number of Voigt terms $n$ and the order of the baseline polynomial $m$ can be changed by double-clicking on the fit function. The default values are $n=1$ and $m=-1$. 
 
 The domain of the function is $-\infty \leq x \leq \infty$. 
 
@@ -1337,7 +1382,7 @@ The domain of the function is $-\infty \leq x \leq \infty$.
   <data name="Probability.VoigtAreaParametrizationNu" xml:space="preserve">
     <value>##### VoigtArea (Parametrization Nu)
 
-This function evaluates a sum of Voigt terms, plus a background polynomial with one or multiple terms, according to
+This function evaluates a sum of Voigt terms, plus a baseline polynomial with one or multiple terms, according to
 
 $$
 y(x) = A_0 \times Voigt \left ( x-x_{c0}, w_0, \nu_0 \right ) + ... + A_{n-1} \times Voigt \left ( x-x_{c{n-1}}, w_{n-1}, \nu_{n-1} \right ) + b_0 + b_1 x^1 + ... + b_m x^m 
@@ -1356,7 +1401,7 @@ in which:
 - $b_0 ... b_m$ are the coefficients of the background polynomial of order  $m$
 
 - $n$ is the number of Voigt terms ($n \geq 1$)
-- $m$ is the order of the background polynomial (set $m=-1$ to disable the background polynomial)
+- $m$ is the order of the baseline polynomial (set $m=-1$ to disable the baseline polynomial)
 
 The original definition of the Voigt function is a convolution of a Gaussian function and a Lorentzian function:
 
@@ -1385,7 +1430,7 @@ $$
 Parameter $w$ is the approximate HWHM of the peak, and parameter $\nu$ ($\nu=[0..1]$) determines the ratio between $\sigma$ and $\gamma$, i.e. whether the peak is more Lorentzian like ($\nu=0$) or more Gauss like ($\nu=1$).
 This parametrization is preferred over the original Voigt function if fitting with parameter constraints is performed.
 
-The number of Voigt terms $n$ and the order of the background polynomial $m$ can be changed by double-clicking on the fit function. The default values are $n=1$ and $m=-1$. 
+The number of Voigt terms $n$ and the order of the baseline polynomial $m$ can be changed by double-clicking on the fit function. The default values are $n=1$ and $m=-1$. 
 
 The domain of the function is $-\infty \leq x \leq \infty$. 
 

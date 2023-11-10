@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2021 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2023 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -44,7 +44,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
   /// </remarks>
   [FitFunctionClass]
   [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Peaks.ShiftedLogNormalParametrizationNIST}")]
-  public record ShiftedLogNormal_ParametrizationNIST : IFitFunctionWithDerivative, IFitFunctionPeak, IImmutable
+  public record ShiftedLogNormalParametrizationNIST : IFitFunctionWithDerivative, IFitFunctionPeak, IImmutable
   {
     private const double Log2 = 0.69314718055994530941723212145818; //  Math.Log(2);
     private const double Log4 = 1.3862943611198906188344642429164; // Math.Log(4);
@@ -66,14 +66,14 @@ namespace Altaxo.Calc.FitFunctions.Peaks
     #region Serialization
 
     /// <summary>
-    /// 2023-11-09 Initial version 0
+    /// 2023-11-10 Initial version 0
     /// </summary>
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ShiftedLogNormal_ParametrizationNIST), 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ShiftedLogNormalParametrizationNIST), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (ShiftedLogNormal_ParametrizationNIST)obj;
+        var s = (ShiftedLogNormalParametrizationNIST)obj;
         info.AddValue("NumberOfTerms", s._numberOfTerms);
         info.AddValue("OrderOfBackgroundPolynomial", s._orderOfBaselinePolynomial);
       }
@@ -82,19 +82,19 @@ namespace Altaxo.Calc.FitFunctions.Peaks
       {
         var numberOfTerms = info.GetInt32("NumberOfTerms");
         var orderOfBackgroundPolynomial = info.GetInt32("OrderOfBackgroundPolynomial");
-        return new ShiftedLogNormal_ParametrizationNIST(numberOfTerms, orderOfBackgroundPolynomial);
+        return new ShiftedLogNormalParametrizationNIST(numberOfTerms, orderOfBackgroundPolynomial);
       }
     }
 
     #endregion Serialization
 
-    public ShiftedLogNormal_ParametrizationNIST()
+    public ShiftedLogNormalParametrizationNIST()
     {
       _numberOfTerms = 1;
       _orderOfBaselinePolynomial = -1;
     }
 
-    public ShiftedLogNormal_ParametrizationNIST(int numberOfPeakTerms, int orderOfBackgroundPolynomial)
+    public ShiftedLogNormalParametrizationNIST(int numberOfPeakTerms, int orderOfBackgroundPolynomial)
     {
       _numberOfTerms = numberOfPeakTerms;
       _orderOfBaselinePolynomial = orderOfBackgroundPolynomial;
@@ -116,7 +116,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
     [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.Peaks.ShiftedLogNormalParametrizationNIST}")]
     public static IFitFunction Create_1_M1()
     {
-      return new ShiftedLogNormal_ParametrizationNIST(1, -1);
+      return new ShiftedLogNormalParametrizationNIST(1, -1);
     }
 
     /// <summary>
@@ -315,7 +315,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
     private static double Log1p(double x)
     {
       double y = 1 + x;
-      return Math.Log(y) - ((y - 1) - x) / y;  /* cancels errors with IEEE arithmetic */
+      return Math.Log(y) - ((y - 1) - x) / y;  // cancels errors with IEEE arithmetic
     }
 
     public void Evaluate(double[] X, double[] P, double[] Y)
@@ -414,7 +414,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
             DY[r, j + 2] = h * expterm * 8 * Log2 * arg * arg / w;
             DY[r, j + 3] = h * expterm * 8 * Log2 * arg * arg * arg;
           }
-          else if ((logarg = 1 + arg * (rho - 1 / rho)) <= 0)
+          else if ((logarg = arg * (rho - 1 / rho)) <= -1)
           {
             DY[r, j + 0] = 0;
             DY[r, j + 1] = 0;
@@ -423,8 +423,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
           }
           else
           {
-
-            var loglogarg = Math.Log(logarg);
+            var loglogarg = Log1p(logarg);
             var logrho = Math.Log(rho);
             var expTerm = Math.Exp(-Log2 * Pow2(loglogarg / logrho));
             DY[r, j + 0] = expTerm;
