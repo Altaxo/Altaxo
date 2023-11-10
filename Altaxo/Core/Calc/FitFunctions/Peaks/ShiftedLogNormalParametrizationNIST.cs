@@ -262,10 +262,10 @@ namespace Altaxo.Calc.FitFunctions.Peaks
         int j = i / NumberOfParametersPerPeak;
         return (i % NumberOfParametersPerPeak) switch
         {
-          0 => FormattableString.Invariant($"a{j}"),
-          1 => FormattableString.Invariant($"xc{j}"),
-          2 => FormattableString.Invariant($"w{j}"),
-          3 => FormattableString.Invariant($"rho{j}"),
+          0 => FormattableString.Invariant($"{ParameterBaseName0}{j}"),
+          1 => FormattableString.Invariant($"{ParameterBaseName1}{j}"),
+          2 => FormattableString.Invariant($"{ParameterBaseName2}{j}"),
+          3 => FormattableString.Invariant($"{ParameterBaseName3}{j}"),
           _ => throw new InvalidProgramException()
         };
       }
@@ -280,7 +280,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
       if (i >= NumberOfParametersPerPeak * _numberOfTerms)
         return 0; // Polynomials
       else
-        return i % NumberOfParametersPerPeak switch
+        return (i % NumberOfParametersPerPeak) switch
         {
           0 => 1, // height
           1 => 0, // location
