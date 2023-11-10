@@ -243,15 +243,14 @@ namespace Altaxo.Gui.Common
 
     private static void OnMinimumChanged(DependencyObject element, DependencyPropertyChangedEventArgs args)
     {
-      element.CoerceValue(MaximumProperty);
       element.CoerceValue(ValueProperty);
     }
 
     private static object CoerceMinimum(DependencyObject element, object value)
     {
-      int minimum = (int)value;
       var control = (Int32UpDown)element;
-      return minimum;
+      int newMinimum = (int)value;
+      return Math.Min(newMinimum, control.Maximum);
     }
 
     #endregion Minimum

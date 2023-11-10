@@ -47,8 +47,9 @@
                        Content="No. of terms:"/>
 
         <axogc:Int32UpDown Grid.Row="4" Grid.Column="2"
-                                   Value="{Binding NumberOfTerms}"
-                                   Minimum="0"/>
+                           Value="{Binding NumberOfTerms}"
+                           Minimum="0"
+                           />
 
         <Label Grid.Row="2" Grid.Column="4"
                        Content="Baseline order:"/>
