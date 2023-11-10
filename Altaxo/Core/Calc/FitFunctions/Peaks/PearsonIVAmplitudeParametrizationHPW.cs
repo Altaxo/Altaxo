@@ -139,8 +139,8 @@ namespace Altaxo.Calc.FitFunctions.Peaks
       get => _numberOfTerms;
       init
       {
-        if (!(value >= 1))
-          throw new ArgumentOutOfRangeException(nameof(NumberOfTerms), $"{nameof(NumberOfTerms)} must be greater than or equal to 1");
+        if (!(value >= 0))
+          throw new ArgumentOutOfRangeException(nameof(NumberOfTerms), $"{nameof(NumberOfTerms)} must be greater than or equal to 0");
         _numberOfTerms = value;
       }
     }
