@@ -23,7 +23,6 @@
 #endregion Copyright
 
 #nullable disable warnings
-using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -265,11 +264,11 @@ namespace Altaxo.Gui.Common
     private static void InitializeCommands()
     {
       _increaseCommand = new RoutedCommand("IncreaseCommand", typeof(NumericUpDownBase));
-      CommandManager.RegisterClassCommandBinding(typeof(NumericUpDownBase), new CommandBinding(_increaseCommand, OnIncreaseCommand));
+      CommandManager.RegisterClassCommandBinding(typeof(NumericUpDownBase), new CommandBinding(_increaseCommand, OnIncreaseCommand, OnIncreaseCommandCanExecute));
       CommandManager.RegisterClassInputBinding(typeof(NumericUpDownBase), new InputBinding(_increaseCommand, new KeyGesture(Key.Up)));
 
       _decreaseCommand = new RoutedCommand("DecreaseCommand", typeof(NumericUpDownBase));
-      CommandManager.RegisterClassCommandBinding(typeof(NumericUpDownBase), new CommandBinding(_decreaseCommand, OnDecreaseCommand));
+      CommandManager.RegisterClassCommandBinding(typeof(NumericUpDownBase), new CommandBinding(_decreaseCommand, OnDecreaseCommand, OnDecreaseCommandCanExecute));
       CommandManager.RegisterClassInputBinding(typeof(NumericUpDownBase), new InputBinding(_decreaseCommand, new KeyGesture(Key.Down)));
 
       _gotoMinimumCommand = new RoutedCommand("GotoMinimumCommand", typeof(NumericUpDownBase));
@@ -280,6 +279,7 @@ namespace Altaxo.Gui.Common
       CommandManager.RegisterClassCommandBinding(typeof(NumericUpDownBase), new CommandBinding(_gotoMaximumCommand, OnGotoMaximumCommand));
       CommandManager.RegisterClassInputBinding(typeof(NumericUpDownBase), new InputBinding(_gotoMaximumCommand, new KeyGesture(Key.End)));
     }
+
 
     /// <summary>
     /// Static handler that is called on <see cref="IncreaseCommand"/>. This handler calls the instance function <see cref="OnIncrease"/>, which must be overriden in derived classes.
@@ -296,6 +296,25 @@ namespace Altaxo.Gui.Common
     }
 
     /// <summary>
+    /// Static handler that is called on <see cref="IncreaseCommand"/>. This handler calls the instance function <see cref="OnIncrease"/>, which must be overriden in derived classes.
+    /// </summary>
+    /// <param name="sender">Sender of the command.</param>
+    /// <param name="e">Event args.</param>
+    private static void OnIncreaseCommandCanExecute(object sender, CanExecuteRoutedEventArgs e)
+    {
+      var control = sender as NumericUpDownBase;
+      if (control is not null)
+      {
+        e.CanExecute = control.OnIncreaseCanExecute();
+      }
+      else
+      {
+        e.CanExecute = false;
+      }
+    }
+
+
+    /// <summary>
     /// Static handler that is called on <see cref="DecreaseCommand"/>. This handler calls the instance function <see cref="OnDecrease"/>, which must be overriden in derived classes.
     /// </summary>
     /// <param name="sender">Sender of the command.</param>
@@ -308,6 +327,20 @@ namespace Altaxo.Gui.Common
         control.OnDecrease();
       }
     }
+
+    private static void OnDecreaseCommandCanExecute(object sender, CanExecuteRoutedEventArgs e)
+    {
+      var control = sender as NumericUpDownBase;
+      if (control is not null)
+      {
+        e.CanExecute = control.OnDecreaseCanExecute();
+      }
+      else
+      {
+        e.CanExecute = false;
+      }
+    }
+
 
     /// <summary>
     /// Static handler that is called on <see cref="GotoMinimumCommand"/>. This handler calls the instance function <see cref="OnGotoMinimum"/>, which must be overriden in derived classes.
@@ -346,6 +379,17 @@ namespace Altaxo.Gui.Common
     /// Derived classes should decrease the property 'Value' by one change unit here.
     /// </summary>
     protected abstract void OnDecrease();
+
+    /// <summary>
+    /// Derived classes should return false if the command can not be executed.
+    /// </summary>
+    protected virtual bool OnIncreaseCanExecute() { return true; }
+
+    /// <summary>
+    /// Derived classes should return false if the command can not be executed.
+    /// </summary>
+    protected virtual bool OnDecreaseCanExecute() { return true; }
+
 
     /// <summary>
     /// Derived classes should change the property 'Value' to the minimum value.

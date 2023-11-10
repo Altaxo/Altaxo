@@ -140,7 +140,8 @@ namespace Altaxo.Gui.Common
             new FrameworkPropertyMetadata(DefaultValue,
                 new PropertyChangedCallback(OnValueChanged),
                 new CoerceValueCallback(CoerceValue)
-            ) { BindsTwoWayByDefault = true }
+            )
+            { BindsTwoWayByDefault = true }
         );
 
     private static void OnValueChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
@@ -355,6 +356,11 @@ namespace Altaxo.Gui.Common
         Value = int.MaxValue;
     }
 
+    protected override bool OnIncreaseCanExecute()
+    {
+      return Value < Maximum;
+    }
+
     protected override void OnDecrease()
     {
       // avoid an underflow before coerce of the value
@@ -362,6 +368,11 @@ namespace Altaxo.Gui.Common
         Value -= Change;
       else
         Value = int.MinValue;
+    }
+
+    protected override bool OnDecreaseCanExecute()
+    {
+      return Value > Minimum;
     }
 
     protected override void OnGotoMinimum()
