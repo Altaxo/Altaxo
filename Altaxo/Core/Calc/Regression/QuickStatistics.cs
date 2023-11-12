@@ -161,5 +161,16 @@ namespace Altaxo.Calc.Regression
         return _n > 0 ? Math.Sqrt(_qi / (_n)) : double.NaN;
       }
     }
+
+    /// <summary>
+    /// Returns the variance: error sum of squares divided by N.
+    /// </summary>
+    public double Variance
+    {
+      get
+      {
+        return _n > 0 ? _qi / (_n) : double.NaN;
+      }
+    }
   }
 }
