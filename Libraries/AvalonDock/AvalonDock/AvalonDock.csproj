@@ -20,7 +20,7 @@
     <Authors>https://github.com/Dirkster99/AvalonDock</Authors>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(TargetFramework)'=='net7.0-windows'">
+  <PropertyGroup Condition="'$(TargetFramework)'!='net48'">
     <NoWarn>SYSLIB0003;SYSLIB0004</NoWarn>
     <DefineConstants />
   </PropertyGroup>

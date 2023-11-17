@@ -31,7 +31,7 @@ Fixed:
         <IncludeSymbols>true</IncludeSymbols>
         <SymbolPackageFormat>snupkg</SymbolPackageFormat>
 
-        <Nullable Condition="'$(TargetFramework)' == 'net7.0-windows'">enable</Nullable>
+        <Nullable Condition="'$(TargetFramework)' != 'net48'">enable</Nullable>
         <Nullable Condition="'$(TargetFramework)' == 'net48'">annotations</Nullable>
     </PropertyGroup>
 

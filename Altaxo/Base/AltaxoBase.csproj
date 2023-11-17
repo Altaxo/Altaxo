@@ -36,7 +36,7 @@
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="7.0.0" />
   </ItemGroup>
   
-   <ItemGroup Condition=" '$(TargetFramework)' == 'net7.0' ">
+   <ItemGroup Condition=" '$(TargetFramework)' != 'net48' ">
      <PackageReference Include="System.Resources.Extensions" Version="7.0.0" />
      <PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0" />
      <PackageReference Include="Microsoft.Win32.SystemEvents" Version="7.0.0" />
