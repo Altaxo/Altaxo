@@ -44,12 +44,12 @@ namespace Altaxo.Science.Spectroscopy.Raman
     public const string ColumnName_Group0_NeonCalibration_DifferenceOfPeakWavelengthsStdDev = "DifferenceOfPeakWavelengths.Err [nm]";
     public const string PColumnName_Group0_NeonCalibration_AssumedLaserWavelength = "AssumedLaserWavelength [nm]";
 
-    public const string ColumnName_Group1_NeonCalibration1_PreprocessedUncalibratedWavelength = "Neon1_Unpreprocessed_Wavelength [nm]";
-    public const string ColumnName_Group1_NeonCalibration1_PreprocessedCalibratedWavelength = "Neon1_Preprocessed_Wavelength [nm]";
+    public const string ColumnName_Group1_NeonCalibration1_PreprocessedUncalibratedWavelength = "Neon1_PreprocessedUncalibrated_Wavelength [nm]";
+    public const string ColumnName_Group1_NeonCalibration1_PreprocessedCalibratedWavelength = "Neon1_PreprocessedCalibrated_Wavelength [nm]";
     public const string ColumnName_Group1_NeonCalibration1_PreprocessedSignal = "Neon1_Preprocessed_Signal";
 
-    public const string ColumnName_Group2_NeonCalibration2_PreprocessedUncalibratedWavelength = "Neon2_Unpreprocessed_Wavelength [nm]";
-    public const string ColumnName_Group2_NeonCalibration2_PreprocessedCalibratedWavelength = "Neon2_Preprocessed_Wavelength [nm]";
+    public const string ColumnName_Group2_NeonCalibration2_PreprocessedUncalibratedWavelength = "Neon2_PreprocessedUncalibrated_Wavelength [nm]";
+    public const string ColumnName_Group2_NeonCalibration2_PreprocessedCalibratedWavelength = "Neon2_PreprocessedCalibrated_Wavelength [nm]";
     public const string ColumnName_Group2_NeonCalibration2_PreprocessedSignal = "Neon2_Preprocessed_Signal";
 
     public const string ColumnName_Group3_NeonCalibration_SplineX_MeasuredWavelength = "NeonCalibration_MeasuredWL [nm]";
