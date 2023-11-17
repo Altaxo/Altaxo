@@ -57,15 +57,15 @@
     <EmbeddedResource Include="CompiledShaders\Lighting_VS_PT.cso" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Vortice.Mathematics" Version="1.4.25" />
-    <PackageReference Include="Vortice.D3DCompiler" Version="2.2.0" />
-    <PackageReference Include="Vortice.Direct2D1" Version="2.2.0" />
-    <PackageReference Include="Vortice.Direct3D11" Version="2.2.0" />
-    <PackageReference Include="Vortice.Direct3D9" Version="2.2.0" />
-    <PackageReference Include="Vortice.DirectX" Version="2.2.0" />
-    <PackageReference Include="Vortice.DXGI" Version="2.2.0" />
-    <PackageReference Include="SharpGen.Runtime" Version="2.0.0-beta.11" />
-    <PackageReference Include="SharpGen.Runtime.COM" Version="2.0.0-beta.11" />
+    <PackageReference Include="Vortice.Mathematics" Version="1.4.26" />
+    <PackageReference Include="Vortice.D3DCompiler" Version="2.4.2" />
+    <PackageReference Include="Vortice.Direct2D1" Version="2.4.2" />
+    <PackageReference Include="Vortice.Direct3D11" Version="2.4.2" />
+    <PackageReference Include="Vortice.Direct3D9" Version="2.4.2" />
+    <PackageReference Include="Vortice.DirectX" Version="2.4.2" />
+    <PackageReference Include="Vortice.DXGI" Version="2.4.2" />
+    <PackageReference Include="SharpGen.Runtime" Version="2.0.0-beta.13" />
+    <PackageReference Include="SharpGen.Runtime.COM" Version="2.0.0-beta.13" />
 
   </ItemGroup>
   <UsingTask TaskName="Shader" AssemblyFile="ShaderCompilerBuildTask.dll" />
