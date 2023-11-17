@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
 using Altaxo.Drawing;
 using Altaxo.Text.Renderers.OpenXML;
 using Altaxo.Text.Renderers.OpenXML.Extensions;
@@ -277,8 +274,11 @@ namespace Altaxo.Text.Renderers
         if (System.IO.Path.IsPathRooted(ThemeName))
         {
           // Route 1: create the Word document from an existing document
-          using (_wordDocument = WordprocessingDocument.CreateFromTemplate(ThemeName, false))
+          using var wordDocumentTemplate = WordprocessingDocument.CreateFromTemplate(ThemeName, false);
+          using (_wordDocument = wordDocumentTemplate.Clone(WordDocumentFileName))
           {
+            wordDocumentTemplate.Dispose();
+
             _mainDocumentPart = _wordDocument.MainDocumentPart;
             Body = _wordDocument.MainDocumentPart.Document.Body;
             Push(Body);
@@ -300,7 +300,7 @@ namespace Altaxo.Text.Renderers
             // now write the document
             Write(markdownObject);
 
-            _wordDocument.SaveAs(WordDocumentFileName);
+            _wordDocument.Save();
           }
         }
         else

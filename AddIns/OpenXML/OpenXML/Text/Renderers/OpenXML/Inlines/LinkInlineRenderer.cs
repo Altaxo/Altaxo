@@ -23,11 +23,8 @@
 #endregion Copyright
 
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Windows;
-using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
 using Markdig.Syntax.Inlines;
@@ -142,7 +139,7 @@ namespace Altaxo.Text.Renderers.OpenXML.Inlines
           }
         }
 
-        ImagePartType imgPartType = GetImagePartTypeFromExtension(streamResult.Extension);
+        var imgPartType = GetImagePartTypeFromExtension(streamResult.Extension);
 
         var mainPart = wordDocument.MainDocumentPart;
         var imagePart = mainPart.AddImagePart(imgPartType);
@@ -387,9 +384,9 @@ namespace Altaxo.Text.Renderers.OpenXML.Inlines
     /// <param name="extension">The extension (e.g. '.png', '.jpg', etc.).</param>
     /// <returns>The image part type.</returns>
     /// <exception cref="NotImplementedException"></exception>
-    public static ImagePartType GetImagePartTypeFromExtension(string extension)
+    public static PartTypeInfo GetImagePartTypeFromExtension(string extension)
     {
-      ImagePartType imgPartType = ImagePartType.Jpeg;
+      var imgPartType = ImagePartType.Jpeg;
       switch (extension.ToLowerInvariant())
       {
         case ".bmp":

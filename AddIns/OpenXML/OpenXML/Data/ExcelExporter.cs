@@ -332,7 +332,7 @@ namespace Altaxo.Data
       workbookpart.Workbook.Save();
 
       // Close the document.
-      spreadsheetDocument.Close();
+      spreadsheetDocument.Dispose();
     }
 
     /// <summary>
