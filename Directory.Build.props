@@ -5,10 +5,10 @@
  <PropertyGroup Condition=" '$(TargetFramework)' == 'net48' ">
    <TargetFrameworkSubdir>net48</TargetFrameworkSubdir>
  </PropertyGroup>
- <PropertyGroup Condition=" '$(TargetFramework)' == 'net7.0-windows' ">
-   <TargetFrameworkSubdir>net7.0-windows</TargetFrameworkSubdir>
+ <PropertyGroup Condition=" '$(TargetFramework)' == 'net8.0-windows' ">
+  <TargetFrameworkSubdir>net8.0-windows</TargetFrameworkSubdir>
  </PropertyGroup>
- <PropertyGroup Condition=" '$(TargetFramework)' == 'net7.0' ">
-   <TargetFrameworkSubdir>net7.0-windows</TargetFrameworkSubdir>
+ <PropertyGroup Condition=" '$(TargetFramework)' == 'net8.0' ">
+  <TargetFrameworkSubdir>net8.0-windows</TargetFrameworkSubdir>
  </PropertyGroup>
 </Project>

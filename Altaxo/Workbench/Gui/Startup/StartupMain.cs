@@ -327,7 +327,7 @@ namespace Altaxo.Gui.Startup
                       var splashScreen = SplashScreenForm.SplashScreen;
                       if (splashScreen is not null)
                       {
-                        splashScreen.BeginInvoke(new MethodInvoker(splashScreen.Dispose));
+                        splashScreen.BeginInvoke(splashScreen.Dispose);
                         SplashScreenForm.SplashScreen = null;
                       }
                     }, null);
