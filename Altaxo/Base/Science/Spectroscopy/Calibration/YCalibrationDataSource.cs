@@ -34,8 +34,19 @@ namespace Altaxo.Science.Spectroscopy.Calibration
 {
   public class YCalibrationDataSource : TableDataSourceBase, IAltaxoTableDataSource, IYCalibrationDataSource, IHasDocumentReferences
   {
-    public const string ColumnName_Group0_SpectrumX = "X";
-    public const string ColumnName_Group0_ScalingFactor = "IntensityScaling";
+    /// <summary>Name of the column that represents the x-values of the signal after preprocessing.</summary>
+    public const string ColumnName_Group0_SpectrumX = "X_Spectrum";
+
+    /// <summary>Name of the column that represents the y-values of the signal after preprocessing.</summary>
+    public const string ColumnName_Group0_SpectrumY = "Y_Spectrum";
+
+    /// <summary>Name of the column that represents the y-values of the calibration standard,
+    /// evaluated usually from the formula that comes with this standard.</summary>
+    public const string ColumnName_Group0_CalibrationStandardY = "Y_CalibrationStandard";
+
+    /// <summary>Name of the column that represents the values that are used as denominator to convert
+    /// an uncalibrated intensity value to a calibrated one.</summary>
+    public const string ColumnName_Group0_ScalingDenominator = "ScalingDenominator";
 
 
     private IDataSourceImportOptions _importOptions;
@@ -217,7 +228,9 @@ namespace Altaxo.Science.Spectroscopy.Calibration
       destinationTable.PropertyColumns.RemoveColumnsAll();
 
       var colX = destinationTable.DataColumns.EnsureExistence(ColumnName_Group0_SpectrumX, typeof(DoubleColumn), ColumnKind.X, 0);
-      var colY = destinationTable.DataColumns.EnsureExistence(ColumnName_Group0_ScalingFactor, typeof(DoubleColumn), ColumnKind.V, 0);
+      var colY = destinationTable.DataColumns.EnsureExistence(ColumnName_Group0_SpectrumY, typeof(DoubleColumn), ColumnKind.V, 0);
+      var colCalStandardY = destinationTable.DataColumns.EnsureExistence(ColumnName_Group0_CalibrationStandardY, typeof(DoubleColumn), ColumnKind.V, 0);
+      var colScalingDenominator = destinationTable.DataColumns.EnsureExistence(ColumnName_Group0_ScalingDenominator, typeof(DoubleColumn), ColumnKind.V, 0);
 
       var srcXCol = _processData.XColumn;
       var srcYCol = _processData.YColumn;
@@ -246,26 +259,26 @@ namespace Altaxo.Science.Spectroscopy.Calibration
       var Y = new double[1];
       for (int i = 0; i < xArr.Length; i++)
       {
+        colX[i] = xArr[i];
+        colY[i] = yArr[i];
         X[0] = xArr[i];
         function.Evaluate(X, para, Y);
-        yArr[i] /= Y[0];
+        colCalStandardY[i] = Y[0];
+        colScalingDenominator[i] = yArr[i] / Y[0];
       }
-
-      colX.Data = xArr;
-      colY.Data = yArr;
     }
 
     public bool IsContainingValidYAxisCalibration(DataTable table)
     {
       var xColumn = table.DataColumns.TryGetColumn(ColumnName_Group0_SpectrumX);
-      var sColumn = table.DataColumns.TryGetColumn(ColumnName_Group0_ScalingFactor);
+      var sColumn = table.DataColumns.TryGetColumn(ColumnName_Group0_ScalingDenominator);
       return xColumn is not null && sColumn is not null && Math.Min(xColumn.Count, sColumn.Count) >= 2;
     }
 
     public (double x, double yScalingFactor)[] GetYAxisCalibration(DataTable table)
     {
       var xColumn = table.DataColumns.TryGetColumn(ColumnName_Group0_SpectrumX);
-      var sColumn = table.DataColumns.TryGetColumn(ColumnName_Group0_ScalingFactor);
+      var sColumn = table.DataColumns.TryGetColumn(ColumnName_Group0_ScalingDenominator);
 
       if (!(xColumn is not null && sColumn is not null && Math.Min(xColumn.Count, sColumn.Count) >= 2))
         throw new InvalidOperationException($"This data source does not contain a valid intensity calibration. Please check this with {nameof(IsContainingValidYAxisCalibration)} beforehand!");
