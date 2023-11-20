@@ -38,7 +38,7 @@ The spectrometer. The spectrometer pixels need to be attributed to their corresp
 <listItem>
 
 <para>
-The laser. The wavelength of the laser is approximately known, but it is neccessary to determine the exact wavelength.
+The laser. The wavelength of the laser is approximately known, but it is necessary to determine the exact wavelength.
 </para>
 </listItem>
 </list>
@@ -68,7 +68,7 @@ A measurement without laser (to exclude the influence of the laser wavelength). 
 <listItem>
 
 <para>
-A measurement with laser. In this measurement, a sample with a well defined peak, for which the Raman shift is known, is measured. Usually, a polished Silicon wafer is used for this measurement. In combination with the absolute wavelength calibration of the spectromenter with Neon light, the exact wavelength of the Laser light can be calculated.
+A measurement with laser. In this measurement, a sample with a well defined peak, for which the Raman shift is known, is measured. Usually, a polished Silicon wafer is used for this measurement. In combination with the absolute wavelength calibration of the spectrometer with Neon light, the exact wavelength of the Laser light can be calculated.
 </para>
 </listItem>
 </list>
@@ -95,7 +95,7 @@ Make sure the laser is switched on already for some time and now is stable. Adju
 <content>
 
 <para>
-Load both the Neon spectrum and the Silicon spectrum into an empty worksheet. For that, create an empty worksheet, and then use <codeInline>File → Import → Ascii</codeInline>, or <codeInline>File → Import → SPC </codeInline>or some of the other file import menu points, according to the file format of the spectra.
+Load both the Neon spectrum and the Silicon spectrum into an empty worksheet. For that, create an empty worksheet, and then use <codeInline>File → Import → Ascii</codeInline>, or <codeInline>File → Import → SPC </codeInline>or some of the other file import menu points, according to the file format of the spectra. Details on how to import can be find <link xlink:href="57BC83FC0E3407AD2601F88D5E928326#Section_ImportOfSpectra">here</link>.
 </para>
 
 <para>
@@ -161,7 +161,7 @@ You have entered the wrong (approximate) wavelength of the laser. For instance, 
 <listItem>
 
 <para>
-The Neon spectrum is too noisy, so that too few peaks or too many peaks are detected. Try to adjust some options in the peak finding algorithm. You can use peak detection and finding (menu Analysis-&gt;Spectroscopy-&gt;PeakDetection&amp;Finding) to search for appropriate settings, and then use those settings for calibration.
+The Neon spectrum is too noisy, so that too few peaks or too many peaks are detected. Try to adjust some options in the peak finding algorithm. You can use peak detection and finding (menu <codeInline>Analysis → Spectroscopy → PeakDetection &amp; Finding</codeInline>) to search for appropriate settings, and then use those settings for calibration.
 </para>
 </listItem>
 </list>
@@ -194,6 +194,264 @@ Make sure that in the combobox <legacyBold>&quot;Calibration table&quot;</legacy
 <para>
 Press OK. Now your calibration table should contain a full x-axis calibration. From now on you can use that calibration table in the preprocessing of spectra to adjust the x-axis to a calibrated x-axis.
 </para>
+
+<para>
+<legacyBold>Contents of the calibration table</legacyBold>
+</para>
+
+<para>
+If both the neon as well as the silicon calibration has been successfully performed, the calibration table consist of the following columns:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+<codeInline>NistNeonPeakWavelength [nm]</codeInline><lineBreak/>
+Wavelength in nm of the neon peak tabulated in a table from NIST (National institute of Standards and Technology)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<codeInline>MeasuredNeonPeakWavelength [nm]</codeInline><lineBreak/>
+Wavelength in nm of the peak that was found in the neon spectrum used for calibration. Please note, that when the original x-axis of the neon spectrum was Raman shift (cm<superscript>-1</superscript>), then the wavelength was calculated using the approximate laser wavelength that was provided in the neon calibration dialog.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<codeInline>DifferenceOfPeakWavelengths [nm]</codeInline><lineBreak/>
+Difference <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#C63757FF9E7D599DDB2307FAF4C3A542"><img src="../media/C63757FF9E7D599DDB2307FAF4C3A542.png" width="493" height="17" align="bottom"></img></a></markup>
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<codeInline>DifferenceOfPeakWavelengths.Err [nm]</codeInline><lineBreak/>
+The error of the previous column, assuming that the NIST wavelength has a neglectable error. Thus, this column represents the errors of the fit position of the neon peaks.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<codeInline>Neon1_PreprocessedUncalibrated_Wavelength [nm]</codeInline><lineBreak/>
+X-axis values in nm of the neon spectrum. If the original x-axis of the neon spectrum was Raman shift (cm<superscript>-1</superscript>), then the wavelength values in this column were calculated using the approximate laser wavelength that was provided in the neon calibration dialog.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<codeInline>Neon1_PreprocessedCalibrated_Wavelength [nm]</codeInline><lineBreak/>
+X-axis values in nm of the neon spectrum after the neon calibration. Thus, the values in this column represent absolute, calibrated wavelength values.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<codeInline>Neon1_Preprocessed_Signal</codeInline><lineBreak/>
+Y-values of the neon spectrum after execution of the preprocessing steps. These values can be plotted either using the uncalibrated wavelength x-axis, or the calibrated one (see the previous two columns).
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<codeInline>NeonCalibration_MeasuredWL [nm]</codeInline><lineBreak/>
+X-axis values in nm of the neon spectrum. If the original x-axis of the neon spectrum was Raman shift (cm<superscript>-1</superscript>), then the wavelength values in this column were calculated using the approximate laser wavelength that was provided in the neon calibration dialog.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<codeInline>NeonCalibration_DifferenceWL [nm]</codeInline><lineBreak/>
+Contains the difference wavelength values in nm. By adding these difference values to the uncalibrated x-axis values (see previous column), the calibrated x-axis in absolute nm is obtained.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<codeInline>SiliconPeakShift [cm-1]</codeInline><lineBreak/>
+This column only contains a single value, which is the peak position of the silicon peak (obtained from the fit of this peak).
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<codeInline>SiliconPeakShift.Err [cm-1]</codeInline><lineBreak/>
+This column only contains a single value, which is the peak position error of the silicon peak (obtained from the fit of this peak).
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<codeInline>XCalibration_UncalibratedX</codeInline><lineBreak/>
+Contains the uncalibrated x-axis in the unit in which the neon and silicon spectrum were provided.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<codeInline>XCalibration_CalibratedX</codeInline><lineBreak/>
+Contains the calibrated x-axis in the unit in which the neon and silicon spectrum were provided. The calibration uses here both the neon and silicon calibration.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<codeInline>XCalibration_XDeviation</codeInline><lineBreak/>
+Contains the difference between calibrated and uncalibrated x-axis values.
+</para>
+</listItem>
+</list>
+
+<quote>
+
+<para>
+<legacyBold>Note</legacyBold><lineBreak/>
+Most of the columns in this table are for your information only.
+To apply an x-axis calibration to another spectrum, only the columns <codeInline>XCalibration_UncalibratedX</codeInline> and <codeInline>XCalibration_CalibratedX</codeInline> are necessary.
+</para>
+</quote>
+</content>
+</section>
+</content>
+</section>
+</content>
+</section>
+</sections>
+</content>
+</section>
+
+<section address="Section_RamanSpectroscopy_IntensityCalibration">
+<title>Intensity calibration of a Raman device with a known light source
+</title>
+<content>
+
+<sections>
+
+<section address="04AE4E635A50D72F6F6B3AA071D3B1D8">
+<title>Objective
+</title>
+<content>
+
+<para>
+The spectrometer of a Raman device has a sensitivity which is dependent on the wavelength. The sensitivity varies from device to device, even if they are coming from the same manufacturer.
+</para>
+
+<para>
+The <legacyBold>objective</legacyBold> of the intensity calibration is to find a wavelength dependent correction function, which corrects the different sensitivities of the spectrometers. Although no absolute calibration is possible, this will make Raman spectra from different devices better comparable, because the relative heights of the peaks will be the same.
+</para>
+
+<section address="BC6B39C0B2DBB3916337D9BFF09F2A96">
+<title>What is needed
+</title>
+<content>
+
+<para>
+For intensity calibration, a light source with a known spectrum is necessary:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+Either, a  fluorescent glass is exited with the Raman laser, which will then emit light with a broad spectral distribution. Usually, for each laser wavelength, another glass is used. Such standards are available for instance from NIST, and they are accompanied by a description of the wavelength dependent intensity.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+Or, a known light source, for instance an LED with a known (preferable broad) spectrum, is used. The spectrum of the LED must cover the range of the spectrometer. Those light sources come with a certificate, in which the wavelength dependent intensity is described as a function.
+</para>
+</listItem>
+</list>
+
+<section address="80D4677DDB39CCB3E59C85E5D84F7DBF">
+<title>What is measured
+</title>
+<content>
+
+<para>
+When using the fluorescent glass, follow the instructions accompanying this standard. The laser must be switched on for the measurement. Acquire a spectrum which is neither overexposed nor underexposed. Multiple accumulations can enhance the signal to noise ratio.
+</para>
+
+<para>
+When using the known light source, the laser must not be switched on. Take a spectrum of the light source which is neither overexposed nor underexposed. Multiple accumulations can enhance the signal to noise ratio.
+</para>
+
+<quote>
+
+<para>
+<legacyBold>Important</legacyBold>:<lineBreak/>
+For both methods it is absolutely necessary to acquire a dark spectrum (a spectrum with laser and all other light sources off). On some instruments, a dark spectrum is acquired automatically, and is then part of the exported spectrum. Ideally, the exported spectrum contains already one column, in which the dark spectrum is subtracted from the signal spectrum.
+</para>
+</quote>
+
+<section address="380374604E5FFD9E9CE0D46DAFDBE1F7">
+<title>Data evaluation
+</title>
+<content>
+
+<para>
+Load the acquired spectrum into an empty worksheet. For that, create an empty worksheet, and then use <codeInline>File → Import → Ascii</codeInline>, or <codeInline>File → Import → SPC </codeInline>or some of the other file import menu points, according to the file format of the spectra. Details on how to import can be find <link xlink:href="57BC83FC0E3407AD2601F88D5E928326#Section_ImportOfSpectra">here</link>.
+</para>
+
+<para>
+Make sure that the x-axis of the spectrum is marked as type &quot;X&quot;. Take a look at the spectrum by plotting it. It should have a broad distribution, i.e. the intensity should be high enough in all parts of the spectrum (except in the range close to the laser wavelength, where filter catch the light).
+</para>
+
+<para>
+If the dark spectrum was exported to a separate file, then import that spectrum, too.
+</para>
+
+<para>
+<legacyBold>Intensity calibration</legacyBold>
+</para>
+
+<para>
+Go to the worksheet which contains the spectrum. If the worksheet contains a column in which the dark spectrum is already subtracted, then select this column. Otherwise, select the column with the y-values of the spectrum, and use the menu <codeInline>Analysis → Spectroscopy → Intensity calibration</codeInline>. A dialog opens.
+</para>
+
+<para>
+Its upper part contain the spectral preprocessing pipeline. If the dark signal is already subtracted, no preprocessing should be used here. If it is not already subtracted, then use the tab 'Dark', choose <codeInline>SpectrumSubtraction</codeInline>, and provide the table which contains the dark spectrum and the x and y-column names of that spectrum.
+</para>
+
+<para>
+In the lower part of the dialog, a function must be entered, which describes the intensity in dependence of the wavelength. Usually, a Gaussian distribution (with one term, with no baseline or a constant baseline is used). Make sure that the function you select is identical to the function that come with the certificate of the light source. The selected function is described in the right part of the dialog. Enter the parameters given on the certificate. Make also sure that the x-axis of your spectrum matches the x-axis unit given in the certificate. Example: if your x-axis is Raman shift, but on the certificate the x-axis unit is wavelength, then you can not perform intensity calibration.
+</para>
+
+<para>
+Press OK to perform the intensity calibration. A new table is created, which contains the correction function.
+</para>
+
+<section address="6439392E833B0642F55500E4ECEB153D">
+<title>Perform an intensity correction
+</title>
+<content>
+
+<para>
+In subsequent <link xlink:href="3A0137E53CEEEFFC3A49CDCA2CC5B88D#Section_SpectralPreprocessing">preprocessing operations</link>, this calibration table can be used for intensity correction. Use the tab <codeInline>YCal</codeInline> of the preprocessing pipeline, select <codeInline>YCalibrationByDataSource</codeInline>, and in the combobox, choose the table containing the intensity calibration.
+</para>
+</content>
+</section>
+</content>
+</section>
 </content>
 </section>
 </content>

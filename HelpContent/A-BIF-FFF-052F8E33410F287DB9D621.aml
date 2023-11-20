@@ -16,7 +16,7 @@ Previous section: <link xlink:href="FDA2C14CC9564D6357135DA2850F79AE">Fit functi
 <content>
 
 <para>
-This function evaluates a sum of Cauchy (Lorentzian) terms, plus a background polynomial with one or multiple terms, according to
+This function evaluates a sum of Cauchy (Lorentzian) terms, plus a baseline polynomial with one or multiple terms, according to
 </para>
 <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#61961E5D8040CFB31F00B832E7B163BD"><img src="../media/61961E5D8040CFB31F00B832E7B163BD.png" width="514" height="51"></img></a></markup>
 
@@ -50,7 +50,7 @@ in which:
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#EA408D4FFBE691FB61A157029F1CDB87"><img src="../media/EA408D4FFBE691FB61A157029F1CDB87.png" width="41" height="15" align="bottom"></img></a></markup> are the coefficients of the background polynomial of order  <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1524114A576378DC1D43A85F23D2A753"><img src="../media/1524114A576378DC1D43A85F23D2A753.png" width="14" height="7" align="baseline"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#EA408D4FFBE691FB61A157029F1CDB87"><img src="../media/EA408D4FFBE691FB61A157029F1CDB87.png" width="41" height="15" align="bottom"></img></a></markup> are the coefficients of the baseline polynomial of order  <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1524114A576378DC1D43A85F23D2A753"><img src="../media/1524114A576378DC1D43A85F23D2A753.png" width="14" height="7" align="baseline"></img></a></markup>
 </para>
 </listItem>
 
@@ -64,13 +64,13 @@ in which:
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1524114A576378DC1D43A85F23D2A753"><img src="../media/1524114A576378DC1D43A85F23D2A753.png" width="14" height="7" align="baseline"></img></a></markup> is the order of the background polynomial (set <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#542521E9C0C5C7B36CA39A384A75C928"><img src="../media/542521E9C0C5C7B36CA39A384A75C928.png" width="53" height="14" align="bottom"></img></a></markup> to disable the background polynomial)
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1524114A576378DC1D43A85F23D2A753"><img src="../media/1524114A576378DC1D43A85F23D2A753.png" width="14" height="7" align="baseline"></img></a></markup> is the order of the baseline polynomial (set <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#542521E9C0C5C7B36CA39A384A75C928"><img src="../media/542521E9C0C5C7B36CA39A384A75C928.png" width="53" height="14" align="bottom"></img></a></markup> to disable the baseline polynomial)
 </para>
 </listItem>
 </list>
 
 <para>
-The number of Cauchy terms <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4EF835FC99A8EA2F77EC0547660B4997"><img src="../media/4EF835FC99A8EA2F77EC0547660B4997.png" width="10" height="7" align="baseline"></img></a></markup> and the order of the background polynomial <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1524114A576378DC1D43A85F23D2A753"><img src="../media/1524114A576378DC1D43A85F23D2A753.png" width="14" height="7" align="baseline"></img></a></markup> can be changed by double-clicking on the fit function. The default values are <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AB6102027499324E523E96136FF3C0DD"><img src="../media/AB6102027499324E523E96136FF3C0DD.png" width="37" height="10" align="baseline"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#27F4FE01705E8CE801E4F68D69F87349"><img src="../media/27F4FE01705E8CE801E4F68D69F87349.png" width="41" height="10" align="baseline"></img></a></markup>. In order to get the probability density function of the Cauchy distribution, set <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AB6102027499324E523E96136FF3C0DD"><img src="../media/AB6102027499324E523E96136FF3C0DD.png" width="37" height="10" align="baseline"></img></a></markup>,  <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#542521E9C0C5C7B36CA39A384A75C928"><img src="../media/542521E9C0C5C7B36CA39A384A75C928.png" width="53" height="14" align="bottom"></img></a></markup>, and set the parameter <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D71AF3B9818CE0BC34A7502C35C25B31"><img src="../media/D71AF3B9818CE0BC34A7502C35C25B31.png" width="18" height="15" align="bottom"></img></a></markup> fixed to <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#CA3555FD03D00CAA539EA83501957738"><img src="../media/CA3555FD03D00CAA539EA83501957738.png" width="45" height="15" align="bottom"></img></a></markup>.
+The number of Cauchy terms <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4EF835FC99A8EA2F77EC0547660B4997"><img src="../media/4EF835FC99A8EA2F77EC0547660B4997.png" width="10" height="7" align="baseline"></img></a></markup> and the order of the baseline polynomial <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1524114A576378DC1D43A85F23D2A753"><img src="../media/1524114A576378DC1D43A85F23D2A753.png" width="14" height="7" align="baseline"></img></a></markup> can be changed by double-clicking on the fit function. The default values are <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AB6102027499324E523E96136FF3C0DD"><img src="../media/AB6102027499324E523E96136FF3C0DD.png" width="37" height="10" align="baseline"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#27F4FE01705E8CE801E4F68D69F87349"><img src="../media/27F4FE01705E8CE801E4F68D69F87349.png" width="41" height="10" align="baseline"></img></a></markup>. In order to get the probability density function of the Cauchy distribution, set <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AB6102027499324E523E96136FF3C0DD"><img src="../media/AB6102027499324E523E96136FF3C0DD.png" width="37" height="10" align="baseline"></img></a></markup>,  <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#542521E9C0C5C7B36CA39A384A75C928"><img src="../media/542521E9C0C5C7B36CA39A384A75C928.png" width="53" height="14" align="bottom"></img></a></markup>, and set the parameter <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D71AF3B9818CE0BC34A7502C35C25B31"><img src="../media/D71AF3B9818CE0BC34A7502C35C25B31.png" width="18" height="15" align="bottom"></img></a></markup> fixed to <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#CA3555FD03D00CAA539EA83501957738"><img src="../media/CA3555FD03D00CAA539EA83501957738.png" width="45" height="15" align="bottom"></img></a></markup>.
 </para>
 
 <para>
@@ -99,7 +99,7 @@ References:
 <content>
 
 <para>
-This function evaluates a sum of Gaussian terms, plus a background polynomial with one or multiple terms, according to
+This function evaluates a sum of Gaussian terms, plus a baseline polynomial with one or multiple terms, according to
 </para>
 <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#428F12B096CF3A156801D83CADD1E406"><img src="../media/428F12B096CF3A156801D83CADD1E406.png" width="631" height="46"></img></a></markup>
 
@@ -133,7 +133,7 @@ in which:
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#EA408D4FFBE691FB61A157029F1CDB87"><img src="../media/EA408D4FFBE691FB61A157029F1CDB87.png" width="41" height="15" align="bottom"></img></a></markup> are the coefficients of the background polynomial of order  <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1524114A576378DC1D43A85F23D2A753"><img src="../media/1524114A576378DC1D43A85F23D2A753.png" width="14" height="7" align="baseline"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#EA408D4FFBE691FB61A157029F1CDB87"><img src="../media/EA408D4FFBE691FB61A157029F1CDB87.png" width="41" height="15" align="bottom"></img></a></markup> are the coefficients of the baseline polynomial of order  <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1524114A576378DC1D43A85F23D2A753"><img src="../media/1524114A576378DC1D43A85F23D2A753.png" width="14" height="7" align="baseline"></img></a></markup>
 </para>
 </listItem>
 
@@ -147,13 +147,13 @@ in which:
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1524114A576378DC1D43A85F23D2A753"><img src="../media/1524114A576378DC1D43A85F23D2A753.png" width="14" height="7" align="baseline"></img></a></markup> is the order of the background polynomial (set <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#542521E9C0C5C7B36CA39A384A75C928"><img src="../media/542521E9C0C5C7B36CA39A384A75C928.png" width="53" height="14" align="bottom"></img></a></markup> to disable the background polynomial)
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1524114A576378DC1D43A85F23D2A753"><img src="../media/1524114A576378DC1D43A85F23D2A753.png" width="14" height="7" align="baseline"></img></a></markup> is the order of the baseline polynomial (set <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#542521E9C0C5C7B36CA39A384A75C928"><img src="../media/542521E9C0C5C7B36CA39A384A75C928.png" width="53" height="14" align="bottom"></img></a></markup> to disable the baseline polynomial)
 </para>
 </listItem>
 </list>
 
 <para>
-The number of Gaussian terms <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4EF835FC99A8EA2F77EC0547660B4997"><img src="../media/4EF835FC99A8EA2F77EC0547660B4997.png" width="10" height="7" align="baseline"></img></a></markup> and the order of the background polynomial <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1524114A576378DC1D43A85F23D2A753"><img src="../media/1524114A576378DC1D43A85F23D2A753.png" width="14" height="7" align="baseline"></img></a></markup> can be changed by double-clicking on the fit function. The default values are <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AB6102027499324E523E96136FF3C0DD"><img src="../media/AB6102027499324E523E96136FF3C0DD.png" width="37" height="10" align="baseline"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#27F4FE01705E8CE801E4F68D69F87349"><img src="../media/27F4FE01705E8CE801E4F68D69F87349.png" width="41" height="10" align="baseline"></img></a></markup>.
+The number of Gaussian terms <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4EF835FC99A8EA2F77EC0547660B4997"><img src="../media/4EF835FC99A8EA2F77EC0547660B4997.png" width="10" height="7" align="baseline"></img></a></markup> and the order of the baseline polynomial <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1524114A576378DC1D43A85F23D2A753"><img src="../media/1524114A576378DC1D43A85F23D2A753.png" width="14" height="7" align="baseline"></img></a></markup> can be changed by double-clicking on the fit function. The default values are <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AB6102027499324E523E96136FF3C0DD"><img src="../media/AB6102027499324E523E96136FF3C0DD.png" width="37" height="10" align="baseline"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#27F4FE01705E8CE801E4F68D69F87349"><img src="../media/27F4FE01705E8CE801E4F68D69F87349.png" width="41" height="10" align="baseline"></img></a></markup>.
 </para>
 
 <para>
@@ -176,7 +176,7 @@ Fig. 1: GaussArea (<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AB6
 <content>
 
 <para>
-This function evaluates a sum of PearsonIV terms, plus a background polynomial with one or multiple terms, according to
+This function evaluates a sum of PearsonIV terms, plus a baseline polynomial with one or multiple terms, according to
 </para>
 <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#E440823059D5543C3D35FE90399AC532"><img src="../media/E440823059D5543C3D35FE90399AC532.png" width="785" height="22"></img></a></markup>
 
@@ -224,7 +224,7 @@ in which:
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#18CA44BFC7C143C77EBF53FC4232882F"><img src="../media/18CA44BFC7C143C77EBF53FC4232882F.png" width="37" height="21" align="texttop"></img></a></markup> are the coefficients of the background polynomial of order  <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4A9B55C67A07376D4E7A6BEE87A443B6"><img src="../media/4A9B55C67A07376D4E7A6BEE87A443B6.png" width="8" height="11" align="bottom"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#18CA44BFC7C143C77EBF53FC4232882F"><img src="../media/18CA44BFC7C143C77EBF53FC4232882F.png" width="37" height="21" align="texttop"></img></a></markup> are the coefficients of the baseline polynomial of order  <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4A9B55C67A07376D4E7A6BEE87A443B6"><img src="../media/4A9B55C67A07376D4E7A6BEE87A443B6.png" width="8" height="11" align="bottom"></img></a></markup>
 </para>
 </listItem>
 
@@ -238,7 +238,7 @@ in which:
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4A9B55C67A07376D4E7A6BEE87A443B6"><img src="../media/4A9B55C67A07376D4E7A6BEE87A443B6.png" width="8" height="11" align="bottom"></img></a></markup> is the order of the background polynomial (set <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#8536774C8991A6B6FD7B109172B719CB"><img src="../media/8536774C8991A6B6FD7B109172B719CB.png" width="47" height="14" align="bottom"></img></a></markup> to disable the background polynomial)
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4A9B55C67A07376D4E7A6BEE87A443B6"><img src="../media/4A9B55C67A07376D4E7A6BEE87A443B6.png" width="8" height="11" align="bottom"></img></a></markup> is the order of the baseline polynomial (set <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#8536774C8991A6B6FD7B109172B719CB"><img src="../media/8536774C8991A6B6FD7B109172B719CB.png" width="47" height="14" align="bottom"></img></a></markup> to disable the baseline polynomial)
 </para>
 </listItem>
 </list>
@@ -263,7 +263,7 @@ The location of the maximum function value is at:
 <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5080D7E7C70A9FCEB9185DD8A4FB1B77"><img src="../media/5080D7E7C70A9FCEB9185DD8A4FB1B77.png" width="103" height="34"></img></a></markup>
 
 <para>
-The number of PearsonIV terms <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4EF835FC99A8EA2F77EC0547660B4997"><img src="../media/4EF835FC99A8EA2F77EC0547660B4997.png" width="10" height="7" align="baseline"></img></a></markup> and the order of the background polynomial <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4A9B55C67A07376D4E7A6BEE87A443B6"><img src="../media/4A9B55C67A07376D4E7A6BEE87A443B6.png" width="8" height="11" align="bottom"></img></a></markup> can be changed by double-clicking on the fit function. The default values are <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AB6102027499324E523E96136FF3C0DD"><img src="../media/AB6102027499324E523E96136FF3C0DD.png" width="37" height="10" align="baseline"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#8536774C8991A6B6FD7B109172B719CB"><img src="../media/8536774C8991A6B6FD7B109172B719CB.png" width="47" height="14" align="bottom"></img></a></markup>.
+The number of PearsonIV terms <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4EF835FC99A8EA2F77EC0547660B4997"><img src="../media/4EF835FC99A8EA2F77EC0547660B4997.png" width="10" height="7" align="baseline"></img></a></markup> and the order of the baseline polynomial <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4A9B55C67A07376D4E7A6BEE87A443B6"><img src="../media/4A9B55C67A07376D4E7A6BEE87A443B6.png" width="8" height="11" align="bottom"></img></a></markup> can be changed by double-clicking on the fit function. The default values are <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AB6102027499324E523E96136FF3C0DD"><img src="../media/AB6102027499324E523E96136FF3C0DD.png" width="37" height="10" align="baseline"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#8536774C8991A6B6FD7B109172B719CB"><img src="../media/8536774C8991A6B6FD7B109172B719CB.png" width="47" height="14" align="bottom"></img></a></markup>.
 </para>
 
 <para>
@@ -295,7 +295,7 @@ Literature:
 <content>
 
 <para>
-This function evaluates a sum of Voigt terms, plus a background polynomial with one or multiple terms, according to
+This function evaluates a sum of Voigt terms, plus a baseline polynomial with one or multiple terms, according to
 </para>
 <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#0B992DFDA47E4E1A3BBEE139ABFB287F"><img src="../media/0B992DFDA47E4E1A3BBEE139ABFB287F.png" width="657" height="18"></img></a></markup>
 
@@ -336,7 +336,7 @@ in which:
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#EA408D4FFBE691FB61A157029F1CDB87"><img src="../media/EA408D4FFBE691FB61A157029F1CDB87.png" width="41" height="15" align="bottom"></img></a></markup> are the coefficients of the background polynomial of order  <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1524114A576378DC1D43A85F23D2A753"><img src="../media/1524114A576378DC1D43A85F23D2A753.png" width="14" height="7" align="baseline"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#EA408D4FFBE691FB61A157029F1CDB87"><img src="../media/EA408D4FFBE691FB61A157029F1CDB87.png" width="41" height="15" align="bottom"></img></a></markup> are the coefficients of the baseline polynomial of order  <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1524114A576378DC1D43A85F23D2A753"><img src="../media/1524114A576378DC1D43A85F23D2A753.png" width="14" height="7" align="baseline"></img></a></markup>
 </para>
 </listItem>
 
@@ -350,7 +350,7 @@ in which:
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1524114A576378DC1D43A85F23D2A753"><img src="../media/1524114A576378DC1D43A85F23D2A753.png" width="14" height="7" align="baseline"></img></a></markup> is the order of the background polynomial (set <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#542521E9C0C5C7B36CA39A384A75C928"><img src="../media/542521E9C0C5C7B36CA39A384A75C928.png" width="53" height="14" align="bottom"></img></a></markup> to disable the background polynomial)
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1524114A576378DC1D43A85F23D2A753"><img src="../media/1524114A576378DC1D43A85F23D2A753.png" width="14" height="7" align="baseline"></img></a></markup> is the order of the baseline polynomial (set <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#542521E9C0C5C7B36CA39A384A75C928"><img src="../media/542521E9C0C5C7B36CA39A384A75C928.png" width="53" height="14" align="bottom"></img></a></markup> to disable the baseline polynomial)
 </para>
 </listItem>
 </list>
@@ -375,7 +375,7 @@ Lorentzian:
 <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#7DD10D51193BBA313024870FF78CD5EB"><img src="../media/7DD10D51193BBA313024870FF78CD5EB.png" width="133" height="34"></img></a></markup>
 
 <para>
-The number of Voigt terms <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4EF835FC99A8EA2F77EC0547660B4997"><img src="../media/4EF835FC99A8EA2F77EC0547660B4997.png" width="10" height="7" align="baseline"></img></a></markup> and the order of the background polynomial <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1524114A576378DC1D43A85F23D2A753"><img src="../media/1524114A576378DC1D43A85F23D2A753.png" width="14" height="7" align="baseline"></img></a></markup> can be changed by double-clicking on the fit function. The default values are <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AB6102027499324E523E96136FF3C0DD"><img src="../media/AB6102027499324E523E96136FF3C0DD.png" width="37" height="10" align="baseline"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#542521E9C0C5C7B36CA39A384A75C928"><img src="../media/542521E9C0C5C7B36CA39A384A75C928.png" width="53" height="14" align="bottom"></img></a></markup>.
+The number of Voigt terms <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4EF835FC99A8EA2F77EC0547660B4997"><img src="../media/4EF835FC99A8EA2F77EC0547660B4997.png" width="10" height="7" align="baseline"></img></a></markup> and the order of the baseline polynomial <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1524114A576378DC1D43A85F23D2A753"><img src="../media/1524114A576378DC1D43A85F23D2A753.png" width="14" height="7" align="baseline"></img></a></markup> can be changed by double-clicking on the fit function. The default values are <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AB6102027499324E523E96136FF3C0DD"><img src="../media/AB6102027499324E523E96136FF3C0DD.png" width="37" height="10" align="baseline"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#542521E9C0C5C7B36CA39A384A75C928"><img src="../media/542521E9C0C5C7B36CA39A384A75C928.png" width="53" height="14" align="bottom"></img></a></markup>.
 </para>
 
 <para>
@@ -398,7 +398,7 @@ Fig. 1: VoigtArea (<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AB6
 <content>
 
 <para>
-This function evaluates a sum of Voigt terms, plus a background polynomial with one or multiple terms, according to
+This function evaluates a sum of Voigt terms, plus a baseline polynomial with one or multiple terms, according to
 </para>
 <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#796A5C9BDADED0E7021B69C82C60F59B"><img src="../media/796A5C9BDADED0E7021B69C82C60F59B.png" width="656" height="18"></img></a></markup>
 
@@ -453,7 +453,7 @@ in which:
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1524114A576378DC1D43A85F23D2A753"><img src="../media/1524114A576378DC1D43A85F23D2A753.png" width="14" height="7" align="baseline"></img></a></markup> is the order of the background polynomial (set <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#542521E9C0C5C7B36CA39A384A75C928"><img src="../media/542521E9C0C5C7B36CA39A384A75C928.png" width="53" height="14" align="bottom"></img></a></markup> to disable the background polynomial)
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1524114A576378DC1D43A85F23D2A753"><img src="../media/1524114A576378DC1D43A85F23D2A753.png" width="14" height="7" align="baseline"></img></a></markup> is the order of the baseline polynomial (set <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#542521E9C0C5C7B36CA39A384A75C928"><img src="../media/542521E9C0C5C7B36CA39A384A75C928.png" width="53" height="14" align="bottom"></img></a></markup> to disable the baseline polynomial)
 </para>
 </listItem>
 </list>
@@ -488,7 +488,7 @@ This parametrization is preferred over the original Voigt function if fitting wi
 </para>
 
 <para>
-The number of Voigt terms <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4EF835FC99A8EA2F77EC0547660B4997"><img src="../media/4EF835FC99A8EA2F77EC0547660B4997.png" width="10" height="7" align="baseline"></img></a></markup> and the order of the background polynomial <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1524114A576378DC1D43A85F23D2A753"><img src="../media/1524114A576378DC1D43A85F23D2A753.png" width="14" height="7" align="baseline"></img></a></markup> can be changed by double-clicking on the fit function. The default values are <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AB6102027499324E523E96136FF3C0DD"><img src="../media/AB6102027499324E523E96136FF3C0DD.png" width="37" height="10" align="baseline"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#542521E9C0C5C7B36CA39A384A75C928"><img src="../media/542521E9C0C5C7B36CA39A384A75C928.png" width="53" height="14" align="bottom"></img></a></markup>.
+The number of Voigt terms <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4EF835FC99A8EA2F77EC0547660B4997"><img src="../media/4EF835FC99A8EA2F77EC0547660B4997.png" width="10" height="7" align="baseline"></img></a></markup> and the order of the baseline polynomial <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1524114A576378DC1D43A85F23D2A753"><img src="../media/1524114A576378DC1D43A85F23D2A753.png" width="14" height="7" align="baseline"></img></a></markup> can be changed by double-clicking on the fit function. The default values are <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AB6102027499324E523E96136FF3C0DD"><img src="../media/AB6102027499324E523E96136FF3C0DD.png" width="37" height="10" align="baseline"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#542521E9C0C5C7B36CA39A384A75C928"><img src="../media/542521E9C0C5C7B36CA39A384A75C928.png" width="53" height="14" align="bottom"></img></a></markup>.
 </para>
 
 <para>
