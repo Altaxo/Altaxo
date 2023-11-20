@@ -44,6 +44,9 @@ namespace Altaxo.Science.Spectroscopy.Calibration
     /// evaluated usually from the formula that comes with this standard.</summary>
     public const string ColumnName_Group0_CalibrationStandardY = "Y_CalibrationStandard";
 
+    /// <summary>Name of the column of the scaling denominator, but not smoothed in this case.</summary>
+    public const string ColumnName_Group0_ScalingDenominatorNotSmoothed = "ScalingDenominator (not smoothed)";
+
     /// <summary>Name of the column that represents the values that are used as denominator to convert
     /// an uncalibrated intensity value to a calibrated one.</summary>
     public const string ColumnName_Group0_ScalingDenominator = "ScalingDenominator";
@@ -230,7 +233,23 @@ namespace Altaxo.Science.Spectroscopy.Calibration
       var colX = destinationTable.DataColumns.EnsureExistence(ColumnName_Group0_SpectrumX, typeof(DoubleColumn), ColumnKind.X, 0);
       var colY = destinationTable.DataColumns.EnsureExistence(ColumnName_Group0_SpectrumY, typeof(DoubleColumn), ColumnKind.V, 0);
       var colCalStandardY = destinationTable.DataColumns.EnsureExistence(ColumnName_Group0_CalibrationStandardY, typeof(DoubleColumn), ColumnKind.V, 0);
-      var colScalingDenominator = destinationTable.DataColumns.EnsureExistence(ColumnName_Group0_ScalingDenominator, typeof(DoubleColumn), ColumnKind.V, 0);
+
+      var yCalibrationOptions = _processOptions.GetYCalibrationOptions();
+
+      DoubleColumn colScalingDenominatorNotSmoothed, colScalingDenominator;
+      if (yCalibrationOptions.InterpolationMethod is not null)
+      {
+        colScalingDenominatorNotSmoothed = (DoubleColumn)destinationTable.DataColumns.EnsureExistence(
+            ColumnName_Group0_ScalingDenominatorNotSmoothed, typeof(DoubleColumn), ColumnKind.V, 0);
+        colScalingDenominator = (DoubleColumn)destinationTable.DataColumns.EnsureExistence(
+            ColumnName_Group0_ScalingDenominator, typeof(DoubleColumn), ColumnKind.V, 0);
+      }
+      else
+      {
+        colScalingDenominatorNotSmoothed = (DoubleColumn)destinationTable.DataColumns.EnsureExistence(
+            ColumnName_Group0_ScalingDenominator, typeof(DoubleColumn), ColumnKind.V, 0);
+        colScalingDenominator = colScalingDenominatorNotSmoothed;
+      }
 
       var srcXCol = _processData.XColumn;
       var srcYCol = _processData.YColumn;
@@ -264,7 +283,18 @@ namespace Altaxo.Science.Spectroscopy.Calibration
         X[0] = xArr[i];
         function.Evaluate(X, para, Y);
         colCalStandardY[i] = Y[0];
-        colScalingDenominator[i] = yArr[i] / Y[0];
+        colScalingDenominatorNotSmoothed[i] = yArr[i] / Y[0];
+      }
+
+      // if choosen, then smooth the result
+      if (yCalibrationOptions.InterpolationMethod is { } smoothingOption)
+      {
+        var yarr = colScalingDenominatorNotSmoothed.ToArray();
+        var interpolation = smoothingOption.Interpolate(xArr, yarr);
+        for (int i = 0; i < xArr.Length; i++)
+        {
+          colScalingDenominator[i] = interpolation.GetYOfX(xArr[i]);
+        }
       }
     }
 

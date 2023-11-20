@@ -22,7 +22,9 @@
 
 #endregion Copyright
 
+using System;
 using System.Collections.Immutable;
+using Altaxo.Calc.Interpolation;
 using Altaxo.Calc.Regression.Nonlinear;
 
 namespace Altaxo.Science.Spectroscopy.Calibration
@@ -44,17 +46,25 @@ namespace Altaxo.Science.Spectroscopy.Calibration
 
     public SpectralPreprocessingOptionsBase Preprocessing { get; init; } = new SpectralPreprocessingOptions();
 
+    /// <summary>
+    /// Gets or sets the smoothing interpolation that is used to smooth the resulting curve.
+    /// The value can be null: in this case, no smoothing is performed.
+    /// </summary>
+    public IInterpolationFunctionOptions? InterpolationMethod { get; init; }
+
     #region Serialization
 
     /// <summary>
     /// 2023-03-30 Initial version.
     /// </summary>
     /// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(YCalibrationOptions), 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoCore", "Altaxo.Science.Spectroscopy.Calibration.YCalibrationOptions", 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
+        throw new InvalidOperationException("Serialization of old version");
+        /*
         var s = (YCalibrationOptions)obj;
         info.AddValue("SpectralPreprocessing", s.Preprocessing);
         info.AddValue("CurveShape", s.CurveShape);
@@ -72,6 +82,7 @@ namespace Altaxo.Science.Spectroscopy.Calibration
           }
         }
         info.CommitArray();
+        */
       }
 
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
@@ -99,9 +110,72 @@ namespace Altaxo.Science.Spectroscopy.Calibration
           Preprocessing = spectralPreprocessing,
           CurveShape = intensityCurve,
           CurveParameters = arr.ToImmutableArray(),
+          InterpolationMethod = null,
         };
       }
     }
+
+    /// <summary>
+    /// 2023-11-20 V1: new property 'InterpolationMethod' added
+    /// </summary>
+    /// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(YCalibrationOptions), 1)]
+    public class SerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        var s = (YCalibrationOptions)obj;
+        info.AddValue("SpectralPreprocessing", s.Preprocessing);
+        info.AddValue("CurveShape", s.CurveShape);
+
+        info.CreateArray("CurveParameters", s.CurveParameters.Length);
+        {
+          for (int i = 0; i < s.CurveParameters.Length; i++)
+          {
+            info.CreateElement("e");
+            {
+              info.AddValue("Name", s.CurveParameters[i].Name);
+              info.AddValue("Value", s.CurveParameters[i].Value);
+            }
+            info.CommitElement();
+          }
+        }
+        info.CommitArray();
+
+        info.AddValueOrNull("InterpolationMethod", s.InterpolationMethod);
+      }
+
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      {
+        var spectralPreprocessing = info.GetValue<SpectralPreprocessingOptionsBase>("SpectralPreprocessing", parent);
+        var intensityCurve = info.GetValue<IFitFunction>("CurveShape", null);
+
+        var count = info.OpenArray("CurveParameters");
+        var arr = new (string Name, double Value)[count];
+        {
+          for (int i = 0; i < count; ++i)
+          {
+            info.OpenElement(); // "e"
+            var s = info.GetString("Name");
+            var v = info.GetDouble("Value");
+            info.CloseElement();
+            arr[i] = (s, v);
+          }
+        }
+        info.CloseArray(count);
+
+        var interpolationMethod = info.GetValueOrNull<IInterpolationFunctionOptions>("InterpolationMethod", null);
+
+        return new YCalibrationOptions
+        {
+          Preprocessing = spectralPreprocessing,
+          CurveShape = intensityCurve,
+          CurveParameters = arr.ToImmutableArray(),
+          InterpolationMethod = interpolationMethod,
+        };
+      }
+    }
+
     #endregion
 
   }

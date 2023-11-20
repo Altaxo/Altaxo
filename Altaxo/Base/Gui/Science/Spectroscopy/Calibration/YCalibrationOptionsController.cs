@@ -29,8 +29,10 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using Altaxo.Calc.FitFunctions.Peaks;
+using Altaxo.Calc.Interpolation;
 using Altaxo.Calc.Regression.Nonlinear;
 using Altaxo.Collections;
+using Altaxo.Gui.Calc.Interpolation;
 using Altaxo.Gui.Common;
 using Altaxo.Science.Spectroscopy;
 using Altaxo.Science.Spectroscopy.Calibration;
@@ -161,6 +163,38 @@ namespace Altaxo.Gui.Science.Spectroscopy.Calibration
       }
     }
 
+    private bool _smoothResultingCurve;
+
+    public bool SmoothResultingCurve
+    {
+      get => _smoothResultingCurve;
+      set
+      {
+        if (!(_smoothResultingCurve == value))
+        {
+          _smoothResultingCurve = value;
+          OnPropertyChanged(nameof(SmoothResultingCurve));
+        }
+      }
+    }
+
+
+    private InterpolationFunctionOptionsController _interpolationMethod;
+
+    public InterpolationFunctionOptionsController InterpolationMethod
+    {
+      get => _interpolationMethod;
+      set
+      {
+        if (!(_interpolationMethod == value))
+        {
+          _interpolationMethod?.Dispose();
+          _interpolationMethod = value;
+          OnPropertyChanged(nameof(InterpolationMethod));
+        }
+      }
+    }
+
     #endregion
 
     protected override void Initialize(bool initData)
@@ -184,6 +218,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.Calibration
         AvailableShapes = new ItemsController<Type>(
           new Collections.SelectableListNodeList(fitFuncTypes.Select(ff => new Collections.SelectableListNode(ff.Name, ff, false))), EhCurveShapeChanged);
         AvailableShapes.SelectedValue = _doc.CurveShape.GetType();
+
+        SmoothResultingCurve = _doc.InterpolationMethod is not null;
+        InterpolationMethod = new InterpolationFunctionOptionsController(_doc.InterpolationMethod ?? new PolyharmonicSpline1DOptions() { DerivativeOrder = 2, RegularizationParameter = 1000 });
       }
     }
 
@@ -218,11 +255,21 @@ namespace Altaxo.Gui.Science.Spectroscopy.Calibration
         curveInstance = ffp.WithNumberOfTerms(NumberOfTerms).WithOrderOfBaselinePolynomial(OrderOfBaselinePolynomial);
       }
 
+      IInterpolationFunctionOptions? interpolationMethod = null;
+      if (SmoothResultingCurve)
+      {
+        if (!InterpolationMethod.Apply(disposeController))
+          return ApplyEnd(false, disposeController);
+        else
+          interpolationMethod = (IInterpolationFunctionOptions)InterpolationMethod.ModelObject;
+      }
+
       _doc = new YCalibrationOptions
       {
         Preprocessing = (SpectralPreprocessingOptionsBase)PreprocessingController.ModelObject,
         CurveShape = curveInstance,
         CurveParameters = ParametersOfCurve.Select(p => (p.Name, p.Value)).ToImmutableArray(),
+        InterpolationMethod = interpolationMethod,
       };
 
       return ApplyEnd(true, disposeController);

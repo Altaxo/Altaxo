@@ -23,6 +23,7 @@
 #endregion Copyright
 
 using System;
+using Altaxo.Calc.Interpolation;
 using Altaxo.Calc.Regression.Nonlinear;
 using Altaxo.Data;
 using Altaxo.Science.Spectroscopy;
@@ -46,5 +47,12 @@ namespace Altaxo.Gui.Science.Spectroscopy.Calibration
     public IFitFunction CurveShape { get; set; } = new Altaxo.Calc.FitFunctions.Peaks.GaussAmplitude(1, -1);
 
     public (string Name, double Value)[] CurveParameter { get; set; } = Array.Empty<(string Name, double Value)>();
+
+    /// <summary>
+    /// Gets or sets the smoothing interpolation that is used to smooth the resulting curve.
+    /// The value can be null: in this case, no smoothing is performed.
+    /// </summary>
+    public IInterpolationFunctionOptions? InterpolationMethod { get; set; }
+
   }
 }

@@ -1192,7 +1192,12 @@ namespace Altaxo.Science.Spectroscopy
       // now, create a new table with an intensityCalibrationDataSource
 
       var dstTable = new DataTable();
-      dstTable.Name = Current.Project.DataTableCollection.FindNewItemName(ctrl.DataTable.FolderName + "WIntensityCalibration");
+      var proposedName = ctrl.DataTable.FolderName + "WIntensityCalibration";
+      if (Current.Project.DataTableCollection.Contains(proposedName))
+      {
+        proposedName = Current.Project.DataTableCollection.FindNewItemName(proposedName);
+      }
+      dstTable.Name = proposedName;
       Current.Project.DataTableCollection.Add(dstTable);
 
       var proxy = new DataTableXYColumnProxy(ctrl.DataTable, x_column1, y_column1);

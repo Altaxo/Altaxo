@@ -8,77 +8,99 @@
              d:DataContext="{d:DesignInstance Type=localmodel:YCalibrationOptionsController}"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="4"/>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="4"/>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="4"/>
-        </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="4"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="4"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="4"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="4"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="4"/>
-        </Grid.RowDefinitions>
+  <Grid>
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="Auto"/>
+      <ColumnDefinition Width="4"/>
+      <ColumnDefinition Width="Auto"/>
+      <ColumnDefinition Width="4"/>
+      <ColumnDefinition Width="Auto"/>
+      <ColumnDefinition Width="4"/>
+    </Grid.ColumnDefinitions>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="4"/>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="4"/>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="4"/>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="4"/>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="4"/>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="4"/>
+    </Grid.RowDefinitions>
 
-        <GroupBox Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="5"
+    <GroupBox Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="5"
                           Header="Spectral preprocessing:">
-            <ContentControl Content="{Binding PreprocessingController.ViewObject}"/>
-        </GroupBox>
+      <ContentControl Content="{Binding PreprocessingController.ViewObject}"/>
+    </GroupBox>
 
 
-        <Label Grid.Row="2" Grid.Column="0"
+    <Label Grid.Row="2" Grid.Column="0"
                        Content="Curve shape:"/>
 
-        <ComboBox Grid.Row="4" Grid.Column="0"
+    <ComboBox Grid.Row="4" Grid.Column="0"
                           ItemsSource="{Binding AvailableShapes.Items}"
                           SelectedItem="{Binding AvailableShapes.SelectedItem, Mode=TwoWay}"/>
 
-        <Label Grid.Row="2" Grid.Column="2"
+    <Label Grid.Row="2" Grid.Column="2"
                        Content="No. of terms:"/>
 
-        <axogc:Int32UpDown Grid.Row="4" Grid.Column="2"
+    <axogc:Int32UpDown Grid.Row="4" Grid.Column="2"
                            Value="{Binding NumberOfTerms}"
                            Minimum="0"
                            />
 
-        <Label Grid.Row="2" Grid.Column="4"
+    <Label Grid.Row="2" Grid.Column="4"
                        Content="Baseline order:"/>
 
-        <axogc:Int32UpDown Grid.Row="4" Grid.Column="4"
+    <axogc:Int32UpDown Grid.Row="4" Grid.Column="4"
                                    Value="{Binding OrderOfBaselinePolynomial}"
                                    Minimum="-1"/>
 
-        <Label Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="3"
+    <Label Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="3"
                        Content="Parameters of curve:"/>
 
-        <ListView Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="3" ItemsSource="{Binding ParametersOfCurve}">
-            <ListView.View>
-                <GridView>
-                    <GridView.Columns>
-                        <GridViewColumn Header="Name" DisplayMemberBinding="{Binding Name}"/>
-                        <GridViewColumn x:Name="_valueColumn" Header="Value" Width="100">
-                            <GridViewColumn.CellTemplate>
-                                <DataTemplate>
-                                    <Border Width="{Binding ActualWidth, ElementName=_valueColumn}" Padding="4,0,12,0" >
-                                        <axogc:NumericDoubleTextBox SelectedValue="{Binding Value}" HorizontalAlignment="Stretch"/>
-                                    </Border>
-                                </DataTemplate>
-                            </GridViewColumn.CellTemplate>
-                        </GridViewColumn>
-                    </GridView.Columns>
-                </GridView>
-            </ListView.View>
-        </ListView>
-    </Grid>
+    <ListView Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="3" ItemsSource="{Binding ParametersOfCurve}">
+      <ListView.View>
+        <GridView>
+          <GridView.Columns>
+            <GridViewColumn Header="Name" DisplayMemberBinding="{Binding Name}"/>
+            <GridViewColumn x:Name="_valueColumn" Header="Value" Width="100">
+              <GridViewColumn.CellTemplate>
+                <DataTemplate>
+                  <Border Width="{Binding ActualWidth, ElementName=_valueColumn}" Padding="4,0,12,0" >
+                    <axogc:NumericDoubleTextBox SelectedValue="{Binding Value}" HorizontalAlignment="Stretch"/>
+                  </Border>
+                </DataTemplate>
+              </GridViewColumn.CellTemplate>
+            </GridViewColumn>
+          </GridView.Columns>
+        </GridView>
+      </ListView.View>
+    </ListView>
+
+    <GroupBox Grid.Row="10" Grid.ColumnSpan="3">
+      <GroupBox.Header>
+        <CheckBox Content="Smooth result by smoothing interpolation"
+                        IsChecked="{Binding SmoothResultingCurve, Mode=TwoWay}"
+                        />
+      </GroupBox.Header>
+      <Expander
+          Header="Interpolation method"
+          IsExpanded="true"
+        IsEnabled="{Binding SmoothResultingCurve}"
+        >
+        <StackPanel Orientation="Vertical" Margin="0,4,0,4">
+          <ComboBox ItemsSource="{Binding InterpolationMethod.InterpolationMethod.Items}"
+                  SelectedValue="{Binding InterpolationMethod.InterpolationMethod.SelectedItem}"/>
+          <ContentControl Content="{Binding InterpolationMethod.InterpolationDetailsController.ViewObject}"/>
+        </StackPanel>
+      </Expander>
+    </GroupBox>
+
+  </Grid>
 
 </UserControl>
