@@ -100,8 +100,8 @@ namespace Altaxo.Calc.FitFunctions.Peaks
 
       if (!(_orderOfBaselinePolynomial >= -1))
         throw new ArgumentOutOfRangeException("Order of baseline polynomial has to be greater than or equal to zero, or -1 in order to deactivate it.");
-      if (!(_numberOfTerms >= 1))
-        throw new ArgumentOutOfRangeException("Number of peak terms has to be greater than or equal to 1");
+      if (!(_numberOfTerms >= 0))
+        throw new ArgumentOutOfRangeException("Number of peak terms has to be greater than or equal to 0");
 
     }
 
