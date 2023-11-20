@@ -131,6 +131,9 @@ namespace Altaxo.Gui.Pads.Notes
         case Altaxo.Gui.Graph.Graph3D.Viewing.Graph3DController ctrl3:
           notes = ctrl3.Doc.Notes;
           break;
+        case Altaxo.Gui.Text.Viewing.TextDocumentController ctrl4:
+          notes = ctrl4.TextDocument.Notes;
+          break;
         default:
           notes = null;
           break;
