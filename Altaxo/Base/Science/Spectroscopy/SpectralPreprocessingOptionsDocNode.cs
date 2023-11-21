@@ -280,16 +280,40 @@ namespace Altaxo.Science.Spectroscopy
         switch (oldElement)
         {
           case XCalibrationByDataSource xcal:
-            newElement = UpdateXCalibrationByDataSourceElement(xcal, _proxyCache[oldElement]);
-            ReplaceProxyKey(oldElement, newElement, proxy);
+            if (_proxyCache.ContainsKey(oldElement))
+            {
+              newElement = UpdateXCalibrationByDataSourceElement(xcal, _proxyCache[oldElement]);
+              ReplaceProxyKey(oldElement, newElement, proxy);
+            }
+            else
+            {
+              // we can not throw an exception here, since this can happen oftenly
+              Current.MessageService.ShowError($"Source for x-calibration not found anymore: table: \"{xcal.TableName}\"!");
+            }
             break;
           case YCalibrationByDataSource ycal:
-            newElement = UpdateYCalibrationByDataSourceElement(ycal, _proxyCache[oldElement]);
-            ReplaceProxyKey(oldElement, newElement, proxy);
+            if (_proxyCache.ContainsKey(oldElement))
+            {
+              newElement = UpdateYCalibrationByDataSourceElement(ycal, _proxyCache[oldElement]);
+              ReplaceProxyKey(oldElement, newElement, proxy);
+            }
+            else
+            {
+              // we can not throw an exception here, since this can happen oftenly
+              Current.MessageService.ShowError($"Source for y-calibration not found anymore: table: \"{ycal.TableName}\"!");
+            }
             break;
           case IReferencingXYColumns refXYCol:
-            newElement = UpdateElementIReferencingXYColumns(refXYCol, _proxyCache[oldElement]);
-            ReplaceProxyKey(oldElement, newElement, proxy);
+            if (_proxyCache.ContainsKey(oldElement))
+            {
+              newElement = UpdateElementIReferencingXYColumns(refXYCol, _proxyCache[oldElement]);
+              ReplaceProxyKey(oldElement, newElement, proxy);
+            }
+            else
+            {
+              // we can not throw an exception here, since this can happen oftenly
+              Current.MessageService.ShowError($"Source for element {refXYCol} not found anymore: table: \"{refXYCol.XYDataOrigin}\"!");
+            }
             break;
           case IReferencingTable rt:
             throw new NotImplementedException($"Unhandled element referencing a table: {oldElement.GetType}");
