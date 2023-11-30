@@ -26,8 +26,7 @@ using System;
 
 namespace Altaxo.Science.Spectroscopy.BaselineEstimation
 {
-  public record XToXLine
-    : IBaselineEstimation
+  public abstract record XToXLineBase : Main.IImmutable
   {
     protected double _x0;
     protected double _x1;
@@ -57,31 +56,6 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
         _x1 = value;
       }
     }
-
-
-    #region Serialization
-
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XToXLine), 0)]
-    public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-    {
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-      {
-        var s = (XToXLine)obj;
-        info.AddValue("X0", s._x0);
-        info.AddValue("X1", s._x1);
-      }
-
-      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
-      {
-        var x0 = info.GetDouble("X0");
-        var x1 = info.GetDouble("X1");
-        return new XToXLine() { _x0 = x0, _x1 = x1 };
-      }
-    }
-    #endregion
-
-
-
 
     /// <inheritdoc/>
     public (double[] x, double[] y, int[]? regions) Execute(double[] x, double[] y, int[]? regions)
@@ -137,5 +111,29 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
         result[i] = yleft * (xright - xArray[i]) / xspan + yright * (xArray[i] - xleft) / xspan;
       }
     }
+  }
+
+  public record XToXLine : XToXLineBase, IBaselineEstimation
+  {
+    #region Serialization
+
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(XToXLine), 0)]
+    public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        var s = (XToXLine)obj;
+        info.AddValue("X0", s._x0);
+        info.AddValue("X1", s._x1);
+      }
+
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      {
+        var x0 = info.GetDouble("X0");
+        var x1 = info.GetDouble("X1");
+        return new XToXLine() { _x0 = x0, _x1 = x1 };
+      }
+    }
+    #endregion
   }
 }

@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2023 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -36,7 +36,7 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
   /// <para>[1] Z.-M. Zhang et al., Baseline correction using adaptive iteratively reweighted penalized least
   /// squares, Analyst, 2010, 135, 1138–1146, doi:10.1039/b922045c</para>
   /// </remarks>
-  public record AirPLS : ALSBase, IBaselineEstimation
+  public abstract record AirPLSBase : ALSMethodsBase
   {
     private double _lambda = 100;
 
@@ -125,49 +125,6 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
         _order = value;
       }
     }
-
-    #region Serialization
-
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AirPLS), 0)]
-    public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-    {
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-      {
-        var s = (AirPLS)obj;
-        info.AddValue("Lambda", s.Lambda);
-        info.AddValue("ScaleLambdaWithXUnits", s.ScaleLambdaWithXUnits);
-        info.AddValue("TerminationRatio", s.TerminationRatio);
-        info.AddValue("Order", s.Order);
-        info.AddValue("MaxNumberOfIterations", s.MaximumNumberOfIterations);
-      }
-
-      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
-      {
-        var lambda = info.GetDouble("Lambda");
-        var scaleLambdaWithXUnits = info.GetBoolean("ScaleLambdaWithXUnits");
-        var terminationRatio = info.GetDouble("TerminationRatio");
-        var order = info.GetInt32("Order");
-        var maxNumberOfIterations = info.GetInt32("MaxNumberOfIterations");
-
-        return o is null ? new AirPLS
-        {
-          Lambda = lambda,
-          ScaleLambdaWithXUnits = scaleLambdaWithXUnits,
-          TerminationRatio = terminationRatio,
-          Order = order,
-          MaximumNumberOfIterations = maxNumberOfIterations,
-        } :
-          ((AirPLS)o) with
-          {
-            Lambda = lambda,
-            ScaleLambdaWithXUnits = scaleLambdaWithXUnits,
-            TerminationRatio = terminationRatio,
-            Order = order,
-            MaximumNumberOfIterations = maxNumberOfIterations,
-          };
-      }
-    }
-    #endregion
 
 
 
@@ -278,5 +235,59 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
     {
       return $"{this.GetType().Name} Order={Order} TR={TerminationRatio} Lambda={Lambda}{(ScaleLambdaWithXUnits ? 'X' : 'P')} Iterations={MaximumNumberOfIterations}";
     }
+  }
+
+  /// <summary>
+  /// Implements the adaptive iteratively reweighted penalized least squares algorithm proposed by Zhang et al [1].
+  /// </summary>
+  /// <remarks>
+  /// <para>References:</para>
+  /// <para>[1] Z.-M. Zhang et al., Baseline correction using adaptive iteratively reweighted penalized least
+  /// squares, Analyst, 2010, 135, 1138–1146, doi:10.1039/b922045c</para>
+  /// </remarks>
+  public record AirPLS : AirPLSBase, IBaselineEstimation
+  {
+    #region Serialization
+
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(AirPLS), 0)]
+    public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        var s = (AirPLS)obj;
+        info.AddValue("Lambda", s.Lambda);
+        info.AddValue("ScaleLambdaWithXUnits", s.ScaleLambdaWithXUnits);
+        info.AddValue("TerminationRatio", s.TerminationRatio);
+        info.AddValue("Order", s.Order);
+        info.AddValue("MaxNumberOfIterations", s.MaximumNumberOfIterations);
+      }
+
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      {
+        var lambda = info.GetDouble("Lambda");
+        var scaleLambdaWithXUnits = info.GetBoolean("ScaleLambdaWithXUnits");
+        var terminationRatio = info.GetDouble("TerminationRatio");
+        var order = info.GetInt32("Order");
+        var maxNumberOfIterations = info.GetInt32("MaxNumberOfIterations");
+
+        return o is null ? new AirPLS
+        {
+          Lambda = lambda,
+          ScaleLambdaWithXUnits = scaleLambdaWithXUnits,
+          TerminationRatio = terminationRatio,
+          Order = order,
+          MaximumNumberOfIterations = maxNumberOfIterations,
+        } :
+          ((AirPLS)o) with
+          {
+            Lambda = lambda,
+            ScaleLambdaWithXUnits = scaleLambdaWithXUnits,
+            TerminationRatio = terminationRatio,
+            Order = order,
+            MaximumNumberOfIterations = maxNumberOfIterations,
+          };
+      }
+    }
+    #endregion
   }
 }

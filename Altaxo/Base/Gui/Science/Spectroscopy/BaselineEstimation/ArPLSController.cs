@@ -32,9 +32,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.BaselineEstimation
   {
   }
 
-  [UserControllerForObject(typeof(ArPLS))]
+  [UserControllerForObject(typeof(ArPLSBase))]
   [ExpectedTypeOfView(typeof(IArPLSView))]
-  public class ArPLSController : MVCANControllerEditImmutableDocBase<ArPLS, IArPLSView>
+  public class ArPLSController : MVCANControllerEditImmutableDocBase<ArPLSBase, IArPLSView>
   {
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {

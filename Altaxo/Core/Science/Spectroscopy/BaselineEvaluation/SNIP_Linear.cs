@@ -22,24 +22,12 @@
 
 #endregion Copyright
 
+using System;
 
-namespace Altaxo.Science.Spectroscopy.BaselineEstimation
+namespace Altaxo.Science.Spectroscopy.BaselineEvaluation
 {
-  /// <summary>
-  /// SNIP algorithm for background estimation on linear (unmodified) data. SNIP = Statistical sensitive Non-Linear Iterative Procedure.
-  /// </summary>
-  /// <remarks>
-  /// In difference to the procedure described in Ref. 1, no previous smoothing is applied to the data. Furthermore,
-  /// the paper suggests to twice logarithmize the data beforehand, which is also not done here.
-  /// As described in the paper, after execution the number of regular stages of the algorithm, the window width is sucessivly decreased, until it reaches 1.
-  /// This results in a smoothing of the background signal.
-  /// 
-  /// <para>References:</para>
-  /// <para>[1] C.G. Ryan et al., SNIP, A STATISTICS-SENSITIVE BACKGROUND TREATMENT FOR THE QUANTITATIVE 
-  /// ANALYSIS OF PIXE SPECTRA IN GEOSCIENCE APPLICATIONS, Nuclear Instruments and Methods in Physics Research 934 (1988) 396-402 
-  /// North-Holland, Amsterdam</para>
-  /// </remarks>
-  public record SNIP_Linear : SNIP_Base, IBaselineEstimation
+  /// <inheritdoc/>
+  public record SNIP_Linear : Altaxo.Science.Spectroscopy.BaselineEstimation.SNIP_Base, IBaselineEvaluation
   {
     #region Serialization
 
@@ -76,13 +64,21 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
     }
     #endregion
 
-
-
-
-
-    public override string ToString()
+    public new (double[] x, double[] y, int[]? regions) Execute(double[] x, double[] y, int[]? regions)
     {
-      return $"{this.GetType().Name} HW={HalfWidth}{(IsHalfWidthInXUnits ? 'X' : 'P')} Iterations={NumberOfRegularIterations}";
+      var yBaseline = new double[y.Length];
+      foreach (var (start, end) in RegionHelper.GetRegionRanges(regions, x.Length))
+      {
+        var xSpan = new ReadOnlySpan<double>(x, start, end - start);
+        var ySpan = new ReadOnlySpan<double>(y, start, end - start);
+        var yBaselineSpan = new Span<double>(yBaseline, start, end - start);
+        Execute(xSpan, ySpan, yBaselineSpan);
+      }
+
+      // return the baseline itself
+      return (x, yBaseline, regions);
     }
+
+
   }
 }

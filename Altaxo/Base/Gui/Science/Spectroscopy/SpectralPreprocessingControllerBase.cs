@@ -180,6 +180,7 @@ namespace Altaxo.Gui.Science.Spectroscopy
             ("XCal", typeof(XCalibrationNone), () => new Calibration.XCalibrationController()),
             ("Smoothing", typeof(SmoothingNone), () => new Smoothing.SmoothingController()),
             ("Baseline", typeof(BaselineEstimationNone), () => new BaselineEstimation.BaselineEstimationController()),
+            ("BaselineCurve", typeof(Altaxo.Science.Spectroscopy.BaselineEvaluation.SNIP_Linear), () => new BaselineEvaluation.BaselineEvaluationController()),
             ("Resample", typeof(ResamplingNone), () => new Resampling.ResamplingController()),
             ("Cropping", typeof(CroppingNone), () => new Cropping.CroppingController()),
             ("Normalization", typeof(NormalizationNone), () => new Normalization.NormalizationController()),

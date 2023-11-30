@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2023 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -36,7 +36,7 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
   /// <para>[1] Sung-June Baek et al., Baseline correction using asymmetrically reweighted penalized least squares smoothing,
   /// Analyst, 2015, 140, 250-257 doi: 10.1039/C4AN01061B</para>
   /// </remarks>
-  public record ArPLS : ALSBase, IBaselineEstimation
+  public abstract record ArPLSBase : ALSMethodsBase
   {
     private double _lambda = 1E5;
 
@@ -123,50 +123,6 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
         _order = value;
       }
     }
-
-
-    #region Serialization
-
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ArPLS), 0)]
-    public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-    {
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-      {
-        var s = (ArPLS)obj;
-        info.AddValue("Lambda", s.Lambda);
-        info.AddValue("ScaleLambdaWithXUnits", s.ScaleLambdaWithXUnits);
-        info.AddValue("TerminationRatio", s.TerminationRatio);
-        info.AddValue("Order", s.Order);
-        info.AddValue("MaxNumberOfIterations", s.MaximumNumberOfIterations);
-      }
-
-      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
-      {
-        var lambda = info.GetDouble("Lambda");
-        var scaleLambdaWithXUnits = info.GetBoolean("ScaleLambdaWithXUnits");
-        var terminationRatio = info.GetDouble("TerminationRatio");
-        var order = info.GetInt32("Order");
-        var maxNumberOfIterations = info.GetInt32("MaxNumberOfIterations");
-
-        return o is null ? new ArPLS
-        {
-          Lambda = lambda,
-          ScaleLambdaWithXUnits = scaleLambdaWithXUnits,
-          TerminationRatio = terminationRatio,
-          Order = order,
-          MaximumNumberOfIterations = maxNumberOfIterations,
-        } :
-          ((ArPLS)o) with
-          {
-            Lambda = lambda,
-            ScaleLambdaWithXUnits = scaleLambdaWithXUnits,
-            TerminationRatio = terminationRatio,
-            Order = order,
-            MaximumNumberOfIterations = maxNumberOfIterations,
-          };
-      }
-    }
-    #endregion
 
     /// <inheritdoc/>
     public override void Execute(ReadOnlySpan<double> xArray, ReadOnlySpan<double> yArray, Span<double> resultingBaseline)
@@ -293,5 +249,61 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
     {
       return $"{this.GetType().Name} Order={Order} TR={TerminationRatio} Lambda={Lambda}{(ScaleLambdaWithXUnits ? 'X' : 'P')} Iterations={MaximumNumberOfIterations}";
     }
+  }
+
+  /// <summary>
+  /// Implements the asymmetrically reweighted penalized least squares algorithm proposed by Baek et al [1].
+  /// </summary>
+  /// <remarks>
+  /// <para>References:</para>
+  /// <para>[1] Sung-June Baek et al., Baseline correction using asymmetrically reweighted penalized least squares smoothing,
+  /// Analyst, 2015, 140, 250-257 doi: 10.1039/C4AN01061B</para>
+  /// </remarks>
+  public record ArPLS : ArPLSBase, IBaselineEstimation
+  {
+
+    #region Serialization
+
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ArPLS), 0)]
+    public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        var s = (ArPLS)obj;
+        info.AddValue("Lambda", s.Lambda);
+        info.AddValue("ScaleLambdaWithXUnits", s.ScaleLambdaWithXUnits);
+        info.AddValue("TerminationRatio", s.TerminationRatio);
+        info.AddValue("Order", s.Order);
+        info.AddValue("MaxNumberOfIterations", s.MaximumNumberOfIterations);
+      }
+
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      {
+        var lambda = info.GetDouble("Lambda");
+        var scaleLambdaWithXUnits = info.GetBoolean("ScaleLambdaWithXUnits");
+        var terminationRatio = info.GetDouble("TerminationRatio");
+        var order = info.GetInt32("Order");
+        var maxNumberOfIterations = info.GetInt32("MaxNumberOfIterations");
+
+        return o is null ? new ArPLS
+        {
+          Lambda = lambda,
+          ScaleLambdaWithXUnits = scaleLambdaWithXUnits,
+          TerminationRatio = terminationRatio,
+          Order = order,
+          MaximumNumberOfIterations = maxNumberOfIterations,
+        } :
+          ((ArPLS)o) with
+          {
+            Lambda = lambda,
+            ScaleLambdaWithXUnits = scaleLambdaWithXUnits,
+            TerminationRatio = terminationRatio,
+            Order = order,
+            MaximumNumberOfIterations = maxNumberOfIterations,
+          };
+      }
+    }
+    #endregion
+
   }
 }

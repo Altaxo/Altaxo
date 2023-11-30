@@ -24,9 +24,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Altaxo.Science.Spectroscopy.BaselineEstimation;
 
 namespace Altaxo.Gui.Science.Spectroscopy.BaselineEstimation
@@ -35,9 +32,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.BaselineEstimation
   {
   }
 
-  [UserControllerForObject(typeof(ALS))]
+  [UserControllerForObject(typeof(ALSBase))]
   [ExpectedTypeOfView(typeof(IALSView))]
-  public class ALSController : MVCANControllerEditImmutableDocBase<ALS, IALSView>
+  public class ALSController : MVCANControllerEditImmutableDocBase<ALSBase, IALSView>
   {
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {

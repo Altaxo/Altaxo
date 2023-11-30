@@ -24,9 +24,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Altaxo.Science.Spectroscopy.BaselineEstimation;
 
 namespace Altaxo.Gui.Science.Spectroscopy.BaselineEstimation
@@ -35,9 +32,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.BaselineEstimation
   {
   }
 
-  [UserControllerForObject(typeof(AirPLS))]
+  [UserControllerForObject(typeof(AirPLSBase))]
   [ExpectedTypeOfView(typeof(IAirPLSView))]
-  public class AirPLSController : MVCANControllerEditImmutableDocBase<AirPLS, IAirPLSView>
+  public class AirPLSController : MVCANControllerEditImmutableDocBase<AirPLSBase, IAirPLSView>
   {
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {

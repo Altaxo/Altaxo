@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2023 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -23,15 +23,14 @@
 #endregion Copyright
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Altaxo.Calc.LinearAlgebra;
 
 namespace Altaxo.Science.Spectroscopy.BaselineEstimation
 {
-  public abstract record ALSBase : IBaselineEstimation
+  /// <summary>
+  /// Base class of ALS based methods, like <see cref="AirPLSBase"/>, <see cref="ALSBase"/> and <see cref="ArPLSBase"/>.
+  /// </summary>
+  public abstract record ALSMethodsBase
   {
     public void FillBandMatrixOrder1(IMatrix<double> m, double[] weights, double lambda, int countM1)
     {
@@ -51,7 +50,7 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
 
     public void UpdateBandMatrixDiagonalOrder1(IMatrix<double> m, double[] weights, double lambda, int countM1)
     {
-      m[0,0] = weights[0] + lambda;
+      m[0, 0] = weights[0] + lambda;
       for (int i = 1; i < countM1; ++i)
       {
         m[i, i] = weights[i] + 2 * lambda;
@@ -59,7 +58,7 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
       m[countM1, countM1] = weights[countM1] + lambda;
     }
 
-      public void FillBandMatrixOrder2(IMatrix<double> m, double[] weights, double lambda, int countM1)
+    public void FillBandMatrixOrder2(IMatrix<double> m, double[] weights, double lambda, int countM1)
     {
       // Fill the (2,2) band matrix with (W + lambda D'D) (Eq.(6) in Ref.[1])
       m[0, 0] = weights[0] + lambda;

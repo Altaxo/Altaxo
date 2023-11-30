@@ -27,6 +27,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Altaxo.Science.Spectroscopy;
 using Altaxo.Science.Spectroscopy.BaselineEstimation;
+using Altaxo.Science.Spectroscopy.BaselineEvaluation;
 using Altaxo.Science.Spectroscopy.Calibration;
 using Altaxo.Science.Spectroscopy.Cropping;
 using Altaxo.Science.Spectroscopy.DarkSubtraction;
@@ -75,6 +76,9 @@ namespace Altaxo.Gui.Science.Spectroscopy
             break;
           case IBaselineEstimation baselineEstimation:
             yield return ("Baseline", baselineEstimation, () => new BaselineEstimation.BaselineEstimationController());
+            break;
+          case IBaselineEvaluation baselineEvaluation:
+            yield return ("BaselineCurve", baselineEvaluation, () => new BaselineEvaluation.BaselineEvaluationController());
             break;
           case IResampling resampling and not ICropping:
             yield return ("Resample", resampling, () => new Resampling.ResamplingController());

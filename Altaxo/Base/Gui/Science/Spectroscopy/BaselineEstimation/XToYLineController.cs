@@ -32,9 +32,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.BaselineEstimation
   {
   }
 
-  [UserControllerForObject(typeof(XToXLine))]
+  [UserControllerForObject(typeof(XToXLineBase))]
   [ExpectedTypeOfView(typeof(IXToXLineView))]
-  public class XToXLineController : MVCANControllerEditImmutableDocBase<XToXLine, IXToXLineView>
+  public class XToXLineController : MVCANControllerEditImmutableDocBase<XToXLineBase, IXToXLineView>
   {
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {

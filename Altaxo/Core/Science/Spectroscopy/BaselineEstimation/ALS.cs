@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2023 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -35,7 +35,7 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
   /// <para>[1] P. H. C. Eilers and H. F. M. Boelens, Baseline correction with
   /// asymmetric least squares smoothing, Leiden University Medical Centre report, 2005</para>
   /// </remarks>
-  public record ALS : ALSBase, IBaselineEstimation
+  public abstract record ALSBase : ALSMethodsBase
   {
     private double _lambda = 1E5;
 
@@ -121,48 +121,7 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
     }
 
 
-    #region Serialization
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ALS), 0)]
-    public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-    {
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-      {
-        var s = (ALS)obj;
-        info.AddValue("Lambda", s.Lambda);
-        info.AddValue("ScaleLambdaWithXUnits", s.ScaleLambdaWithXUnits);
-        info.AddValue("P", s.P);
-        info.AddValue("Order", s.Order);
-        info.AddValue("MaxNumberOfIterations", s.MaximumNumberOfIterations);
-      }
-
-      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
-      {
-        var lambda = info.GetDouble("Lambda");
-        var scaleLambdaWithXUnits = info.GetBoolean("ScaleLambdaWithXUnits");
-        var p = info.GetDouble("P");
-        var order = info.GetInt32("Order");
-        var maxNumberOfIterations = info.GetInt32("MaxNumberOfIterations");
-
-        return o is null ? new ALS
-        {
-          Lambda = lambda,
-          ScaleLambdaWithXUnits = scaleLambdaWithXUnits,
-          P = p,
-          Order = order,
-          MaximumNumberOfIterations = maxNumberOfIterations,
-        } :
-          ((ALS)o) with
-          {
-            Lambda = lambda,
-            ScaleLambdaWithXUnits = scaleLambdaWithXUnits,
-            P = p,
-            Order = order,
-            MaximumNumberOfIterations = maxNumberOfIterations,
-          };
-      }
-    }
-    #endregion
 
 
     /// <inheritdoc/>
@@ -247,5 +206,59 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
     {
       return $"{this.GetType().Name} Order={Order} P={P} Lambda={Lambda}{(ScaleLambdaWithXUnits ? 'X' : 'P')} Iterations={MaximumNumberOfIterations}";
     }
+  }
+
+  /// <summary>
+  /// Implements the Asymmetric Least Squares method for baseline estimation, proposed by Eilers and Boelens 2005 [1].
+  /// </summary>
+  /// <remarks>
+  /// <para>References:</para>
+  /// <para>[1] P. H. C. Eilers and H. F. M. Boelens, Baseline correction with
+  /// asymmetric least squares smoothing, Leiden University Medical Centre report, 2005</para>
+  /// </remarks>
+  public record ALS : ALSBase, IBaselineEstimation
+  {
+    #region Serialization
+
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ALS), 0)]
+    public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        var s = (ALS)obj;
+        info.AddValue("Lambda", s.Lambda);
+        info.AddValue("ScaleLambdaWithXUnits", s.ScaleLambdaWithXUnits);
+        info.AddValue("P", s.P);
+        info.AddValue("Order", s.Order);
+        info.AddValue("MaxNumberOfIterations", s.MaximumNumberOfIterations);
+      }
+
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      {
+        var lambda = info.GetDouble("Lambda");
+        var scaleLambdaWithXUnits = info.GetBoolean("ScaleLambdaWithXUnits");
+        var p = info.GetDouble("P");
+        var order = info.GetInt32("Order");
+        var maxNumberOfIterations = info.GetInt32("MaxNumberOfIterations");
+
+        return o is null ? new ALS
+        {
+          Lambda = lambda,
+          ScaleLambdaWithXUnits = scaleLambdaWithXUnits,
+          P = p,
+          Order = order,
+          MaximumNumberOfIterations = maxNumberOfIterations,
+        } :
+          ((ALS)o) with
+          {
+            Lambda = lambda,
+            ScaleLambdaWithXUnits = scaleLambdaWithXUnits,
+            P = p,
+            Order = order,
+            MaximumNumberOfIterations = maxNumberOfIterations,
+          };
+      }
+    }
+    #endregion
   }
 }

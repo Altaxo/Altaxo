@@ -23,43 +23,45 @@
 #endregion Copyright
 
 using System;
+using Altaxo.Science.Spectroscopy.BaselineEstimation;
 
-namespace Altaxo.Science.Spectroscopy.BaselineEstimation
+namespace Altaxo.Science.Spectroscopy.BaselineEvaluation
 {
-  /// <summary>
-  /// Does nothing (null operation).
-  /// </summary>
-  /// <seealso cref="Altaxo.Science.Spectroscopy.BaselineEstimation.IBaselineEstimation" />
-  public class BaselineEstimationNone : IBaselineEstimation
+  /// <inheritdoc/>
+  public record PolynomialDetrending : PolynomialDetrendingBase
   {
     #region Serialization
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(BaselineEstimationNone), 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PolynomialDetrending), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
+        var s = (PolynomialDetrending)obj;
+        info.AddValue("Order", s.DetrendingOrder);
       }
 
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        return new BaselineEstimationNone();
+        var order = info.GetInt32("Order");
+        return new PolynomialDetrending() { DetrendingOrder = order };
       }
     }
     #endregion
 
     /// <inheritdoc/>
-    public (double[] x, double[] y, int[]? regions) Execute(double[] x, double[] y, int[]? regions)
+    public new (double[] x, double[] y, int[]? regions) Execute(double[] x, double[] y, int[]? regions)
     {
-      return (x, y, regions);
-    }
-
-    public void Execute(ReadOnlySpan<double> xArray, ReadOnlySpan<double> yArray, Span<double> resultingBaseline)
-    {
-      for (int i = 0; i < resultingBaseline.Length; i++)
+      var yBaseline = new double[y.Length];
+      foreach (var (start, end) in RegionHelper.GetRegionRanges(regions, x.Length))
       {
-        resultingBaseline[i] = 0;
+        var xSpan = new ReadOnlySpan<double>(x, start, end - start);
+        var ySpan = new ReadOnlySpan<double>(y, start, end - start);
+        var yBaselineSpan = new Span<double>(yBaseline, start, end - start);
+        Execute(xSpan, ySpan, yBaselineSpan);
       }
+
+      return (x, yBaseline, regions);
     }
   }
 }

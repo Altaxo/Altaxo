@@ -22,21 +22,14 @@
 
 #endregion Copyright
 
-using System;
-
-namespace Altaxo.Science.Spectroscopy.BaselineEstimation
+namespace Altaxo.Science.Spectroscopy.BaselineEvaluation
 {
   /// <summary>
-  /// Interface to all baseline estimation algorithms for simple (1D) spectra.
+  /// Interface to all baseline evaluation algorithms for simple (1D) spectra.
+  /// In contrast to <see cref="Altaxo.Science.Spectroscopy.BaselineEstimation.IBaselineEstimation"/> which evaluates and then subtracts the baseline,
+  /// <see cref="IBaselineEvaluation"/> really evaluates the baseline, that is, the output is the baseline itself. 
   /// </summary>
-  public interface IBaselineEstimation : ISingleSpectrumPreprocessor
+  public interface IBaselineEvaluation : ISingleSpectrumPreprocessor
   {
-    /// <summary>
-    /// Executes the baseline estimation algorithm with the provided spectrum.
-    /// </summary>
-    /// <param name="xArray">The x values of the spectral values.</param>
-    /// <param name="yArray">The array of spectral values.</param>
-    /// <param name="resultingBaseline">The location to which the estimated baseline should be copied.</param>
-    public abstract void Execute(ReadOnlySpan<double> xArray, ReadOnlySpan<double> yArray, Span<double> resultingBaseline);
   }
 }

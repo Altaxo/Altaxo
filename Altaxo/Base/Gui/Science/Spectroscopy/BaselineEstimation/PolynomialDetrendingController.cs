@@ -24,7 +24,6 @@
 
 using System.Collections.Generic;
 using Altaxo.Science.Spectroscopy.BaselineEstimation;
-using Altaxo.Science.Spectroscopy.Cropping;
 
 namespace Altaxo.Gui.Science.Spectroscopy.BaselineEstimation
 {
@@ -32,9 +31,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.BaselineEstimation
   {
   }
 
-  [UserControllerForObject(typeof(PolynomialDetrending))]
+  [UserControllerForObject(typeof(PolynomialDetrendingBase))]
   [ExpectedTypeOfView(typeof(IPolynomialDetrendingView))]
-  public class PolynomialDetrendingController : MVCANControllerEditImmutableDocBase<PolynomialDetrending, IPolynomialDetrendingView>
+  public class PolynomialDetrendingController : MVCANControllerEditImmutableDocBase<PolynomialDetrendingBase, IPolynomialDetrendingView>
   {
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {

@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2023 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -33,29 +33,9 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
   /// subtracting the fit curve from the spectrum.
   /// The degree of the polynomial can be choosen between 0 (the mean is subtracted), 1 (a fitted straight line is subtracted).
   /// </summary>
-  public record PolynomialDetrending : IBaselineEstimation, Main.IImmutable
+  public abstract record PolynomialDetrendingBase : Main.IImmutable
   {
     private int _order = 0;
-
-    #region Serialization
-
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PolynomialDetrending), 0)]
-    public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-    {
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-      {
-        var s = (PolynomialDetrending)obj;
-        info.AddValue("Order", s._order);
-      }
-
-      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
-      {
-        var order = info.GetInt32("Order");
-        return new PolynomialDetrending() { DetrendingOrder = order };
-      }
-    }
-    #endregion
-
 
     public int DetrendingOrder
     {
@@ -162,6 +142,33 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
     {
       return $"{this.GetType().Name} Order={DetrendingOrder}";
     }
+  }
+
+  /// <summary>
+  /// This class detrends all spectra. This is done by fitting a polynomial to the spectrum (x value is simply the index of data point), and then
+  /// subtracting the fit curve from the spectrum.
+  /// The degree of the polynomial can be choosen between 0 (the mean is subtracted), 1 (a fitted straight line is subtracted).
+  /// </summary>
+  public record PolynomialDetrending : PolynomialDetrendingBase, IBaselineEstimation
+  {
+    #region Serialization
+
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PolynomialDetrending), 0)]
+    public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        var s = (PolynomialDetrending)obj;
+        info.AddValue("Order", s.DetrendingOrder);
+      }
+
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      {
+        var order = info.GetInt32("Order");
+        return new PolynomialDetrending() { DetrendingOrder = order };
+      }
+    }
+    #endregion
   }
 }
 

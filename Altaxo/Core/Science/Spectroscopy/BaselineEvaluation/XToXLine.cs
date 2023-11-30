@@ -23,20 +23,26 @@
 #endregion Copyright
 
 using System;
+using Altaxo.Science.Spectroscopy.BaselineEstimation;
 
-namespace Altaxo.Science.Spectroscopy.BaselineEstimation
+namespace Altaxo.Science.Spectroscopy.BaselineEvaluation
 {
-  /// <summary>
-  /// Interface to all baseline estimation algorithms for simple (1D) spectra.
-  /// </summary>
-  public interface IBaselineEstimation : ISingleSpectrumPreprocessor
+  /// <inheritdoc/>
+  public record XToXLine : XToXLineBase, IBaselineEvaluation
   {
-    /// <summary>
-    /// Executes the baseline estimation algorithm with the provided spectrum.
-    /// </summary>
-    /// <param name="xArray">The x values of the spectral values.</param>
-    /// <param name="yArray">The array of spectral values.</param>
-    /// <param name="resultingBaseline">The location to which the estimated baseline should be copied.</param>
-    public abstract void Execute(ReadOnlySpan<double> xArray, ReadOnlySpan<double> yArray, Span<double> resultingBaseline);
+    /// <inheritdoc/>
+    public new (double[] x, double[] y, int[]? regions) Execute(double[] x, double[] y, int[]? regions)
+    {
+      var yBaseline = new double[y.Length];
+      foreach (var (start, end) in RegionHelper.GetRegionRanges(regions, x.Length))
+      {
+        var xSpan = new ReadOnlySpan<double>(x, start, end - start);
+        var ySpan = new ReadOnlySpan<double>(y, start, end - start);
+        var yBaselineSpan = new Span<double>(yBaseline, start, end - start);
+        Execute(xSpan, ySpan, yBaselineSpan);
+      }
+
+      return (x, yBaseline, regions);
+    }
   }
 }
