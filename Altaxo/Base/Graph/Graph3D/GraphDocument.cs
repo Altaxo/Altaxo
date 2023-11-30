@@ -26,8 +26,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Altaxo.Drawing;
 using Altaxo.Geometry;
 //using Altaxo.Graph;
@@ -583,6 +581,11 @@ namespace Altaxo.Graph.Graph3D
 
     public void Paint(IGraphicsContext3D g)
     {
+      // First set the current thread's document culture
+      if (GetPropertyValue(Altaxo.Settings.CultureSettings.PropertyKeyDocumentCulture, null)?.Culture is { } culture)
+        System.Threading.Thread.CurrentThread.CurrentCulture = culture;
+
+
       FixupInternalDataStructures();
 
       var paintContext = new Altaxo.Graph.Gdi.GdiPaintContext();
