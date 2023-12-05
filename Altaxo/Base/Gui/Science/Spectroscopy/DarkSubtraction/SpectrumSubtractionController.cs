@@ -67,7 +67,7 @@ namespace Altaxo.Gui.Science.Spectroscopy.DarkSubtraction
       base.Initialize(initData);
       if (initData)
       {
-        DataTableXYColumnProxy proxy = null;
+        DataTableXYColumnProxy? proxy = null;
         if (_doc.XYDataOrigin.HasValue)
         {
           var v = _doc.XYDataOrigin.Value;
@@ -75,8 +75,10 @@ namespace Altaxo.Gui.Science.Spectroscopy.DarkSubtraction
           {
             var xc = table.DataColumns.TryGetColumn(v.XColumnName);
             var yc = table.DataColumns.TryGetColumn(v.YColumnName);
-            proxy = new DataTableXYColumnProxy(table, xc, yc);
-
+            if (xc is not null && yc is not null)
+            {
+              proxy = new DataTableXYColumnProxy(table, xc, yc);
+            }
           }
         }
         var proxyController = new DataTableXYColumnProxyController();
@@ -96,10 +98,26 @@ namespace Altaxo.Gui.Science.Spectroscopy.DarkSubtraction
         var proxy = (DataTableXYColumnProxy)ProxyController.ModelObject;
 
         var table = proxy.DataTable;
+        if (table is null)
+        {
+          Current.Gui.ErrorMessageBox("Please choose a valid table");
+          return ApplyEnd(false, disposeController);
+        }
         var groupNumber = proxy.GroupNumber;
-        var xcol = (DataColumn)proxy.XColumn;
-        var ycol = (DataColumn)proxy.YColumn;
+        var xcol = (DataColumn?)proxy.XColumn;
+        if (xcol is null)
+        {
+          Current.Gui.ErrorMessageBox("Please choose a valid x-column");
+          return ApplyEnd(false, disposeController);
+        }
         var xcolName = table.DataColumns.GetColumnName(xcol);
+
+        var ycol = (DataColumn?)proxy.YColumn;
+        if (ycol is null)
+        {
+          Current.Gui.ErrorMessageBox("Please choose a valid y-column");
+          return ApplyEnd(false, disposeController);
+        }
         var ycolName = table.DataColumns.GetColumnName(ycol);
         var len = Math.Min(xcol.Count, ycol.Count);
 

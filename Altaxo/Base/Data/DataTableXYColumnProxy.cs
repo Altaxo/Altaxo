@@ -178,6 +178,11 @@ namespace Altaxo.Data
     {
       if (table is null)
         throw new ArgumentNullException(nameof(table));
+      if (xColumn is null)
+        throw new ArgumentException(nameof(xColumn));
+      if (yColumn is null)
+        throw new ArgumentException(nameof(yColumn));
+
       var yGroupNumber = table.DataColumns.GetColumnGroup(yColumn);
       var xGroupNumber = table.DataColumns.GetColumnGroup(xColumn);
 
