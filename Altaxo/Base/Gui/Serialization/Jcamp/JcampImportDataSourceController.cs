@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2023 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -22,23 +22,21 @@
 
 #endregion Copyright
 
-using System.Windows.Controls;
-using Altaxo.Gui.Serialization.Jcamp;
-using Altaxo.Gui.Serialization.Renishaw;
+using Altaxo.Gui.Common;
+using Altaxo.Gui.Data;
+using Altaxo.Serialization.Jcamp;
 
-namespace Altaxo.Gui.Serialization.Galactic
+namespace Altaxo.Gui.Serialization.Jcamp
 {
-  /// <summary>
-  /// Interaction logic for GalacticSPCImportOptionsControl.xaml
-  /// </summary>
-  public partial class GalacticSPCImportOptionsControl : UserControl,
-    IGalacticSPCImportOptionsView,
-    IRenishawImportOptionsView,
-    IJcampImportOptionsView
+  [UserControllerForObject(typeof(JcampImportDataSource))]
+  public class JcampImportDataSourceController : DataSourceControllerBase<JcampImportDataSource>
   {
-    public GalacticSPCImportOptionsControl()
+    protected override IMVCANController GetProcessDataController()
     {
-      InitializeComponent();
+      var processDataController = new MultipleFilesController();
+      processDataController.InitializeDocument(_doc.SourceFileNames);
+      Current.Gui.FindAndAttachControlTo(processDataController);
+      return processDataController;
     }
   }
 }

@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2023 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -204,7 +204,7 @@ namespace Altaxo.Serialization.Galactic
               yvalues[i] = binreader.ReadInt32() * Math.Pow(2, spchdr.fexp - 32);
           }
 
-          listOfYArrays.Add(yvalues); 
+          listOfYArrays.Add(yvalues);
         }
       }
       catch (Exception e)
@@ -257,9 +257,9 @@ namespace Altaxo.Serialization.Galactic
       if (table.DataColumns.ColumnCount > 0)
       {
         lastColumnGroup = table.DataColumns.GetColumnGroup(table.DataColumns.ColumnCount - 1);
-        Altaxo.Data.DataColumn? xColumnOfRightMost = table.DataColumns.FindXColumnOfGroup(lastColumnGroup);
-        if (xColumnOfRightMost is Altaxo.Data.DoubleColumn)
-          xcol = (Altaxo.Data.DoubleColumn)xColumnOfRightMost;
+        var xColumnOfRightMost = table.DataColumns.FindXColumnOfGroup(lastColumnGroup);
+        if (xColumnOfRightMost is DoubleColumn dcolMostRight)
+          xcol = dcolMostRight;
       }
 
       int idxYColumn = 0;
@@ -309,21 +309,15 @@ namespace Altaxo.Serialization.Galactic
 
         // now add the y-values
 
-        for (int idxCol = 0; idxCol < yvalues.Count; ++idxCol)
+        for (int iSpectrum = 0; iSpectrum < yvalues.Count; ++iSpectrum)
         {
-          string columnName;
-          if (importOptions.UseNeutralColumnName)
-          {
-            columnName = $"{(string.IsNullOrEmpty(importOptions.NeutralColumnName) ? "Y" : importOptions.NeutralColumnName)}{idxYColumn}";
-          }
-          else
-          {
-            columnName = table.DataColumns.FindUniqueColumnName(System.IO.Path.GetFileNameWithoutExtension(filename));
-          }
+          string columnName = importOptions.UseNeutralColumnName ?
+                              $"{(string.IsNullOrEmpty(importOptions.NeutralColumnName) ? "Y" : importOptions.NeutralColumnName)}{idxYColumn}" :
+                              System.IO.Path.GetFileNameWithoutExtension(filename);
+          columnName = table.DataColumns.FindUniqueColumnName(columnName);
           var ycol = table.DataColumns.EnsureExistence(columnName, typeof(DoubleColumn), ColumnKind.V, lastColumnGroup);
           ++idxYColumn;
-
-          ycol.CopyDataFrom(yvalues[idxCol]);
+          ycol.CopyDataFrom(yvalues[iSpectrum]);
 
           if (importOptions.IncludeFilePathAsProperty)
           {
@@ -332,13 +326,22 @@ namespace Altaxo.Serialization.Galactic
               table.PropCols.Add(new Altaxo.Data.TextColumn(), "FilePath");
 
             // now set the file name property cell
+            int yColumnNumber = table.DataColumns.GetColumnNumber(ycol);
             if (table.PropCols["FilePath"] is Altaxo.Data.TextColumn)
             {
-              table.PropCols["FilePath"][table.DataColumns.GetColumnNumber(ycol)] = filename;
+              table.PropCols["FilePath"][yColumnNumber] = filename;
             }
           }
         } // foreach yarray in yvalues
       } // foreache file
+
+      // Make also a note from where it was imported
+      {
+        if (filenames.Length == 1)
+          table.Notes.WriteLine($"Imported from {filenames[0]} at {DateTimeOffset.Now}");
+        else if (filenames.Length > 1)
+          table.Notes.WriteLine($"Imported from {filenames[0]} and more ({filenames.Length} files) at {DateTimeOffset.Now}");
+      }
 
       return errorList.Length == 0 ? null : errorList.ToString();
     }
@@ -368,7 +371,7 @@ namespace Altaxo.Serialization.Galactic
 
         if (errors is not null)
         {
-          Current.Gui.ErrorMessageBox(errors);
+          Current.Gui.ErrorMessageBox(errors, "Some errors occured during import!");
         }
       }
     }

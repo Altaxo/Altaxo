@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2023 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -147,7 +147,7 @@ namespace Altaxo.Serialization.Jcamp
             else if (line.StartsWith(TimeHeader))
             {
               var timeV = ParseTime(line.Substring(TimeHeader.Length));
-              if(timeV.HasValue)
+              if (timeV.HasValue)
               {
                 timeValue = timeV.Value;
               }
@@ -275,7 +275,7 @@ namespace Altaxo.Serialization.Jcamp
         table.PropCols["Label"][1] = YLabel;
       }
 
-      for(int i=0;i<_xyValues.Length;++i)
+      for (int i = 0; i < _xyValues.Length; ++i)
       {
         xCol[i] = _xyValues[i].X;
         yCol[i] = _xyValues[i].Y;
@@ -429,7 +429,7 @@ namespace Altaxo.Serialization.Jcamp
     /// <param name="filenames">An array of filenames to import.</param>
     /// <param name="table">The table the spectra should be imported to.</param>
     /// <returns>Null if no error occurs, or an error description.</returns>
-    public static string? ImportJcampFiles(string[] filenames, Altaxo.Data.DataTable table)
+    public static string? ImportJcampFiles(string[] filenames, Altaxo.Data.DataTable table, JcampImportOptions importOptions)
     {
       DoubleColumn? xcol = null;
       DoubleColumn xvalues, yvalues;
@@ -439,11 +439,12 @@ namespace Altaxo.Serialization.Jcamp
       if (table.DataColumns.ColumnCount > 0)
       {
         lastColumnGroup = table.DataColumns.GetColumnGroup(table.DataColumns.ColumnCount - 1);
-        Altaxo.Data.DataColumn? xColumnOfRightMost = table.DataColumns.FindXColumnOfGroup(lastColumnGroup);
-        if (xColumnOfRightMost is Altaxo.Data.DoubleColumn dcolMostRight)
+        var xColumnOfRightMost = table.DataColumns.FindXColumnOfGroup(lastColumnGroup);
+        if (xColumnOfRightMost is DoubleColumn dcolMostRight)
           xcol = dcolMostRight;
       }
 
+      int idxYColumn = 0;
       foreach (string filename in filenames)
       {
         using var stream = new FileStream(filename, FileMode.Open, FileAccess.Read, FileShare.Read);
@@ -475,11 +476,9 @@ namespace Altaxo.Serialization.Jcamp
           }
         }
 
-        bool bMatchsXColumn = false;
-
         // first look if our default xcolumn matches the xvalues
-        if (xcol is not null)
-          bMatchsXColumn = ValuesMatch(xvalues, xcol);
+
+        bool bMatchsXColumn = xcol is not null && ValuesMatch(xvalues, xcol);
 
         // if no match, then consider all xcolumns from right to left, maybe some fits
         if (!bMatchsXColumn)
@@ -509,31 +508,43 @@ namespace Altaxo.Serialization.Jcamp
         }
 
         // now add the y-values
-        var ycol = new Altaxo.Data.DoubleColumn();
+        string columnName = importOptions.UseNeutralColumnName ?
+                            $"{(string.IsNullOrEmpty(importOptions.NeutralColumnName) ? "Y" : importOptions.NeutralColumnName)}{idxYColumn}" :
+                            System.IO.Path.GetFileNameWithoutExtension(filename);
+        columnName = table.DataColumns.FindUniqueColumnName(columnName);
+        var ycol = table.DataColumns.EnsureExistence(columnName, typeof(DoubleColumn), ColumnKind.V, lastColumnGroup);
+        ++idxYColumn;
         ycol.CopyDataFrom(yvalues);
-        table.DataColumns.Add(ycol,
-          table.DataColumns.FindUniqueColumnName(System.IO.Path.GetFileNameWithoutExtension(filename)),
-          Altaxo.Data.ColumnKind.V,
-          lastColumnGroup);
 
-        // add also a property column named "FilePath" if not existing so far
-        if (!table.PropCols.ContainsColumn("FilePath"))
-          table.PropCols.Add(new Altaxo.Data.TextColumn(), "FilePath");
-
-        // now set the file name property cell
-        int yColumnNumber = table.DataColumns.GetColumnNumber(ycol);
-        if (table.PropCols["FilePath"] is Altaxo.Data.TextColumn)
+        if (importOptions.IncludeFilePathAsProperty)
         {
-          table.PropCols["FilePath"][yColumnNumber] = filename;
-        }
+          // add also a property column named "FilePath" if not existing so far
+          if (!table.PropCols.ContainsColumn("FilePath"))
+            table.PropCols.Add(new Altaxo.Data.TextColumn(), "FilePath");
 
-        // set the other property columns
-        for (int i = 0; i < localTable.PropCols.ColumnCount; i++)
-        {
-          string name = localTable.PropCols.GetColumnName(i);
-          table.PropCols[name][yColumnNumber] = localTable.PropCols[i][1];
+          // now set the file name property cell
+          int yColumnNumber = table.DataColumns.GetColumnNumber(ycol);
+          if (table.PropCols["FilePath"] is Altaxo.Data.TextColumn)
+          {
+            table.PropCols["FilePath"][yColumnNumber] = filename;
+          }
+
+          // set the other property columns
+          for (int i = 0; i < localTable.PropCols.ColumnCount; i++)
+          {
+            string name = localTable.PropCols.GetColumnName(i);
+            table.PropCols[name][yColumnNumber] = localTable.PropCols[i][1];
+          }
         }
       } // foreache file
+
+      // Make also a note from where it was imported
+      {
+        if (filenames.Length == 1)
+          table.Notes.WriteLine($"Imported from {filenames[0]} at {DateTimeOffset.Now}");
+        else if (filenames.Length > 1)
+          table.Notes.WriteLine($"Imported from {filenames[0]} and more ({filenames.Length} files) at {DateTimeOffset.Now}");
+      }
 
       return errorList.Length == 0 ? null : errorList.ToString();
     }
@@ -556,7 +567,10 @@ namespace Altaxo.Serialization.Jcamp
         string[] filenames = options.FileNames;
         Array.Sort(filenames); // Windows seems to store the filenames reverse to the clicking order or in arbitrary order
 
-        string? errors = ImportJcampFiles(filenames, table);
+        var importOptions = new JcampImportOptions();
+        string? errors = ImportJcampFiles(filenames, table, importOptions);
+
+        table.DataSource = new JcampImportDataSource(filenames, importOptions);
 
         if (errors is not null)
         {

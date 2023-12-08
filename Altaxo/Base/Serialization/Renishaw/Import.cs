@@ -23,10 +23,6 @@
 #endregion Copyright
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Altaxo.Data;
 
 namespace Altaxo.Serialization.Renishaw
@@ -54,7 +50,10 @@ namespace Altaxo.Serialization.Renishaw
         string[] filenames = options.FileNames;
         Array.Sort(filenames); // Windows seems to store the filenames reverse to the clicking order or in arbitrary order
 
-        string? errors = ImportRenishawWdfFiles(filenames, table);
+        var importOptions = new RenishawImportOptions();
+        string? errors = ImportRenishawWdfFiles(filenames, table, importOptions);
+
+        table.DataSource = new RenishawImportDataSource(filenames, importOptions);
 
         if (errors is not null)
         {
@@ -64,7 +63,7 @@ namespace Altaxo.Serialization.Renishaw
     }
 
     /// <returns>Null if no error occurs, or an error description.</returns>
-    public static string? ImportRenishawWdfFiles(string[] filenames, Altaxo.Data.DataTable table)
+    public static string? ImportRenishawWdfFiles(string[] filenames, Altaxo.Data.DataTable table, RenishawImportOptions importOptions)
     {
       DoubleColumn? xcol = null;
       var errorList = new System.Text.StringBuilder();
@@ -78,6 +77,7 @@ namespace Altaxo.Serialization.Renishaw
           xcol = dcolMostRight;
       }
 
+      int idxYColumn = 0;
       foreach (string filename in filenames)
       {
         WdfFileReader wdfFile;
@@ -85,7 +85,7 @@ namespace Altaxo.Serialization.Renishaw
         {
           wdfFile = WdfFileReader.FromFileName(filename);
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
           errorList.Append(ex.Message);
           continue;
@@ -130,25 +130,37 @@ namespace Altaxo.Serialization.Renishaw
         // now add the y-values
         for (int iSpectrum = 0; iSpectrum < wdfFile.Count; iSpectrum++)
         {
-          var ycol = new Altaxo.Data.DoubleColumn();
+          string columnName = importOptions.UseNeutralColumnName ?
+                              $"{(string.IsNullOrEmpty(importOptions.NeutralColumnName) ? "Y" : importOptions.NeutralColumnName)}{idxYColumn}" :
+                              System.IO.Path.GetFileNameWithoutExtension(filename);
+          columnName = table.DataColumns.FindUniqueColumnName(columnName);
+          var ycol = table.DataColumns.EnsureExistence(columnName, typeof(DoubleColumn), ColumnKind.V, lastColumnGroup);
+          ++idxYColumn;
           ycol.CopyDataFrom(wdfFile.GetSpectrum(iSpectrum));
-          table.DataColumns.Add(ycol,
-                                table.DataColumns.FindUniqueColumnName(System.IO.Path.GetFileNameWithoutExtension(filename)),
-                                Altaxo.Data.ColumnKind.V,
-                                lastColumnGroup);
 
-          // add also a property column named "FilePath" if not existing so far
-          if (!table.PropCols.ContainsColumn("FilePath"))
-            table.PropCols.Add(new Altaxo.Data.TextColumn(), "FilePath");
-
-          // now set the file name property cell
-          int yColumnNumber = table.DataColumns.GetColumnNumber(ycol);
-          if (table.PropCols["FilePath"] is Altaxo.Data.TextColumn)
+          if (importOptions.IncludeFilePathAsProperty)
           {
-            table.PropCols["FilePath"][yColumnNumber] = filename;
+            // add also a property column named "FilePath" if not existing so far
+            if (!table.PropCols.ContainsColumn("FilePath"))
+              table.PropCols.Add(new Altaxo.Data.TextColumn(), "FilePath");
+
+            // now set the file name property cell
+            int yColumnNumber = table.DataColumns.GetColumnNumber(ycol);
+            if (table.PropCols["FilePath"] is Altaxo.Data.TextColumn)
+            {
+              table.PropCols["FilePath"][yColumnNumber] = filename;
+            }
           }
         }
       } // foreach file
+
+      // Make also a note from where it was imported
+      {
+        if (filenames.Length == 1)
+          table.Notes.WriteLine($"Imported from {filenames[0]} at {DateTimeOffset.Now}");
+        else if (filenames.Length > 1)
+          table.Notes.WriteLine($"Imported from {filenames[0]} and more ({filenames.Length} files) at {DateTimeOffset.Now}");
+      }
 
       return errorList.Length == 0 ? null : errorList.ToString();
     }
