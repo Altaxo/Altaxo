@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+using System;
 using System.Collections.Generic;
 
 namespace Altaxo.Science.Thermorheology.MasterCurves
@@ -40,6 +41,14 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     /// Gets the y-values of the curve to be shifted.
     /// </summary>
     public IReadOnlyList<double> Y { get; }
+
+    public int Count
+    {
+      get
+      {
+        return Math.Min(X.Count, Y.Count);
+      }
+    }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ShiftCurve"/> class.
