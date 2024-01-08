@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2023 Dr. Dirk Lellinger
+//    Copyright (C) 2024 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -22,9 +22,23 @@
 
 #endregion Copyright
 
-namespace Altaxo.Science.Thermorheology.MasterCurves
+using System.Windows.Controls;
+
+namespace Altaxo.Gui.Science.Thermorheology
 {
-  public record MasterCurveCreationOptions2
+  /// <summary>
+  /// Interaction logic for MasterCurveDataControl.xaml
+  /// </summary>
+  public partial class MasterCurveDataControl : UserControl, IMasterCurveDataView
   {
+    public MasterCurveDataControl()
+    {
+      InitializeComponent();
+    }
+
+    private void EhFocusData(object sender, System.Windows.RoutedEventArgs e)
+    {
+
+    }
   }
 }
