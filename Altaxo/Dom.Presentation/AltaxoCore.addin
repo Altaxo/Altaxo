@@ -644,6 +644,8 @@
                               class="Altaxo.Worksheet.Commands.AnalysisPronyRetardationTimeDomain" />
                     <MenuItem id="PronyRetardFreq" label="Prony retardation (frequency domain).." description="Performs a prony fit to a retardation signal in the frequency domain."
                               class="Altaxo.Worksheet.Commands.AnalysisPronyRetardationFrequencyDomain" />
+                  <MenuItem id="MasterCurveWks" label="Create master curve.." description="Creates a master curve of the selected columns."
+                            class="Altaxo.Worksheet.Commands.AnalysisMasterCurveCreation" />
                 </MenuItem>
                 <MenuItem id="1DFFT" label="${res:XML.MainMenu.AnalysisMenu.FFT}" description="${res:XML.MainMenu.AnalysisMenu.FFT.Description}"
                             class="Altaxo.Worksheet.Commands.AnalysisFFT" />

@@ -38,5 +38,32 @@ namespace Altaxo.Gui.Science.Thermorheology
       Current.Gui.FindAndAttachControlTo(processDataController);
       return processDataController;
     }
+
+    protected override void Initialize(bool initData)
+    {
+      base.Initialize(initData);
+
+      if (initData)
+      {
+        if (ProcessOptionsController is MasterCurveCreationOptionsExController optionsController)
+        {
+          optionsController.NumberOfGroups = _doc.ProcessData.CurveData.Count;
+        }
+
+        if (this.ProcessOptionsController is IMVCANDController andController)
+        {
+          andController.MadeDirty += EhOptionsMadeDirty;
+        }
+      }
+    }
+
+    private void EhOptionsMadeDirty(IMVCANDController controller)
+    {
+      if (controller is MasterCurveCreationOptionsExController optionsController &&
+         ProcessDataController is MasterCurveDataController dataController)
+      {
+        dataController.HintOptionValues(optionsController.NumberOfGroups, optionsController.Property1, optionsController.Property2);
+      }
+    }
   }
 }

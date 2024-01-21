@@ -24,10 +24,11 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using Altaxo.Collections;
 using Altaxo.Gui.Common;
-using Altaxo.Gui.Worksheet;
+using Altaxo.Science;
 using Altaxo.Science.Thermorheology.MasterCurves;
 using Altaxo.Units;
 
@@ -35,8 +36,12 @@ namespace Altaxo.Gui.Science.Thermorheology
 {
   public interface IMasterCurveCreationOptionsExView : IDataContextAwareView { }
 
-  public class MasterCurveCreationOptionsExController : MVCANDControllerEditImmutableDocBase<MasterCurveCreationOptionsEx, IMasterCurveCreationDataView>
+  [ExpectedTypeOfView(typeof(IMasterCurveCreationOptionsExView))]
+  [UserControllerForObject(typeof(MasterCurveCreationOptionsEx))]
+  public class MasterCurveCreationOptionsExController : MVCANDControllerEditImmutableDocBase<MasterCurveCreationOptionsEx, IMasterCurveCreationOptionsExView>
   {
+    IMVCAController? _selectedController;
+
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield break;
@@ -55,25 +60,26 @@ namespace Altaxo.Gui.Science.Thermorheology
         {
           _numberOfGroups = value;
           OnPropertyChanged(nameof(NumberOfGroups));
+          OnMadeDirty();
         }
       }
     }
 
+    private int _indexOfReferenceColumn;
 
-    private ItemsController<ShiftXBy> _shiftX;
-
-    public ItemsController<ShiftXBy> ShiftX
+    public int IndexOfReferenceColumn
     {
-      get => _shiftX;
+      get => _indexOfReferenceColumn;
       set
       {
-        if (!(_shiftX == value))
+        if (!(_indexOfReferenceColumn == value))
         {
-          _shiftX = value;
-          OnPropertyChanged(nameof(ShiftX));
+          _indexOfReferenceColumn = value;
+          OnPropertyChanged(nameof(IndexOfReferenceColumn));
         }
       }
     }
+
 
     private string _property1;
 
@@ -86,9 +92,42 @@ namespace Altaxo.Gui.Science.Thermorheology
         {
           _property1 = value;
           OnPropertyChanged(nameof(Property1));
+          OnMadeDirty();
         }
       }
     }
+
+    private bool _Property1IsTemperature;
+
+    public bool Property1IsTemperature
+    {
+      get => _Property1IsTemperature;
+      set
+      {
+        if (!(_Property1IsTemperature == value))
+        {
+          _Property1IsTemperature = value;
+          OnPropertyChanged(nameof(Property1IsTemperature));
+        }
+      }
+    }
+
+    private ItemsController<TemperatureRepresentation> _Property1TemperatureRepresentation;
+
+    public ItemsController<TemperatureRepresentation> Property1TemperatureRepresentation
+    {
+      get => _Property1TemperatureRepresentation;
+      set
+      {
+        if (!(_Property1TemperatureRepresentation == value))
+        {
+          _Property1TemperatureRepresentation = value;
+          OnPropertyChanged(nameof(Property1TemperatureRepresentation));
+        }
+      }
+    }
+
+
 
     private string _property2;
 
@@ -101,40 +140,12 @@ namespace Altaxo.Gui.Science.Thermorheology
         {
           _property2 = value;
           OnPropertyChanged(nameof(Property2));
-        }
-      }
-    }
-
-    private bool _logarithmizeXForInterpolation;
-
-    public bool LogarithmizeXForInterpolation
-    {
-      get => _logarithmizeXForInterpolation;
-      set
-      {
-        if (!(_logarithmizeXForInterpolation == value))
-        {
-          _logarithmizeXForInterpolation = value;
-          OnPropertyChanged(nameof(LogarithmizeXForInterpolation));
+          OnMadeDirty();
         }
       }
     }
 
 
-    private bool _logarithmizeYForInterpolation;
-
-    public bool LogarithmizeYForInterpolation
-    {
-      get => _logarithmizeYForInterpolation;
-      set
-      {
-        if (!(_logarithmizeYForInterpolation == value))
-        {
-          _logarithmizeYForInterpolation = value;
-          OnPropertyChanged(nameof(LogarithmizeYForInterpolation));
-        }
-      }
-    }
 
 
     private ItemsController<OptimizationMethod> _optimizationMethod;
@@ -185,9 +196,9 @@ namespace Altaxo.Gui.Science.Thermorheology
       }
     }
 
-    private ItemsController<int> _interpolationFunctionSpecification;
+    private ItemsController<MasterCurveGroupOptionsChoice> _interpolationFunctionSpecification;
 
-    public ItemsController<int> InterpolationFunctionSpecification
+    public ItemsController<MasterCurveGroupOptionsChoice> InterpolationFunctionSpecification
     {
       get => _interpolationFunctionSpecification;
       set
@@ -200,35 +211,37 @@ namespace Altaxo.Gui.Science.Thermorheology
       }
     }
 
-    private ItemsController<object> _interpolationFunction0;
+    private ItemsController<MasterCurveGroupOptionsChoice> _GroupOptionsChoice;
 
-    public ItemsController<object> InterpolationFunction0
+    public ItemsController<MasterCurveGroupOptionsChoice> GroupOptionsChoice
     {
-      get => _interpolationFunction0;
+      get => _GroupOptionsChoice;
       set
       {
-        if (!(_interpolationFunction0 == value))
+        if (!(_GroupOptionsChoice == value))
         {
-          _interpolationFunction0 = value;
-          OnPropertyChanged(nameof(InterpolationFunction0));
+          _GroupOptionsChoice?.Dispose();
+          _GroupOptionsChoice = value;
+          OnPropertyChanged(nameof(GroupOptionsChoice));
         }
       }
     }
 
-    private ItemsController<object> _interpolationFunction1;
 
-    public ItemsController<object> InterpolationFunction1
+    ItemsController<IMVCAController> _tabControllers;
+    public ItemsController<IMVCAController> TabControllers
     {
-      get => _interpolationFunction1;
+      get => _tabControllers;
       set
       {
-        if (!(_interpolationFunction1 == value))
+        if (!(_tabControllers == value))
         {
-          _interpolationFunction1 = value;
-          OnPropertyChanged(nameof(InterpolationFunction1));
+          _tabControllers = value;
+          OnPropertyChanged(nameof(TabControllers));
         }
       }
     }
+
 
     #endregion Bindings
 
@@ -239,67 +252,143 @@ namespace Altaxo.Gui.Science.Thermorheology
       if (initData)
       {
         NumberOfGroups = 1;
-
-        ShiftX = new ItemsController<ShiftXBy>(new SelectableListNodeList(
-          new[] {
-          new SelectableListNode(ShiftXBy.Factor.ToString(), ShiftXBy.Factor,false),
-          new SelectableListNode(ShiftXBy.Offset.ToString(), ShiftXBy.Factor, false)
-          }));
-        ShiftX.SelectedValue = _doc.XShiftBy;
+        IndexOfReferenceColumn = _doc.IndexOfReferenceColumnInColumnGroup;
+        OptimizationMethod = new ItemsController<OptimizationMethod>(new SelectableListNodeList(_doc.OptimizationMethod));
 
         NumberOfIterations = _doc.NumberOfIterations;
-
-        LogarithmizeXForInterpolation = _doc.LogarithmizeXForInterpolation;
-        LogarithmizeYForInterpolation = _doc.LogarithmizeYForInterpolation;
+        InterpolationFunctionSpecification = new ItemsController<MasterCurveGroupOptionsChoice>(new Collections.SelectableListNodeList(_doc.MasterCurveGroupOptionsChoice));
         RelativeOverlap = new DimensionfulQuantity(_doc.RequiredRelativeOverlap, Altaxo.Units.Dimensionless.Unity.Instance).AsQuantityIn(RelativeOverlapEnvironment.DefaultUnit);
 
         Property1 = _doc.Property1;
+        Property1IsTemperature = _doc.Property1TemperatureRepresentation is not null;
+        Property1TemperatureRepresentation = new ItemsController<TemperatureRepresentation>(new SelectableListNodeList(_doc.Property1TemperatureRepresentation ?? TemperatureRepresentation.DegreeCelsius));
+        if (_doc.Property1TemperatureRepresentation.HasValue)
+        {
+          Property1TemperatureRepresentation.SelectedValue = _doc.Property1TemperatureRepresentation.Value;
+        }
+
         Property2 = _doc.Property2;
 
-        InitializeInterpolationFunctionChoices();
+        GroupOptionsChoice = new ItemsController<MasterCurveGroupOptionsChoice>(new SelectableListNodeList(_doc.MasterCurveGroupOptionsChoice), EhCurveGroupOptionsChanged);
+        GroupOptionsChoice.SelectedValue = _doc.MasterCurveGroupOptionsChoice;
 
+        AddControllers(_doc.MasterCurveGroupOptionsChoice);
+        TabControllers.SelectedValue = _selectedController;
       }
     }
 
-    private void InitializeInterpolationFunctionChoices()
+    private void EhCurveGroupOptionsChanged(MasterCurveGroupOptionsChoice choice)
     {
-      var types = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(Altaxo.Calc.Interpolation.IInterpolationFunctionOptions));
+      AddControllers(choice);
+    }
 
-      InterpolationFunction0 = new ItemsController<object>(new SelectableListNodeList(types.Select(t => new SelectableListNode(t.Name, t, false))));
-      InterpolationFunction1 = new ItemsController<object>(new SelectableListNodeList(types.Select(t => new SelectableListNode(t.Name, t, false))));
+    private void EhSelectedTabChanged(IMVCANController controller)
+    {
+      if (!object.ReferenceEquals(controller, _selectedController))
+      {
+        if (!_selectedController.Apply(false))
+        {
+          TabControllers.SelectedValue = _selectedController;
+          return;
+        }
+        _selectedController = controller;
+      }
+    }
 
+    protected virtual void AddControllers(MasterCurveGroupOptionsChoice choice)
+    {
+      var list = new SelectableListNodeList();
+      switch (choice)
+      {
+        case MasterCurveGroupOptionsChoice.SameForAllGroups:
+          {
+            if (!(_doc.GroupOptions.Count >= 1 && _doc.GroupOptions[0] is MasterCurveGroupOptionsWithScalarInterpolation doc))
+            {
+              doc = new MasterCurveGroupOptionsWithScalarInterpolation();
+            }
+            var controller = new MasterCurveGroupOptionsWithScalarInterpolationController();
+            controller.InitializeDocument(doc);
+            Current.Gui.FindAndAttachControlTo(controller);
+            list.Add(new SelectableListNodeWithController("For all groups", controller, false) { Controller = controller, ControllerTag = 0 });
+          }
+          break;
+        case MasterCurveGroupOptionsChoice.SeparateForEachGroup:
+          {
+            for (int i = 0; i < NumberOfGroups; ++i)
+            {
+              if (!(i < _doc.GroupOptions.Count && _doc.GroupOptions[i] is MasterCurveGroupOptionsWithScalarInterpolation doc))
+              {
+                doc = new MasterCurveGroupOptionsWithScalarInterpolation();
+              }
 
+              var controller = new MasterCurveGroupOptionsWithScalarInterpolationController();
+              controller.InitializeDocument(doc);
+              Current.Gui.FindAndAttachControlTo(controller);
+              list.Add(new SelectableListNodeWithController($"Group {i}", controller, false) { Controller = controller, ControllerTag = i });
+            }
+          }
+          break;
+        case MasterCurveGroupOptionsChoice.ForComplex:
+          {
+            if (!(_doc.GroupOptions.Count >= 1 && _doc.GroupOptions[0] is MasterCurveGroupOptionsWithComplexInterpolation doc))
+            {
+              doc = new MasterCurveGroupOptionsWithComplexInterpolation();
+            }
+
+            /*
+            var controller = new MasterCurveGroupOptionsWithComplexInterpolationController();
+            controller.InitializeDocument(doc);
+            Current.Gui.FindAndAttachControlTo(controller);
+            list.Add(new SelectableListNodeWithController("For all groups", controller, false) { Controller = controller, ControllerTag = 0 });
+            */
+
+          }
+          break;
+        default:
+          throw new NotImplementedException();
+      }
+      TabControllers = new ItemsController<IMVCAController>(list, EhGroupOptionsTabChanged);
+      TabControllers.SelectedValue = _selectedController = ((SelectableListNodeWithController)list[0]).Controller;
+
+    }
+
+    private void EhGroupOptionsTabChanged(IMVCAController controller)
+    {
+    }
+
+    private void EhGroupOptionsTabChanged(MasterCurveGroupOptionsChoice choice)
+    {
     }
 
     public override bool Apply(bool disposeController)
     {
-      var xShiftBy = ShiftX.SelectedValue;
+      if (_selectedController is not null && !_selectedController.Apply(disposeController))
+      {
+        return ApplyEnd(false, disposeController);
+      }
+
 
       var prop1 = Property1;
       var prop2 = Property2;
-      var logXForInterpolation = LogarithmizeXForInterpolation;
-      var logYForInterpolation = LogarithmizeYForInterpolation;
       var numIterations = NumberOfIterations;
       var optimizationMethod = OptimizationMethod.SelectedValue;
       var relOverlap = RelativeOverlap.AsValueInSIUnits;
-
-      var interpolation0 = InterpolationFunction0.SelectedValue;
-      if (interpolation0 is Type t)
-        interpolation0 = Activator.CreateInstance(t);
+      var choice = GroupOptionsChoice.SelectedValue;
+      var options = TabControllers.Items.Select(x => (MasterCurveGroupOptions)(((SelectableListNodeWithController)x).Controller.ModelObject)).ToImmutableList();
 
       _doc = _doc with
       {
-        XShiftBy = xShiftBy,
+        IndexOfReferenceColumnInColumnGroup = IndexOfReferenceColumn,
         OptimizationMethod = optimizationMethod,
         RequiredRelativeOverlap = relOverlap,
         NumberOfIterations = numIterations,
+        MasterCurveGroupOptionsChoice = choice,
+        GroupOptions = options,
+
 
         Property1 = prop1,
+        Property1TemperatureRepresentation = Property1IsTemperature ? Property1TemperatureRepresentation.SelectedValue : null,
         Property2 = prop2,
-
-        // Interpolation 1
-        LogarithmizeXForInterpolation = logXForInterpolation,
-        LogarithmizeYForInterpolation = logYForInterpolation,
       };
 
       return ApplyEnd(true, disposeController);

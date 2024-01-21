@@ -1054,6 +1054,14 @@ namespace Altaxo.Worksheet.Commands
     }
   }
 
+  public class AnalysisMasterCurveCreation : AbstractWorksheetControllerCommand
+  {
+    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
+    {
+      Altaxo.Science.Thermorheology.MasterCurves.MasterCurveCreationHelper.CreateMasterCurve(ctrl.DataTable, ctrl.SelectedDataColumns, ctrl.SelectedDataRows);
+    }
+  }
+
   public class SpectroscopyPreprocessing : AbstractWorksheetControllerCommand
   {
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)

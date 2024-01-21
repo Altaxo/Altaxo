@@ -1,0 +1,69 @@
+﻿<UserControl x:Class="Altaxo.Gui.Science.Thermorheology.MasterCurveGroupOptionsWithScalarInterpolationController"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:locald="clr-namespace:Altaxo.Gui.Science.Thermorheology;assembly=AltaxoBase"
+             xmlns:axogc="clr-namespace:Altaxo.Gui.Common" 
+             d:DataContext="{d:DesignInstance Type=locald:MasterCurveGroupOptionsWithScalarInterpolationController}"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid>
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="Auto"/>
+      <ColumnDefinition Width="4"/>
+      <ColumnDefinition Width="Auto"/>
+      <ColumnDefinition Width="4"/>
+      <ColumnDefinition Width="Auto"/>
+      <ColumnDefinition Width="4"/>
+    </Grid.ColumnDefinitions>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="4"/>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="4"/>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="4"/>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="4"/>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="4"/>
+    </Grid.RowDefinitions>
+
+    <Label Grid.Row="0" Grid.Column="0"
+         Content="Shift x by:"/>
+    <ComboBox Grid.Row="0" Grid.Column="2"
+            ItemsSource="{Binding ShiftX.Items}"
+            SelectedItem="{Binding ShiftX.SelectedItem, Mode=TwoWay}"/>
+
+    <Label Grid.Row="2" Grid.Column="0"
+          Content="Interpolation function:"/>
+    <ComboBox Grid.Row="2" Grid.Column="2"
+             ItemsSource="{Binding InterpolationFunction0.Items}"
+             SelectedItem="{Binding InterpolationFunction0.SelectedItem, Mode=TwoWay}"/>
+
+    <ContentControl Grid.Row="2" Grid.Column="4" 
+                    Content="{Binding InterpolationDetails.ViewObject}"/>
+
+    <CheckBox Grid.Row="4" Grid.Column="0"
+             IsChecked="{Binding LogarithmizeXForInterpolation, Mode=TwoWay}"
+             Content="Logarithmize x-values for interpolation"/>
+
+    <CheckBox Grid.Row="6" Grid.Column="0"
+             IsChecked="{Binding LogarithmizeYForInterpolation, Mode=TwoWay}"
+             Content="Logarithmize y-values for interpolation"/>
+
+    <CheckBox Grid.Row="8" Grid.Column="0"
+              IsChecked="{Binding IsParticipatingInFit}"
+              Content="Participate in fit with weight:"/>
+    <axogc:QuantityWithUnitTextBox Grid.Row="8" Grid.Column="2"
+                                 SelectedQuantity="{Binding  FittingWeight}"
+                                 UnitEnvironment="{Binding FittingWeightEnvironment}"
+                                   IsEnabled="{Binding IsParticipatingInFit}"
+                                 AllowNaNValues="False"
+                                 DisallowNegativeValues="True"
+                                 AllowInfiniteValues="False"
+                                 ToolTip="Usually, set this to 1 (100%). If the group should not participate in the fit, set the value to 0." />
+
+  </Grid>
+</UserControl>

@@ -24,6 +24,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Altaxo.Data;
 using Altaxo.Main;
 
@@ -36,7 +37,35 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     /// The data of the curves to master. The data belonging to the first master curve are _curves[0][0], _curves[1][0], _curves[2][0], .. _curves[n-1][0].
     /// The data belonging to a second master curve with the same shift factors (if there is any, e.g. the imaginary part), are _curves[0][1], _curves[1][1], .. _curves[n-1][1].
     /// </summary>
-    public List<XAndYColumn?[]> CurveData { get; } = [];
+    public List<XAndYColumn?[]> CurveData { get; set; } = [];
+
+    public void SetCurveData(DataTable dataTable, IReadOnlyList<IReadOnlyList<DataColumn?>> dataGroups)
+    {
+      var maxCount = dataGroups.Max(g => g.Count);
+
+      var curveData = new List<XAndYColumn?[]>();
+
+      foreach (var group in dataGroups)
+      {
+        var arr = new XAndYColumn?[maxCount];
+        for (int i = 0; i < group.Count; ++i)
+        {
+          var yCol = group[i];
+          if (yCol is not null)
+          {
+            var xCol = dataTable.DataColumns.FindXColumnOf(yCol);
+            if (xCol is not null)
+            {
+              arr[i] = new XAndYColumn(dataTable, dataTable.DataColumns.GetColumnGroup(yCol)) { XColumn = xCol, YColumn = yCol };
+            }
+          }
+        }
+
+        curveData.Add(arr);
+      }
+
+      CurveData = curveData;
+    }
 
     public object Clone()
     {

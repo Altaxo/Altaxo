@@ -25,11 +25,54 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
+using Altaxo.Calc.Interpolation;
 using Complex64 = System.Numerics.Complex;
 
 namespace Altaxo.Science.Thermorheology.MasterCurves
 {
+  public abstract record MasterCurveGroupOptions : Main.IImmutable
+  {
+    /// <summary>Logarithmize x values before adding to the interpolation curve. (Only for interpolation).</summary>
+    public bool LogarithmizeXForInterpolation { get; init; }
+
+    /// <summary>Logarithmize y values before adding to the interpolation curve. (Only for interpolation).</summary>
+    public bool LogarithmizeYForInterpolation { get; init; }
+
+    /// <summary>
+    /// Determines how to shift the x values: either by factor or by offset. Use offset if the original data are already logarithmized.
+    /// </summary>
+    public ShiftXBy XShiftBy { get; init; }
+
+    public double FittingWeight { get; init; } = 1;
+  }
+
+  public record MasterCurveGroupOptionsWithScalarInterpolation : MasterCurveGroupOptions
+  {
+    public Altaxo.Calc.Interpolation.IInterpolationFunctionOptions InterpolationFunction { get; init; } = new PolynomialRegressionAsInterpolationOptions { Order = 3 };
+  }
+
+  public record MasterCurveGroupOptionsWithComplexInterpolation : MasterCurveGroupOptions
+  {
+    public Altaxo.Calc.Interpolation.IInterpolationCurveOptions InterpolationFunction { get; init; }
+  }
+
+  /// <summary>
+  /// Choices for the interpolation function used for master curve interpolation.
+  /// </summary>
+  public enum MasterCurveGroupOptionsChoice
+  {
+    /// <summary>Use the same interpolation function for all curve groups.</summary>
+    SameForAllGroups,
+
+    /// <summary>For each curve group, use a separate interpolation function.</summary>
+    SeparateForEachGroup,
+
+    /// <summary>When there are exactly two groups, use a complex interpolation function.</summary>
+    ForComplex,
+  }
+
   /// <summary>
   /// Contains options for master curve creation.
   /// </summary>
@@ -38,21 +81,19 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     /// <summary>Index of the reference curve.</summary>
     public int IndexOfReferenceColumnInColumnGroup { get; init; }
 
-    /// <summary>Logarithmize x values before adding to the interpolation curve. (Only for interpolation).</summary>
-    public bool LogarithmizeXForInterpolation { get; init; }
-
-    /// <summary>Logarithmize y values before adding to the interpolation curve. (Only for interpolation).</summary>
-    public bool LogarithmizeYForInterpolation { get; init; }
-
-    /// <summary>
-    /// Determines how to shift the x values: either by factor or by offset.
-    /// </summary>
-    public ShiftXBy XShiftBy { get; init; }
-
     /// <summary>
     /// Determines the method to best fit the data into the master curve.
     /// </summary>
     public OptimizationMethod OptimizationMethod { get; init; }
+
+    public MasterCurveGroupOptionsChoice MasterCurveGroupOptionsChoice { get; init; }
+
+    /// <summary>
+    /// Get the options for each group. If there is only one <see cref="MasterCurveGroupOptionsWithScalarInterpolation"/>, and multiple groups, the options are applied
+    /// to each of the groups. Otherwise, the number of group options must match the number of groups. If there is one <see cref="MasterCurveGroupOptionsWithComplexInterpolation"/>,
+    /// two groups are needed.
+    /// </summary>
+    public ImmutableList<MasterCurveGroupOptions> GroupOptions { get; init; } = new MasterCurveGroupOptions[] { new MasterCurveGroupOptionsWithScalarInterpolation() }.ToImmutableList();
 
     protected Func<IReadOnlyList<(IReadOnlyList<double> X, IReadOnlyList<double> Y, IReadOnlyList<double>? YErr)>, IReadOnlyList<Func<double, double>>> _createInterpolationFunctionCreation = (ds) => throw new NotImplementedException();
 
@@ -129,7 +170,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     }
 
 
-    protected int _numberOfIterations = 1;
+    protected int _numberOfIterations = 20;
 
     /// <summary>
     /// Gets or sets the number of iterations. Must be greater than or equal to 1.

@@ -97,5 +97,98 @@ namespace Altaxo.Data
       var result = GetResolvedData();
       return (result.Independent[0], result.Dependent[0], result.RowCount);
     }
+
+    public virtual string GetName(int style)
+    {
+      int st = (int)style;
+      int sx = st & 0x0F;
+      int sy = (st & 0xF0) >> 4;
+
+      var stb = new System.Text.StringBuilder();
+      if (sx > 0)
+      {
+        stb.Append(GetXName(sx - 1));
+        if (sx > 0 && sy > 0)
+          stb.Append("(X)");
+        if (sy > 0)
+          stb.Append(",");
+      }
+      if (sy > 0)
+      {
+        stb.Append(GetYName(sy - 1));
+        if (sx > 0 && sy > 0)
+          stb.Append("(Y)");
+      }
+
+      return stb.ToString();
+    }
+
+    /// <summary>
+    /// Gets the name of the x column, depending on the provided level.
+    /// </summary>
+    /// <param name="level">The level (0..2).</param>
+    /// <returns>The name of the x-column, depending on the provided level: 0: only name of the data column. 1: table name and column name. 2: table name, collection, and column name.</returns>
+    public string GetXName(int level)
+    {
+      IReadableColumn? col = XColumn;
+      if (col is Altaxo.Data.DataColumn dataCol)
+      {
+        var table = Altaxo.Data.DataTable.GetParentDataTableOf(dataCol);
+        string tablename = table is null ? string.Empty : table.Name + "\\";
+        string collectionname = table is null ? string.Empty : (table.PropertyColumns.ContainsColumn(dataCol) ? "PropCols\\" : "DataCols\\");
+        if (level <= 0)
+          return dataCol.Name;
+        else if (level == 1)
+          return tablename + dataCol.Name;
+        else
+          return tablename + collectionname + dataCol.Name;
+      }
+      else if (col is not null)
+      {
+        return col.FullName;
+      }
+      else if (_independentVariables.Length > 0 && _independentVariables[0] is not null)
+      {
+        return _independentVariables[0].GetName(level) + " (broken)";
+      }
+      else
+      {
+        return " (broken)";
+      }
+    }
+
+    /// <summary>
+    /// Gets the name of the y column, depending on the provided level.
+    /// </summary>
+    /// <param name="level">The level (0..2).</param>
+    /// <returns>The name of the y-column, depending on the provided level: 0: only name of the data column. 1: table name and column name. 2: table name, collection, and column name.</returns>
+    public string GetYName(int level)
+    {
+      IReadableColumn? col = YColumn;
+      if (col is Altaxo.Data.DataColumn dataCol)
+      {
+        var table = Altaxo.Data.DataTable.GetParentDataTableOf(dataCol);
+        string tablename = table is null ? string.Empty : table.Name + "\\";
+        string collectionname = table is null ? string.Empty : (table.PropertyColumns.ContainsColumn(dataCol) ? "PropCols\\" : "DataCols\\");
+        if (level <= 0)
+          return dataCol.Name;
+        else if (level == 1)
+          return tablename + dataCol.Name;
+        else
+          return tablename + collectionname + dataCol.Name;
+      }
+      else if (col is not null)
+      {
+        return col.FullName;
+      }
+      else if (_dependentVariables.Length > 0 && _dependentVariables[0] is not null)
+      {
+        return _dependentVariables[0].GetName(level) + " (broken)";
+      }
+      else
+      {
+        return " (broken)";
+      }
+    }
   }
 }

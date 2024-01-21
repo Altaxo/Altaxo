@@ -52,11 +52,15 @@
                        Maximum="2"
                        ToolTip="Number of curve groups. Choose 1 if you want to shift real valued curves. Choose 2 if you want to shift complex valued curves."
                        />
+
     <Label Grid.Row="2" Grid.Column="0"
-             Content="Shift x by:"/>
-    <ComboBox Grid.Row="2" Grid.Column="2"
-                ItemsSource="{Binding ShiftX.Items}"
-                SelectedItem="{Binding ShiftX.SelectedItem, Mode=TwoWay}"/>
+          Content="Index of reference column:"/>
+    <axogc:Int32UpDown Grid.Row="2" Grid.Column="2"
+                    Value="{Binding IndexOfReferenceColumn}"
+                    Minimum="0"
+                    ToolTip="The index of the reference data column. This is the data column which remains unshifted, i.e. that has a shift factor of 1."
+                    />
+
 
     <Label Grid.Row="4" Grid.Column="0"
              Content="Optimization method:"/>
@@ -82,10 +86,11 @@
              ToolTip="Name of the first column property. Leave empty if not used."/>
     <CheckBox Grid.Row="10" Grid.Column="4" 
                 Content="is temperature in:"
-                IsChecked="{Binding IsProperty1Temperature, Mode=TwoWay}"/>
+                IsChecked="{Binding Property1IsTemperature, Mode=TwoWay}"/>
     <ComboBox Grid.Row="10" Grid.Column="6"
-              ItemsSource="{Binding TemperatureUnit.Items}"
-              SelectedItem="{Binding TemperatureUnit.SelectedItem, Mode=TwoWay}"/>
+              ItemsSource="{Binding Property1TemperatureRepresentation.Items}"
+              SelectedItem="{Binding Property1TemperatureRepresentation.SelectedItem, Mode=TwoWay}"
+              IsEnabled="{Binding Property1IsTemperature}"/>
 
     <Label Grid.Row="12" Grid.Column="0"
            Content="Name of second property:"/>
@@ -93,20 +98,25 @@
              Text="{Binding Property2, Mode=TwoWay}"
              ToolTip="Name of the second column property. Leave empty if not used."/>
 
+    <Label Grid.Row="14"
+           Content="Group options:"
+           />
 
-    <Label Grid.Row="16" Grid.Column="0"
-             Content="Interpolation function:"/>
-    <ComboBox Grid.Row="16" Grid.Column="2"
-                ItemsSource="{Binding InterpolationFunction0.Items}"
-                SelectedItem="{Binding InterpolationFunction0.SelectedItem, Mode=TwoWay}"/>
+    <ComboBox Grid.Row="14" Grid.Column="2"
+                ItemsSource="{Binding GroupOptionsChoice.Items}"
+                SelectedItem="{Binding GroupOptionsChoice.SelectedItem, Mode=TwoWay}"
+                />
 
-    <CheckBox Grid.Row="18" Grid.Column="0"
-                IsChecked="{Binding LogarithmizeXForInterpolation, Mode=TwoWay}"
-                Content="Logarithmize x-values for interpolation"/>
-
-      <CheckBox Grid.Row="20" Grid.Column="0"
-                IsChecked="{Binding LogarithmizeYForInterpolation, Mode=TwoWay}"
-                Content="Logarithmize y-values for interpolation"/>
+    <TabControl Grid.Row="16" Grid.ColumnSpan="7"
+            ItemsSource="{Binding  TabControllers.Items}"
+            SelectedItem="{Binding TabControllers.SelectedItem, Mode=TwoWay}"
+                DisplayMemberPath="Text">
+      <TabControl.ContentTemplate>
+        <DataTemplate>
+          <ContentPresenter Content="{Binding ViewObject}"/>
+        </DataTemplate>
+      </TabControl.ContentTemplate>
+    </TabControl>
 
   </Grid>
 </UserControl>

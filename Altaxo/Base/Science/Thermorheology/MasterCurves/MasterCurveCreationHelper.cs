@@ -24,13 +24,101 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Altaxo.Calc.LinearAlgebra;
+using Altaxo.Collections;
 using Altaxo.Data;
+using Altaxo.Gui.Science.Thermorheology;
 
 namespace Altaxo.Science.Thermorheology.MasterCurves
 {
   public class MasterCurveCreationHelper
   {
+    public static void CreateMasterCurve(DataTable dataTable, IndexSelection selectedDataColumns, IndexSelection selectedPropertyColumns)
+    {
+      var groupOfColumns = GetColumnsDividedIntoGroups(dataTable, selectedDataColumns);
+
+      var newData = new MasterCurveData();
+      newData.SetCurveData(dataTable, groupOfColumns);
+      var options = new MasterCurveCreationOptionsEx();
+      var dataSource = new MasterCurveCreationDataSource(newData, options, new DataSourceImportOptions());
+
+      var newTable = new DataTable();
+      newTable.DataSource = dataSource;
+
+      // Show the data source dialog
+      var ctrl = new MasterCurveCreationDataSourceController();
+      ctrl.InitializeDocument(dataSource);
+
+      if (true == Current.Gui.ShowDialog(ctrl, "Master curve creation"))
+      {
+        newTable.DataSource = (MasterCurveCreationDataSource)ctrl.ModelObject;
+      }
+    }
+
+    public static IReadOnlyList<IReadOnlyList<DataColumn?>> GetColumnsDividedIntoGroups(DataTable dataTable, IndexSelection selectedDataColumns)
+    {
+      int numberOfNamesWithBaseName = 0;
+      int numberOfOtherNames = 0;
+
+      var baseNames = new HashSet<string>();
+      foreach (var selIndex in selectedDataColumns)
+      {
+        var nameOfColumn = dataTable.DataColumns.GetColumnName(selIndex);
+        var (isBaseName, baseName) = HasBaseName(nameOfColumn);
+
+        if (isBaseName)
+        {
+          ++numberOfNamesWithBaseName;
+          baseNames.Add(baseName);
+        }
+        else
+        {
+          ++numberOfOtherNames;
+        }
+      }
+
+      var result = new List<List<DataColumn?>>();
+      if (numberOfOtherNames == 0 && baseNames.Count * 3 < numberOfNamesWithBaseName)
+      {
+        // we want to maintain the order in which the column names appear
+        var dict = new Dictionary<string, int>(); // dictionary key = baseName, value = index of group
+        foreach (var selIndex in selectedDataColumns)
+        {
+          var nameOfColumn = dataTable.DataColumns.GetColumnName(selIndex);
+          var (isBaseName, baseName) = HasBaseName(nameOfColumn);
+          if (!dict.TryGetValue(baseName, out var listIndex))
+          {
+            listIndex = result.Count;
+            dict.Add(baseName, listIndex);
+            result.Add(new List<DataColumn?>());
+          }
+          result[listIndex].Add(dataTable.DataColumns[selIndex]);
+        }
+      }
+      else
+      {
+        result.Add(selectedDataColumns.Select(idx => dataTable.DataColumns[idx]).ToList());
+      }
+
+      return result;
+    }
+
+
+    public static (bool hasBaseName, string baseName) HasBaseName(string nameOfColumn)
+    {
+      for (int k = nameOfColumn.Length - 1; k >= 0; --k)
+      {
+        var c = nameOfColumn[k];
+        if (!(char.IsDigit(c) || c == '.'))
+        {
+          return (true, nameOfColumn.Substring(0, k + 1));
+        }
+      }
+      return (false, string.Empty);
+    }
+
+
     public static ShiftCurveCollections GetShiftCurveCollections(List<List<DoubleColumn>> data)
     {
       var multipleShiftDataList = new List<ShiftCurveCollection>();

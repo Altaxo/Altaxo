@@ -6,11 +6,15 @@
              xmlns:local="clr-namespace:Altaxo.Gui.Science.Thermorheology"
              xmlns:localm="clr-namespace:Altaxo.Gui.Science.Thermorheology;assembly=AltaxoBase"
        			 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
+             xmlns:axogb="clr-namespace:Altaxo.Gui.Behaviors"
        			 xmlns:dd="clr-namespace:GongSolutions.Wpf.DragDrop"
        			 xmlns:axocoll="clr-namespace:Altaxo.Collections;assembly=AltaxoBase"
              d:DataContext="{d:DesignInstance Type=localm:MasterCurveDataController}"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
+  <UserControl.Resources>
+    <Thickness x:Key="ButtonMargin">8</Thickness>
+  </UserControl.Resources>
     <Grid>
     <Grid.Resources>
       <ResourceDictionary Source="pack://application:,,,/AltaxoBase.Presentation;component/CommonStyles.xaml" />
@@ -51,7 +55,7 @@
             Grid.Row="2" Grid.Column="0" Grid.RowSpan="18"
             ItemsSource="{Binding AvailableContent.Nodes}"
             Focusable="True"
-			dd:DragDrop.IsDragSource="True" 
+			      dd:DragDrop.IsDragSource="True" 
             dd:DragDrop.DragMVVMHandler="{Binding AvailableItemsDragHandler}"
             >
       <ItemsControl.ItemContainerStyle>
@@ -80,7 +84,7 @@
 
     <Button Grid.Row="2" Grid.Column="1"  
                 Height="{Binding ElementName=_btGroup, Path=ActualHeight}" 
-                Margin="{StaticResource ButtonMargin}"
+                Margin="4"
                 Command="{Binding CmdPutDataToPlotItems}"
                 Click="EhFocusData" 
                 HorizontalContentAlignment="Stretch" 
@@ -98,8 +102,14 @@
                 DisplayMemberPath="Text">
     </TabControl>
     <ListView  Grid.Column="2" Grid.Row="2" Grid.RowSpan="18" 
+               x:Name="_guiMasterDataList"
                ItemsSource="{Binding DataItems.Items}"
-               SelectedItem="{Binding DataItems.SelectedItem, Mode=TwoWay}">
+               axogb:SelectedItemsExBehavior.IsEnabled="True"
+               axogb:SelectedItemsExBehavior.SelectedItemsEx="{Binding SelectedMasterDataItems, Mode=OneWayToSource}"
+               axogb:SelectedItemsExBehavior.SelectionChangedCommand="{Binding CmdMasterDataSelectionChanged}"
+               axogb:DoubleClickTriggersCommand.IsHandled="True"
+               axogb:DoubleClickTriggersCommand.Command="{Binding CmdMasterDataDoubleClick}"
+               >
       <ListView.Resources>
         <Style TargetType="{x:Type ListViewItem}">
           <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}"/>
@@ -109,15 +119,59 @@
       <ListView.View>
         <GridView>
           <GridView.Columns>
-            <GridViewColumn Header="No." DisplayMemberBinding="{Binding Number}"/>
-            <GridViewColumn Header="Data1" DisplayMemberBinding="{Binding Data1}" Width="{Binding ColumnWidthData1, Mode=TwoWay}"/>
-            <GridViewColumn Header="Data2" DisplayMemberBinding="{Binding Data2}" Width="{Binding ColumnWidthData2, Mode=TwoWay}"/>
+            <GridViewColumn Header="No." DisplayMemberBinding="{Binding Text0}"/>
+            <GridViewColumn Header="Data1" DisplayMemberBinding="{Binding Text1}" Width="{Binding ColumnWidthData1, Mode=TwoWay}"/>
+            <GridViewColumn Header="Data2" DisplayMemberBinding="{Binding Text2}" Width="{Binding ColumnWidthData2, Mode=TwoWay}"/>
             <GridViewColumn Header="Item" DisplayMemberBinding="{Binding Text}"/>
           </GridView.Columns>
         </GridView>
       </ListView.View>
       
     </ListView>
+
+    <Button Grid.Row="2" Grid.Column="3" 
+                Command="{Binding CmdPLotItemsMoveUpSelected}"
+                Click="EhFocusData" 
+                Height="{Binding ElementName=_btGroup, Path=ActualHeight}"
+                HorizontalAlignment="Left" 
+                HorizontalContentAlignment="Stretch" 
+                VerticalContentAlignment="Stretch" 
+                Margin="{StaticResource ButtonMargin}" 
+                ToolTip="Move selected items upwards">
+      <Viewbox Style="{StaticResource ArrowViewBoxStyle}">
+        <Path Style="{StaticResource UpArrowPathStyle}" />
+      </Viewbox>
+    </Button>
+
+    <Button Grid.Row="2" Grid.Column="3" 
+                Command="{Binding CmdPlotItemsDelete}"
+                Height="{Binding ElementName=_btGroup, Path=ActualHeight}"
+                Margin="{StaticResource ButtonMargin}" 
+                HorizontalContentAlignment="Stretch" 
+                VerticalContentAlignment="Stretch" 
+                HorizontalAlignment="Right" 
+                ToolTip="Remove selected items">
+      <Viewbox Style="{StaticResource ArrowViewBoxStyle}">
+        <Path Style="{StaticResource RemoveCrossPathStyle}" />
+      </Viewbox>
+    </Button>
+
+    <Button Grid.Row="4" Grid.Column="3" 
+                Command="{Binding CmdPLotItemsMoveDownSelected}"
+                Click="EhFocusData"
+                Height="{Binding ElementName=_btGroup, Path=ActualHeight}" 
+                HorizontalAlignment="Left"
+                HorizontalContentAlignment="Stretch"
+                VerticalContentAlignment="Stretch" 
+                Margin="{StaticResource ButtonMargin}" 
+                ToolTip="Move selected items downwards">
+      <Viewbox Style="{StaticResource ArrowViewBoxStyle}">
+        <Path Style="{StaticResource DownArrowPathStyle}" />
+      </Viewbox>
+    </Button>
+
+    <Button Grid.Row="6" Grid.Column="3" Command="{Binding CmdPlotItemOpen}" Click="EhFocusData" Content="Edit item" Margin="{StaticResource ButtonMargin}"  ToolTip="Edit the selected plot item or the selected plot group." />
+
 
   </Grid>
 </UserControl>

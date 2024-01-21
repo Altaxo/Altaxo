@@ -38,7 +38,9 @@ namespace Altaxo.Gui.Science.Thermorheology
 
     private void EhFocusData(object sender, System.Windows.RoutedEventArgs e)
     {
-
+      _guiMasterDataList.Focus();
     }
+
+
   }
 }

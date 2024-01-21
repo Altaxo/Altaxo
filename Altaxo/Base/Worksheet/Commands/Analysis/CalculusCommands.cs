@@ -454,6 +454,11 @@ namespace Altaxo.Worksheet.Commands.Analysis
       }
     }
 
+    public static void CreateMasterCurve(WorksheetController ctrl)
+    {
+      Altaxo.Science.Thermorheology.MasterCurves.MasterCurveCreationHelper.CreateMasterCurve(ctrl.DataTable, ctrl.SelectedDataColumns, ctrl.SelectedPropertyColumns);
+    }
+
     #endregion
   }
 }
