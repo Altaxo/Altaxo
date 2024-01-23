@@ -94,8 +94,6 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
 
     #endregion Serialization
 
-
-
     /// <summary>
     /// Initializes a new instance of the <see cref="MasterCurveCreationDataSource"/> class.
     /// </summary>
@@ -194,7 +192,6 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     public override void FillData_Unchecked(DataTable destinationTable, IProgressReporter reporter)
     {
       var masterCurveCreation = new MasterCurveCreationHelper();
-
       masterCurveCreation.Execute(_processData, _processOptions, destinationTable);
     }
 

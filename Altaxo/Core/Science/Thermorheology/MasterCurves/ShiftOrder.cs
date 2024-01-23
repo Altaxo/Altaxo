@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2023 Dr. Dirk Lellinger
+//    Copyright (C) 2024 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -22,34 +22,29 @@
 
 #endregion Copyright
 
-using System.Collections.Generic;
-
 namespace Altaxo.Science.Thermorheology.MasterCurves
 {
   /// <summary>
-  /// Contains the result of the master curve creation.
+  /// Designates the order in which the curves are tried to fit.
   /// </summary>
-  public class MasterCurveCreationResult
+  public enum ShiftOrder
   {
-    /// <summary>
-    /// Resulting list of shift offsets or ln(shiftfactors).
-    /// </summary>
-    public List<double> ResultingShifts { get; } = new List<double>();
+    /// <summary>Fit by fixing the 1st curve, then adding the 2nd curve, 3rd curve, up to the Nth curve.</summary>
+    FirstToLast,
 
-    /// <summary>
-    /// Gets the resulting interpolation curve for each group of columns.
-    /// </summary>
-    public InterpolationInformation[] ResultingInterpolation { get; set; }
+    /// <summary>Fit by fixing the Nth curve, then adding the N-1 curve, N-2 curve, up to the 0th curve.</summary>
+    LastToFirst,
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="MasterCurveCreationResult"/> class.
-    /// </summary>
-    /// <param name="numberOfShiftCurveCollections">The number of <see cref="ShiftGroup"/>s.</param>
-    public MasterCurveCreationResult(int numberOfShiftCurveCollections)
-    {
-      ResultingInterpolation = new InterpolationInformation[numberOfShiftCurveCollections];
-    }
+    /// <summary>Fit by fixing the Rth curve, then adding the R+1 curve, .. Nth curve. Then adding the R-1 curve, down to the 0th curve.</summary>
+    RefToLastThenToFirst,
 
+    /// <summary>Fit by fixing the Rth curve, then adding the R-1 curve, .. 0th curve. Then adding the R+1 curve, up to the Nth curve.</summary>
+    RefToFirstThenToLast,
+
+    /// <summary>Fit by fixing the Rth curve, then adding the R+1 curve, R-1 curve, up and down to the Nth and 0th curve.</summary>
+    RefToLastAlternating,
+
+    /// <summary>Fit by fixing the Rth curve, then adding the R-1 curve, R+1 curve, down and up to the 0th and Nth curve.</summary>
+    RefToFirstAlternating,
   }
 }
-

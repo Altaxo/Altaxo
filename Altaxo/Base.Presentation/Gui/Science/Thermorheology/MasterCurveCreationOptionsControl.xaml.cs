@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2024 Dr. Dirk Lellinger
+//    Copyright (C) 2024 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -22,30 +22,18 @@
 
 #endregion Copyright
 
-namespace Altaxo.Science.Thermorheology.MasterCurves
+using System.Windows.Controls;
+
+namespace Altaxo.Gui.Science.Thermorheology
 {
-  public record MasterCurveCreationOptionsEx : MasterCurveCreationOptions
+  /// <summary>
+  /// Interaction logic for MasterCurveCreationOptionsExControl.xaml
+  /// </summary>
+  public partial class MasterCurveCreationOptionsControl : UserControl, IMasterCurveCreationOptionsView
   {
-    /// <summary>
-    /// Name of the first column property. In most cases, this is something like 'Temperature'.
-    /// If unused, set this to <see cref="string.Empty"/>
-    /// </summary>
-    public string Property1 { get; init; } = string.Empty;
-
-    /// <summary>
-    /// If not null, <see cref="Property1"/> represents a temperature, and the value here represents the unit of the temperature.
-    /// </summary>
-    public TemperatureRepresentation? Property1TemperatureRepresentation { get; init; }
-
-    /// <summary>
-    /// Name of the second column property. In most cases, this is something like 'Temperature'.
-    /// If unused, set this to <see cref="string.Empty"/>
-    /// </summary>
-    public string Property2 { get; init; } = string.Empty;
-
-
-
+    public MasterCurveCreationOptionsControl()
+    {
+      InitializeComponent();
+    }
   }
-
-
 }

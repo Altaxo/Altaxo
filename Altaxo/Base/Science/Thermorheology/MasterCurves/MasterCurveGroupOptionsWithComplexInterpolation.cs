@@ -22,34 +22,20 @@
 
 #endregion Copyright
 
-using System.Collections.Generic;
-
+#nullable enable
 namespace Altaxo.Science.Thermorheology.MasterCurves
 {
-  /// <summary>
-  /// Contains the result of the master curve creation.
-  /// </summary>
-  public class MasterCurveCreationResult
+  public record MasterCurveGroupOptionsWithComplexInterpolation : MasterCurveGroupOptions
   {
-    /// <summary>
-    /// Resulting list of shift offsets or ln(shiftfactors).
-    /// </summary>
-    public List<double> ResultingShifts { get; } = new List<double>();
+    public Altaxo.Calc.Interpolation.IInterpolationCurveOptions InterpolationFunction { get; init; }
+
 
     /// <summary>
-    /// Gets the resulting interpolation curve for each group of columns.
+    /// Gets the fitting weight for the imaginary part.
     /// </summary>
-    public InterpolationInformation[] ResultingInterpolation { get; set; }
+    public double FittingWeightIm { get; init; } = 1;
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="MasterCurveCreationResult"/> class.
-    /// </summary>
-    /// <param name="numberOfShiftCurveCollections">The number of <see cref="ShiftGroup"/>s.</param>
-    public MasterCurveCreationResult(int numberOfShiftCurveCollections)
-    {
-      ResultingInterpolation = new InterpolationInformation[numberOfShiftCurveCollections];
-    }
-
+    /// <summary>Logarithmize y-im values before adding to the interpolation curve. (Only for interpolation).</summary>
+    public bool LogarithmizeYImForInterpolation { get; init; }
   }
 }
-

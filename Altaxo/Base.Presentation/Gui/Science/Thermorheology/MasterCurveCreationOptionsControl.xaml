@@ -1,15 +1,18 @@
-﻿<UserControl x:Class="Altaxo.Gui.Science.Thermorheology.MasterCurveCreationOptionsExControl"
+﻿<UserControl x:Class="Altaxo.Gui.Science.Thermorheology.MasterCurveCreationOptionsControl"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:locald="clr-namespace:Altaxo.Gui.Science.Thermorheology;assembly=AltaxoBase"
              xmlns:axogc="clr-namespace:Altaxo.Gui.Common" 
-             d:DataContext="{d:DesignInstance Type=locald:MasterCurveCreationOptionsExController}"
+             xmlns:axogcc="clr-namespace:Altaxo.Gui.Common.Converters" 
+             d:DataContext="{d:DesignInstance Type=locald:MasterCurveCreationOptionsController}"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
     <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="Auto"/>
+      <ColumnDefinition Width="4"/>
       <ColumnDefinition Width="Auto"/>
       <ColumnDefinition Width="4"/>
       <ColumnDefinition Width="Auto"/>
@@ -53,14 +56,24 @@
                        ToolTip="Number of curve groups. Choose 1 if you want to shift real valued curves. Choose 2 if you want to shift complex valued curves."
                        />
 
-    <Label Grid.Row="2" Grid.Column="0"
-          Content="Index of reference column:"/>
+    <CheckBox Grid.Row="2" Grid.Column="0"
+              IsChecked="{Binding ManualPivotCurveIndex, Mode=TwoWay}"
+              Content="Manual pivot index:"/>
     <axogc:Int32UpDown Grid.Row="2" Grid.Column="2"
-                    Value="{Binding IndexOfReferenceColumn}"
+                    Value="{Binding IndexOfPivotCurve}"
+                    Visibility="{Binding ManualPivotCurveIndex, Converter={x:Static axogcc:FalseToVisibilityHiddenConverter.Instance}}"   
                     Minimum="0"
-                    ToolTip="The index of the reference data column. This is the data column which remains unshifted, i.e. that has a shift factor of 1."
+                    ToolTip="The index of the data column where the master curve creation starts. This is the data column which remains unshifted, i.e. that has a shift factor of 1."
                     />
 
+    <Label Grid.Row="2" Grid.Column="4"
+           Content="Shift order: "
+           HorizontalAlignment="Right"
+           />
+    <ComboBox Grid.Row="2" Grid.Column="6"
+              ItemsSource="{Binding ShiftOrder.Items}"
+              SelectedItem="{Binding ShiftOrder.SelectedItem, Mode=TwoWay}"
+              />
 
     <Label Grid.Row="4" Grid.Column="0"
              Content="Optimization method:"/>
@@ -98,16 +111,47 @@
              Text="{Binding Property2, Mode=TwoWay}"
              ToolTip="Name of the second column property. Leave empty if not used."/>
 
-    <Label Grid.Row="14"
+    <CheckBox Grid.Row="14" Grid.Column="0"
+                IsChecked="{Binding IsReferenceValueUsed, Mode=TwoWay}"
+                Content="Use reference value"
+                />
+
+    <CheckBox Grid.Row="14" Grid.Column="2"
+                IsChecked="{Binding UseExactReferenceValue, Mode=TwoWay}"
+                Visibility="{Binding IsReferenceValueUsed, Converter={x:Static axogcc:FalseToVisibilityHiddenConverter.Instance}}"
+                Content="Use exact reference value"
+                />
+
+    <Label Grid.Row="16" Grid.Column="0"
+             Content="Reference value:"
+             Visibility="{Binding IsReferenceValueUsed, Converter={x:Static axogcc:FalseToVisibilityHiddenConverter.Instance}}"
+             />
+
+    <Label Grid.Row="16" Grid.Column="0"
+             Content="Reference index:"
+             Visibility="{Binding IsReferenceValueUsed, Converter={x:Static axogcc:TrueToVisibilityHiddenConverter.Instance}}"
+             />
+
+    <axogc:NumericDoubleTextBox Grid.Row="16" Grid.Column="2"
+                                SelectedValue="{Binding ReferenceValue}"
+                                Visibility="{Binding IsReferenceValueUsed, Converter={x:Static axogcc:FalseToVisibilityHiddenConverter.Instance}}"
+                                  />
+      
+    <axogc:Int32UpDown Grid.Row="16" Grid.Column="2"
+                       Value="{Binding IndexOfReferenceColumn}"
+                       Visibility="{Binding IsReferenceValueUsed, Converter={x:Static axogcc:TrueToVisibilityHiddenConverter.Instance}}"
+                         />
+
+    <Label Grid.Row="18"
            Content="Group options:"
            />
 
-    <ComboBox Grid.Row="14" Grid.Column="2"
+    <ComboBox Grid.Row="18" Grid.Column="2"
                 ItemsSource="{Binding GroupOptionsChoice.Items}"
                 SelectedItem="{Binding GroupOptionsChoice.SelectedItem, Mode=TwoWay}"
                 />
 
-    <TabControl Grid.Row="16" Grid.ColumnSpan="7"
+    <TabControl Grid.Row="20" Grid.ColumnSpan="9"
             ItemsSource="{Binding  TabControllers.Items}"
             SelectedItem="{Binding TabControllers.SelectedItem, Mode=TwoWay}"
                 DisplayMemberPath="Text">

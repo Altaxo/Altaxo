@@ -42,119 +42,154 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     /// <summary>
     /// Creates one or multiple master curve(s).
     /// </summary>
-    /// <param name="options">The options for creating a master curve.</param>
-    /// <param name="shiftCurveCollections">Raw data for master curve creation.</param>
+    /// <param name="shiftGroupCollection">Raw data for master curve creation.</param>
     /// <returns>The result of the master curve creation.</returns>
-    public static MasterCurveCreationResult CreateMasterCurve(MasterCurveCreationOptions options, ShiftCurveCollections shiftCurveCollections)
+    public static MasterCurveCreationResult CreateMasterCurve(ShiftGroupCollection shiftGroupCollection)
     {
       // First we create the initial interpolation of the master column
       // then we successively add columns by shifting the x and merge them with the interpolation
-      var indexOfReferenceColumnInColumnGroup = options.IndexOfReferenceColumnInColumnGroup;
-      int maxColumns = shiftCurveCollections.Max(x => x.Count);
+      int maxColumns = shiftGroupCollection.Max(x => x.Count);
+      var (indexOfReferenceColumnInColumnGroup, shiftOrder) = GetFixedAndShiftedIndices(shiftGroupCollection.ShiftOrder, maxColumns, shiftGroupCollection.IndexOfReferenceColumnInColumnGroup);
 
-      var result = new MasterCurveCreationResult(shiftCurveCollections.Count);
+      var result = new MasterCurveCreationResult(shiftGroupCollection.Count);
       result.ResultingShifts.Clear();
-      for (int i = 0; i < maxColumns; i++)
-        result.ResultingShifts.Add(0);
+      result.ResultingShifts.AddRange(Enumerable.Range(0, maxColumns).Select(_ => 0d));
 
-      for (int nColumnGroup = 0; nColumnGroup < result.ResultingInterpolation.Length; nColumnGroup++)
+      for (int idxGroup = 0; idxGroup < result.ResultingInterpolation.Length; idxGroup++)
       {
-        result.ResultingInterpolation[nColumnGroup] = new InterpolationInformation();
-        var referenceShiftCurve = shiftCurveCollections[nColumnGroup][options.IndexOfReferenceColumnInColumnGroup];
+        var shiftGroup = shiftGroupCollection[idxGroup];
+        result.ResultingInterpolation[idxGroup] = new InterpolationInformation();
+        var referenceShiftCurve = shiftGroupCollection[idxGroup][shiftGroupCollection.IndexOfReferenceColumnInColumnGroup];
         // To each column group, add initially only the column used as reference (shift 0)
-        result.ResultingInterpolation[nColumnGroup].AddXYColumn(0, indexOfReferenceColumnInColumnGroup, referenceShiftCurve.X, referenceShiftCurve.Y, nColumnGroup, options);
+        result.ResultingInterpolation[idxGroup].AddXYColumn(0, indexOfReferenceColumnInColumnGroup, referenceShiftCurve.X, referenceShiftCurve.Y, idxGroup, shiftGroup);
       }
 
       // Make the initial interpolation for all column groups, using only the column(s) used as reference (shift 0)
-      InterpolateAllColumnGroups(options, result);
-
-      CreateShiftGroups(indexOfReferenceColumnInColumnGroup, maxColumns, result);
+      InterpolateAllColumnGroups(shiftGroupCollection, result);
 
       // now that we have a first interpolation using the reference curve, we can iterate
       // at the first iteration, the other curves will be added to the interpolation
       // and then, the quality of the master curve will be successivly improved
-      Iterate(options, shiftCurveCollections, result);
+      Iterate(shiftGroupCollection, shiftOrder, result);
 
       return result;
     }
 
-    private static void InterpolateAllColumnGroups(MasterCurveCreationOptions options, MasterCurveCreationResult result)
+    private static void InterpolateAllColumnGroups(ShiftGroupCollection shiftGroupCollection, MasterCurveCreationResult result)
     {
-      var setOfCurvesToInterpolate = result.ResultingInterpolation.Select(
-              ri => ((IReadOnlyList<double> X, IReadOnlyList<double> Y, IReadOnlyList<double>? YErr))(ri.XValues, ri.YValues, null)).ToArray();
-      var interpolations = options.CreateInterpolationFunction(setOfCurvesToInterpolate);
       for (int nColumnGroup = 0; nColumnGroup < result.ResultingInterpolation.Length; nColumnGroup++)
       {
-        result.ResultingInterpolation[nColumnGroup].InterpolationFunction = interpolations[nColumnGroup];
+        var columnGroup = shiftGroupCollection[nColumnGroup];
+        var ri = result.ResultingInterpolation[nColumnGroup];
+        ri.InterpolationFunction = columnGroup.CreateInterpolationFunction((ri.XValues, ri.YValues, null));
       }
     }
 
-    private static void CreateShiftGroups(int indexOfReferenceColumnInColumnGroup, int maxColumns, MasterCurveCreationResult result)
+    public static (int fixedIndex, IReadOnlyList<int> shiftOrderIndices) GetFixedAndShiftedIndices(ShiftOrder order, int numberOfItems, int refIndex)
     {
-      // now take the other columns, and shift them with respect to the interpolation
-      // in each shift group we have a list of columns, the first of those columns is initially processed with a shift of 1
-      // but subsequent columns are then processed with an initial shift factor which is set to the previously calculated shift factor.
-      var shiftGroups = result.ShiftGroups;
-      shiftGroups.Clear();
-      var shiftGroup = new List<int>();
-      for (int i = indexOfReferenceColumnInColumnGroup + 1; i < maxColumns; i++)
-        shiftGroup.Add(i);
-      shiftGroups.Add(shiftGroup);
-      shiftGroup = new List<int>();
-      for (int i = indexOfReferenceColumnInColumnGroup - 1; i >= 0; i--)
-        shiftGroup.Add(i);
-      shiftGroups.Add(shiftGroup);
+      var e = GetShiftOrderIndices(order, numberOfItems, refIndex);
+      return (e.First(), e.Skip(1).ToArray());
+    }
+
+    /// <summary>
+    /// Gets the indices of the curves in the order in which they should be shifted.
+    /// Attention: the first returned index is the index of the curve that is fixed!
+    /// </summary>
+    /// <param name="order">The shift order.</param>
+    /// <param name="numberOfItems">The number of items.</param>
+    /// <param name="refIndex">Index of the reference curve.</param>
+    /// <returns>Enumeration of curve indices in the order in which the curves should be fitted.
+    /// Attention: the first returned index is the index of the curve that is fixed!
+    /// </returns>
+    /// <exception cref="System.NotImplementedException"></exception>
+    public static IEnumerable<int> GetShiftOrderIndices(ShiftOrder order, int numberOfItems, int refIndex)
+    {
+      switch (order)
+      {
+        case ShiftOrder.FirstToLast:
+          for (int i = 0; i < numberOfItems; ++i)
+            yield return i;
+          break;
+        case ShiftOrder.LastToFirst:
+          for (int i = numberOfItems - 1; i >= 0; --i)
+            yield return i;
+          break;
+        case ShiftOrder.RefToLastThenToFirst:
+          for (int i = refIndex; i < numberOfItems; ++i)
+            yield return i;
+          for (int i = refIndex - 1; i >= 0; --i)
+            yield return i;
+          break;
+        case ShiftOrder.RefToFirstThenToLast:
+          for (int i = refIndex; i >= 0; --i)
+            yield return i;
+          for (int i = refIndex + 1; i < numberOfItems; ++i)
+            yield return i;
+          break;
+        case ShiftOrder.RefToLastAlternating:
+          yield return refIndex;
+          for (int i = 1; (refIndex - i) >= 0 || (refIndex + 1) < numberOfItems; ++i)
+          {
+            if ((refIndex + i) < numberOfItems)
+              yield return (refIndex + i);
+            if ((refIndex - i) >= 0)
+              yield return (refIndex - i);
+          }
+          break;
+        case ShiftOrder.RefToFirstAlternating:
+          yield return refIndex;
+          for (int i = 1; (refIndex - i) >= 0 || (refIndex + 1) < numberOfItems; ++i)
+          {
+            if ((refIndex - i) >= 0)
+              yield return (refIndex - i);
+            if ((refIndex + i) < numberOfItems)
+              yield return (refIndex + i);
+          }
+          break;
+        default:
+          throw new NotImplementedException();
+      }
     }
 
     /// <summary>
     /// Performs iteration to create or refine the master curve. There must already exist an interpolation for each curve group
     /// (which at the first iteration consist only of the interpolation of the reference curve(s)).
     /// </summary>
-    /// <param name="options">The master curve creation options.</param>
-    /// <param name="shiftCurveCollections">The data to construct the master curve(s).</param>
+    /// <param name="shiftGroupCollection">The data to construct the master curve(s).</param>
     /// <param name="result">The result of the master curve construction.</param>
-    public static void Iterate(MasterCurveCreationOptions options, ShiftCurveCollections shiftCurveCollections, MasterCurveCreationResult result)
+    public static void Iterate(ShiftGroupCollection shiftGroupCollection, IReadOnlyList<int> shiftOrder, MasterCurveCreationResult result)
     {
-      for (int iteration = 0; iteration < options.NumberOfIterations; ++iteration)
+      for (int iteration = 0; iteration < shiftGroupCollection.NumberOfIterations; ++iteration)
       {
-        OneIteration(options, shiftCurveCollections, result);
+        OneIteration(shiftGroupCollection, shiftOrder, result);
       }
     }
 
-    private static void OneIteration(MasterCurveCreationOptions options, ShiftCurveCollections shiftCurveCollections, MasterCurveCreationResult result)
-    {
-      for (int groupNumber = 0; groupNumber < result.ShiftGroups.Count; ++groupNumber)
-      {
-        OneIterationForOneShiftGroup(groupNumber, options, shiftCurveCollections, result.ShiftGroups[groupNumber], result);
-      }
-    }
-
-    private static void OneIterationForOneShiftGroup(int groupNumber, MasterCurveCreationOptions options, ShiftCurveCollections shiftCurveCollections, List<int> shiftGroup, MasterCurveCreationResult result)
+    private static void OneIteration(ShiftGroupCollection shiftGroupCollection, IReadOnlyList<int> shiftCurveOrder, MasterCurveCreationResult result)
     {
       double initialShift = 0;
-      var oneShiftDataAcrossCurveGroups = new ShiftCurve[shiftCurveCollections.Count]; // contains the shift data for the same curve index, but for all curve groups
+      var oneShiftDataAcrossCurveGroups = new ShiftCurve[shiftGroupCollection.Count]; // contains the shift data for the same curve index, but for all curve groups
       var interpolations = result.ResultingInterpolation ?? throw new InvalidOperationException($"{nameof(result)} must already contain valid interpolation(s).");
-      int idxGroupOption = groupNumber < options.GroupOptions.Count ? groupNumber : 0;
-      var groupOptions = options.GroupOptions[idxGroupOption];
 
-      foreach (int indexOfCurveInShiftGroup in shiftGroup)
+      foreach (int indexOfCurveInShiftGroup in shiftCurveOrder)
       {
         double globalMinShift = double.MaxValue;
         double globalMaxShift = double.MinValue;
         double globalMinRange = double.MaxValue;
-        for (int nColumnGroup = 0; nColumnGroup < interpolations.Length; nColumnGroup++)
+        for (int idxShiftGroup = 0; idxShiftGroup < interpolations.Length; idxShiftGroup++)
         {
-          var shiftCurve = shiftCurveCollections[nColumnGroup][indexOfCurveInShiftGroup];
-          oneShiftDataAcrossCurveGroups[nColumnGroup] = shiftCurve;
-          var (xmin, xmax) = GetMinMaxOfFirstColumnForValidSecondColumn(shiftCurve.X, shiftCurve.Y, groupOptions.XShiftBy, groupOptions.LogarithmizeXForInterpolation, groupOptions.LogarithmizeYForInterpolation);
+          var shiftGroup = shiftGroupCollection[idxShiftGroup];
+          var shiftCurve = shiftGroup[indexOfCurveInShiftGroup];
+          oneShiftDataAcrossCurveGroups[idxShiftGroup] = shiftCurve;
+          var (xmin, xmax) = GetMinMaxOfFirstColumnForValidSecondColumn(shiftCurve.X, shiftCurve.Y, shiftGroup.XShiftBy, shiftGroup.LogarithmizeXForInterpolation, shiftGroup.LogarithmizeYForInterpolation);
 
           double localMaxShift;
           double localMinShift;
           double localRange;
 
-          var (xMinOfInterpolation, xMaxOfInterpolation) = interpolations[nColumnGroup].GetMinimumMaximumOfXValuesExceptForCurveIndex(indexOfCurveInShiftGroup);
+          var (xMinOfInterpolation, xMaxOfInterpolation) = interpolations[idxShiftGroup].GetMinimumMaximumOfXValuesExceptForCurveIndex(indexOfCurveInShiftGroup);
 
-          if (options.GroupOptions[idxGroupOption].LogarithmizeXForInterpolation)
+          if (shiftGroup.LogarithmizeXForInterpolation)
           {
             localMaxShift = xMaxOfInterpolation - xmin;
             localMinShift = xMinOfInterpolation - xmax;
@@ -172,20 +207,20 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
         }
 
         // we reduce the maximum possible shifts a little in order to get at least one point overlapping
-        double requiredShiftOverlap = globalMinRange * options.RequiredRelativeOverlap;
+        double requiredShiftOverlap = globalMinRange * shiftGroupCollection.RequiredRelativeOverlap;
         requiredShiftOverlap = Math.Min(requiredShiftOverlap, 0.5 * (globalMaxShift - globalMinShift));
         // reduce the borders [globalMinShift, globalMaxShift] by the required shift overlap
         globalMinShift += requiredShiftOverlap;
         globalMaxShift -= requiredShiftOverlap;
 
         double currentShift = initialShift; // remember: this is either a offset or the natural logarithm of the shift factor
-        switch (options.OptimizationMethod)
+        switch (shiftGroupCollection.OptimizationMethod)
         {
           case OptimizationMethod.OptimizeSignedDifference:
             {
               currentShift =
               QuickRootFinding.ByBrentsAlgorithm(
-                shift => GetMeanSignedPenalty(interpolations, oneShiftDataAcrossCurveGroups, shift, groupOptions), globalMinShift, globalMaxShift);
+                shift => GetMeanSignedPenalty(interpolations, oneShiftDataAcrossCurveGroups, shift, shiftGroupCollection), globalMinShift, globalMaxShift);
             }
             break;
 
@@ -193,7 +228,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
             {
               Func<double, double> optFunc = delegate (double shift)
               {
-                double res = GetMeanSquaredPenalty(interpolations, oneShiftDataAcrossCurveGroups, shift, groupOptions);
+                double res = GetMeanSquaredPenalty(interpolations, oneShiftDataAcrossCurveGroups, shift, shiftGroupCollection);
                 //Current.Console.WriteLine("Eval for shift={0}: {1}", shift, res);
                 return res;
               };
@@ -216,7 +251,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
             {
               Func<double, double> optFunc = delegate (double shift)
               {
-                double res = GetMeanSquaredPenalty(interpolations, oneShiftDataAcrossCurveGroups, shift, groupOptions);
+                double res = GetMeanSquaredPenalty(interpolations, oneShiftDataAcrossCurveGroups, shift, shiftGroupCollection);
                 //Current.Console.WriteLine("Eval for shift={0}: {1}", shift, res);
                 return res;
               };
@@ -233,20 +268,20 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
             break;
 
           default:
-            throw new NotImplementedException("OptimizationMethod not implemented: " + options.OptimizationMethod.ToString());
+            throw new NotImplementedException("OptimizationMethod not implemented: " + shiftGroupCollection.OptimizationMethod.ToString());
         }
 
         if (currentShift.IsFinite())
         {
           result.ResultingShifts[indexOfCurveInShiftGroup] = currentShift;
 
-          for (int nColumnGroup = 0; nColumnGroup < interpolations.Length; nColumnGroup++)
+          for (int idxShiftGroup = 0; idxShiftGroup < interpolations.Length; idxShiftGroup++)
           {
             // add the data for interpolation again, using the new shift
-            interpolations[nColumnGroup].AddXYColumn(currentShift, indexOfCurveInShiftGroup, oneShiftDataAcrossCurveGroups[nColumnGroup].X, oneShiftDataAcrossCurveGroups[nColumnGroup].Y, nColumnGroup, options);
+            interpolations[idxShiftGroup].AddXYColumn(currentShift, indexOfCurveInShiftGroup, oneShiftDataAcrossCurveGroups[idxShiftGroup].X, oneShiftDataAcrossCurveGroups[idxShiftGroup].Y, idxShiftGroup, shiftGroupCollection[idxShiftGroup]);
           }
           // now build up a new interpolation, where the shifted data is taken into account
-          InterpolateAllColumnGroups(options, result);
+          InterpolateAllColumnGroups(shiftGroupCollection, result);
 
           initialShift = currentShift;
         }
@@ -256,39 +291,37 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
 
     /// <summary>
     /// Reinitializes the result. With that, new options can be used, for instance a new interpolation function.
-    /// Typically, after calling this, you can call <see cref="Iterate(MasterCurveCreationOptions, ShiftCurveCollections, List{List{int}}, MasterCurveCreationResult)"/> to iterate
+    /// Typically, after calling this, you can call <see cref="Iterate(ShiftGroupCollection, List{List{int}}, MasterCurveCreationResult)"/> to iterate
     /// with the new interpolation function again.
     /// </summary>
-    /// <param name="options">The master curve creation options.</param>
-    /// <param name="shiftCurveCollections">The data to construct the master curve(s).</param>
+    /// <param name="shiftGroupCollection">The data to construct the master curve(s).</param>
     /// <param name="result">The result of the master curve construction.</param>
-    public static void ReInitializeResult(MasterCurveCreationOptions options, ShiftCurveCollections shiftCurveCollections, MasterCurveCreationResult result)
+    public static void ReInitializeResult(ShiftGroupCollection shiftGroupCollection, MasterCurveCreationResult result)
     {
-      for (int idxColumnGroup = 0; idxColumnGroup < shiftCurveCollections.Count; idxColumnGroup++)
+      for (int idxColumnGroup = 0; idxColumnGroup < shiftGroupCollection.Count; idxColumnGroup++)
       {
         var interpolation = result.ResultingInterpolation[idxColumnGroup];
-        var shiftCurves = shiftCurveCollections[idxColumnGroup];
+        var shiftCurves = shiftGroupCollection[idxColumnGroup];
         interpolation.Clear();
 
         for (int idxCurve = 0; idxCurve < shiftCurves.Count; idxCurve++)
         {
-          interpolation.AddXYColumn(result.ResultingShifts[idxCurve], idxCurve, shiftCurves[idxCurve].X, shiftCurves[idxCurve].Y, idxColumnGroup, options);
+          interpolation.AddXYColumn(result.ResultingShifts[idxCurve], idxCurve, shiftCurves[idxCurve].X, shiftCurves[idxCurve].Y, idxColumnGroup, shiftCurves);
         }
       }
-      InterpolateAllColumnGroups(options, result);
+      InterpolateAllColumnGroups(shiftGroupCollection, result);
     }
 
     /// <summary>
-    /// Reinitializes the result (see <see cref="ReInitializeResult(MasterCurveCreationOptions, ShiftCurveCollections, MasterCurveCreationResult)"/>)
+    /// Reinitializes the result (see <see cref="ReInitializeResult(ShiftGroupCollection, MasterCurveCreationResult)"/>)
     /// and then iterate anew.
     /// </summary>
-    /// <param name="options">The master curve creation options.</param>
-    /// <param name="shiftCurveCollections">The data to construct the master curve(s).</param>
+    /// <param name="shiftGroupCollection">The data to construct the master curve(s).</param>
     /// <param name="result">The result of the master curve construction.</param>
-    public static void ReIterate(MasterCurveCreationOptions options, ShiftCurveCollections shiftCurveCollections, MasterCurveCreationResult result)
+    public static void ReIterate(ShiftGroupCollection shiftGroupCollection, IReadOnlyList<int> shiftOrder, MasterCurveCreationResult result)
     {
-      ReInitializeResult(options, shiftCurveCollections, result);
-      Iterate(options, shiftCurveCollections, result);
+      ReInitializeResult(shiftGroupCollection, result);
+      Iterate(shiftGroupCollection, shiftOrder, result);
     }
 
     /// <summary>
@@ -328,16 +361,16 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     /// <param name="shift">Current shift (direct offset or the natural logarithm of the shiftFactor).</param>
     /// <param name="options">Options for creating the master curve.</param>
     /// <returns>The mean penalty value for the current shift factor of the current column.</returns>
-    private static double GetMeanSignedPenalty(InterpolationInformation[] interpolations, IReadOnlyList<ShiftCurve> oneShiftDataAcrossGroups, double shift, MasterCurveGroupOptions options)
+    private static double GetMeanSignedPenalty(InterpolationInformation[] interpolations, IReadOnlyList<ShiftCurve> oneShiftDataAcrossGroups, double shift, ShiftGroupCollection options)
     {
 
       double penaltySum = 0;
       int penaltyPoints = 0;
 
-      for (int i = 0; i < oneShiftDataAcrossGroups.Count; i++)
+      for (int idxShiftGroup = 0; idxShiftGroup < oneShiftDataAcrossGroups.Count; idxShiftGroup++)
       {
-        var shiftData = oneShiftDataAcrossGroups[i];
-        GetMeanSignedYDifference(interpolations[i].InterpolationFunction, interpolations[i].InterpolationMinimumX, interpolations[i].InterpolationMaximumX, shiftData.X, shiftData.Y, shift, options, out var penalty, out var points);
+        var shiftData = oneShiftDataAcrossGroups[idxShiftGroup];
+        GetMeanSignedYDifference(interpolations[idxShiftGroup].InterpolationFunction, interpolations[idxShiftGroup].InterpolationMinimumX, interpolations[idxShiftGroup].InterpolationMaximumX, shiftData.X, shiftData.Y, shift, options[idxShiftGroup], out var penalty, out var points);
 
         if (points > 0)
         {
@@ -359,16 +392,16 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     /// <param name="shift">Current shift (direct or log of shiftFactor).</param>
     /// <param name="options">Options for creating the master curve.</param>
     /// <returns>The mean penalty value for the current shift factor of the current column.</returns>
-    private static double GetMeanSquaredPenalty(InterpolationInformation[] interpolations, IReadOnlyList<ShiftCurve> oneShiftDataAcrossGroups, double shift, MasterCurveGroupOptions options)
+    private static double GetMeanSquaredPenalty(InterpolationInformation[] interpolations, IReadOnlyList<ShiftCurve> oneShiftDataAcrossGroups, double shift, ShiftGroupCollection shiftGroupCollection)
     {
 
       double penaltySum = 0;
       int penaltyPoints = 0;
 
-      for (int i = 0; i < oneShiftDataAcrossGroups.Count; i++)
+      for (int idxShiftGroup = 0; idxShiftGroup < oneShiftDataAcrossGroups.Count; idxShiftGroup++)
       {
-        var shiftData = oneShiftDataAcrossGroups[i];
-        GetMeanSquaredYDifference(interpolations[i].InterpolationFunction, interpolations[i].InterpolationMinimumX, interpolations[i].InterpolationMaximumX, shiftData.X, shiftData.Y, shift, options, out var penalty, out var points);
+        var shiftData = oneShiftDataAcrossGroups[idxShiftGroup];
+        GetMeanSquaredYDifference(interpolations[idxShiftGroup].InterpolationFunction, interpolations[idxShiftGroup].InterpolationMinimumX, interpolations[idxShiftGroup].InterpolationMaximumX, shiftData.X, shiftData.Y, shift, shiftGroupCollection[idxShiftGroup], out var penalty, out var points);
 
         if (points > 0)
         {
@@ -394,7 +427,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     /// <param name="options">Information for the master curve creation.</param>
     /// <param name="penalty">Returns the calculated penalty value (mean difference between interpolation curve and provided data).</param>
     /// <param name="evaluatedPoints">Returns the number of points (of the new part of the curve) used for calculating the penalty value.</param>
-    public static void GetMeanSignedYDifference(Func<double, double> interpolation, double interpolMin, double interpolMax, IReadOnlyList<double> x, IReadOnlyList<double> y, double shift, MasterCurveGroupOptions options, out double penalty, out int evaluatedPoints)
+    public static void GetMeanSignedYDifference(Func<double, double> interpolation, double interpolMin, double interpolMax, IReadOnlyList<double> x, IReadOnlyList<double> y, double shift, ShiftGroup options, out double penalty, out int evaluatedPoints)
     {
       int len = Math.Min(x.Count, y.Count);
       int validPoints = 0;
@@ -445,7 +478,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     /// <param name="options">Information for the master curve creation.</param>
     /// <param name="penalty">Returns the calculated penalty value (mean squared difference between interpolation curve and provided data).</param>
     /// <param name="evaluatedPoints">Returns the number of points (of the new part of the curve) used for calculating the penalty value.</param>
-    public static void GetMeanSquaredYDifference(Func<double, double> interpolationFunc, double interpolMin, double interpolMax, IReadOnlyList<double> x, IReadOnlyList<double> y, double shift, MasterCurveGroupOptions options, out double penalty, out int evaluatedPoints)
+    public static void GetMeanSquaredYDifference(Func<double, double> interpolationFunc, double interpolMin, double interpolMax, IReadOnlyList<double> x, IReadOnlyList<double> y, double shift, ShiftGroup options, out double penalty, out int evaluatedPoints)
     {
       int len = Math.Min(x.Count, y.Count);
       int validPoints = 0;

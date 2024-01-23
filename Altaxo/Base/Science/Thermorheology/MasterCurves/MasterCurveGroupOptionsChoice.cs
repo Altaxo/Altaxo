@@ -22,45 +22,21 @@
 
 #endregion Copyright
 
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-
+#nullable enable
 namespace Altaxo.Science.Thermorheology.MasterCurves
 {
   /// <summary>
-  /// A collection of multiple x-y curves (see <see cref="ShiftCurve"/>) that will finally form one master curve.
+  /// Choices for the interpolation function used for master curve interpolation.
   /// </summary>
-  public class ShiftCurveCollection : IReadOnlyList<ShiftCurve>
+  public enum MasterCurveGroupOptionsChoice
   {
-    ShiftCurve[] _inner;
+    /// <summary>Use the same interpolation function for all curve groups.</summary>
+    SameForAllGroups,
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="ShiftCurveCollection"/> class.
-    /// </summary>
-    /// <param name="data">Collection of multiple x-y curves that will finally form one master curve.</param>
-    public ShiftCurveCollection(IEnumerable<ShiftCurve> data)
-    {
-      _inner = data.ToArray();
-    }
+    /// <summary>For each curve group, use a separate interpolation function.</summary>
+    SeparateForEachGroup,
 
-    /// <inheritdoc/>
-    public ShiftCurve this[int index] => ((IReadOnlyList<ShiftCurve>)_inner)[index];
-
-    /// <inheritdoc/>
-    public int Count => ((IReadOnlyCollection<ShiftCurve>)_inner).Count;
-
-    /// <inheritdoc/>
-    public IEnumerator<ShiftCurve> GetEnumerator()
-    {
-      return ((IEnumerable<ShiftCurve>)_inner).GetEnumerator();
-    }
-
-    /// <inheritdoc/>
-    IEnumerator IEnumerable.GetEnumerator()
-    {
-      return _inner.GetEnumerator();
-    }
+    /// <summary>When there are exactly two groups, use a complex interpolation function.</summary>
+    ForComplex,
   }
 }
-

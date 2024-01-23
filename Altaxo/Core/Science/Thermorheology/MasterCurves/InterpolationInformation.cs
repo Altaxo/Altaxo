@@ -102,7 +102,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     }
 
     /// <summary>
-    /// Adds values to the data that should be interpolated, but does not evaluate a new interpolation (call <see cref="Interpolate(MasterCurveCreationOptions)"/>
+    /// Adds values to the data that should be interpolated, but does not evaluate a new interpolation (call <see cref="Interpolate(ShiftGroup)"/>
     /// after this call if a new interpolation should be evaluated).
     /// </summary>
     /// <param name="shift">Shift value used to modify the x values.</param>
@@ -111,7 +111,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     /// <param name="y">Column of y values.</param>
     /// <param name="groupNumber">Number of the curve group.</param>
     /// <param name="options">Options for creating the master curve.</param>
-    public void AddXYColumn(double shift, int indexOfCurve, IReadOnlyList<double> x, IReadOnlyList<double> y, int groupNumber, MasterCurveCreationOptions options)
+    public void AddXYColumn(double shift, int indexOfCurve, IReadOnlyList<double> x, IReadOnlyList<double> y, int groupNumber, ShiftGroup options)
     {
       // first, Remove all points with indexOfCurve
       for (int i = ValuesToInterpolate.Count - 1; i >= 0; --i)
@@ -121,10 +121,9 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
       // now add the new values
       int count = Math.Min(x.Count, y.Count);
 
-      var groupOptionsIndex = groupNumber < options.GroupOptions.Count ? groupNumber : 1;
-      bool doLogX = options.GroupOptions[groupOptionsIndex].LogarithmizeXForInterpolation;
-      bool doLogY = options.GroupOptions[groupOptionsIndex].LogarithmizeYForInterpolation;
-      bool shiftXByOffset = options.GroupOptions[groupOptionsIndex].XShiftBy == ShiftXBy.Offset;
+      bool doLogX = options.LogarithmizeXForInterpolation;
+      bool doLogY = options.LogarithmizeYForInterpolation;
+      bool shiftXByOffset = options.XShiftBy == ShiftXBy.Offset;
       double minX = InterpolationMinimumX;
       double maxX = InterpolationMaximumX;
 

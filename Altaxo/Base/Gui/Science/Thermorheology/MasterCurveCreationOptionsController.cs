@@ -34,11 +34,11 @@ using Altaxo.Units;
 
 namespace Altaxo.Gui.Science.Thermorheology
 {
-  public interface IMasterCurveCreationOptionsExView : IDataContextAwareView { }
+  public interface IMasterCurveCreationOptionsView : IDataContextAwareView { }
 
-  [ExpectedTypeOfView(typeof(IMasterCurveCreationOptionsExView))]
-  [UserControllerForObject(typeof(MasterCurveCreationOptionsEx))]
-  public class MasterCurveCreationOptionsExController : MVCANDControllerEditImmutableDocBase<MasterCurveCreationOptionsEx, IMasterCurveCreationOptionsExView>
+  [ExpectedTypeOfView(typeof(IMasterCurveCreationOptionsView))]
+  [UserControllerForObject(typeof(MasterCurveCreationOptions))]
+  public class MasterCurveCreationOptionsController : MVCANDControllerEditImmutableDocBase<MasterCurveCreationOptions, IMasterCurveCreationOptionsView>
   {
     IMVCAController? _selectedController;
 
@@ -61,6 +61,99 @@ namespace Altaxo.Gui.Science.Thermorheology
           _numberOfGroups = value;
           OnPropertyChanged(nameof(NumberOfGroups));
           OnMadeDirty();
+        }
+      }
+    }
+
+    private bool _manualPivotCurveIndex;
+
+    public bool ManualPivotCurveIndex
+    {
+      get => _manualPivotCurveIndex;
+      set
+      {
+        if (!(_manualPivotCurveIndex == value))
+        {
+          _manualPivotCurveIndex = value;
+          OnPropertyChanged(nameof(ManualPivotCurveIndex));
+        }
+      }
+    }
+
+
+    private int _indexOfPivotCurve;
+
+    public int IndexOfPivotCurve
+    {
+      get => _indexOfPivotCurve;
+      set
+      {
+        if (!(_indexOfPivotCurve == value))
+        {
+          _indexOfPivotCurve = value;
+          OnPropertyChanged(nameof(IndexOfPivotCurve));
+        }
+      }
+    }
+
+    private ItemsController<ShiftOrder> _shiftOrder;
+
+    public ItemsController<ShiftOrder> ShiftOrder
+    {
+      get => _shiftOrder;
+      set
+      {
+        if (!(_shiftOrder == value))
+        {
+          _shiftOrder = value;
+          OnPropertyChanged(nameof(ShiftOrder));
+        }
+      }
+    }
+
+
+    private double? _ReferenceValue;
+
+    public double? ReferenceValue
+    {
+      get => _ReferenceValue;
+      set
+      {
+        if (!(_ReferenceValue == value))
+        {
+          _ReferenceValue = value;
+          OnPropertyChanged(nameof(ReferenceValue));
+        }
+      }
+    }
+
+    private bool _isReferenceValueUsed;
+
+    public bool IsReferenceValueUsed
+    {
+      get => _isReferenceValueUsed;
+      set
+      {
+        if (!(_isReferenceValueUsed == value))
+        {
+          _isReferenceValueUsed = value;
+          OnPropertyChanged(nameof(IsReferenceValueUsed));
+        }
+      }
+    }
+
+
+    private bool _useExactReferenceValue;
+
+    public bool UseExactReferenceValue
+    {
+      get => _useExactReferenceValue;
+      set
+      {
+        if (!(_useExactReferenceValue == value))
+        {
+          _useExactReferenceValue = value;
+          OnPropertyChanged(nameof(UseExactReferenceValue));
         }
       }
     }

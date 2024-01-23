@@ -45,7 +45,7 @@ namespace Altaxo.Gui.Science.Thermorheology
 
       if (initData)
       {
-        if (ProcessOptionsController is MasterCurveCreationOptionsExController optionsController)
+        if (ProcessOptionsController is MasterCurveCreationOptionsController optionsController)
         {
           optionsController.NumberOfGroups = _doc.ProcessData.CurveData.Count;
         }
@@ -59,7 +59,7 @@ namespace Altaxo.Gui.Science.Thermorheology
 
     private void EhOptionsMadeDirty(IMVCANDController controller)
     {
-      if (controller is MasterCurveCreationOptionsExController optionsController &&
+      if (controller is MasterCurveCreationOptionsController optionsController &&
          ProcessDataController is MasterCurveDataController dataController)
       {
         dataController.HintOptionValues(optionsController.NumberOfGroups, optionsController.Property1, optionsController.Property2);

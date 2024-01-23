@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2024 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2023 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -22,18 +22,13 @@
 
 #endregion Copyright
 
-using System.Windows.Controls;
+#nullable enable
+using Altaxo.Calc.Interpolation;
 
-namespace Altaxo.Gui.Science.Thermorheology
+namespace Altaxo.Science.Thermorheology.MasterCurves
 {
-  /// <summary>
-  /// Interaction logic for MasterCurveCreationOptionsExControl.xaml
-  /// </summary>
-  public partial class MasterCurveCreationOptionsExControl : UserControl, IMasterCurveCreationOptionsExView
+  public record MasterCurveGroupOptionsWithScalarInterpolation : MasterCurveGroupOptions
   {
-    public MasterCurveCreationOptionsExControl()
-    {
-      InitializeComponent();
-    }
+    public Altaxo.Calc.Interpolation.IInterpolationFunctionOptions InterpolationFunction { get; init; } = new PolynomialRegressionAsInterpolationOptions { Order = 3 };
   }
 }

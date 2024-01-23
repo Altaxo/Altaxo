@@ -22,34 +22,22 @@
 
 #endregion Copyright
 
-using System.Collections.Generic;
-
+#nullable enable
 namespace Altaxo.Science.Thermorheology.MasterCurves
 {
-  /// <summary>
-  /// Contains the result of the master curve creation.
-  /// </summary>
-  public class MasterCurveCreationResult
+  public abstract record MasterCurveGroupOptions : Main.IImmutable
   {
-    /// <summary>
-    /// Resulting list of shift offsets or ln(shiftfactors).
-    /// </summary>
-    public List<double> ResultingShifts { get; } = new List<double>();
+    /// <summary>Logarithmize x values before adding to the interpolation curve. (Only for interpolation).</summary>
+    public bool LogarithmizeXForInterpolation { get; init; }
+
+    /// <summary>Logarithmize y values before adding to the interpolation curve. (Only for interpolation).</summary>
+    public bool LogarithmizeYForInterpolation { get; init; }
 
     /// <summary>
-    /// Gets the resulting interpolation curve for each group of columns.
+    /// Determines how to shift the x values: either by factor or by offset. Use offset if the original data are already logarithmized.
     /// </summary>
-    public InterpolationInformation[] ResultingInterpolation { get; set; }
+    public ShiftXBy XShiftBy { get; init; }
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="MasterCurveCreationResult"/> class.
-    /// </summary>
-    /// <param name="numberOfShiftCurveCollections">The number of <see cref="ShiftGroup"/>s.</param>
-    public MasterCurveCreationResult(int numberOfShiftCurveCollections)
-    {
-      ResultingInterpolation = new InterpolationInformation[numberOfShiftCurveCollections];
-    }
-
+    public double FittingWeight { get; init; } = 1;
   }
 }
-

@@ -41,7 +41,7 @@ namespace Altaxo.Gui.Science.Thermorheology
   {
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
-      yield return new ControllerAndSetNullMethod(_interpolationDetails, () => InterpolationDetails = null);
+      yield return new ControllerAndSetNullMethod(_interpolationDetails, () => InterpolationDetails = null!);
     }
 
     #region Bindings
