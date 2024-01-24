@@ -39,6 +39,65 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     /// </summary>
     public List<XAndYColumn?[]> CurveData { get; set; } = [];
 
+    #region Serialization
+
+    /// <summary>
+    /// V0: 2024-01-24 initial version
+    /// </summary>
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(MasterCurveData), 0)]
+    public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        var s = (MasterCurveData)obj;
+
+        info.CreateArray("Groups", s.CurveData.Count);
+        {
+          foreach (var group in s.CurveData)
+          {
+            info.CreateArray("Group", group.Length);
+            {
+              foreach (var curve in group)
+              {
+                info.AddValueOrNull("e", curve);
+              }
+            }
+            info.CommitArray(); // Group
+          }
+        }
+        info.CommitArray(); // Groups
+      }
+
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      {
+        var s = o as MasterCurveData ?? new MasterCurveData();
+
+        int numberOfGroups = info.OpenArray("Groups");
+        var curveData = new List<XAndYColumn?[]>(numberOfGroups);
+        {
+          int numberOfCurves = info.OpenArray("Group");
+          {
+            var curves = new XAndYColumn?[numberOfCurves];
+            for (int i = 0; i < numberOfCurves; ++i)
+            {
+              var curve = info.GetValueOrNull<XAndYColumn>("e", null);
+              if (curve is not null)
+                curve.ParentObject = s;
+              curves[i] = curve;
+            }
+            curveData.Add(curves);
+          }
+          info.CloseArray(numberOfCurves);
+        }
+        info.CloseArray(numberOfGroups);
+
+        return s;
+      }
+    }
+
+    #endregion
+
+
     public void SetCurveData(DataTable dataTable, IReadOnlyList<IReadOnlyList<DataColumn?>> dataGroups)
     {
       var maxCount = dataGroups.Max(g => g.Count);

@@ -246,7 +246,7 @@ namespace Altaxo.Data
 
     public AltaxoVariant(object? k)
     {
-      switch(k)
+      switch (k)
       {
         case null:
           _typeOfContent = Content.VNull;
@@ -301,11 +301,13 @@ namespace Altaxo.Data
       return _typeOfContent == c || _typeOfContent == Content.VNull;
     }
 
+    public bool IsEmpty => _typeOfContent == Content.VNull;
+
     public bool CanConvertedToDouble
     {
       get
       {
-        if (_typeOfContent == Content.VDouble || _typeOfContent == Content.VDateTime || _typeOfContent==Content.VDateTimeOffset)
+        if (_typeOfContent == Content.VDouble || _typeOfContent == Content.VDateTime || _typeOfContent == Content.VDateTimeOffset)
           return true; // we can create a double from a double (trivial) and from DateTime
         if (_typeOfContent == Content.VString) // if the content is a string, we have to look if it is possible to convert
           return Altaxo.Serialization.NumberConversion.IsNumeric((string?)_object);

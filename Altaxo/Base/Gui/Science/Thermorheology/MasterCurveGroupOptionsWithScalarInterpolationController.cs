@@ -39,6 +39,9 @@ namespace Altaxo.Gui.Science.Thermorheology
   [UserControllerForObject(typeof(MasterCurveGroupOptionsWithScalarInterpolation))]
   public class MasterCurveGroupOptionsWithScalarInterpolationController : MVCANControllerEditImmutableDocBase<MasterCurveGroupOptionsWithScalarInterpolation, IMasterCurveGroupOptionsWithScalarInterpolationView>
   {
+    Altaxo.Calc.Interpolation.IInterpolationFunctionOptions _selectedInterpolation;
+
+
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
       yield return new ControllerAndSetNullMethod(_interpolationDetails, () => InterpolationDetails = null!);
@@ -189,9 +192,11 @@ namespace Altaxo.Gui.Science.Thermorheology
         LogarithmizeYForInterpolation = _doc.LogarithmizeYForInterpolation;
         FittingWeight = new DimensionfulQuantity(_doc.FittingWeight, Altaxo.Units.Dimensionless.Unity.Instance).AsQuantityIn(FittingWeightEnvironment.DefaultUnit);
         IsParticipatingInFit = _doc.FittingWeight > 0;
+        _selectedInterpolation = _doc.InterpolationFunction;
         InitializeInterpolationFunctionChoices();
       }
     }
+
 
     private void InitializeInterpolationFunctionChoices()
     {
@@ -203,8 +208,11 @@ namespace Altaxo.Gui.Science.Thermorheology
 
     private void EhInterpolationFunctionChanged(Type type)
     {
-      var intp = Activator.CreateInstance(type);
-      InterpolationDetails = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { intp }, typeof(IMVCANController));
+      if (_selectedInterpolation is null || _selectedInterpolation.GetType() != type)
+      {
+        _selectedInterpolation = (IInterpolationFunctionOptions)Activator.CreateInstance(type);
+      }
+      InterpolationDetails = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _selectedInterpolation }, typeof(IMVCANController));
     }
 
     public override bool Apply(bool disposeController)

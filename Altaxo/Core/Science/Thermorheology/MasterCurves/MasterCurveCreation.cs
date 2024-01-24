@@ -114,21 +114,21 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
           for (int i = numberOfItems - 1; i >= 0; --i)
             yield return i;
           break;
-        case ShiftOrder.RefToLastThenToFirst:
+        case ShiftOrder.PivotToLastThenToFirst:
           for (int i = refIndex; i < numberOfItems; ++i)
             yield return i;
           for (int i = refIndex - 1; i >= 0; --i)
             yield return i;
           break;
-        case ShiftOrder.RefToFirstThenToLast:
+        case ShiftOrder.PivotToFirstThenToLast:
           for (int i = refIndex; i >= 0; --i)
             yield return i;
           for (int i = refIndex + 1; i < numberOfItems; ++i)
             yield return i;
           break;
-        case ShiftOrder.RefToLastAlternating:
+        case ShiftOrder.PivotToLastAlternating:
           yield return refIndex;
-          for (int i = 1; (refIndex - i) >= 0 || (refIndex + 1) < numberOfItems; ++i)
+          for (int i = 1; (refIndex - i) >= 0 || (refIndex + i) < numberOfItems; ++i)
           {
             if ((refIndex + i) < numberOfItems)
               yield return (refIndex + i);
@@ -136,9 +136,9 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
               yield return (refIndex - i);
           }
           break;
-        case ShiftOrder.RefToFirstAlternating:
+        case ShiftOrder.PivotToFirstAlternating:
           yield return refIndex;
-          for (int i = 1; (refIndex - i) >= 0 || (refIndex + 1) < numberOfItems; ++i)
+          for (int i = 1; (refIndex - i) >= 0 || (refIndex + i) < numberOfItems; ++i)
           {
             if ((refIndex - i) >= 0)
               yield return (refIndex - i);

@@ -82,7 +82,7 @@
                 SelectedItem="{Binding OptimizationMethod.SelectedItem, Mode=TwoWay}"/>
     <Label Grid.Row="6" Grid.Column="0"
              Content="Number of iterations:"/>
-    <axogc:Int32ListUpDown Grid.Row="6" Grid.Column="2"
+    <axogc:Int32UpDown Grid.Row="6" Grid.Column="2"
                              Value="{Binding NumberOfIterations}"
                              Minimum="1"/>
     <Label Grid.Row="8" Grid.Column="0"

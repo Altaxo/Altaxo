@@ -352,7 +352,7 @@ namespace Altaxo.Gui.Science.Thermorheology
 
     public override bool Apply(bool disposeController)
     {
-      int numberOfItems = _dataNodes.Max(x => x.IndexOfLast((n, i) => n.Tag is not null));
+      int numberOfItems = 1 + _dataNodes.Max(x => x.IndexOfLast((n, i) => n.Tag is not null));
 
       var list = new List<XAndYColumn?[]>();
       for (int i = 0; i < _dataNodes.Count; ++i)

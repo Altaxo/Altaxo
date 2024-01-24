@@ -25,6 +25,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Altaxo.Calc;
 using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Collections;
 using Altaxo.Data;
@@ -34,6 +35,49 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
 {
   public class MasterCurveCreationHelper
   {
+    #region Helper classes
+
+    /// <summary>
+    /// Information about a single curve.
+    /// </summary>
+    private class ExtendedInformation
+    {
+      /// <summary>
+      /// The corresponding index in the shift group collection. If null, this curve does not participate in fitting.
+      /// </summary>
+      public int? IndexInShiftGroupCollection;
+
+      /// <summary>
+      /// Value of property1.
+      /// </summary>
+      public AltaxoVariant Property1Value;
+
+      /// <summary>
+      /// Value of property2.
+      /// </summary>
+      public AltaxoVariant Property2Value;
+    }
+
+    private class FitInformation
+    {
+      public IReadOnlyList<ExtendedInformation> CurveInformation { get; }
+
+      /// <summary>
+      /// Relates the group in the MasterCurveData to the group in the fit (<see cref="ShiftGroupCollection"/>).
+      /// If the element has a value, the value designates the corresponding group index in the <see cref="ShiftGroupCollection"/>.
+      /// If the element value is null, then this group was not participating in the fit.
+      /// </summary>
+      public IReadOnlyList<int?> IndexOfGroupInShiftGroupCollection { get; }
+
+      public FitInformation(ExtendedInformation[] curveInfo, IReadOnlyList<int?> groupInformation)
+      {
+        CurveInformation = curveInfo;
+        IndexOfGroupInShiftGroupCollection = groupInformation;
+      }
+    }
+
+    #endregion
+
     public static void CreateMasterCurve(DataTable dataTable, IndexSelection selectedDataColumns, IndexSelection selectedPropertyColumns)
     {
       var groupOfColumns = GetColumnsDividedIntoGroups(dataTable, selectedDataColumns);
@@ -129,8 +173,11 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     {
       // Test the data
 
+      // at first, we create information about the curves
+      int numberOfCurves = processData.CurveData.Max(shiftGroup => shiftGroup.Length);
+
       // convert the data to the working data - including the options
-      var shiftGroupCollection = ConvertToShiftGroupCollection(processOptions, processData);
+      var (shiftGroupCollection, fitInfo) = ConvertToShiftGroupCollection(processOptions, processData);
 
       // create the master curve
       var masterCurveResult = MasterCurveCreation.CreateMasterCurve(shiftGroupCollection);
@@ -140,181 +187,491 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
       int groupNumber = -1;
       var col = destinationTable.DataColumns;
       var pcol = destinationTable.PropCols;
+      col.RemoveColumnsAll();
+      pcol.RemoveColumnsAll();
 
       DataColumn? pcol1 = null, pcol2 = null; ;
 
-      if (!string.IsNullOrEmpty(processOptions.Property1))
+      if (!string.IsNullOrEmpty(processOptions.Property1Name))
       {
-        pcol1 = pcol.EnsureExistence(processOptions.Property1, typeof(DoubleColumn), ColumnKind.V, 0);
+        pcol1 = pcol.EnsureExistence(processOptions.Property1Name, typeof(DoubleColumn), ColumnKind.V, 0);
       }
-      if (!string.IsNullOrEmpty(processOptions.Property2))
+      if (!string.IsNullOrEmpty(processOptions.Property2Name))
       {
-        pcol2 = pcol.EnsureExistence(processOptions.Property2, typeof(DoubleColumn), ColumnKind.V, 0);
+        pcol2 = pcol.EnsureExistence(processOptions.Property2Name, typeof(DoubleColumn), ColumnKind.V, 0);
       }
+      var pcolShift = pcol.EnsureExistence("Shift", typeof(DoubleColumn), ColumnKind.V, 0);
 
-      if (true) // if the table should be filled with the original data
+      if (processOptions.TableOutputOptions.OutputOriginalCurves) // if the table should be filled with the original data
       {
         // in groups
         IReadOnlyList<double> lastX = new double[0];
-        for (int j = 0; j < shiftGroupCollection.Count; j++)
+        for (int idxGroup = 0; idxGroup < processData.CurveData.Count; idxGroup++)
         {
-          var shiftGroup = shiftGroupCollection[j];
-          for (int i = 0; i < shiftGroup.Count; i++)
+          var group = processData.CurveData[idxGroup];
+          for (int idxCurve = 0; idxCurve < group.Length; idxCurve++)
           {
-            var shiftCurve = shiftGroup[i];
+            var shiftCurve = ConvertToShiftCurve(group[idxCurve]);
 
             if (lastX.Count != shiftCurve.X.Count || !VectorMath.AreValuesEqual(lastX, shiftCurve.X))
             {
               ++groupNumber;
-              var xCol = col.EnsureExistence($"xOrg{(char)('A' + j)}{i}", typeof(DoubleColumn), ColumnKind.X, groupNumber);
-              xCol.Data = lastX;
-              lastX = shiftCurve.X;
+              var xCol = col.EnsureExistence($"xOrg{(char)('A' + idxGroup)}{idxCurve}", typeof(DoubleColumn), ColumnKind.X, groupNumber);
+              xCol.Data = lastX = shiftCurve.X;
             }
-            var yCol = col.EnsureExistence($"yOrg{(char)('A' + j)}{i}", typeof(DoubleColumn), ColumnKind.V, groupNumber);
+            var yCol = col.EnsureExistence($"yOrg{(char)('A' + idxGroup)}{idxCurve}", typeof(DoubleColumn), ColumnKind.V, groupNumber);
             yCol.Data = shiftCurve.Y;
 
-
+            if (pcol1 is not null)
+            {
+              pcol1[col.GetColumnNumber(yCol)] = fitInfo.CurveInformation[idxCurve].Property1Value;
+            }
+            if (pcol2 is not null)
+            {
+              pcol2[col.GetColumnNumber(yCol)] = fitInfo.CurveInformation[idxCurve].Property2Value;
+            }
           }
         }
       }    // end copying the original data
 
-      if (true) // if the table should be filled with the shifted data
+      // for finalization, we need the shift offset
+      var (shiftOffset, referenceValueUsed) = GetShiftOffset(masterCurveResult, fitInfo, processOptions);
+
+      if (processOptions.TableOutputOptions.OutputShiftedCurves) // if the table should be filled with the shifted data
       {
+        // we want to put the x-columns all together in one place, that's why we accumulate the columns and
+        // put them afterwards to the table
+        var xColumnList = new List<(int group, string name, DataColumn column)>();
+        var yColumnList = new List<(int group, string name, DataColumn column, AltaxoVariant p1, AltaxoVariant p2, double shift)>();
+
         IReadOnlyList<double> lastX = new double[0];
         groupNumber = (int)(1000 * Math.Ceiling(groupNumber / 1000d) - 1);
         // in groups
-        for (int j = 0; j < shiftGroupCollection.Count; j++)
+        for (int idxGroup = 0; idxGroup < processData.CurveData.Count; idxGroup++)
         {
-          var shiftGroup = shiftGroupCollection[j];
-          for (int i = 0; i < shiftGroup.Count; i++)
+          var group = processData.CurveData[idxGroup];
+          var groupOptions = GetGroupOptions(processOptions, idxGroup);
+          for (int idxCurve = 0; idxCurve < group.Length; idxCurve++)
           {
-            var shiftCurve = shiftGroup[i];
+            var idxCurveInShiftGroupCollection = fitInfo.CurveInformation[idxCurve].IndexInShiftGroupCollection;
+            if (idxCurveInShiftGroupCollection is null)
+              continue; // if this particular curve has no shift information, we skip it
 
+            var shiftValue = masterCurveResult.ResultingShifts[idxCurveInShiftGroupCollection.Value];
+            // subtract the shiftOffset
+            shiftValue -= shiftOffset;
+
+            var shiftCurve = ConvertToShiftCurve(group[idxCurve]);
             var xshifted = shiftCurve.X.ToArray();
-            VectorMath.Multiply(xshifted, masterCurveResult.ResultingShifts[i]);
+            if (groupOptions.XShiftBy == ShiftXBy.Factor)
+              VectorMath.Multiply(xshifted, Math.Exp(shiftValue));
+            else if (groupOptions.XShiftBy == ShiftXBy.Offset)
+              VectorMath.Add(xshifted, shiftValue);
+            else
+              throw new NotImplementedException();
 
             if (lastX.Count != xshifted.Length || !VectorMath.AreValuesEqual(lastX, xshifted))
             {
               ++groupNumber;
-              var xCol = col.EnsureExistence($"xSft{(char)('A' + j)}{i}", typeof(DoubleColumn), ColumnKind.X, groupNumber);
+              var xCol = new DoubleColumn();
               xCol.Data = xshifted;
               lastX = xshifted;
+              xColumnList.Add((groupNumber, $"xSft{(char)('A' + idxGroup)}{idxCurve}", xCol));
             }
-            var yCol = col.EnsureExistence($"ySft{(char)('A' + j)}{i}", typeof(DoubleColumn), ColumnKind.V, groupNumber);
+            var yCol = new DoubleColumn();
             yCol.Data = shiftCurve.Y;
+            yColumnList.Add((groupNumber, $"ySft{(char)('A' + idxGroup)}{idxCurve}", yCol, fitInfo.CurveInformation[idxCurve].Property1Value, fitInfo.CurveInformation[idxCurve].Property2Value, shiftValue));
+          }
+        }
+
+        // now put the x-columns to the table
+        foreach (var xcol in xColumnList)
+        {
+          col.Add(xcol.column, xcol.name, ColumnKind.X, xcol.group);
+        }
+        // and now the y-columns
+        foreach (var ycol in yColumnList)
+        {
+          col.Add(ycol.column, ycol.name, ColumnKind.V, ycol.group);
+          pcolShift[col.GetColumnNumber(col[ycol.name])] = ycol.shift;
+
+          if (pcol1 is not null)
+          {
+            pcol1[col.GetColumnNumber(col[ycol.name])] = ycol.p1;
+          }
+          if (pcol2 is not null)
+          {
+            pcol2[col.GetColumnNumber(col[ycol.name])] = ycol.p2;
           }
         }
       }    // end copying the original data
 
-      // copy the shift values
-      groupNumber = (int)(1000 * Math.Ceiling(groupNumber / 1000d));
-
-      double reallyUsedRefTemperature = 0;
-      double shiftOffsetToExactTemp = 0;
-
-      // get out the interpolation result, Achtung die Werte sind logarithmiert
-      for (int i = 0; i < masterCurveResult.ResultingInterpolation.Length; i++)
+      if (processOptions.TableOutputOptions.OutputMergedShiftedCurve) // if the table should be filled with the merged data
       {
-        var minX = masterCurveResult.ResultingInterpolation[i].InterpolationMinimumX;
-        var maxX = masterCurveResult.ResultingInterpolation[i].InterpolationMaximumX;
-
-        var xCol = col.EnsureExistence("ipolX", typeof(DoubleColumn), ColumnKind.X, groupNumber);
-        var yCol = col.EnsureExistence("ipolY" + i.ToString(), typeof(DoubleColumn), ColumnKind.V, groupNumber);
-        var lgyCol = col.EnsureExistence("lgIpolY" + i.ToString(), typeof(DoubleColumn), ColumnKind.V, groupNumber);
-        if (pcol1 is not null)
+        groupNumber = (int)(1000 * Math.Ceiling(groupNumber / 1000d));
+        // in groups
+        for (int idxGroup = 0; idxGroup < processData.CurveData.Count; idxGroup++)
         {
-          pcol1[col.GetColumnNumber(yCol)] = reallyUsedRefTemperature;
-          pcol1[col.GetColumnNumber(lgyCol)] = reallyUsedRefTemperature;
-        }
+          var group = processData.CurveData[idxGroup];
+          var groupOptions = GetGroupOptions(processOptions, idxGroup);
+          var resultCurve = GetMergedCurveData(group, groupOptions, masterCurveResult, fitInfo, shiftOffset);
+
+          var xcol = col.EnsureExistence($"xMerged{(char)('A' + idxGroup)}", typeof(DoubleColumn), ColumnKind.X, groupNumber);
+          var ycol = col.EnsureExistence($"yMerged{(char)('A' + idxGroup)}", typeof(DoubleColumn), ColumnKind.V, groupNumber);
+          ++groupNumber;
+
+          for (int i = 0; i < resultCurve.Count; ++i)
+          {
+            xcol[i] = resultCurve[i].x;
+            ycol[i] = resultCurve[i].y;
+          }
+        } // for each group
+      } // end put merged curves
 
 
-        for (int j = 0; j <= 1000; j++)
+      if (processOptions.TableOutputOptions.OutputInterpolatedCurve)
+      {
+        groupNumber = (int)(100 * Math.Ceiling(groupNumber / 100d));
+
+        // get out the interpolation result, Achtung die Werte sind logarithmiert
+        for (int idxGroup = 0; idxGroup < processData.CurveData.Count; idxGroup++)
         {
-          double x = minX + (maxX - minX) * j / 1000.0;
-          double y = masterCurveResult.ResultingInterpolation[i].InterpolationFunction(x);
-          xCol[j] = Math.Exp(x + shiftOffsetToExactTemp);
-          yCol[j] = Math.Exp(y);
-          lgyCol[j] = Math.Log10(Math.Exp(y));
+          var group = processData.CurveData[idxGroup];
+          var groupOptions = GetGroupOptions(processOptions, idxGroup);
+          var resultCurve = GetMergedCurveData(group, groupOptions, masterCurveResult, fitInfo, shiftOffset);
+
+          var xtrans = new List<double>();
+          var ytrans = new List<double>();
+          for (int i = 0; i < resultCurve.Count; ++i)
+          {
+            double x = resultCurve[i].x;
+            var y = resultCurve[i].y;
+
+            if (groupOptions.LogarithmizeXForInterpolation)
+              x = Math.Log(x);
+            if (groupOptions.LogarithmizeYForInterpolation)
+              y = Math.Log(y);
+
+            if (x.IsFinite() && y.IsFinite())
+            {
+              xtrans.Add(x);
+              ytrans.Add(y);
+            }
+          }
+
+          var interpolation = (groupOptions as MasterCurveGroupOptionsWithScalarInterpolation).InterpolationFunction;
+
+          if (interpolation is not null)
+          {
+            var interpolationResult = interpolation.Interpolate(xtrans, ytrans);
+            var xcol = col.EnsureExistence($"xInterpolated{(char)('A' + idxGroup)}", typeof(DoubleColumn), ColumnKind.X, groupNumber);
+            var ycol = col.EnsureExistence($"yInterpolated{(char)('A' + idxGroup)}", typeof(DoubleColumn), ColumnKind.V, groupNumber);
+            ++groupNumber;
+
+            var minX = xtrans[0];
+            var maxX = xtrans[^1];
+            int numberOfInterpolationPoints = 1001;
+            for (int i = 0; i < numberOfInterpolationPoints; ++i)
+            {
+              var r = i / (numberOfInterpolationPoints + 1d);
+              var x = minX * (1 - r) + maxX * r;
+              var y = interpolationResult.GetYOfX(x);
+
+              if (groupOptions.LogarithmizeXForInterpolation)
+                x = Math.Exp(x);
+              if (groupOptions.LogarithmizeYForInterpolation)
+                y = Math.Exp(y);
+
+              xcol[i] = x;
+              ycol[i] = y;
+            }
+          }
         }
-        ++groupNumber;
       }
 
-      var shiftFactors = col.EnsureExistence("ShiftFactors", typeof(DoubleColumn), ColumnKind.V, groupNumber);
-      shiftFactors.Data = masterCurveResult.ResultingShifts;
+      if (!string.IsNullOrEmpty(processOptions.Property1Name))
+      {
+        var prop1Col = (DoubleColumn)col.EnsureExistence(processOptions.Property1Name, typeof(DoubleColumn), ColumnKind.X, groupNumber);
+
+        DoubleColumn prop1ColInv = null;
+        if (processOptions.Property1TemperatureRepresentation.HasValue)
+        {
+          prop1ColInv = (DoubleColumn)col.EnsureExistence(processOptions.Property1Name + "_Inverse", typeof(DoubleColumn), ColumnKind.V, groupNumber);
+        }
+
+        for (int idxCurve = 0; idxCurve < numberOfCurves; ++idxCurve)
+        {
+          var idxCurveInShiftGroupCollection = fitInfo.CurveInformation[idxCurve].IndexInShiftGroupCollection;
+          if (idxCurveInShiftGroupCollection.HasValue)
+          {
+            prop1Col[idxCurveInShiftGroupCollection.Value] = fitInfo.CurveInformation[idxCurve].Property1Value;
+
+            if (prop1ColInv is not null)
+            {
+              var t = new Altaxo.Science.Temperature(fitInfo.CurveInformation[idxCurve].Property1Value, processOptions.Property1TemperatureRepresentation.Value);
+              prop1ColInv[idxCurveInShiftGroupCollection.Value] = t.InInverseKelvin;
+            }
+          }
+        }
+      }
+
+      if (!string.IsNullOrEmpty(processOptions.Property2Name))
+      {
+        var prop2Col = (DoubleColumn)col.EnsureExistence(processOptions.Property2Name, typeof(DoubleColumn), ColumnKind.V, groupNumber);
+        for (int idxCurve = 0; idxCurve < numberOfCurves; ++idxCurve)
+        {
+          var idxCurveInShiftGroupCollection = fitInfo.CurveInformation[idxCurve].IndexInShiftGroupCollection;
+          if (idxCurveInShiftGroupCollection.HasValue)
+          {
+            prop2Col[idxCurveInShiftGroupCollection.Value] = fitInfo.CurveInformation[idxCurve].Property2Value;
+          }
+        }
+      }
+
+      var shiftCol = (DoubleColumn)col.EnsureExistence("Shift", typeof(DoubleColumn), ColumnKind.V, groupNumber);
+      shiftCol.Data = masterCurveResult.ResultingShifts;
+      shiftCol.Data = shiftCol - shiftOffset; // subtract the shiftOffset
+      var shiftFactorCol = (DoubleColumn)col.EnsureExistence("ShiftFactor", typeof(DoubleColumn), ColumnKind.V, groupNumber);
+      shiftFactorCol.Data = shiftFactorCol.Array.Select(x => Math.Exp(x));
+    }
+
+    private static IReadOnlyList<(double x, double y)> GetMergedCurveData(XAndYColumn?[] originalCurves, MasterCurveGroupOptions groupOptions, MasterCurveCreationResult masterCurveResult, FitInformation fitInfo, double shiftOffset)
+    {
+      var resultCurve = new List<(double x, double y)>();
+      for (int idxCurve = 0; idxCurve < originalCurves.Length; idxCurve++)
+      {
+        var idxCurveInShiftGroupCollection = fitInfo.CurveInformation[idxCurve].IndexInShiftGroupCollection;
+        if (idxCurveInShiftGroupCollection is null)
+          continue; // if this particular curve has no shift information, we skip it
+
+        var shiftValue = masterCurveResult.ResultingShifts[idxCurveInShiftGroupCollection.Value] - shiftOffset;
+        var shiftCurve = ConvertToShiftCurve(originalCurves[idxCurve]);
+        for (int i = 0; i < shiftCurve.Count; ++i)
+        {
+          var x = shiftCurve.X[i];
+          if (groupOptions.XShiftBy == ShiftXBy.Factor)
+            x *= Math.Exp(shiftValue);
+          else if (groupOptions.XShiftBy == ShiftXBy.Offset)
+            x += shiftValue;
+          else
+            throw new NotImplementedException();
+          resultCurve.Add((x, shiftCurve.Y[i]));
+        }
+      }
+      resultCurve.Sort((a, b) => Comparer<double>.Default.Compare(a.x, b.x));
+
+      return resultCurve;
+    }
+
+    private (double shiftOffset, AltaxoVariant referenceValue) GetShiftOffset(MasterCurveCreationResult masterCurveResult, FitInformation fitInfo, MasterCurveCreationOptions processOptions)
+    {
+      var useExactReferenceValue = processOptions.UseExactReferenceValue;
+
+StartOfFunction:
+
+      double shiftOffset = 0;
+      AltaxoVariant referenceValueUsed = new AltaxoVariant();
+      if (processOptions.ReferenceValue.HasValue)
+      {
+        if (useExactReferenceValue)
+        {
+          // we have to make an interpolation of the shift values (y) versus the property1 values (x), and then
+          // try to get the shift value at the reference property
+          var listX = new List<double>();
+          var listY = new List<double>();
+          for (int idxCurve = 0; idxCurve < fitInfo.CurveInformation.Count; ++idxCurve)
+          {
+            var idxCurveInShiftGroupCollection = fitInfo.CurveInformation[idxCurve].IndexInShiftGroupCollection;
+            if (idxCurveInShiftGroupCollection.HasValue && !fitInfo.CurveInformation[idxCurve].Property1Value.IsEmpty)
+            {
+              double x = fitInfo.CurveInformation[idxCurve].Property1Value;
+              double y = masterCurveResult.ResultingShifts[idxCurveInShiftGroupCollection.Value];
+
+              if (!double.IsNaN(x) && !double.IsNaN(y))
+              {
+                listX.Add(x);
+                listY.Add(y);
+              }
+            }
+          }
+
+          if (listX.Count < 2)
+          {
+            useExactReferenceValue = false;
+            goto StartOfFunction;
+          }
+
+          var interpolation = new Altaxo.Calc.Interpolation.CrossValidatedCubicSplineOptions();
+          var interpolationFunc = interpolation.Interpolate(listX, listY);
+          shiftOffset = interpolationFunc.GetYOfX(processOptions.ReferenceValue.Value);
+          referenceValueUsed = processOptions.ReferenceValue.Value;
+        }
+        else
+        {
+
+          // we search for the nearest index that has shift information available
+          var referenceValue = processOptions.ReferenceValue.Value;
+          double minDistance = double.PositiveInfinity;
+          shiftOffset = 0;
+          for (int idxCurve = 0; idxCurve < fitInfo.CurveInformation.Count; ++idxCurve)
+          {
+            var idxCurveInShiftGroupCollection = fitInfo.CurveInformation[idxCurve].IndexInShiftGroupCollection;
+            if (idxCurveInShiftGroupCollection.HasValue && !fitInfo.CurveInformation[idxCurve].Property1Value.IsEmpty)
+            {
+              var distance = Math.Abs(fitInfo.CurveInformation[idxCurve].Property1Value - referenceValue);
+              if (distance < minDistance)
+              {
+                minDistance = distance;
+                shiftOffset = masterCurveResult.ResultingShifts[idxCurveInShiftGroupCollection.Value];
+                referenceValueUsed = fitInfo.CurveInformation[idxCurve].Property1Value;
+              }
+            }
+          }
+        }
+      }
+      else // we use the reference index
+      {
+        var refIndex = processOptions.IndexOfReferenceColumnInColumnGroup;
+        // we search for the nearest index that has shift information available
+        double minDistance = double.PositiveInfinity;
+        shiftOffset = 0;
+        for (int idxCurve = 0; idxCurve < fitInfo.CurveInformation.Count; ++idxCurve)
+        {
+          var idxCurveInShiftGroupCollection = fitInfo.CurveInformation[idxCurve].IndexInShiftGroupCollection;
+
+          if (idxCurveInShiftGroupCollection.HasValue)
+          {
+            var distance = Math.Abs(idxCurve - refIndex);
+            if (distance < minDistance)
+            {
+              minDistance = distance;
+              shiftOffset = masterCurveResult.ResultingShifts[idxCurveInShiftGroupCollection.Value];
+              referenceValueUsed = fitInfo.CurveInformation[idxCurve].Property1Value;
+            }
+          }
+        }
+
+      }
+      return (shiftOffset, referenceValueUsed);
+    }
+
+    static MasterCurveGroupOptions GetGroupOptions(MasterCurveCreationOptions options, int idxGroup)
+    {
+      int choiceIndex = options.MasterCurveGroupOptionsChoice == MasterCurveGroupOptionsChoice.SeparateForEachGroup ? idxGroup : 0;
+      var groupOptions = options.GroupOptions[choiceIndex];
+      return groupOptions;
     }
 
     /// <summary>
     /// Converts the <see cref="MasterCurveData"/> to <see cref="ShiftGroupCollection"/>.
+    /// Only those curves are converted which participate on the fit, i.e. the curve must have at least two points,
+    /// and the fitting weight must be positive.
     /// </summary>
     /// <param name="processData">The process data.</param>
     /// <returns>The <see cref="ShiftGroupCollection"/> containing the data to be shifted.</returns>
-    private static ShiftGroupCollection ConvertToShiftGroupCollection(MasterCurveCreationOptions options, MasterCurveData processData)
+    private static (ShiftGroupCollection shiftGroupCollection, FitInformation fitInformation) ConvertToShiftGroupCollection(MasterCurveCreationOptions options, MasterCurveData processData)
     {
       var srcData = processData.CurveData;
-      var listShiftCollections = new List<ShiftGroup>();
 
-      for (int groupNo = 0; groupNo < srcData.Count; ++groupNo)
+      var numberOfGroups = srcData.Count;
+      var numberOfCurves = srcData.Max(shiftGroup => shiftGroup.Length);
+      var listShiftCollections = Enumerable.Range(0, numberOfGroups).Select(i => new List<ShiftCurve>()).ToList();
+
+      // create an array of extended information that will accomodate info about the curves, e.g. the property1 and property2
+      var curveInfo = Enumerable.Range(0, numberOfCurves).Select(i => new ExtendedInformation()).ToArray();
+      // create an array that relates the group of our MasterCurveData to the group in the resulting listShiftCollection
+      var groupCorrespondence = new int?[numberOfGroups];
+
+      for (int idxCurve = 0; idxCurve < numberOfCurves; idxCurve++)
       {
-        var srcSubArr = srcData[groupNo];
-        int choiceIndex = options.MasterCurveGroupOptionsChoice == MasterCurveGroupOptionsChoice.SeparateForEachGroup ? groupNo : 0;
+        bool curveIndexWillParticipateInFit = false;
+        var createdShiftCurves = new ShiftCurve?[numberOfGroups];
 
-        bool logarithmizeXForInterpolation, logarithmizeYForInterpolation;
-        double fitWeight;
-        ShiftXBy xShiftBy;
-        Func<(IReadOnlyList<double> X, IReadOnlyList<double> Y, IReadOnlyList<double>? YErr), Func<double, double>>? createInterpolationFunction = null;
+        AltaxoVariant property1Value = new AltaxoVariant(), property2Value = new AltaxoVariant();
 
-        if (options.GroupOptions[choiceIndex] is MasterCurveGroupOptionsWithScalarInterpolation scalarOptions)
+        for (int idxGroup = 0; idxGroup < numberOfGroups; idxGroup++)
         {
-          fitWeight = scalarOptions.FittingWeight;
-          if (!(fitWeight > 0))
-            continue;
-          logarithmizeXForInterpolation = scalarOptions.LogarithmizeXForInterpolation;
-          logarithmizeYForInterpolation = scalarOptions.LogarithmizeYForInterpolation;
-          xShiftBy = scalarOptions.XShiftBy;
-          createInterpolationFunction = (arg) => scalarOptions.InterpolationFunction.Interpolate(arg.X, arg.Y, arg.YErr).GetYOfX;
+          var groupOptions = GetGroupOptions(options, idxGroup);
+          // look if the curve has some points
+          var xycol = srcData[idxGroup][idxCurve];
+          var shiftCurve = xycol is not null ? ConvertToShiftCurve(xycol) : null;
+          if (shiftCurve is not null && shiftCurve.Count >= 2 && groupOptions.FittingWeight > 0) // Curve is appropriate to be used for fitting
+          {
+            curveIndexWillParticipateInFit = true;
+            createdShiftCurves[idxGroup] = shiftCurve;
+          }
+
+          var (p1, p2) = GetPropertiesOfCurve(xycol, options.Property1Name, options.Property2Name);
+
+          if (!p1.IsEmpty)
+          {
+            if (property1Value.IsEmpty)
+              property1Value = p1;
+            else if (property1Value != p1)
+              throw new InvalidOperationException();
+          }
+          if (!p2.IsEmpty)
+          {
+            if (property2Value.IsEmpty)
+              property2Value = p2;
+            else if (property2Value != p2)
+              throw new InvalidOperationException();
+          }
         }
-        else if (options.GroupOptions[choiceIndex] is MasterCurveGroupOptionsWithComplexInterpolation complexOptions)
+
+        curveInfo[idxCurve].Property1Value = property1Value;
+        curveInfo[idxCurve].Property2Value = property2Value;
+
+        if (curveIndexWillParticipateInFit)
         {
-          fitWeight = groupNo == 0 ? complexOptions.FittingWeight : complexOptions.FittingWeightIm;
-          if (!(fitWeight > 0))
-            continue;
-          logarithmizeXForInterpolation = complexOptions.LogarithmizeXForInterpolation;
-          logarithmizeYForInterpolation = groupNo == 0 ? complexOptions.LogarithmizeYForInterpolation : complexOptions.LogarithmizeYImForInterpolation;
-          xShiftBy = complexOptions.XShiftBy;
+          curveInfo[idxCurve].IndexInShiftGroupCollection = listShiftCollections[0].Count;
+          for (int idxGroup = 0; idxGroup < numberOfGroups; idxGroup++)
+          {
+            listShiftCollections[idxGroup].Add(createdShiftCurves[idxGroup]);
+          }
         }
         else
         {
-          throw new NotImplementedException();
-        }
-
-
-        var shiftCurves = new ShiftCurve?[srcSubArr.Length];
-        bool any = false;
-        for (int i = 0; i < srcSubArr.Length; i++)
-        {
-          var xycol = srcSubArr[i];
-          shiftCurves[i] = xycol is not null ? ConvertToShiftCurve(xycol) : null;
-          any |= shiftCurves[i] is not null;
-        }
-
-        if (any)
-        {
-          listShiftCollections.Add(new ShiftGroup(shiftCurves, xShiftBy, fitWeight, logarithmizeXForInterpolation, logarithmizeYForInterpolation, createInterpolationFunction));
-        }
-        else
-        {
-          break;
+          curveInfo[idxCurve].IndexInShiftGroupCollection = null; // curve will not participate in fit
         }
       }
 
-      return new ShiftGroupCollection(listShiftCollections)
+      // Use only those shift groups that not have at least one curve in it
+      var listOfShiftGroups = new List<ShiftGroup>();
+      for (int idxGroup = 0; idxGroup < numberOfGroups; idxGroup++)
+      {
+        if (listShiftCollections.Any(c => c is not null))
+        {
+          var groupOptions = GetGroupOptions(options, idxGroup);
+          Func<(IReadOnlyList<double> X, IReadOnlyList<double> Y, IReadOnlyList<double>? YErr), Func<double, double>>? createInterpolationFunction = null;
+          if (groupOptions is MasterCurveGroupOptionsWithScalarInterpolation scalarOptions)
+          {
+            createInterpolationFunction = (arg) => scalarOptions.InterpolationFunction.Interpolate(arg.X, arg.Y, arg.YErr).GetYOfX;
+          }
+
+          var shiftGroup = new ShiftGroup(listShiftCollections[idxGroup],
+            groupOptions.XShiftBy,
+            groupOptions.FittingWeight,
+            groupOptions.LogarithmizeXForInterpolation,
+            groupOptions.LogarithmizeYForInterpolation,
+            createInterpolationFunction);
+
+          groupCorrespondence[idxGroup] = listOfShiftGroups.Count; // relate idxGroup to index in listOfShiftGroups
+          listOfShiftGroups.Add(shiftGroup);
+        }
+      }
+
+      var shiftGroupCollection = new ShiftGroupCollection(listOfShiftGroups)
       {
         RequiredRelativeOverlap = options.RequiredRelativeOverlap,
         NumberOfIterations = options.NumberOfIterations,
-        IndexOfReferenceColumnInColumnGroup = options.IndexOfReferenceColumnInColumnGroup,
+        IndexOfReferenceColumnInColumnGroup = options.IndexOfPivotCurve ?? 0,
         OptimizationMethod = options.OptimizationMethod,
       };
+
+      return (shiftGroupCollection, new FitInformation(curveInfo, groupCorrespondence));
     }
+
 
     /// <summary>
     /// Converts <see cref="XAndYColumn"/> data to a <see cref="ShiftCurve"/>.
@@ -330,5 +687,48 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
       else
         return new ShiftCurve(x, y);
     }
+
+    static DataColumn? GetRootDataColumn(IReadableColumn? column)
+    {
+      while (column is TransformedReadableColumn trc)
+      {
+        column = trc.UnderlyingReadableColumn;
+      }
+      return column as DataColumn;
+    }
+
+
+
+    public static (AltaxoVariant property1Value, AltaxoVariant property2Value) GetPropertiesOfCurve(XAndYColumn curve, string _property1, string _property2)
+    {
+      object? property1 = null, property2 = null;
+      if (curve is not null && (GetRootDataColumn(curve.YColumn) is { } ycol))
+      {
+        var table = curve.DataTable ?? DataTable.GetParentDataTableOf(ycol);
+        if (table is not null)
+        {
+          if (table.PropCols.TryGetColumn(_property1) is { } pcol1)
+          {
+            property1 = pcol1[table.DataColumns.GetColumnNumber(ycol)];
+          }
+          else
+          {
+            property1 = table.GetPropertyValue<object>(_property1);
+          }
+
+          if (table.PropCols.TryGetColumn(_property2) is { } pcol2)
+          {
+            property2 = pcol2[table.DataColumns.GetColumnNumber(ycol)];
+          }
+          else
+          {
+            property2 = table.GetPropertyValue<object>(_property1);
+          }
+        }
+      }
+
+      return (new AltaxoVariant(property1), new AltaxoVariant(property2));
+    }
+
   }
 }

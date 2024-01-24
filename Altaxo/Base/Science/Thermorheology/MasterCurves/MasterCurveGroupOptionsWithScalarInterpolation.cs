@@ -29,6 +29,47 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
 {
   public record MasterCurveGroupOptionsWithScalarInterpolation : MasterCurveGroupOptions
   {
-    public Altaxo.Calc.Interpolation.IInterpolationFunctionOptions InterpolationFunction { get; init; } = new PolynomialRegressionAsInterpolationOptions { Order = 3 };
+    public IInterpolationFunctionOptions InterpolationFunction { get; init; } = new SmoothingCubicSplineOptions { Smoothness = 1 };
+
+    #region Serialization
+
+    /// <summary>
+    /// V0: 2024-01-24 initial version
+    /// </summary>
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(MasterCurveGroupOptionsWithScalarInterpolation), 0)]
+    public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        var s = (MasterCurveGroupOptionsWithScalarInterpolation)obj;
+
+        info.AddEnum("XShiftBy", s.XShiftBy);
+        info.AddValue("LogarithmizeXForInterpolation", s.LogarithmizeXForInterpolation);
+        info.AddValue("LogarithmizeYForInterpolation", s.LogarithmizeYForInterpolation);
+        info.AddValue("FittingWeight", s.FittingWeight);
+        info.AddValue("Interpolation", s.InterpolationFunction);
+      }
+
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      {
+        var xShiftBy = info.GetEnum<ShiftXBy>("XShiftBy");
+        var logarithmizeXForInterpolation = info.GetBoolean("LogarithmizeXForInterpolation");
+        var logarithmizeYForInterpolation = info.GetBoolean("LogarithmizeYForInterpolation");
+        var fittingWeight = info.GetDouble("FittingWeight");
+        var interpolation = info.GetValue<IInterpolationFunctionOptions>("Interpolation", null);
+
+        return new MasterCurveGroupOptionsWithScalarInterpolation()
+        {
+          XShiftBy = xShiftBy,
+          LogarithmizeXForInterpolation = logarithmizeXForInterpolation,
+          LogarithmizeYForInterpolation = logarithmizeYForInterpolation,
+          FittingWeight = fittingWeight,
+          InterpolationFunction = interpolation,
+        };
+      }
+    }
+
+    #endregion
+
   }
 }

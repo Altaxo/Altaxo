@@ -36,15 +36,15 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     LastToFirst,
 
     /// <summary>Fit by fixing the Rth curve, then adding the R+1 curve, .. Nth curve. Then adding the R-1 curve, down to the 0th curve.</summary>
-    RefToLastThenToFirst,
+    PivotToLastThenToFirst,
 
     /// <summary>Fit by fixing the Rth curve, then adding the R-1 curve, .. 0th curve. Then adding the R+1 curve, up to the Nth curve.</summary>
-    RefToFirstThenToLast,
+    PivotToFirstThenToLast,
 
     /// <summary>Fit by fixing the Rth curve, then adding the R+1 curve, R-1 curve, up and down to the Nth and 0th curve.</summary>
-    RefToLastAlternating,
+    PivotToLastAlternating,
 
     /// <summary>Fit by fixing the Rth curve, then adding the R-1 curve, R+1 curve, down and up to the 0th and Nth curve.</summary>
-    RefToFirstAlternating,
+    PivotToFirstAlternating,
   }
 }

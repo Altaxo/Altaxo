@@ -28,15 +28,15 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
   public abstract record MasterCurveGroupOptions : Main.IImmutable
   {
     /// <summary>Logarithmize x values before adding to the interpolation curve. (Only for interpolation).</summary>
-    public bool LogarithmizeXForInterpolation { get; init; }
+    public bool LogarithmizeXForInterpolation { get; init; } = true;
 
     /// <summary>Logarithmize y values before adding to the interpolation curve. (Only for interpolation).</summary>
-    public bool LogarithmizeYForInterpolation { get; init; }
+    public bool LogarithmizeYForInterpolation { get; init; } = true;
 
     /// <summary>
     /// Determines how to shift the x values: either by factor or by offset. Use offset if the original data are already logarithmized.
     /// </summary>
-    public ShiftXBy XShiftBy { get; init; }
+    public ShiftXBy XShiftBy { get; init; } = ShiftXBy.Factor;
 
     public double FittingWeight { get; init; } = 1;
   }

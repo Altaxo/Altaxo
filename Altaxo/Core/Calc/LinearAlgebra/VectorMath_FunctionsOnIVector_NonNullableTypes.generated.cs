@@ -51,6 +51,20 @@ namespace Altaxo.Calc.LinearAlgebra
 				vector[i] = function(vector[i]);
 		}
 
+    /// <summary>
+		/// Adds all vector elements with a constant.
+		/// </summary>
+		/// <param name="v">The vector.</param>
+		/// <param name="a">The constant to add to.</param>
+		public static void Add(this double[] v, double a)
+		{
+			for (int i = v.Length - 1; i >= 0; --i)
+				{
+				v[i] += a;
+				}
+		}
+
+
 
 		/// <summary>
 		/// Multiplies all vector elements with a constant.
@@ -227,6 +241,20 @@ namespace Altaxo.Calc.LinearAlgebra
 			for (int i = vector.Length - 1; i >= 0; --i)
 				vector[i] = function(vector[i]);
 		}
+
+    /// <summary>
+		/// Adds all vector elements with a constant.
+		/// </summary>
+		/// <param name="v">The vector.</param>
+		/// <param name="a">The constant to add to.</param>
+		public static void Add(this float[] v, float a)
+		{
+			for (int i = v.Length - 1; i >= 0; --i)
+				{
+				v[i] += a;
+				}
+		}
+
 
 
 		/// <summary>
@@ -405,6 +433,20 @@ namespace Altaxo.Calc.LinearAlgebra
 				vector[i] = function(vector[i]);
 		}
 
+    /// <summary>
+		/// Adds all vector elements with a constant.
+		/// </summary>
+		/// <param name="v">The vector.</param>
+		/// <param name="a">The constant to add to.</param>
+		public static void Add(this int[] v, int a)
+		{
+			for (int i = v.Length - 1; i >= 0; --i)
+				{
+				v[i] += a;
+				}
+		}
+
+
 
 		/// <summary>
 		/// Multiplies all vector elements with a constant.
@@ -582,6 +624,20 @@ namespace Altaxo.Calc.LinearAlgebra
 				vector[i] = function(vector[i]);
 		}
 
+    /// <summary>
+		/// Adds all vector elements with a constant.
+		/// </summary>
+		/// <param name="v">The vector.</param>
+		/// <param name="a">The constant to add to.</param>
+		public static void Add(this IVector<double> v, double a)
+		{
+			for (int i = v.Count - 1; i >= 0; --i)
+				{
+				v[i] += a;
+				}
+		}
+
+
 
 		/// <summary>
 		/// Multiplies all vector elements with a constant.
@@ -758,6 +814,20 @@ namespace Altaxo.Calc.LinearAlgebra
 			for (int i = vector.Count - 1; i >= 0; --i)
 				vector[i] = function(vector[i]);
 		}
+
+    /// <summary>
+		/// Adds all vector elements with a constant.
+		/// </summary>
+		/// <param name="v">The vector.</param>
+		/// <param name="a">The constant to add to.</param>
+		public static void Add(this IVector<float> v, float a)
+		{
+			for (int i = v.Count - 1; i >= 0; --i)
+				{
+				v[i] += a;
+				}
+		}
+
 
 
 		/// <summary>

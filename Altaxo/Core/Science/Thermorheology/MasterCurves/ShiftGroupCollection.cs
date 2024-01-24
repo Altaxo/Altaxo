@@ -47,7 +47,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     /// </summary>
     public OptimizationMethod OptimizationMethod { get; init; }
 
-    public ShiftOrder ShiftOrder { get; init; } = ShiftOrder.RefToLastAlternating;
+    public ShiftOrder ShiftOrder { get; init; } = ShiftOrder.PivotToLastAlternating;
 
     protected int _numberOfIterations = 20;
 

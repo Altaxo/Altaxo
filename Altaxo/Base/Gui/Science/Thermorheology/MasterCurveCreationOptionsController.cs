@@ -345,6 +345,12 @@ namespace Altaxo.Gui.Science.Thermorheology
       if (initData)
       {
         NumberOfGroups = 1;
+        ManualPivotCurveIndex = _doc.IndexOfPivotCurve.HasValue;
+        if (_doc.IndexOfPivotCurve.HasValue)
+          IndexOfPivotCurve = _doc.IndexOfPivotCurve.Value;
+
+        ShiftOrder = new ItemsController<ShiftOrder>(new SelectableListNodeList(_doc.ShiftOrder));
+
         IndexOfReferenceColumn = _doc.IndexOfReferenceColumnInColumnGroup;
         OptimizationMethod = new ItemsController<OptimizationMethod>(new SelectableListNodeList(_doc.OptimizationMethod));
 
@@ -352,7 +358,7 @@ namespace Altaxo.Gui.Science.Thermorheology
         InterpolationFunctionSpecification = new ItemsController<MasterCurveGroupOptionsChoice>(new Collections.SelectableListNodeList(_doc.MasterCurveGroupOptionsChoice));
         RelativeOverlap = new DimensionfulQuantity(_doc.RequiredRelativeOverlap, Altaxo.Units.Dimensionless.Unity.Instance).AsQuantityIn(RelativeOverlapEnvironment.DefaultUnit);
 
-        Property1 = _doc.Property1;
+        Property1 = _doc.Property1Name;
         Property1IsTemperature = _doc.Property1TemperatureRepresentation is not null;
         Property1TemperatureRepresentation = new ItemsController<TemperatureRepresentation>(new SelectableListNodeList(_doc.Property1TemperatureRepresentation ?? TemperatureRepresentation.DegreeCelsius));
         if (_doc.Property1TemperatureRepresentation.HasValue)
@@ -360,7 +366,15 @@ namespace Altaxo.Gui.Science.Thermorheology
           Property1TemperatureRepresentation.SelectedValue = _doc.Property1TemperatureRepresentation.Value;
         }
 
-        Property2 = _doc.Property2;
+        Property2 = _doc.Property2Name;
+
+        IsReferenceValueUsed = _doc.ReferenceValue.HasValue;
+        if (_doc.ReferenceValue.HasValue)
+        {
+          ReferenceValue = _doc.ReferenceValue.Value;
+        }
+        IndexOfReferenceColumn = _doc.IndexOfReferenceColumnInColumnGroup;
+        UseExactReferenceValue = _doc.UseExactReferenceValue;
 
         GroupOptionsChoice = new ItemsController<MasterCurveGroupOptionsChoice>(new SelectableListNodeList(_doc.MasterCurveGroupOptionsChoice), EhCurveGroupOptionsChanged);
         GroupOptionsChoice.SelectedValue = _doc.MasterCurveGroupOptionsChoice;
@@ -471,17 +485,20 @@ namespace Altaxo.Gui.Science.Thermorheology
 
       _doc = _doc with
       {
-        IndexOfReferenceColumnInColumnGroup = IndexOfReferenceColumn,
+        IndexOfPivotCurve = ManualPivotCurveIndex ? IndexOfPivotCurve : null,
+        ShiftOrder = ShiftOrder.SelectedValue,
         OptimizationMethod = optimizationMethod,
         RequiredRelativeOverlap = relOverlap,
         NumberOfIterations = numIterations,
+        UseExactReferenceValue = UseExactReferenceValue,
+        ReferenceValue = IsReferenceValueUsed ? ReferenceValue : null,
+        IndexOfReferenceColumnInColumnGroup = IndexOfReferenceColumn,
         MasterCurveGroupOptionsChoice = choice,
         GroupOptions = options,
 
-
-        Property1 = prop1,
+        Property1Name = prop1,
         Property1TemperatureRepresentation = Property1IsTemperature ? Property1TemperatureRepresentation.SelectedValue : null,
-        Property2 = prop2,
+        Property2Name = prop2,
       };
 
       return ApplyEnd(true, disposeController);

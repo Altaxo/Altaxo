@@ -39,24 +39,13 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     /// </summary>
     public int? IndexOfPivotCurve { get; init; }
 
-    public ShiftOrder ShiftOrder { get; init; } = ShiftOrder.RefToLastAlternating;
-
-
     /// <summary>
-    /// If set, the resulting shift values are transformed in such a manner that the resulting shift at the <see cref="Property1"/> is 1.
-    /// The behavior depends also on the value of <see cref="UseExactReferenceValue"/>. If this property is false, the curve that is nearest to the reference
-    /// value is used as reference curve. If <see cref="UseExactReferenceValue"/> is true, the shift values are interpolated, and the exact reference value is used.
-    /// If the value is not set, then the curve with the index <see cref="IndexOfReferenceColumnInColumnGroup"/> is used as reference curve.
+    /// Designates the order with which the curves are shifted to the master curve.
     /// </summary>
-    public double? ReferenceValue { get; init; }
+    public ShiftOrder ShiftOrder { get; init; } = ShiftOrder.PivotToLastAlternating;
 
-    /// <summary>
-    /// Gets a value indicating whether to use the exact reference value. See <see cref="ReferenceValue"/> for explanations.
-    /// </summary>
-    public bool UseExactReferenceValue { get; init; }
 
-    /// <summary>Index of the reference curve.</summary>
-    public int IndexOfReferenceColumnInColumnGroup { get; init; }
+
 
     /// <summary>
     /// Determines the method to best fit the data into the master curve.
@@ -107,7 +96,6 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
       }
     }
 
-
     public MasterCurveGroupOptionsChoice MasterCurveGroupOptionsChoice { get; init; } = MasterCurveGroupOptionsChoice.SameForAllGroups;
 
     /// <summary>
@@ -117,15 +105,21 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     /// </summary>
     public ImmutableList<MasterCurveGroupOptions> GroupOptions { get; init; } = new MasterCurveGroupOptions[] { new MasterCurveGroupOptionsWithScalarInterpolation() }.ToImmutableList();
 
+    /// <summary>
+    /// If not null, a second stage of fitting can be appended when creating the master curve.
+    /// In the default stage, usually a robust interpolation method is chosen. Then, in the 2nd stage, a less robust interpolation method can be used, because the
+    /// master curve is already created, and only fine adjustments need to be done.
+    /// </summary>
+    public MasterCurveImprovementOptions? MasterCurveImprovementOptions { get; init; }
 
     /// <summary>
     /// Name of the first column property. In most cases, this is something like 'Temperature'.
     /// If unused, set this to <see cref="string.Empty"/>
     /// </summary>
-    public string Property1 { get; init; } = string.Empty;
+    public string Property1Name { get; init; } = string.Empty;
 
     /// <summary>
-    /// If not null, <see cref="Property1"/> represents a temperature, and the value here represents the unit of the temperature.
+    /// If not null, <see cref="Property1Name"/> represents a temperature, and the value here represents the unit of the temperature.
     /// </summary>
     public TemperatureRepresentation? Property1TemperatureRepresentation { get; init; }
 
@@ -133,7 +127,98 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     /// Name of the second column property. In most cases, this is something like 'Temperature'.
     /// If unused, set this to <see cref="string.Empty"/>
     /// </summary>
-    public string Property2 { get; init; } = string.Empty;
+    public string Property2Name { get; init; } = string.Empty;
+
+    /// <summary>
+    /// If set, the resulting shift values are transformed in such a manner that the resulting shift at the <see cref="Property1Name"/> is 1.
+    /// The behavior depends also on the value of <see cref="UseExactReferenceValue"/>. If this property is false, the curve that is nearest to the reference
+    /// value is used as reference curve. If <see cref="UseExactReferenceValue"/> is true, the shift values are interpolated, and the exact reference value is used.
+    /// If the value is not set, then the curve with the index <see cref="IndexOfReferenceColumnInColumnGroup"/> is used as reference curve.
+    /// </summary>
+    public double? ReferenceValue { get; init; }
+
+    /// <summary>
+    /// Gets a value indicating whether to use the exact reference value. See <see cref="ReferenceValue"/> for explanations.
+    /// </summary>
+    public bool UseExactReferenceValue { get; init; }
+
+    /// <summary>Index of the reference curve. This value is only used if <see cref="ReferenceValue"/> is null; otherwise the value of
+    /// the reference column will be determined from the value of <see cref="ReferenceValue"/> and the <see cref="Property1Name"/> of the curves.</summary>
+    public int IndexOfReferenceColumnInColumnGroup { get; init; }
+
+    /// <summary>
+    /// Gets the output options for writing the resulting data into the master curve table.
+    /// </summary>
+    public MasterCurveTableOutputOptions TableOutputOptions { get; init; }
+
+    #region Serialization
+
+    /// <summary>
+    /// V0: 2024-01-24 initial version
+    /// </summary>
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(MasterCurveCreationOptions), 0)]
+    public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        var s = (MasterCurveCreationOptions)obj;
+
+        info.AddValue("IndexOfPivotCurve", s.IndexOfPivotCurve);
+        info.AddEnum("ShiftOrder", s.ShiftOrder);
+        info.AddEnum("OptimizationMethod", s.OptimizationMethod);
+        info.AddValue("NumberOfIterations", s.NumberOfIterations);
+        info.AddValue("RequiredRelativeOverlap", s.RequiredRelativeOverlap);
+        info.AddEnum("GroupOptionsChoice", s.MasterCurveGroupOptionsChoice);
+        info.AddArray("GroupOptions", s.GroupOptions, s.GroupOptions.Count);
+        info.AddValueOrNull("ImprovmentOptions", s.MasterCurveImprovementOptions);
+        info.AddValue("Property1Name", s.Property1Name);
+        info.AddValue("Property2Name", s.Property2Name);
+        info.AddValue("ReferenceValue", s.ReferenceValue);
+        info.AddValue("UseExactReferenceValue", s.UseExactReferenceValue);
+        info.AddValue("ReferenceColumnIndex", s.IndexOfReferenceColumnInColumnGroup);
+        info.AddValue("TableOutputOptions", s.TableOutputOptions);
+
+      }
+
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      {
+        var IndexOfPivotCurve = info.GetNullableInt32("IndexOfPivotCurve");
+        var ShiftOrder = info.GetEnum<ShiftOrder>("ShiftOrder");
+        var OptimizationMethod = info.GetEnum<OptimizationMethod>("OptimizationMethod");
+        var NumberOfIterations = info.GetInt32("NumberOfIterations");
+        var RequiredRelativeOverlap = info.GetDouble("RequiredRelativeOverlap");
+        var GroupOptionsChoice = info.GetEnum<MasterCurveGroupOptionsChoice>("GroupOptionsChoice");
+        var GroupOptions = info.GetArrayOfValues<MasterCurveGroupOptions>("GroupOptions", null);
+        var ImprovementOptions = info.GetValueOrNull<MasterCurveImprovementOptions>("ImprovementOptions", null);
+        var Property1Name = info.GetString("Property1Name");
+        var Property2Name = info.GetString("Property2Name");
+        var ReferenceValue = info.GetNullableDouble("ReferenceValue");
+        var UseExactReferenceValue = info.GetBoolean("UseExactReferenceValue");
+        var ReferenceColumnIndex = info.GetInt32("ReferenceColumnIndex");
+        var TableOutputOptions = info.GetValue<MasterCurveTableOutputOptions>("TableOutputOptions", null);
+
+        return new MasterCurveCreationOptions()
+        {
+          IndexOfPivotCurve = IndexOfPivotCurve,
+          ShiftOrder = ShiftOrder,
+          OptimizationMethod = OptimizationMethod,
+          NumberOfIterations = NumberOfIterations,
+          RequiredRelativeOverlap = RequiredRelativeOverlap,
+          MasterCurveGroupOptionsChoice = GroupOptionsChoice,
+          GroupOptions = GroupOptions.ToImmutableList(),
+          MasterCurveImprovementOptions = ImprovementOptions,
+          Property1Name = Property1Name,
+          Property2Name = Property2Name,
+          ReferenceValue = ReferenceValue,
+          UseExactReferenceValue = UseExactReferenceValue,
+          IndexOfReferenceColumnInColumnGroup = ReferenceColumnIndex,
+          TableOutputOptions = TableOutputOptions,
+        };
+      }
+    }
+
+    #endregion
+
 
 
   }
