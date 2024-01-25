@@ -53,7 +53,8 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
       var shiftOrder = shiftGroupCollection.ShiftOrder;
       if (shiftOrder.IsPivotIndexRequired && !shiftOrder.PivotIndex.HasValue)
       {
-        shiftOrder = shiftOrder.WithPivotIndex(0);
+        var pivotIndexCandidate = GetCurveIndexWithMostVariation(shiftGroupCollection[0]);
+        shiftOrder = shiftOrder.WithPivotIndex(pivotIndexCandidate ?? 0);
       }
 
       var (indexOfReferenceColumnInColumnGroup, shiftOrderIndices) = GetFixedAndShiftedIndices(shiftOrder, maxColumns);
@@ -103,6 +104,63 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     {
       var e = order.GetShiftOrderIndices(numberOfItems);
       return (e.First(), e.Skip(1).ToArray());
+    }
+
+    /// <summary>
+    /// Gets the index of the curve in the given group with the most variation. The variation is determined by calculating the absolute slope,
+    /// with applying the logarithmic transformations according to the interpolation settings in that group.
+    /// </summary>
+    /// <param name="group">The group.</param>
+    /// <returns>The index of the curve with most variation. If no suitable curve was found, then the return value is null.</returns>
+    public static int? GetCurveIndexWithMostVariation(ShiftGroup group)
+    {
+      double maxAbsoluteSlope = 0;
+      int idxMaxAbsoluteSlope = -1;
+      for (int idxCurve = 0; idxCurve < group.Count; idxCurve++)
+      {
+        var (x, y) = TransformCurveForInterpolationAccordingToGroupOptions(group[idxCurve], group);
+        if (x.Count < 2)
+          continue;
+        var reg = new Altaxo.Calc.Regression.QuickLinearRegression();
+        for (int i = 0; i < x.Count; i++)
+        {
+          reg.Add(x[i], y[i]);
+        }
+
+        var absSlope = Math.Abs(reg.GetA1());
+        if (absSlope > maxAbsoluteSlope)
+        {
+          maxAbsoluteSlope = absSlope;
+          idxMaxAbsoluteSlope = idxCurve;
+        }
+      }
+
+      return idxMaxAbsoluteSlope >= 0 ? idxMaxAbsoluteSlope : null;
+    }
+
+    public static (IReadOnlyList<double> x, IReadOnlyList<double> y) TransformCurveForInterpolationAccordingToGroupOptions(ShiftCurve curve, ShiftGroup group)
+    {
+      var xarr = new List<double>();
+      var yarr = new List<double>();
+
+      for (int i = 0; i < curve.Count; ++i)
+      {
+        var x = curve.X[i];
+        var y = curve.Y[i];
+
+        if (group.LogarithmizeXForInterpolation)
+          x = Math.Log(x);
+        if (group.LogarithmizeYForInterpolation)
+          y = Math.Log(y);
+
+        if (x.IsFinite() && y.IsFinite())
+        {
+          xarr.Add(x);
+          yarr.Add(y);
+        }
+      }
+
+      return (xarr, yarr);
     }
 
     /// <summary>
