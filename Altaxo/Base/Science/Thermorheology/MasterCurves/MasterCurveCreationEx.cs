@@ -281,7 +281,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
         var yColumnList = new List<(int group, string name, DataColumn column, AltaxoVariant p1, AltaxoVariant p2, double shift)>();
 
         IReadOnlyList<double> lastX = new double[0];
-        groupNumber = (int)(1000 * Math.Ceiling(groupNumber / 1000d) - 1);
+        groupNumber = (int)(1000 * Math.Ceiling((groupNumber + 1) / 1000d) - 1);
         // in groups
         for (int idxGroup = 0; idxGroup < processData.CurveData.Count; idxGroup++)
         {
@@ -344,7 +344,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
 
       if (processOptions.TableOutputOptions.OutputMergedShiftedCurve) // if the table should be filled with the merged data
       {
-        groupNumber = (int)(1000 * Math.Ceiling(groupNumber / 1000d));
+        groupNumber = (int)(1000 * Math.Ceiling((groupNumber + 1) / 1000d));
         // in groups
         for (int idxGroup = 0; idxGroup < processData.CurveData.Count; idxGroup++)
         {
@@ -369,7 +369,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
 
       if (processOptions.TableOutputOptions.OutputInterpolatedCurve)
       {
-        groupNumber = (int)(100 * Math.Ceiling(groupNumber / 100d));
+        groupNumber = (int)(100 * Math.Ceiling((groupNumber + 1) / 100d));
 
         // get out the interpolation result, Achtung die Werte sind logarithmiert
         for (int idxGroup = 0; idxGroup < processData.CurveData.Count; idxGroup++)
@@ -425,62 +425,71 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
             }
           }
         }
-
-        // Finally, we put the actually used Reference value to a table property "MasterCurveReferenceValue"
-        if (!referenceValueUsed.IsEmpty)
-        {
-          destinationTable.SetTableProperty("MasterCurveReferenceValue", referenceValueUsed);
-        }
       }
 
-      if (!string.IsNullOrEmpty(processOptions.Property1Name))
       {
-        var prop1Col = (DoubleColumn)col.EnsureExistence(processOptions.Property1Name, typeof(DoubleColumn), ColumnKind.X, groupNumber);
-
-        DoubleColumn prop1ColInv = null;
-        if (processOptions.Property1TemperatureRepresentation.HasValue)
+        // Output the columns with the values of Property1 (most probable the temperature) ....
+        groupNumber = (int)(100 * Math.Ceiling((groupNumber + 1) / 100d));
+        if (!string.IsNullOrEmpty(processOptions.Property1Name))
         {
-          prop1ColInv = (DoubleColumn)col.EnsureExistence(processOptions.Property1Name + "_Inverse", typeof(DoubleColumn), ColumnKind.V, groupNumber);
-        }
+          var prop1Col = (DoubleColumn)col.EnsureExistence(processOptions.Property1Name, typeof(DoubleColumn), ColumnKind.X, groupNumber);
 
-        for (int idxCurve = 0; idxCurve < numberOfCurves; ++idxCurve)
-        {
-          var idxCurveInShiftGroupCollection = fitInfo.CurveInformation[idxCurve].IndexInShiftGroupCollection;
-          if (idxCurveInShiftGroupCollection.HasValue)
+          // ... and if Property1 represents indeed the temperature, then also create a column with the inverse temperature...
+          DoubleColumn prop1ColInv = null;
+          if (processOptions.Property1TemperatureRepresentation.HasValue)
           {
-            prop1Col[idxCurveInShiftGroupCollection.Value] = fitInfo.CurveInformation[idxCurve].Property1Value;
+            prop1ColInv = (DoubleColumn)col.EnsureExistence(processOptions.Property1Name + "_Inverse", typeof(DoubleColumn), ColumnKind.X, groupNumber);
+          }
 
-            if (prop1ColInv is not null)
+          for (int idxCurve = 0; idxCurve < numberOfCurves; ++idxCurve)
+          {
+            var idxCurveInShiftGroupCollection = fitInfo.CurveInformation[idxCurve].IndexInShiftGroupCollection;
+            if (idxCurveInShiftGroupCollection.HasValue)
             {
-              var t = new Altaxo.Science.Temperature(fitInfo.CurveInformation[idxCurve].Property1Value, processOptions.Property1TemperatureRepresentation.Value);
-              prop1ColInv[idxCurveInShiftGroupCollection.Value] = t.InInverseKelvin;
+              prop1Col[idxCurveInShiftGroupCollection.Value] = fitInfo.CurveInformation[idxCurve].Property1Value;
+
+              if (prop1ColInv is not null)
+              {
+                var t = new Altaxo.Science.Temperature(fitInfo.CurveInformation[idxCurve].Property1Value, processOptions.Property1TemperatureRepresentation.Value);
+                prop1ColInv[idxCurveInShiftGroupCollection.Value] = t.InInverseKelvin;
+              }
             }
           }
         }
-      }
 
-      if (!string.IsNullOrEmpty(processOptions.Property2Name))
-      {
-        var prop2Col = (DoubleColumn)col.EnsureExistence(processOptions.Property2Name, typeof(DoubleColumn), ColumnKind.V, groupNumber);
-        for (int idxCurve = 0; idxCurve < numberOfCurves; ++idxCurve)
+        // ... and a column with the property2 values...
+        if (!string.IsNullOrEmpty(processOptions.Property2Name))
         {
-          var idxCurveInShiftGroupCollection = fitInfo.CurveInformation[idxCurve].IndexInShiftGroupCollection;
-          if (idxCurveInShiftGroupCollection.HasValue)
+          var prop2Col = (DoubleColumn)col.EnsureExistence(processOptions.Property2Name, typeof(DoubleColumn), ColumnKind.V, groupNumber);
+          for (int idxCurve = 0; idxCurve < numberOfCurves; ++idxCurve)
           {
-            prop2Col[idxCurveInShiftGroupCollection.Value] = fitInfo.CurveInformation[idxCurve].Property2Value;
+            var idxCurveInShiftGroupCollection = fitInfo.CurveInformation[idxCurve].IndexInShiftGroupCollection;
+            if (idxCurveInShiftGroupCollection.HasValue)
+            {
+              prop2Col[idxCurveInShiftGroupCollection.Value] = fitInfo.CurveInformation[idxCurve].Property2Value;
+            }
           }
+        }
+
+        // now the shift values
+        var shiftCol = (DoubleColumn)col.EnsureExistence("Shift", typeof(DoubleColumn), ColumnKind.V, groupNumber);
+        shiftCol.Data = masterCurveResult.ResultingShifts;
+        shiftCol.Data = shiftCol - shiftOffset; // subtract the shiftOffset
+
+
+        // Output the factor only if any for the group uses shift by factor
+        if (processOptions.GroupOptions.Any(g => g.XShiftBy == ShiftXBy.Factor))
+        {
+          var shiftFactorCol = (DoubleColumn)col.EnsureExistence("ShiftFactor", typeof(DoubleColumn), ColumnKind.V, groupNumber);
+          shiftFactorCol.Data = shiftCol.Array.Select(x => Math.Exp(x)).ToArray();
         }
       }
 
-      var shiftCol = (DoubleColumn)col.EnsureExistence("Shift", typeof(DoubleColumn), ColumnKind.V, groupNumber);
-      shiftCol.Data = masterCurveResult.ResultingShifts;
-      shiftCol.Data = shiftCol - shiftOffset; // subtract the shiftOffset
 
-      // Output the factor only if any for the group uses shift by factor
-      if (processOptions.GroupOptions.Any(g => g.XShiftBy == ShiftXBy.Factor))
+      // Finally, we put the actually used Reference value to a table property "MasterCurveReferenceValue"
+      if (!referenceValueUsed.IsEmpty)
       {
-        var shiftFactorCol = (DoubleColumn)col.EnsureExistence("ShiftFactor", typeof(DoubleColumn), ColumnKind.V, groupNumber);
-        shiftFactorCol.Data = shiftCol.Array.Select(x => Math.Exp(x)).ToArray();
+        destinationTable.SetTableProperty("MasterCurveReferenceValue", referenceValueUsed);
       }
     }
 
