@@ -58,7 +58,7 @@ namespace Altaxo.Gui.Science.Thermorheology
 
 
       int numberOfGroups = _doc.CurveData.Count;
-      int numberOfItems = _doc.CurveData.Max(x => x.Length);
+      int numberOfItems = numberOfGroups == 0 ? 0 : _doc.CurveData.Max(x => x.Length);
 
       _dataNodes = Enumerable.Range(0, numberOfGroups)
                     .Select(i => new SelectableListNodeList(

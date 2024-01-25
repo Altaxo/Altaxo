@@ -37,7 +37,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
   /// <summary>
   /// Methods for creating a master curve.
   /// </summary>
-  public static class MasterCurveCreation
+  public class MasterCurveCreation
   {
     /// <summary>
     /// Creates one or multiple master curve(s).
@@ -49,7 +49,14 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
       // First we create the initial interpolation of the master column
       // then we successively add columns by shifting the x and merge them with the interpolation
       int maxColumns = shiftGroupCollection.Max(x => x.Count);
-      var (indexOfReferenceColumnInColumnGroup, shiftOrder) = GetFixedAndShiftedIndices(shiftGroupCollection.ShiftOrder, maxColumns, shiftGroupCollection.IndexOfReferenceColumnInColumnGroup);
+
+      var shiftOrder = shiftGroupCollection.ShiftOrder;
+      if (shiftOrder.IsPivotIndexRequired && !shiftOrder.PivotIndex.HasValue)
+      {
+        shiftOrder = shiftOrder.WithPivotIndex(0);
+      }
+
+      var (indexOfReferenceColumnInColumnGroup, shiftOrderIndices) = GetFixedAndShiftedIndices(shiftOrder, maxColumns);
 
       var result = new MasterCurveCreationResult(shiftGroupCollection.Count);
       result.ResultingShifts.Clear();
@@ -59,7 +66,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
       {
         var shiftGroup = shiftGroupCollection[idxGroup];
         result.ResultingInterpolation[idxGroup] = new InterpolationInformation();
-        var referenceShiftCurve = shiftGroupCollection[idxGroup][shiftGroupCollection.IndexOfReferenceColumnInColumnGroup];
+        var referenceShiftCurve = shiftGroupCollection[idxGroup][indexOfReferenceColumnInColumnGroup];
         // To each column group, add initially only the column used as reference (shift 0)
         result.ResultingInterpolation[idxGroup].AddXYColumn(0, indexOfReferenceColumnInColumnGroup, referenceShiftCurve.X, referenceShiftCurve.Y, idxGroup, shiftGroup);
       }
@@ -70,7 +77,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
       // now that we have a first interpolation using the reference curve, we can iterate
       // at the first iteration, the other curves will be added to the interpolation
       // and then, the quality of the master curve will be successivly improved
-      Iterate(shiftGroupCollection, shiftOrder, result);
+      Iterate(shiftGroupCollection, shiftOrderIndices, result);
 
       return result;
     }
@@ -85,70 +92,17 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
       }
     }
 
-    public static (int fixedIndex, IReadOnlyList<int> shiftOrderIndices) GetFixedAndShiftedIndices(ShiftOrder order, int numberOfItems, int refIndex)
-    {
-      var e = GetShiftOrderIndices(order, numberOfItems, refIndex);
-      return (e.First(), e.Skip(1).ToArray());
-    }
-
     /// <summary>
-    /// Gets the indices of the curves in the order in which they should be shifted.
-    /// Attention: the first returned index is the index of the curve that is fixed!
+    /// Gets the index of the initially fixed curve, and the indices of the curve that are shifted and fitted towards the master curve.
     /// </summary>
-    /// <param name="order">The shift order.</param>
-    /// <param name="numberOfItems">The number of items.</param>
-    /// <param name="refIndex">Index of the reference curve.</param>
-    /// <returns>Enumeration of curve indices in the order in which the curves should be fitted.
-    /// Attention: the first returned index is the index of the curve that is fixed!
-    /// </returns>
-    /// <exception cref="System.NotImplementedException"></exception>
-    public static IEnumerable<int> GetShiftOrderIndices(ShiftOrder order, int numberOfItems, int refIndex)
+    /// <param name="order">An instance of <see cref="ShiftOrder.IShiftOrder"/> that determines the order.</param>
+    /// <param name="numberOfItems">The number of items. This is the maximal number of curves in a group, e.g. if there is one shift group with 20 curves and another with 30 curves, then the argument should be 30.</param>
+    /// <returns>A tuple of the initially fixed index and the indices that should be fitted then.</returns>
+    /// <remarks>This function does not ensure that at the fixed index all groups have a valid curve, which is absolutely neccessary to start the shift procedure.</remarks>
+    public static (int fixedIndex, IReadOnlyList<int> shiftOrderIndices) GetFixedAndShiftedIndices(ShiftOrder.IShiftOrder order, int numberOfItems)
     {
-      switch (order)
-      {
-        case ShiftOrder.FirstToLast:
-          for (int i = 0; i < numberOfItems; ++i)
-            yield return i;
-          break;
-        case ShiftOrder.LastToFirst:
-          for (int i = numberOfItems - 1; i >= 0; --i)
-            yield return i;
-          break;
-        case ShiftOrder.PivotToLastThenToFirst:
-          for (int i = refIndex; i < numberOfItems; ++i)
-            yield return i;
-          for (int i = refIndex - 1; i >= 0; --i)
-            yield return i;
-          break;
-        case ShiftOrder.PivotToFirstThenToLast:
-          for (int i = refIndex; i >= 0; --i)
-            yield return i;
-          for (int i = refIndex + 1; i < numberOfItems; ++i)
-            yield return i;
-          break;
-        case ShiftOrder.PivotToLastAlternating:
-          yield return refIndex;
-          for (int i = 1; (refIndex - i) >= 0 || (refIndex + i) < numberOfItems; ++i)
-          {
-            if ((refIndex + i) < numberOfItems)
-              yield return (refIndex + i);
-            if ((refIndex - i) >= 0)
-              yield return (refIndex - i);
-          }
-          break;
-        case ShiftOrder.PivotToFirstAlternating:
-          yield return refIndex;
-          for (int i = 1; (refIndex - i) >= 0 || (refIndex + i) < numberOfItems; ++i)
-          {
-            if ((refIndex - i) >= 0)
-              yield return (refIndex - i);
-            if ((refIndex + i) < numberOfItems)
-              yield return (refIndex + i);
-          }
-          break;
-        default:
-          throw new NotImplementedException();
-      }
+      var e = order.GetShiftOrderIndices(numberOfItems);
+      return (e.First(), e.Skip(1).ToArray());
     }
 
     /// <summary>
@@ -165,6 +119,14 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
       }
     }
 
+    /// <summary>
+    /// Performs one iteration of the shift-and-fit procedure.
+    /// </summary>
+    /// <param name="shiftGroupCollection">The shift group collection.</param>
+    /// <param name="shiftCurveOrder">The order in which the curves are shifted and fitted. This list does not contain the index of the fixed curve.</param>
+    /// <param name="result">The result that accomodates the actual shift values.</param>
+    /// <exception cref="System.InvalidOperationException"></exception>
+    /// <exception cref="System.NotImplementedException">OptimizationMethod not implemented: " + shiftGroupCollection.OptimizationMethod.ToString()</exception>
     private static void OneIteration(ShiftGroupCollection shiftGroupCollection, IReadOnlyList<int> shiftCurveOrder, MasterCurveCreationResult result)
     {
       double initialShift = 0;
@@ -460,7 +422,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
           }
         }
       }
-      penalty = penaltySum;
+      penalty = penaltySum * Math.Abs(options.FittingWeight);
       evaluatedPoints = validPoints;
 
       //System.Diagnostics.Debug.WriteLine(string.Format("GetMeanYDifference for shift={0} resulted in {1} ({2} points)", shift, penalty, evaluatedPoints));
@@ -511,7 +473,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
           }
         }
       }
-      penalty = penaltySum;
+      penalty = penaltySum * RMath.Pow2(options.FittingWeight);
       evaluatedPoints = validPoints;
 
       //System.Diagnostics.Debug.WriteLine(string.Format("GetMeanYDifference for shift={0} resulted in {1} ({2} points)", shift, penalty, evaluatedPoints));

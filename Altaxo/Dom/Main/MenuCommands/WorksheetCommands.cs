@@ -1058,7 +1058,7 @@ namespace Altaxo.Worksheet.Commands
   {
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
-      Altaxo.Science.Thermorheology.MasterCurves.MasterCurveCreationHelper.CreateMasterCurve(ctrl.DataTable, ctrl.SelectedDataColumns, ctrl.SelectedDataRows);
+      Altaxo.Science.Thermorheology.MasterCurves.MasterCurveCreationEx.CreateMasterCurveShowDialog(ctrl.DataTable, ctrl.SelectedDataColumns, ctrl.SelectedDataRows);
     }
   }
 

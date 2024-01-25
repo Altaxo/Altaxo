@@ -74,6 +74,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
 
         int numberOfGroups = info.OpenArray("Groups");
         var curveData = new List<XAndYColumn?[]>(numberOfGroups);
+        for (int idxGroup = 0; idxGroup < numberOfGroups; idxGroup++)
         {
           int numberOfCurves = info.OpenArray("Group");
           {
@@ -90,6 +91,8 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
           info.CloseArray(numberOfCurves);
         }
         info.CloseArray(numberOfGroups);
+
+        s.CurveData = curveData;
 
         return s;
       }

@@ -39,15 +39,12 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
   {
     ShiftGroup[] _inner;
 
-    /// <summary>Index of the reference curve.</summary>
-    public int IndexOfReferenceColumnInColumnGroup { get; init; }
-
     /// <summary>
     /// Determines the method to best fit the data into the master curve.
     /// </summary>
     public OptimizationMethod OptimizationMethod { get; init; }
 
-    public ShiftOrder ShiftOrder { get; init; } = ShiftOrder.PivotToLastAlternating;
+    public ShiftOrder.IShiftOrder ShiftOrder { get; init; } = new ShiftOrder.FirstToLast();
 
     protected int _numberOfIterations = 20;
 

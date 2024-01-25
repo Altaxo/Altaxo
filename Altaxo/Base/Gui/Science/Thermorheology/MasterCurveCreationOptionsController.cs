@@ -30,6 +30,7 @@ using Altaxo.Collections;
 using Altaxo.Gui.Common;
 using Altaxo.Science;
 using Altaxo.Science.Thermorheology.MasterCurves;
+using Altaxo.Science.Thermorheology.MasterCurves.ShiftOrder;
 using Altaxo.Units;
 
 namespace Altaxo.Gui.Science.Thermorheology
@@ -65,17 +66,18 @@ namespace Altaxo.Gui.Science.Thermorheology
       }
     }
 
-    private bool _manualPivotCurveIndex;
+    private bool _useManualPivotCurveIndex;
 
-    public bool ManualPivotCurveIndex
+    public bool UseManualPivotCurveIndex
     {
-      get => _manualPivotCurveIndex;
+      get => _useManualPivotCurveIndex;
       set
       {
-        if (!(_manualPivotCurveIndex == value))
+        if (!(_useManualPivotCurveIndex == value))
         {
-          _manualPivotCurveIndex = value;
-          OnPropertyChanged(nameof(ManualPivotCurveIndex));
+          _useManualPivotCurveIndex = value;
+          OnPropertyChanged(nameof(UseManualPivotCurveIndex));
+          OnPropertyChanged(nameof(IsManualPivotIndexRequired));
         }
       }
     }
@@ -83,7 +85,7 @@ namespace Altaxo.Gui.Science.Thermorheology
 
     private int _indexOfPivotCurve;
 
-    public int IndexOfPivotCurve
+    public int ManualPivotCurveIndex
     {
       get => _indexOfPivotCurve;
       set
@@ -91,14 +93,24 @@ namespace Altaxo.Gui.Science.Thermorheology
         if (!(_indexOfPivotCurve == value))
         {
           _indexOfPivotCurve = value;
-          OnPropertyChanged(nameof(IndexOfPivotCurve));
+          OnPropertyChanged(nameof(ManualPivotCurveIndex));
         }
       }
     }
 
-    private ItemsController<ShiftOrder> _shiftOrder;
+    private void EhShiftOrderChanged(IShiftOrder order)
+    {
+      OnPropertyChanged(nameof(IsPivotIndexRequired));
+      OnPropertyChanged(nameof(IsManualPivotIndexRequired));
+    }
 
-    public ItemsController<ShiftOrder> ShiftOrder
+    public bool IsPivotIndexRequired => ShiftOrder?.SelectedValue?.IsPivotIndexRequired ?? false;
+
+    public bool IsManualPivotIndexRequired => IsPivotIndexRequired && UseManualPivotCurveIndex;
+
+    private ItemsController<IShiftOrder> _shiftOrder;
+
+    public ItemsController<IShiftOrder> ShiftOrder
     {
       get => _shiftOrder;
       set
@@ -344,12 +356,17 @@ namespace Altaxo.Gui.Science.Thermorheology
 
       if (initData)
       {
-        NumberOfGroups = 1;
-        ManualPivotCurveIndex = _doc.IndexOfPivotCurve.HasValue;
-        if (_doc.IndexOfPivotCurve.HasValue)
-          IndexOfPivotCurve = _doc.IndexOfPivotCurve.Value;
+        NumberOfGroups = Math.Max(1, _doc.GroupOptions.Count);
 
-        ShiftOrder = new ItemsController<ShiftOrder>(new SelectableListNodeList(_doc.ShiftOrder));
+        var types = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(IShiftOrder));
+        var instances = types.Select(t => (IShiftOrder)Activator.CreateInstance(t));
+        ShiftOrder = new ItemsController<IShiftOrder>(new SelectableListNodeList(
+          instances.Where(i => !i.IsOnlySuitableForRefinement).Select(i => new SelectableListNode(i.GetType().Name, i, false))), EhShiftOrderChanged);
+        ShiftOrder.SelectedValue = _doc.ShiftOrder.WithPivotIndex(null);
+
+        UseManualPivotCurveIndex = _doc.ShiftOrder.PivotIndex.HasValue;
+        if (_doc.ShiftOrder.PivotIndex.HasValue)
+          ManualPivotCurveIndex = _doc.ShiftOrder.PivotIndex.Value;
 
         IndexOfReferenceColumn = _doc.IndexOfReferenceColumnInColumnGroup;
         OptimizationMethod = new ItemsController<OptimizationMethod>(new SelectableListNodeList(_doc.OptimizationMethod));
@@ -383,6 +400,8 @@ namespace Altaxo.Gui.Science.Thermorheology
         TabControllers.SelectedValue = _selectedController;
       }
     }
+
+
 
     private void EhCurveGroupOptionsChanged(MasterCurveGroupOptionsChoice choice)
     {
@@ -461,6 +480,7 @@ namespace Altaxo.Gui.Science.Thermorheology
 
     private void EhGroupOptionsTabChanged(IMVCAController controller)
     {
+      _selectedController = controller;
     }
 
     private void EhGroupOptionsTabChanged(MasterCurveGroupOptionsChoice choice)
@@ -482,11 +502,16 @@ namespace Altaxo.Gui.Science.Thermorheology
       var relOverlap = RelativeOverlap.AsValueInSIUnits;
       var choice = GroupOptionsChoice.SelectedValue;
       var options = TabControllers.Items.Select(x => (MasterCurveGroupOptions)(((SelectableListNodeWithController)x).Controller.ModelObject)).ToImmutableList();
+      var shiftOrder = ShiftOrder.SelectedValue;
+      if (shiftOrder.IsPivotIndexRequired && UseManualPivotCurveIndex)
+      {
+        shiftOrder = shiftOrder.WithPivotIndex(ManualPivotCurveIndex);
+      }
+
 
       _doc = _doc with
       {
-        IndexOfPivotCurve = ManualPivotCurveIndex ? IndexOfPivotCurve : null,
-        ShiftOrder = ShiftOrder.SelectedValue,
+        ShiftOrder = shiftOrder,
         OptimizationMethod = optimizationMethod,
         RequiredRelativeOverlap = relOverlap,
         NumberOfIterations = numIterations,

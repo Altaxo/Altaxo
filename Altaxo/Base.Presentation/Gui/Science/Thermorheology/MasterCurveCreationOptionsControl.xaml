@@ -19,7 +19,7 @@
       <ColumnDefinition Width="4"/>
       <ColumnDefinition Width="Auto"/>
       <ColumnDefinition Width="4"/>
-      <ColumnDefinition Width="Auto"/>
+      <ColumnDefinition Width="*"/>
       <ColumnDefinition Width="4"/>
     </Grid.ColumnDefinitions>
     <Grid.RowDefinitions>
@@ -56,24 +56,26 @@
                        ToolTip="Number of curve groups. Choose 1 if you want to shift real valued curves. Choose 2 if you want to shift complex valued curves."
                        />
 
-    <CheckBox Grid.Row="2" Grid.Column="0"
-              IsChecked="{Binding ManualPivotCurveIndex, Mode=TwoWay}"
-              Content="Manual pivot index:"/>
-    <axogc:Int32UpDown Grid.Row="2" Grid.Column="2"
-                    Value="{Binding IndexOfPivotCurve}"
-                    Visibility="{Binding ManualPivotCurveIndex, Converter={x:Static axogcc:FalseToVisibilityHiddenConverter.Instance}}"   
-                    Minimum="0"
-                    ToolTip="The index of the data column where the master curve creation starts. This is the data column which remains unshifted, i.e. that has a shift factor of 1."
-                    />
-
-    <Label Grid.Row="2" Grid.Column="4"
+    <Label Grid.Row="2" Grid.Column="0"
            Content="Shift order: "
            HorizontalAlignment="Right"
            />
-    <ComboBox Grid.Row="2" Grid.Column="6"
+    <ComboBox Grid.Row="2" Grid.Column="2"
               ItemsSource="{Binding ShiftOrder.Items}"
               SelectedItem="{Binding ShiftOrder.SelectedItem, Mode=TwoWay}"
               />
+
+    <CheckBox Grid.Row="2" Grid.Column="4"
+              IsChecked="{Binding UseManualPivotCurveIndex, Mode=TwoWay}"
+              Visibility="{Binding IsPivotIndexRequired, Converter={x:Static axogcc:FalseToVisibilityHiddenConverter.Instance}}"
+              Content="Manual pivot index:" 
+              VerticalAlignment="Center"/>
+    <axogc:Int32UpDown Grid.Row="2" Grid.Column="6"
+                    Value="{Binding ManualPivotCurveIndex}"
+                    Visibility="{Binding IsManualPivotIndexRequired, Converter={x:Static axogcc:FalseToVisibilityHiddenConverter.Instance}}"   
+                    Minimum="0"
+                    ToolTip="The index of the data column where the master curve creation starts. This is the data column which remains unshifted, i.e. that has a shift factor of 1."
+                    />
 
     <Label Grid.Row="4" Grid.Column="0"
              Content="Optimization method:"/>
@@ -99,7 +101,8 @@
              ToolTip="Name of the first column property. Leave empty if not used."/>
     <CheckBox Grid.Row="10" Grid.Column="4" 
                 Content="is temperature in:"
-                IsChecked="{Binding Property1IsTemperature, Mode=TwoWay}"/>
+                IsChecked="{Binding Property1IsTemperature, Mode=TwoWay}"
+                VerticalAlignment="Center"/>
     <ComboBox Grid.Row="10" Grid.Column="6"
               ItemsSource="{Binding Property1TemperatureRepresentation.Items}"
               SelectedItem="{Binding Property1TemperatureRepresentation.SelectedItem, Mode=TwoWay}"

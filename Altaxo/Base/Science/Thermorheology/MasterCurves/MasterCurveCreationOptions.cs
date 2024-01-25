@@ -34,25 +34,16 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
   public record MasterCurveCreationOptions : Main.IImmutable
   {
     /// <summary>
-    /// Gets the index of that curve where the fit starts (the curve whose x-values are fixed). If this value is null, the value would be determined automatically. If this is not possible,
-    /// the value will be assumed to be zero.
-    /// </summary>
-    public int? IndexOfPivotCurve { get; init; }
-
-    /// <summary>
     /// Designates the order with which the curves are shifted to the master curve.
     /// </summary>
-    public ShiftOrder ShiftOrder { get; init; } = ShiftOrder.PivotToLastAlternating;
-
-
-
+    public ShiftOrder.IShiftOrder ShiftOrder { get; init; } = new ShiftOrder.PivotToLastAlternating();
 
     /// <summary>
     /// Determines the method to best fit the data into the master curve.
     /// </summary>
-    public OptimizationMethod OptimizationMethod { get; init; }
+    public OptimizationMethod OptimizationMethod { get; init; } = OptimizationMethod.OptimizeSquaredDifferenceByBruteForce;
 
-    protected int _numberOfIterations = 20;
+    protected int _numberOfIterations = 40;
 
     /// <summary>
     /// Gets or sets the number of iterations. Must be greater than or equal to 1.
@@ -149,7 +140,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     /// <summary>
     /// Gets the output options for writing the resulting data into the master curve table.
     /// </summary>
-    public MasterCurveTableOutputOptions TableOutputOptions { get; init; }
+    public MasterCurveTableOutputOptions TableOutputOptions { get; init; } = new MasterCurveTableOutputOptions();
 
     #region Serialization
 
@@ -163,15 +154,15 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
       {
         var s = (MasterCurveCreationOptions)obj;
 
-        info.AddValue("IndexOfPivotCurve", s.IndexOfPivotCurve);
-        info.AddEnum("ShiftOrder", s.ShiftOrder);
+        info.AddValue("ShiftOrder", s.ShiftOrder);
         info.AddEnum("OptimizationMethod", s.OptimizationMethod);
         info.AddValue("NumberOfIterations", s.NumberOfIterations);
         info.AddValue("RequiredRelativeOverlap", s.RequiredRelativeOverlap);
         info.AddEnum("GroupOptionsChoice", s.MasterCurveGroupOptionsChoice);
         info.AddArray("GroupOptions", s.GroupOptions, s.GroupOptions.Count);
-        info.AddValueOrNull("ImprovmentOptions", s.MasterCurveImprovementOptions);
+        info.AddValueOrNull("ImprovementOptions", s.MasterCurveImprovementOptions);
         info.AddValue("Property1Name", s.Property1Name);
+        info.AddNullableEnum("Property1TemperatureRepresentation", s.Property1TemperatureRepresentation);
         info.AddValue("Property2Name", s.Property2Name);
         info.AddValue("ReferenceValue", s.ReferenceValue);
         info.AddValue("UseExactReferenceValue", s.UseExactReferenceValue);
@@ -182,8 +173,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
 
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var IndexOfPivotCurve = info.GetNullableInt32("IndexOfPivotCurve");
-        var ShiftOrder = info.GetEnum<ShiftOrder>("ShiftOrder");
+        var ShiftOrder = info.GetValue<ShiftOrder.IShiftOrder>("ShiftOrder", null);
         var OptimizationMethod = info.GetEnum<OptimizationMethod>("OptimizationMethod");
         var NumberOfIterations = info.GetInt32("NumberOfIterations");
         var RequiredRelativeOverlap = info.GetDouble("RequiredRelativeOverlap");
@@ -191,6 +181,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
         var GroupOptions = info.GetArrayOfValues<MasterCurveGroupOptions>("GroupOptions", null);
         var ImprovementOptions = info.GetValueOrNull<MasterCurveImprovementOptions>("ImprovementOptions", null);
         var Property1Name = info.GetString("Property1Name");
+        var Property1TemperatureRepresentation = info.GetNullableEnum<TemperatureRepresentation>("Property1TemperatureRepresentation");
         var Property2Name = info.GetString("Property2Name");
         var ReferenceValue = info.GetNullableDouble("ReferenceValue");
         var UseExactReferenceValue = info.GetBoolean("UseExactReferenceValue");
@@ -199,7 +190,6 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
 
         return new MasterCurveCreationOptions()
         {
-          IndexOfPivotCurve = IndexOfPivotCurve,
           ShiftOrder = ShiftOrder,
           OptimizationMethod = OptimizationMethod,
           NumberOfIterations = NumberOfIterations,
@@ -208,6 +198,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
           GroupOptions = GroupOptions.ToImmutableList(),
           MasterCurveImprovementOptions = ImprovementOptions,
           Property1Name = Property1Name,
+          Property1TemperatureRepresentation = Property1TemperatureRepresentation,
           Property2Name = Property2Name,
           ReferenceValue = ReferenceValue,
           UseExactReferenceValue = UseExactReferenceValue,
