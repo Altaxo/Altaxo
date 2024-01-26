@@ -507,7 +507,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
           ChiSquareValue = fitAdapter.Value;
           _sigmaSquare = fitAdapter.SigmaSquare;
           _numberOfFitPoints = fitAdapter.NumberOfObservations;
-          _covarianceMatrix = minimizationResult.Covariance.Clone();
+          _covarianceMatrix = minimizationResult.Covariance?.Clone();
 
           fitAdapter.CopyParametersBackTo(_doc.CurrentParameters, minimizationResult.StandardErrors);
 
