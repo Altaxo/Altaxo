@@ -225,5 +225,9 @@ namespace Altaxo.Data.Selections
       if (!(_columnProxy is null))
         Report(_columnProxy, this, nameof(Column));
     }
+
+    /// <inheritdoc/>
+    public IEnumerable<IRowSelection>? ChildNodes => null;
+
   }
 }

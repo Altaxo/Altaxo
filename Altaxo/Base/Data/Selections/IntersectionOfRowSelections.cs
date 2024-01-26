@@ -132,6 +132,10 @@ namespace Altaxo.Data.Selections
     }
 
     /// <inheritdoc/>
+    public IEnumerable<IRowSelection>? ChildNodes => _rowSelections;
+
+
+    /// <inheritdoc/>
     public object Clone()
     {
       return new IntersectionOfRowSelections(this);

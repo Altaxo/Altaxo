@@ -29,6 +29,7 @@ using Altaxo.Calc;
 using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Collections;
 using Altaxo.Data;
+using Altaxo.Data.Selections;
 using Altaxo.Gui.Science.Thermorheology;
 
 namespace Altaxo.Science.Thermorheology.MasterCurves
@@ -570,7 +571,13 @@ StartOfFunction:
             goto StartOfFunction;
           }
 
-          var interpolation = new Altaxo.Calc.Interpolation.CrossValidatedCubicSplineOptions();
+          Altaxo.Calc.Interpolation.IInterpolationFunctionOptions interpolation;
+
+          if (listX.Count <= 2)
+            interpolation = new Altaxo.Calc.Interpolation.PolynomialRegressionAsInterpolationOptions(order: listX.Count - 1);
+          else
+            interpolation = new Altaxo.Calc.Interpolation.CrossValidatedCubicSplineOptions();
+
           var interpolationFunc = interpolation.Interpolate(listX, listY);
           shiftOffset = interpolationFunc.GetYOfX(processOptions.ReferenceValue.Value);
           referenceValueUsed = processOptions.ReferenceValue.Value;
@@ -766,37 +773,56 @@ StartOfFunction:
       return column as DataColumn;
     }
 
-
-
-    public static (AltaxoVariant property1Value, AltaxoVariant property2Value) GetPropertiesOfCurve(XAndYColumn curve, string _property1, string _property2)
+    public static AltaxoVariant GetPropertyValueOfCurve(XAndYColumn curve, string propertyName)
     {
-      object? property1 = null, property2 = null;
-      if (curve is not null && (GetRootDataColumn(curve.YColumn) is { } ycol))
+      if (curve is null || string.IsNullOrEmpty(propertyName))
+        return new AltaxoVariant();
+
+      DataTable? table = null;
+      if (GetRootDataColumn(curve.YColumn) is { } ycol)
       {
-        var table = curve.DataTable ?? DataTable.GetParentDataTableOf(ycol);
+        table = curve.DataTable ?? DataTable.GetParentDataTableOf(ycol);
         if (table is not null)
         {
-          if (table.PropCols.TryGetColumn(_property1) is { } pcol1)
+          if (table.PropCols.TryGetColumn(propertyName) is { } pcol1)
           {
-            property1 = pcol1[table.DataColumns.GetColumnNumber(ycol)];
-          }
-          else
-          {
-            property1 = table.GetPropertyValue<object>(_property1);
-          }
-
-          if (table.PropCols.TryGetColumn(_property2) is { } pcol2)
-          {
-            property2 = pcol2[table.DataColumns.GetColumnNumber(ycol)];
-          }
-          else
-          {
-            property2 = table.GetPropertyValue<object>(_property1);
+            // if the column has a property column with that name...
+            var p = pcol1[table.DataColumns.GetColumnNumber(ycol)];
+            if (!p.IsEmpty)
+              return p;
           }
         }
       }
 
-      return (new AltaxoVariant(property1), new AltaxoVariant(property2));
+      {
+        // try to get the property from the data row selection of the xycurve
+        foreach (var node in Altaxo.Collections.TreeNodeExtensions.TakeFromHereToFirstLeaves(curve.DataRowSelection))
+        {
+          if (node is IncludeSingleNumericalValue isn && isn.ColumnName == propertyName)
+          {
+            var p1 = isn.Value;
+            return new AltaxoVariant(p1);
+          }
+        }
+      }
+
+      if (table is not null)
+      {
+        // try to get the property from the hierarchy of table .. folder .. root folder
+        var p = table.GetPropertyValue<object>(propertyName);
+        if (p is not null)
+        {
+          return new AltaxoVariant(p);
+        }
+      }
+
+      return new AltaxoVariant(); // empty property
+    }
+
+    public static (AltaxoVariant property1Value, AltaxoVariant property2Value) GetPropertiesOfCurve(XAndYColumn curve, string property1Name, string property2Name)
+    {
+
+      return (GetPropertyValueOfCurve(curve, property1Name), GetPropertyValueOfCurve(curve, property2Name));
     }
 
   }

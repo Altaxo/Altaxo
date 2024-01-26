@@ -194,5 +194,9 @@ namespace Altaxo.Data.Selections
     public void VisitDocumentReferences(DocNodeProxyReporter Report)
     {
     }
+
+    /// <inheritdoc/>
+    public IEnumerable<IRowSelection>? ChildNodes => null;
+
   }
 }

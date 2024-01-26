@@ -127,29 +127,10 @@ namespace Altaxo.Gui.Science.Thermorheology
     void UpdateGuiNodeWithProperties(MyNode node)
     {
       object? property1 = null, property2 = null;
-      if (node.Curve is { } curve && (GetRootDataColumn(curve.YColumn) is { } ycol))
-      {
-        var table = curve.DataTable ?? DataTable.GetParentDataTableOf(ycol);
-        if (table is not null)
-        {
-          if (table.PropCols.TryGetColumn(_property1) is { } pcol1)
-          {
-            property1 = pcol1[table.DataColumns.GetColumnNumber(ycol)];
-          }
-          else
-          {
-            property1 = table.GetPropertyValue<object>(_property1);
-          }
 
-          if (table.PropCols.TryGetColumn(_property2) is { } pcol2)
-          {
-            property2 = pcol2[table.DataColumns.GetColumnNumber(ycol)];
-          }
-          else
-          {
-            property2 = table.GetPropertyValue<object>(_property1);
-          }
-        }
+      if (node.Curve is { } curve)
+      {
+        (property1, property2) = MasterCurveCreationEx.GetPropertiesOfCurve(curve, _property1, _property2);
       }
 
       node.Property1 = property1;

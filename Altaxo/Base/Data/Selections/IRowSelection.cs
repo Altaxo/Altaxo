@@ -25,12 +25,13 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
+using Altaxo.Collections;
 using Altaxo.Graph.Plot.Data;
 using Altaxo.Main;
 
 namespace Altaxo.Data.Selections
 {
-  public interface IRowSelection : Main.IDocumentLeafNode, ICloneable
+  public interface IRowSelection : Main.IDocumentLeafNode, ICloneable, ITreeNode<IRowSelection>
   {
     /// <summary>
     /// Gets the selected row indices as segments of (startIndex, endIndexExclusive), beginning with no less than the start index and less than the maximum index.
