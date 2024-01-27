@@ -48,11 +48,8 @@ namespace Altaxo.Gui.Science.Thermorheology
         if (ProcessOptionsController is MasterCurveCreationOptionsController optionsController)
         {
           optionsController.NumberOfGroups = _doc.ProcessData.CurveData.Count;
-        }
-
-        if (this.ProcessOptionsController is IMVCANDController andController)
-        {
-          andController.MadeDirty += EhOptionsMadeDirty;
+          optionsController.MadeDirty += EhOptionsMadeDirty;
+          optionsController.TriggerOnMadeDirty();
         }
       }
     }

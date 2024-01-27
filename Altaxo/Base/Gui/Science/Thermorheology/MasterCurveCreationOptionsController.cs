@@ -66,6 +66,11 @@ namespace Altaxo.Gui.Science.Thermorheology
       }
     }
 
+    public void TriggerOnMadeDirty()
+    {
+      OnMadeDirty();
+    }
+
     private bool _useManualPivotCurveIndex;
 
     public bool UseManualPivotCurveIndex
