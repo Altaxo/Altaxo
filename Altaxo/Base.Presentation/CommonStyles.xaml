@@ -3,7 +3,9 @@
     <!--  *********************** Arrows and other geometries **************************************  -->
 
     <Geometry x:Key="LeftArrowGeometry">M 0 3 L 2 3 L 2 4 L 4 2 L 2 0 L 2 1 L 0 1 Z</Geometry>
-    <Geometry x:Key="LeftIndentGeometry">M 0 3 L 2 3 L 2 4 L 4 2 L 2 0 L 2 1 L 0 1 Z M 0 0 L 0 4 L 4 4 L 4 3.8 L 0.2 3.8 L 0.2 0 Z</Geometry>
+  <Geometry x:Key="RightDownRightArrowGeometry">M 0 2 L 1 2 L 2 3 L 3 3 L 3 4 L 5 2 L 3 0 L 3 1 L 2 1 L 1 0 L 0 0 Z</Geometry>
+  <Geometry x:Key="RightUpRightArrowGeometry">M 0 4 L 1 4 L 2 3 L 3 3 L 3 4 L 5 2 L 3 0 L 3 1 L 2 1 L 1 2 L 0 2 Z</Geometry>
+  <Geometry x:Key="LeftIndentGeometry">M 0 3 L 2 3 L 2 4 L 4 2 L 2 0 L 2 1 L 0 1 Z M 0 0 L 0 4 L 4 4 L 4 3.8 L 0.2 3.8 L 0.2 0 Z</Geometry>
     <Geometry x:Key="RemoveCrossGeometry">M 4 4 L 0 0.5 L 0.5 0 Z M 4 0 L 0 3.5 L 0.5 4 Z</Geometry>
     <Geometry x:Key="AddCrossGeometry">M 0 1.5 L 1.5 1.5 L 1.5 0 L 2.5 0 L 2.5 1.5 L 4 1.5 L 4 2.5 L 2.5 2.5 L 2.5 4 L 1.5 4 L 1.5 2.5 L 0 2.5 Z</Geometry>
     <Style x:Key="LeftArrowPathStyle" TargetType="Path">
@@ -19,7 +21,19 @@
             </Setter>
         </Style.Setters>
     </Style>
-    <Style
+  <Style
+        x:Key="RightDownRightArrowPathStyle"
+        BasedOn="{StaticResource LeftArrowPathStyle}"
+        TargetType="Path">
+    <Setter Property="Data" Value="{StaticResource RightDownRightArrowGeometry}" />
+  </Style>
+  <Style
+        x:Key="RightUpRightArrowPathStyle"
+        BasedOn="{StaticResource LeftArrowPathStyle}"
+        TargetType="Path">
+    <Setter Property="Data" Value="{StaticResource RightUpRightArrowGeometry}" />
+  </Style>
+  <Style
         x:Key="RightArrowPathStyle"
         BasedOn="{StaticResource LeftArrowPathStyle}"
         TargetType="Path">

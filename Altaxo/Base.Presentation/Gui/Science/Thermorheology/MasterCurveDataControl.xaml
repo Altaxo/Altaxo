@@ -85,17 +85,31 @@
     <Button Grid.Row="2" Grid.Column="1"  
                 Height="{Binding ElementName=_btGroup, Path=ActualHeight}" 
                 Margin="4"
-                Command="{Binding CmdPutDataToPlotItems}"
+                Command="{Binding CmdPutDataToPlotItemsUp}"
                 Click="EhFocusData" 
                 HorizontalContentAlignment="Stretch" 
                 VerticalContentAlignment="Stretch"
                 ToolTip="Add the selected data columns as plot item.">
       <Viewbox Style="{StaticResource ArrowViewBoxStyle}">
-        <Path Style="{StaticResource LeftArrowPathStyle}" />
+        <Path Style="{StaticResource RightUpRightArrowPathStyle}" />
       </Viewbox>
     </Button>
 
-      <Label Grid.Column="2" Grid.Row="0">Master data:</Label>
+    <Button Grid.Row="4" Grid.Column="1"  
+                Height="{Binding ElementName=_btGroup, Path=ActualHeight}" 
+                Margin="4"
+                Command="{Binding CmdPutDataToPlotItemsDown}"
+                Click="EhFocusData" 
+                HorizontalContentAlignment="Stretch" 
+                VerticalContentAlignment="Stretch"
+                ToolTip="Add the selected data columns as plot item.">
+      <Viewbox Style="{StaticResource ArrowViewBoxStyle}">
+        <Path Style="{StaticResource RightDownRightArrowPathStyle}" />
+      </Viewbox>
+    </Button>
+
+
+    <Label Grid.Column="2" Grid.Row="0">Master data:</Label>
     <TabControl Grid.Column="2" Grid.Row="1" 
                 ItemsSource="{Binding DataGroup.Items}"
                 SelectedItem="{Binding DataGroup.SelectedItem, Mode=TwoWay}"
@@ -109,12 +123,30 @@
                axogb:SelectedItemsExBehavior.SelectionChangedCommand="{Binding CmdMasterDataSelectionChanged}"
                axogb:DoubleClickTriggersCommand.IsHandled="True"
                axogb:DoubleClickTriggersCommand.Command="{Binding CmdMasterDataDoubleClick}"
+               Focusable="True"
+     axogb:CommandBindingBehavior.Copy="{Binding CmdPlotItemsCopy}"
+     axogb:CommandBindingBehavior.Cut="{Binding CmdPlotItemsCut}"
+     axogb:CommandBindingBehavior.Paste="{Binding CmdPlotItemsPaste}"
+     axogb:CommandBindingBehavior.Delete="{Binding CmdPlotItemsDelete}"
+     dd:DragDrop.IsDragSource="True" dd:DragDrop.DragMVVMHandler="{Binding PlotItemsDragDropHandler}"
+		 dd:DragDrop.IsDropTarget="True" dd:DragDrop.DropMVVMHandler="{Binding PlotItemsDragDropHandler}"
+
                >
       <ListView.Resources>
         <Style TargetType="{x:Type ListViewItem}">
           <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}"/>
         </Style>
       </ListView.Resources>
+      <ListView.ContextMenu>
+        <ContextMenu>
+          <MenuItem Command="Copy" Header="Copy items" />
+          <MenuItem Command="Cut" Header="Cut items" />
+          <MenuItem Command="Paste" Header="Paste items" />
+          <MenuItem Command="Delete" Header="Delete items" />
+          <MenuItem Header="Change table for selected items" Command="{Binding CommandChangeTableForSelectedItems}" ToolTip="Exchange the table that is common to all the selected plot items." />
+          <MenuItem Header="Change columns for selected items" Command="{Binding CommandChangeColumnsForSelectedItems}" ToolTip="Exchange one or more columns with names common to all the selected plot items." />
+        </ContextMenu>
+      </ListView.ContextMenu>
 
       <ListView.View>
         <GridView>

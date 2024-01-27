@@ -29,9 +29,11 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using Altaxo.Collections;
 using Altaxo.Data;
+using Altaxo.Graph.Plot.Data;
 using Altaxo.Gui.Common;
 using Altaxo.Gui.Data;
 using Altaxo.Science.Thermorheology.MasterCurves;
+using Altaxo.Serialization.Clipboard;
 
 namespace Altaxo.Gui.Science.Thermorheology
 {
@@ -43,8 +45,8 @@ namespace Altaxo.Gui.Science.Thermorheology
   [UserControllerForObject(typeof(MasterCurveData))]
   public partial class MasterCurveDataController : MVCANControllerEditCopyOfDocBase<MasterCurveData, IMasterCurveDataView>
   {
-    string _property1;
-    string _property2;
+    string _property1Name;
+    string _property2Name;
 
 
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
@@ -57,13 +59,19 @@ namespace Altaxo.Gui.Science.Thermorheology
       CommandChangeTableForSelectedItems = new RelayCommand(EhChangeTableForSelectedItems, EhCanChangeTableForSelectedItems);
       CommandChangeColumnsForSelectedItems = new RelayCommand(EhChangeColumnsForSelectedItems, EhCanChangeColumnsForSelectedItems);
 
-      CmdPutDataToPlotItems = new RelayCommand(AvailableItems_PutDataToPlotItems);
+      CmdPutDataToPlotItemsUp = new RelayCommand(AvailableItems_PutDataToPlotItemsUp);
+      CmdPutDataToPlotItemsDown = new RelayCommand(AvailableItems_PutDataToPlotItemsDown);
       CmdPLotItemsMoveUpSelected = new RelayCommand(PlotItems_MoveUpSelected);
       CmdPLotItemsMoveDownSelected = new RelayCommand(PlotItems_MoveDownSelected);
-      CmdPlotItemsDelete = new RelayCommand(PlotItems_Delete);
       CmdPlotItemOpen = new RelayCommand(PlotItem_Open);
       CmdMasterDataDoubleClick = new RelayCommand(PlotItem_Open);
       AvailableItemsDragHandler = new AvailableItems_DragHandler(this);
+      PlotItemsDragDropHandler = new PlotItems_DragDropHandler(this);
+
+      CmdPlotItemsCopy = new RelayCommand(PlotItems_Copy, PlotItems_CanCopy);
+      CmdPlotItemsCut = new RelayCommand(PlotItems_Cut, PlotItems_CanCut);
+      CmdPlotItemsPaste = new RelayCommand(PlotItems_Paste, PlotItems_CanPaste);
+      CmdPlotItemsDelete = new RelayCommand(PlotItems_Delete);
     }
 
 
@@ -81,6 +89,73 @@ namespace Altaxo.Gui.Science.Thermorheology
           myitem.Tag = ctrl.ModelObject;
           myitem.Text = myitem.Curve?.GetName(0x21) ?? "---";
         }
+      }
+    }
+
+    public bool PlotItems_CanCopy()
+    {
+      return DataItems.Items.Any(node => node.IsSelected);
+    }
+    public void PlotItems_Copy()
+    {
+      var selNodes = DataItems.Items.Where(node => node.IsSelected).Select(node => node.Tag).ToList();
+      ClipboardSerialization.PutObjectToClipboard("Altaxo.Data.ListOfXAndYColumn.AsXml", selNodes);
+    }
+
+    public bool PlotItems_CanCut()
+    {
+      return DataItems.Items.Any(node => node.IsSelected);
+    }
+    public void PlotItems_Cut()
+    {
+      var selNodes = DataItems.Items.Where(node => node.IsSelected).ToArray();
+      PlotItems_Copy();
+      foreach (var node in DataItems.Items.Where(node => node.IsSelected))
+      {
+        (node.Tag as IDisposable)?.Dispose();
+        DataItems.Items.Remove(node);
+      }
+    }
+
+    public bool PlotItems_CanPaste()
+    {
+      object o = ClipboardSerialization.GetObjectFromClipboard("Altaxo.Graph.Gdi.Plot.PlotItemCollection.AsXml");
+      var coll = o as Altaxo.Graph.Gdi.Plot.PlotItemCollection;
+      if (coll is not null)
+        return true;
+
+      o = ClipboardSerialization.GetObjectFromClipboard("Altaxo.Data.ListOfXAndYColumn.AsXml");
+      if (o is List<object> list && list.Any(x => x is XAndYColumn))
+        return true;
+
+      return false;
+    }
+
+    public void PlotItems_Paste()
+    {
+      var itemsToPast = new List<XAndYColumn>();
+      object o = ClipboardSerialization.GetObjectFromClipboard("Altaxo.Graph.Gdi.Plot.PlotItemCollection.AsXml");
+      if (o is Altaxo.Graph.Gdi.Plot.PlotItemCollection coll)
+      {
+        // if at this point obj is a memory stream, you probably have forgotten the deserialization constructor of the class you expect to deserialize here
+        foreach (Altaxo.Graph.Gdi.Plot.IGPlotItem item in coll) // it is neccessary to add the items to the doc first, because otherwise they don't have names
+        {
+          if (item is XYColumnPlotData xyPlotData)
+          {
+            var xyitem = new XAndYColumn(xyPlotData.DataTable, xyPlotData.GroupNumber) { XColumn = xyPlotData.XColumn, YColumn = xyPlotData.YColumn };
+            itemsToPast.Add(xyitem);
+          }
+        }
+      }
+      o = ClipboardSerialization.GetObjectFromClipboard("Altaxo.Data.ListOfXAndYColumn.AsXml");
+      if (o is List<object> list && list.Any(x => x is XAndYColumn))
+      {
+        itemsToPast.AddRange(list.Where(l => l is XAndYColumn).Select(l => (XAndYColumn)l));
+      }
+
+      if (itemsToPast.Count > 0)
+      {
+        AddItemsToGuiList(itemsToPast, DataGroup.SelectedValue, toLast: true);
       }
     }
 
@@ -115,9 +190,13 @@ namespace Altaxo.Gui.Science.Thermorheology
     public ICommand CommandChangeTableForSelectedItems { get; }
     public ICommand CommandChangeColumnsForSelectedItems { get; }
 
-    public ICommand CmdPutDataToPlotItems { get; }
+    public ICommand CmdPutDataToPlotItemsUp { get; }
+    public ICommand CmdPutDataToPlotItemsDown { get; }
     public ICommand CmdPLotItemsMoveUpSelected { get; }
     public ICommand CmdPLotItemsMoveDownSelected { get; }
+    public ICommand CmdPlotItemsCopy { get; }
+    public ICommand CmdPlotItemsCut { get; }
+    public ICommand CmdPlotItemsPaste { get; }
     public ICommand CmdPlotItemsDelete { get; }
     public ICommand CmdPlotItemOpen { get; }
     public ICommand CmdMasterDataDoubleClick { get; }
@@ -228,14 +307,32 @@ namespace Altaxo.Gui.Science.Thermorheology
     }
 
     /// <summary>
-    /// Puts the selected data columns into the plot content.
+    /// Puts the selected data columns into the plot content, either at the first position(s), or immediately before the first selected item.
     /// </summary>
-    public void AvailableItems_PutDataToPlotItems()
+    public void AvailableItems_PutDataToPlotItemsUp()
+    {
+      AvailableItems_PutDataToPlotItems(false);
+    }
+
+    /// <summary>
+    /// Puts the selected data columns into the plot content, either at the first position(s), or immediately before the first selected item.
+    /// </summary>
+    public void AvailableItems_PutDataToPlotItemsDown()
+    {
+      AvailableItems_PutDataToPlotItems(true);
+    }
+
+    /// <summary>
+    /// Puts the selected data columns into the plot content, either at the first position(s), or immediately before the first selected item.
+    /// </summary>
+    public void AvailableItems_PutDataToPlotItems(bool toLast)
     {
       var columnsAlreadyProcessed = new HashSet<Altaxo.Data.DataColumn>();
 
       var selNodes = AvailableItemsSelected;
       var validNodes = NGTreeNode.NodesWithoutSelectedChilds(selNodes);
+
+      var xyColumns = new List<XAndYColumn>();
 
       // first, put the selected node into the list, even if it is not checked
       foreach (NGTreeNode sn in validNodes)
@@ -244,7 +341,11 @@ namespace Altaxo.Gui.Science.Thermorheology
         if (dataCol is not null && !columnsAlreadyProcessed.Contains(dataCol))
         {
           columnsAlreadyProcessed.Add(dataCol);
-          CreatePlotItemNodeAndAddAtEndOfTree(dataCol);
+          var node = CreatePlotItem(dataCol);
+          if (node is not null)
+          {
+            xyColumns.Add(node);
+          }
         }
         else if (sn is Altaxo.Gui.Graph.SingleColumnChoiceController.TableNode)
         {
@@ -259,11 +360,17 @@ namespace Altaxo.Gui.Science.Thermorheology
             if (coll.GetColumnKind(i) == ColumnKind.V && !columnsAlreadyProcessed.Contains(dataCol)) // add only value columns as plot items
             {
               columnsAlreadyProcessed.Add(dataCol);
-              CreatePlotItemNodeAndAddAtEndOfTree(dataCol);
+              var node = CreatePlotItem(dataCol);
+              if (node is not null)
+              {
+                xyColumns.Add(node);
+              }
             }
           }
         }
       }
+
+      AddItemsToGuiList(xyColumns, DataGroup.SelectedValue, toLast);
 
       AvailableItems_ClearSelection();
 
@@ -271,15 +378,6 @@ namespace Altaxo.Gui.Science.Thermorheology
       if (!TreeNodeExtensions.IsStructuralEquivalentTo<NGTreeNode, IGPlotItem>(_plotItemsRootNode, _doc, (x, y) => object.ReferenceEquals(x.Tag, y)))
         throw new InvalidProgramException("Trees of plot items and model nodes are not structural equivalent");
 #endif
-    }
-
-    private void CreatePlotItemNodeAndAddAtEndOfTree(DataColumn yCol)
-    {
-      var node = CreatePlotItem(yCol);
-      if (node is not null)
-      {
-        AppendItemToGuiList(node, DataGroup.SelectedValue);
-      }
     }
 
     private XAndYColumn? CreatePlotItem(DataColumn ycol)
@@ -309,24 +407,44 @@ namespace Altaxo.Gui.Science.Thermorheology
 
     private bool EhCanChangeTableForSelectedItems()
     {
-      // see XYPlotLayerContentsController
-      return false;
+      return ColumnPlotDataExchangeTableData.CanChangeTableForIColumnPlotDataItems(
+        DataItems.Items.Where(n => n.IsSelected && n.Tag is IColumnPlotData).Select(n => (IColumnPlotData)n.Tag));
     }
 
     private void EhChangeTableForSelectedItems()
     {
-      // see XYPlotLayerContentsController
+      // get all selected plot items with IColumnPlotData
+      var selectedNodes = DataItems.Items.Where(n => n.IsSelected && n.Tag is IColumnPlotData);
+      var selectedPlotItems = selectedNodes.Select(n => (IColumnPlotData)n.Tag);
+
+      ColumnPlotDataExchangeTableData.ShowChangeTableForSelectedItemsDialog(selectedPlotItems);
+
+      // update the text for the items here
+      foreach (var selNode in selectedNodes)
+      {
+        ((MyNode)selNode).UpdateName();
+      }
     }
 
     private bool EhCanChangeColumnsForSelectedItems()
     {
-      // see XYPlotLayerContentsController
-      return false;
+      return ColumnPlotDataExchangeColumnsData.CanChangeCommonColumnsForItems(
+      DataItems.Items.Where(n => n.IsSelected && n.Tag is IColumnPlotData).Select(n => (IColumnPlotData)(n.Tag)));
     }
 
     private void EhChangeColumnsForSelectedItems()
     {
-      // see XYPlotLayerContentsController
+      // get all selected plot items with IColumnPlotData
+      var selectedNodes = DataItems.Items.Where(n => n.IsSelected && n.Tag is IColumnPlotData);
+      var selectedPlotItems = selectedNodes.Select(n => (IColumnPlotData)(n.Tag));
+
+      ColumnPlotDataExchangeColumnsData.ShowChangeColumnsForSelectedItemsDialog(selectedPlotItems);
+
+      // update the text for the items here
+      foreach (var selNode in selectedNodes)
+      {
+        ((MyNode)selNode).UpdateName();
+      }
     }
 
     public void HintOptionValues(int numberOfGroups, string Property1, string Property2)
@@ -338,16 +456,21 @@ namespace Altaxo.Gui.Science.Thermorheology
         CreateDataGroupTabs(numberOfGroups, indexOfSelectedGroup);
       }
 
-      if (_property1 != Property1 || _property2 != Property2)
+      if (_property1Name != Property1 || _property2Name != Property2)
       {
-        _property1 = Property1;
-        _property2 = Property2;
+        _property1Name = Property1;
+        _property2Name = Property2;
 
-        if (_property1 != string.Empty || _property2 != string.Empty)
+        if (_property1Name != string.Empty || _property2Name != string.Empty)
         {
-          Task.Run(() => { UpdateAllGuiNodesWithProperties(); });
+          StartTaskUpdateAllGuiNodesWithProperties();
         }
       }
+    }
+
+    public void StartTaskUpdateAllGuiNodesWithProperties()
+    {
+      Task.Run(() => { UpdateAllGuiNodesWithProperties(); });
     }
 
     public override bool Apply(bool disposeController)

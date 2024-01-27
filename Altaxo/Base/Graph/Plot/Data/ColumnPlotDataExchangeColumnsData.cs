@@ -26,8 +26,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Altaxo.Data;
 
 namespace Altaxo.Graph.Plot.Data
@@ -55,11 +53,21 @@ namespace Altaxo.Graph.Plot.Data
     /// <summary>
     /// Initializes a new instance of the <see cref="ColumnPlotDataExchangeColumnsData"/> class.
     /// </summary>
+    /// <param name="plotDataItems">The plot items, for which to change common columns.</param>
+    public ColumnPlotDataExchangeColumnsData(IEnumerable<IColumnPlotData> plotDataItems)
+    {
+      PlotItemsOrPlotData = plotDataItems;
+      CollectCommonColumnNamesAndTablesFromItems(plotDataItems);
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ColumnPlotDataExchangeColumnsData"/> class.
+    /// </summary>
     /// <param name="plotItems">The plot items, for which to change common columns.</param>
     public ColumnPlotDataExchangeColumnsData(IEnumerable<Altaxo.Graph.Plot.IGPlotItem> plotItems)
     {
-      PlotItems = plotItems;
-      CollectCommonColumnNamesAndTablesFromPlotItems();
+      PlotItemsOrPlotData = plotItems;
+      CollectCommonColumnNamesAndTablesFromPlotItems(plotItems);
     }
 
     /// <summary>
@@ -88,13 +96,54 @@ namespace Altaxo.Graph.Plot.Data
     /// Collects the tuples of (ColumnGroupLabel, ColumnLabel, ColumnName) that are common to all plot items. Furthermore,
     /// it stores the underlying tables of the plot items in another collection <see cref="_tables"/>.
     /// </summary>
-    public void CollectCommonColumnNamesAndTablesFromPlotItems()
+    public void CollectCommonColumnNamesAndTablesFromItems(IEnumerable<IColumnPlotData> plotDataItems)
     {
       HashSet<(string ColumnGroup, string ColumnLabel, string? ColumnName, string? NewColumnName)>? totalSet = null;
       var dataTables = new HashSet<DataTable>();
 
       // collect all column names from those plot items
-      foreach (var plotItem in PlotItems)
+      foreach (var plotDataItem in plotDataItems)
+      {
+        if (plotDataItem is { } columnPlotData && columnPlotData.DataTable is not null)
+        {
+          dataTables.Add(columnPlotData.DataTable);
+
+          var localSet = new HashSet<(string ColumnGroup, string ColumnLabel, string? ColumnName, string? NewColumnName)>();
+          // collect from the plot item's row selection
+          foreach (var columnInfo in ColumnPlotDataExchangeTableData.EnumerateAllDataColumnsOfItem(plotDataItem, (info) => true))
+          {
+            localSet.Add((columnInfo.ColumnGroup, columnInfo.ColumnLabel, columnInfo.ColumnName, null));
+          }
+
+          if (totalSet is null)
+            totalSet = localSet;
+          else
+            totalSet.IntersectWith(localSet);
+        }
+      }
+
+      _columns.Clear();
+      if (totalSet is not null)
+      {
+        foreach (var item in totalSet)
+          _columns.Add(item);
+      }
+
+      _columns.Sort();
+      _tables = new List<DataTable>(dataTables);
+    }
+
+    /// <summary>
+    /// Collects the tuples of (ColumnGroupLabel, ColumnLabel, ColumnName) that are common to all plot items. Furthermore,
+    /// it stores the underlying tables of the plot items in another collection <see cref="_tables"/>.
+    /// </summary>
+    public void CollectCommonColumnNamesAndTablesFromPlotItems(IEnumerable<IGPlotItem> plotItems)
+    {
+      HashSet<(string ColumnGroup, string ColumnLabel, string? ColumnName, string? NewColumnName)>? totalSet = null;
+      var dataTables = new HashSet<DataTable>();
+
+      // collect all column names from those plot items
+      foreach (var plotItem in plotItems)
       {
         if (plotItem.DataObject is IColumnPlotData columnPlotData && columnPlotData.DataTable is not null)
         {
@@ -128,6 +177,19 @@ namespace Altaxo.Graph.Plot.Data
     /// <summary>
     /// Determines whether it is possible to change one or more data columns with names that are common for all specified plot items.
     /// </summary>
+    /// <param name="plotDataItems">The plot data items.</param>
+    /// <returns>
+    ///   <c>true</c> if this instance [can change table for plot items] the specified plot items; otherwise, <c>false</c>.
+    /// </returns>
+    public static bool CanChangeCommonColumnsForItems(IEnumerable<IColumnPlotData> plotDataItems)
+    {
+      var data = new ColumnPlotDataExchangeColumnsData(plotDataItems);
+      return data.Columns.Count > 0;
+    }
+
+    /// <summary>
+    /// Determines whether it is possible to change one or more data columns with names that are common for all specified plot items.
+    /// </summary>
     /// <param name="plotItems">The plot items.</param>
     /// <returns>
     ///   <c>true</c> if this instance [can change table for plot items] the specified plot items; otherwise, <c>false</c>.
@@ -137,6 +199,29 @@ namespace Altaxo.Graph.Plot.Data
       var data = new ColumnPlotDataExchangeColumnsData(plotItems);
 
       return data.Columns.Count > 0;
+    }
+
+    /// <summary>
+    /// Shows a dialog that allows to change the underlying data table for the provided plot items.
+    /// </summary>
+    /// <param name="plotDataItems">The plot data items.</param>
+    /// <returns>True if the dialog was shown and for at least one plot item the underlying table was exchanged; otherwise false.</returns>
+    public static bool ShowChangeColumnsForSelectedItemsDialog(IEnumerable<IColumnPlotData> plotDataItems)
+    {
+      var data = new ColumnPlotDataExchangeColumnsData(plotDataItems);
+      if (!(data.Columns.Count > 0))
+        return false; // nothing to do
+
+      object exchangeColumnDataObject = data;
+      if (!Current.Gui.ShowDialog(ref exchangeColumnDataObject, "Select new columns for plot items"))
+        return false;
+
+      data = (ColumnPlotDataExchangeColumnsData)exchangeColumnDataObject;
+
+      // now exchange the data
+      data.ExchangeColumns();
+
+      return true;
     }
 
     /// <summary>
@@ -163,11 +248,61 @@ namespace Altaxo.Graph.Plot.Data
     }
 
     /// <summary>
-    /// Exchanges the data columns of the plot items in <see cref="ColumnPlotDataExchangeDataBase.PlotItems"/>, using the field NewTableName in each entry of <see cref="Columns"/>.
+    /// Exchanges the data columns of the plot items in <see cref="ColumnPlotDataExchangeDataBase.PlotItemsOrPlotData"/>, using the field NewTableName in each entry of <see cref="Columns"/>.
     /// </summary>
     public void ExchangeColumns()
     {
-      foreach (var plotItem in PlotItems)
+      if (PlotItemsOrPlotData is IEnumerable<IGPlotItem> plotItems)
+        ExchangeColumns(plotItems);
+      else if (PlotItemsOrPlotData is IEnumerable<IColumnPlotData> plotData)
+        ExchangeColumns(plotData);
+    }
+
+    /// <summary>
+    /// Exchanges the data columns of the plot items in the provided plot items, using the field NewTableName in each entry of <see cref="Columns"/>.
+    /// </summary>
+    public void ExchangeColumns(IEnumerable<IColumnPlotData> plotDataItems)
+    {
+      foreach (var columnPlotData in plotDataItems)
+      {
+        if (columnPlotData is not null && columnPlotData.DataTable is not null)
+        {
+          foreach (var columnInfo in ColumnPlotDataExchangeTableData.EnumerateAllDataColumnsOfItem(columnPlotData, (info) => true))
+          {
+            foreach (var info in _columns) // we can not access info directly, since we have no key. So we must dumbly compare it item by item
+            {
+              if (
+                info.ColumnGroup == columnInfo.ColumnGroup &&
+                info.ColumnLabel == columnInfo.ColumnLabel &&
+                info.ColumnName == columnInfo.ColumnName &&
+                info.ColumnName != info.NewColumnName)
+              {
+                if (string.IsNullOrEmpty(info.NewColumnName))
+                {
+                  columnInfo.ColumnSetAction(null, columnPlotData.DataTable, GroupNumber);
+                }
+                else
+                {
+                  if (columnPlotData.DataTable.DataColumns.Contains(info.NewColumnName))
+                  {
+                    var newCol = columnPlotData.DataTable.DataColumns[info.NewColumnName];
+                    var group = columnPlotData.DataTable.DataColumns.GetColumnGroup(newCol);
+                    columnInfo.ColumnSetAction(newCol, columnPlotData.DataTable, GroupNumber);
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+
+    /// <summary>
+    /// Exchanges the data columns of the plot items in the provided plot items, using the field NewTableName in each entry of <see cref="Columns"/>.
+    /// </summary>
+    public void ExchangeColumns(IEnumerable<IGPlotItem> plotItems)
+    {
+      foreach (var plotItem in plotItems)
       {
         if (plotItem.DataObject is IColumnPlotData columnPlotData && columnPlotData.DataTable is not null)
         {

@@ -37,6 +37,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
 {
   public partial class XYPlotLayerContentsController
   {
+
     public class PlotItems_DragDropHandler : IMVVMDragDropHandler
     {
       XYPlotLayerContentsController _parent;
@@ -68,7 +69,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
 
       public void DropCanAcceptData(object data, object targetObject, Gui.Common.DragDropRelativeInsertPosition insertPosition, bool isCtrlKeyPressed, bool isShiftKeyPressed, out bool canCopy, out bool canMove, out bool itemIsSwallowingData)
       {
-        if(data is not IEnumerable<NGTreeNode> nodes)
+        if (data is not IEnumerable<NGTreeNode> nodes)
         {
           canCopy = false;
           canMove = false;
@@ -117,7 +118,7 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
         int actualInsertIndex; // is updated every time the following delegate is called
         NGTreeNodeCollection parentNodeCollectionOfTargetNode = null;
 
-        if (canTargetSwallowNodes) // Target is plot item collectio node -> we can simply add the data to it
+        if (canTargetSwallowNodes) // Target is plot item collection node -> we can simply add the data to it
         {
           AddNodeToTree = node => { targetNode.Nodes.Add(node); ((PlotItemCollection)targetNode.Tag).Add((IGPlotItem)node.Tag); };
         }
@@ -143,10 +144,10 @@ namespace Altaxo.Gui.Graph.Gdi.Plot
             AddNodeToTree = node =>
             {
               parentNodeCollectionOfTargetNode.Insert(actualInsertIndex, node); // the incrementation is to support dropping of multiple items, they must be dropped at increasing indices
-            ((ITreeListNode<IGPlotItem>)targetNode.ParentNode.Tag).ChildNodes.Insert(actualInsertIndex, (IGPlotItem)node.Tag);
+              ((ITreeListNode<IGPlotItem>)targetNode.ParentNode.Tag).ChildNodes.Insert(actualInsertIndex, (IGPlotItem)node.Tag);
               ((IGPlotItem)node.Tag).ParentObject = (Altaxo.Main.IDocumentNode)(targetNode.ParentNode.Tag); // fix parent child relation
 
-            ++actualInsertIndex;
+              ++actualInsertIndex;
             };
           }
         }

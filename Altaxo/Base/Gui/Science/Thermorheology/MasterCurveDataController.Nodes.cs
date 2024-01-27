@@ -113,26 +113,68 @@ namespace Altaxo.Gui.Science.Thermorheology
     /// <summary>
     /// Appends and curve item to the Gui list.
     /// </summary>
-    /// <param name="curve">The curve.</param>
+    /// <param name="curves">The curves to add.</param>
     /// <param name="groupNumber">The group number to which to append.</param>
-    void AppendItemToGuiList(XAndYColumn curve, int groupNumber)
+    /// <param name="toLast">If false, the item is put immediately before the first selected node (or at the top of the list).
+    /// If true, the item is put immediately after the last selected node (or at the end of the list).</param>
+    void AddItemsToGuiList(IReadOnlyList<XAndYColumn> curves, int groupNumber, bool toLast)
     {
-      int maxListIndexFilled = _dataNodes.Max(x => x.IndexOfLast((node, j) => node.Tag is not null));
-      EnsureNumberOfItemsInGuiListIsAtLeast(maxListIndexFilled + 2);
-      _dataNodes[groupNumber][maxListIndexFilled + 1] = NewGuiNode(curve);
+      int maxListIndexFilled = _dataNodes.Count == 0 ? 0 : _dataNodes.Max(x => x.IndexOfLast((node, j) => node.Tag is not null));
+      int insertPosition;
+      if (toLast)
+      {
+        var lastIdx = _dataNodes[groupNumber].IndexOfLast((node, i) => node.IsSelected);
+        insertPosition = lastIdx < 0 ? maxListIndexFilled + 1 : lastIdx + 1;
+      }
+      else
+      {
+        insertPosition = Math.Max(0, _dataNodes[groupNumber].IndexOfFirst((node, i) => node.IsSelected));
+      }
+
+      AddItemsToGuiList(curves, groupNumber, insertPosition);
+    }
+
+    /// <summary>
+    /// Appends and curve item to the Gui list.
+    /// </summary>
+    /// <param name="curves">The curves to add.</param>
+    /// <param name="groupNumber">The group number to which to append.</param>
+    /// <param name="insertPosition">The index where to insert the items.</param>
+    private void AddItemsToGuiList(IReadOnlyList<XAndYColumn> curves, int groupNumber, int insertPosition)
+    {
+      // Insert the curve nodes into the current group
+      for (int i = 0; i < curves.Count; i++)
+      {
+        _dataNodes[groupNumber].Insert(insertPosition + i, NewGuiNode(curves[i]));
+      }
+
+      // Now insert the same amout of empty curve nodes into the other groups
+      for (int idxGroup = 0; idxGroup < _dataNodes.Count; ++idxGroup)
+      {
+        if (idxGroup != groupNumber)
+        {
+          for (int i = 0; i < curves.Count; i++)
+          {
+            _dataNodes[groupNumber].Insert(insertPosition + i, NewEmptyGuiNode);
+          }
+        }
+      }
+
+      StartTaskUpdateAllGuiNodesWithProperties();
     }
 
     #region Properties
 
-    void UpdateGuiNodeWithProperties(MyNode node)
+    void UpdateGuiNodeWithProperties(MyNode node, int idx)
     {
       object? property1 = null, property2 = null;
 
       if (node.Curve is { } curve)
       {
-        (property1, property2) = MasterCurveCreationEx.GetPropertiesOfCurve(curve, _property1, _property2);
+        (property1, property2) = MasterCurveCreationEx.GetPropertiesOfCurve(curve, _property1Name, _property2Name);
       }
 
+      node.Index = idx;
       node.Property1 = property1;
       node.Property2 = property2;
     }
@@ -150,9 +192,10 @@ namespace Altaxo.Gui.Science.Thermorheology
     {
       foreach (var sublist in _dataNodes)
       {
+        int idx = 0;
         foreach (MyNode node in sublist)
         {
-          UpdateGuiNodeWithProperties(node);
+          UpdateGuiNodeWithProperties(node, idx++);
         }
       }
     }
@@ -161,12 +204,14 @@ namespace Altaxo.Gui.Science.Thermorheology
     {
       var sublist = DataItems.Items;
       sublist.MoveSelectedItemsUp();
+      StartTaskUpdateAllGuiNodesWithProperties();
     }
 
     public void PlotItems_MoveDownSelected()
     {
       var sublist = DataItems.Items;
       sublist.MoveSelectedItemsDown();
+      StartTaskUpdateAllGuiNodesWithProperties();
     }
 
     #endregion
@@ -207,8 +252,20 @@ namespace Altaxo.Gui.Science.Thermorheology
 
 
 
-
-      public int Index;
+      int _index;
+      public int Index
+      {
+        get { return _index; }
+        set
+        {
+          if (!(_index == value))
+          {
+            _index = value;
+            OnPropertyChanged(nameof(Index));
+            OnPropertyChanged(nameof(Text0));
+          }
+        }
+      }
       public XAndYColumn? Curve => (XAndYColumn?)Tag;
 
       public MyNode(string text, XAndYColumn? curve, bool isSelected) : base(text, curve, isSelected) { }
@@ -222,6 +279,11 @@ namespace Altaxo.Gui.Science.Thermorheology
           2 => Property2?.ToString() ?? string.Empty,
           _ => null,
         };
+      }
+
+      public void UpdateName()
+      {
+        Text = Tag is XAndYColumn xycolumn ? xycolumn.GetName(0x21) : string.Empty;
       }
     }
 

@@ -26,8 +26,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Altaxo.Data;
 
 namespace Altaxo.Graph.Plot.Data
@@ -37,12 +35,10 @@ namespace Altaxo.Graph.Plot.Data
   /// </summary>
   public abstract class ColumnPlotDataExchangeDataBase
   {
-    private static IGPlotItem[] _emptyPlotItems = new IGPlotItem[0];
-
     /// <summary>
-    /// Gets or sets the plot items, for which either the underlying data table or data columns should be changed.
+    /// Gets or sets the plot items or plot data, for which either the underlying data table or data columns should be changed.
     /// </summary>
-    public IEnumerable<IGPlotItem> PlotItems { get; protected set; } = _emptyPlotItems;
+    public IEnumerable<object> PlotItemsOrPlotData { get; protected set; } = new object[0];
 
     /// <summary>
     /// Enumerates all data columns used by an <see cref="Altaxo.Graph.Plot.IGPlotItem"/>
@@ -130,6 +126,83 @@ namespace Altaxo.Graph.Plot.Data
           }
         }
       }
+    }
+
+    /// <summary>
+    /// Enumerates all data columns used by an <see cref="Altaxo.Graph.Plot.IGPlotItem"/>
+    /// </summary>
+    /// <param name="data">The <see cref="IColumnPlotData"/> item.</param>
+    /// <param name="predicate">The predicate. Should return true if the data column provided in the argument should be enumerated.</param>
+    /// <returns>Enumeration of all data columns used by the plot item. Note that also the broken data columns will be reported with name and label (but of course the tuple member DataColumn is null in this case).</returns>
+    public static IEnumerable<
+      (
+      string ColumnGroup,
+      string ColumnLabel,
+      IReadableColumn? Column,
+      string? ColumnName,
+      Action<IReadableColumn?, DataTable, int> ColumnSetAction
+      )>
+      EnumerateAllDataColumnsOfItem(
+        IColumnPlotData data,
+        Predicate<(DataColumn? Column, string? ColumnName)> predicate)
+    {
+      {
+        // first the row selection(s)
+        foreach (var columnInfo in data.DataRowSelection.GetAdditionallyUsedColumns())
+        {
+          if ((columnInfo.Column is DataColumn dataColumn1 && predicate((dataColumn1, columnInfo.ColumnName))) || (columnInfo.Column is null && !string.IsNullOrEmpty(columnInfo.ColumnName)))
+          {
+            yield return (nameof(data.DataRowSelection), columnInfo.ColumnLabel, columnInfo.Column, columnInfo.ColumnName, (col, tbl, grp) => columnInfo.SetColumnAction(col ?? new IndexerColumn()));
+          }
+          else if ((columnInfo.Column is TransformedReadableColumn transColumn && transColumn.UnderlyingReadableColumn is DataColumn dataColumn2 && predicate((dataColumn2, columnInfo.ColumnName))))
+          {
+            yield return (nameof(data.DataRowSelection), columnInfo.ColumnLabel, columnInfo.Column, columnInfo.ColumnName, (col, tbl, grp) => columnInfo.SetColumnAction(col is null ? (IReadableColumn)new IndexerColumn() : transColumn.WithUnderlyingReadableColumn(col)));
+          }
+        }
+
+        // now the data itself
+        foreach (var t in data.GetAdditionallyUsedColumns())
+        {
+          foreach (var columnInfo in t.ColumnInfos)
+          {
+            if ((columnInfo.Column is DataColumn dataColumn1 && predicate((dataColumn1, columnInfo.ColumnName))) || (columnInfo.Column is null && !string.IsNullOrEmpty(columnInfo.ColumnName)))
+            {
+              yield return (t.NameOfColumnGroup, columnInfo.ColumnLabel, columnInfo.Column, columnInfo.ColumnName, columnInfo.SetColumnAction);
+            }
+            else if ((columnInfo.Column is TransformedReadableColumn transColumn && transColumn.UnderlyingReadableColumn is DataColumn dataColumn2 && predicate((dataColumn2, columnInfo.ColumnName))))
+            {
+              yield return (t.NameOfColumnGroup, columnInfo.ColumnLabel, columnInfo.Column, columnInfo.ColumnName, (col, tbl, grp) => columnInfo.SetColumnAction(col is null ? col : transColumn.WithUnderlyingReadableColumn(col), tbl, grp));
+            }
+          }
+        }
+      }
+    }
+
+    /// <summary>
+    /// Determines whether it is possible to change the underlying table for the specified plot items.
+    /// The table can be changed if all plot items have exactly the same underlying table.
+    /// </summary>
+    /// <param name="dataItems">The plot data items.</param>
+    /// <returns>
+    ///   <c>true</c> if this instance [can change table for plot items] the specified plot items; otherwise, <c>false</c>.
+    /// </returns>
+    public static bool CanChangeTableForIColumnPlotDataItems(IEnumerable<IColumnPlotData> dataItems)
+    {
+      var firstSelectedItem = dataItems.FirstOrDefault();
+      if (firstSelectedItem is null)
+        return false;
+
+      var table = firstSelectedItem?.DataTable;
+      if (table is null)
+        return false;
+
+      foreach (var node in dataItems)
+      {
+        if (!object.ReferenceEquals(table, node?.DataTable))
+          return false;
+      }
+
+      return true;
     }
 
     /// <summary>
