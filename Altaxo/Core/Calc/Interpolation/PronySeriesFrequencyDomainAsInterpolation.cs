@@ -25,12 +25,137 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Science.Signals;
 
 namespace Altaxo.Calc.Interpolation
 {
-  public class PronySeriesFrequencyDomainAsInterpolation : IInterpolationFunction
+  /// <summary>
+  /// Base class of the options for Prony series interpolation.
+  /// </summary>
+  public record PronySeriesInterpolationBase
+  {
+    /// <summary>
+    /// Gets the minimum and maximum x values to be used. If this property is null, then the minimum and maximum x is determined automatically.
+    /// In time domain, the x values are times. In frequency domain, the x values are frequencies (frequencies, not circular frequencies!).
+    /// </summary>
+    public (double xMinimum, double xMaximum)? XMinimumMaximum { get; init; }
+
+    /// <summary>
+    /// If <see cref="PointsPerDecade"/> is 0, this property specifies a fixed number of Prony terms.
+    /// Else, if <see cref="PointsPerDecade"/> is &gt; 0, this property specifies the maximum number of Prony terms.
+    /// </summary>
+    public int NumberOfPoints { get; init; } = int.MaxValue;
+
+    /// <summary>
+    /// Gets the number of Prony terms per decade. If this value is &lt;=0, the property <see cref="NumberOfPoints"/> specifiy a fixed number of Prony terms.
+    /// Else, if this property is &gt; 0, it specify the number of Prony terms per decade, and <see cref="NumberOfPoints"/> only specifies the maximum number of Prony terms.
+    /// </summary>
+    public double PointsPerDecade { get; init; } = 2;
+
+    /// <summary>
+    /// If true, the Prony terms model a relaxation process, i.e. a modulus, where the real part increases with frequency.
+    /// If false, the Prony terms model a retardation process, i.e. a susceptibility, where the real part decreases with frequency.
+    /// </summary>
+    public bool IsRelaxation { get; init; }
+
+    /// <summary>
+    /// If true, besides of the Prony terms, additionally an intercept is fitted to the data.
+    /// </summary>
+    public bool UseIntercept { get; init; }
+
+    /// <summary>
+    /// If true, also negative Prony coefficients are allowed. The default value is false. 
+    /// </summary>
+    public bool AllowNegativePronyCoefficients { get; init; }
+
+    /// <summary>
+    /// Gets /sets the regularization parameter that controls the smoothing
+    /// of the resulting curve. The higher the parameter, the smoother the resulting curve will be.
+    /// </summary>
+    public double RegularizationParameter { get; init; }
+
+    public PronySeriesInterpolationBase WithSpecifiedXMinimumMaximumAndFixedNumberOfPoints(double xmin, double xmax, int numberOfPoints)
+    {
+      return this with
+      {
+        XMinimumMaximum = (xmin, xmax),
+        NumberOfPoints = numberOfPoints,
+        PointsPerDecade = 0,
+      };
+    }
+
+    public PronySeriesInterpolationBase RetardationWithAutomaticXMinimumMaximumAndNumberOfPointsPerDecade(double pointsPerDecade)
+    {
+      if (!(pointsPerDecade > 0))
+        throw new ArgumentOutOfRangeException(nameof(pointsPerDecade));
+
+      return this with
+      {
+        XMinimumMaximum = null,
+        NumberOfPoints = int.MaxValue,
+        PointsPerDecade = pointsPerDecade,
+      };
+    }
+
+    public PronySeriesInterpolationBase WithAutomaticXMinimumMaximumAndFixedNumberOfPoints(int numberOfPoints)
+    {
+      return this with
+      {
+        XMinimumMaximum = null,
+        NumberOfPoints = numberOfPoints,
+        PointsPerDecade = 0,
+      };
+    }
+
+    public PronySeriesInterpolationBase WithAutomaticXMinimumMaximumAndNumberOfPointsPerDecadeAndMaximumNumberOfPoints(double pointsPerDecade, int numberOfPoints)
+    {
+      return this with
+      {
+        XMinimumMaximum = null,
+        NumberOfPoints = numberOfPoints,
+        PointsPerDecade = pointsPerDecade,
+      };
+    }
+
+
+    protected PronySeriesFrequencyDomainAsInterpolation GetInterpolation()
+    {
+      PronySeriesFrequencyDomainAsInterpolation result;
+
+      if (XMinimumMaximum.HasValue)
+      {
+        result = new PronySeriesFrequencyDomainAsInterpolation(XMinimumMaximum.Value.xMinimum, XMinimumMaximum.Value.xMaximum, NumberOfPoints, IsRelaxation, AllowNegativePronyCoefficients, UseIntercept, RegularizationParameter);
+      }
+      else
+      {
+        result = new PronySeriesFrequencyDomainAsInterpolation(NumberOfPoints, PointsPerDecade, IsRelaxation, AllowNegativePronyCoefficients, UseIntercept, RegularizationParameter);
+      }
+      return result;
+    }
+
+  }
+
+  public record PronySeriesComplexInterpolation : PronySeriesInterpolationBase, IComplexInterpolation
+  {
+    public IComplexInterpolationFunction Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<Complex> yvec, IReadOnlyList<Complex>? yStdDev = null)
+    {
+      var result = GetInterpolation();
+      result.Interpolate(xvec, yvec.Select(x => x.Real).ToArray(), yvec.Select(y => y.Imaginary).ToArray());
+      return result;
+    }
+
+    public IComplexInterpolationFunction Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yreal, IReadOnlyList<double> yimaginary)
+    {
+      var result = GetInterpolation();
+      result.Interpolate(xvec, yreal, yimaginary);
+      return result;
+
+    }
+  }
+
+  public class PronySeriesFrequencyDomainAsInterpolation : IInterpolationFunction, IComplexInterpolationFunction
   {
     bool _isRelaxation;
     bool _isMinMaxAutomatic;
@@ -182,6 +307,8 @@ namespace Altaxo.Calc.Interpolation
     }
 
 
+
+
     public double GetYOfU(double u)
     {
       return GetYOfX(u);
@@ -190,6 +317,16 @@ namespace Altaxo.Calc.Interpolation
     public double GetXOfU(double u)
     {
       return u;
+    }
+
+    Complex IComplexInterpolationFunction.GetYOfX(double x)
+    {
+      if (_fit is null)
+        throw new InvalidOperationException($"Results not available yet - please execute an interpolation first");
+
+      return _isRelaxation ?
+             ((PronySeriesRelaxationResult)_fit).GetFrequencyDomainYOfFrequency(x) :
+             ((PronySeriesRetardationResult)_fit).GetFrequencyDomainYOfFrequency(x);
     }
   }
 }

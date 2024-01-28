@@ -37,12 +37,26 @@ namespace Altaxo.Calc.Interpolation
     int _numberOfPoints;
     double _pointsPerDecade = 1;
 
+    /// <summary>
+    /// If true, the Prony terms model a relaxation process, i.e. a time dependent modulus, whose curve decreases with time.
+    /// If false, the Prony terms model a retardation process, i.e. a time dependent susceptibility, whose curve increases with time.
+    /// </summary>
     public bool IsRelaxation { get; init; }
 
-    public bool AllowNegativePronyCoefficients { get; init; }
-
+    /// <summary>
+    /// If true, besides of the Prony terms, additionally an intercept is fitted to the data.
+    /// </summary>
     public bool UseIntercept { get; init; }
 
+    /// <summary>
+    /// If true, also negative Prony coefficients are allowed. The default value is false. 
+    /// </summary>
+    public bool AllowNegativePronyCoefficients { get; init; }
+
+    /// <summary>
+    /// Gets /sets the regularization parameter that controls the smoothing
+    /// of the resulting curve. The higher the parameter, the smoother the resulting curve will be.
+    /// </summary>
     public double RegularizationParameter { get; init; }
 
     #region Serialization
