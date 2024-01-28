@@ -28,18 +28,16 @@ using System.Collections.Immutable;
 using System.Linq;
 using Altaxo.Collections;
 using Altaxo.Gui.Common;
-using Altaxo.Science;
 using Altaxo.Science.Thermorheology.MasterCurves;
 using Altaxo.Science.Thermorheology.MasterCurves.ShiftOrder;
-using Altaxo.Units;
 
 namespace Altaxo.Gui.Science.Thermorheology
 {
-  public interface IMasterCurveCreationOptionsView : IDataContextAwareView { }
+  public interface IMasterCurveImprovementOptionsView : IDataContextAwareView { }
 
-  [ExpectedTypeOfView(typeof(IMasterCurveCreationOptionsView))]
+  [ExpectedTypeOfView(typeof(IMasterCurveImprovementOptionsView))]
   [UserControllerForObject(typeof(MasterCurveCreationOptions))]
-  public class MasterCurveCreationOptionsController : MVCANDControllerEditImmutableDocBase<MasterCurveCreationOptions, IMasterCurveCreationOptionsView>
+  public class MasterCurveImprovementOptionsController : MVCANDControllerEditImmutableDocBase<MasterCurveImprovementOptions, IMasterCurveImprovementOptionsView>
   {
     IMVCAController? _selectedController;
 
@@ -50,26 +48,15 @@ namespace Altaxo.Gui.Science.Thermorheology
 
     #region Bindings
 
-    private int _numberOfGroups;
-
-    public int NumberOfGroups
-    {
-      get => _numberOfGroups;
-      set
-      {
-        if (!(_numberOfGroups == value))
-        {
-          _numberOfGroups = value;
-          OnPropertyChanged(nameof(NumberOfGroups));
-          OnMadeDirty();
-        }
-      }
-    }
-
     public void TriggerOnMadeDirty()
     {
       OnMadeDirty();
     }
+
+    /// <summary>
+    /// Gets or sets the number of groups. This property must be set by the superior controller.
+    /// </summary>
+    public int NumberOfGroups { get; set; } = 1;
 
     private bool _useManualPivotCurveIndex;
 
@@ -128,136 +115,6 @@ namespace Altaxo.Gui.Science.Thermorheology
       }
     }
 
-
-    private double? _ReferenceValue;
-
-    public double? ReferenceValue
-    {
-      get => _ReferenceValue;
-      set
-      {
-        if (!(_ReferenceValue == value))
-        {
-          _ReferenceValue = value;
-          OnPropertyChanged(nameof(ReferenceValue));
-        }
-      }
-    }
-
-    private bool _isReferenceValueUsed;
-
-    public bool IsReferenceValueUsed
-    {
-      get => _isReferenceValueUsed;
-      set
-      {
-        if (!(_isReferenceValueUsed == value))
-        {
-          _isReferenceValueUsed = value;
-          OnPropertyChanged(nameof(IsReferenceValueUsed));
-        }
-      }
-    }
-
-
-    private bool _useExactReferenceValue;
-
-    public bool UseExactReferenceValue
-    {
-      get => _useExactReferenceValue;
-      set
-      {
-        if (!(_useExactReferenceValue == value))
-        {
-          _useExactReferenceValue = value;
-          OnPropertyChanged(nameof(UseExactReferenceValue));
-        }
-      }
-    }
-
-    private int _indexOfReferenceColumn;
-
-    public int IndexOfReferenceColumn
-    {
-      get => _indexOfReferenceColumn;
-      set
-      {
-        if (!(_indexOfReferenceColumn == value))
-        {
-          _indexOfReferenceColumn = value;
-          OnPropertyChanged(nameof(IndexOfReferenceColumn));
-        }
-      }
-    }
-
-
-    private string _property1;
-
-    public string Property1
-    {
-      get => _property1;
-      set
-      {
-        if (!(_property1 == value))
-        {
-          _property1 = value;
-          OnPropertyChanged(nameof(Property1));
-          OnMadeDirty();
-        }
-      }
-    }
-
-    private bool _Property1IsTemperature;
-
-    public bool Property1IsTemperature
-    {
-      get => _Property1IsTemperature;
-      set
-      {
-        if (!(_Property1IsTemperature == value))
-        {
-          _Property1IsTemperature = value;
-          OnPropertyChanged(nameof(Property1IsTemperature));
-        }
-      }
-    }
-
-    private ItemsController<TemperatureRepresentation> _Property1TemperatureRepresentation;
-
-    public ItemsController<TemperatureRepresentation> Property1TemperatureRepresentation
-    {
-      get => _Property1TemperatureRepresentation;
-      set
-      {
-        if (!(_Property1TemperatureRepresentation == value))
-        {
-          _Property1TemperatureRepresentation = value;
-          OnPropertyChanged(nameof(Property1TemperatureRepresentation));
-        }
-      }
-    }
-
-
-
-    private string _property2;
-
-    public string Property2
-    {
-      get => _property2;
-      set
-      {
-        if (!(_property2 == value))
-        {
-          _property2 = value;
-          OnPropertyChanged(nameof(Property2));
-          OnMadeDirty();
-        }
-      }
-    }
-
-
-
-
     private ItemsController<OptimizationMethod> _optimizationMethod;
 
     public ItemsController<OptimizationMethod> OptimizationMethod
@@ -289,22 +146,6 @@ namespace Altaxo.Gui.Science.Thermorheology
     }
 
 
-    public QuantityWithUnitGuiEnvironment RelativeOverlapEnvironment => RelationEnvironment.Instance;
-
-    private DimensionfulQuantity _relativeOverlap;
-
-    public DimensionfulQuantity RelativeOverlap
-    {
-      get => _relativeOverlap;
-      set
-      {
-        if (!(_relativeOverlap == value))
-        {
-          _relativeOverlap = value;
-          OnPropertyChanged(nameof(RelativeOverlap));
-        }
-      }
-    }
 
     private ItemsController<MasterCurveGroupOptionsChoice> _GroupOptionsChoice;
 
@@ -346,8 +187,6 @@ namespace Altaxo.Gui.Science.Thermorheology
 
       if (initData)
       {
-        NumberOfGroups = Math.Max(1, _doc.GroupOptions.Count);
-
         var types = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(IShiftOrder));
         var instances = types.Select(t => (IShiftOrder)Activator.CreateInstance(t));
         ShiftOrder = new ItemsController<IShiftOrder>(new SelectableListNodeList(
@@ -358,29 +197,9 @@ namespace Altaxo.Gui.Science.Thermorheology
         if (_doc.ShiftOrder.PivotIndex.HasValue)
           ManualPivotCurveIndex = _doc.ShiftOrder.PivotIndex.Value;
 
-        IndexOfReferenceColumn = _doc.IndexOfReferenceColumnInColumnGroup;
         OptimizationMethod = new ItemsController<OptimizationMethod>(new SelectableListNodeList(_doc.OptimizationMethod));
 
         NumberOfIterations = _doc.NumberOfIterations;
-        RelativeOverlap = new DimensionfulQuantity(_doc.RequiredRelativeOverlap, Altaxo.Units.Dimensionless.Unity.Instance).AsQuantityIn(RelativeOverlapEnvironment.DefaultUnit);
-
-        Property1 = _doc.Property1Name;
-        Property1IsTemperature = _doc.Property1TemperatureRepresentation is not null;
-        Property1TemperatureRepresentation = new ItemsController<TemperatureRepresentation>(new SelectableListNodeList(_doc.Property1TemperatureRepresentation ?? TemperatureRepresentation.DegreeCelsius));
-        if (_doc.Property1TemperatureRepresentation.HasValue)
-        {
-          Property1TemperatureRepresentation.SelectedValue = _doc.Property1TemperatureRepresentation.Value;
-        }
-
-        Property2 = _doc.Property2Name;
-
-        IsReferenceValueUsed = _doc.ReferenceValue.HasValue;
-        if (_doc.ReferenceValue.HasValue)
-        {
-          ReferenceValue = _doc.ReferenceValue.Value;
-        }
-        IndexOfReferenceColumn = _doc.IndexOfReferenceColumnInColumnGroup;
-        UseExactReferenceValue = _doc.UseExactReferenceValue;
 
         GroupOptionsChoice = new ItemsController<MasterCurveGroupOptionsChoice>(new SelectableListNodeList(_doc.MasterCurveGroupOptionsChoice), EhCurveGroupOptionsChanged);
         GroupOptionsChoice.SelectedValue = _doc.MasterCurveGroupOptionsChoice;
@@ -389,8 +208,6 @@ namespace Altaxo.Gui.Science.Thermorheology
         TabControllers.SelectedValue = _selectedController;
       }
     }
-
-
 
     private void EhCurveGroupOptionsChanged(MasterCurveGroupOptionsChoice choice)
     {
@@ -484,11 +301,8 @@ namespace Altaxo.Gui.Science.Thermorheology
       }
 
 
-      var prop1 = Property1;
-      var prop2 = Property2;
       var numIterations = NumberOfIterations;
       var optimizationMethod = OptimizationMethod.SelectedValue;
-      var relOverlap = RelativeOverlap.AsValueInSIUnits;
       var choice = GroupOptionsChoice.SelectedValue;
       var options = TabControllers.Items.Select(x => (MasterCurveGroupOptions)(((SelectableListNodeWithController)x).Controller.ModelObject)).ToImmutableList();
       var shiftOrder = ShiftOrder.SelectedValue;
@@ -502,17 +316,9 @@ namespace Altaxo.Gui.Science.Thermorheology
       {
         ShiftOrder = shiftOrder,
         OptimizationMethod = optimizationMethod,
-        RequiredRelativeOverlap = relOverlap,
         NumberOfIterations = numIterations,
-        UseExactReferenceValue = UseExactReferenceValue,
-        ReferenceValue = IsReferenceValueUsed ? ReferenceValue : null,
-        IndexOfReferenceColumnInColumnGroup = IndexOfReferenceColumn,
         MasterCurveGroupOptionsChoice = choice,
         GroupOptions = options,
-
-        Property1Name = prop1,
-        Property1TemperatureRepresentation = Property1IsTemperature ? Property1TemperatureRepresentation.SelectedValue : null,
-        Property2Name = prop2,
       };
 
       return ApplyEnd(true, disposeController);

@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2023 Dr. Dirk Lellinger
+//    Copyright (C) 2024 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -22,19 +22,18 @@
 
 #endregion Copyright
 
-#nullable enable
-namespace Altaxo.Science.Thermorheology.MasterCurves
+using System.Windows.Controls;
+
+namespace Altaxo.Gui.Science.Thermorheology
 {
-  public record MasterCurveGroupOptionsWithComplexInterpolation : MasterCurveGroupOptions
+  /// <summary>
+  /// Interaction logic for MasterCurveCreationOptionsExControl.xaml
+  /// </summary>
+  public partial class MasterCurveImprovementOptionsControl : UserControl, IMasterCurveImprovementOptionsView
   {
-    public Altaxo.Calc.Interpolation.IComplexInterpolation InterpolationFunction { get; init; }
-
-    /// <summary>
-    /// Gets the fitting weight for the imaginary part.
-    /// </summary>
-    public double FittingWeightIm { get; init; } = 1;
-
-    /// <summary>Logarithmize y-im values before adding to the interpolation curve. (Only for interpolation).</summary>
-    public bool LogarithmizeYImForInterpolation { get; init; }
+    public MasterCurveImprovementOptionsControl()
+    {
+      InitializeComponent();
+    }
   }
 }

@@ -34,6 +34,11 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
   public record MasterCurveImprovementOptions : Main.IImmutable
   {
     /// <summary>
+    /// Designates the order with which the curves are shifted to the master curve.
+    /// </summary>
+    public ShiftOrder.IShiftOrder ShiftOrder { get; init; } = new ShiftOrder.PivotToLastAlternating();
+
+    /// <summary>
     /// Determines the method to best fit the data into the master curve.
     /// </summary>
     public OptimizationMethod OptimizationMethod { get; init; }
@@ -83,6 +88,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
       {
         var s = (MasterCurveImprovementOptions)obj;
 
+        info.AddValue("ShiftOrder", s.ShiftOrder);
         info.AddEnum("OptimizationMethod", s.OptimizationMethod);
         info.AddValue("NumberOfIterations", s.NumberOfIterations);
         info.AddEnum("GroupOptionsChoice", s.MasterCurveGroupOptionsChoice);
@@ -91,14 +97,15 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
 
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
+        var ShiftOrder = info.GetValue<ShiftOrder.IShiftOrder>("ShiftOrder", null);
         var OptimizationMethod = info.GetEnum<OptimizationMethod>("OptimizationMethod");
         var NumberOfIterations = info.GetInt32("NumberOfIterations");
-        var RequiredRelativeOverlap = info.GetDouble("RequiredRelativeOverlap");
         var GroupOptionsChoice = info.GetEnum<MasterCurveGroupOptionsChoice>("GroupOptionsChoice");
         var GroupOptions = info.GetArrayOfValues<MasterCurveGroupOptions>("GroupOptions", null);
 
         return new MasterCurveImprovementOptions()
         {
+          ShiftOrder = ShiftOrder,
           OptimizationMethod = OptimizationMethod,
           NumberOfIterations = NumberOfIterations,
           MasterCurveGroupOptionsChoice = GroupOptionsChoice,

@@ -76,7 +76,7 @@ namespace Altaxo.Gui.Science.Thermorheology
           canMove = true;
           itemIsSwallowingData = false;
         }
-        if (data is IEnumerable<SelectableListNode> nodes2)
+        else if (data is IEnumerable<SelectableListNode> nodes2)
         {
           canCopy = false;
           canMove = true;

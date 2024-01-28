@@ -1,0 +1,95 @@
+﻿<UserControl x:Class="Altaxo.Gui.Science.Thermorheology.MasterCurveImprovementOptionsControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:locald="clr-namespace:Altaxo.Gui.Science.Thermorheology;assembly=AltaxoBase"
+             xmlns:axogc="clr-namespace:Altaxo.Gui.Common" 
+             xmlns:axogcc="clr-namespace:Altaxo.Gui.Common.Converters" 
+             d:DataContext="{d:DesignInstance Type=locald:MasterCurveImprovementOptionsController}"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid>
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="Auto"/>
+      <ColumnDefinition Width="4"/>
+      <ColumnDefinition Width="Auto"/>
+      <ColumnDefinition Width="4"/>
+      <ColumnDefinition Width="Auto"/>
+      <ColumnDefinition Width="4"/>
+      <ColumnDefinition Width="Auto"/>
+      <ColumnDefinition Width="4"/>
+      <ColumnDefinition Width="*"/>
+      <ColumnDefinition Width="4"/>
+    </Grid.ColumnDefinitions>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="4"/>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="4"/>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="4"/>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="4"/>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="4"/>
+    </Grid.RowDefinitions>
+
+    <Label Grid.Row="0" Grid.Column="0"
+           Content="Shift order: "
+           HorizontalAlignment="Right"
+           />
+    <ComboBox Grid.Row="0" Grid.Column="2"
+              ItemsSource="{Binding ShiftOrder.Items}"
+              SelectedItem="{Binding ShiftOrder.SelectedItem, Mode=TwoWay}"
+              />
+
+    <CheckBox Grid.Row="0" Grid.Column="4"
+              IsChecked="{Binding UseManualPivotCurveIndex, Mode=TwoWay}"
+              Visibility="{Binding IsPivotIndexRequired, Converter={x:Static axogcc:FalseToVisibilityHiddenConverter.Instance}}"
+              Content="Manual pivot index:" 
+              VerticalAlignment="Center"/>
+      
+    <axogc:Int32UpDown Grid.Row="0" Grid.Column="6"
+                    Value="{Binding ManualPivotCurveIndex}"
+                    Visibility="{Binding IsManualPivotIndexRequired, Converter={x:Static axogcc:FalseToVisibilityHiddenConverter.Instance}}"   
+                    Minimum="0"
+                    ToolTip="The index of the data column where the master curve creation starts. This is the data column which remains unshifted, i.e. that has a shift factor of 1."
+                    />
+
+    <Label Grid.Row="2" Grid.Column="0"
+             Content="Optimization method:"/>
+      
+    <ComboBox Grid.Row="2" Grid.Column="2"
+                ItemsSource="{Binding OptimizationMethod.Items}"
+                SelectedItem="{Binding OptimizationMethod.SelectedItem, Mode=TwoWay}"/>
+      
+    <Label Grid.Row="4" Grid.Column="0"
+             Content="Number of iterations:"/>
+      
+    <axogc:Int32UpDown Grid.Row="4" Grid.Column="2"
+                             Value="{Binding NumberOfIterations}"
+                             Minimum="1"/>
+
+    <Label Grid.Row="6"
+           Content="Group options:"
+           />
+
+    <ComboBox Grid.Row="6" Grid.Column="2"
+                ItemsSource="{Binding GroupOptionsChoice.Items}"
+                SelectedItem="{Binding GroupOptionsChoice.SelectedItem, Mode=TwoWay}"
+                />
+
+    <TabControl Grid.Row="8" Grid.ColumnSpan="9"
+            ItemsSource="{Binding  TabControllers.Items}"
+            SelectedItem="{Binding TabControllers.SelectedItem, Mode=TwoWay}"
+                DisplayMemberPath="Text">
+      <TabControl.ContentTemplate>
+        <DataTemplate>
+          <ContentPresenter Content="{Binding ViewObject}"/>
+        </DataTemplate>
+      </TabControl.ContentTemplate>
+    </TabControl>
+
+  </Grid>
+</UserControl>

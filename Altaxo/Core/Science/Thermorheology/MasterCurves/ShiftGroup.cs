@@ -61,6 +61,11 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     /// Initializes a new instance of the <see cref="ShiftGroup"/> class.
     /// </summary>
     /// <param name="data">Collection of multiple x-y curves that will finally form one master curve.</param>
+    /// <param name="xShiftBy">Shift method, either additive or multiplicative.</param>
+    /// <param name="fitWeight">The weight with which to participate in the fit. Has to be &gt; 0.</param>
+    /// <param name="logarithmizeXForInterpolation">If true, the x-values are logarithmized prior to participating in the interpolation function.</param>
+    /// <param name="logarithmizeYForInterpolation">If true, the y-values are logartihmized prior to participating in the interpolation function.</param>
+    /// <param name="createInterpolationFunction">Function that creates the interpolation. Input are the x-array, y-array, and optionally, the array of y-errors. Output is an interpolation function which returns an interpolated y-value for a given x-value.</param>
     public ShiftGroup(IEnumerable<ShiftCurve> data, ShiftXBy xShiftBy, double fitWeight, bool logarithmizeXForInterpolation, bool logarithmizeYForInterpolation, Func<(IReadOnlyList<double> X, IReadOnlyList<double> Y, IReadOnlyList<double>? YErr), Func<double, double>>? createInterpolationFunction = null)
     {
       _inner = data.ToArray();
