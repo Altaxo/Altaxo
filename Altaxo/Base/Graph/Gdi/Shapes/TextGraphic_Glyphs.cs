@@ -717,6 +717,7 @@ namespace Altaxo.Graph.Gdi.Shapes
       private int _plotNumber;
       private string? _plotLabelStyle;
       private bool _plotLabelStyleIsPropColName;
+      private string? _csharpformatstring;
 
       public PlotName(StyleContext context, int plotNumber)
         : this(context, plotNumber, -1)
@@ -730,10 +731,11 @@ namespace Altaxo.Graph.Gdi.Shapes
         _layerNumber = plotLayer;
       }
 
-      public void SetPropertyColumnName(string name)
+      public void SetPropertyColumnName(string name, string? csharpformatstring = null)
       {
         _plotLabelStyle = name;
         _plotLabelStyleIsPropColName = true;
+        _csharpformatstring = csharpformatstring;
       }
 
       public override void Measure(Graphics g, MeasureContext mc, double x)
@@ -780,10 +782,32 @@ namespace Altaxo.Graph.Gdi.Shapes
           {
             var pb = xycpi.Data;
             var propertyValue = IndependentAndDependentColumns.GetPropertyValueOfCurve(pb, _plotLabelStyle);
-            if (propertyValue.IsEmpty)
-              result = string.Empty;
-            else
-              result = propertyValue.ToString();
+            result = string.Empty;
+            if (!propertyValue.IsEmpty)
+            {
+              if (!string.IsNullOrEmpty(_csharpformatstring))
+              {
+                try
+                {
+                  var documentCulture = System.Threading.Thread.CurrentThread.CurrentCulture;
+                  if (obj is Altaxo.Main.IDocumentLeafNode suspObj)
+                  {
+                    var context = Altaxo.PropertyExtensions.GetPropertyContext(suspObj);
+                    var documentCultureSettings = context.GetValue(Altaxo.Settings.CultureSettings.PropertyKeyDocumentCulture) ?? throw new InvalidProgramException();
+                    documentCulture = documentCultureSettings.Culture;
+                  }
+                  result = propertyValue.ToString(_csharpformatstring, documentCulture);
+                }
+                catch
+                {
+                  result = propertyValue.ToString();
+                }
+              }
+              else
+              {
+                result = propertyValue.ToString();
+              }
+            }
           }
         }
 

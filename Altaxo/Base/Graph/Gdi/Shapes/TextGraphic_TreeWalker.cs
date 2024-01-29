@@ -24,10 +24,7 @@
 
 #nullable enable
 using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 
 /* the Grammar used here is the following PEG grammar
@@ -49,32 +46,34 @@ using System.Text.RegularExpressions;
 
 [7]^EscChar:        '\\\\' / '\\)' / '\\(';
 
-[8]^EscSeq:   	    (EscSeq3 / EscSeq2 / EscSeq1);
+[8]^EscSeq:   	    (EscSeq4 / EscSeq3 / EscSeq2 / EscSeq1);
 
 [9]^Number:         [0-9]+ ('.' [0-9]+)?([eE][+-][0-9]+)?;
 
 [10]Word:           [#x20-#x28#x2A-#x2B#x2D-#x5B#x5D-#xFFFF]+;
 
-[11]^^Space:        '\t' / '\r\n' / '\n';
+[11]^^Space:        '\t' / '\r\n' / '\n'; 
 
 [12]^PositiveInteger: 	[0-9]+;
 
-[13]^^EscSeq3:      ('\\L('\i PositiveInteger ',' PositiveInteger ',' PositiveInteger ')') /
+[13]^^EscSeq4:      ('\\%(' PositiveInteger ',' PositiveInteger ',' QuotedString ',' QuotedString ')');
+
+[14]^^EscSeq3:      ('\\L('\i PositiveInteger ',' PositiveInteger ',' PositiveInteger ')') /
                     ('\\%(' PositiveInteger ',' PositiveInteger ',' QuotedString ')');
 
-[14]^^EscSeq2:      ( '\\' ( 'P'\i / 'F'\i / 'C'\i / '=' ) '(' SentenceNC ',' Sentence ')' ) /
+[15]^^EscSeq2:      ( '\\' ( 'P'\i / 'F'\i / 'C'\i / '=' ) '(' SentenceNC ',' Sentence ')' ) /
                     ( '\\' ( 'L'\i                       ) '(' PositiveInteger ',' PositiveInteger ')' ) /
-                    ( '\\' ( '%'                         ) '(' PositiveInteger ',' (PositiveInteger / QuotedString) ')' )
+                    ( '\\' ( '%'                         ) '(' PositiveInteger ',' (PositiveInteger / QuotedString) ')' ) 
                     ;
 
-[15]^^EscSeq1:      '\\' ('AB'\i / 'AD'\i / 'ID'\i / '+' / '-' /  '%' / '#' /  'B'\i / 'G'\i / 'I'\i / 'L'\i / 'N'\i / 'S'\i / 'U'\i / 'V'\i ) '(' Sentence ')';
+[16]^^EscSeq1:      '\\' ('AB'\i / 'AD'\i / 'ID'\i / '+' / '-' /  '%' / '#' /  'B'\i / 'G'\i / 'I'\i / 'L'\i / 'N'\i / 'S'\i / 'U'\i / 'V'\i ) '(' Sentence ')';
 
-[16]QuotedString:  '"' StringContent '"';
+[17]QuotedString:  '"' StringContent '"';
 
-[17]^^StringContent: ( '\\'
+[18]^^StringContent: ( '\\' 
                            ( 'u'([0-9A-Fa-f]{4}/FATAL<"4 hex digits expected">)
-                           / ["\\/bfnrt]/FATAL<"illegal escape">
-                           )
+                           / ["\\/bfnrt]/FATAL<"illegal escape"> 
+                           ) 
                         / [#x20-#x21#x23-#xFFFF]
                         )*	;
 
@@ -160,6 +159,10 @@ namespace Altaxo.Graph.Gdi.Shapes
 
           case EAltaxo_LabelV1.EscSeq3:
             HandleEscSeq3(node, context, parent);
+            break;
+
+          case EAltaxo_LabelV1.EscSeq4:
+            HandleEscSeq4(node, context, parent);
             break;
         }
 
@@ -541,6 +544,35 @@ namespace Altaxo.Graph.Gdi.Shapes
               {
                 var label = new PlotName(context, plotNumber, plotLayer);
                 label.SetPropertyColumnName(s3);
+                parent.Add(label);
+              }
+            }
+            break;
+        }
+      }
+
+      private void HandleEscSeq4(PegNode node, StyleContext context, StructuralGlyph parent)
+      {
+        int posBeg = node.match_.posBeg_;
+        var childNode = node.child_;
+
+        if (childNode is null)
+          throw new ArgumentNullException("childNode");
+
+        string escHeader = _sourceText.Substring(posBeg, childNode.match_.posBeg_ - posBeg);
+
+        switch (escHeader.ToLowerInvariant())
+        {
+          case @"\%(":
+            {
+              string s1 = GetText(childNode);
+              string s2 = GetText(childNode.next_);
+              string s3 = GetText(childNode.next_.next_);
+              string s4 = GetText(childNode.next_.next_.next_);
+              if (int.TryParse(s1, out var plotLayer) && int.TryParse(s2, out var plotNumber))
+              {
+                var label = new PlotName(context, plotNumber, plotLayer);
+                label.SetPropertyColumnName(s3, s4);
                 parent.Add(label);
               }
             }
