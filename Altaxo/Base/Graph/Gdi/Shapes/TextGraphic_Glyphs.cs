@@ -27,14 +27,12 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using System.Linq;
-using System.Text;
 
 namespace Altaxo.Graph.Gdi.Shapes
 {
+  using Altaxo.Data;
   using Altaxo.Drawing;
   using Geometry;
-  using Graph.Plot.Data;
   using Plot;
 
   public partial class TextGraphic : GraphicBase
@@ -749,10 +747,10 @@ namespace Altaxo.Graph.Gdi.Shapes
         string result = string.Empty;
 
         // first of all, retrieve the actual name
-        if(obj is not HostLayer mylayer)
+        if (obj is not HostLayer mylayer)
           return result;
 
-        var layer = 
+        var layer =
           (_layerNumber >= 0 && mylayer.SiblingLayers is not null && _layerNumber < mylayer.SiblingLayers.Count) ?
             mylayer.SiblingLayers[_layerNumber] as XYPlotLayer :
             mylayer as XYPlotLayer;
@@ -778,15 +776,14 @@ namespace Altaxo.Graph.Gdi.Shapes
             result = ((XYColumnPlotItem)pa).GetName(style);
           }
 
-          if (_plotLabelStyleIsPropColName && _plotLabelStyle is not null && pa is XYColumnPlotItem)
+          if (_plotLabelStyleIsPropColName && _plotLabelStyle is not null && pa is XYColumnPlotItem xycpi)
           {
-            XYColumnPlotData pb = ((XYColumnPlotItem)pa).Data;
-            if (pb.YColumn is Data.DataColumn ycol && Data.DataTable.GetParentDataTableOf(ycol) is { } tbl)
-            {
-              int colNumber = tbl.DataColumns.GetColumnNumber(ycol);
-              if (tbl.PropertyColumns.ContainsColumn(_plotLabelStyle))
-                result = tbl.PropertyColumns[_plotLabelStyle][colNumber].ToString();
-            }
+            var pb = xycpi.Data;
+            var propertyValue = IndependentAndDependentColumns.GetPropertyValueOfCurve(pb, _plotLabelStyle);
+            if (propertyValue.IsEmpty)
+              result = string.Empty;
+            else
+              result = propertyValue.ToString();
           }
         }
 
@@ -828,10 +825,10 @@ namespace Altaxo.Graph.Gdi.Shapes
         Width = 0;
         Height = 0;
 
-        if(mc.LinkedObject is not HostLayer mylayer)
+        if (mc.LinkedObject is not HostLayer mylayer)
           return;
 
-        var layer = 
+        var layer =
           (_layerNumber >= 0 && mylayer.SiblingLayers is not null && _layerNumber < mylayer.SiblingLayers.Count) ?
             mylayer.SiblingLayers[_layerNumber] as XYPlotLayer :
             mylayer as XYPlotLayer;

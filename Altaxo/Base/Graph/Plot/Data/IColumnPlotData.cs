@@ -26,8 +26,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Text;
 using Altaxo.Data;
 using Altaxo.Data.Selections;
 
@@ -49,6 +47,13 @@ namespace Altaxo.Graph.Plot.Data
     /// The selection of data rows to be plotted.
     /// </summary>
     IRowSelection DataRowSelection { get; set; }
+
+    /// <summary>
+    /// Gets the dependent variable column with index i.
+    /// </summary>
+    /// <param name="i">The index i.</param>
+    /// <returns>The dependent variable column, or null if it can not be resolved.</returns>
+    public IReadableColumn? GetDependentVariable(int i);
 
     /// <summary>
     /// Gets the columns used additionally by this style, e.g. the label column for a label plot style, or the error columns for an error bar plot style.

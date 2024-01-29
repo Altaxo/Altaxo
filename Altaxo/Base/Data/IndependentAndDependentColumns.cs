@@ -425,6 +425,62 @@ namespace Altaxo.Data
       return (resIndependent, resDependent, rowCount);
     }
 
+    public static DataColumn? GetRootDataColumn(IReadableColumn? column)
+    {
+      while (column is TransformedReadableColumn trc)
+      {
+        column = trc.UnderlyingReadableColumn;
+      }
+      return column as DataColumn;
+    }
+
+    public static AltaxoVariant GetPropertyValueOfCurve(IColumnPlotData curve, string propertyName)
+    {
+      if (curve is null || string.IsNullOrEmpty(propertyName))
+        return new AltaxoVariant();
+
+      DataTable? table = null;
+      if (GetRootDataColumn(curve.GetDependentVariable(0)) is { } ycol)
+      {
+        table = curve.DataTable ?? DataTable.GetParentDataTableOf(ycol);
+        if (table is not null)
+        {
+          if (table.PropCols.TryGetColumn(propertyName) is { } pcol1)
+          {
+            // if the column has a property column with that name...
+            var p = pcol1[table.DataColumns.GetColumnNumber(ycol)];
+            if (!p.IsEmpty)
+              return p;
+          }
+        }
+      }
+
+      {
+        // try to get the property from the data row selection of the xycurve
+        foreach (var node in Altaxo.Collections.TreeNodeExtensions.TakeFromHereToFirstLeaves(curve.DataRowSelection))
+        {
+          if (node is IncludeSingleNumericalValue isn && isn.ColumnName == propertyName)
+          {
+            var p1 = isn.Value;
+            return new AltaxoVariant(p1);
+          }
+        }
+      }
+
+      if (table is not null)
+      {
+        // try to get the property from the hierarchy of table .. folder .. root folder
+        var p = table.GetPropertyValue<object>(propertyName);
+        if (p is not null)
+        {
+          return new AltaxoVariant(p);
+        }
+      }
+
+      return new AltaxoVariant(); // empty property
+    }
+
+
     protected override System.Collections.Generic.IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
     {
       if (_dataTable is not null)

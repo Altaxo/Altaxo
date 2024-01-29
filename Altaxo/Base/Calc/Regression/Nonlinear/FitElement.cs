@@ -599,6 +599,12 @@ namespace Altaxo.Calc.Regression.Nonlinear
       }
     }
 
+    public IReadableColumn? GetDependentVariable(int i)
+    {
+      return (_dependentVariables is not null && i < _dependentVariables.Length) ? _dependentVariables[i]?.Document() : null;
+    }
+
+
     /// <summary>
     /// Gets the maximum row index that can be deduced from the data columns. The calculation does <b>not</b> include the DataRowSelection.
     /// </summary>

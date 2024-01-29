@@ -30,7 +30,6 @@ using Altaxo.Data;
 using Altaxo.Graph.Scales;
 using Altaxo.Graph.Scales.Boundaries;
 using Altaxo.Main;
-using Altaxo.Serialization;
 
 namespace Altaxo.Graph.Plot.Data
 {
@@ -778,6 +777,11 @@ namespace Altaxo.Graph.Plot.Data
     {
       yield return new ColumnInformation("X", XColumn, _xColumn?.DocumentPath()?.LastPartOrDefault, (col, table, group) => { XColumn = col; if (table is not null) { DataTable = table; GroupNumber = group; } });
       yield return new ColumnInformation("Y", YColumn, _yColumn?.DocumentPath()?.LastPartOrDefault, (col, table, group) => { YColumn = col; if (table is not null) { DataTable = table; GroupNumber = group; } });
+    }
+
+    public IReadableColumn? GetDependentVariable(int i)
+    {
+      return i == 0 ? _yColumn?.Document() : null;
     }
 
     [MaybeNull]

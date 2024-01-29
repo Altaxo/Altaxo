@@ -26,7 +26,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Drawing;
 using Altaxo.Data;
 using Altaxo.Data.Selections;
 using Altaxo.Geometry;
@@ -35,7 +34,6 @@ using Altaxo.Graph.Graph3D.Plot.Data;
 using Altaxo.Graph.Scales;
 using Altaxo.Graph.Scales.Boundaries;
 using Altaxo.Main;
-using Altaxo.Serialization;
 
 namespace Altaxo.Graph.Plot.Data
 {
@@ -524,6 +522,12 @@ namespace Altaxo.Graph.Plot.Data
       yield return new ColumnInformation("Y", YColumn, _yColumn?.DocumentPath()?.LastPartOrDefault, (col, table, group) => { if (col is not null) YColumn = col; if (table is not null) { DataTable = table; GroupNumber = group; } });
       yield return new ColumnInformation("Z", ZColumn, _zColumn?.DocumentPath()?.LastPartOrDefault, (col, table, group) => { if (col is not null) ZColumn = col; if (table is not null) { DataTable = table; GroupNumber = group; } });
     }
+
+    public IReadableColumn? GetDependentVariable(int i)
+    {
+      return i == 0 ? _zColumn?.Document() : null;
+    }
+
 
     /// <summary>
     /// One more than the index to the last valid plot data point. This is <b>not</b>
