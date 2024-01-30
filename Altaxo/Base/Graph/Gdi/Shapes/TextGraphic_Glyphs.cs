@@ -787,18 +787,33 @@ namespace Altaxo.Graph.Gdi.Shapes
             {
               if (!string.IsNullOrEmpty(_csharpformatstring))
               {
+                var documentCulture = System.Threading.Thread.CurrentThread.CurrentCulture;
+                if (obj is Altaxo.Main.IDocumentLeafNode suspObj)
+                {
+                  var context = Altaxo.PropertyExtensions.GetPropertyContext(suspObj);
+                  var documentCultureSettings = context.GetValue(Altaxo.Settings.CultureSettings.PropertyKeyDocumentCulture) ?? throw new InvalidProgramException();
+                  documentCulture = documentCultureSettings.Culture;
+                }
+
+                bool wasSuccess = false;
                 try
                 {
-                  var documentCulture = System.Threading.Thread.CurrentThread.CurrentCulture;
-                  if (obj is Altaxo.Main.IDocumentLeafNode suspObj)
-                  {
-                    var context = Altaxo.PropertyExtensions.GetPropertyContext(suspObj);
-                    var documentCultureSettings = context.GetValue(Altaxo.Settings.CultureSettings.PropertyKeyDocumentCulture) ?? throw new InvalidProgramException();
-                    documentCulture = documentCultureSettings.Culture;
-                  }
-                  result = propertyValue.ToString(_csharpformatstring, documentCulture);
+                  result = string.Format(documentCulture, "{0," + _csharpformatstring + "}", propertyValue);
+                  result = result.Replace(' ', (char)0x2002); // replace normal char by fixed char
+                  wasSuccess = true;
                 }
-                catch
+                catch { }
+                if (!wasSuccess)
+                {
+                  try
+                  {
+                    result = propertyValue.ToString(_csharpformatstring, documentCulture);
+                    result = result.Replace(' ', (char)0x2002); // replace normal char by fixed char
+                    wasSuccess = true;
+                  }
+                  catch { }
+                }
+                if (!wasSuccess)
                 {
                   result = propertyValue.ToString();
                 }

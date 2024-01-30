@@ -577,15 +577,35 @@ namespace Altaxo.Graph.Gdi.Shapes
     [MemberNotNull(nameof(_rootNode))]
     private void InterpretText()
     {
-      var parser = new Altaxo_LabelV1();
-      parser.SetSource(_text);
-      bool bMatches = parser.MainSentence();
-      var tree = parser.GetRoot();
+      InterpretText(_text);
+    }
 
-      var walker = new TreeWalker(_text);
-      var style = new StyleContext(_font, _textBrush, _font);
+    [MemberNotNull(nameof(_rootNode))]
+    private void InterpretText(string text, bool isErrorMessage = false)
+    {
+      try
+      {
+        var parser = new Altaxo_LabelV1();
+        parser.SetSource(text);
+        bool bMatches = parser.MainSentence();
+        var tree = parser.GetRoot();
 
-      _rootNode = walker.VisitTree(tree, style, _lineSpacingFactor, true);
+        var walker = new TreeWalker(text);
+        var style = new StyleContext(_font, _textBrush, _font);
+
+        _rootNode = walker.VisitTree(tree, style, _lineSpacingFactor, true);
+      }
+      catch (Exception ex)
+      {
+        if (!isErrorMessage)
+        {
+          InterpretText(ex.Message);
+        }
+        else
+        {
+          InterpretText("Repeating error in parsing the text");
+        }
+      }
     }
 
     private void MeasureGlyphs(Graphics g, FontCache cache, IPaintContext paintContext)

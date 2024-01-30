@@ -31,7 +31,6 @@
 #nullable disable
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -196,8 +195,8 @@ namespace Altaxo.Main.PegParser
 
   public class PegException : System.Exception
   {
-    public PegException()
-      : base("Fatal parsing error ocurred")
+    public PegException(string message)
+      : base("Parsing error: " + message ?? string.Empty)
     {
     }
   }
@@ -1261,14 +1260,17 @@ namespace Altaxo.Main.PegParser
 
     private void LogOutMsg(string sErrKind, string sMsg)
     {
-      errOut_.WriteLine("<{0}>{1}:{2}", pos_, sErrKind, sMsg);
-      errOut_.Flush();
+      if (errOut_ is not null)
+      {
+        errOut_.WriteLine("<{0}>{1}:{2}", pos_, sErrKind, sMsg);
+        errOut_.Flush();
+      }
     }
 
     public virtual bool Fatal(string sMsg)
     {
       LogOutMsg("FATAL", sMsg);
-      throw new PegException();
+      throw new PegException(sMsg);
     }
 
     public bool Warning(string sMsg)
@@ -2048,14 +2050,17 @@ namespace Altaxo.Main.PegParser
     private void LogOutMsg(string sErrKind, string sMsg)
     {
       errors.GetLineAndCol(src_, pos_, out var lineNo, out var colNo);
-      errOut_.WriteLine("<{0},{1}>{2}:{3}", lineNo, colNo, sErrKind, sMsg);
-      errOut_.Flush();
+      if (errOut_ is not null)
+      {
+        errOut_.WriteLine("<{0},{1}>{2}:{3}", lineNo, colNo, sErrKind, sMsg);
+        errOut_.Flush();
+      }
     }
 
     public virtual bool Fatal(string sMsg)
     {
       LogOutMsg("FATAL", sMsg);
-      throw new PegException();
+      throw new PegException(sMsg);
       //return false;
     }
 
