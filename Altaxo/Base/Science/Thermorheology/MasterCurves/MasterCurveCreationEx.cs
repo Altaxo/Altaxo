@@ -218,6 +218,28 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
       // create the master curve
       var masterCurveResult = CreateMasterCurve(shiftGroupCollection);
 
+      if (processOptions.MasterCurveImprovementOptions is { } improvementOptions)
+      {
+        // if improvement options are set, then we set the options in the low level interface anew,
+        // and then we re-iterate, but using the already evaluated shift factors
+
+        // create new shiftGroupCollection with the same data, but with the options contained in improvementOptions
+        // the data a copied by reference, but this is OK, since we drop the old shiftGroupCollection
+        shiftGroupCollection = new ShiftGroupCollection(shiftGroupCollection.Select((group, idx) =>
+        {
+          var newGroupOptions = (MasterCurveGroupOptionsWithScalarInterpolation)GetGroupOptions(improvementOptions, idx);
+          var newShiftGroup = new ShiftGroup(group, newGroupOptions.XShiftBy, newGroupOptions.FittingWeight, newGroupOptions.LogarithmizeXForInterpolation, newGroupOptions.LogarithmizeYForInterpolation, (arg) => newGroupOptions.InterpolationFunction.Interpolate(arg.X, arg.Y, arg.YErr).GetYOfX);
+          return newShiftGroup;
+        }))
+        {
+          ShiftOrder = improvementOptions.ShiftOrder,
+          NumberOfIterations = improvementOptions.NumberOfIterations,
+          OptimizationMethod = improvementOptions.OptimizationMethod,
+        };
+
+        ReIterate(shiftGroupCollection, masterCurveResult);
+      }
+
       // fill the table
 
       int groupNumber = -1;
@@ -631,6 +653,12 @@ StartOfFunction:
     }
 
     static MasterCurveGroupOptions GetGroupOptions(MasterCurveCreationOptions options, int idxGroup)
+    {
+      int choiceIndex = options.MasterCurveGroupOptionsChoice == MasterCurveGroupOptionsChoice.SeparateForEachGroup ? idxGroup : 0;
+      var groupOptions = options.GroupOptions[choiceIndex];
+      return groupOptions;
+    }
+    static MasterCurveGroupOptions GetGroupOptions(MasterCurveImprovementOptions options, int idxGroup)
     {
       int choiceIndex = options.MasterCurveGroupOptionsChoice == MasterCurveGroupOptionsChoice.SeparateForEachGroup ? idxGroup : 0;
       var groupOptions = options.GroupOptions[choiceIndex];

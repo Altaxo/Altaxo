@@ -168,6 +168,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     /// (which at the first iteration consist only of the interpolation of the reference curve(s)).
     /// </summary>
     /// <param name="shiftGroupCollection">The data to construct the master curve(s).</param>
+    /// <param name="shiftOrder">The order in which the curves are shifted and fitted to the master curve.</param>
     /// <param name="result">The result of the master curve construction.</param>
     public static void Iterate(ShiftGroupCollection shiftGroupCollection, IReadOnlyList<int> shiftOrder, MasterCurveCreationResult result)
     {
@@ -338,10 +339,11 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     /// </summary>
     /// <param name="shiftGroupCollection">The data to construct the master curve(s).</param>
     /// <param name="result">The result of the master curve construction.</param>
-    public static void ReIterate(ShiftGroupCollection shiftGroupCollection, IReadOnlyList<int> shiftOrder, MasterCurveCreationResult result)
+    public static void ReIterate(ShiftGroupCollection shiftGroupCollection, MasterCurveCreationResult result)
     {
       ReInitializeResult(shiftGroupCollection, result);
-      Iterate(shiftGroupCollection, shiftOrder, result);
+      var (indexOfReferenceColumnInColumnGroup, shiftOrderIndices) = GetFixedAndShiftedIndices(shiftGroupCollection.ShiftOrder, result.ResultingShifts.Count);
+      Iterate(shiftGroupCollection, shiftOrderIndices, result);
     }
 
     /// <summary>
