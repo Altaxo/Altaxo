@@ -22,8 +22,68 @@
 
 #endregion Copyright
 
-/* created on 9.9.2009 20:57:49 from peg generator V1.0 using 'Altaxo_LabelV1_PEG.txt' as input*/
+/* created on 30.01.2024 (file Altaxo_LabelV2_PEG.txt)
+ * Instructions:
+ * - Use the program "PEG Explorer" from here: https://www.codeproject.com/Articles/29713/Parsing-Expression-Grammar-Support-for-C-3-0-Part
+ * - Save the grammar below in a file.
+ * - Load the file in PEG Explorer.
+ * - in the combobox "Grammar", choose "PEG Parser Generator"
+ * - Click on the button "Parse"
+ * - if parsing was successful, click button "C#" to generate C# file
+ * - copy the enum and the class contained in this generated file to the file here
+ * - the Grammar used here is the following PEG grammar (save it to a file, then load it into PEG Explorer):
 
+<<Grammar Name="Altaxo_LabelV1">>
+
+// root element: the first part is the regular parsed text, the second part is the rest which can not be interpreted properly
+[1]^^MainSentence:  (EscSeq / WordSpanExt / Space)*  (WordSpanExt / EscChar / Space / '\\')*;
+
+[2]^Sentence:       (EscSeq / WordSpan / Space)+;
+
+[3]^SentenceNC:     (EscSeq / WordSpanNC / Space)+;
+
+[4]^^WordSpanExt:   (Word / EscChar / ',' / ')')+;
+
+[5]^^WordSpan:      (Word / EscChar / ',')+;
+
+[6]^^WordSpanNC:    (Word / EscChar)+;
+
+[7]^EscChar:        '\\\\' / '\\)' / '\\(';
+
+[8]^EscSeq:   	    (EscSeq4 / EscSeq3 / EscSeq2 / EscSeq1);
+
+[9]^Number:         [0-9]+ ('.' [0-9]+)?([eE][+-][0-9]+)?;
+
+[10]Word:           [#x20-#x28#x2A-#x2B#x2D-#x5B#x5D-#xFFFF]+;
+
+[11]^^Space:        '\t' / '\r\n' / '\n'; 
+
+[12]^PositiveInteger: 	[0-9]+;
+
+[13]^^EscSeq4:      ('\\%(' PositiveInteger ',' PositiveInteger ',' QuotedString ',' QuotedString ')');
+
+[14]^^EscSeq3:      ('\\L('\i PositiveInteger ',' PositiveInteger ',' PositiveInteger ')') /
+                    ('\\%(' PositiveInteger ',' PositiveInteger ',' QuotedString ')');
+
+[15]^^EscSeq2:      ( '\\' ( 'P'\i / 'F'\i / 'C'\i / '=' ) '(' SentenceNC ',' Sentence ')' ) /
+                    ( '\\' ( 'L'\i                       ) '(' PositiveInteger ',' PositiveInteger ')' ) /
+                    ( '\\' ( '%'                         ) '(' PositiveInteger ',' (PositiveInteger / QuotedString) ')' ) 
+                    ;
+
+[16]^^EscSeq1:      '\\' ('AB'\i / 'AD'\i / 'ID'\i / '+' / '-' /  '%' / '#' /  'B'\i / 'G'\i / 'I'\i / 'L'\i / 'N'\i / 'S'\i / 'U'\i / 'V'\i ) '(' Sentence ')';
+
+[17]QuotedString:  '"' StringContent '"';
+
+[18]^^StringContent: ( '\\' 
+                           ( 'u'([0-9A-Fa-f]{4}/FATAL<"4 hex digits expected">)
+                           / ["\\/bfnrt]/FATAL<"illegal escape"> 
+                           ) 
+                        / [#x20-#x21#x23-#xFFFF]
+                        )*	;
+
+<</Grammar>>
+
+*/
 #nullable enable
 using System;
 using System.IO;

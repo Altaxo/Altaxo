@@ -28,6 +28,11 @@
 
 #endregion Copyright
 
+/* Changes made for Altaxo:
+ * Uses of member errOut_ is secured by if not null since its not guaranted that errOut_ is always not null
+ * Parameterless constructor of PegException is replaced by constructor which takes an error message, and calls to this constructor are provided with a meaningful message
+*/
+
 #nullable disable
 using System;
 using System.Collections.Generic;
