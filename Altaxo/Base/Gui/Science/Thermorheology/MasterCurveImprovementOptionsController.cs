@@ -53,10 +53,22 @@ namespace Altaxo.Gui.Science.Thermorheology
       OnMadeDirty();
     }
 
+    int _numberOfGroups = 1;
     /// <summary>
     /// Gets or sets the number of groups. This property must be set by the superior controller.
     /// </summary>
-    public int NumberOfGroups { get; set; } = 1;
+    public int NumberOfGroups
+    {
+      get => _numberOfGroups;
+      set
+      {
+        if (!(_numberOfGroups == value))
+        {
+          _numberOfGroups = value;
+          EhNumberOfGroupsChanged(value);
+        }
+      }
+    }
 
     private bool _useManualPivotCurveIndex;
 
@@ -190,7 +202,7 @@ namespace Altaxo.Gui.Science.Thermorheology
         var types = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(IShiftOrder));
         var instances = types.Select(t => (IShiftOrder)Activator.CreateInstance(t));
         ShiftOrder = new ItemsController<IShiftOrder>(new SelectableListNodeList(
-          instances.Where(i => !i.IsOnlySuitableForRefinement).Select(i => new SelectableListNode(i.GetType().Name, i, false))), EhShiftOrderChanged);
+          instances.Select(i => new SelectableListNode(i.GetType().Name, i, false))), EhShiftOrderChanged);
         ShiftOrder.SelectedValue = _doc.ShiftOrder.WithPivotIndex(null);
 
         UseManualPivotCurveIndex = _doc.ShiftOrder.PivotIndex.HasValue;
@@ -291,6 +303,34 @@ namespace Altaxo.Gui.Science.Thermorheology
 
     private void EhGroupOptionsTabChanged(MasterCurveGroupOptionsChoice choice)
     {
+    }
+
+    private void EhNumberOfGroupsChanged(int value)
+    {
+      if (TabControllers.Items.Count != value)
+      {
+        if (GroupOptionsChoice.SelectedValue == MasterCurveGroupOptionsChoice.SeparateForEachGroup)
+        {
+          if (value < TabControllers.Items.Count)
+          {
+            for (int i = TabControllers.Items.Count - 1; i >= value; i--)
+            {
+              var oldIndex = TabControllers.SelectedIndex;
+              TabControllers.Items.RemoveAt(i);
+              var newIndex = Math.Min(TabControllers.Items.Count - 1, oldIndex);
+              if (newIndex >= 0 && newIndex != oldIndex)
+              {
+                _selectedController = null;
+                TabControllers.SelectedItem = TabControllers.Items[newIndex];
+              }
+            }
+          }
+          else if (value > TabControllers.Items.Count)
+          {
+            AddControllers(GroupOptionsChoice.SelectedValue);
+          }
+        }
+      }
     }
 
     public override bool Apply(bool disposeController)

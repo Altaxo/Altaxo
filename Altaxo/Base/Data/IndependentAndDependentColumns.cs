@@ -448,9 +448,9 @@ namespace Altaxo.Data
           if (table.PropCols.TryGetColumn(propertyName) is { } pcol1)
           {
             // if the column has a property column with that name...
-            var p = pcol1[table.DataColumns.GetColumnNumber(ycol)];
-            if (!p.IsEmpty)
-              return p;
+            var columnNumber = table.DataColumns.GetColumnNumber(ycol);
+            if (!pcol1.IsElementEmpty(columnNumber))
+              return pcol1[columnNumber];
           }
         }
       }
@@ -462,6 +462,11 @@ namespace Altaxo.Data
           if (node is IncludeSingleNumericalValue isn && isn.ColumnName == propertyName)
           {
             var p1 = isn.Value;
+            return new AltaxoVariant(p1);
+          }
+          else if (node is IncludeSingleTextValue istv && istv.ColumnName == propertyName)
+          {
+            var p1 = istv.Value;
             return new AltaxoVariant(p1);
           }
         }

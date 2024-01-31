@@ -308,7 +308,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
         for (int idxGroup = 0; idxGroup < processData.CurveData.Count; idxGroup++)
         {
           var group = processData.CurveData[idxGroup];
-          var groupOptions = GetGroupOptions(processOptions, idxGroup);
+          var groupOptions = GetGroupOptionsOfImprovementOrMain(processOptions, idxGroup);
           for (int idxCurve = 0; idxCurve < group.Length; idxCurve++)
           {
             var idxCurveInShiftGroupCollection = fitInfo.CurveInformation[idxCurve].IndexInShiftGroupCollection;
@@ -371,7 +371,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
         for (int idxGroup = 0; idxGroup < processData.CurveData.Count; idxGroup++)
         {
           var group = processData.CurveData[idxGroup];
-          var groupOptions = GetGroupOptions(processOptions, idxGroup);
+          var groupOptions = GetGroupOptionsOfImprovementOrMain(processOptions, idxGroup);
           var resultCurve = GetMergedCurveData(group, groupOptions, masterCurveResult, fitInfo, shiftOffset);
 
           var xcol = col.EnsureExistence($"xMerged{(char)('A' + idxGroup)}", typeof(DoubleColumn), ColumnKind.X, groupNumber);
@@ -397,7 +397,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
         for (int idxGroup = 0; idxGroup < processData.CurveData.Count; idxGroup++)
         {
           var group = processData.CurveData[idxGroup];
-          var groupOptions = GetGroupOptions(processOptions, idxGroup);
+          var groupOptions = GetGroupOptionsOfImprovementOrMain(processOptions, idxGroup);
           var resultCurve = GetMergedCurveData(group, groupOptions, masterCurveResult, fitInfo, shiftOffset);
 
           var xtrans = new List<double>();
@@ -664,6 +664,26 @@ StartOfFunction:
       var groupOptions = options.GroupOptions[choiceIndex];
       return groupOptions;
     }
+
+    /// <summary>
+    /// Gets the group options. If improvement options are available, the group options are used from there.
+    /// Else, if the improvement options are null, then the group options are used from the main options.
+    /// </summary>
+    /// <param name="options">The options.</param>
+    /// <param name="idxGroup">The index group.</param>
+    /// <returns></returns>
+    static MasterCurveGroupOptions GetGroupOptionsOfImprovementOrMain(MasterCurveCreationOptions options, int idxGroup)
+    {
+      if (options.MasterCurveImprovementOptions is { } improvementOptions)
+      {
+        return GetGroupOptions(improvementOptions, idxGroup);
+      }
+      else
+      {
+        return GetGroupOptions(options, idxGroup);
+      }
+    }
+
 
     /// <summary>
     /// Converts the <see cref="MasterCurveData"/> to <see cref="ShiftGroupCollection"/>.

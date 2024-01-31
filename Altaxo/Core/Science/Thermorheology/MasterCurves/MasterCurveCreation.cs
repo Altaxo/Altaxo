@@ -341,8 +341,20 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     /// <param name="result">The result of the master curve construction.</param>
     public static void ReIterate(ShiftGroupCollection shiftGroupCollection, MasterCurveCreationResult result)
     {
+      // First we create the initial interpolation of the master column
+      // then we successively add columns by shifting the x and merge them with the interpolation
+      int maxColumns = shiftGroupCollection.Max(x => x.Count);
+
+      var shiftOrder = shiftGroupCollection.ShiftOrder;
+      if (shiftOrder.IsPivotIndexRequired && !shiftOrder.PivotIndex.HasValue)
+      {
+        var pivotIndexCandidate = GetCurveIndexWithMostVariation(shiftGroupCollection[0]);
+        shiftOrder = shiftOrder.WithPivotIndex(pivotIndexCandidate ?? 0);
+      }
+
+      var (indexOfReferenceColumnInColumnGroup, shiftOrderIndices) = GetFixedAndShiftedIndices(shiftOrder, maxColumns);
+
       ReInitializeResult(shiftGroupCollection, result);
-      var (indexOfReferenceColumnInColumnGroup, shiftOrderIndices) = GetFixedAndShiftedIndices(shiftGroupCollection.ShiftOrder, result.ResultingShifts.Count);
       Iterate(shiftGroupCollection, shiftOrderIndices, result);
     }
 

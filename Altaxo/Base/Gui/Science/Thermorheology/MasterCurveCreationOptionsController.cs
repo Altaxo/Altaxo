@@ -45,7 +45,8 @@ namespace Altaxo.Gui.Science.Thermorheology
 
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
-      yield break;
+      if (ImprovementOptionsController is not null)
+        yield return new ControllerAndSetNullMethod(ImprovementOptionsController, () => ImprovementOptionsController = null);
     }
 
     #region Bindings
@@ -60,11 +61,14 @@ namespace Altaxo.Gui.Science.Thermorheology
         if (!(_numberOfGroups == value))
         {
           _numberOfGroups = value;
+          EhNumberOfGroupsChanged(value);
           OnPropertyChanged(nameof(NumberOfGroups));
           OnMadeDirty();
         }
       }
     }
+
+
 
     public void TriggerOnMadeDirty()
     {
@@ -337,6 +341,44 @@ namespace Altaxo.Gui.Science.Thermorheology
       }
     }
 
+    private bool _UseImprovementOptions;
+
+    public bool UseImprovementOptions
+    {
+      get => _UseImprovementOptions;
+      set
+      {
+        if (!(_UseImprovementOptions == value))
+        {
+          _UseImprovementOptions = value;
+          OnPropertyChanged(nameof(UseImprovementOptions));
+          if (value == true)
+          {
+            EhCreateImprovementOptionsAndControllerIfNeccessary();
+          }
+        }
+      }
+    }
+
+
+
+    private MasterCurveImprovementOptionsController? _improvementOptionsController;
+
+    public MasterCurveImprovementOptionsController? ImprovementOptionsController
+    {
+      get => _improvementOptionsController;
+      set
+      {
+        if (!(_improvementOptionsController == value))
+        {
+          _improvementOptionsController?.Dispose();
+          _improvementOptionsController = value;
+          OnPropertyChanged(nameof(ImprovementOptionsController));
+        }
+      }
+    }
+
+
 
     #endregion Bindings
 
@@ -387,10 +429,47 @@ namespace Altaxo.Gui.Science.Thermorheology
 
         AddControllers(_doc.MasterCurveGroupOptionsChoice);
         TabControllers.SelectedValue = _selectedController;
+
+        if (_doc.MasterCurveImprovementOptions is not null)
+        {
+          CreateImprovementOptionsController(_doc.MasterCurveImprovementOptions);
+        }
       }
     }
 
+    private void EhNumberOfGroupsChanged(int value)
+    {
+      if (TabControllers.Items.Count != value)
+      {
+        if (GroupOptionsChoice.SelectedValue == MasterCurveGroupOptionsChoice.SeparateForEachGroup)
+        {
+          if (value < TabControllers.Items.Count)
+          {
+            for (int i = TabControllers.Items.Count - 1; i >= value; i--)
+            {
+              _selectedController = null;
+              var oldIndex = TabControllers.SelectedIndex;
+              TabControllers.Items.RemoveAt(i);
+              var newIndex = Math.Min(TabControllers.Items.Count - 1, oldIndex);
+              if (newIndex >= 0 && newIndex != oldIndex)
+              {
+                _selectedController = null;
+                TabControllers.SelectedItem = TabControllers.Items[newIndex];
+              }
+            }
+          }
+          else if (value > TabControllers.Items.Count)
+          {
+            AddControllers(GroupOptionsChoice.SelectedValue);
+          }
+        }
+      }
 
+      if (ImprovementOptionsController is not null)
+      {
+        ImprovementOptionsController.NumberOfGroups = value;
+      }
+    }
 
     private void EhCurveGroupOptionsChanged(MasterCurveGroupOptionsChoice choice)
     {
@@ -476,6 +555,42 @@ namespace Altaxo.Gui.Science.Thermorheology
     {
     }
 
+    private void CreateImprovementOptionsController(MasterCurveImprovementOptions improvementOptions)
+    {
+      var improvementOptionsController = new MasterCurveImprovementOptionsController();
+      improvementOptionsController.InitializeDocument(improvementOptions);
+      improvementOptionsController.NumberOfGroups = NumberOfGroups;
+      Current.Gui.FindAndAttachControlTo(improvementOptionsController);
+      ImprovementOptionsController = improvementOptionsController;
+      UseImprovementOptions = true;
+    }
+
+    private void EhCreateImprovementOptionsAndControllerIfNeccessary()
+    {
+      if (ImprovementOptionsController is null)
+      {
+        // per default, we set the improvement options to the options here
+        _selectedController?.Apply(false); // Update the latest group options
+        var groupOptions = TabControllers.Items.Select(x => (MasterCurveGroupOptions)(((SelectableListNodeWithController)x).Controller.ModelObject)).ToImmutableList();
+        var shiftOrder = ShiftOrder.SelectedValue;
+        if (shiftOrder.IsPivotIndexRequired && UseManualPivotCurveIndex)
+        {
+          shiftOrder = shiftOrder.WithPivotIndex(ManualPivotCurveIndex);
+        }
+
+        var improvementOptions = new MasterCurveImprovementOptions()
+        {
+          ShiftOrder = shiftOrder,
+          OptimizationMethod = OptimizationMethod.SelectedValue,
+          NumberOfIterations = NumberOfIterations,
+          MasterCurveGroupOptionsChoice = GroupOptionsChoice.SelectedValue,
+          GroupOptions = groupOptions
+        };
+
+        CreateImprovementOptionsController(improvementOptions);
+      }
+    }
+
     public override bool Apply(bool disposeController)
     {
       if (_selectedController is not null && !_selectedController.Apply(disposeController))
@@ -483,6 +598,18 @@ namespace Altaxo.Gui.Science.Thermorheology
         return ApplyEnd(false, disposeController);
       }
 
+      MasterCurveImprovementOptions? improvementOptions = null;
+      if (UseImprovementOptions && (ImprovementOptionsController is not null))
+      {
+        if (!ImprovementOptionsController.Apply(disposeController))
+        {
+          return ApplyEnd(false, disposeController);
+        }
+        else
+        {
+          improvementOptions = (MasterCurveImprovementOptions)(ImprovementOptionsController.ModelObject);
+        }
+      }
 
       var prop1 = Property1;
       var prop2 = Property2;
@@ -513,6 +640,7 @@ namespace Altaxo.Gui.Science.Thermorheology
         Property1Name = prop1,
         Property1TemperatureRepresentation = Property1IsTemperature ? Property1TemperatureRepresentation.SelectedValue : null,
         Property2Name = prop2,
+        MasterCurveImprovementOptions = improvementOptions,
       };
 
       return ApplyEnd(true, disposeController);
