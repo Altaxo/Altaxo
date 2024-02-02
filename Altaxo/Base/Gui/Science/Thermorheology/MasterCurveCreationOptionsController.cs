@@ -388,8 +388,7 @@ namespace Altaxo.Gui.Science.Thermorheology
 
       if (initData)
       {
-        NumberOfGroups = Math.Max(1, _doc.GroupOptions.Count);
-
+        _numberOfGroups = Math.Max(1, _doc.GroupOptions.Count); // must be set silently in order to avoid calling EhNumberOfGroupsChanged
         var types = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(IShiftOrder));
         var instances = types.Select(t => (IShiftOrder)Activator.CreateInstance(t));
         ShiftOrder = new ItemsController<IShiftOrder>(new SelectableListNodeList(
@@ -429,6 +428,7 @@ namespace Altaxo.Gui.Science.Thermorheology
 
         AddControllers(_doc.MasterCurveGroupOptionsChoice);
         TabControllers.SelectedValue = _selectedController;
+
 
         if (_doc.MasterCurveImprovementOptions is not null)
         {
