@@ -434,7 +434,14 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
             for (int i = 0; i < numberOfInterpolationPoints; ++i)
             {
               var r = i / (numberOfInterpolationPoints + 1d);
-              var x = minX * (1 - r) + maxX * r;
+              var x = (groupOptions.LogarithmizeXForInterpolation, groupOptions.XShiftBy) switch
+              {
+                (true, ShiftXBy.Factor) => minX * (1 - r) + maxX * r,// logarithmic spacing, x is logarithmized before and after
+                (false, ShiftXBy.Factor) => Math.Exp(Math.Log(minX) * (1 - r) + Math.Log(maxX) * r),// logarithmic spacing, x not logarithmized before and not after
+                (true, ShiftXBy.Offset) => Math.Log(Math.Exp(minX) * (1 - r) + Math.Exp(maxX) * r),// linear spacing, x was already logarithmized for interpolation, and has to be afterward again
+                (false, ShiftXBy.Offset) => minX * (1 - r) + maxX * r,// linear spacing, x not logarithmized before and after
+                _ => throw new NotImplementedException(),
+              };
               var y = interpolationResult.GetYOfX(x);
 
               if (groupOptions.LogarithmizeXForInterpolation)
@@ -698,7 +705,7 @@ StartOfFunction:
 
       var numberOfGroups = srcData.Count;
       var numberOfCurves = srcData.Max(shiftGroup => shiftGroup.Length);
-      var listShiftCollections = Enumerable.Range(0, numberOfGroups).Select(i => new List<ShiftCurve>()).ToList();
+      var listShiftCollections = Enumerable.Range(0, numberOfGroups).Select(i => new List<ShiftCurve<double>>()).ToList();
 
       // create an array of extended information that will accomodate info about the curves, e.g. the property1 and property2
       var curveInfo = Enumerable.Range(0, numberOfCurves).Select(i => new CurveInformation()).ToArray();
@@ -708,7 +715,7 @@ StartOfFunction:
       for (int idxCurve = 0; idxCurve < numberOfCurves; idxCurve++)
       {
         bool curveIndexWillParticipateInFit = false;
-        var createdShiftCurves = new ShiftCurve?[numberOfGroups];
+        var createdShiftCurves = new ShiftCurve<double>?[numberOfGroups];
 
         AltaxoVariant property1Value = new AltaxoVariant(), property2Value = new AltaxoVariant();
 
@@ -801,14 +808,14 @@ StartOfFunction:
     /// </summary>
     /// <param name="data">The data.</param>
     /// <returns>The shift curve (if there is any data). If the argument contains to data rows, then the return value is null.</returns>
-    private static ShiftCurve? ConvertToShiftCurve(XAndYColumn? data)
+    private static ShiftCurve<double>? ConvertToShiftCurve(XAndYColumn? data)
     {
       var (x, y, rowCount) = data.GetResolvedXYData();
 
       if (rowCount == 0)
         return null;
       else
-        return new ShiftCurve(x, y);
+        return new ShiftCurve<double>(x, y);
     }
 
     public static (AltaxoVariant property1Value, AltaxoVariant property2Value) GetPropertiesOfCurve(XAndYColumn curve, string property1Name, string property2Name)

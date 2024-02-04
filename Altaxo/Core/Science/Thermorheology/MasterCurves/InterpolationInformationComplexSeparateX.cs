@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2023 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2024 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -26,25 +26,40 @@
 using System;
 using System.Collections.Generic;
 using Altaxo.Calc;
+using Complex64 = System.Numerics.Complex;
 
 namespace Altaxo.Science.Thermorheology.MasterCurves
 {
   /// <summary>
   /// Stores information about an interpolation curve that interpolates the resulting shift curve for one group of columns, e.g. for the real part of measured values.
   /// </summary>
-  public class InterpolationInformation : InterpolationInformationBase<double>
+  public class InterpolationInformationComplexSeparateX : InterpolationInformationBase<double>
   {
     /// <summary>
     /// Gets the current interpolation function. The argument of the function is the x-value. The result is the interpolated y-value.
     /// </summary>
-    public Func<double, double> InterpolationFunction { get; set; }
+    public Func<double, Complex64> InterpolationFunction { get; set; }
+
+    /// <summary>List of all x values of the points that are used for the interpolation.</summary>
+    public IReadOnlyList<double> XValuesImaginary { get { return new WrapperIListToIRoVectorK<double>(ValuesImaginaryToInterpolate.Keys); } }
+
+
+    /// <summary>List of all y values of the points that are used for the interpolation.</summary>
+    public IReadOnlyList<double> YValuesImaginary { get { return new WrapperIListToIRoVectorV<double>(ValuesImaginaryToInterpolate.Values); } }
+
+    /// <summary>
+    /// List of all points used for the interpolation, sorted by the x values.
+    /// Keys are the x-Values, values are the y-values, and the index of the curve the y-value belongs to.
+    /// </summary>
+    protected SortedList<double, (double yImaginary, int indexOfCurve)> ValuesImaginaryToInterpolate { get; }
 
     /// <summary>
     /// Initialized the instance.
     /// </summary>
-    public InterpolationInformation()
+    public InterpolationInformationComplexSeparateX()
     {
-      InterpolationFunction = new Func<double, double>((x) => throw new InvalidOperationException("Interpolation was not yet done."));
+      ValuesImaginaryToInterpolate = new SortedList<double, (double, int)>();
+      InterpolationFunction = new Func<double, Complex64>((x) => throw new InvalidOperationException("Interpolation was not yet done."));
     }
 
     /// <summary>
@@ -53,7 +68,8 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     public override void Clear()
     {
       base.Clear();
-      InterpolationFunction = new Func<double, double>((x) => throw new InvalidOperationException("Interpolation was not yet done."));
+      ValuesImaginaryToInterpolate.Clear();
+      InterpolationFunction = new Func<double, Complex64>((x) => throw new InvalidOperationException("Interpolation was not yet done."));
     }
 
     /// <summary>
@@ -66,12 +82,19 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     /// <param name="y">Column of y values.</param>
     /// <param name="groupNumber">Number of the curve group.</param>
     /// <param name="options">Options for creating the master curve.</param>
-    public void AddXYColumn(double shift, int indexOfCurve, IReadOnlyList<double> x, IReadOnlyList<double> y, int groupNumber, ShiftGroup options)
+    public void AddXYColumn(double shift, int indexOfCurve, IReadOnlyList<double> x, IReadOnlyList<double> y, int groupNumber, ShiftGroupBase<double> options)
     {
+      var valuesToInterpolate = groupNumber switch
+      {
+        0 => ValuesToInterpolate,
+        1 => ValuesImaginaryToInterpolate,
+        _ => throw new NotImplementedException()
+      };
+
       // first, Remove all points with indexOfCurve
-      for (int i = ValuesToInterpolate.Count - 1; i >= 0; --i)
-        if (ValuesToInterpolate.Values[i].indexOfCurve == indexOfCurve)
-          ValuesToInterpolate.RemoveAt(i);
+      for (int i = valuesToInterpolate.Count - 1; i >= 0; --i)
+        if (valuesToInterpolate.Values[i].indexOfCurve == indexOfCurve)
+          valuesToInterpolate.RemoveAt(i);
 
       // now add the new values
       int count = Math.Min(x.Count, y.Count);
@@ -104,14 +127,14 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
           maxX = Math.Max(maxX, xv);
           minX = Math.Min(minX, xv);
 
-          for (; ValuesToInterpolate.Keys.Contains(xv);)
+          for (; valuesToInterpolate.Keys.Contains(xv);)
           {
             if (xv == 0)
               xv = DoubleConstants.SmallestPositiveValue / DoubleConstants.DBL_EPSILON;
             else
               xv *= (1 + 2 * DoubleConstants.DBL_EPSILON);
           }
-          ValuesToInterpolate.Add(xv, (yv, indexOfCurve));
+          valuesToInterpolate.Add(xv, (yv, indexOfCurve));
           j++;
         }
       }

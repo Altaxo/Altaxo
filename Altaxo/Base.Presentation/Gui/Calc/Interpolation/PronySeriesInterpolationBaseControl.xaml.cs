@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2023 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2024 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -22,43 +22,18 @@
 
 #endregion Copyright
 
-using System;
-using System.Collections.Generic;
+using System.Windows.Controls;
 
-namespace Altaxo.Science.Thermorheology.MasterCurves
+namespace Altaxo.Gui.Calc.Interpolation
 {
   /// <summary>
-  /// The data for one curve to be shifted consist of an array of X and Y.
+  /// Interaction logic for PronySeriesInterpolationBaseController.xaml
   /// </summary>
-  public record ShiftCurve<T>
+  public partial class PronySeriesInterpolationBaseControl : UserControl, IPronySeriesInterpolationBaseView
   {
-    /// <summary>
-    /// Gets the x-values of the curve to be shifted.
-    /// </summary>
-    public IReadOnlyList<double> X { get; }
-
-    /// <summary>
-    /// Gets the y-values of the curve to be shifted.
-    /// </summary>
-    public IReadOnlyList<T> Y { get; }
-
-    public int Count
+    public PronySeriesInterpolationBaseControl()
     {
-      get
-      {
-        return Math.Min(X.Count, Y.Count);
-      }
-    }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="ShiftCurve{T}"/> class.
-    /// </summary>
-    /// <param name="x">The x-values of the curve to be shifted.</param>
-    /// <param name="y">The y-values of the curve to be shifted.</param>
-    public ShiftCurve(IReadOnlyList<double> x, IReadOnlyList<T> y)
-    {
-      X = x;
-      Y = y;
+      InitializeComponent();
     }
   }
 }

@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2023 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2024 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -24,18 +24,19 @@
 
 using System;
 using System.Collections.Generic;
+using Complex64 = System.Numerics.Complex;
 
 namespace Altaxo.Science.Thermorheology.MasterCurves
 {
   /// <summary>
   /// A collection of multiple x-y curves (see <see cref="ShiftCurve{Double}"/>) that will finally form one master curve.
   /// </summary>
-  public class ShiftGroup : ShiftGroupBase<double>
+  public class ShiftGroupComplex : ShiftGroupBase<Complex64>
   {
     /// <summary>
     /// Creates the fit function. Argument is the tuple consisting of X, Y, and optional YErr. Return value is a function that calculates y for a given x.
     /// </summary>
-    public Func<(IReadOnlyList<double> X, IReadOnlyList<double> Y, IReadOnlyList<double>? YErr), Func<double, double>>? CreateInterpolationFunction { get; }
+    public Func<(IReadOnlyList<double> X, IReadOnlyList<Complex64> Y, IReadOnlyList<Complex64>? YErr), Func<double, Complex64>>? CreateInterpolationFunction { get; }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ShiftGroup"/> class.
@@ -46,7 +47,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     /// <param name="logarithmizeXForInterpolation">If true, the x-values are logarithmized prior to participating in the interpolation function.</param>
     /// <param name="logarithmizeYForInterpolation">If true, the y-values are logartihmized prior to participating in the interpolation function.</param>
     /// <param name="createInterpolationFunction">Function that creates the interpolation. Input are the x-array, y-array, and optionally, the array of y-errors. Output is an interpolation function which returns an interpolated y-value for a given x-value.</param>
-    public ShiftGroup(IEnumerable<ShiftCurve<double>> data, ShiftXBy xShiftBy, double fitWeight, bool logarithmizeXForInterpolation, bool logarithmizeYForInterpolation, Func<(IReadOnlyList<double> X, IReadOnlyList<double> Y, IReadOnlyList<double>? YErr), Func<double, double>>? createInterpolationFunction = null)
+    public ShiftGroupComplex(IEnumerable<ShiftCurve<Complex64>> data, ShiftXBy xShiftBy, double fitWeight, bool logarithmizeXForInterpolation, bool logarithmizeYForInterpolation, Func<(IReadOnlyList<double> X, IReadOnlyList<Complex64> Y, IReadOnlyList<Complex64>? YErr), Func<double, Complex64>>? createInterpolationFunction = null)
       : base(data, xShiftBy, fitWeight, logarithmizeXForInterpolation, logarithmizeYForInterpolation)
     {
       CreateInterpolationFunction = createInterpolationFunction;

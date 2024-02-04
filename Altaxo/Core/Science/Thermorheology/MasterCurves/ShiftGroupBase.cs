@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2023 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2024 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -22,21 +22,36 @@
 
 #endregion Copyright
 
-using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Altaxo.Science.Thermorheology.MasterCurves
 {
   /// <summary>
-  /// A collection of multiple x-y curves (see <see cref="ShiftCurve{Double}"/>) that will finally form one master curve.
+  /// A collection of multiple x-y curves (see <see cref="ShiftCurve{T}"/>) that will finally form one master curve.
   /// </summary>
-  public class ShiftGroup : ShiftGroupBase<double>
+  public class ShiftGroupBase<T> : IReadOnlyList<ShiftCurve<T>>
   {
-    /// <summary>
-    /// Creates the fit function. Argument is the tuple consisting of X, Y, and optional YErr. Return value is a function that calculates y for a given x.
-    /// </summary>
-    public Func<(IReadOnlyList<double> X, IReadOnlyList<double> Y, IReadOnlyList<double>? YErr), Func<double, double>>? CreateInterpolationFunction { get; }
+    protected ShiftCurve<T>[] _inner;
 
+    /// <summary>
+    /// Determines how to shift the x values: either by factor or by offset. Use offset if the original data are already logarithmized.
+    /// </summary>
+    public ShiftXBy XShiftBy { get; }
+
+    /// <summary>Logarithmize x values before adding to the interpolation curve. (Only for interpolation).</summary>
+    public bool LogarithmizeXForInterpolation { get; }
+
+    /// <summary>Logarithmize y values before adding to the interpolation curve. (Only for interpolation).</summary>
+    public bool LogarithmizeYForInterpolation { get; }
+
+    /// <summary>
+    /// Gets the fitting weight, a number number &gt; 0.
+    /// </summary>
+    public double FittingWeight { get; }
+
+    /// <summary>
     /// <summary>
     /// Initializes a new instance of the <see cref="ShiftGroup"/> class.
     /// </summary>
@@ -45,11 +60,31 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     /// <param name="fitWeight">The weight with which to participate in the fit. Has to be &gt; 0.</param>
     /// <param name="logarithmizeXForInterpolation">If true, the x-values are logarithmized prior to participating in the interpolation function.</param>
     /// <param name="logarithmizeYForInterpolation">If true, the y-values are logartihmized prior to participating in the interpolation function.</param>
-    /// <param name="createInterpolationFunction">Function that creates the interpolation. Input are the x-array, y-array, and optionally, the array of y-errors. Output is an interpolation function which returns an interpolated y-value for a given x-value.</param>
-    public ShiftGroup(IEnumerable<ShiftCurve<double>> data, ShiftXBy xShiftBy, double fitWeight, bool logarithmizeXForInterpolation, bool logarithmizeYForInterpolation, Func<(IReadOnlyList<double> X, IReadOnlyList<double> Y, IReadOnlyList<double>? YErr), Func<double, double>>? createInterpolationFunction = null)
-      : base(data, xShiftBy, fitWeight, logarithmizeXForInterpolation, logarithmizeYForInterpolation)
+    public ShiftGroupBase(IEnumerable<ShiftCurve<T>> data, ShiftXBy xShiftBy, double fitWeight, bool logarithmizeXForInterpolation, bool logarithmizeYForInterpolation)
     {
-      CreateInterpolationFunction = createInterpolationFunction;
+      _inner = data.ToArray();
+      XShiftBy = xShiftBy;
+      FittingWeight = fitWeight;
+      LogarithmizeXForInterpolation = logarithmizeXForInterpolation;
+      LogarithmizeYForInterpolation = logarithmizeYForInterpolation;
+    }
+
+    /// <inheritdoc/>
+    public ShiftCurve<T> this[int index] => ((IReadOnlyList<ShiftCurve<T>>)_inner)[index];
+
+    /// <inheritdoc/>
+    public int Count => ((IReadOnlyCollection<ShiftCurve<T>>)_inner).Count;
+
+    /// <inheritdoc/>
+    public IEnumerator<ShiftCurve<T>> GetEnumerator()
+    {
+      return ((IEnumerable<ShiftCurve<T>>)_inner).GetEnumerator();
+    }
+
+    /// <inheritdoc/>
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+      return _inner.GetEnumerator();
     }
   }
 }

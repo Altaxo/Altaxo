@@ -1,0 +1,124 @@
+﻿<UserControl x:Class="Altaxo.Gui.Calc.Interpolation.PronySeriesInterpolationBaseControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
+             xmlns:axogcc="clr-namespace:Altaxo.Gui.Common.Converters"
+             xmlns:localm="clr-namespace:Altaxo.Gui.Calc.Interpolation;assembly=AltaxoBase"
+             d:DataContext="{d:DesignInstance Type=localm:PronySeriesInterpolationBaseController}"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid>
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="Auto"/>
+      <ColumnDefinition Width="4"/>
+      <ColumnDefinition Width="Auto"/>
+      <ColumnDefinition Width="4"/>
+    </Grid.ColumnDefinitions>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="4"/>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="4"/>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="4"/>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="4"/>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="4"/>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="4"/>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="4"/>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="4"/>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="4"/>
+    </Grid.RowDefinitions>
+    <Label Grid.Row="0" Grid.Column="0"
+           Content="Prony type"/>
+      
+    <StackPanel Grid.Row="0" Grid.Column="2" Orientation="Horizontal">
+      <RadioButton IsChecked="{Binding IsRelaxation}" 
+                   Content="Relaxation"
+                   ToolTip="Use relaxation, if the curve is decreasing with time (time domain), or the real part is increasing with frequency (frequency domain)"
+                   Margin="0,0,4,0"
+                   VerticalAlignment="Center"/>
+      <RadioButton IsChecked="{Binding IsRelaxation, Converter={x:Static axogcc:InverseBooleanConverter.Instance}}" 
+                   Content="Retardation"
+                   ToolTip="Use retardation, if the curve is increasing with time (time domain), or the real part is decreasing with frequency (frequency domain)"
+                   VerticalAlignment="Center"
+                   />
+    </StackPanel>
+
+    <CheckBox Grid.Row="2" Grid.Column="0"
+                IsChecked="{Binding IsManuallySpecifiedXMinXMax, Mode=TwoWay}"
+              Content="Specify x-min/x-max:"
+              ToolTip="If not checked, the x-minimum and x-maximum is automatically calculated from the provided x-data. If checked, you can specify x-minimum and x-maximum manually."
+              />
+      <Label Grid.Row="4" Grid.Column="0"
+             Content="X-min:"
+             Visibility="{Binding IsManuallySpecifiedXMinXMax, Converter={x:Static axogcc:FalseToVisibilityCollapsedConverter.Instance}}"/>
+    <axogc:NumericDoubleTextBox Grid.Row="4" Grid.Column="2"
+                                SelectedValue="{Binding XMinimum}"
+                                Visibility="{Binding IsManuallySpecifiedXMinXMax, Converter={x:Static axogcc:FalseToVisibilityCollapsedConverter.Instance}}"
+                                ToolTip="The minimum relaxation/retardation time (in time domain), or the minimum frequency (in frequency domain)."/>
+    <Label Grid.Row="6" Grid.Column="0"
+           Content="X-max:"
+           Visibility="{Binding IsManuallySpecifiedXMinXMax, Converter={x:Static axogcc:FalseToVisibilityCollapsedConverter.Instance}}"/>
+      
+    <axogc:NumericDoubleTextBox Grid.Row="6" Grid.Column="2"
+                                SelectedValue="{Binding XMaximum}"
+                                Visibility="{Binding IsManuallySpecifiedXMinXMax, Converter={x:Static axogcc:FalseToVisibilityCollapsedConverter.Instance}}"
+                                ToolTip="The maximum relaxation/retardation time (in time domain), or the maximum frequency (in frequency domain)."/>
+
+    <CheckBox Grid.Row="8" Grid.Column="0"
+                IsChecked="{Binding IsSpecificationPointsPerDecade, Mode=TwoWay}"
+                Content="Number of Prony terms per decade:"/>
+
+    <axogc:NumericDoubleTextBox Grid.Row="8" Grid.Column="2"
+                            SelectedValue="{Binding PointsPerDecade}"
+                            MinValue="0"
+                            IsEnabled="{Binding IsSpecificationPointsPerDecade}"
+                            ToolTip="The number of Prony terms per decade (per decade either in time domain or in frequency domain)."    
+                            />
+
+    <Label Grid.Row="10" Grid.Column="0"
+           Content="Number of Prony terms:"
+           Visibility="{Binding IsNumberOfPointsLabelVisible, Converter={x:Static axogcc:FalseToVisibilityCollapsedConverter.Instance}}"
+           />
+    <Label Grid.Row="10" Grid.Column="0"
+           Content="Maximum number of Prony terms:"
+           Visibility="{Binding IsMaximumNumberOfPointsLabelVisible, Converter={x:Static axogcc:FalseToVisibilityCollapsedConverter.Instance}}"
+           />
+
+    <axogc:Int32UpDown Grid.Row="10" Grid.Column="2"
+                       Value="{Binding NumberOfPoints}"
+                       Visibility="{Binding IsNumberOfPointsVisible, Converter={x:Static axogcc:FalseToVisibilityCollapsedConverter.Instance}}"
+                       Minimum="0"
+                       Maximum="2147483647"
+                       MaximumReplacementText="Unlimited"
+                       />
+
+    <CheckBox Grid.Row="12" Grid.Column="0"
+              IsChecked="{Binding UseIntercept, Mode=TwoWay}"
+              Content="Use intercept"
+              ToolTip="Use intercept, if your signal has an y-offset, which is almost ever true."
+              />
+    <CheckBox Grid.Row="12" Grid.Column="2"
+              IsChecked="{Binding AllowNegativePronyCoefficients, Mode=TwoWay}"
+              Content="Allow neg. Prony coefficients"
+              ToolTip="Don't check this unless you know what you do. If checked, you will allow negative Prony coefficients."
+              />
+
+    <Label Grid.Row="14" Grid.Column="0"
+             Content="Regularization parameter:"/>
+    
+      <axogc:NumericDoubleTextBox Grid.Row="14" Grid.Column="2"
+                                  SelectedValue="{Binding RegularizationParameter}"
+                                  MinValue="0"
+                                  ToolTip="By increasing the value, the curve of Prony coefficents (over the times or frequencies) will become smoother. If in doubt, leave the value at zero."/>
+
+  </Grid>
+</UserControl>

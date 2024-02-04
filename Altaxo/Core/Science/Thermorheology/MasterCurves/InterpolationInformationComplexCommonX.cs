@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2023 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2024 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -26,25 +26,26 @@
 using System;
 using System.Collections.Generic;
 using Altaxo.Calc;
+using Complex64 = System.Numerics.Complex;
 
 namespace Altaxo.Science.Thermorheology.MasterCurves
 {
   /// <summary>
   /// Stores information about an interpolation curve that interpolates the resulting shift curve for one group of columns, e.g. for the real part of measured values.
   /// </summary>
-  public class InterpolationInformation : InterpolationInformationBase<double>
+  public class InterpolationInformationComplexCommonX : InterpolationInformationBase<Complex64>
   {
     /// <summary>
     /// Gets the current interpolation function. The argument of the function is the x-value. The result is the interpolated y-value.
     /// </summary>
-    public Func<double, double> InterpolationFunction { get; set; }
+    public Func<double, Complex64> InterpolationFunction { get; set; }
 
     /// <summary>
     /// Initialized the instance.
     /// </summary>
-    public InterpolationInformation()
+    public InterpolationInformationComplexCommonX()
     {
-      InterpolationFunction = new Func<double, double>((x) => throw new InvalidOperationException("Interpolation was not yet done."));
+      InterpolationFunction = new Func<double, Complex64>((x) => throw new InvalidOperationException("Interpolation was not yet done."));
     }
 
     /// <summary>
@@ -53,11 +54,11 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     public override void Clear()
     {
       base.Clear();
-      InterpolationFunction = new Func<double, double>((x) => throw new InvalidOperationException("Interpolation was not yet done."));
+      InterpolationFunction = new Func<double, Complex64>((x) => throw new InvalidOperationException("Interpolation was not yet done."));
     }
 
     /// <summary>
-    /// Adds values to the data that should be interpolated, but does not evaluate a new interpolation (call <see cref="Interpolate(ShiftGroup)"/>
+    /// Adds values to the data that should be interpolated, but does not evaluate a new interpolation/>
     /// after this call if a new interpolation should be evaluated).
     /// </summary>
     /// <param name="shift">Shift value used to modify the x values.</param>
@@ -66,7 +67,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     /// <param name="y">Column of y values.</param>
     /// <param name="groupNumber">Number of the curve group.</param>
     /// <param name="options">Options for creating the master curve.</param>
-    public void AddXYColumn(double shift, int indexOfCurve, IReadOnlyList<double> x, IReadOnlyList<double> y, int groupNumber, ShiftGroup options)
+    public void AddXYColumn(double shift, int indexOfCurve, IReadOnlyList<double> x, IReadOnlyList<Complex64> y, IReadOnlyList<Complex64>? yerr, int groupNumber, ShiftGroupComplex options)
     {
       // first, Remove all points with indexOfCurve
       for (int i = ValuesToInterpolate.Count - 1; i >= 0; --i)
@@ -94,12 +95,11 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
         else
           xv = shiftXByOffset ? x[i] + shift : x[i] * Math.Exp(shift);
 
-        double yv = y[i];
+        var yv = y[i];
         if (doLogY)
-          yv = Math.Log(yv);
+          yv = new Complex64(Math.Log(yv.Real), Math.Log(yv.Imaginary));
 
-
-        if (isXUsable && xv.IsFinite() && yv.IsFinite())
+        if (isXUsable && xv.IsFinite() && yv.Real.IsFinite() && yv.Imaginary.IsFinite())
         {
           maxX = Math.Max(maxX, xv);
           minX = Math.Min(minX, xv);

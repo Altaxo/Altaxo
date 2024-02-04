@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2023 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2024 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -28,6 +28,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Altaxo.Calc;
 using Altaxo.Calc.Optimization;
+using Complex64 = System.Numerics.Complex;
 
 namespace Altaxo.Science.Thermorheology.MasterCurves
 {
@@ -37,14 +38,14 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
   /// <summary>
   /// Methods for creating a master curve.
   /// </summary>
-  public class MasterCurveCreation
+  public class MasterCurveCreationComplexCommonX
   {
     /// <summary>
     /// Creates one or multiple master curve(s).
     /// </summary>
     /// <param name="shiftGroupCollection">Raw data for master curve creation.</param>
     /// <returns>The result of the master curve creation.</returns>
-    public static MasterCurveCreationResult CreateMasterCurve(ShiftGroupCollection shiftGroupCollection)
+    public static MasterCurveCreationResultComplexCommonX CreateMasterCurve(ShiftGroupCollectionComplexCommonX shiftGroupCollection)
     {
       // First we create the initial interpolation of the master column
       // then we successively add columns by shifting the x and merge them with the interpolation
@@ -53,23 +54,23 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
       var shiftOrder = shiftGroupCollection.ShiftOrder;
       if (shiftOrder.IsPivotIndexRequired && !shiftOrder.PivotIndex.HasValue)
       {
-        var pivotIndexCandidate = GetCurveIndexWithMostVariation(shiftGroupCollection[0]);
+        var pivotIndexCandidate = GetCurveIndexWithMostVariation(shiftGroupCollection[0]); // we get the curve with most variation from the real part
         shiftOrder = shiftOrder.WithPivotIndex(pivotIndexCandidate ?? 0);
       }
 
       var (indexOfReferenceColumnInColumnGroup, shiftOrderIndices) = GetFixedAndShiftedIndices(shiftOrder, maxColumns);
 
-      var result = new MasterCurveCreationResult(shiftGroupCollection.Count);
+      var result = new MasterCurveCreationResultComplexCommonX(shiftGroupCollection.Count);
       result.ResultingShifts.Clear();
       result.ResultingShifts.AddRange(Enumerable.Range(0, maxColumns).Select(_ => 0d));
 
-      for (int idxGroup = 0; idxGroup < result.ResultingInterpolation.Length; idxGroup++)
+      for (int idxGroup = 0; idxGroup < shiftGroupCollection.Count; idxGroup++)
       {
         var shiftGroup = shiftGroupCollection[idxGroup];
-        result.ResultingInterpolation[idxGroup] = new InterpolationInformation();
+        result.ResultingInterpolation[idxGroup] = new InterpolationInformationComplexCommonX();
         var referenceShiftCurve = shiftGroupCollection[idxGroup][indexOfReferenceColumnInColumnGroup];
         // To each column group, add initially only the column used as reference (shift 0)
-        result.ResultingInterpolation[idxGroup].AddXYColumn(0, indexOfReferenceColumnInColumnGroup, referenceShiftCurve.X, referenceShiftCurve.Y, idxGroup, shiftGroup);
+        result.ResultingInterpolation[idxGroup].AddXYColumn(0, indexOfReferenceColumnInColumnGroup, referenceShiftCurve.X, referenceShiftCurve.Y, null, idxGroup, shiftGroup);
       }
 
       // Make the initial interpolation for all column groups, using only the column(s) used as reference (shift 0)
@@ -83,7 +84,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
       return result;
     }
 
-    private static void InterpolateAllColumnGroups(ShiftGroupCollection shiftGroupCollection, MasterCurveCreationResult result)
+    private static void InterpolateAllColumnGroups(ShiftGroupCollectionComplexCommonX shiftGroupCollection, MasterCurveCreationResultComplexCommonX result)
     {
       for (int idxGroup = 0; idxGroup < shiftGroupCollection.Count; idxGroup++)
       {
@@ -112,7 +113,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     /// </summary>
     /// <param name="group">The group.</param>
     /// <returns>The index of the curve with most variation. If no suitable curve was found, then the return value is null.</returns>
-    public static int? GetCurveIndexWithMostVariation(ShiftGroup group)
+    public static int? GetCurveIndexWithMostVariation(ShiftGroupComplex group)
     {
       double maxAbsoluteSlope = 0;
       int idxMaxAbsoluteSlope = -1;
@@ -124,7 +125,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
         var reg = new Altaxo.Calc.Regression.QuickLinearRegression();
         for (int i = 0; i < x.Count; i++)
         {
-          reg.Add(x[i], y[i]);
+          reg.Add(x[i], y[i].Real);
         }
 
         var absSlope = Math.Abs(reg.GetA1());
@@ -138,10 +139,10 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
       return idxMaxAbsoluteSlope >= 0 ? idxMaxAbsoluteSlope : null;
     }
 
-    public static (IReadOnlyList<double> x, IReadOnlyList<double> y) TransformCurveForInterpolationAccordingToGroupOptions(ShiftCurve<double> curve, ShiftGroup group)
+    public static (IReadOnlyList<double> x, IReadOnlyList<Complex64> y) TransformCurveForInterpolationAccordingToGroupOptions(ShiftCurve<Complex64> curve, ShiftGroupBase<Complex64> group)
     {
       var xarr = new List<double>();
-      var yarr = new List<double>();
+      var yarr = new List<Complex64>();
 
       for (int i = 0; i < curve.Count; ++i)
       {
@@ -151,9 +152,9 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
         if (group.LogarithmizeXForInterpolation)
           x = Math.Log(x);
         if (group.LogarithmizeYForInterpolation)
-          y = Math.Log(y);
+          y = new Complex64(Math.Log(y.Real), Math.Log(y.Imaginary));
 
-        if (x.IsFinite() && y.IsFinite())
+        if (x.IsFinite() && y.Real.IsFinite() && y.Imaginary.IsFinite())
         {
           xarr.Add(x);
           yarr.Add(y);
@@ -170,7 +171,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     /// <param name="shiftGroupCollection">The data to construct the master curve(s).</param>
     /// <param name="shiftOrder">The order in which the curves are shifted and fitted to the master curve.</param>
     /// <param name="result">The result of the master curve construction.</param>
-    public static void Iterate(ShiftGroupCollection shiftGroupCollection, IReadOnlyList<int> shiftOrder, MasterCurveCreationResult result)
+    public static void Iterate(ShiftGroupCollectionComplexCommonX shiftGroupCollection, IReadOnlyList<int> shiftOrder, MasterCurveCreationResultComplexCommonX result)
     {
       for (int iteration = 0; iteration < shiftGroupCollection.NumberOfIterations; ++iteration)
       {
@@ -186,10 +187,10 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     /// <param name="result">The result that accomodates the actual shift values.</param>
     /// <exception cref="System.InvalidOperationException"></exception>
     /// <exception cref="System.NotImplementedException">OptimizationMethod not implemented: " + shiftGroupCollection.OptimizationMethod.ToString()</exception>
-    private static void OneIteration(ShiftGroupCollection shiftGroupCollection, IReadOnlyList<int> shiftCurveOrder, MasterCurveCreationResult result)
+    private static void OneIteration(ShiftGroupCollectionComplexCommonX shiftGroupCollection, IReadOnlyList<int> shiftCurveOrder, MasterCurveCreationResultComplexCommonX result)
     {
       double initialShift = 0;
-      var oneShiftDataAcrossCurveGroups = new ShiftCurve<double>[shiftGroupCollection.Count]; // contains the shift data for the same curve index, but for all curve groups
+      var oneShiftDataAcrossCurveGroups = new ShiftCurve<Complex64>[shiftGroupCollection.Count]; // contains the shift data for the same curve index, but for all curve groups
       var interpolations = result.ResultingInterpolation ?? throw new InvalidOperationException($"{nameof(result)} must already contain valid interpolation(s).");
 
       foreach (int indexOfCurveInShiftGroup in shiftCurveOrder)
@@ -197,7 +198,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
         double globalMinShift = double.MaxValue;
         double globalMaxShift = double.MinValue;
         double globalMinRange = double.MaxValue;
-        for (int idxShiftGroup = 0; idxShiftGroup < interpolations.Length; idxShiftGroup++)
+        for (int idxShiftGroup = 0; idxShiftGroup < shiftGroupCollection.Count; idxShiftGroup++)
         {
           var shiftGroup = shiftGroupCollection[idxShiftGroup];
           var shiftCurve = shiftGroup[indexOfCurveInShiftGroup];
@@ -299,7 +300,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
           for (int idxShiftGroup = 0; idxShiftGroup < interpolations.Length; idxShiftGroup++)
           {
             // add the data for interpolation again, using the new shift
-            interpolations[idxShiftGroup].AddXYColumn(currentShift, indexOfCurveInShiftGroup, oneShiftDataAcrossCurveGroups[idxShiftGroup].X, oneShiftDataAcrossCurveGroups[idxShiftGroup].Y, idxShiftGroup, shiftGroupCollection[idxShiftGroup]);
+            interpolations[idxShiftGroup].AddXYColumn(currentShift, indexOfCurveInShiftGroup, oneShiftDataAcrossCurveGroups[idxShiftGroup].X, oneShiftDataAcrossCurveGroups[idxShiftGroup].Y, null, idxShiftGroup, shiftGroupCollection[idxShiftGroup]);
           }
           // now build up a new interpolation, where the shifted data is taken into account
           InterpolateAllColumnGroups(shiftGroupCollection, result);
@@ -317,7 +318,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     /// </summary>
     /// <param name="shiftGroupCollection">The data to construct the master curve(s).</param>
     /// <param name="result">The result of the master curve construction.</param>
-    public static void ReInitializeResult(ShiftGroupCollection shiftGroupCollection, MasterCurveCreationResult result)
+    public static void ReInitializeResult(ShiftGroupCollectionComplexCommonX shiftGroupCollection, MasterCurveCreationResultComplexCommonX result)
     {
       for (int idxColumnGroup = 0; idxColumnGroup < shiftGroupCollection.Count; idxColumnGroup++)
       {
@@ -327,7 +328,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
 
         for (int idxCurve = 0; idxCurve < shiftCurves.Count; idxCurve++)
         {
-          interpolation.AddXYColumn(result.ResultingShifts[idxCurve], idxCurve, shiftCurves[idxCurve].X, shiftCurves[idxCurve].Y, idxColumnGroup, shiftCurves);
+          interpolation.AddXYColumn(result.ResultingShifts[idxCurve], idxCurve, shiftCurves[idxCurve].X, shiftCurves[idxCurve].Y, null, idxColumnGroup, shiftCurves);
         }
       }
       InterpolateAllColumnGroups(shiftGroupCollection, result);
@@ -339,7 +340,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     /// </summary>
     /// <param name="shiftGroupCollection">The data to construct the master curve(s).</param>
     /// <param name="result">The result of the master curve construction.</param>
-    public static void ReIterate(ShiftGroupCollection shiftGroupCollection, MasterCurveCreationResult result)
+    public static void ReIterate(ShiftGroupCollectionComplexCommonX shiftGroupCollection, MasterCurveCreationResultComplexCommonX result)
     {
       // First we create the initial interpolation of the master column
       // then we successively add columns by shifting the x and merge them with the interpolation
@@ -367,7 +368,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     /// <param name="doLogX">True if the x-values are logarithmized for the interpolation.</param>
     /// <param name="doLogY">True if the y-values are logarithmized for the interpolation.</param>
     /// <returns>Minimum and maximum of the x-values, for x and y values appropriate for the conditions given by the parameter.</returns>
-    public static (double min, double max) GetMinMaxOfFirstColumnForValidSecondColumn(IReadOnlyList<double> x, IReadOnlyList<double> y, ShiftXBy shiftBy, bool doLogX, bool doLogY)
+    public static (double min, double max) GetMinMaxOfFirstColumnForValidSecondColumn(IReadOnlyList<double> x, IReadOnlyList<Complex64> y, ShiftXBy shiftBy, bool doLogX, bool doLogY)
     {
       var len = Math.Min(x.Count, y.Count);
       var min = double.PositiveInfinity;
@@ -375,10 +376,10 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
 
       for (int i = 0; i < len; i++)
       {
-        double x1 = shiftBy == ShiftXBy.Factor ? Math.Log(x[i]) : x[i];
-        double xv = doLogX ? Math.Log(x[i]) : x[i];
-        double yv = doLogY ? Math.Log(y[i]) : y[i];
-        if (x1.IsFinite() && xv.IsFinite() && yv.IsFinite())
+        var x1 = shiftBy == ShiftXBy.Factor ? Math.Log(x[i]) : x[i];
+        var xv = doLogX ? Math.Log(x[i]) : x[i];
+        var yv = doLogY ? new Complex64(Math.Log(y[i].Real), Math.Log(y[i].Imaginary)) : y[i];
+        if (x1.IsFinite() && xv.IsFinite() && yv.Real.IsFinite() && yv.Imaginary.IsFinite())
         {
           min = Math.Min(min, xv);
           max = Math.Max(max, xv);
@@ -395,7 +396,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     /// <param name="shift">Current shift (direct offset or the natural logarithm of the shiftFactor).</param>
     /// <param name="options">Options for creating the master curve.</param>
     /// <returns>The mean penalty value for the current shift factor of the current column.</returns>
-    private static double GetMeanSignedPenalty(InterpolationInformation[] interpolations, IReadOnlyList<ShiftCurve<double>> oneShiftDataAcrossGroups, double shift, ShiftGroupCollection options)
+    private static double GetMeanSignedPenalty(InterpolationInformationComplexCommonX[] interpolations, IReadOnlyList<ShiftCurve<Complex64>> oneShiftDataAcrossGroups, double shift, ShiftGroupCollectionComplexCommonX options)
     {
 
       double penaltySum = 0;
@@ -426,7 +427,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     /// <param name="shift">Current shift (direct or log of shiftFactor).</param>
     /// <param name="options">Options for creating the master curve.</param>
     /// <returns>The mean penalty value for the current shift factor of the current column.</returns>
-    private static double GetMeanSquaredPenalty(InterpolationInformation[] interpolations, IReadOnlyList<ShiftCurve<double>> oneShiftDataAcrossGroups, double shift, ShiftGroupCollection shiftGroupCollection)
+    private static double GetMeanSquaredPenalty(InterpolationInformationComplexCommonX[] interpolations, IReadOnlyList<ShiftCurve<Complex64>> oneShiftDataAcrossGroups, double shift, ShiftGroupCollectionComplexCommonX shiftGroupCollection)
     {
 
       double penaltySum = 0;
@@ -461,7 +462,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     /// <param name="options">Information for the master curve creation.</param>
     /// <param name="penalty">Returns the calculated penalty value (mean difference between interpolation curve and provided data).</param>
     /// <param name="evaluatedPoints">Returns the number of points (of the new part of the curve) used for calculating the penalty value.</param>
-    public static void GetMeanSignedYDifference(Func<double, double> interpolation, double interpolMin, double interpolMax, IReadOnlyList<double> x, IReadOnlyList<double> y, double shift, ShiftGroup options, out double penalty, out int evaluatedPoints)
+    public static void GetMeanSignedYDifference(Func<double, Complex64> interpolation, double interpolMin, double interpolMax, IReadOnlyList<double> x, IReadOnlyList<Complex64> y, double shift, ShiftGroupComplex options, out double penalty, out int evaluatedPoints)
     {
       int len = Math.Min(x.Count, y.Count);
       int validPoints = 0;
@@ -477,15 +478,16 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
         else
           xv = shiftXByOffset ? x[i] + shift : x[i] * Math.Exp(shift);
 
-        double yv = y[i];
+        var yv = y[i];
         if (doLogY)
-          yv = Math.Log(yv);
+          yv = new Complex64(Math.Log(yv.Real), Math.Log(yv.Imaginary));
 
-        if (xv.IsFinite() && yv.IsFinite() && xv.IsInIntervalCC(interpolMin, interpolMax))
+        if (xv.IsFinite() && yv.Real.IsFinite() && yv.Imaginary.IsFinite() && xv.IsInIntervalCC(interpolMin, interpolMax))
         {
           try
           {
-            double diff = yv - interpolation(xv);
+            var yinterpol = interpolation(xv);
+            double diff = yv.Real - yinterpol.Real + yv.Imaginary - yinterpol.Imaginary;
             penaltySum += diff;
             validPoints++;
           }
@@ -512,7 +514,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     /// <param name="options">Information for the master curve creation.</param>
     /// <param name="penalty">Returns the calculated penalty value (mean squared difference between interpolation curve and provided data).</param>
     /// <param name="evaluatedPoints">Returns the number of points (of the new part of the curve) used for calculating the penalty value.</param>
-    public static void GetMeanSquaredYDifference(Func<double, double> interpolationFunc, double interpolMin, double interpolMax, IReadOnlyList<double> x, IReadOnlyList<double> y, double shift, ShiftGroup options, out double penalty, out int evaluatedPoints)
+    public static void GetMeanSquaredYDifference(Func<double, Complex64> interpolationFunc, double interpolMin, double interpolMax, IReadOnlyList<double> x, IReadOnlyList<Complex64> y, double shift, ShiftGroupComplex options, out double penalty, out int evaluatedPoints)
     {
       int len = Math.Min(x.Count, y.Count);
       int validPoints = 0;
@@ -528,16 +530,17 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
         else
           xv = shiftXByOffset ? x[i] + shift : x[i] * Math.Exp(shift);
 
-        double yv = y[i];
+        var yv = y[i];
         if (doLogY)
-          yv = Math.Log(yv);
+          yv = new Complex64(Math.Log(yv.Real), Math.Log(yv.Imaginary));
 
-        if (xv.IsFinite() && yv.IsFinite() && xv.IsInIntervalCC(interpolMin, interpolMax))
+        if (xv.IsFinite() && yv.Real.IsFinite() && yv.Imaginary.IsFinite() && xv.IsInIntervalCC(interpolMin, interpolMax))
         {
           try
           {
-            double diff = yv - interpolationFunc(xv);
-            penaltySum += diff * diff;
+            var yinterpol = interpolationFunc(xv);
+            var diff = yv - yinterpol;
+            penaltySum += diff.MagnitudeSquared();
             validPoints++;
           }
           catch (Exception)
