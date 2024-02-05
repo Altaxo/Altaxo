@@ -529,13 +529,10 @@ namespace Altaxo.Gui.Science.Thermorheology
               doc = new MasterCurveGroupOptionsWithComplexInterpolation();
             }
 
-            /*
             var controller = new MasterCurveGroupOptionsWithComplexInterpolationController();
             controller.InitializeDocument(doc);
             Current.Gui.FindAndAttachControlTo(controller);
             list.Add(new SelectableListNodeWithController("For all groups", controller, false) { Controller = controller, ControllerTag = 0 });
-            */
-
           }
           break;
         default:

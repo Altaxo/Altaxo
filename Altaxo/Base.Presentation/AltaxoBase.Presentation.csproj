@@ -138,6 +138,9 @@
     <Compile Update="Gui\Common\BasicTypes\NumericFloatValueControl.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Gui\Science\Thermorheology\MasterCurveGroupOptionsWithComplexInterpolationController.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Gui\Science\Thermorheology\MasterCurveImprovementOptionsControl.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
