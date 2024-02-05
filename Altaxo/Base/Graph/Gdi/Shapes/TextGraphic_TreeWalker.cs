@@ -454,15 +454,24 @@ namespace Altaxo.Graph.Gdi.Shapes
             {
               string s1 = GetText(childNode);
               string s2 = GetText(childNode.next_);
-              if (int.TryParse(s1, out var plotLayer) && int.TryParse(s2, out var plotNumber))
+              if (IsPositiveInteger(childNode) && IsPositiveInteger(childNode.next_))
               {
-                parent.Add(new PlotName(context, plotNumber, plotLayer));
+                // number of plot layer and number of plot curve
+                if (int.TryParse(s1, System.Globalization.NumberStyles.Integer, System.Globalization.CultureInfo.InvariantCulture, out var plotLayer) &&
+                    int.TryParse(s2, System.Globalization.NumberStyles.Integer, System.Globalization.CultureInfo.InvariantCulture, out var plotNumber))
+                {
+                  parent.Add(new PlotName(context, plotNumber, plotLayer));
+                }
               }
-              else if (int.TryParse(s1, out plotNumber))
+              else if (IsPositiveInteger(childNode) && IsString(childNode.next_))
               {
-                var label = new PlotName(context, plotNumber);
-                label.SetPropertyColumnName(s2);
-                parent.Add(label);
+                // number of plot curve, and property name
+                if (int.TryParse(s1, System.Globalization.NumberStyles.Integer, System.Globalization.CultureInfo.InvariantCulture, out var plotNumber))
+                {
+                  var label = new PlotName(context, plotNumber);
+                  label.SetPropertyColumnName(s2);
+                  parent.Add(label);
+                }
               }
             }
             break;
@@ -486,17 +495,31 @@ namespace Altaxo.Graph.Gdi.Shapes
               string s1 = GetText(childNode);
               string s2 = GetText(childNode.next_);
               string s3 = GetText(childNode.next_.next_);
-              if (int.TryParse(s1, out var plotLayer) && int.TryParse(s2, out var plotNumber))
+              if (IsPositiveInteger(childNode) && IsPositiveInteger(childNode.next_) && IsString(childNode.next_.next_))
               {
-                var label = new PlotName(context, plotNumber, plotLayer);
-                label.SetPropertyColumnName(s3);
-                parent.Add(label);
+                // Number of plot layer, number of plot curve, and property name
+                if (int.TryParse(s1, System.Globalization.NumberStyles.Integer, System.Globalization.CultureInfo.InvariantCulture, out var plotLayer) &&
+                    int.TryParse(s2, System.Globalization.NumberStyles.Integer, System.Globalization.CultureInfo.InvariantCulture, out var plotNumber))
+                {
+                  var label = new PlotName(context, plotNumber, plotLayer);
+                  label.SetPropertyColumnName(s3);
+                  parent.Add(label);
+                }
+              }
+              else if (IsPositiveInteger(childNode) && IsString(childNode.next_) && IsString(childNode.next_.next_))
+              {
+                // Number of plot-curve, property name, and C# format string
+                if (int.TryParse(s1, System.Globalization.NumberStyles.Integer, System.Globalization.CultureInfo.InvariantCulture, out var plotNumber))
+                {
+                  var label = new PlotName(context, plotNumber);
+                  label.SetPropertyColumnName(s2, s3);
+                  parent.Add(label);
+                }
               }
             }
             break;
         }
       }
-
       private void HandleEscSeq4(PegNode node, StyleContext context, StructuralGlyph parent)
       {
         int posBeg = node.match_.posBeg_;
@@ -515,11 +538,16 @@ namespace Altaxo.Graph.Gdi.Shapes
               string s2 = GetText(childNode.next_);
               string s3 = GetText(childNode.next_.next_);
               string s4 = GetText(childNode.next_.next_.next_);
-              if (int.TryParse(s1, out var plotLayer) && int.TryParse(s2, out var plotNumber))
+              if (IsPositiveInteger(childNode) && IsPositiveInteger(childNode.next_) && IsString(childNode.next_.next_) && IsString(childNode.next_.next_.next_))
               {
-                var label = new PlotName(context, plotNumber, plotLayer);
-                label.SetPropertyColumnName(s3, s4);
-                parent.Add(label);
+                // Number of layer, number of plot-curve, property name, and C# format string
+                if (int.TryParse(s1, System.Globalization.NumberStyles.Integer, System.Globalization.CultureInfo.InvariantCulture, out var plotLayer) &&
+                    int.TryParse(s2, System.Globalization.NumberStyles.Integer, System.Globalization.CultureInfo.InvariantCulture, out var plotNumber))
+                {
+                  var label = new PlotName(context, plotNumber, plotLayer);
+                  label.SetPropertyColumnName(s3, s4);
+                  parent.Add(label);
+                }
               }
             }
             break;
@@ -529,6 +557,21 @@ namespace Altaxo.Graph.Gdi.Shapes
       private string GetText(PegNode node)
       {
         return _sourceText.Substring(node.match_.posBeg_, node.match_.Length);
+      }
+
+      public static bool IsType(PegNode n, EAltaxo_LabelV1 t)
+      {
+        return n.id_ == (int)t;
+      }
+
+      public static bool IsPositiveInteger(PegNode n)
+      {
+        return n.id_ == (int)EAltaxo_LabelV1.PositiveInteger;
+      }
+
+      public static bool IsString(PegNode n)
+      {
+        return n.id_ == (int)EAltaxo_LabelV1.StringContent;
       }
     } // end class TreeWalker
   }

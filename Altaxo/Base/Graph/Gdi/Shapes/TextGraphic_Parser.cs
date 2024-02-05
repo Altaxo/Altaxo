@@ -22,7 +22,7 @@
 
 #endregion Copyright
 
-/* created on 30.01.2024 (file Altaxo_LabelV2_PEG.txt)
+/* created on 05.02.2024 (file Altaxo_LabelV3_PEG.txt)
  * Instructions:
  * - Use the program "PEG Explorer" from here: https://www.codeproject.com/Articles/29713/Parsing-Expression-Grammar-Support-for-C-3-0-Part
  * - Save the grammar below in a file.
@@ -33,7 +33,7 @@
  * - copy the enum and the class contained in this generated file to the file here
  * - the Grammar used here is the following PEG grammar (save it to a file, then load it into PEG Explorer):
 
-<<Grammar Name="Altaxo_LabelV1">>
+<<Grammar Name="Altaxo_LabelV3">>
 
 // root element: the first part is the regular parsed text, the second part is the rest which can not be interpreted properly
 [1]^^MainSentence:  (EscSeq / WordSpanExt / Space)*  (WordSpanExt / EscChar / Space / '\\')*;
@@ -63,7 +63,8 @@
 [13]^^EscSeq4:      ('\\%(' PositiveInteger ',' PositiveInteger ',' QuotedString ',' QuotedString ')');
 
 [14]^^EscSeq3:      ('\\L('\i PositiveInteger ',' PositiveInteger ',' PositiveInteger ')') /
-                    ('\\%(' PositiveInteger ',' PositiveInteger ',' QuotedString ')');
+                    ('\\%(' PositiveInteger ',' PositiveInteger ',' QuotedString ')') /
+		                ('\\%(' PositiveInteger ',' QuotedString ',' QuotedString ')');
 
 [15]^^EscSeq2:      ( '\\' ( 'P'\i / 'F'\i / 'C'\i / '=' ) '(' SentenceNC ',' Sentence ')' ) /
                     ( '\\' ( 'L'\i                       ) '(' PositiveInteger ',' PositiveInteger ')' ) /
@@ -83,6 +84,7 @@
 
 <</Grammar>>
 
+
 */
 #nullable enable
 using System;
@@ -98,7 +100,6 @@ namespace Altaxo.Graph.Gdi.Shapes
     Word = 10, Space = 11, PositiveInteger = 12, EscSeq4 = 13, EscSeq3 = 14,
     EscSeq2 = 15, EscSeq1 = 16, QuotedString = 17, StringContent = 18
   };
-
   class Altaxo_LabelV1 : PegCharParser
   {
 
@@ -254,7 +255,8 @@ namespace Altaxo.Graph.Gdi.Shapes
              && Char(')')));
     }
     public bool EscSeq3()    /*[14]^^EscSeq3:      ('\\L('\i PositiveInteger ',' PositiveInteger ',' PositiveInteger ')') /
-                    ('\\%(' PositiveInteger ',' PositiveInteger ',' QuotedString ')');*/
+                    ('\\%(' PositiveInteger ',' PositiveInteger ',' QuotedString ')') /
+		    ('\\%(' PositiveInteger ',' QuotedString ',' QuotedString ')');*/
     {
 
       return TreeNT((int)EAltaxo_LabelV1.EscSeq3, () =>
@@ -272,6 +274,14 @@ namespace Altaxo.Graph.Gdi.Shapes
                  && PositiveInteger()
                  && Char(',')
                  && PositiveInteger()
+                 && Char(',')
+                 && QuotedString()
+                 && Char(')'))
+             || And(() =>
+                    Char('\\', '%', '(')
+                 && PositiveInteger()
+                 && Char(',')
+                 && QuotedString()
                  && Char(',')
                  && QuotedString()
                  && Char(')')));
@@ -387,4 +397,5 @@ namespace Altaxo.Graph.Gdi.Shapes
     }
     #endregion Optimization Data 
   }
+
 }
