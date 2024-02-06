@@ -36,6 +36,7 @@ namespace Altaxo.Calc.Interpolation
   /// </summary>
   public record PronySeriesFrequencyDomainComplexInterpolation : PronySeriesInterpolationBase, IComplexInterpolation
   {
+
     public IComplexInterpolationFunction Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<Complex64> yvec, IReadOnlyList<Complex64>? yStdDev = null)
     {
       var (workingXMinimum, workingXMaximum, workingNumberOfPoints) = GetWorkingXMinMaxNumberOfPoints(xvec);
@@ -110,6 +111,14 @@ namespace Altaxo.Calc.Interpolation
 
         return new InterpolationResultComplexWrapper(fit.GetFrequencyDomainYOfFrequency);
       }
+    }
+
+    public bool IsSupportingSeparateXForRealAndImaginaryPart => false;
+
+
+    public IComplexInterpolationFunction Interpolate(IReadOnlyList<double> xreal, IReadOnlyList<double> yreal, IReadOnlyList<double> ximaginary, IReadOnlyList<double> yimaginary)
+    {
+      throw new System.NotImplementedException($"Please ensure that the value of {IsSupportingSeparateXForRealAndImaginaryPart} is true before calling this function");
     }
   }
 }

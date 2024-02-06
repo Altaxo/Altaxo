@@ -30,6 +30,7 @@ using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Collections;
 using Altaxo.Data;
 using Altaxo.Gui.Science.Thermorheology;
+using Complex64 = System.Numerics.Complex;
 
 namespace Altaxo.Science.Thermorheology.MasterCurves
 {
@@ -691,7 +692,6 @@ StartOfFunction:
       }
     }
 
-
     /// <summary>
     /// Converts the <see cref="MasterCurveData"/> to <see cref="ShiftGroupCollection"/>.
     /// Only those curves are converted which participate on the fit, i.e. the curve must have at least two points,
@@ -802,6 +802,90 @@ StartOfFunction:
       return (shiftGroupCollection, new FitInformation(curveInfo, groupCorrespondence));
     }
 
+    /// <summary>
+    /// Converts the <see cref="MasterCurveData"/> to <see cref="ShiftGroupCollection"/>.
+    /// Only those curves are converted which participate on the fit, i.e. the curve must have at least two points,
+    /// and the fitting weight must be positive.
+    /// </summary>
+    /// <param name="processData">The process data.</param>
+    /// <returns>The <see cref="ShiftGroupCollection"/> containing the data to be shifted.</returns>
+    private static (ShiftGroupCollectionComplexCommonX shiftGroupCollection, FitInformation fitInformation) ConvertToShiftGroupCollectionComplexCommonX(MasterCurveCreationOptions options, MasterCurveData processData)
+    {
+      var srcData = processData.CurveData;
+      var numberOfGroups = srcData.Count;
+      if (numberOfGroups != 2)
+        throw new ArgumentOutOfRangeException("Number of groups must be exactly 2");
+      var groupOptions = (MasterCurveGroupOptionsWithComplexInterpolation)options.GroupOptions[0];
+
+      var numberOfCurves = srcData.Max(shiftGroup => shiftGroup.Length);
+      var listShiftCollection = new List<ShiftCurve<Complex64>>();
+
+      // create an array of extended information that will accomodate info about the curves, e.g. the property1 and property2
+      var curveInfo = Enumerable.Range(0, numberOfCurves).Select(i => new CurveInformation()).ToArray();
+
+      for (int idxCurve = 0; idxCurve < numberOfCurves; idxCurve++)
+      {
+        bool curveIndexWillParticipateInFit = false;
+
+        AltaxoVariant property1Value = new AltaxoVariant(), property2Value = new AltaxoVariant();
+
+
+        // look if the curve has some points
+        var xycolreal = srcData[0][idxCurve];
+        var xycolimag = srcData[1][idxCurve];
+        var shiftCurve = ConvertToShiftCurveComplex(xycolreal, xycolimag);
+
+        if (shiftCurve is not null && shiftCurve.Count >= 2) // Curve is appropriate to be used for fitting
+        {
+          curveIndexWillParticipateInFit = true;
+        }
+
+        var (p1r, p2r) = GetPropertiesOfCurve(xycolreal, options.Property1Name, options.Property2Name);
+        var (p1i, p2i) = GetPropertiesOfCurve(xycolreal, options.Property1Name, options.Property2Name);
+
+        if (!p1r.IsEmpty && !p1i.IsEmpty && p1r != p1i)
+          throw new InvalidOperationException();
+        if (!p2r.IsEmpty && !p2i.IsEmpty && p2r != p2i)
+          throw new InvalidOperationException();
+
+        property1Value = !p1r.IsEmpty ? p1r : p1i;
+        property2Value = !p2r.IsEmpty ? p2r : p2i;
+
+
+        curveInfo[idxCurve].Property1Value = property1Value;
+        curveInfo[idxCurve].Property2Value = property2Value;
+
+        if (curveIndexWillParticipateInFit)
+        {
+          curveInfo[idxCurve].IndexInShiftGroupCollection = listShiftCollection.Count;
+          listShiftCollection.Add(shiftCurve);
+        }
+        else
+        {
+          curveInfo[idxCurve].IndexInShiftGroupCollection = null; // curve will not participate in fit
+        }
+      }
+
+      var shiftGroup = new ShiftGroupComplex(
+        listShiftCollection,
+        groupOptions.XShiftBy,
+        groupOptions.FittingWeight,
+        groupOptions.LogarithmizeXForInterpolation,
+        groupOptions.LogarithmizeYForInterpolation,
+        (arg) => groupOptions.InterpolationFunction.Interpolate(arg.X, arg.Y, arg.YErr).GetYOfX);
+
+      var shiftGroupCollection = new ShiftGroupCollectionComplexCommonX(new[] { shiftGroup })
+      {
+        RequiredRelativeOverlap = options.RequiredRelativeOverlap,
+        NumberOfIterations = options.NumberOfIterations,
+        OptimizationMethod = options.OptimizationMethod,
+        ShiftOrder = options.ShiftOrder,
+      };
+
+      var groupCorrespondence = new int?[1];
+      groupCorrespondence[0] = 0;
+      return (shiftGroupCollection, new FitInformation(curveInfo, groupCorrespondence));
+    }
 
     /// <summary>
     /// Converts <see cref="XAndYColumn"/> data to a <see cref="ShiftCurve"/>.
@@ -817,6 +901,55 @@ StartOfFunction:
       else
         return new ShiftCurve<double>(x, y);
     }
+
+    /// <summary>
+    /// Converts <see cref="XAndYColumn"/> data to a <see cref="ShiftCurve"/>.
+    /// </summary>
+    /// <param name="dataReal">The data of the real part.</param>
+    /// <param name="dataImag">The data of the imaginary part.</param>
+    /// <returns>The shift curve (if there is any data). If the argument contains to data rows, then the return value is null.</returns>
+    private static ShiftCurve<Complex64>? ConvertToShiftCurveComplex(XAndYColumn? dataReal, XAndYColumn? dataImag)
+    {
+      if (dataReal is null || dataImag is null)
+        return null;
+
+      var (xre, yre, rowCountRe) = dataReal.GetResolvedXYData();
+      var (xim, yim, rowCountIm) = dataImag.GetResolvedXYData();
+
+      if (rowCountRe == 0 || rowCountIm == 0)
+        return null;
+
+      var dict = new Dictionary<double, double>();
+      for (int i = 0; i < rowCountIm; ++i)
+        dict[xim[i]] = yim[i];
+
+      var curvePointsX = new List<double>();
+      var curvePointsY = new List<Complex64>();
+      for (int i = 0; i < Math.Min(rowCountRe, rowCountIm); ++i)
+      {
+        var x = xre[i];
+        var yr = yre[i];
+        var yi = double.NaN;
+        if (xre[i] == xim[i])
+        {
+          yi = yim[i];
+        }
+        else if (dict.TryGetValue(x, out var v))
+        {
+          yi = v;
+        }
+
+        if (!(double.IsNaN(x) || double.IsNaN(yr) || double.IsNaN(yi)))
+        {
+          curvePointsX.Add(x);
+          curvePointsY.Add(new Complex64(yr, yi));
+        }
+      }
+
+      return new ShiftCurve<Complex64>(curvePointsX, curvePointsY);
+    }
+
+
 
     public static (AltaxoVariant property1Value, AltaxoVariant property2Value) GetPropertiesOfCurve(XAndYColumn curve, string property1Name, string property2Name)
     {

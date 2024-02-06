@@ -25,6 +25,24 @@ namespace Altaxo.Calc.Interpolation
     /// <param name="yimaginary">Vector of the imaginary part of y (dependent) data.</param>
     /// <returns>A <see cref="IComplexInterpolationFunction"/> object.</returns>
     IComplexInterpolationFunction Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yreal, IReadOnlyList<double> yimaginary);
+
+    /// <summary>
+    /// Gets a value indicating whether this instance is supporting separate pairs of xreal, yreal and ximag, yimag for the real and imaginary data.
+    /// Only if true is returned, you may use <see cref="Interpolate(IReadOnlyList{double}, IReadOnlyList{double}, IReadOnlyList{double}, IReadOnlyList{double})"/>
+    /// to provide separate pairs of x and y for real and imaginary part.
+    /// </summary>
+    bool IsSupportingSeparateXForRealAndImaginaryPart { get; }
+
+    /// <summary>
+    /// This call is only supported if <see cref="IsSupportingSeparateXForRealAndImaginaryPart"/> is returning true.
+    /// Sets the interpolation data by providing values for xreal and yreal (both of same length), as well as for ximag and yimag (both also of same length, but length can be different from real pair).
+    /// </summary>
+    /// <param name="xreal">Vector of x (independent) data, belonging to the real part of y.</param>
+    /// <param name="yreal">Vector of the real part of y (dependent) data.</param>
+    /// <param name="ximaginary">Vector of x (independent) data, belonging to the imaginary part of y.</param>
+    /// <param name="yimaginary">Vector of the imaginary part of y (dependent) data.</param>
+    /// <returns>A <see cref="IComplexInterpolationFunction"/> object.</returns>
+    IComplexInterpolationFunction Interpolate(IReadOnlyList<double> xreal, IReadOnlyList<double> yreal, IReadOnlyList<double> ximaginary, IReadOnlyList<double> yimaginary);
   }
 
   /// <summary>
