@@ -28,6 +28,38 @@ using System.Linq;
 
 namespace Altaxo.Science.Thermorheology.MasterCurves
 {
+  public interface IShiftGroup
+  {
+    /// <summary>
+    /// Determines how to shift the x values: either by factor or by offset. Use offset if the original data are already logarithmized.
+    /// </summary>
+    ShiftXBy XShiftBy { get; }
+
+    /// <summary>Logarithmize x values before adding to the interpolation curve. (Only for interpolation).</summary>
+    bool LogarithmizeXForInterpolation { get; }
+
+
+    /// <summary>
+    /// Gets the index of the curve in the given group with the most variation. The variation is determined by calculating the absolute slope,
+    /// with applying the logarithmic transformations according to the interpolation settings in that group.
+    /// </summary>
+    /// <returns>The index of the curve with most variation. If no suitable curve was found, then the return value is null.</returns>
+    int? GetCurveIndexWithMostVariation();
+
+    /// <summary>
+    /// Initializes the interpolation with initially no points in it.
+    /// </summary>
+    void InitializeInterpolation();
+
+    /// <summary>
+    /// Adds the data of the curve with index <paramref name="idxCurve"/> to the interpolation.
+    /// If data for that curve are already present in the interpolation data, they are removed, and then added anew.
+    /// </summary>
+    /// <param name="idxCurve">The index of the curve to add.</param>
+    /// <param name="shift">The current shift that should be used.</param>
+    void AddCurveToInterpolation(int idxCurve, double shift);
+  }
+
   /// <summary>
   /// A collection of multiple x-y curves (see <see cref="ShiftCurve{T}"/>) that will finally form one master curve.
   /// </summary>
@@ -53,7 +85,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
 
     /// <summary>
     /// <summary>
-    /// Initializes a new instance of the <see cref="ShiftGroup"/> class.
+    /// Initializes a new instance of the <see cref="ShiftGroupDouble"/> class.
     /// </summary>
     /// <param name="data">Collection of multiple x-y curves that will finally form one master curve.</param>
     /// <param name="xShiftBy">Shift method, either additive or multiplicative.</param>

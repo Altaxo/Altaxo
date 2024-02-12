@@ -65,9 +65,8 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     /// <param name="indexOfCurve">Index of the curve in the group of curves.</param>
     /// <param name="x">Column of x values.</param>
     /// <param name="y">Column of y values.</param>
-    /// <param name="groupNumber">Number of the curve group.</param>
     /// <param name="options">Options for creating the master curve.</param>
-    public void AddXYColumn(double shift, int indexOfCurve, IReadOnlyList<double> x, IReadOnlyList<Complex64> y, IReadOnlyList<Complex64>? yerr, int groupNumber, ShiftGroupComplex options)
+    public void AddXYColumn(double shift, int indexOfCurve, IReadOnlyList<double> x, IReadOnlyList<Complex64> y, ShiftGroupComplexCommonX options)
     {
       // first, Remove all points with indexOfCurve
       for (int i = ValuesToInterpolate.Count - 1; i >= 0; --i)

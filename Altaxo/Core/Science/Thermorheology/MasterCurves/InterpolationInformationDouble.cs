@@ -29,10 +29,15 @@ using Altaxo.Calc;
 
 namespace Altaxo.Science.Thermorheology.MasterCurves
 {
+  public interface IInterpolationInformation
+  {
+
+  }
+
   /// <summary>
   /// Stores information about an interpolation curve that interpolates the resulting shift curve for one group of columns, e.g. for the real part of measured values.
   /// </summary>
-  public class InterpolationInformation : InterpolationInformationBase<double>
+  public class InterpolationInformationDouble : InterpolationInformationBase<double>
   {
     /// <summary>
     /// Gets the current interpolation function. The argument of the function is the x-value. The result is the interpolated y-value.
@@ -42,7 +47,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     /// <summary>
     /// Initialized the instance.
     /// </summary>
-    public InterpolationInformation()
+    public InterpolationInformationDouble()
     {
       InterpolationFunction = new Func<double, double>((x) => throw new InvalidOperationException("Interpolation was not yet done."));
     }
@@ -57,16 +62,15 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     }
 
     /// <summary>
-    /// Adds values to the data that should be interpolated, but does not evaluate a new interpolation (call <see cref="Interpolate(ShiftGroup)"/>
+    /// Adds values to the data that should be interpolated, but does not evaluate a new interpolation (call <see cref="Interpolate(ShiftGroupDouble)"/>
     /// after this call if a new interpolation should be evaluated).
     /// </summary>
     /// <param name="shift">Shift value used to modify the x values.</param>
     /// <param name="indexOfCurve">Index of the curve in the group of curves.</param>
     /// <param name="x">Column of x values.</param>
     /// <param name="y">Column of y values.</param>
-    /// <param name="groupNumber">Number of the curve group.</param>
     /// <param name="options">Options for creating the master curve.</param>
-    public void AddXYColumn(double shift, int indexOfCurve, IReadOnlyList<double> x, IReadOnlyList<double> y, int groupNumber, ShiftGroup options)
+    public void AddXYColumn(double shift, int indexOfCurve, IReadOnlyList<double> x, IReadOnlyList<double> y, ShiftGroupDouble options)
     {
       // first, Remove all points with indexOfCurve
       for (int i = ValuesToInterpolate.Count - 1; i >= 0; --i)

@@ -73,7 +73,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     }
 
     /// <summary>
-    /// Adds values to the data that should be interpolated, but does not evaluate a new interpolation (call <see cref="Interpolate(ShiftGroup)"/>
+    /// Adds values to the data that should be interpolated, but does not evaluate a new interpolation (call <see cref="Interpolate(ShiftGroupDouble)"/>
     /// after this call if a new interpolation should be evaluated).
     /// </summary>
     /// <param name="shift">Shift value used to modify the x values.</param>

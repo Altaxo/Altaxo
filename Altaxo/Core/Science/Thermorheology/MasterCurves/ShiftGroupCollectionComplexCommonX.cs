@@ -31,14 +31,14 @@ using Complex64 = System.Numerics.Complex;
 namespace Altaxo.Science.Thermorheology.MasterCurves
 {
   /// <summary>
-  /// A set of <see cref="ShiftGroup"/>s. The curves in these collections will be shifted with a common set of shift factors.
-  /// For example, for complex data to be shifted, there will be two <see cref="ShiftGroup"/>s, one for the real part, and one for the imaginary.
+  /// A set of <see cref="ShiftGroupDouble"/>s. The curves in these collections will be shifted with a common set of shift factors.
+  /// For example, for complex data to be shifted, there will be two <see cref="ShiftGroupDouble"/>s, one for the real part, and one for the imaginary.
   /// The curves of the real part will finally form the master curve of the real part, and the curves of the imaginary part will finally
   /// form the master curve of the imaginary part.
   /// </summary>
-  public class ShiftGroupCollectionComplexCommonX : IReadOnlyList<ShiftGroupComplex>
+  public class ShiftGroupCollectionComplexCommonX : IReadOnlyList<ShiftGroupComplexCommonX>
   {
-    ShiftGroupComplex[] _inner;
+    ShiftGroupComplexCommonX[] _inner;
 
     /// <summary>
     /// Determines the method to best fit the data into the master curve.
@@ -97,24 +97,24 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     public Func<(IReadOnlyList<double> X, IReadOnlyList<Complex64> Y, IReadOnlyList<Complex64>? YErr), Func<double, Complex64>>? CreateInterpolationFunctionCommonX { get; }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="ShiftGroupCollection"/> class.
+    /// Initializes a new instance of the <see cref="ShiftGroupCollectionDouble"/> class.
     /// </summary>
-    /// <param name="data">The set of <see cref="ShiftGroup"/>s.</param>
-    public ShiftGroupCollectionComplexCommonX(IEnumerable<ShiftGroupComplex> data)
+    /// <param name="data">The set of <see cref="ShiftGroupDouble"/>s.</param>
+    public ShiftGroupCollectionComplexCommonX(IEnumerable<ShiftGroupComplexCommonX> data)
     {
       _inner = data.ToArray();
     }
 
     /// <inheritdoc/>
-    public ShiftGroupComplex this[int index] => ((IReadOnlyList<ShiftGroupComplex>)_inner)[index];
+    public ShiftGroupComplexCommonX this[int index] => ((IReadOnlyList<ShiftGroupComplexCommonX>)_inner)[index];
 
     /// <inheritdoc/>
     public int Count => _inner.Length;
 
     /// <inheritdoc/>
-    public IEnumerator<ShiftGroupComplex> GetEnumerator()
+    public IEnumerator<ShiftGroupComplexCommonX> GetEnumerator()
     {
-      return ((IEnumerable<ShiftGroupComplex>)_inner).GetEnumerator();
+      return ((IEnumerable<ShiftGroupComplexCommonX>)_inner).GetEnumerator();
     }
 
     /// <inheritdoc/>

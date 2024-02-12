@@ -30,14 +30,14 @@ using System.Linq;
 namespace Altaxo.Science.Thermorheology.MasterCurves
 {
   /// <summary>
-  /// A set of <see cref="ShiftGroup"/>s. The curves in these collections will be shifted with a common set of shift factors.
-  /// For example, for complex data to be shifted, there will be two <see cref="ShiftGroup"/>s, one for the real part, and one for the imaginary.
+  /// A set of <see cref="ShiftGroupDouble"/>s. The curves in these collections will be shifted with a common set of shift factors.
+  /// For example, for complex data to be shifted, there will be two <see cref="ShiftGroupDouble"/>s, one for the real part, and one for the imaginary.
   /// The curves of the real part will finally form the master curve of the real part, and the curves of the imaginary part will finally
   /// form the master curve of the imaginary part.
   /// </summary>
-  public class ShiftGroupCollection : IReadOnlyList<ShiftGroup>
+  public class ShiftGroupCollectionDouble : IReadOnlyList<ShiftGroupDouble>
   {
-    ShiftGroup[] _inner;
+    ShiftGroupDouble[] _inner;
 
     /// <summary>
     /// Determines the method to best fit the data into the master curve.
@@ -93,24 +93,24 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
 
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="ShiftGroupCollection"/> class.
+    /// Initializes a new instance of the <see cref="ShiftGroupCollectionDouble"/> class.
     /// </summary>
-    /// <param name="data">The set of <see cref="ShiftGroup"/>s.</param>
-    public ShiftGroupCollection(IEnumerable<ShiftGroup> data)
+    /// <param name="data">The set of <see cref="ShiftGroupDouble"/>s.</param>
+    public ShiftGroupCollectionDouble(IEnumerable<ShiftGroupDouble> data)
     {
       _inner = data.ToArray();
     }
 
     /// <inheritdoc/>
-    public ShiftGroup this[int index] => ((IReadOnlyList<ShiftGroup>)_inner)[index];
+    public ShiftGroupDouble this[int index] => ((IReadOnlyList<ShiftGroupDouble>)_inner)[index];
 
     /// <inheritdoc/>
-    public int Count => ((IReadOnlyCollection<ShiftGroup>)_inner).Count;
+    public int Count => ((IReadOnlyCollection<ShiftGroupDouble>)_inner).Count;
 
     /// <inheritdoc/>
-    public IEnumerator<ShiftGroup> GetEnumerator()
+    public IEnumerator<ShiftGroupDouble> GetEnumerator()
     {
-      return ((IEnumerable<ShiftGroup>)_inner).GetEnumerator();
+      return ((IEnumerable<ShiftGroupDouble>)_inner).GetEnumerator();
     }
 
     /// <inheritdoc/>

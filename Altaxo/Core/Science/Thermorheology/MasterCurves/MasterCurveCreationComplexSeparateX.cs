@@ -319,7 +319,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
 
     /// <summary>
     /// Reinitializes the result. With that, new options can be used, for instance a new interpolation function.
-    /// Typically, after calling this, you can call <see cref="Iterate(ShiftGroupCollection, List{List{int}}, MasterCurveCreationResult)"/> to iterate
+    /// Typically, after calling this, you can call <see cref="Iterate(ShiftGroupCollectionDouble, List{List{int}}, MasterCurveCreationResultDouble)"/> to iterate
     /// with the new interpolation function again.
     /// </summary>
     /// <param name="shiftGroupCollection">The data to construct the master curve(s).</param>
@@ -341,7 +341,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     }
 
     /// <summary>
-    /// Reinitializes the result (see <see cref="ReInitializeResult(ShiftGroupCollection, MasterCurveCreationResult)"/>)
+    /// Reinitializes the result (see <see cref="ReInitializeResult(ShiftGroupCollectionDouble, MasterCurveCreationResultDouble)"/>)
     /// and then iterate anew.
     /// </summary>
     /// <param name="shiftGroupCollection">The data to construct the master curve(s).</param>

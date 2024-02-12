@@ -68,20 +68,20 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
   /// <summary>
   /// Contains the result of the master curve creation.
   /// </summary>
-  public class MasterCurveCreationResult : MasterCurveCreationResultBase
+  public class MasterCurveCreationResultDouble : MasterCurveCreationResultBase
   {
     /// <summary>
     /// Gets the resulting interpolation curve for each group of columns.
     /// </summary>
-    public InterpolationInformation[] ResultingInterpolation { get; set; }
+    public InterpolationInformationDouble[] ResultingInterpolation { get; set; }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="MasterCurveCreationResult"/> class.
+    /// Initializes a new instance of the <see cref="MasterCurveCreationResultDouble"/> class.
     /// </summary>
-    /// <param name="numberOfShiftCurveCollections">The number of <see cref="ShiftGroup"/>s.</param>
-    public MasterCurveCreationResult(int numberOfShiftCurveCollections)
+    /// <param name="numberOfShiftCurveCollections">The number of <see cref="ShiftGroupDouble"/>s.</param>
+    public MasterCurveCreationResultDouble(int numberOfShiftCurveCollections)
     {
-      ResultingInterpolation = new InterpolationInformation[numberOfShiftCurveCollections];
+      ResultingInterpolation = new InterpolationInformationDouble[numberOfShiftCurveCollections];
     }
 
   }

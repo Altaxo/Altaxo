@@ -37,9 +37,9 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     public InterpolationInformationComplexCommonX[] ResultingInterpolation { get; set; }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="MasterCurveCreationResult"/> class.
+    /// Initializes a new instance of the <see cref="MasterCurveCreationResultDouble"/> class.
     /// </summary>
-    /// <param name="numberOfShiftCurveCollections">The number of <see cref="ShiftGroup"/>s.</param>
+    /// <param name="numberOfShiftCurveCollections">The number of <see cref="ShiftGroupDouble"/>s.</param>
     public MasterCurveCreationResultComplexCommonX(int numberOfShiftCurveCollections)
     {
       ResultingInterpolation = new InterpolationInformationComplexCommonX[numberOfShiftCurveCollections];
@@ -57,9 +57,9 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     public InterpolationInformationComplexSeparateX[] ResultingInterpolation { get; set; }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="MasterCurveCreationResult"/> class.
+    /// Initializes a new instance of the <see cref="MasterCurveCreationResultDouble"/> class.
     /// </summary>
-    /// <param name="numberOfShiftCurveCollections">The number of <see cref="ShiftGroup"/>s.</param>
+    /// <param name="numberOfShiftCurveCollections">The number of <see cref="ShiftGroupDouble"/>s.</param>
     public MasterCurveCreationResultComplexSeparateX(int numberOfShiftCurveCollections)
     {
       if (numberOfShiftCurveCollections % 2 != 0)
