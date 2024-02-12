@@ -23,20 +23,14 @@
 #endregion Copyright
 
 using System;
-using System.Collections.Generic;
 
 namespace Altaxo.Science.Thermorheology.MasterCurves
 {
   /// <summary>
   /// Contains the result of the master curve creation.
   /// </summary>
-  public class MasterCurveCreationResultComplexCommonX
+  public class MasterCurveCreationResultComplexCommonX : MasterCurveCreationResultBase
   {
-    /// <summary>
-    /// Resulting list of shift offsets or ln(shiftfactors).
-    /// </summary>
-    public List<double> ResultingShifts { get; } = new List<double>();
-
     /// <summary>
     /// Gets the resulting interpolation curve for each group of columns.
     /// </summary>
@@ -55,13 +49,8 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
   /// <summary>
   /// Contains the result of the master curve creation.
   /// </summary>
-  public class MasterCurveCreationResultComplexSeparateX
+  public class MasterCurveCreationResultComplexSeparateX : MasterCurveCreationResultBase
   {
-    /// <summary>
-    /// Resulting list of shift offsets or ln(shiftfactors).
-    /// </summary>
-    public List<double> ResultingShifts { get; } = new List<double>();
-
     /// <summary>
     /// Gets the resulting interpolation curve for each group of columns.
     /// </summary>

@@ -31,42 +31,10 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
   /// <summary>
   /// Contains options for master curve creation.
   /// </summary>
-  public record MasterCurveCreationOptions : Main.IImmutable
+  public record MasterCurveCreationOptions : MasterCurveCreationOptionsBase
   {
-    /// <summary>
-    /// Designates the order with which the curves are shifted to the master curve.
-    /// </summary>
-    public ShiftOrder.IShiftOrder ShiftOrder { get; init; } = new ShiftOrder.PivotToLastAlternating();
-
-    /// <summary>
-    /// Determines the method to best fit the data into the master curve.
-    /// </summary>
-    public OptimizationMethod OptimizationMethod { get; init; } = OptimizationMethod.OptimizeSquaredDifferenceByBruteForce;
-
-    protected int _numberOfIterations = 40;
-
-    /// <summary>
-    /// Gets or sets the number of iterations. Must be greater than or equal to 1.
-    /// This number determines how many rounds the master curve is fitted. Increasing this value will in most cases
-    /// increase the quality of the fit.
-    /// </summary>
-    /// <value>
-    /// The number of iterations for master curve creation.
-    /// </value>
-    /// <exception cref="ArgumentOutOfRangeException">value - Must be a number >= 1</exception>
-    public int NumberOfIterations
-    {
-      get { return _numberOfIterations; }
-      init
-      {
-        if (!(value >= 1))
-          throw new ArgumentOutOfRangeException(nameof(value), "Must be a number >= 1");
-
-        _numberOfIterations = value;
-      }
-    }
-
     protected double _requiredRelativeOverlap = 0;
+
     /// <summary>
     /// Gets/sets the required relative overlap. The default value is 0, which means that a curve part only needs to touch the rest of the master curve.
     /// Setting this to a value, for instance to 0.1, means that a curve part needs an overlapping of 10% (of its x-range) with the rest of the master curve.
@@ -86,15 +54,6 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
         _requiredRelativeOverlap = value;
       }
     }
-
-    public MasterCurveGroupOptionsChoice MasterCurveGroupOptionsChoice { get; init; } = MasterCurveGroupOptionsChoice.SameForAllGroups;
-
-    /// <summary>
-    /// Get the options for each group. If there is only one <see cref="MasterCurveGroupOptionsWithScalarInterpolation"/>, and multiple groups, the options are applied
-    /// to each of the groups. Otherwise, the number of group options must match the number of groups. If there is one <see cref="MasterCurveGroupOptionsWithComplexInterpolation"/>,
-    /// two groups are needed.
-    /// </summary>
-    public ImmutableList<MasterCurveGroupOptions> GroupOptions { get; init; } = new MasterCurveGroupOptions[] { new MasterCurveGroupOptionsWithScalarInterpolation() }.ToImmutableList();
 
     /// <summary>
     /// If not null, a second stage of fitting can be appended when creating the master curve.
@@ -141,6 +100,19 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     /// Gets the output options for writing the resulting data into the master curve table.
     /// </summary>
     public MasterCurveTableOutputOptions TableOutputOptions { get; init; } = new MasterCurveTableOutputOptions();
+
+    public MasterCurveCreationOptions With(MasterCurveImprovementOptions improvementOptions)
+    {
+      return this with
+      {
+        ShiftOrder = improvementOptions.ShiftOrder,
+        OptimizationMethod = improvementOptions.OptimizationMethod,
+        NumberOfIterations = improvementOptions.NumberOfIterations,
+        MasterCurveGroupOptionsChoice = improvementOptions.MasterCurveGroupOptionsChoice,
+        GroupOptions = improvementOptions.GroupOptions,
+        MasterCurveImprovementOptions = null,
+      };
+    }
 
     #region Serialization
 
@@ -209,8 +181,5 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     }
 
     #endregion
-
-
-
   }
 }
