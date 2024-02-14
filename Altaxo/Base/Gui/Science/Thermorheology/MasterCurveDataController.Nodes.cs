@@ -171,7 +171,7 @@ namespace Altaxo.Gui.Science.Thermorheology
 
       if (node.Curve is { } curve)
       {
-        (property1, property2) = MasterCurveCreationEx.GetPropertiesOfCurve(curve, _property1Name, _property2Name);
+        (property1, property2) = MasterCurveCreation.GetPropertiesOfCurve(curve, _property1Name, _property2Name);
       }
 
       node.Index = idx;

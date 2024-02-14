@@ -82,7 +82,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     /// <param name="y">Column of y values.</param>
     /// <param name="groupNumber">Number of the curve group.</param>
     /// <param name="options">Options for creating the master curve.</param>
-    public void AddXYColumn(double shift, int indexOfCurve, IReadOnlyList<double> x, IReadOnlyList<double> y, int groupNumber, ShiftGroupBase<double> options)
+    public void AddXYColumn(double shift, int indexOfCurve, IReadOnlyList<double> x, IReadOnlyList<double> y, int groupNumber, ShiftGroupBase options)
     {
       var valuesToInterpolate = groupNumber switch
       {

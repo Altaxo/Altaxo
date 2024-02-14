@@ -191,8 +191,8 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     /// <param name="reporter"></param>
     public override void FillData_Unchecked(DataTable destinationTable, IProgressReporter reporter)
     {
-      var masterCurveCreation = new MasterCurveCreationEx();
-      MasterCurveCreationEx.Execute(_processData, _processOptions, destinationTable);
+      var masterCurveCreation = new MasterCurveCreation();
+      MasterCurveCreation.Execute(_processData, _processOptions, destinationTable);
     }
 
     /// <summary>

@@ -24,6 +24,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Altaxo.Calc;
 using Complex64 = System.Numerics.Complex;
 
@@ -32,8 +33,24 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
   /// <summary>
   /// A collection of multiple x-y curves (see <see cref="ShiftCurve{Double}"/>) that will finally form one master curve.
   /// </summary>
-  public class ShiftGroupComplexCommonX : ShiftGroupBase<Complex64>, IShiftGroup
+  public class ShiftGroupComplexCommonX : ShiftGroupBase, IShiftGroup
   {
+    protected ShiftCurve<Complex64>[] _curves;
+
+    /// <summary>
+    /// Gets the fitting weight, a number number &gt; 0.
+    /// </summary>
+    public double FittingWeightReal { get; }
+
+    /// <summary>
+    /// Gets the fitting weight, a number number &gt; 0.
+    /// </summary>
+    public double FittingWeightImaginary { get; }
+
+    /// <inheritdoc/>
+    public bool ParticipateInFitByFitWeight => FittingWeightReal > 0 || FittingWeightImaginary > 0;
+
+
     /// <summary>
     /// Creates the fit function. Argument is the tuple consisting of X, Y, and optional YErr. Return value is a function that calculates y for a given x.
     /// </summary>
@@ -48,12 +65,24 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     /// <param name="logarithmizeXForInterpolation">If true, the x-values are logarithmized prior to participating in the interpolation function.</param>
     /// <param name="logarithmizeYForInterpolation">If true, the y-values are logartihmized prior to participating in the interpolation function.</param>
     /// <param name="createInterpolationFunction">Function that creates the interpolation. Input are the x-array, y-array, and optionally, the array of y-errors. Output is an interpolation function which returns an interpolated y-value for a given x-value.</param>
-    public ShiftGroupComplexCommonX(IEnumerable<ShiftCurve<Complex64>> data, ShiftXBy xShiftBy, double fitWeight, bool logarithmizeXForInterpolation, bool logarithmizeYForInterpolation, Func<(IReadOnlyList<double> X, IReadOnlyList<Complex64> Y, IReadOnlyList<Complex64>? YErr), Func<double, Complex64>>? createInterpolationFunction = null)
-      : base(data, xShiftBy, fitWeight, logarithmizeXForInterpolation, logarithmizeYForInterpolation)
+    public ShiftGroupComplexCommonX(IEnumerable<ShiftCurve<Complex64>> data, ShiftXBy xShiftBy, double fitWeight, double fitWeightIm, bool logarithmizeXForInterpolation, bool logarithmizeYForInterpolation, Func<(IReadOnlyList<double> X, IReadOnlyList<Complex64> Y, IReadOnlyList<Complex64>? YErr), Func<double, Complex64>>? createInterpolationFunction = null)
+      : base(xShiftBy, logarithmizeXForInterpolation, logarithmizeYForInterpolation)
     {
+      _curves = data.ToArray();
+      FittingWeightReal = fitWeight;
+      FittingWeightImaginary = fitWeightIm;
       CreateInterpolationFunction = createInterpolationFunction;
     }
 
+    /// <inheritdoc/>
+    public int Count => _curves.Length;
+
+    /// <inheritdoc/>
+    public bool IsCurveSuitableForParticipatingInFit(int idxCurve)
+    {
+      var (x, y) = TransformCurveForInterpolationAccordingToGroupOptions(idxCurve);
+      return x.Count >= 2 && x.Max() > x.Min();
+    }
 
     /// <summary>
     /// Gets the index of the curve in the given group with the most variation. The variation is determined by calculating the absolute slope,
@@ -91,21 +120,24 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
       var xarr = new List<double>();
       var yarr = new List<Complex64>();
 
-      var curve = this[idx];
-      for (int i = 0; i < curve.Count; ++i)
+      var curve = _curves[idx];
+      if (curve is not null)
       {
-        var x = curve.X[i];
-        var y = curve.Y[i];
-
-        if (LogarithmizeXForInterpolation)
-          x = Math.Log(x);
-        if (LogarithmizeYForInterpolation)
-          y = new Complex64(Math.Log(y.Real), Math.Log(y.Imaginary));
-
-        if (x.IsFinite() && y.Real.IsFinite() && y.Imaginary.IsFinite())
+        for (int i = 0; i < curve.Count; ++i)
         {
-          xarr.Add(x);
-          yarr.Add(y);
+          var x = curve.X[i];
+          var y = curve.Y[i];
+
+          if (LogarithmizeXForInterpolation)
+            x = Math.Log(x);
+          if (LogarithmizeYForInterpolation)
+            y = new Complex64(Math.Log(y.Real), Math.Log(y.Imaginary));
+
+          if (x.IsFinite() && y.Real.IsFinite() && y.Imaginary.IsFinite())
+          {
+            xarr.Add(x);
+            yarr.Add(y);
+          }
         }
       }
 
@@ -126,9 +158,179 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
       if (_interpolationInformation is null)
         throw new InvalidOperationException($"{nameof(_interpolationInformation)} is not initialized. Call {nameof(InitializeInterpolation)} before.");
 
-      _interpolationInformation.AddXYColumn(shift, idxCurve, _inner[idxCurve].X, _inner[idxCurve].Y, this);
+      _interpolationInformation.AddXYColumn(shift, idxCurve, _curves[idxCurve].X, _curves[idxCurve].Y, this);
     }
 
+    public void Interpolate()
+    {
+      if (_interpolationInformation is null) throw NewExceptionNoInterpolationInformation;
+
+      var interpol = CreateInterpolationFunction((_interpolationInformation.XValues, _interpolationInformation.YValues, null));
+      _interpolationInformation.InterpolationFunction = interpol;
+    }
+
+    /// <summary>
+    /// Gets the minimum and maximum of the x-values, taking into account different options and whether the y-values are valid.
+    /// </summary>
+    /// <param name="idxCurve">Index of the curve.</param>
+    /// <returns>Minimum and maximum of the x-values, for x and y values appropriate for the conditions given by the parameter.</returns>
+    public (double min, double max) GetXMinMaxOfFirstColumnForValidSecondColumn(int idxCurve)
+    {
+      var curve = _curves[idxCurve];
+      var x = curve.X;
+      var y = curve.Y;
+      var len = Math.Min(x.Count, y.Count);
+      var min = double.PositiveInfinity;
+      var max = double.NegativeInfinity;
+
+      for (int i = 0; i < len; i++)
+      {
+        double x1 = XShiftBy == ShiftXBy.Factor ? Math.Log(x[i]) : x[i];
+        double xv = LogarithmizeXForInterpolation ? Math.Log(x[i]) : x[i];
+        double yvre = LogarithmizeYForInterpolation ? Math.Log(y[i].Real) : y[i].Real;
+        double yvim = LogarithmizeYForInterpolation ? Math.Log(y[i].Imaginary) : y[i].Imaginary;
+        if (x1.IsFinite() && xv.IsFinite() && yvre.IsFinite() && yvim.IsFinite())
+        {
+          min = Math.Min(min, xv);
+          max = Math.Max(max, xv);
+        }
+      }
+      return (min, max);
+    }
+
+    /// <summary>
+    /// Gets the minimum and maximum of the current x-values used for interpolation. Data points that belong
+    /// to the curve with the index given in the argument are not taken into account.
+    /// </summary>
+    /// <param name="indexOfCurve">The index of curve.</param>
+    /// <returns>The minimum and maximum of the x-values, except for those points that belong to the curve with index=<paramref name="indexOfCurve"/>.</returns>
+    public (double min, double max) GetXMinimumMaximumOfInterpolationValuesExceptForCurveIndex(int indexOfCurve)
+    {
+      if (_interpolationInformation is null) throw NewExceptionNoInterpolationInformation;
+
+      return _interpolationInformation.GetMinimumMaximumOfXValuesExceptForCurveIndex(indexOfCurve);
+    }
+
+    /// <summary>
+    /// Gets the mean difference between the y column and the interpolation function, provided that the x column is shifted by a factor.
+    /// </summary>
+    /// <param name="idxCurve">The index of the curve to fit.</param>
+    /// <param name="shift">Shift offset (direct offset or natural logarithm of the shiftFactor for the new part of the master curve.</param>
+    /// <returns>Returns the calculated penalty value (mean difference between interpolation curve and provided data),
+    /// and the number of points (of the new part of the curve) used for calculating the penalty value.</returns>
+    /// 
+    public (double Penalty, int EvaluatedPoints) GetMeanSignedYDifference(int idxCurve, double shift)
+    {
+      if (_interpolationInformation is null) throw NewExceptionNoInterpolationInformation;
+
+      var curve = _curves[idxCurve];
+      var x = curve.X;
+      var y = curve.Y;
+      var interpolation = _interpolationInformation.InterpolationFunction;
+      var interpolMin = _interpolationInformation.InterpolationMinimumX;
+      var interpolMax = _interpolationInformation.InterpolationMaximumX;
+      int len = Math.Min(x.Count, y.Count);
+      int validPoints = 0;
+      bool doLogX = LogarithmizeXForInterpolation;
+      bool doLogY = LogarithmizeYForInterpolation;
+      bool shiftXByOffset = XShiftBy == ShiftXBy.Offset;
+      double penaltySum = 0;
+      for (int i = 0; i < len; i++)
+      {
+        double xv;
+        if (doLogX)
+          xv = shiftXByOffset ? Math.Log(x[i] + shift) : Math.Log(x[i]) + shift;
+        else
+          xv = shiftXByOffset ? x[i] + shift : x[i] * Math.Exp(shift);
+
+        double yvre = y[i].Real;
+        double yvim = y[i].Imaginary;
+        if (doLogY)
+        {
+          yvre = Math.Log(yvre);
+          yvim = Math.Log(yvim);
+        }
+
+        if (xv.IsFinite() && yvre.IsFinite() && yvim.IsFinite() && xv.IsInIntervalCC(interpolMin, interpolMax))
+        {
+          try
+          {
+            var interpolValue = interpolation(xv);
+            double diff = yvre - interpolation(xv).Real;
+            penaltySum += diff;
+            diff = yvim - interpolation(xv).Imaginary;
+            penaltySum += diff;
+
+            validPoints++;
+          }
+          catch (Exception)
+          {
+          }
+        }
+      }
+      var penalty = penaltySum * Math.Abs(FittingWeightReal);
+      var evaluatedPoints = validPoints;
+
+      //System.Diagnostics.Debug.WriteLine(string.Format("GetMeanYDifference for shift={0} resulted in {1} ({2} points)", shift, penalty, evaluatedPoints));
+      return (penalty, evaluatedPoints);
+    }
+
+    public (double Penalty, int EvaluatedPoints) GetMeanSquaredYDifference(int idxCurve, double shift)
+    {
+      if (_interpolationInformation is null) throw NewExceptionNoInterpolationInformation;
+
+
+      var curve = _curves[idxCurve];
+      var x = curve.X;
+      var y = curve.Y;
+      var interpolation = _interpolationInformation.InterpolationFunction;
+      var interpolMin = _interpolationInformation.InterpolationMinimumX;
+      var interpolMax = _interpolationInformation.InterpolationMaximumX;
+
+      int len = Math.Min(x.Count, y.Count);
+      int validPoints = 0;
+      bool doLogX = LogarithmizeXForInterpolation;
+      bool doLogY = LogarithmizeYForInterpolation;
+      bool shiftXByOffset = XShiftBy == ShiftXBy.Offset;
+      double penaltySumRe = 0;
+      double penaltySumIm = 0;
+      for (int i = 0; i < len; i++)
+      {
+        double xv;
+        if (doLogX)
+          xv = shiftXByOffset ? Math.Log(x[i] + shift) : Math.Log(x[i]) + shift;
+        else
+          xv = shiftXByOffset ? x[i] + shift : x[i] * Math.Exp(shift);
+
+        double yvre = y[i].Real;
+        double yvim = y[i].Imaginary;
+        if (doLogY)
+        {
+          yvre = Math.Log(yvre);
+          yvim = Math.Log(yvim);
+        }
+
+        if (xv.IsFinite() && yvre.IsFinite() && yvim.IsFinite() && xv.IsInIntervalCC(interpolMin, interpolMax))
+        {
+          try
+          {
+            double diff = yvre - interpolation(xv).Real;
+            penaltySumRe += diff * diff;
+            diff = yvim - interpolation(xv).Imaginary;
+            penaltySumIm += diff * diff;
+            validPoints++;
+          }
+          catch (Exception)
+          {
+          }
+        }
+      }
+      var penalty = penaltySumRe * RMath.Pow2(FittingWeightReal) + penaltySumIm * RMath.Pow2(FittingWeightImaginary);
+      var evaluatedPoints = validPoints;
+
+      //System.Diagnostics.Debug.WriteLine(string.Format("GetMeanYDifference for shift={0} resulted in {1} ({2} points)", shift, penalty, evaluatedPoints));
+      return (penalty, evaluatedPoints);
+    }
   }
 }
 
