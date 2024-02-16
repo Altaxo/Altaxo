@@ -35,9 +35,9 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
   /// </summary>
   public class ShiftGroupComplexSeparateX : ShiftGroupBase, IShiftGroup
   {
-    protected ShiftCurve<double>[] _curvesReal;
+    protected ShiftCurve<double>?[] _curvesReal;
 
-    protected ShiftCurve<double>[] _curvesImaginary;
+    protected ShiftCurve<double>?[] _curvesImaginary;
 
     /// <summary>
     /// Gets the fitting weight, a number number &gt; 0.
@@ -51,6 +51,10 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
 
     /// <inheritdoc/>
     public bool ParticipateInFitByFitWeight => FittingWeightReal > 0 || FittingWeightImaginary > 0;
+
+    /// <inheritdoc/>
+    public int NumberOfValueComponents => 1;
+
 
 
     /// <summary>
@@ -67,7 +71,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     /// <param name="logarithmizeXForInterpolation">If true, the x-values are logarithmized prior to participating in the interpolation function.</param>
     /// <param name="logarithmizeYForInterpolation">If true, the y-values are logartihmized prior to participating in the interpolation function.</param>
     /// <param name="createInterpolationFunction">Function that creates the interpolation. Input are the x-array, y-array, and optionally, the array of y-errors. Output is an interpolation function which returns an interpolated y-value for a given x-value.</param>
-    public ShiftGroupComplexSeparateX(IEnumerable<ShiftCurve<double>> dataRe, IEnumerable<ShiftCurve<double>> dataIm, ShiftXBy xShiftBy, double fitWeightRe, double fitWeightIm, bool logarithmizeXForInterpolation, bool logarithmizeYForInterpolation, Func<(IReadOnlyList<double> XRe, IReadOnlyList<double> YRe, IReadOnlyList<double> XIm, IReadOnlyList<double> YIm), Func<double, Complex64>>? createInterpolationFunction = null)
+    public ShiftGroupComplexSeparateX(IEnumerable<ShiftCurve<double>?> dataRe, IEnumerable<ShiftCurve<double>?> dataIm, ShiftXBy xShiftBy, double fitWeightRe, double fitWeightIm, bool logarithmizeXForInterpolation, bool logarithmizeYForInterpolation, Func<(IReadOnlyList<double> XRe, IReadOnlyList<double> YRe, IReadOnlyList<double> XIm, IReadOnlyList<double> YIm), Func<double, Complex64>>? createInterpolationFunction = null)
       : base(xShiftBy, logarithmizeXForInterpolation, logarithmizeYForInterpolation)
     {
       _curvesReal = dataRe.ToArray();
@@ -227,7 +231,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     /// </summary>
     /// <param name="idxCurve">Index of the curve.</param>
     /// <returns>Minimum and maximum of the x-values, for x and y values appropriate for the conditions given by the parameter.</returns>
-    public (double min, double max) GetXMinMaxOfFirstColumnForValidSecondColumn(int idxCurve)
+    public (double min, double max) GetXMinimumMaximumOfCurvePointsSuitableForInterpolation(int idxCurve)
     {
       var xre = _curvesReal[idxCurve].X;
       var yre = _curvesReal[idxCurve].Y;
@@ -267,6 +271,120 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
       if (_interpolationInformation is null) throw NewExceptionNoInterpolationInformation;
 
       return _interpolationInformation.GetMinimumMaximumOfXValuesExceptForCurveIndex(indexOfCurve);
+    }
+
+    /// <inheritdoc/>
+    public (IReadOnlyList<double> X, IReadOnlyList<double> Y) GetCurvePoints(int idxCurve, int idxValueComponent)
+    {
+      if (!(idxValueComponent == 0 || idxValueComponent == 1))
+        throw new ArgumentOutOfRangeException($"{nameof(ShiftGroupDouble)} has two value components, thus {nameof(idxValueComponent)} should be either 0 or 1, but is {idxValueComponent}");
+
+      var curve = idxValueComponent == 0 ? _curvesReal[idxCurve] : _curvesImaginary[idxCurve];
+      if (curve is not null)
+      {
+        return (curve.X, curve.Y);
+      }
+      else
+      {
+        return (new double[0], new double[0]);
+      }
+    }
+
+    /// <inheritdoc/>
+    public (IReadOnlyList<double> X, IReadOnlyList<double> Y) GetShiftedCurvePoints(int idxCurve, int idxValueComponent, double shiftValue)
+    {
+      if (!(idxValueComponent == 0 || idxValueComponent == 1))
+        throw new ArgumentOutOfRangeException($"{nameof(ShiftGroupDouble)} has two value components, thus {nameof(idxValueComponent)} should be either 0 or 1, but is {idxValueComponent}");
+
+      var curve = idxValueComponent == 0 ? _curvesReal[idxCurve] : _curvesImaginary[idxCurve];
+      if (curve is not null)
+      {
+
+        double[] xx;
+        if (XShiftBy == ShiftXBy.Factor)
+        {
+          xx = curve.X.Select(x => x * Math.Exp(shiftValue)).ToArray();
+        }
+        else
+        {
+          xx = curve.X.Select(x => x + shiftValue).ToArray();
+        }
+
+        return (xx, curve.Y);
+      }
+      else
+      {
+        return (new double[0], new double[0]);
+      }
+    }
+
+    /// <inheritdoc/>
+    public (IReadOnlyList<double> X, IReadOnlyList<double> Y, IReadOnlyList<int> IndexOfCurve) GetMergedCurvePointsUsedForInterpolation(int idxValueComponent)
+    {
+      if (!(idxValueComponent == 0 || idxValueComponent == 1))
+        throw new ArgumentOutOfRangeException($"{nameof(ShiftGroupDouble)} has two value components, thus {nameof(idxValueComponent)} should be either 0 or 1, but is {idxValueComponent}");
+
+      if (_interpolationInformation is not null)
+      {
+        IReadOnlyList<double> x, y;
+        if (idxValueComponent == 0)
+        {
+          x = LogarithmizeXForInterpolation ? _interpolationInformation.XValues.Select(xx => Math.Exp(xx)).ToArray() : _interpolationInformation.XValues;
+          y = LogarithmizeYForInterpolation ? _interpolationInformation.YValues.Select(yy => Math.Exp(yy)).ToArray() : _interpolationInformation.YValues;
+        }
+        else
+        {
+          x = LogarithmizeXForInterpolation ? _interpolationInformation.XValuesImaginary.Select(xx => Math.Exp(xx)).ToArray() : _interpolationInformation.XValuesImaginary;
+          y = LogarithmizeYForInterpolation ? _interpolationInformation.YValuesImaginary.Select(yy => Math.Exp(yy)).ToArray() : _interpolationInformation.YValuesImaginary;
+        }
+
+        return (x, y, _interpolationInformation.IndexOfCurve);
+      }
+      else
+      {
+        return (new double[0], new double[0], new int[0]);
+      }
+    }
+
+    /// <inheritdoc/>
+    public (IReadOnlyList<double> X, IReadOnlyList<double> Y) GetInterpolatedCurvePoints(int idxValueComponent, int numberOfInterpolationPoints = 1001)
+    {
+      if (!(idxValueComponent == 0 || idxValueComponent == 1))
+        throw new ArgumentOutOfRangeException($"{nameof(ShiftGroupDouble)} has two value components, thus {nameof(idxValueComponent)} should be either 0 or 1, but is {idxValueComponent}");
+
+      var xcol = new List<double>();
+      var ycol = new List<double>();
+
+      if (_interpolationInformation?.InterpolationFunction is { } interpolationResult)
+      {
+
+        var minX = _interpolationInformation.InterpolationMinimumX;
+        var maxX = _interpolationInformation.InterpolationMaximumX;
+        for (int i = 0; i < numberOfInterpolationPoints; ++i)
+        {
+          var r = i / (numberOfInterpolationPoints + 1d);
+          var x = (LogarithmizeXForInterpolation, XShiftBy) switch
+          {
+            (true, ShiftXBy.Factor) => minX * (1 - r) + maxX * r,// logarithmic spacing, x is logarithmized before and after
+            (false, ShiftXBy.Factor) => Math.Exp(Math.Log(minX) * (1 - r) + Math.Log(maxX) * r),// logarithmic spacing, x not logarithmized before and not after
+            (true, ShiftXBy.Offset) => Math.Log(Math.Exp(minX) * (1 - r) + Math.Exp(maxX) * r),// linear spacing, x was already logarithmized for interpolation, and has to be afterward again
+            (false, ShiftXBy.Offset) => minX * (1 - r) + maxX * r,// linear spacing, x not logarithmized before and after
+            _ => throw new NotImplementedException(),
+          };
+          var c = interpolationResult(x);
+          var y = idxValueComponent == 0 ? c.Real : c.Imaginary;
+
+          if (LogarithmizeXForInterpolation)
+            x = Math.Exp(x);
+          if (LogarithmizeYForInterpolation)
+            y = Math.Exp(y);
+
+          xcol.Add(x);
+          ycol.Add(y);
+        }
+      }
+
+      return (xcol, ycol);
     }
 
     /// <summary>

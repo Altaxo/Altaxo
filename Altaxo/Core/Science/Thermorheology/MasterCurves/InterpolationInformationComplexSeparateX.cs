@@ -40,12 +40,16 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     /// </summary>
     public Func<double, Complex64> InterpolationFunction { get; set; }
 
-    /// <summary>List of all x values of the points that are used for the interpolation.</summary>
+    /// <summary>List of all x values of the imaginary points that are used for the interpolation.</summary>
     public IReadOnlyList<double> XValuesImaginary { get { return new WrapperIListToIRoVectorK<double>(ValuesImaginaryToInterpolate.Keys); } }
 
 
-    /// <summary>List of all y values of the points that are used for the interpolation.</summary>
+    /// <summary>List of all y values of the imaginary points that are used for the interpolation.</summary>
     public IReadOnlyList<double> YValuesImaginary { get { return new WrapperIListToIRoVectorV<double>(ValuesImaginaryToInterpolate.Values); } }
+
+    /// <summary>List of the index of the imaginary curve to which each point belongs.</summary>
+    public IReadOnlyList<int> IndexOfCurveImaginary { get { return new WrapperIListToIRoVectorV2<double>(ValuesImaginaryToInterpolate.Values); } }
+
 
     /// <summary>
     /// List of all points used for the interpolation, sorted by the x values.

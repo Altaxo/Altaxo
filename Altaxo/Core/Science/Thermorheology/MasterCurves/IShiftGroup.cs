@@ -22,6 +22,8 @@
 
 #endregion Copyright
 
+using System.Collections.Generic;
+
 namespace Altaxo.Science.Thermorheology.MasterCurves
 {
   public interface IShiftGroup
@@ -72,7 +74,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     /// </summary>
     /// <param name="idxCurve">Index of the curve.</param>
     /// <returns>Minimum and maximum of the x-values, for x and y values appropriate for the conditions given by the parameter.</returns>
-    public (double min, double max) GetXMinMaxOfFirstColumnForValidSecondColumn(int idxCurve);
+    public (double min, double max) GetXMinimumMaximumOfCurvePointsSuitableForInterpolation(int idxCurve);
 
     /// <summary>
     /// Gets the minimum and maximum of the current x-values used for interpolation. Data points that belong
@@ -117,6 +119,46 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     /// </returns>
     public bool IsCurveSuitableForParticipatingInFit(int idxCurve);
 
+
+    /// <summary>
+    /// Gets the number of value components. For a usual curve, the return value is 1. For a curve consisting of
+    /// complex values, the return value is 2.
+    /// </summary>
+    public int NumberOfValueComponents { get; }
+
+    /// <summary>
+    /// Gets the original curve points of the curve with the provided index.
+    /// </summary>
+    /// <param name="idxCurve">The index of the curve.</param>
+    /// <param name="idxValueComponent">The index of the value component, see <see cref="NumberOfValueComponents"/>.</param>
+    /// <returns>Pair of x and y arrays (of same length) representing the curve points. For complexed valued y, if <paramref name="idxValueComponent"/> is 0, the real part is returned as y, for <paramref name="idxValueComponent"/>==1 the imaginary part is returned.</returns>
+    public (IReadOnlyList<double> X, IReadOnlyList<double> Y) GetCurvePoints(int idxCurve, int idxValueComponent);
+
+    /// <summary>
+    /// Gets the curve points of the shifted curve with  with the provided index.
+    /// </summary>
+    /// <param name="idxCurve">The index of the curve.</param>
+    /// <param name="idxValueComponent">The index of the value component, see <see cref="NumberOfValueComponents"/>.</param>
+    /// <param name="shiftValue">The actual shift value.</param>
+    /// <returns>Pair of x and y arrays (of same length) representing the shifted curve points. For complexed valued y, if <paramref name="idxValueComponent"/> is 0, the real part is returned as y, for <paramref name="idxValueComponent"/>==1 the imaginary part is returned.</returns>
+    public (IReadOnlyList<double> X, IReadOnlyList<double> Y) GetShiftedCurvePoints(int idxCurve, int idxValueComponent, double shiftValue);
+
+    /// <summary>
+    /// Gets the merged curve points that were used for interpolation. Before calling this function, the interpolation has to be initialized, and curves must be added to the interpolation.
+    /// </summary>
+    /// <param name="idxValueComponent">The index of the value component, see <see cref="NumberOfValueComponents"/>.</param>
+    /// <returns>Pair of x and y arrays (of same length) representing the merged curve points. For complexed valued y, if <paramref name="idxValueComponent"/> is 0, the real part is returned as y, for <paramref name="idxValueComponent"/>==1 the imaginary part is returned.
+    /// Furthermore, the array IndexOfCurve contains for every point to which curve it originally belongs.</returns>
+    public (IReadOnlyList<double> X, IReadOnlyList<double> Y, IReadOnlyList<int> IndexOfCurve) GetMergedCurvePointsUsedForInterpolation(int idxValueComponent);
+
+    /// <summary>
+    /// Gets interpolated curve points between the minimum x-value and the maximum x-value.
+    /// Before calling this function, the interpolation has to be initialized, curves must be added to the interpolation, and then <see cref="Interpolate"/> must be called.
+    /// </summary>
+    /// <param name="idxValueComponent">The index of the value component, see <see cref="NumberOfValueComponents"/>.</param>
+    /// <param name="numberOfInterpolationPoints">Number of points used for the interpolation. The default value is 1001.</param>
+    /// <returns>Pair of x and y arrays (of same length) representing the interpolated curve points. For complexed valued y, if <paramref name="idxValueComponent"/> is 0, the real part is returned as y, for <paramref name="idxValueComponent"/>==1 the imaginary part is returned.</returns>
+    public (IReadOnlyList<double> X, IReadOnlyList<double> Y) GetInterpolatedCurvePoints(int idxValueComponent, int numberOfInterpolationPoints = 1001);
 
   }
 }

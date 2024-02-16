@@ -46,6 +46,9 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     /// <summary>List of all y values of the points that are used for the interpolation.</summary>
     public IReadOnlyList<T> YValues { get { return new WrapperIListToIRoVectorV<T>(ValuesToInterpolate.Values); } }
 
+    /// <summary>List of the index of the curve to which each point belongs.</summary>
+    public IReadOnlyList<int> IndexOfCurve { get { return new WrapperIListToIRoVectorV2<T>(ValuesToInterpolate.Values); } }
+
     /// <summary>
     /// List of all points used for the interpolation, sorted by the x values.
     /// Keys are the x-Values, values are the y-values, and the index of the curve the y-value belongs to.
@@ -171,6 +174,51 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
       }
 
       public IEnumerator<TW> GetEnumerator()
+      {
+        var len = Count;
+        for (int i = 0; i < len; ++i)
+          yield return this[i];
+      }
+
+      IEnumerator IEnumerable.GetEnumerator()
+      {
+        var len = Count;
+        for (int i = 0; i < len; ++i)
+          yield return this[i];
+      }
+
+      #endregion INumericSequence Members
+    }
+
+    /// <summary>
+    /// Wraps an IList of double values to an IROVector
+    /// </summary>
+    protected class WrapperIListToIRoVectorV2<TW> : IReadOnlyList<int>
+    {
+      private IList<(TW, int)> _list;
+
+      public WrapperIListToIRoVectorV2(IList<(TW, int)> list)
+      {
+        _list = list;
+      }
+
+      #region IROVector Members
+
+      public int Count
+      {
+        get { return _list.Count; }
+      }
+
+      #endregion IROVector Members
+
+      #region INumericSequence Members
+
+      public int this[int i]
+      {
+        get { return _list[i].Item2; }
+      }
+
+      public IEnumerator<int> GetEnumerator()
       {
         var len = Count;
         for (int i = 0; i < len; ++i)

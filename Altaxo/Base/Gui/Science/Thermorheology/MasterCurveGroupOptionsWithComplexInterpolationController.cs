@@ -94,21 +94,6 @@ namespace Altaxo.Gui.Science.Thermorheology
       }
     }
 
-    private bool _logarithmizeYImForInterpolation;
-
-    public bool LogarithmizeYImForInterpolation
-    {
-      get => _logarithmizeYImForInterpolation;
-      set
-      {
-        if (!(_logarithmizeYImForInterpolation == value))
-        {
-          _logarithmizeYImForInterpolation = value;
-          OnPropertyChanged(nameof(LogarithmizeYImForInterpolation));
-        }
-      }
-    }
-
 
     private ItemsController<System.Type> _interpolationFunction0;
 
@@ -242,7 +227,6 @@ namespace Altaxo.Gui.Science.Thermorheology
 
         LogarithmizeXForInterpolation = _doc.LogarithmizeXForInterpolation;
         LogarithmizeYForInterpolation = _doc.LogarithmizeYForInterpolation;
-        LogarithmizeYImForInterpolation = _doc.LogarithmizeYImForInterpolation;
         FittingWeight = new DimensionfulQuantity(_doc.FittingWeight, Altaxo.Units.Dimensionless.Unity.Instance).AsQuantityIn(FittingWeightEnvironment.DefaultUnit);
         FittingWeightIm = new DimensionfulQuantity(_doc.FittingWeightIm, Altaxo.Units.Dimensionless.Unity.Instance).AsQuantityIn(FittingWeightEnvironment.DefaultUnit);
         IsParticipatingInFit = _doc.FittingWeight > 0;
@@ -285,7 +269,6 @@ namespace Altaxo.Gui.Science.Thermorheology
       {
         LogarithmizeXForInterpolation = LogarithmizeXForInterpolation,
         LogarithmizeYForInterpolation = LogarithmizeYForInterpolation,
-        LogarithmizeYImForInterpolation = LogarithmizeYImForInterpolation,
         XShiftBy = ShiftX.SelectedValue,
         FittingWeight = FittingWeight.AsValueInSIUnits,
         FittingWeightIm = FittingWeightIm.AsValueInSIUnits,

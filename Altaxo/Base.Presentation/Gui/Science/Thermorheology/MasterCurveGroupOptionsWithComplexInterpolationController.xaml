@@ -55,11 +55,7 @@
 
     <CheckBox Grid.Row="6" Grid.Column="0"
              IsChecked="{Binding LogarithmizeYForInterpolation, Mode=TwoWay}"
-             Content="Logarithmize y-real values for interpolation"/>
-
-    <CheckBox Grid.Row="8" Grid.Column="0"
-         IsChecked="{Binding LogarithmizeYImForInterpolation, Mode=TwoWay}"
-         Content="Logarithmize y-imaginary values for interpolation"/>
+             Content="Logarithmize y values for interpolation"/>
 
     <CheckBox Grid.Row="10" Grid.Column="0"
               IsChecked="{Binding IsParticipatingInFit}"

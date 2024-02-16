@@ -266,18 +266,19 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
         pivotIndexCandidate = ClampPivotIndexCandidateToAvailablePivots(pivotIndexCandidate);
         shiftOrder = shiftOrder.WithPivotIndex(pivotIndexCandidate.Value);
       }
-      var (indexOfReferenceColumnInColumnGroup, shiftOrderIndices) = GetFixedAndShiftedIndices(shiftOrder, MaximumNumberOfCurves);
+      var (idxReferenceCurve, shiftOrderIndices) = GetFixedAndShiftedIndices(shiftOrder, MaximumNumberOfCurves);
 
-      if (_isCurveSuitableForPivot[indexOfReferenceColumnInColumnGroup] == false)
+      if (_isCurveSuitableForPivot[idxReferenceCurve] == false)
       {
-        throw new InvalidOperationException($"Index {indexOfReferenceColumnInColumnGroup} is not suitable as a starting index for master curve creation. Please choose another shift order with a variable pivot index.");
+        throw new InvalidOperationException($"Index {idxReferenceCurve} is not suitable as a starting index for master curve creation. Please choose another shift order with a variable pivot index.");
       }
 
+      _resultingShifts[idxReferenceCurve] = 0; // set shift value of reference curve to 0
       foreach (var idxGroup in _groupsParticipatingInFit)
       {
         var shiftGroup = _shiftGroups[idxGroup];
         shiftGroup.InitializeInterpolation();
-        shiftGroup.AddCurveToInterpolation(indexOfReferenceColumnInColumnGroup, 0);
+        shiftGroup.AddCurveToInterpolation(idxReferenceCurve, ResultingShifts[idxReferenceCurve].Value);
 
         // Make the initial interpolation for all column groups, using only the column(s) used as reference (shift 0)
         shiftGroup.Interpolate();
@@ -315,9 +316,9 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
       for (int i = 0; i < MaximumNumberOfCurves; i++)
       {
         if ((startIndex + i) < _isCurveSuitableForPivot.Length && _isCurveSuitableForPivot[startIndex + i])
-          return i;
+          return startIndex + i;
         if ((startIndex - i) >= 0 && _isCurveSuitableForPivot[startIndex - i])
-          return i;
+          return startIndex - i;
       }
       throw new InvalidProgramException($"By now, we should have found a pivot index. If not, the {_isCurveSuitableForPivot} does not contain elements of value true, which should be catched in the constructor.");
     }
@@ -341,7 +342,6 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     /// <param name="shiftCurveOrder">The order in which the curves are shifted and fitted. This list does not contain the index of the fixed curve.</param>
     private void OneIteration(IReadOnlyList<int> shiftCurveOrder)
     {
-      double initialShift = 0;
       foreach (int idxCurve in shiftCurveOrder.Where(idx => _isCurveParticipatingInFit[idx] == true))
       {
         double globalMinShift = double.MaxValue;
@@ -350,7 +350,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
         foreach (int idxGroup in _groupsParticipatingInFit)
         {
           var shiftGroup = _shiftGroups[idxGroup];
-          var (xmin, xmax) = shiftGroup.GetXMinMaxOfFirstColumnForValidSecondColumn(idxCurve);
+          var (xmin, xmax) = shiftGroup.GetXMinimumMaximumOfCurvePointsSuitableForInterpolation(idxCurve);
 
           double localMaxShift;
           double localMinShift;
@@ -382,7 +382,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
         globalMinShift += requiredShiftOverlap;
         globalMaxShift -= requiredShiftOverlap;
 
-        double currentShift = initialShift; // remember: this is either a offset or the natural logarithm of the shift factor
+        double currentShift; // remember: this is either a offset or the natural logarithm of the shift factor
         switch (OptimizationMethod)
         {
           case OptimizationMethod.OptimizeSignedDifference:
@@ -404,7 +404,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
 
               var optimizationMethod = new StupidLineSearch(new Simple1DCostFunction(optFunc));
               var vec = CreateVector.Dense<double>(1);
-              vec[0] = initialShift;
+              vec[0] = globalMinShift;
 
               var dir = CreateVector.Dense<double>(1);
               dir[0] = 1;
@@ -444,14 +444,13 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
         {
           _resultingShifts[idxCurve] = currentShift;
 
-          for (int idxShiftGroup = 0; idxShiftGroup < Count; idxShiftGroup++)
+          foreach (int idxShiftGroup in _groupsParticipatingInFit)
           {
             // add the data for interpolation again, using the new shift
             _shiftGroups[idxShiftGroup].AddCurveToInterpolation(idxCurve, currentShift);
             // now build up a new interpolation, where the shifted data is taken into account
             _shiftGroups[idxShiftGroup].Interpolate();
           }
-          initialShift = currentShift;
         }
       }
     }
@@ -489,7 +488,18 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     {
       if (_resultingShifts.Length != previousMasterCurve._resultingShifts.Length)
         throw new InvalidOperationException("The number of curves in this shift group collection and in the previos shift group collection should match.");
-      // use the shifts from the previous curve
+      // use the shifts from the previous curve, but only then if the curve index is also used here
+      for (int idxCurve = 0; idxCurve < MaximumNumberOfCurves; idxCurve++)
+      {
+        if (_isCurveParticipatingInFit[idxCurve])
+        {
+          _resultingShifts[idxCurve] = previousMasterCurve.ResultingShifts[idxCurve];
+        }
+        else
+        {
+          _resultingShifts[idxCurve] = null;
+        }
+      }
       Array.Copy(previousMasterCurve._resultingShifts, _resultingShifts, _resultingShifts.Length);
 
       // First we create the initial interpolation of the master column
@@ -506,6 +516,147 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
 
       ReInitializeResult();
       Iterate(shiftOrderIndices);
+    }
+
+    /// <summary>
+    /// Reinterpolates the master curves in all groups, using the current shift values.
+    /// This call will also interpolate the curves in thoses groups, which do not participate in the master curve fitting.
+    /// </summary>
+    public void ReinterpolateAllGroups()
+    {
+      for (int idxGroup = 0; idxGroup < Count; idxGroup++)
+      {
+        var group = _shiftGroups[idxGroup];
+        group.InitializeInterpolation();
+        for (int idxCurve = 0; idxCurve < MaximumNumberOfCurves; idxCurve++)
+        {
+          if (ResultingShifts[idxCurve] is { } shiftValue)
+          {
+            group.AddCurveToInterpolation(idxCurve, shiftValue);
+          }
+        }
+        group.Interpolate();
+      }
+    }
+
+    /// <summary>
+    /// Gets the shift offset. After creation of the master curve using the low level interface, the entire curve can be shifted, so that the value shift=0 is at another point.
+    /// The point is determined by the options.
+    /// </summary>
+    /// <param name="referencePropertyValue">If not null, this is the reference value. Most probably in master curve construction, this is the reference temperature.</param>
+    /// <param name="useExactReferencePropertyValue">If true, the exact value given by <paramref name="referencePropertyValue"/> is trying to use, even if this value is not the property value of any curve.
+    /// In this case, the shift values are interpolated over the property values, and then the shift value is interpolated. If interpolation is not possible, the fallback method is then to not use the exact reference value.</param>
+    /// <param name="curveProperties">The properties of the curves. The array must have the same length as the number of curves in this instance. If <paramref name="referencePropertyValue"/> is a reference temperature,
+    /// then the values in this array must be temperatures, each temperature associated with a curve.</param>
+    /// <param name="indexOfReferenceCurve">If <paramref name="referencePropertyValue"/> is null, then the curve with this index is used as the reference curve. If at this index no shift
+    /// information is available, then the curve nextmost to this index is used as the reference curve.</param>
+    /// <returns>A tuple containing the shift offset, with which the entire curve should be shifted, and the actually used reference value (e.g. reference temperature).</returns>
+    public (double shiftOffset, double? referenceValue) GetShiftOffset(double? referencePropertyValue, bool useExactReferencePropertyValue, double?[] curveProperties, int indexOfReferenceCurve)
+    {
+      double shiftOffset;
+      double? referenceValueUsed = null;
+      if (referencePropertyValue.HasValue)
+      {
+        if (useExactReferencePropertyValue)
+        {
+          // we have to make an interpolation of the shift values (y) versus the property1 values (x), and then
+          // try to get the shift value at the reference property
+          var listX = new List<double>();
+          var listY = new List<double>();
+          for (int idxCurve = 0; idxCurve < MaximumNumberOfCurves; idxCurve++)
+          {
+            if (ResultingShifts[idxCurve] is { } shiftValue)
+            {
+              if (curveProperties[idxCurve] is { } propertyValue)
+              {
+                double x = propertyValue;
+                double y = shiftValue;
+
+                if (!double.IsNaN(x) && !double.IsNaN(y))
+                {
+                  listX.Add(x);
+                  listY.Add(y);
+                }
+              }
+            }
+          }
+
+          if (listX.Count < 2)
+          {
+            return GetShiftOffset(referencePropertyValue, useExactReferencePropertyValue: false, curveProperties: curveProperties, indexOfReferenceCurve: indexOfReferenceCurve);
+          }
+
+          Altaxo.Calc.Interpolation.IInterpolationFunctionOptions interpolation;
+
+          if (listX.Count <= 2)
+            interpolation = new Altaxo.Calc.Interpolation.PolynomialRegressionAsInterpolationOptions(order: listX.Count - 1);
+          else
+            interpolation = new Altaxo.Calc.Interpolation.CrossValidatedCubicSplineOptions();
+
+          var interpolationFunc = interpolation.Interpolate(listX, listY);
+          shiftOffset = interpolationFunc.GetYOfX(referencePropertyValue.Value);
+          referenceValueUsed = referencePropertyValue.Value;
+        }
+        else // not using the exact reference value
+        {
+          // we search for the nearest index that has shift information available
+          double minDistance = double.PositiveInfinity;
+          shiftOffset = 0;
+          for (int idxCurve = 0; idxCurve < MaximumNumberOfCurves; ++idxCurve)
+          {
+            if (ResultingShifts[idxCurve] is { } shiftValue)
+            {
+              if (curveProperties[idxCurve] is { } propertyValue)
+              {
+                var distance = Math.Abs(propertyValue - referencePropertyValue.Value);
+                if (distance < minDistance)
+                {
+                  minDistance = distance;
+                  shiftOffset = shiftValue;
+                  referenceValueUsed = propertyValue;
+                }
+              }
+            }
+          }
+        }
+      }
+      else // we use the reference index
+      {
+        // we search for the nearest index that has shift information available
+        double minDistance = double.PositiveInfinity;
+        shiftOffset = 0;
+        for (int idxCurve = 0; idxCurve < MaximumNumberOfCurves; ++idxCurve)
+        {
+          if (ResultingShifts[idxCurve] is { } shiftValue)
+          {
+            var distance = Math.Abs(idxCurve - indexOfReferenceCurve);
+            if (distance < minDistance)
+            {
+              minDistance = distance;
+              shiftOffset = shiftValue;
+              referenceValueUsed = curveProperties[idxCurve];
+            }
+          }
+        }
+
+      }
+      return (shiftOffset, referenceValueUsed);
+    }
+
+
+    /// <summary>
+    /// Offsets the shift values (<see cref="ResultingShifts"/>) by the provided value.
+    /// </summary>
+    /// <param name="shiftOffset">The shift offset.</param>
+    public void SetShiftOffset(double shiftOffset)
+    {
+      for (int idxCurve = 0; idxCurve < MaximumNumberOfCurves; ++idxCurve)
+      {
+        if (_resultingShifts[(idxCurve)] is { } shiftValue)
+        {
+          _resultingShifts[idxCurve] = shiftValue + shiftOffset;
+        }
+      }
     }
 
     /// <summary>
