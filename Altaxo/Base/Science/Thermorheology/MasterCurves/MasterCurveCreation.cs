@@ -626,9 +626,9 @@ StartOfFunction:
       // create an array of extended information that will accomodate info about the curves, e.g. the property1 and property2
       int numberOfCurves = listOfShiftGroups.Max(x => x.Count);
       var curveInfo = Enumerable.Range(0, numberOfCurves).Select(i => new CurveInformation()).ToArray();
-      AltaxoVariant property1Value = new AltaxoVariant(), property2Value = new AltaxoVariant();
       for (int idxCurve = 0; idxCurve < numberOfCurves; idxCurve++)
       {
+        AltaxoVariant property1Value = new AltaxoVariant(), property2Value = new AltaxoVariant();
         for (int idxDataColumn = 0; idxDataColumn < srcData.Count; idxDataColumn++)
         {
           var xycol = srcData[idxDataColumn][idxCurve];
@@ -639,14 +639,14 @@ StartOfFunction:
             if (property1Value.IsEmpty)
               property1Value = p1;
             else if (property1Value != p1)
-              throw new InvalidOperationException();
+              throw new InvalidOperationException($"The value property {options.Property1Name} of curve[{idxCurve}] in column[{idxDataColumn}] is {p1}, but in a previous column it was {property1Value}");
           }
           if (!p2.IsEmpty)
           {
             if (property2Value.IsEmpty)
               property2Value = p2;
             else if (property2Value != p2)
-              throw new InvalidOperationException();
+              throw new InvalidOperationException($"The value property {options.Property2Name} of curve[{idxCurve}] in column[{idxDataColumn}] is {p2}, but in a previous column it was {property2Value}");
           }
         }
 
