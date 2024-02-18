@@ -41,9 +41,9 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     /// <summary>
     /// Determines the method to best fit the data into the master curve.
     /// </summary>
-    public OptimizationMethod OptimizationMethod { get; init; }
+    public OptimizationMethod OptimizationMethod { get; init; } = OptimizationMethod.OptimizeSquaredDifferenceByBruteForce;
 
-    protected int _numberOfIterations = 20;
+    protected int _numberOfIterations = 40;
 
     /// <summary>
     /// Gets or sets the number of iterations. Must be greater than or equal to 1.
@@ -54,7 +54,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     /// The number of iterations for master curve creation.
     /// </value>
     /// <exception cref="ArgumentOutOfRangeException">value - Must be a number >= 1</exception>
-    public int NumberOfIterations
+    public virtual int NumberOfIterations
     {
       get { return _numberOfIterations; }
       init

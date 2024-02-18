@@ -107,7 +107,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
       {
         ShiftOrder = improvementOptions.ShiftOrder,
         OptimizationMethod = improvementOptions.OptimizationMethod,
-        NumberOfIterations = improvementOptions.NumberOfIterations,
+        _numberOfIterations = improvementOptions.NumberOfIterations, // in order to circumvent the >0 criterion
         MasterCurveGroupOptionsChoice = improvementOptions.MasterCurveGroupOptionsChoice,
         GroupOptions = improvementOptions.GroupOptions,
         MasterCurveImprovementOptions = null,

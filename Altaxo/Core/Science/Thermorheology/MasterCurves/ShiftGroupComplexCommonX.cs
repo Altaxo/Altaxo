@@ -31,10 +31,14 @@ using Complex64 = System.Numerics.Complex;
 namespace Altaxo.Science.Thermorheology.MasterCurves
 {
   /// <summary>
-  /// A collection of multiple x-y curves (see <see cref="ShiftCurve{Double}"/>) that will finally form one master curve.
+  /// A collection of multiple x-y curves (see <see cref="ShiftCurve{Complex64}"/>) that will finally form one master curve.
+  /// Here, the real and imaginary part of the complex value have a common x-value.
   /// </summary>
   public class ShiftGroupComplexCommonX : ShiftGroupBase, IShiftGroup
   {
+    /// <summary>
+    /// The complex valued curves to be shifted.
+    /// </summary>
     protected ShiftCurve<Complex64>?[] _curves;
 
     /// <summary>
@@ -51,13 +55,13 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     public bool ParticipateInFitByFitWeight => FittingWeightReal > 0 || FittingWeightImaginary > 0;
 
     /// <inheritdoc/>
-    public int NumberOfValueComponents => 1;
+    public int NumberOfValueComponents => 2;
 
 
     /// <summary>
     /// Creates the fit function. Argument is the tuple consisting of X, Y, and optional YErr. Return value is a function that calculates y for a given x.
     /// </summary>
-    public Func<(IReadOnlyList<double> X, IReadOnlyList<Complex64> Y, IReadOnlyList<Complex64>? YErr), Func<double, Complex64>>? CreateInterpolationFunction { get; }
+    public Func<(IReadOnlyList<double> X, IReadOnlyList<Complex64> Y, IReadOnlyList<Complex64>? YErr), Func<double, Complex64>> CreateInterpolationFunction { get; }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ShiftGroupDouble"/> class.
@@ -68,7 +72,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     /// <param name="logarithmizeXForInterpolation">If true, the x-values are logarithmized prior to participating in the interpolation function.</param>
     /// <param name="logarithmizeYForInterpolation">If true, the y-values are logartihmized prior to participating in the interpolation function.</param>
     /// <param name="createInterpolationFunction">Function that creates the interpolation. Input are the x-array, y-array, and optionally, the array of y-errors. Output is an interpolation function which returns an interpolated y-value for a given x-value.</param>
-    public ShiftGroupComplexCommonX(IEnumerable<ShiftCurve<Complex64>?> data, ShiftXBy xShiftBy, double fitWeight, double fitWeightIm, bool logarithmizeXForInterpolation, bool logarithmizeYForInterpolation, Func<(IReadOnlyList<double> X, IReadOnlyList<Complex64> Y, IReadOnlyList<Complex64>? YErr), Func<double, Complex64>>? createInterpolationFunction = null)
+    public ShiftGroupComplexCommonX(IEnumerable<ShiftCurve<Complex64>?> data, ShiftXBy xShiftBy, double fitWeight, double fitWeightIm, bool logarithmizeXForInterpolation, bool logarithmizeYForInterpolation, Func<(IReadOnlyList<double> X, IReadOnlyList<Complex64> Y, IReadOnlyList<Complex64>? YErr), Func<double, Complex64>> createInterpolationFunction)
       : base(xShiftBy, logarithmizeXForInterpolation, logarithmizeYForInterpolation)
     {
       _curves = data.ToArray();
@@ -161,12 +165,19 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
       if (_interpolationInformation is null)
         throw new InvalidOperationException($"{nameof(_interpolationInformation)} is not initialized. Call {nameof(InitializeInterpolation)} before.");
 
-      _interpolationInformation.AddXYColumn(shift, idxCurve, _curves[idxCurve].X, _curves[idxCurve].Y, this);
+      var curve = _curves[idxCurve];
+      if (curve is not null)
+      {
+        _interpolationInformation.AddXYColumn(shift, idxCurve, curve.X, curve.Y, this);
+      }
     }
 
     public void Interpolate()
     {
-      if (_interpolationInformation is null) throw NewExceptionNoInterpolationInformation;
+      if (_interpolationInformation is null)
+      {
+        throw NewExceptionNoInterpolationInformation;
+      }
 
       var interpol = CreateInterpolationFunction((_interpolationInformation.XValues, _interpolationInformation.YValues, null));
       _interpolationInformation.InterpolationFunction = interpol;
@@ -179,23 +190,26 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     /// <returns>Minimum and maximum of the x-values, for x and y values appropriate for the conditions given by the parameter.</returns>
     public (double min, double max) GetXMinimumMaximumOfCurvePointsSuitableForInterpolation(int idxCurve)
     {
-      var curve = _curves[idxCurve];
-      var x = curve.X;
-      var y = curve.Y;
-      var len = Math.Min(x.Count, y.Count);
       var min = double.PositiveInfinity;
       var max = double.NegativeInfinity;
 
-      for (int i = 0; i < len; i++)
+      if (_curves[idxCurve] is { } curve)
       {
-        double x1 = XShiftBy == ShiftXBy.Factor ? Math.Log(x[i]) : x[i];
-        double xv = LogarithmizeXForInterpolation ? Math.Log(x[i]) : x[i];
-        double yvre = LogarithmizeYForInterpolation ? Math.Log(y[i].Real) : y[i].Real;
-        double yvim = LogarithmizeYForInterpolation ? Math.Log(y[i].Imaginary) : y[i].Imaginary;
-        if (x1.IsFinite() && xv.IsFinite() && yvre.IsFinite() && yvim.IsFinite())
+        var x = curve.X;
+        var y = curve.Y;
+        var len = Math.Min(x.Count, y.Count);
+
+        for (int i = 0; i < len; i++)
         {
-          min = Math.Min(min, xv);
-          max = Math.Max(max, xv);
+          double x1 = XShiftBy == ShiftXBy.Factor ? Math.Log(x[i]) : x[i];
+          double xv = LogarithmizeXForInterpolation ? Math.Log(x[i]) : x[i];
+          double yvre = LogarithmizeYForInterpolation ? Math.Log(y[i].Real) : y[i].Real;
+          double yvim = LogarithmizeYForInterpolation ? Math.Log(y[i].Imaginary) : y[i].Imaginary;
+          if (x1.IsFinite() && xv.IsFinite() && yvre.IsFinite() && yvim.IsFinite())
+          {
+            min = Math.Min(min, xv);
+            max = Math.Max(max, xv);
+          }
         }
       }
       return (min, max);
@@ -209,7 +223,10 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     /// <returns>The minimum and maximum of the x-values, except for those points that belong to the curve with index=<paramref name="indexOfCurve"/>.</returns>
     public (double min, double max) GetXMinimumMaximumOfInterpolationValuesExceptForCurveIndex(int indexOfCurve)
     {
-      if (_interpolationInformation is null) throw NewExceptionNoInterpolationInformation;
+      if (_interpolationInformation is null)
+      {
+        throw NewExceptionNoInterpolationInformation;
+      }
 
       return _interpolationInformation.GetMinimumMaximumOfXValuesExceptForCurveIndex(indexOfCurve);
     }
@@ -220,8 +237,10 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
       if (!(idxValueComponent == 0 || idxValueComponent == 1))
         throw new ArgumentOutOfRangeException($"{nameof(ShiftGroupDouble)} has two value components, thus {nameof(idxValueComponent)} should be either 0 or 1, but is {idxValueComponent}");
 
-      var curve = _curves[idxCurve];
-      return (curve.X, curve.Y.Select(c => idxValueComponent == 0 ? c.Real : c.Imaginary).ToArray());
+      if (_curves[idxCurve] is { } curve)
+        return (curve.X, curve.Y.Select(c => idxValueComponent == 0 ? c.Real : c.Imaginary).ToArray());
+      else
+        return (Array.Empty<double>(), Array.Empty<double>());
     }
 
     /// <inheritdoc/>
@@ -230,19 +249,24 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
       if (!(idxValueComponent == 0 || idxValueComponent == 1))
         throw new ArgumentOutOfRangeException($"{nameof(ShiftGroupDouble)} has two value components, thus {nameof(idxValueComponent)} should be either 0 or 1, but is {idxValueComponent}");
 
-      var curve = _curves[idxCurve];
-
-      double[] xx;
-      if (XShiftBy == ShiftXBy.Factor)
+      if (_curves[idxCurve] is { } curve)
       {
-        xx = curve.X.Select(x => x * Math.Exp(shiftValue)).ToArray();
+        double[] xx;
+        if (XShiftBy == ShiftXBy.Factor)
+        {
+          xx = curve.X.Select(x => x * Math.Exp(shiftValue)).ToArray();
+        }
+        else
+        {
+          xx = curve.X.Select(x => x + shiftValue).ToArray();
+        }
+
+        return (xx, curve.Y.Select(c => idxValueComponent == 0 ? c.Real : c.Imaginary).ToArray());
       }
       else
       {
-        xx = curve.X.Select(x => x + shiftValue).ToArray();
+        return (Array.Empty<double>(), Array.Empty<double>());
       }
-
-      return (xx, curve.Y.Select(c => idxValueComponent == 0 ? c.Real : c.Imaginary).ToArray());
     }
 
     /// <inheritdoc/>
@@ -316,60 +340,69 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     /// <returns>Returns the calculated penalty value (mean difference between interpolation curve and provided data),
     /// and the number of points (of the new part of the curve) used for calculating the penalty value.</returns>
     /// 
-    public (double Penalty, int EvaluatedPoints) GetMeanSignedYDifference(int idxCurve, double shift)
+    public (double Penalty, int EvaluatedPoints) GetMeanAbsYDifference(int idxCurve, double shift)
     {
-      if (_interpolationInformation is null) throw NewExceptionNoInterpolationInformation;
-
-      var curve = _curves[idxCurve];
-      var x = curve.X;
-      var y = curve.Y;
-      var interpolation = _interpolationInformation.InterpolationFunction;
-      var interpolMin = _interpolationInformation.InterpolationMinimumX;
-      var interpolMax = _interpolationInformation.InterpolationMaximumX;
-      int len = Math.Min(x.Count, y.Count);
-      int validPoints = 0;
-      bool doLogX = LogarithmizeXForInterpolation;
-      bool doLogY = LogarithmizeYForInterpolation;
-      bool shiftXByOffset = XShiftBy == ShiftXBy.Offset;
-      double penaltySum = 0;
-      for (int i = 0; i < len; i++)
+      if (_interpolationInformation is null)
       {
-        double xv;
-        if (doLogX)
-          xv = shiftXByOffset ? Math.Log(x[i] + shift) : Math.Log(x[i]) + shift;
-        else
-          xv = shiftXByOffset ? x[i] + shift : x[i] * Math.Exp(shift);
-
-        double yvre = y[i].Real;
-        double yvim = y[i].Imaginary;
-        if (doLogY)
-        {
-          yvre = Math.Log(yvre);
-          yvim = Math.Log(yvim);
-        }
-
-        if (xv.IsFinite() && yvre.IsFinite() && yvim.IsFinite() && xv.IsInIntervalCC(interpolMin, interpolMax))
-        {
-          try
-          {
-            var interpolValue = interpolation(xv);
-            double diff = yvre - interpolation(xv).Real;
-            penaltySum += diff;
-            diff = yvim - interpolation(xv).Imaginary;
-            penaltySum += diff;
-
-            validPoints++;
-          }
-          catch (Exception)
-          {
-          }
-        }
+        throw NewExceptionNoInterpolationInformation;
       }
-      var penalty = penaltySum * Math.Abs(FittingWeightReal);
-      var evaluatedPoints = validPoints;
 
-      //System.Diagnostics.Debug.WriteLine(string.Format("GetMeanYDifference for shift={0} resulted in {1} ({2} points)", shift, penalty, evaluatedPoints));
-      return (penalty, evaluatedPoints);
+      if (_curves[idxCurve] is { } curve)
+      {
+        var x = curve.X;
+        var y = curve.Y;
+        var interpolation = _interpolationInformation.InterpolationFunction;
+        var interpolMin = _interpolationInformation.InterpolationMinimumX;
+        var interpolMax = _interpolationInformation.InterpolationMaximumX;
+        int len = Math.Min(x.Count, y.Count);
+        int validPoints = 0;
+        bool doLogX = LogarithmizeXForInterpolation;
+        bool doLogY = LogarithmizeYForInterpolation;
+        bool shiftXByOffset = XShiftBy == ShiftXBy.Offset;
+        double penaltySum = 0;
+        for (int i = 0; i < len; i++)
+        {
+          double xv;
+          if (doLogX)
+            xv = shiftXByOffset ? Math.Log(x[i] + shift) : Math.Log(x[i]) + shift;
+          else
+            xv = shiftXByOffset ? x[i] + shift : x[i] * Math.Exp(shift);
+
+          double yvre = y[i].Real;
+          double yvim = y[i].Imaginary;
+          if (doLogY)
+          {
+            yvre = Math.Log(yvre);
+            yvim = Math.Log(yvim);
+          }
+
+          if (xv.IsFinite() && yvre.IsFinite() && yvim.IsFinite() && xv.IsInIntervalCC(interpolMin, interpolMax))
+          {
+            try
+            {
+              var interpolValue = interpolation(xv);
+              double diff = Math.Abs(yvre - interpolation(xv).Real);
+              penaltySum += diff;
+              diff = Math.Abs(yvim - interpolation(xv).Imaginary);
+              penaltySum += diff;
+
+              validPoints++;
+            }
+            catch (Exception)
+            {
+            }
+          }
+        }
+        var penalty = penaltySum * Math.Abs(FittingWeightReal);
+        var evaluatedPoints = validPoints;
+
+        //System.Diagnostics.Debug.WriteLine(string.Format("GetMeanYDifference for shift={0} resulted in {1} ({2} points)", shift, penalty, evaluatedPoints));
+        return (penalty, evaluatedPoints);
+      }
+      else
+      {
+        return (0, 0);
+      }
     }
 
     public (double Penalty, int EvaluatedPoints) GetMeanSquaredYDifference(int idxCurve, double shift)
@@ -377,56 +410,62 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
       if (_interpolationInformation is null) throw NewExceptionNoInterpolationInformation;
 
 
-      var curve = _curves[idxCurve];
-      var x = curve.X;
-      var y = curve.Y;
-      var interpolation = _interpolationInformation.InterpolationFunction;
-      var interpolMin = _interpolationInformation.InterpolationMinimumX;
-      var interpolMax = _interpolationInformation.InterpolationMaximumX;
-
-      int len = Math.Min(x.Count, y.Count);
-      int validPoints = 0;
-      bool doLogX = LogarithmizeXForInterpolation;
-      bool doLogY = LogarithmizeYForInterpolation;
-      bool shiftXByOffset = XShiftBy == ShiftXBy.Offset;
-      double penaltySumRe = 0;
-      double penaltySumIm = 0;
-      for (int i = 0; i < len; i++)
+      if (_curves[idxCurve] is { } curve)
       {
-        double xv;
-        if (doLogX)
-          xv = shiftXByOffset ? Math.Log(x[i] + shift) : Math.Log(x[i]) + shift;
-        else
-          xv = shiftXByOffset ? x[i] + shift : x[i] * Math.Exp(shift);
+        var x = curve.X;
+        var y = curve.Y;
+        var interpolation = _interpolationInformation.InterpolationFunction;
+        var interpolMin = _interpolationInformation.InterpolationMinimumX;
+        var interpolMax = _interpolationInformation.InterpolationMaximumX;
 
-        double yvre = y[i].Real;
-        double yvim = y[i].Imaginary;
-        if (doLogY)
+        int len = Math.Min(x.Count, y.Count);
+        int validPoints = 0;
+        bool doLogX = LogarithmizeXForInterpolation;
+        bool doLogY = LogarithmizeYForInterpolation;
+        bool shiftXByOffset = XShiftBy == ShiftXBy.Offset;
+        double penaltySumRe = 0;
+        double penaltySumIm = 0;
+        for (int i = 0; i < len; i++)
         {
-          yvre = Math.Log(yvre);
-          yvim = Math.Log(yvim);
-        }
+          double xv;
+          if (doLogX)
+            xv = shiftXByOffset ? Math.Log(x[i] + shift) : Math.Log(x[i]) + shift;
+          else
+            xv = shiftXByOffset ? x[i] + shift : x[i] * Math.Exp(shift);
 
-        if (xv.IsFinite() && yvre.IsFinite() && yvim.IsFinite() && xv.IsInIntervalCC(interpolMin, interpolMax))
-        {
-          try
+          double yvre = y[i].Real;
+          double yvim = y[i].Imaginary;
+          if (doLogY)
           {
-            double diff = yvre - interpolation(xv).Real;
-            penaltySumRe += diff * diff;
-            diff = yvim - interpolation(xv).Imaginary;
-            penaltySumIm += diff * diff;
-            validPoints++;
+            yvre = Math.Log(yvre);
+            yvim = Math.Log(yvim);
           }
-          catch (Exception)
+
+          if (xv.IsFinite() && yvre.IsFinite() && yvim.IsFinite() && xv.IsInIntervalCC(interpolMin, interpolMax))
           {
+            try
+            {
+              double diff = yvre - interpolation(xv).Real;
+              penaltySumRe += diff * diff;
+              diff = yvim - interpolation(xv).Imaginary;
+              penaltySumIm += diff * diff;
+              validPoints++;
+            }
+            catch (Exception)
+            {
+            }
           }
         }
+        var penalty = penaltySumRe * RMath.Pow2(FittingWeightReal) + penaltySumIm * RMath.Pow2(FittingWeightImaginary);
+        var evaluatedPoints = validPoints;
+
+        //System.Diagnostics.Debug.WriteLine(string.Format("GetMeanYDifference for shift={0} resulted in {1} ({2} points)", shift, penalty, evaluatedPoints));
+        return (penalty, evaluatedPoints);
       }
-      var penalty = penaltySumRe * RMath.Pow2(FittingWeightReal) + penaltySumIm * RMath.Pow2(FittingWeightImaginary);
-      var evaluatedPoints = validPoints;
-
-      //System.Diagnostics.Debug.WriteLine(string.Format("GetMeanYDifference for shift={0} resulted in {1} ({2} points)", shift, penalty, evaluatedPoints));
-      return (penalty, evaluatedPoints);
+      else
+      {
+        return (0, 0);
+      }
     }
   }
 }

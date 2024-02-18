@@ -176,7 +176,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     /// <param name="processOptions">The options for master curve creation.</param>
     /// <param name="destinationTable">The destination table that accomodates the results.</param>
     /// <exception cref="System.NotImplementedException"></exception>
-    public static void Execute(MasterCurveData processData, MasterCurveCreationOptions processOptions, DataTable destinationTable)
+    public static void Execute(MasterCurveData processData, MasterCurveCreationOptions processOptions, DataTable destinationTable, IProgressReporter reporter)
     {
       // Test the data
 
@@ -186,7 +186,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
       var effectiveProcessOptions = processOptions;
       var (shiftGroupCollection, curveInfo) = ConvertToShiftGroupCollection(effectiveProcessOptions, processData);
 
-      shiftGroupCollection.CreateMasterCurve();
+      shiftGroupCollection.CreateMasterCurve(reporter.CancellationToken, reporter);
 
       // Improve the master curve if required
       if (processOptions.MasterCurveImprovementOptions is { } improvementOptions)
@@ -195,7 +195,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
 
         var (shiftGroupCollectionPrevious, curveInfoPrevios) = (shiftGroupCollection, curveInfo);
         (shiftGroupCollection, curveInfo) = ConvertToShiftGroupCollection(effectiveProcessOptions, processData);
-        shiftGroupCollection.ReIterate(shiftGroupCollectionPrevious);
+        shiftGroupCollection.ReIterate(shiftGroupCollectionPrevious, reporter.CancellationToken, reporter);
       }
 
       double? referenceValueUsed = null;
@@ -776,7 +776,9 @@ StartOfFunction:
         groupOptions.FittingWeight,
         groupOptions.FittingWeightIm,
         groupOptions.LogarithmizeXForInterpolation,
-        groupOptions.LogarithmizeYForInterpolation);
+        groupOptions.LogarithmizeYForInterpolation,
+        (arg) => groupOptions.InterpolationFunction.Interpolate(arg.XRe, arg.YRe, arg.XIm, arg.YIm).GetYOfX
+        );
 
       idxDataColumn += 2;
       return shiftGroup;

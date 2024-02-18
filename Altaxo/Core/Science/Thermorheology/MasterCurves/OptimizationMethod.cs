@@ -30,17 +30,17 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
   public enum OptimizationMethod
   {
     /// <summary>
-    /// Evaluates the mean difference (signed) between master curve and new data and tries to make this difference zero (root finding).
+    /// Evaluates the mean absolute difference (L1-Norm) between master curve and new data and tries to minimize this difference.
     /// </summary>
-    OptimizeSignedDifference,
+    OptimizeAbsoluteDifference,
 
     /// <summary>
-    /// Evaluates the mean squared difference (always positive) between master curve and new data and tries to minimize this value (minimization method).
+    /// Evaluates the mean squared difference (L2-Norm) between master curve and new data and tries to minimize this value (minimization method).
     /// </summary>
     OptimizeSquaredDifference,
 
     /// <summary>
-    /// Evaluates the mean squared difference (always positive) between master curve and new data and tries to minimize this value by brute force search.
+    /// Evaluates the mean squared difference (L2-Norm) between master curve and new data and tries to minimize this value by brute force search.
     /// </summary>
     OptimizeSquaredDifferenceByBruteForce
   }

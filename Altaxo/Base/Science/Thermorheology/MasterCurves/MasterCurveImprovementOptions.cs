@@ -23,6 +23,7 @@
 #endregion Copyright
 
 #nullable enable
+using System;
 using System.Collections.Immutable;
 
 namespace Altaxo.Science.Thermorheology.MasterCurves
@@ -32,7 +33,6 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
   /// </summary>
   public record MasterCurveImprovementOptions : MasterCurveCreationOptionsBase
   {
-
     #region Serialization
 
     /// <summary>
@@ -73,7 +73,25 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
 
     #endregion
 
+    /// <summary>
+    /// Gets or sets the number of iterations. Must be greater than or equal to 0 (0 means that the curve is interpolated with the provided function, but nothing more).
+    /// This number determines how many rounds the master curve is fitted. Increasing this value will in most cases
+    /// increase the quality of the fit.
+    /// </summary>
+    /// <value>
+    /// The number of iterations for master curve creation.
+    /// </value>
+    /// <exception cref="ArgumentOutOfRangeException">value - Must be a number >= 1</exception>
+    public override int NumberOfIterations
+    {
+      get { return _numberOfIterations; }
+      init
+      {
+        if (!(value >= 0))
+          throw new ArgumentOutOfRangeException(nameof(value), "Must be a number >= 0");
 
-
+        _numberOfIterations = value;
+      }
+    }
   }
 }

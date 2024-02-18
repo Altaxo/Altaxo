@@ -30,7 +30,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
   public record MasterCurveGroupOptionsWithComplexInterpolation : MasterCurveGroupOptions
   {
     /// <summary>
-    /// Gets the interpolation function.
+    /// Gets the complex interpolation function.
     /// </summary>
     public IComplexInterpolation InterpolationFunction { get; init; } = new PronySeriesFrequencyDomainComplexInterpolation() { UseIntercept = true };
 
@@ -82,6 +82,13 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
 
     #endregion
 
-
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MasterCurveGroupOptionsWithComplexInterpolation"/> class.
+    /// </summary>
+    public MasterCurveGroupOptionsWithComplexInterpolation()
+    {
+      LogarithmizeXForInterpolation = false;
+      LogarithmizeYForInterpolation = false;
+    }
   }
 }

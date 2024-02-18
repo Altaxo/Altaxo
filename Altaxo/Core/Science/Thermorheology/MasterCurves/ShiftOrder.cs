@@ -89,7 +89,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves.ShiftOrder
     /// <inheritdoc/>
     public IShiftOrder WithPivotIndex(int? index) => this;
 
-    void Noop() { }
+    static void Noop() { }
 
     #region Serialization
 
@@ -131,7 +131,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves.ShiftOrder
     /// <inheritdoc/>
     public IShiftOrder WithPivotIndex(int? index) => this;
 
-    void Noop() { }
+    static void Noop() { }
 
     #region Serialization
 
@@ -384,7 +384,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves.ShiftOrder
     /// <inheritdoc/>
     public IShiftOrder WithPivotIndex(int? index) => this;
 
-    void Noop() { }
+    static void Noop() { }
 
     #region Serialization
 

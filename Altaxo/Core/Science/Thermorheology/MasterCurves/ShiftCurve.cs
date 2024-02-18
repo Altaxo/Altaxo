@@ -42,6 +42,9 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     /// </summary>
     public IReadOnlyList<T> Y { get; }
 
+    /// <summary>
+    /// Gets the number of points of this curve.
+    /// </summary>
     public int Count
     {
       get

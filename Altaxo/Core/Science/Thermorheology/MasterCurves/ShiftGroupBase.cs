@@ -26,9 +26,8 @@ using System;
 
 namespace Altaxo.Science.Thermorheology.MasterCurves
 {
-
   /// <summary>
-  /// A collection of multiple x-y curves (see <see cref="ShiftCurve{T}"/>) that will finally form one master curve.
+  /// The base of a collection of multiple x-y curves (see <see cref="ShiftCurve{T}"/>) that will finally form one master curve.
   /// </summary>
   public class ShiftGroupBase
   {
@@ -58,8 +57,14 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     }
 
 
+    /// <summary>
+    /// Creates a new <see cref="InvalidOperationException"/> that should be thrown if the interpolation information was not initialized before.
+    /// </summary>
     public static Exception NewExceptionNoInterpolationInformation => new InvalidOperationException($"Interpolation information is not initialized!");
 
+    /// <summary>
+    /// Creates a new <see cref="InvalidOperationException"/> that should be thrown if currently no interpolation information is available.
+    /// </summary>
     public static Exception NewExceptionNoInterpolation => new InvalidOperationException($"Currently, no interpolation is available");
   }
 }

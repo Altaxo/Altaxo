@@ -58,8 +58,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     }
 
     /// <summary>
-    /// Adds values to the data that should be interpolated, but does not evaluate a new interpolation/>
-    /// after this call if a new interpolation should be evaluated).
+    /// Adds values to the data that should be interpolated, but does not evaluate a new interpolation.
     /// </summary>
     /// <param name="shift">Shift value used to modify the x values.</param>
     /// <param name="indexOfCurve">Index of the curve in the group of curves.</param>
@@ -81,9 +80,6 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
       bool shiftXByOffset = options.XShiftBy == ShiftXBy.Offset;
       double minX = InterpolationMinimumX;
       double maxX = InterpolationMaximumX;
-
-      double interpolMin = InterpolationMinimumX;
-      double interpolMax = InterpolationMaximumX;
 
       for (int i = 0, j = 0; i < count; i++)
       {

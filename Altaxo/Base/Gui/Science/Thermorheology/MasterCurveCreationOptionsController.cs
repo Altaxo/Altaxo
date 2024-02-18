@@ -512,7 +512,10 @@ namespace Altaxo.Gui.Science.Thermorheology
             {
               if (!(i < _doc.GroupOptions.Count && _doc.GroupOptions[i] is MasterCurveGroupOptionsWithScalarInterpolation doc))
               {
-                doc = new MasterCurveGroupOptionsWithScalarInterpolation();
+                if (i > 0 && _doc.GroupOptions[0] is MasterCurveGroupOptionsWithScalarInterpolation template)
+                  doc = template; // is safe, because is immutable
+                else
+                  doc = new MasterCurveGroupOptionsWithScalarInterpolation();
               }
 
               var controller = new MasterCurveGroupOptionsWithScalarInterpolationController();

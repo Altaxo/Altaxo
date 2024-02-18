@@ -76,7 +76,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     /// <inheritdoc/>
     public bool IsCurveSuitableForParticipatingInFit(int idxCurve)
     {
-      var (x, y) = TransformCurveForInterpolationAccordingToGroupOptions(idxCurve);
+      var (x, _) = TransformCurveForInterpolationAccordingToGroupOptions(idxCurve);
       return x.Count >= 2 && x.Max() > x.Min();
     }
 
@@ -110,9 +110,8 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     {
       var xarr = new List<double>();
       var yarr = new List<double>();
-      var curve = _curves[idx];
 
-      if (curve is not null)
+      if (_curves[idx] is { } curve)
       {
 
         for (int i = 0; i < curve.Count; ++i)
@@ -178,8 +177,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
       var min = double.PositiveInfinity;
       var max = double.NegativeInfinity;
 
-      var curve = _curves[idxCurve];
-      if (curve is not null)
+      if (_curves[idxCurve] is { } curve)
       {
         var x = curve.X;
         var y = curve.Y;
@@ -223,7 +221,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
       if (curve is not null)
         return (curve.X, curve.Y);
       else
-        return (new double[0], new double[0]);
+        return (Array.Empty<double>(), Array.Empty<double>());
     }
 
     /// <inheritdoc/>
@@ -250,7 +248,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
       }
       else
       {
-        return (new double[0], new double[0]);
+        return (Array.Empty<double>(), Array.Empty<double>());
       }
     }
 
@@ -268,7 +266,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
       }
       else
       {
-        return (new double[0], new double[0], new int[0]);
+        return (Array.Empty<double>(), Array.Empty<double>(), Array.Empty<int>());
       }
     }
 
@@ -320,9 +318,12 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     /// <returns>Returns the calculated penalty value (mean difference between interpolation curve and provided data),
     /// and the number of points (of the new part of the curve) used for calculating the penalty value.</returns>
     /// 
-    public (double Penalty, int EvaluatedPoints) GetMeanSignedYDifference(int idxCurve, double shift)
+    public (double Penalty, int EvaluatedPoints) GetMeanAbsYDifference(int idxCurve, double shift)
     {
-      if (_interpolationInformation is null) throw NewExceptionNoInterpolationInformation;
+      if (_interpolationInformation is null)
+      {
+        throw NewExceptionNoInterpolationInformation;
+      }
 
 
       var curve = _curves[idxCurve] ?? throw new InvalidProgramException($"The curve with index {idxCurve} is null.");
@@ -354,7 +355,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
           try
           {
             double diff = yv - interpolation(xv);
-            penaltySum += diff;
+            penaltySum += Math.Abs(diff);
             validPoints++;
           }
           catch (Exception)
@@ -418,8 +419,6 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
       //System.Diagnostics.Debug.WriteLine(string.Format("GetMeanYDifference for shift={0} resulted in {1} ({2} points)", shift, penalty, evaluatedPoints));
       return (penalty, evaluatedPoints);
     }
-
-
   }
 }
 

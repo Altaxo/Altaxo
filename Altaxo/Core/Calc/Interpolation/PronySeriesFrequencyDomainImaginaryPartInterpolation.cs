@@ -34,6 +34,28 @@ namespace Altaxo.Calc.Interpolation
   /// </summary>
   public record PronySeriesFrequencyDomainImaginaryPartInterpolation : PronySeriesInterpolationBase, IInterpolationFunctionOptions
   {
+    #region Serialization
+
+    /// <summary>
+    /// 2024-02-18 V0: initial version
+    /// </summary>
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PronySeriesFrequencyDomainImaginaryPartInterpolation), 0)]
+    public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        var s = (PronySeriesFrequencyDomainImaginaryPartInterpolation)obj;
+        s.SerializeV0(info);
+      }
+
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      {
+        return new PronySeriesFrequencyDomainImaginaryPartInterpolation().DeserializeV0(info);
+      }
+    }
+
+    #endregion
+
     /// <inheritdoc/>
     public IInterpolationFunction Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<double> yvec, IReadOnlyList<double>? yStdDev = null)
     {

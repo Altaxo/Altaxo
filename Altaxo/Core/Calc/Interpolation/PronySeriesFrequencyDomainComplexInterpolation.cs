@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Altaxo.Science.Signals;
@@ -36,6 +37,27 @@ namespace Altaxo.Calc.Interpolation
   /// </summary>
   public record PronySeriesFrequencyDomainComplexInterpolation : PronySeriesInterpolationBase, IComplexInterpolation
   {
+    #region Serialization
+
+    /// <summary>
+    /// 2024-02-18 V0: initial version
+    /// </summary>
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PronySeriesFrequencyDomainComplexInterpolation), 0)]
+    public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        var s = (PronySeriesFrequencyDomainComplexInterpolation)obj;
+        s.SerializeV0(info);
+      }
+
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      {
+        return new PronySeriesFrequencyDomainComplexInterpolation().DeserializeV0(info);
+      }
+    }
+
+    #endregion
 
     public IComplexInterpolationFunction Interpolate(IReadOnlyList<double> xvec, IReadOnlyList<Complex64> yvec, IReadOnlyList<Complex64>? yStdDev = null)
     {
@@ -48,8 +70,8 @@ namespace Altaxo.Calc.Interpolation
           isCircularFrequency: false,
           yvec.Select(y => y.Real).ToArray(),
           yvec.Select(y => y.Imaginary).ToArray(),
-          workingXMinimum,
-          workingXMaximum,
+          tmin: 1 / (2 * Math.PI * workingXMaximum),
+          tmax: 1 / (2 * Math.PI * workingXMinimum),
           workingNumberOfPoints,
           withIntercept: UseIntercept,
           regularizationLambda: RegularizationParameter
@@ -63,8 +85,8 @@ namespace Altaxo.Calc.Interpolation
           isCircularFrequency: false,
           yvec.Select(y => y.Real).ToArray(),
           yvec.Select(y => y.Imaginary).ToArray(),
-          workingXMinimum,
-          workingXMaximum,
+          tmin: 1 / (2 * Math.PI * workingXMaximum),
+          tmax: 1 / (2 * Math.PI * workingXMinimum),
           workingNumberOfPoints,
           withIntercept: UseIntercept,
           withFlowTerm: false,

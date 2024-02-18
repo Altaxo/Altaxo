@@ -25,11 +25,12 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Threading;
 using Altaxo.Calc;
 using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Calc.Optimization;
-using Altaxo.Calc.RootFinding;
 
 namespace Altaxo.Science.Thermorheology.MasterCurves
 {
@@ -63,13 +64,13 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     /// <value>
     /// The number of iterations for master curve creation.
     /// </value>
-    /// <exception cref="ArgumentOutOfRangeException">value - Must be a number >= 1</exception>
+    /// <exception cref="ArgumentOutOfRangeException">value - Must be a number >= 0</exception>
     public int NumberOfIterations
     {
       get { return _numberOfIterations; }
       init
       {
-        if (!(value >= 1))
+        if (!(value >= 0))
           throw new ArgumentOutOfRangeException(nameof(value), "Must be a number >= 1");
 
         _numberOfIterations = value;
@@ -172,6 +173,11 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
       return _shiftGroups.GetEnumerator();
     }
 
+    [MemberNotNull(nameof(_isGroupParticipatingInFit))]
+    [MemberNotNull(nameof(_isCurveParticipatingInFit))]
+    [MemberNotNull(nameof(_groupsParticipatingInFit))]
+    [MemberNotNull(nameof(_curvesParticipatingInFit))]
+    [MemberNotNull(nameof(_isCurveSuitableForPivot))]
     public void EvaluateParticipatingCurvesAndGroups()
     {
       // First assume that all groups and curves will participate in the fit
@@ -257,8 +263,13 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     /// <summary>
     /// Creates one or multiple master curve(s).
     /// </summary>
-    public void CreateMasterCurve()
+    public void CreateMasterCurve(CancellationToken cancellationToken, IProgress<double>? progress)
     {
+      if (NumberOfIterations == 0)
+      {
+        throw new InvalidOperationException($"If calling {nameof(CreateMasterCurve)}, the {nameof(NumberOfIterations)} must be >= 1, but currently it is 0.");
+      }
+
       var shiftOrder = ShiftOrder;
       if (shiftOrder.IsPivotIndexRequired && !shiftOrder.PivotIndex.HasValue)
       {
@@ -273,12 +284,13 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
         throw new InvalidOperationException($"Index {idxReferenceCurve} is not suitable as a starting index for master curve creation. Please choose another shift order with a variable pivot index.");
       }
 
-      _resultingShifts[idxReferenceCurve] = 0; // set shift value of reference curve to 0
+      double initialShiftOfReferenceCurve = 0;
+      _resultingShifts[idxReferenceCurve] = initialShiftOfReferenceCurve; // set shift value of reference curve to 0
       foreach (var idxGroup in _groupsParticipatingInFit)
       {
         var shiftGroup = _shiftGroups[idxGroup];
         shiftGroup.InitializeInterpolation();
-        shiftGroup.AddCurveToInterpolation(idxReferenceCurve, ResultingShifts[idxReferenceCurve].Value);
+        shiftGroup.AddCurveToInterpolation(idxReferenceCurve, initialShiftOfReferenceCurve);
 
         // Make the initial interpolation for all column groups, using only the column(s) used as reference (shift 0)
         shiftGroup.Interpolate();
@@ -287,7 +299,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
       // now that we have a first interpolation using the reference curve, we can iterate
       // at the first iteration, the other curves will be added to the interpolation
       // and then, the quality of the master curve will be successivly improved
-      Iterate(shiftOrderIndices);
+      Iterate(shiftOrderIndices, cancellationToken, progress);
     }
 
     /// <summary>
@@ -328,22 +340,30 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     /// (which at the first iteration consist only of the interpolation of the reference curve(s)).
     /// </summary>
     /// <param name="shiftOrder">The order in which the curves are shifted and fitted to the master curve.</param>
-    public void Iterate(IReadOnlyList<int> shiftOrder)
+    public void Iterate(IReadOnlyList<int> shiftOrder, CancellationToken cancellationToken, IProgress<double>? progress)
     {
-      for (int iteration = 0; iteration < NumberOfIterations; ++iteration)
+      progress?.Report(0);
+      for (int idxIteration = 0; idxIteration < NumberOfIterations && !cancellationToken.IsCancellationRequested; ++idxIteration)
       {
-        OneIteration(shiftOrder);
+        OneIteration(shiftOrder, idxIteration, cancellationToken);
+        progress?.Report((idxIteration + 1) / (double)NumberOfIterations);
       }
+      progress?.Report(1);
     }
 
     /// <summary>
     /// Performs one iteration of the shift-and-fit procedure.
     /// </summary>
     /// <param name="shiftCurveOrder">The order in which the curves are shifted and fitted. This list does not contain the index of the fixed curve.</param>
-    private void OneIteration(IReadOnlyList<int> shiftCurveOrder)
+    private void OneIteration(IReadOnlyList<int> shiftCurveOrder, int idxIteration, CancellationToken cancellationToken)
     {
       foreach (int idxCurve in shiftCurveOrder.Where(idx => _isCurveParticipatingInFit[idx] == true))
       {
+        if (cancellationToken.IsCancellationRequested)
+        {
+          break;
+        }
+
         double globalMinShift = double.MaxValue;
         double globalMaxShift = double.MinValue;
         double globalMinRange = double.MaxValue;
@@ -385,11 +405,23 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
         double currentShift; // remember: this is either a offset or the natural logarithm of the shift factor
         switch (OptimizationMethod)
         {
-          case OptimizationMethod.OptimizeSignedDifference:
+          case OptimizationMethod.OptimizeAbsoluteDifference:
             {
-              currentShift =
-              QuickRootFinding.ByBrentsAlgorithm(
-                shift => GetMeanSignedPenalty(idxCurve, shift), globalMinShift, globalMaxShift);
+              Func<double, double> optFunc = delegate (double shift)
+              {
+                double res = GetMeanAbsolutePenalty(idxCurve, shift);
+                //Current.Console.WriteLine("Eval for shift={0}: {1}", shift, res);
+                return res;
+              };
+              var optimizationMethod = new BruteForceLineSearch(new Simple1DCostFunction(optFunc));
+              var vec = CreateVector.Dense<double>(1);
+              vec[0] = globalMinShift;
+
+              var dir = CreateVector.Dense<double>(1);
+              dir[0] = globalMaxShift - globalMinShift;
+              double initialStep = 1;
+              var optresult = optimizationMethod.Search(vec, dir, initialStep);
+              currentShift = optresult[0];
             }
             break;
 
@@ -442,6 +474,11 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
 
         if (currentShift.IsFinite())
         {
+          if (!RMath.IsInIntervalCC(currentShift, globalMinShift, globalMaxShift))
+          {
+          }
+
+
           _resultingShifts[idxCurve] = currentShift;
 
           foreach (int idxShiftGroup in _groupsParticipatingInFit)
@@ -452,12 +489,16 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
             _shiftGroups[idxShiftGroup].Interpolate();
           }
         }
+        else
+        {
+          throw new InvalidOperationException($"For curve[{idxCurve}], no valid shift value could be evaluated by fitting. Consider using another optimization method.");
+        }
       }
     }
 
     /// <summary>
     /// Reinitializes the result. With that, new options can be used, for instance a new interpolation function.
-    /// Typically, after calling this, you can call <see cref="Iterate(ShiftGroupCollectionDouble, List{List{int}}, MasterCurveCreationResultDouble)"/> to iterate
+    /// Typically, after calling this, you can call <see cref="Iterate(IReadOnlyList{int}, CancellationToken, IProgress{double}?)"/> to iterate
     /// with the new interpolation function again.
     /// </summary>
     public void ReInitializeResult()
@@ -479,12 +520,12 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     }
 
     /// <summary>
-    /// Reinitializes the result (see <see cref="ReInitializeResult(ShiftGroupCollectionDouble, MasterCurveCreationResultDouble)"/>)
-    /// and then iterate anew.
+    /// Reinitializes the result (see <see cref="ReInitializeResult"/>) 
+    /// and then iterate anew with <see cref="Iterate(IReadOnlyList{int}, CancellationToken, IProgress{double}?)"/>.
     /// </summary>
     /// <param name="previousMasterCurve">A <see cref="ShiftGroupCollection"/> for which the master curve creation was successfully. The results, particularly the shifts,
     /// are used from that previous master curve.</param>
-    public void ReIterate(ShiftGroupCollection previousMasterCurve)
+    public void ReIterate(ShiftGroupCollection previousMasterCurve, CancellationToken cancellationToken, IProgress<double>? progress)
     {
       if (_resultingShifts.Length != previousMasterCurve._resultingShifts.Length)
         throw new InvalidOperationException("The number of curves in this shift group collection and in the previos shift group collection should match.");
@@ -500,7 +541,6 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
           _resultingShifts[idxCurve] = null;
         }
       }
-      Array.Copy(previousMasterCurve._resultingShifts, _resultingShifts, _resultingShifts.Length);
 
       // First we create the initial interpolation of the master column
       // then we successively add columns by shifting the x and merge them with the interpolation
@@ -515,7 +555,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
       var (indexOfReferenceColumnInColumnGroup, shiftOrderIndices) = GetFixedAndShiftedIndices(shiftOrder, MaximumNumberOfCurves);
 
       ReInitializeResult();
-      Iterate(shiftOrderIndices);
+      Iterate(shiftOrderIndices, cancellationToken, progress);
     }
 
     /// <summary>
@@ -665,13 +705,13 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     /// <param name="idxCurve">Index of the curve.</param>
     /// <param name="shift">Current shift (direct offset or the natural logarithm of the shiftFactor).</param>
     /// <returns>The mean penalty value for the current shift factor of the current column.</returns>
-    private double GetMeanSignedPenalty(int idxCurve, double shift)
+    private double GetMeanAbsolutePenalty(int idxCurve, double shift)
     {
       double penaltySum = 0;
       int penaltyPoints = 0;
       for (int idxShiftGroup = 0; idxShiftGroup < Count; idxShiftGroup++)
       {
-        var (penalty, points) = _shiftGroups[idxShiftGroup].GetMeanSignedYDifference(idxCurve, shift);
+        var (penalty, points) = _shiftGroups[idxShiftGroup].GetMeanAbsYDifference(idxCurve, shift);
 
         if (points > 0)
         {

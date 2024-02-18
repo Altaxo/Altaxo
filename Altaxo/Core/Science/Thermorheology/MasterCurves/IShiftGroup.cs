@@ -26,6 +26,10 @@ using System.Collections.Generic;
 
 namespace Altaxo.Science.Thermorheology.MasterCurves
 {
+  /// <summary>
+  /// Interface for a shift group. A shift group consist of a number of curves, which when shifted properly, finally form a master curve.
+  /// The curves can by scalar valued (y is of type <see cref="System.Double"/>, or complex valued.
+  /// </summary>
   public interface IShiftGroup
   {
 
@@ -92,7 +96,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     /// <returns>Returns the calculated penalty value (mean difference between interpolation curve and provided data),
     /// and the number of points (of the new part of the curve) used for calculating the penalty value.</returns>
     /// 
-    public (double Penalty, int EvaluatedPoints) GetMeanSignedYDifference(int idxCurve, double shift);
+    public (double Penalty, int EvaluatedPoints) GetMeanAbsYDifference(int idxCurve, double shift);
 
     /// <summary>
     /// Gets the mean squared difference between the y column and the interpolation function, provided that the x column is shifted by a factor.

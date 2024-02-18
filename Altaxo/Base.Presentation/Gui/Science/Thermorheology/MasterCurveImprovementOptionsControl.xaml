@@ -69,7 +69,7 @@
       
     <axogc:Int32UpDown Grid.Row="4" Grid.Column="2"
                              Value="{Binding NumberOfIterations}"
-                             Minimum="1"/>
+                             Minimum="0"/>
 
     <Label Grid.Row="6"
            Content="Group options:"

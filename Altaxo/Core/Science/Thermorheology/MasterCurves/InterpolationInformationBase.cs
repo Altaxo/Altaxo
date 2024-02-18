@@ -62,7 +62,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     {
       InterpolationMinimumX = double.MaxValue;
       InterpolationMaximumX = double.MinValue;
-      ValuesToInterpolate = new SortedList<double, (T, int)>();
+      ValuesToInterpolate = [];
     }
 
     /// <summary>
@@ -103,14 +103,9 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     /// <summary>
     /// Wraps an IList of double values to an IROVector
     /// </summary>
-    protected class WrapperIListToIRoVectorK<TW> : IReadOnlyList<TW>
+    protected class WrapperIListToIRoVectorK<TW>(IList<TW> list) : IReadOnlyList<TW>
     {
-      private IList<TW> _list;
-
-      public WrapperIListToIRoVectorK(IList<TW> list)
-      {
-        _list = list;
-      }
+      private IList<TW> _list = list;
 
       #region IROVector Members
 
@@ -146,16 +141,11 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     }
 
     /// <summary>
-    /// Wraps an IList of double values to an IROVector
+    /// Wraps an IList of (double, int) values to an IROVector of the first component (the double value).
     /// </summary>
-    protected class WrapperIListToIRoVectorV<TW> : IReadOnlyList<TW>
+    protected class WrapperIListToIRoVectorV<TW>(IList<(TW, int)> list) : IReadOnlyList<TW>
     {
-      private IList<(TW, int)> _list;
-
-      public WrapperIListToIRoVectorV(IList<(TW, int)> list)
-      {
-        _list = list;
-      }
+      private IList<(TW, int)> _list = list;
 
       #region IROVector Members
 
@@ -191,16 +181,11 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     }
 
     /// <summary>
-    /// Wraps an IList of double values to an IROVector
+    /// Wraps an IList of (double, int) values to an IROVector of the second component (the int value)
     /// </summary>
-    protected class WrapperIListToIRoVectorV2<TW> : IReadOnlyList<int>
+    protected class WrapperIListToIRoVectorV2<TW>(IList<(TW, int)> list) : IReadOnlyList<int>
     {
-      private IList<(TW, int)> _list;
-
-      public WrapperIListToIRoVectorV2(IList<(TW, int)> list)
-      {
-        _list = list;
-      }
+      private IList<(TW, int)> _list = list;
 
       #region IROVector Members
 

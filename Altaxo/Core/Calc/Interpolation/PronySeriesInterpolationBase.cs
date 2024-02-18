@@ -74,6 +74,52 @@ namespace Altaxo.Calc.Interpolation
     /// </summary>
     public double RegularizationParameter { get; init; }
 
+    protected void SerializeV0(Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+    {
+      info.AddValue("IsXMinimumMaximumSpecified", XMinimumMaximum.HasValue);
+      if (XMinimumMaximum.HasValue)
+      {
+        info.AddValue("XMinimum", XMinimumMaximum.Value.xMinimum);
+        info.AddValue("XMaximum", XMinimumMaximum.Value.xMinimum);
+      }
+      info.AddValue("NumberOfPoints", NumberOfPoints);
+      info.AddValue("PointsPerDecade", PointsPerDecade);
+      info.AddValue("IsRelaxation", IsRelaxation);
+      info.AddValue("UseIntercept", UseIntercept);
+      info.AddValue("AllowNegativeCoefficients", AllowNegativePronyCoefficients);
+      info.AddValue("RegularizationParameter", RegularizationParameter);
+    }
+
+    protected PronySeriesInterpolationBase DeserializeV0(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
+    {
+      (double xMinimum, double xMaximum)? xMinimumMaximum = null;
+      var isXMinimumMaximumSpecified = info.GetBoolean("IsXMinimumMaximumSpecified");
+      if (isXMinimumMaximumSpecified)
+      {
+        var xmin = info.GetDouble("XMinimum");
+        var xmax = info.GetDouble("XMaximum");
+        xMinimumMaximum = (xmin, xmax);
+      }
+      var numberOfPoints = info.GetInt32("NumberOfPoints");
+      var pointsPerDecade = info.GetDouble("PointsPerDecade");
+      var isRelaxation = info.GetBoolean("IsRelaxation");
+      var useIntercept = info.GetBoolean("UseIntercept");
+      var allowNegativeCoefficients = info.GetBoolean("AllowNegativeCoefficients");
+      var regularizationParameter = info.GetDouble("RegularizationParameter");
+
+      return this with
+      {
+        XMinimumMaximum = xMinimumMaximum,
+        NumberOfPoints = numberOfPoints,
+        PointsPerDecade = pointsPerDecade,
+        IsRelaxation = isRelaxation,
+        UseIntercept = useIntercept,
+        AllowNegativePronyCoefficients = allowNegativeCoefficients,
+        RegularizationParameter = regularizationParameter,
+      };
+    }
+
+
     public PronySeriesInterpolationBase WithSpecifiedXMinimumMaximumAndFixedNumberOfPoints(double xmin, double xmax, int numberOfPoints)
     {
       return this with
