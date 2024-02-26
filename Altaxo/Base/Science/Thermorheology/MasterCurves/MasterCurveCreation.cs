@@ -424,13 +424,23 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
         // now the shift values
         var shiftCol = (DoubleColumn)col.EnsureExistence("Shift", typeof(DoubleColumn), ColumnKind.V, groupNumber);
         shiftCol.Data = shiftGroupCollection.ResultingShifts.Select(shift => shift ?? double.NaN);
-
+        if (shiftGroupCollection.ShiftErrors.Any(x => x.HasValue))
+        {
+          var shiftColErr = (DoubleColumn)col.EnsureExistence("Shift.Err", typeof(DoubleColumn), ColumnKind.Err, groupNumber);
+          shiftColErr.Data = shiftGroupCollection.ShiftErrors.Select(shiftErr => shiftErr ?? double.NaN);
+        }
 
         // Output the factor only if any for the group uses shift by factor
         if (processOptions.GroupOptions.Any(g => g.XShiftBy == ShiftXBy.Factor))
         {
           var shiftFactorCol = (DoubleColumn)col.EnsureExistence("ShiftFactor", typeof(DoubleColumn), ColumnKind.V, groupNumber);
           shiftFactorCol.Data = shiftCol.Array.Select(x => Math.Exp(x)).ToArray();
+
+          if (shiftGroupCollection.ShiftErrors.Any(x => x.HasValue))
+          {
+            var shiftColErr = (DoubleColumn)col.EnsureExistence("ShiftFactor.Err", typeof(DoubleColumn), ColumnKind.Err, groupNumber);
+            shiftColErr.Data = shiftGroupCollection.ResultingShifts.Zip(shiftGroupCollection.ShiftErrors, (x, xerr) => (x, xerr)).Select(t => t.x.HasValue && t.xerr.HasValue ? Math.Exp(t.x.Value) * t.xerr.Value : double.NaN);
+          }
         }
       }
 

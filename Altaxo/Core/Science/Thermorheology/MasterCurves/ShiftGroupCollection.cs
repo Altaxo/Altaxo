@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2023 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2024 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -46,6 +46,11 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     /// Resulting list of shift offsets or ln(shiftfactors).
     /// </summary>
     public IReadOnlyList<double?> ResultingShifts => _resultingShifts;
+
+    /// <summary>
+    /// Gets the shift errors.
+    /// </summary>
+    public IReadOnlyList<double?> ShiftErrors => _shiftErrors;
 
     /// <summary>
     /// Determines the method to best fit the data into the master curve.
@@ -105,6 +110,11 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     private double?[] _resultingShifts;
 
     /// <summary>
+    /// Contains the shift errors.
+    /// </summary>
+    private double?[] _shiftErrors;
+
+    /// <summary>
     /// If the element is true, the curve(s) with that curve index participate in the fit; otherwise, the element is false.
     /// </summary>
     private bool[] _isCurveParticipatingInFit;
@@ -150,6 +160,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
       // then we successively add columns by shifting the x and merge them with the interpolation
       int maxColumns = _shiftGroups.Max(x => x.Count);
       _resultingShifts = new double?[maxColumns];
+      _shiftErrors = new double?[maxColumns];
       EvaluateParticipatingCurvesAndGroups();
     }
 
@@ -364,43 +375,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
           break;
         }
 
-        double globalMinShift = double.MaxValue;
-        double globalMaxShift = double.MinValue;
-        double globalMinRange = double.MaxValue;
-        foreach (int idxGroup in _groupsParticipatingInFit)
-        {
-          var shiftGroup = _shiftGroups[idxGroup];
-          var (xmin, xmax) = shiftGroup.GetXMinimumMaximumOfCurvePointsSuitableForInterpolation(idxCurve);
-
-          double localMaxShift;
-          double localMinShift;
-          double localRange;
-
-          var (xMinOfInterpolation, xMaxOfInterpolation) = shiftGroup.GetXMinimumMaximumOfInterpolationValuesExceptForCurveIndex(idxCurve);
-
-          if (shiftGroup.LogarithmizeXForInterpolation)
-          {
-            localMaxShift = xMaxOfInterpolation - xmin;
-            localMinShift = xMinOfInterpolation - xmax;
-            localRange = xmax - xmin;
-          }
-          else
-          {
-            localMaxShift = Math.Log(xMaxOfInterpolation / xmin);
-            localMinShift = Math.Log(xMinOfInterpolation / xmax);
-            localRange = Math.Log(xmax / xmin);
-          }
-          globalMinShift = Math.Min(globalMinShift, localMinShift);
-          globalMaxShift = Math.Max(globalMaxShift, localMaxShift);
-          globalMinRange = Math.Min(globalMinRange, localRange);
-        }
-
-        // we reduce the maximum possible shifts a little in order to get at least one point overlapping
-        double requiredShiftOverlap = globalMinRange * RequiredRelativeOverlap;
-        requiredShiftOverlap = Math.Min(requiredShiftOverlap, 0.5 * (globalMaxShift - globalMinShift));
-        // reduce the borders [globalMinShift, globalMaxShift] by the required shift overlap
-        globalMinShift += requiredShiftOverlap;
-        globalMaxShift -= requiredShiftOverlap;
+        var (globalMinShift, globalMaxShift) = GetMinimumMaximumGlobalShift(idxCurve);
 
         double currentShift; // remember: this is either a offset or the natural logarithm of the shift factor
         switch (OptimizationMethod)
@@ -444,7 +419,6 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
               double initialStep = 0.05;
               var optresult = optimizationMethod.Search(vec, dir, initialStep);
               currentShift = optresult[0];
-              // currentShiftFactor = optimizationMethod.SolutionVector[0];
             }
             break;
 
@@ -478,8 +452,16 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
           {
           }
 
-
           _resultingShifts[idxCurve] = currentShift;
+
+          if (_shiftErrors is { } shiftErrors &&
+              (idxIteration + 1) >= NumberOfIterations &&
+              (OptimizationMethod == OptimizationMethod.OptimizeSquaredDifference || OptimizationMethod == OptimizationMethod.OptimizeSquaredDifferenceByBruteForce)
+              )
+          {
+            _shiftErrors[idxCurve] = CalculateShiftError(idxCurve);
+          }
+
 
           foreach (int idxShiftGroup in _groupsParticipatingInFit)
           {
@@ -494,6 +476,90 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
           throw new InvalidOperationException($"For curve[{idxCurve}], no valid shift value could be evaluated by fitting. Consider using another optimization method.");
         }
       }
+    }
+
+    /// <summary>
+    /// Gets the minimum and the maximum of the possible global shift.
+    /// </summary>
+    /// <param name="idxCurve">The index of curve.</param>
+    /// <returns>The minimum and maximum shift values by which the curve can be shifted.</returns>
+    private (double globalMinShift, double globalMaxShift) GetMinimumMaximumGlobalShift(int idxCurve)
+    {
+      var globalMinShift = double.MaxValue;
+      var globalMaxShift = double.MinValue;
+      double globalMinRange = double.MaxValue;
+      foreach (int idxGroup in _groupsParticipatingInFit)
+      {
+        var shiftGroup = _shiftGroups[idxGroup];
+        var (xmin, xmax) = shiftGroup.GetXMinimumMaximumOfCurvePointsSuitableForInterpolation(idxCurve);
+
+        double localMaxShift;
+        double localMinShift;
+        double localRange;
+
+        var (xMinOfInterpolation, xMaxOfInterpolation) = shiftGroup.GetXMinimumMaximumOfInterpolationValuesExceptForCurveIndex(idxCurve);
+
+        if (shiftGroup.LogarithmizeXForInterpolation)
+        {
+          localMaxShift = xMaxOfInterpolation - xmin;
+          localMinShift = xMinOfInterpolation - xmax;
+          localRange = xmax - xmin;
+        }
+        else
+        {
+          localMaxShift = Math.Log(xMaxOfInterpolation / xmin);
+          localMinShift = Math.Log(xMinOfInterpolation / xmax);
+          localRange = Math.Log(xmax / xmin);
+        }
+        globalMinShift = Math.Min(globalMinShift, localMinShift);
+        globalMaxShift = Math.Max(globalMaxShift, localMaxShift);
+        globalMinRange = Math.Min(globalMinRange, localRange);
+      }
+
+      // we reduce the maximum possible shifts a little in order to get at least one point overlapping
+      double requiredShiftOverlap = globalMinRange * RequiredRelativeOverlap;
+      requiredShiftOverlap = Math.Min(requiredShiftOverlap, 0.5 * (globalMaxShift - globalMinShift));
+      // reduce the borders [globalMinShift, globalMaxShift] by the required shift overlap
+      globalMinShift += requiredShiftOverlap;
+      globalMaxShift -= requiredShiftOverlap;
+
+      return (globalMinShift, globalMaxShift);
+    }
+
+
+    /// <summary>
+    /// Calculates the errors of the shift values. This function assumes that the shift values were already before.
+    /// </summary>
+    /// <param name="idxCurve">The number of the curve for which to calculate the shift error.</param>
+    /// <returns>The shift error, or null if the shift error could not be calculated.</returns>
+    private double? CalculateShiftError(int idxCurve)
+    {
+      if (!(ResultingShifts[idxCurve] is { } shift))
+      {
+        return null;
+      }
+
+      var (globalMinShift, globalMaxShift) = GetMinimumMaximumGlobalShift(idxCurve);
+      var penaltyMiddle = GetMeanSquaredPenalty(idxCurve, shift);
+
+      double? shiftErr = null;
+      for (int iExp = -8; iExp <= -4; ++iExp)
+      {
+        var delta = Math.Abs(globalMaxShift - globalMinShift) * RMath.Pow(10, iExp);
+        var penaltyLeft = GetMeanSquaredPenalty(idxCurve, shift - delta);
+        var penaltyRight = GetMeanSquaredPenalty(idxCurve, shift + delta);
+        var deriv2nd = ((penaltyRight - penaltyMiddle) - (penaltyMiddle - penaltyLeft)) / (delta * delta);
+
+        if (deriv2nd >= 0)
+        {
+          shiftErr = Math.Sqrt(penaltyMiddle * 2 / deriv2nd);
+          break;
+        }
+        else
+          shiftErr = null;
+      }
+
+      return shiftErr;
     }
 
     /// <summary>
@@ -750,6 +816,8 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
 
       return penaltyPoints > 0 ? penaltySum / penaltyPoints : float.MaxValue;
     }
+
+
 
   }
 }
