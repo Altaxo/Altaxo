@@ -463,7 +463,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
           return;
         }
 
-        var (msg, isFatal) = TestAndCorrectParametersAndBoundaries(_doc.CurrentParameters);
+        var (msg, isFatal) = ParameterSetController.TestAndCorrectParametersAndBoundaries(_doc.CurrentParameters);
         if (msg.Length > 0)
         {
           if (isFatal)
@@ -488,7 +488,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
         var fit = new LevenbergMarquardtMinimizerNonAllocating();
 
 
-        var (initialGuess, lowerBounds, upperBounds) = CollectVaryingParametersAndBoundaries(_doc.CurrentParameters);
+        var (initialGuess, lowerBounds, upperBounds) = ParameterSetElement.CollectVaryingParametersAndBoundaries(_doc.CurrentParameters);
         NonlinearMinimizationResult minimizationResult = null;
 
         var exception = Current.Gui.ExecuteAsUserCancellable(1000, (reporter) =>
@@ -539,76 +539,6 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
       {
         exception = ex;
       }
-    }
-
-    /// <summary>
-    /// Tests the values of parameters and boundaries for inconsistencies, and corrects them.
-    /// </summary>
-    /// <param name="parameters">The parameters.</param>
-    /// <returns>A <see cref="StringBuilder"/> containing warnings and errors, and a flag indicating if any inconsistence could not be corrected automatically.</returns>
-    (StringBuilder Message, bool isFatal) TestAndCorrectParametersAndBoundaries(ParameterSet parameters)
-    {
-      var stb = new StringBuilder();
-      bool isFatal = false;
-
-      for (int i = 0; i < parameters.Count; i++)
-      {
-        var p = parameters[i];
-        if (p.LowerBound.HasValue && p.UpperBound.HasValue)
-        {
-          if (!(p.LowerBound <= p.UpperBound))
-          {
-            stb.AppendLine($"Parameter {p.Name}: lower bound is greater than upper bound, CORRECTION REQUIRED!");
-            isFatal = true;
-          }
-          else if (p.UpperBound == p.LowerBound && p.Vary)
-          {
-            p.Parameter = p.LowerBound.Value;
-            p.Vary = false;
-            stb.AppendLine($"Parameter {p.Name}: was set to fixed since lower bound is equal to upper bound!");
-          }
-        }
-        if (p.UpperBound.HasValue && !(p.Parameter <= p.UpperBound.Value))
-        {
-          p.Parameter = p.UpperBound.Value;
-          stb.AppendLine($"Parameter {p.Name}: was set to upper bound since it was greater than upper bound!");
-        }
-        if (p.LowerBound.HasValue && !(p.Parameter >= p.LowerBound.Value))
-        {
-          p.Parameter = p.LowerBound.Value;
-          stb.AppendLine($"Parameter {p.Name}: was set to lower bound since it was less than lower bound!");
-        }
-      }
-      return (stb, isFatal);
-    }
-
-    /// <summary>
-    /// Collects the list of varying parameters and their corresponding boundaries.
-    /// </summary>
-    /// <param name="parameters">The parameters.</param>
-    /// <returns>A tuple of three lists, one with the parameters, one with the lower bounds (can be null), and one with the upper bounds (can be null).</returns>
-    (List<double> varyingParameters, List<double?>? lowerBounds, List<double?>? upperBounds) CollectVaryingParametersAndBoundaries(ParameterSet parameters)
-    {
-      var varyingParameters = new List<double>();
-      var lowerBounds = new List<double?>();
-      var upperBounds = new List<double?>();
-
-      bool hasAnyLowerBound = false;
-      bool hasAnyUpperBound = false;
-
-      for (int i = 0; i < parameters.Count; i++)
-      {
-        var p = parameters[i];
-        if (p.Vary)
-        {
-          varyingParameters.Add(p.Parameter);
-          lowerBounds.Add(p.LowerBound);
-          upperBounds.Add(p.UpperBound);
-          hasAnyLowerBound |= p.LowerBound.HasValue;
-          hasAnyUpperBound |= p.UpperBound.HasValue;
-        }
-      }
-      return (varyingParameters, hasAnyLowerBound ? lowerBounds : null, hasAnyUpperBound ? upperBounds : null);
     }
 
     private class ReportCostMonitor : ExternalDrivenBackgroundMonitor
@@ -1321,133 +1251,32 @@ Label_EditScript:
 
     public void EhView_PasteParameterV()
     {
-      Altaxo.Data.DataTable table = Altaxo.Worksheet.Commands.EditCommands.GetTableFromClipboard();
-      if (table is null)
-        return;
-      Altaxo.Data.DoubleColumn col = null;
-      // Find the first column that contains numeric values
-      for (int i = 0; i < table.DataColumnCount; i++)
-      {
-        if (table[i] is Altaxo.Data.DoubleColumn)
-        {
-          col = table[i] as Altaxo.Data.DoubleColumn;
-          break;
-        }
-      }
-      if (col is null)
-        return;
-
-      int len = Math.Max(col.Count, _doc.CurrentParameters.Count);
-      for (int i = 0; i < len; i++)
-        _doc.CurrentParameters[i].Parameter = col[i];
-
-      _parameterController.InitializeDocument(_doc.CurrentParameters);
+      if (_parameterController is ParameterSetController psc)
+        psc.EhPasteParameterValues();
     }
 
     public void EhView_CopyParameterV()
     {
-      if (true == _parameterController.Apply(false))
-      {
-        var dao = Current.Gui.GetNewClipboardDataObject();
-        var col = new Altaxo.Data.DoubleColumn();
-        for (int i = 0; i < _doc.CurrentParameters.Count; i++)
-          col[i] = _doc.CurrentParameters[i].Parameter;
-
-        var tb = new Altaxo.Data.DataTable();
-        tb.DataColumns.Add(col, "Value", Altaxo.Data.ColumnKind.V, 0);
-        Altaxo.Worksheet.Commands.EditCommands.WriteAsciiToClipBoardIfDataCellsSelected(
-            tb, new Altaxo.Collections.AscendingIntegerCollection(),
-            new Altaxo.Collections.AscendingIntegerCollection(),
-            new Altaxo.Collections.AscendingIntegerCollection(),
-            dao);
-        Current.Gui.SetClipboardDataObject(dao, true);
-      }
-      else
-      {
-        Current.Gui.ErrorMessageBox("Some of your parameter input is not valid!");
-      }
+      if (_parameterController is ParameterSetController psc)
+        psc.EhCopyParameterValues();
     }
 
     public void EhView_CopyParameterVAsCDef()
     {
-      if (true == _parameterController.Apply(false))
-      {
-        var dao = Current.Gui.GetNewClipboardDataObject();
-        var stb = new System.Text.StringBuilder();
-        for (int i = 0; i < _doc.CurrentParameters.Count; i++)
-        {
-          stb.AppendFormat(System.Globalization.CultureInfo.InvariantCulture, "double {0} = {1};\r\n", _doc.CurrentParameters[i].Name, _doc.CurrentParameters[i].Parameter);
-        }
-        dao.SetData(typeof(string), stb.ToString());
-        Current.Gui.SetClipboardDataObject(dao, true);
-      }
-      else
-      {
-        Current.Gui.ErrorMessageBox("Some of your parameter input is not valid!");
-      }
+      if (_parameterController is ParameterSetController psc)
+        psc.EhCopyParameterVAsCDef();
     }
 
     public void EhView_CopyParameterNV()
     {
-      if (true == _parameterController.Apply(false))
-      {
-        var dao = Current.Gui.GetNewClipboardDataObject();
-        var txt = new Altaxo.Data.TextColumn();
-        var col = new Altaxo.Data.DoubleColumn();
-
-        for (int i = 0; i < _doc.CurrentParameters.Count; i++)
-        {
-          txt[i] = _doc.CurrentParameters[i].Name;
-          col[i] = _doc.CurrentParameters[i].Parameter;
-        }
-
-        var tb = new Altaxo.Data.DataTable();
-        tb.DataColumns.Add(txt, "Name", Altaxo.Data.ColumnKind.V, 0);
-        tb.DataColumns.Add(col, "Value", Altaxo.Data.ColumnKind.V, 0);
-        Altaxo.Worksheet.Commands.EditCommands.WriteAsciiToClipBoardIfDataCellsSelected(
-            tb, new Altaxo.Collections.AscendingIntegerCollection(),
-            new Altaxo.Collections.AscendingIntegerCollection(),
-            new Altaxo.Collections.AscendingIntegerCollection(),
-            dao);
-        Current.Gui.SetClipboardDataObject(dao, true);
-      }
-      else
-      {
-        Current.Gui.ErrorMessageBox("Some of your parameter input is not valid!");
-      }
+      if (_parameterController is ParameterSetController psc)
+        psc.EhCopyParameterNV();
     }
 
     public void EhView_CopyParameterNVV()
     {
-      if (true == _parameterController.Apply(false))
-      {
-        var dao = Current.Gui.GetNewClipboardDataObject();
-        var txt = new Altaxo.Data.TextColumn();
-        var col = new Altaxo.Data.DoubleColumn();
-        var var = new Altaxo.Data.DoubleColumn();
-
-        for (int i = 0; i < _doc.CurrentParameters.Count; i++)
-        {
-          txt[i] = _doc.CurrentParameters[i].Name;
-          col[i] = _doc.CurrentParameters[i].Parameter;
-          var[i] = _doc.CurrentParameters[i].Variance;
-        }
-
-        var tb = new Altaxo.Data.DataTable();
-        tb.DataColumns.Add(txt, "Name", Altaxo.Data.ColumnKind.V, 0);
-        tb.DataColumns.Add(col, "Value", Altaxo.Data.ColumnKind.V, 0);
-        tb.DataColumns.Add(var, "Variance", Altaxo.Data.ColumnKind.V, 0);
-        Altaxo.Worksheet.Commands.EditCommands.WriteAsciiToClipBoardIfDataCellsSelected(
-            tb, new Altaxo.Collections.AscendingIntegerCollection(),
-            new Altaxo.Collections.AscendingIntegerCollection(),
-            new Altaxo.Collections.AscendingIntegerCollection(),
-            dao);
-        Current.Gui.SetClipboardDataObject(dao, true);
-      }
-      else
-      {
-        Current.Gui.ErrorMessageBox("Some of your parameter input is not valid!");
-      }
+      if (_parameterController is ParameterSetController psc)
+        psc.EhCopyParameterNVV();
     }
 
     public void EhView_CopyParameterNCM()
@@ -1744,12 +1573,16 @@ Label_EditScript:
     {
       for (int i = 0; i < _doc.CurrentParameters.Count; i++)
       {
-        _doc.CurrentParameters[i].LowerBound = lowerBounds[i];
-        _doc.CurrentParameters[i].UpperBound = upperBounds[i];
-        if (_doc.CurrentParameters[i].UpperBound.HasValue && _doc.CurrentParameters[i].Parameter > _doc.CurrentParameters[i].UpperBound.Value)
-          _doc.CurrentParameters[i].Parameter = _doc.CurrentParameters[i].UpperBound.Value;
-        if (_doc.CurrentParameters[i].LowerBound.HasValue && _doc.CurrentParameters[i].Parameter < _doc.CurrentParameters[i].LowerBound.Value)
-          _doc.CurrentParameters[i].Parameter = _doc.CurrentParameters[i].LowerBound.Value;
+        var e = _doc.CurrentParameters[i];
+        _doc.CurrentParameters[i] = e with
+        {
+          LowerBound = lowerBounds[i],
+          UpperBound = upperBounds[i],
+          Parameter = (e.UpperBound.HasValue && e.Parameter > e.UpperBound.Value) ?
+                      e.UpperBound.Value :
+                      ((e.LowerBound.HasValue && e.Parameter < e.LowerBound.Value) ?
+                      e.LowerBound.Value : e.Parameter)
+        };
       }
     }
 

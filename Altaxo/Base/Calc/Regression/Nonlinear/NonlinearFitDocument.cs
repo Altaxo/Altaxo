@@ -131,7 +131,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
       for (int i = 0; i < fitele.NumberOfParameters; ++i)
       {
         int k = (int)byName[fitele.ParameterName(i)];
-        _currentParameters[k].Parameter = fitele.FitFunction.DefaultParameterValue(i);
+        _currentParameters[k] = _currentParameters[k] with { Parameter = fitele.FitFunction.DefaultParameterValue(i) };
       }
 
       _currentParameters.OnInitializationFinished();

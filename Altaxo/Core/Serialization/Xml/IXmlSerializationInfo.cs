@@ -89,7 +89,7 @@ namespace Altaxo.Serialization.Xml
 
     void AddArray(string name, float[] val, int count);
 
-    void AddArray(string name, double[] val, int count);
+    void AddArray(string name, IReadOnlyList<double> val, int count);
 
     void AddArray(string name, DateTime[] val, int count);
 

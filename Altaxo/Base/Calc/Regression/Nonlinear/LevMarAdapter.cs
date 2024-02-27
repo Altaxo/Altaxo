@@ -700,14 +700,21 @@ else
       {
         if (pset[i].Vary)
         {
-          pset[i].Parameter = _cachedVaryingParameters[varyingPara];
-          pset[i].Variance = _resultingCovariances is null ? 0 : Math.Sqrt(_resultingCovariances[varyingPara + varyingPara * _cachedVaryingParameters.Length]);
+          pset[i] = pset[i] with
+          {
+            Parameter = _cachedVaryingParameters[varyingPara],
+            Variance = _resultingCovariances is null ? 0 : Math.Sqrt(_resultingCovariances[varyingPara + varyingPara * _cachedVaryingParameters.Length]),
+          };
           varyingPara++;
         }
         else
         {
-          pset[i].Parameter = _constantParameters[i];
-          pset[i].Variance = 0;
+
+          pset[i] = pset[i] with
+          {
+            Parameter = _constantParameters[i],
+            Variance = 0,
+          };
         }
       }
       pset.OnInitializationFinished();

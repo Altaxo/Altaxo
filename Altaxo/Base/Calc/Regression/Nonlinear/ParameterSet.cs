@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2024 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@
 
 #nullable enable
 using System;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace Altaxo.Calc.Regression.Nonlinear
@@ -31,8 +32,12 @@ namespace Altaxo.Calc.Regression.Nonlinear
   /// <summary>
   /// Holds a bunch of <see cref="ParameterSetElement"/>, i.e. a collection of fit parameters together with their values.
   /// </summary>
-  public class ParameterSet : System.Collections.CollectionBase, ICloneable, IEnumerable<ParameterSetElement>
+  public class ParameterSet : ICloneable, IReadOnlyList<ParameterSetElement>
   {
+    List<ParameterSetElement> _inner;
+
+    public int Count => _inner.Count;
+
     /// <summary>
     /// Event is fired if the main initialization is finished. This event can be fired
     /// multiple times (every time the set has changed basically.
@@ -71,6 +76,12 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
     public ParameterSet()
     {
+      _inner = new List<ParameterSetElement>();
+    }
+
+    public ParameterSet(IEnumerable<ParameterSetElement> elements)
+    {
+      _inner = new List<ParameterSetElement>(elements);
     }
 
     public void OnInitializationFinished()
@@ -82,13 +93,17 @@ namespace Altaxo.Calc.Regression.Nonlinear
     {
       get
       {
-        return (ParameterSetElement)InnerList[i]!;
+        return _inner[i];
+      }
+      set
+      {
+        _inner[i] = value ?? throw new ArgumentNullException(nameof(ParameterSetElement));
       }
     }
 
     public void Add(ParameterSetElement ele)
     {
-      InnerList.Add(ele);
+      _inner.Add(ele);
     }
 
     #region ICloneable Members
@@ -97,15 +112,24 @@ namespace Altaxo.Calc.Regression.Nonlinear
     {
       var result = new ParameterSet();
       for (int i = 0; i < Count; ++i)
-        result.Add((ParameterSetElement)this[i].Clone());
+        result.Add(this[i]);
 
       return result;
     }
 
     IEnumerator<ParameterSetElement> IEnumerable<ParameterSetElement>.GetEnumerator()
     {
-      foreach (var e in InnerList)
-        yield return (ParameterSetElement)e!;
+      return _inner.GetEnumerator();
+    }
+
+    public IEnumerator GetEnumerator()
+    {
+      return _inner.GetEnumerator();
+    }
+
+    internal void Clear()
+    {
+      _inner.Clear();
     }
 
     #endregion ICloneable Members

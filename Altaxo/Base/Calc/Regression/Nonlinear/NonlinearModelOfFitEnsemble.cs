@@ -377,14 +377,20 @@ namespace Altaxo.Calc.Regression.Nonlinear
       {
         if (pset[i].Vary)
         {
-          pset[i].Parameter = _coefficients[varyingPara];
-          pset[i].Variance = standardErrors is null ? 0 : standardErrors[varyingPara];
+          pset[i] = pset[i] with
+          {
+            Parameter = _coefficients[varyingPara],
+            Variance = standardErrors is null ? 0 : standardErrors[varyingPara],
+          };
           varyingPara++;
         }
         else
         {
-          pset[i].Parameter = _constantParameters[i];
-          pset[i].Variance = 0;
+          pset[i] = pset[i] with
+          {
+            Parameter = _constantParameters[i],
+            Variance = 0,
+          };
         }
       }
       pset.OnInitializationFinished();

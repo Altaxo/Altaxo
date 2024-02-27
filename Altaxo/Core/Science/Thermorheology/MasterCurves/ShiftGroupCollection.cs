@@ -311,6 +311,12 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
       // at the first iteration, the other curves will be added to the interpolation
       // and then, the quality of the master curve will be successivly improved
       Iterate(shiftOrderIndices, cancellationToken, progress);
+
+      // if there are any values in _shiftErrors, then add also 0 for the error of the fixed curve
+      if (_shiftErrors.Any(x => x.HasValue))
+      {
+        _shiftErrors[idxReferenceCurve] = 0;
+      }
     }
 
     /// <summary>
@@ -583,6 +589,11 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
         }
         shiftGroup.Interpolate();
       }
+
+      for (int i = 0; i < _shiftErrors.Length; i++)
+      {
+        _shiftErrors[i] = null;
+      }
     }
 
     /// <summary>
@@ -618,10 +629,16 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
         shiftOrder = shiftOrder.WithPivotIndex(pivotIndexCandidate ?? 0);
       }
 
-      var (indexOfReferenceColumnInColumnGroup, shiftOrderIndices) = GetFixedAndShiftedIndices(shiftOrder, MaximumNumberOfCurves);
+      var (idxReferenceCurve, shiftOrderIndices) = GetFixedAndShiftedIndices(shiftOrder, MaximumNumberOfCurves);
 
       ReInitializeResult();
       Iterate(shiftOrderIndices, cancellationToken, progress);
+
+      // if there are any values in _shiftErrors, then add also 0 for the error of the fixed curve
+      if (_shiftErrors.Any(x => x.HasValue))
+      {
+        _shiftErrors[idxReferenceCurve] = 0;
+      }
     }
 
     /// <summary>

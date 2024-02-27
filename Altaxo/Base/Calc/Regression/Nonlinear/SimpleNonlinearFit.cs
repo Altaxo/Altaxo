@@ -209,7 +209,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
     /// <param name="val">Value of the parameter.</param>
     public void SetParameter(int i, double val)
     {
-      _fitDoc.CurrentParameters[i].Parameter = val;
+      _fitDoc.CurrentParameters[i] = _fitDoc.CurrentParameters[i] with { Parameter = val };
     }
 
     /// <summary>
@@ -239,7 +239,7 @@ namespace Altaxo.Calc.Regression.Nonlinear
     /// <param name="paraFixed">If true, the parameter is fixed during fitting.</param>
     public void SetParameterIsFixed(int i, bool paraFixed)
     {
-      _fitDoc.CurrentParameters[i].Vary = !paraFixed;
+      _fitDoc.CurrentParameters[i] = _fitDoc.CurrentParameters[i] with { Vary = !paraFixed };
     }
 
     /// <summary>

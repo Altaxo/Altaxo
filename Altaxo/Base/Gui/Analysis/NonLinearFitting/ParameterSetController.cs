@@ -23,13 +23,13 @@
 #endregion Copyright
 
 #nullable disable
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Text;
 using Altaxo.Calc.Regression.Nonlinear;
 using Altaxo.Collections;
-using Altaxo.Gui.Common;
-using Altaxo.Main.Properties;
 
 namespace Altaxo.Gui.Analysis.NonLinearFitting
 {
@@ -159,7 +159,7 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
   /// </summary>
   [UserControllerForObject(typeof(ParameterSet))]
   [ExpectedTypeOfView(typeof(IParameterSetView))]
-  public class ParameterSetController1 : MVCANControllerEditOriginalDocBase<ParameterSet, IParameterSetView>
+  public class ParameterSetController : MVCANControllerEditOriginalDocBase<ParameterSet, IParameterSetView>
   {
     public ObservableCollection<ParameterSetViewItem> ParameterList { get; } = new ObservableCollection<ParameterSetViewItem>();
 
@@ -227,24 +227,161 @@ namespace Altaxo.Gui.Analysis.NonLinearFitting
 
       for (int i = 0; i < _doc.Count; i++)
       {
+        var l = list[i];
 
         // Parameter
-        _doc[i].Parameter = list[i].Value;
-
-        // Vary
-        _doc[i].Vary = list[i].Vary;
-
-        // Variance
-        _doc[i].Variance = list[i].Variance;
-
-        // Bounds
-        _doc[i].LowerBound = list[i].LowerBound;
-        _doc[i].UpperBound = list[i].UpperBound;
-        _doc[i].IsLowerBoundExclusive = list[i].IsLowerBoundExclusive;
-        _doc[i].IsUpperBoundExclusive = list[i].IsUpperBoundExclusive;
+        _doc[i] = new ParameterSetElement(l.Name, l.Value, l.Variance, l.Vary, l.LowerBound, l.IsLowerBoundExclusive, l.UpperBound, l.IsUpperBoundExclusive);
       }
 
       return ApplyEnd(true, disposeController);
+    }
+
+    public void EhPasteParameterValues()
+    {
+      Altaxo.Data.DataTable table = Altaxo.Worksheet.Commands.EditCommands.GetTableFromClipboard();
+      if (table is null)
+        return;
+      Altaxo.Data.DoubleColumn col = null;
+      // Find the first column that contains numeric values
+      for (int i = 0; i < table.DataColumnCount; i++)
+      {
+        if (table[i] is Altaxo.Data.DoubleColumn)
+        {
+          col = table[i] as Altaxo.Data.DoubleColumn;
+          break;
+        }
+      }
+      if (col is null)
+        return;
+
+      int len = Math.Max(col.Count, _doc.Count);
+      for (int i = 0; i < len; i++)
+        _doc[i] = _doc[i] with { Parameter = col[i] };
+
+      InitializeDocument(_doc);
+    }
+
+    public void EhCopyParameterValues()
+    {
+      if (true == Apply(false))
+      {
+        var dao = Current.Gui.GetNewClipboardDataObject();
+        var col = new Altaxo.Data.DoubleColumn();
+        for (int i = 0; i < _doc.Count; i++)
+          col[i] = _doc[i].Parameter;
+
+        var tb = new Altaxo.Data.DataTable();
+        tb.DataColumns.Add(col, "Value", Altaxo.Data.ColumnKind.V, 0);
+        Altaxo.Worksheet.Commands.EditCommands.WriteAsciiToClipBoardIfDataCellsSelected(
+            tb, new Altaxo.Collections.AscendingIntegerCollection(),
+            new Altaxo.Collections.AscendingIntegerCollection(),
+            new Altaxo.Collections.AscendingIntegerCollection(),
+            dao);
+        Current.Gui.SetClipboardDataObject(dao, true);
+      }
+      else
+      {
+        Current.Gui.ErrorMessageBox("Some of your parameter input is not valid!");
+      }
+    }
+
+    public void EhCopyParameterVAsCDef()
+    {
+      if (true == Apply(false))
+      {
+        var dao = Current.Gui.GetNewClipboardDataObject();
+        var stb = new System.Text.StringBuilder();
+        for (int i = 0; i < _doc.Count; i++)
+        {
+          stb.AppendFormat(System.Globalization.CultureInfo.InvariantCulture, "double {0} = {1};\r\n", _doc[i].Name, _doc[i].Parameter);
+        }
+        dao.SetData(typeof(string), stb.ToString());
+        Current.Gui.SetClipboardDataObject(dao, true);
+      }
+      else
+      {
+        Current.Gui.ErrorMessageBox("Some of your parameter input is not valid!");
+      }
+    }
+
+    public void EhCopyParameterNV()
+    {
+      if (true == Apply(false))
+      {
+        var dao = Current.Gui.GetNewClipboardDataObject();
+        var txt = new Altaxo.Data.TextColumn();
+        var col = new Altaxo.Data.DoubleColumn();
+
+        for (int i = 0; i < _doc.Count; i++)
+        {
+          txt[i] = _doc[i].Name;
+          col[i] = _doc[i].Parameter;
+        }
+
+        var tb = new Altaxo.Data.DataTable();
+        tb.DataColumns.Add(txt, "Name", Altaxo.Data.ColumnKind.V, 0);
+        tb.DataColumns.Add(col, "Value", Altaxo.Data.ColumnKind.V, 0);
+        Altaxo.Worksheet.Commands.EditCommands.WriteAsciiToClipBoardIfDataCellsSelected(
+            tb, new Altaxo.Collections.AscendingIntegerCollection(),
+            new Altaxo.Collections.AscendingIntegerCollection(),
+            new Altaxo.Collections.AscendingIntegerCollection(),
+            dao);
+        Current.Gui.SetClipboardDataObject(dao, true);
+      }
+      else
+      {
+        Current.Gui.ErrorMessageBox("Some of your parameter input is not valid!");
+      }
+    }
+
+    public void EhCopyParameterNVV()
+    {
+      if (true == Apply(false))
+      {
+        var dao = Current.Gui.GetNewClipboardDataObject();
+        var txt = new Altaxo.Data.TextColumn();
+        var col = new Altaxo.Data.DoubleColumn();
+        var var = new Altaxo.Data.DoubleColumn();
+
+        for (int i = 0; i < _doc.Count; i++)
+        {
+          txt[i] = _doc[i].Name;
+          col[i] = _doc[i].Parameter;
+          var[i] = _doc[i].Variance;
+        }
+
+        var tb = new Altaxo.Data.DataTable();
+        tb.DataColumns.Add(txt, "Name", Altaxo.Data.ColumnKind.V, 0);
+        tb.DataColumns.Add(col, "Value", Altaxo.Data.ColumnKind.V, 0);
+        tb.DataColumns.Add(var, "Variance", Altaxo.Data.ColumnKind.V, 0);
+        Altaxo.Worksheet.Commands.EditCommands.WriteAsciiToClipBoardIfDataCellsSelected(
+            tb, new Altaxo.Collections.AscendingIntegerCollection(),
+            new Altaxo.Collections.AscendingIntegerCollection(),
+            new Altaxo.Collections.AscendingIntegerCollection(),
+            dao);
+        Current.Gui.SetClipboardDataObject(dao, true);
+      }
+      else
+      {
+        Current.Gui.ErrorMessageBox("Some of your parameter input is not valid!");
+      }
+    }
+
+    /// <summary>
+    /// Tests the values of parameters and boundaries for inconsistencies, and corrects them.
+    /// </summary>
+    /// <param name="parameters">The parameters.</param>
+    /// <returns>A <see cref="StringBuilder"/> containing warnings and errors, and a flag indicating if any inconsistence could not be corrected automatically.</returns>
+    public static (StringBuilder Message, bool isFatal) TestAndCorrectParametersAndBoundaries(ParameterSet parameters)
+    {
+      var stb = new StringBuilder();
+      bool isFatal = false;
+
+      for (int i = 0; i < parameters.Count; i++)
+      {
+        parameters[i] = parameters[i].TestAndCorrectParameterAndBoundaries(stb, ref isFatal);
+      }
+      return (stb, isFatal);
     }
   }
 }

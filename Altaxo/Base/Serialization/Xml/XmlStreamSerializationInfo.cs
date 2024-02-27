@@ -26,6 +26,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Xml;
 
@@ -310,7 +311,7 @@ namespace Altaxo.Serialization.Xml
       CommitArray();
     }
 
-    public void AddArray(string name, double[] val, int count)
+    public void AddArray(string name, IReadOnlyList<double> val, int count)
     {
       CreateArray(name, count);
 
@@ -330,7 +331,7 @@ namespace Altaxo.Serialization.Xml
         }
         else
         {
-          AddArrayOfPrimitiveType(name, val, count, _size_of_double, m_DefaultArrayEncoding);
+          AddArrayOfPrimitiveType(name, val is Array valarr ? valarr : val.ToArray(), count, _size_of_double, m_DefaultArrayEncoding);
         }
       } // count>0
       CommitArray();
