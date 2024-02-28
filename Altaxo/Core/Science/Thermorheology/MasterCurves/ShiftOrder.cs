@@ -355,54 +355,5 @@ namespace Altaxo.Science.Thermorheology.MasterCurves.ShiftOrder
     }
     #endregion
   }
-
-  /// <summary>Only suitable for refinement: 0th curve, Nth curve, 1st curve, N-1 curve, 2nd curve, N-2 curve etc.</summary>
-  public record FirstOuterToInner : IShiftOrder
-  {
-    /// <inheritdoc/>
-    public IEnumerable<int> GetShiftOrderIndices(int numberOfCurves)
-    {
-      for (int i = 0, j = numberOfCurves - 1; i <= j; i++, j--)
-      {
-        yield return i;
-        if (i != j)
-        {
-          yield return j;
-        }
-      }
-    }
-
-    /// <inheritdoc/>
-    public bool IsOnlySuitableForRefinement => true;
-
-    /// <inheritdoc/>
-    public bool IsPivotIndexRequired => false;
-
-    /// <inheritdoc/>
-    public int? PivotIndex { get => null; init => Noop(); }
-
-    /// <inheritdoc/>
-    public IShiftOrder WithPivotIndex(int? index) => this;
-
-    static void Noop() { }
-
-    #region Serialization
-
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(FirstOuterToInner), 0)]
-    public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
-    {
-      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
-      {
-      }
-
-      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
-      {
-        return new FirstOuterToInner();
-      }
-    }
-    #endregion
-  }
-
-
 }
 

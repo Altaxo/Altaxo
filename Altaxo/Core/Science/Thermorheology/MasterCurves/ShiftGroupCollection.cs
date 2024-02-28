@@ -288,8 +288,9 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
         pivotIndexCandidate = ClampPivotIndexCandidateToAvailablePivots(pivotIndexCandidate);
         shiftOrder = shiftOrder.WithPivotIndex(pivotIndexCandidate.Value);
       }
-      var (idxReferenceCurve, shiftOrderIndices) = GetFixedAndShiftedIndices(shiftOrder, MaximumNumberOfCurves);
 
+      var shiftOrderIndices = shiftOrder.GetShiftOrderIndices(MaximumNumberOfCurves).ToArray();
+      var idxReferenceCurve = shiftOrderIndices[0];
       if (_isCurveSuitableForPivot[idxReferenceCurve] == false)
       {
         throw new InvalidOperationException($"Index {idxReferenceCurve} is not suitable as a starting index for master curve creation. Please choose another shift order with a variable pivot index.");
@@ -317,19 +318,6 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
       {
         _shiftErrors[idxReferenceCurve] = 0;
       }
-    }
-
-    /// <summary>
-    /// Gets the index of the initially fixed curve, and the indices of the curve that are shifted and fitted towards the master curve.
-    /// </summary>
-    /// <param name="order">An instance of <see cref="ShiftOrder.IShiftOrder"/> that determines the order.</param>
-    /// <param name="numberOfItems">The number of items. This is the maximal number of curves in a group, e.g. if there is one shift group with 20 curves and another with 30 curves, then the argument should be 30.</param>
-    /// <returns>A tuple of the initially fixed index and the indices that should be fitted then.</returns>
-    /// <remarks>This function does not ensure that at the fixed index all groups have a valid curve, which is absolutely neccessary to start the shift procedure.</remarks>
-    public static (int fixedIndex, IReadOnlyList<int> shiftOrderIndices) GetFixedAndShiftedIndices(ShiftOrder.IShiftOrder order, int numberOfItems)
-    {
-      var e = order.GetShiftOrderIndices(numberOfItems);
-      return (e.First(), e.Skip(1).ToArray());
     }
 
     /// <summary>
@@ -371,17 +359,20 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     /// <summary>
     /// Performs one iteration of the shift-and-fit procedure.
     /// </summary>
-    /// <param name="shiftCurveOrder">The order in which the curves are shifted and fitted. This list does not contain the index of the fixed curve.</param>
+    /// <param name="shiftCurveOrder">The order in which the curves are shifted and fitted. This first index in this list is the index of the fixed curve.</param>
     private void OneIteration(IReadOnlyList<int> shiftCurveOrder, int idxIteration, CancellationToken cancellationToken)
     {
-      foreach (int idxCurve in shiftCurveOrder.Where(idx => _isCurveParticipatingInFit[idx] == true))
+      // start the tracking of the x-minimum and x-maximum by adding the fixed curve
+      TrackXMinimumMaximumOfMasterCurvePoints(shiftCurveOrder[0], _resultingShifts[shiftCurveOrder[0]]!.Value, startNewTracking: true);
+
+      foreach (int idxCurve in shiftCurveOrder.Skip(1).Where(idx => _isCurveParticipatingInFit[idx] == true))
       {
         if (cancellationToken.IsCancellationRequested)
         {
           break;
         }
 
-        var (globalMinShift, globalMaxShift) = GetMinimumMaximumGlobalShift(idxCurve);
+        var (globalMinShift, globalMaxShift) = GetMinimumMaximumGlobalShiftAlt(idxCurve);
 
         double currentShift; // remember: this is either a offset or the natural logarithm of the shift factor
         switch (OptimizationMethod)
@@ -471,6 +462,8 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
 
           foreach (int idxShiftGroup in _groupsParticipatingInFit)
           {
+            // Continue tracking of x-minimum and x-maximum by considering the curve
+            _shiftGroups[idxShiftGroup].TrackXMinimumMaximumOfMasterCurvePoints(idxCurve, currentShift, startNewTracking: false);
             // add the data for interpolation again, using the new shift
             _shiftGroups[idxShiftGroup].AddCurveToInterpolation(idxCurve, currentShift);
             // now build up a new interpolation, where the shifted data is taken into account
@@ -483,6 +476,40 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
         }
       }
     }
+
+    /// <summary>
+    /// Tracks the x minimum and x maximum of the master curve points (independently of the interpolation points, for each iteration only those curves which were already considered).
+    /// </summary>
+    /// <param name="idxCurve">The index of the curve to consider.</param>
+    /// <param name="shift">The shift value for this curve.</param>
+    /// <param name="startNewTracking">If set to true, a new tracking will be started, i.e. the xmin and xmax of the curve (under consideration of the shift value) is
+    /// set as the new tracked xminimum and xmaximum. If false, the xmin and xmax of the curve (under consideration) of the shift value is calculated, and then merged
+    /// into the tracked xminimum and xmaximum.</param>
+    public void TrackXMinimumMaximumOfMasterCurvePoints(int idxCurve, double shift, bool startNewTracking)
+    {
+      foreach (int idxGroup in _groupsParticipatingInFit)
+      {
+        _shiftGroups[idxGroup].TrackXMinimumMaximumOfMasterCurvePoints(idxCurve, shift, startNewTracking);
+      }
+    }
+
+    /// <summary>
+    /// Gets the tracked x minimum and x maximum values. For explanation, see <see cref="TrackXMinimumMaximumOfMasterCurvePoints(int, double, bool)"/>.
+    /// </summary>
+    /// <returns>The tracked x-minimum and x-maximum values.</returns>
+    public (double xmin, double xmax) GetTrackedXMinimumMaximum()
+    {
+      double xmin = double.PositiveInfinity;
+      double xmax = double.NegativeInfinity;
+      foreach (int idxGroup in _groupsParticipatingInFit)
+      {
+        var (min, max) = this[idxGroup].GetTrackedXMinimumMaximum();
+        xmin = Math.Min(xmin, min);
+        xmax = Math.Max(xmax, max);
+      }
+      return (xmin, xmax);
+    }
+
 
     /// <summary>
     /// Gets the minimum and the maximum of the possible global shift.
@@ -517,6 +544,53 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
           localMinShift = Math.Log(xMinOfInterpolation / xmax);
           localRange = Math.Log(xmax / xmin);
         }
+        globalMinShift = Math.Min(globalMinShift, localMinShift);
+        globalMaxShift = Math.Max(globalMaxShift, localMaxShift);
+        globalMinRange = Math.Min(globalMinRange, localRange);
+      }
+
+      // we reduce the maximum possible shifts a little in order to get at least one point overlapping
+      double requiredShiftOverlap = globalMinRange * RequiredRelativeOverlap;
+      requiredShiftOverlap = Math.Min(requiredShiftOverlap, 0.5 * (globalMaxShift - globalMinShift));
+      // reduce the borders [globalMinShift, globalMaxShift] by the required shift overlap
+      globalMinShift += requiredShiftOverlap;
+      globalMaxShift -= requiredShiftOverlap;
+
+      return (globalMinShift, globalMaxShift);
+    }
+
+    /// <summary>
+    /// Gets the minimum and the maximum of the possible shift value for the designated curve. Here, we use the points that form
+    /// the master curve so far (in the current iteration) to calculate the values.
+    /// </summary>
+    /// <param name="idxCurve">The index of curve.</param>
+    /// <returns>The minimum and maximum shift values by which the curve can be shifted.</returns>
+    private (double globalMinShift, double globalMaxShift) GetMinimumMaximumGlobalShiftAlt(int idxCurve)
+    {
+      var globalMinShift = double.MaxValue;
+      var globalMaxShift = double.MinValue;
+      double globalMinRange = double.MaxValue;
+      foreach (int idxGroup in _groupsParticipatingInFit)
+      {
+        var shiftGroup = _shiftGroups[idxGroup];
+
+        var (xMinOfMasterCurveSoFar, xMaxOfMasterCurveSoFar) = shiftGroup.GetTrackedXMinimumMaximum(); // if ShiftedByFactor, the values are already logarithmized!
+
+        var (xmin, xmax) = shiftGroup.GetXMinimumMaximumOfCurvePointsSuitableForInterpolation(idxCurve);
+        (xmin, xmax) = (shiftGroup.XShiftBy, shiftGroup.LogarithmizeXForInterpolation) switch
+        {
+          (ShiftXBy.Offset, false) => (xmin, xmax),
+          (ShiftXBy.Offset, true) => (Math.Exp(xmin), Math.Exp(xmax)),
+          (ShiftXBy.Factor, false) => (Math.Log(xmin), Math.Log(xmax)),
+          (ShiftXBy.Factor, true) => (xmin, xmax),
+          _ => throw new NotImplementedException(),
+        };
+
+
+        var localMaxShift = xMaxOfMasterCurveSoFar - xmin;
+        var localMinShift = xMinOfMasterCurveSoFar - xmax;
+        var localRange = xmax - xmin;
+
         globalMinShift = Math.Min(globalMinShift, localMinShift);
         globalMaxShift = Math.Max(globalMaxShift, localMaxShift);
         globalMinRange = Math.Min(globalMinRange, localRange);
@@ -629,7 +703,8 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
         shiftOrder = shiftOrder.WithPivotIndex(pivotIndexCandidate ?? 0);
       }
 
-      var (idxReferenceCurve, shiftOrderIndices) = GetFixedAndShiftedIndices(shiftOrder, MaximumNumberOfCurves);
+      var shiftOrderIndices = shiftOrder.GetShiftOrderIndices(MaximumNumberOfCurves).ToArray();
+      var idxReferenceCurve = shiftOrderIndices[0];
 
       ReInitializeResult();
       Iterate(shiftOrderIndices, cancellationToken, progress);

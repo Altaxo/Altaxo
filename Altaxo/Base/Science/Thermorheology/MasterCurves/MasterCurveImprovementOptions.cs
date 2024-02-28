@@ -48,6 +48,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
         info.AddValue("ShiftOrder", s.ShiftOrder);
         info.AddEnum("OptimizationMethod", s.OptimizationMethod);
         info.AddValue("NumberOfIterations", s.NumberOfIterations);
+        info.AddValue("RequiredRelativeOverlap", s.RequiredRelativeOverlap);
         info.AddEnum("GroupOptionsChoice", s.MasterCurveGroupOptionsChoice);
         info.AddArray("GroupOptions", s.GroupOptions, s.GroupOptions.Count);
       }
@@ -57,6 +58,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
         var ShiftOrder = info.GetValue<ShiftOrder.IShiftOrder>("ShiftOrder", null);
         var OptimizationMethod = info.GetEnum<OptimizationMethod>("OptimizationMethod");
         var NumberOfIterations = info.GetInt32("NumberOfIterations");
+        var RequiredRelativeOverlap = info.GetDouble("RequiredRelativeOverlap");
         var GroupOptionsChoice = info.GetEnum<MasterCurveGroupOptionsChoice>("GroupOptionsChoice");
         var GroupOptions = info.GetArrayOfValues<MasterCurveGroupOptions>("GroupOptions", null);
 
@@ -65,6 +67,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
           ShiftOrder = ShiftOrder,
           OptimizationMethod = OptimizationMethod,
           NumberOfIterations = NumberOfIterations,
+          RequiredRelativeOverlap = RequiredRelativeOverlap,
           MasterCurveGroupOptionsChoice = GroupOptionsChoice,
           GroupOptions = GroupOptions.ToImmutableList(),
         };

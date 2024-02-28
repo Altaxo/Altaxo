@@ -81,6 +81,25 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     public (double min, double max) GetXMinimumMaximumOfCurvePointsSuitableForInterpolation(int idxCurve);
 
     /// <summary>
+    /// Tracks the x minimum and x maximum of the master curve points.
+    /// </summary>
+    /// <param name="idxCurve">The index of the curve to consider.</param>
+    /// <param name="shift">The shift value for this curve.</param>
+    /// <param name="startNewTracking">If set to true, a new tracking will be started, i.e. the xmin and xmax of the curve (under consideration of the shift value) is
+    /// set as the new tracked xminimum and xmaximum. If false, the xmin and xmax of the curve (under consideration) of the shift value is calculated, and then merged
+    /// into the tracked xminimum and xmaximum.</param>
+    public void TrackXMinimumMaximumOfMasterCurvePoints(int idxCurve, double shift, bool startNewTracking);
+
+    /// <summary>
+    /// Gets the tracked x minimum and x maximum values.
+    /// For explanation, see <see cref="TrackXMinimumMaximumOfMasterCurvePoints(int, double, bool)"/>.
+    /// The convention is, that when shifting by multiplication, the returned values are already logarithmized, whereas, if shifted by offset, the returned values are not logarithmized.
+    /// That means that the possible shifts can always be calculated by subtraction.
+    /// </summary>
+    /// <returns>The tracked x-minimum and x-maximum values.</returns>
+    public (double xmin, double xmax) GetTrackedXMinimumMaximum();
+
+    /// <summary>
     /// Gets the minimum and maximum of the current x-values used for interpolation. Data points that belong
     /// to the curve with the index given in the argument are not taken into account.
     /// </summary>

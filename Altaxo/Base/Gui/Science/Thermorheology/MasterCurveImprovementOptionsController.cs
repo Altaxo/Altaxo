@@ -30,6 +30,7 @@ using Altaxo.Collections;
 using Altaxo.Gui.Common;
 using Altaxo.Science.Thermorheology.MasterCurves;
 using Altaxo.Science.Thermorheology.MasterCurves.ShiftOrder;
+using Altaxo.Units;
 
 namespace Altaxo.Gui.Science.Thermorheology
 {
@@ -157,6 +158,22 @@ namespace Altaxo.Gui.Science.Thermorheology
       }
     }
 
+    public QuantityWithUnitGuiEnvironment RelativeOverlapEnvironment => RelationEnvironment.Instance;
+
+    private DimensionfulQuantity _relativeOverlap;
+
+    public DimensionfulQuantity RelativeOverlap
+    {
+      get => _relativeOverlap;
+      set
+      {
+        if (!(_relativeOverlap == value))
+        {
+          _relativeOverlap = value;
+          OnPropertyChanged(nameof(RelativeOverlap));
+        }
+      }
+    }
 
 
     private ItemsController<MasterCurveGroupOptionsChoice> _GroupOptionsChoice;
@@ -212,6 +229,7 @@ namespace Altaxo.Gui.Science.Thermorheology
         OptimizationMethod = new ItemsController<OptimizationMethod>(new SelectableListNodeList(_doc.OptimizationMethod));
 
         NumberOfIterations = _doc.NumberOfIterations;
+        RelativeOverlap = new DimensionfulQuantity(_doc.RequiredRelativeOverlap, Altaxo.Units.Dimensionless.Unity.Instance).AsQuantityIn(RelativeOverlapEnvironment.DefaultUnit);
 
         GroupOptionsChoice = new ItemsController<MasterCurveGroupOptionsChoice>(new SelectableListNodeList(_doc.MasterCurveGroupOptionsChoice), EhCurveGroupOptionsChanged);
         GroupOptionsChoice.SelectedValue = _doc.MasterCurveGroupOptionsChoice;
@@ -343,6 +361,7 @@ namespace Altaxo.Gui.Science.Thermorheology
 
       var numIterations = NumberOfIterations;
       var optimizationMethod = OptimizationMethod.SelectedValue;
+      var relOverlap = RelativeOverlap.AsValueInSIUnits;
       var choice = GroupOptionsChoice.SelectedValue;
       var options = TabControllers.Items.Select(x => (MasterCurveGroupOptions)(((SelectableListNodeWithController)x).Controller.ModelObject)).ToImmutableList();
       var shiftOrder = ShiftOrder.SelectedValue;
@@ -356,6 +375,7 @@ namespace Altaxo.Gui.Science.Thermorheology
       {
         ShiftOrder = shiftOrder,
         OptimizationMethod = optimizationMethod,
+        RequiredRelativeOverlap = relOverlap,
         NumberOfIterations = numIterations,
         MasterCurveGroupOptionsChoice = choice,
         GroupOptions = options,

@@ -66,6 +66,28 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
       }
     }
 
+    protected double _requiredRelativeOverlap = 0;
+
+    /// <summary>
+    /// Gets/sets the required relative overlap. The default value is 0, which means that a curve part only needs to touch the rest of the master curve.
+    /// Setting this to a value, for instance to 0.1, means that a curve part needs an overlapping of 10% (of its x-range) with the rest of the master curve.
+    /// This value can also be set to negative values. For instance, setting it to -1 means that a curve part could be in 100% distance (of its x-range) to the rest of the master curve.
+    /// </summary>
+    /// <value>
+    /// The required overlap.
+    /// </value>
+    public double RequiredRelativeOverlap
+    {
+      get => _requiredRelativeOverlap;
+      init
+      {
+        if (double.IsNaN(value))
+          throw new ArgumentOutOfRangeException(nameof(value), "Must be a valid number");
+
+        _requiredRelativeOverlap = value;
+      }
+    }
+
     public MasterCurveGroupOptionsChoice MasterCurveGroupOptionsChoice { get; init; } = MasterCurveGroupOptionsChoice.SameForAllGroups;
 
     /// <summary>
