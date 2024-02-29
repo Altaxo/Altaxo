@@ -313,7 +313,7 @@ namespace Altaxo.Science.Signals
     }
 
     /// <summary>
-    /// Evaluates a prony series fit in the time domain.
+    /// Evaluates a prony series fit in the frequency domain from the real and imaginary part of a general complex dynamic susceptibility.
     /// </summary>
     /// <param name="xarr">The x-values of the signal (all elements must be positive).</param>
     /// <param name="isCircularFrequency">True if xarr contains circular frequencies; false if xarr contains normal frequencies.</param>
@@ -445,6 +445,107 @@ namespace Altaxo.Science.Signals
 
       return Evaluate(tmin, tmax, numberOfRetardationTimes, withIntercept, withFlowTerm, isRelativePermittivitySpectrum, flowTermScale, allowNegativeCoefficients: false, taus, X, y);
     }
+
+    /// <summary>
+    /// Evaluates a prony series fit in the frequency domain from the absolute value (magnitude) of a general complex dynamic susceptibility.
+    /// </summary>
+    /// <param name="xarr">The x-values of the signal (all elements must be positive).</param>
+    /// <param name="isCircularFrequency">True if xarr contains circular frequencies; false if xarr contains normal frequencies.</param>
+    /// <param name="yMagnitude">The absolute value (magnitude) of the general complex dynamic susceptibility.</param>
+    /// in science it is usual to change the sign, e.g. J*(w) = J'(w) - i J''(w). Thus, here it is expected that the imaginary part is positive.</param>
+    /// <param name="tmin">The smallest Retardation time (tau of the first Prony term).</param>
+    /// <param name="tmax">The largest Retardation time (tau of the last Prony term).</param>
+    /// <param name="numberOfRetardationTimes">The number of Retardation times (number of Prony terms).</param>
+    /// <param name="withIntercept">If set to <c>true</c>, an offset term is added. This term can be considered to have a infinite Retardation time.</param>
+    /// <param name="withFlowTerm">If set to true, the flow term is calculated, too.</param>
+    /// <param name="isRelativePermittivitySpectrum">If set to true, it is indicated that the spectrum to be fitted is a dielectric spectrum of relative permittivities.</param>
+    /// <param name="regularizationLambda">A regularization parameter to smooth the resulting array of Prony terms.</param>
+    /// <returns>The result of the evaluation, see <see cref="PronySeriesRetardationResult"/>.</returns>
+    public static PronySeriesRetardationResult EvaluateFrequencyDomainFromMagnitude(IReadOnlyList<double> xarr, bool isCircularFrequency, IReadOnlyList<double>? yMagnitude, double tmin, double tmax, int numberOfRetardationTimes, bool withIntercept, bool withFlowTerm, bool isRelativePermittivitySpectrum, double regularizationLambda)
+    {
+      if (xarr is null)
+        throw new ArgumentNullException(nameof(xarr));
+      if (yMagnitude is null)
+        throw new ArgumentNullException(nameof(yMagnitude));
+      if (xarr.Count != yMagnitude.Count)
+        throw new ArgumentOutOfRangeException(nameof(yMagnitude), $"{nameof(yMagnitude)} should have the same length than xarr");
+      if (!(tmin > 0))
+        throw new ArgumentOutOfRangeException(nameof(tmin), "Must be > 0");
+      if (!(tmax > tmin))
+        throw new ArgumentOutOfRangeException(nameof(tmax), "Must be > xmin");
+      if (!(numberOfRetardationTimes >= 1))
+        throw new ArgumentOutOfRangeException(nameof(numberOfRetardationTimes), "Must be >= 1");
+      if (!(tmax == tmin || numberOfRetardationTimes >= 2))
+        throw new ArgumentOutOfRangeException(nameof(numberOfRetardationTimes), "Must be >= 2");
+
+      // evaluate the Retardation times (logarithmically spaced)
+      double[] taus = new double[numberOfRetardationTimes];
+      for (int c = 0; c < numberOfRetardationTimes; ++c)
+      {
+        double r = c == 0 ? 0 : c / (double)(numberOfRetardationTimes - 1);
+        double lntau = (1 - r) * Math.Log(tmin) + r * Math.Log(tmax);
+        taus[c] = Math.Exp(lntau);
+      }
+      var numberOfTausPerExpcade = (numberOfRetardationTimes - 1) / (Math.Log(tmax) - Math.Log(tmin));
+
+      int xCount = xarr.Count;
+      int NR = xarr.Count;
+      int NC = numberOfRetardationTimes + (withIntercept ? 1 : 0) + (withFlowTerm ? 1 : 0); // one more column for the intercept (intercept is only in the real part), and one more for the flow term
+
+      // Basis functions		
+      var X = Matrix<double>.Build.Dense(NR + numberOfRetardationTimes, NC);
+      for (int c = 0; c < numberOfRetardationTimes; ++c)
+      {
+        for (int r = 0; r < NR; ++r)
+        {
+          var tauomega = taus[c] * xarr[r % xCount] * (isCircularFrequency ? 1 : 2 * Math.PI);
+          var g = 1 / (1 + tauomega * Complex64.ImaginaryOne);
+          X[r, c] = g.Magnitude;
+        }
+      }
+
+      // Intercept
+      if (withIntercept)
+      {
+        int idx = NC - (withFlowTerm ? 2 : 1);
+        for (int r = 0; r < xCount; ++r) // set intercept only for real part -> only for the first half
+        {
+          X[r, idx] = 1; // base function for the intercept
+        }
+      }
+      double flowTermScale = 1 / tmax;
+      if (withFlowTerm)
+      {
+        int offs = xarr.Count;
+        double fac = isCircularFrequency ? 1 : 2 * Math.PI;
+        for (int r = 0; r < xCount; ++r) // set flow term only for the imaginary part -> either on the first half or the second half
+        {
+          X[r + offs, NC - 1] = flowTermScale / (xarr[r] * fac); // base function for the intercept
+        }
+      }
+
+      // Regularization by minimizing the sum of squares of the 2nd derivative of the parameters
+      // we scale the parameter with the square root of the measured points
+      // and with the number of retardation times per decade to the power of 5/2
+      regularizationLambda /= 100;
+      regularizationLambda *= Math.Sqrt(NR) * Math.Sqrt(2);
+      regularizationLambda *= numberOfTausPerExpcade * (numberOfTausPerExpcade * Math.Sqrt(numberOfTausPerExpcade));
+      for (int r = NR; r < NR + numberOfRetardationTimes - 2; ++r)
+      {
+        X[r, r - NR] = regularizationLambda;
+        X[r, r - NR + 1] = -2 * regularizationLambda;
+        X[r, r - NR + 2] = regularizationLambda;
+      }
+
+      // read dependent variable to matrix y
+      var y = Matrix<double>.Build.Dense(NR + numberOfRetardationTimes, 1);
+
+      for (int r = 0; r < NR; ++r)
+        y[r, 0] = yMagnitude[r];
+
+      return Evaluate(tmin, tmax, numberOfRetardationTimes, withIntercept, withFlowTerm, isRelativePermittivitySpectrum, flowTermScale, allowNegativeCoefficients: false, taus, X, y);
+    }
+
 
     protected static PronySeriesRetardationResult Evaluate(double tmin, double tmax, int numberOfRetardationTimes, bool withIntercept, bool withFlowTerm, bool isRelativePermittivitySpectrum, double flowTermScale, bool allowNegativeCoefficients, double[] taus, Matrix<double> X, Matrix<double> y)
     {

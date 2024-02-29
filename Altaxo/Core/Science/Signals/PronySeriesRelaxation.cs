@@ -281,7 +281,7 @@ namespace Altaxo.Science.Signals
     }
 
     /// <summary>
-    /// Evaluates a prony series fit in the time domain.
+    /// Evaluates a prony series fit in the frequency domain from the real and imaginary part of a general complex dynamic modulus.
     /// </summary>
     /// <param name="xarr">The x-values of the signal (all elements must be positive).</param>
     /// <param name="isCircularFrequency">True if xarr contains circular frequencies; false if xarr contains normal frequencies.</param>
@@ -398,6 +398,95 @@ namespace Altaxo.Science.Signals
 
       return Evaluate(tmin, tmax, numberOfRelaxationTimes, withIntercept, allowNegativeCoefficients: false, taus, X, y);
     }
+
+    /// <summary>
+    /// Evaluates a prony series fit in the frequency domain from the absolute values (magnitude) of of a general complex dynamic modulus.
+    /// </summary>
+    /// <param name="xarr">The x-values of the signal (all elements must be positive).</param>
+    /// <param name="isCircularFrequency">True if xarr contains circular frequencies; false if xarr contains normal frequencies.</param>
+    /// <param name="yMagnitude">The magnitude value of the complex dynamic modulus.</param>
+    /// <param name="tmin">The smallest relaxation time (tau of the first Prony term).</param>
+    /// <param name="tmax">The largest relaxation time (tau of the last Prony term).</param>
+    /// <param name="numberOfRelaxationTimes">The number of relaxation times (number of Prony terms).</param>
+    /// <param name="withIntercept">If set to <c>true</c>, an offset term is added. This term can be considered to have a infinite relaxation time.</param>
+    /// <param name="regularizationLambda">A regularization parameter to smooth the resulting array of Prony terms.</param>
+    /// <returns>The result of the evaluation, see <see cref="PronySeriesRelaxationResult"/>.</returns>
+    public static PronySeriesRelaxationResult EvaluateFrequencyDomainFromMagnitude(IReadOnlyList<double> xarr, bool isCircularFrequency, IReadOnlyList<double>? yMagnitude, double tmin, double tmax, int numberOfRelaxationTimes, bool withIntercept, double regularizationLambda)
+    {
+      if (xarr is null)
+        throw new ArgumentNullException(nameof(xarr));
+      if (yMagnitude is null)
+        throw new ArgumentNullException(nameof(yMagnitude));
+      if (xarr.Count != yMagnitude.Count)
+        throw new ArgumentOutOfRangeException(nameof(yMagnitude), $"{nameof(yMagnitude)} should have the same length than xarr");
+      if (!(tmin > 0))
+        throw new ArgumentOutOfRangeException(nameof(tmin), "Must be > 0");
+      if (!(tmax > tmin))
+        throw new ArgumentOutOfRangeException(nameof(tmax), "Must be > xmin");
+      if (!(numberOfRelaxationTimes >= 1))
+        throw new ArgumentOutOfRangeException(nameof(numberOfRelaxationTimes), "Must be >= 1");
+      if (!(tmax == tmin || numberOfRelaxationTimes >= 2))
+        throw new ArgumentOutOfRangeException(nameof(numberOfRelaxationTimes), "Must be >= 2");
+
+      // evaluate the relaxation times (logarithmically spaced)
+      double[] taus = new double[numberOfRelaxationTimes];
+      for (int c = 0; c < numberOfRelaxationTimes; ++c)
+      {
+        double r = c == 0 ? 0 : c / (double)(numberOfRelaxationTimes - 1);
+        double lntau = (1 - r) * Math.Log(tmin) + r * Math.Log(tmax);
+        taus[c] = Math.Exp(lntau);
+      }
+      var numberOfTausPerExpcade = (numberOfRelaxationTimes - 1) / (Math.Log(tmax) - Math.Log(tmin));
+
+
+      int xCount = xarr.Count;
+      int NR = xarr.Count;
+      int NC = numberOfRelaxationTimes + (withIntercept ? 1 : 0); // one more column for the intercept (intercept is only in the real part)
+
+      // Basis functions		
+      var X = Matrix<double>.Build.Dense(NR + numberOfRelaxationTimes, NC);
+      for (int c = 0; c < numberOfRelaxationTimes; ++c)
+      {
+        for (int r = 0; r < NR; ++r)
+        {
+          var tauomega = taus[c] * xarr[r % xCount] * (isCircularFrequency ? 1 : 2 * Math.PI);
+          var g = tauomega / (tauomega - Complex64.ImaginaryOne);
+          X[r, c] = g.Magnitude;
+        }
+      }
+
+      // Intercept
+      if (withIntercept)
+      {
+        for (int r = 0; r < xCount; ++r) // set intercept only for real part -> only for the first half
+        {
+          X[r, NC - 1] = 1; // base function for the intercept
+        }
+      }
+
+      // Regularization by minimizing the sum of squares of the 2nd derivative of the parameters
+      // we scale the parameter with the square root of the measured points
+      // and with the number of relaxation times per decade to the power of 5/2
+      regularizationLambda /= 100;
+      regularizationLambda *= Math.Sqrt(NR) * Math.Sqrt(2);
+      regularizationLambda *= numberOfTausPerExpcade * (numberOfTausPerExpcade * Math.Sqrt(numberOfTausPerExpcade));
+      for (int r = NR; r < NR + numberOfRelaxationTimes - 2; ++r)
+      {
+        X[r, r - NR] = regularizationLambda;
+        X[r, r - NR + 1] = -2 * regularizationLambda;
+        X[r, r - NR + 2] = regularizationLambda;
+      }
+
+      // read dependent variable to matrix y
+      var y = Matrix<double>.Build.Dense(NR + numberOfRelaxationTimes, 1);
+
+      for (int r = 0; r < NR; ++r)
+        y[r, 0] = yMagnitude[r];
+
+      return Evaluate(tmin, tmax, numberOfRelaxationTimes, withIntercept, allowNegativeCoefficients: false, taus, X, y);
+    }
+
+
 
     protected static PronySeriesRelaxationResult Evaluate(double tmin, double tmax, int numberOfRelaxationTimes, bool withIntercept, bool allowNegativeCoefficients, double[] taus, Matrix<double> X, Matrix<double> y)
     {
