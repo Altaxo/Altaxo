@@ -43,14 +43,61 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     IShiftGroup[] _shiftGroups;
 
     /// <summary>
+    /// Contains the resulting shift values.
+    /// </summary>
+    private double?[] _shiftValues;
+
+    /// <summary>
+    /// Contains the shift errors.
+    /// </summary>
+    private double?[] _shiftErrors;
+
+    /// <summary>
+    /// Element is true if the shift value of the respective curve is not at its optimum, but
+    /// is restricted by the boundaries given by the <see cref="RequiredRelativeOverlap"/>.
+    /// </summary>
+    private bool[] _isShiftValueRestrictedByBoundaries;
+
+    /// <summary>
+    /// If the element is true, the curve(s) with that curve index participate in the fit; otherwise, the element is false.
+    /// </summary>
+    private bool[] _isCurveParticipatingInFit;
+
+    /// <summary>
+    /// Contains the indices of the curves that participate in the fit. Contains the same information as <see cref="_isCurveParticipatingInFit"/>, but more convienient for foreach.. statements
+    /// </summary>
+    private int[] _curvesParticipatingInFit;
+
+    /// <summary>
+    /// If the element is true, the group with that group index participate in the fit; otherwise, the element is false.
+    /// </summary>
+    private bool[] _isGroupParticipatingInFit;
+
+    /// <summary>
+    /// Contains the indices of the groups that participate in the fit. Contains the same information as <see cref="_isGroupParticipatingInFit"/>, but more convienient for foreach.. statements
+    /// </summary>
+    private int[] _groupsParticipatingInFit;
+
+    /// <summary>
+    /// If a element is true, the index of that element can be used as curve index for the pivot, i.e. for the starting point of the master curve creation.
+    /// </summary>
+    private bool[] _isCurveSuitableForPivot;
+
+    /// <summary>
     /// Resulting list of shift offsets or ln(shiftfactors).
     /// </summary>
-    public IReadOnlyList<double?> ResultingShifts => _resultingShifts;
+    public IReadOnlyList<double?> ShiftValues => _shiftValues;
 
     /// <summary>
     /// Gets the shift errors.
     /// </summary>
     public IReadOnlyList<double?> ShiftErrors => _shiftErrors;
+
+    /// <summary>
+    /// Element is true if the shift value of the respective curve is not at its optimum, but
+    /// is restricted by the boundaries given by the <see cref="RequiredRelativeOverlap"/>.
+    /// </summary>
+    public IReadOnlyList<bool> IsShiftValueRestrictedByBoundaries => _isShiftValueRestrictedByBoundaries;
 
     /// <summary>
     /// Determines the method to best fit the data into the master curve.
@@ -83,6 +130,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     }
 
     protected double _requiredRelativeOverlap = 0;
+
     /// <summary>
     /// Gets/sets the required relative overlap. The default value is 0, which means that a curve part only needs to touch the rest of the master curve.
     /// Setting this to a value, for instance to 0.1, means that a curve part needs an overlapping of 10% (of its x-range) with the rest of the master curve.
@@ -104,40 +152,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     }
 
 
-    /// <summary>
-    /// Contains the resulting shift values.
-    /// </summary>
-    private double?[] _resultingShifts;
 
-    /// <summary>
-    /// Contains the shift errors.
-    /// </summary>
-    private double?[] _shiftErrors;
-
-    /// <summary>
-    /// If the element is true, the curve(s) with that curve index participate in the fit; otherwise, the element is false.
-    /// </summary>
-    private bool[] _isCurveParticipatingInFit;
-
-    /// <summary>
-    /// Contains the indices of the curves that participate in the fit. Contains the same information as <see cref="_isCurveParticipatingInFit"/>, but more convienient for foreach.. statements
-    /// </summary>
-    private int[] _curvesParticipatingInFit;
-
-    /// <summary>
-    /// If the element is true, the group with that group index participate in the fit; otherwise, the element is false.
-    /// </summary>
-    private bool[] _isGroupParticipatingInFit;
-
-    /// <summary>
-    /// Contains the indices of the groups that participate in the fit. Contains the same information as <see cref="_isGroupParticipatingInFit"/>, but more convienient for foreach.. statements
-    /// </summary>
-    private int[] _groupsParticipatingInFit;
-
-    /// <summary>
-    /// If a element is true, the index of that element can be used as curve index for the pivot, i.e. for the starting point of the master curve creation.
-    /// </summary>
-    private bool[] _isCurveSuitableForPivot;
 
     /// <summary>
     /// Contains the indices of the groups that participate in the fit. Contains the same information as <see cref="_isGroupParticipatingInFit"/>, but more convienient for foreach.. statements
@@ -159,8 +174,9 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
       // First we create the initial interpolation of the master column
       // then we successively add columns by shifting the x and merge them with the interpolation
       int maxColumns = _shiftGroups.Max(x => x.Count);
-      _resultingShifts = new double?[maxColumns];
+      _shiftValues = new double?[maxColumns];
       _shiftErrors = new double?[maxColumns];
+      _isShiftValueRestrictedByBoundaries = new bool[maxColumns];
       EvaluateParticipatingCurvesAndGroups();
     }
 
@@ -170,7 +186,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     /// <inheritdoc/>
     public int Count => _shiftGroups.Length;
 
-    public int MaximumNumberOfCurves => _resultingShifts.Length;
+    public int MaximumNumberOfCurves => _shiftValues.Length;
 
     /// <inheritdoc/>
     public IEnumerator<IShiftGroup> GetEnumerator()
@@ -297,7 +313,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
       }
 
       double initialShiftOfReferenceCurve = 0;
-      _resultingShifts[idxReferenceCurve] = initialShiftOfReferenceCurve; // set shift value of reference curve to 0
+      _shiftValues[idxReferenceCurve] = initialShiftOfReferenceCurve; // set shift value of reference curve to 0
       foreach (var idxGroup in _groupsParticipatingInFit)
       {
         var shiftGroup = _shiftGroups[idxGroup];
@@ -312,12 +328,6 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
       // at the first iteration, the other curves will be added to the interpolation
       // and then, the quality of the master curve will be successivly improved
       Iterate(shiftOrderIndices, cancellationToken, progress);
-
-      // if there are any values in _shiftErrors, then add also 0 for the error of the fixed curve
-      if (_shiftErrors.Any(x => x.HasValue))
-      {
-        _shiftErrors[idxReferenceCurve] = 0;
-      }
     }
 
     /// <summary>
@@ -353,6 +363,9 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
         OneIteration(shiftOrder, idxIteration, cancellationToken);
         progress?.Report((idxIteration + 1) / (double)NumberOfIterations);
       }
+
+      CalculateShiftErrors();
+
       progress?.Report(1);
     }
 
@@ -363,7 +376,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     private void OneIteration(IReadOnlyList<int> shiftCurveOrder, int idxIteration, CancellationToken cancellationToken)
     {
       // start the tracking of the x-minimum and x-maximum by adding the fixed curve
-      TrackXMinimumMaximumOfMasterCurvePoints(shiftCurveOrder[0], _resultingShifts[shiftCurveOrder[0]]!.Value, startNewTracking: true);
+      TrackXMinimumMaximumOfMasterCurvePoints(shiftCurveOrder[0], _shiftValues[shiftCurveOrder[0]]!.Value, startNewTracking: true);
 
       foreach (int idxCurve in shiftCurveOrder.Skip(1).Where(idx => _isCurveParticipatingInFit[idx] == true))
       {
@@ -449,16 +462,8 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
           {
           }
 
-          _resultingShifts[idxCurve] = currentShift;
-
-          if (_shiftErrors is { } shiftErrors &&
-              (idxIteration + 1) >= NumberOfIterations &&
-              (OptimizationMethod == OptimizationMethod.OptimizeSquaredDifference || OptimizationMethod == OptimizationMethod.OptimizeSquaredDifferenceByBruteForce)
-              )
-          {
-            _shiftErrors[idxCurve] = CalculateShiftError(idxCurve);
-          }
-
+          _shiftValues[idxCurve] = currentShift;
+          _isShiftValueRestrictedByBoundaries[idxCurve] = currentShift == globalMinShift || currentShift == globalMaxShift;
 
           foreach (int idxShiftGroup in _groupsParticipatingInFit)
           {
@@ -510,55 +515,6 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
       return (xmin, xmax);
     }
 
-
-    /// <summary>
-    /// Gets the minimum and the maximum of the possible global shift.
-    /// </summary>
-    /// <param name="idxCurve">The index of curve.</param>
-    /// <returns>The minimum and maximum shift values by which the curve can be shifted.</returns>
-    private (double globalMinShift, double globalMaxShift) GetMinimumMaximumGlobalShift(int idxCurve)
-    {
-      var globalMinShift = double.MaxValue;
-      var globalMaxShift = double.MinValue;
-      double globalMinRange = double.MaxValue;
-      foreach (int idxGroup in _groupsParticipatingInFit)
-      {
-        var shiftGroup = _shiftGroups[idxGroup];
-        var (xmin, xmax) = shiftGroup.GetXMinimumMaximumOfCurvePointsSuitableForInterpolation(idxCurve);
-
-        double localMaxShift;
-        double localMinShift;
-        double localRange;
-
-        var (xMinOfInterpolation, xMaxOfInterpolation) = shiftGroup.GetXMinimumMaximumOfInterpolationValuesExceptForCurveIndex(idxCurve);
-
-        if (shiftGroup.LogarithmizeXForInterpolation)
-        {
-          localMaxShift = xMaxOfInterpolation - xmin;
-          localMinShift = xMinOfInterpolation - xmax;
-          localRange = xmax - xmin;
-        }
-        else
-        {
-          localMaxShift = Math.Log(xMaxOfInterpolation / xmin);
-          localMinShift = Math.Log(xMinOfInterpolation / xmax);
-          localRange = Math.Log(xmax / xmin);
-        }
-        globalMinShift = Math.Min(globalMinShift, localMinShift);
-        globalMaxShift = Math.Max(globalMaxShift, localMaxShift);
-        globalMinRange = Math.Min(globalMinRange, localRange);
-      }
-
-      // we reduce the maximum possible shifts a little in order to get at least one point overlapping
-      double requiredShiftOverlap = globalMinRange * RequiredRelativeOverlap;
-      requiredShiftOverlap = Math.Min(requiredShiftOverlap, 0.5 * (globalMaxShift - globalMinShift));
-      // reduce the borders [globalMinShift, globalMaxShift] by the required shift overlap
-      globalMinShift += requiredShiftOverlap;
-      globalMaxShift -= requiredShiftOverlap;
-
-      return (globalMinShift, globalMaxShift);
-    }
-
     /// <summary>
     /// Gets the minimum and the maximum of the possible shift value for the designated curve. Here, we use the points that form
     /// the master curve so far (in the current iteration) to calculate the values.
@@ -606,6 +562,26 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
       return (globalMinShift, globalMaxShift);
     }
 
+    /// <summary>
+    /// Calculates the errors of the shift values. The function assumes that the shift values
+    /// were calculated before, and that the current interpolation is using all curves.
+    /// </summary>
+    private void CalculateShiftErrors()
+    {
+      for (int i = 0; i < _shiftErrors.Length; i++)
+      {
+        _shiftErrors[i] = null;
+      }
+
+      foreach (var idxCurve in _curvesParticipatingInFit)
+      {
+        if (!_isShiftValueRestrictedByBoundaries[idxCurve])
+        {
+          _shiftErrors[idxCurve] = CalculateShiftError(idxCurve);
+        }
+      }
+    }
+
 
     /// <summary>
     /// Calculates the errors of the shift values. This function assumes that the shift values were already before.
@@ -614,12 +590,12 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     /// <returns>The shift error, or null if the shift error could not be calculated.</returns>
     private double? CalculateShiftError(int idxCurve)
     {
-      if (!(ResultingShifts[idxCurve] is { } shift))
+      if (!(ShiftValues[idxCurve] is { } shift))
       {
         return null;
       }
 
-      var (globalMinShift, globalMaxShift) = GetMinimumMaximumGlobalShift(idxCurve);
+      var (globalMinShift, globalMaxShift) = GetMinimumMaximumGlobalShiftAlt(idxCurve);
       var penaltyMiddle = GetMeanSquaredPenalty(idxCurve, shift);
 
       double? shiftErr = null;
@@ -630,7 +606,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
         var penaltyRight = GetMeanSquaredPenalty(idxCurve, shift + delta);
         var deriv2nd = ((penaltyRight - penaltyMiddle) - (penaltyMiddle - penaltyLeft)) / (delta * delta);
 
-        if (deriv2nd >= 0)
+        if (penaltyLeft > penaltyMiddle && penaltyRight > penaltyMiddle)
         {
           shiftErr = Math.Sqrt(penaltyMiddle * 2 / deriv2nd);
           break;
@@ -656,7 +632,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
         shiftGroup.InitializeInterpolation();
         foreach (var idxCurve in _curvesParticipatingInFit)
         {
-          if (ResultingShifts[idxCurve] is { } shift)
+          if (ShiftValues[idxCurve] is { } shift)
           {
             shiftGroup.AddCurveToInterpolation(idxCurve, shift);
           }
@@ -678,18 +654,18 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     /// are used from that previous master curve.</param>
     public void ReIterate(ShiftGroupCollection previousMasterCurve, CancellationToken cancellationToken, IProgress<double>? progress)
     {
-      if (_resultingShifts.Length != previousMasterCurve._resultingShifts.Length)
+      if (_shiftValues.Length != previousMasterCurve._shiftValues.Length)
         throw new InvalidOperationException("The number of curves in this shift group collection and in the previos shift group collection should match.");
       // use the shifts from the previous curve, but only then if the curve index is also used here
       for (int idxCurve = 0; idxCurve < MaximumNumberOfCurves; idxCurve++)
       {
         if (_isCurveParticipatingInFit[idxCurve])
         {
-          _resultingShifts[idxCurve] = previousMasterCurve.ResultingShifts[idxCurve];
+          _shiftValues[idxCurve] = previousMasterCurve.ShiftValues[idxCurve];
         }
         else
         {
-          _resultingShifts[idxCurve] = null;
+          _shiftValues[idxCurve] = null;
         }
       }
 
@@ -708,12 +684,6 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
 
       ReInitializeResult();
       Iterate(shiftOrderIndices, cancellationToken, progress);
-
-      // if there are any values in _shiftErrors, then add also 0 for the error of the fixed curve
-      if (_shiftErrors.Any(x => x.HasValue))
-      {
-        _shiftErrors[idxReferenceCurve] = 0;
-      }
     }
 
     /// <summary>
@@ -728,7 +698,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
         group.InitializeInterpolation();
         for (int idxCurve = 0; idxCurve < MaximumNumberOfCurves; idxCurve++)
         {
-          if (ResultingShifts[idxCurve] is { } shiftValue)
+          if (ShiftValues[idxCurve] is { } shiftValue)
           {
             group.AddCurveToInterpolation(idxCurve, shiftValue);
           }
@@ -763,7 +733,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
           var listY = new List<double>();
           for (int idxCurve = 0; idxCurve < MaximumNumberOfCurves; idxCurve++)
           {
-            if (ResultingShifts[idxCurve] is { } shiftValue)
+            if (ShiftValues[idxCurve] is { } shiftValue)
             {
               if (curveProperties[idxCurve] is { } propertyValue)
               {
@@ -802,7 +772,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
           shiftOffset = 0;
           for (int idxCurve = 0; idxCurve < MaximumNumberOfCurves; ++idxCurve)
           {
-            if (ResultingShifts[idxCurve] is { } shiftValue)
+            if (ShiftValues[idxCurve] is { } shiftValue)
             {
               if (curveProperties[idxCurve] is { } propertyValue)
               {
@@ -825,7 +795,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
         shiftOffset = 0;
         for (int idxCurve = 0; idxCurve < MaximumNumberOfCurves; ++idxCurve)
         {
-          if (ResultingShifts[idxCurve] is { } shiftValue)
+          if (ShiftValues[idxCurve] is { } shiftValue)
           {
             var distance = Math.Abs(idxCurve - indexOfReferenceCurve);
             if (distance < minDistance)
@@ -843,16 +813,16 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
 
 
     /// <summary>
-    /// Offsets the shift values (<see cref="ResultingShifts"/>) by the provided value.
+    /// Offsets the shift values (<see cref="ShiftValues"/>) by the provided value.
     /// </summary>
     /// <param name="shiftOffset">The shift offset.</param>
     public void SetShiftOffset(double shiftOffset)
     {
       for (int idxCurve = 0; idxCurve < MaximumNumberOfCurves; ++idxCurve)
       {
-        if (_resultingShifts[(idxCurve)] is { } shiftValue)
+        if (_shiftValues[(idxCurve)] is { } shiftValue)
         {
-          _resultingShifts[idxCurve] = shiftValue + shiftOffset;
+          _shiftValues[idxCurve] = shiftValue + shiftOffset;
         }
       }
     }

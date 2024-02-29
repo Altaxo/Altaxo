@@ -43,13 +43,6 @@ namespace Altaxo.Science.Thermorheology.MasterCurves.ShiftOrder
     IEnumerable<int> GetShiftOrderIndices(int numberOfCurves);
 
     /// <summary>
-    /// Gets a value indicating whether this shift order is only suitable for refinement.
-    /// In refinement, the entire master curve is already present, together with the shift values,
-    /// thus each of the curves is only slightly adjusted.
-    /// </summary>
-    bool IsOnlySuitableForRefinement { get; }
-
-    /// <summary>
     /// Gets a value indicating whether this instance requires a pivot index to be set.
     /// </summary>
     bool IsPivotIndexRequired { get; }
@@ -77,8 +70,6 @@ namespace Altaxo.Science.Thermorheology.MasterCurves.ShiftOrder
         yield return i;
       }
     }
-    /// <inheritdoc/>
-    public bool IsOnlySuitableForRefinement => false;
 
     /// <inheritdoc/>
     public bool IsPivotIndexRequired => false;
@@ -119,8 +110,6 @@ namespace Altaxo.Science.Thermorheology.MasterCurves.ShiftOrder
         yield return i;
       }
     }
-    /// <inheritdoc/>
-    public bool IsOnlySuitableForRefinement => false;
 
     /// <inheritdoc/>
     public bool IsPivotIndexRequired => false;
@@ -167,8 +156,6 @@ namespace Altaxo.Science.Thermorheology.MasterCurves.ShiftOrder
       for (int i = refIndex - 1; i >= 0; --i)
         yield return i;
     }
-    /// <inheritdoc/>
-    public bool IsOnlySuitableForRefinement => false;
 
     /// <inheritdoc/>
     public bool IsPivotIndexRequired => true;
@@ -216,8 +203,6 @@ namespace Altaxo.Science.Thermorheology.MasterCurves.ShiftOrder
       for (int i = refIndex + 1; i < numberOfCurves; ++i)
         yield return i;
     }
-    /// <inheritdoc/>
-    public bool IsOnlySuitableForRefinement => false;
 
     /// <inheritdoc/>
     public bool IsPivotIndexRequired => true;
@@ -271,9 +256,6 @@ namespace Altaxo.Science.Thermorheology.MasterCurves.ShiftOrder
     }
 
     /// <inheritdoc/>
-    public bool IsOnlySuitableForRefinement => false;
-
-    /// <inheritdoc/>
     public bool IsPivotIndexRequired => true;
 
     /// <inheritdoc/>
@@ -323,9 +305,6 @@ namespace Altaxo.Science.Thermorheology.MasterCurves.ShiftOrder
           yield return (refIndex + i);
       }
     }
-
-    /// <inheritdoc/>
-    public bool IsOnlySuitableForRefinement => false;
 
     /// <inheritdoc/>
     public bool IsPivotIndexRequired => true;

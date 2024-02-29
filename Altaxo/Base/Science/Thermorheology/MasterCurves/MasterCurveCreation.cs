@@ -275,7 +275,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
           var groupOptions = GetGroupOptions(effectiveProcessOptions, idxGroup);
           for (int idxCurve = 0; idxCurve < group.Length; idxCurve++)
           {
-            if (!(shiftGroupCollection.ResultingShifts[idxCurve] is { } shiftValue))
+            if (!(shiftGroupCollection.ShiftValues[idxCurve] is { } shiftValue))
               continue; // if this particular curve has no shift information, we skip it
 
             var shiftCurve = ConvertToShiftCurve(group[idxCurve]);
@@ -395,7 +395,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
 
           for (int idxCurve = 0; idxCurve < numberOfCurves; ++idxCurve)
           {
-            if (shiftGroupCollection.ResultingShifts is { } shiftValue)
+            if (shiftGroupCollection.ShiftValues is { } shiftValue)
             {
               prop1Col[idxCurve] = curveInfo[idxCurve].Property1Value;
 
@@ -414,7 +414,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
           var prop2Col = (DoubleColumn)col.EnsureExistence(processOptions.Property2Name, typeof(DoubleColumn), ColumnKind.V, groupNumber);
           for (int idxCurve = 0; idxCurve < numberOfCurves; ++idxCurve)
           {
-            if (shiftGroupCollection.ResultingShifts[idxCurve].HasValue)
+            if (shiftGroupCollection.ShiftValues[idxCurve].HasValue)
             {
               prop2Col[idxCurve] = curveInfo[idxCurve].Property2Value;
             }
@@ -423,7 +423,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
 
         // now the shift values
         var shiftCol = (DoubleColumn)col.EnsureExistence("Shift", typeof(DoubleColumn), ColumnKind.V, groupNumber);
-        shiftCol.Data = shiftGroupCollection.ResultingShifts.Select(shift => shift ?? double.NaN);
+        shiftCol.Data = shiftGroupCollection.ShiftValues.Select(shift => shift ?? double.NaN);
         if (shiftGroupCollection.ShiftErrors.Any(x => x.HasValue))
         {
           var shiftColErr = (DoubleColumn)col.EnsureExistence("Shift.Err", typeof(DoubleColumn), ColumnKind.Err, groupNumber);
@@ -439,11 +439,130 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
           if (shiftGroupCollection.ShiftErrors.Any(x => x.HasValue))
           {
             var shiftColErr = (DoubleColumn)col.EnsureExistence("ShiftFactor.Err", typeof(DoubleColumn), ColumnKind.Err, groupNumber);
-            shiftColErr.Data = shiftGroupCollection.ResultingShifts.Zip(shiftGroupCollection.ShiftErrors, (x, xerr) => (x, xerr)).Select(t => t.x.HasValue && t.xerr.HasValue ? Math.Exp(t.x.Value) * t.xerr.Value : double.NaN);
+            shiftColErr.Data = shiftGroupCollection.ShiftValues.Zip(shiftGroupCollection.ShiftErrors, (x, xerr) => (x, xerr)).Select(t => t.x.HasValue && t.xerr.HasValue ? Math.Exp(t.x.Value) * t.xerr.Value : double.NaN);
           }
         }
       }
 
+      if (processOptions.Property1TemperatureRepresentation.HasValue)
+      {
+        groupNumber = (int)(100 * Math.Ceiling((groupNumber + 1) / 100d));
+
+        // calculate the Activation energies
+        if (curveInfo.Any(i => !(i.Property2Value.IsEmpty)))
+        {
+          // then we have to calculate the activation energies per property2
+          var prop2Col = (DoubleColumn)col.EnsureExistence("Ea_For_" + processOptions.Property2Name, typeof(DoubleColumn), ColumnKind.V, groupNumber);
+          var energyCol = (DoubleColumn)col.EnsureExistence("Ea_JoulePerMole", typeof(DoubleColumn), ColumnKind.V, groupNumber);
+          var energyErrCol = (DoubleColumn)col.EnsureExistence("Ea_JoulePerMole.Err", typeof(DoubleColumn), ColumnKind.Err, groupNumber);
+          var k0Col = (DoubleColumn)col.EnsureExistence("ArrheniusPrefactor", typeof(DoubleColumn), ColumnKind.V, groupNumber);
+          var k0ErrCol = (DoubleColumn)col.EnsureExistence("ArrheniusPrefactor.Err", typeof(DoubleColumn), ColumnKind.Err, groupNumber);
+
+          // we first collect all property2 values
+          var prop2Hash = new HashSet<AltaxoVariant>();
+          for (int idxCurve = 0; idxCurve < numberOfCurves; ++idxCurve)
+          {
+            if (shiftGroupCollection.ShiftValues[idxCurve] is { } shiftValue &&
+              !curveInfo[idxCurve].Property1Value.IsEmpty &&
+              !curveInfo[idxCurve].Property2Value.IsEmpty)
+            {
+              prop2Hash.Add(curveInfo[idxCurve].Property2Value);
+            }
+          }
+
+          // for every property2, we calculate the activation energy
+          int idxRow = 0;
+          foreach (var prop2 in prop2Hash.OrderBy(x => x))
+          {
+            // regress the shift values versus the inverse temperature
+            var listShift = new List<double>();
+            var listInvTemp = new List<double>();
+            for (int idxCurve = 0; idxCurve < numberOfCurves; ++idxCurve)
+            {
+              if (shiftGroupCollection.ShiftValues[idxCurve] is { } shiftValue &&
+                  !curveInfo[idxCurve].Property1Value.IsEmpty &&
+                  curveInfo[idxCurve].Property2Value == prop2
+                 )
+              {
+                var t = new Altaxo.Science.Temperature(curveInfo[idxCurve].Property1Value, processOptions.Property1TemperatureRepresentation.Value);
+                listShift.Add(shiftValue);
+                listInvTemp.Add(t.InInverseKelvin);
+              }
+            }
+            if (listInvTemp.Count >= 2)
+            {
+              var reg = new Altaxo.Calc.Regression.LinearFitBySvd(listInvTemp.ToArray(), listShift.ToArray(), null, listInvTemp.Count, 2, (x, arr) => { arr[0] = 1; arr[1] = x; }, 1E-12);
+              var parameter = reg.Parameter;
+
+              prop2Col[idxRow] = prop2;
+              k0Col[idxRow] = Math.Exp(parameter[0]);
+              k0ErrCol[idxRow] = reg.StandardErrorOfParameter(0) * Math.Exp(parameter[0]);
+              energyCol[idxRow] = parameter[1] * Science.SIConstants.MOLAR_GAS;
+              energyErrCol[idxRow] = reg.StandardErrorOfParameter(1) * Science.SIConstants.MOLAR_GAS;
+              ++idxRow;
+            }
+          }
+          {
+            // now calculate also an activation energy for all together, but with separate prefactors for each property 2
+            var xbase = new List<double[]>();
+            var listShift = new List<double>();
+            var prop2Dict = new Dictionary<AltaxoVariant, int>(); // for each property2, gets the index of this property
+            prop2Dict.AddRange(prop2Hash.OrderBy(x => x).Select((x, i) => new KeyValuePair<AltaxoVariant, int>(x, i)));
+            for (int idxCurve = 0; idxCurve < numberOfCurves; ++idxCurve)
+            {
+              if (shiftGroupCollection.ShiftValues[idxCurve] is { } shiftValue &&
+                  !curveInfo[idxCurve].Property1Value.IsEmpty &&
+                  !curveInfo[idxCurve].Property2Value.IsEmpty
+                 )
+              {
+
+                var basearr = new double[prop2Dict.Count + 1];
+                var t = new Altaxo.Science.Temperature(curveInfo[idxCurve].Property1Value, processOptions.Property1TemperatureRepresentation.Value);
+                basearr[0] = t.InInverseKelvin; // attention: here x is at position 0!
+                var ii = prop2Dict[curveInfo[idxCurve].Property2Value];
+                basearr[ii + 1] = 1; // for each of the properties2, a separate offset value
+                xbase.Add(basearr);
+                listShift.Add(shiftValue);
+              }
+            }
+            var basematrix = MatrixMath.ToMatrixFromLeftSpineJaggedArray(xbase.ToArray());
+            var reg = new Altaxo.Calc.Regression.LinearFitBySvd(basematrix, listShift.ToArray(), null, listShift.Count, prop2Dict.Count + 1, 1E-12);
+            var parameter = reg.Parameter;
+            energyCol[idxRow] = parameter[0] * Science.SIConstants.MOLAR_GAS;
+            energyErrCol[idxRow] = reg.StandardErrorOfParameter(0) * Science.SIConstants.MOLAR_GAS;
+            idxRow++;
+          }
+
+        }
+        else
+        {
+          var energyCol = (DoubleColumn)col.EnsureExistence("Ea_JoulePerMole", typeof(DoubleColumn), ColumnKind.V, groupNumber);
+          var energyErrCol = (DoubleColumn)col.EnsureExistence("Ea_JoulePerMole.Err", typeof(DoubleColumn), ColumnKind.Err, groupNumber);
+          var k0Col = (DoubleColumn)col.EnsureExistence("ArrheniusPrefactor", typeof(DoubleColumn), ColumnKind.V, groupNumber);
+          var k0ErrCol = (DoubleColumn)col.EnsureExistence("ArrheniusPrefactor.Err", typeof(DoubleColumn), ColumnKind.Err, groupNumber);
+
+          // one activation energy for all
+          // regress the shift values versus the inverse temperature
+          var listShift = new List<double>();
+          var listInvTemp = new List<double>();
+          for (int idxCurve = 0; idxCurve < numberOfCurves; ++idxCurve)
+          {
+            if (shiftGroupCollection.ShiftValues[idxCurve] is { } shiftValue && !curveInfo[idxCurve].Property1Value.IsEmpty)
+            {
+              var t = new Altaxo.Science.Temperature(curveInfo[idxCurve].Property1Value, processOptions.Property1TemperatureRepresentation.Value);
+              listShift.Add(shiftValue);
+              listInvTemp.Add(t.InInverseKelvin);
+            }
+          }
+          var reg = new Altaxo.Calc.Regression.LinearFitBySvd(listInvTemp.ToArray(), listShift.ToArray(), null, listInvTemp.Count, 2, (x, arr) => { arr[0] = 1; arr[1] = x; }, 1E-12);
+          var parameter = reg.Parameter;
+
+          k0Col[0] = Math.Exp(parameter[0]);
+          k0ErrCol[0] = reg.StandardErrorOfParameter(0) * Math.Exp(parameter[0]);
+          energyCol[0] = parameter[1] * Science.SIConstants.MOLAR_GAS;
+          energyErrCol[0] = reg.StandardErrorOfParameter(1) * Science.SIConstants.MOLAR_GAS;
+        }
+      }
 
       // Finally, we put the actually used Reference value to a table property "MasterCurveReferenceValue"
       if (referenceValueUsed.HasValue)
@@ -458,7 +577,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
       for (int idxCurve = 0; idxCurve < originalCurves.Length; idxCurve++)
       {
 
-        if (!(masterCurveResult.ResultingShifts[idxCurve] is { } shiftValue))
+        if (!(masterCurveResult.ShiftValues[idxCurve] is { } shiftValue))
           continue; // if this particular curve has no shift information, we skip it
 
         var shiftCurve = ConvertToShiftCurve(originalCurves[idxCurve]);
@@ -511,7 +630,7 @@ StartOfFunction:
             if (!curveInfo[idxCurve].Property1Value.IsEmpty)
             {
               double x = curveInfo[idxCurve].Property1Value;
-              double y = masterCurveResult.ResultingShifts[idxCurve] ?? double.NaN;
+              double y = masterCurveResult.ShiftValues[idxCurve] ?? double.NaN;
 
               if (!double.IsNaN(x) && !double.IsNaN(y))
               {
@@ -553,7 +672,7 @@ StartOfFunction:
               if (distance < minDistance)
               {
                 minDistance = distance;
-                shiftOffset = masterCurveResult.ResultingShifts[idxCurve].Value;
+                shiftOffset = masterCurveResult.ShiftValues[idxCurve].Value;
                 referenceValueUsed = curveInfo[idxCurve].Property1Value;
               }
             }
@@ -572,7 +691,7 @@ StartOfFunction:
           if (distance < minDistance)
           {
             minDistance = distance;
-            shiftOffset = masterCurveResult.ResultingShifts[idxCurve].Value;
+            shiftOffset = masterCurveResult.ShiftValues[idxCurve].Value;
             referenceValueUsed = curveInfo[idxCurve].Property1Value;
           }
         }

@@ -392,7 +392,7 @@ namespace Altaxo.Gui.Science.Thermorheology
         var types = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(IShiftOrder));
         var instances = types.Select(t => (IShiftOrder)Activator.CreateInstance(t));
         ShiftOrder = new ItemsController<IShiftOrder>(new SelectableListNodeList(
-          instances.Where(i => !i.IsOnlySuitableForRefinement).Select(i => new SelectableListNode(i.GetType().Name, i, false))), EhShiftOrderChanged);
+          instances.Select(i => new SelectableListNode(i.GetType().Name, i, false))), EhShiftOrderChanged);
         ShiftOrder.SelectedValue = _doc.ShiftOrder.WithPivotIndex(null);
 
         UseManualPivotCurveIndex = _doc.ShiftOrder.PivotIndex.HasValue;
