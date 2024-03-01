@@ -438,8 +438,10 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
 
           if (shiftGroupCollection.ShiftErrors.Any(x => x.HasValue))
           {
-            var shiftColErr = (DoubleColumn)col.EnsureExistence("ShiftFactor.Err", typeof(DoubleColumn), ColumnKind.Err, groupNumber);
-            shiftColErr.Data = shiftGroupCollection.ShiftValues.Zip(shiftGroupCollection.ShiftErrors, (x, xerr) => (x, xerr)).Select(t => t.x.HasValue && t.xerr.HasValue ? Math.Exp(t.x.Value) * t.xerr.Value : double.NaN);
+            var shiftColmErr = (DoubleColumn)col.EnsureExistence("ShiftFactor.mErr", typeof(DoubleColumn), ColumnKind.mErr, groupNumber);
+            var shiftColpErr = (DoubleColumn)col.EnsureExistence("ShiftFactor.pErr", typeof(DoubleColumn), ColumnKind.pErr, groupNumber);
+            shiftColmErr.Data = shiftGroupCollection.ShiftValues.Zip(shiftGroupCollection.ShiftErrors, (x, xerr) => (x, xerr)).Select(t => t.x.HasValue && t.xerr.HasValue ? Math.Exp(t.x.Value) - Math.Exp(t.x.Value - t.xerr.Value) : double.NaN);
+            shiftColpErr.Data = shiftGroupCollection.ShiftValues.Zip(shiftGroupCollection.ShiftErrors, (x, xerr) => (x, xerr)).Select(t => t.x.HasValue && t.xerr.HasValue ? Math.Exp(t.x.Value + t.xerr.Value) - Math.Exp(t.x.Value) : double.NaN);
           }
         }
       }
