@@ -49,6 +49,22 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     /// </summary>
     public bool OutputInterpolatedCurve { get; init; } = true;
 
+    /// <summary>
+    /// Gets a value indicating whether activation energies should be calculated.
+    /// </summary>
+    public bool OutputActivationEnergies { get; init; } = true;
+
+    /// <summary>
+    /// Gets a value indicating whether the x-values for shifting are times or rates (i.e., inverse times).
+    /// This value is used for the expected slope of the shift values versus inverse temperature.
+    /// </summary>
+    public bool XValuesForActivationEnergiesAreRates { get; init; } = true;
+
+    /// <summary>
+    /// Indicates whether and how to sort the values in the shift column group.
+    /// </summary>
+    public ShiftGroupSorting SortShiftGroupValuesBy { get; init; } = ShiftGroupSorting.None;
+
     #region Serialization
 
     /// <summary>
@@ -84,6 +100,71 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
       }
     }
 
+    /// <summary>
+    /// V0: 2024-01-24 initial version
+    /// V1: 2024-03-01 Added properties SortShiftGroupValuesBy, OutputActivationEnergies, XValuesForActivationEnergiesAreRates
+    /// </summary>
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(MasterCurveTableOutputOptions), 1)]
+    public class SerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        var s = (MasterCurveTableOutputOptions)obj;
+
+        info.AddValue("OriginalCurves", s.OutputOriginalCurves);
+        info.AddValue("ShiftedCurves", s.OutputShiftedCurves);
+        info.AddValue("MergedShiftedCurve", s.OutputMergedShiftedCurve);
+        info.AddValue("InterpolatedCurve", s.OutputInterpolatedCurve);
+        info.AddEnum("ShiftGroupSorting", s.SortShiftGroupValuesBy);
+        info.AddValue("OutputActivationEnergies", s.OutputActivationEnergies);
+        info.AddValue("XValuesForActivationEnergiesAreRates", s.XValuesForActivationEnergiesAreRates);
+      }
+
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      {
+        var originalCurves = info.GetBoolean("OriginalCurves");
+        var shiftedCurves = info.GetBoolean("ShiftedCurves");
+        var mergedShiftedCurve = info.GetBoolean("MergedShiftedCurve");
+        var interpolatedCurve = info.GetBoolean("InterpolatedCurve");
+        var shiftGroupSorting = info.GetEnum<ShiftGroupSorting>("ShiftGroupSorting");
+        var outputActivationEnergies = info.GetBoolean("OutputActivationEnergies");
+        var xValuesForActivationEnergiesAreRates = info.GetBoolean("XValuesForActivationEnergiesAreRates");
+
+        return new MasterCurveTableOutputOptions()
+        {
+          OutputOriginalCurves = originalCurves,
+          OutputShiftedCurves = shiftedCurves,
+          OutputMergedShiftedCurve = mergedShiftedCurve,
+          OutputInterpolatedCurve = interpolatedCurve,
+          SortShiftGroupValuesBy = shiftGroupSorting,
+          OutputActivationEnergies = outputActivationEnergies,
+          XValuesForActivationEnergiesAreRates = xValuesForActivationEnergiesAreRates,
+        };
+      }
+    }
+
     #endregion
+  }
+
+  /// <summary>
+  /// Indicates whether and how to sort the values in the shift column group.
+  /// </summary>
+  public enum ShiftGroupSorting
+  {
+    /// <summary>No sorting.</summary>
+    None,
+
+    /// <summary>Sorting by properties, (first property, then second property), descending.</summary>
+    ByPropertiesDescending,
+
+    /// <summary>Sorting by properties, (first property, then second property), ascending.</summary>
+    ByPropertiesAscending,
+
+    /// <summary>Sorting by shift values, descending.</summary>
+    ByShiftValueDescending,
+
+    /// <summary>Sorting by shift values, ascending.</summary>
+    ByShiftValueAscending,
+
   }
 }

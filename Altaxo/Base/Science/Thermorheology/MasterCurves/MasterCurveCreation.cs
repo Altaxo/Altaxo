@@ -444,11 +444,39 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
             shiftColpErr.Data = shiftGroupCollection.ShiftValues.Zip(shiftGroupCollection.ShiftErrors, (x, xerr) => (x, xerr)).Select(t => t.x.HasValue && t.xerr.HasValue ? Math.Exp(t.x.Value + t.xerr.Value) - Math.Exp(t.x.Value) : double.NaN);
           }
         }
+
+        // now sort the columns according to the output options
+
+        switch (processOptions.TableOutputOptions.SortShiftGroupValuesBy)
+        {
+          case ShiftGroupSorting.None:
+            break;
+          case ShiftGroupSorting.ByShiftValueAscending:
+          case ShiftGroupSorting.ByShiftValueDescending:
+            col.SortRows(new[] { shiftCol }, processOptions.TableOutputOptions.SortShiftGroupValuesBy == ShiftGroupSorting.ByShiftValueAscending);
+            break;
+          case ShiftGroupSorting.ByPropertiesAscending:
+          case ShiftGroupSorting.ByPropertiesDescending:
+            {
+              var col1 = string.IsNullOrEmpty(processOptions.Property1Name) ? null : col.TryGetColumn(processOptions.Property1Name);
+              var col2 = string.IsNullOrEmpty(processOptions.Property2Name) ? null : col.TryGetColumn(processOptions.Property2Name);
+              bool ascending = processOptions.TableOutputOptions.SortShiftGroupValuesBy == ShiftGroupSorting.ByPropertiesAscending;
+              var colsToSort = new[] { col1, col2 }.Where(x => x is not null).ToArray();
+              if (colsToSort.Length > 0)
+              {
+                col.SortRows(colsToSort, ascending);
+              }
+            }
+            break;
+          default:
+            throw new NotImplementedException();
+        }
       }
 
-      if (processOptions.Property1TemperatureRepresentation.HasValue)
+      if (processOptions.TableOutputOptions.OutputActivationEnergies && processOptions.Property1TemperatureRepresentation.HasValue)
       {
         groupNumber = (int)(100 * Math.Ceiling((groupNumber + 1) / 100d));
+        int activationEnergySign = processOptions.TableOutputOptions.XValuesForActivationEnergiesAreRates ? 1 : -1;
 
         // calculate the Activation energies
         if (curveInfo.Any(i => !(i.Property2Value.IsEmpty)))
@@ -499,7 +527,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
               prop2Col[idxRow] = prop2;
               k0Col[idxRow] = Math.Exp(parameter[0]);
               k0ErrCol[idxRow] = reg.StandardErrorOfParameter(0) * Math.Exp(parameter[0]);
-              energyCol[idxRow] = parameter[1] * Science.SIConstants.MOLAR_GAS;
+              energyCol[idxRow] = parameter[1] * Science.SIConstants.MOLAR_GAS * activationEnergySign;
               energyErrCol[idxRow] = reg.StandardErrorOfParameter(1) * Science.SIConstants.MOLAR_GAS;
               ++idxRow;
             }
@@ -530,7 +558,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
             var basematrix = MatrixMath.ToMatrixFromLeftSpineJaggedArray(xbase.ToArray());
             var reg = new Altaxo.Calc.Regression.LinearFitBySvd(basematrix, listShift.ToArray(), null, listShift.Count, prop2Dict.Count + 1, 1E-12);
             var parameter = reg.Parameter;
-            energyCol[idxRow] = parameter[0] * Science.SIConstants.MOLAR_GAS;
+            energyCol[idxRow] = parameter[0] * Science.SIConstants.MOLAR_GAS * activationEnergySign;
             energyErrCol[idxRow] = reg.StandardErrorOfParameter(0) * Science.SIConstants.MOLAR_GAS;
             idxRow++;
           }
@@ -561,7 +589,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
 
           k0Col[0] = Math.Exp(parameter[0]);
           k0ErrCol[0] = reg.StandardErrorOfParameter(0) * Math.Exp(parameter[0]);
-          energyCol[0] = parameter[1] * Science.SIConstants.MOLAR_GAS;
+          energyCol[0] = parameter[1] * Science.SIConstants.MOLAR_GAS * activationEnergySign;
           energyErrCol[0] = reg.StandardErrorOfParameter(1) * Science.SIConstants.MOLAR_GAS;
         }
       }
