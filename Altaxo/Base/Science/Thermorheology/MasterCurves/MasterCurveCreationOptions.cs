@@ -85,6 +85,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
         ShiftOrder = improvementOptions.ShiftOrder,
         OptimizationMethod = improvementOptions.OptimizationMethod,
         _numberOfIterations = improvementOptions.NumberOfIterations, // in order to circumvent the >0 criterion
+        RequiredRelativeOverlap = improvementOptions.RequiredRelativeOverlap,
         MasterCurveGroupOptionsChoice = improvementOptions.MasterCurveGroupOptionsChoice,
         GroupOptions = improvementOptions.GroupOptions,
         MasterCurveImprovementOptions = null,
