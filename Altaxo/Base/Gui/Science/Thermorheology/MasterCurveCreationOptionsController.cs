@@ -47,6 +47,8 @@ namespace Altaxo.Gui.Science.Thermorheology
     {
       if (ImprovementOptionsController is not null)
         yield return new ControllerAndSetNullMethod(ImprovementOptionsController, () => ImprovementOptionsController = null);
+      if (TableOutputOptionsController is not null)
+        yield return new ControllerAndSetNullMethod(TableOutputOptionsController, () => TableOutputOptionsController = null);
     }
 
     #region Bindings
@@ -378,6 +380,23 @@ namespace Altaxo.Gui.Science.Thermorheology
       }
     }
 
+    private IMVCANController _tableOutputOptionsController;
+
+    public IMVCANController TableOutputOptionsController
+    {
+      get => _tableOutputOptionsController;
+      set
+      {
+        if (!(_tableOutputOptionsController == value))
+        {
+          _tableOutputOptionsController?.Dispose();
+          _tableOutputOptionsController = value;
+          OnPropertyChanged(nameof(TableOutputOptionsController));
+        }
+      }
+    }
+
+
 
 
     #endregion Bindings
@@ -434,6 +453,8 @@ namespace Altaxo.Gui.Science.Thermorheology
         {
           CreateImprovementOptionsController(_doc.MasterCurveImprovementOptions);
         }
+
+        TableOutputOptionsController = (IMVCANController)Current.Gui.GetControllerAndControl(new object[] { _doc.TableOutputOptions }, typeof(IMVCANController));
       }
     }
 
@@ -598,6 +619,8 @@ namespace Altaxo.Gui.Science.Thermorheology
         return ApplyEnd(false, disposeController);
       }
 
+
+
       MasterCurveImprovementOptions? improvementOptions = null;
       if (UseImprovementOptions && (ImprovementOptionsController is not null))
       {
@@ -610,6 +633,12 @@ namespace Altaxo.Gui.Science.Thermorheology
           improvementOptions = (MasterCurveImprovementOptions)(ImprovementOptionsController.ModelObject);
         }
       }
+
+      if (!TableOutputOptionsController.Apply(disposeController))
+      {
+        return ApplyEnd(false, disposeController);
+      }
+      var tableOutputOptions = (MasterCurveTableOutputOptions)TableOutputOptionsController.ModelObject;
 
       var prop1 = Property1;
       var prop2 = Property2;
@@ -641,6 +670,7 @@ namespace Altaxo.Gui.Science.Thermorheology
         Property1TemperatureRepresentation = Property1IsTemperature ? Property1TemperatureRepresentation.SelectedValue : null,
         Property2Name = prop2,
         MasterCurveImprovementOptions = improvementOptions,
+        TableOutputOptions = tableOutputOptions,
       };
 
       return ApplyEnd(true, disposeController);

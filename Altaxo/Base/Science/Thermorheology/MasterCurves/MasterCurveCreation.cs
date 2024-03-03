@@ -209,7 +209,6 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
 
       // fill the table
 
-      int groupNumber = -1;
       var col = destinationTable.DataColumns;
       var pcol = destinationTable.PropCols;
       col.RemoveColumnsAll();
@@ -227,6 +226,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
       }
       var pcolShift = pcol.EnsureExistence("Shift", typeof(DoubleColumn), ColumnKind.V, 0);
 
+      int groupNumber = -1;
       if (processOptions.TableOutputOptions.OutputOriginalCurves) // if the table should be filled with the original data
       {
         // in groups
@@ -259,6 +259,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
         }
       }    // end copying the original data
 
+      groupNumber = (int)(1000 * Math.Ceiling((Math.Max(0, groupNumber) + 1) / 1000d) - 1);
       if (processOptions.TableOutputOptions.OutputShiftedCurves) // if the table should be filled with the shifted data
       {
         // we want to put the x-columns all together in one place, that's why we accumulate the columns and
@@ -267,7 +268,6 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
         var yColumnList = new List<(int group, string name, DataColumn column, AltaxoVariant p1, AltaxoVariant p2, double shift)>();
 
         IReadOnlyList<double> lastX = new double[0];
-        groupNumber = (int)(1000 * Math.Ceiling((groupNumber + 1) / 1000d) - 1);
         // in groups
         for (int idxGroup = 0; idxGroup < processData.CurveData.Count; idxGroup++)
         {
@@ -323,10 +323,9 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
         }
       }    // end copying the original data
 
+      groupNumber = (int)(1000 * Math.Ceiling((Math.Max(1000, groupNumber) + 1) / 1000d));
       if (processOptions.TableOutputOptions.OutputMergedShiftedCurve) // if the table should be filled with the merged data
       {
-        groupNumber = (int)(1000 * Math.Ceiling((groupNumber + 1) / 1000d));
-
         // in groups
         for (int idxGroup = 0, idxColumn = 0; idxGroup < shiftGroupCollection.Count; idxGroup++)
         {
@@ -351,11 +350,9 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
       } // end put merged curves
 
 
+      groupNumber = (int)(100 * Math.Ceiling((groupNumber + 1) / 100d));
       if (processOptions.TableOutputOptions.OutputInterpolatedCurve)
       {
-        groupNumber = (int)(100 * Math.Ceiling((groupNumber + 1) / 100d));
-
-
         // get out the interpolation result, Achtung die Werte sind logarithmiert
         for (int idxGroup = 0, idxColumn = 0; idxGroup < shiftGroupCollection.Count; idxGroup++)
         {
@@ -379,9 +376,10 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
       }
 
 
+      // -------- Output of the shift values ---------------------------
+      groupNumber = (int)(100 * Math.Ceiling((groupNumber + 1) / 100d));
       {
         // Output the columns with the values of Property1 (most probable the temperature) ....
-        groupNumber = (int)(100 * Math.Ceiling((groupNumber + 1) / 100d));
         if (!string.IsNullOrEmpty(processOptions.Property1Name))
         {
           var prop1Col = (DoubleColumn)col.EnsureExistence(processOptions.Property1Name, typeof(DoubleColumn), ColumnKind.X, groupNumber);
@@ -429,6 +427,8 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
           var shiftColErr = (DoubleColumn)col.EnsureExistence("Shift.Err", typeof(DoubleColumn), ColumnKind.Err, groupNumber);
           shiftColErr.Data = shiftGroupCollection.ShiftErrors.Select(shiftErr => shiftErr ?? double.NaN);
         }
+        var shiftIsClampedCol = (DoubleColumn)col.EnsureExistence("ShiftIsRestricted", typeof(DoubleColumn), ColumnKind.V, groupNumber);
+        shiftIsClampedCol.Data = shiftGroupCollection.IsShiftValueRestrictedByBoundaries.Select(x => x ? 1.0 : 0.0);
 
         // Output the factor only if any for the group uses shift by factor
         if (processOptions.GroupOptions.Any(g => g.XShiftBy == ShiftXBy.Factor))
@@ -473,20 +473,20 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
         }
       }
 
+      groupNumber = (int)(100 * Math.Ceiling((groupNumber + 1) / 100d));
       if (processOptions.TableOutputOptions.OutputActivationEnergies && processOptions.Property1TemperatureRepresentation.HasValue)
       {
-        groupNumber = (int)(100 * Math.Ceiling((groupNumber + 1) / 100d));
         int activationEnergySign = processOptions.TableOutputOptions.XValuesForActivationEnergiesAreRates ? 1 : -1;
 
         // calculate the Activation energies
         if (curveInfo.Any(i => !(i.Property2Value.IsEmpty)))
         {
           // then we have to calculate the activation energies per property2
-          var prop2Col = (DoubleColumn)col.EnsureExistence("Ea_For_" + processOptions.Property2Name, typeof(DoubleColumn), ColumnKind.V, groupNumber);
-          var energyCol = (DoubleColumn)col.EnsureExistence("Ea_JoulePerMole", typeof(DoubleColumn), ColumnKind.V, groupNumber);
-          var energyErrCol = (DoubleColumn)col.EnsureExistence("Ea_JoulePerMole.Err", typeof(DoubleColumn), ColumnKind.Err, groupNumber);
-          var k0Col = (DoubleColumn)col.EnsureExistence("ArrheniusPrefactor", typeof(DoubleColumn), ColumnKind.V, groupNumber);
-          var k0ErrCol = (DoubleColumn)col.EnsureExistence("ArrheniusPrefactor.Err", typeof(DoubleColumn), ColumnKind.Err, groupNumber);
+          var eaParaNameCol = col.EnsureExistence("Ea_ParameterName", typeof(TextColumn), ColumnKind.X, groupNumber);
+          var eaTemperatureCol = col.EnsureExistence("Ea_Temperature", typeof(DoubleColumn), ColumnKind.V, groupNumber);
+          var eaProperty2Col = col.EnsureExistence("Ea_Property2Value", typeof(DoubleColumn), ColumnKind.V, groupNumber);
+          var eaParameterValueCol = (DoubleColumn)col.EnsureExistence("Ea_ParameterValue", typeof(DoubleColumn), ColumnKind.V, groupNumber);
+          var eaParameterValueErrCol = (DoubleColumn)col.EnsureExistence("Ea_ParameterValue.Err", typeof(DoubleColumn), ColumnKind.Err, groupNumber);
 
           // we first collect all property2 values
           var prop2Hash = new HashSet<AltaxoVariant>();
@@ -524,12 +524,29 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
               var reg = new Altaxo.Calc.Regression.LinearFitBySvd(listInvTemp.ToArray(), listShift.ToArray(), null, listInvTemp.Count, 2, (x, arr) => { arr[0] = 1; arr[1] = x; }, 1E-12);
               var parameter = reg.Parameter;
 
-              prop2Col[idxRow] = prop2;
-              k0Col[idxRow] = Math.Exp(parameter[0]);
-              k0ErrCol[idxRow] = reg.StandardErrorOfParameter(0) * Math.Exp(parameter[0]);
-              energyCol[idxRow] = parameter[1] * Science.SIConstants.MOLAR_GAS * activationEnergySign;
-              energyErrCol[idxRow] = reg.StandardErrorOfParameter(1) * Science.SIConstants.MOLAR_GAS;
+              eaParaNameCol[idxRow] = "Ea (J/mol)";
+              eaProperty2Col[idxRow] = prop2;
+              eaParameterValueCol[idxRow] = parameter[1] * Science.SIConstants.MOLAR_GAS * activationEnergySign;
+              eaParameterValueErrCol[idxRow] = reg.StandardErrorOfParameter(1) * Science.SIConstants.MOLAR_GAS;
               ++idxRow;
+              eaParaNameCol[idxRow] = "K0_Inf";
+              eaTemperatureCol[idxRow] = double.PositiveInfinity;
+              eaProperty2Col[idxRow] = prop2;
+              eaParameterValueCol[idxRow] = Math.Exp(parameter[0]);
+              eaParameterValueErrCol[idxRow] = reg.StandardErrorOfParameter(0) * Math.Exp(parameter[0]);
+              ++idxRow;
+              if (referenceValueUsed.HasValue)
+              {
+                var inverseT = new Altaxo.Science.Temperature(referenceValueUsed.Value, processOptions.Property1TemperatureRepresentation.Value).InInverseKelvin;
+                reg = new Altaxo.Calc.Regression.LinearFitBySvd(listInvTemp.ToArray(), listShift.ToArray(), null, listInvTemp.Count, 2, (x, arr) => { arr[0] = 1; arr[1] = x - inverseT; }, 1E-12);
+                parameter = reg.Parameter;
+                eaParaNameCol[idxRow] = "K0_Tref";
+                eaTemperatureCol[idxRow] = referenceValueUsed.Value;
+                eaProperty2Col[idxRow] = prop2;
+                eaParameterValueCol[idxRow] = Math.Exp(parameter[0]);
+                eaParameterValueErrCol[idxRow] = reg.StandardErrorOfParameter(0) * Math.Exp(parameter[0]);
+                ++idxRow;
+              }
             }
           }
           {
@@ -537,7 +554,8 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
             var xbase = new List<double[]>();
             var listShift = new List<double>();
             var prop2Dict = new Dictionary<AltaxoVariant, int>(); // for each property2, gets the index of this property
-            prop2Dict.AddRange(prop2Hash.OrderBy(x => x).Select((x, i) => new KeyValuePair<AltaxoVariant, int>(x, i)));
+            var prop2Sorted = prop2Hash.OrderBy(x => x).ToArray();
+            prop2Dict.AddRange(prop2Sorted.Select((x, i) => new KeyValuePair<AltaxoVariant, int>(x, i)));
             for (int idxCurve = 0; idxCurve < numberOfCurves; ++idxCurve)
             {
               if (shiftGroupCollection.ShiftValues[idxCurve] is { } shiftValue &&
@@ -558,18 +576,51 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
             var basematrix = MatrixMath.ToMatrixFromLeftSpineJaggedArray(xbase.ToArray());
             var reg = new Altaxo.Calc.Regression.LinearFitBySvd(basematrix, listShift.ToArray(), null, listShift.Count, prop2Dict.Count + 1, 1E-12);
             var parameter = reg.Parameter;
-            energyCol[idxRow] = parameter[0] * Science.SIConstants.MOLAR_GAS * activationEnergySign;
-            energyErrCol[idxRow] = reg.StandardErrorOfParameter(0) * Science.SIConstants.MOLAR_GAS;
-            idxRow++;
+
+            eaParaNameCol[idxRow] = "Ea (J/mol)";
+            eaParameterValueCol[idxRow] = parameter[1] * Science.SIConstants.MOLAR_GAS * activationEnergySign;
+            eaParameterValueErrCol[idxRow] = reg.StandardErrorOfParameter(1) * Science.SIConstants.MOLAR_GAS;
+            ++idxRow;
+            for (int i = 0; i < prop2Sorted.Length; ++i)
+            {
+              eaParaNameCol[idxRow] = "K0_Inf";
+              eaTemperatureCol[idxRow] = double.PositiveInfinity;
+              eaProperty2Col[idxRow] = prop2Sorted[i];
+              eaParameterValueCol[idxRow] = Math.Exp(parameter[0]);
+              eaParameterValueErrCol[idxRow] = reg.StandardErrorOfParameter(0) * Math.Exp(parameter[0]);
+              ++idxRow;
+            }
+
+            if (referenceValueUsed.HasValue)
+            {
+              var inverseT = new Altaxo.Science.Temperature(referenceValueUsed.Value, processOptions.Property1TemperatureRepresentation.Value).InInverseKelvin;
+              for (int i = 0; i < basematrix.RowCount; ++i)
+                basematrix[i, 0] -= inverseT;
+              reg = new Altaxo.Calc.Regression.LinearFitBySvd(basematrix, listShift.ToArray(), null, listShift.Count, prop2Dict.Count + 1, 1E-12);
+              parameter = reg.Parameter;
+              eaParaNameCol[idxRow] = "Ea (J/mol)";
+              eaParameterValueCol[idxRow] = parameter[1] * Science.SIConstants.MOLAR_GAS * activationEnergySign;
+              eaParameterValueErrCol[idxRow] = reg.StandardErrorOfParameter(1) * Science.SIConstants.MOLAR_GAS;
+              ++idxRow;
+              for (int i = 0; i < prop2Sorted.Length; ++i)
+              {
+                eaParaNameCol[idxRow] = "K0_Tref";
+                eaTemperatureCol[idxRow] = referenceValueUsed.Value;
+                eaProperty2Col[idxRow] = prop2Sorted[i];
+                eaParameterValueCol[idxRow] = Math.Exp(parameter[0]);
+                eaParameterValueErrCol[idxRow] = reg.StandardErrorOfParameter(0) * Math.Exp(parameter[0]);
+                ++idxRow;
+              }
+            }
           }
 
         }
-        else
+        else // we do not have property 2
         {
-          var energyCol = (DoubleColumn)col.EnsureExistence("Ea_JoulePerMole", typeof(DoubleColumn), ColumnKind.V, groupNumber);
-          var energyErrCol = (DoubleColumn)col.EnsureExistence("Ea_JoulePerMole.Err", typeof(DoubleColumn), ColumnKind.Err, groupNumber);
-          var k0Col = (DoubleColumn)col.EnsureExistence("ArrheniusPrefactor", typeof(DoubleColumn), ColumnKind.V, groupNumber);
-          var k0ErrCol = (DoubleColumn)col.EnsureExistence("ArrheniusPrefactor.Err", typeof(DoubleColumn), ColumnKind.Err, groupNumber);
+          var eaParaNameCol = col.EnsureExistence("Ea_ParameterName", typeof(TextColumn), ColumnKind.X, groupNumber);
+          var eaTemperatureCol = col.EnsureExistence("Ea_Temperature", typeof(DoubleColumn), ColumnKind.V, groupNumber);
+          var eaParameterValueCol = (DoubleColumn)col.EnsureExistence("Ea_ParameterValue", typeof(DoubleColumn), ColumnKind.V, groupNumber);
+          var eaParameterValueErrCol = (DoubleColumn)col.EnsureExistence("Ea_ParameterValue.Err", typeof(DoubleColumn), ColumnKind.Err, groupNumber);
 
           // one activation energy for all
           // regress the shift values versus the inverse temperature
@@ -587,10 +638,23 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
           var reg = new Altaxo.Calc.Regression.LinearFitBySvd(listInvTemp.ToArray(), listShift.ToArray(), null, listInvTemp.Count, 2, (x, arr) => { arr[0] = 1; arr[1] = x; }, 1E-12);
           var parameter = reg.Parameter;
 
-          k0Col[0] = Math.Exp(parameter[0]);
-          k0ErrCol[0] = reg.StandardErrorOfParameter(0) * Math.Exp(parameter[0]);
-          energyCol[0] = parameter[1] * Science.SIConstants.MOLAR_GAS * activationEnergySign;
-          energyErrCol[0] = reg.StandardErrorOfParameter(1) * Science.SIConstants.MOLAR_GAS;
+          eaParaNameCol[0] = "Ea (J/mol)";
+          eaParameterValueCol[0] = parameter[1] * Science.SIConstants.MOLAR_GAS * activationEnergySign;
+          eaParameterValueErrCol[0] = reg.StandardErrorOfParameter(1) * Science.SIConstants.MOLAR_GAS;
+          eaParaNameCol[1] = "K0_Inf";
+          eaTemperatureCol[1] = double.PositiveInfinity;
+          eaParameterValueCol[1] = Math.Exp(parameter[0]);
+          eaParameterValueErrCol[1] = reg.StandardErrorOfParameter(0) * Math.Exp(parameter[0]);
+          if (referenceValueUsed.HasValue)
+          {
+            var inverseT = new Altaxo.Science.Temperature(referenceValueUsed.Value, processOptions.Property1TemperatureRepresentation.Value).InInverseKelvin;
+            reg = new Altaxo.Calc.Regression.LinearFitBySvd(listInvTemp.ToArray(), listShift.ToArray(), null, listInvTemp.Count, 2, (x, arr) => { arr[0] = 1; arr[1] = x - inverseT; }, 1E-12);
+            parameter = reg.Parameter;
+            eaParaNameCol[2] = "K0_Tref";
+            eaTemperatureCol[2] = referenceValueUsed.Value;
+            eaParameterValueCol[2] = Math.Exp(parameter[0]);
+            eaParameterValueErrCol[2] = reg.StandardErrorOfParameter(0) * Math.Exp(parameter[0]);
+          }
         }
       }
 
