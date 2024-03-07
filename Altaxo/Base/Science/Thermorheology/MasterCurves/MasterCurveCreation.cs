@@ -578,16 +578,18 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
             var parameter = reg.Parameter;
 
             eaParaNameCol[idxRow] = "Ea (J/mol)";
-            eaParameterValueCol[idxRow] = parameter[1] * Science.SIConstants.MOLAR_GAS * activationEnergySign;
-            eaParameterValueErrCol[idxRow] = reg.StandardErrorOfParameter(1) * Science.SIConstants.MOLAR_GAS;
+            eaParameterValueCol[idxRow] = parameter[0] * Science.SIConstants.MOLAR_GAS * activationEnergySign;
+            eaParameterValueErrCol[idxRow] = reg.StandardErrorOfParameter(0) * Science.SIConstants.MOLAR_GAS;
             ++idxRow;
             for (int i = 0; i < prop2Sorted.Length; ++i)
             {
+              var prop2 = prop2Sorted[i];
+              int paraIndex = prop2Dict[prop2] + 1;
               eaParaNameCol[idxRow] = "K0_Inf";
               eaTemperatureCol[idxRow] = double.PositiveInfinity;
-              eaProperty2Col[idxRow] = prop2Sorted[i];
-              eaParameterValueCol[idxRow] = Math.Exp(parameter[0]);
-              eaParameterValueErrCol[idxRow] = reg.StandardErrorOfParameter(0) * Math.Exp(parameter[0]);
+              eaProperty2Col[idxRow] = prop2;
+              eaParameterValueCol[idxRow] = Math.Exp(parameter[paraIndex]);
+              eaParameterValueErrCol[idxRow] = reg.StandardErrorOfParameter(paraIndex) * Math.Exp(parameter[paraIndex]);
               ++idxRow;
             }
 
@@ -598,17 +600,15 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
                 basematrix[i, 0] -= inverseT;
               reg = new Altaxo.Calc.Regression.LinearFitBySvd(basematrix, listShift.ToArray(), null, listShift.Count, prop2Dict.Count + 1, 1E-12);
               parameter = reg.Parameter;
-              eaParaNameCol[idxRow] = "Ea (J/mol)";
-              eaParameterValueCol[idxRow] = parameter[1] * Science.SIConstants.MOLAR_GAS * activationEnergySign;
-              eaParameterValueErrCol[idxRow] = reg.StandardErrorOfParameter(1) * Science.SIConstants.MOLAR_GAS;
-              ++idxRow;
               for (int i = 0; i < prop2Sorted.Length; ++i)
               {
+                var prop2 = prop2Sorted[i];
+                int paraIndex = prop2Dict[prop2] + 1;
                 eaParaNameCol[idxRow] = "K0_Tref";
                 eaTemperatureCol[idxRow] = referenceValueUsed.Value;
-                eaProperty2Col[idxRow] = prop2Sorted[i];
-                eaParameterValueCol[idxRow] = Math.Exp(parameter[0]);
-                eaParameterValueErrCol[idxRow] = reg.StandardErrorOfParameter(0) * Math.Exp(parameter[0]);
+                eaProperty2Col[idxRow] = prop2;
+                eaParameterValueCol[idxRow] = Math.Exp(parameter[paraIndex]);
+                eaParameterValueErrCol[idxRow] = reg.StandardErrorOfParameter(paraIndex) * Math.Exp(parameter[paraIndex]);
                 ++idxRow;
               }
             }
@@ -635,25 +635,25 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
               listInvTemp.Add(t.InInverseKelvin);
             }
           }
-          var reg = new Altaxo.Calc.Regression.LinearFitBySvd(listInvTemp.ToArray(), listShift.ToArray(), null, listInvTemp.Count, 2, (x, arr) => { arr[0] = 1; arr[1] = x; }, 1E-12);
+          var reg = new Altaxo.Calc.Regression.LinearFitBySvd(listInvTemp.ToArray(), listShift.ToArray(), null, listInvTemp.Count, 2, (x, arr) => { arr[0] = x; arr[1] = 1; }, 1E-12);
           var parameter = reg.Parameter;
 
           eaParaNameCol[0] = "Ea (J/mol)";
-          eaParameterValueCol[0] = parameter[1] * Science.SIConstants.MOLAR_GAS * activationEnergySign;
-          eaParameterValueErrCol[0] = reg.StandardErrorOfParameter(1) * Science.SIConstants.MOLAR_GAS;
+          eaParameterValueCol[0] = parameter[0] * Science.SIConstants.MOLAR_GAS * activationEnergySign;
+          eaParameterValueErrCol[0] = reg.StandardErrorOfParameter(0) * Science.SIConstants.MOLAR_GAS;
           eaParaNameCol[1] = "K0_Inf";
           eaTemperatureCol[1] = double.PositiveInfinity;
-          eaParameterValueCol[1] = Math.Exp(parameter[0]);
-          eaParameterValueErrCol[1] = reg.StandardErrorOfParameter(0) * Math.Exp(parameter[0]);
+          eaParameterValueCol[1] = Math.Exp(parameter[1]);
+          eaParameterValueErrCol[1] = reg.StandardErrorOfParameter(1) * Math.Exp(parameter[1]);
           if (referenceValueUsed.HasValue)
           {
             var inverseT = new Altaxo.Science.Temperature(referenceValueUsed.Value, processOptions.Property1TemperatureRepresentation.Value).InInverseKelvin;
-            reg = new Altaxo.Calc.Regression.LinearFitBySvd(listInvTemp.ToArray(), listShift.ToArray(), null, listInvTemp.Count, 2, (x, arr) => { arr[0] = 1; arr[1] = x - inverseT; }, 1E-12);
+            reg = new Altaxo.Calc.Regression.LinearFitBySvd(listInvTemp.ToArray(), listShift.ToArray(), null, listInvTemp.Count, 2, (x, arr) => { arr[0] = x - inverseT; arr[1] = 1; }, 1E-12);
             parameter = reg.Parameter;
             eaParaNameCol[2] = "K0_Tref";
             eaTemperatureCol[2] = referenceValueUsed.Value;
-            eaParameterValueCol[2] = Math.Exp(parameter[0]);
-            eaParameterValueErrCol[2] = reg.StandardErrorOfParameter(0) * Math.Exp(parameter[0]);
+            eaParameterValueCol[2] = Math.Exp(parameter[1]);
+            eaParameterValueErrCol[2] = reg.StandardErrorOfParameter(1) * Math.Exp(parameter[1]);
           }
         }
       }
