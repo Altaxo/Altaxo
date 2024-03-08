@@ -379,6 +379,8 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
       // -------- Output of the shift values ---------------------------
       groupNumber = (int)(100 * Math.Ceiling((groupNumber + 1) / 100d));
       {
+        var indexCol = (DoubleColumn)col.EnsureExistence("IndexOfShiftCurve", typeof(DoubleColumn), ColumnKind.X, groupNumber);
+        indexCol.Data = Enumerable.Range(0, numberOfCurves);
         // Output the columns with the values of Property1 (most probable the temperature) ....
         if (!string.IsNullOrEmpty(processOptions.Property1Name))
         {
