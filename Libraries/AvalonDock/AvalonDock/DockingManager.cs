@@ -1138,7 +1138,7 @@ namespace AvalonDock
 				new FrameworkPropertyMetadata((Style)null));
 
 		/// <summary>
-		/// Gets or sets the GridSplitterVerticalStyle property.  This dependency property 
+		/// Gets or sets the GridSplitterVerticalStyle property.  This dependency property
 		/// indicates the style to apply to the LayoutGridResizerControl when displayed vertically.
 		/// </summary>
 		public Style GridSplitterVerticalStyle
@@ -1164,7 +1164,7 @@ namespace AvalonDock
 				new FrameworkPropertyMetadata((Style)null));
 
 		/// <summary>
-		/// Gets or sets the GridSplitterHorizontalStyle property.  This dependency property 
+		/// Gets or sets the GridSplitterHorizontalStyle property.  This dependency property
 		/// indicates the style to apply to the LayoutGridResizerControl when displayed horizontally.
 		/// </summary>
 		public Style GridSplitterHorizontalStyle
@@ -1383,6 +1383,22 @@ namespace AvalonDock
 
 		#endregion AutoWindowSizeWhenOpened
 
+		#region ShowNavigator
+
+		/// <summary><see cref="ShowNavigator"/> dependency property.</summary>
+		public static readonly DependencyProperty ShowNavigatorProperty = DependencyProperty.Register(nameof(ShowNavigator), typeof(bool), typeof(DockingManager),
+				new FrameworkPropertyMetadata(true));
+
+		/// <summary>Gets/sets whether the navigator window should be shown when the user presses Control + Tab.</summary>
+		[Bindable(true), Description("Gets/sets whether floating windows should show the system menu when a custom context menu is not defined."), Category("FloatingWindow")]
+		public bool ShowNavigator
+		{
+			get => (bool)GetValue(ShowNavigatorProperty);
+			set => SetValue(ShowNavigatorProperty, value);
+		}
+
+		#endregion ShowNavigator
+
 		#endregion Public Properties
 
 		#region LogicalChildren
@@ -1428,7 +1444,7 @@ namespace AvalonDock
 
 		private bool IsNavigatorWindowActive => _navigatorWindow != null;
 
-		private bool CanShowNavigatorWindow => _layoutItems.Any();
+		private bool CanShowNavigatorWindow => ShowNavigator && _layoutItems.Any();
 
 		#endregion Private Properties
 
@@ -1854,95 +1870,7 @@ namespace AvalonDock
 			LayoutFloatingWindowControlClosed?.Invoke(this, new LayoutFloatingWindowControlClosedEventArgs(floatingWindow));
 		}
 
-		internal void ExecuteCloseCommand(LayoutDocument document)
-		{
-			if (DocumentClosing != null)
-			{
-				var argsClosing = new DocumentClosingEventArgs(document);
-				DocumentClosing(this, argsClosing);
-				if (argsClosing.Cancel) return;
-			}
-
-			//
-			// Determine the index of the document that will be removed.
-			//
-			int indexOfDocumentToRemove = GetIndexOfDocument(document);
-
-			if (!document.CloseDocument()) return;
-
-			RemoveViewFromLogicalChild(document);
-			if (document.Content is UIElement uIElement)
-				RemoveLogicalChild(uIElement);
-			DocumentClosed?.Invoke(this, new DocumentClosedEventArgs(document));
-
-			//get rid of the closed document content
-			document.Content = null;
-
-			int indexOfDocumentToSelect = indexOfDocumentToRemove - 1;
-
-			if (indexOfDocumentToSelect < 0)
-			{
-				indexOfDocumentToSelect = 0;
-			}
-
-			//
-			// Determine the new active document and activate it.
-			// This doesn't only update the layout, but also all related (dependency) properties.
-			//
-			LayoutDocument layoutDocument = GetDocumentOnIndex(indexOfDocumentToSelect);
-
-			if (layoutDocument != null)
-			{
-				layoutDocument.IsActive = true;
-			}
-		}
-
-		private LayoutDocument GetDocumentOnIndex(int indexToFind)
-		{
-			if (indexToFind < 0)
-			{
-				throw new ArgumentOutOfRangeException(nameof(indexToFind));
-			}
-
-			int index = 0;
-
-			foreach (LayoutDocument layoutDocument in this.Layout.Descendents().OfType<LayoutDocument>())
-			{
-				if (index == indexToFind)
-				{
-					return layoutDocument;
-				}
-
-				index++;
-			}
-
-			return null;
-		}
-
-		private int GetIndexOfDocument(LayoutDocument documentToFind)
-		{
-			if (documentToFind == null)
-			{
-				throw new ArgumentNullException(nameof(documentToFind));
-			}
-
-			int index = 0;
-
-			foreach (LayoutDocument layoutDocument in this.Layout.Descendents().OfType<LayoutDocument>())
-			{
-				if (layoutDocument == documentToFind)
-				{
-					return index;
-				}
-
-				index++;
-			}
-
-			//
-			// Not found.
-			//
-			return -1;
-		}
+		
 
 		internal void ExecuteCloseAllButThisCommand(LayoutContent contentSelected)
 		{
@@ -1970,6 +1898,62 @@ namespace AvalonDock
 				RemoveViewFromLogicalChild(model);
 				AnchorableClosed?.Invoke(this, new AnchorableClosedEventArgs(model));
 			}
+		}
+
+		internal void ExecuteCloseCommand(LayoutDocument document)
+		{
+			if (DocumentClosing != null)
+			{
+				var argsClosing = new DocumentClosingEventArgs(document);
+				DocumentClosing(this, argsClosing);
+				if (argsClosing.Cancel) return;
+			}
+
+			// Get the document to activate after the close.
+			LayoutDocument documentToActivate = GetDocumentToActivate(document);
+
+			if (!document.CloseDocument()) return;
+
+			RemoveViewFromLogicalChild(document);
+			if (document.Content is UIElement uIElement)
+				RemoveLogicalChild(uIElement);
+			DocumentClosed?.Invoke(this, new DocumentClosedEventArgs(document));
+
+			//get rid of the closed document content
+			document.Content = null;
+
+			//
+			// Activate the document determined to be the next active document.
+			// This doesn't only update the layout, but also all related (dependency) properties.
+			//
+			if (documentToActivate != null)
+			{
+				documentToActivate.IsActive = true;
+			}
+		}
+
+		private LayoutDocument GetDocumentToActivate(LayoutDocument previousDocument)
+		{
+			ILayoutContainer parentContainer = previousDocument.Parent;
+			IEnumerable<LayoutDocument> siblingDocuments = parentContainer?.Children.OfType<LayoutDocument>() ?? Enumerable.Empty<LayoutDocument>();
+
+			foreach (var childPair in siblingDocuments.Zip(siblingDocuments.Skip(1), Tuple.Create))
+			{
+				if (childPair.Item2 == previousDocument)
+				{
+					return childPair.Item1;
+				}
+			}
+
+			foreach (LayoutDocument document in this.Layout.Descendents().OfType<LayoutDocument>())
+			{
+				if (document.IsSelected)
+				{
+					return document;
+				}
+			}
+
+			return null;
 		}
 
 		internal void ExecuteHideCommand(LayoutAnchorable anchorable)
@@ -2125,9 +2109,8 @@ namespace AvalonDock
 			}
 			_fwHiddenList.Clear();
 
-			// load floating windows not already loaded! (issue #59 & #254)
-			var items = new List<LayoutFloatingWindow>(Layout.FloatingWindows.Where(fw => !_fwList.Any(fwc => fwc.Model == fw)));
-			foreach (var fw in items)
+			// load floating windows not already loaded! (issue #59 & #254 & #426)
+			foreach (var fw in Layout.FloatingWindows.Where(fw => !_fwList.Any(fwc => fwc.Model == fw)))
 				CreateUIElementForModel(fw);
 
 			//create the overlaywindow if it's possible
@@ -2292,7 +2275,7 @@ namespace AvalonDock
 					foreach (var documentToRemove in documentsToRemove)
 					{
 						documentToRemove.Content = null;
-						documentToRemove.Parent.RemoveChild(documentToRemove);
+						documentToRemove.Parent?.RemoveChild(documentToRemove);
 						RemoveViewFromLogicalChild(documentToRemove);
 					}
 				}
@@ -2354,7 +2337,7 @@ namespace AvalonDock
 				var documentsToRemove = GetItemsToRemoveAfterReset<LayoutDocument>(DocumentsSource);
 				foreach (var documentToRemove in documentsToRemove)
 				{
-					(documentToRemove.Parent as ILayoutContainer).RemoveChild(
+					(documentToRemove.Parent as ILayoutContainer)?.RemoveChild(
 						documentToRemove);
 					RemoveViewFromLogicalChild(documentToRemove);
 				}
