@@ -18,8 +18,8 @@
   </ItemGroup>
   <ItemGroup>
     <!-- Make sure this versions always match that of the MLNetDependencies project -->
-    <PackageReference Include="Microsoft.ML" Version="2.0.1" />
-    <PackageReference Include="Microsoft.ML.TimeSeries" Version="2.0.1" />
+    <PackageReference Include="Microsoft.ML" Version="3.0.1" />
+    <PackageReference Include="Microsoft.ML.TimeSeries" Version="3.0.1" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Altaxo\Base\AltaxoBase.csproj" />
