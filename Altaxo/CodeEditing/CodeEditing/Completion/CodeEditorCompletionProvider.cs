@@ -26,17 +26,17 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
+using Altaxo.CodeEditing.SignatureHelp;
+using Altaxo.CodeEditing.SnippetHandling;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Completion;
+using Microsoft.CodeAnalysis.SignatureHelp;
 using Microsoft.CodeAnalysis.Text;
 
 namespace Altaxo.CodeEditing.Completion
 {
-  using System.Threading;
-  using Microsoft.CodeAnalysis.SignatureHelp;
-  using SignatureHelp;
-  using SnippetHandling;
 
   internal sealed class CodeEditorCompletionProvider : ICodeEditorCompletionProvider
   {
@@ -94,9 +94,8 @@ namespace Altaxo.CodeEditing.Completion
       }
 #endif
 
-      if (overloadProvider == null)
+      if (overloadProvider == null && CompletionService.GetService(document) is { } completionService)
       {
-        var completionService = CompletionService.GetService(document);
         var completionTrigger = GetCompletionTrigger(triggerChar);
         var data = await completionService.GetCompletionsAsync(
             document,
@@ -106,12 +105,11 @@ namespace Altaxo.CodeEditing.Completion
         if (data != null && data.Items.Any())
         {
           useHardSelection = data.SuggestionModeItem == null;
-          var helper = Microsoft.CodeAnalysis.Completion.CompletionHelper.GetHelper(document);
           var text = await document.GetTextAsync().ConfigureAwait(false);
           var textSpanToText = new Dictionary<TextSpan, string>();
 
           completionData = data.Items
-              .Where(item => MatchesFilterText(helper, item, text, textSpanToText))
+              .Where(item => MatchesFilterText(completionService, document, item, text, textSpanToText))
               .Select(item => new AvalonEditCompletionItem(document, item, triggerChar, _snippetService.SnippetManager))
                   .ToArray<ICompletionDataEx>();
         }
@@ -124,12 +122,12 @@ namespace Altaxo.CodeEditing.Completion
       return new CompletionResult(completionData, overloadProvider, useHardSelection);
     }
 
-    private static bool MatchesFilterText(Microsoft.CodeAnalysis.Completion.CompletionHelper helper, CompletionItem item, SourceText text, Dictionary<TextSpan, string> textSpanToText)
+    private static bool MatchesFilterText(CompletionService completionService, Document document, CompletionItem item, SourceText text, Dictionary<TextSpan, string> textSpanToText)
     {
       var filterText = GetFilterText(item, text, textSpanToText);
       if (string.IsNullOrEmpty(filterText))
         return true;
-      return helper.MatchesPattern(item, filterText, System.Globalization.CultureInfo.InvariantCulture);
+      return completionService.FilterItems(document, [item], filterText).Length > 0;
     }
 
     private static string GetFilterText(CompletionItem item, SourceText text, Dictionary<TextSpan, string> textSpanToText)

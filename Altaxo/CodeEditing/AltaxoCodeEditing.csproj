@@ -34,13 +34,13 @@
     <ProjectReference Include="..\..\Libraries\ICSharpCode.AvalonEdit\ICSharpCode.AvalonEdit.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="IgnoresAccessChecksToGenerator" Version="0.6.0" PrivateAssets="All" />
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.5.2-3.23171.7" />
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Features" Version="4.5.2-3.23171.7" />
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="4.5.2-3.23171.7" />
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.5.2-3.23171.7" />
-    <PackageReference Include="Microsoft.CodeAnalysis.LanguageServer.Protocol" Version="4.5.2-3.23171.7" />
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.EditorFeatures" Version="4.5.2-3.23171.7" />
+    <PackageReference Include="IgnoresAccessChecksToGenerator" Version="0.7.0" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.CodeAnalysis.LanguageServer.Protocol" Version="4.9.0-3.24121.1" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.9.0-3.24121.1" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Features" Version="4.9.0-3.24121.1" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="4.9.0-3.24121.1" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.9.0-3.24121.1" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.EditorFeatures" Version="4.9.0-3.24121.1" />
     <PackageReference Include="System.Reflection.Metadata" Version="8.0.0" />
     <PackageReference Include="System.Reflection.MetadataLoadContext" Version="8.0.0" />
     <PackageReference Include="System.Collections.Immutable" Version="8.0.0" />

@@ -27,12 +27,12 @@ namespace Altaxo.CodeEditing.Renaming
       {
         var newSymbolName = dialog.SymbolName;
 
+        var options = new SymbolRenameOptions();
 
         var renameLocations = await Renamer.FindRenameLocationsAsync(
           document.Project.Solution,
           symbol,
-          default,
-          default,
+          options,
           CancellationToken.None)
           .ConfigureAwait(true); // we need Gui context afterwards
         var textChanges = renameLocations.Locations.Select(loc => new TextChange(loc.Location.SourceSpan, newSymbolName));
