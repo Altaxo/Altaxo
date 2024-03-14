@@ -5,9 +5,7 @@
     <Copyright>Alexandre Mutel</Copyright>
     <NeutralLanguage>en-US</NeutralLanguage>
     <Authors>Alexandre Mutel</Authors>
-    <!-- Markdig.Wpf still supports net452, a target still supported by by Microsoft until January 10, 2023 -->
-    <!-- see: https://github.com/xoofx/markdig/pull/466 -->
-    <TargetFrameworks>net452;netstandard2.0;netstandard2.1;net6.0</TargetFrameworks>
+    <TargetFrameworks>net462;netstandard2.0;netstandard2.1;net6.0;net8.0</TargetFrameworks>
     <CheckEolTargetFramework>false</CheckEolTargetFramework>
     <PackageTags>Markdown CommonMark md html md2html</PackageTags>
     <PackageReleaseNotes>https://github.com/lunet-io/markdig/blob/master/changelog.md</PackageReleaseNotes>
@@ -16,7 +14,7 @@
     <PackageIcon>markdig.png</PackageIcon>
     <PackageProjectUrl>https://github.com/lunet-io/markdig</PackageProjectUrl>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <LangVersion>10</LangVersion>
+    <LangVersion>12</LangVersion>
     <Nullable>enable</Nullable>
     <NoWarn>$(NoWarn);CS1591</NoWarn>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
@@ -26,22 +24,18 @@
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
 
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net452' ">
-    <PackageReference Include="System.Memory" Version="4.5.4" />
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net462' OR  '$(TargetFramework)' == 'netstandard2.0'">
+    <PackageReference Include="System.Memory" Version="4.5.5" />
   </ItemGroup>
 
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
-    <PackageReference Include="System.Memory" Version="4.5.4" />
-  </ItemGroup>
-  
   <ItemGroup>
     <None Include="../../img/markdig.png" Pack="true" PackagePath="" />
     <None Include="../../readme.md" Pack="true" PackagePath="/"/>
-    <PackageReference Include="MinVer" Version="3.1.0">
+    <PackageReference Include="MinVer" Version="4.3.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.*" PrivateAssets="All"/>
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.*" PrivateAssets="All"/>
   </ItemGroup>
 
   <Target Name="PatchVersion" AfterTargets="MinVer">

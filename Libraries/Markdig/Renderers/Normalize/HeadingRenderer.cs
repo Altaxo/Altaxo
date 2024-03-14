@@ -4,33 +4,37 @@
 
 using Markdig.Syntax;
 
-namespace Markdig.Renderers.Normalize
+namespace Markdig.Renderers.Normalize;
+
+/// <summary>
+/// An Normalize renderer for a <see cref="HeadingBlock"/>.
+/// </summary>
+/// <seealso cref="NormalizeObjectRenderer{HeadingBlock}" />
+public class HeadingRenderer : NormalizeObjectRenderer<HeadingBlock>
 {
-    /// <summary>
-    /// An Normalize renderer for a <see cref="HeadingBlock"/>.
-    /// </summary>
-    /// <seealso cref="NormalizeObjectRenderer{HeadingBlock}" />
-    public class HeadingRenderer : NormalizeObjectRenderer<HeadingBlock>
-    {
-        private static readonly string[] HeadingTexts = {
-            "#",
-            "##",
-            "###",
-            "####",
-            "#####",
-            "######",
-        };
+    private static readonly string[] HeadingTexts = [
+        "#",
+        "##",
+        "###",
+        "####",
+        "#####",
+        "######",
+    ];
 
-        protected override void Write(NormalizeRenderer renderer, HeadingBlock obj)
+    protected override void Write(NormalizeRenderer renderer, HeadingBlock obj)
+    {        
+        if (obj.Level is > 0 and <= 6)
         {
-            var headingText = obj.Level > 0 && obj.Level <= 6
-                ? HeadingTexts[obj.Level - 1]
-                : new string('#', obj.Level);
-
-            renderer.Write(headingText).Write(' ');
-            renderer.WriteLeafInline(obj);
-
-            renderer.FinishBlock(renderer.Options.EmptyLineAfterHeading);
+            renderer.Write(HeadingTexts[obj.Level - 1]);
         }
+        else
+        {
+            renderer.Write('#', obj.Level);            
+        }        
+
+        renderer.Write(' ');
+        renderer.WriteLeafInline(obj);
+
+        renderer.FinishBlock(renderer.Options.EmptyLineAfterHeading);
     }
 }
