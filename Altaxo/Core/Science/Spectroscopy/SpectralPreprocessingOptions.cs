@@ -44,8 +44,8 @@ namespace Altaxo.Science.Spectroscopy
     private const int IndexSanitzer = 0;
     private const int IndexDarkSubtraction = 1;
     private const int IndexSpikeRemoval = 2;
-    private const int IndexYCalibration = 3;
-    private const int IndexXCalibration = 4;
+    private const int IndexXCalibration = 3;
+    private const int IndexYCalibration = 4;
     private const int IndexResampling = 5;
     private const int IndexSmoothing = 6;
     private const int IndexBaselineEstimation = 7;
@@ -85,7 +85,7 @@ namespace Altaxo.Science.Spectroscopy
         var cropping = info.GetValue<ICropping>("Cropping", parent);
         var normalization = info.GetValue<INormalization>("Normalization", parent);
 
-        return new SpectralPreprocessingOptions(new ISingleSpectrumPreprocessor[]
+        return new SpectralPreprocessingOptionsList(new ISingleSpectrumPreprocessor[]
         {
           sanitizer,
           new DarkSubtractionNone(),
@@ -136,7 +136,7 @@ namespace Altaxo.Science.Spectroscopy
         var cropping = info.GetValue<ICropping>("Cropping", parent);
         var normalization = info.GetValue<INormalization>("Normalization", parent);
 
-        return new SpectralPreprocessingOptions(new ISingleSpectrumPreprocessor[]
+        return new SpectralPreprocessingOptionsList(new ISingleSpectrumPreprocessor[]
         {
           sanitizer,
           new DarkSubtractionNone(),
@@ -152,13 +152,17 @@ namespace Altaxo.Science.Spectroscopy
       }
     }
 
+    #endregion
+
+    #region Version 2
+
     /// <summary>
     /// 2022-06-09 V0: Initial version
     /// 2022-08-04 V1: Added Calibration element
     /// 2023-03-30 V2: Added DarkSubtraction and YCalibration, rename Calibration to XCalibration
     /// </summary>
     /// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(SpectralPreprocessingOptions), 2)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoCore", "Altaxo.Science.Spectroscopy.SpectralPreprocessingOptions", 2)]
     public class SerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
@@ -190,13 +194,71 @@ namespace Altaxo.Science.Spectroscopy
         var normalization = info.GetValue<INormalization>("Normalization", parent);
 
 
-        return new SpectralPreprocessingOptions(new ISingleSpectrumPreprocessor[]
+        return new SpectralPreprocessingOptionsList(new ISingleSpectrumPreprocessor[]
         {
           sanitizer,
           darkSubtraction,
           spikeRemoval,
           ycalibration,
           xcalibration,
+          resampling,
+          smoothing,
+          baselineEstimation,
+          cropping,
+          normalization,
+        });
+      }
+    }
+    #endregion
+
+    #region Version 3
+
+    /// <summary>
+    /// 2022-06-09 V0: Initial version
+    /// 2022-08-04 V1: Added Calibration element
+    /// 2023-03-30 V2: Added DarkSubtraction and YCalibration, rename Calibration to XCalibration
+    /// 2024-03-16 V3: Change positions of x-calibration and y-calibration
+    /// </summary>
+    /// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(SpectralPreprocessingOptions), 3)]
+    public class SerializationSurrogate3 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        var s = (SpectralPreprocessingOptions)obj;
+        info.AddValue("Sanitizer", s.Sanitizer);
+        info.AddValue("DarkSubtraction", s.DarkSubtraction);
+        info.AddValue("SpikeRemoval", s.SpikeRemoval);
+        info.AddValue("XCalibration", s.XCalibration);
+        info.AddValue("YCalibration", s.YCalibration);
+        info.AddValue("Resampling", s.Resampling);
+        info.AddValue("Smoothing", s.Smoothing);
+        info.AddValue("BaselineEstimation", s.BaselineEstimation);
+        info.AddValue("Cropping", s.Cropping);
+        info.AddValue("Normalization", s.Normalization);
+      }
+
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      {
+        var sanitizer = info.GetValue<ISanitizer>("Sanitizer", parent);
+        var darkSubtraction = info.GetValue<IDarkSubtraction>("DarkSubtraction", parent);
+        var spikeRemoval = info.GetValue<ISpikeRemoval>("SpikeRemoval", parent);
+        var xcalibration = info.GetValue<IXCalibration>("XCalibration", parent);
+        var ycalibration = info.GetValue<IYCalibration>("YCalibration", parent);
+        var resampling = info.GetValue<IResampling>("Resampling", parent);
+        var smoothing = info.GetValue<ISmoothing>("Smoothing", parent);
+        var baselineEstimation = info.GetValue<IBaselineEstimation>("BaselineEstimation", parent);
+        var cropping = info.GetValue<ICropping>("Cropping", parent);
+        var normalization = info.GetValue<INormalization>("Normalization", parent);
+
+
+        return new SpectralPreprocessingOptions(new ISingleSpectrumPreprocessor[]
+        {
+          sanitizer,
+          darkSubtraction,
+          spikeRemoval,
+          xcalibration,
+          ycalibration,
           resampling,
           smoothing,
           baselineEstimation,
@@ -216,8 +278,8 @@ namespace Altaxo.Science.Spectroscopy
         yield return typeof(ISanitizer);
         yield return typeof(IDarkSubtraction);
         yield return typeof(ISpikeRemoval);
-        yield return typeof(IYCalibration);
         yield return typeof(IXCalibration);
+        yield return typeof(IYCalibration);
         yield return typeof(IResampling);
         yield return typeof(ISmoothing);
         yield return typeof(IBaselineEstimation);
@@ -232,8 +294,8 @@ namespace Altaxo.Science.Spectroscopy
         new SanitizerNone(),
         new DarkSubtractionNone(),
         new SpikeRemovalNone(),
-        new YCalibrationNone(),
         new XCalibrationNone(),
+        new YCalibrationNone(),
         new ResamplingNone(),
         new SmoothingNone(),
         new BaselineEstimationNone(),

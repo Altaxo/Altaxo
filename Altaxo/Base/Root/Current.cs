@@ -257,7 +257,12 @@ namespace Altaxo
       return null;
     }
 
-    /// <inheritdoc see="IMessageService"/>
+
+    /// <summary>
+    /// Gets the message service. The message service usually requires action from the user (showing a message box,
+    /// the user has to click OK to close the message box). If a message should be showed without requiring
+    /// user interaction, it is better to use <see cref="InfoTextMessageService"/>.
+    /// </summary>
     public static IMessageService MessageService
     {
       get

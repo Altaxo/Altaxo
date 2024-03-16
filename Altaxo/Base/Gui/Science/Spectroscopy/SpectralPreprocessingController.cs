@@ -166,5 +166,19 @@ namespace Altaxo.Gui.Science.Spectroscopy
     }
 
 
+    protected override bool ApplyEnd(bool applyResult, bool disposeController)
+    {
+      // clean the SpectralPreprocessingOptionsList by dropping non-elements
+      if (applyResult == true)
+      {
+        if (_doc is SpectralPreprocessingOptionsList doclist)
+        {
+          _doc = SpectralPreprocessingOptionsList.CreateWithoutNoneElements(doclist);
+        }
+      }
+
+      return base.ApplyEnd(applyResult, disposeController);
+    }
+
   }
 }

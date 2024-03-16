@@ -108,7 +108,7 @@ namespace Altaxo.Gui.Science.Spectroscopy
           ApplyCurrentController();
           if (value == false)
           {
-            var newPre = SpectralPreprocessingOptions.TryCreateFrom(InternalPreprocessingOptions);
+            var newPre = SpectralPreprocessingOptions.TryCreateFrom(SpectralPreprocessingOptionsList.CreateWithoutNoneElements(InternalPreprocessingOptions));
             if (newPre is null)
               return; // conversion is not possible
             else

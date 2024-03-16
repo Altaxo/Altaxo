@@ -288,7 +288,7 @@ namespace Altaxo.Science.Spectroscopy
             else
             {
               // we can not throw an exception here, since this can happen oftenly
-              Current.MessageService.ShowError($"Source for x-calibration not found anymore: table: \"{xcal.TableName}\"!");
+              Current.InfoTextMessageService.WriteLine(Main.Services.MessageLevel.Error, nameof(SpectralPreprocessingOptionsDocNode), $"Source for x-calibration not found anymore: table: \"{xcal.TableName}\"!");
             }
             break;
           case YCalibrationByDataSource ycal:
@@ -300,7 +300,7 @@ namespace Altaxo.Science.Spectroscopy
             else
             {
               // we can not throw an exception here, since this can happen oftenly
-              Current.MessageService.ShowError($"Source for y-calibration not found anymore: table: \"{ycal.TableName}\"!");
+              Current.InfoTextMessageService.WriteLine(Main.Services.MessageLevel.Error, nameof(SpectralPreprocessingOptionsDocNode), $"Source for y-calibration not found anymore: table: \"{ycal.TableName}\"!");
             }
             break;
           case IReferencingXYColumns refXYCol:
@@ -312,7 +312,7 @@ namespace Altaxo.Science.Spectroscopy
             else
             {
               // we can not throw an exception here, since this can happen oftenly
-              Current.MessageService.ShowError($"Source for element {refXYCol} not found anymore: table: \"{refXYCol.XYDataOrigin}\"!");
+              Current.InfoTextMessageService.WriteLine(Main.Services.MessageLevel.Error, nameof(SpectralPreprocessingOptionsDocNode), $"Source for element {refXYCol} not found anymore: table: \"{refXYCol.XYDataOrigin}\"!");
             }
             break;
           case IReferencingTable rt:
