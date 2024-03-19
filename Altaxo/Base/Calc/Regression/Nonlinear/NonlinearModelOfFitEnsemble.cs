@@ -651,13 +651,21 @@ namespace Altaxo.Calc.Regression.Nonlinear
 
     protected override Matrix<double> NumericalJacobian(Vector<double> parameters, Vector<double> currentValues, int accuracyOrder = 2)
     {
-      const double sqrtEpsilon = 1.4901161193847656250E-8; // sqrt(machineEpsilon)
-
       Matrix<double> derivatives = _jacobianValue;
-
-      var d = 0.000003 * parameters.PointwiseAbs().PointwiseMaximum(sqrtEpsilon);
-
       var h = Vector<double>.Build.Dense(NumberOfParameters);
+
+      var d = 0.000003 * parameters;
+      for (int i = 0; i < d.Count; ++i)
+      {
+        d[i] = Math.Abs(d[i]);
+        if (d[i] == 0)
+        {
+          // if the parameter is 0, we use a somewhat higher value than the lowest value which leads to a change of the function values
+          d[i] = 16 * GetLowestParameterVariationToChangeFunctionValues(currentValues, i, parameters, h);
+        }
+      }
+
+
       for (int j = 0; j < NumberOfParameters; j++)
       {
         h[j] = d[j];
@@ -735,7 +743,31 @@ namespace Altaxo.Calc.Regression.Nonlinear
       return _jacobianValue;
     }
 
-
-
+    /// <summary>
+    /// If a parameter is zero, it is hard to find the right order of magnitude for a variation of that parameter.
+    /// Here, the variation is guessed by starting with the lowest possible variation, and increase the variation, until
+    /// the function values deviate from the original value.
+    /// </summary>
+    /// <param name="currentValues">The current function values.</param>
+    /// <param name="idxParameter">The index of the parameter for which to find a good guess for the variation.</param>
+    /// <param name="parameters">The parameters.</param>
+    /// <param name="h">A scratch array.</param>
+    /// <returns>The lowest variation (increased in steps of 2), for which the function values deviate from the original values.</returns>
+    private double GetLowestParameterVariationToChangeFunctionValues(Vector<double> currentValues, int idxParameter, Vector<double> parameters, Vector<double> h)
+    {
+      // because we have no idea what the order of magnitude of the parameter is, we start from the lowest possible
+      // value and increase h by a factor, until there is a notable difference between the original value and the new value
+      h.Clear();
+      for (double dh = double.Epsilon; dh < double.MaxValue; dh *= 2)
+      {
+        h[idxParameter] = dh;
+        EvaluateModelValues(parameters + h, _f2, false);
+        if ((_f2 - currentValues).L1Norm() > 0)
+        {
+          return dh;
+        }
+      }
+      return 1; // obviously, there is no variation with this parameter
+    }
   }
 }
