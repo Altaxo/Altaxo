@@ -22,20 +22,14 @@
 
 #endregion Copyright
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using DocumentFormat.OpenXml.Math;
-using WpfMath.Atoms;
+using XamlMath.Atoms;
 
 namespace Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering.Renderers
 {
   /// <summary>
   /// Renderer for <see cref="StyledAtom"/> objects, i.e. elements that have a style, e.g. a foreground color etc.
   /// </summary>
-  /// <seealso cref="Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering.OpenXMLAtomRenderer{WpfMath.Atoms.StyledAtom}" />
+  /// <seealso cref="Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering.OpenXMLAtomRenderer{XamlMath.Atoms.StyledAtom}" />
   internal class StyledAtomRenderer : OpenXMLAtomRenderer<StyledAtom>
   {
     protected override WriteResult Write(OpenXMLWpfMathRenderer renderer, StyledAtom item)
@@ -43,6 +37,7 @@ namespace Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering.Renderers
       bool foregroundPushed = false;
       bool backgroundPushed = false;
 
+      /*
       if (item.Foreground is System.Windows.Media.SolidColorBrush scbf)
       {
         var c = scbf.Color;
@@ -56,6 +51,7 @@ namespace Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering.Renderers
         renderer.PushBackgroundColor(c.R, c.G, c.B);
         backgroundPushed = true;
       }
+      */
 
       renderer.Write(item.RowAtom);
 

@@ -22,21 +22,15 @@
 
 #endregion Copyright
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using DocumentFormat.OpenXml.Math;
-using DocumentFormat.OpenXml.Wordprocessing;
-using WpfMath.Atoms;
+using XamlMath.Atoms;
 
 namespace Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering.Renderers
 {
   /// <summary>
   /// Renderer for <see cref="FractionAtom"/> objects (mathematical fractions).
   /// </summary>
-  /// <seealso cref="Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering.OpenXMLAtomRenderer{WpfMath.Atoms.FractionAtom}" />
+  /// <seealso cref="Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering.OpenXMLAtomRenderer{XamlMath.Atoms.FractionAtom}" />
   internal class FractionAtomRenderer : OpenXMLAtomRenderer<FractionAtom>
   {
     protected override WriteResult Write(OpenXMLWpfMathRenderer renderer, FractionAtom item)

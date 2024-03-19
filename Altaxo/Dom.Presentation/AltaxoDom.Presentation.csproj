@@ -26,7 +26,7 @@
     <ProjectReference Include="..\Base.Presentation\AltaxoBase.Presentation.csproj" />
     <ProjectReference Include="..\Dom\AltaxoDom.csproj" />
     <ProjectReference Include="..\CodeEditing\AltaxoCodeEditing.csproj" />
-    <ProjectReference Include="..\..\Libraries\WpfMath\WpfMath.csproj" />
+    <ProjectReference Include="..\..\Libraries\xaml-math\src\WpfMath\WpfMath.csproj" />
     <ProjectReference Include="..\..\Libraries\Markdig.Wpf\Markdig.Wpf.csproj" />
     <ProjectReference Include="..\MarkdownEditing\AltaxoMarkdownEditing.csproj" />
     <ProjectReference Include="..\HelpViewer\AltaxoHelpViewer.csproj" />

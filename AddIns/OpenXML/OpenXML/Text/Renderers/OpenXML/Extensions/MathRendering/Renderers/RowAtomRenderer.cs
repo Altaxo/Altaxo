@@ -22,19 +22,14 @@
 
 #endregion Copyright
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using WpfMath.Atoms;
+using XamlMath.Atoms;
 
 namespace Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering.Renderers
 {
   /// <summary>
   /// Renderer for <see cref="RowAtom"/> objects, containing children that are horizontally aligned.
   /// </summary>
-  /// <seealso cref="Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering.OpenXMLAtomRenderer{WpfMath.Atoms.RowAtom}" />
+  /// <seealso cref="Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering.OpenXMLAtomRenderer{XamlMath.Atoms.RowAtom}" />
   internal class RowAtomRenderer : OpenXMLAtomRenderer<RowAtom>
   {
     protected override WriteResult Write(OpenXMLWpfMathRenderer renderer, RowAtom item)

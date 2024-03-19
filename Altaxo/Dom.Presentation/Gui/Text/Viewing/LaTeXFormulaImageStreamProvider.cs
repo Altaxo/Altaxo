@@ -27,11 +27,12 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using WpfMath;
+using WpfMath.Parsers;
+using WpfMath.Rendering;
+using XamlMath;
+using XamlMath.Boxes;
 
 namespace Altaxo.Gui.Markdown
 {
@@ -40,7 +41,11 @@ namespace Altaxo.Gui.Markdown
   /// </summary>
   public class LaTeXFormulaImageStreamProvider : Altaxo.Main.Services.ILaTeXFormulaImageStreamProvider
   {
-    private static TexFormulaParser _formulaParser = new TexFormulaParser();
+    private static TexFormulaParser _formulaParser = WpfTeXFormulaParser.Instance;
+
+
+    private static TexEnvironment _texEnvironment = WpfTeXEnvironment.Create(TexStyle.Display);
+
 
     /// <inheritdoc/>
     public (Stream bitmapStream, string placement, int yoffset, int width96thInch, int height96thInch) Parse(string text, string fontFamily, double fontSize, double dpiResolution, bool isIntendedForHelp1File)
@@ -76,10 +81,20 @@ namespace Altaxo.Gui.Markdown
         }
       }
 
-      var formulaRenderer = formula.GetRenderer(TexStyle.Display, fontSize, fontFamily);
+      Box box;
+      {
+        // get the bounding box of the formula
+        var visual = new DrawingVisual();
+        using (var drawingContext = visual.RenderOpen())
+        {
+          box = formula.RenderTo(drawingContext, _texEnvironment, fontSize);
+        }
+      }
+
       // the placement of the image depends on the depth value
-      var absoluteDepth = formulaRenderer.RenderSize.Height * formulaRenderer.RelativeDepth;
-      var absoluteAscent = formulaRenderer.RenderSize.Height * (1 - formulaRenderer.RelativeDepth);
+      var relativeDepth = box.Depth / box.TotalHeight;
+      var absoluteDepth = box.Depth * fontSize; // TODO: is this in 72th inch because of fontSize or in 96th inch?
+      var absoluteAscent = box.Height * fontSize;
 
       double yoffset = 0;
 
@@ -93,7 +108,7 @@ namespace Altaxo.Gui.Markdown
         // dictionary that holds the number of additional pixels neccessary to exactly align the formula, and the value is the alignment
         var sort = new SortedDictionary<double, (double, string)>();
 
-        if (formulaRenderer.RelativeDepth < (1 / 16.0)) // if the formulas baseline is almost at the bottom of the image
+        if (relativeDepth < (1 / 16.0)) // if the formulas baseline is almost at the bottom of the image
         {
           sort.Add(0, (0.0, "baseline")); // then we can use baseline as vertical alight
         }
@@ -121,7 +136,7 @@ namespace Altaxo.Gui.Markdown
         }
 
         var firstEntry = sort.First();
-        (bmp, width96thInch, height96thInch) = RenderToBitmap(formulaRenderer, 0, firstEntry.Value.Item1, dpiResolution);
+        (bmp, width96thInch, height96thInch) = RenderToBitmap(formula, _texEnvironment, fontSize, 0, firstEntry.Value.Item1, dpiResolution);
         alignment = firstEntry.Value.Item2;
         yoffset = 0; // 0 as return value
       }
@@ -129,9 +144,10 @@ namespace Altaxo.Gui.Markdown
       {
         alignment = "baseline";
         var yshift = Math.Ceiling(absoluteAscent) - absoluteAscent; // we shift the formula downwards, so that the new absoluteAscent is Math.Ceiling(absoluteAscent)
-        // by providing a positive offset in arg2, the image is lowered compared to the baseline
-        (bmp, width96thInch, height96thInch) = RenderToBitmap(formulaRenderer, 0, yshift, dpiResolution);
-        yoffset = Math.Ceiling(absoluteAscent) - height96thInch; // number of pixels from image bottom to baseline (negative sign)
+                                                                    // by providing a positive offset in arg2, the image is lowered compared to the baseline
+        (bmp, width96thInch, height96thInch) = RenderToBitmap(formula, _texEnvironment, fontSize, 0, yshift, dpiResolution);
+        // bmp = WpfTeXFormulaExtensions.RenderToBitmap(formula, _texEnvironment, out box, fontSize, 0, yshift, dpiResolution);
+        yoffset = Math.Ceiling(absoluteAscent) - box.TotalHeight * 96d / dpiResolution; // number of pixels from image bottom to baseline (negative sign)
       }
 
       var fileStream = new MemoryStream();
@@ -140,8 +156,9 @@ namespace Altaxo.Gui.Markdown
       encoder.Save(fileStream);
       fileStream.Seek(0, SeekOrigin.Begin);
 
-      return (fileStream, alignment, (int)Math.Round(yoffset), width96thInch, height96thInch);
+      return (fileStream, alignment, (int)Math.Round(yoffset), (int)(box.Width * 96 / dpiResolution), (int)(box.TotalHeight * 96d / dpiResolution));
     }
+
 
     /// <summary>
     /// Renders a formula to a bitmap.
@@ -157,17 +174,18 @@ namespace Altaxo.Gui.Markdown
     /// </param>
     /// <param name="dpiResolution">The resolution of the image in dpi. If not sure, use 96 dpi.</param>
     /// <returns>The bitmap souce that represents the formula.</returns>
-    public static (BitmapSource bitmapSource, int width96thInch, int heigth96thInch) RenderToBitmap(TexRenderer formulaRenderer, double x, double y, double dpiResolution)
+    public static (BitmapSource bitmapSource, int width96thInch, int heigth96thInch) RenderToBitmap(TexFormula formula, TexEnvironment environment, double fontSize, double x, double y, double dpiResolution)
     {
+      Box box;
       var visual = new DrawingVisual();
       using (var drawingContext = visual.RenderOpen())
       {
         // Note that argument y in Render measures from the top. Thus is y is positive, this shifts the text down.
-        formulaRenderer.Render(drawingContext, x, Math.Max(0, y)); // if y negative, then we don't change y, because we measure relative to the upper edge of the image. Only if y is positive, we translate the formula downwards.
+        box = formula.RenderTo(drawingContext, _texEnvironment, fontSize, x, Math.Max(0, y));
       }
 
-      var width = (int)Math.Ceiling(formulaRenderer.RenderSize.Width);
-      var height = (int)Math.Ceiling(formulaRenderer.RenderSize.Height);
+      var width = (int)Math.Ceiling(fontSize * box.Width); // TODO: is this in 96th inch, or because of the fontSize, in 72th inch?
+      var height = (int)Math.Ceiling(fontSize * box.TotalHeight);
       height += (int)Math.Ceiling(Math.Abs(y));
 
       var relativeResolution = dpiResolution / 96.0;
@@ -177,5 +195,6 @@ namespace Altaxo.Gui.Markdown
 
       return (bitmap, width, height);
     }
+
   }
 }

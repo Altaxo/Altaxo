@@ -23,9 +23,7 @@
 #endregion Copyright
 
 
-using Markdig.Helpers;
-using Markdig.Syntax;
-using WpfMath.Atoms;
+using XamlMath.Atoms;
 
 namespace Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering
 {

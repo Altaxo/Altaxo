@@ -22,13 +22,8 @@
 
 #endregion Copyright
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using DocumentFormat.OpenXml.Math;
-using WpfMath.Atoms;
+using XamlMath.Atoms;
 using W = DocumentFormat.OpenXml.Wordprocessing;
 
 namespace Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering.Renderers
@@ -37,7 +32,7 @@ namespace Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering.Renderers
   /// Renderer for <see cref="FencedAtom"/> objects, i.e. elements that are embedded in delimiters,
   /// like braces.
   /// </summary>
-  /// <seealso cref="Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering.OpenXMLAtomRenderer{WpfMath.Atoms.FencedAtom}" />
+  /// <seealso cref="Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering.OpenXMLAtomRenderer{XamlMath.Atoms.FencedAtom}" />
   internal class FencedAtomRenderer : OpenXMLAtomRenderer<FencedAtom>
   {
     protected override WriteResult Write(OpenXMLWpfMathRenderer renderer, FencedAtom item)

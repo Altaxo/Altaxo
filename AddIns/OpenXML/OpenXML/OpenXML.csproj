@@ -33,7 +33,8 @@
     <ProjectReference Include="..\..\..\Altaxo\Dom\AltaxoDom.csproj" />
     <ProjectReference Include="..\..\..\Altaxo\Dom.Presentation\AltaxoDom.Presentation.csproj" />
     <ProjectReference Include="..\..\..\Libraries\Markdig\Markdig.csproj" />
-    <ProjectReference Include="..\..\..\Libraries\WpfMath\WpfMath.csproj" />
+    <ProjectReference Include="..\..\..\Libraries\xaml-math\src\WpfMath\WpfMath.csproj" />
+    <ProjectReference Include="..\..\..\Libraries\xaml-math\src\XamlMath.Shared\XamlMath.Shared.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="PresentationCore" />

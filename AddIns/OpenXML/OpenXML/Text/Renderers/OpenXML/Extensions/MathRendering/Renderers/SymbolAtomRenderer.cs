@@ -22,13 +22,9 @@
 
 #endregion Copyright
 
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using DocumentFormat.OpenXml.Math;
-using WpfMath.Atoms;
+using XamlMath.Atoms;
 
 namespace Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering.Renderers
 {
@@ -36,7 +32,7 @@ namespace Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering.Renderers
   /// Renderer for <see cref="SymbolAtom"/> objects, like operator symbols, greek characters,
   /// and special symbols.
   /// </summary>
-  /// <seealso cref="Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering.OpenXMLAtomRenderer{WpfMath.Atoms.SymbolAtom}" />
+  /// <seealso cref="Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering.OpenXMLAtomRenderer{XamlMath.Atoms.SymbolAtom}" />
   internal class SymbolAtomRenderer : OpenXMLAtomRenderer<SymbolAtom>
   {
     protected override WriteResult Write(OpenXMLWpfMathRenderer renderer, SymbolAtom item)
@@ -65,8 +61,8 @@ namespace Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering.Renderers
 
     public static bool TryConvert(string symbolName, out string textString)
     {
-      if(_nameToSymbol.TryGetValue(symbolName, out var t))
-        {
+      if (_nameToSymbol.TryGetValue(symbolName, out var t))
+      {
         textString = t;
         return true;
       }

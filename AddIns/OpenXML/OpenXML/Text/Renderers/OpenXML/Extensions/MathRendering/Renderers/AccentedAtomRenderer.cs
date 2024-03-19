@@ -22,13 +22,8 @@
 
 #endregion Copyright
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using DocumentFormat.OpenXml.Math;
-using WpfMath.Atoms;
+using XamlMath.Atoms;
 using W = DocumentFormat.OpenXml.Wordprocessing;
 
 namespace Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering.Renderers
@@ -36,7 +31,7 @@ namespace Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering.Renderers
   /// <summary>
   /// Renderer for <see cref="AccentedAtom"/> objects, i.e. elements that have an accent.
   /// </summary>
-  /// <seealso cref="Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering.OpenXMLAtomRenderer{WpfMath.Atoms.AccentedAtom}" />
+  /// <seealso cref="Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering.OpenXMLAtomRenderer{XamlMath.Atoms.AccentedAtom}" />
   internal class AccentedAtomRenderer : OpenXMLAtomRenderer<AccentedAtom>
   {
     protected override WriteResult Write(OpenXMLWpfMathRenderer renderer, AccentedAtom item)

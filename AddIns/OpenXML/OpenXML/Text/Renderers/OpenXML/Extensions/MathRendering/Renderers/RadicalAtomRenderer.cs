@@ -22,23 +22,18 @@
 
 #endregion Copyright
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using DocumentFormat.OpenXml.Math;
 using W = DocumentFormat.OpenXml.Wordprocessing;
 
 namespace Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering.Renderers
 {
   /// <summary>
-  /// Renderer for <see cref="WpfMath.Atoms.Radical"/> objects (radicals like square root).
+  /// Renderer for <see cref="XamlMath.Atoms.Radical"/> objects (radicals like square root).
   /// </summary>
-  /// <seealso cref="Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering.OpenXMLAtomRenderer{WpfMath.Atoms.Radical}" />
-  internal class RadicalAtomRenderer : OpenXMLAtomRenderer<WpfMath.Radical>
+  /// <seealso cref="Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering.OpenXMLAtomRenderer{XamlMath.Atoms.Radical}" />
+  internal class RadicalAtomRenderer : OpenXMLAtomRenderer<XamlMath.Atoms.Radical>
   {
-    protected override WriteResult Write(OpenXMLWpfMathRenderer renderer, WpfMath.Radical item)
+    protected override WriteResult Write(OpenXMLWpfMathRenderer renderer, XamlMath.Atoms.Radical item)
     {
 
       var radicalEle = renderer.Push(new Radical());

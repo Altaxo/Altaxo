@@ -25,12 +25,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Math;
-using WpfMath;
-using WpfMath.Atoms;
+using XamlMath;
+using XamlMath.Atoms;
 using W = DocumentFormat.OpenXml.Wordprocessing;
 
 namespace Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering.Renderers
@@ -39,7 +37,7 @@ namespace Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering.Renderers
   /// Render for <see cref="BigOperatorAtom"/> objects. Those objects
   /// include integral, sum and product symbols, and functions.
   /// </summary>
-  /// <seealso cref="Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering.OpenXMLAtomRenderer{WpfMath.Atoms.BigOperatorAtom}" />
+  /// <seealso cref="Altaxo.Text.Renderers.OpenXML.Extensions.MathRendering.OpenXMLAtomRenderer{XamlMath.Atoms.BigOperatorAtom}" />
   internal class BigOperatorAtomRenderer : OpenXMLAtomRenderer<BigOperatorAtom>
   {
     // Examples for BigOperatorAtom

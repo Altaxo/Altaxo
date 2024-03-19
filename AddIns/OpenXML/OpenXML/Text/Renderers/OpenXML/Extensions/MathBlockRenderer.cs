@@ -23,21 +23,16 @@
 #endregion Copyright
 
 using System;
-using System.Collections.Generic;
-using System.IO;
-using Altaxo;
-using Altaxo.Graph;
-using Altaxo.Main.Services;
-using Altaxo.Text.Renderers;
 using DocumentFormat.OpenXml.Math;
 using Markdig.Extensions.Mathematics;
-using WpfMath;
+using WpfMath.Parsers;
+using XamlMath;
 
 namespace Altaxo.Text.Renderers.OpenXML.Extensions
 {
   public class MathBlockRenderer : OpenXMLObjectRenderer<MathBlock>
   {
-    private static TexFormulaParser _formulaParser = new TexFormulaParser();
+    private static TexFormulaParser _formulaParser = WpfTeXFormulaParser.Instance;
 
     protected override void Write(OpenXMLRenderer renderer, MathBlock obj)
     {
