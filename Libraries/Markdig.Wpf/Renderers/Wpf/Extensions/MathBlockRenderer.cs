@@ -2,14 +2,17 @@
 using System;
 using System.Windows.Documents;
 using System.Windows.Media;
-using WpfMath;
+using WpfMath.Parsers;
+using WpfMath.Rendering;
+using XamlMath;
 
 namespace Markdig.Renderers.Wpf.Extensions
 {
     public class MathBlockRenderer : WpfObjectRenderer<MathBlock>
     {
-        private static TexFormulaParser formulaParser = new TexFormulaParser();
-        private static Pen pen = new Pen(Brushes.Black, 1);
+        private static TexFormulaParser formulaParser = WpfTeXFormulaParser.Instance;
+
+        static internal TexEnvironment _texEnvironment = WpfTeXEnvironment.Create(TexStyle.Display);
 
         protected override void Write(WpfRenderer renderer, MathBlock obj)
         {
@@ -46,12 +49,14 @@ namespace Markdig.Renderers.Wpf.Extensions
                 throw new InvalidProgramException();
             }
 
-            var formulaRenderer = formula.GetRenderer(TexStyle.Display, fontSize, "Arial");
-            var geo = formulaRenderer.RenderToGeometry(0, 0);
+            var geo = WpfTeXFormulaExtensions.RenderToGeometry(formula, _texEnvironment, fontSize);
+
+            //var formulaRenderer = formula.GetRenderer(TexStyle.Display, fontSize, "Arial");
+            //var geo = formulaRenderer.RenderToGeometry(0, 0);
             var geoD = new System.Windows.Media.GeometryDrawing(Brushes.Black, null, geo);
             var di = new DrawingImage(geoD);
             var uiImage = new System.Windows.Controls.Image() { Source = di };
-            uiImage.Height = formulaRenderer.RenderSize.Height; // size image to match rendersize -> get a zoom of 100%
+            uiImage.Height = geoD.Bounds.Height; // size image to match rendersize -> get a zoom of 100%
             // uiImage.Margin = new System.Windows.Thickness(0, 0, 0, -formulaRenderer.RenderSize.Height * formulaRenderer.RelativeDepth); // Move image so that baseline matches that of text
             var uiBlock = new System.Windows.Documents.BlockUIContainer()
             {

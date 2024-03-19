@@ -2,14 +2,17 @@
 using System;
 using System.Windows.Documents;
 using System.Windows.Media;
-using WpfMath;
+using WpfMath.Parsers;
+using WpfMath.Rendering;
+using XamlMath;
 
 namespace Markdig.Renderers.Wpf.Extensions
 {
     public class MathInlineRenderer : WpfObjectRenderer<MathInline>
     {
-        private static TexFormulaParser formulaParser = new TexFormulaParser();
-        private static Pen pen = new Pen(Brushes.Black, 1);
+        private static TexFormulaParser formulaParser = WpfTeXFormulaParser.Instance;
+
+        static internal TexEnvironment _texEnvironment = WpfTeXEnvironment.Create(TexStyle.Display);
 
         protected override void Write(WpfRenderer renderer, MathInline obj)
         {
@@ -27,13 +30,14 @@ namespace Markdig.Renderers.Wpf.Extensions
             }
 
             var fontSize = renderer.CurrentFontSize();
-            var formulaRenderer = formula.GetRenderer(TexStyle.Display, fontSize, "Arial");
-            var geo = formulaRenderer.RenderToGeometry(0, 0);
+
+
+            var geo = WpfTeXFormulaExtensions.RenderToGeometry(formula, _texEnvironment, out var box, fontSize);
             var geoD = new System.Windows.Media.GeometryDrawing(Brushes.Black, null, geo);
             var di = new DrawingImage(geoD);
             var uiImage = new System.Windows.Controls.Image() { Source = di };
-            uiImage.Height = formulaRenderer.RenderSize.Height; // size image to match rendersize -> get a zoom of 100%
-            uiImage.Margin = new System.Windows.Thickness(0, 0, 0, -formulaRenderer.RenderSize.Height * formulaRenderer.RelativeDepth); // Move image so that baseline matches that of text
+            uiImage.Height = geoD.Bounds.Height; // size image to match rendersize -> get a zoom of 100%
+            uiImage.Margin = new System.Windows.Thickness(0, 0, 0, -box.Depth * fontSize  /* formulaRenderer.RelativeDepth */); // Move image so that baseline matches that of text
             var uiInline = new System.Windows.Documents.InlineUIContainer()
             {
                 Child = uiImage,

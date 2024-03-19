@@ -11,6 +11,6 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\Markdig\Markdig.csproj" />
-    <ProjectReference Include="..\WpfMath\WpfMath.csproj" />
+    <ProjectReference Include="..\xaml-math\src\WpfMath\WpfMath.csproj" />
   </ItemGroup>
 </Project>
