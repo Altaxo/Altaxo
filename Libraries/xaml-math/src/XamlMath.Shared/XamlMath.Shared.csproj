@@ -1,0 +1,35 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFrameworks>net462;netstandard2.0;net6.0</TargetFrameworks>
+        <OutputType>Library</OutputType>
+        <RootNamespace>XamlMath</RootNamespace>
+    </PropertyGroup>
+
+    <PropertyGroup Label="Packaging">
+        <PackageId>XamlMath.Shared</PackageId>
+        <Title>XAML-Math Shared Code</Title>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <PackageTags>$(PackageTags);xaml</PackageTags>
+        <Description>A package code shared between UI framework-specific implementations of XAML-Math, a .NET library for rendering mathematical formulae using the LaTeX typsetting style.</Description>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <EmbeddedResource Include="Data\DefaultTexFont.xml" />
+      <EmbeddedResource Include="Data\GlueSettings.xml" />
+      <EmbeddedResource Include="Data\PredefinedColors.xml" />
+      <EmbeddedResource Include="Data\PredefinedTexFormulas.xml" />
+      <EmbeddedResource Include="Data\TexFormulaSettings.xml" />
+      <EmbeddedResource Include="Data\TexSymbols.xml" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <InternalsVisibleTo Include="WpfMath" />
+        <InternalsVisibleTo Include="AvaloniaMath" />
+        <InternalsVisibleTo Include="WpfMath.Tests" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="ChangelogAutomation.MSBuild" PrivateAssets="All" />
+    </ItemGroup>
+</Project>

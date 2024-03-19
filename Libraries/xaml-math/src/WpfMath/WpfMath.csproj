@@ -1,0 +1,36 @@
+<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+
+    <PropertyGroup>
+        <TargetFrameworks>net462;net6.0-windows</TargetFrameworks>
+        <UseWpf>true</UseWpf>
+        <OutputType>Library</OutputType>
+        <EnableWindowsTargeting>true</EnableWindowsTargeting>
+    </PropertyGroup>
+    <PropertyGroup>
+        <PackageId>WpfMath</PackageId>
+        <Title>WPF-Math</Title>
+        <PackageLicenseExpression>MIT AND OFL-1.1</PackageLicenseExpression>
+        <Description>.NET library for rendering mathematical formulae using the LaTeX typsetting style, for the WPF framework.</Description>
+        <PackageTags>$(PackageTags);wpf</PackageTags>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <Resource Include="..\..\fonts\*.ttf" LinkBase="Fonts" />
+        <None Include="..\..\fonts\LICENSES.md" Pack="true" PackagePath="\FONT-LICENSES.md" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.SourceLink.GitHub" PrivateAssets="All" />
+        <PackageReference Include="Nullable" PrivateAssets="All" />
+        <PackageReference Include="ChangelogAutomation.MSBuild" PrivateAssets="All" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\XamlMath.Shared\XamlMath.Shared.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <InternalsVisibleTo Include="$(AssemblyName).Tests" />
+    </ItemGroup>
+
+</Project>
