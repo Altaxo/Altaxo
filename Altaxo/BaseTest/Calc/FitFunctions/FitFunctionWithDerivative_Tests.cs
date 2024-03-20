@@ -143,8 +143,9 @@ namespace Altaxo.Calc.FitFunctions
       var typeHash = _fitData.Select(x => x.Creation().GetType()).ToHashSet();
       var allTypes = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(IFitFunctionWithDerivative)).ToHashSet();
       allTypes.ExceptWith(typeHash);
+      var arr = allTypes.Where(t => !(t.Assembly.GetName().Name.EndsWith("Test"))).ToArray();
 
-      Assert.True(0 == allTypes.Count);
+      Assert.True(0 == arr.Length);
     }
 
 

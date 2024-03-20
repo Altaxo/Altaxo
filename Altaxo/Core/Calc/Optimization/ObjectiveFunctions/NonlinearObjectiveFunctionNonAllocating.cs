@@ -166,13 +166,27 @@ namespace Altaxo.Calc.Optimization.ObjectiveFunctions
 
     protected override Matrix<double> NumericalJacobian(Vector<double> parameters, Vector<double> currentValues, int accuracyOrder = 2)
     {
-      const double sqrtEpsilon = 1.4901161193847656250E-8; // sqrt(machineEpsilon)
+      const double deltaFactor = 0.000003;
 
       Matrix<double> derivatives = Matrix<double>.Build.Dense(NumberOfObservations, NumberOfParameters);
-
-      var d = 0.000003 * parameters.PointwiseAbs().PointwiseMaximum(sqrtEpsilon);
-
       var h = Vector<double>.Build.Dense(NumberOfParameters);
+      var d = Vector<double>.Build.Dense(NumberOfParameters);
+
+      for (int i = 0; i < d.Count; ++i)
+      {
+        d[i] = Math.Abs(deltaFactor * parameters[i]);
+        if (d[i] == 0)
+        {
+          // if the parameter is 0, we use a somewhat higher value than the lowest value which leads to a change of the function values
+          // we multiply it with 2/deltaFactor, so that in the next iteration, when we multipy the parameter with deltafactor,
+          // we still have some variation
+          d[i] = (2 / deltaFactor) * GetLowestParameterVariationToChangeFunctionValues(
+            (para) => { _userFunction(_observedXAsMatrix, para, _f2, null); return _f2; },
+            currentValues, i, parameters, h);
+        }
+      }
+
+
       for (int j = 0; j < NumberOfParameters; j++)
       {
         h[j] = d[j];
@@ -316,6 +330,105 @@ namespace Altaxo.Calc.Optimization.ObjectiveFunctions
         Weights = null;
         L = null;
       }
+    }
+
+    /// <summary>
+    /// If a parameter is zero, it is hard to find the right order of magnitude for a variation of that parameter.
+    /// Here, the variation is guessed by starting with the lowest possible variation, and increase the variation, until
+    /// the function values deviate from the original value.
+    /// </summary>
+    /// <param name="EvaluateModelValues">Function that evaluate the model values. Argument are the parameters, result are the model values.</param>
+    /// <param name="currentValues">The current function values.</param>
+    /// <param name="idxParameter">The index of the parameter for which to find a good guess for the variation.</param>
+    /// <param name="parameters">The parameters.</param>
+    /// <param name="h">A scratch array.</param>
+    /// <returns>The lowest variation (increased in steps of 2), for which the function values deviate from the original values.</returns>
+    public static double GetLowestParameterVariationToChangeFunctionValues(Func<Vector<double>, Vector<double>> EvaluateModelValues, Vector<double> currentValues, int idxParameter, Vector<double> parameters, Vector<double> h)
+    {
+      // because we have no idea what the order of magnitude of the parameter is, we start from the lowest possible
+      // value and increase h by a factor, until there is a notable difference between the original value and the new value
+      h.Clear();
+
+      var lo = Math.Log(double.Epsilon);
+      var hi = Math.Log(double.MaxValue);
+      int sign = 1;
+      double diff;
+
+
+      // First of all, test, if the smallest possible variation already leads to invalid results
+      var dh = double.Epsilon;
+      h[idxParameter] = dh;
+      var f2 = EvaluateModelValues(parameters + h);
+      diff = (f2 - currentValues).L1Norm();
+
+      if (diff >= 0) // valid result
+      {
+      }
+      else // invalid result with a positive delta, we try it now with a negative delta
+      {
+        sign = -1;
+        dh = sign * double.Epsilon;
+        h[idxParameter] = dh;
+        f2 = EvaluateModelValues(parameters + h);
+        diff = (f2 - currentValues).L1Norm();
+        if (diff >= 0) // valid result
+        {
+        }
+        else // invalid result also with a negative delta, so we are out of options now
+        {
+          throw new InvalidOperationException($"Variation of parameter {idxParameter} around zero lead to invalid function values");
+        }
+      }
+
+      // first, find the highest possible value
+      for (; (hi - lo) > 1;)
+      {
+        var mi = (lo + hi) * 0.5;
+        dh = sign * Math.Exp(mi);
+        h[idxParameter] = dh;
+        f2 = EvaluateModelValues(parameters + h);
+        diff = (f2 - currentValues).L1Norm();
+
+
+        if (double.IsNaN(diff) || double.IsInfinity(diff))
+        {
+          hi = mi;
+        }
+        else
+        {
+          lo = mi;
+        }
+      }
+
+      // now look how many values change with the low value
+      var criterium = Math.Sqrt(2 * double.Epsilon);
+      dh = sign * Math.Exp(lo);
+      h[idxParameter] = dh;
+      f2 = EvaluateModelValues(parameters + h);
+      int numberOfChangingParameters = (f2 - currentValues).Count(x => Math.Abs(x) >= criterium);
+
+      // now, find the lowest possible value that has the same number of changing function values
+      hi = lo;
+      lo = Math.Log(double.Epsilon);
+      for (; (hi - lo) > 1;)
+      {
+        var mi = (lo + hi) * 0.5;
+        dh = sign * Math.Exp(mi);
+        h[idxParameter] = dh;
+        f2 = EvaluateModelValues(parameters + h);
+        int parametersChanged = (f2 - currentValues).Count(x => Math.Abs(x) >= criterium);
+        if (numberOfChangingParameters == parametersChanged)
+        {
+          hi = mi;
+        }
+        else
+        {
+          lo = mi;
+        }
+      }
+
+
+      return sign * Math.Exp(hi);
     }
 
   }
