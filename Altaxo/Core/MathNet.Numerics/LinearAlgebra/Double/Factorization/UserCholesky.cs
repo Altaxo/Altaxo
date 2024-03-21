@@ -130,7 +130,7 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
     }
 
     private UserCholesky(Matrix<double> factor)
-            : base(factor)
+        : base(factor)
     {
     }
 

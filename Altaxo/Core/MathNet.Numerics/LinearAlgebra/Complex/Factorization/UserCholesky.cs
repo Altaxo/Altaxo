@@ -133,7 +133,7 @@ namespace Altaxo.Calc.LinearAlgebra.Complex.Factorization
     }
 
     private UserCholesky(Matrix<Complex> factor)
-            : base(factor)
+        : base(factor)
     {
     }
 

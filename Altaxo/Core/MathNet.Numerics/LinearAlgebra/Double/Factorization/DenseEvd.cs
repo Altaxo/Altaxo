@@ -94,7 +94,7 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
     }
 
     private DenseEvd(Matrix<double> eigenVectors, Vector<Complex> eigenValues, Matrix<double> blockDiagonal, bool isSymmetric)
-            : base(eigenVectors, eigenValues, blockDiagonal, isSymmetric)
+        : base(eigenVectors, eigenValues, blockDiagonal, isSymmetric)
     {
     }
 

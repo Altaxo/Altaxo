@@ -85,7 +85,7 @@ namespace Altaxo.Calc.LinearAlgebra.Single.Factorization
     }
 
     private DenseQR(Matrix<float> q, Matrix<float> rFull, QRMethod method, float[] tau)
-            : base(q, rFull, method)
+        : base(q, rFull, method)
     {
       Tau = tau;
     }

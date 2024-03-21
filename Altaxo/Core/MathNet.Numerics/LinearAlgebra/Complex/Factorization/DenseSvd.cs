@@ -70,7 +70,7 @@ namespace Altaxo.Calc.LinearAlgebra.Complex.Factorization
     }
 
     private DenseSvd(Vector<Complex> s, Matrix<Complex> u, Matrix<Complex> vt, bool vectorsComputed)
-            : base(s, u, vt, vectorsComputed)
+        : base(s, u, vt, vectorsComputed)
     {
     }
 

@@ -242,8 +242,8 @@ namespace Altaxo.Calc.Distributions
       {
         for (int i = a; i < b; i++)
         {
-                // this happens very rarely
-                var r = values[i];
+          // this happens very rarely
+          var r = values[i];
           while (r == 0.0)
           {
             r = rnd.NextDouble();

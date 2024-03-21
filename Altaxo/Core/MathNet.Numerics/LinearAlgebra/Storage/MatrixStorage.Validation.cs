@@ -49,9 +49,9 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
     }
 
     private void ValidateSubMatrixRange<TU>(MatrixStorage<TU> target,
-            int sourceRowIndex, int targetRowIndex, int rowCount,
-            int sourceColumnIndex, int targetColumnIndex, int columnCount)
-            where TU : struct, IEquatable<TU>, IFormattable
+        int sourceRowIndex, int targetRowIndex, int rowCount,
+        int sourceColumnIndex, int targetColumnIndex, int columnCount)
+        where TU : struct, IEquatable<TU>, IFormattable
     {
       if (rowCount < 1)
       {
@@ -115,7 +115,7 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
     }
 
     private void ValidateRowRange<TU>(VectorStorage<TU> target, int rowIndex)
-            where TU : struct, IEquatable<TU>, IFormattable
+        where TU : struct, IEquatable<TU>, IFormattable
     {
       if ((uint)rowIndex >= (uint)RowCount)
       {
@@ -129,7 +129,7 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
     }
 
     private void ValidateColumnRange<TU>(VectorStorage<TU> target, int columnIndex)
-            where TU : struct, IEquatable<TU>, IFormattable
+        where TU : struct, IEquatable<TU>, IFormattable
     {
       if ((uint)columnIndex >= (uint)ColumnCount)
       {
@@ -143,8 +143,8 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
     }
 
     private void ValidateSubRowRange<TU>(VectorStorage<TU> target, int rowIndex,
-            int sourceColumnIndex, int targetColumnIndex, int columnCount)
-            where TU : struct, IEquatable<TU>, IFormattable
+        int sourceColumnIndex, int targetColumnIndex, int columnCount)
+        where TU : struct, IEquatable<TU>, IFormattable
     {
       if (columnCount < 1)
       {
@@ -182,8 +182,8 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
     }
 
     private void ValidateSubColumnRange<TU>(VectorStorage<TU> target, int columnIndex,
-            int sourceRowIndex, int targetRowIndex, int rowCount)
-            where TU : struct, IEquatable<TU>, IFormattable
+        int sourceRowIndex, int targetRowIndex, int rowCount)
+        where TU : struct, IEquatable<TU>, IFormattable
     {
       if (rowCount < 1)
       {

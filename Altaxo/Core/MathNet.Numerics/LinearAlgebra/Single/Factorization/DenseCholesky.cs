@@ -65,7 +65,7 @@ namespace Altaxo.Calc.LinearAlgebra.Single.Factorization
     }
 
     private DenseCholesky(Matrix<float> factor)
-            : base(factor)
+        : base(factor)
     {
     }
 

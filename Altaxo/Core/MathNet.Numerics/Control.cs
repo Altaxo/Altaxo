@@ -314,9 +314,9 @@ namespace Altaxo.Calc
 #if NET5_0
             sb.AppendLine("Built for .NET 5.0");
 #elif NET5_0_OR_GREATER
-      sb.AppendLine("Built for .NET 5.0+");
+            sb.AppendLine("Built for .NET 5.0+");
 #elif NETSTANDARD2_0
-            sb.AppendLine("Built for .NET Standard 2.0");
+      sb.AppendLine("Built for .NET Standard 2.0");
 #elif NET48
             sb.AppendLine("Built for .NET Framework 4.8");
 #elif NET461

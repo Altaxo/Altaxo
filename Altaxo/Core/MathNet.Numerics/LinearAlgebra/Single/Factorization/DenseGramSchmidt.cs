@@ -65,7 +65,7 @@ namespace Altaxo.Calc.LinearAlgebra.Single.Factorization
     }
 
     private DenseGramSchmidt(Matrix<float> q, Matrix<float> rFull)
-            : base(q, rFull)
+        : base(q, rFull)
     {
     }
 

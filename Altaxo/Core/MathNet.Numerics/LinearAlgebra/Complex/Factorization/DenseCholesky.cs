@@ -67,7 +67,7 @@ namespace Altaxo.Calc.LinearAlgebra.Complex.Factorization
     }
 
     private DenseCholesky(Matrix<Complex> factor)
-            : base(factor)
+        : base(factor)
     {
     }
 

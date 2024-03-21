@@ -30,6 +30,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Runtime;
 using System.Runtime.CompilerServices;
 using Altaxo.Calc.LinearAlgebra.Storage;
@@ -41,8 +42,9 @@ namespace Altaxo.Calc.LinearAlgebra
   /// </summary>
   /// <typeparam name="T">Supported data types are double, single, <see cref="Complex"/>, and <see cref="Complex32"/>.</typeparam>
   [Serializable]
-  public abstract partial class Vector<T> : IFormattable, IEquatable<Vector<T>>, IList, IList<T>, IReadOnlyList<T>, IVector<T>, ICloneable
-      where T : struct, IEquatable<T>, IFormattable
+  [DebuggerTypeProxy(typeof(VectorDebuggingView<>))]
+  public abstract partial class Vector<T> : IFormattable, IEquatable<Vector<T>>, IList, IList<T>, ICloneable, IReadOnlyList<T>, IVector<T>
+        where T : struct, IEquatable<T>, IFormattable
   {
     /// <summary>
     /// Initializes a new instance of the Vector class.
@@ -528,5 +530,19 @@ namespace Altaxo.Calc.LinearAlgebra
     {
       return Storage.Find2(other.Storage, (x, y) => !predicate(x, y), zeros) == null;
     }
+  }
+
+  internal class VectorDebuggingView<T>
+      where T : struct, IEquatable<T>, IFormattable
+  {
+    private readonly Vector<T> _vector;
+
+    public VectorDebuggingView(Vector<T> vector)
+    {
+      _vector = vector;
+    }
+
+    [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
+    public T[] Items => _vector.ToArray();
   }
 }

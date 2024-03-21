@@ -130,7 +130,7 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
     }
 
     private UserLU(Matrix<double> factors, int[] pivots)
-            : base(factors, pivots)
+        : base(factors, pivots)
     {
     }
 

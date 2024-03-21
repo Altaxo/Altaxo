@@ -62,11 +62,11 @@ namespace Altaxo.Calc.Providers.Common
     private static readonly Lazy<Dictionary<string, IntPtr>> NativeHandles = new Lazy<Dictionary<string, IntPtr>>(LazyThreadSafetyMode.PublicationOnly);
 
 #if !NET5_0_OR_GREATER
-        /// <summary>
-        /// If the last native library failed to load then gets the corresponding exception
-        /// which occurred or null if the library was successfully loaded.
-        /// </summary>
-        internal static Exception LastException { get; private set; }
+    /// <summary>
+    /// If the last native library failed to load then gets the corresponding exception
+    /// which occurred or null if the library was successfully loaded.
+    /// </summary>
+    internal static Exception LastException { get; private set; }
 #endif
 
     private static bool IsWindows { get; }
@@ -325,28 +325,28 @@ namespace Altaxo.Calc.Providers.Common
         return true;
 
 #else
-                try
-                {
-                    // If successful this will return a handle to the library
-                    libraryHandle = IsWindows ? WindowsLoader.LoadLibrary(fileName) : IsMac ? MacLoader.LoadLibrary(fileName) : LinuxLoader.LoadLibrary(fileName);
-                }
-                catch (Exception e)
-                {
-                    LastException = e;
-                    return false;
-                }
+        try
+        {
+          // If successful this will return a handle to the library
+          libraryHandle = IsWindows ? WindowsLoader.LoadLibrary(fileName) : IsMac ? MacLoader.LoadLibrary(fileName) : LinuxLoader.LoadLibrary(fileName);
+        }
+        catch (Exception e)
+        {
+          LastException = e;
+          return false;
+        }
 
-                if (libraryHandle == IntPtr.Zero)
-                {
-                    int lastError = Marshal.GetLastWin32Error();
-                    var exception = new System.ComponentModel.Win32Exception(lastError);
-                    LastException = exception;
-                    return false;
-                }
+        if (libraryHandle == IntPtr.Zero)
+        {
+          int lastError = Marshal.GetLastWin32Error();
+          var exception = new System.ComponentModel.Win32Exception(lastError);
+          LastException = exception;
+          return false;
+        }
 
-                LastException = null;
-                NativeHandles.Value[fileName] = libraryHandle;
-                return true;
+        LastException = null;
+        NativeHandles.Value[fileName] = libraryHandle;
+        return true;
 #endif
       }
     }
@@ -389,78 +389,78 @@ namespace Altaxo.Calc.Providers.Common
         return true;
 
 #else
-                try
-                {
-                    // If successful this will return a handle to the library
-                    libraryHandle = IsWindows ? WindowsLoader.LoadLibrary(fullPath) : IsMac ? MacLoader.LoadLibrary(fullPath) : LinuxLoader.LoadLibrary(fullPath);
-                }
-                catch (Exception e)
-                {
-                    LastException = e;
-                    return false;
-                }
+        try
+        {
+          // If successful this will return a handle to the library
+          libraryHandle = IsWindows ? WindowsLoader.LoadLibrary(fullPath) : IsMac ? MacLoader.LoadLibrary(fullPath) : LinuxLoader.LoadLibrary(fullPath);
+        }
+        catch (Exception e)
+        {
+          LastException = e;
+          return false;
+        }
 
-                if (libraryHandle == IntPtr.Zero)
-                {
-                    int lastError = Marshal.GetLastWin32Error();
-                    var exception = new System.ComponentModel.Win32Exception(lastError);
-                    LastException = exception;
-                    return false;
-                }
+        if (libraryHandle == IntPtr.Zero)
+        {
+          int lastError = Marshal.GetLastWin32Error();
+          var exception = new System.ComponentModel.Win32Exception(lastError);
+          LastException = exception;
+          return false;
+        }
 
-                LastException = null;
-                NativeHandles.Value[fileName] = libraryHandle;
-                return true;
+        LastException = null;
+        NativeHandles.Value[fileName] = libraryHandle;
+        return true;
 #endif
       }
     }
 
 #if !NET5_0_OR_GREATER
-        [SuppressUnmanagedCodeSecurity]
-        [SecurityCritical]
-        static class WindowsLoader
-        {
-            public static IntPtr LoadLibrary(string fileName)
-            {
-                return LoadLibraryEx(fileName, IntPtr.Zero, LOAD_WITH_ALTERED_SEARCH_PATH);
-            }
+    [SuppressUnmanagedCodeSecurity]
+    [SecurityCritical]
+    static class WindowsLoader
+    {
+      public static IntPtr LoadLibrary(string fileName)
+      {
+        return LoadLibraryEx(fileName, IntPtr.Zero, LOAD_WITH_ALTERED_SEARCH_PATH);
+      }
 
-            // Search for dependencies in the library's directory rather than the calling process's directory
-            const uint LOAD_WITH_ALTERED_SEARCH_PATH = 0x00000008;
+      // Search for dependencies in the library's directory rather than the calling process's directory
+      const uint LOAD_WITH_ALTERED_SEARCH_PATH = 0x00000008;
 
-            [DllImport("kernel32", CallingConvention = CallingConvention.Winapi, CharSet = CharSet.Unicode, SetLastError = true)]
-            static extern IntPtr LoadLibraryEx(string fileName, IntPtr reservedNull, uint flags);
-        }
+      [DllImport("kernel32", CallingConvention = CallingConvention.Winapi, CharSet = CharSet.Unicode, SetLastError = true)]
+      static extern IntPtr LoadLibraryEx(string fileName, IntPtr reservedNull, uint flags);
+    }
 
-        [SuppressUnmanagedCodeSecurity]
-        [SecurityCritical]
-        static class LinuxLoader
-        {
-            public static IntPtr LoadLibrary(string fileName)
-            {
-                return dlopen(fileName, RTLD_NOW);
-            }
+    [SuppressUnmanagedCodeSecurity]
+    [SecurityCritical]
+    static class LinuxLoader
+    {
+      public static IntPtr LoadLibrary(string fileName)
+      {
+        return dlopen(fileName, RTLD_NOW);
+      }
 
-            const int RTLD_NOW = 2;
+      const int RTLD_NOW = 2;
 
-            [DllImport("libdl.so.2", SetLastError = true)]
-            static extern IntPtr dlopen(string fileName, int flags);
-        }
+      [DllImport("libdl.so.2", SetLastError = true)]
+      static extern IntPtr dlopen(string fileName, int flags);
+    }
 
-        [SuppressUnmanagedCodeSecurity]
-        [SecurityCritical]
-        static class MacLoader
-        {
-            public static IntPtr LoadLibrary(string fileName)
-            {
-                return dlopen(fileName, RTLD_NOW);
-            }
+    [SuppressUnmanagedCodeSecurity]
+    [SecurityCritical]
+    static class MacLoader
+    {
+      public static IntPtr LoadLibrary(string fileName)
+      {
+        return dlopen(fileName, RTLD_NOW);
+      }
 
-            const int RTLD_NOW = 2;
+      const int RTLD_NOW = 2;
 
-            [DllImport("libdl.dylib", SetLastError = true)]
-            static extern IntPtr dlopen(string fileName, int flags);
-        }
+      [DllImport("libdl.dylib", SetLastError = true)]
+      static extern IntPtr dlopen(string fileName, int flags);
+    }
 #endif
   }
 }

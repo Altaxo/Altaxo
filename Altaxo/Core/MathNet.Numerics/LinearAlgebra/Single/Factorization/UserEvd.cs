@@ -130,7 +130,7 @@ namespace Altaxo.Calc.LinearAlgebra.Single.Factorization
     }
 
     private UserEvd(Matrix<float> eigenVectors, Vector<Complex> eigenValues, Matrix<float> blockDiagonal, bool isSymmetric)
-            : base(eigenVectors, eigenValues, blockDiagonal, isSymmetric)
+        : base(eigenVectors, eigenValues, blockDiagonal, isSymmetric)
     {
     }
 

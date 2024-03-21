@@ -39,7 +39,7 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
   [Serializable]
   [DataContract(Namespace = "urn:MathNet/Numerics/LinearAlgebra")]
   public class SparseVectorStorage<T> : VectorStorage<T>
-      where T : struct, IEquatable<T>, IFormattable
+        where T : struct, IEquatable<T>, IFormattable
   {
     // [ruegg] public fields are OK here
 
@@ -573,8 +573,8 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
     }
 
     private void CopySubVectorToUnchecked(SparseVectorStorage<T> target,
-            int sourceIndex, int targetIndex, int count,
-            ExistingData existingData)
+        int sourceIndex, int targetIndex, int count,
+        ExistingData existingData)
     {
       var offset = targetIndex - sourceIndex;
 

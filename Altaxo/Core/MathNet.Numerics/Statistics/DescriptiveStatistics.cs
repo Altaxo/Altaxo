@@ -111,15 +111,15 @@ namespace Altaxo.Calc.Statistics
     }
 
 #if NET5_0_OR_GREATER
-    /// <summary>
-    /// Initializes a new instance of the <see cref="DescriptiveStatistics"/> class.
-    /// </summary>
-    /// <remarks>
-    /// Used for Json serialization
-    /// </remarks>
-    public DescriptiveStatistics()
-    {
-    }
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DescriptiveStatistics"/> class.
+        /// </summary>
+        /// <remarks>
+        /// Used for Json serialization
+        /// </remarks>
+        public DescriptiveStatistics()
+        {
+        }
 #endif
 
     /// <summary>
@@ -128,7 +128,7 @@ namespace Altaxo.Calc.Statistics
     /// <value>The size of the sample.</value>
     [DataMember(Order = 1)]
 #if NET5_0_OR_GREATER
-    [JsonInclude]
+        [JsonInclude]
 #endif
     public long Count { get; private set; }
 
@@ -138,7 +138,7 @@ namespace Altaxo.Calc.Statistics
     /// <value>The sample mean.</value>
     [DataMember(Order = 2)]
 #if NET5_0_OR_GREATER
-    [JsonInclude]
+        [JsonInclude]
 #endif
     public double Mean { get; private set; }
 
@@ -148,7 +148,7 @@ namespace Altaxo.Calc.Statistics
     /// <value>The sample variance.</value>
     [DataMember(Order = 3)]
 #if NET5_0_OR_GREATER
-    [JsonInclude]
+        [JsonInclude]
 #endif
     public double Variance { get; private set; }
 
@@ -158,7 +158,7 @@ namespace Altaxo.Calc.Statistics
     /// <value>The sample standard deviation.</value>
     [DataMember(Order = 4)]
 #if NET5_0_OR_GREATER
-    [JsonInclude]
+        [JsonInclude]
 #endif
     public double StandardDeviation { get; private set; }
 
@@ -169,7 +169,7 @@ namespace Altaxo.Calc.Statistics
     /// <remarks>Returns zero if <see cref="Count"/> is less than three. </remarks>
     [DataMember(Order = 5)]
 #if NET5_0_OR_GREATER
-    [JsonInclude]
+        [JsonInclude]
 #endif
     public double Skewness { get; private set; }
 
@@ -180,7 +180,7 @@ namespace Altaxo.Calc.Statistics
     /// <remarks>Returns zero if <see cref="Count"/> is less than four. </remarks>
     [DataMember(Order = 6)]
 #if NET5_0_OR_GREATER
-    [JsonInclude]
+        [JsonInclude]
 #endif
     public double Kurtosis { get; private set; }
 
@@ -190,7 +190,7 @@ namespace Altaxo.Calc.Statistics
     /// <value>The maximum sample value.</value>
     [DataMember(Order = 7)]
 #if NET5_0_OR_GREATER
-    [JsonInclude]
+        [JsonInclude]
 #endif
     public double Maximum { get; private set; }
 
@@ -200,7 +200,7 @@ namespace Altaxo.Calc.Statistics
     /// <value>The minimum sample value.</value>
     [DataMember(Order = 8)]
 #if NET5_0_OR_GREATER
-    [JsonInclude]
+        [JsonInclude]
 #endif
     public double Minimum { get; private set; }
 

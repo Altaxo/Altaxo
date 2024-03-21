@@ -29,6 +29,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime;
 using System.Runtime.CompilerServices;
@@ -42,8 +43,9 @@ namespace Altaxo.Calc.LinearAlgebra
   /// </summary>
   /// <typeparam name="T">Supported data types are <c>double</c>, <c>single</c>, <see cref="Complex"/>, and <see cref="Complex32"/>.</typeparam>
   [Serializable]
-  public abstract partial class Matrix<T> : IFormattable, IEquatable<Matrix<T>>, IMatrix<T>, ICloneable
-      where T : struct, IEquatable<T>, IFormattable
+  [DebuggerTypeProxy(typeof(MatrixDebuggingView<>))]
+  public abstract partial class Matrix<T> : IFormattable, IEquatable<Matrix<T>>, ICloneable, IMatrix<T>
+        where T : struct, IEquatable<T>, IFormattable
   {
     /// <summary>
     /// Initializes a new instance of the Matrix class.
@@ -1894,5 +1896,19 @@ namespace Altaxo.Calc.LinearAlgebra
     {
       return Storage.Find2(other.Storage, (x, y) => !predicate(x, y), zeros) == null;
     }
+  }
+
+  internal class MatrixDebuggingView<T>
+      where T : struct, IEquatable<T>, IFormattable
+  {
+    private readonly Matrix<T> _matrix;
+
+    public MatrixDebuggingView(Matrix<T> matrix)
+    {
+      _matrix = matrix;
+    }
+
+    [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
+    public T[,] Items => _matrix.ToArray();
   }
 }

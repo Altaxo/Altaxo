@@ -72,7 +72,7 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
     }
 
     private DenseLU(Matrix<double> factors, int[] pivots)
-            : base(factors, pivots)
+        : base(factors, pivots)
     {
     }
 

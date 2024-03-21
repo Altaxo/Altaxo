@@ -1041,11 +1041,11 @@ namespace Altaxo.Calc
     }
 
     private static readonly double[] NegativePowersOf10 = new double[]
-        {
+    {
             1, 0.1, 0.01, 1e-3, 1e-4, 1e-5, 1e-6, 1e-7, 1e-8, 1e-9,
             1e-10, 1e-11, 1e-12, 1e-13, 1e-14, 1e-15, 1e-16,
             1e-17, 1e-18, 1e-19, 1e-20
-        };
+    };
 
     private static double Pow10(int y)
     {

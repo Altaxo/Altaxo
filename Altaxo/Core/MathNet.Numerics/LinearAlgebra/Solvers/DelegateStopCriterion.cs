@@ -35,7 +35,7 @@ namespace Altaxo.Calc.LinearAlgebra.Solvers
   /// Stop criterion that delegates the status determination to a delegate.
   /// </summary>
   public class DelegateStopCriterion<T> : IIterationStopCriterion<T>
-      where T : struct, IEquatable<T>, IFormattable
+        where T : struct, IEquatable<T>, IFormattable
   {
     private readonly Func<int, Vector<T>, Vector<T>, Vector<T>, IterationStatus> _determine;
     private IterationStatus _status = IterationStatus.Continue;

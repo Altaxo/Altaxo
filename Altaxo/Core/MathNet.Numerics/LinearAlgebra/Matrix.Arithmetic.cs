@@ -2379,7 +2379,7 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
     private static Exception CreateException<TException>(string message, string paramName = null)
-            where TException : Exception
+        where TException : Exception
     {
       if (typeof(TException) == typeof(ArgumentException))
       {

@@ -121,8 +121,8 @@ namespace Altaxo.Calc.Providers.FourierTransform
       CommonParallel.Invoke(
           () =>
           {
-                  // Build and transform padded sequence b_k = exp(I*Pi*k^2/N)
-                  for (int i = 0; i < n; i++)
+            // Build and transform padded sequence b_k = exp(I*Pi*k^2/N)
+            for (int i = 0; i < n; i++)
             {
               b[i] = sequence[i];
             }
@@ -136,8 +136,8 @@ namespace Altaxo.Calc.Providers.FourierTransform
           },
           () =>
           {
-                  // Build and transform padded sequence a_k = x_k * exp(-I*Pi*k^2/N)
-                  for (int i = 0; i < samples.Length; i++)
+            // Build and transform padded sequence a_k = x_k * exp(-I*Pi*k^2/N)
+            for (int i = 0; i < samples.Length; i++)
             {
               a[i] = sequence[i].Conjugate() * samples[i];
             }
@@ -176,8 +176,8 @@ namespace Altaxo.Calc.Providers.FourierTransform
       CommonParallel.Invoke(
           () =>
           {
-                  // Build and transform padded sequence b_k = exp(I*Pi*k^2/N)
-                  for (int i = 0; i < n; i++)
+            // Build and transform padded sequence b_k = exp(I*Pi*k^2/N)
+            for (int i = 0; i < n; i++)
             {
               b[i] = sequence[i];
             }
@@ -191,8 +191,8 @@ namespace Altaxo.Calc.Providers.FourierTransform
           },
           () =>
           {
-                  // Build and transform padded sequence a_k = x_k * exp(-I*Pi*k^2/N)
-                  for (int i = 0; i < samples.Length; i++)
+            // Build and transform padded sequence a_k = x_k * exp(-I*Pi*k^2/N)
+            for (int i = 0; i < samples.Length; i++)
             {
               a[i] = sequence[i].Conjugate() * samples[i];
             }

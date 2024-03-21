@@ -42,7 +42,7 @@ namespace Altaxo.Calc.LinearAlgebra.Factorization
   /// </remarks>
   /// <typeparam name="T">Supported data types are double, single, <see cref="Complex"/>, and <see cref="Complex32"/>.</typeparam>
   public abstract class Cholesky<T> : ISolver<T>
-      where T : struct, IEquatable<T>, IFormattable
+        where T : struct, IEquatable<T>, IFormattable
   {
     protected Cholesky(Matrix<T> factor)
     {

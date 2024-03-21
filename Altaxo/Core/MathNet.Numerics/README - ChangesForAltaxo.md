@@ -14,7 +14,12 @@ Math.NET Numerics was adopted for the needs of Altaxo. The following changes wer
 
 - in Correlation.cs the Fourier class must be explicitely specified with IntegralTransforms.Fourier
 
+- different improvements in NelderMeadSimplex (for instance, cancellation) 
 
+- NonlinearMinimizationResult: add infrastructure for parameters at their parameter boundaries
+
+- LinearAlgebraControl: change namespace path to provider
+- SparseSolverControl: change namespace path to provider
 
 License
 ================

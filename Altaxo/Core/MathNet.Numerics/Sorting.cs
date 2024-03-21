@@ -38,7 +38,7 @@ namespace Altaxo.Calc
   public static class Sorting
   {
     /// <summary>
-    /// Sort a list of keys, in place using the quick sort algorithm using the quick sort algorithm.
+    /// Sort a list of keys, in place using the quick sort algorithm.
     /// </summary>
     /// <typeparam name="T">The type of elements in the key list.</typeparam>
     /// <param name="keys">List to sort.</param>
@@ -658,9 +658,9 @@ namespace Altaxo.Calc
     /// <param name="left">The left boundary of the quick sort.</param>
     /// <param name="right">The right boundary of the quick sort.</param>
     private static void QuickSort<T, TItems1, TItems2>(
-            IList<T> keys, IList<TItems1> items1, IList<TItems2> items2,
-            IComparer<T> comparer,
-            int left, int right)
+        IList<T> keys, IList<TItems1> items1, IList<TItems2> items2,
+        IComparer<T> comparer,
+        int left, int right)
     {
       do
       {
@@ -756,9 +756,9 @@ namespace Altaxo.Calc
     /// <param name="left">The left boundary of the quick sort.</param>
     /// <param name="right">The right boundary of the quick sort.</param>
     private static void QuickSortAll<T1, T2>(
-            IList<T1> primary, IList<T2> secondary,
-            IComparer<T1> primaryComparer, IComparer<T2> secondaryComparer,
-            int left, int right)
+        IList<T1> primary, IList<T2> secondary,
+        IComparer<T1> primaryComparer, IComparer<T2> secondaryComparer,
+        int left, int right)
     {
       do
       {

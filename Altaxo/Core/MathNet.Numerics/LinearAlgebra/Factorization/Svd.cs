@@ -47,7 +47,7 @@ namespace Altaxo.Calc.LinearAlgebra.Factorization
   /// </remarks>
   /// <typeparam name="T">Supported data types are double, single, <see cref="Complex"/>, and <see cref="Complex32"/>.</typeparam>
   public abstract class Svd<T> : ISolver<T>
-      where T : struct, IEquatable<T>, IFormattable
+        where T : struct, IEquatable<T>, IFormattable
   {
     private readonly Lazy<Matrix<T>> _lazyW;
 

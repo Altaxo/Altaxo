@@ -346,7 +346,7 @@ namespace Altaxo.Calc.Optimization
     /// <param name="objectiveFunction"></param>
     /// <returns></returns>
     private static double TryToScaleSimplex(double scaleFactor, ref ErrorProfile errorProfile, Vector<double>[] vertices,
-                                          double[] errorValues, IObjectiveFunction objectiveFunction)
+                                      double[] errorValues, IObjectiveFunction objectiveFunction)
     {
       // find the centroid through which we will reflect
       Vector<double> centroid = ComputeCentroid(vertices, errorProfile);
@@ -379,7 +379,7 @@ namespace Altaxo.Calc.Optimization
     /// <param name="errorValues"></param>
     /// <param name="objectiveFunction"></param>
     private static void ShrinkSimplex(ErrorProfile errorProfile, Vector<double>[] vertices, double[] errorValues,
-                                      IObjectiveFunction objectiveFunction)
+                                  IObjectiveFunction objectiveFunction)
     {
       Vector<double> lowestVertex = vertices[errorProfile.LowestIndex];
       for (int i = 0; i < vertices.Length; i++)

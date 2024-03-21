@@ -38,7 +38,7 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
   [Serializable]
   [DataContract(Namespace = "urn:MathNet/Numerics/LinearAlgebra")]
   public class DenseVectorStorage<T> : VectorStorage<T>
-      where T : struct, IEquatable<T>, IFormattable
+        where T : struct, IEquatable<T>, IFormattable
   {
     // [ruegg] public fields are OK here
 

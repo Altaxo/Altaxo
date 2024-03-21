@@ -27,7 +27,7 @@ namespace Altaxo.Calc
     /// </summary>
     [DataMember(Order = 1)]
 #if NET5_0_OR_GREATER
-    [JsonInclude]
+        [JsonInclude]
 #endif
     public double[] Coefficients { get; private set; }
 

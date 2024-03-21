@@ -149,7 +149,7 @@ namespace Altaxo.Calc.Integration
     /// Precomputed abscissa vector per level.
     /// </summary>
     private static readonly double[][] PrecomputedAbscissas =
-        {
+    {
             new[]
             {
                 0.00000000000000000000,
@@ -370,7 +370,7 @@ namespace Altaxo.Calc.Integration
     /// Precomputed weight vector per level.
     /// </summary>
     private static readonly double[][] PrecomputedWeights =
-        {
+    {
             new[]
             {
                 1.5707963267948966192,

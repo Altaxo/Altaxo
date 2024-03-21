@@ -132,7 +132,7 @@ namespace Altaxo.Calc.LinearAlgebra.Complex.Factorization
     }
 
     private UserLU(Matrix<Complex> factors, int[] pivots)
-            : base(factors, pivots)
+        : base(factors, pivots)
     {
     }
 

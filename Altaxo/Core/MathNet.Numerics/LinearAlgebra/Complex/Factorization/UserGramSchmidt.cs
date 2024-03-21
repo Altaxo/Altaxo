@@ -95,7 +95,7 @@ namespace Altaxo.Calc.LinearAlgebra.Complex.Factorization
     }
 
     private UserGramSchmidt(Matrix<Complex> q, Matrix<Complex> rFull)
-            : base(q, rFull)
+        : base(q, rFull)
     {
     }
 

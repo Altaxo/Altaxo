@@ -38,7 +38,7 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
   [Serializable]
   [DataContract(Namespace = "urn:MathNet/Numerics/LinearAlgebra")]
   public class DenseColumnMajorMatrixStorage<T> : MatrixStorage<T>
-      where T : struct, IEquatable<T>, IFormattable
+        where T : struct, IEquatable<T>, IFormattable
   {
     // [ruegg] public fields are OK here
 
@@ -472,8 +472,8 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
     }
 
     private void CopySubMatrixToUnchecked(DenseColumnMajorMatrixStorage<T> target,
-            int sourceRowIndex, int targetRowIndex, int rowCount,
-            int sourceColumnIndex, int targetColumnIndex, int columnCount)
+        int sourceRowIndex, int targetRowIndex, int rowCount,
+        int sourceColumnIndex, int targetColumnIndex, int columnCount)
     {
       for (int j = sourceColumnIndex, jj = targetColumnIndex; j < sourceColumnIndex + columnCount; j++, jj++)
       {

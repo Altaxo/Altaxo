@@ -43,7 +43,7 @@ namespace Altaxo.Calc.LinearAlgebra.Factorization
   /// </remarks>
   /// <typeparam name="T">Supported data types are double, single, <see cref="Complex"/>, and <see cref="Complex32"/>.</typeparam>
   public abstract class LU<T> : ISolver<T>
-      where T : struct, IEquatable<T>, IFormattable
+        where T : struct, IEquatable<T>, IFormattable
   {
     private static readonly T One = BuilderInstance<T>.Matrix.One;
     private readonly Lazy<Matrix<T>> _lazyL;

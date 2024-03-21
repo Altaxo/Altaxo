@@ -87,7 +87,7 @@ namespace Altaxo.Calc.LinearAlgebra.Complex32.Factorization
     }
 
     private DenseQR(Matrix<Complex32> q, Matrix<Complex32> rFull, QRMethod method, Complex32[] tau)
-            : base(q, rFull, method)
+        : base(q, rFull, method)
     {
       Tau = tau;
     }

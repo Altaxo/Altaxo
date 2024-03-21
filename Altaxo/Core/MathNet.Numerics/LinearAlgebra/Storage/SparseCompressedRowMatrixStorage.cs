@@ -37,7 +37,7 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
   [Serializable]
   [DataContract(Namespace = "urn:MathNet/Numerics/LinearAlgebra")]
   public class SparseCompressedRowMatrixStorage<T> : MatrixStorage<T>
-      where T : struct, IEquatable<T>, IFormattable
+        where T : struct, IEquatable<T>, IFormattable
   {
     // [ruegg] public fields are OK here
 
@@ -1264,9 +1264,9 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
     }
 
     private void CopySubMatrixToUnchecked(SparseCompressedRowMatrixStorage<T> target,
-            int sourceRowIndex, int targetRowIndex, int rowCount,
-            int sourceColumnIndex, int targetColumnIndex, int columnCount,
-            ExistingData existingData)
+        int sourceRowIndex, int targetRowIndex, int rowCount,
+        int sourceColumnIndex, int targetColumnIndex, int columnCount,
+        ExistingData existingData)
     {
       var rowOffset = targetRowIndex - sourceRowIndex;
       var columnOffset = targetColumnIndex - sourceColumnIndex;
@@ -2260,10 +2260,10 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
     }
 
     private void MapSubMatrixIndexedToUnchecked<TU>(SparseCompressedRowMatrixStorage<TU> target, Func<int, int, T, TU> f,
-            int sourceRowIndex, int targetRowIndex, int rowCount,
-            int sourceColumnIndex, int targetColumnIndex, int columnCount,
-            Zeros zeros, ExistingData existingData)
-            where TU : struct, IEquatable<TU>, IFormattable
+        int sourceRowIndex, int targetRowIndex, int rowCount,
+        int sourceColumnIndex, int targetColumnIndex, int columnCount,
+        Zeros zeros, ExistingData existingData)
+        where TU : struct, IEquatable<TU>, IFormattable
     {
       var processZeros = zeros == Zeros.Include || !Zero.Equals(f(0, 1, Zero));
       if (existingData == ExistingData.Clear && !processZeros)

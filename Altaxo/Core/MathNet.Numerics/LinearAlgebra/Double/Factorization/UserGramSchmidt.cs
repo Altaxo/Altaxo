@@ -88,7 +88,7 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
     }
 
     private UserGramSchmidt(Matrix<double> q, Matrix<double> rFull)
-            : base(q, rFull)
+        : base(q, rFull)
     {
     }
 

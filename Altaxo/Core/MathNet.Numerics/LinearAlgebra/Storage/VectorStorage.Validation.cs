@@ -43,7 +43,7 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
     }
 
     private void ValidateSubVectorRange(VectorStorage<T> target,
-            int sourceIndex, int targetIndex, int count)
+        int sourceIndex, int targetIndex, int count)
     {
       if (count < 1)
       {
@@ -106,7 +106,7 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
     }
 
     private void ValidateSubRowRange(MatrixStorage<T> target, int rowIndex,
-            int sourceColumnIndex, int targetColumnIndex, int columnCount)
+        int sourceColumnIndex, int targetColumnIndex, int columnCount)
     {
       if (columnCount < 1)
       {
@@ -144,7 +144,7 @@ namespace Altaxo.Calc.LinearAlgebra.Storage
     }
 
     private void ValidateSubColumnRange(MatrixStorage<T> target, int columnIndex,
-            int sourceRowIndex, int targetRowIndex, int rowCount)
+        int sourceRowIndex, int targetRowIndex, int rowCount)
     {
       if (rowCount < 1)
       {

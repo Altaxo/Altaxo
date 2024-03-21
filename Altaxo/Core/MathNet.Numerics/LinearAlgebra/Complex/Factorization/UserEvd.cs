@@ -115,7 +115,7 @@ namespace Altaxo.Calc.LinearAlgebra.Complex.Factorization
     }
 
     private UserEvd(Matrix<Complex> eigenVectors, Vector<Complex> eigenValues, Matrix<Complex> blockDiagonal, bool isSymmetric)
-            : base(eigenVectors, eigenValues, blockDiagonal, isSymmetric)
+        : base(eigenVectors, eigenValues, blockDiagonal, isSymmetric)
     {
     }
 

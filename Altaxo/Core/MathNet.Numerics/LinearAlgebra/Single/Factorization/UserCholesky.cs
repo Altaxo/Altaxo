@@ -130,7 +130,7 @@ namespace Altaxo.Calc.LinearAlgebra.Single.Factorization
     }
 
     private UserCholesky(Matrix<float> factor)
-            : base(factor)
+        : base(factor)
     {
     }
 

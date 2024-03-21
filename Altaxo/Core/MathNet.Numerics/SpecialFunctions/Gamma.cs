@@ -53,7 +53,7 @@ namespace Altaxo.Calc
     /// Polynomial coefficients for the <see cref="GammaLn"/> approximation.
     /// </summary>
     private static readonly double[] GammaDk =
-        {
+    {
             2.48574089138753565546e-5,
             1.05142378581721974210,
             -3.45687097222016235469,

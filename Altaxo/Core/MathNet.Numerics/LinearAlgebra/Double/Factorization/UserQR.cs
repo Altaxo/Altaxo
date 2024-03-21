@@ -114,7 +114,7 @@ namespace Altaxo.Calc.LinearAlgebra.Double.Factorization
     }
 
     private UserQR(Matrix<double> q, Matrix<double> rFull, QRMethod method)
-            : base(q, rFull, method)
+        : base(q, rFull, method)
     {
     }
 

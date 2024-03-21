@@ -566,8 +566,8 @@ namespace Altaxo.Calc.Distributions
 
           if (u == 0.0d)
           {
-                  // skip zero-probability categories
-                  while (0.0d == cdfUnnormalized[idx])
+            // skip zero-probability categories
+            while (0.0d == cdfUnnormalized[idx])
             {
               idx++;
             }

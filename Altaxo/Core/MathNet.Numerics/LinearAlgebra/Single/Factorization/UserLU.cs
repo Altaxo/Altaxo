@@ -130,7 +130,7 @@ namespace Altaxo.Calc.LinearAlgebra.Single.Factorization
     }
 
     private UserLU(Matrix<float> factors, int[] pivots)
-            : base(factors, pivots)
+        : base(factors, pivots)
     {
     }
 
