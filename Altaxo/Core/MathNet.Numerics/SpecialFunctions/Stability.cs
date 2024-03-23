@@ -43,21 +43,34 @@ namespace Altaxo.Calc
     /// <returns>Returns <code>sqrt(a<sup>2</sup> + b<sup>2</sup>)</code> without underflow/overflow.</returns>
     public static Complex Hypotenuse(Complex a, Complex b)
     {
-      if (a.Magnitude > b.Magnitude)
+      double x, y, min, max;
+      x = a.Magnitude;
+      y = b.Magnitude;
+      if (y > x)
       {
-        var r = b.Magnitude / a.Magnitude;
-        return a.Magnitude * Math.Sqrt(1 + (r * r));
+        min = x;
+        max = y;
       }
-
-      if (b != 0.0)
+      else
       {
-        // NOTE (ruegg): not "!b.AlmostZero()" to avoid convergence issues (e.g. in SVD algorithm)
-        var r = a.Magnitude / b.Magnitude;
-        return b.Magnitude * Math.Sqrt(1 + (r * r));
+        min = y;
+        max = x;
       }
-
-      return 0d;
+      if (min == 0)
+      {
+        return max;
+      }
+      else if (double.IsInfinity(x + y))
+      {
+        return double.PositiveInfinity;
+      }
+      else
+      {
+        var u = min / max;
+        return max * Math.Sqrt(1 + u * u);
+      }
     }
+
 
     /// <summary>
     /// Numerically stable hypotenuse of a right angle triangle, i.e. <code>(a,b) -> sqrt(a^2 + b^2)</code>
@@ -67,20 +80,32 @@ namespace Altaxo.Calc
     /// <returns>Returns <code>sqrt(a<sup>2</sup> + b<sup>2</sup>)</code> without underflow/overflow.</returns>
     public static Complex32 Hypotenuse(Complex32 a, Complex32 b)
     {
-      if (a.Magnitude > b.Magnitude)
+      float x, y, min, max;
+      x = a.Magnitude;
+      y = b.Magnitude;
+      if (y > x)
       {
-        var r = b.Magnitude / a.Magnitude;
-        return a.Magnitude * (float)Math.Sqrt(1 + (r * r));
+        min = x;
+        max = y;
       }
-
-      if (b != 0.0f)
+      else
       {
-        // NOTE (ruegg): not "!b.AlmostZero()" to avoid convergence issues (e.g. in SVD algorithm)
-        var r = a.Magnitude / b.Magnitude;
-        return b.Magnitude * (float)Math.Sqrt(1 + (r * r));
+        min = y;
+        max = x;
       }
-
-      return 0f;
+      if (min == 0)
+      {
+        return max;
+      }
+      else if (float.IsInfinity(x + y))
+      {
+        return float.PositiveInfinity;
+      }
+      else
+      {
+        var u = min / max;
+        return max * (float)Math.Sqrt(1 + u * u);
+      }
     }
 
     /// <summary>
@@ -91,20 +116,32 @@ namespace Altaxo.Calc
     /// <returns>Returns <code>sqrt(a<sup>2</sup> + b<sup>2</sup>)</code> without underflow/overflow.</returns>
     public static double Hypotenuse(double a, double b)
     {
-      if (Math.Abs(a) > Math.Abs(b))
+      double x, y, min, max;
+      x = Math.Abs(a);
+      y = Math.Abs(b);
+      if (y > x)
       {
-        double r = b / a;
-        return Math.Abs(a) * Math.Sqrt(1 + (r * r));
+        min = x;
+        max = y;
       }
-
-      if (b != 0.0)
+      else
       {
-        // NOTE (ruegg): not "!b.AlmostZero()" to avoid convergence issues (e.g. in SVD algorithm)
-        double r = a / b;
-        return Math.Abs(b) * Math.Sqrt(1 + (r * r));
+        min = y;
+        max = x;
       }
-
-      return 0d;
+      if (min == 0)
+      {
+        return max;
+      }
+      else if (double.IsInfinity(x + y))
+      {
+        return double.PositiveInfinity;
+      }
+      else
+      {
+        var u = min / max;
+        return max * Math.Sqrt(1 + u * u);
+      }
     }
 
     /// <summary>
@@ -115,20 +152,32 @@ namespace Altaxo.Calc
     /// <returns>Returns <code>sqrt(a<sup>2</sup> + b<sup>2</sup>)</code> without underflow/overflow.</returns>
     public static float Hypotenuse(float a, float b)
     {
-      if (Math.Abs(a) > Math.Abs(b))
+      float x, y, min, max;
+      x = Math.Abs(a);
+      y = Math.Abs(b);
+      if (y > x)
       {
-        float r = b / a;
-        return Math.Abs(a) * (float)Math.Sqrt(1 + (r * r));
+        min = x;
+        max = y;
       }
-
-      if (b != 0.0)
+      else
       {
-        // NOTE (ruegg): not "!b.AlmostZero()" to avoid convergence issues (e.g. in SVD algorithm)
-        float r = a / b;
-        return Math.Abs(b) * (float)Math.Sqrt(1 + (r * r));
+        min = y;
+        max = x;
       }
-
-      return 0f;
+      if (min == 0)
+      {
+        return max;
+      }
+      else if (float.IsInfinity(x + y))
+      {
+        return float.PositiveInfinity;
+      }
+      else
+      {
+        var u = min / max;
+        return max * (float)Math.Sqrt(1 + u * u);
+      }
     }
   }
 }

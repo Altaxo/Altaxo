@@ -23,6 +23,8 @@
 #endregion Copyright
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using Altaxo.Calc.Probability;
 using Xunit;
 
@@ -34,11 +36,60 @@ namespace AltaxoTest.Calc.Probability
 
   internal class ContDistTester
   {
+    /// <summary>
+    /// Probability that the Kolmogorov-Smirnov-Test will fail even if the samples are distributed according to
+    /// the expected distribution. Lowering the value decreases the probability that the test will fail, but
+    /// makes the test more insensitive.
+    /// </summary>
+    private const double _probabilityForKSTestToFailWrongly = 0.001;
+
     private const double firstProb = 0.25;
     private const double secondProb = 0.95;
 
     private double[] _a;
     private ContinuousDistribution _dist;
+
+
+    /// <summary>
+    /// Kolmogorov-Smirnov-Test to test if samples drawn from a distribution are distributed as expected.
+    /// </summary>
+    /// <param name="sample">The samples drawn from a distribution. You should provide at least 10000 samples.</param>
+    /// <param name="referenceCDF">The expected cumulative distribution function.</param>
+    /// <param name="alpha">Probability that the Kolmogorov-Smirnov-Test will fail even if the samples are distributed according to
+    /// the expected distribution. Lowering the value decreases the probability that the test will fail, but
+    /// makes the test more insensitive.</param>
+    /// <returns>True if the samples follow the distribution; otherwise, false.</returns>
+    public static bool OneSampleKolmogorovSmirnovTest(IEnumerable<double> sample, Func<double, double> referenceCDF, double alpha = 0.001)
+    {
+      // Calculate the empirical CDF of the sample
+      var sortedSample = sample.OrderBy(x => x).ToArray();
+      var n = sortedSample.Length;
+      var empiricalCDF = sortedSample.Select((x, i) => (i + 1.0) / n).ToArray();
+
+      // Calculate the theoretical CDF using the reference distribution
+      var theoreticalCDF = sortedSample.Select(referenceCDF).ToArray();
+
+      // Compute the maximum absolute difference between the CDFs
+      var ksStatistic = empiricalCDF.Zip(theoreticalCDF, (ecdf, tcdf) => Math.Abs(ecdf - tcdf)).Max();
+
+      // Calculate the critical value for the given significance level (e.g., alpha = 0.05)
+      var criticalValue = Math.Sqrt(-0.5 * Math.Log(alpha / 2.0) / n);
+
+      // Compare the KS statistic to the critical value
+      if (ksStatistic > criticalValue)
+      {
+        // Reject the null hypothesis (sample does not follow the specified distribution)
+        // var alphaRequired = 2 * Math.Exp(-2 * criticalValue * criticalValue * n);
+        return false;
+      }
+      else
+      {
+        // Fail to reject the null hypothesis (sample follows the specified distribution).");
+        return true;
+      }
+    }
+
+
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ContDistTester"/> class.
@@ -75,17 +126,8 @@ namespace AltaxoTest.Calc.Probability
       double d2 = _dist.PDF(_a[4]);
       AssertEx.Equal(_a[5], d2, Math.Abs(_a[5] * tolerance), "Unexpected result of PDF secondQuantile");
 
-      int len = 1000000;
-      int suml = 0;
-      for (int i = 0; i < len; i++)
-      {
-        if (_dist.NextDouble() < _a[2])
-          suml++;
-      }
-      double p1_tested = suml / (double)len;
-      double confidence = BinomialDistribution.CDF(suml, firstProb, len);
-      AssertEx.Greater(confidence, 0.01, string.Format("Unexpected result of distribution of generated values : outside (left) the 1% confidence limits, expected p={0}, actual p={1}, confidence={2}", firstProb, p1_tested, confidence));
-      AssertEx.Less(confidence, 0.999, string.Format("Unexpected result of distribution of generated values : outside (right) the 1% confidence limits, expected p={0}, actual p={1}, confidence={2}", firstProb, p1_tested, confidence));
+
+      Assert.True(ContDistTester.OneSampleKolmogorovSmirnovTest(Enumerable.Range(0, 10000).Select(_ => _dist.NextDouble()), _dist.CDF, _probabilityForKSTestToFailWrongly));
     }
   }
 
