@@ -108,6 +108,9 @@
     <Compile Update="Gui\Science\Spectroscopy\PeakFitting\PeakFittingByIncrementalPeakAdditionControl.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Gui\Science\Spectroscopy\PeakFitting\PeakFittingInGroupControl.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Gui\Science\Spectroscopy\PeakFitting\PeakFittingSeparatelyControl.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -224,6 +227,9 @@
     <Page Update="Gui\Science\Spectroscopy\PeakFitting\PeakFittingByIncrementalPeakAdditionControl.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Gui\Science\Spectroscopy\PeakFitting\PeakFittingInGroupControl.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
     </Page>
     <Page Update="Gui\Science\Spectroscopy\SpectralPreprocessingDataControl.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>

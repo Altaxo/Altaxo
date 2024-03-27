@@ -392,6 +392,17 @@ namespace Altaxo.Calc.FitFunctions.Peaks
       return new double[] { height, position, w };
     }
 
+    /// <summary>
+    /// Gets the FWHM from the width value and the relative height at which the width was determined.
+    /// </summary>
+    /// <param name="width">The width value.</param>
+    /// <param name="relativeHeightOfWidthDetermination">The relative height (relative to the maximum), at which the width was determined.</param>
+    /// <returns>The estimated full width half maximum value.</returns>
+    public static double GetFWHMFromWidthAndRelativeHeight(double width, double relativeHeightOfWidthDetermination)
+    {
+      return SqrtLog4 * width / Math.Sqrt(-2 * Math.Log(relativeHeightOfWidthDetermination));
+    }
+
     /// <inheritdoc/>
     public string[] ParameterNamesForOnePeak => new string[] { ParameterBaseName0, ParameterBaseName1, ParameterBaseName2 };
 

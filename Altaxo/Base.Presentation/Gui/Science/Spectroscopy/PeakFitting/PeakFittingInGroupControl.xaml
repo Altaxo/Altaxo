@@ -1,0 +1,126 @@
+﻿<UserControl x:Class="Altaxo.Gui.Science.Spectroscopy.PeakFitting.PeakFittingInGroupsControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Altaxo.Gui.Science.Spectroscopy"
+             xmlns:localModel="clr-namespace:Altaxo.Gui.Science.Spectroscopy.PeakFitting;assembly=AltaxoBase"
+             xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
+             d:DataContext="{d:DesignInstance Type=localModel:PeakFittingInGroupsController}"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="4"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="4"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="4"/>
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="4" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="4" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="4" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="4" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="4" />
+    </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="4"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="4"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="4"/>
+        </Grid.ColumnDefinitions>
+
+        <GroupBox Grid.Row="0" Grid.Column="0"
+                  Header="Fit function:">
+            <axogc:SingleChoiceRadioStackPanelDC 
+                ItemsSource="{Binding FitFunctions.Items}"
+                SelectedItem="{Binding FitFunctions.SelectedItem}"/>
+        </GroupBox>
+
+        <Label Grid.Row="2" Grid.Column="0"
+               Content="Fit width:"/>
+
+        <axogc:QuantityWithUnitTextBox Grid.Row="2" Grid.Column="2"
+                                       UnitEnvironment="{Binding FitWidthScalingFactorEnvironment}"
+                                       SelectedQuantity="{Binding FitWidthScalingFactor}"
+                                       MinWidth="100"/>
+
+    <Label Grid.Row="2"
+           Grid.Column="4"
+           Content="x FWHM" />
+
+    <Label Grid.Row="4" Grid.Column="0"
+               Content="Minimal peak FWHM:"/>
+
+        <axogc:NumericDoubleTextBox Grid.Row="4" Grid.Column="2" 
+                                    SelectedValue="{Binding MinimalFWHMValue}"/>
+
+        <CheckBox Grid.Row="4" Grid.Column="4"
+                  IsChecked="{Binding IsMinimalFWHMValueInXUnits, Mode=TwoWay}"
+                  Content="in X-units" 
+                  VerticalAlignment="Center"/>
+
+    <Label Grid.Row="6"
+           Grid.Column="0"
+           Content="Group separation:" />
+
+    <axogc:QuantityWithUnitTextBox Grid.Row="6"
+                                   Grid.Column="2"
+                                   UnitEnvironment="{Binding FitWidthScalingFactorEnvironment}"
+                                   SelectedQuantity="{Binding MinimalGroupSeparationFWHMFactor}" />
+
+    <Label Grid.Row="6"
+           Grid.Column="4"
+           Content="x FWHM" />
+
+    <CheckBox Grid.Row="8"
+              Grid.Column="0" Grid.ColumnSpan="3"
+              IsChecked="{Binding IsEvaluatingSeparateVariances, Mode=TwoWay}"
+              Content="Separate error eval. with relative fit width:"
+              ToolTip="If checked, the peak's parameter errors are evaluated separately for each peak." />
+
+    <Label Grid.Row="10"
+           Grid.Column="0"
+           Content="Min. order of baseline polynomial:" />
+
+    <axogc:Int32UpDown Grid.Row="10"
+                       Grid.Column="2"
+                       Value="{Binding MinimumOrderOfBaselinePolynomial}"
+                       Minimum="-1"
+                       Maximum="10"
+                       ToolTip="If the baseline was already subtracted, choose -1 (no baseline polynomial). Else, choose the order not too high." />
+
+    <Label Grid.Row="10"
+           Grid.Column="4"
+           Content="(for 1 peak)" />
+
+    <Label Grid.Row="12"
+           Grid.Column="0"
+           Content="Max. order of baseline polynomial:" />
+
+    <axogc:Int32UpDown Grid.Row="12"
+                       Grid.Column="2"
+                       Value="{Binding MaximumOrderOfBaselinePolynomial}"
+                       Minimum="-1"
+                       Maximum="10"
+                       ToolTip="If the baseline was already subtracted, choose -1 (no baseline polynomial). Else, choose the order not too high." />
+
+    <Label Grid.Row="14"
+           Grid.Column="0"
+           Content="Max. order reached @ number of peaks:" />
+
+    <axogc:Int32UpDown Grid.Row="14"
+                       Grid.Column="2"
+                       Value="{Binding NumberOfPeaksAtMaximalOrderOfBaselinePolynomial}"
+                       Minimum="2"
+                       ToolTip="Number of peaks in one group, at which the maximum order of the baseline polynomial should be applied." />
+
+  </Grid>
+</UserControl>
