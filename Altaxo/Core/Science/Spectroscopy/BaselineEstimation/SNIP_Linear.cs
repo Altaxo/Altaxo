@@ -76,10 +76,6 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
     }
     #endregion
 
-
-
-
-
     public override string ToString()
     {
       return $"{this.GetType().Name} HW={HalfWidth}{(IsHalfWidthInXUnits ? 'X' : 'P')} Iterations={NumberOfRegularIterations}";

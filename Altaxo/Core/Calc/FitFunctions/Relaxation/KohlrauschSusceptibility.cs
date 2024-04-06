@@ -69,7 +69,7 @@ namespace Altaxo.Calc.FitFunctions.Relaxation
       }
     }
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(KohlrauschSusceptibility), 1)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Calc.FitFunctions.Relaxation.KohlrauschSusceptibility", 1)]
     private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)

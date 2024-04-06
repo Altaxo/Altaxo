@@ -22,6 +22,7 @@
 
 #endregion Copyright
 
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 
@@ -101,13 +102,29 @@ namespace Altaxo.Science.Spectroscopy.Calibration
       var spline = new Altaxo.Calc.Interpolation.AkimaCubicSpline();
       spline.Interpolate(ux, uy);
 
-      var yy = new double[y.Length];
+      var minX = ux.Min();
+      var maxX = ux.Max();
 
-      for (int i = 0; i < x.Length; ++i)
+      var xx = new List<double>();
+      var yy = new List<double>();
+      var rr = new List<int>();
+      foreach (var (start, end) in RegionHelper.GetRegionRanges(regions, x.Length))
       {
-        yy[i] = y[i] / spline.GetYOfX(x[i]);
+        if (xx.Count > 0)
+        {
+          rr.Add(xx.Count);
+        }
+        for (int i = start; i < end; ++i)
+        {
+          var xv = x[i];
+          if (minX <= xv && xv <= maxX) // we do not extrapolate, only interpolate
+          {
+            xx.Add(xv);
+            yy.Add(y[i] / spline.GetYOfX(xv));
+          }
+        }
       }
-      return (x, yy, regions);
+      return (xx.ToArray(), yy.ToArray(), RegionHelper.NormalizeRegions(rr, xx.Count));
     }
 
     /// <inheritdoc/>

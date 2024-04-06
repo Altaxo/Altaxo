@@ -30,14 +30,8 @@ using Altaxo.Science.Spectroscopy.PeakSearching;
 
 namespace Altaxo.Science.Spectroscopy
 {
-  public class PeakSearchingAndFittingOptionsDocNode : SpectralPreprocessingOptionsDocNode
+  public class PeakSearchingAndFittingOptionsDocNode : SpectralPreprocessingOptionsDocNodeBase
   {
-    public IPeakSearching PeakSearching { get; }
-
-    public IPeakFitting PeakFitting { get; }
-
-    private PeakSearchingAndFittingOutputOptions OutputOptions { get; }
-
 
     #region Serialization
 
@@ -61,20 +55,26 @@ namespace Altaxo.Science.Spectroscopy
 
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var options = info.GetValue<SpectralPreprocessingOptionsBase>("SpectralPreprocessingOptions", null);
-        var proxyList = SpectralPreprocessingOptionsDocNode.SerializationSurrogate0.DeserializeProxiesVersion0(info, parent, options);
+        var preprocessing = info.GetValue<SpectralPreprocessingOptionsBase>("SpectralPreprocessingOptions", null);
+        var proxyList = SpectralPreprocessingOptionsDocNode.SerializationSurrogate0.DeserializeProxiesVersion0(info, parent, preprocessing);
         var peakSearching = info.GetValue<IPeakSearching>("PeakSearching", null);
         var peakFitting = info.GetValue<IPeakFitting>("PeakFitting", null);
 
-
-        return new PeakSearchingAndFittingOptionsDocNode(options, proxyList, peakSearching, peakFitting, new PeakSearchingAndFittingOutputOptions());
+        var options = new PeakSearchingAndFittingOptions
+        {
+          Preprocessing = preprocessing,
+          PeakSearching = peakSearching,
+          PeakFitting = peakFitting,
+          OutputOptions = new PeakSearchingAndFittingOutputOptions(),
+        };
+        return new PeakSearchingAndFittingOptionsDocNode(options, proxyList);
       }
     }
 
     /// <summary>
     /// 2022-08-06 Initial version
     /// </summary>
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PeakSearchingAndFittingOptionsDocNode), 1)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Science.Spectroscopy.PeakSearchingAndFittingOptionsDocNode", 1)]
     public new class SerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
@@ -92,23 +92,34 @@ namespace Altaxo.Science.Spectroscopy
 
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var options = info.GetValue<SpectralPreprocessingOptionsBase>("SpectralPreprocessingOptions", null);
-        var proxyList = SpectralPreprocessingOptionsDocNode.SerializationSurrogate0.DeserializeProxiesVersion0(info, parent, options);
+        var preprocessing = info.GetValue<SpectralPreprocessingOptionsBase>("SpectralPreprocessingOptions", null);
+        var proxyList = SpectralPreprocessingOptionsDocNode.SerializationSurrogate0.DeserializeProxiesVersion0(info, parent, preprocessing);
         var peakSearching = info.GetValue<IPeakSearching>("PeakSearching", null);
         var peakFitting = info.GetValue<IPeakFitting>("PeakFitting", null);
         var outputOptions = info.GetValue<PeakSearchingAndFittingOutputOptions>("OutputOptions", null);
-        return new PeakSearchingAndFittingOptionsDocNode(options, proxyList, peakSearching, peakFitting, outputOptions);
+
+        var options = new PeakSearchingAndFittingOptions
+        {
+          Preprocessing = preprocessing,
+          PeakSearching = peakSearching,
+          PeakFitting = peakFitting,
+          OutputOptions = outputOptions,
+        };
+
+        return new PeakSearchingAndFittingOptionsDocNode(options, proxyList);
       }
     }
 
     /// <summary>
     /// 2023-03-30 A list of proxies now can be serialized.
     /// </summary>
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PeakSearchingAndFittingOptionsDocNode), 2)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Science.Spectroscopy.PeakSearchingAndFittingOptionsDocNode", 2)]
     public class SerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
+        throw new InvalidOperationException("Serialization of old version");
+        /*
         var s = (PeakSearchingAndFittingOptionsDocNode)obj;
         var preProcessingOptions = s.GetSpectralPreprocessingOptions();
         info.AddValue("SpectralPreprocessingOptions", preProcessingOptions);
@@ -116,36 +127,62 @@ namespace Altaxo.Science.Spectroscopy
         info.AddValue("PeakSearching", s.PeakSearching);
         info.AddValue("PeakFitting", s.PeakFitting);
         info.AddValue("OutputOptions", s.OutputOptions);
+        */
       }
 
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var options = info.GetValue<SpectralPreprocessingOptionsBase>("SpectralPreprocessingOptions", null);
-        var proxyList = SpectralPreprocessingOptionsDocNode.SerializationSurrogate1.DeserializeProxiesVersion1(info);
+        var preprocessing = info.GetValue<SpectralPreprocessingOptionsBase>("SpectralPreprocessingOptions", null);
+        var proxyList = SpectralPreprocessingOptionsDocNodeBase.DeserializeProxiesVersion1(info);
         var peakSearching = info.GetValue<IPeakSearching>("PeakSearching", null);
         var peakFitting = info.GetValue<IPeakFitting>("PeakFitting", null);
         var outputOptions = info.GetValue<PeakSearchingAndFittingOutputOptions>("OutputOptions", null);
-        return new PeakSearchingAndFittingOptionsDocNode(options, proxyList, peakSearching, peakFitting, outputOptions);
+
+        var options = new PeakSearchingAndFittingOptions
+        {
+          Preprocessing = preprocessing,
+          PeakSearching = peakSearching,
+          PeakFitting = peakFitting,
+          OutputOptions = outputOptions,
+        };
+        return new PeakSearchingAndFittingOptionsDocNode(options, proxyList);
       }
     }
 
+    /// <summary>
+    /// 2023-03-30 A list of proxies now can be serialized.
+    /// 2024-04-05 V3: PeakSearchingAndFittingOptions is now contained in _optionsObject
+    /// </summary>
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PeakSearchingAndFittingOptionsDocNode), 3)]
+    public class SerializationSurrogate3 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        var s = (PeakSearchingAndFittingOptionsDocNode)obj;
+        var preprocessingOptions = s.InternalGetSpectralPreprocessingOptions();
+        s.InternalSpectralPreprocessingOptions = preprocessingOptions;
+        info.AddValue("Options", s._optionsObject);
+        SpectralPreprocessingOptionsDocNodeBase.SerializeProxiesVersion1(info, s, preprocessingOptions);
+      }
+
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      {
+        var options = info.GetValue<PeakSearchingAndFittingOptions>("Options", null);
+        var proxyList = SpectralPreprocessingOptionsDocNodeBase.DeserializeProxiesVersion1(info);
+        return new PeakSearchingAndFittingOptionsDocNode(options, proxyList);
+      }
+    }
 
     #endregion
 
-    protected PeakSearchingAndFittingOptionsDocNode(SpectralPreprocessingOptionsBase options, List<(int number, IDocumentLeafNode proxy)> proxyList, IPeakSearching peakSearching, IPeakFitting peakFitting, PeakSearchingAndFittingOutputOptions outputOptions)
+    protected PeakSearchingAndFittingOptionsDocNode(PeakSearchingAndFittingOptions options, List<(int number, IDocumentLeafNode proxy)> proxyList)
       : base(options, proxyList)
     {
-      PeakSearching = peakSearching;
-      PeakFitting = peakFitting;
-      OutputOptions = outputOptions;
     }
 
 
-    public PeakSearchingAndFittingOptionsDocNode(PeakSearchingAndFittingOptions options) : base(options.Preprocessing)
+    public PeakSearchingAndFittingOptionsDocNode(PeakSearchingAndFittingOptions options) : base(options)
     {
-      PeakSearching = options.PeakSearching;
-      PeakFitting = options.PeakFitting;
-      OutputOptions = options.OutputOptions;
     }
 
     /// <summary>
@@ -154,15 +191,20 @@ namespace Altaxo.Science.Spectroscopy
     /// <returns>The wrapped spectral preprocessing options</returns>
     public PeakSearchingAndFittingOptions GetPeakSearchingAndFittingOptions()
     {
-      var preprocessing = GetSpectralPreprocessingOptions();
+      InternalSpectralPreprocessingOptions = InternalGetSpectralPreprocessingOptions();
+      return (PeakSearchingAndFittingOptions)_optionsObject;
+    }
 
-      return new PeakSearchingAndFittingOptions
+    protected override SpectralPreprocessingOptionsBase InternalSpectralPreprocessingOptions
+    {
+      get
       {
-        Preprocessing = preprocessing,
-        PeakSearching = PeakSearching,
-        PeakFitting = PeakFitting,
-        OutputOptions = OutputOptions,
-      };
+        return ((PeakSearchingAndFittingOptions)_optionsObject).Preprocessing;
+      }
+      set
+      {
+        _optionsObject = ((PeakSearchingAndFittingOptions)_optionsObject) with { Preprocessing = value };
+      }
     }
   }
 }

@@ -52,6 +52,33 @@ namespace Altaxo.Science.Spectroscopy.Calibration
     /// </summary>
     public IInterpolationFunctionOptions? InterpolationMethod { get; init; }
 
+    /// <summary>
+    /// Gets the minimal valid x value of the calibration curve that comes with the certificate of the source.
+    /// </summary>
+    public double MinimalValidXValueOfCurve { get; init; } = double.NegativeInfinity;
+
+    /// <summary>
+    /// Gets the maximal valid x value of the calibration curve that comes with the certificate of the source.
+    /// </summary>
+    public double MaximalValidXValueOfCurve { get; init; } = double.PositiveInfinity;
+
+    private double _maximalGainRatio = double.PositiveInfinity;
+    /// <summary>
+    /// Gets the maximal allowed ratio of the gain that is caused by the intensity correction.
+    /// Example: if the value is 10, and in the center of the spectrum the gain is 1, then
+    /// the spectrum is cropped at the ends, where the gain reaches 10.
+    /// </summary>
+    public double MaximalGainRatio
+    {
+      get => _maximalGainRatio;
+      set
+      {
+        if (!(value > 1))
+          throw new ArgumentException("The maximal gain ratio has to be a value > 1");
+        _maximalGainRatio = value;
+      }
+    }
+
     #region Serialization
 
     /// <summary>
@@ -119,7 +146,7 @@ namespace Altaxo.Science.Spectroscopy.Calibration
     /// 2023-11-20 V1: new property 'InterpolationMethod' added
     /// </summary>
     /// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(YCalibrationOptions), 1)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoCore", "Altaxo.Science.Spectroscopy.Calibration.YCalibrationOptions", 1)]
     public class SerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
@@ -172,6 +199,78 @@ namespace Altaxo.Science.Spectroscopy.Calibration
           CurveShape = intensityCurve,
           CurveParameters = arr.ToImmutableArray(),
           InterpolationMethod = interpolationMethod,
+        };
+      }
+    }
+
+    /// <summary>
+    /// 2024-04-04 V2: new properties MinimalValidXValueOfCurve, MaximalValidXValueOfCurve and MaximalGainRatio
+    /// </summary>
+    /// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(YCalibrationOptions), 2)]
+    public class SerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        var s = (YCalibrationOptions)obj;
+        info.AddValue("SpectralPreprocessing", s.Preprocessing);
+        info.AddValue("CurveShape", s.CurveShape);
+
+        info.CreateArray("CurveParameters", s.CurveParameters.Length);
+        {
+          for (int i = 0; i < s.CurveParameters.Length; i++)
+          {
+            info.CreateElement("e");
+            {
+              info.AddValue("Name", s.CurveParameters[i].Name);
+              info.AddValue("Value", s.CurveParameters[i].Value);
+            }
+            info.CommitElement();
+          }
+        }
+        info.CommitArray();
+
+        info.AddValueOrNull("InterpolationMethod", s.InterpolationMethod);
+
+        info.AddValue("MinimalValidXValueOfCurve", s.MinimalValidXValueOfCurve);
+        info.AddValue("MaximalValidXValueOfCurve", s.MaximalValidXValueOfCurve);
+        info.AddValue("MaximalGainRatio", s.MaximalGainRatio);
+      }
+
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      {
+        var spectralPreprocessing = info.GetValue<SpectralPreprocessingOptionsBase>("SpectralPreprocessing", parent);
+        var intensityCurve = info.GetValue<IFitFunction>("CurveShape", null);
+
+        var count = info.OpenArray("CurveParameters");
+        var arr = new (string Name, double Value)[count];
+        {
+          for (int i = 0; i < count; ++i)
+          {
+            info.OpenElement(); // "e"
+            var s = info.GetString("Name");
+            var v = info.GetDouble("Value");
+            info.CloseElement();
+            arr[i] = (s, v);
+          }
+        }
+        info.CloseArray(count);
+
+        var interpolationMethod = info.GetValueOrNull<IInterpolationFunctionOptions>("InterpolationMethod", null);
+
+        var minimalValidXValueOfCurve = info.GetDouble("MinimalValidXValueOfCurve");
+        var maximalValidXValueOfCurve = info.GetDouble("MaximalValidXValueOfCurve");
+        var maximalGainRatio = info.GetDouble("MaximalGainRatio");
+
+        return new YCalibrationOptions
+        {
+          Preprocessing = spectralPreprocessing,
+          CurveShape = intensityCurve,
+          CurveParameters = arr.ToImmutableArray(),
+          InterpolationMethod = interpolationMethod,
+          MinimalValidXValueOfCurve = minimalValidXValueOfCurve,
+          MaximalValidXValueOfCurve = maximalValidXValueOfCurve,
+          MaximalGainRatio = maximalGainRatio,
         };
       }
     }

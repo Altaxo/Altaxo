@@ -44,7 +44,7 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
   {
     #region Serialization
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(SNIP_Linear), 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(SNIP_LogLog), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)

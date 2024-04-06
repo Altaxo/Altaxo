@@ -84,7 +84,7 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
 
     #region Serialization
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PeakSearchingByTopology), 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoCore", "Altaxo.Science.Spectroscopy.PeakSearching.PeakSearchingByTopology", 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
@@ -104,7 +104,7 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
       }
     }
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PeakSearchingByTopology), 1)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoCore", "Altaxo.Science.Spectroscopy.PeakSearching.PeakSearchingByTopology", 1)]
     public class SerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)

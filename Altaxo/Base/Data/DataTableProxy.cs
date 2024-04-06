@@ -144,23 +144,14 @@ namespace Altaxo.Data
       var table = Document; // this may have the side effect that the object is tried to resolve, is this o.k.?
       if (table is not null)
       {
-        return table.Name;
+        return level <= 0 ? table.Name : Main.AbsoluteDocumentPath.GetAbsolutePath(table).ToString();
       }
       else
       {
-        string path = InternalDocumentPath.ToString();
-        int idx = 0;
-        if (level <= 0)
-        {
-          idx = path.LastIndexOf('/');
-          if (idx < 0)
-            idx = 0;
-          else
-            idx++;
-        }
-
-        return path.Substring(idx);
+        return level <= 0 ? InternalDocumentPath.LastPart : InternalDocumentPath.ToString();
       }
     }
+
+    public string TableName => GetName(0);
   }
 }

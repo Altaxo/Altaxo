@@ -30,6 +30,12 @@
       <RowDefinition Height="4"/>
       <RowDefinition Height="Auto"/>
       <RowDefinition Height="4"/>
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="4" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="4" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="4" />
     </Grid.RowDefinitions>
 
     <GroupBox Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="5"
@@ -82,7 +88,22 @@
       </ListView.View>
     </ListView>
 
-    <GroupBox Grid.Row="10" Grid.ColumnSpan="3">
+    <Label Grid.Row="10"
+           Grid.Column="0"
+           Grid.ColumnSpan="2"
+           Content="Minimal x of curve:" />
+    <axogc:NumericDoubleTextBox Grid.Row="10"
+                                Grid.Column="2"
+                                SelectedValue="{Binding MinimalValidXValueOfCurve}" />
+    <Label Grid.Row="12"
+           Grid.Column="0"
+           Grid.ColumnSpan="2"
+           Content="Minimal x of curve:" />
+    <axogc:NumericDoubleTextBox Grid.Row="12"
+                                Grid.Column="2"
+                                SelectedValue="{Binding MaximalValidXValueOfCurve}" />
+
+    <GroupBox Grid.Row="14" Grid.ColumnSpan="3">
       <GroupBox.Header>
         <CheckBox Content="Smooth result by smoothing interpolation"
                         IsChecked="{Binding SmoothResultingCurve, Mode=TwoWay}"
@@ -100,6 +121,13 @@
         </StackPanel>
       </Expander>
     </GroupBox>
+
+    <Label Grid.Row="16"
+           Grid.Column="0" Grid.ColumnSpan="2"
+           Content="Maximal gain ratio:" />
+    <axogc:NumericDoubleTextBox Grid.Row="16"
+                                Grid.Column="2"
+                                SelectedValue="{Binding MaximalGainRatio}" />
 
   </Grid>
 

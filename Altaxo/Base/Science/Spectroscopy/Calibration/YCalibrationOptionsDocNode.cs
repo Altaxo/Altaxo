@@ -31,24 +31,8 @@ using Altaxo.Main;
 
 namespace Altaxo.Science.Spectroscopy.Calibration
 {
-  public class YCalibrationOptionsDocNode : SpectralPreprocessingOptionsDocNode
+  public class YCalibrationOptionsDocNode : SpectralPreprocessingOptionsDocNodeBase
   {
-    /// <summary>
-    /// Gets the intensity curve of calibration source. This is usually a peak function, for instance a Gaussian shape with one or more terms (and baseline polynomial).
-    /// </summary>
-    public IFitFunction CurveShape { get; init; } = new Altaxo.Calc.FitFunctions.Peaks.GaussAmplitude(1, -1);
-
-    /// <summary>
-    /// Gets the curve parameters for the <see cref="CurveShape"/> function.
-    /// </summary>
-    public ImmutableArray<(string Name, double Value)> CurveParameters { get; init; } = ImmutableArray<(string Name, double Value)>.Empty;
-
-    /// <summary>
-    /// Gets or sets the smoothing interpolation that is used to smooth the resulting curve.
-    /// The value can be null: in this case, no smoothing is performed.
-    /// </summary>
-    public IInterpolationFunctionOptions? InterpolationMethod { get; init; }
-
     #region Serialization
 
     /// <summary>
@@ -85,8 +69,8 @@ namespace Altaxo.Science.Spectroscopy.Calibration
 
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var options = info.GetValue<SpectralPreprocessingOptionsBase>("SpectralPreprocessingOptions", null);
-        var proxyList = SpectralPreprocessingOptionsDocNode.SerializationSurrogate1.DeserializeProxiesVersion1(info);
+        var preprocessing = info.GetValue<SpectralPreprocessingOptionsBase>("SpectralPreprocessingOptions", null);
+        var proxyList = SpectralPreprocessingOptionsDocNodeBase.DeserializeProxiesVersion1(info);
 
         var intensityCurve = info.GetValue<IFitFunction>("CurveShape", null);
         var count = info.OpenArray("CurveParameters");
@@ -103,19 +87,26 @@ namespace Altaxo.Science.Spectroscopy.Calibration
         }
         info.CloseArray(count);
 
-
-        return new YCalibrationOptionsDocNode(options, proxyList, intensityCurve, arr.ToImmutableArray(), null);
+        var options = new YCalibrationOptions()
+        {
+          Preprocessing = preprocessing,
+          CurveShape = intensityCurve,
+          CurveParameters = arr.ToImmutableArray(),
+        };
+        return new YCalibrationOptionsDocNode(options, proxyList);
       }
     }
 
     /// <summary>
     /// 2023-11-20 V1: new property 'InterpolationMethod'
     /// </summary>
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(YCalibrationOptionsDocNode), 1)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Science.Spectroscopy.Calibration.YCalibrationOptionsDocNode", 1)]
     public class SerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
+        throw new InvalidOperationException("Serialization of old version");
+        /*
         var s = (YCalibrationOptionsDocNode)obj;
         var preProcessingOptions = s.GetSpectralPreprocessingOptions();
         info.AddValue("SpectralPreprocessingOptions", preProcessingOptions);
@@ -137,12 +128,13 @@ namespace Altaxo.Science.Spectroscopy.Calibration
         info.CommitArray();
 
         info.AddValueOrNull("InterpolationMethod", s.InterpolationMethod);
+        */
       }
 
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        var options = info.GetValue<SpectralPreprocessingOptionsBase>("SpectralPreprocessingOptions", null);
-        var proxyList = SpectralPreprocessingOptionsDocNode.SerializationSurrogate1.DeserializeProxiesVersion1(info);
+        var preprocessing = info.GetValue<SpectralPreprocessingOptionsBase>("SpectralPreprocessingOptions", null);
+        var proxyList = SpectralPreprocessingOptionsDocNodeBase.DeserializeProxiesVersion1(info);
 
         var intensityCurve = info.GetValue<IFitFunction>("CurveShape", null);
         var count = info.OpenArray("CurveParameters");
@@ -161,25 +153,52 @@ namespace Altaxo.Science.Spectroscopy.Calibration
 
         var interpolationMethod = info.GetValueOrNull<IInterpolationFunctionOptions>("InterpolationMethod", null);
 
-        return new YCalibrationOptionsDocNode(options, proxyList, intensityCurve, arr.ToImmutableArray(), interpolationMethod);
+        var options = new YCalibrationOptions()
+        {
+          Preprocessing = preprocessing,
+          InterpolationMethod = interpolationMethod,
+          CurveParameters = arr.ToImmutableArray(),
+          CurveShape = intensityCurve,
+        };
+
+        return new YCalibrationOptionsDocNode(options, proxyList);
       }
     }
+
+    /// <summary>
+    /// 2023-11-20 V1: new property 'InterpolationMethod'
+    /// 2024-04-05 V2: YCalibrationOptions now in _optionsObject
+    /// </summary>
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(YCalibrationOptionsDocNode), 2)]
+    public class SerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        var s = (YCalibrationOptionsDocNode)obj;
+        var preprocessingOptions = s.InternalGetSpectralPreprocessingOptions();
+        s.InternalSpectralPreprocessingOptions = preprocessingOptions;
+        info.AddValue("Options", s._optionsObject);
+        SpectralPreprocessingOptionsDocNodeBase.SerializeProxiesVersion1(info, s, preprocessingOptions);
+      }
+
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      {
+        var options = info.GetValue<YCalibrationOptions>("Options", null);
+        var proxyList = SpectralPreprocessingOptionsDocNodeBase.DeserializeProxiesVersion1(info);
+        return new YCalibrationOptionsDocNode(options, proxyList);
+      }
+    }
+
     #endregion
 
-    protected YCalibrationOptionsDocNode(SpectralPreprocessingOptionsBase options, List<(int number, IDocumentLeafNode proxy)> proxyList, IFitFunction curve, ImmutableArray<(string Name, double Value)> curveParameters, IInterpolationFunctionOptions? interpolationMethod)
+    protected YCalibrationOptionsDocNode(YCalibrationOptions options, List<(int number, IDocumentLeafNode proxy)> proxyList)
       : base(options, proxyList)
     {
-      CurveShape = curve;
-      CurveParameters = curveParameters;
-      InterpolationMethod = interpolationMethod;
     }
 
 
-    public YCalibrationOptionsDocNode(YCalibrationOptions options) : base(options.Preprocessing)
+    public YCalibrationOptionsDocNode(YCalibrationOptions options) : base(options)
     {
-      CurveShape = options.CurveShape;
-      CurveParameters = options.CurveParameters;
-      InterpolationMethod = options.InterpolationMethod;
     }
 
     /// <summary>
@@ -188,15 +207,20 @@ namespace Altaxo.Science.Spectroscopy.Calibration
     /// <returns>The wrapped spectral preprocessing options</returns>
     public YCalibrationOptions GetYCalibrationOptions()
     {
-      var preprocessing = GetSpectralPreprocessingOptions();
+      InternalSpectralPreprocessingOptions = InternalGetSpectralPreprocessingOptions();
+      return (YCalibrationOptions)_optionsObject;
+    }
 
-      return new YCalibrationOptions
+    protected override SpectralPreprocessingOptionsBase InternalSpectralPreprocessingOptions
+    {
+      get
       {
-        Preprocessing = preprocessing,
-        CurveShape = CurveShape,
-        CurveParameters = CurveParameters,
-        InterpolationMethod = InterpolationMethod,
-      };
+        return ((YCalibrationOptions)_optionsObject).Preprocessing;
+      }
+      set
+      {
+        _optionsObject = ((YCalibrationOptions)_optionsObject) with { Preprocessing = value };
+      }
     }
   }
 

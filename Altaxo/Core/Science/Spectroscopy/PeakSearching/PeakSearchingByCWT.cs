@@ -183,7 +183,7 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
 
     #region Serialization
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PeakSearchingByCwt), 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoCore", "Altaxo.Science.Spectroscopy.PeakSearching.PeakSearchingByCwt", 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
@@ -217,7 +217,7 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
     /// 2022-10-19 V1: Add property 'MaximalNumberOfPeaks'
     /// </summary>
     /// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PeakSearchingByCwt), 1)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoCore", "Altaxo.Science.Spectroscopy.PeakSearching.PeakSearchingByCwt", 1)]
     public class SerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)

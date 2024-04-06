@@ -31,12 +31,12 @@ namespace Altaxo.Science.Spectroscopy.BaselineEvaluation
   {
     #region Serialization
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(SNIP_Linear), 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(SNIP_LogLog), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (SNIP_Linear)obj;
+        var s = (SNIP_LogLog)obj;
         info.AddValue("HalfWidth", s.HalfWidth);
         info.AddValue("IsHalfWidthInXUnits", s.IsHalfWidthInXUnits);
         info.AddValue("NumberOfIterations", s.NumberOfRegularIterations);
@@ -48,13 +48,13 @@ namespace Altaxo.Science.Spectroscopy.BaselineEvaluation
         var isHalfWidthInXUnits = info.GetBoolean("IsHalfWidthInXUnits");
         var numberOfIterations = info.GetInt32("NumberOfIterations");
 
-        return o is null ? new SNIP_Linear
+        return o is null ? new SNIP_LogLog
         {
           HalfWidth = halfWidth,
           IsHalfWidthInXUnits = isHalfWidthInXUnits,
           NumberOfRegularIterations = numberOfIterations
         } :
-          ((SNIP_Linear)o) with
+          ((SNIP_LogLog)o) with
           {
             HalfWidth = halfWidth,
             IsHalfWidthInXUnits = isHalfWidthInXUnits,

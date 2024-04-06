@@ -27,6 +27,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
+using Altaxo.Calc;
 using Altaxo.Data;
 using Altaxo.Main;
 
@@ -268,32 +269,76 @@ namespace Altaxo.Science.Spectroscopy.Calibration
         yArr[i] = srcYCol[i];
       }
 
-      var spectralPreprocessingOptions = _processOptions.GetSpectralPreprocessingOptions();
+      var spectralPreprocessingOptions = yCalibrationOptions.Preprocessing;
       int[]? regions = null;
       (xArr, yArr, regions) = spectralPreprocessingOptions.Execute(xArr, yArr, regions);
 
-      var function = _processOptions.CurveShape;
-      var para = _processOptions.CurveParameters.Select(x => x.Value).ToArray();
+      var function = yCalibrationOptions.CurveShape;
+      var para = yCalibrationOptions.CurveParameters.Select(x => x.Value).ToArray();
       var X = new double[1];
       var Y = new double[1];
+      var xList = new List<double>();
+      var yList = new List<double>();
+      var yStandardList = new List<double>();
+      var yScalingDenominatorNotSmoothedList = new List<double>();
+      double maxScalingDenominator = double.NegativeInfinity;
       for (int i = 0; i < xArr.Length; i++)
       {
-        colX[i] = xArr[i];
-        colY[i] = yArr[i];
-        X[0] = xArr[i];
-        function.Evaluate(X, para, Y);
-        colCalStandardY[i] = Y[0];
-        colScalingDenominatorNotSmoothed[i] = yArr[i] / Y[0];
+        var x = xArr[i];
+        if (RMath.IsInIntervalCC(x, yCalibrationOptions.MinimalValidXValueOfCurve, yCalibrationOptions.MaximalValidXValueOfCurve))
+        {
+          X[0] = xArr[i];
+          function.Evaluate(X, para, Y);
+          var yStandard = Y[0];
+          var scalingDenominator = yArr[i] / yStandard;
+          xList.Add(xArr[i]);
+          yList.Add(yArr[i]);
+          yStandardList.Add(yStandard);
+          yScalingDenominatorNotSmoothedList.Add(scalingDenominator);
+          maxScalingDenominator = Math.Max(maxScalingDenominator, scalingDenominator);
+        }
       }
 
       // if choosen, then smooth the result
       if (yCalibrationOptions.InterpolationMethod is { } smoothingOption)
       {
-        var yarr = colScalingDenominatorNotSmoothed.ToArray();
-        var interpolation = smoothingOption.Interpolate(xArr, yarr);
-        for (int i = 0; i < xArr.Length; i++)
+        var yScalingDenominatorSmoothedList = new List<double>();
+        var interpolation = smoothingOption.Interpolate(xList.ToArray(), yScalingDenominatorNotSmoothedList.ToArray());
+        maxScalingDenominator = double.NegativeInfinity;
+        for (int i = 0; i < xList.Count; i++)
         {
-          colScalingDenominator[i] = interpolation.GetYOfX(xArr[i]);
+          var scalingDenominator = interpolation.GetYOfX(xList[i]);
+          yScalingDenominatorSmoothedList.Add(scalingDenominator);
+          maxScalingDenominator = Math.Max(maxScalingDenominator, scalingDenominator);
+        }
+
+        for (int i = 0, j = 0; i < xList.Count; i++)
+        {
+          var gainRatio = maxScalingDenominator / yScalingDenominatorSmoothedList[i];
+          if (RMath.IsInIntervalOC(gainRatio, 0, yCalibrationOptions.MaximalGainRatio))
+          {
+            colX[j] = xArr[i];
+            colY[j] = yArr[i];
+            colCalStandardY[j] = yStandardList[i];
+            colScalingDenominatorNotSmoothed[j] = yScalingDenominatorNotSmoothedList[i];
+            colScalingDenominator[j] = yScalingDenominatorSmoothedList[i];
+            j++;
+          }
+        }
+      }
+      else
+      {
+        for (int i = 0, j = 0; i < xList.Count; i++)
+        {
+          var gainRatio = maxScalingDenominator / yScalingDenominatorNotSmoothedList[i];
+          if (RMath.IsInIntervalOC(gainRatio, 0, yCalibrationOptions.MaximalGainRatio))
+          {
+            colX[j] = xArr[i];
+            colY[j] = yArr[i];
+            colCalStandardY[j] = yStandardList[i];
+            colScalingDenominator[j] = yScalingDenominatorNotSmoothedList[i];
+            j++;
+          }
         }
       }
     }
@@ -387,7 +432,7 @@ namespace Altaxo.Science.Spectroscopy.Calibration
         if (value is null)
           throw new ArgumentNullException(nameof(ProcessOptions));
 
-        if (_processOptions is null || !object.Equals(_processOptions.GetSpectralPreprocessingOptions(), value))
+        if (_processOptions is null || !object.Equals(_processOptions.GetYCalibrationOptions(), value))
         {
           ChildSetMember(ref _processOptions, new YCalibrationOptionsDocNode(value));
           EhChildChanged(_processOptions, EventArgs.Empty);

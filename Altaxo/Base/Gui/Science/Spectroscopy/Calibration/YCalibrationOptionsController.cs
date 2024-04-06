@@ -195,6 +195,52 @@ namespace Altaxo.Gui.Science.Spectroscopy.Calibration
       }
     }
 
+    private double _minimalValidXValueOfCurve;
+
+    public double MinimalValidXValueOfCurve
+    {
+      get => _minimalValidXValueOfCurve;
+      set
+      {
+        if (!(_minimalValidXValueOfCurve == value))
+        {
+          _minimalValidXValueOfCurve = value;
+          OnPropertyChanged(nameof(MinimalValidXValueOfCurve));
+        }
+      }
+    }
+
+
+    private double _maximalValidXValueOfCurve;
+
+    public double MaximalValidXValueOfCurve
+    {
+      get => _maximalValidXValueOfCurve;
+      set
+      {
+        if (!(_maximalValidXValueOfCurve == value))
+        {
+          _maximalValidXValueOfCurve = value;
+          OnPropertyChanged(nameof(MaximalValidXValueOfCurve));
+        }
+      }
+    }
+
+    private double _maximalGainRatio;
+
+    public double MaximalGainRatio
+    {
+      get => _maximalGainRatio;
+      set
+      {
+        if (!(_maximalGainRatio == value))
+        {
+          _maximalGainRatio = value;
+          OnPropertyChanged(nameof(MaximalGainRatio));
+        }
+      }
+    }
+
     #endregion
 
     protected override void Initialize(bool initData)
@@ -221,6 +267,10 @@ namespace Altaxo.Gui.Science.Spectroscopy.Calibration
 
         SmoothResultingCurve = _doc.InterpolationMethod is not null;
         InterpolationMethod = new InterpolationFunctionOptionsController(_doc.InterpolationMethod ?? new PolyharmonicSpline1DOptions() { DerivativeOrder = 2, RegularizationParameter = 1000 });
+
+        MinimalValidXValueOfCurve = _doc.MinimalValidXValueOfCurve;
+        MaximalValidXValueOfCurve = _doc.MaximalValidXValueOfCurve;
+        MaximalGainRatio = _doc.MaximalGainRatio;
       }
     }
 
@@ -270,6 +320,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.Calibration
         CurveShape = curveInstance,
         CurveParameters = ParametersOfCurve.Select(p => (p.Name, p.Value)).ToImmutableArray(),
         InterpolationMethod = interpolationMethod,
+        MinimalValidXValueOfCurve = MinimalValidXValueOfCurve,
+        MaximalValidXValueOfCurve = MaximalValidXValueOfCurve,
+        MaximalGainRatio = MaximalGainRatio,
       };
 
       return ApplyEnd(true, disposeController);

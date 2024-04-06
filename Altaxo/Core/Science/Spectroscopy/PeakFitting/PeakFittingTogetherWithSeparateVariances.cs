@@ -68,7 +68,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
     /// <summary>
     /// 2022-08-06 Added FitWidthScalingFactor
     /// </summary>
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PeakFittingTogetherWithSeparateVariances), 1)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoCore", "Altaxo.Science.Spectroscopy.PeakFitting.PeakFittingTogetherWithSeparateVariances", 1)]
     public class SerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
