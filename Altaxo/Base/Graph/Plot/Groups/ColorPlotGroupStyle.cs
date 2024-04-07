@@ -24,8 +24,6 @@
 
 #nullable enable
 using System;
-using System.Collections.Generic;
-using System.Text;
 using Altaxo.Drawing;
 using Altaxo.Drawing.ColorManagement;
 
@@ -70,7 +68,7 @@ namespace Altaxo.Graph.Plot.Groups
 
     #region Serialization
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ColorGroupStyle), 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Plot.Groups.ColorGroupStyle", 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
@@ -90,7 +88,7 @@ namespace Altaxo.Graph.Plot.Groups
     /// <summary>
     ///
     /// </summary>
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ColorGroupStyle), 1)] // 2011-05-11 adding ColorSet
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Plot.Groups.ColorGroupStyle", 1)] // 2011-05-11 adding ColorSet
     private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)

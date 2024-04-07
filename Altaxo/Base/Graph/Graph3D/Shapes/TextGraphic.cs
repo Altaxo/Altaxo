@@ -25,15 +25,12 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.Linq;
 using Altaxo.Geometry;
 
 namespace Altaxo.Graph.Graph3D.Shapes
 {
   using System.Diagnostics.CodeAnalysis;
-  using System.Security.Policy;
   using Background;
   using Drawing;
   using Drawing.D3D;
@@ -551,7 +548,7 @@ namespace Altaxo.Graph.Graph3D.Shapes
       BlackOut
     }
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.BackgroundStyle", 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.Graph3D.Shapes.BackgroundStyle", 0)]
     public class BackgroundStyleXmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)

@@ -24,9 +24,6 @@
 
 #nullable enable
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Altaxo.Drawing.ColorManagement;
 
 namespace Altaxo.Drawing
@@ -52,7 +49,7 @@ namespace Altaxo.Drawing
     /// 2015-11-25 Version 1 NamedColor moved from Altaxo.Graph workspace into Altaxo.Drawing namespace
     /// </summary>
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Graph.NamedColor", 0)]
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(NamedColor), 1)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Drawing.NamedColor", 1)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)

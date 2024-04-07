@@ -106,7 +106,7 @@ namespace Altaxo.Worksheet
 
     #region Version 0
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(WorksheetLayout), 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Worksheet.WorksheetLayout", 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       protected WorksheetLayout? _worksheetLayout;

@@ -70,7 +70,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     /// <summary>
     /// V0: 2024-01-24 initial version
     /// </summary>
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(MasterCurveTableOutputOptions), 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Science.Thermorheology.MasterCurves.MasterCurveTableOutputOptions", 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)

@@ -145,7 +145,6 @@ namespace Altaxo.Calc.Regression.Multivariate
       }
     }
 
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(MultivariateContentMemento), 1)]
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Calc.Regression.PLS.PLSContentMemento", 1)]
     private class XmlSerializationSurrogate1 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
@@ -382,8 +381,8 @@ namespace Altaxo.Calc.Regression.Multivariate
       ConvertPreprocessing(SpectralPreprocessingOptions options)
     {
       var singleProcessor = new Altaxo.Science.Spectroscopy.SpectralPreprocessingOptions();
-        
-      Altaxo.Science.Spectroscopy.EnsembleMeanScale.IEnsembleMeanScalePreprocessor ensembleProcessor=null;
+
+      Altaxo.Science.Spectroscopy.EnsembleMeanScale.IEnsembleMeanScalePreprocessor ensembleProcessor = null;
 
       switch (options.Method)
       {
@@ -405,7 +404,7 @@ namespace Altaxo.Calc.Regression.Multivariate
           throw new NotImplementedException($"option {options.Method} is unknown.");
       }
 
-      if(options.UseDetrending)
+      if (options.UseDetrending)
       {
         singleProcessor = singleProcessor with { BaselineEstimation = new Altaxo.Science.Spectroscopy.BaselineEstimation.PolynomialDetrending { DetrendingOrder = options.DetrendingOrder } };
       }
@@ -430,10 +429,10 @@ namespace Altaxo.Calc.Regression.Multivariate
 
         // process data
         var table = Current.Project.DataTableCollection[plsMemo.OriginalDataTableName];
-        processData = new DataTableMatrixProxyWithMultipleColumnHeaderColumns(table, plsMemo.SpectralIndices, plsMemo.MeasurementIndices, plsMemo.ConcentrationIndices); 
+        processData = new DataTableMatrixProxyWithMultipleColumnHeaderColumns(table, plsMemo.SpectralIndices, plsMemo.MeasurementIndices, plsMemo.ConcentrationIndices);
 
-      // process Options
-      var (singlePreprocessor, ensemblePreprocessor) = ConvertPreprocessing(plsMemo._spectralPreprocessing);
+        // process Options
+        var (singlePreprocessor, ensemblePreprocessor) = ConvertPreprocessing(plsMemo._spectralPreprocessing);
         processOptions = new DimensionReductionAndRegressionOptions
         {
           MaximumNumberOfFactors = plsMemo._CalculatedNumberOfFactors,
@@ -465,6 +464,6 @@ namespace Altaxo.Calc.Regression.Multivariate
         dataSource = null;
         return false;
       }
-   }
+    }
   }
 }

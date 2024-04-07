@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using Altaxo.Collections;
 using Xunit;
 
 namespace Altaxo.Serialization.Xml
@@ -35,7 +34,7 @@ namespace Altaxo.Serialization.Xml
     {
       var stb = new StringBuilder();
       var dict = new Dictionary<AssemblyNameTypeName, List<(XmlSerializationSurrogateForAttribute Attr, System.Type AppliedType)>>();
-      var allTypesSet = new HashSet<AssemblyNameTypeName>(); // set of all types in the 3 Altaxo assemblies
+      var allTypesSet = new Dictionary<AssemblyNameTypeName, System.Type>(); // set of all types in the 3 Altaxo assemblies
 
       // the names of the Altaxo assemblies to test
       var altaxoAssemblyNames = new HashSet<string>(GetAssembliesToTest().Select(ass => ass.GetName().Name));
@@ -43,7 +42,10 @@ namespace Altaxo.Serialization.Xml
       foreach (var ass in GetAssembliesToTest())
       {
         var allTypes = ass.GetTypes();
-        allTypesSet.AddRange(allTypes.Select(x => new AssemblyNameTypeName(x.Assembly.GetName().Name, x.FullName)));
+        foreach (var type in allTypes)
+        {
+          allTypesSet.Add(new AssemblyNameTypeName(type.Assembly.GetName().Name, type.FullName), type);
+        }
         foreach (var type in allTypes)
         {
           var attributes = type.GetCustomAttributes().OfType<XmlSerializationSurrogateForAttribute>();
@@ -150,11 +152,17 @@ namespace Altaxo.Serialization.Xml
 
         // if the type the attributes refers to still exists in Altaxo, then there
         // must be exactly one attribute which have this type directly set
-        if (allTypesSet.Contains(entry.Key))
+        // but note: this is not an error if the type to serialize is marked as obsolete
+        if (allTypesSet.TryGetValue(entry.Key, out var serializationType))
         {
-          if (!(1 == count))
+          if (0 == count && serializationType.GetCustomAttributes().OfType<System.ObsoleteAttribute>().FirstOrDefault() is null)
           {
             stb.AppendLine($"There is no serialization attribute for which serialization type is set directly: {entry.Key}");
+            stb.AppendLine($"Those attributes are applied to the following types:");
+            foreach (var x in list)
+            {
+              stb.AppendLine($"\t{x.AppliedType.Assembly.GetName().Name}, {x.AppliedType}: Version:{x.Attr.Version}");
+            }
           }
         }
       }

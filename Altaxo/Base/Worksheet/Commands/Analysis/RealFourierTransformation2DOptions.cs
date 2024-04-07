@@ -24,9 +24,6 @@
 
 #nullable enable
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Altaxo.Calc.Fourier;
 
 namespace Altaxo.Worksheet.Commands.Analysis
@@ -84,7 +81,7 @@ namespace Altaxo.Worksheet.Commands.Analysis
     /// <summary>
     /// 2014-07-08 initial version.
     /// </summary>
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(RealFourierTransformation2DOptions), 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoBase", "Altaxo.Worksheet.Commands.Analysis.RealFourierTransformation2DOptions", 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
