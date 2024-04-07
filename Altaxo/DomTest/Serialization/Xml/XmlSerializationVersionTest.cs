@@ -152,10 +152,34 @@ namespace Altaxo.Serialization.Xml
 
         // if the type the attributes refers to still exists in Altaxo, then there
         // must be exactly one attribute which have this type directly set
-        // but note: this is not an error if the type to serialize is marked as obsolete
+        // but note (1): it is not an error if the type to serialize is marked as obsolete
+        // but note (2): it is not an error if the existing indirect attributes apply to a serialization surrogate which has at least one direct attribute
         if (allTypesSet.TryGetValue(entry.Key, out var serializationType))
         {
-          if (0 == count && serializationType.GetCustomAttributes().OfType<System.ObsoleteAttribute>().FirstOrDefault() is null)
+          bool isAnError = 0 == count; // no direct attribute exist for that type
+
+          if (isAnError)
+          {
+            isAnError &= serializationType.GetCustomAttributes().OfType<System.ObsoleteAttribute>().FirstOrDefault() is null; // serialization type is not marked as obsolete
+          }
+
+          if (isAnError)
+          {
+            // See Note 2 above:
+            // if there is no direct attribute for that type
+            // then the indirect attributes for that type must be applied to a serialization surrogate which
+            // has other attributes attached (although not for the same type), and one of those other attributes is a direct one
+            // as example see Altaxo.Worksheet.WorksheetViewLayout+XmlSerializationSurrogate0
+            bool allIndirectAttributesHaveOneDirectSiblingInSerializationSurrogate = true;
+            foreach (var entr in list)
+            {
+              bool atLeastOneAttributeIsDirect = entr.AppliedType.GetCustomAttributes().OfType<XmlSerializationSurrogateForAttribute>().Any(x => x.SerializationType is not null); ;
+              allIndirectAttributesHaveOneDirectSiblingInSerializationSurrogate &= atLeastOneAttributeIsDirect;
+            }
+            isAnError &= !allIndirectAttributesHaveOneDirectSiblingInSerializationSurrogate;
+          }
+
+          if (isAnError)
           {
             stb.AppendLine($"There is no serialization attribute for which serialization type is set directly: {entry.Key}");
             stb.AppendLine($"Those attributes are applied to the following types:");
