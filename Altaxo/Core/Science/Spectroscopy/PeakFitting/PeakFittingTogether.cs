@@ -175,7 +175,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
         int len = last - first + 1;
         if (len < numberOfParametersPerPeak)
         {
-          dictionaryOfNotFittedPeaks.Add(description, new PeakDescription() { Notes = "Width too small for fitting" });
+          dictionaryOfNotFittedPeaks.Add(description, new PeakDescription() { SearchDescription = description, Notes = "Width too small for fitting", FirstFitPoint = first, LastFitPoint = last });
           continue;
         }
 
