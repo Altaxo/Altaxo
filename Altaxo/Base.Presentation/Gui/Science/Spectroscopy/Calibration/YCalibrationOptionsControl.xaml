@@ -91,17 +91,19 @@
     <Label Grid.Row="10"
            Grid.Column="0"
            Grid.ColumnSpan="2"
-           Content="Minimal x of curve:" />
+           Content="Minimal x-value of curve:" />
     <axogc:NumericDoubleTextBox Grid.Row="10"
                                 Grid.Column="2"
-                                SelectedValue="{Binding MinimalValidXValueOfCurve}" />
+                                SelectedValue="{Binding MinimalValidXValueOfCurve}"
+                                ToolTip="Enter the minimal valid x-value for which the calibration curve is valid (usually written on the certificate of the intensity calibration source)."/>
     <Label Grid.Row="12"
            Grid.Column="0"
            Grid.ColumnSpan="2"
-           Content="Minimal x of curve:" />
+           Content="Maximal x-value of curve:" />
     <axogc:NumericDoubleTextBox Grid.Row="12"
                                 Grid.Column="2"
-                                SelectedValue="{Binding MaximalValidXValueOfCurve}" />
+                                SelectedValue="{Binding MaximalValidXValueOfCurve}"
+                                ToolTip="Enter the maximal valid x-value for which the calibration curve is valid (usually written on the certificate of the intensity calibration source)." />
 
     <GroupBox Grid.Row="14" Grid.ColumnSpan="3">
       <GroupBox.Header>
@@ -127,7 +129,9 @@
            Content="Maximal gain ratio:" />
     <axogc:NumericDoubleTextBox Grid.Row="16"
                                 Grid.Column="2"
-                                SelectedValue="{Binding MaximalGainRatio}" />
+                                SelectedValue="{Binding MaximalGainRatio}"
+                                ToolTip="Enter the maximum permitted value by which the spectrum is amplified in the intensity correction."
+                                />
 
   </Grid>
 
