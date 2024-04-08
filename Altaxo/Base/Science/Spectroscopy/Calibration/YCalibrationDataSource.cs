@@ -320,8 +320,8 @@ namespace Altaxo.Science.Spectroscopy.Calibration
             colX[j] = xArr[i];
             colY[j] = yArr[i];
             colCalStandardY[j] = yStandardList[i];
-            colScalingDenominatorNotSmoothed[j] = yScalingDenominatorNotSmoothedList[i];
-            colScalingDenominator[j] = yScalingDenominatorSmoothedList[i];
+            colScalingDenominatorNotSmoothed[j] = yScalingDenominatorNotSmoothedList[i] / maxScalingDenominator;
+            colScalingDenominator[j] = yScalingDenominatorSmoothedList[i] / maxScalingDenominator;
             j++;
           }
         }
@@ -336,7 +336,7 @@ namespace Altaxo.Science.Spectroscopy.Calibration
             colX[j] = xArr[i];
             colY[j] = yArr[i];
             colCalStandardY[j] = yStandardList[i];
-            colScalingDenominator[j] = yScalingDenominatorNotSmoothedList[i];
+            colScalingDenominator[j] = yScalingDenominatorNotSmoothedList[i] / maxScalingDenominator;
             j++;
           }
         }
