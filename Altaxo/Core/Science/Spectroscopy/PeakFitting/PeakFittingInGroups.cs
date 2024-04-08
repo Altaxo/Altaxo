@@ -57,6 +57,27 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
       }
     }
 
+    public double _maximalRelativeAmplitudeInfluence = double.PositiveInfinity;
+
+    /// <summary>
+    /// Gets the maximal relative amplitude influence. If we have two neighbouring peaks, the one peak should not influence the amplitude
+    /// at the most close point of the other peak (that is included in the fit) by more that this value times the expected height of the other peak at this point.
+    /// </summary>
+    public double MaximalRelativeAmplitudeInfluence
+    {
+      get
+      {
+        return _maximalRelativeAmplitudeInfluence;
+      }
+      init
+      {
+        if (!(value > 0))
+          throw new ArgumentOutOfRangeException("Value has to be > 0", nameof(MaximalRelativeAmplitudeInfluence));
+
+        _maximalRelativeAmplitudeInfluence = value;
+      }
+    }
+
     private int _minimalOrderOfBaselinePolynomial = -1;
     /// <summary>
     /// Gets or sets the minimal order of the polynomial that is used for the baseline of each group.
@@ -136,6 +157,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
         info.AddValue("IsMinimalFWHMValueInXUnits", s.IsMinimalFWHMValueInXUnits);
         info.AddValue("MinimalFWHMValue", s.MinimalFWHMValue);
         info.AddValue("MinimalGroupSeparationFWHMFactor", s.MinimalGroupSeparationFWHMFactor);
+        info.AddValue("MaximalRelativeAmplitudeInfluence", s.MaximalRelativeAmplitudeInfluence);
         info.AddValue("EvaluateSeparateVariances", s.IsEvaluatingSeparateVariances);
         info.AddValue("MinOrderOfBaselinePolynomial", s.MinimalOrderOfBaselinePolynomial);
         info.AddValue("MaxOrderOfBaselinePolynomial", s.MaximalOrderOfBaselinePolynomial);
@@ -149,6 +171,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
         var isMinimalFWHMValueInXUnits = info.GetBoolean("IsMinimalFWHMValueInXUnits");
         var minimalFWHMValue = info.GetDouble("MinimalFWHMValue");
         var minimalGroupSeparationFWHMFactor = info.GetDouble("MinimalGroupSeparationFWHMFactor");
+        var maximalRelativeAmplitudeInfluence = info.GetDouble("MaximalRelativeAmplitudeInfluence");
         var isEvaluatingSeparateVariances = info.GetBoolean("EvaluateSeparateVariances");
         var minOrderOfBaselinePolynomial = info.GetInt32("MinOrderOfBaselinePolynomial");
         var maxOrderOfBaselinePolynomial = info.GetInt32("MaxOrderOfBaselinePolynomial");
@@ -164,6 +187,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
           IsMinimalFWHMValueInXUnits = isMinimalFWHMValueInXUnits,
           MinimalFWHMValue = minimalFWHMValue,
           MinimalGroupSeparationFWHMFactor = minimalGroupSeparationFWHMFactor,
+          MaximalRelativeAmplitudeInfluence = maximalRelativeAmplitudeInfluence,
           IsEvaluatingSeparateVariances = isEvaluatingSeparateVariances,
         };
       }
@@ -302,6 +326,11 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
         var (_, maxXDistance, _, _) = SignalMath.GetMinimalAndMaximalProperties(new ReadOnlySpan<double>(xArray, first, last - first + 1));
         peakParam.Add((first, last, maxXDistance, description));
         ++numberOfPeaks;
+      }
+
+      if (numberOfPeaks == 0) // no peaks could be fitted 
+      {
+        return dictionaryOfNotFittedPeaks.Values.ToList();
       }
 
       var orderOfBaselinePolynomial = numberOfPeaks >= NumberOfPeaksAtMaximalOrderOfBaselinePolynomial ? MaximalOrderOfBaselinePolynomial :
