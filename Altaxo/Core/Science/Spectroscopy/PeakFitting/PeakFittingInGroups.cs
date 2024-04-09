@@ -270,12 +270,13 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
       var result = new List<PeakDescription>();
 
       var groups = GroupPeaks(peakDescriptions);
-      foreach (var group in groups)
+
+      for (int peakGroupNumber = 0; peakGroupNumber < groups.Count; peakGroupNumber++)
       {
         if (cancellationToken.IsCancellationRequested)
         { break; }
 
-        var list = ExecuteForOneGroup(xArray, yArray, group, cancellationToken);
+        var list = ExecuteForOneGroup(xArray, yArray, groups[peakGroupNumber], peakGroupNumber, cancellationToken);
         result.AddRange(list);
       }
 
@@ -284,7 +285,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
 
     /// <summary>Executes peak fitting for peaks in one group</summary>
     /// <param name="xArray"></param>
-    public List<PeakDescription> ExecuteForOneGroup(double[] xArray, double[] yArray, IEnumerable<PeakSearching.PeakDescription> peakDescriptions, CancellationToken cancellationToken)
+    public List<PeakDescription> ExecuteForOneGroup(double[] xArray, double[] yArray, IEnumerable<PeakSearching.PeakDescription> peakDescriptions, int peakGroupNumber, CancellationToken cancellationToken)
     {
       var fitFunc = FitFunction.WithNumberOfTerms(1);
       int numberOfParametersPerPeak = fitFunc.NumberOfParameters;
@@ -304,7 +305,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
         int len = last - first + 1;
         if (len < numberOfParametersPerPeak)
         {
-          dictionaryOfNotFittedPeaks.Add(description, new PeakDescription() { SearchDescription = description, Notes = "Width too small for fitting", FirstFitPoint = first, LastFitPoint = last });
+          dictionaryOfNotFittedPeaks.Add(description, new PeakDescription() { SearchDescription = description, Notes = "Width too small for fitting", FirstFitPoint = first, LastFitPoint = last, PeakGroupNumber = peakGroupNumber });
           continue;
         }
 
@@ -445,7 +446,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
       if (!IsEvaluatingSeparateVariances)
       {
 
-        var list = GetPeakDescriptionList(xArray, yArray, peakDescriptions, fitFunc, numberOfParametersPerPeak, dictionaryOfNotFittedPeaks, peakParam, lowerBounds, upperBounds, fit, globalFitResult, cancellationToken);
+        var list = GetPeakDescriptionList(xArray, yArray, peakDescriptions, fitFunc, numberOfParametersPerPeak, dictionaryOfNotFittedPeaks, peakParam, lowerBounds, upperBounds, fit, globalFitResult, peakGroupNumber, cancellationToken);
         return list;
       }
       else // we calculate separate variances for each peak
@@ -531,6 +532,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
             PeakParameterCovariances = covMatrix,
             SumChiSquare = localFitResult.ModelInfoAtMinimum.Value,
             SigmaSquare = localFitResult.ModelInfoAtMinimum.Value / (localFitResult.ModelInfoAtMinimum.DegreeOfFreedom + 1),
+            PeakGroupNumber = peakGroupNumber,
           };
           list.Add(desc);
         }
@@ -550,6 +552,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
       IReadOnlyList<double?>? upperBounds,
       QuickNonlinearRegression fit,
       NonlinearMinimizationResult globalFitResult,
+      int peakGroupNumber,
       CancellationToken cancellationToken)
     {
       var param = globalFitResult.MinimizingPoint.ToArray();
@@ -578,6 +581,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
             FitFunctionParameter = globalFitResult.MinimizingPoint.ToArray(),
             SumChiSquare = globalFitResult.ModelInfoAtMinimum.Value,
             SigmaSquare = globalFitResult.ModelInfoAtMinimum.Value / (globalFitResult.ModelInfoAtMinimum.DegreeOfFreedom + 1),
+            PeakGroupNumber = peakGroupNumber,
           });
           ++idx;
         }

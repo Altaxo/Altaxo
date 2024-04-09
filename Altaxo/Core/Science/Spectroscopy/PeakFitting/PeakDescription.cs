@@ -95,6 +95,14 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
     public double SigmaSquare { get; init; }
 
     /// <summary>
+    /// Gets the peak group number (when fitting in groups).
+    /// </summary>
+    /// <value>
+    /// The peak group number. The value is zero if groups are not used in the fit.
+    /// </value>
+    public int PeakGroupNumber { get; init; }
+
+    /// <summary>
     /// Gets the position, the area, the height and the Full Width Half Maximum of the fitted peak.
     /// </summary>
     /// <exception cref="System.InvalidOperationException">FitFunction or PeakParameter is null (in instance of {this.GetType()}).</exception>
