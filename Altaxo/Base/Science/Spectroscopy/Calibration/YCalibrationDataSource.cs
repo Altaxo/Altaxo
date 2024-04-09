@@ -317,8 +317,8 @@ namespace Altaxo.Science.Spectroscopy.Calibration
           var gainRatio = maxScalingDenominator / yScalingDenominatorSmoothedList[i];
           if (RMath.IsInIntervalOC(gainRatio, 0, yCalibrationOptions.MaximalGainRatio))
           {
-            colX[j] = xArr[i];
-            colY[j] = yArr[i];
+            colX[j] = xList[i];
+            colY[j] = yList[i];
             colCalStandardY[j] = yStandardList[i];
             colScalingDenominatorNotSmoothed[j] = yScalingDenominatorNotSmoothedList[i] / maxScalingDenominator;
             colScalingDenominator[j] = yScalingDenominatorSmoothedList[i] / maxScalingDenominator;
@@ -333,8 +333,8 @@ namespace Altaxo.Science.Spectroscopy.Calibration
           var gainRatio = maxScalingDenominator / yScalingDenominatorNotSmoothedList[i];
           if (RMath.IsInIntervalOC(gainRatio, 0, yCalibrationOptions.MaximalGainRatio))
           {
-            colX[j] = xArr[i];
-            colY[j] = yArr[i];
+            colX[j] = xList[i];
+            colY[j] = yList[i];
             colCalStandardY[j] = yStandardList[i];
             colScalingDenominator[j] = yScalingDenominatorNotSmoothedList[i] / maxScalingDenominator;
             j++;
