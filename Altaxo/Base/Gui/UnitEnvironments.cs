@@ -24,8 +24,10 @@
 
 #nullable enable
 using System;
+using System.Collections.Generic;
 using Altaxo.Main.Properties;
 using Altaxo.Units;
+using Altaxo.Units.Speed;
 
 namespace Altaxo.Gui
 {
@@ -140,6 +142,49 @@ namespace Altaxo.Gui
     PropertyLevel.Application,
     () => new PrefixedUnit(SIPrefix.None, Altaxo.Units.Length.Point.Instance));
   }
+
+  public static class SpeedEnvironment
+  {
+    private static QuantityWithUnitGuiEnvironment _instance;
+
+    static SpeedEnvironment()
+    {
+      var speedUnits = new List<IUnit>
+      {
+        new UnitWithLimitedPrefixes(MeterPerSecond.Instance, [SIPrefix.Micro, SIPrefix.Milli, SIPrefix.Centi, SIPrefix.Deci]),
+      };
+
+      _instance = new QuantityWithUnitGuiEnvironment(speedUnits)
+      {
+        DefaultUnit = Current.PropertyService.GetValue(PropertyKeyDefaultUnit, Altaxo.Main.Services.RuntimePropertyKind.UserAndApplicationAndBuiltin)
+      };
+      _instance.DefaultUnitChanged += EhDefaultUnitChanged;
+    }
+
+    /// <summary>
+    /// Gets the common position environment for all position boxes.
+    /// </summary>
+    public static QuantityWithUnitGuiEnvironment Instance
+    {
+      get
+      {
+        return _instance;
+      }
+    }
+
+    private static void EhDefaultUnitChanged(object? sender, EventArgs e)
+    {
+      Current.PropertyService.SetValue(PropertyKeyDefaultUnit, _instance.DefaultUnit);
+    }
+
+    public static readonly PropertyKey<IPrefixedUnit> PropertyKeyDefaultUnit =
+    new PropertyKey<IPrefixedUnit>(
+    "2EAC8982-E624-4B13-ADD2-91EAA75690A3",
+    "Units\\DefaultSpeedUnit",
+    PropertyLevel.Application,
+    () => new PrefixedUnit(SIPrefix.None, Altaxo.Units.Speed.MeterPerSecond.Instance));
+  }
+
 
   public static class SizeEnvironment
   {
