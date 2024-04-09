@@ -1,4 +1,4 @@
-Math.NET Numerics
+﻿Math.NET Numerics
 =================
 
 Math.NET Numerics is an opensource **numerical library for .NET and Mono**.

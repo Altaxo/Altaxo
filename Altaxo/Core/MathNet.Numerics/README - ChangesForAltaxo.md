@@ -1,4 +1,4 @@
-Math.NET Numerics
+﻿Math.NET Numerics
 =================
 
 Math.NET Numerics is an opensource **numerical library for .NET and Mono**. See Readme.md in this folder for more information.
@@ -6,7 +6,7 @@ Math.NET Numerics is an opensource **numerical library for .NET and Mono**. See 
 
 Math.NET Numerics was adopted for the needs of Altaxo. The following changes were made, compared with the original code:
 
-- The namespace ´MathNet.Numerics´ was transformed to `Altaxo.Calc`.
+- The namespace Â´MathNet.NumericsÂ´ was transformed to `Altaxo.Calc`.
 
 - to Vector<T> the interfaces `IReadOnlyList<T>` and `IVector<T>` were added (the latter defined in Altaxo)
 
