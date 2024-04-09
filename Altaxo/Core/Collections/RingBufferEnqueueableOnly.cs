@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2024 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -64,6 +64,8 @@ namespace Altaxo.Collections
     /// The number of elements in this buffer.
     /// </value>
     public int Count => _count;
+
+    public bool IsEmpty => _count == 0;
 
     /// <summary>
     /// Gets the maximum number of elements that this buffer can store.
