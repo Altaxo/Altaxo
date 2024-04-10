@@ -116,5 +116,33 @@ namespace Altaxo.Data
     }
 
     #endregion IEnumerable Members
+
+    #region Convenience function
+
+    /// <summary>
+    /// Copies data from another row into this row. The data is copied using the name of the column.
+    /// It is copied lazy, thus it is not an error some columns don't exist on the destination or source,
+    /// or if the data types doesn't match.
+    /// </summary>
+    /// <param name="another">Another.</param>
+    public void CopyLazyByNameFrom(DataRow another)
+    {
+      for (int c = 0; c < another.ColumnCollection.ColumnCount; c++)
+      {
+        var name = another.ColumnCollection.GetColumnName(another.ColumnCollection[c]);
+        if (this.ColumnCollection.Contains(name))
+        {
+          try
+          {
+            this[name] = another[name];
+          }
+          catch (System.Exception)
+          {
+          }
+        }
+      }
+    }
+
+    #endregion
   }
 }
