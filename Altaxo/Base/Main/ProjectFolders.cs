@@ -211,6 +211,21 @@ namespace Altaxo.Main
       return result;
     }
 
+    /// <summary>
+    /// Get the items (but not the subfolders) of the subfolders of the provided folder.
+    /// Note that the items contained in the provided folder are <b>not</b> included.
+    /// </summary>
+    /// <param name="folderName">Folder for which to retrieve the items.</param>
+    /// <returns>List of items (but not the subfolders) of the provided folder.</returns>
+    public List<IProjectItem> GetItemsInSubfolders(string folderName)
+    {
+      ProjectFolder.ThrowExceptionOnInvalidFullFolderPath(folderName);
+
+      var result = new List<IProjectItem>();
+      AddItemsInSubfolders(folderName, result);
+
+      return result;
+    }
 
     /// <summary>
     /// Add the items  of the provided folder (but not of the subfolders) to the list.
@@ -262,6 +277,28 @@ namespace Altaxo.Main
     /// <param name="list">List where to add the items to.</param>
     public void AddItemsInFolderAndSubfolders(string folderName, ICollection<IProjectItem> list)
     {
+      AddItemsInFolderAndSubfolders(folderName, list, true);
+    }
+
+    /// <summary>
+    /// Add the items of the subfolders of the provided folder to the list.
+    /// The items in the provided folder itself are <b>not</b> added to the list.
+    /// </summary>
+    /// <param name="folderName">Folder for which to retrieve the items.</param>
+    /// <param name="list">List where to add the items to.</param>
+    public void AddItemsInSubfolders(string folderName, ICollection<IProjectItem> list)
+    {
+      AddItemsInFolderAndSubfolders(folderName, list, false);
+    }
+
+    /// <summary>
+    /// Add the items  of the provided folder and of the subfolders to the list.
+    /// </summary>
+    /// <param name="folderName">Folder for which to retrieve the items.</param>
+    /// <param name="list">List where to add the items to.</param>
+    /// <param name="includeItemsInFolder">If true, the items in the provided folder are included, too. If false, only items in subfolders of the provided folder are included.</param>
+    public void AddItemsInFolderAndSubfolders(string folderName, ICollection<IProjectItem> list, bool includeItemsInFolder)
+    {
       if (!_directories.TryGetValue(folderName, out var items))
       {
         ProjectFolder.ThrowExceptionOnInvalidFullFolderPath(folderName);
@@ -272,13 +309,16 @@ namespace Altaxo.Main
       {
         if (v is IProjectItem)
         {
-          list.Add((IProjectItem)v);
+          if (includeItemsInFolder)
+          {
+            list.Add((IProjectItem)v);
+          }
         }
         else if (v is string)
         {
           var subfolder = (string)v;
           if (_directories.ContainsKey(subfolder))
-            AddItemsInFolderAndSubfolders(subfolder, list);
+            AddItemsInFolderAndSubfolders(subfolder, list, true);
         }
         else
         {
