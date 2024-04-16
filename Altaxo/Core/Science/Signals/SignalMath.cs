@@ -171,7 +171,26 @@ namespace Altaxo.Science.Signals
       // make the order odd
       if (order % 2 == 0)
         order += 1;
+
       int numberOfPoints = order + 2;
+      return GetNoiseLevelEstimate(signal, numberOfPoints, order);
+    }
+
+    /// <summary>
+    /// Estimates the noise level of a signal.
+    /// </summary>
+    /// <param name="signal">The signal.</param>
+    /// <param name="numberOfPoints">The number of points used. Must be at least (order + 2).</param>
+    /// <param name="order">The order (should be odd). A order of 1 (linear) requires at least 3 points. Order of 3 requires at least 5 points. A order of 2k+1 requires at least 2k+3 points.</param>
+    /// <returns>The estimated noise level of the signal.</returns>
+    public static double GetNoiseLevelEstimate(double[] signal, int numberOfPoints, int order)
+    {
+      // make the order odd
+      if (order % 2 == 0)
+        order += 1;
+
+      if (!(numberOfPoints >= (order + 2)))
+        throw new ArgumentOutOfRangeException(nameof(numberOfPoints), "Must be >= (order + 2)");
 
       var p = new SavitzkyGolayParameters() { NumberOfPoints = numberOfPoints, PolynomialOrder = order, DerivativeOrder = 0 };
 

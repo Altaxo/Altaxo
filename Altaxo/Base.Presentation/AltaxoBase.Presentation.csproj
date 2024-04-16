@@ -54,6 +54,12 @@
     <Compile Update="Gui\Science\Signals\PronySeriesRelaxationControl.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Gui\Science\Spectroscopy\BaselineEstimation\ISREAControl.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Gui\Science\Spectroscopy\BaselineEstimation\SSProbControl.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Gui\Science\Spectroscopy\BaselineEstimation\XToXLineControl.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -171,6 +177,12 @@
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
     </Page>
     <Page Update="Gui\Science\Signals\PronySeriesRelaxationControl.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+    </Page>
+    <Page Update="Gui\Science\Spectroscopy\BaselineEstimation\ISREAControl.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+    </Page>
+    <Page Update="Gui\Science\Spectroscopy\BaselineEstimation\SSProbControl.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
     </Page>
     <Page Update="Gui\Science\Spectroscopy\BaselineEstimation\XToXLineControl.xaml">
