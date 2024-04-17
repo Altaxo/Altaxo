@@ -5,7 +5,8 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Altaxo.Gui.Science.Spectroscopy"
              xmlns:localModel="clr-namespace:Altaxo.Gui.Science.Spectroscopy.BaselineEstimation;assembly=AltaxoBase"
-             xmlns:axogc="clr-namespace:Altaxo.Gui.Common" 
+             xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
+             xmlns:axogcc="clr-namespace:Altaxo.Gui.Common.Converters"
              d:DataContext="{d:DesignInstance Type=localModel:ISREAController}"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
@@ -29,10 +30,43 @@
             <ColumnDefinition Width="4"/>
         </Grid.ColumnDefinitions>
 
-        <Label Grid.Row="0" Grid.Column="0"
-               Content="Number of features:"/>
-        <axogc:NumericDoubleTextBox Grid.Row="0" Grid.Column="2"
-                           SelectedValue="{Binding NumberOfFeatures}"
-                           ToolTip="Number of features determines the smoothness of the spline. The less features are chosen, the smoother the spline will be." />
-        </Grid>
+    <Label Grid.Row="0"
+           Grid.Column="0"
+           Content="Specifiy smoothness by:" />
+    <StackPanel Grid.Row="0"
+                Grid.Column="2"
+                Orientation="Vertical">
+      <RadioButton Content="Number of features"
+                   IsChecked="{Binding IsSpecifiedNumberOfFeatures, Mode=TwoWay}"
+                   VerticalAlignment="Center"
+                   Margin="0,0,4,0" />
+      <RadioButton Content="Span in points"
+                   IsChecked="{Binding IsSpecifiedNumberOfPoints, Mode=TwoWay}"
+                   VerticalAlignment="Center"
+                   Margin="0,0,4,0" />
+      <RadioButton Content="Span in x-units"
+                   IsChecked="{Binding IsSpecifiedXSpan, Mode=TwoWay}"
+                   VerticalAlignment="Center"
+                   Margin="0,0,4,0" />
+    </StackPanel>
+
+    <Label Grid.Row="2"
+           Grid.Column="0"
+           Content="Number of features:"
+           Visibility="{Binding IsSpecifiedNumberOfFeatures, Converter={x:Static axogcc:FalseToVisibilityHiddenConverter.Instance}}" />
+    <Label Grid.Row="2"
+           Grid.Column="0"
+           Content="Number of characteristic points:"
+           Visibility="{Binding IsSpecifiedNumberOfPoints, Converter={x:Static axogcc:FalseToVisibilityHiddenConverter.Instance}}" />
+    <Label Grid.Row="2"
+           Grid.Column="0"
+           Content="Characteristic span in x-units:"
+           Visibility="{Binding IsSpecifiedXSpan, Converter={x:Static axogcc:FalseToVisibilityHiddenConverter.Instance}}" />
+
+    <axogc:NumericDoubleTextBox Grid.Row="2"
+                                Grid.Column="2"
+                                SelectedValue="{Binding SmoothnessValue}"
+                                ToolTip="Number of features determines the smoothness of the spline. The less features are chosen, the smoother the spline will be." />
+
+  </Grid>
 </UserControl>

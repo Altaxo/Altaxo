@@ -43,23 +43,23 @@ namespace Altaxo.Science.Spectroscopy.BaselineEvaluation
       {
         var s = (SSProb)obj;
         info.AddValue("Interpolation", s.InterpolationFunctionOptions);
-        info.AddValue("NumberOfFeatures", s.NumberOfFeatures);
-        info.AddValue("AveragingSpan", s.AveragingSpan);
-        info.AddValue("IsAveragingSpanInXUnits", s.IsAveragingSpanInXUnits);
+        info.AddEnum("SmoothnessSpecifiedBy", s.SmoothnessSpecifiedBy);
+        info.AddValue("SmoothnessValue", s.SmoothnessValue);
+        info.AddValue("Probability", s.RelativeProbabilityThreshold);
       }
 
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var interpolation = info.GetValue<IInterpolationFunctionOptions>("Interpolation", parent);
-        var numberOfFeatures = info.GetDouble("NumberOfFeatures");
-        var averagingSpan = info.GetDouble("AveragingSpan");
-        var isAveragingSpanInXUnits = info.GetBoolean("IsAveragingSpanInXUnits");
+        var smoothnessSpecifiedBy = info.GetEnum<SmoothnessSpecification>("SmoothnessSpecifiedBy");
+        var numberOfFeatures = info.GetDouble("SmoothnessValue");
+        var probabilityThreshold = info.GetDouble("Probability");
         return new SSProb()
         {
           InterpolationFunctionOptions = interpolation,
-          NumberOfFeatures = numberOfFeatures,
-          AveragingSpan = averagingSpan,
-          IsAveragingSpanInXUnits = isAveragingSpanInXUnits
+          SmoothnessSpecifiedBy = smoothnessSpecifiedBy,
+          SmoothnessValue = numberOfFeatures,
+          RelativeProbabilityThreshold = probabilityThreshold,
         };
       }
     }

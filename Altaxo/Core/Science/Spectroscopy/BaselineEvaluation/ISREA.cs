@@ -43,14 +43,22 @@ namespace Altaxo.Science.Spectroscopy.BaselineEvaluation
       {
         var s = (ISREA)obj;
         info.AddValue("Interpolation", s.InterpolationFunctionOptions);
-        info.AddValue("NumberOfFeatures", s.NumberOfFeatures);
+        info.AddEnum("SmoothnessSpecifiedBy", s.SmoothnessSpecifiedBy);
+        info.AddValue("SmoothnessValue", s.SmoothnessValue);
       }
 
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var interpolation = info.GetValue<IInterpolationFunctionOptions>("Interpolation", parent);
-        var order = info.GetDouble("NumberOfFeatures");
-        return new ISREA() { InterpolationFunctionOptions = interpolation, NumberOfFeatures = order };
+        var smoothnessSpecifiedBy = info.GetEnum<SmoothnessSpecification>("SmoothnessSpecifiedBy");
+        var numberOfFeatures = info.GetDouble("SmoothnessValue");
+
+        return new ISREA()
+        {
+          InterpolationFunctionOptions = interpolation,
+          SmoothnessSpecifiedBy = smoothnessSpecifiedBy,
+          SmoothnessValue = numberOfFeatures,
+        };
       }
     }
     #endregion

@@ -246,5 +246,20 @@ namespace Altaxo.Science.Signals
       }
       return (minDist, maxDist, min, max);
     }
+
+    /// <summary>
+    /// Gets the mean increment of an array of values, i.e. the mean of array[i]-array[i-1].
+    /// </summary>
+    /// <param name="array">The array.</param>
+    /// <returns>The mean value of array[i]-array[i-1].</returns>
+    public static double GetMeanIncrement(IReadOnlyList<double> array)
+    {
+      double sum = 0;
+      for (int i = 1; i < array.Count; i++)
+      {
+        sum += (array[i] - array[i - 1]);
+      }
+      return sum / (array.Count - 1);
+    }
   }
 }

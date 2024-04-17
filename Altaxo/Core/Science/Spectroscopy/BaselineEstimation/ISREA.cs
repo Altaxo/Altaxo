@@ -26,6 +26,7 @@ using System;
 using System.Xml;
 using Altaxo.Calc;
 using Altaxo.Calc.Interpolation;
+using Altaxo.Science.Signals;
 
 namespace Altaxo.Science.Spectroscopy.BaselineEstimation
 {
@@ -39,17 +40,25 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
   /// </remarks>
   public abstract record ISREABase : Main.IImmutable
   {
-    private double _numberOfFeatures = 15;
+    /// <summary>
+    /// Determines how the smoothness of the spline is specified, together with <see cref="SmoothnessValue"/>.
+    /// </summary>
+    public SmoothnessSpecification SmoothnessSpecifiedBy { get; init; } = SmoothnessSpecification.ByNumberOfFeatures;
 
-    public double NumberOfFeatures
+    private double _smoothnessValue = 15;
+
+    /// <summary>
+    /// Determines the smoothness of the spline. This value has different meaning depending on the value of <see cref="SmoothnessSpecifiedBy"/>.
+    /// </summary>
+    public double SmoothnessValue
     {
-      get => _numberOfFeatures;
+      get => _smoothnessValue;
       init
       {
         if (!(value > 0))
-          throw new ArgumentOutOfRangeException("Number of features must be a value > 0", nameof(NumberOfFeatures));
+          throw new ArgumentOutOfRangeException("Number of features must be a value > 0", nameof(SmoothnessValue));
 
-        _numberOfFeatures = value;
+        _smoothnessValue = value;
       }
     }
 
@@ -100,8 +109,10 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
 
       var xx = xArray.ToArray();
       var yy = yArray.ToArray();
+      double meanXIncrement = SignalMath.GetMeanIncrement(xx);
+
       var yprev = new double[yy.Length];
-      var spline = GetSpline(InterpolationFunctionOptions, NumberOfFeatures, yArray.Length);
+      var spline = GetSpline(InterpolationFunctionOptions, SmoothnessSpecifiedBy, SmoothnessValue, yArray.Length, meanXIncrement);
       IInterpolationFunction interpolation = null!;
       double sumysqr = 0;
       for (int i = 0; i < yy.Length; ++i)
@@ -142,33 +153,41 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
     public void Export(XmlWriter writer)
     {
       writer.WriteStartElement("ISREA");
-      writer.WriteElementString("NumberOfKnots", XmlConvert.ToString(_numberOfFeatures));
+      writer.WriteElementString("NumberOfKnots", XmlConvert.ToString(_smoothnessValue));
       writer.WriteEndElement();
     }
 
     public override string ToString()
     {
-      return $"{this.GetType().Name} NumberOfKnots={NumberOfFeatures}";
+      return $"{this.GetType().Name} NumberOfKnots={SmoothnessValue}";
     }
 
     /// <summary>
     /// Gets the smoothing spline (options) for which the smoothing amount is set to the value given in the options.
     /// </summary>
     /// <param name="interpolation">The spline interpolation options.</param>
-    /// <param name="numberOfFeatures">The number of features. The less features, the smoother the spline will be.</param>
-    /// <param name="numberOfPoints">The number of points in the spline curve.</param>
-    /// <returns>The same spline, but now with the smoothing value set according to <paramref name="numberOfFeatures"/>.</returns>
+    /// <param name="smoothnessSpecifiedBy">Determines how the smoothness is specified.</param>
+    /// <param name="smoothnessValue">The smoothness value. The smoothness depends on this value and how the smoothness is specified.</param>
+    /// <param name="numberOfArrayPoints">The number of points in the spline curve.</param>
+    /// <param name="meanXIncrement">Mean increment of the x-values of the spectrum.</param>
+    /// <returns>The same spline, but now with the smoothing value set according to the parameters.</returns>
     /// <exception cref="System.NotImplementedException"></exception>
-    protected static IInterpolationFunctionOptions GetSpline(IInterpolationFunctionOptions interpolation, double numberOfFeatures, double numberOfPoints)
+    protected static IInterpolationFunctionOptions GetSpline(IInterpolationFunctionOptions interpolation, SmoothnessSpecification smoothnessSpecifiedBy, double smoothnessValue, double numberOfArrayPoints, double meanXIncrement)
     {
       switch (interpolation)
       {
         case SmoothingCubicSplineOptions csp:
           {
-            var pointsPerFeature = numberOfPoints / numberOfFeatures;
-            pointsPerFeature *= pointsPerFeature;
-            pointsPerFeature *= pointsPerFeature;
-            return csp with { Smoothness = 0.00219146043349633 * pointsPerFeature };
+            double pointsPerPeriod = smoothnessSpecifiedBy switch
+            {
+              SmoothnessSpecification.ByNumberOfFeatures => numberOfArrayPoints / smoothnessValue, // smoothness value is NumberOfFeatures
+              SmoothnessSpecification.ByNumberOfPoints => smoothnessValue, // smoothness value is period in points
+              SmoothnessSpecification.ByXSpan => (smoothnessValue / meanXIncrement), // smoothness value is period in x-units
+              _ => throw new NotImplementedException()
+            };
+            pointsPerPeriod *= pointsPerPeriod;
+            pointsPerPeriod *= pointsPerPeriod;
+            return csp with { Smoothness = 0.00219146043349633 * pointsPerPeriod };
           }
         default:
           throw new NotImplementedException($"Does not know how to set the smoothing value for spline {interpolation?.GetType()}");
@@ -176,11 +195,7 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
     }
   }
 
-  /// <summary>
-  /// This class detrends all spectra. This is done by fitting a polynomial to the spectrum (x value is simply the index of data point), and then
-  /// subtracting the fit curve from the spectrum.
-  /// The degree of the polynomial can be choosen between 0 (the mean is subtracted), 1 (a fitted straight line is subtracted).
-  /// </summary>
+  /// <inheritdoc/>
   public record ISREA : ISREABase, IBaselineEstimation
   {
     #region Serialization
@@ -195,14 +210,22 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
       {
         var s = (ISREA)obj;
         info.AddValue("Interpolation", s.InterpolationFunctionOptions);
-        info.AddValue("NumberOfFeatures", s.NumberOfFeatures);
+        info.AddEnum("SmoothnessSpecifiedBy", s.SmoothnessSpecifiedBy);
+        info.AddValue("SmoothnessValue", s.SmoothnessValue);
       }
 
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
         var interpolation = info.GetValue<IInterpolationFunctionOptions>("Interpolation", parent);
-        var order = info.GetDouble("NumberOfFeatures");
-        return new ISREA() { InterpolationFunctionOptions = interpolation, NumberOfFeatures = order };
+        var smoothnessSpecifiedBy = info.GetEnum<SmoothnessSpecification>("SmoothnessSpecifiedBy");
+        var numberOfFeatures = info.GetDouble("SmoothnessValue");
+
+        return new ISREA()
+        {
+          InterpolationFunctionOptions = interpolation,
+          SmoothnessSpecifiedBy = smoothnessSpecifiedBy,
+          SmoothnessValue = numberOfFeatures,
+        };
       }
     }
     #endregion

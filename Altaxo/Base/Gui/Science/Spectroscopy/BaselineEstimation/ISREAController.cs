@@ -43,18 +43,65 @@ namespace Altaxo.Gui.Science.Spectroscopy.BaselineEstimation
 
     #region Bindings
 
-    private double _numberOfFeatures;
+    private double _smoothnessValue;
 
-    public double NumberOfFeatures
+    public double SmoothnessValue
     {
-      get => _numberOfFeatures;
+      get => _smoothnessValue;
       set
       {
-        if (!(_numberOfFeatures == value))
+        if (!(_smoothnessValue == value))
         {
-          _numberOfFeatures = value;
-          OnPropertyChanged(nameof(NumberOfFeatures));
+          _smoothnessValue = value;
+          OnPropertyChanged(nameof(SmoothnessValue));
         }
+      }
+    }
+
+    private SmoothnessSpecification _smoothnessSpecificiedBy;
+
+    public SmoothnessSpecification SmoothnessSpecificiedBy
+    {
+      get => _smoothnessSpecificiedBy;
+      set
+      {
+        if (!(_smoothnessSpecificiedBy == value))
+        {
+          _smoothnessSpecificiedBy = value;
+          OnPropertyChanged(nameof(SmoothnessSpecificiedBy));
+          OnPropertyChanged(nameof(IsSpecifiedNumberOfFeatures));
+          OnPropertyChanged(nameof(IsSpecifiedNumberOfPoints));
+          OnPropertyChanged(nameof(IsSpecifiedXSpan));
+        }
+      }
+    }
+
+    public bool IsSpecifiedNumberOfFeatures
+    {
+      get => SmoothnessSpecificiedBy == SmoothnessSpecification.ByNumberOfFeatures;
+      set
+      {
+        if (value)
+          SmoothnessSpecificiedBy = SmoothnessSpecification.ByNumberOfFeatures;
+      }
+    }
+
+    public bool IsSpecifiedNumberOfPoints
+    {
+      get => SmoothnessSpecificiedBy == SmoothnessSpecification.ByNumberOfPoints;
+      set
+      {
+        if (value)
+          SmoothnessSpecificiedBy = SmoothnessSpecification.ByNumberOfPoints;
+      }
+    }
+    public bool IsSpecifiedXSpan
+    {
+      get => SmoothnessSpecificiedBy == SmoothnessSpecification.ByXSpan;
+      set
+      {
+        if (value)
+          SmoothnessSpecificiedBy = SmoothnessSpecification.ByXSpan;
       }
     }
 
@@ -66,7 +113,8 @@ namespace Altaxo.Gui.Science.Spectroscopy.BaselineEstimation
 
       if (initData)
       {
-        NumberOfFeatures = _doc.NumberOfFeatures;
+        SmoothnessSpecificiedBy = _doc.SmoothnessSpecifiedBy;
+        SmoothnessValue = _doc.SmoothnessValue;
       }
     }
 
@@ -76,7 +124,8 @@ namespace Altaxo.Gui.Science.Spectroscopy.BaselineEstimation
       {
         _doc = _doc with
         {
-          NumberOfFeatures = NumberOfFeatures,
+          SmoothnessSpecifiedBy = SmoothnessSpecificiedBy,
+          SmoothnessValue = SmoothnessValue,
         };
       }
       catch (Exception ex)

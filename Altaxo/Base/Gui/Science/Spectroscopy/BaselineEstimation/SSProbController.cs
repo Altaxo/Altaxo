@@ -43,50 +43,68 @@ namespace Altaxo.Gui.Science.Spectroscopy.BaselineEstimation
 
     #region Bindings
 
-    private double _numberOfFeatures;
+    private double _smoothnessValue;
 
-    public double NumberOfFeatures
+    public double SmoothnessValue
     {
-      get => _numberOfFeatures;
+      get => _smoothnessValue;
       set
       {
-        if (!(_numberOfFeatures == value))
+        if (!(_smoothnessValue == value))
         {
-          _numberOfFeatures = value;
-          OnPropertyChanged(nameof(NumberOfFeatures));
+          _smoothnessValue = value;
+          OnPropertyChanged(nameof(SmoothnessValue));
         }
       }
     }
 
-    private double _averageSpan;
+    private SmoothnessSpecification _smoothnessSpecificiedBy;
 
-    public double AveragingSpan
+    public SmoothnessSpecification SmoothnessSpecificiedBy
     {
-      get => _averageSpan;
+      get => _smoothnessSpecificiedBy;
       set
       {
-        if (!(_averageSpan == value))
+        if (!(_smoothnessSpecificiedBy == value))
         {
-          _averageSpan = value;
-          OnPropertyChanged(nameof(AveragingSpan));
+          _smoothnessSpecificiedBy = value;
+          OnPropertyChanged(nameof(SmoothnessSpecificiedBy));
+          OnPropertyChanged(nameof(IsSpecifiedNumberOfFeatures));
+          OnPropertyChanged(nameof(IsSpecifiedNumberOfPoints));
+          OnPropertyChanged(nameof(IsSpecifiedXSpan));
         }
       }
     }
 
-    private bool _isAverageSpanInXUnits;
-
-    public bool IsAveragingSpanInXUnits
+    public bool IsSpecifiedNumberOfFeatures
     {
-      get => _isAverageSpanInXUnits;
+      get => SmoothnessSpecificiedBy == SmoothnessSpecification.ByNumberOfFeatures;
       set
       {
-        if (!(_isAverageSpanInXUnits == value))
-        {
-          _isAverageSpanInXUnits = value;
-          OnPropertyChanged(nameof(IsAveragingSpanInXUnits));
-        }
+        if (value)
+          SmoothnessSpecificiedBy = SmoothnessSpecification.ByNumberOfFeatures;
       }
     }
+
+    public bool IsSpecifiedNumberOfPoints
+    {
+      get => SmoothnessSpecificiedBy == SmoothnessSpecification.ByNumberOfPoints;
+      set
+      {
+        if (value)
+          SmoothnessSpecificiedBy = SmoothnessSpecification.ByNumberOfPoints;
+      }
+    }
+    public bool IsSpecifiedXSpan
+    {
+      get => SmoothnessSpecificiedBy == SmoothnessSpecification.ByXSpan;
+      set
+      {
+        if (value)
+          SmoothnessSpecificiedBy = SmoothnessSpecification.ByXSpan;
+      }
+    }
+
 
     #endregion
 
@@ -96,9 +114,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.BaselineEstimation
 
       if (initData)
       {
-        NumberOfFeatures = _doc.NumberOfFeatures;
-        AveragingSpan = _doc.AveragingSpan;
-        IsAveragingSpanInXUnits = _doc.IsAveragingSpanInXUnits;
+        SmoothnessSpecificiedBy = _doc.SmoothnessSpecifiedBy;
+        SmoothnessValue = _doc.SmoothnessValue;
+
       }
     }
 
@@ -108,9 +126,8 @@ namespace Altaxo.Gui.Science.Spectroscopy.BaselineEstimation
       {
         _doc = _doc with
         {
-          NumberOfFeatures = NumberOfFeatures,
-          AveragingSpan = AveragingSpan,
-          IsAveragingSpanInXUnits = IsAveragingSpanInXUnits,
+          SmoothnessSpecifiedBy = SmoothnessSpecificiedBy,
+          SmoothnessValue = SmoothnessValue,
         };
       }
       catch (Exception ex)

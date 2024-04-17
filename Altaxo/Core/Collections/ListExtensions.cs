@@ -24,8 +24,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Altaxo.Collections
 {
@@ -389,6 +387,22 @@ namespace Altaxo.Collections
         collection.Add(i);
     }
 
-   
+    /// <summary>
+    /// Fills an array with a specified value.
+    /// </summary>
+    /// <typeparam name="T">Type of array element.</typeparam>
+    /// <param name="array">The array.</param>
+    /// <param name="value">The value to fill the array with.</param>
+    /// <returns>The array (for convenience).</returns>
+    public static T[] FillWith<T>(this T[] array, T value)
+    {
+      for (int i = 0; i < array.Length; ++i)
+      {
+        array[i] = value;
+      }
+      return array;
+    }
+
+
   }
 }
