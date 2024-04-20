@@ -40,7 +40,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
   /// </summary>
   public class ShiftGroupCollection : IReadOnlyList<IShiftGroup>
   {
-    IShiftGroup[] _shiftGroups;
+    private IShiftGroup[] _shiftGroups;
 
     /// <summary>
     /// Contains the resulting shift values.
@@ -465,14 +465,14 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
           _shiftValues[idxCurve] = currentShift;
           _isShiftValueRestrictedByBoundaries[idxCurve] = currentShift == globalMinShift || currentShift == globalMaxShift;
 
-          foreach (int idxShiftGroup in _groupsParticipatingInFit)
+          foreach (int idxGroup in _groupsParticipatingInFit)
           {
             // Continue tracking of x-minimum and x-maximum by considering the curve
-            _shiftGroups[idxShiftGroup].TrackXMinimumMaximumOfMasterCurvePoints(idxCurve, currentShift, startNewTracking: false);
+            _shiftGroups[idxGroup].TrackXMinimumMaximumOfMasterCurvePoints(idxCurve, currentShift, startNewTracking: false);
             // add the data for interpolation again, using the new shift
-            _shiftGroups[idxShiftGroup].AddCurveToInterpolation(idxCurve, currentShift);
+            _shiftGroups[idxGroup].AddCurveToInterpolation(idxCurve, currentShift);
             // now build up a new interpolation, where the shifted data is taken into account
-            _shiftGroups[idxShiftGroup].Interpolate();
+            _shiftGroups[idxGroup].Interpolate();
           }
         }
         else
@@ -837,9 +837,9 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     {
       double penaltySum = 0;
       int penaltyPoints = 0;
-      for (int idxShiftGroup = 0; idxShiftGroup < Count; idxShiftGroup++)
+      foreach (int idxGroup in _groupsParticipatingInFit)
       {
-        var (penalty, points) = _shiftGroups[idxShiftGroup].GetMeanAbsYDifference(idxCurve, shift);
+        var (penalty, points) = _shiftGroups[idxGroup].GetMeanAbsYDifference(idxCurve, shift);
 
         if (points > 0)
         {
@@ -864,9 +864,9 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
       double penaltySum = 0;
       int penaltyPoints = 0;
 
-      for (int idxShiftGroup = 0; idxShiftGroup < Count; idxShiftGroup++)
+      foreach (int idxGroup in _groupsParticipatingInFit)
       {
-        var (penalty, points) = _shiftGroups[idxShiftGroup].GetMeanSquaredYDifference(idxCurve, shift);
+        var (penalty, points) = _shiftGroups[idxGroup].GetMeanSquaredYDifference(idxCurve, shift);
         if (points > 0)
         {
           penaltySum += penalty;

@@ -135,7 +135,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
       return (xarr, yarr);
     }
 
-    InterpolationInformationDouble? _interpolationInformation;
+    private InterpolationInformationDouble? _interpolationInformation;
 
     /// <inheritdoc/>
     public void InitializeInterpolation()
@@ -372,7 +372,10 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
 
     public (double Penalty, int EvaluatedPoints) GetMeanSquaredYDifference(int idxCurve, double shift)
     {
-      if (_interpolationInformation is null) throw NewExceptionNoInterpolationInformation;
+      if (_interpolationInformation is null)
+      {
+        throw NewExceptionNoInterpolationInformation;
+      }
 
 
       var curve = _curves[idxCurve] ?? throw new InvalidProgramException($"The curve with index {idxCurve} is null.");
