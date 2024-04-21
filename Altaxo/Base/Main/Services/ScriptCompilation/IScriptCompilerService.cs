@@ -32,6 +32,11 @@ namespace Altaxo.Main.Services.ScriptCompilation
   /// </summary>
   public interface IScriptCompilerService
   {
+    /// <summary>
+    /// Gets the compiler result for a given assembly (reverse search).
+    /// </summary>
+    /// <param name="ass">The assembly that was compiled from a script.</param>
+    /// <returns>The script compiler result associated with that assembly.</returns>
     IScriptCompilerSuccessfulResult? GetCompilerResult(Assembly ass);
 
     /// <summary>

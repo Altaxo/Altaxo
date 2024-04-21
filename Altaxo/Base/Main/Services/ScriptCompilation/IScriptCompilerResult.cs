@@ -23,20 +23,32 @@
 #endregion Copyright
 
 #nullable enable
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace Altaxo.Main.Services.ScriptCompilation
 {
+  /// <summary>
+  /// Base interface for the result of the script controller. This base interface only provided the source code.
+  /// The derived interfaces then also provide compilation results.
+  /// </summary>
   public interface IScriptCompilerResult
   {
+    /// <summary>
+    /// Gets the number of source code fragments (script text) of which consists the compilation result.
+    /// </summary>
     int ScriptTextCount { get; }
 
+    /// <summary>
+    /// Get the script text with index i (i ranges from 0 to <see cref="ScriptTextCount"/>-1).
+    /// </summary>
+    /// <param name="i">The index of the script text.</param>
+    /// <returns>The script text with index i.</returns>
     string ScriptText(int i);
 
+    /// <summary>
+    /// Gets the script text hash that is build over all the script texts in exactly the order provided here.
+    /// </summary>
+    /// <value>
+    /// The script text hash.
+    /// </value>
     string ScriptTextHash { get; }
   }
 }

@@ -23,16 +23,17 @@
 #endregion Copyright
 
 #nullable enable
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace Altaxo.Main.Services.ScriptCompilation
 {
+  /// <summary>
+  /// Extends the <see cref="IScriptCompilerResult"/> by the assembly that was the result of the successful compilation.
+  /// </summary>
+  /// <seealso cref="Altaxo.Main.Services.ScriptCompilation.IScriptCompilerResult" />
   public interface IScriptCompilerSuccessfulResult : IScriptCompilerResult
   {
+    /// <summary>
+    /// Gets the script assembly as the result of the successful compilation.
+    /// </summary>
     System.Reflection.Assembly ScriptAssembly { get; }
   }
 }

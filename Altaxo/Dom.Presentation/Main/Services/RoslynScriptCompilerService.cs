@@ -23,34 +23,44 @@
 #endregion Copyright
 
 #nullable enable
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Altaxo.Main.Services.ScriptCompilation
 {
+  /// <summary>
+  /// Implementation of <see cref="IScriptCompilerService"/>, using the Roslyn compilation infrastructure.
+  /// </summary>
+  /// <seealso cref="Altaxo.Main.Services.ScriptCompilation.IScriptCompilerService" />
   public class RoslynScriptCompilerService : IScriptCompilerService
   {
-    private ConcurrentScriptCompilerResultDictionary _compilerResults = new ConcurrentScriptCompilerResultDictionary();
+    private ConcurrentScriptCompilerResultDictionary _compilerResults = new();
 
     public IScriptCompilerResult Compile(string[] scriptText)
     {
       var scriptTextsWithHash = new CodeTextsWithHash(scriptText);
 
+      if (_compilerResults.TryGetValue(scriptTextsWithHash.Hash, out var scriptCompilerResult))
+      {
+        return scriptCompilerResult;
+      }
+
       var result = Altaxo.CodeEditing.CompilationHandling.CompilationServiceStatic.GetCompilation(scriptTextsWithHash, scriptTextsWithHash.Hash, Altaxo.Settings.Scripting.ReferencedAssemblies.All);
 
       if (result.CompiledAssembly is not null)
       {
-        return new ScriptCompilerSuccessfulResult(scriptTextsWithHash, result.CompiledAssembly);
+        scriptCompilerResult = new ScriptCompilerSuccessfulResult(scriptTextsWithHash, result.CompiledAssembly);
+
       }
       else
       {
-        return new ScriptCompilerFailedResult(scriptTextsWithHash,
+        scriptCompilerResult = new ScriptCompilerFailedResult(scriptTextsWithHash,
           result.Diagnostics.Select(diag => new CompilerDiagnostic(diag.Line, diag.Column, (DiagnosticSeverity)diag.Severity, diag.MessageText)));
       }
+
+      _compilerResults.TryAdd(scriptCompilerResult);
+
+      return scriptCompilerResult;
     }
 
     public IScriptCompilerSuccessfulResult? GetCompilerResult(Assembly ass)

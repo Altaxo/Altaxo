@@ -29,11 +29,8 @@ using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Threading;
-using System.Windows;
 using System.Windows.Controls;
-using Altaxo.AddInItems;
 using Altaxo.CodeEditing.CompilationHandling;
 using Altaxo.CodeEditing.ExternalHelp;
 using Altaxo.Main.Services;
@@ -250,22 +247,6 @@ namespace Altaxo.Gui.Scripting
       tw.Write(fileContent);
       tw.Flush();
       return memoryStream.ToArray();
-    }
-
-    public IScriptCompilerResult Compile()
-    {
-      var result = _codeView.Compile(texts => new CodeTextsWithHash(texts).Hash, GetReferencedAssemblies());
-      var scriptTextsWithHash = new CodeTextsWithHash(result.CodeText);
-
-      if (result.CompiledAssembly is not null)
-      {
-        return new ScriptCompilerSuccessfulResult(scriptTextsWithHash, result.CompiledAssembly);
-      }
-      else
-      {
-        return new ScriptCompilerFailedResult(scriptTextsWithHash,
-          result.Diagnostics.Select(diag => new CompilerDiagnostic(diag.Line, diag.Column, (DiagnosticSeverity)diag.Severity, diag.MessageText)));
-      }
     }
 
     public void SetCompilerErrors(IEnumerable<ICompilerDiagnostic> errors)

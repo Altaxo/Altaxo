@@ -47,12 +47,6 @@ namespace Altaxo.Gui.Scripting
     event Action<string> CompilerMessageClicked;
 
     /// <summary>
-    /// Compiles the code text. If the view can not compile the text by itself, it should return null.
-    /// In this case the controller is responsible for compiling the text, and set the error messages in the view.
-    /// </summary>
-    IScriptCompilerResult Compile();
-
-    /// <summary>
     /// Sets the compiler errors. Tuple.Item1: line, Tuple.Item2=column, Tuple.Item3: severity level, Tuple.Item4: severity string, Tuple.Item5: message
     /// </summary>
     /// <param name="errors">The errors.</param>
@@ -186,7 +180,7 @@ namespace Altaxo.Gui.Scripting
 
     public void Compile()
     {
-      var result = _view?.Compile();
+      var result = ScriptCompilerService.Compile([_view.ScriptText]);
 
       if (result is null) // compilation must be handled by this controller
       {

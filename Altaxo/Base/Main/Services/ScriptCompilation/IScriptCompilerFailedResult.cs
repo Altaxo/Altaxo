@@ -23,16 +23,19 @@
 #endregion Copyright
 
 #nullable enable
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Altaxo.Main.Services.ScriptCompilation
 {
+  /// <summary>
+  /// Extends the <see cref="IScriptCompilerResult"/> by the list of compilation errors of an unsuccessful compilation.
+  /// </summary>
+  /// <seealso cref="Altaxo.Main.Services.ScriptCompilation.IScriptCompilerResult" />
   public interface IScriptCompilerFailedResult : IScriptCompilerResult
   {
+    /// <summary>
+    /// Gets the list of compilation errors.
+    /// </summary>
     IReadOnlyList<ICompilerDiagnostic> CompileErrors { get; }
   }
 }
