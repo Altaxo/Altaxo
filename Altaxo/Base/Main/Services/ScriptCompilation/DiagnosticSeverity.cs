@@ -22,29 +22,23 @@
 
 #endregion Copyright
 
-using System.Reflection;
-
 namespace Altaxo.Main.Services.ScriptCompilation
 {
   /// <summary>
-  /// Provides compilation of scripts to assemblies.
+  /// Severity of a diagnostics message.
   /// </summary>
-  public interface IScriptCompilerService
+  public enum DiagnosticSeverity
   {
-    /// <summary>
-    /// Gets the compiler result for a given assembly (reverse search).
-    /// </summary>
-    /// <param name="ass">The assembly that was compiled from a script.</param>
-    /// <returns>The script compiler result associated with that assembly.</returns>
-    IScriptCompilerSuccessfulResult? GetCompilerResult(Assembly ass);
+    /// <summary>Hidden message.</summary>
+    Hidden = 0,
 
-    /// <summary>
-    /// Does the compilation of the script into an assembly. The assembly is stored together with
-    /// the read-only source code and returned as result. As list of compiled source codes is maintained by this class.
-    /// If you provide a text that was already compiled before, the already compiled assembly is returned instead
-    /// of a freshly compiled assembly.
-    /// </summary>
-    /// <returns>True if successfully compiles, otherwise false.</returns>
-    IScriptCompilerResult Compile(string[] scriptText);
+    /// <summary>Info message.</summary>
+    Info = 1,
+
+    /// <summary>Warning message.</summary>
+    Warning = 2,
+
+    /// <summary>Error message.</summary>
+    Error = 3
   }
 }

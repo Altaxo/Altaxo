@@ -180,7 +180,8 @@ namespace Altaxo.Gui.Scripting
 
     public void Compile()
     {
-      var result = ScriptCompilerService.Compile([_view.ScriptText]);
+      var scriptCompilerService = Current.GetRequiredService<IScriptCompilerService>();
+      var result = scriptCompilerService.Compile([_view.ScriptText]);
 
       if (result is null) // compilation must be handled by this controller
       {

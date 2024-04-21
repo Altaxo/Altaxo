@@ -426,7 +426,7 @@ namespace Altaxo.Scripting
         {
           _scriptText = CodeHeader + CodeStart + CodeUserDefault + CodeEnd + CodeTail;
         }
-        return ScriptCompilerService.ComputeScriptTextHash(new string[] { _scriptText });
+        return CodeTextsWithHash.ComputeScriptTextHash([_scriptText]);
       }
     }
 
@@ -563,7 +563,8 @@ namespace Altaxo.Scripting
       if (_compilerResult is not null)
         return true;
 
-      var scriptCompilerResult = ScriptCompilerService.Compile(new string[] { ScriptText });
+      var scriptCompilerService = Current.GetRequiredService<IScriptCompilerService>();
+      var scriptCompilerResult = scriptCompilerService.Compile(new string[] { ScriptText });
 
       return SetCompilerResult(scriptCompilerResult);
     }

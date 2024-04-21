@@ -22,7 +22,6 @@
 
 #endregion Copyright
 
-#nullable enable
 namespace Altaxo.Main.Services.ScriptCompilation
 {
   /// <summary>

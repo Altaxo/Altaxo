@@ -27,9 +27,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Security.Cryptography;
 
 namespace Altaxo.Main.Services.ScriptCompilation
 {
@@ -44,7 +42,7 @@ namespace Altaxo.Main.Services.ScriptCompilation
     /// <value>
     /// The code text.
     /// </value>
-    public IReadOnlyList<string> CodeTexts { get; private set; }
+    public IReadOnlyList<string> CodeTexts { get; }
 
     /// <summary>
     /// Gets the hash that is a unique identifier of the code text.
@@ -52,7 +50,7 @@ namespace Altaxo.Main.Services.ScriptCompilation
     /// <value>
     /// The hash.
     /// </value>
-    public string Hash { get; private set; }
+    public string Hash { get; }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="CodeTextsWithHash"/> class.
@@ -71,11 +69,16 @@ namespace Altaxo.Main.Services.ScriptCompilation
       Hash = ComputeScriptTextHash(CodeTexts);
     }
 
-    public static string ComputeScriptTextHash(IReadOnlyList<string> scripts)
+    /// <summary>
+    /// Computes a hash value from the provided script text(s).
+    /// </summary>
+    /// <param name="scripts">The scripts.</param>
+    /// <returns>A hash value that uniquely identifies the script text.</returns>
+    public static string ComputeScriptTextHash(IEnumerable<string> scripts)
     {
       int len = 0;
-      for (int i = 0; i < scripts.Count; i++)
-        len += scripts[i].Length;
+      foreach (var script in scripts)
+        len += script.Length;
 
       byte[]? hash = null;
 
@@ -83,14 +86,14 @@ namespace Altaxo.Main.Services.ScriptCompilation
       {
         using (var sw = new System.IO.StreamWriter(stream, System.Text.Encoding.Unicode))
         {
-          for (int i = 0; i < scripts.Count; i++)
+          foreach (var script in scripts)
           {
-            sw.Write(scripts[i]);
+            sw.Write(script);
           }
           sw.Flush();
 
           sw.BaseStream.Seek(0, System.IO.SeekOrigin.Begin);
-          var md5 = new System.Security.Cryptography.MD5CryptoServiceProvider();
+          using var md5 = MD5.Create();
           hash = md5.ComputeHash(sw.BaseStream);
           sw.Close();
         }
