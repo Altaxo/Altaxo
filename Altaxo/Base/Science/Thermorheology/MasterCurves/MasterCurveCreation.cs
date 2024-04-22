@@ -238,6 +238,11 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
           {
             var shiftCurve = ConvertToShiftCurve(group[idxCurve]);
 
+            if (shiftCurve is null)
+            {
+              continue;
+            }
+
             if (lastX.Count != shiftCurve.X.Count || !VectorMath.AreValuesEqual(lastX, shiftCurve.X))
             {
               ++groupNumber;
@@ -395,7 +400,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
 
           for (int idxCurve = 0; idxCurve < numberOfCurves; ++idxCurve)
           {
-            if (shiftGroupCollection.ShiftValues is { } shiftValue)
+            if (shiftGroupCollection.ShiftValues[idxCurve].HasValue)
             {
               prop1Col[idxCurve] = curveInfo[idxCurve].Property1Value;
 
@@ -796,13 +801,14 @@ StartOfFunction:
       return (shiftOffset, referenceValueUsed);
     }
 
-    static MasterCurveGroupOptions GetGroupOptions(MasterCurveCreationOptions options, int idxGroup)
+    private static MasterCurveGroupOptions GetGroupOptions(MasterCurveCreationOptions options, int idxGroup)
     {
       int choiceIndex = options.MasterCurveGroupOptionsChoice == MasterCurveGroupOptionsChoice.SeparateForEachGroup ? idxGroup : 0;
       var groupOptions = options.GroupOptions[choiceIndex];
       return groupOptions;
     }
-    static MasterCurveGroupOptions GetGroupOptions(MasterCurveImprovementOptions options, int idxGroup)
+
+    private static MasterCurveGroupOptions GetGroupOptions(MasterCurveImprovementOptions options, int idxGroup)
     {
       int choiceIndex = options.MasterCurveGroupOptionsChoice == MasterCurveGroupOptionsChoice.SeparateForEachGroup ? idxGroup : 0;
       var groupOptions = options.GroupOptions[choiceIndex];
@@ -1022,7 +1028,7 @@ StartOfFunction:
 
       var (x, y, rowCount) = data.GetResolvedXYData();
 
-      if (rowCount == 0)
+      if (rowCount == 0 || x is null || y is null)
         return null;
       else
         return new ShiftCurve<double>(x, y);

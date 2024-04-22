@@ -157,12 +157,17 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     /// <summary>
     /// Contains the indices of the groups that participate in the fit. Contains the same information as <see cref="_isGroupParticipatingInFit"/>, but more convienient for foreach.. statements
     /// </summary>
-    public IReadOnlyCollection<int> GroupsParticipatingInFit => _groupsParticipatingInFit;
+    public IReadOnlyList<int> GroupsParticipatingInFit => _groupsParticipatingInFit;
 
     /// <summary>
     /// Contains the indices of the curves that participate in the fit. Contains the same information as <see cref="_isCurveParticipatingInFit"/>, but more convienient for foreach.. statements
     /// </summary>
-    public IReadOnlyCollection<int> CurvesParticipatingInFit => _curvesParticipatingInFit;
+    public IReadOnlyList<int> CurvesParticipatingInFit => _curvesParticipatingInFit;
+
+    /// <summary>
+    /// If the element is true, the curve(s) with that curve index participate in the fit; otherwise, the element is false.
+    /// </summary>
+    public IReadOnlyList<bool> IsCurveParticipatingInFit => _isCurveParticipatingInFit;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ShiftGroupCollection"/> class.

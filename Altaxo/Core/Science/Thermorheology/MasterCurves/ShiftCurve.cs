@@ -60,8 +60,8 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     /// <param name="y">The y-values of the curve to be shifted.</param>
     public ShiftCurve(IReadOnlyList<double> x, IReadOnlyList<T> y)
     {
-      X = x;
-      Y = y;
+      X = x ?? throw new ArgumentNullException(nameof(x));
+      Y = y ?? throw new ArgumentNullException(nameof(y));
     }
   }
 }
