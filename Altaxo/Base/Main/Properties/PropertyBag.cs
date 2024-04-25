@@ -26,9 +26,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Text;
-using Altaxo.Serialization.Xml;
 
 namespace Altaxo.Main.Properties
 {
@@ -601,6 +598,8 @@ namespace Altaxo.Main.Properties
     {
       if (from is null)
         return;
+      if (object.ReferenceEquals(from, this))
+        throw new ArgumentException($"The bag to copy from is the same instance as this bag ({this.Name}).", nameof(from));
 
       bool anythingChanged = false;
 
