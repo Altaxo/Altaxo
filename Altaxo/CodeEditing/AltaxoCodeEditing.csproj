@@ -40,11 +40,10 @@
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Features" Version="4.9.0-3.24121.1" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="4.9.0-3.24121.1" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.9.0-3.24121.1" />
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.EditorFeatures" Version="4.9.0-3.24121.1" />
     <PackageReference Include="System.Reflection.Metadata" Version="8.0.0" />
     <PackageReference Include="System.Reflection.MetadataLoadContext" Version="8.0.0" />
     <PackageReference Include="System.Collections.Immutable" Version="8.0.0" />
-    <PackageReference Include="System.Composition" Version="8.0.0" />
+    <PackageReference Include="System.ComponentModel.Composition" Version="8.0.0" />
     <PackageReference Include="System.Runtime" Version="4.3.1" />
   </ItemGroup>
 
