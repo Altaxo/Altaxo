@@ -2018,6 +2018,70 @@ namespace Altaxo.Data
     }
 
     /// <summary>
+    /// Removes rows in a group of columns.
+    /// </summary>
+    /// <param name="indexOfFirstRowToRemove">The index of the first row to remove.</param>
+    /// <param name="numberOfRowsToRemove">The number of rows to remove. Rows <paramref name="indexOfFirstRowToRemove"/> to <paramref name="indexOfFirstRowToRemove"/>+<paramref name="numberOfRowsToRemove"/>-1 will be removed.</param>
+    /// <param name="groupNumber">The group number of the column group.</param>
+    public void RemoveRowsInGroup(int indexOfFirstRowToRemove, int numberOfRowsToRemove, int groupNumber)
+    {
+      using (var suspendToken = SuspendGetToken())
+      {
+        foreach (var entry in _columnInfoByColumn)
+        {
+          if (entry.Value.Group == groupNumber)
+          {
+            entry.Key.RemoveRows(indexOfFirstRowToRemove, numberOfRowsToRemove);
+          }
+        }
+        suspendToken.Dispose();
+      }
+    }
+
+    /// <summary>
+    /// Removes a row in a group of columns.
+    /// </summary>
+    /// <param name="indexOfRowToRemove">The index of the row to remove.</param>
+    /// <param name="groupNumber">The group number of the column group.</param>
+    public void RemoveRowInGroup(int indexOfRowToRemove, int groupNumber)
+    {
+      RemoveRowsInGroup(indexOfRowToRemove, 1, groupNumber);
+    }
+
+    /// <summary>
+    /// Removes rows in group of columns.
+    /// </summary>
+    /// <param name="indicesOfRowsToRemove">The indices of the rows that will be removed.</param>
+    /// <param name="groupNumber">The group number of the column group.</param>
+    public void RemoveRowsInGroup(IAscendingIntegerCollection indicesOfRowsToRemove, int groupNumber)
+    {
+      using (var suspendToken = SuspendGetToken())
+      {
+        foreach (var entry in _columnInfoByColumn)
+        {
+          if (entry.Value.Group == groupNumber)
+          {
+            foreach (var range in indicesOfRowsToRemove.RangesDescending)
+            {
+              entry.Key.RemoveRows(range.Start, range.Count);
+            }
+          }
+        }
+        suspendToken.Dispose();
+      }
+    }
+
+    /// <summary>
+    /// Removes rows in group of columns.
+    /// </summary>
+    /// <param name="indicesOfRowsToRemove">The indices of the rows that will be removed.</param>
+    /// <param name="groupNumber">The group number of the column group.</param>
+    public void RemoveRowsInGroup(IEnumerable<int> indicesOfRowsToRemove, int groupNumber)
+    {
+      RemoveRowsInGroup(new AscendingIntegerCollection(indicesOfRowsToRemove), groupNumber);
+    }
+
+    /// <summary>
     /// Removes a single row of all columns.
     /// </summary>
     /// <param name="nFirstRow">The row to remove.</param>
