@@ -1263,6 +1263,8 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
 
           if (isMove && !isCopy)
           {
+            if (false == Current.Gui.YesNoMessageBox($"This will move {projectItems?.Count} item(s) to folder {targetFolder}.\r\nDo you really want to move these item(s)?", "Confirmation", false))
+              return;
             Current.Project.Folders.MoveItemsToFolder(projectItems, targetFolder);
           }
           else
@@ -1270,7 +1272,7 @@ namespace Altaxo.Gui.Pads.ProjectBrowser
             DocNodePathReplacementOptions relocateOptions = null;
             if (items.BaseFolder is not null) // if items are from the same folder, the basefolder is set to a non-null value
             {
-              var relocateData = Current.Gui.YesNoCancelMessageBox("Do you want to relocate the references in the copied plots so that they point to the destination folder?", "Question", null);
+              var relocateData = Current.Gui.YesNoCancelMessageBox($"This will copy {projectItems.Count} items to folder {targetFolder}.\r\nDo you want to relocate the references in the copied project items so that they point to the destination folder?", "Question", null);
               if (relocateData is null)
                 return;
 
