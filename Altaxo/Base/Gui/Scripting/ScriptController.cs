@@ -194,10 +194,18 @@ namespace Altaxo.Gui.Scripting
         {
           _compiledDoc = _tempDoc.CloneForModification();
           _compiledDoc.SetCompilerResult(result);
+          _view.SetCompilerErrors(ImmutableArray.Create(new CompilerDiagnostic(null, null, DiagnosticSeverity.Info, DateTime.Now.ToLongTimeString() + " : Compilation successful.")));
         }
-        else // not successful
+        else if (result is IScriptCompilerFailedResult failedResult) // not successful
         {
           _compiledDoc = null;
+          _view.SetCompilerErrors(failedResult.CompileErrors);
+          Current.Gui.ErrorMessageBox("There were compilation errors");
+          return;
+        }
+        else
+        {
+          throw new NotImplementedException($"Unknown compiler result of type {result?.GetType()}");
         }
       }
     }
