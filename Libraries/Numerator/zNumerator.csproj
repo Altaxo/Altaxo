@@ -1,10 +1,11 @@
-﻿<Project Sdk="Microsoft.NET.Sdk" InitialTargets="GenAssInfo">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>net48;net8.0</TargetFrameworks>
     <AssemblyName>Numerator</AssemblyName>
     <RootNamespace>Numerator</RootNamespace>
     <LangVersion>preview</LangVersion>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <CoreCompileDependsOn>GenAssInfo</CoreCompileDependsOn>
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="Properties\AssemblyInfo.cs" Visible="true" />

@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk" InitialTargets="GenAssInfo">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>net48;net8.0</TargetFrameworks>
     <LangVersion>preview</LangVersion>
@@ -8,6 +8,7 @@
     <nullable>enable</nullable>
     <NoWarn>1591;CA1416</NoWarn>
     <DefineConstants></DefineConstants>
+    <CoreCompileDependsOn>GenAssInfo</CoreCompileDependsOn>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(TargetFramework)' == 'net48' ">
