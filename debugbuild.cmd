@@ -6,7 +6,7 @@ rmdir /S /Q .\rtnet8.0-windows
 mkdir rtnet48
 mkdir rtnet8.0-windows
 
-"%ProgramFiles%\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\msbuild.exe" /m Altaxo.sln /t:Restore;Build /p:Configuration=Debug "/p:Platform=Any CPU" 
+"%ProgramFiles%\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\msbuild.exe" /m Altaxo.sln /t:Restore;Build /p:Configuration=Debug "/p:Platform=Any CPU" -fl -flp:logfile=..\AltaxoBuildLog.txt;verbosity=detailed
 IF %ERRORLEVEL% NEQ 0 GOTO err
 @exit /B 0
 :err
