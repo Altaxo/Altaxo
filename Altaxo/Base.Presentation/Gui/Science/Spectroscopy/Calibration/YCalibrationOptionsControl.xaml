@@ -11,94 +11,106 @@
              mc:Ignorable="d"
              d:DesignHeight="450"
              d:DesignWidth="800">
+  <UserControl.Resources>
+    <axogcc:MarkdownToFlowDocumentConverter x:Key="MD2FlowDocConverter" />
+  </UserControl.Resources>
   <Grid>
     <Grid.ColumnDefinitions>
       <ColumnDefinition Width="Auto" />
       <ColumnDefinition Width="4" />
-      <ColumnDefinition Width="Auto" />
-      <ColumnDefinition Width="4" />
-      <ColumnDefinition Width="Auto" />
-      <ColumnDefinition Width="4" />
+      <ColumnDefinition Width="*" />
     </Grid.ColumnDefinitions>
-    <Grid.RowDefinitions>
-      <RowDefinition Height="Auto" />
-      <RowDefinition Height="4" />
-      <RowDefinition Height="Auto" />
-      <RowDefinition Height="4" />
-      <RowDefinition Height="Auto" />
-      <RowDefinition Height="4" />
-      <RowDefinition Height="Auto" />
-      <RowDefinition Height="4" />
-      <RowDefinition Height="Auto" />
-      <RowDefinition Height="4" />
-      <RowDefinition Height="Auto" />
-      <RowDefinition Height="4" />
-      <RowDefinition Height="Auto" />
-      <RowDefinition Height="4" />
-      <RowDefinition Height="Auto" />
-      <RowDefinition Height="4" />
-      <RowDefinition Height="Auto" />
-      <RowDefinition Height="4" />
-    </Grid.RowDefinitions>
+    <Grid>
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="Auto" />
+        <ColumnDefinition Width="4" />
+        <ColumnDefinition Width="Auto" />
+        <ColumnDefinition Width="4" />
+        <ColumnDefinition Width="Auto" />
+        <ColumnDefinition Width="4" />
+      </Grid.ColumnDefinitions>
+      <Grid.RowDefinitions>
+        <RowDefinition Height="Auto" />
+        <RowDefinition Height="4" />
+        <RowDefinition Height="Auto" />
+        <RowDefinition Height="4" />
+        <RowDefinition Height="Auto" />
+        <RowDefinition Height="4" />
+        <RowDefinition Height="Auto" />
+        <RowDefinition Height="4" />
+        <RowDefinition Height="Auto" />
+        <RowDefinition Height="4" />
+        <RowDefinition Height="Auto" />
+        <RowDefinition Height="4" />
+      </Grid.RowDefinitions>
 
-    <GroupBox Grid.Row="0"
-              Grid.Column="0"
-              Grid.ColumnSpan="5"
-              Header="Spectral preprocessing:">
-      <ContentControl Content="{Binding PreprocessingController.ViewObject}" />
-    </GroupBox>
+      <GroupBox Grid.Row="0"
+                Grid.Column="0"
+                Grid.ColumnSpan="5"
+                Header="Spectral preprocessing:">
+        <ContentControl Content="{Binding PreprocessingController.ViewObject}" />
+      </GroupBox>
 
-    <GroupBox Grid.Row="2"
-              Grid.Column="0"
-              Grid.ColumnSpan="5"
-              Header="Specification of calibration source intensity">
-      <local:ScalarFunctionControl DataContext="{Binding FunctionController}" />
-    </GroupBox>
+      <GroupBox Grid.Row="2"
+                Grid.Column="0"
+                Grid.ColumnSpan="5"
+                Header="Specification of calibration source intensity">
+        <local:ScalarFunctionControl DataContext="{Binding FunctionController}" />
+      </GroupBox>
 
-    <Label Grid.Row="4"
-           Grid.Column="0"
-           Grid.ColumnSpan="2"
-           Content="Minimal x-value of curve:" />
-    <axogc:NumericDoubleTextBox Grid.Row="4"
-                                Grid.Column="2"
-                                SelectedValue="{Binding MinimalValidXValueOfCurve}"
-                                ToolTip="Enter the minimal valid x-value for which the calibration curve is valid (usually written on the certificate of the intensity calibration source)." />
-    <Label Grid.Row="6"
-           Grid.Column="0"
-           Grid.ColumnSpan="2"
-           Content="Maximal x-value of curve:" />
-    <axogc:NumericDoubleTextBox Grid.Row="6"
-                                Grid.Column="2"
-                                SelectedValue="{Binding MaximalValidXValueOfCurve}"
-                                ToolTip="Enter the maximal valid x-value for which the calibration curve is valid (usually written on the certificate of the intensity calibration source)." />
+      <Label Grid.Row="4"
+             Grid.Column="0"
+             Grid.ColumnSpan="2"
+             Content="Minimal x-value of curve:" />
+      <axogc:NumericDoubleTextBox Grid.Row="4"
+                                  Grid.Column="2"
+                                  SelectedValue="{Binding MinimalValidXValueOfCurve}"
+                                  ToolTip="Enter the minimal valid x-value for which the calibration curve is valid (usually written on the certificate of the intensity calibration source)." />
+      <Label Grid.Row="6"
+             Grid.Column="0"
+             Grid.ColumnSpan="2"
+             Content="Maximal x-value of curve:" />
+      <axogc:NumericDoubleTextBox Grid.Row="6"
+                                  Grid.Column="2"
+                                  SelectedValue="{Binding MaximalValidXValueOfCurve}"
+                                  ToolTip="Enter the maximal valid x-value for which the calibration curve is valid (usually written on the certificate of the intensity calibration source)." />
 
-    <GroupBox Grid.Row="8"
-              Grid.ColumnSpan="3">
-      <GroupBox.Header>
-        <CheckBox Content="Smooth result by smoothing interpolation"
-                  IsChecked="{Binding SmoothResultingCurve, Mode=TwoWay}" />
-      </GroupBox.Header>
-      <Expander Header="Interpolation method"
-                IsExpanded="true"
-                IsEnabled="{Binding SmoothResultingCurve}">
-        <StackPanel Orientation="Vertical"
-                    Margin="0,4,0,4">
-          <ComboBox ItemsSource="{Binding InterpolationMethod.InterpolationMethod.Items}"
-                    SelectedValue="{Binding InterpolationMethod.InterpolationMethod.SelectedItem}" />
-          <ContentControl Content="{Binding InterpolationMethod.InterpolationDetailsController.ViewObject}" />
-        </StackPanel>
-      </Expander>
-    </GroupBox>
+      <GroupBox Grid.Row="8"
+                Grid.ColumnSpan="3">
+        <GroupBox.Header>
+          <CheckBox Content="Smooth result by smoothing interpolation"
+                    IsChecked="{Binding SmoothResultingCurve, Mode=TwoWay}" />
+        </GroupBox.Header>
+        <Expander Header="Interpolation method"
+                  IsExpanded="true"
+                  IsEnabled="{Binding SmoothResultingCurve}">
+          <StackPanel Orientation="Vertical"
+                      Margin="0,4,0,4">
+            <ComboBox ItemsSource="{Binding InterpolationMethod.InterpolationMethod.Items}"
+                      SelectedValue="{Binding InterpolationMethod.InterpolationMethod.SelectedItem}" />
+            <ContentControl Content="{Binding InterpolationMethod.InterpolationDetailsController.ViewObject}" />
+          </StackPanel>
+        </Expander>
+      </GroupBox>
 
-    <Label Grid.Row="10"
-           Grid.Column="0"
-           Grid.ColumnSpan="2"
-           Content="Maximal gain ratio:" />
-    <axogc:NumericDoubleTextBox Grid.Row="10"
-                                Grid.Column="2"
-                                SelectedValue="{Binding MaximalGainRatio}"
-                                ToolTip="Enter the maximum permitted value by which the spectrum is amplified in the intensity correction." />
+      <Label Grid.Row="10"
+             Grid.Column="0"
+             Grid.ColumnSpan="2"
+             Content="Maximal gain ratio:" />
+      <axogc:NumericDoubleTextBox Grid.Row="10"
+                                  Grid.Column="2"
+                                  SelectedValue="{Binding MaximalGainRatio}"
+                                  ToolTip="Enter the maximum permitted value by which the spectrum is amplified in the intensity correction." />
 
+    </Grid>
+    <GridSplitter Grid.Column="1"
+                  VerticalAlignment="Stretch"
+                  HorizontalAlignment="Stretch"
+                  ResizeDirection="Columns" />
+    <axogc:FlowDocumentScrollViewerWithDefaultSize Grid.Column="2"
+                                                   Document="{Binding FunctionController.FitFunctionDescription, Converter={StaticResource MD2FlowDocConverter }}"
+                                                   MinWidth="60"
+                                                   DefaultWidth="300"
+                                                   DefaultHeigth="270" />
   </Grid>
-
 </UserControl>

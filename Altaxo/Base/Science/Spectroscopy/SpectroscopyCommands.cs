@@ -1174,19 +1174,14 @@ namespace Altaxo.Science.Spectroscopy
         spectralPreprocessingOptions = spectralPreprocessingOptions with { DarkSubtraction = specSubtraction };
       }
 
-
-      var doc = new YCalibrationSetup()
-      {
-        XColumn = x_column1,
-        YColumn = y_column1,
-        SpectralPreprocessing = spectralPreprocessingOptions,
-      };
-      var controller = new YCalibrationSetupController();
+      var dataProxy = new DataTableXYColumnProxy(ctrl.DataTable, x_column1, y_column1, null);
+      var doc = new YCalibrationDataSource(dataProxy, new YCalibrationOptions(), new DataSourceImportOptions());
+      var controller = new YCalibrationDataSourceController();
       controller.InitializeDocument(doc);
       if (!Current.Gui.ShowDialog(controller, "Choose options for intensity calibration"))
         return;
 
-      doc = (YCalibrationSetup)controller.ModelObject;
+      doc = (YCalibrationDataSource)controller.ModelObject;
 
       // now, create a new table with an intensityCalibrationDataSource
 
@@ -1198,23 +1193,12 @@ namespace Altaxo.Science.Spectroscopy
       }
       dstTable.Name = proposedName;
       Current.Project.DataTableCollection.Add(dstTable);
-
-      var proxy = new DataTableXYColumnProxy(ctrl.DataTable, x_column1, y_column1);
-
-      var options = new YCalibrationOptions()
-      {
-        CurveShape = doc.CurveShape,
-        Preprocessing = doc.SpectralPreprocessing,
-      };
-
-      var dataSource = new YCalibrationDataSource(proxy, options, new DataSourceImportOptions());
-      dstTable.DataSource = dataSource;
+      dstTable.DataSource = doc;
       var errors = dstTable.UpdateTableFromTableDataSourceAsUserCancellable();
       if (!string.IsNullOrEmpty(errors))
       {
         Current.Gui.ErrorMessageBox("The intensity calibration task has not completed successfully, thus the calibration table may be corrupted!");
       }
-
 
       Current.ProjectService.OpenOrCreateWorksheetForTable(dstTable);
     }
