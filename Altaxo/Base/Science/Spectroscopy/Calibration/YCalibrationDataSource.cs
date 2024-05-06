@@ -25,7 +25,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Threading;
 using Altaxo.Calc;
 using Altaxo.Data;
@@ -274,9 +273,6 @@ namespace Altaxo.Science.Spectroscopy.Calibration
       (xArr, yArr, regions) = spectralPreprocessingOptions.Execute(xArr, yArr, regions);
 
       var function = yCalibrationOptions.CurveShape;
-      var para = yCalibrationOptions.CurveParameters.Select(x => x.Value).ToArray();
-      var X = new double[1];
-      var Y = new double[1];
       var xList = new List<double>();
       var yList = new List<double>();
       var yStandardList = new List<double>();
@@ -287,9 +283,8 @@ namespace Altaxo.Science.Spectroscopy.Calibration
         var x = xArr[i];
         if (RMath.IsInIntervalCC(x, yCalibrationOptions.MinimalValidXValueOfCurve, yCalibrationOptions.MaximalValidXValueOfCurve))
         {
-          X[0] = xArr[i];
-          function.Evaluate(X, para, Y);
-          var yStandard = Y[0];
+
+          var yStandard = function.Evaluate(xArr[i]);
           var scalingDenominator = yArr[i] / yStandard;
           xList.Add(xArr[i]);
           yList.Add(yArr[i]);

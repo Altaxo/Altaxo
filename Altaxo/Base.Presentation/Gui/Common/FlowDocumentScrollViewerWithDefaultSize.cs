@@ -23,9 +23,7 @@
 #endregion Copyright
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -33,6 +31,19 @@ namespace Altaxo.Gui.Common
 {
   public class FlowDocumentScrollViewerWithDefaultSize : FlowDocumentScrollViewer
   {
+    public FlowDocumentScrollViewerWithDefaultSize()
+    {
+      DependencyPropertyDescriptor.FromProperty(DocumentProperty, typeof(FlowDocumentScrollViewerWithDefaultSize)).AddValueChanged(this, EhDocumentChanged);
+    }
+
+    private void EhDocumentChanged(object? sender, EventArgs e)
+    {
+      if (Document is { } doc && double.IsNaN(doc.PageWidth) && ActualWidth > 0)
+      {
+        doc.PageWidth = ActualWidth;
+      }
+    }
+
     #region Dependency property
 
     public double DefaultWidth
@@ -46,6 +57,8 @@ namespace Altaxo.Gui.Common
       get { return (double)GetValue(DefaultHeightProperty); }
       set { SetValue(DefaultHeightProperty, value); }
     }
+
+
 
     public static readonly DependencyProperty DefaultWidthProperty =
         DependencyProperty.Register("DefaultWidth", typeof(double), typeof(FlowDocumentScrollViewerWithDefaultSize),
@@ -77,5 +90,7 @@ namespace Altaxo.Gui.Common
       }
       return result;
     }
+
+
   }
 }

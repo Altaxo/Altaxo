@@ -43,9 +43,10 @@ namespace Altaxo.Gui.Common.Converters
 
     public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
     {
-      return value is string text ?
+      var result = value is string text ?
         RenderDocument(text, System.Globalization.CultureInfo.InvariantCulture) :
         Binding.DoNothing;
+      return result;
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)

@@ -1,0 +1,129 @@
+﻿<UserControl x:Class="Altaxo.Gui.Science.Spectroscopy.Calibration.ScalarFunctionControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:localmodel="clr-namespace:Altaxo.Gui.Science.Spectroscopy.Calibration;assembly=AltaxoBase"
+             xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
+             xmlns:axogcc="clr-namespace:Altaxo.Gui.Common.Converters"
+             d:DataContext="{d:DesignInstance Type=localmodel:ScalarFunctionController}"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+  <Grid HorizontalAlignment="Stretch"
+        VerticalAlignment="Stretch">
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="Auto" />
+      <ColumnDefinition Width="4" />
+      <ColumnDefinition Width="Auto" />
+      <ColumnDefinition Width="4" />
+      <ColumnDefinition Width="Auto" />
+      <ColumnDefinition Width="4" />
+      <ColumnDefinition Width="*" />
+      <ColumnDefinition Width="4" />
+    </Grid.ColumnDefinitions>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="4" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="4" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="4" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="4" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="4" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="4" />
+    </Grid.RowDefinitions>
+
+    <axogc:SingleChoiceRadioStackPanel Grid.Row="0"
+                                       Grid.Column="0"
+                                       Grid.ColumnSpan="6"
+                                       Orientation="Horizontal"
+                                       ItemsSource="{Binding TypeOfTheFunction.Items}"
+                                       SelectedItem="{Binding TypeOfTheFunction.SelectedItem, Mode=TwoWay}" />
+
+    <Label Grid.Row="2"
+           Grid.Column="0"
+           Content="Curve shape:"
+           Visibility="{Binding IsPeakFunction, Converter={x:Static axogcc:FalseToVisibilityHiddenConverter.Instance}}" />
+
+    <ComboBox Grid.Row="4"
+              Grid.Column="0"
+              ItemsSource="{Binding AvailableShapes.Items}"
+              SelectedItem="{Binding AvailableShapes.SelectedItem, Mode=TwoWay}"
+              Visibility="{Binding IsPeakFunction, Converter={x:Static axogcc:FalseToVisibilityHiddenConverter.Instance}}" />
+
+    <Label Grid.Row="2"
+           Grid.Column="2"
+           Content="No. of terms:"
+           Visibility="{Binding IsPeakFunction, Converter={x:Static axogcc:FalseToVisibilityHiddenConverter.Instance}}" />
+
+    <axogc:Int32UpDown Grid.Row="4"
+                       Grid.Column="2"
+                       Value="{Binding NumberOfTerms}"
+                       Minimum="0"
+                       Visibility="{Binding IsPeakFunction, Converter={x:Static axogcc:FalseToVisibilityHiddenConverter.Instance}}"
+                       ToolTip="Enter the number of peak function terms (usually only one term)." />
+
+    <Label Grid.Row="2"
+           Grid.Column="4"
+           Content="Baseline order:"
+           Visibility="{Binding IsExpressionString, Converter={x:Static axogcc:TrueToVisibilityHiddenConverter.Instance}}" />
+
+    <axogc:Int32UpDown Grid.Row="4"
+                       Grid.Column="4"
+                       Value="{Binding OrderOfBaselinePolynomial}"
+                       Minimum="-1"
+                       Visibility="{Binding IsExpressionString, Converter={x:Static axogcc:TrueToVisibilityHiddenConverter.Instance}}"
+                       ToolTip="Enter the order of the baseline polynomial for peak functions or the order of the polynomial. Use a value of -1 if no baseline function is required." />
+
+    <Label Grid.Row="6"
+           Grid.Column="0"
+           Grid.ColumnSpan="5"
+           Content="Expression f(x) = "
+           Visibility="{Binding IsExpressionString, Converter={x:Static axogcc:FalseToVisibilityHiddenConverter.Instance}}" />
+
+    <TextBox Grid.Row="8"
+             Grid.Column="0"
+             Grid.ColumnSpan="7"
+             Text="{Binding ExpressionString}"
+             AcceptsReturn="True"
+             Visibility="{Binding IsExpressionString, Converter={x:Static axogcc:FalseToVisibilityHiddenConverter.Instance}}"
+             ToolTip="Enter a mathematical expression. The independent variable is named 'x'. You can use all mathematical functions of the System.Math class, like Abs(), Sin(), Exp(), Pow() etc. Note that the function names all start with a capital letter." />
+
+    <Label Grid.Row="6"
+           Grid.Column="0"
+           Grid.ColumnSpan="5"
+           Content="Parameters of curve:"
+           Visibility="{Binding IsExpressionString, Converter={x:Static axogcc:TrueToVisibilityHiddenConverter.Instance}}" />
+
+    <ListView Grid.Row="8"
+              Grid.Column="0"
+              Grid.ColumnSpan="5"
+              ItemsSource="{Binding ParametersOfCurve}"
+              Visibility="{Binding IsExpressionString, Converter={x:Static axogcc:TrueToVisibilityHiddenConverter.Instance}}">
+      <ListView.View>
+        <GridView>
+          <GridView.Columns>
+            <GridViewColumn Header="Name"
+                            DisplayMemberBinding="{Binding Name}" />
+            <GridViewColumn x:Name="_valueColumn"
+                            Header="Value"
+                            Width="100">
+              <GridViewColumn.CellTemplate>
+                <DataTemplate>
+                  <Border Width="{Binding ActualWidth, ElementName=_valueColumn}"
+                          Padding="4,0,12,0">
+                    <axogc:NumericDoubleTextBox SelectedValue="{Binding Value}"
+                                                HorizontalAlignment="Stretch" />
+                  </Border>
+                </DataTemplate>
+              </GridViewColumn.CellTemplate>
+            </GridViewColumn>
+          </GridView.Columns>
+        </GridView>
+      </ListView.View>
+    </ListView>
+  </Grid>
+</UserControl>

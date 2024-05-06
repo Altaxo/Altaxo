@@ -24,7 +24,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
+using System.Linq;
 using Altaxo.Calc.Interpolation;
 using Altaxo.Calc.Regression.Nonlinear;
 using Altaxo.Main;
@@ -90,8 +90,7 @@ namespace Altaxo.Science.Spectroscopy.Calibration
         var options = new YCalibrationOptions()
         {
           Preprocessing = preprocessing,
-          CurveShape = intensityCurve,
-          CurveParameters = arr.ToImmutableArray(),
+          CurveShape = new Altaxo.Calc.FitFunctions.FitFunctionDDWrapper(intensityCurve, arr.Select(x => x.Value).ToArray()),
         };
         return new YCalibrationOptionsDocNode(options, proxyList);
       }
@@ -157,8 +156,7 @@ namespace Altaxo.Science.Spectroscopy.Calibration
         {
           Preprocessing = preprocessing,
           InterpolationMethod = interpolationMethod,
-          CurveParameters = arr.ToImmutableArray(),
-          CurveShape = intensityCurve,
+          CurveShape = new Altaxo.Calc.FitFunctions.FitFunctionDDWrapper(intensityCurve, arr.Select(x => x.Value).ToArray()),
         };
 
         return new YCalibrationOptionsDocNode(options, proxyList);

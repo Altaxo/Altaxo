@@ -23,7 +23,9 @@
 #endregion Copyright
 
 using System;
-using System.Collections.Immutable;
+using System.Linq;
+using Altaxo.Calc;
+using Altaxo.Calc.FitFunctions;
 using Altaxo.Calc.Interpolation;
 using Altaxo.Calc.Regression.Nonlinear;
 
@@ -37,12 +39,7 @@ namespace Altaxo.Science.Spectroscopy.Calibration
     /// <summary>
     /// Gets the intensity curve of calibration source. This is usually a peak function, for instance a Gaussian shape with one or more terms (and baseline polynomial).
     /// </summary>
-    public IFitFunction CurveShape { get; init; } = new Altaxo.Calc.FitFunctions.Peaks.GaussAmplitude(1, -1);
-
-    /// <summary>
-    /// Gets the curve parameters for the <see cref="CurveShape"/> function.
-    /// </summary>
-    public ImmutableArray<(string Name, double Value)> CurveParameters { get; init; } = ImmutableArray<(string Name, double Value)>.Empty;
+    public IScalarFunctionDD CurveShape { get; init; } = new FitFunctionDDWrapper(new Altaxo.Calc.FitFunctions.Peaks.GaussAmplitude(1, -1), new double[] { 1, 0, 1 });
 
     public SpectralPreprocessingOptionsBase Preprocessing { get; init; } = new SpectralPreprocessingOptions();
 
@@ -135,8 +132,7 @@ namespace Altaxo.Science.Spectroscopy.Calibration
         return new YCalibrationOptions
         {
           Preprocessing = spectralPreprocessing,
-          CurveShape = intensityCurve,
-          CurveParameters = arr.ToImmutableArray(),
+          CurveShape = new Altaxo.Calc.FitFunctions.FitFunctionDDWrapper(intensityCurve, arr.Select(x => x.Value).ToArray()),
           InterpolationMethod = null,
         };
       }
@@ -151,6 +147,8 @@ namespace Altaxo.Science.Spectroscopy.Calibration
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
+        throw new InvalidOperationException("Serialization of old version");
+        /*
         var s = (YCalibrationOptions)obj;
         info.AddValue("SpectralPreprocessing", s.Preprocessing);
         info.AddValue("CurveShape", s.CurveShape);
@@ -170,6 +168,7 @@ namespace Altaxo.Science.Spectroscopy.Calibration
         info.CommitArray();
 
         info.AddValueOrNull("InterpolationMethod", s.InterpolationMethod);
+        */
       }
 
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
@@ -196,8 +195,7 @@ namespace Altaxo.Science.Spectroscopy.Calibration
         return new YCalibrationOptions
         {
           Preprocessing = spectralPreprocessing,
-          CurveShape = intensityCurve,
-          CurveParameters = arr.ToImmutableArray(),
+          CurveShape = new Altaxo.Calc.FitFunctions.FitFunctionDDWrapper(intensityCurve, arr.Select(x => x.Value).ToArray()),
           InterpolationMethod = interpolationMethod,
         };
       }
@@ -207,11 +205,14 @@ namespace Altaxo.Science.Spectroscopy.Calibration
     /// 2024-04-04 V2: new properties MinimalValidXValueOfCurve, MaximalValidXValueOfCurve and MaximalGainRatio
     /// </summary>
     /// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(YCalibrationOptions), 2)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor("AltaxoCore", "Altaxo.Science.Spectroscopy.Calibration.YCalibrationOptions", 2)]
     public class SerializationSurrogate2 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
+        throw new InvalidOperationException("Serialization of old version");
+
+        /*
         var s = (YCalibrationOptions)obj;
         info.AddValue("SpectralPreprocessing", s.Preprocessing);
         info.AddValue("CurveShape", s.CurveShape);
@@ -235,6 +236,7 @@ namespace Altaxo.Science.Spectroscopy.Calibration
         info.AddValue("MinimalValidXValueOfCurve", s.MinimalValidXValueOfCurve);
         info.AddValue("MaximalValidXValueOfCurve", s.MaximalValidXValueOfCurve);
         info.AddValue("MaximalGainRatio", s.MaximalGainRatio);
+        */
       }
 
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
@@ -265,8 +267,48 @@ namespace Altaxo.Science.Spectroscopy.Calibration
         return new YCalibrationOptions
         {
           Preprocessing = spectralPreprocessing,
+          CurveShape = new Altaxo.Calc.FitFunctions.FitFunctionDDWrapper(intensityCurve, arr.Select(x => x.Value).ToArray()),
+          InterpolationMethod = interpolationMethod,
+          MinimalValidXValueOfCurve = minimalValidXValueOfCurve,
+          MaximalValidXValueOfCurve = maximalValidXValueOfCurve,
+          MaximalGainRatio = maximalGainRatio,
+        };
+      }
+    }
+
+    /// <summary>
+    /// 2024-04-04 V2: new properties MinimalValidXValueOfCurve, MaximalValidXValueOfCurve and MaximalGainRatio
+    /// 2024-05-06 V3: CurveShape now is IScalarFunctionDD, thus parameters are stored together with curve
+    /// </summary>
+    /// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(YCalibrationOptions), 3)]
+    public class SerializationSurrogate3 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        var s = (YCalibrationOptions)obj;
+        info.AddValue("SpectralPreprocessing", s.Preprocessing);
+        info.AddValue("CurveShape", s.CurveShape);
+        info.AddValueOrNull("InterpolationMethod", s.InterpolationMethod);
+        info.AddValue("MinimalValidXValueOfCurve", s.MinimalValidXValueOfCurve);
+        info.AddValue("MaximalValidXValueOfCurve", s.MaximalValidXValueOfCurve);
+        info.AddValue("MaximalGainRatio", s.MaximalGainRatio);
+      }
+
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      {
+        var spectralPreprocessing = info.GetValue<SpectralPreprocessingOptionsBase>("SpectralPreprocessing", parent);
+        var intensityCurve = info.GetValue<IScalarFunctionDD>("CurveShape", null);
+        var interpolationMethod = info.GetValueOrNull<IInterpolationFunctionOptions>("InterpolationMethod", null);
+
+        var minimalValidXValueOfCurve = info.GetDouble("MinimalValidXValueOfCurve");
+        var maximalValidXValueOfCurve = info.GetDouble("MaximalValidXValueOfCurve");
+        var maximalGainRatio = info.GetDouble("MaximalGainRatio");
+
+        return new YCalibrationOptions
+        {
+          Preprocessing = spectralPreprocessing,
           CurveShape = intensityCurve,
-          CurveParameters = arr.ToImmutableArray(),
           InterpolationMethod = interpolationMethod,
           MinimalValidXValueOfCurve = minimalValidXValueOfCurve,
           MaximalValidXValueOfCurve = maximalValidXValueOfCurve,

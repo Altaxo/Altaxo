@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2022 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2024 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -22,35 +22,18 @@
 
 #endregion Copyright
 
-using System.Collections.Generic;
-using System.Linq;
-using Altaxo.Calc;
-using Altaxo.Calc.Regression.Nonlinear;
+using System.Windows.Controls;
 
-namespace Altaxo.Science.Spectroscopy.PeakFitting
+namespace Altaxo.Gui.Science.Spectroscopy.Calibration
 {
-  public class PeakFitFunctions
+  /// <summary>
+  /// Interaction logic for ScalarFunctionControl.xaml
+  /// </summary>
+  public partial class ScalarFunctionControl : UserControl, IScalarFunctionView
   {
-    public class FunctionWrapper : IScalarFunctionDD
+    public ScalarFunctionControl()
     {
-      private IFitFunction _f;
-      private double[] _param;
-      private double[] _x;
-      private double[] _y;
-
-      public FunctionWrapper(IFitFunction f, IReadOnlyList<double> param)
-      {
-        _f = f;
-        _param = param.ToArray();
-        _x = new double[1];
-        _y = new double[1];
-      }
-      public double Evaluate(double x)
-      {
-        _x[0] = x;
-        _f.Evaluate(_x, _param, _y);
-        return _y[0];
-      }
+      InitializeComponent();
     }
   }
 }

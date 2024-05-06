@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2023 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2024 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -22,9 +22,9 @@
 
 #endregion Copyright
 
-using System;
+using Altaxo.Calc;
+using Altaxo.Calc.FitFunctions;
 using Altaxo.Calc.Interpolation;
-using Altaxo.Calc.Regression.Nonlinear;
 using Altaxo.Data;
 using Altaxo.Science.Spectroscopy;
 
@@ -44,9 +44,7 @@ namespace Altaxo.Gui.Science.Spectroscopy.Calibration
 
     public SpectralPreprocessingOptionsBase SpectralPreprocessing { get; set; }
 
-    public IFitFunction CurveShape { get; set; } = new Altaxo.Calc.FitFunctions.Peaks.GaussAmplitude(1, -1);
-
-    public (string Name, double Value)[] CurveParameter { get; set; } = Array.Empty<(string Name, double Value)>();
+    public IScalarFunctionDD CurveShape { get; set; } = new FitFunctionDDWrapper(new Altaxo.Calc.FitFunctions.Peaks.GaussAmplitude(1, -1), new double[] { 1, 0, 1 });
 
     /// <summary>
     /// Gets or sets the smoothing interpolation that is used to smooth the resulting curve.

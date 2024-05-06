@@ -24,7 +24,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Linq;
 using System.Threading;
 using Altaxo.Calc.FitFunctions.Peaks;
@@ -1205,7 +1204,6 @@ namespace Altaxo.Science.Spectroscopy
       var options = new YCalibrationOptions()
       {
         CurveShape = doc.CurveShape,
-        CurveParameters = doc.CurveParameter.ToImmutableArray(),
         Preprocessing = doc.SpectralPreprocessing,
       };
 

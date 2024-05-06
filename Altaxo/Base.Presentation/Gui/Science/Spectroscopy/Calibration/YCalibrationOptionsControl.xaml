@@ -1,35 +1,38 @@
 ﻿<UserControl x:Class="Altaxo.Gui.Science.Spectroscopy.Calibration.YCalibrationOptionsControl"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:localmodel="clr-namespace:Altaxo.Gui.Science.Spectroscopy.Calibration;assembly=AltaxoBase" 
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:Altaxo.Gui.Science.Spectroscopy.Calibration"
+             xmlns:localmodel="clr-namespace:Altaxo.Gui.Science.Spectroscopy.Calibration;assembly=AltaxoBase"
              xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
+             xmlns:axogcc="clr-namespace:Altaxo.Gui.Common.Converters"
              d:DataContext="{d:DesignInstance Type=localmodel:YCalibrationOptionsController}"
-             mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+             mc:Ignorable="d"
+             d:DesignHeight="450"
+             d:DesignWidth="800">
   <Grid>
     <Grid.ColumnDefinitions>
-      <ColumnDefinition Width="Auto"/>
-      <ColumnDefinition Width="4"/>
-      <ColumnDefinition Width="Auto"/>
-      <ColumnDefinition Width="4"/>
-      <ColumnDefinition Width="Auto"/>
-      <ColumnDefinition Width="4"/>
+      <ColumnDefinition Width="Auto" />
+      <ColumnDefinition Width="4" />
+      <ColumnDefinition Width="Auto" />
+      <ColumnDefinition Width="4" />
+      <ColumnDefinition Width="Auto" />
+      <ColumnDefinition Width="4" />
     </Grid.ColumnDefinitions>
     <Grid.RowDefinitions>
-      <RowDefinition Height="Auto"/>
-      <RowDefinition Height="4"/>
-      <RowDefinition Height="Auto"/>
-      <RowDefinition Height="4"/>
-      <RowDefinition Height="Auto"/>
-      <RowDefinition Height="4"/>
-      <RowDefinition Height="Auto"/>
-      <RowDefinition Height="4"/>
-      <RowDefinition Height="Auto"/>
-      <RowDefinition Height="4"/>
-      <RowDefinition Height="Auto"/>
-      <RowDefinition Height="4"/>
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="4" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="4" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="4" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="4" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="4" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="4" />
       <RowDefinition Height="Auto" />
       <RowDefinition Height="4" />
       <RowDefinition Height="Auto" />
@@ -38,100 +41,63 @@
       <RowDefinition Height="4" />
     </Grid.RowDefinitions>
 
-    <GroupBox Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="5"
-                          Header="Spectral preprocessing:">
-      <ContentControl Content="{Binding PreprocessingController.ViewObject}"/>
+    <GroupBox Grid.Row="0"
+              Grid.Column="0"
+              Grid.ColumnSpan="5"
+              Header="Spectral preprocessing:">
+      <ContentControl Content="{Binding PreprocessingController.ViewObject}" />
     </GroupBox>
 
+    <GroupBox Grid.Row="2"
+              Grid.Column="0"
+              Grid.ColumnSpan="5"
+              Header="Specification of calibration source intensity">
+      <local:ScalarFunctionControl DataContext="{Binding FunctionController}" />
+    </GroupBox>
 
-    <Label Grid.Row="2" Grid.Column="0"
-                       Content="Curve shape:"/>
-
-    <ComboBox Grid.Row="4" Grid.Column="0"
-                          ItemsSource="{Binding AvailableShapes.Items}"
-                          SelectedItem="{Binding AvailableShapes.SelectedItem, Mode=TwoWay}"/>
-
-    <Label Grid.Row="2" Grid.Column="2"
-                       Content="No. of terms:"/>
-
-    <axogc:Int32UpDown Grid.Row="4" Grid.Column="2"
-                           Value="{Binding NumberOfTerms}"
-                           Minimum="0"
-                           />
-
-    <Label Grid.Row="2" Grid.Column="4"
-                       Content="Baseline order:"/>
-
-    <axogc:Int32UpDown Grid.Row="4" Grid.Column="4"
-                                   Value="{Binding OrderOfBaselinePolynomial}"
-                                   Minimum="-1"/>
-
-    <Label Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="3"
-                       Content="Parameters of curve:"/>
-
-    <ListView Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="3" ItemsSource="{Binding ParametersOfCurve}">
-      <ListView.View>
-        <GridView>
-          <GridView.Columns>
-            <GridViewColumn Header="Name" DisplayMemberBinding="{Binding Name}"/>
-            <GridViewColumn x:Name="_valueColumn" Header="Value" Width="100">
-              <GridViewColumn.CellTemplate>
-                <DataTemplate>
-                  <Border Width="{Binding ActualWidth, ElementName=_valueColumn}" Padding="4,0,12,0" >
-                    <axogc:NumericDoubleTextBox SelectedValue="{Binding Value}" HorizontalAlignment="Stretch"/>
-                  </Border>
-                </DataTemplate>
-              </GridViewColumn.CellTemplate>
-            </GridViewColumn>
-          </GridView.Columns>
-        </GridView>
-      </ListView.View>
-    </ListView>
-
-    <Label Grid.Row="10"
+    <Label Grid.Row="4"
            Grid.Column="0"
            Grid.ColumnSpan="2"
            Content="Minimal x-value of curve:" />
-    <axogc:NumericDoubleTextBox Grid.Row="10"
+    <axogc:NumericDoubleTextBox Grid.Row="4"
                                 Grid.Column="2"
                                 SelectedValue="{Binding MinimalValidXValueOfCurve}"
-                                ToolTip="Enter the minimal valid x-value for which the calibration curve is valid (usually written on the certificate of the intensity calibration source)."/>
-    <Label Grid.Row="12"
+                                ToolTip="Enter the minimal valid x-value for which the calibration curve is valid (usually written on the certificate of the intensity calibration source)." />
+    <Label Grid.Row="6"
            Grid.Column="0"
            Grid.ColumnSpan="2"
            Content="Maximal x-value of curve:" />
-    <axogc:NumericDoubleTextBox Grid.Row="12"
+    <axogc:NumericDoubleTextBox Grid.Row="6"
                                 Grid.Column="2"
                                 SelectedValue="{Binding MaximalValidXValueOfCurve}"
                                 ToolTip="Enter the maximal valid x-value for which the calibration curve is valid (usually written on the certificate of the intensity calibration source)." />
 
-    <GroupBox Grid.Row="14" Grid.ColumnSpan="3">
+    <GroupBox Grid.Row="8"
+              Grid.ColumnSpan="3">
       <GroupBox.Header>
         <CheckBox Content="Smooth result by smoothing interpolation"
-                        IsChecked="{Binding SmoothResultingCurve, Mode=TwoWay}"
-                        />
+                  IsChecked="{Binding SmoothResultingCurve, Mode=TwoWay}" />
       </GroupBox.Header>
-      <Expander
-          Header="Interpolation method"
-          IsExpanded="true"
-        IsEnabled="{Binding SmoothResultingCurve}"
-        >
-        <StackPanel Orientation="Vertical" Margin="0,4,0,4">
+      <Expander Header="Interpolation method"
+                IsExpanded="true"
+                IsEnabled="{Binding SmoothResultingCurve}">
+        <StackPanel Orientation="Vertical"
+                    Margin="0,4,0,4">
           <ComboBox ItemsSource="{Binding InterpolationMethod.InterpolationMethod.Items}"
-                  SelectedValue="{Binding InterpolationMethod.InterpolationMethod.SelectedItem}"/>
-          <ContentControl Content="{Binding InterpolationMethod.InterpolationDetailsController.ViewObject}"/>
+                    SelectedValue="{Binding InterpolationMethod.InterpolationMethod.SelectedItem}" />
+          <ContentControl Content="{Binding InterpolationMethod.InterpolationDetailsController.ViewObject}" />
         </StackPanel>
       </Expander>
     </GroupBox>
 
-    <Label Grid.Row="16"
-           Grid.Column="0" Grid.ColumnSpan="2"
+    <Label Grid.Row="10"
+           Grid.Column="0"
+           Grid.ColumnSpan="2"
            Content="Maximal gain ratio:" />
-    <axogc:NumericDoubleTextBox Grid.Row="16"
+    <axogc:NumericDoubleTextBox Grid.Row="10"
                                 Grid.Column="2"
                                 SelectedValue="{Binding MaximalGainRatio}"
-                                ToolTip="Enter the maximum permitted value by which the spectrum is amplified in the intensity correction."
-                                />
+                                ToolTip="Enter the maximum permitted value by which the spectrum is amplified in the intensity correction." />
 
   </Grid>
 

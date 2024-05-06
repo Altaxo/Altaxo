@@ -22,20 +22,12 @@
 
 #endregion Copyright
 
-using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Linq;
 using System.Windows.Input;
-using Altaxo.Calc.FitFunctions.Peaks;
+using Altaxo.Calc;
 using Altaxo.Calc.Interpolation;
-using Altaxo.Calc.Regression.Nonlinear;
-using Altaxo.Collections;
 using Altaxo.Data;
 using Altaxo.Gui.Calc.Interpolation;
-using Altaxo.Gui.Common;
-using Altaxo.Main.Services;
 using Altaxo.Science.Spectroscopy;
 
 namespace Altaxo.Gui.Science.Spectroscopy.Calibration
@@ -49,7 +41,8 @@ namespace Altaxo.Gui.Science.Spectroscopy.Calibration
   {
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
-      yield return new ControllerAndSetNullMethod(PreprocessingController, () => PreprocessingController = null);
+      yield return new ControllerAndSetNullMethod(PreprocessingController, () => PreprocessingController = null!);
+      yield return new ControllerAndSetNullMethod(FunctionController, () => FunctionController = null!);
     }
 
 
@@ -107,99 +100,6 @@ namespace Altaxo.Gui.Science.Spectroscopy.Calibration
       }
     }
 
-    private int _numberOfTerms;
-
-    public int NumberOfTerms
-    {
-      get => _numberOfTerms;
-      set
-      {
-        if (!(_numberOfTerms == value))
-        {
-          _numberOfTerms = value;
-          OnPropertyChanged(nameof(NumberOfTerms));
-          if (AvailableShapes?.SelectedValue is Type shapeType)
-          {
-            EhCurveShapeChanged(shapeType);
-          }
-        }
-      }
-    }
-
-    private int _orderOfBaselinePolynomial;
-
-    public int OrderOfBaselinePolynomial
-    {
-      get => _orderOfBaselinePolynomial;
-      set
-      {
-        if (!(_orderOfBaselinePolynomial == value))
-        {
-          _orderOfBaselinePolynomial = value;
-          OnPropertyChanged(nameof(OrderOfBaselinePolynomial));
-          if (AvailableShapes?.SelectedValue is Type shapeType)
-          {
-            EhCurveShapeChanged(shapeType);
-          }
-        }
-      }
-    }
-
-    private ItemsController<Type> _availableShapes;
-
-    public ItemsController<Type> AvailableShapes
-    {
-      get => _availableShapes;
-      set
-      {
-        if (!(_availableShapes == value))
-        {
-          _availableShapes = value;
-          OnPropertyChanged(nameof(AvailableShapes));
-        }
-      }
-    }
-
-    public class ParameterItem : INotifyPropertyChanged
-    {
-      private string _name;
-
-      public string Name
-      {
-        get => _name;
-        set
-        {
-          if (!(_name == value))
-          {
-            _name = value;
-            OnPropertyChanged(nameof(Name));
-          }
-        }
-      }
-
-
-
-      private double _value;
-
-      public event PropertyChangedEventHandler? PropertyChanged;
-      protected void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-      public double Value
-      {
-        get => _value;
-        set
-        {
-          if (!(_value == value))
-          {
-            _value = value;
-            OnPropertyChanged(nameof(Value));
-          }
-        }
-      }
-
-    }
-
-    public ObservableCollection<ParameterItem> ParametersOfCurve { get; } = new ObservableCollection<ParameterItem>();
-
     private SpectralPreprocessingController _preprocessingController;
 
     public SpectralPreprocessingController PreprocessingController
@@ -216,21 +116,21 @@ namespace Altaxo.Gui.Science.Spectroscopy.Calibration
       }
     }
 
-    private string _fitFunctionDescription = string.Empty;
+    private ScalarFunctionController _functionController;
 
-    public string FitFunctionDescription
+    public ScalarFunctionController FunctionController
     {
-      get => _fitFunctionDescription;
+      get => _functionController;
       set
       {
-        if (!(_fitFunctionDescription == value))
+        if (!(_functionController == value))
         {
-          _fitFunctionDescription = value;
-          OnPropertyChanged(nameof(FitFunctionDescription));
+          _functionController?.Dispose();
+          _functionController = value;
+          OnPropertyChanged(nameof(FunctionController));
         }
       }
     }
-
 
     private bool _smoothResultingCurve;
 
@@ -281,39 +181,14 @@ namespace Altaxo.Gui.Science.Spectroscopy.Calibration
         Current.Gui.FindAndAttachControlTo(preprocessingController);
         PreprocessingController = preprocessingController;
 
-        NumberOfTerms = _doc.CurveShape is IFitFunctionPeak ffp ? ffp.NumberOfTerms : 1;
-        OrderOfBaselinePolynomial = _doc.CurveShape is IFitFunctionPeak ffp1 ? ffp1.OrderOfBaselinePolynomial : -1;
-        var fitFuncTypes = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(Altaxo.Calc.FitFunctions.Peaks.IFitFunctionPeak));
-
-        AvailableShapes = new ItemsController<Type>(
-          new Collections.SelectableListNodeList(fitFuncTypes.Select(ff => new Collections.SelectableListNode(ff.Name, ff, false))), EhCurveShapeChanged);
-        AvailableShapes.SelectedValue = _doc.CurveShape.GetType();
+        var functionController = new ScalarFunctionController();
+        functionController.InitializeDocument(_doc.CurveShape);
+        //Current.Gui.FindAndAttachControlTo(_functionController);
+        FunctionController = functionController;
 
         SmoothResultingCurve = _doc.InterpolationMethod is not null;
         InterpolationMethod = new InterpolationFunctionOptionsController(_doc.InterpolationMethod ?? new PolyharmonicSpline1DOptions() { DerivativeOrder = 2, RegularizationParameter = 1000 });
       }
-    }
-
-    private void EhCurveShapeChanged(Type newType)
-    {
-      var parameterDict = new Dictionary<string, double>();
-      parameterDict.AddRange(ParametersOfCurve.Select(p => new KeyValuePair<string, double>(p.Name, p.Value)));
-
-      var newFunction = (Altaxo.Calc.FitFunctions.Peaks.IFitFunctionPeak)Activator.CreateInstance(newType);
-      newFunction = newFunction.WithNumberOfTerms(NumberOfTerms).WithOrderOfBaselinePolynomial(OrderOfBaselinePolynomial);
-      ParametersOfCurve.Clear();
-      for (int i = 0; i < newFunction.NumberOfParameters; ++i)
-      {
-        var name = newFunction.ParameterName(i);
-        double value = 0;
-        if (!parameterDict.TryGetValue(name, out value))
-          value = 0;
-        ParametersOfCurve.Add(new ParameterItem { Name = name, Value = value });
-      }
-
-      object[] attribs = newType.GetCustomAttributes(typeof(System.ComponentModel.DescriptionAttribute), false);
-      FitFunctionDescription = (attribs.Length == 0) ? string.Empty : StringParser.Parse(((System.ComponentModel.DescriptionAttribute)attribs[0]).Description);
-
     }
 
     public override bool Apply(bool disposeController)
@@ -323,11 +198,12 @@ namespace Altaxo.Gui.Science.Spectroscopy.Calibration
         return ApplyEnd(false, disposeController);
       }
 
-      var curveInstance = (IFitFunction)Activator.CreateInstance(AvailableShapes.SelectedValue);
-      if (curveInstance is IFitFunctionPeak ffp)
+      if (!FunctionController.Apply(disposeController))
       {
-        curveInstance = ffp.WithNumberOfTerms(NumberOfTerms).WithOrderOfBaselinePolynomial(OrderOfBaselinePolynomial);
+        return ApplyEnd(false, disposeController);
       }
+
+      var curveInstance = (IScalarFunctionDD)FunctionController.ModelObject;
 
       IInterpolationFunctionOptions? interpolationMethod = null;
       if (SmoothResultingCurve)
@@ -345,12 +221,8 @@ namespace Altaxo.Gui.Science.Spectroscopy.Calibration
         YColumn = SignalColumn,
         SpectralPreprocessing = (SpectralPreprocessingOptionsBase)PreprocessingController.ModelObject,
         CurveShape = curveInstance,
-        CurveParameter = ParametersOfCurve.Select(p => (p.Name, p.Value)).ToArray(),
         InterpolationMethod = interpolationMethod,
       };
-
-
-
 
       return ApplyEnd(true, disposeController);
     }

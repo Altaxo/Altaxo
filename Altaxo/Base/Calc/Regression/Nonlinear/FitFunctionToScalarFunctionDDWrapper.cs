@@ -221,6 +221,8 @@ namespace Altaxo.Calc.Regression.Nonlinear
         _parameter[i] = parameter[i];
     }
 
+    public IFitFunction? FitFunction => _fitFunction;
+
     public double[] Parameter
     {
       get

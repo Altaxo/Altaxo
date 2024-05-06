@@ -36,6 +36,7 @@ namespace Altaxo.Calc.FitFunctions.General
   /// This is for completeness only, fitting should be done with a linear fit instead.
   /// </summary>
   [FitFunctionClass]
+  [System.ComponentModel.Description("${res:Altaxo.Calc.FitFunctions.General.Polynomial}")]
   public class Polynomial
         : IFitFunctionWithDerivative, IImmutable
   {
