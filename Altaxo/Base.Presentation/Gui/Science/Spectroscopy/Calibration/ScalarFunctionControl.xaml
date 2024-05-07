@@ -90,7 +90,7 @@
              Text="{Binding ExpressionString}"
              AcceptsReturn="True"
              Visibility="{Binding IsExpressionString, Converter={x:Static axogcc:FalseToVisibilityHiddenConverter.Instance}}"
-             ToolTip="Enter a mathematical expression. The independent variable is named 'x'. You can use all mathematical functions of the System.Math class, like Abs(), Sin(), Exp(), Pow() etc. Note that the function names all start with a capital letter." />
+             ToolTip="Enter a mathematical expression. The independent variable is named 'x'. You can use all mathematical functions of the System.Math class, like Abs(), Sin(), Exp(), Pow() etc. Note that the function names all start with a capital letter. Example: Exp(-0.1234*Pow(x-250,2)) gives you a Gaussian shape with a maximum at x=250." />
 
     <Label Grid.Row="6"
            Grid.Column="0"
