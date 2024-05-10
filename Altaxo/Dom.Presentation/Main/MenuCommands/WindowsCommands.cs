@@ -2,9 +2,9 @@
 
 namespace Altaxo.Main.Commands
 {
-  public class ResizeMainWindowTo1920x1080 : SimpleCommand
+  public abstract class ResizeBaseClass : SimpleCommand
   {
-    public override void Execute(object? parameter)
+    public void Execute(int width, int height)
     {
       var mainWindow = System.Windows.Application.Current.MainWindow;
 
@@ -29,8 +29,8 @@ namespace Altaxo.Main.Commands
         mainWindow.WindowState = System.Windows.WindowState.Normal;
       }
 
-      mainWindow.Width = 1920 + 14;
-      mainWindow.Height = 1080 + 7;
+      mainWindow.Width = width + 14;
+      mainWindow.Height = height + 7;
 
       mainWindow.Top = 0;
       mainWindow.Left = -7;
@@ -39,7 +39,30 @@ namespace Altaxo.Main.Commands
       mainWindow.Topmost = true;  // important
       mainWindow.Topmost = false; // important
       mainWindow.Focus();         // important
+    }
+  }
 
+  public class ResizeMainWindowTo1920x1080 : ResizeBaseClass
+  {
+    public override void Execute(object? parameter)
+    {
+      Execute(1920, 1080);
+    }
+  }
+
+  public class ResizeMainWindowTo1024x768 : ResizeBaseClass
+  {
+    public override void Execute(object? parameter)
+    {
+      Execute(1024, 768);
+    }
+  }
+
+  public class ResizeMainWindowTo800x600 : ResizeBaseClass
+  {
+    public override void Execute(object? parameter)
+    {
+      Execute(800, 600);
     }
   }
 }

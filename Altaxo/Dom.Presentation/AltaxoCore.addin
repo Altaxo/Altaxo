@@ -820,6 +820,10 @@
             <MenuItem id="ResizeMainWindow" label="Resize main window" type="Menu">
                 <MenuItem id="ResizeTo1920x1080" label="Resize to 1920x1080"
                             description="" class="Altaxo.Main.Commands.ResizeMainWindowTo1920x1080" />
+              <MenuItem id="ResizeTo1024x768" label="Resize to 1024x768"
+                         description="" class="Altaxo.Main.Commands.ResizeMainWindowTo1024x768" />
+              <MenuItem id="ResizeTo800x600" label="Resize to 800x600"
+                          description="" class="Altaxo.Main.Commands.ResizeMainWindowTo800x600" />
             </MenuItem>
             <MenuItem id = "ContentBuilder"  type="Builder" class="Altaxo.Gui.Workbench.Commands.OpenContentsMenuBuilder" />
         </MenuItem>
