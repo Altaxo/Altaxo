@@ -64,7 +64,8 @@
                           Content="Enable"/>
                 <Label Grid.Column="0" Grid.Row="2">Pen brush:</Label>
 				<axog3m:MaterialComboBox Grid.Column="1" Grid.Row="2" 
-                                         SelectedMaterial="{Binding AxisLinePenController.Material}"/>
+                                 SelectedMaterial="{Binding AxisLinePenController.Material}"
+                                 CustomPenCommand="{Binding AxisLinePenController.CmdShowCustomPen}"/>
 				<Label Grid.Column="2" Grid.Row="2">Thickness:</Label>
 				<axogcd:LineThicknessComboBox Grid.Column="3" Grid.Row="2" 
                                               SelectedQuantityAsValueInPoints="{Binding AxisLinePenController.LineThickness}" />
@@ -90,7 +91,8 @@
                           VerticalAlignment="Center" />
                 <axog3m:MaterialComboBox Grid.Column="1" Grid.Row="0" 
                                          SelectedMaterial="{Binding MajorTicksPenController.Material}"
-                                         IsEnabled="{Binding IndividualMajorColor}" />
+                                         IsEnabled="{Binding IndividualMajorColor}"
+                                         CustomPenCommand="{Binding MajorTicksPenController.CmdShowCustomPen}" />
 
                 <CheckBox Grid.Column="2" Grid.Row="0"
                           IsChecked="{Binding IndividualMajorThickness, Mode=TwoWay}"
@@ -129,7 +131,8 @@
                 
                 <axog3m:MaterialComboBox Grid.Column="1" Grid.Row="0" 
                                          SelectedMaterial="{Binding MinorTicksPenController.Material}" 
-                                         IsEnabled="{Binding IndividualMinorColor}"/>
+                                         IsEnabled="{Binding IndividualMinorColor}"
+                                         CustomPenCommand="{Binding MinorTicksPenController.CmdShowCustomPen}" />
 
                 <CheckBox Grid.Column="2" Grid.Row="0"
                           IsChecked="{Binding IndividualMinorThickness, Mode=TwoWay}"
