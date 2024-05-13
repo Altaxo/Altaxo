@@ -276,7 +276,10 @@
                     <MenuItem id="WorksheetImportRenishawWdf" label="${res:XML.MainMenu.FileMenu.Import.RenishawWdf}"
                                   icon="Icons.16x16.NewDocumentIcon" description="${res:XML.MainMenu.FileMenu.Import.RenishawWdf.Description}"
                                   class="Altaxo.Worksheet.Commands.ImportRenishawWdf" />
-                    <MenuItem id="WorksheetImportOriginOpj" label="${res:XML.MainMenu.FileMenu.Import.OriginOpj}"
+                  <MenuItem id="WorksheetImportRamanCHADA" label="CHADA (Raman)"
+                                icon="Icons.16x16.NewDocumentIcon" description="Imports a .cha (Raman CHADA) file."
+                                class="Altaxo.Worksheet.Commands.ImportRamanCHADA" />
+                  <MenuItem id="WorksheetImportOriginOpj" label="${res:XML.MainMenu.FileMenu.Import.OriginOpj}"
                                   icon="Icons.16x16.NewDocumentIcon" description="${res:XML.MainMenu.FileMenu.Import.OriginOpj.Description}"
                                   class="Altaxo.Main.Commands.FileImportOriginOpj" />
                     <MenuItem id="WorksheetImportImage" label="${res:XML.MainMenu.FileMenu.Import.ImageData}"
