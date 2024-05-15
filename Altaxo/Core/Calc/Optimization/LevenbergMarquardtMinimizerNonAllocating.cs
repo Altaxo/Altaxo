@@ -563,6 +563,7 @@ namespace Altaxo.Calc.Optimization
     /// <param name="parameterValues">The given parameters.</param>
     /// <param name="parameterStep">The proposed step.</param>
     /// <param name="clampedParameterStep">On return, contains the clamped step.</param>
+    /// <param name="clampedScaledParameterStep">On return, contains the clamped and scaled (with Scales matrix) parameter step.</param>
     /// <param name="nextParameterValues">On return, contains the new parameters, i.e. <paramref name="parameterValues"/>+<paramref name="clampedParameterStep"/>.</param>
     /// <returns>The scale factor. The scale factor is either 1 (if the step was not scaled down), or less than 1 (if the step was scaled down).</returns>
     private double ClampStepToBoundaryConditions(IReadOnlyList<double> parameterValues, IReadOnlyList<double> parameterStep, IVector<double> clampedParameterStep, IVector<double> clampedScaledParameterStep, IVector<double> nextParameterValues)
@@ -679,6 +680,9 @@ namespace Altaxo.Calc.Optimization
     /// <param name="gradient">The negative gradient.  If the return value is true, this vector was modified during the call.</param>
     /// <param name="diagonalOfHessianPlusMu">The diagonal of the Hessian matrix plus mu.  If the return value is true, this vector was modified during the call.</param>
     /// <param name="isTemporaryFixed">The array of fixed parameters (parameters fixed from the beginning plus parameters that have reached the boundary). If the return value is true, this vector was modified during the call.</param>
+    /// <param name="savedGradient">If parameter <paramref name="wasHessianAndGradientSaved"/> is true, this parameter contains the unmodified gradient.</param>
+    /// <param name="savedHessian">If parameter <paramref name="wasHessianAndGradientSaved"/> is true, this parameter contains the unmodified Hessian.</param>
+    /// <param name="wasHessianAndGradientSaved">True if the original gradient and Hessian was saved before modification (see <paramref name="savedGradient"/> and <paramref name="savedHessian"/>) </param>
     /// <returns>True if the Hessian and gradient were modified; otherwise, false. Additionally, the number of free parameters is returned.</returns>
     private (bool wasModified, int numberOfFreeParameters) ModifyHessianAndGradient(IReadOnlyList<double> Pint, IReadOnlyList<double> pstep, double mu, Matrix<double> hessian, Vector<double> gradient, Vector<double> diagonalOfHessianPlusMu, bool[] isTemporaryFixed, ref Matrix<double>? savedHessian, ref Vector<double>? savedGradient, ref bool wasHessianAndGradientSaved)
     {

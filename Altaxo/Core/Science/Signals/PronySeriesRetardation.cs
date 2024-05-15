@@ -452,7 +452,6 @@ namespace Altaxo.Science.Signals
     /// <param name="xarr">The x-values of the signal (all elements must be positive).</param>
     /// <param name="isCircularFrequency">True if xarr contains circular frequencies; false if xarr contains normal frequencies.</param>
     /// <param name="yMagnitude">The absolute value (magnitude) of the general complex dynamic susceptibility.</param>
-    /// in science it is usual to change the sign, e.g. J*(w) = J'(w) - i J''(w). Thus, here it is expected that the imaginary part is positive.</param>
     /// <param name="tmin">The smallest Retardation time (tau of the first Prony term).</param>
     /// <param name="tmax">The largest Retardation time (tau of the last Prony term).</param>
     /// <param name="numberOfRetardationTimes">The number of Retardation times (number of Prony terms).</param>

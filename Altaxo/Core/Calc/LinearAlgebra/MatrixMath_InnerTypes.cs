@@ -1209,7 +1209,6 @@ namespace Altaxo.Calc.LinearAlgebra
       /// Initializes a new instance of the <see cref="ROMatrixFrom2DArray{T}"/> class.
       /// </summary>
       /// <param name="array">The linear array in column major order.</param>
-      /// <param name="nRows">The number of rows of the matrix. The number of colums are calculated from the length of the array and the number of rows.</param>
       /// <exception cref="System.ArgumentException"></exception>
       public ROMatrixFrom2DArray(T[,] array)
       {

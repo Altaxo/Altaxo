@@ -360,6 +360,8 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     /// (which at the first iteration consist only of the interpolation of the reference curve(s)).
     /// </summary>
     /// <param name="shiftOrder">The order in which the curves are shifted and fitted to the master curve.</param>
+    /// <param name="cancellationToken">The token to cancel the iteration.</param>
+    /// <param name="progress">Progress result.</param>
     public void Iterate(IReadOnlyList<int> shiftOrder, CancellationToken cancellationToken, IProgress<double>? progress)
     {
       progress?.Report(0);
@@ -378,6 +380,8 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     /// Performs one iteration of the shift-and-fit procedure.
     /// </summary>
     /// <param name="shiftCurveOrder">The order in which the curves are shifted and fitted. This first index in this list is the index of the fixed curve.</param>
+    /// <param name="idxIteration">Index of the current iteration.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
     private void OneIteration(IReadOnlyList<int> shiftCurveOrder, int idxIteration, CancellationToken cancellationToken)
     {
       // start the tracking of the x-minimum and x-maximum by adding the fixed curve
@@ -657,6 +661,8 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     /// </summary>
     /// <param name="previousMasterCurve">A <see cref="ShiftGroupCollection"/> for which the master curve creation was successfully. The results, particularly the shifts,
     /// are used from that previous master curve.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <param name="progress">Progress reporter.</param>
     public void ReIterate(ShiftGroupCollection previousMasterCurve, CancellationToken cancellationToken, IProgress<double>? progress)
     {
       if (_shiftValues.Length != previousMasterCurve._shiftValues.Length)

@@ -284,7 +284,12 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
     }
 
     /// <summary>Executes peak fitting for peaks in one group</summary>
-    /// <param name="xArray"></param>
+    /// <param name="xArray">Array of x values.</param>
+    /// <param name="yArray">Array of y values.</param>
+    /// <param name="peakDescriptions">Peak descriptions from the previous peak searching step.</param>
+    /// <param name="peakGroupNumber">Current group number.</param>
+    /// <param name="cancellationToken">Token to cancel the peak fitting</param>
+    /// <returns>A list of peak descriptions for the fitted peaks.</returns>
     public List<PeakDescription> ExecuteForOneGroup(double[] xArray, double[] yArray, IEnumerable<PeakSearching.PeakDescription> peakDescriptions, int peakGroupNumber, CancellationToken cancellationToken)
     {
       var fitFunc = FitFunction.WithNumberOfTerms(1);

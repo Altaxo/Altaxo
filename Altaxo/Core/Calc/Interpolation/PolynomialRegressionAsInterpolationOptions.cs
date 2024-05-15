@@ -28,7 +28,7 @@ using System.Collections.Generic;
 namespace Altaxo.Calc.Interpolation
 {
   /// <summary>
-  /// Options for a polynomial regression used as interpolation method (<see cref=PolynomialRegressionAsInterpolation"/>).
+  /// Options for a polynomial regression used as interpolation method (<see cref="PolynomialRegressionAsInterpolation"/>).
   /// </summary>
   public record PolynomialRegressionAsInterpolationOptions : IInterpolationFunctionOptions
   {

@@ -6,17 +6,11 @@
 
 #endregion Copyright
 
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Runtime.CompilerServices;
-using Altaxo.Calc.LinearAlgebra;
-
 namespace Altaxo.Calc.Ode.Obsolete
 {
   // Options name should match if possible: http://www.mathworks.com/help/techdoc/ref/odeset.html
 
-  /// <summary>Options for <see cref="GearsBDF"/> ODE solver.</summary>
+  /// <summary>Options for a former ODE solver.</summary>
   public class GearsBDFOptions
   {
     /// <summary>Gets or sets initial step for solution. Default value 0 means that initial step is computed automatically</summary>

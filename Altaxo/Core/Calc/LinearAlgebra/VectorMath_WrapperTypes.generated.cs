@@ -414,21 +414,21 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
 		/// <summary>
-		/// Wraps a double[] array to get an  <see cref="IROVector{double}" /> with elements = 1 / elements of the original vector.
+		/// Wraps a double[] array to get an  <see cref="IReadOnlyList{double}" /> with elements = 1 / elements of the original vector.
 		/// </summary>
 		/// <param name="array">The array to wrap.</param>
-		/// <returns>A wrapper objects with the <see cref="IROVector{double}" /> returning elements that are inverse to those of the original vector.</returns>
+		/// <returns>A wrapper objects with the <see cref="IReadOnlyList{double}" /> returning elements that are inverse to those of the original vector.</returns>
 		public static IReadOnlyList<double> ToInverseROVector(this IReadOnlyList<double> array)
 		{
 			return array is null ? null : new RODoubleInverseElementWrapper(array);
 		}
 
 		/// <summary>
-		/// Wraps a double[] array till a given length to get an <see cref="IROVector{double}" /> with elements = 1 / elements of the original vector.
+		/// Wraps a double[] array till a given length to get an <see cref="IReadOnlyList{double}" /> with elements = 1 / elements of the original vector.
 		/// </summary>
 		/// <param name="array">The array to wrap.</param>
 		/// <param name="usedlength">Length of the resulting vector. Can be equal or less the length of the array.</param>
-		/// <returns>A wrapper objects with the <see cref="IROVector{double}" /> interface that wraps the provided array returning elements that are inverse to those of the original vector..</returns>
+		/// <returns>A wrapper objects with the <see cref="IReadOnlyList{double}" /> interface that wraps the provided array returning elements that are inverse to those of the original vector..</returns>
 		public static IReadOnlyList<double> ToInverseROVector(this IReadOnlyList<double> array, int usedlength)
 		{
 			return new RODoubleInverseElementWrapper(array, usedlength);
@@ -436,7 +436,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
 
 		/// <summary>
-    /// Serves as wrapper for an array to plug-in where an <see cref="IROVector{double}" /> is neccessary.
+    /// Serves as wrapper for an array to plug-in where an <see cref="IReadOnlyList{double}" /> is neccessary.
     /// </summary>
     private class RODoubleArrayWrapper : IReadOnlyList<double>
     {
@@ -509,28 +509,28 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
 		/// <summary>
-		/// Wraps a double[] array to get an <see cref="IROVector{double}" />.
+		/// Wraps a double[] array to get an <see cref="IReadOnlyList{double}" />.
 		/// </summary>
 		/// <param name="array">The array to wrap.</param>
-		/// <returns>A wrapper objects with the <see cref="IROVector{double}" /> interface that wraps the provided array.</returns>
+		/// <returns>A wrapper objects with the <see cref="IReadOnlyList{double}" /> interface that wraps the provided array.</returns>
 		public static IReadOnlyList<double> ToROVector(this double[] array)
 		{
 			return array is null ? null : new RODoubleArrayWrapper(array);
 		}
 
 		/// <summary>
-		/// Wraps a double[] array till a given length to get an <see cref="IROVector{double}" />.
+		/// Wraps a double[] array till a given length to get an <see cref="IReadOnlyList{double}" />.
 		/// </summary>
 		/// <param name="array">The array to wrap.</param>
 		/// <param name="usedlength">Length of the resulting vector. Can be equal or less the length of the array.</param>
-		/// <returns>A wrapper objects with the <see cref="IROVector{double}" /> interface that wraps the provided array.</returns>
+		/// <returns>A wrapper objects with the <see cref="IReadOnlyList{double}" /> interface that wraps the provided array.</returns>
 		public static IReadOnlyList<double> ToROVector(this double[] array, int usedlength)
 		{
 			return new RODoubleArrayWrapper(array, usedlength);
 		}
 
 			/// <summary>
-    /// Serves as wrapper for an array to plug-in where an <see cref="IROVector{double}" /> is neccessary.
+    /// Serves as wrapper for an array to plug-in where an <see cref="IReadOnlyList{double}" /> is neccessary.
     /// </summary>
     private class RODouble_DoubleArrayWrapper : IReadOnlyList<double>
     {
@@ -603,21 +603,21 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
 		/// <summary>
-		/// Wraps a double[] array to get an <see cref="IROVector{double}" />.
+		/// Wraps a double[] array to get an <see cref="IReadOnlyList{Double}" />.
 		/// </summary>
 		/// <param name="array">The array to wrap.</param>
-		/// <returns>A wrapper objects with the <see cref="IROVector{double}" /> interface that wraps the provided array.</returns>
+		/// <returns>A wrapper objects with the <see cref="IReadOnlyList{double}" /> interface that wraps the provided array.</returns>
 		public static IReadOnlyList<double> ToRODoubleVector(this double[] array)
 		{
 			return array is null ? null : new RODouble_DoubleArrayWrapper(array);
 		}
 
 		/// <summary>
-		/// Wraps a double[] array till a given length to get an <see cref="IROVector{double}" />.
+		/// Wraps a double[] array till a given length to get an <see cref="IReadOnlyList{Double}" />.
 		/// </summary>
 		/// <param name="array">The array to wrap.</param>
 		/// <param name="usedlength">Length of the resulting vector. Can be equal or less the length of the array.</param>
-		/// <returns>A wrapper objects with the <see cref="IROVector{double}" /> interface that wraps the provided array.</returns>
+		/// <returns>A wrapper objects with the <see cref="IReadOnlyList{double}" /> interface that wraps the provided array.</returns>
 		public static IReadOnlyList<double> ToRODoubleVector(this double[] array, int usedlength)
 		{
 			return new RODouble_DoubleArrayWrapper(array, usedlength);
@@ -625,7 +625,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
 
 		  /// <summary>
-    /// Serves as wrapper for a section of an array to plug-in where an <see cref="IROVector{double}" /> is neccessary.
+    /// Serves as wrapper for a section of an array to plug-in where an <see cref="IReadOnlyList{double}" /> is neccessary.
     /// </summary>
     private class RODoubleArraySectionWrapper : IReadOnlyList<double>
     {
@@ -695,12 +695,12 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
 		/// <summary>
-		/// Wraps an array to an <see cref="IROVector{double}" />. Start and length of the used section of the array are specified in the parameters.
+		/// Wraps an array to an <see cref="IReadOnlyList{double}" />. Start and length of the used section of the array are specified in the parameters.
 		/// </summary>
 		/// <param name="array">The array to wrap.</param>
 		/// <param name="start">Index of the element in <paramref name="array"/> used as the first element of the vector.</param>
 		/// <param name="usedlength">Length of the resulting vector. Can be equal or less the length of the array.</param>
-		/// <returns>A wrapper object with the <see cref="IROVector{double}" /> interface that wraps the provided array.</returns>
+		/// <returns>A wrapper object with the <see cref="IReadOnlyList{double}" /> interface that wraps the provided array.</returns>
 		public static IReadOnlyList<double> ToROVector(this double[] array, int start, int usedlength)
 		{
 			if (0 == start)
@@ -711,7 +711,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
 
 		/// <summary>
-    /// Serves as wrapper for an array to plug-in where an <see cref="IROVector{double}" /> is neccessary.
+    /// Serves as wrapper for an array to plug-in where an <see cref="IReadOnlyList{double}" /> is neccessary.
     /// </summary>
     private class RODoubleArrayWrapperAmendedShifted : IReadOnlyList<double>
     {
@@ -819,21 +819,21 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
 			/// <summary>
-		/// Wraps a double[] array to get an <see cref="IROVector{double}" />.
+		/// Wraps a double[] array to get an <see cref="IReadOnlyList{double}" />.
 		/// </summary>
 		/// <param name="array">The array to wrap. The first element of the array has index <paramref name="amendedValuesAtStartCount"/> in the returned vector.</param>
 		/// <param name="amendedValueAtStart">Value of the vector at the first <paramref name="amendedValuesAtStartCount"/> indices</param>.
 		/// <param name="amendedValuesAtStartCount">Number of indices at the start of the vector that take the value of <paramref name="amendedValueAtStart"/>. The first element of the wrapped array starts at index <paramref name="amendedValuesAtStartCount"/>.</param>
 		/// <param name="amendedValueAtEnd">Value of the vector at the last <paramref name="amendedValuesAtEndCount"/> indices</param>.
 		/// <param name="amendedValuesAtEndCount">Number of indices at the end of the vector that take the value of <paramref name="amendedValueAtEnd"/>.</param>
-		/// <returns>A wrapper objects with the <see cref="IROVector{double}" /> interface that wraps the provided array.</returns>
+		/// <returns>A wrapper objects with the <see cref="IReadOnlyList{double}" /> interface that wraps the provided array.</returns>
 		public static IReadOnlyList<double> ToROVectorAmendedShifted(this double[] array,double amendedValueAtStart, int amendedValuesAtStartCount, double amendedValueAtEnd, int amendedValuesAtEndCount)
 		{
 			return array is null ? null : new RODoubleArrayWrapperAmendedShifted(array, amendedValueAtStart, amendedValuesAtStartCount, amendedValueAtEnd, amendedValuesAtEndCount);
 		}
 
 		/// <summary>
-		/// Wraps a double[] array till a given length to get an <see cref="IROVector{double}" />.
+		/// Wraps a double[] array till a given length to get an <see cref="IReadOnlyList{double}" />.
 		/// </summary>
 		/// <param name="array">The array to wrap.</param>
 		/// <param name="usedlength">Length of the resulting vector. Can be equal or less the length of the array. The first element of the array has index <paramref name="amendedValuesAtStartCount"/> in the returned vector.</param>
@@ -841,7 +841,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <param name="amendedValuesAtStartCount">Number of indices at the start of the vector that take the value of <paramref name="amendedValueAtStart"/>. The first element of the wrapped array starts at index <paramref name="amendedValuesAtStartCount"/>.</param>
 		/// <param name="amendedValueAtEnd">Value of the vector at the last <paramref name="amendedValuesAtEndCount"/> indices</param>.
 		/// <param name="amendedValuesAtEndCount">Number of indices at the end of the vector that take the value of <paramref name="amendedValueAtEnd"/>.</param>
-		/// <returns>A wrapper objects with the <see cref="IROVector{double}" /> interface that wraps the provided array.</returns>
+		/// <returns>A wrapper objects with the <see cref="IReadOnlyList{double}" /> interface that wraps the provided array.</returns>
 		public static IReadOnlyList<double> ToROVectorAmendedShifted(this double[] array, int usedlength,double amendedValueAtStart, int amendedValuesAtStartCount, double amendedValueAtEnd, int amendedValuesAtEndCount)
 		{
 			return new RODoubleArrayWrapperAmendedShifted(array, usedlength, amendedValueAtStart, amendedValuesAtStartCount, amendedValueAtEnd, amendedValuesAtEndCount);
@@ -947,27 +947,27 @@ namespace Altaxo.Calc.LinearAlgebra
 
 		
 		/// <summary>
-		/// Wraps a double[] array to get a struct with an <see cref="IROVector{double}" /> implementation. The wrapping is done lazily, i.e. you can access elements with indices below zero and
+		/// Wraps a double[] array to get a struct with an <see cref="IReadOnlyList{double}" /> implementation. The wrapping is done lazily, i.e. you can access elements with indices below zero and
 		/// above Length, which is normally forbidden. The values for that are given as parameters.
 		/// </summary>
 		/// <param name="array">The array to wrap. The first element of the array has index 0 in the returned vector.</param>
 		/// <param name="amendedValueAtStart">Value of the vector at indices less than zero.</param>.
 		/// <param name="amendedValueAtEnd">Value of the vector at indices greater than or equal to <paramref name="array"/>.Length.</param>.
-		/// <returns>A wrapper struct with the <see cref="IROVector{double}" /> interface that wraps the provided array, and allows access to elements below and above the valid indices of the array.</returns>
+		/// <returns>A wrapper struct with the <see cref="IReadOnlyList{double}" /> interface that wraps the provided array, and allows access to elements below and above the valid indices of the array.</returns>
 		public static RODoubleArrayWrapperStructAmendedUnshifted ToROVectorStructAmendedUnshifted(this double[] array,double amendedValueAtStart, double amendedValueAtEnd)
 		{
 			return new RODoubleArrayWrapperStructAmendedUnshifted(array, amendedValueAtStart, amendedValueAtEnd);
 		}
 
 		/// <summary>
-		/// Wraps a double[] array till a given length to get a struct with an <see cref="IROVector{double}" /> implementation. The wrapping is done lazily, i.e. you can access elements with indices below zero and
+		/// Wraps a double[] array till a given length to get a struct with an <see cref="IReadOnlyList{double}" /> implementation. The wrapping is done lazily, i.e. you can access elements with indices below zero and
 		/// above <paramref name="usedlength"/>, which is normally forbidden. The values for that are given as parameters.
 		/// </summary>
 		/// <param name="array">The array to wrap.</param>
 		/// <param name="usedlength">Length of the resulting vector. Can be equal or less the length of the array. The first element of the array has index 0 in the returned vector.</param>
 		/// <param name="amendedValueAtStart">Value of the vector at indices less than zero.</param>.
 		/// <param name="amendedValueAtEnd">Value of the vector at indices greater then or equal to <paramref name="usedlength"/>.</param>.
-		/// <returns>A wrapper struct with the <see cref="IROVector{double}" /> interface that wraps the provided array, and allows access to elements below and above the valid indices of the array.</returns>
+		/// <returns>A wrapper struct with the <see cref="IReadOnlyList{double}" /> interface that wraps the provided array, and allows access to elements below and above the valid indices of the array.</returns>
 		public static RODoubleArrayWrapperStructAmendedUnshifted ToROVectorStructAmendedUnshifted(this double[] array, int usedlength,double amendedValueAtStart, double amendedValueAtEnd)
 		{
 			return new RODoubleArrayWrapperStructAmendedUnshifted(array, usedlength, amendedValueAtStart, amendedValueAtEnd );
@@ -1056,7 +1056,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
 
 		 /// <summary>
-    /// Serves as wrapper for an <see cref="IROVector{double}" /> to get only a section of the original wrapper.
+    /// Serves as wrapper for an <see cref="IReadOnlyList{double}" /> to get only a section of the original wrapper.
     /// </summary>
     private class RODoubleVectorSectionWrapper : IReadOnlyList<double>
     {
@@ -1113,7 +1113,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <param name="vector">Original vector.</param>
 		/// <param name="start">Index of the start of the section to wrap.</param>
 		/// <param name="usedLength">Length (=number of elements) of the section to wrap.</param>
-		/// <returns>An <see cref="IROVector{double}" /> that contains the section from <c>start</c> to <c>start+len-1</c> of the original vector.</returns>
+		/// <returns>An <see cref="IReadOnlyList{double}" /> that contains the section from <c>start</c> to <c>start+len-1</c> of the original vector.</returns>
 		public static IReadOnlyList<double> ToROVector(this IReadOnlyList<double> vector, int start, int usedLength)
 		{
 			return new RODoubleVectorSectionWrapper(vector, start, usedLength);
@@ -1578,21 +1578,21 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
 		/// <summary>
-		/// Wraps a float[] array to get an  <see cref="IROVector{float}" /> with elements = 1 / elements of the original vector.
+		/// Wraps a float[] array to get an  <see cref="IReadOnlyList{float}" /> with elements = 1 / elements of the original vector.
 		/// </summary>
 		/// <param name="array">The array to wrap.</param>
-		/// <returns>A wrapper objects with the <see cref="IROVector{float}" /> returning elements that are inverse to those of the original vector.</returns>
+		/// <returns>A wrapper objects with the <see cref="IReadOnlyList{float}" /> returning elements that are inverse to those of the original vector.</returns>
 		public static IReadOnlyList<float> ToInverseROVector(this IReadOnlyList<float> array)
 		{
 			return array is null ? null : new ROFloatInverseElementWrapper(array);
 		}
 
 		/// <summary>
-		/// Wraps a float[] array till a given length to get an <see cref="IROVector{float}" /> with elements = 1 / elements of the original vector.
+		/// Wraps a float[] array till a given length to get an <see cref="IReadOnlyList{float}" /> with elements = 1 / elements of the original vector.
 		/// </summary>
 		/// <param name="array">The array to wrap.</param>
 		/// <param name="usedlength">Length of the resulting vector. Can be equal or less the length of the array.</param>
-		/// <returns>A wrapper objects with the <see cref="IROVector{float}" /> interface that wraps the provided array returning elements that are inverse to those of the original vector..</returns>
+		/// <returns>A wrapper objects with the <see cref="IReadOnlyList{float}" /> interface that wraps the provided array returning elements that are inverse to those of the original vector..</returns>
 		public static IReadOnlyList<float> ToInverseROVector(this IReadOnlyList<float> array, int usedlength)
 		{
 			return new ROFloatInverseElementWrapper(array, usedlength);
@@ -1600,7 +1600,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
 
 		/// <summary>
-    /// Serves as wrapper for an array to plug-in where an <see cref="IROVector{float}" /> is neccessary.
+    /// Serves as wrapper for an array to plug-in where an <see cref="IReadOnlyList{float}" /> is neccessary.
     /// </summary>
     private class ROFloatArrayWrapper : IReadOnlyList<float>
     {
@@ -1673,28 +1673,28 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
 		/// <summary>
-		/// Wraps a float[] array to get an <see cref="IROVector{float}" />.
+		/// Wraps a float[] array to get an <see cref="IReadOnlyList{float}" />.
 		/// </summary>
 		/// <param name="array">The array to wrap.</param>
-		/// <returns>A wrapper objects with the <see cref="IROVector{float}" /> interface that wraps the provided array.</returns>
+		/// <returns>A wrapper objects with the <see cref="IReadOnlyList{float}" /> interface that wraps the provided array.</returns>
 		public static IReadOnlyList<float> ToROVector(this float[] array)
 		{
 			return array is null ? null : new ROFloatArrayWrapper(array);
 		}
 
 		/// <summary>
-		/// Wraps a float[] array till a given length to get an <see cref="IROVector{float}" />.
+		/// Wraps a float[] array till a given length to get an <see cref="IReadOnlyList{float}" />.
 		/// </summary>
 		/// <param name="array">The array to wrap.</param>
 		/// <param name="usedlength">Length of the resulting vector. Can be equal or less the length of the array.</param>
-		/// <returns>A wrapper objects with the <see cref="IROVector{float}" /> interface that wraps the provided array.</returns>
+		/// <returns>A wrapper objects with the <see cref="IReadOnlyList{float}" /> interface that wraps the provided array.</returns>
 		public static IReadOnlyList<float> ToROVector(this float[] array, int usedlength)
 		{
 			return new ROFloatArrayWrapper(array, usedlength);
 		}
 
 			/// <summary>
-    /// Serves as wrapper for an array to plug-in where an <see cref="IROVector{float}" /> is neccessary.
+    /// Serves as wrapper for an array to plug-in where an <see cref="IReadOnlyList{float}" /> is neccessary.
     /// </summary>
     private class RODouble_FloatArrayWrapper : IReadOnlyList<double>
     {
@@ -1767,21 +1767,21 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
 		/// <summary>
-		/// Wraps a float[] array to get an <see cref="IROVector{double}" />.
+		/// Wraps a float[] array to get an <see cref="IReadOnlyList{Double}" />.
 		/// </summary>
 		/// <param name="array">The array to wrap.</param>
-		/// <returns>A wrapper objects with the <see cref="IROVector{float}" /> interface that wraps the provided array.</returns>
+		/// <returns>A wrapper objects with the <see cref="IReadOnlyList{float}" /> interface that wraps the provided array.</returns>
 		public static IReadOnlyList<double> ToRODoubleVector(this float[] array)
 		{
 			return array is null ? null : new RODouble_FloatArrayWrapper(array);
 		}
 
 		/// <summary>
-		/// Wraps a float[] array till a given length to get an <see cref="IROVector{double}" />.
+		/// Wraps a float[] array till a given length to get an <see cref="IReadOnlyList{Double}" />.
 		/// </summary>
 		/// <param name="array">The array to wrap.</param>
 		/// <param name="usedlength">Length of the resulting vector. Can be equal or less the length of the array.</param>
-		/// <returns>A wrapper objects with the <see cref="IROVector{float}" /> interface that wraps the provided array.</returns>
+		/// <returns>A wrapper objects with the <see cref="IReadOnlyList{float}" /> interface that wraps the provided array.</returns>
 		public static IReadOnlyList<double> ToRODoubleVector(this float[] array, int usedlength)
 		{
 			return new RODouble_FloatArrayWrapper(array, usedlength);
@@ -1789,7 +1789,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
 
 		  /// <summary>
-    /// Serves as wrapper for a section of an array to plug-in where an <see cref="IROVector{float}" /> is neccessary.
+    /// Serves as wrapper for a section of an array to plug-in where an <see cref="IReadOnlyList{float}" /> is neccessary.
     /// </summary>
     private class ROFloatArraySectionWrapper : IReadOnlyList<float>
     {
@@ -1859,12 +1859,12 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
 		/// <summary>
-		/// Wraps an array to an <see cref="IROVector{float}" />. Start and length of the used section of the array are specified in the parameters.
+		/// Wraps an array to an <see cref="IReadOnlyList{float}" />. Start and length of the used section of the array are specified in the parameters.
 		/// </summary>
 		/// <param name="array">The array to wrap.</param>
 		/// <param name="start">Index of the element in <paramref name="array"/> used as the first element of the vector.</param>
 		/// <param name="usedlength">Length of the resulting vector. Can be equal or less the length of the array.</param>
-		/// <returns>A wrapper object with the <see cref="IROVector{float}" /> interface that wraps the provided array.</returns>
+		/// <returns>A wrapper object with the <see cref="IReadOnlyList{float}" /> interface that wraps the provided array.</returns>
 		public static IReadOnlyList<float> ToROVector(this float[] array, int start, int usedlength)
 		{
 			if (0 == start)
@@ -1875,7 +1875,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
 
 		/// <summary>
-    /// Serves as wrapper for an array to plug-in where an <see cref="IROVector{float}" /> is neccessary.
+    /// Serves as wrapper for an array to plug-in where an <see cref="IReadOnlyList{float}" /> is neccessary.
     /// </summary>
     private class ROFloatArrayWrapperAmendedShifted : IReadOnlyList<float>
     {
@@ -1983,21 +1983,21 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
 			/// <summary>
-		/// Wraps a float[] array to get an <see cref="IROVector{float}" />.
+		/// Wraps a float[] array to get an <see cref="IReadOnlyList{float}" />.
 		/// </summary>
 		/// <param name="array">The array to wrap. The first element of the array has index <paramref name="amendedValuesAtStartCount"/> in the returned vector.</param>
 		/// <param name="amendedValueAtStart">Value of the vector at the first <paramref name="amendedValuesAtStartCount"/> indices</param>.
 		/// <param name="amendedValuesAtStartCount">Number of indices at the start of the vector that take the value of <paramref name="amendedValueAtStart"/>. The first element of the wrapped array starts at index <paramref name="amendedValuesAtStartCount"/>.</param>
 		/// <param name="amendedValueAtEnd">Value of the vector at the last <paramref name="amendedValuesAtEndCount"/> indices</param>.
 		/// <param name="amendedValuesAtEndCount">Number of indices at the end of the vector that take the value of <paramref name="amendedValueAtEnd"/>.</param>
-		/// <returns>A wrapper objects with the <see cref="IROVector{float}" /> interface that wraps the provided array.</returns>
+		/// <returns>A wrapper objects with the <see cref="IReadOnlyList{float}" /> interface that wraps the provided array.</returns>
 		public static IReadOnlyList<float> ToROVectorAmendedShifted(this float[] array,float amendedValueAtStart, int amendedValuesAtStartCount, float amendedValueAtEnd, int amendedValuesAtEndCount)
 		{
 			return array is null ? null : new ROFloatArrayWrapperAmendedShifted(array, amendedValueAtStart, amendedValuesAtStartCount, amendedValueAtEnd, amendedValuesAtEndCount);
 		}
 
 		/// <summary>
-		/// Wraps a float[] array till a given length to get an <see cref="IROVector{float}" />.
+		/// Wraps a float[] array till a given length to get an <see cref="IReadOnlyList{float}" />.
 		/// </summary>
 		/// <param name="array">The array to wrap.</param>
 		/// <param name="usedlength">Length of the resulting vector. Can be equal or less the length of the array. The first element of the array has index <paramref name="amendedValuesAtStartCount"/> in the returned vector.</param>
@@ -2005,7 +2005,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <param name="amendedValuesAtStartCount">Number of indices at the start of the vector that take the value of <paramref name="amendedValueAtStart"/>. The first element of the wrapped array starts at index <paramref name="amendedValuesAtStartCount"/>.</param>
 		/// <param name="amendedValueAtEnd">Value of the vector at the last <paramref name="amendedValuesAtEndCount"/> indices</param>.
 		/// <param name="amendedValuesAtEndCount">Number of indices at the end of the vector that take the value of <paramref name="amendedValueAtEnd"/>.</param>
-		/// <returns>A wrapper objects with the <see cref="IROVector{float}" /> interface that wraps the provided array.</returns>
+		/// <returns>A wrapper objects with the <see cref="IReadOnlyList{float}" /> interface that wraps the provided array.</returns>
 		public static IReadOnlyList<float> ToROVectorAmendedShifted(this float[] array, int usedlength,float amendedValueAtStart, int amendedValuesAtStartCount, float amendedValueAtEnd, int amendedValuesAtEndCount)
 		{
 			return new ROFloatArrayWrapperAmendedShifted(array, usedlength, amendedValueAtStart, amendedValuesAtStartCount, amendedValueAtEnd, amendedValuesAtEndCount);
@@ -2111,27 +2111,27 @@ namespace Altaxo.Calc.LinearAlgebra
 
 		
 		/// <summary>
-		/// Wraps a float[] array to get a struct with an <see cref="IROVector{float}" /> implementation. The wrapping is done lazily, i.e. you can access elements with indices below zero and
+		/// Wraps a float[] array to get a struct with an <see cref="IReadOnlyList{float}" /> implementation. The wrapping is done lazily, i.e. you can access elements with indices below zero and
 		/// above Length, which is normally forbidden. The values for that are given as parameters.
 		/// </summary>
 		/// <param name="array">The array to wrap. The first element of the array has index 0 in the returned vector.</param>
 		/// <param name="amendedValueAtStart">Value of the vector at indices less than zero.</param>.
 		/// <param name="amendedValueAtEnd">Value of the vector at indices greater than or equal to <paramref name="array"/>.Length.</param>.
-		/// <returns>A wrapper struct with the <see cref="IROVector{float}" /> interface that wraps the provided array, and allows access to elements below and above the valid indices of the array.</returns>
+		/// <returns>A wrapper struct with the <see cref="IReadOnlyList{float}" /> interface that wraps the provided array, and allows access to elements below and above the valid indices of the array.</returns>
 		public static ROFloatArrayWrapperStructAmendedUnshifted ToROVectorStructAmendedUnshifted(this float[] array,float amendedValueAtStart, float amendedValueAtEnd)
 		{
 			return new ROFloatArrayWrapperStructAmendedUnshifted(array, amendedValueAtStart, amendedValueAtEnd);
 		}
 
 		/// <summary>
-		/// Wraps a float[] array till a given length to get a struct with an <see cref="IROVector{float}" /> implementation. The wrapping is done lazily, i.e. you can access elements with indices below zero and
+		/// Wraps a float[] array till a given length to get a struct with an <see cref="IReadOnlyList{float}" /> implementation. The wrapping is done lazily, i.e. you can access elements with indices below zero and
 		/// above <paramref name="usedlength"/>, which is normally forbidden. The values for that are given as parameters.
 		/// </summary>
 		/// <param name="array">The array to wrap.</param>
 		/// <param name="usedlength">Length of the resulting vector. Can be equal or less the length of the array. The first element of the array has index 0 in the returned vector.</param>
 		/// <param name="amendedValueAtStart">Value of the vector at indices less than zero.</param>.
 		/// <param name="amendedValueAtEnd">Value of the vector at indices greater then or equal to <paramref name="usedlength"/>.</param>.
-		/// <returns>A wrapper struct with the <see cref="IROVector{float}" /> interface that wraps the provided array, and allows access to elements below and above the valid indices of the array.</returns>
+		/// <returns>A wrapper struct with the <see cref="IReadOnlyList{float}" /> interface that wraps the provided array, and allows access to elements below and above the valid indices of the array.</returns>
 		public static ROFloatArrayWrapperStructAmendedUnshifted ToROVectorStructAmendedUnshifted(this float[] array, int usedlength,float amendedValueAtStart, float amendedValueAtEnd)
 		{
 			return new ROFloatArrayWrapperStructAmendedUnshifted(array, usedlength, amendedValueAtStart, amendedValueAtEnd );
@@ -2220,7 +2220,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
 
 		 /// <summary>
-    /// Serves as wrapper for an <see cref="IROVector{float}" /> to get only a section of the original wrapper.
+    /// Serves as wrapper for an <see cref="IReadOnlyList{float}" /> to get only a section of the original wrapper.
     /// </summary>
     private class ROFloatVectorSectionWrapper : IReadOnlyList<float>
     {
@@ -2277,7 +2277,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <param name="vector">Original vector.</param>
 		/// <param name="start">Index of the start of the section to wrap.</param>
 		/// <param name="usedLength">Length (=number of elements) of the section to wrap.</param>
-		/// <returns>An <see cref="IROVector{float}" /> that contains the section from <c>start</c> to <c>start+len-1</c> of the original vector.</returns>
+		/// <returns>An <see cref="IReadOnlyList{float}" /> that contains the section from <c>start</c> to <c>start+len-1</c> of the original vector.</returns>
 		public static IReadOnlyList<float> ToROVector(this IReadOnlyList<float> vector, int start, int usedLength)
 		{
 			return new ROFloatVectorSectionWrapper(vector, start, usedLength);
@@ -2742,21 +2742,21 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
 		/// <summary>
-		/// Wraps a Int32[] array to get an  <see cref="IROVector{Int32}" /> with elements = 1 / elements of the original vector.
+		/// Wraps a Int32[] array to get an  <see cref="IReadOnlyList{Int32}" /> with elements = 1 / elements of the original vector.
 		/// </summary>
 		/// <param name="array">The array to wrap.</param>
-		/// <returns>A wrapper objects with the <see cref="IROVector{Int32}" /> returning elements that are inverse to those of the original vector.</returns>
+		/// <returns>A wrapper objects with the <see cref="IReadOnlyList{Int32}" /> returning elements that are inverse to those of the original vector.</returns>
 		public static IReadOnlyList<double> ToInverseROVector(this IReadOnlyList<Int32> array)
 		{
 			return array is null ? null : new ROIntInverseElementWrapper(array);
 		}
 
 		/// <summary>
-		/// Wraps a Int32[] array till a given length to get an <see cref="IROVector{Int32}" /> with elements = 1 / elements of the original vector.
+		/// Wraps a Int32[] array till a given length to get an <see cref="IReadOnlyList{Int32}" /> with elements = 1 / elements of the original vector.
 		/// </summary>
 		/// <param name="array">The array to wrap.</param>
 		/// <param name="usedlength">Length of the resulting vector. Can be equal or less the length of the array.</param>
-		/// <returns>A wrapper objects with the <see cref="IROVector{Int32}" /> interface that wraps the provided array returning elements that are inverse to those of the original vector..</returns>
+		/// <returns>A wrapper objects with the <see cref="IReadOnlyList{Int32}" /> interface that wraps the provided array returning elements that are inverse to those of the original vector..</returns>
 		public static IReadOnlyList<double> ToInverseROVector(this IReadOnlyList<Int32> array, int usedlength)
 		{
 			return new ROIntInverseElementWrapper(array, usedlength);
@@ -2764,7 +2764,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
 
 		/// <summary>
-    /// Serves as wrapper for an array to plug-in where an <see cref="IROVector{Int32}" /> is neccessary.
+    /// Serves as wrapper for an array to plug-in where an <see cref="IReadOnlyList{Int32}" /> is neccessary.
     /// </summary>
     private class ROIntArrayWrapper : IReadOnlyList<Int32>
     {
@@ -2837,28 +2837,28 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
 		/// <summary>
-		/// Wraps a Int32[] array to get an <see cref="IROVector{Int32}" />.
+		/// Wraps a Int32[] array to get an <see cref="IReadOnlyList{Int32}" />.
 		/// </summary>
 		/// <param name="array">The array to wrap.</param>
-		/// <returns>A wrapper objects with the <see cref="IROVector{Int32}" /> interface that wraps the provided array.</returns>
+		/// <returns>A wrapper objects with the <see cref="IReadOnlyList{Int32}" /> interface that wraps the provided array.</returns>
 		public static IReadOnlyList<Int32> ToROVector(this Int32[] array)
 		{
 			return array is null ? null : new ROIntArrayWrapper(array);
 		}
 
 		/// <summary>
-		/// Wraps a Int32[] array till a given length to get an <see cref="IROVector{Int32}" />.
+		/// Wraps a Int32[] array till a given length to get an <see cref="IReadOnlyList{Int32}" />.
 		/// </summary>
 		/// <param name="array">The array to wrap.</param>
 		/// <param name="usedlength">Length of the resulting vector. Can be equal or less the length of the array.</param>
-		/// <returns>A wrapper objects with the <see cref="IROVector{Int32}" /> interface that wraps the provided array.</returns>
+		/// <returns>A wrapper objects with the <see cref="IReadOnlyList{Int32}" /> interface that wraps the provided array.</returns>
 		public static IReadOnlyList<Int32> ToROVector(this Int32[] array, int usedlength)
 		{
 			return new ROIntArrayWrapper(array, usedlength);
 		}
 
 			/// <summary>
-    /// Serves as wrapper for an array to plug-in where an <see cref="IROVector{Int32}" /> is neccessary.
+    /// Serves as wrapper for an array to plug-in where an <see cref="IReadOnlyList{Int32}" /> is neccessary.
     /// </summary>
     private class RODouble_IntArrayWrapper : IReadOnlyList<double>
     {
@@ -2931,21 +2931,21 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
 		/// <summary>
-		/// Wraps a Int32[] array to get an <see cref="IROVector{double}" />.
+		/// Wraps a Int32[] array to get an <see cref="IReadOnlyList{Double}" />.
 		/// </summary>
 		/// <param name="array">The array to wrap.</param>
-		/// <returns>A wrapper objects with the <see cref="IROVector{Int32}" /> interface that wraps the provided array.</returns>
+		/// <returns>A wrapper objects with the <see cref="IReadOnlyList{Int32}" /> interface that wraps the provided array.</returns>
 		public static IReadOnlyList<double> ToRODoubleVector(this Int32[] array)
 		{
 			return array is null ? null : new RODouble_IntArrayWrapper(array);
 		}
 
 		/// <summary>
-		/// Wraps a Int32[] array till a given length to get an <see cref="IROVector{double}" />.
+		/// Wraps a Int32[] array till a given length to get an <see cref="IReadOnlyList{Double}" />.
 		/// </summary>
 		/// <param name="array">The array to wrap.</param>
 		/// <param name="usedlength">Length of the resulting vector. Can be equal or less the length of the array.</param>
-		/// <returns>A wrapper objects with the <see cref="IROVector{Int32}" /> interface that wraps the provided array.</returns>
+		/// <returns>A wrapper objects with the <see cref="IReadOnlyList{Int32}" /> interface that wraps the provided array.</returns>
 		public static IReadOnlyList<double> ToRODoubleVector(this Int32[] array, int usedlength)
 		{
 			return new RODouble_IntArrayWrapper(array, usedlength);
@@ -2953,7 +2953,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
 
 		  /// <summary>
-    /// Serves as wrapper for a section of an array to plug-in where an <see cref="IROVector{Int32}" /> is neccessary.
+    /// Serves as wrapper for a section of an array to plug-in where an <see cref="IReadOnlyList{Int32}" /> is neccessary.
     /// </summary>
     private class ROIntArraySectionWrapper : IReadOnlyList<Int32>
     {
@@ -3023,12 +3023,12 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
 		/// <summary>
-		/// Wraps an array to an <see cref="IROVector{Int32}" />. Start and length of the used section of the array are specified in the parameters.
+		/// Wraps an array to an <see cref="IReadOnlyList{Int32}" />. Start and length of the used section of the array are specified in the parameters.
 		/// </summary>
 		/// <param name="array">The array to wrap.</param>
 		/// <param name="start">Index of the element in <paramref name="array"/> used as the first element of the vector.</param>
 		/// <param name="usedlength">Length of the resulting vector. Can be equal or less the length of the array.</param>
-		/// <returns>A wrapper object with the <see cref="IROVector{Int32}" /> interface that wraps the provided array.</returns>
+		/// <returns>A wrapper object with the <see cref="IReadOnlyList{Int32}" /> interface that wraps the provided array.</returns>
 		public static IReadOnlyList<Int32> ToROVector(this Int32[] array, int start, int usedlength)
 		{
 			if (0 == start)
@@ -3039,7 +3039,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
 
 		/// <summary>
-    /// Serves as wrapper for an array to plug-in where an <see cref="IROVector{Int32}" /> is neccessary.
+    /// Serves as wrapper for an array to plug-in where an <see cref="IReadOnlyList{Int32}" /> is neccessary.
     /// </summary>
     private class ROIntArrayWrapperAmendedShifted : IReadOnlyList<Int32>
     {
@@ -3147,21 +3147,21 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
 			/// <summary>
-		/// Wraps a Int32[] array to get an <see cref="IROVector{Int32}" />.
+		/// Wraps a Int32[] array to get an <see cref="IReadOnlyList{Int32}" />.
 		/// </summary>
 		/// <param name="array">The array to wrap. The first element of the array has index <paramref name="amendedValuesAtStartCount"/> in the returned vector.</param>
 		/// <param name="amendedValueAtStart">Value of the vector at the first <paramref name="amendedValuesAtStartCount"/> indices</param>.
 		/// <param name="amendedValuesAtStartCount">Number of indices at the start of the vector that take the value of <paramref name="amendedValueAtStart"/>. The first element of the wrapped array starts at index <paramref name="amendedValuesAtStartCount"/>.</param>
 		/// <param name="amendedValueAtEnd">Value of the vector at the last <paramref name="amendedValuesAtEndCount"/> indices</param>.
 		/// <param name="amendedValuesAtEndCount">Number of indices at the end of the vector that take the value of <paramref name="amendedValueAtEnd"/>.</param>
-		/// <returns>A wrapper objects with the <see cref="IROVector{Int32}" /> interface that wraps the provided array.</returns>
+		/// <returns>A wrapper objects with the <see cref="IReadOnlyList{Int32}" /> interface that wraps the provided array.</returns>
 		public static IReadOnlyList<Int32> ToROVectorAmendedShifted(this Int32[] array,Int32 amendedValueAtStart, int amendedValuesAtStartCount, Int32 amendedValueAtEnd, int amendedValuesAtEndCount)
 		{
 			return array is null ? null : new ROIntArrayWrapperAmendedShifted(array, amendedValueAtStart, amendedValuesAtStartCount, amendedValueAtEnd, amendedValuesAtEndCount);
 		}
 
 		/// <summary>
-		/// Wraps a Int32[] array till a given length to get an <see cref="IROVector{Int32}" />.
+		/// Wraps a Int32[] array till a given length to get an <see cref="IReadOnlyList{Int32}" />.
 		/// </summary>
 		/// <param name="array">The array to wrap.</param>
 		/// <param name="usedlength">Length of the resulting vector. Can be equal or less the length of the array. The first element of the array has index <paramref name="amendedValuesAtStartCount"/> in the returned vector.</param>
@@ -3169,7 +3169,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <param name="amendedValuesAtStartCount">Number of indices at the start of the vector that take the value of <paramref name="amendedValueAtStart"/>. The first element of the wrapped array starts at index <paramref name="amendedValuesAtStartCount"/>.</param>
 		/// <param name="amendedValueAtEnd">Value of the vector at the last <paramref name="amendedValuesAtEndCount"/> indices</param>.
 		/// <param name="amendedValuesAtEndCount">Number of indices at the end of the vector that take the value of <paramref name="amendedValueAtEnd"/>.</param>
-		/// <returns>A wrapper objects with the <see cref="IROVector{Int32}" /> interface that wraps the provided array.</returns>
+		/// <returns>A wrapper objects with the <see cref="IReadOnlyList{Int32}" /> interface that wraps the provided array.</returns>
 		public static IReadOnlyList<Int32> ToROVectorAmendedShifted(this Int32[] array, int usedlength,Int32 amendedValueAtStart, int amendedValuesAtStartCount, Int32 amendedValueAtEnd, int amendedValuesAtEndCount)
 		{
 			return new ROIntArrayWrapperAmendedShifted(array, usedlength, amendedValueAtStart, amendedValuesAtStartCount, amendedValueAtEnd, amendedValuesAtEndCount);
@@ -3275,27 +3275,27 @@ namespace Altaxo.Calc.LinearAlgebra
 
 		
 		/// <summary>
-		/// Wraps a Int32[] array to get a struct with an <see cref="IROVector{Int32}" /> implementation. The wrapping is done lazily, i.e. you can access elements with indices below zero and
+		/// Wraps a Int32[] array to get a struct with an <see cref="IReadOnlyList{Int32}" /> implementation. The wrapping is done lazily, i.e. you can access elements with indices below zero and
 		/// above Length, which is normally forbidden. The values for that are given as parameters.
 		/// </summary>
 		/// <param name="array">The array to wrap. The first element of the array has index 0 in the returned vector.</param>
 		/// <param name="amendedValueAtStart">Value of the vector at indices less than zero.</param>.
 		/// <param name="amendedValueAtEnd">Value of the vector at indices greater than or equal to <paramref name="array"/>.Length.</param>.
-		/// <returns>A wrapper struct with the <see cref="IROVector{Int32}" /> interface that wraps the provided array, and allows access to elements below and above the valid indices of the array.</returns>
+		/// <returns>A wrapper struct with the <see cref="IReadOnlyList{Int32}" /> interface that wraps the provided array, and allows access to elements below and above the valid indices of the array.</returns>
 		public static ROIntArrayWrapperStructAmendedUnshifted ToROVectorStructAmendedUnshifted(this Int32[] array,Int32 amendedValueAtStart, Int32 amendedValueAtEnd)
 		{
 			return new ROIntArrayWrapperStructAmendedUnshifted(array, amendedValueAtStart, amendedValueAtEnd);
 		}
 
 		/// <summary>
-		/// Wraps a Int32[] array till a given length to get a struct with an <see cref="IROVector{Int32}" /> implementation. The wrapping is done lazily, i.e. you can access elements with indices below zero and
+		/// Wraps a Int32[] array till a given length to get a struct with an <see cref="IReadOnlyList{Int32}" /> implementation. The wrapping is done lazily, i.e. you can access elements with indices below zero and
 		/// above <paramref name="usedlength"/>, which is normally forbidden. The values for that are given as parameters.
 		/// </summary>
 		/// <param name="array">The array to wrap.</param>
 		/// <param name="usedlength">Length of the resulting vector. Can be equal or less the length of the array. The first element of the array has index 0 in the returned vector.</param>
 		/// <param name="amendedValueAtStart">Value of the vector at indices less than zero.</param>.
 		/// <param name="amendedValueAtEnd">Value of the vector at indices greater then or equal to <paramref name="usedlength"/>.</param>.
-		/// <returns>A wrapper struct with the <see cref="IROVector{Int32}" /> interface that wraps the provided array, and allows access to elements below and above the valid indices of the array.</returns>
+		/// <returns>A wrapper struct with the <see cref="IReadOnlyList{Int32}" /> interface that wraps the provided array, and allows access to elements below and above the valid indices of the array.</returns>
 		public static ROIntArrayWrapperStructAmendedUnshifted ToROVectorStructAmendedUnshifted(this Int32[] array, int usedlength,Int32 amendedValueAtStart, Int32 amendedValueAtEnd)
 		{
 			return new ROIntArrayWrapperStructAmendedUnshifted(array, usedlength, amendedValueAtStart, amendedValueAtEnd );
@@ -3384,7 +3384,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
 
 		 /// <summary>
-    /// Serves as wrapper for an <see cref="IROVector{Int32}" /> to get only a section of the original wrapper.
+    /// Serves as wrapper for an <see cref="IReadOnlyList{Int32}" /> to get only a section of the original wrapper.
     /// </summary>
     private class ROIntVectorSectionWrapper : IReadOnlyList<Int32>
     {
@@ -3441,7 +3441,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <param name="vector">Original vector.</param>
 		/// <param name="start">Index of the start of the section to wrap.</param>
 		/// <param name="usedLength">Length (=number of elements) of the section to wrap.</param>
-		/// <returns>An <see cref="IROVector{Int32}" /> that contains the section from <c>start</c> to <c>start+len-1</c> of the original vector.</returns>
+		/// <returns>An <see cref="IReadOnlyList{Int32}" /> that contains the section from <c>start</c> to <c>start+len-1</c> of the original vector.</returns>
 		public static IReadOnlyList<Int32> ToROVector(this IReadOnlyList<Int32> vector, int start, int usedLength)
 		{
 			return new ROIntVectorSectionWrapper(vector, start, usedLength);
@@ -3906,21 +3906,21 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
 		/// <summary>
-		/// Wraps a Int16[] array to get an  <see cref="IROVector{Int16}" /> with elements = 1 / elements of the original vector.
+		/// Wraps a Int16[] array to get an  <see cref="IReadOnlyList{Int16}" /> with elements = 1 / elements of the original vector.
 		/// </summary>
 		/// <param name="array">The array to wrap.</param>
-		/// <returns>A wrapper objects with the <see cref="IROVector{Int16}" /> returning elements that are inverse to those of the original vector.</returns>
+		/// <returns>A wrapper objects with the <see cref="IReadOnlyList{Int16}" /> returning elements that are inverse to those of the original vector.</returns>
 		public static IReadOnlyList<double> ToInverseROVector(this IReadOnlyList<Int16> array)
 		{
 			return array is null ? null : new ROShortInverseElementWrapper(array);
 		}
 
 		/// <summary>
-		/// Wraps a Int16[] array till a given length to get an <see cref="IROVector{Int16}" /> with elements = 1 / elements of the original vector.
+		/// Wraps a Int16[] array till a given length to get an <see cref="IReadOnlyList{Int16}" /> with elements = 1 / elements of the original vector.
 		/// </summary>
 		/// <param name="array">The array to wrap.</param>
 		/// <param name="usedlength">Length of the resulting vector. Can be equal or less the length of the array.</param>
-		/// <returns>A wrapper objects with the <see cref="IROVector{Int16}" /> interface that wraps the provided array returning elements that are inverse to those of the original vector..</returns>
+		/// <returns>A wrapper objects with the <see cref="IReadOnlyList{Int16}" /> interface that wraps the provided array returning elements that are inverse to those of the original vector..</returns>
 		public static IReadOnlyList<double> ToInverseROVector(this IReadOnlyList<Int16> array, int usedlength)
 		{
 			return new ROShortInverseElementWrapper(array, usedlength);
@@ -3928,7 +3928,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
 
 		/// <summary>
-    /// Serves as wrapper for an array to plug-in where an <see cref="IROVector{Int16}" /> is neccessary.
+    /// Serves as wrapper for an array to plug-in where an <see cref="IReadOnlyList{Int16}" /> is neccessary.
     /// </summary>
     private class ROShortArrayWrapper : IReadOnlyList<Int16>
     {
@@ -4001,28 +4001,28 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
 		/// <summary>
-		/// Wraps a Int16[] array to get an <see cref="IROVector{Int16}" />.
+		/// Wraps a Int16[] array to get an <see cref="IReadOnlyList{Int16}" />.
 		/// </summary>
 		/// <param name="array">The array to wrap.</param>
-		/// <returns>A wrapper objects with the <see cref="IROVector{Int16}" /> interface that wraps the provided array.</returns>
+		/// <returns>A wrapper objects with the <see cref="IReadOnlyList{Int16}" /> interface that wraps the provided array.</returns>
 		public static IReadOnlyList<Int16> ToROVector(this Int16[] array)
 		{
 			return array is null ? null : new ROShortArrayWrapper(array);
 		}
 
 		/// <summary>
-		/// Wraps a Int16[] array till a given length to get an <see cref="IROVector{Int16}" />.
+		/// Wraps a Int16[] array till a given length to get an <see cref="IReadOnlyList{Int16}" />.
 		/// </summary>
 		/// <param name="array">The array to wrap.</param>
 		/// <param name="usedlength">Length of the resulting vector. Can be equal or less the length of the array.</param>
-		/// <returns>A wrapper objects with the <see cref="IROVector{Int16}" /> interface that wraps the provided array.</returns>
+		/// <returns>A wrapper objects with the <see cref="IReadOnlyList{Int16}" /> interface that wraps the provided array.</returns>
 		public static IReadOnlyList<Int16> ToROVector(this Int16[] array, int usedlength)
 		{
 			return new ROShortArrayWrapper(array, usedlength);
 		}
 
 			/// <summary>
-    /// Serves as wrapper for an array to plug-in where an <see cref="IROVector{Int16}" /> is neccessary.
+    /// Serves as wrapper for an array to plug-in where an <see cref="IReadOnlyList{Int16}" /> is neccessary.
     /// </summary>
     private class RODouble_ShortArrayWrapper : IReadOnlyList<double>
     {
@@ -4095,21 +4095,21 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
 		/// <summary>
-		/// Wraps a Int16[] array to get an <see cref="IROVector{double}" />.
+		/// Wraps a Int16[] array to get an <see cref="IReadOnlyList{Double}" />.
 		/// </summary>
 		/// <param name="array">The array to wrap.</param>
-		/// <returns>A wrapper objects with the <see cref="IROVector{Int16}" /> interface that wraps the provided array.</returns>
+		/// <returns>A wrapper objects with the <see cref="IReadOnlyList{Int16}" /> interface that wraps the provided array.</returns>
 		public static IReadOnlyList<double> ToRODoubleVector(this Int16[] array)
 		{
 			return array is null ? null : new RODouble_ShortArrayWrapper(array);
 		}
 
 		/// <summary>
-		/// Wraps a Int16[] array till a given length to get an <see cref="IROVector{double}" />.
+		/// Wraps a Int16[] array till a given length to get an <see cref="IReadOnlyList{Double}" />.
 		/// </summary>
 		/// <param name="array">The array to wrap.</param>
 		/// <param name="usedlength">Length of the resulting vector. Can be equal or less the length of the array.</param>
-		/// <returns>A wrapper objects with the <see cref="IROVector{Int16}" /> interface that wraps the provided array.</returns>
+		/// <returns>A wrapper objects with the <see cref="IReadOnlyList{Int16}" /> interface that wraps the provided array.</returns>
 		public static IReadOnlyList<double> ToRODoubleVector(this Int16[] array, int usedlength)
 		{
 			return new RODouble_ShortArrayWrapper(array, usedlength);
@@ -4117,7 +4117,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
 
 		  /// <summary>
-    /// Serves as wrapper for a section of an array to plug-in where an <see cref="IROVector{Int16}" /> is neccessary.
+    /// Serves as wrapper for a section of an array to plug-in where an <see cref="IReadOnlyList{Int16}" /> is neccessary.
     /// </summary>
     private class ROShortArraySectionWrapper : IReadOnlyList<Int16>
     {
@@ -4187,12 +4187,12 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
 		/// <summary>
-		/// Wraps an array to an <see cref="IROVector{Int16}" />. Start and length of the used section of the array are specified in the parameters.
+		/// Wraps an array to an <see cref="IReadOnlyList{Int16}" />. Start and length of the used section of the array are specified in the parameters.
 		/// </summary>
 		/// <param name="array">The array to wrap.</param>
 		/// <param name="start">Index of the element in <paramref name="array"/> used as the first element of the vector.</param>
 		/// <param name="usedlength">Length of the resulting vector. Can be equal or less the length of the array.</param>
-		/// <returns>A wrapper object with the <see cref="IROVector{Int16}" /> interface that wraps the provided array.</returns>
+		/// <returns>A wrapper object with the <see cref="IReadOnlyList{Int16}" /> interface that wraps the provided array.</returns>
 		public static IReadOnlyList<Int16> ToROVector(this Int16[] array, int start, int usedlength)
 		{
 			if (0 == start)
@@ -4203,7 +4203,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
 
 		/// <summary>
-    /// Serves as wrapper for an array to plug-in where an <see cref="IROVector{Int16}" /> is neccessary.
+    /// Serves as wrapper for an array to plug-in where an <see cref="IReadOnlyList{Int16}" /> is neccessary.
     /// </summary>
     private class ROShortArrayWrapperAmendedShifted : IReadOnlyList<Int16>
     {
@@ -4311,21 +4311,21 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
 			/// <summary>
-		/// Wraps a Int16[] array to get an <see cref="IROVector{Int16}" />.
+		/// Wraps a Int16[] array to get an <see cref="IReadOnlyList{Int16}" />.
 		/// </summary>
 		/// <param name="array">The array to wrap. The first element of the array has index <paramref name="amendedValuesAtStartCount"/> in the returned vector.</param>
 		/// <param name="amendedValueAtStart">Value of the vector at the first <paramref name="amendedValuesAtStartCount"/> indices</param>.
 		/// <param name="amendedValuesAtStartCount">Number of indices at the start of the vector that take the value of <paramref name="amendedValueAtStart"/>. The first element of the wrapped array starts at index <paramref name="amendedValuesAtStartCount"/>.</param>
 		/// <param name="amendedValueAtEnd">Value of the vector at the last <paramref name="amendedValuesAtEndCount"/> indices</param>.
 		/// <param name="amendedValuesAtEndCount">Number of indices at the end of the vector that take the value of <paramref name="amendedValueAtEnd"/>.</param>
-		/// <returns>A wrapper objects with the <see cref="IROVector{Int16}" /> interface that wraps the provided array.</returns>
+		/// <returns>A wrapper objects with the <see cref="IReadOnlyList{Int16}" /> interface that wraps the provided array.</returns>
 		public static IReadOnlyList<Int16> ToROVectorAmendedShifted(this Int16[] array,Int16 amendedValueAtStart, int amendedValuesAtStartCount, Int16 amendedValueAtEnd, int amendedValuesAtEndCount)
 		{
 			return array is null ? null : new ROShortArrayWrapperAmendedShifted(array, amendedValueAtStart, amendedValuesAtStartCount, amendedValueAtEnd, amendedValuesAtEndCount);
 		}
 
 		/// <summary>
-		/// Wraps a Int16[] array till a given length to get an <see cref="IROVector{Int16}" />.
+		/// Wraps a Int16[] array till a given length to get an <see cref="IReadOnlyList{Int16}" />.
 		/// </summary>
 		/// <param name="array">The array to wrap.</param>
 		/// <param name="usedlength">Length of the resulting vector. Can be equal or less the length of the array. The first element of the array has index <paramref name="amendedValuesAtStartCount"/> in the returned vector.</param>
@@ -4333,7 +4333,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <param name="amendedValuesAtStartCount">Number of indices at the start of the vector that take the value of <paramref name="amendedValueAtStart"/>. The first element of the wrapped array starts at index <paramref name="amendedValuesAtStartCount"/>.</param>
 		/// <param name="amendedValueAtEnd">Value of the vector at the last <paramref name="amendedValuesAtEndCount"/> indices</param>.
 		/// <param name="amendedValuesAtEndCount">Number of indices at the end of the vector that take the value of <paramref name="amendedValueAtEnd"/>.</param>
-		/// <returns>A wrapper objects with the <see cref="IROVector{Int16}" /> interface that wraps the provided array.</returns>
+		/// <returns>A wrapper objects with the <see cref="IReadOnlyList{Int16}" /> interface that wraps the provided array.</returns>
 		public static IReadOnlyList<Int16> ToROVectorAmendedShifted(this Int16[] array, int usedlength,Int16 amendedValueAtStart, int amendedValuesAtStartCount, Int16 amendedValueAtEnd, int amendedValuesAtEndCount)
 		{
 			return new ROShortArrayWrapperAmendedShifted(array, usedlength, amendedValueAtStart, amendedValuesAtStartCount, amendedValueAtEnd, amendedValuesAtEndCount);
@@ -4439,27 +4439,27 @@ namespace Altaxo.Calc.LinearAlgebra
 
 		
 		/// <summary>
-		/// Wraps a Int16[] array to get a struct with an <see cref="IROVector{Int16}" /> implementation. The wrapping is done lazily, i.e. you can access elements with indices below zero and
+		/// Wraps a Int16[] array to get a struct with an <see cref="IReadOnlyList{Int16}" /> implementation. The wrapping is done lazily, i.e. you can access elements with indices below zero and
 		/// above Length, which is normally forbidden. The values for that are given as parameters.
 		/// </summary>
 		/// <param name="array">The array to wrap. The first element of the array has index 0 in the returned vector.</param>
 		/// <param name="amendedValueAtStart">Value of the vector at indices less than zero.</param>.
 		/// <param name="amendedValueAtEnd">Value of the vector at indices greater than or equal to <paramref name="array"/>.Length.</param>.
-		/// <returns>A wrapper struct with the <see cref="IROVector{Int16}" /> interface that wraps the provided array, and allows access to elements below and above the valid indices of the array.</returns>
+		/// <returns>A wrapper struct with the <see cref="IReadOnlyList{Int16}" /> interface that wraps the provided array, and allows access to elements below and above the valid indices of the array.</returns>
 		public static ROShortArrayWrapperStructAmendedUnshifted ToROVectorStructAmendedUnshifted(this Int16[] array,Int16 amendedValueAtStart, Int16 amendedValueAtEnd)
 		{
 			return new ROShortArrayWrapperStructAmendedUnshifted(array, amendedValueAtStart, amendedValueAtEnd);
 		}
 
 		/// <summary>
-		/// Wraps a Int16[] array till a given length to get a struct with an <see cref="IROVector{Int16}" /> implementation. The wrapping is done lazily, i.e. you can access elements with indices below zero and
+		/// Wraps a Int16[] array till a given length to get a struct with an <see cref="IReadOnlyList{Int16}" /> implementation. The wrapping is done lazily, i.e. you can access elements with indices below zero and
 		/// above <paramref name="usedlength"/>, which is normally forbidden. The values for that are given as parameters.
 		/// </summary>
 		/// <param name="array">The array to wrap.</param>
 		/// <param name="usedlength">Length of the resulting vector. Can be equal or less the length of the array. The first element of the array has index 0 in the returned vector.</param>
 		/// <param name="amendedValueAtStart">Value of the vector at indices less than zero.</param>.
 		/// <param name="amendedValueAtEnd">Value of the vector at indices greater then or equal to <paramref name="usedlength"/>.</param>.
-		/// <returns>A wrapper struct with the <see cref="IROVector{Int16}" /> interface that wraps the provided array, and allows access to elements below and above the valid indices of the array.</returns>
+		/// <returns>A wrapper struct with the <see cref="IReadOnlyList{Int16}" /> interface that wraps the provided array, and allows access to elements below and above the valid indices of the array.</returns>
 		public static ROShortArrayWrapperStructAmendedUnshifted ToROVectorStructAmendedUnshifted(this Int16[] array, int usedlength,Int16 amendedValueAtStart, Int16 amendedValueAtEnd)
 		{
 			return new ROShortArrayWrapperStructAmendedUnshifted(array, usedlength, amendedValueAtStart, amendedValueAtEnd );
@@ -4548,7 +4548,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
 
 		 /// <summary>
-    /// Serves as wrapper for an <see cref="IROVector{Int16}" /> to get only a section of the original wrapper.
+    /// Serves as wrapper for an <see cref="IReadOnlyList{Int16}" /> to get only a section of the original wrapper.
     /// </summary>
     private class ROShortVectorSectionWrapper : IReadOnlyList<Int16>
     {
@@ -4605,7 +4605,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <param name="vector">Original vector.</param>
 		/// <param name="start">Index of the start of the section to wrap.</param>
 		/// <param name="usedLength">Length (=number of elements) of the section to wrap.</param>
-		/// <returns>An <see cref="IROVector{Int16}" /> that contains the section from <c>start</c> to <c>start+len-1</c> of the original vector.</returns>
+		/// <returns>An <see cref="IReadOnlyList{Int16}" /> that contains the section from <c>start</c> to <c>start+len-1</c> of the original vector.</returns>
 		public static IReadOnlyList<Int16> ToROVector(this IReadOnlyList<Int16> vector, int start, int usedLength)
 		{
 			return new ROShortVectorSectionWrapper(vector, start, usedLength);
@@ -5070,21 +5070,21 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
 		/// <summary>
-		/// Wraps a SByte[] array to get an  <see cref="IROVector{SByte}" /> with elements = 1 / elements of the original vector.
+		/// Wraps a SByte[] array to get an  <see cref="IReadOnlyList{SByte}" /> with elements = 1 / elements of the original vector.
 		/// </summary>
 		/// <param name="array">The array to wrap.</param>
-		/// <returns>A wrapper objects with the <see cref="IROVector{SByte}" /> returning elements that are inverse to those of the original vector.</returns>
+		/// <returns>A wrapper objects with the <see cref="IReadOnlyList{SByte}" /> returning elements that are inverse to those of the original vector.</returns>
 		public static IReadOnlyList<double> ToInverseROVector(this IReadOnlyList<SByte> array)
 		{
 			return array is null ? null : new ROSByteInverseElementWrapper(array);
 		}
 
 		/// <summary>
-		/// Wraps a SByte[] array till a given length to get an <see cref="IROVector{SByte}" /> with elements = 1 / elements of the original vector.
+		/// Wraps a SByte[] array till a given length to get an <see cref="IReadOnlyList{SByte}" /> with elements = 1 / elements of the original vector.
 		/// </summary>
 		/// <param name="array">The array to wrap.</param>
 		/// <param name="usedlength">Length of the resulting vector. Can be equal or less the length of the array.</param>
-		/// <returns>A wrapper objects with the <see cref="IROVector{SByte}" /> interface that wraps the provided array returning elements that are inverse to those of the original vector..</returns>
+		/// <returns>A wrapper objects with the <see cref="IReadOnlyList{SByte}" /> interface that wraps the provided array returning elements that are inverse to those of the original vector..</returns>
 		public static IReadOnlyList<double> ToInverseROVector(this IReadOnlyList<SByte> array, int usedlength)
 		{
 			return new ROSByteInverseElementWrapper(array, usedlength);
@@ -5092,7 +5092,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
 
 		/// <summary>
-    /// Serves as wrapper for an array to plug-in where an <see cref="IROVector{SByte}" /> is neccessary.
+    /// Serves as wrapper for an array to plug-in where an <see cref="IReadOnlyList{SByte}" /> is neccessary.
     /// </summary>
     private class ROSByteArrayWrapper : IReadOnlyList<SByte>
     {
@@ -5165,28 +5165,28 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
 		/// <summary>
-		/// Wraps a SByte[] array to get an <see cref="IROVector{SByte}" />.
+		/// Wraps a SByte[] array to get an <see cref="IReadOnlyList{SByte}" />.
 		/// </summary>
 		/// <param name="array">The array to wrap.</param>
-		/// <returns>A wrapper objects with the <see cref="IROVector{SByte}" /> interface that wraps the provided array.</returns>
+		/// <returns>A wrapper objects with the <see cref="IReadOnlyList{SByte}" /> interface that wraps the provided array.</returns>
 		public static IReadOnlyList<SByte> ToROVector(this SByte[] array)
 		{
 			return array is null ? null : new ROSByteArrayWrapper(array);
 		}
 
 		/// <summary>
-		/// Wraps a SByte[] array till a given length to get an <see cref="IROVector{SByte}" />.
+		/// Wraps a SByte[] array till a given length to get an <see cref="IReadOnlyList{SByte}" />.
 		/// </summary>
 		/// <param name="array">The array to wrap.</param>
 		/// <param name="usedlength">Length of the resulting vector. Can be equal or less the length of the array.</param>
-		/// <returns>A wrapper objects with the <see cref="IROVector{SByte}" /> interface that wraps the provided array.</returns>
+		/// <returns>A wrapper objects with the <see cref="IReadOnlyList{SByte}" /> interface that wraps the provided array.</returns>
 		public static IReadOnlyList<SByte> ToROVector(this SByte[] array, int usedlength)
 		{
 			return new ROSByteArrayWrapper(array, usedlength);
 		}
 
 			/// <summary>
-    /// Serves as wrapper for an array to plug-in where an <see cref="IROVector{SByte}" /> is neccessary.
+    /// Serves as wrapper for an array to plug-in where an <see cref="IReadOnlyList{SByte}" /> is neccessary.
     /// </summary>
     private class RODouble_SByteArrayWrapper : IReadOnlyList<double>
     {
@@ -5259,21 +5259,21 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
 		/// <summary>
-		/// Wraps a SByte[] array to get an <see cref="IROVector{double}" />.
+		/// Wraps a SByte[] array to get an <see cref="IReadOnlyList{Double}" />.
 		/// </summary>
 		/// <param name="array">The array to wrap.</param>
-		/// <returns>A wrapper objects with the <see cref="IROVector{SByte}" /> interface that wraps the provided array.</returns>
+		/// <returns>A wrapper objects with the <see cref="IReadOnlyList{SByte}" /> interface that wraps the provided array.</returns>
 		public static IReadOnlyList<double> ToRODoubleVector(this SByte[] array)
 		{
 			return array is null ? null : new RODouble_SByteArrayWrapper(array);
 		}
 
 		/// <summary>
-		/// Wraps a SByte[] array till a given length to get an <see cref="IROVector{double}" />.
+		/// Wraps a SByte[] array till a given length to get an <see cref="IReadOnlyList{Double}" />.
 		/// </summary>
 		/// <param name="array">The array to wrap.</param>
 		/// <param name="usedlength">Length of the resulting vector. Can be equal or less the length of the array.</param>
-		/// <returns>A wrapper objects with the <see cref="IROVector{SByte}" /> interface that wraps the provided array.</returns>
+		/// <returns>A wrapper objects with the <see cref="IReadOnlyList{SByte}" /> interface that wraps the provided array.</returns>
 		public static IReadOnlyList<double> ToRODoubleVector(this SByte[] array, int usedlength)
 		{
 			return new RODouble_SByteArrayWrapper(array, usedlength);
@@ -5281,7 +5281,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
 
 		  /// <summary>
-    /// Serves as wrapper for a section of an array to plug-in where an <see cref="IROVector{SByte}" /> is neccessary.
+    /// Serves as wrapper for a section of an array to plug-in where an <see cref="IReadOnlyList{SByte}" /> is neccessary.
     /// </summary>
     private class ROSByteArraySectionWrapper : IReadOnlyList<SByte>
     {
@@ -5351,12 +5351,12 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
 		/// <summary>
-		/// Wraps an array to an <see cref="IROVector{SByte}" />. Start and length of the used section of the array are specified in the parameters.
+		/// Wraps an array to an <see cref="IReadOnlyList{SByte}" />. Start and length of the used section of the array are specified in the parameters.
 		/// </summary>
 		/// <param name="array">The array to wrap.</param>
 		/// <param name="start">Index of the element in <paramref name="array"/> used as the first element of the vector.</param>
 		/// <param name="usedlength">Length of the resulting vector. Can be equal or less the length of the array.</param>
-		/// <returns>A wrapper object with the <see cref="IROVector{SByte}" /> interface that wraps the provided array.</returns>
+		/// <returns>A wrapper object with the <see cref="IReadOnlyList{SByte}" /> interface that wraps the provided array.</returns>
 		public static IReadOnlyList<SByte> ToROVector(this SByte[] array, int start, int usedlength)
 		{
 			if (0 == start)
@@ -5367,7 +5367,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
 
 		/// <summary>
-    /// Serves as wrapper for an array to plug-in where an <see cref="IROVector{SByte}" /> is neccessary.
+    /// Serves as wrapper for an array to plug-in where an <see cref="IReadOnlyList{SByte}" /> is neccessary.
     /// </summary>
     private class ROSByteArrayWrapperAmendedShifted : IReadOnlyList<SByte>
     {
@@ -5475,21 +5475,21 @@ namespace Altaxo.Calc.LinearAlgebra
     }
 
 			/// <summary>
-		/// Wraps a SByte[] array to get an <see cref="IROVector{SByte}" />.
+		/// Wraps a SByte[] array to get an <see cref="IReadOnlyList{SByte}" />.
 		/// </summary>
 		/// <param name="array">The array to wrap. The first element of the array has index <paramref name="amendedValuesAtStartCount"/> in the returned vector.</param>
 		/// <param name="amendedValueAtStart">Value of the vector at the first <paramref name="amendedValuesAtStartCount"/> indices</param>.
 		/// <param name="amendedValuesAtStartCount">Number of indices at the start of the vector that take the value of <paramref name="amendedValueAtStart"/>. The first element of the wrapped array starts at index <paramref name="amendedValuesAtStartCount"/>.</param>
 		/// <param name="amendedValueAtEnd">Value of the vector at the last <paramref name="amendedValuesAtEndCount"/> indices</param>.
 		/// <param name="amendedValuesAtEndCount">Number of indices at the end of the vector that take the value of <paramref name="amendedValueAtEnd"/>.</param>
-		/// <returns>A wrapper objects with the <see cref="IROVector{SByte}" /> interface that wraps the provided array.</returns>
+		/// <returns>A wrapper objects with the <see cref="IReadOnlyList{SByte}" /> interface that wraps the provided array.</returns>
 		public static IReadOnlyList<SByte> ToROVectorAmendedShifted(this SByte[] array,SByte amendedValueAtStart, int amendedValuesAtStartCount, SByte amendedValueAtEnd, int amendedValuesAtEndCount)
 		{
 			return array is null ? null : new ROSByteArrayWrapperAmendedShifted(array, amendedValueAtStart, amendedValuesAtStartCount, amendedValueAtEnd, amendedValuesAtEndCount);
 		}
 
 		/// <summary>
-		/// Wraps a SByte[] array till a given length to get an <see cref="IROVector{SByte}" />.
+		/// Wraps a SByte[] array till a given length to get an <see cref="IReadOnlyList{SByte}" />.
 		/// </summary>
 		/// <param name="array">The array to wrap.</param>
 		/// <param name="usedlength">Length of the resulting vector. Can be equal or less the length of the array. The first element of the array has index <paramref name="amendedValuesAtStartCount"/> in the returned vector.</param>
@@ -5497,7 +5497,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <param name="amendedValuesAtStartCount">Number of indices at the start of the vector that take the value of <paramref name="amendedValueAtStart"/>. The first element of the wrapped array starts at index <paramref name="amendedValuesAtStartCount"/>.</param>
 		/// <param name="amendedValueAtEnd">Value of the vector at the last <paramref name="amendedValuesAtEndCount"/> indices</param>.
 		/// <param name="amendedValuesAtEndCount">Number of indices at the end of the vector that take the value of <paramref name="amendedValueAtEnd"/>.</param>
-		/// <returns>A wrapper objects with the <see cref="IROVector{SByte}" /> interface that wraps the provided array.</returns>
+		/// <returns>A wrapper objects with the <see cref="IReadOnlyList{SByte}" /> interface that wraps the provided array.</returns>
 		public static IReadOnlyList<SByte> ToROVectorAmendedShifted(this SByte[] array, int usedlength,SByte amendedValueAtStart, int amendedValuesAtStartCount, SByte amendedValueAtEnd, int amendedValuesAtEndCount)
 		{
 			return new ROSByteArrayWrapperAmendedShifted(array, usedlength, amendedValueAtStart, amendedValuesAtStartCount, amendedValueAtEnd, amendedValuesAtEndCount);
@@ -5603,27 +5603,27 @@ namespace Altaxo.Calc.LinearAlgebra
 
 		
 		/// <summary>
-		/// Wraps a SByte[] array to get a struct with an <see cref="IROVector{SByte}" /> implementation. The wrapping is done lazily, i.e. you can access elements with indices below zero and
+		/// Wraps a SByte[] array to get a struct with an <see cref="IReadOnlyList{SByte}" /> implementation. The wrapping is done lazily, i.e. you can access elements with indices below zero and
 		/// above Length, which is normally forbidden. The values for that are given as parameters.
 		/// </summary>
 		/// <param name="array">The array to wrap. The first element of the array has index 0 in the returned vector.</param>
 		/// <param name="amendedValueAtStart">Value of the vector at indices less than zero.</param>.
 		/// <param name="amendedValueAtEnd">Value of the vector at indices greater than or equal to <paramref name="array"/>.Length.</param>.
-		/// <returns>A wrapper struct with the <see cref="IROVector{SByte}" /> interface that wraps the provided array, and allows access to elements below and above the valid indices of the array.</returns>
+		/// <returns>A wrapper struct with the <see cref="IReadOnlyList{SByte}" /> interface that wraps the provided array, and allows access to elements below and above the valid indices of the array.</returns>
 		public static ROSByteArrayWrapperStructAmendedUnshifted ToROVectorStructAmendedUnshifted(this SByte[] array,SByte amendedValueAtStart, SByte amendedValueAtEnd)
 		{
 			return new ROSByteArrayWrapperStructAmendedUnshifted(array, amendedValueAtStart, amendedValueAtEnd);
 		}
 
 		/// <summary>
-		/// Wraps a SByte[] array till a given length to get a struct with an <see cref="IROVector{SByte}" /> implementation. The wrapping is done lazily, i.e. you can access elements with indices below zero and
+		/// Wraps a SByte[] array till a given length to get a struct with an <see cref="IReadOnlyList{SByte}" /> implementation. The wrapping is done lazily, i.e. you can access elements with indices below zero and
 		/// above <paramref name="usedlength"/>, which is normally forbidden. The values for that are given as parameters.
 		/// </summary>
 		/// <param name="array">The array to wrap.</param>
 		/// <param name="usedlength">Length of the resulting vector. Can be equal or less the length of the array. The first element of the array has index 0 in the returned vector.</param>
 		/// <param name="amendedValueAtStart">Value of the vector at indices less than zero.</param>.
 		/// <param name="amendedValueAtEnd">Value of the vector at indices greater then or equal to <paramref name="usedlength"/>.</param>.
-		/// <returns>A wrapper struct with the <see cref="IROVector{SByte}" /> interface that wraps the provided array, and allows access to elements below and above the valid indices of the array.</returns>
+		/// <returns>A wrapper struct with the <see cref="IReadOnlyList{SByte}" /> interface that wraps the provided array, and allows access to elements below and above the valid indices of the array.</returns>
 		public static ROSByteArrayWrapperStructAmendedUnshifted ToROVectorStructAmendedUnshifted(this SByte[] array, int usedlength,SByte amendedValueAtStart, SByte amendedValueAtEnd)
 		{
 			return new ROSByteArrayWrapperStructAmendedUnshifted(array, usedlength, amendedValueAtStart, amendedValueAtEnd );
@@ -5712,7 +5712,7 @@ namespace Altaxo.Calc.LinearAlgebra
 
 
 		 /// <summary>
-    /// Serves as wrapper for an <see cref="IROVector{SByte}" /> to get only a section of the original wrapper.
+    /// Serves as wrapper for an <see cref="IReadOnlyList{SByte}" /> to get only a section of the original wrapper.
     /// </summary>
     private class ROSByteVectorSectionWrapper : IReadOnlyList<SByte>
     {
@@ -5769,7 +5769,7 @@ namespace Altaxo.Calc.LinearAlgebra
 		/// <param name="vector">Original vector.</param>
 		/// <param name="start">Index of the start of the section to wrap.</param>
 		/// <param name="usedLength">Length (=number of elements) of the section to wrap.</param>
-		/// <returns>An <see cref="IROVector{SByte}" /> that contains the section from <c>start</c> to <c>start+len-1</c> of the original vector.</returns>
+		/// <returns>An <see cref="IReadOnlyList{SByte}" /> that contains the section from <c>start</c> to <c>start+len-1</c> of the original vector.</returns>
 		public static IReadOnlyList<SByte> ToROVector(this IReadOnlyList<SByte> vector, int start, int usedLength)
 		{
 			return new ROSByteVectorSectionWrapper(vector, start, usedLength);

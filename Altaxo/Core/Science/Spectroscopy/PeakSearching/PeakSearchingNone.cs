@@ -104,6 +104,8 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
     /// </summary>
     /// <param name="peaksRegular">The result of the regular peak search.</param>
     /// <param name="peaksEnhanced">The result of the peak search in the enhanced spectrum.</param>
+    /// <param name="xRegular">The x-array of the spectrum that was used to find the regular peaks.</param>
+    /// <param name="yRegular">The y-array of the spectrum that was used to find the regular peaks.</param>
     /// <returns>A list with the combined results.</returns>
     /// <exception cref="System.NotImplementedException"></exception>
     public static List<PeakDescription> CombineResults(List<PeakDescription> peaksRegular, List<PeakDescription> peaksEnhanced, double[] xRegular, double[] yRegular)

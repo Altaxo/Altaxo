@@ -22,10 +22,6 @@
 
 #endregion Copyright
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.Win32;
 
 #nullable enable
@@ -71,7 +67,7 @@ namespace Altaxo.Main.Services
     /// <returns>
     ///   <c>true</c> if [is version installed] [the specified major]; otherwise, <c>false</c>.
     /// </returns>
-    /// <remarks>See <seehcref="https://stackoverflow.com/questions/62875409/how-to-programmatically-check-the-net-core-runtime-version-installed-on-my-mach"/> for details.</remarks>
+    /// <remarks>See <see href="https://stackoverflow.com/questions/62875409/how-to-programmatically-check-the-net-core-runtime-version-installed-on-my-mach"/> for details.</remarks>
     public static bool IsVersionInstalled(int major, int minor)
     {
       if (Environment.OSVersion.Platform == PlatformID.Win32NT)
@@ -87,7 +83,7 @@ namespace Altaxo.Main.Services
           }
         }
       }
-      else if(Environment.OSVersion.Platform == PlatformID.Unix)
+      else if (Environment.OSVersion.Platform == PlatformID.Unix)
       {
         // refer to the reference above for a method to determine .NET core version on Linux
         throw new NotImplementedException();

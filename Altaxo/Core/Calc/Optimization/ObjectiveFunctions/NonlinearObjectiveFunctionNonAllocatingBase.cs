@@ -38,7 +38,7 @@ namespace Altaxo.Calc.Optimization.ObjectiveFunctions
     public IReadOnlyList<bool> IsFixedByUser { get; protected set; }
 
     /// <summary>
-    /// Array of the length <see cref="NumberOfParameters"/>. If an element is true, that parameter is either fixed by the user (see <see cref="IsFixed"/>), or
+    /// Array of the length <see cref="NumberOfParameters"/>. If an element is true, that parameter is either fixed by the user (see <see cref="IsFixedByUser"/>), or
     /// is fixed because it has reached a boundary.
     /// This array will be updated only at the end of the minimization process.
     /// </summary>

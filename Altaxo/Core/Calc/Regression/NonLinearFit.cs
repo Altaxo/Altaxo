@@ -129,6 +129,7 @@ namespace Altaxo.Calc.Regression
     /// the relative error between x and the solution is at
     /// most tol.
     /// </param>
+    /// <param name="cancellationToken">Token to cancel the fit.</param>
     /// <param name="info">
     /// Info is an integer output variable. If the user has
     /// terminated execution, info is set to the (negative)
@@ -253,6 +254,7 @@ namespace Altaxo.Calc.Regression
     /// <param name="wa2"></param>
     /// <param name="wa3"></param>
     /// <param name="wa4"></param>
+    /// <param name="cancellationToken">Token to cancel the fit.</param>
     /// <remarks>
     /// This is the most easy-to-use interface with the smallest number of
     /// arguments. If you need more control over the minimization process and

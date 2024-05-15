@@ -28,7 +28,7 @@ using System.Collections.Generic;
 namespace Altaxo.Calc.Interpolation
 {
   /// <summary>
-  /// Options for a rational interpolation (<see cref=RationalInterpolation"/>).
+  /// Options for a rational interpolation (<see cref="RationalInterpolation"/>).
   /// </summary>
   public record RationalInterpolationOptions : IInterpolationFunctionOptions
   {

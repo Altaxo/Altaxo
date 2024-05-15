@@ -36,7 +36,7 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
   /// <para>[1] Z.-M. Zhang et al., Baseline correction using adaptive iteratively reweighted penalized least
   /// squares, Analyst, 2010, 135, 1138–1146, doi:10.1039/b922045c</para>
   /// </remarks>
-  public abstract record AirPLSBase : ALSMethodsBase
+  public abstract record AirPLSBase : ALSMethodsBase, Main.IImmutable
   {
     private double _lambda = 100;
 
@@ -89,11 +89,6 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
       }
     }
 
-    /// <summary>
-    /// Gets the number of iterations that were executed during the last call to <see cref="Execute(IEnumerable{double})"/>.
-    /// </summary>
-    public int ActualNumberOfIterations { get; private set; }
-
     private int _maximumNumberOfIterations = 100;
 
     /// <summary>
@@ -118,7 +113,7 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
     public int Order
     {
       get => _order;
-      set
+      init
       {
         if (!(value >= 1 && value <= 2))
           throw new ArgumentOutOfRangeException("Order must be 1 or 2", nameof(Order));
@@ -216,7 +211,6 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
         }
 
         // Stop criterion l1normOfNegativeDifferences < 1E-3 * l1NormOfX (Eq.(10) in Ref.[1])
-        ActualNumberOfIterations = iteration;
         if (l1normOfNegativeDifferences < _terminationRatio * l1NormOfX)
           break;
 

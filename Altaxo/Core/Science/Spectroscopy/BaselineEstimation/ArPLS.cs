@@ -87,10 +87,6 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
       }
     }
 
-    /// <summary>
-    /// Gets the number of iterations that were executed during the last call to <see cref="Execute(IEnumerable{double})"/>.
-    /// </summary>
-    public int ActualNumberOfIterations { get; private set; }
 
     private int _maximumNumberOfIterations = 100;
 
@@ -227,7 +223,6 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
         }
 
         // Stop criterion Norm(weights-nextWeights)/Norm(weigths) < ratio (pseudo code in Ref.[1])
-        ActualNumberOfIterations = iteration;
         double sum2Wdiff = 0; double sum2W = 0;
         for (int i = 0; i <= countM1; ++i)
         {

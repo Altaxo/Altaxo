@@ -33,7 +33,7 @@ using Altaxo.Main;
 namespace Altaxo.Calc.FitFunctions.Kinetics
 {
   /// <summary>
-  /// Represents solutions related to the differential equation y'=(k1+k2*y^m)(1-y)^n with the initial condition y(t0)=0. For the direct solution of this equation, see <see cref="CoreSolution"/>.
+  /// Represents solutions related to the differential equation y'=(k1+k2*y^m)(1-y)^n with the initial condition y(t0)=0./>.
   /// </summary>
   [FitFunctionClass]
   public class ConversionAutocatalytic : IFitFunction, IImmutable

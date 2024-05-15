@@ -78,6 +78,7 @@ namespace Altaxo.Science.Signals
     /// <param name="x">The x-values of the signal.</param>
     /// <param name="y">The y-values of the signal.</param>
     /// <param name="maximumNumberOfModesToReturn">The maximum number of modes to return from this enumeration.</param>
+    /// <param name="returnRest">If true, the returned enumerattion will also include the rest.</param>
     /// <returns>An endless enumeration of signals, consisting of the mode y, the residual yResidual, and representing the modes of the original signal.</returns>
     public IEnumerable<(double[] yIMFC, double[] yResidual, int modeNumber)> ExtractIntrinsicModeFunctionComponents(double[] x, double[] y, int maximumNumberOfModesToReturn, bool returnRest)
     {

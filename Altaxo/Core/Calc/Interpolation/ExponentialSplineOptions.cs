@@ -28,7 +28,7 @@ using System.Collections.Generic;
 namespace Altaxo.Calc.Interpolation
 {
   /// <summary>
-  /// Options for an exponential spline (<see cref=ExponentialSpline"/>).
+  /// Options for an exponential spline (<see cref="ExponentialSpline"/>).
   /// </summary>
   public record ExponentialSplineOptions : IInterpolationFunctionOptions
   {

@@ -145,7 +145,7 @@ namespace Altaxo.Collections
     }
 
     /// <summary>
-    /// Gets the element <see cref="T"/> with the specified index. The newest element is at index 0.
+    /// Gets the element with the specified index. The newest element is at index 0.
     /// </summary>
     /// <param name="idx">The index.</param>
     /// <returns>The element at index.</returns>

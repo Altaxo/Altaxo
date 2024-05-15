@@ -37,7 +37,7 @@ namespace Altaxo.Calc.Interpolation
   /// </summary>
   public record BSpline1DOptions : IInterpolationFunctionOptions
   {
-    int _degree = 3;
+    private int _degree = 3;
 
     #region Serialization
 
@@ -617,34 +617,34 @@ namespace Altaxo.Calc.Interpolation
 
 
 
-    /**
-  * Returns the index of the time interval corresponding to time `t`.
-  * Let @f$t_0\le\cdots\le t_n@f$ be simulation times stored in a
-  * subset of `times`. This method uses binary search to determine the
-  * smallest value @f$i@f$ for which @f$t_i\le t < t_{i+1}@f$, and
-  * returns @f$i@f$. The value of @f$t_i@f$ is stored in
-  * `times[start+i]` whereas @f$n@f$ is defined as `end - start`. If
-  * @f$t<t_0@f$, this returns @f$-1@f$. If @f$t\ge t_n@f$, this returns
-  * @f$n@f$. Otherwise, the returned value is greater than or equal to
-  * 0, and smaller than or equal to @f$n-1@f$. `start` and `end` are
-  * only used to set lower and upper limits of the search in the `times`
-  * array; the index space of the returned value always starts at 0.
-  * Note that if the elements of `times` with indices `start`, …, `end`
-  * are not sorted in non-decreasing order, the behavior of this method
-  * is undefined.
-  *  @param times        an array of simulation times.
-  *  @param start        the first index in the array to consider.
-  *  @param end          the last index (inclusive) in the array to
-  *                      consider.
-  *  @param t            the queried simulation time.
-  *  @return the index of the interval.
-  *
-  *  @exception NullPointerException if `times` is `null`.
-  *  @exception IllegalArgumentException if `start` is negative, or if
-  * `end` is smaller than `start`.
-  *  @exception ArrayIndexOutOfBoundsException if `start + end` is
-  * greater than or equal to the length of `times`.
-  */
+    /*
+     * Returns the index of the time interval corresponding to time `t`.
+     * Let @f$t_0\le\cdots\le t_n@f$ be simulation times stored in a
+     * subset of `times`. This method uses binary search to determine the
+     * smallest value @f$i@f$ for which @f$t_i\le t < t_{i+1}@f$, and
+     * returns @f$i@f$. The value of @f$t_i@f$ is stored in
+     * `times[start+i]` whereas @f$n@f$ is defined as `end - start`. If
+     * @f$t<t_0@f$, this returns @f$-1@f$. If @f$t\ge t_n@f$, this returns
+     * @f$n@f$. Otherwise, the returned value is greater than or equal to
+     * 0, and smaller than or equal to @f$n-1@f$. `start` and `end` are
+     * only used to set lower and upper limits of the search in the `times`
+     * array; the index space of the returned value always starts at 0.
+     * Note that if the elements of `times` with indices `start`, …, `end`
+     * are not sorted in non-decreasing order, the behavior of this method
+     * is undefined.
+     *  @param times        an array of simulation times.
+     *  @param start        the first index in the array to consider.
+     *  @param end          the last index (inclusive) in the array to
+     *                      consider.
+     *  @param t            the queried simulation time.
+     *  @return the index of the interval.
+     *
+     *  @exception NullPointerException if `times` is `null`.
+     *  @exception IllegalArgumentException if `start` is negative, or if
+     * `end` is smaller than `start`.
+     *  @exception ArrayIndexOutOfBoundsException if `start + end` is
+     * greater than or equal to the length of `times`.
+     */
     public static int GetTimeInterval(double[] times, int start, int end, double t)
     {
       if (start < 0)

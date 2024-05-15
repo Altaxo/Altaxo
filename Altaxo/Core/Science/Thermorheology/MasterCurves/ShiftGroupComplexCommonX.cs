@@ -68,7 +68,8 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     /// </summary>
     /// <param name="data">Collection of multiple x-y curves that will finally form one master curve.</param>
     /// <param name="xShiftBy">Shift method, either additive or multiplicative.</param>
-    /// <param name="fitWeight">The weight with which to participate in the fit. Has to be &gt; 0.</param>
+    /// <param name="fitWeight">The weight with which the real part participate in the fit. Has to be &gt; 0.</param>
+    /// <param name="fitWeightIm">The weight with which the imaginary part participate in the fit. Has to be &gt; 0.</param>
     /// <param name="logarithmizeXForInterpolation">If true, the x-values are logarithmized prior to participating in the interpolation function.</param>
     /// <param name="logarithmizeYForInterpolation">If true, the y-values are logartihmized prior to participating in the interpolation function.</param>
     /// <param name="createInterpolationFunction">Function that creates the interpolation. Input are the x-array, y-array, and optionally, the array of y-errors. Output is an interpolation function which returns an interpolated y-value for a given x-value.</param>
@@ -151,7 +152,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
       return (xarr, yarr);
     }
 
-    InterpolationInformationComplexCommonX? _interpolationInformation;
+    private InterpolationInformationComplexCommonX? _interpolationInformation;
 
     /// <inheritdoc/>
     public void InitializeInterpolation()

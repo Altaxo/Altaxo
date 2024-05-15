@@ -78,7 +78,7 @@ namespace Altaxo.Geometry
     /// </summary>
     /// <param name="newX">The new x.</param>
     /// <returns>New instance with <see cref="X"/> set to the provided value.</returns>
-    public VectorD4D WithX(double newX)
+    public readonly VectorD4D WithX(double newX)
     {
       return new VectorD4D(newX, Y, Z, W);
     }
@@ -88,7 +88,7 @@ namespace Altaxo.Geometry
     /// </summary>
     /// <param name="newY">The new x.</param>
     /// <returns>New instance with <see cref="Y"/> set to the provided value.</returns>
-    public VectorD4D WithY(double newY)
+    public readonly VectorD4D WithY(double newY)
     {
       return new VectorD4D(X, newY, Z, W);
     }
@@ -98,7 +98,7 @@ namespace Altaxo.Geometry
     /// </summary>
     /// <param name="newZ">The new z.</param>
     /// <returns>New instance with <see cref="Z"/> set to the provided value.</returns>
-    public VectorD4D WithZ(double newZ)
+    public readonly VectorD4D WithZ(double newZ)
     {
       return new VectorD4D(X, Y, newZ, W);
     }
@@ -106,9 +106,9 @@ namespace Altaxo.Geometry
     /// <summary>
     /// Returns a new instance with <see cref="W"/> set to the provided value.
     /// </summary>
-    /// <param name="newZ">The new z.</param>
+    /// <param name="newW">The new w.</param>
     /// <returns>New instance with <see cref="Z"/> set to the provided value.</returns>
-    public VectorD4D WithW(double newW)
+    public readonly VectorD4D WithW(double newW)
     {
       return new VectorD4D(X, Y, Z, newW);
     }

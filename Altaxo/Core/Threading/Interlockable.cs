@@ -99,7 +99,7 @@ namespace Altaxo.Threading
     }
 
     /// <summary>
-    /// Performs an implicit conversion from <see cref="Interlockable{T}"/> to <see cref="T"/>.
+    /// Performs an implicit conversion from <see cref="Interlockable{T}"/> to T/>.
     /// </summary>
     /// <param name="t">The interlockable instance.</param>
     /// <returns>

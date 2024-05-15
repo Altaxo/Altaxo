@@ -175,6 +175,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     /// <param name="processData">Contains the curves that participate in the master curve creation.</param>
     /// <param name="processOptions">The options for master curve creation.</param>
     /// <param name="destinationTable">The destination table that accomodates the results.</param>
+    /// <param name="reporter">The object to report the progress.</param>
     /// <exception cref="System.NotImplementedException"></exception>
     public static void Execute(MasterCurveData processData, MasterCurveCreationOptions processOptions, DataTable destinationTable, IProgressReporter reporter)
     {
@@ -707,7 +708,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
     /// The point is determined by the options.
     /// </summary>
     /// <param name="masterCurveResult">The results of master curve creation (contains the actual shift values).</param>
-    /// <param name="highToLowLevelMapping">The mapping of the high level data (see <see cref="MasterCurveData"/>), to the low level data (see <see cref="ShiftGroupCollectionDouble"/>.</param>
+    /// <param name="curveInfo">The collected information about the curves.</param>
     /// <param name="processOptions">The master curve creation options.</param>
     /// <returns>A tuple containing the shift offset, with which the entire curve should be shifted, and the actually used reference value (e.g. reference temperature).</returns>
     private static (double shiftOffset, AltaxoVariant referenceValue) GetShiftOffset(ShiftGroupCollection masterCurveResult, IReadOnlyList<CurveInformation> curveInfo, MasterCurveCreationOptions processOptions)

@@ -886,8 +886,6 @@ namespace Altaxo.Science.Spectroscopy.Raman
     /// Finds the peaks, and fits them if allowed in the options.
     /// </summary>
     /// <param name="options">The options.</param>
-    /// <param name="x">The x-values of the spectrum.</param>
-    /// <param name="y">The y-values of the spectrum.</param>
     /// <param name="cancellationToken">The cancellation token.</param>
     /// <remarks>
     /// At the end of this call, the 
@@ -938,6 +936,7 @@ namespace Altaxo.Science.Spectroscopy.Raman
     /// Finds a coarse match between the peaks in the measured Neon spectrum and the Nist table.
     /// </summary>
     /// <param name="options">The options used for calculation.</param>
+    /// <param name="cancellationToken">Token to cancel the finding process.</param>
     /// <returns>A tuple of wavelength (in nm): Nist wavelength and Meas wavelength at the left of the range, Nist wavelength and meas wavelength at the right of the range.</returns>
     /// The returned value is null if no peaks could be matched.
     public (double NistWL_Left, double MeasWL_Left, double NistWL_Right, double MeasWL_Right)?

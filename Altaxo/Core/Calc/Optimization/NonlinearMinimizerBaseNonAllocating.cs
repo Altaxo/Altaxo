@@ -214,6 +214,7 @@ namespace Altaxo.Calc.Optimization
     /// </summary>
     /// <param name="objective">The objective.</param>
     /// <param name="pInt">The parameters (internal representation).</param>
+    /// <param name="scaleFactors">The scale factors for the Jacobian.</param>
     /// <returns>The negative gradient and the hessian.</returns>
     protected (Vector<double> NegativeGradient, Matrix<double> Hessian) EvaluateJacobian(IObjectiveModelNonAllocating objective, IReadOnlyList<double> pInt, Vector<double> scaleFactors)
     {

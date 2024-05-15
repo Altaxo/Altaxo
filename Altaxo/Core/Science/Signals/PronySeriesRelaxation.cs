@@ -209,6 +209,7 @@ namespace Altaxo.Science.Signals
     /// <param name="numberOfRelaxationTimes">The number of relaxation times (number of Prony terms).</param>
     /// <param name="withIntercept">If set to <c>true</c>, an offset term is added. This term can be considered to have a infinite relaxation time.</param>
     /// <param name="regularizationLambda">A regularization parameter to smooth the resulting array of Prony terms.</param>
+    /// <param name="allowNegativeCoefficients">If true, negative Prony coefficients are allowed. This should be used only in very special cases.</param>
     /// <returns>The result of the evaluation, see <see cref="PronySeriesRelaxationResult"/>.</returns>
     public static PronySeriesRelaxationResult EvaluateTimeDomain(IReadOnlyList<double> xarr, IReadOnlyList<double> yarr, double tmin, double tmax, int numberOfRelaxationTimes, bool withIntercept, double regularizationLambda, bool allowNegativeCoefficients = false)
     {

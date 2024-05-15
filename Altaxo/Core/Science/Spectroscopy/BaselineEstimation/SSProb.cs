@@ -343,7 +343,9 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
     /// This function is an approximation for Erfc(x/(sigma*Sqrt(2)).
     /// </summary>
     /// <param name="x">The x value.</param>
-    /// <param name="sigma">The sigma value.</param>
+    /// <param name="sigma">The sigma of the noise.</param>
+    /// <param name="numberOfAddedPoints">The parameter <paramref name="x"/>can contain of a single value, or of a sum of consecutive values.
+    /// The number represents the number of values that were added up. Provide 1  if x is a single value.</param>
     /// <returns>Approximation for the Erfc function.</returns>
     protected static double ProbabilityThatXIsNoise(double x, double sigma, int numberOfAddedPoints)
     {
