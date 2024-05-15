@@ -297,6 +297,9 @@
                     <MenuItem id="WorksheetExportGalacticSPC" label="${res:XML.MainMenu.FileMenu.Export.GalacticSPC}"
                                   icon="Icons.16x16.NewDocumentIcon" description="${res:XML.MainMenu.FileMenu.Export.GalacticSPC.Description}"
                                   class="Altaxo.Worksheet.Commands.ExportGalacticSPC" />
+                  <MenuItem id="WorksheetExportRamanChada" label="Export to RamanCHADA .."
+                                icon="Icons.16x16.NewDocumentIcon" description="Exports the table to a RamanCHADA file."
+                                class="Altaxo.Worksheet.Commands.ExportRamanCHADA" />
                 </MenuItem>
             </Condition>
             <Condition name = "WindowActive" activewindow="Altaxo.Gui.Graph.Gdi.Viewing.GraphController" action="Exclude">

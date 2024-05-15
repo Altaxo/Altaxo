@@ -120,6 +120,14 @@ namespace Altaxo.Worksheet.Commands
     }
   }
 
+  public class ExportRamanCHADA : AbstractWorksheetControllerCommand
+  {
+    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
+    {
+      Altaxo.Serialization.HDF5.Chada.ChadaExport.ShowExportRamanChadaDialog(ctrl.DataTable);
+    }
+  }
+
   public class ExportAscii : AbstractWorksheetControllerCommand
   {
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
