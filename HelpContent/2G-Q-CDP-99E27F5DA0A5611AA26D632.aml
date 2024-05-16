@@ -28,7 +28,7 @@ worksheet script.
 <para>
 The classical example for this is to show the function
 </para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#E83DBABFB6DA25A06B5CB477EC8389AD"><img src="../media/E83DBABFB6DA25A06B5CB477EC8389AD.png" width="155" height="50"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#A67B268568F36ADCA3B3584F5F0468E7"><img src="../media/A67B268568F36ADCA3B3584F5F0468E7.png" width="5" height="1"></img></a></markup>
 
 <para>
 Create an empty worksheet, and then open the worksheet script dialog by choosing from the main menu  <codeInline>Worksheet → Worksheet script</codeInline>. Enter the following script text (you can copy it from here):
@@ -133,7 +133,7 @@ Now again, use from the main menu <codeInline>Plot → Density plot</codeInline>
 </para>
 
 <para>
-Now, the range of the x values is as expected from -16 to 16, and the range of the y-values is the same. Also, the white dot in the middle has disappeared, since the condition, that the radius <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#428FF2B9A1B98993734C70D4AEC905DC"><img src="../media/428FF2B9A1B98993734C70D4AEC905DC.png" width="89" height="20" align="bottom"></img></a></markup>  is zero, has been treated properly by setting <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#73A69C8C8AEF10A09EF9E4AF5877ADA0"><img src="../media/73A69C8C8AEF10A09EF9E4AF5877ADA0.png" width="37" height="15" align="bottom"></img></a></markup> then.
+Now, the range of the x values is as expected from -16 to 16, and the range of the y-values is the same. Also, the white dot in the middle has disappeared, since the condition, that the radius <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D73406D15C1CA8612B8DD9E8D4C18A38"><img src="../media/D73406D15C1CA8612B8DD9E8D4C18A38.png" width="2" height="0" align="bottom"></img></a></markup>  is zero, has been treated properly by setting <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#0F25262815FCC580BF90F3337F713401"><img src="../media/0F25262815FCC580BF90F3337F713401.png" width="1" height="0" align="bottom"></img></a></markup> then.
 </para>
 </content>
 </section>
