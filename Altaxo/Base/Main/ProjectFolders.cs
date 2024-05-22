@@ -173,12 +173,21 @@ namespace Altaxo.Main
     /// Get the items (but not the subfolders) of the provided folder.
     /// </summary>
     /// <param name="folderName">Folder for which to retrieve the items.</param>
+    /// <param name="throwIfFolderDoesNotExists">If true, and the provided folder does not exist, a <see cref="ArgumentOutOfRangeException"/></param> is thrown.
     /// <returns>List of items (but not the subfolders) of the provided folder.</returns>
-    public List<IProjectItem> GetItemsInFolder(string folderName)
+    public List<IProjectItem> GetItemsInFolder(string folderName, bool throwIfFolderDoesNotExists = false)
     {
       ProjectFolder.ThrowExceptionOnInvalidFullFolderPath(folderName);
+      var isFolderExisting = ContainsFolder(folderName);
+      if (throwIfFolderDoesNotExists && !isFolderExisting)
+        throw new ArgumentOutOfRangeException($"The folder {folderName} does not exist in this project");
+
+
       var result = new List<IProjectItem>();
-      AddItemsInFolder(folderName, result);
+      if (isFolderExisting)
+      {
+        AddItemsInFolder(folderName, result);
+      }
       return result;
     }
 
@@ -187,12 +196,20 @@ namespace Altaxo.Main
     /// The items in the subfolders are not included.
     /// </summary>
     /// <param name="folderName">Folder for which to retrieve the items.</param>
+    /// <param name="throwIfFolderDoesNotExists">If true, and the provided folder does not exist, a <see cref="ArgumentOutOfRangeException"/></param> is thrown.
     /// <returns>List of project items and subfolder objects of the provided folder.</returns>
-    public List<INamedObject> GetItemsAndSubfoldersInFolder(string folderName)
+    public List<INamedObject> GetItemsAndSubfoldersInFolder(string folderName, bool throwIfFolderDoesNotExists = false)
     {
       ProjectFolder.ThrowExceptionOnInvalidFullFolderPath(folderName);
+      var isFolderExisting = ContainsFolder(folderName);
+      if (throwIfFolderDoesNotExists && !isFolderExisting)
+        throw new ArgumentOutOfRangeException($"The folder {folderName} does not exist in this project");
+
       var result = new List<INamedObject>();
-      AddItemsAndSubFoldersInFolder(folderName, result);
+      if (isFolderExisting)
+      {
+        AddItemsAndSubFoldersInFolder(folderName, result);
+      }
       return result;
     }
 
@@ -200,13 +217,23 @@ namespace Altaxo.Main
     /// Get the items (but not the subfolders) of the provided folder.
     /// </summary>
     /// <param name="folderName">Folder for which to retrieve the items.</param>
+    /// <param name="throwIfFolderDoesNotExists">If true, and the provided folder does not exist, a <see cref="ArgumentOutOfRangeException"/></param> is thrown.
     /// <returns>List of items (but not the subfolders) of the provided folder.</returns>
-    public List<IProjectItem> GetItemsInFolderAndSubfolders(string folderName)
+    public List<IProjectItem> GetItemsInFolderAndSubfolders(string folderName, bool throwIfFolderDoesNotExists = false)
     {
       ProjectFolder.ThrowExceptionOnInvalidFullFolderPath(folderName);
 
+      var isFolderExisting = ContainsFolder(folderName);
+      if (throwIfFolderDoesNotExists && !isFolderExisting)
+        throw new ArgumentOutOfRangeException($"The folder {folderName} does not exist in this project");
+
+
       var result = new List<IProjectItem>();
-      AddItemsInFolderAndSubfolders(folderName, result);
+
+      if (isFolderExisting)
+      {
+        AddItemsInFolderAndSubfolders(folderName, result);
+      }
 
       return result;
     }
@@ -839,6 +866,67 @@ namespace Altaxo.Main
     }
 
     /// <summary>
+    /// Copies project items from a source folder to a destination folder.
+    /// </summary>
+    /// <param name="sourceFolderName">Name of the source folder.</param>
+    /// <param name="destinationFolderName">Name of the destination folder.</param>
+    /// <param name="includeSubfolders">If set to <c>true</c>, items in subfolders are included in the operation, too.</param>
+    /// <param name="relocateReferences">If set to <c>true</c>, the references inbetween the copied items are maintained.</param>
+    /// <param name="overwriteExistingItemsOfSameType">If set to <c>true</c>, existing items of same type will be overwritten. If set to <c>false</c>, and an items of same type and name already exists, a new name is given to the copied item.</param>
+    /// <param name="throwIfFolderDoesNotExists">If true, and the provided folder does not exist, a <see cref="ArgumentOutOfRangeException"/></param> is thrown.
+    public void CopyItemsFromFolderToFolder(string sourceFolderName, string destinationFolderName, bool includeSubfolders = true, bool relocateReferences = true, bool overwriteExistingItemsOfSameType = false, bool throwIfFolderDoesNotExists = true)
+    {
+      var items = includeSubfolders ? new List<object>(GetItemsAndSubfoldersInFolder(sourceFolderName, throwIfFolderDoesNotExists)) : new List<object>(GetItemsInFolder(sourceFolderName, throwIfFolderDoesNotExists));
+
+      DocNodePathReplacementOptions? relocateOptions = null;
+      if (relocateReferences)
+      {
+        relocateOptions = new Altaxo.Main.DocNodePathReplacementOptions();
+        relocateOptions.AddPathReplacementsForAllProjectItemTypes(sourceFolderName, destinationFolderName);
+      }
+      CopyItemsToFolder(items, destinationFolderName, relocateOptions is null ? null : relocateOptions.Visit, overwriteExistingItemsOfSameType: overwriteExistingItemsOfSameType);
+    }
+
+    /// <summary>
+    /// Moves project items from a source folder to a destination folder.
+    /// </summary>
+    /// <param name="sourceFolderName">Name of the source folder.</param>
+    /// <param name="destinationFolderName">Name of the destination folder.</param>
+    /// <param name="includeSubfolders">If set to <c>true</c>, items in subfolders are included in the operation, too.</param>
+    /// <param name="throwIfFolderDoesNotExists">If true, and the provided folder does not exist, a <see cref="ArgumentOutOfRangeException"/></param> is thrown.
+    public void MoveItemsFromFolderToFolder(string sourceFolderName, string destinationFolderName, bool includeSubfolders = true, bool throwIfFolderDoesNotExists = true)
+    {
+      var items = includeSubfolders ? GetItemsInFolderAndSubfolders(sourceFolderName, throwIfFolderDoesNotExists) : GetItemsInFolder(sourceFolderName, throwIfFolderDoesNotExists);
+      MoveItemsToNewFolder(sourceFolderName, destinationFolderName, items);
+    }
+
+    /// <summary>
+    /// Deletes all project items in a folder.
+    /// </summary>
+    /// <param name="sourceFolderName">Name of folder in which the items should be deleted.</param>
+    /// <param name="includeSubfolders">If set to <c>true</c>, the items in all subfolders are also deleted.</param>
+    /// <param name="throwIfFolderDoesNotExists">If true, and the provided folder does not exist, a <see cref="ArgumentOutOfRangeException"/></param> is thrown.
+    /// <returns>True if any item was deleted; otherwise, false.</returns>
+    public bool DeleteItemsInFolder(string sourceFolderName, bool includeSubfolders = true, bool throwIfFolderDoesNotExists = false)
+    {
+      var items = includeSubfolders ? GetItemsInFolderAndSubfolders(sourceFolderName, throwIfFolderDoesNotExists) : GetItemsInFolder(sourceFolderName, throwIfFolderDoesNotExists);
+      var isAny = items.Count > 0;
+      DeleteDocuments(items);
+      return isAny;
+    }
+
+    /// <summary>
+    /// Deletes the folder, that means, this operation deletes the project items in the given folder and in all subfolders.
+    /// </summary>
+    /// <param name="sourceFolderName">Name of the source folder.</param>
+    /// <param name="throwIfFolderDoesNotExists">If true, and the provided folder does not exist, a <see cref="ArgumentOutOfRangeException"/></param> is thrown.
+    /// <returns>True if any item was deleted; otherwise, false.</returns>
+    public bool DeleteFolder(string sourceFolderName, bool throwIfFolderDoesNotExists = false)
+    {
+      return DeleteItemsInFolder(sourceFolderName, includeSubfolders: true, throwIfFolderDoesNotExists: throwIfFolderDoesNotExists);
+    }
+
+    /// <summary>
     /// Copies the items given in the list (tables, graphs and folders) to another folder, which is given by newFolderName. The copying
     /// is done by cloning the items.
     /// </summary>
@@ -846,7 +934,7 @@ namespace Altaxo.Main
     /// <param name="destinationFolderName">Destination folder name.</param>
     /// <param name="ReportProxies">If not null, this argument is used to relocate references to other items (e.g. columns) to point to the destination folder.</param>
     /// <param name="overwriteExistingItemsOfSameType">If true, any item with the same name and same type will be replaced by the copied item. (if false, a new name is found for the copied item which not conflicts with the existing items).</param>
-    public void CopyItemsToFolder(IList<object> list, string destinationFolderName, DocNodeProxyReporter ReportProxies, bool overwriteExistingItemsOfSameType)
+    public void CopyItemsToFolder(IList<object> list, string destinationFolderName, DocNodeProxyReporter? ReportProxies, bool overwriteExistingItemsOfSameType)
     {
       ProjectFolder.ThrowExceptionOnInvalidFullFolderPath(destinationFolderName);
 
@@ -863,7 +951,7 @@ namespace Altaxo.Main
     /// <param name="destinationFolderName">Destination folder name.</param>
     /// <param name="ReportProxies">If not null, this argument is used to relocate references to other items (e.g. columns) to point to the destination folder.</param>
     /// <param name="overwriteExistingItemsOfSameType">If true, any item with the same name and same type will be replaced by the copied item. (if false, a new name is found for the copied item which not conflicts with the existing items).</param>
-    public void CopyItemToFolder(object item, string destinationFolderName, DocNodeProxyReporter ReportProxies, bool overwriteExistingItemsOfSameType)
+    public void CopyItemToFolder(object item, string destinationFolderName, DocNodeProxyReporter? ReportProxies, bool overwriteExistingItemsOfSameType)
     {
       ProjectFolder.ThrowExceptionOnInvalidFullFolderPath(destinationFolderName);
 
