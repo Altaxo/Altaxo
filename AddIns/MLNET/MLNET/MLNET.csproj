@@ -1,5 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk" InitialTargets="GenAssInfo">
   <PropertyGroup>
+    <CoreCompileDependsOn>GenAssInfo</CoreCompileDependsOn>
     <TargetFrameworks>net48;net8.0-windows</TargetFrameworks>
     <AssemblyName>MLNETAddin</AssemblyName>
     <LangVersion>preview</LangVersion>
@@ -7,8 +8,10 @@
     <RootNamespace>Altaxo</RootNamespace>
     <GenerateDocumentationFile>false</GenerateDocumentationFile>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <Platforms>x64</Platforms>
+    <PlatformTarget>x64</PlatformTarget>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
-    <CoreCompileDependsOn>GenAssInfo</CoreCompileDependsOn>
+    <EnableDynamicLoading>true</EnableDynamicLoading>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(TargetFramework)' == 'net48' ">
     

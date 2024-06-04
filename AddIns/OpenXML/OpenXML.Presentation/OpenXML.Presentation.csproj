@@ -1,5 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop" InitialTargets="GenAssInfo">
   <PropertyGroup>
+    <CoreCompileDependsOn>GenAssInfo</CoreCompileDependsOn>
     <TargetFrameworks>net48; net8.0-windows</TargetFrameworks>
     <AssemblyName>OpenXMLAddin.Presentation</AssemblyName>
     <LangVersion>preview</LangVersion>
@@ -8,7 +9,8 @@
     <RootNamespace>Altaxo</RootNamespace>
     <GenerateDocumentationFile>false</GenerateDocumentationFile>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <CoreCompileDependsOn>GenAssInfo</CoreCompileDependsOn>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <EnableDynamicLoading>true</EnableDynamicLoading>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(TargetFramework)' == 'net48' ">

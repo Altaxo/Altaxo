@@ -1,5 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop" InitialTargets="GenAssInfo;DoCompileShaders">
   <PropertyGroup>
+    <CoreCompileDependsOn>GenAssInfo;DoCompileShaders</CoreCompileDependsOn>
+    <PrepareResourcesDependsOn>DoCompileShaders</PrepareResourcesDependsOn>
     <TargetFrameworks>net48;net8.0-windows</TargetFrameworks>
     <LangVersion>preview</LangVersion>
     <nullable>enable</nullable>
@@ -8,8 +10,7 @@
     <GenerateDocumentationFile>false</GenerateDocumentationFile>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
-    <CoreCompileDependsOn>GenAssInfo;DoCompileShaders</CoreCompileDependsOn>
-    <PrepareResourcesDependsOn>DoCompileShaders</PrepareResourcesDependsOn>
+    <EnableDynamicLoading>true</EnableDynamicLoading>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(TargetFramework)' == 'net48' ">
