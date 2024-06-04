@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2024 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -31,6 +31,7 @@ using System.Reflection;
 
 namespace Altaxo.AddInItems
 {
+  using System.Diagnostics;
   using System.Runtime.Loader;
 
   /// <summary>
@@ -44,18 +45,86 @@ namespace Altaxo.AddInItems
   {
     /// <summary>Resolver for the addin folder</summary>
     private AssemblyDependencyResolver _resolver;
-
     private string _pluginAssemblyFileName;
+
+    [Conditional("LogAssemblyLoading")]
+    private static void WriteAssemblyLoadingLog(string s)
+    {
+      Console.WriteLine(s);
+      Debug.WriteLine(s);
+    }
+
+    static PluginAssemblyLoadContext()
+    {
+      Default.Resolving -= EhDefaultResolving;
+      Default.Resolving += EhDefaultResolving;
+      AppDomain.CurrentDomain.AssemblyLoad -= EhAssemblyLoad;
+      AppDomain.CurrentDomain.AssemblyLoad += EhAssemblyLoad;
+    }
+
+    private static void EhAssemblyLoad(object? sender, AssemblyLoadEventArgs args)
+    {
+      WriteAssemblyLoadingLog($"Assembly '{args.LoadedAssembly}' was successfully loaded.");
+    }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="PluginAssemblyLoadContext"/> class.
     /// </summary>
     /// <param name="pluginAssemblyFileName">The full file name of the original plugin assembly file.</param>
-    public PluginAssemblyLoadContext(string pluginAssemblyFileName)
+    public PluginAssemblyLoadContext(string pluginAssemblyFileName) : base(pluginAssemblyFileName) // we give the context the name of the assembly file
     {
+      WriteAssemblyLoadingLog($"Constructor of {this.GetType()} fileName = {pluginAssemblyFileName}");
+
       _pluginAssemblyFileName = pluginAssemblyFileName;
       _resolver = new AssemblyDependencyResolver(pluginAssemblyFileName);
+
+
     }
+
+    private static Assembly? EhDefaultResolving(AssemblyLoadContext context, AssemblyName name)
+    {
+      Assembly? result = null;
+      var requestingAssembly = Assembly.GetEntryAssembly();
+
+      var nameParts = name.Name!.Split(',');
+      var fullFileName = Path.Combine(Path.GetDirectoryName(requestingAssembly.Location), nameParts[0] + ".dll");
+      if (File.Exists(fullFileName))
+      {
+
+        // search the context
+        foreach (var context1 in AssemblyLoadContext.All)
+        {
+          if (context1.Assemblies.FirstOrDefault(x => x == requestingAssembly) is not null)
+          {
+            context = context1;
+            break;
+          }
+        }
+        context ??= new PluginAssemblyLoadContext(fullFileName);
+        result = context.LoadFromAssemblyPath(fullFileName);
+        WriteAssemblyLoadingLog($"{typeof(PluginAssemblyLoadContext)}.EhDefaultResolving {name.Name} was resolved to {result}.");
+        return result;
+      }
+      else
+      {
+        WriteAssemblyLoadingLog($"{typeof(PluginAssemblyLoadContext)}.EhDefaultResolving {name.Name} could not be resolved.");
+        return null;
+      }
+    }
+
+    private (Assembly? assembly, AssemblyLoadContext? context) FindAlreadyLoadedAssembly(AssemblyName name)
+    {
+      foreach (var context in AssemblyLoadContext.All)
+      {
+        if (context.Assemblies.FirstOrDefault(x => x.GetName().Name == name.Name) is { } foundAssembly)
+        {
+          return (foundAssembly, context);
+        }
+      }
+
+      return (null, null);
+    }
+
 
     /// <summary>
     /// Allows an assembly to be resolved and loaded based on its <see cref="T:System.Reflection.AssemblyName" />.
@@ -71,36 +140,72 @@ namespace Altaxo.AddInItems
     {
       // this function is called when dependencies of the pluginAssembly should be loaded
 
-      // First of all, we look if such an assembly is loaded already
-      var result = AppDomain.CurrentDomain.GetAssemblies().Where(ass => ass.GetName().Name == assemblyName.Name).FirstOrDefault();
 
-      if (result is null)
+      // First of all, we look if such an assembly is loaded already
+      // var result = AppDomain.CurrentDomain.GetAssemblies().Where(ass => ass.GetName().Name == assemblyName.Name).FirstOrDefault();
+      var (result, fromContext) = FindAlreadyLoadedAssembly(assemblyName);
+      if (result is not null)
       {
-        // otherwise, we use the _resolver to resolve the dependent assembly
-        string? assemblyPath = _resolver.ResolveAssemblyToPath(assemblyName);
-        if (assemblyPath is not null)
+        WriteAssemblyLoadingLog($"{this.GetType()}.Load ({this.Name}) of {assemblyName} was resolved with already loaded module {fromContext?.Name}.");
+        return result;
+      }
+
+
+      // otherwise, we use the _resolver to resolve the dependent assembly
+      var assemblyPath = _resolver.ResolveAssemblyToPath(assemblyName);
+      if (assemblyPath is not null)
+      {
+        // if the assemblyPath could be determined, we look if the file has a .deps.json file, and if so, we load it into its own context
+        var depsFilePath = Path.Combine(Path.GetDirectoryName(assemblyPath), Path.GetFileNameWithoutExtension(assemblyPath) + ".deps.json");
+        if (File.Exists(depsFilePath))
         {
-          // note that we load the dependent assemblies into the default load context,
-          // and not in this context here
-          // by this way we avoid that we load the same assembly in different contexts
-          result = Default.LoadFromAssemblyPath(assemblyPath);
-        }
-        else
-        {
-          var dirInfo = new DirectoryInfo(Path.GetDirectoryName(Assembly.GetEntryAssembly()!.Location)!);
-          var fileInfo = dirInfo.EnumerateFiles(assemblyName.Name + ".dll").FirstOrDefault();
-          if (fileInfo is not null)
+          WriteAssemblyLoadingLog($"{this.GetType()}.Load ({this.Name}) of {assemblyName} has its own dependency file and will therefore be loaded into its own context.");
+          var newContext = new PluginAssemblyLoadContext(assemblyPath);
+          result = newContext.LoadFromAssemblyPath(assemblyPath);
+          if (result is not null)
           {
-            // note that we load the dependent assemblies into the default load context,
-            // and not in this context here
-            // by this way we avoid that we load the same assembly in different contexts
-            result = Default.LoadFromAssemblyPath(fileInfo.FullName);
+            return result;
           }
+          else
+          {
+            WriteAssemblyLoadingLog($"{this.GetType()}.Load ({this.Name}) of {assemblyName} has its own dependency file and therefore was tried to loaded into its own context, but failed!");
+          }
+        }
+
+        // note that we load the dependent assemblies into the default load context,
+        // and not in this context here
+        // by this way we avoid that we load the same assembly in different contexts
+        var destinationContext = this; // we could also use Default here!
+        result = LoadFromAssemblyPath(assemblyPath);
+        if (result is not null)
+        {
+          WriteAssemblyLoadingLog($"{this.GetType()}.Load ({this.Name}) of {assemblyName} into context '{destinationContext.Name}', result={result}");
+          return result;
+        }
+      }
+      else
+      {
+        WriteAssemblyLoadingLog($"{this.GetType()}.Load ({this.Name}) of {assemblyName} AssemblyPath could not be resolved!");
+      }
+
+      var dirInfo = new DirectoryInfo(Path.GetDirectoryName(Assembly.GetEntryAssembly()!.Location)!);
+      var fileInfo = dirInfo.EnumerateFiles(assemblyName.Name + ".dll").FirstOrDefault();
+      if (fileInfo is not null)
+      {
+        // note that we load the dependent assemblies into the default load context,
+        // and not in this context here
+        // by this way we avoid that we load the same assembly in different contexts
+        result = LoadFromAssemblyPath(fileInfo.FullName);
+
+        if (result is not null)
+        {
+          WriteAssemblyLoadingLog($"{this.GetType()}.Load ({this.Name}) of {assemblyName} was resolved latest, result={result}");
+          return result;
         }
       }
 
-      System.Diagnostics.Debug.WriteLine($"{assemblyName} resolved to {result?.Location ?? "null"}");
-      return result;
+      WriteAssemblyLoadingLog($"{this.GetType()}.Load ({this.Name}) of {assemblyName}  FAILURE (could not be resolved)");
+      return null;
     }
 
     /// <summary>
@@ -113,15 +218,16 @@ namespace Altaxo.AddInItems
     protected override IntPtr LoadUnmanagedDll(string unmanagedDllName)
     {
       var libraryPath = _resolver.ResolveUnmanagedDllToPath(unmanagedDllName);
-      if (!(libraryPath is null))
+      var result = IntPtr.Zero;
+      if (libraryPath is not null)
       {
-        return LoadUnmanagedDllFromPath(libraryPath);
+        result = LoadUnmanagedDllFromPath(libraryPath);
       }
 
-      return IntPtr.Zero;
+      WriteAssemblyLoadingLog($"{this.GetType()}.LoadUnmanagedDll ({this.Name}) UnmanagedDllFileName={unmanagedDllName}, libraryPath={libraryPath}, result={result}");
+      return result;
     }
   }
-
 }
 #endif
 
