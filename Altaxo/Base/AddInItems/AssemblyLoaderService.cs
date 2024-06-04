@@ -87,7 +87,7 @@ namespace Altaxo.AddInItems
 #if NETFRAMEWORK
       return System.Reflection.Assembly.LoadFrom(fullName);
 #else
-      var context = new LoadContextIntoDefault(fullName);
+      var context = new PluginAssemblyLoadContext(fullName);
       return context.LoadFromAssemblyPath(fullName);
 #endif
     }
@@ -107,7 +107,7 @@ namespace Altaxo.AddInItems
   /// In this way it can be avoided that we have unintentionally load multiple instances of the same assembly.
   /// </summary>
   /// <seealso cref="System.Runtime.Loader.AssemblyLoadContext" />
-  public class LoadContextIntoDefault : AssemblyLoadContext
+  public class PluginAssemblyLoadContext : AssemblyLoadContext
   {
     /// <summary>Resolver for the addin folder</summary>
     private AssemblyDependencyResolver _resolver;
@@ -115,10 +115,10 @@ namespace Altaxo.AddInItems
     private string _pluginAssemblyFileName;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="LoadContextIntoDefault"/> class.
+    /// Initializes a new instance of the <see cref="PluginAssemblyLoadContext"/> class.
     /// </summary>
     /// <param name="pluginAssemblyFileName">The full file name of the original plugin assembly file.</param>
-    public LoadContextIntoDefault(string pluginAssemblyFileName)
+    public PluginAssemblyLoadContext(string pluginAssemblyFileName)
     {
       _pluginAssemblyFileName = pluginAssemblyFileName;
       _resolver = new AssemblyDependencyResolver(pluginAssemblyFileName);
