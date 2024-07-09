@@ -1178,7 +1178,7 @@ namespace Altaxo.Science.Spectroscopy
       var doc = new YCalibrationDataSource(dataProxy, new YCalibrationOptions(), new DataSourceImportOptions());
       var controller = new YCalibrationDataSourceController();
       controller.InitializeDocument(doc);
-      if (!Current.Gui.ShowDialog(controller, "Choose options for intensity calibration"))
+      if (!Current.Gui.ShowDialog(controller, "Choose options for relative intensity calibration"))
         return;
 
       doc = (YCalibrationDataSource)controller.ModelObject;
