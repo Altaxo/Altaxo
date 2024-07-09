@@ -351,6 +351,11 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
               ycol[i] = data.Y[i];
               zcol[i] = data.IndexOfCurve[i];
             }
+
+            if (pcol1 is not null && referenceValueUsed.HasValue)
+            {
+              pcol1[col.GetColumnNumber(ycol)] = referenceValueUsed.Value;
+            }
           }
         } // for each group
       } // end put merged curves
@@ -359,7 +364,7 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
       groupNumber = (int)(100 * Math.Ceiling((groupNumber + 1) / 100d));
       if (processOptions.TableOutputOptions.OutputInterpolatedCurve)
       {
-        // get out the interpolation result, Achtung die Werte sind logarithmiert
+        // get out the interpolation result
         for (int idxGroup = 0, idxColumn = 0; idxGroup < shiftGroupCollection.Count; idxGroup++)
         {
           var group = shiftGroupCollection[idxGroup];
@@ -376,6 +381,11 @@ namespace Altaxo.Science.Thermorheology.MasterCurves
             {
               xcol[i] = resultCurve.X[i];
               ycol[i] = resultCurve.Y[i];
+            }
+
+            if (pcol1 is not null && referenceValueUsed.HasValue)
+            {
+              pcol1[col.GetColumnNumber(ycol)] = referenceValueUsed.Value;
             }
           }
         }
