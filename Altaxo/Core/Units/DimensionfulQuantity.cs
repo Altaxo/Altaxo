@@ -34,7 +34,7 @@ namespace Altaxo.Units
   /// Please note that two <see cref="DimensionfulQuantity"/> instances are considered equal only if (i) the units are equal, (ii) the prefixes are equal, and (iii) the values are equal.
   /// If you want to compare the SI values, please compare the <see cref="AsValueInSIUnits"/> values.
   /// </summary>
-  public struct DimensionfulQuantity : IComparable<DimensionfulQuantity>, IFormattable
+  public struct DimensionfulQuantity : IComparable, IComparable<DimensionfulQuantity>, IEquatable<DimensionfulQuantity>, IFormattable
   {
     private double _value;
     private SIPrefix? _prefix;
@@ -312,34 +312,32 @@ namespace Altaxo.Units
       return thisval.CompareTo(otherval);
     }
 
-    public override bool Equals(object? obj)
+    public int CompareTo(object? value)
     {
-      if (obj is DimensionfulQuantity quantity)
-      {
-        return _value == quantity._value &&
-             EqualityComparer<SIPrefix>.Default.Equals(_prefix, quantity._prefix) &&
-             EqualityComparer<IUnit>.Default.Equals(_unit, quantity._unit);
-      }
+      if (value is null)
+        return 1;
+      if (value is DimensionfulQuantity other)
+        return CompareTo(other);
       else
-      {
-        return false;
-      }
+        throw new ArgumentException($"Parameter must be of type {typeof(DimensionfulQuantity)}, but acutally is {value?.GetType()}");
+    }
+
+    public readonly bool Equals(DimensionfulQuantity other)
+    {
+      return this._value.Equals(other._value) &&
+             EqualityComparer<SIPrefix>.Default.Equals(_prefix, other._prefix) &&
+             EqualityComparer<IUnit>.Default.Equals(_unit, other._unit);
+
+    }
+
+    public override readonly bool Equals(object? obj)
+    {
+      return obj is DimensionfulQuantity other && this.Equals(other);
     }
 
     public override int GetHashCode()
     {
-      if (_unit is null)
-        return 0;
-      else
-      {
-
-        var hashCode = -1954364663;
-        hashCode = hashCode * -1521134295 + base.GetHashCode();
-        hashCode = hashCode * -1521134295 + _value.GetHashCode();
-        hashCode = hashCode * -1521134295 + EqualityComparer<SIPrefix>.Default.GetHashCode(Prefix);
-        hashCode = hashCode * -1521134295 + EqualityComparer<IUnit>.Default.GetHashCode(_unit);
-        return hashCode;
-      }
+      return _value.GetHashCode() + 17 * (_prefix ?? SIPrefix.None).GetHashCode() + (_unit is null ? 0 : 31 * _unit.GetHashCode());
     }
 
     public static bool operator ==(DimensionfulQuantity a, DimensionfulQuantity b)
@@ -361,21 +359,21 @@ namespace Altaxo.Units
 
     public static bool operator <(DimensionfulQuantity a, DimensionfulQuantity b)
     {
-      return a.CompareTo(b) < 0;
+      return !double.IsNaN(a._value) && a.CompareTo(b) < 0;
     }
     public static bool operator >(DimensionfulQuantity a, DimensionfulQuantity b)
     {
-      return a.CompareTo(b) > 0;
+      return !double.IsNaN(b._value) && a.CompareTo(b) > 0;
     }
 
     public static bool operator <=(DimensionfulQuantity a, DimensionfulQuantity b)
     {
-      return a.CompareTo(b) <= 0;
+      return !double.IsNaN(a._value) && a.CompareTo(b) <= 0;
     }
 
     public static bool operator >=(DimensionfulQuantity a, DimensionfulQuantity b)
     {
-      return a.CompareTo(b) >= 0;
+      return !double.IsNaN(b._value) && a.CompareTo(b) >= 0;
     }
 
 
@@ -640,5 +638,7 @@ namespace Altaxo.Units
         ? double.NaN.ToString(formatProvider)
         : string.Format(formatProvider, "{0} {1}{2}", _value.ToString(format, formatProvider), Prefix.ShortCut, Unit.ShortCut);
     }
+
+
   }
 }
