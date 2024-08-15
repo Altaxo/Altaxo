@@ -457,7 +457,7 @@ namespace Altaxo.Calc.FitFunctions.Peaks
 
       var lrh = Math.Log(relativeHeight, 2);
       double w = width / Math.Sqrt(-lrh);
-      return new double[] { height, position, w };
+      return new double[] { height, position, w, 1 };
     }
 
     /// <inheritdoc/>

@@ -61,5 +61,23 @@ namespace Altaxo.Calc.FitFunctions.Peaks
         }
       }
     }
+
+    /// <summary>
+    /// Tests the number of parameters returned from <see cref="IFitFunctionPeak.GetInitialParametersFromHeightPositionAndWidthAtRelativeHeight(double, double, double, double)"/>.
+    /// </summary>
+    [Fact]
+    public void TestNumberOfParametersForInitialGuess()
+    {
+      var types = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(Altaxo.Calc.FitFunctions.Peaks.IFitFunctionPeak));
+      foreach (var type in types)
+      {
+        var ff = (IFitFunctionPeak)Activator.CreateInstance(type);
+        ff = ff.WithNumberOfTerms(1).WithOrderOfBaselinePolynomial(-1);
+        var param = ff.GetInitialParametersFromHeightPositionAndWidthAtRelativeHeight(77.0, 23.0, 7.0, 0.5);
+
+        Assert.Equal(ff.ParameterNamesForOnePeak.Length, param.Length);
+        Assert.Equal(ff.NumberOfParameters, param.Length);
+      }
+    }
   }
 }
