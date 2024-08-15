@@ -42,13 +42,21 @@ namespace Altaxo.Calc
 
     #region Number tests
 
-
+    /// <summary>
+    /// Tests if x is finite, i.e. is in the interval [double.MinValue, double.MaxValue].
+    /// </summary>
+    /// <param name="x">Number to test.</param>
+    /// <returns>True if x is finite. False if is is not finite or is double.NaN.</returns>
+    public static bool IsFinite(double x) // Note that we don't use 'this' here, because 'IsFinite' is also included in the 'Math.Net' package
+    {
+      return double.MinValue <= x && x <= double.MaxValue;
+    }
 
     /// <summary>
     /// Tests if x is finite, i.e. is in the interval [float.MinValue, float.MaxValue].
     /// </summary>
     /// <param name="x">Number to test.</param>
-    /// <returns>True if x is finite. False if is is not finite or is double.NaN.</returns>
+    /// <returns>True if x is finite. False if is is not finite or is float.NaN.</returns>
     public static bool IsFinite(this float x)
     {
       return float.MinValue <= x && x <= float.MaxValue;
