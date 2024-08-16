@@ -156,7 +156,7 @@ namespace Altaxo.Gui.Markdown
       encoder.Save(fileStream);
       fileStream.Seek(0, SeekOrigin.Begin);
 
-      return (fileStream, alignment, (int)Math.Round(yoffset), (int)(box.Width * 96 / dpiResolution), (int)(box.TotalHeight * 96d / dpiResolution));
+      return (fileStream, alignment, (int)Math.Round(yoffset), width96thInch, height96thInch);
     }
 
 
