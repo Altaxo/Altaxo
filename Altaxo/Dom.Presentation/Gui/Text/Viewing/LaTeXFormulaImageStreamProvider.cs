@@ -143,11 +143,11 @@ namespace Altaxo.Gui.Markdown
       else // MAML is intended for HTML help (so we can use HTML5 alignment with pixel accuracy        )
       {
         alignment = "baseline";
-        var yshift = Math.Ceiling(absoluteAscent) - absoluteAscent; // we shift the formula downwards, so that the new absoluteAscent is Math.Ceiling(absoluteAscent)
-                                                                    // by providing a positive offset in arg2, the image is lowered compared to the baseline
+        var yshift = -Math.Ceiling(absoluteDepth); // we shift the formula downwards, so that the new absoluteAscent is Math.Ceiling(absoluteAscent)
+                                                   // by providing a positive offset in arg2, the image is lowered compared to the baseline
         (bmp, width96thInch, height96thInch) = RenderToBitmap(formula, _texEnvironment, fontSize, 0, yshift, dpiResolution);
         // bmp = WpfTeXFormulaExtensions.RenderToBitmap(formula, _texEnvironment, out box, fontSize, 0, yshift, dpiResolution);
-        yoffset = Math.Ceiling(absoluteAscent) - box.TotalHeight * 96d / dpiResolution; // number of pixels from image bottom to baseline (negative sign)
+        yoffset = Math.Ceiling(absoluteAscent) - height96thInch; // number of pixels from image bottom to baseline (negative sign)
       }
 
       var fileStream = new MemoryStream();
@@ -185,8 +185,8 @@ namespace Altaxo.Gui.Markdown
       }
 
       var width = (int)Math.Ceiling(fontSize * box.Width); // TODO: is this in 96th inch, or because of the fontSize, in 72th inch?
-      var height = (int)Math.Ceiling(fontSize * box.TotalHeight);
-      height += (int)Math.Ceiling(Math.Abs(y));
+      var height = (int)(Math.Ceiling(fontSize * box.Height) + Math.Ceiling(fontSize * box.Depth));
+      //height += (int)Math.Ceiling(Math.Abs(y));
 
       var relativeResolution = dpiResolution / 96.0;
 
