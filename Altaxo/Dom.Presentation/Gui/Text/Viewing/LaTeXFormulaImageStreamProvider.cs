@@ -63,15 +63,6 @@ namespace Altaxo.Gui.Markdown
       double fontDescent;
       double fontStrikethrough;
       {
-        var gdiFont = new System.Drawing.Font(fontFamily, (float)fontSize, System.Drawing.FontStyle.Regular);
-        int iCellSpace = gdiFont.FontFamily.GetLineSpacing(gdiFont.Style);
-        int iEmHeight = gdiFont.FontFamily.GetEmHeight(gdiFont.Style);
-        int iCellAscent = gdiFont.FontFamily.GetCellAscent(gdiFont.Style);
-        int iCellDescent = gdiFont.FontFamily.GetCellDescent(gdiFont.Style);
-        fontAscent = fontSize * iCellAscent / iEmHeight;
-        fontDescent = fontSize * iCellDescent / iEmHeight;
-        fontStrikethrough = fontAscent / 3; // is only a first guess, details coming from the Wpf font
-        gdiFont.Dispose();
         var ff = new System.Windows.Media.FontFamily(fontFamily);
         var tf = new Typeface(ff, System.Windows.FontStyles.Normal, System.Windows.FontWeights.Normal, System.Windows.FontStretches.Normal);
         if (tf.TryGetGlyphTypeface(out var gtf))
@@ -79,6 +70,17 @@ namespace Altaxo.Gui.Markdown
           fontAscent = fontSize * gtf.Baseline;
           fontDescent = fontSize * (gtf.Height - gtf.Baseline);
           fontStrikethrough = fontSize * gtf.StrikethroughPosition;
+        }
+        else
+        {
+          using var gdiFont = new System.Drawing.Font(fontFamily, (float)fontSize, System.Drawing.FontStyle.Regular);
+          int iCellSpace = gdiFont.FontFamily.GetLineSpacing(gdiFont.Style);
+          int iEmHeight = gdiFont.FontFamily.GetEmHeight(gdiFont.Style);
+          int iCellAscent = gdiFont.FontFamily.GetCellAscent(gdiFont.Style);
+          int iCellDescent = gdiFont.FontFamily.GetCellDescent(gdiFont.Style);
+          fontAscent = fontSize * iCellAscent / iEmHeight;
+          fontDescent = fontSize * iCellDescent / iEmHeight;
+          fontStrikethrough = fontSize * 0.258; // is only a first guess, details coming from the Wpf font
         }
       }
 
@@ -112,12 +114,36 @@ namespace Altaxo.Gui.Markdown
         // dictionary that holds the number vertical pixels of the image, and a tuple of the neccessary render offset and the alignment
         var sort = new List<(int imageHeight, double yOffset_96thInch, string alignment)>();
 
+        /* 
+        // 2024-08-20 The baseline alignment is not used anymore in Help1 for the following reason:
+        // if the formula contains characters with a round shape at the bottom (e.g. '0', 'O' 'C'), there are some
+        // pixels required for the character just below the baseline.
+        // But if the image is baseline aligned, the first row of pixels
+        // starts slightly above the baseline. Thus a correct display of those characters is not possible
+        // a alternative would be to slighly shift the formula a little bit to the top, but then it is
+        // not anymore baseline aligned
+
         if (formulaDescentRelative < (1 / 16.0)) // if the formulas baseline is almost at the bottom of the image
         {
-          sort.Add((imageHeightPixels, 0.0, "baseline")); // then we can use baseline as vertical alight
+          // if the descent is close to zero, then we can use the baseline alignment
+          // for a Help1 target this means that the bottom of the formula image is aligned with the baseline of the surrounding font.
+
+          height96thInch = (int)Math.Round(imageHeightPixels / relativeResolution);
+          var yoffsetAccurate = formulaAscent - height96thInch; // number of pixels from image bottom to baseline (negative sign)
+          if (yoffsetAccurate >= 0) // if the formula fits exactly, then we add one pixel more
+          {
+            imageHeightPixels += (int)Math.Ceiling(relativeResolution);
+            height96thInch = (int)Math.Round(imageHeightPixels / relativeResolution);
+            yoffsetAccurate = formulaAscent - height96thInch; // number of pixels from image bottom to baseline (negative sign)
+          }
+          sort.Add((imageHeightPixels, -yoffsetAccurate, "baseline")); // then we can use baseline as vertical alight
         }
+        */
+
+
         if (fontAscent >= formulaAscent)
         {
+          // Alignment: texttop
           // if our formula is not higher than the top of the text than we can use the texttop alignment
           // texttop alignment means that the top of the formula box is aligned with the top (cyAscent) of the surrounding font
           // we pad our formula box at the top with the difference between the font ascent and the formula ascent
@@ -127,8 +153,10 @@ namespace Altaxo.Gui.Markdown
           var renderOffset = yoffset;
           sort.Add((imageHeightPixels + additionalPixelsTop, renderOffset, "texttop"));
         }
-        if (fontDescent >= formulaDescent) // then we can use bottom alignment, and we shift the formula upwards (negative offset)
+
+        if (fontDescent >= formulaDescent)
         {
+          // Alignment: bottom
           // if our formula is not deeper than the bottom of the text (font) then we can use bottom alignment
           // for a Help1 target bottom alignment means that the bottom of the formula image is aligned with the bottom (cyDescent) of the surrounding font
           // we pad our formula box at the bottom with the difference value
@@ -140,7 +168,7 @@ namespace Altaxo.Gui.Markdown
           // by using Math.Ceiling, we shift the image a little bit to high
           int additionalPixelsBottom = (int)Math.Ceiling(yoffset * relativeResolution);
           // in order to compensate for this, we have to shift the formula a little bit down again
-          var renderOffset = (additionalPixelsBottom / relativeResolution) - yoffset;
+          var renderOffset = (imageHeightPixels + additionalPixelsBottom) / relativeResolution - fontDescent - formulaAscent;
           sort.Add((imageHeightPixels + additionalPixelsBottom, renderOffset, "bottom")); // note that we store the value as negative value to mark it as bottom padding
         }
 
