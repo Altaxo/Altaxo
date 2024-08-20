@@ -18,7 +18,7 @@ Previous section: <link xlink:href="FDA2C14CC9564D6357135DA2850F79AE">Fit functi
 <para>
 This function evaluates a sum of Cauchy (Lorentzian) terms, plus a baseline polynomial with one or multiple terms, according to
 </para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1B517D1A9A91178FAD89334C82CD9E38"><img src="../media/1B517D1A9A91178FAD89334C82CD9E38.png" width="17" height="1"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#791349AB72F26EA63C16DAB57F153AB5"><img src="../media/791349AB72F26EA63C16DAB57F153AB5.png" width="512" height="59"></img></a></markup>
 
 <para>
 in which:
@@ -29,52 +29,52 @@ in which:
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FB4DEDB06F4E5B5B9983082E188D8782"><img src="../media/FB4DEDB06F4E5B5B9983082E188D8782.png" width="2" height="0" align="bottom"></img></a></markup> are the areas under the Cauchy terms
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#BABA259A1B076BE1F68B876321A9825B"><img src="../media/BABA259A1B076BE1F68B876321A9825B.png" width="61" height="15" align="bottom"></img></a></markup> are the areas under the Cauchy terms
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9E0C61DB886B4D6625B30888D802B302"><img src="../media/9E0C61DB886B4D6625B30888D802B302.png" width="2" height="0" align="bottom"></img></a></markup> are the locations of the Cauchy terms
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#07F41FF5FFDEBDFBAF366D164F08B861"><img src="../media/07F41FF5FFDEBDFBAF366D164F08B861.png" width="64" height="11" align="bottom"></img></a></markup> are the locations of the Cauchy terms
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#413213270BACD36A4A6758B1BAC447AD"><img src="../media/413213270BACD36A4A6758B1BAC447AD.png" width="1" height="0" align="bottom"></img></a></markup> are the half widths of half maximum (HWHM) of the Cauchy terms
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#EBB51A0217C999F86F8D9A6D70D50E73"><img src="../media/EBB51A0217C999F86F8D9A6D70D50E73.png" width="60" height="11" align="bottom"></img></a></markup> are the half widths of half maximum (HWHM) of the Cauchy terms
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#313CE41EAD077CC05F86EB817979B651"><img src="../media/313CE41EAD077CC05F86EB817979B651.png" width="1" height="0" align="bottom"></img></a></markup> are the coefficients of the baseline polynomial of order  <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1524114A576378DC1D43A85F23D2A753"><img src="../media/1524114A576378DC1D43A85F23D2A753.png" width="0" height="0" align="baseline"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#366F28926F3F7E49F4468E17F33EBAAE"><img src="../media/366F28926F3F7E49F4468E17F33EBAAE.png" width="41" height="13" align="middle"></img></a></markup> are the coefficients of the baseline polynomial of order  <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9FD34652DC94880E880464BC7F6D7026"><img src="../media/9FD34652DC94880E880464BC7F6D7026.png" width="13" height="6" align="baseline"></img></a></markup>
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4EF835FC99A8EA2F77EC0547660B4997"><img src="../media/4EF835FC99A8EA2F77EC0547660B4997.png" width="0" height="0" align="baseline"></img></a></markup> is the number of Cauchy terms (<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#82F0E41C75F4684DF9D917F18AB1BCF7"><img src="../media/82F0E41C75F4684DF9D917F18AB1BCF7.png" width="1" height="0" align="bottom"></img></a></markup>)
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5F0117272C7B6CF7327019290D7B40D1"><img src="../media/5F0117272C7B6CF7327019290D7B40D1.png" width="9" height="6" align="baseline"></img></a></markup> is the number of Cauchy terms (<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9B8B6C64A76E824D6136C1263AB24E5C"><img src="../media/9B8B6C64A76E824D6136C1263AB24E5C.png" width="37" height="13" align="middle"></img></a></markup>)
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1524114A576378DC1D43A85F23D2A753"><img src="../media/1524114A576378DC1D43A85F23D2A753.png" width="0" height="0" align="baseline"></img></a></markup> is the order of the baseline polynomial (set <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#542521E9C0C5C7B36CA39A384A75C928"><img src="../media/542521E9C0C5C7B36CA39A384A75C928.png" width="1" height="0" align="bottom"></img></a></markup> to disable the baseline polynomial)
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9FD34652DC94880E880464BC7F6D7026"><img src="../media/9FD34652DC94880E880464BC7F6D7026.png" width="13" height="6" align="baseline"></img></a></markup> is the order of the baseline polynomial (set <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#117EC9FA36BFDEB4C44D929405E658BC"><img src="../media/117EC9FA36BFDEB4C44D929405E658BC.png" width="52" height="12" align="middle"></img></a></markup> to disable the baseline polynomial)
 </para>
 </listItem>
 </list>
 
 <para>
-The number of Cauchy terms <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4EF835FC99A8EA2F77EC0547660B4997"><img src="../media/4EF835FC99A8EA2F77EC0547660B4997.png" width="0" height="0" align="baseline"></img></a></markup> and the order of the baseline polynomial <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1524114A576378DC1D43A85F23D2A753"><img src="../media/1524114A576378DC1D43A85F23D2A753.png" width="0" height="0" align="baseline"></img></a></markup> can be changed by double-clicking on the fit function. The default values are <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AB6102027499324E523E96136FF3C0DD"><img src="../media/AB6102027499324E523E96136FF3C0DD.png" width="1" height="0" align="baseline"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#27F4FE01705E8CE801E4F68D69F87349"><img src="../media/27F4FE01705E8CE801E4F68D69F87349.png" width="1" height="0" align="baseline"></img></a></markup>. In order to get the probability density function of the Cauchy distribution, set <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AB6102027499324E523E96136FF3C0DD"><img src="../media/AB6102027499324E523E96136FF3C0DD.png" width="1" height="0" align="baseline"></img></a></markup>,  <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#542521E9C0C5C7B36CA39A384A75C928"><img src="../media/542521E9C0C5C7B36CA39A384A75C928.png" width="1" height="0" align="bottom"></img></a></markup>, and set the parameter <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#DA93E856FEDCE03261FBBFA397EB9417"><img src="../media/DA93E856FEDCE03261FBBFA397EB9417.png" width="0" height="0" align="bottom"></img></a></markup> fixed to <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#BEF9DA0DA9ADD8E4076991B2C68312CB"><img src="../media/BEF9DA0DA9ADD8E4076991B2C68312CB.png" width="1" height="0" align="bottom"></img></a></markup>.
+The number of Cauchy terms <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5F0117272C7B6CF7327019290D7B40D1"><img src="../media/5F0117272C7B6CF7327019290D7B40D1.png" width="9" height="6" align="baseline"></img></a></markup> and the order of the baseline polynomial <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9FD34652DC94880E880464BC7F6D7026"><img src="../media/9FD34652DC94880E880464BC7F6D7026.png" width="13" height="6" align="baseline"></img></a></markup> can be changed by double-clicking on the fit function. The default values are <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AB6102027499324E523E96136FF3C0DD"><img src="../media/AB6102027499324E523E96136FF3C0DD.png" width="37" height="10" align="baseline"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#27F4FE01705E8CE801E4F68D69F87349"><img src="../media/27F4FE01705E8CE801E4F68D69F87349.png" width="41" height="10" align="baseline"></img></a></markup>. In order to get the probability density function of the Cauchy distribution, set <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AB6102027499324E523E96136FF3C0DD"><img src="../media/AB6102027499324E523E96136FF3C0DD.png" width="37" height="10" align="baseline"></img></a></markup>,  <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#117EC9FA36BFDEB4C44D929405E658BC"><img src="../media/117EC9FA36BFDEB4C44D929405E658BC.png" width="52" height="12" align="middle"></img></a></markup>, and set the parameter <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B4DDCF3D22F9C04098E877FB85E9CA4B"><img src="../media/B4DDCF3D22F9C04098E877FB85E9CA4B.png" width="17" height="13" align="middle"></img></a></markup> fixed to <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#0F2A1F7F12A1EDD1D769BD668BAE7D22"><img src="../media/0F2A1F7F12A1EDD1D769BD668BAE7D22.png" width="44" height="13" align="middle"></img></a></markup>.
 </para>
 
 <para>
-The domain of the function is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FB4DE268FCBAFA43EB96F2668F852D86"><img src="../media/FB4DE268FCBAFA43EB96F2668F852D86.png" width="3" height="0" align="bottom"></img></a></markup>.
+The domain of the function is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#728CA8EFFEF65F08F2DE8C7D7FA29D38"><img src="../media/728CA8EFFEF65F08F2DE8C7D7FA29D38.png" width="90" height="13" align="middle"></img></a></markup>.
 </para>
 
 <para>
@@ -82,7 +82,7 @@ The domain of the function is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB
 </para>
 
 <para>
-Fig. 1: CauchyArea (<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AB6102027499324E523E96136FF3C0DD"><img src="../media/AB6102027499324E523E96136FF3C0DD.png" width="1" height="0" align="baseline"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#27F4FE01705E8CE801E4F68D69F87349"><img src="../media/27F4FE01705E8CE801E4F68D69F87349.png" width="1" height="0" align="baseline"></img></a></markup>) with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#CC81461A654A1032444650BF3C1D9958"><img src="../media/CC81461A654A1032444650BF3C1D9958.png" width="1" height="0" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#A2B3EBE2172F5029BE9B965F09F502F3"><img src="../media/A2B3EBE2172F5029BE9B965F09F502F3.png" width="1" height="0" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5EC121586E5283B42A4443304CE8253A"><img src="../media/5EC121586E5283B42A4443304CE8253A.png" width="1" height="0" align="bottom"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#8F6EC133B79FEC27173D19C1A810AF9C"><img src="../media/8F6EC133B79FEC27173D19C1A810AF9C.png" width="1" height="0" align="bottom"></img></a></markup>.
+Fig. 1: CauchyArea (<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AB6102027499324E523E96136FF3C0DD"><img src="../media/AB6102027499324E523E96136FF3C0DD.png" width="37" height="10" align="baseline"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#27F4FE01705E8CE801E4F68D69F87349"><img src="../media/27F4FE01705E8CE801E4F68D69F87349.png" width="41" height="10" align="baseline"></img></a></markup>) with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#BD82927758259B89917E405ADE25EFED"><img src="../media/BD82927758259B89917E405ADE25EFED.png" width="52" height="13" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D68C07A809BC47747AD25C405B9D95EA"><img src="../media/D68C07A809BC47747AD25C405B9D95EA.png" width="46" height="13" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#0092134760F193C3CEA5E4999B1058BA"><img src="../media/0092134760F193C3CEA5E4999B1058BA.png" width="44" height="13" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FDBDF20E6A4B09056F54ABAB1160D82D"><img src="../media/FDBDF20E6A4B09056F54ABAB1160D82D.png" width="40" height="13" align="middle"></img></a></markup>.
 </para>
 <markup><hr/></markup>
 
@@ -101,7 +101,7 @@ References:
 <para>
 This function evaluates a sum of Gaussian terms, plus a baseline polynomial with one or multiple terms, according to
 </para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#C238838898D4EB3502D76A4A8155C0FE"><img src="../media/C238838898D4EB3502D76A4A8155C0FE.png" width="20" height="1"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#30930242A2F4C6E9FC99215E95C18F26"><img src="../media/30930242A2F4C6E9FC99215E95C18F26.png" width="628" height="42"></img></a></markup>
 
 <para>
 in which:
@@ -112,52 +112,52 @@ in which:
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FB4DEDB06F4E5B5B9983082E188D8782"><img src="../media/FB4DEDB06F4E5B5B9983082E188D8782.png" width="2" height="0" align="bottom"></img></a></markup> are the areas under the Gaussian terms
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#BABA259A1B076BE1F68B876321A9825B"><img src="../media/BABA259A1B076BE1F68B876321A9825B.png" width="61" height="15" align="bottom"></img></a></markup> are the areas under the Gaussian terms
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9E0C61DB886B4D6625B30888D802B302"><img src="../media/9E0C61DB886B4D6625B30888D802B302.png" width="2" height="0" align="bottom"></img></a></markup> are the locations of the Gaussian terms
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#07F41FF5FFDEBDFBAF366D164F08B861"><img src="../media/07F41FF5FFDEBDFBAF366D164F08B861.png" width="64" height="11" align="bottom"></img></a></markup> are the locations of the Gaussian terms
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#413213270BACD36A4A6758B1BAC447AD"><img src="../media/413213270BACD36A4A6758B1BAC447AD.png" width="1" height="0" align="bottom"></img></a></markup> are the widths of the Gaussian terms
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#EBB51A0217C999F86F8D9A6D70D50E73"><img src="../media/EBB51A0217C999F86F8D9A6D70D50E73.png" width="60" height="11" align="bottom"></img></a></markup> are the widths of the Gaussian terms
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#313CE41EAD077CC05F86EB817979B651"><img src="../media/313CE41EAD077CC05F86EB817979B651.png" width="1" height="0" align="bottom"></img></a></markup> are the coefficients of the baseline polynomial of order  <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1524114A576378DC1D43A85F23D2A753"><img src="../media/1524114A576378DC1D43A85F23D2A753.png" width="0" height="0" align="baseline"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#366F28926F3F7E49F4468E17F33EBAAE"><img src="../media/366F28926F3F7E49F4468E17F33EBAAE.png" width="41" height="13" align="middle"></img></a></markup> are the coefficients of the baseline polynomial of order  <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9FD34652DC94880E880464BC7F6D7026"><img src="../media/9FD34652DC94880E880464BC7F6D7026.png" width="13" height="6" align="baseline"></img></a></markup>
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4EF835FC99A8EA2F77EC0547660B4997"><img src="../media/4EF835FC99A8EA2F77EC0547660B4997.png" width="0" height="0" align="baseline"></img></a></markup> is the number of Gaussian terms (<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#82F0E41C75F4684DF9D917F18AB1BCF7"><img src="../media/82F0E41C75F4684DF9D917F18AB1BCF7.png" width="1" height="0" align="bottom"></img></a></markup>)
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5F0117272C7B6CF7327019290D7B40D1"><img src="../media/5F0117272C7B6CF7327019290D7B40D1.png" width="9" height="6" align="baseline"></img></a></markup> is the number of Gaussian terms (<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9B8B6C64A76E824D6136C1263AB24E5C"><img src="../media/9B8B6C64A76E824D6136C1263AB24E5C.png" width="37" height="13" align="middle"></img></a></markup>)
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1524114A576378DC1D43A85F23D2A753"><img src="../media/1524114A576378DC1D43A85F23D2A753.png" width="0" height="0" align="baseline"></img></a></markup> is the order of the baseline polynomial (set <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#542521E9C0C5C7B36CA39A384A75C928"><img src="../media/542521E9C0C5C7B36CA39A384A75C928.png" width="1" height="0" align="bottom"></img></a></markup> to disable the baseline polynomial)
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9FD34652DC94880E880464BC7F6D7026"><img src="../media/9FD34652DC94880E880464BC7F6D7026.png" width="13" height="6" align="baseline"></img></a></markup> is the order of the baseline polynomial (set <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#117EC9FA36BFDEB4C44D929405E658BC"><img src="../media/117EC9FA36BFDEB4C44D929405E658BC.png" width="52" height="12" align="middle"></img></a></markup> to disable the baseline polynomial)
 </para>
 </listItem>
 </list>
 
 <para>
-The number of Gaussian terms <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4EF835FC99A8EA2F77EC0547660B4997"><img src="../media/4EF835FC99A8EA2F77EC0547660B4997.png" width="0" height="0" align="baseline"></img></a></markup> and the order of the baseline polynomial <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1524114A576378DC1D43A85F23D2A753"><img src="../media/1524114A576378DC1D43A85F23D2A753.png" width="0" height="0" align="baseline"></img></a></markup> can be changed by double-clicking on the fit function. The default values are <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AB6102027499324E523E96136FF3C0DD"><img src="../media/AB6102027499324E523E96136FF3C0DD.png" width="1" height="0" align="baseline"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#27F4FE01705E8CE801E4F68D69F87349"><img src="../media/27F4FE01705E8CE801E4F68D69F87349.png" width="1" height="0" align="baseline"></img></a></markup>.
+The number of Gaussian terms <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5F0117272C7B6CF7327019290D7B40D1"><img src="../media/5F0117272C7B6CF7327019290D7B40D1.png" width="9" height="6" align="baseline"></img></a></markup> and the order of the baseline polynomial <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9FD34652DC94880E880464BC7F6D7026"><img src="../media/9FD34652DC94880E880464BC7F6D7026.png" width="13" height="6" align="baseline"></img></a></markup> can be changed by double-clicking on the fit function. The default values are <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AB6102027499324E523E96136FF3C0DD"><img src="../media/AB6102027499324E523E96136FF3C0DD.png" width="37" height="10" align="baseline"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#27F4FE01705E8CE801E4F68D69F87349"><img src="../media/27F4FE01705E8CE801E4F68D69F87349.png" width="41" height="10" align="baseline"></img></a></markup>.
 </para>
 
 <para>
-The domain of the function is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FB4DE268FCBAFA43EB96F2668F852D86"><img src="../media/FB4DE268FCBAFA43EB96F2668F852D86.png" width="3" height="0" align="bottom"></img></a></markup>.
+The domain of the function is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#728CA8EFFEF65F08F2DE8C7D7FA29D38"><img src="../media/728CA8EFFEF65F08F2DE8C7D7FA29D38.png" width="90" height="13" align="middle"></img></a></markup>.
 </para>
 
 <para>
@@ -165,7 +165,7 @@ The domain of the function is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB
 </para>
 
 <para>
-Fig. 1: GaussArea (<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AB6102027499324E523E96136FF3C0DD"><img src="../media/AB6102027499324E523E96136FF3C0DD.png" width="1" height="0" align="baseline"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#27F4FE01705E8CE801E4F68D69F87349"><img src="../media/27F4FE01705E8CE801E4F68D69F87349.png" width="1" height="0" align="baseline"></img></a></markup>) with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#CC81461A654A1032444650BF3C1D9958"><img src="../media/CC81461A654A1032444650BF3C1D9958.png" width="1" height="0" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#A2B3EBE2172F5029BE9B965F09F502F3"><img src="../media/A2B3EBE2172F5029BE9B965F09F502F3.png" width="1" height="0" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5EC121586E5283B42A4443304CE8253A"><img src="../media/5EC121586E5283B42A4443304CE8253A.png" width="1" height="0" align="bottom"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#8F6EC133B79FEC27173D19C1A810AF9C"><img src="../media/8F6EC133B79FEC27173D19C1A810AF9C.png" width="1" height="0" align="bottom"></img></a></markup>.
+Fig. 1: GaussArea (<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AB6102027499324E523E96136FF3C0DD"><img src="../media/AB6102027499324E523E96136FF3C0DD.png" width="37" height="10" align="baseline"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#27F4FE01705E8CE801E4F68D69F87349"><img src="../media/27F4FE01705E8CE801E4F68D69F87349.png" width="41" height="10" align="baseline"></img></a></markup>) with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#BD82927758259B89917E405ADE25EFED"><img src="../media/BD82927758259B89917E405ADE25EFED.png" width="52" height="13" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D68C07A809BC47747AD25C405B9D95EA"><img src="../media/D68C07A809BC47747AD25C405B9D95EA.png" width="46" height="13" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#0092134760F193C3CEA5E4999B1058BA"><img src="../media/0092134760F193C3CEA5E4999B1058BA.png" width="44" height="13" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FDBDF20E6A4B09056F54ABAB1160D82D"><img src="../media/FDBDF20E6A4B09056F54ABAB1160D82D.png" width="40" height="13" align="middle"></img></a></markup>.
 </para>
 <markup><hr/></markup></content>
 </section>
@@ -178,7 +178,7 @@ Fig. 1: GaussArea (<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AB6
 <para>
 This function evaluates a sum of PearsonIV terms, plus a baseline polynomial with one or multiple terms, according to
 </para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#0BACF6EE05A6786DF7E0E666097D07C8"><img src="../media/0BACF6EE05A6786DF7E0E666097D07C8.png" width="25" height="0"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#8610BC0825AC94B0C42B240CC24BD258"><img src="../media/8610BC0825AC94B0C42B240CC24BD258.png" width="780" height="18"></img></a></markup>
 
 <para>
 in which:
@@ -189,56 +189,56 @@ in which:
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FB4DEDB06F4E5B5B9983082E188D8782"><img src="../media/FB4DEDB06F4E5B5B9983082E188D8782.png" width="2" height="0" align="bottom"></img></a></markup> are the areas of the PearsonIV terms
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#BABA259A1B076BE1F68B876321A9825B"><img src="../media/BABA259A1B076BE1F68B876321A9825B.png" width="61" height="15" align="bottom"></img></a></markup> are the areas of the PearsonIV terms
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9E0C61DB886B4D6625B30888D802B302"><img src="../media/9E0C61DB886B4D6625B30888D802B302.png" width="2" height="0" align="bottom"></img></a></markup> are the location parameters of the PearsonIV terms
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#07F41FF5FFDEBDFBAF366D164F08B861"><img src="../media/07F41FF5FFDEBDFBAF366D164F08B861.png" width="64" height="11" align="bottom"></img></a></markup> are the location parameters of the PearsonIV terms
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#413213270BACD36A4A6758B1BAC447AD"><img src="../media/413213270BACD36A4A6758B1BAC447AD.png" width="1" height="0" align="bottom"></img></a></markup> are the widths of the PearsonIV terms
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#EBB51A0217C999F86F8D9A6D70D50E73"><img src="../media/EBB51A0217C999F86F8D9A6D70D50E73.png" width="60" height="11" align="bottom"></img></a></markup> are the widths of the PearsonIV terms
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#54E13A0DC3A3E472374652963E82C862"><img src="../media/54E13A0DC3A3E472374652963E82C862.png" width="2" height="0" align="bottom"></img></a></markup> are the exponents of the PearsonIV terms (<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#F1D19CF6544FE981DB0ED67BD29713E8"><img src="../media/F1D19CF6544FE981DB0ED67BD29713E8.png" width="1" height="0" align="bottom"></img></a></markup>)
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#825FB31F0494736FC42272E59B4CE479"><img src="../media/825FB31F0494736FC42272E59B4CE479.png" width="65" height="11" align="bottom"></img></a></markup> are the exponents of the PearsonIV terms (<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#C227AAC9FC81F63CDDEFC7EF8292EDB1"><img src="../media/C227AAC9FC81F63CDDEFC7EF8292EDB1.png" width="56" height="16" align="bottom"></img></a></markup>)
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#27E607BBE8B68BF8E2686EE095688FB6"><img src="../media/27E607BBE8B68BF8E2686EE095688FB6.png" width="1" height="0" align="bottom"></img></a></markup> are the skewness parameters of the PearsonIV terms
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#E7BA42A575D4D42E5D83ECE42FB3114A"><img src="../media/E7BA42A575D4D42E5D83ECE42FB3114A.png" width="53" height="11" align="bottom"></img></a></markup> are the skewness parameters of the PearsonIV terms
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#C5E9D3EFBAEAA87E39A4993FB73FD3FA"><img src="../media/C5E9D3EFBAEAA87E39A4993FB73FD3FA.png" width="1" height="0" align="texttop"></img></a></markup> are the coefficients of the baseline polynomial of order  <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#65BD8A098980BC6E02CEE0D10AB1181D"><img src="../media/65BD8A098980BC6E02CEE0D10AB1181D.png" width="0" height="0" align="bottom"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#6553AD75E34AC3118EA67ABE581803CF"><img src="../media/6553AD75E34AC3118EA67ABE581803CF.png" width="36" height="17" align="middle"></img></a></markup> are the coefficients of the baseline polynomial of order  <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#54E8744FCA3B205287D151F13AD66A38"><img src="../media/54E8744FCA3B205287D151F13AD66A38.png" width="7" height="10" align="bottom"></img></a></markup>
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4EF835FC99A8EA2F77EC0547660B4997"><img src="../media/4EF835FC99A8EA2F77EC0547660B4997.png" width="0" height="0" align="baseline"></img></a></markup> is the number of PearsonIV terms (<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#82F0E41C75F4684DF9D917F18AB1BCF7"><img src="../media/82F0E41C75F4684DF9D917F18AB1BCF7.png" width="1" height="0" align="bottom"></img></a></markup>)
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5F0117272C7B6CF7327019290D7B40D1"><img src="../media/5F0117272C7B6CF7327019290D7B40D1.png" width="9" height="6" align="baseline"></img></a></markup> is the number of PearsonIV terms (<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9B8B6C64A76E824D6136C1263AB24E5C"><img src="../media/9B8B6C64A76E824D6136C1263AB24E5C.png" width="37" height="13" align="middle"></img></a></markup>)
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#65BD8A098980BC6E02CEE0D10AB1181D"><img src="../media/65BD8A098980BC6E02CEE0D10AB1181D.png" width="0" height="0" align="bottom"></img></a></markup> is the order of the baseline polynomial (set <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#67DBFC59F3197937E1EB2D152938581C"><img src="../media/67DBFC59F3197937E1EB2D152938581C.png" width="1" height="0" align="bottom"></img></a></markup> to disable the baseline polynomial)
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#54E8744FCA3B205287D151F13AD66A38"><img src="../media/54E8744FCA3B205287D151F13AD66A38.png" width="7" height="10" align="bottom"></img></a></markup> is the order of the baseline polynomial (set <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#16B2BEA961442164D8F9E2DFA8201498"><img src="../media/16B2BEA961442164D8F9E2DFA8201498.png" width="46" height="14" align="bottom"></img></a></markup> to disable the baseline polynomial)
 </para>
 </listItem>
 </list>
@@ -246,7 +246,7 @@ in which:
 <quote>
 
 <para>
-Please note that the location parameters <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#54E8ADF757555A52085AEE574A32ACC9"><img src="../media/54E8ADF757555A52085AEE574A32ACC9.png" width="0" height="0" align="bottom"></img></a></markup> are <legacyBold>not</legacyBold> the location of the maximum function values of the terms!
+Please note that the location parameters <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#C2DFF8392683D30506A94FD4E11DA91C"><img src="../media/C2DFF8392683D30506A94FD4E11DA91C.png" width="13" height="11" align="bottom"></img></a></markup> are <legacyBold>not</legacyBold> the location of the maximum function values of the terms!
 (see figure below)
 </para>
 </quote>
@@ -255,19 +255,19 @@ Please note that the location parameters <markup><a href="ACAC6A80-7CE0-4CB9-B36
 The <externalLink><linkText>PearsonIV function</linkText><linkUri>https://en.wikipedia.org/wiki/Pearson_distribution</linkUri></externalLink> is scaled in a way that its area
 under the curve is 1:
 </para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#525EDA127138FE1D347A2E7D7DAC6F93"><img src="../media/525EDA127138FE1D347A2E7D7DAC6F93.png" width="17" height="1"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9E097CF23AECD13172966B026A6793B0"><img src="../media/9E097CF23AECD13172966B026A6793B0.png" width="512" height="64"></img></a></markup>
 
 <para>
 The location of the maximum function value is at:
 </para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9B805D982B09D48897E9222A1ADCC935"><img src="../media/9B805D982B09D48897E9222A1ADCC935.png" width="3" height="0"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#2390FBCF20D994A05C10CCA8ED002131"><img src="../media/2390FBCF20D994A05C10CCA8ED002131.png" width="102" height="29"></img></a></markup>
 
 <para>
-The number of PearsonIV terms <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4EF835FC99A8EA2F77EC0547660B4997"><img src="../media/4EF835FC99A8EA2F77EC0547660B4997.png" width="0" height="0" align="baseline"></img></a></markup> and the order of the baseline polynomial <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#65BD8A098980BC6E02CEE0D10AB1181D"><img src="../media/65BD8A098980BC6E02CEE0D10AB1181D.png" width="0" height="0" align="bottom"></img></a></markup> can be changed by double-clicking on the fit function. The default values are <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AB6102027499324E523E96136FF3C0DD"><img src="../media/AB6102027499324E523E96136FF3C0DD.png" width="1" height="0" align="baseline"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#67DBFC59F3197937E1EB2D152938581C"><img src="../media/67DBFC59F3197937E1EB2D152938581C.png" width="1" height="0" align="bottom"></img></a></markup>.
+The number of PearsonIV terms <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5F0117272C7B6CF7327019290D7B40D1"><img src="../media/5F0117272C7B6CF7327019290D7B40D1.png" width="9" height="6" align="baseline"></img></a></markup> and the order of the baseline polynomial <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#54E8744FCA3B205287D151F13AD66A38"><img src="../media/54E8744FCA3B205287D151F13AD66A38.png" width="7" height="10" align="bottom"></img></a></markup> can be changed by double-clicking on the fit function. The default values are <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AB6102027499324E523E96136FF3C0DD"><img src="../media/AB6102027499324E523E96136FF3C0DD.png" width="37" height="10" align="baseline"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#16B2BEA961442164D8F9E2DFA8201498"><img src="../media/16B2BEA961442164D8F9E2DFA8201498.png" width="46" height="14" align="bottom"></img></a></markup>.
 </para>
 
 <para>
-The domain of the function is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FB4DE268FCBAFA43EB96F2668F852D86"><img src="../media/FB4DE268FCBAFA43EB96F2668F852D86.png" width="3" height="0" align="bottom"></img></a></markup>.
+The domain of the function is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#728CA8EFFEF65F08F2DE8C7D7FA29D38"><img src="../media/728CA8EFFEF65F08F2DE8C7D7FA29D38.png" width="90" height="13" align="middle"></img></a></markup>.
 </para>
 
 <para>
@@ -275,7 +275,7 @@ The domain of the function is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB
 </para>
 
 <para>
-Fig. 1: PearsonIVArea (<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AB6102027499324E523E96136FF3C0DD"><img src="../media/AB6102027499324E523E96136FF3C0DD.png" width="1" height="0" align="baseline"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4B74E50207A1CB4D87F8C9D4E06582B3"><img src="../media/4B74E50207A1CB4D87F8C9D4E06582B3.png" width="1" height="0" align="bottom"></img></a></markup>) with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#12BFFDB3DF47C5EC94064A0B22E4A180"><img src="../media/12BFFDB3DF47C5EC94064A0B22E4A180.png" width="1" height="0" align="baseline"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B21E8F08605E4A0088DAC1B7ED3B6AF4"><img src="../media/B21E8F08605E4A0088DAC1B7ED3B6AF4.png" width="1" height="0" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FAEC6544B843D29C1B3F667A6A44BEF2"><img src="../media/FAEC6544B843D29C1B3F667A6A44BEF2.png" width="1" height="0" align="baseline"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#E10AE056A4A4A6AC167C50D28738BA90"><img src="../media/E10AE056A4A4A6AC167C50D28738BA90.png" width="1" height="0" align="baseline"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#8F6EC133B79FEC27173D19C1A810AF9C"><img src="../media/8F6EC133B79FEC27173D19C1A810AF9C.png" width="1" height="0" align="bottom"></img></a></markup>, and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#7D45989AA9B7FBE8E8D56A6EB8E1AD9A"><img src="../media/7D45989AA9B7FBE8E8D56A6EB8E1AD9A.png" width="1" height="0" align="baseline"></img></a></markup> (green) or  <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FEF3D489D8611492E6DC67A4E1FF49D0"><img src="../media/FEF3D489D8611492E6DC67A4E1FF49D0.png" width="1" height="0" align="baseline"></img></a></markup> (orange), respectively. Note that despite the fact that <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B21E8F08605E4A0088DAC1B7ED3B6AF4"><img src="../media/B21E8F08605E4A0088DAC1B7ED3B6AF4.png" width="1" height="0" align="bottom"></img></a></markup> is equal for both functions, the locations of the maxima are quite different. Only if <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#7D45989AA9B7FBE8E8D56A6EB8E1AD9A"><img src="../media/7D45989AA9B7FBE8E8D56A6EB8E1AD9A.png" width="1" height="0" align="baseline"></img></a></markup>, the location of the maximum function value is  <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#54E8ADF757555A52085AEE574A32ACC9"><img src="../media/54E8ADF757555A52085AEE574A32ACC9.png" width="0" height="0" align="bottom"></img></a></markup>.
+Fig. 1: PearsonIVArea (<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AB6102027499324E523E96136FF3C0DD"><img src="../media/AB6102027499324E523E96136FF3C0DD.png" width="37" height="10" align="baseline"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#C724389FFE6B3A10BC95CFEF87A3B944"><img src="../media/C724389FFE6B3A10BC95CFEF87A3B944.png" width="34" height="14" align="bottom"></img></a></markup>) with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#780EBFDF8A9057973FA4F3032F37D25D"><img src="../media/780EBFDF8A9057973FA4F3032F37D25D.png" width="46" height="10" align="baseline"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1B4F70B3F589153915CC9B58DB8D6BDF"><img src="../media/1B4F70B3F589153915CC9B58DB8D6BDF.png" width="41" height="13" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#8ECE6C354B3A72892A5120F17B9D621D"><img src="../media/8ECE6C354B3A72892A5120F17B9D621D.png" width="38" height="10" align="baseline"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#E10AE056A4A4A6AC167C50D28738BA90"><img src="../media/E10AE056A4A4A6AC167C50D28738BA90.png" width="41" height="10" align="baseline"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FDBDF20E6A4B09056F54ABAB1160D82D"><img src="../media/FDBDF20E6A4B09056F54ABAB1160D82D.png" width="40" height="13" align="middle"></img></a></markup>, and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#7D45989AA9B7FBE8E8D56A6EB8E1AD9A"><img src="../media/7D45989AA9B7FBE8E8D56A6EB8E1AD9A.png" width="35" height="10" align="baseline"></img></a></markup> (green) or  <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FEF3D489D8611492E6DC67A4E1FF49D0"><img src="../media/FEF3D489D8611492E6DC67A4E1FF49D0.png" width="35" height="10" align="baseline"></img></a></markup> (orange), respectively. Note that despite the fact that <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1B4F70B3F589153915CC9B58DB8D6BDF"><img src="../media/1B4F70B3F589153915CC9B58DB8D6BDF.png" width="41" height="13" align="middle"></img></a></markup> is equal for both functions, the locations of the maxima are quite different. Only if <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#7D45989AA9B7FBE8E8D56A6EB8E1AD9A"><img src="../media/7D45989AA9B7FBE8E8D56A6EB8E1AD9A.png" width="35" height="10" align="baseline"></img></a></markup>, the location of the maximum function value is  <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#C2DFF8392683D30506A94FD4E11DA91C"><img src="../media/C2DFF8392683D30506A94FD4E11DA91C.png" width="13" height="11" align="bottom"></img></a></markup>.
 </para>
 <markup><hr/></markup>
 
@@ -297,7 +297,7 @@ Literature:
 <para>
 This function evaluates a sum of Voigt terms, plus a baseline polynomial with one or multiple terms, according to
 </para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9A89BB17F4F3C429F40E369B054811A7"><img src="../media/9A89BB17F4F3C429F40E369B054811A7.png" width="21" height="0"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#3C75D68AD0FD355657D10EEE39F5CCFC"><img src="../media/3C75D68AD0FD355657D10EEE39F5CCFC.png" width="652" height="17"></img></a></markup>
 
 <para>
 in which:
@@ -308,49 +308,49 @@ in which:
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FB4DEDB06F4E5B5B9983082E188D8782"><img src="../media/FB4DEDB06F4E5B5B9983082E188D8782.png" width="2" height="0" align="bottom"></img></a></markup> are the areas under the Voigt terms
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#BABA259A1B076BE1F68B876321A9825B"><img src="../media/BABA259A1B076BE1F68B876321A9825B.png" width="61" height="15" align="bottom"></img></a></markup> are the areas under the Voigt terms
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9E0C61DB886B4D6625B30888D802B302"><img src="../media/9E0C61DB886B4D6625B30888D802B302.png" width="2" height="0" align="bottom"></img></a></markup> are the locations of the Voigt terms
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#07F41FF5FFDEBDFBAF366D164F08B861"><img src="../media/07F41FF5FFDEBDFBAF366D164F08B861.png" width="64" height="11" align="bottom"></img></a></markup> are the locations of the Voigt terms
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#413213270BACD36A4A6758B1BAC447AD"><img src="../media/413213270BACD36A4A6758B1BAC447AD.png" width="1" height="0" align="bottom"></img></a></markup> are the widths of the Gaussian part of the Voigt terms
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#EBB51A0217C999F86F8D9A6D70D50E73"><img src="../media/EBB51A0217C999F86F8D9A6D70D50E73.png" width="60" height="11" align="bottom"></img></a></markup> are the widths of the Gaussian part of the Voigt terms
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4E7718216B742D79242339542B9DA053"><img src="../media/4E7718216B742D79242339542B9DA053.png" width="1" height="0" align="bottom"></img></a></markup> are the parameters of the Lorentzian part of the Voigt terms
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B1E89B4635C0CB65581647FBF2860BDA"><img src="../media/B1E89B4635C0CB65581647FBF2860BDA.png" width="54" height="11" align="bottom"></img></a></markup> are the parameters of the Lorentzian part of the Voigt terms
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#313CE41EAD077CC05F86EB817979B651"><img src="../media/313CE41EAD077CC05F86EB817979B651.png" width="1" height="0" align="bottom"></img></a></markup> are the coefficients of the baseline polynomial of order  <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1524114A576378DC1D43A85F23D2A753"><img src="../media/1524114A576378DC1D43A85F23D2A753.png" width="0" height="0" align="baseline"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#366F28926F3F7E49F4468E17F33EBAAE"><img src="../media/366F28926F3F7E49F4468E17F33EBAAE.png" width="41" height="13" align="middle"></img></a></markup> are the coefficients of the baseline polynomial of order  <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9FD34652DC94880E880464BC7F6D7026"><img src="../media/9FD34652DC94880E880464BC7F6D7026.png" width="13" height="6" align="baseline"></img></a></markup>
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4EF835FC99A8EA2F77EC0547660B4997"><img src="../media/4EF835FC99A8EA2F77EC0547660B4997.png" width="0" height="0" align="baseline"></img></a></markup> is the number of Voigt terms (<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#82F0E41C75F4684DF9D917F18AB1BCF7"><img src="../media/82F0E41C75F4684DF9D917F18AB1BCF7.png" width="1" height="0" align="bottom"></img></a></markup>)
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5F0117272C7B6CF7327019290D7B40D1"><img src="../media/5F0117272C7B6CF7327019290D7B40D1.png" width="9" height="6" align="baseline"></img></a></markup> is the number of Voigt terms (<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9B8B6C64A76E824D6136C1263AB24E5C"><img src="../media/9B8B6C64A76E824D6136C1263AB24E5C.png" width="37" height="13" align="middle"></img></a></markup>)
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1524114A576378DC1D43A85F23D2A753"><img src="../media/1524114A576378DC1D43A85F23D2A753.png" width="0" height="0" align="baseline"></img></a></markup> is the order of the baseline polynomial (set <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#542521E9C0C5C7B36CA39A384A75C928"><img src="../media/542521E9C0C5C7B36CA39A384A75C928.png" width="1" height="0" align="bottom"></img></a></markup> to disable the baseline polynomial)
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9FD34652DC94880E880464BC7F6D7026"><img src="../media/9FD34652DC94880E880464BC7F6D7026.png" width="13" height="6" align="baseline"></img></a></markup> is the order of the baseline polynomial (set <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#117EC9FA36BFDEB4C44D929405E658BC"><img src="../media/117EC9FA36BFDEB4C44D929405E658BC.png" width="52" height="12" align="middle"></img></a></markup> to disable the baseline polynomial)
 </para>
 </listItem>
 </list>
@@ -362,24 +362,24 @@ The Voigt function is a convolution of a Gaussian function and a Lorentzian func
 <para>
 Voigt:
 </para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#435D01684104AECF848B018E9F66626C"><img src="../media/435D01684104AECF848B018E9F66626C.png" width="6" height="1"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#036496E5F9D126DA5FF40ED7F0FA477B"><img src="../media/036496E5F9D126DA5FF40ED7F0FA477B.png" width="191" height="34"></img></a></markup>
 
 <para>
 Gauss:
 </para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#410E5CCC9AF628664CEE670037DE1AEC"><img src="../media/410E5CCC9AF628664CEE670037DE1AEC.png" width="6" height="1"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9CF3A0730421C31863EE67C5820278F2"><img src="../media/9CF3A0730421C31863EE67C5820278F2.png" width="197" height="42"></img></a></markup>
 
 <para>
 Lorentzian:
 </para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#167CB0843887D2908EF75F498BBD411C"><img src="../media/167CB0843887D2908EF75F498BBD411C.png" width="4" height="1"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#7F3143178A21FB3657D173D8DBA6F7BC"><img src="../media/7F3143178A21FB3657D173D8DBA6F7BC.png" width="132" height="37"></img></a></markup>
 
 <para>
-The number of Voigt terms <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4EF835FC99A8EA2F77EC0547660B4997"><img src="../media/4EF835FC99A8EA2F77EC0547660B4997.png" width="0" height="0" align="baseline"></img></a></markup> and the order of the baseline polynomial <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1524114A576378DC1D43A85F23D2A753"><img src="../media/1524114A576378DC1D43A85F23D2A753.png" width="0" height="0" align="baseline"></img></a></markup> can be changed by double-clicking on the fit function. The default values are <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AB6102027499324E523E96136FF3C0DD"><img src="../media/AB6102027499324E523E96136FF3C0DD.png" width="1" height="0" align="baseline"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#542521E9C0C5C7B36CA39A384A75C928"><img src="../media/542521E9C0C5C7B36CA39A384A75C928.png" width="1" height="0" align="bottom"></img></a></markup>.
+The number of Voigt terms <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5F0117272C7B6CF7327019290D7B40D1"><img src="../media/5F0117272C7B6CF7327019290D7B40D1.png" width="9" height="6" align="baseline"></img></a></markup> and the order of the baseline polynomial <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9FD34652DC94880E880464BC7F6D7026"><img src="../media/9FD34652DC94880E880464BC7F6D7026.png" width="13" height="6" align="baseline"></img></a></markup> can be changed by double-clicking on the fit function. The default values are <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AB6102027499324E523E96136FF3C0DD"><img src="../media/AB6102027499324E523E96136FF3C0DD.png" width="37" height="10" align="baseline"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#117EC9FA36BFDEB4C44D929405E658BC"><img src="../media/117EC9FA36BFDEB4C44D929405E658BC.png" width="52" height="12" align="middle"></img></a></markup>.
 </para>
 
 <para>
-The domain of the function is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FB4DE268FCBAFA43EB96F2668F852D86"><img src="../media/FB4DE268FCBAFA43EB96F2668F852D86.png" width="3" height="0" align="bottom"></img></a></markup>.
+The domain of the function is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#728CA8EFFEF65F08F2DE8C7D7FA29D38"><img src="../media/728CA8EFFEF65F08F2DE8C7D7FA29D38.png" width="90" height="13" align="middle"></img></a></markup>.
 </para>
 
 <para>
@@ -387,7 +387,7 @@ The domain of the function is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB
 </para>
 
 <para>
-Fig. 1: VoigtArea (<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AB6102027499324E523E96136FF3C0DD"><img src="../media/AB6102027499324E523E96136FF3C0DD.png" width="1" height="0" align="baseline"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#27F4FE01705E8CE801E4F68D69F87349"><img src="../media/27F4FE01705E8CE801E4F68D69F87349.png" width="1" height="0" align="baseline"></img></a></markup>) with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#CC81461A654A1032444650BF3C1D9958"><img src="../media/CC81461A654A1032444650BF3C1D9958.png" width="1" height="0" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#A2B3EBE2172F5029BE9B965F09F502F3"><img src="../media/A2B3EBE2172F5029BE9B965F09F502F3.png" width="1" height="0" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5EC121586E5283B42A4443304CE8253A"><img src="../media/5EC121586E5283B42A4443304CE8253A.png" width="1" height="0" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#8F6EC133B79FEC27173D19C1A810AF9C"><img src="../media/8F6EC133B79FEC27173D19C1A810AF9C.png" width="1" height="0" align="bottom"></img></a></markup>, and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1680E9074FBFF79D1CF0660515A58937"><img src="../media/1680E9074FBFF79D1CF0660515A58937.png" width="1" height="0" align="bottom"></img></a></markup> (green) or  <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B44FD405502CE480160C38AF6EFF469D"><img src="../media/B44FD405502CE480160C38AF6EFF469D.png" width="1" height="0" align="bottom"></img></a></markup> (orange), respectively. Note that in the limit <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B44FD405502CE480160C38AF6EFF469D"><img src="../media/B44FD405502CE480160C38AF6EFF469D.png" width="1" height="0" align="bottom"></img></a></markup> the Gauss function is returned.
+Fig. 1: VoigtArea (<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AB6102027499324E523E96136FF3C0DD"><img src="../media/AB6102027499324E523E96136FF3C0DD.png" width="37" height="10" align="baseline"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#27F4FE01705E8CE801E4F68D69F87349"><img src="../media/27F4FE01705E8CE801E4F68D69F87349.png" width="41" height="10" align="baseline"></img></a></markup>) with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#BD82927758259B89917E405ADE25EFED"><img src="../media/BD82927758259B89917E405ADE25EFED.png" width="52" height="13" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D68C07A809BC47747AD25C405B9D95EA"><img src="../media/D68C07A809BC47747AD25C405B9D95EA.png" width="46" height="13" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#0092134760F193C3CEA5E4999B1058BA"><img src="../media/0092134760F193C3CEA5E4999B1058BA.png" width="44" height="13" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FDBDF20E6A4B09056F54ABAB1160D82D"><img src="../media/FDBDF20E6A4B09056F54ABAB1160D82D.png" width="40" height="13" align="middle"></img></a></markup>, and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#F0067BF17CADABB2A2324681E74222C5"><img src="../media/F0067BF17CADABB2A2324681E74222C5.png" width="41" height="14" align="bottom"></img></a></markup> (green) or  <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#0A789464BFF1E7BC7D1CA2A1641E30A6"><img src="../media/0A789464BFF1E7BC7D1CA2A1641E30A6.png" width="41" height="14" align="bottom"></img></a></markup> (orange), respectively. Note that in the limit <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#0A789464BFF1E7BC7D1CA2A1641E30A6"><img src="../media/0A789464BFF1E7BC7D1CA2A1641E30A6.png" width="41" height="14" align="bottom"></img></a></markup> the Gauss function is returned.
 </para>
 <markup><hr/></markup></content>
 </section>
@@ -400,7 +400,7 @@ Fig. 1: VoigtArea (<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AB6
 <para>
 This function evaluates a sum of Voigt terms, plus a baseline polynomial with one or multiple terms, according to
 </para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#BA1395612E033473A40D1F96D0ECE2AA"><img src="../media/BA1395612E033473A40D1F96D0ECE2AA.png" width="21" height="0"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AB6A3FFF0543DD99ACE7A926C133169E"><img src="../media/AB6A3FFF0543DD99ACE7A926C133169E.png" width="651" height="17"></img></a></markup>
 
 <para>
 in which:
@@ -411,49 +411,49 @@ in which:
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FB4DEDB06F4E5B5B9983082E188D8782"><img src="../media/FB4DEDB06F4E5B5B9983082E188D8782.png" width="2" height="0" align="bottom"></img></a></markup> are the areas under the Voigt terms
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#BABA259A1B076BE1F68B876321A9825B"><img src="../media/BABA259A1B076BE1F68B876321A9825B.png" width="61" height="15" align="bottom"></img></a></markup> are the areas under the Voigt terms
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9E0C61DB886B4D6625B30888D802B302"><img src="../media/9E0C61DB886B4D6625B30888D802B302.png" width="2" height="0" align="bottom"></img></a></markup> are the locations of the Voigt terms
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#07F41FF5FFDEBDFBAF366D164F08B861"><img src="../media/07F41FF5FFDEBDFBAF366D164F08B861.png" width="64" height="11" align="bottom"></img></a></markup> are the locations of the Voigt terms
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#413213270BACD36A4A6758B1BAC447AD"><img src="../media/413213270BACD36A4A6758B1BAC447AD.png" width="1" height="0" align="bottom"></img></a></markup> are the approximate half-width-half-maximum (HWHM) values of the peaks
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#EBB51A0217C999F86F8D9A6D70D50E73"><img src="../media/EBB51A0217C999F86F8D9A6D70D50E73.png" width="60" height="11" align="bottom"></img></a></markup> are the approximate half-width-half-maximum (HWHM) values of the peaks
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#27E607BBE8B68BF8E2686EE095688FB6"><img src="../media/27E607BBE8B68BF8E2686EE095688FB6.png" width="1" height="0" align="bottom"></img></a></markup> are the mixing parameters (range: 0..1) that determine the Lorentzian'ness or Gauss'ness of the terms
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#E7BA42A575D4D42E5D83ECE42FB3114A"><img src="../media/E7BA42A575D4D42E5D83ECE42FB3114A.png" width="53" height="11" align="bottom"></img></a></markup> are the mixing parameters (range: 0..1) that determine the Lorentzian'ness or Gauss'ness of the terms
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#313CE41EAD077CC05F86EB817979B651"><img src="../media/313CE41EAD077CC05F86EB817979B651.png" width="1" height="0" align="bottom"></img></a></markup> are the coefficients of the background polynomial of order  <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1524114A576378DC1D43A85F23D2A753"><img src="../media/1524114A576378DC1D43A85F23D2A753.png" width="0" height="0" align="baseline"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#366F28926F3F7E49F4468E17F33EBAAE"><img src="../media/366F28926F3F7E49F4468E17F33EBAAE.png" width="41" height="13" align="middle"></img></a></markup> are the coefficients of the background polynomial of order  <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9FD34652DC94880E880464BC7F6D7026"><img src="../media/9FD34652DC94880E880464BC7F6D7026.png" width="13" height="6" align="baseline"></img></a></markup>
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4EF835FC99A8EA2F77EC0547660B4997"><img src="../media/4EF835FC99A8EA2F77EC0547660B4997.png" width="0" height="0" align="baseline"></img></a></markup> is the number of Voigt terms (<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#82F0E41C75F4684DF9D917F18AB1BCF7"><img src="../media/82F0E41C75F4684DF9D917F18AB1BCF7.png" width="1" height="0" align="bottom"></img></a></markup>)
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5F0117272C7B6CF7327019290D7B40D1"><img src="../media/5F0117272C7B6CF7327019290D7B40D1.png" width="9" height="6" align="baseline"></img></a></markup> is the number of Voigt terms (<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9B8B6C64A76E824D6136C1263AB24E5C"><img src="../media/9B8B6C64A76E824D6136C1263AB24E5C.png" width="37" height="13" align="middle"></img></a></markup>)
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1524114A576378DC1D43A85F23D2A753"><img src="../media/1524114A576378DC1D43A85F23D2A753.png" width="0" height="0" align="baseline"></img></a></markup> is the order of the baseline polynomial (set <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#542521E9C0C5C7B36CA39A384A75C928"><img src="../media/542521E9C0C5C7B36CA39A384A75C928.png" width="1" height="0" align="bottom"></img></a></markup> to disable the baseline polynomial)
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9FD34652DC94880E880464BC7F6D7026"><img src="../media/9FD34652DC94880E880464BC7F6D7026.png" width="13" height="6" align="baseline"></img></a></markup> is the order of the baseline polynomial (set <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#117EC9FA36BFDEB4C44D929405E658BC"><img src="../media/117EC9FA36BFDEB4C44D929405E658BC.png" width="52" height="12" align="middle"></img></a></markup> to disable the baseline polynomial)
 </para>
 </listItem>
 </list>
@@ -465,34 +465,34 @@ The original definition of the Voigt function is a convolution of a Gaussian fun
 <para>
 Voigt:
 </para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#3A176C02031E6054DF7344BC08199417"><img src="../media/3A176C02031E6054DF7344BC08199417.png" width="7" height="1"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FF606944DCC8E456F85E7CBAAA92AE36"><img src="../media/FF606944DCC8E456F85E7CBAAA92AE36.png" width="221" height="34"></img></a></markup>
 
 <para>
 Gauss:
 </para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#325198B92E9E4CEF25178E901BB844B6"><img src="../media/325198B92E9E4CEF25178E901BB844B6.png" width="6" height="1"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#E306FB781D68C595902332B8DD83E6EB"><img src="../media/E306FB781D68C595902332B8DD83E6EB.png" width="195" height="42"></img></a></markup>
 
 <para>
 Lorentzian:
 </para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#167CB0843887D2908EF75F498BBD411C"><img src="../media/167CB0843887D2908EF75F498BBD411C.png" width="4" height="1"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#7F3143178A21FB3657D173D8DBA6F7BC"><img src="../media/7F3143178A21FB3657D173D8DBA6F7BC.png" width="132" height="37"></img></a></markup>
 
 <para>
-Here, another parametrization with the two parameters <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#02BCB35F4805CEDBEED7D1000F67E469"><img src="../media/02BCB35F4805CEDBEED7D1000F67E469.png" width="0" height="0" align="baseline"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#98C9E2ACBB135225D31FE686A7DF7994"><img src="../media/98C9E2ACBB135225D31FE686A7DF7994.png" width="0" height="0" align="baseline"></img></a></markup> is used. The new parameters are related to the original parameters <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#E1959F6663A0E4AE8CBF086F75128149"><img src="../media/E1959F6663A0E4AE8CBF086F75128149.png" width="0" height="0" align="bottom"></img></a></markup> by:
+Here, another parametrization with the two parameters <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#86A5523C08C79D94B27F18A4668E03AD"><img src="../media/86A5523C08C79D94B27F18A4668E03AD.png" width="11" height="6" align="baseline"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#6667EEA30A8FA26587CAC5C9E8E8A84B"><img src="../media/6667EEA30A8FA26587CAC5C9E8E8A84B.png" width="7" height="6" align="baseline"></img></a></markup> is used. The new parameters are related to the original parameters <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D08AE24F24CE8AE2FA98E95342A2D0EC"><img src="../media/D08AE24F24CE8AE2FA98E95342A2D0EC.png" width="23" height="10" align="bottom"></img></a></markup> by:
 </para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#EFECEC65D278B6DD2CD4DEA7DC751FDD"><img src="../media/EFECEC65D278B6DD2CD4DEA7DC751FDD.png" width="5" height="1"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#6650E46C7D1E69136DFB14D71CCC6822"><img src="../media/6650E46C7D1E69136DFB14D71CCC6822.png" width="176" height="39"></img></a></markup>
 
 <para>
-Parameter <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#02BCB35F4805CEDBEED7D1000F67E469"><img src="../media/02BCB35F4805CEDBEED7D1000F67E469.png" width="0" height="0" align="baseline"></img></a></markup> is the approximate HWHM of the peak, and parameter <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#98C9E2ACBB135225D31FE686A7DF7994"><img src="../media/98C9E2ACBB135225D31FE686A7DF7994.png" width="0" height="0" align="baseline"></img></a></markup> (<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#C1520393164D857C3200051F46034FE5"><img src="../media/C1520393164D857C3200051F46034FE5.png" width="1" height="0" align="bottom"></img></a></markup>) determines the ratio between <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#CBDA83410447038FFD43ADC8498E1108"><img src="../media/CBDA83410447038FFD43ADC8498E1108.png" width="0" height="0" align="baseline"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#74A19000A56F5ED4D4490B9BF3B39BE2"><img src="../media/74A19000A56F5ED4D4490B9BF3B39BE2.png" width="0" height="0" align="bottom"></img></a></markup>, i.e. whether the peak is more Lorentzian like (<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#7D45989AA9B7FBE8E8D56A6EB8E1AD9A"><img src="../media/7D45989AA9B7FBE8E8D56A6EB8E1AD9A.png" width="1" height="0" align="baseline"></img></a></markup>) or more Gauss like (<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#DDEB44D908C063A18FA269B180312873"><img src="../media/DDEB44D908C063A18FA269B180312873.png" width="1" height="0" align="baseline"></img></a></markup>).
+Parameter <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#86A5523C08C79D94B27F18A4668E03AD"><img src="../media/86A5523C08C79D94B27F18A4668E03AD.png" width="11" height="6" align="baseline"></img></a></markup> is the approximate HWHM of the peak, and parameter <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#6667EEA30A8FA26587CAC5C9E8E8A84B"><img src="../media/6667EEA30A8FA26587CAC5C9E8E8A84B.png" width="7" height="6" align="baseline"></img></a></markup> (<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#A793675E02376E5017B5A0F1CCCE404E"><img src="../media/A793675E02376E5017B5A0F1CCCE404E.png" width="59" height="16" align="bottom"></img></a></markup>) determines the ratio between <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#370CD7E513996157BD3A057A651757DF"><img src="../media/370CD7E513996157BD3A057A651757DF.png" width="9" height="6" align="baseline"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#3A94731BF74551B8E1D2F433B38EA40C"><img src="../media/3A94731BF74551B8E1D2F433B38EA40C.png" width="8" height="10" align="bottom"></img></a></markup>, i.e. whether the peak is more Lorentzian like (<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#7D45989AA9B7FBE8E8D56A6EB8E1AD9A"><img src="../media/7D45989AA9B7FBE8E8D56A6EB8E1AD9A.png" width="35" height="10" align="baseline"></img></a></markup>) or more Gauss like (<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#DDEB44D908C063A18FA269B180312873"><img src="../media/DDEB44D908C063A18FA269B180312873.png" width="35" height="10" align="baseline"></img></a></markup>).
 This parametrization is preferred over the original Voigt function if fitting with parameter constraints is performed.
 </para>
 
 <para>
-The number of Voigt terms <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4EF835FC99A8EA2F77EC0547660B4997"><img src="../media/4EF835FC99A8EA2F77EC0547660B4997.png" width="0" height="0" align="baseline"></img></a></markup> and the order of the baseline polynomial <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1524114A576378DC1D43A85F23D2A753"><img src="../media/1524114A576378DC1D43A85F23D2A753.png" width="0" height="0" align="baseline"></img></a></markup> can be changed by double-clicking on the fit function. The default values are <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AB6102027499324E523E96136FF3C0DD"><img src="../media/AB6102027499324E523E96136FF3C0DD.png" width="1" height="0" align="baseline"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#542521E9C0C5C7B36CA39A384A75C928"><img src="../media/542521E9C0C5C7B36CA39A384A75C928.png" width="1" height="0" align="bottom"></img></a></markup>.
+The number of Voigt terms <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5F0117272C7B6CF7327019290D7B40D1"><img src="../media/5F0117272C7B6CF7327019290D7B40D1.png" width="9" height="6" align="baseline"></img></a></markup> and the order of the baseline polynomial <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9FD34652DC94880E880464BC7F6D7026"><img src="../media/9FD34652DC94880E880464BC7F6D7026.png" width="13" height="6" align="baseline"></img></a></markup> can be changed by double-clicking on the fit function. The default values are <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AB6102027499324E523E96136FF3C0DD"><img src="../media/AB6102027499324E523E96136FF3C0DD.png" width="37" height="10" align="baseline"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#117EC9FA36BFDEB4C44D929405E658BC"><img src="../media/117EC9FA36BFDEB4C44D929405E658BC.png" width="52" height="12" align="middle"></img></a></markup>.
 </para>
 
 <para>
-The domain of the function is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FB4DE268FCBAFA43EB96F2668F852D86"><img src="../media/FB4DE268FCBAFA43EB96F2668F852D86.png" width="3" height="0" align="bottom"></img></a></markup>.
+The domain of the function is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#728CA8EFFEF65F08F2DE8C7D7FA29D38"><img src="../media/728CA8EFFEF65F08F2DE8C7D7FA29D38.png" width="90" height="13" align="middle"></img></a></markup>.
 </para>
 
 <para>
@@ -500,7 +500,7 @@ The domain of the function is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB
 </para>
 
 <para>
-Fig. 1: VoigtAreaParametrizationNu (<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AB6102027499324E523E96136FF3C0DD"><img src="../media/AB6102027499324E523E96136FF3C0DD.png" width="1" height="0" align="baseline"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#27F4FE01705E8CE801E4F68D69F87349"><img src="../media/27F4FE01705E8CE801E4F68D69F87349.png" width="1" height="0" align="baseline"></img></a></markup>) with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#CC81461A654A1032444650BF3C1D9958"><img src="../media/CC81461A654A1032444650BF3C1D9958.png" width="1" height="0" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#A2B3EBE2172F5029BE9B965F09F502F3"><img src="../media/A2B3EBE2172F5029BE9B965F09F502F3.png" width="1" height="0" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5EC121586E5283B42A4443304CE8253A"><img src="../media/5EC121586E5283B42A4443304CE8253A.png" width="1" height="0" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#8F6EC133B79FEC27173D19C1A810AF9C"><img src="../media/8F6EC133B79FEC27173D19C1A810AF9C.png" width="1" height="0" align="bottom"></img></a></markup>, and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#0A3BF8B3F70E03860BAB0586B2EDC461"><img src="../media/0A3BF8B3F70E03860BAB0586B2EDC461.png" width="1" height="0" align="bottom"></img></a></markup> (green) or  <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#8905C36269579DD778410A3C7DFEBFED"><img src="../media/8905C36269579DD778410A3C7DFEBFED.png" width="1" height="0" align="bottom"></img></a></markup> (orange), respectively. Note that in the limit <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#0A3BF8B3F70E03860BAB0586B2EDC461"><img src="../media/0A3BF8B3F70E03860BAB0586B2EDC461.png" width="1" height="0" align="bottom"></img></a></markup> the peak is a Lorentzian, in the limit of <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#8905C36269579DD778410A3C7DFEBFED"><img src="../media/8905C36269579DD778410A3C7DFEBFED.png" width="1" height="0" align="bottom"></img></a></markup> the peak is a Gaussian.
+Fig. 1: VoigtAreaParametrizationNu (<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AB6102027499324E523E96136FF3C0DD"><img src="../media/AB6102027499324E523E96136FF3C0DD.png" width="37" height="10" align="baseline"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#27F4FE01705E8CE801E4F68D69F87349"><img src="../media/27F4FE01705E8CE801E4F68D69F87349.png" width="41" height="10" align="baseline"></img></a></markup>) with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#BD82927758259B89917E405ADE25EFED"><img src="../media/BD82927758259B89917E405ADE25EFED.png" width="52" height="13" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D68C07A809BC47747AD25C405B9D95EA"><img src="../media/D68C07A809BC47747AD25C405B9D95EA.png" width="46" height="13" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#0092134760F193C3CEA5E4999B1058BA"><img src="../media/0092134760F193C3CEA5E4999B1058BA.png" width="44" height="13" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FDBDF20E6A4B09056F54ABAB1160D82D"><img src="../media/FDBDF20E6A4B09056F54ABAB1160D82D.png" width="40" height="13" align="middle"></img></a></markup>, and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#0CB5148E0C3ACCC3CEF2B59FD985B9D4"><img src="../media/0CB5148E0C3ACCC3CEF2B59FD985B9D4.png" width="41" height="13" align="middle"></img></a></markup> (green) or  <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4D88C8B511DC22A831CC2644CEEDD934"><img src="../media/4D88C8B511DC22A831CC2644CEEDD934.png" width="41" height="13" align="middle"></img></a></markup> (orange), respectively. Note that in the limit <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#0CB5148E0C3ACCC3CEF2B59FD985B9D4"><img src="../media/0CB5148E0C3ACCC3CEF2B59FD985B9D4.png" width="41" height="13" align="middle"></img></a></markup> the peak is a Lorentzian, in the limit of <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4D88C8B511DC22A831CC2644CEEDD934"><img src="../media/4D88C8B511DC22A831CC2644CEEDD934.png" width="41" height="13" align="middle"></img></a></markup> the peak is a Gaussian.
 </para>
 <markup><hr/></markup></content>
 </section>

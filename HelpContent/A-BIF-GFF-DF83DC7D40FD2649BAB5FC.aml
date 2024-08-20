@@ -18,7 +18,7 @@ Previous section: <link xlink:href="C217D5E95E222A9979E190190DB7F706">Built-in f
 <para>
 This function evaluates an exponential decay with one or multiple terms according to
 </para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1E0784020A18BAE367E4D9948B6EB5FE"><img src="../media/1E0784020A18BAE367E4D9948B6EB5FE.png" width="10" height="1"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#CFF29EFC6507F9DC8A8DDC1884660A3B"><img src="../media/CFF29EFC6507F9DC8A8DDC1884660A3B.png" width="312" height="37"></img></a></markup>
 
 <para>
 in which:
@@ -29,38 +29,38 @@ in which:
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B57AE20FABC41FEA4221F60B7000D7AF"><img src="../media/B57AE20FABC41FEA4221F60B7000D7AF.png" width="0" height="0" align="bottom"></img></a></markup> is the value of the base line (value of y for <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#67D56B69A1CF3796571A791B30921BA5"><img src="../media/67D56B69A1CF3796571A791B30921BA5.png" width="1" height="0" align="baseline"></img></a></markup> )
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#54AF930CA32CEFBC08DCD27186250A38"><img src="../media/54AF930CA32CEFBC08DCD27186250A38.png" width="13" height="10" align="bottom"></img></a></markup> is the value of the base line (value of y for <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D4C08CAD75F7C8AE9EF2CA3274DDFCFF"><img src="../media/D4C08CAD75F7C8AE9EF2CA3274DDFCFF.png" width="47" height="6" align="baseline"></img></a></markup> )
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FF0EAA0A84521EBB01CD0129382B586C"><img src="../media/FF0EAA0A84521EBB01CD0129382B586C.png" width="0" height="0" align="bottom"></img></a></markup> .. <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AA087D8F2B2D4D686BA02561A90CD0E8"><img src="../media/AA087D8F2B2D4D686BA02561A90CD0E8.png" width="0" height="0" align="bottom"></img></a></markup> are the prefactors of the exponential decay terms
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#A9D312440B63B2918F3F49AE3FDB409A"><img src="../media/A9D312440B63B2918F3F49AE3FDB409A.png" width="14" height="11" align="bottom"></img></a></markup> .. <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B6A953C3ECD6FB5BCFAAAA302939CFDF"><img src="../media/B6A953C3ECD6FB5BCFAAAA302939CFDF.png" width="28" height="11" align="bottom"></img></a></markup> are the prefactors of the exponential decay terms
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FAD57F95E94EBD603B93207643B5F397"><img src="../media/FAD57F95E94EBD603B93207643B5F397.png" width="0" height="0" align="bottom"></img></a></markup> ... <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#989877226FE87096DEBEE069643FCB6B"><img src="../media/989877226FE87096DEBEE069643FCB6B.png" width="0" height="0" align="bottom"></img></a></markup> are the characteristic times
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#2DDD32A131C535DD44A05308DD86B4C2"><img src="../media/2DDD32A131C535DD44A05308DD86B4C2.png" width="12" height="11" align="bottom"></img></a></markup> ... <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#216684A9BBD53B36AC5EF0AC8628CADF"><img src="../media/216684A9BBD53B36AC5EF0AC8628CADF.png" width="27" height="11" align="bottom"></img></a></markup> are the characteristic times
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4EF835FC99A8EA2F77EC0547660B4997"><img src="../media/4EF835FC99A8EA2F77EC0547660B4997.png" width="0" height="0" align="baseline"></img></a></markup> is the number of exponential terms
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5F0117272C7B6CF7327019290D7B40D1"><img src="../media/5F0117272C7B6CF7327019290D7B40D1.png" width="9" height="6" align="baseline"></img></a></markup> is the number of exponential terms
 </para>
 </listItem>
 </list>
 
 <para>
-The number of terms <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4EF835FC99A8EA2F77EC0547660B4997"><img src="../media/4EF835FC99A8EA2F77EC0547660B4997.png" width="0" height="0" align="baseline"></img></a></markup> can be changed by double-clicking on the fit function. The default value is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AB6102027499324E523E96136FF3C0DD"><img src="../media/AB6102027499324E523E96136FF3C0DD.png" width="1" height="0" align="baseline"></img></a></markup>.
+The number of terms <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5F0117272C7B6CF7327019290D7B40D1"><img src="../media/5F0117272C7B6CF7327019290D7B40D1.png" width="9" height="6" align="baseline"></img></a></markup> can be changed by double-clicking on the fit function. The default value is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AB6102027499324E523E96136FF3C0DD"><img src="../media/AB6102027499324E523E96136FF3C0DD.png" width="37" height="10" align="baseline"></img></a></markup>.
 </para>
 
 <para>
-The domain of the function is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FB4DE268FCBAFA43EB96F2668F852D86"><img src="../media/FB4DE268FCBAFA43EB96F2668F852D86.png" width="3" height="0" align="bottom"></img></a></markup>.
+The domain of the function is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#728CA8EFFEF65F08F2DE8C7D7FA29D38"><img src="../media/728CA8EFFEF65F08F2DE8C7D7FA29D38.png" width="90" height="13" align="middle"></img></a></markup>.
 </para>
 
 <para>
@@ -68,7 +68,7 @@ The domain of the function is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB
 </para>
 
 <para>
-Fig. 1: Exponential decay with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#466944A46C40F675AD1E2EAC186A977E"><img src="../media/466944A46C40F675AD1E2EAC186A977E.png" width="1" height="0" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1A5317EE8069F3FB30BE7C67AD6A41AB"><img src="../media/1A5317EE8069F3FB30BE7C67AD6A41AB.png" width="1" height="0" align="bottom"></img></a></markup>, and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#2B6608A39C699AC5BBC70E7BFBE0543D"><img src="../media/2B6608A39C699AC5BBC70E7BFBE0543D.png" width="1" height="0" align="bottom"></img></a></markup>.
+Fig. 1: Exponential decay with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#C48549B03BA53AE5E36F79063777C63F"><img src="../media/C48549B03BA53AE5E36F79063777C63F.png" width="40" height="14" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B1DFD8E0433494D846D6B7524E214664"><img src="../media/B1DFD8E0433494D846D6B7524E214664.png" width="41" height="13" align="middle"></img></a></markup>, and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#21AAB344C2EC14C0E3F444B27342BC86"><img src="../media/21AAB344C2EC14C0E3F444B27342BC86.png" width="40" height="13" align="middle"></img></a></markup>.
 </para>
 </content>
 </section>
@@ -81,7 +81,7 @@ Fig. 1: Exponential decay with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACA
 <para>
 This function evaluates an exponential equilibration process with one or multiple terms according to
 </para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FC3AC69628E45A75FE6424F443CD16E7"><img src="../media/FC3AC69628E45A75FE6424F443CD16E7.png" width="18" height="2"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D9F4412A24A6AFA0B68702194339A5DE"><img src="../media/D9F4412A24A6AFA0B68702194339A5DE.png" width="553" height="64"></img></a></markup>
 
 <para>
 in which:
@@ -92,45 +92,45 @@ in which:
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B57AE20FABC41FEA4221F60B7000D7AF"><img src="../media/B57AE20FABC41FEA4221F60B7000D7AF.png" width="0" height="0" align="bottom"></img></a></markup> is the starting value (and the value for <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#206BB9335104921949ED088E6CECB398"><img src="../media/206BB9335104921949ED088E6CECB398.png" width="1" height="0" align="bottom"></img></a></markup>)
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#54AF930CA32CEFBC08DCD27186250A38"><img src="../media/54AF930CA32CEFBC08DCD27186250A38.png" width="13" height="10" align="bottom"></img></a></markup> is the starting value (and the value for <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#29A82B6671AB44EB5B0C91E09086611E"><img src="../media/29A82B6671AB44EB5B0C91E09086611E.png" width="43" height="13" align="middle"></img></a></markup>)
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B9300C4A081A9E6FD0B6FC1CD1C4EFAB"><img src="../media/B9300C4A081A9E6FD0B6FC1CD1C4EFAB.png" width="0" height="0" align="bottom"></img></a></markup> is the starting point of the equilibration process
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#DC03BA1D1482720BE1FEDC0229835F0E"><img src="../media/DC03BA1D1482720BE1FEDC0229835F0E.png" width="14" height="11" align="bottom"></img></a></markup> is the starting point of the equilibration process
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FF0EAA0A84521EBB01CD0129382B586C"><img src="../media/FF0EAA0A84521EBB01CD0129382B586C.png" width="0" height="0" align="bottom"></img></a></markup> .. <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AA087D8F2B2D4D686BA02561A90CD0E8"><img src="../media/AA087D8F2B2D4D686BA02561A90CD0E8.png" width="0" height="0" align="bottom"></img></a></markup> are the prefactors of the exponential equilibration terms
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#A9D312440B63B2918F3F49AE3FDB409A"><img src="../media/A9D312440B63B2918F3F49AE3FDB409A.png" width="14" height="11" align="bottom"></img></a></markup> .. <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B6A953C3ECD6FB5BCFAAAA302939CFDF"><img src="../media/B6A953C3ECD6FB5BCFAAAA302939CFDF.png" width="28" height="11" align="bottom"></img></a></markup> are the prefactors of the exponential equilibration terms
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FAD57F95E94EBD603B93207643B5F397"><img src="../media/FAD57F95E94EBD603B93207643B5F397.png" width="0" height="0" align="bottom"></img></a></markup> ... <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#989877226FE87096DEBEE069643FCB6B"><img src="../media/989877226FE87096DEBEE069643FCB6B.png" width="0" height="0" align="bottom"></img></a></markup> are the characteristic times
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#2DDD32A131C535DD44A05308DD86B4C2"><img src="../media/2DDD32A131C535DD44A05308DD86B4C2.png" width="12" height="11" align="bottom"></img></a></markup> ... <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#216684A9BBD53B36AC5EF0AC8628CADF"><img src="../media/216684A9BBD53B36AC5EF0AC8628CADF.png" width="27" height="11" align="bottom"></img></a></markup> are the characteristic times
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4EF835FC99A8EA2F77EC0547660B4997"><img src="../media/4EF835FC99A8EA2F77EC0547660B4997.png" width="0" height="0" align="baseline"></img></a></markup> is the number of exponential terms
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5F0117272C7B6CF7327019290D7B40D1"><img src="../media/5F0117272C7B6CF7327019290D7B40D1.png" width="9" height="6" align="baseline"></img></a></markup> is the number of exponential terms
 </para>
 </listItem>
 </list>
 
 <para>
-The number of terms <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4EF835FC99A8EA2F77EC0547660B4997"><img src="../media/4EF835FC99A8EA2F77EC0547660B4997.png" width="0" height="0" align="baseline"></img></a></markup> can be changed by double-clicking on the fit function. The default value is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AB6102027499324E523E96136FF3C0DD"><img src="../media/AB6102027499324E523E96136FF3C0DD.png" width="1" height="0" align="baseline"></img></a></markup>.
+The number of terms <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5F0117272C7B6CF7327019290D7B40D1"><img src="../media/5F0117272C7B6CF7327019290D7B40D1.png" width="9" height="6" align="baseline"></img></a></markup> can be changed by double-clicking on the fit function. The default value is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AB6102027499324E523E96136FF3C0DD"><img src="../media/AB6102027499324E523E96136FF3C0DD.png" width="37" height="10" align="baseline"></img></a></markup>.
 </para>
 
 <para>
-The domain of the function is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FB4DE268FCBAFA43EB96F2668F852D86"><img src="../media/FB4DE268FCBAFA43EB96F2668F852D86.png" width="3" height="0" align="bottom"></img></a></markup>.
+The domain of the function is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#728CA8EFFEF65F08F2DE8C7D7FA29D38"><img src="../media/728CA8EFFEF65F08F2DE8C7D7FA29D38.png" width="90" height="13" align="middle"></img></a></markup>.
 </para>
 
 <para>
@@ -138,7 +138,7 @@ The domain of the function is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB
 </para>
 
 <para>
-Fig. 1: Exponential equilibration with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#466944A46C40F675AD1E2EAC186A977E"><img src="../media/466944A46C40F675AD1E2EAC186A977E.png" width="1" height="0" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1A5317EE8069F3FB30BE7C67AD6A41AB"><img src="../media/1A5317EE8069F3FB30BE7C67AD6A41AB.png" width="1" height="0" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#A2A3CEAE4C04312C349C7B191848BA50"><img src="../media/A2A3CEAE4C04312C349C7B191848BA50.png" width="1" height="0" align="bottom"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#2B6608A39C699AC5BBC70E7BFBE0543D"><img src="../media/2B6608A39C699AC5BBC70E7BFBE0543D.png" width="1" height="0" align="bottom"></img></a></markup>.
+Fig. 1: Exponential equilibration with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#C48549B03BA53AE5E36F79063777C63F"><img src="../media/C48549B03BA53AE5E36F79063777C63F.png" width="40" height="14" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B1DFD8E0433494D846D6B7524E214664"><img src="../media/B1DFD8E0433494D846D6B7524E214664.png" width="41" height="13" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#C42266EA2173A7E8E2E502084FADF965"><img src="../media/C42266EA2173A7E8E2E502084FADF965.png" width="42" height="13" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#21AAB344C2EC14C0E3F444B27342BC86"><img src="../media/21AAB344C2EC14C0E3F444B27342BC86.png" width="40" height="13" align="middle"></img></a></markup>.
 </para>
 </content>
 </section>
@@ -151,7 +151,7 @@ Fig. 1: Exponential equilibration with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-
 <para>
 This function evaluates an exponential growth with one or multiple terms according to
 </para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#64619E29FB2C979BB02D677CDD43EF06"><img src="../media/64619E29FB2C979BB02D677CDD43EF06.png" width="10" height="1"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#524F78CA2347C20AF581A366008ABEF4"><img src="../media/524F78CA2347C20AF581A366008ABEF4.png" width="303" height="37"></img></a></markup>
 
 <para>
 in which:
@@ -162,38 +162,38 @@ in which:
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B57AE20FABC41FEA4221F60B7000D7AF"><img src="../media/B57AE20FABC41FEA4221F60B7000D7AF.png" width="0" height="0" align="bottom"></img></a></markup> is the value of the base line (value of y for <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B29D525FF315EB20BAC81AD4CD7696E4"><img src="../media/B29D525FF315EB20BAC81AD4CD7696E4.png" width="1" height="0" align="bottom"></img></a></markup> )
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#54AF930CA32CEFBC08DCD27186250A38"><img src="../media/54AF930CA32CEFBC08DCD27186250A38.png" width="13" height="10" align="bottom"></img></a></markup> is the value of the base line (value of y for <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#349C9D52842AB1BF06014EE278490FFB"><img src="../media/349C9D52842AB1BF06014EE278490FFB.png" width="59" height="11" align="middle"></img></a></markup> )
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FF0EAA0A84521EBB01CD0129382B586C"><img src="../media/FF0EAA0A84521EBB01CD0129382B586C.png" width="0" height="0" align="bottom"></img></a></markup> .. <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AA087D8F2B2D4D686BA02561A90CD0E8"><img src="../media/AA087D8F2B2D4D686BA02561A90CD0E8.png" width="0" height="0" align="bottom"></img></a></markup> are the prefactors of the exponential terms
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#A9D312440B63B2918F3F49AE3FDB409A"><img src="../media/A9D312440B63B2918F3F49AE3FDB409A.png" width="14" height="11" align="bottom"></img></a></markup> .. <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B6A953C3ECD6FB5BCFAAAA302939CFDF"><img src="../media/B6A953C3ECD6FB5BCFAAAA302939CFDF.png" width="28" height="11" align="bottom"></img></a></markup> are the prefactors of the exponential terms
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FAD57F95E94EBD603B93207643B5F397"><img src="../media/FAD57F95E94EBD603B93207643B5F397.png" width="0" height="0" align="bottom"></img></a></markup> ... <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#989877226FE87096DEBEE069643FCB6B"><img src="../media/989877226FE87096DEBEE069643FCB6B.png" width="0" height="0" align="bottom"></img></a></markup> are the characteristic times
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#2DDD32A131C535DD44A05308DD86B4C2"><img src="../media/2DDD32A131C535DD44A05308DD86B4C2.png" width="12" height="11" align="bottom"></img></a></markup> ... <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#216684A9BBD53B36AC5EF0AC8628CADF"><img src="../media/216684A9BBD53B36AC5EF0AC8628CADF.png" width="27" height="11" align="bottom"></img></a></markup> are the characteristic times
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4EF835FC99A8EA2F77EC0547660B4997"><img src="../media/4EF835FC99A8EA2F77EC0547660B4997.png" width="0" height="0" align="baseline"></img></a></markup> is the number of exponential terms
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5F0117272C7B6CF7327019290D7B40D1"><img src="../media/5F0117272C7B6CF7327019290D7B40D1.png" width="9" height="6" align="baseline"></img></a></markup> is the number of exponential terms
 </para>
 </listItem>
 </list>
 
 <para>
-The number of terms <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4EF835FC99A8EA2F77EC0547660B4997"><img src="../media/4EF835FC99A8EA2F77EC0547660B4997.png" width="0" height="0" align="baseline"></img></a></markup> can be changed by double-clicking on the fit function. The default value is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AB6102027499324E523E96136FF3C0DD"><img src="../media/AB6102027499324E523E96136FF3C0DD.png" width="1" height="0" align="baseline"></img></a></markup>.
+The number of terms <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5F0117272C7B6CF7327019290D7B40D1"><img src="../media/5F0117272C7B6CF7327019290D7B40D1.png" width="9" height="6" align="baseline"></img></a></markup> can be changed by double-clicking on the fit function. The default value is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AB6102027499324E523E96136FF3C0DD"><img src="../media/AB6102027499324E523E96136FF3C0DD.png" width="37" height="10" align="baseline"></img></a></markup>.
 </para>
 
 <para>
-The domain of the function is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FB4DE268FCBAFA43EB96F2668F852D86"><img src="../media/FB4DE268FCBAFA43EB96F2668F852D86.png" width="3" height="0" align="bottom"></img></a></markup>.
+The domain of the function is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#728CA8EFFEF65F08F2DE8C7D7FA29D38"><img src="../media/728CA8EFFEF65F08F2DE8C7D7FA29D38.png" width="90" height="13" align="middle"></img></a></markup>.
 </para>
 
 <para>
@@ -201,7 +201,7 @@ The domain of the function is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB
 </para>
 
 <para>
-Fig. 1: Exponential growth with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#CEBA0B816215FDB64E625D70BA6639C5"><img src="../media/CEBA0B816215FDB64E625D70BA6639C5.png" width="1" height="0" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1A5317EE8069F3FB30BE7C67AD6A41AB"><img src="../media/1A5317EE8069F3FB30BE7C67AD6A41AB.png" width="1" height="0" align="bottom"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#2B6608A39C699AC5BBC70E7BFBE0543D"><img src="../media/2B6608A39C699AC5BBC70E7BFBE0543D.png" width="1" height="0" align="bottom"></img></a></markup>.
+Fig. 1: Exponential growth with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#E9DE78C181D4A3013699A18FCB9C94F8"><img src="../media/E9DE78C181D4A3013699A18FCB9C94F8.png" width="55" height="14" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B1DFD8E0433494D846D6B7524E214664"><img src="../media/B1DFD8E0433494D846D6B7524E214664.png" width="41" height="13" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#21AAB344C2EC14C0E3F444B27342BC86"><img src="../media/21AAB344C2EC14C0E3F444B27342BC86.png" width="40" height="13" align="middle"></img></a></markup>.
 </para>
 </content>
 </section>
@@ -214,7 +214,7 @@ Fig. 1: Exponential growth with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6AC
 <para>
 This function evaluates an polynomial with one or multiple terms, and both positive and negative exponents, according to
 </para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#07DCAD88F34A46116AD8BB6E3FBE3E94"><img src="../media/07DCAD88F34A46116AD8BB6E3FBE3E94.png" width="11" height="0"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D0D8DFFDA492AE969DF42A1CFEB05FD4"><img src="../media/D0D8DFFDA492AE969DF42A1CFEB05FD4.png" width="331" height="17"></img></a></markup>
 
 <para>
 in which:
@@ -225,38 +225,38 @@ in which:
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#2904EEEF02713AFD0E9EAF9C2798A4D2"><img src="../media/2904EEEF02713AFD0E9EAF9C2798A4D2.png" width="1" height="0" align="bottom"></img></a></markup> are the polynomial coefficients for positive exponents <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B6D648D089D58E155305FC76EA435F19"><img src="../media/B6D648D089D58E155305FC76EA435F19.png" width="0" height="0" align="baseline"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#621BC5A834A54E145E64E47546786A48"><img src="../media/621BC5A834A54E145E64E47546786A48.png" width="41" height="11" align="bottom"></img></a></markup> are the polynomial coefficients for positive exponents <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#C3582BD069E90EB6C0F15F5A300F90E0"><img src="../media/C3582BD069E90EB6C0F15F5A300F90E0.png" width="29" height="10" align="baseline"></img></a></markup>
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#6D18D097AD47934437B04D539A52C988"><img src="../media/6D18D097AD47934437B04D539A52C988.png" width="0" height="0" align="bottom"></img></a></markup> ... <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#7290FDFBECF4AA48003611C219D271D0"><img src="../media/7290FDFBECF4AA48003611C219D271D0.png" width="0" height="0" align="bottom"></img></a></markup> are the polynomial coefficients for negative exponents <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#898C1350736F2705D96774FE77012F04"><img src="../media/898C1350736F2705D96774FE77012F04.png" width="1" height="0" align="bottom"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B02A6D31E0DB2D8C225BB0C45D0A815B"><img src="../media/B02A6D31E0DB2D8C225BB0C45D0A815B.png" width="12" height="13" align="middle"></img></a></markup> ... <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B21361358D3AFE7A664CE0DA25B3DBE0"><img src="../media/B21361358D3AFE7A664CE0DA25B3DBE0.png" width="16" height="13" align="middle"></img></a></markup> are the polynomial coefficients for negative exponents <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#E1C8BECFD9C4252ACAB0E5A7CBB60D48"><img src="../media/E1C8BECFD9C4252ACAB0E5A7CBB60D48.png" width="59" height="12" align="middle"></img></a></markup>
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4EF835FC99A8EA2F77EC0547660B4997"><img src="../media/4EF835FC99A8EA2F77EC0547660B4997.png" width="0" height="0" align="baseline"></img></a></markup> is the order of the polynom for positive exponents
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5F0117272C7B6CF7327019290D7B40D1"><img src="../media/5F0117272C7B6CF7327019290D7B40D1.png" width="9" height="6" align="baseline"></img></a></markup> is the order of the polynom for positive exponents
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1524114A576378DC1D43A85F23D2A753"><img src="../media/1524114A576378DC1D43A85F23D2A753.png" width="0" height="0" align="baseline"></img></a></markup> is the order of the polynom for negative exponents
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9FD34652DC94880E880464BC7F6D7026"><img src="../media/9FD34652DC94880E880464BC7F6D7026.png" width="13" height="6" align="baseline"></img></a></markup> is the order of the polynom for negative exponents
 </para>
 </listItem>
 </list>
 
 <para>
-The polynomial orders <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4EF835FC99A8EA2F77EC0547660B4997"><img src="../media/4EF835FC99A8EA2F77EC0547660B4997.png" width="0" height="0" align="baseline"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1524114A576378DC1D43A85F23D2A753"><img src="../media/1524114A576378DC1D43A85F23D2A753.png" width="0" height="0" align="baseline"></img></a></markup> can be changed by double-clicking on the fit function. The default value is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#41B1DC639708ED2B087A16665DBA5CC7"><img src="../media/41B1DC639708ED2B087A16665DBA5CC7.png" width="1" height="0" align="baseline"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#27F4FE01705E8CE801E4F68D69F87349"><img src="../media/27F4FE01705E8CE801E4F68D69F87349.png" width="1" height="0" align="baseline"></img></a></markup>. If some of the terms are not needed, set their corresponding coefficients fixed to zero.
+The polynomial orders <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5F0117272C7B6CF7327019290D7B40D1"><img src="../media/5F0117272C7B6CF7327019290D7B40D1.png" width="9" height="6" align="baseline"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9FD34652DC94880E880464BC7F6D7026"><img src="../media/9FD34652DC94880E880464BC7F6D7026.png" width="13" height="6" align="baseline"></img></a></markup> can be changed by double-clicking on the fit function. The default value is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#41B1DC639708ED2B087A16665DBA5CC7"><img src="../media/41B1DC639708ED2B087A16665DBA5CC7.png" width="37" height="10" align="baseline"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#27F4FE01705E8CE801E4F68D69F87349"><img src="../media/27F4FE01705E8CE801E4F68D69F87349.png" width="41" height="10" align="baseline"></img></a></markup>. If some of the terms are not needed, set their corresponding coefficients fixed to zero.
 </para>
 
 <para>
-The domain of the function is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FB4DE268FCBAFA43EB96F2668F852D86"><img src="../media/FB4DE268FCBAFA43EB96F2668F852D86.png" width="3" height="0" align="bottom"></img></a></markup>. If <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#F29DB2966C0790C6A1DDCCD20F2A57FE"><img src="../media/F29DB2966C0790C6A1DDCCD20F2A57FE.png" width="1" height="0" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#ABAC714516AE0C6E81469C4B146DE454"><img src="../media/ABAC714516AE0C6E81469C4B146DE454.png" width="1" height="0" align="baseline"></img></a></markup> is excluded.
+The domain of the function is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#728CA8EFFEF65F08F2DE8C7D7FA29D38"><img src="../media/728CA8EFFEF65F08F2DE8C7D7FA29D38.png" width="90" height="13" align="middle"></img></a></markup>. If <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#E12868D0B4A62D2D7905A053B2412D21"><img src="../media/E12868D0B4A62D2D7905A053B2412D21.png" width="41" height="14" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FBDADA539604A3B630924F7785312639"><img src="../media/FBDADA539604A3B630924F7785312639.png" width="36" height="10" align="baseline"></img></a></markup> is excluded.
 </para>
 
 <para>
@@ -264,7 +264,7 @@ The domain of the function is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB
 </para>
 
 <para>
-Fig. 1: Polynomial (<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#77FEA5A5F2FC08C3DB86E58E29BB70D5"><img src="../media/77FEA5A5F2FC08C3DB86E58E29BB70D5.png" width="1" height="0" align="baseline"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#27F4FE01705E8CE801E4F68D69F87349"><img src="../media/27F4FE01705E8CE801E4F68D69F87349.png" width="1" height="0" align="baseline"></img></a></markup>) with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1326DF29E2FC36AB394456EDE311C7B9"><img src="../media/1326DF29E2FC36AB394456EDE311C7B9.png" width="1" height="0" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#F4F60D8BCE5E26DACC2A0A21B6161169"><img src="../media/F4F60D8BCE5E26DACC2A0A21B6161169.png" width="1" height="0" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#7E03AF10E50165EAB1E14512B90E007F"><img src="../media/7E03AF10E50165EAB1E14512B90E007F.png" width="1" height="0" align="bottom"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D256332345080E265CDD4386D18CC011"><img src="../media/D256332345080E265CDD4386D18CC011.png" width="2" height="0" align="bottom"></img></a></markup>.
+Fig. 1: Polynomial (<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#77FEA5A5F2FC08C3DB86E58E29BB70D5"><img src="../media/77FEA5A5F2FC08C3DB86E58E29BB70D5.png" width="37" height="10" align="baseline"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#27F4FE01705E8CE801E4F68D69F87349"><img src="../media/27F4FE01705E8CE801E4F68D69F87349.png" width="41" height="10" align="baseline"></img></a></markup>) with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#95C5DA89368DAFB0CCC861E8D31C6C27"><img src="../media/95C5DA89368DAFB0CCC861E8D31C6C27.png" width="41" height="13" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4B8960D05961E7EA56581913CCB8A105"><img src="../media/4B8960D05961E7EA56581913CCB8A105.png" width="41" height="13" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#6DF2942DA588C8D9B7BF978A685A39EE"><img src="../media/6DF2942DA588C8D9B7BF978A685A39EE.png" width="41" height="13" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#80914B56F7A6A714EC0DC1E590514D5A"><img src="../media/80914B56F7A6A714EC0DC1E590514D5A.png" width="79" height="13" align="middle"></img></a></markup>.
 </para>
 </content>
 </section>
@@ -277,7 +277,7 @@ Fig. 1: Polynomial (<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#77
 <para>
 This function evaluates a power law with one or multiple terms according to
 </para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#55951E7C9394FBDC76C32BA989FF979B"><img src="../media/55951E7C9394FBDC76C32BA989FF979B.png" width="7" height="0"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#68EFFF9FFDCE54328D5FBAECE1E5BE3F"><img src="../media/68EFFF9FFDCE54328D5FBAECE1E5BE3F.png" width="217" height="18"></img></a></markup>
 
 <para>
 in which:
@@ -288,38 +288,38 @@ in which:
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B57AE20FABC41FEA4221F60B7000D7AF"><img src="../media/B57AE20FABC41FEA4221F60B7000D7AF.png" width="0" height="0" align="bottom"></img></a></markup> is the value of the base line (value of y for <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#ABAC714516AE0C6E81469C4B146DE454"><img src="../media/ABAC714516AE0C6E81469C4B146DE454.png" width="1" height="0" align="baseline"></img></a></markup> )
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#54AF930CA32CEFBC08DCD27186250A38"><img src="../media/54AF930CA32CEFBC08DCD27186250A38.png" width="13" height="10" align="bottom"></img></a></markup> is the value of the base line (value of y for <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FBDADA539604A3B630924F7785312639"><img src="../media/FBDADA539604A3B630924F7785312639.png" width="36" height="10" align="baseline"></img></a></markup> )
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FF0EAA0A84521EBB01CD0129382B586C"><img src="../media/FF0EAA0A84521EBB01CD0129382B586C.png" width="0" height="0" align="bottom"></img></a></markup> .. <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AA087D8F2B2D4D686BA02561A90CD0E8"><img src="../media/AA087D8F2B2D4D686BA02561A90CD0E8.png" width="0" height="0" align="bottom"></img></a></markup> are the pre-factors of the terms
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#A9D312440B63B2918F3F49AE3FDB409A"><img src="../media/A9D312440B63B2918F3F49AE3FDB409A.png" width="14" height="11" align="bottom"></img></a></markup> .. <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B6A953C3ECD6FB5BCFAAAA302939CFDF"><img src="../media/B6A953C3ECD6FB5BCFAAAA302939CFDF.png" width="28" height="11" align="bottom"></img></a></markup> are the pre-factors of the terms
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#F1FE13240E59082AB7AAF41E7D04FA07"><img src="../media/F1FE13240E59082AB7AAF41E7D04FA07.png" width="0" height="0" align="bottom"></img></a></markup> ... <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#23330A1307C67F2B84BA88FE4480FD4B"><img src="../media/23330A1307C67F2B84BA88FE4480FD4B.png" width="0" height="0" align="bottom"></img></a></markup> are the exponents
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AAB9041FBAF784600810109A14E17EB7"><img src="../media/AAB9041FBAF784600810109A14E17EB7.png" width="13" height="13" align="middle"></img></a></markup> ... <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#A3F81DBF7FDE9358FEEBE93176AE61D3"><img src="../media/A3F81DBF7FDE9358FEEBE93176AE61D3.png" width="28" height="14" align="middle"></img></a></markup> are the exponents
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4EF835FC99A8EA2F77EC0547660B4997"><img src="../media/4EF835FC99A8EA2F77EC0547660B4997.png" width="0" height="0" align="baseline"></img></a></markup> is the number of  terms
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5F0117272C7B6CF7327019290D7B40D1"><img src="../media/5F0117272C7B6CF7327019290D7B40D1.png" width="9" height="6" align="baseline"></img></a></markup> is the number of  terms
 </para>
 </listItem>
 </list>
 
 <para>
-The number of terms <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4EF835FC99A8EA2F77EC0547660B4997"><img src="../media/4EF835FC99A8EA2F77EC0547660B4997.png" width="0" height="0" align="baseline"></img></a></markup> can be changed by double-clicking on the fit function. The default value is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AB6102027499324E523E96136FF3C0DD"><img src="../media/AB6102027499324E523E96136FF3C0DD.png" width="1" height="0" align="baseline"></img></a></markup>. Strictly speaking, the function is a power law only if <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#543714ADF625E548EE58C8874E229AA2"><img src="../media/543714ADF625E548EE58C8874E229AA2.png" width="1" height="0" align="bottom"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AB6102027499324E523E96136FF3C0DD"><img src="../media/AB6102027499324E523E96136FF3C0DD.png" width="1" height="0" align="baseline"></img></a></markup>.
+The number of terms <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5F0117272C7B6CF7327019290D7B40D1"><img src="../media/5F0117272C7B6CF7327019290D7B40D1.png" width="9" height="6" align="baseline"></img></a></markup> can be changed by double-clicking on the fit function. The default value is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AB6102027499324E523E96136FF3C0DD"><img src="../media/AB6102027499324E523E96136FF3C0DD.png" width="37" height="10" align="baseline"></img></a></markup>. Strictly speaking, the function is a power law only if <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#50ADAC665016DEC15542BDE2C5C0D372"><img src="../media/50ADAC665016DEC15542BDE2C5C0D372.png" width="40" height="14" align="bottom"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AB6102027499324E523E96136FF3C0DD"><img src="../media/AB6102027499324E523E96136FF3C0DD.png" width="37" height="10" align="baseline"></img></a></markup>.
 </para>
 
 <para>
-The domain of the function is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#276D707BB663F5AD7AA15B56FF5B9AE2"><img src="../media/276D707BB663F5AD7AA15B56FF5B9AE2.png" width="2" height="0" align="bottom"></img></a></markup> if all <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1DBE9A9B806AE19A7DB8A9DFA59F9FF9"><img src="../media/1DBE9A9B806AE19A7DB8A9DFA59F9FF9.png" width="1" height="0" align="bottom"></img></a></markup> are positive, or <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#46D521D5A476D91D118102F38969251E"><img src="../media/46D521D5A476D91D118102F38969251E.png" width="2" height="0" align="baseline"></img></a></markup> if some of the exponents are negative.
+The domain of the function is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B93378059D926E79D5B66E38ECCBA750"><img src="../media/B93378059D926E79D5B66E38ECCBA750.png" width="71" height="13" align="middle"></img></a></markup> if all <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#26AD1AA4C4602B8B1A45F6FD71F0C7D8"><img src="../media/26AD1AA4C4602B8B1A45F6FD71F0C7D8.png" width="50" height="14" align="middle"></img></a></markup> are positive, or <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#A069B437F563F31106377A464B609727"><img src="../media/A069B437F563F31106377A464B609727.png" width="71" height="11" align="baseline"></img></a></markup> if some of the exponents are negative.
 </para>
 
 <quote>
@@ -335,7 +335,7 @@ Even if you set the exponents fixed to integer values, the domain of the functio
 </para>
 
 <para>
-Fig. 1: Power law with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#543714ADF625E548EE58C8874E229AA2"><img src="../media/543714ADF625E548EE58C8874E229AA2.png" width="1" height="0" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1A5317EE8069F3FB30BE7C67AD6A41AB"><img src="../media/1A5317EE8069F3FB30BE7C67AD6A41AB.png" width="1" height="0" align="bottom"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#F2C5D6CD7ABA2D83EF791C12ABB29A14"><img src="../media/F2C5D6CD7ABA2D83EF791C12ABB29A14.png" width="1" height="0" align="bottom"></img></a></markup> with linear x- and y-axes.
+Fig. 1: Power law with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#50ADAC665016DEC15542BDE2C5C0D372"><img src="../media/50ADAC665016DEC15542BDE2C5C0D372.png" width="40" height="14" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B1DFD8E0433494D846D6B7524E214664"><img src="../media/B1DFD8E0433494D846D6B7524E214664.png" width="41" height="13" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#66DB3CFF81FFEAB4F7D9895FFFD33B95"><img src="../media/66DB3CFF81FFEAB4F7D9895FFFD33B95.png" width="53" height="13" align="middle"></img></a></markup> with linear x- and y-axes.
 </para>
 
 <para>
@@ -343,7 +343,7 @@ Fig. 1: Power law with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm
 </para>
 
 <para>
-Fig. 2: Power law with the same parameters <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#543714ADF625E548EE58C8874E229AA2"><img src="../media/543714ADF625E548EE58C8874E229AA2.png" width="1" height="0" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1A5317EE8069F3FB30BE7C67AD6A41AB"><img src="../media/1A5317EE8069F3FB30BE7C67AD6A41AB.png" width="1" height="0" align="bottom"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#F2C5D6CD7ABA2D83EF791C12ABB29A14"><img src="../media/F2C5D6CD7ABA2D83EF791C12ABB29A14.png" width="1" height="0" align="bottom"></img></a></markup> in a double-logarithmic plot.
+Fig. 2: Power law with the same parameters <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#50ADAC665016DEC15542BDE2C5C0D372"><img src="../media/50ADAC665016DEC15542BDE2C5C0D372.png" width="40" height="14" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B1DFD8E0433494D846D6B7524E214664"><img src="../media/B1DFD8E0433494D846D6B7524E214664.png" width="41" height="13" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#66DB3CFF81FFEAB4F7D9895FFFD33B95"><img src="../media/66DB3CFF81FFEAB4F7D9895FFFD33B95.png" width="53" height="13" align="middle"></img></a></markup> in a double-logarithmic plot.
 </para>
 </content>
 </section>
@@ -356,7 +356,7 @@ Fig. 2: Power law with the same parameters <markup><a href="ACAC6A80-7CE0-4CB9-B
 <para>
 This function evaluates a power law with one or multiple terms according to
 </para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1401430E8F7BCDE0941F9E6F7461E735"><img src="../media/1401430E8F7BCDE0941F9E6F7461E735.png" width="8" height="1"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#34BEBD84349D6F4A00AED8F68E4A071F"><img src="../media/34BEBD84349D6F4A00AED8F68E4A071F.png" width="244" height="42"></img></a></markup>
 
 <para>
 in which:
@@ -367,38 +367,38 @@ in which:
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B57AE20FABC41FEA4221F60B7000D7AF"><img src="../media/B57AE20FABC41FEA4221F60B7000D7AF.png" width="0" height="0" align="bottom"></img></a></markup> is the value of the base line (value of y for <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#ABAC714516AE0C6E81469C4B146DE454"><img src="../media/ABAC714516AE0C6E81469C4B146DE454.png" width="1" height="0" align="baseline"></img></a></markup> )
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#54AF930CA32CEFBC08DCD27186250A38"><img src="../media/54AF930CA32CEFBC08DCD27186250A38.png" width="13" height="10" align="bottom"></img></a></markup> is the value of the base line (value of y for <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FBDADA539604A3B630924F7785312639"><img src="../media/FBDADA539604A3B630924F7785312639.png" width="36" height="10" align="baseline"></img></a></markup> )
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FF0EAA0A84521EBB01CD0129382B586C"><img src="../media/FF0EAA0A84521EBB01CD0129382B586C.png" width="0" height="0" align="bottom"></img></a></markup> .. <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AA087D8F2B2D4D686BA02561A90CD0E8"><img src="../media/AA087D8F2B2D4D686BA02561A90CD0E8.png" width="0" height="0" align="bottom"></img></a></markup> are the denominators of the terms
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#A9D312440B63B2918F3F49AE3FDB409A"><img src="../media/A9D312440B63B2918F3F49AE3FDB409A.png" width="14" height="11" align="bottom"></img></a></markup> .. <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B6A953C3ECD6FB5BCFAAAA302939CFDF"><img src="../media/B6A953C3ECD6FB5BCFAAAA302939CFDF.png" width="28" height="11" align="bottom"></img></a></markup> are the denominators of the terms
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#F1FE13240E59082AB7AAF41E7D04FA07"><img src="../media/F1FE13240E59082AB7AAF41E7D04FA07.png" width="0" height="0" align="bottom"></img></a></markup> ... <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#23330A1307C67F2B84BA88FE4480FD4B"><img src="../media/23330A1307C67F2B84BA88FE4480FD4B.png" width="0" height="0" align="bottom"></img></a></markup> are the exponents
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AAB9041FBAF784600810109A14E17EB7"><img src="../media/AAB9041FBAF784600810109A14E17EB7.png" width="13" height="13" align="middle"></img></a></markup> ... <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#A3F81DBF7FDE9358FEEBE93176AE61D3"><img src="../media/A3F81DBF7FDE9358FEEBE93176AE61D3.png" width="28" height="14" align="middle"></img></a></markup> are the exponents
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4EF835FC99A8EA2F77EC0547660B4997"><img src="../media/4EF835FC99A8EA2F77EC0547660B4997.png" width="0" height="0" align="baseline"></img></a></markup> is the number of  terms
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5F0117272C7B6CF7327019290D7B40D1"><img src="../media/5F0117272C7B6CF7327019290D7B40D1.png" width="9" height="6" align="baseline"></img></a></markup> is the number of  terms
 </para>
 </listItem>
 </list>
 
 <para>
-The number of terms <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4EF835FC99A8EA2F77EC0547660B4997"><img src="../media/4EF835FC99A8EA2F77EC0547660B4997.png" width="0" height="0" align="baseline"></img></a></markup> can be changed by double-clicking on the fit function. The default value is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AB6102027499324E523E96136FF3C0DD"><img src="../media/AB6102027499324E523E96136FF3C0DD.png" width="1" height="0" align="baseline"></img></a></markup>. Strictly speaking, the function is a power law only if <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#543714ADF625E548EE58C8874E229AA2"><img src="../media/543714ADF625E548EE58C8874E229AA2.png" width="1" height="0" align="bottom"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AB6102027499324E523E96136FF3C0DD"><img src="../media/AB6102027499324E523E96136FF3C0DD.png" width="1" height="0" align="baseline"></img></a></markup>.
+The number of terms <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5F0117272C7B6CF7327019290D7B40D1"><img src="../media/5F0117272C7B6CF7327019290D7B40D1.png" width="9" height="6" align="baseline"></img></a></markup> can be changed by double-clicking on the fit function. The default value is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AB6102027499324E523E96136FF3C0DD"><img src="../media/AB6102027499324E523E96136FF3C0DD.png" width="37" height="10" align="baseline"></img></a></markup>. Strictly speaking, the function is a power law only if <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#50ADAC665016DEC15542BDE2C5C0D372"><img src="../media/50ADAC665016DEC15542BDE2C5C0D372.png" width="40" height="14" align="bottom"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AB6102027499324E523E96136FF3C0DD"><img src="../media/AB6102027499324E523E96136FF3C0DD.png" width="37" height="10" align="baseline"></img></a></markup>.
 </para>
 
 <para>
-The domain of the function is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#276D707BB663F5AD7AA15B56FF5B9AE2"><img src="../media/276D707BB663F5AD7AA15B56FF5B9AE2.png" width="2" height="0" align="bottom"></img></a></markup> if all <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1DBE9A9B806AE19A7DB8A9DFA59F9FF9"><img src="../media/1DBE9A9B806AE19A7DB8A9DFA59F9FF9.png" width="1" height="0" align="bottom"></img></a></markup> and all <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#600C2AAC6142DD7E99716CF631BFCC02"><img src="../media/600C2AAC6142DD7E99716CF631BFCC02.png" width="1" height="0" align="bottom"></img></a></markup> are positive, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#C1A532D79A64D43DC88B18192D1928A0"><img src="../media/C1A532D79A64D43DC88B18192D1928A0.png" width="2" height="0" align="bottom"></img></a></markup> if all <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1DBE9A9B806AE19A7DB8A9DFA59F9FF9"><img src="../media/1DBE9A9B806AE19A7DB8A9DFA59F9FF9.png" width="1" height="0" align="bottom"></img></a></markup> are positive and all <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#600C2AAC6142DD7E99716CF631BFCC02"><img src="../media/600C2AAC6142DD7E99716CF631BFCC02.png" width="1" height="0" align="bottom"></img></a></markup> are negative, and, if some of the exponents are negative, the  value <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#ABAC714516AE0C6E81469C4B146DE454"><img src="../media/ABAC714516AE0C6E81469C4B146DE454.png" width="1" height="0" align="baseline"></img></a></markup> is not included.
+The domain of the function is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B93378059D926E79D5B66E38ECCBA750"><img src="../media/B93378059D926E79D5B66E38ECCBA750.png" width="71" height="13" align="middle"></img></a></markup> if all <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#26AD1AA4C4602B8B1A45F6FD71F0C7D8"><img src="../media/26AD1AA4C4602B8B1A45F6FD71F0C7D8.png" width="50" height="14" align="middle"></img></a></markup> and all <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9E0490689AA2339DD85B0FEBE43AEBCD"><img src="../media/9E0490689AA2339DD85B0FEBE43AEBCD.png" width="50" height="11" align="bottom"></img></a></markup> are positive, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#937D26E5E77916BEF03B0DC55C5F2A46"><img src="../media/937D26E5E77916BEF03B0DC55C5F2A46.png" width="83" height="13" align="middle"></img></a></markup> if all <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#26AD1AA4C4602B8B1A45F6FD71F0C7D8"><img src="../media/26AD1AA4C4602B8B1A45F6FD71F0C7D8.png" width="50" height="14" align="middle"></img></a></markup> are positive and all <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9E0490689AA2339DD85B0FEBE43AEBCD"><img src="../media/9E0490689AA2339DD85B0FEBE43AEBCD.png" width="50" height="11" align="bottom"></img></a></markup> are negative, and, if some of the exponents are negative, the  value <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FBDADA539604A3B630924F7785312639"><img src="../media/FBDADA539604A3B630924F7785312639.png" width="36" height="10" align="baseline"></img></a></markup> is not included.
 </para>
 
 <para>
@@ -406,7 +406,7 @@ The domain of the function is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB
 </para>
 
 <para>
-Fig. 1: Power law (ratio) with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#543714ADF625E548EE58C8874E229AA2"><img src="../media/543714ADF625E548EE58C8874E229AA2.png" width="1" height="0" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1A5317EE8069F3FB30BE7C67AD6A41AB"><img src="../media/1A5317EE8069F3FB30BE7C67AD6A41AB.png" width="1" height="0" align="bottom"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AE57C4BBA66F1946B9DD21C93DD3B5B8"><img src="../media/AE57C4BBA66F1946B9DD21C93DD3B5B8.png" width="2" height="0" align="bottom"></img></a></markup> with linear x- and y-axes.
+Fig. 1: Power law (ratio) with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#50ADAC665016DEC15542BDE2C5C0D372"><img src="../media/50ADAC665016DEC15542BDE2C5C0D372.png" width="40" height="14" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B1DFD8E0433494D846D6B7524E214664"><img src="../media/B1DFD8E0433494D846D6B7524E214664.png" width="41" height="13" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#802E078137822DBAD6F59077E570789D"><img src="../media/802E078137822DBAD6F59077E570789D.png" width="64" height="13" align="middle"></img></a></markup> with linear x- and y-axes.
 </para>
 
 <para>
@@ -414,7 +414,7 @@ Fig. 1: Power law (ratio) with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACA
 </para>
 
 <para>
-Fig. 2: Power law (ratio) with the same parameters <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#543714ADF625E548EE58C8874E229AA2"><img src="../media/543714ADF625E548EE58C8874E229AA2.png" width="1" height="0" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1A5317EE8069F3FB30BE7C67AD6A41AB"><img src="../media/1A5317EE8069F3FB30BE7C67AD6A41AB.png" width="1" height="0" align="bottom"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AE57C4BBA66F1946B9DD21C93DD3B5B8"><img src="../media/AE57C4BBA66F1946B9DD21C93DD3B5B8.png" width="2" height="0" align="bottom"></img></a></markup> in a double-logarithmic plot.
+Fig. 2: Power law (ratio) with the same parameters <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#50ADAC665016DEC15542BDE2C5C0D372"><img src="../media/50ADAC665016DEC15542BDE2C5C0D372.png" width="40" height="14" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B1DFD8E0433494D846D6B7524E214664"><img src="../media/B1DFD8E0433494D846D6B7524E214664.png" width="41" height="13" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#802E078137822DBAD6F59077E570789D"><img src="../media/802E078137822DBAD6F59077E570789D.png" width="64" height="13" align="middle"></img></a></markup> in a double-logarithmic plot.
 </para>
 </content>
 </section>
@@ -427,7 +427,7 @@ Fig. 2: Power law (ratio) with the same parameters <markup><a href="ACAC6A80-7CE
 <para>
 This function evaluates a rational polynom with one or multiple terms in the nominator and in the denominator according to
 </para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#BE791E2D49FBE005B37D34A3FD610EFC"><img src="../media/BE791E2D49FBE005B37D34A3FD610EFC.png" width="6" height="1"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#C8AEE2EC75274AA5A7FCBA5957EEA84D"><img src="../media/C8AEE2EC75274AA5A7FCBA5957EEA84D.png" width="181" height="34"></img></a></markup>
 
 <para>
 in which:
@@ -438,42 +438,42 @@ in which:
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FF0EAA0A84521EBB01CD0129382B586C"><img src="../media/FF0EAA0A84521EBB01CD0129382B586C.png" width="0" height="0" align="bottom"></img></a></markup> .. <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#7FC45FCC6AC8868699AF446DBD64AE48"><img src="../media/7FC45FCC6AC8868699AF446DBD64AE48.png" width="0" height="0" align="bottom"></img></a></markup> are the coefficients of the nominator polynom
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#A9D312440B63B2918F3F49AE3FDB409A"><img src="../media/A9D312440B63B2918F3F49AE3FDB409A.png" width="14" height="11" align="bottom"></img></a></markup> .. <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9B1F3A0CB71D30B6853999807953D258"><img src="../media/9B1F3A0CB71D30B6853999807953D258.png" width="15" height="11" align="bottom"></img></a></markup> are the coefficients of the nominator polynom
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#6D18D097AD47934437B04D539A52C988"><img src="../media/6D18D097AD47934437B04D539A52C988.png" width="0" height="0" align="bottom"></img></a></markup> .. <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#7290FDFBECF4AA48003611C219D271D0"><img src="../media/7290FDFBECF4AA48003611C219D271D0.png" width="0" height="0" align="bottom"></img></a></markup> are the coefficients of the denominator polynom
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B02A6D31E0DB2D8C225BB0C45D0A815B"><img src="../media/B02A6D31E0DB2D8C225BB0C45D0A815B.png" width="12" height="13" align="middle"></img></a></markup> .. <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B21361358D3AFE7A664CE0DA25B3DBE0"><img src="../media/B21361358D3AFE7A664CE0DA25B3DBE0.png" width="16" height="13" align="middle"></img></a></markup> are the coefficients of the denominator polynom
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4EF835FC99A8EA2F77EC0547660B4997"><img src="../media/4EF835FC99A8EA2F77EC0547660B4997.png" width="0" height="0" align="baseline"></img></a></markup> is the polynomial order of the nominator polynom
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5F0117272C7B6CF7327019290D7B40D1"><img src="../media/5F0117272C7B6CF7327019290D7B40D1.png" width="9" height="6" align="baseline"></img></a></markup> is the polynomial order of the nominator polynom
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1524114A576378DC1D43A85F23D2A753"><img src="../media/1524114A576378DC1D43A85F23D2A753.png" width="0" height="0" align="baseline"></img></a></markup> is the polynomial order of the denominator polynom
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9FD34652DC94880E880464BC7F6D7026"><img src="../media/9FD34652DC94880E880464BC7F6D7026.png" width="13" height="6" align="baseline"></img></a></markup> is the polynomial order of the denominator polynom
 </para>
 </listItem>
 </list>
 
 <para>
-In order to avoid covariance between the 0th order coefficients <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FF0EAA0A84521EBB01CD0129382B586C"><img src="../media/FF0EAA0A84521EBB01CD0129382B586C.png" width="0" height="0" align="bottom"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B59A153D50A7DA1C5550354AF688DD5C"><img src="../media/B59A153D50A7DA1C5550354AF688DD5C.png" width="0" height="0" align="bottom"></img></a></markup>, in this formula <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B59A153D50A7DA1C5550354AF688DD5C"><img src="../media/B59A153D50A7DA1C5550354AF688DD5C.png" width="0" height="0" align="bottom"></img></a></markup> is set to <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#8F6EC133B79FEC27173D19C1A810AF9C"><img src="../media/8F6EC133B79FEC27173D19C1A810AF9C.png" width="1" height="0" align="bottom"></img></a></markup>. Please use <codeInline>RationalInverse</codeInline> if a free value of <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B59A153D50A7DA1C5550354AF688DD5C"><img src="../media/B59A153D50A7DA1C5550354AF688DD5C.png" width="0" height="0" align="bottom"></img></a></markup> is preferred.
+In order to avoid covariance between the 0th order coefficients <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#A9D312440B63B2918F3F49AE3FDB409A"><img src="../media/A9D312440B63B2918F3F49AE3FDB409A.png" width="14" height="11" align="bottom"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#47F41F05506ADE657BD1996A0475853B"><img src="../media/47F41F05506ADE657BD1996A0475853B.png" width="12" height="13" align="middle"></img></a></markup>, in this formula <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#47F41F05506ADE657BD1996A0475853B"><img src="../media/47F41F05506ADE657BD1996A0475853B.png" width="12" height="13" align="middle"></img></a></markup> is set to <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FDBDF20E6A4B09056F54ABAB1160D82D"><img src="../media/FDBDF20E6A4B09056F54ABAB1160D82D.png" width="40" height="13" align="middle"></img></a></markup>. Please use <codeInline>RationalInverse</codeInline> if a free value of <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#47F41F05506ADE657BD1996A0475853B"><img src="../media/47F41F05506ADE657BD1996A0475853B.png" width="12" height="13" align="middle"></img></a></markup> is preferred.
 </para>
 
 <para>
-The polynomial orders <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4EF835FC99A8EA2F77EC0547660B4997"><img src="../media/4EF835FC99A8EA2F77EC0547660B4997.png" width="0" height="0" align="baseline"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1524114A576378DC1D43A85F23D2A753"><img src="../media/1524114A576378DC1D43A85F23D2A753.png" width="0" height="0" align="baseline"></img></a></markup> can be changed by double-clicking on the fit function. The default value is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AB6102027499324E523E96136FF3C0DD"><img src="../media/AB6102027499324E523E96136FF3C0DD.png" width="1" height="0" align="baseline"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#3139EA525B8EBE410A9362A7947DC5D7"><img src="../media/3139EA525B8EBE410A9362A7947DC5D7.png" width="1" height="0" align="baseline"></img></a></markup>.
+The polynomial orders <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5F0117272C7B6CF7327019290D7B40D1"><img src="../media/5F0117272C7B6CF7327019290D7B40D1.png" width="9" height="6" align="baseline"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9FD34652DC94880E880464BC7F6D7026"><img src="../media/9FD34652DC94880E880464BC7F6D7026.png" width="13" height="6" align="baseline"></img></a></markup> can be changed by double-clicking on the fit function. The default value is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AB6102027499324E523E96136FF3C0DD"><img src="../media/AB6102027499324E523E96136FF3C0DD.png" width="37" height="10" align="baseline"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#3139EA525B8EBE410A9362A7947DC5D7"><img src="../media/3139EA525B8EBE410A9362A7947DC5D7.png" width="41" height="10" align="baseline"></img></a></markup>.
 </para>
 
 <para>
-The domain of the function is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1352FFE99F6CFEAB717EC5B1FDDFAC6C"><img src="../media/1352FFE99F6CFEAB717EC5B1FDDFAC6C.png" width="3" height="0" align="bottom"></img></a></markup>, with some points (poles) excluded, at which the denominator becomes zero.
+The domain of the function is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1645FFF6CD0054F5A3FAA7E56CB6E88D"><img src="../media/1645FFF6CD0054F5A3FAA7E56CB6E88D.png" width="90" height="11" align="middle"></img></a></markup>, with some points (poles) excluded, at which the denominator becomes zero.
 </para>
 
 <para>
@@ -481,7 +481,7 @@ The domain of the function is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB
 </para>
 
 <para>
-Fig. 1: Rational <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#6AD7699E760542FE990F3FF84E3D0243"><img src="../media/6AD7699E760542FE990F3FF84E3D0243.png" width="1" height="1" align="middle"></img></a></markup>, i.e. with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FC8F5D986EF1E75BC2BEF18FB453B94A"><img src="../media/FC8F5D986EF1E75BC2BEF18FB453B94A.png" width="2" height="0" align="baseline"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#CBC54DABD291A7F05B24670AC8825001"><img src="../media/CBC54DABD291A7F05B24670AC8825001.png" width="1" height="0" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#776CCDB27023DDBF1B3B02BE30F7F8D8"><img src="../media/776CCDB27023DDBF1B3B02BE30F7F8D8.png" width="1" height="0" align="bottom"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#75B4F8AEAE435AFAB9981ADF86293A9D"><img src="../media/75B4F8AEAE435AFAB9981ADF86293A9D.png" width="1" height="0" align="bottom"></img></a></markup>.
+Fig. 1: Rational <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#6FAD033450DCF63443BDC5016D88B482"><img src="../media/6FAD033450DCF63443BDC5016D88B482.png" width="42" height="33" align="middle"></img></a></markup>, i.e. with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FC8F5D986EF1E75BC2BEF18FB453B94A"><img src="../media/FC8F5D986EF1E75BC2BEF18FB453B94A.png" width="70" height="10" align="baseline"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#6A945EEA99A73A24BBE486B82B7474C9"><img src="../media/6A945EEA99A73A24BBE486B82B7474C9.png" width="41" height="13" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#2C7C227BDEC25DA3F532AA897607154E"><img src="../media/2C7C227BDEC25DA3F532AA897607154E.png" width="41" height="13" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#C1543541EA67176A308F239288884BA3"><img src="../media/C1543541EA67176A308F239288884BA3.png" width="40" height="13" align="middle"></img></a></markup>.
 </para>
 <markup><hr/></markup></content>
 </section>
@@ -494,7 +494,7 @@ Fig. 1: Rational <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#6AD76
 <para>
 This function evaluates a rational polynom with one or multiple terms in the nominator and in the denominator according to
 </para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#E5CD14ADFF86166610F6E72F2FD6BA46"><img src="../media/E5CD14ADFF86166610F6E72F2FD6BA46.png" width="5" height="1"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#34168FF9F1552D4B5C0BF1C5BA307EC6"><img src="../media/34168FF9F1552D4B5C0BF1C5BA307EC6.png" width="178" height="34"></img></a></markup>
 
 <para>
 in which:
@@ -505,42 +505,42 @@ in which:
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#A75A9522BEA384CA2AB0B00194847F72"><img src="../media/A75A9522BEA384CA2AB0B00194847F72.png" width="0" height="0" align="bottom"></img></a></markup> .. <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#7FC45FCC6AC8868699AF446DBD64AE48"><img src="../media/7FC45FCC6AC8868699AF446DBD64AE48.png" width="0" height="0" align="bottom"></img></a></markup> are the coefficients of the nominator polynom
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#0BAC06314F262E14707FB05151A5DEB4"><img src="../media/0BAC06314F262E14707FB05151A5DEB4.png" width="14" height="11" align="bottom"></img></a></markup> .. <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9B1F3A0CB71D30B6853999807953D258"><img src="../media/9B1F3A0CB71D30B6853999807953D258.png" width="15" height="11" align="bottom"></img></a></markup> are the coefficients of the nominator polynom
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B59A153D50A7DA1C5550354AF688DD5C"><img src="../media/B59A153D50A7DA1C5550354AF688DD5C.png" width="0" height="0" align="bottom"></img></a></markup> .. <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#7290FDFBECF4AA48003611C219D271D0"><img src="../media/7290FDFBECF4AA48003611C219D271D0.png" width="0" height="0" align="bottom"></img></a></markup> are the coefficients of the denominator polynom
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#47F41F05506ADE657BD1996A0475853B"><img src="../media/47F41F05506ADE657BD1996A0475853B.png" width="12" height="13" align="middle"></img></a></markup> .. <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B21361358D3AFE7A664CE0DA25B3DBE0"><img src="../media/B21361358D3AFE7A664CE0DA25B3DBE0.png" width="16" height="13" align="middle"></img></a></markup> are the coefficients of the denominator polynom
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4EF835FC99A8EA2F77EC0547660B4997"><img src="../media/4EF835FC99A8EA2F77EC0547660B4997.png" width="0" height="0" align="baseline"></img></a></markup> is the polynomial order of the nominator polynom
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5F0117272C7B6CF7327019290D7B40D1"><img src="../media/5F0117272C7B6CF7327019290D7B40D1.png" width="9" height="6" align="baseline"></img></a></markup> is the polynomial order of the nominator polynom
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1524114A576378DC1D43A85F23D2A753"><img src="../media/1524114A576378DC1D43A85F23D2A753.png" width="0" height="0" align="baseline"></img></a></markup> is the polynomial order of the denominator polynom
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9FD34652DC94880E880464BC7F6D7026"><img src="../media/9FD34652DC94880E880464BC7F6D7026.png" width="13" height="6" align="baseline"></img></a></markup> is the polynomial order of the denominator polynom
 </para>
 </listItem>
 </list>
 
 <para>
-In order to avoid covariance between the 0<superscript>th</superscript> order coefficients <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FF0EAA0A84521EBB01CD0129382B586C"><img src="../media/FF0EAA0A84521EBB01CD0129382B586C.png" width="0" height="0" align="bottom"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B59A153D50A7DA1C5550354AF688DD5C"><img src="../media/B59A153D50A7DA1C5550354AF688DD5C.png" width="0" height="0" align="bottom"></img></a></markup>, in this formula <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FF0EAA0A84521EBB01CD0129382B586C"><img src="../media/FF0EAA0A84521EBB01CD0129382B586C.png" width="0" height="0" align="bottom"></img></a></markup> is set to <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1326DF29E2FC36AB394456EDE311C7B9"><img src="../media/1326DF29E2FC36AB394456EDE311C7B9.png" width="1" height="0" align="bottom"></img></a></markup>. Please use <codeInline>Rational</codeInline> if a free value of <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FF0EAA0A84521EBB01CD0129382B586C"><img src="../media/FF0EAA0A84521EBB01CD0129382B586C.png" width="0" height="0" align="bottom"></img></a></markup> is preferred.
+In order to avoid covariance between the 0<superscript>th</superscript> order coefficients <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#A9D312440B63B2918F3F49AE3FDB409A"><img src="../media/A9D312440B63B2918F3F49AE3FDB409A.png" width="14" height="11" align="bottom"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#47F41F05506ADE657BD1996A0475853B"><img src="../media/47F41F05506ADE657BD1996A0475853B.png" width="12" height="13" align="middle"></img></a></markup>, in this formula <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#A9D312440B63B2918F3F49AE3FDB409A"><img src="../media/A9D312440B63B2918F3F49AE3FDB409A.png" width="14" height="11" align="bottom"></img></a></markup> is set to <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#95C5DA89368DAFB0CCC861E8D31C6C27"><img src="../media/95C5DA89368DAFB0CCC861E8D31C6C27.png" width="41" height="13" align="middle"></img></a></markup>. Please use <codeInline>Rational</codeInline> if a free value of <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#A9D312440B63B2918F3F49AE3FDB409A"><img src="../media/A9D312440B63B2918F3F49AE3FDB409A.png" width="14" height="11" align="bottom"></img></a></markup> is preferred.
 </para>
 
 <para>
-The polynomial orders <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4EF835FC99A8EA2F77EC0547660B4997"><img src="../media/4EF835FC99A8EA2F77EC0547660B4997.png" width="0" height="0" align="baseline"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1524114A576378DC1D43A85F23D2A753"><img src="../media/1524114A576378DC1D43A85F23D2A753.png" width="0" height="0" align="baseline"></img></a></markup> can be changed by double-clicking on the fit function. The default value is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4359DE9F468878166517C05C722F485C"><img src="../media/4359DE9F468878166517C05C722F485C.png" width="1" height="0" align="baseline"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#3139EA525B8EBE410A9362A7947DC5D7"><img src="../media/3139EA525B8EBE410A9362A7947DC5D7.png" width="1" height="0" align="baseline"></img></a></markup>.
+The polynomial orders <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5F0117272C7B6CF7327019290D7B40D1"><img src="../media/5F0117272C7B6CF7327019290D7B40D1.png" width="9" height="6" align="baseline"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9FD34652DC94880E880464BC7F6D7026"><img src="../media/9FD34652DC94880E880464BC7F6D7026.png" width="13" height="6" align="baseline"></img></a></markup> can be changed by double-clicking on the fit function. The default value is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4359DE9F468878166517C05C722F485C"><img src="../media/4359DE9F468878166517C05C722F485C.png" width="37" height="10" align="baseline"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#3139EA525B8EBE410A9362A7947DC5D7"><img src="../media/3139EA525B8EBE410A9362A7947DC5D7.png" width="41" height="10" align="baseline"></img></a></markup>.
 </para>
 
 <para>
-The domain of the function is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1352FFE99F6CFEAB717EC5B1FDDFAC6C"><img src="../media/1352FFE99F6CFEAB717EC5B1FDDFAC6C.png" width="3" height="0" align="bottom"></img></a></markup>, with some points (poles) excluded, at which the denominator becomes zero.
+The domain of the function is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1645FFF6CD0054F5A3FAA7E56CB6E88D"><img src="../media/1645FFF6CD0054F5A3FAA7E56CB6E88D.png" width="90" height="11" align="middle"></img></a></markup>, with some points (poles) excluded, at which the denominator becomes zero.
 </para>
 
 <para>
@@ -548,7 +548,7 @@ The domain of the function is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB
 </para>
 
 <para>
-Fig. 1: RationalInverse <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D77722455F1150A994C01B790837D759"><img src="../media/D77722455F1150A994C01B790837D759.png" width="1" height="1" align="middle"></img></a></markup>, i.e. with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FC8F5D986EF1E75BC2BEF18FB453B94A"><img src="../media/FC8F5D986EF1E75BC2BEF18FB453B94A.png" width="2" height="0" align="baseline"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#F9B342391BD8F207E7EDAEFD822F0027"><img src="../media/F9B342391BD8F207E7EDAEFD822F0027.png" width="1" height="0" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#06B28DA98476732BC91E018E7A4C7E65"><img src="../media/06B28DA98476732BC91E018E7A4C7E65.png" width="1" height="0" align="bottom"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#78EE702F925C492D89F25029329C2F08"><img src="../media/78EE702F925C492D89F25029329C2F08.png" width="1" height="0" align="bottom"></img></a></markup>.
+Fig. 1: RationalInverse <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#BD1AFC7B7920E47825D11F0135727658"><img src="../media/BD1AFC7B7920E47825D11F0135727658.png" width="46" height="33" align="middle"></img></a></markup>, i.e. with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FC8F5D986EF1E75BC2BEF18FB453B94A"><img src="../media/FC8F5D986EF1E75BC2BEF18FB453B94A.png" width="70" height="10" align="baseline"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#DA8F1E0AC0B7B717B2DE40675EEC2DF7"><img src="../media/DA8F1E0AC0B7B717B2DE40675EEC2DF7.png" width="41" height="13" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#693E961F9D245F1860563BF789C3DB84"><img src="../media/693E961F9D245F1860563BF789C3DB84.png" width="51" height="13" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1B21D5E56DFCE22D0BC7D9A34116F7DE"><img src="../media/1B21D5E56DFCE22D0BC7D9A34116F7DE.png" width="40" height="13" align="middle"></img></a></markup>.
 </para>
 <markup><hr/></markup></content>
 </section>
@@ -563,9 +563,9 @@ Fig. 1: RationalInverse <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.ht
 </para>
 
 <para>
-This function evaluates a stretched exponential decay process starting at <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4A629DA66A6F78F88159A8DA4F62A7F5"><img src="../media/4A629DA66A6F78F88159A8DA4F62A7F5.png" width="1" height="0" align="bottom"></img></a></markup> with one or multiple terms according to
+This function evaluates a stretched exponential decay process starting at <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#93E7FAC9670B2DBEF079A5D2FC16EDD6"><img src="../media/93E7FAC9670B2DBEF079A5D2FC16EDD6.png" width="43" height="11" align="bottom"></img></a></markup> with one or multiple terms according to
 </para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#A67B5B6B19BC7D010332E6A1E9FF70DB"><img src="../media/A67B5B6B19BC7D010332E6A1E9FF70DB.png" width="17" height="3"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#69D7BC2D9C1D7D6E8DFFFFE88BB8D21E"><img src="../media/69D7BC2D9C1D7D6E8DFFFFE88BB8D21E.png" width="514" height="94"></img></a></markup>
 
 <para>
 in which:
@@ -576,52 +576,52 @@ in which:
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B9300C4A081A9E6FD0B6FC1CD1C4EFAB"><img src="../media/B9300C4A081A9E6FD0B6FC1CD1C4EFAB.png" width="0" height="0" align="bottom"></img></a></markup> is the starting point of the decay process. If this value is known, you should enter the value and set this parameter to fixed.
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#DC03BA1D1482720BE1FEDC0229835F0E"><img src="../media/DC03BA1D1482720BE1FEDC0229835F0E.png" width="14" height="11" align="bottom"></img></a></markup> is the starting point of the decay process. If this value is known, you should enter the value and set this parameter to fixed.
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B57AE20FABC41FEA4221F60B7000D7AF"><img src="../media/B57AE20FABC41FEA4221F60B7000D7AF.png" width="0" height="0" align="bottom"></img></a></markup> is the value for <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#67D56B69A1CF3796571A791B30921BA5"><img src="../media/67D56B69A1CF3796571A791B30921BA5.png" width="1" height="0" align="baseline"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#54AF930CA32CEFBC08DCD27186250A38"><img src="../media/54AF930CA32CEFBC08DCD27186250A38.png" width="13" height="10" align="bottom"></img></a></markup> is the value for <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D4C08CAD75F7C8AE9EF2CA3274DDFCFF"><img src="../media/D4C08CAD75F7C8AE9EF2CA3274DDFCFF.png" width="47" height="6" align="baseline"></img></a></markup>
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FF0EAA0A84521EBB01CD0129382B586C"><img src="../media/FF0EAA0A84521EBB01CD0129382B586C.png" width="0" height="0" align="bottom"></img></a></markup> .. <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AA087D8F2B2D4D686BA02561A90CD0E8"><img src="../media/AA087D8F2B2D4D686BA02561A90CD0E8.png" width="0" height="0" align="bottom"></img></a></markup> are the pre-factors of the exponential terms
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#A9D312440B63B2918F3F49AE3FDB409A"><img src="../media/A9D312440B63B2918F3F49AE3FDB409A.png" width="14" height="11" align="bottom"></img></a></markup> .. <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B6A953C3ECD6FB5BCFAAAA302939CFDF"><img src="../media/B6A953C3ECD6FB5BCFAAAA302939CFDF.png" width="28" height="11" align="bottom"></img></a></markup> are the pre-factors of the exponential terms
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FAD57F95E94EBD603B93207643B5F397"><img src="../media/FAD57F95E94EBD603B93207643B5F397.png" width="0" height="0" align="bottom"></img></a></markup> ... <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#989877226FE87096DEBEE069643FCB6B"><img src="../media/989877226FE87096DEBEE069643FCB6B.png" width="0" height="0" align="bottom"></img></a></markup> are the characteristic times
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#2DDD32A131C535DD44A05308DD86B4C2"><img src="../media/2DDD32A131C535DD44A05308DD86B4C2.png" width="12" height="11" align="bottom"></img></a></markup> ... <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#216684A9BBD53B36AC5EF0AC8628CADF"><img src="../media/216684A9BBD53B36AC5EF0AC8628CADF.png" width="27" height="11" align="bottom"></img></a></markup> are the characteristic times
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#E7AFB6B9B943A93FE2E9E6D1EB10449C"><img src="../media/E7AFB6B9B943A93FE2E9E6D1EB10449C.png" width="0" height="0" align="bottom"></img></a></markup> ... <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5DA5056A0DB44AFD085FA93D81B4F491"><img src="../media/5DA5056A0DB44AFD085FA93D81B4F491.png" width="0" height="0" align="bottom"></img></a></markup> are the exponents, usually in the range <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5CF435BD9E2FF53D31958C10AADB0E5F"><img src="../media/5CF435BD9E2FF53D31958C10AADB0E5F.png" width="2" height="0" align="bottom"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#F8404D54288D896ACD121D723DE56A27"><img src="../media/F8404D54288D896ACD121D723DE56A27.png" width="14" height="14" align="middle"></img></a></markup> ... <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#2F2464D6504EF54BB559F2831B4A20CA"><img src="../media/2F2464D6504EF54BB559F2831B4A20CA.png" width="29" height="14" align="middle"></img></a></markup> are the exponents, usually in the range <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#8BEDE380AFE7C0F7C07863B80ABF0695"><img src="../media/8BEDE380AFE7C0F7C07863B80ABF0695.png" width="63" height="14" align="middle"></img></a></markup>
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4EF835FC99A8EA2F77EC0547660B4997"><img src="../media/4EF835FC99A8EA2F77EC0547660B4997.png" width="0" height="0" align="baseline"></img></a></markup> is the number of exponential terms
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5F0117272C7B6CF7327019290D7B40D1"><img src="../media/5F0117272C7B6CF7327019290D7B40D1.png" width="9" height="6" align="baseline"></img></a></markup> is the number of exponential terms
 </para>
 </listItem>
 </list>
 
 <para>
-The number of terms <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4EF835FC99A8EA2F77EC0547660B4997"><img src="../media/4EF835FC99A8EA2F77EC0547660B4997.png" width="0" height="0" align="baseline"></img></a></markup> can be changed by double-clicking on the fit function. The default value is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AB6102027499324E523E96136FF3C0DD"><img src="../media/AB6102027499324E523E96136FF3C0DD.png" width="1" height="0" align="baseline"></img></a></markup>.
+The number of terms <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5F0117272C7B6CF7327019290D7B40D1"><img src="../media/5F0117272C7B6CF7327019290D7B40D1.png" width="9" height="6" align="baseline"></img></a></markup> can be changed by double-clicking on the fit function. The default value is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AB6102027499324E523E96136FF3C0DD"><img src="../media/AB6102027499324E523E96136FF3C0DD.png" width="37" height="10" align="baseline"></img></a></markup>.
 </para>
 
 <para>
-The domain of the function is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1352FFE99F6CFEAB717EC5B1FDDFAC6C"><img src="../media/1352FFE99F6CFEAB717EC5B1FDDFAC6C.png" width="3" height="0" align="bottom"></img></a></markup>. The function values are set to constant for <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#ADBE00860391BAA80C046B989C721148"><img src="../media/ADBE00860391BAA80C046B989C721148.png" width="1" height="0" align="bottom"></img></a></markup>.
+The domain of the function is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1645FFF6CD0054F5A3FAA7E56CB6E88D"><img src="../media/1645FFF6CD0054F5A3FAA7E56CB6E88D.png" width="90" height="11" align="middle"></img></a></markup>. The function values are set to constant for <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#479FBE2C5A2757266D97191B3EFCAC79"><img src="../media/479FBE2C5A2757266D97191B3EFCAC79.png" width="43" height="13" align="bottom"></img></a></markup>.
 </para>
 
 <para>
@@ -629,7 +629,7 @@ The domain of the function is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB
 </para>
 
 <para>
-Fig. 1: Stretched exponential decay with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#63E54F49ABBB90D6139DB08C2BFBAFF4"><img src="../media/63E54F49ABBB90D6139DB08C2BFBAFF4.png" width="1" height="0" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#466944A46C40F675AD1E2EAC186A977E"><img src="../media/466944A46C40F675AD1E2EAC186A977E.png" width="1" height="0" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1A5317EE8069F3FB30BE7C67AD6A41AB"><img src="../media/1A5317EE8069F3FB30BE7C67AD6A41AB.png" width="1" height="0" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#2B6608A39C699AC5BBC70E7BFBE0543D"><img src="../media/2B6608A39C699AC5BBC70E7BFBE0543D.png" width="1" height="0" align="bottom"></img></a></markup>, and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#EA0150FA7B1471F6216F833C3DD3CBFE"><img src="../media/EA0150FA7B1471F6216F833C3DD3CBFE.png" width="1" height="0" align="bottom"></img></a></markup> (green) in comparison to a 'normal' exponential decay function with the same parameters (grey). Note that the 'normal' exponential decay has varying function values both for <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#EC2B7C174FB1713FA6F54E05A37A931E"><img src="../media/EC2B7C174FB1713FA6F54E05A37A931E.png" width="1" height="0" align="baseline"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9D29A02ABB5B8F03B649A1899E323A15"><img src="../media/9D29A02ABB5B8F03B649A1899E323A15.png" width="1" height="0" align="baseline"></img></a></markup>, whereas the stretched exponential decay is constant for <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#ADBE00860391BAA80C046B989C721148"><img src="../media/ADBE00860391BAA80C046B989C721148.png" width="1" height="0" align="bottom"></img></a></markup>.
+Fig. 1: Stretched exponential decay with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D82ECD2633A11398C448A8B11A7AD8F4"><img src="../media/D82ECD2633A11398C448A8B11A7AD8F4.png" width="42" height="13" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#C48549B03BA53AE5E36F79063777C63F"><img src="../media/C48549B03BA53AE5E36F79063777C63F.png" width="40" height="14" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B1DFD8E0433494D846D6B7524E214664"><img src="../media/B1DFD8E0433494D846D6B7524E214664.png" width="41" height="13" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#21AAB344C2EC14C0E3F444B27342BC86"><img src="../media/21AAB344C2EC14C0E3F444B27342BC86.png" width="40" height="13" align="middle"></img></a></markup>, and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#F2CA2E3B828ADE1CA0B6AE36D702171D"><img src="../media/F2CA2E3B828ADE1CA0B6AE36D702171D.png" width="48" height="14" align="middle"></img></a></markup> (green) in comparison to a 'normal' exponential decay function with the same parameters (grey). Note that the 'normal' exponential decay has varying function values both for <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D950D21C3041A0EB1FAE795FF244F4EE"><img src="../media/D950D21C3041A0EB1FAE795FF244F4EE.png" width="36" height="11" align="baseline"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D11957DBF89ED3BBF89DBACA66F895F8"><img src="../media/D11957DBF89ED3BBF89DBACA66F895F8.png" width="36" height="11" align="baseline"></img></a></markup>, whereas the stretched exponential decay is constant for <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#479FBE2C5A2757266D97191B3EFCAC79"><img src="../media/479FBE2C5A2757266D97191B3EFCAC79.png" width="43" height="13" align="bottom"></img></a></markup>.
 </para>
 <markup><hr/></markup></content>
 </section>
@@ -642,7 +642,7 @@ Fig. 1: Stretched exponential decay with <markup><a href="ACAC6A80-7CE0-4CB9-B36
 <para>
 This function evaluates a stretched exponential equilibration process with one or multiple terms according to
 </para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#F7FBB360EB4FDF9C90D16D4664A53E7E"><img src="../media/F7FBB360EB4FDF9C90D16D4664A53E7E.png" width="20" height="2"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#7BA867DF116FCE6BC49F7EC876948BD3"><img src="../media/7BA867DF116FCE6BC49F7EC876948BD3.png" width="610" height="64"></img></a></markup>
 
 <para>
 in which:
@@ -653,52 +653,52 @@ in which:
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B9300C4A081A9E6FD0B6FC1CD1C4EFAB"><img src="../media/B9300C4A081A9E6FD0B6FC1CD1C4EFAB.png" width="0" height="0" align="bottom"></img></a></markup> is the starting point of the equilibration process. If this value is known, you should enter the value and set this parameter to fixed.
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#DC03BA1D1482720BE1FEDC0229835F0E"><img src="../media/DC03BA1D1482720BE1FEDC0229835F0E.png" width="14" height="11" align="bottom"></img></a></markup> is the starting point of the equilibration process. If this value is known, you should enter the value and set this parameter to fixed.
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B57AE20FABC41FEA4221F60B7000D7AF"><img src="../media/B57AE20FABC41FEA4221F60B7000D7AF.png" width="0" height="0" align="bottom"></img></a></markup> is the starting value (and the value for <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#206BB9335104921949ED088E6CECB398"><img src="../media/206BB9335104921949ED088E6CECB398.png" width="1" height="0" align="bottom"></img></a></markup>)
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#54AF930CA32CEFBC08DCD27186250A38"><img src="../media/54AF930CA32CEFBC08DCD27186250A38.png" width="13" height="10" align="bottom"></img></a></markup> is the starting value (and the value for <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#29A82B6671AB44EB5B0C91E09086611E"><img src="../media/29A82B6671AB44EB5B0C91E09086611E.png" width="43" height="13" align="middle"></img></a></markup>)
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FF0EAA0A84521EBB01CD0129382B586C"><img src="../media/FF0EAA0A84521EBB01CD0129382B586C.png" width="0" height="0" align="bottom"></img></a></markup> .. <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AA087D8F2B2D4D686BA02561A90CD0E8"><img src="../media/AA087D8F2B2D4D686BA02561A90CD0E8.png" width="0" height="0" align="bottom"></img></a></markup> are the pre-factors of the exponential equilibration terms
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#A9D312440B63B2918F3F49AE3FDB409A"><img src="../media/A9D312440B63B2918F3F49AE3FDB409A.png" width="14" height="11" align="bottom"></img></a></markup> .. <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B6A953C3ECD6FB5BCFAAAA302939CFDF"><img src="../media/B6A953C3ECD6FB5BCFAAAA302939CFDF.png" width="28" height="11" align="bottom"></img></a></markup> are the pre-factors of the exponential equilibration terms
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FAD57F95E94EBD603B93207643B5F397"><img src="../media/FAD57F95E94EBD603B93207643B5F397.png" width="0" height="0" align="bottom"></img></a></markup> ... <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#989877226FE87096DEBEE069643FCB6B"><img src="../media/989877226FE87096DEBEE069643FCB6B.png" width="0" height="0" align="bottom"></img></a></markup> are the characteristic times
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#2DDD32A131C535DD44A05308DD86B4C2"><img src="../media/2DDD32A131C535DD44A05308DD86B4C2.png" width="12" height="11" align="bottom"></img></a></markup> ... <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#216684A9BBD53B36AC5EF0AC8628CADF"><img src="../media/216684A9BBD53B36AC5EF0AC8628CADF.png" width="27" height="11" align="bottom"></img></a></markup> are the characteristic times
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#E7AFB6B9B943A93FE2E9E6D1EB10449C"><img src="../media/E7AFB6B9B943A93FE2E9E6D1EB10449C.png" width="0" height="0" align="bottom"></img></a></markup> ... <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5DA5056A0DB44AFD085FA93D81B4F491"><img src="../media/5DA5056A0DB44AFD085FA93D81B4F491.png" width="0" height="0" align="bottom"></img></a></markup> are the exponents, usually in the range <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5CF435BD9E2FF53D31958C10AADB0E5F"><img src="../media/5CF435BD9E2FF53D31958C10AADB0E5F.png" width="2" height="0" align="bottom"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#F8404D54288D896ACD121D723DE56A27"><img src="../media/F8404D54288D896ACD121D723DE56A27.png" width="14" height="14" align="middle"></img></a></markup> ... <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#2F2464D6504EF54BB559F2831B4A20CA"><img src="../media/2F2464D6504EF54BB559F2831B4A20CA.png" width="29" height="14" align="middle"></img></a></markup> are the exponents, usually in the range <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#8BEDE380AFE7C0F7C07863B80ABF0695"><img src="../media/8BEDE380AFE7C0F7C07863B80ABF0695.png" width="63" height="14" align="middle"></img></a></markup>
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4EF835FC99A8EA2F77EC0547660B4997"><img src="../media/4EF835FC99A8EA2F77EC0547660B4997.png" width="0" height="0" align="baseline"></img></a></markup> is the number of exponential terms
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5F0117272C7B6CF7327019290D7B40D1"><img src="../media/5F0117272C7B6CF7327019290D7B40D1.png" width="9" height="6" align="baseline"></img></a></markup> is the number of exponential terms
 </para>
 </listItem>
 </list>
 
 <para>
-The number of terms <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4EF835FC99A8EA2F77EC0547660B4997"><img src="../media/4EF835FC99A8EA2F77EC0547660B4997.png" width="0" height="0" align="baseline"></img></a></markup> can be changed by double-clicking on the fit function. The default value is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AB6102027499324E523E96136FF3C0DD"><img src="../media/AB6102027499324E523E96136FF3C0DD.png" width="1" height="0" align="baseline"></img></a></markup>.
+The number of terms <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5F0117272C7B6CF7327019290D7B40D1"><img src="../media/5F0117272C7B6CF7327019290D7B40D1.png" width="9" height="6" align="baseline"></img></a></markup> can be changed by double-clicking on the fit function. The default value is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AB6102027499324E523E96136FF3C0DD"><img src="../media/AB6102027499324E523E96136FF3C0DD.png" width="37" height="10" align="baseline"></img></a></markup>.
 </para>
 
 <para>
-The domain of the function is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1352FFE99F6CFEAB717EC5B1FDDFAC6C"><img src="../media/1352FFE99F6CFEAB717EC5B1FDDFAC6C.png" width="3" height="0" align="bottom"></img></a></markup>.
+The domain of the function is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1645FFF6CD0054F5A3FAA7E56CB6E88D"><img src="../media/1645FFF6CD0054F5A3FAA7E56CB6E88D.png" width="90" height="11" align="middle"></img></a></markup>.
 </para>
 
 <para>
@@ -706,7 +706,7 @@ The domain of the function is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB
 </para>
 
 <para>
-Fig. 1: Stretched exponential equilibration with  <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#A2A3CEAE4C04312C349C7B191848BA50"><img src="../media/A2A3CEAE4C04312C349C7B191848BA50.png" width="1" height="0" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#466944A46C40F675AD1E2EAC186A977E"><img src="../media/466944A46C40F675AD1E2EAC186A977E.png" width="1" height="0" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1A5317EE8069F3FB30BE7C67AD6A41AB"><img src="../media/1A5317EE8069F3FB30BE7C67AD6A41AB.png" width="1" height="0" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#2B6608A39C699AC5BBC70E7BFBE0543D"><img src="../media/2B6608A39C699AC5BBC70E7BFBE0543D.png" width="1" height="0" align="bottom"></img></a></markup>, and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#EA0150FA7B1471F6216F833C3DD3CBFE"><img src="../media/EA0150FA7B1471F6216F833C3DD3CBFE.png" width="1" height="0" align="bottom"></img></a></markup> (green) in comparison to a 'normal' exponential equilibration function with the same parameters (grey).
+Fig. 1: Stretched exponential equilibration with  <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#C42266EA2173A7E8E2E502084FADF965"><img src="../media/C42266EA2173A7E8E2E502084FADF965.png" width="42" height="13" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#C48549B03BA53AE5E36F79063777C63F"><img src="../media/C48549B03BA53AE5E36F79063777C63F.png" width="40" height="14" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B1DFD8E0433494D846D6B7524E214664"><img src="../media/B1DFD8E0433494D846D6B7524E214664.png" width="41" height="13" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#21AAB344C2EC14C0E3F444B27342BC86"><img src="../media/21AAB344C2EC14C0E3F444B27342BC86.png" width="40" height="13" align="middle"></img></a></markup>, and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#F2CA2E3B828ADE1CA0B6AE36D702171D"><img src="../media/F2CA2E3B828ADE1CA0B6AE36D702171D.png" width="48" height="14" align="middle"></img></a></markup> (green) in comparison to a 'normal' exponential equilibration function with the same parameters (grey).
 </para>
 <markup><hr/></markup></content>
 </section>
@@ -717,9 +717,9 @@ Fig. 1: Stretched exponential equilibration with  <markup><a href="ACAC6A80-7CE0
 <content>
 
 <para>
-This function evaluates a stretched exponential growth process starting at <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4A629DA66A6F78F88159A8DA4F62A7F5"><img src="../media/4A629DA66A6F78F88159A8DA4F62A7F5.png" width="1" height="0" align="bottom"></img></a></markup> with one or multiple terms according to
+This function evaluates a stretched exponential growth process starting at <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#93E7FAC9670B2DBEF079A5D2FC16EDD6"><img src="../media/93E7FAC9670B2DBEF079A5D2FC16EDD6.png" width="43" height="11" align="bottom"></img></a></markup> with one or multiple terms according to
 </para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#18A459B21933B2DA76A1747C5F6B5A04"><img src="../media/18A459B21933B2DA76A1747C5F6B5A04.png" width="16" height="3"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#37EE9840DD9D114A7D803068F16C1C4D"><img src="../media/37EE9840DD9D114A7D803068F16C1C4D.png" width="491" height="94"></img></a></markup>
 
 <para>
 in which:
@@ -730,52 +730,52 @@ in which:
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B9300C4A081A9E6FD0B6FC1CD1C4EFAB"><img src="../media/B9300C4A081A9E6FD0B6FC1CD1C4EFAB.png" width="0" height="0" align="bottom"></img></a></markup> is the starting point of the growth process. If this value is known, you should enter the value and set this parameter to fixed.
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#DC03BA1D1482720BE1FEDC0229835F0E"><img src="../media/DC03BA1D1482720BE1FEDC0229835F0E.png" width="14" height="11" align="bottom"></img></a></markup> is the starting point of the growth process. If this value is known, you should enter the value and set this parameter to fixed.
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B57AE20FABC41FEA4221F60B7000D7AF"><img src="../media/B57AE20FABC41FEA4221F60B7000D7AF.png" width="0" height="0" align="bottom"></img></a></markup> is an offset value
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#54AF930CA32CEFBC08DCD27186250A38"><img src="../media/54AF930CA32CEFBC08DCD27186250A38.png" width="13" height="10" align="bottom"></img></a></markup> is an offset value
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FF0EAA0A84521EBB01CD0129382B586C"><img src="../media/FF0EAA0A84521EBB01CD0129382B586C.png" width="0" height="0" align="bottom"></img></a></markup> .. <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AA087D8F2B2D4D686BA02561A90CD0E8"><img src="../media/AA087D8F2B2D4D686BA02561A90CD0E8.png" width="0" height="0" align="bottom"></img></a></markup> are the pre-factors of the exponential terms
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#A9D312440B63B2918F3F49AE3FDB409A"><img src="../media/A9D312440B63B2918F3F49AE3FDB409A.png" width="14" height="11" align="bottom"></img></a></markup> .. <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B6A953C3ECD6FB5BCFAAAA302939CFDF"><img src="../media/B6A953C3ECD6FB5BCFAAAA302939CFDF.png" width="28" height="11" align="bottom"></img></a></markup> are the pre-factors of the exponential terms
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FAD57F95E94EBD603B93207643B5F397"><img src="../media/FAD57F95E94EBD603B93207643B5F397.png" width="0" height="0" align="bottom"></img></a></markup> ... <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#989877226FE87096DEBEE069643FCB6B"><img src="../media/989877226FE87096DEBEE069643FCB6B.png" width="0" height="0" align="bottom"></img></a></markup> are the characteristic times
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#2DDD32A131C535DD44A05308DD86B4C2"><img src="../media/2DDD32A131C535DD44A05308DD86B4C2.png" width="12" height="11" align="bottom"></img></a></markup> ... <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#216684A9BBD53B36AC5EF0AC8628CADF"><img src="../media/216684A9BBD53B36AC5EF0AC8628CADF.png" width="27" height="11" align="bottom"></img></a></markup> are the characteristic times
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#E7AFB6B9B943A93FE2E9E6D1EB10449C"><img src="../media/E7AFB6B9B943A93FE2E9E6D1EB10449C.png" width="0" height="0" align="bottom"></img></a></markup> ... <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5DA5056A0DB44AFD085FA93D81B4F491"><img src="../media/5DA5056A0DB44AFD085FA93D81B4F491.png" width="0" height="0" align="bottom"></img></a></markup> are the exponents, usually in the range <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5CF435BD9E2FF53D31958C10AADB0E5F"><img src="../media/5CF435BD9E2FF53D31958C10AADB0E5F.png" width="2" height="0" align="bottom"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#F8404D54288D896ACD121D723DE56A27"><img src="../media/F8404D54288D896ACD121D723DE56A27.png" width="14" height="14" align="middle"></img></a></markup> ... <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#2F2464D6504EF54BB559F2831B4A20CA"><img src="../media/2F2464D6504EF54BB559F2831B4A20CA.png" width="29" height="14" align="middle"></img></a></markup> are the exponents, usually in the range <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#8BEDE380AFE7C0F7C07863B80ABF0695"><img src="../media/8BEDE380AFE7C0F7C07863B80ABF0695.png" width="63" height="14" align="middle"></img></a></markup>
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4EF835FC99A8EA2F77EC0547660B4997"><img src="../media/4EF835FC99A8EA2F77EC0547660B4997.png" width="0" height="0" align="baseline"></img></a></markup> is the number of exponential terms
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5F0117272C7B6CF7327019290D7B40D1"><img src="../media/5F0117272C7B6CF7327019290D7B40D1.png" width="9" height="6" align="baseline"></img></a></markup> is the number of exponential terms
 </para>
 </listItem>
 </list>
 
 <para>
-The number of terms <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#4EF835FC99A8EA2F77EC0547660B4997"><img src="../media/4EF835FC99A8EA2F77EC0547660B4997.png" width="0" height="0" align="baseline"></img></a></markup> can be changed by double-clicking on the fit function. The default value is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AB6102027499324E523E96136FF3C0DD"><img src="../media/AB6102027499324E523E96136FF3C0DD.png" width="1" height="0" align="baseline"></img></a></markup>.
+The number of terms <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5F0117272C7B6CF7327019290D7B40D1"><img src="../media/5F0117272C7B6CF7327019290D7B40D1.png" width="9" height="6" align="baseline"></img></a></markup> can be changed by double-clicking on the fit function. The default value is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AB6102027499324E523E96136FF3C0DD"><img src="../media/AB6102027499324E523E96136FF3C0DD.png" width="37" height="10" align="baseline"></img></a></markup>.
 </para>
 
 <para>
-The domain of the function is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1352FFE99F6CFEAB717EC5B1FDDFAC6C"><img src="../media/1352FFE99F6CFEAB717EC5B1FDDFAC6C.png" width="3" height="0" align="bottom"></img></a></markup>. The function values are set to constant for <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#ADBE00860391BAA80C046B989C721148"><img src="../media/ADBE00860391BAA80C046B989C721148.png" width="1" height="0" align="bottom"></img></a></markup>.
+The domain of the function is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1645FFF6CD0054F5A3FAA7E56CB6E88D"><img src="../media/1645FFF6CD0054F5A3FAA7E56CB6E88D.png" width="90" height="11" align="middle"></img></a></markup>. The function values are set to constant for <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#479FBE2C5A2757266D97191B3EFCAC79"><img src="../media/479FBE2C5A2757266D97191B3EFCAC79.png" width="43" height="13" align="bottom"></img></a></markup>.
 </para>
 
 <para>
@@ -783,7 +783,7 @@ The domain of the function is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB
 </para>
 
 <para>
-Fig. 1: Stretched exponential growth with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#63E54F49ABBB90D6139DB08C2BFBAFF4"><img src="../media/63E54F49ABBB90D6139DB08C2BFBAFF4.png" width="1" height="0" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AB276D007DA2AA243EE40E7CFB8C74BC"><img src="../media/AB276D007DA2AA243EE40E7CFB8C74BC.png" width="1" height="0" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1A5317EE8069F3FB30BE7C67AD6A41AB"><img src="../media/1A5317EE8069F3FB30BE7C67AD6A41AB.png" width="1" height="0" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#2B6608A39C699AC5BBC70E7BFBE0543D"><img src="../media/2B6608A39C699AC5BBC70E7BFBE0543D.png" width="1" height="0" align="bottom"></img></a></markup>, and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#EA0150FA7B1471F6216F833C3DD3CBFE"><img src="../media/EA0150FA7B1471F6216F833C3DD3CBFE.png" width="1" height="0" align="bottom"></img></a></markup> (green) in comparison to a 'normal' exponential growth function with the same parameters (grey). Note that the 'normal' exponential growth has varying function values both for <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#EC2B7C174FB1713FA6F54E05A37A931E"><img src="../media/EC2B7C174FB1713FA6F54E05A37A931E.png" width="1" height="0" align="baseline"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9D29A02ABB5B8F03B649A1899E323A15"><img src="../media/9D29A02ABB5B8F03B649A1899E323A15.png" width="1" height="0" align="baseline"></img></a></markup>, whereas the stretched exponential growth is constant for <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#ADBE00860391BAA80C046B989C721148"><img src="../media/ADBE00860391BAA80C046B989C721148.png" width="1" height="0" align="bottom"></img></a></markup>.
+Fig. 1: Stretched exponential growth with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D82ECD2633A11398C448A8B11A7AD8F4"><img src="../media/D82ECD2633A11398C448A8B11A7AD8F4.png" width="42" height="13" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#843097FD1BA02D34FFD9C53D0284F18A"><img src="../media/843097FD1BA02D34FFD9C53D0284F18A.png" width="52" height="14" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B1DFD8E0433494D846D6B7524E214664"><img src="../media/B1DFD8E0433494D846D6B7524E214664.png" width="41" height="13" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#21AAB344C2EC14C0E3F444B27342BC86"><img src="../media/21AAB344C2EC14C0E3F444B27342BC86.png" width="40" height="13" align="middle"></img></a></markup>, and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#F2CA2E3B828ADE1CA0B6AE36D702171D"><img src="../media/F2CA2E3B828ADE1CA0B6AE36D702171D.png" width="48" height="14" align="middle"></img></a></markup> (green) in comparison to a 'normal' exponential growth function with the same parameters (grey). Note that the 'normal' exponential growth has varying function values both for <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D950D21C3041A0EB1FAE795FF244F4EE"><img src="../media/D950D21C3041A0EB1FAE795FF244F4EE.png" width="36" height="11" align="baseline"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D11957DBF89ED3BBF89DBACA66F895F8"><img src="../media/D11957DBF89ED3BBF89DBACA66F895F8.png" width="36" height="11" align="baseline"></img></a></markup>, whereas the stretched exponential growth is constant for <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#479FBE2C5A2757266D97191B3EFCAC79"><img src="../media/479FBE2C5A2757266D97191B3EFCAC79.png" width="43" height="13" align="bottom"></img></a></markup>.
 </para>
 <markup><hr/></markup></content>
 </section>

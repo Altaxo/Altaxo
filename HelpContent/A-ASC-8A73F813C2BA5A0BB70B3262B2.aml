@@ -72,6 +72,14 @@ Altaxo will not perform an auto update. Use this argument if you have more than 
 <listItem>
 
 <para>
+<codeInline>--attachDebugger</codeInline>  :<lineBreak/>
+Immediately after startup, Altaxo will wait for a debugger to be attached to the process.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
 <codeInline>-exit</codeInline> :<lineBreak/>
 if this argument is the last argument, Altaxo is exited before Altaxo's workbench is shown. All arguments before this argument are executed nevertheless (e.g. loading of a Altaxo project, executing a table script etc.). If this argument is not the last one, it is ignored.
 </para>
