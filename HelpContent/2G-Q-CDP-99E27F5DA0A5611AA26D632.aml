@@ -133,7 +133,7 @@ Now again, use from the main menu <codeInline>Plot → Density plot</codeInline>
 </para>
 
 <para>
-Now, the range of the x values is as expected from -16 to 16, and the range of the y-values is the same. Also, the white dot in the middle has disappeared, since the condition, that the radius <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#C84F37490909B914121F7B392F8D17EC"><img src="../media/C84F37490909B914121F7B392F8D17EC.png" width="88" height="20" align="bottom"></img></a></markup>  is zero, has been treated properly by setting <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#722C7CB6CC53FCD78C677A226E38F8AE"><img src="../media/722C7CB6CC53FCD78C677A226E38F8AE.png" width="35" height="14" align="middle"></img></a></markup> then.
+Now, the range of the x values is as expected from -16 to 16, and the range of the y-values is the same. Also, the white dot in the middle has disappeared, since the condition, that the radius <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9207B800D09B8E80B11931CA84598B3B"><img src="../media/9207B800D09B8E80B11931CA84598B3B.png" width="88" height="20" align="bottom"></img></a></markup>  is zero, has been treated properly by setting <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#722C7CB6CC53FCD78C677A226E38F8AE"><img src="../media/722C7CB6CC53FCD78C677A226E38F8AE.png" width="35" height="14" align="middle"></img></a></markup> then.
 </para>
 </content>
 </section>

@@ -29,14 +29,14 @@ in which
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#58E56D6C367F0C13FFA286CDF058B473"><img src="../media/58E56D6C367F0C13FFA286CDF058B473.png" width="6" height="6" align="baseline"></img></a></markup> is a value in the range [0, 1], e.g. the chemical conversion,
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#C1F1D9A4DCE770273CE5B234A667BD36"><img src="../media/C1F1D9A4DCE770273CE5B234A667BD36.png" width="6" height="8" align="middle"></img></a></markup> is a value in the range [0, 1], e.g. the chemical conversion,
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#992D5054922F4DA8638CA147FD86562C"><img src="../media/992D5054922F4DA8638CA147FD86562C.png" width="9" height="6" align="baseline"></img></a></markup> is the independent variable (for a reaction, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#992D5054922F4DA8638CA147FD86562C"><img src="../media/992D5054922F4DA8638CA147FD86562C.png" width="9" height="6" align="baseline"></img></a></markup> represents the time),
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#CC8723E7D1A6769711F2B74778518A93"><img src="../media/CC8723E7D1A6769711F2B74778518A93.png" width="9" height="8" align="middle"></img></a></markup> is the independent variable (for a reaction, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#CC8723E7D1A6769711F2B74778518A93"><img src="../media/CC8723E7D1A6769711F2B74778518A93.png" width="9" height="8" align="middle"></img></a></markup> represents the time),
 </para>
 </listItem>
 
@@ -50,14 +50,14 @@ in which
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9FD34652DC94880E880464BC7F6D7026"><img src="../media/9FD34652DC94880E880464BC7F6D7026.png" width="13" height="6" align="baseline"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5F0117272C7B6CF7327019290D7B40D1"><img src="../media/5F0117272C7B6CF7327019290D7B40D1.png" width="9" height="6" align="baseline"></img></a></markup> are exponents,
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#05D89BADA9F8449E8B1D903E20FC1521"><img src="../media/05D89BADA9F8449E8B1D903E20FC1521.png" width="13" height="8" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#2C98805231D9E459838EDFD6D25D90F0"><img src="../media/2C98805231D9E459838EDFD6D25D90F0.png" width="9" height="8" align="middle"></img></a></markup> are exponents,
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D1A7B934C18EC91787E450B1C2A8D5EF"><img src="../media/D1A7B934C18EC91787E450B1C2A8D5EF.png" width="11" height="13" align="middle"></img></a></markup> is the point (time) of the start of the reaction, i.e. <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#DE099318013414C1810AAC40E34FCE7D"><img src="../media/DE099318013414C1810AAC40E34FCE7D.png" width="57" height="16" align="bottom"></img></a></markup>.
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D1A7B934C18EC91787E450B1C2A8D5EF"><img src="../media/D1A7B934C18EC91787E450B1C2A8D5EF.png" width="11" height="13" align="middle"></img></a></markup> is the point (time) of the start of the reaction, i.e. <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D036900024B11F4EB0E19A43981628EC"><img src="../media/D036900024B11F4EB0E19A43981628EC.png" width="57" height="16" align="bottom"></img></a></markup>.
 </para>
 </listItem>
 </list>
@@ -65,7 +65,7 @@ in which
 <quote>
 
 <para>
-<legacyBold>Important</legacyBold>: In this fit function, the <legacyBold>dependent variable <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#8674962D5AE2A4098EB5523538340C26"><img src="../media/8674962D5AE2A4098EB5523538340C26.png" width="7" height="10" align="bottom"></img></a></markup> is not the conversion</legacyBold> <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#8154C9420850BA7B6FA8F2DD0D599F0E"><img src="../media/8154C9420850BA7B6FA8F2DD0D599F0E.png" width="27" height="16" align="bottom"></img></a></markup>, but a scaled value of the conversion <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#DF170BF99C454210C6B77CEEFDEDED3E"><img src="../media/DF170BF99C454210C6B77CEEFDEDED3E.png" width="91" height="16" align="bottom"></img></a></markup>, in which <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B4DDCF3D22F9C04098E877FB85E9CA4B"><img src="../media/B4DDCF3D22F9C04098E877FB85E9CA4B.png" width="17" height="13" align="middle"></img></a></markup> is an additional parameter!
+<legacyBold>Important</legacyBold>: In this fit function, the <legacyBold>dependent variable <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#8674962D5AE2A4098EB5523538340C26"><img src="../media/8674962D5AE2A4098EB5523538340C26.png" width="7" height="10" align="bottom"></img></a></markup> is not the conversion</legacyBold> <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#05639BE45B5B73B56942C662AB9B0298"><img src="../media/05639BE45B5B73B56942C662AB9B0298.png" width="27" height="16" align="bottom"></img></a></markup>, but a scaled value of the conversion <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#CD0AD68855062E2298DF7F551C9AD956"><img src="../media/CD0AD68855062E2298DF7F551C9AD956.png" width="91" height="16" align="bottom"></img></a></markup>, in which <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B4DDCF3D22F9C04098E877FB85E9CA4B"><img src="../media/B4DDCF3D22F9C04098E877FB85E9CA4B.png" width="17" height="13" align="middle"></img></a></markup> is an additional parameter!
 </para>
 </quote>
 
@@ -110,7 +110,7 @@ This kinetic equation assumes that the conversion finally reaches 1 (100%). This
 </para>
 
 <para>
-Fig. 1: ConversionAutocatalytic (with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5F11FF7444894F8F51F7C700F986EAE0"><img src="../media/5F11FF7444894F8F51F7C700F986EAE0.png" width="39" height="13" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#0F2A1F7F12A1EDD1D769BD668BAE7D22"><img src="../media/0F2A1F7F12A1EDD1D769BD668BAE7D22.png" width="44" height="13" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#C62F768DDB4C88438518366FC36F113E"><img src="../media/C62F768DDB4C88438518366FC36F113E.png" width="41" height="13" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FB6A64316C184AC25466E662BEC3C98D"><img src="../media/FB6A64316C184AC25466E662BEC3C98D.png" width="13" height="13" align="middle"></img></a></markup>=1). The values for <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9FD34652DC94880E880464BC7F6D7026"><img src="../media/9FD34652DC94880E880464BC7F6D7026.png" width="13" height="6" align="baseline"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5F0117272C7B6CF7327019290D7B40D1"><img src="../media/5F0117272C7B6CF7327019290D7B40D1.png" width="9" height="6" align="baseline"></img></a></markup> are indicated in the legend.
+Fig. 1: ConversionAutocatalytic (with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5F11FF7444894F8F51F7C700F986EAE0"><img src="../media/5F11FF7444894F8F51F7C700F986EAE0.png" width="39" height="13" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#0F2A1F7F12A1EDD1D769BD668BAE7D22"><img src="../media/0F2A1F7F12A1EDD1D769BD668BAE7D22.png" width="44" height="13" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#C62F768DDB4C88438518366FC36F113E"><img src="../media/C62F768DDB4C88438518366FC36F113E.png" width="41" height="13" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FB6A64316C184AC25466E662BEC3C98D"><img src="../media/FB6A64316C184AC25466E662BEC3C98D.png" width="13" height="13" align="middle"></img></a></markup>=1). The values for <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#05D89BADA9F8449E8B1D903E20FC1521"><img src="../media/05D89BADA9F8449E8B1D903E20FC1521.png" width="13" height="8" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#2C98805231D9E459838EDFD6D25D90F0"><img src="../media/2C98805231D9E459838EDFD6D25D90F0.png" width="9" height="8" align="middle"></img></a></markup> are indicated in the legend.
 </para>
 <markup><hr/></markup>
 
@@ -149,35 +149,35 @@ in which
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#58E56D6C367F0C13FFA286CDF058B473"><img src="../media/58E56D6C367F0C13FFA286CDF058B473.png" width="6" height="6" align="baseline"></img></a></markup> is a value in the range [0, 1], e.g. the chemical conversion,
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#C1F1D9A4DCE770273CE5B234A667BD36"><img src="../media/C1F1D9A4DCE770273CE5B234A667BD36.png" width="6" height="8" align="middle"></img></a></markup> is a value in the range [0, 1], e.g. the chemical conversion,
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#992D5054922F4DA8638CA147FD86562C"><img src="../media/992D5054922F4DA8638CA147FD86562C.png" width="9" height="6" align="baseline"></img></a></markup> is the independent variable (for a kinetics, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#992D5054922F4DA8638CA147FD86562C"><img src="../media/992D5054922F4DA8638CA147FD86562C.png" width="9" height="6" align="baseline"></img></a></markup> represents the time),
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#CC8723E7D1A6769711F2B74778518A93"><img src="../media/CC8723E7D1A6769711F2B74778518A93.png" width="9" height="8" align="middle"></img></a></markup> is the independent variable (for a kinetics, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#CC8723E7D1A6769711F2B74778518A93"><img src="../media/CC8723E7D1A6769711F2B74778518A93.png" width="9" height="8" align="middle"></img></a></markup> represents the time),
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#46BB3168C6415A47FFF5B4ABDB39FE89"><img src="../media/46BB3168C6415A47FFF5B4ABDB39FE89.png" width="8" height="10" align="baseline"></img></a></markup> is a rate parameter,
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FB20E232CC65285AF026C17292618ECA"><img src="../media/FB20E232CC65285AF026C17292618ECA.png" width="8" height="13" align="middle"></img></a></markup> is a rate parameter,
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5F0117272C7B6CF7327019290D7B40D1"><img src="../media/5F0117272C7B6CF7327019290D7B40D1.png" width="9" height="6" align="baseline"></img></a></markup> is the order of the kinetic conversion process,
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#2C98805231D9E459838EDFD6D25D90F0"><img src="../media/2C98805231D9E459838EDFD6D25D90F0.png" width="9" height="8" align="middle"></img></a></markup> is the order of the kinetic conversion process,
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D1A7B934C18EC91787E450B1C2A8D5EF"><img src="../media/D1A7B934C18EC91787E450B1C2A8D5EF.png" width="11" height="13" align="middle"></img></a></markup> is the point (time) of the start of the reaction, i.e. <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#DE099318013414C1810AAC40E34FCE7D"><img src="../media/DE099318013414C1810AAC40E34FCE7D.png" width="57" height="16" align="bottom"></img></a></markup>.
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D1A7B934C18EC91787E450B1C2A8D5EF"><img src="../media/D1A7B934C18EC91787E450B1C2A8D5EF.png" width="11" height="13" align="middle"></img></a></markup> is the point (time) of the start of the reaction, i.e. <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D036900024B11F4EB0E19A43981628EC"><img src="../media/D036900024B11F4EB0E19A43981628EC.png" width="57" height="16" align="bottom"></img></a></markup>.
 </para>
 </listItem>
 </list>
@@ -185,12 +185,12 @@ in which
 <quote>
 
 <para>
-<legacyBold>Important</legacyBold>: In this fit function, the <legacyBold>dependent variable <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#8674962D5AE2A4098EB5523538340C26"><img src="../media/8674962D5AE2A4098EB5523538340C26.png" width="7" height="10" align="bottom"></img></a></markup> is not the conversion</legacyBold> <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#8154C9420850BA7B6FA8F2DD0D599F0E"><img src="../media/8154C9420850BA7B6FA8F2DD0D599F0E.png" width="27" height="16" align="bottom"></img></a></markup>, but a scaled value of the conversion <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#DF170BF99C454210C6B77CEEFDEDED3E"><img src="../media/DF170BF99C454210C6B77CEEFDEDED3E.png" width="91" height="16" align="bottom"></img></a></markup>, in which <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B4DDCF3D22F9C04098E877FB85E9CA4B"><img src="../media/B4DDCF3D22F9C04098E877FB85E9CA4B.png" width="17" height="13" align="middle"></img></a></markup> is an additional parameter!
+<legacyBold>Important</legacyBold>: In this fit function, the <legacyBold>dependent variable <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#8674962D5AE2A4098EB5523538340C26"><img src="../media/8674962D5AE2A4098EB5523538340C26.png" width="7" height="10" align="bottom"></img></a></markup> is not the conversion</legacyBold> <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#05639BE45B5B73B56942C662AB9B0298"><img src="../media/05639BE45B5B73B56942C662AB9B0298.png" width="27" height="16" align="bottom"></img></a></markup>, but a scaled value of the conversion <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#CD0AD68855062E2298DF7F551C9AD956"><img src="../media/CD0AD68855062E2298DF7F551C9AD956.png" width="91" height="16" align="bottom"></img></a></markup>, in which <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B4DDCF3D22F9C04098E877FB85E9CA4B"><img src="../media/B4DDCF3D22F9C04098E877FB85E9CA4B.png" width="17" height="13" align="middle"></img></a></markup> is an additional parameter!
 </para>
 </quote>
 
 <para>
-The value of <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#46BB3168C6415A47FFF5B4ABDB39FE89"><img src="../media/46BB3168C6415A47FFF5B4ABDB39FE89.png" width="8" height="10" align="baseline"></img></a></markup> is assumed to be positive.
+The value of <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FB20E232CC65285AF026C17292618ECA"><img src="../media/FB20E232CC65285AF026C17292618ECA.png" width="8" height="13" align="middle"></img></a></markup> is assumed to be positive.
 </para>
 
 <para>
@@ -199,7 +199,7 @@ The solution for <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#14888
 <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#3C4A5EFC5CFEFF0726316CB0CE6106AF"><img src="../media/3C4A5EFC5CFEFF0726316CB0CE6106AF.png" width="296" height="46"></img></a></markup>
 
 <para>
-For <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1DCF3447FB8B6FF6B6321314959C8E5C"><img src="../media/1DCF3447FB8B6FF6B6321314959C8E5C.png" width="40" height="13" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#58E56D6C367F0C13FFA286CDF058B473"><img src="../media/58E56D6C367F0C13FFA286CDF058B473.png" width="6" height="6" align="baseline"></img></a></markup> is set to 0. Additionally, in order to be consistent among different <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5F0117272C7B6CF7327019290D7B40D1"><img src="../media/5F0117272C7B6CF7327019290D7B40D1.png" width="9" height="6" align="baseline"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#58E56D6C367F0C13FFA286CDF058B473"><img src="../media/58E56D6C367F0C13FFA286CDF058B473.png" width="6" height="6" align="baseline"></img></a></markup> is set to 1 if <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#8E80843589F0DDE8B216CCFA52ED81FE"><img src="../media/8E80843589F0DDE8B216CCFA52ED81FE.png" width="37" height="11" align="baseline"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B8504D3C75DBED044AD06AD6EDB6E8D6"><img src="../media/B8504D3C75DBED044AD06AD6EDB6E8D6.png" width="112" height="36" align="middle"></img></a></markup>.
+For <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1DCF3447FB8B6FF6B6321314959C8E5C"><img src="../media/1DCF3447FB8B6FF6B6321314959C8E5C.png" width="40" height="13" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#C1F1D9A4DCE770273CE5B234A667BD36"><img src="../media/C1F1D9A4DCE770273CE5B234A667BD36.png" width="6" height="8" align="middle"></img></a></markup> is set to 0. Additionally, in order to be consistent among different <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#2C98805231D9E459838EDFD6D25D90F0"><img src="../media/2C98805231D9E459838EDFD6D25D90F0.png" width="9" height="8" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#C1F1D9A4DCE770273CE5B234A667BD36"><img src="../media/C1F1D9A4DCE770273CE5B234A667BD36.png" width="6" height="8" align="middle"></img></a></markup> is set to 1 if <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#6AEFBF289891F40F40BFFFB4A359BB7C"><img src="../media/6AEFBF289891F40F40BFFFB4A359BB7C.png" width="37" height="12" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B8504D3C75DBED044AD06AD6EDB6E8D6"><img src="../media/B8504D3C75DBED044AD06AD6EDB6E8D6.png" width="112" height="36" align="middle"></img></a></markup>.
 </para>
 
 <para>
@@ -227,7 +227,7 @@ To fit conversion data that are in percent, i.e. in a range of [0, 100], set the
 </para>
 
 <para>
-Fig. 1: ConversionNthOrder fit functions (with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5F11FF7444894F8F51F7C700F986EAE0"><img src="../media/5F11FF7444894F8F51F7C700F986EAE0.png" width="39" height="13" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#0F2A1F7F12A1EDD1D769BD668BAE7D22"><img src="../media/0F2A1F7F12A1EDD1D769BD668BAE7D22.png" width="44" height="13" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AAC6F407732EB05E99FA5B48B73701C7"><img src="../media/AAC6F407732EB05E99FA5B48B73701C7.png" width="35" height="10" align="baseline"></img></a></markup>). The values for <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5F0117272C7B6CF7327019290D7B40D1"><img src="../media/5F0117272C7B6CF7327019290D7B40D1.png" width="9" height="6" align="baseline"></img></a></markup> are indicated in the legend.
+Fig. 1: ConversionNthOrder fit functions (with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5F11FF7444894F8F51F7C700F986EAE0"><img src="../media/5F11FF7444894F8F51F7C700F986EAE0.png" width="39" height="13" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#0F2A1F7F12A1EDD1D769BD668BAE7D22"><img src="../media/0F2A1F7F12A1EDD1D769BD668BAE7D22.png" width="44" height="13" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#C199D62478BFE3D028D27DBAA75C21F3"><img src="../media/C199D62478BFE3D028D27DBAA75C21F3.png" width="35" height="13" align="middle"></img></a></markup>). The values for <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#2C98805231D9E459838EDFD6D25D90F0"><img src="../media/2C98805231D9E459838EDFD6D25D90F0.png" width="9" height="8" align="middle"></img></a></markup> are indicated in the legend.
 </para>
 <markup><hr/></markup></content>
 </section>
@@ -258,28 +258,28 @@ in which
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#992D5054922F4DA8638CA147FD86562C"><img src="../media/992D5054922F4DA8638CA147FD86562C.png" width="9" height="6" align="baseline"></img></a></markup> is the independent variable (for a kinetics, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#992D5054922F4DA8638CA147FD86562C"><img src="../media/992D5054922F4DA8638CA147FD86562C.png" width="9" height="6" align="baseline"></img></a></markup> represents the time),
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#CC8723E7D1A6769711F2B74778518A93"><img src="../media/CC8723E7D1A6769711F2B74778518A93.png" width="9" height="8" align="middle"></img></a></markup> is the independent variable (for a kinetics, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#CC8723E7D1A6769711F2B74778518A93"><img src="../media/CC8723E7D1A6769711F2B74778518A93.png" width="9" height="8" align="middle"></img></a></markup> represents the time),
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#46BB3168C6415A47FFF5B4ABDB39FE89"><img src="../media/46BB3168C6415A47FFF5B4ABDB39FE89.png" width="8" height="10" align="baseline"></img></a></markup> is a rate parameter,
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FB20E232CC65285AF026C17292618ECA"><img src="../media/FB20E232CC65285AF026C17292618ECA.png" width="8" height="13" align="middle"></img></a></markup> is a rate parameter,
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5F0117272C7B6CF7327019290D7B40D1"><img src="../media/5F0117272C7B6CF7327019290D7B40D1.png" width="9" height="6" align="baseline"></img></a></markup> is the order of the kinetic process,
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#2C98805231D9E459838EDFD6D25D90F0"><img src="../media/2C98805231D9E459838EDFD6D25D90F0.png" width="9" height="8" align="middle"></img></a></markup> is the order of the kinetic process,
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#54AF930CA32CEFBC08DCD27186250A38"><img src="../media/54AF930CA32CEFBC08DCD27186250A38.png" width="13" height="10" align="bottom"></img></a></markup> is the value of <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#8674962D5AE2A4098EB5523538340C26"><img src="../media/8674962D5AE2A4098EB5523538340C26.png" width="7" height="10" align="bottom"></img></a></markup> at <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FBDADA539604A3B630924F7785312639"><img src="../media/FBDADA539604A3B630924F7785312639.png" width="36" height="10" align="baseline"></img></a></markup>.
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#54AF930CA32CEFBC08DCD27186250A38"><img src="../media/54AF930CA32CEFBC08DCD27186250A38.png" width="13" height="10" align="bottom"></img></a></markup> is the value of <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#8674962D5AE2A4098EB5523538340C26"><img src="../media/8674962D5AE2A4098EB5523538340C26.png" width="7" height="10" align="bottom"></img></a></markup> at <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B7536A7BA81E981B413A075103EA2A5F"><img src="../media/B7536A7BA81E981B413A075103EA2A5F.png" width="36" height="12" align="middle"></img></a></markup>.
 </para>
 </listItem>
 </list>
@@ -302,7 +302,7 @@ The domain of the function is:
 </para>
 
 <para>
-Fig. 1: KineticsNthOrder (with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#C48549B03BA53AE5E36F79063777C63F"><img src="../media/C48549B03BA53AE5E36F79063777C63F.png" width="40" height="14" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AAC6F407732EB05E99FA5B48B73701C7"><img src="../media/AAC6F407732EB05E99FA5B48B73701C7.png" width="35" height="10" align="baseline"></img></a></markup>). The values for <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5F0117272C7B6CF7327019290D7B40D1"><img src="../media/5F0117272C7B6CF7327019290D7B40D1.png" width="9" height="6" align="baseline"></img></a></markup> are indicated in the legend.
+Fig. 1: KineticsNthOrder (with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#6166469FD5ACBDFB07A5FBD454F58314"><img src="../media/6166469FD5ACBDFB07A5FBD454F58314.png" width="40" height="14" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#C199D62478BFE3D028D27DBAA75C21F3"><img src="../media/C199D62478BFE3D028D27DBAA75C21F3.png" width="35" height="13" align="middle"></img></a></markup>). The values for <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#2C98805231D9E459838EDFD6D25D90F0"><img src="../media/2C98805231D9E459838EDFD6D25D90F0.png" width="9" height="8" align="middle"></img></a></markup> are indicated in the legend.
 </para>
 <markup><hr/></markup></content>
 </section>
@@ -326,14 +326,14 @@ in which
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#58E56D6C367F0C13FFA286CDF058B473"><img src="../media/58E56D6C367F0C13FFA286CDF058B473.png" width="6" height="6" align="baseline"></img></a></markup> is a value in the range [0, 1], e.g. the chemical conversion,
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#C1F1D9A4DCE770273CE5B234A667BD36"><img src="../media/C1F1D9A4DCE770273CE5B234A667BD36.png" width="6" height="8" align="middle"></img></a></markup> is a value in the range [0, 1], e.g. the chemical conversion,
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#992D5054922F4DA8638CA147FD86562C"><img src="../media/992D5054922F4DA8638CA147FD86562C.png" width="9" height="6" align="baseline"></img></a></markup> is the independent variable (for a reaction, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#992D5054922F4DA8638CA147FD86562C"><img src="../media/992D5054922F4DA8638CA147FD86562C.png" width="9" height="6" align="baseline"></img></a></markup> represents the time),
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#CC8723E7D1A6769711F2B74778518A93"><img src="../media/CC8723E7D1A6769711F2B74778518A93.png" width="9" height="8" align="middle"></img></a></markup> is the independent variable (for a reaction, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#CC8723E7D1A6769711F2B74778518A93"><img src="../media/CC8723E7D1A6769711F2B74778518A93.png" width="9" height="8" align="middle"></img></a></markup> represents the time),
 </para>
 </listItem>
 
@@ -347,14 +347,14 @@ in which
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9FD34652DC94880E880464BC7F6D7026"><img src="../media/9FD34652DC94880E880464BC7F6D7026.png" width="13" height="6" align="baseline"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5F0117272C7B6CF7327019290D7B40D1"><img src="../media/5F0117272C7B6CF7327019290D7B40D1.png" width="9" height="6" align="baseline"></img></a></markup> are exponents,
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#05D89BADA9F8449E8B1D903E20FC1521"><img src="../media/05D89BADA9F8449E8B1D903E20FC1521.png" width="13" height="8" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#2C98805231D9E459838EDFD6D25D90F0"><img src="../media/2C98805231D9E459838EDFD6D25D90F0.png" width="9" height="8" align="middle"></img></a></markup> are exponents,
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D1A7B934C18EC91787E450B1C2A8D5EF"><img src="../media/D1A7B934C18EC91787E450B1C2A8D5EF.png" width="11" height="13" align="middle"></img></a></markup> is the point (time) of the start of the reaction, i.e. <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#DE099318013414C1810AAC40E34FCE7D"><img src="../media/DE099318013414C1810AAC40E34FCE7D.png" width="57" height="16" align="bottom"></img></a></markup>.
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D1A7B934C18EC91787E450B1C2A8D5EF"><img src="../media/D1A7B934C18EC91787E450B1C2A8D5EF.png" width="11" height="13" align="middle"></img></a></markup> is the point (time) of the start of the reaction, i.e. <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D036900024B11F4EB0E19A43981628EC"><img src="../media/D036900024B11F4EB0E19A43981628EC.png" width="57" height="16" align="bottom"></img></a></markup>.
 </para>
 </listItem>
 </list>
@@ -362,12 +362,12 @@ in which
 <quote>
 
 <para>
-<legacyBold>Important</legacyBold>: In this fit function, the <legacyBold>dependent variable is not the conversion</legacyBold> <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#8154C9420850BA7B6FA8F2DD0D599F0E"><img src="../media/8154C9420850BA7B6FA8F2DD0D599F0E.png" width="27" height="16" align="bottom"></img></a></markup>, <legacyBold>but a scaled value of the conversion rate</legacyBold> <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#330DB0C589B7E069F555AACD99FE35BA"><img src="../media/330DB0C589B7E069F555AACD99FE35BA.png" width="102" height="35" align="middle"></img></a></markup>, in which <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B4DDCF3D22F9C04098E877FB85E9CA4B"><img src="../media/B4DDCF3D22F9C04098E877FB85E9CA4B.png" width="17" height="13" align="middle"></img></a></markup> is an additional parameter!
+<legacyBold>Important</legacyBold>: In this fit function, the <legacyBold>dependent variable is not the conversion</legacyBold> <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#05639BE45B5B73B56942C662AB9B0298"><img src="../media/05639BE45B5B73B56942C662AB9B0298.png" width="27" height="16" align="bottom"></img></a></markup>, <legacyBold>but a scaled value of the conversion rate</legacyBold> <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#330DB0C589B7E069F555AACD99FE35BA"><img src="../media/330DB0C589B7E069F555AACD99FE35BA.png" width="102" height="35" align="middle"></img></a></markup>, in which <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B4DDCF3D22F9C04098E877FB85E9CA4B"><img src="../media/B4DDCF3D22F9C04098E877FB85E9CA4B.png" width="17" height="13" align="middle"></img></a></markup> is an additional parameter!
 </para>
 </quote>
 
 <para>
-The values of <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#8674962D5AE2A4098EB5523538340C26"><img src="../media/8674962D5AE2A4098EB5523538340C26.png" width="7" height="10" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D46041364DEBE2FE020A08D622FD23D6"><img src="../media/D46041364DEBE2FE020A08D622FD23D6.png" width="13" height="13" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FB6A64316C184AC25466E662BEC3C98D"><img src="../media/FB6A64316C184AC25466E662BEC3C98D.png" width="13" height="13" align="middle"></img></a></markup> are assumed to be positive. The value of <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#58E56D6C367F0C13FFA286CDF058B473"><img src="../media/58E56D6C367F0C13FFA286CDF058B473.png" width="6" height="6" align="baseline"></img></a></markup> before the start of reaction (<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1DCF3447FB8B6FF6B6321314959C8E5C"><img src="../media/1DCF3447FB8B6FF6B6321314959C8E5C.png" width="40" height="13" align="middle"></img></a></markup>) is assumed to be 0.
+The values of <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#8674962D5AE2A4098EB5523538340C26"><img src="../media/8674962D5AE2A4098EB5523538340C26.png" width="7" height="10" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D46041364DEBE2FE020A08D622FD23D6"><img src="../media/D46041364DEBE2FE020A08D622FD23D6.png" width="13" height="13" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FB6A64316C184AC25466E662BEC3C98D"><img src="../media/FB6A64316C184AC25466E662BEC3C98D.png" width="13" height="13" align="middle"></img></a></markup> are assumed to be positive. The value of <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#C1F1D9A4DCE770273CE5B234A667BD36"><img src="../media/C1F1D9A4DCE770273CE5B234A667BD36.png" width="6" height="8" align="middle"></img></a></markup> before the start of reaction (<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1DCF3447FB8B6FF6B6321314959C8E5C"><img src="../media/1DCF3447FB8B6FF6B6321314959C8E5C.png" width="40" height="13" align="middle"></img></a></markup>) is assumed to be 0.
 </para>
 
 <para>
@@ -391,7 +391,7 @@ This kinetic equation assumes that the conversion finally reaches 1 (100%). This
 </para>
 
 <para>
-Fig. 1: RateOfConversionAutocatalytic (with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5F11FF7444894F8F51F7C700F986EAE0"><img src="../media/5F11FF7444894F8F51F7C700F986EAE0.png" width="39" height="13" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#0F2A1F7F12A1EDD1D769BD668BAE7D22"><img src="../media/0F2A1F7F12A1EDD1D769BD668BAE7D22.png" width="44" height="13" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#C62F768DDB4C88438518366FC36F113E"><img src="../media/C62F768DDB4C88438518366FC36F113E.png" width="41" height="13" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FB6A64316C184AC25466E662BEC3C98D"><img src="../media/FB6A64316C184AC25466E662BEC3C98D.png" width="13" height="13" align="middle"></img></a></markup>=1). The values for <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#9FD34652DC94880E880464BC7F6D7026"><img src="../media/9FD34652DC94880E880464BC7F6D7026.png" width="13" height="6" align="baseline"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5F0117272C7B6CF7327019290D7B40D1"><img src="../media/5F0117272C7B6CF7327019290D7B40D1.png" width="9" height="6" align="baseline"></img></a></markup> are indicated in the legend.
+Fig. 1: RateOfConversionAutocatalytic (with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5F11FF7444894F8F51F7C700F986EAE0"><img src="../media/5F11FF7444894F8F51F7C700F986EAE0.png" width="39" height="13" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#0F2A1F7F12A1EDD1D769BD668BAE7D22"><img src="../media/0F2A1F7F12A1EDD1D769BD668BAE7D22.png" width="44" height="13" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#C62F768DDB4C88438518366FC36F113E"><img src="../media/C62F768DDB4C88438518366FC36F113E.png" width="41" height="13" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FB6A64316C184AC25466E662BEC3C98D"><img src="../media/FB6A64316C184AC25466E662BEC3C98D.png" width="13" height="13" align="middle"></img></a></markup>=1). The values for <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#05D89BADA9F8449E8B1D903E20FC1521"><img src="../media/05D89BADA9F8449E8B1D903E20FC1521.png" width="13" height="8" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#2C98805231D9E459838EDFD6D25D90F0"><img src="../media/2C98805231D9E459838EDFD6D25D90F0.png" width="9" height="8" align="middle"></img></a></markup> are indicated in the legend.
 </para>
 <markup><hr/></markup>
 
@@ -430,35 +430,35 @@ in which
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#58E56D6C367F0C13FFA286CDF058B473"><img src="../media/58E56D6C367F0C13FFA286CDF058B473.png" width="6" height="6" align="baseline"></img></a></markup> is a value in the range [0, 1], e.g. the chemical conversion,
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#C1F1D9A4DCE770273CE5B234A667BD36"><img src="../media/C1F1D9A4DCE770273CE5B234A667BD36.png" width="6" height="8" align="middle"></img></a></markup> is a value in the range [0, 1], e.g. the chemical conversion,
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#992D5054922F4DA8638CA147FD86562C"><img src="../media/992D5054922F4DA8638CA147FD86562C.png" width="9" height="6" align="baseline"></img></a></markup> is the independent variable (for a kinetics, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#992D5054922F4DA8638CA147FD86562C"><img src="../media/992D5054922F4DA8638CA147FD86562C.png" width="9" height="6" align="baseline"></img></a></markup> represents the time),
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#CC8723E7D1A6769711F2B74778518A93"><img src="../media/CC8723E7D1A6769711F2B74778518A93.png" width="9" height="8" align="middle"></img></a></markup> is the independent variable (for a kinetics, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#CC8723E7D1A6769711F2B74778518A93"><img src="../media/CC8723E7D1A6769711F2B74778518A93.png" width="9" height="8" align="middle"></img></a></markup> represents the time),
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#46BB3168C6415A47FFF5B4ABDB39FE89"><img src="../media/46BB3168C6415A47FFF5B4ABDB39FE89.png" width="8" height="10" align="baseline"></img></a></markup> is a rate parameter,
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FB20E232CC65285AF026C17292618ECA"><img src="../media/FB20E232CC65285AF026C17292618ECA.png" width="8" height="13" align="middle"></img></a></markup> is a rate parameter,
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5F0117272C7B6CF7327019290D7B40D1"><img src="../media/5F0117272C7B6CF7327019290D7B40D1.png" width="9" height="6" align="baseline"></img></a></markup> is the order of the kinetic conversion process,
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#2C98805231D9E459838EDFD6D25D90F0"><img src="../media/2C98805231D9E459838EDFD6D25D90F0.png" width="9" height="8" align="middle"></img></a></markup> is the order of the kinetic conversion process,
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D1A7B934C18EC91787E450B1C2A8D5EF"><img src="../media/D1A7B934C18EC91787E450B1C2A8D5EF.png" width="11" height="13" align="middle"></img></a></markup> is the point (time) of the start of the reaction, i.e. <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#DE099318013414C1810AAC40E34FCE7D"><img src="../media/DE099318013414C1810AAC40E34FCE7D.png" width="57" height="16" align="bottom"></img></a></markup>.
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D1A7B934C18EC91787E450B1C2A8D5EF"><img src="../media/D1A7B934C18EC91787E450B1C2A8D5EF.png" width="11" height="13" align="middle"></img></a></markup> is the point (time) of the start of the reaction, i.e. <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D036900024B11F4EB0E19A43981628EC"><img src="../media/D036900024B11F4EB0E19A43981628EC.png" width="57" height="16" align="bottom"></img></a></markup>.
 </para>
 </listItem>
 </list>
@@ -466,12 +466,12 @@ in which
 <quote>
 
 <para>
-<legacyBold>Important</legacyBold>: In this fit function, the <legacyBold>dependent variable is not the conversion</legacyBold> <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#8154C9420850BA7B6FA8F2DD0D599F0E"><img src="../media/8154C9420850BA7B6FA8F2DD0D599F0E.png" width="27" height="16" align="bottom"></img></a></markup>, <legacyBold>but a scaled value of the conversion rate</legacyBold> <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#330DB0C589B7E069F555AACD99FE35BA"><img src="../media/330DB0C589B7E069F555AACD99FE35BA.png" width="102" height="35" align="middle"></img></a></markup>, in which <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B4DDCF3D22F9C04098E877FB85E9CA4B"><img src="../media/B4DDCF3D22F9C04098E877FB85E9CA4B.png" width="17" height="13" align="middle"></img></a></markup> is an additional parameter!
+<legacyBold>Important</legacyBold>: In this fit function, the <legacyBold>dependent variable is not the conversion</legacyBold> <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#05639BE45B5B73B56942C662AB9B0298"><img src="../media/05639BE45B5B73B56942C662AB9B0298.png" width="27" height="16" align="bottom"></img></a></markup>, <legacyBold>but a scaled value of the conversion rate</legacyBold> <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#330DB0C589B7E069F555AACD99FE35BA"><img src="../media/330DB0C589B7E069F555AACD99FE35BA.png" width="102" height="35" align="middle"></img></a></markup>, in which <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B4DDCF3D22F9C04098E877FB85E9CA4B"><img src="../media/B4DDCF3D22F9C04098E877FB85E9CA4B.png" width="17" height="13" align="middle"></img></a></markup> is an additional parameter!
 </para>
 </quote>
 
 <para>
-The value of <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#46BB3168C6415A47FFF5B4ABDB39FE89"><img src="../media/46BB3168C6415A47FFF5B4ABDB39FE89.png" width="8" height="10" align="baseline"></img></a></markup> is assumed to be positive.
+The value of <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FB20E232CC65285AF026C17292618ECA"><img src="../media/FB20E232CC65285AF026C17292618ECA.png" width="8" height="13" align="middle"></img></a></markup> is assumed to be positive.
 </para>
 
 <para>
@@ -480,7 +480,7 @@ The solution for <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#14888
 <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#3C4A5EFC5CFEFF0726316CB0CE6106AF"><img src="../media/3C4A5EFC5CFEFF0726316CB0CE6106AF.png" width="296" height="46"></img></a></markup>
 
 <para>
-For <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1DCF3447FB8B6FF6B6321314959C8E5C"><img src="../media/1DCF3447FB8B6FF6B6321314959C8E5C.png" width="40" height="13" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#58E56D6C367F0C13FFA286CDF058B473"><img src="../media/58E56D6C367F0C13FFA286CDF058B473.png" width="6" height="6" align="baseline"></img></a></markup> is set to 0. Additionally, in order to be consistent among different <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5F0117272C7B6CF7327019290D7B40D1"><img src="../media/5F0117272C7B6CF7327019290D7B40D1.png" width="9" height="6" align="baseline"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#58E56D6C367F0C13FFA286CDF058B473"><img src="../media/58E56D6C367F0C13FFA286CDF058B473.png" width="6" height="6" align="baseline"></img></a></markup> is set to 1 if <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#8E80843589F0DDE8B216CCFA52ED81FE"><img src="../media/8E80843589F0DDE8B216CCFA52ED81FE.png" width="37" height="11" align="baseline"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B8504D3C75DBED044AD06AD6EDB6E8D6"><img src="../media/B8504D3C75DBED044AD06AD6EDB6E8D6.png" width="112" height="36" align="middle"></img></a></markup>.
+For <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1DCF3447FB8B6FF6B6321314959C8E5C"><img src="../media/1DCF3447FB8B6FF6B6321314959C8E5C.png" width="40" height="13" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#C1F1D9A4DCE770273CE5B234A667BD36"><img src="../media/C1F1D9A4DCE770273CE5B234A667BD36.png" width="6" height="8" align="middle"></img></a></markup> is set to 0. Additionally, in order to be consistent among different <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#2C98805231D9E459838EDFD6D25D90F0"><img src="../media/2C98805231D9E459838EDFD6D25D90F0.png" width="9" height="8" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#C1F1D9A4DCE770273CE5B234A667BD36"><img src="../media/C1F1D9A4DCE770273CE5B234A667BD36.png" width="6" height="8" align="middle"></img></a></markup> is set to 1 if <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#6AEFBF289891F40F40BFFFB4A359BB7C"><img src="../media/6AEFBF289891F40F40BFFFB4A359BB7C.png" width="37" height="12" align="middle"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B8504D3C75DBED044AD06AD6EDB6E8D6"><img src="../media/B8504D3C75DBED044AD06AD6EDB6E8D6.png" width="112" height="36" align="middle"></img></a></markup>.
 </para>
 
 <para>
@@ -492,7 +492,7 @@ The domain of the function is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB
 </para>
 
 <para>
-Fig. 1: RateOfConversionNthOrder fit functions (with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5F11FF7444894F8F51F7C700F986EAE0"><img src="../media/5F11FF7444894F8F51F7C700F986EAE0.png" width="39" height="13" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#0F2A1F7F12A1EDD1D769BD668BAE7D22"><img src="../media/0F2A1F7F12A1EDD1D769BD668BAE7D22.png" width="44" height="13" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#AAC6F407732EB05E99FA5B48B73701C7"><img src="../media/AAC6F407732EB05E99FA5B48B73701C7.png" width="35" height="10" align="baseline"></img></a></markup>). The values for <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5F0117272C7B6CF7327019290D7B40D1"><img src="../media/5F0117272C7B6CF7327019290D7B40D1.png" width="9" height="6" align="baseline"></img></a></markup> are indicated in the legend.
+Fig. 1: RateOfConversionNthOrder fit functions (with <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#5F11FF7444894F8F51F7C700F986EAE0"><img src="../media/5F11FF7444894F8F51F7C700F986EAE0.png" width="39" height="13" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#0F2A1F7F12A1EDD1D769BD668BAE7D22"><img src="../media/0F2A1F7F12A1EDD1D769BD668BAE7D22.png" width="44" height="13" align="middle"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#C199D62478BFE3D028D27DBAA75C21F3"><img src="../media/C199D62478BFE3D028D27DBAA75C21F3.png" width="35" height="13" align="middle"></img></a></markup>). The values for <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#2C98805231D9E459838EDFD6D25D90F0"><img src="../media/2C98805231D9E459838EDFD6D25D90F0.png" width="9" height="8" align="middle"></img></a></markup> are indicated in the legend.
 </para>
 <markup><hr/></markup></content>
 </section>

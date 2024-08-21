@@ -22,7 +22,7 @@ The function is defined as:
 <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#926795F779864995AD907E4D881A7C00"><img src="../media/926795F779864995AD907E4D881A7C00.png" width="137" height="37"></img></a></markup>
 
 <para>
-in which <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#8674962D5AE2A4098EB5523538340C26"><img src="../media/8674962D5AE2A4098EB5523538340C26.png" width="7" height="10" align="bottom"></img></a></markup> is the reaction rate (dependent variable), <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D07FFFE2113880423FB0F67CDB6B0F9B"><img src="../media/D07FFFE2113880423FB0F67CDB6B0F9B.png" width="9" height="10" align="baseline"></img></a></markup> is the absolute (!) temperature (independent variable), and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#46BB3168C6415A47FFF5B4ABDB39FE89"><img src="../media/46BB3168C6415A47FFF5B4ABDB39FE89.png" width="8" height="10" align="baseline"></img></a></markup> is a constant, usually the Boltzmann constant, but it depends on the options you choose for the fit (see below).
+in which <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#8674962D5AE2A4098EB5523538340C26"><img src="../media/8674962D5AE2A4098EB5523538340C26.png" width="7" height="10" align="bottom"></img></a></markup> is the reaction rate (dependent variable), <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#3D0E087EAE38BD0D05451AA81419C432"><img src="../media/3D0E087EAE38BD0D05451AA81419C432.png" width="9" height="13" align="middle"></img></a></markup> is the absolute (!) temperature (independent variable), and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FB20E232CC65285AF026C17292618ECA"><img src="../media/FB20E232CC65285AF026C17292618ECA.png" width="8" height="13" align="middle"></img></a></markup> is a constant, usually the Boltzmann constant, but it depends on the options you choose for the fit (see below).
 </para>
 
 <para>
@@ -34,7 +34,7 @@ The parameters are:
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#54AF930CA32CEFBC08DCD27186250A38"><img src="../media/54AF930CA32CEFBC08DCD27186250A38.png" width="13" height="10" align="bottom"></img></a></markup> is the reaction rate in the limit <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D104CF3DCBAF2CE019DE9DEC664A3682"><img src="../media/D104CF3DCBAF2CE019DE9DEC664A3682.png" width="47" height="10" align="baseline"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#54AF930CA32CEFBC08DCD27186250A38"><img src="../media/54AF930CA32CEFBC08DCD27186250A38.png" width="13" height="10" align="bottom"></img></a></markup> is the reaction rate in the limit <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#8D266FC05614C00257079373C514E150"><img src="../media/8D266FC05614C00257079373C514E150.png" width="47" height="13" align="middle"></img></a></markup>
 </para>
 </listItem>
 
@@ -63,7 +63,7 @@ In order to get a good fit nevertheless, it is neccessary  that you logarithmize
 <listItem>
 
 <para>
-Kelvin: x is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D07FFFE2113880423FB0F67CDB6B0F9B"><img src="../media/D07FFFE2113880423FB0F67CDB6B0F9B.png" width="9" height="10" align="baseline"></img></a></markup> in Kelvin
+Kelvin: x is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#3D0E087EAE38BD0D05451AA81419C432"><img src="../media/3D0E087EAE38BD0D05451AA81419C432.png" width="9" height="13" align="middle"></img></a></markup> in Kelvin
 </para>
 </listItem>
 
@@ -119,28 +119,28 @@ Negative: the negative rate <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB02
 <listItem>
 
 <para>
-DecadicLogarithm: <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#95620D9BEABD40EE0E096E8C850EA8E6"><img src="../media/95620D9BEABD40EE0E096E8C850EA8E6.png" width="49" height="16" align="bottom"></img></a></markup>
+DecadicLogarithm: <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#25EDB1B6D89860E65F2C024C703EEBCC"><img src="../media/25EDB1B6D89860E65F2C024C703EEBCC.png" width="49" height="16" align="bottom"></img></a></markup>
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-NegativeDecadicLogarithm: <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#55BC8035F33846048FDDC124618D42BC"><img src="../media/55BC8035F33846048FDDC124618D42BC.png" width="63" height="16" align="bottom"></img></a></markup>
+NegativeDecadicLogarithm: <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#82D793344D2DD68DEC9CB259C97D6FA9"><img src="../media/82D793344D2DD68DEC9CB259C97D6FA9.png" width="63" height="16" align="bottom"></img></a></markup>
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-NaturalLogarithm: <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#40D0C0D93FBD4F42C162A2E7F9C8CBBC"><img src="../media/40D0C0D93FBD4F42C162A2E7F9C8CBBC.png" width="32" height="16" align="bottom"></img></a></markup>
+NaturalLogarithm: <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#EC2207BCE6F588143DC2CC01145B0C47"><img src="../media/EC2207BCE6F588143DC2CC01145B0C47.png" width="32" height="16" align="bottom"></img></a></markup>
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-NegativeNaturalLogarithm: <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1186BD1F3A63CFC59D6DAB8EFA96370B"><img src="../media/1186BD1F3A63CFC59D6DAB8EFA96370B.png" width="46" height="16" align="bottom"></img></a></markup>
+NegativeNaturalLogarithm: <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#010890F63A878B7C41BB6A4A5EFB17AD"><img src="../media/010890F63A878B7C41BB6A4A5EFB17AD.png" width="46" height="16" align="bottom"></img></a></markup>
 </para>
 </listItem>
 </list>
@@ -195,7 +195,7 @@ kWh, calorie, calorie per mole and more..
 </para>
 
 <para>
-Fig. 1: Typical plot of an Arrhenius diagram (reaction rate by the inverse temperature). Here the parameters are <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#657DCBF95ECFE016F0A9A8BC5762CAFF"><img src="../media/657DCBF95ECFE016F0A9A8BC5762CAFF.png" width="80" height="17" align="bottom"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#6324D6D071A04014F10D36344B8C18C9"><img src="../media/6324D6D071A04014F10D36344B8C18C9.png" width="52" height="13" align="middle"></img></a></markup> kJ/mol. Please note that if you choose the x-axis to be <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#57B7C8E568C700EA5BC855BFD4BAEF40"><img src="../media/57B7C8E568C700EA5BC855BFD4BAEF40.png" width="24" height="16" align="bottom"></img></a></markup> instead of T and the y-axis to be logarithmic, as in this example, the curve becomes a straight line. You can even include the &quot;right&quot; temperatures in °C by adding a second axis at the bottom, with inverse tick spacing and the transformation <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#CBBD3BFF5CACCF0756B7F9DF98E8FB47"><img src="../media/CBBD3BFF5CACCF0756B7F9DF98E8FB47.png" width="112" height="17" align="bottom"></img></a></markup>.
+Fig. 1: Typical plot of an Arrhenius diagram (reaction rate by the inverse temperature). Here the parameters are <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#657DCBF95ECFE016F0A9A8BC5762CAFF"><img src="../media/657DCBF95ECFE016F0A9A8BC5762CAFF.png" width="80" height="17" align="bottom"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#6324D6D071A04014F10D36344B8C18C9"><img src="../media/6324D6D071A04014F10D36344B8C18C9.png" width="52" height="13" align="middle"></img></a></markup> kJ/mol. Please note that if you choose the x-axis to be <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#8CD93693032BCF698C54C2560D939B30"><img src="../media/8CD93693032BCF698C54C2560D939B30.png" width="24" height="16" align="bottom"></img></a></markup> instead of T and the y-axis to be logarithmic, as in this example, the curve becomes a straight line. You can even include the &quot;right&quot; temperatures in °C by adding a second axis at the bottom, with inverse tick spacing and the transformation <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#17158232950C18CAC0B715F475DC1CB2"><img src="../media/17158232950C18CAC0B715F475DC1CB2.png" width="112" height="17" align="bottom"></img></a></markup>.
 </para>
 </content>
 </section>
@@ -212,7 +212,7 @@ The function is defined as:
 <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#F4DFDCD22685ED3A4AEFDE5CC17A7C43"><img src="../media/F4DFDCD22685ED3A4AEFDE5CC17A7C43.png" width="125" height="37"></img></a></markup>
 
 <para>
-in which <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#8674962D5AE2A4098EB5523538340C26"><img src="../media/8674962D5AE2A4098EB5523538340C26.png" width="7" height="10" align="bottom"></img></a></markup> is the relaxation or retardation time or viscosity (dependent variable), <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D07FFFE2113880423FB0F67CDB6B0F9B"><img src="../media/D07FFFE2113880423FB0F67CDB6B0F9B.png" width="9" height="10" align="baseline"></img></a></markup> is the absolute (!) temperature (independent variable), and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#46BB3168C6415A47FFF5B4ABDB39FE89"><img src="../media/46BB3168C6415A47FFF5B4ABDB39FE89.png" width="8" height="10" align="baseline"></img></a></markup> is a constant, usually the Boltzmann constant, but it depends on the options you choose for the fit (see below).
+in which <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#8674962D5AE2A4098EB5523538340C26"><img src="../media/8674962D5AE2A4098EB5523538340C26.png" width="7" height="10" align="bottom"></img></a></markup> is the relaxation or retardation time or viscosity (dependent variable), <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#3D0E087EAE38BD0D05451AA81419C432"><img src="../media/3D0E087EAE38BD0D05451AA81419C432.png" width="9" height="13" align="middle"></img></a></markup> is the absolute (!) temperature (independent variable), and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#FB20E232CC65285AF026C17292618ECA"><img src="../media/FB20E232CC65285AF026C17292618ECA.png" width="8" height="13" align="middle"></img></a></markup> is a constant, usually the Boltzmann constant, but it depends on the options you choose for the fit (see below).
 </para>
 
 <para>
@@ -224,7 +224,7 @@ The parameters are:
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#54AF930CA32CEFBC08DCD27186250A38"><img src="../media/54AF930CA32CEFBC08DCD27186250A38.png" width="13" height="10" align="bottom"></img></a></markup> is the relaxation or retardation time or viscosity in the limit <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D104CF3DCBAF2CE019DE9DEC664A3682"><img src="../media/D104CF3DCBAF2CE019DE9DEC664A3682.png" width="47" height="10" align="baseline"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#54AF930CA32CEFBC08DCD27186250A38"><img src="../media/54AF930CA32CEFBC08DCD27186250A38.png" width="13" height="10" align="bottom"></img></a></markup> is the relaxation or retardation time or viscosity in the limit <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#8D266FC05614C00257079373C514E150"><img src="../media/8D266FC05614C00257079373C514E150.png" width="47" height="13" align="middle"></img></a></markup>
 </para>
 </listItem>
 
@@ -253,7 +253,7 @@ In order to get a good fit nevertheless, it is neccessary  that you logarithmize
 <listItem>
 
 <para>
-Kelvin: x is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D07FFFE2113880423FB0F67CDB6B0F9B"><img src="../media/D07FFFE2113880423FB0F67CDB6B0F9B.png" width="9" height="10" align="baseline"></img></a></markup> in Kelvin
+Kelvin: x is <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#3D0E087EAE38BD0D05451AA81419C432"><img src="../media/3D0E087EAE38BD0D05451AA81419C432.png" width="9" height="13" align="middle"></img></a></markup> in Kelvin
 </para>
 </listItem>
 
@@ -309,28 +309,28 @@ Negative: the negative rate <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB02
 <listItem>
 
 <para>
-DecadicLogarithm: <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#95620D9BEABD40EE0E096E8C850EA8E6"><img src="../media/95620D9BEABD40EE0E096E8C850EA8E6.png" width="49" height="16" align="bottom"></img></a></markup>
+DecadicLogarithm: <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#25EDB1B6D89860E65F2C024C703EEBCC"><img src="../media/25EDB1B6D89860E65F2C024C703EEBCC.png" width="49" height="16" align="bottom"></img></a></markup>
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-NegativeDecadicLogarithm: <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#55BC8035F33846048FDDC124618D42BC"><img src="../media/55BC8035F33846048FDDC124618D42BC.png" width="63" height="16" align="bottom"></img></a></markup>
+NegativeDecadicLogarithm: <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#82D793344D2DD68DEC9CB259C97D6FA9"><img src="../media/82D793344D2DD68DEC9CB259C97D6FA9.png" width="63" height="16" align="bottom"></img></a></markup>
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-NaturalLogarithm: <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#40D0C0D93FBD4F42C162A2E7F9C8CBBC"><img src="../media/40D0C0D93FBD4F42C162A2E7F9C8CBBC.png" width="32" height="16" align="bottom"></img></a></markup>
+NaturalLogarithm: <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#EC2207BCE6F588143DC2CC01145B0C47"><img src="../media/EC2207BCE6F588143DC2CC01145B0C47.png" width="32" height="16" align="bottom"></img></a></markup>
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-NegativeNaturalLogarithm: <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1186BD1F3A63CFC59D6DAB8EFA96370B"><img src="../media/1186BD1F3A63CFC59D6DAB8EFA96370B.png" width="46" height="16" align="bottom"></img></a></markup>
+NegativeNaturalLogarithm: <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#010890F63A878B7C41BB6A4A5EFB17AD"><img src="../media/010890F63A878B7C41BB6A4A5EFB17AD.png" width="46" height="16" align="bottom"></img></a></markup>
 </para>
 </listItem>
 </list>
@@ -385,7 +385,7 @@ kWh, calorie, calorie per mole and more..
 </para>
 
 <para>
-Fig. 1: Typical plot of an Arrhenius diagram (viscosity by the inverse temperature). Here the parameters are <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#F82E2D84B03E10850DFADE1512D13B04"><img src="../media/F82E2D84B03E10850DFADE1512D13B04.png" width="67" height="17" align="bottom"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#6324D6D071A04014F10D36344B8C18C9"><img src="../media/6324D6D071A04014F10D36344B8C18C9.png" width="52" height="13" align="middle"></img></a></markup> kJ/mol. Please note that if you choose the x-axis to be <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#57B7C8E568C700EA5BC855BFD4BAEF40"><img src="../media/57B7C8E568C700EA5BC855BFD4BAEF40.png" width="24" height="16" align="bottom"></img></a></markup> instead of T and the y-axis to be logarithmic, as in this example, the curve becomes a straight line. You can even include the &quot;right&quot; temperatures in °C by adding a second axis at the bottom, with inverse tick spacing and the transformation <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#CBBD3BFF5CACCF0756B7F9DF98E8FB47"><img src="../media/CBBD3BFF5CACCF0756B7F9DF98E8FB47.png" width="112" height="17" align="bottom"></img></a></markup>.
+Fig. 1: Typical plot of an Arrhenius diagram (viscosity by the inverse temperature). Here the parameters are <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#F82E2D84B03E10850DFADE1512D13B04"><img src="../media/F82E2D84B03E10850DFADE1512D13B04.png" width="67" height="17" align="bottom"></img></a></markup> and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#6324D6D071A04014F10D36344B8C18C9"><img src="../media/6324D6D071A04014F10D36344B8C18C9.png" width="52" height="13" align="middle"></img></a></markup> kJ/mol. Please note that if you choose the x-axis to be <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#8CD93693032BCF698C54C2560D939B30"><img src="../media/8CD93693032BCF698C54C2560D939B30.png" width="24" height="16" align="bottom"></img></a></markup> instead of T and the y-axis to be logarithmic, as in this example, the curve becomes a straight line. You can even include the &quot;right&quot; temperatures in °C by adding a second axis at the bottom, with inverse tick spacing and the transformation <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#17158232950C18CAC0B715F475DC1CB2"><img src="../media/17158232950C18CAC0B715F475DC1CB2.png" width="112" height="17" align="bottom"></img></a></markup>.
 </para>
 <markup><hr/></markup></content>
 </section>
@@ -409,14 +409,14 @@ The function is defined as:
 <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#570B73ABC013912BC4E98FC728883B5A"><img src="../media/570B73ABC013912BC4E98FC728883B5A.png" width="164" height="37"></img></a></markup>
 
 <para>
-in which <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#8674962D5AE2A4098EB5523538340C26"><img src="../media/8674962D5AE2A4098EB5523538340C26.png" width="7" height="10" align="bottom"></img></a></markup> is the  rate, mobility, etc. (dependent variable), <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D07FFFE2113880423FB0F67CDB6B0F9B"><img src="../media/D07FFFE2113880423FB0F67CDB6B0F9B.png" width="9" height="10" align="baseline"></img></a></markup> is the  temperature (independent variable), <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#09F4BF028C25556B6D1F9714B4B8DDD9"><img src="../media/09F4BF028C25556B6D1F9714B4B8DDD9.png" width="14" height="13" align="middle"></img></a></markup> is the so-called Vogel temperature, and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#EACC7838CF3C8B4E935C468EF92495BE"><img src="../media/EACC7838CF3C8B4E935C468EF92495BE.png" width="11" height="10" align="baseline"></img></a></markup> is a broadness parameter.
+in which <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#8674962D5AE2A4098EB5523538340C26"><img src="../media/8674962D5AE2A4098EB5523538340C26.png" width="7" height="10" align="bottom"></img></a></markup> is the  rate, mobility, etc. (dependent variable), <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#3D0E087EAE38BD0D05451AA81419C432"><img src="../media/3D0E087EAE38BD0D05451AA81419C432.png" width="9" height="13" align="middle"></img></a></markup> is the  temperature (independent variable), <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#09F4BF028C25556B6D1F9714B4B8DDD9"><img src="../media/09F4BF028C25556B6D1F9714B4B8DDD9.png" width="14" height="13" align="middle"></img></a></markup> is the so-called Vogel temperature, and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B66A446058C5BAB064876C75D2DA0BE5"><img src="../media/B66A446058C5BAB064876C75D2DA0BE5.png" width="11" height="13" align="middle"></img></a></markup> is a broadness parameter.
 </para>
 
 <quote>
 
 <para>
 <legacyBold>Note:</legacyBold>
-The function above is designed for reaction rates, mobilities, etc., i.e. for quantities, which increase with increasing temperature. But quantities like viscosity, relaxation times decrease with increasing temperature. To fit those quantities, please use <codeInline>VogelFulcherLaw (Time)</codeInline>, or use this function with a negative value for <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#EACC7838CF3C8B4E935C468EF92495BE"><img src="../media/EACC7838CF3C8B4E935C468EF92495BE.png" width="11" height="10" align="baseline"></img></a></markup>.
+The function above is designed for reaction rates, mobilities, etc., i.e. for quantities, which increase with increasing temperature. But quantities like viscosity, relaxation times decrease with increasing temperature. To fit those quantities, please use <codeInline>VogelFulcherLaw (Time)</codeInline>, or use this function with a negative value for <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B66A446058C5BAB064876C75D2DA0BE5"><img src="../media/B66A446058C5BAB064876C75D2DA0BE5.png" width="11" height="13" align="middle"></img></a></markup>.
 </para>
 </quote>
 
@@ -429,7 +429,7 @@ The parameters are:
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#54AF930CA32CEFBC08DCD27186250A38"><img src="../media/54AF930CA32CEFBC08DCD27186250A38.png" width="13" height="10" align="bottom"></img></a></markup> is the reaction rate, mobility, ..., etc. in the limit <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D104CF3DCBAF2CE019DE9DEC664A3682"><img src="../media/D104CF3DCBAF2CE019DE9DEC664A3682.png" width="47" height="10" align="baseline"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#54AF930CA32CEFBC08DCD27186250A38"><img src="../media/54AF930CA32CEFBC08DCD27186250A38.png" width="13" height="10" align="bottom"></img></a></markup> is the reaction rate, mobility, ..., etc. in the limit <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#8D266FC05614C00257079373C514E150"><img src="../media/8D266FC05614C00257079373C514E150.png" width="47" height="13" align="middle"></img></a></markup>
 </para>
 </listItem>
 
@@ -443,7 +443,7 @@ The parameters are:
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#EACC7838CF3C8B4E935C468EF92495BE"><img src="../media/EACC7838CF3C8B4E935C468EF92495BE.png" width="11" height="10" align="baseline"></img></a></markup> changes the slope of the curve.
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B66A446058C5BAB064876C75D2DA0BE5"><img src="../media/B66A446058C5BAB064876C75D2DA0BE5.png" width="11" height="13" align="middle"></img></a></markup> changes the slope of the curve.
 </para>
 </listItem>
 </list>
@@ -457,7 +457,7 @@ In order to get a good fit nevertheless, it is necessary  that you logarithmize 
 </para>
 
 <para>
-<legacyItalic>Options for the independent variable <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D07FFFE2113880423FB0F67CDB6B0F9B"><img src="../media/D07FFFE2113880423FB0F67CDB6B0F9B.png" width="9" height="10" align="baseline"></img></a></markup></legacyItalic>:
+<legacyItalic>Options for the independent variable <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#3D0E087EAE38BD0D05451AA81419C432"><img src="../media/3D0E087EAE38BD0D05451AA81419C432.png" width="9" height="13" align="middle"></img></a></markup></legacyItalic>:
 </para>
 
 <list class="bullet">
@@ -541,7 +541,7 @@ kWh, calorie, calorie per mole and more..
 </para>
 
 <para>
-Fig. 1: Vogel-Fulcher law (e.g. reaction rate by temperature). Here the parameters are <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#7DD513DA98C32F8CCE38D8982212FADD"><img src="../media/7DD513DA98C32F8CCE38D8982212FADD.png" width="59" height="17" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#09F4BF028C25556B6D1F9714B4B8DDD9"><img src="../media/09F4BF028C25556B6D1F9714B4B8DDD9.png" width="14" height="13" align="middle"></img></a></markup>=120°C and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#EACC7838CF3C8B4E935C468EF92495BE"><img src="../media/EACC7838CF3C8B4E935C468EF92495BE.png" width="11" height="10" align="baseline"></img></a></markup>=1000 K.
+Fig. 1: Vogel-Fulcher law (e.g. reaction rate by temperature). Here the parameters are <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#7DD513DA98C32F8CCE38D8982212FADD"><img src="../media/7DD513DA98C32F8CCE38D8982212FADD.png" width="59" height="17" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#09F4BF028C25556B6D1F9714B4B8DDD9"><img src="../media/09F4BF028C25556B6D1F9714B4B8DDD9.png" width="14" height="13" align="middle"></img></a></markup>=120°C and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B66A446058C5BAB064876C75D2DA0BE5"><img src="../media/B66A446058C5BAB064876C75D2DA0BE5.png" width="11" height="13" align="middle"></img></a></markup>=1000 K.
 </para>
 
 <para>
@@ -549,7 +549,7 @@ Fig. 1: Vogel-Fulcher law (e.g. reaction rate by temperature). Here the paramete
 </para>
 
 <para>
-Fig. 2: Vogel-Fulcher law plotted in an Arrhenius diagram (e.g. reaction rate versus inverse temperature). The parameters are <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#7DD513DA98C32F8CCE38D8982212FADD"><img src="../media/7DD513DA98C32F8CCE38D8982212FADD.png" width="59" height="17" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#09F4BF028C25556B6D1F9714B4B8DDD9"><img src="../media/09F4BF028C25556B6D1F9714B4B8DDD9.png" width="14" height="13" align="middle"></img></a></markup>=120°C and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#EACC7838CF3C8B4E935C468EF92495BE"><img src="../media/EACC7838CF3C8B4E935C468EF92495BE.png" width="11" height="10" align="baseline"></img></a></markup>=1000 K.
+Fig. 2: Vogel-Fulcher law plotted in an Arrhenius diagram (e.g. reaction rate versus inverse temperature). The parameters are <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#7DD513DA98C32F8CCE38D8982212FADD"><img src="../media/7DD513DA98C32F8CCE38D8982212FADD.png" width="59" height="17" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#09F4BF028C25556B6D1F9714B4B8DDD9"><img src="../media/09F4BF028C25556B6D1F9714B4B8DDD9.png" width="14" height="13" align="middle"></img></a></markup>=120°C and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B66A446058C5BAB064876C75D2DA0BE5"><img src="../media/B66A446058C5BAB064876C75D2DA0BE5.png" width="11" height="13" align="middle"></img></a></markup>=1000 K.
 </para>
 <markup><hr/></markup></content>
 </section>
@@ -573,14 +573,14 @@ The function is defined as:
 <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B9DDB4ECC0D91E3D6F70F2E5313EBCC6"><img src="../media/B9DDB4ECC0D91E3D6F70F2E5313EBCC6.png" width="150" height="37"></img></a></markup>
 
 <para>
-in which <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#8674962D5AE2A4098EB5523538340C26"><img src="../media/8674962D5AE2A4098EB5523538340C26.png" width="7" height="10" align="bottom"></img></a></markup> is the  relaxation time, viscosity, etc. (dependent variable), <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D07FFFE2113880423FB0F67CDB6B0F9B"><img src="../media/D07FFFE2113880423FB0F67CDB6B0F9B.png" width="9" height="10" align="baseline"></img></a></markup> is the  temperature (independent variable), <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#09F4BF028C25556B6D1F9714B4B8DDD9"><img src="../media/09F4BF028C25556B6D1F9714B4B8DDD9.png" width="14" height="13" align="middle"></img></a></markup> is the so-called Vogel temperature, and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#EACC7838CF3C8B4E935C468EF92495BE"><img src="../media/EACC7838CF3C8B4E935C468EF92495BE.png" width="11" height="10" align="baseline"></img></a></markup> is a broadness parameter.
+in which <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#8674962D5AE2A4098EB5523538340C26"><img src="../media/8674962D5AE2A4098EB5523538340C26.png" width="7" height="10" align="bottom"></img></a></markup> is the  relaxation time, viscosity, etc. (dependent variable), <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#3D0E087EAE38BD0D05451AA81419C432"><img src="../media/3D0E087EAE38BD0D05451AA81419C432.png" width="9" height="13" align="middle"></img></a></markup> is the  temperature (independent variable), <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#09F4BF028C25556B6D1F9714B4B8DDD9"><img src="../media/09F4BF028C25556B6D1F9714B4B8DDD9.png" width="14" height="13" align="middle"></img></a></markup> is the so-called Vogel temperature, and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B66A446058C5BAB064876C75D2DA0BE5"><img src="../media/B66A446058C5BAB064876C75D2DA0BE5.png" width="11" height="13" align="middle"></img></a></markup> is a broadness parameter.
 </para>
 
 <quote>
 
 <para>
 <legacyBold>Note:</legacyBold>
-The function above is designed for relaxation times, viscosities, etc, i.e. for quantities, which decrease with increasing temperature. But quantities like reaction rates, mobilities, etc., increase with increasing temperature. To fit those quantities, please use <codeInline>VogelFulcherLawRate</codeInline>, or use this function with a negative value for <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#EACC7838CF3C8B4E935C468EF92495BE"><img src="../media/EACC7838CF3C8B4E935C468EF92495BE.png" width="11" height="10" align="baseline"></img></a></markup>.
+The function above is designed for relaxation times, viscosities, etc, i.e. for quantities, which decrease with increasing temperature. But quantities like reaction rates, mobilities, etc., increase with increasing temperature. To fit those quantities, please use <codeInline>VogelFulcherLawRate</codeInline>, or use this function with a negative value for <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B66A446058C5BAB064876C75D2DA0BE5"><img src="../media/B66A446058C5BAB064876C75D2DA0BE5.png" width="11" height="13" align="middle"></img></a></markup>.
 </para>
 </quote>
 
@@ -593,7 +593,7 @@ The parameters are:
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#54AF930CA32CEFBC08DCD27186250A38"><img src="../media/54AF930CA32CEFBC08DCD27186250A38.png" width="13" height="10" align="bottom"></img></a></markup> is the relaxation time, viscosity, ..., etc. in the limit <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D104CF3DCBAF2CE019DE9DEC664A3682"><img src="../media/D104CF3DCBAF2CE019DE9DEC664A3682.png" width="47" height="10" align="baseline"></img></a></markup>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#54AF930CA32CEFBC08DCD27186250A38"><img src="../media/54AF930CA32CEFBC08DCD27186250A38.png" width="13" height="10" align="bottom"></img></a></markup> is the relaxation time, viscosity, ..., etc. in the limit <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#8D266FC05614C00257079373C514E150"><img src="../media/8D266FC05614C00257079373C514E150.png" width="47" height="13" align="middle"></img></a></markup>
 </para>
 </listItem>
 
@@ -607,7 +607,7 @@ The parameters are:
 <listItem>
 
 <para>
-<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#EACC7838CF3C8B4E935C468EF92495BE"><img src="../media/EACC7838CF3C8B4E935C468EF92495BE.png" width="11" height="10" align="baseline"></img></a></markup> changes the slope of the curve.
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B66A446058C5BAB064876C75D2DA0BE5"><img src="../media/B66A446058C5BAB064876C75D2DA0BE5.png" width="11" height="13" align="middle"></img></a></markup> changes the slope of the curve.
 </para>
 </listItem>
 </list>
@@ -621,7 +621,7 @@ In order to get a good fit nevertheless, it is necessary  that you logarithmize 
 </para>
 
 <para>
-<legacyItalic>Options for the independent variable <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#D07FFFE2113880423FB0F67CDB6B0F9B"><img src="../media/D07FFFE2113880423FB0F67CDB6B0F9B.png" width="9" height="10" align="baseline"></img></a></markup></legacyItalic>:
+<legacyItalic>Options for the independent variable <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#3D0E087EAE38BD0D05451AA81419C432"><img src="../media/3D0E087EAE38BD0D05451AA81419C432.png" width="9" height="13" align="middle"></img></a></markup></legacyItalic>:
 </para>
 
 <list class="bullet">
@@ -705,7 +705,7 @@ kWh, calorie, calorie per mole and more..
 </para>
 
 <para>
-Fig. 1: Vogel-Fulcher law (e.g. relaxation time by temperature). Here the parameters are <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#F82E2D84B03E10850DFADE1512D13B04"><img src="../media/F82E2D84B03E10850DFADE1512D13B04.png" width="67" height="17" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#09F4BF028C25556B6D1F9714B4B8DDD9"><img src="../media/09F4BF028C25556B6D1F9714B4B8DDD9.png" width="14" height="13" align="middle"></img></a></markup>=120°C and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#EACC7838CF3C8B4E935C468EF92495BE"><img src="../media/EACC7838CF3C8B4E935C468EF92495BE.png" width="11" height="10" align="baseline"></img></a></markup>=1000 K.
+Fig. 1: Vogel-Fulcher law (e.g. relaxation time by temperature). Here the parameters are <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#F82E2D84B03E10850DFADE1512D13B04"><img src="../media/F82E2D84B03E10850DFADE1512D13B04.png" width="67" height="17" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#09F4BF028C25556B6D1F9714B4B8DDD9"><img src="../media/09F4BF028C25556B6D1F9714B4B8DDD9.png" width="14" height="13" align="middle"></img></a></markup>=120°C and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B66A446058C5BAB064876C75D2DA0BE5"><img src="../media/B66A446058C5BAB064876C75D2DA0BE5.png" width="11" height="13" align="middle"></img></a></markup>=1000 K.
 </para>
 
 <para>
@@ -713,7 +713,7 @@ Fig. 1: Vogel-Fulcher law (e.g. relaxation time by temperature). Here the parame
 </para>
 
 <para>
-Fig. 2: Vogel-Fulcher law plotted in an Arrhenius diagram (e.g. relaxation time versus inverse temperature). The parameters are <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#F82E2D84B03E10850DFADE1512D13B04"><img src="../media/F82E2D84B03E10850DFADE1512D13B04.png" width="67" height="17" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#09F4BF028C25556B6D1F9714B4B8DDD9"><img src="../media/09F4BF028C25556B6D1F9714B4B8DDD9.png" width="14" height="13" align="middle"></img></a></markup>=120°C and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#EACC7838CF3C8B4E935C468EF92495BE"><img src="../media/EACC7838CF3C8B4E935C468EF92495BE.png" width="11" height="10" align="baseline"></img></a></markup>=1000 K.
+Fig. 2: Vogel-Fulcher law plotted in an Arrhenius diagram (e.g. relaxation time versus inverse temperature). The parameters are <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#F82E2D84B03E10850DFADE1512D13B04"><img src="../media/F82E2D84B03E10850DFADE1512D13B04.png" width="67" height="17" align="bottom"></img></a></markup>, <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#09F4BF028C25556B6D1F9714B4B8DDD9"><img src="../media/09F4BF028C25556B6D1F9714B4B8DDD9.png" width="14" height="13" align="middle"></img></a></markup>=120°C and <markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B66A446058C5BAB064876C75D2DA0BE5"><img src="../media/B66A446058C5BAB064876C75D2DA0BE5.png" width="11" height="13" align="middle"></img></a></markup>=1000 K.
 </para>
 <markup><hr/></markup></content>
 </section>
