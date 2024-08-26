@@ -76,5 +76,13 @@ namespace Altaxo.Graph.Gdi
     /// <param name="point">Coordinates of the mouse pointer in unscaled page coordinates (points).</param>
     /// <returns></returns>
     bool IsGripHitted(PointD2D point);
+
+    /// <summary>
+    /// Gets a value indicating whether the gripped object is disposed.
+    /// </summary>
+    /// <value>
+    ///   <c>true</c> if the object manipulated by this handle is disposed; otherwise, <c>false</c>.
+    /// </value>
+    bool IsGrippedObjectDisposed { get; }
   }
 }

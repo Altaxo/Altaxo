@@ -28,11 +28,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Windows;
 using System.Windows.Input;
 using Altaxo.Collections;
 using Altaxo.Geometry;
-using Altaxo.Graph;
 using Altaxo.Graph.Gdi;
 
 namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
@@ -122,6 +120,21 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
           if (ele.IsGripHitted(point))
             return true;
         return false;
+      }
+
+      public bool IsGrippedObjectDisposed
+      {
+        get
+        {
+          foreach (var ele in GripList)
+          {
+            if (ele.IsGrippedObjectDisposed)
+            {
+              return true;
+            }
+          }
+          return false;
+        }
       }
 
       public bool GetHittedElement(PointD2D point, out IGripManipulationHandle gripHandle, out IHitTestObject hitObject)
@@ -266,12 +279,41 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
     }
 
     /// <summary>
+    /// Tidy-up the grip handles. Grips for which the 
+    /// objects that they should manipulated no longer exists (because they are disposed, for instance when deleted),
+    /// are removed. This also concerns the active grip
+    /// </summary>
+    public void TidyUpGrips()
+    {
+      if (ActiveGrip is not null && ActiveGrip.IsGrippedObjectDisposed)
+      {
+        ActiveGrip = null;
+      }
+
+      if (DisplayedGrips is not null)
+      {
+        var list = new List<IGripManipulationHandle>();
+        for (int i = 0; i < DisplayedGrips.Length; ++i)
+        {
+          if (DisplayedGrips[i] is { } grip && !grip.IsGrippedObjectDisposed)
+            list.Add(grip);
+        }
+
+        if (list.Count > 0)
+          DisplayedGrips = list.ToArray();
+        else
+          DisplayedGrips = null;
+      }
+    }
+
+    /// <summary>
     /// Tests if a grip from the <see cref="DisplayedGrips"/>  is hitted.
     /// </summary>
     /// <param name="pt">Mouse location.</param>
     /// <returns>The grip which was hitted, or null if no grip was hitted.</returns>
     public IGripManipulationHandle GripHitTest(PointD2D pt)
     {
+      TidyUpGrips();
       if (DisplayedGrips is null || DisplayedGrips.Length == 0)
         return null;
 

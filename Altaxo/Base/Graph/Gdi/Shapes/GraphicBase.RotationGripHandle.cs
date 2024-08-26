@@ -27,6 +27,7 @@ using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using Altaxo.Geometry;
+using Altaxo.Main;
 
 namespace Altaxo.Graph.Gdi.Shapes
 {
@@ -101,6 +102,18 @@ namespace Altaxo.Graph.Gdi.Shapes
       {
         point = _spanningHalfYRhombus.InverseTransformPoint(point);
         return Calc.RMath.IsInIntervalCC(point.X, 0, 1) && Calc.RMath.IsInIntervalCC(point.Y, -1, 1);
+      }
+
+      public bool IsGrippedObjectDisposed
+      {
+        get
+        {
+          return _parent?.HittedObject switch
+          {
+            IDocumentLeafNode dln => dln.IsDisposed,
+            _ => false,
+          };
+        }
       }
 
       static RotationGripHandle()

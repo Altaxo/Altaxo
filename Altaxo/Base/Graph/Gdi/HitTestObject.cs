@@ -82,6 +82,11 @@ namespace Altaxo.Graph.Gdi
         return false;
       }
 
+      public bool IsGrippedObjectDisposed
+      {
+        get { return false; }
+      }
+
       #endregion IGripManipulationHandle Members
     }
 

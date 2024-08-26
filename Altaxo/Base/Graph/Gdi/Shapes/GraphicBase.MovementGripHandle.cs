@@ -27,6 +27,7 @@ using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using Altaxo.Geometry;
+using Altaxo.Main;
 
 namespace Altaxo.Graph.Gdi.Shapes
 {
@@ -111,6 +112,18 @@ namespace Altaxo.Graph.Gdi.Shapes
       public bool IsGripHitted(PointD2D point)
       {
         return _gripPath.IsVisible(point.ToGdi());
+      }
+
+      public bool IsGrippedObjectDisposed
+      {
+        get
+        {
+          return _parent?.HittedObject switch
+          {
+            IDocumentLeafNode dln => dln.IsDisposed,
+            _ => false,
+          };
+        }
       }
 
       #endregion IGripManipulationHandle Members
