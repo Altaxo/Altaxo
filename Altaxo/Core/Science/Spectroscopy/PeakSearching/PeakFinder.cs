@@ -40,7 +40,7 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
   /// </summary>
   public class PeakFinder
   {
-    bool _isExecuted;
+    private bool _isExecuted;
 
     private void CheckExecuted()
     {
@@ -50,7 +50,7 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
 
     #region Parameters
 
-    object? _height;
+    private object? _height;
 
     /// <summary>
     /// Resets the height parameter, so that there is no requirement to the height of the peaks anymore.
@@ -106,7 +106,7 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
       return this;
     }
 
-    object? _threshold;
+    private object? _threshold;
 
     /// <summary>
     /// Resets the threshold parameter, so that there is no requirement to the threshold value of the peaks anymore.
@@ -164,9 +164,7 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
       return this;
     }
 
-
-
-    double? _distance;
+    private double? _distance;
 
 
     /// <summary>
@@ -191,7 +189,7 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
       return this;
     }
 
-    object? _prominence;
+    private object? _prominence;
 
     /// <summary>
     /// Resets the prominence parameter, so that there is no requirement to the prominence values of the peaks anymore.
@@ -251,7 +249,7 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
       return this;
     }
 
-    object? _width;
+    private object? _width;
 
     /// <summary>
     /// Resets the width parameter, so that there is no requirement to the width of the peaks anymore.
@@ -311,7 +309,7 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
       return this;
     }
 
-    int? _wlen;
+    private int? _wlen;
 
     /// <summary>
     /// Resets the width of the search window for the neighbouring values around a peak to the full spectral range.
@@ -336,7 +334,7 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
       return this;
     }
 
-    double _rel_height = 0.5;
+    private double _rel_height = 0.5;
 
     /// <summary>
     /// Resets the relative height parameter to its default value of 0.5.
@@ -360,7 +358,7 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
       return this;
     }
 
-    object? _plateauSize;
+    private object? _plateauSize;
 
     /// <summary>
     /// Resets the plateau size parameter, so that there is no requirement to the plateau size of the peaks anymore.
@@ -420,7 +418,7 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
 
     #region Resulting properties
 
-    int[] _peaks = new int[0];
+    private int[] _peaks = new int[0];
 
     /// <summary>
     /// The peak positions (indices of the y-array). This array is always set after a call to Execute.
@@ -431,7 +429,7 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
       private set { _peaks = value; }
     }
 
-    int[]? _plateauSizes;
+    private int[]? _plateauSizes;
 
     /// <summary>
     /// The plateau sizes of each peak. This array is only set if the parameter PlateauSize was specified.
@@ -442,7 +440,7 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
       private set { _plateauSizes = value; }
     }
 
-    int[]? _leftEdges;
+    private int[]? _leftEdges;
     /// <summary>
     /// Position of the first point to the left of each peak, whose value is different from the peak's value.
     /// This array is only set if the parameter 'PlateauSize' was specified.
@@ -453,7 +451,7 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
       private set { _leftEdges = value; }
     }
 
-    int[]? _rightEdges;
+    private int[]? _rightEdges;
     /// <summary>
     /// Position of the first point to the right of each peak, whose value is different from the peak's value.
     /// This array is only set if the parameter 'PlateauSize' was specified.
@@ -464,7 +462,7 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
       private set { _rightEdges = value; }
     }
 
-    double[]? _peakHeights;
+    private double[]? _peakHeights;
 
     /// <summary>
     /// The peak height of each peak. This array is only set if the parameter Height was specified.
@@ -475,7 +473,7 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
       private set { _peakHeights = value; }
     }
 
-    double[]? _leftThresholds;
+    private double[]? _leftThresholds;
 
     /// <summary>
     /// The left thresholds of each peak. This array is only set if the parameter 'Threshold' was specified.
@@ -486,7 +484,7 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
       private set { _leftThresholds = value; }
     }
 
-    double[]? _rightThresholds;
+    private double[]? _rightThresholds;
     /// <summary>
     /// The right thresholds of each peak. This array is only set if the parameter 'Threshold' was specified.
     /// </summary>
@@ -496,7 +494,7 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
       private set { _rightThresholds = value; }
     }
 
-    double[]? _prominences;
+    private double[]? _prominences;
 
     /// <summary>
     /// The prominence values of each peak. This array is only set if the parameter 'Prominence' was specified.
@@ -507,7 +505,7 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
       private set { _prominences = value; }
     }
 
-    int[]? _leftBases;
+    private int[]? _leftBases;
     /// <summary>
     /// The position of the lowest valley point to the left of each peak. This array is only set if the parameter 'Prominence' was specified.
     /// </summary>
@@ -517,7 +515,7 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
       private set { _leftBases = value; }
     }
 
-    int[]? _rightBases;
+    private int[]? _rightBases;
     /// <summary>
     /// The position of the lowest valley point to the right of each peak. This array is only set if the parameter 'Prominence' was specified.
     /// </summary>
@@ -527,7 +525,7 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
       private set { _rightBases = value; }
     }
 
-    double[]? _widths;
+    private double[]? _widths;
     /// <summary>
     /// The width of each peak. This array is only set if the parameter 'Width' was specified.
     /// </summary>
@@ -537,7 +535,7 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
       private set { _widths = value; }
     }
 
-    double[]? _widthHeights;
+    private double[]? _widthHeights;
 
     /// <summary>
     /// The height at which the width of each peak was determined. This array is only set if the parameter 'Width' was specified.
@@ -548,7 +546,7 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
       private set { _widthHeights = value; }
     }
 
-    double[]? _leftIps;
+    private double[]? _leftIps;
     /// <summary>
     /// The left intersection points of each peak. This array is only set if the parameter 'Width' was specified.
     /// </summary>
@@ -558,7 +556,7 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
       private set { _leftIps = value; }
     }
 
-    double[]? _rightIps;
+    private double[]? _rightIps;
     /// <summary>
     /// The right intersection points of each peak. This array is only set if the parameter 'Width' was specified.
     /// </summary>
@@ -568,7 +566,7 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
       private set { _rightIps = value; }
     }
 
-    string? _warnings;
+    private string? _warnings;
     /// <summary>
     /// The warnings during the execution of the peak finder algorithm.
     /// </summary>
@@ -594,7 +592,7 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
     /// for access to more results. Note that most of the properties are only set, if the corresponding parameter is specified in this call.
     /// </returns>
     /// <exception cref="System.ArgumentOutOfRangeException">distance` must be greater than or equal to 1 - distance</exception>
-    public int[] Execute(double[] x)
+    public int[] Execute(IReadOnlyList<double> x)
     {
       return Execute(x, _height, _threshold, _distance, _prominence, _width, _wlen, _rel_height, _plateauSize);
     }
@@ -642,7 +640,7 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
     /// </returns>
     /// <exception cref="System.ArgumentOutOfRangeException">distance` must be greater than or equal to 1 - distance</exception>
     public int[] Execute(
-      double[] x,
+      IReadOnlyList<double> x,
       double? height = null,
       double? threshold = null,
       double? distance = null,
@@ -708,7 +706,7 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
     /// </returns>
     /// <exception cref="System.ArgumentOutOfRangeException">distance` must be greater than or equal to 1 - distance</exception>
     public int[] Execute(
-      double[] x,
+      IReadOnlyList<double> x,
       object? height = null,
       object? threshold = null,
       double? distance = null,
@@ -871,7 +869,7 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
       array = array?.ElementsWhere(keep);
     }
 
-    protected (bool[] keep, double[] leftDiff, double[] rightDiff) _select_by_peak_threshold(double[] x, int[] peaks, double[] tmin, double[] tmax)
+    protected (bool[] keep, double[] leftDiff, double[] rightDiff) _select_by_peak_threshold(IReadOnlyList<double> x, int[] peaks, double[] tmin, double[] tmax)
     {
       var leftDiff = new double[peaks.Length];
       var rightDiff = new double[peaks.Length];
@@ -964,7 +962,7 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
     }
 
 
-    protected (double[]? pmin, double[]? pmax) _unpack_condition_args(object interval, double[] x, int[] peaks)
+    protected (double[]? pmin, double[]? pmax) _unpack_condition_args(object interval, IReadOnlyList<double> x, int[] peaks)
     {
       IReadOnlyList<double> imin = null;
       IReadOnlyList<double> imax = null;
@@ -984,21 +982,21 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
       }
       else if (interval is ValueTuple<int, int> tupleI)
       {
-        imin = VectorMath.GetConstantVector((double)tupleI.Item1, x.Length);
-        imax = VectorMath.GetConstantVector((double)tupleI.Item2, x.Length);
+        imin = VectorMath.GetConstantVector((double)tupleI.Item1, x.Count);
+        imax = VectorMath.GetConstantVector((double)tupleI.Item2, x.Count);
       }
       else if (interval is ValueTuple<double, double> tupleD)
       {
-        imin = VectorMath.GetConstantVector((double)tupleD.Item1, x.Length);
-        imax = VectorMath.GetConstantVector((double)tupleD.Item2, x.Length);
+        imin = VectorMath.GetConstantVector((double)tupleD.Item1, x.Count);
+        imax = VectorMath.GetConstantVector((double)tupleD.Item2, x.Count);
       }
       else if (interval is int iV)
       {
-        imin = VectorMath.GetConstantVector((double)iV, x.Length);
+        imin = VectorMath.GetConstantVector((double)iV, x.Count);
       }
       else if (interval is double dV)
       {
-        imin = VectorMath.GetConstantVector(dV, x.Length);
+        imin = VectorMath.GetConstantVector(dV, x.Count);
       }
       else if (interval is null)
       {
@@ -1009,9 +1007,9 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
         throw new NotImplementedException($"Interval is {interval}, Type: {interval.GetType()}");
       }
 
-      if (imin is not null && imin.Count != x.Length)
+      if (imin is not null && imin.Count != x.Count)
         throw new ArgumentException("array size of lower interval border must match x", nameof(interval));
-      if (imax is not null && imax.Count != x.Length)
+      if (imax is not null && imax.Count != x.Count)
         throw new ArgumentException("array size of upper interval border must match x", nameof(interval));
 
 
@@ -1076,7 +1074,7 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
     ///  A maxima is defined as one or more samples of equal value that are
     /// surrounded on both sides by at least one smaller sample.
     /// </remarks>
-    public (int[] MidPoints, int[] LeftEdges, int[] RightEdges) _local_maxima_1d(double[] x)
+    public (int[] MidPoints, int[] LeftEdges, int[] RightEdges) _local_maxima_1d(IReadOnlyList<double> x)
     {
       var leftedges = new List<int>();
       var midpoints = new List<int>();
@@ -1086,7 +1084,7 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
       i_ahead = 0;
 
       i = 1;  //  Pointer to current sample, first one can't be maxima
-      i_max = x.Length - 1; // Last sample can't be maxima
+      i_max = x.Count - 1; // Last sample can't be maxima
       while (i < i_max)
       {
         // Test if previous sample is smaller
@@ -1124,7 +1122,7 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
     /// <param name="wlen">A window length in samples (see `peak_prominences`) which is rounded up
     /// to the nearest odd integer.If smaller than 2 the entire signal `x` is
     /// used.</param>
-    public (double[] Prominences, int[] LeftBase, int[] RightBase, string? warnings) _peak_prominences(double[] x, int[] peaks, int wlen)
+    public (double[] Prominences, int[] LeftBase, int[] RightBase, string? warnings) _peak_prominences(IReadOnlyList<double> x, int[] peaks, int wlen)
     {
       int i;
       bool show_warning = false;
@@ -1138,7 +1136,7 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
       {
         var peak = peaks[peak_nr];
         var i_min = 0;
-        var i_max = x.Length - 1;
+        var i_max = x.Count - 1;
         if (!(i_min <= peak && peak <= i_max))
         {
           throw new ArgumentException($"peak {peak} is not a valid index for `x`");
@@ -1215,7 +1213,7 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
     /// </exception>
     /// <exception cref="System.InvalidOperationException">prominence data is invalid for peak {peak}</exception>
     protected (double[] widths, double[] width_heights, double[] left_ips, double[] right_ips, string? warnings) _peak_widths(
-      double[] x,
+      IReadOnlyList<double> x,
       int[] peaks,
       double rel_height,
       double[] prominences,
@@ -1247,7 +1245,7 @@ namespace Altaxo.Science.Spectroscopy.PeakSearching
         i_max = right_bases[p];
         peak = peaks[p];
         // Validate bounds and order
-        if (!(0 <= i_min && i_min <= peak && peak <= i_max && i_max < x.Length))
+        if (!(0 <= i_min && i_min <= peak && peak <= i_max && i_max < x.Count))
         {
           throw new InvalidOperationException($"prominence data is invalid for peak {peak}");
         }

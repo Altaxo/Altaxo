@@ -144,7 +144,7 @@ namespace Altaxo.Calc.LinearAlgebra
     {
       return indices.Select(idx => array[idx]).ToArray();
     }
-    public static IReadOnlyList<T> ElementsAt<T>(this IReadOnlyList<T> array, int[] indices)
+    public static T[] ElementsAt<T>(this IReadOnlyList<T> array, int[] indices)
     {
       return indices.Select(idx => array[idx]).ToArray();
     }
@@ -153,7 +153,7 @@ namespace Altaxo.Calc.LinearAlgebra
     {
       return array.Where((x, i) => condition[i]).ToArray();
     }
-    public static IReadOnlyList<T> ElementsWhere<T>(this IReadOnlyList<T> array, bool[] condition)
+    public static T[] ElementsWhere<T>(this IReadOnlyList<T> array, bool[] condition)
     {
       return array.Where((x, i) => condition[i]).ToArray();
     }
@@ -179,7 +179,7 @@ namespace Altaxo.Calc.LinearAlgebra
       }
       return RFunc(array, condition).ToArray();
     }
-    public static IReadOnlyList<T> ElementsWhere<T>(this IReadOnlyList<T> array, IEnumerable<bool> condition)
+    public static T[] ElementsWhere<T>(this IReadOnlyList<T> array, IEnumerable<bool> condition)
     {
       static IEnumerable<T> RFunc(IReadOnlyList<T> array, IEnumerable<bool> condition)
       {
@@ -207,5 +207,135 @@ namespace Altaxo.Calc.LinearAlgebra
         destination[k] = source[j];
       }
     }
+
+    #region IROVector and IVector wrapper types
+
+    /// <summary>
+    /// Creates a subvector of the read-only vector.
+    /// </summary>
+    /// <typeparam name="T">The type of element of the vector.</typeparam>
+    /// <param name="source">The source vector.</param>
+    /// <param name="offset">The offset of the first element of the subvector.</param>
+    /// <param name="count">The number of elements of the subvector.</param>
+    /// <returns>The subvector.</returns>
+    public static IReadOnlyList<T> ToROSubVector<T>(this IReadOnlyList<T> source, int offset, int count)
+    {
+      return new ROVectorWrapperOfIROVector<T>(source, offset, count);
+    }
+
+    protected class ROVectorWrapperOfIROVector<T> : IReadOnlyList<T>
+    {
+      private IReadOnlyList<T> _source;
+      private int _offset;
+      private int _count;
+
+      public ROVectorWrapperOfIROVector(IReadOnlyList<T> source, int offset, int count)
+      {
+        if (_source is null)
+          throw new ArgumentNullException(nameof(source));
+        if (count < 0)
+          throw new ArgumentOutOfRangeException(nameof(count));
+        if (offset < 0 || (offset + count) > _source.Count)
+          throw new IndexOutOfRangeException(nameof(offset));
+
+        _source = source;
+        _offset = offset;
+        _count = count;
+      }
+
+      public T this[int index]
+      {
+        get
+        {
+          if (index < 0 || index >= _count)
+            throw new IndexOutOfRangeException();
+
+          return _source[index + _offset];
+        }
+      }
+
+      public int Count => _count;
+
+      public IEnumerator<T> GetEnumerator()
+      {
+        for (int i = _offset, j = 0; j < _count; ++i, ++j)
+          yield return _source[i];
+      }
+
+      IEnumerator IEnumerable.GetEnumerator()
+      {
+        for (int i = _offset, j = 0; j < _count; ++i, ++j)
+          yield return _source[i];
+      }
+    }
+
+    /// <summary>
+    /// Creates a subvector of the read/write vector. Note that is is only a wrapper around the wrapper. If the subvector is changed, also the underlying (wrapped) vector is changed!
+    /// </summary>
+    /// <typeparam name="T">The type of element of the vector.</typeparam>
+    /// <param name="source">The source vector.</param>
+    /// <param name="offset">The offset of the first element of the subvector.</param>
+    /// <param name="count">The number of elements of the subvector.</param>
+    /// <returns>The subvector.</returns>
+    public static IVector<T> ToSubVector<T>(this IVector<T> source, int offset, int count)
+    {
+      return new VectorWrapperOfIVector<T>(source, offset, count);
+    }
+
+    protected class VectorWrapperOfIVector<T> : IVector<T>
+    {
+      private IVector<T> _source;
+      private int _offset;
+      private int _count;
+
+      public VectorWrapperOfIVector(IVector<T> source, int offset, int count)
+      {
+        if (source is null)
+          throw new ArgumentNullException(nameof(source));
+        if (count < 0)
+          throw new ArgumentOutOfRangeException(nameof(count));
+        if (offset < 0 || (offset + count) > source.Count)
+          throw new IndexOutOfRangeException(nameof(offset));
+
+        _source = source;
+        _offset = offset;
+        _count = count;
+      }
+
+      public T this[int index]
+      {
+        get
+        {
+          if (index < 0 || index >= _count)
+            throw new IndexOutOfRangeException();
+
+          return _source[index + _offset];
+        }
+        set
+        {
+          if (index < 0 || index >= _count)
+            throw new IndexOutOfRangeException();
+
+          _source[index + _offset] = value;
+        }
+      }
+
+      public int Count => _count;
+
+      public IEnumerator<T> GetEnumerator()
+      {
+        for (int i = _offset, j = 0; j < _count; ++i, ++j)
+          yield return _source[i];
+      }
+
+      IEnumerator IEnumerable.GetEnumerator()
+      {
+        for (int i = _offset, j = 0; j < _count; ++i, ++j)
+          yield return _source[i];
+      }
+    }
+
+
+    #endregion
   }
 }
