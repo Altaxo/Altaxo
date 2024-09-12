@@ -686,6 +686,8 @@
                               class="Altaxo.Worksheet.Commands.SpectroscopyPreprocessing" />
                     <MenuItem id="PeakFindingFitting" label="PeakFinding+Fitting" description="aa"
                               class="Altaxo.Worksheet.Commands.SpectroscopyPeakFindingFitting" />
+                  <MenuItem id="PeakFindingMultipleSpectra" label="Find common peaks in multiple spectra.." description="Finds and fits common peaks in multiple spectra."
+                            class="Altaxo.Worksheet.Commands.SpectroscopyFitPeaksInMultipleSpectra" />
                     <MenuItem id="IdYCalibration" label="Relative intensity calibration" description="Use a known spectrum for relative intensity calibration"
                           class="Altaxo.Worksheet.Commands.SpectroscopyYCalibration" />
                     <MenuItem id="IdSpectroscopyRaman" label="Raman.."  type="Menu">

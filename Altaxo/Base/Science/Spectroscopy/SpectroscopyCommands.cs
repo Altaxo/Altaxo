@@ -40,6 +40,7 @@ using Altaxo.Gui.Science.Spectroscopy.Calibration;
 using Altaxo.Gui.Science.Spectroscopy.Raman;
 using Altaxo.Gui.Worksheet.Viewing;
 using Altaxo.Science.Spectroscopy.Calibration;
+using Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra;
 using Altaxo.Science.Spectroscopy.Raman;
 using Altaxo.Worksheet.Commands;
 
@@ -768,6 +769,49 @@ namespace Altaxo.Science.Spectroscopy
             PlotFitCurve(peakTable, numberOfSpectrum);
           }
         }
+      }
+    }
+
+    public static void PeakFindingFittingInMultipleSpectraShowDialog(WorksheetController ctrl)
+    {
+      int numberOfNamesWithBaseName = 0;
+      int numberOfOtherNames = 0;
+
+      var selectedDataColumns = ctrl.SelectedDataColumns;
+      var srcTable = ctrl.DataTable;
+      var list = new List<(DataColumn x, DataColumn y)>();
+      foreach (var selIndex in selectedDataColumns)
+      {
+        var yColumn = srcTable.DataColumns[selIndex];
+        var xColumn = srcTable.DataColumns.FindXColumnOf(yColumn);
+        list.Add((xColumn, yColumn));
+      }
+
+      var listOfXAndYColumn = new ListOfXAndYColumn();
+      listOfXAndYColumn.SetCurveData(list);
+
+
+      var doc = new PeakFittingOfMultipleSpectraByIncrementalPeakAdditionDataSource(listOfXAndYColumn, new PeakFittingOfMultipleSpectraByIncrementalPeakAdditionOptions(), new DataSourceImportOptions()); ;
+
+      var dlgctr = (IMVCAController)Current.Gui.GetControllerAndControl(new object[] { doc }, typeof(IMVCAController));
+
+      if (Current.Gui.ShowDialog(dlgctr, "Peaks of multiple spectra"))
+      {
+        doc = (PeakFittingOfMultipleSpectraByIncrementalPeakAdditionDataSource)dlgctr.ModelObject;
+
+
+        // name the peak table, and add it to the project
+        var dstName = srcTable.Name + "_Peaks";
+        if (Current.Project.DataTableCollection.Contains(dstName))
+          dstName = Current.Project.DataTableCollection.FindNewItemName(dstName);
+        var peakTable = new DataTable();
+        peakTable.Name = dstName;
+        Current.Project.DataTableCollection.Add(peakTable);
+        Current.ProjectService.OpenOrCreateWorksheetForTable(peakTable);
+
+        peakTable.DataSource = doc;
+
+        Current.Gui.ExecuteAsUserCancellable(1000, reporter => peakTable.DataSource.FillData(peakTable, reporter));
       }
     }
 

@@ -56,7 +56,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
         MaximumNumberOfPeaks = 2,
       };
 
-      var result = fit.Execute([(x, y)], cancellationToken: System.Threading.CancellationToken.None);
+      var result = fit.Execute([(x, y)], cancellationToken: System.Threading.CancellationToken.None).PeakDescriptions;
 
       Assert.Equal(2, result.Count);
       AssertEx.Equal(1030.0, result[0].PeakParameter[0], 1E-7, 1e-7, "Position of first peak");
@@ -95,7 +95,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
         MaximumNumberOfPeaks = 2,
       };
 
-      var result = fit.Execute([(x0, y0), (x0, y0)], cancellationToken: System.Threading.CancellationToken.None);
+      var result = fit.Execute([(x0, y0), (x0, y0)], cancellationToken: System.Threading.CancellationToken.None).PeakDescriptions;
 
       Assert.Equal(2, result.Count);
       AssertEx.Equal(1030.0, result[0].PeakParameter[0], 1E-7, 1e-7, "Position of first peak");
@@ -149,7 +149,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
         MaximumNumberOfPeaks = 2,
       };
 
-      var result = fit.Execute([(x0, y0), (x1, y1)], cancellationToken: System.Threading.CancellationToken.None);
+      var result = fit.Execute([(x0, y0), (x1, y1)], cancellationToken: System.Threading.CancellationToken.None).PeakDescriptions;
 
       Assert.Equal(2, result.Count);
       AssertEx.Equal(1030.0, result[0].PeakParameter[0], 1E-7, 1e-7, "Position of first peak");

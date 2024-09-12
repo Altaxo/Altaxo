@@ -1,0 +1,202 @@
+﻿<UserControl x:Class="Altaxo.Gui.Data.ListOfXAndYColumnControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Altaxo.Gui.Data"
+             xmlns:localm="clr-namespace:Altaxo.Gui.Data;assembly=AltaxoBase"
+       			 xmlns:axogc="clr-namespace:Altaxo.Gui.Common"
+             xmlns:axogb="clr-namespace:Altaxo.Gui.Behaviors"
+       			 xmlns:dd="clr-namespace:GongSolutions.Wpf.DragDrop"
+       			 xmlns:axocoll="clr-namespace:Altaxo.Collections;assembly=AltaxoBase"
+             d:DataContext="{d:DesignInstance Type=localm:ListOfXAndYColumnController}"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+  <UserControl.Resources>
+    <Thickness x:Key="ButtonMargin">8</Thickness>
+  </UserControl.Resources>
+    <Grid>
+    <Grid.Resources>
+      <ResourceDictionary Source="pack://application:,,,/AltaxoBase.Presentation;component/CommonStyles.xaml" />
+    </Grid.Resources>
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="*" />
+      <ColumnDefinition Width="Auto" />
+      <ColumnDefinition Width="*" />
+      <ColumnDefinition Width="Auto" />
+    </Grid.ColumnDefinitions>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="4" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="4" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="4" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="4" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="4" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition MinHeight="4" Height="*" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="4" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="4" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="4" />
+    </Grid.RowDefinitions>
+
+
+    <Label Grid.Row="0" Grid.Column="0" Content="Available data:"/>
+    <axogc:MultiSelectTreeView	
+            Grid.Row="2" Grid.Column="0" Grid.RowSpan="18"
+            ItemsSource="{Binding AvailableContent.Nodes}"
+            Focusable="True"
+			      dd:DragDrop.IsDragSource="True" 
+            dd:DragDrop.DragMVVMHandler="{Binding AvailableItemsDragHandler}"
+            >
+      <ItemsControl.ItemContainerStyle>
+        <!-- This Style binds a TreeViewItem to a TreeViewItemViewModel. -->
+        <Style TargetType="{x:Type TreeViewItem}">
+          <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
+          <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
+          <Setter Property="FontWeight" Value="Normal" />
+          <Style.Triggers>
+            <DataTrigger Binding="{Binding IsSelected}" Value="True">
+              <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" />
+            </DataTrigger>
+          </Style.Triggers>
+        </Style>
+      </ItemsControl.ItemContainerStyle>
+
+      <ItemsControl.Resources>
+        <HierarchicalDataTemplate DataType="{x:Type axocoll:NGTreeNode}" ItemsSource="{Binding Nodes}">
+          <StackPanel Orientation="Horizontal">
+            <Image Width="16" Height="16" Margin="3,0" />
+            <TextBlock Text="{Binding Text}" />
+          </StackPanel>
+        </HierarchicalDataTemplate>
+      </ItemsControl.Resources>
+    </axogc:MultiSelectTreeView>
+
+    <Button Grid.Row="2" Grid.Column="1"  
+                Height="{Binding ElementName=_btGroup, Path=ActualHeight}" 
+                Margin="4"
+                Command="{Binding CmdPutDataToPlotItemsUp}"
+                Click="EhFocusData" 
+                HorizontalContentAlignment="Stretch" 
+                VerticalContentAlignment="Stretch"
+                ToolTip="Add the selected data columns as plot item.">
+      <Viewbox Style="{StaticResource ArrowViewBoxStyle}">
+        <Path Style="{StaticResource RightUpRightArrowPathStyle}" />
+      </Viewbox>
+    </Button>
+
+    <Button Grid.Row="4" Grid.Column="1"  
+                Height="{Binding ElementName=_btGroup, Path=ActualHeight}" 
+                Margin="4"
+                Command="{Binding CmdPutDataToPlotItemsDown}"
+                Click="EhFocusData" 
+                HorizontalContentAlignment="Stretch" 
+                VerticalContentAlignment="Stretch"
+                ToolTip="Add the selected data columns as plot item.">
+      <Viewbox Style="{StaticResource ArrowViewBoxStyle}">
+        <Path Style="{StaticResource RightDownRightArrowPathStyle}" />
+      </Viewbox>
+    </Button>
+
+
+    <Label Grid.Column="2" Grid.Row="0">Master data:</Label>
+    <ListView  Grid.Column="2" Grid.Row="2" Grid.RowSpan="18" 
+               x:Name="_guiMasterDataList"
+               ItemsSource="{Binding DataItems.Items}"
+               axogb:SelectedItemsExBehavior.IsEnabled="True"
+               axogb:SelectedItemsExBehavior.SelectedItemsEx="{Binding SelectedMasterDataItems, Mode=OneWayToSource}"
+               axogb:SelectedItemsExBehavior.SelectionChangedCommand="{Binding CmdMasterDataSelectionChanged}"
+               axogb:DoubleClickTriggersCommand.IsHandled="True"
+               axogb:DoubleClickTriggersCommand.Command="{Binding CmdMasterDataDoubleClick}"
+               Focusable="True"
+     axogb:CommandBindingBehavior.Copy="{Binding CmdPlotItemsCopy}"
+     axogb:CommandBindingBehavior.Cut="{Binding CmdPlotItemsCut}"
+     axogb:CommandBindingBehavior.Paste="{Binding CmdPlotItemsPaste}"
+     axogb:CommandBindingBehavior.Delete="{Binding CmdPlotItemsDelete}"
+     dd:DragDrop.IsDragSource="True" dd:DragDrop.DragMVVMHandler="{Binding PlotItemsDragDropHandler}"
+		 dd:DragDrop.IsDropTarget="True" dd:DragDrop.DropMVVMHandler="{Binding PlotItemsDragDropHandler}"
+
+               >
+      <ListView.Resources>
+        <Style TargetType="{x:Type ListViewItem}">
+          <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}"/>
+        </Style>
+      </ListView.Resources>
+      <ListView.ContextMenu>
+        <ContextMenu>
+          <MenuItem Command="Copy" Header="Copy items" />
+          <MenuItem Command="Cut" Header="Cut items" />
+          <MenuItem Command="Paste" Header="Paste items" />
+          <MenuItem Command="Delete" Header="Delete items" />
+          <MenuItem Header="Change table for selected items" Command="{Binding CommandChangeTableForSelectedItems}" ToolTip="Exchange the table that is common to all the selected plot items." />
+          <MenuItem Header="Change columns for selected items" Command="{Binding CommandChangeColumnsForSelectedItems}" ToolTip="Exchange one or more columns with names common to all the selected plot items." />
+        </ContextMenu>
+      </ListView.ContextMenu>
+
+      <ListView.View>
+        <GridView>
+          <GridView.Columns>
+            <GridViewColumn Header="No." DisplayMemberBinding="{Binding Text0}"/>
+            <GridViewColumn Header="Item" DisplayMemberBinding="{Binding Text}"/>
+          </GridView.Columns>
+        </GridView>
+      </ListView.View>
+      
+    </ListView>
+
+    <Button Grid.Row="2" Grid.Column="3" 
+                Command="{Binding CmdPLotItemsMoveUpSelected}"
+                Click="EhFocusData" 
+                Height="{Binding ElementName=_btGroup, Path=ActualHeight}"
+                HorizontalAlignment="Left" 
+                HorizontalContentAlignment="Stretch" 
+                VerticalContentAlignment="Stretch" 
+                Margin="{StaticResource ButtonMargin}" 
+                ToolTip="Move selected items upwards">
+      <Viewbox Style="{StaticResource ArrowViewBoxStyle}">
+        <Path Style="{StaticResource UpArrowPathStyle}" />
+      </Viewbox>
+    </Button>
+
+    <Button Grid.Row="2" Grid.Column="3" 
+                Command="{Binding CmdPlotItemsDelete}"
+                Height="{Binding ElementName=_btGroup, Path=ActualHeight}"
+                Margin="{StaticResource ButtonMargin}" 
+                HorizontalContentAlignment="Stretch" 
+                VerticalContentAlignment="Stretch" 
+                HorizontalAlignment="Right" 
+                ToolTip="Remove selected items">
+      <Viewbox Style="{StaticResource ArrowViewBoxStyle}">
+        <Path Style="{StaticResource RemoveCrossPathStyle}" />
+      </Viewbox>
+    </Button>
+
+    <Button Grid.Row="4" Grid.Column="3" 
+                Command="{Binding CmdPLotItemsMoveDownSelected}"
+                Click="EhFocusData"
+                Height="{Binding ElementName=_btGroup, Path=ActualHeight}" 
+                HorizontalAlignment="Left"
+                HorizontalContentAlignment="Stretch"
+                VerticalContentAlignment="Stretch" 
+                Margin="{StaticResource ButtonMargin}" 
+                ToolTip="Move selected items downwards">
+      <Viewbox Style="{StaticResource ArrowViewBoxStyle}">
+        <Path Style="{StaticResource DownArrowPathStyle}" />
+      </Viewbox>
+    </Button>
+
+    <Button Grid.Row="6" Grid.Column="3" Command="{Binding CmdPlotItemOpen}" Click="EhFocusData" Content="Edit item" Margin="{StaticResource ButtonMargin}"  ToolTip="Edit the selected plot item or the selected plot group." />
+
+
+  </Grid>
+</UserControl>

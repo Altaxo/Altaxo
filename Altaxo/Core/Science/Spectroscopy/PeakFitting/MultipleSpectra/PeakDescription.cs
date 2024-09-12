@@ -22,6 +22,9 @@
 
 #endregion Copyright
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using Altaxo.Calc.FitFunctions.Peaks;
 using Altaxo.Calc.LinearAlgebra;
 
@@ -33,37 +36,72 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
   /// </summary>
   public record PeakDescription
   {
+    public MultipleSpectraPeakFittingResult Parent { get; init; }
+
+    /// <summary>
+    /// Gets the original index of the peak. This is the index as the peak appears in the global parameter array.
+    /// </summary>
+    public int OriginalPeakIndex { get; init; }
+
     /// <summary>
     /// Gets notes, for instance, why a fit was not possible.
     /// </summary>
     public string Notes { get; init; } = string.Empty;
 
     /// <summary>
-    /// Gets the amplitudes of this peak, for all spectra. Depending on the fit function, the amplitudes could be height or area values.
+    /// Gets the peak parameters of this peak for a given spectrum.
     /// </summary>
-    public double[]? PeakAmplitudes { get; init; }
-
+    /// <param name="idxSpectrum">The index spectrum.</param>
+    /// <returns></returns>
+    public double[] GetPeakParametersOfSpectrum(int idxSpectrum)
+    {
+      var result = new double[Parent.NumberOfParametersPerPeak];
+      int offset = Parent.NumberOfParametersPerPeakGlobal * OriginalPeakIndex;
+      result[0] = Parent.ParametersGlobal[offset + idxSpectrum];
+      offset += Parent.NumberOfSpectra;
+      Array.Copy(Parent.ParametersGlobal, offset, result, 1, result.Length - 1);
+      return result;
+    }
 
     /// <summary>
-    /// Gets the fit parameter values of the peak with exception of the amplitudes. Thus, the first element is the peak position, the second element
-    /// is the width parameter.
+    /// Gets the parameter indices of this peak and for the spectrum given in the argument.
     /// </summary>
-    public double[]? PeakParameter { get; init; }
+    /// <param name="idxSpectrum">The index of the spectrum.</param>
+    /// <returns>The indices in the global array that point to the local peak parameters for the spectrum given in the argument.</returns>
+    public IEnumerable<int> GetParameterIndicesOfSpectrum(int idxSpectrum)
+    {
+      int offset = Parent.NumberOfParametersPerPeakGlobal * OriginalPeakIndex;
+      yield return offset + idxSpectrum;
+      offset += Parent.NumberOfSpectra - 1;
+      for (int i = 1; i < Parent.NumberOfParametersPerPeak; ++i)
+        yield return offset + i;
+    }
 
     /// <summary>
     /// Gets the fit covariance matrix of the parameters of the peak.
     /// </summary>
-    public IROMatrix<double>? PeakParameterCovariances { get; init; }
+    public IROMatrix<double>? GetPeakParameterCovariancesForSpectrum(int idxSpectrum)
+    {
+      if (Parent.CovariancesGlobal is { } src)
+      {
+        var indices = GetParameterIndicesOfSpectrum(idxSpectrum).ToArray();
+
+        var result = Matrix<double>.Build.Dense(indices.Length, indices.Length);
+        for (int r = 0; r < indices.Length; ++r)
+          for (int c = 0; c < indices.Length; ++c)
+            result[r, c] = src[indices[r], indices[c]];
+        return result;
+      }
+      else
+      {
+        return null;
+      }
+    }
 
     /// <summary>
     /// Gets the fit function that was used to fit the peak.
     /// </summary>
-    public IFitFunctionPeak? FitFunction { get; init; }
-
-    /// <summary>
-    /// Gets the complete fit function parameter values (may include parameters of all peaks that were fitted).
-    /// </summary>
-    public double[]? FitFunctionParameter { get; init; }
+    public IFitFunctionPeak? FitFunction => Parent.FitFunction;
 
     /// <summary>
     /// Gets the chi square value of the fit.
@@ -86,18 +124,26 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
     /// </value>
     public int PeakGroupNumber { get; init; }
 
+
+    /// <summary>
+    /// Gets the position of this peak.
+    /// </summary>
+    public double Position => GetPositionAreaHeightFWHMOfSpectrum(0).Position;
+
     /// <summary>
     /// Gets the position, the area, the height and the Full Width Half Maximum of the fitted peak.
     /// </summary>
     /// <exception cref="System.InvalidOperationException">FitFunction or PeakParameter is null (in instance of {this.GetType()}).</exception>
-    public (double Position, double Area, double Height, double FWHM) PositionAreaHeightFWHM
+    public (double Position, double Area, double Height, double FWHM) GetPositionAreaHeightFWHMOfSpectrum(int idxSpectrum)
     {
-      get
+      if (Parent.FitFunction is { } ff)
       {
-        if (FitFunction is { } ff && PeakParameter is { } para)
-          return ff.GetPositionAreaHeightFWHMFromSinglePeakParameters(para);
-        else
-          throw new System.InvalidOperationException($"FitFunction or PeakParameter is null (in instance of {this.GetType()}).");
+        var para = GetPeakParametersOfSpectrum(idxSpectrum);
+        return ff.GetPositionAreaHeightFWHMFromSinglePeakParameters(para);
+      }
+      else
+      {
+        throw new System.InvalidOperationException($"FitFunction or PeakParameter is null (in instance of {this.GetType()}).");
       }
     }
   }

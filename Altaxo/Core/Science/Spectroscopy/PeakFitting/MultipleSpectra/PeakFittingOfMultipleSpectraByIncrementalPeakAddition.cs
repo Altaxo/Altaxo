@@ -200,13 +200,71 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
 
     public bool IsMinimalFWHMValueInXUnits { get; init; } = true;
 
+    #region Serialization
+
+    #region Version 0
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PeakFittingOfMultipleSpectraByIncrementalPeakAddition), 0)]
+    public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
+    {
+      public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
+      {
+        var s = (PeakFittingOfMultipleSpectraByIncrementalPeakAddition)obj;
+        info.AddValue("FitFunction", s.FitFunction);
+        info.AddValue("OrderOfBaselinePolynomial", s.OrderOfBaselinePolynomial);
+        info.AddValue("MaximumNumberOfPeaks", s.MaximumNumberOfPeaks);
+        info.AddValue("MinimalRelativeHeight", s.MinimalRelativeHeight);
+        info.AddValue("MinimalSignalToNoiseRatio", s.MinimalSignalToNoiseRatio);
+        info.AddValue("IsMinimalFWHMValueInXUnits", s.IsMinimalFWHMValueInXUnits);
+        info.AddValue("MinimalFWHMValue", s.MinimalFWHMValue);
+        info.AddValue("PrunePeaksSumChiSquareFactor", s.PrunePeaksSumChiSquareFactor);
+        info.AddValue("FitWidthScalingFactor", s.FitWidthScalingFactor);
+      }
+
+      public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
+      {
+        var fitFunction = info.GetValue<IFitFunctionPeak>("FitFunction", null);
+        var orderOfBaselinePolynomial = info.GetInt32("OrderOfBaselinePolynomial");
+        var maximumNumberOfPeaks = info.GetInt32("MaximumNumberOfPeaks");
+        var minimalRelativeHeight = info.GetDouble("MinimalRelativeHeight");
+        var minimalSignalToNoiseRatio = info.GetDouble("MinimalSignalToNoiseRatio");
+        var isMinimalFWHMValueInXUnits = info.GetBoolean("IsMinimalFWHMValueInXUnits");
+        var minimalFWHMValue = info.GetDouble("MinimalFWHMValue");
+        var prunePeaksSumChiSquareFactor = info.GetDouble("PrunePeaksSumChiSquareFactor");
+        var fitWidthScalingFactor = info.GetNullableDouble("FitWidthScalingFactor");
+
+
+        return new PeakFittingOfMultipleSpectraByIncrementalPeakAddition()
+        {
+          FitFunction = fitFunction,
+          OrderOfBaselinePolynomial = orderOfBaselinePolynomial,
+          MaximumNumberOfPeaks = maximumNumberOfPeaks,
+          MinimalRelativeHeight = minimalRelativeHeight,
+          MinimalSignalToNoiseRatio = minimalSignalToNoiseRatio,
+          IsMinimalFWHMValueInXUnits = isMinimalFWHMValueInXUnits,
+          MinimalFWHMValue = minimalFWHMValue,
+          PrunePeaksSumChiSquareFactor = prunePeaksSumChiSquareFactor,
+          FitWidthScalingFactor = fitWidthScalingFactor,
+        };
+      }
+    }
+
+    #endregion
+
+    #endregion
+
+
     /// <summary>
     /// Executes the peak fitting algorithm.
     /// </summary>
     /// <param name="spectra">The list of spectra. Each spectrum consists of an x-array and an y-array.</param>
     /// <param name="cancellationToken">The token to cancel the algorithm.</param>
     /// <returns>A list of peak descriptions, sorted by position ascending.</returns>
-    public List<PeakDescription> Execute(IReadOnlyList<(double[] xArray, double[] yArray)> spectra, CancellationToken cancellationToken)
+    public MultipleSpectraPeakFittingResult Execute(IReadOnlyList<(double[] xArray, double[] yArray)> spectra, CancellationToken cancellationToken)
     {
       var fitFunctionWithOneTerm = FitFunction.WithNumberOfTerms(1).WithOrderOfBaselinePolynomial(-1);
       int numberOfSpectra = spectra.Count;
@@ -466,9 +524,22 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
       // assemble the fit results
       // *************************************************
 
-      var result = new List<PeakDescription>();
+      var listOfPeaks = new List<PeakDescription>();
       var parameter = fitResult2.MinimizingPoint.ToArray();
       var numberOfPeaks = (fitResult2.MinimizingPoint.Count - (OrderOfBaselinePolynomial + 1) * numberOfSpectra) / (numberOfParametersPerPeakGlobal);
+
+      var result = new MultipleSpectraPeakFittingResult
+      {
+        PeakDescriptions = listOfPeaks,
+        FitFunction = fitFunction,
+        NumberOfParametersPerPeak = numberOfParametersPerPeakLocal,
+        NumberOfSpectra = numberOfSpectra,
+        ParametersGlobal = parameter,
+        XGlobal = xGlobal,
+        YGlobal = yGlobal,
+        StartIndicesOfSpectra = startIndicesOfSpectra,
+        CovariancesGlobal = fitResult2.Covariance
+      };
 
       for (int idxPeak = 0; idxPeak < numberOfPeaks; ++idxPeak)
       {
@@ -481,17 +552,18 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
 
         var pd = new PeakDescription()
         {
-          PeakAmplitudes = peakAmplitudes,
-          PeakParameter = peakParameter,
-          FitFunctionParameter = parameter,
-          FitFunction = FitFunction,
+          Parent = result,
+          OriginalPeakIndex = idxPeak,
         };
 
-        result.Add(pd);
+        listOfPeaks.Add(pd);
       }
 
       // sort the result list by position
-      result.Sort((x, y) => Comparer<double>.Default.Compare(x.PeakParameter[0], y.PeakParameter[0]));
+      // note that when we sort the peaks, all the rest must also be sorted, thus
+      listOfPeaks.Sort((x, y) => Comparer<double>.Default.Compare(x.Position, y.Position));
+
+
 
 
       return result;
