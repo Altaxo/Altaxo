@@ -264,7 +264,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
     /// <param name="spectra">The list of spectra. Each spectrum consists of an x-array and an y-array.</param>
     /// <param name="cancellationToken">The token to cancel the algorithm.</param>
     /// <returns>A list of peak descriptions, sorted by position ascending.</returns>
-    public MultipleSpectraPeakFittingResult Execute(IReadOnlyList<(double[] xArray, double[] yArray)> spectra, CancellationToken cancellationToken)
+    public MultipleSpectraPeakFittingResult Execute(IReadOnlyList<(double[] xArray, double[] yArray)> spectra, CancellationToken cancellationToken, IProgress<double>? numericalProgress = null, IProgress<string> textualProgress = null)
     {
       var fitFunctionWithOneTerm = FitFunction.WithNumberOfTerms(1).WithOrderOfBaselinePolynomial(-1);
       int numberOfSpectra = spectra.Count;
@@ -477,7 +477,13 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
           else
             prohibitedPeaks.Add(idxMax, 2);
 
+          // Decrease the number of terms, and remove again the lower and upper bounds
           --numberOfTerms;
+          for (int i = 0; i < numberOfParametersPerPeakGlobal; i++)
+          {
+            lowerBounds.RemoveAt(0);
+            upperBounds.RemoveAt(0);
+          }
           continue;
         }
 
@@ -512,8 +518,19 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
         VectorMath.AddScaled(yGlobal, yRest, -1, yRest); // yRest now contains the rest
 
 
+        if (numericalProgress is { } numericalProgessNotNull)
+        {
+          numericalProgress.Report((numberOfTerms + 1) / (double)MaximumNumberOfPeaks);
+        }
+
+        if (textualProgress is { } textualProgessNotNull)
+        {
+          textualProgress.Report($"PeakFittingOfMultipleSpectra: {numberOfTerms + 1} of {MaximumNumberOfPeaks} fitted.");
+        }
+
         if (cancellationToken.IsCancellationRequested)
           break;
+
       }
 
       // *************************************************
@@ -527,6 +544,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
       var listOfPeaks = new List<PeakDescription>();
       var parameter = fitResult2.MinimizingPoint.ToArray();
       var numberOfPeaks = (fitResult2.MinimizingPoint.Count - (OrderOfBaselinePolynomial + 1) * numberOfSpectra) / (numberOfParametersPerPeakGlobal);
+      fitFunction = fitFunction.WithNumberOfTerms(numberOfPeaks);
 
       var result = new MultipleSpectraPeakFittingResult
       {

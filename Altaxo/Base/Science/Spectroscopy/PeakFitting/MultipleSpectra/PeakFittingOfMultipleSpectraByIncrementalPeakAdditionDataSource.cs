@@ -25,6 +25,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using Altaxo.Calc;
 using Altaxo.Calc.LinearAlgebra;
 using Altaxo.Data;
 
@@ -213,7 +214,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
       }
 
       // now do the peak fitting
-      var peakResults = peakFindingAndFittingOptions.PeakFitting.Execute(preprocessedSpectra, reporter.CancellationToken);
+      var peakResults = peakFindingAndFittingOptions.PeakFitting.Execute(preprocessedSpectra, reporter.CancellationToken, reporter, reporter);
 
       // and now the output
       {
@@ -321,9 +322,9 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
           groupNumber = (int)(1000 * Math.Ceiling((Math.Max(0, groupNumber) + 1) / 1000d) - 1);
           for (int iCurve = 0; iCurve < preprocessedSpectra.Count; iCurve++)
           {
-            var destX = destinationTable.DataColumns.EnsureExistence($"XPreprocessed{iCurve}", typeof(DoubleColumn), ColumnKind.X, groupNumber);
-            var destY = destinationTable.DataColumns.EnsureExistence($"YPreprocessed{iCurve}", typeof(DoubleColumn), ColumnKind.V, groupNumber);
             ++groupNumber;
+            var destX = destinationTable.DataColumns.EnsureExistence(PeakTable_PreprocessedColumnNameX(iCurve), typeof(DoubleColumn), ColumnKind.X, groupNumber);
+            var destY = destinationTable.DataColumns.EnsureExistence(PeakTable_PreprocessedColumnNameY(iCurve), typeof(DoubleColumn), ColumnKind.V, groupNumber);
 
             destX.Data = preprocessedSpectra[iCurve].X;
             destY.Data = preprocessedSpectra[iCurve].Y;
@@ -336,6 +337,63 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
         if (outputOptions.OutputFitCurve)
         {
           groupNumber = (int)(1000 * Math.Ceiling((Math.Max(0, groupNumber) + 1) / 1000d) - 1);
+
+          for (int iCurve = 0; iCurve < preprocessedSpectra.Count; iCurve++)
+          {
+            ++groupNumber;
+            var destX = destinationTable.DataColumns.EnsureExistence(PeakTable_FitCurveColumnNameX(iCurve), typeof(DoubleColumn), ColumnKind.X, groupNumber);
+            var destY = destinationTable.DataColumns.EnsureExistence(PeakTable_FitCurveColumnNameY(iCurve), typeof(DoubleColumn), ColumnKind.V, groupNumber);
+
+            var parameter = peakResults.GetFullParameterSetForSpectrum(iCurve);
+            var y = Vector<double>.Build.Dense(preprocessedSpectra[iCurve].Y.Length);
+            peakResults.FitFunction.Evaluate(MatrixMath.ToROMatrixWithOneColumn(preprocessedSpectra[iCurve].X), parameter, y, null);
+
+            destX.Data = preprocessedSpectra[iCurve].X;
+            destY.Data = y;
+          }
+        }
+
+        // ********************************************
+        //     output the fit curves as separate peaks
+        // ********************************************
+        if (outputOptions.OutputFitCurveAsSeparatePeaks)
+        {
+          groupNumber = (int)(1000 * Math.Ceiling((Math.Max(0, groupNumber) + 1) / 1000d) - 1);
+          var fitWidthScalingFactor = _processOptions.GetPeakSearchingAndFittingOptions().PeakFitting.FitWidthScalingFactor;
+          var numberOfPeaks = peakResults.NumberOfPeaks;
+          var fitFunc = peakResults.FitFunction.WithNumberOfTerms(1);
+          for (int iCurve = 0; iCurve < preprocessedSpectra.Count; iCurve++)
+          {
+            ++groupNumber;
+            var destX = destinationTable.DataColumns.EnsureExistence(PeakTable_SeparatePeaksColumnNameX(iCurve), typeof(DoubleColumn), ColumnKind.X, groupNumber);
+            var destY = destinationTable.DataColumns.EnsureExistence(PeakTable_SeparatePeaksColumnNameY(iCurve), typeof(DoubleColumn), ColumnKind.V, groupNumber);
+            var destZ = destinationTable.DataColumns.EnsureExistence(PeakTable_SeparatePeaksColumnNameID(iCurve), typeof(DoubleColumn), ColumnKind.V, groupNumber);
+
+            int idxRow = 0;
+            for (int idxPeak = 0; idxPeak < peakResults.NumberOfPeaks; ++idxPeak)
+            {
+              var pahf = peakResults.PeakDescriptions[idxPeak].GetPositionAreaHeightFWHMOfSpectrum(iCurve);
+              var parameter = peakResults.GetParametersForOnePeakInclusiveBaselineForSpectrum(iCurve, idxPeak);
+              var x = preprocessedSpectra[iCurve].X;
+              var y = Vector<double>.Build.Dense(preprocessedSpectra[iCurve].Y.Length);
+              fitFunc.Evaluate(MatrixMath.ToROMatrixWithOneColumn(preprocessedSpectra[iCurve].X), parameter, y, null);
+
+              var lowerBound = pahf.Position - pahf.FWHM * (fitWidthScalingFactor ?? 1000);
+              var upperBound = pahf.Position + pahf.FWHM * (fitWidthScalingFactor ?? 1000);
+
+              for (int i = 0; i < x.Length; ++i)
+              {
+                if (RMath.IsInIntervalCC(x[i], lowerBound, upperBound))
+                {
+                  destX[idxRow] = x[i];
+                  destY[idxRow] = y[i];
+                  destZ[idxRow] = numberOfPeaks <= 1 ? 0 : (((idxPeak * (numberOfPeaks + 1)) / 4) % numberOfPeaks) / ((double)numberOfPeaks - 1);
+                  ++idxRow;
+                }
+              }
+              ++idxRow; // one empty row between each peak
+            }
+          }
         }
       }
     }

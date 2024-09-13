@@ -59,13 +59,16 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
       var result = fit.Execute([(x, y)], cancellationToken: System.Threading.CancellationToken.None).PeakDescriptions;
 
       Assert.Equal(2, result.Count);
-      AssertEx.Equal(1030.0, result[0].PeakParameter[0], 1E-7, 1e-7, "Position of first peak");
-      AssertEx.Equal(5.0, result[0].PeakParameter[1], 1E-7, 1e-7, "Sigma of first peak");
-      AssertEx.Equal(666.0, result[0].PeakAmplitudes[0], 1E-7, 1E-7, "Amplitude of first peak");
+      var peakParameter = result[0].GetPeakParametersOfSpectrum(0);
+      AssertEx.Equal(666.0, peakParameter[0], 1E-7, 1E-7, "Amplitude of first peak");
+      AssertEx.Equal(1030.0, peakParameter[1], 1E-7, 1e-7, "Position of first peak");
+      AssertEx.Equal(5.0, peakParameter[2], 1E-7, 1e-7, "Sigma of first peak");
 
-      AssertEx.Equal(1070.0, result[1].PeakParameter[0], 1E-7, 1e-7, "Position of second peak");
-      AssertEx.Equal(4.0, result[1].PeakParameter[1], 1E-7, 1e-7, "Sigma of second peak");
-      AssertEx.Equal(444.0, result[1].PeakAmplitudes[0], 1E-7, 1e-7, "Amplitude of second peak");
+      peakParameter = result[1].GetPeakParametersOfSpectrum(0);
+      AssertEx.Equal(444.0, peakParameter[0], 1E-7, 1e-7, "Amplitude of second peak");
+      AssertEx.Equal(1070.0, peakParameter[1], 1E-7, 1e-7, "Position of second peak");
+      AssertEx.Equal(4.0, peakParameter[2], 1E-7, 1e-7, "Sigma of second peak");
+
 
     }
 
@@ -98,15 +101,23 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
       var result = fit.Execute([(x0, y0), (x0, y0)], cancellationToken: System.Threading.CancellationToken.None).PeakDescriptions;
 
       Assert.Equal(2, result.Count);
-      AssertEx.Equal(1030.0, result[0].PeakParameter[0], 1E-7, 1e-7, "Position of first peak");
-      AssertEx.Equal(5.0, result[0].PeakParameter[1], 1E-7, 1e-7, "Sigma of first peak");
-      AssertEx.Equal(666.0, result[0].PeakAmplitudes[0], 1E-7, 1E-7, "Amplitude of first peak, first spectrum");
-      AssertEx.Equal(666.0, result[0].PeakAmplitudes[1], 1E-7, 1E-7, "Amplitude of first peak, second spectrum");
+      var peakParameter0 = result[0].GetPeakParametersOfSpectrum(0);
+      var peakParameter1 = result[0].GetPeakParametersOfSpectrum(1);
+      AssertEx.Equal(666.0, peakParameter0[0], 1E-7, 1E-7, "Amplitude of first peak, first spectrum");
+      AssertEx.Equal(666.0, peakParameter1[0], 1E-7, 1E-7, "Amplitude of first peak, second spectrum");
+      AssertEx.Equal(1030.0, peakParameter0[1], 1E-7, 1e-7, "Position of first peak");
+      AssertEx.Equal(1030.0, peakParameter1[1], 1E-7, 1e-7, "Position of first peak");
+      AssertEx.Equal(5.0, peakParameter0[2], 1E-7, 1e-7, "Sigma of first peak");
+      AssertEx.Equal(5.0, peakParameter1[2], 1E-7, 1e-7, "Sigma of first peak");
 
-      AssertEx.Equal(1070.0, result[1].PeakParameter[0], 1E-7, 1e-7, "Position of second peak");
-      AssertEx.Equal(4.0, result[1].PeakParameter[1], 1E-7, 1e-7, "Sigma of second peak");
-      AssertEx.Equal(444.0, result[1].PeakAmplitudes[0], 1E-7, 1e-7, "Amplitude of second peak, first spectrum");
-      AssertEx.Equal(444.0, result[1].PeakAmplitudes[1], 1E-7, 1e-7, "Amplitude of second peak, second spectrum");
+      peakParameter0 = result[1].GetPeakParametersOfSpectrum(0);
+      peakParameter1 = result[1].GetPeakParametersOfSpectrum(1);
+      AssertEx.Equal(444.0, peakParameter0[0], 1E-7, 1e-7, "Amplitude of second peak, first spectrum");
+      AssertEx.Equal(444.0, peakParameter1[0], 1E-7, 1e-7, "Amplitude of second peak, second spectrum");
+      AssertEx.Equal(1070.0, peakParameter0[1], 1E-7, 1e-7, "Position of second peak");
+      AssertEx.Equal(1070.0, peakParameter1[1], 1E-7, 1e-7, "Position of second peak");
+      AssertEx.Equal(4.0, peakParameter0[2], 1E-7, 1e-7, "Sigma of second peak");
+      AssertEx.Equal(4.0, peakParameter1[2], 1E-7, 1e-7, "Sigma of second peak");
     }
 
     /// <summary>
@@ -149,19 +160,49 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
         MaximumNumberOfPeaks = 2,
       };
 
-      var result = fit.Execute([(x0, y0), (x1, y1)], cancellationToken: System.Threading.CancellationToken.None).PeakDescriptions;
+      var peakResults = fit.Execute([(x0, y0), (x1, y1)], cancellationToken: System.Threading.CancellationToken.None);
+      var result = peakResults.PeakDescriptions;
 
       Assert.Equal(2, result.Count);
-      AssertEx.Equal(1030.0, result[0].PeakParameter[0], 1E-7, 1e-7, "Position of first peak");
-      AssertEx.Equal(5.0, result[0].PeakParameter[1], 1E-7, 1e-7, "Sigma of first peak");
-      AssertEx.Equal(666.0, result[0].PeakAmplitudes[0], 1E-7, 1E-7, "Amplitude of first peak, first spectrum");
-      AssertEx.Equal(222.0, result[0].PeakAmplitudes[1], 1E-7, 1E-7, "Amplitude of first peak, second spectrum");
+      var peakParameter0 = result[0].GetPeakParametersOfSpectrum(0);
+      var peakParameter1 = result[0].GetPeakParametersOfSpectrum(1);
+      AssertEx.Equal(666.0, peakParameter0[0], 1E-7, 1E-7, "Amplitude of first peak, first spectrum");
+      AssertEx.Equal(222.0, peakParameter1[0], 1E-7, 1E-7, "Amplitude of first peak, second spectrum");
+      AssertEx.Equal(1030.0, peakParameter0[1], 1E-7, 1e-7, "Position of first peak");
+      AssertEx.Equal(1030.0, peakParameter1[1], 1E-7, 1e-7, "Position of first peak");
+      AssertEx.Equal(5.0, peakParameter0[2], 1E-7, 1e-7, "Sigma of first peak");
+      AssertEx.Equal(5.0, peakParameter1[2], 1E-7, 1e-7, "Sigma of first peak");
 
-      AssertEx.Equal(1070.0, result[1].PeakParameter[0], 1E-7, 1e-7, "Position of second peak");
-      AssertEx.Equal(4.0, result[1].PeakParameter[1], 1E-7, 1e-7, "Sigma of second peak");
-      AssertEx.Equal(444.0, result[1].PeakAmplitudes[0], 1E-7, 1e-7, "Amplitude of second peak, first spectrum");
-      AssertEx.Equal(555.0, result[1].PeakAmplitudes[1], 1E-7, 1e-7, "Amplitude of second peak, second spectrum");
+      peakParameter0 = result[1].GetPeakParametersOfSpectrum(0);
+      peakParameter1 = result[1].GetPeakParametersOfSpectrum(1);
+      AssertEx.Equal(444.0, peakParameter0[0], 1E-7, 1e-7, "Amplitude of second peak, first spectrum");
+      AssertEx.Equal(555.0, peakParameter1[0], 1E-7, 1e-7, "Amplitude of second peak, second spectrum");
+      AssertEx.Equal(1070.0, peakParameter0[1], 1E-7, 1e-7, "Position of second peak");
+      AssertEx.Equal(1070.0, peakParameter1[1], 1E-7, 1e-7, "Position of second peak");
+      AssertEx.Equal(4.0, peakParameter0[2], 1E-7, 1e-7, "Sigma of second peak");
+      AssertEx.Equal(4.0, peakParameter1[2], 1E-7, 1e-7, "Sigma of second peak");
 
+      // First spectrum
+      peakParameter0 = peakResults.GetFullParameterSetForSpectrum(0);
+      AssertEx.Equal(7, peakParameter0.Length);
+      AssertEx.Equal(666.0, peakParameter0[0], 1E-7, 1E-7, "Amplitude of first peak, first spectrum");
+      AssertEx.Equal(1030.0, peakParameter0[1], 1E-7, 1e-7, "Position of first peak");
+      AssertEx.Equal(5.0, peakParameter0[2], 1E-7, 1e-7, "Sigma of first peak");
+      AssertEx.Equal(444.0, peakParameter0[3], 1E-7, 1e-7, "Amplitude of second peak, first spectrum");
+      AssertEx.Equal(1070.0, peakParameter0[4], 1E-7, 1e-7, "Position of second peak");
+      AssertEx.Equal(4.0, peakParameter0[5], 1E-7, 1e-7, "Sigma of second peak");
+      AssertEx.Equal(7000.0, peakParameter0[6], 1E-7, 1e-7, "Baseline");
+
+      // Second spectrum
+      peakParameter1 = peakResults.GetFullParameterSetForSpectrum(1);
+      AssertEx.Equal(7, peakParameter1.Length);
+      AssertEx.Equal(222.0, peakParameter1[0], 1E-7, 1E-7, "Amplitude of first peak, first spectrum");
+      AssertEx.Equal(1030.0, peakParameter1[1], 1E-7, 1e-7, "Position of first peak");
+      AssertEx.Equal(5.0, peakParameter1[2], 1E-7, 1e-7, "Sigma of first peak");
+      AssertEx.Equal(555.0, peakParameter1[3], 1E-7, 1e-7, "Amplitude of second peak, first spectrum");
+      AssertEx.Equal(1070.0, peakParameter1[4], 1E-7, 1e-7, "Position of second peak");
+      AssertEx.Equal(4.0, peakParameter1[5], 1E-7, 1e-7, "Sigma of second peak");
+      AssertEx.Equal(5000.0, peakParameter1[6], 1E-7, 1e-7, "Baseline");
     }
   }
 
