@@ -310,6 +310,15 @@ namespace Altaxo.Data
     }
 
     /// <summary>
+    /// Asks for file names, and imports one or more Renishaw .wdf files (Raman spectroscopy) into a single data table.
+    /// </summary>
+    /// <param name="dataTable">Data table to import to.</param>
+    public static void ShowImportNicoletSPADialog(this DataTable dataTable)
+    {
+      Altaxo.Serialization.NicoletSPA.NicoletSPAImporter.ShowDialog(dataTable);
+    }
+
+    /// <summary>
     /// Shows the dialog for Galactic SPC file export, and exports the data of the table using the options provided in that dialog.
     /// </summary>
     /// <param name="dataTable">DataTable to export.</param>

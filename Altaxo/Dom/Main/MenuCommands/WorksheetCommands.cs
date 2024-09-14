@@ -112,6 +112,14 @@ namespace Altaxo.Worksheet.Commands
     }
   }
 
+  public class ImportNicoletSPA : AbstractWorksheetControllerCommand
+  {
+    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
+    {
+      Altaxo.Data.FileCommands.ShowImportNicoletSPADialog(ctrl.DataTable);
+    }
+  }
+
   public class ImportRamanCHADA : AbstractWorksheetControllerCommand
   {
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
