@@ -23,6 +23,10 @@
 #endregion Copyright
 
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Linq;
+using Altaxo.Collections;
 using Altaxo.Science.Spectroscopy;
 
 namespace Altaxo.Gui.Science.Spectroscopy
@@ -117,6 +121,46 @@ namespace Altaxo.Gui.Science.Spectroscopy
       }
     }
 
+    public class Property : IEditableObject, INotifyPropertyChanged
+    {
+      public event PropertyChangedEventHandler? PropertyChanged;
+
+      public Property() { }
+      public Property(string name)
+      {
+        _propertyName = name ?? string.Empty;
+      }
+
+
+      public void BeginEdit()
+      {
+      }
+
+      public void CancelEdit()
+      {
+      }
+
+      public void EndEdit()
+      {
+      }
+
+      private string _propertyName = string.Empty;
+      public string PropertyName
+      {
+        get => _propertyName;
+        set
+        {
+          if (_propertyName != value)
+          {
+            _propertyName = value;
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(PropertyName)));
+          }
+        }
+      }
+    }
+
+    public ObservableCollection<Property> PropertyNames { get; } = new();
+
 
     #endregion
 
@@ -131,6 +175,7 @@ namespace Altaxo.Gui.Science.Spectroscopy
         OutputFitCurveSamplingFactor = _doc.OutputFitCurveSamplingFactor;
         OutputFitCurveAsSeparatePeaks = _doc.OutputFitCurveAsSeparatePeaks;
         OutputFitCurveAsSeparatePeaksSamplingFactor = _doc.OutputFitCurveAsSeparatePeaksSamplingFactor;
+        PropertyNames.AddRange(_doc.PropertyNames.Select(x => new Property(x)));
       }
     }
 
@@ -143,6 +188,7 @@ namespace Altaxo.Gui.Science.Spectroscopy
         OutputFitCurveSamplingFactor = _doc.OutputFitCurveSamplingFactor,
         OutputFitCurveAsSeparatePeaks = OutputFitCurveAsSeparatePeaks,
         OutputFitCurveAsSeparatePeaksSamplingFactor = OutputFitCurveAsSeparatePeaksSamplingFactor,
+        PropertyNames = PropertyNames.Select(x => x.PropertyName).Distinct().ToArray(),
       };
 
       return ApplyEnd(true, disposeController);

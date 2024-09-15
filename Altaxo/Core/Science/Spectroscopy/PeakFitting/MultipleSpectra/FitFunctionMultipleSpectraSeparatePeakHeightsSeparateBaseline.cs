@@ -143,7 +143,9 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
     /// <summary>Not implemented.</summary>
     public void Evaluate(double[] independent, double[] parameters, double[] FV)
     {
-      throw new NotImplementedException();
+      var x = MatrixMath.ToROMatrixWithOneRow(independent);
+      var y = VectorMath.ToVector(FV);
+      Evaluate(x, parameters, y, null);
     }
 
     /// <inheritdoc/>

@@ -109,6 +109,7 @@ namespace Altaxo.Calc.FitFunctions
         (() => new Kinetics.RateOfConversionNthOrder(), 3.5, new double[]{2,1,3,1}, 0.033326989614726919488),
         (() => new Kinetics.ConversionNthOrder(), 3.5, new double[]{2,1,3,1.5}, 153/169d),
         (() => new Kinetics.RateOfConversionNthOrder(), 3.5, new double[]{2,1,3,1.5}, 192/2197d),
+        (() => new Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra.FitFunctionMultipleSpectraSeparatePeakHeightsSeparateBaseline(new GaussAmplitude(1,1),new int[]{0}), 0.5, new double[]{2,3,5,1,3}, 1+3*0.5+2*Math.Exp(-0.5*RMath.Pow2((0.5-3)/5))),
       };
     private static DoubleEqualityComparer CompareD = new DoubleEqualityComparer(1E-100, 1E-12);
     private static DoubleEqualityComparer CompareDerivatives = new DoubleEqualityComparer(1E-4, 1E-4);

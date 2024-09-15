@@ -63,7 +63,23 @@
                            Minimum="1"
                            Maximum="100"/>
 
+    <Label Grid.Row="6"
+           Grid.Column="0"
+           Content="Properties to include in result table:" />
+
+    <DataGrid Grid.Row="6" Grid.Column="2" Grid.ColumnSpan="5" 
+              ItemsSource="{Binding PropertyNames}"
+              AutoGenerateColumns="False"
+              CanUserAddRows="True"   
+              CanUserDeleteRows="True"   
+              
+              >
+      <DataGrid.Columns>
+        <DataGridTextColumn Header="Property name" Binding="{Binding PropertyName}" IsReadOnly="False"  />
+      </DataGrid.Columns>
+    </DataGrid>
 
 
-    </Grid>
+
+  </Grid>
 </UserControl>

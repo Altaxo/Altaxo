@@ -227,6 +227,20 @@ namespace Altaxo.Calc.LinearAlgebra
       return new VectorToROMatrixWithOneRowWrapper<T>(vector);
     }
 
+    /// <summary>
+    /// Wraps an array, so that it becomes a matrix with one row, and as many columns as elements in the vector.
+    /// </summary>
+    /// <typeparam name="T">Type of elements</typeparam>
+    /// <param name="vector">The array to wrap.</param>
+    /// <returns>A wrapper that appears as a matrix with one row, and as many columns as elements in the wrapped vector.</returns>
+    /// <remarks>Only a wrapper is returned, thus if the data of the vector change, the changes are reflected in the returned matrix.
+    /// This is also true for the opposite process: if the data of the matrix change, the changes are reflected in the provided array.
+    /// </remarks>
+    public static IMatrix<T> ToMatrixWithOneRow<T>(T[] vector) where T : struct
+    {
+      return MatrixWithOneRow<T>.CreateWrapperMatrix(vector);
+    }
+
     #endregion
     #region MatrixWithOneRow
 
@@ -247,6 +261,20 @@ namespace Altaxo.Calc.LinearAlgebra
       public MatrixWithOneRow(int cols)
       {
         _array = new T[cols];
+      }
+
+      /// <summary>
+      /// Creates the wrapper matrix around the provided array. Attention: it is fully intended that
+      /// the underlying array elements are changed when writing to the returned wrapper matrix! 
+      /// </summary>
+      /// <param name="array">The array that is to be wrapped.</param>
+      /// <returns>The wrapper matrix, that has one row, and the number of columns corresponding to the length of the provided array.</returns>
+      /// <exception cref="System.ArgumentNullException">array</exception>
+      public static MatrixWithOneRow<T> CreateWrapperMatrix(T[] array)
+      {
+        var result = new MatrixWithOneRow<T>(0);
+        result._array = array ?? throw new System.ArgumentNullException(nameof(array));
+        return result;
       }
 
       /// <inheritdoc/>

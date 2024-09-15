@@ -227,6 +227,26 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
 
 
         // ***************************************
+        // Retrieve the properties
+        // ***************************************
+
+        var columnProperties = new AltaxoVariant[outputOptions.PropertyNames.Count][];
+        var columnPropertyColumns = new DataColumn[outputOptions.PropertyNames.Count];
+        for (int idxProperty = 0; idxProperty < outputOptions.PropertyNames.Count; idxProperty++)
+        {
+          var propertyName = outputOptions.PropertyNames[idxProperty];
+          var arr = new AltaxoVariant[numberOfSpectra];
+          bool isNumeric = true;
+          for (int idxSpectrum = 0; idxSpectrum < numberOfSpectra; ++idxSpectrum)
+          {
+            var pvalue = IndependentAndDependentColumns.GetPropertyValueOfCurve(_processData.CurveData[idxSpectrum], propertyName);
+            arr[idxProperty] = pvalue;
+            isNumeric &= pvalue.CanConvertedToDouble;
+          }
+          columnPropertyColumns[idxProperty] = destinationTable.PropCols.EnsureExistence(propertyName, isNumeric ? typeof(DoubleColumn) : typeof(TextColumn), ColumnKind.V, 0);
+        }
+
+        // ***************************************
         //     output the peaks
         // ***************************************
 
@@ -252,6 +272,19 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
         //var cLastXValue = destinationTable.DataColumns.EnsureExistence($"FitLastXValue", typeof(DoubleColumn), ColumnKind.V, groupNumber);
         var cSumChiSquare = destinationTable.DataColumns.EnsureExistence($"SumChiSquare", typeof(DoubleColumn), ColumnKind.V, groupNumber);
         var cSigmaSquare = destinationTable.DataColumns.EnsureExistence($"SigmaSquare", typeof(DoubleColumn), ColumnKind.V, groupNumber);
+
+        // set the properties for the columns which are separate for each spectrum
+        for (int idxProperty = 0; idxProperty < columnPropertyColumns.Length; ++idxProperty)
+        {
+          var pcol = columnPropertyColumns[idxProperty];
+          for (int idxSpectrum = 0; idxSpectrum < numberOfSpectra; idxSpectrum++)
+          {
+            pcol[destinationTable.DataColumns.GetColumnNumber(cFArea[idxSpectrum])] = columnProperties[idxProperty][idxSpectrum];
+            pcol[destinationTable.DataColumns.GetColumnNumber(cFAreaVar[idxSpectrum])] = columnProperties[idxProperty][idxSpectrum];
+            pcol[destinationTable.DataColumns.GetColumnNumber(cFHei[idxSpectrum])] = columnProperties[idxProperty][idxSpectrum];
+            pcol[destinationTable.DataColumns.GetColumnNumber(cFHeiVar[idxSpectrum])] = columnProperties[idxProperty][idxSpectrum];
+          }
+        }
 
         double[] localParam = null;
         IROMatrix<double> localCovariances = null;
@@ -299,6 +332,12 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
               var cParaStdError = destinationTable.DataColumns.EnsureExistence($"{parameterNames[0]}{idxSpectrum}.Err", typeof(DoubleColumn), ColumnKind.Err, groupNumber);
               cParaValue[idxPeak] = localParam[0];
               cParaStdError[idxPeak] = localCovariances is null ? 0 : Math.Sqrt(localCovariances[0, 0]);
+
+              for (int idxProperty = 0; idxProperty < columnPropertyColumns.Length; ++idxProperty)
+              {
+                columnPropertyColumns[idxProperty][destinationTable.DataColumns.GetColumnNumber(cParaValue)] = columnProperties[idxProperty][idxSpectrum];
+                columnPropertyColumns[idxProperty][destinationTable.DataColumns.GetColumnNumber(cParaStdError)] = columnProperties[idxProperty][idxSpectrum];
+              }
             }
 
             // now the rest of the parameters
@@ -320,14 +359,20 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
         if (outputOptions.OutputPreprocessedCurve)
         {
           groupNumber = (int)(1000 * Math.Ceiling((Math.Max(0, groupNumber) + 1) / 1000d) - 1);
-          for (int iCurve = 0; iCurve < preprocessedSpectra.Count; iCurve++)
+          for (int idxSpectrum = 0; idxSpectrum < preprocessedSpectra.Count; idxSpectrum++)
           {
             ++groupNumber;
-            var destX = destinationTable.DataColumns.EnsureExistence(PeakTable_PreprocessedColumnNameX(iCurve), typeof(DoubleColumn), ColumnKind.X, groupNumber);
-            var destY = destinationTable.DataColumns.EnsureExistence(PeakTable_PreprocessedColumnNameY(iCurve), typeof(DoubleColumn), ColumnKind.V, groupNumber);
+            var destX = destinationTable.DataColumns.EnsureExistence(PeakTable_PreprocessedColumnNameX(idxSpectrum), typeof(DoubleColumn), ColumnKind.X, groupNumber);
+            var destY = destinationTable.DataColumns.EnsureExistence(PeakTable_PreprocessedColumnNameY(idxSpectrum), typeof(DoubleColumn), ColumnKind.V, groupNumber);
 
-            destX.Data = preprocessedSpectra[iCurve].X;
-            destY.Data = preprocessedSpectra[iCurve].Y;
+            destX.Data = preprocessedSpectra[idxSpectrum].X;
+            destY.Data = preprocessedSpectra[idxSpectrum].Y;
+
+            for (int idxProperty = 0; idxProperty < columnPropertyColumns.Length; ++idxProperty)
+            {
+              columnPropertyColumns[idxProperty][destinationTable.DataColumns.GetColumnNumber(destX)] = columnProperties[idxProperty][idxSpectrum];
+              columnPropertyColumns[idxProperty][destinationTable.DataColumns.GetColumnNumber(destY)] = columnProperties[idxProperty][idxSpectrum];
+            }
           }
         }
 
@@ -338,18 +383,24 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
         {
           groupNumber = (int)(1000 * Math.Ceiling((Math.Max(0, groupNumber) + 1) / 1000d) - 1);
 
-          for (int iCurve = 0; iCurve < preprocessedSpectra.Count; iCurve++)
+          for (int idxSpectrum = 0; idxSpectrum < preprocessedSpectra.Count; idxSpectrum++)
           {
             ++groupNumber;
-            var destX = destinationTable.DataColumns.EnsureExistence(PeakTable_FitCurveColumnNameX(iCurve), typeof(DoubleColumn), ColumnKind.X, groupNumber);
-            var destY = destinationTable.DataColumns.EnsureExistence(PeakTable_FitCurveColumnNameY(iCurve), typeof(DoubleColumn), ColumnKind.V, groupNumber);
+            var destX = destinationTable.DataColumns.EnsureExistence(PeakTable_FitCurveColumnNameX(idxSpectrum), typeof(DoubleColumn), ColumnKind.X, groupNumber);
+            var destY = destinationTable.DataColumns.EnsureExistence(PeakTable_FitCurveColumnNameY(idxSpectrum), typeof(DoubleColumn), ColumnKind.V, groupNumber);
 
-            var parameter = peakResults.GetFullParameterSetForSpectrum(iCurve);
-            var y = Vector<double>.Build.Dense(preprocessedSpectra[iCurve].Y.Length);
-            peakResults.FitFunction.Evaluate(MatrixMath.ToROMatrixWithOneColumn(preprocessedSpectra[iCurve].X), parameter, y, null);
+            var parameter = peakResults.GetFullParameterSetForSpectrum(idxSpectrum);
+            var y = Vector<double>.Build.Dense(preprocessedSpectra[idxSpectrum].Y.Length);
+            peakResults.FitFunction.Evaluate(MatrixMath.ToROMatrixWithOneColumn(preprocessedSpectra[idxSpectrum].X), parameter, y, null);
 
-            destX.Data = preprocessedSpectra[iCurve].X;
+            destX.Data = preprocessedSpectra[idxSpectrum].X;
             destY.Data = y;
+
+            for (int idxProperty = 0; idxProperty < columnPropertyColumns.Length; ++idxProperty)
+            {
+              columnPropertyColumns[idxProperty][destinationTable.DataColumns.GetColumnNumber(destX)] = columnProperties[idxProperty][idxSpectrum];
+              columnPropertyColumns[idxProperty][destinationTable.DataColumns.GetColumnNumber(destY)] = columnProperties[idxProperty][idxSpectrum];
+            }
           }
         }
 
@@ -362,21 +413,28 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
           var fitWidthScalingFactor = _processOptions.GetPeakSearchingAndFittingOptions().PeakFitting.FitWidthScalingFactor;
           var numberOfPeaks = peakResults.NumberOfPeaks;
           var fitFunc = peakResults.FitFunction.WithNumberOfTerms(1);
-          for (int iCurve = 0; iCurve < preprocessedSpectra.Count; iCurve++)
+          for (int idxSpectrum = 0; idxSpectrum < preprocessedSpectra.Count; idxSpectrum++)
           {
             ++groupNumber;
-            var destX = destinationTable.DataColumns.EnsureExistence(PeakTable_SeparatePeaksColumnNameX(iCurve), typeof(DoubleColumn), ColumnKind.X, groupNumber);
-            var destY = destinationTable.DataColumns.EnsureExistence(PeakTable_SeparatePeaksColumnNameY(iCurve), typeof(DoubleColumn), ColumnKind.V, groupNumber);
-            var destZ = destinationTable.DataColumns.EnsureExistence(PeakTable_SeparatePeaksColumnNameID(iCurve), typeof(DoubleColumn), ColumnKind.V, groupNumber);
+            var destX = destinationTable.DataColumns.EnsureExistence(PeakTable_SeparatePeaksColumnNameX(idxSpectrum), typeof(DoubleColumn), ColumnKind.X, groupNumber);
+            var destY = destinationTable.DataColumns.EnsureExistence(PeakTable_SeparatePeaksColumnNameY(idxSpectrum), typeof(DoubleColumn), ColumnKind.V, groupNumber);
+            var destZ = destinationTable.DataColumns.EnsureExistence(PeakTable_SeparatePeaksColumnNameID(idxSpectrum), typeof(DoubleColumn), ColumnKind.V, groupNumber);
+
+            for (int idxProperty = 0; idxProperty < columnPropertyColumns.Length; ++idxProperty)
+            {
+              columnPropertyColumns[idxProperty][destinationTable.DataColumns.GetColumnNumber(destX)] = columnProperties[idxProperty][idxSpectrum];
+              columnPropertyColumns[idxProperty][destinationTable.DataColumns.GetColumnNumber(destY)] = columnProperties[idxProperty][idxSpectrum];
+              columnPropertyColumns[idxProperty][destinationTable.DataColumns.GetColumnNumber(destZ)] = columnProperties[idxProperty][idxSpectrum];
+            }
 
             int idxRow = 0;
             for (int idxPeak = 0; idxPeak < peakResults.NumberOfPeaks; ++idxPeak)
             {
-              var pahf = peakResults.PeakDescriptions[idxPeak].GetPositionAreaHeightFWHMOfSpectrum(iCurve);
-              var parameter = peakResults.GetParametersForOnePeakInclusiveBaselineForSpectrum(iCurve, idxPeak);
-              var x = preprocessedSpectra[iCurve].X;
-              var y = Vector<double>.Build.Dense(preprocessedSpectra[iCurve].Y.Length);
-              fitFunc.Evaluate(MatrixMath.ToROMatrixWithOneColumn(preprocessedSpectra[iCurve].X), parameter, y, null);
+              var pahf = peakResults.PeakDescriptions[idxPeak].GetPositionAreaHeightFWHMOfSpectrum(idxSpectrum);
+              var parameter = peakResults.GetParametersForOnePeakInclusiveBaselineForSpectrum(idxSpectrum, idxPeak);
+              var x = preprocessedSpectra[idxSpectrum].X;
+              var y = Vector<double>.Build.Dense(preprocessedSpectra[idxSpectrum].Y.Length);
+              fitFunc.Evaluate(MatrixMath.ToROMatrixWithOneColumn(preprocessedSpectra[idxSpectrum].X), parameter, y, null);
 
               var lowerBound = pahf.Position - pahf.FWHM * (fitWidthScalingFactor ?? 1000);
               var upperBound = pahf.Position + pahf.FWHM * (fitWidthScalingFactor ?? 1000);
