@@ -200,6 +200,12 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
 
     public bool IsMinimalFWHMValueInXUnits { get; init; } = true;
 
+    /// <summary>
+    /// Gets a list of fixed peak positions. While the designated positions are fixed and will not participate in the fitting process,
+    /// the designated FWHM values are intended for calculation of the initial peak parameter values.
+    /// </summary>
+    public IReadOnlyList<(double Position, double FWHMValue)> FixedPeakPositions { get; init; } = [];
+
     #region Serialization
 
     #region Version 0
@@ -223,6 +229,17 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
         info.AddValue("MinimalFWHMValue", s.MinimalFWHMValue);
         info.AddValue("PrunePeaksSumChiSquareFactor", s.PrunePeaksSumChiSquareFactor);
         info.AddValue("FitWidthScalingFactor", s.FitWidthScalingFactor);
+        info.CreateArray("FixedPeakPositions", s.FixedPeakPositions.Count);
+        {
+          for (int i = 0; i < s.FixedPeakPositions.Count;)
+          {
+            info.CreateElement("e");
+            info.AddValue("Position", s.FixedPeakPositions[i].Position);
+            info.AddValue("FWHM", s.FixedPeakPositions[i].FWHMValue);
+            info.CommitElement();
+          }
+        }
+        info.CommitArray(); // FixedPeakPositions
       }
 
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
@@ -237,6 +254,19 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
         var prunePeaksSumChiSquareFactor = info.GetDouble("PrunePeaksSumChiSquareFactor");
         var fitWidthScalingFactor = info.GetNullableDouble("FitWidthScalingFactor");
 
+        var count = info.OpenArray("FixedPeakPositions");
+        var fixedPeaks = new (double Position, double FWHMValue)[count];
+        {
+          for (int i = 0; i < count; ++i)
+          {
+            info.OpenElement();
+            var pos = info.GetDouble("Position");
+            var fwhm = info.GetDouble("FWHM");
+            fixedPeaks[i] = (pos, fwhm);
+            info.CloseElement();
+          }
+        }
+        info.CloseArray(count); // FixedPeakPositions
 
         return new PeakFittingOfMultipleSpectraByIncrementalPeakAddition()
         {
@@ -249,6 +279,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
           MinimalFWHMValue = minimalFWHMValue,
           PrunePeaksSumChiSquareFactor = prunePeaksSumChiSquareFactor,
           FitWidthScalingFactor = fitWidthScalingFactor,
+          FixedPeakPositions = fixedPeaks,
         };
       }
     }
