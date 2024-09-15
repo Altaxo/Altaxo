@@ -235,12 +235,12 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
         for (int idxProperty = 0; idxProperty < outputOptions.PropertyNames.Count; idxProperty++)
         {
           var propertyName = outputOptions.PropertyNames[idxProperty];
-          var arr = new AltaxoVariant[numberOfSpectra];
+          columnProperties[idxProperty] = new AltaxoVariant[numberOfSpectra];
           bool isNumeric = true;
           for (int idxSpectrum = 0; idxSpectrum < numberOfSpectra; ++idxSpectrum)
           {
             var pvalue = IndependentAndDependentColumns.GetPropertyValueOfCurve(_processData.CurveData[idxSpectrum], propertyName);
-            arr[idxProperty] = pvalue;
+            columnProperties[idxProperty][idxSpectrum] = pvalue;
             isNumeric &= pvalue.CanConvertedToDouble;
           }
           columnPropertyColumns[idxProperty] = destinationTable.PropCols.EnsureExistence(propertyName, isNumeric ? typeof(DoubleColumn) : typeof(TextColumn), ColumnKind.V, 0);
