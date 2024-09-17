@@ -114,6 +114,24 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
       return result;
     }
 
+    /// <summary>
+    /// Gets the parameter for one peak of one spectrum, including the baseline parameters.
+    /// </summary>
+    /// <param name="idxSpectrum">The index of the spectrum.</param>
+    /// <returns></returns>
+    public double[] GetBaselineParametersForSpectrum(int idxSpectrum)
+    {
+      var result = new double[NumberOfBaselineParameters];
+      int j = 0;
+
+      for (int idx = NumberOfPeaks * NumberOfParametersPerPeakGlobal + NumberOfBaselineParameters * idxSpectrum, k = NumberOfBaselineParameters; k > 0; ++idx, --k)
+      {
+        result[j++] = ParametersGlobal[idx];
+      }
+
+      return result;
+    }
+
 
 
   }

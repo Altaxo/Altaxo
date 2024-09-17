@@ -453,6 +453,65 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
             }
           }
         }
+
+        // ***************************************
+        //     output the baseline curves
+        // ***************************************
+        if (outputOptions.OutputBaselineCurve)
+        {
+          groupNumber = (int)(1000 * Math.Ceiling((Math.Max(0, groupNumber) + 1) / 1000d) - 1);
+          var fitFunction = peakResults.FitFunction.WithNumberOfTerms(0); // only baseline
+          for (int idxSpectrum = 0; idxSpectrum < preprocessedSpectra.Count; idxSpectrum++)
+          {
+            ++groupNumber;
+            var destX = destinationTable.DataColumns.EnsureExistence(PeakTable_BaselineCurveColumnNameX(idxSpectrum), typeof(DoubleColumn), ColumnKind.X, groupNumber);
+            var destY = destinationTable.DataColumns.EnsureExistence(PeakTable_BaselineCurveColumnNameY(idxSpectrum), typeof(DoubleColumn), ColumnKind.V, groupNumber);
+
+            var parameter = peakResults.GetBaselineParametersForSpectrum(idxSpectrum);
+            var y = Vector<double>.Build.Dense(preprocessedSpectra[idxSpectrum].Y.Length);
+            fitFunction.Evaluate(MatrixMath.ToROMatrixWithOneColumn(preprocessedSpectra[idxSpectrum].X), parameter, y, null);
+
+            destX.Data = preprocessedSpectra[idxSpectrum].X;
+            destY.Data = y;
+
+            for (int idxProperty = 0; idxProperty < columnPropertyColumns.Length; ++idxProperty)
+            {
+              columnPropertyColumns[idxProperty][destinationTable.DataColumns.GetColumnNumber(destX)] = columnProperties[idxProperty][idxSpectrum];
+              columnPropertyColumns[idxProperty][destinationTable.DataColumns.GetColumnNumber(destY)] = columnProperties[idxProperty][idxSpectrum];
+            }
+          }
+        }
+
+        // ***************************************
+        //     output the residual curves
+        // ***************************************
+        if (outputOptions.OutputFitResidualCurve)
+        {
+          groupNumber = (int)(1000 * Math.Ceiling((Math.Max(0, groupNumber) + 1) / 1000d) - 1);
+
+          for (int idxSpectrum = 0; idxSpectrum < preprocessedSpectra.Count; idxSpectrum++)
+          {
+            ++groupNumber;
+            var destX = destinationTable.DataColumns.EnsureExistence(PeakTable_ResidualCurveColumnNameX(idxSpectrum), typeof(DoubleColumn), ColumnKind.X, groupNumber);
+            var destY = destinationTable.DataColumns.EnsureExistence(PeakTable_ResidualCurveColumnNameY(idxSpectrum), typeof(DoubleColumn), ColumnKind.V, groupNumber);
+
+            var parameter = peakResults.GetFullParameterSetForSpectrum(idxSpectrum);
+            var y = Vector<double>.Build.Dense(preprocessedSpectra[idxSpectrum].Y.Length);
+            peakResults.FitFunction.Evaluate(MatrixMath.ToROMatrixWithOneColumn(preprocessedSpectra[idxSpectrum].X), parameter, y, null);
+
+            destX.Data = preprocessedSpectra[idxSpectrum].X;
+            for (int i = 0; i < y.Count; i++)
+            {
+              destY[i] = preprocessedSpectra[idxSpectrum].Y[i] - y[i];
+            }
+
+            for (int idxProperty = 0; idxProperty < columnPropertyColumns.Length; ++idxProperty)
+            {
+              columnPropertyColumns[idxProperty][destinationTable.DataColumns.GetColumnNumber(destX)] = columnProperties[idxProperty][idxSpectrum];
+              columnPropertyColumns[idxProperty][destinationTable.DataColumns.GetColumnNumber(destY)] = columnProperties[idxProperty][idxSpectrum];
+            }
+          }
+        }
       }
     }
 
@@ -464,6 +523,12 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
 
     public static string PeakTable_FitCurveColumnNameX(int numberOfSpectrum) => $"X_FitCurve{numberOfSpectrum}";
     public static string PeakTable_FitCurveColumnNameY(int numberOfSpectrum) => $"Y_FitCurve{numberOfSpectrum}";
+
+    public static string PeakTable_BaselineCurveColumnNameX(int numberOfSpectrum) => $"X_BaselineCurve{numberOfSpectrum}";
+    public static string PeakTable_BaselineCurveColumnNameY(int numberOfSpectrum) => $"Y_BaselineCurve{numberOfSpectrum}";
+
+    public static string PeakTable_ResidualCurveColumnNameX(int numberOfSpectrum) => $"X_ResidualCurve{numberOfSpectrum}";
+    public static string PeakTable_ResidualCurveColumnNameY(int numberOfSpectrum) => $"Y_ResidualCurve{numberOfSpectrum}";
 
     public static string PeakTable_SeparatePeaksColumnNameX(int numberOfSpectrum) => $"X_PeakCurves{numberOfSpectrum}";
     public static string PeakTable_SeparatePeaksColumnNameY(int numberOfSpectrum) => $"Y_PeakCurves{numberOfSpectrum}";

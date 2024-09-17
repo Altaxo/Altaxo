@@ -121,6 +121,37 @@ namespace Altaxo.Gui.Science.Spectroscopy
       }
     }
 
+    private bool _outputBaselineCurve;
+
+    public bool OutputBaselineCurve
+    {
+      get => _outputBaselineCurve;
+      set
+      {
+        if (!(_outputBaselineCurve == value))
+        {
+          _outputBaselineCurve = value;
+          OnPropertyChanged(nameof(OutputBaselineCurve));
+        }
+      }
+    }
+
+    private bool _outputFitResidualCurve;
+
+    public bool OutputFitResidualCurve
+    {
+      get => _outputFitResidualCurve;
+      set
+      {
+        if (!(_outputFitResidualCurve == value))
+        {
+          _outputFitResidualCurve = value;
+          OnPropertyChanged(nameof(OutputFitResidualCurve));
+        }
+      }
+    }
+
+
     public class Property : IEditableObject, INotifyPropertyChanged
     {
       public event PropertyChangedEventHandler? PropertyChanged;
@@ -175,6 +206,8 @@ namespace Altaxo.Gui.Science.Spectroscopy
         OutputFitCurveSamplingFactor = _doc.OutputFitCurveSamplingFactor;
         OutputFitCurveAsSeparatePeaks = _doc.OutputFitCurveAsSeparatePeaks;
         OutputFitCurveAsSeparatePeaksSamplingFactor = _doc.OutputFitCurveAsSeparatePeaksSamplingFactor;
+        OutputBaselineCurve = _doc.OutputBaselineCurve;
+        OutputFitResidualCurve = _doc.OutputFitResidualCurve;
         PropertyNames.AddRange(_doc.PropertyNames.Select(x => new Property(x)));
       }
     }
@@ -188,6 +221,8 @@ namespace Altaxo.Gui.Science.Spectroscopy
         OutputFitCurveSamplingFactor = _doc.OutputFitCurveSamplingFactor,
         OutputFitCurveAsSeparatePeaks = OutputFitCurveAsSeparatePeaks,
         OutputFitCurveAsSeparatePeaksSamplingFactor = OutputFitCurveAsSeparatePeaksSamplingFactor,
+        OutputBaselineCurve = OutputBaselineCurve,
+        OutputFitResidualCurve = OutputFitResidualCurve,
         PropertyNames = PropertyNames.Select(x => x.PropertyName).Distinct().ToArray(),
       };
 

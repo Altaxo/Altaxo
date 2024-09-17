@@ -51,6 +51,22 @@ namespace Altaxo.Science.Spectroscopy
 
     public bool OutputFitCurveAsSeparatePeaks { get; init; } = true;
 
+    /// <summary>
+    /// Gets a value indicating whether the baseline curve(s) is included in the output.
+    /// </summary>
+    /// <value>
+    ///   <c>true</c> if the baseline curve is included in the output; otherwise, <c>false</c>.
+    /// </value>
+    public bool OutputBaselineCurve { get; init; } = false;
+
+    /// <summary>
+    /// Gets a value indicating whether the fit residual curve(s) is included in the output.
+    /// </summary>
+    /// <value>
+    ///   <c>true</c> if the fit residual curve is included in the output; otherwise, <c>false</c>.
+    /// </value>
+    public bool OutputFitResidualCurve { get; init; } = false;
+
     private int _outputFitCurveSamplingFactor = 3;
 
     private int _outputFitCurveAsSeparatePeaksSamplingFactor = 5;
@@ -151,7 +167,7 @@ namespace Altaxo.Science.Spectroscopy
     }
 
     /// <summary>
-    /// 2024-09-15 V1: added list of properties
+    /// 2024-09-15 V1: added list of properties, output baseline, output fit residual
     /// </summary>
     /// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
     [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(PeakSearchingAndFittingOutputOptions), 1)]
@@ -165,7 +181,10 @@ namespace Altaxo.Science.Spectroscopy
         info.AddValue("FitCurveSamplingFactor", s.OutputFitCurveSamplingFactor);
         info.AddValue("OutputSeparatePeaks", s.OutputFitCurveAsSeparatePeaks);
         info.AddValue("SeparatePeaksSamplingFactor", s.OutputFitCurveAsSeparatePeaksSamplingFactor);
+        info.AddValue("OutputBaseline", s.OutputBaselineCurve);
+        info.AddValue("OutputResidual", s.OutputFitResidualCurve);
         info.AddArray("PropertyNames", s.PropertyNames, s.PropertyNames.Count);
+
       }
 
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
@@ -176,6 +195,8 @@ namespace Altaxo.Science.Spectroscopy
         var fitSampling = info.GetInt32("FitCurveSamplingFactor");
         var separate = info.GetBoolean("OutputSeparatePeaks");
         var separateSampling = info.GetInt32("SeparatePeaksSamplingFactor");
+        var baselineCurve = info.GetBoolean("OutputBaseline");
+        var residualCurve = info.GetBoolean("OutputResidual");
         var propertyNames = info.GetArrayOfStrings("PropertyNames");
 
         return s with
@@ -185,6 +206,8 @@ namespace Altaxo.Science.Spectroscopy
           OutputFitCurveSamplingFactor = fitSampling,
           OutputFitCurveAsSeparatePeaks = separate,
           OutputFitCurveAsSeparatePeaksSamplingFactor = separateSampling,
+          OutputBaselineCurve = baselineCurve,
+          OutputFitResidualCurve = residualCurve,
           PropertyNames = propertyNames,
         };
       }
