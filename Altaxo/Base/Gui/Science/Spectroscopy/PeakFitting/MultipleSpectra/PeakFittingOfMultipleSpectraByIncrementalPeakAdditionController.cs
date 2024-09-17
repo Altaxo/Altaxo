@@ -24,6 +24,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using Altaxo.Calc.FitFunctions.Peaks;
 using Altaxo.Collections;
@@ -33,11 +35,11 @@ using Altaxo.Units;
 
 namespace Altaxo.Gui.Science.Spectroscopy.PeakFitting.MultipleSpectra
 {
-  //public interface IPeakFittingOfMultipleSpectraByIncrementalPeakAdditionView : IDataContextAwareView { }
+  public interface IPeakFittingOfMultipleSpectraByIncrementalPeakAdditionView : IDataContextAwareView { }
 
   [UserControllerForObject(typeof(PeakFittingOfMultipleSpectraByIncrementalPeakAddition))]
-  [ExpectedTypeOfView(typeof(IPeakFittingByIncrementalPeakAdditionView))]
-  public class PeakFittingOfMultipleSpectraByIncrementalPeakAdditionController : MVCANControllerEditImmutableDocBase<PeakFittingOfMultipleSpectraByIncrementalPeakAddition, IPeakFittingByIncrementalPeakAdditionView>
+  [ExpectedTypeOfView(typeof(IPeakFittingOfMultipleSpectraByIncrementalPeakAdditionView))]
+  public class PeakFittingOfMultipleSpectraByIncrementalPeakAdditionController : MVCANControllerEditImmutableDocBase<PeakFittingOfMultipleSpectraByIncrementalPeakAddition, IPeakFittingOfMultipleSpectraByIncrementalPeakAdditionView>
   {
     public override IEnumerable<ControllerAndSetNullMethod> GetSubControllers()
     {
@@ -203,6 +205,106 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakFitting.MultipleSpectra
       }
     }
 
+    public class EditablePositionFWHM : IEditableObject, INotifyPropertyChanged
+    {
+      public event PropertyChangedEventHandler? PropertyChanged;
+
+      protected void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+
+      public EditablePositionFWHM()
+      {
+
+      }
+
+      public EditablePositionFWHM(double position, double initialFWHMValue, double? minimalFWHMValue, double? maximalFWHMValue)
+      {
+        Position = position;
+        InitialFWHMValue = initialFWHMValue;
+        MinimalFWHMValue = minimalFWHMValue;
+        MaximalFWHMValue = maximalFWHMValue;
+      }
+
+      public EditablePositionFWHM((double position, double initialFWHMValue, double? minimalFWHMValue, double? maximalFWHMValue) v)
+      {
+        Position = v.position;
+        InitialFWHMValue = v.initialFWHMValue;
+        MinimalFWHMValue = v.minimalFWHMValue;
+        MaximalFWHMValue = v.maximalFWHMValue;
+      }
+
+      public void BeginEdit()
+      {
+      }
+
+      public void CancelEdit()
+      {
+      }
+
+      public void EndEdit()
+      {
+      }
+
+      private double _position;
+
+      public double Position
+      {
+        get => _position;
+        set
+        {
+          if (!(_position == value))
+          {
+            _position = value;
+            OnPropertyChanged(nameof(Position));
+          }
+        }
+      }
+
+      private double _initialFWHMValue;
+
+      public double InitialFWHMValue
+      {
+        get => _initialFWHMValue;
+        set
+        {
+          if (!(_initialFWHMValue == value))
+          {
+            _initialFWHMValue = value;
+            OnPropertyChanged(nameof(InitialFWHMValue));
+          }
+        }
+      }
+
+      private double? _minimalFWHMValue;
+
+      public double? MinimalFWHMValue
+      {
+        get => _minimalFWHMValue;
+        set
+        {
+          if (!(_minimalFWHMValue == value))
+          {
+            _minimalFWHMValue = value;
+            OnPropertyChanged(nameof(MinimalFWHMValue));
+          }
+        }
+      }
+      private double? _maximalFWHMValue;
+
+      public double? MaximalFWHMValue
+      {
+        get => _maximalFWHMValue;
+        set
+        {
+          if (!(_maximalFWHMValue == value))
+          {
+            _maximalFWHMValue = value;
+            OnPropertyChanged(nameof(MaximalFWHMValue));
+          }
+        }
+      }
+    }
+
+    public ObservableCollection<EditablePositionFWHM> FixedPositions { get; protected set; } = new();
 
     #endregion
 
@@ -235,11 +337,35 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakFitting.MultipleSpectra
         FitWidthScalingFactor = new DimensionfulQuantity(_doc.FitWidthScalingFactor ?? 2, Altaxo.Units.Dimensionless.Unity.Instance).AsQuantityIn(MinimalRelativeHeightEnvironment.DefaultUnit);
 
         PrunePeaksSumChiSquareFactor = new DimensionfulQuantity(_doc.PrunePeaksSumChiSquareFactor, Altaxo.Units.Dimensionless.Unity.Instance).AsQuantityIn(MinimalRelativeHeightEnvironment.DefaultUnit);
+
+        FixedPositions.Clear();
+        FixedPositions.AddRange(_doc.FixedPeakPositions.Select(x => new EditablePositionFWHM(x)));
       }
     }
 
     public override bool Apply(bool disposeController)
     {
+      // test the fixed positions
+      for (int i = 0; i < FixedPositions.Count; ++i)
+      {
+        var fp = FixedPositions[i];
+        if (!(fp.InitialFWHMValue > 0))
+        {
+          Current.Gui.ErrorMessageBox($"For the fixed position #{i}, the initial FWHM value must be >=0, but currently is {fp.InitialFWHMValue}");
+          return ApplyEnd(false, disposeController);
+        }
+        if (fp.MinimalFWHMValue.HasValue && !(fp.MinimalFWHMValue.Value <= fp.InitialFWHMValue))
+        {
+          Current.Gui.ErrorMessageBox($"For the fixed position #{i}, the minimal FWHM value must be <= the initial FWHM value, but currently is {fp.MinimalFWHMValue}");
+          return ApplyEnd(false, disposeController);
+        }
+        if (fp.MaximalFWHMValue.HasValue && !(fp.MaximalFWHMValue.Value >= fp.InitialFWHMValue))
+        {
+          Current.Gui.ErrorMessageBox($"For the fixed position #{i}, the maximal FWHM value must be >= the initial FWHM value, but currently is {fp.MaximalFWHMValue}");
+          return ApplyEnd(false, disposeController);
+        }
+      }
+
       try
       {
         _doc = _doc with
@@ -253,6 +379,7 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakFitting.MultipleSpectra
           MinimalFWHMValue = MinimalFWHMValue,
           FitWidthScalingFactor = UseSeparatePeaksForErrorEvaluation ? (FitWidthScalingFactor.AsValueInSIUnits == 0 ? null : FitWidthScalingFactor.AsValueInSIUnits) : null,
           PrunePeaksSumChiSquareFactor = PrunePeaksSumChiSquareFactor.AsValueInSIUnits,
+          FixedPeakPositions = FixedPositions.Select(x => (x.Position, x.InitialFWHMValue, x.MinimalFWHMValue, x.MaximalFWHMValue)).ToArray(),
         };
       }
       catch (Exception ex)

@@ -44,6 +44,8 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
     private int _numberOfParametersPerPeakLocal;
     private int _numberOfPeaks;
 
+    private int NumberOfParametersPerPeakGlobal => (_numberOfParametersPerPeakLocal - 1 + _numberOfSpectra);
+
     /// <summary>
     /// Indices of the start of the spectra in the global spectra array
     /// The first element is always 0
@@ -125,11 +127,16 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
     /// Sets all peak parameters except that for the first peak to fixed.
     /// </summary>
     /// <param name="value">If set to true, all parameters except for the first peak are set to fixed. If set to false, all parameters can vary.</param>
-    public void SetAllPeakParametersExceptFirstPeakToFixed(bool value)
+    /// <param name="numberOfFixedPositionPeaks">Number of peaks (at the end), for which the position is fixed. </param>
+    public void SetAllPeakParametersExceptFirstPeakToFixed(bool value, int numberOfFixedPositionPeaks)
     {
       if (value == false)
       {
         Array.Clear(_isFixedLocal, 0, _isFixedLocal.Length);
+        for (int idxPeak = _numberOfPeaks - numberOfFixedPositionPeaks; idxPeak < _numberOfPeaks; idxPeak++)
+        {
+          _isFixedLocal[idxPeak * _numberOfParametersPerPeakLocal + 1] = true; // Fix the position of the peak
+        }
       }
       else
       {

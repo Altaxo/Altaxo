@@ -202,9 +202,9 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
 
     /// <summary>
     /// Gets a list of fixed peak positions. While the designated positions are fixed and will not participate in the fitting process,
-    /// the designated FWHM values are intended for calculation of the initial peak parameter values.
+    /// the designated FWHM values are intended for calculation of the initial peak parameter values and to calculate the parameter boundaries.
     /// </summary>
-    public IReadOnlyList<(double Position, double FWHMValue)> FixedPeakPositions { get; init; } = [];
+    public IReadOnlyList<(double Position, double InitialFWHMValue, double? MinimalFWHMValue, double? MaximalFWHMValue)> FixedPeakPositions { get; init; } = [];
 
     #region Serialization
 
@@ -231,11 +231,13 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
         info.AddValue("FitWidthScalingFactor", s.FitWidthScalingFactor);
         info.CreateArray("FixedPeakPositions", s.FixedPeakPositions.Count);
         {
-          for (int i = 0; i < s.FixedPeakPositions.Count;)
+          for (int i = 0; i < s.FixedPeakPositions.Count; ++i)
           {
             info.CreateElement("e");
             info.AddValue("Position", s.FixedPeakPositions[i].Position);
-            info.AddValue("FWHM", s.FixedPeakPositions[i].FWHMValue);
+            info.AddValue("InitialFWHMValue", s.FixedPeakPositions[i].InitialFWHMValue);
+            info.AddValue("MinimalFWHMValue", s.FixedPeakPositions[i].MinimalFWHMValue);
+            info.AddValue("MaximalFWHMValue", s.FixedPeakPositions[i].MaximalFWHMValue);
             info.CommitElement();
           }
         }
@@ -255,14 +257,16 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
         var fitWidthScalingFactor = info.GetNullableDouble("FitWidthScalingFactor");
 
         var count = info.OpenArray("FixedPeakPositions");
-        var fixedPeaks = new (double Position, double FWHMValue)[count];
+        var fixedPeaks = new (double Position, double InitialFWHMValue, double? MinimalFWHMValue, double? MaximalFWHMValue)[count];
         {
           for (int i = 0; i < count; ++i)
           {
             info.OpenElement();
             var pos = info.GetDouble("Position");
-            var fwhm = info.GetDouble("FWHM");
-            fixedPeaks[i] = (pos, fwhm);
+            var inifwhm = info.GetDouble("InitialFWHMValue");
+            var minfwhm = info.GetNullableDouble("MinimalFWHMValue");
+            var maxfwhm = info.GetNullableDouble("MaximalFWHMValue");
+            fixedPeaks[i] = (pos, inifwhm, minfwhm, maxfwhm);
             info.CloseElement();
           }
         }
@@ -334,24 +338,30 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
       }
       var spanX = maximalX - minimalX;
 
+      var minimalFWHM = IsMinimalFWHMValueInXUnits && MinimalFWHMValue > 0 ? MinimalFWHMValue : Math.Max(1, MinimalFWHMValue) * minIncrement;
+      var maximalFWHM = spanX;
+
+
       // make one big array of x and y values
       var xGlobal = new double[totalNumberOfPoints];
       var yGlobal = new double[totalNumberOfPoints];
-      int idxSpectrum = 0;
       totalNumberOfPoints = 0;
       var startIndicesOfSpectra = new int[spectra.Count];
-      foreach (var spectrum in spectra)
       {
-        var len = Math.Min(spectrum.xArray.Length, spectrum.yArray.Length);
-        startIndicesOfSpectra[idxSpectrum] = totalNumberOfPoints;
-        for (int i = 0; i < len; ++i)
+        int idxSpectrum = 0;
+        foreach (var spectrum in spectra)
         {
-          xGlobal[totalNumberOfPoints + i] = spectrum.xArray[i];
-          yGlobal[totalNumberOfPoints + i] = spectrum.yArray[i];
-        }
+          var len = Math.Min(spectrum.xArray.Length, spectrum.yArray.Length);
+          startIndicesOfSpectra[idxSpectrum] = totalNumberOfPoints;
+          for (int i = 0; i < len; ++i)
+          {
+            xGlobal[totalNumberOfPoints + i] = spectrum.xArray[i];
+            yGlobal[totalNumberOfPoints + i] = spectrum.yArray[i];
+          }
 
-        ++idxSpectrum;
-        totalNumberOfPoints += len;
+          ++idxSpectrum;
+          totalNumberOfPoints += len;
+        }
       }
 
       int GetLengthOfSpectrum(int i)
@@ -361,8 +371,6 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
 
       var yRest = (double[])yGlobal.Clone();
 
-      var lowerBounds = new List<double?>(Enumerable.Repeat<double?>(null, numberOfSpectra * (OrderOfBaselinePolynomial + 1)));
-      var upperBounds = new List<double?>(Enumerable.Repeat<double?>(null, numberOfSpectra * (OrderOfBaselinePolynomial + 1)));
       double[] previousGuess = new double[OrderOfBaselinePolynomial + 1];
       NonlinearMinimizationResult? fitResult2 = null;
 
@@ -385,10 +393,10 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
       double minimalPeakHeightForSearching = Math.Max(Math.Abs(MinimalRelativeHeight * spanY), Math.Abs(noiseLevel * MinimalSignalToNoiseRatio));
 
 
-      // **********************************************
-      // Fit the baseline first
-      // **********************************************
-      var fitFunction = fitFunctionWithOneTerm.WithNumberOfTerms(0).WithOrderOfBaselinePolynomial(OrderOfBaselinePolynomial);
+      // ************************************************************
+      // Fit the baseline first, and optionally, the fixed peaks
+      // ************************************************************
+      var fitFunction = fitFunctionWithOneTerm.WithNumberOfTerms(FixedPeakPositions.Count).WithOrderOfBaselinePolynomial(OrderOfBaselinePolynomial);
       var fitFunctionGlobal = new FitFunctionMultipleSpectraSeparatePeakHeightsSeparateBaseline(fitFunction, startIndicesOfSpectra);
       var fit = new QuickNonlinearRegression(fitFunctionGlobal)
       {
@@ -396,9 +404,53 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
         StepTolerance = 1E-7,
         MinimalRSSImprovement = 1E-4
       };
-      fitFunctionGlobal.SetAllPeakParametersExceptFirstPeakToFixed(false); // all baseline parameters can vary
-      var initialGuess = new double[numberOfSpectra * (OrderOfBaselinePolynomial + 1)];
-      fitResult2 = fit.Fit(xGlobal, yGlobal, initialGuess, null, null, null, null, cancellationToken);
+      var lowerBounds = new List<double?>();
+      var upperBounds = new List<double?>();
+      var tempInitialGuessList = new List<double>();
+      var tempInitialFixedList = new List<bool>();
+      for (int idxPeak = 0; idxPeak < FixedPeakPositions.Count; ++idxPeak)
+      {
+        var fixedPeak = FixedPeakPositions[idxPeak];
+        var fixedPeakBoundaries = fitFunctionWithOneTerm.GetParameterBoundariesForPositivePeaks(
+        minimalPosition: minimalX,
+        maximalPosition: maximalX,
+        minimalFWHM: fixedPeak.MinimalFWHMValue.HasValue ? Math.Max(minimalFWHM, fixedPeak.MinimalFWHMValue.Value) : minimalFWHM,
+        maximalFWHM: fixedPeak.MaximalFWHMValue.HasValue ? Math.Min(maximalFWHM, fixedPeak.MaximalFWHMValue.Value) : maximalFWHM);
+        var peakParam = fitFunctionWithOneTerm.GetInitialParametersFromHeightPositionAndWidthAtRelativeHeight(0, fixedPeak.Position, fixedPeak.InitialFWHMValue, 0.5);
+
+        for (int idxSpectrum = 0; idxSpectrum < numberOfSpectra; ++idxSpectrum)
+        {
+          // add the amplitude boundaries for each spectrum
+          lowerBounds.Add(fixedPeakBoundaries.LowerBounds?[0]);
+          upperBounds.Add(fixedPeakBoundaries.UpperBounds?[0]);
+          tempInitialGuessList.Add(peakParam[0]);
+          tempInitialFixedList.Add(false);
+        }
+        for (int j = 1; j < numberOfParametersPerPeakLocal; ++j)
+        {
+          // add the other parameter boundaries
+          lowerBounds.Add(fixedPeakBoundaries.LowerBounds?[j]);
+          upperBounds.Add(fixedPeakBoundaries.UpperBounds?[j]);
+          tempInitialGuessList.Add(peakParam[j]);
+          tempInitialFixedList.Add(j == 1); // the position (j==1) is fixed, all other parameters can vary
+        }
+      }
+      // Add lower and upper bounds for the baseline parameters
+      for (int idxSpectrum = 0; idxSpectrum < numberOfSpectra; ++idxSpectrum)
+      {
+        for (int j = 0; j <= OrderOfBaselinePolynomial; ++j)
+        {
+          lowerBounds.Add(null);
+          upperBounds.Add(null);
+          tempInitialGuessList.Add(0);
+          tempInitialFixedList.Add(false);
+        }
+      }
+      var initialGuess = tempInitialGuessList.ToArray();
+      var isFixed = tempInitialFixedList.ToArray();
+
+      fitFunctionGlobal.SetAllPeakParametersExceptFirstPeakToFixed(false, FixedPeakPositions.Count); // all baseline parameters can vary
+      fitResult2 = fit.Fit(xGlobal, yGlobal, initialGuess, lowerBounds, upperBounds, null, isFixed, cancellationToken);
       previousGuess = fitResult2.MinimizingPoint.ToArray();
 
       // calculate remaining (original signal minus fit function)
@@ -409,7 +461,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
         null);
       VectorMath.AddScaled(yGlobal, yRest, -1, yRest); // yRest now contains the rest
 
-      for (int numberOfTerms = 1; numberOfTerms <= MaximumNumberOfPeaks; ++numberOfTerms)
+      for (int numberOfTerms = 1 + FixedPeakPositions.Count; numberOfTerms <= MaximumNumberOfPeaks; ++numberOfTerms)
       {
         // search in all spectra for peaks
         var peakList = new List<(int Position, double Height, double Width, int idxSpectrum)>();
@@ -456,7 +508,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
 
         // all Parameters exept that for the first peak are set to fixed
         // we do this directly in the fit wrapper, not here.
-        fitFunctionGlobal.SetAllPeakParametersExceptFirstPeakToFixed(true);
+        fitFunctionGlobal.SetAllPeakParametersExceptFirstPeakToFixed(true, FixedPeakPositions.Count);
 
         for (int i = numberOfParametersPerPeakGlobal; i < paramsFixed.Length; ++i)
         {
@@ -523,9 +575,13 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
           prohibitedPeaks[key] = Math.Max(0, prohibitedPeaks[key] - 1);
         }
 
-        // now all parameters are free to vary
+        // now all parameters are free to vary, except the fixed positions
         Array.Clear(paramsFixed, 0, paramsFixed.Length);
-        fitFunctionGlobal.SetAllPeakParametersExceptFirstPeakToFixed(false);
+        for (int idxPeak = numberOfTerms - FixedPeakPositions.Count; idxPeak < numberOfTerms; ++idxPeak)
+        {
+          paramsFixed[idxPeak * numberOfParametersPerPeakGlobal + numberOfSpectra] = true;
+        }
+        fitFunctionGlobal.SetAllPeakParametersExceptFirstPeakToFixed(false, FixedPeakPositions.Count);
 
         // Copy fit parameters back to initialGuess array
         for (int i = 0; i < initialGuess.Length; ++i)
