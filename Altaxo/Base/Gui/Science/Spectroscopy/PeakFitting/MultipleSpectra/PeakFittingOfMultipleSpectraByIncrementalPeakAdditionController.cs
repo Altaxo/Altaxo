@@ -400,6 +400,7 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakFitting.MultipleSpectra
           MinimalFWHMValue = MinimalFWHMValue,
           FitWidthScalingFactor = UseSeparatePeaksForErrorEvaluation ? (FitWidthScalingFactor.AsValueInSIUnits == 0 ? null : FitWidthScalingFactor.AsValueInSIUnits) : null,
           PrunePeaksSumChiSquareFactor = PrunePeaksSumChiSquareFactor.AsValueInSIUnits,
+          PeakAdditionOrder = PeakAdditionOrder.SelectedValue,
           FixedPeakPositions = FixedPositions.Select(x => (x.Position, x.InitialFWHMValue, x.MinimalFWHMValue, x.MaximalFWHMValue)).ToArray(),
         };
       }
