@@ -214,7 +214,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
       }
 
       // now do the peak fitting
-      var peakResults = peakFindingAndFittingOptions.PeakFitting.Execute(preprocessedSpectra, reporter.CancellationToken, reporter, reporter);
+      var peakResults = peakFindingAndFittingOptions.PeakFitting.Execute(preprocessedSpectra, reporter.CancellationToken, reporter.CancellationTokenHard, reporter, reporter);
 
       // and now the output
       {

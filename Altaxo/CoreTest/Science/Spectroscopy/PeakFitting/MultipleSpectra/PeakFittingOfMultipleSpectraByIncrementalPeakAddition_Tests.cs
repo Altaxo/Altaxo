@@ -56,7 +56,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
         MaximumNumberOfPeaks = 2,
       };
 
-      var result = fit.Execute([(x, y)], cancellationToken: System.Threading.CancellationToken.None).PeakDescriptions;
+      var result = fit.Execute([(x, y)], System.Threading.CancellationToken.None, System.Threading.CancellationToken.None).PeakDescriptions;
 
       Assert.Equal(2, result.Count);
       var peakParameter = result[0].GetPeakParametersOfSpectrum(0);
@@ -98,7 +98,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
         MaximumNumberOfPeaks = 2,
       };
 
-      var result = fit.Execute([(x0, y0), (x0, y0)], cancellationToken: System.Threading.CancellationToken.None).PeakDescriptions;
+      var result = fit.Execute([(x0, y0), (x0, y0)], System.Threading.CancellationToken.None, System.Threading.CancellationToken.None).PeakDescriptions;
 
       Assert.Equal(2, result.Count);
       var peakParameter0 = result[0].GetPeakParametersOfSpectrum(0);
@@ -160,7 +160,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
         MaximumNumberOfPeaks = 2,
       };
 
-      var peakResults = fit.Execute([(x0, y0), (x1, y1)], cancellationToken: System.Threading.CancellationToken.None);
+      var peakResults = fit.Execute([(x0, y0), (x1, y1)], System.Threading.CancellationToken.None, System.Threading.CancellationToken.None);
       var result = peakResults.PeakDescriptions;
 
       Assert.Equal(2, result.Count);

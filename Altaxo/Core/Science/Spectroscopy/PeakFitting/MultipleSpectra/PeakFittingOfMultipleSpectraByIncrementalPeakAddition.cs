@@ -206,6 +206,9 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
     /// </summary>
     public IReadOnlyList<(double Position, double InitialFWHMValue, double? MinimalFWHMValue, double? MaximalFWHMValue)> FixedPeakPositions { get; init; } = [];
 
+
+    public PeakAdditionOrder PeakAdditionOrder { get; init; } = PeakAdditionOrder.Height;
+
     #region Serialization
 
     #region Version 0
@@ -229,6 +232,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
         info.AddValue("MinimalFWHMValue", s.MinimalFWHMValue);
         info.AddValue("PrunePeaksSumChiSquareFactor", s.PrunePeaksSumChiSquareFactor);
         info.AddValue("FitWidthScalingFactor", s.FitWidthScalingFactor);
+        info.AddEnum("PeakAdditionOrder", s.PeakAdditionOrder);
         info.CreateArray("FixedPeakPositions", s.FixedPeakPositions.Count);
         {
           for (int i = 0; i < s.FixedPeakPositions.Count; ++i)
@@ -255,6 +259,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
         var minimalFWHMValue = info.GetDouble("MinimalFWHMValue");
         var prunePeaksSumChiSquareFactor = info.GetDouble("PrunePeaksSumChiSquareFactor");
         var fitWidthScalingFactor = info.GetNullableDouble("FitWidthScalingFactor");
+        var peakAdditionOrder = info.GetEnum("PeakAdditionOrder", typeof(PeakAdditionOrder));
 
         var count = info.OpenArray("FixedPeakPositions");
         var fixedPeaks = new (double Position, double InitialFWHMValue, double? MinimalFWHMValue, double? MaximalFWHMValue)[count];
@@ -298,8 +303,9 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
     /// </summary>
     /// <param name="spectra">The list of spectra. Each spectrum consists of an x-array and an y-array.</param>
     /// <param name="cancellationToken">The token to cancel the algorithm.</param>
+    /// <param name="cancellationTokenHard">The token to hard cancel the algorithm</param>
     /// <returns>A list of peak descriptions, sorted by position ascending.</returns>
-    public MultipleSpectraPeakFittingResult Execute(IReadOnlyList<(double[] xArray, double[] yArray)> spectra, CancellationToken cancellationToken, IProgress<double>? numericalProgress = null, IProgress<string> textualProgress = null)
+    public MultipleSpectraPeakFittingResult Execute(IReadOnlyList<(double[] xArray, double[] yArray)> spectra, CancellationToken cancellationToken, CancellationToken cancellationTokenHard, IProgress<double>? numericalProgress = null, IProgress<string> textualProgress = null)
     {
       var fitFunctionWithOneTerm = FitFunction.WithNumberOfTerms(1).WithOrderOfBaselinePolynomial(-1);
       int numberOfSpectra = spectra.Count;
@@ -389,7 +395,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
         minimalFWHM: IsMinimalFWHMValueInXUnits && MinimalFWHMValue > 0 ? MinimalFWHMValue : Math.Max(1, MinimalFWHMValue) * minIncrement,
         maximalFWHM: spanX);
 
-      var prohibitedPeaks = new Dictionary<int, int>(); // Dictionary of prohibited peaks, key is the point index, value is the number of times this peak was evaluated as prohibited
+      var prohibitedPeaks = new Dictionary<int, (int countDown, int numberOfPushs)>(); // Dictionary of prohibited peaks, key is the point index, value is the number of times this peak was evaluated as prohibited
       double minimalPeakHeightForSearching = Math.Max(Math.Abs(MinimalRelativeHeight * spanY), Math.Abs(noiseLevel * MinimalSignalToNoiseRatio));
 
 
@@ -450,7 +456,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
       var isFixed = tempInitialFixedList.ToArray();
 
       fitFunctionGlobal.SetAllPeakParametersExceptFirstPeakToFixed(false, FixedPeakPositions.Count); // all baseline parameters can vary
-      fitResult2 = fit.Fit(xGlobal, yGlobal, initialGuess, lowerBounds, upperBounds, null, isFixed, cancellationToken);
+      fitResult2 = fit.Fit(xGlobal, yGlobal, initialGuess, lowerBounds, upperBounds, null, isFixed, cancellationTokenHard);
       previousGuess = fitResult2.MinimizingPoint.ToArray();
 
       // calculate remaining (original signal minus fit function)
@@ -478,9 +484,22 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
           }
         }
         // peakList now contains the peaks of all spectra, now sort them by height (descending), so that the highest peak is first
-        peakList.Sort((x, y) => Comparer<double>.Default.Compare(y.Height, x.Height)); // Sort peaks by height descending
+        switch (PeakAdditionOrder)
+        {
+          case PeakAdditionOrder.Height:
+            peakList.Sort((x, y) => Comparer<double>.Default.Compare(y.Height, x.Height)); // Sort peaks by height descending
+            break;
+          case PeakAdditionOrder.Area:
+            peakList.Sort((x, y) => Comparer<double>.Default.Compare(y.Height * y.Width, x.Height * x.Width)); // Sort peaks by height descending
+            break;
+          case PeakAdditionOrder.SquaredHeightTimesWidth:
+            peakList.Sort((x, y) => Comparer<double>.Default.Compare(y.Height * y.Height * y.Width, x.Height * x.Height * x.Width)); // Sort peaks by height descending
+            break;
+          default:
+            throw new NotImplementedException($"Unknown peak addition order: {PeakAdditionOrder}");
+        }
 
-        var thispeak = peakList.FirstOrDefault(peak => !prohibitedPeaks.TryGetValue(peak.Position, out var prohibitionLevel) || prohibitionLevel == 0);
+        var thispeak = peakList.FirstOrDefault(peak => !prohibitedPeaks.TryGetValue(peak.Position, out var prohibitionLevel) || prohibitionLevel.countDown == 0);
 
         if (thispeak.Height == 0)
         {
@@ -540,7 +559,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
         // now copy the new peak parameters at the beginning of the array (note that no amplitude is set)
         Array.Copy(peakParam, 1, initialGuess, numberOfSpectra, numberOfParametersPerPeakLocal - 1);
 
-        var fitResult1 = fit.Fit(xGlobal, yGlobal, initialGuess, lowerBounds, upperBounds, null, paramsFixed, cancellationToken);
+        var fitResult1 = fit.Fit(xGlobal, yGlobal, initialGuess, lowerBounds, upperBounds, null, paramsFixed, cancellationTokenHard);
 
         double sumChiSquareFirst = fitResult1.ModelInfoAtMinimum.Value;
 
@@ -555,10 +574,14 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
 
         if (isAmplitudeZeroForAllSpectra)
         {
-          if (prohibitedPeaks.TryGetValue(idxMax, out var numberOfHits))
-            prohibitedPeaks[idxMax] = 2 * (numberOfHits + 1);
+          if (prohibitedPeaks.TryGetValue(idxMax, out var val))
+          {
+            prohibitedPeaks[idxMax] = (2 * (val.numberOfPushs + 1), val.numberOfPushs + 1);
+          }
           else
-            prohibitedPeaks.Add(idxMax, 2);
+          {
+            prohibitedPeaks.Add(idxMax, (2, 1));
+          }
 
           // Decrease the number of terms, and remove again the lower and upper bounds
           --numberOfTerms;
@@ -572,7 +595,8 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
 
         foreach (var key in prohibitedPeaks.Keys.ToArray())
         {
-          prohibitedPeaks[key] = Math.Max(0, prohibitedPeaks[key] - 1);
+          var val = prohibitedPeaks[key];
+          prohibitedPeaks[key] = (Math.Max(0, val.countDown - 1), val.numberOfPushs);
         }
 
         // now all parameters are free to vary, except the fixed positions
@@ -590,7 +614,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
         }
 
         // now perform the second fit, now with all parameters free to vary
-        fitResult2 = fit.Fit(xGlobal, yGlobal, initialGuess, lowerBounds, upperBounds, null, paramsFixed, cancellationToken);
+        fitResult2 = fit.Fit(xGlobal, yGlobal, initialGuess, lowerBounds, upperBounds, null, paramsFixed, cancellationTokenHard);
         double sumChiSquareSecond = fitResult2.ModelInfoAtMinimum.Value;
         // Current.Console.WriteLine($"SumChiSquare First={sumChiSquareFirst}, second={sumChiSquareSecond}");
 

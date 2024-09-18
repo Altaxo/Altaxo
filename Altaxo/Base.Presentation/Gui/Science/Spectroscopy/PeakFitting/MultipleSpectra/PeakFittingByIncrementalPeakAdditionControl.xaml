@@ -31,6 +31,8 @@
       <RowDefinition Height="4" />
       <RowDefinition Height="Auto" />
       <RowDefinition Height="4" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="4" />
     </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
@@ -118,9 +120,18 @@
 
     <Label Grid.Row="16"
            Grid.Column="0"
+           Content="Order of peak addition:" />
+
+    <ComboBox Grid.Row="16"
+              Grid.Column="2"
+              ItemsSource="{Binding PeakAdditionOrder.Items}"
+              SelectedItem="{Binding PeakAdditionOrder.SelectedItem}" />
+
+    <Label Grid.Row="18"
+           Grid.Column="0"
            Content="Peaks with fixed positions:" />
 
-    <DataGrid Grid.Row="18"
+    <DataGrid Grid.Row="20"
               Grid.Column="0"
               Grid.ColumnSpan="5"
               IsReadOnly="False"

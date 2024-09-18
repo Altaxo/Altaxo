@@ -30,6 +30,7 @@ using System.Linq;
 using Altaxo.Calc.FitFunctions.Peaks;
 using Altaxo.Collections;
 using Altaxo.Gui.Common;
+using Altaxo.Science.Spectroscopy.PeakFitting;
 using Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra;
 using Altaxo.Units;
 
@@ -205,6 +206,23 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakFitting.MultipleSpectra
       }
     }
 
+    private ItemsController<PeakAdditionOrder> _peakAdditionOrder;
+
+    public ItemsController<PeakAdditionOrder> PeakAdditionOrder
+    {
+      get => _peakAdditionOrder;
+      set
+      {
+        if (!(_peakAdditionOrder == value))
+        {
+          _peakAdditionOrder?.Dispose();
+          _peakAdditionOrder = value;
+          OnPropertyChanged(nameof(PeakAdditionOrder));
+        }
+      }
+    }
+
+
     public class EditablePositionFWHM : IEditableObject, INotifyPropertyChanged
     {
       public event PropertyChangedEventHandler? PropertyChanged;
@@ -337,6 +355,9 @@ namespace Altaxo.Gui.Science.Spectroscopy.PeakFitting.MultipleSpectra
         FitWidthScalingFactor = new DimensionfulQuantity(_doc.FitWidthScalingFactor ?? 2, Altaxo.Units.Dimensionless.Unity.Instance).AsQuantityIn(MinimalRelativeHeightEnvironment.DefaultUnit);
 
         PrunePeaksSumChiSquareFactor = new DimensionfulQuantity(_doc.PrunePeaksSumChiSquareFactor, Altaxo.Units.Dimensionless.Unity.Instance).AsQuantityIn(MinimalRelativeHeightEnvironment.DefaultUnit);
+
+        PeakAdditionOrder = new ItemsController<PeakAdditionOrder>(new SelectableListNodeList(_doc.PeakAdditionOrder));
+        PeakAdditionOrder.SelectedValue = _doc.PeakAdditionOrder;
 
         FixedPositions.Clear();
         FixedPositions.AddRange(_doc.FixedPeakPositions.Select(x => new EditablePositionFWHM(x)));
