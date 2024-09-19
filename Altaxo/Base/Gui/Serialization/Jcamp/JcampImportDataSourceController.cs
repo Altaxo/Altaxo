@@ -34,9 +34,13 @@ namespace Altaxo.Gui.Serialization.Jcamp
     protected override IMVCANController GetProcessDataController()
     {
       var processDataController = new MultipleFilesController();
+      processDataController.FileFilters = [("*.jcamp;*.jdx;*.dx", "JCamp files (*.jcamp;*.jdx;*.dx)")];
       processDataController.InitializeDocument(_doc.SourceFileNames);
       Current.Gui.FindAndAttachControlTo(processDataController);
       return processDataController;
     }
+
+    protected override bool IsProcessDataInitiallyExpanded() => true;
+    protected override bool IsProcessOptionsInitiallyExpanded() => false;
   }
 }

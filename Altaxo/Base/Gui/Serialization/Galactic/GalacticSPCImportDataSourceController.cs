@@ -34,9 +34,13 @@ namespace Altaxo.Gui.Serialization.Galactic
     protected override IMVCANController GetProcessDataController()
     {
       var processDataController = new MultipleFilesController();
+      processDataController.FileFilters = [("*.spc", "Galactic SPC files (*.spc)")];
       processDataController.InitializeDocument(_doc.SourceFileNames);
       Current.Gui.FindAndAttachControlTo(processDataController);
       return processDataController;
     }
+
+    protected override bool IsProcessDataInitiallyExpanded() => true;
+    protected override bool IsProcessOptionsInitiallyExpanded() => false;
   }
 }

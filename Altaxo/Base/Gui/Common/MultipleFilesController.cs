@@ -185,7 +185,8 @@ namespace Altaxo.Gui.Common
     {
       var node = _fileNames.Count > 0 ? _fileNames[_fileNames.Count - 1] : null;
       var options = new OpenFileOptions();
-      options.AddFilter("*.csv;*.dat;*.txt", "Text files (*.csv;*.dat;*.txt)");
+      foreach (var filter in _fileFilters)
+        options.AddFilter(filter.Filter, filter.Description);
       options.AddFilter("*.*", "All files (*.*)");
       if (node is not null)
         options.InitialDirectory = System.IO.Path.GetDirectoryName((string)node.Tag!);

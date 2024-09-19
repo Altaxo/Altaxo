@@ -35,9 +35,13 @@ namespace Altaxo.Gui.Serialization.NicoletSPA
     protected override IMVCANController GetProcessDataController()
     {
       var processDataController = new MultipleFilesController();
+      processDataController.FileFilters = [("*.spa", "Nicolet/Thermo Onmic SPA files (*.spa)")];
       processDataController.InitializeDocument(_doc.SourceFileNames);
       Current.Gui.FindAndAttachControlTo(processDataController);
       return processDataController;
     }
+
+    protected override bool IsProcessDataInitiallyExpanded() => true;
+    protected override bool IsProcessOptionsInitiallyExpanded() => false;
   }
 }

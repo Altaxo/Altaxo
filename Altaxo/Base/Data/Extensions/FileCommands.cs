@@ -326,7 +326,7 @@ namespace Altaxo.Data
     /// <param name="selectedDataColumns">Columns to export (can be null - then all columns will be considered for export).</param>
     public static void ShowExportGalacticSPCDialog(this DataTable dataTable, IAscendingIntegerCollection selectedDataRows, IAscendingIntegerCollection selectedDataColumns)
     {
-      var exportCtrl = new Altaxo.Gui.Worksheet.ExportGalacticSpcFileDialogController(dataTable, selectedDataRows, selectedDataColumns);
+      var exportCtrl = new Altaxo.Gui.Serialization.Galactic.ExportGalacticSpcFileDialogController(dataTable, selectedDataRows, selectedDataColumns);
       Current.Gui.ShowDialog(exportCtrl, "Export Galactic SPC format");
     }
 

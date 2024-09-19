@@ -198,7 +198,7 @@ namespace Altaxo.Serialization.NicoletSPA
       {
         destinationTable.DataColumns.RemoveColumnsAll();
         destinationTable.PropCols.RemoveColumnsAll();
-        NicoletSPAImporter.ImportNicoletSPAFiles(validFileNames, destinationTable, _processOptions);
+        new NicoletSPAImporter().Import(validFileNames, destinationTable, _processOptions);
       }
 
       var invalidFileNames = _asciiFiles.Where(x => string.IsNullOrEmpty(x.GetResolvedFileNameOrNull())).ToArray();
@@ -455,6 +455,11 @@ namespace Altaxo.Serialization.NicoletSPA
         SwitchOffWatching();
 
       base.Dispose(disposing);
+    }
+
+    public (IReadOnlyList<string> FileExtensions, string Explanation) GetFileExtensions()
+    {
+      return new NicoletSPAImporter().GetFileExtensions();
     }
   }
 }

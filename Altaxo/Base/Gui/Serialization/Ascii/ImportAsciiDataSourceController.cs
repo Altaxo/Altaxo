@@ -25,17 +25,12 @@
 #nullable disable
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Altaxo.Collections;
 using Altaxo.Gui.Common;
 using Altaxo.Gui.Data;
 using Altaxo.Serialization.Ascii;
 
-namespace Altaxo.Gui.Worksheet
+namespace Altaxo.Gui.Serialization.Ascii
 {
-
-
   [ExpectedTypeOfView(typeof(IImportDataSourceView))]
   [UserControllerForObject(typeof(AsciiImportDataSource))]
   public class AsciiImportDataSourceController : MVCANControllerEditOriginalDocBase<AsciiImportDataSource, IImportDataSourceView>, IMVCSupportsApplyCallback
@@ -124,7 +119,7 @@ namespace Altaxo.Gui.Worksheet
       base.DetachView();
     }
 
-    private class AsciiImportOptionsAnalysisDataProvider : Altaxo.Gui.Serialization.Ascii.IAsciiImportOptionsAnalysisDataProvider
+    private class AsciiImportOptionsAnalysisDataProvider : IAsciiImportOptionsAnalysisDataProvider
     {
       private AsciiImportDataSourceController _parent;
 
