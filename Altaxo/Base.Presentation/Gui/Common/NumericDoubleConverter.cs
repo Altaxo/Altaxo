@@ -24,11 +24,9 @@
 
 #nullable disable warnings
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Windows.Controls;
 using System.Windows.Data;
+using Microsoft.CodeAnalysis.CSharp.Scripting;
 
 namespace Altaxo.Gui.Common
 {
@@ -131,6 +129,15 @@ namespace Altaxo.Gui.Common
       if (double.TryParse(s, System.Globalization.NumberStyles.Float, _conversionCulture, out result))
       {
         return ValidateSuccessfullyConvertedValue(result);
+      }
+
+      try
+      {
+        result = CSharpScript.EvaluateAsync<double>(s).Result;
+        return ValidateSuccessfullyConvertedValue(result);
+      }
+      catch
+      {
       }
 
       return new ValidationResult(false, "String could not be converted to a number");
