@@ -288,7 +288,7 @@ namespace Altaxo.Data
     /// <param name="dataTable">Data table to import to.</param>
     public static void ShowImportGalacticSPCDialog(this DataTable dataTable)
     {
-      Altaxo.Serialization.Galactic.Import.ShowDialog(dataTable);
+      new Altaxo.Serialization.Galactic.GalacticSPCImporter().ShowDialog(dataTable);
     }
 
     /// <summary>
@@ -297,7 +297,7 @@ namespace Altaxo.Data
     /// <param name="dataTable">Data table to import to.</param>
     public static void ShowImportJcampDialog(this DataTable dataTable)
     {
-      Altaxo.Serialization.Jcamp.Import.ShowDialog(dataTable);
+      new Altaxo.Serialization.Jcamp.JcampImporter().ShowDialog(dataTable);
     }
 
     /// <summary>
@@ -306,7 +306,7 @@ namespace Altaxo.Data
     /// <param name="dataTable">Data table to import to.</param>
     public static void ShowImportRenishawWdfDialog(this DataTable dataTable)
     {
-      Altaxo.Serialization.Renishaw.Import.ShowDialog(dataTable);
+      new Altaxo.Serialization.Renishaw.RenishawImporter().ShowDialog(dataTable);
     }
 
     /// <summary>
@@ -315,7 +315,7 @@ namespace Altaxo.Data
     /// <param name="dataTable">Data table to import to.</param>
     public static void ShowImportNicoletSPADialog(this DataTable dataTable)
     {
-      Altaxo.Serialization.NicoletSPA.NicoletSPAImporter.ShowDialog(dataTable);
+      new Altaxo.Serialization.NicoletSPA.NicoletSPAImporter().ShowDialog(dataTable);
     }
 
     /// <summary>

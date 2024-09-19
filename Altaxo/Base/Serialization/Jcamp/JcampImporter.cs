@@ -28,82 +28,64 @@ using System.IO;
 using System.Linq;
 using Altaxo.Data;
 
-namespace Altaxo.Serialization.NicoletSPA
+namespace Altaxo.Serialization.Jcamp
 {
-  /// <summary>
-  /// Imports Nicolet SPA spectra.
-  /// </summary>
-  /// <remarks>
-  /// See
-  /// Ref1: <see href="https://stackoverflow.com/questions/2887151/how-to-read-data-from-a-nicolet-ftir-spectral-file-with-extension-of-spa"/>
-  /// Ref2: <see href="https://github.com/aitap/spa2txt/blob/master/spa.c"/>
-  /// Ref3: <see href="https://gist.github.com/mgaitan/53ea9f5ff47781f34c153c433474ea51"/>
-  /// SPA file format:
-  /// <para>The comment is at position 30:255. It is UTF8 coded.</para>
-  /// <para>At position 564, there is an integer designating the offset to the data. (little endian)</para>
-  /// </remarks>
-  public record NicoletSPAImporter : IDataFileImporter, Main.IImmutable
+  public record JcampImporter : IDataFileImporter, Main.IImmutable
   {
-    /// <summary>
-    /// Imports the data of this <see cref="Import"/> instance into a <see cref="DataTable"/>.
-    /// </summary>
-    /// <param name="table">The table.</param>
-    public string? Import(Stream stream, DataTable table)
+    /// <inheritdoc/>
+    public (IReadOnlyList<string> FileExtensions, string Explanation) GetFileExtensions()
     {
-      var result = new NicoletSPAImportResult(stream);
+      return ([".jcamp", ".jdx", ".dx"], "JCampDX files (*.jcamp;*.jdx;*.dx)");
+    }
 
-      var xCol = new DoubleColumn();
-      var yCol = new DoubleColumn();
-      table.DataColumns.Add(xCol, string.IsNullOrEmpty(result.XLabel) ? "X" : result.XLabel, ColumnKind.X);
-      table.DataColumns.Add(yCol, string.IsNullOrEmpty(result.YLabel) ? "Y" : result.YLabel, ColumnKind.V);
-
-      if (!string.IsNullOrEmpty(result.XUnit) || !string.IsNullOrEmpty(result.YUnit))
+    /// <inheritdoc/>
+    public double GetProbabilityForBeingThisFileFormat(string fileName)
+    {
+      double p = 0;
+      var fe = GetFileExtensions();
+      if (fe.FileExtensions.ToHashSet().Contains(Path.GetExtension(fileName).ToLowerInvariant()))
       {
-        table.PropCols.Add(new TextColumn(), "Unit", ColumnKind.V);
-        table.PropCols["Unit"][0] = result.XUnit;
-        table.PropCols["Unit"][1] = result.YUnit;
+        p += 0.5;
       }
 
-      if (!string.IsNullOrEmpty(result.XLabel) || !string.IsNullOrEmpty(result.YLabel))
+      try
       {
-        table.PropCols.Add(new TextColumn(), "Label", ColumnKind.V);
-        table.PropCols["Label"][0] = result.XLabel;
-        table.PropCols["Label"][1] = result.YLabel;
+        using var stream = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.Read);
+        using var reader = new StreamReader(stream);
+        var result = new JcampReader(reader);
+        if (string.IsNullOrEmpty(result.ErrorMessages) && !double.IsNaN(result.XFirst) && !double.IsNaN(result.XIncrement) && result.XYValues is not null && result.XYValues.Count > 0)
+        {
+          p += 0.5;
+        }
+      }
+      catch
+      {
+        p = 0;
       }
 
-      xCol.Data = result.X;
-      yCol.Data = result.Y;
+      return p;
+    }
 
-      return result.ErrorMessages;
+
+    public string? Import(IReadOnlyList<string> filenames, DataTable table, bool attachDataSource = true)
+    {
+      var options = new JcampImportOptions();
+      var result = ImportJcampFiles(filenames, table, options);
+      if (attachDataSource)
+      {
+        table.DataSource = new JcampImportDataSource(filenames, options);
+      }
+      return result;
     }
 
     /// <summary>
-    /// Compare the values in a double array with values in a double column and see if they match.
-    /// </summary>
-    /// <param name="values">An array of double values.</param>
-    /// <param name="col">A double column to compare with the double array.</param>
-    /// <returns>True if the length of the array is equal to the length of the <see cref="DoubleColumn" /> and the values in
-    /// both array match to each other, otherwise false.</returns>
-    public static bool ValuesMatch(DoubleColumn values, DoubleColumn col)
-    {
-      if (values.Count != col.Count)
-        return false;
-
-      for (int i = 0; i < values.Count; i++)
-        if (col[i] != values[i])
-          return false;
-
-      return true;
-    }
-
-    /// <summary>
-    /// Imports a couple of Nicolet SPA files into a table. The spectra are added as columns to the (one and only) table. If the x column
+    /// Imports a couple of JCAMP files into a table. The spectra are added as columns to the (one and only) table. If the x column
     /// of the rightmost column does not match the x-data of the spectra, a new x-column is also created.
     /// </summary>
     /// <param name="filenames">An array of filenames to import.</param>
     /// <param name="table">The table the spectra should be imported to.</param>
     /// <returns>Null if no error occurs, or an error description.</returns>
-    public string? Import(IReadOnlyList<string> filenames, Altaxo.Data.DataTable table, NicoletSPAImportOptions importOptions)
+    public static string? ImportJcampFiles(IReadOnlyList<string> filenames, DataTable table, JcampImportOptions importOptions)
     {
       DoubleColumn? xcol = null;
       DoubleColumn xvalues, yvalues;
@@ -123,7 +105,8 @@ namespace Altaxo.Serialization.NicoletSPA
       {
         using var stream = new FileStream(filename, FileMode.Open, FileAccess.Read, FileShare.Read);
         var localTable = new DataTable();
-        string? error = Import(stream, localTable);
+        var imported = new JcampReader(stream, localTable);
+        string? error = imported.ErrorMessages;
         stream.Close();
 
         if (error is not null)
@@ -242,11 +225,10 @@ namespace Altaxo.Serialization.NicoletSPA
         string[] filenames = options.FileNames;
         Array.Sort(filenames); // Windows seems to store the filenames reverse to the clicking order or in arbitrary order
 
-        var importOptions = new NicoletSPAImportOptions();
-        var importer = new NicoletSPAImporter();
-        string? errors = importer.Import(filenames, table, importOptions);
+        var importOptions = new JcampImportOptions();
+        string? errors = ImportJcampFiles(filenames, table, importOptions);
 
-        table.DataSource = new NicoletSPAImportDataSource(filenames, importOptions);
+        table.DataSource = new JcampImportDataSource(filenames, importOptions);
 
         if (errors is not null)
         {
@@ -255,48 +237,23 @@ namespace Altaxo.Serialization.NicoletSPA
       }
     }
 
-    /// <inheritdoc/>
-    public (IReadOnlyList<string> FileExtensions, string Explanation) GetFileExtensions()
+    /// <summary>
+    /// Compare the values in a double array with values in a double column and see if they match.
+    /// </summary>
+    /// <param name="values">An array of double values.</param>
+    /// <param name="col">A double column to compare with the double array.</param>
+    /// <returns>True if the length of the array is equal to the length of the <see cref="DoubleColumn" /> and the values in
+    /// both array match to each other, otherwise false.</returns>
+    public static bool ValuesMatch(DoubleColumn values, DoubleColumn col)
     {
-      return ([".spa"], "Nicolet/Thermo Omnic files (*.spa)");
-    }
+      if (values.Count != col.Count)
+        return false;
 
-    /// <inheritdoc/>
-    public double GetProbabilityForBeingThisFileFormat(string fileName)
-    {
-      double p = 0;
-      var fe = GetFileExtensions();
-      if (fe.FileExtensions.ToHashSet().Contains(Path.GetExtension(fileName).ToLowerInvariant()))
-      {
-        p += 0.5;
-      }
+      for (int i = 0; i < values.Count; i++)
+        if (col[i] != values[i])
+          return false;
 
-      try
-      {
-        using var stream = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.Read);
-        var result = new NicoletSPAImportResult(stream);
-        if (result.NumberOfPoints > 0 && string.IsNullOrEmpty(result.ErrorMessages))
-        {
-          p += 0.5;
-        }
-      }
-      catch
-      {
-        p = 0;
-      }
-
-      return p;
-    }
-
-    public string? Import(IReadOnlyList<string> filenames, DataTable table, bool attachDataSource = true)
-    {
-      var options = new NicoletSPAImportOptions();
-      var result = Import(filenames, table, options);
-      if (attachDataSource)
-      {
-        table.DataSource = new NicoletSPAImportDataSource(filenames, options);
-      }
-      return result;
+      return true;
     }
   }
 }

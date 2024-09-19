@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Altaxo.Data;
 
 namespace Altaxo.Serialization
 {
@@ -21,5 +22,14 @@ namespace Altaxo.Serialization
     /// <returns>A probability value (ranging from 0 to 1), that the provided file is the format
     /// that is covered by this importer.</returns>
     double GetProbabilityForBeingThisFileFormat(string fileName);
+
+    /// <summary>
+    /// Imports the specified file name into a table.
+    /// </summary>
+    /// <param name="fileNames">Name of the files.</param>
+    /// <param name="table">The table.</param>
+    /// <param name="attachDataSource">If the value is true, the corresponding data source is attached to the table.</param>
+    /// <returns>An error message, or null if successful.</returns>
+    string? Import(IReadOnlyList<string> fileNames, DataTable table, bool attachDataSource = true);
   }
 }

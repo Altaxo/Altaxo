@@ -89,14 +89,14 @@ namespace Altaxo.Serialization.Renishaw
   {
     #region Inner classes
 
-    record class BlockInfo(int Uid, long Position, long Size)
+    private record class BlockInfo(int Uid, long Position, long Size)
     {
     }
 
     /// <summary>
     /// Offsets to the start of block
     /// </summary>
-    static class Offsets
+    private static class Offsets
     {
       // General offsets
       public const int block_name = 0x0;
@@ -118,9 +118,7 @@ namespace Altaxo.Serialization.Renishaw
       public const int jpeg_header = 0x10;
     }
 
-
-
-    enum ListKind
+    private enum ListKind
     {
       X,
       Y
@@ -129,7 +127,7 @@ namespace Altaxo.Serialization.Renishaw
     /// <summary>
     /// Customized EXIF TAGS
     /// </summary>
-     enum ExifTags
+    private enum ExifTags
     {
 
       // Standard EXIF TAGS
@@ -213,11 +211,12 @@ namespace Altaxo.Serialization.Renishaw
     }
 
     public (int w, int h) MapShape { get; private set; }
-    Dictionary<string, object> _map_info = new();
 
-    IReadOnlyDictionary<string, object> MapInfo => _map_info;
+    private Dictionary<string, object> _map_info = new();
 
-    (int Type, int Unit, int Length, float[] Data)[] listinfo = new (int Type, int Unit, int Length, float[] Data)[2];
+    private IReadOnlyDictionary<string, object> MapInfo => _map_info;
+
+    private (int Type, int Unit, int Length, float[] Data)[] listinfo = new (int Type, int Unit, int Length, float[] Data)[2];
 
     public float[] XData => listinfo[(int)ListKind.X].Data;
     public float[] YData => listinfo[(int)ListKind.Y].Data;
@@ -256,7 +255,7 @@ namespace Altaxo.Serialization.Renishaw
       return new WdfFileReader(rs);
     }
 
-      public WdfFileReader(Stream rs)
+    public WdfFileReader(Stream rs)
     {
       if (rs is null)
         throw new ArgumentNullException(nameof(rs));
@@ -289,6 +288,11 @@ namespace Altaxo.Serialization.Renishaw
       while (currentPosition < sr.Length)
       {
         var (block_name, block_uid, block_size) = LocateSingleBlock(sr, currentPosition);
+        if (block_size == 0)
+        {
+          throw new InvalidDataException("Block size of a single block is 0");
+        }
+
         _blockInfo[block_name] = new BlockInfo(block_uid, currentPosition, block_size);
         currentPosition += block_size;
         sr.Seek(currentPosition, SeekOrigin.Begin);
@@ -408,7 +412,7 @@ namespace Altaxo.Serialization.Renishaw
       // For the units
       SpectralUnit = (UnitType)BitConverter.ToInt32(buf, Offsets.spectral_info + 0);
       LaserWavelength_nm = ConvertWavenumberToWavelength_nm(BitConverter.ToSingle(buf, Offsets.spectral_info + 4));  // in nm
-                                                                                               // Username and title
+                                                                                                                     // Username and title
       UserName = System.Text.Encoding.UTF8.GetString(buf, Offsets.file_info, Offsets.usr_name - Offsets.file_info).TrimEnd('\0');
       Title = System.Text.Encoding.UTF8.GetString(buf, Offsets.usr_name, Offsets.data_block - Offsets.usr_name).TrimEnd('\0');
 
@@ -503,7 +507,7 @@ namespace Altaxo.Serialization.Renishaw
       var list_increment = Offsets.origin_increment + sizeof(double) * Capacity;
       var curpos = blockinfo.Position + Offsets.origin_info;
 
-      OriginListHeader = new (bool isY, DataType dataType, UnitType unitType, string annotation, Array array)[DataOriginCount]; 
+      OriginListHeader = new (bool isY, DataType dataType, UnitType unitType, string annotation, Array array)[DataOriginCount];
       for (int i = 0; i < DataOriginCount; ++i)
       {
         sr.Seek(curpos, SeekOrigin.Begin);
@@ -724,15 +728,15 @@ namespace Altaxo.Serialization.Renishaw
     /// </summary>
     /// <param name="wn">The wavenumber.</param>
     /// <returns>Wavelength in nm</returns>
-    static double ConvertWavenumberToWavelength_nm(double wn) => 1 / (wn * 1e2) / 1e-9;
+    private static double ConvertWavenumberToWavelength_nm(double wn) => 1 / (wn * 1e2) / 1e-9;
 
-    static bool IsClose(double x, double y, double atol = 0, double rtol = 0)
+    private static bool IsClose(double x, double y, double atol = 0, double rtol = 0)
     {
       var tol = Math.Max(atol, Math.Max(Math.Abs(x), Math.Abs(y)) * rtol);
       return Math.Abs(x - y) <= tol;
     }
 
-    static int ReadBuffer(Stream sr, byte[] buf, int start, int len)
+    private static int ReadBuffer(Stream sr, byte[] buf, int start, int len)
     {
       var total = 0;
       while (len > 0)

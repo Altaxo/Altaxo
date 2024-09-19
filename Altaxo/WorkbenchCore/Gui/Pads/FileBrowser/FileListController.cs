@@ -27,9 +27,11 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using Altaxo.Collections;
-using Altaxo.Gui.Workbench;
+using Altaxo.Data;
 using Altaxo.Main.Services;
+using Altaxo.Serialization;
 
 namespace Altaxo.Gui.Pads.FileBrowser
 {
@@ -246,36 +248,75 @@ namespace Altaxo.Gui.Pads.FileBrowser
 
     public void EhView_ActivateSelectedItems()
     {
+      var importers = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(Altaxo.Serialization.IDataFileImporter))
+                      .Select(t => (IDataFileImporter)Activator.CreateInstance(t))
+                      .ToArray();
+
       foreach (FileListItem item in _fileList.Where(x => x.IsSelected))
       {
-        var fileExtension = Path.GetExtension(item.FullName).ToUpperInvariant();
+        var fileExtension = Path.GetExtension(item.FullName).ToLowerInvariant();
 
         if (Current.IProjectService.IsProjectFileExtension(fileExtension))
         {
           Current.IProjectService.OpenProject(new FileName(item.FullName), showUserInteraction: true);
-          break;
+          return;
+        }
+      }
+
+      // if it is not a project file, then maybe a data file...
+      foreach (FileListItem item in _fileList.Where(x => x.IsSelected))
+      {
+        var fileExtension = Path.GetExtension(item.FullName).ToLowerInvariant();
+        var table = new DataTable(Path.GetFileNameWithoutExtension(Path.GetFileName(item.FullName)));
+
+        bool wasHandled = false;
+        bool wasImported = false;
+        foreach (var imp in importers)
+        {
+          if (imp.GetFileExtensions().FileExtensions.Contains(fileExtension))
+          {
+            wasHandled = true;
+            try
+            {
+              imp.Import([item.FullName], table, true);
+              Current.ProjectService.CreateNewWorksheet(table);
+              wasImported = true;
+              break;
+            }
+            catch
+            {
+            }
+          }
         }
 
-        switch (fileExtension)
+        if (wasImported)
         {
-          case ".SPC":
-            {
-              // Actions for spc
-            }
-            break;
+          continue;
+        }
 
-          case ".DAT":
-          case ".TXT":
-          case ".CSV":
-            {
-            }
-            break;
 
-          default:
-            {
-              FileService.Instance.OpenFile(new FileName(item.FullName));
-            }
-            break;
+        var arr = importers.Select(imp => Task.Run<double>(new Func<double>(() => imp.GetProbabilityForBeingThisFileFormat(item.FullName)))).ToArray();
+        Task.WaitAll(arr);
+        var maxIdx = arr.IndexOfMax((t) => t.Result);
+        if (arr[maxIdx].Result > 0) // The probability should be greater than one
+        {
+          wasHandled |= true;
+          try
+          {
+            importers[maxIdx].Import([item.FullName], table, true);
+            Current.Project.DataTableCollection.Add(table);
+            Current.ProjectService.CreateNewWorksheet(table);
+            wasImported = true;
+            continue;
+          }
+          catch
+          {
+          }
+        }
+
+        if (!wasHandled)
+        {
+          Current.Gui.InfoMessageBox($"No idea how to import file {item.FullName}", "For your information");
         }
       }
     }

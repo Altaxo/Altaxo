@@ -198,7 +198,7 @@ namespace Altaxo.Serialization.Jcamp
       {
         destinationTable.DataColumns.RemoveColumnsAll();
         destinationTable.PropCols.RemoveColumnsAll();
-        Import.ImportJcampFiles(validFileNames, destinationTable, _processOptions);
+        JcampImporter.ImportJcampFiles(validFileNames, destinationTable, _processOptions);
       }
 
       var invalidFileNames = _asciiFiles.Where(x => string.IsNullOrEmpty(x.GetResolvedFileNameOrNull())).ToArray();

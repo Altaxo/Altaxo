@@ -198,7 +198,7 @@ namespace Altaxo.Serialization.Renishaw
       {
         destinationTable.DataColumns.RemoveColumnsAll();
         destinationTable.PropCols.RemoveColumnsAll();
-        Import.ImportRenishawWdfFiles(validFileNames, destinationTable, _processOptions);
+        RenishawImporter.ImportRenishawWdfFiles(validFileNames, destinationTable, _processOptions);
       }
 
       var invalidFileNames = _asciiFiles.Where(x => string.IsNullOrEmpty(x.GetResolvedFileNameOrNull())).ToArray();

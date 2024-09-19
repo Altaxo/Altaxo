@@ -233,9 +233,9 @@ namespace Altaxo.Worksheet.Commands
       {
         var valueToFillWith = (AltaxoVariant)controller.ModelObject;
 
-        if(ctrl.AreDataCellsSelected)
+        if (ctrl.AreDataCellsSelected)
         {
-          foreach(var dci in ctrl.SelectedDataColumns)
+          foreach (var dci in ctrl.SelectedDataColumns)
           {
             var dc = ctrl.DataTable[dci];
             if (ctrl.SelectedDataRows.Count > 0)
@@ -247,16 +247,16 @@ namespace Altaxo.Worksheet.Commands
             }
             else
             {
-              for(int dri=0; dri < dc.Count;++dri)
+              for (int dri = 0; dri < dc.Count; ++dri)
               {
                 dc[dri] = valueToFillWith;
               }
             }
           }
         }
-        if(ctrl.ArePropertyCellsSelected)
+        if (ctrl.ArePropertyCellsSelected)
         {
-          foreach(var pci in ctrl.SelectedPropertyColumns)
+          foreach (var pci in ctrl.SelectedPropertyColumns)
           {
             var pc = ctrl.DataTable.PropertyColumns[pci];
             if (ctrl.SelectedPropertyRows.Count > 0)
@@ -268,7 +268,7 @@ namespace Altaxo.Worksheet.Commands
             }
             else
             {
-              for(int pri=0;pri<ctrl.DataTable.DataColumnCount;++pri)
+              for (int pri = 0; pri < ctrl.DataTable.DataColumnCount; ++pri)
               {
                 pc[pri] = valueToFillWith;
               }

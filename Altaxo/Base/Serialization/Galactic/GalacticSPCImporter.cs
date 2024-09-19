@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2022 Dr. Dirk Lellinger, T.Tian, Alex Henderson
+//    Copyright (C) 2002-2024 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -23,24 +23,72 @@
 #endregion Copyright
 
 using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using Altaxo.Data;
 
-namespace Altaxo.Serialization.Renishaw
+namespace Altaxo.Serialization.Galactic
 {
-  /// <summary>
-  /// Supplies static methods to import Renishaw .wdf files.
-  /// </summary>
-  public class Import
+  public record GalacticSPCImporter : IDataFileImporter, Main.IImmutable
   {
+    /// <inheritdoc/>
+    public (IReadOnlyList<string> FileExtensions, string Explanation) GetFileExtensions()
+    {
+      return ([".spc"], "Galactic SPC files (*.spc)");
+    }
+
+    /// <inheritdoc/>
+    public double GetProbabilityForBeingThisFileFormat(string fileName)
+    {
+      double p = 0;
+      var fe = GetFileExtensions();
+      if (fe.FileExtensions.ToHashSet().Contains(Path.GetExtension(fileName).ToLowerInvariant()))
+      {
+        p += 0.5;
+      }
+
+      try
+      {
+        using var stream = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.Read);
+        var result = new GalacticSPCReader(stream);
+        if (string.IsNullOrEmpty(result.ErrorMessages) &&
+          result.XValues is not null && result.XValues.Length > 0
+          && result.YValues is not null && result.YValues.Count > 0)
+        {
+          p += 0.5;
+        }
+      }
+      catch
+      {
+        p = 0;
+      }
+
+      return p;
+    }
+
+    public string? Import(IReadOnlyList<string> filenames, DataTable table, bool attachDataSource)
+    {
+      var options = new GalacticSPCImportOptions();
+      var result = ImportSpcFiles(filenames, table, options);
+      if (attachDataSource)
+      {
+        table.DataSource = new GalacticSPCImportDataSource(filenames, options);
+      }
+      return result;
+    }
+
     /// <summary>
     /// Shows the SPC file import dialog, and imports the files to the table if the user clicked on "OK".
     /// </summary>
     /// <param name="table">The table to import the SPC files to.</param>
-    public static void ShowDialog(Altaxo.Data.DataTable table)
+    public void ShowDialog(Altaxo.Data.DataTable table)
     {
       var options = new Altaxo.Gui.OpenFileOptions();
-      options.AddFilter("*.wdf", "Renishaw WiRE™ files (*.wdf)");
-      options.AddFilter("*.*", "All files (*.*)");
+      var filter = FileIOHelper.GetFilterDescriptionForExtensions(GetFileExtensions());
+      options.AddFilter(filter.Filter, filter.Description);
+      filter = FileIOHelper.GetFilterDescriptionForAllFiles();
+      options.AddFilter(filter.Filter, filter.Description);
       options.FilterIndex = 0;
       options.Multiselect = true; // allow selecting more than one file
 
@@ -50,10 +98,10 @@ namespace Altaxo.Serialization.Renishaw
         string[] filenames = options.FileNames;
         Array.Sort(filenames); // Windows seems to store the filenames reverse to the clicking order or in arbitrary order
 
-        var importOptions = new RenishawImportOptions();
-        string? errors = ImportRenishawWdfFiles(filenames, table, importOptions);
+        var importOptions = new GalacticSPCImportOptions();
+        string? errors = ImportSpcFiles(filenames, table, importOptions);
 
-        table.DataSource = new RenishawImportDataSource(filenames, importOptions);
+        table.DataSource = new GalacticSPCImportDataSource(filenames, importOptions);
 
         if (errors is not null)
         {
@@ -62,55 +110,61 @@ namespace Altaxo.Serialization.Renishaw
       }
     }
 
+    /// <summary>
+    /// Imports a couple of SPC files into a table. The spectra are added as columns to the table. If the x column
+    /// of the rightmost column does not match the x-data of the spectra, a new x-column is also created.
+    /// </summary>
+    /// <param name="filenames">An array of filenames to import.</param>
+    /// <param name="table">The table the spectra should be imported to.</param>
     /// <returns>Null if no error occurs, or an error description.</returns>
-    public static string? ImportRenishawWdfFiles(string[] filenames, Altaxo.Data.DataTable table, RenishawImportOptions importOptions)
+    public static string? ImportSpcFiles(IReadOnlyList<string> filenames, Altaxo.Data.DataTable table, GalacticSPCImportOptions importOptions)
     {
-      DoubleColumn? xcol = null;
+      Altaxo.Data.DoubleColumn? xcol = null;
       var errorList = new System.Text.StringBuilder();
       int lastColumnGroup = 0;
 
       if (table.DataColumns.ColumnCount > 0)
       {
         lastColumnGroup = table.DataColumns.GetColumnGroup(table.DataColumns.ColumnCount - 1);
-        Altaxo.Data.DataColumn? xColumnOfRightMost = table.DataColumns.FindXColumnOfGroup(lastColumnGroup);
-        if (xColumnOfRightMost is Altaxo.Data.DoubleColumn dcolMostRight)
+        var xColumnOfRightMost = table.DataColumns.FindXColumnOfGroup(lastColumnGroup);
+        if (xColumnOfRightMost is DoubleColumn dcolMostRight)
           xcol = dcolMostRight;
       }
 
       int idxYColumn = 0;
       foreach (string filename in filenames)
       {
-        WdfFileReader wdfFile;
-        try
+        GalacticSPCReader result;
+        using (var stream = new FileStream(filename, FileMode.Open, FileAccess.Read, FileShare.Read))
         {
-          wdfFile = WdfFileReader.FromFileName(filename);
+          result = new GalacticSPCReader(stream);
         }
-        catch (Exception ex)
+
+        if (!string.IsNullOrEmpty(result.ErrorMessages))
         {
-          errorList.Append(ex.Message);
+          errorList.Append(result.ErrorMessages);
           continue;
         }
+        if (result.XValues is null || result.YValues is null)
+          throw new InvalidProgramException();
 
-        var xvalues = wdfFile.XData;
-        var yvalues = wdfFile.Spectra;
 
-        // Add the necessary property columns
-        // TODO: which properties should be converted to property columns?
-        // for instance: Scan Positions, etc.
 
         // first look if our default xcolumn matches the xvalues
-        bool bMatchsXColumn = xcol is not null && ValuesMatch(xvalues, xcol);
+
+        bool bMatchsXColumn = xcol is not null && ValuesMatch(result.XValues, xcol);
+
+        // if no match, then consider all xcolumns from right to left, maybe some fits
         if (!bMatchsXColumn)
         {
-          // if no match, then consider all xcolumns from right to left, maybe some fits
           for (int ncol = table.DataColumns.ColumnCount - 1; ncol >= 0; ncol--)
           {
             if ((ColumnKind.X == table.DataColumns.GetColumnKind(ncol)) &&
-              (table.DataColumns[ncol] is DoubleColumn xdc) &&
-              (ValuesMatch(xvalues, xdc))
+              (table.DataColumns[ncol] is DoubleColumn) &&
+              (ValuesMatch(result.XValues, (DoubleColumn)table.DataColumns[ncol]))
               )
             {
-              xcol = xdc;
+              xcol = (DoubleColumn)table.DataColumns[ncol];
               lastColumnGroup = table.DataColumns.GetColumnGroup(xcol);
               bMatchsXColumn = true;
               break;
@@ -118,17 +172,18 @@ namespace Altaxo.Serialization.Renishaw
           }
         }
 
-        // if there is still no matching x-column, create a new x column 
+        // create a new x column if the last one does not match
         if (!bMatchsXColumn)
         {
           xcol = new Altaxo.Data.DoubleColumn();
-          xcol.CopyDataFrom(xvalues);
+          xcol.CopyDataFrom(result.XValues);
           lastColumnGroup = table.DataColumns.GetUnusedColumnGroupNumber();
           table.DataColumns.Add(xcol, "X", Altaxo.Data.ColumnKind.X, lastColumnGroup);
         }
 
         // now add the y-values
-        for (int iSpectrum = 0; iSpectrum < wdfFile.Count; iSpectrum++)
+
+        for (int iSpectrum = 0; iSpectrum < result.YValues.Count; ++iSpectrum)
         {
           string columnName = importOptions.UseNeutralColumnName ?
                               $"{(string.IsNullOrEmpty(importOptions.NeutralColumnName) ? "Y" : importOptions.NeutralColumnName)}{idxYColumn}" :
@@ -136,7 +191,7 @@ namespace Altaxo.Serialization.Renishaw
           columnName = table.DataColumns.FindUniqueColumnName(columnName);
           var ycol = table.DataColumns.EnsureExistence(columnName, typeof(DoubleColumn), ColumnKind.V, lastColumnGroup);
           ++idxYColumn;
-          ycol.CopyDataFrom(wdfFile.GetSpectrum(iSpectrum));
+          ycol.CopyDataFrom(result.YValues[iSpectrum]);
 
           if (importOptions.IncludeFilePathAsProperty)
           {
@@ -151,15 +206,15 @@ namespace Altaxo.Serialization.Renishaw
               table.PropCols["FilePath"][yColumnNumber] = filename;
             }
           }
-        }
-      } // foreach file
+        } // foreach yarray in yvalues
+      } // foreache file
 
       // Make also a note from where it was imported
       {
-        if (filenames.Length == 1)
+        if (filenames.Count == 1)
           table.Notes.WriteLine($"Imported from {filenames[0]} at {DateTimeOffset.Now}");
-        else if (filenames.Length > 1)
-          table.Notes.WriteLine($"Imported from {filenames[0]} and more ({filenames.Length} files) at {DateTimeOffset.Now}");
+        else if (filenames.Count > 1)
+          table.Notes.WriteLine($"Imported from {filenames[0]} and more ({filenames.Count} files) at {DateTimeOffset.Now}");
       }
 
       return errorList.Length == 0 ? null : errorList.ToString();
@@ -172,7 +227,7 @@ namespace Altaxo.Serialization.Renishaw
     /// <param name="col">A double column to compare with the double array.</param>
     /// <returns>True if the length of the array is equal to the length of the <see cref="DoubleColumn" /> and the values in
     /// both array match to each other, otherwise false.</returns>
-    public static bool ValuesMatch(float[] values, DoubleColumn col)
+    public static bool ValuesMatch(double[] values, DoubleColumn col)
     {
       if (values.Length != col.Count)
         return false;
@@ -183,5 +238,6 @@ namespace Altaxo.Serialization.Renishaw
 
       return true;
     }
+
   }
 }

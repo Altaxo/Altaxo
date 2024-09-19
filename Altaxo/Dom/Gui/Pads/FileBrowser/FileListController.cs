@@ -27,9 +27,11 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
+using System.Threading.Tasks;
 using Altaxo.Collections;
+using Altaxo.Data;
 using Altaxo.Main.Services;
+using Altaxo.Serialization;
 
 namespace Altaxo.Gui.Pads.FileBrowser
 {
@@ -54,7 +56,7 @@ namespace Altaxo.Gui.Pads.FileBrowser
       private string _text1;
       private string _text2;
 
-      public string FullName { get { return (string)Tag; } }
+      public string FullName { get { return (string?)Tag ?? string.Empty; } }
 
       public FileListItem(string fullPath)
         : base(Path.GetFileName(fullPath), fullPath, false)
@@ -125,9 +127,9 @@ namespace Altaxo.Gui.Pads.FileBrowser
 
     #endregion FileItem
 
-    private IFileListView _view;
-    private FileSystemWatcher watcher;
-    private List<string> _columnNames;
+    private IFileListView? _view;
+    private FileSystemWatcher? _watcher;
+    private List<string> _columnNames = new List<string>();
 
     private SelectableListNodeList _fileList = new SelectableListNodeList();
 
@@ -140,28 +142,29 @@ namespace Altaxo.Gui.Pads.FileBrowser
     {
       if (initData)
       {
-        _columnNames = new List<string>
+        _columnNames.Clear();
+        _columnNames.AddRange(new[]
         {
           Current.ResourceService.GetString("CompilerResultView.FileText"),
           Current.ResourceService.GetString("MainWindow.Windows.FileScout.Size"),
           Current.ResourceService.GetString("MainWindow.Windows.FileScout.LastModified")
-        };
+        });
 
         try
         {
-          watcher = new FileSystemWatcher();
+          _watcher = new FileSystemWatcher();
         }
         catch { }
 
-        if (watcher is not null)
+        if (_watcher is not null)
         {
-          watcher.NotifyFilter = NotifyFilters.FileName;
-          watcher.EnableRaisingEvents = false;
+          _watcher.NotifyFilter = NotifyFilters.FileName;
+          _watcher.EnableRaisingEvents = false;
 
-          watcher.Renamed += new RenamedEventHandler(fileRenamed);
-          watcher.Deleted += new FileSystemEventHandler(fileDeleted);
-          watcher.Created += new FileSystemEventHandler(fileCreated);
-          watcher.Changed += new FileSystemEventHandler(fileChanged);
+          _watcher.Renamed += new RenamedEventHandler(fileRenamed);
+          _watcher.Deleted += new FileSystemEventHandler(fileDeleted);
+          _watcher.Created += new FileSystemEventHandler(fileCreated);
+          _watcher.Changed += new FileSystemEventHandler(fileChanged);
         }
       }
 
@@ -242,37 +245,66 @@ namespace Altaxo.Gui.Pads.FileBrowser
 
     public void EhView_ActivateSelectedItems()
     {
+      var importers = Altaxo.Main.Services.ReflectionService.GetNonAbstractSubclassesOf(typeof(Altaxo.Serialization.IDataFileImporter))
+                      .Select(t => (IDataFileImporter)Activator.CreateInstance(t))
+                      .ToArray();
+
       foreach (FileListItem item in _fileList.Where(x => x.IsSelected))
       {
-        var fileExtension = Path.GetExtension(item.FullName).ToUpperInvariant();
+        var fileExtension = Path.GetExtension(item.FullName).ToLowerInvariant();
 
         if (Current.IProjectService.IsProjectFileExtension(fileExtension))
         {
           Current.IProjectService.OpenProject(new FileName(item.FullName), showUserInteraction: true);
-          break;
+          return;
+        }
+      }
+
+      // if it is not a project file, then maybe a data file...
+      foreach (FileListItem item in _fileList.Where(x => x.IsSelected))
+      {
+        var fileExtension = Path.GetExtension(item.FullName).ToLowerInvariant();
+        var table = new DataTable(Path.GetFileNameWithoutExtension(Path.GetFileName(item.FullName)));
+
+        bool wasHandled = false;
+        foreach (var imp in importers)
+        {
+          if (imp.GetFileExtensions().FileExtensions.Contains(fileExtension))
+          {
+            wasHandled = true;
+            try
+            {
+              imp.Import([item.FullName], table);
+              Current.ProjectService.CreateNewWorksheet(table);
+              continue;
+            }
+            catch
+            {
+            }
+          }
         }
 
-        switch (fileExtension)
+        var arr = importers.Select(imp => new Task<double>(() => imp.GetProbabilityForBeingThisFileFormat(item.FullName))).ToArray();
+        Task.WaitAll(arr);
+        var maxIdx = arr.IndexOfMax((t) => t.Result);
+        if (arr[maxIdx].Result > 0)
         {
-          case ".SPC":
-            if (Current.Workbench.ActiveViewContent is Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
-            {
-              string[] files = new string[] { item.FullName };
-              Altaxo.Serialization.Galactic.Import.ImportSpcFiles(files, ctrl.DataTable, new Altaxo.Serialization.Galactic.GalacticSPCImportOptions());
-            }
-            break;
+          wasHandled |= true;
+          try
+          {
+            importers[maxIdx].Import([item.FullName], table);
+            Current.Project.DataTableCollection.Add(table);
+            Current.ProjectService.CreateNewWorksheet(table);
+            continue;
+          }
+          catch
+          {
+          }
+        }
 
-          case ".DAT":
-          case ".TXT":
-          case ".CSV":
-            {
-              Altaxo.Serialization.Ascii.AsciiImporter.ImportFilesIntoSeparateNewTables(Altaxo.Main.ProjectFolder.RootFolder, new string[] { item.FullName }, true, true);
-            }
-            break;
-
-          default:
-            Current.Gui.InfoMessageBox(string.Format("No idea how to open file {0}", item.FullName), "For your information");
-            break;
+        if (!wasHandled)
+        {
+          Current.Gui.InfoMessageBox(string.Format("No idea how to open file {0}", item.FullName), "For your information");
         }
       }
     }
@@ -298,8 +330,11 @@ namespace Altaxo.Gui.Pads.FileBrowser
         return;
       }
 
-      watcher.Path = path;
-      watcher.EnableRaisingEvents = true;
+      if (_watcher is not null)
+      {
+        _watcher.Path = path;
+        _watcher.EnableRaisingEvents = true;
+      }
 
       foreach (string file in files)
       {
@@ -309,7 +344,7 @@ namespace Altaxo.Gui.Pads.FileBrowser
 
     #endregion User handlers
 
-    public object ViewObject
+    public object? ViewObject
     {
       get
       {

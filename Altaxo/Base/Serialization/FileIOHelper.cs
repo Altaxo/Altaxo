@@ -25,6 +25,7 @@
 #nullable enable
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Linq;
 using System.Text;
 
 namespace Altaxo.Serialization
@@ -77,6 +78,25 @@ namespace Altaxo.Serialization
       ['|'] = '∣',
       ['/'] = '⁄',
     }.ToImmutableDictionary();
+
+    /// <summary>
+    /// Converts the file extensions to file filter.
+    /// </summary>
+    /// <param name="value">The value, containing the file extensions and the description.</param>
+    /// <returns>File filter (which are the file extensions prepended with a joker star), and separated by a semicolon. The description is left unchanged.</returns>
+    public static (string Filter, string Description) GetFilterDescriptionForExtensions((IReadOnlyList<string> Extensions, string Description) value)
+    {
+      return (string.Join(";", value.Extensions.Select(x => "*" + x)), value.Description);
+    }
+
+    /// <summary>
+    /// Gets the filter description for all files.
+    /// </summary>
+    /// <returns>The file filter and the description for all files.</returns>
+    public static (string Filter, string Description) GetFilterDescriptionForAllFiles()
+    {
+      return ("*.*", "All files (*.*)");
+    }
 
     /// <summary>
     /// Get a valid full file name out of a raw file name that can contain invalid characters. Those characters are
