@@ -4,7 +4,7 @@ using Altaxo.Data;
 
 namespace Altaxo.Serialization.NicoletSPA
 {
-  public class NicoletSPAImportResult
+  public class NicoletSPAReader
   {
     public double XFirst { get; protected set; }
     public double XLast { get; protected set; }
@@ -35,7 +35,7 @@ namespace Altaxo.Serialization.NicoletSPA
     public double[] Y { get; protected set; }
 
 
-    public NicoletSPAImportResult(Stream stream)
+    public NicoletSPAReader(Stream stream)
     {
       const int Pos_BeginComment = 0x1E; // 30 dez, position where the comment starts
       const int Pos_EndComment = 0x100; // 255 dez, position where the comment ends (exclusive)
@@ -51,16 +51,16 @@ namespace Altaxo.Serialization.NicoletSPA
 
       stream.Seek(Pos_BeginComment, SeekOrigin.Begin); // Begin of the comment section
       var buffer = new byte[Pos_EndComment - Pos_BeginComment];
-      stream.Read(buffer, 0, buffer.Length);
+      stream.ForcedRead(buffer, 0, buffer.Length);
       var comment = System.Text.Encoding.UTF8.GetString(buffer);
       Comment = comment.TrimEnd('\0');
       stream.Seek(Pos_NumberOfPoints, SeekOrigin.Begin);
-      stream.Read(buffer, 0, sizeof(Int32));
+      stream.ForcedRead(buffer, 0, sizeof(Int32));
       var numberOfPoints = BitConverter.ToInt32(buffer, 0);
 
       // get minimum and maximum wavenumbers
       stream.Seek(Pos_MinMax, SeekOrigin.Begin);
-      stream.Read(buffer, 0, 2 * sizeof(Single));
+      stream.ForcedRead(buffer, 0, 2 * sizeof(Single));
       var min = BitConverter.ToSingle(buffer, 0);
       var max = BitConverter.ToSingle(buffer, sizeof(Single));
 
@@ -74,16 +74,16 @@ namespace Altaxo.Serialization.NicoletSPA
       stream.Seek(Pos_StartSearchMarkerBeforeOffset, SeekOrigin.Begin);
       do
       {
-        stream.Read(buffer, 0, sizeof(Int16));
+        stream.ForcedRead(buffer, 0, sizeof(Int16));
       } while (StartMarkerForOffset != BitConverter.ToInt16(buffer, 0));
 
       // now read the offset
-      stream.Read(buffer, 0, sizeof(Int16));
+      stream.ForcedRead(buffer, 0, sizeof(Int16));
       var offset = BitConverter.ToInt16(buffer, 0);
 
       var ybuffer = new byte[numberOfPoints * sizeof(float)];
       stream.Seek(offset, SeekOrigin.Begin);
-      stream.Read(ybuffer, 0, ybuffer.Length);
+      stream.ForcedRead(ybuffer, 0, ybuffer.Length);
 
       var x = new double[numberOfPoints];
       var y = new double[numberOfPoints];
@@ -103,7 +103,7 @@ namespace Altaxo.Serialization.NicoletSPA
     /// Imports the data of this <see cref="Import"/> instance into a <see cref="DataTable"/>.
     /// </summary>
     /// <param name="table">The table.</param>
-    public NicoletSPAImportResult(Stream stream, DataTable table) : this(stream)
+    public NicoletSPAReader(Stream stream, DataTable table) : this(stream)
     {
       var xCol = new DoubleColumn();
       var yCol = new DoubleColumn();

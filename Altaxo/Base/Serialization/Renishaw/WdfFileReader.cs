@@ -302,17 +302,14 @@ namespace Altaxo.Serialization.Renishaw
     /// <summary>
     /// Gets the block information at the starting position
     /// </summary>
-    /// <param name="sr">The stream.</param>
+    /// <param name="stream">The stream.</param>
     /// <param name="pos">The stream position.</param>
     /// <returns>Tuple consisting of the block's name, uid, and size.</returns>
-    private (string Name, int Uid, long Size) LocateSingleBlock(Stream sr, long pos)
+    private (string Name, int Uid, long Size) LocateSingleBlock(Stream stream, long pos)
     {
-      sr.Seek(pos, SeekOrigin.Begin);
+      stream.Seek(pos, SeekOrigin.Begin);
       var buf = new byte[16];
-      if (buf.Length != ReadBuffer(sr, buf, 0, buf.Length))
-      {
-        throw new System.IO.EndOfStreamException();
-      }
+      stream.ForcedRead(buf, 0, buf.Length);
       var block_name = System.Text.ASCIIEncoding.ASCII.GetString(buf, 0, 4);
       var block_uid = BitConverter.ToInt32(buf, 4);
       var block_size = BitConverter.ToInt64(buf, 8);
@@ -380,10 +377,7 @@ namespace Altaxo.Serialization.Renishaw
 
       sr.Seek(blockinfo.Position, SeekOrigin.Begin);
       var buf = new byte[blockinfo.Size];
-      if (buf.Length != ReadBuffer(sr, buf, 0, buf.Length))
-      {
-        throw new System.IO.EndOfStreamException();
-      }
+      sr.ForcedRead(buf, 0, buf.Length);
 
       // TODO what are the digits in between?
 
@@ -447,7 +441,7 @@ namespace Altaxo.Serialization.Renishaw
       Spectra = new float[n_row][];
       for (int i = 0; i < n_row; ++i)
       {
-        ReadBuffer(sr, buf, 0, buf.Length);
+        sr.ForcedRead(buf, 0, buf.Length);
         Spectra[i] = new float[NumberOfPointsPerSpectrum];
         Buffer.BlockCopy(buf, 0, Spectra[i], 0, buf.Length);
       }
@@ -467,8 +461,7 @@ namespace Altaxo.Serialization.Renishaw
       // uid, pos, size = self.block_info[name]
       sr.Seek(blockinfo.Position + Offsets.block_data, SeekOrigin.Begin);
       var buf = new byte[8];
-      if (buf.Length != ReadBuffer(sr, buf, 0, buf.Length))
-        throw new EndOfStreamException();
+      sr.ForcedRead(buf, 0, buf.Length);
 
       listinfo[(int)kind].Type = BitConverter.ToInt32(buf, 0);
       listinfo[(int)kind].Unit = BitConverter.ToInt32(buf, 4);
@@ -481,8 +474,7 @@ namespace Altaxo.Serialization.Renishaw
 
       buf = new byte[size * sizeof(float)];
 
-      if (buf.Length != ReadBuffer(sr, buf, 0, buf.Length))
-        throw new EndOfStreamException();
+      sr.ForcedRead(buf, 0, buf.Length);
 
       var data = new float[size];
       Buffer.BlockCopy(buf, 0, data, 0, buf.Length);
@@ -512,8 +504,7 @@ namespace Altaxo.Serialization.Renishaw
       {
         sr.Seek(curpos, SeekOrigin.Begin);
         var buf = new byte[24];
-        if (buf.Length != ReadBuffer(sr, buf, 0, buf.Length))
-          throw new EndOfStreamException();
+        sr.ForcedRead(buf, 0, buf.Length);
 
 
 
@@ -537,8 +528,7 @@ namespace Altaxo.Serialization.Renishaw
         // Set time[0] = 0 until timestamp reference can be determined
         // Resulting array will have unit of `FileTime` in seconds
         buf = new byte[Count * sizeof(double)];
-        if (buf.Length != ReadBuffer(sr, buf, 0, buf.Length))
-          throw new EndOfStreamException();
+        sr.ForcedRead(buf, 0, buf.Length);
 
         Array array;
         if (header_dataType == DataType.Time)
@@ -590,8 +580,7 @@ namespace Altaxo.Serialization.Renishaw
     {
       sr.Seek(blockinfo.Position + Offsets.wmap_origin, SeekOrigin.Begin);
       var buf = new byte[32];
-      if (buf.Length != ReadBuffer(sr, buf, 0, buf.Length))
-        throw new EndOfStreamException();
+      sr.ForcedRead(buf, 0, buf.Length);
 
       var x_start = BitConverter.ToSingle(buf, 0);
       if (!IsClose(x_start, XPositions[0], 0, 1e-4))
@@ -660,8 +649,7 @@ namespace Altaxo.Serialization.Renishaw
       // Read the bytes. `self.img` is a wrapped IO object mimicking a file
       sr.Seek(blockinfo.Position + Offsets.jpeg_header, SeekOrigin.Begin);
       var buf = new byte[blockinfo.Size - Offsets.jpeg_header];
-      if (buf.Length != ReadBuffer(sr, buf, 0, buf.Length))
-        throw new EndOfStreamException();
+      sr.ForcedRead(buf, 0, buf.Length);
 
       // https://docs.microsoft.com/en-us/dotnet/desktop/winforms/advanced/how-to-read-image-metadata
 
@@ -734,27 +722,6 @@ namespace Altaxo.Serialization.Renishaw
     {
       var tol = Math.Max(atol, Math.Max(Math.Abs(x), Math.Abs(y)) * rtol);
       return Math.Abs(x - y) <= tol;
-    }
-
-    private static int ReadBuffer(Stream sr, byte[] buf, int start, int len)
-    {
-      var total = 0;
-      while (len > 0)
-      {
-        var r = sr.Read(buf, start, len);
-        if (r > 0)
-        {
-          start += r;
-          len -= r;
-          total += r;
-        }
-        else
-        {
-          break;
-        }
-
-      }
-      return total;
     }
   }
 }

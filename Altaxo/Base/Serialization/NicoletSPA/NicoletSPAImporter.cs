@@ -50,7 +50,7 @@ namespace Altaxo.Serialization.NicoletSPA
     /// <param name="table">The table.</param>
     public string? Import(Stream stream, DataTable table)
     {
-      var result = new NicoletSPAImportResult(stream);
+      var result = new NicoletSPAReader(stream);
 
       var xCol = new DoubleColumn();
       var yCol = new DoubleColumn();
@@ -274,7 +274,7 @@ namespace Altaxo.Serialization.NicoletSPA
       try
       {
         using var stream = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.Read);
-        var result = new NicoletSPAImportResult(stream);
+        var result = new NicoletSPAReader(stream);
         if (result.NumberOfPoints > 0 && string.IsNullOrEmpty(result.ErrorMessages))
         {
           p += 0.5;
