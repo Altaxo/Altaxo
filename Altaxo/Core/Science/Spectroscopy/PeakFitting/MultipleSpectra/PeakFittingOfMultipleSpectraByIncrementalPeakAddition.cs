@@ -455,17 +455,20 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
       var initialGuess = tempInitialGuessList.ToArray();
       var isFixed = tempInitialFixedList.ToArray();
 
-      fitFunctionGlobal.SetAllPeakParametersExceptFirstPeakToFixed(false, FixedPeakPositions.Count); // all baseline parameters can vary
-      fitResult2 = fit.Fit(xGlobal, yGlobal, initialGuess, lowerBounds, upperBounds, null, isFixed, cancellationTokenHard);
-      previousGuess = fitResult2.MinimizingPoint.ToArray();
+      if (initialGuess.Length > 0)
+      {
+        fitFunctionGlobal.SetAllPeakParametersExceptFirstPeakToFixed(false, FixedPeakPositions.Count); // all baseline parameters can vary
+        fitResult2 = fit.Fit(xGlobal, yGlobal, initialGuess, lowerBounds, upperBounds, null, isFixed, cancellationTokenHard);
+        previousGuess = fitResult2.MinimizingPoint.ToArray();
 
-      // calculate remaining (original signal minus fit function)
-      fitFunctionGlobal.Evaluate(
-        MatrixMath.ToROMatrixWithOneColumn(xGlobal),
-        previousGuess,
-        VectorMath.ToVector(yRest),
-        null);
-      VectorMath.AddScaled(yGlobal, yRest, -1, yRest); // yRest now contains the rest
+        // calculate remaining (original signal minus fit function)
+        fitFunctionGlobal.Evaluate(
+          MatrixMath.ToROMatrixWithOneColumn(xGlobal),
+          previousGuess,
+          VectorMath.ToVector(yRest),
+          null);
+        VectorMath.AddScaled(yGlobal, yRest, -1, yRest); // yRest now contains the rest
+      }
 
       for (int numberOfTerms = 1 + FixedPeakPositions.Count; numberOfTerms <= MaximumNumberOfPeaks; ++numberOfTerms)
       {
