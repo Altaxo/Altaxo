@@ -379,7 +379,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
         // ***************************************
         //     output the fit curves
         // ***************************************
-        if (outputOptions.OutputFitCurve)
+        if (outputOptions.OutputFitCurve && peakResults.PeakDescriptions.Count > 0)
         {
           groupNumber = (int)(1000 * Math.Ceiling((Math.Max(0, groupNumber) + 1) / 1000d) - 1);
 
@@ -407,7 +407,7 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
         // ********************************************
         //     output the fit curves as separate peaks
         // ********************************************
-        if (outputOptions.OutputFitCurveAsSeparatePeaks)
+        if (outputOptions.OutputFitCurveAsSeparatePeaks && peakResults.PeakDescriptions.Count > 0)
         {
           groupNumber = (int)(1000 * Math.Ceiling((Math.Max(0, groupNumber) + 1) / 1000d) - 1);
           var fitWidthScalingFactor = _processOptions.GetPeakSearchingAndFittingOptions().PeakFitting.FitWidthScalingFactor;
@@ -461,23 +461,26 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting.MultipleSpectra
         {
           groupNumber = (int)(1000 * Math.Ceiling((Math.Max(0, groupNumber) + 1) / 1000d) - 1);
           var fitFunction = peakResults.FitFunction.WithNumberOfTerms(0); // only baseline
-          for (int idxSpectrum = 0; idxSpectrum < preprocessedSpectra.Count; idxSpectrum++)
+          if (fitFunction.NumberOfParameters > 0)
           {
-            ++groupNumber;
-            var destX = destinationTable.DataColumns.EnsureExistence(PeakTable_BaselineCurveColumnNameX(idxSpectrum), typeof(DoubleColumn), ColumnKind.X, groupNumber);
-            var destY = destinationTable.DataColumns.EnsureExistence(PeakTable_BaselineCurveColumnNameY(idxSpectrum), typeof(DoubleColumn), ColumnKind.V, groupNumber);
-
-            var parameter = peakResults.GetBaselineParametersForSpectrum(idxSpectrum);
-            var y = Vector<double>.Build.Dense(preprocessedSpectra[idxSpectrum].Y.Length);
-            fitFunction.Evaluate(MatrixMath.ToROMatrixWithOneColumn(preprocessedSpectra[idxSpectrum].X), parameter, y, null);
-
-            destX.Data = preprocessedSpectra[idxSpectrum].X;
-            destY.Data = y;
-
-            for (int idxProperty = 0; idxProperty < columnPropertyColumns.Length; ++idxProperty)
+            for (int idxSpectrum = 0; idxSpectrum < preprocessedSpectra.Count; idxSpectrum++)
             {
-              columnPropertyColumns[idxProperty][destinationTable.DataColumns.GetColumnNumber(destX)] = columnProperties[idxProperty][idxSpectrum];
-              columnPropertyColumns[idxProperty][destinationTable.DataColumns.GetColumnNumber(destY)] = columnProperties[idxProperty][idxSpectrum];
+              ++groupNumber;
+              var destX = destinationTable.DataColumns.EnsureExistence(PeakTable_BaselineCurveColumnNameX(idxSpectrum), typeof(DoubleColumn), ColumnKind.X, groupNumber);
+              var destY = destinationTable.DataColumns.EnsureExistence(PeakTable_BaselineCurveColumnNameY(idxSpectrum), typeof(DoubleColumn), ColumnKind.V, groupNumber);
+
+              var parameter = peakResults.GetBaselineParametersForSpectrum(idxSpectrum);
+              var y = Vector<double>.Build.Dense(preprocessedSpectra[idxSpectrum].Y.Length);
+              fitFunction.Evaluate(MatrixMath.ToROMatrixWithOneColumn(preprocessedSpectra[idxSpectrum].X), parameter, y, null);
+
+              destX.Data = preprocessedSpectra[idxSpectrum].X;
+              destY.Data = y;
+
+              for (int idxProperty = 0; idxProperty < columnPropertyColumns.Length; ++idxProperty)
+              {
+                columnPropertyColumns[idxProperty][destinationTable.DataColumns.GetColumnNumber(destX)] = columnProperties[idxProperty][idxSpectrum];
+                columnPropertyColumns[idxProperty][destinationTable.DataColumns.GetColumnNumber(destY)] = columnProperties[idxProperty][idxSpectrum];
+              }
             }
           }
         }

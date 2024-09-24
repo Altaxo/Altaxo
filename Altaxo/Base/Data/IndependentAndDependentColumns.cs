@@ -434,6 +434,37 @@ namespace Altaxo.Data
       return column as DataColumn;
     }
 
+    public static AltaxoVariant GetPropertyValueOfColumn(DataColumn ycol, string propertyName)
+    {
+      if (ycol is null || string.IsNullOrEmpty(propertyName))
+        return new AltaxoVariant();
+
+      DataTable? table = DataTable.GetParentDataTableOf(ycol);
+      if (table is not null)
+      {
+        if (table.PropCols.TryGetColumn(propertyName) is { } pcol1)
+        {
+          // if the column has a property column with that name...
+          var columnNumber = table.DataColumns.GetColumnNumber(ycol);
+          if (!pcol1.IsElementEmpty(columnNumber))
+            return pcol1[columnNumber];
+        }
+      }
+
+      if (table is not null)
+      {
+        // try to get the property from the hierarchy of table .. folder .. root folder
+        var p = table.GetPropertyValue<object>(propertyName);
+        if (p is not null)
+        {
+          return new AltaxoVariant(p);
+        }
+      }
+
+      return new AltaxoVariant(); // empty property
+    }
+
+
     public static AltaxoVariant GetPropertyValueOfCurve(IColumnPlotData curve, string propertyName)
     {
       if (curve is null || string.IsNullOrEmpty(propertyName))
