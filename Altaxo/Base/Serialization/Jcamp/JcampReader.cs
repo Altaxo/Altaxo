@@ -36,13 +36,18 @@ namespace Altaxo.Serialization.Jcamp
   /// </summary>
   public class JcampReader
   {
+    private const string TitleHeader = "##TITLE=";
+    private const string OwnerHeader = "##OWNER=";
+    private const string SystemNameHeader = "##SPECTROMETER/DATA SYSTEM=";
     private const string XLabelHeader = "##XLABEL=";
     private const string YLabelHeader = "##YLABEL=";
     private const string XUnitHeader = "##XUNITS=";
     private const string YUnitHeader = "##YUNITS=";
     private const string TimeHeader = "##TIME=";
     private const string DateHeader = "##DATE=";
+    private const string NumberOfPointsHeader = "##NPOINTS=";
     private const string FirstXHeader = "##FIRSTX=";
+    private const string LastXHeader = "##LASTX=";
     private const string DeltaXHeader = "##DELTAX=";
     private const string XFactorHeader = "##XFACTOR=";
     private const string YFactorHeader = "##YFACTOR=";
@@ -55,15 +60,23 @@ namespace Altaxo.Serialization.Jcamp
 
 
     protected double _xFirst = double.NaN;
+    protected double _xLast = double.NaN;
     protected double _xInc = double.NaN;
     protected double _xScale = double.NaN;
     protected double _yScale = double.NaN;
+    public int? _numberOfPoints = null;
 
 
     public double XFirst => _xFirst;
     public double XIncrement => _xInc;
     public double XScale => _xScale;
     public double YScale => _yScale;
+
+
+    /// <summary>The title of the file.</summary>
+    public string? Title { get; protected set; } = null;
+    public string? Owner { get; protected set; } = null;
+    public string? SystemName { get; protected set; } = null;
 
     /// <summary>The label of the x-axis.</summary>
     public string? XLabel { get; protected set; } = null;
@@ -88,19 +101,18 @@ namespace Altaxo.Serialization.Jcamp
     /// </summary>
     public DateTime CreationTime { get; protected set; } = DateTime.MinValue;
 
-    private (double X, double Y)[] _xyValues;
+    private double[] _xValues;
+    private double[] _yValues;
 
-    public IReadOnlyList<(double X, double Y)> XYValues => _xyValues;
-
-
-
+    public double[] XValues => _xValues;
+    public double[] YValues => _yValues;
 
     /// <summary>
     /// Imports a Jcamp file. The file must not be a multi spectrum file (an exception is thrown in this case).
     /// </summary>
     /// <param name="stream">The stream where to import from.</param>
     /// <returns>Null if successful, otherwise an error description.</returns>
-    public JcampReader(System.IO.Stream stream, DataTable? table) : this(new StreamReader(stream))
+    public JcampReader(System.IO.Stream stream) : this(new StreamReader(stream))
     {
     }
 
@@ -114,7 +126,6 @@ namespace Altaxo.Serialization.Jcamp
       DateTime dateValue = DateTime.MinValue;
       DateTime timeValue = DateTime.MinValue;
 
-      var xyValues = new List<(double X, double Y)>();
 
       try
       {
@@ -128,8 +139,19 @@ namespace Altaxo.Serialization.Jcamp
 
           try
           {
-
-            if (line.StartsWith(XLabelHeader))
+            if (line.StartsWith(TitleHeader))
+            {
+              Title = line.Substring(TitleHeader.Length).Trim();
+            }
+            if (line.StartsWith(OwnerHeader))
+            {
+              Owner = line.Substring(OwnerHeader.Length).Trim();
+            }
+            if (line.StartsWith(SystemNameHeader))
+            {
+              SystemName = line.Substring(SystemNameHeader.Length).Trim();
+            }
+            else if (line.StartsWith(XLabelHeader))
             {
               XLabel = line.Substring(XLabelHeader.Length).Trim();
             }
@@ -170,9 +192,19 @@ namespace Altaxo.Serialization.Jcamp
             {
               DoubleParse(line.Substring(FirstXHeader.Length), out _xFirst);
             }
+            else if (line.StartsWith(LastXHeader))
+            {
+              DoubleParse(line.Substring(LastXHeader.Length), out _xLast);
+            }
             else if (line.StartsWith(DeltaXHeader))
             {
               DoubleParse(line.Substring(DeltaXHeader.Length), out _xInc);
+            }
+            else if (line.StartsWith(NumberOfPointsHeader))
+            {
+              double numPoints;
+              DoubleParse(line.Substring(NumberOfPointsHeader.Length), out numPoints);
+              _numberOfPoints = (int)numPoints;
             }
             else if (line.StartsWith(XFactorHeader))
             {
@@ -193,7 +225,12 @@ namespace Altaxo.Serialization.Jcamp
 
         // adjust some variables if not given
         if (double.IsNaN(_xInc))
-          _xInc = 1;
+        {
+          if (_numberOfPoints.HasValue && !double.IsNaN(_xFirst) && !double.IsNaN(_xLast))
+            _xInc = (_xLast - _xFirst) / (_numberOfPoints.Value - 1d);
+          else
+            _xInc = 1;
+        }
         if (double.IsNaN(_xScale))
           _xScale = 1;
         if (double.IsNaN(_yScale))
@@ -207,6 +244,8 @@ namespace Altaxo.Serialization.Jcamp
 
         if (line.StartsWith(XYBlockHeader))
         {
+          var xValues = new List<double>();
+          var yValues = new List<double>();
           for (; ; )
           {
             line = tr.ReadLine();
@@ -232,11 +271,13 @@ namespace Altaxo.Serialization.Jcamp
               if (!DoubleTryParse(tokens[i], out var yValue))
                 throw new FormatException("Non numeric value found in line" + lineCounter.ToString());
 
-              xyValues.Add((xValue * _xScale, yValue * _yScale));
+              xValues.Add(xValue * _xScale);
+              yValues.Add(yValue * _yScale);
               xValue += _xInc;
             }
           }
-          _xyValues = xyValues.ToArray();
+          _xValues = xValues.ToArray();
+          _yValues = yValues.ToArray();
         }
       }
       catch (Exception ex)
@@ -276,11 +317,8 @@ namespace Altaxo.Serialization.Jcamp
         table.PropCols["Label"][1] = YLabel;
       }
 
-      for (int i = 0; i < _xyValues.Length; ++i)
-      {
-        xCol[i] = _xyValues[i].X;
-        yCol[i] = _xyValues[i].Y;
-      }
+      xCol.Data = _xValues;
+      yCol.Data = _yValues;
     }
 
     public static string[] SplitLineByPlusOrMinus(string s)

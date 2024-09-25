@@ -53,7 +53,7 @@ namespace Altaxo.Serialization.Jcamp
         using var stream = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.Read);
         using var reader = new StreamReader(stream);
         var result = new JcampReader(reader);
-        if (string.IsNullOrEmpty(result.ErrorMessages) && !double.IsNaN(result.XFirst) && !double.IsNaN(result.XIncrement) && result.XYValues is not null && result.XYValues.Count > 0)
+        if (string.IsNullOrEmpty(result.ErrorMessages) && !double.IsNaN(result.XFirst) && !double.IsNaN(result.XIncrement) && result.XValues is not null && result.XValues.Length > 0)
         {
           p += 0.5;
         }
@@ -104,8 +104,7 @@ namespace Altaxo.Serialization.Jcamp
       foreach (string filename in filenames)
       {
         using var stream = new FileStream(filename, FileMode.Open, FileAccess.Read, FileShare.Read);
-        var localTable = new DataTable();
-        var imported = new JcampReader(stream, localTable);
+        var imported = new JcampReader(stream);
         string? error = imported.ErrorMessages;
         stream.Close();
 
@@ -114,23 +113,12 @@ namespace Altaxo.Serialization.Jcamp
           errorList.Append(error);
           continue;
         }
-        if (localTable is null)
-          throw new InvalidProgramException();
 
-        if (localTable.DataColumns.RowCount == 0)
+        if (imported.XValues is null || imported.YValues is null || imported.XValues.Length == 0 || imported.YValues.Length == 0)
           continue;
-        xvalues = (DoubleColumn)localTable[0];
-        yvalues = (DoubleColumn)localTable[1];
 
-        // Add the necessary property columns
-        for (int i = 0; i < localTable.PropCols.ColumnCount; i++)
-        {
-          string name = localTable.PropCols.GetColumnName(i);
-          if (!table.PropCols.ContainsColumn(name))
-          {
-            table.PropCols.Add((DataColumn)localTable.PropCols[i].Clone(), name, localTable.PropCols.GetColumnKind(i));
-          }
-        }
+        xvalues = new DoubleColumn() { Data = imported.XValues };
+        yvalues = new DoubleColumn() { Data = imported.YValues };
 
         // first look if our default xcolumn matches the xvalues
 
@@ -160,17 +148,28 @@ namespace Altaxo.Serialization.Jcamp
           xcol = new Altaxo.Data.DoubleColumn();
           xcol.CopyDataFrom(xvalues);
           lastColumnGroup = table.DataColumns.GetUnusedColumnGroupNumber();
-          table.DataColumns.Add(xcol, "X", Altaxo.Data.ColumnKind.X, lastColumnGroup);
+          string xColumnName = (!string.IsNullOrEmpty(imported.XLabel) && !importOptions.UseNeutralColumnName) ? imported.XLabel : "X";
+          table.DataColumns.Add(xcol, xColumnName, Altaxo.Data.ColumnKind.X, lastColumnGroup);
+          if (!string.IsNullOrEmpty(imported.XUnit))
+          {
+            var pCol = table.PropCols.EnsureExistence("Unit", typeof(TextColumn), ColumnKind.V, 0);
+            pCol[table.DataColumns.GetColumnNumber(xcol)] = imported.XUnit;
+          }
         }
 
         // now add the y-values
-        string columnName = importOptions.UseNeutralColumnName ?
-                            $"{(string.IsNullOrEmpty(importOptions.NeutralColumnName) ? "Y" : importOptions.NeutralColumnName)}{idxYColumn}" :
-                            System.IO.Path.GetFileNameWithoutExtension(filename);
-        columnName = table.DataColumns.FindUniqueColumnName(columnName);
-        var ycol = table.DataColumns.EnsureExistence(columnName, typeof(DoubleColumn), ColumnKind.V, lastColumnGroup);
+        string yColumnName = (!importOptions.UseNeutralColumnName && !string.IsNullOrEmpty(imported.YLabel)) ? imported.YLabel : "Y";
+        yColumnName = table.DataColumns.FindUniqueColumnName(yColumnName);
+        var ycol = table.DataColumns.EnsureExistence(yColumnName, typeof(DoubleColumn), ColumnKind.V, lastColumnGroup);
         ++idxYColumn;
         ycol.CopyDataFrom(yvalues);
+        int yColumnNumber = table.DataColumns.GetColumnNumber(ycol);
+        if (!string.IsNullOrEmpty(imported.YUnit))
+        {
+          var pCol = table.PropCols.EnsureExistence("Unit", typeof(TextColumn), ColumnKind.V, 0);
+          pCol[yColumnNumber] = imported.YUnit;
+        }
+
 
         if (importOptions.IncludeFilePathAsProperty)
         {
@@ -179,19 +178,19 @@ namespace Altaxo.Serialization.Jcamp
             table.PropCols.Add(new Altaxo.Data.TextColumn(), "FilePath");
 
           // now set the file name property cell
-          int yColumnNumber = table.DataColumns.GetColumnNumber(ycol);
           if (table.PropCols["FilePath"] is Altaxo.Data.TextColumn)
           {
             table.PropCols["FilePath"][yColumnNumber] = filename;
           }
-
-          // set the other property columns
-          for (int i = 0; i < localTable.PropCols.ColumnCount; i++)
-          {
-            string name = localTable.PropCols.GetColumnName(i);
-            table.PropCols[name][yColumnNumber] = localTable.PropCols[i][1];
-          }
         }
+
+        // set the other property columns
+        if (!string.IsNullOrEmpty(imported.Title))
+        {
+          var pcol = table.PropCols.EnsureExistence("Title", typeof(TextColumn), ColumnKind.V, 0);
+          pcol[yColumnNumber] = imported.Title;
+        }
+
       } // foreache file
 
       // Make also a note from where it was imported
