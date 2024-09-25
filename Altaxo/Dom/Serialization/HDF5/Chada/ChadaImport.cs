@@ -23,6 +23,9 @@
 #endregion Copyright
 
 using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Text;
 using Altaxo.Data;
 using PureHDF;
@@ -30,20 +33,60 @@ using PureHDF.VOL.Native;
 
 namespace Altaxo.Serialization.HDF5.Chada
 {
-  public class ChadaImport
+  public class ChadaImport : IDataFileImporter
   {
+    public (IReadOnlyList<string> FileExtensions, string Explanation) GetFileExtensions()
+    {
+      return ([".cha"], "Chada files (*.cha)");
+    }
+
+    public double GetProbabilityForBeingThisFileFormat(string fileName)
+    {
+      double p = 0;
+      var fe = GetFileExtensions();
+      if (fe.FileExtensions.ToHashSet().Contains(Path.GetExtension(fileName).ToLowerInvariant()))
+      {
+        p += 0.5;
+      }
+
+      try
+      {
+        var table = new DataTable();
+        var result = ImportRamanCHADA([fileName], table);
+        if (string.IsNullOrEmpty(result) &&
+          table.DataColumnCount >= 1 && table.DataRowCount >= 1)
+        {
+          p += 0.5;
+        }
+      }
+      catch
+      {
+        p = 0;
+      }
+
+      return p;
+    }
+
+    public string? Import(IReadOnlyList<string> fileNames, DataTable table, bool attachDataSource = true)
+    {
+      var result = ImportRamanCHADA(fileNames, table);
+      // TODO: we do not have a import data source for this
+      return result;
+    }
+
+
     /// <summary>
     /// Import a Chada file. Chada files are very simply structured HDF5 files, with only one or two datasets, consisting of two columns.
     /// </summary>
-    public static string? ImportRamanCHADA(string[] fileNames, DataTable dataTable)
+    public static string? ImportRamanCHADA(IReadOnlyList<string> fileNames, DataTable dataTable)
     {
       var stb = new StringBuilder();
       DataColumn? lastXColumn = null;
       int lastGroupNumber = -1;
       int lastYNumber = -1;
-      for (int i = 0; i < fileNames.Length; ++i)
+      for (int i = 0; i < fileNames.Count; ++i)
       {
-        var err = ImportRamanCHADA(fileNames[i], dataTable, fileNames.Length, ref lastXColumn, ref lastGroupNumber, ref lastYNumber);
+        var err = ImportRamanCHADA(fileNames[i], dataTable, fileNames.Count, ref lastXColumn, ref lastGroupNumber, ref lastYNumber);
         if (!string.IsNullOrEmpty(err))
           stb.Append(err);
       }
@@ -169,5 +212,7 @@ namespace Altaxo.Serialization.HDF5.Chada
         }
       }
     }
+
+
   }
 }

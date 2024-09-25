@@ -22,27 +22,27 @@
 
 #endregion Copyright
 
-using System.Windows.Controls;
-using Altaxo.Gui.Serialization.BrukerOpus;
-using Altaxo.Gui.Serialization.Jcamp;
-using Altaxo.Gui.Serialization.NicoletSPA;
-using Altaxo.Gui.Serialization.Renishaw;
+using Altaxo.Gui.Common;
+using Altaxo.Gui.Data;
+using Altaxo.Serialization;
+using Altaxo.Serialization.BrukerOpus;
 
-namespace Altaxo.Gui.Serialization.Galactic
+
+namespace Altaxo.Gui.Serialization.BrukerOpus
 {
-  /// <summary>
-  /// Interaction logic for GalacticSPCImportOptionsControl.xaml
-  /// </summary>
-  public partial class GalacticSPCImportOptionsControl : UserControl,
-    IGalacticSPCImportOptionsView,
-    IRenishawImportOptionsView,
-    IJcampImportOptionsView,
-    INicoletSPAImportOptionsView,
-    IBrukerOpusImportOptionsView
+  [UserControllerForObject(typeof(BrukerOpusImportDataSource))]
+  public class BrukerOpusImportDataSourceController : DataSourceControllerBase<BrukerOpusImportDataSource>
   {
-    public GalacticSPCImportOptionsControl()
+    protected override IMVCANController GetProcessDataController()
     {
-      InitializeComponent();
+      var processDataController = new MultipleFilesController();
+      processDataController.FileFilters = [FileIOHelper.GetFilterDescriptionForExtensions(new BrukerOpusImporter().GetFileExtensions())];
+      processDataController.InitializeDocument(_doc.SourceFileNames);
+      Current.Gui.FindAndAttachControlTo(processDataController);
+      return processDataController;
     }
+
+    protected override bool IsProcessDataInitiallyExpanded() => true;
+    protected override bool IsProcessOptionsInitiallyExpanded() => false;
   }
 }

@@ -27,6 +27,9 @@ using Altaxo.Data;
 using Altaxo.Gui;
 using Altaxo.Gui.Scripting;
 using Altaxo.Scripting;
+using Altaxo.Serialization;
+using Altaxo.Serialization.BrukerOpus;
+using Altaxo.Serialization.NicoletSPA;
 
 namespace Altaxo.Worksheet.Commands
 {
@@ -116,9 +119,18 @@ namespace Altaxo.Worksheet.Commands
   {
     public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
     {
-      Altaxo.Data.FileCommands.ShowImportNicoletSPADialog(ctrl.DataTable);
+      FileIOHelper.ShowDialog(ctrl.DataTable, new NicoletSPAImporter());
     }
   }
+
+  public class ImportBrukerOpus : AbstractWorksheetControllerCommand
+  {
+    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
+    {
+      FileIOHelper.ShowDialog(ctrl.DataTable, new BrukerOpusImporter());
+    }
+  }
+
 
   public class ImportRamanCHADA : AbstractWorksheetControllerCommand
   {
