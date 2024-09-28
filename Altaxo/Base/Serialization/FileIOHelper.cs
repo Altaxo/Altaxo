@@ -201,7 +201,7 @@ namespace Altaxo.Serialization
     /// <exception cref="System.IO.IOException">Could not read any data from the stream</exception>
     public static void ForcedRead(this Stream stream, byte[] buffer, int offset, int length)
     {
-      if (length <= 0)
+      if (length < 0)
       {
         throw new System.ArgumentOutOfRangeException(nameof(length));
       }

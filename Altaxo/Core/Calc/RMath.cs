@@ -23,6 +23,7 @@
 #endregion Copyright
 
 using System;
+using System.Collections.Generic;
 
 namespace Altaxo.Calc
 {
@@ -281,6 +282,41 @@ namespace Altaxo.Calc
     }
 
     private static readonly double OneMinusExp_SmallBound = Math.Pow(DoubleConstants.DBL_EPSILON * 3628800, 1 / 9.0);
+
+    /// <summary>
+    /// Evaluates the polynom. The polynomial coefficients are given in ascending order.
+    /// </summary>
+    /// <param name="x">The x value.</param>
+    /// <param name="coefficients">The polynomila coefficients in ascending order.</param>
+    /// <returns>The value of the evaluated polynom.</returns>
+    public static double EvaluatePolynomOrderAscending(double x, IReadOnlyList<double> coefficients)
+    {
+      double sum = 0;
+      for (int i = coefficients.Count - 1; i >= 0; --i)
+      {
+        sum *= x;
+        sum += coefficients[i];
+      }
+      return sum;
+    }
+
+    /// <summary>
+    /// Evaluates the polynom. The polynomial coefficients are given in ascending order.
+    /// </summary>
+    /// <param name="x">The x value.</param>
+    /// <param name="coefficients">The polynomila coefficients in ascending order.</param>
+    /// <returns>The value of the evaluated polynom.</returns>
+    public static double EvaluatePolynomOrderDescending(double x, IReadOnlyList<double> coefficients)
+    {
+      double sum = 0;
+      for (int i = 0; i < coefficients.Count; ++i)
+      {
+        sum *= x;
+        sum += coefficients[i];
+      }
+      return sum;
+    }
+
 
     /// <summary>
     /// Calculates 1-Exp(x) with better accuracy around x=0.

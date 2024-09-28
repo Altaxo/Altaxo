@@ -30,6 +30,7 @@ using Altaxo.Scripting;
 using Altaxo.Serialization;
 using Altaxo.Serialization.BrukerOpus;
 using Altaxo.Serialization.NicoletSPA;
+using Altaxo.Serialization.WITec;
 
 namespace Altaxo.Worksheet.Commands
 {
@@ -131,6 +132,13 @@ namespace Altaxo.Worksheet.Commands
     }
   }
 
+  public class ImportWiTec : AbstractWorksheetControllerCommand
+  {
+    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
+    {
+      FileIOHelper.ShowDialog(ctrl.DataTable, new WITecImporter());
+    }
+  }
 
   public class ImportRamanCHADA : AbstractWorksheetControllerCommand
   {

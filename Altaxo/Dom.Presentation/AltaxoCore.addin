@@ -282,6 +282,9 @@
                   <MenuItem id="WorksheetImportBrukerOpus" label="Bruker Opus .0 files"
                                 icon="Icons.16x16.NewDocumentIcon" description="Imports one or multiple Bruker opus spectra files (*.0)."
                                 class="Altaxo.Worksheet.Commands.ImportBrukerOpus" />
+                  <MenuItem id="WorksheetImportWiTec" label="WiTec .wip files"
+                                icon="Icons.16x16.NewDocumentIcon" description="Imports one or multiple WiTec .wip project files."
+                                class="Altaxo.Worksheet.Commands.ImportWiTec" />
                   <MenuItem id="WorksheetImportRamanCHADA" label="CHADA (Raman)"
                                 icon="Icons.16x16.NewDocumentIcon" description="Imports a .cha (Raman CHADA) file."
                                 class="Altaxo.Worksheet.Commands.ImportRamanCHADA" />
