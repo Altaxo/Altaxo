@@ -51,9 +51,8 @@ namespace Altaxo.Serialization.Jcamp
       try
       {
         using var stream = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.Read);
-        using var reader = new StreamReader(stream);
-        var result = new JcampReader(reader);
-        if (string.IsNullOrEmpty(result.ErrorMessages) && !double.IsNaN(result.XFirst) && !double.IsNaN(result.XIncrement) && result.XValues is not null && result.XValues.Length > 0)
+        var result = new JcampReader(stream);
+        if (string.IsNullOrEmpty(result.ErrorMessages) && result.Blocks.Count > 0 && result.Blocks[0].XValues.Length > 0 && result.Blocks[0].YValues.Length > 0)
         {
           p += 0.5;
         }
@@ -103,10 +102,13 @@ namespace Altaxo.Serialization.Jcamp
       int idxYColumn = 0;
       foreach (string filename in filenames)
       {
-        using var stream = new FileStream(filename, FileMode.Open, FileAccess.Read, FileShare.Read);
-        var imported = new JcampReader(stream);
+        JcampReader imported;
+
+        using (var stream = new FileStream(filename, FileMode.Open, FileAccess.Read, FileShare.Read))
+        {
+          imported = new JcampReader(stream);
+        }
         string? error = imported.ErrorMessages;
-        stream.Close();
 
         if (error is not null)
         {
@@ -114,83 +116,88 @@ namespace Altaxo.Serialization.Jcamp
           continue;
         }
 
-        if (imported.XValues is null || imported.YValues is null || imported.XValues.Length == 0 || imported.YValues.Length == 0)
-          continue;
-
-        xvalues = new DoubleColumn() { Data = imported.XValues };
-        yvalues = new DoubleColumn() { Data = imported.YValues };
-
-        // first look if our default xcolumn matches the xvalues
-
-        bool bMatchsXColumn = xcol is not null && ValuesMatch(xvalues, xcol);
-
-        // if no match, then consider all xcolumns from right to left, maybe some fits
-        if (!bMatchsXColumn)
+        for (int idxBlock = 0; idxBlock < imported.Blocks.Count; ++idxBlock)
         {
-          for (int ncol = table.DataColumns.ColumnCount - 1; ncol >= 0; ncol--)
+          var block = imported.Blocks[idxBlock];
+
+          if (block.XValues is null || block.YValues is null || block.XValues.Length == 0 || block.YValues.Length == 0)
+            continue;
+
+          xvalues = new DoubleColumn() { Data = block.XValues };
+          yvalues = new DoubleColumn() { Data = block.YValues };
+
+          // first look if our default xcolumn matches the xvalues
+
+          bool bMatchsXColumn = xcol is not null && ValuesMatch(xvalues, xcol);
+
+          // if no match, then consider all xcolumns from right to left, maybe some fits
+          if (!bMatchsXColumn)
           {
-            if ((ColumnKind.X == table.DataColumns.GetColumnKind(ncol)) &&
-              (table.DataColumns[ncol] is DoubleColumn) &&
-              (ValuesMatch(xvalues, (DoubleColumn)table.DataColumns[ncol]))
-              )
+            for (int ncol = table.DataColumns.ColumnCount - 1; ncol >= 0; ncol--)
             {
-              xcol = (DoubleColumn)table.DataColumns[ncol];
-              lastColumnGroup = table.DataColumns.GetColumnGroup(xcol);
-              bMatchsXColumn = true;
-              break;
+              if ((ColumnKind.X == table.DataColumns.GetColumnKind(ncol)) &&
+                (table.DataColumns[ncol] is DoubleColumn) &&
+                (ValuesMatch(xvalues, (DoubleColumn)table.DataColumns[ncol]))
+                )
+              {
+                xcol = (DoubleColumn)table.DataColumns[ncol];
+                lastColumnGroup = table.DataColumns.GetColumnGroup(xcol);
+                bMatchsXColumn = true;
+                break;
+              }
             }
           }
-        }
 
-        // create a new x column if the last one does not match
-        if (!bMatchsXColumn)
-        {
-          xcol = new Altaxo.Data.DoubleColumn();
-          xcol.CopyDataFrom(xvalues);
-          lastColumnGroup = table.DataColumns.GetUnusedColumnGroupNumber();
-          string xColumnName = (!string.IsNullOrEmpty(imported.XLabel) && !importOptions.UseNeutralColumnName) ? imported.XLabel : "X";
-          table.DataColumns.Add(xcol, xColumnName, Altaxo.Data.ColumnKind.X, lastColumnGroup);
-          if (!string.IsNullOrEmpty(imported.XUnit))
+          // create a new x column if the last one does not match
+          if (!bMatchsXColumn)
+          {
+            xcol = new Altaxo.Data.DoubleColumn();
+            xcol.CopyDataFrom(xvalues);
+            lastColumnGroup = table.DataColumns.GetUnusedColumnGroupNumber();
+            string xColumnName = (!string.IsNullOrEmpty(block.XLabel) && !importOptions.UseNeutralColumnName) ? block.XLabel : "X";
+            table.DataColumns.Add(xcol, xColumnName, Altaxo.Data.ColumnKind.X, lastColumnGroup);
+            if (!string.IsNullOrEmpty(block.XUnit))
+            {
+              var pCol = table.PropCols.EnsureExistence("Unit", typeof(TextColumn), ColumnKind.V, 0);
+              pCol[table.DataColumns.GetColumnNumber(xcol)] = block.XUnit;
+            }
+          }
+
+          // now add the y-values
+          string yColumnName = (!importOptions.UseNeutralColumnName && !string.IsNullOrEmpty(block.YLabel)) ? block.YLabel :
+                               (imported.Blocks.Count == 1 ? "Y" : $"Y{idxBlock}");
+          yColumnName = table.DataColumns.FindUniqueColumnName(yColumnName);
+          var ycol = table.DataColumns.EnsureExistence(yColumnName, typeof(DoubleColumn), ColumnKind.V, lastColumnGroup);
+          ++idxYColumn;
+          ycol.CopyDataFrom(yvalues);
+          int yColumnNumber = table.DataColumns.GetColumnNumber(ycol);
+          if (!string.IsNullOrEmpty(block.YUnit))
           {
             var pCol = table.PropCols.EnsureExistence("Unit", typeof(TextColumn), ColumnKind.V, 0);
-            pCol[table.DataColumns.GetColumnNumber(xcol)] = imported.XUnit;
+            pCol[yColumnNumber] = block.YUnit;
           }
-        }
-
-        // now add the y-values
-        string yColumnName = (!importOptions.UseNeutralColumnName && !string.IsNullOrEmpty(imported.YLabel)) ? imported.YLabel : "Y";
-        yColumnName = table.DataColumns.FindUniqueColumnName(yColumnName);
-        var ycol = table.DataColumns.EnsureExistence(yColumnName, typeof(DoubleColumn), ColumnKind.V, lastColumnGroup);
-        ++idxYColumn;
-        ycol.CopyDataFrom(yvalues);
-        int yColumnNumber = table.DataColumns.GetColumnNumber(ycol);
-        if (!string.IsNullOrEmpty(imported.YUnit))
-        {
-          var pCol = table.PropCols.EnsureExistence("Unit", typeof(TextColumn), ColumnKind.V, 0);
-          pCol[yColumnNumber] = imported.YUnit;
-        }
 
 
-        if (importOptions.IncludeFilePathAsProperty)
-        {
-          // add also a property column named "FilePath" if not existing so far
-          if (!table.PropCols.ContainsColumn("FilePath"))
-            table.PropCols.Add(new Altaxo.Data.TextColumn(), "FilePath");
-
-          // now set the file name property cell
-          if (table.PropCols["FilePath"] is Altaxo.Data.TextColumn)
+          if (importOptions.IncludeFilePathAsProperty)
           {
-            table.PropCols["FilePath"][yColumnNumber] = filename;
+            // add also a property column named "FilePath" if not existing so far
+            if (!table.PropCols.ContainsColumn("FilePath"))
+              table.PropCols.Add(new Altaxo.Data.TextColumn(), "FilePath");
+
+            // now set the file name property cell
+            if (table.PropCols["FilePath"] is Altaxo.Data.TextColumn)
+            {
+              table.PropCols["FilePath"][yColumnNumber] = filename;
+            }
           }
-        }
 
-        // set the other property columns
-        if (!string.IsNullOrEmpty(imported.Title))
-        {
-          var pcol = table.PropCols.EnsureExistence("Title", typeof(TextColumn), ColumnKind.V, 0);
-          pcol[yColumnNumber] = imported.Title;
-        }
-
+          // set the other property columns
+          if (!string.IsNullOrEmpty(block.Title))
+          {
+            var pcol = table.PropCols.EnsureExistence("Title", typeof(TextColumn), ColumnKind.V, 0);
+            pcol[yColumnNumber] = block.Title;
+          }
+        } // foreach block
       } // foreache file
 
       // Make also a note from where it was imported
@@ -233,6 +240,45 @@ namespace Altaxo.Serialization.Jcamp
         {
           Current.Gui.ErrorMessageBox(errors, "Some errors occured during import!");
         }
+      }
+    }
+
+    /// <summary>
+    /// Imports the data of this <see cref="JcampReader"/> instance into a <see cref="DataTable"/>.
+    /// </summary>
+    /// <param name="table">The table.</param>
+    public void ToDataTable(JcampReader reader, DataTable table)
+    {
+      foreach (var block in reader.Blocks)
+      {
+
+        var xCol = new DoubleColumn();
+        var yCol = new DoubleColumn();
+        table.DataColumns.Add(xCol, string.IsNullOrEmpty(block.XLabel) ? "X" : block.XLabel, ColumnKind.X);
+        table.DataColumns.Add(yCol, string.IsNullOrEmpty(block.YLabel) ? "Y" : block.YLabel, ColumnKind.V);
+
+        if (block.CreationTime != DateTime.MinValue)
+        {
+          table.PropCols.Add(new DateTimeColumn(), "Date", ColumnKind.V);
+          table.PropCols["Date"][1] = block.CreationTime;
+        }
+
+        if (!string.IsNullOrEmpty(block.XUnit) || !string.IsNullOrEmpty(block.YUnit))
+        {
+          table.PropCols.Add(new TextColumn(), "Unit", ColumnKind.V);
+          table.PropCols["Unit"][0] = block.XUnit;
+          table.PropCols["Unit"][1] = block.YUnit;
+        }
+
+        if (!string.IsNullOrEmpty(block.XLabel) || !string.IsNullOrEmpty(block.YLabel))
+        {
+          table.PropCols.Add(new TextColumn(), "Label", ColumnKind.V);
+          table.PropCols["Label"][0] = block.XLabel;
+          table.PropCols["Label"][1] = block.YLabel;
+        }
+
+        xCol.Data = block.XValues;
+        yCol.Data = block.YValues;
       }
     }
 
