@@ -274,7 +274,7 @@ namespace Altaxo.Gui.Pads.FileBrowser
             wasHandled = true;
             try
             {
-              imp.Import([item.FullName], table);
+              imp.Import([item.FullName], table, imp.CheckOrCreateImportOptions(null), attachDataSource: true);
               Current.ProjectService.CreateNewWorksheet(table);
               continue;
             }
@@ -292,7 +292,7 @@ namespace Altaxo.Gui.Pads.FileBrowser
           wasHandled |= true;
           try
           {
-            importers[maxIdx].Import([item.FullName], table);
+            importers[maxIdx].Import([item.FullName], table, importers[maxIdx].CheckOrCreateImportOptions(null), attachDataSource: true);
             Current.Project.DataTableCollection.Add(table);
             Current.ProjectService.CreateNewWorksheet(table);
             continue;

@@ -198,7 +198,7 @@ namespace Altaxo.Serialization.NicoletSPA
       {
         destinationTable.DataColumns.RemoveColumnsAll();
         destinationTable.PropCols.RemoveColumnsAll();
-        new NicoletSPAImporter().Import(validFileNames, destinationTable, _processOptions);
+        new NicoletSPAImporter().Import(validFileNames, destinationTable, _processOptions, attachDataSource: false);
       }
 
       var invalidFileNames = _asciiFiles.Where(x => string.IsNullOrEmpty(x.GetResolvedFileNameOrNull())).ToArray();

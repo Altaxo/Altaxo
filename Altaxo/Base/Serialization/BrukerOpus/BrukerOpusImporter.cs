@@ -36,14 +36,27 @@ namespace Altaxo.Serialization.BrukerOpus
   /// <seealso cref="Altaxo.Serialization.IDataFileImporter" />
   /// <remarks>
   /// </remarks>
-  public record BrukerOpusImporter : IDataFileImporter
+  public record BrukerOpusImporter : DataFileImporterBase
   {
-    public (IReadOnlyList<string> FileExtensions, string Explanation) GetFileExtensions()
+    public override (IReadOnlyList<string> FileExtensions, string Explanation) GetFileExtensions()
     {
       return ([".0"], "Bruker Opus files (*.0)");
     }
 
-    public double GetProbabilityForBeingThisFileFormat(string fileName)
+    /// <inheritdoc/>
+    public override object CheckOrCreateImportOptions(object? importOptions)
+    {
+      return (importOptions as BrukerOpusImportOptions) ?? new BrukerOpusImportOptions();
+    }
+
+
+    public override IAltaxoTableDataSource? CreateTableDataSource(IReadOnlyList<string> fileNames, object importOptions)
+    {
+      return new BrukerOpusImportDataSource(fileNames, (BrukerOpusImportOptions)importOptions);
+    }
+
+
+    public override double GetProbabilityForBeingThisFileFormat(string fileName)
     {
       double p = 0;
       var fe = GetFileExtensions();
@@ -71,20 +84,12 @@ namespace Altaxo.Serialization.BrukerOpus
       return p;
     }
 
-    public string? Import(IReadOnlyList<string> filenames, DataTable table, bool attachDataSource = true)
-    {
-      var importOptions = new BrukerOpusImportOptions();
-      var result = Import(filenames, table, importOptions);
-      if (attachDataSource)
-      {
-        table.DataSource = new BrukerOpusImportDataSource(filenames, importOptions);
-      }
-      return result;
-    }
 
 
-    public string? Import(IReadOnlyList<string> filenames, DataTable table, BrukerOpusImportOptions importOptions)
+
+    public override string? Import(IReadOnlyList<string> filenames, DataTable table, object importOptionsObj, bool attachDataSource = true)
     {
+      var importOptions = (BrukerOpusImportOptions)importOptionsObj;
       DoubleColumn? xcol = null;
       DoubleColumn xvalues, yvalues;
       var errorList = new System.Text.StringBuilder();
@@ -180,6 +185,11 @@ namespace Altaxo.Serialization.BrukerOpus
           table.Notes.WriteLine($"Imported from {filenames[0]} at {DateTimeOffset.Now}");
         else if (filenames.Count > 1)
           table.Notes.WriteLine($"Imported from {filenames[0]} and more ({filenames.Count} files) at {DateTimeOffset.Now}");
+      }
+
+      if (attachDataSource)
+      {
+        table.DataSource = CreateTableDataSource(filenames, importOptions);
       }
 
       return errorList.Length == 0 ? null : errorList.ToString();

@@ -85,7 +85,7 @@ namespace Altaxo.Serialization.Xml
 
     void CommitArray();
 
-    void AddArray(string name, int[] val, int count);
+    void AddArray(string name, IReadOnlyList<int> val, int count);
 
     void AddArray(string name, float[] val, int count);
 

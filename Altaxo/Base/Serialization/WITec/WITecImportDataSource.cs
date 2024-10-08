@@ -30,13 +30,13 @@ using System.Linq;
 using System.Text;
 using Altaxo.Data;
 
-namespace Altaxo.Serialization.BrukerOpus
+namespace Altaxo.Serialization.WITec
 {
-  public class BrukerOpusImportDataSource : TableDataSourceBase, Altaxo.Data.IAltaxoTableDataSource
+  public class WITecImportDataSource : TableDataSourceBase, Altaxo.Data.IAltaxoTableDataSource
   {
     private IDataSourceImportOptions _importOptions;
 
-    private BrukerOpusImportOptions _processOptions;
+    private WITecImportOptions _processOptions;
 
     private List<AbsoluteAndRelativeFileName> _asciiFiles = new List<AbsoluteAndRelativeFileName>();
 
@@ -57,14 +57,14 @@ namespace Altaxo.Serialization.BrukerOpus
     #region Version 0
 
     /// <summary>
-    /// 2024-09-30 initial version.
+    /// 2024-10-08 initial version.
     /// </summary>
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(BrukerOpusImportDataSource), 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(WITecImportDataSource), 0)]
     private class XmlSerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public virtual void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (BrukerOpusImportDataSource)obj;
+        var s = (WITecImportDataSource)obj;
 
         info.AddValue("ImportOptions", s._importOptions);
         info.AddValue("ProcessOptions", s._processOptions);
@@ -73,10 +73,10 @@ namespace Altaxo.Serialization.BrukerOpus
 
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
       {
-        if (o is BrukerOpusImportDataSource s)
+        if (o is WITecImportDataSource s)
           s.DeserializeSurrogate0(info);
         else
-          s = new BrukerOpusImportDataSource(info, 0);
+          s = new WITecImportDataSource(info, 0);
         return s;
       }
     }
@@ -86,7 +86,7 @@ namespace Altaxo.Serialization.BrukerOpus
     {
       _isDeserializationInProgress = true;
       ChildSetMember(ref _importOptions, (IDataSourceImportOptions)info.GetValue("ImportOptions", this));
-      _processOptions = (BrukerOpusImportOptions)info.GetValue("ProcessOptions", this);
+      _processOptions = (WITecImportOptions)info.GetValue("ProcessOptions", this);
       var count = info.OpenArray("ProcessData");
       for (int i = 0; i < count; ++i)
         _asciiFiles.Add((AbsoluteAndRelativeFileName)info.GetValue("e", this));
@@ -100,7 +100,7 @@ namespace Altaxo.Serialization.BrukerOpus
     /// <summary>
     /// Deserialization constructor
     /// </summary>
-    protected BrukerOpusImportDataSource(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, int version)
+    protected WITecImportDataSource(Altaxo.Serialization.Xml.IXmlDeserializationInfo info, int version)
     {
       switch (version)
       {
@@ -117,7 +117,7 @@ namespace Altaxo.Serialization.BrukerOpus
     #region Construction
 
     [MemberNotNull(nameof(_asciiFiles), nameof(_importOptions), nameof(_processOptions))]
-    private void CopyFrom(BrukerOpusImportDataSource from)
+    private void CopyFrom(WITecImportDataSource from)
     {
       using (var token = SuspendGetToken())
       {
@@ -134,7 +134,7 @@ namespace Altaxo.Serialization.BrukerOpus
       if (ReferenceEquals(this, obj))
         return true;
 
-      var from = obj as BrukerOpusImportDataSource;
+      var from = obj as WITecImportDataSource;
       if (from is not null)
       {
         CopyFrom(from);
@@ -146,12 +146,12 @@ namespace Altaxo.Serialization.BrukerOpus
 
 
 
-    public BrukerOpusImportDataSource(string fileName, BrukerOpusImportOptions options)
+    public WITecImportDataSource(string fileName, WITecImportOptions options)
       : this(new string[] { fileName }, options)
     {
     }
 
-    public BrukerOpusImportDataSource(IEnumerable<string> fileNames, BrukerOpusImportOptions options)
+    public WITecImportDataSource(IEnumerable<string> fileNames, WITecImportOptions options)
     {
       _asciiFiles = new List<AbsoluteAndRelativeFileName>();
       foreach (var fileName in fileNames)
@@ -162,14 +162,14 @@ namespace Altaxo.Serialization.BrukerOpus
       _importOptions = new DataSourceImportOptions() { ParentObject = this };
     }
 
-    public BrukerOpusImportDataSource(BrukerOpusImportDataSource from)
+    public WITecImportDataSource(WITecImportDataSource from)
     {
       CopyFrom(from);
     }
 
     public object Clone()
     {
-      return new BrukerOpusImportDataSource(this);
+      return new WITecImportDataSource(this);
     }
 
     protected override IEnumerable<Main.DocumentNodeAndName> GetDocumentNodeChildrenWithName()
@@ -198,7 +198,7 @@ namespace Altaxo.Serialization.BrukerOpus
       {
         destinationTable.DataColumns.RemoveColumnsAll();
         destinationTable.PropCols.RemoveColumnsAll();
-        new BrukerOpusImporter().Import(validFileNames, destinationTable, _processOptions, attachDataSource: false);
+        new WITecImporter().Import(validFileNames, destinationTable, _processOptions, attachDataSource: false);
       }
 
       var invalidFileNames = _asciiFiles.Where(x => string.IsNullOrEmpty(x.GetResolvedFileNameOrNull())).ToArray();
@@ -289,7 +289,7 @@ namespace Altaxo.Serialization.BrukerOpus
       }
     }
 
-    public BrukerOpusImportOptions ProcessOptions
+    public WITecImportOptions ProcessOptions
     {
       get
       {
@@ -304,7 +304,7 @@ namespace Altaxo.Serialization.BrukerOpus
     object IAltaxoTableDataSource.ProcessOptionsObject
     {
       get => _processOptions;
-      set => ProcessOptions = (BrukerOpusImportOptions)value;
+      set => ProcessOptions = (WITecImportOptions)value;
     }
 
     object IAltaxoTableDataSource.ProcessDataObject
@@ -459,7 +459,7 @@ namespace Altaxo.Serialization.BrukerOpus
 
     public (IReadOnlyList<string> FileExtensions, string Explanation) GetFileExtensions()
     {
-      return new BrukerOpusImporter().GetFileExtensions();
+      return new WITecImporter().GetFileExtensions();
     }
   }
 }

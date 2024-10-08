@@ -262,32 +262,33 @@
                 <MenuItem id="TextImport" label="${res:XML.MainMenu.FileMenu.ImportMarkdown}"
                                             description="${res:XML.MainMenu.FileMenu.ImportMarkdown.Description}" class="Altaxo.Main.MenuCommands.Text.ImportMarkdown" />
 
-                <Condition name = "WindowActive" activewindow="Altaxo.Gui.Worksheet.Viewing.WorksheetController" action="Exclude">
+              <MenuItem id="WorksheetImportBrukerOpus" label="Bruker Opus .0 files"
+                            icon="Icons.16x16.NewDocumentIcon" description="Imports one or multiple Bruker opus spectra files (*.0)."
+                            class="Altaxo.Worksheet.Commands.ImportBrukerOpus" />
+              <MenuItem id="WorksheetImportGalacticSPC" label="${res:XML.MainMenu.FileMenu.Import.GalacticSPC}"
+                            icon="Icons.16x16.NewDocumentIcon" description="${res:XML.MainMenu.FileMenu.Import.GalacticSPC.Description}"
+                            class="Altaxo.Worksheet.Commands.ImportGalacticSPC" />
+              <MenuItem id="WorksheetImportJcamp" label="${res:XML.MainMenu.FileMenu.Import.Jcamp}"
+                            icon="Icons.16x16.NewDocumentIcon" description="${res:XML.MainMenu.FileMenu.Import.Jcamp.Description}"
+                            class="Altaxo.Worksheet.Commands.ImportJcamp" />
+              <MenuItem id="WorksheetImportNicoletSPA" label="Nicolet .SPA files"
+                            icon="Icons.16x16.NewDocumentIcon" description="Imports one or multiple .SPA spectra files (Nicolet)."
+                            class="Altaxo.Worksheet.Commands.ImportNicoletSPA" />
+              <MenuItem id="WorksheetImportRamanCHADA" label="CHADA (Raman)"
+                            icon="Icons.16x16.NewDocumentIcon" description="Imports a .cha (Raman CHADA) file."
+                            class="Altaxo.Worksheet.Commands.ImportRamanCHADA" />
+              <MenuItem id="WorksheetImportRenishawWdf" label="${res:XML.MainMenu.FileMenu.Import.RenishawWdf}"
+                            icon="Icons.16x16.NewDocumentIcon" description="${res:XML.MainMenu.FileMenu.Import.RenishawWdf.Description}"
+                            class="Altaxo.Worksheet.Commands.ImportRenishawWdf" />
+              <MenuItem id="WorksheetImportWiTec" label="WiTec .wip files"
+                            icon="Icons.16x16.NewDocumentIcon" description="Imports one or multiple WiTec .wip project files."
+                            class="Altaxo.Worksheet.Commands.ImportWiTec" />
+
+              <Condition name = "WindowActive" activewindow="Altaxo.Gui.Worksheet.Viewing.WorksheetController" action="Exclude">
                     <MenuItem id="WorksheetImportAsciiSingleWksHorz" label="${res:XML.MainMenu.FileMenu.Import.AsciiSingleWorksheet}" icon="Icons.16x16.ImportAscii"
                               description="${res:XML.MainMenu.FileMenu.Import.AsciiSingleWorksheet.Description}" class="Altaxo.Worksheet.Commands.ImportAsciiInSingleWorksheetHorizontally" />
                     <MenuItem id="WorksheetImportAsciiSingleWksVert" label="${res:XML.MainMenu.FileMenu.Import.AsciiSingleWorksheetVert}" icon="Icons.16x16.ImportAscii"
                                   description="${res:XML.MainMenu.FileMenu.Import.AsciiSingleWorksheetVert.Description}" class="Altaxo.Worksheet.Commands.ImportAsciiInSingleWorksheetVertically" />
-                    <MenuItem id="WorksheetImportGalacticSPC" label="${res:XML.MainMenu.FileMenu.Import.GalacticSPC}"
-                                  icon="Icons.16x16.NewDocumentIcon" description="${res:XML.MainMenu.FileMenu.Import.GalacticSPC.Description}"
-                                  class="Altaxo.Worksheet.Commands.ImportGalacticSPC" />
-                    <MenuItem id="WorksheetImportJcamp" label="${res:XML.MainMenu.FileMenu.Import.Jcamp}"
-                                  icon="Icons.16x16.NewDocumentIcon" description="${res:XML.MainMenu.FileMenu.Import.Jcamp.Description}"
-                                  class="Altaxo.Worksheet.Commands.ImportJcamp" />
-                    <MenuItem id="WorksheetImportRenishawWdf" label="${res:XML.MainMenu.FileMenu.Import.RenishawWdf}"
-                                  icon="Icons.16x16.NewDocumentIcon" description="${res:XML.MainMenu.FileMenu.Import.RenishawWdf.Description}"
-                                  class="Altaxo.Worksheet.Commands.ImportRenishawWdf" />
-                  <MenuItem id="WorksheetImportNicoletSPA" label="Nicolet .SPA files"
-                                icon="Icons.16x16.NewDocumentIcon" description="Imports one or multiple .SPA spectra files (Nicolet)."
-                                class="Altaxo.Worksheet.Commands.ImportNicoletSPA" />
-                  <MenuItem id="WorksheetImportBrukerOpus" label="Bruker Opus .0 files"
-                                icon="Icons.16x16.NewDocumentIcon" description="Imports one or multiple Bruker opus spectra files (*.0)."
-                                class="Altaxo.Worksheet.Commands.ImportBrukerOpus" />
-                  <MenuItem id="WorksheetImportWiTec" label="WiTec .wip files"
-                                icon="Icons.16x16.NewDocumentIcon" description="Imports one or multiple WiTec .wip project files."
-                                class="Altaxo.Worksheet.Commands.ImportWiTec" />
-                  <MenuItem id="WorksheetImportRamanCHADA" label="CHADA (Raman)"
-                                icon="Icons.16x16.NewDocumentIcon" description="Imports a .cha (Raman CHADA) file."
-                                class="Altaxo.Worksheet.Commands.ImportRamanCHADA" />
                   <MenuItem id="WorksheetImportOriginOpj" label="${res:XML.MainMenu.FileMenu.Import.OriginOpj}"
                                   icon="Icons.16x16.NewDocumentIcon" description="${res:XML.MainMenu.FileMenu.Import.OriginOpj.Description}"
                                   class="Altaxo.Main.Commands.FileImportOriginOpj" />

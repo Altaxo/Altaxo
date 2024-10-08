@@ -33,14 +33,28 @@ using PureHDF.VOL.Native;
 
 namespace Altaxo.Serialization.HDF5.Chada
 {
-  public class ChadaImport : IDataFileImporter
+  public record ChadaImporter : DataFileImporterBase
   {
-    public (IReadOnlyList<string> FileExtensions, string Explanation) GetFileExtensions()
+    /// <inheritdoc/>
+    public override (IReadOnlyList<string> FileExtensions, string Explanation) GetFileExtensions()
     {
       return ([".cha"], "Chada files (*.cha)");
     }
 
-    public double GetProbabilityForBeingThisFileFormat(string fileName)
+    /// <inheritdoc/>
+    public override object CheckOrCreateImportOptions(object? importOptions)
+    {
+      return (importOptions as ChadaImportOptions) ?? new ChadaImportOptions();
+    }
+
+    /// <inheritdoc/>
+    public override IAltaxoTableDataSource? CreateTableDataSource(IReadOnlyList<string> fileNames, object importOptions)
+    {
+      return null;
+    }
+
+    /// <inheritdoc/>
+    public override double GetProbabilityForBeingThisFileFormat(string fileName)
     {
       double p = 0;
       var fe = GetFileExtensions();
@@ -52,7 +66,7 @@ namespace Altaxo.Serialization.HDF5.Chada
       try
       {
         var table = new DataTable();
-        var result = ImportRamanCHADA([fileName], table);
+        var result = Import([fileName], table, new ChadaImportOptions(), false);
         if (string.IsNullOrEmpty(result) &&
           table.DataColumnCount >= 1 && table.DataRowCount >= 1)
         {
@@ -67,18 +81,13 @@ namespace Altaxo.Serialization.HDF5.Chada
       return p;
     }
 
-    public string? Import(IReadOnlyList<string> fileNames, DataTable table, bool attachDataSource = true)
-    {
-      var result = ImportRamanCHADA(fileNames, table);
-      // TODO: we do not have a import data source for this
-      return result;
-    }
+
 
 
     /// <summary>
     /// Import a Chada file. Chada files are very simply structured HDF5 files, with only one or two datasets, consisting of two columns.
     /// </summary>
-    public static string? ImportRamanCHADA(IReadOnlyList<string> fileNames, DataTable dataTable)
+    public override string? Import(IReadOnlyList<string> fileNames, DataTable dataTable, object importOptionsObj, bool attachDataSource = true)
     {
       var stb = new StringBuilder();
       DataColumn? lastXColumn = null;
@@ -181,38 +190,5 @@ namespace Altaxo.Serialization.HDF5.Chada
 
       return null;
     }
-
-
-
-    /// <summary>
-    /// Shows the CHADA file import dialog, and imports the files to the table if the user clicked on "OK".
-    /// </summary>
-    /// <param name="dataTable">The table to import the Chada files to.</param>
-    public static void ShowImportRamanChadaDialog(DataTable dataTable)
-    {
-      var options = new Altaxo.Gui.OpenFileOptions();
-      options.AddFilter("*.cha", "Raman CHADA files (*.cha)");
-      options.AddFilter("*.*", "All files (*.*)");
-      options.FilterIndex = 0;
-      options.Multiselect = true; // allow selecting more than one file
-
-      if (Current.Gui.ShowOpenFileDialog(options))
-      {
-        // if user has clicked ok, import all selected files into Altaxo
-        string[] filenames = options.FileNames;
-        Array.Sort(filenames); // Windows seems to store the filenames reverse to the clicking order or in arbitrary order
-
-        string? errors = ImportRamanCHADA(filenames, dataTable);
-
-        // table.DataSource = new RenishawImportDataSource(filenames, importOptions);
-
-        if (errors is not null)
-        {
-          Current.Gui.ErrorMessageBox(errors, "Some errors occured during import!");
-        }
-      }
-    }
-
-
   }
 }

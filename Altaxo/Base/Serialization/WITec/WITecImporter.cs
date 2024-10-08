@@ -25,18 +25,31 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using Altaxo.Data;
 
 namespace Altaxo.Serialization.WITec
 {
-  public class WITecImporter : IDataFileImporter
+  public record WITecImporter : DataFileImporterBase
   {
-    public (IReadOnlyList<string> FileExtensions, string Explanation) GetFileExtensions()
+    public override (IReadOnlyList<string> FileExtensions, string Explanation) GetFileExtensions()
     {
       return ([".wip"], "WiTec project files (*.wip)");
     }
 
-    public double GetProbabilityForBeingThisFileFormat(string fileName)
+    /// <inheritdoc/>
+    public override object CheckOrCreateImportOptions(object? importOptions)
+    {
+      return (importOptions as WITecImportOptions) ?? new WITecImportOptions();
+    }
+
+    public override IAltaxoTableDataSource? CreateTableDataSource(IReadOnlyList<string> fileNames, object importOptions)
+    {
+      return new WITecImportDataSource(fileNames, (WITecImportOptions)importOptions);
+    }
+
+
+    public override double GetProbabilityForBeingThisFileFormat(string fileName)
     {
       double p = 0;
       var fe = GetFileExtensions();
@@ -64,15 +77,84 @@ namespace Altaxo.Serialization.WITec
       return p;
     }
 
-    public string? Import(IReadOnlyList<string> fileNames, DataTable table, bool attachDataSource = true)
+    public override string? Import(IReadOnlyList<string> fileNames, ImportOptionsInitial initialOptions)
     {
-      var importOptions = new WITecImportOptions();
-      var result = Import(fileNames, table, importOptions);
-      return result;
+      var stb = new StringBuilder();
+      var importOptions = (WITecImportOptions)initialOptions.ImportOptions;
+      if (initialOptions.DistributeFilesToSeparateTables)
+      {
+        foreach (var fileName in fileNames)
+        {
+          if (initialOptions.DistributeDataPerFileToSeparateTables)
+          {
+            WITecReader reader;
+            using (var stream = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.Read))
+            {
+              reader = new WITecReader(stream);
+            }
+            reader.ExtractSpectra();
+
+            var spectra = (importOptions.IgnoreSecondaryData ?
+              reader.Spectra.Where(s => s.GraphType == TDGraphClass.GraphClassType.SpectralData) :
+              reader.Spectra).ToArray();
+
+            int indexOfSpectrum = -1;
+            foreach (var spectrum in spectra)
+            {
+              ++indexOfSpectrum;
+
+              var dataTable = new DataTable();
+              if (!string.IsNullOrEmpty(spectrum.Title) && initialOptions.UseMetaDataNameAsTableName)
+              {
+                dataTable.Name = spectrum.Title;
+              }
+
+              var localImportOptions = importOptions with { IndicesOfImportedGraphs = [indexOfSpectrum] };
+
+              var result = Import([fileName], dataTable, localImportOptions);
+              if (result is not null)
+              {
+                stb.AppendLine(result);
+              }
+              Current.Project.AddItemWithThisOrModifiedName(dataTable);
+              Current.ProjectService.CreateNewWorksheet(dataTable);
+              dataTable.DataSource = new WITecImportDataSource(fileNames, localImportOptions);
+
+            }
+          }
+          else
+          {
+            var dataTable = new DataTable();
+            var result = Import([fileName], dataTable, initialOptions.ImportOptions);
+            if (result is not null)
+            {
+              stb.AppendLine(result);
+            }
+            Current.Project.AddItemWithThisOrModifiedName(dataTable);
+            Current.ProjectService.CreateNewWorksheet(dataTable);
+            dataTable.DataSource = new WITecImportDataSource(fileNames, importOptions);
+          }
+        }
+      }
+      else // all files into one table
+      {
+        var dataTable = new DataTable();
+        var result = Import(fileNames, dataTable, initialOptions.ImportOptions);
+        if (result is not null)
+        {
+          stb.AppendLine(result);
+        }
+        Current.Project.AddItemWithThisOrModifiedName(dataTable);
+        Current.ProjectService.CreateNewWorksheet(dataTable);
+        dataTable.DataSource = new WITecImportDataSource(fileNames, importOptions);
+      }
+
+      return stb.Length == 0 ? null : stb.ToString();
     }
 
-    public string? Import(IReadOnlyList<string> fileNames, DataTable table, WITecImportOptions importOptions)
+    public override string? Import(IReadOnlyList<string> fileNames, DataTable table, object importOptionsObj, bool attachDataSource = true)
     {
+      var importOptions = (WITecImportOptions)importOptionsObj;
       Altaxo.Data.DoubleColumn? xcol = null;
       var errorList = new System.Text.StringBuilder();
       int lastColumnGroup = 0;
@@ -95,10 +177,22 @@ namespace Altaxo.Serialization.WITec
         }
         reader.ExtractSpectra();
 
-        foreach (var spectrum in reader.Spectra.Where(r => r.GraphType == TDGraphClass.GraphClassType.SpectralData))
+        IEnumerable<TDGraphClass> spectra = importOptions.IgnoreSecondaryData ?
+          reader.Spectra.Where(r => r.GraphType == TDGraphClass.GraphClassType.SpectralData) :
+          reader.Spectra;
+        int indexOfSpectrum = -1;
+        foreach (var spectrum in spectra)
         {
-          // first look if our default xcolumn matches the xvalues
+          ++indexOfSpectrum;
+          if (!(importOptions.IndicesOfImportedGraphs.Count == 0 ||
+               importOptions.IndicesOfImportedGraphs.Contains(indexOfSpectrum) ||
+               importOptions.IndicesOfImportedGraphs.Contains(indexOfSpectrum - reader.Spectra.Count)
+            ))
+          {
+            continue;
+          }
 
+          // first look if our default xcolumn matches the xvalues
           bool bMatchsXColumn = xcol is not null && ValuesMatch(spectrum.XValues, xcol);
 
           // if no match, then consider all xcolumns from right to left, maybe some fits
@@ -187,8 +281,16 @@ namespace Altaxo.Serialization.WITec
           }
         } // for each spectrum
       } // for each file
+
+      if (attachDataSource)
+      {
+        table.DataSource = CreateTableDataSource(fileNames, importOptions);
+      }
+
       return null;
     }
+
+
 
 
     /// <summary>

@@ -198,7 +198,7 @@ namespace Altaxo.Serialization.Galactic
       {
         destinationTable.DataColumns.RemoveColumnsAll();
         destinationTable.PropCols.RemoveColumnsAll();
-        GalacticSPCImporter.ImportSpcFiles(validFileNames, destinationTable, _processOptions);
+        new GalacticSPCImporter().Import(validFileNames, destinationTable, _processOptions, attachDataSource: false);
       }
 
       var invalidFileNames = _asciiFiles.Where(x => string.IsNullOrEmpty(x.GetResolvedFileNameOrNull())).ToArray();

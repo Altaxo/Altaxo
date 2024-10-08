@@ -22,14 +22,12 @@
 
 #endregion Copyright
 
-using System.Collections.Generic;
-
-namespace Altaxo.Serialization.WITec
+namespace Altaxo.Serialization.HDF5.Chada
 {
   /// <summary>
-  /// Import options for importing WITec project files.
+  /// Import options for importing Bruker opus files.
   /// </summary>
-  public record WITecImportOptions : Main.IImmutable
+  public record ChadaImportOptions : Main.IImmutable
   {
     /// <summary>
     /// If true, the column name of the imported y-columns is set to a neutral, constant value.
@@ -47,36 +45,20 @@ namespace Altaxo.Serialization.WITec
     /// </summary>
     public bool IncludeFilePathAsProperty { get; init; } = true;
 
-    /// <summary>
-    /// Gets the indices of imported graphs.
-    /// If the collection is empty, all graphs 
-    /// </summary>
-    public IReadOnlyList<int> IndicesOfImportedGraphs { get; init; } = [];
-
-    /// <summary>
-    /// Gets a value indicating whether to ignore secondary data, i.e. data that belong to other
-    /// graph data. Example: in a spectra time series, there is separate graph data for the times of the spectra.
-    /// This data is not imported if this flag is set to true, because it belongs to the spectra series.
-    /// </summary>
-    public bool IgnoreSecondaryData { get; init; } = true;
-
     #region Serialization
 
     /// <summary>
-    /// 
+    /// V0: 2024-10-08 Initial version
     /// </summary>
-    /// <seealso cref="Altaxo.Serialization.Xml.IXmlSerializationSurrogate" />
-    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(WITecImportOptions), 0)]
+    [Altaxo.Serialization.Xml.XmlSerializationSurrogateFor(typeof(ChadaImportOptions), 0)]
     public class SerializationSurrogate0 : Altaxo.Serialization.Xml.IXmlSerializationSurrogate
     {
       public void Serialize(object obj, Altaxo.Serialization.Xml.IXmlSerializationInfo info)
       {
-        var s = (WITecImportOptions)obj;
+        var s = (ChadaImportOptions)obj;
         info.AddValue("UseNeutralColumnName", s.UseNeutralColumnName);
         info.AddValue("NeutralColumnName", s.NeutralColumnName);
         info.AddValue("IncludeFilePathAsProperty", s.IncludeFilePathAsProperty);
-        info.AddValue("IgnoreSecondaryData", s.IgnoreSecondaryData);
-        info.AddArray("IndicesOfImportedGraphs", s.IndicesOfImportedGraphs, s.IndicesOfImportedGraphs.Count);
       }
 
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
@@ -84,27 +66,22 @@ namespace Altaxo.Serialization.WITec
         var useNeutralColumnName = info.GetBoolean("UseNeutralColumnName");
         var neutralColumnName = info.GetString("NeutralColumnName");
         var includeFilePathAsProperty = info.GetBoolean("IncludeFilePathAsProperty");
-        var ignoreSecondaryData = info.GetBoolean("IgnoreSecondaryData");
-        info.GetArray("IndicesOfImportedGraphs", out int[] indicesOfImportedGraphs);
 
-        return o is null ? new WITecImportOptions
+        return o is null ? new ChadaImportOptions
         {
           UseNeutralColumnName = useNeutralColumnName,
           NeutralColumnName = neutralColumnName,
           IncludeFilePathAsProperty = includeFilePathAsProperty,
-          IgnoreSecondaryData = ignoreSecondaryData,
-          IndicesOfImportedGraphs = indicesOfImportedGraphs,
         } :
-          ((WITecImportOptions)o) with
+          ((ChadaImportOptions)o) with
           {
             UseNeutralColumnName = useNeutralColumnName,
             NeutralColumnName = neutralColumnName,
             IncludeFilePathAsProperty = includeFilePathAsProperty,
-            IgnoreSecondaryData = ignoreSecondaryData,
-            IndicesOfImportedGraphs = indicesOfImportedGraphs,
           };
       }
     }
     #endregion
+
   }
 }

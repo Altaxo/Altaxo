@@ -33,16 +33,28 @@ namespace Altaxo.Serialization.Renishaw
   /// <summary>
   /// Supplies methods to import Renishaw .wdf files.
   /// </summary>
-  public record RenishawImporter : IDataFileImporter, Main.IImmutable
+  public record RenishawImporter : DataFileImporterBase, Main.IImmutable
   {
     /// <inheritdoc/>
-    public (IReadOnlyList<string> FileExtensions, string Explanation) GetFileExtensions()
+    public override (IReadOnlyList<string> FileExtensions, string Explanation) GetFileExtensions()
     {
       return ([".wdf"], "Renishaw WiRE™ files (*.wdf)");
     }
 
     /// <inheritdoc/>
-    public double GetProbabilityForBeingThisFileFormat(string fileName)
+    public override object CheckOrCreateImportOptions(object? importOptions)
+    {
+      return (importOptions as RenishawImportOptions) ?? new RenishawImportOptions();
+    }
+
+    /// <inheritdoc/>
+    public override IAltaxoTableDataSource? CreateTableDataSource(IReadOnlyList<string> fileNames, object importOptions)
+    {
+      return new RenishawImportDataSource(fileNames, (RenishawImportOptions)importOptions);
+    }
+
+    /// <inheritdoc/>
+    public override double GetProbabilityForBeingThisFileFormat(string fileName)
     {
       double p = 0;
       var fe = GetFileExtensions();
@@ -68,53 +80,12 @@ namespace Altaxo.Serialization.Renishaw
       return p;
     }
 
-    /// <summary>
-    /// Shows the SPC file import dialog, and imports the files to the table if the user clicked on "OK".
-    /// </summary>
-    /// <param name="table">The table to import the SPC files to.</param>
-    public void ShowDialog(Altaxo.Data.DataTable table)
-    {
-      var options = new Altaxo.Gui.OpenFileOptions();
-      var filter = FileIOHelper.GetFilterDescriptionForExtensions(GetFileExtensions());
-      options.AddFilter(filter.Filter, filter.Description);
-      filter = FileIOHelper.GetFilterDescriptionForAllFiles();
-      options.AddFilter(filter.Filter, filter.Description);
-      options.FilterIndex = 0;
-      options.Multiselect = true; // allow selecting more than one file
 
-      if (Current.Gui.ShowOpenFileDialog(options))
-      {
-        // if user has clicked ok, import all selected files into Altaxo
-        string[] filenames = options.FileNames;
-        Array.Sort(filenames); // Windows seems to store the filenames reverse to the clicking order or in arbitrary order
-
-        var importOptions = new RenishawImportOptions();
-        string? errors = ImportRenishawWdfFiles(filenames, table, importOptions);
-
-        table.DataSource = new RenishawImportDataSource(filenames, importOptions);
-
-        if (errors is not null)
-        {
-          Current.Gui.ErrorMessageBox(errors, "Some errors occured during import!");
-        }
-      }
-    }
-
-    /// <inheritdoc/>
-    public string? Import(IReadOnlyList<string> fileNames, Altaxo.Data.DataTable table, bool attachDataSource = true)
-    {
-      var options = new RenishawImportOptions();
-      var result = ImportRenishawWdfFiles(fileNames, table, options);
-      if (attachDataSource)
-      {
-        table.DataSource = new RenishawImportDataSource(fileNames, options);
-      }
-      return result;
-    }
 
     /// <returns>Null if no error occurs, or an error description.</returns>
-    public static string? ImportRenishawWdfFiles(IReadOnlyList<string> filenames, Altaxo.Data.DataTable table, RenishawImportOptions importOptions)
+    public override string? Import(IReadOnlyList<string> filenames, Altaxo.Data.DataTable table, object importOptionsObj, bool attachDataSource = true)
     {
+      var importOptions = (RenishawImportOptions)importOptionsObj;
       DoubleColumn? xcol = null;
       var errorList = new System.Text.StringBuilder();
       int lastColumnGroup = 0;
@@ -210,6 +181,11 @@ namespace Altaxo.Serialization.Renishaw
           table.Notes.WriteLine($"Imported from {filenames[0]} at {DateTimeOffset.Now}");
         else if (filenames.Count > 1)
           table.Notes.WriteLine($"Imported from {filenames[0]} and more ({filenames.Count} files) at {DateTimeOffset.Now}");
+      }
+
+      if (attachDataSource)
+      {
+        table.DataSource = CreateTableDataSource(filenames, importOptions);
       }
 
       return errorList.Length == 0 ? null : errorList.ToString();

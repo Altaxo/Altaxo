@@ -26,9 +26,12 @@
 using Altaxo.Data;
 using Altaxo.Gui;
 using Altaxo.Gui.Scripting;
+using Altaxo.Gui.Workbench;
 using Altaxo.Scripting;
 using Altaxo.Serialization;
 using Altaxo.Serialization.BrukerOpus;
+using Altaxo.Serialization.Galactic;
+using Altaxo.Serialization.Jcamp;
 using Altaxo.Serialization.NicoletSPA;
 using Altaxo.Serialization.WITec;
 
@@ -92,60 +95,48 @@ namespace Altaxo.Worksheet.Commands
     }
   }
 
-  public class ImportGalacticSPC : AbstractWorksheetControllerCommand
+  public class ImportDataFileCommandBase<TImporter> : SimpleCommand where TImporter : IDataFileImporter, new()
   {
-    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
+    public override bool CanExecute(object? parameter)
     {
-      Altaxo.Data.FileCommands.ShowImportGalacticSPCDialog(ctrl.DataTable);
+      return true;
+    }
+
+    public override void Execute(object? parameter)
+    {
+      if (!(parameter is IViewContent activeViewContent))
+        activeViewContent = Current.Workbench.ActiveViewContent;
+
+      DataFileImporterBase.ImportShowDialogs(activeViewContent, new TImporter());
     }
   }
 
-  public class ImportJcamp : AbstractWorksheetControllerCommand
+  public class ImportGalacticSPC : ImportDataFileCommandBase<GalacticSPCImporter>
   {
-    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
-    {
-      Altaxo.Data.FileCommands.ShowImportJcampDialog(ctrl.DataTable);
-    }
   }
 
-  public class ImportRenishawWdf : AbstractWorksheetControllerCommand
+  public class ImportJcamp : ImportDataFileCommandBase<JcampImporter>
   {
-    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
-    {
-      Altaxo.Data.FileCommands.ShowImportRenishawWdfDialog(ctrl.DataTable);
-    }
   }
 
-  public class ImportNicoletSPA : AbstractWorksheetControllerCommand
+  public class ImportRenishawWdf : ImportDataFileCommandBase<Altaxo.Serialization.Renishaw.RenishawImporter>
   {
-    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
-    {
-      FileIOHelper.ShowDialog(ctrl.DataTable, new NicoletSPAImporter());
-    }
   }
 
-  public class ImportBrukerOpus : AbstractWorksheetControllerCommand
+  public class ImportNicoletSPA : ImportDataFileCommandBase<NicoletSPAImporter>
   {
-    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
-    {
-      FileIOHelper.ShowDialog(ctrl.DataTable, new BrukerOpusImporter());
-    }
   }
 
-  public class ImportWiTec : AbstractWorksheetControllerCommand
+  public class ImportBrukerOpus : ImportDataFileCommandBase<BrukerOpusImporter>
   {
-    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
-    {
-      FileIOHelper.ShowDialog(ctrl.DataTable, new WITecImporter());
-    }
   }
 
-  public class ImportRamanCHADA : AbstractWorksheetControllerCommand
+  public class ImportWiTec : ImportDataFileCommandBase<WITecImporter>
   {
-    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
-    {
-      Altaxo.Serialization.HDF5.Chada.ChadaImport.ShowImportRamanChadaDialog(ctrl.DataTable);
-    }
+  }
+
+  public class ImportRamanCHADA : ImportDataFileCommandBase<Altaxo.Serialization.HDF5.Chada.ChadaImporter>
+  {
   }
 
   public class ExportRamanCHADA : AbstractWorksheetControllerCommand

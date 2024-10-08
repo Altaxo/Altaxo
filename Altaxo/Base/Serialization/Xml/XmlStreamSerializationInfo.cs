@@ -337,7 +337,7 @@ namespace Altaxo.Serialization.Xml
       CommitArray();
     }
 
-    public void AddArray(string name, int[] val, int count)
+    public void AddArray(string name, IReadOnlyList<int> val, int count)
     {
       CreateArray(name, count);
 
@@ -355,9 +355,13 @@ namespace Altaxo.Serialization.Xml
           }
           _writer.WriteEndElement(); // node "e"
         }
+        else if (val is int[] arr)
+        {
+          AddArrayOfPrimitiveType(name, arr, count, _size_of_int, m_DefaultArrayEncoding);
+        }
         else
         {
-          AddArrayOfPrimitiveType(name, val, count, _size_of_int, m_DefaultArrayEncoding);
+          throw new NotImplementedException("Serialization of primitive type not yet supported from a read-only list.");
         }
       } // count>0
       CommitArray();
@@ -475,6 +479,7 @@ namespace Altaxo.Serialization.Xml
           throw new ApplicationException("Unknown encoding value: " + encoding.ToString());
       } // end switch
     }
+
 
     public void AddArray(string name, IReadOnlyList<object> val, int count)
     {

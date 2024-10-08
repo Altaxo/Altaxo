@@ -30,16 +30,29 @@ using Altaxo.Data;
 
 namespace Altaxo.Serialization.Jcamp
 {
-  public record JcampImporter : IDataFileImporter, Main.IImmutable
+  public record JcampImporter : DataFileImporterBase, Main.IImmutable
   {
     /// <inheritdoc/>
-    public (IReadOnlyList<string> FileExtensions, string Explanation) GetFileExtensions()
+    public override (IReadOnlyList<string> FileExtensions, string Explanation) GetFileExtensions()
     {
       return ([".jcamp", ".jdx", ".dx"], "JCampDX files (*.jcamp;*.jdx;*.dx)");
     }
 
     /// <inheritdoc/>
-    public double GetProbabilityForBeingThisFileFormat(string fileName)
+    public override object CheckOrCreateImportOptions(object? importOptions)
+    {
+      return (importOptions as JcampImportOptions) ?? new JcampImportOptions();
+    }
+
+    /// <inheritdoc/>
+    public override IAltaxoTableDataSource? CreateTableDataSource(IReadOnlyList<string> fileNames, object importOptions)
+    {
+      return new JcampImportDataSource(fileNames, (JcampImportOptions)importOptions);
+    }
+
+
+    /// <inheritdoc/>
+    public override double GetProbabilityForBeingThisFileFormat(string fileName)
     {
       double p = 0;
       var fe = GetFileExtensions();
@@ -65,18 +78,6 @@ namespace Altaxo.Serialization.Jcamp
       return p;
     }
 
-
-    public string? Import(IReadOnlyList<string> filenames, DataTable table, bool attachDataSource = true)
-    {
-      var options = new JcampImportOptions();
-      var result = ImportJcampFiles(filenames, table, options);
-      if (attachDataSource)
-      {
-        table.DataSource = new JcampImportDataSource(filenames, options);
-      }
-      return result;
-    }
-
     /// <summary>
     /// Imports a couple of JCAMP files into a table. The spectra are added as columns to the (one and only) table. If the x column
     /// of the rightmost column does not match the x-data of the spectra, a new x-column is also created.
@@ -84,8 +85,9 @@ namespace Altaxo.Serialization.Jcamp
     /// <param name="filenames">An array of filenames to import.</param>
     /// <param name="table">The table the spectra should be imported to.</param>
     /// <returns>Null if no error occurs, or an error description.</returns>
-    public static string? ImportJcampFiles(IReadOnlyList<string> filenames, DataTable table, JcampImportOptions importOptions)
+    public override string? Import(IReadOnlyList<string> filenames, DataTable table, object importOptionsObj, bool attachDataSource = true)
     {
+      var importOptions = (JcampImportOptions)importOptionsObj;
       DoubleColumn? xcol = null;
       DoubleColumn xvalues, yvalues;
       var errorList = new System.Text.StringBuilder();
@@ -208,39 +210,12 @@ namespace Altaxo.Serialization.Jcamp
           table.Notes.WriteLine($"Imported from {filenames[0]} and more ({filenames.Count} files) at {DateTimeOffset.Now}");
       }
 
-      return errorList.Length == 0 ? null : errorList.ToString();
-    }
-
-    /// <summary>
-    /// Shows the SPC file import dialog, and imports the files to the table if the user clicked on "OK".
-    /// </summary>
-    /// <param name="table">The table to import the SPC files to.</param>
-    public void ShowDialog(DataTable table)
-    {
-      var options = new Altaxo.Gui.OpenFileOptions();
-      var filter = FileIOHelper.GetFilterDescriptionForExtensions(GetFileExtensions());
-      options.AddFilter(filter.Filter, filter.Description);
-      filter = FileIOHelper.GetFilterDescriptionForAllFiles();
-      options.AddFilter(filter.Filter, filter.Description);
-      options.FilterIndex = 0;
-      options.Multiselect = true; // allow selecting more than one file
-
-      if (Current.Gui.ShowOpenFileDialog(options))
+      if (attachDataSource)
       {
-        // if user has clicked ok, import all selected files into Altaxo
-        string[] filenames = options.FileNames;
-        Array.Sort(filenames); // Windows seems to store the filenames reverse to the clicking order or in arbitrary order
-
-        var importOptions = new JcampImportOptions();
-        string? errors = ImportJcampFiles(filenames, table, importOptions);
-
-        table.DataSource = new JcampImportDataSource(filenames, importOptions);
-
-        if (errors is not null)
-        {
-          Current.Gui.ErrorMessageBox(errors, "Some errors occured during import!");
-        }
+        table.DataSource = CreateTableDataSource(filenames, importOptions);
       }
+
+      return errorList.Length == 0 ? null : errorList.ToString();
     }
 
     /// <summary>

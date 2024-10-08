@@ -33,19 +33,31 @@ namespace Altaxo.Serialization.Ascii
   /// <summary>
   /// Central class for import of ascii data.
   /// </summary>
-  public record AsciiImporterImpl : IDataFileImporter, Main.IImmutable
+  public record AsciiImporterImpl : DataFileImporterBase, Main.IImmutable
   {
     /// <summary>Prepend this string to a file name in order to designate the stream origin as file name origin.</summary>
     public const string FileUrlStart = @"file:///";
 
     /// <inheritdoc/>
-    public (IReadOnlyList<string> FileExtensions, string Explanation) GetFileExtensions()
+    public override (IReadOnlyList<string> FileExtensions, string Explanation) GetFileExtensions()
     {
       return ([".txt", ".csv", ".dat"], "ASCII files (*.txt;*.csv;*.dat)");
     }
 
     /// <inheritdoc/>
-    public double GetProbabilityForBeingThisFileFormat(string fileName)
+    public override object CheckOrCreateImportOptions(object? importOptions)
+    {
+      return (importOptions as AsciiImportOptions) ?? new AsciiImportOptions();
+    }
+
+    /// <inheritdoc/>
+    public override IAltaxoTableDataSource? CreateTableDataSource(IReadOnlyList<string> fileNames, object importOptions)
+    {
+      return new AsciiImportDataSource(fileNames, (AsciiImportOptions)importOptions);
+    }
+
+    /// <inheritdoc/>
+    public override double GetProbabilityForBeingThisFileFormat(string fileName)
     {
       double p = 0;
       var fe = GetFileExtensions();
@@ -80,24 +92,26 @@ namespace Altaxo.Serialization.Ascii
     }
 
     /// <inheritdoc/>
-    public string? Import(IReadOnlyList<string> filenames, DataTable table, bool attachDataSource)
+    public override string? Import(IReadOnlyList<string> filenames, DataTable table, object importOptionsObj, bool attachDataSource)
     {
+      var importOptions = (AsciiImportOptions)importOptionsObj;
+
       if (filenames.Count == 1)
       {
         AsciiImporter.ImportFromAsciiFile(table, filenames[0], out var options);
         if (attachDataSource && !(table.DataSource is AsciiImportDataSource))
         {
-          table.DataSource = new AsciiImportDataSource(filenames[0], options);
+          table.DataSource = CreateTableDataSource(filenames, options);
         }
         return null;
       }
       else
       {
-        var options = new AsciiImportOptions();
+        var options = importOptions ?? new AsciiImportOptions();
         AsciiImporter.TryImportFromMultipleAsciiFilesHorizontally(table, filenames, true, options, out var errors);
         if (attachDataSource && !(table.DataSource is AsciiImportDataSource))
         {
-          table.DataSource = new AsciiImportDataSource(filenames[0], options);
+          table.DataSource = CreateTableDataSource(filenames, options);
         }
         return errors;
       }

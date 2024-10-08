@@ -42,8 +42,55 @@ namespace Altaxo.Serialization.NicoletSPA
   /// <para>The comment is at position 30:255. It is UTF8 coded.</para>
   /// <para>At position 564, there is an integer designating the offset to the data. (little endian)</para>
   /// </remarks>
-  public record NicoletSPAImporter : IDataFileImporter, Main.IImmutable
+  public record NicoletSPAImporter : DataFileImporterBase, Main.IImmutable
   {
+
+    /// <inheritdoc/>
+    public override (IReadOnlyList<string> FileExtensions, string Explanation) GetFileExtensions()
+    {
+      return ([".spa"], "Nicolet/Thermo Omnic files (*.spa)");
+    }
+
+    /// <inheritdoc/>
+    public override object CheckOrCreateImportOptions(object? importOptions)
+    {
+      return (importOptions as NicoletSPAImportOptions) ?? new NicoletSPAImportOptions();
+    }
+
+    /// <inheritdoc/>
+    public override double GetProbabilityForBeingThisFileFormat(string fileName)
+    {
+      double p = 0;
+      var fe = GetFileExtensions();
+      if (fe.FileExtensions.ToHashSet().Contains(Path.GetExtension(fileName).ToLowerInvariant()))
+      {
+        p += 0.5;
+      }
+
+      try
+      {
+        using var stream = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.Read);
+        var result = new NicoletSPAReader(stream);
+        if (result.NumberOfPoints > 0 && string.IsNullOrEmpty(result.ErrorMessages))
+        {
+          p += 0.5;
+        }
+      }
+      catch
+      {
+        p = 0;
+      }
+
+      return p;
+    }
+
+
+    /// <inheritdoc/>
+    public override IAltaxoTableDataSource? CreateTableDataSource(IReadOnlyList<string> fileNames, object importOptions)
+    {
+      return new NicoletSPAImportDataSource(fileNames, (NicoletSPAImportOptions)importOptions);
+    }
+
     /// <summary>
     /// Imports the data of this <see cref="Import"/> instance into a <see cref="DataTable"/>.
     /// </summary>
@@ -103,8 +150,9 @@ namespace Altaxo.Serialization.NicoletSPA
     /// <param name="filenames">An array of filenames to import.</param>
     /// <param name="table">The table the spectra should be imported to.</param>
     /// <returns>Null if no error occurs, or an error description.</returns>
-    public string? Import(IReadOnlyList<string> filenames, Altaxo.Data.DataTable table, NicoletSPAImportOptions importOptions)
+    public override string? Import(IReadOnlyList<string> filenames, Altaxo.Data.DataTable table, object importOptionsObj, bool attachDataSource = true)
     {
+      var importOptions = (NicoletSPAImportOptions)importOptionsObj;
       DoubleColumn? xcol = null;
       DoubleColumn xvalues, yvalues;
       var errorList = new System.Text.StringBuilder();
@@ -219,84 +267,14 @@ namespace Altaxo.Serialization.NicoletSPA
           table.Notes.WriteLine($"Imported from {filenames[0]} and more ({filenames.Count} files) at {DateTimeOffset.Now}");
       }
 
+      if (attachDataSource)
+      {
+        table.DataSource = CreateTableDataSource(filenames, importOptions);
+      }
+
       return errorList.Length == 0 ? null : errorList.ToString();
     }
 
-    /// <summary>
-    /// Shows the SPC file import dialog, and imports the files to the table if the user clicked on "OK".
-    /// </summary>
-    /// <param name="table">The table to import the SPC files to.</param>
-    public void ShowDialog(DataTable table)
-    {
-      var options = new Altaxo.Gui.OpenFileOptions();
-      var filter = FileIOHelper.GetFilterDescriptionForExtensions(GetFileExtensions());
-      options.AddFilter(filter.Filter, filter.Description);
-      filter = FileIOHelper.GetFilterDescriptionForAllFiles();
-      options.AddFilter(filter.Filter, filter.Description);
-      options.FilterIndex = 0;
-      options.Multiselect = true; // allow selecting more than one file
 
-      if (Current.Gui.ShowOpenFileDialog(options))
-      {
-        // if user has clicked ok, import all selected files into Altaxo
-        string[] filenames = options.FileNames;
-        Array.Sort(filenames); // Windows seems to store the filenames reverse to the clicking order or in arbitrary order
-
-        var importOptions = new NicoletSPAImportOptions();
-        var importer = new NicoletSPAImporter();
-        string? errors = importer.Import(filenames, table, importOptions);
-
-        table.DataSource = new NicoletSPAImportDataSource(filenames, importOptions);
-
-        if (errors is not null)
-        {
-          Current.Gui.ErrorMessageBox(errors, "Some errors occured during import!");
-        }
-      }
-    }
-
-    /// <inheritdoc/>
-    public (IReadOnlyList<string> FileExtensions, string Explanation) GetFileExtensions()
-    {
-      return ([".spa"], "Nicolet/Thermo Omnic files (*.spa)");
-    }
-
-    /// <inheritdoc/>
-    public double GetProbabilityForBeingThisFileFormat(string fileName)
-    {
-      double p = 0;
-      var fe = GetFileExtensions();
-      if (fe.FileExtensions.ToHashSet().Contains(Path.GetExtension(fileName).ToLowerInvariant()))
-      {
-        p += 0.5;
-      }
-
-      try
-      {
-        using var stream = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.Read);
-        var result = new NicoletSPAReader(stream);
-        if (result.NumberOfPoints > 0 && string.IsNullOrEmpty(result.ErrorMessages))
-        {
-          p += 0.5;
-        }
-      }
-      catch
-      {
-        p = 0;
-      }
-
-      return p;
-    }
-
-    public string? Import(IReadOnlyList<string> filenames, DataTable table, bool attachDataSource = true)
-    {
-      var options = new NicoletSPAImportOptions();
-      var result = Import(filenames, table, options);
-      if (attachDataSource)
-      {
-        table.DataSource = new NicoletSPAImportDataSource(filenames, options);
-      }
-      return result;
-    }
   }
 }

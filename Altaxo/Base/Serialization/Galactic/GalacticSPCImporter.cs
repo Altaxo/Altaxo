@@ -30,16 +30,29 @@ using Altaxo.Data;
 
 namespace Altaxo.Serialization.Galactic
 {
-  public record GalacticSPCImporter : IDataFileImporter, Main.IImmutable
+  public record GalacticSPCImporter : DataFileImporterBase, Main.IImmutable
   {
     /// <inheritdoc/>
-    public (IReadOnlyList<string> FileExtensions, string Explanation) GetFileExtensions()
+    public override (IReadOnlyList<string> FileExtensions, string Explanation) GetFileExtensions()
     {
       return ([".spc"], "Galactic SPC files (*.spc)");
     }
 
     /// <inheritdoc/>
-    public double GetProbabilityForBeingThisFileFormat(string fileName)
+    public override object CheckOrCreateImportOptions(object? importOptions)
+    {
+      return (importOptions as GalacticSPCImportOptions) ?? new GalacticSPCImportOptions();
+    }
+
+    /// <inheritdoc/>
+    public override IAltaxoTableDataSource? CreateTableDataSource(IReadOnlyList<string> fileNames, object importOptions)
+    {
+      return new GalacticSPCImportDataSource(fileNames, (GalacticSPCImportOptions)importOptions);
+    }
+
+
+    /// <inheritdoc/>
+    public override double GetProbabilityForBeingThisFileFormat(string fileName)
     {
       double p = 0;
       var fe = GetFileExtensions();
@@ -67,49 +80,6 @@ namespace Altaxo.Serialization.Galactic
       return p;
     }
 
-    public string? Import(IReadOnlyList<string> filenames, DataTable table, bool attachDataSource)
-    {
-      var options = new GalacticSPCImportOptions();
-      var result = ImportSpcFiles(filenames, table, options);
-      if (attachDataSource)
-      {
-        table.DataSource = new GalacticSPCImportDataSource(filenames, options);
-      }
-      return result;
-    }
-
-    /// <summary>
-    /// Shows the SPC file import dialog, and imports the files to the table if the user clicked on "OK".
-    /// </summary>
-    /// <param name="table">The table to import the SPC files to.</param>
-    public void ShowDialog(Altaxo.Data.DataTable table)
-    {
-      var options = new Altaxo.Gui.OpenFileOptions();
-      var filter = FileIOHelper.GetFilterDescriptionForExtensions(GetFileExtensions());
-      options.AddFilter(filter.Filter, filter.Description);
-      filter = FileIOHelper.GetFilterDescriptionForAllFiles();
-      options.AddFilter(filter.Filter, filter.Description);
-      options.FilterIndex = 0;
-      options.Multiselect = true; // allow selecting more than one file
-
-      if (Current.Gui.ShowOpenFileDialog(options))
-      {
-        // if user has clicked ok, import all selected files into Altaxo
-        string[] filenames = options.FileNames;
-        Array.Sort(filenames); // Windows seems to store the filenames reverse to the clicking order or in arbitrary order
-
-        var importOptions = new GalacticSPCImportOptions();
-        string? errors = ImportSpcFiles(filenames, table, importOptions);
-
-        table.DataSource = new GalacticSPCImportDataSource(filenames, importOptions);
-
-        if (errors is not null)
-        {
-          Current.Gui.ErrorMessageBox(errors, "Some errors occured during import!");
-        }
-      }
-    }
-
     /// <summary>
     /// Imports a couple of SPC files into a table. The spectra are added as columns to the table. If the x column
     /// of the rightmost column does not match the x-data of the spectra, a new x-column is also created.
@@ -117,8 +87,9 @@ namespace Altaxo.Serialization.Galactic
     /// <param name="filenames">An array of filenames to import.</param>
     /// <param name="table">The table the spectra should be imported to.</param>
     /// <returns>Null if no error occurs, or an error description.</returns>
-    public static string? ImportSpcFiles(IReadOnlyList<string> filenames, Altaxo.Data.DataTable table, GalacticSPCImportOptions importOptions)
+    public override string? Import(IReadOnlyList<string> filenames, Altaxo.Data.DataTable table, object importOptionsObj, bool attachDataSource)
     {
+      var importOptions = (GalacticSPCImportOptions)importOptionsObj;
       Altaxo.Data.DoubleColumn? xcol = null;
       var errorList = new System.Text.StringBuilder();
       int lastColumnGroup = 0;
@@ -215,6 +186,11 @@ namespace Altaxo.Serialization.Galactic
           table.Notes.WriteLine($"Imported from {filenames[0]} at {DateTimeOffset.Now}");
         else if (filenames.Count > 1)
           table.Notes.WriteLine($"Imported from {filenames[0]} and more ({filenames.Count} files) at {DateTimeOffset.Now}");
+      }
+
+      if (attachDataSource)
+      {
+        table.DataSource = CreateTableDataSource(filenames, importOptions);
       }
 
       return errorList.Length == 0 ? null : errorList.ToString();

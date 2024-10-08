@@ -23,7 +23,6 @@
 #endregion Copyright
 
 #nullable enable
-using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.IO;
@@ -98,36 +97,6 @@ namespace Altaxo.Serialization
     public static (string Filter, string Description) GetFilterDescriptionForAllFiles()
     {
       return ("*.*", "All files (*.*)");
-    }
-
-    /// <summary>
-    /// Shows a file import dialog for the specific importer provided as parameter, and imports the files to the table if the user clicked on "OK".
-    /// </summary>
-    /// <param name="table">The table to import the files to.</param>
-    /// <param name="importer">The data file importer.</param>
-    public static void ShowDialog(Altaxo.Data.DataTable table, IDataFileImporter importer)
-    {
-      var options = new Altaxo.Gui.OpenFileOptions();
-      var filter = FileIOHelper.GetFilterDescriptionForExtensions(importer.GetFileExtensions());
-      options.AddFilter(filter.Filter, filter.Description);
-      filter = FileIOHelper.GetFilterDescriptionForAllFiles();
-      options.AddFilter(filter.Filter, filter.Description);
-      options.FilterIndex = 0;
-      options.Multiselect = true; // allow selecting more than one file
-
-      if (Current.Gui.ShowOpenFileDialog(options))
-      {
-        // if user has clicked ok, import all selected files into Altaxo
-        string[] filenames = options.FileNames;
-        Array.Sort(filenames); // Windows seems to store the filenames reverse to the clicking order or in arbitrary order
-
-        string? errors = importer.Import(filenames, table, true);
-
-        if (errors is not null)
-        {
-          Current.Gui.ErrorMessageBox(errors, "Some errors occured during import!");
-        }
-      }
     }
 
     /// <summary>
