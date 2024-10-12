@@ -1,6 +1,29 @@
-﻿using System;
+﻿#region Copyright
+
+/////////////////////////////////////////////////////////////////////////////
+//    Altaxo:  a data processing and data plotting program
+//    Copyright (C) 2002-2024 Dr. Dirk Lellinger
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
+//    This program is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with this program; if not, write to the Free Software
+//    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+//
+/////////////////////////////////////////////////////////////////////////////
+
+#endregion Copyright
+
+using System;
 using System.IO;
-using Altaxo.Data;
 
 namespace Altaxo.Serialization.NicoletSPA
 {
@@ -97,54 +120,6 @@ namespace Altaxo.Serialization.NicoletSPA
 
       X = x;
       Y = y;
-    }
-
-    /// <summary>
-    /// Imports the data of this <see cref="Import"/> instance into a <see cref="DataTable"/>.
-    /// </summary>
-    /// <param name="table">The table.</param>
-    public NicoletSPAReader(Stream stream, DataTable table) : this(stream)
-    {
-      var xCol = new DoubleColumn();
-      var yCol = new DoubleColumn();
-      table.DataColumns.Add(xCol, string.IsNullOrEmpty(XLabel) ? "X" : XLabel, ColumnKind.X);
-      table.DataColumns.Add(yCol, string.IsNullOrEmpty(YLabel) ? "Y" : YLabel, ColumnKind.V);
-
-      if (!string.IsNullOrEmpty(XUnit) || !string.IsNullOrEmpty(YUnit))
-      {
-        table.PropCols.Add(new TextColumn(), "Unit", ColumnKind.V);
-        table.PropCols["Unit"][0] = XUnit;
-        table.PropCols["Unit"][1] = YUnit;
-      }
-
-      if (!string.IsNullOrEmpty(XLabel) || !string.IsNullOrEmpty(YLabel))
-      {
-        table.PropCols.Add(new TextColumn(), "Label", ColumnKind.V);
-        table.PropCols["Label"][0] = XLabel;
-        table.PropCols["Label"][1] = YLabel;
-      }
-
-      xCol.Data = X;
-      yCol.Data = Y;
-    }
-
-    /// <summary>
-    /// Compare the values in a double array with values in a double column and see if they match.
-    /// </summary>
-    /// <param name="values">An array of double values.</param>
-    /// <param name="col">A double column to compare with the double array.</param>
-    /// <returns>True if the length of the array is equal to the length of the <see cref="DoubleColumn" /> and the values in
-    /// both array match to each other, otherwise false.</returns>
-    public static bool ValuesMatch(DoubleColumn values, DoubleColumn col)
-    {
-      if (values.Count != col.Count)
-        return false;
-
-      for (int i = 0; i < values.Count; i++)
-        if (col[i] != values[i])
-          return false;
-
-      return true;
     }
   }
 }

@@ -239,6 +239,21 @@ namespace Altaxo.Serialization.Renishaw
     }
 
     /// <summary>
+    /// Contains the images as bitstreams. See the remarks for an example how to use the bytes.
+    /// </summary>
+    /// <remarks>
+    /// The following code will convert the Image #0 into an System.Drawing.Bitmap:
+    /// <code>
+    /// using var ms = new MemoryStream(Images[0]);
+    /// var img = new System.Drawing.Bitmap(ms);
+    /// var dict = new Dictionary&lt;int, System.Drawing.Imaging.PropertyItem&gt;();
+    ///   foreach (var item in img.PropertyItems)
+    ///     dict[item.Id] = item;
+    /// </code>
+    /// </remarks>
+    public List<byte[]> Images { get; private set; } = new List<byte[]>();
+
+    /// <summary>
     /// Contains information of all blocks. Key is the block's name. Value is a tuple of block's Uid, position, and size.
     /// </summary>
     private Dictionary<string, BlockInfo> _blockInfo = new();
@@ -650,6 +665,9 @@ namespace Altaxo.Serialization.Renishaw
       sr.Seek(blockinfo.Position + Offsets.jpeg_header, SeekOrigin.Begin);
       var buf = new byte[blockinfo.Size - Offsets.jpeg_header];
       sr.ForcedRead(buf, 0, buf.Length);
+      Images.Add(buf);
+
+      /*
 
       // https://docs.microsoft.com/en-us/dotnet/desktop/winforms/advanced/how-to-read-image-metadata
 
@@ -661,7 +679,6 @@ namespace Altaxo.Serialization.Renishaw
       foreach (var item in img.PropertyItems)
         dict[item.Id] = item;
 
-      /*
       img_bytes = self.file_obj.read(size - Offsets.jpeg_header)
         self.img = io.BytesIO(img_bytes)
         # Handle image dimension if PIL is present

@@ -26,7 +26,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using Altaxo.Data;
 
 namespace Altaxo.Serialization.Galactic
 {
@@ -148,7 +147,7 @@ namespace Altaxo.Serialization.Galactic
           else
             throw new System.FormatException(string.Format("This SPC file has a version of {0}, the only version recognized here is {1}", spchdr.fversn, 0x4B));
         }
-        double[] xvalues=null;
+        double[] xvalues = null;
         if (spchdr.ftflgs.HasFlag(Ftflgs.TXVALS))
         {
           xvalues = new double[spchdr.fnpts];
