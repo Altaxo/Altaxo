@@ -49,7 +49,7 @@ namespace Altaxo.Serialization.WITec
 
     /// <summary>
     /// Gets the indices of imported graphs.
-    /// If the collection is empty, all graphs 
+    /// If the collection is empty, all graphs are imported.
     /// </summary>
     public IReadOnlyList<int> IndicesOfImportedGraphs { get; init; } = [];
 

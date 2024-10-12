@@ -9,6 +9,21 @@
   <ItemGroup>
     <Compile Remove="Properties\AssemblyInfo.cs" Visible="true" />
   </ItemGroup>
+  <ItemGroup>
+    <None Remove="Serialization\PrincetonInstruments\TestFiles\full_sensor_image.spe" />
+    <None Remove="Serialization\PrincetonInstruments\TestFiles\one_dimensional_spectrum.spe" />
+    <None Remove="Serialization\PrincetonInstruments\TestFiles\raman_spectrum_silicon.spe" />
+    <None Remove="Serialization\PrincetonInstruments\TestFiles\small_roi.spe" />
+    <None Remove="Serialization\PrincetonInstruments\TestFiles\step_and_glue.spe" />
+    <None Remove="Serialization\PrincetonInstruments\TestFiles\ten_frames_two_rois_different_binning.spe" />
+    <None Remove="Serialization\PrincetonInstruments\TestFiles\two_rectangular_rois_different_binning.spe" />
+    <None Remove="Serialization\PrincetonInstruments\TestFiles\two_rectangular_rois_noBinning.spe" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Serialization\PrincetonInstruments\TestFiles\*.*">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
   
   <ItemGroup>
     <ProjectReference Include="..\Core\AltaxoCore.csproj" />

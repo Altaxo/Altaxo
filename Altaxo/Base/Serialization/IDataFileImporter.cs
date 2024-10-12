@@ -48,7 +48,7 @@ namespace Altaxo.Serialization
     /// <param name="importOptions">The options for import.</param>
     /// <param name="attachDataSource">If the value is true, the corresponding data source is attached to the table.</param>
     /// <returns>An error message, or null if successful.</returns>
-    string? Import(IReadOnlyList<string> fileNames, DataTable table, object importOptions, bool attachDataSource = true);
+    string? Import(IReadOnlyList<string> fileNames, DataTable table, object importOptions, bool attachDataSource);
 
     /// <summary>
     /// Imports the specified file names according to the initial options into new tables.

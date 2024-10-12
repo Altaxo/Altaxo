@@ -25,7 +25,6 @@
 #nullable enable
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.IO;
 using System.Linq;
 using System.Text;
 
@@ -156,34 +155,6 @@ namespace Altaxo.Serialization
         }
       }
       return stb is null ? name : stb.ToString();
-    }
-
-
-    /// <summary>
-    /// Reads the data into a buffer. Ensures that the provided number of bytes is really read. If not, a <see cref="EndOfStreamException"/> is thrown.
-    /// </summary>
-    /// <param name="stream">The stream.</param>
-    /// <param name="buffer">The buffer.</param>
-    /// <param name="offset">The offset where the first read byte should be stored into the buffer.</param>
-    /// <param name="length">The number of bytes that must be read.</param>
-    /// <exception cref="System.ArgumentOutOfRangeException">length</exception>
-    /// <exception cref="System.IO.IOException">Could not read any data from the stream</exception>
-    public static void ForcedRead(this Stream stream, byte[] buffer, int offset, int length)
-    {
-      if (length < 0)
-      {
-        throw new System.ArgumentOutOfRangeException(nameof(length));
-      }
-      while (length > 0)
-      {
-        var read = stream.Read(buffer, offset, length);
-        if (read == 0)
-        {
-          throw new System.IO.EndOfStreamException();
-        }
-        length -= read;
-        offset += read;
-      }
     }
   }
 }

@@ -255,13 +255,12 @@
             </Condition>
             <MenuItem id="ImportExportSeparator" type = "Separator" />
             <MenuItem id="Import" label="${res:XML.MainMenu.FileMenu.Import}" type="Menu">
-                <MenuItem id="FileImportAscii" label="${res:XML.MainMenu.FileMenu.Import.Ascii}" icon="Icons.16x16.ImportAscii"
+              <MenuItem id="TextImport" label="${res:XML.MainMenu.FileMenu.ImportMarkdown}"
+                                          description="${res:XML.MainMenu.FileMenu.ImportMarkdown.Description}" class="Altaxo.Main.MenuCommands.Text.ImportMarkdown" />
+              <MenuItem id="FileImportAscii" label="${res:XML.MainMenu.FileMenu.Import.Ascii}" icon="Icons.16x16.ImportAscii"
                                  description="${res:XML.MainMenu.FileMenu.Import.Ascii.Description}" class="Altaxo.Main.Commands.FileImportAscii" />
                 <MenuItem id="FileImportAsciiWithOptions" label="${res:XML.MainMenu.FileMenu.Import.AsciiWithOptions}" icon="Icons.16x16.ImportAscii"
                                  description="${res:XML.MainMenu.FileMenu.Import.AsciiWithOptions.Description}" class="Altaxo.Main.Commands.FileImportAsciiWithOptions" />
-                <MenuItem id="TextImport" label="${res:XML.MainMenu.FileMenu.ImportMarkdown}"
-                                            description="${res:XML.MainMenu.FileMenu.ImportMarkdown.Description}" class="Altaxo.Main.MenuCommands.Text.ImportMarkdown" />
-
               <MenuItem id="WorksheetImportBrukerOpus" label="Bruker Opus .0 files"
                             icon="Icons.16x16.NewDocumentIcon" description="Imports one or multiple Bruker opus spectra files (*.0)."
                             class="Altaxo.Worksheet.Commands.ImportBrukerOpus" />
@@ -274,6 +273,9 @@
               <MenuItem id="WorksheetImportNicoletSPA" label="Nicolet .SPA files"
                             icon="Icons.16x16.NewDocumentIcon" description="Imports one or multiple .SPA spectra files (Nicolet)."
                             class="Altaxo.Worksheet.Commands.ImportNicoletSPA" />
+              <MenuItem id="WorksheetImportPrincetonSPE" label="Princeton Instruments .SPE files"
+                            icon="Icons.16x16.NewDocumentIcon" description="Imports one or multiple .SPE files (Princeton Instruments)."
+                            class="Altaxo.Worksheet.Commands.ImportPrincetonInstrumentsSPE" />
               <MenuItem id="WorksheetImportRamanCHADA" label="CHADA (Raman)"
                             icon="Icons.16x16.NewDocumentIcon" description="Imports a .cha (Raman CHADA) file."
                             class="Altaxo.Worksheet.Commands.ImportRamanCHADA" />

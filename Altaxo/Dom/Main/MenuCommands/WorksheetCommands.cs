@@ -33,6 +33,7 @@ using Altaxo.Serialization.BrukerOpus;
 using Altaxo.Serialization.Galactic;
 using Altaxo.Serialization.Jcamp;
 using Altaxo.Serialization.NicoletSPA;
+using Altaxo.Serialization.PrincetonInstruments;
 using Altaxo.Serialization.WITec;
 
 namespace Altaxo.Worksheet.Commands
@@ -124,6 +125,10 @@ namespace Altaxo.Worksheet.Commands
   }
 
   public class ImportNicoletSPA : ImportDataFileCommandBase<NicoletSPAImporter>
+  {
+  }
+
+  public class ImportPrincetonInstrumentsSPE : ImportDataFileCommandBase<PrincetonInstrumentsSPEImporter>
   {
   }
 

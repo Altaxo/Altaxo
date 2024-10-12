@@ -278,7 +278,7 @@ namespace Altaxo.Gui.Pads.FileBrowser
             wasHandled = true;
             try
             {
-              imp.Import([item.FullName], table, true);
+              imp.Import([item.FullName], table, imp.CheckOrCreateImportOptions(null), true);
               Current.ProjectService.CreateNewWorksheet(table);
               wasImported = true;
               break;
@@ -303,14 +303,15 @@ namespace Altaxo.Gui.Pads.FileBrowser
           wasHandled |= true;
           try
           {
-            importers[maxIdx].Import([item.FullName], table, true);
+            importers[maxIdx].Import([item.FullName], table, importers[maxIdx].CheckOrCreateImportOptions(null), true);
             Current.Project.DataTableCollection.Add(table);
             Current.ProjectService.CreateNewWorksheet(table);
             wasImported = true;
             continue;
           }
-          catch
+          catch (Exception ex)
           {
+            Current.Gui.ErrorMessageBox($"It was tried to use the importer {importers[maxIdx].GetType().Name} to import the data, but an exception ocurred during import:\r\n{ex}");
           }
         }
 
