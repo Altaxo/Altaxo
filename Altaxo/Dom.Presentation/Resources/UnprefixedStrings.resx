@@ -1888,4 +1888,7 @@
   <data name="XML.ProjectBrowserMenu.ClearDataTablesShowDialog.Description" xml:space="preserve">
     <value>Clears data and other items in the selected data tables (using a dialog).</value>
   </data>
+  <data name="XML.MainMenu.FileMenu.Import.AnyDataFile.Description" xml:space="preserve">
+    <value>Imports data file(s) (Ascii, spectra files, etc.)</value>
+  </data>
 </root>

@@ -917,10 +917,10 @@
             <ToolbarItem id="TextPrint" icon="Icons.16x16.Printer"
                       description="${res:XML.MainMenu.FileMenu.Print.Description}" class="Altaxo.Main.MenuCommands.Text.Print" />
         </Condition>
-        <Condition name = "WindowActive" activewindow="Altaxo.Gui.Worksheet.Viewing.WorksheetController" action="Disable">
-            <ToolbarItem id="ImportAscii" icon="Icons.16x16.ImportAscii" tooltip="${res:XML.MainMenu.FileMenu.Import.Ascii.Description}"
-                      class="Altaxo.Worksheet.Commands.ImportAscii" />
-            <ToolbarItem id="ImportDatabase" icon="Icons.16x16.DataConnection.EditConnectionString" tooltip="${res:XML.MainMenu.FileMenu.Import.Database.Description}"
+      <ToolbarItem id="ImportAscii" icon="Icons.16x16.ImportAscii" tooltip="${res:XML.MainMenu.FileMenu.Import.AnyDataFile.Description}"
+                class="Altaxo.Worksheet.Commands.ImportAnyDataFile" />
+      <Condition name = "WindowActive" activewindow="Altaxo.Gui.Worksheet.Viewing.WorksheetController" action="Disable">
+        <ToolbarItem id="ImportDatabase" icon="Icons.16x16.DataConnection.EditConnectionString" tooltip="${res:XML.MainMenu.FileMenu.Import.Database.Description}"
                       class="Altaxo.Worksheet.Commands.ImportDatabase" />
             <Condition name="ContainsTableDataSource" action="Disable">
                 <ToolbarItem id="TableDataSourceEditing" icon="Icons.16x16.DataSourceEditing" tooltip="${res:XML.MainMenu.EditMenu.EditTableDataSource.Description}"

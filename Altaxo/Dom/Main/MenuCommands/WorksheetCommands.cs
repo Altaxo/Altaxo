@@ -96,6 +96,23 @@ namespace Altaxo.Worksheet.Commands
     }
   }
 
+  public class ImportAnyDataFile : SimpleCommand
+  {
+    public override bool CanExecute(object? parameter)
+    {
+      return true;
+    }
+
+    public override void Execute(object? parameter)
+    {
+      if (!(parameter is IViewContent activeViewContent))
+        activeViewContent = Current.Workbench.ActiveViewContent;
+
+      DataFileImporterBase.ImportShowReducedDialogsForAllTypes(activeViewContent);
+    }
+  }
+
+
   public class ImportDataFileCommandBase<TImporter> : SimpleCommand where TImporter : IDataFileImporter, new()
   {
     public override bool CanExecute(object? parameter)

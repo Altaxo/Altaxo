@@ -284,10 +284,11 @@ namespace Altaxo.Gui.Pads.FileBrowser
           }
         }
 
-        var arr = importers.Select(imp => new Task<double>(() => imp.GetProbabilityForBeingThisFileFormat(item.FullName))).ToArray();
-        Task.WaitAll(arr);
-        var maxIdx = arr.IndexOfMax((t) => t.Result);
-        if (arr[maxIdx].Result > 0)
+        var tasks = importers.Select(imp => new Task<double>(() => imp.GetProbabilityForBeingThisFileFormat(item.FullName))).ToArray();
+        tasks.ForEachDo(task => task.Start());
+        Task.WaitAll(tasks);
+        var maxIdx = tasks.IndexOfMax((t) => t.Result);
+        if (tasks[maxIdx].Result > 0)
         {
           wasHandled |= true;
           try
