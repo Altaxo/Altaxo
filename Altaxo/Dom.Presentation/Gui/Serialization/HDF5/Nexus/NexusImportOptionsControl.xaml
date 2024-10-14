@@ -1,0 +1,105 @@
+﻿<UserControl x:Class="Altaxo.Gui.Serialization.HDF5.Nexus.NexusImportOptionsControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:Altaxo.Gui.Serialization.HDF5.Nexus;assembly=AltaxoDom"
+             d:DataContext="{d:DesignInstance Type=local:NexusImportOptionsController}"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="4"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="4"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="4"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="4"/>
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="4" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="4" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="4" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="4" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="4" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="4" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="4" />
+    </Grid.RowDefinitions>
+
+        <CheckBox Grid.Row="0" Grid.Column="0"
+                  IsChecked="{Binding UseNeutralColumnName, Mode=TwoWay}"
+                  Content="Use neutral column name:"/>
+        <TextBox Grid.Row="0" Grid.Column="2"
+                 Text="{Binding NeutralColumnName, Mode=TwoWay}"
+                 IsEnabled="{Binding UseNeutralColumnName}"
+                 MinWidth="100" />
+
+        <CheckBox Grid.Row="2" Grid.Column="0"
+                  IsChecked="{Binding IncludeFilePathAsProperty, Mode=TwoWay}"
+              Content="Include file path as property"
+              ToolTip="If checked, the file name is imported in a property column." />
+
+    <CheckBox Grid.Row="4"
+              Grid.Column="0"
+              Grid.ColumnSpan="3"
+              IsChecked="{Binding IncludeNXentryNameAsProperty, Mode=TwoWay}"
+              Content="Include the NXentry name as property" 
+              ToolTip="If checked, the NXentry name is imported in a property column." />
+
+      <CheckBox Grid.Row="6"
+              Grid.Column="0"
+              Grid.ColumnSpan="3"
+              IsChecked="{Binding IncludeNXentryIndexAsProperty, Mode=TwoWay}"
+              Content="Include the NXentry index as property"
+              ToolTip="If checked, the NXentry index is imported in a property column." />
+
+    <CheckBox Grid.Row="8"
+              Grid.Column="0"
+              Grid.ColumnSpan="3"
+              IsChecked="{Binding IncludeTitleAsProperty, Mode=TwoWay}"
+              Content="Include the title as property"
+              ToolTip="If checked, the title of the NXdata entry is imported in a property column." />
+
+    <CheckBox Grid.Row="10"
+              Grid.Column="0"
+              Grid.ColumnSpan="3"
+              IsChecked="{Binding IncludeLongNameAndUnitAsProperty, Mode=TwoWay}"
+              Content="Include long name and unit as property"
+              ToolTip="If checked, the long name and unit of each data is imported in a property column." />
+
+      <CheckBox Grid.Row="12"
+              Grid.Column="0" Grid.ColumnSpan="3"
+              IsChecked="{Binding IncludeMetaDataAsProperties, Mode=TwoWay}"
+              Content="Include meta data as property"
+              ToolTip="If checked, the meta data is imported in a property column." />
+
+
+    <Label Grid.Row="14"
+           Grid.Column="0"
+           Content="Data indices:" />
+
+    <DataGrid Grid.Row="14"
+              Grid.Column="2"
+              ItemsSource="{Binding IndicesOfEntries}"
+              IsReadOnly="False"
+              CanUserAddRows="True"
+              CanUserDeleteRows="True"
+              AutoGenerateColumns="False"
+              ToolTip="Either leave this empty (all data will be imported), or add the indices of data you want to import.">
+      <DataGrid.Columns>
+        <DataGridTextColumn Binding="{Binding Index}"
+                            Header="Index"
+                            IsReadOnly="False" />
+      </DataGrid.Columns>
+    </DataGrid>
+  </Grid>
+</UserControl>

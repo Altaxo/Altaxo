@@ -270,6 +270,9 @@
               <MenuItem id="WorksheetImportJcamp" label="${res:XML.MainMenu.FileMenu.Import.Jcamp}"
                             icon="Icons.16x16.NewDocumentIcon" description="${res:XML.MainMenu.FileMenu.Import.Jcamp.Description}"
                             class="Altaxo.Worksheet.Commands.ImportJcamp" />
+              <MenuItem id="WorksheetImportNexus" label="Nexus format .NX .HDF5 files"
+                            icon="Icons.16x16.NewDocumentIcon" description="Imports one or multiple Nexus formatted files (HDF5)."
+                            class="Altaxo.Worksheet.Commands.ImportNexus" />
               <MenuItem id="WorksheetImportNicoletSPA" label="Nicolet .SPA files"
                             icon="Icons.16x16.NewDocumentIcon" description="Imports one or multiple .SPA spectra files (Nicolet)."
                             class="Altaxo.Worksheet.Commands.ImportNicoletSPA" />

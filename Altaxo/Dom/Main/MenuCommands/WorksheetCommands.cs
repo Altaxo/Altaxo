@@ -31,6 +31,7 @@ using Altaxo.Scripting;
 using Altaxo.Serialization;
 using Altaxo.Serialization.BrukerOpus;
 using Altaxo.Serialization.Galactic;
+using Altaxo.Serialization.HDF5.Nexus;
 using Altaxo.Serialization.Jcamp;
 using Altaxo.Serialization.NicoletSPA;
 using Altaxo.Serialization.PrincetonInstruments;
@@ -138,6 +139,10 @@ namespace Altaxo.Worksheet.Commands
   }
 
   public class ImportRenishawWdf : ImportDataFileCommandBase<Altaxo.Serialization.Renishaw.RenishawImporter>
+  {
+  }
+
+  public class ImportNexus : ImportDataFileCommandBase<NexusImporter>
   {
   }
 
