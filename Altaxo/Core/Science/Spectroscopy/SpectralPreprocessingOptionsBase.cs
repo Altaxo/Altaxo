@@ -81,5 +81,40 @@ namespace Altaxo.Science.Spectroscopy
       }
       return stb.ToString();
     }
+
+    /// <summary>
+    /// Checks the data for validity (no NaNs, no infinite values), and x strictly monotonically increasing. If the data are not valid, a <see cref="System.InvalidOperationException"/> is thrown.
+    /// </summary>
+    /// <param name="x">The x data.</param>
+    /// <param name="y">The y data.</param>
+    public static void CheckValidDataAndXStrictlyMonotonicallyIncreasing(double[] x, double[] y)
+    {
+      if (x.Length != y.Length)
+        throw new System.InvalidOperationException($"The arrays x and y must have the same length, but x has length {x.Length} and y has length {y.Length}");
+
+      if (x.Length == 0)
+        return; // no data
+
+      if (!double.IsNaN(x[0]) || double.IsInfinity(x[0]) || double.IsNaN(y[0]) || double.IsInfinity(y[0]))
+        throw new System.InvalidOperationException($"The first elements of x and y should be value, but are x={x[0]} and y={y[0]}");
+
+      for (int i = 1; i < x.Length; ++i)
+      {
+        if (double.IsNaN(x[i]) || double.IsInfinity(x[i]))
+        {
+          throw new System.InvalidOperationException($"The element x[{i}] = {x[i]} is invalid. It is not allowed to have NaNs or infinite values in the data.");
+        }
+        if (double.IsNaN(y[i]) || double.IsInfinity(y[i]))
+        {
+          throw new System.InvalidOperationException($"The element y[{i}] = {y[i]} is invalid. It is not allowed to have NaNs or infinite values in the data.");
+        }
+        if (!(x[i] > x[i - 1]))
+        {
+          throw new System.InvalidOperationException($"The element x[{i}] = {x[i]} should be greater than x[{i - 1}]={x[i - 1]}, but it isn't. It is not allowed to have NaNs or multiple equal x values in the data.");
+        }
+      }
+
+
+    }
   }
 }

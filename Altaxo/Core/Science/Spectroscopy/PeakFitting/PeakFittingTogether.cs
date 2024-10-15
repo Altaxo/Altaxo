@@ -198,6 +198,12 @@ namespace Altaxo.Science.Spectroscopy.PeakFitting
         peakParam.Add((first, last, maxXDistance, description));
       }
 
+      if (paramList.Count == 0 || peakParam.Count == 0)
+      {
+        // it seems that there are no fittable peaks, thus we return at least the non-fittable peaks (or nothing at all)
+        return new List<PeakDescription>(dictionaryOfNotFittedPeaks.Values);
+      }
+
       var xCut = new double[xyValues.Count];
       var yCut = new double[xyValues.Count];
       int idx = 0;
