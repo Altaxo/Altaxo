@@ -211,6 +211,10 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
       var wmax = _roundUp ? CalculateHalfWidthInPointsLocallyRoundUp(x, HalfWidth, w) :
                             CalculateHalfWidthInPointsLocallyRoundDown(x, HalfWidth, w);
 
+      var prev_wmax = int.MaxValue;
+      var prev_prev_wmax = int.MaxValue;
+      var prev_prev_prev_wmax = int.MaxValue;
+
       for (int iStage = _numberOfRegularStages - 1; ; --iStage)
       {
         if (iStage < 0)
@@ -236,8 +240,13 @@ namespace Altaxo.Science.Spectroscopy.BaselineEstimation
           }
         }
 
-        if (iStage < 0 && wmax <= 1)
+        // the comparison with previous wmax values is because for input data that contain multiple values with the same x-value,
+        // the wmax value does not drop down to 1, but to the number of same x-values.
+        if (iStage < 0 && (wmax <= 1 || (wmax == prev_wmax && wmax == prev_prev_wmax && wmax == prev_prev_prev_wmax)))
           break;
+        prev_prev_prev_wmax = prev_prev_wmax;
+        prev_prev_wmax = prev_wmax;
+        prev_wmax = wmax;
 
         (tmpY, srcY) = (srcY, tmpY);
       }
