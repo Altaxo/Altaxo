@@ -29,8 +29,8 @@
     <EmbeddedResource Include="Text\OpenXMLStyles\GitHub.xml" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Altaxo\Base\AltaxoBase.csproj" />
     <ProjectReference Include="..\..\..\Altaxo\Core\AltaxoCore.csproj" />
+    <ProjectReference Include="..\..\..\Altaxo\Base\AltaxoBase.csproj" />
     <ProjectReference Include="..\..\..\Altaxo\Dom\AltaxoDom.csproj" />
     <ProjectReference Include="..\..\..\Altaxo\Dom.Presentation\AltaxoDom.Presentation.csproj" />
     <ProjectReference Include="..\..\..\Libraries\Markdig\Markdig.csproj" />
@@ -39,7 +39,7 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="PresentationCore" />
-    <PackageReference Include="DocumentFormat.OpenXml" Version="3.0.1" />
+    <PackageReference Include="DocumentFormat.OpenXml" Version="3.1.1" />
     <PackageReference Include="System.IO.Compression" Version="4.3.0" />
   </ItemGroup>
   <UsingTask TaskName="GitVersionFile" AssemblyFile="..\..\..\MSBuildVersioning.dll" />
