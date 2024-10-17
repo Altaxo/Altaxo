@@ -100,8 +100,9 @@ namespace Altaxo.Serialization.HDF5.Nexus
       var importOptions = (NexusImportOptions)importOptionsObj;
       var errors = new StringBuilder();
 
-      int yColumnNameNumber = 0;
       int groupNumber = 0;
+
+      var columnNameDictionary = new Dictionary<string, int>(); // dictionary to track how often a columnName is already used. Key is the column name, Value is the number of columns with that name.
 
       foreach (var fileName in fileNames)
       {
@@ -171,27 +172,36 @@ namespace Altaxo.Serialization.HDF5.Nexus
                   // Note that only the last dimension of the axes can form columns in Altaxo
                   // the other dimensions can be metadata of the columns
                   var xdata = axesDataSets[^1].ReadData();
-                  var xCol = table.DataColumns.EnsureExistence($"X{groupNumber}", typeof(DoubleColumn), ColumnKind.X, groupNumber);
+                  var (xCol, xColPostfix) = CreateDoubleDataColumn(importOptions.UseNeutralColumnName || axesNames.Length == 0 || string.IsNullOrEmpty(axesNames[^1]) ? "X" : axesNames[^1], ColumnKind.X, groupNumber, table, columnNameDictionary);
                   xCol.Data = xdata;
                   SetColumnProperties(table, xCol, importOptions, fileName, nxEntry.Name, nxEntryIndex, title,
                     axesDataSets[^1].TryGetAttributeValueAsString("long_name"),
                     axesDataSets[^1].TryGetAttributeValueAsString("units")
                     );
 
-                  var yDataSets = new List<IH5Dataset>();
-                  yDataSets.Add(signalDataSet);
+                  var yDataSets = new List<(IH5Dataset dataSet, string dataSetName)>();
+                  yDataSets.Add((signalDataSet, signalName));
                   if (auxiliarySignalNames is not null)
                   {
-                    yDataSets.AddRange(auxiliarySignalNames.Select(name => nxData.GetChildObjectNamed<IH5Dataset>(name)));
+                    yDataSets.AddRange(auxiliarySignalNames.Select(name => (nxData.GetChildObjectNamed<IH5Dataset>(name), name)));
                   }
 
-                  foreach (var yDataSet in yDataSets)
+                  foreach (var (yDataSet, yDataSetName) in yDataSets)
                   {
                     var yData = yDataSet.ReadData();
+
+                    double[]? errorData = null;
+                    if (nxData.GetChildObjectNamed<IH5Dataset>(yDataSetName + "_errors") is { } errorDataSet)
+                    {
+                      errorData = errorDataSet.ReadData();
+                    }
+
                     if (signalDimensions.Length == 1)
                     {
-                      var yCol = table.DataColumns.EnsureExistence($"Y{yColumnNameNumber}", typeof(DoubleColumn), ColumnKind.V, groupNumber);
-                      yColumnNameNumber++;
+                      string yColumnName = (importOptions.UseNeutralColumnName || string.IsNullOrEmpty(yDataSetName)) ?
+                        (string.IsNullOrEmpty(importOptions.NeutralColumnName) ? "Y" : importOptions.NeutralColumnName) :
+                        yDataSetName;
+                      var (yCol, yColPostFix) = CreateDoubleDataColumn(yColumnName, ColumnKind.V, groupNumber, table, columnNameDictionary);
                       yCol.Data = yData;
 
                       SetColumnProperties(table, yCol, importOptions, fileName, nxEntry.Name, nxEntryIndex, title,
@@ -199,6 +209,16 @@ namespace Altaxo.Serialization.HDF5.Nexus
                               yDataSet.TryGetAttributeValueAsString("units")
                               );
 
+                      // retrieve the error column, if existing
+                      if (errorData is not null)
+                      {
+                        var errCol = table.DataColumns.EnsureExistence(FormattableString.Invariant($"{yColumnName}{(yColPostFix.HasValue ? yColPostFix.Value : "")}.Err"), typeof(DoubleColumn), ColumnKind.Err, groupNumber);
+                        errCol.Data = errorData;
+                        SetColumnProperties(table, yCol, importOptions, fileName, nxEntry.Name, nxEntryIndex, title,
+                             yDataSet.TryGetAttributeValueAsString("long_name"),
+                             yDataSet.TryGetAttributeValueAsString("units")
+                             );
+                      }
                     }
                     else if (signalDimensions.Length == 2)
                     {
@@ -210,12 +230,25 @@ namespace Altaxo.Serialization.HDF5.Nexus
 
                       for (int iD0 = 0; iD0 < (int)signalDimensions[0]; iD0++)
                       {
-                        var yCol = table.DataColumns.EnsureExistence($"Y{yColumnNameNumber}", typeof(DoubleColumn), ColumnKind.V, groupNumber);
-                        yColumnNameNumber++;
+                        string yColumnName;
+                        if (signalDimensions[0] == 1)
+                        {
+                          yColumnName = (importOptions.UseNeutralColumnName || string.IsNullOrEmpty(yDataSetName)) ?
+                          (string.IsNullOrEmpty(importOptions.NeutralColumnName) ? "Y" : importOptions.NeutralColumnName) :
+                          yDataSetName;
+                        }
+                        else
+                        {
+                          yColumnName = (importOptions.UseNeutralColumnName || string.IsNullOrEmpty(yDataSetName)) ?
+                          (string.IsNullOrEmpty(importOptions.NeutralColumnName) ? FormattableString.Invariant($"Y({iD0}") : FormattableString.Invariant($"{importOptions.NeutralColumnName}({iD0}")) :
+                          FormattableString.Invariant($"{yDataSetName}({iD0}");
+                        }
+
+                        var (yCol, yColPostFix) = CreateDoubleDataColumn(yColumnName, ColumnKind.V, groupNumber, table, columnNameDictionary);
                         yCol.Data = yData.Skip(iD0 * (int)signalDimensions[1]).Take((int)signalDimensions[1]);
-                        var yColIdx = table.DataColumns.GetColumnNumber(yCol);
                         if (axis0Col is not null)
                         {
+                          var yColIdx = table.DataColumns.GetColumnNumber(yCol);
                           axis0Col[yColIdx] = axesDataValues[0][iD0];
                         }
 
@@ -223,11 +256,26 @@ namespace Altaxo.Serialization.HDF5.Nexus
                                 yDataSet.TryGetAttributeValueAsString("long_name"),
                                 yDataSet.TryGetAttributeValueAsString("units")
                                 );
+
+                        if (errorData is not null)
+                        {
+                          var errCol = table.DataColumns.EnsureExistence(FormattableString.Invariant($"{yColumnName}{(yColPostFix.HasValue ? yColPostFix.Value : "")}.Err"), typeof(DoubleColumn), ColumnKind.Err, groupNumber);
+                          errCol.Data = errorData.Skip(iD0 * (int)signalDimensions[1]).Take((int)signalDimensions[1]);
+                          if (axis0Col is not null)
+                          {
+                            var errColIdx = table.DataColumns.GetColumnNumber(errCol);
+                            axis0Col[errColIdx] = axesDataValues[0][iD0];
+                          }
+                          SetColumnProperties(table, yCol, importOptions, fileName, nxEntry.Name, nxEntryIndex, title,
+                               yDataSet.TryGetAttributeValueAsString("long_name"),
+                               yDataSet.TryGetAttributeValueAsString("units")
+                               );
+                        }
                       }
                     }
                     else
                     {
-                      throw new NotImplementedException();
+                      throw new NotImplementedException($"The number of signal dimensions is {signalDimensions.Length}, which is not yet implemented.");
                     }
                   }
                 }
@@ -370,6 +418,43 @@ namespace Altaxo.Serialization.HDF5.Nexus
       }
 
       return stb.Length == 0 ? null : stb.ToString();
+    }
+
+    /// <summary>
+    /// Creates a double data column with a specified name. If a column with the name already exists, a postfix number is appended to the name to ensure a unique column name.
+    /// </summary>
+    /// <param name="columnName">Name of the column.</param>
+    /// <param name="kind">The kind.</param>
+    /// <param name="groupNumber">The group number.</param>
+    /// <param name="table">The table.</param>
+    /// <param name="columnNameDictionary">The column name dictionary.</param>
+    /// <returns>The created data column and the postfix that was used. The postfix number can be used for instance to create an error column with a correspondending name.</returns>
+    public static (DoubleColumn column, int? numberPostfix) CreateDoubleDataColumn(string columnName, ColumnKind kind, int groupNumber, DataTable table, Dictionary<string, int> columnNameDictionary)
+    {
+      DoubleColumn result;
+      int? numberPostfix;
+
+      if (columnNameDictionary.TryGetValue(columnName, out var numberOfUses))
+      {
+        if (numberOfUses == 1) // if there is one column with this name, for consistency reasons we rename the existing column by appending a zero
+        {
+          table.DataColumns.SetColumnName(columnName, columnName + "0");
+          if (table.DataColumns.Contains(columnName + ".Err"))
+          {
+            table.DataColumns.SetColumnName(columnName + ".Err", columnName + "0.Err");
+          }
+        }
+        numberPostfix = numberOfUses;
+        result = (DoubleColumn)table.DataColumns.EnsureExistence(FormattableString.Invariant($"{columnName}{numberOfUses}"), typeof(DoubleColumn), kind, groupNumber);
+        columnNameDictionary[columnName] = numberOfUses + 1;
+      }
+      else
+      {
+        numberPostfix = null;
+        result = (DoubleColumn)table.DataColumns.EnsureExistence(columnName, typeof(DoubleColumn), kind, groupNumber);
+        columnNameDictionary.Add(columnName, 1);
+      }
+      return (result, numberPostfix);
     }
   }
 }
