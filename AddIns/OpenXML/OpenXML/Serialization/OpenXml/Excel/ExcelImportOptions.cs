@@ -89,7 +89,7 @@ namespace Altaxo.Serialization.OpenXml.Excel
         info.AddArray("IndicesOfImportedSheets", s.IndicesOfImportedSheets, s.IndicesOfImportedSheets.Count);
         info.AddValue("NumberOfMainHeaderLines", s.NumberOfMainHeaderLines);
         info.AddValue("IndexOfCaptionLine", s.IndexOfCaptionLine);
-        info.AddValue("RecognizedStructure", s.RecognizedStructure);
+        info.AddValueOrNull("RecognizedStructure", s.RecognizedStructure);
       }
 
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
