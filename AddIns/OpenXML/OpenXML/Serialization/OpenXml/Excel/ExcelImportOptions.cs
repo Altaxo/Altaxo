@@ -22,6 +22,9 @@
 
 #endregion Copyright
 
+using System.Collections.Generic;
+using Altaxo.Serialization.Ascii;
+
 namespace Altaxo.Serialization.OpenXml.Excel
 {
   /// <summary>
@@ -45,7 +48,27 @@ namespace Altaxo.Serialization.OpenXml.Excel
     /// </summary>
     public bool IncludeFilePathAsProperty { get; init; } = true;
 
-    private Altaxo.Collections.Boxed<int> Dummy { get; init; }
+    /// <summary>
+    /// If true, the sheet name is included as a column property.
+    /// </summary>
+    public bool IncludeSheetNameAsProperty { get; init; } = true;
+
+    /// <summary>
+    /// Designates the place where to write to the header lines.
+    /// </summary>
+    public AsciiHeaderLinesDestination HeaderLinesDestination { get; init; }
+
+    /// <summary>
+    /// Gets the indices of imported sheets.
+    /// If the collection is empty, all sheets are imported.
+    /// </summary>
+    public IReadOnlyList<int> IndicesOfImportedSheets { get; init; } = [];
+
+    public int? NumberOfMainHeaderLines { get; init; }
+
+    public int? IndexOfCaptionLine { get; init; }
+
+    public AsciiLineComposition? RecognizedStructure { get; init; }
 
     #region Serialization
 
@@ -61,6 +84,12 @@ namespace Altaxo.Serialization.OpenXml.Excel
         info.AddValue("UseNeutralColumnName", s.UseNeutralColumnName);
         info.AddValue("NeutralColumnName", s.NeutralColumnName);
         info.AddValue("IncludeFilePathAsProperty", s.IncludeFilePathAsProperty);
+        info.AddValue("IncludeSheetNameAsProperty", s.IncludeSheetNameAsProperty);
+        info.AddEnum("HeaderLinesDestination", s.HeaderLinesDestination);
+        info.AddArray("IndicesOfImportedSheets", s.IndicesOfImportedSheets, s.IndicesOfImportedSheets.Count);
+        info.AddValue("NumberOfMainHeaderLines", s.NumberOfMainHeaderLines);
+        info.AddValue("IndexOfCaptionLine", s.IndexOfCaptionLine);
+        info.AddValue("RecognizedStructure", s.RecognizedStructure);
       }
 
       public object Deserialize(object? o, Altaxo.Serialization.Xml.IXmlDeserializationInfo info, object? parent)
@@ -68,18 +97,37 @@ namespace Altaxo.Serialization.OpenXml.Excel
         var useNeutralColumnName = info.GetBoolean("UseNeutralColumnName");
         var neutralColumnName = info.GetString("NeutralColumnName");
         var includeFilePathAsProperty = info.GetBoolean("IncludeFilePathAsProperty");
+        var includeSheetNameAsProperty = info.GetBoolean("IncludeSheetNameAsProperty");
+        var headerLinesDestination = info.GetEnum<AsciiHeaderLinesDestination>("HeaderLinesDestination");
+        var indicesOfImportedSheets = info.GetArrayOfValues<int>("IndicesOfImportedSheets", null);
+        var numberOfMainHeaderLines = info.GetNullableInt32("NumberOfMainHeaderLines");
+        var indexOfCaptionLine = info.GetNullableInt32("IndexOfCaptionLine");
+        var recognizedStructure = info.GetValueOrNull<AsciiLineComposition>("RecognizedStructure", null);
+
 
         return o is null ? new ExcelImportOptions
         {
           UseNeutralColumnName = useNeutralColumnName,
           NeutralColumnName = neutralColumnName,
           IncludeFilePathAsProperty = includeFilePathAsProperty,
+          IncludeSheetNameAsProperty = includeSheetNameAsProperty,
+          HeaderLinesDestination = headerLinesDestination,
+          IndicesOfImportedSheets = indicesOfImportedSheets,
+          NumberOfMainHeaderLines = numberOfMainHeaderLines,
+          IndexOfCaptionLine = indexOfCaptionLine,
+          RecognizedStructure = recognizedStructure,
         } :
           ((ExcelImportOptions)o) with
           {
             UseNeutralColumnName = useNeutralColumnName,
             NeutralColumnName = neutralColumnName,
             IncludeFilePathAsProperty = includeFilePathAsProperty,
+            IncludeSheetNameAsProperty = includeSheetNameAsProperty,
+            HeaderLinesDestination = headerLinesDestination,
+            IndicesOfImportedSheets = indicesOfImportedSheets,
+            NumberOfMainHeaderLines = numberOfMainHeaderLines,
+            IndexOfCaptionLine = indexOfCaptionLine,
+            RecognizedStructure = recognizedStructure,
           };
       }
     }

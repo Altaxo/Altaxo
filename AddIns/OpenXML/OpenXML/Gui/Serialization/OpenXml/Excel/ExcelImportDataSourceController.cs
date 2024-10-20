@@ -25,18 +25,18 @@
 using Altaxo.Gui.Common;
 using Altaxo.Gui.Data;
 using Altaxo.Serialization;
-using Altaxo.Serialization.NicoletSPA;
+using Altaxo.Serialization.OpenXml.Excel;
 
 
-namespace Altaxo.Gui.Serialization.NicoletSPA
+namespace Altaxo.Gui.Serialization.OpenXml.Excel
 {
-  [UserControllerForObject(typeof(NicoletSPAImportDataSource))]
-  public class NicoletSPAImportDataSourceController : DataSourceControllerBase<NicoletSPAImportDataSource>
+  [UserControllerForObject(typeof(ExcelImportDataSource))]
+  public class ExcelImportDataSourceController : DataSourceControllerBase<ExcelImportDataSource>
   {
     protected override IMVCANController GetProcessDataController()
     {
       var processDataController = new MultipleFilesController();
-      processDataController.FileFilters = [FileIOHelper.GetFilterDescriptionForExtensions(new NicoletSPAImporter().GetFileExtensions())];
+      processDataController.FileFilters = [FileIOHelper.GetFilterDescriptionForExtensions(new ExcelImporter().GetFileExtensions())];
       processDataController.InitializeDocument(_doc.SourceFileNames);
       Current.Gui.FindAndAttachControlTo(processDataController);
       return processDataController;

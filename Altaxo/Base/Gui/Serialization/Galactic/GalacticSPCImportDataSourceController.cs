@@ -24,6 +24,7 @@
 
 using Altaxo.Gui.Common;
 using Altaxo.Gui.Data;
+using Altaxo.Serialization;
 using Altaxo.Serialization.Galactic;
 
 namespace Altaxo.Gui.Serialization.Galactic
@@ -34,7 +35,7 @@ namespace Altaxo.Gui.Serialization.Galactic
     protected override IMVCANController GetProcessDataController()
     {
       var processDataController = new MultipleFilesController();
-      processDataController.FileFilters = [("*.spc", "Galactic SPC files (*.spc)")];
+      processDataController.FileFilters = [FileIOHelper.GetFilterDescriptionForExtensions(new GalacticSPCImporter().GetFileExtensions())];
       processDataController.InitializeDocument(_doc.SourceFileNames);
       Current.Gui.FindAndAttachControlTo(processDataController);
       return processDataController;

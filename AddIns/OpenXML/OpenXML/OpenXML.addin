@@ -10,8 +10,8 @@
     <Import assembly=":AltaxoBase" />
     <Import assembly=":AltaxoBase.Presentation" />
     <Import assembly=":AltaxoDom" />
-    <Import assembly="OpenXMLAddin.dll"/>
-    <Import assembly="OpenXMLAddin.Presentation.dll"/>
+    <Import assembly="OpenXMLAddin.dll" preloaded="true"/>
+    <Import assembly="OpenXMLAddin.Presentation.dll" preloaded="true"/>
   </Runtime>
 
   <Path name = "/Altaxo/Workbench/MainMenu/File">
@@ -22,6 +22,11 @@
                 class = "Altaxo.Data.Commands.ExportDataTableToExcel"/>
     </Condition>
 
+    <MenuItem id = "ExportTableAsExcel"
+                insertbefore="ExportTextAsMaml"
+                label = "Export to Excel (.xlsx)"
+                class = "Altaxo.Data.Commands.ExportDataTableToExcel"/>
+    
     <Condition name = "WindowActive" activewindow="Altaxo.Gui.Text.Viewing.TextDocumentController" action="Exclude">
       <MenuItem id = "ExportTextAsOpenXML"
                 insertbefore="ExportTextAsMaml"
@@ -29,6 +34,14 @@
                 class = "Altaxo.Text.Commands.ExportOpenXML"/>
 
     </Condition>
+  </Path>
+
+  <Path name = "/Altaxo/Workbench/MainMenu/File/Import">
+    <MenuItem id="WorksheetImportExcel" 
+              insertbefore="WorksheetImportGalacticSPC"
+              label="Import Excel .xlsx"
+              icon="Icons.16x16.NewDocumentIcon" description="Imports Excel files."
+              class="Altaxo.Serialization.OpenXml.Excel.CommandImportExcel" />
   </Path>
 
   <Path name = "/Altaxo/Workbench/MainMenu/Tools">

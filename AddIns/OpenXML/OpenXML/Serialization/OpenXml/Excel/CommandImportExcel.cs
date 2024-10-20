@@ -22,27 +22,11 @@
 
 #endregion Copyright
 
-using Altaxo.Gui.Common;
-using Altaxo.Gui.Data;
-using Altaxo.Serialization;
-using Altaxo.Serialization.NicoletSPA;
+using Altaxo.Worksheet.Commands;
 
-
-namespace Altaxo.Gui.Serialization.NicoletSPA
+namespace Altaxo.Serialization.OpenXml.Excel
 {
-  [UserControllerForObject(typeof(NicoletSPAImportDataSource))]
-  public class NicoletSPAImportDataSourceController : DataSourceControllerBase<NicoletSPAImportDataSource>
+  public class CommandImportExcel : ImportDataFileCommandBase<ExcelImporter>
   {
-    protected override IMVCANController GetProcessDataController()
-    {
-      var processDataController = new MultipleFilesController();
-      processDataController.FileFilters = [FileIOHelper.GetFilterDescriptionForExtensions(new NicoletSPAImporter().GetFileExtensions())];
-      processDataController.InitializeDocument(_doc.SourceFileNames);
-      Current.Gui.FindAndAttachControlTo(processDataController);
-      return processDataController;
-    }
-
-    protected override bool IsProcessDataInitiallyExpanded() => true;
-    protected override bool IsProcessOptionsInitiallyExpanded() => false;
   }
 }

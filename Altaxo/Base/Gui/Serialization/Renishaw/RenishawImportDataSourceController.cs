@@ -24,6 +24,7 @@
 
 using Altaxo.Gui.Common;
 using Altaxo.Gui.Data;
+using Altaxo.Serialization;
 using Altaxo.Serialization.Renishaw;
 
 namespace Altaxo.Gui.Serialization.Renishaw
@@ -34,7 +35,7 @@ namespace Altaxo.Gui.Serialization.Renishaw
     protected override IMVCANController GetProcessDataController()
     {
       var processDataController = new MultipleFilesController();
-      processDataController.FileFilters = [("*.wdf", "Renishaw spectra files (*.wdf)")];
+      processDataController.FileFilters = [FileIOHelper.GetFilterDescriptionForExtensions(new RenishawImporter().GetFileExtensions())];
       processDataController.InitializeDocument(_doc.SourceFileNames);
       Current.Gui.FindAndAttachControlTo(processDataController);
       return processDataController;

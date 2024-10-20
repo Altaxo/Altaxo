@@ -22,27 +22,18 @@
 
 #endregion Copyright
 
-using Altaxo.Gui.Common;
-using Altaxo.Gui.Data;
-using Altaxo.Serialization;
-using Altaxo.Serialization.NicoletSPA;
+using System.Windows.Controls;
 
-
-namespace Altaxo.Gui.Serialization.NicoletSPA
+namespace Altaxo.Gui.Serialization.OpenXml.Excel
 {
-  [UserControllerForObject(typeof(NicoletSPAImportDataSource))]
-  public class NicoletSPAImportDataSourceController : DataSourceControllerBase<NicoletSPAImportDataSource>
+  /// <summary>
+  /// Interaction logic for ExcelImportOptionsControl.xaml
+  /// </summary>
+  public partial class ExcelImportOptionsControl : UserControl, IExcelImportOptionsView
   {
-    protected override IMVCANController GetProcessDataController()
+    public ExcelImportOptionsControl()
     {
-      var processDataController = new MultipleFilesController();
-      processDataController.FileFilters = [FileIOHelper.GetFilterDescriptionForExtensions(new NicoletSPAImporter().GetFileExtensions())];
-      processDataController.InitializeDocument(_doc.SourceFileNames);
-      Current.Gui.FindAndAttachControlTo(processDataController);
-      return processDataController;
+      InitializeComponent();
     }
-
-    protected override bool IsProcessDataInitiallyExpanded() => true;
-    protected override bool IsProcessOptionsInitiallyExpanded() => false;
   }
 }
