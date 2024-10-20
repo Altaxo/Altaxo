@@ -129,9 +129,9 @@ namespace Altaxo.Serialization.Galactic
         spchdr.flast = binreader.ReadDouble(); // flast : last x-value
         spchdr.fnsub = binreader.ReadInt32(); // fnsub : 1 (one) subfile only
 
-        binreader.ReadByte(); //  Type of X axis units (see definitions below)
-        binreader.ReadByte(); //  Type of Y axis units (see definitions below)
-        binreader.ReadByte(); // Type of Z axis units (see definitions below)
+        var xunit = binreader.ReadByte(); //  Type of X axis units (see definitions below)
+        var yunit = binreader.ReadByte(); //  Type of Y axis units (see definitions below)
+        var zunit = binreader.ReadByte(); // Type of Z axis units (see definitions below)
         binreader.ReadByte(); // Posting disposition (see GRAMSDDE.H)
 
         binreader.Read(new byte[0x1E0], 0, 0x1E0); // rest of SPC header
@@ -147,6 +147,30 @@ namespace Altaxo.Serialization.Galactic
           else
             throw new System.FormatException(string.Format("This SPC file has a version of {0}, the only version recognized here is {1}", spchdr.fversn, 0x4B));
         }
+
+        if (!(spchdr.ftflgs.HasFlag(Ftflgs.TMULTI)) && (spchdr.ftflgs.HasFlag(Ftflgs.TRANDM) || spchdr.ftflgs.HasFlag(Ftflgs.TORDRD)))
+        {
+          throw new System.FormatException($"This SPC file has the TRANDM or TORDRD flag set, but not the TMULTI flag.");
+        }
+
+        if (spchdr.fnpts < 0)
+        {
+          throw new System.FormatException($"This SPC file has no sensible number of points: {spchdr.fnpts}");
+        }
+        if (spchdr.fnsub < 0)
+        {
+          throw new System.FormatException($"This SPC file has a negative number of subfiles: {spchdr.fnsub}");
+        }
+        else if (spchdr.fnsub > 65536)
+        {
+          throw new System.FormatException($"This SPC file has a too high number of subfiles: {spchdr.fnsub}");
+        }
+
+        if (spchdr.fexp != 0x80)
+        {
+          throw new System.NotImplementedException($"This SPC file has integer formatted values, which is not supported yet.");
+        }
+
         double[] xvalues = null;
         if (spchdr.ftflgs.HasFlag(Ftflgs.TXVALS))
         {
