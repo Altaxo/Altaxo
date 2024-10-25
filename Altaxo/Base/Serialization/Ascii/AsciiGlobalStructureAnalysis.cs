@@ -107,7 +107,7 @@ namespace Altaxo.Serialization.Ascii
     }
 
     /// <summary>
-    /// Constructor for the analysis. You must provide the first few lines of a ascii file (say 30) in order to have a good analysis.
+    /// Constructor for the analysis. You must provide the first few lines of a ascii file (say 1000) in order to have a good analysis.
     /// </summary>
     /// <param name="firstLines">List of the first lines of an ascii file.</param>
     public AsciiGlobalStructureAnalysis(List<string> firstLines)

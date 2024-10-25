@@ -248,7 +248,7 @@ namespace Altaxo.Serialization.Ascii
     /// <param name="cultures">The cultures to test.</param>
     protected static void InitializeWithCultures(AsciiDocumentAnalysisOptions options, params CultureInfo[] cultures)
     {
-      options._numberOfLinesToAnalyze = 30;
+      options._numberOfLinesToAnalyze = DefaultNumberOfLinesToAnalyze;
       options._numberFormatsToTest.Clear();
       options._dateTimeFormatsToTest.Clear();
 
