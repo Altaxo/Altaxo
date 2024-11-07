@@ -410,10 +410,10 @@ namespace Altaxo.Serialization.Renishaw
       DataOriginCount = BitConverter.ToInt32(buf, Offsets.measurement_info + 32);
       ApplicationName = System.Text.Encoding.UTF8.GetString(buf, Offsets.measurement_info + 36, 24).TrimEnd('\0'); // Must be "WiRE"
       ApplicationVersion = new Version(
-        BitConverter.ToInt16(buf, Offsets.measurement_info + 60),
-        BitConverter.ToInt16(buf, Offsets.measurement_info + 62),
-        BitConverter.ToInt16(buf, Offsets.measurement_info + 64),
-        BitConverter.ToInt16(buf, Offsets.measurement_info + 66)
+        BitConverter.ToUInt16(buf, Offsets.measurement_info + 60),
+        BitConverter.ToUInt16(buf, Offsets.measurement_info + 62),
+        BitConverter.ToUInt16(buf, Offsets.measurement_info + 64),
+        BitConverter.ToUInt16(buf, Offsets.measurement_info + 66)
         );
 
       ScanType = (ScanType)BitConverter.ToInt32(buf, Offsets.measurement_info + 68);
