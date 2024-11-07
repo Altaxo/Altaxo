@@ -73,7 +73,16 @@ namespace Altaxo.Serialization.BrukerOpus
       for (int positionMetaBlock = PositionOfFirstMetablock; positionMetaBlock + SizeOfMetablock <= streamLength; positionMetaBlock += SizeOfMetablock)
       {
         stream.Seek(positionMetaBlock, SeekOrigin.Begin);
+
+/* Unmerged change from project 'AltaxoCore (net8.0)'
+Before:
         stream.ForcedRead(metaBlock, 0, metaBlock.Length);
+        var dataType = metaBlock[0];
+After:
+        FileIOExtensions.ReadExactly(stream, metaBlock, 0, metaBlock.Length);
+        var dataType = metaBlock[0];
+*/
+        stream.ReadExactly(metaBlock, 0, metaBlock.Length);
         var dataType = metaBlock[0];
         var channelType = metaBlock[1];
         var textType = metaBlock[2];
@@ -248,7 +257,16 @@ namespace Altaxo.Serialization.BrukerOpus
       {
         var result = new byte[4 * _chunkSize];
         stream.Seek(_offset, SeekOrigin.Begin);
+
+/* Unmerged change from project 'AltaxoCore (net8.0)'
+Before:
         stream.ForcedRead(result, 0, result.Length);
+        return result;
+After:
+        FileIOExtensions.ReadExactly(stream, result, 0, result.Length);
+        return result;
+*/
+        stream.ReadExactly(result, 0, result.Length);
         return result;
       }
 

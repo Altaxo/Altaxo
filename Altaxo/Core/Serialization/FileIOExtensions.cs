@@ -37,7 +37,7 @@ namespace Altaxo.Serialization
     /// <param name="length">The number of bytes that must be read.</param>
     /// <exception cref="System.ArgumentOutOfRangeException">length</exception>
     /// <exception cref="System.IO.IOException">Could not read any data from the stream</exception>
-    public static void ForcedRead(this Stream stream, byte[] buffer, int offset, int length)
+    public static void ReadExactly(this Stream stream, byte[] buffer, int offset, int length)
     {
       if (length < 0)
       {

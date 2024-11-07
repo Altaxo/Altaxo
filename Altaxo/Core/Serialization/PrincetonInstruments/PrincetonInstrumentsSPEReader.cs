@@ -143,7 +143,16 @@ namespace Altaxo.Serialization.PrincetonInstruments
     public PrincetonInstrumentsSPEReader(Stream stream)
     {
       var buffer = new byte[Location_StartDataBlock];
+
+/* Unmerged change from project 'AltaxoCore (net8.0)'
+Before:
       stream.ForcedRead(buffer, 0, buffer.Length);
+      var dataTypeCode = BitConverter.ToUInt16(buffer, Location_DataTypeCode);
+After:
+      FileIOExtensions.ReadExactly(stream, buffer, 0, buffer.Length);
+      var dataTypeCode = BitConverter.ToUInt16(buffer, Location_DataTypeCode);
+*/
+      stream.ReadExactly(buffer, 0, buffer.Length);
       var dataTypeCode = BitConverter.ToUInt16(buffer, Location_DataTypeCode);
       var footerPosition = BitConverter.ToInt64(buffer, Location_FooterPosition);
       NumberOfFrames = (int)BitConverter.ToUInt16(buffer, Location_NumberOfFrames);
@@ -302,7 +311,16 @@ namespace Altaxo.Serialization.PrincetonInstruments
 
           var arr = new double[ydim, xdim];
           var bufferArr = new byte[sizeOfDataElement * xdim * ydim];
+
+/* Unmerged change from project 'AltaxoCore (net8.0)'
+Before:
           stream.ForcedRead(bufferArr, 0, bufferArr.Length);
+          var ptr = 0;
+After:
+          FileIOExtensions.ReadExactly(stream, bufferArr, 0, bufferArr.Length);
+          var ptr = 0;
+*/
+          stream.ReadExactly(bufferArr, 0, bufferArr.Length);
           var ptr = 0;
           for (int i = 0; i < xdim; i++)
           {
@@ -337,7 +355,16 @@ namespace Altaxo.Serialization.PrincetonInstruments
           {
             var type = meta_types[idxMetaBlock];
             // Note: the meta data type is either Int64 or Double, thus always read-in 8 bytes
+
+/* Unmerged change from project 'AltaxoCore (net8.0)'
+Before:
             stream.ForcedRead(buffer, 0, 8);
+            if (type == "Int64")
+After:
+            FileIOExtensions.ReadExactly(stream, buffer, 0, 8);
+            if (type == "Int64")
+*/
+            stream.ReadExactly(buffer, 0, 8);
             if (type == "Int64")
             {
               FrameMetaDataValues[idxFrame, idxMetaBlock] = BitConverter.ToInt64(buffer, 0);

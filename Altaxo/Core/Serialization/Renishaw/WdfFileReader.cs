@@ -340,7 +340,16 @@ namespace Altaxo.Serialization.Renishaw
     {
       stream.Seek(pos, SeekOrigin.Begin);
       var buf = new byte[16];
+
+/* Unmerged change from project 'AltaxoCore (net8.0)'
+Before:
       stream.ForcedRead(buf, 0, buf.Length);
+      var block_name = System.Text.ASCIIEncoding.ASCII.GetString(buf, 0, 4);
+After:
+      FileIOExtensions.ReadExactly(stream, buf, 0, buf.Length);
+      var block_name = System.Text.ASCIIEncoding.ASCII.GetString(buf, 0, 4);
+*/
+      stream.ReadExactly(buf, 0, buf.Length);
       var block_name = System.Text.ASCIIEncoding.ASCII.GetString(buf, 0, 4);
       var block_uid = BitConverter.ToInt32(buf, 4);
       var block_size = BitConverter.ToInt64(buf, 8);
@@ -408,7 +417,14 @@ namespace Altaxo.Serialization.Renishaw
 
       sr.Seek(blockinfo.Position, SeekOrigin.Begin);
       var buf = new byte[blockinfo.Size];
+
+/* Unmerged change from project 'AltaxoCore (net8.0)'
+Before:
       sr.ForcedRead(buf, 0, buf.Length);
+After:
+      FileIOExtensions.ReadExactly(sr, buf, 0, buf.Length);
+*/
+      sr.ReadExactly(buf, 0, buf.Length);
 
       // TODO what are the digits in between?
 
@@ -472,7 +488,16 @@ namespace Altaxo.Serialization.Renishaw
       Spectra = new float[n_row][];
       for (int i = 0; i < n_row; ++i)
       {
+
+/* Unmerged change from project 'AltaxoCore (net8.0)'
+Before:
         sr.ForcedRead(buf, 0, buf.Length);
+        Spectra[i] = new float[NumberOfPointsPerSpectrum];
+After:
+        FileIOExtensions.ReadExactly(sr, buf, 0, buf.Length);
+        Spectra[i] = new float[NumberOfPointsPerSpectrum];
+*/
+        sr.ReadExactly(buf, 0, buf.Length);
         Spectra[i] = new float[NumberOfPointsPerSpectrum];
         Buffer.BlockCopy(buf, 0, Spectra[i], 0, buf.Length);
       }
@@ -492,7 +517,14 @@ namespace Altaxo.Serialization.Renishaw
       // uid, pos, size = self.block_info[name]
       sr.Seek(blockinfo.Position + Offsets.block_data, SeekOrigin.Begin);
       var buf = new byte[8];
+
+/* Unmerged change from project 'AltaxoCore (net8.0)'
+Before:
       sr.ForcedRead(buf, 0, buf.Length);
+After:
+      FileIOExtensions.ReadExactly(sr, buf, 0, buf.Length);
+*/
+      sr.ReadExactly(buf, 0, buf.Length);
 
       listinfo[(int)kind].Type = BitConverter.ToInt32(buf, 0);
       listinfo[(int)kind].Unit = BitConverter.ToInt32(buf, 4);
@@ -505,7 +537,14 @@ namespace Altaxo.Serialization.Renishaw
 
       buf = new byte[size * sizeof(float)];
 
+
+/* Unmerged change from project 'AltaxoCore (net8.0)'
+Before:
       sr.ForcedRead(buf, 0, buf.Length);
+After:
+      FileIOExtensions.ReadExactly(sr, buf, 0, buf.Length);
+*/
+      sr.ReadExactly(buf, 0, buf.Length);
 
       var data = new float[size];
       Buffer.BlockCopy(buf, 0, data, 0, buf.Length);
@@ -535,7 +574,14 @@ namespace Altaxo.Serialization.Renishaw
       {
         sr.Seek(curpos, SeekOrigin.Begin);
         var buf = new byte[24];
+
+/* Unmerged change from project 'AltaxoCore (net8.0)'
+Before:
         sr.ForcedRead(buf, 0, buf.Length);
+After:
+        FileIOExtensions.ReadExactly(sr, buf, 0, buf.Length);
+*/
+        sr.ReadExactly(buf, 0, buf.Length);
 
 
 
@@ -559,7 +605,14 @@ namespace Altaxo.Serialization.Renishaw
         // Set time[0] = 0 until timestamp reference can be determined
         // Resulting array will have unit of `FileTime` in seconds
         buf = new byte[Count * sizeof(double)];
+
+/* Unmerged change from project 'AltaxoCore (net8.0)'
+Before:
         sr.ForcedRead(buf, 0, buf.Length);
+After:
+        FileIOExtensions.ReadExactly(sr, buf, 0, buf.Length);
+*/
+        sr.ReadExactly(buf, 0, buf.Length);
 
         Array array;
         if (header_dataType == DataType.Time)
@@ -611,7 +664,14 @@ namespace Altaxo.Serialization.Renishaw
     {
       sr.Seek(blockinfo.Position + Offsets.wmap_origin, SeekOrigin.Begin);
       var buf = new byte[32];
+
+/* Unmerged change from project 'AltaxoCore (net8.0)'
+Before:
       sr.ForcedRead(buf, 0, buf.Length);
+After:
+      FileIOExtensions.ReadExactly(sr, buf, 0, buf.Length);
+*/
+      sr.ReadExactly(buf, 0, buf.Length);
 
       var x_start = BitConverter.ToSingle(buf, 0);
       if (!IsClose(x_start, XPositions[0], 0, 1e-4))
@@ -680,7 +740,16 @@ namespace Altaxo.Serialization.Renishaw
       // Read the bytes. `self.img` is a wrapped IO object mimicking a file
       sr.Seek(blockinfo.Position + Offsets.jpeg_header, SeekOrigin.Begin);
       var buf = new byte[blockinfo.Size - Offsets.jpeg_header];
+
+/* Unmerged change from project 'AltaxoCore (net8.0)'
+Before:
       sr.ForcedRead(buf, 0, buf.Length);
+      Images.Add(buf);
+After:
+      FileIOExtensions.ReadExactly(sr, buf, 0, buf.Length);
+      Images.Add(buf);
+*/
+      sr.ReadExactly(buf, 0, buf.Length);
       Images.Add(buf);
 
       /*
