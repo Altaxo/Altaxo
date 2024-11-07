@@ -67,7 +67,7 @@ namespace Altaxo.Serialization.Renishaw
       {
         using var stream = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.Read);
         var result = new WdfFileReader(stream);
-        if (result.XData is not null && result.YData is not null && result.YData.Length > 0 && result.XData.Length == result.YData.Length)
+        if (result.XData is not null && result.Spectra is not null && result.Spectra.Length > 0 && result.Spectra[0].Length > 0 && result.XData.Length == result.YData.Length)
         {
           p += 0.5;
         }
