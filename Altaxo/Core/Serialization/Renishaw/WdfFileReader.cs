@@ -218,21 +218,37 @@ namespace Altaxo.Serialization.Renishaw
 
     private (int Type, int Unit, int Length, float[] Data)[] listinfo = new (int Type, int Unit, int Length, float[] Data)[2];
 
+    /// <summary>
+    /// Gets the x data. This are usually the spectrum's x values (wavelength, shift, etc.).
+    /// </summary>
     public float[] XData => listinfo[(int)ListKind.X].Data;
+
+    /// <summary>
+    /// Gets the y data. ATTENTION: this are usually <b>NOT</b> the spectrum's intensity values (these are stored in <see cref="Spectra"/>, or use <see cref="GetSpectrum(int)"/>).
+    /// </summary>
     public float[] YData => listinfo[(int)ListKind.Y].Data;
 
-
+    /// <summary>
+    /// Gets the unit of the <see cref="XData"/> values.
+    /// </summary>
     public UnitType XUnit => (UnitType)listinfo[(int)ListKind.X].Unit;
+
+    /// <summary>
+    /// Gets the unit of the <see cref="YData"/> values.
+    /// </summary>
     public UnitType YUnit => (UnitType)listinfo[(int)ListKind.Y].Unit;
 
 
-    public float[][] Spectra { get; private set; }
+    /// <summary>
+    /// Gets the spectra's intensity values.
+    /// </summary>
+    public float[][] Spectra { get; private set; } = [];
 
     /// <summary>
-    /// Gets the spectrum with index <paramref name="idx"/>. 
+    /// Gets the spectrum's intensity values with index <paramref name="idx"/>. 
     /// </summary>
     /// <param name="idx">The index (must be &gt;=0 and &lt;<see cref="Count"/>).</param>
-    /// <returns>The spectrum.</returns>
+    /// <returns>The spectrum's intensity values.</returns>
     public float[] GetSpectrum(int idx)
     {
       return Spectra[idx];
