@@ -32,6 +32,7 @@
 global using ColorMapVector = System.Collections.Generic.List<(double, Altaxo.Serialization.Origin.ColorMapLevel)>;
 using System;
 using System.Collections.Generic;
+using Altaxo.Collections;
 
 namespace Altaxo.Serialization.Origin
 {
@@ -401,6 +402,8 @@ namespace Altaxo.Serialization.Origin
 
     }
 
+    public bool IsDouble => _type == vtype.V_DOUBLE;
+
     public double AsDouble()
     {
       if (_type == vtype.V_DOUBLE)
@@ -411,6 +414,7 @@ namespace Altaxo.Serialization.Origin
       throw new ApplicationException($"Variant contains {_type}, but expecting type Double");
     }
 
+    public bool IsString => _type == vtype.V_DOUBLE;
     public string AsString()
     {
       if (_type == vtype.V_STRING)
@@ -1370,9 +1374,9 @@ namespace Altaxo.Serialization.Origin
     Folder
   };
 
-  public class ProjectNode
+  public class ProjectNode : ITreeNodeWithParent<ProjectNode>
   {
-    public ProjectNode? Parent;
+    public ProjectNode? ParentNode { get; set; }
     public ProjectNodeType NodeType;
     public string Name;
     public DateTimeOffset CreationDate;
@@ -1381,7 +1385,9 @@ namespace Altaxo.Serialization.Origin
     private List<ProjectNode>? _children = null;
     public object? ValueAsObject;
 
-    public IReadOnlyList<ProjectNode> Children => (IReadOnlyList<ProjectNode>?)_children ?? Array.Empty<ProjectNode>();
+    IEnumerable<ProjectNode> ITreeNode<ProjectNode>.ChildNodes => (IEnumerable<ProjectNode>?)_children ?? Array.Empty<ProjectNode>();
+
+    public IReadOnlyList<ProjectNode> ChildNodes => (IReadOnlyList<ProjectNode>?)_children ?? Array.Empty<ProjectNode>();
 
     public ProjectNode()
  : this("")
@@ -1419,7 +1425,7 @@ namespace Altaxo.Serialization.Origin
     {
       _children ??= new List<ProjectNode>();
       _children.Add(node);
-      node.Parent = this;
+      node.ParentNode = this;
       return node;
     }
   }

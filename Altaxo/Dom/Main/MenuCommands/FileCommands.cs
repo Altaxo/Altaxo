@@ -322,31 +322,6 @@ namespace Altaxo.Main.Commands
     }
   }
 
-
-
-  public class FileImportOriginOpj : SimpleCommand
-  {
-    public override void Execute(object parameter)
-    {
-      var openFileDialog1 = new Altaxo.Gui.OpenFileOptions
-      {
-        FilterIndex = 1,
-        RestoreDirectory = true,
-        Multiselect = false,
-      };
-      openFileDialog1.AddFilter("*.opj", "OPJ files (*.opj)");
-      openFileDialog1.AddFilter("*.*", "All files (*.*)");
-
-      if (true == Current.Gui.ShowOpenFileDialog(openFileDialog1) && openFileDialog1.FileName.Length > 0)
-      {
-        string result = Altaxo.Serialization.Origin.Importer.Import(openFileDialog1.FileName);
-        if (result is not null)
-          Current.Gui.ErrorMessageBox(result);
-      }
-    }
-  }
-
-
   public class NewInstanceScript : SimpleCommand
   {
     public override void Execute(object parameter)

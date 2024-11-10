@@ -58,7 +58,7 @@ namespace Altaxo.Serialization.Origin
     public double Version => FileVersion / 100.0;
 
     // Process data
-    private FileStream _file;
+    private Stream _file;
     private StreamWriter _logfile;
     private System.Text.Encoding _encoding;
 
@@ -85,7 +85,7 @@ namespace Altaxo.Serialization.Origin
     {
     }
 
-    public OriginAnyParser(FileStream originFile, StreamWriter? logFile)
+    public OriginAnyParser(Stream originFile, StreamWriter? logFile)
     {
       this._file = originFile;
       _logfile = logFile;
@@ -337,19 +337,19 @@ namespace Altaxo.Serialization.Origin
     /// <summary>
     /// Reads the file version from an .opj or .opju file.
     /// </summary>
-    /// <param name="_file">The file stream.</param>
+    /// <param name="file">The file stream.</param>
     /// <returns>Tuple of file version, new file version (contains the year), buildversion, whether it is an opju file, and a error string.
     /// The function is considered successful if the returned error is null.</returns>
-    public static (int FileVersion, int NewFileVersion, int BuildVersion, bool IsOpjuFile, string? Error) ReadFileVersion(FileStream _file)
+    public static (int FileVersion, int NewFileVersion, int BuildVersion, bool IsOpjuFile, string? Error) ReadFileVersion(Stream file)
     {
       int fileVersion;
       int newFileVersion = 0;
       int buildVersion;
       bool isOpjuFile;
 
-      _file.Seek(0, SeekOrigin.Begin);
+      file.Seek(0, SeekOrigin.Begin);
       // get file and program version, check it is a valid file
-      string sFileVersion = ReadLine(_file, false);
+      string sFileVersion = ReadLine(file, false);
 
       if (sFileVersion.Length <= 5)
       {
@@ -3770,7 +3770,7 @@ namespace Altaxo.Serialization.Origin
       }
 
       // now do the same thing for all subnodes
-      foreach (var subNode in current.Children)
+      foreach (var subNode in current.ChildNodes)
       {
         AssignObjectsToProjectTree(subNode);
       }
@@ -3781,7 +3781,7 @@ namespace Altaxo.Serialization.Origin
       throw new NotImplementedException();
     }
 
-    private DateTime DoubleToPosixTime(double jdt)
+    public static DateTime DoubleToPosixTime(double jdt)
     {
       // 2440587.5 is julian date for the unixtime epoch
       return new DateTime(1970, 1, 1).AddDays(jdt - 2440587).AddSeconds(0.5);
@@ -4084,7 +4084,7 @@ namespace Altaxo.Serialization.Origin
     /// <param name="doUnreadDelimiter">If true, the file stream is placed on the character that has cause the stop. If false, the file stream is placed
     /// after the delimiting char.</param>
     /// <returns>The line (without any newline, zeros, and other chars below 0x20.</returns>
-    public static string ReadLine(FileStream fs, bool doUnreadDelimiter)
+    public static string ReadLine(Stream fs, bool doUnreadDelimiter)
     {
       var stb = new StringBuilder();
       for (; ; )

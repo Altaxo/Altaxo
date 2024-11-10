@@ -276,6 +276,9 @@
               <MenuItem id="WorksheetImportNicoletSPA" label="Nicolet .SPA files"
                             icon="Icons.16x16.NewDocumentIcon" description="Imports one or multiple .SPA spectra files (Nicolet)."
                             class="Altaxo.Worksheet.Commands.ImportNicoletSPA" />
+              <MenuItem id="WorksheetImportOrigin" label="Origin .OPJ files"
+                            icon="Icons.16x16.NewDocumentIcon" description="Imports one or multiple Origin project files (.OPJ Format)."
+                            class="Altaxo.Worksheet.Commands.ImportOrigin" />
               <MenuItem id="WorksheetImportPrincetonSPE" label="Princeton Instruments .SPE files"
                             icon="Icons.16x16.NewDocumentIcon" description="Imports one or multiple .SPE files (Princeton Instruments)."
                             class="Altaxo.Worksheet.Commands.ImportPrincetonInstrumentsSPE" />
@@ -294,9 +297,6 @@
                               description="${res:XML.MainMenu.FileMenu.Import.AsciiSingleWorksheet.Description}" class="Altaxo.Worksheet.Commands.ImportAsciiInSingleWorksheetHorizontally" />
                     <MenuItem id="WorksheetImportAsciiSingleWksVert" label="${res:XML.MainMenu.FileMenu.Import.AsciiSingleWorksheetVert}" icon="Icons.16x16.ImportAscii"
                                   description="${res:XML.MainMenu.FileMenu.Import.AsciiSingleWorksheetVert.Description}" class="Altaxo.Worksheet.Commands.ImportAsciiInSingleWorksheetVertically" />
-                  <MenuItem id="WorksheetImportOriginOpj" label="${res:XML.MainMenu.FileMenu.Import.OriginOpj}"
-                                  icon="Icons.16x16.NewDocumentIcon" description="${res:XML.MainMenu.FileMenu.Import.OriginOpj.Description}"
-                                  class="Altaxo.Main.Commands.FileImportOriginOpj" />
                     <MenuItem id="WorksheetImportImage" label="${res:XML.MainMenu.FileMenu.Import.ImageData}"
                                   icon="Icons.16x16.NewDocumentIcon" description="${res:XML.MainMenu.FileMenu.Import.ImageData.Description}"
                                   class="Altaxo.Worksheet.Commands.ImportImage" />
