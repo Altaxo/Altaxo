@@ -81,111 +81,25 @@ namespace Altaxo.Serialization.Origin
     public override string? Import(IReadOnlyList<string> fileNames, DataTable table, object importOptionsObj, bool attachDataSource = true)
     {
       var importOptions = (OriginImportOptions)importOptionsObj;
-      Altaxo.Data.DoubleColumn? xcol = null;
-      var errorList = new System.Text.StringBuilder();
-      int lastColumnGroup = 0;
+      var opData = new ImportOperationalDataForTable();
 
-      if (table.DataColumns.ColumnCount > 0)
-      {
-        lastColumnGroup = table.DataColumns.GetColumnGroup(table.DataColumns.ColumnCount - 1);
-        var xColumnOfRightMost = table.DataColumns.FindXColumnOfGroup(lastColumnGroup);
-        if (xColumnOfRightMost is DoubleColumn dcolMostRight)
-          xcol = dcolMostRight;
-      }
-
-      int idxYColumn = 0;
       foreach (var fileName in fileNames)
       {
         Origin2AltaxoWrapper reader;
         using (var stream = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.Read))
         {
-          reader = new Origin2AltaxoWrapper(new OriginAnyParser(stream));
+          reader = new Origin2AltaxoWrapper(new OriginAnyParser(stream), fileName);
         }
-        int indexOfSpectrum = -1;
         foreach (var entry in reader.EnumerateAllSpreadSheets(considerSpreadsheetsInExcelsToo: true))
         {
-          if (!(importOptions.PathsOfImportedData.Count == 0 ||
-               importOptions.PathsOfImportedData.Contains(entry.fullName))
-             )
-          {
-            continue;
-          }
+          ImportSpreadSheet(reader, entry.fullName, entry.spreadsheet, importOptions, table, opData);
+        }
 
-          var spreadSheet = entry.spreadsheet;
 
-          // add the columns
-          for (int idxColumn = 0; idxColumn < spreadSheet.Columns.Count; ++idxColumn)
-          {
-            var originColumn = spreadSheet.Columns[idxColumn];
-            var (columnName, altaxoColumn, altaxoColumnKind) = Origin2AltaxoWrapper.OriginColumnToAltaxoColumn(originColumn);
-
-            if (importOptions.UseNeutralColumnName)
-            {
-              columnName = $"{(string.IsNullOrEmpty(importOptions.NeutralColumnName) ? "Y" : importOptions.NeutralColumnName)}{idxYColumn}";
-            }
-            columnName = table.DataColumns.FindUniqueColumnName(columnName);
-            table.DataColumns.Add(altaxoColumn, columnName, altaxoColumnKind, lastColumnGroup);
-            ++idxYColumn;
-
-            if (importOptions.IncludeFilePathAsProperty)
-            {
-              // add also a property column named "FilePath" if not existing so far
-              if (!table.PropCols.ContainsColumn("FilePath"))
-                table.PropCols.Add(new Altaxo.Data.TextColumn(), "FilePath");
-
-              // now set the file name property cell
-              int yColumnNumber = table.DataColumns.GetColumnNumber(altaxoColumn);
-              if (table.PropCols["FilePath"] is Altaxo.Data.TextColumn)
-              {
-                table.PropCols["FilePath"][yColumnNumber] = fileName;
-              }
-            }
-          }
-          lastColumnGroup++;
-        } // for each spectrum
         foreach (var entry in reader.EnumerateAllMatrixSheets())
         {
-          if (!(importOptions.PathsOfImportedData.Count == 0 ||
-               importOptions.PathsOfImportedData.Contains(entry.fullName))
-             )
-          {
-            continue;
-          }
-
-          var matrixSheet = entry.matrixSheet;
-
-          // add the columns
-          for (int idxColumn = 0; idxColumn < matrixSheet.ColumnCount; ++idxColumn)
-          {
-            var altaxoColumn = new DoubleColumn();
-            for (int idxRow = 0; idxRow < matrixSheet.RowCount; ++idxRow)
-            {
-              var idxData = idxColumn * matrixSheet.RowCount + idxRow;
-              if (idxData < matrixSheet.Data.Count)
-                altaxoColumn[idxRow] = matrixSheet.Data[idxData];
-            }
-            var columnName = $"{(string.IsNullOrEmpty(importOptions.NeutralColumnName) ? "Y" : importOptions.NeutralColumnName)}{idxYColumn}";
-            columnName = table.DataColumns.FindUniqueColumnName(columnName);
-
-            table.DataColumns.Add(altaxoColumn, columnName, ColumnKind.V, lastColumnGroup);
-            ++idxYColumn;
-
-            if (importOptions.IncludeFilePathAsProperty)
-            {
-              // add also a property column named "FilePath" if not existing so far
-              if (!table.PropCols.ContainsColumn("FilePath"))
-                table.PropCols.Add(new Altaxo.Data.TextColumn(), "FilePath");
-
-              // now set the file name property cell
-              int yColumnNumber = table.DataColumns.GetColumnNumber(altaxoColumn);
-              if (table.PropCols["FilePath"] is Altaxo.Data.TextColumn)
-              {
-                table.PropCols["FilePath"][yColumnNumber] = fileName;
-              }
-            }
-          }
-          lastColumnGroup++;
-        } // for each spectrum
+          ImportMatrixSheet(reader, entry.fullName, entry.matrixSheet, importOptions, table, opData);
+        }
       } // for each file
 
       if (attachDataSource)
@@ -209,42 +123,36 @@ namespace Altaxo.Serialization.Origin
             Origin2AltaxoWrapper reader;
             using (var stream = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.Read))
             {
-              reader = new Origin2AltaxoWrapper(new OriginAnyParser(stream));
+              reader = new Origin2AltaxoWrapper(new OriginAnyParser(stream), fileName);
             }
+
+            // enumerate all spreadsheets and import them each separately in a table
             foreach (var entry in reader.EnumerateAllSpreadSheets(considerSpreadsheetsInExcelsToo: true))
             {
               var dataTable = new DataTable();
+              var opData = new ImportOperationalDataForTable();
               if (initialOptions.UseMetaDataNameAsTableName)
               {
                 dataTable.Name = entry.fullName;
               }
               var localImportOptions = importOptions with { PathsOfImportedData = [entry.fullName] };
-
-              var result = Import([fileName], dataTable, localImportOptions);
-              if (result is not null)
-              {
-                stb.AppendLine(result);
-              }
+              ImportSpreadSheet(reader, entry.fullName, entry.spreadsheet, localImportOptions, dataTable, opData);
               Current.Project.AddItemWithThisOrModifiedName(dataTable);
               Current.ProjectService.CreateNewWorksheet(dataTable);
               dataTable.DataSource = new OriginImportDataSource(fileNames, localImportOptions);
             }
 
-            // now the matrices
+            // enumerate all matrices
             foreach (var entry in reader.EnumerateAllMatrixSheets())
             {
               var dataTable = new DataTable();
+              var opData = new ImportOperationalDataForTable();
               if (initialOptions.UseMetaDataNameAsTableName)
               {
                 dataTable.Name = entry.fullName;
               }
               var localImportOptions = importOptions with { PathsOfImportedData = [entry.fullName] };
-
-              var result = Import([fileName], dataTable, localImportOptions);
-              if (result is not null)
-              {
-                stb.AppendLine(result);
-              }
+              ImportMatrixSheet(reader, entry.fullName, entry.matrixSheet, localImportOptions, dataTable, opData);
               Current.Project.AddItemWithThisOrModifiedName(dataTable);
               Current.ProjectService.CreateNewWorksheet(dataTable);
               dataTable.DataSource = new OriginImportDataSource(fileNames, localImportOptions);
@@ -281,5 +189,193 @@ namespace Altaxo.Serialization.Origin
     }
 
 
+    public class ImportOperationalDataForTable
+    {
+      /// <summary>
+      /// The last used group number. The start value is -1, thus the number has to be incremented before use.
+      /// </summary>
+      public int LastUsedGroupNumber = -1;
+
+      /// <summary>
+      /// Gets the column name usage of the table. Key is the column name, value is the number of uses.
+      /// </summary>
+      public Dictionary<string, int> ColumnNameDictionary { get; } = [];
+
+
+      /// <summary>
+      /// Creates a double data column with a specified name. If a column with the name already exists, a postfix number is appended to the name to ensure a unique column name.
+      /// </summary>
+      /// <param name="columnName">Name of the column.</param>
+      /// <param name="kind">The kind.</param>
+      /// <param name="groupNumber">The group number.</param>
+      /// <param name="table">The table.</param>
+      /// <returns>The created data column and the postfix that was used. The postfix number can be used for instance to create an error column with a correspondending name.</returns>
+      public (DataColumn column, int? numberPostfix) AddDataColumn(DataColumn column, string columnName, ColumnKind kind, int groupNumber, DataTable table)
+      {
+        int? numberPostfix;
+
+        if (ColumnNameDictionary.TryGetValue(columnName, out var numberOfUses))
+        {
+          if (numberOfUses == 1) // if there is one column with this name, for consistency reasons we rename the existing column by appending a zero
+          {
+            table.DataColumns.SetColumnName(columnName, columnName + "0");
+            if (table.DataColumns.Contains(columnName + ".Err"))
+            {
+              table.DataColumns.SetColumnName(columnName + ".Err", columnName + "0.Err");
+            }
+          }
+          numberPostfix = numberOfUses;
+          table.DataColumns.Add(column, FormattableString.Invariant($"{columnName}{numberOfUses}"), kind, groupNumber);
+          ColumnNameDictionary[columnName] = numberOfUses + 1;
+        }
+        else
+        {
+          numberPostfix = null;
+          table.DataColumns.Add(column, columnName, kind, groupNumber);
+          ColumnNameDictionary.Add(columnName, 1);
+        }
+        return (column, numberPostfix);
+      }
+    }
+
+    /// <summary>
+    /// Imports an Origin spread sheet into an Altaxo table. The Altaxo table can or can not be empty.
+    /// </summary>
+    /// <param name="reader">The Origin project wrapper.</param>
+    /// <param name="spreadSheetName">Full name of the Origin spread sheet.</param>
+    /// <param name="spreadSheet">The Origin spread sheet.</param>
+    /// <param name="importOptions">The import options.</param>
+    /// <param name="table">The Altaxo table, in which the data are imported.</param>
+    /// <param name="opData">The operational data for importing into that Altaxo table.</param>
+    public static void ImportSpreadSheet(Origin2AltaxoWrapper reader, string spreadSheetName, SpreadSheet spreadSheet, OriginImportOptions importOptions, DataTable table, ImportOperationalDataForTable opData)
+    {
+      ++opData.LastUsedGroupNumber;
+
+      for (int idxColumn = 0; idxColumn < spreadSheet.Columns.Count; ++idxColumn)
+      {
+        var originColumn = spreadSheet.Columns[idxColumn];
+        var (columnName, altaxoColumn, altaxoColumnKind) = Origin2AltaxoWrapper.OriginColumnToAltaxoColumn(originColumn);
+
+        if (importOptions.UseNeutralColumnName)
+        {
+          if (string.IsNullOrEmpty(importOptions.NeutralColumnName))
+          {
+            columnName = altaxoColumnKind switch
+            {
+              ColumnKind.X => "X",
+              ColumnKind.Y => "Y",
+              ColumnKind.Z => "Z",
+              ColumnKind.V => "Y",
+              ColumnKind.Label => "L",
+              _ => "Y",
+            };
+          }
+          else
+          {
+            columnName = importOptions.NeutralColumnName;
+          }
+        }
+
+        opData.AddDataColumn(altaxoColumn, columnName, altaxoColumnKind, opData.LastUsedGroupNumber, table);
+
+        if (importOptions.IncludeFilePathAsProperty && !string.IsNullOrEmpty(reader.FileName))
+        {
+          // add also a property column named "FilePath" if not existing so far
+          if (!table.PropCols.ContainsColumn("FilePath"))
+            table.PropCols.Add(new Altaxo.Data.TextColumn(), "FilePath");
+
+          // now set the file name property cell
+          int yColumnNumber = table.DataColumns.GetColumnNumber(altaxoColumn);
+          if (table.PropCols["FilePath"] is Altaxo.Data.TextColumn)
+          {
+            table.PropCols["FilePath"][yColumnNumber] = reader.FileName;
+          }
+        }
+      }
+    }
+
+
+    /// <summary>
+    /// Imports an Origin matrix sheet into an Altaxo table. The Altaxo table can or can not be empty.
+    /// </summary>
+    /// <param name="reader">The Origin project wrapper.</param>
+    /// <param name="sheetName">Full name of the Origin maxtrix sheet.</param>
+    /// <param name="matrixSheet">The Origin matrix sheet.</param>
+    /// <param name="importOptions">The import options.</param>
+    /// <param name="table">The Altaxo table, in which the data are imported.</param>
+    /// <param name="opData">The operational data for importing into that Altaxo table.</param>
+    public static void ImportMatrixSheet(Origin2AltaxoWrapper reader, string sheetName, MatrixSheet matrixSheet, OriginImportOptions importOptions, DataTable table, ImportOperationalDataForTable opData)
+    {
+      ++opData.LastUsedGroupNumber;
+
+      // add the columns
+      for (int idxColumn = 0; idxColumn < matrixSheet.ColumnCount; ++idxColumn)
+      {
+        var altaxoColumn = new DoubleColumn();
+        for (int idxRow = 0; idxRow < matrixSheet.RowCount; ++idxRow)
+        {
+          var idxData = idxColumn * matrixSheet.RowCount + idxRow;
+          if (idxData < matrixSheet.Data.Count)
+            altaxoColumn[idxRow] = matrixSheet.Data[idxData];
+        }
+
+
+        string columnName;
+        if (string.IsNullOrEmpty(importOptions.NeutralColumnName))
+        {
+          columnName = "Y";
+        }
+        else
+        {
+          columnName = importOptions.NeutralColumnName;
+        }
+
+        opData.AddDataColumn(altaxoColumn, columnName, ColumnKind.V, opData.LastUsedGroupNumber, table);
+
+        if (importOptions.IncludeFilePathAsProperty)
+        {
+          // add also a property column named "FilePath" if not existing so far
+          if (!table.PropCols.ContainsColumn("FilePath"))
+            table.PropCols.Add(new Altaxo.Data.TextColumn(), "FilePath");
+
+          // now set the file name property cell
+          int yColumnNumber = table.DataColumns.GetColumnNumber(altaxoColumn);
+          if (table.PropCols["FilePath"] is Altaxo.Data.TextColumn)
+          {
+            table.PropCols["FilePath"][yColumnNumber] = reader.FileName;
+          }
+        }
+      }
+    }
+
+
+
+    /// <summary>
+    /// Imports the specified reader.
+    /// </summary>
+    /// <param name="reader">The reader.</param>
+    /// <param name="importOptions">The import options.</param>
+    /// <param name="dataTable">The data table.</param>
+    /// <param name="opData">The op data.</param>
+    public static void Import(Origin2AltaxoWrapper reader, OriginImportOptions importOptions, DataTable dataTable, ImportOperationalDataForTable opData)
+    {
+      // import all spread sheets
+      foreach (var entry in reader.EnumerateAllSpreadSheets(considerSpreadsheetsInExcelsToo: true))
+      {
+        if (importOptions.PathsOfImportedData.Count == 0 || importOptions.PathsOfImportedData.Contains(entry.fullName))
+        {
+          ImportSpreadSheet(reader, entry.fullName, entry.spreadsheet, importOptions, dataTable, opData);
+        }
+      }
+
+      // import all matrix sheets
+      foreach (var entry in reader.EnumerateAllMatrixSheets())
+      {
+        if (importOptions.PathsOfImportedData.Count == 0 || importOptions.PathsOfImportedData.Contains(entry.fullName))
+        {
+          ImportMatrixSheet(reader, entry.fullName, entry.matrixSheet, importOptions, dataTable, opData);
+        }
+      }
+    }
   }
 }

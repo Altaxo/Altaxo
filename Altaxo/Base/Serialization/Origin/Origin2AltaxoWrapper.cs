@@ -37,14 +37,18 @@ namespace Altaxo.Serialization.Origin
   {
     public OriginAnyParser Parser { get; }
 
+    public string FileName { get; }
+
     /// <summary>
     /// Initializes a new instance of the <see cref="Origin2AltaxoWrapper"/> class.
     /// </summary>
     /// <param name="parser">The parser.</param>
+    /// <param name="fileName">The file name (only to track the origin of the opj project)</param>
     /// <exception cref="Markdig.Helpers.ThrowHelper.ArgumentNullException(System.String)">parser</exception>
-    public Origin2AltaxoWrapper(OriginAnyParser parser)
+    public Origin2AltaxoWrapper(OriginAnyParser parser, string fileName)
     {
       Parser = parser ?? throw new ArgumentNullException(nameof(parser));
+      FileName = fileName ?? string.Empty;
     }
 
 
@@ -192,7 +196,8 @@ namespace Altaxo.Serialization.Origin
         SpreadColumnType.XErr => ColumnKind.Err,
         SpreadColumnType.YErr => ColumnKind.Err,
         SpreadColumnType.Label => ColumnKind.Label,
-        _ => throw new System.NotImplementedException(),
+        SpreadColumnType.NONE => ColumnKind.V,
+        _ => throw new System.NotImplementedException($"SpreadColumnType {ctype} (0x{(int)ctype:X2}) is not implemented!"),
       };
     }
 

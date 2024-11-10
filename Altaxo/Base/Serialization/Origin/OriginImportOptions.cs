@@ -35,7 +35,7 @@ namespace Altaxo.Serialization.Origin
     /// If true, the column name of the imported y-columns is set to a neutral, constant value.
     /// If false, the column name of the imported y-columns is derived from the file name of the imported file.
     /// </summary>
-    public bool UseNeutralColumnName { get; init; } = true;
+    public bool UseNeutralColumnName { get; init; }
 
     /// <summary>
     /// Gets the neutral column name (base). The name is at request extended, e.g. by a number at the end.

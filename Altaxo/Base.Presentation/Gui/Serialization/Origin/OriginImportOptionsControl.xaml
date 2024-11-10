@@ -53,7 +53,7 @@
               ToolTip="Either leave this empty (all data will be imported), or add the paths of data you want to import.">
       <DataGrid.Columns>
         <DataGridTextColumn Binding="{Binding Index}"
-                            Header="Index"
+                            Header="Object path"
                             IsReadOnly="False" />
       </DataGrid.Columns>
     </DataGrid>
