@@ -31,7 +31,7 @@ namespace Altaxo.Serialization.Origin.Tests
 {
   public class OriginFile_Test
   {
-    public string TestFilePath => Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "TestFiles");
+    public string TestFilePath => Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Serialization\Origin\TestFiles");
 
 
     /// <summary>
@@ -58,6 +58,7 @@ namespace Altaxo.Serialization.Origin.Tests
     public void Test_AdditionalFilesReadable()
     {
       var listOfFailedFiles = new List<(FileInfo fileInfo, Exception exception)>();
+      var listOfCorruptedFiles = new List<(FileInfo fileInfo, Exception exception)>();
 
       void TestFolder(DirectoryInfo folder)
       {
@@ -89,6 +90,10 @@ namespace Altaxo.Serialization.Origin.Tests
           try
           {
             var reader = new OriginAnyParser(str);
+          }
+          catch (EndOfStreamException ex)
+          {
+            listOfCorruptedFiles.Add((file, ex));
           }
           catch (Exception ex)
           {
@@ -127,6 +132,87 @@ namespace Altaxo.Serialization.Origin.Tests
         // Set a break point here to inspect the list of failed files
       }
       Assert.Empty(listOfFailedFiles);
+    }
+
+    [Fact]
+    public void TestOneWorksheetOneMatrix()
+    {
+      var fileName = Path.Combine(TestFilePath, "OneWorksheetOneMatrix.opj");
+      using var str = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.Read);
+      var reader = new OriginAnyParser(str);
+
+      Assert.Single(reader.SpreadSheets);
+      Assert.Single(reader.Matrixes);
+    }
+
+    [Fact]
+    public void TestMatrix137x179()
+    {
+      var fileName = Path.Combine(TestFilePath, "Matrix137x179.opj");
+      using var str = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.Read);
+      var reader = new OriginAnyParser(str);
+
+      Assert.Empty(reader.SpreadSheets);
+      Assert.Single(reader.Matrixes);
+      var matrix = reader.Matrixes[0];
+      Assert.Single(matrix.Sheets);
+      var sheet = matrix.Sheets[0];
+      Assert.Equal(137, sheet.ColumnCount);
+      Assert.Equal(179, sheet.RowCount);
+    }
+
+    [Fact]
+    public void TestMatrix71x29()
+    {
+      var fileName = Path.Combine(TestFilePath, "Matrix71x29.opj");
+      using var str = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.Read);
+      var reader = new OriginAnyParser(str);
+
+      Assert.Empty(reader.SpreadSheets);
+      Assert.Single(reader.Matrixes);
+      var matrix = reader.Matrixes[0];
+      Assert.Single(matrix.Sheets);
+      var sheet = matrix.Sheets[0];
+      Assert.Equal(71, sheet.ColumnCount);
+      Assert.Equal(29, sheet.RowCount);
+      Assert.Equal(1, sheet[0, 0]);
+      Assert.Equal(2, sheet[0, 1]);
+      Assert.Equal(3, sheet[0, 2]);
+      Assert.Equal(10, sheet[1, 0]);
+      Assert.Equal(20, sheet[2, 0]);
+      Assert.Equal(30, sheet[3, 0]);
+    }
+
+    [Fact]
+    public void TestMatrix2x3OfDifferentTypes()
+    {
+      var fileName = Path.Combine(TestFilePath, "Matrix2x3OfDifferentTypes.opj");
+      using var str = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.Read);
+      var reader = new OriginAnyParser(str);
+
+      Assert.Empty(reader.SpreadSheets);
+      Assert.Equal(9, reader.Matrixes.Count);
+
+      foreach (var matrix in reader.Matrixes)
+      {
+        var sheet = matrix.Sheets[0];
+        Assert.Equal(11, sheet[0, 0]);
+        Assert.Equal(12, sheet[0, 1]);
+        Assert.Equal(21, sheet[1, 0]);
+        Assert.Equal(22, sheet[1, 1]);
+        Assert.Equal(31, sheet[2, 0]);
+        Assert.Equal(32, sheet[2, 1]);
+
+        if (matrix.Name == "MComplex")
+        {
+          Assert.Equal(0.11, sheet.ImaginaryPart(0, 0));
+          Assert.Equal(0.12, sheet.ImaginaryPart(0, 1));
+          Assert.Equal(0.21, sheet.ImaginaryPart(1, 0));
+          Assert.Equal(0.22, sheet.ImaginaryPart(1, 1));
+          Assert.Equal(0.31, sheet.ImaginaryPart(2, 0));
+          Assert.Equal(0.32, sheet.ImaginaryPart(2, 1));
+        }
+      }
     }
   }
 }
