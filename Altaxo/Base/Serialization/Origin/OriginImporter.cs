@@ -314,11 +314,8 @@ namespace Altaxo.Serialization.Origin
         var altaxoColumn = new DoubleColumn();
         for (int idxRow = 0; idxRow < matrixSheet.RowCount; ++idxRow)
         {
-          var idxData = idxColumn * matrixSheet.RowCount + idxRow;
-          if (idxData < matrixSheet.Data.Count)
-            altaxoColumn[idxRow] = matrixSheet.Data[idxData];
+          altaxoColumn[idxRow] = matrixSheet[idxRow, idxColumn];
         }
-
 
         string columnName;
         if (string.IsNullOrEmpty(importOptions.NeutralColumnName))
