@@ -6,7 +6,7 @@
  * OriginAnyParser.cpp
  *
  * Copyright 2017 Miquel Garriga <gbmiquel@gmail.com>
- * Copyright 2024 Dirk Lellinger (translation to C#)
+ * Copyright 2024 Dirk Lellinger (translation to C#, bug fixing)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -236,7 +236,7 @@ namespace Altaxo.Serialization.Origin
 
       // Project Tree was added between version >4.210 and 4.2616,
       // i.e., with Release 6.0
-      if (_curpos < _d_file_size)
+      if (_curpos < _d_file_size && Version >= 6)
       {
         // get project tree
         ReadProjectTree();
@@ -246,7 +246,7 @@ namespace Altaxo.Serialization.Origin
 
       // Attachments were added between version >4.2673_558 and 4.2764_623,
       // i.e., with Release 7.0
-      if (_curpos < _d_file_size)
+      if (_curpos < _d_file_size && Version >= 7)
       {
         ReadAttachmentList();
         _curpos = _file.Position;
@@ -1659,6 +1659,15 @@ namespace Altaxo.Serialization.Origin
             Matrixes[mIndex].Sheets[^1].Data.Add(BitConverter.ToSingle(colData, i * sizeof(float)));
           }
           break;
+        case 0x6201: // complex (2xdouble)
+          {
+            for (int i = 0; i < size; ++i)
+            {
+              Matrixes[mIndex].Sheets[^1].Data.Add(BitConverter.ToDouble(colData, i * valueSize));
+              Matrixes[mIndex].Sheets[^1].ImaginaryData.Add(BitConverter.ToDouble(colData, i * valueSize + sizeof(Double)));
+            }
+          }
+          break;
         case 0x6801: // int
           if (dataTypeU == 8) // unsigned
           {
@@ -1850,7 +1859,6 @@ namespace Altaxo.Serialization.Origin
 
         short width = 8;
         width = BitConverter.ToInt16(lye_header, 0);
-        cursor += sizeof(Int16);
         if (width == 0)
         {
           width = 8;
@@ -1858,10 +1866,8 @@ namespace Altaxo.Serialization.Origin
 
         sheet.Width = width;
 
-        sheet.ColumnCount = BitConverter.ToInt16(lye_header, cursor);
-        cursor += sizeof(Int16);
-        sheet.RowCount = BitConverter.ToInt16(lye_header, cursor);
-        cursor += sizeof(Int16);
+        sheet.ColumnCount = BitConverter.ToInt16(lye_header, 0x2B);
+        sheet.RowCount = BitConverter.ToInt16(lye_header, 0x52);
 
         byte view = (byte)lye_header[0x71];
         sheet.View = (view != 0x32 && view != 0x28) ? MatrixSheet.ViewType.ImageView : MatrixSheet.ViewType.DataView;
@@ -2020,21 +2026,33 @@ namespace Altaxo.Serialization.Origin
         {
           sheet.Command = _encoding.GetString(andt1, 0, andt1.Length).TrimEnd('\0');
         }
-        else if (sec_name == "Y2")
+        else if (sec_name == "Y2" || sec_name == "X2" || sec_name == "Y1" || sec_name == "X1")
         {
-          sheet.Coordinates[0] = BitConverter.ToDouble(andt1, cursor); cursor += sizeof(double);
-        }
-        else if (sec_name == "X2")
-        {
-          sheet.Coordinates[1] = BitConverter.ToDouble(andt1, cursor); cursor += sizeof(double);
-        }
-        else if (sec_name == "Y1")
-        {
-          sheet.Coordinates[2] = BitConverter.ToDouble(andt1, cursor); cursor += sizeof(double);
-        }
-        else if (sec_name == "X1")
-        {
-          sheet.Coordinates[3] = BitConverter.ToDouble(andt1, cursor); cursor += sizeof(double);
+          var idxCoordinate = sec_name switch
+          {
+            "Y2" => 0,
+            "X2" => 1,
+            "Y1" => 2,
+            "X1" => 3,
+            _ => throw new NotImplementedException()
+          };
+
+          if (andt1.Length >= sizeof(double))
+          {
+            sheet.Coordinates[idxCoordinate] = BitConverter.ToDouble(andt1, cursor); cursor += sizeof(Double);
+          }
+          else if (andt1.Length >= sizeof(float))
+          {
+            sheet.Coordinates[idxCoordinate] = BitConverter.ToSingle(andt1, cursor); cursor += sizeof(Single);
+          }
+          else if (andt1.Length >= sizeof(Int16))
+          {
+            sheet.Coordinates[idxCoordinate] = BitConverter.ToInt16(andt1, cursor); cursor += sizeof(Int16);
+          }
+          else
+          {
+            throw new NotImplementedException($"Annotation named {sec_name} has {andt1.Length} of data");
+          }
         }
         else if (sec_name == "COLORMAP")
         {
@@ -2680,102 +2698,104 @@ namespace Altaxo.Serialization.Origin
       else if (_iexcel != -1)
       {
         byte c = (byte)cvehd[0x11];
-        string name = _encoding.GetString(cvehd, 0x12, cvehd.Length - 0x12).TrimEnd('\0');
+        string name = _encoding.GetString(cvehd, 0x12, 12).TrimEnd('\0');
         short width = BitConverter.ToInt16(cvehd, 0x4A);
         short dataID = BitConverter.ToInt16(cvehd, 0x04);
 
-
-        int isheet = Datasets[dataID - 1].Sheet;
-        int col_index = FindExcelColumnByName(_iexcel, isheet, name);
-        if (col_index != -1)
+        if (dataID - 1 < Datasets.Count)
         {
-          SpreadColumnType type;
-          switch (c)
+          int isheet = Datasets[dataID - 1].Sheet;
+          int col_index = FindExcelColumnByName(_iexcel, isheet, name);
+          if (col_index != -1)
           {
-            case 3:
-              type = SpreadColumnType.X;
-              break;
-            case 0:
-              type = SpreadColumnType.Y;
-              break;
-            case 5:
-              type = SpreadColumnType.Z;
-              break;
-            case 6:
-              type = SpreadColumnType.XErr;
-              break;
-            case 2:
-              type = SpreadColumnType.YErr;
-              break;
-            case 4:
-              type = SpreadColumnType.Label;
-              break;
-            default:
-              type = SpreadColumnType.NONE;
-              break;
-          }
-          Excels[_iexcel].Sheets[isheet].Columns[col_index].ColumnType = type;
-          width /= 0xA;
-          if (width == 0)
-          {
-            width = 8;
-          }
+            SpreadColumnType type;
+            switch (c)
+            {
+              case 3:
+                type = SpreadColumnType.X;
+                break;
+              case 0:
+                type = SpreadColumnType.Y;
+                break;
+              case 5:
+                type = SpreadColumnType.Z;
+                break;
+              case 6:
+                type = SpreadColumnType.XErr;
+                break;
+              case 2:
+                type = SpreadColumnType.YErr;
+                break;
+              case 4:
+                type = SpreadColumnType.Label;
+                break;
+              default:
+                type = SpreadColumnType.NONE;
+                break;
+            }
+            Excels[_iexcel].Sheets[isheet].Columns[col_index].ColumnType = type;
+            width /= 0xA;
+            if (width == 0)
+            {
+              width = 8;
+            }
 
-          Excels[_iexcel].Sheets[isheet].Columns[col_index].Width = width;
+            Excels[_iexcel].Sheets[isheet].Columns[col_index].Width = width;
 
-          byte c1 = (byte)cvehd[0x1E];
-          byte c2 = (byte)cvehd[0x1F];
-          switch (c1)
-          {
-            case 0x00: // Numeric - Dec1000
-            case 0x09: // Text&Numeric - Dec1000
-            case 0x10: // Numeric - Scientific
-            case 0x19: // Text&Numeric - Scientific
-            case 0x20: // Numeric - Engineering
-            case 0x29: // Text&Numeric - Engineering
-            case 0x30: // Numeric - Dec1,000
-            case 0x39: // Text&Numeric - Dec1,000
-              Excels[_iexcel].Sheets[isheet].Columns[col_index].ValueType = (c1 % 0x10 == 0x9) ? ValueType.TextNumeric : ValueType.Numeric;
-              Excels[_iexcel].Sheets[isheet].Columns[col_index].ValueTypeSpecification = (byte)(c1 / 0x10);
-              if (c2 >= 0x80)
-              {
-                Excels[_iexcel].Sheets[isheet].Columns[col_index].SignificantDigits = c2 - 0x80;
-                Excels[_iexcel].Sheets[isheet].Columns[col_index].NumericDisplayType = NumericDisplayType.SignificantDigits;
-              }
-              else if (c2 > 0)
-              {
-                Excels[_iexcel].Sheets[isheet].Columns[col_index].DecimalPlaces = c2 - 0x03;
-                Excels[_iexcel].Sheets[isheet].Columns[col_index].NumericDisplayType = NumericDisplayType.DecimalPlaces;
-              }
-              break;
-            case 0x02: // Time
-              Excels[_iexcel].Sheets[isheet].Columns[col_index].ValueType = ValueType.Time;
-              Excels[_iexcel].Sheets[isheet].Columns[col_index].ValueTypeSpecification = (byte)(c2 - 0x80);
-              break;
-            case 0x03: // Date
-              Excels[_iexcel].Sheets[isheet].Columns[col_index].ValueType = ValueType.Date;
-              Excels[_iexcel].Sheets[isheet].Columns[col_index].ValueTypeSpecification = (byte)(c2 - 0x80);
-              break;
-            case 0x31: // Text
-              Excels[_iexcel].Sheets[isheet].Columns[col_index].ValueType = ValueType.Text;
-              break;
-            case 0x04: // Month
-            case 0x34:
-              Excels[_iexcel].Sheets[isheet].Columns[col_index].ValueType = ValueType.Month;
-              Excels[_iexcel].Sheets[isheet].Columns[col_index].ValueTypeSpecification = c2;
-              break;
-            case 0x05: // Day
-            case 0x35:
-              Excels[_iexcel].Sheets[isheet].Columns[col_index].ValueType = ValueType.Day;
-              Excels[_iexcel].Sheets[isheet].Columns[col_index].ValueTypeSpecification = c2;
-              break;
-            default: // Text
-              Excels[_iexcel].Sheets[isheet].Columns[col_index].ValueType = ValueType.Text;
-              break;
-          }
-          if (cvedtsz > 0)
-          {
-            Excels[_iexcel].Sheets[isheet].Columns[col_index].Comment = _encoding.GetString(cvedt, 0, cvedt.Length).TrimEnd('\0');
+            byte c1 = (byte)cvehd[0x1E];
+            byte c2 = (byte)cvehd[0x1F];
+            switch (c1)
+            {
+              case 0x00: // Numeric - Dec1000
+              case 0x09: // Text&Numeric - Dec1000
+              case 0x10: // Numeric - Scientific
+              case 0x19: // Text&Numeric - Scientific
+              case 0x20: // Numeric - Engineering
+              case 0x29: // Text&Numeric - Engineering
+              case 0x30: // Numeric - Dec1,000
+              case 0x39: // Text&Numeric - Dec1,000
+                Excels[_iexcel].Sheets[isheet].Columns[col_index].ValueType = (c1 % 0x10 == 0x9) ? ValueType.TextNumeric : ValueType.Numeric;
+                Excels[_iexcel].Sheets[isheet].Columns[col_index].ValueTypeSpecification = (byte)(c1 / 0x10);
+                if (c2 >= 0x80)
+                {
+                  Excels[_iexcel].Sheets[isheet].Columns[col_index].SignificantDigits = c2 - 0x80;
+                  Excels[_iexcel].Sheets[isheet].Columns[col_index].NumericDisplayType = NumericDisplayType.SignificantDigits;
+                }
+                else if (c2 > 0)
+                {
+                  Excels[_iexcel].Sheets[isheet].Columns[col_index].DecimalPlaces = c2 - 0x03;
+                  Excels[_iexcel].Sheets[isheet].Columns[col_index].NumericDisplayType = NumericDisplayType.DecimalPlaces;
+                }
+                break;
+              case 0x02: // Time
+                Excels[_iexcel].Sheets[isheet].Columns[col_index].ValueType = ValueType.Time;
+                Excels[_iexcel].Sheets[isheet].Columns[col_index].ValueTypeSpecification = (byte)(c2 - 0x80);
+                break;
+              case 0x03: // Date
+                Excels[_iexcel].Sheets[isheet].Columns[col_index].ValueType = ValueType.Date;
+                Excels[_iexcel].Sheets[isheet].Columns[col_index].ValueTypeSpecification = (byte)(c2 - 0x80);
+                break;
+              case 0x31: // Text
+                Excels[_iexcel].Sheets[isheet].Columns[col_index].ValueType = ValueType.Text;
+                break;
+              case 0x04: // Month
+              case 0x34:
+                Excels[_iexcel].Sheets[isheet].Columns[col_index].ValueType = ValueType.Month;
+                Excels[_iexcel].Sheets[isheet].Columns[col_index].ValueTypeSpecification = c2;
+                break;
+              case 0x05: // Day
+              case 0x35:
+                Excels[_iexcel].Sheets[isheet].Columns[col_index].ValueType = ValueType.Day;
+                Excels[_iexcel].Sheets[isheet].Columns[col_index].ValueTypeSpecification = c2;
+                break;
+              default: // Text
+                Excels[_iexcel].Sheets[isheet].Columns[col_index].ValueType = ValueType.Text;
+                break;
+            }
+            if (cvedtsz > 0)
+            {
+              Excels[_iexcel].Sheets[isheet].Columns[col_index].Comment = _encoding.GetString(cvedt, 0, cvedt.Length).TrimEnd('\0');
+            }
           }
         }
       }
@@ -3783,6 +3803,9 @@ namespace Altaxo.Serialization.Origin
 
     public static DateTime DoubleToPosixTime(double jdt)
     {
+      if (jdt == 0)
+        return new DateTime(1970, 1, 1);
+
       // 2440587.5 is julian date for the unixtime epoch
       return new DateTime(1970, 1, 1).AddDays(jdt - 2440587).AddSeconds(0.5);
     }
@@ -3873,13 +3896,21 @@ namespace Altaxo.Serialization.Origin
       return -1;
     }
 
-    protected int FindExcelColumnByName(int excel, int sheet, string name)
+    protected int FindExcelColumnByName(int idxExcel, int idxSheet, string name)
     {
-      for (int i = 0; i < Excels[excel].Sheets[sheet].Columns.Count; i++)
+      if (idxExcel < Excels.Count)
       {
-        if (Excels[excel].Sheets[sheet].Columns[i].Name == name)
+        var excel = Excels[idxExcel];
+        if (idxSheet < excel.Sheets.Count)
         {
-          return i;
+          var sheet = excel.Sheets[idxSheet];
+          for (int i = 0; i < sheet.Columns.Count; i++)
+          {
+            if (sheet.Columns[i].Name == name)
+            {
+              return i;
+            }
+          }
         }
       }
       return -1;
@@ -4092,12 +4123,19 @@ namespace Altaxo.Serialization.Origin
         var b = fs.ReadByte();
         if (b < 0x20)
         {
+          if (b < 0)
+          {
+            throw new System.IO.EndOfStreamException();
+          }
           if (b == 0 && !doUnreadDelimiter)
           {
             b = fs.ReadByte();
             if (b != '\n')
             {
-              throw new InvalidDataException("After a \\0 string delimiter a 0x0A (\\n) char is expected");
+              if (b < 0)
+                throw new System.IO.EndOfStreamException();
+              else
+                throw new InvalidDataException("After a \\0 string delimiter a 0x0A (\\n) char is expected");
             }
           }
 

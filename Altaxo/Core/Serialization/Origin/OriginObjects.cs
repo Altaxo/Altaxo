@@ -3,7 +3,7 @@
     --------------------------------------------------------------------
     Copyright            : (C) 2005-2007, 2017 Stefan Gerlach
                            (C) 2007-2008 Alex Kargovsky, Ion Vasilief
-    Copyright            : (C) 2024 Dirk Lellinger (translation to C#)
+    Copyright            : (C) 2024 Dirk Lellinger (translation to C#, bug fixing)
     Email (use @ for *)  : kargovsky*yumr.phys.msu.su, ion_vasilief*yahoo.fr
     Description          : Origin internal object classes
 
@@ -347,24 +347,22 @@ namespace Altaxo.Serialization.Origin
     }
   }
 
-  // Variant type with boost-free functions
-  // see https://github.com/highperformancecoder/scidavis/commit/7c6e07dfad80dbe190af29ffa8a56c82a8aa9180
-  // see https://www.ojdip.net/2013/10/implementing-a-variant-type-in-cpp/
-  // https://stackoverflow.com/questions/35648390/tagged-union-c
-  // https://books.google.de/books?id=PSUNAAAAQBAJ&pg=PA217&lpg=PA217&dq=c%2B%2B+tagged+union+string&source=bl&ots=DqArIieZ8H&sig=k2a6okxxgUuEkLw48hFJChkIG9o&hl=en&sa=X&ved=0ahUKEwjylreR08DUAhWBVRoKHWPSBqE4ChDoAQhUMAg#v=onepage&q=c%2B%2B%20tagged%20union%20string&f=false
+  /// <summary>
+  /// Variant that can hold either a <see cref="Double"/> value or a <see cref="String"/>
+  /// </summary>
   public struct Variant
   {
-    private vtype _type = vtype.V_DOUBLE;
+    private VType _type = VType.V_DOUBLE;
     private double _double;
-    private string _string;
+    private string? _string;
 
-    public enum vtype
+    public enum VType
     {
       V_DOUBLE,
       V_STRING
     };
 
-    public vtype ValueType()
+    public VType ValueType()
     {
       return _type;
     }
@@ -375,38 +373,37 @@ namespace Altaxo.Serialization.Origin
     public Variant(double d)
     {
       _double = d;
-      _type = vtype.V_DOUBLE;
+      _type = VType.V_DOUBLE;
     }
     public Variant(string s)
     {
       _string = s;
-      _type = vtype.V_STRING;
+      _type = VType.V_STRING;
     }
 
     public Variant(object o)
     {
       if (o is string s)
       {
-        _type = vtype.V_STRING;
+        _type = VType.V_STRING;
         _string = s;
       }
       else if (o is double d)
       {
-        _type = vtype.V_DOUBLE;
+        _type = VType.V_DOUBLE;
         _double = d;
       }
       else
       {
         throw new Exception($"Can not create a variant with object {o}");
       }
-
     }
 
-    public bool IsDouble => _type == vtype.V_DOUBLE;
+    public readonly bool IsDouble => _type == VType.V_DOUBLE;
 
-    public double AsDouble()
+    public readonly double AsDouble()
     {
-      if (_type == vtype.V_DOUBLE)
+      if (_type == VType.V_DOUBLE)
       {
         return _double;
       }
@@ -414,10 +411,10 @@ namespace Altaxo.Serialization.Origin
       throw new ApplicationException($"Variant contains {_type}, but expecting type Double");
     }
 
-    public bool IsString => _type == vtype.V_DOUBLE;
-    public string AsString()
+    public readonly bool IsString => _type == VType.V_DOUBLE;
+    public readonly string? AsString()
     {
-      if (_type == vtype.V_STRING)
+      if (_type == VType.V_STRING)
       {
         return _string;
       }
@@ -427,7 +424,7 @@ namespace Altaxo.Serialization.Origin
 
     public static implicit operator double(Variant f)
     {
-      if (f._type == vtype.V_DOUBLE)
+      if (f._type == VType.V_DOUBLE)
       {
         return f._double;
       }
@@ -435,9 +432,9 @@ namespace Altaxo.Serialization.Origin
       throw new ApplicationException($"Variant contains {f._type}, but expecting type Double");
     }
 
-    public static implicit operator string(Variant f)
+    public static implicit operator string?(Variant f)
     {
-      if (f._type == vtype.V_STRING)
+      if (f._type == VType.V_STRING)
       {
         return f._string;
       }
@@ -547,6 +544,7 @@ namespace Altaxo.Serialization.Origin
     public ViewType View;
     public ColorMap ColorMap;
     public List<double> Data = [];
+    public List<double> ImaginaryData = [];
     public List<double> Coordinates = [];
 
     public MatrixSheet(string name = "", int index = 0)
@@ -563,6 +561,21 @@ namespace Altaxo.Serialization.Origin
       View = ViewType.DataView;
       ColorMap = new ColorMap();
       Coordinates = [10.0, 10.0, 1.0, 1.0];
+    }
+
+    public double this[int r, int c]
+    {
+      get
+      {
+        int i = r * ColumnCount + c;
+        return i < Data.Count ? Data[i] : double.NaN;
+      }
+    }
+
+    public double ImaginaryPart(int r, int c)
+    {
+      int i = r * ColumnCount + c;
+      return i < ImaginaryData.Count ? ImaginaryData[i] : double.NaN;
     }
   }
 
