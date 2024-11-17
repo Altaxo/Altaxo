@@ -20,3 +20,4 @@ TestResults/
 /packages
 d3dcompiler_*.dll
 *.log
+/Altaxo/CoreTest/Serialization/Origin/TestFiles/AdditionalFoldersWithOpjFiles.txt
