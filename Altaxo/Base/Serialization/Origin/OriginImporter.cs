@@ -277,6 +277,7 @@ namespace Altaxo.Serialization.Origin
         }
 
         opData.AddDataColumn(altaxoColumn, columnName, altaxoColumnKind, opData.LastUsedGroupNumber, table);
+        int yColumnNumber = table.DataColumns.GetColumnNumber(altaxoColumn);
 
         if (importOptions.IncludeFilePathAsProperty && !string.IsNullOrEmpty(reader.FileName))
         {
@@ -285,11 +286,32 @@ namespace Altaxo.Serialization.Origin
             table.PropCols.Add(new Altaxo.Data.TextColumn(), "FilePath");
 
           // now set the file name property cell
-          int yColumnNumber = table.DataColumns.GetColumnNumber(altaxoColumn);
           if (table.PropCols["FilePath"] is Altaxo.Data.TextColumn)
           {
             table.PropCols["FilePath"][yColumnNumber] = reader.FileName;
           }
+        }
+
+        if (!string.IsNullOrEmpty(originColumn.LongName))
+        {
+          // add also a property column named "FilePath" if not existing so far
+          if (!table.PropCols.ContainsColumn("LongName"))
+            table.PropCols.Add(new Altaxo.Data.TextColumn(), "LongName");
+          table.PropCols["LongName"][yColumnNumber] = originColumn.LongName;
+        }
+        if (!string.IsNullOrEmpty(originColumn.Units))
+        {
+          // add also a property column named "FilePath" if not existing so far
+          if (!table.PropCols.ContainsColumn("Unit"))
+            table.PropCols.Add(new Altaxo.Data.TextColumn(), "Unit");
+          table.PropCols["Unit"][yColumnNumber] = originColumn.Units;
+        }
+        if (!string.IsNullOrEmpty(originColumn.Comments))
+        {
+          // add also a property column named "FilePath" if not existing so far
+          if (!table.PropCols.ContainsColumn("Comments"))
+            table.PropCols.Add(new Altaxo.Data.TextColumn(), "Comments");
+          table.PropCols["Comments"][yColumnNumber] = originColumn.Comments;
         }
       }
     }

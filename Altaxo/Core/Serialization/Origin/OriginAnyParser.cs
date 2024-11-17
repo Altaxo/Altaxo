@@ -27,6 +27,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Text;
 
@@ -45,6 +46,10 @@ namespace Altaxo.Serialization.Origin
     public List<Graph> Graphs { get; set; } = [];
     public List<Note> Notes { get; set; } = [];
     public List<(string Name, double Value)> Parameters { get; } = [];
+
+    /// <summary>Gets the attachments. Consist of name/value pairs, but the name often seems to be empty.</summary>
+    public List<(string Name, string Value)> Attachments { get; } = [];
+
     public ProjectNode ProjectTree { get; set; } = new();
     public string ResultsLog { get; set; }
     public int WindowsCount { get; set; }
@@ -303,35 +308,6 @@ namespace Altaxo.Serialization.Origin
         return blob;
       }
       return [];
-    }
-
-    public string ReadObjectAsString(int size)
-    {
-      char c;
-      // read a size-byte blob of data followed by '\n'
-      if (size > 0)
-      {
-        // get a string large enough to hold the result, initialize it to all 0's
-        byte[] blob = new byte[size];
-        // read data into that string
-        // cannot use '>>' operator because iendianfstream truncates it at first '\0'
-        _file.ReadExactly(blob, 0, (int)size);
-        // read the '\n'
-        c = (char)_file.ReadByte();
-        if (c < 0)
-        {
-          throw new EndOfStreamException();
-        }
-        if (c != '\n')
-        {
-          _curpos = _file.Position;
-          LogPrint($"Wrong delimiter {c} at {_curpos} [0x{_curpos:X}]");
-          _parseError = 4;
-          return string.Empty;
-        }
-        return _encoding.GetString(blob);
-      }
-      return string.Empty;
     }
 
     /// <summary>
@@ -1272,7 +1248,6 @@ namespace Altaxo.Serialization.Origin
       att_1st_empty = BitConverter.ToInt32(_buffer16, 0);
       _file.Seek(-4, SeekOrigin.Current);
 
-      byte[] att_header;
       if (att_1st_empty == 8)
       {
         // first group
@@ -1284,12 +1259,18 @@ namespace Altaxo.Serialization.Origin
         var att_list1 = ReadObjectAsByteArray(att_list1_size);
         LogPrint($"First attachment group at {_curpos} [0x{_curpos:X}]");
 
-        int att_mark = 0, number_of_atts = 0, iattno = 0, att_data_size = 0;
-        att_mark = BitConverter.ToInt32(att_list1, 0); // should be 4096
-        number_of_atts = BitConverter.ToInt32(att_list1, 0x04);
+        var att_mark = BitConverter.ToInt32(att_list1, 0); // should be 4096
+        var number_of_atts = BitConverter.ToInt32(att_list1, sizeof(Int32));
         LogPrint($" with {number_of_atts} attachments.");
 
-        for (uint i = 0; i < number_of_atts; i++)
+        // if the number of attachments is null, then it seems that we have to iterate through each header
+        // or is it a matter of versions?
+        if (number_of_atts == 0)
+        {
+          number_of_atts = int.MaxValue;
+        }
+
+        for (int i = 0; i < number_of_atts && (_file.Position + 12 <= _d_file_size); i++)
         {
           /* Header is a group of 7 integers followed by \n
           1st  attachment mark (4096: 0x00 0x10 0x00 0x00)
@@ -1298,20 +1279,22 @@ namespace Altaxo.Serialization.Origin
           4th .. 7th ???
           */
           // get header
-          att_header = ReadObjectAsByteArray(7 * 4);
-          att_mark = BitConverter.ToInt32(att_header, 0); // should be 4096
-          iattno = BitConverter.ToInt32(att_header, 0x04);
-          att_data_size = BitConverter.ToInt32(att_header, 0x08);
+          _file.ReadExactly(_buffer16, 0, 12);
+          att_mark = BitConverter.ToInt32(_buffer16, 0); // should be 4096
+          if (att_mark != 0x1000) // if this is not a first group attachment, go to the second group
+          {
+            _file.Seek(-12, SeekOrigin.Current); // make the reading undone
+            break;
+          }
+          var iattno = BitConverter.ToInt32(_buffer16, 0x04);
+          var att_data_size = BitConverter.ToInt32(_buffer16, 0x08);
           _curpos = _file.Position;
           LogPrint($"Attachment no {i} ({iattno}) at {_curpos} [0x{_curpos:X}], size {att_data_size}");
+          var att_name = ReadObjectAsString(16); // the content of the remaining 16 bytes + 0x0A is unclear
 
           // get data
-          string att_data = ReadObjectAsString(att_data_size);
-          // even if att_data_size is zero, we get a '\n' mark
-          if (att_data_size == 0)
-          {
-            _file.Seek(1, SeekOrigin.Current);
-          }
+          string att_data = ReadObjectAsString(att_data_size, readNewlineDelimiterInAnyCase: false); // even if att_data_size is zero, we get a '\n' mark
+          Attachments.Add((iattno.ToString(CultureInfo.InvariantCulture), att_data));
         }
       }
       else
@@ -1329,46 +1312,36 @@ namespace Altaxo.Serialization.Origin
         3rd size of data */
 
       // get header
-      while (true)
+      while (_file.Position + 12 <= _d_file_size)
       {
-        // check for eof
-        if ((_d_file_size == _file.Position) || (_file.Position >= _d_file_size))
-        {
-          break;
-        }
-        // cannot use ReadObjectAsString: there is no '\n' at end
-        byte[] headerBytes = new byte[12];
-        _file.ReadExactly(headerBytes, 0, 12);
-
-        if (headerBytes.Length != 12)
-        {
-          break;
-        }
+        _file.ReadExactly(_buffer16, 0, 12); // cannot use ReadObjectAsString here be there is no '\n' at end
         // get header size, type and data size
-        int att_header_size = 0, att_type = 0, att_size = 0;
-        att_header_size = BitConverter.ToInt32(headerBytes, 0);
-        att_type = BitConverter.ToInt32(headerBytes, 0x04);
-        att_size = BitConverter.ToInt32(headerBytes, 0x08);
+        var att_header_size = BitConverter.ToInt32(_buffer16, 0x00);
+        var att_type = BitConverter.ToInt32(_buffer16, 0x04);
+        var att_size = BitConverter.ToInt32(_buffer16, 0x08);
 
-        // get name and data
-        int name_size = att_header_size - 3 * 4;
-        string att_name = new string('\0', (int)name_size);
-        byte[] nameBytes = new byte[name_size];
-        _file.ReadExactly(nameBytes, 0, (int)name_size);
-        att_name = Encoding.UTF8.GetString(nameBytes);
+        if (_file.Position + att_header_size - 12 + att_size > _file.Length || att_header_size < 0 || att_size < 0)
+        {
+          LogPrint($"ReadAttachmentList 2nd part: Suspicious header at position 0x{_file.Position - 12:X}, att_header_size={att_header_size}, att_size{att_size}");
+          return;
+        }
+
+        // get name and data, note that the name is not limited with a newline!
+        var buffer = new byte[att_header_size - 12];
+        _file.ReadExactly(buffer, 0, buffer.Length);
+        var att_name = _encoding.GetString(buffer).TrimEnd('\0');
         _curpos = _file.Position;
-        string att_data = new string('\0', (int)att_size);
-        byte[] dataBytes = new byte[att_size];
-        _file.ReadExactly(dataBytes, 0, (int)att_size);
-        att_data = Encoding.UTF8.GetString(dataBytes);
-        LogPrint($"attachment at {_curpos} [0x{_curpos:X}], type 0x{att_type:X}, size {att_size} [0x{att_size:X}]: {att_name}");
-      }
 
+        byte[] dataBytes = new byte[att_size];
+        _file.ReadExactly(dataBytes, 0, att_size);
+        var att_data = _encoding.GetString(dataBytes);
+        LogPrint($"attachment at {_curpos} [0x{_curpos:X}], type 0x{att_type:X}, size {att_size} [0x{att_size:X}]: {att_name}");
+        Attachments.Add((att_name, att_data));
+      }
     }
 
     public bool GetColumnInfoAndData(byte[] colHeader, int colHeaderSize, byte[] colData, int colDataSize)
     {
-
       short dataType;
       byte dataTypeU;
       byte valueSize;
@@ -1405,7 +1378,7 @@ namespace Altaxo.Serialization.Origin
       string columnName = string.Empty;
       if (colPos != -1)
       {
-        columnName = name.Substring(colPos + 1);
+        columnName = name.Substring(colPos + 1).TrimEnd('@'); // 2024-11-14 in some .opj files the column name ends with @ but without any number afterwards, thus we trim the @ away
         name = name.Substring(0, colPos);
       }
 
@@ -1513,10 +1486,21 @@ namespace Altaxo.Serialization.Origin
         };
         SpreadSheets[spread].Columns.Add(newSpreadColumn);
 
-        int sheetpos = newSpreadColumn.Name.LastIndexOf('@');
+        int sheetpos = columnName.LastIndexOf('@');
         if (sheetpos >= 0)
         {
-          int sheet = int.Parse(columnName.Substring(sheetpos + 1), System.Globalization.NumberStyles.Integer, System.Globalization.CultureInfo.InvariantCulture);
+          int sheet;
+          var sheetSpec = columnName.Substring(sheetpos + 1);
+          var indexOfDot = sheetSpec.IndexOf('.');
+          if (indexOfDot > 0)
+          {
+            sheet = int.Parse(sheetSpec.Substring(0, indexOfDot), System.Globalization.NumberStyles.Integer, System.Globalization.CultureInfo.InvariantCulture);
+          }
+          else
+          {
+            sheet = int.Parse(sheetSpec, System.Globalization.NumberStyles.Integer, System.Globalization.CultureInfo.InvariantCulture);
+          }
+
           if (sheet > 1)
           {
             newSpreadColumn.Name = columnName;
@@ -1540,87 +1524,106 @@ namespace Altaxo.Serialization.Origin
         LogPrint($"n. of rows = {nr}\n\n");
 
         SpreadSheets[spread].MaxRows = Math.Max(SpreadSheets[spread].MaxRows, nr);
-        //stmp = new StringReader(col_data);
-        for (int i = 0; i < nr; ++i)
+
+        // Working hypothesis:
+        // dataType & 0x800 != 0 => Integer data type (4 byte, 2 byte, or 1 byte)
+        // dataType & 0x100 != 0 => Combined text and number
+        // dataType & 0x200 != 0 => Complex
+        // dataType & 0x002 != 0 => Single instead of double (if floating point number) or short instead of int (if integer type)
+        // dataType & 0x020 != 0 => Byte instead of int (if integer type)
+        // dataType == 0x6021 => Text
+
+        var dataTypeToDeserialize = GetDataTypeToDeserialize(dataType, dataTypeU, valueSize);
+        newSpreadColumn.DeserializedDataType = dataTypeToDeserialize;
+        switch (dataTypeToDeserialize)
         {
-          double value;
-          if (valueSize <= 8) // Numeric, Time, Date, Month, Day
-          {
-            value = BitConverter.ToDouble(colData, i * valueSize);
-            if ((i < 5) || (i > (nr - 5)))
+          case DeserializedDataType.UInt32: // ***** UInt32 *****
+            for (int i = 0, j = 0; i < nr; ++i, j += sizeof(UInt32))
             {
-              LogPrint($"{value} ");
+              newSpreadColumn.Data.Add(new Variant((double)BitConverter.ToUInt32(colData, j)));
             }
-            else if (i == 5)
+            break;
+          case DeserializedDataType.Int32: // ***** Int32 *****
+            for (int i = 0, j = 0; i < nr; ++i, j += sizeof(Int32))
             {
-              LogPrint("... ");
+              newSpreadColumn.Data.Add(new Variant((double)BitConverter.ToInt32(colData, j)));
             }
-            SpreadSheets[spread].Columns[currentCol - 1].Data.Add(new Variant(value));
-          }
-          else if ((dataType & 0x100) == 0x100) // Text&Numeric
-          {
-            byte c = colData[i * valueSize];
-            if (c != 1) // value
+            break;
+          case DeserializedDataType.UInt16: // ***** UInt16 *****
+            for (int i = 0, j = 0; i < nr; ++i, j += sizeof(UInt16))
             {
-              value = BitConverter.ToDouble(colData, i * valueSize + 2);
-              if ((i < 5) || (i > (nr - 5)))
+              newSpreadColumn.Data.Add(new Variant((double)BitConverter.ToUInt16(colData, j)));
+            }
+            break;
+          case DeserializedDataType.Int16: // ***** Int16 *****
+            for (int i = 0, j = 0; i < nr; ++i, j += sizeof(Int16))
+            {
+              newSpreadColumn.Data.Add(new Variant((double)BitConverter.ToInt16(colData, j)));
+            }
+            break;
+          case DeserializedDataType.Byte: // ***** byte *****
+            for (int i = 0; i < nr; ++i)
+            {
+              newSpreadColumn.Data.Add(new Variant((double)colData[i]));
+            }
+            break;
+          case DeserializedDataType.SByte: // ***** sbyte *****
+            for (int i = 0; i < nr; ++i)
+            {
+              newSpreadColumn.Data.Add(new Variant((double)(sbyte)colData[i]));
+            }
+            break;
+          case DeserializedDataType.TextAndNumber: // ***** Text and Number *****
+            for (int i = 0, j = 0; i < nr; ++i, j += valueSize)
+            {
+              if (colData[j] == 1) // Text
               {
-                LogPrint($"{value} ");
+                string svaltmp = _encoding.GetString(colData, j + 2, valueSize - 2).TrimEnd('\0');
+                newSpreadColumn.Data.Add(new Variant(svaltmp));
               }
-              else if (i == 5)
+              else // Number
               {
-                LogPrint("... ");
+                newSpreadColumn.Data.Add(new Variant((double)BitConverter.ToDouble(colData, j + 2)));
               }
-              SpreadSheets[spread].Columns[currentCol - 1].Data.Add(new Variant(value));
             }
-            else // text
+            break;
+          case DeserializedDataType.Text: // ***** Text *****
+            for (int i = 0, j = 0; i < nr; ++i, j += valueSize)
             {
-              string svaltmp = _encoding.GetString(colData, i * valueSize + 2, valueSize - 2).TrimEnd('\0');
-              // TODO: check if this test is still needed
-#if NETFRAMEWORK
-              if (svaltmp.Contains("\u000E"))
-#else
-              if (svaltmp.Contains((char)0x0E))
-#endif
-              { // try find non-printable symbol - garbage test
-                svaltmp = string.Empty;
-                LogPrint($"Non printable symbol found, place 1 for i={i}");
-              }
-              if ((i < 5) || (i > (nr - 5)))
-              {
-                LogPrint($"\"{svaltmp}\" ");
-              }
-              else if (i == 5)
-              {
-                LogPrint("... ");
-              }
-              SpreadSheets[spread].Columns[currentCol - 1].Data.Add(new Variant(svaltmp));
+              string svaltmp = GetNullTerminatedString(colData, j, valueSize);
+              newSpreadColumn.Data.Add(new Variant(svaltmp));
             }
-          }
-          else // text
-          {
-            string svaltmp = _encoding.GetString(colData, i * valueSize, valueSize).TrimEnd('\0');
-            // TODO: check if this test is still needed
-#if NETFRAMEWORK
-            if (svaltmp.Contains("\u000E"))
-#else
-            if (svaltmp.Contains((char)0x0E))
-#endif
-            { // try find non-printable symbol - garbage test
-              svaltmp = string.Empty;
-              LogPrint($"Non printable symbol found, place 2 for i={i}");
-            }
-            if ((i < 5) || (i > (nr - 5)))
+            break;
+          case DeserializedDataType.Single: // ***** Single ***** 
+            for (int i = 0, j = 0; i < nr; ++i, j += sizeof(Single))
             {
-              Console.Write($"\"{svaltmp}\" ");
+              newSpreadColumn.Data.Add(new Variant((double)BitConverter.ToSingle(colData, j)));
             }
-            else if (i == 5)
+            break;
+          case DeserializedDataType.Double: // ***** Double ***** 
+            for (int i = 0, j = 0; i < nr; ++i, j += sizeof(Double))
             {
-              Console.Write("... ");
+              newSpreadColumn.Data.Add(new Variant((double)BitConverter.ToDouble(colData, j)));
             }
-            SpreadSheets[spread].Columns[currentCol - 1].Data.Add(new Variant(svaltmp));
-          }
+            break;
+          case DeserializedDataType.Double10: // ***** Double10 ***** 
+            for (int i = 0, j = 0; i < nr; ++i, j += valueSize)
+            {
+              newSpreadColumn.Data.Add(new Variant((double)BitConverter.ToDouble(colData, j)));
+            }
+            break;
+          case DeserializedDataType.Complex: // ***** ComplexDouble *****
+            newSpreadColumn.ImaginaryData ??= [];
+            for (int i = 0, j = 0; i < nr; i++, j += valueSize)
+            {
+              newSpreadColumn.Data.Add(new Variant(BitConverter.ToDouble(colData, j)));
+              newSpreadColumn.ImaginaryData.Add(new Variant(BitConverter.ToDouble(colData, j + sizeof(double))));
+            }
+            break;
+          default:
+            throw new NotImplementedException($"The combination of data type 0x{dataType:X} and valueSize={valueSize} is not implemented. Column name: {newSpreadColumn.Name}, spreadsheet name: {SpreadSheets[spread].Name}.");
         }
+
         LogPrint("\n\n");
         Datasets.Add(SpreadSheets[spread].Columns[^1]);
       }
@@ -1645,21 +1648,23 @@ namespace Altaxo.Serialization.Origin
       var size = colDataSize / valueSize;
       bool logValues = true;
 
-      switch (dataType)
+      var dataTypeToDeserialize = GetDataTypeToDeserialize(dataType, dataTypeU, valueSize);
+
+      switch (dataTypeToDeserialize)
       {
-        case 0x6001: // double
+        case DeserializedDataType.Double: // double
           for (int i = 0; i < size; ++i)
           {
             Matrixes[mIndex].Sheets[^1].Data.Add(BitConverter.ToDouble(colData, i * sizeof(double)));
           }
           break;
-        case 0x6003: // float
+        case DeserializedDataType.Single: // float
           for (int i = 0; i < size; ++i)
           {
             Matrixes[mIndex].Sheets[^1].Data.Add(BitConverter.ToSingle(colData, i * sizeof(float)));
           }
           break;
-        case 0x6201: // complex (2xdouble)
+        case DeserializedDataType.Complex: // complex (2xdouble)
           {
             for (int i = 0; i < size; ++i)
             {
@@ -1668,43 +1673,40 @@ namespace Altaxo.Serialization.Origin
             }
           }
           break;
-        case 0x6801: // int
-          if (dataTypeU == 8) // unsigned
-          {
-            for (int i = 0; i < size; ++i)
-            {
-              Matrixes[mIndex].Sheets[^1].Data.Add(BitConverter.ToUInt32(colData, i * sizeof(UInt32)));
-            }
-          }
-          else
-          {
-            for (int i = 0; i < size; ++i)
-            {
-              Matrixes[mIndex].Sheets[^1].Data.Add(BitConverter.ToInt32(colData, i * sizeof(Int32)));
-            }
-
-          }
-          break;
-        case 0x6803: // short
-          if (dataTypeU == 8) // unsigned
-          {
-            for (int i = 0; i < size; ++i)
-            {
-              Matrixes[mIndex].Sheets[^1].Data.Add(BitConverter.ToUInt16(colData, i * sizeof(UInt16)));
-            }
-          }
-          else
-          {
-            for (int i = 0; i < size; ++i)
-            {
-              Matrixes[mIndex].Sheets[^1].Data.Add(BitConverter.ToInt16(colData, i * sizeof(Int16)));
-            }
-          }
-          break;
-        case 0x6821: // char
+        case DeserializedDataType.Int32: // int
           for (int i = 0; i < size; ++i)
           {
-            Matrixes[(int)mIndex].Sheets[^1].Data.Add(colData[i]);
+            Matrixes[mIndex].Sheets[^1].Data.Add(BitConverter.ToInt32(colData, i * sizeof(Int32)));
+          }
+          break;
+        case DeserializedDataType.UInt32:
+          for (int i = 0; i < size; ++i)
+          {
+            Matrixes[mIndex].Sheets[^1].Data.Add(BitConverter.ToUInt32(colData, i * sizeof(UInt32)));
+          }
+          break;
+        case DeserializedDataType.Int16: // short
+          for (int i = 0; i < size; ++i)
+          {
+            Matrixes[mIndex].Sheets[^1].Data.Add(BitConverter.ToInt16(colData, i * sizeof(Int16)));
+          }
+          break;
+        case DeserializedDataType.UInt16:
+          for (int i = 0; i < size; ++i)
+          {
+            Matrixes[mIndex].Sheets[^1].Data.Add(BitConverter.ToUInt16(colData, i * sizeof(UInt16)));
+          }
+          break;
+        case DeserializedDataType.SByte: // 
+          for (int i = 0; i < size; ++i)
+          {
+            Matrixes[mIndex].Sheets[^1].Data.Add((sbyte)colData[i]);
+          }
+          break;
+        case DeserializedDataType.Byte: // char
+          for (int i = 0; i < size; ++i)
+          {
+            Matrixes[mIndex].Sheets[^1].Data.Add(colData[i]);
           }
           break;
         default:
@@ -2007,7 +2009,7 @@ namespace Altaxo.Serialization.Origin
       //StringReader stmp = new StringReader(andt1);
       // (void) anhdsz; (void) andt3; (void) andt3sz; // Not needed in C#
       int cursor = 0;
-      string sec_name = _encoding.GetString(anhd, 0x46, Math.Min(41, anhd.Length - 0x46)).TrimEnd('\0');
+      string sec_name = _encoding.GetString(anhd, 0x46, Math.Min(32, anhd.Length - 0x46)).TrimEnd('\0');
       if (_ispread != -1)
       {
         int col_index = FindColumnByName((int)_ispread, sec_name);
@@ -2028,31 +2030,18 @@ namespace Altaxo.Serialization.Origin
         }
         else if (sec_name == "Y2" || sec_name == "X2" || sec_name == "Y1" || sec_name == "X1")
         {
-          var idxCoordinate = sec_name switch
-          {
-            "Y2" => 0,
-            "X2" => 1,
-            "Y1" => 2,
-            "X1" => 3,
-            _ => throw new NotImplementedException()
-          };
+          // these parameters are coded as Ascii strings
+          var valueText = _encoding.GetString(andt1, 0, andt1.Length).TrimEnd('\0');
+          double value = double.Parse(valueText, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture);
 
-          if (andt1.Length >= sizeof(double))
+          switch (sec_name)
           {
-            sheet.Coordinates[idxCoordinate] = BitConverter.ToDouble(andt1, cursor); cursor += sizeof(Double);
+            case "X1": sheet.X1 = value; break;
+            case "X2": sheet.X2 = value; break;
+            case "Y1": sheet.Y1 = value; break;
+            case "Y2": sheet.Y2 = value; break;
           }
-          else if (andt1.Length >= sizeof(float))
-          {
-            sheet.Coordinates[idxCoordinate] = BitConverter.ToSingle(andt1, cursor); cursor += sizeof(Single);
-          }
-          else if (andt1.Length >= sizeof(Int16))
-          {
-            sheet.Coordinates[idxCoordinate] = BitConverter.ToInt16(andt1, cursor); cursor += sizeof(Int16);
-          }
-          else
-          {
-            throw new NotImplementedException($"Annotation named {sec_name} has {andt1.Length} of data");
-          }
+
         }
         else if (sec_name == "COLORMAP")
         {
@@ -2096,6 +2085,14 @@ namespace Altaxo.Serialization.Origin
         Color color = GetColor(_encoding.GetString(anhd, 0x33, 4));
 
         var andt1String = _encoding.GetString(andt1, 0, andt1.Length).TrimEnd('\0');
+        if (andt1String.IndexOf('\0') >= 0) // in some documents, the string contains two numbers, separated by \0
+        {
+          var parts = andt1String.Split(new char[] { '\0' }, StringSplitOptions.RemoveEmptyEntries);
+          if (parts.Length > 0)
+          {
+            andt1String = parts[0];
+          }
+        }
         if (sec_name == "PL")
         {
           glayer.YAxis.FormatAxis[0].Prefix = andt1String;
@@ -2157,15 +2154,18 @@ namespace Altaxo.Serialization.Origin
         }
         if (sec_name == "X1T")
         {
-          glayer.XAxis.Anchor = double.Parse(andt1String, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture);
+          if (double.TryParse(andt1String, NumberStyles.Float, CultureInfo.InvariantCulture, out var value))
+            glayer.XAxis.Anchor = value;
         }
         if (sec_name == "Y1T")
         {
-          glayer.YAxis.Anchor = double.Parse(andt1String, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture);
+          if (double.TryParse(andt1String, NumberStyles.Float, CultureInfo.InvariantCulture, out var value))
+            glayer.YAxis.Anchor = value;
         }
         if (sec_name == "Z1T")
         {
-          glayer.ZAxis.Anchor = double.Parse(andt1String, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture);
+          if (double.TryParse(andt1String, NumberStyles.Float, CultureInfo.InvariantCulture, out var value))
+            glayer.ZAxis.Anchor = value;
         }
 
         byte type = andt1[0x00];
@@ -2458,10 +2458,9 @@ namespace Altaxo.Serialization.Origin
         {
           glayer.IsWaterfall = true;
           string text = _encoding.GetString(andt1, 0, andt1.Length).TrimEnd('\0');
-          int commaPos = text.IndexOf(",");
-          throw new NotImplementedException("Please Implement the next two lines");
-          //glayer.xOffset = double.Parse(stmp.ReadLine());
-          //glayer.yOffset = double.Parse(stmp.ReadLine());
+          var textParts = text.Split(',');
+          glayer.XOffset = double.Parse(textParts[0], NumberStyles.Float, CultureInfo.InvariantCulture);
+          glayer.YOffset = double.Parse(textParts[1], NumberStyles.Float, CultureInfo.InvariantCulture);
         }
         /* OriginNNNParser identify text, circle, rectangle and bitmap annotation by checking size of andt1:
                          text/pie text          rectangle/circle       line            bitmap
@@ -2582,11 +2581,20 @@ namespace Altaxo.Serialization.Origin
           SpreadColumnType type;
           switch (c)
           {
+            case 0:
+              type = SpreadColumnType.Y;
+              break;
+            case 1:
+              type = SpreadColumnType.Ignore;
+              break;
+            case 2:
+              type = SpreadColumnType.YErr;
+              break;
             case 3:
               type = SpreadColumnType.X;
               break;
-            case 0:
-              type = SpreadColumnType.Y;
+            case 4:
+              type = SpreadColumnType.Label;
               break;
             case 5:
               type = SpreadColumnType.Z;
@@ -2594,14 +2602,14 @@ namespace Altaxo.Serialization.Origin
             case 6:
               type = SpreadColumnType.XErr;
               break;
-            case 2:
-              type = SpreadColumnType.YErr;
+            case 7:
+              type = SpreadColumnType.Group;
               break;
-            case 4:
-              type = SpreadColumnType.Label;
+            case 8:
+              type = SpreadColumnType.Subject;
               break;
             default:
-              type = SpreadColumnType.NONE;
+              type = SpreadColumnType.Ignore;
               break;
           }
           SpreadSheets[_ispread].Columns[col_index].ColumnType = type;
@@ -2666,7 +2674,12 @@ namespace Altaxo.Serialization.Origin
           }
           if (cvedtsz > 0)
           {
-            SpreadSheets[_ispread].Columns[col_index].Comment = _encoding.GetString(cvedt, 0, cvedt.Length).TrimEnd('\0');
+            // note that longName, units and comments seems to be encoded in the following string, separated by 0xD, 0xA
+            var allComments = _encoding.GetString(cvedt, 0, cvedt.Length).TrimEnd('\0');
+            var parts = allComments.Split(['\n'], 3, StringSplitOptions.None);
+            if (parts.Length > 0) SpreadSheets[_ispread].Columns[col_index].LongName = parts[0].TrimEnd();
+            if (parts.Length > 1) SpreadSheets[_ispread].Columns[col_index].Units = parts[1].TrimEnd();
+            if (parts.Length > 2) SpreadSheets[_ispread].Columns[col_index].Comments = parts[2].TrimEnd();
           }
           // TODO: check that spreadsheet columns are stored in proper order
           // header.Add(spreadSheets[ispread].columns[col_index]);
@@ -2711,11 +2724,20 @@ namespace Altaxo.Serialization.Origin
             SpreadColumnType type;
             switch (c)
             {
+              case 0:
+                type = SpreadColumnType.Y;
+                break;
+              case 1:
+                type = SpreadColumnType.Ignore;
+                break;
+              case 2:
+                type = SpreadColumnType.YErr;
+                break;
               case 3:
                 type = SpreadColumnType.X;
                 break;
-              case 0:
-                type = SpreadColumnType.Y;
+              case 4:
+                type = SpreadColumnType.Label;
                 break;
               case 5:
                 type = SpreadColumnType.Z;
@@ -2723,14 +2745,14 @@ namespace Altaxo.Serialization.Origin
               case 6:
                 type = SpreadColumnType.XErr;
                 break;
-              case 2:
-                type = SpreadColumnType.YErr;
+              case 7:
+                type = SpreadColumnType.Group;
                 break;
-              case 4:
-                type = SpreadColumnType.Label;
+              case 8:
+                type = SpreadColumnType.Subject;
                 break;
               default:
-                type = SpreadColumnType.NONE;
+                type = SpreadColumnType.Ignore;
                 break;
             }
             Excels[_iexcel].Sheets[isheet].Columns[col_index].ColumnType = type;
@@ -2794,7 +2816,12 @@ namespace Altaxo.Serialization.Origin
             }
             if (cvedtsz > 0)
             {
-              Excels[_iexcel].Sheets[isheet].Columns[col_index].Comment = _encoding.GetString(cvedt, 0, cvedt.Length).TrimEnd('\0');
+              // note that longName, units and comments seems to be encoded in the following string, separated by 0xD, 0xA
+              var allComments = _encoding.GetString(cvedt, 0, cvedt.Length).TrimEnd('\0');
+              var parts = allComments.Split(new char['\n']);
+              if (parts.Length > 0) Excels[_iexcel].Sheets[isheet].Columns[col_index].LongName = parts[0].TrimEnd();
+              if (parts.Length > 1) Excels[_iexcel].Sheets[isheet].Columns[col_index].Units = parts[1].TrimEnd();
+              if (parts.Length > 2) Excels[_iexcel].Sheets[isheet].Columns[col_index].Comments = parts[2].TrimEnd();
             }
           }
         }
@@ -3727,13 +3754,20 @@ namespace Altaxo.Serialization.Origin
       {
         ProjectNode childNode;
         var obj = FindWindowObjectByIndex(fileObjectId);
-        childNode = currentFolder.AppendChild(
-          new ProjectNode(obj.Item2.Name, obj.Item1)
-          {
-            CreationDate = obj.Item2.CreationDate,
-            ModificationDate = obj.Item2.ModificationDate,
-          }
-          );
+        if (obj.window is not null)
+        {
+          childNode = currentFolder.AppendChild(
+            new ProjectNode(obj.Item2.Name, obj.Item1)
+            {
+              CreationDate = obj.Item2.CreationDate,
+              ModificationDate = obj.Item2.ModificationDate,
+            }
+            );
+        }
+        else
+        {
+          LogPrint($"GetProjectLeafProperties: Window with id = {fileObjectId} was not found!");
+        }
       }
     }
 
@@ -3807,7 +3841,7 @@ namespace Altaxo.Serialization.Origin
         return new DateTime(1970, 1, 1);
 
       // 2440587.5 is julian date for the unixtime epoch
-      return new DateTime(1970, 1, 1).AddDays(jdt - 2440587).AddSeconds(0.5);
+      return new DateTime(1970, 1, 1).AddDays(jdt - 2440587);
     }
 
     #region From original file "originparser.cpp"
@@ -4018,7 +4052,7 @@ namespace Altaxo.Serialization.Origin
       return ((ProjectNodeType)0, null);
     }
 
-    public (ProjectNodeType, Origin.Window) FindWindowObjectByIndex(int index)
+    public (ProjectNodeType nodeType, Origin.Window? window) FindWindowObjectByIndex(int index)
     {
       for (int i = 0; i < SpreadSheets.Count; i++)
       {
@@ -4071,9 +4105,25 @@ namespace Altaxo.Serialization.Origin
       {
         int index = 0;
         int pos = column.Name.LastIndexOf("@");
+        var sheetIndexText = column.Name.Substring(pos + 1);
         if (pos != -1)
         {
-          index = int.Parse(column.Name.Substring(pos + 1)) - 1;
+          if (int.TryParse(sheetIndexText, NumberStyles.Integer, CultureInfo.InvariantCulture, out var value))
+          {
+            index = value - 1;
+          }
+          else
+          {
+            int indexOfDot = sheetIndexText.IndexOf(".");
+            if (indexOfDot > 0 && int.TryParse(sheetIndexText.Substring(0, indexOfDot), NumberStyles.Integer, CultureInfo.InvariantCulture, out var value1))
+            {
+              index = value1 - 1;
+            }
+            else
+            {
+              LogPrint($"ConvertSpreadSheetToExcel could not parse excel sheet index from {sheetIndexText}");
+            }
+          }
           column.Name = column.Name.Substring(0, pos);
         }
 
@@ -4107,6 +4157,60 @@ namespace Altaxo.Serialization.Origin
       return -1;
     }
 
+
+    /// <summary>
+    /// Reads a fixed length string. If the size is given as greater than 0, then also the delimiting newline char (0x0A) is read.
+    /// Note that if a size of 0 is provided, then the delimiting newline character is not read!
+    /// </summary>
+    /// <param name="size">The size of the string.</param>
+    /// <param name="readNewlineDelimiterInAnyCase">If true, the newline delimiter is also read if the size argument is 0.</param>
+    /// <returns></returns>
+    public string ReadObjectAsString(int size, bool readNewlineDelimiterInAnyCase = false)
+    {
+      // read a size-byte blob of data followed by '\n'
+      var result = string.Empty;
+      if (size > 0)
+      {
+        byte[] buffer = new byte[size];
+        _file.ReadExactly(buffer, 0, size);
+        result = _encoding.GetString(buffer).TrimEnd('\0');
+      }
+
+      if (size > 0 || readNewlineDelimiterInAnyCase)
+      {
+        // read the newline 0x0A character
+        var c = _file.ReadByte();
+        if (c != 0x0A)
+        {
+          if (c < 0)
+          {
+            LogPrint($"Unexpected end of stream when trying to read the delimiting newline character of a string object");
+            throw new System.IO.EndOfStreamException($"Unexpected end of stream, file: {((_file is FileStream f) ? f.Name : _file.ToString())}");
+          }
+          else
+          {
+            _curpos = _file.Position;
+            LogPrint($"Wrong delimiter 0x{c:X2} at {_file.Position} [0x{_curpos:X}]");
+            throw new InvalidDataException($"After a string the delimiter a 0x0A (\\n) char is expected (but is was 0x{c:X2}), position 0x{_file.Position:X}, file: {((_file is FileStream f) ? f.Name : _file.ToString())}");
+          }
+        }
+      }
+      return result;
+    }
+
+    /// <summary>
+    /// Gets a null terminated string from a byte buffer.
+    /// </summary>
+    /// <param name="buffer">The byte buffer.</param>
+    /// <param name="start">The start index where to read from.</param>
+    /// <param name="maxLength">The maximum length of the string. This count includes the '\0' character.</param>
+    /// <returns></returns>
+    public string GetNullTerminatedString(byte[] buffer, int start, int maxLength)
+    {
+      var idx = Array.IndexOf<byte>(buffer, 0, start, maxLength);
+      return idx < 0 ? _encoding.GetString(buffer, start, maxLength) : _encoding.GetString(buffer, start, idx - start);
+    }
+
     /// <summary>
     /// Reads a string line, and stops if the char is below 0x20.
     /// Afterwards, the stream cursor is placed on the character that has caused the stop.
@@ -4118,24 +4222,26 @@ namespace Altaxo.Serialization.Origin
     public static string ReadLine(Stream fs, bool doUnreadDelimiter)
     {
       var stb = new StringBuilder();
-      for (; ; )
+      int? endIndex = null;
+      for (int i = 0; ; ++i)
       {
         var b = fs.ReadByte();
         if (b < 0x20)
         {
+          endIndex ??= i;
           if (b < 0)
           {
-            throw new System.IO.EndOfStreamException();
+            throw new System.IO.EndOfStreamException($"Unexpected end of stream, file: {((fs is FileStream f) ? f.Name : fs.ToString())}");
           }
-          if (b == 0 && !doUnreadDelimiter)
+          if (b <= 1 && !doUnreadDelimiter)
           {
             b = fs.ReadByte();
             if (b != '\n')
             {
               if (b < 0)
-                throw new System.IO.EndOfStreamException();
+                throw new System.IO.EndOfStreamException($"Unexpected end of stream, file: {((fs is FileStream f) ? f.Name : fs.ToString())}");
               else
-                throw new InvalidDataException("After a \\0 string delimiter a 0x0A (\\n) char is expected");
+                throw new InvalidDataException($"After a \\0 string delimiter a 0x0A (\\n) char is expected, position 0x{fs.Position:X}, file: {((fs is FileStream f) ? f.Name : fs.ToString())}");
             }
           }
 
@@ -4150,8 +4256,82 @@ namespace Altaxo.Serialization.Origin
       return stb.ToString();
     }
 
+
+
     #endregion
 
+    /// <summary>
+    /// Gets the type of data toe deserialize from dataType, dataTypeU and valueSize.
+    /// </summary>
+    /// <param name="dataType">Type of the data.</param>
+    /// <param name="dataTypeU">The data typeU.</param>
+    /// <param name="valueSize">Size of the value in bytes.</param>
+    /// <returns>The data type to deserialize.</returns>
+    /// <exception cref="System.NotImplementedException">The combination of data type 0x{dataType:X} and valueSize={valueSize} is not implemented. Column name: {newSpreadColumn.Name}, spreadsheet name: {SpreadSheets[spread].Name}.</exception>
+    public static DeserializedDataType GetDataTypeToDeserialize(int dataType, int dataTypeU, int valueSize)
+    {
+      if ((dataType & 0x0822) == 0x0800 && valueSize == 4) // INT32
+      {
+        if (dataTypeU == 8) // ***** UInt32 *****
+        {
+          return DeserializedDataType.UInt32;
+        }
+        else // ***** Int32 *****
+        {
+          return DeserializedDataType.Int32;
+        }
+      }
+      else if ((dataType & 0x0822) == 0x0802 && valueSize == 2) // ***** Int16 or UInt16 *****
+      {
+        if (dataTypeU == 8) // ***** UInt16 *****
+        {
+          return DeserializedDataType.UInt16;
+        }
+        else // ***** Int16 *****
+        {
+          return DeserializedDataType.Int16;
+        }
+      }
+      else if ((dataType & 0x0822) == 0x0820 && valueSize == 1) // ***** sbyte or byte *****
+      {
+        if (dataTypeU == 8) // ***** byte *****
+        {
+          return DeserializedDataType.Byte;
+        }
+        else // ***** sbyte *****
+        {
+          return DeserializedDataType.SByte;
+        }
+      }
+      else if ((dataType & 0x0120) == 0x0120 && valueSize >= 10) // ***** Text and Number *****
+      {
+        return DeserializedDataType.TextAndNumber;
+      }
+      else if ((dataType & 0x0120) == 0x0020) // ***** Text *****
+      {
+        return DeserializedDataType.Text;
+      }
+      else if ((dataType & 0x0822) == 0x0002 && valueSize == 4) // ***** Single ***** 
+      {
+        return DeserializedDataType.Single;
+      }
+      else if ((dataType & 0x0822) == 0x0000 && valueSize == 8) // ***** Double ***** 
+      {
+        return DeserializedDataType.Double;
+      }
+      else if ((dataType & 0x0822) == 0x0000 && valueSize == 10) // ***** Double10 ***** 
+      {
+        return DeserializedDataType.Double10;
+      }
+      else if ((dataType & 0x0822) == 0x0000 && valueSize == 16) // ***** ComplexDouble *****
+      {
+        return DeserializedDataType.Complex;
+      }
+      else
+      {
+        return DeserializedDataType.Unknown;
+      }
+    }
 
     [Conditional("GENERATE_CODE_FOR_LOG")]
     private void LogPrint(string message)
@@ -4166,8 +4346,6 @@ namespace Altaxo.Serialization.Origin
     {
       LogPrint(string.Format(message, args));
     }
-
-
   }
-
 }
+

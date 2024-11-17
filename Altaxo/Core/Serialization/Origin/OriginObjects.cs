@@ -36,6 +36,57 @@ using Altaxo.Collections;
 
 namespace Altaxo.Serialization.Origin
 {
+  /// <summary>
+  /// Designates the data type that was used to deserialize the data.
+  /// This does not tell you how to interpret the data. For instance, double can
+  /// also interpreted as DateTime, Time, etc.
+  /// </summary>
+  public enum DeserializedDataType
+  {
+    /// <summary>
+    /// Value not set yet, or type is unknown.
+    /// </summary>
+    Unknown,
+
+    /// <summary>Text</summary>
+    Text,
+
+    /// <summary>Text and Double</summary>
+    TextAndNumber,
+
+    /// <summary>Complex (2 x double)</summary>
+    Complex,
+
+    /// <summary>Double (8 byte)</summary>
+    Double,
+
+    /// <summary>Double (10 byte)</summary>
+    Double10,
+
+    /// <summary>Single (4 byte)</summary>
+    Single,
+
+    /// <summary>Signed int (4 byte)</summary>
+    Int32,
+
+    /// <summary>Unsigned int (4 byte)</summary>
+    UInt32,
+
+    /// <summary>Signed int (2 byte)</summary>
+    Int16,
+
+    /// <summary>Unsigned int (2 byte)</summary>
+    UInt16,
+
+    /// <summary>Signed int (1 byte)</summary>
+    SByte,
+
+    /// <summary>Unsigned int (1 byte)</summary>
+    Byte,
+  };
+
+
+
   public enum ValueType
   {
     Numeric = 0,
@@ -49,6 +100,8 @@ namespace Altaxo.Serialization.Origin
     TextNumeric = 9,
     Categorical = 10
   };
+
+
 
   // Numeric Format:
   // 1000 | 1E3 | 1k | 1,000
@@ -296,10 +349,10 @@ namespace Altaxo.Serialization.Origin
     public bool IsLabelVisible;
   };
 
-  public struct ColorMap
+  public class ColorMap
   {
     public bool IsFillEnabled;
-    public ColorMapVector Levels;
+    public ColorMapVector Levels = [];
   };
 
   public enum WindowState
@@ -358,6 +411,7 @@ namespace Altaxo.Serialization.Origin
 
     public enum VType
     {
+      V_Empty,
       V_DOUBLE,
       V_STRING
     };
@@ -378,6 +432,7 @@ namespace Altaxo.Serialization.Origin
     public Variant(string s)
     {
       _string = s;
+      _double = double.NaN;
       _type = VType.V_STRING;
     }
 
@@ -387,6 +442,7 @@ namespace Altaxo.Serialization.Origin
       {
         _type = VType.V_STRING;
         _string = s;
+        _double = double.NaN;
       }
       else if (o is double d)
       {
@@ -399,7 +455,10 @@ namespace Altaxo.Serialization.Origin
       }
     }
 
+    public readonly bool IsEmpty => _type == VType.V_Empty;
+
     public readonly bool IsDouble => _type == VType.V_DOUBLE;
+    public readonly bool IsDoubleOrNaN => _type == VType.V_DOUBLE || string.IsNullOrEmpty(_string);
 
     public readonly double AsDouble()
     {
@@ -407,19 +466,14 @@ namespace Altaxo.Serialization.Origin
       {
         return _double;
       }
-
-      throw new ApplicationException($"Variant contains {_type}, but expecting type Double");
-    }
-
-    public readonly bool IsString => _type == VType.V_DOUBLE;
-    public readonly string? AsString()
-    {
-      if (_type == VType.V_STRING)
+      else if (_type == VType.V_Empty || string.IsNullOrEmpty(_string))
       {
-        return _string;
+        return double.NaN;
       }
-
-      throw new ApplicationException($"Variant contains {_type}, but expecting type String");
+      else
+      {
+        throw new ApplicationException($"Variant contains {_type}, but expecting type Double");
+      }
     }
 
     public static implicit operator double(Variant f)
@@ -428,18 +482,82 @@ namespace Altaxo.Serialization.Origin
       {
         return f._double;
       }
-
-      throw new ApplicationException($"Variant contains {f._type}, but expecting type Double");
+      else if (f._type == VType.V_Empty)
+      {
+        return double.NaN;
+      }
+      else
+      {
+        throw new ApplicationException($"Variant contains {f._type}, but expecting type Double");
+      }
     }
 
-    public static implicit operator string?(Variant f)
+    public readonly DateTime? AsDateTime()
+    {
+      var refDate = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+      if (_type == VType.V_DOUBLE)
+      {
+        return refDate.AddDays(_double - 2440587);
+      }
+      else if (_type == VType.V_Empty || string.IsNullOrEmpty(_string))
+      {
+        return null;
+      }
+      else
+      {
+        throw new ApplicationException($"Variant contains {_type}, but expecting type Double");
+      }
+    }
+
+    public readonly TimeSpan? AsTimeSpan()
+    {
+      if (_type == VType.V_DOUBLE)
+      {
+        return TimeSpan.FromDays(_double);
+      }
+      else if (_type == VType.V_Empty || string.IsNullOrEmpty(_string))
+      {
+        return null;
+      }
+      else
+      {
+        throw new ApplicationException($"Variant contains {_type}, but expecting type Double");
+      }
+    }
+
+
+    public readonly bool IsString => _type == VType.V_STRING;
+
+    public readonly string AsString()
+    {
+      if (_type == VType.V_STRING)
+      {
+        return _string ?? string.Empty;
+      }
+      else if (_type == VType.V_Empty)
+      {
+        return string.Empty;
+      }
+      else
+      {
+        throw new ApplicationException($"Variant contains {_type}, but expecting type String");
+      }
+    }
+
+    public static implicit operator string(Variant f)
     {
       if (f._type == VType.V_STRING)
       {
-        return f._string;
+        return f._string ?? string.Empty;
       }
-
-      throw new ApplicationException($"Variant contains {f._type}, but expecting type string");
+      else if (f._type == VType.V_Empty)
+      {
+        return string.Empty;
+      }
+      else
+      {
+        throw new ApplicationException($"Variant contains {f._type}, but expecting type String");
+      }
     }
   }
 
@@ -451,7 +569,9 @@ namespace Altaxo.Serialization.Origin
     XErr,
     YErr,
     Label,
-    NONE
+    Ignore,
+    Group,
+    Subject,
   };
 
   public class SpreadColumn
@@ -465,7 +585,23 @@ namespace Altaxo.Serialization.Origin
     public int DecimalPlaces;
     public NumericDisplayType NumericDisplayType;
     public string Command;
-    public string Comment;
+
+    /// <summary>
+    /// Designates the data type that was used to deserialize the data.
+    /// This does not tell you how to interpret the data. For instance, double can
+    /// also interpreted as DateTime, Time, etc.
+    /// </summary>
+    public DeserializedDataType DeserializedDataType { get; set; }
+
+    /// <summary>Gets or sets the long name of the column.</summary>
+    public string LongName { get; set; } = string.Empty;
+
+    /// <summary>Gets or sets the units of the column.</summary>
+    public string Units { get; set; } = string.Empty;
+
+    /// <summary>Gets or sets the comments of the column.</summary>
+    public string Comments { get; set; } = string.Empty;
+
     public int Width;
     public int Index;
     public int ColIndex;
@@ -474,6 +610,12 @@ namespace Altaxo.Serialization.Origin
     public int BeginRow;
     public int EndRow;
     public List<Variant> Data;
+
+    /// <summary>
+    /// The imaginary data. Is only not null if
+    /// the data are complex.
+    /// </summary>
+    public List<double>? ImaginaryData;
 
     public SpreadColumn(string name = "", int index = 0)
     {
@@ -545,7 +687,18 @@ namespace Altaxo.Serialization.Origin
     public ColorMap ColorMap;
     public List<double> Data = [];
     public List<double> ImaginaryData = [];
-    public List<double> Coordinates = [];
+
+    /// <summary>The x-value that corresponds to the first column of the matrix.</summary>
+    public double X1 { get; set; }
+
+    /// <summary>The x-value that corresponds to the last column of the matrix.</summary>
+    public double X2 { get; set; }
+
+    /// <summary>The y-value that corresponds to the first row of the matrix.</summary>
+    public double Y1 { get; set; }
+
+    /// <summary>The y-value that corresponds to the last row of the matrix.</summary>
+    public double Y2 { get; set; }
 
     public MatrixSheet(string name = "", int index = 0)
     {
@@ -560,7 +713,8 @@ namespace Altaxo.Serialization.Origin
       Index = index;
       View = ViewType.DataView;
       ColorMap = new ColorMap();
-      Coordinates = [10.0, 10.0, 1.0, 1.0];
+      X1 = Y1 = 1;
+      X2 = Y2 = 10;
     }
 
     public double this[int r, int c]
@@ -802,11 +956,28 @@ namespace Altaxo.Serialization.Origin
     public Color XSideWallColor;
     public Color YSideWallColor;
 
-    public SurfaceColoration Surface;
-    public SurfaceColoration TopContour;
-    public SurfaceColoration BottomContour;
+    public SurfaceColoration Surface
+    {
+      get { return field ??= new(); }
+      set { field = value; }
+    }
 
-    public ColorMap ColorMap;
+    public SurfaceColoration TopContour
+    {
+      get { return field ??= new(); }
+      set { field = value; }
+    }
+    public SurfaceColoration BottomContour
+    {
+      get { return field ??= new(); }
+      set { field = value; }
+    }
+
+    public ColorMap ColorMap
+    {
+      get { return field ??= new(); }
+      set { field = value; }
+    }
   }
 
   public class PercentileProperties
@@ -966,19 +1137,39 @@ namespace Altaxo.Serialization.Origin
     public bool ConnectSymbols;
 
     //pie
-    public PieProperties Pie;
+    public PieProperties? Pie
+    {
+      get { return field ??= new(); }
+      set { field = value; }
+    }
 
     //vector
-    public VectorProperties Vector;
+    public VectorProperties? Vector
+    {
+      get { return field ??= new(); }
+      set { field = value; }
+    }
 
     //text
-    public TextProperties Text;
+    public TextProperties? Text
+    {
+      get { return field ??= new(); }
+      set { field = value; }
+    }
 
     //surface
-    public SurfaceProperties Surface;
+    public SurfaceProperties? Surface
+    {
+      get { return field ??= new(); }
+      set { field = value; }
+    }
 
     //contour
-    public ColorMap ColorMap;
+    public ColorMap? ColorMap
+    {
+      get { return field ??= new(); }
+      set { field = value; }
+    }
   }
 
   public class GraphAxisBreak
@@ -1253,8 +1444,8 @@ namespace Altaxo.Serialization.Origin
     public double HLine;
 
     public bool IsWaterfall;
-    public int XOffset;
-    public int YOffset;
+    public double XOffset;
+    public double YOffset;
 
     public bool GridOnTop;
     public bool ExchangedAxes;

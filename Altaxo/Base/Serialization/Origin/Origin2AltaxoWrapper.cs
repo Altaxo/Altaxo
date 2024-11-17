@@ -196,7 +196,9 @@ namespace Altaxo.Serialization.Origin
         SpreadColumnType.XErr => ColumnKind.Err,
         SpreadColumnType.YErr => ColumnKind.Err,
         SpreadColumnType.Label => ColumnKind.Label,
-        SpreadColumnType.NONE => ColumnKind.V,
+        SpreadColumnType.Ignore => ColumnKind.V,
+        SpreadColumnType.Group => ColumnKind.V,
+        SpreadColumnType.Subject => ColumnKind.V,
         _ => throw new System.NotImplementedException($"SpreadColumnType {ctype} (0x{(int)ctype:X2}) is not implemented!"),
       };
     }
@@ -250,7 +252,21 @@ namespace Altaxo.Serialization.Origin
         {
           if (v.IsDouble)
           {
-            dtc[i] = OriginAnyParser.DoubleToPosixTime(v.AsDouble());
+            switch (spreadColumn.ValueType)
+            {
+              case ValueType.Day:
+                dtc[i] = DateTime.MinValue + TimeSpan.FromDays(v.AsDouble());
+                break;
+              case ValueType.Month:
+                dtc[i] = new DateTime(1, (int)v.AsDouble(), 1);
+                break;
+              case ValueType.Time:
+                dtc[i] = DateTime.MinValue + TimeSpan.FromDays(v.AsDouble());
+                break;
+              default:
+                dtc[i] = OriginAnyParser.DoubleToPosixTime(v.AsDouble());
+                break;
+            }
           }
           else
           {
