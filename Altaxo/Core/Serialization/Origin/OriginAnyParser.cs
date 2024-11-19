@@ -123,7 +123,7 @@ namespace Altaxo.Serialization.Origin
       {
         _parseError = 1;
         LogPrint(error);
-        return false;
+        throw new InvalidDataException($"File {((_file is FileStream fs) ? fs.Name : _file.ToString())} seems to be corrupted. Can not read OPJ version, error message: {error}");
       }
 
       if (newFileVersion == 0)
@@ -312,26 +312,24 @@ namespace Altaxo.Serialization.Origin
 
     /// <summary>
     /// Reads the file version from an .opj or .opju file.
+    /// Attention: this call does not throw exceptions if the file is corrupt!
+    /// Instead you have to check the error argument!
     /// </summary>
     /// <param name="file">The file stream.</param>
     /// <returns>Tuple of file version, new file version (contains the year), buildversion, whether it is an opju file, and a error string.
     /// The function is considered successful if the returned error is null.</returns>
     public static (int FileVersion, int NewFileVersion, int BuildVersion, bool IsOpjuFile, string? Error) ReadFileVersion(Stream file)
     {
-      int fileVersion;
-      int newFileVersion = 0;
-      int buildVersion;
-      bool isOpjuFile;
-
       file.Seek(0, SeekOrigin.Begin);
       // get file and program version, check it is a valid file
       string sFileVersion = ReadLine(file, false);
 
       if (sFileVersion.Length <= 5)
       {
-        return (0, 0, 0, false, "Unexpectedly short version string");
+        return (0, 0, 0, false, $"Unexpectedly short version string in file '{(file is FileStream fs ? fs.Name : file.ToString())}'. The version string is '{sFileVersion}'");
       }
 
+      bool isOpjuFile;
       if (sFileVersion.Substring(0, 4) == "CPYA")
       {
         isOpjuFile = false;
@@ -342,20 +340,46 @@ namespace Altaxo.Serialization.Origin
       }
       else
       {
-        return (0, 0, 0, false, $"File is neither an Origin .OPJ nor .OPJU file; the version string is {sFileVersion}");
+        return (0, 0, 0, false, $"The file '{(file is FileStream fs ? fs.Name : file.ToString())}' is neither an Origin .OPJ nor an .OPJU file; the version string is '{sFileVersion}'");
       }
 
-      if (sFileVersion[sFileVersion.Length - 1] != '#')
+      var idxEnd = sFileVersion.IndexOf('#');
+      if (idxEnd < 0)
       {
-        return (0, 0, 0, false, $"Unexpected end of version string (should end with #); the version string is {sFileVersion}");
+        return (0, 0, 0, false, $"Unexpected end of version string (should end with #) in file '{(file is FileStream fs ? fs.Name : file.ToString())}': the version string is '{sFileVersion}'");
       }
 
-      long majorVersion = int.Parse(sFileVersion.Substring(5, 1), System.Globalization.NumberStyles.Integer, System.Globalization.CultureInfo.InvariantCulture);
-      int idx = sFileVersion.IndexOf(' ', 7);
-      buildVersion = int.Parse(sFileVersion.Substring(7, idx - 7), System.Globalization.NumberStyles.Integer, System.Globalization.CultureInfo.InvariantCulture);
+      var offset = isOpjuFile ? 6 : 5;
+
+
+
+      var idxPoint = sFileVersion.IndexOfAny(['.', ','], offset);
+      if (idxPoint < 0)
+      {
+        return (0, 0, 0, false, $"No dot or comma found in version number of file '{(file is FileStream fs ? fs.Name : file.ToString())}': the version string is '{sFileVersion}'");
+      }
+
+      var majorVersionString = sFileVersion.Substring(offset, idxPoint - offset);
+      if (!int.TryParse(majorVersionString, System.Globalization.NumberStyles.Integer, System.Globalization.CultureInfo.InvariantCulture, out var majorVersion))
+      {
+        return (0, 0, 0, false, $"In file '{(file is FileStream fs ? fs.Name : file.ToString())}': could not read major version from string '{majorVersionString}'");
+      }
+
+      var idxSpace = sFileVersion.IndexOf(' ', idxPoint);
+      if (idxSpace < 0)
+      {
+        return (0, 0, 0, false, $"In file '{(file is FileStream fs ? fs.Name : file.ToString())}': no space found after version number; the version number string is '{sFileVersion.Substring(offset)}'");
+      }
+
+      var buildVersionString = sFileVersion.Substring(idxPoint + 1, idxSpace - idxPoint - 1);
+      if (!int.TryParse(buildVersionString, System.Globalization.NumberStyles.Integer, System.Globalization.CultureInfo.InvariantCulture, out var buildVersion))
+      {
+        return (0, 0, 0, false, $"In file '{(file is FileStream fs ? fs.Name : file.ToString())}': could not read build version from string '{buildVersionString}'");
+      }
 
       // Translate version
-
+      int fileVersion;
+      int newFileVersion = 0;
       if (majorVersion == 3)
       {
         if (buildVersion < 830)

@@ -93,29 +93,23 @@ namespace Altaxo.Serialization.Origin.Tests
       {
         using var str = new FileStream(file.FullName, FileMode.Open, FileAccess.Read, FileShare.Read);
         (int FileVersion, int NewFileVersion, int BuildVersion, bool IsOpjuFile, string? Error) version;
+        version = OriginAnyParser.ReadFileVersion(str);
+        if (!string.IsNullOrEmpty(version.Error))
+        {
+          listOfCorruptedFiles.Add((file, new Exception(version.Error)));
+          return;
+        }
         try
         {
-          version = OriginAnyParser.ReadFileVersion(str);
+          var reader = new OriginAnyParser(str);
+        }
+        catch (EndOfStreamException ex)
+        {
+          listOfCorruptedFiles.Add((file, ex));
         }
         catch (Exception ex)
         {
-          listOfCorruptedFiles.Add((file, ex));
-          return;
-        }
-        if (version.FileVersion >= 400)
-        {
-          try
-          {
-            var reader = new OriginAnyParser(str);
-          }
-          catch (EndOfStreamException ex)
-          {
-            listOfCorruptedFiles.Add((file, ex));
-          }
-          catch (Exception ex)
-          {
-            listOfFailedFiles.Add((file, ex));
-          }
+          listOfFailedFiles.Add((file, ex));
         }
       }
 
@@ -128,8 +122,15 @@ namespace Altaxo.Serialization.Origin.Tests
         while (null != (line = fr.ReadLine()))
         {
           line = line.Trim();
-          if (!string.IsNullOrEmpty(line))
+          if (!string.IsNullOrEmpty(line) && line[0] != '#')
           {
+#if NETFRAMEWORK
+            if (!line.StartsWith(@"\\?\"))
+            {
+              line = @"\\?\" + line;
+            }
+#endif
+
             var file = new FileInfo(line.Trim().Trim('"'));
             if (file.Exists)
             {
@@ -490,6 +491,63 @@ namespace Altaxo.Serialization.Origin.Tests
       Assert.Empty(c.LongName);
       Assert.Empty(c.Units);
       Assert.Empty(c.Comments);
+    }
+
+    [Fact]
+    public void TestRepresentationOfNaN()
+    {
+      var fileName = Path.Combine(TestFilePath, "RepresentationOfNaN.opj");
+      using var str = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.Read);
+      var reader = new OriginAnyParser(str);
+
+      Assert.Single(reader.SpreadSheets);
+      Assert.Empty(reader.Matrixes);
+      Assert.Empty(reader.Excels);
+
+      var spreadSheet = reader.SpreadSheets[0];
+      Assert.Equal("Book1", spreadSheet.Name);
+      Assert.Equal(9, spreadSheet.Columns.Count);
+
+      for (int ic = 0; ic < 9; ++ic)
+      {
+
+        var c = spreadSheet.Columns[ic];
+        Assert.Equal(0, c.BeginRow);
+        Assert.Equal(3, c.EndRow);
+        Assert.Equal(1, c.Data[0].AsDouble());
+        Assert.Equal(3, c.Data[2].AsDouble());
+        Assert.Empty(c.LongName);
+        Assert.Empty(c.Units);
+
+
+        var expectedComment = ic switch
+        {
+          0 => "Double",
+          1 => "Single",
+          2 => "Int16",
+          3 => "Int32",
+          4 => "SByte",
+          5 => "Byte",
+          6 => "UInt16",
+          7 => "UInt32",
+          8 => "Complex",
+          _ => throw new NotImplementedException(),
+        };
+        Assert.Equal(expectedComment, c.Comments);
+
+
+        if (ic == 0 || ic == 8)
+          Assert.True(double.IsNaN(c.Data[1].AsDouble()));
+        else
+          Assert.Equal(0, c.Data[1].AsDouble());
+
+        if (ic == 8)
+        {
+          Assert.NotNull(c.ImaginaryData);
+          Assert.Equal(0, c.ImaginaryData[0]);
+          Assert.Equal(0, c.ImaginaryData[2]);
+        }
+      }
     }
 
 

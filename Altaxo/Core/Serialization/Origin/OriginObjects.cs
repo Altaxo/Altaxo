@@ -426,6 +426,9 @@ namespace Altaxo.Serialization.Origin
     }
     public Variant(double d)
     {
+      if (d == -1.23456789E-300)
+        d = double.NaN;
+
       _double = d;
       _type = VType.V_DOUBLE;
     }
@@ -446,6 +449,9 @@ namespace Altaxo.Serialization.Origin
       }
       else if (o is double d)
       {
+        if (d == -1.23456789E-300)
+          d = double.NaN;
+
         _type = VType.V_DOUBLE;
         _double = d;
       }
