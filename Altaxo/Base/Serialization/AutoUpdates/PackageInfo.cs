@@ -41,6 +41,11 @@ namespace Altaxo.Serialization.AutoUpdates
     /// <summary>Gets the hash sum of the package file.</summary>
     public string Hash { get; private set; }
 
+    /// <summary>Gets the target name addendum of the package file. This is a short string which should help
+    /// to distinguish between different packages, for instance one package with standalone dotnet, and another packacke
+    /// which requires a installed dotnet.</summary>
+    public string TargetName { get; private set; }
+
     /// <summary>Gets a value indicating whether this package is the unstable or the stable build of the program.</summary>
     public bool IsUnstableVersion { get; private set; }
 
@@ -88,12 +93,13 @@ namespace Altaxo.Serialization.AutoUpdates
     /// <param name="version">The version of Altaxo in this package.</param>
     /// <param name="fileLength">Length of the package file.</param>
     /// <param name="hash">The hash of the package file.</param>
-    protected PackageInfo(bool isUnstableVersion, Version version, long fileLength, string hash)
+    protected PackageInfo(bool isUnstableVersion, Version version, long fileLength, string hash, string targetName)
     {
       IsUnstableVersion = isUnstableVersion;
       Version = version;
       FileLength = fileLength;
       Hash = hash;
+      TargetName = targetName;
     }
 
 
@@ -117,11 +123,22 @@ namespace Altaxo.Serialization.AutoUpdates
       if (!IsValidStableIdentifier(entries[0].Trim(), out var isUnstableVersion))
         throw new InvalidOperationException(string.Format("First item in line number {0} of the package info file is neither 'stable' nor 'unstable'", lineNumber));
 
+      // the version string may consist of a prefix, which designates architecture, OS, and so on, and the version itself, separated by a underline
+      var targetNameString = string.Empty;
+      var versionString = entries[1].Trim();
+      var idxUnderline = versionString.IndexOf('_');
+      if (idxUnderline >= 0)
+      {
+        targetNameString = versionString.Substring(0, idxUnderline);
+        versionString = versionString.Substring(idxUnderline + 1).Trim();
+      }
+
       var result = new PackageInfo(
         isUnstableVersion: isUnstableVersion,
-        version: new Version(entries[1].Trim()),
+        version: Version.Parse(versionString),
         fileLength: long.Parse(entries[2].Trim()),
-      hash: entries[3].Trim());
+        hash: entries[3].Trim(),
+        targetName: targetNameString);
 
 
 
@@ -205,11 +222,15 @@ namespace Altaxo.Serialization.AutoUpdates
     }
 
     /// <summary>Gets the name of the package file.</summary>
-    /// <param name="version">The version of the package.</param>
-    /// <returns>The package file name.</returns>
-    public static string GetPackageFileName(Version version)
+    /// <value>The package file name.</value>
+    public string PackageFileName
     {
-      return "AltaxoBinaries-" + version.ToString(4) + ".zip";
+      get
+      {
+        return string.IsNullOrEmpty(TargetName) ?
+          $"AltaxoBinaries-{Version.ToString(4)}.zip" :
+          $"AltaxoBinaries-{TargetName}-{Version.ToString(4)}.zip";
+      }
     }
 
     /// <summary>Gets the stable identifier (either 'Unstable' or 'Stable').</summary>
@@ -260,7 +281,7 @@ namespace Altaxo.Serialization.AutoUpdates
           return null; // there is currently no version that can be installed on this system.
 
         // test, if the file exists and has the right Hash
-        var fileInfo = new FileInfo(Path.Combine(storagePath, GetPackageFileName(packageInfo.Version)));
+        var fileInfo = new FileInfo(Path.Combine(storagePath, packageInfo.PackageFileName));
         if (!fileInfo.Exists)
           return null;
 
@@ -268,7 +289,7 @@ namespace Altaxo.Serialization.AutoUpdates
         if (fileInfo.Length != packageInfo.FileLength)
           return null;
 
-        packageFile = new FileStream(Path.Combine(storagePath, GetPackageFileName(packageInfo.Version)), FileMode.Open, FileAccess.Read, FileShare.Read);
+        packageFile = new FileStream(Path.Combine(storagePath, packageInfo.PackageFileName), FileMode.Open, FileAccess.Read, FileShare.Read);
         var hashProvider = new System.Security.Cryptography.SHA1Managed();
         var hash = hashProvider.ComputeHash(packageFile);
 

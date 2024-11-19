@@ -17,17 +17,17 @@
     <Compile Remove="Properties\AssemblyInfo.cs" Visible="true" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\Altaxo\Base\Serialization\AutoUpdates\INetFrameworkVersionDetermination.cs">
-      <Link>INetFrameworkVersionDetermination.cs</Link>
-    </Compile>
-    <Compile Include="..\..\Altaxo\Base.Presentation\Main\Services\NetCoreVersionDetermination.cs">
+    <Compile Include="..\..\Altaxo\Base.Presentation\Serialization\AutoUpdates\NetCoreVersionDetermination.cs">
       <Link>NetCoreVersionDetermination.cs</Link>
     </Compile>
-    <Compile Include="..\..\Altaxo\Base.Presentation\Main\Services\NetFrameworkVersionDetermination.cs">
+    <Compile Include="..\..\Altaxo\Base.Presentation\Serialization\AutoUpdates\NetFrameworkVersionDetermination.cs">
       <Link>NetFrameworkVersionDetermination.cs</Link>
     </Compile>
     <Compile Include="..\..\Altaxo\Base\Serialization\AutoUpdates\PackageInfo.cs">
       <Link>PackageInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Altaxo\Base\Serialization\AutoUpdates\SystemRequirementsBase.cs">
+      <Link>SystemRequirementsBase.cs</Link>
     </Compile>
   </ItemGroup>
 

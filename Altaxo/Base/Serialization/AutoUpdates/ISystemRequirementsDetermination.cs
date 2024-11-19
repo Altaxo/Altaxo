@@ -23,26 +23,29 @@
 #endregion Copyright
 
 #nullable enable
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace Altaxo.Serialization.AutoUpdates
 {
   /// <summary>
-  /// Interface to a class that is able to determine whether a given version of .NET framework is installed.
+  /// Interface to a class that is able to determine whether a given version of .NET framework and .NET core is installed.
   /// </summary>
-  public interface INetFrameworkVersionDetermination
+  public interface ISystemRequirementsDetermination
   {
     /// <summary>
     /// Determines whether a specified version of the net framework is installed.
     /// </summary>
-    /// <param name="version">The version. Examples are 4.0, 4.6, 4.7.1 etc.</param>
+    /// <param name="versionString">The version. Examples are 4.0, 4.6, 4.7.1 etc.</param>
     /// <returns>
     ///   <c>true</c> if the specified version of the .NET framework is installed; otherwise, <c>false</c>.
     /// </returns>
-    bool IsVersionInstalled(string version);
+    bool IsNetFrameworkVersionInstalled(string versionString);
+
+    /// <summary>
+    /// Determines whether the specified DotNet core version is installed on the current system.
+    /// </summary>
+    /// <param name="versionString">The version string.</param>
+    /// <returns>
+    ///   <c>true</c> if the specified .NET core version is installed; otherwise, <c>false</c>.
+    /// </returns>
+    public bool IsNetCoreVersionInstalled(string versionString);
   }
 }

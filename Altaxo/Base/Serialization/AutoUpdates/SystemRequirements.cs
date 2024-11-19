@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2018 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2024 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -22,34 +22,48 @@
 
 #endregion Copyright
 
-#nullable enable
+using System;
+using System.Runtime.InteropServices;
 
 namespace Altaxo.Serialization.AutoUpdates
 {
-  public static class SystemRequirements
-  {
-    public const string PropertyKeyNetFrameworkVersion = "RequiredNetFrameworkVersion";
 
+  public class SystemRequirements : SystemRequirementsBase
+  {
     /// <summary>
-    /// Determines whether the system matches the requirements given in the provided package info.
+    /// Determines if this system is matching the requirements of the package.
     /// </summary>
-    /// <param name="packageInfo">The package information.</param>
-    /// <returns>True if the system matches the requirements; otherwise, false.</returns>
+    /// <param name="packageInfo">The information about the package.</param>
+    /// <returns>True if the system is matching the requirements of the package; otherwise, false.</returns>
     public static bool MatchesRequirements(PackageInfo packageInfo)
     {
       var properties = packageInfo.Properties;
+      var systemRequirementsService = Current.GetRequiredService<ISystemRequirementsDetermination>();
 
-      string netFrameworkVersion;
 
-      if (properties.ContainsKey(PropertyKeyNetFrameworkVersion))
-        netFrameworkVersion = properties[PropertyKeyNetFrameworkVersion];
-      else
-        netFrameworkVersion = "4.0";
+      if (properties.TryGetValue(PropertyKeyNetFrameworkVersion, out var netFrameworkVersion))
+      {
+        if (!systemRequirementsService.IsNetFrameworkVersionInstalled(netFrameworkVersion))
+          return false;
+      }
 
-      var frameworkDeterminationService = Current.GetRequiredService<INetFrameworkVersionDetermination>();
+      if (properties.TryGetValue(PropertyKeyDotNetVersion, out var dotnetVersion))
+      {
+        if (!systemRequirementsService.IsNetCoreVersionInstalled(dotnetVersion))
+          return false;
+      }
 
-      if (!frameworkDeterminationService.IsVersionInstalled(netFrameworkVersion))
-        return false;
+      if (properties.TryGetValue(PropertyKeyArchitecture, out var requiredArchitecture))
+      {
+        if (!MeetsArchitectureRequirements(requiredArchitecture))
+          return false;
+      }
+
+      if (properties.TryGetValue(PropertyKeyOperatingSystem, out var operatingSystem))
+      {
+        if (!MeetsOSRequirements(operatingSystem))
+          return false;
+      }
 
       return true;
     }

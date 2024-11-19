@@ -25,10 +25,8 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Security.AccessControl;
 using System.Security.Principal;
-using System.Text;
 
 namespace Altaxo.Serialization.AutoUpdates
 {
@@ -99,11 +97,11 @@ namespace Altaxo.Serialization.AutoUpdates
 
 
           // from all parsed versions, choose that one that matches the requirements
-          var parsedVersion = PackageInfo.GetHighestVersion(parsedVersions);
+          var bestPackage = PackageInfo.GetHighestVersion(parsedVersions);
 
-          if (parsedVersion is not null)
+          if (bestPackage is not null)
           {
-            Console.WriteLine("The remote package version is: {0}", parsedVersion.Version);
+            Console.WriteLine("The remote package version is: {0}", bestPackage.Version);
           }
           else
           {
@@ -111,21 +109,21 @@ namespace Altaxo.Serialization.AutoUpdates
             return;
           }
 
-          if (!(Comparer<Version>.Default.Compare(parsedVersion.Version, _currentVersion) > 0)) // if the remote version is not higher than the currently installed Altaxo version
+          if (!(Comparer<Version>.Default.Compare(bestPackage.Version, _currentVersion) > 0)) // if the remote version is not higher than the currently installed Altaxo version
           {
-            Console.WriteLine($"The current version of Altaxo ({_currentVersion}) is equal to or higher than the available version ({parsedVersion.Version}). Therefore, no download is needed.");
+            Console.WriteLine($"The current version of Altaxo ({_currentVersion}) is equal to or higher than the available version ({bestPackage.Version}). Therefore, no download is needed.");
             return; // then there is nothing to do
           }
 
           // Test, whether the required file is already present...
-          var packageFileName = Path.Combine(_storagePath, PackageInfo.GetPackageFileName(parsedVersion.Version));
+          var packageFileName = Path.Combine(_storagePath, bestPackage.PackageFileName);
           try
           {
             if (File.Exists(packageFileName))
             {
-              if (parsedVersion.FileLength == new FileInfo(packageFileName).Length)
+              if (bestPackage.FileLength == new FileInfo(packageFileName).Length)
               {
-                if (IsHashOfFileEqualTo(packageFileName, parsedVersion.Hash, out var _))
+                if (IsHashOfFileEqualTo(packageFileName, bestPackage.Hash, out var _))
                 {
                   Console.WriteLine($"The package file ({packageFileName}) is already present and up to date. Therefore, no download is needed.");
                   return; // then there is nothing to do
@@ -144,7 +142,7 @@ namespace Altaxo.Serialization.AutoUpdates
           CleanDirectory(versionFileFullName); // Clean old downloaded files from the directory
           Console.WriteLine(" ok!");
 
-          var packageUrl = _downloadURL + PackageInfo.GetPackageFileName(parsedVersion.Version);
+          var packageUrl = _downloadURL + bestPackage.PackageFileName;
           Console.WriteLine("Starting download of package file ...");
           webClient.DownloadProgressChanged += EhDownloadOfPackageFileProgressChanged;
           webClient.DownloadFileCompleted += EhDownloadOfPackageFileCompleted;
@@ -161,9 +159,9 @@ namespace Altaxo.Serialization.AutoUpdates
 
           // make at least the test for the right length
           var fileInfo = new FileInfo(packageFileName);
-          if (fileInfo.Length != parsedVersion.FileLength)
+          if (fileInfo.Length != bestPackage.FileLength)
           {
-            Console.WriteLine("Downloaded file length ({0}) differs from length in VersionInfo.txt {1}, thus the downloaded file will be deleted!", fileInfo.Length, parsedVersion.FileLength);
+            Console.WriteLine("Downloaded file length ({0}) differs from length in VersionInfo.txt {1}, thus the downloaded file will be deleted!", fileInfo.Length, bestPackage.FileLength);
             fileInfo.Delete();
             return;
           }
@@ -172,13 +170,13 @@ namespace Altaxo.Serialization.AutoUpdates
             Console.WriteLine("Test file length of downloaded package file ... ok!");
           }
 
-          if (IsHashOfFileEqualTo(packageFileName, parsedVersion.Hash, out var calculatedHash))
+          if (IsHashOfFileEqualTo(packageFileName, bestPackage.Hash, out var calculatedHash))
           {
             Console.WriteLine("Test hash of downloaded package file ... ok!");
           }
           else
           {
-            Console.WriteLine($"The hash of the downloaded file ({calculatedHash}) differs from the hash in VersionInfo.txt ({parsedVersion.Hash}). Therefore, the downloaded file will be deleted!");
+            Console.WriteLine($"The hash of the downloaded file ({calculatedHash}) differs from the hash in VersionInfo.txt ({bestPackage.Hash}). Therefore, the downloaded file will be deleted!");
             fileInfo.Delete();
             return;
           }

@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2018 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2024 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -22,23 +22,14 @@
 
 #endregion Copyright
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Altaxo.Main.Services;
-
 namespace Altaxo.Serialization.AutoUpdates
 {
   /// <summary>
   /// Represents the system requirements needed for a given package.
   /// </summary>
-  public static class SystemRequirements
+  public class SystemRequirements : SystemRequirementsBase
   {
-    /// <summary>
-    /// The property key: .NET framework version
-    /// </summary>
-    public const string PropertyKeyNetFrameworkVersion = "RequiredNetFrameworkVersion";
+
 
     /// <summary>
     /// Determines if this system is matching the requirements of the package.
@@ -49,16 +40,30 @@ namespace Altaxo.Serialization.AutoUpdates
     {
       var properties = packageInfo.Properties;
 
-      string netFrameworkVersion;
+      if (properties.TryGetValue(PropertyKeyNetFrameworkVersion, out var netFrameworkVersion))
+      {
+        if (!NetFrameworkVersionDetermination.IsVersionInstalled(netFrameworkVersion))
+          return false;
+      }
 
-      if (properties.ContainsKey(PropertyKeyNetFrameworkVersion))
-        netFrameworkVersion = properties[PropertyKeyNetFrameworkVersion];
-      else
-        netFrameworkVersion = "4.0";
+      if (properties.TryGetValue(PropertyKeyDotNetVersion, out var dotnetVersion))
+      {
+        if (!NetCoreVersionDetermination.IsVersionInstalled(dotnetVersion))
+          return false;
+      }
 
+      if (properties.TryGetValue(PropertyKeyArchitecture, out var requiredArchitecture))
+      {
+        if (!MeetsArchitectureRequirements(requiredArchitecture))
+          return false;
+      }
 
-      if (!NetFrameworkVersionDetermination.IsVersionInstalledHere(netFrameworkVersion))
-        return false;
+      if (properties.TryGetValue(PropertyKeyOperatingSystem, out var operatingSystem))
+      {
+        if (!MeetsOSRequirements(operatingSystem))
+          return false;
+      }
+
 
       return true;
     }

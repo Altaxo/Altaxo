@@ -26,7 +26,7 @@ using Microsoft.Win32;
 
 #nullable enable
 
-namespace Altaxo.Main.Services
+namespace Altaxo.Serialization.AutoUpdates
 {
 
   /// <summary>
@@ -34,6 +34,17 @@ namespace Altaxo.Main.Services
   /// </summary>
   public class NetCoreVersionDetermination
   {
+    public static bool IsVersionInstalled(string versionString)
+    {
+      if (Version.TryParse(versionString, out var version))
+      {
+        return IsVersionInstalled(version.Major, version.Minor);
+      }
+      return false;
+    }
+
+
+
     /// <summary>
     /// Gets the highest net core version installed currently.
     /// </summary>

@@ -24,30 +24,15 @@
 
 #nullable disable warnings
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Microsoft.Win32;
 
-namespace Altaxo.Main.Services
+namespace Altaxo.Serialization.AutoUpdates
 {
   /// <summary>
   /// Class responsible for determining which .NET framework version is currently installed.
   /// </summary>
-  /// <seealso cref="Altaxo.Serialization.AutoUpdates.INetFrameworkVersionDetermination" />
-  public class NetFrameworkVersionDetermination : Serialization.AutoUpdates.INetFrameworkVersionDetermination
+  public class NetFrameworkVersionDetermination
   {
-    /// <summary>
-    /// Determines whether a specified version of the .NET framework is installed.
-    /// </summary>
-    /// <param name="version">The version. Examples are 4.0, 4.6, 4.7.1 etc.</param>
-    /// <returns>
-    ///   <c>true</c> if the specified version of the .NET framework is installed; otherwise, <c>false</c>.
-    /// </returns>
-    public bool IsVersionInstalled(string version)
-    {
-      return IsVersionInstalledHere(version);
-    }
 
     /// <summary>
     /// Determines whether a specified version of the .NET framework is installed.
@@ -56,7 +41,7 @@ namespace Altaxo.Main.Services
     /// <returns>
     ///   <c>true</c> if the specified version of the .NET framework is installed; otherwise, <c>false</c>.
     /// </returns>
-    public static bool IsVersionInstalledHere(string version)
+    public static bool IsVersionInstalled(string version)
     {
       version = version.ToUpperInvariant();
 
