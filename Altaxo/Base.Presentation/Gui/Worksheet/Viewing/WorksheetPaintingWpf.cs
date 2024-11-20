@@ -72,6 +72,11 @@ namespace Altaxo.Gui.Worksheet.Viewing
       int horzScrollPos, int vertScrollPos
       )
     {
+      if (layout.IsDisposeInProgress || layout.DataTable.IsDisposeInProgress)
+      {
+        return;
+      }
+
       dc.PushClip(new RectangleGeometry(new Rect(0, 0, viewSize.Width, viewSize.Height)));
 
       var dataTable = layout.DataTable;

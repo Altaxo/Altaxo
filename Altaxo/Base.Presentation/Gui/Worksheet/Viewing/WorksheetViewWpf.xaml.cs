@@ -24,10 +24,7 @@
 
 #nullable disable warnings
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -354,6 +351,9 @@ namespace Altaxo.Gui.Worksheet.Viewing
     public void EhView_TableAreaPaint(DrawingContext unused)
     {
       if (Canvas is null || _guiController is null || _guiController.DataTable is null)
+        return;
+
+      if (_guiController.WorksheetLayout.IsDisposeInProgress)
         return;
 
       using (var dc = _visualHost.OpenDrawingContext())

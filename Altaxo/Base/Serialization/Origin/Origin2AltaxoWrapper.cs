@@ -212,10 +212,13 @@ namespace Altaxo.Serialization.Origin
     public static (string name, DataColumn dataColumn, ColumnKind kind) OriginColumnToAltaxoColumn(SpreadColumn spreadColumn)
     {
       DataColumn dataColumn;
+      var lenData = Math.Max(0, Math.Min(spreadColumn.Data?.Count ?? 0, spreadColumn.EndRow - spreadColumn.BeginRow));
       switch (spreadColumn.ValueType)
       {
         case ValueType.Day:
         case ValueType.Month:
+          dataColumn = new DoubleColumn();
+          break;
         case ValueType.Date:
         case ValueType.Time:
           dataColumn = new DateTimeColumn();
@@ -227,62 +230,84 @@ namespace Altaxo.Serialization.Origin
           dataColumn = new TextColumn();
           break;
         case ValueType.TextNumeric:
-          dataColumn = new TextColumn();
+          {
+            bool isAnyText = false;
+            for (int i = 0; i < lenData; ++i)
+            {
+              isAnyText |= spreadColumn.Data[i].IsString && !string.IsNullOrEmpty(spreadColumn.Data[i].AsString());
+            }
+            dataColumn = isAnyText ? new TextColumn() : new DoubleColumn();
+          }
           break;
         default:
           throw new System.NotImplementedException();
       };
 
-      for (int i = spreadColumn.BeginRow; i < spreadColumn.EndRow; i++)
+      for (int i = 0, j = spreadColumn.BeginRow; i < lenData; i++, j++)
       {
         var v = spreadColumn.Data[i];
         if (dataColumn is DoubleColumn dc)
         {
           if (v.IsDouble)
           {
-            dc[i] = v.AsDouble();
+            dc[j] = v.AsDouble();
           }
           else
           {
             if (double.TryParse(v.AsString(), System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out var vv))
-              dc[i] = vv;
+              dc[j] = vv;
           }
         }
         else if (dataColumn is DateTimeColumn dtc)
         {
           if (v.IsDouble)
           {
-            switch (spreadColumn.ValueType)
+            var d = v.AsDouble();
+            if (double.IsNaN(d))
             {
-              case ValueType.Day:
-                dtc[i] = DateTime.MinValue + TimeSpan.FromDays(v.AsDouble());
-                break;
-              case ValueType.Month:
-                dtc[i] = new DateTime(1, (int)v.AsDouble(), 1);
-                break;
-              case ValueType.Time:
-                dtc[i] = DateTime.MinValue + TimeSpan.FromDays(v.AsDouble());
-                break;
-              default:
-                dtc[i] = OriginAnyParser.DoubleToPosixTime(v.AsDouble());
-                break;
+              dtc[j] = DateTime.MinValue;
+            }
+            else
+            {
+              try
+              {
+                switch (spreadColumn.ValueType)
+                {
+                  case ValueType.Day:
+                    dtc[j] = DateTime.MinValue + TimeSpan.FromDays(v.AsDouble());
+                    break;
+                  case ValueType.Month:
+                    dtc[j] = new DateTime(1, (int)v.AsDouble(), 1);
+                    break;
+                  case ValueType.Time:
+                    dtc[j] = DateTime.MinValue + TimeSpan.FromDays(v.AsDouble());
+                    break;
+                  default:
+                    dtc[j] = OriginAnyParser.DoubleToPosixTime(v.AsDouble());
+                    break;
+                }
+              }
+              catch
+              {
+                dtc[j] = DateTime.MinValue;
+              }
             }
           }
           else
           {
             if (DateTime.TryParse(v.AsString(), System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.AssumeLocal, out var vt))
-              dtc[i] = vt;
+              dtc[j] = vt;
           }
         }
         else
         {
           if (v.IsDouble)
           {
-            dataColumn[i] = v.AsDouble().ToString(System.Globalization.CultureInfo.InvariantCulture);
+            dataColumn[j] = v.AsDouble().ToString(System.Globalization.CultureInfo.InvariantCulture);
           }
           else
           {
-            dataColumn[i] = v.AsString();
+            dataColumn[j] = v.AsString();
           }
         }
       }
