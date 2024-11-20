@@ -47,6 +47,19 @@ namespace Altaxo.Serialization.Origin.Tests
       {
         using var str = new FileStream(file.FullName, FileMode.Open, FileAccess.Read, FileShare.Read);
         var reader = new OriginAnyParser(str);
+
+        // First test that the method to test enums really works
+        Assert.True(string.IsNullOrEmpty(Enum.GetName(typeof(ValueTypeSpecification), (ValueTypeSpecification)(0xFFFF))));
+
+        // Test that the enums have valid values
+        foreach (var dataset in reader.Datasets)
+        {
+          Assert.False(string.IsNullOrEmpty(Enum.GetName(typeof(SpreadColumnType), dataset.ColumnType)));
+          Assert.False(string.IsNullOrEmpty(Enum.GetName(typeof(ValueType), dataset.ValueType)));
+          Assert.False(string.IsNullOrEmpty(Enum.GetName(typeof(ValueTypeSpecification), dataset.ValueTypeSpecification)));
+          Assert.False(string.IsNullOrEmpty(Enum.GetName(typeof(DeserializedDataType), dataset.DeserializedDataType)));
+          Assert.False(string.IsNullOrEmpty(Enum.GetName(typeof(NumericDisplayType), dataset.NumericDisplayType)));
+        }
       }
     }
 
@@ -193,6 +206,8 @@ namespace Altaxo.Serialization.Origin.Tests
       Assert.Equal(4, spreadSheet.Columns.Count);
 
       var c = spreadSheet.Columns[0];
+      Assert.Equal(ValueType.Time, c.ValueType);
+      Assert.Equal(ValueTypeSpecification.Time_HH_MM, c.ValueTypeSpecification);
       Assert.Equal(0, c.BeginRow);
       Assert.Equal(1, c.EndRow);
       Assert.Equal(new TimeSpan(12, 34, 00), RoundToSecond(c.Data[0].AsTimeSpan().Value, 1));
@@ -201,6 +216,8 @@ namespace Altaxo.Serialization.Origin.Tests
       Assert.Equal("Zeit HH:mm", c.Comments);
 
       c = spreadSheet.Columns[1];
+      Assert.Equal(ValueType.Date, c.ValueType);
+      Assert.Equal(ValueTypeSpecification.Date_MM_DD_YYYY_HH_MM, c.ValueTypeSpecification);
       Assert.Equal(0, c.BeginRow);
       Assert.Equal(1, c.EndRow);
       Assert.Equal(new DateTime(2031, 6, 27, 14, 19, 0), RoundToSecond(c.Data[0].AsDateTime().Value, 1));
@@ -209,16 +226,22 @@ namespace Altaxo.Serialization.Origin.Tests
       Assert.Equal("Date MM/DD/YYYY HH:mm", c.Comments);
 
       c = spreadSheet.Columns[2];
+      Assert.Equal(ValueType.Month, c.ValueType);
+      Assert.Equal(ValueTypeSpecification.Month_MMM, c.ValueTypeSpecification);
       Assert.Equal(0, c.BeginRow);
       Assert.Equal(1, c.EndRow);
+      Assert.Equal(3, c.Data[0].AsDouble());
       Assert.Empty(c.LongName);
       Assert.Empty(c.Units);
       Assert.Equal("Month", c.Comments);
       Assert.Equal(3, c.Data[0].AsDouble());
 
       c = spreadSheet.Columns[3];
+      Assert.Equal(ValueType.Day, c.ValueType);
+      Assert.Equal(ValueTypeSpecification.Day_DDD, c.ValueTypeSpecification);
       Assert.Equal(0, c.BeginRow);
       Assert.Equal(1, c.EndRow);
+      Assert.Equal(5, c.Data[0].AsDouble());
       Assert.Empty(c.LongName);
       Assert.Empty(c.Units);
       Assert.Equal("DayOfWeek\nMon", c.Comments);
@@ -350,6 +373,7 @@ namespace Altaxo.Serialization.Origin.Tests
       Assert.Equal(2, spreadSheet.Columns.Count);
 
       var c = spreadSheet.Columns[0];
+      Assert.Equal(ValueType.TextNumeric, c.ValueType);
       Assert.Equal(0, c.BeginRow);
       Assert.Equal(3, c.EndRow);
       Assert.Equal(1, c.Data[0].AsDouble());
@@ -360,6 +384,7 @@ namespace Altaxo.Serialization.Origin.Tests
       Assert.Empty(c.Comments);
 
       c = spreadSheet.Columns[1];
+      Assert.Equal(ValueType.TextNumeric, c.ValueType);
       Assert.Equal(0, c.BeginRow);
       Assert.Equal(3, c.EndRow);
       Assert.Equal(4, c.Data[0].AsDouble());
@@ -897,6 +922,58 @@ namespace Altaxo.Serialization.Origin.Tests
         Assert.NotNull(c.ImaginaryData);
         Assert.Equal(0.5, c.ImaginaryData[0]);
         Assert.Equal(3.5, c.ImaginaryData[1]);
+      }
+    }
+
+    [Fact]
+    public void TestWksDifferentNumericFormattings()
+    {
+      var fileName = Path.Combine(TestFilePath, "WksDifferentNumericFormattings.opj");
+      using var str = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.Read);
+      var reader = new OriginAnyParser(str);
+
+      Assert.Single(reader.SpreadSheets);
+      var spreadSheet = reader.SpreadSheets[0];
+      Assert.Equal("Book1", spreadSheet.Name);
+      Assert.Equal(7, spreadSheet.Columns.Count);
+
+      for (int i = 0; i < spreadSheet.Columns.Count; i++)
+      {
+        var c = spreadSheet.Columns[0];
+        Assert.Equal(0, c.BeginRow);
+        Assert.Equal(1, c.EndRow);
+        Assert.Equal(ValueType.Numeric, c.ValueType);
+        Assert.Equal(987654321, c.Data[0].AsDouble());
+      }
+      {
+        // Column A (decimal)
+        var c = spreadSheet.Columns[0];
+        Assert.Equal(ValueTypeSpecification.Numeric_Decimal, c.ValueTypeSpecification);
+      }
+      {
+        // Column B (scientific)
+        var c = spreadSheet.Columns[1];
+        Assert.Equal(ValueTypeSpecification.Numeric_Scientific, c.ValueTypeSpecification);
+      }
+      {
+        // Column C (engineering)
+        var c = spreadSheet.Columns[2];
+        Assert.Equal(ValueTypeSpecification.Numeric_Engineering, c.ValueTypeSpecification);
+      }
+      {
+        // Column D (with separators)
+        var c = spreadSheet.Columns[3];
+        Assert.Equal(ValueTypeSpecification.Numeric_DecimalWithMarks, c.ValueTypeSpecification);
+      }
+      {
+        // Column E (user defined)
+        var c = spreadSheet.Columns[4];
+        Assert.Equal(ValueTypeSpecification.Numeric_UserDefined, c.ValueTypeSpecification);
+      }
+      {
+        // Column F (user defined)
+        var c = spreadSheet.Columns[5];
+        Assert.Equal(ValueTypeSpecification.Numeric_UserDefined, c.ValueTypeSpecification);
       }
     }
 

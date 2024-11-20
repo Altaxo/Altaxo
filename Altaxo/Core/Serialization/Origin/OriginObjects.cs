@@ -102,83 +102,87 @@ namespace Altaxo.Serialization.Origin
   };
 
 
-
-  // Numeric Format:
-  // 1000 | 1E3 | 1k | 1,000
-  public enum NumericFormat
+  public enum ValueTypeSpecification
   {
-    Decimal = 0,
-    Scientific = 1,
-    Engineering = 2,
-    DecimalWithMarks = 3
-  };
+    // Numeric Format:
 
-  // Time Format:
-  // hh:mm | hh | hh:mm:ss | hh:mm:ss.zz | hh ap | hh:mm ap | mm:ss
-  // mm:ss.zz | hhmm | hhmmss | hh:mm:ss.zzz
-  public enum TimeFormat
-  {
-    TIME_HH_MM = 0,
-    TIME_HH = 1,
-    TIME_HH_MM_SS = 2,
-    TIME_HH_MM_SS_ZZ = 3,
-    TIME_HH_AP = 4,
-    TIME_HH_MM_AP = 5,
-    TIME_MM_SS = 6,
-    TIME_MM_SS_ZZ = 7,
-    TIME_HHMM = 8,
-    TIME_HHMMSS = 9,
-    TIME_HH_MM_SS_ZZZ = 10
-  };
+    /// <summary>Decimal, e.g. 1000</summary>
+    Numeric_Decimal = 0x0000,
+    /// <summary>Scientific, e.g. 1E3</summary>
+    Numeric_Scientific = 0x0001,
+    /// <summary>Engineering, e.g. 1k</summary>
+    Numeric_Engineering = 0x0002,
+    /// <summary>With separators, e.g. 1,000</summary>
+    Numeric_DecimalWithMarks = 0x0003,
+    /// <summary>User defined</summary>
+    Numeric_UserDefined = 0x0005,
 
-  // Date Format:
-  // dd/MM/yyyy | dd/MM/yyyy HH:mm | dd/MM/yyyy HH:mm:ss | dd.MM.yyyy | y. (year abbreviation) | MMM d
-  // M/d | d | ddd | First letter of day | yyyy | yy | dd.MM.yyyy hh:mm | dd.MM.yyyy hh:mm:ss
-  // yyMMdd | yyMMdd hh:mm | yyMMdd hh:mm:ss | yyMMdd hhmm | yyMMdd hhmmss | MMM
-  // First letter of month | Quartal | M-d-yyyy (Custom1) | hh:mm:ss.zzzz (Custom2)
-  public enum DateFormat
-  {
-    DATE_DD_MM_YYYY = -128,
-    DATE_DD_MM_YYYY_HH_MM = -119,
-    DATE_DD_MM_YYYY_HH_MM_SS = -118,
-    DATE_DDMMYYYY = 0, DATE_Y = 1,
-    DATE_MMM_D = 2,
-    DATE_M_D = 3,
-    DATE_D = 4,
-    DATE_DDD = 5,
-    DATE_DAY_LETTER = 6,
-    DATE_YYYY = 7,
-    DATE_YY = 8,
-    DATE_DDMMYYYY_HH_MM = 9,
-    DATE_DDMMYYYY_HH_MM_SS = 10,
-    DATE_YYMMDD = 11,
-    DATE_YYMMDD_HH_MM = 12,
-    DATE_YYMMDD_HH_MM_SS = 13,
-    DATE_YYMMDD_HHMM = 14,
-    DATE_YYMMDD_HHMMSS = 15,
-    DATE_MMM = 16,
-    DATE_MONTH_LETTER = 17,
-    DATE_Q = 18,
-    DATE_M_D_YYYY = 19,
-    DATE_HH_MM_SS_ZZZZ = 20
-  };
 
-  // Month Format:
-  //  MMM | MMMM | First letter of month
-  public enum MonthFormat
-  {
-    MONTH_MMM = 0,
-    MONTH_MMMM = 1,
-    MONTH_LETTER = 2
-  };
+    // Text format
 
-  // ddd | dddd | First letter of day
-  public enum DayOfWeekFormat
-  {
-    DAY_DDD = 0,
-    DAY_DDDD = 1,
-    DAY_LETTER = 2
-  };
+    Text_Default = 0x0100,
+
+    // Time Format:
+    // hh:mm | hh | hh:mm:ss | hh:mm:ss.zz | hh ap | hh:mm ap | mm:ss
+    // mm:ss.zz | hhmm | hhmmss | hh:mm:ss.zzz
+
+    Time_HH_MM = 0x0200,
+    Time_HH = 0x0201,
+    Time_HH_MM_SS = 0x0202,
+    Time_HH_MM_SS_ZZ = 0x0203,
+    Time_HH_AP = 0x0204,
+    Time_HH_MM_AP = 0x0205,
+    Time_MM_SS = 0x0206,
+    Time_MM_SS_ZZ = 0x0207,
+    Time_HHMM = 0x0208,
+    Time_HHMMSS = 0x0209,
+    Time_HH_MM_SS_ZZZ = 0x020A,
+
+
+    // Date Format:
+    // dd/MM/yyyy | dd/MM/yyyy HH:mm | dd/MM/yyyy HH:mm:ss | dd.MM.yyyy | y. (year abbreviation) | MMM d
+    // M/d | d | ddd | First letter of day | yyyy | yy | dd.MM.yyyy hh:mm | dd.MM.yyyy hh:mm:ss
+    // yyMMdd | yyMMdd hh:mm | yyMMdd hh:mm:ss | yyMMdd hhmm | yyMMdd hhmmss | MMM
+    // First letter of month | Quartal | M-d-yyyy (Custom1) | hh:mm:ss.zzzz (Custom2)
+
+    Date_DD_MM_YYYY = 0x0300,
+    Date_MM_DD_YYYY_HH_MM = 0x0309,
+    Date_DD_MM_YYYY_HH_MM_SS = 0x030A,
+    Date_DDMMYYYY = 0x0380,
+    Date_Y = 0x0381,
+    Date_MMM_D = 0x0382,
+    Date_M_D = 0x0383,
+    Date_D = 0x0384,
+    Date_DDD = 0x0385,
+    Date_DAY_LETTER = 0x0386,
+    Date_YYYY = 0x0387,
+    Date_YY = 0x0388,
+    Date_DDMMYYYY_HH_MM = 0x0389,
+    Date_DDMMYYYY_HH_MM_SS = 0x038A,
+    Date_YYMMDD = 0x038B,
+    Date_YYMMDD_HH_MM = 0x038C,
+    Date_YYMMDD_HH_MM_SS = 0x038D,
+    Date_YYMMDD_HHMM = 0x038E,
+    Date_YYMMDD_HHMMSS = 0x038F,
+    Date_MMM = 0x0390,
+    Date_MONTH_LETTER = 0x0391,
+    Date_Q = 0x0392,
+    Date_M_D_YYYY = 0x0393,
+    Date_HH_MM_SS_ZZZZ = 0x0394,
+
+    // Month Format:
+    //  MMM | MMMM | First letter of month
+
+    Month_MMM = 0x0400,
+    Month_MMMM = 0x0401,
+    Month_LETTER = 0x0402,
+
+    // ddd | dddd | First letter of day
+
+    Day_DDD = 0x0500,
+    Day_DDDD = 0x0501,
+    Day_LETTER = 0x0502,
+  }
 
   public enum NumericDisplayType
   {
@@ -586,7 +590,7 @@ namespace Altaxo.Serialization.Origin
     public string DatasetName;
     public SpreadColumnType ColumnType;
     public ValueType ValueType;
-    public int ValueTypeSpecification;
+    public ValueTypeSpecification ValueTypeSpecification;
     public int SignificantDigits;
     public int DecimalPlaces;
     public NumericDisplayType NumericDisplayType;

@@ -1649,7 +1649,7 @@ namespace Altaxo.Serialization.Origin
         }
 
         LogPrint("\n\n");
-        Datasets.Add(SpreadSheets[spread].Columns[^1]);
+        Datasets.Add(newSpreadColumn);
       }
 
       ++_objectIndex;
@@ -2657,8 +2657,10 @@ namespace Altaxo.Serialization.Origin
             case 0x29: // Text&Numeric - Engineering
             case 0x30: // Numeric - Dec1,000
             case 0x39: // Text&Numeric - Dec1,000
+            case 0x50: // Numeric - UserDefined
+            case 0x59: // Text&Numeric - UserDefined
               SpreadSheets[_ispread].Columns[col_index].ValueType = (c1 % 0x10 == 0x9) ? ValueType.TextNumeric : ValueType.Numeric;
-              SpreadSheets[_ispread].Columns[col_index].ValueTypeSpecification = (byte)(c1 / 0x10);
+              SpreadSheets[_ispread].Columns[col_index].ValueTypeSpecification = (ValueTypeSpecification)(c1 / 0x10);
               if (c2 >= 0x80)
               {
                 SpreadSheets[_ispread].Columns[col_index].SignificantDigits = c2 - 0x80;
@@ -2672,28 +2674,30 @@ namespace Altaxo.Serialization.Origin
               break;
             case 0x02: // Time
               SpreadSheets[_ispread].Columns[col_index].ValueType = ValueType.Time;
-              SpreadSheets[_ispread].Columns[col_index].ValueTypeSpecification = (byte)(c2 - 0x80);
+              SpreadSheets[_ispread].Columns[col_index].ValueTypeSpecification = (ValueTypeSpecification)(0x0200 + c2);
               break;
             case 0x03: // Date
             case 0x33:
               SpreadSheets[_ispread].Columns[col_index].ValueType = ValueType.Date;
-              SpreadSheets[_ispread].Columns[col_index].ValueTypeSpecification = (byte)(c2 - 0x80);
+              SpreadSheets[_ispread].Columns[col_index].ValueTypeSpecification = (ValueTypeSpecification)(0x0300 + c2);
               break;
             case 0x31: // Text
               SpreadSheets[_ispread].Columns[col_index].ValueType = ValueType.Text;
+              SpreadSheets[_ispread].Columns[col_index].ValueTypeSpecification = ValueTypeSpecification.Text_Default;
               break;
             case 0x04: // Month
             case 0x34:
               SpreadSheets[_ispread].Columns[col_index].ValueType = ValueType.Month;
-              SpreadSheets[_ispread].Columns[col_index].ValueTypeSpecification = c2;
+              SpreadSheets[_ispread].Columns[col_index].ValueTypeSpecification = (ValueTypeSpecification)(0x0400 + c2);
               break;
             case 0x05: // Day
             case 0x35:
               SpreadSheets[_ispread].Columns[col_index].ValueType = ValueType.Day;
-              SpreadSheets[_ispread].Columns[col_index].ValueTypeSpecification = c2;
+              SpreadSheets[_ispread].Columns[col_index].ValueTypeSpecification = (ValueTypeSpecification)(0x0500 + c2);
               break;
             default: // Text
               SpreadSheets[_ispread].Columns[col_index].ValueType = ValueType.Text;
+              SpreadSheets[_ispread].Columns[col_index].ValueTypeSpecification = ValueTypeSpecification.Text_Default;
               break;
           }
           if (cvedtsz > 0)
@@ -2801,7 +2805,7 @@ namespace Altaxo.Serialization.Origin
               case 0x30: // Numeric - Dec1,000
               case 0x39: // Text&Numeric - Dec1,000
                 Excels[_iexcel].Sheets[isheet].Columns[col_index].ValueType = (c1 % 0x10 == 0x9) ? ValueType.TextNumeric : ValueType.Numeric;
-                Excels[_iexcel].Sheets[isheet].Columns[col_index].ValueTypeSpecification = (byte)(c1 / 0x10);
+                Excels[_iexcel].Sheets[isheet].Columns[col_index].ValueTypeSpecification = (ValueTypeSpecification)(c1 / 0x10);
                 if (c2 >= 0x80)
                 {
                   Excels[_iexcel].Sheets[isheet].Columns[col_index].SignificantDigits = c2 - 0x80;
@@ -2815,27 +2819,29 @@ namespace Altaxo.Serialization.Origin
                 break;
               case 0x02: // Time
                 Excels[_iexcel].Sheets[isheet].Columns[col_index].ValueType = ValueType.Time;
-                Excels[_iexcel].Sheets[isheet].Columns[col_index].ValueTypeSpecification = (byte)(c2 - 0x80);
+                Excels[_iexcel].Sheets[isheet].Columns[col_index].ValueTypeSpecification = (ValueTypeSpecification)(0x0200 + c2);
                 break;
               case 0x03: // Date
                 Excels[_iexcel].Sheets[isheet].Columns[col_index].ValueType = ValueType.Date;
-                Excels[_iexcel].Sheets[isheet].Columns[col_index].ValueTypeSpecification = (byte)(c2 - 0x80);
+                Excels[_iexcel].Sheets[isheet].Columns[col_index].ValueTypeSpecification = (ValueTypeSpecification)(0x0300 + c2);
                 break;
               case 0x31: // Text
                 Excels[_iexcel].Sheets[isheet].Columns[col_index].ValueType = ValueType.Text;
+                Excels[_iexcel].Sheets[isheet].Columns[col_index].ValueTypeSpecification = ValueTypeSpecification.Text_Default;
                 break;
               case 0x04: // Month
               case 0x34:
                 Excels[_iexcel].Sheets[isheet].Columns[col_index].ValueType = ValueType.Month;
-                Excels[_iexcel].Sheets[isheet].Columns[col_index].ValueTypeSpecification = c2;
+                Excels[_iexcel].Sheets[isheet].Columns[col_index].ValueTypeSpecification = (ValueTypeSpecification)(0x0400 + c2);
                 break;
               case 0x05: // Day
               case 0x35:
                 Excels[_iexcel].Sheets[isheet].Columns[col_index].ValueType = ValueType.Day;
-                Excels[_iexcel].Sheets[isheet].Columns[col_index].ValueTypeSpecification = c2;
+                Excels[_iexcel].Sheets[isheet].Columns[col_index].ValueTypeSpecification = (ValueTypeSpecification)(0x0500 + c2);
                 break;
               default: // Text
                 Excels[_iexcel].Sheets[isheet].Columns[col_index].ValueType = ValueType.Text;
+                Excels[_iexcel].Sheets[isheet].Columns[col_index].ValueTypeSpecification = ValueTypeSpecification.Text_Default;
                 break;
             }
             if (cvedtsz > 0)
@@ -4292,6 +4298,17 @@ namespace Altaxo.Serialization.Origin
     /// <param name="valueSize">Size of the value in bytes.</param>
     /// <returns>The data type to deserialize.</returns>
     /// <exception cref="System.NotImplementedException">The combination of data type 0x{dataType:X} and valueSize={valueSize} is not implemented. Column name: {newSpreadColumn.Name}, spreadsheet name: {SpreadSheets[spread].Name}.</exception>
+    /// <remarks>
+    /// <code>
+    /// Working hypothesis:
+    /// dataType & 0x800 != 0 => Integer data type (4 byte, 2 byte, or 1 byte)
+    /// dataType & 0x100 != 0 => Combined text and number
+    /// dataType & 0x200 != 0 => Complex
+    /// dataType & 0x002 != 0 => Single instead of double (if floating point number) or short instead of int (if integer type)
+    /// dataType & 0x020 != 0 => Byte instead of int (if integer type) or text (if not an integer type)
+    /// dataType == 0x6021 => Text
+    /// </code>
+    /// </remarks>
     public static DeserializedDataType GetDataTypeToDeserialize(int dataType, int dataTypeU, int valueSize)
     {
       if ((dataType & 0x0822) == 0x0800 && valueSize == 4) // INT32
