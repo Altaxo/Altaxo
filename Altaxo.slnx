@@ -1,0 +1,112 @@
+<Solution>
+  <Configurations>
+   
+  </Configurations>
+  <Folder Name="/Analyzer/">
+    <Project Path="Analyzer/NullComparisonAnalyzer/NullComparisonAnalyzer.csproj">
+    </Project>
+  </Folder>
+  <Folder Name="/Libraries/">
+    <Project Path="Libraries/AvalonDock/AvalonDock.Themes.Aero/AvalonDock.Themes.Aero.csproj">
+    </Project>
+    <Project Path="Libraries/AvalonDock/AvalonDock.Themes.Expression/AvalonDock.Themes.Expression.csproj">
+    </Project>
+    <Project Path="Libraries/AvalonDock/AvalonDock.Themes.Metro/AvalonDock.Themes.Metro.csproj">
+    </Project>
+    <Project Path="Libraries/AvalonDock/AvalonDock.Themes.VS2010/AvalonDock.Themes.VS2010.csproj">
+    </Project>
+    <Project Path="Libraries/AvalonDock/AvalonDock.Themes.VS2013/AvalonDock.Themes.VS2013.csproj">
+    </Project>
+    <Project Path="Libraries/AvalonDock/AvalonDock/AvalonDock.csproj">
+    </Project>
+    <Project Path="Libraries/ICSharpCode.AvalonEdit/ICSharpCode.AvalonEdit.csproj">
+    </Project>
+    <Project Path="Libraries/Markdig.Wpf/Markdig.Wpf.csproj">
+    </Project>
+    <Project Path="Libraries/Markdig/Markdig.csproj">
+    </Project>
+    <Project Path="Libraries/System.IO.Compression.Altaxo.Tests/System.IO.Compression.Altaxo.Tests.csproj">
+    </Project>
+    <Project Path="Libraries/System.IO.Compression.Altaxo/System.IO.Compression.Altaxo.csproj">
+    </Project>
+    <Project Path="Libraries/xaml-math/src/WpfMath/WpfMath.csproj">
+    </Project>
+    <Project Path="Libraries/xaml-math/src/XamlMath.Shared/XamlMath.Shared.csproj">
+    </Project>
+  </Folder>
+  <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
+    <File Path="Altaxo/AltaxoProject.ico" />
+    <File Path="Content/doc/altaxotodo.xml" />
+    <File Path="LayerButtons.bmp" />
+    <File Path="README.md" />
+  </Folder>
+  <Project Path="Addins/D3D/D3DPresentation/D3DPresentation.csproj">
+  </Project>
+  <Project Path="AddIns/MLNET/MLNET/MLNet.csproj">
+  </Project>
+  <Project Path="AddIns/MLNET/MLNetDependencies/MLNetDependencies.csproj">
+    <Platform Project="x64" />
+  </Project>
+  <Project Path="AddIns/OpenXML/OpenXML.Presentation/OpenXML.Presentation.csproj">
+  </Project>
+  <Project Path="AddIns/OpenXML/OpenXML/OpenXML.csproj">
+  </Project>
+  <Project Path="AddIns/OriginConnector/OriginConnector.csproj">
+  </Project>
+  <Project Path="Altaxo/Base.Presentation/AltaxoBase.Presentation.csproj">
+  </Project>
+  <Project Path="Altaxo/Base/AltaxoBase.csproj">
+    <BuildDependency Project="Altaxo/Providers.MKL/Providers.MKL.csproj" />
+  </Project>
+  <Project Path="Altaxo/BaseTest/AltaxoBaseTest.csproj">
+  </Project>
+  <Project Path="Altaxo/CodeEditing/AltaxoCodeEditing.csproj">
+  </Project>
+  <Project Path="Altaxo/Core/AltaxoCore.csproj">
+  </Project>
+  <Project Path="Altaxo/CoreTest/AltaxoCoreTest.csproj">
+  </Project>
+  <Project Path="Altaxo/Dom.Presentation/AltaxoDom.Presentation.csproj">
+  </Project>
+  <Project Path="Altaxo/Dom/AltaxoDom.csproj">
+  </Project>
+  <Project Path="Altaxo/DomTest/AltaxoDomTest.csproj">
+  </Project>
+  <Project Path="Altaxo/HelpViewer/AltaxoHelpViewer.csproj">
+  </Project>
+  <Project Path="Altaxo/MarkdownEditing/AltaxoMarkdownEditing.csproj">
+  </Project>
+  <Project Path="Altaxo/Providers.MKL/Providers.MKL.csproj">
+  </Project>
+  <Project Path="Altaxo/Startup/AltaxoStartup.csproj">
+    <BuildDependency Project="Addins/D3D/D3DPresentation/D3DPresentation.csproj" />
+    <BuildDependency Project="AddIns/MLNET/MLNET/MLNet.csproj" />
+    <BuildDependency Project="AddIns/MLNET/MLNetDependencies/MLNetDependencies.csproj" />
+    <BuildDependency Project="AddIns/OpenXML/OpenXML.Presentation/OpenXML.Presentation.csproj" />
+    <BuildDependency Project="AddIns/OriginConnector/OriginConnector.csproj" />
+    <BuildDependency Project="Altaxo/Base/AltaxoBase.csproj" />
+    <BuildDependency Project="Altaxo/Core/AltaxoCore.csproj" />
+    <BuildDependency Project="Altaxo/Dom.Presentation/AltaxoDom.Presentation.csproj" />
+    <BuildDependency Project="Content/Content.csproj" />
+  </Project>
+  <Project Path="Altaxo/Startup32/AltaxoStartup32.csproj">
+    <Platform Project="x86" />
+  </Project>
+  <Project Path="Altaxo/Startup64/AltaxoStartup64.csproj">
+  </Project>
+  <Project Path="Altaxo/Workbench/Workbench.csproj">
+  </Project>
+  <Project Path="Altaxo/WorkbenchBase/WorkbenchBase.csproj">
+  </Project>
+  <Project Path="Altaxo/WorkbenchCore/WorkbenchCore.csproj">
+  </Project>
+  <Project Path="Content/Content.csproj">
+  </Project>
+  <Project Path="Libraries/Numerator/zNumerator.csproj">
+  </Project>
+  <Project Path="Libraries/UpdateDownloader/AutoUpdateDownloader.csproj">
+  </Project>
+  <Project Path="Libraries/UpdateInstaller/AutoUpdateInstaller.csproj">
+  </Project>
+</Solution>
