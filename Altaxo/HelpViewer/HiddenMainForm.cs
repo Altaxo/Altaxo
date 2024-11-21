@@ -23,19 +23,14 @@
 #endregion Copyright
 
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Altaxo.Gui.HelpViewing
 {
   public partial class HiddenMainForm : Form
   {
+    [DefaultValue(false)]
     public bool IsLoaded { get; private set; }
 
     public HiddenMainForm()

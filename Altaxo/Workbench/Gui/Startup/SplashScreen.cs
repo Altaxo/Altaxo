@@ -18,6 +18,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -30,6 +31,7 @@ namespace Altaxo.Gui.Startup
     private static List<string> _parameterList = new List<string>();
     private Bitmap? _bitmap;
 
+    [DefaultValue(false)]
     public static SplashScreenForm? SplashScreen
     {
       get
@@ -45,7 +47,7 @@ namespace Altaxo.Gui.Startup
     public SplashScreenForm(string applicationName)
     {
       var startass = System.Reflection.Assembly.GetExecutingAssembly();
-      var version = startass.GetName().Version ?? new Version(0,0,0,0);
+      var version = startass.GetName().Version ?? new Version(0, 0, 0, 0);
       string versionText = $"{applicationName} {version.Major}.{version.Minor} build {version.Build}.{version.Revision}";
 #if DEBUG
       versionText += " (debug)";
@@ -98,8 +100,8 @@ namespace Altaxo.Gui.Startup
     {
       if (disposing)
       {
-          _bitmap?.Dispose();
-          _bitmap = null;
+        _bitmap?.Dispose();
+        _bitmap = null;
       }
       base.Dispose(disposing);
     }
