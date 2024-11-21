@@ -218,10 +218,13 @@ namespace Altaxo.Serialization.Origin
         {
           if (numberOfUses == 1) // if there is one column with this name, for consistency reasons we rename the existing column by appending a zero
           {
-            table.DataColumns.SetColumnName(columnName, columnName + "0");
-            if (table.DataColumns.Contains(columnName + ".Err"))
+            if (!table.DataColumns.Contains(columnName + "0"))
             {
-              table.DataColumns.SetColumnName(columnName + ".Err", columnName + "0.Err");
+              table.DataColumns.SetColumnName(columnName, columnName + "0");
+              if (table.DataColumns.Contains(columnName + ".Err"))
+              {
+                table.DataColumns.SetColumnName(columnName + ".Err", columnName + "0.Err");
+              }
             }
           }
           numberPostfix = numberOfUses;
