@@ -8,6 +8,7 @@
     <GenerateDocumentationFile>false</GenerateDocumentationFile>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <EnableDynamicLoading>true</EnableDynamicLoading>
     <CoreCompileDependsOn>GenAssInfo;DoCompileShaders</CoreCompileDependsOn>
     <PrepareResourcesDependsOn>DoCompileShaders</PrepareResourcesDependsOn>
   </PropertyGroup>

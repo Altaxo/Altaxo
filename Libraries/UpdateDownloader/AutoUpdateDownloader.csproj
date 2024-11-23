@@ -3,7 +3,7 @@
     <TargetFrameworks>net48;net9.0</TargetFrameworks>
     <LangVersion>preview</LangVersion>
     <nullable>enable</nullable>
-    <OutputType>WinExe</OutputType>
+    <OutputType>Exe</OutputType>
     <AssemblyName>AltaxoUpdateDownloader</AssemblyName>
     <RootNamespace>Altaxo.Serialization.AutoUpdates</RootNamespace>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>

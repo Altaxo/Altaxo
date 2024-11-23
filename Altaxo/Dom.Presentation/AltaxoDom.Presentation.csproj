@@ -12,6 +12,7 @@
     <IntermediateOutputPath>obj\$(Configuration)\$(TargetFramework)\</IntermediateOutputPath>
     <OutputPath>..\..\rt$(TargetFramework)\bin</OutputPath>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <EnableDynamicLoading>true</EnableDynamicLoading>
     <NoWarn>CA1416</NoWarn>
     <CoreCompileDependsOn>GenAssInfo</CoreCompileDependsOn>
   </PropertyGroup>
@@ -22,9 +23,11 @@
     <Compile Remove="Properties\AssemblyInfo.cs" Visible="true" />
   </ItemGroup>
   <ItemGroup>
+    <!-- Shared projects (Projects already loaded by Altaxo's main program -->
     <ProjectReference Include="..\Core\AltaxoCore.csproj" />
     <ProjectReference Include="..\Base\AltaxoBase.csproj" />
     <ProjectReference Include="..\Base.Presentation\AltaxoBase.Presentation.csproj" />
+    <!-- Projects solely for this plugin -->
     <ProjectReference Include="..\Dom\AltaxoDom.csproj" />
     <ProjectReference Include="..\CodeEditing\AltaxoCodeEditing.csproj" />
     <ProjectReference Include="..\..\Libraries\xaml-math\src\WpfMath\WpfMath.csproj" />
