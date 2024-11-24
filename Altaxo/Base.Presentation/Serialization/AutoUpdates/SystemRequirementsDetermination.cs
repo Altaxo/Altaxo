@@ -24,11 +24,18 @@
 
 namespace Altaxo.Serialization.AutoUpdates
 {
+#if AutoUpdateDownloader
+  /// <summary>
+  /// Checker for the system requirements.
+  /// </summary>
+  public class SystemRequirementsDetermination
+#else
   /// <summary>
   /// Implementation of the <see cref="ISystemRequirementsDetermination"/> interface.
   /// </summary>
   /// <seealso cref="Altaxo.Serialization.AutoUpdates.ISystemRequirementsDetermination" />
   public class SystemRequirementsDetermination : ISystemRequirementsDetermination
+#endif
   {
     /// <summary>
     /// Determines whether a specified version of the .NET framework is installed.

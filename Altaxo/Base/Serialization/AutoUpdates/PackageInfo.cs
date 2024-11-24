@@ -35,16 +35,16 @@ namespace Altaxo.Serialization.AutoUpdates
   /// </summary>
   public class PackageInfo
   {
+    /// <summary>
+    /// The property for the operating system. The value consist of a name (Windows, OSX, Linux) and a version number, separated by an underscore.
+    /// </summary>
+    public const string PropertyKeyFileName = "FileName";
+
     /// <summary>Gets the version of the package.</summary>
     public Version Version { get; private set; }
 
     /// <summary>Gets the hash sum of the package file.</summary>
     public string Hash { get; private set; }
-
-    /// <summary>Gets the target name addendum of the package file. This is a short string which should help
-    /// to distinguish between different packages, for instance one package with standalone dotnet, and another packacke
-    /// which requires a installed dotnet.</summary>
-    public string TargetName { get; private set; }
 
     /// <summary>Gets a value indicating whether this package is the unstable or the stable build of the program.</summary>
     public bool IsUnstableVersion { get; private set; }
@@ -93,13 +93,12 @@ namespace Altaxo.Serialization.AutoUpdates
     /// <param name="version">The version of Altaxo in this package.</param>
     /// <param name="fileLength">Length of the package file.</param>
     /// <param name="hash">The hash of the package file.</param>
-    protected PackageInfo(bool isUnstableVersion, Version version, long fileLength, string hash, string targetName)
+    protected PackageInfo(bool isUnstableVersion, Version version, long fileLength, string hash)
     {
       IsUnstableVersion = isUnstableVersion;
       Version = version;
       FileLength = fileLength;
       Hash = hash;
-      TargetName = targetName;
     }
 
 
@@ -116,52 +115,35 @@ namespace Altaxo.Serialization.AutoUpdates
       var entries = line.Split(new char[] { '\t' }, StringSplitOptions.None);
 
       if (entries.Length < 4)
-        throw new InvalidOperationException(string.Format("Line number {0} of the package info file doesn't contain at least 4 words, separated by tabulators", lineNumber));
-
-
+        throw new InvalidOperationException($"Line number {lineNumber} of the package info file doesn't contain at least 4 words, separated by tabulators");
 
       if (!IsValidStableIdentifier(entries[0].Trim(), out var isUnstableVersion))
-        throw new InvalidOperationException(string.Format("First item in line number {0} of the package info file is neither 'stable' nor 'unstable'", lineNumber));
+        throw new InvalidOperationException($"First item in line number {lineNumber} of the package info file is neither 'stable' nor 'unstable'");
 
       // the version string may consist of a prefix, which designates architecture, OS, and so on, and the version itself, separated by a underline
-      var targetNameString = string.Empty;
       var versionString = entries[1].Trim();
-      var idxUnderline = versionString.IndexOf('_');
-      if (idxUnderline >= 0)
-      {
-        targetNameString = versionString.Substring(0, idxUnderline);
-        versionString = versionString.Substring(idxUnderline + 1).Trim();
-      }
 
       var result = new PackageInfo(
         isUnstableVersion: isUnstableVersion,
         version: Version.Parse(versionString),
         fileLength: long.Parse(entries[2].Trim()),
-        hash: entries[3].Trim(),
-        targetName: targetNameString);
-
-
+        hash: entries[3].Trim());
 
       // All other entries should be in the form PropertyName = PropertyValue
-
       for (int i = 4; i < entries.Length; ++i)
       {
         var pv = entries[i].Split(new char[] { '=' }, 2);
         if (pv.Length != 2)
-          throw new InvalidOperationException(string.Format("Line number {0} of the package info file contains an ill formated property in column {1}: {2}", lineNumber, i + 1, entries[i]));
+          throw new InvalidOperationException($"Line number {lineNumber} of the package info file contains an ill formated property in column {i + 1}: {entries[i]}");
 
         string key = pv[0].Trim();
         string val = pv[1].Trim();
 
         if (string.IsNullOrEmpty(key) || string.IsNullOrEmpty(val))
-          throw new InvalidOperationException(string.Format("Line number {0} of the package info file contains an ill formated property in column {1}: {2}", lineNumber, i + 1, entries[i]));
+          throw new InvalidOperationException($"Line number {lineNumber} of the package info file contains an ill formated property in column {i + 1}: {entries[i]}");
 
         result.Properties[key] = val;
       }
-
-      if (lineNumber > 1 && !result.Properties.ContainsKey(SystemRequirements.PropertyKeyNetFrameworkVersion))
-        throw new InvalidOperationException(string.Format("Line number {0} of the package info file does not contain the mandatory property {1}", lineNumber, SystemRequirements.PropertyKeyNetFrameworkVersion));
-
       return result;
     }
 
@@ -173,17 +155,30 @@ namespace Altaxo.Serialization.AutoUpdates
     public static PackageInfo? GetHighestVersion(PackageInfo[] packageInfos)
     {
       // from all parsed versions, choose that one that matches the requirements
-      PackageInfo? parsedVersion = null;
-      for (int i = packageInfos.Length - 1; i >= 0; --i) // from higher indices to lower indices in order to download the most advanced version that can be used by this system
+      // and has the highest version
+      // if in doubt, choose that at the topmost line
+      var list = new List<(PackageInfo packageInfo, int line)>();
+      for (int i = 0; i < packageInfos.Length; ++i)
       {
         if (SystemRequirements.MatchesRequirements(packageInfos[i]))
         {
-          parsedVersion = packageInfos[i];
-          break;
+          list.Add((packageInfos[i], i));
         }
       }
 
-      return parsedVersion;
+      if (list.Count == 0)
+      {
+        return null;
+      }
+      else
+      {
+        list.Sort((x, y) =>
+        {
+          var b0 = Comparer<Version>.Default.Compare(x.packageInfo.Version, y.packageInfo.Version);
+          return b0 != 0 ? b0 : Comparer<int>.Default.Compare(y.line, x.line); // note that x and y is here exchanged to choose the topmost line
+        });
+        return list[list.Count - 1].packageInfo;
+      }
     }
 
     /// <summary>Determines whether the provided string designates either the stable or the unstable build.</summary>
@@ -221,15 +216,14 @@ namespace Altaxo.Serialization.AutoUpdates
       return stb.ToString();
     }
 
-    /// <summary>Gets the name of the package file.</summary>
+    /// <summary>Gets the name of the package file. If the property dictionary contain a property named 'FileName', then the value of this property is returned.
+    /// Otherwise, the old behavior 'AltaxoBinaries-' and version is used.</summary>
     /// <value>The package file name.</value>
     public string PackageFileName
     {
       get
       {
-        return string.IsNullOrEmpty(TargetName) ?
-          $"AltaxoBinaries-{Version.ToString(4)}.zip" :
-          $"AltaxoBinaries-{TargetName}-{Version.ToString(4)}.zip";
+        return _properties.TryGetValue(PropertyKeyFileName, out var fileName) ? fileName : $"AltaxoBinaries-{Version.ToString(4)}.zip";
       }
     }
 

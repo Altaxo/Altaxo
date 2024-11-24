@@ -12,11 +12,15 @@
     <IntermediateOutputPath>obj\$(Configuration)\$(TargetFramework)\</IntermediateOutputPath>
     <OutputPath>..\..\rt$(TargetFrameworkSubdir)\bin</OutputPath>
     <CoreCompileDependsOn>GenAssInfo</CoreCompileDependsOn>
+    <DefineConstants>$(DefineConstants);AutoUpdateDownloader</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="Properties\AssemblyInfo.cs" Visible="true" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\Altaxo\Base.Presentation\Serialization\AutoUpdates\SystemRequirementsDetermination.cs">
+      <Link>SystemRequirementsDetermination.cs</Link>
+    </Compile>
     <Compile Include="..\..\Altaxo\Base.Presentation\Serialization\AutoUpdates\NetCoreVersionDetermination.cs">
       <Link>NetCoreVersionDetermination.cs</Link>
     </Compile>
@@ -26,8 +30,8 @@
     <Compile Include="..\..\Altaxo\Base\Serialization\AutoUpdates\PackageInfo.cs">
       <Link>PackageInfo.cs</Link>
     </Compile>
-    <Compile Include="..\..\Altaxo\Base\Serialization\AutoUpdates\SystemRequirementsBase.cs">
-      <Link>SystemRequirementsBase.cs</Link>
+    <Compile Include="..\..\Altaxo\Base\Serialization\AutoUpdates\SystemRequirements.cs">
+      <Link>SystemRequirements.cs</Link>
     </Compile>
   </ItemGroup>
 
