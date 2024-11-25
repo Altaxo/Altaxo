@@ -58,8 +58,7 @@ namespace Altaxo.Gui.Workbench.Commands
         string file = Path.Combine(FileUtility.ApplicationRootPath, site.Substring(7).Replace('/', Path.DirectorySeparatorChar));
         try
         {
-          var startInfo = new ProcessStartInfo(file) { UseShellExecute = true };
-          Process.Start(startInfo);
+          Process.Start(new ProcessStartInfo(file) { UseShellExecute = true });
         }
         catch (Exception)
         {

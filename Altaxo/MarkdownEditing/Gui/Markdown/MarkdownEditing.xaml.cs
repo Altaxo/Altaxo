@@ -48,7 +48,7 @@ namespace Altaxo.Gui.Markdown
 
     private void OpenHyperlink(object sender, System.Windows.Input.ExecutedRoutedEventArgs e)
     {
-      Process.Start($"{e.Parameter}");
+      Process.Start(new ProcessStartInfo($"{e.Parameter}") { UseShellExecute = true });
     }
 
     private void ToggleExtensionsButton_OnClick(object sender, RoutedEventArgs e)

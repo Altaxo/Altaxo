@@ -9,21 +9,9 @@
 
 #endregion Copyright
 
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using Markdig;
 using Markdig.Wpf;
 
@@ -49,7 +37,7 @@ namespace Altaxo.Gui.Markdown
 
     private void OpenHyperlink(object sender, System.Windows.Input.ExecutedRoutedEventArgs e)
     {
-      Process.Start($"{e.Parameter}");
+      Process.Start(new ProcessStartInfo($"{e.Parameter}") { UseShellExecute = true });
     }
 
     private void ToggleExtensionsButton_OnClick(object sender, RoutedEventArgs e)

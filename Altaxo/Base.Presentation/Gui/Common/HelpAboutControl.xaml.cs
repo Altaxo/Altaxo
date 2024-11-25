@@ -93,7 +93,7 @@ namespace Altaxo.Gui.Common
     private void EhOpenExplorer(object sender, MouseButtonEventArgs e)
     {
       var hyperlink = (Hyperlink)sender;
-      System.Diagnostics.Process.Start(hyperlink.NavigateUri.ToString());
+      System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(hyperlink.NavigateUri.ToString()) { UseShellExecute = true });
     }
   }
 }

@@ -307,7 +307,7 @@ namespace Altaxo.Gui.Markdown
     {
       try
       {
-        Process.Start($"{e.Parameter}");
+        Process.Start(new ProcessStartInfo($"{e.Parameter}") { UseShellExecute = true });
       }
       catch (Exception ex)
       {

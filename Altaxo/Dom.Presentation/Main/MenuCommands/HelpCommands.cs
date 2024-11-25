@@ -44,12 +44,7 @@ namespace Altaxo.Main.Commands
       }
       else
       {
-        var startInfo = new System.Diagnostics.ProcessStartInfo("https://altaxo.github.io/AltaxoClassReference/html/1B7FE024E7E614BFA13DAA1FD005CB2E.htm")
-        {
-          UseShellExecute = true,
-        };
-
-        System.Diagnostics.Process.Start(startInfo);
+        System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo("https://altaxo.github.io/AltaxoClassReference/html/1B7FE024E7E614BFA13DAA1FD005CB2E.htm") { UseShellExecute = true });
       }
     }
   }
@@ -71,7 +66,7 @@ namespace Altaxo.Main.Commands
       {
         if (Current.Gui.YesNoMessageBox("Altaxo class reference was not found on local computer. Do you want to open the online class reference instead?", "Local class ref not found!", true))
         {
-          System.Diagnostics.Process.Start("https://altaxo.github.io/AltaxoClassReference/html/R_Project_Documentation.htm");
+          System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo("https://altaxo.github.io/AltaxoClassReference/html/R_Project_Documentation.htm") { UseShellExecute = true });
         }
       }
     }

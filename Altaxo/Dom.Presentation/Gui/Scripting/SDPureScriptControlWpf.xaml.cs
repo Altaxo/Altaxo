@@ -145,7 +145,7 @@ namespace Altaxo.Gui.Scripting
       }
 
       // Invoke standard browser of the system
-      System.Diagnostics.Process.Start(url);
+      System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(url) { UseShellExecute = true });
     }
 
     protected static void ShowAltaxoClassRefHelpFromWeb(ExternalHelpItem helpItem)
@@ -153,7 +153,7 @@ namespace Altaxo.Gui.Scripting
       string url = "https://altaxo.github.io/AltaxoClassReference/html/" + helpItem.DocumentationReferenceIdentifier + ".htm";
 
       // Invoke standard browser of the system
-      System.Diagnostics.Process.Start(url);
+      System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(url) { UseShellExecute = true });
     }
 
     protected static void ShowAltaxoClassRefHelpFromChmFile(string chmFileName, string chmTopic)

@@ -26,10 +26,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using System.Xml;
 using Altaxo.Drawing;
 using Altaxo.Gui;
 using Altaxo.Text.Renderers;
@@ -345,7 +342,7 @@ namespace Altaxo.Text
         // Start Sandcastle help file builder
         if (exportOptions.OpenHelpFileBuilder && System.IO.Path.GetExtension(exportOptions.OutputFileName).ToLowerInvariant() == ".shfbproj")
         {
-          System.Diagnostics.Process.Start(exportOptions.OutputFileName);
+          System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(exportOptions.OutputFileName) { UseShellExecute = true });
         }
 
       }

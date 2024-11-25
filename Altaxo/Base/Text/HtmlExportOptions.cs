@@ -334,7 +334,7 @@ namespace Altaxo.Text
         // Start Html viewer
         if (exportOptions.OpenHtmlViewer && System.IO.Path.GetExtension(exportOptions.OutputFileName).ToLowerInvariant() == ".html")
         {
-          System.Diagnostics.Process.Start(exportOptions.OutputFileName);
+          System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(exportOptions.OutputFileName) { UseShellExecute = true });
         }
       }
     }

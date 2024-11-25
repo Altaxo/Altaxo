@@ -130,7 +130,7 @@ namespace Altaxo.Text
       // Start Sandcastle help file builder
       if (exportOptions.OpenApplication)
       {
-        System.Diagnostics.Process.Start(exportOptions.OutputFileName);
+        System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(exportOptions.OutputFileName) { UseShellExecute = true  });
       }
     }
 
