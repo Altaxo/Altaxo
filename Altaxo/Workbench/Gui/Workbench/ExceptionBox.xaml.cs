@@ -23,13 +23,10 @@
 #endregion Copyright
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using Altaxo.Main.Services;
 using Altaxo.Main.Services.ExceptionHandling;
@@ -147,14 +144,14 @@ namespace Altaxo.Gui.Workbench
       _isCurrentlyShowingBox = true;
       try
       {
-          try
-          {
-          }
-          catch (Exception ex)
-          {
-            Current.Log.Warn("Error tracking exception", ex);
-          }
-        
+        try
+        {
+        }
+        catch (Exception ex)
+        {
+          Current.Log.Warn("Error tracking exception", ex);
+        }
+
         var box = new ExceptionBox(exception, message, mustTerminate);
         {
           box.ShowDialog();
@@ -245,7 +242,7 @@ namespace Altaxo.Gui.Workbench
     {
       var sb = new StringBuilder();
 
-      var version = Assembly.GetEntryAssembly()?.GetName()?.Version ?? new Version(0,0,0,0);
+      var version = Assembly.GetEntryAssembly()?.GetName()?.Version ?? new Version(0, 0, 0, 0);
       string versionText = string.Format("Altaxo {0}.{1} build {2}.{3}", version.Major, version.Minor, version.Build, version.Revision);
 
       sb.Append(versionText);
@@ -291,7 +288,7 @@ namespace Altaxo.Gui.Workbench
     {
       try
       {
-        System.Diagnostics.Process.Start(url);
+        System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(url) { UseShellExecute = true });
       }
       catch (Exception e)
       {
