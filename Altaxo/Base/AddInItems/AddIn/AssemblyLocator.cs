@@ -45,7 +45,7 @@ namespace Altaxo.AddInItems
 
     private static Assembly? CurrentDomain_AssemblyResolve(object? sender, ResolveEventArgs args)
     {
-      if (args.Name is null)
+      if (string.IsNullOrEmpty(args.Name))
         return null;
 
       lock (_assemblies)
@@ -54,31 +54,45 @@ namespace Altaxo.AddInItems
           return assembly;
       }
 
+      var fileNameParts = args.Name.Split(new char[] { ',' });
+      Assembly? result = null;
+
 
       // try to load the assembly by the name, from the same directory as the calling assembly
-      if (!(args.RequestingAssembly is null))
+      string path1 = args.RequestingAssembly is { } requestingAssembly ? System.IO.Path.GetDirectoryName(requestingAssembly.Location) ?? string.Empty : string.Empty;
+
+      if (!string.IsNullOrEmpty(path1))
       {
-        var path = System.IO.Path.GetDirectoryName(args.RequestingAssembly.Location) ?? string.Empty;
-        var fileNameParts = args.Name.Split(new char[] { ',' });
-        if (fileNameParts.Length > 0)
+        result = TryGetAssembly(path1, fileNameParts[0]);
+      }
+
+      if (result is null)
+      {
+        var path2 = System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly()?.Location) ?? string.Empty;
+        if (!string.IsNullOrEmpty(path2) && path2 != path1)
         {
-          var fileName = System.IO.Path.Combine(path, fileNameParts[0] + ".dll");
-          try
-          {
-            if (System.IO.File.Exists(fileName))
-            {
-              var assembly = Assembly.LoadFile(fileName);
-              if (assembly is not null)
-                return assembly;
-            }
-          }
-          catch (Exception)
-          {
-          }
+          result = TryGetAssembly(path2, fileNameParts[0]);
         }
       }
 
+      return result;
+    }
 
+    private static Assembly? TryGetAssembly(string path, string fileNameWithoutExtension)
+    {
+      var fileName = System.IO.Path.Combine(path, fileNameWithoutExtension + ".dll");
+      try
+      {
+        if (System.IO.File.Exists(fileName))
+        {
+          var assembly = Assembly.LoadFile(fileName);
+          if (assembly is not null)
+            return assembly;
+        }
+      }
+      catch (Exception)
+      {
+      }
       return null;
     }
 
