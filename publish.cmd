@@ -61,5 +61,3 @@ rem ******** Prune the Addin directories ********
 if "%Architecture%"=="x64" (
 %SolutionDir%..\PrunePublishedAddins.exe %PublishDir%\AddIns\ML.Net          %PublishDir%\bin
 )
-
-pause
