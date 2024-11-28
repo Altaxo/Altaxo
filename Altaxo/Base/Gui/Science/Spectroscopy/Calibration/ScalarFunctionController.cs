@@ -262,7 +262,7 @@ namespace Altaxo.Gui.Science.Spectroscopy.Calibration
             numberOfTerms = ffp.NumberOfTerms;
             orderOfBaselinePolynomial = ffp.OrderOfBaselinePolynomial;
           }
-          else if (_doc is Altaxo.Calc.FitFunctions.General.Polynomial po)
+          else if (ffw.FitFunction is Altaxo.Calc.FitFunctions.General.Polynomial po)
           {
             type = TypeOfFunction.Polynomial;
             orderOfBaselinePolynomial = po.PolynomialOrder_PositiveExponents;
