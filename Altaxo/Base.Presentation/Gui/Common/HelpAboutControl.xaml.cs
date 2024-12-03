@@ -24,10 +24,7 @@
 
 #nullable disable warnings
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Input;
@@ -88,7 +85,22 @@ namespace Altaxo.Gui.Common
 
     public string OSDescription => RuntimeInformation.OSDescription;
 
-    public string FrameworkDescription => RuntimeInformation.FrameworkDescription;
+    public string FrameworkDescription
+    {
+      get
+      {
+        bool isRunningSelfContained = false;
+        try
+        {
+          var dir1 = System.IO.Path.GetDirectoryName(typeof(object).Assembly.Location);
+          var dir2 = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location);
+          isRunningSelfContained = 0 == string.Compare(dir1, dir2, StringComparison.OrdinalIgnoreCase);
+        }
+        catch { }
+
+        return isRunningSelfContained ? $"{RuntimeInformation.FrameworkDescription} (self contained)" : RuntimeInformation.FrameworkDescription;
+      }
+    }
 
     private void EhOpenExplorer(object sender, MouseButtonEventArgs e)
     {

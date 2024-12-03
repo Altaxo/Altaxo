@@ -19,7 +19,7 @@
 			<RowDefinition Height="Auto" />
 		</Grid.RowDefinitions>
 		<Label Grid.Row="0" Grid.RowSpan="5" Content="Altaxo" FontFamily="Times New Roman" FontSize="32" HorizontalAlignment="Center" />
-		<Label Grid.Row="0" Content="(C) 2002-2020 Dr. Dirk Lellinger" FontFamily="Times New Roman" FontSize="12" HorizontalAlignment="Right" Margin="0,-4,0,-4" />
+		<Label Grid.Row="0" Content="(C) 2002-2025 Dr. Dirk Lellinger" FontFamily="Times New Roman" FontSize="12" HorizontalAlignment="Right" Margin="0,-4,0,-4" />
 		<Label Grid.Row="1" Content="{Binding Path=VersionString, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type axogc:HelpAboutControl}}}" FontFamily="Times New Roman" FontSize="12" HorizontalAlignment="Right"  Margin="0,-4,0,-4" />
 		<Label Grid.Row="2" Content="{Binding Path=RevisionString, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type axogc:HelpAboutControl}}}" FontFamily="Times New Roman" FontSize="12" HorizontalAlignment="Right"  Margin="0,-4,0,-4" />
         <Label Grid.Row="3" Content="{Binding Path=OSDescription, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type axogc:HelpAboutControl}}}" FontFamily="Times New Roman" FontSize="12" HorizontalAlignment="Right"  Margin="0,-4,0,-4" />
