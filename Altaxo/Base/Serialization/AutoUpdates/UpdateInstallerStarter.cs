@@ -61,10 +61,13 @@ namespace Altaxo.Serialization.AutoUpdates
 
         versionFileStream = new FileStream(versionFileName, FileMode.Open, FileAccess.Read, FileShare.Read);
 
-        var info = PackageInfo.GetPresentDownloadedPackage(versionFileStream, downloadFolder, out packageStream);
+        (var info, packageStream) = SystemRequirements.TryGetPackageThatWasDownloadedAlready(versionFileStream, downloadFolder, leavePackageFileStreamOpen: true);
 
         if (info is null || packageStream is null)
+        {
+          packageStream?.Dispose();
           return false;
+        }
 
         var entryAssembly = System.Reflection.Assembly.GetEntryAssembly() ?? throw new InvalidOperationException("Unable to get entry assembly");
         var entryAssemblyVersion = entryAssembly.GetName().Version;
@@ -141,10 +144,8 @@ namespace Altaxo.Serialization.AutoUpdates
       }
       finally
       {
-        if (packageStream is not null)
-          packageStream.Close();
-        if (versionFileStream is not null)
-          versionFileStream.Close();
+        packageStream?.Dispose();
+        versionFileStream?.Dispose();
       }
     }
   }

@@ -24,6 +24,7 @@
 
 using System;
 using System.IO;
+using System.Runtime.InteropServices;
 using Altaxo.Main.Services;
 using Xunit;
 
@@ -31,13 +32,128 @@ namespace Altaxo.Serialization.AutoUpdates
 {
   public class PackageInfoTest
   {
-    private static readonly string[] Test1_Lines = new[]
-    {
-      "Unstable\t4.8.3228.0\t253216686\tB9898BE3301B057DA6B1BA41A52A98F6C232F08C\tRequiredNetFrameworkVersion=4.8\r\n",
-      "Stable\t4.8.3228.0\t253216686\tB9898BE3301B057DA6B1BA41A52A98F6C232F08C\tRequiredNetFrameworkVersion=4.8\r\n",
-      "Unstable\t4.8.3228.0\t253216686\tB9898BE3301B057DA6B1BA41A52A98F6C232F08C\tRequiredNetFrameworkVersion=4.8\tFileName=AltaxoBinaries-X64-4.8.3228.0.zip\r\n",
-      "Unstable\t4.8.3228.0\t253216686\tB9898BE3301B057DA6B1BA41A52A98F6C232F08C\tRequiredNetFrameworkVersion=4.8\tRequiredDotNetVersion=9.0\tRequiredArchitecture=x64\tRequiredOperatingSystem=Windows_10.0.17763\tFileName=AltaxoBinaries-x64-4.8.3228.0.zip\r\n",
-    };
+    private static readonly string Test1_Line1 =
+  """
+  {
+    "SerializationVersion": 1,
+    "PackageVersion": "4.8.3242.0",
+    "IsUnstable": true,
+    "FileName": "AltaxoBinaries-4.8.3242.0.zip",
+    "FileLength": 157205920,
+    "FileHash": {
+      "Name": "SHA256",
+      "Value": "CD0F8469B617D1C3624A47934E6F2E4953B202E02187697DC486F48AD2B8C596"
+    },
+    "RequiredNetFrameworkVersion": "4.8"
+  }
+  """;
+
+    private static readonly string Test1_Line2 =
+      """
+      {
+        "SerializationVersion": 1,
+        "PackageVersion": "4.8.3243.0",
+        "IsUnstable": true,
+        "FileName": "AltaxoBinaries-4.8.3243.0-WINDOWS-DotNet9.0.zip",
+        "FileLength": 130066234,
+        "FileHash": {
+          "Name": "SHA256",
+          "Value": "006D1811A812C9AFF0E65D4489793AA70E48AD2325D0DACDA9E1FCCB795D005C"
+        },
+        "RequiredDotNetVersion": "9.0",
+        "RequiredOperatingSystem": [
+          {
+            "OSPlatform": "WINDOWS",
+            "OSVersion": "10.0.19045"
+          }
+        ]
+      }
+      """;
+
+
+    private static readonly string Test1_Line3 =
+      """
+      {
+        "SerializationVersion": 1,
+        "PackageVersion": "4.8.3243.0",
+        "IsUnstable": true,
+        "FileName": "AltaxoBinaries-4.8.3243.0-WINDOWS-X64-Net4.8.zip",
+        "FileLength": 135277552,
+        "FileHash": {
+          "Name": "SHA256",
+          "Value": "5F033C80A8EA9BBA3E1865710E3C65156B0693190DEDC1D719D3587E9D565C7D"
+        },
+        "RequiredNetFrameworkVersion": "4.8",
+        "RequiredArchitecture": [
+          "X64"
+        ],
+        "RequiredOperatingSystem": [
+          {
+            "OSPlatform": "WINDOWS",
+            "OSVersion": "10.0.19045"
+          }
+        ]
+      }
+      """;
+
+
+
+    private static readonly string Test1_Lines =
+      """
+      [
+        {
+          "SerializationVersion": 1,
+          "PackageVersion": "4.8.3242.0",
+          "IsUnstable": true,
+          "FileName": "AltaxoBinaries-4.8.3242.0.zip",
+          "FileLength": 157205920,
+          "FileHash": {
+            "Name": "SHA256",
+            "Value": "CD0F8469B617D1C3624A47934E6F2E4953B202E02187697DC486F48AD2B8C596"
+          },
+          "RequiredNetFrameworkVersion": "4.8"
+        },
+        {
+          "SerializationVersion": 1,
+          "PackageVersion": "4.8.3243.0",
+          "IsUnstable": true,
+          "FileName": "AltaxoBinaries-4.8.3243.0-WINDOWS-DotNet9.0.zip",
+          "FileLength": 130066234,
+          "FileHash": {
+            "Name": "SHA256",
+            "Value": "006D1811A812C9AFF0E65D4489793AA70E48AD2325D0DACDA9E1FCCB795D005C"
+          },
+          "RequiredDotNetVersion": "9.0",
+          "RequiredOperatingSystem": [
+            {
+              "OSPlatform": "WINDOWS",
+              "OSVersion": "10.0.19045"
+            }
+          ]
+        },
+        {
+          "SerializationVersion": 1,
+          "PackageVersion": "4.8.3243.0",
+          "IsUnstable": true,
+          "FileName": "AltaxoBinaries-4.8.3243.0-WINDOWS-X64-Net4.8.zip",
+          "FileLength": 135277552,
+          "FileHash": {
+            "Name": "SHA256",
+            "Value": "5F033C80A8EA9BBA3E1865710E3C65156B0693190DEDC1D719D3587E9D565C7D"
+          },
+          "RequiredNetFrameworkVersion": "4.8",
+          "RequiredArchitecture": [
+            "X64"
+          ],
+          "RequiredOperatingSystem": [
+            {
+              "OSPlatform": "WINDOWS",
+              "OSVersion": "10.0.19045"
+            }
+          ]
+        }
+      ]
+      """;
 
     /// <summary>
     /// Test different lines for parsability.
@@ -45,61 +161,31 @@ namespace Altaxo.Serialization.AutoUpdates
     [Fact]
     public void TestLineParser()
     {
-      var pkg = PackageInfo.FromLine(Test1_Lines[0], 0);
-      Assert.True(pkg.IsUnstableVersion);
-      Assert.Equal(new Version(4, 8, 3228, 0), pkg.Version);
-      Assert.Equal(253216686, pkg.FileLength);
-      Assert.Equal("B9898BE3301B057DA6B1BA41A52A98F6C232F08C", pkg.Hash);
-      Assert.Single(pkg.Properties);
-      Assert.Equal("4.8", pkg.Properties[SystemRequirements.PropertyKeyNetFrameworkVersion]);
-      Assert.Equal("AltaxoBinaries-4.8.3228.0.zip", pkg.PackageFileName);
+      var memstream = new MemoryStream(System.Text.Encoding.UTF8.GetBytes(Test1_Line1));
+      var pkg = PackageInfo.ReadPackageFromJson(memstream);
+      VerifyPackage1(pkg);
+      memstream.Dispose();
 
-      pkg = PackageInfo.FromLine(Test1_Lines[1], 1);
-      Assert.False(pkg.IsUnstableVersion);
-      Assert.Equal(new Version(4, 8, 3228, 0), pkg.Version);
-      Assert.Equal(253216686, pkg.FileLength);
-      Assert.Equal("B9898BE3301B057DA6B1BA41A52A98F6C232F08C", pkg.Hash);
-      Assert.Single(pkg.Properties);
-      Assert.Equal("4.8", pkg.Properties[SystemRequirements.PropertyKeyNetFrameworkVersion]);
-      Assert.Equal("AltaxoBinaries-4.8.3228.0.zip", pkg.PackageFileName);
+      memstream = new MemoryStream(System.Text.Encoding.UTF8.GetBytes(Test1_Line2));
+      pkg = PackageInfo.ReadPackageFromJson(memstream);
+      VerifyPackage2(pkg);
+      memstream.Dispose();
 
-      pkg = PackageInfo.FromLine(Test1_Lines[2], 2);
-      Assert.True(pkg.IsUnstableVersion);
-      Assert.Equal(new Version(4, 8, 3228, 0), pkg.Version);
-      Assert.Equal(253216686, pkg.FileLength);
-      Assert.Equal("B9898BE3301B057DA6B1BA41A52A98F6C232F08C", pkg.Hash);
-      Assert.Equal(2, pkg.Properties.Count);
-      Assert.Equal("4.8", pkg.Properties[SystemRequirements.PropertyKeyNetFrameworkVersion]);
-      Assert.Equal("AltaxoBinaries-X64-4.8.3228.0.zip", pkg.PackageFileName);
-
-      pkg = PackageInfo.FromLine(Test1_Lines[3], 3);
-      Assert.True(pkg.IsUnstableVersion);
-      Assert.Equal(new Version(4, 8, 3228, 0), pkg.Version);
-      Assert.Equal(253216686, pkg.FileLength);
-      Assert.Equal("B9898BE3301B057DA6B1BA41A52A98F6C232F08C", pkg.Hash);
-      Assert.Equal("AltaxoBinaries-x64-4.8.3228.0.zip", pkg.PackageFileName);
-      Assert.Equal(5, pkg.Properties.Count);
-      Assert.Equal("4.8", pkg.Properties[SystemRequirements.PropertyKeyNetFrameworkVersion]);
-      Assert.Equal("9.0", pkg.Properties[SystemRequirements.PropertyKeyDotNetVersion]);
-      Assert.Equal("x64", pkg.Properties[SystemRequirements.PropertyKeyArchitecture]);
-      Assert.Equal("Windows_10.0.17763", pkg.Properties[SystemRequirements.PropertyKeyOperatingSystem]);
+      memstream = new MemoryStream(System.Text.Encoding.UTF8.GetBytes(Test1_Line3));
+      pkg = PackageInfo.ReadPackageFromJson(memstream);
+      VerifyPackage3(pkg);
+      memstream.Dispose();
     }
 
-
-    private static readonly string Test2_Lines =
-
-      "Unstable\t4.0.1447.0\t61028037\tA7F87F7FE41686AD797606B5CF2638FF184F9F21\tRequiredNetFrameworkVersion=4.0\r\n" +
-      "Unstable\t4.8.3230.0\t253227706\t8FAD7BDC2B5A38D01029E8275B889BD1C2A9D6C5\tRequiredNetFrameworkVersion=4.8\r\n";
-
-    /// <summary>
-    /// Test a file with two lines with equal requirements. The parser then should choose the bottommost line.
-    /// </summary>
     [Fact]
-    public void TestBackwardCompatibility()
+    public void TestFullParser()
     {
-      var buffer = System.Text.Encoding.UTF8.GetBytes(Test2_Lines);
-      var memstream = new MemoryStream(buffer);
-      var packages = PackageInfo.FromStream(memstream);
+      var memstream = new MemoryStream(System.Text.Encoding.UTF8.GetBytes(Test1_Lines));
+      var packages = PackageInfo.ReadPackagesFromJson(memstream);
+      Assert.Equal(3, packages.Length);
+      VerifyPackage1(packages[0]);
+      VerifyPackage2(packages[1]);
+      VerifyPackage3(packages[2]);
 
       PackageInfo pkg;
       // inject service
@@ -107,12 +193,80 @@ namespace Altaxo.Serialization.AutoUpdates
       {
         Current.Services = new AltaxoServiceContainer();
         Current.AddService<ISystemRequirementsDetermination>(new SystemRequirements_DotNet9IsNotInstalled());
-        pkg = PackageInfo.GetHighestVersion(packages);
+        pkg = SystemRequirements.TryGetHighestVersion(packages);
       }
 
       Assert.NotNull(pkg);
-      Assert.Equal("AltaxoBinaries-4.8.3230.0.zip", pkg.PackageFileName);
+      Assert.Equal("AltaxoBinaries-4.8.3243.0-WINDOWS-X64-Net4.8.zip", pkg.FileNameOfPackageZipFile);
+
+      lock (SystemRequirementsHelper.ServiceLocker)
+      {
+        Current.Services = new AltaxoServiceContainer();
+        Current.AddService<ISystemRequirementsDetermination>(new SystemRequirements_DotNet9IsInstalled());
+        pkg = SystemRequirements.TryGetHighestVersion(packages);
+      }
+
+      Assert.NotNull(pkg);
+      Assert.Equal("AltaxoBinaries-4.8.3243.0-WINDOWS-DotNet9.0.zip", pkg.FileNameOfPackageZipFile);
+
     }
+    private static PackageInfo VerifyPackage1(PackageInfo pkg)
+    {
+      Assert.True(pkg.IsUnstableVersion);
+      Assert.True(pkg.IsOldStyleFile);
+      Assert.Equal(new Version(4, 8, 3242, 0), pkg.Version);
+      Assert.Equal(157205920, pkg.FileLength);
+      Assert.Equal("SHA256", pkg.HashName.Name);
+      Assert.Equal("CD0F8469B617D1C3624A47934E6F2E4953B202E02187697DC486F48AD2B8C596", pkg.Hash);
+      Assert.Equal("AltaxoBinaries-4.8.3242.0.zip", pkg.FileNameOfPackageZipFile);
+      Assert.NotNull(pkg.RequiredNetFrameworkVersion);
+      Assert.Null(pkg.RequiredDotNetVersion);
+      Assert.Empty(pkg.RequiredArchitectures);
+      Assert.Empty(pkg.RequiredOperatingSystems);
+      Assert.Equal(new Version(4, 8), pkg.RequiredNetFrameworkVersion);
+      return pkg;
+    }
+    private static void VerifyPackage2(PackageInfo pkg)
+    {
+      Assert.True(pkg.IsUnstableVersion);
+      Assert.False(pkg.IsOldStyleFile);
+      Assert.Equal(new Version(4, 8, 3243, 0), pkg.Version);
+      Assert.Equal(130066234, pkg.FileLength);
+      Assert.Equal("SHA256", pkg.HashName.Name);
+      Assert.Equal("006D1811A812C9AFF0E65D4489793AA70E48AD2325D0DACDA9E1FCCB795D005C", pkg.Hash);
+      Assert.Equal("AltaxoBinaries-4.8.3243.0-WINDOWS-DotNet9.0.zip", pkg.FileNameOfPackageZipFile);
+      Assert.Null(pkg.RequiredNetFrameworkVersion);
+      Assert.NotNull(pkg.RequiredDotNetVersion);
+      Assert.Empty(pkg.RequiredArchitectures);
+      Assert.Single(pkg.RequiredOperatingSystems);
+      Assert.Equal(new Version(9, 0), pkg.RequiredDotNetVersion);
+      Assert.Equal(OSPlatform.Windows, pkg.RequiredOperatingSystems[0].Platform);
+      Assert.Equal(new Version(10, 0, 19045), pkg.RequiredOperatingSystems[0].Version);
+    }
+
+    private static void VerifyPackage3(PackageInfo pkg)
+    {
+      Assert.True(pkg.IsUnstableVersion);
+      Assert.False(pkg.IsOldStyleFile);
+      Assert.Equal(new Version(4, 8, 3243, 0), pkg.Version);
+      Assert.Equal(135277552, pkg.FileLength);
+      Assert.Equal("SHA256", pkg.HashName.Name);
+      Assert.Equal("5F033C80A8EA9BBA3E1865710E3C65156B0693190DEDC1D719D3587E9D565C7D", pkg.Hash);
+      Assert.Equal("AltaxoBinaries-4.8.3243.0-WINDOWS-X64-Net4.8.zip", pkg.FileNameOfPackageZipFile);
+      Assert.NotNull(pkg.RequiredNetFrameworkVersion);
+      Assert.Null(pkg.RequiredDotNetVersion);
+      Assert.Single(pkg.RequiredArchitectures);
+      Assert.Single(pkg.RequiredOperatingSystems);
+
+      Assert.Equal(new Version(4, 8), pkg.RequiredNetFrameworkVersion);
+      Assert.Equal(Architecture.X64, pkg.RequiredArchitectures[0]);
+      Assert.Equal(OSPlatform.Windows, pkg.RequiredOperatingSystems[0].Platform);
+      Assert.Equal(new Version(10, 0, 19045), pkg.RequiredOperatingSystems[0].Version);
+    }
+
+
+
+
   }
 }
 

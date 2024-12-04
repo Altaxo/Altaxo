@@ -86,6 +86,41 @@ namespace Altaxo.Serialization.AutoUpdates
     }
 
     /// <summary>
+    /// Determines whether a specified version of the .NET framework is installed.
+    /// </summary>
+    /// <param name="version">The version. Examples are 4.0, 4.6, 4.7.1 etc.</param>
+    /// <returns>
+    ///   <c>true</c> if the specified version of the .NET framework is installed; otherwise, <c>false</c>.
+    /// </returns>
+    public static bool IsVersionInstalled(Version version)
+    {
+      if (version <= new Version(4, 0))
+        return true;
+      else if (version <= new Version(4, 5))
+        return IsVersion45Installed();
+      else if (version <= new Version(4, 5, 1))
+        return IsVersion451Installed();
+      else if (version <= new Version(4, 5, 2))
+        return IsVersion452Installed();
+      else if (version <= new Version(4, 6))
+        return IsVersion46Installed();
+      else if (version <= new Version(4, 6, 1))
+        return IsVersion461Installed();
+      else if (version <= new Version(4, 6, 2))
+        return IsVersion462Installed();
+      else if (version <= new Version(4, 7))
+        return IsVersion47Installed();
+      else if (version <= new Version(4, 7, 1))
+        return IsVersion471Installed();
+      else if (version <= new Version(4, 7, 2))
+        return IsVersion472Installed();
+      else if (version <= new Version(4, 8))
+        return IsVersion48Installed();
+
+      return false;
+    }
+
+    /// <summary>
     /// Reads from the registry the .NET framework release number (working for framework versions &gt;=4.5).
     /// </summary>
     /// <returns>The framework release number.</returns>

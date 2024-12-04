@@ -23,7 +23,8 @@
 #endregion Copyright
 
 using System;
-using System.Linq;
+using System.Collections.Generic;
+using System.IO;
 using System.Runtime.InteropServices;
 
 
@@ -35,34 +36,12 @@ namespace Altaxo.Serialization.AutoUpdates
   public class SystemRequirements
   {
     /// <summary>
-    /// The property key: .NET framework version
-    /// </summary>
-    public const string PropertyKeyNetFrameworkVersion = "RequiredNetFrameworkVersion";
-
-    /// <summary>
-    /// Property key for the required dotnet runtime version
-    /// </summary>
-    public const string PropertyKeyDotNetVersion = "RequiredDotNetVersion";
-
-    /// <summary>
-    /// The property for the required architecture (x86, x64, Arm, Arm64 etc.)
-    /// </summary>
-    public const string PropertyKeyArchitecture = "RequiredArchitecture";
-
-    /// <summary>
-    /// The property for the operating system. The value consist of a name (Windows, OSX, Linux) and a version number, separated by an underscore.
-    /// </summary>
-    public const string PropertyKeyOperatingSystem = "RequiredOperatingSystem";
-
-
-    /// <summary>
     /// Determines if this system is matching the requirements of the package.
     /// </summary>
     /// <param name="packageInfo">The information about the package.</param>
     /// <returns>True if the system is matching the requirements of the package; otherwise, false.</returns>
     public static bool MatchesRequirements(PackageInfo packageInfo)
     {
-      var properties = packageInfo.Properties;
 
 #if AutoUpdateDownloader
       var systemRequirementsService = new SystemRequirementsDetermination();
@@ -70,100 +49,119 @@ namespace Altaxo.Serialization.AutoUpdates
       var systemRequirementsService = Current.GetRequiredService<ISystemRequirementsDetermination>();
 #endif
 
-      // we investigate all keys that start with 'Required'
-      // if some of the keys is unknown, we have to assume that this in an older version
-      // which doesn't know about this new requirement
-      // in this case we return false because we have to assume that the new requirement is not matched.
-      foreach (var entry in properties.Where(entry => entry.Key.StartsWith("Required")))
+      if (packageInfo.RequiredNetFrameworkVersion is not null && !systemRequirementsService.IsNetFrameworkVersionInstalled(packageInfo.RequiredNetFrameworkVersion))
       {
-        switch (entry.Key)
+        return false;
+      }
+
+      if (packageInfo.RequiredDotNetVersion is not null && !systemRequirementsService.IsNetCoreVersionInstalled(packageInfo.RequiredDotNetVersion))
+      {
+        return false;
+      }
+
+      if (packageInfo.RequiredArchitectures.Length > 0)
+      {
+        bool meetsArchitecture = false;
+        foreach (var arch in packageInfo.RequiredArchitectures)
         {
-          case PropertyKeyNetFrameworkVersion:
-            {
-              if (!systemRequirementsService.IsNetFrameworkVersionInstalled(entry.Value))
-                return false;
-            }
-            break;
-          case PropertyKeyDotNetVersion:
-            {
-              if (!systemRequirementsService.IsNetCoreVersionInstalled(entry.Value))
-                return false;
-            }
-            break;
-          case PropertyKeyArchitecture:
-            {
-              if (!MeetsArchitectureRequirements(entry.Value))
-                return false;
-            }
-            break;
-          case PropertyKeyOperatingSystem:
-            {
-              if (!MeetsOSRequirements(entry.Value))
-                return false;
-            }
-            break;
-          default:
-            return false; // return false if the requirement is unknown (we have to assume that this is an older version
+          meetsArchitecture |= MeetsArchitectureRequirements(arch);
+        }
+        if (!meetsArchitecture)
+        {
+          return false;
         }
       }
+
+      if (packageInfo.RequiredOperatingSystems.Length > 0)
+      {
+        bool meetsOperatingSystem = false;
+        foreach (var os in packageInfo.RequiredOperatingSystems)
+        {
+          meetsOperatingSystem |= MeetsOSRequirements(os);
+        }
+        if (!meetsOperatingSystem)
+        {
+          return false;
+        }
+      }
+
+
       return true;
     }
 
 
-    public static bool MeetsArchitectureRequirements(string value)
+    public static bool MeetsArchitectureRequirements(Architecture value)
     {
       var thisArchitecture = System.Runtime.InteropServices.RuntimeInformation.OSArchitecture;
-      var architectureName = Enum.GetName(typeof(System.Runtime.InteropServices.Architecture), thisArchitecture);
-      var parts = value.Split([';'], StringSplitOptions.RemoveEmptyEntries);
 
-      foreach (var part in parts)
-      {
-        if (part == architectureName)
-          return true;
-      }
-      return false;
+      return value == thisArchitecture;
     }
 
-    public static bool MeetsOSRequirements(string value)
+    public static bool MeetsOSRequirements((OSPlatform osPlatForm, Version osVersion) value)
     {
-      const string OSArchitectureWindows = "Windows_";
-      const string OSArchitectureOsx = "OSX_";
-      const string OSArchitectureLinux = "Linux_";
-
-      var parts = value.Split([';'], StringSplitOptions.RemoveEmptyEntries);
-      bool isFulfilled;
-      foreach (var part in parts)
-      {
-        if (part.StartsWith(OSArchitectureWindows))
-        {
-          isFulfilled = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) && MeetsOperatingSystemVersion(part.Substring(OSArchitectureWindows.Length));
-          if (isFulfilled)
-            return true;
-        }
-        if (part.StartsWith(OSArchitectureOsx))
-        {
-          isFulfilled = RuntimeInformation.IsOSPlatform(OSPlatform.OSX) && MeetsOperatingSystemVersion(part.Substring(OSArchitectureOsx.Length));
-          if (isFulfilled)
-            return true;
-        }
-        if (part.StartsWith(OSArchitectureLinux))
-        {
-          isFulfilled = RuntimeInformation.IsOSPlatform(OSPlatform.Linux) && MeetsOperatingSystemVersion(part.Substring(OSArchitectureLinux.Length));
-          if (isFulfilled)
-            return true;
-        }
-      }
-      return false;
+      return RuntimeInformation.IsOSPlatform(value.osPlatForm) && Environment.OSVersion.Version >= value.osVersion;
     }
 
-    public static bool MeetsOperatingSystemVersion(string versionString)
+    /// <summary>
+    /// Gets the highest version that is possible to install; or null, if such a version does not exist.
+    /// </summary>
+    /// <param name="packageInfos">The package infos.</param>
+    /// <returns></returns>
+    public static PackageInfo? TryGetHighestVersion(PackageInfo[] packageInfos)
     {
-      if (Version.TryParse(versionString, out var requiredVersion))
+      // from all parsed versions, choose that one that matches the requirements
+      // and has the highest version
+      // if in doubt, choose that at the topmost line
+      var list = new List<(PackageInfo packageInfo, int line)>();
+      for (int i = 0; i < packageInfos.Length; ++i)
       {
-        var os = Environment.OSVersion;
-        return os.Version >= requiredVersion;
+        if (SystemRequirements.MatchesRequirements(packageInfos[i]))
+        {
+          list.Add((packageInfos[i], i));
+        }
       }
-      return false;
+
+      if (list.Count == 0)
+      {
+        return null;
+      }
+      else
+      {
+        list.Sort((x, y) =>
+        {
+          var b0 = Comparer<Version>.Default.Compare(x.packageInfo.Version, y.packageInfo.Version);
+          return b0 != 0 ? b0 : Comparer<int>.Default.Compare(y.line, x.line); // note that x and y is here exchanged to choose the topmost line
+        });
+        return list[list.Count - 1].packageInfo;
+      }
+    }
+
+    /// <summary>If there already the currently best package in the download directory, this function gets the present downloaded package.
+    /// If anything is invalid (wrong format of the version file,
+    /// wrong hash sum), the return value is <c>Null</c>.</summary>
+    /// <param name="versionFileStream">Stream to read the version info from. This must be the opened stream of the VersionInfo.json file in the download directory.</param>
+    /// <param name="storagePath">Path to the directory that stores the downloaded package.</param>
+    /// <param name="leavePackageFileStreamOpen">If true, the file stream of the package file that was opened for checking the hash is left opened and
+    /// returned as the second item of the returned tuple. In that case, you are responsible for  disposing the stream.</param>
+    /// <returns>The info for the already present package in the download directory. If anything is invalid, the return value is null.</returns>
+    public static (PackageInfo? packageInfo, FileStream? packageFileStream) TryGetPackageThatWasDownloadedAlready(Stream versionFileStream, string storagePath, bool leavePackageFileStreamOpen = false)
+    {
+      PackageInfo? packageInfo = null;
+      try
+      {
+        var packageInfos = PackageInfo.ReadPackagesFromJson(versionFileStream);
+        packageInfo = TryGetHighestVersion(packageInfos);
+        if (packageInfo is null)
+          return (null, null); // there is currently no version that can be installed on this system.
+
+        var packageFileStream = packageInfo.VerifyLengthAndHashOfPackageZipFile(storagePath, leavePackageFileStreamOpen: leavePackageFileStreamOpen);
+        return (packageInfo, packageFileStream);
+      }
+      catch (Exception)
+      {
+      }
+
+      return (null, null);
     }
   }
 }

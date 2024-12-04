@@ -85,7 +85,7 @@ namespace Altaxo.Serialization.AutoUpdates
       {
         var searchString = FormattableString.Invariant($"{major}.{minor}.");
         using (var baseKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine,
-          RegistryView.Registry32).OpenSubKey(@"SOFTWARE\WOW6432Node\dotnet\Setup\InstalledVersions\x64\sharedfx\Microsoft.NETCore.App\"))
+          RegistryView.Registry32).OpenSubKey(@"SOFTWARE\WOW6432Node\dotnet\Setup\InstalledVersions\x64\sharedfx\Microsoft.WindowsDesktop.App\"))
         {
           foreach (var subKeyName in baseKey.GetSubKeyNames())
           {
@@ -97,6 +97,7 @@ namespace Altaxo.Serialization.AutoUpdates
       else if (Environment.OSVersion.Platform == PlatformID.Unix)
       {
         // refer to the reference above for a method to determine .NET core version on Linux
+        // see https://stackoverflow.com/questions/62875409/how-to-programmatically-check-the-net-core-runtime-version-installed-on-my-mach
         throw new NotImplementedException();
       }
       else

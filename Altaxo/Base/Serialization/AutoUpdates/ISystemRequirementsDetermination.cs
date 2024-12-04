@@ -23,6 +23,8 @@
 #endregion Copyright
 
 #nullable enable
+using System;
+
 namespace Altaxo.Serialization.AutoUpdates
 {
   /// <summary>
@@ -33,19 +35,19 @@ namespace Altaxo.Serialization.AutoUpdates
     /// <summary>
     /// Determines whether a specified version of the net framework is installed.
     /// </summary>
-    /// <param name="versionString">The version. Examples are 4.0, 4.6, 4.7.1 etc.</param>
+    /// <param name="version">The version. Examples are 4.0, 4.6, 4.7.1 etc.</param>
     /// <returns>
     ///   <c>true</c> if the specified version of the .NET framework is installed; otherwise, <c>false</c>.
     /// </returns>
-    bool IsNetFrameworkVersionInstalled(string versionString);
+    bool IsNetFrameworkVersionInstalled(Version version);
 
     /// <summary>
     /// Determines whether the specified DotNet core version is installed on the current system.
     /// </summary>
-    /// <param name="versionString">The version string.</param>
+    /// <param name="version">The version string.</param>
     /// <returns>
     ///   <c>true</c> if the specified .NET core version is installed; otherwise, <c>false</c>.
     /// </returns>
-    public bool IsNetCoreVersionInstalled(string versionString);
+    public bool IsNetCoreVersionInstalled(Version version);
   }
 }

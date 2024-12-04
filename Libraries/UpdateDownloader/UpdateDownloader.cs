@@ -77,11 +77,11 @@ namespace Altaxo.Serialization.AutoUpdates
       }
 
       var versionFileFullName = Path.Combine(_storagePath, PackageInfo.VersionFileName);
-      using (var fs = new FileStream(versionFileFullName, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None))
+      using (var versionFileStream = new FileStream(versionFileFullName, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None))
       {
-        fs.Seek(0, SeekOrigin.Begin);
-        var alreadyDownloadedVersion = PackageInfo.GetPresentDownloadedPackage(fs, _storagePath);
-        fs.Seek(0, SeekOrigin.Begin);
+        versionFileStream.Seek(0, SeekOrigin.Begin);
+        var (alreadyDownloadedVersion, _) = SystemRequirements.TryGetPackageThatWasDownloadedAlready(versionFileStream, _storagePath, leavePackageFileStreamOpen: false);
+        versionFileStream.Seek(0, SeekOrigin.Begin);
 
         using (var webClient = new System.Net.WebClient())
         {
@@ -89,25 +89,23 @@ namespace Altaxo.Serialization.AutoUpdates
           var versionData = webClient.DownloadData(_downloadURL + PackageInfo.VersionFileName);
           Console.WriteLine(" ok! ({0} bytes downloaded)", versionData.Length);
           // we leave the file open, thus no other process can access it
-          var parsedVersions = PackageInfo.FromStream(new MemoryStream(versionData));
+          var parsedVersions = PackageInfo.ReadPackagesFromJson(new MemoryStream(versionData));
 
-          fs.Write(versionData, 0, versionData.Length);
-          fs.SetLength(versionData.Length); // cut the stream at this length
-          fs.Flush(); // write the new version to disc in order to change the write date
+          versionFileStream.Write(versionData, 0, versionData.Length);
+          versionFileStream.SetLength(versionData.Length); // cut the stream at this length in case the existing file before was longer
+          versionFileStream.Flush(); // write the new version to disc in order to change the write date
 
 
           // from all parsed versions, choose that one that matches the requirements
-          var bestPackage = PackageInfo.GetHighestVersion(parsedVersions);
+          var bestPackage = SystemRequirements.TryGetHighestVersion(parsedVersions);
 
-          if (bestPackage is not null)
-          {
-            Console.WriteLine("The remote package version is: {0}", bestPackage.Version);
-          }
-          else
+          if (bestPackage is null)
           {
             Console.WriteLine("This computer does not match the requirements of any package. The version file contains {0} packages.", parsedVersions.Length);
             return;
           }
+
+          Console.WriteLine("The remote package version is: {0}", bestPackage.Version);
 
           if (!(Comparer<Version>.Default.Compare(bestPackage.Version, _currentVersion) > 0)) // if the remote version is not higher than the currently installed Altaxo version
           {
@@ -116,33 +114,28 @@ namespace Altaxo.Serialization.AutoUpdates
           }
 
           // Test, whether the required file is already present...
-          var packageFileName = Path.Combine(_storagePath, bestPackage.PackageFileName);
-          try
+          var packageFileName = Path.Combine(_storagePath, bestPackage.FileNameOfPackageZipFile);
+          if (File.Exists(packageFileName))
           {
-            if (File.Exists(packageFileName))
+            try
             {
-              if (bestPackage.FileLength == new FileInfo(packageFileName).Length)
-              {
-                if (IsHashOfFileEqualTo(packageFileName, bestPackage.Hash, out var _))
-                {
-                  Console.WriteLine($"The package file ({packageFileName}) is already present and up to date. Therefore, no download is needed.");
-                  return; // then there is nothing to do
-                }
-              }
+              bestPackage.VerifyLengthAndHashOfPackageZipFile(packageFileName);
+              Console.WriteLine($"The package file ({packageFileName}) is already present and up to date. Therefore, no download is needed.");
+              return; // then there is nothing to do
+            }
+            catch (Exception ex)
+            {
+              Console.WriteLine(ex.Message);
+              Console.WriteLine($"Something is wrong with the already downloaded package file, thus we download it again...");
+              // do not stop the program here, if an exception was thrown during the testing of the existing package file...
             }
           }
-          catch (Exception testExistingPackageException)
-          {
-            Console.WriteLine($"An exception was thrown while testing for the existence of the package file \"{packageFileName}\". The exception message is {testExistingPackageException.Message}.");
-            // do not stop the program here, if an exception was thrown during the testing of the existing package file...
-          }
-
 
           Console.Write("Cleaning download directory ...");
           CleanDirectory(versionFileFullName); // Clean old downloaded files from the directory
           Console.WriteLine(" ok!");
 
-          var packageUrl = _downloadURL + bestPackage.PackageFileName;
+          var packageUrl = _downloadURL + bestPackage.FileNameOfPackageZipFile;
           Console.WriteLine("Starting download of package file ...");
           webClient.DownloadProgressChanged += EhDownloadOfPackageFileProgressChanged;
           webClient.DownloadFileCompleted += EhDownloadOfPackageFileCompleted;
@@ -157,64 +150,22 @@ namespace Altaxo.Serialization.AutoUpdates
 
           Console.WriteLine("Download finished!");
 
-          // make at least the test for the right length
-          var fileInfo = new FileInfo(packageFileName);
-          if (fileInfo.Length != bestPackage.FileLength)
+          try
           {
-            Console.WriteLine("Downloaded file length ({0}) differs from length in VersionInfo.txt {1}, thus the downloaded file will be deleted!", fileInfo.Length, bestPackage.FileLength);
-            fileInfo.Delete();
-            return;
+            bestPackage.VerifyLengthAndHashOfPackageZipFile(packageFileName);
+            Console.WriteLine("Test of downloaded package file ... ok!");
           }
-          else
+          catch (Exception ex)
           {
-            Console.WriteLine("Test file length of downloaded package file ... ok!");
-          }
-
-          if (IsHashOfFileEqualTo(packageFileName, bestPackage.Hash, out var calculatedHash))
-          {
-            Console.WriteLine("Test hash of downloaded package file ... ok!");
-          }
-          else
-          {
-            Console.WriteLine($"The hash of the downloaded file ({calculatedHash}) differs from the hash in VersionInfo.txt ({bestPackage.Hash}). Therefore, the downloaded file will be deleted!");
-            fileInfo.Delete();
-            return;
+            Console.WriteLine(ex.Message);
+            Console.WriteLine("Something is wrong with the downloaded file, thus it will be deleted!");
+            if (File.Exists(packageFileName))
+            {
+              File.Delete(packageFileName);
+            }
           }
         }
       }
-    }
-
-    /// <summary>
-    /// Calculates the hash of the package file, and compares it to the expected hash.
-    /// </summary>
-    /// <param name="packageFileName">Name of the package file.</param>
-    /// <param name="expectedHash">The expected hash.</param>
-    /// <param name="calculatedHash">The hash as calculated from the file.</param>
-    /// <returns>True if the hash of file is equal to the expected hash; otherwise, <c>false</c>.
-    /// </returns>
-    private bool IsHashOfFileEqualTo(string packageFileName, string expectedHash, out string calculatedHash)
-    {
-      System.Security.Cryptography.HashAlgorithm hashProvider;
-      switch (expectedHash.Length)
-      {
-        default:
-        case 40:
-          hashProvider = new System.Security.Cryptography.SHA1CryptoServiceProvider();
-          break;
-        case 64:
-          hashProvider = new System.Security.Cryptography.SHA256CryptoServiceProvider();
-          break;
-        case 128:
-          hashProvider = new System.Security.Cryptography.SHA512CryptoServiceProvider();
-          break;
-      }
-      byte[] hashBytes;
-      using (var packageFileStream = new FileStream(packageFileName, FileMode.Open, FileAccess.Read, FileShare.Read))
-      {
-        hashBytes = hashProvider.ComputeHash(packageFileStream);
-      }
-      calculatedHash = PackageInfo.GetHashAsString(hashBytes);
-      return (calculatedHash == expectedHash);
     }
 
     /// <summary>It is neccessary to modify the download directory access rights, because as default only creator/owner has the right to change the newly created directory.
