@@ -91,7 +91,11 @@ namespace Altaxo.Serialization.AutoUpdates
         var entryAssemblyFolder = Path.GetDirectoryName(entryAssembly.Location) ?? throw new InvalidOperationException("Unable to get directory of entry assembly");
         var installerFullSrcName = Path.Combine(entryAssemblyFolder, UpdateInstallerFileName);
         var installerFullDestName = Path.Combine(downloadFolder, UpdateInstallerFileName);
-        File.Copy(installerFullSrcName, installerFullDestName, true);
+        var installerSrcFiles = new DirectoryInfo(entryAssemblyFolder).GetFiles(Path.GetFileNameWithoutExtension(UpdateInstallerFileName) + ".*");
+        foreach (var installerSrcFile in installerSrcFiles)
+        {
+          File.Copy(installerSrcFile.FullName, Path.Combine(downloadFolder, installerSrcFile.Name), true);
+        }
 
         // both the version file and the package stream are locked now
         // so we can start the updater program

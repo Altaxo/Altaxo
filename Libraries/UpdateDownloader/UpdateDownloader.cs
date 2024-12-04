@@ -119,7 +119,7 @@ namespace Altaxo.Serialization.AutoUpdates
           {
             try
             {
-              bestPackage.VerifyLengthAndHashOfPackageZipFile(packageFileName);
+              bestPackage.VerifyLengthAndHashOfPackageZipFileInFolder(_storagePath);
               Console.WriteLine($"The package file ({packageFileName}) is already present and up to date. Therefore, no download is needed.");
               return; // then there is nothing to do
             }
@@ -152,7 +152,7 @@ namespace Altaxo.Serialization.AutoUpdates
 
           try
           {
-            bestPackage.VerifyLengthAndHashOfPackageZipFile(packageFileName);
+            bestPackage.VerifyLengthAndHashOfPackageZipFileInFolder(_storagePath);
             Console.WriteLine("Test of downloaded package file ... ok!");
           }
           catch (Exception ex)

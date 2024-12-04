@@ -12,6 +12,7 @@
     <IntermediateOutputPath>obj\$(Configuration)\$(TargetFramework)\</IntermediateOutputPath>
     <OutputPath>..\..\rt$(TargetFrameworkSubdir)\bin</OutputPath>
     <CoreCompileDependsOn>GenAssInfo</CoreCompileDependsOn>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     <DefineConstants>$(DefineConstants);AutoUpdateDownloader</DefineConstants>
   </PropertyGroup>
   <ItemGroup>

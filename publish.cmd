@@ -44,10 +44,10 @@ dotnet publish %SolutionDir%\AddIns\MLNET\MLNET\MLNET.csproj --arch x64 --config
 xcopy %SolutionDir%\AddIns\MLNET\MLNET\MLNET.addin %PublishDir%\AddIns\ML.Net /I /Y
 )
 
-rem ******** Altaxo update downloader (must be published as single file) ********
+rem ******** Altaxo update downloader ********
 rem ******** As long as there is no Linux version, we publish a Net48 exe ********
-dotnet publish %SolutionDir%\Libraries\UpdateDownloader\AutoUpdateDownloader.csproj --arch %Architecture% --configuration %Configuration% --framework net48 -p:PublishDir=%PublishDir%\bin\ -p:SolutionDir=%SolutionDir%
-rem dotnet publish %SolutionDir%\Libraries\UpdateDownloader\AutoUpdateDownloader.csproj --arch %Architecture% --configuration %Configuration% --framework net9.0 --self-contained true -p:PublishSingleFile=true -p:PublishTrimmed=true -p:EnableCompressionInSingleFile=true -p:PublishDir=%PublishDir%\bin\ -p:SolutionDir=%SolutionDir%
+rem dotnet publish %SolutionDir%\Libraries\UpdateDownloader\AutoUpdateDownloader.csproj --arch %Architecture% --configuration %Configuration% --framework net48 -p:PublishDir=%PublishDir%\bin\ -p:SolutionDir=%SolutionDir%
+dotnet publish %SolutionDir%\Libraries\UpdateDownloader\AutoUpdateDownloader.csproj --arch %Architecture% --configuration %Configuration% --framework net9.0 --self-contained true -p:PublishDir=%PublishDir%\bin\ -p:SolutionDir=%SolutionDir%
 
 rem ******** Altaxo update installer (must be published as single file) ********
 rem ******** As long as there is no Linux version, we publish a Net48 exe ********

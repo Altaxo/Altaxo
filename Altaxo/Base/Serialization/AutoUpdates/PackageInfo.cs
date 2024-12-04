@@ -727,7 +727,7 @@ namespace Altaxo.Serialization.AutoUpdates
     /// The downloaded file {fileInfo.FullName} has a different hash and is considered corrupted.
     /// </exception>
     /// <exception cref="System.NotImplementedException">The downloaded file {fileInfo.FullName} was hashed with algorithm {HashName}, which is not implemented here.</exception>
-    public FileStream? VerifyLengthAndHashOfPackageZipFile(string storagePath, bool leavePackageFileStreamOpen = false)
+    public FileStream? VerifyLengthAndHashOfPackageZipFileInFolder(string storagePath, bool leavePackageFileStreamOpen = false)
     {
       // test, if the file exists and has the right Hash
       var fileInfo = new FileInfo(Path.Combine(storagePath, FileNameOfPackageZipFile));

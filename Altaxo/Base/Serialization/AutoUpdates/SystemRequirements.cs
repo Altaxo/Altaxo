@@ -154,7 +154,7 @@ namespace Altaxo.Serialization.AutoUpdates
         if (packageInfo is null)
           return (null, null); // there is currently no version that can be installed on this system.
 
-        var packageFileStream = packageInfo.VerifyLengthAndHashOfPackageZipFile(storagePath, leavePackageFileStreamOpen: leavePackageFileStreamOpen);
+        var packageFileStream = packageInfo.VerifyLengthAndHashOfPackageZipFileInFolder(storagePath, leavePackageFileStreamOpen: leavePackageFileStreamOpen);
         return (packageInfo, packageFileStream);
       }
       catch (Exception)
