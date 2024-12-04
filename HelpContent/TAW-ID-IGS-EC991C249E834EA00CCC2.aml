@@ -1,0 +1,21 @@
+﻿
+<topic id="EC991C249E834EA00CCC2CEE70302673" revisionNumber="1">
+
+<developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+<introduction>
+
+<para>
+Previous section: <link xlink:href="A5BA93CA67BDC644250D380397EB154C">Importing Excel .xlsx files</link></para>
+<autoOutline />
+<markup><hr/></markup>
+
+<para>
+Galactic SPC files usually contain spectral data. They usually have the extension <codeInline>.spc</codeInline>.
+</para>
+<markup><hr/></markup>
+<para>
+Next section: <link xlink:href="3E068D9FF2127C78F33CA21E0D60CBE8">Import JcampDX files</link></para>
+</introduction>
+</developerConceptualDocument>
+</topic>

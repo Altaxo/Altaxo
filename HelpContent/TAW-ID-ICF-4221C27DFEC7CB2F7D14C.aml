@@ -1,0 +1,21 @@
+﻿
+<topic id="4221C27DFEC7CB2F7D14CBC04B9DA725" revisionNumber="1">
+
+<developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+<introduction>
+
+<para>
+Previous section: <link xlink:href="A509DB28A236673F8A27EDCA3A89BEE7">Importing Princeton Instruments spectral files</link></para>
+<autoOutline />
+<markup><hr/></markup>
+
+<para>
+The CHADA file format is based on <codeInline>.HDF5</codeInline>. The data sets that are located in the root directory of the <codeInline>.HDF5</codeInline> file are imported into Altaxo. The file extension of the Chada files is <codeInline>.cha</codeInline>.
+</para>
+<markup><hr/></markup>
+<para>
+Next section: <link xlink:href="1F1AAFADC4EF3F7BD0D8BE6B023E5EC3">Importing Renishaw spectral files</link></para>
+</introduction>
+</developerConceptualDocument>
+</topic>

@@ -1,0 +1,21 @@
+﻿
+<topic id="3E068D9FF2127C78F33CA21E0D60CBE8" revisionNumber="1">
+
+<developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+<introduction>
+
+<para>
+Previous section: <link xlink:href="EC991C249E834EA00CCC2CEE70302673">Importing Galactic SPC files</link></para>
+<autoOutline />
+<markup><hr/></markup>
+
+<para>
+JcampDX files are files containing spectral data. They usually have the extension <codeInline>.dx</codeInline> or <codeInline>.jdx</codeInline>.
+</para>
+<markup><hr/></markup>
+<para>
+Next section: <link xlink:href="C6D3B54D07F1549BEF0FB719092A137A">Importing Nexus files</link></para>
+</introduction>
+</developerConceptualDocument>
+</topic>

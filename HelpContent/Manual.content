@@ -55,6 +55,32 @@
 </Topic>
 <Topic id="BBABBC927250DB6DD339D7FF83A7D699" visible="True" title="Importing ASCII data from multiple files into separate worksheets">
 </Topic>
+<Topic id="4D35A597A85B3E34D4E106327C613F18" visible="True" title="Importing Bruker Opus files">
+</Topic>
+<Topic id="A5BA93CA67BDC644250D380397EB154C" visible="True" title="Importing Excel .xlsx files">
+</Topic>
+<Topic id="EC991C249E834EA00CCC2CEE70302673" visible="True" title="Importing Galactic SPC files">
+</Topic>
+<Topic id="3E068D9FF2127C78F33CA21E0D60CBE8" visible="True" title="Import JcampDX files">
+</Topic>
+<Topic id="C6D3B54D07F1549BEF0FB719092A137A" visible="True" title="Importing Nexus files">
+</Topic>
+<Topic id="EFB0729EBF100744EFB427B47ECA230A" visible="True" title="Importing Nicolet spectral files">
+</Topic>
+<Topic id="E2E8BA9CA692DE544D7DCC06F8106956" visible="True" title="Importing Origin files">
+</Topic>
+<Topic id="A509DB28A236673F8A27EDCA3A89BEE7" visible="True" title="Importing Princeton Instruments spectral files">
+</Topic>
+<Topic id="4221C27DFEC7CB2F7D14CBC04B9DA725" visible="True" title="Importing CHADA files">
+</Topic>
+<Topic id="1F1AAFADC4EF3F7BD0D8BE6B023E5EC3" visible="True" title="Importing Renishaw spectral files">
+</Topic>
+<Topic id="0D8FC420A513A74FCE8A0D37B84C60BC" visible="True" title="Importing WiTec project files">
+</Topic>
+<Topic id="9AEBB231B81FBCD7DCADD4C077D9F950" visible="True" title="Importing images as data">
+</Topic>
+<Topic id="7FA33403602C7A9E2DB542C8F2C9D8DD" visible="True" title="Importing using a self-made import script">
+</Topic>
 </Topic>
 <Topic id="B09D5D470B8DCF524A698117E51D308B" visible="True" title="Changing the structure of a worksheet">
 <Topic id="F30A8388D1325EC508BCF6A76CC69D49" visible="True" title="Transposing a worksheet">

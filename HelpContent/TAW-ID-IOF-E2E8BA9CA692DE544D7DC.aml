@@ -1,0 +1,21 @@
+﻿
+<topic id="E2E8BA9CA692DE544D7DCC06F8106956" revisionNumber="1">
+
+<developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+<introduction>
+
+<para>
+Previous section: <link xlink:href="EFB0729EBF100744EFB427B47ECA230A">Importing Nicolet spectral files</link></para>
+<autoOutline />
+<markup><hr/></markup>
+
+<para>
+Altaxo supports the import of all data tables (spreadsheets and matrices) from Origin project files. Only the old format with the extension <codeInline>.OPJ</codeInline> is supported. Files with the new format <codeInline>.OPJU</codeInline> can not be read. If you know about how the new format is structured, let me know by opening a Github issue.
+</para>
+<markup><hr/></markup>
+<para>
+Next section: <link xlink:href="A509DB28A236673F8A27EDCA3A89BEE7">Importing Princeton Instruments spectral files</link></para>
+</introduction>
+</developerConceptualDocument>
+</topic>

@@ -1,0 +1,21 @@
+﻿
+<topic id="4D35A597A85B3E34D4E106327C613F18" revisionNumber="1">
+
+<developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+<introduction>
+
+<para>
+Previous section: <link xlink:href="BBABBC927250DB6DD339D7FF83A7D699">Importing ASCII data from multiple files into separate worksheets</link></para>
+<autoOutline />
+<markup><hr/></markup>
+
+<para>
+Bruker Opus files usually have the extension <codeInline>.0</codeInline>. This is a binary file format which is used for spectra measured with Bruker instruments.
+</para>
+<markup><hr/></markup>
+<para>
+Next section: <link xlink:href="A5BA93CA67BDC644250D380397EB154C">Importing Excel .xlsx files</link></para>
+</introduction>
+</developerConceptualDocument>
+</topic>

@@ -43,7 +43,7 @@ Import via the File explorer
 </para>
 
 <para>
-Fig.1: Import via the file menu.
+Fig.1: Import via the file menu. This also gives you an idea which file formats are supported by Altaxo.
 </para>
 
 <para>
@@ -73,6 +73,18 @@ Fig.3: Import via the file explorer. In order to import the file, double-click o
 <para>
 The import via the <legacyBold>File explorer</legacyBold> offers the least possibilities. You can only import one file at once. The file format is detected automatically. In case the file contains more than one table, all tables are imported into only one Altaxo table. To import a file, open the file explorer (menu View-&gt;Files),
 then navigate to the file you want to import and double-click on it.
+</para>
+
+<para>
+<mediaLinkInline><image xlink:href="D826279F757A5E5A2EF841D5CA86A046"></image></mediaLinkInline>
+</para>
+
+<para>
+Fig.4: By clicking on the question mark in the toolbar, you can open the table data source. For tables which contain imported data, the table data source remembers the origin and options of the data import. If you click the toolbar button with the red triangle (right from the question mark toolbar button), you will re-import the data without opening the dialog.
+</para>
+
+<para>
+After your import was successful, you will see one or more tables (depending on the file format and your options) in the project explorer which contain the imported data. Each table remembers the origin of the data in an object named <codeInline>TableDataSource</codeInline>. By clicking on the question mark in the toolbar, you can open the dialog of this <codeInline>TableDataSource</codeInline>, and change the file name or change the import options. This is very convenient if you have to import repeatedly: simply clone the table, and then change in the cloned table the file name in the <codeInline>TableDataSource</codeInline>.
 </para>
 
 <para>

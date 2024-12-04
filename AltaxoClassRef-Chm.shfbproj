@@ -118,6 +118,19 @@
     <None Include="HelpContent/TAW-ID-0D1CC7EABBD1395A9C7E70C02.aml" />
     <None Include="HelpContent/TAW-ID-IAD-993EAEBA834AC15438608.aml" />
     <None Include="HelpContent/TAW-ID-IAD-BBABBC927250DB6DD339D.aml" />
+    <None Include="HelpContent/TAW-ID-IBO-4D35A597A85B3E34D4E10.aml" />
+    <None Include="HelpContent/TAW-ID-IEX-A5BA93CA67BDC644250D3.aml" />
+    <None Include="HelpContent/TAW-ID-IGS-EC991C249E834EA00CCC2.aml" />
+    <None Include="HelpContent/TAW-ID-IJF-3E068D9FF2127C78F33CA.aml" />
+    <None Include="HelpContent/TAW-ID-INF-C6D3B54D07F1549BEF0FB.aml" />
+    <None Include="HelpContent/TAW-ID-INS-EFB0729EBF100744EFB42.aml" />
+    <None Include="HelpContent/TAW-ID-IOF-E2E8BA9CA692DE544D7DC.aml" />
+    <None Include="HelpContent/TAW-ID-IPI-A509DB28A236673F8A27E.aml" />
+    <None Include="HelpContent/TAW-ID-ICF-4221C27DFEC7CB2F7D14C.aml" />
+    <None Include="HelpContent/TAW-ID-IRS-1F1AAFADC4EF3F7BD0D8B.aml" />
+    <None Include="HelpContent/TAW-ID-IWP-0D8FC420A513A74FCE8A0.aml" />
+    <None Include="HelpContent/TAW-ID-IIA-9AEBB231B81FBCD7DCADD.aml" />
+    <None Include="HelpContent/TAW-ID-IUS-7FA33403602C7A9E2DB54.aml" />
     <None Include="HelpContent/TAW-CSO-B09D5D470B8DCF524A698117.aml" />
     <None Include="HelpContent/TAW-CSO-TW-F30A8388D1325EC508BCF.aml" />
     <None Include="HelpContent/TAW-CSO-DTW-BDC77858E7B184C7E543.aml" />
@@ -784,6 +797,10 @@
     <Image Include="HelpContent/Images/175BA38271F9EFD451538A761150E354.png">
       <ImageId>175BA38271F9EFD451538A761150E354</ImageId>
       <AlternateText>175BA38271F9EFD451538A761150E354</AlternateText>
+    </Image>
+    <Image Include="HelpContent/Images/D826279F757A5E5A2EF841D5CA86A046.png">
+      <ImageId>D826279F757A5E5A2EF841D5CA86A046</ImageId>
+      <AlternateText>D826279F757A5E5A2EF841D5CA86A046</AlternateText>
     </Image>
     <Image Include="HelpContent/Images/09D1AA90E9BC94358ECB8CE658BE302F.png">
       <ImageId>09D1AA90E9BC94358ECB8CE658BE302F</ImageId>

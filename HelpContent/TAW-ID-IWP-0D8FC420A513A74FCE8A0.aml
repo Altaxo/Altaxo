@@ -1,0 +1,21 @@
+﻿
+<topic id="0D8FC420A513A74FCE8A0D37B84C60BC" revisionNumber="1">
+
+<developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+<introduction>
+
+<para>
+Previous section: <link xlink:href="1F1AAFADC4EF3F7BD0D8BE6B023E5EC3">Importing Renishaw spectral files</link></para>
+<autoOutline />
+<markup><hr/></markup>
+
+<para>
+Altaxo supports the import of WiTec project files. WiTec project files are very complex and can contain multidimensional spectra and images. Only the spectra import is supported for now. WiTec project files usually have the extension `.wip'.
+</para>
+<markup><hr/></markup>
+<para>
+Next section: <link xlink:href="9AEBB231B81FBCD7DCADD4C077D9F950">Importing images as data</link></para>
+</introduction>
+</developerConceptualDocument>
+</topic>

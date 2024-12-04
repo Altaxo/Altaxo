@@ -1,0 +1,21 @@
+﻿
+<topic id="1F1AAFADC4EF3F7BD0D8BE6B023E5EC3" revisionNumber="1">
+
+<developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+<introduction>
+
+<para>
+Previous section: <link xlink:href="4221C27DFEC7CB2F7D14CBC04B9DA725">Importing CHADA files</link></para>
+<autoOutline />
+<markup><hr/></markup>
+
+<para>
+Altaxo is able to import spectral files from Renishaw instruments. Only files with the extension <codeInline>.wdf</codeInline> are supported.
+</para>
+<markup><hr/></markup>
+<para>
+Next section: <link xlink:href="0D8FC420A513A74FCE8A0D37B84C60BC">Importing WiTec project files</link></para>
+</introduction>
+</developerConceptualDocument>
+</topic>
