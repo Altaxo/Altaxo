@@ -1,14 +1,19 @@
 ﻿
-<topic id="FFF4C2F612B2BAB9CF689F557A184E3A" revisionNumber="1">
+<topic id="993EAEBA834AC1543860805ADEA169D2" revisionNumber="1">
 
 <developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
 
 <introduction>
 
 <para>
-Previous section: <link xlink:href="CCE945B2EC2C578D8C49120D55FACEE3">Importing ASCII data</link></para>
+Previous section: <link xlink:href="0D1CC7EABBD1395A9C7E70C02EE259E7">Importing data</link></para>
 <autoOutline />
-<markup><hr/></markup>
+<markup><hr/></markup></introduction>
+
+<section address="BA2AFBE4E7255BE6C2541952B2A9D087">
+<title>Importing ASCII data from a single file into a single worksheet
+</title>
+<content>
 
 <para>
 To import ASCII data from a single file into a (single) worksheet, first
@@ -99,9 +104,85 @@ and uncheck those results that you want to be analyzed again.
 <para>
 Finally, press OK to import the Ascii file into your worksheet.
 </para>
-<markup><hr/></markup>
+</content>
+</section>
+
+<section address="CAE12899C69AC6767A51CFE5FCCE04A1">
+<title>Importing ASCII data from multiple files into a single worksheet
+</title>
+<content>
+
 <para>
-Next section: <link xlink:href="9BC603C8A9C16E1CE5AC496DA8097D99">Importing ASCII data from multiple files into a single worksheet</link></para>
-</introduction>
+Suppose you have a spectrometer that stores every spectrum in a single
+Ascii file. The data in each file is structured into two columns. The
+first column usually contains the values of the wavelength, and the
+second column the measured values (for instance absorbance).
+Furthermore, suppose that you acquire a series of spectra, e.g. the time
+dependence of some reaction, so that you have hundreds or even thousands
+of spectra.
+</para>
+
+<para>
+You probably not want to import each spectrum into a single worksheet,
+because then you will get hundreds or thousands of worksheets. Instead,
+it would be convenient if all spectra would be imported into a single
+worksheet. And, because all spectra share the same wavelength values,
+you will need only one wavelength column in your worksheet (instead of
+one wavelength column per spectrum).
+</para>
+
+<para>
+To import all spectra into a single worksheet, create a new (preferably
+empty) worksheet or open an existing one, and then choose
+File→Impor→Ascii (all into a single worksheet). A file dialog
+opens, in which you have to select all files you want to import. After
+pressing OK, the selected files will be sorted by their file name and in
+this order imported into the current worksheet.
+</para>
+
+<para>
+Note: Should it happen, that the x-column of one or more imported data
+files is different from the first imported file: this is not a problem.
+The new x-values will be imported into a different column, which gets a
+new group number, and all other imported columns of that file will get
+the same new group number.
+</para>
+
+<para>
+Note: A property column named “FilePath” is created in the current
+worksheet. The cells of this property column are filled with the file
+name of the file where the data originate from.
+</para>
+
+<para>
+In the figure below you can see the result after importing three
+spectrum files.
+</para>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#1E66B99E8F58140906BC74D1B3D881CD"><img src="../media/1E66B99E8F58140906BC74D1B3D881CD.png" width="567"></img></a></markup>
+</para>
+
+<para>
+As you can see, the first column contains the wavelength values. Because
+there is only this one x-column, we conclude that the three spectra
+share the same wavelength values. The next 3 columns contain the
+spectral amplitudes of each spectrum. The property column “FilePath”
+contains the file names of the spectrum files. As you can see, the
+spectrometer codes the date and time into the filename. With the help of
+a script, one can extract this date/time and use it to calculate the
+time span relative to the start of measurement.
+</para>
+</content>
+</section>
+<markup><hr/></markup>
+<section>
+
+<content>
+
+<para>
+Next section: <link xlink:href="BBABBC927250DB6DD339D7FF83A7D699">Importing ASCII data from multiple files into separate worksheets</link></para>
+</content>
+</section>
 </developerConceptualDocument>
 </topic>

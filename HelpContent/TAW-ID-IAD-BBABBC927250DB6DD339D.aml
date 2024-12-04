@@ -1,12 +1,12 @@
 ﻿
-<topic id="E5EFC13BB357BF4A1093885F345139B9" revisionNumber="1">
+<topic id="BBABBC927250DB6DD339D7FF83A7D699" revisionNumber="1">
 
 <developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
 
 <introduction>
 
 <para>
-Previous section: <link xlink:href="9BC603C8A9C16E1CE5AC496DA8097D99">Importing ASCII data from multiple files into a single worksheet</link></para>
+Previous section: <link xlink:href="993EAEBA834AC1543860805ADEA169D2">Importing ASCII data</link></para>
 <autoOutline />
 <markup><hr/></markup>
 
@@ -58,9 +58,56 @@ import. In contrast to the example in chapter “Importing ASCII data from
 multiple files into a single worksheet”, each worksheet now contains a
 separate x-column with the wavelength values.
 </para>
-<markup><hr/></markup>
-<para>
-Next section: <link xlink:href="048F6F0FD3BDC7133EB4130BF53BF21D">Importing multiple ASCII files into a single worksheet vertically</link></para>
 </introduction>
+
+<section address="084921C4761623CB223EC486A1D7D349">
+<title>Importing multiple ASCII files into a single worksheet vertically
+</title>
+<content>
+
+<para>
+This command is useful if you have a time series of data in one file,
+which is continued in another file and so on. You can then import all
+data into a single worksheet. The data from the second file is appended
+to the data from the first file. This means that the data from the
+second file is imported starting from the next free data row of the
+worksheet.
+</para>
+
+<para>
+Create a new (preferably empty) worksheet or choose an existing one.
+Then use File→Import→Import ASCII vertically from the menu.
+Select multiple Ascii files in the file dialog. After pressing OK, the
+files are sorted by their file name and imported into the current
+worksheet.
+</para>
+
+<para>
+I have to admit that this function makes no sense for my example (see
+previous chapters) with the three spectra, but the next figure shows the
+outcome after I imported the three spectra with this command.
+</para>
+
+<para>
+<mediaLinkInline><image xlink:href="E21C36582AE1B83887AD842DCE2B70A5"></image></mediaLinkInline>
+</para>
+
+<para>
+As you can see, data row [1310] is the end of the first spectrum. The
+first row of the next spectrum is imported into data row [1311]. Note
+that the file name of the imported file is stored in column ‘FilePath’
+at the beginning of each data chunk.
+</para>
+</content>
+</section>
+<markup><hr/></markup>
+<section>
+
+<content>
+
+<para>
+Next section: <link xlink:href="B09D5D470B8DCF524A698117E51D308B">Changing the structure of a worksheet</link></para>
+</content>
+</section>
 </developerConceptualDocument>
 </topic>

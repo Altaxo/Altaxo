@@ -62,7 +62,7 @@ The next action depends on the file format to import:
 <listItem>
 
 <para>
-For Ascii files, you can use the toolbar button <mediaLinkInline><image xlink:href="Icons.16x16"></image></mediaLinkInline> for import, or the menu <codeInline>File</codeInline> → <codeInline>Import</codeInline> → <codeInline>Ascii</codeInline>. If multiple spectra needs to be imported into one worksheet (for instance for chemometric analysis), use <codeInline>File</codeInline> → <codeInline>Import</codeInline> → <codeInline>Ascii (all into a single worksheet)</codeInline>. Select all files that should be imported. Further information can be found in the section <link xlink:href="CCE945B2EC2C578D8C49120D55FACEE3#Section_Tables_ImportingAscii">&quot;Importing ASCII data&quot;</link>.
+For Ascii files, you can use the toolbar button <mediaLinkInline><image xlink:href="Icons.16x16"></image></mediaLinkInline> for import, or the menu <codeInline>File</codeInline> → <codeInline>Import</codeInline> → <codeInline>Ascii</codeInline>. If multiple spectra needs to be imported into one worksheet (for instance for chemometric analysis), use <codeInline>File</codeInline> → <codeInline>Import</codeInline> → <codeInline>Ascii (all into a single worksheet)</codeInline>. Select all files that should be imported. Further information can be found in the section <link xlink:href="993EAEBA834AC1543860805ADEA169D2#Section_Tables_ImportingAscii">&quot;Importing ASCII data&quot;</link>.
 </para>
 </listItem>
 

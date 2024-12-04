@@ -50,14 +50,10 @@
 </Topic>
 <Topic id="F71D3901373F20479F4C3575F2838494" visible="True" title="Copy/paste of worksheet data">
 </Topic>
-<Topic id="CCE945B2EC2C578D8C49120D55FACEE3" visible="True" title="Importing ASCII data">
-<Topic id="FFF4C2F612B2BAB9CF689F557A184E3A" visible="True" title="Importing ASCII data from a single file into a single worksheet">
+<Topic id="0D1CC7EABBD1395A9C7E70C02EE259E7" visible="True" title="Importing data">
+<Topic id="993EAEBA834AC1543860805ADEA169D2" visible="True" title="Importing ASCII data">
 </Topic>
-<Topic id="9BC603C8A9C16E1CE5AC496DA8097D99" visible="True" title="Importing ASCII data from multiple files into a single worksheet">
-</Topic>
-<Topic id="E5EFC13BB357BF4A1093885F345139B9" visible="True" title="Importing ASCII data from multiple files into separate worksheets">
-</Topic>
-<Topic id="048F6F0FD3BDC7133EB4130BF53BF21D" visible="True" title="Importing multiple ASCII files into a single worksheet vertically">
+<Topic id="BBABBC927250DB6DD339D7FF83A7D699" visible="True" title="Importing ASCII data from multiple files into separate worksheets">
 </Topic>
 </Topic>
 <Topic id="B09D5D470B8DCF524A698117E51D308B" visible="True" title="Changing the structure of a worksheet">

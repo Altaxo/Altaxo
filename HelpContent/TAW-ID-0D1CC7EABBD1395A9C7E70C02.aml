@@ -1,0 +1,86 @@
+﻿
+<topic id="0D1CC7EABBD1395A9C7E70C02EE259E7" revisionNumber="1">
+
+<developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+<introduction>
+
+<para>
+Previous section: <link xlink:href="F71D3901373F20479F4C3575F2838494">Copy/paste of worksheet data</link></para>
+<autoOutline />
+<markup><hr/></markup>
+
+<para>
+Basically, there are three different ways to import data, which differ by the number of options you can choose.
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+Import via the file menu (menu File-&gt;Import)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+Import via the import button in the toolbar
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+Import via the File explorer
+</para>
+</listItem>
+</list>
+
+<para>
+<mediaLinkInline><image xlink:href="9F760815B5198BD233751A9D1385C52D"></image></mediaLinkInline>
+</para>
+
+<para>
+Fig.1: Import via the file menu.
+</para>
+
+<para>
+The import via the <legacyBold>file menu</legacyBold> (menu File-&gt;Import) offers the highest number of import options. First of all, you select the file format you want to import by choosing one of the menu points. Then you can not only import multiple files at once. For file formats which can contain more than one table (e.g., Origin, Nexus, SPC, etc.) you can also choose whether those tables should be imported in individual tables in Altaxo, or into only one merged table. Furthermore, there are options for the naming of the data columns.
+</para>
+
+<para>
+<mediaLinkInline><image xlink:href="E8EF04E5701A344D78E8C122CCD7A6ED"></image></mediaLinkInline>
+</para>
+
+<para>
+Fig.2: Import via the import button in Altaxo's toolbar.
+</para>
+
+<para>
+The import via the <legacyBold>import button in the toolbar</legacyBold> is intended to import only one file at once, thus it offers slightly less options compared to the import via the File menu described above. In contrast to import via File menu, the data format is detected automatically, and the importer which is most suitable is used for import the data. Thus, in case the automatic detection of the data format fails, and you know which data format is used, then you better import your data via the File menu.
+</para>
+
+<para>
+<mediaLinkInline><image xlink:href="09D1AA90E9BC94358ECB8CE658BE302F"></image></mediaLinkInline>
+</para>
+
+<para>
+Fig.3: Import via the file explorer. In order to import the file, double-click on it.
+</para>
+
+<para>
+The import via the <legacyBold>File explorer</legacyBold> offers the least possibilities. You can only import one file at once. The file format is detected automatically. In case the file contains more than one table, all tables are imported into only one Altaxo table. To import a file, open the file explorer (menu View-&gt;Files),
+then navigate to the file you want to import and double-click on it.
+</para>
+
+<para>
+In the following chapters the individual file formats are described in more detail.
+</para>
+<markup><hr/></markup>
+<para>
+Next section: <link xlink:href="993EAEBA834AC1543860805ADEA169D2">Importing ASCII data</link></para>
+</introduction>
+</developerConceptualDocument>
+</topic>

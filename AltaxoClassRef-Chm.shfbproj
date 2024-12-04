@@ -115,11 +115,9 @@
     <None Include="HelpContent/TAW-SOC-TSS-6ED85BE6DBAD7774A4EF.aml" />
     <None Include="HelpContent/TAW-SOC-EOS-009360DD1C44007C3450.aml" />
     <None Include="HelpContent/TAW-CPO-F71D3901373F20479F4C3575.aml" />
-    <None Include="HelpContent/TAW-IAD-CCE945B2EC2C578D8C49120D.aml" />
-    <None Include="HelpContent/TAW-IAD-IAD-FFF4C2F612B2BAB9CF68.aml" />
-    <None Include="HelpContent/TAW-IAD-IAD-9BC603C8A9C16E1CE5AC.aml" />
-    <None Include="HelpContent/TAW-IAD-IAD-E5EFC13BB357BF4A1093.aml" />
-    <None Include="HelpContent/TAW-IAD-IMA-048F6F0FD3BDC7133EB4.aml" />
+    <None Include="HelpContent/TAW-ID-0D1CC7EABBD1395A9C7E70C02.aml" />
+    <None Include="HelpContent/TAW-ID-IAD-993EAEBA834AC15438608.aml" />
+    <None Include="HelpContent/TAW-ID-IAD-BBABBC927250DB6DD339D.aml" />
     <None Include="HelpContent/TAW-CSO-B09D5D470B8DCF524A698117.aml" />
     <None Include="HelpContent/TAW-CSO-TW-F30A8388D1325EC508BCF.aml" />
     <None Include="HelpContent/TAW-CSO-DTW-BDC77858E7B184C7E543.aml" />
@@ -786,6 +784,18 @@
     <Image Include="HelpContent/Images/175BA38271F9EFD451538A761150E354.png">
       <ImageId>175BA38271F9EFD451538A761150E354</ImageId>
       <AlternateText>175BA38271F9EFD451538A761150E354</AlternateText>
+    </Image>
+    <Image Include="HelpContent/Images/09D1AA90E9BC94358ECB8CE658BE302F.png">
+      <ImageId>09D1AA90E9BC94358ECB8CE658BE302F</ImageId>
+      <AlternateText>09D1AA90E9BC94358ECB8CE658BE302F</AlternateText>
+    </Image>
+    <Image Include="HelpContent/Images/E8EF04E5701A344D78E8C122CCD7A6ED.png">
+      <ImageId>E8EF04E5701A344D78E8C122CCD7A6ED</ImageId>
+      <AlternateText>E8EF04E5701A344D78E8C122CCD7A6ED</AlternateText>
+    </Image>
+    <Image Include="HelpContent/Images/9F760815B5198BD233751A9D1385C52D.png">
+      <ImageId>9F760815B5198BD233751A9D1385C52D</ImageId>
+      <AlternateText>9F760815B5198BD233751A9D1385C52D</AlternateText>
     </Image>
     <Image Include="HelpContent/Images/9BA76B45EEE12F560B8344BB75DE93D6.png">
       <ImageId>9BA76B45EEE12F560B8344BB75DE93D6</ImageId>
