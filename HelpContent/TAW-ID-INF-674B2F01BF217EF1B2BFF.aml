@@ -1,0 +1,25 @@
+﻿
+<topic id="674B2F01BF217EF1B2BFFCDC1D77C21D" revisionNumber="1">
+
+<developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+<introduction>
+
+<para>
+Previous section: <link xlink:href="3E068D9FF2127C78F33CA21E0D60CBE8">Import JcampDX files</link></para>
+<autoOutline />
+<markup><hr/></markup>
+
+<para>
+The NeXus file format is a file format driven by the  <externalLink><linkText>NeXus community</linkText><linkUri>https://www.nexusformat.org/</linkUri></externalLink> with a growing field of applications. Its base format is <codeInline>.HDF5</codeInline>. Nexus files usually have the extension <codeInline>.nx</codeInline> or <codeInline>.nxs</codeInline>.
+</para>
+
+<para>
+Since typically a NeXus file can contain multiple tables, it is recommended to import these files be the <codeInline>File</codeInline>→<codeInline>Import</codeInline> menu, so that you can change the options how those multiple tables are handled.
+</para>
+<markup><hr/></markup>
+<para>
+Next section: <link xlink:href="EFB0729EBF100744EFB427B47ECA230A">Importing Nicolet spectral files</link></para>
+</introduction>
+</developerConceptualDocument>
+</topic>

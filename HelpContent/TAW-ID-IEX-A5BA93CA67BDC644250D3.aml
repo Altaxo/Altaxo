@@ -11,7 +11,7 @@ Previous section: <link xlink:href="4D35A597A85B3E34D4E106327C613F18">Importing 
 <markup><hr/></markup>
 
 <para>
-Altaxo supports the import of Excel .xlsx files. The older format .xls is not supported. Since Excel columns can contain different types (text, numbers etc.), but columns in Altaxo can only hold a specific type, the importer determines automatically which type is most suitable.
+Altaxo supports the import of Excel .xlsx files. The older format .xls is not supported. Since Excel columns can contain different types (text, numbers etc.), but columns in Altaxo can only hold a specific type, the importer determines automatically which type is most suitable. This means, that if an Excel column not only contains numbers, but also text, the resulting column type in Altaxo is a text column.
 </para>
 <markup><hr/></markup>
 <para>

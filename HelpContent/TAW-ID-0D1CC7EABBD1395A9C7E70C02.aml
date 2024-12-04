@@ -19,7 +19,7 @@ Basically, there are three different ways to import data, which differ by the nu
 <listItem>
 
 <para>
-Import via the file menu (menu File-&gt;Import)
+Import via the file menu (menu <codeInline>File</codeInline>→<codeInline>Import</codeInline>)
 </para>
 </listItem>
 
@@ -47,7 +47,7 @@ Fig.1: Import via the file menu. This also gives you an idea which file formats 
 </para>
 
 <para>
-The import via the <legacyBold>file menu</legacyBold> (menu File-&gt;Import) offers the highest number of import options. First of all, you select the file format you want to import by choosing one of the menu points. Then you can not only import multiple files at once. For file formats which can contain more than one table (e.g., Origin, Nexus, SPC, etc.) you can also choose whether those tables should be imported in individual tables in Altaxo, or into only one merged table. Furthermore, there are options for the naming of the data columns.
+The import via the <legacyBold>file menu</legacyBold> (menu <codeInline>File</codeInline>→<codeInline>Import</codeInline>) offers the highest number of import options. First of all, you select the file format you want to import by choosing one of the menu points. Then you can not only import multiple files at once. For file formats which can contain more than one table (e.g., Origin, Nexus, SPC, etc.) you can also choose whether those tables should be imported in individual tables in Altaxo, or into only one merged table. Furthermore, there are options for the naming of the data columns.
 </para>
 
 <para>
@@ -71,7 +71,7 @@ Fig.3: Import via the file explorer. In order to import the file, double-click o
 </para>
 
 <para>
-The import via the <legacyBold>File explorer</legacyBold> offers the least possibilities. You can only import one file at once. The file format is detected automatically. In case the file contains more than one table, all tables are imported into only one Altaxo table. To import a file, open the file explorer (menu View-&gt;Files),
+The import via the <legacyBold>File explorer</legacyBold> offers the least possibilities. You can only import one file at once. The file format is detected automatically. In case the file contains more than one table, all tables are imported into only one Altaxo table. To import a file, open the file explorer (menu <codeInline>View</codeInline>→<codeInline>Files</codeInline>),
 then navigate to the file you want to import and double-click on it.
 </para>
 

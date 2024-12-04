@@ -23,11 +23,7 @@ make the worksheet to import to the active document, or create a new
 
 <para>
 Then choose File→Import→Ascii from the main menu, or use the
-toolbar button (see Figure below).
-</para>
-
-<para>
-<mediaLinkInline><image xlink:href="175BA38271F9EFD451538A761150E354"></image></mediaLinkInline>
+import toolbar button.
 </para>
 
 <para>
