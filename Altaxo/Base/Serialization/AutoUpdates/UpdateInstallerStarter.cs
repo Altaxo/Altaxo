@@ -61,10 +61,13 @@ namespace Altaxo.Serialization.AutoUpdates
 
         versionFileStream = new FileStream(versionFileName, FileMode.Open, FileAccess.Read, FileShare.Read);
 
-        var info = PackageInfo.GetPresentDownloadedPackage(versionFileStream, downloadFolder, out packageStream);
+        (var info, packageStream) = SystemRequirements.TryGetPackageThatWasDownloadedAlready(versionFileStream, downloadFolder, leavePackageFileStreamOpen: true);
 
         if (info is null || packageStream is null)
+        {
+          packageStream?.Dispose();
           return false;
+        }
 
         var entryAssembly = System.Reflection.Assembly.GetEntryAssembly() ?? throw new InvalidOperationException("Unable to get entry assembly");
         var entryAssemblyVersion = entryAssembly.GetName().Version;
@@ -88,7 +91,11 @@ namespace Altaxo.Serialization.AutoUpdates
         var entryAssemblyFolder = Path.GetDirectoryName(entryAssembly.Location) ?? throw new InvalidOperationException("Unable to get directory of entry assembly");
         var installerFullSrcName = Path.Combine(entryAssemblyFolder, UpdateInstallerFileName);
         var installerFullDestName = Path.Combine(downloadFolder, UpdateInstallerFileName);
-        File.Copy(installerFullSrcName, installerFullDestName, true);
+        var installerSrcFiles = new DirectoryInfo(entryAssemblyFolder).GetFiles(Path.GetFileNameWithoutExtension(UpdateInstallerFileName) + ".*");
+        foreach (var installerSrcFile in installerSrcFiles)
+        {
+          File.Copy(installerSrcFile.FullName, Path.Combine(downloadFolder, installerSrcFile.Name), true);
+        }
 
         // both the version file and the package stream are locked now
         // so we can start the updater program
@@ -141,10 +148,8 @@ namespace Altaxo.Serialization.AutoUpdates
       }
       finally
       {
-        if (packageStream is not null)
-          packageStream.Close();
-        if (versionFileStream is not null)
-          versionFileStream.Close();
+        packageStream?.Dispose();
+        versionFileStream?.Dispose();
       }
     }
   }
