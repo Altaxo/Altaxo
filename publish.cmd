@@ -51,8 +51,8 @@ dotnet publish %SolutionDir%\Libraries\UpdateDownloader\AutoUpdateDownloader.csp
 
 rem ******** Altaxo update installer (must be published as single file) ********
 rem ******** As long as there is no Linux version, we publish a Net48 exe ********
-dotnet publish %SolutionDir%\Libraries\UpdateInstaller\AutoUpdateInstaller.csproj --arch %Architecture% --configuration %Configuration% --framework net48  -p:PublishDir=%PublishDir%\bin\ -p:SolutionDir=%SolutionDir%
-rem dotnet publish %SolutionDir%\Libraries\UpdateInstaller\AutoUpdateInstaller.csproj --arch %Architecture% --configuration %Configuration% --framework net9.0-windows --self-contained true -p:PublishSingleFile=true -p:EnableCompressionInSingleFile=true -p:PublishDir=%PublishDir%\bin\ -p:SolutionDir=%SolutionDir%
+rem dotnet publish %SolutionDir%\Libraries\UpdateInstaller\AutoUpdateInstaller.csproj --arch %Architecture% --configuration %Configuration% --framework net48  -p:PublishDir=%PublishDir%\bin\ -p:SolutionDir=%SolutionDir%
+dotnet publish %SolutionDir%\Libraries\UpdateInstaller\AutoUpdateInstaller.csproj --arch %Architecture% --configuration %Configuration% --framework net9.0-windows --self-contained true -p:PublishSingleFile=true -p:EnableCompressionInSingleFile=true -p:PublishDir=%PublishDir%\bin\ -p:SolutionDir=%SolutionDir%
 
 rem ******** Prune the Addin directories ********
 %SolutionDir%..\PrunePublishedAddins.exe %PublishDir%\AddIns\OriginConnector %PublishDir%\bin

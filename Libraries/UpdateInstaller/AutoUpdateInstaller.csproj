@@ -1,12 +1,15 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk" InitialTargets="GenAssInfo">
   <PropertyGroup>
+    <AssemblyName>AltaxoUpdateInstaller</AssemblyName>
+    <RootNamespace>Altaxo.Serialization.AutoUpdates</RootNamespace>
     <TargetFrameworks>net48;net9.0-windows</TargetFrameworks>
     <LangVersion>preview</LangVersion>
     <nullable>enable</nullable>
     <OutputType>WinExe</OutputType>
     <UseWPF>true</UseWPF>
-    <AssemblyName>AltaxoUpdateInstaller</AssemblyName>
-    <RootNamespace>Altaxo.Serialization.AutoUpdates</RootNamespace>
+    <PublishSingleFile>true</PublishSingleFile>
+    <SelfContained>true</SelfContained>
+    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <IntermediateOutputPath>obj\$(Configuration)\$(TargetFramework)\</IntermediateOutputPath>
