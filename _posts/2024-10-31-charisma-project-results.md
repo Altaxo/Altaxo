@@ -40,5 +40,5 @@ Or if you do not want to program by yourself, then either use [Oranchada](https:
 
 Disclaimer:
 
-<img src="assets/img/EU+flag.png" alt="EU flag" style="width:64px; height:43px;">
+<img src="/assets/img/EU+flag.png" alt="EU flag" style="width:64px; height:43px;">
 The CHARISMA project has received  funding from the European Union’s Horizon 2020 Research and Innovation Program under Grant Agreement No. 952921.
