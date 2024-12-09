@@ -18,13 +18,13 @@ of Altaxo without requiring admin rights. This was possible because the .NET fra
 installed on all computers running Windows by default, and it was regularily updated.
 
 In contrast, the .NET Core series (currently .NET 9.0) is not installed on Windows by default,
-and worse, the installation requires admin rights. I see this as a big disadvantage. Fortunately,
-at least once it is installed, it receives monthly security updates. But every year, the you have
+and even worse, the installation requires admin rights. I see this as a big disadvantage. Fortunately,
+at least once it is installed, it receives monthly security updates. But every year, you have
 to install the next version of .NET again.
 
 So why change at all? The reason is that more and more libraries have ceased support for .NET framework.
 In Altaxo this is for instance the Vortex library, responsible for 3D-rendering, and the PureHDF library,
-responsible for reading NeXus formatted files. Furthermore, as mentioned above, the further development
+used for reading NeXus and CHADA formatted files. Furthermore, as mentioned above, the further development
 is done on the .NET series.
 
 **What are the plans then? Can we keep to the copy-paste installation without admin rights?**
@@ -32,7 +32,7 @@ is done on the .NET series.
 In January 2025, I will completely switch to .NET 9.0. The last version of Altaxo using the .NET framework
 will remain for some time available, to make sure that all installations can update properly.
 Then, we will have two distibutions of Altaxo: (i) a distribution that requires that .NET 9.0 is
-installed on the computer, and (ii) a standalone version, that comes with local files of
+installed on the computer, and (ii) a so-called self-contained version, that comes with local files of
 .NET 9.0. The advantages and disadvantages are:
 
 **Distribution that requires .NET 9.0 installed**
@@ -47,7 +47,7 @@ Disadvantages:
 - installation of .NET 9.0 requires admin rights
 - switching from .NET 9.0 to .NET 10.0 again requires installation with admin rights
 
-**Standalone distribution**
+**Self-contained distribution**
 
 Advantages:
 - Copy-Paste installation without admin rights is possible
@@ -60,7 +60,7 @@ Disadvantages:
 
 In the last weeks I have made a lot of effort in the automatic update system. It can now detect whether
 .NET 9.0 is installed on your computer or not. If it is installed, the version that requires .NET 9.0 is preferred.
-If .NET 9.0 is not detected, then the update is made with the standalone version of Altaxo.
+If .NET 9.0 is not detected, then the update is made with the self-contained version of Altaxo.
 Thus, I hope it will be a smooth transition from .NET framework 4.8 to .NET 9.0!
 
 

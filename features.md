@@ -1,4 +1,4 @@
----
+--
 layout: page
 title: Features of Altaxo
 permalink: /features.html
@@ -34,7 +34,7 @@ permalink: /features.html
 * Picture import (as brightness values)
 * Galactic® SPC file import (multiple files selectable)
 * Galactic® SPC file export wizard
-* Import of Origin .OPJ files (only worksheet data), although not toroughly tested.
+* Import of Origin .OPJ files (only worksheet data).
 * Export of graphs as WMF (Windows Metafile)
 * Export of partial least squares (PLS) calibration files (XML format)
 * The Altaxo document is now stored as ZIP-file. The worksheets and graphs are stored in XML file format inside of the ZIP-file. Support for versioning.
