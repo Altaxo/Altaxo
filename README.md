@@ -11,7 +11,7 @@ The [homepage](http://altaxo.github.io/Altaxo/) of the Altaxo project is hosted 
 The downloads are hosted on SourceForge. 
 There is a [folder for the latest stable version](https://sourceforge.net/projects/altaxo/files/Altaxo/Altaxo-Latest-Stable/) 
 and a [folder for the latest unstable version](https://sourceforge.net/projects/altaxo/files/Altaxo/Altaxo-Latest-Unstable/).
-Grab the file with the highest version number, either the `.msi` file or the `..Binaries..zip` file. 
+Grab the file with the highest version number, either the `.msi` file or the `AltaxoBinaries...zip` file. 
 The different versions in this folder require different versions of the .NET framework or the .NET Desktop runtime.
 If in doubt, have a look into the `VersionInfo.json` file in the download folder.
 See [here for download details](https://altaxo.github.io/Altaxo/download.html) 
@@ -22,9 +22,9 @@ and [for installation instructions](https://altaxo.sourceforge.io/AltaxoClassRef
 
 Clone the sources: `git clone https://github.com/Altaxo/Altaxo.git`
 
-Open the solution file in the Altaxo source folder with the **latest** version of Visual Studio 2019.
-Visual Studio 2019 Community edition is sufficient.
-The installation of Visual Studio 2019 should include the C# desktop development workload, the .NET core workload
+Open the solution file in the Altaxo source folder with the **latest** version of Visual Studio 2022.
+Visual Studio 2022 Community edition is sufficient.
+The installation of Visual Studio 2022 should include the C# desktop development workload, the .NET core workload
 and furthermore should include the T4 text templates feature. 
 
 
@@ -32,12 +32,8 @@ and furthermore should include the T4 text templates feature.
 
 Help by other developers is greatly appreciated! 
 
-**Attention developers**: has anyone made a **successfull connection** to a **COM local server running as 64 bit WPF** process? You? Then please mail me how to do it! I could only get a connection if WPF is running as 32 bit process.
-
 Help is especially welcome in the following areas: 
-- Mathematics: non-linear curve fitting with parameter boundary conditions
-- Mathematics: add a basic set of commonly used fitting functions
-- Mathematics: tidy up Altaxo's linear algebra library
+- Mathematics: tidy up Altaxo's linear algebra library, remove redundant functions
 - Mathematics: implement statistical functions, improve linear and non-linear curve fitting, and add special mathematical functions 
 - Help system: since the scripts can use all public classes and objects from the program, a good documentation of these classes is absolutely necessary 
 
