@@ -87,10 +87,13 @@ namespace Altaxo.Serialization.AutoUpdates
         using (var baseKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine,
           RegistryView.Registry32).OpenSubKey(@"SOFTWARE\WOW6432Node\dotnet\Setup\InstalledVersions\x64\sharedfx\Microsoft.WindowsDesktop.App\"))
         {
-          foreach (var subKeyName in baseKey.GetSubKeyNames())
+          if (baseKey is not null)
           {
-            if (subKeyName.StartsWith(searchString) && baseKey.GetValue(subKeyName) is int value && value != 0)
-              return true;
+            foreach (var subKeyName in baseKey.GetSubKeyNames())
+            {
+              if (subKeyName.StartsWith(searchString) && baseKey.GetValue(subKeyName) is int value && value != 0)
+                return true;
+            }
           }
         }
       }

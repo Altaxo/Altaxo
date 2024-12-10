@@ -26,7 +26,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading;
 
 namespace Altaxo.Serialization.AutoUpdates
@@ -338,32 +337,27 @@ namespace Altaxo.Serialization.AutoUpdates
     {
       var dictionary = new Dictionary<string, long>();
 
-      byte[]? buff = null;
-      using (var fso = new FileStream(Path.Combine(pathToInstallation, PackListRelativePath), FileMode.Open, FileAccess.Read, FileShare.Read))
-      {
-        buff = new byte[fso.Length];
-        fso.Read(buff, 0, buff.Length);
-        fso.Close();
-      }
+      byte[] buff = File.ReadAllBytes(Path.Combine(pathToInstallation, PackListRelativePath));
+
       // thus we ensured that PackList.txt is closed, so that it can be deleted now
-
-      var str = new StreamReader(new MemoryStream(buff));
-      string? line;
-      while ((line = str.ReadLine()) is not null)
+      using (var str = new StreamReader(new MemoryStream(buff)))
       {
-        line = line.Trim();
-        if (line.Length == 0)
-          continue;
-        // each line consist of the length of the file and the relative file name, separated by a tab
-        int idx = line.IndexOf('\t');
-        if (idx < 1)
-          throw new InvalidOperationException("Unrecognized format of line in PackList.txt");
-        long fileLength = long.Parse(line.Substring(0, idx));
-        string fileName = line.Substring(idx + 1);
+        string? line;
+        while ((line = str.ReadLine()) is not null)
+        {
+          line = line.Trim();
+          if (line.Length == 0)
+            continue;
+          // each line consist of the length of the file and the relative file name, separated by a tab
+          int idx = line.IndexOf('\t');
+          if (idx < 1)
+            throw new InvalidOperationException("Unrecognized format of line in PackList.txt");
+          long fileLength = long.Parse(line.Substring(0, idx));
+          string fileName = line.Substring(idx + 1);
 
-        dictionary[fileName] = fileLength;
+          dictionary[fileName] = fileLength;
+        }
       }
-
       return dictionary;
     }
 
