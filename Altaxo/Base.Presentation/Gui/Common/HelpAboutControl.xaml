@@ -82,7 +82,10 @@
 						<ListItem>
 							<Paragraph>Alex Regueiro and the WPF-Math contributors for providing the WpfMath library, which is used for rendering of LaTeX formulas an a Markdown document.</Paragraph>
 						</ListItem>
-						<ListItem>
+            <ListItem>
+              <Paragraph>Large parts of the code for spectral processing, peak finding and fitting as well as Raman x-axis calibration was developed during the runtime of the CHARISMA project, which has received funding from the European Union’s Horizon 2020 Research and Innovation Program under Grant Agreement No. 952921.</Paragraph>
+            </ListItem>
+            <ListItem>
 							<Paragraph>The authors of the projects that I have forgotten (sorry!), and the authors of the
   countless support tools that are neccessary to manage such a project (for instance
   Mercurial, WinMerge, NUnit, NDoc).</Paragraph>
