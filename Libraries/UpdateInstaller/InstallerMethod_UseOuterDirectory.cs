@@ -23,10 +23,7 @@
 #endregion Copyright
 
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading;
 
 namespace Altaxo.Serialization.AutoUpdates
@@ -172,8 +169,10 @@ namespace Altaxo.Serialization.AutoUpdates
           System.Diagnostics.Process.Start("explorer.exe", "\"" + _pathToInstallationBaseDirectory + "\"");
         };
 
+        bool isLockFileDeleted = false;
         bool isDirectoryRenamed = false;
         DateTime startWaitingTime = DateTime.UtcNow;
+
         do
         {
           try
@@ -182,7 +181,10 @@ namespace Altaxo.Serialization.AutoUpdates
             updateLockFile?.Dispose();
             updateLockFile = null;
             if (File.Exists(updateLockFileName))
+            {
               File.Delete(updateLockFileName);
+            }
+            isLockFileDeleted = true;
 
             Directory.Move(_pathToInstallation, pathToPreviousInstallation);
             isDirectoryRenamed = true;
@@ -191,6 +193,7 @@ namespace Altaxo.Serialization.AutoUpdates
           {
             if (ReportProgress(99,
               $"Renaming the old Altaxo installation directory \"{_pathToInstallation}\" fails currently.\r\n" +
+              (isLockFileDeleted ? "" : $"Because the lock file {updateLockFileName} could not be deleted.\r\n") +
               $"The exception message is: {ex.Message}\r\n\r\n" +
               $"Please make sure that no files, explorer windows or other file manager windows are open in this directory or its subdirectories!\r\n\r\n" +
               $"Waiting for the directory to be released... {Math.Round((DateTime.UtcNow - startWaitingTime).TotalSeconds)} s",
@@ -199,12 +202,8 @@ namespace Altaxo.Serialization.AutoUpdates
             {
               throw new ThreadInterruptedException("Installation cancelled by the user");
             }
-
-            System.Threading.Thread.Sleep(250);
           }
-          finally
-          {
-          }
+          System.Threading.Thread.Sleep(250);
         } while (!isDirectoryRenamed);
 
 

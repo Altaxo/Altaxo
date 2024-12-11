@@ -105,7 +105,8 @@ namespace Altaxo.Serialization.AutoUpdates
 
         var processInfo = new System.Diagnostics.ProcessStartInfo
         {
-          FileName = installerFullDestName
+          FileName = installerFullDestName,
+          WorkingDirectory = downloadFolder,
         };
         var stb = new StringBuilder();
         stb.AppendFormat(System.Globalization.CultureInfo.InvariantCulture,

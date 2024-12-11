@@ -23,8 +23,7 @@
 #endregion Copyright
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.IO;
 using System.Text;
 using System.Threading;
 
@@ -49,6 +48,9 @@ namespace Altaxo.Serialization.AutoUpdates
     [STAThread]
     private static void Main(string[] args)
     {
+      // IMPORTANT: when calling this program from Altaxo, the working directory should be set to the download directory or at least
+      // any other directory, but not any of Altaxo's directory. Otherwise the update would fail, because Altaxo's directory can not be renamed!
+
       try
       {
         // args[0]: the name of the event that must be signalled when the installer is ready to install
@@ -88,11 +90,10 @@ namespace Altaxo.Serialization.AutoUpdates
           return; // another instance of the updater is already running
         }
 
-        var entryAssembly = System.Reflection.Assembly.GetEntryAssembly() ?? throw new InvalidOperationException("Unable to get entry assembly");
         try
         {
           // try to set the current directory to this of the entry assembly in order to not block the removing of the Altaxo directories
-          System.Environment.CurrentDirectory = System.IO.Path.GetDirectoryName(entryAssembly.Location) ?? throw new InvalidOperationException($"Can not get directory name of file name {entryAssembly.Location}");
+          System.Environment.CurrentDirectory = System.AppContext.BaseDirectory;
         }
         catch (Exception)
         {
@@ -130,8 +131,10 @@ namespace Altaxo.Serialization.AutoUpdates
               // Start a new process with elevated privileges and wait for exit
               var proc = new System.Diagnostics.ProcessStartInfo
               {
-                FileName = entryAssembly.Location
+                FileName = Path.Combine(System.AppContext.BaseDirectory, "AltaxoUpdateDownloader.exe"),
+                WorkingDirectory = System.AppContext.BaseDirectory,
               };
+
               args[4] = "2";
               var stb = new StringBuilder();
               foreach (var s in args)
