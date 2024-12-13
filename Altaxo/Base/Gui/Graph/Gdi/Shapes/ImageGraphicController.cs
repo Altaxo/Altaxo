@@ -166,7 +166,7 @@ namespace Altaxo.Gui.Graph.Gdi.Shapes
         KeepAspect = new ItemsController<AspectRatioPreservingMode>(keepAspect, EhAspectRatioPreservingChanged);
 
 
-        var srcSize = _doc.GetImageSizePt();
+        SrcSize = _doc.GetImageSizePt();
 
 
         _docScale = new PointD2D(_doc.Size.X / SrcSize.X, _doc.Size.Y / SrcSize.Y);
