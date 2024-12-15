@@ -165,14 +165,6 @@ namespace Altaxo.Serialization.WITec
     {
       var name = ReadString(stream, buffer);
 
-/* Unmerged change from project 'AltaxoCore (net8.0)'
-Before:
-      stream.ForcedRead(buffer, 0, sizeof(Int32) + 2 * sizeof(Int64));
-      var typeOfNode = BitConverter.ToInt32(buffer, 0);
-After:
-      FileIOExtensions.ReadExactly(stream, buffer, 0, sizeof(Int32) + 2 * sizeof(Int64));
-      var typeOfNode = BitConverter.ToInt32(buffer, 0);
-*/
       stream.ReadExactly(buffer, 0, sizeof(Int32) + 2 * sizeof(Int64));
       var typeOfNode = BitConverter.ToInt32(buffer, 0);
       var startOfData = BitConverter.ToInt64(buffer, sizeof(Int32));
@@ -190,15 +182,6 @@ After:
             int numberOfPoints = (int)((endOfData - startOfData) / dataSize);
             if (numberOfPoints == 1)
             {
-
-/* Unmerged change from project 'AltaxoCore (net8.0)'
-Before:
-              stream.ForcedRead(buffer, 0, dataSize);
-              return (name, BitConverter.ToDouble(buffer, 0));
-After:
-              FileIOExtensions.ReadExactly(stream, buffer, 0, dataSize);
-              return (name, BitConverter.ToDouble(buffer, 0));
-*/
               stream.ReadExactly(buffer, 0, dataSize);
               return (name, BitConverter.ToDouble(buffer, 0));
             }
@@ -206,15 +189,6 @@ After:
             {
               var array = new double[numberOfPoints];
               var buf = new byte[numberOfPoints * dataSize];
-
-/* Unmerged change from project 'AltaxoCore (net8.0)'
-Before:
-              stream.ForcedRead(buf, 0, buf.Length);
-              Buffer.BlockCopy(buf, 0, array, 0, numberOfPoints * dataSize);
-After:
-              FileIOExtensions.ReadExactly(stream, buf, 0, buf.Length);
-              Buffer.BlockCopy(buf, 0, array, 0, numberOfPoints * dataSize);
-*/
               stream.ReadExactly(buf, 0, buf.Length);
               Buffer.BlockCopy(buf, 0, array, 0, numberOfPoints * dataSize);
               return (name, array);
@@ -227,15 +201,6 @@ After:
             int numberOfPoints = (int)((endOfData - startOfData) / dataSize);
             if (numberOfPoints == 1)
             {
-
-/* Unmerged change from project 'AltaxoCore (net8.0)'
-Before:
-              stream.ForcedRead(buffer, 0, dataSize);
-              return (name, BitConverter.ToSingle(buffer, 0));
-After:
-              FileIOExtensions.ReadExactly(stream, buffer, 0, dataSize);
-              return (name, BitConverter.ToSingle(buffer, 0));
-*/
               stream.ReadExactly(buffer, 0, dataSize);
               return (name, BitConverter.ToSingle(buffer, 0));
             }
@@ -243,15 +208,6 @@ After:
             {
               var array = new float[numberOfPoints];
               var buf = new byte[numberOfPoints * dataSize];
-
-/* Unmerged change from project 'AltaxoCore (net8.0)'
-Before:
-              stream.ForcedRead(buf, 0, buf.Length);
-              Buffer.BlockCopy(buf, 0, array, 0, numberOfPoints * dataSize);
-After:
-              FileIOExtensions.ReadExactly(stream, buf, 0, buf.Length);
-              Buffer.BlockCopy(buf, 0, array, 0, numberOfPoints * dataSize);
-*/
               stream.ReadExactly(buf, 0, buf.Length);
               Buffer.BlockCopy(buf, 0, array, 0, numberOfPoints * dataSize);
               return (name, array);
@@ -264,15 +220,6 @@ After:
             int numberOfPoints = (int)((endOfData - startOfData) / dataSize);
             if (numberOfPoints == 1)
             {
-
-/* Unmerged change from project 'AltaxoCore (net8.0)'
-Before:
-              stream.ForcedRead(buffer, 0, dataSize);
-              return (name, BitConverter.ToInt64(buffer, 0));
-After:
-              FileIOExtensions.ReadExactly(stream, buffer, 0, dataSize);
-              return (name, BitConverter.ToInt64(buffer, 0));
-*/
               stream.ReadExactly(buffer, 0, dataSize);
               return (name, BitConverter.ToInt64(buffer, 0));
             }
@@ -280,15 +227,6 @@ After:
             {
               var array = new Int64[numberOfPoints];
               var buf = new byte[numberOfPoints * dataSize];
-
-/* Unmerged change from project 'AltaxoCore (net8.0)'
-Before:
-              stream.ForcedRead(buf, 0, buf.Length);
-              Buffer.BlockCopy(buf, 0, array, 0, numberOfPoints * dataSize);
-After:
-              FileIOExtensions.ReadExactly(stream, buf, 0, buf.Length);
-              Buffer.BlockCopy(buf, 0, array, 0, numberOfPoints * dataSize);
-*/
               stream.ReadExactly(buf, 0, buf.Length);
               Buffer.BlockCopy(buf, 0, array, 0, numberOfPoints * dataSize);
               return (name, array);
@@ -301,15 +239,6 @@ After:
             int numberOfPoints = (int)((endOfData - startOfData) / dataSize);
             if (numberOfPoints == 1)
             {
-
-/* Unmerged change from project 'AltaxoCore (net8.0)'
-Before:
-              stream.ForcedRead(buffer, 0, dataSize);
-              return (name, BitConverter.ToInt32(buffer, 0));
-After:
-              FileIOExtensions.ReadExactly(stream, buffer, 0, dataSize);
-              return (name, BitConverter.ToInt32(buffer, 0));
-*/
               stream.ReadExactly(buffer, 0, dataSize);
               return (name, BitConverter.ToInt32(buffer, 0));
             }
@@ -317,15 +246,6 @@ After:
             {
               var array = new Int32[numberOfPoints];
               var buf = new byte[numberOfPoints * dataSize];
-
-/* Unmerged change from project 'AltaxoCore (net8.0)'
-Before:
-              stream.ForcedRead(buf, 0, buf.Length);
-              Buffer.BlockCopy(buf, 0, array, 0, numberOfPoints * dataSize);
-After:
-              FileIOExtensions.ReadExactly(stream, buf, 0, buf.Length);
-              Buffer.BlockCopy(buf, 0, array, 0, numberOfPoints * dataSize);
-*/
               stream.ReadExactly(buf, 0, buf.Length);
               Buffer.BlockCopy(buf, 0, array, 0, numberOfPoints * dataSize);
               return (name, array);
@@ -335,13 +255,6 @@ After:
           {
             stream.Seek(startOfData, SeekOrigin.Begin);
             var len = (int)(endOfData - startOfData);
-
-/* Unmerged change from project 'AltaxoCore (net8.0)'
-Before:
-            stream.ForcedRead(buffer, 0, len);
-After:
-            FileIOExtensions.ReadExactly(stream, buffer, 0, len);
-*/
             stream.ReadExactly(buffer, 0, len);
 
             if (len == sizeof(UInt16))
@@ -378,15 +291,6 @@ After:
             int numberOfPoints = (int)((endOfData - startOfData) / dataSize);
             if (numberOfPoints == 1)
             {
-
-/* Unmerged change from project 'AltaxoCore (net8.0)'
-Before:
-              stream.ForcedRead(buffer, 0, dataSize);
-              return (name, buffer[0]);
-After:
-              FileIOExtensions.ReadExactly(stream, buffer, 0, dataSize);
-              return (name, buffer[0]);
-*/
               stream.ReadExactly(buffer, 0, dataSize);
               return (name, buffer[0]);
             }
@@ -394,15 +298,6 @@ After:
             {
               var array = new byte[numberOfPoints];
               var buf = new byte[numberOfPoints * dataSize];
-
-/* Unmerged change from project 'AltaxoCore (net8.0)'
-Before:
-              stream.ForcedRead(buf, 0, buf.Length);
-              Buffer.BlockCopy(buf, 0, array, 0, numberOfPoints * dataSize);
-After:
-              FileIOExtensions.ReadExactly(stream, buf, 0, buf.Length);
-              Buffer.BlockCopy(buf, 0, array, 0, numberOfPoints * dataSize);
-*/
               stream.ReadExactly(buf, 0, buf.Length);
               Buffer.BlockCopy(buf, 0, array, 0, numberOfPoints * dataSize);
               return (name, array);
@@ -415,15 +310,6 @@ After:
             int numberOfPoints = (int)((endOfData - startOfData) / dataSize);
             if (numberOfPoints == 1)
             {
-
-/* Unmerged change from project 'AltaxoCore (net8.0)'
-Before:
-              stream.ForcedRead(buffer, 0, dataSize);
-              return (name, buffer[0] != 0);
-After:
-              FileIOExtensions.ReadExactly(stream, buffer, 0, dataSize);
-              return (name, buffer[0] != 0);
-*/
               stream.ReadExactly(buffer, 0, dataSize);
               return (name, buffer[0] != 0);
             }
@@ -431,15 +317,6 @@ After:
             {
               var array = new bool[numberOfPoints];
               var buf = new byte[numberOfPoints * dataSize];
-
-/* Unmerged change from project 'AltaxoCore (net8.0)'
-Before:
-              stream.ForcedRead(buf, 0, buf.Length);
-              for (int i = 0; i < array.Length; ++i)
-After:
-              FileIOExtensions.ReadExactly(stream, buf, 0, buf.Length);
-              for (int i = 0; i < array.Length; ++i)
-*/
               stream.ReadExactly(buf, 0, buf.Length);
               for (int i = 0; i < array.Length; ++i)
               {
@@ -455,19 +332,6 @@ After:
             var list = new List<string>();
             while (stream.Position < endOfData)
             {
-
-/* Unmerged change from project 'AltaxoCore (net8.0)'
-Before:
-              stream.ForcedRead(buffer, 0, 4);
-              int stringLength = BitConverter.ToInt32(buffer, 0);
-              stream.ForcedRead(buffer, 0, stringLength);
-              var sstring = TextEncoding.GetString(buffer, 0, stringLength);
-After:
-              FileIOExtensions.ReadExactly(stream, buffer, 0, 4);
-              int stringLength = BitConverter.ToInt32(buffer, 0);
-              FileIOExtensions.ReadExactly(stream, buffer, 0, stringLength);
-              var sstring = TextEncoding.GetString(buffer, 0, stringLength);
-*/
               stream.ReadExactly(buffer, 0, 4);
               int stringLength = BitConverter.ToInt32(buffer, 0);
               stream.ReadExactly(buffer, 0, stringLength);
@@ -497,26 +361,10 @@ After:
     /// <returns></returns>
     public static string ReadString(Stream stream, byte[] buffer)
     {
-
-/* Unmerged change from project 'AltaxoCore (net8.0)'
-Before:
-      stream.ForcedRead(buffer, 0, sizeof(Int32));
-      int stringLength = BitConverter.ToInt32(buffer, 0);
-      stream.ForcedRead(buffer, 0, stringLength);
-      return TextEncoding.GetString(buffer, 0, stringLength);
-After:
-      FileIOExtensions.ReadExactly(stream, buffer, 0, sizeof(Int32));
-      int stringLength = BitConverter.ToInt32(buffer, 0);
-      FileIOExtensions.ReadExactly(stream, buffer, 0, stringLength);
-      return TextEncoding.GetString(buffer, 0, stringLength);
-*/
       stream.ReadExactly(buffer, 0, sizeof(Int32));
       int stringLength = BitConverter.ToInt32(buffer, 0);
       stream.ReadExactly(buffer, 0, stringLength);
       return TextEncoding.GetString(buffer, 0, stringLength);
     }
-
-
-
   }
 }

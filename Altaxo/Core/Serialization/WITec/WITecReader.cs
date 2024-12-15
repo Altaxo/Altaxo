@@ -60,15 +60,6 @@ namespace Altaxo.Serialization.WITec
     public WITecReader(Stream stream)
     {
       var buffer = new byte[8];
-
-/* Unmerged change from project 'AltaxoCore (net8.0)'
-Before:
-      stream.ForcedRead(buffer, 0, 8); // Skip the first 8 bytes
-      MagicString = System.Text.Encoding.ASCII.GetString(buffer);
-After:
-      FileIOExtensions.ReadExactly(stream, buffer, 0, 8); // Skip the first 8 bytes
-      MagicString = System.Text.Encoding.ASCII.GetString(buffer);
-*/
       stream.ReadExactly(buffer, 0, 8); // Skip the first 8 bytes
       MagicString = System.Text.Encoding.ASCII.GetString(buffer);
       var (name, node) = WITecTreeNode.Read(stream);
