@@ -11,7 +11,15 @@ Previous section: <link xlink:href="A509DB28A236673F8A27EDCA3A89BEE7">Importing 
 <markup><hr/></markup>
 
 <para>
-The CHADA file format is based on <codeInline>.HDF5</codeInline>. The data sets that are located in the root directory of the <codeInline>.HDF5</codeInline> file are imported into Altaxo. The file extension of the Chada files is <codeInline>.cha</codeInline>.
+The CHADA file format is based on <codeInline>.HDF5</codeInline>. It consists of one or multiple HDF5 data sets, located in the root folder of the .HDF5 file. All data sets that are located in the root directory of the <codeInline>.HDF5</codeInline> file are imported into Altaxo. The file extension of the Chada files is <codeInline>.cha</codeInline>.
+</para>
+
+<para>
+References:
+</para>
+
+<para>
+[1] <externalLink><linkText>HDF5 file format</linkText><linkUri>https://www.hdfgroup.org/solutions/hdf5/</linkUri></externalLink>
 </para>
 <markup><hr/></markup>
 <para>

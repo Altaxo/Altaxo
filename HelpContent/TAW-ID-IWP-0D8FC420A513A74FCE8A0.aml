@@ -11,7 +11,23 @@ Previous section: <link xlink:href="1F1AAFADC4EF3F7BD0D8BE6B023E5EC3">Importing 
 <markup><hr/></markup>
 
 <para>
-Altaxo supports the import of WiTec project files. WiTec project files are very complex and can contain multidimensional spectra and images. Only the spectra import is supported for now. WiTec project files usually have the extension `.wip'.
+Altaxo supports the import of WiTec project files. WiTec project files are very complex and can contain multidimensional spectra and images. Only the spectra import is supported for now. WiTec project files usually have the extension `.wip'. The format is very complex, and can contain multiple spectra and images.
+</para>
+
+<para>
+[1] J. T. Holmi, H. Lipsanen, &quot;WITio: A MATLAB data evaluation toolbox to script broader insights into big data from WITec microscopes&quot;, SoftwareX 18 (2022), 101009, doi: <externalLink><linkText>https://doi.org/10.1016/j.softx.2022.101009</linkText><linkUri>https://doi.org/10.1016/j.softx.2022.101009</linkUri></externalLink>
+</para>
+
+<para>
+[2] <externalLink><linkText>Wit tag format description</linkText><linkUri>https://gitlab.com/jtholmi/wit_io/-/blob/master/+WITio/+doc/README%20on%20WIT-tag%20format.txt</linkUri></externalLink>
+</para>
+
+<para>
+[3] <externalLink><linkText>Mathlab implementation</linkText><linkUri>https://gitlab.com/jtholmi/wit_io</linkUri></externalLink>
+</para>
+
+<para>
+[4] <externalLink><linkText>Phyton implementation</linkText><linkUri>https://git.photonicdata.science/py-packages/photonicdata-files-wip</linkUri></externalLink>
 </para>
 <markup><hr/></markup>
 <para>

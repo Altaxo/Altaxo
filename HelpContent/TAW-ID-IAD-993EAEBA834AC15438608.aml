@@ -171,13 +171,110 @@ time span relative to the start of measurement.
 </para>
 </content>
 </section>
+
+<section address="BE1A1D6CD9DDB5CAA2B855A41908E1FA">
+<title>Importing ASCII data from multiple files into separate worksheets
+</title>
+<content>
+
+<para>
+If you want to import Ascii data from multiple files into separate
+worksheets, the most preferable way is to start when your current
+document is either a graph, or there is no current document at all.
+</para>
+
+<para>
+Background: if your current document is a worksheet, the first Ascii
+file is imported into this worksheet, and the other files are imported
+into newly created worksheets. The newly created worksheets get the name
+of the corresponding Ascii file, but the first worksheet is not renamed.
+</para>
+
+<para>
+Thus, either select a graph, or close all documents (main menu:
+Window→Close all documents) before importing into separate
+worksheets.
+</para>
+
+<para>
+Choose File→Import→Ascii (or File→Import→Ascii with
+Options), and select multiple Ascii files in the file dialog.
+</para>
+
+<para>
+If you press OK, the selected files will be sorted by their file name,
+and then imported into newly created worksheets. The new worksheets are
+located in the root folder of the project.
+</para>
+
+<para>
+The figure below shows the result after importing the three spectrum
+files from the example of the previous chapter into separate worksheets.
+</para>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#3D7DD208F7ACE3197B8A626FD9BCF93F"><img src="../media/3D7DD208F7ACE3197B8A626FD9BCF93F.png" width="567"></img></a></markup>
+</para>
+
+<para>
+Please note that the new worksheets get the names of their corresponding
+Ascii files (see Project explorer at the right side). Furthermore, the
+“Notes” tool window of each worksheet (at the bottom) contains a note
+with information about the original file name and the date/time of the
+import. In contrast to the example in chapter “Importing ASCII data from
+multiple files into a single worksheet”, each worksheet now contains a
+separate x-column with the wavelength values.
+</para>
+</content>
+</section>
+
+<section address="335FB5B392C707A99569331DE69711F6">
+<title>Importing multiple ASCII files into a single worksheet vertically
+</title>
+<content>
+
+<para>
+This command is useful if you have a time series of data in one file,
+which is continued in another file and so on. You can then import all
+data into a single worksheet. The data from the second file is appended
+to the data from the first file. This means that the data from the
+second file is imported starting from the next free data row of the
+worksheet.
+</para>
+
+<para>
+Create a new (preferably empty) worksheet or choose an existing one.
+Then use File→Import→Import ASCII vertically from the menu.
+Select multiple Ascii files in the file dialog. After pressing OK, the
+files are sorted by their file name and imported into the current
+worksheet.
+</para>
+
+<para>
+I have to admit that this function makes no sense for my example (see
+previous chapters) with the three spectra, but the next figure shows the
+outcome after I imported the three spectra with this command.
+</para>
+
+<para>
+<mediaLinkInline><image xlink:href="E21C36582AE1B83887AD842DCE2B70A5"></image></mediaLinkInline>
+</para>
+
+<para>
+As you can see, data row [1310] is the end of the first spectrum. The
+first row of the next spectrum is imported into data row [1311]. Note
+that the file name of the imported file is stored in column ‘FilePath’
+at the beginning of each data chunk.
+</para>
+</content>
+</section>
 <markup><hr/></markup>
 <section>
 
 <content>
 
 <para>
-Next section: <link xlink:href="BBABBC927250DB6DD339D7FF83A7D699">Importing ASCII data from multiple files into separate worksheets</link></para>
+Next section: <link xlink:href="4D35A597A85B3E34D4E106327C613F18">Importing Bruker Opus files</link></para>
 </content>
 </section>
 </developerConceptualDocument>

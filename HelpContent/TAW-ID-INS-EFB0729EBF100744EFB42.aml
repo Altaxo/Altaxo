@@ -11,7 +11,15 @@ Previous section: <link xlink:href="674B2F01BF217EF1B2BFFCDC1D77C21D">Importing 
 <markup><hr/></markup>
 
 <para>
-Altaxo supports the import of Nicolet spectral files with the extension <codeInline>.SPA</codeInline>.
+Altaxo supports the import of Nicolet spectral files with the extension <codeInline>.SPA</codeInline>. This is a binary file format, supporting one spectrum per file.
+</para>
+
+<para>
+References:
+</para>
+
+<para>
+[1] <externalLink><linkText>C++ program which converts .spa files to text</linkText><linkUri>https://github.com/aitap/spa2txt</linkUri></externalLink>
 </para>
 <markup><hr/></markup>
 <para>

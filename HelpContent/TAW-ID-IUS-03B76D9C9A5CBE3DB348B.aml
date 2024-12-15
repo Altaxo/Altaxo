@@ -1,0 +1,119 @@
+﻿
+<topic id="03B76D9C9A5CBE3DB348B3C817E52BFC" revisionNumber="1">
+
+<developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+<introduction>
+
+<para>
+Previous section: <link xlink:href="9AEBB231B81FBCD7DCADD4C077D9F950">Importing images as data</link></para>
+<autoOutline />
+<markup><hr/></markup>
+
+<para>
+By choosing <codeInline>File</codeInline>→<codeInline>Import</codeInline>→<codeInline>Using file import script</codeInline> you can write your own script to import files.
+The advantage compared to a worksheet script is that the TableDataSource still remembers where the data come from, and that the script will not change if the file name(s) change.
+</para>
+
+<para>
+At first, create a new, empty worksheet to import the data into, or select an existing one. Then, use the menu item <codeInline>File</codeInline>→<codeInline>Import</codeInline>→<codeInline>Using file import script</codeInline> to open the import script dialog.
+</para>
+
+<para>
+<mediaLinkInline><image xlink:href="05937921672D622B9FAA9726F8020D73"></image></mediaLinkInline>  
+</para>
+
+<para>
+Fig.1: Import script dialog after you open it (without expanding the script header)
+</para>
+
+<para>
+By clicking on the '+' sign in line 1 of the script, you can expand the script header to see which variables are available in your script.
+</para>
+
+<para>
+<mediaLinkInline><image xlink:href="1F6AEA6B69285521251227CC8FD4DAC0"></image></mediaLinkInline>  
+</para>
+
+<para>
+Fig.2: By clicking on the '+' sign in line 1 of <link xlink:href="03B76D9C9A5CBE3DB348B3C817E52BFC#Fig_Tables_ImportData_ImportScript_ScriptWithUnexpandedHeader">Fig.1</link>, you can expand the script header to see the lines that define some helper functions and the Execute function.
+</para>
+
+<para>
+<link xlink:href="03B76D9C9A5CBE3DB348B3C817E52BFC#Fig_Tables_ImportData_ImportScript_ScriptWithExpandedHeader">Fig.2</link> requires some explanation:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+In line 15, the function <codeInline>CanAcceptMultipleFiles</codeInline> define whether your script can process multiple files. The default return value, as you can see, is <codeInline>false</codeInline>. Set it to <codeInline>true</codeInline> if your script can process multiple files.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+In line 18, you can define your default extension. For instance, if the extension of your file is .abc, then replace <codeInline>&quot;*.*&quot;, &quot;All files(*.*)&quot;</codeInline> by <codeInline>&quot;*.abc&quot;, &quot;My ABC files (*.abc)&quot;</codeInline>.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+Line 20 defines the Execute function that is used to import your files. The arguments of this function are:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+<codeInline>mytable</codeInline>: The table to import the data in.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<codeInline>fileNames</codeInline>: A list of file names (absolute file names including the full path) of the files you want to import. If <codeInline>CanAcceptMultipleFiles</codeInline> is set to <codeInline>false</codeInline> (in line 15)), then the list contains only one file name.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<codeInline>reporter</codeInline>: Can be used to report the progress of the import, and to cancel the operation if the user presses the <codeInline>Cancel</codeInline> button.
+</para>
+</listItem>
+</list>
+</listItem>
+
+<listItem>
+
+<para>
+Line 25 and 26: Before importing the data, the old contents of the data table is removed.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+Line 27: Convenience function when importing only one file: The file name of the first file in the list of file names is put into variable <codeInline>fileName</codeInline>.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+Line 31-34: This is some default basis to build your own script on: A file stream is opened with the provided file name. After the comment in Line 33 you should do something with the stream. Typically, you will read data from the <codeInline>stream</codeInline> and then put the data into the table <codeInline>mytable</codeInline>.
+</para>
+</listItem>
+</list>
+<markup><hr/></markup>
+<para>
+Next section: <link xlink:href="B09D5D470B8DCF524A698117E51D308B">Changing the structure of a worksheet</link></para>
+</introduction>
+</developerConceptualDocument>
+</topic>

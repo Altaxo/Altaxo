@@ -53,8 +53,6 @@
 <Topic id="0D1CC7EABBD1395A9C7E70C02EE259E7" visible="True" title="Importing data">
 <Topic id="993EAEBA834AC1543860805ADEA169D2" visible="True" title="Importing ASCII data">
 </Topic>
-<Topic id="BBABBC927250DB6DD339D7FF83A7D699" visible="True" title="Importing ASCII data from multiple files into separate worksheets">
-</Topic>
 <Topic id="4D35A597A85B3E34D4E106327C613F18" visible="True" title="Importing Bruker Opus files">
 </Topic>
 <Topic id="A5BA93CA67BDC644250D380397EB154C" visible="True" title="Importing Excel .xlsx files">
@@ -79,7 +77,7 @@
 </Topic>
 <Topic id="9AEBB231B81FBCD7DCADD4C077D9F950" visible="True" title="Importing images as data">
 </Topic>
-<Topic id="7FA33403602C7A9E2DB542C8F2C9D8DD" visible="True" title="Importing using a self-made import script">
+<Topic id="03B76D9C9A5CBE3DB348B3C817E52BFC" visible="True" title="Importing using a self-written import script">
 </Topic>
 </Topic>
 <Topic id="B09D5D470B8DCF524A698117E51D308B" visible="True" title="Changing the structure of a worksheet">

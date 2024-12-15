@@ -6,12 +6,12 @@
 <introduction>
 
 <para>
-Previous section: <link xlink:href="BBABBC927250DB6DD339D7FF83A7D699">Importing ASCII data from multiple files into separate worksheets</link></para>
+Previous section: <link xlink:href="993EAEBA834AC1543860805ADEA169D2">Importing ASCII data</link></para>
 <autoOutline />
 <markup><hr/></markup>
 
 <para>
-Bruker Opus files usually have the extension <codeInline>.0</codeInline>. This is a binary file format which is used for spectra measured with Bruker instruments.
+Bruker Opus files usually have the extension <codeInline>.0</codeInline>. This is a binary file format which is used for spectra measured with Bruker spectrometers. The file contains one spectrum.
 </para>
 <markup><hr/></markup>
 <para>

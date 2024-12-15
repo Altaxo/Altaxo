@@ -17,6 +17,14 @@ The NeXus file format is a file format driven by the  <externalLink><linkText>Ne
 <para>
 Since typically a NeXus file can contain multiple tables, it is recommended to import these files be the <codeInline>File</codeInline>→<codeInline>Import</codeInline> menu, so that you can change the options how those multiple tables are handled.
 </para>
+
+<para>
+References:
+</para>
+
+<para>
+[1] <externalLink><linkText>https://www.nexusformat.org/</linkText><linkUri>https://www.nexusformat.org/</linkUri></externalLink>
+</para>
 <markup><hr/></markup>
 <para>
 Next section: <link xlink:href="EFB0729EBF100744EFB427B47ECA230A">Importing Nicolet spectral files</link></para>

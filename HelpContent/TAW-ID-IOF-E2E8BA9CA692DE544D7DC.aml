@@ -11,7 +11,20 @@ Previous section: <link xlink:href="EFB0729EBF100744EFB427B47ECA230A">Importing 
 <markup><hr/></markup>
 
 <para>
-Altaxo supports the import of all data tables (spreadsheets and matrices) from Origin project files. Only the old format with the extension <codeInline>.OPJ</codeInline> is supported. Files with the new format <codeInline>.OPJU</codeInline> can not be read. If you know about how the new format is structured, let me know by opening a Github issue.
+Altaxo supports the import of all data tables (spreadsheets and matrices) from Origin project files. Only the old format with the extension <codeInline>.OPJ</codeInline> is supported. Files with the new format <codeInline>.OPJU</codeInline> can not be read.
+If you by chance know about how the new .OPJU format is structured, let me know by <externalLink><linkText>opening a Github issue</linkText><linkUri>https://github.com/Altaxo/Altaxo/issues</linkUri></externalLink>.
+</para>
+
+<para>
+References:
+</para>
+
+<para>
+[1] <externalLink><linkText>CSharp implementation of liborigin</linkText><linkUri>https://github.com/Altaxo/LibOriginCSharp</linkUri></externalLink>
+</para>
+
+<para>
+[2] <externalLink><linkText>Original C++ code of liborigin</linkText><linkUri>https://github.com/Makhber/liborigin</linkUri></externalLink>
 </para>
 <markup><hr/></markup>
 <para>

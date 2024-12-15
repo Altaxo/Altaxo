@@ -26,6 +26,13 @@ Ascii (.txt; .dat; .csv)
 <listItem>
 
 <para>
+Bruker Opus (.0)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
 Galactic SPC (.spc)
 </para>
 </listItem>
@@ -40,7 +47,42 @@ Jcamp-DX (.dx; .jdx)
 <listItem>
 
 <para>
+NeXus (.nx)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+Chada (.cha)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+Nicolet (.spa)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+Princeton Instruments (.spe)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
 Renishaw (.wdf)
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+WiTec (.wip)
 </para>
 </listItem>
 </list>
@@ -50,29 +92,8 @@ Some of these formats, e.g. Galactic SPC files, can contain more than one spectr
 </para>
 
 <para>
-In order to import one or multiple spectra, first create an empty worksheet. Either use the menu <codeInline>File</codeInline> → <codeInline>New</codeInline> → <codeInline>Worksheet</codeInline>, or use the toolbar button <mediaLinkInline><image xlink:href="Icons.16x16"></image></mediaLinkInline>.
+The easiest way to import a new spectrum is to use the import toolbar button <mediaLinkInline><image xlink:href="Icons.16x16"></image></mediaLinkInline> for import. If multiple spectra needs to be imported into one worksheet (for instance for chemometric analysis), use the menu item appropriate for your format from the <codeInline>File</codeInline> → <codeInline>Import</codeInline>  menu. Select all files that should be imported. Further information can be found in the <link xlink:href="">section &quot;Importing data&quot;</link>.
 </para>
-
-<para>
-The next action depends on the file format to import:
-</para>
-
-<list class="bullet">
-
-<listItem>
-
-<para>
-For Ascii files, you can use the toolbar button <mediaLinkInline><image xlink:href="Icons.16x16"></image></mediaLinkInline> for import, or the menu <codeInline>File</codeInline> → <codeInline>Import</codeInline> → <codeInline>Ascii</codeInline>. If multiple spectra needs to be imported into one worksheet (for instance for chemometric analysis), use <codeInline>File</codeInline> → <codeInline>Import</codeInline> → <codeInline>Ascii (all into a single worksheet)</codeInline>. Select all files that should be imported. Further information can be found in the section <link xlink:href="993EAEBA834AC1543860805ADEA169D2#Section_Tables_ImportingAscii">&quot;Importing ASCII data&quot;</link>.
-</para>
-</listItem>
-
-<listItem>
-
-<para>
-For all other files, use the menus <codeInline>File</codeInline> → <codeInline>Import</codeInline> → <codeInline>Galactic SPC files</codeInline>, <codeInline>File</codeInline> → <codeInline>Import</codeInline> → <codeInline>JCamp-DX files</codeInline>, or <codeInline>File</codeInline> → <codeInline>Import</codeInline> → <codeInline>Renishaw .wdf files</codeInline>. Here too, you can select multiple files.
-</para>
-</listItem>
-</list>
 
 <para>
 <mediaLinkInline><image xlink:href="A09570BF5D0F36251993D8D16D7681AE"></image></mediaLinkInline>

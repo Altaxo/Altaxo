@@ -11,7 +11,15 @@ Previous section: <link xlink:href="EC991C249E834EA00CCC2CEE70302673">Importing 
 <markup><hr/></markup>
 
 <para>
-JcampDX files are files containing spectral data. They usually have the extension <codeInline>.dx</codeInline> or <codeInline>.jdx</codeInline>.
+JCAMP-DX format was developed by the Joint Committee on Atomic and Molecular Physical data, originally for Near Infrared (NIR) spectra, but the format can be used for other spectra as well. It is an Ascii based format with special formatting. The files usually have the extension <codeInline>.dx</codeInline> or <codeInline>.jdx</codeInline>. Typically one file contains one spectrum, but multiple spectra per file are supported as well, simply by appending the other spectra.
+</para>
+
+<para>
+Reference:
+</para>
+
+<para>
+[1] R. S. McDonald, and P. A. Wilks, Jr., &quot;JCAMP-DX: A Standard Form for Exchange of Infrared Spectra in Computer Readable Form&quot;, Applied Spectroscopy, Vol. 42, No.1, (1988), pp. 151-162, <externalLink><linkText>https://doi.org/10.1366/0003702884428734</linkText><linkUri>https://doi.org/10.1366/0003702884428734</linkUri></externalLink>
 </para>
 <markup><hr/></markup>
 <para>

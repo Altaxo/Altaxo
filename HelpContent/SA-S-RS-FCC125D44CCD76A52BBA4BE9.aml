@@ -337,13 +337,13 @@ To apply an x-axis calibration to another spectrum, only the columns <codeInline
 </section>
 
 <section address="Section_RamanSpectroscopy_IntensityCalibration">
-<title>Intensity calibration of a Raman device with a known light source
+<title>Relative intensity calibration of a Raman device with either a fluorescence standard or a calibrated light source
 </title>
 <content>
 
 <sections>
 
-<section address="04AE4E635A50D72F6F6B3AA071D3B1D8">
+<section address="94A2BA004A8E327EAC531FB2217E1708">
 <title>Objective
 </title>
 <content>
@@ -353,10 +353,10 @@ The spectrometer of a Raman device has a sensitivity which is dependent on the w
 </para>
 
 <para>
-The <legacyBold>objective</legacyBold> of the intensity calibration is to find a wavelength dependent correction function, which corrects the different sensitivities of the spectrometers. Although no absolute calibration is possible, this will make Raman spectra from different devices better comparable, because the relative heights of the peaks will be the same.
+The <legacyBold>objective</legacyBold> of the relative intensity calibration is to find a wavelength dependent correction function, which corrects the different sensitivities of the spectrometers. Although no absolute calibration is possible, this will make Raman spectra from different devices better comparable, because the relative heights of the peaks will be the same.
 </para>
 
-<section address="BC6B39C0B2DBB3916337D9BFF09F2A96">
+<section address="0C8225EA4C5C9A72FD9357DA766A657D">
 <title>What is needed
 </title>
 <content>
@@ -370,19 +370,19 @@ For intensity calibration, a light source with a known spectrum is necessary:
 <listItem>
 
 <para>
-Either, a  fluorescent glass is exited with the Raman laser, which will then emit light with a broad spectral distribution. Usually, for each laser wavelength, another glass is used. Such standards are available for instance from NIST, and they are accompanied by a description of the wavelength dependent intensity.
+Either, a  fluorescent glass is exited with the Raman laser, which will then emit light with a broad spectral distribution. Usually, for each laser wavelength, another glass is used. Such standards are available for instance from NIST, and they are accompanied by a calibration certificate with the description of the wavelength dependent intensity, expressed as a function.
 </para>
 </listItem>
 
 <listItem>
 
 <para>
-Or, a known light source, for instance an LED with a known (preferable broad) spectrum, is used. The spectrum of the LED must cover the range of the spectrometer. Those light sources come with a certificate, in which the wavelength dependent intensity is described as a function.
+Or, a calibrated light source, for instance an LED with a known (preferably broad) spectrum is used. The spectrum of the LED must cover the range of the spectrometer. Those light sources also come with a certificate, in which the wavelength dependent intensity is described as a function.
 </para>
 </listItem>
 </list>
 
-<section address="80D4677DDB39CCB3E59C85E5D84F7DBF">
+<section address="A5C598B2023B6D2EC799D3478CBAFC78">
 <title>What is measured
 </title>
 <content>
@@ -392,18 +392,18 @@ When using the fluorescent glass, follow the instructions accompanying this stan
 </para>
 
 <para>
-When using the known light source, the laser must not be switched on. Take a spectrum of the light source which is neither overexposed nor underexposed. Multiple accumulations can enhance the signal to noise ratio.
+When using the LED light source, the laser should be switched off. Take a spectrum of the light source which is neither overexposed nor underexposed. Multiple accumulations can enhance the signal to noise ratio.
 </para>
 
 <quote>
 
 <para>
 <legacyBold>Important</legacyBold>:<lineBreak/>
-For both methods it is absolutely necessary to acquire a dark spectrum (a spectrum with laser and all other light sources off). On some instruments, a dark spectrum is acquired automatically, and is then part of the exported spectrum. Ideally, the exported spectrum contains already one column, in which the dark spectrum is subtracted from the signal spectrum.
+For both methods it is absolutely necessary to acquire a dark spectrum (a spectrum with the laser / calibration light source  off). On some instruments, a dark spectrum is acquired automatically, and is then part of the exported spectrum. Ideally, the exported spectrum already contains one column, in which the dark spectrum is subtracted from the signal spectrum.
 </para>
 </quote>
 
-<section address="380374604E5FFD9E9CE0D46DAFDBE1F7">
+<section address="BE386098577524873259F6355D6E771B">
 <title>Data evaluation
 </title>
 <content>
@@ -421,32 +421,120 @@ If the dark spectrum was exported to a separate file, then import that spectrum,
 </para>
 
 <para>
-<legacyBold>Intensity calibration</legacyBold>
+<legacyBold>Relative intensity calibration</legacyBold>
 </para>
 
 <para>
-Go to the worksheet which contains the spectrum. If the worksheet contains a column in which the dark spectrum is already subtracted, then select this column. Otherwise, select the column with the y-values of the spectrum, and use the menu <codeInline>Analysis → Spectroscopy → Intensity calibration</codeInline>. A dialog opens.
+Go to the worksheet which contains the spectrum. If the worksheet contains a column in which the dark spectrum is already subtracted, then select this column. Otherwise, select the column with the y-values of the spectrum, and use the menu <codeInline>Analysis → Spectroscopy → Intensity calibration</codeInline>. A dialog opens, see <link xlink:href="FCC125D44CCD76A52BBA4BE955537F85#RamanSpectroscopy_IntensityCalibration_CalibrationDialog">Fig.1</link>.
 </para>
 
 <para>
-Its upper part contain the spectral preprocessing pipeline. If the dark signal is already subtracted, no preprocessing should be used here. If it is not already subtracted, then use the tab 'Dark', choose <codeInline>SpectrumSubtraction</codeInline>, and provide the table which contains the dark spectrum and the x and y-column names of that spectrum.
+Its upper part contain the spectral preprocessing pipeline. If the dark signal is not already subtracted, then use the tab 'Dark', choose <codeInline>SpectrumSubtraction</codeInline>, and provide the table which contains the dark spectrum and the x and y-column names of that spectrum. If you have already an x-calibration table, then you should apply the x-calibration in the preprocessing, as can be seen in Fig.1.
 </para>
 
 <para>
-In the lower part of the dialog, a function must be entered, which describes the intensity in dependence of the wavelength. Usually, a Gaussian distribution (with one term, with no baseline or a constant baseline is used). Make sure that the function you select is identical to the function that come with the certificate of the light source. The selected function is described in the right part of the dialog. Enter the parameters given on the certificate. Make also sure that the x-axis of your spectrum matches the x-axis unit given in the certificate. Example: if your x-axis is Raman shift, but on the certificate the x-axis unit is wavelength, then you can not perform intensity calibration.
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#07DA0606F0EFA3681389AE3EE69A1B21"><img src="../media/07DA0606F0EFA3681389AE3EE69A1B21.png" width="567"></img></a></markup>  
 </para>
 
 <para>
-Press OK to perform the intensity calibration. A new table is created, which contains the correction function.
+Fig.1: The relative intensity calibration dialog.
 </para>
 
-<section address="6439392E833B0642F55500E4ECEB153D">
-<title>Perform an intensity correction
+<para>
+In the lower part of the <link xlink:href="FCC125D44CCD76A52BBA4BE955537F85#RamanSpectroscopy_IntensityCalibration_CalibrationDialog">dialog</link>, a function must be entered, which describes the intensity in dependence of the wavelength.  The NIST 532nm standard uses for instance a shifted log-normal peak function, which is already built-in in Altaxo. Make sure that the function you select is identical to the function that come with the certification of the  fluorescence standard or of the calibrated light source. The selected function is described in the right part of the dialog. Besides different peak shaped functions you can also use a polynomial, or you can even use your own mathematical expression.
+</para>
+
+<quote>
+
+<para>
+<legacyBold>Note</legacyBold>: when you enter your own mathematical expression, it must be given in C# syntax. Thus, numbers must be given using the invariant culture (dot as decimal separator). The spectral x-value is provided in the variable <codeInline>x</codeInline>. Furthermore, the static <codeInline>System.Math</codeInline> class is included in the <codeInline>usings</codeInline>, so all functions from that class are available directly. Thus for instance <codeInline>5.794*Sin(x)</codeInline> would be a valid mathematical expression, but you could also have used <codeInline>5.794*Math.Sin(x)</codeInline>, which gives the same result. On the other hand, <codeInline>5.794*sin(x)</codeInline> would not be a valid expression, since all functions in C# begin with a capital letter.
+</para>
+</quote>
+
+<para>
+Enter the parameters of the function. They are given on the certificate of your calibration standard. Make also sure that the x-axis of your spectrum matches the x-axis unit given in the certificate. Example: if your x-axis is Raman shift, but on the certificate the x-axis unit is wavelength, then you can not perform intensity calibration.
+</para>
+
+<para>
+Most of the certificates come also with a validity range. This is the range of x-values for which the function is applicable. Enter this values in the fields <codeInline>Minimal x-value of curve</codeInline> and <codeInline>Maximal x-value of curve</codeInline>.
+</para>
+
+<para>
+You can smooth the resulting correction curve by checking the checkbox <codeInline>Smooth result by smoothing interpolation</codeInline>. The amount of smoothing depends on the smoothing function you choose, you have to experiment a bit to find the best compromise between accuracy and amount of smoothing.
+</para>
+
+<para>
+Especially at the end of the spectrum of a 785 nm system, the sensitivity of your sensor goes down, so you need high gain to compensate that effect. Unfortunately, that means that also noise and errors coming from the dark subtraction will be amplified. To limit the gain to reasonable values (for instance to 10), you can enter a gain limit in the field <codeInline>Maximal gain ratio</codeInline>.
+</para>
+
+<para>
+Press then OK to perform the intensity calibration. A <link xlink:href="FCC125D44CCD76A52BBA4BE955537F85#RamanSpectroscopy_IntensityCalibration_CalibrationTable">new table</link> is created, which contains the correction function.
+</para>
+
+<para>
+<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#CE0DE1D4E3E60E49D7CF84B0F32BA1DE"><img src="../media/CE0DE1D4E3E60E49D7CF84B0F32BA1DE.png" width="567"></img></a></markup>  
+</para>
+
+<para>
+Fig.2: The resulting relative intensity calibration table.
+</para>
+
+<para>
+The <link xlink:href="FCC125D44CCD76A52BBA4BE955537F85#RamanSpectroscopy_IntensityCalibration_CalibrationTable">resulting table</link> contains 5 columns:
+</para>
+
+<list class="bullet">
+
+<listItem>
+
+<para>
+<codeInline>X_Spectrum</codeInline> contains the x-values of the preprocessed spectrum of the fluorescence standard or the calibrated light source
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<codeInline>Y_Spectrum</codeInline> contains the y-values of the preprocessed spectrum of the fluorescence standard or the calibrated light source
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<codeInline>Y_CalibrationStandard</codeInline> contains the y-values of the intensity curve calculated from the shape function and the coefficients that came with the calibration certificate
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<codeInline>ScalingDenominator (not smoothed)</codeInline> is the unsmoothed correction denominator (<markup><a href="ACAC6A80-7CE0-4CB9-B36C-B2FB6ACAB027.htm#B877418511F2BD1F948722C85678128A"><img src="../media/B877418511F2BD1F948722C85678128A.png" width="183" height="17" align="middle"></img></a></markup>). The y-values of any uncalibrated spectrum have to be divided by this denominator values in order to obtain the calibrated y-values.
+</para>
+</listItem>
+
+<listItem>
+
+<para>
+<codeInline>ScalingDenominator (smoothed)</codeInline> is the smoothed scaling denominator (only available if you have checked the smoothing option). The y-values of any uncalibrated spectrum have to be divided by this denominator values in order to obtain the calibrated y-values.
+</para>
+</listItem>
+</list>
+
+<quote>
+
+<para>
+<legacyBold>Note</legacyBold>: In other spectroscopic software, instead of a denominator, as here in Altaxo, the nominator is calculated, which of course is the inverse of the denominator. Thus, both methods are equivalent. The reason why I use here the denominator is that the noise of the denominator values is proportional to the noise of the measured intensity spectrum, which is important to smooth the denominator values properly, especially at the end of the spectrum.
+</para>
+</quote>
+
+<section address="CE026FF3364B1D7BC0A6040B9052177E">
+<title>Apply the relative intensity correction to other spectra
 </title>
 <content>
 
 <para>
-In subsequent <link xlink:href="3A0137E53CEEEFFC3A49CDCA2CC5B88D#Section_SpectralPreprocessing">preprocessing operations</link>, this calibration table can be used for intensity correction. Use the tab <codeInline>YCal</codeInline> of the preprocessing pipeline, select <codeInline>YCalibrationByDataSource</codeInline>, and in the combobox, choose the table containing the intensity calibration.
+In subsequent <link xlink:href="3A0137E53CEEEFFC3A49CDCA2CC5B88D#Section_SpectralPreprocessing">preprocessing operations</link>, the calibration table that was created above can be used for intensity correction. Use the tab <codeInline>YCal</codeInline> of the preprocessing pipeline, select <codeInline>YCalibrationByDataSource</codeInline>, and in the combo box, choose the table containing the intensity calibration.
 </para>
 </content>
 </section>

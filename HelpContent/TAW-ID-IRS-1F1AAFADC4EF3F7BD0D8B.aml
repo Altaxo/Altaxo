@@ -11,7 +11,19 @@ Previous section: <link xlink:href="4221C27DFEC7CB2F7D14CBC04B9DA725">Importing 
 <markup><hr/></markup>
 
 <para>
-Altaxo is able to import spectral files from Renishaw instruments. Only files with the extension <codeInline>.wdf</codeInline> are supported.
+Altaxo is able to import spectral files from Renishaw instruments. Only files with the extension <codeInline>.wdf</codeInline> are supported. The format is a block based format, containing one or more spectra with a common x-axis.
+</para>
+
+<para>
+References:
+</para>
+
+<para>
+[1] Henderson, Alex <externalLink><linkText>DOI:10.5281/zenodo.495477</linkText><linkUri>https://zenodo.org/records/495477</linkUri></externalLink>
+</para>
+
+<para>
+[2] <externalLink><linkText>Python implementation</linkText><linkUri>https://github.com/alchem0x2A/py-wdf-reader/blob/master/renishawWiRE/wdfReader.py</linkUri></externalLink>
 </para>
 <markup><hr/></markup>
 <para>
