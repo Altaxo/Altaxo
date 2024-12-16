@@ -424,6 +424,19 @@ namespace Altaxo.Text
         );
 
       renderer.Render(markdownDocument);
+
+      if (renderer.UnresolvedLinks.Count > 0 && errors is not null)
+      {
+        foreach (var unresolvedLink in renderer.UnresolvedLinks)
+        {
+          errors.Add(new MarkdownError
+          {
+            LineNumber = unresolvedLink.Line,
+            ColumnNumber = unresolvedLink.Column,
+            ErrorMessage = $"Unresolved link '{unresolvedLink.Url}' at line={unresolvedLink.Line} / column={unresolvedLink.Column}, title='{unresolvedLink.Title}', firstChild='{unresolvedLink.FirstChild}', lastChild='{unresolvedLink.LastChild}'",
+          });
+        }
+      }
     }
 
     /// <summary>

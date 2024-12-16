@@ -27,8 +27,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Altaxo.Text.Renderers.Maml;
 using Altaxo.Text.Renderers.Maml.Extensions;
 using Altaxo.Text.Renderers.Maml.Inlines;
@@ -198,6 +196,11 @@ namespace Altaxo.Text.Renderers
     public double BodyTextFontSize { get; }
 
     private List<Maml.MamlElement> _currentElementStack = new List<MamlElement>();
+
+    /// <summary>
+    /// After rendering, this list contains all links that could not be resolved.
+    /// </summary>
+    public List<LinkInline> UnresolvedLinks { get; } = new();
 
     public MamlRenderer(
       string projectOrContentFileName,

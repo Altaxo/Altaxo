@@ -25,7 +25,6 @@
 #nullable enable
 using System;
 using System.Collections.Generic;
-using System.Windows;
 using Markdig.Syntax.Inlines;
 
 namespace Altaxo.Text.Renderers.Maml.Inlines
@@ -66,6 +65,10 @@ namespace Altaxo.Text.Renderers.Maml.Inlines
           if (fileGuid is not null && localUrl is not null)
           {
             totalAddress = fileGuid + "#" + localUrl;
+          }
+          else
+          {
+            renderer.UnresolvedLinks.Add(link);
           }
 
           renderer.Push(MamlElements.link, new[] { new KeyValuePair<string, string>("xlink:href", totalAddress) });

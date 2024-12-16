@@ -69,7 +69,7 @@ namespace Altaxo.Text
     /// and we somewhat loose this context during the expansion, we convert the graphs to local images before we insert the document into the master document.</remarks>
     public static TextDocument ExpandDocumentToNewDocument(TextDocument textDocument, string targetDocumentFolder, int recursionLevel = 0, List<MarkdownError>? errors = null)
     {
-      return ExpandDocumentToNewDocument(textDocument, false, targetDocumentFolder, recursionLevel);
+      return ExpandDocumentToNewDocument(textDocument, false, targetDocumentFolder, recursionLevel, errors);
     }
 
     /// <summary>
@@ -84,7 +84,7 @@ namespace Altaxo.Text
     /// <returns>A new <see cref="TextDocument"/>. This text document contains the expanded markdown text. In addition, all Altaxo graphs are converted to local images.</returns>
     /// <remarks>Since finding Altaxo graphs embedded in the markdown is depended on the context (location of the TextDocument and location of the graph),
     /// and we somewhat loose this context during the expansion, we convert the graphs to local images before we insert the document into the master document.</remarks>
-    private static TextDocument ExpandDocumentToNewDocument(TextDocument textDocument, bool convertGraphsToImages, string newPath, int recursionLevel = 0, List<MarkdownError>? errors = null)
+    private static TextDocument ExpandDocumentToNewDocument(TextDocument textDocument, bool convertGraphsToImages, string newPath, int recursionLevel, List<MarkdownError>? errors)
     {
       var resultDocument = new TextDocument();
       resultDocument.AddImagesFrom(textDocument);
