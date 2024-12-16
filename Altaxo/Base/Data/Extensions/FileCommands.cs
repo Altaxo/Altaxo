@@ -26,12 +26,7 @@
 using System;
 using System.IO;
 using Altaxo.Collections;
-using Altaxo.Serialization;
 using Altaxo.Serialization.Ascii;
-using Altaxo.Serialization.Galactic;
-using Altaxo.Serialization.Jcamp;
-using Altaxo.Serialization.NicoletSPA;
-using Altaxo.Serialization.Renishaw;
 
 namespace Altaxo.Data
 {
@@ -288,44 +283,6 @@ namespace Altaxo.Data
     }
 
     /// <summary>
-    /// Asks for file names, and imports one or more Galactic SPC files into a single data table.
-    /// </summary>
-    /// <param name="dataTable">Data table to import to.</param>
-    public static void ShowImportGalacticSPCDialog(this DataTable dataTable)
-    {
-      DataFileImporterBase.ShowDialog(dataTable, new GalacticSPCImporter());
-    }
-
-    /// <summary>
-    /// Asks for file names, and imports one or more Jcamp files into a single data table.
-    /// </summary>
-    /// <param name="dataTable">Data table to import to.</param>
-    public static void ShowImportJcampDialog(this DataTable dataTable)
-    {
-      DataFileImporterBase.ShowDialog(dataTable, new JcampImporter());
-    }
-
-    /// <summary>
-    /// Asks for file names, and imports one or more Renishaw .wdf files (Raman spectroscopy) into a single data table.
-    /// </summary>
-    /// <param name="dataTable">Data table to import to.</param>
-    public static void ShowImportRenishawWdfDialog(this DataTable dataTable)
-    {
-      DataFileImporterBase.ShowDialog(dataTable, new RenishawImporter());
-
-    }
-
-    /// <summary>
-    /// Asks for file names, and imports one or more Renishaw .wdf files (Raman spectroscopy) into a single data table.
-    /// </summary>
-    /// <param name="dataTable">Data table to import to.</param>
-    public static void ShowImportNicoletSPADialog(this DataTable dataTable)
-    {
-      DataFileImporterBase.ShowDialog(dataTable, new NicoletSPAImporter());
-
-    }
-
-    /// <summary>
     /// Shows the dialog for Galactic SPC file export, and exports the data of the table using the options provided in that dialog.
     /// </summary>
     /// <param name="dataTable">DataTable to export.</param>
@@ -335,61 +292,6 @@ namespace Altaxo.Data
     {
       var exportCtrl = new Altaxo.Gui.Serialization.Galactic.ExportGalacticSpcFileDialogController(dataTable, selectedDataRows, selectedDataColumns);
       Current.Gui.ShowDialog(exportCtrl, "Export Galactic SPC format");
-    }
-
-    public delegate double ColorAmplitudeFunction(System.Drawing.Color c);
-
-    public static double ColorToBrightness(System.Drawing.Color c)
-    {
-      return c.GetBrightness();
-    }
-
-    /// <summary>
-    /// Asks for a file name of an image file, and imports the image data into a data table.
-    /// </summary>
-    /// <param name="table">The table to import to.</param>
-    public static void ShowImportImageDialog(this DataTable table)
-    {
-      ColorAmplitudeFunction colorfunc;
-      var options = new Altaxo.Gui.OpenFileOptions();
-      options.AddFilter("*.bmp;*.jpg;*.png,*.tif", "Image files (*.bmp;*.jpg;*.png,*.tif)");
-      options.AddFilter("*.*", "All files (*.*)");
-      options.FilterIndex = 0;
-      options.RestoreDirectory = true;
-
-      if (Current.Gui.ShowOpenFileDialog(options))
-      {
-        using (Stream myStream = new FileStream(options.FileName, FileMode.Open, FileAccess.Read, FileShare.Read))
-        {
-          var bmp = new System.Drawing.Bitmap(myStream);
-
-          int sizex = bmp.Width;
-          int sizey = bmp.Height;
-          //if(Format16bppGrayScale==bmp.PixelFormat)
-
-          colorfunc = new ColorAmplitudeFunction(ColorToBrightness);
-          // add here other function or the result of a dialog box
-
-          // now add new columns to the worksheet,
-          // the name of the columns should preferabbly simply
-          // the index in x direction
-
-          using (var suspendToken = table.SuspendGetToken())
-          {
-            for (int i = 0; i < sizex; i++)
-            {
-              var dblcol = new Altaxo.Data.DoubleColumn();
-              for (int j = sizey - 1; j >= 0; j--)
-                dblcol[j] = colorfunc(bmp.GetPixel(i, j));
-
-              table.DataColumns.Add(dblcol, table.DataColumns.FindUniqueColumnName(i.ToString())); // Spalte hinzufügen
-            } // end for all x coordinaates
-
-            suspendToken.Dispose();
-          }
-          myStream.Close();
-        } // end using myStream
-      }
     }
   }
 }

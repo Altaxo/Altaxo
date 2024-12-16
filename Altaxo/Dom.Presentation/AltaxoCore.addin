@@ -291,15 +291,15 @@
               <MenuItem id="WorksheetImportWiTec" label="WiTec .wip files"
                             icon="Icons.16x16.NewDocumentIcon" description="Imports one or multiple WiTec .wip project files."
                             class="Altaxo.Worksheet.Commands.ImportWiTec" />
+              <MenuItem id="WorksheetImportImage" label="${res:XML.MainMenu.FileMenu.Import.ImageData}"
+                            icon="Icons.16x16.NewDocumentIcon" description="${res:XML.MainMenu.FileMenu.Import.ImageData.Description}"
+                            class="Altaxo.Worksheet.Commands.ImportImage" />
 
               <Condition name = "WindowActive" activewindow="Altaxo.Gui.Worksheet.Viewing.WorksheetController" action="Exclude">
                     <MenuItem id="WorksheetImportAsciiSingleWksHorz" label="${res:XML.MainMenu.FileMenu.Import.AsciiSingleWorksheet}" icon="Icons.16x16.ImportAscii"
                               description="${res:XML.MainMenu.FileMenu.Import.AsciiSingleWorksheet.Description}" class="Altaxo.Worksheet.Commands.ImportAsciiInSingleWorksheetHorizontally" />
                     <MenuItem id="WorksheetImportAsciiSingleWksVert" label="${res:XML.MainMenu.FileMenu.Import.AsciiSingleWorksheetVert}" icon="Icons.16x16.ImportAscii"
                                   description="${res:XML.MainMenu.FileMenu.Import.AsciiSingleWorksheetVert.Description}" class="Altaxo.Worksheet.Commands.ImportAsciiInSingleWorksheetVertically" />
-                    <MenuItem id="WorksheetImportImage" label="${res:XML.MainMenu.FileMenu.Import.ImageData}"
-                                  icon="Icons.16x16.NewDocumentIcon" description="${res:XML.MainMenu.FileMenu.Import.ImageData.Description}"
-                                  class="Altaxo.Worksheet.Commands.ImportImage" />
                     <MenuItem id="WorksheetFileImportScript" label="${res:XML.MainMenu.FileMenu.Import.UsingFileImportScript}"
                                   icon="Icons.16x16.NewDocumentIcon" description="${res:XML.MainMenu.FileMenu.Import.UsingFileImportScript.Description}"
                                   class="Altaxo.Worksheet.Commands.OpenFileImportScriptDialog" />

@@ -90,14 +90,6 @@ namespace Altaxo.Worksheet.Commands
     }
   }
 
-  public class ImportImage : AbstractWorksheetControllerCommand
-  {
-    public override void Run(Altaxo.Gui.Worksheet.Viewing.WorksheetController ctrl)
-    {
-      Altaxo.Data.FileCommands.ShowImportImageDialog(ctrl.DataTable);
-    }
-  }
-
   public class ImportAnyDataFile : SimpleCommand
   {
     public override bool CanExecute(object? parameter)
@@ -165,6 +157,10 @@ namespace Altaxo.Worksheet.Commands
   }
 
   public class ImportWiTec : ImportDataFileCommandBase<WITecImporter>
+  {
+  }
+
+  public class ImportImage : ImportDataFileCommandBase<Altaxo.Serialization.Bitmaps.BitmapImporter>
   {
   }
 
