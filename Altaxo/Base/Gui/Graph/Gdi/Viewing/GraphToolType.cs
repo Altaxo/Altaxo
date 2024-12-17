@@ -23,11 +23,6 @@
 #endregion Copyright
 
 #nullable disable
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
 namespace Altaxo.Gui.Graph.Gdi.Viewing
 {
   public enum GraphToolType
@@ -48,6 +43,9 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
     ClosedCardinalSplineDrawing,
 
     /// <summary>Edits the grid of the current layer, or if it has no childs, the grid of the parent layer.</summary>
-    EditGrid
+    EditGrid,
+
+    /// <summary>Four points on a curve to evaluate areas, steps, etc,</summary>
+    FourPointsOnCurve,
   }
 }

@@ -27,7 +27,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -38,7 +37,6 @@ using Altaxo.Collections;
 namespace Altaxo.Gui.Graph.Gdi.Viewing
 {
   using Altaxo.Geometry;
-  using Altaxo.Graph;
   using Altaxo.Graph.Gdi;
 
   /// <summary>
@@ -221,6 +219,10 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
 
             case GraphToolType.EditGrid:
               _mouseState = new GraphControllerMouseHandlers.EditGridMouseHandler(Controller);
+              break;
+
+            case GraphToolType.FourPointsOnCurve:
+              _mouseState = new GraphControllerMouseHandlers.FourPointsOnCurveMouseHandler(Controller);
               break;
 
             default:
