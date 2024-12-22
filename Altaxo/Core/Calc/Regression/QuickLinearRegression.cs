@@ -138,6 +138,20 @@ namespace Altaxo.Calc.Regression
       return _n * _sxx - _sx * _sx;
     }
 
+    /// <summary>
+    /// Returns true if this regression spans a valid line, i.e. both coefficients a0 and a1 are finite.
+    /// </summary>
+    /// <value>
+    /// <c>true</c> if this regression is valid; otherwise, <c>false</c>.
+    /// </value>
+    public bool IsValid
+    {
+      get
+      {
+        return _n >= 2 && RMath.IsFinite(GetA0()) && RMath.IsFinite(GetA1());
+      }
+    }
+
     public double MeanX
     {
       get
@@ -160,6 +174,38 @@ namespace Altaxo.Calc.Regression
       {
         return (_n * _syx - _sx * _sy) / Math.Sqrt((_n * _sxx - _sx * _sx) * (_n * _syy - _sy * _sy));
       }
+    }
+
+    /// <summary>
+    /// Gets the intersection point of two linear regressions
+    /// </summary>
+    /// <param name="reg2">The reg2.</param>
+    /// <returns></returns>
+    public (double x, double y) GetIntersectionPoint(QuickLinearRegression reg2)
+    {
+      var x = (GetA0() - reg2.GetA0()) / (reg2.GetA1() - GetA1());
+      var y = 0.5 * (this.GetYOfX(x) + reg2.GetYOfX(x)); // we use the average, although both regression should give the same result
+      return (x, y);
+    }
+
+    /// <summary>
+    /// Gets the relative distance of a point (x,y) between two regression lines.
+    /// </summary>
+    /// <param name="a">The first regression line.</param>
+    /// <param name="b">The other regression line.</param>
+    /// <param name="x">The x value of the point.</param>
+    /// <param name="y">The y value of the point.</param>
+    /// <returns>The relative y value. If the point (x,y) is located on the regression line a, then 0 is returned.
+    /// If the point (x,y) is located on the regression line b, then 1 is returned. Likewise, if the point is located between
+    /// the two regression lines, then a value inbetween 0 and 1 is returned.
+    /// The value is not clamped to the interval [0, 1]. Thus if the point is outside the two regression lines,
+    /// then a value less than 0 or greater than 1 could be returned.
+    /// </returns>
+    public static double GetRelativeYBetweenRegressions(QuickLinearRegression a, QuickLinearRegression b, double x, double y)
+    {
+      var y0 = a.GetYOfX(x);
+      var y1 = b.GetYOfX(x);
+      return (y - y0) / (y1 - y0);
     }
   }
 }

@@ -49,15 +49,32 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
     // 1 + Left/Right : moves the most-left point on the curve ... 4 + Left/Right: moves the most-right point on the curve.
 
 
-    private struct Handle
+    /// <summary>
+    /// Stores information about a handle.
+    /// </summary>
+    public struct Handle
     {
+      /// <summary>
+      /// The index of the plot data. This can be different from the row index, e.g. if not all data are plotted.
+      /// </summary>
       public int PlotIndex;
+
+      /// <summary>
+      /// The index of the row in the underlying data table of the data that is plotted.
+      /// </summary>
       public int RowIndex;
+      /// <summary>
+      /// The position of the handle in root layer coordinates
+      /// </summary>
       public PointD2D Position;
+
+      /// <summary>
+      /// The bounds of the handle rectangle that can be used to drag the handle, in root layer coordinates.
+      /// </summary>
       public RectangleF HandleBounds;
     }
 
-    private class HandleDragState
+    protected class HandleDragState
     {
       public int IndexOfHandle;
       public PointD2D MouseStartCoordinates;
@@ -81,14 +98,14 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
     /// <summary>
     /// The number of the plot item where the cross is currently.
     /// </summary>
-    protected int _PlotItemNumber;
+    public int PlotItemNumber { get; protected set; }
 
     /// <summary>
     /// The plot item where the mouse snaps in
     /// </summary>
-    protected XYColumnPlotItem? _plotItem;
+    public XYColumnPlotItem? PlotItem { get; protected set; }
 
-    private Handle[] _handle = new Handle[4];
+    protected Handle[] _handle = new Handle[4];
     private HandleDragState? _handleDragState;
 
 
@@ -98,12 +115,25 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
 
     private State _state;
 
-    private bool _drawLineBetweenOuterPoints = true;
-
     /// <summary>
     /// A line that is drawn from the current mouse coordinates to the nearest point on the selected curve.
     /// </summary>
     private CatchLine? _catchLine;
+
+    public Handle LeftHandle => _handle[0];
+
+    public Handle RightHandle => _handle[^1];
+
+    /// <summary>
+    /// Gets a value that indicated whether the handle positions now can be used for other tools or operations.
+    /// </summary>
+    public bool IsReadyToBeUsed
+    {
+      get
+      {
+        return _state != State.NoPoint && _state != State.OnePoint;
+      }
+    }
 
 
     public FourPointsOnCurveMouseHandler(GraphController grac)
@@ -148,14 +178,14 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
     private void OnMouseDown_NoPoint(PointD2D position, PointD2D graphXY)
     {
       _grac.FindGraphObjectAtPixelPosition(position, true, out var clickedObject, out var clickedLayerNumber);
-      if (clickedObject is not null && clickedObject.HittedObject is XYColumnPlotItem)
+      if (clickedObject?.HittedObject is XYColumnPlotItem item)
       {
-        _plotItem = (XYColumnPlotItem)clickedObject.HittedObject;
+        PlotItem = item;
         var transXY = clickedObject.Transformation.InverseTransformPoint(graphXY);
 
         _layer = (XYPlotLayer)(clickedObject.ParentLayer);
-        XYScatterPointInformation scatterPoint = _plotItem.GetNearestPlotPoint(_layer, transXY);
-        _PlotItemNumber = GetPlotItemNumber(_layer, _plotItem);
+        XYScatterPointInformation scatterPoint = PlotItem.GetNearestPlotPoint(_layer, transXY);
+        PlotItemNumber = GetPlotItemNumber(_layer, PlotItem);
 
         if (scatterPoint is not null)
         {
@@ -169,8 +199,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
           _handle[3] = new Handle { PlotIndex = plotIndex, RowIndex = rowIndex, Position = rootLayerCoord };
           _state = State.OnePoint;
 
-          UpdateDataDisplay();   // show coordinates in the data reader
-          _grac.RenderOverlay(); // invalidate the overlay
+          OnHandlesUpdated();   // show coordinates in the data reader
         }
       }
     }
@@ -183,7 +212,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
     private void OnMouseDown_OnePoint(PointD2D position, PointD2D graphXY)
     {
       var transXY = _layer.TransformCoordinatesFromRootToHere(graphXY);
-      XYScatterPointInformation scatterPoint = _plotItem.GetNearestPlotPoint(_layer, transXY);
+      XYScatterPointInformation scatterPoint = PlotItem.GetNearestPlotPoint(_layer, transXY);
       if (scatterPoint is not null)
       {
         var plotIndex = scatterPoint.PlotIndex;
@@ -203,12 +232,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
         _state = State.TwoPoints;
         _catchLine = null;
 
-        UpdateDataDisplay();   // show coordinates in the data reader
-
-        // here we shoud switch the bitmap cache mode on and link us with the AfterPaint event
-        // of the grac
-        _grac.RenderOverlay(); // no refresh necessary, only invalidate to show the cross
-
+        OnHandlesUpdated();   // show coordinates in the data reader
       }
     }
 
@@ -223,7 +247,14 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
       {
         if (_handle[i].HandleBounds.Contains((float)graphXY.X, (float)graphXY.Y))
         {
-          _handleDragState = new HandleDragState { IndexOfHandle = i, MouseStartCoordinates = graphXY };
+          _handleDragState = new HandleDragState
+          {
+            IndexOfHandle = i,
+            MouseStartCoordinates = graphXY,
+            PlotIndex = _handle[i].PlotIndex,
+            RowIndex = _handle[i].RowIndex,
+            Position = _handle[i].Position,
+          };
           break;
         }
       }
@@ -237,16 +268,17 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
       if (_state == State.OnePoint)
       {
         var mouseLayerCoord = _layer.TransformCoordinatesFromRootToHere(mouseRootCoord);
-        if (_plotItem.GetNearestPlotPoint(_layer, mouseLayerCoord) is { } scatterPoint)
+        if (PlotItem.GetNearestPlotPoint(_layer, mouseLayerCoord) is { } scatterPoint)
         {
           _catchLine = new CatchLine { MouseCoordinates = mouseRootCoord, ScatterPointCoordinates = _layer.TransformCoordinatesFromHereToRoot(scatterPoint.LayerCoordinates.ToPointD2D()) };
+          UpdateDataDisplayDuringDrag(scatterPoint);
           _grac.RenderOverlay();
         }
       }
       if (_handleDragState is { } dragState)
       {
         var mouseLayerCoord = _layer.TransformCoordinatesFromRootToHere(mouseRootCoord);
-        XYScatterPointInformation scatterPoint = _plotItem.GetNearestPlotPoint(_layer, mouseLayerCoord);
+        XYScatterPointInformation scatterPoint = PlotItem.GetNearestPlotPoint(_layer, mouseLayerCoord);
         if (scatterPoint is not null)
         {
           var plotIndex = scatterPoint.PlotIndex;
@@ -260,6 +292,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
             dragState.PlotIndex = plotIndex;
             dragState.RowIndex = rowIndex;
             _catchLine = new CatchLine { MouseCoordinates = mouseRootCoord, ScatterPointCoordinates = scatterRootCoord };
+            UpdateDataDisplayDuringDrag(scatterPoint);
             _grac.RenderOverlay();
           }
         }
@@ -304,8 +337,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
 
       if (renderOverlay)
       {
-        UpdateDataDisplay();   // show coordinates in the data reader
-        _grac.RenderOverlay();
+        OnHandlesUpdated();   // show coordinates in the data reader
       }
     }
 
@@ -344,12 +376,6 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
           _handle[i].HandleBounds = DrawHandle(g, brush, pen, _handle[i].Position, i);
         }
       }
-
-      if (_drawLineBetweenOuterPoints)
-      {
-        g.DrawLine(pen, (float)_handle[0].Position.X, (float)_handle[0].Position.Y, (float)_handle[^1].Position.X, (float)_handle[^1].Position.Y);
-      }
-
 
       base.AfterPaint(g);
     }
@@ -407,6 +433,7 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
       if (e.Key == Key.Escape)
       {
         _grac.SetGraphToolFromInternal(GraphToolType.ObjectPointer);
+        return true;
       }
 
       return false; // per default the key is not processed
@@ -423,8 +450,8 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
       var prevPlotIndexDown = h.PlotIndex;
       for (; ; )
       {
-        up = _plotItem.GetNextPlotPoint(_layer, h.PlotIndex, 1);
-        down = _plotItem.GetNextPlotPoint(_layer, h.PlotIndex, -1);
+        up = PlotItem.GetNextPlotPoint(_layer, h.PlotIndex, 1);
+        down = PlotItem.GetNextPlotPoint(_layer, h.PlotIndex, -1);
 
         if (up is not null)
         {
@@ -465,13 +492,34 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
           _handle[indexOfHandle].PlotIndex = next.PlotIndex;
           _handle[indexOfHandle].RowIndex = next.RowIndex;
           _handle[indexOfHandle].Position = rootCoord;
-          UpdateDataDisplay();   // show coordinates in the data reader
-          _grac.RenderOverlay();
+          OnHandlesUpdated();   // show coordinates in the data reader
         }
       }
     }
 
-    private void UpdateDataDisplay()
+    /// <summary>
+    /// Called every time if one of the handles is updated.
+    /// </summary>
+    protected virtual void OnHandlesUpdated()
+    {
+      UpdateDataDisplay();
+      _grac.RenderOverlay();
+    }
+
+    protected virtual void UpdateDataDisplayDuringDrag(XYScatterPointInformation scatterPoint)
+    {
+      if (PlotItem?.XYColumnPlotData?.XColumn is { } xcol &&
+          PlotItem?.XYColumnPlotData?.YColumn is { } ycol &&
+          scatterPoint is not null)
+      {
+        Current.DataDisplay.WriteOneLine($"X = {xcol[scatterPoint.RowIndex]}; Y = {ycol[scatterPoint.RowIndex]}");
+      }
+    }
+
+    /// <summary>
+    /// Updates the data display. In the basis version, the (x,y) positions of the handles are shown.
+    /// </summary>
+    protected virtual void UpdateDataDisplay()
     {
       if (_state == State.NoPoint)
       {
@@ -483,13 +531,13 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
       }
       else if (_handle.Length == 2)
       {
-        var xcol = _plotItem.XYColumnPlotData.XColumn;
-        var ycol = _plotItem.XYColumnPlotData.YColumn;
+        var xcol = PlotItem.XYColumnPlotData.XColumn;
+        var ycol = PlotItem.XYColumnPlotData.YColumn;
 
         if (xcol is not null && ycol is not null)
         {
           Current.DataDisplay.WriteThreeLines(
-            $"{_layer.Name}: {_plotItem}",
+            $"{_layer.Name}: {PlotItem}",
             $"XL[{_handle[0].RowIndex}]={xcol[_handle[0].RowIndex]}; YL[{_handle[0].RowIndex}]={ycol[_handle[0].RowIndex]}; XR[{_handle[1].RowIndex}]={xcol[_handle[1].RowIndex]}; YR[{_handle[1].RowIndex}]={ycol[_handle[1].RowIndex]}",
             $"DX={xcol[_handle[1].RowIndex] - xcol[_handle[0].RowIndex]}; DY={ycol[_handle[1].RowIndex] - ycol[_handle[0].RowIndex]}"
             );
@@ -497,13 +545,13 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing.GraphControllerMouseHandlers
       }
       else if (_handle.Length == 4)
       {
-        var xcol = _plotItem.XYColumnPlotData.XColumn;
-        var ycol = _plotItem.XYColumnPlotData.YColumn;
+        var xcol = PlotItem.XYColumnPlotData.XColumn;
+        var ycol = PlotItem.XYColumnPlotData.YColumn;
 
         if (xcol is not null && ycol is not null)
         {
           Current.DataDisplay.WriteThreeLines(
-            $"{_layer.Name}: {_plotItem}",
+            $"{_layer.Name}: {PlotItem}",
             $"XLO[{_handle[0].RowIndex}]={xcol[_handle[0].RowIndex]}; YLO[{_handle[0].RowIndex}]={ycol[_handle[0].RowIndex]}; XRO[{_handle[3].RowIndex}]={xcol[_handle[3].RowIndex]}; YRO[{_handle[3].RowIndex}]={ycol[_handle[3].RowIndex]}; DX={xcol[_handle[3].RowIndex] - xcol[_handle[0].RowIndex]}; DY={ycol[_handle[3].RowIndex] - ycol[_handle[0].RowIndex]}",
             $"XLI[{_handle[1].RowIndex}]={xcol[_handle[1].RowIndex]}; YLI[{_handle[1].RowIndex}]={ycol[_handle[1].RowIndex]}; XRI[{_handle[2].RowIndex}]={xcol[_handle[2].RowIndex]}; YRI[{_handle[2].RowIndex}]={ycol[_handle[2].RowIndex]}; DX={xcol[_handle[2].RowIndex] - xcol[_handle[1].RowIndex]}; DY={ycol[_handle[2].RowIndex] - ycol[_handle[1].RowIndex]}"
             );

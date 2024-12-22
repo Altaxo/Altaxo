@@ -162,6 +162,17 @@ namespace Altaxo.Graph.Commands
   }
 
   /// <summary>
+  /// Tool for reading the x-y coordinate values of a layer.
+  /// </summary>
+  public class FourPointStepEvaluationTool : AbstractGraphToolsCommand
+  {
+    public FourPointStepEvaluationTool()
+      : base(GraphToolType.FourPointStepEvaluation)
+    {
+    }
+  }
+
+  /// <summary>
   /// Drawing a simple line with two points.
   /// </summary>
   public class SingleLineDrawingTool : AbstractGraphToolsCommand

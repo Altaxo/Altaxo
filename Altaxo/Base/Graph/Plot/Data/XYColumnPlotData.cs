@@ -61,7 +61,7 @@ namespace Altaxo.Graph.Plot.Data
     /// <summary>
     /// The selection of data rows to be plotted.
     /// </summary>
-    protected IRowSelection _dataRowSelection;
+    protected IRowSelection _rangeOfRows;
 
     // cached or temporary data
     protected IPhysicalBoundaries? _xBoundaries;
@@ -379,7 +379,7 @@ namespace Altaxo.Graph.Plot.Data
         int rangeLength = info.GetInt32("RangeLength");
 
         if (rangeStart < 0 || rangeLength != int.MaxValue)
-          s.ChildSetMember(ref s._dataRowSelection, RangeOfRowIndices.FromStartAndCount(rangeStart, rangeLength));
+          s.ChildSetMember(ref s._rangeOfRows, RangeOfRowIndices.FromStartAndCount(rangeStart, rangeLength));
 
         return s;
       }
@@ -410,7 +410,7 @@ namespace Altaxo.Graph.Plot.Data
 
         info.AddValueOrNull("DataTable", s._dataTable);
         info.AddValue("GroupNumber", s._groupNumber);
-        info.AddValue("RowSelection", s._dataRowSelection);
+        info.AddValue("RowSelection", s._rangeOfRows);
 
         info.AddValue("XColumn", s._xColumn);
         info.AddValue("YColumn", s._yColumn);
@@ -427,7 +427,7 @@ namespace Altaxo.Graph.Plot.Data
 
         s._groupNumber = info.GetInt32("GroupNumber");
 
-        s.ChildSetMember(ref s._dataRowSelection, (IRowSelection)info.GetValue("RowSelection", s));
+        s.ChildSetMember(ref s._rangeOfRows, (IRowSelection)info.GetValue("RowSelection", s));
         s.ChildSetMember(ref s._xColumn, (IReadableColumnProxy)info.GetValue("XColumn", s));
         s.ChildSetMember(ref s._yColumn, (IReadableColumnProxy)info.GetValue("YColumn", s));
         s.ChildSetMember(ref s._xBoundaries, info.GetValueOrNull<IPhysicalBoundaries>("XBoundaries", s));
@@ -452,7 +452,7 @@ namespace Altaxo.Graph.Plot.Data
 #pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
     protected XYColumnPlotData(Altaxo.Serialization.Xml.IXmlDeserializationInfo info)
     {
-      ChildSetMember(ref _dataRowSelection, new AllRows());
+      ChildSetMember(ref _rangeOfRows, new AllRows());
     }
 #pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
 
@@ -461,7 +461,7 @@ namespace Altaxo.Graph.Plot.Data
     public XYColumnPlotData(Altaxo.Data.DataTable dataTable, int groupNumber, Altaxo.Data.IReadableColumn xColumn, Altaxo.Data.IReadableColumn yColumn)
     {
       DataTable = dataTable;
-      ChildSetMember(ref _dataRowSelection, new AllRows());
+      ChildSetMember(ref _rangeOfRows, new AllRows());
       _groupNumber = groupNumber;
       XColumn = xColumn;
       YColumn = yColumn;
@@ -477,7 +477,7 @@ namespace Altaxo.Graph.Plot.Data
       ChildCopyToMember(ref _dataTable, from._dataTable);
       _groupNumber = from._groupNumber;
 
-      ChildCloneToMember(ref _dataRowSelection, from._dataRowSelection);
+      ChildCloneToMember(ref _rangeOfRows, from._rangeOfRows);
 
       ChildCopyToMember(ref _xColumn, from._xColumn);
       ChildCopyToMember(ref _yColumn, from._yColumn);
@@ -500,8 +500,8 @@ namespace Altaxo.Graph.Plot.Data
       if (_dataTable is not null)
         yield return new DocumentNodeAndName(_dataTable, "DataTable");
 
-      if (_dataRowSelection is not null)
-        yield return new DocumentNodeAndName(_dataRowSelection, nameof(DataRowSelection));
+      if (_rangeOfRows is not null)
+        yield return new DocumentNodeAndName(_rangeOfRows, nameof(DataRowSelection));
 
       if (_xColumn is not null)
         yield return new Main.DocumentNodeAndName(_xColumn, "XColumn");
@@ -591,16 +591,16 @@ namespace Altaxo.Graph.Plot.Data
     {
       get
       {
-        return _dataRowSelection;
+        return _rangeOfRows;
       }
       set
       {
         if (value is null)
           throw new ArgumentNullException(nameof(value));
 
-        if (!_dataRowSelection.Equals(value))
+        if (!_rangeOfRows.Equals(value))
         {
-          ChildSetMember(ref _dataRowSelection, value);
+          ChildSetMember(ref _rangeOfRows, value);
           _isCachedDataValidX = _isCachedDataValidY = false;
           EhSelfChanged(EventArgs.Empty);
         }
@@ -755,7 +755,7 @@ namespace Altaxo.Graph.Plot.Data
       Report(_xColumn, this, "XColumn");
       Report(_yColumn, this, "YColumn");
 
-      _dataRowSelection.VisitDocumentReferences(Report);
+      _rangeOfRows.VisitDocumentReferences(Report);
     }
 
     /// <summary>
@@ -928,7 +928,7 @@ namespace Altaxo.Graph.Plot.Data
 
         if (XColumn is { } xColumn && YColumn is { } yColumn && DataTable is { } dataTable)
         {
-          foreach (var segment in _dataRowSelection.GetSelectedRowIndexSegmentsFromTo(0, _pointCount, dataTable.DataColumns, _pointCount))
+          foreach (var segment in _rangeOfRows.GetSelectedRowIndexSegmentsFromTo(0, _pointCount, dataTable.DataColumns, _pointCount))
           {
             for (int rowIdx = segment.start; rowIdx < segment.endExclusive; ++rowIdx)
             {
@@ -1025,7 +1025,7 @@ namespace Altaxo.Graph.Plot.Data
 
       if (DataTable is { } dataTable)
       {
-        foreach ((int start, int endExclusive) in _dataRowSelection.GetSelectedRowIndexSegmentsFromTo(0, maxRowIndex, dataTable.DataColumns, maxRowIndex))
+        foreach ((int start, int endExclusive) in _rangeOfRows.GetSelectedRowIndexSegmentsFromTo(0, maxRowIndex, dataTable.DataColumns, maxRowIndex))
         {
           for (int dataRowIdx = start; dataRowIdx < endExclusive; ++dataRowIdx)
           {

@@ -591,5 +591,41 @@ namespace Altaxo.Calc
     {
       return n < 0 ? x / Pow(10, -n) : x * Pow(10, n);
     }
+
+    /// <summary>
+    /// Gets the minimum and maximum of two values.
+    /// </summary>
+    /// <param name="a">First value.</param>
+    /// <param name="b">Second value.</param>
+    /// <returns>The minimum and maximum of the two values.</returns>
+    public static (double Min, double Max) MinMax(double a, double b)
+    {
+      return a < b ? (a, b) : (b, a);
+    }
+
+    /// <summary>
+    /// Gets the minimum and maximum of three values.
+    /// </summary>
+    /// <param name="a">First value.</param>
+    /// <param name="b">Second value.</param>
+    /// <param name="c">Third value.</param>
+    /// <returns>The minimum and maximum of the three values.</returns>
+    public static (double Min, double Max) MinMax(double a, double b, double c)
+    {
+      return (Math.Min(a, Math.Min(b, c)), Math.Max(a, Math.Max(b, c)));
+    }
+
+    /// <summary>
+    /// Gets the minimum and maximum of four values.
+    /// </summary>
+    /// <param name="a">First value.</param>
+    /// <param name="b">Second value.</param>
+    /// <param name="c">Third value.</param>
+    /// <param name="d">Fourth value.</param>
+    /// <returns>The minimum and maximum of the four values.</returns>
+    public static (double Min, double Max) MinMax(double a, double b, double c, double d)
+    {
+      return (Math.Min(a, Math.Min(b, Math.Min(c, d))), Math.Max(a, Math.Max(b, Math.Max(c, d))));
+    }
   }
 }

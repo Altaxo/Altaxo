@@ -63,6 +63,15 @@ namespace Altaxo.Data
     {
     }
 
+    public XAndYColumn(Altaxo.Graph.Plot.Data.XYColumnPlotData plotData)
+      : base(plotData.DataTable ?? throw new System.ArgumentException($"The argument {nameof(plotData)} has a property {nameof(plotData.DataTable)} that is null"),
+          plotData.GroupNumber, 1, 1)
+    {
+      XColumn = plotData.XColumn;
+      YColumn = plotData.YColumn;
+      DataRowSelection = (Selections.IRowSelection)plotData.DataRowSelection.Clone();
+    }
+
     protected XAndYColumn(IXmlDeserializationInfo info, int version) : base(info, version)
     {
     }

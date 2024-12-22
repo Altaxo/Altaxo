@@ -2,7 +2,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 //    Altaxo:  a data processing and data plotting program
-//    Copyright (C) 2002-2011 Dr. Dirk Lellinger
+//    Copyright (C) 2002-2024 Dr. Dirk Lellinger
 //
 //    This program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -22,32 +22,18 @@
 
 #endregion Copyright
 
-#nullable disable
-namespace Altaxo.Gui.Graph.Gdi.Viewing
+using System.Windows.Controls;
+
+namespace Altaxo.Gui.Science.Signals
 {
-  public enum GraphToolType
+  /// <summary>
+  /// Interaction logic for FourPointStepEvaluationOptionsControl.xaml
+  /// </summary>
+  public partial class FourPointStepEvaluationOptionsControl : UserControl, IFourPointStepEvaluationOptionsView
   {
-    None,
-    ObjectPointer,
-    ArrowLineDrawing,
-    SingleLineDrawing,
-    RectangleDrawing,
-    CurlyBraceDrawing,
-    EllipseDrawing,
-    TextDrawing,
-    ReadPlotItemData,
-    ReadXYCoordinates,
-    ZoomAxes,
-    RegularPolygonDrawing,
-    OpenCardinalSplineDrawing,
-    ClosedCardinalSplineDrawing,
-
-    /// <summary>Edits the grid of the current layer, or if it has no childs, the grid of the parent layer.</summary>
-    EditGrid,
-
-    /// <summary>Four points on a curve to evaluate areas, steps, etc,</summary>
-    FourPointsOnCurve,
-
-    FourPointStepEvaluation,
+    public FourPointStepEvaluationOptionsControl()
+    {
+      InitializeComponent();
+    }
   }
 }

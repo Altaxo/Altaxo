@@ -225,6 +225,10 @@ namespace Altaxo.Gui.Graph.Gdi.Viewing
               _mouseState = new GraphControllerMouseHandlers.FourPointsOnCurveMouseHandler(Controller);
               break;
 
+            case GraphToolType.FourPointStepEvaluation:
+              _mouseState = new GraphControllerMouseHandlers.StepEvaluationToolMouseHandler(Controller);
+              break;
+
             default:
               throw new NotImplementedException("Type not implemented: " + value.ToString());
           } // end switch
